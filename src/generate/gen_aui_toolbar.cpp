@@ -148,11 +148,6 @@ std::optional<ttlib::cstr> AuiToolBarGenerator::GenSettings(Node* node, size_t& 
     return code;
 }
 
-std::optional<ttlib::cstr> AuiToolBarGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
-{
-    return GenEventCode(event, class_name);
-}
-
 bool AuiToolBarGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
     InsertGeneratorInclude(node, "#include <wx/aui/auibar.h>", set_src, set_hdr);
@@ -256,11 +251,6 @@ std::optional<ttlib::cstr> AuiToolGenerator::GenConstruction(Node* node)
     }
 }
 
-std::optional<ttlib::cstr> AuiToolGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
-{
-    return GenEventCode(event, class_name);
-}
-
 int AuiToolGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
     auto item = InitializeXrcObject(node, object);
@@ -289,11 +279,6 @@ std::optional<ttlib::cstr> AuiToolLabelGenerator::GenConstruction(Node* node)
          << ");";
 
     return code;
-}
-
-std::optional<ttlib::cstr> AuiToolLabelGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
-{
-    return GenEventCode(event, class_name);
 }
 
 int AuiToolLabelGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)

@@ -27,7 +27,7 @@ wxObject* BoxSizerGenerator::CreateMockup(Node* node, wxObject* parent)
     return sizer;
 }
 
-std::optional<ttlib::cstr> BoxSizerGenerator::CommonConstruction(Code& code)
+std::optional<ttlib::sview> BoxSizerGenerator::CommonConstruction(Code& code)
 {
     if (code.is_cpp() && code.is_local_var())
         code << "auto* ";

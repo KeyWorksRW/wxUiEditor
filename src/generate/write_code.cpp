@@ -95,7 +95,7 @@ void WriteCode::writeLine(std::string& code, size_t indentation)
     }
 }
 
-void WriteCode::writeLine(ttlib::sview code, bool auto_indent)
+void WriteCode::writeLine(ttlib::sview code, size_t indentation)
 {
     if (code.empty())
     {
@@ -107,12 +107,12 @@ void WriteCode::writeLine(ttlib::sview code, bool auto_indent)
         ttlib::multiview lines(code, '\n');
         for (auto& iter: lines)
         {
-            WriteCodeLine(iter, auto_indent);
+            WriteCodeLine(iter, indentation);
         }
     }
     else
     {
-        WriteCodeLine(code, auto_indent);
+        WriteCodeLine(code, indentation);
     }
 }
 

@@ -15,7 +15,7 @@ class BoxSizerGenerator : public BaseGenerator
 public:
     wxObject* CreateMockup(Node* node, wxObject* /*parent*/) override;
 
-    std::optional<ttlib::cstr> CommonConstruction(Code& code) override;
+    std::optional<ttlib::sview> CommonConstruction(Code& code) override;
     std::optional<ttlib::cstr> CommonAfterChildren(Code& code) override;
 
     bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr) override;

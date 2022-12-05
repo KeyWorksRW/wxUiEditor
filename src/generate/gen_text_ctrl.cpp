@@ -97,13 +97,13 @@ bool TextCtrlGenerator::OnPropertyChange(wxObject* widget, Node* node, NodePrope
     return false;
 }
 
-std::optional<ttlib::cstr> TextCtrlGenerator::CommonConstruction(Code& code)
+std::optional<ttlib::sview> TextCtrlGenerator::CommonConstruction(Code& code)
 {
     if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
     code.NodeName().CreateClass();
     code.GetParentName().Comma().as_string(prop_id).Comma().CheckLineLength();
-    code.QuotedString(prop_value).CheckLineLength();
+    code.QuotedString(prop_value);
     code.PosSizeFlags(true);
 
     return code.m_code;
@@ -201,11 +201,6 @@ std::optional<ttlib::cstr> TextCtrlGenerator::CommonSettings(Code& code, size_t&
     }
 
     return code.m_code;
-}
-
-std::optional<ttlib::cstr> TextCtrlGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
-{
-    return GenEventCode(event, class_name);
 }
 
 void TextCtrlGenerator::ChangeEnableState(wxPropertyGridManager* prop_grid, NodeProperty* changed_prop)

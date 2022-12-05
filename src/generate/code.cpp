@@ -233,7 +233,7 @@ Code& Code::GetParentName()
             if (parent->IsStaticBoxSizer())
             {
                 m_code << parent->get_node_name();
-                Function("GetStaticBox(").EndFunction();
+                Function("GetStaticBox()");
                 return *this;
             }
         }
@@ -250,7 +250,7 @@ Code& Code::GetParentName()
                 m_code << parent->get_node_name();
                 if (parent->isGen(gen_wxCollapsiblePane))
                 {
-                    Function("GetPane(").EndFunction();
+                    Function("GetPane()");
                 }
                 return *this;
             }

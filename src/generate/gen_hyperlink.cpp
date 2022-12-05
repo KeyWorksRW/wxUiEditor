@@ -212,11 +212,6 @@ bool HyperlinkGenerator::IsGeneric(Node* node)
     return (!node->prop_as_bool(prop_underlined));
 }
 
-std::optional<ttlib::cstr> HyperlinkGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
-{
-    return GenEventCode(event, class_name);
-}
-
 bool HyperlinkGenerator::GetIncludes(Node* /* node */, std::set<std::string>& /* set_src */, std::set<std::string>& set_hdr)
 {
     // If there's an event, then this has to be in the header file.

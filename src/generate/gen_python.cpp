@@ -10,6 +10,7 @@
 #include "mainframe.h"
 
 #include "base_generator.h"   // BaseGenerator -- Base widget generator class
+#include "code.h"             // Code -- Helper class for generating code
 #include "gen_base.h"         // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
 #include "gen_common.h"       // Common component functions
 #include "gen_lang_common.h"  // Common mulit-language functions
@@ -167,18 +168,18 @@ void BaseCodeGenerator::GeneratePythonClass(Node* form_node, PANEL_PAGE panel_ty
     thrd_get_events.join();
 
     auto generator = form_node->GetNodeDeclaration()->GetGenerator();
+    Code code(form_node, GEN_LANG_PYTHON);
 
-    auto result = generator->GenPythonConstruction(form_node);
-    if (result)
+    if (generator->GenPythonForm(code))
     {
-        m_source->writeLine(result.value(), indent::none);
+        m_source->writeLine(code.m_code, indent::none);
         m_source->writeLine();
         m_source->Indent();
         m_source->Indent();
     }
 
     size_t auto_indent = indent::auto_no_whitespace;
-    if (result = generator->GenSettings(form_node, auto_indent, GEN_LANG_PYTHON); result)
+    if (auto result = generator->GenSettings(form_node, auto_indent, GEN_LANG_PYTHON); result)
     {
         if (result.value().size())
         {
@@ -189,12 +190,12 @@ void BaseCodeGenerator::GeneratePythonClass(Node* form_node, PANEL_PAGE panel_ty
 
     if (form_node->get_prop_ptr(prop_window_extra_style))
     {
-        ttlib::cstr code;
-        GenerateWindowSettings(GEN_LANG_PYTHON, form_node, code);
+        ttlib::cstr win_code;
+        GenerateWindowSettings(GEN_LANG_PYTHON, form_node, win_code);
         if (code.size())
         {
             // GenerateWindowSettings() can result in code within braces, so keep any leading whitespace.
-            m_source->writeLine(code, indent::auto_keep_whitespace);
+            m_source->writeLine(win_code, indent::auto_keep_whitespace);
         }
     }
 
@@ -206,7 +207,7 @@ void BaseCodeGenerator::GeneratePythonClass(Node* form_node, PANEL_PAGE panel_ty
         GenConstruction(child.get());
     }
 
-    if (result = generator->GenAdditionalCode(code_after_children, form_node, GEN_LANG_PYTHON); result)
+    if (auto result = generator->GenAdditionalCode(code_after_children, form_node, GEN_LANG_PYTHON); result)
     {
         if (result.value().size())
         {
@@ -215,6 +216,53 @@ void BaseCodeGenerator::GeneratePythonClass(Node* form_node, PANEL_PAGE panel_ty
         }
     }
 
+    // TODO: [Randalphwa - 12-04-2022] Python supports persistence, though it's not as easy as it is in C++.
+    // See https://docs.wxpython.org/wx.lib.agw.persist.html?highlight=persist#module-wx.lib.agw.persist
+
+    if (events.size())
+    {
+        m_source->writeLine();
+        m_source->writeLine("# Bind Event handlers");
+        GenSrcEventBinding(form_node, events);
+
+        m_source->ResetIndent();
+        m_source->writeLine();
+        m_source->Indent();
+        GenPythonEventHandlers(events);
+    }
+
     // Make certain indentation is reset after all construction code is written
     m_source->ResetIndent();
+}
+
+void BaseCodeGenerator::GenPythonEventHandlers(const EventVector& events)
+{
+    // Multiple events can be bound to the same function, so use a set to make sure we only generate each function once.
+    std::set<ttlib::cstr> code_lines;
+
+    for (auto& event: events)
+    {
+        // Ignore lambda's and functions in another class
+        if (event->get_value().contains("[") || event->get_value().contains("::"))
+            continue;
+
+        ttlib::cstr code("\tdef ");
+        code << event->get_value() << "(self, event):\n\t\t";
+        if (event->GetNode()->get_form()->prop_as_bool(prop_python_call_skip))
+            code << "event.Skip()";
+        else
+            code << "pass";
+        code_lines.emplace(code);
+    }
+
+    if (code_lines.size())
+    {
+        m_source->writeLine();
+        m_source->writeLine("# Event handler functions");
+        for (const auto& code: code_lines)
+        {
+            m_source->writeLine(code, false);
+            m_source->writeLine();
+        }
+    }
 }

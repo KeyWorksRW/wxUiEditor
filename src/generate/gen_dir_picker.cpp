@@ -90,10 +90,6 @@ std::optional<ttlib::cstr> DirPickerGenerator::GenSettings(Node* node, size_t& /
 
         return {};
 }
-std::optional<ttlib::cstr> DirPickerGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
-{
-    return GenEventCode(event, class_name);
-}
 
 bool DirPickerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {

@@ -46,11 +46,6 @@ std::optional<ttlib::cstr> TreeListCtrlGenerator::GenConstruction(Node* node)
     return code;
 }
 
-std::optional<ttlib::cstr> TreeListCtrlGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
-{
-    return GenEventCode(event, class_name);
-}
-
 bool TreeListCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
     InsertGeneratorInclude(node, "#include <wx/treelist.h>", set_src, set_hdr);

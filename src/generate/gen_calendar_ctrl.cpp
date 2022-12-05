@@ -58,10 +58,6 @@ std::optional<ttlib::cstr> CalendarCtrlGenerator::GenSettings(Node* node, size_t
 
         return {};
 }
-std::optional<ttlib::cstr> CalendarCtrlGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
-{
-    return GenEventCode(event, class_name);
-}
 
 bool CalendarCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {

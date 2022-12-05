@@ -9,7 +9,9 @@
 #include <wx/sizer.h>
 #include <wx/statline.h>
 
+#include "code.h"        // Code -- Helper class for generating code
 #include "gen_common.h"  // GeneratorLibrary -- Generator classes
+#include "lambdas.h"     // Functions for formatting and storage of lamda events
 #include "node.h"        // Node class
 
 #include "pugixml.hpp"  // xml read/write/create/process
@@ -362,60 +364,68 @@ void StdDialogButtonSizerGenerator::RequiredHandlers(Node* /* node */, std::set<
     handlers.emplace("wxStdDialogButtonSizerXmlHandler");
 }
 
-std::optional<ttlib::cstr> StdDialogButtonSizerGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
+std::optional<ttlib::sview> StdDialogButtonSizerGenerator::GenEvents(Code& code, NodeEvent* event,
+                                                                     const std::string& class_name)
 {
-    ttlib::cstr code;
-    ttlib::cstr handler;
+    Code handler(event->GetNode(), code.m_language);
 
     // This is what we normally use if an ID is needed. However, a lambda needs to put the ID on it's own line, so we
     // use a string for this to allow the lambda processing code to replace it.
     std::string comma(", ");
-
     if (event->get_value().contains("["))
     {
+        if (!code.is_cpp())
+            return {};
         handler << event->get_name() << ',' << event->get_value();
         // Put the lambda expression on it's own line
-        handler.Replace("[", "\n\t\t[");
+        handler.m_code.Replace("[", "\n\t[");
         comma = ",\n\t";
+        ExpandLambda(handler.m_code);
     }
     else if (event->get_value().contains("::"))
     {
-        if (event->get_value()[0] != '&')
+        handler.Add(event->get_name()) << ", ";
+        if (event->get_value()[0] != '&' && handler.is_cpp())
             handler << '&';
         handler << event->get_value();
     }
     else
     {
-        // code << "Bind(" << evt_str << ", &" << class_name << "::" << event->get_value() << ", this, ";
-        handler << "&" << class_name << "::" << event->get_value() << ", this";
+        if (code.is_cpp())
+            handler << "&" << class_name << "::" << event->get_value() << ", this";
+        else
+            handler.Add("self.") << event->get_value();
     }
 
     ttlib::cstr evt_str =
         (event->GetEventInfo()->get_event_class() == "wxCommandEvent" ? "wxEVT_BUTTON" : "wxEVT_UPDATE_UI");
-    code << "Bind(" << evt_str << comma << handler << comma;
+    if (code.is_python())
+        code.Add("self.");
+    code.Add("Bind(").Add(evt_str) << comma << handler.m_code << comma;
 
     if (event->get_name().starts_with("OKButton"))
-        code << "wxID_OK);";
+        code.Add("wxID_OK");
     else if (event->get_name().starts_with("YesButton"))
-        code << "wxID_YES);";
+        code.Add("wxID_YES");
     else if (event->get_name().starts_with("SaveButton"))
-        code << "wxID_SAVE);";
+        code.Add("wxID_SAVE");
     else if (event->get_name().starts_with("ApplyButton"))
-        code << "wxID_APPLY);";
+        code.Add("wxID_APPLY");
     else if (event->get_name().starts_with("NoButton"))
-        code << "wxID_NO);";
+        code.Add("wxID_NO");
     else if (event->get_name().starts_with("CancelButton"))
-        code << "wxID_CANCEL);";
+        code.Add("wxID_CANCEL");
     else if (event->get_name().starts_with("CloseButton"))
-        code << "wxID_CLOSE);";
+        code.Add("wxID_CLOSE");
     else if (event->get_name().starts_with("HelpButton"))
-        code << "wxID_HELP);";
+        code.Add("wxID_HELP");
     else if (event->get_name().starts_with("ContextHelpButton"))
-        code << "wxID_CONTEXT_HELP);";
+        code.Add("wxID_CONTEXT_HELP");
 
-    return code;
+    code.EndFunction();
+
+    return code.m_code;
 }
-
 bool StdDialogButtonSizerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
     InsertGeneratorInclude(node, "#include <wx/button.h>", set_src, set_hdr);

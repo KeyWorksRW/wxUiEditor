@@ -7,6 +7,8 @@
 
 #include "base_generator.h"  // BaseGenerator -- Base Generator class
 
+class Code;
+
 const char* LangPtr(int language);
 ttlib::cstr GetWidgetName(int language, ttlib::sview name);
 

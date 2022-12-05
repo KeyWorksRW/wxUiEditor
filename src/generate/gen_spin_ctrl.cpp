@@ -100,11 +100,6 @@ std::optional<ttlib::cstr> SpinCtrlGenerator::GenSettings(Node* node, size_t& /*
         return {};
 }
 
-std::optional<ttlib::cstr> SpinCtrlGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
-{
-    return GenEventCode(event, class_name);
-}
-
 int SpinCtrlGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
     auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
@@ -216,11 +211,6 @@ std::optional<ttlib::cstr> SpinCtrlDoubleGenerator::GenSettings(Node* node, size
     }
 
     return code;
-}
-
-std::optional<ttlib::cstr> SpinCtrlDoubleGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
-{
-    return GenEventCode(event, class_name);
 }
 
 int SpinCtrlDoubleGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)

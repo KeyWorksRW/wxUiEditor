@@ -230,11 +230,6 @@ void PanelFormGenerator::RequiredHandlers(Node* /* node */, std::set<std::string
     handlers.emplace("wxPanelXmlHandler");
 }
 
-std::optional<ttlib::cstr> PanelFormGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
-{
-    return GenEventCode(event, class_name);
-}
-
 bool PanelFormGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
     InsertGeneratorInclude(node, "#include <wx/panel.h>", set_src, set_hdr);

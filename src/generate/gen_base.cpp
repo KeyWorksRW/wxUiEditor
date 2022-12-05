@@ -15,6 +15,7 @@
 
 #include "gen_base.h"
 
+#include "code.h"           // Code -- Helper class for generating code
 #include "gen_common.h"     // GeneratorLibrary -- Generator classes
 #include "node.h"           // Node class
 #include "node_creator.h"   // NodeCreator class
@@ -618,8 +619,6 @@ void BaseCodeGenerator::GenerateBaseClass(Node* form_node, PANEL_PAGE panel_type
 
 void BaseCodeGenerator::GenSrcEventBinding(Node* node, const EventVector& events)
 {
-    ASSERT(m_language == GEN_LANG_CPLUSPLUS);
-
     ASSERT_MSG(events.size(), "GenSrcEventBinding() shouldn't be called if there are no events");
     if (events.empty())
     {
@@ -644,39 +643,58 @@ void BaseCodeGenerator::GenSrcEventBinding(Node* node, const EventVector& events
     {
         if (auto generator = iter->GetNode()->GetNodeDeclaration()->GetGenerator(); generator)
         {
-            if (auto result = generator->GenEvents(iter, class_name); result)
+            Code code(node, m_language);
+            auto scode = generator->GenEvents(code, iter, class_name);
+#if defined(_DEBUG)
+            if (is_cpp())
             {
-                if (!result.value().contains("["))
+                if (auto result = generator->GenEvents(iter, class_name); result)
                 {
-                    m_source->writeLine(result.value(), result.value().contains("\n") ? indent::auto_keep_whitespace :
-                                                                                        indent::auto_no_whitespace);
+                }
+            }
+#endif  // _DEBUG
+
+            if (scode)
+            {
+                if (!scode->contains("["))
+                {
+                    size_t indentation = scode->contains("\n") ? indent::auto_keep_whitespace : indent::auto_no_whitespace;
+                    m_source->writeLine(*scode, indentation);
                 }
                 else  // this is a lambda
                 {
-                    ttlib::cstr convert(result.value());
-                    convert.Replace("@@", "\n", tt::REPLACE::all);
-                    ttlib::multistr lines(convert, '\n');
-                    bool initial_bracket = false;
-                    for (auto& code: lines)
+                    if (!is_cpp())
                     {
-                        if (code.contains("}"))
-                        {
-                            m_source->Unindent();
-                        }
-                        else if (!initial_bracket && code.contains("["))
-                        {
-                            initial_bracket = true;
-                            m_source->Indent();
-                        }
-
-                        m_source->writeLine(code, indent::auto_no_whitespace);
-
-                        if (code.contains("{"))
-                        {
-                            m_source->Indent();
-                        }
+                        m_source->writeLine("# You cannot use C++ lambda functions as an event handler in wxPython.");
                     }
-                    m_source->Unindent();
+                    else
+                    {
+                        ttlib::cstr convert(*scode);
+                        convert.Replace("@@", "\n", tt::REPLACE::all);
+                        ttlib::multistr lines(convert, '\n');
+                        bool initial_bracket = false;
+                        for (auto& line: lines)
+                        {
+                            if (line.contains("}"))
+                            {
+                                m_source->Unindent();
+                            }
+                            else if (!initial_bracket && line.contains("["))
+                            {
+                                initial_bracket = true;
+                                m_source->Indent();
+                            }
+
+                            size_t indentation = indent::auto_no_whitespace;
+                            m_source->writeLine(line, indentation);
+
+                            if (line.contains("{"))
+                            {
+                                m_source->Indent();
+                            }
+                        }
+                        m_source->Unindent();
+                    }
                 }
             }
         }
@@ -1534,6 +1552,7 @@ void BaseCodeGenerator::GenerateClassConstructor(Node* form_node, const EventVec
     if (node_ctx_menu)
         GenContextMenuHandler(form_node, node_ctx_menu);
 }
+
 void BaseCodeGenerator::CollectIDs(Node* node, std::set<std::string>& set_ids)
 {
     for (auto& iter: node->get_props_vector())
@@ -1832,7 +1851,8 @@ void BaseCodeGenerator::GenContextMenuHandler(Node* form_node, Node* node_ctx_me
     {
         if (auto generator = iter->GetNode()->GetNodeDeclaration()->GetGenerator(); generator)
         {
-            if (auto result = generator->GenEvents(iter, form_node->get_node_name()); result)
+            Code code(form_node, m_language);
+            if (auto result = generator->GenEvents(code, iter, form_node->get_node_name()); result)
             {
                 m_source->write("menu.");
                 m_source->writeLine(result.value(), result.value().contains("\n") ? indent::auto_keep_whitespace :

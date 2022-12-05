@@ -50,13 +50,20 @@ void BaseCodeGenerator::GenConstruction(Node* node)
     // if the line is not broken.
     gen_code.Add((m_language == GEN_LANG_CPLUSPLUS) ? "\t" : "\t\t");
     gen_code.SetBreakAt(80);
-    auto result = generator->CommonConstruction(gen_code);
+    std::optional<ttlib::sview> scode;
+    std::optional<ttlib::cstr> result;
 
-    if (!result)
-        result =
-            (m_language == GEN_LANG_CPLUSPLUS) ? generator->GenConstruction(node) : generator->GenPythonConstruction(node);
+    scode = generator->CommonConstruction(gen_code);
+    if (!scode && is_cpp() && is_cpp())
+    {
+        // Python form constructor will have already been called, so we should only get here
+        // if there is no CommonConstruction that supports Python.
+        result = generator->GenConstruction(node);
+        if (result)
+            scode = *result;
+    }
 
-    if (result)
+    if (scode)
     {
         // Don't add blank lines when adding tools to a toolbar
         if (type != type_aui_tool && type != type_tool)
@@ -66,11 +73,10 @@ void BaseCodeGenerator::GenConstruction(Node* node)
 
         // Check for any indentation via a brace or line break with multiple tabs, and if so,
         // don't remove the whitespace
-        m_source->writeLine(result.value(),
-                            (ttlib::is_found(result.value().find('{')) || ttlib::is_found(result.value().find("\n\t\t"))) ?
-                                indent::none :
-                                indent::auto_no_whitespace);
-        if (result.value().starts_with("\t{"))
+        m_source->writeLine(*scode, (ttlib::is_found(scode->find('{')) || ttlib::is_found(scode->find("\n\t\t"))) ?
+                                        indent::none :
+                                        indent::auto_no_whitespace);
+        if (scode->starts_with("\t{"))
         {
             need_closing_brace = true;
         }
@@ -84,21 +90,20 @@ void BaseCodeGenerator::GenConstruction(Node* node)
         for (const auto& child: node->GetChildNodePtrs())
         {
             gen_code.clear();
-            if (auto gen_result = child->GetGenerator()->CommonConstruction(gen_code); gen_result)
+            scode = child->GetGenerator()->CommonConstruction(gen_code);
+            if (!scode && is_cpp())
             {
-                m_source->writeLine(gen_result.value());
+                result = child->GetGenerator()->GenConstruction(child.get());
+                if (result)
+                    scode = *result;
             }
-            else
-            {
-                auto child_generator = child->GetGenerator();
-                if (gen_result = (m_language == GEN_LANG_CPLUSPLUS) ? child_generator->GenConstruction(child.get()) :
-                                                                      child_generator->GenPythonConstruction(child.get());
-                    gen_result)
-                    m_source->writeLine(result.value());
-            }
+            if (scode)
+                m_source->writeLine(*scode);
         }
         EndBrace();
-        m_source->writeLine(ttlib::cstr() << node->get_node_name() << LangPtr() << "Realize();");
+        gen_code.clear();
+        gen_code.NodeName().Function("Realize()").EndFunction();
+        m_source->writeLine(gen_code.m_code);
         return;
     }
     else if (type == type_tool_dropdown && node->GetChildCount())
@@ -114,12 +119,15 @@ void BaseCodeGenerator::GenConstruction(Node* node)
             if (auto gen = child->GetNodeDeclaration()->GetGenerator(); gen)
             {
                 gen_code.clear();
-                result = gen->CommonConstruction(gen_code);
-                if (!result)
-                    result = (m_language == GEN_LANG_CPLUSPLUS) ? gen->GenConstruction(child.get()) :
-                                                                  gen->GenPythonConstruction(child.get());
-                if (result)
-                    m_source->writeLine(result.value());
+                scode = gen->CommonConstruction(gen_code);
+                if (!scode && is_cpp())
+                {
+                    result = gen->GenConstruction(child.get());
+                    if (result)
+                        scode = *result;
+                }
+                if (scode)
+                    m_source->writeLine(*scode);
             }
             GenSettings(child.get());
             // A submenu can have children
@@ -130,12 +138,15 @@ void BaseCodeGenerator::GenConstruction(Node* node)
                     if (auto gen = grandchild->GetNodeDeclaration()->GetGenerator(); gen)
                     {
                         gen_code.clear();
-                        result = gen->CommonConstruction(gen_code);
-                        if (!result)
-                            result = (m_language == GEN_LANG_CPLUSPLUS) ? gen->GenConstruction(grandchild.get()) :
-                                                                          gen->GenPythonConstruction(grandchild.get());
-                        if (result)
-                            m_source->writeLine(result.value());
+                        scode = gen->CommonConstruction(gen_code);
+                        if (!scode && is_cpp())
+                        {
+                            result = gen->GenConstruction(grandchild.get());
+                            if (result)
+                                scode = *result;
+                        }
+                        if (scode)
+                            m_source->writeLine(*scode);
                     }
                     GenSettings(grandchild.get());
                     // A submenu menu item can also be a submenu with great grandchildren.
@@ -147,10 +158,8 @@ void BaseCodeGenerator::GenConstruction(Node* node)
                             {
                                 gen_code.clear();
                                 result = gen->CommonConstruction(gen_code);
-                                if (!result)
-                                    result = (m_language == GEN_LANG_CPLUSPLUS) ?
-                                                 gen->GenConstruction(great_grandchild.get()) :
-                                                 gen->GenPythonConstruction(great_grandchild.get());
+                                if (!result && is_cpp())
+                                    result = gen->GenConstruction(great_grandchild.get());
                                 if (result)
                                     m_source->writeLine(result.value());
                             }
@@ -513,7 +522,7 @@ bool BaseCodeGenerator::GenAfterChildren(Node* node, bool need_closing_brace)
                 }
 
                 if (!node->HasValue(prop_borders) && !node->HasValue(prop_flags))
-                     gen_code.m_code += '0';
+                    gen_code.m_code += '0';
 
                 gen_code.as_string(prop_border_size).EndFunction();
                 gen_code.m_code.Replace(", 0, 0)", ")");

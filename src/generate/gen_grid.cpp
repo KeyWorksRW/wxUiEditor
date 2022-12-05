@@ -357,11 +357,6 @@ std::optional<ttlib::cstr> GridGenerator::GenSettings(Node* node, size_t& auto_i
     return code;
 }
 
-std::optional<ttlib::cstr> GridGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
-{
-    return GenEventCode(event, class_name);
-}
-
 int GridGenerator::GetRequiredVersion(Node* node)
 {
     // Code generation was invalid in minRequiredVer, so a newer version is required if this property is set.

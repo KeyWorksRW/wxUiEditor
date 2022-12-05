@@ -38,11 +38,6 @@ std::optional<ttlib::cstr> PanelGenerator::GenConstruction(Node* node)
     return code;
 }
 
-std::optional<ttlib::cstr> PanelGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
-{
-    return GenEventCode(event, class_name);
-}
-
 bool PanelGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
     InsertGeneratorInclude(node, "#include <wx/panel.h>", set_src, set_hdr);
@@ -51,8 +46,6 @@ bool PanelGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std
 
 int PanelGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    ASSERT(node)
-    ASSERT(node->GetParent())
     auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 

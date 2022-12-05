@@ -119,11 +119,6 @@ std::optional<ttlib::cstr> FrameFormGenerator::GenAdditionalCode(GenEnum::GenCod
     return GenFormCode(cmd, node);
 }
 
-std::optional<ttlib::cstr> FrameFormGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
-{
-    return GenEventCode(event, class_name);
-}
-
 std::optional<ttlib::cstr> FrameFormGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
 {
     if (auto code = GenerateIconCode(node->prop_as_string(prop_icon)); code.size())

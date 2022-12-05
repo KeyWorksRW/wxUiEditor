@@ -1318,7 +1318,7 @@ void MainFrame::CopyNode(Node* node)
             m_clipboard->AddNodeToDoc(clip_node, project_version);
             // REVIEW: [Randalphwa - 08-24-2022] project_version is ignored, assuming that the same version of
             // wxClipboard will be used to paste the clipboard node.
-            auto u8_data = new wxUtf8DataObject();
+            auto* u8_data = new wxUtf8DataObject();
             std::stringstream strm;
             doc.save(strm, "", pugi::format_raw);
 
@@ -1337,6 +1337,12 @@ void MainFrame::CopyNode(Node* node)
                 data->Add(u8_data, true);
                 data->Add(hash_data, false);
                 wxTheClipboard->SetData(data);
+            }
+            else
+            {
+                // If it wasn't passed to wxDataObjectComposite, then we need to delete it
+                // ourselves.
+                delete u8_data;
             }
         }
     }

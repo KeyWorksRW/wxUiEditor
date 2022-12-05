@@ -53,11 +53,6 @@ std::optional<ttlib::cstr> ListbookGenerator::GenConstruction(Node* node)
     return code;
 }
 
-std::optional<ttlib::cstr> ListbookGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
-{
-    return GenEventCode(event, class_name);
-}
-
 bool ListbookGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
     InsertGeneratorInclude(node, "#include <wx/listbook.h>", set_src, set_hdr);

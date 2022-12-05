@@ -72,7 +72,8 @@ wxObject* StatusBarGenerator::CreateMockup(Node* node, wxObject* parent)
 
     return widget;
 }
-std::optional<ttlib::cstr> StatusBarGenerator::CommonConstruction(Code& code)
+
+std::optional<ttlib::sview> StatusBarGenerator::CommonConstruction(Code& code)
 {
     Node* node = code.node();  // This is just for convenience
     int num_fields;
@@ -140,11 +141,6 @@ std::optional<ttlib::cstr> StatusBarGenerator::GenSettings(Node* node, size_t& a
     code << "}";
 
     return code;
-}
-
-std::optional<ttlib::cstr> StatusBarGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
-{
-    return GenEventCode(event, class_name);
 }
 
 int StatusBarGenerator::GetRequiredVersion(Node* node)

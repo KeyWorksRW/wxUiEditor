@@ -7,6 +7,7 @@
 
 #include <wx/webview.h>  // Common interface and events for web view component
 
+#include "code.h"           // Code -- Helper class for generating code
 #include "gen_common.h"     // GeneratorLibrary -- Generator classes
 #include "gen_xrc_utils.h"  // Common XRC generating functions
 #include "node.h"           // Node class
@@ -52,7 +53,6 @@ std::optional<ttlib::cstr> WebViewGenerator::GenConstruction(Node* node)
         if (!isPosSet)
         {
             code << ", wxDefaultPosition";
-            isPosSet = true;
         }
         code << ", wxSize(" << size.x << ", " << size.y << ")";
     }
@@ -72,20 +72,22 @@ std::optional<ttlib::cstr> WebViewGenerator::GenConstruction(Node* node)
     return code;
 }
 
-std::optional<ttlib::cstr> WebViewGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
+std::optional<ttlib::sview> WebViewGenerator::GenEvents(Code& code, NodeEvent* event, const std::string& class_name)
 {
+    if (code.is_python())
+        return BaseGenerator::GenEvents(code, event, class_name);
     if ((event->get_name() == "wxEVT_WEBVIEW_FULL_SCREEN_CHANGED" ||
          event->get_name() == "wxEVT_WEBVIEW_SCRIPT_MESSAGE_RECEIVED") &&
         wxGetProject().value(prop_wxWidgets_version) == "3.1")
     {
-        ttlib::cstr code("\n#if wxCHECK_VERSION(3, 1, 5)\n");
-        code << GenEventCode(event, class_name);
-        code << "\n#endif";
-        return code;
+        code.Add("\n#if wxCHECK_VERSION(3, 1, 5)\n");
+        BaseGenerator::GenEvents(code, event, class_name);
+        code.Add("\n#endif");
+        return code.m_code;
     }
     else
     {
-        return GenEventCode(event, class_name);
+        return BaseGenerator::GenEvents(code, event, class_name);
     }
 }
 

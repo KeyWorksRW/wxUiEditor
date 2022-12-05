@@ -204,11 +204,6 @@ std::optional<ttlib::cstr> SplitterWindowGenerator::GenSettings(Node* node, size
     return code;
 }
 
-std::optional<ttlib::cstr> SplitterWindowGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
-{
-    return GenEventCode(event, class_name);
-}
-
 bool SplitterWindowGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
     InsertGeneratorInclude(node, "#include <wx/splitter.h>", set_src, set_hdr);

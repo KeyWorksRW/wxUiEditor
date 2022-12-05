@@ -70,11 +70,6 @@ std::optional<ttlib::cstr> CheckBoxGenerator::GenConstruction(Node* node)
     return code;
 }
 
-std::optional<ttlib::cstr> CheckBoxGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
-{
-    return GenEventCode(event, class_name);
-}
-
 std::optional<ttlib::cstr> CheckBoxGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
 {
     ttlib::cstr code;
@@ -199,11 +194,6 @@ std::optional<ttlib::cstr> Check3StateGenerator::GenConstruction(Node* node)
     code << ");";
 
     return code;
-}
-
-std::optional<ttlib::cstr> Check3StateGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
-{
-    return GenEventCode(event, class_name);
 }
 
 std::optional<ttlib::cstr> Check3StateGenerator::GenSettings(Node* node, size_t& /* auto_indent */)

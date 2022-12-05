@@ -79,11 +79,6 @@ std::optional<ttlib::cstr> SliderGenerator::GenConstruction(Node* node)
     return code;
 }
 
-std::optional<ttlib::cstr> SliderGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
-{
-    return GenEventCode(event, class_name);
-}
-
 std::optional<ttlib::cstr> SliderGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
 {
     ttlib::cstr code;

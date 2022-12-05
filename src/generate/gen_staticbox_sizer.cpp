@@ -108,11 +108,6 @@ std::optional<ttlib::cstr> StaticBoxSizerGenerator::GenSettings(Node* node, size
     return code;
 }
 
-std::optional<ttlib::cstr> StaticBoxSizerGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
-{
-    return GenEventCode(event, class_name);
-}
-
 std::optional<ttlib::cstr> StaticBoxSizerGenerator::GenAfterChildren(Node* node)
 {
     ttlib::cstr code;

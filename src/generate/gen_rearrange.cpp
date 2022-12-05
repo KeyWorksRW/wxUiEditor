@@ -166,11 +166,6 @@ std::optional<ttlib::cstr> RearrangeCtrlGenerator::GenSettings(Node* node, size_
     return code;
 }
 
-std::optional<ttlib::cstr> RearrangeCtrlGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
-{
-    return GenEventCode(event, class_name);
-}
-
 int RearrangeCtrlGenerator::GetRequiredVersion(Node* node)
 {
     if (node->HasValue(prop_contents))

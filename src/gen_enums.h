@@ -429,6 +429,7 @@ namespace GenEnum
         prop_python_file,
         prop_python_inherit_name,
         prop_python_output_folder,
+        prop_python_use_xrc,
         prop_python_variable_args,
         prop_python_xrc_file,
 

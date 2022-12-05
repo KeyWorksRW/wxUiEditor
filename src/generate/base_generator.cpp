@@ -325,6 +325,13 @@ void BaseGenerator::ChangeEnableState(wxPropertyGridManager* prop_grid, NodeProp
             pg_setting->Enable(changed_prop->as_bool());
         }
     }
+    else if (changed_prop->isProp(prop_python_use_xrc))
+    {
+        if (auto pg_setting = prop_grid->GetProperty("python_xrc_file"); pg_setting)
+        {
+            pg_setting->Enable(changed_prop->as_bool());
+        }
+    }
 }
 
 bool BaseGenerator::VerifyProperty(NodeProperty* prop)
@@ -378,6 +385,10 @@ std::optional<ttlib::cstr> BaseGenerator::GetHint(NodeProperty* prop)
     else if (prop->isProp(prop_derived_file) && !prop->HasValue())
     {
         return ttlib::cstr(!prop->GetNode()->prop_as_bool(prop_use_derived_class) ? "requires use_derived_class" : "");
+    }
+    else if (prop->isProp(prop_python_xrc_file) && !prop->HasValue())
+    {
+        return ttlib::cstr(!prop->GetNode()->prop_as_bool(prop_use_derived_class) ? "requires python_use_xrc" : "");
     }
     else if (prop->isProp(prop_base_file) && !prop->HasValue())
     {

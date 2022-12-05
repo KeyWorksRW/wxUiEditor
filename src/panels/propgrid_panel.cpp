@@ -468,6 +468,15 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
             new_pg_property->SetAttribute(wxPG_FILE_DIALOG_STYLE, wxFD_SAVE);
             new_pg_property->SetAttribute(wxPG_FILE_WILDCARD, "Python Files|*.py");
         }
+        else if (prop->isProp(prop_python_xrc_file))
+        {
+            // Python XRC files default to being created in the same directory as python files
+            new_pg_property->SetAttribute(wxPG_DIALOG_TITLE, "Python XRC filename");
+            new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH, GetProject()->GetBaseDirectory(GEN_LANG_PYTHON));
+            new_pg_property->SetAttribute(wxPG_FILE_SHOW_RELATIVE_PATH, GetProject()->GetProjectPath());
+            new_pg_property->SetAttribute(wxPG_FILE_DIALOG_STYLE, wxFD_SAVE);
+            new_pg_property->SetAttribute(wxPG_FILE_WILDCARD, "XRC Files|*.xrc");
+        }
         else if (prop->isProp(prop_header))
         {
             new_pg_property->SetAttribute(wxPG_DIALOG_TITLE, "Custom Control Header");

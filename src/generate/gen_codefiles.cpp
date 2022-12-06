@@ -468,6 +468,11 @@ void GenerateTmpFiles(const std::vector<ttlib::cstr>& ClassList, pugi::xml_node 
                     {
                         tmp_path.insert(pos_file, "~wxue_");
                     }
+                    else
+                    {
+                        ASSERT(tmp_path.size())
+                        tmp_path.insert(0, "~wxue_");
+                    }
 
                     tmp_path.replace_extension(header_ext);
                     h_cw = std::make_unique<FileCodeWriter>(tmp_path.wx_str());

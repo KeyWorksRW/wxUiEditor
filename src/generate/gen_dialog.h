@@ -18,6 +18,7 @@ public:
     bool GenConstruction(Node*, BaseCodeGenerator* code_gen) override;
 
     bool GenPythonForm(Code&) override;
+    std::optional<ttlib::sview> CommonAdditionalCode(Code&, GenEnum::GenCodeType cmd) override;
 
     std::optional<ttlib::cstr> GenAdditionalCode(GenEnum::GenCodeType cmd, Node* node) override;
     std::optional<ttlib::cstr> GenAdditionalCode(GenEnum::GenCodeType cmd, Node* node, int language) override;

@@ -46,6 +46,7 @@ public:
     void Create();
 
 protected:
+    wxString GetPropHelp(NodeProperty* prop);
     wxString GetCategoryDisplayName(const wxString& original);
 
     // Called to determine if a property should be displayed or not

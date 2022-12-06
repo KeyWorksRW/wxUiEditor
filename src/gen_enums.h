@@ -439,6 +439,7 @@ namespace GenEnum
         prop_processed  // special value used by some importers
     };
     extern std::map<GenEnum::PropName, const char*> map_PropNames;
+    extern std::map<GenEnum::PropName, const char*> map_PropHelp;
     extern std::map<std::string_view, GenEnum::PropName, std::less<>> rmap_PropNames;
     inline GenEnum::PropName FindProp(std::string_view name)
     {

@@ -412,19 +412,21 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
 
         new_pg_property->SetValueFromString(value, 0);
 
-        wxString description = propInfo->GetDescription().wx_str();
+        auto description = GetPropHelp(prop);
         if (description.empty())
         {
-            description << value << ":\n";
+            description << value;
         }
         else
         {
-            description.Replace("\\n", "\n", true);
-            description << "\n\n" << value << ":\n";
+            description << "\n\n" << value;
         }
-
         if (pHelp)
+        {
+            if (description.size())
+                description << "\n\n";
             description << *pHelp;
+        }
 
         new_pg_property->SetHelpString(description);
     }
@@ -590,22 +592,14 @@ void PropGridPanel::AddProperties(ttlib::sview name, Node* node, NodeCategory& c
             auto propType = prop->type();
             if (propType != type_option)
             {
-                auto description = propInfo->GetDescription();
-                description.Replace("\\n", "\n", true);
-                m_prop_grid->SetPropertyHelpString(pg, description.wx_str());
                 if (auto gen = node->GetGenerator(); gen)
                 {
-                    if (auto result = gen->GetPropertyDescription(prop); result)
-                    {
-                        wxString help_test(result->wx_str());
-                        m_prop_grid->SetPropertyHelpString(pg, help_test);
-                    }
-
                     if (auto result = gen->GetHint(prop); result)
                     {
                         m_prop_grid->SetPropertyAttribute(pg, wxPG_ATTR_HINT, result->wx_str());
                     }
                 }
+                m_prop_grid->SetPropertyHelpString(pg, GetPropHelp(prop));
 
                 if (propType == type_id)
                 {
@@ -1016,25 +1010,23 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                 // Update displayed description for the new selection
                 auto propInfo = prop->GetPropDeclaration();
 
-                auto description = propInfo->GetDescription();
-                description.Replace("\\n", "\n", true);
+                auto description = GetPropHelp(prop);
 
                 for (auto& iter: propInfo->GetOptions())
                 {
                     if (iter.name == value)
                     {
                         if (iter.help.empty())
-                            description = value + ":\n";
+                            description = value + "\n";
                         else
-                            description += "\n\n" + value + ":\n" + iter.help;
+                            description += "\n\n" + value + "\n" + iter.help;
 
                         break;
                     }
                 }
 
-                wxString localized = wxGetTranslation(description);
-                m_prop_grid->SetPropertyHelpString(property, localized);
-                m_prop_grid->SetDescription(property->GetLabel(), localized);
+                m_prop_grid->SetPropertyHelpString(property, description);
+                m_prop_grid->SetDescription(property->GetLabel(), description);
 
                 if (auto selected_node = wxGetFrame().GetSelectedNode(); selected_node)
                 {
@@ -1678,10 +1670,8 @@ void PropGridPanel::CreateLayoutCategory(Node* node)
 
             auto id_prop = m_prop_grid->Append(CreatePGProperty(prop));
 
-            auto propInfo = prop->GetPropDeclaration();
-            auto description = propInfo->GetDescription();
-            description.Replace("\\n", "\n", true);
-            m_prop_grid->SetPropertyHelpString(id_prop, description.wx_str());
+            auto description = GetPropHelp(prop);
+            m_prop_grid->SetPropertyHelpString(id_prop, description);
 
             m_property_map[id_prop] = prop;
             if (prop->isProp(prop_alignment))
@@ -1694,10 +1684,8 @@ void PropGridPanel::CreateLayoutCategory(Node* node)
         {
             auto id_prop = m_prop_grid->Append(CreatePGProperty(prop));
 
-            auto propInfo = prop->GetPropDeclaration();
-            auto description = propInfo->GetDescription();
-            description.Replace("\\n", "\n", true);
-            m_prop_grid->SetPropertyHelpString(id_prop, description.wx_str());
+            auto description = GetPropHelp(prop);
+            m_prop_grid->SetPropertyHelpString(id_prop, description);
 
             m_property_map[id_prop] = prop;
         }
@@ -1712,10 +1700,8 @@ void PropGridPanel::CreateLayoutCategory(Node* node)
 
             auto id_prop = m_prop_grid->Append(CreatePGProperty(prop));
 
-            auto propInfo = prop->GetPropDeclaration();
-            auto description = propInfo->GetDescription();
-            description.Replace("\\n", "\n", true);
-            m_prop_grid->SetPropertyHelpString(id_prop, description.wx_str());
+            auto description = GetPropHelp(prop);
+            m_prop_grid->SetPropertyHelpString(id_prop, description);
 
             m_property_map[id_prop] = prop;
         }
@@ -1867,4 +1853,32 @@ void PropGridPanel::OnAuiNotebookPageChanged(wxAuiNotebookEvent& /* event */)
     CustomEvent custom_event(EVT_NodeSelected, wxGetFrame().GetSelectedNode());
 
     wxGetFrame().GetGeneratedPanel()->OnNodeSelected(custom_event);
+}
+
+wxString PropGridPanel::GetPropHelp(NodeProperty* prop)
+{
+    wxString description;
+    if (auto gen = prop->GetNode()->GetGenerator(); gen)
+    {
+        // First let the generator specify the description
+        if (auto result = gen->GetPropertyDescription(prop); result)
+        {
+            description = result->wx_str();
+        }
+    }
+    if (description.empty())
+    {
+        // If the generator didn't specify a description, then look for a description in the help map
+        if (auto map_help = GenEnum::map_PropHelp.find(prop->get_name()); map_help != GenEnum::map_PropHelp.end())
+        {
+            description = map_help->second;
+            description.Replace("\\n", "\n", true);
+        }
+        else
+        {
+            // If we still don't have a description, get whatever was in the XML interface
+            description = prop->GetPropDeclaration()->GetDescription().wx_str();
+        }
+    }
+    return description;
 }

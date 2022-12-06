@@ -698,3 +698,21 @@ std::map<GenEnum::PropName, const char*> map_PropMacros = {
 
 // This is the opposite of map_PropMacros, and is initialized in NodeCreator::Initialize()
 std::map<std::string_view, GenEnum::PropName, std::less<>> map_MacroProps;
+
+// In order to sort the left column, everything needs to be on one line. Since these can be
+// very long lines, we can't let clang-format wrap them.
+
+// clang-format off
+
+// These can be used for any type of property. The generator can override this using
+// GetPropertyDescription(). If neither this map or the generator supply a description, it
+// will be retrieved from the XML interface file.
+std::map<GenEnum::PropName, const char*> GenEnum::map_PropHelp = {
+
+    // Use \\n to add a line break
+
+    { prop_persist, "Use wxPersistentRegisterAndRestore to save/restore the size and position of the form.\\n\\nOnly available for C++ code." },
+
+};
+
+// clang-format on

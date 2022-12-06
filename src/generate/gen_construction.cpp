@@ -559,20 +559,29 @@ void BaseCodeGenerator::GenParentSizer(Node* node, bool need_closing_brace)
     auto declaration = node->GetNodeDeclaration();
     auto generator = declaration->GetGenerator();
 
-    auto result = generator->GenAdditionalCode(code_after_children, node, m_language);
-    if (!result)
+    Code code(node, m_language);
+    auto scode = generator->CommonAdditionalCode(code, code_after_children);
+    std::optional<ttlib::cstr> result;
+    if (!scode)
     {
         if (m_language == GEN_LANG_CPLUSPLUS)
-            result = generator->GenAdditionalCode(code_after_children, node);
+        {
+            if (result = generator->GenAdditionalCode(code_after_children, node); result)
+                scode = result.value();
+        }
         else
-            result = generator->GenAdditionalCode(code_after_children, node, m_language);
+        {
+            if (result = generator->GenAdditionalCode(code_after_children, node, m_language); result)
+                scode = result.value();
+        }
     }
 
-    ttlib::cstr code;
-    if (result && result.value().size())
+    if (scode && scode.value().size())
     {
-        m_source->writeLine(result.value(), indent::none);
+        m_source->writeLine(scode.value(), indent::none);
     }
+
+    code.clear();
 
     // Code for spacer's is handled by the component's GenConstruction() call
     if (!node->isGen(gen_spacer))
@@ -580,24 +589,23 @@ void BaseCodeGenerator::GenParentSizer(Node* node, bool need_closing_brace)
         if (node->isGen(gen_wxStdDialogButtonSizer))
         {
             if (node->get_form()->isGen(gen_wxDialog) && node->prop_as_bool(prop_static_line))
-                code << node->GetParent()->get_node_name() << LangPtr() << "Add(CreateSeparatedSizer("
-                     << node->get_node_name() << "), ";
+                code.ParentName().Function("Add(CreateSeparatedSizer(").NodeName() << "), ";
             else
-                code << node->GetParent()->get_node_name() << LangPtr() << "Add(" << node->get_node_name() << ", ";
+                code.ParentName().Function("Add(").NodeName() << ", ";
         }
         else
         {
-            if (need_closing_brace)
+            if (need_closing_brace && is_cpp())
             {
                 code << "\t";
             }
-            code << node->GetParent()->get_node_name() << LangPtr() << "Add(" << node->get_node_name() << ", ";
+            code.ParentName().Function("Add(").NodeName() << ", ";
         }
 
         if (node->GetParent()->isGen(gen_wxGridBagSizer))
         {
-            code << "wxGBPosition(" << node->prop_as_string(prop_row) << ", " << node->prop_as_string(prop_column) << "), ";
-            code << "wxGBSpan(" << node->prop_as_string(prop_rowspan) << ", " << node->prop_as_string(prop_colspan) << "), ";
+            code.Add("wxGBPosition(").as_string(prop_row).Comma().as_string(prop_column) << "), ";
+            code.Add("wxGBSpan(").as_string(prop_rowspan).Comma().as_string(prop_colspan) << "), ";
             ttlib::cstr flags(node->prop_as_string(prop_borders));
             if (node->prop_as_string(prop_flags).size())
             {
@@ -609,20 +617,22 @@ void BaseCodeGenerator::GenParentSizer(Node* node, bool need_closing_brace)
             if (flags.empty())
                 flags << '0';
 
-            code << flags << ", " << node->prop_as_string(prop_border_size) << ");";
-            code.Replace(", 0, 0);", ");");
+            code.Add(flags).Comma().as_string(prop_border_size).EndFunction();
+            if (is_cpp())
+                code.m_code.Replace(", 0, 0);", ");");
+            else
+                code.m_code.Replace(", 0, 0)", ")");
         }
         else
         {
-            code << GenerateSizerFlags(m_language, node) << ")";
-            if (m_language == GEN_LANG_CPLUSPLUS)
-                code << ';';
+            code << GenerateSizerFlags(m_language, node);
+            code.EndFunction();
         }
     }
 
     if (need_closing_brace)
     {
-        m_source->writeLine(code, indent::auto_keep_whitespace);
+        m_source->writeLine(code.m_code, indent::auto_keep_whitespace);
         if (m_language == GEN_LANG_CPLUSPLUS)
         {
             m_source->writeLine("\t}");
@@ -630,6 +640,6 @@ void BaseCodeGenerator::GenParentSizer(Node* node, bool need_closing_brace)
     }
     else
     {
-        m_source->writeLine(code);
+        m_source->writeLine(code.m_code);
     }
 }

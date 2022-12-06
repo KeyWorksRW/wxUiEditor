@@ -1872,7 +1872,6 @@ wxString PropGridPanel::GetPropHelp(NodeProperty* prop)
         if (auto map_help = GenEnum::map_PropHelp.find(prop->get_name()); map_help != GenEnum::map_PropHelp.end())
         {
             description = map_help->second;
-            description.Replace("\\n", "\n", true);
         }
         else
         {
@@ -1880,5 +1879,6 @@ wxString PropGridPanel::GetPropHelp(NodeProperty* prop)
             description = prop->GetPropDeclaration()->GetDescription().wx_str();
         }
     }
+    description.Replace("\\n", "\n", true);
     return description;
 }

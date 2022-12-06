@@ -62,6 +62,7 @@ public:
         return *this;
     }
 
+    // Adds comma and space: ", "
     Code& Comma()
     {
         m_code << ", ";

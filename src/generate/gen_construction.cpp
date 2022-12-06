@@ -102,7 +102,7 @@ void BaseCodeGenerator::GenConstruction(Node* node)
         }
         EndBrace();
         gen_code.clear();
-        gen_code.NodeName().Function("Realize()").EndFunction();
+        gen_code.NodeName().Function("Realize(").EndFunction();
         m_source->writeLine(gen_code.m_code);
         return;
     }

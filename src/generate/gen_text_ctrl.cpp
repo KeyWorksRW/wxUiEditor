@@ -109,7 +109,7 @@ std::optional<ttlib::sview> TextCtrlGenerator::CommonConstruction(Code& code)
     return code.m_code;
 }
 
-std::optional<ttlib::cstr> TextCtrlGenerator::CommonSettings(Code& code, size_t& auto_indent)
+std::optional<ttlib::sview> TextCtrlGenerator::CommonSettings(Code& code, size_t& auto_indent)
 {
     if ((code.IsTrue(prop_maxlength) && code.PropContains(prop_style, "wxTE_MULTILINE")) ||
         code.HasValue(prop_auto_complete))

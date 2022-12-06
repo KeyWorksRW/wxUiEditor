@@ -12,8 +12,7 @@ inline const char* dialogs_xml = R"===(<?xml version="1.0"?>
 			help="The name of the base class.">MyDialogBase</property>
 		<property name="title" type="string_escapes"
 			help="The text to display on the dialog's title bar." />
-		<property name="persist" type="bool"
-			help="Use wxPersistentRegisterAndRestore to save/restore the size and position of the dialog.">0</property>
+		<property name="persist" type="bool">0</property>
 		<property name="style" type="bitlist">
 			<option name="wxCAPTION"
 				help="Puts a caption on the dialog box." />

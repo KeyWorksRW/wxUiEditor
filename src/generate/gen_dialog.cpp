@@ -87,6 +87,30 @@ bool DialogFormGenerator::GenConstruction(Node* node, BaseCodeGenerator* code_ge
     return true;
 }
 
+bool DialogFormGenerator::GenPythonForm(Code& code)
+{
+    code.Add("class ").NodeName().Add("(wx.Dialog):\n");
+    code.Tab().Add("def __init__(self, parent):").Eol().Tab(2);
+    code << "wx.Dialog.__init__(self, parent, id=";
+    code.as_string(prop_id).Comma(false).Eol().Tab(3).Add("title=");
+
+    if (code.HasValue(prop_title))
+        code.QuotedString(prop_title);
+    else
+        code << "\"\"";
+
+    code.Comma().Eol().Tab(3).Add("pos=").Pos(prop_pos);
+    code.Comma().Add("size=").WxSize(prop_size);
+    code.Comma().Eol().Tab(3).Add("style=");
+    if (code.HasValue(prop_style) && !code.node()->as_string(prop_style).is_sameas("wxDEFAULT_DIALOG_STYLE"))
+        code.Style();
+    else
+        code << "wx.DEFAULT_DIALOG_STYLE";
+    code << ")";
+
+    return true;
+}
+
 std::optional<ttlib::cstr> DialogFormGenerator::GenAdditionalCode(GenEnum::GenCodeType cmd, Node* node)
 {
     if (cmd == code_after_children)
@@ -271,30 +295,6 @@ std::optional<ttlib::sview> DialogFormGenerator::CommonAdditionalCode(Code& code
 bool DialogFormGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
     InsertGeneratorInclude(node, "#include <wx/dialog.h>", set_src, set_hdr);
-    return true;
-}
-
-bool DialogFormGenerator::GenPythonForm(Code& code)
-{
-    code.Add("class ").NodeName().Add("(wx.Dialog):\n");
-    code.Tab().Add("def __init__(self, parent):").Eol().Tab(2);
-    code << "wx.Dialog.__init__(self, parent, id=";
-    code.as_string(prop_id).Comma().Eol().Tab(3).Add("title=");
-
-    if (code.HasValue(prop_title))
-        code.QuotedString(prop_title);
-    else
-        code << "\"\"";
-
-    code.Comma().Eol().Tab(3).Add("pos=").Pos(prop_pos);
-    code.Comma().Add("size=").WxSize(prop_size);
-    code.Comma().Eol().Tab(3).Add("style=");
-    if (code.HasValue(prop_style) && !code.node()->as_string(prop_style).is_sameas("wxDEFAULT_DIALOG_STYLE"))
-        code.Style();
-    else
-        code << "wx.DEFAULT_DIALOG_STYLE";
-    code << ")";
-
     return true;
 }
 

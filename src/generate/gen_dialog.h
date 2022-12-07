@@ -21,7 +21,6 @@ public:
     std::optional<ttlib::sview> CommonAdditionalCode(Code&, GenEnum::GenCodeType cmd) override;
 
     std::optional<ttlib::cstr> GenAdditionalCode(GenEnum::GenCodeType cmd, Node* node) override;
-    std::optional<ttlib::cstr> GenAdditionalCode(GenEnum::GenCodeType cmd, Node* node, int language) override;
 
     bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr) override;
 

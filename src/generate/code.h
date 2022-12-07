@@ -5,6 +5,12 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
+/*
+
+    This class is used to generate code for any language that wxUiEditor supports (currently C++ and Python).
+
+*/
+
 #pragma once
 
 #include "gen_enums.h"  // Enumerations for generators
@@ -23,13 +29,15 @@ public:
     void clear()
     {
         m_code.clear();
-        m_break_at = 10000;
+        m_break_at = 10000;  // initialize this high enough that no line will break unless SetBreakAt() is called
     }
     auto size() { return m_code.size(); }
 
     bool is_cpp() const { return m_language == GEN_LANG_CPLUSPLUS; }
     bool is_python() const { return m_language == GEN_LANG_PYTHON; }
     bool is_local_var() const;
+
+    Node* node() const { return m_node; }
 
     bool HasValue(GenEnum::PropName prop_name) const;
 
@@ -39,11 +47,12 @@ public:
     // Equivalent to calling m_node->prop_as_string(prop_name).contains(text)
     bool PropContains(GenEnum::PropName prop_name, ttlib::sview text) const;
 
-    Node* node() const { return m_node; }
-
-    Code& itoa(int val)
+    // Adds comma and optional trailing space: ", "
+    Code& Comma(bool trailing_space = true)
     {
-        m_code << val;
+        m_code += ',';
+        if (trailing_space)
+            m_code += ' ';
         return *this;
     }
 
@@ -53,32 +62,28 @@ public:
         if (check_size)
         {
             if (m_code.size())
-                m_code << '\n';
+                m_code += '\n';
         }
         else
         {
-            m_code << '\n';
+            m_code += '\n';
         }
         return *this;
     }
 
-    // Adds comma and optional trailing space: ", "
-    Code& Comma(bool trailing_space = true)
-    {
-        m_code << ',';
-        if (trailing_space)
-            m_code << ' ';
-        return *this;
-    }
+    // Adds as many '\t' characters as specified by nTabs. Note that tabs are converted to
+    // spaces when the line is written.
+    Code& Tab(int nTabs = 1);
 
-    Code& EmptyString()
+    // If the line from the beginning or the last call to CheckLineLength() is longer than
+    // 80, then this will insert a newline and indent the line. Indentation is 2 tabs for
+    // C++, 3 tabs for Python.
+    Code& CheckLineLength();
+    void SetBreakAt(size_t break_at = 80)
     {
-        m_code += is_cpp() ? "wxEmptyString" : "\"\"";
-        return *this;
+        m_break_at = break_at;
+        m_break_length = break_at; // m_break_length gets added to m_break_at after every break
     }
-
-    // Adds as many '\t' as specified
-    Code& Tab(int tabs = 1);
 
     // If string starts with "wx" and language is not C++, then this will add "wx." and then
     // the string without the "wx" prefix.
@@ -86,6 +91,13 @@ public:
 
     // Adds -> or . to the string, then wxFunction or wx.Function
     Code& Function(ttlib::sview text);
+
+    // For C++, this simply calls the function. For Python it prefixes "self." to the
+    // function name.
+    Code& FormFunction(ttlib::sview text);
+
+    // Adds ");" or ")"
+    Code& EndFunction();
 
     // Adds wxClass or wx.Class
     Code& Class(ttlib::sview text);
@@ -97,9 +109,6 @@ public:
     // Adds wxGeneric prefix if use_generic is true.
     // Creates wxPanel if node is a book page.
     Code& CreateClass(bool use_generic = false);
-
-    // Adds ");" or ")"
-    Code& EndFunction();
 
     // m_code << m_node->get_node_name();
     Code& NodeName();
@@ -114,6 +123,12 @@ public:
     // Handles regular or or'd styles for C++ or Python
     Code& as_string(GenEnum::PropName prop_name);
 
+    Code& itoa(int val)
+    {
+        m_code << val;
+        return *this;
+    }
+
     // Handles prop_internationalize and strings containing at least one utf8 character.
     // Generates correct code for C++ or Python.
     Code& QuotedString(GenEnum::PropName prop_name);
@@ -121,19 +136,25 @@ public:
     // Will either generate wxSize(...) or ConvertDialogToPixels(wxSize(...))
     Code& WxSize(GenEnum::PropName prop_name = GenEnum::PropName::prop_size);
 
+    Code& EmptyString()
+    {
+        m_code += is_cpp() ? "wxEmptyString" : "\"\"";
+        return *this;
+    }
+
     // Will either generate wxPoint(...) or ConvertDialogToPixels(wxPoint(...))
     Code& Pos(GenEnum::PropName prop_name = GenEnum::PropName::prop_pos);
-
-    // This will output "0" if there are no styles (style, window_style, tab_position etc.)
-    //
-    // If style is a friendly name, add the prefix parameter to prefix lookups.
-    Code& Style(const char* prefix = nullptr);
 
     // Check for pos, size, flags, window_flags, and window name, and generate code if needed
     // starting with a comma, e.g. -- ", wxPoint(x, y), wxSize(x, y), styles, name);"
     //
     // If the only style specified is def_style, then it will not be added.
     Code& PosSizeFlags(bool uses_def_validator = false, ttlib::sview def_style = tt_empty_cstr);
+
+    // This will output "0" if there are no styles (style, window_style, tab_position etc.)
+    //
+    // If style is a friendly name, add the prefix parameter to prefix lookups.
+    Code& Style(const char* prefix = nullptr);
 
     Code& GenSizerFlags();
 
@@ -155,9 +176,7 @@ public:
         return *this;
     }
 
-    Code& CheckLineLength();
-    void SetBreakAt(int break_at) { m_break_at = break_at; }
-
 private:
     size_t m_break_at { 10000 };
+    size_t m_break_length { 80 };
 };

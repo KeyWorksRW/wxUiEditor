@@ -63,6 +63,16 @@ Code& Code::Function(ttlib::sview text)
     return *this;
 }
 
+Code& Code::FormFunction(ttlib::sview text)
+{
+    if (m_language == GEN_LANG_PYTHON)
+    {
+        m_code += "self.";
+    }
+    m_code += text;
+    return *this;
+}
+
 Code& Code::Class(ttlib::sview text)
 {
     if (is_cpp())
@@ -527,7 +537,7 @@ Code& Code::CheckLineLength()
         m_code += "\n\t\t";
         if (is_python())
             m_code += '\t';
-        m_break_at += 80;
+        m_break_at += m_break_length;
     }
 
     return *this;

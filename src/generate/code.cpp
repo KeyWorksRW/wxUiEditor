@@ -12,6 +12,18 @@
 #include "node.h"           // Node class
 #include "project_class.h"  // Project class
 
+Code::Code(Node* node, int language) : m_node(node), m_language(language)
+{
+    if (language == GEN_LANG_PYTHON)
+    {
+        // This allows for the extra '.' between wx and wxWidget name
+        m_break_length = 79;
+    }
+
+    // Reserve large enough for multiple lines -- goal is to avoid multiple reallocations
+    m_code.reserve(256);
+}
+
 // The Code ctor will have already accounted for the extra character that wxWidgets names use
 // in Python.
 void Code::CheckLineBreak(size_t add_length)

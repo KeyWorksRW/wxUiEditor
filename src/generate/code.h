@@ -24,14 +24,7 @@ public:
     Node* m_node;
     int m_language;
 
-    Code(Node* node, int language = GEN_LANG_CPLUSPLUS) : m_node(node), m_language(language)
-    {
-        if (language == GEN_LANG_PYTHON)
-        {
-            // This allows for the extra '.' between wx and wxWidget name
-            m_break_length = 79;
-        }
-    }
+    Code(Node* node, int language = GEN_LANG_CPLUSPLUS);
 
     void clear()
     {

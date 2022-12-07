@@ -475,16 +475,19 @@ bool BaseCodeGenerator::GenAfterChildren(Node* node, bool need_closing_brace)
 {
     auto generator = node->GetGenerator();
     Code gen_code(node, m_language);
-    auto result = generator->CommonAfterChildren(gen_code);
-    if (!result)
+    auto scode = generator->CommonAfterChildren(gen_code);
+    std::optional<ttlib::cstr> result;
+    if (!scode)
     {
-        if (m_language == GEN_LANG_CPLUSPLUS)
+        if (is_cpp())
             result = generator->GenAfterChildren(node);
         else if (m_language == GEN_LANG_PYTHON)
             result = generator->GenPythonAfterChildren(node);
+        if (result)
+            scode = result.value();
     }
 
-    if (result)
+    if (scode)
     {
         // If the node needs to write code after all children are constructed, then create the children first, then write
         // the post-child code. Note that in this case, no further handling of the node is done, so GenAfterChildren() is
@@ -495,7 +498,7 @@ bool BaseCodeGenerator::GenAfterChildren(Node* node, bool need_closing_brace)
             GenConstruction(child.get());
         }
 
-        m_source->writeLine(result.value(), indent::none);
+        m_source->writeLine(scode.value(), indent::none);
         auto parent = node->GetParent();
 
         // Code for spacer's is handled by the component's GenConstruction() call

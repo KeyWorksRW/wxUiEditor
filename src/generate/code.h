@@ -24,12 +24,27 @@ public:
     Node* m_node;
     int m_language;
 
-    Code(Node* node, int language = GEN_LANG_CPLUSPLUS) : m_node(node), m_language(language) {}
+    Code(Node* node, int language = GEN_LANG_CPLUSPLUS) : m_node(node), m_language(language)
+    {
+        if (language == GEN_LANG_PYTHON)
+        {
+            // This allows for the extra '.' between wx and wxWidget name
+            m_break_length = 79;
+        }
+    }
 
     void clear()
     {
         m_code.clear();
-        m_break_at = 10000;  // initialize this high enough that no line will break unless SetBreakAt() is called
+        if (m_auto_break)
+        {
+            m_break_at = m_break_length;
+            m_minium_length = 10;
+        }
+        else
+        {
+            m_break_at = 100000;  // initialize this high enough that no line will break unless SetBreakAt() is called
+        }
     }
     auto size() { return m_code.size(); }
 
@@ -75,6 +90,10 @@ public:
     // spaces when the line is written.
     Code& Tab(int nTabs = 1);
 
+    void EnableAutoLineBreak(bool auto_break = true) { m_auto_break = auto_break; }
+
+    // Only call the following two functions if you called DisableAutoLineBreak() first.
+
     // If the line from the beginning or the last call to CheckLineLength() is longer than
     // 80, then this will insert a newline and indent the line. Indentation is 2 tabs for
     // C++, 3 tabs for Python.
@@ -82,7 +101,7 @@ public:
     void SetBreakAt(size_t break_at = 80)
     {
         m_break_at = break_at;
-        m_break_length = break_at; // m_break_length gets added to m_break_at after every break
+        m_break_length = break_at;  // m_break_length gets added to m_break_at after every break
     }
 
     // If string starts with "wx" and language is not C++, then this will add "wx." and then
@@ -176,7 +195,13 @@ public:
         return *this;
     }
 
+protected:
+    // If the line would be too long, this will automatically break it.
+    void CheckLineBreak(size_t add_length);
+
 private:
-    size_t m_break_at { 10000 };
+    bool m_auto_break { true };
     size_t m_break_length { 80 };
+    size_t m_break_at { 80 };       // this should be the same as m_break_length
+    size_t m_minium_length { 10 };  // if the line is shorter than this, don't break it
 };

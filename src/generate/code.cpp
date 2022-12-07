@@ -12,6 +12,33 @@
 #include "node.h"           // Node class
 #include "project_class.h"  // Project class
 
+// The Code ctor will have already accounted for the extra character that wxWidgets names use
+// in Python.
+void Code::CheckLineBreak(size_t add_length)
+{
+    if (!m_auto_break || m_code.size() < m_minium_length)
+        return;
+
+    if (m_code.size() + add_length > m_break_at)
+    {
+        m_code += (is_cpp() ? "\n\t\t" : "\n\t\t\t");
+        m_break_at += m_break_length;
+        m_minium_length += m_break_length;
+    }
+}
+
+Code& Code::CheckLineLength()
+{
+    if (m_code.size() > m_break_at)
+    {
+        m_code += (is_cpp() ? "\n\t\t" : "\n\t\t\t");
+        m_break_at += m_break_length;
+        m_minium_length += m_break_length;
+    }
+
+    return *this;
+}
+
 Code& Code::Tab(int tabs)
 {
     while (tabs)
@@ -24,7 +51,9 @@ Code& Code::Tab(int tabs)
 
 Code& Code::Add(ttlib::sview text)
 {
-    if (m_language == GEN_LANG_CPLUSPLUS)
+    CheckLineBreak(text.size());
+
+    if (is_cpp())
     {
         m_code << text;
     }
@@ -153,6 +182,7 @@ Code& Code::EndFunction()
 
 Code& Code::as_string(PropName prop_name)
 {
+    auto cur_pos = m_code.size();
     if (is_cpp())
     {
         m_code << m_node->prop_as_string(prop_name);
@@ -178,6 +208,18 @@ Code& Code::as_string(PropName prop_name)
                 m_code << iter;
         }
     }
+    if (m_auto_break && m_code.size() > m_break_at)
+    {
+        m_code.insert(cur_pos, (is_cpp() ? "\n\t\t" : "\n\t\t\t"));
+        do
+        {
+            // while extremely unlikely, we need to make sure we don't get stuck in an
+            // infinite loop with a very long string
+            m_break_at += m_break_length;
+            m_minium_length += m_break_length;
+        } while (m_code.size() > m_break_at);
+    }
+
     return *this;
 }
 
@@ -276,9 +318,19 @@ Code& Code::QuotedString(GenEnum::PropName prop_name)
 {
     if (!m_node->HasValue(prop_name))
     {
-        m_code += is_cpp() ? "wxEmptyString" : "\"\"";
+        if (is_cpp())
+        {
+            CheckLineBreak(sizeof("wxEmptyString"));
+            m_code += "wxEmptyString";
+        }
+        else
+        {
+            m_code += "\"\"";
+        }
         return *this;
     }
+
+    auto cur_pos = m_code.size();
 
     if (GetProject()->prop_as_bool(prop_internationalize))
     {
@@ -350,6 +402,18 @@ Code& Code::QuotedString(GenEnum::PropName prop_name)
         m_code += ')';
     }
 
+    if (m_auto_break && m_code.size() > m_break_at)
+    {
+        m_code.insert(cur_pos, (is_cpp() ? "\n\t\t" : "\n\t\t\t"));
+        do
+        {
+            // while extremely unlikely, we need to make sure we don't get stuck in an
+            // infinite loop with a very long string
+            m_break_at += m_break_length;
+            m_minium_length += m_break_length;
+        } while (m_code.size() > m_break_at);
+    }
+
     return *this;
 }
 
@@ -357,16 +421,17 @@ Code& Code::WxSize(GenEnum::PropName prop_name)
 {
     if (m_node->prop_as_wxSize(prop_name) == wxDefaultSize)
     {
+        CheckLineBreak(sizeof("wxDefaultSize"));
         m_code += is_cpp() ? "wxDefaultSize" : "wx.DefaultSize";
         return *this;
     }
 
+    auto cur_pos = m_code.size();
+
     bool dialog_units = m_node->value(prop_name).contains("d", tt::CASE::either);
     if (dialog_units)
     {
-        if (is_python())
-            Add("self.");
-        m_code += "ConvertDialogToPixels(";
+        FormFunction("ConvertDialogToPixels(");
     }
 
     auto size = m_node->prop_as_wxSize(prop_name);
@@ -375,6 +440,18 @@ Code& Code::WxSize(GenEnum::PropName prop_name)
     if (dialog_units)
         m_code += ')';
 
+    if (m_auto_break && m_code.size() > m_break_at)
+    {
+        m_code.insert(cur_pos, (is_cpp() ? "\n\t\t" : "\n\t\t\t"));
+        do
+        {
+            // while extremely unlikely, we need to make sure we don't get stuck in an
+            // infinite loop with a very long string
+            m_break_at += m_break_length;
+            m_minium_length += m_break_length;
+        } while (m_code.size() > m_break_at);
+    }
+
     return *this;
 }
 
@@ -382,16 +459,17 @@ Code& Code::Pos(GenEnum::PropName prop_name)
 {
     if (m_node->prop_as_wxPoint(prop_name) == wxDefaultPosition)
     {
+        CheckLineBreak(sizeof("wxDefaultPosition"));
         m_code += is_cpp() ? "wxDefaultPosition" : "wx.DefaultPosition";
         return *this;
     }
 
+    auto cur_pos = m_code.size();
+
     bool dialog_units = m_node->value(prop_name).contains("d", tt::CASE::either);
     if (dialog_units)
     {
-        if (is_python())
-            Add("self.");
-        m_code += "ConvertDialogToPixels(";
+        FormFunction("ConvertDialogToPixels(");
     }
 
     auto size = m_node->prop_as_wxSize(prop_name);
@@ -399,6 +477,19 @@ Code& Code::Pos(GenEnum::PropName prop_name)
 
     if (dialog_units)
         m_code += ')';
+
+    if (m_auto_break && m_code.size() > m_break_at)
+    {
+        m_code.insert(cur_pos, (is_cpp() ? "\n\t\t" : "\n\t\t\t"));
+        do
+        {
+            // while extremely unlikely, we need to make sure we don't get stuck in an
+            // infinite loop with a very long string
+            m_break_at += m_break_length;
+            m_minium_length += m_break_length;
+        } while (m_code.size() > m_break_at);
+    }
+
     return *this;
 }
 
@@ -420,6 +511,9 @@ Code& Code::Style(const char* prefix)
         style_set = true;
         as_string(prop_orientation);
     }
+
+    // Note that as_string() may break the line, so recalculate any time as_string() is called
+    auto cur_pos = m_code.size();
 
     if (m_node->isGen(gen_wxRichTextCtrl))
     {
@@ -459,6 +553,7 @@ Code& Code::Style(const char* prefix)
         else
         {
             as_string(prop_style);
+            cur_pos = m_code.size();
         }
         style_set = true;
     }
@@ -469,6 +564,7 @@ Code& Code::Style(const char* prefix)
             m_code += '|';
         style_set = true;
         as_string(prop_window_style);
+        cur_pos = m_code.size();
     }
 
     if (m_node->isGen(gen_wxListView))
@@ -477,11 +573,24 @@ Code& Code::Style(const char* prefix)
             m_code += '|';
         style_set = true;
         as_string(prop_mode);
+        cur_pos = m_code.size();
     }
 
     if (!style_set)
     {
         m_code += "0";
+    }
+
+    if (m_auto_break && m_code.size() > m_break_at)
+    {
+        m_code.insert(cur_pos, (is_cpp() ? "\n\t\t" : "\n\t\t\t"));
+        do
+        {
+            // while extremely unlikely, we need to make sure we don't get stuck in an
+            // infinite loop with a very long string
+            m_break_at += m_break_length;
+            m_minium_length += m_break_length;
+        } while (m_code.size() > m_break_at);
     }
 
     return *this;
@@ -530,22 +639,18 @@ Code& Code::PosSizeFlags(bool uses_def_validator, ttlib::sview def_style)
     return *this;
 }
 
-Code& Code::CheckLineLength()
-{
-    if (m_code.size() > m_break_at)
-    {
-        m_code += "\n\t\t";
-        if (is_python())
-            m_code += '\t';
-        m_break_at += m_break_length;
-    }
-
-    return *this;
-}
-
 Code& Code::GenSizerFlags()
 {
+    // wxSizerFlags functions are chained together, so we don't want to break them. Instead,
+    // shut off auto_break and then restore it when we are done, after which we can check whether
+    // or note the entire wxSizerFlags() statement needs to be broken.
+
+    bool save_auto_break = m_auto_break;
+    m_auto_break = false;
+    auto cur_pos = m_code.size();
+
     Add("wxSizerFlags");
+
     if (auto& prop = m_node->prop_as_string(prop_proportion); prop != "0")
     {
         m_code << '(' << prop << ')';
@@ -662,6 +767,20 @@ Code& Code::GenSizerFlags()
                 m_code << border_size << ')';
             }
         }
+    }
+
+    m_auto_break = save_auto_break;
+
+    if (m_auto_break && m_code.size() > m_break_at)
+    {
+        m_code.insert(cur_pos, (is_cpp() ? "\n\t\t" : "\n\t\t\t"));
+        do
+        {
+            // while extremely unlikely, we need to make sure we don't get stuck in an
+            // infinite loop with a very long string
+            m_break_at += m_break_length;
+            m_minium_length += m_break_length;
+        } while (m_code.size() > m_break_at);
     }
 
     return *this;

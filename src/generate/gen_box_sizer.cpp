@@ -53,7 +53,7 @@ void BoxSizerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/
     }
 }
 
-std::optional<ttlib::cstr> BoxSizerGenerator::CommonAfterChildren(Code& code)
+std::optional<ttlib::sview> BoxSizerGenerator::CommonAfterChildren(Code& code)
 {
     if (code.m_node->as_bool(prop_hide_children))
     {

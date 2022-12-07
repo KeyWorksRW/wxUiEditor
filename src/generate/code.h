@@ -62,9 +62,12 @@ public:
         return *this;
     }
 
-    Code& Comma()
+    // Adds comma and optional trailing space: ", "
+    Code& Comma(bool trailing_space = true)
     {
-        m_code << ", ";
+        m_code << ',';
+        if (trailing_space)
+            m_code << ' ';
         return *this;
     }
 

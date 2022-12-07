@@ -79,6 +79,14 @@ public:
     // Generate the code used to construct the object using either C++ or Python
     virtual std::optional<ttlib::sview> CommonConstruction(Code&) { return {}; }
 
+    // Generate code after any children have been constructed
+    //
+    // Code will be written with indent::none set
+    virtual std::optional<ttlib::sview> CommonAfterChildren(Code&) { return {}; }
+
+    virtual std::optional<ttlib::sview> CommonSettings(Code&, size_t& /* auto_indent */) { return {}; }
+    virtual std::optional<ttlib::sview> CommonAdditionalCode(Code&, GenEnum::GenCodeType /* command */) { return {}; }
+
     // Generate the C++ code used to construct the object.
     virtual std::optional<ttlib::cstr> GenConstruction(Node*) { return {}; }  //
 
@@ -106,7 +114,6 @@ public:
     // Generate code after any children have been constructed
     //
     // Code will be written with indent::none set
-    virtual std::optional<ttlib::cstr> CommonAfterChildren(Code&) { return {}; }
     virtual std::optional<ttlib::cstr> GenAfterChildren(Node* /* node */) { return {}; }
     virtual std::optional<ttlib::cstr> GenPythonAfterChildren(Node* /* node */) { return {}; }
 
@@ -117,7 +124,6 @@ public:
     // Generate code to bind the event to a handler
     virtual std::optional<ttlib::cstr> GenEvents(NodeEvent*, const std::string&) { return {}; }
 
-    virtual std::optional<ttlib::cstr> CommonSettings(Code&, size_t& /* auto_indent */) { return {}; }
     virtual std::optional<ttlib::cstr> GenSettings(Node*, size_t&, int /* language */) { return {}; }
 
     virtual std::optional<ttlib::cstr> GenSettings(Node*, size_t&) { return {}; }
@@ -149,6 +155,9 @@ public:
     {
         return false;
     };
+
+    // Add any required Python libraries that need to be imported
+    virtual bool GetPythonImports(Node*, std::set<std::string>& /* set_imports */) { return false; };
 
     // Return false if the entire Mockup contents should be recreated due to the property change
     virtual bool OnPropertyChange(wxObject*, Node*, NodeProperty*) { return false; }

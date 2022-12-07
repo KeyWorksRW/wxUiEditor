@@ -194,32 +194,52 @@ Code& Code::EndFunction()
 
 Code& Code::as_string(PropName prop_name)
 {
-    auto cur_pos = m_code.size();
+    auto& str = m_node->as_string(prop_name);
     if (is_cpp())
     {
-        m_code << m_node->prop_as_string(prop_name);
+        CheckLineBreak(str.size());
+        m_code += str;
+        return *this;
     }
-    else
-    {
-        ttlib::multiview multistr(m_node->prop_as_string(prop_name), "|", tt::TRIM::both);
-        bool first = true;
-        for (auto& iter: multistr)
-        {
-            if (iter.empty())
-                continue;
-            if (!first)
-                m_code << '|';
-            else
-                first = false;
 
-            if (iter == "wxEmptyString")
-                m_code << "\"\"";
-            else if (iter.is_sameprefix("wx"))
-                m_code << "wx." << iter.substr(2);
+    if (!ttlib::is_found(str.find('|')))
+    {
+        if (str == "wxEmptyString")
+        {
+            m_code += "\"\"";
+        }
+        else
+        {
+            CheckLineBreak(str.size());
+            if (str.is_sameprefix("wx"))
+                m_code << "wx." << str.substr(2);
             else
-                m_code << iter;
+                m_code += str;
+            return *this;
         }
     }
+
+    auto cur_pos = m_code.size();
+
+    ttlib::multiview multistr(str, "|", tt::TRIM::both);
+    bool first = true;
+    for (auto& iter: multistr)
+    {
+        if (iter.empty())
+            continue;
+        if (!first)
+            m_code << '|';
+        else
+            first = false;
+
+        if (iter == "wxEmptyString")
+            m_code << "\"\"";
+        else if (iter.is_sameprefix("wx"))
+            m_code << "wx." << iter.substr(2);
+        else
+            m_code << iter;
+    }
+
     if (m_auto_break && m_code.size() > m_break_at)
     {
         m_code.insert(cur_pos, (is_cpp() ? "\n\t\t" : "\n\t\t\t"));
@@ -677,8 +697,8 @@ Code& Code::GenSizerFlags()
         if (prop.contains("wxALIGN_CENTER"))
         {
             // Note that CenterHorizontal() and CenterVertical() require wxWidgets 3.1 or higher. Their advantage is
-            // generating an assert if you try to use one that is invalid if the sizer parent's orientation doesn't support
-            // it. Center() just works without the assertion check.
+            // generating an assert if you try to use one that is invalid if the sizer parent's orientation doesn't
+            // support it. Center() just works without the assertion check.
             m_code << ".Center()";
         }
 

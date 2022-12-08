@@ -19,6 +19,23 @@ static const std::map<std::string_view, std::string_view, std::less<>> s_map_wx_
 {
     { "wxAC_DEFAULT_STYLE", "wx.adv."},
     { "wxAC_NO_AUTORESIZE", "wx.adv."},
+    { "wxNullAnimation", "wx.adv."},
+    { "wxCAL_SUNDAY_FIRST", "wx.adv."},
+    { "wxCAL_MONDAY_FIRST", "wx.adv."},
+    { "wxCAL_SHOW_HOLIDAYS", "wx.adv."},
+    { "wxCAL_NO_YEAR_CHANGE", "wx.adv."},
+    { "wxCAL_NO_MONTH_CHANGE", "wx.adv."},
+    { "wxCAL_SHOW_SURROUNDING_WEEKS", "wx.adv."},
+    { "wxCAL_SEQUENTIAL_MONTH_SELECTION", "wx.adv."},
+    { "wxCAL_SHOW_WEEK_NUMBERS", "wx.adv."},
+
+};
+
+static const std::map<std::string_view, std::string_view, std::less<>> s_map_class_prefix
+{
+    { "wxAnimationCtrl", "wx.adv."},
+    { "wxBannerWindow", "wx.adv."},
+    { "wxCalendarCtrl", "wx.adv."},
 
 };
 // clang-format on
@@ -209,7 +226,14 @@ Code& Code::CreateClass(bool use_generic)
     if (m_language == GEN_LANG_CPLUSPLUS)
         m_code << class_name;
     else
-        m_code << "wx." << class_name.substr(2);
+    {
+        std::string_view prefix = "wx.";
+        if (auto wx_iter = s_map_class_prefix.find(class_name); wx_iter != s_map_class_prefix.end())
+        {
+            prefix = wx_iter->second;
+        }
+        m_code << prefix << class_name.substr(2);
+    }
     m_code << '(';
     return *this;
 }
@@ -293,11 +317,11 @@ Code& Code::as_string(PropName prop_name)
         else if (iter.is_sameprefix("wx"))
         {
             std::string_view prefix = "wx.";
-            if (auto wx_iter = s_map_wx_prefix.find(str); wx_iter != s_map_wx_prefix.end())
+            if (auto wx_iter = s_map_wx_prefix.find(iter); wx_iter != s_map_wx_prefix.end())
             {
                 prefix = wx_iter->second;
             }
-            m_code << prefix << str.substr(2);
+            m_code << prefix << iter.substr(2);
         }
         else
             m_code << iter;
@@ -792,7 +816,7 @@ Code& Code::GenSizerFlags()
                 Add(".TripleBorder(").Add("wxALL)");
             else
             {
-                Add(".Border(").Add("wxAll, ") << border_size << ')';
+                Add(".Border(").Add("wxALL, ") << border_size << ')';
             }
         }
         else

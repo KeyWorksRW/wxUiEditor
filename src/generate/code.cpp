@@ -5,12 +5,23 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
+#include <map>
+
 #include <ttmultistr_wx.h>  // ttMultiString -- Class for handling multiple strings
 
 #include "code.h"
 
 #include "node.h"           // Node class
 #include "project_class.h"  // Project class
+
+// clang-format off
+static const std::map<std::string_view, std::string_view, std::less<>> s_map_wx_prefix
+{
+    { "wxAC_DEFAULT_STYLE", "wx.adv."},
+    { "wxAC_NO_AUTORESIZE", "wx.adv."},
+
+};
+// clang-format on
 
 Code::Code(Node* node, int language) : m_node(node), m_language(language)
 {
@@ -69,7 +80,7 @@ Code& Code::Eol(bool check_size)
 
 void Code::InsertLineBreak(size_t cur_pos)
 {
-    ASSERT(cur_pos > 1 && cur_pos < m_code.size());
+    ASSERT(cur_pos > 1 && cur_pos <= m_code.size());
     if (m_code[cur_pos - 1] == ' ')
     {
         m_code[cur_pos - 1] = '\n';
@@ -105,7 +116,12 @@ Code& Code::Add(ttlib::sview text)
     {
         if (text.is_sameprefix("wx"))
         {
-            m_code << "wx." << text.substr(2);
+            std::string_view prefix = "wx.";
+            if (auto iter = s_map_wx_prefix.find(text); iter != s_map_wx_prefix.end())
+            {
+                prefix = iter->second;
+            }
+            m_code << prefix << text.substr(2);
         }
         else
         {
@@ -165,6 +181,7 @@ Code& Code::Class(ttlib::sview text)
     }
     return *this;
 }
+
 Code& Code::CreateClass(bool use_generic)
 {
     m_code << " = ";
@@ -244,7 +261,14 @@ Code& Code::as_string(PropName prop_name)
         {
             CheckLineBreak(str.size());
             if (str.is_sameprefix("wx"))
-                m_code << "wx." << str.substr(2);
+            {
+                std::string_view prefix = "wx.";
+                if (auto iter = s_map_wx_prefix.find(str); iter != s_map_wx_prefix.end())
+                {
+                    prefix = iter->second;
+                }
+                m_code << prefix << str.substr(2);
+            }
             else
                 m_code += str;
             return *this;
@@ -267,7 +291,14 @@ Code& Code::as_string(PropName prop_name)
         if (iter == "wxEmptyString")
             m_code << "\"\"";
         else if (iter.is_sameprefix("wx"))
-            m_code << "wx." << iter.substr(2);
+        {
+            std::string_view prefix = "wx.";
+            if (auto wx_iter = s_map_wx_prefix.find(str); wx_iter != s_map_wx_prefix.end())
+            {
+                prefix = wx_iter->second;
+            }
+            m_code << prefix << str.substr(2);
+        }
         else
             m_code << iter;
     }
@@ -581,7 +612,15 @@ Code& Code::Style(const char* prefix)
                     if (style_set)
                         m_code += '|';
                     if (iter.is_sameprefix("wx"))
-                        m_code << "wx." << iter.substr(2);
+                    {
+                        std::string_view wx_prefix = "wx.";
+                        if (auto wx_iter = s_map_wx_prefix.find(iter); wx_iter != s_map_wx_prefix.end())
+                        {
+                            wx_prefix = wx_iter->second;
+                        }
+
+                        m_code << wx_prefix << iter.substr(2);
+                    }
                     else
                         m_code += iter;
                     style_set = true;

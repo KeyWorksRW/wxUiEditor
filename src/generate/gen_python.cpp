@@ -240,12 +240,12 @@ void BaseCodeGenerator::GeneratePythonClass(Node* form_node, PANEL_PAGE panel_ty
 
     if (form_node->get_prop_ptr(prop_window_extra_style))
     {
-        ttlib::cstr win_code;
-        GenerateWindowSettings(GEN_LANG_PYTHON, form_node, win_code);
+        Code win_code(form_node, GEN_LANG_PYTHON);
+        win_code.GenWindowSettings();
         if (win_code.size())
         {
             // GenerateWindowSettings() can result in code within braces, so keep any leading whitespace.
-            m_source->writeLine(win_code, indent::auto_keep_whitespace);
+            m_source->writeLine(win_code.m_code, indent::auto_keep_whitespace);
         }
     }
 

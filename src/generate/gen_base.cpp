@@ -1488,12 +1488,12 @@ void BaseCodeGenerator::GenerateClassConstructor(Node* form_node, const EventVec
 
     if (form_node->get_prop_ptr(prop_window_extra_style))
     {
-        ttlib::cstr code;
-        GenerateWindowSettings(form_node, code);
+        Code code(form_node, GEN_LANG_CPLUSPLUS);
+        code.GenWindowSettings();
         if (code.size())
         {
             // GenerateWindowSettings() can result in code within braces, so keep any leading whitespace.
-            m_source->writeLine(code, indent::auto_keep_whitespace);
+            m_source->writeLine(code.m_code, indent::auto_keep_whitespace);
         }
     }
 

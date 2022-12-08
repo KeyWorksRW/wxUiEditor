@@ -809,3 +809,144 @@ Code& Code::GenSizerFlags()
 
     return *this;
 }
+
+void Code::GenWindowSettings()
+{
+    if (HasValue(prop_window_extra_style))
+    {
+        if (m_node->IsForm())
+            FormFunction("SetExtraStyle(");
+        else
+            NodeName().Function("SetExtraStyle(");
+
+        if (is_cpp())
+        {
+            as_string(prop_window_extra_style);
+        }
+        else
+        {
+            ttlib::multiview multistr(m_node->as_string(prop_window_extra_style), "|", tt::TRIM::both);
+            bool style_set = false;
+
+            for (auto& iter: multistr)
+            {
+                if (iter.empty())
+                    continue;
+                if (style_set)
+                    m_code += '|';
+                if (iter.is_sameprefix("wx"))
+                    m_code << "wx." << iter.substr(2);
+                else
+                    m_code += iter;
+                style_set = true;
+            }
+        }
+        EndFunction();
+    }
+
+    if (IsTrue(prop_disabled))
+    {
+        Eol(true);
+        if (!m_node->IsForm())
+            NodeName().Function("Enable(false)");
+        else
+            FormFunction("Enable(false)");
+        EndFunction();
+    }
+
+    if (IsTrue(prop_hidden))
+    {
+        Eol(true);
+        if (!m_node->IsForm())
+            NodeName().Function("Hide()");
+        else
+            FormFunction("Hide()");
+        EndFunction();
+    }
+
+    bool allow_minmax { true };
+    if (m_node->IsForm() && !m_node->isGen(gen_PanelForm) && !m_node->isGen(gen_wxToolBar))
+        allow_minmax = false;
+
+    if (allow_minmax && m_node->as_wxSize(prop_minimum_size) != wxDefaultSize)
+    {
+        Eol(true);
+        if (!m_node->IsForm())
+            NodeName().Function("SetMinSize(");
+        else
+            NodeName().FormFunction("SetMinSize(");
+        WxSize(prop_minimum_size);
+        EndFunction();
+    }
+
+    if (allow_minmax && m_node->as_wxSize(prop_maximum_size) != wxDefaultSize)
+    {
+        Eol(true);
+        if (!m_node->IsForm())
+            NodeName().Function("SetMaxSize(");
+        else
+            FormFunction("SetMaxSize(");
+        WxSize(prop_maximum_size);
+        EndFunction();
+    }
+
+    if (!m_node->IsForm() && !m_node->isPropValue(prop_variant, "normal"))
+    {
+        Eol(true);
+        NodeName().Function("SetWindowVariant(");
+        if (m_node->isPropValue(prop_variant, "small"))
+            Add("wxWINDOW_VARIANT_SMALL");
+        else if (m_node->isPropValue(prop_variant, "mini"))
+            Add("wxWINDOW_VARIANT_MINI");
+        else
+            Add("wxWINDOW_VARIANT_LARGE");
+
+        EndFunction();
+    }
+
+    if (HasValue(prop_tooltip))
+    {
+        Eol(true);
+        if (!m_node->IsForm())
+            NodeName().Function("SetToolTip(");
+        else
+            FormFunction("SetToolTip(");
+        QuotedString(prop_tooltip).EndFunction();
+    }
+
+    if (HasValue(prop_context_help))
+    {
+        Eol(true);
+        if (!m_node->IsForm())
+            NodeName().Function("SetHelpText(");
+        else
+            FormFunction("SetHelpText(");
+        QuotedString(prop_context_help).EndFunction();
+    }
+
+    GenFontColourSettings();
+}
+
+extern ttlib::cstr GenFontColourSettings(Node* node);
+
+void Code::GenFontColourSettings()
+{
+    // TODO: [Randalphwa - 12-08-2022] Need to implement C++/Python version of GenFontColourSettings
+
+    if (is_cpp())
+    {
+        auto result = ::GenFontColourSettings(m_node);
+        if (result.size())
+        {
+            Eol(true);
+            Add(result);
+        }
+    }
+
+#if 0
+    if (m_node->HasValue(prop_font))
+    {
+        FontProperty fontprop(m_node->get_prop_ptr(prop_font));
+    }
+#endif
+}

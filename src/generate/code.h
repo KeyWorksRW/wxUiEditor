@@ -65,19 +65,7 @@ public:
     }
 
     // Pass true to only add EOL if there is already code in the string
-    Code& Eol(bool check_size = false)
-    {
-        if (check_size)
-        {
-            if (m_code.size())
-                m_code += '\n';
-        }
-        else
-        {
-            m_code += '\n';
-        }
-        return *this;
-    }
+    Code& Eol(bool check_size = false);
 
     // Adds as many '\t' characters as specified by nTabs. Note that tabs are converted to
     // spaces when the line is written.
@@ -168,6 +156,13 @@ public:
     // If style is a friendly name, add the prefix parameter to prefix lookups.
     Code& Style(const char* prefix = nullptr);
 
+    // Generates code for prop_window_extra_style, prop_background_colour,
+    // prop_foreground_colour, prop_disabled, prop_hidden, prop_maximum_size, prop_variant,
+    // prop_tooltip, and prop_context_help
+    void GenWindowSettings();
+
+    void GenFontColourSettings();
+
     Code& GenSizerFlags();
 
     Code& operator<<(std::string_view str)
@@ -191,6 +186,7 @@ public:
 protected:
     // If the line would be too long, this will automatically break it.
     void CheckLineBreak(size_t add_length);
+    void InsertLineBreak(size_t cur_pos);
 
 private:
     bool m_auto_break { true };

@@ -460,7 +460,6 @@ void BaseCodeGenerator::GenSettings(Node* node)
 
     if (node->get_prop_ptr(prop_window_extra_style))
     {
-        ttlib::cstr code;
         if (m_language == GEN_LANG_CPLUSPLUS)
         {
             if (result = GenValidatorSettings(node); result)
@@ -468,14 +467,10 @@ void BaseCodeGenerator::GenSettings(Node* node)
                 m_source->writeLine(result.value());
             }
         }
-
-        if (m_language == GEN_LANG_CPLUSPLUS)
-            GenerateWindowSettings(node, code);
-        else
-            GenerateWindowSettings(m_language, node, code);
-
-        if (code.size())
-            m_source->writeLine(code, indent::auto_keep_whitespace);
+        gen_code.clear();
+        gen_code.GenWindowSettings();
+        if (gen_code.size())
+            m_source->writeLine(gen_code.m_code, indent::auto_keep_whitespace);
     }
 }
 

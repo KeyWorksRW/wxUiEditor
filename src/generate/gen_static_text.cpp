@@ -88,7 +88,7 @@ std::optional<ttlib::sview> StaticTextGenerator::CommonConstruction(Code& code)
         auto& label = code.m_node->prop_as_string(prop_label);
         if (label.size())
         {
-            code.CheckLineLength().QuotedString(prop_label);
+            code.QuotedString(prop_label);
         }
         else
         {
@@ -106,7 +106,7 @@ std::optional<ttlib::sview> StaticTextGenerator::CommonSettings(Code& code, size
     if (code.m_node->prop_as_bool(prop_markup) && code.m_node->prop_as_int(prop_wrap) <= 0)
     {
         code.NodeName().Function("SetLabelMarkup(");
-        code << GenerateQuotedString(code.m_node->prop_as_string(prop_label));
+        code.QuotedString(prop_label);
         code.EndFunction();
     }
 

@@ -46,20 +46,13 @@ void BaseCodeGenerator::GenConstruction(Node* node)
     bool need_closing_brace = false;
     Code gen_code(node, m_language);
 
-    // Always start with a tab in case there are line breaks. The leading tab will be ignored
-    // if the line is not broken.
-    gen_code.Add((m_language == GEN_LANG_CPLUSPLUS) ? "\t" : "\t\t");
-    gen_code.SetBreakAt(80);
     std::optional<ttlib::sview> scode;
     std::optional<ttlib::cstr> result;
 
     scode = generator->CommonConstruction(gen_code);
-    if (!scode && is_cpp() && is_cpp())
+    if (!scode && is_cpp())
     {
-        // Python form constructor will have already been called, so we should only get here
-        // if there is no CommonConstruction that supports Python.
-        result = generator->GenConstruction(node);
-        if (result)
+        if (result = generator->GenConstruction(node); result)
             scode = *result;
     }
 
@@ -71,15 +64,26 @@ void BaseCodeGenerator::GenConstruction(Node* node)
             m_source->writeLine();
         }
 
-        // Check for any indentation via a brace or line break with multiple tabs, and if so,
-        // don't remove the whitespace
-        m_source->writeLine(*scode, (ttlib::is_found(scode->find('{')) || ttlib::is_found(scode->find("\n\t\t"))) ?
-                                        indent::none :
-                                        indent::auto_no_whitespace);
-        if (scode->starts_with("\t{"))
+#if 0
+        if (is_cpp())
         {
-            need_closing_brace = true;
+            // Check for any indentation via a brace or line break with multiple tabs, and if so,
+            // don't remove the whitespace
+            m_source->writeLine(*scode, (ttlib::is_found(scode->find('{')) || ttlib::is_found(scode->find("\n\t\t"))) ?
+                                            indent::none :
+                                            indent::auto_no_whitespace);
+            if (scode->starts_with("\t{"))
+            {
+                need_closing_brace = true;
+            }
         }
+        else
+        {
+            m_source->writeLine(*scode, indent::auto_keep_whitespace);
+        }
+#else
+        m_source->writeLine(*scode, indent::auto_keep_whitespace);
+#endif
     }
     GenSettings(node);
 
@@ -300,7 +304,7 @@ void BaseCodeGenerator::GenConstruction(Node* node)
 
                 if (result && result.value().size())
                 {
-                    m_source->writeLine(result.value(), indent::none);
+                    m_source->writeLine(result.value(), indent::auto_keep_whitespace);
                 }
                 m_source->writeLine();
                 break;
@@ -432,22 +436,26 @@ void BaseCodeGenerator::EndBrace()
 
 void BaseCodeGenerator::GenSettings(Node* node)
 {
-    size_t auto_indent = indent::auto_no_whitespace;
+    size_t auto_indent = indent::auto_keep_whitespace;
     auto generator = node->GetGenerator();
-    std::optional<ttlib::cstr> result;
+
     Code gen_code(node, m_language);
-    result = generator->CommonSettings(gen_code, auto_indent);
-    if (!result)
+    auto scode = generator->CommonSettings(gen_code, auto_indent);
+    std::optional<ttlib::cstr> result;
+
+    if (!scode)
     {
         if (m_language == GEN_LANG_CPLUSPLUS)
             result = generator->GenSettings(node, auto_indent);
         else
             result = generator->GenSettings(node, auto_indent, m_language);
+        if (result)
+            scode = result.value();
     }
 
-    if (result && result.value().size())
+    if (scode && scode->size())
     {
-        m_source->writeLine(result.value(), auto_indent);
+        m_source->writeLine(scode.value(), auto_indent);
     }
 
     if (node->get_prop_ptr(prop_window_extra_style))
@@ -498,7 +506,7 @@ bool BaseCodeGenerator::GenAfterChildren(Node* node, bool need_closing_brace)
             GenConstruction(child.get());
         }
 
-        m_source->writeLine(scode.value(), indent::none);
+        m_source->writeLine(scode.value(), indent::auto_keep_whitespace);
         auto parent = node->GetParent();
 
         // Code for spacer's is handled by the component's GenConstruction() call
@@ -581,7 +589,7 @@ void BaseCodeGenerator::GenParentSizer(Node* node, bool need_closing_brace)
 
     if (scode && scode.value().size())
     {
-        m_source->writeLine(scode.value(), indent::none);
+        m_source->writeLine(scode.value(), indent::auto_keep_whitespace);
     }
 
     code.clear();

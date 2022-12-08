@@ -57,14 +57,14 @@ std::optional<ttlib::sview> BoxSizerGenerator::CommonAfterChildren(Code& code)
 {
     if (code.m_node->as_bool(prop_hide_children))
     {
-        code.Tab().NodeName().Function("ShowItems(false").EndFunction();
+        code.NodeName().Function("ShowItems(false").EndFunction();
     }
     auto parent = code.m_node->GetParent();
     if (!parent->IsSizer() && !parent->isGen(gen_wxDialog) && !parent->isGen(gen_PanelForm))
     {
         if (code.size())
             code.Eol();
-        code.Eol().Tab();
+        code.Eol();
 
         // The parent node is not a sizer -- which is expected if this is the parent sizer underneath a form or
         // wxPanel.

@@ -49,6 +49,7 @@ bool DialogFormGenerator::GenConstruction(Node* node, BaseCodeGenerator* code_ge
 
     ttlib::cstr code;
 
+    // Note: this code is called before any indentation is set
     code << "bool " << node->prop_as_string(prop_class_name)
          << "::Create(wxWindow* parent, wxWindowID id, const wxString& title,\n\t\tconst wxPoint& pos, const wxSize& size, "
             "long "
@@ -89,6 +90,7 @@ bool DialogFormGenerator::GenConstruction(Node* node, BaseCodeGenerator* code_ge
 
 bool DialogFormGenerator::GenPythonForm(Code& code)
 {
+    // Note: this code is called before any indentation is set
     code.Add("class ").NodeName().Add("(wx.Dialog):\n");
     code.Tab().Add("def __init__(self, parent):").Eol().Tab(2);
     code << "wx.Dialog.__init__(self, parent, id=";
@@ -267,26 +269,26 @@ std::optional<ttlib::sview> DialogFormGenerator::CommonAdditionalCode(Code& code
 
     if (min_size == wxDefaultSize && max_size == wxDefaultSize)
     {
-        code.Tab().Add("self.SetSizerAndFit(") << node->get_node_name() << ")";
+        code.FormFunction("SetSizerAndFit(") << node->get_node_name() << ")";
     }
     else
     {
-        code.Tab().Add("self.SetSizer(") << node->get_node_name() << ")";
+        code.FormFunction("SetSizer(") << node->get_node_name() << ")";
         if (min_size != wxDefaultSize)
         {
-            code.Eol().Tab().Add("self.SetMinSize(wx.Size(") << min_size.GetWidth() << ", " << min_size.GetHeight() << "))";
+            code.Eol().FormFunction("SetMinSize(wx.Size(") << min_size.GetWidth() << ", " << min_size.GetHeight() << "))";
         }
         if (max_size != wxDefaultSize)
         {
-            code.Eol().Tab().Add("self.SetMaxSize(wx.Size(") << max_size.GetWidth() << ", " << max_size.GetHeight() << "))";
+            code.Eol().FormFunction("SetMaxSize(wx.Size(") << max_size.GetWidth() << ", " << max_size.GetHeight() << "))";
         }
-        code.Eol().Tab().Add("self.Fit()");
+        code.Eol().FormFunction("Fit()");
     }
 
     auto& center = dlg->prop_as_string(prop_center);
     if (center.size() && !center.is_sameas("no"))
     {
-        code.Eol().Tab().Add("self.Centre(").Add(center) << ")";
+        code.Eol().FormFunction("Centre(").Add(center) << ")";
     }
 
     return code.m_code;

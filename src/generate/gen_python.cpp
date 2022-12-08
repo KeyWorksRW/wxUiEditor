@@ -222,7 +222,7 @@ void BaseCodeGenerator::GeneratePythonClass(Node* form_node, PANEL_PAGE panel_ty
 
     if (generator->GenPythonForm(code))
     {
-        m_source->writeLine(code.m_code, indent::none);
+        m_source->writeLine(code.m_code, indent::auto_keep_whitespace);
         m_source->writeLine();
         m_source->Indent();
         m_source->Indent();
@@ -242,7 +242,7 @@ void BaseCodeGenerator::GeneratePythonClass(Node* form_node, PANEL_PAGE panel_ty
     {
         ttlib::cstr win_code;
         GenerateWindowSettings(GEN_LANG_PYTHON, form_node, win_code);
-        if (code.size())
+        if (win_code.size())
         {
             // GenerateWindowSettings() can result in code within braces, so keep any leading whitespace.
             m_source->writeLine(win_code, indent::auto_keep_whitespace);
@@ -264,7 +264,7 @@ void BaseCodeGenerator::GeneratePythonClass(Node* form_node, PANEL_PAGE panel_ty
         if (result.value().size())
         {
             m_source->writeLine();
-            m_source->writeLine(result.value());
+            m_source->writeLine(result.value(), indent::auto_keep_whitespace);
         }
     }
 

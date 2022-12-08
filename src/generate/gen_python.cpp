@@ -5,6 +5,8 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
+#include <set>
+
 #include "ttcwd_wx.h"  // cwd -- Class for storing and optionally restoring the current directory
 
 #include "mainframe.h"
@@ -23,6 +25,18 @@
 
 // defined in gen_xrc.cpp
 int GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags);
+
+static void GatherImportModules(std::set<std::string>& imports, Node* node)
+{
+    if (auto* gen = node->GetGenerator(); gen)
+    {
+        gen->GetPythonImports(node, imports);
+    }
+    for (auto& child: node->GetChildNodePtrs())
+    {
+        GatherImportModules(imports, child.get());
+    }
+}
 
 bool GeneratePythonFiles(GenResults& results, std::vector<ttlib::cstr>* pClassList)
 {
@@ -175,7 +189,6 @@ R"===(# -*- coding: utf-8 -*-
 ###############################################################################
 
 import wx
-
 )===";
 
 // clang-format on
@@ -213,6 +226,14 @@ void BaseCodeGenerator::GeneratePythonClass(Node* form_node, PANEL_PAGE panel_ty
     m_source->Clear();
 
     m_source->writeLine(txt_PythonCmtBlock);
+    std::set<std::string> imports;
+    GatherImportModules(imports, form_node);
+    for (const auto& import: imports)
+    {
+        m_source->writeLine(import);
+    }
+    m_source->writeLine();
+
     m_header->writeLine("# wxPython information is available at https://www.wxpython.org/");
 
     thrd_get_events.join();

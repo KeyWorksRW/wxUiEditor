@@ -608,6 +608,9 @@ std::optional<ttlib::sview> BaseGenerator::GenEvents(Code& code, NodeEvent* even
             handler.Add(", self.") << event->get_value();
     }
 
+    // With lambdas, line break have already been added
+    code.EnableAutoLineBreak(is_lambda ? false : true);
+
     // Do *NOT* assume that code.m_node is the same as event->GetNode()!
 
     if (event->GetNode()->IsStaticBoxSizer())
@@ -685,5 +688,6 @@ std::optional<ttlib::sview> BaseGenerator::GenEvents(Code& code, NodeEvent* even
         code.EndFunction();
     }
 
+    code.EnableAutoLineBreak(true);
     return code.m_code;
 }

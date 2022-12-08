@@ -16,6 +16,7 @@
 #include "node.h"           // Node class
 #include "pugixml.hpp"      // xml read/write/create/process
 #include "utils.h"          // Utility functions that work with properties
+#include "write_code.h"     // WriteCode -- Write code to Scintilla or file
 
 #include "gen_text_ctrl.h"
 
@@ -111,15 +112,9 @@ std::optional<ttlib::sview> TextCtrlGenerator::CommonConstruction(Code& code)
 
 std::optional<ttlib::sview> TextCtrlGenerator::CommonSettings(Code& code, size_t& auto_indent)
 {
-    if ((code.IsTrue(prop_maxlength) && code.PropContains(prop_style, "wxTE_MULTILINE")) ||
-        code.HasValue(prop_auto_complete))
-        auto_indent = false;
-
     if (code.HasValue(prop_hint))
     {
         code.Eol(true);
-        if (!auto_indent)
-            code.Tab(code.is_cpp() ? 1 : 3);
         code.Eol(true).NodeName().Function("SetHint(").QuotedString(prop_hint).EndFunction();
     }
     if (code.IsTrue(prop_focus))
@@ -132,20 +127,18 @@ std::optional<ttlib::sview> TextCtrlGenerator::CommonSettings(Code& code, size_t
     if (code.IsTrue(prop_maxlength))
     {
         code.Eol(true);
-        if (!auto_indent)
-            code.Tab(code.is_cpp() ? 1 : 2);
         if (code.PropContains(prop_style, "wxTE_MULTILINE"))
         {
             if (code.is_cpp())
             {
-                code << "#if !defined(__WXGTK__))\n\t";
-                code.NodeName().Function("SetMaxLength(").as_string(prop_maxlength).EndFunction().Eol();
-                code << "\t#endif";
+                code << "#if !defined(__WXGTK__))";
+                code.Eol().Tab().NodeName().Function("SetMaxLength(").as_string(prop_maxlength).EndFunction().Eol();
+                code.m_code += "#endif";
             }
             else
             {
-                code.Add("if wx.Platform != \'__WXGTK__\':\n\t\t\t");
-                code.NodeName().Function("SetMaxLength(").as_string(prop_maxlength).EndFunction().Eol();
+                code.Add("if wx.Platform != \'__WXGTK__\':");
+                code.Eol().Tab().NodeName().Function("SetMaxLength(").as_string(prop_maxlength).EndFunction().Eol();
             }
         }
         else
@@ -157,14 +150,17 @@ std::optional<ttlib::sview> TextCtrlGenerator::CommonSettings(Code& code, size_t
     {
         if (code.is_cpp())
         {
-            code << "\t{\n\t\twxArrayString tmp_array;\n";
+            code.EnableAutoLineBreak(false);
+            code.Add("{").Eol().Tab().Add("wxArrayString tmp_array;").Eol();
             auto array = ConvertToArrayString(code.node()->prop_as_string(prop_auto_complete));
             for (auto& iter: array)
             {
-                code << "\t\ttmp_array.push_back(wxString::FromUTF8(\"" << iter << "\"));\n";
+                code.Tab().Add("tmp_array.push_back(wxString::FromUTF8(\"") << iter << "\"));";
+                code.Eol();
             }
-            code << "\t\t" << code.node()->get_node_name() << "->AutoComplete(tmp_array);\n";
-            code << "\t}";
+            code.Tab() << code.node()->get_node_name() << "->AutoComplete(tmp_array);";
+            code.Eol() << "}";
+            code.EnableAutoLineBreak(true);
         }
 
         // TODO: [Randalphwa - 12-02-2022] Add Python code
@@ -176,12 +172,12 @@ std::optional<ttlib::sview> TextCtrlGenerator::CommonSettings(Code& code, size_t
         {
             if (wxGetProject().value(prop_wxWidgets_version) == "3.1")
             {
-                code << "\n#if wxCHECK_VERSION(3, 1, 6)\n\t";
-                code << code.node()->get_node_name() << "->EnableProofCheck(wxTextProofOptions::Default()";
+                code.Eol() << "#if wxCHECK_VERSION(3, 1, 6)";
+                code.Eol().Tab().NodeName() << "->EnableProofCheck(wxTextProofOptions::Default()";
                 if (code.PropContains(prop_spellcheck, "grammar"))
                     code << ".GrammarCheck()";
                 code << ");";
-                code << "\n#endif";
+                code.Eol() << "#endif";
             }
             else
             {
@@ -193,10 +189,7 @@ std::optional<ttlib::sview> TextCtrlGenerator::CommonSettings(Code& code, size_t
         }
         else
         {
-            code.Eol();
-            if (!auto_indent)
-                code.Tab(2);
-            code.Add("# wxPython 4.2.0 does not support wxTextProofOptions\n");
+            code.Eol().Add("# wxPython 4.2.0 does not support wxTextProofOptions").Eol();
         }
     }
 

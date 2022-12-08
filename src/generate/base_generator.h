@@ -81,7 +81,7 @@ public:
 
     // Generate code after any children have been constructed
     //
-    // Code will be written with indent::none set
+    // Code will be written with indent::auto_keep_whitespace set
     virtual std::optional<ttlib::sview> CommonAfterChildren(Code&) { return {}; }
 
     virtual std::optional<ttlib::sview> CommonSettings(Code&, size_t& /* auto_indent */) { return {}; }

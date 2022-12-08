@@ -12,11 +12,82 @@
 #include "node.h"           // Node class
 #include "project_class.h"  // Project class
 
+Code::Code(Node* node, int language) : m_node(node), m_language(language)
+{
+    if (language == GEN_LANG_PYTHON)
+    {
+        // This allows for the extra '.' between wx and wxWidget name
+        m_break_length = 79;
+    }
+
+    // Reserve large enough for multiple lines -- goal is to avoid multiple reallocations
+    m_code.reserve(256);
+}
+
+// The Code ctor will have already accounted for the extra character that wxWidgets names use
+// in Python.
+void Code::CheckLineBreak(size_t add_length)
+{
+    if (!m_auto_break || m_code.size() < m_minium_length)
+        return;
+
+    if (m_code.size() + add_length > m_break_at)
+    {
+        Eol().Tab();
+    }
+}
+
+Code& Code::CheckLineLength()
+{
+    if (m_code.size() > m_break_at)
+    {
+        Eol().Tab();
+    }
+
+    return *this;
+}
+
+Code& Code::Eol(bool check_size)
+{
+    if (check_size)
+    {
+        if (m_code.size())
+            m_code += '\n';
+    }
+    else
+    {
+        m_code += '\n';
+    }
+
+    if (m_auto_break)
+    {
+        m_break_at = m_code.size() + m_break_length;
+        m_minium_length = m_code.size() + 10;
+    }
+    return *this;
+}
+
+void Code::InsertLineBreak(size_t cur_pos)
+{
+    ASSERT(cur_pos > 1 && cur_pos < m_code.size());
+    if (m_code[cur_pos - 1] == ' ')
+    {
+        m_code[cur_pos - 1] = '\n';
+        m_code.insert(cur_pos, "\t");
+    }
+    else
+    {
+        m_code.insert(cur_pos, "\n\t");
+    }
+    m_break_at = cur_pos + m_break_length;
+    m_minium_length = cur_pos + 10;
+}
+
 Code& Code::Tab(int tabs)
 {
     while (tabs)
     {
-        m_code << '\t';
+        m_code += '\t';
         --tabs;
     }
     return *this;
@@ -24,7 +95,9 @@ Code& Code::Tab(int tabs)
 
 Code& Code::Add(ttlib::sview text)
 {
-    if (m_language == GEN_LANG_CPLUSPLUS)
+    CheckLineBreak(text.size());
+
+    if (is_cpp())
     {
         m_code << text;
     }
@@ -60,6 +133,16 @@ Code& Code::Function(ttlib::sview text)
             m_code << text;
         }
     }
+    return *this;
+}
+
+Code& Code::FormFunction(ttlib::sview text)
+{
+    if (m_language == GEN_LANG_PYTHON)
+    {
+        m_code += "self.";
+    }
+    m_code += text;
     return *this;
 }
 
@@ -143,31 +226,57 @@ Code& Code::EndFunction()
 
 Code& Code::as_string(PropName prop_name)
 {
+    auto& str = m_node->as_string(prop_name);
     if (is_cpp())
     {
-        m_code << m_node->prop_as_string(prop_name);
+        CheckLineBreak(str.size());
+        m_code += str;
+        return *this;
     }
-    else
-    {
-        ttlib::multiview multistr(m_node->prop_as_string(prop_name), "|", tt::TRIM::both);
-        bool first = true;
-        for (auto& iter: multistr)
-        {
-            if (iter.empty())
-                continue;
-            if (!first)
-                m_code << '|';
-            else
-                first = false;
 
-            if (iter == "wxEmptyString")
-                m_code << "\"\"";
-            else if (iter.is_sameprefix("wx"))
-                m_code << "wx." << iter.substr(2);
+    if (!ttlib::is_found(str.find('|')))
+    {
+        if (str == "wxEmptyString")
+        {
+            m_code += "\"\"";
+        }
+        else
+        {
+            CheckLineBreak(str.size());
+            if (str.is_sameprefix("wx"))
+                m_code << "wx." << str.substr(2);
             else
-                m_code << iter;
+                m_code += str;
+            return *this;
         }
     }
+
+    auto cur_pos = m_code.size();
+
+    ttlib::multiview multistr(str, "|", tt::TRIM::both);
+    bool first = true;
+    for (auto& iter: multistr)
+    {
+        if (iter.empty())
+            continue;
+        if (!first)
+            m_code << '|';
+        else
+            first = false;
+
+        if (iter == "wxEmptyString")
+            m_code << "\"\"";
+        else if (iter.is_sameprefix("wx"))
+            m_code << "wx." << iter.substr(2);
+        else
+            m_code << iter;
+    }
+
+    if (m_auto_break && m_code.size() > m_break_at)
+    {
+        InsertLineBreak(cur_pos);
+    }
+
     return *this;
 }
 
@@ -266,9 +375,19 @@ Code& Code::QuotedString(GenEnum::PropName prop_name)
 {
     if (!m_node->HasValue(prop_name))
     {
-        m_code += is_cpp() ? "wxEmptyString" : "\"\"";
+        if (is_cpp())
+        {
+            CheckLineBreak(sizeof("wxEmptyString"));
+            m_code += "wxEmptyString";
+        }
+        else
+        {
+            m_code += "\"\"";
+        }
         return *this;
     }
+
+    auto cur_pos = m_code.size();
 
     if (GetProject()->prop_as_bool(prop_internationalize))
     {
@@ -340,6 +459,11 @@ Code& Code::QuotedString(GenEnum::PropName prop_name)
         m_code += ')';
     }
 
+    if (m_auto_break && m_code.size() > m_break_at)
+    {
+        InsertLineBreak(cur_pos);
+    }
+
     return *this;
 }
 
@@ -347,16 +471,18 @@ Code& Code::WxSize(GenEnum::PropName prop_name)
 {
     if (m_node->prop_as_wxSize(prop_name) == wxDefaultSize)
     {
+        CheckLineBreak(sizeof("wxDefaultSize"));
         m_code += is_cpp() ? "wxDefaultSize" : "wx.DefaultSize";
         return *this;
     }
 
+    auto cur_pos = m_code.size();
+
     bool dialog_units = m_node->value(prop_name).contains("d", tt::CASE::either);
     if (dialog_units)
     {
-        if (is_python())
-            Add("self.");
-        m_code += "ConvertDialogToPixels(";
+        CheckLineBreak(sizeof("self.ConvertDialogToPixels(wxSize(999, 999))"));
+        FormFunction("ConvertDialogToPixels(");
     }
 
     auto size = m_node->prop_as_wxSize(prop_name);
@@ -365,6 +491,11 @@ Code& Code::WxSize(GenEnum::PropName prop_name)
     if (dialog_units)
         m_code += ')';
 
+    if (m_auto_break && m_code.size() > m_break_at)
+    {
+        InsertLineBreak(cur_pos);
+    }
+
     return *this;
 }
 
@@ -372,16 +503,18 @@ Code& Code::Pos(GenEnum::PropName prop_name)
 {
     if (m_node->prop_as_wxPoint(prop_name) == wxDefaultPosition)
     {
+        CheckLineBreak(sizeof("wxDefaultPosition"));
         m_code += is_cpp() ? "wxDefaultPosition" : "wx.DefaultPosition";
         return *this;
     }
 
+    auto cur_pos = m_code.size();
+
     bool dialog_units = m_node->value(prop_name).contains("d", tt::CASE::either);
     if (dialog_units)
     {
-        if (is_python())
-            Add("self.");
-        m_code += "ConvertDialogToPixels(";
+        CheckLineBreak(sizeof("self.ConvertDialogToPixels(wxPoint(999, 999))"));
+        FormFunction("ConvertDialogToPixels(");
     }
 
     auto size = m_node->prop_as_wxSize(prop_name);
@@ -389,6 +522,12 @@ Code& Code::Pos(GenEnum::PropName prop_name)
 
     if (dialog_units)
         m_code += ')';
+
+    if (m_auto_break && m_code.size() > m_break_at)
+    {
+        InsertLineBreak(cur_pos);
+    }
+
     return *this;
 }
 
@@ -411,12 +550,15 @@ Code& Code::Style(const char* prefix)
         as_string(prop_orientation);
     }
 
+    // Note that as_string() may break the line, so recalculate any time as_string() is called
+    auto cur_pos = m_code.size();
+
     if (m_node->isGen(gen_wxRichTextCtrl))
     {
         if (style_set)
             m_code += '|';
         style_set = true;
-        m_code += is_cpp() ? "wxRE_MULTILINE" : "wx.RE_MULTILINE";
+        Add("wxRE_MULTILINE");
     }
 
     if (m_node->HasValue(prop_style))
@@ -449,6 +591,7 @@ Code& Code::Style(const char* prefix)
         else
         {
             as_string(prop_style);
+            cur_pos = m_code.size();
         }
         style_set = true;
     }
@@ -459,6 +602,7 @@ Code& Code::Style(const char* prefix)
             m_code += '|';
         style_set = true;
         as_string(prop_window_style);
+        cur_pos = m_code.size();
     }
 
     if (m_node->isGen(gen_wxListView))
@@ -467,11 +611,17 @@ Code& Code::Style(const char* prefix)
             m_code += '|';
         style_set = true;
         as_string(prop_mode);
+        cur_pos = m_code.size();
     }
 
     if (!style_set)
     {
         m_code += "0";
+    }
+
+    if (m_auto_break && m_code.size() > m_break_at)
+    {
+        InsertLineBreak(cur_pos);
     }
 
     return *this;
@@ -482,12 +632,12 @@ Code& Code::PosSizeFlags(bool uses_def_validator, ttlib::sview def_style)
     if (m_node->HasValue(prop_window_name))
     {
         // Window name is always the last parameter, so if it is specified, everything has to be generated.
-        Comma().CheckLineLength();
-        Pos().Comma().CheckLineLength().WxSize().Comma().CheckLineLength();
+        Comma();
+        Pos().Comma().WxSize().Comma();
         Style();
         if (uses_def_validator)
-            Comma().CheckLineLength().Add("wxDefaultValidator");
-        Comma().CheckLineLength();
+            Comma().Add("wxDefaultValidator");
+        Comma();
         QuotedString(prop_window_name).EndFunction();
         return *this;
     }
@@ -499,8 +649,8 @@ Code& Code::PosSizeFlags(bool uses_def_validator, ttlib::sview def_style)
         m_node->isGen(gen_wxRichTextCtrl) || m_node->isGen(gen_wxRichTextCtrl) || m_node->HasValue(prop_window_style) ||
         m_node->isGen(gen_wxListView))
     {
-        Comma().CheckLineLength();
-        Pos().Comma().CheckLineLength().WxSize().Comma().CheckLineLength().Style();
+        Comma();
+        Pos().Comma().WxSize().Comma().Style();
         if (def_style.size() && m_code.ends_with(def_style))
         {
             m_code.erase(m_code.size() - def_style.size());
@@ -508,34 +658,30 @@ Code& Code::PosSizeFlags(bool uses_def_validator, ttlib::sview def_style)
     }
     else if (m_node->prop_as_wxSize(prop_size) != wxDefaultSize)
     {
-        Comma().CheckLineLength();
-        Pos().Comma().CheckLineLength().WxSize();
+        Comma();
+        Pos().Comma().WxSize();
     }
     else if (m_node->prop_as_wxPoint(prop_pos) != wxDefaultPosition)
     {
-        Comma().CheckLineLength();
+        Comma();
         Pos();
     }
     EndFunction();
     return *this;
 }
 
-Code& Code::CheckLineLength()
-{
-    if (m_code.size() > m_break_at)
-    {
-        m_code += "\n\t\t";
-        if (is_python())
-            m_code += '\t';
-        m_break_at += 80;
-    }
-
-    return *this;
-}
-
 Code& Code::GenSizerFlags()
 {
+    // wxSizerFlags functions are chained together, so we don't want to break them. Instead,
+    // shut off auto_break and then restore it when we are done, after which we can check whether
+    // or note the entire wxSizerFlags() statement needs to be broken.
+
+    bool save_auto_break = m_auto_break;
+    m_auto_break = false;
+    auto cur_pos = m_code.size();
+
     Add("wxSizerFlags");
+
     if (auto& prop = m_node->prop_as_string(prop_proportion); prop != "0")
     {
         m_code << '(' << prop << ')';
@@ -550,8 +696,8 @@ Code& Code::GenSizerFlags()
         if (prop.contains("wxALIGN_CENTER"))
         {
             // Note that CenterHorizontal() and CenterVertical() require wxWidgets 3.1 or higher. Their advantage is
-            // generating an assert if you try to use one that is invalid if the sizer parent's orientation doesn't support
-            // it. Center() just works without the assertion check.
+            // generating an assert if you try to use one that is invalid if the sizer parent's orientation doesn't
+            // support it. Center() just works without the assertion check.
             m_code << ".Center()";
         }
 
@@ -654,5 +800,153 @@ Code& Code::GenSizerFlags()
         }
     }
 
+    m_auto_break = save_auto_break;
+
+    if (m_auto_break && m_code.size() > m_break_at)
+    {
+        InsertLineBreak(cur_pos);
+    }
+
     return *this;
+}
+
+void Code::GenWindowSettings()
+{
+    if (HasValue(prop_window_extra_style))
+    {
+        if (m_node->IsForm())
+            FormFunction("SetExtraStyle(");
+        else
+            NodeName().Function("SetExtraStyle(");
+
+        if (is_cpp())
+        {
+            as_string(prop_window_extra_style);
+        }
+        else
+        {
+            ttlib::multiview multistr(m_node->as_string(prop_window_extra_style), "|", tt::TRIM::both);
+            bool style_set = false;
+
+            for (auto& iter: multistr)
+            {
+                if (iter.empty())
+                    continue;
+                if (style_set)
+                    m_code += '|';
+                if (iter.is_sameprefix("wx"))
+                    m_code << "wx." << iter.substr(2);
+                else
+                    m_code += iter;
+                style_set = true;
+            }
+        }
+        EndFunction();
+    }
+
+    if (IsTrue(prop_disabled))
+    {
+        Eol(true);
+        if (!m_node->IsForm())
+            NodeName().Function("Enable(false)");
+        else
+            FormFunction("Enable(false)");
+        EndFunction();
+    }
+
+    if (IsTrue(prop_hidden))
+    {
+        Eol(true);
+        if (!m_node->IsForm())
+            NodeName().Function("Hide()");
+        else
+            FormFunction("Hide()");
+        EndFunction();
+    }
+
+    bool allow_minmax { true };
+    if (m_node->IsForm() && !m_node->isGen(gen_PanelForm) && !m_node->isGen(gen_wxToolBar))
+        allow_minmax = false;
+
+    if (allow_minmax && m_node->as_wxSize(prop_minimum_size) != wxDefaultSize)
+    {
+        Eol(true);
+        if (!m_node->IsForm())
+            NodeName().Function("SetMinSize(");
+        else
+            NodeName().FormFunction("SetMinSize(");
+        WxSize(prop_minimum_size);
+        EndFunction();
+    }
+
+    if (allow_minmax && m_node->as_wxSize(prop_maximum_size) != wxDefaultSize)
+    {
+        Eol(true);
+        if (!m_node->IsForm())
+            NodeName().Function("SetMaxSize(");
+        else
+            FormFunction("SetMaxSize(");
+        WxSize(prop_maximum_size);
+        EndFunction();
+    }
+
+    if (!m_node->IsForm() && !m_node->isPropValue(prop_variant, "normal"))
+    {
+        Eol(true);
+        NodeName().Function("SetWindowVariant(");
+        if (m_node->isPropValue(prop_variant, "small"))
+            Add("wxWINDOW_VARIANT_SMALL");
+        else if (m_node->isPropValue(prop_variant, "mini"))
+            Add("wxWINDOW_VARIANT_MINI");
+        else
+            Add("wxWINDOW_VARIANT_LARGE");
+
+        EndFunction();
+    }
+
+    if (HasValue(prop_tooltip))
+    {
+        Eol(true);
+        if (!m_node->IsForm())
+            NodeName().Function("SetToolTip(");
+        else
+            FormFunction("SetToolTip(");
+        QuotedString(prop_tooltip).EndFunction();
+    }
+
+    if (HasValue(prop_context_help))
+    {
+        Eol(true);
+        if (!m_node->IsForm())
+            NodeName().Function("SetHelpText(");
+        else
+            FormFunction("SetHelpText(");
+        QuotedString(prop_context_help).EndFunction();
+    }
+
+    GenFontColourSettings();
+}
+
+extern ttlib::cstr GenFontColourSettings(Node* node);
+
+void Code::GenFontColourSettings()
+{
+    // TODO: [Randalphwa - 12-08-2022] Need to implement C++/Python version of GenFontColourSettings
+
+    if (is_cpp())
+    {
+        auto result = ::GenFontColourSettings(m_node);
+        if (result.size())
+        {
+            Eol(true);
+            Add(result);
+        }
+    }
+
+#if 0
+    if (m_node->HasValue(prop_font))
+    {
+        FontProperty fontprop(m_node->get_prop_ptr(prop_font));
+    }
+#endif
 }

@@ -69,9 +69,6 @@ ttlib::cstr GetParentName(Node* node);
 void GeneratePosSizeFlags(Node* node, ttlib::cstr& code, bool uses_def_validator = false,
                           ttlib::sview def_style = tt_empty_cstr);
 
-// Generate any non-default wxWindow settings
-void GenerateWindowSettings(Node* node, ttlib::cstr& code);
-
 // Used for controls that need to call SetBitmap(bitmap). Returns true if wxVector generated.
 //
 // Set is_single to true for a non-button control.

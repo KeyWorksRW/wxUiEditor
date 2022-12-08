@@ -33,9 +33,7 @@ void Code::CheckLineBreak(size_t add_length)
 
     if (m_code.size() + add_length > m_break_at)
     {
-        m_code += (is_cpp() ? "\n\t\t" : "\n\t\t\t");
-        m_break_at += m_break_length;
-        m_minium_length += m_break_length;
+        Eol().Tab();
     }
 }
 
@@ -43,19 +41,53 @@ Code& Code::CheckLineLength()
 {
     if (m_code.size() > m_break_at)
     {
-        m_code += (is_cpp() ? "\n\t\t" : "\n\t\t\t");
-        m_break_at += m_break_length;
-        m_minium_length += m_break_length;
+        Eol().Tab();
     }
 
     return *this;
+}
+
+Code& Code::Eol(bool check_size)
+{
+    if (check_size)
+    {
+        if (m_code.size())
+            m_code += '\n';
+    }
+    else
+    {
+        m_code += '\n';
+    }
+
+    if (m_auto_break)
+    {
+        m_break_at = m_code.size() + m_break_length;
+        m_minium_length = m_code.size() + 10;
+    }
+    return *this;
+}
+
+void Code::InsertLineBreak(size_t cur_pos)
+{
+    ASSERT(cur_pos > 1 && cur_pos < m_code.size());
+    if (m_code[cur_pos - 1] == ' ')
+    {
+        m_code[cur_pos - 1] = '\n';
+        m_code.insert(cur_pos, "\t");
+    }
+    else
+    {
+        m_code.insert(cur_pos, "\n\t");
+    }
+    m_break_at = cur_pos + m_break_length;
+    m_minium_length = cur_pos + 10;
 }
 
 Code& Code::Tab(int tabs)
 {
     while (tabs)
     {
-        m_code << '\t';
+        m_code += '\t';
         --tabs;
     }
     return *this;
@@ -242,14 +274,7 @@ Code& Code::as_string(PropName prop_name)
 
     if (m_auto_break && m_code.size() > m_break_at)
     {
-        m_code.insert(cur_pos, (is_cpp() ? "\n\t\t" : "\n\t\t\t"));
-        do
-        {
-            // while extremely unlikely, we need to make sure we don't get stuck in an
-            // infinite loop with a very long string
-            m_break_at += m_break_length;
-            m_minium_length += m_break_length;
-        } while (m_code.size() > m_break_at);
+        InsertLineBreak(cur_pos);
     }
 
     return *this;
@@ -436,14 +461,7 @@ Code& Code::QuotedString(GenEnum::PropName prop_name)
 
     if (m_auto_break && m_code.size() > m_break_at)
     {
-        m_code.insert(cur_pos, (is_cpp() ? "\n\t\t" : "\n\t\t\t"));
-        do
-        {
-            // while extremely unlikely, we need to make sure we don't get stuck in an
-            // infinite loop with a very long string
-            m_break_at += m_break_length;
-            m_minium_length += m_break_length;
-        } while (m_code.size() > m_break_at);
+        InsertLineBreak(cur_pos);
     }
 
     return *this;
@@ -463,6 +481,7 @@ Code& Code::WxSize(GenEnum::PropName prop_name)
     bool dialog_units = m_node->value(prop_name).contains("d", tt::CASE::either);
     if (dialog_units)
     {
+        CheckLineBreak(sizeof("self.ConvertDialogToPixels(wxSize(999, 999))"));
         FormFunction("ConvertDialogToPixels(");
     }
 
@@ -474,14 +493,7 @@ Code& Code::WxSize(GenEnum::PropName prop_name)
 
     if (m_auto_break && m_code.size() > m_break_at)
     {
-        m_code.insert(cur_pos, (is_cpp() ? "\n\t\t" : "\n\t\t\t"));
-        do
-        {
-            // while extremely unlikely, we need to make sure we don't get stuck in an
-            // infinite loop with a very long string
-            m_break_at += m_break_length;
-            m_minium_length += m_break_length;
-        } while (m_code.size() > m_break_at);
+        InsertLineBreak(cur_pos);
     }
 
     return *this;
@@ -501,6 +513,7 @@ Code& Code::Pos(GenEnum::PropName prop_name)
     bool dialog_units = m_node->value(prop_name).contains("d", tt::CASE::either);
     if (dialog_units)
     {
+        CheckLineBreak(sizeof("self.ConvertDialogToPixels(wxPoint(999, 999))"));
         FormFunction("ConvertDialogToPixels(");
     }
 
@@ -512,14 +525,7 @@ Code& Code::Pos(GenEnum::PropName prop_name)
 
     if (m_auto_break && m_code.size() > m_break_at)
     {
-        m_code.insert(cur_pos, (is_cpp() ? "\n\t\t" : "\n\t\t\t"));
-        do
-        {
-            // while extremely unlikely, we need to make sure we don't get stuck in an
-            // infinite loop with a very long string
-            m_break_at += m_break_length;
-            m_minium_length += m_break_length;
-        } while (m_code.size() > m_break_at);
+        InsertLineBreak(cur_pos);
     }
 
     return *this;
@@ -552,7 +558,7 @@ Code& Code::Style(const char* prefix)
         if (style_set)
             m_code += '|';
         style_set = true;
-        m_code += is_cpp() ? "wxRE_MULTILINE" : "wx.RE_MULTILINE";
+        Add("wxRE_MULTILINE");
     }
 
     if (m_node->HasValue(prop_style))
@@ -615,14 +621,7 @@ Code& Code::Style(const char* prefix)
 
     if (m_auto_break && m_code.size() > m_break_at)
     {
-        m_code.insert(cur_pos, (is_cpp() ? "\n\t\t" : "\n\t\t\t"));
-        do
-        {
-            // while extremely unlikely, we need to make sure we don't get stuck in an
-            // infinite loop with a very long string
-            m_break_at += m_break_length;
-            m_minium_length += m_break_length;
-        } while (m_code.size() > m_break_at);
+        InsertLineBreak(cur_pos);
     }
 
     return *this;
@@ -633,12 +632,12 @@ Code& Code::PosSizeFlags(bool uses_def_validator, ttlib::sview def_style)
     if (m_node->HasValue(prop_window_name))
     {
         // Window name is always the last parameter, so if it is specified, everything has to be generated.
-        Comma().CheckLineLength();
-        Pos().Comma().CheckLineLength().WxSize().Comma().CheckLineLength();
+        Comma();
+        Pos().Comma().WxSize().Comma();
         Style();
         if (uses_def_validator)
-            Comma().CheckLineLength().Add("wxDefaultValidator");
-        Comma().CheckLineLength();
+            Comma().Add("wxDefaultValidator");
+        Comma();
         QuotedString(prop_window_name).EndFunction();
         return *this;
     }
@@ -650,8 +649,8 @@ Code& Code::PosSizeFlags(bool uses_def_validator, ttlib::sview def_style)
         m_node->isGen(gen_wxRichTextCtrl) || m_node->isGen(gen_wxRichTextCtrl) || m_node->HasValue(prop_window_style) ||
         m_node->isGen(gen_wxListView))
     {
-        Comma().CheckLineLength();
-        Pos().Comma().CheckLineLength().WxSize().Comma().CheckLineLength().Style();
+        Comma();
+        Pos().Comma().WxSize().Comma().Style();
         if (def_style.size() && m_code.ends_with(def_style))
         {
             m_code.erase(m_code.size() - def_style.size());
@@ -659,12 +658,12 @@ Code& Code::PosSizeFlags(bool uses_def_validator, ttlib::sview def_style)
     }
     else if (m_node->prop_as_wxSize(prop_size) != wxDefaultSize)
     {
-        Comma().CheckLineLength();
-        Pos().Comma().CheckLineLength().WxSize();
+        Comma();
+        Pos().Comma().WxSize();
     }
     else if (m_node->prop_as_wxPoint(prop_pos) != wxDefaultPosition)
     {
-        Comma().CheckLineLength();
+        Comma();
         Pos();
     }
     EndFunction();
@@ -805,14 +804,7 @@ Code& Code::GenSizerFlags()
 
     if (m_auto_break && m_code.size() > m_break_at)
     {
-        m_code.insert(cur_pos, (is_cpp() ? "\n\t\t" : "\n\t\t\t"));
-        do
-        {
-            // while extremely unlikely, we need to make sure we don't get stuck in an
-            // infinite loop with a very long string
-            m_break_at += m_break_length;
-            m_minium_length += m_break_length;
-        } while (m_code.size() > m_break_at);
+        InsertLineBreak(cur_pos);
     }
 
     return *this;

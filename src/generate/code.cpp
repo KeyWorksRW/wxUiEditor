@@ -199,7 +199,7 @@ Code& Code::Class(ttlib::sview text)
     return *this;
 }
 
-Code& Code::CreateClass(bool use_generic)
+Code& Code::CreateClass(bool use_generic, ttlib::sview override_name)
 {
     m_code << " = ";
     if (m_language == GEN_LANG_CPLUSPLUS)
@@ -213,7 +213,11 @@ Code& Code::CreateClass(bool use_generic)
         }
     }
 
-    ttlib::cstr class_name = m_node->DeclName();
+    ttlib::cstr class_name;
+    if (override_name.empty())
+         class_name = m_node->DeclName();
+    else
+        class_name = override_name;
     if (use_generic)
     {
         class_name.Replace("wx", "wxGeneric");
@@ -586,9 +590,14 @@ Code& Code::Pos(GenEnum::PropName prop_name)
     return *this;
 }
 
-Code& Code::Style(const char* prefix)
+Code& Code::Style(const char* prefix, ttlib::sview force_style)
 {
     bool style_set = false;
+    if (force_style.size())
+    {
+        Add(force_style);
+        style_set = true;
+    }
 
     if (m_node->HasValue(prop_tab_position) && !m_node->prop_as_string(prop_tab_position).is_sameas("wxBK_DEFAULT"))
     {
@@ -728,6 +737,29 @@ Code& Code::PosSizeFlags(bool uses_def_validator, ttlib::sview def_style)
     {
         Comma();
         Pos();
+    }
+    EndFunction();
+    return *this;
+}
+
+Code& Code::PosSizeForceStyle(ttlib::sview force_style, bool uses_def_validator)
+{
+    if (m_node->HasValue(prop_window_name))
+    {
+        // Window name is always the last parameter, so if it is specified, everything has to be generated.
+        Comma();
+        Pos().Comma().WxSize().Comma();
+        Style(nullptr, force_style);
+        if (uses_def_validator)
+            Comma().Add("wxDefaultValidator");
+        Comma();
+        QuotedString(prop_window_name).EndFunction();
+        return *this;
+    }
+    else
+    {
+        Comma();
+        Pos().Comma().WxSize().Comma().Style(nullptr, force_style);
     }
     EndFunction();
     return *this;

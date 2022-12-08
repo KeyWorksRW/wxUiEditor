@@ -108,7 +108,8 @@ public:
     // Adds " = new wxClass(" or " = wx.Class('.
     // Adds wxGeneric prefix if use_generic is true.
     // Creates wxPanel if node is a book page.
-    Code& CreateClass(bool use_generic = false);
+    // Specify override_name to override node->DeclName()
+    Code& CreateClass(bool use_generic = false, ttlib::sview override_name = tt_empty_cstr);
 
     // m_code << m_node->get_node_name();
     Code& NodeName();
@@ -145,16 +146,19 @@ public:
     // Will either generate wxPoint(...) or ConvertDialogToPixels(wxPoint(...))
     Code& Pos(GenEnum::PropName prop_name = GenEnum::PropName::prop_pos);
 
-    // Check for pos, size, flags, window_flags, and window name, and generate code if needed
+    // Check for pos, size, style, window_style, and window name, and generate code if needed
     // starting with a comma, e.g. -- ", wxPoint(x, y), wxSize(x, y), styles, name);"
     //
     // If the only style specified is def_style, then it will not be added.
     Code& PosSizeFlags(bool uses_def_validator = false, ttlib::sview def_style = tt_empty_cstr);
 
+    // Call this when you need to force a specific style such as "wxCHK_3STATE"
+    Code& PosSizeForceStyle(ttlib::sview force_style, bool uses_def_validator = true);
+
     // This will output "0" if there are no styles (style, window_style, tab_position etc.)
     //
     // If style is a friendly name, add the prefix parameter to prefix lookups.
-    Code& Style(const char* prefix = nullptr);
+    Code& Style(const char* prefix = nullptr, ttlib::sview force_style = tt_empty_cstr);
 
     // Generates code for prop_window_extra_style, prop_background_colour,
     // prop_foreground_colour, prop_disabled, prop_hidden, prop_maximum_size, prop_variant,

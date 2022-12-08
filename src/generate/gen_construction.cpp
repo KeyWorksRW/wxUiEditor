@@ -631,7 +631,7 @@ void BaseCodeGenerator::GenParentSizer(Node* node, bool need_closing_brace)
         }
         else
         {
-            code << GenerateSizerFlags(m_language, node);
+            code.GenSizerFlags();
             code.EndFunction();
         }
     }

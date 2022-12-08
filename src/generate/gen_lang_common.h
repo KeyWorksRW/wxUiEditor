@@ -21,7 +21,3 @@ ttlib::cstr GetPythonName(ttlib::sview name);
 //
 // Will return "wxEmptyString" if prop_name is empty.
 ttlib::cstr GeneratePythonQuotedString(const ttlib::cstr& str);
-
-// Generate wxSizerFlags() function based on prop_proportion, prop_alignment, prop_flags,
-// prop_borders and prop_border_size
-ttlib::cstr GenerateSizerFlags(int language, Node* node);

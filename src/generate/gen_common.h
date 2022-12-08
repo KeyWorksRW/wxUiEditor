@@ -34,10 +34,6 @@ inline void AddBitFlag(ttlib::cstr& strFlags, ttlib::sview flag)
     strFlags << flag;
 }
 
-// Generate wxSizerFlags() function based on prop_proportion, prop_alignment, prop_flags,
-// prop_borders and prop_border_size
-ttlib::cstr GenerateSizerFlags(Node* node);
-
 // Places the string in wxString::FromUTF8(), adds C++ escapes around any characters the
 // compiler wouldn't accept as a normal part of a string, and wraps it all in _() if
 // prop_internationalize is true.

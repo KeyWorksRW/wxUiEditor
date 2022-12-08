@@ -84,7 +84,7 @@ public:
     // Code will be written with indent::auto_keep_whitespace set
     virtual std::optional<ttlib::sview> CommonAfterChildren(Code&) { return {}; }
 
-    virtual std::optional<ttlib::sview> CommonSettings(Code&, size_t& /* auto_indent */) { return {}; }
+    virtual std::optional<ttlib::sview> CommonSettings(Code&) { return {}; }
     virtual std::optional<ttlib::sview> CommonAdditionalCode(Code&, GenEnum::GenCodeType /* command */) { return {}; }
 
     // Generate the C++ code used to construct the object.

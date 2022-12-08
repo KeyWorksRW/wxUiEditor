@@ -110,7 +110,7 @@ std::optional<ttlib::sview> TextCtrlGenerator::CommonConstruction(Code& code)
     return code.m_code;
 }
 
-std::optional<ttlib::sview> TextCtrlGenerator::CommonSettings(Code& code, size_t& auto_indent)
+std::optional<ttlib::sview> TextCtrlGenerator::CommonSettings(Code& code)
 {
     if (code.HasValue(prop_hint))
     {
@@ -120,8 +120,6 @@ std::optional<ttlib::sview> TextCtrlGenerator::CommonSettings(Code& code, size_t
     if (code.IsTrue(prop_focus))
     {
         code.Eol(true);
-        if (!auto_indent)
-            code.Tab(code.is_cpp() ? 1 : 2);
         code.NodeName().Function("SetFocus(").EndFunction();
     }
     if (code.IsTrue(prop_maxlength))

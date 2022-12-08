@@ -440,7 +440,7 @@ void BaseCodeGenerator::GenSettings(Node* node)
     auto generator = node->GetGenerator();
 
     Code gen_code(node, m_language);
-    auto scode = generator->CommonSettings(gen_code, auto_indent);
+    auto scode = generator->CommonSettings(gen_code);
     std::optional<ttlib::cstr> result;
 
     if (!scode)

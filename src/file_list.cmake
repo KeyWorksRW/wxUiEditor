@@ -84,18 +84,21 @@ set (file_list
 
     generate/gen_activity.cpp       # wxActivityIndicator generator
     generate/gen_animation.cpp      # wxAnimationCtrl generator
-    generate/gen_aui_toolbar.cpp    # wxAuiToolBar generator
     generate/gen_banner_window.cpp  # wxBannerWindow generator
-    generate/gen_bitmap_combo.cpp   # wxBitmapComboBox generator
-    generate/gen_button.cpp         # wxButton generator
     generate/gen_calendar_ctrl.cpp  # wxCalendarCtrl generator
-    generate/gen_check_listbox.cpp  # wxCheckListBox generator
     generate/gen_checkbox.cpp       # wxCheckBox generator
     generate/gen_choice.cpp         # wxChoice generator
     generate/gen_close_btn.cpp      # wxBitmapButton::CreateCloseButton generator
+    generate/gen_combobox.cpp       # wxComboBox generator
+    generate/gen_static_text.cpp    # wxStaticText generator
+    generate/gen_text_ctrl.cpp      # wxTextCtrl generator
+
+    generate/gen_aui_toolbar.cpp    # wxAuiToolBar generator
+    generate/gen_bitmap_combo.cpp   # wxBitmapComboBox generator
+    generate/gen_button.cpp         # wxButton generator
+    generate/gen_check_listbox.cpp  # wxCheckListBox generator
     generate/gen_cmd_link_btn.cpp   # wxCommandLinkButton generator
     generate/gen_collapsible.cpp    # wxCollapsiblePane generator
-    generate/gen_combobox.cpp       # wxComboBox generator
     generate/gen_custom_ctrl.cpp    # Custom Control generator
     generate/gen_dir_ctrl.cpp       # wxGenericDirCtrl generator
     generate/gen_edit_listbox.cpp   # wxEditableListBox generator
@@ -124,9 +127,7 @@ set (file_list
     generate/gen_static_bmp.cpp     # wxStaticBitmap generator
     generate/gen_static_box.cpp     # wxStaticBox generator
     generate/gen_static_line.cpp    # wxStaticLine generator
-    generate/gen_static_text.cpp    # wxStaticText generator
     generate/gen_status_bar.cpp     # wxStatusBar generator
-    generate/gen_text_ctrl.cpp      # wxTextCtrl generator
     generate/gen_toggle_btn.cpp     # wxToggleButton generator
     generate/gen_toolbar.cpp        # wxToolBar generator
     generate/gen_tree_ctrl.cpp      # wxTreeCtrl generator

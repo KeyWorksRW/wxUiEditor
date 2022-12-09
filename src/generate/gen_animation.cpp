@@ -8,6 +8,7 @@
 #include <wx/animate.h>          // wxAnimation and wxAnimationCtrl
 #include <wx/generic/animate.h>  // wxGenericAnimationCtrl
 
+#include "code.h"           // Code -- Helper class for generating code
 #include "gen_common.h"     // GeneratorLibrary -- Generator classes
 #include "gen_xrc_utils.h"  // Common XRC generating functions
 #include "node.h"           // Node class
@@ -46,17 +47,16 @@ wxObject* AnimationGenerator::CreateMockup(Node* node, wxObject* parent)
     }
 }
 
-std::optional<ttlib::cstr> AnimationGenerator::GenConstruction(Node* node)
+std::optional<ttlib::sview> AnimationGenerator::CommonConstruction(Code& code)
 {
-    ttlib::cstr code;
-    if (node->IsLocal())
+    if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
-    code << node->get_node_name() << GenerateNewAssignment(node, node->as_bool(prop_use_generic));
-    code << GetParentName(node) << ", " << node->prop_as_string(prop_id) << ", ";
-
-    if (node->HasValue(prop_animation))
+    code.NodeName().CreateClass();
+    code.GetParentName().Comma().as_string(prop_id).Comma().CheckLineLength();
+    // TODO: [Randalphwa - 12-08-2022] Enable Python support once image handling is worked out
+    if (code.HasValue(prop_animation) && code.is_cpp())
     {
-        ttlib::multiview parts(node->prop_as_string(prop_animation), ';');
+        ttlib::multiview parts(code.node()->as_string(prop_animation), ';');
         ttlib::cstr name(parts[IndexImage].filename());
         name.remove_extension();
         name.LeftTrim();
@@ -73,31 +73,24 @@ std::optional<ttlib::cstr> AnimationGenerator::GenConstruction(Node* node)
     }
     else
     {
-        code << "wxNullAnimation";
+        code.Add("wxNullAnimation");
     }
-
-    GeneratePosSizeFlags(node, code, false, "wxAC_DEFAULT_STYLE");
-    if (node->HasValue(prop_inactive_bitmap))
+    code.PosSizeFlags(false);
+    if (code.HasValue(prop_inactive_bitmap) && code.is_cpp())
     {
-        code << "\n\t" << node->get_node_name() << "->SetInactiveBitmap(";
-        code << GenerateBitmapCode(node->prop_as_string(prop_inactive_bitmap)) << ");";
+        code.Eol().NodeName().Function("SetInactiveBitmap(");
+        code.m_code << GenerateBitmapCode(code.node()->as_string(prop_inactive_bitmap));
+        code.EndFunction();
     }
 
-    return code;
+    return code.m_code;
 }
 
-std::optional<ttlib::cstr> AnimationGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
+std::optional<ttlib::sview> AnimationGenerator::CommonSettings(Code& code)
 {
-    if (node->prop_as_bool(prop_play))
-    {
-        ttlib::cstr code;
-        code << node->get_node_name() << "->Play();";
-        return code;
-    }
-    else
-    {
-        return {};
-    }
+    if (code.IsTrue(prop_play))
+        code.NodeName().Function("Play(").EndFunction();
+    return code.m_code;
 }
 
 int AnimationGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
@@ -158,5 +151,11 @@ bool AnimationGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
     InsertGeneratorInclude(node, "#include <wx/animate.h>", set_src, set_hdr);
     if (node->as_bool(prop_use_generic))
         InsertGeneratorInclude(node, "#include <wx/generic/animate.h>", set_src, set_hdr);
+    return true;
+}
+
+bool AnimationGenerator::GetPythonImports(Node*, std::set<std::string>& set_imports)
+{
+    set_imports.insert("import wx.adv");
     return true;
 }

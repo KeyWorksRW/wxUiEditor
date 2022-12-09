@@ -7,6 +7,7 @@
 
 #include <wx/bmpbuttn.h>  // wxBitmapButton class interface
 
+#include "code.h"           // Code -- Helper class for generating code
 #include "gen_common.h"     // GeneratorLibrary -- Generator classes
 #include "gen_xrc_utils.h"  // Common XRC generating functions
 #include "node.h"           // Node class
@@ -25,23 +26,17 @@ wxObject* CloseButtonGenerator::CreateMockup(Node* /* node */, wxObject* parent)
     return widget;
 }
 
-std::optional<ttlib::cstr> CloseButtonGenerator::GenConstruction(Node* node)
+std::optional<ttlib::sview> CloseButtonGenerator::CommonConstruction(Code& code)
 {
-    ttlib::cstr code;
-    if (node->IsLocal())
+    if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
-    code << node->get_node_name() << " = new wxBitmapButton;\n";
-    code << node->get_node_name() << "->CreateCloseButton(" << GetParentName(node) << ", ";
-    if (!node->HasValue(prop_id))
-    {
-        code << "wxID_ANY);";
-    }
-    else
-    {
-        code << node->prop_as_string(prop_id) << ");";
-    }
+    code.NodeName().Add(" = ").Add("wxBitmapButton") << (code.is_cpp() ? "::" : ".");
+    code.Add("NewCloseButton(").GetParentName().Comma().as_string(prop_id);
+    if (code.HasValue(prop_window_name))
+        code.Comma().QuotedString(prop_window_name);
+    code.EndFunction();
 
-    return code;
+    return code.m_code;
 }
 
 bool CloseButtonGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)

@@ -7,6 +7,7 @@
 
 #include <wx/checkbox.h>  // wxCheckBox class interface
 
+#include "code.h"        // Code -- Helper class for generating code
 #include "gen_common.h"  // GeneratorLibrary -- Generator classes
 #include "node.h"        // Node class
 #include "utils.h"       // Utility functions that work with properties
@@ -47,37 +48,22 @@ bool CheckBoxGenerator::OnPropertyChange(wxObject* widget, Node* node, NodePrope
     return false;
 }
 
-std::optional<ttlib::cstr> CheckBoxGenerator::GenConstruction(Node* node)
+std::optional<ttlib::sview> CheckBoxGenerator::CommonConstruction(Code& code)
 {
-    ttlib::cstr code;
-    if (node->IsLocal())
+    if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
-    code << node->get_node_name() << GenerateNewAssignment(node);
-    code << GetParentName(node) << ", " << node->prop_as_string(prop_id) << ", ";
+    code.NodeName().CreateClass();
+    code.GetParentName().Comma().as_string(prop_id).Comma().QuotedString(prop_label);
+    code.PosSizeFlags(true);
 
-    auto& label = node->prop_as_string(prop_label);
-    if (label.size())
-    {
-        code << GenerateQuotedString(label);
-    }
-    else
-    {
-        code << "wxEmptyString";
-    }
-
-    GeneratePosSizeFlags(node, code);
-
-    return code;
+    return code.m_code;
 }
 
-std::optional<ttlib::cstr> CheckBoxGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
+std::optional<ttlib::sview> CheckBoxGenerator::CommonSettings(Code& code)
 {
-    ttlib::cstr code;
-
-    if (node->prop_as_bool(prop_checked))
-        code << node->get_node_name() << "->SetValue(true);";
-
-    return code;
+    if (code.IsTrue(prop_checked))
+        code.NodeName().Function("SetValue(true").EndFunction();
+    return code.m_code;
 }
 
 bool CheckBoxGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
@@ -156,61 +142,30 @@ bool Check3StateGenerator::OnPropertyChange(wxObject* widget, Node* node, NodePr
     return false;
 }
 
-std::optional<ttlib::cstr> Check3StateGenerator::GenConstruction(Node* node)
+std::optional<ttlib::sview> Check3StateGenerator::CommonConstruction(Code& code)
 {
-    ttlib::cstr code;
-    if (node->IsLocal())
+    if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
-    code << node->get_node_name() << " = new wxCheckBox(";
-    code << GetParentName(node) << ", " << node->prop_as_string(prop_id) << ", ";
+    code.NodeName().CreateClass(false, "wxCheckBox");
+    code.GetParentName().Comma().as_string(prop_id).Comma().QuotedString(prop_label);
+    code.PosSizeForceStyle("wxCHK_3STATE");
 
-    auto& label = node->prop_as_string(prop_label);
-    if (label.size())
-    {
-        code << GenerateQuotedString(label);
-    }
-    else
-    {
-        code << "wxEmptyString";
-    }
-
-    code << ", ";
-    GenPos(node, code);
-    code << ", ";
-    GenSize(node, code);
-    code << ", ";
-    code << "wxCHK_3STATE";
-    auto& style = node->prop_as_string(prop_style);
-    if (style.size())
-        code << '|' << style;
-    auto& win_style = node->prop_as_string(prop_window_style);
-    if (win_style.size())
-        code << '|' << win_style;
-    auto& win_name = node->prop_as_string(prop_window_name);
-    if (win_name.size())
-    {
-        code << ", wxDefaultValidator, " << node->prop_as_string(prop_window_name);
-    }
-    code << ");";
-
-    return code;
+    return code.m_code;
 }
 
-std::optional<ttlib::cstr> Check3StateGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
+std::optional<ttlib::sview> Check3StateGenerator::CommonSettings(Code& code)
 {
-    ttlib::cstr code;
-
-    auto& state = node->prop_as_string(prop_initial_state);
+    auto& state = code.node()->as_string(prop_initial_state);
     if (state == "wxCHK_CHECKED")
     {
-        code << node->get_node_name() << "->Set3StateValue(wxCHK_CHECKED);";
+        code.NodeName().Function("Set3StateValue(").Add("wxCHK_CHECKED").EndFunction();
     }
     else if (state == "wxCHK_UNDETERMINED")
     {
-        code << node->get_node_name() << "->Set3StateValue(wxCHK_UNDETERMINED);";
+        code.NodeName().Function("Set3StateValue(").Add("wxCHK_UNDETERMINED").EndFunction();
     }
 
-    return code;
+    return code.m_code;
 }
 
 bool Check3StateGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)

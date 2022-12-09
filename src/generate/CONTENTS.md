@@ -59,18 +59,18 @@ The following tables list classes, objects and functions that wxUiEditor can gen
 
 | Class | C++ | Python | XRC |file |
 -----------|-----|--------|------|------|
-| wxActivityIndicator | yes |  ?? | yes | gen_activity.cpp |
-| wxAnimationCtrl | yes |  ?? | yes | gen_animation.cpp |
+| wxActivityIndicator | yes |  yes | yes | gen_activity.cpp |
+| wxAnimationCtrl | yes |  yes | yes | gen_animation.cpp |
 | wxAuiToolBar | yes |  ?? | yes | gen_aui_toolbar.cpp |
-| wxBannerWindow | yes |  ?? | yes | gen_banner_window.cpp |
+| wxBannerWindow | yes |  yes | yes | gen_banner_window.cpp |
 | wxBitmapComboBox | yes |  ?? | yes | gen_bitmap_combo.cpp |
 | wxButton | yes |  ?? | yes | gen_button.cpp |
 | wxCalendarCtrl | yes |  ?? | yes | gen_calendar_ctrl.cpp |
-| wxCheckBox | yes |  ?? | yes | gen_checkbox.cpp |
+| wxCheckBox | yes |  yes | yes | gen_checkbox.cpp |
 | wxCheckListBox | yes |  ?? | yes | gen_check_listbox.cpp |
-| wxChoice | yes |  ?? | yes | gen_choice.cpp |
+| wxChoice | yes |  yes | yes | gen_choice.cpp |
 | wxCollapsiblePane | yes |  ?? | yes | gen_collapsible.cpp |
-| wxComboBox | yes |  ?? | yes | gen_combobox.cpp |
+| wxComboBox | yes |  yes | yes | gen_combobox.cpp |
 | wxCommandLinkButton | yes |  ?? | yes | gen_cmd_link_btn.cpp |
 | wxDataViewCtrl | yes |  ?? | yes | dataview_widgets.cpp |
 | wxDataViewListCtrl | yes |  ?? | yes | dataview_widgets.cpp |
@@ -113,7 +113,7 @@ The following tables list classes, objects and functions that wxUiEditor can gen
 | wxStaticBitmap | yes |  ?? | yes | gen_static_bmp.cpp |
 | wxStaticBox | yes |  ?? | yes | gen_static_box.cpp |
 | wxStaticLine | yes |  ?? | yes | gen_static_line.cpp |
-| wxStaticText | yes |  ?? | yes | gen_static_text.cpp |
+| wxStaticText | yes |  yes | yes | gen_static_text.cpp |
 | wxStatusBar | yes |  ?? | yes | gen_status_bar.cpp |
 | wxStyledTextCtrl | yes |  ?? | yes | styled_text.cpp |
 | wxTextCtrl | yes |  ?? | yes | gen_text_ctrl.cpp |
@@ -134,10 +134,10 @@ The following tables list classes, objects and functions that wxUiEditor can gen
 | AuiToolStretchSpacer | yes |  ?? | yes | gen_aui_toolbar.cpp |
 | BookPage | yes |  ?? | yes | gen_book_page.cpp |
 | Check3State | yes |  ?? | yes | gen_checkbox.cpp |
-| CreateCloseButton | yes |  ?? | yes | gen_close_btn.cpp |
 | CustomControl | yes |  ?? | yes | gen_custom_ctrl.cpp |
 | DataViewColumn | yes |  ?? | yes | dataview_widgets.cpp |
 | DataViewListColumn | yes |  ?? | yes | dataview_widgets.cpp |
+| NewCloseButton | yes |  yes | yes | gen_close_btn.cpp |
 | PageCtrl | yes |  ?? | no | gen_page_ctrl.cpp |
 | PropertyGridItem | yes |  ?? | no | gen_prop_item.cpp |
 | PropertyGridPage | yes |  ?? | no | grid_widgets.cpp |

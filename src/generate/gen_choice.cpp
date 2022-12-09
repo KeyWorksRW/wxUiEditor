@@ -7,6 +7,7 @@
 
 #include <wx/choice.h>  // wxChoice class interface
 
+#include "code.h"           // Code -- Helper class for generating code
 #include "gen_common.h"     // GeneratorLibrary -- Generator classes
 #include "gen_xrc_utils.h"  // Common XRC generating functions
 #include "node.h"           // Node class
@@ -14,8 +15,6 @@
 #include "utils.h"          // Utility functions that work with properties
 
 #include "gen_choice.h"
-
-//////////////////////////////////////////  ChoiceGenerator  //////////////////////////////////////////
 
 wxObject* ChoiceGenerator::CreateMockup(Node* node, wxObject* parent)
 {
@@ -63,88 +62,74 @@ bool ChoiceGenerator::OnPropertyChange(wxObject* widget, Node* node, NodePropert
     return false;
 }
 
-std::optional<ttlib::cstr> ChoiceGenerator::GenConstruction(Node* node)
+std::optional<ttlib::sview> ChoiceGenerator::CommonConstruction(Code& code)
 {
-    ttlib::cstr code;
-    if (node->IsLocal())
+    if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
-    code << node->get_node_name() << GenerateNewAssignment(node);
-    code << GetParentName(node) << ", " << node->prop_as_string(prop_id);
-
-    if (node->prop_as_string(prop_window_name).empty() && node->prop_as_string(prop_style).empty() &&
-        node->prop_as_string(prop_window_style).empty())
+    code.NodeName().CreateClass();
+    code.GetParentName().Comma().as_string(prop_id);
+    if (code.HasValue(prop_style))
     {
-        GeneratePosSizeFlags(node, code);
+        code.Comma().CheckLineLength().Pos().Comma().CheckLineLength().WxSize().Comma().CheckLineLength();
+        if (code.is_cpp())
+            code << "0, nullptr";
+        else
+            code.Add("[]");
+        code.Comma().Style().EndFunction();
     }
     else
     {
-        // We have to generate a default validator before the window name, which GeneratePosSizeFlags doesn't do. We don't
-        // actually need that validator, since GenSettings will create it, but we have to supply something before the window
-        // name.
-
-        code << ", ";
-        GenPos(node, code);
-        code << ", ";
-        GenSize(node, code);
-        code << ", 0, nullptr, ";
-        GenStyle(node, code);
-        if (node->HasValue(prop_window_name))
-        {
-            code << ", wxDefaultValidator, " << node->prop_as_string(prop_window_name);
-        }
-        code << ");";
+        code.PosSizeFlags(true);
     }
 
-    return code;
+    return code.m_code;
 }
 
-std::optional<ttlib::cstr> ChoiceGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
+std::optional<ttlib::sview> ChoiceGenerator::CommonSettings(Code& code)
 {
-    ttlib::cstr code;
-
-    if (node->prop_as_bool(prop_focus))
+    if (code.IsTrue(prop_focus))
     {
-        if (code.size())
-            code << '\n';
-        code << node->get_node_name() << "->SetFocus()";
+        code.Eol(true);
+        code.NodeName().Function("SetFocus(").EndFunction();
     }
 
-    if (node->HasValue(prop_contents))
+    if (code.HasValue(prop_contents))
     {
-        auto array = ConvertToArrayString(node->prop_as_string(prop_contents));
+        auto array = ConvertToArrayString(code.node()->as_string(prop_contents));
         for (auto& iter: array)
         {
-            if (code.size())
-                code << "\n";
-            code << node->get_node_name() << "->Append(" << GenerateQuotedString(iter) << ");";
+            code.Eol(true).NodeName().Function("Append(").QuotedString(iter).EndFunction();
         }
 
-        if (node->HasValue(prop_selection_string))
+        if (code.HasValue(prop_selection_string))
         {
-            code << "\n";
-            if (node->HasValue(prop_validator_variable))
+            code.Eol(true);
+            if (code.HasValue(prop_validator_variable))
             {
-                code << node->prop_as_string(prop_validator_variable) << " = ";
-                code << GenerateQuotedString(node, prop_selection_string) << ";  // set validator variable";
+                code.as_string(prop_validator_variable) << " = ";
+                code.QuotedString(prop_selection_string);
+                if (code.is_cpp())
+                    code << ";  // set validator variable";
+                else
+                    code << "  # set validator variable";
             }
             else
             {
-                code << node->get_node_name() << "->SetStringSelection(";
-                code << GenerateQuotedString(node, prop_selection_string) << ");";
+                code.NodeName().Function("SetStringSelection(");
+                code.QuotedString(prop_selection_string).EndFunction();
             }
         }
         else
         {
-            int sel = node->prop_as_int(prop_selection_int);
+            int sel = code.node()->as_int(prop_selection_int);
             if (sel > -1 && sel < (to_int) array.size())
             {
-                code << "\n";
-                code << node->get_node_name() << "->SetSelection(" << node->prop_as_string(prop_selection_int) << ");";
+                code.Eol(true).NodeName().Function("SetSelection(").as_string(prop_selection_int).EndFunction();
             }
         }
     }
 
-    return code;
+    return code.m_code;
 }
 
 bool ChoiceGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)

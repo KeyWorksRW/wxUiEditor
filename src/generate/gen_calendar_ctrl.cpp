@@ -13,6 +13,8 @@
 #include "pugixml.hpp"      // xml read/write/create/process
 #include "utils.h"          // Utility functions that work with properties
 
+#include "code.h"  // Code -- Helper class for generating code
+
 #include "gen_calendar_ctrl.h"
 
 //////////////////////////////////////////  CalendarCtrlGenerator  //////////////////////////////////////////
@@ -27,41 +29,35 @@ wxObject* CalendarCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
     return widget;
 }
 
-std::optional<ttlib::cstr> CalendarCtrlGenerator::GenConstruction(Node* node)
+std::optional<ttlib::sview> CalendarCtrlGenerator::CommonConstruction(Code& code)
 {
-    ttlib::cstr code;
-    if (node->IsLocal())
+    if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
-    code << node->get_node_name() << GenerateNewAssignment(node);
-    code << GetParentName(node) << ", " << node->prop_as_string(prop_id) << ", wxDefaultDateTime";
-    GeneratePosSizeFlags(node, code, false, "wxCAL_SHOW_HOLIDAYS");
+    code.NodeName().CreateClass();
+    code.GetParentName().Comma().as_string(prop_id).Comma().Add("wxDefaultDateTime");
+    code.PosSizeFlags(true);
 
-    code.Replace(", wxDefaultDateTime);", ");");
-
-    return code;
+    return code.m_code;
 }
 
-std::optional<ttlib::cstr> CalendarCtrlGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
+std::optional<ttlib::sview> CalendarCtrlGenerator::CommonSettings(Code& code)
 {
-    ttlib::cstr code;
-
-    if (node->prop_as_bool(prop_focus))
+    if (code.IsTrue(prop_focus))
     {
-        if (code.size())
-            code << '\n';
-        code << node->get_node_name() << "->SetFocus()";
+        code.NodeName().Function("SetFocus(").EndFunction();
     }
-
-    if (code.size())
-        return code;
-    else
-
-        return {};
+    return code.m_code;
 }
 
 bool CalendarCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
     InsertGeneratorInclude(node, "#include <wx/calctrl.h>", set_src, set_hdr);
+    return true;
+}
+
+bool CalendarCtrlGenerator::GetPythonImports(Node*, std::set<std::string>& set_imports)
+{
+    set_imports.insert("import wx.adv");
     return true;
 }
 

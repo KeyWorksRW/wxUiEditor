@@ -7,6 +7,7 @@
 
 #include <wx/bannerwindow.h>  // wxBannerWindow class declaration
 
+#include "code.h"           // Code -- Helper class for generating code
 #include "gen_common.h"     // GeneratorLibrary -- Generator classes
 #include "gen_xrc_utils.h"  // Common XRC generating functions
 #include "node.h"           // Node class
@@ -41,15 +42,64 @@ wxObject* BannerWindowGenerator::CreateMockup(Node* node, wxObject* parent)
     return widget;
 }
 
-std::optional<ttlib::cstr> BannerWindowGenerator::GenConstruction(Node* node)
+std::optional<ttlib::sview> BannerWindowGenerator::CommonConstruction(Code& code)
 {
-    ttlib::cstr code;
-    if (node->IsLocal())
+    if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
-    code << node->get_node_name() << GenerateNewAssignment(node);
-    code << GetParentName(node) << ", " << node->prop_as_string(prop_direction) << ");";
+    code.NodeName().CreateClass();
+    code.GetParentName().Comma().as_string(prop_id).Comma().as_string(prop_direction);
+    code.PosSizeFlags(true);
 
-    return code;
+    return code.m_code;
+}
+
+std::optional<ttlib::sview> BannerWindowGenerator::CommonSettings(Code& code)
+{
+    if (code.HasValue(prop_bitmap) && code.is_cpp())
+    {
+        ttlib::cstr tmp;
+        GenBtnBimapCode(code.node(), tmp, true);
+        code << tmp;
+    }
+    else if (code.HasValue(prop_start_colour) && code.HasValue(prop_end_colour))
+    {
+        auto& start_colour = code.node()->as_string(prop_start_colour);
+        code.NodeName().Function("SetGradient(");
+        if (start_colour.contains("wx"))
+        {
+            code.Add("wxSystemSettings").Add(code.is_cpp() ? "::" : ".").Add("GetColour(").Add(start_colour) << ")";
+        }
+        else
+        {
+            wxColour colour = ConvertToColour(start_colour);
+            ttlib::cstr clr_format;
+            clr_format.Format("wxColour(%i, %i, %i)", colour.Red(), colour.Green(), colour.Blue());
+            code.Add(clr_format);
+        }
+
+        code.Comma().CheckLineLength();
+
+        auto& end_colour = code.node()->as_string(prop_end_colour);
+        if (end_colour.contains("wx"))
+            code.Add("wxSystemSettings").Add(code.is_cpp() ? "::" : ".").Add("GetColour(").Add(end_colour) << ")";
+        else
+        {
+            wxColour colour = ConvertToColour(end_colour);
+            ttlib::cstr clr_format;
+            clr_format.Format("wxColour(%i, %i, %i)", colour.Red(), colour.Green(), colour.Blue());
+            code.Add(clr_format);
+        }
+        code.EndFunction();
+    }
+
+    if (code.HasValue(prop_title) || code.HasValue(prop_message))
+    {
+        code.Eol(true);
+        code.NodeName().Function("->SetText(").QuotedString(prop_title).Comma();
+        code.QuotedString(prop_message).EndFunction();
+    }
+
+    return code.m_code;
 }
 
 std::optional<ttlib::cstr> BannerWindowGenerator::GenSettings(Node* node, size_t& auto_indent)
@@ -102,6 +152,12 @@ std::optional<ttlib::cstr> BannerWindowGenerator::GenSettings(Node* node, size_t
 bool BannerWindowGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
     InsertGeneratorInclude(node, "#include <wx/bannerwindow.h>", set_src, set_hdr);
+    return true;
+}
+
+bool BannerWindowGenerator::GetPythonImports(Node*, std::set<std::string>& set_imports)
+{
+    set_imports.insert("import wx.adv");
     return true;
 }
 

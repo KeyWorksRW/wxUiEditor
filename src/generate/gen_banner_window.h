@@ -13,9 +13,12 @@ class BannerWindowGenerator : public BaseGenerator
 {
 public:
     wxObject* CreateMockup(Node* node, wxObject* parent) override;
-    std::optional<ttlib::cstr> GenConstruction(Node* node) override;
+    std::optional<ttlib::sview> CommonConstruction(Code& code) override;
+    std::optional<ttlib::sview> CommonSettings(Code&) override;
+
     std::optional<ttlib::cstr> GenSettings(Node* node, size_t& auto_indent) override;
     bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr) override;
+    bool GetPythonImports(Node*, std::set<std::string>& set_imports) override;
 
     int GenXrcObject(Node*, pugi::xml_node& /* object */, size_t /* xrc_flags */) override;
     void RequiredHandlers(Node*, std::set<std::string>& /* handlers */) override;

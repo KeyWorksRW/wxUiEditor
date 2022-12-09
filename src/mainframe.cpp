@@ -86,7 +86,8 @@ enum
     id_XrcPreviewDlg,
     id_CompareXrcDlg,
     id_MockupPreview,
-    id_FindWidget
+    id_FindWidget,
+    id_GeneratePython,
 };
 
 const char* txtEmptyProject = "Empty Project";
@@ -169,6 +170,7 @@ MainFrame::MainFrame() :
     menuInternal->Append(id_ShowLogger, "Show &Log Window", "Show window containing debug messages");
     menuInternal->Append(id_DebugPreferences, "Test &Settings...", "Settings to use in testing builds");
     menuInternal->AppendSeparator();
+    menuInternal->Append(id_GeneratePython, "&Generate Python\tF7", "Generate all python files from current project.");
     menuInternal->Append(id_DebugCurrentTest, "&Current Test", "Current debugging test");
 
     ////////////////////// Debug-only menu items //////////////////////
@@ -337,6 +339,7 @@ MainFrame::MainFrame() :
         },
         id_DebugPreferences);
 
+    Bind(wxEVT_MENU, &MainFrame::OnGeneratePython, this, id_GeneratePython);
     Bind(wxEVT_MENU, &App::DbgCurrentTest, &wxGetApp(), id_DebugCurrentTest);
 #endif
 

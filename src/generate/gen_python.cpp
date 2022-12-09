@@ -26,6 +26,34 @@
 // defined in gen_xrc.cpp
 int GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags);
 
+#if defined(_DEBUG) || defined(INTERNAL_TESTING)
+
+void MainFrame::OnGeneratePython(wxCommandEvent& WXUNUSED(event))
+{
+    GenResults results;
+    GeneratePythonFiles(results);
+
+    if (results.msgs.size())
+    {
+        ttlib::cstr msg;
+        if (results.updated_files.size())
+        {
+            if (results.updated_files.size() == 1)
+                msg << "1 file was updated";
+            else
+                msg << " files were updated";
+        }
+        else if (results.file_count)
+        {
+            msg << "All " << results.file_count << " generated files are current";
+        }
+
+        SetStatusText(msg);
+    }
+}
+
+#endif
+
 static void GatherImportModules(std::set<std::string>& imports, Node* node)
 {
     if (auto* gen = node->GetGenerator(); gen)

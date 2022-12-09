@@ -429,7 +429,6 @@ Code& Code::GetParentName()
     ASSERT_MSG(parent, ttlib::cstr() << m_node->get_node_name() << " has no parent!");
     return *this;
 }
-
 Code& Code::QuotedString(GenEnum::PropName prop_name)
 {
     if (!m_node->HasValue(prop_name))
@@ -446,6 +445,11 @@ Code& Code::QuotedString(GenEnum::PropName prop_name)
         return *this;
     }
 
+    return QuotedString(m_node->as_string(prop_name));
+}
+
+Code& Code::QuotedString(ttlib::sview text)
+{
     auto cur_pos = m_code.size();
 
     if (GetProject()->prop_as_bool(prop_internationalize))
@@ -457,7 +461,7 @@ Code& Code::QuotedString(GenEnum::PropName prop_name)
     bool has_utf_char = false;
     if (is_cpp())
     {
-        for (auto iter: m_node->as_string(prop_name))
+        for (auto iter: text)
         {
             if (iter < 0)
             {
@@ -473,7 +477,7 @@ Code& Code::QuotedString(GenEnum::PropName prop_name)
     }
 
     m_code += '"';
-    for (auto c: m_node->as_string(prop_name))
+    for (auto c: text)
     {
         switch (c)
         {

@@ -133,6 +133,7 @@ public:
     // Handles prop_internationalize and strings containing at least one utf8 character.
     // Generates correct code for C++ or Python.
     Code& QuotedString(GenEnum::PropName prop_name);
+    Code& QuotedString(ttlib::sview text);
 
     // Will either generate wxSize(...) or ConvertDialogToPixels(wxSize(...))
     Code& WxSize(GenEnum::PropName prop_name = GenEnum::PropName::prop_size);

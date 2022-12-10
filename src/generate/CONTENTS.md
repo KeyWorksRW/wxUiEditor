@@ -51,7 +51,7 @@ The following tables list classes, objects and functions that wxUiEditor can gen
 | wxGridSizer | yes |  ?? | yes | gen_grid_sizer.cpp |
 | wxRadioButtonSizer | yes |  ?? | yes | gen_statradiobox_sizer.cpp |
 | wxStaticBoxSizer | yes |  ?? | yes | gen_staticbox_sizer.cpp |
-| wxStdDialogButtonSizer | yes |  ?? | yes | gen_std_dlgbtn_sizer.cpp |
+| wxStdDialogButtonSizer | yes |  yes | yes | gen_std_dlgbtn_sizer.cpp |
 | wxTextSizerWrapper | yes |  ?? | no | gen_text_sizer.cpp |
 | wxWrapSizer | yes |  ?? | yes | gen_wrap_sizer.cpp |
 

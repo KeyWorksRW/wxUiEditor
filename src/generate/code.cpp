@@ -131,7 +131,32 @@ Code& Code::Add(ttlib::sview text)
     }
     else
     {
-        if (text.is_sameprefix("wx"))
+        if (text.find('|') != tt::npos)
+        {
+            bool style_set = false;
+            ttlib::multiview multistr(text, "|", tt::TRIM::both);
+            for (auto& iter: multistr)
+            {
+                if (iter.empty())
+                    continue;
+                if (style_set)
+                    m_code += '|';
+                if (iter.is_sameprefix("wx"))
+                {
+                    std::string_view wx_prefix = "wx.";
+                    if (auto wx_iter = s_map_wx_prefix.find(iter); wx_iter != s_map_wx_prefix.end())
+                    {
+                        wx_prefix = wx_iter->second;
+                    }
+
+                    m_code << wx_prefix << iter.substr(2);
+                }
+                else
+                    m_code += iter;
+                style_set = true;
+            }
+        }
+        else if (text.is_sameprefix("wx"))
         {
             std::string_view prefix = "wx.";
             if (auto iter = s_map_wx_prefix.find(text); iter != s_map_wx_prefix.end())
@@ -215,7 +240,7 @@ Code& Code::CreateClass(bool use_generic, ttlib::sview override_name)
 
     ttlib::cstr class_name;
     if (override_name.empty())
-         class_name = m_node->DeclName();
+        class_name = m_node->DeclName();
     else
         class_name = override_name;
     if (use_generic)

@@ -11,6 +11,7 @@
 
 #include "code.h"
 
+#include "mainapp.h"        // App class
 #include "node.h"           // Node class
 #include "project_class.h"  // Project class
 
@@ -42,11 +43,15 @@ static const std::map<std::string_view, std::string_view, std::less<>> s_map_cla
 
 Code::Code(Node* node, int language) : m_node(node), m_language(language)
 {
-    if (language == GEN_LANG_PYTHON)
+    if (language == GEN_LANG_CPLUSPLUS)
     {
-        // This allows for the extra '.' between wx and wxWidget name
-        m_break_length = 79;
+        m_break_length = wxGetApp().Preferences().get_cpp_line_length();
     }
+    else if (language == GEN_LANG_PYTHON)
+    {
+        m_break_length = wxGetApp().Preferences().get_python_line_length();
+    }
+    m_break_at = m_break_length;
 
     // Reserve large enough for multiple lines -- goal is to avoid multiple reallocations
     m_code.reserve(256);

@@ -53,6 +53,9 @@ struct PREFS
     long GetProjectFlags() const { return m_project_flags; }
     void SetProjectFlags(long flags) { m_project_flags = flags; }
 
+    size_t get_cpp_line_length() const { return to_size_t(m_cpp_line_length); }
+    size_t get_python_line_length() const { return to_size_t(m_python_line_length); }
+
     PREVIEW_TYPE GetPreviewType() const { return m_preview_type; }
     void SetPreviewType(PREVIEW_TYPE type) { m_preview_type = type; }
 
@@ -78,6 +81,8 @@ struct PREFS
 private:
     // These store both Debug and INTERNAL flags
     long m_flags { 0 };
+    long m_cpp_line_length { 110 };
+    long m_python_line_length { 89 };
 
     long m_project_flags { 0 };
     PREVIEW_TYPE m_preview_type { PREVIEW_TYPE_XRC };

@@ -176,6 +176,11 @@ public:
         return *this;
     }
 
+    void operator+=(std::string_view str)
+    {
+        m_code += str;
+    }
+
     Code& operator<<(char ch)
     {
         m_code += ch;

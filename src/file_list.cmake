@@ -71,7 +71,9 @@ set (file_list
     generate/gen_xrc.cpp           # Generate XRC file
 
     # Generators are responsible for displaying the widget in the Mockup window,
-    # and generating both C++ and XRC code.
+    # and generating both C++, Python and XRC code. If the generated object can
+    # be used in a Dialog or Frame, then the generator must also be able to create
+    # a preview of the object for the Preview display.
 
     generate/dataview_widgets.cpp  # wxDataView generation classes
     generate/grid_widgets.cpp      # Grid generation classes

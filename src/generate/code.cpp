@@ -110,7 +110,7 @@ void Code::InsertLineBreak(size_t cur_pos)
     }
     else
     {
-        m_code.insert(cur_pos, "\n\t");
+        m_code.insert(cur_pos, "\n");
     }
     m_break_at = cur_pos + m_break_length;
     m_minium_length = cur_pos + 10;

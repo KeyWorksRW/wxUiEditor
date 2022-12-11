@@ -81,7 +81,7 @@ std::optional<ttlib::cstr> ListViewGenerator::GenSettings(Node* node, size_t& au
         for (auto& iter: headers)
         {
             if (code.size())
-                code << "\n\t";
+                code << "\n";
             code << node->get_node_name() << "->AppendColumn(" << GenerateQuotedString(iter) << ");";
         }
         if (node->HasValue(prop_contents))

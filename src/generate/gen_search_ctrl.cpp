@@ -79,14 +79,14 @@ std::optional<ttlib::cstr> SearchCtrlGenerator::GenSettings(Node* node, size_t& 
     if (node->prop_as_bool(prop_search_button))
     {
         if (code.size())
-            code << "\n\t";
+            code << "\n";
         code << node->get_node_name() << "->ShowSearchButton(true);";
     }
 
     if (node->prop_as_bool(prop_cancel_button))
     {
         if (code.size())
-            code << "\n\t";
+            code << "\n";
         code << node->get_node_name() << "->ShowCancelButton(true);";
     }
 

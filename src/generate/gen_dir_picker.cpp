@@ -38,7 +38,7 @@ wxObject* DirPickerGenerator::CreateMockup(Node* node, wxObject* parent)
 
 std::optional<ttlib::cstr> DirPickerGenerator::GenConstruction(Node* node)
 {
-    ttlib::cstr code("\t");
+    ttlib::cstr code;
     if (node->IsLocal())
         code << "auto* ";
     code << node->get_node_name() << GenerateNewAssignment(node);
@@ -60,7 +60,7 @@ std::optional<ttlib::cstr> DirPickerGenerator::GenConstruction(Node* node)
         auto& msg = node->prop_as_string(prop_message);
         if (msg.size())
         {
-            code << "\n\t\t" << GenerateQuotedString(msg);
+            code << "\n\t" << GenerateQuotedString(msg);
         }
         else
         {

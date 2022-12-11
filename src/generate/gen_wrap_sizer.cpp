@@ -41,7 +41,7 @@ std::optional<ttlib::cstr> WrapSizerGenerator::GenConstruction(Node* node)
     auto min_size = node->prop_as_wxSize(prop_minimum_size);
     if (min_size.x != -1 || min_size.y != -1)
     {
-        code << "\n\t" << node->get_node_name() << "->SetMinSize(" << min_size.GetX() << ", " << min_size.GetY() << ");";
+        code << "\n" << node->get_node_name() << "->SetMinSize(" << min_size.GetX() << ", " << min_size.GetY() << ");";
     }
 
     return code;
@@ -69,7 +69,7 @@ std::optional<ttlib::cstr> WrapSizerGenerator::GenAfterChildren(Node* node)
     {
         if (code.size())
             code << '\n';
-        code << "\n\t";
+        code << "\n";
 
         // The parent node is not a sizer -- which is expected if this is the parent sizer underneath a form or
         // wxPanel.

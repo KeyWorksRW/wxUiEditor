@@ -39,14 +39,14 @@ std::optional<ttlib::cstr> EditListBoxGenerator::GenSettings(Node* node, size_t&
     if (node->HasValue(prop_contents))
     {
         auto_indent = false;
-        code << "\t{\n\t\twxArrayString tmp_array;\n";
+        code << "{\n\twxArrayString tmp_array;\n";
         auto array = ConvertToArrayString(node->prop_as_string(prop_contents));
         for (auto& iter: array)
         {
             code << "\t\ttmp_array.push_back(wxString::FromUTF8(\"" << iter << "\"));\n";
         }
         code << "\t\t" << node->get_node_name() << "->SetStrings(tmp_array);\n";
-        code << "\t}";
+        code << "}";
     }
 
     return code;

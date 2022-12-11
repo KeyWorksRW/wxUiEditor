@@ -65,7 +65,7 @@ std::optional<ttlib::cstr> SimplebookGenerator::GenSettings(Node* node, size_t& 
 
         if (node->prop_as_int(prop_duration))
         {
-            code << "\n\t" << node->get_node_name() << "->SetEffectTimeout(" << node->prop_as_string(prop_duration) << ");";
+            code << "\n" << node->get_node_name() << "->SetEffectTimeout(" << node->prop_as_string(prop_duration) << ");";
         }
 
         return code;

@@ -143,12 +143,12 @@ std::optional<ttlib::cstr> CheckListBoxGenerator::GenSettings(Node* node, size_t
             code << "int item_position;";
             for (auto& iter: contents)
             {
-                code << "\n\t";
+                code << "\n";
                 if (iter.checked == "1")
                     code << "item_position = ";
                 code << node->get_node_name() << "->Append(" << GenerateQuotedString(iter.label) << ");";
                 if (iter.checked == "1")
-                    code << "\n\t" << node->get_node_name() << "->Check(item_position);";
+                    code << "\n" << node->get_node_name() << "->Check(item_position);";
             }
             code << "\n}";
         }

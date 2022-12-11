@@ -1219,7 +1219,7 @@ ttlib::cstr BaseCodeGenerator::GetDeclaration(Node* node)
         if (!node->IsLocal())
         {
             if (code.size())
-                code << "\n\t";
+                code << "\n";
             code << "wxStaticBoxSizer* " << node->get_node_name() << ';';
         }
     }
@@ -1231,7 +1231,7 @@ ttlib::cstr BaseCodeGenerator::GetDeclaration(Node* node)
         if (!node->IsLocal())
         {
             if (code.size())
-                code << "\n\t";
+                code << "\n";
             code << "wxStaticBoxSizer* " << node->get_node_name() << ';';
         }
     }

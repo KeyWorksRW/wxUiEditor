@@ -76,7 +76,7 @@ std::optional<ttlib::cstr> FileCtrlGenerator::GenConstruction(Node* node)
 
     if (node->prop_as_bool(prop_show_hidden))
     {
-        code << "\n\t" << node->get_node_name() << "->ShowHidden(true);";
+        code << "\n" << node->get_node_name() << "->ShowHidden(true);";
     }
 
     return code;

@@ -125,7 +125,7 @@ std::optional<ttlib::cstr> StaticRadioBtnBoxSizerGenerator::GenConstruction(Node
     auto min_size = node->prop_as_wxSize(prop_minimum_size);
     if (min_size.GetX() != -1 || min_size.GetY() != -1)
     {
-        code << "\n\t" << node->get_node_name() << "->SetMinSize(" << min_size.GetX() << ", " << min_size.GetY() << ");";
+        code << "\n" << node->get_node_name() << "->SetMinSize(" << min_size.GetX() << ", " << min_size.GetY() << ");";
     }
 
     return code;
@@ -141,7 +141,7 @@ std::optional<ttlib::cstr> StaticRadioBtnBoxSizerGenerator::GenSettings(Node* no
     if (node->HasValue(prop_tooltip))
     {
         if (code.size())
-            code << "\n\t";
+            code << "\n";
         code << node->prop_as_string(prop_radiobtn_var_name) << "->SetToolTip("
              << GenerateQuotedString(node->prop_as_string(prop_tooltip)) << ");";
     }
@@ -162,7 +162,7 @@ std::optional<ttlib::cstr> StaticRadioBtnBoxSizerGenerator::GenAfterChildren(Nod
     {
         if (code.size())
             code << '\n';
-        code << "\n\t";
+        code << "\n";
 
         // The parent node is not a sizer -- which is expected if this is the parent sizer underneath a form or
         // wxPanel.

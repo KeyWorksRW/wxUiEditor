@@ -59,11 +59,11 @@ std::optional<ttlib::cstr> AuiNotebookGenerator::GenConstruction(Node* node)
 
     if (node->prop_as_string(prop_art_provider).is_sameas("wxAuiGenericTabArt"))
     {
-        code << "\n\t" << node->get_node_name() << "->SetArtProvider(new wxAuiGenericTabArt());";
+        code << "\n" << node->get_node_name() << "->SetArtProvider(new wxAuiGenericTabArt());";
     }
     else if (node->prop_as_string(prop_art_provider).is_sameas("wxAuiSimpleTabArt"))
     {
-        code << "\n\t" << node->get_node_name() << "->SetArtProvider(new wxAuiSimpleTabArt());";
+        code << "\n" << node->get_node_name() << "->SetArtProvider(new wxAuiSimpleTabArt());";
     }
 
     return code;

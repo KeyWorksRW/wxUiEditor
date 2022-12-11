@@ -72,7 +72,7 @@ std::optional<ttlib::cstr> RadioBoxGenerator::GenConstruction(Node* node)
     auto array = ConvertToArrayString(node->prop_as_string(prop_contents));
     for (auto& iter: array)
     {
-        code << "\n\t\t" << GenerateQuotedString(iter) << ",";
+        code << "\n\t" << GenerateQuotedString(iter) << ",";
     }
     code << "\n\t};\n\t";
 

@@ -130,7 +130,7 @@ void BookCtorAddImagelist(ttlib::cstr& code, Node* node)
                 ttlib::cstr bundle_code;
                 if (GenerateBundleCode(child_node->prop_as_string(prop_bitmap), bundle_code))
                 {
-                    code << "\n\t\t" << bundle_code;
+                    code << "\n\t" << bundle_code;
                     code << "\n\t\t\tbundle_list.push_back(wxBitmapBundle::FromBitmaps(bitmaps));";
                     code << "\n\t\t}";
                 }
@@ -142,7 +142,7 @@ void BookCtorAddImagelist(ttlib::cstr& code, Node* node)
                 }
             }
         }
-        code << "\n\t\t" << node->get_node_name() << "->SetImages(bundle_list);";
+        code << "\n\t" << node->get_node_name() << "->SetImages(bundle_list);";
 
         if (wxGetProject().value(prop_wxWidgets_version) == "3.1")
         {
@@ -173,7 +173,7 @@ void BookCtorAddImagelist(ttlib::cstr& code, Node* node)
                     AddTreebookImageCode(code, child_node.get(), image_index);
                 }
             }
-            code << "\n\t\t" << node->get_node_name() << "->AssignImageList(img_list);";
+            code << "\n\t" << node->get_node_name() << "->AssignImageList(img_list);";
 
             code << "\n#endif  // wxCHECK_VERSION(3, 1, 6)";
         }

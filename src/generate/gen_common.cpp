@@ -263,7 +263,7 @@ void GeneratePosSizeFlags(Node* node, ttlib::cstr& code, bool uses_def_validator
         if (code.size() < 80)
             code << ", ";
         else
-            code << ",\n\t\t";
+            code << ",\n\t";
 
         GenPos(node, code);
         code << ", ";
@@ -332,15 +332,7 @@ void GeneratePosSizeFlags(Node* node, ttlib::cstr& code, bool uses_def_validator
             code << ", ";
         else
         {
-            code << ",\n\t\t";
-            if (code.starts_with("    "))
-            {
-                code.insert(0, 4, ' ');
-            }
-            else if (code.at(0) != '\t')
-            {
-                code.insert(0, 1, '\t');
-            }
+            code << ",\n\t";
         }
 
         code << all_styles << ");";
@@ -1015,16 +1007,16 @@ ttlib::cstr GenFontColourSettings(Node* node)
 
             if (node->IsForm())
             {
-                code << "\n\t"
+                code << "\n"
                      << "SetFont(font);\n}";
             }
             else if (node->isGen(gen_wxStyledTextCtrl))
             {
-                code << "\n\t" << node->get_node_name() << "->StyleSetFont(wxSTC_STYLE_DEFAULT, font);\n}";
+                code << "\n" << node->get_node_name() << "->StyleSetFont(wxSTC_STYLE_DEFAULT, font);\n}";
             }
             else
             {
-                code << "\n\t" << node->get_node_name() << "->SetFont(font);\n}";
+                code << "\n" << node->get_node_name() << "->SetFont(font);\n}";
             }
         }
         else
@@ -1092,12 +1084,12 @@ ttlib::cstr GenFontColourSettings(Node* node)
 
             if (node->IsForm())
             {
-                code << "\n\t"
+                code << "\n"
                         "SetFont(wxFont(font_info));\n}";
             }
             else
             {
-                code << "\n\t" << node->get_node_name() << "->SetFont(wxFont(font_info));\n}";
+                code << "\n" << node->get_node_name() << "->SetFont(wxFont(font_info));\n}";
             }
         }
     }
@@ -1532,7 +1524,7 @@ ttlib::cstr GenToolCode(Node* node, ttlib::sview BitmapCode)
 
     if (node->prop_as_bool(prop_disabled))
     {
-        code << "\n\t" << node->get_node_name() << "->Enable(false);";
+        code << "\n" << node->get_node_name() << "->Enable(false);";
     }
 
     return code;

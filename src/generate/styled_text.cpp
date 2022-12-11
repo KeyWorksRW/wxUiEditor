@@ -501,35 +501,35 @@ std::optional<ttlib::cstr> StyledTextGenerator::GenSettings(Node* node, size_t& 
     {
         ttlib::cstr name("wxSTC_LEX_");
         name << node->prop_as_string(prop_stc_lexer);
-        code << "\n\t\t" << node->get_node_name() << "->SetLexer(" << name << ");";
+        code << "\n\t" << node->get_node_name() << "->SetLexer(" << name << ");";
     }
 
     // Default is false, so only set if true
     if (node->prop_as_bool(prop_read_only))
     {
-        code << "\n\t\t" << node->get_node_name() << "->SetReadOnly(true);";
+        code << "\n\t" << node->get_node_name() << "->SetReadOnly(true);";
     }
 
     if (node->HasValue(prop_eol_mode))
     {
-        code << "\n\t\t" << node->get_node_name() << "->SetEOLMode(" << node->prop_as_constant(prop_eol_mode, "stc_")
+        code << "\n\t" << node->get_node_name() << "->SetEOLMode(" << node->prop_as_constant(prop_eol_mode, "stc_")
              << ");";
     }
 
     // Default is false, so only set if true
     if (node->prop_as_bool(prop_view_eol))
     {
-        code << "\n\t\t" << node->get_node_name() << "->SetViewEOL(true);";
+        code << "\n\t" << node->get_node_name() << "->SetViewEOL(true);";
     }
 
     // Default is false, so only set if true
     if (!node->isPropValue(prop_view_whitespace, "invisible"))
     {
-        code << "\n\t\t" << node->get_node_name() << "->SetViewWhiteSpace("
+        code << "\n\t" << node->get_node_name() << "->SetViewWhiteSpace("
              << node->prop_as_constant(prop_view_whitespace, "stc_") << ");";
         if (node->prop_as_bool(prop_view_tab_strikeout))
         {
-            code << "\n\t\t" << node->get_node_name() << "->SetTabDrawMode(wxSTC_TD_STRIKEOUT);";
+            code << "\n\t" << node->get_node_name() << "->SetTabDrawMode(wxSTC_TD_STRIKEOUT);";
         }
     }
 
@@ -537,31 +537,31 @@ std::optional<ttlib::cstr> StyledTextGenerator::GenSettings(Node* node, size_t& 
 
     if (!node->prop_as_string(prop_stc_wrap_mode).is_sameas("no wrapping"))
     {
-        code << "\n\t\t" << node->get_node_name() << "->SetWrapMode(" << node->prop_as_constant(prop_stc_wrap_mode, "stc_")
+        code << "\n\t" << node->get_node_name() << "->SetWrapMode(" << node->prop_as_constant(prop_stc_wrap_mode, "stc_")
              << ");";
     }
     if (node->HasValue(prop_stc_wrap_visual_flag))
     {
         if (auto result = node->prop_as_constant(prop_stc_wrap_visual_flag, "stc_"); result.size())
         {
-            code << "\n\t\t" << node->get_node_name() << "->SetWrapVisualFlags(" << result << ");";
+            code << "\n\t" << node->get_node_name() << "->SetWrapVisualFlags(" << result << ");";
         }
     }
     if (node->HasValue(prop_stc_wrap_visual_location))
     {
         if (auto result = node->prop_as_constant(prop_stc_wrap_visual_location, "stc_"); result.size())
         {
-            code << "\n\t\t" << node->get_node_name() << "->SetWrapVisualFlagsLocation(" << result << ");";
+            code << "\n\t" << node->get_node_name() << "->SetWrapVisualFlagsLocation(" << result << ");";
         }
     }
     if (!node->prop_as_string(prop_stc_wrap_indent_mode).is_sameas("fixed"))
     {
-        code << "\n\t\t" << node->get_node_name() << "->SetWrapIndentMode("
+        code << "\n\t" << node->get_node_name() << "->SetWrapIndentMode("
              << node->prop_as_constant(prop_stc_wrap_indent_mode, "stc_") << ");";
     }
     if (node->HasValue(prop_stc_wrap_start_indent))
     {
-        code << "\n\t\t" << node->get_node_name() << "->SetWrapStartIndent(" << node->prop_as_int(prop_stc_wrap_start_indent)
+        code << "\n\t" << node->get_node_name() << "->SetWrapStartIndent(" << node->prop_as_int(prop_stc_wrap_start_indent)
              << ");";
     }
 
@@ -569,32 +569,32 @@ std::optional<ttlib::cstr> StyledTextGenerator::GenSettings(Node* node, size_t& 
 
     if (node->prop_as_bool(prop_multiple_selections))
     {
-        code << "\n\t\t" << node->get_node_name() << "->SetMultipleSelection(wxSTC_MULTIPASTE_EACH);";
+        code << "\n\t" << node->get_node_name() << "->SetMultipleSelection(wxSTC_MULTIPASTE_EACH);";
         if (node->prop_as_bool(prop_paste_multiple))
         {
-            code << "\n\t\t" << node->get_node_name() << "->SetMultiPaste(wxSTC_MULTIPASTE_EACH);";
+            code << "\n\t" << node->get_node_name() << "->SetMultiPaste(wxSTC_MULTIPASTE_EACH);";
         }
         if (node->prop_as_bool(prop_paste_multiple))
         {
-            code << "\n\t\t" << node->get_node_name() << "->SetMultiPaste(wxSTC_MULTIPASTE_EACH);";
+            code << "\n\t" << node->get_node_name() << "->SetMultiPaste(wxSTC_MULTIPASTE_EACH);";
         }
-        code << "\n\t\t" << node->get_node_name() << "->SetAdditionalSelectionTyping("
+        code << "\n\t" << node->get_node_name() << "->SetAdditionalSelectionTyping("
              << (node->prop_as_bool(prop_additional_carets_blink) ? "true" : "false") << ");";
 
         if (!node->prop_as_bool(prop_additional_carets_visible))
         {
-            code << "\n\t\t" << node->get_node_name() << "->SetAdditionalCaretsVisible(false);";
+            code << "\n\t" << node->get_node_name() << "->SetAdditionalCaretsVisible(false);";
         }
         else
         {
-            code << "\n\t\t" << node->get_node_name() << "->SetAdditionalCaretsBlink("
+            code << "\n\t" << node->get_node_name() << "->SetAdditionalCaretsBlink("
                  << (node->prop_as_bool(prop_additional_carets_blink) ? "true" : "false") << ");";
         }
     }
 
     if (node->prop_as_bool(prop_allow_mouse_rectangle))
     {
-        code << "\n\t\t" << node->get_node_name() << "->SetMouseSelectionRectangularSwitch(true);";
+        code << "\n\t" << node->get_node_name() << "->SetMouseSelectionRectangularSwitch(true);";
     }
 
     //////////// Margin category settings ////////////
@@ -607,7 +607,7 @@ std::optional<ttlib::cstr> StyledTextGenerator::GenSettings(Node* node, size_t& 
             code << "\n\t\t// Sets text margin scaled appropriately for the current DPI on Windows,\n\t\t// 5 on wxGTK or "
                     "wxOSX";
         }
-        code << "\n\t\t" << node->get_node_name() << "->SetMarginLeft(";
+        code << "\n\t" << node->get_node_name() << "->SetMarginLeft(";
         if (node->prop_as_int(prop_stc_left_margin_width) == 5)
         {
             code << "wxSizerFlags::GetDefaultBorder());";
@@ -625,7 +625,7 @@ std::optional<ttlib::cstr> StyledTextGenerator::GenSettings(Node* node, size_t& 
             code << "\n\t\t// Sets text margin scaled appropriately for the current DPI on Windows,\n\t\t// 5 on wxGTK or "
                     "wxOSX";
         }
-        code << "\n\t\t" << node->get_node_name() << "->SetMarginRight(";
+        code << "\n\t" << node->get_node_name() << "->SetMarginRight(";
         if (node->prop_as_int(prop_stc_right_margin_width) == 5)
         {
             code << "wxSizerFlags::GetDefaultBorder());";
@@ -638,7 +638,7 @@ std::optional<ttlib::cstr> StyledTextGenerator::GenSettings(Node* node, size_t& 
 
     if (!node->prop_as_bool(prop_stc_select_wrapped_line))
     {
-        code << "\n\t\t" << node->get_node_name() << "->SetMarginOptions(wxSTC_MARGINOPTION_SUBLINESELECT);";
+        code << "\n\t" << node->get_node_name() << "->SetMarginOptions(wxSTC_MARGINOPTION_SUBLINESELECT);";
     }
 
     // By default, scintilla sets margin one to a width to 16. We want to shut off all margins unless the user specifically
@@ -668,7 +668,7 @@ std::optional<ttlib::cstr> StyledTextGenerator::GenSettings(Node* node, size_t& 
 
     if (!is_margin_1_set)
     {
-        code << "\n\t\t" << node->get_node_name() << "->SetMarginWidth(1, 0);  // Remove default margin";
+        code << "\n\t" << node->get_node_name() << "->SetMarginWidth(1, 0);  // Remove default margin";
     }
 
     if (node->prop_as_string(prop_line_margin) != "none")
@@ -683,27 +683,27 @@ std::optional<ttlib::cstr> StyledTextGenerator::GenSettings(Node* node, size_t& 
             --width;
         }
 
-        code << "\n\t\t" << node->get_node_name() << "->SetMarginWidth(" << margin << ", ";
+        code << "\n\t" << node->get_node_name() << "->SetMarginWidth(" << margin << ", ";
         code << node->get_node_name() << "->TextWidth(wxSTC_STYLE_LINENUMBER, " << '"' << numbers << "\"));";
-        code << "\n\t\t" << node->get_node_name() << "->SetMarginType(" << margin << ", wxSTC_MARGIN_NUMBER);";
+        code << "\n\t" << node->get_node_name() << "->SetMarginType(" << margin << ", wxSTC_MARGIN_NUMBER);";
     }
 
     if (node->prop_as_string(prop_fold_margin) != "none" && node->prop_as_int(prop_fold_width))
     {
         auto margin = node->prop_as_string(prop_fold_margin).atoi();
-        code << "\n\t\t" << node->get_node_name() << "->SetProperty(\"fold\", \"1\");";
-        code << "\n\t\t" << node->get_node_name() << "->SetMarginWidth(" << margin << ", 16);";
-        code << "\n\t\t" << node->get_node_name() << "->SetMarginType(" << margin << ", wxSTC_MARGIN_SYMBOL);";
-        code << "\n\t\t" << node->get_node_name() << "->SetMarginMask(" << margin << ", wxSTC_MASK_FOLDERS);";
-        code << "\n\t\t" << node->get_node_name() << "->SetMarginSensitive(" << margin << ", true);";
+        code << "\n\t" << node->get_node_name() << "->SetProperty(\"fold\", \"1\");";
+        code << "\n\t" << node->get_node_name() << "->SetMarginWidth(" << margin << ", 16);";
+        code << "\n\t" << node->get_node_name() << "->SetMarginType(" << margin << ", wxSTC_MARGIN_SYMBOL);";
+        code << "\n\t" << node->get_node_name() << "->SetMarginMask(" << margin << ", wxSTC_MASK_FOLDERS);";
+        code << "\n\t" << node->get_node_name() << "->SetMarginSensitive(" << margin << ", true);";
         if (node->HasValue(prop_automatic_folding))
         {
-            code << "\n\t\t" << node->get_node_name() << "->SetAutomaticFold("
+            code << "\n\t" << node->get_node_name() << "->SetAutomaticFold("
                  << node->prop_as_constant(prop_automatic_folding, "stc_") << ");";
         }
         if (node->HasValue(prop_fold_flags))
         {
-            code << "\n\t\t" << node->get_node_name() << "->SetFoldFlags(" << node->prop_as_constant(prop_fold_flags, "stc_")
+            code << "\n\t" << node->get_node_name() << "->SetFoldFlags(" << node->prop_as_constant(prop_fold_flags, "stc_")
                  << ");";
         }
 
@@ -726,30 +726,30 @@ std::optional<ttlib::cstr> StyledTextGenerator::GenSettings(Node* node, size_t& 
 
             if (node->HasValue(prop_fold_marker_colour))
             {
-                code << "\n\t\t" << node->get_node_name() << "->MarkerDefine(wxSTC_MARKNUM_FOLDER, " << symbol_folder
+                code << "\n\t" << node->get_node_name() << "->MarkerDefine(wxSTC_MARKNUM_FOLDER, " << symbol_folder
                      << ", wxNullColour, " << GenerateColourCode(node, prop_fold_marker_colour) << ";";
-                code << "\n\t\t" << node->get_node_name() << "->MarkerDefine(wxSTC_MARKNUM_FOLDEROPEN, " << symbol_open
+                code << "\n\t" << node->get_node_name() << "->MarkerDefine(wxSTC_MARKNUM_FOLDEROPEN, " << symbol_open
                      << ", wxNullColour, " << GenerateColourCode(node, prop_fold_marker_colour) << ";";
-                code << "\n\t\t" << node->get_node_name() << "->MarkerDefine(wxSTC_MARKNUM_FOLDEROPENMID, " << symbol_open
+                code << "\n\t" << node->get_node_name() << "->MarkerDefine(wxSTC_MARKNUM_FOLDEROPENMID, " << symbol_open
                      << ", wxNullColour, " << GenerateColourCode(node, prop_fold_marker_colour) << ";";
-                code << "\n\t\t" << node->get_node_name() << "->MarkerDefine(wxSTC_MARKNUM_FOLDEREND, " << symbol_folder
+                code << "\n\t" << node->get_node_name() << "->MarkerDefine(wxSTC_MARKNUM_FOLDEREND, " << symbol_folder
                      << ", wxNullColour, " << GenerateColourCode(node, prop_fold_marker_colour) << ";";
             }
             else
             {
-                code << "\n\t\t" << node->get_node_name() << "->MarkerDefine(wxSTC_MARKNUM_FOLDER, " << symbol_folder
+                code << "\n\t" << node->get_node_name() << "->MarkerDefine(wxSTC_MARKNUM_FOLDER, " << symbol_folder
                      << ");";
-                code << "\n\t\t" << node->get_node_name() << "->MarkerDefine(wxSTC_MARKNUM_FOLDEROPEN, " << symbol_open
+                code << "\n\t" << node->get_node_name() << "->MarkerDefine(wxSTC_MARKNUM_FOLDEROPEN, " << symbol_open
                      << ");";
-                code << "\n\t\t" << node->get_node_name() << "->MarkerDefine(wxSTC_MARKNUM_FOLDEROPENMID, " << symbol_open
+                code << "\n\t" << node->get_node_name() << "->MarkerDefine(wxSTC_MARKNUM_FOLDEROPENMID, " << symbol_open
                      << ");";
-                code << "\n\t\t" << node->get_node_name() << "->MarkerDefine(wxSTC_MARKNUM_FOLDEREND, " << symbol_folder
+                code << "\n\t" << node->get_node_name() << "->MarkerDefine(wxSTC_MARKNUM_FOLDEREND, " << symbol_folder
                      << ");";
             }
-            code << "\n\t\t" << node->get_node_name()
+            code << "\n\t" << node->get_node_name()
                  << "->MarkerDefine(wxSTC_MARKNUM_FOLDERMIDTAIL, wxSTC_MARK_BACKGROUND);";
-            code << "\n\t\t" << node->get_node_name() << "->MarkerDefine(wxSTC_MARKNUM_FOLDERSUB, wxSTC_MARK_BACKGROUND);";
-            code << "\n\t\t" << node->get_node_name() << "->MarkerDefine(wxSTC_MARKNUM_FOLDERTAIL, wxSTC_MARK_BACKGROUND);";
+            code << "\n\t" << node->get_node_name() << "->MarkerDefine(wxSTC_MARKNUM_FOLDERSUB, wxSTC_MARK_BACKGROUND);";
+            code << "\n\t" << node->get_node_name() << "->MarkerDefine(wxSTC_MARKNUM_FOLDERTAIL, wxSTC_MARK_BACKGROUND);";
         }
         else  // circle tree or box tree
         {
@@ -787,31 +787,31 @@ std::optional<ttlib::cstr> StyledTextGenerator::GenSettings(Node* node, size_t& 
 
             if (node->prop_as_string(prop_fold_marker_style) == "circle tree")
             {
-                code << "\n\t\t" << node->get_node_name() << "->MarkerDefine(wxSTC_MARKNUM_FOLDER, wxSTC_MARK_CIRCLEPLUS);";
-                code << "\n\t\t" << node->get_node_name()
+                code << "\n\t" << node->get_node_name() << "->MarkerDefine(wxSTC_MARKNUM_FOLDER, wxSTC_MARK_CIRCLEPLUS);";
+                code << "\n\t" << node->get_node_name()
                      << "->MarkerDefine(wxSTC_MARKNUM_FOLDEROPEN, wxSTC_MARK_CIRCLEMINUS);";
-                code << "\n\t\t" << node->get_node_name()
+                code << "\n\t" << node->get_node_name()
                      << "->MarkerDefine(wxSTC_MARKNUM_FOLDEROPENMID, wxSTC_MARK_CIRCLEMINUSCONNECTED);";
-                code << "\n\t\t" << node->get_node_name()
+                code << "\n\t" << node->get_node_name()
                      << "->MarkerDefine(wxSTC_MARKNUM_FOLDEREND, wxSTC_MARK_CIRCLEPLUSCONNECTED);";
-                code << "\n\t\t" << node->get_node_name()
+                code << "\n\t" << node->get_node_name()
                      << "->MarkerDefine(wxSTC_MARKNUM_FOLDERMIDTAIL, wxSTC_MARK_TCORNERCURVE);";
-                code << "\n\t\t" << node->get_node_name() << "->MarkerDefine(wxSTC_MARKNUM_FOLDERSUB, wxSTC_MARK_VLINE);";
-                code << "\n\t\t" << node->get_node_name()
+                code << "\n\t" << node->get_node_name() << "->MarkerDefine(wxSTC_MARKNUM_FOLDERSUB, wxSTC_MARK_VLINE);";
+                code << "\n\t" << node->get_node_name()
                      << "->MarkerDefine(wxSTC_MARKNUM_FOLDERTAIL, wxSTC_MARK_LCORNERCURVE);";
             }
             else
             {
-                code << "\n\t\t" << node->get_node_name() << "->MarkerDefine(wxSTC_MARKNUM_FOLDER, wxSTC_MARK_BOXMINUS);";
-                code << "\n\t\t" << node->get_node_name() << "->MarkerDefine(wxSTC_MARKNUM_FOLDEROPEN, wxSTC_MARK_BOXPLUS);";
-                code << "\n\t\t" << node->get_node_name()
+                code << "\n\t" << node->get_node_name() << "->MarkerDefine(wxSTC_MARKNUM_FOLDER, wxSTC_MARK_BOXMINUS);";
+                code << "\n\t" << node->get_node_name() << "->MarkerDefine(wxSTC_MARKNUM_FOLDEROPEN, wxSTC_MARK_BOXPLUS);";
+                code << "\n\t" << node->get_node_name()
                      << "->MarkerDefine(wxSTC_MARKNUM_FOLDEROPENMID, wxSTC_MARK_BOXMINUSCONNECTED);";
-                code << "\n\t\t" << node->get_node_name()
+                code << "\n\t" << node->get_node_name()
                      << "->MarkerDefine(wxSTC_MARKNUM_FOLDEREND, wxSTC_MARK_BOXPLUSCONNECTED);";
-                code << "\n\t\t" << node->get_node_name()
+                code << "\n\t" << node->get_node_name()
                      << "->MarkerDefine(wxSTC_MARKNUM_FOLDERMIDTAIL, wxSTC_MARK_TCORNER);";
-                code << "\n\t\t" << node->get_node_name() << "->MarkerDefine(wxSTC_MARKNUM_FOLDERSUB, wxSTC_MARK_VLINE);";
-                code << "\n\t\t" << node->get_node_name() << "->MarkerDefine(wxSTC_MARKNUM_FOLDERTAIL, wxSTC_MARK_LCORNER);";
+                code << "\n\t" << node->get_node_name() << "->MarkerDefine(wxSTC_MARKNUM_FOLDERSUB, wxSTC_MARK_VLINE);";
+                code << "\n\t" << node->get_node_name() << "->MarkerDefine(wxSTC_MARKNUM_FOLDERTAIL, wxSTC_MARK_LCORNER);";
             }
         }
     }
@@ -819,43 +819,43 @@ std::optional<ttlib::cstr> StyledTextGenerator::GenSettings(Node* node, size_t& 
     if (node->prop_as_string(prop_symbol_margin) != "none")
     {
         auto margin = node->prop_as_string(prop_symbol_margin).atoi();
-        code << "\n\t\t" << node->get_node_name() << "->SetMarginWidth(" << margin << ", 16);";
-        code << "\n\t\t" << node->get_node_name() << "->SetMarginType(" << margin << ", wxSTC_MARGIN_SYMBOL);";
-        code << "\n\t\t" << node->get_node_name() << "->SetMarginMask(" << margin << ", ~wxSTC_MASK_FOLDERS);";
-        code << "\n\t\t" << node->get_node_name() << "->SetMarginSensitive(" << margin << ", ";
+        code << "\n\t" << node->get_node_name() << "->SetMarginWidth(" << margin << ", 16);";
+        code << "\n\t" << node->get_node_name() << "->SetMarginType(" << margin << ", wxSTC_MARGIN_SYMBOL);";
+        code << "\n\t" << node->get_node_name() << "->SetMarginMask(" << margin << ", ~wxSTC_MASK_FOLDERS);";
+        code << "\n\t" << node->get_node_name() << "->SetMarginSensitive(" << margin << ", ";
         code << (node->prop_as_bool(prop_symbol_mouse_sensitive) ? "true" : "false") << ");";
     }
 
     if (node->prop_as_string(prop_separator_margin) != "none")
     {
         auto margin = node->prop_as_string(prop_separator_margin).atoi();
-        code << "\n\t\t" << node->get_node_name() << "->SetMarginWidth(" << margin << ", "
+        code << "\n\t" << node->get_node_name() << "->SetMarginWidth(" << margin << ", "
              << node->prop_as_int(prop_separator_width) << ");";
-        code << "\n\t\t" << node->get_node_name() << "->SetMarginType(" << margin << ", wxSTC_MARGIN_FORE);";
+        code << "\n\t" << node->get_node_name() << "->SetMarginType(" << margin << ", wxSTC_MARGIN_FORE);";
     }
 
     if (node->prop_as_string(prop_custom_margin) != "none" && node->prop_as_int(prop_custom_width))
     {
         auto margin = node->prop_as_string(prop_custom_margin).atoi();
-        code << "\n\t\t" << node->get_node_name() << "->SetMarginWidth(" << margin << ", "
+        code << "\n\t" << node->get_node_name() << "->SetMarginWidth(" << margin << ", "
              << node->prop_as_int(prop_custom_width) << ");";
 
-        code << "\n\t\t" << node->get_node_name() << "->SetMarginType(" << margin << ", "
+        code << "\n\t" << node->get_node_name() << "->SetMarginType(" << margin << ", "
              << node->prop_as_constant(prop_custom_type, "stc_") << ");";
 
         if (node->prop_as_string(prop_custom_type) == "colour" && node->HasValue(prop_custom_colour))
         {
-            code << "\n\t\t" << node->get_node_name() << "->SetMarginBackground(" << margin << ", "
+            code << "\n\t" << node->get_node_name() << "->SetMarginBackground(" << margin << ", "
                  << GenerateColourCode(node, prop_custom_colour) << ");";
         }
         else
         {
-            code << "\n\t\t" << node->get_node_name() << "->SetMarginMask(" << margin << ", "
+            code << "\n\t" << node->get_node_name() << "->SetMarginMask(" << margin << ", "
                  << (node->prop_as_bool(prop_custom_mask_folders) ? "wxSTC_MASK_FOLDERS" : "~wxSTC_MASK_FOLDERS") << ");";
         }
         if (node->prop_as_bool(prop_custom_mouse_sensitive))
         {
-            code << "\n\t\t" << node->get_node_name() << "->SetMarginSensitive(" << margin << ", true);";
+            code << "\n\t" << node->get_node_name() << "->SetMarginSensitive(" << margin << ", true);";
         }
     }
 
@@ -865,30 +865,30 @@ std::optional<ttlib::cstr> StyledTextGenerator::GenSettings(Node* node, size_t& 
         // false was what was used in previous versions as well as in some imported values
         !node->prop_as_string(prop_indentation_guides).is_sameas("false"))
     {
-        code << "\n\t\t" << node->get_node_name() << "->SetIndentationGuides("
+        code << "\n\t" << node->get_node_name() << "->SetIndentationGuides("
              << node->prop_as_constant(prop_indentation_guides, "stc_") << ");";
     }
     if (node->prop_as_int(prop_stc_indentation_size) != 0)
     {
-        code << "\n\t\t" << node->get_node_name() << "->SetIndent(" << node->prop_as_int(prop_stc_indentation_size) << ");";
+        code << "\n\t" << node->get_node_name() << "->SetIndent(" << node->prop_as_int(prop_stc_indentation_size) << ");";
     }
 
     // Default is true, so only set if false
     if (!node->prop_as_bool(prop_use_tabs))
     {
-        code << "\n\t\t" << node->get_node_name() << "->SetUseTabs(false);";
+        code << "\n\t" << node->get_node_name() << "->SetUseTabs(false);";
 
         if (node->prop_as_int(prop_tab_width) != 8)
-            code << "\n\t\t" << node->get_node_name() << "->SetTabWidth(" << node->prop_as_string(prop_tab_width) << ");";
+            code << "\n\t" << node->get_node_name() << "->SetTabWidth(" << node->prop_as_string(prop_tab_width) << ");";
     }
 
     // Default is true, so only set if false
     if (!node->prop_as_bool(prop_tab_indents))
-        code << "\n\t\t" << node->get_node_name() << "->SetTabIndents(false);";
+        code << "\n\t" << node->get_node_name() << "->SetTabIndents(false);";
 
     // Default is false, so only set if true
     if (node->prop_as_bool(prop_backspace_unindents))
-        code << "\n\t\t" << node->get_node_name() << "->SetBackSpaceUnIndents(true);";
+        code << "\n\t" << node->get_node_name() << "->SetBackSpaceUnIndents(true);";
     code << "\n\t}";
 
     if (code.is_sameas("\t{\n\t}"))

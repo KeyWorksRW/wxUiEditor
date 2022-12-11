@@ -135,7 +135,7 @@ wxObject* GridGenerator::CreateMockup(Node* node, wxObject* parent)
 
 std::optional<ttlib::cstr> GridGenerator::GenConstruction(Node* node)
 {
-    ttlib::cstr code("\t");
+    ttlib::cstr code;
     if (node->IsLocal())
         code << "auto* ";
     code << node->get_node_name() << GenerateNewAssignment(node);

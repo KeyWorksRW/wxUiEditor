@@ -543,7 +543,7 @@ bool BaseCodeGenerator::GenAfterChildren(Node* node, bool need_closing_brace)
                 m_source->writeLine(gen_code.m_code, indent::auto_keep_whitespace);
                 if (m_language == GEN_LANG_CPLUSPLUS)
                 {
-                    m_source->writeLine("\t}");
+                    m_source->writeLine("}");
                 }
             }
             else
@@ -645,7 +645,7 @@ void BaseCodeGenerator::GenParentSizer(Node* node, bool need_closing_brace)
         m_source->writeLine(code.m_code, indent::auto_keep_whitespace);
         if (m_language == GEN_LANG_CPLUSPLUS)
         {
-            m_source->writeLine("\t}");
+            m_source->writeLine("}");
         }
     }
     else

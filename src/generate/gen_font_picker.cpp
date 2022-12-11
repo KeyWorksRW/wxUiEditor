@@ -77,14 +77,14 @@ std::optional<ttlib::cstr> FontPickerGenerator::GenSettings(Node* node, size_t& 
     if (node->prop_as_string(prop_min_point_size) != "0")
     {
         if (code.size())
-            code << "\n\t";
+            code << "\n";
         code << node->get_node_name() << "->SetMinPointSize(" << node->prop_as_string(prop_min_point_size) << ");";
     }
 
     if (node->prop_as_string(prop_max_point_size) != "100")
     {
         if (code.size())
-            code << "\n\t";
+            code << "\n";
         code << node->get_node_name() << "->SetMaxPointSize(" << node->prop_as_string(prop_max_point_size) << ");";
     }
 

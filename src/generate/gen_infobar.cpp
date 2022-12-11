@@ -55,7 +55,7 @@ std::optional<ttlib::cstr> InfoBarGenerator::GenSettings(Node* node, size_t& /* 
 
     if (node->prop_as_int(prop_duration) != 500)
     {
-        code << "\n\t" << node->get_node_name() << "->SetEffectDuration(" << node->prop_as_string(prop_duration) << ");";
+        code << "\n" << node->get_node_name() << "->SetEffectDuration(" << node->prop_as_string(prop_duration) << ");";
     }
 
     return code;

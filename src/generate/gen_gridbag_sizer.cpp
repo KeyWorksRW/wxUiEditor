@@ -143,7 +143,7 @@ void GridBagSizerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxpare
 std::optional<ttlib::cstr> GridBagSizerGenerator::GenConstruction(Node* node)
 {
     // The leading tab is in case we indent in a brace block later on
-    ttlib::cstr code("\t");
+    ttlib::cstr code;
     if (node->IsLocal())
         code << "auto* ";
 
@@ -209,7 +209,7 @@ std::optional<ttlib::cstr> GridBagSizerGenerator::GenConstruction(Node* node)
 
     if (node->HasValue(prop_empty_cell_size))
     {
-        code << (isExpanded ? "\n\t    " : "\n\t") << node->get_node_name() << "->SetEmptyCellSize(";
+        code << (isExpanded ? "\n\t    " : "\n") << node->get_node_name() << "->SetEmptyCellSize(";
         code << GenerateWxSize(node, prop_empty_cell_size) << ");";
     }
 
@@ -221,7 +221,7 @@ std::optional<ttlib::cstr> GridBagSizerGenerator::GenConstruction(Node* node)
         return code;
     }
 
-    code << (isExpanded ? "\n\t    " : "\n\t") << node->get_node_name() << "->SetFlexibleDirection(" << direction << ");";
+    code << (isExpanded ? "\n\t    " : "\n") << node->get_node_name() << "->SetFlexibleDirection(" << direction << ");";
 
     auto non_flex_growth = node->prop_as_string(prop_non_flexible_grow_mode);
     if (non_flex_growth.empty() || non_flex_growth.is_sameas("wxFLEX_GROWMODE_SPECIFIED"))
@@ -230,7 +230,7 @@ std::optional<ttlib::cstr> GridBagSizerGenerator::GenConstruction(Node* node)
             code << "\n\t}";
         return code;
     }
-    code << (isExpanded ? "\n\t    " : "\n\t") << node->get_node_name() << "->SetNonFlexibleGrowMode(" << non_flex_growth
+    code << (isExpanded ? "\n\t    " : "\n") << node->get_node_name() << "->SetNonFlexibleGrowMode(" << non_flex_growth
          << ");";
 
     if (isExpanded)
@@ -251,7 +251,7 @@ std::optional<ttlib::cstr> GridBagSizerGenerator::GenAfterChildren(Node* node)
     {
         if (code.size())
             code << '\n';
-        code << "\n\t";
+        code << "\n";
 
         // The parent node is not a sizer -- which is expected if this is the parent sizer underneath a form or
         // wxPanel.

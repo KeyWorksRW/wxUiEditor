@@ -87,7 +87,7 @@ void PropertyGridManagerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /
 
 std::optional<ttlib::cstr> PropertyGridManagerGenerator::GenConstruction(Node* node)
 {
-    ttlib::cstr code("\t");
+    ttlib::cstr code;
     if (node->IsLocal())
         code << "auto* ";
     code << node->get_node_name() << GenerateNewAssignment(node);
@@ -97,7 +97,7 @@ std::optional<ttlib::cstr> PropertyGridManagerGenerator::GenConstruction(Node* n
     code.Replace(", wxID_ANY);", ");");
 
     if (node->HasValue(prop_extra_style))
-        code << "\n\t" << node->get_node_name() << "->SetExtraStyle(" << node->prop_as_string(prop_extra_style) << ");";
+        code << "\n" << node->get_node_name() << "->SetExtraStyle(" << node->prop_as_string(prop_extra_style) << ");";
 
     return code;
 }

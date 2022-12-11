@@ -345,7 +345,7 @@ void DataViewTreeCtrl::RequiredHandlers(Node* /* node */, std::set<std::string>&
 
 std::optional<ttlib::cstr> DataViewColumn::GenConstruction(Node* node)
 {
-    ttlib::cstr code("\t");
+    ttlib::cstr code;
     if (node->IsLocal())
         code << "auto* ";
     code << node->get_node_name() << " = " << node->get_parent_name() << "->Append";
@@ -363,7 +363,7 @@ std::optional<ttlib::cstr> DataViewColumn::GenConstruction(Node* node)
 
     if (node->HasValue(prop_ellipsize))
     {
-        code << "\n\t" << node->get_node_name() << "->GetRenderer()->EnableEllipsize("
+        code << "\n" << node->get_node_name() << "->GetRenderer()->EnableEllipsize("
              << node->prop_as_string(prop_ellipsize) << ");";
     }
 
@@ -374,7 +374,7 @@ std::optional<ttlib::cstr> DataViewColumn::GenConstruction(Node* node)
 
 std::optional<ttlib::cstr> DataViewListColumn::GenConstruction(Node* node)
 {
-    ttlib::cstr code("\t");
+    ttlib::cstr code;
     if (node->IsLocal())
         code << "auto* ";
     code << node->get_node_name() << " = " << node->get_parent_name() << "->Append";
@@ -390,7 +390,7 @@ std::optional<ttlib::cstr> DataViewListColumn::GenConstruction(Node* node)
 
     if (node->HasValue(prop_ellipsize))
     {
-        code << "\n\t" << node->get_node_name() << "->GetRenderer()->EnableEllipsize("
+        code << "\n" << node->get_node_name() << "->GetRenderer()->EnableEllipsize("
              << node->prop_as_string(prop_ellipsize) << ");";
     }
 

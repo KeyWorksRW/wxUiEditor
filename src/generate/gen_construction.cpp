@@ -598,7 +598,7 @@ void BaseCodeGenerator::GenParentSizer(Node* node, bool need_closing_brace)
                 if (is_cpp())
                     code.ParentName().Function("Add(CreateSeparatedSizer(").NodeName() << "), ";
                 else
-                    code.ParentName().Function("Add(self.CreateSeparatedSizer(").NodeName() << "), ";
+                    code.ParentName().Function("Add(").NodeName() << ", ";
             }
             else
                 code.ParentName().Function("Add(").NodeName() << ", ";

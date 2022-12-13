@@ -7,6 +7,7 @@
 
 #include <wx/statline.h>  // wxStaticLine class interface
 
+#include "code.h"           // Code -- Helper class for generating code
 #include "gen_common.h"     // GeneratorLibrary -- Generator classes
 #include "gen_xrc_utils.h"  // Common XRC generating functions
 #include "node.h"           // Node class
@@ -25,42 +26,23 @@ wxObject* StaticLineGenerator::CreateMockup(Node* node, wxObject* parent)
     return widget;
 }
 
-std::optional<ttlib::cstr> StaticLineGenerator::GenConstruction(Node* node)
+std::optional<ttlib::sview> StaticLineGenerator::CommonConstruction(Code& code)
 {
-    ttlib::cstr code;
-    if (node->IsLocal())
+    if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
-    code << node->get_node_name() << " = new wxStaticLine(";
-    code << GetParentName(node) << ", " << node->prop_as_string(prop_id);
-
-    if (node->prop_as_string(prop_style) != "wxLI_HORIZONTAL")
+    code.NodeName().CreateClass();
+    code.GetParentName().Comma().as_string(prop_id);
+    if (code.HasValue(prop_pos) || code.HasValue(prop_size) || code.HasValue(prop_window_name) ||
+        code.PropContains(prop_style, "wxLI_VERTICAL"))
     {
-        GeneratePosSizeFlags(node, code);
+        code.PosSizeFlags();
     }
     else
     {
-        auto pos = node->prop_as_wxPoint(prop_pos);
-        auto size = node->prop_as_wxPoint(prop_size);
-        auto& win_name = node->prop_as_string(prop_window_name);
-        auto& win_style = node->prop_as_string(prop_window_style);
-
-        if (win_name.empty() && win_style.empty() && size.x == -1 && size.y == -1 && pos.x == -1 && pos.y == -1)
-        {
-            code << ");";
-            // A lot easier to remove the id once we get here then to add the logic above to not add it
-            code.Replace(", wxID_ANY", "");
-            return code;
-        }
-
-        code << ", ";
-        GenPos(node, code);
-        code << ", ";
-        GenSize(node, code);
-        code << ", ";
-        GenStyle(node, code);
+        code.EndFunction();
     }
 
-    return code;
+    return code.m_code;
 }
 
 bool StaticLineGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)

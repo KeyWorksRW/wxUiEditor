@@ -92,6 +92,7 @@ set (file_list
     generate/gen_choice.cpp         # wxChoice generator
     generate/gen_close_btn.cpp      # wxBitmapButton::CreateCloseButton generator
     generate/gen_combobox.cpp       # wxComboBox generator
+    generate/gen_static_line.cpp    # wxStaticLine generator
     generate/gen_static_text.cpp    # wxStaticText generator
     generate/gen_text_ctrl.cpp      # wxTextCtrl generator
 
@@ -128,7 +129,6 @@ set (file_list
     generate/gen_split_win.cpp      # wxSplitterWindow generator
     generate/gen_static_bmp.cpp     # wxStaticBitmap generator
     generate/gen_static_box.cpp     # wxStaticBox generator
-    generate/gen_static_line.cpp    # wxStaticLine generator
     generate/gen_status_bar.cpp     # wxStatusBar generator
     generate/gen_toggle_btn.cpp     # wxToggleButton generator
     generate/gen_toolbar.cpp        # wxToolBar generator

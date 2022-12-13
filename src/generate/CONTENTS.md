@@ -112,7 +112,7 @@ The following tables list classes, objects and functions that wxUiEditor can gen
 | wxSplitterWindow | yes |  ?? | yes | gen_split_win.cpp |
 | wxStaticBitmap | yes |  ?? | yes | gen_static_bmp.cpp |
 | wxStaticBox | yes |  ?? | yes | gen_static_box.cpp |
-| wxStaticLine | yes |  ?? | yes | gen_static_line.cpp |
+| wxStaticLine | yes |  yes | yes | gen_static_line.cpp |
 | wxStaticText | yes |  yes | yes | gen_static_text.cpp |
 | wxStatusBar | yes |  ?? | yes | gen_status_bar.cpp |
 | wxStyledTextCtrl | yes |  ?? | yes | styled_text.cpp |

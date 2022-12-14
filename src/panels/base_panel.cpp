@@ -59,7 +59,18 @@ BasePanel::BasePanel(wxWindow* parent, MainFrame* frame, int panel_type) : wxPan
         m_inherit_hdr_panel = new CodeDisplay(m_notebook, panel_type);
         m_notebook->AddPage(m_inherit_hdr_panel, "inherit_hdr", false, wxWithImages::NO_IMAGE);
     }
-    else if (m_panel_type == GEN_LANG_XRC || m_panel_type == GEN_LANG_PYTHON)
+    else if (m_panel_type == GEN_LANG_PYTHON)
+    {
+        m_cppPanel = new CodeDisplay(m_notebook, panel_type);
+        m_notebook->AddPage(m_cppPanel, "source", false, wxWithImages::NO_IMAGE);
+
+        // A lot of code expects m_hPanel to exist. This will give us something to add additional information to, such as
+        // which properties are not supported.
+
+        m_hPanel = new CodeDisplay(m_notebook, panel_type);
+        m_notebook->AddPage(m_hPanel, "inherit", false, wxWithImages::NO_IMAGE);
+    }
+    else if (m_panel_type == GEN_LANG_XRC)
     {
         m_cppPanel = new CodeDisplay(m_notebook, panel_type);
         m_notebook->AddPage(m_cppPanel, "source", false, wxWithImages::NO_IMAGE);
@@ -157,7 +168,7 @@ void BasePanel::OnFind(wxFindDialogEvent& event)
     {
         m_inherit_src_panel->GetEventHandler()->ProcessEvent(event);
     }
-    else if (text == "header" || text == "info")
+    else if (text == "header" || text == "inherit" || text == "info")
     {
         m_hPanel->GetEventHandler()->ProcessEvent(event);
     }

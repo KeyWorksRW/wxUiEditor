@@ -252,15 +252,32 @@ void BaseCodeGenerator::GeneratePythonClass(Node* form_node, PANEL_PAGE panel_ty
     m_source->Clear();
 
     m_source->writeLine(txt_PythonCmtBlock);
+    m_header->writeLine(ttlib::cstr("# Sample inherited class from ") << form_node->as_string(prop_class_name));
+    m_header->writeLine();
     std::set<std::string> imports;
     GatherImportModules(imports, form_node);
     for (const auto& import: imports)
     {
         m_source->writeLine(import);
+        m_header->writeLine(import);
     }
     m_source->writeLine();
+    m_header->writeLine();
+    m_header->writeLine(ttlib::cstr("import ") << form_node->as_string(prop_python_file) << "\n");
+    m_header->writeLine();
 
-    m_header->writeLine("# wxPython information is available at https://www.wxpython.org/");
+    if (form_node->HasValue(prop_python_inherit_name))
+    {
+        ttlib::cstr inherit("class ");
+        inherit << form_node->prop_as_string(prop_python_inherit_name) << "(";
+        inherit << form_node->as_string(prop_python_file) << "." << form_node->as_string(prop_class_name) << "):";
+
+        m_header->writeLine(inherit);
+        m_header->Indent();
+        m_header->writeLine("def __init__(self, parent):");
+        m_header->Indent();
+        m_header->writeLine("super().__init__(parent)");
+    }
 
     thrd_get_events.join();
 
@@ -332,6 +349,7 @@ void BaseCodeGenerator::GeneratePythonClass(Node* form_node, PANEL_PAGE panel_ty
 
     // Make certain indentation is reset after all construction code is written
     m_source->ResetIndent();
+    m_header->ResetIndent();
 }
 
 void BaseCodeGenerator::GenPythonEventHandlers(const EventVector& events)

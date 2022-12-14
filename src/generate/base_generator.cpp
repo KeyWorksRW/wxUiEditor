@@ -682,6 +682,8 @@ std::optional<ttlib::sview> BaseGenerator::GenEvents(Code& code, NodeEvent* even
     }
     else
     {
+        if (code.is_python() && !event->GetNode()->IsLocal())
+            code.Add("self.");
         code.Add(event->GetNode()->get_node_name()).Function("Bind(") << handler.m_code;
         if (is_lambda)
             code << " ";

@@ -82,7 +82,7 @@ std::optional<ttlib::cstr> ListViewGenerator::GenSettings(Node* node, size_t& au
         {
             if (code.size())
                 code << "\n";
-            code << node->get_node_name() << "->AppendColumn(" << GenerateQuotedString(iter) << ");";
+            code << '\t' << node->get_node_name() << "->AppendColumn(" << GenerateQuotedString(iter) << ");";
         }
         if (node->HasValue(prop_contents))
         {

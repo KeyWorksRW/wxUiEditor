@@ -32,20 +32,20 @@ wxObject* EditListBoxGenerator::CreateMockup(Node* node, wxObject* parent)
     return widget;
 }
 
-std::optional<ttlib::cstr> EditListBoxGenerator::GenSettings(Node* node, size_t& auto_indent)
+std::optional<ttlib::cstr> EditListBoxGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
 {
     ttlib::cstr code;
 
     if (node->HasValue(prop_contents))
     {
-        auto_indent = false;
+        // auto_indent = false;
         code << "{\n\twxArrayString tmp_array;\n";
         auto array = ConvertToArrayString(node->prop_as_string(prop_contents));
         for (auto& iter: array)
         {
-            code << "\t\ttmp_array.push_back(wxString::FromUTF8(\"" << iter << "\"));\n";
+            code << "\ttmp_array.push_back(wxString::FromUTF8(\"" << iter << "\"));\n";
         }
-        code << "\t\t" << node->get_node_name() << "->SetStrings(tmp_array);\n";
+        code << "\t" << node->get_node_name() << "->SetStrings(tmp_array);\n";
         code << "}";
     }
 

@@ -984,9 +984,9 @@ void Code::GenWindowSettings()
     {
         Eol(true);
         if (!m_node->IsForm())
-            NodeName().Function("Enable(false)");
+            NodeName().Function("Enable(false");
         else
-            FormFunction("Enable(false)");
+            FormFunction("Enable(false");
         EndFunction();
     }
 

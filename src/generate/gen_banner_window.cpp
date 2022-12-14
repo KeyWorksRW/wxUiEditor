@@ -47,7 +47,14 @@ std::optional<ttlib::sview> BannerWindowGenerator::CommonConstruction(Code& code
     if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
     code.NodeName().CreateClass();
-    code.GetParentName().Comma().as_string(prop_id).Comma().as_string(prop_direction);
+    if (code.is_cpp())
+        code.GetParentName().Comma().as_string(prop_direction);
+    else
+    {
+        // wxPython docs state that you only need the direction, but in 4.2, there's an error
+        // if you don't inlude the id.
+        code.GetParentName().Comma().as_string(prop_id).Comma().as_string(prop_direction);
+    }
     code.PosSizeFlags(true);
 
     return code.m_code;
@@ -95,7 +102,7 @@ std::optional<ttlib::sview> BannerWindowGenerator::CommonSettings(Code& code)
     if (code.HasValue(prop_title) || code.HasValue(prop_message))
     {
         code.Eol(true);
-        code.NodeName().Function("->SetText(").QuotedString(prop_title).Comma();
+        code.NodeName().Function("SetText(").QuotedString(prop_title).Comma();
         code.QuotedString(prop_message).EndFunction();
     }
 

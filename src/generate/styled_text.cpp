@@ -488,14 +488,14 @@ std::optional<ttlib::cstr> StyledTextGenerator::GenConstruction(Node* node)
     return code;
 }
 
-std::optional<ttlib::cstr> StyledTextGenerator::GenSettings(Node* node, size_t& auto_indent)
+std::optional<ttlib::cstr> StyledTextGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
 {
     ttlib::cstr code;
 
     // There are potentially a LOT of settings, so we put them all in a bracket pair to make them easier to identifiy
 
-    auto_indent = false;
-    code << "\t{";
+    // auto_indent = false;
+    code << "{";
 
     if (node->HasValue(prop_stc_lexer) && node->prop_as_string(prop_stc_lexer) != "NULL")
     {
@@ -512,8 +512,7 @@ std::optional<ttlib::cstr> StyledTextGenerator::GenSettings(Node* node, size_t& 
 
     if (node->HasValue(prop_eol_mode))
     {
-        code << "\n\t" << node->get_node_name() << "->SetEOLMode(" << node->prop_as_constant(prop_eol_mode, "stc_")
-             << ");";
+        code << "\n\t" << node->get_node_name() << "->SetEOLMode(" << node->prop_as_constant(prop_eol_mode, "stc_") << ");";
     }
 
     // Default is false, so only set if true
@@ -604,7 +603,7 @@ std::optional<ttlib::cstr> StyledTextGenerator::GenSettings(Node* node, size_t& 
     {
         if (node->prop_as_int(prop_stc_left_margin_width) == 5)
         {
-            code << "\n\t\t// Sets text margin scaled appropriately for the current DPI on Windows,\n\t\t// 5 on wxGTK or "
+            code << "\n\t// Sets text margin scaled appropriately for the current DPI on Windows,\n\t// 5 on wxGTK or "
                     "wxOSX";
         }
         code << "\n\t" << node->get_node_name() << "->SetMarginLeft(";
@@ -737,8 +736,7 @@ std::optional<ttlib::cstr> StyledTextGenerator::GenSettings(Node* node, size_t& 
             }
             else
             {
-                code << "\n\t" << node->get_node_name() << "->MarkerDefine(wxSTC_MARKNUM_FOLDER, " << symbol_folder
-                     << ");";
+                code << "\n\t" << node->get_node_name() << "->MarkerDefine(wxSTC_MARKNUM_FOLDER, " << symbol_folder << ");";
                 code << "\n\t" << node->get_node_name() << "->MarkerDefine(wxSTC_MARKNUM_FOLDEROPEN, " << symbol_open
                      << ");";
                 code << "\n\t" << node->get_node_name() << "->MarkerDefine(wxSTC_MARKNUM_FOLDEROPENMID, " << symbol_open
@@ -746,8 +744,7 @@ std::optional<ttlib::cstr> StyledTextGenerator::GenSettings(Node* node, size_t& 
                 code << "\n\t" << node->get_node_name() << "->MarkerDefine(wxSTC_MARKNUM_FOLDEREND, " << symbol_folder
                      << ");";
             }
-            code << "\n\t" << node->get_node_name()
-                 << "->MarkerDefine(wxSTC_MARKNUM_FOLDERMIDTAIL, wxSTC_MARK_BACKGROUND);";
+            code << "\n\t" << node->get_node_name() << "->MarkerDefine(wxSTC_MARKNUM_FOLDERMIDTAIL, wxSTC_MARK_BACKGROUND);";
             code << "\n\t" << node->get_node_name() << "->MarkerDefine(wxSTC_MARKNUM_FOLDERSUB, wxSTC_MARK_BACKGROUND);";
             code << "\n\t" << node->get_node_name() << "->MarkerDefine(wxSTC_MARKNUM_FOLDERTAIL, wxSTC_MARK_BACKGROUND);";
         }
@@ -889,7 +886,7 @@ std::optional<ttlib::cstr> StyledTextGenerator::GenSettings(Node* node, size_t& 
     // Default is false, so only set if true
     if (node->prop_as_bool(prop_backspace_unindents))
         code << "\n\t" << node->get_node_name() << "->SetBackSpaceUnIndents(true);";
-    code << "\n\t}";
+    code << "\n}";
 
     if (code.is_sameas("\t{\n\t}"))
     {

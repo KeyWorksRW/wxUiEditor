@@ -129,7 +129,7 @@ std::optional<ttlib::sview> TextCtrlGenerator::CommonSettings(Code& code)
         {
             if (code.is_cpp())
             {
-                code << "#if !defined(__WXGTK__))";
+                code << "#if !defined(__WXGTK__)";
                 code.Eol().Tab().NodeName().Function("SetMaxLength(").as_string(prop_maxlength).EndFunction().Eol();
                 code.m_code += "#endif";
             }

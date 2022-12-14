@@ -111,18 +111,18 @@ void BookCtorAddImagelist(ttlib::cstr& code, Node* node)
 {
     if ((node->prop_as_bool(prop_display_images) || node->isGen(gen_wxToolbook)) && isBookHasImage(node))
     {
-        code.insert(0, "\t");
+        // code.insert(0, "\t");
 
         // Enclose the code in braces to allow using "img_list" and "bmp" as variable names, as well as making the
         // code more readable.
 
-        code << "\n\t{";
+        code << "\n{";
         if (wxGetProject().value(prop_wxWidgets_version) == "3.1")
         {
             code << "\n#if wxCHECK_VERSION(3, 1, 6)";
         }
 
-        code << "\n\t\twxBookCtrlBase::Images bundle_list;";
+        code << "\n\twxBookCtrlBase::Images bundle_list;";
         for (const auto& child_node: node->GetChildNodePtrs())
         {
             if (child_node->HasValue(prop_bitmap))
@@ -130,13 +130,13 @@ void BookCtorAddImagelist(ttlib::cstr& code, Node* node)
                 ttlib::cstr bundle_code;
                 if (GenerateBundleCode(child_node->prop_as_string(prop_bitmap), bundle_code))
                 {
-                    code << "\n\t" << bundle_code;
-                    code << "\n\t\t\tbundle_list.push_back(wxBitmapBundle::FromBitmaps(bitmaps));";
-                    code << "\n\t\t}";
+                    code << "\n" << bundle_code;
+                    code << "\n\tbundle_list.push_back(wxBitmapBundle::FromBitmaps(bitmaps));";
+                    code << "\n}";
                 }
                 else
                 {
-                    code << "\n\t\tbundle_list.push_back(";
+                    code << "\n\tbundle_list.push_back(";
                     code << bundle_code;
                     code << ");";
                 }
@@ -148,7 +148,7 @@ void BookCtorAddImagelist(ttlib::cstr& code, Node* node)
         {
             code << "\n\n#else  // older version of wxWidgets that don't support bitmap bundles\n";
 
-            code << "\n\t\tauto img_list = new wxImageList;";
+            code << "\n\tauto img_list = new wxImageList;";
 
             size_t image_index = 0;
             for (const auto& child_node: node->GetChildNodePtrs())
@@ -159,9 +159,9 @@ void BookCtorAddImagelist(ttlib::cstr& code, Node* node)
 
                 if (child_node->HasValue(prop_bitmap))
                 {
-                    code << "\n\t\tauto img_" << image_index << " = ";
+                    code << "\n\tauto img_" << image_index << " = ";
                     code << GenerateBitmapCode(child_node->prop_as_string(prop_bitmap)) << ";";
-                    code << "\n\t\timg_list->Add(img_" << image_index;
+                    code << "\n\timg_list->Add(img_" << image_index;
                     if (child_node->prop_as_string(prop_bitmap).starts_with("Art;"))
                         code << ".ConvertToImage()";
                     code << ");";
@@ -173,11 +173,11 @@ void BookCtorAddImagelist(ttlib::cstr& code, Node* node)
                     AddTreebookImageCode(code, child_node.get(), image_index);
                 }
             }
-            code << "\n\t" << node->get_node_name() << "->AssignImageList(img_list);";
+            code << "\n" << node->get_node_name() << "->AssignImageList(img_list);";
 
             code << "\n#endif  // wxCHECK_VERSION(3, 1, 6)";
         }
-        code << "\n\t}";
+        code << "\n}";
     }
 }
 
@@ -202,9 +202,9 @@ void AddTreebookImageCode(ttlib::cstr& code, Node* child_node, size_t& image_ind
     {
         if (grand_child->isGen(gen_BookPage) && grand_child->HasValue(prop_bitmap))
         {
-            code << "\n\t\tauto img_" << image_index << " = ";
+            code << "\n\tauto img_" << image_index << " = ";
             code << GenerateBitmapCode(grand_child->prop_as_string(prop_bitmap)) << ";";
-            code << "\n\t\timg_list->Add(img_" << image_index;
+            code << "\n\timg_list->Add(img_" << image_index;
             if (grand_child->prop_as_string(prop_bitmap).starts_with("Art;"))
                 code << ".ConvertToImage()";
             code << ");";

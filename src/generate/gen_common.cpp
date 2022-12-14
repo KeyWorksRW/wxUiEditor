@@ -798,12 +798,12 @@ bool GenerateVectorCode(const ttlib::cstr& description, ttlib::cstr& code)
 
     // If we get here, then we need to first put the bitmaps into a wxVector in order for wxBitmapBundle to load them.
 
-    code << "\t{\n";
+    code << "{\n";
     if (wxGetProject().value(prop_wxWidgets_version) == "3.1")
     {
         code << "#if wxCHECK_VERSION(3, 1, 6)\n";
     }
-    code << "\t\twxVector<wxBitmap> bitmaps;\n";
+    code << "\twxVector<wxBitmap> bitmaps;\n";
 
     bool is_xpm = (parts[IndexType].is_sameas("XPM"));
 
@@ -813,7 +813,7 @@ bool GenerateVectorCode(const ttlib::cstr& description, ttlib::cstr& code)
         name.remove_extension();
         if (is_xpm)
         {
-            code << "\t\tbitmaps.push_back(wxImage(" << name << "_xpm));\n";
+            code << "\tbitmaps.push_back(wxImage(" << name << "_xpm));\n";
         }
         else
         {

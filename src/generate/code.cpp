@@ -66,6 +66,8 @@ void Code::CheckLineBreak(size_t add_length)
 
     if (m_code.size() + add_length > m_break_at)
     {
+        if (m_code.back() == ' ')
+            m_code.pop_back();
         Eol().Tab();
     }
 }
@@ -74,6 +76,8 @@ Code& Code::CheckLineLength()
 {
     if (m_code.size() > m_break_at)
     {
+        if (m_code.back() == ' ')
+            m_code.pop_back();
         Eol().Tab();
     }
 
@@ -89,6 +93,8 @@ Code& Code::Eol(bool check_size)
     }
     else
     {
+        if (m_code.back() == ' ')
+            m_code.pop_back();
         m_code += '\n';
     }
 

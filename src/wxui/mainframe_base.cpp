@@ -279,6 +279,11 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
         "Open wxWidgets documentation in your default browser.", wxITEM_NORMAL);
     menu_item_6->SetBitmap(wxue_img::bundle_wxlogo_svg(16, 16));
     m_menuHelp->Append(menu_item_6);
+
+    auto* menu_item_9 = new wxMenuItem(m_menuHelp, wxID_ANY, "wxPython Documentation",
+        "Open wxPython documentation in your default browser.", wxITEM_NORMAL);
+    menu_item_9->SetBitmap(wxue_img::bundle_wxlogo_svg(16, 16));
+    m_menuHelp->Append(menu_item_9);
     m_menubar->Append(m_menuHelp, "&Help");
 
     SetMenuBar(m_menubar);
@@ -492,6 +497,8 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
     Bind(wxEVT_MENU, &MainFrameBase::OnAbout, this, wxID_ABOUT);
     Bind(wxEVT_MENU, &MainFrameBase::OnBrowseDocs, this, menu_item_6->GetId());
     Bind(wxEVT_UPDATE_UI, &MainFrameBase::OnUpdateBrowseDocs, this, menu_item_6->GetId());
+    Bind(wxEVT_MENU, &MainFrameBase::OnBrowsePython, this, menu_item_9->GetId());
+    Bind(wxEVT_UPDATE_UI, &MainFrameBase::OnUpdateBrowsePython, this, menu_item_9->GetId());
     Bind(wxEVT_TOOL, &MainFrameBase::OnGenerateCode, this, id_GenerateCode);
     Bind(wxEVT_TOOL, &MainFrameBase::OnPreviewXrc, this, id_PreviewForm);
 }

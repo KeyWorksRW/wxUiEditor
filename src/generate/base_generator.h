@@ -174,6 +174,12 @@ public:
     // Get the HTML filename to browse to. Caller needs to supply the prefix.
     virtual ttlib::cstr GetHelpURL(Node*);
 
+    // Get the wxPython Help menu item text
+    virtual ttlib::cstr GetPythonHelpText(Node*) { return {}; }
+
+    // Get the HTML filename to browse to. E.g., "wx.Button.html"
+    virtual ttlib::cstr GetPythonURL(Node*) { return {}; }
+
     // Change the enable/disable states in the Property Grid Panel based on the current
     // property.
     virtual void ChangeEnableState(wxPropertyGridManager*, NodeProperty*);

@@ -65,6 +65,7 @@ protected:
     virtual void OnAppendSmith(wxCommandEvent& event) { event.Skip(); }
     virtual void OnAppendXRC(wxCommandEvent& event) { event.Skip(); }
     virtual void OnBrowseDocs(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnBrowsePython(wxCommandEvent& event) { event.Skip(); }
     virtual void OnChangeAlignment(wxCommandEvent& event) { event.Skip(); }
     virtual void OnChangeBorder(wxCommandEvent& event) { event.Skip(); }
     virtual void OnClose(wxCloseEvent& event) { event.Skip(); }
@@ -84,6 +85,7 @@ protected:
     virtual void OnSaveProject(wxCommandEvent& event) { event.Skip(); }
     virtual void OnToggleExpandLayout(wxCommandEvent& event) { event.Skip(); }
     virtual void OnUpdateBrowseDocs(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnUpdateBrowsePython(wxUpdateUIEvent& event) { event.Skip(); }
 
     // Class member variables
 

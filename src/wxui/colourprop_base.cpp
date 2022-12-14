@@ -63,7 +63,8 @@ bool ColourPropBase::Create(wxWindow* parent, wxWindowID id, const wxString& tit
     m_combo_system->Enable(false);
     m_staticbox_system->Add(m_combo_system, wxSizerFlags().Border(wxALL));
 
-    auto* staticText = new wxStaticText(m_staticbox_system->GetStaticBox(), wxID_ANY, "Caution: On Windows, these are classic colours. They may not be the colours the user has set via a Theme or Dark Mode.");
+    auto* staticText = new wxStaticText(m_staticbox_system->GetStaticBox(), wxID_ANY, 
+        "Caution: On Windows, these are classic colours. They may not be the colours the user has set via a Theme or Dark Mode.");
     staticText->Wrap(250);
     m_staticbox_system->Add(staticText, wxSizerFlags().Border(wxALL));
 

@@ -26,4 +26,7 @@ public:
 
     int GenXrcObject(Node*, pugi::xml_node& /* object */, size_t /* xrc_flags */) override;
     void RequiredHandlers(Node*, std::set<std::string>& /* handlers */) override;
+
+    ttlib::cstr GetPythonHelpText(Node*) override { return "wx.Dialog"; }
+    ttlib::cstr GetPythonURL(Node*) override { return "wx.Dialog.html"; }
 };

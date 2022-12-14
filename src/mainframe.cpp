@@ -982,6 +982,45 @@ void MainFrame::OnUpdateBrowseDocs(wxUpdateUIEvent& event)
     event.SetText("wxWidgets Documentation");
 }
 
+void MainFrame::OnBrowsePython(wxCommandEvent& WXUNUSED(event))
+{
+    if (m_selected_node)
+    {
+        if (auto generator = m_selected_node->GetGenerator(); generator)
+        {
+            auto file = generator->GetPythonURL(m_selected_node.get());
+            if (file.size())
+            {
+                wxString url("https://docs.wxpython.org/");
+                url << file.wx_str();
+                wxLaunchDefaultBrowser(url);
+                return;
+            }
+        }
+    }
+    wxLaunchDefaultBrowser("https://docs.wxpython.org/index.html");
+}
+
+void MainFrame::OnUpdateBrowsePython(wxUpdateUIEvent& event)
+{
+    if (m_selected_node)
+    {
+        if (auto generator = m_selected_node->GetGenerator(); generator)
+        {
+            auto label = generator->GetPythonHelpText(m_selected_node.get());
+            if (label.empty())
+            {
+                label << "wxPython";
+            }
+            label << " Documentation";
+            event.SetText(label.wx_str());
+            return;
+        }
+    }
+
+    event.SetText("wxPython Documentation");
+}
+
 void MainFrame::OnChangeAlignment(wxCommandEvent& event)
 {
     int align = 0;

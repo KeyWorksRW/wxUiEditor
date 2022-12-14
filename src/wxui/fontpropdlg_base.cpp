@@ -53,7 +53,8 @@ bool FontPropDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString& ti
     auto* box_sizer_12 = new wxBoxSizer(wxVERTICAL);
     box_sizer_10->Add(box_sizer_12, wxSizerFlags(1).Expand().Border(wxALL));
 
-    m_staticSystemSample = new wxStaticText(m_system_box->GetStaticBox(), wxID_ANY, "Sample");
+    m_staticSystemSample = new wxStaticText(m_system_box->GetStaticBox(), wxID_ANY, 
+        "Sample");
     m_staticSystemSample->SetToolTip("This sample text will show you how the text will look on the current operating system. The font will be different when your program is used on a different operating systems.");
     box_sizer_12->Add(m_staticSystemSample, wxSizerFlags(1).Center().Border(wxALL));
 
@@ -148,7 +149,8 @@ bool FontPropDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString& ti
     auto* box_sizer_9 = new wxBoxSizer(wxVERTICAL);
     box_sizer_5->Add(box_sizer_9, wxSizerFlags(1).Expand().Border(wxALL));
 
-    m_staticCustomSample = new wxStaticText(m_custom_box->GetStaticBox(), wxID_ANY, "Sample");
+    m_staticCustomSample = new wxStaticText(m_custom_box->GetStaticBox(), wxID_ANY, 
+        "Sample");
     box_sizer_9->Add(m_staticCustomSample, wxSizerFlags(1).Center().Border(wxALL));
 
     dlg_sizer->AddSpacer(20);

@@ -197,10 +197,10 @@
       label="Custom Property Editors">
       <node
         class="wxDialog"
-        base_file="artpropdlg_base"
         class_name="ArtPropertyDlgBase"
-        derived_class_name="ArtPropertyDlg"
-        title="Art Provider Image">
+        title="Art Provider Image"
+        base_file="artpropdlg_base"
+        derived_class_name="ArtPropertyDlg">
         <node
           class="wxBoxSizer"
           orientation="wxVERTICAL"
@@ -258,10 +258,10 @@
       </node>
       <node
         class="wxDialog"
-        base_file="colourprop_base"
         class_name="ColourPropBase"
-        derived_class_name="ColourPropDialog"
         title="Colour Property"
+        base_file="colourprop_base"
+        derived_class_name="ColourPropDialog"
         wxEVT_INIT_DIALOG="OnInit">
         <node
           class="wxBoxSizer"
@@ -365,11 +365,11 @@
       </node>
       <node
         class="wxDialog"
-        base_file="editcodedialog_base"
         class_name="EditCodeDialogBase"
-        derived_class_name="EditCodeDialog"
         persist="1"
         style="wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER"
+        base_file="editcodedialog_base"
+        derived_class_name="EditCodeDialog"
         wxEVT_INIT_DIALOG="OnInit">
         <node
           class="wxBoxSizer"
@@ -402,12 +402,12 @@
       </node>
       <node
         class="wxDialog"
-        base_file="edit_html_dialog_base"
         class_name="EditHtmlDialogBase"
-        derived_class_name="EditHtmlDialog"
         persist="1"
-        size="500,400d"
         style="wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER"
+        size="500,400d"
+        base_file="edit_html_dialog_base"
+        derived_class_name="EditHtmlDialog"
         wxEVT_INIT_DIALOG="OnInit">
         <node
           class="wxBoxSizer"
@@ -449,8 +449,8 @@
       </node>
       <node
         class="wxDialog"
-        base_file="editstringdialog_base"
         class_name="EditStringDialogBase"
+        base_file="editstringdialog_base"
         derived_class_name="EditStringDialog">
         <node
           class="wxBoxSizer"
@@ -479,12 +479,12 @@
       </node>
       <node
         class="wxDialog"
-        base_file="eventhandlerdlg_base"
         class_name="EventHandlerDlgBase"
-        derived_class_name="EventHandlerDlg"
         persist="1"
         style="wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER"
         title="Event Handler"
+        base_file="eventhandlerdlg_base"
+        derived_class_name="EventHandlerDlg"
         wxEVT_INIT_DIALOG="OnInit">
         <node
           class="wxBoxSizer"
@@ -584,10 +584,10 @@
       </node>
       <node
         class="wxDialog"
-        base_file="fontpropdlg_base"
         class_name="FontPropDlgBase"
-        derived_class_name="FontPropDlg"
         title="Font Property"
+        base_file="fontpropdlg_base"
+        derived_class_name="FontPropDlg"
         wxEVT_INIT_DIALOG="OnInit">
         <node
           class="wxBoxSizer"
@@ -853,11 +853,11 @@
     </node>
     <node
       class="wxDialog"
-      base_file="generatedlg_base"
       class_name="GenerateDlgBase"
+      title="Generate Code"
+      base_file="generatedlg_base"
       derived_class_name="GenerateDlg"
       derived_file="generatedlg"
-      title="Generate Code"
       wxEVT_INIT_DIALOG="OnInit">
       <node
         class="wxBoxSizer"
@@ -904,11 +904,11 @@
     </node>
     <node
       class="wxDialog"
-      base_file="dlg_gen_results"
       class_name="GeneratedResultsDlg"
       persist="1"
       style="wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER"
       title="Generated Code Results"
+      base_file="dlg_gen_results"
       use_derived_class="0">
       <node
         class="wxBoxSizer"
@@ -946,13 +946,13 @@
     </node>
     <node
       class="wxDialog"
-      base_file="generate_xrc_dlg_base"
       class_name="GenerateXrcDlgBase"
-      derived_class_name="GenerateXrcDlg"
-      derived_file="../ui/generate_xrc_dlg"
       persist="1"
       style="wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER"
       title="Generate XRC File(s)"
+      base_file="generate_xrc_dlg_base"
+      derived_class_name="GenerateXrcDlg"
+      derived_file="../ui/generate_xrc_dlg"
       wxEVT_INIT_DIALOG="OnInit">
       <node
         class="wxBoxSizer"
@@ -1009,10 +1009,10 @@
     </node>
     <node
       class="wxDialog"
-      base_file="gridbag_item_base"
       class_name="GridBagItemBase"
-      derived_class_name="GridBagItem"
       title="Append or Insert into wxGridBagSizer"
+      base_file="gridbag_item_base"
+      derived_class_name="GridBagItem"
       wxEVT_INIT_DIALOG="OnInit">
       <node
         class="wxBoxSizer"
@@ -1096,10 +1096,10 @@
     </node>
     <node
       class="wxDialog"
-      base_file="grid_property_dlg"
-      base_src_includes="// This is the base class for editing multiple-field properties"
       class_name="GridPropertyDlg"
       title="Property Editor"
+      base_file="grid_property_dlg"
+      base_src_includes="// This is the base class for editing multiple-field properties"
       wxEVT_INIT_DIALOG="OnInit"
       wxEVT_UPDATE_UI="OnUpdateUI">
       <node
@@ -1167,11 +1167,11 @@
     </node>
     <node
       class="wxDialog"
-      base_file="import_base"
       class_name="ImportBase"
-      derived_class_name="ImportDlg"
       icon="SVG;../art_src/import.svg;[16,16]"
       title="New Imported Project"
+      base_file="import_base"
+      derived_class_name="ImportDlg"
       wxEVT_INIT_DIALOG="OnInitDialog">
       <node
         class="wxBoxSizer"
@@ -1304,11 +1304,11 @@
     </node>
     <node
       class="wxDialog"
-      base_file="importwinres_base"
       class_name="ImportWinRes"
+      title="Import Windows Resource Dialogs"
+      base_file="importwinres_base"
       inserted_hdr_code="const ttlib::cstr&amp; GetRcFilename() { return m_rcFilename; }@@std::vector&lt;ttlib::cstr>&amp; GetDlgNames() { return m_dialogs; }@@@@protected:@@void ReadRcFile();@@@@private:@@ttlib::cstr m_rcFilename;@@std::vector&lt;ttlib::cstr> m_dialogs;"
       private_members="1"
-      title="Import Windows Resource Dialogs"
       use_derived_class="0"
       wxEVT_INIT_DIALOG="OnInit">
       <node
@@ -1373,13 +1373,13 @@
     </node>
     <node
       class="wxDialog"
-      base_file="insertwidget_base"
       class_name="InsertWidget"
       icon="Art;wxART_EDIT|wxART_MENU"
-      inserted_hdr_code="ttlib::cstr GetWidget() { return m_widget; }@@@@private:@@ttlib::cstr m_widget;"
-      minimum_size="-1,-1"
-      private_members="1"
       title="Insert Widget"
+      minimum_size="-1,-1"
+      base_file="insertwidget_base"
+      inserted_hdr_code="ttlib::cstr GetWidget() { return m_widget; }@@@@private:@@ttlib::cstr m_widget;"
+      private_members="1"
       use_derived_class="0"
       wxEVT_INIT_DIALOG="OnInit">
       <node
@@ -1858,6 +1858,14 @@
               var_name="menu_item_6"
               wxEVT_MENU="OnBrowseDocs"
               wxEVT_UPDATE_UI="OnUpdateBrowseDocs" />
+            <node
+              class="wxMenuItem"
+              bitmap="SVG;../art_src/wxlogo.svg;[16,16]"
+              help="Open wxPython documentation in your default browser."
+              label="wxPython Documentation"
+              var_name="menu_item_9"
+              wxEVT_MENU="OnBrowsePython"
+              wxEVT_UPDATE_UI="OnUpdateBrowsePython" />
           </node>
         </node>
         <node
@@ -3322,11 +3330,11 @@
       label="Dialogs for New Forms">
       <node
         class="wxDialog"
-        base_file="newdialog_base"
         class_name="NewDialog"
+        title="Create New Dialog"
+        base_file="newdialog_base"
         inserted_hdr_code="void CreateNode();@@void VerifyClassName();@@@@private:@@bool m_is_info_shown { false };"
         private_members="1"
-        title="Create New Dialog"
         use_derived_class="0"
         wxEVT_INIT_DIALOG="OnInit">
         <node
@@ -3432,11 +3440,11 @@
       </node>
       <node
         class="wxDialog"
-        base_file="newframe_base"
         class_name="NewFrame"
+        title="New wxFrame window"
+        base_file="newframe_base"
         inserted_hdr_code="void CreateNode();@@void VerifyClassName();@@@@private:@@bool m_is_info_shown { false };"
         private_members="1"
-        title="New wxFrame window"
         use_derived_class="0"
         wxEVT_INIT_DIALOG="[this](wxInitDialogEvent&amp; event)@@{@@m_classname->SetFocus();@@event.Skip();@@}">
         <node
@@ -3519,11 +3527,11 @@
       </node>
       <node
         class="wxDialog"
-        base_file="newpanel_base"
         class_name="NewPanel"
+        title="Create New Panel"
+        base_file="newpanel_base"
         derived_class_name="NewPanel"
         inserted_hdr_code="void WantFormVersion() { m_is_form = true; }@@void CreateNode();@@void VerifyClassName();@@@@private:@@bool m_is_form { false };@@bool m_is_info_shown { false };"
-        title="Create New Panel"
         use_derived_class="0"
         wxEVT_INIT_DIALOG="OnInit">
         <node
@@ -3602,11 +3610,11 @@
       </node>
       <node
         class="wxDialog"
-        base_file="newribbon_base"
         class_name="NewRibbon"
+        title="New Ribbon Bar"
+        base_file="newribbon_base"
         inserted_hdr_code="// Checks current selected node to see if it accepts a wxRibbonBar as a child@@bool IsCreatable(bool notify_user = true);@@@@void WantFormVersion() { m_is_form = true; }@@void CreateNode();@@void VerifyClassName();@@@@private:@@bool m_is_form { false };@@bool m_is_info_shown { false };"
         private_members="1"
-        title="New Ribbon Bar"
         use_derived_class="0"
         wxEVT_INIT_DIALOG="OnInit">
         <node
@@ -3686,11 +3694,11 @@
       </node>
       <node
         class="wxDialog"
-        base_file="newwizard_base"
         class_name="NewWizard"
+        title="Create New Wizard"
+        base_file="newwizard_base"
         inserted_hdr_code="void CreateNode();@@void VerifyClassName();@@@@private:@@bool m_is_info_shown { false };"
         private_members="1"
-        title="Create New Wizard"
         use_derived_class="0"
         wxEVT_INIT_DIALOG="OnInit">
         <node
@@ -3780,10 +3788,10 @@
     </node>
     <node
       class="wxDialog"
-      base_file="optionsdlg_base"
       class_name="OptionsDlgBase"
-      derived_class_name="OptionsDlg"
       title="Options"
+      base_file="optionsdlg_base"
+      derived_class_name="OptionsDlg"
       wxEVT_INIT_DIALOG="OnInit">
       <node
         class="wxBoxSizer"
@@ -3829,12 +3837,12 @@
     </node>
     <node
       class="wxDialog"
-      base_file="startupdlg_base"
       class_name="StartupDlg"
       icon="SVG;../art_src/logo.svg;[16,16]"
+      title="Open, Import, or Create Project"
+      base_file="startupdlg_base"
       inserted_hdr_code="enum : size_t@@{@@    START_MRU,@@    START_CONVERT,@@    START_OPEN,@@    START_EMPTY,@@};@@@@auto GetCommandType() const { return m_cmdType; }@@ttString&amp; GetProjectFile() { return m_value; }@@@@protected:@@void OnHyperlink(wxHyperlinkEvent&amp; event);@@@@private:@@ttString m_value;@@size_t m_cmdType { START_EMPTY };"
       private_members="1"
-      title="Open, Import, or Create Project"
       use_derived_class="0"
       wxEVT_INIT_DIALOG="OnInit">
       <node
@@ -3978,9 +3986,9 @@
     </node>
     <node
       class="wxDialog"
-      base_file="preview_settings"
       class_name="PreviewSettings"
       title="Preview"
+      base_file="preview_settings"
       use_derived_class="0"
       wxEVT_INIT_DIALOG="OnInit">
       <node
@@ -4024,11 +4032,11 @@
     </node>
     <node
       class="wxDialog"
-      base_file="xrccompare_base"
       class_name="XrcCompareBase"
-      derived_class_name="XrcCompare"
       style="wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER"
-      title="Compare C++/XRC Generated UI">
+      title="Compare C++/XRC Generated UI"
+      base_file="xrccompare_base"
+      derived_class_name="XrcCompare">
       <node
         class="wxGridBagSizer"
         class_access="protected:"

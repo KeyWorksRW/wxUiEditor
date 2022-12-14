@@ -371,7 +371,14 @@ Code& Code::as_string(PropName prop_name)
 
 Code& Code::NodeName()
 {
-    m_code << m_node->get_node_name();
+    if (is_cpp() || m_node->IsLocal())
+    {
+        m_code << m_node->get_node_name();
+    }
+    else
+    {
+        m_code << "self." << m_node->get_node_name();
+    }
     return *this;
 }
 

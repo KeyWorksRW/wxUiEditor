@@ -338,7 +338,10 @@ void BaseCodeGenerator::GeneratePythonClass(Node* form_node, PANEL_PAGE panel_ty
     if (events.size())
     {
         m_source->writeLine();
-        m_source->writeLine("# Bind Event handlers");
+        if (m_form_node->HasValue(prop_python_inherit_name))
+            m_source->writeLine(ttlib::cstr("# Bind Event handlers to inherited ") << m_form_node->as_string(prop_python_inherit_name) << " class functions");
+        else
+            m_source->writeLine("# Bind Event handlers");
         GenSrcEventBinding(form_node, events);
 
         m_source->ResetIndent();
@@ -354,6 +357,8 @@ void BaseCodeGenerator::GeneratePythonClass(Node* form_node, PANEL_PAGE panel_ty
 
 void BaseCodeGenerator::GenPythonEventHandlers(const EventVector& events)
 {
+    bool inherited_class = m_form_node->HasValue(prop_python_inherit_name);
+
     // Multiple events can be bound to the same function, so use a set to make sure we only generate each function once.
     std::set<ttlib::cstr> code_lines;
 
@@ -365,7 +370,7 @@ void BaseCodeGenerator::GenPythonEventHandlers(const EventVector& events)
 
         ttlib::cstr code("\tdef ");
         code << event->get_value() << "(self, event):\n\t\t";
-        if (event->GetNode()->get_form()->prop_as_bool(prop_python_call_skip))
+        if (inherited_class || event->GetNode()->get_form()->prop_as_bool(prop_python_call_skip))
             code << "event.Skip()";
         else
             code << "pass";
@@ -374,12 +379,29 @@ void BaseCodeGenerator::GenPythonEventHandlers(const EventVector& events)
 
     if (code_lines.size())
     {
-        m_source->writeLine();
-        m_source->writeLine("# Event handler functions");
-        for (const auto& code: code_lines)
+        if (inherited_class)
         {
-            m_source->writeLine(code, false);
+            m_header->Unindent();
+            m_header->writeLine();
+            m_header->writeLine("# Event handler functions");
+        }
+        else
+        {
             m_source->writeLine();
+            m_source->writeLine("# Event handler functions");
+        }
+        for (auto code: code_lines)
+        {
+            if (!inherited_class)
+            {
+                m_source->writeLine(code, false);
+                m_source->writeLine();
+            }
+            else
+            {
+                m_header->writeLine(code, false);
+                m_header->writeLine();
+            }
         }
     }
 }

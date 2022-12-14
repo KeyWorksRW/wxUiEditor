@@ -104,8 +104,13 @@ bool GeneratePythonFiles(GenResults& results, std::vector<ttlib::cstr>* pClassLi
         }
         else
         {
+#if !defined(_DEBUG)
+            // For a lot of wxPython testing of projects with multiple dialogs, there may
+            // only be a few forms where wxPython generation is being tested, so don't nag in
+            // Debug builds. :-)
             results.msgs.emplace_back() << "No Python filename specified for " << form->prop_as_string(prop_class_name)
                                         << '\n';
+#endif  // _DEBUG
             continue;
         }
 
@@ -339,7 +344,8 @@ void BaseCodeGenerator::GeneratePythonClass(Node* form_node, PANEL_PAGE panel_ty
     {
         m_source->writeLine();
         if (m_form_node->HasValue(prop_python_inherit_name))
-            m_source->writeLine(ttlib::cstr("# Bind Event handlers to inherited ") << m_form_node->as_string(prop_python_inherit_name) << " class functions");
+            m_source->writeLine(ttlib::cstr("# Bind Event handlers to inherited ")
+                                << m_form_node->as_string(prop_python_inherit_name) << " class functions");
         else
             m_source->writeLine("# Bind Event handlers");
         GenSrcEventBinding(form_node, events);

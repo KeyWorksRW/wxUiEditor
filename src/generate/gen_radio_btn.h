@@ -15,8 +15,8 @@ public:
     wxObject* CreateMockup(Node* node, wxObject* parent) override;
     bool OnPropertyChange(wxObject* widget, Node* node, NodeProperty* prop) override;
 
-    std::optional<ttlib::cstr> GenConstruction(Node* node) override;
-    std::optional<ttlib::cstr> GenSettings(Node* node, size_t& auto_indent) override;
+    std::optional<ttlib::sview> CommonConstruction(Code& code) override;
+    std::optional<ttlib::sview> CommonSettings(Code&) override;
 
     bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr) override;
 
@@ -25,6 +25,9 @@ public:
 
     int GenXrcObject(Node*, pugi::xml_node& /* object */, size_t /* xrc_flags */) override;
     void RequiredHandlers(Node*, std::set<std::string>& /* handlers */) override;
+
+    ttlib::cstr GetPythonHelpText(Node*) override { return "wx.RadioButton"; }
+    ttlib::cstr GetPythonURL(Node*) override { return "wx.RadioButton.html"; }
 
 private:
     bool m_info_warning { false };

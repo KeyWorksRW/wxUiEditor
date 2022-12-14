@@ -9,6 +9,7 @@
 #include <wx/propgrid/manager.h>  // wxPropertyGridManager
 #include <wx/radiobut.h>          // wxRadioButton declaration
 
+#include "code.h"        // Code -- Helper class for generating code
 #include "gen_common.h"  // GeneratorLibrary -- Generator classes
 #include "mainframe.h"   // MainFrame -- Main window frame
 #include "node.h"        // Node class
@@ -45,54 +46,31 @@ bool RadioButtonGenerator::OnPropertyChange(wxObject* widget, Node* node, NodePr
     return false;
 }
 
-std::optional<ttlib::cstr> RadioButtonGenerator::GenConstruction(Node* node)
+std::optional<ttlib::sview> RadioButtonGenerator::CommonConstruction(Code& code)
 {
-    ttlib::cstr code;
-    if (node->IsLocal())
+    if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
-    code << node->get_node_name() << GenerateNewAssignment(node);
-    code << GetParentName(node) << ", " << node->prop_as_string(prop_id) << ", ";
+    code.NodeName().CreateClass();
+    code.GetParentName().Comma().as_string(prop_id).Comma().QuotedString(prop_label);
+    code.PosSizeFlags(true);
 
-    if (node->prop_as_string(prop_label).size())
-        code << GenerateQuotedString(node->prop_as_string(prop_label));
-    else
-        code << "wxEmptyString";
-
-    if (node->prop_as_string(prop_window_name).empty())
-        GeneratePosSizeFlags(node, code);
-    else
-    {
-        // We have to generate a default validator before the window name, which GeneratePosSizeFlags doesn't do. We don't
-        // actually need that validator, since GenSettings will create it, but we have to supply something before the window
-        // name.
-
-        code << ", ";
-        GenPos(node, code);
-        code << ", ";
-        GenSize(node, code);
-        code << ", ";
-        GenStyle(node, code);
-        code << ", wxDefaultValidator, " << node->prop_as_string(prop_window_name);
-        code << ");";
-    }
-
-    return code;
+    return code.m_code;
 }
 
-std::optional<ttlib::cstr> RadioButtonGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
+std::optional<ttlib::sview> RadioButtonGenerator::CommonSettings(Code& code)
 {
-    ttlib::cstr code;
-
     // If a validator has been specified, then the variable will be initialized with the selection variable.
-    if (node->prop_as_string(prop_validator_variable).empty())
-    {
-        if (node->prop_as_bool(prop_checked))
-        {
-            code << node->get_node_name() << "->SetValue(true);";
-        }
-    }
+    if (code.is_cpp() && code.HasValue(prop_validator_variable))
+        return code.m_code;
 
-    return code;
+    if (code.IsTrue(prop_checked))
+    {
+        if (code.is_cpp())
+            code.NodeName().Function("SetValue(true").EndFunction();
+        else
+            code.NodeName().Function("SetValue(True").EndFunction();
+    }
+    return code.m_code;
 }
 
 int RadioButtonGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)

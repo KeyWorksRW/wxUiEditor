@@ -44,7 +44,7 @@ CodeDisplay::CodeDisplay(wxWindow* parent, int panel_type) : CodeDisplayBase(par
         m_scintilla->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_xrc_keywords);
 
         m_scintilla->StyleSetBold(wxSTC_H_TAG, true);
-        m_scintilla->StyleSetForeground(wxSTC_H_ATTRIBUTE, wxColour("#E91AFF"));
+        m_scintilla->StyleSetForeground(wxSTC_H_ATTRIBUTE, wxColour("#FF00FF"));
         m_scintilla->StyleSetForeground(wxSTC_H_TAG, *wxBLUE);
         m_scintilla->StyleSetForeground(wxSTC_H_COMMENT, wxColour(0, 128, 0));
         m_scintilla->StyleSetForeground(wxSTC_H_NUMBER, *wxRED);
@@ -58,8 +58,37 @@ CodeDisplay::CodeDisplay(wxWindow* parent, int panel_type) : CodeDisplayBase(par
         // On Windows, this saves converting the UTF8 to UTF16 and then back to ANSI.
         m_scintilla->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_python_keywords);
 
+        ttlib::cstr wxPython_keywords("\
+        ToolBar \
+        MenuBar \
+        BitmapBundle \
+        Bitmap \
+        MemoryInputStream \
+        Window"
+
+        );
+
+        // clang-format on
+
+        for (auto iter: g_NodeCreator.GetNodeDeclarationArray())
+        {
+            if (!iter)
+            {
+                // This will happen if there is an enumerated value but no generator for it
+                continue;
+            }
+
+            if (!iter->DeclName().starts_with("wx") || iter->DeclName().is_sameas("wxContextMenuEvent"))
+                continue;
+            // wxPython_keywords << " wx." << iter->DeclName().subview(2);
+            wxPython_keywords << ' ' << iter->DeclName().subview(2);
+        }
+
+        // On Windows, this saves converting the UTF8 to UTF16 and then back to ANSI.
+        m_scintilla->SendMsg(SCI_SETKEYWORDS, 1, (wxIntPtr) wxPython_keywords.c_str());
+
         m_scintilla->StyleSetForeground(wxSTC_P_WORD, *wxBLUE);
-        m_scintilla->StyleSetForeground(wxSTC_P_WORD2, wxColour("#E91AFF"));
+        m_scintilla->StyleSetForeground(wxSTC_P_WORD2, wxColour("#FF00FF"));
         m_scintilla->StyleSetForeground(wxSTC_P_STRING, wxColour(0, 128, 0));
         m_scintilla->StyleSetForeground(wxSTC_P_STRINGEOL, wxColour(0, 128, 0));
         m_scintilla->StyleSetForeground(wxSTC_P_COMMENTLINE, wxColour(0, 128, 0));
@@ -105,7 +134,7 @@ CodeDisplay::CodeDisplay(wxWindow* parent, int panel_type) : CodeDisplayBase(par
         m_scintilla->SendMsg(SCI_SETKEYWORDS, 1, (wxIntPtr) widget_keywords.c_str());
         m_scintilla->StyleSetBold(wxSTC_C_WORD, true);
         m_scintilla->StyleSetForeground(wxSTC_C_WORD, *wxBLUE);
-        m_scintilla->StyleSetForeground(wxSTC_C_WORD2, wxColour("#E91AFF"));
+        m_scintilla->StyleSetForeground(wxSTC_C_WORD2, wxColour("#FF00FF"));
         m_scintilla->StyleSetForeground(wxSTC_C_STRING, wxColour(0, 128, 0));
         m_scintilla->StyleSetForeground(wxSTC_C_STRINGEOL, wxColour(0, 128, 0));
         m_scintilla->StyleSetForeground(wxSTC_C_PREPROCESSOR, wxColour(49, 106, 197));

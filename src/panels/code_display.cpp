@@ -232,6 +232,8 @@ void CodeDisplay::OnNodeSelected(Node* node)
     // Find where the node is created.
 
     ttlib::cstr name(" ");
+    if (m_panel_type == GEN_LANG_PYTHON && !node->IsLocal())
+        name << "self.";
     name << node->prop_as_string(prop_var_name);
     int line = 0;
     if (is_event)

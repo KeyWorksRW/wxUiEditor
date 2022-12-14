@@ -371,7 +371,7 @@ Code& Code::as_string(PropName prop_name)
 
 Code& Code::NodeName()
 {
-    if (is_cpp() || m_node->IsLocal())
+    if (is_cpp() || m_node->IsLocal() || m_node->IsForm())
     {
         m_code << m_node->get_node_name();
     }

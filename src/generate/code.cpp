@@ -93,7 +93,7 @@ Code& Code::Eol(bool check_size)
     }
     else
     {
-        if (m_code.back() == ' ')
+        if (m_code.size() && m_code.back() == ' ')
             m_code.pop_back();
         m_code += '\n';
     }
@@ -761,12 +761,22 @@ Code& Code::PosSizeFlags(bool uses_def_validator, ttlib::sview def_style)
         return *this;
     }
 
+    // This could be done as a single if statement, but it is easier to read this way.
+    bool style_needed = false;
+    if ((m_node->HasValue(prop_style) && m_node->as_string(prop_style) != def_style))
+        style_needed = true;
+    else if (m_node->HasValue(prop_window_style))
+        style_needed = true;
+    else if (m_node->HasValue(prop_orientation) && !m_node->as_string(prop_orientation).is_sameas("wxGA_HORIZONTAL") &&
+             !m_node->as_string(prop_orientation).is_sameas("wxSL_HORIZONTAL"))
+        style_needed = true;
+    else if (m_node->HasValue(prop_tab_position) && !m_node->as_string(prop_tab_position).is_sameas("wxBK_DEFAULT"))
+        style_needed = true;
+    else if (m_node->isGen(gen_wxRichTextCtrl) || m_node->isGen(gen_wxListView))
+        style_needed = true;
+
     // Do we need a style and/or a default validator?
-    if (m_node->HasValue(prop_style) ||
-        (m_node->HasValue(prop_tab_position) && !m_node->prop_as_string(prop_tab_position).is_sameas("wxBK_DEFAULT")) ||
-        (m_node->HasValue(prop_orientation) && !m_node->prop_as_string(prop_orientation).is_sameas("wxGA_HORIZONTAL")) ||
-        m_node->isGen(gen_wxRichTextCtrl) || m_node->isGen(gen_wxRichTextCtrl) || m_node->HasValue(prop_window_style) ||
-        m_node->isGen(gen_wxListView))
+    if (style_needed)
     {
         Comma();
         Pos().Comma().WxSize().Comma().Style();

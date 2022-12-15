@@ -19,6 +19,7 @@
 #include "generate_dlg.h"     // GenerateDlg -- Dialog for choosing and generating specific language file(s)
 #include "node.h"             // Node class
 #include "project_class.h"    // Project class
+#include "utils.h"            // Miscellaneous utilities
 #include "write_code.h"       // Write code to Scintilla or file
 
 #include "pugixml.hpp"
@@ -33,9 +34,9 @@ void MainFrame::OnGeneratePython(wxCommandEvent& WXUNUSED(event))
     GenResults results;
     GeneratePythonFiles(results);
 
-    if (results.msgs.size())
+    ttlib::cstr msg;
+    if (results.updated_files.size() || results.msgs.size())
     {
-        ttlib::cstr msg;
         if (results.updated_files.size())
         {
             if (results.updated_files.size() == 1)
@@ -43,13 +44,13 @@ void MainFrame::OnGeneratePython(wxCommandEvent& WXUNUSED(event))
             else
                 msg << " files were updated";
         }
-        else if (results.file_count)
-        {
-            msg << "All " << results.file_count << " generated files are current";
-        }
-
-        SetStatusText(msg);
     }
+    else if (results.file_count)
+    {
+        msg << "All " << results.file_count << " generated files are current";
+    }
+
+    SetStatusText(msg);
 }
 
 #endif
@@ -410,4 +411,164 @@ void BaseCodeGenerator::GenPythonEventHandlers(const EventVector& events)
             }
         }
     }
+}
+
+bool PythonBitmapList(Code& code, GenEnum::PropName prop)
+{
+    auto& description = code.node()->as_string(prop);
+    ttlib::multiview parts(description, BMP_PROP_SEPARATOR, tt::TRIM::both);
+
+    if (parts[IndexImage].empty() || parts[IndexType].contains("Art") || parts[IndexType].contains("SVG"))
+    {
+        return false;
+    }
+
+    auto bundle = GetProject()->GetPropertyImageBundle(description);
+
+    if (!bundle || bundle->lst_filenames.size() < 3)
+    {
+        return false;
+    }
+
+    bool is_xpm = (parts[IndexType].is_sameas("XPM"));
+    auto path = MakePythonPath(code.node());
+
+    code += "bitmaps = [ ";
+    bool needs_comma = false;
+    for (auto& iter: bundle->lst_filenames)
+    {
+        if (needs_comma)
+        {
+            code.UpdateBreakAt();
+            code.Comma(false).Eol().Tab(3);
+        }
+        ttlib::cstr name(iter);
+        name.make_absolute();
+        name.make_relative(path);
+        name.backslashestoforward();
+
+        code.Add("wxBitmap(\'") << name << "\'";
+        if (is_xpm)
+            code.Add(", wx.BITMAP_TYPE_XPM");
+        code += ")";
+        needs_comma = true;
+    }
+    code += " ]\n";
+    code.UpdateBreakAt();
+
+    return true;
+}
+bool PythonBundleCode(Code& code, GenEnum::PropName prop)
+{
+    auto& description = code.node()->as_string(prop);
+    if (description.empty())
+    {
+        code.Add("wxNullBitmap");
+        return false;
+    }
+
+    ttlib::multiview parts(description, BMP_PROP_SEPARATOR, tt::TRIM::both);
+
+    if (parts[IndexImage].empty())
+    {
+        code.Add("wxNullBitmap");
+        return false;
+    }
+
+    if (parts[IndexType].contains("Art"))
+    {
+        ttlib::cstr art_id(parts[IndexArtID]);
+        ttlib::cstr art_client;
+        if (auto pos = art_id.find('|'); ttlib::is_found(pos))
+        {
+            art_client = art_id.subview(pos + 1);
+            art_id.erase(pos);
+        }
+
+        code.Add("wxArtProvider.GetBitmapBundle(").Add(art_id);
+
+        // Note that current documentation states that the client is required, but the header file says otherwise
+        if (art_client.size())
+            code.Comma().Add(art_client);
+        code << ')';
+        return true;
+    }
+
+    auto path = MakePythonPath(code.node());
+
+    if (auto bundle = GetProject()->GetPropertyImageBundle(description); bundle)
+    {
+        ttlib::cstr name(bundle->lst_filenames[0]);
+        name.make_absolute();
+        name.make_relative(path);
+        name.backslashestoforward();
+
+        if (description.starts_with("SVG"))
+        {
+            code += "wx.BitmapBundle.";
+            code << "FromSVGFile(\'" << name << "\'";
+            wxSize svg_size { -1, -1 };
+            if (parts[IndexSize].size())
+            {
+                GetSizeInfo(svg_size, parts[IndexSize]);
+            }
+            code.Comma().Add("wxSize(").itoa(svg_size.x).Comma().itoa(svg_size.y) += "))";
+        }
+
+        else if (bundle->lst_filenames.size() == 1)
+        {
+            code += "wx.BitmapBundle.";
+            code << "FromBitmap(wx.Bitmap(\'" << name << "\'))";
+        }
+        else if (bundle->lst_filenames.size() == 2)
+        {
+            ttlib::cstr name2(bundle->lst_filenames[0]);
+            name2.make_absolute();
+            name2.make_relative(path);
+            name2.backslashestoforward();
+            code += "wx.BitmapBundle.";
+            code << "FromBitmap(wx.Bitmap(\'" << name << "\', \'" << name2 << "\'))";
+        }
+        else
+        {
+            FAIL_MSG("Unexpected number of images in bundle -- should be <= 2");
+            code.Add("wxNullBitmap");
+            return false;
+        }
+    }
+    else
+    {
+        FAIL_MSG("Missing bundle description");
+        code.Add("wxNullBitmap");
+        return false;
+    }
+
+    return true;
+}
+
+ttlib::cstr MakePythonPath(Node* node)
+{
+    ttlib::cstr path;
+    Node* form = node->get_form();
+
+    if (auto& base_file = form->prop_as_string(prop_python_file); base_file.size())
+    {
+        path = base_file;
+
+        if (auto* node_folder = form->get_folder(); node_folder && node_folder->HasValue(prop_folder_python_output_folder))
+        {
+            path = node_folder->as_string(prop_folder_python_output_folder);
+            path.append_filename(base_file.filename());
+        }
+        else if (GetProject()->HasValue(prop_python_output_folder) && !path.contains("/"))
+        {
+            path = GetProject()->GetBaseDirectory(GEN_LANG_PYTHON).utf8_string();
+            path.append_filename(base_file);
+        }
+    }
+    if (path.empty())
+        path = "./z";
+    path.make_absolute();
+    path.remove_filename();
+    return path;
 }

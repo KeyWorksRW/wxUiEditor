@@ -133,3 +133,15 @@ ttlib::cstr GenToolCode(Node* node, ttlib::sview BitmapCode = "");
 //
 // wxSize will be converted to dialog units if the size contains a 'd' character.
 ttlib::cstr GenerateWxSize(Node* node, PropName prop);
+
+/////////////////////////////////////// wxPython Functions ///////////////////////////////////////
+
+// Returns true if a list was created. List name will be called "bitmaps".
+bool PythonBitmapList(Code& code, GenEnum::PropName prop);
+
+// Generates code to load a bitmap from Art, SVG, or up to two bitmap files.
+bool PythonBundleCode(Code& code, GenEnum::PropName prop);
+
+// Deterimes where the python code will be written to, and returns an absolute path to that
+// location which can be used as the parameter for make_relative().
+ttlib::cstr MakePythonPath(Node* node);

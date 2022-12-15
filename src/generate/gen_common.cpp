@@ -1007,16 +1007,16 @@ ttlib::cstr GenFontColourSettings(Node* node)
 
             if (node->IsForm())
             {
-                code << "\n"
+                code << "\n\t"
                      << "SetFont(font);\n}";
             }
             else if (node->isGen(gen_wxStyledTextCtrl))
             {
-                code << "\n" << node->get_node_name() << "->StyleSetFont(wxSTC_STYLE_DEFAULT, font);\n}";
+                code << "\n\t" << node->get_node_name() << "->StyleSetFont(wxSTC_STYLE_DEFAULT, font);\n}";
             }
             else
             {
-                code << "\n" << node->get_node_name() << "->SetFont(font);\n}";
+                code << "\n\t" << node->get_node_name() << "->SetFont(font);\n}";
             }
         }
         else
@@ -1084,12 +1084,11 @@ ttlib::cstr GenFontColourSettings(Node* node)
 
             if (node->IsForm())
             {
-                code << "\n"
-                        "SetFont(wxFont(font_info));\n}";
+                code << "\n\tSetFont(wxFont(font_info));\n}";
             }
             else
             {
-                code << "\n" << node->get_node_name() << "->SetFont(wxFont(font_info));\n}";
+                code << "\n\t" << node->get_node_name() << "->SetFont(wxFont(font_info));\n}";
             }
         }
     }

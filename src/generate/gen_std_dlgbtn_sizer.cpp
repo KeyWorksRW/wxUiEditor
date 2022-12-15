@@ -102,13 +102,10 @@ std::optional<ttlib::sview> StdDialogButtonSizerGenerator::CommonConstruction(Co
 
     auto& def_btn_name = node->prop_as_string(prop_default_button);
 
-    if (!node->get_form()->isGen(gen_wxDialog) || node->as_bool(prop_Save) || node->as_bool(prop_ContextHelp))
+    if (node->get_form()->isGen(gen_wxDialog) && (!node->as_bool(prop_Save) && !node->as_bool(prop_ContextHelp)))
     {
         code.NodeName();
-        if (code.is_cpp())
-            code += " = CreateStdDialogButtonSizer(";
-        else
-            code += " = self.CreateStdDialogButtonSizer(";
+        code += " = CreateStdDialogButtonSizer(";
 
         ttlib::cstr flags;
         if (node->prop_as_bool(prop_OK))
@@ -155,80 +152,53 @@ std::optional<ttlib::sview> StdDialogButtonSizerGenerator::CommonConstruction(Co
     if (node->prop_as_bool(prop_OK))
     {
         code.Eol().NodeName().Function("AddButton(");
-        if (code.is_cpp())
             code += "new wxButton(this, wxID_OK));";
-        else
-            code += "wx.Button(self, wx.ID_OK))";
     }
     else if (node->prop_as_bool(prop_Yes))
     {
         code.Eol().NodeName().Function("AddButton(");
-        if (code.is_cpp())
             code += "new wxButton(this, wxID_YES));";
-        else
-            code += "wx.Button(self, wx.ID_YES))";
     }
     else if (node->prop_as_bool(prop_Save))
     {
         code.Eol().NodeName().Function("AddButton(");
-        if (code.is_cpp())
             code += "new wxButton(this, wxID_SAVE));";
-        else
-            code += "wx.Button(self, wx.ID_SAVE))";
     }
 
     if (node->prop_as_bool(prop_No))
     {
         code.Eol().NodeName().Function("AddButton(");
-        if (code.is_cpp())
             code += "new wxButton(this, wxID_NO));";
-        else
-            code += "wx.Button(self, wx.ID_NO))";
     }
 
     // You can only have one of: Cancel, Close
     if (node->prop_as_bool(prop_Cancel))
     {
         code.Eol().NodeName().Function("AddButton(");
-        if (code.is_cpp())
             code += "new wxButton(this, wxID_CANCEL));";
-        else
-            code += "wx.Button(self, wx.ID_CANCEL))";
     }
     else if (node->prop_as_bool(prop_Close))
     {
         code.Eol().NodeName().Function("AddButton(");
-        if (code.is_cpp())
             code += "new wxButton(this, wxID_CLOSE));";
-        else
-            code += "wx.Button(self, wx.ID_CLOSE))";
     }
 
     if (node->prop_as_bool(prop_Apply))
     {
         code.Eol().NodeName().Function("AddButton(");
-        if (code.is_cpp())
             code += "new wxButton(this, wxID_APPLY));";
-        else
-            code += "wx.Button(self, wx.ID_APPLY))";
     }
 
     // You can only have one of: Help, ContextHelp
     if (node->prop_as_bool(prop_Help))
     {
         code.Eol().NodeName().Function("AddButton(");
-        if (code.is_cpp())
             code += "new wxButton(this, wxID_HELP));";
-        else
-            code += "wx.Button(self, wx.ID_HELP))";
     }
     else if (node->prop_as_bool(prop_ContextHelp))
     {
         code.Eol().NodeName().Function("AddButton(");
-        if (code.is_cpp())
             code += "new wxButton(this, wxID_CONTEXT_HELP));";
-        else
-            code += "wx.Button(self, wx.ID_CONTEXT_HELP))";
     }
 
     if (def_btn_name == "OK" || def_btn_name == "Yes" || def_btn_name == "Save")
@@ -244,28 +214,27 @@ std::optional<ttlib::sview> StdDialogButtonSizerGenerator::CommonConstruction(Co
 
     code.Eol().NodeName().Function("Realize(").EndFunction();
 
-    // REVIEW: [Randalphwa - 12-09-2022] Do we need this for Python?
-    if (!node->IsLocal() && code.is_cpp())
+    if (!node->IsLocal())
     {
         if (node->prop_as_bool(prop_OK))
-            code << node->get_node_name() << "OK = wxStaticCast(FindWindowById(wxID_OK), wxButton);\n";
+            code.NodeName() << "OK = wxStaticCast(FindWindowById(wxID_OK), wxButton);\n";
         if (node->prop_as_bool(prop_Yes))
-            code << node->get_node_name() << "Yes = wxStaticCast(FindWindowById(wxID_YES), wxButton);\n";
+            code.NodeName() << "Yes = wxStaticCast(FindWindowById(wxID_YES), wxButton);\n";
         if (node->prop_as_bool(prop_Save))
-            code << node->get_node_name() << "Save = wxStaticCast(FindWindowById(wxID_SAVE), wxButton);\n";
+            code.NodeName() << "Save = wxStaticCast(FindWindowById(wxID_SAVE), wxButton);\n";
         if (node->prop_as_bool(prop_Apply))
-            code << node->get_node_name() << "Apply = wxStaticCast(FindWindowById(wxID_APPLY), wxButton);\n";
+            code.NodeName() << "Apply = wxStaticCast(FindWindowById(wxID_APPLY), wxButton);\n";
 
         if (node->prop_as_bool(prop_No))
-            code << node->get_node_name() << "No = wxStaticCast(FindWindowById(wxID_NO), wxButton);\n";
+            code.NodeName() << "No = wxStaticCast(FindWindowById(wxID_NO), wxButton);\n";
         if (node->prop_as_bool(prop_Cancel))
-            code << node->get_node_name() << "Cancel = wxStaticCast(FindWindowById(wxID_CANCEL), wxButton);\n";
+            code.NodeName() << "Cancel = wxStaticCast(FindWindowById(wxID_CANCEL), wxButton);\n";
         if (node->prop_as_bool(prop_Close))
-            code << node->get_node_name() << "Close = wxStaticCast(FindWindowById(wxID_CLOSE), wxButton);\n";
+            code.NodeName() << "Close = wxStaticCast(FindWindowById(wxID_CLOSE), wxButton);\n";
         if (node->prop_as_bool(prop_Help))
-            code << node->get_node_name() << "Help = wxStaticCast(FindWindowById(wxID_HELP), wxButton);\n";
+            code.NodeName() << "Help = wxStaticCast(FindWindowById(wxID_HELP), wxButton);\n";
         if (node->prop_as_bool(prop_ContextHelp))
-            code << node->get_node_name() << "ContextHelp = wxStaticCast(FindWindowById(wxID_CONTEXT_HELP), wxButton);\n";
+            code.NodeName() << "ContextHelp = wxStaticCast(FindWindowById(wxID_CONTEXT_HELP), wxButton);\n";
     }
 
     return code.m_code;
@@ -279,7 +248,7 @@ void StdDialogButtonSizerGenerator::GenPythonConstruction(Code& code)
     // CreateSeparatedSizer, the dialog will not display correctly and will shortly exit. To
     // work around this, we create the line ourselves (except on MAC).
 
-    code += "if not \" wxMac \" in wx.PlatformInfo:";
+    code += "if \"wxMac\" not in wx.PlatformInfo:";
     code.Eol().Tab().NodeName().Add("_line = wx.StaticLine(self, wx.ID_ANY, wx.DefaultPosition, wx.Size(20, -1))");
     code.Eol().Tab().ParentName().Function("Add(").NodeName() += "_line, wx.SizerFlags().Expand().Border(wx.ALL))";
 

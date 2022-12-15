@@ -5,13 +5,12 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include "code.h"             // Code -- Helper class for generating code
-#include "gen_base.h"         // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
-#include "gen_common.h"       // Common component functions
-#include "gen_lang_common.h"  // Common mulit-language functions
-#include "node.h"             // Node class
-#include "node_decl.h"        // NodeDeclaration class
-#include "write_code.h"       // Write code to Scintilla or file
+#include "code.h"        // Code -- Helper class for generating code
+#include "gen_base.h"    // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
+#include "gen_common.h"  // Common component functions
+#include "node.h"        // Node class
+#include "node_decl.h"   // NodeDeclaration class
+#include "write_code.h"  // Write code to Scintilla or file
 
 // clang-format off
 
@@ -207,13 +206,11 @@ void BaseCodeGenerator::GenConstruction(Node* node)
     }
     else if (node->gen_type() == type_widget && parent->isGen(gen_wxChoicebook))
     {
+        gen_code.clear();
         ttlib::cstr code;
-        code << parent->get_node_name() << LangPtr() << "GetControlSizer()" << LangPtr() << "Add(" << node->get_node_name();
-        code << ", " << GetWidgetName(m_language, "wxSizerFlags") << "().Expand().Border("
-             << GetWidgetName(m_language, "wxALL") << "))";
-        if (m_language == GEN_LANG_CPLUSPLUS)
-            code << ';';
-        m_source->writeLine(code);
+        gen_code.ParentName().Function("GetControlSizer()").Function("Add(").NodeName();
+        gen_code.CheckLineLength().Comma().Add("wxSizerFlags()").Add(".Expand().Border(").Add("wxALL").EndFunction();
+        m_source->writeLine(gen_code.m_code);
     }
 
     if (node->isGen(gen_PageCtrl) && node->GetChildCount())

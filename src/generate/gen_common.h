@@ -14,6 +14,7 @@
 #include "mockup/mockup_parent.h"  // MockupParent -- Top-level MockUp Parent window
 
 #include "base_generator.h"  // BaseGenerator -- Base Generator class
+#include "code.h"            // Code -- Helper class for generating code
 #include "node_creator.h"    // NodeCreator class
 
 #include "node_classes.h"  // Forward defintions of Node classes
@@ -133,6 +134,9 @@ ttlib::cstr GenToolCode(Node* node, ttlib::sview BitmapCode = "");
 //
 // wxSize will be converted to dialog units if the size contains a 'd' character.
 ttlib::cstr GenerateWxSize(Node* node, PropName prop);
+
+// Generates -> for C++ and . for Python
+const char* LangPtr(int language);
 
 /////////////////////////////////////// wxPython Functions ///////////////////////////////////////
 

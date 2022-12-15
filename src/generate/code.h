@@ -85,6 +85,13 @@ public:
         m_break_length = break_at;  // m_break_length gets added to m_break_at after every break
     }
 
+    // Call this function if you added text directly including a final newline.
+    void UpdateBreakAt()
+    {
+        m_break_at = m_code.size() + m_break_length;
+        m_minium_length = m_code.size() + 10;
+    }
+
     // If string starts with "wx" and language is not C++, then this will add "wx." and then
     // the string without the "wx" prefix.
     Code& Add(ttlib::sview text);
@@ -176,10 +183,7 @@ public:
         return *this;
     }
 
-    void operator+=(std::string_view str)
-    {
-        m_code += str;
-    }
+    void operator+=(std::string_view str) { m_code += str; }
 
     Code& operator<<(char ch)
     {

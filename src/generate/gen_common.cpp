@@ -826,7 +826,7 @@ bool GenerateVectorCode(const ttlib::cstr& description, ttlib::cstr& code)
                     name = "wxue_img::" + embed->array_name;
                 }
             }
-            code << "\t\tbitmaps.push_back(wxueImage(" << name << ", sizeof(" << name << ")));\n";
+            code << "\tbitmaps.push_back(wxueImage(" << name << ", sizeof(" << name << ")));\n";
         }
     }
     if (wxGetProject().value(prop_wxWidgets_version) == "3.1")

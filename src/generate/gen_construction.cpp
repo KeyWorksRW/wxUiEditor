@@ -209,7 +209,7 @@ void BaseCodeGenerator::GenConstruction(Node* node)
         gen_code.clear();
         ttlib::cstr code;
         gen_code.ParentName().Function("GetControlSizer()").Function("Add(").NodeName();
-        gen_code.CheckLineLength().Comma().Add("wxSizerFlags()").Add(".Expand().Border(").Add("wxALL").EndFunction();
+        gen_code.CheckLineLength().Comma().Add("wxSizerFlags()").Add(".Expand().Border(").Add("wxALL)").EndFunction();
         m_source->writeLine(gen_code.m_code);
     }
 

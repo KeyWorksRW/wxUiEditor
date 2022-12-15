@@ -31,34 +31,21 @@ void MainFrame::OnGenerateCode(wxCommandEvent&)
     GenerateDlg dlg(this);
     if (dlg.ShowModal() == wxID_OK)
     {
-        long cur_setting = 0;
-        if (dlg.is_gen_base())
-            cur_setting |= GEN_BASE_CODE;
-        if (dlg.is_gen_inherited())
-            cur_setting |= GEN_INHERITED_CODE;
-        if (dlg.is_gen_python())
-            cur_setting |= GEN_PYTHON_CODE;
-        if (dlg.is_gen_xrc())
-            cur_setting |= GEN_XRC_CODE;
-
-        auto config = wxConfig::Get();
-        config->Write("GenCode", cur_setting);
-
         GenResults results;
 
-        if (cur_setting & GEN_BASE_CODE)
+        if (dlg.is_gen_base())
         {
             GenerateCodeFiles(results);
         }
-        if (cur_setting & GEN_INHERITED_CODE)
+        if (dlg.is_gen_inherited())
         {
             GenInhertedClass(results);
         }
-        if (cur_setting & GEN_PYTHON_CODE)
+        if (dlg.is_gen_python())
         {
             GeneratePythonFiles(results);
         }
-        if (cur_setting & GEN_XRC_CODE)
+        if (dlg.is_gen_xrc())
         {
             GenerateXrcFiles(results);
         }
@@ -106,12 +93,13 @@ GenerateDlg::GenerateDlg(wxWindow* parent)
 
 void GenerateDlg::OnInit(wxInitDialogEvent& event)
 {
-    // TODO: [Randalphwa - 11-11-2022] It would be really helpful if we checked to see if any of these files should be
-    // written, and if so, added a " (*modified)" to the end of the relevant radio button.
-
-    auto config = wxConfig::Get();
-
-    if (GetProject()->as_string(prop_code_preference) == "Python")
+    if (GetProject()->as_string(prop_code_preference) == "C++")
+    {
+        m_gen_python_code = false;
+        m_gen_base_code = true;
+        m_gen_xrc_code = false;
+    }
+    else if (GetProject()->as_string(prop_code_preference) == "Python")
     {
         m_gen_python_code = true;
         m_gen_base_code = false;
@@ -129,17 +117,5 @@ void GenerateDlg::OnInit(wxInitDialogEvent& event)
         m_gen_base_code = true;
         m_gen_xrc_code = false;
     }
-
-    auto cur_setting = config->ReadLong("GenCode", 0);
-
-    if (cur_setting & GEN_BASE_CODE)
-        m_gen_base_code = true;
-    if (cur_setting & GEN_INHERITED_CODE)
-        m_gen_inherited_code = true;
-    if (cur_setting & GEN_PYTHON_CODE)
-        m_gen_python_code = true;
-    if (cur_setting & GEN_XRC_CODE)
-        m_gen_xrc_code = true;
-
     event.Skip();
 }

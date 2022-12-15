@@ -715,9 +715,9 @@ void NodeCreator::ParseProperties(pugi::xml_node& elem_obj, NodeDeclaration* obj
                 }
             }
 
-            prop_info =
-                std::make_shared<PropDeclaration>(prop_class_access, type_option, access,
-                                                  "Determines the type of access your inherited class has to this item.", "");
+            prop_info = std::make_shared<PropDeclaration>(
+                prop_class_access, type_option, access,
+                "Determines the type of access your inherited class has to this item.", "");
             obj_info->GetPropInfoMap()[map_PropNames[prop_class_access]] = prop_info;
 
             auto& opts = prop_info->GetOptions();
@@ -728,8 +728,7 @@ void NodeCreator::ParseProperties(pugi::xml_node& elem_obj, NodeDeclaration* obj
 
             opts.emplace_back();
             opts[opts.size() - 1].name = "protected:";
-            opts[opts.size() - 1].help =
-                "Inherited classes can access this item. In Python, item will have a self. prefix.";
+            opts[opts.size() - 1].help = "Inherited classes can access this item. In Python, item will have a self. prefix.";
 
             opts.emplace_back();
             opts[opts.size() - 1].name = "public:";

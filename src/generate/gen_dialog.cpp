@@ -7,15 +7,14 @@
 
 #include <wx/dialog.h>  // wxDialogBase class
 
-#include "code.h"             // Code -- Helper class for generating code
-#include "gen_base.h"         // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
-#include "gen_common.h"       // Common component functions
-#include "gen_lang_common.h"  // Common mulit-language functions
-#include "gen_xrc_utils.h"    // Common XRC generating functions
-#include "node.h"             // Node class
-#include "pugixml.hpp"        // xml read/write/create/process
-#include "utils.h"            // Utility functions that work with properties
-#include "write_code.h"       // WriteCode -- Write code to Scintilla or file
+#include "code.h"           // Code -- Helper class for generating code
+#include "gen_base.h"       // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
+#include "gen_common.h"     // Common component functions
+#include "gen_xrc_utils.h"  // Common XRC generating functions
+#include "node.h"           // Node class
+#include "pugixml.hpp"      // xml read/write/create/process
+#include "utils.h"          // Utility functions that work with properties
+#include "write_code.h"     // WriteCode -- Write code to Scintilla or file
 
 #include "gen_dialog.h"
 

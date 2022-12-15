@@ -10,13 +10,12 @@
 // Blank line added because wx/stattext.h must be included first
 #include <wx/generic/stattextg.h>  // wxGenericStaticText header
 
-#include "code.h"             // Code -- Helper class for generating code
-#include "gen_common.h"       // Common component functions
-#include "gen_lang_common.h"  // Common mulit-language functions
-#include "gen_xrc_utils.h"    // Common XRC generating functions
-#include "node.h"             // Node class
-#include "pugixml.hpp"        // xml read/write/create/process
-#include "utils.h"            // Utility functions that work with properties
+#include "code.h"           // Code -- Helper class for generating code
+#include "gen_common.h"     // Common component functions
+#include "gen_xrc_utils.h"  // Common XRC generating functions
+#include "node.h"           // Node class
+#include "pugixml.hpp"      // xml read/write/create/process
+#include "utils.h"          // Utility functions that work with properties
 
 #include "gen_static_text.h"
 

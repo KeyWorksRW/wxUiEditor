@@ -7,6 +7,7 @@
 
 #include <wx/gauge.h>  // wxGauge interface
 
+#include "code.h"           // Code -- Helper class for generating code
 #include "gen_common.h"     // GeneratorLibrary -- Generator classes
 #include "gen_xrc_utils.h"  // Common XRC generating functions
 #include "node.h"           // Node class
@@ -37,41 +38,26 @@ bool GaugeGenerator::OnPropertyChange(wxObject* widget, Node* /* node */, NodePr
     return false;
 }
 
-std::optional<ttlib::cstr> GaugeGenerator::GenConstruction(Node* node)
+std::optional<ttlib::sview> GaugeGenerator::CommonConstruction(Code& code)
 {
-    ttlib::cstr code;
-    if (node->IsLocal())
+    if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
-    code << node->get_node_name() << GenerateNewAssignment(node);
-    code << GetParentName(node) << ", " << node->prop_as_string(prop_id) << ", " << node->prop_as_string(prop_range);
+    code.NodeName().CreateClass();
+    code.GetParentName().Comma().as_string(prop_id).Comma().as_string(prop_range);
+    code.PosSizeFlags(true);
 
-    auto& win_name = node->prop_as_string(prop_window_name);
-    if (win_name.size())
-    {
-        // Window name is always the last parameter, so if it is specified, everything has to be generated.
-        code << ", ";
-        GenPos(node, code);
-        code << ", ";
-        GenSize(node, code);
-        code << ", ";
-    }
-
-    GeneratePosSizeFlags(node, code, true, "wxGA_HORIZONTAL");
-
-    return code;
+    return code.m_code;
 }
 
-std::optional<ttlib::cstr> GaugeGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
+std::optional<ttlib::sview> GaugeGenerator::CommonSettings(Code& code)
 {
-    ttlib::cstr code;
+    // If a validator has been specified, then the value will be initialized.
+    if (code.is_cpp() && code.HasValue(prop_validator_variable))
+        return code.m_code;
 
-    // If a validator has been specified, then the variable will be initialized in the header file.
-    if (node->prop_as_string(prop_validator_variable).empty())
-    {
-        code << node->get_node_name() << "->SetValue(" << node->prop_as_string(prop_position) << ");";
-    }
+    code.NodeName().Function("SetValue(").as_string(prop_position).EndFunction();
 
-    return code;
+    return code.m_code;
 }
 
 bool GaugeGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)

@@ -11,16 +11,15 @@
 
 #include "mainframe.h"
 
-#include "base_generator.h"   // BaseGenerator -- Base widget generator class
-#include "code.h"             // Code -- Helper class for generating code
-#include "gen_base.h"         // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
-#include "gen_common.h"       // Common component functions
-#include "gen_lang_common.h"  // Common mulit-language functions
-#include "generate_dlg.h"     // GenerateDlg -- Dialog for choosing and generating specific language file(s)
-#include "node.h"             // Node class
-#include "project_class.h"    // Project class
-#include "utils.h"            // Miscellaneous utilities
-#include "write_code.h"       // Write code to Scintilla or file
+#include "base_generator.h"  // BaseGenerator -- Base widget generator class
+#include "code.h"            // Code -- Helper class for generating code
+#include "gen_base.h"        // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
+#include "gen_common.h"      // Common component functions
+#include "generate_dlg.h"    // GenerateDlg -- Dialog for choosing and generating specific language file(s)
+#include "node.h"            // Node class
+#include "project_class.h"   // Project class
+#include "utils.h"           // Miscellaneous utilities
+#include "write_code.h"      // Write code to Scintilla or file
 
 #include "pugixml.hpp"
 

@@ -8,6 +8,7 @@
 #include <wx/propgrid/propgrid.h>  // wxPropertyGrid
 #include <wx/slider.h>             // wxSlider interface
 
+#include "code.h"           // Code -- Helper class for generating code
 #include "gen_common.h"     // GeneratorLibrary -- Generator classes
 #include "gen_xrc_utils.h"  // Common XRC generating functions
 #include "node.h"           // Node class
@@ -54,77 +55,62 @@ bool SliderGenerator::OnPropertyChange(wxObject* widget, Node* /* node */, NodeP
     return false;
 }
 
-std::optional<ttlib::cstr> SliderGenerator::GenConstruction(Node* node)
+std::optional<ttlib::sview> SliderGenerator::CommonConstruction(Code& code)
 {
-    ttlib::cstr code;
-    if (node->IsLocal())
+    if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
-    code << node->get_node_name() << GenerateNewAssignment(node);
-    code << GetParentName(node) << ", " << node->prop_as_string(prop_id) << ", " << node->prop_as_string(prop_position);
-    code << ", " << node->prop_as_string(prop_minValue) << ", " << node->prop_as_string(prop_maxValue);
+    code.NodeName().CreateClass();
+    code.GetParentName()
+        .Comma()
+        .as_string(prop_id)
+        .Comma()
+        .as_string(prop_position)
+        .Comma()
+        .as_string(prop_minValue)
+        .Comma()
+        .as_string(prop_maxValue);
+    code.PosSizeFlags(true);
 
-    auto& win_name = node->prop_as_string(prop_window_name);
-    if (win_name.size())
-    {
-        // Window name is always the last parameter, so if it is specified, everything has to be generated.
-        code << ", ";
-        GenPos(node, code);
-        code << ", ";
-        GenSize(node, code);
-        code << ", ";
-    }
-
-    GeneratePosSizeFlags(node, code, true, "wxSL_HORIZONTAL");
-
-    return code;
+    return code.m_code;
 }
 
-std::optional<ttlib::cstr> SliderGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
+std::optional<ttlib::sview> SliderGenerator::CommonSettings(Code& code)
 {
-    ttlib::cstr code;
-
-    // If a validator has been specified, then the variable will be initialized in the header file.
-    if (node->prop_as_string(prop_validator_variable).empty())
+    // If a validator has been specified, then the variable will be initialized with the selection variable.
+    if (code.is_python() || !code.HasValue(prop_validator_variable))
     {
-        code << node->get_node_name() << "->SetValue(" << node->prop_as_string(prop_position) << ");";
+        code.NodeName().Function("SetValue(").as_string(prop_position).EndFunction();
     }
 
+    Node* node = code.node();
     if (node->prop_as_int(prop_sel_start) >= 0 && node->prop_as_int(prop_sel_end) >= 0)
     {
-        if (code.size())
-            code << "\n";
-        code << node->get_node_name() << "->SetSelection(" << node->prop_as_int(prop_sel_start) << ", "
-             << node->prop_as_int(prop_sel_end) << ");";
+        code.Eol(true)
+            .NodeName()
+            .Function("SetSelection(")
+            .as_string(prop_sel_start)
+            .Comma()
+            .as_string(prop_sel_end)
+            .EndFunction();
     }
-
     if (node->prop_as_int(prop_line_size) > 0)
     {
-        if (code.size())
-            code << "\n";
-        code << node->get_node_name() << "->SetLineSize(" << node->prop_as_string(prop_line_size) << ");";
+        code.Eol(true).NodeName().Function("SetLineSize(").as_string(prop_line_size).EndFunction();
     }
-
     if (node->prop_as_int(prop_page_size) > 0)
     {
-        if (code.size())
-            code << "\n";
-        code << node->get_node_name() << "->SetPageSize(" << node->prop_as_string(prop_page_size) << ");";
+        code.Eol(true).NodeName().Function("SetPageSize(").as_string(prop_page_size).EndFunction();
     }
-
     if (node->prop_as_int(prop_tick_frequency) > 0)
     {
-        if (code.size())
-            code << "\n";
-        code << node->get_node_name() << "->SetTickFreq(" << node->prop_as_string(prop_tick_frequency) << ");";
+        code.Eol(true).NodeName().Function("SetTickFreq(").as_string(prop_tick_frequency).EndFunction();
     }
-
     if (node->prop_as_int(prop_thumb_length) > 0)
     {
-        if (code.size())
-            code << "\n";
-        code << node->get_node_name() << "->SetThumbLength(" << node->prop_as_string(prop_thumb_length) << ");";
+        code.Eol(true).NodeName().Function("SetThumbLength(").as_string(prop_thumb_length).EndFunction();
     }
-    return code;
+
+    return code.m_code;
 }
 
 bool SliderGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty* prop, Node* node)

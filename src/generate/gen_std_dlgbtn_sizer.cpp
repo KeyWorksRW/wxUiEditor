@@ -280,8 +280,7 @@ void StdDialogButtonSizerGenerator::GenPythonConstruction(Code& code)
     // work around this, we create the line ourselves (except on MAC).
 
     code += "if not \" wxMac \" in wx.PlatformInfo:";
-    code.Eol().Tab().NodeName().Add(
-        "_line = wx.StaticLine(self, wx.ID_ANY, wx.DefaultPosition, wx.Size(20, -1))");
+    code.Eol().Tab().NodeName().Add("_line = wx.StaticLine(self, wx.ID_ANY, wx.DefaultPosition, wx.Size(20, -1))");
     code.Eol().Tab().ParentName().Function("Add(").NodeName() += "_line, wx.SizerFlags().Expand().Border(wx.ALL))";
 
     code.Eol().Eol().NodeName().Add(" = wx.StdDialogButtonSizer()");

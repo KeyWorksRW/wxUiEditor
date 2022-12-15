@@ -363,8 +363,8 @@ std::optional<ttlib::cstr> DataViewColumn::GenConstruction(Node* node)
 
     if (node->HasValue(prop_ellipsize))
     {
-        code << "\n" << node->get_node_name() << "->GetRenderer()->EnableEllipsize("
-             << node->prop_as_string(prop_ellipsize) << ");";
+        code << "\n"
+             << node->get_node_name() << "->GetRenderer()->EnableEllipsize(" << node->prop_as_string(prop_ellipsize) << ");";
     }
 
     return code;
@@ -390,8 +390,8 @@ std::optional<ttlib::cstr> DataViewListColumn::GenConstruction(Node* node)
 
     if (node->HasValue(prop_ellipsize))
     {
-        code << "\n" << node->get_node_name() << "->GetRenderer()->EnableEllipsize("
-             << node->prop_as_string(prop_ellipsize) << ");";
+        code << "\n"
+             << node->get_node_name() << "->GetRenderer()->EnableEllipsize(" << node->prop_as_string(prop_ellipsize) << ");";
     }
 
     return code;

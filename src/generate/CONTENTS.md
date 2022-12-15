@@ -76,7 +76,7 @@ The following tables list classes, objects and functions that wxUiEditor can gen
 | wxDataViewListCtrl | yes |  ?? | yes | dataview_widgets.cpp |
 | wxEditableListBox | yes |  ?? | yes | gen_edit_listbox.cpp |
 | wxFileCtrl | yes |  ?? | yes | gen_file_ctrl.cpp |
-| wxGauge | yes |  ?? | yes | gen_gauge.cpp |
+| wxGauge | yes |  yes | yes | gen_gauge.cpp |
 | wxGenericDirCtrl | yes |  ?? | yes | gen_dir_ctrl.cpp |
 | wxGrid | yes |  ?? | yes | gen_grid.cpp |
 | wxHtmlWindow | yes |  ?? | yes | gen_html_window.cpp |
@@ -91,7 +91,7 @@ The following tables list classes, objects and functions that wxUiEditor can gen
 | wxPropertyGrid | yes |  ?? | no | gen_prop_grid.cpp |
 | wxPropertyGridManager | yes |  ?? | no | grid_widgets.cpp |
 | wxRadioBox | yes |  ?? | yes | gen_prop_grid.cpp |
-| wxRadioButton | yes |  ?? | yes | gen_radio_btn.cpp |
+| wxRadioButton | yes |  yes | yes | gen_radio_btn.cpp |
 | wxRearrangeCtrl | yes |  ?? | no | gen_rearrange.cpp |
 | wxRibbonBar | yes |  ?? | yes | ribbon_widgets.cpp |
 | wxRibbonButtonBar | yes |  ?? | yes | ribbon_widgets.cpp |
@@ -105,12 +105,12 @@ The following tables list classes, objects and functions that wxUiEditor can gen
 | wxScrolled\<wxWindow\> | yes |  ?? | yes | styled_text.cpp |
 | wxSearchCtrl | yes |  ?? | yes | gen_search_ctrl.cpp |
 | wxSimpleHtmlListBox | yes |  ?? | yes | gen_html_listbox.cpp |
-| wxSlider | yes |  ?? | yes | gen_slider.cpp |
+| wxSlider | yes |  yes | yes | gen_slider.cpp |
 | wxSpinButton | yes |  ?? | yes | gen_spin_btn.cpp |
 | wxSpinCtrl | yes |  ?? | yes | gen_spin_ctrl.cpp |
 | wxSpinCtrlDouble | yes |  ?? | yes | gen_spin_ctrl.cpp |
 | wxSplitterWindow | yes |  ?? | yes | gen_split_win.cpp |
-| wxStaticBitmap | yes |  ?? | yes | gen_static_bmp.cpp |
+| wxStaticBitmap | yes |  yes | yes | gen_static_bmp.cpp |
 | wxStaticBox | yes |  ?? | yes | gen_static_box.cpp |
 | wxStaticLine | yes |  yes | yes | gen_static_line.cpp |
 | wxStaticText | yes |  yes | yes | gen_static_text.cpp |

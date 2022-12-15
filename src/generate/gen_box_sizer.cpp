@@ -7,9 +7,8 @@
 
 #include <wx/sizer.h>
 
-#include "gen_common.h"       // Common component functions
-#include "gen_lang_common.h"  // Common mulit-language functions
-#include "node.h"             // Node class
+#include "gen_common.h"  // Common component functions
+#include "node.h"        // Node class
 
 #include "pugixml.hpp"  // xml read/write/create/process
 

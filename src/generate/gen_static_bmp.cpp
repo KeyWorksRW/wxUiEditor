@@ -8,6 +8,7 @@
 #include <wx/generic/statbmpg.h>  // wxGenericStaticBitmap header
 #include <wx/statbmp.h>           // wxStaticBitmap class interface
 
+#include "code.h"           // Code -- Helper class for generating code
 #include "gen_common.h"     // GeneratorLibrary -- Generator classes
 #include "gen_xrc_utils.h"  // Common XRC generating functions
 #include "node.h"           // Node class
@@ -25,7 +26,7 @@ wxObject* StaticBitmapGenerator::CreateMockup(Node* node, wxObject* parent)
     auto default_size = node->prop_as_wxBitmapBundle(prop_bitmap).GetDefaultSize();
 #endif  // _DEBUG
 
-    if (auto value = node->prop_as_string(prop_scale_mode); value != "None")
+    if (auto value = node->as_string(prop_scale_mode); value != "None")
     {
         if (value == "Fill")
             widget->SetScaleMode(wxStaticBitmap::Scale_Fill);
@@ -40,29 +41,65 @@ wxObject* StaticBitmapGenerator::CreateMockup(Node* node, wxObject* parent)
     return widget;
 }
 
-std::optional<ttlib::cstr> StaticBitmapGenerator::GenConstruction(Node* node)
+std::optional<ttlib::sview> StaticBitmapGenerator::CommonConstruction(Code& code)
 {
-    ttlib::cstr code;
+    if (code.is_cpp())
+    {
+        GenCppConstruction(code);
+    }
+    else
+    {
+        if (code.HasValue(prop_bitmap))
+        {
+            bool is_list_created = PythonBitmapList(code, prop_bitmap);
+            code.NodeName().CreateClass().GetParentName().Comma().as_string(prop_id).Comma();
+
+            if (is_list_created)
+            {
+                code += "wx.BitmapBundle.FromBitmaps(bitmaps)";
+            }
+            else
+            {
+                PythonBundleCode(code, prop_bitmap);
+            }
+            code.PosSizeFlags();
+        }
+        else
+        {
+            code.NodeName().CreateClass().GetParentName().Comma().as_string(prop_id).Comma();
+            code.Add("wxNullBitmap");
+            code.PosSizeFlags();
+        }
+    }
+
+    return code.m_code;
+}
+
+void StaticBitmapGenerator::GenCppConstruction(Code& gen_code)
+{
+    Node* node = gen_code.node();
+    ttlib::cstr& code = gen_code.m_code;
     if (node->HasValue(prop_bitmap))
     {
-        auto& description = node->prop_as_string(prop_bitmap);
+        auto& description = node->as_string(prop_bitmap);
         bool is_vector_code = GenerateVectorCode(description, code);
+        gen_code.UpdateBreakAt();
 
         if (is_vector_code)
         {
-            code << "\t\t";
+            gen_code.Tab();
         }
 
         if (node->IsLocal())
             code << "auto* ";
 
-        bool use_generic_version = (node->prop_as_string(prop_scale_mode) != "None");
+        bool use_generic_version = (node->as_string(prop_scale_mode) != "None");
         if (use_generic_version)
-            code << node->get_node_name() << " = new wxGenericStaticBitmap(";
+            gen_code.NodeName() << " = new wxGenericStaticBitmap(";
         else
-            code << node->get_node_name() << " = new wxStaticBitmap(";
+            gen_code.NodeName() << " = new wxStaticBitmap(";
 
-        code << GetParentName(node) << ", " << node->prop_as_string(prop_id) << ", ";
+        gen_code.GetParentName().Comma().as_string(prop_id).Comma();
 
         if (!is_vector_code)
         {
@@ -77,13 +114,13 @@ std::optional<ttlib::cstr> StaticBitmapGenerator::GenConstruction(Node* node)
                 if (wxGetProject().value(prop_wxWidgets_version) == "3.1")
                 {
                     code.insert(0, "\t");
-                    code << "\n#if wxCHECK_VERSION(3, 1, 6)\n\t\t";
+                    code += "\n#if wxCHECK_VERSION(3, 1, 6)\n\t\t";
                     GenerateBundleCode(description, bundle_code);
                     code << bundle_code;
                     GeneratePosSizeFlags(node, code);
                 }
 
-                code << "\n#else\n\t\t";
+                code += "\n#else\n\t";
                 if (use_generic_version)
                 {
                     // wxGenericStaticBitmap expects a wxBitmap, so it's fine to pass it a wxImage
@@ -94,24 +131,25 @@ std::optional<ttlib::cstr> StaticBitmapGenerator::GenConstruction(Node* node)
                     // wxStaticBitmap requires a wxGDIImage for the bitmap, and that won't accept a wxImage.
                     code << "wxBitmap(" << GenerateBitmapCode(description) << ")";
                 }
-                GeneratePosSizeFlags(node, code);
+                // GeneratePosSizeFlags(node, code);
+                gen_code.PosSizeFlags();
                 code << "\n#endif";
-                return code;
+                return;
             }
         }
         else
         {
             if (wxGetProject().value(prop_wxWidgets_version) != "3.1")
             {
-                code << "wxBitmapBundle::FromBitmaps(bitmaps)";
+                code += "wxBitmapBundle::FromBitmaps(bitmaps)";
             }
             else
             {
-                code << "\n#if wxCHECK_VERSION(3, 1, 6)\n\t\t\t";
-                code << "wxBitmapBundle::FromBitmaps(bitmaps)";
+                code += "\n#if wxCHECK_VERSION(3, 1, 6)\n\t\t";
+                code += "wxBitmapBundle::FromBitmaps(bitmaps)";
                 GeneratePosSizeFlags(node, code);
 
-                code << "\n#else\n\t\t\t";
+                code += "\n#else\n\t\t";
                 if (use_generic_version)
                 {
                     // wxGenericStaticBitmap expects a wxBitmap, so it's fine to pass it a wxImage
@@ -122,9 +160,11 @@ std::optional<ttlib::cstr> StaticBitmapGenerator::GenConstruction(Node* node)
                     // wxStaticBitmap requires a wxGDIImage for the bitmap, and that won't accept a wxImage.
                     code << "wxBitmap(" << GenerateBitmapCode(description) << ")";
                 }
-                GeneratePosSizeFlags(node, code);
+                // GeneratePosSizeFlags(node, code);
+                gen_code.PosSizeFlags();
+
                 code << "\n#endif";
-                return code;
+                return;
             }
         }
     }
@@ -133,38 +173,42 @@ std::optional<ttlib::cstr> StaticBitmapGenerator::GenConstruction(Node* node)
         if (node->IsLocal())
             code << "auto* ";
 
-        bool use_generic_version = (node->prop_as_string(prop_scale_mode) != "None");
+        bool use_generic_version = (node->as_string(prop_scale_mode) != "None");
         if (use_generic_version)
-            code << node->get_node_name() << " = new wxGenericStaticBitmap(";
+            gen_code.NodeName() << " = new wxGenericStaticBitmap(";
         else
-            code << node->get_node_name() << " = new wxStaticBitmap(";
+            gen_code.NodeName() << " = new wxStaticBitmap(";
 
-        code << GetParentName(node) << ", " << node->prop_as_string(prop_id) << ", ";
+        gen_code.GetParentName().Comma().as_string(prop_id).Comma();
 
         code << "wxNullBitmap";
     }
 
-    GeneratePosSizeFlags(node, code);
-
-    return code;
+    // GeneratePosSizeFlags(node, code);
+    gen_code.PosSizeFlags();
 }
 
-std::optional<ttlib::cstr> StaticBitmapGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
+std::optional<ttlib::sview> StaticBitmapGenerator::CommonSettings(Code& code)
 {
-    if (node->prop_as_string(prop_scale_mode) == "None")
-        return {};
-
-    ttlib::cstr code;
-
-    code << node->get_node_name() << "->SetScaleMode(wxStaticBitmap::Scale_" << node->prop_as_string(prop_scale_mode)
-         << ");";
-
-    return code;
+    if (code.node()->as_string(prop_scale_mode) != "None")
+    {
+        code.NodeName().Function("SetScaleMode(").Add("wxStaticBitmap");
+        if (code.is_cpp())
+        {
+            code += "::Scale_";
+        }
+        else
+        {
+            code += ".Scale_";
+        }
+        code.as_string(prop_scale_mode).EndFunction();
+    }
+    return code.m_code;
 }
 
 bool StaticBitmapGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
-    if (node->prop_as_string(prop_scale_mode) != "None")
+    if (node->as_string(prop_scale_mode) != "None")
         InsertGeneratorInclude(node, "#include <wx/generic/statbmpg.h>", set_src, set_hdr);
     else
         InsertGeneratorInclude(node, "#include <wx/statbmp.h>", set_src, set_hdr);
@@ -188,7 +232,7 @@ int StaticBitmapGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size
 
     if (xrc_flags & xrc::add_comments)
     {
-        if (node->HasValue(prop_scale_mode) && node->prop_as_string(prop_scale_mode) != "None")
+        if (node->HasValue(prop_scale_mode) && node->as_string(prop_scale_mode) != "None")
         {
             item.append_child(pugi::node_comment).set_value(" scale mode cannot be be set in the XRC file. ");
         }

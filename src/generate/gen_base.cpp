@@ -1884,7 +1884,8 @@ void BaseCodeGenerator::GenCtxConstruction(Node* node)
         }
         if (scode && scode->size())
         {
-            m_source->writeLine();
+            if (!node->isGen(gen_wxMenuItem))
+                m_source->writeLine();
             m_source->writeLine(scode.value(), indent::auto_keep_whitespace);
         }
 
@@ -1898,7 +1899,8 @@ void BaseCodeGenerator::GenCtxConstruction(Node* node)
         }
         if (scode && scode->size())
         {
-            m_source->writeLine();
+            if (!node->isGen(gen_wxMenuItem))
+                m_source->writeLine();
             m_source->writeLine(scode.value(), indent::auto_keep_whitespace);
         }
 
@@ -1918,7 +1920,8 @@ void BaseCodeGenerator::GenCtxConstruction(Node* node)
             }
             if (scode && scode->size())
             {
-                m_source->writeLine();
+                if (!node->isGen(gen_wxMenuItem))
+                    m_source->writeLine();
                 m_source->writeLine(scode.value(), indent::auto_keep_whitespace);
             }
         }

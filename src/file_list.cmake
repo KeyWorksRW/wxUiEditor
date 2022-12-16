@@ -83,6 +83,10 @@ set (file_list
     generate/styled_text.cpp       # wxStyledText (scintilla) generate
     generate/window_widgets.cpp    # Splitter and Scroll generation classes
 
+    generate/gen_menu.cpp          # Menu Generator
+    generate/gen_menuitem.cpp      # Menu Item Generator
+    generate/gen_submenu.cpp       # SubMenu Generator
+
     generate/gen_activity.cpp       # wxActivityIndicator generator
     generate/gen_animation.cpp      # wxAnimationCtrl generator
     generate/gen_banner_window.cpp  # wxBannerWindow generator

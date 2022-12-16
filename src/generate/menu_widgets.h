@@ -1,13 +1,17 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Menu component classes
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2021 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
 #pragma once
 
 #include "base_generator.h"  // BaseGenerator -- Base Generator class
+
+#include "gen_menu.h"      // MenuGenerator -- Menu generator
+#include "gen_menuitem.h"  // MenuItemGenerator -- Menu Item generator
+#include "gen_submenu.h"   // SubMenu Generator
 
 // MenuBarGenerator, MenuBarFormGenerator and PopupMenuGenerator are derived from this class
 class MenuBarBase : public BaseGenerator
@@ -28,13 +32,16 @@ private:
 class MenuBarGenerator : public MenuBarBase
 {
 public:
-    std::optional<ttlib::cstr> GenConstruction(Node* node) override;
-    std::optional<ttlib::cstr> GenAdditionalCode(GenEnum::GenCodeType cmd, Node* node) override;
+    std::optional<ttlib::sview> CommonConstruction(Code& code) override;
+    std::optional<ttlib::sview> CommonAdditionalCode(Code&, GenEnum::GenCodeType /* command */) override;
 
     bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr) override;
 
     int GenXrcObject(Node*, pugi::xml_node& /* object */, size_t /* xrc_flags */) override;
     void RequiredHandlers(Node*, std::set<std::string>& /* handlers */) override;
+
+    ttlib::cstr GetPythonHelpText(Node*) override { return "wx.MenuBar"; }
+    ttlib::cstr GetPythonURL(Node*) override { return "wx.MenuBar.html"; }
 };
 
 class MenuBarFormGenerator : public MenuBarBase
@@ -58,49 +65,17 @@ public:
     bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr) override;
 };
 
-class MenuGenerator : public BaseGenerator
-{
-public:
-    std::optional<ttlib::cstr> GenConstruction(Node* node) override;
-    std::optional<ttlib::cstr> GenAdditionalCode(GenEnum::GenCodeType cmd, Node* node) override;
-
-    bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr) override;
-
-    int GenXrcObject(Node*, pugi::xml_node& /* object */, size_t /* xrc_flags */) override;
-    void RequiredHandlers(Node*, std::set<std::string>& /* handlers */) override;
-};
-
-class SubMenuGenerator : public BaseGenerator
-{
-public:
-    std::optional<ttlib::cstr> GenConstruction(Node* node) override;
-    std::optional<ttlib::cstr> GenAdditionalCode(GenEnum::GenCodeType cmd, Node* node) override;
-    std::optional<ttlib::cstr> GenSettings(Node* node, size_t& auto_indent) override;
-
-    bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr) override;
-
-    int GenXrcObject(Node*, pugi::xml_node& /* object */, size_t /* xrc_flags */) override;
-};
-
-class MenuItemGenerator : public BaseGenerator
-{
-public:
-    std::optional<ttlib::cstr> GenConstruction(Node* node) override;
-    std::optional<ttlib::cstr> GenSettings(Node* node, size_t& auto_indent) override;
-
-    bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr) override;
-
-    int GenXrcObject(Node*, pugi::xml_node& /* object */, size_t /* xrc_flags */) override;
-};
-
 class SeparatorGenerator : public BaseGenerator
 {
 public:
-    std::optional<ttlib::cstr> GenConstruction(Node* node) override;
+    std::optional<ttlib::sview> CommonConstruction(Code& code) override;
 
     bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr) override;
 
     int GenXrcObject(Node*, pugi::xml_node& /* object */, size_t /* xrc_flags */) override;
+
+    ttlib::cstr GetPythonHelpText(Node*) override { return "wx.Menu.AppendSeparator"; }
+    ttlib::cstr GetPythonURL(Node*) override { return "wx.Menu.html#wx.Menu.AppendSeparator"; }
 };
 
 class CtxMenuGenerator : public BaseGenerator

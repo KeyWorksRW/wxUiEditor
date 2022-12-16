@@ -161,30 +161,32 @@ wxMenu* MenuBarBase::MakeSubMenu(Node* menu_node)
 
 //////////////////////////////////////////  MenuBarGenerator  //////////////////////////////////////////
 
-std::optional<ttlib::cstr> MenuBarGenerator::GenConstruction(Node* node)
+std::optional<ttlib::sview> MenuBarGenerator::CommonConstruction(Code& code)
 {
-    ttlib::cstr code;
-    if (node->IsLocal())
+    if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
-    code << node->get_node_name() << " = new wxMenuBar(";
-    GenStyle(node, code);
-    code << ");";
-    code.Replace("(0)", "()");
+    code.NodeName().CreateClass();
+    if (code.HasValue(prop_style))
+    {
+        code.Add(code.node()->as_string(prop_style));
+    }
+    code.EndFunction();
 
-    return code;
+    return code.m_code;
 }
 
-std::optional<ttlib::cstr> MenuBarGenerator::GenAdditionalCode(GenEnum::GenCodeType cmd, Node* node)
+std::optional<ttlib::sview> MenuBarGenerator::CommonAdditionalCode(Code& code, GenEnum::GenCodeType cmd)
 {
-    ttlib::cstr code;
-
     if (cmd == code_after_children)
     {
-        code << "\tSetMenuBar(" << node->get_node_name() << ");";
-        return code;
+        if (code.is_python())
+        {
+            code += "self.";
+        }
+        code.Add("SetMenuBar(").NodeName().EndFunction();
     }
 
-    return {};
+    return code.m_code;
 }
 
 bool MenuBarGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
@@ -338,495 +340,22 @@ bool PopupMenuGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
     return true;
 }
 
-//////////////////////////////////////////  MenuGenerator (wxMenu)  //////////////////////////////////////////
-
-std::optional<ttlib::cstr> MenuGenerator::GenConstruction(Node* node)
-{
-    ttlib::cstr code;
-    if (node->IsLocal())
-        code << "auto* ";
-
-    // BUGBUG: [KeyWorks - 05-20-2021] This never gets deleted!
-    code << node->get_node_name() << " = new wxMenu();";
-
-    return code;
-}
-
-std::optional<ttlib::cstr> MenuGenerator::GenAdditionalCode(GenEnum::GenCodeType cmd, Node* node)
-{
-    ttlib::cstr code;
-
-    if (cmd == code_after_children)
-    {
-        auto parent_type = node->GetParent()->gen_type();
-        if (parent_type == type_menubar)
-        {
-            code << "\t" << node->get_parent_name() << "->Append(" << node->get_node_name() << ", ";
-            code << GenerateQuotedString(node->prop_as_string(prop_label)) << ");";
-        }
-        else if (parent_type == type_menubar_form)
-        {
-            code << "\t"
-                 << "Append(" << node->get_node_name() << ", ";
-            code << GenerateQuotedString(node->prop_as_string(prop_label)) << ");";
-        }
-        else
-        {
-            // The parent can disable generation of Bind by shutting of the context menu
-            if (!node->GetParent()->prop_as_bool(prop_context_menu))
-            {
-                return {};
-            }
-
-            if (parent_type == type_form || parent_type == type_frame_form || parent_type == type_wizard)
-            {
-                code << "\tBind(wxEVT_RIGHT_DOWN, &" << node->get_parent_name() << "::" << node->get_parent_name()
-                     << "OnContextMenu, this);";
-            }
-            else
-            {
-                code << "\t" << node->get_parent_name() << "->Bind(wxEVT_RIGHT_DOWN, &" << node->get_form_name()
-                     << "::" << node->get_parent_name() << "OnContextMenu, this);";
-            }
-        }
-    }
-
-    else
-    {
-        return {};
-    }
-
-    return code;
-}
-
-bool MenuGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
-{
-    InsertGeneratorInclude(node, "#include <wx/menu.h>", set_src, set_hdr);
-
-    return true;
-}
-
-// ../../wxSnapShot/src/xrc/xh_menu.cpp
-// ../../../wxWidgets/src/xrc/xh_menu.cpp
-
-int MenuGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
-{
-    auto item = InitializeXrcObject(node, object);
-
-    GenXrcObjectAttributes(node, item, "wxMenu");
-
-    ADD_ITEM_PROP(prop_label, "label")
-    GenXrcBitmap(node, item, xrc_flags);
-
-    return BaseGenerator::xrc_updated;
-}
-
-void MenuGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>& handlers)
-{
-    handlers.emplace("wxMenuXmlHandler");
-}
-
-//////////////////////////////////////////  SubMenuGenerator  //////////////////////////////////////////
-
-std::optional<ttlib::cstr> SubMenuGenerator::GenConstruction(Node* node)
-{
-    ttlib::cstr code;
-    if (node->IsLocal())
-        code << "auto* ";
-
-    code << node->get_node_name() << " = new wxMenu();\n";
-
-    return code;
-}
-
-std::optional<ttlib::cstr> SubMenuGenerator::GenAdditionalCode(GenEnum::GenCodeType cmd, Node* node)
-{
-    ttlib::cstr code;
-
-    if (cmd == code_after_children)
-    {
-        if (node->GetParent()->isGen(gen_PopupMenu))
-        {
-            code << "\t"
-                    "AppendSubMenu("
-                 << node->get_node_name() << ", ";
-        }
-        else
-        {
-            code << "\t" << node->get_parent_name() << "->AppendSubMenu(" << node->get_node_name() << ", ";
-        }
-
-        code << GenerateQuotedString(node->prop_as_string(prop_label)) << ");";
-    }
-    else
-    {
-        return {};
-    }
-
-    return code;
-}
-
-std::optional<ttlib::cstr> SubMenuGenerator::GenSettings(Node* node, size_t& auto_indent)
-{
-    ttlib::cstr code;
-
-    if (node->HasValue(prop_bitmap))
-    {
-        auto_indent = indent::auto_keep_whitespace;
-        ttlib::cstr bundle_code;
-        bool is_code_block = GenerateBundleCode(node->prop_as_string(prop_bitmap), bundle_code);
-        if (is_code_block)
-        {
-            if (wxGetProject().value(prop_wxWidgets_version) == "3.1")
-            {
-                code << "#if wxCHECK_VERSION(3, 1, 6)\n";
-            }
-            // GenerateBundleCode assumes an indent within an indent
-            bundle_code.Replace("\t\t\t", "\t", true);
-            code << bundle_code;
-            code << "\t";
-            if (node->IsLocal())
-                code << "auto* ";
-            code << node->get_node_name() << "Item->SetBitmap(wxBitmapBundle::FromBitmaps(bitmaps));";
-            code << "\n}";
-            if (wxGetProject().value(prop_wxWidgets_version) == "3.1")
-            {
-                code << "\n#else\n";
-                if (node->IsLocal())
-                    code << "auto* ";
-
-                code << node->get_node_name() << "Item->SetBitmap(" << GenerateBitmapCode(node->prop_as_string(prop_bitmap))
-                     << ");";
-                code << "\n#endif";
-            }
-        }
-        else
-        {
-            if (wxGetProject().value(prop_wxWidgets_version) == "3.1")
-            {
-                code << "#if wxCHECK_VERSION(3, 1, 6)\n";
-            }
-            if (node->IsLocal())
-                code << "auto* ";
-            code << node->get_node_name() << "Item->SetBitmap(" << bundle_code << ");";
-            if (wxGetProject().value(prop_wxWidgets_version) == "3.1")
-            {
-                code << "\n#else\n";
-                if (node->IsLocal())
-                    code << "auto* ";
-
-                code << node->get_node_name() << "Item->SetBitmap(" << GenerateBitmapCode(node->prop_as_string(prop_bitmap))
-                     << ");";
-                code << "\n#endif";
-            }
-        }
-    }
-
-    return code;
-}
-
-bool SubMenuGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
-{
-    InsertGeneratorInclude(node, "#include <wx/menu.h>", set_src, set_hdr);
-
-    return true;
-}
-
-int SubMenuGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
-{
-    auto item = InitializeXrcObject(node, object);
-
-    GenXrcObjectAttributes(node, item, "wxMenu");
-
-    ADD_ITEM_PROP(prop_label, "label")
-    GenXrcBitmap(node, item, xrc_flags);
-
-    return BaseGenerator::xrc_updated;
-}
-
-//////////////////////////////////////////  MenuItemGenerator  //////////////////////////////////////////
-
-std::optional<ttlib::cstr> MenuItemGenerator::GenConstruction(Node* node)
-{
-    ttlib::cstr code;
-    if (node->IsLocal())
-        code << "auto* ";
-
-    if (node->GetParent()->isGen(gen_PopupMenu))
-    {
-        code << node->get_node_name() << " = Append(" << node->prop_as_string(prop_id) << ", ";
-    }
-    else
-    {
-        code << node->get_node_name() << " = new wxMenuItem(" << node->get_parent_name() << ", "
-             << node->prop_as_string(prop_id) << ", ";
-    }
-    auto& label = node->prop_as_string(prop_label);
-    if (label.size())
-    {
-        if (node->HasValue(prop_shortcut))
-        {
-            code << GenerateQuotedString(ttlib::cstr() << label << '\t' << node->prop_as_string(prop_shortcut));
-        }
-        else
-        {
-            code << GenerateQuotedString(label);
-        }
-    }
-    else
-    {
-        code << "wxEmptyString";
-    }
-
-    if (node->HasValue(prop_help) || node->prop_as_string(prop_kind) != "wxITEM_NORMAL")
-    {
-        code.insert(0, 1, '\t');
-        code << ",\n\t\t" << GenerateQuotedString(node->prop_as_string(prop_help)) << ", "
-             << node->prop_as_string(prop_kind);
-    }
-
-    code << ");";
-
-    return code;
-}
-
-std::optional<ttlib::cstr> MenuItemGenerator::GenSettings(Node* node, size_t& auto_indent)
-{
-    ttlib::cstr code;
-
-    if (node->HasValue(prop_extra_accels))
-    {
-        auto_indent = indent::auto_keep_whitespace;
-        code << "{\n\t"
-             << "wxAcceleratorEntry entry;\n";
-
-        bool is_old_widgets = (wxGetProject().value(prop_wxWidgets_version) == "3.1");
-        if (is_old_widgets)
-        {
-            code << "#if wxCHECK_VERSION(3, 1, 6)\n";
-        }
-
-        ttlib::multistr accel_list(node->as_string(prop_extra_accels), "\"", tt::TRIM::both);
-        for (auto& accel: accel_list)
-        {
-            // There are spaces between the quoted strings which will create an entry that we
-            // need to ignore
-            if (accel.size())
-            {
-                code << "\tif (entry.FromString(" << GenerateQuotedString(accel) << "))\n";
-                code << "\t\t" << node->get_node_name() << "->AddExtraAccel(entry);\n";
-            }
-        }
-
-        if (is_old_widgets)
-        {
-            code << "#endif\n";
-        }
-        code << "}\n";
-    }
-
-    bool has_bitmap = node->HasValue(prop_bitmap);
-    if (has_bitmap)
-    {
-        auto_indent = indent::auto_keep_whitespace;
-
-        bool is_old_widgets = (wxGetProject().value(prop_wxWidgets_version) == "3.1");
-        if (is_old_widgets)
-        {
-            code << "#if wxCHECK_VERSION(3, 1, 6)\n";
-        }
-
-        ttlib::cstr bundle_code;
-        bool is_code_block = GenerateBundleCode(node->value(prop_bitmap), bundle_code);
-
-        if (node->HasValue(prop_unchecked_bitmap))
-        {
-            ttlib::cstr unchecked_code;
-            bool is_checked_block = GenerateBundleCode(node->value(prop_unchecked_bitmap), unchecked_code);
-            if (is_code_block || is_checked_block)
-            {
-                code << "{\n";
-                if (is_code_block)
-                {
-                    // GenerateBundleCode assumes an indent within an indent
-                    bundle_code.Replace("\t\t\t", "\t", true);
-                    // we already generated the opening brace
-                    bundle_code.erase(0, 1);
-                    code << bundle_code.c_str() + 1;
-                }
-
-                if (is_checked_block)
-                {
-                    // GenerateBundleCode assumes an indent within an indent
-                    unchecked_code.Replace("\t\t\t", "\t", true);
-                    // we already generated the opening brace
-                    unchecked_code.erase(0, 1);
-                    if (is_code_block)
-                    {
-                        unchecked_code.Replace("bitmaps", "unchecked_bmps", true);
-                    }
-                    code << '\n' << unchecked_code.c_str() + 1;
-                }
-
-                code << "\t" << node->get_node_name() << "->SetBitmaps(";
-
-                if (is_code_block)
-                {
-                    code << "wxBitmapBundle::FromBitmaps(bitmaps), ";
-                }
-                else
-                {
-                    code << bundle_code << ", ";
-                }
-
-                if (is_checked_block)
-                {
-                    code << "wxBitmapBundle::FromBitmaps(";
-                    code << (is_code_block ? "unchecked_bmps" : "bitmaps");
-                }
-                else
-                {
-                    code << bundle_code << ", " << unchecked_code;
-                }
-
-                code << ");\n}";
-            }
-            else
-            {
-                code << node->get_node_name() << "->SetBitmaps(" << bundle_code;
-                code << ", " << unchecked_code << ");";
-            }
-
-            if (is_old_widgets)
-            {
-                code << "\n#else\n";
-                if (node->HasValue(prop_unchecked_bitmap))
-                {
-                    code << node->get_node_name() << "->SetBitmaps("
-                         << GenerateBitmapCode(node->prop_as_string(prop_bitmap));
-                    code << ", " << GenerateBitmapCode(node->prop_as_string(prop_unchecked_bitmap)) << ");";
-                }
-                else
-                {
-                    code << node->get_node_name() << "->SetBitmap(" << GenerateBitmapCode(node->prop_as_string(prop_bitmap))
-                         << ");";
-                }
-                code << "\n#endif  // wxCHECK_VERSION(3, 1, 6)";
-            }
-        }
-
-        // single bitmap (no unchecked bitmap)
-        else
-        {
-            if (is_code_block)
-            {
-                // GenerateBundleCode assumes an indent within an indent
-                bundle_code.Replace("\t\t\t", "\t", true);
-                code << bundle_code;
-                code << "\t" << node->get_node_name() << "->SetBitmap(wxBitmapBundle::FromBitmaps(bitmaps));\n}";
-            }
-            else
-            {
-                code << node->get_node_name() << "->SetBitmap(" << bundle_code << ");";
-            }
-            if (is_old_widgets)
-            {
-                code << "\n#else\n";
-
-                code << node->get_node_name() << "->SetBitmap(" << GenerateBitmapCode(node->prop_as_string(prop_bitmap))
-                     << ");";
-                code << "\n#endif  // wxCHECK_VERSION(3, 1, 6)";
-            }
-        }
-    }
-
-    if (code.size())
-        code << '\n';
-
-    if (!node->GetParent()->isGen(gen_PopupMenu))
-    {
-        if (!has_bitmap)
-            code << "\t";
-        code << node->get_parent_name() << "->Append(" << node->get_node_name() << ");";
-    }
-
-    if ((node->prop_as_string(prop_kind) == "wxITEM_CHECK" || node->prop_as_string(prop_kind) == "wxITEM_RADIO") &&
-        node->prop_as_bool(prop_checked))
-    {
-        if (code.size())
-            code << '\n';
-        if (!has_bitmap)
-            code << "\t";
-        code << node->get_node_name() << "->Check();";
-    }
-
-    return code;
-}
-
-bool MenuItemGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
-{
-    InsertGeneratorInclude(node, "#include <wx/menu.h>", set_src, set_hdr);
-    if (node->HasValue(prop_extra_accels))
-    {
-        InsertGeneratorInclude(node, "#include <wx/accel.h>", set_src, set_hdr);
-    }
-
-    return true;
-}
-
-int MenuItemGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
-{
-    auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
-    auto item = InitializeXrcObject(node, object);
-
-    GenXrcObjectAttributes(node, item, "wxMenuItem");
-
-    ADD_ITEM_PROP(prop_label, "label")
-    ADD_ITEM_PROP(prop_shortcut, "accel")
-    if (node->HasValue(prop_extra_accels))
-    {
-        auto child = item.append_child("extra-accels");
-        ttlib::multistr accel_list(node->as_string(prop_extra_accels), "\"", tt::TRIM::both);
-        for (auto& accel: accel_list)
-        {
-            // There are spaces between the quoted strings which will create an entry that we
-            // need to ignore
-            if (accel.size())
-                child.append_child("accel").text().set(accel);
-        }
-    }
-    ADD_ITEM_PROP(prop_help, "help")
-    ADD_ITEM_BOOL(prop_checked, "checked")
-    if (node->as_bool(prop_disabled))
-        item.append_child("enabled").text().set("0");
-
-    if (node->value(prop_kind) == "wxITEM_RADIO")
-        item.append_child("radio").text().set("1");
-    else if (node->value(prop_kind) == "wxITEM_CHECK")
-        item.append_child("checkable").text().set("1");
-
-    GenXrcBitmap(node, item, xrc_flags);
-
-    if (xrc_flags & xrc::add_comments)
-    {
-        GenXrcComments(node, item);
-    }
-
-    return result;
-}
-
 //////////////////////////////////////////  SeparatorGenerator  //////////////////////////////////////////
 
-std::optional<ttlib::cstr> SeparatorGenerator::GenConstruction(Node* node)
+std::optional<ttlib::sview> SeparatorGenerator::CommonConstruction(Code& code)
 {
-    ttlib::cstr code;
-
-    if (node->GetParent()->isGen(gen_PopupMenu))
-        code << "AppendSeparator();";
+    if (code.node()->GetParent()->isGen(gen_PopupMenu))
+    {
+        if (code.is_python())
+            code += "self.";
+        code.Add("AppendSeparator(").EndFunction();
+    }
     else
-        code << node->get_parent_name() << "->AppendSeparator();";
+    {
+        code.ParentName().Function("AppendSeparator(").EndFunction();
+    }
 
-    return code;
+    return code.m_code;
 }
 
 bool SeparatorGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)

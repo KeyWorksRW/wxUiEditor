@@ -38,6 +38,31 @@ std::optional<ttlib::cstr> FrameFormGenerator::GenConstruction(Node* node)
     return code;
 }
 
+bool FrameFormGenerator::GenPythonForm(Code& code)
+{
+    // Note: this code is called before any indentation is set
+    code.Add("class ").NodeName().Add("(wx.Frame):\n");
+    code.Tab().Add("def __init__(self, parent):").Eol().Tab(2);
+    code << "wx.Frame.__init__(self, parent, id=";
+    code.as_string(prop_id).Comma(false).Eol().Tab(3).Add("title=");
+
+    if (code.HasValue(prop_title))
+        code.QuotedString(prop_title);
+    else
+        code << "\"\"";
+
+    code.Comma().Eol().Tab(3).Add("pos=").Pos(prop_pos);
+    code.Comma().Add("size=").WxSize(prop_size);
+    code.Comma().Eol().Tab(3).Add("style=");
+    if (code.HasValue(prop_style) && !code.node()->as_string(prop_style).is_sameas("wxDEFAULT_FRAME_STYLE"))
+        code.Style();
+    else
+        code << "wx.DEFAULT_FRAME_STYLE";
+    code << ")";
+
+    return true;
+}
+
 int FrameFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
     object.append_attribute("class").set_value("wxFrame");
@@ -117,6 +142,20 @@ void FrameFormGenerator::RequiredHandlers(Node* node, std::set<std::string>& han
 std::optional<ttlib::cstr> FrameFormGenerator::GenAdditionalCode(GenEnum::GenCodeType cmd, Node* node)
 {
     return GenFormCode(cmd, node);
+}
+
+std::optional<ttlib::sview> FrameFormGenerator::CommonAdditionalCode(Code& code, GenEnum::GenCodeType cmd)
+{
+    if (code.is_cpp() || cmd != code_after_children)
+        return {};
+
+    auto& center = code.node()->as_string(prop_center);
+    if (center.size() && !center.is_sameas("no"))
+    {
+        code.Eol().FormFunction("Centre(").Add(center) << ")";
+    }
+
+    return code.m_code;
 }
 
 std::optional<ttlib::cstr> FrameFormGenerator::GenSettings(Node* node, size_t& /* auto_indent */)

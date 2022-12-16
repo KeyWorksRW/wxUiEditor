@@ -57,8 +57,8 @@ void BaseCodeGenerator::GenConstruction(Node* node)
 
     if (scode)
     {
-        // Don't add blank lines when adding tools to a toolbar
-        if (type != type_aui_tool && type != type_tool)
+        // Don't add blank lines when adding tools to a toolbar, or creating menu items
+        if (type != type_aui_tool && type != type_tool && type != type_menuitem)
         {
             m_source->writeLine();
         }
@@ -294,18 +294,21 @@ void BaseCodeGenerator::GenConstruction(Node* node)
         {
             if (type == aftercode_types[idx])
             {
-                result = generator->GenAdditionalCode(code_after_children, node, m_language);
-                if (!result)
+                gen_code.clear();
+                scode = generator->CommonAdditionalCode(gen_code, code_after_children);
+                if (!scode)
                 {
                     if (m_language == GEN_LANG_CPLUSPLUS)
                         result = generator->GenAdditionalCode(code_after_children, node);
                     else
                         result = generator->GenAdditionalCode(code_after_children, node, m_language);
+                    if (result)
+                        scode = result.value();
                 }
 
-                if (result && result.value().size())
+                if (scode && scode.value().size())
                 {
-                    m_source->writeLine(result.value(), indent::auto_keep_whitespace);
+                    m_source->writeLine(scode.value(), indent::auto_keep_whitespace);
                 }
                 m_source->writeLine();
                 break;

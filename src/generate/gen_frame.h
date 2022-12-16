@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   wxFrame generator
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2021 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -18,10 +18,16 @@ public:
     std::optional<ttlib::cstr> GenAdditionalCode(GenEnum::GenCodeType cmd, Node* node) override;
     std::optional<ttlib::cstr> GenSettings(Node* node, size_t& auto_indent) override;
 
+    bool GenPythonForm(Code&) override;
+    std::optional<ttlib::sview> CommonAdditionalCode(Code&, GenEnum::GenCodeType cmd) override;
+
     bool AllowPropertyChange(wxPropertyGridEvent*, NodeProperty*, Node*) override;
 
     bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr) override;
 
     int GenXrcObject(Node*, pugi::xml_node& /* object */, size_t /* xrc_flags */) override;
     void RequiredHandlers(Node*, std::set<std::string>& /* handlers */) override;
+
+    ttlib::cstr GetPythonHelpText(Node*) override { return "wx.Frame"; }
+    ttlib::cstr GetPythonURL(Node*) override { return "wx.Frame.html"; }
 };

@@ -52,7 +52,10 @@ public:
     // Equivalent to calling m_node->prop_as_bool(prop_name)
     bool IsTrue(GenEnum::PropName prop_name) const;
 
-    // Equivalent to calling m_node->prop_as_string(prop_name).contains(text)
+    // Equivalent to calling (node->as_strin(prop_name) == text)
+    bool IsEqualTo(GenEnum::PropName prop_name, ttlib::sview text) const;
+
+    // Equivalent to calling node->as_string(prop_name).contains(text)
     bool PropContains(GenEnum::PropName prop_name, ttlib::sview text) const;
 
     // Adds comma and optional trailing space: ", "

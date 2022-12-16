@@ -390,6 +390,8 @@ Code& Code::NodeName()
 
 Code& Code::ParentName()
 {
+    if (is_python() && !m_node->GetParent()->IsLocal())
+        m_code << "self.";
     m_code << m_node->GetParent()->get_node_name();
     return *this;
 }
@@ -406,12 +408,17 @@ bool Code::HasValue(GenEnum::PropName prop_name) const
 
 bool Code::IsTrue(GenEnum::PropName prop_name) const
 {
-    return m_node->prop_as_bool(prop_name);
+    return m_node->as_bool(prop_name);
+}
+
+bool Code::IsEqualTo(GenEnum::PropName prop_name, ttlib::sview text) const
+{
+    return (m_node->as_string(prop_name) == text);
 }
 
 bool Code::PropContains(GenEnum::PropName prop_name, ttlib::sview text) const
 {
-    return m_node->prop_as_string(prop_name).contains(text);
+    return m_node->as_string(prop_name).contains(text);
 }
 
 // clang-format off

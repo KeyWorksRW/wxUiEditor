@@ -1559,3 +1559,172 @@ const char* LangPtr(int language)
             return "";
     }
 }
+
+// This is called to add a tool to either wxToolBar or wxAuiToolBar
+void GenToolCode(Code& code, bool is_bitmaps_list)
+{
+    Node* node = code.node();
+    if (is_bitmaps_list && code.is_cpp())
+        code.Tab();
+    if (node->prop_as_bool(prop_disabled) || (node->prop_as_string(prop_id) == "wxID_ANY" && node->GetInUseEventCount()))
+    {
+        if (node->IsLocal())
+            code << "auto* ";
+        code.NodeName() << " = ";
+    }
+
+    // If the user doesn't want access, then we have no use for the return value.
+    if (!node->IsLocal())
+        code.NodeName().Add(" = ");
+    if (node->isParent(gen_wxToolBar) || node->isParent(gen_wxAuiToolBar))
+        code.ParentName().Function("AddTool(").as_string(prop_id).Comma();
+    else
+    {
+        if (code.is_python())
+            code += "self.";
+        code.Add("AddTool(").as_string(prop_id).Comma();
+    }
+    code.QuotedString(prop_label);
+    if (is_bitmaps_list)
+    {
+        code.Comma();
+        if (code.is_cpp())
+            code += "wxBitmapBundle::FromBitmaps(bitmaps)";
+        else
+            code += "wx.BitmapBundle.FromBitmaps(bitmaps)";
+    }
+    else
+    {
+        code.Comma();
+        if (code.is_cpp())
+            code << "wxBitmap(" << GenerateBitmapCode(node->as_string(prop_bitmap)) << ")";
+        else
+            PythonBundleCode(code, prop_bitmap);
+    }
+
+    if (!node->HasValue(prop_tooltip) && !node->HasValue(prop_statusbar))
+    {
+        if (node->isGen(gen_tool_dropdown))
+        {
+            code.Comma().Add("wxEmptyString").Comma().Add("wxITEM_DROPDOWN");
+        }
+        else if (node->prop_as_string(prop_kind) != "wxITEM_NORMAL")
+        {
+            code.Comma().Add("wxEmptyString").Comma().as_string(prop_kind);
+        }
+    }
+
+    else if (node->HasValue(prop_tooltip) && !node->HasValue(prop_statusbar))
+    {
+        code.Comma().QuotedString(prop_tooltip);
+        if (node->isGen(gen_tool_dropdown))
+        {
+            code.Comma().Add("wxITEM_DROPDOWN");
+        }
+        else if (node->prop_as_string(prop_kind) != "wxITEM_NORMAL")
+        {
+            code.Comma().as_string(prop_kind);
+        }
+    }
+
+    else if (node->HasValue(prop_statusbar))
+    {
+        code.Comma().Add("wxNullBitmap").Comma().as_string(prop_kind).Comma();
+
+        code.QuotedString(prop_tooltip).Comma().QuotedString(prop_statusbar);
+    }
+    code.EndFunction();
+}
+
+bool BitmapList(Code& code, GenEnum::PropName prop)
+{
+    if (!code.node()->HasValue(prop))
+    {
+        return false;
+    }
+
+    auto& description = code.node()->as_string(prop);
+    ttlib::multiview parts(description, BMP_PROP_SEPARATOR, tt::TRIM::both);
+
+    if (parts[IndexImage].empty() || parts[IndexType].contains("Art") || parts[IndexType].contains("SVG"))
+    {
+        return false;
+    }
+
+    auto bundle = GetProject()->GetPropertyImageBundle(description);
+
+    if (!bundle || bundle->lst_filenames.size() < 3)
+    {
+        return false;
+    }
+
+    // If we get here, then the bitmaps need to be put into a vector
+
+    bool is_xpm = (parts[IndexType].is_sameas("XPM"));
+
+    if (code.is_python())
+    {
+        auto path = MakePythonPath(code.node());
+
+        code += "bitmaps = [ ";
+        bool needs_comma = false;
+        for (auto& iter: bundle->lst_filenames)
+        {
+            if (needs_comma)
+            {
+                code.UpdateBreakAt();
+                code.Comma(false).Eol().Tab(3);
+            }
+            ttlib::cstr name(iter);
+            name.make_absolute();
+            name.make_relative(path);
+            name.backslashestoforward();
+
+            code.Add("wxBitmap(\'") << name << "\'";
+            if (is_xpm)
+                code.Add(", wx.BITMAP_TYPE_XPM");
+            code += ")";
+            needs_comma = true;
+        }
+        code += " ]\n";
+        code.UpdateBreakAt();
+
+        return true;
+    }
+
+    //////////////// C++ code starts here ////////////////
+    if (wxGetProject().value(prop_wxWidgets_version) == "3.1")
+    {
+        code.Add("#if wxCHECK_VERSION(3, 1, 6)").Eol();
+    }
+    code << "{\n";
+
+    for (auto& iter: bundle->lst_filenames)
+    {
+        ttlib::cstr name(iter.filename());
+        name.remove_extension();
+        if (is_xpm)
+        {
+            code << "\tbitmaps.push_back(wxImage(" << name << "_xpm));\n";
+        }
+        else
+        {
+            name.Replace(".", "_", true);  // fix wxFormBuilder header files
+            if (parts[IndexType].starts_with("Embed"))
+            {
+                auto embed = GetProject()->GetEmbeddedImage(iter);
+                if (embed)
+                {
+                    name = "wxue_img::" + embed->array_name;
+                }
+            }
+            code << "\tbitmaps.push_back(wxueImage(" << name << ", sizeof(" << name << ")));\n";
+        }
+    }
+    code.UpdateBreakAt();
+
+    // Caller should add the function that uses the bitmaps, add the closing brace, and if
+    // prop_wxWidgets_version == 3.1, follow this with a #else and the alternate code.
+
+    return true;
+}

@@ -297,82 +297,71 @@ void ToolBarGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/,
     toolbar->Realize();
 }
 
-std::optional<ttlib::cstr> ToolBarGenerator::GenConstruction(Node* node)
+std::optional<ttlib::sview> ToolBarGenerator::CommonConstruction(Code& code)
 {
-    ttlib::cstr code;
-    if (node->IsLocal())
+    if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
-    code << node->prop_as_string(prop_var_name);
-
-    if (node->isParent(gen_wxFrame))
+    code.NodeName();
+    if (code.node()->isParent(gen_wxFrame))
     {
-        code << " = CreateToolBar(";
-
-        auto& id = node->prop_as_string(prop_id);
-        auto& window_name = node->prop_as_string(prop_window_name);
-        auto& style = node->prop_as_string(prop_style);
-        auto& win_style = node->prop_as_string(prop_window_style);
+        code += (code.is_cpp() ? " = CreateToolBar(" : " = self.CreateToolBar(");
+        Node* node = code.node();
+        auto& id = node->as_string(prop_id);
+        auto& window_name = node->as_string(prop_window_name);
+        auto& style = node->as_string(prop_style);
+        auto& win_style = node->as_string(prop_window_style);
 
         if (window_name.size())
         {
-            GenStyle(node, code);
-            code << ", " << id << ", " << window_name;
+            code.Style();
+            code.Comma().as_string(prop_id);
+            code.Comma().QuotedString(prop_window_name);
         }
         else if (!id.is_sameas("wxID_ANY"))
         {
-            GenStyle(node, code);
-            code << ", " << id;
+            code.Style();
+            code.Comma().as_string(prop_id);
         }
         else if (!style.is_sameas("wxTB_HORIZONTAL") || win_style.size())
         {
-            GenStyle(node, code);
+            code.Style();
         }
-
-        code << ");";
+        code.EndFunction();
     }
     else
     {
-        code << " = new wxToolBar(" << GetParentName(node) << ", " << node->prop_as_string(prop_id);
-        GeneratePosSizeFlags(node, code, false, "wxTB_HORIZONTAL");
+        code.CreateClass().GetParentName().Comma().as_string(prop_id);
+        code.PosSizeFlags();
     }
 
-    return code;
+    return code.m_code;
 }
 
-std::optional<ttlib::cstr> ToolBarGenerator::GenAfterChildren(Node* node)
+std::optional<ttlib::sview> ToolBarGenerator::CommonAfterChildren(Code& code)
 {
-    ttlib::cstr code;
-    code << '\t' << node->get_node_name() << "->Realize();";
+    code.NodeName().Function("Realize(").EndFunction();
 
-    return code;
+    return code.m_code;
 }
 
-std::optional<ttlib::cstr> ToolBarGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
+std::optional<ttlib::sview> ToolBarGenerator::CommonSettings(Code& code)
 {
-    auto code = GenFormSettings(node);
-
-    if (node->prop_as_int(prop_separation) != 5)
+    if (code.node()->as_int(prop_separation) != 5)
     {
-        if (code.size())
-            code << '\n';
-        code << "SetToolSeparation(" << node->prop_as_string(prop_separation) << ");";
+        code.Eol().NodeName().Function("SetToolSeparation(").as_string(prop_separation).EndFunction();
     }
 
-    if (node->HasValue(prop_margins))
+    if (code.HasValue(prop_margins))
     {
-        if (code.size())
-            code << '\n';
-        code << "SetMargins(" << node->prop_as_string(prop_margins) << ");";
+        code.Eol().NodeName().Function("SetMargins(").as_string(prop_margins).EndFunction();
     }
 
-    if (node->prop_as_int(prop_packing) != 1)
+    if (code.node()->as_int(prop_packing) != 1)
     {
-        if (code.size())
-            code << '\n';
-        code << "SetToolPacking(" << node->prop_as_string(prop_packing) << ");";
+        code.Eol().NodeName().Function("SetToolPacking(").as_string(prop_packing).EndFunction();
     }
 
-    return code;
+    return code.m_code;
 }
 
 bool ToolBarGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
@@ -468,6 +457,33 @@ std::optional<ttlib::cstr> ToolGenerator::GenConstruction(Node* node)
     {
         return GenToolCode(node);
     }
+}
+
+std::optional<ttlib::sview> ToolGenerator::CommonConstruction(Code& code)
+{
+    auto is_bitmaps_list = BitmapList(code, prop_bitmap);
+    GenToolCode(code, is_bitmaps_list);
+    if (is_bitmaps_list && code.is_cpp())
+    {
+        if (wxGetProject().value(prop_wxWidgets_version) == "3.1")
+        {
+            code.Eol().Add("}").Eol().Add("#else").Eol();
+            GenToolCode(code, false);
+            code.Eol().Add("#endif").Eol();
+        }
+        else
+        {
+            code.Eol() += "}\n";
+        }
+    }
+
+    if (code.IsTrue(prop_disabled))
+    {
+        code.Eol().NodeName().Function("Enable(") << (code.is_cpp() ? "false" : "False");
+        code.EndFunction();
+    }
+
+    return code.m_code;
 }
 
 int ToolGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)

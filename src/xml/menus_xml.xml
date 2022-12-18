@@ -2,7 +2,9 @@ inline const char* menus_xml = R"===(<?xml version="1.0"?>
 <!DOCTYPE GeneratorDefinitions SYSTEM "gen.dtd">
 <GeneratorDefinitions>
 	<gen class="MenuBar" image="wxMenuBar" type="menubar_form">
-		<inherits class="Code Generation" />
+		<inherits class="C++ Settings" />
+		<inherits class="wxPython Settings" />
+		<inherits class="XRC Settings" />
 		<inherits class="wxWindow">
 			<hide name="platforms" />
 		</inherits>
@@ -16,7 +18,9 @@ inline const char* menus_xml = R"===(<?xml version="1.0"?>
 	</gen>
 
 	<gen class="PopupMenu" image="menu" type="popup_menu">
-		<inherits class="Code Generation" />
+		<inherits class="C++ Settings" />
+		<inherits class="wxPython Settings" />
+		<inherits class="XRC Settings" />
 		<property name="class_name" type="string"
 			help="The name of the base class.">MyPopupMenuBase</property>
 	</gen>

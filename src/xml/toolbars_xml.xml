@@ -2,7 +2,9 @@ inline const char* toolbars_xml = R"===(<?xml version="1.0"?>
 <!DOCTYPE GeneratorDefinitions SYSTEM "gen.dtd">
 <GeneratorDefinitions>
 	<gen class="ToolBar" image="wxToolBar" type="toolbar_form">
-		<inherits class="Code Generation" />
+		<inherits class="C++ Settings" />
+		<inherits class="wxPython Settings" />
+		<inherits class="XRC Settings" />
 		<inherits class="wxWindow">
 			<hide name="platforms" />
 		</inherits>

@@ -20,6 +20,15 @@ class Node;
 class Code
 {
 public:
+    enum
+    {
+        nothing_needed = 0,
+        pos_needed = 1 << 0,
+        size_needed = 1 << 1,
+        style_needed = 1 << 2,
+        window_name_needed = 1 << 3,
+    };
+
     ttlib::cstr m_code;
     Node* m_node;
     int m_language;
@@ -57,6 +66,12 @@ public:
 
     // Equivalent to calling node->as_string(prop_name).contains(text)
     bool PropContains(GenEnum::PropName prop_name, ttlib::sview text) const;
+
+    // Returns flags indicating what parameters are needed for the current node.
+    // Code::nothing_needed is returned if no parameters are needed.
+    //
+    // If prop_style == default style, then style_needed is not set.
+    int WhatParamsNeeded(ttlib::sview default_style = tt_empty_cstr) const;
 
     // Adds comma and optional trailing space: ", "
     Code& Comma(bool trailing_space = true)

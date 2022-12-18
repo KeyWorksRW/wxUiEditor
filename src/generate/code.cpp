@@ -804,6 +804,35 @@ Code& Code::PosSizeFlags(bool uses_def_validator, ttlib::sview def_style)
     return *this;
 }
 
+int Code::WhatParamsNeeded(ttlib::sview default_style) const
+{
+    if (m_node->HasValue(prop_window_name))
+    {
+        return (pos_needed | size_needed | style_needed | window_name_needed);
+    }
+
+    // This could be done as a single if statement, but it is easier to read this way.
+    bool result = nothing_needed;
+    if ((m_node->HasValue(prop_style) && m_node->as_string(prop_style) != default_style))
+        return (pos_needed | size_needed | style_needed);
+    else if (m_node->HasValue(prop_window_style))
+        return (pos_needed | size_needed | style_needed);
+    else if (m_node->HasValue(prop_orientation) && !m_node->as_string(prop_orientation).is_sameas("wxGA_HORIZONTAL") &&
+             !m_node->as_string(prop_orientation).is_sameas("wxSL_HORIZONTAL"))
+        return (pos_needed | size_needed | style_needed);
+    else if (m_node->HasValue(prop_tab_position) && !m_node->as_string(prop_tab_position).is_sameas("wxBK_DEFAULT"))
+        return (pos_needed | size_needed | style_needed);
+    else if (m_node->isGen(gen_wxRichTextCtrl) || m_node->isGen(gen_wxListView))
+        return (pos_needed | size_needed | style_needed);
+
+    if (m_node->prop_as_wxSize(prop_size) != wxDefaultSize)
+        return (pos_needed | size_needed);
+    else if (m_node->prop_as_wxPoint(prop_pos) != wxDefaultPosition)
+        return pos_needed;
+
+    return nothing_needed;
+}
+
 Code& Code::PosSizeForceStyle(ttlib::sview force_style, bool uses_def_validator)
 {
     if (m_node->HasValue(prop_window_name))

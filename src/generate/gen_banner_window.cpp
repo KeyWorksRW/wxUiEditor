@@ -74,13 +74,14 @@ std::optional<ttlib::sview> BannerWindowGenerator::CommonSettings(Code& code)
         code.NodeName().Function("SetGradient(");
         if (start_colour.contains("wx"))
         {
-            code.Add("wxSystemSettings").Add(code.is_cpp() ? "::" : ".").Add("GetColour(").Add(start_colour) << ")";
+            code.Add("wxSystemSettings").ClassMethod("GetColour(").Add(start_colour) << ")";
         }
         else
         {
             wxColour colour = ConvertToColour(start_colour);
             ttlib::cstr clr_format;
             clr_format.Format("wxColour(%i, %i, %i)", colour.Red(), colour.Green(), colour.Blue());
+            code.CheckLineLength(clr_format.size());
             code.Add(clr_format);
         }
 
@@ -88,12 +89,16 @@ std::optional<ttlib::sview> BannerWindowGenerator::CommonSettings(Code& code)
 
         auto& end_colour = code.node()->as_string(prop_end_colour);
         if (end_colour.contains("wx"))
-            code.Add("wxSystemSettings").Add(code.is_cpp() ? "::" : ".").Add("GetColour(").Add(end_colour) << ")";
+        {
+            code.CheckLineLength(sizeof("wxSystemSettings::GetColour(") + end_colour.size() + sizeof(")"));
+            code.Add("wxSystemSettings").ClassMethod("GetColour(").Add(end_colour) << ")";
+        }
         else
         {
             wxColour colour = ConvertToColour(end_colour);
             ttlib::cstr clr_format;
             clr_format.Format("wxColour(%i, %i, %i)", colour.Red(), colour.Green(), colour.Blue());
+            code.CheckLineLength(clr_format.size());
             code.Add(clr_format);
         }
         code.EndFunction();
@@ -102,8 +107,8 @@ std::optional<ttlib::sview> BannerWindowGenerator::CommonSettings(Code& code)
     if (code.HasValue(prop_title) || code.HasValue(prop_message))
     {
         code.Eol(true);
-        code.NodeName().Function("SetText(").QuotedString(prop_title).Comma();
-        code.QuotedString(prop_message).EndFunction();
+        code.NodeName().Function("SetText(").QuotedString(prop_title);
+        code.Comma().QuotedString(prop_message).EndFunction();
     }
 
     return code.m_code;

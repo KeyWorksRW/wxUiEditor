@@ -53,19 +53,34 @@ std::optional<ttlib::sview> ComboBoxGenerator::CommonConstruction(Code& code)
     if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
     code.NodeName().CreateClass();
-    code.GetParentName().Comma().as_string(prop_id).Comma().QuotedString(prop_selection_string);
+    code.GetParentName().Comma().as_string(prop_id);
     if (code.HasValue(prop_style))
     {
-        code.Comma().CheckLineLength().Pos().Comma().CheckLineLength().WxSize().Comma().CheckLineLength();
+        code.Comma().Add("wxEmptyString");
+        code.Comma().Pos().Comma().CheckLineLength().WxSize();
         if (code.is_cpp())
+        {
+            code.Comma().CheckLineLength(sizeof("0, nullptr, ") + code.node()->as_string(prop_style).size());
             code << "0, nullptr";
+        }
         else
+        {
+            code.Comma().CheckLineLength(sizeof("[], ") + code.node()->as_string(prop_style).size());
             code.Add("[]");
+        }
         code.Comma().Style().EndFunction();
     }
     else
     {
-        code.PosSizeFlags(true);
+        if (code.WhatParamsNeeded() != Code::nothing_needed)
+        {
+            code.Comma().Add("wxEmptyString");
+            code.PosSizeFlags(true);
+        }
+        else
+        {
+            code.EndFunction();
+        }
     }
 
     return code.m_code;

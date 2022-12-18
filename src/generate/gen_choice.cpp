@@ -70,11 +70,17 @@ std::optional<ttlib::sview> ChoiceGenerator::CommonConstruction(Code& code)
     code.GetParentName().Comma().as_string(prop_id);
     if (code.HasValue(prop_style))
     {
-        code.Comma().CheckLineLength().Pos().Comma().CheckLineLength().WxSize().Comma().CheckLineLength();
+        code.Comma().Pos().Comma().CheckLineLength().WxSize();
         if (code.is_cpp())
+        {
+            code.Comma().CheckLineLength(sizeof("0, nullptr, ") + code.node()->as_string(prop_style).size());
             code << "0, nullptr";
+        }
         else
+        {
+            code.Comma().CheckLineLength(sizeof("[], ") + code.node()->as_string(prop_style).size());
             code.Add("[]");
+        }
         code.Comma().Style().EndFunction();
     }
     else

@@ -655,6 +655,6 @@ void BaseCodeGenerator::GenParentSizer(Node* node, bool need_closing_brace)
     }
     else
     {
-        m_source->writeLine(code.m_code);
+        m_source->writeLine(code.m_code, indent::auto_keep_whitespace);
     }
 }

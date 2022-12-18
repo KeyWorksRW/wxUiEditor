@@ -89,8 +89,7 @@ std::optional<ttlib::sview> StatusBarGenerator::CommonConstruction(Code& code)
     if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
 
-    // REVIEW: [Randalphwa - 12-02-2022] Does wxPython need this to be self.CreateStatusBar ?
-    code.NodeName() << " = CreateStatusBar(";
+    code.NodeName().Str(" = ").FormFunction("CreateStatusBar(");
     if (node->HasValue(prop_window_name))
     {
         code.itoa(num_fields).Comma().as_string(prop_id).Comma().Style();

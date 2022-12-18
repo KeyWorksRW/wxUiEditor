@@ -1568,7 +1568,7 @@ void GenToolCode(Code& code, bool is_bitmaps_list)
         code.Tab();
     if (node->prop_as_bool(prop_disabled) || (node->prop_as_string(prop_id) == "wxID_ANY" && node->GetInUseEventCount()))
     {
-        if (node->IsLocal())
+        if (node->IsLocal() && code.is_cpp())
             code << "auto* ";
         code.NodeName() << " = ";
     }

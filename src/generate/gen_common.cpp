@@ -1597,9 +1597,33 @@ void GenToolCode(Code& code, bool is_bitmaps_list)
     {
         code.Comma();
         if (code.is_cpp())
-            code << "wxBitmap(" << GenerateBitmapCode(node->as_string(prop_bitmap)) << ")";
+        {
+            if (wxGetProject().value(prop_wxWidgets_version) == "3.1")
+            {
+                code.Eol() += "#if wxCHECK_VERSION(3, 1, 6)\n\t";
+            }
+
+            ttlib::cstr bundle_code;
+            GenerateBundleCode(node->prop_as_string(prop_bitmap), bundle_code);
+            code.CheckLineLength(bundle_code.size());
+            code += bundle_code;
+
+            if (wxGetProject().value(prop_wxWidgets_version) == "3.1")
+            {
+                code.Eol() += "#else\n\t";
+                code << "wxBitmap(" << GenerateBitmapCode(node->as_string(prop_bitmap)) << ")";
+                code.Eol() += "#endif";
+                code.Eol();
+            }
+            else
+            {
+                code.CheckLineLength();
+            }
+        }
         else
+        {
             PythonBundleCode(code, prop_bitmap);
+        }
     }
 
     if (!node->HasValue(prop_tooltip) && !node->HasValue(prop_statusbar))

@@ -2,6 +2,12 @@ inline const char* project_xml = R"===(<?xml version="1.0"?>
 <!DOCTYPE GeneratorDefinitions SYSTEM "gen.dtd">
 <GeneratorDefinitions>
 	<gen class="C++" type="interface">
+		<property name="wxWidgets_version" type="option"
+			help="If you specify a control or property that requires a wxWidgets version later than this number, then the code will be generated within a conditional block.">
+			<option name="3.1" />
+			<option name="3.2" />
+			3.1
+		</property>
 		<property name="base_directory" type="path"
 			help="The generated base class output directory. If a form's base_file contains only a filename (without a path), the files will be generated in this directory. Leave blank to generate the in the same directory as the project file." />
 		<property name="derived_directory" type="path"
@@ -71,12 +77,6 @@ inline const char* project_xml = R"===(<?xml version="1.0"?>
 			<option name="Python" />
 			<option name="XRC" />
 			C++
-		</property>
-		<property name="wxWidgets_version" type="option"
-			help="If you specify a control or property that requires a wxWidgets version later than this number, then the code will be generated within a conditional block.">
-			<option name="3.1" />
-			<option name="3.2" />
-			3.1
 		</property>
 		<property name="help_provider" type="option"
 			help="The class of help provider to use for context-sensitive help.">

@@ -57,30 +57,14 @@ Code::Code(Node* node, int language) : m_node(node), m_language(language)
     m_code.reserve(256);
 }
 
-// The Code ctor will have already accounted for the extra character that wxWidgets names use
-// in Python.
-void Code::CheckLineBreak(size_t add_length)
+Code& Code::CheckLineLength(size_t next_str_size)
 {
-    if (!m_auto_break || m_code.size() < m_minium_length)
-        return;
-
-    if (m_code.size() + add_length > m_break_at)
+    if (m_auto_break && m_code.size() > m_minium_length && m_code.size() + next_str_size > m_break_at)
     {
         if (m_code.back() == ' ')
             m_code.pop_back();
         Eol().Tab();
     }
-}
-
-Code& Code::CheckLineLength()
-{
-    if (m_code.size() > m_break_at)
-    {
-        if (m_code.back() == ' ')
-            m_code.pop_back();
-        Eol().Tab();
-    }
-
     return *this;
 }
 
@@ -134,11 +118,11 @@ Code& Code::Tab(int tabs)
 
 Code& Code::Add(ttlib::sview text)
 {
-    CheckLineBreak(text.size());
+    CheckLineLength(text.size());
 
     if (is_cpp())
     {
-        m_code << text;
+        m_code += text;
     }
     else
     {
@@ -178,7 +162,7 @@ Code& Code::Add(ttlib::sview text)
         }
         else
         {
-            m_code << text;
+            m_code += text;
         }
     }
     return *this;
@@ -186,7 +170,7 @@ Code& Code::Add(ttlib::sview text)
 
 Code& Code::Function(ttlib::sview text)
 {
-    if (m_language == GEN_LANG_CPLUSPLUS)
+    if (is_cpp())
     {
         m_code << "->" << text;
     }
@@ -199,15 +183,30 @@ Code& Code::Function(ttlib::sview text)
         }
         else
         {
-            m_code << text;
+            m_code += text;
         }
     }
     return *this;
 }
 
+Code& Code::ClassMethod(ttlib::sview function_name)
+{
+    if (is_cpp())
+    {
+        m_code += "::";
+    }
+    else
+    {
+        m_code += '.';
+    }
+
+    m_code += function_name;
+    return *this;
+}
+
 Code& Code::FormFunction(ttlib::sview text)
 {
-    if (m_language == GEN_LANG_PYTHON)
+    if (is_python())
     {
         m_code += "self.";
     }
@@ -237,14 +236,14 @@ Code& Code::Class(ttlib::sview text)
 
 Code& Code::CreateClass(bool use_generic, ttlib::sview override_name)
 {
-    m_code << " = ";
-    if (m_language == GEN_LANG_CPLUSPLUS)
+    m_code += " = ";
+    if (is_cpp())
     {
-        m_code << "new ";
+        m_code += "new ";
         if (m_node->HasValue(prop_derived_class))
         {
-            m_code << m_node->prop_as_string(prop_derived_class);
-            m_code << '(';
+            m_code += m_node->prop_as_string(prop_derived_class);
+            m_code += '(';
             return *this;
         }
     }
@@ -260,11 +259,11 @@ Code& Code::CreateClass(bool use_generic, ttlib::sview override_name)
     }
     else if (m_node->isGen(gen_BookPage))
     {
-        class_name << "wxPanel";
+        class_name += "wxPanel";
     }
 
     if (m_language == GEN_LANG_CPLUSPLUS)
-        m_code << class_name;
+        m_code += class_name;
     else
     {
         std::string_view prefix = "wx.";
@@ -274,16 +273,16 @@ Code& Code::CreateClass(bool use_generic, ttlib::sview override_name)
         }
         m_code << prefix << class_name.substr(2);
     }
-    m_code << '(';
+    m_code += '(';
     return *this;
 }
 
 Code& Code::Assign(ttlib::sview class_name)
 {
-    m_code << " = ";
+    m_code += " = ";
     if (m_language == GEN_LANG_CPLUSPLUS)
     {
-        m_code << "new ";
+        m_code += "new ";
     }
     else
     {
@@ -294,13 +293,10 @@ Code& Code::Assign(ttlib::sview class_name)
 
 Code& Code::EndFunction()
 {
-    if (m_language == GEN_LANG_CPLUSPLUS)
+    m_code += ')';
+    if (is_cpp())
     {
-        m_code << ");";
-    }
-    else
-    {
-        m_code << ')';
+        m_code += ';';
     }
     return *this;
 }
@@ -310,7 +306,7 @@ Code& Code::as_string(PropName prop_name)
     auto& str = m_node->as_string(prop_name);
     if (is_cpp())
     {
-        CheckLineBreak(str.size());
+        CheckLineLength(str.size());
         m_code += str;
         return *this;
     }
@@ -323,7 +319,7 @@ Code& Code::as_string(PropName prop_name)
         }
         else
         {
-            CheckLineBreak(str.size());
+            CheckLineLength(str.size());
             if (str.is_sameprefix("wx"))
             {
                 std::string_view prefix = "wx.";
@@ -348,12 +344,12 @@ Code& Code::as_string(PropName prop_name)
         if (iter.empty())
             continue;
         if (!first)
-            m_code << '|';
+            m_code += '|';
         else
             first = false;
 
         if (iter == "wxEmptyString")
-            m_code << "\"\"";
+            m_code += "\"\"";
         else if (iter.is_sameprefix("wx"))
         {
             std::string_view prefix = "wx.";
@@ -364,7 +360,7 @@ Code& Code::as_string(PropName prop_name)
             m_code << prefix << iter.substr(2);
         }
         else
-            m_code << iter;
+            m_code += iter;
     }
 
     if (m_auto_break && m_code.size() > m_break_at)
@@ -377,21 +373,16 @@ Code& Code::as_string(PropName prop_name)
 
 Code& Code::NodeName()
 {
-    if (is_cpp() || m_node->IsLocal() || m_node->IsForm())
-    {
-        m_code << m_node->get_node_name();
-    }
-    else
-    {
-        m_code << "self." << m_node->get_node_name();
-    }
+    if (is_python() && !m_node->IsLocal() && !m_node->IsForm())
+        m_code += "self.";
+    m_code += m_node->get_node_name();
     return *this;
 }
 
 Code& Code::ParentName()
 {
-    if (is_python() && !m_node->GetParent()->IsLocal())
-        m_code << "self.";
+    if (is_python() && !m_node->GetParent()->IsLocal() && !m_node->GetParent()->IsForm())
+        m_code += "self.";
     m_code << m_node->GetParent()->get_node_name();
     return *this;
 }
@@ -450,14 +441,16 @@ Code& Code::GetParentName()
         {
             if (parent->IsStaticBoxSizer())
             {
-                m_code << parent->get_node_name();
+                if (is_python() && !parent->IsLocal() && !parent->IsForm())
+                    m_code += "self.";
+                m_code += parent->get_node_name();
                 Function("GetStaticBox()");
                 return *this;
             }
         }
         if (parent->IsForm())
         {
-            m_code += (m_language == GEN_LANG_CPLUSPLUS) ? "this" : "self";
+            m_code += (is_cpp()) ? "this" : "self";
             return *this;
         }
 
@@ -465,7 +458,9 @@ Code& Code::GetParentName()
         {
             if (parent->isType(iter))
             {
-                m_code << parent->get_node_name();
+                if (is_python() && !parent->IsLocal() && !parent->IsForm())
+                    m_code += "self.";
+                m_code += parent->get_node_name();
                 if (parent->isGen(gen_wxCollapsiblePane))
                 {
                     Function("GetPane()");
@@ -479,13 +474,14 @@ Code& Code::GetParentName()
     ASSERT_MSG(parent, ttlib::cstr() << m_node->get_node_name() << " has no parent!");
     return *this;
 }
+
 Code& Code::QuotedString(GenEnum::PropName prop_name)
 {
     if (!m_node->HasValue(prop_name))
     {
         if (is_cpp())
         {
-            CheckLineBreak(sizeof("wxEmptyString"));
+            CheckLineLength(sizeof("wxEmptyString"));
             m_code += "wxEmptyString";
         }
         else
@@ -494,8 +490,10 @@ Code& Code::QuotedString(GenEnum::PropName prop_name)
         }
         return *this;
     }
-
-    return QuotedString(m_node->as_string(prop_name));
+    else
+    {
+        return QuotedString(m_node->as_string(prop_name));
+    }
 }
 
 Code& Code::QuotedString(ttlib::sview text)
@@ -584,7 +582,7 @@ Code& Code::WxSize(GenEnum::PropName prop_name)
 {
     if (m_node->prop_as_wxSize(prop_name) == wxDefaultSize)
     {
-        CheckLineBreak(sizeof("wxDefaultSize"));
+        CheckLineLength(sizeof("wxDefaultSize"));
         m_code += is_cpp() ? "wxDefaultSize" : "wx.DefaultSize";
         return *this;
     }
@@ -594,7 +592,7 @@ Code& Code::WxSize(GenEnum::PropName prop_name)
     bool dialog_units = m_node->value(prop_name).contains("d", tt::CASE::either);
     if (dialog_units)
     {
-        CheckLineBreak(sizeof("self.ConvertDialogToPixels(wxSize(999, 999))"));
+        CheckLineLength(sizeof("self.ConvertDialogToPixels(wxSize(999, 999))"));
         FormFunction("ConvertDialogToPixels(");
     }
 
@@ -616,7 +614,7 @@ Code& Code::Pos(GenEnum::PropName prop_name)
 {
     if (m_node->prop_as_wxPoint(prop_name) == wxDefaultPosition)
     {
-        CheckLineBreak(sizeof("wxDefaultPosition"));
+        CheckLineLength(sizeof("wxDefaultPosition"));
         m_code += is_cpp() ? "wxDefaultPosition" : "wx.DefaultPosition";
         return *this;
     }
@@ -626,7 +624,7 @@ Code& Code::Pos(GenEnum::PropName prop_name)
     bool dialog_units = m_node->value(prop_name).contains("d", tt::CASE::either);
     if (dialog_units)
     {
-        CheckLineBreak(sizeof("self.ConvertDialogToPixels(wxPoint(999, 999))"));
+        CheckLineLength(sizeof("self.ConvertDialogToPixels(wxPoint(999, 999))"));
         FormFunction("ConvertDialogToPixels(");
     }
 

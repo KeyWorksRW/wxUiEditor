@@ -78,15 +78,10 @@ public:
 
     // Only call the following two functions if you called DisableAutoLineBreak() first.
 
-    // If the line from the beginning or the last call to CheckLineLength() is longer than
-    // 80, then this will insert a newline and indent the line. Indentation is 2 tabs for
-    // C++, 3 tabs for Python.
-    Code& CheckLineLength();
-    void SetBreakAt(size_t break_at = 80)
-    {
-        m_break_at = break_at;
-        m_break_length = break_at;  // m_break_length gets added to m_break_at after every break
-    }
+    // If current line (+ next_str_size) > m_break_at, then break the line. This will remove
+    // any trailing space, and begin the next line with a single tab for C++, or a double
+    // table for Python.
+    Code& CheckLineLength(size_t next_str_size = 0);
 
     // Call this function if you added text directly including a final newline.
     void UpdateBreakAt()
@@ -95,12 +90,25 @@ public:
         m_minium_length = m_code.size() + 10;
     }
 
-    // If string starts with "wx" and language is not C++, then this will add "wx." and then
-    // the string without the "wx" prefix.
+    // If the string starts with "wx", Python code will be converted to "wx." and then the
+    // string without the "wx" prefix. Ptyhon code will also handle multiple wx flags
+    // separated by |.
+    //
+    // If needed, the line will be broken *before* the string is added.
     Code& Add(ttlib::sview text);
+
+    // Use Str() instead of Add() if you don't need any special wxPython processing.
+    Code& Str(std::string_view str)
+    {
+        m_code += str;
+        return *this;
+    }
 
     // Adds -> or . to the string, then wxFunction or wx.Function
     Code& Function(ttlib::sview text);
+
+    // C++ will add "::" and the function name. Python will add "." and the function name.
+    Code& ClassMethod(ttlib::sview function_name);
 
     // For C++, this simply calls the function. For Python it prefixes "self." to the
     // function name.
@@ -121,10 +129,14 @@ public:
     // Specify override_name to override node->DeclName()
     Code& CreateClass(bool use_generic = false, ttlib::sview override_name = tt_empty_cstr);
 
-    // m_code << m_node->get_node_name();
+    // For Python code, a non-local, non-form name will be prefixed with "self."
+    //
+    // m_code += m_node->get_node_name();
     Code& NodeName();
 
-    // m_code << m_node->GetParent()->get_node_name();
+    // For Python code, a non-local, non-form name will be prefixed with "self."
+    //
+    // m_code += m_node->GetParent()->get_node_name();
     Code& ParentName();
 
     // This is *NOT* the same as ParentName() -- this will handle wxStaticBox and
@@ -201,8 +213,6 @@ public:
     }
 
 protected:
-    // If the line would be too long, this will automatically break it.
-    void CheckLineBreak(size_t add_length);
     void InsertLineBreak(size_t cur_pos);
 
 private:

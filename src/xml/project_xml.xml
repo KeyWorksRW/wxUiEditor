@@ -66,18 +66,17 @@ inline const char* project_xml = R"===(<?xml version="1.0"?>
 		<inherits class="C++" />
 		<inherits class="wxPython" />
 		<inherits class="XRC" />
-		<property name="art_directory" type="path"
-			help="The directory containing your images (png, ico, xpm, etc.)." />
-		<property name="internationalize" type="bool"
-			help="Wrap strings in a _() macro which expands into a call to wxGetTranslation().">0</property>
 		<property name="code_preference" type="option"
-			help="Specify the code you prefer to generate to minimize other coding categories and properties in the wxUiEditor UI.">
-			<option name="any" />
+			help="Specify the code you prefer to generate. This can affect the UI display in the Mockup panel, and affects the initial expansion/contraction of language properties in wxUiEditor.">
 			<option name="C++" />
 			<option name="Python" />
 			<option name="XRC" />
 			C++
 		</property>
+		<property name="art_directory" type="path"
+			help="The directory containing your images (png, ico, xpm, etc.)." />
+		<property name="internationalize" type="bool"
+			help="Wrap strings in a _() macro which expands into a call to wxGetTranslation().">0</property>
 		<property name="help_provider" type="option"
 			help="The class of help provider to use for context-sensitive help.">
 			<option name="none"

@@ -152,53 +152,53 @@ std::optional<ttlib::sview> StdDialogButtonSizerGenerator::CommonConstruction(Co
     if (node->prop_as_bool(prop_OK))
     {
         code.Eol().NodeName().Function("AddButton(");
-            code += "new wxButton(this, wxID_OK));";
+        code += "new wxButton(this, wxID_OK));";
     }
     else if (node->prop_as_bool(prop_Yes))
     {
         code.Eol().NodeName().Function("AddButton(");
-            code += "new wxButton(this, wxID_YES));";
+        code += "new wxButton(this, wxID_YES));";
     }
     else if (node->prop_as_bool(prop_Save))
     {
         code.Eol().NodeName().Function("AddButton(");
-            code += "new wxButton(this, wxID_SAVE));";
+        code += "new wxButton(this, wxID_SAVE));";
     }
 
     if (node->prop_as_bool(prop_No))
     {
         code.Eol().NodeName().Function("AddButton(");
-            code += "new wxButton(this, wxID_NO));";
+        code += "new wxButton(this, wxID_NO));";
     }
 
     // You can only have one of: Cancel, Close
     if (node->prop_as_bool(prop_Cancel))
     {
         code.Eol().NodeName().Function("AddButton(");
-            code += "new wxButton(this, wxID_CANCEL));";
+        code += "new wxButton(this, wxID_CANCEL));";
     }
     else if (node->prop_as_bool(prop_Close))
     {
         code.Eol().NodeName().Function("AddButton(");
-            code += "new wxButton(this, wxID_CLOSE));";
+        code += "new wxButton(this, wxID_CLOSE));";
     }
 
     if (node->prop_as_bool(prop_Apply))
     {
         code.Eol().NodeName().Function("AddButton(");
-            code += "new wxButton(this, wxID_APPLY));";
+        code += "new wxButton(this, wxID_APPLY));";
     }
 
     // You can only have one of: Help, ContextHelp
     if (node->prop_as_bool(prop_Help))
     {
         code.Eol().NodeName().Function("AddButton(");
-            code += "new wxButton(this, wxID_HELP));";
+        code += "new wxButton(this, wxID_HELP));";
     }
     else if (node->prop_as_bool(prop_ContextHelp))
     {
         code.Eol().NodeName().Function("AddButton(");
-            code += "new wxButton(this, wxID_CONTEXT_HELP));";
+        code += "new wxButton(this, wxID_CONTEXT_HELP));";
     }
 
     if (def_btn_name == "OK" || def_btn_name == "Yes" || def_btn_name == "Save")

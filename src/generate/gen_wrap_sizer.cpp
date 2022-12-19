@@ -27,24 +27,23 @@ wxObject* WrapSizerGenerator::CreateMockup(Node* node, wxObject* parent)
     return sizer;
 }
 
-std::optional<ttlib::cstr> WrapSizerGenerator::GenConstruction(Node* node)
+std::optional<ttlib::sview> WrapSizerGenerator::CommonConstruction(Code& code)
 {
-    ttlib::cstr code;
-    if (node->IsLocal())
+    if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
-    code << node->get_node_name() << " = new wxWrapSizer(" << node->prop_as_string(prop_orientation);
-    auto wrap_flags = node->prop_as_string(prop_wrap_flags);
-    if (wrap_flags.empty())
-        wrap_flags = "0";
-    code << ", " << wrap_flags << ");";
+    code.NodeName().CreateClass().as_string(prop_orientation).Comma();
+    if (code.HasValue(prop_wrap_flags))
+        code.as_string(prop_wrap_flags);
+    else
+        code << "0";
+    code.EndFunction();
 
-    auto min_size = node->prop_as_wxSize(prop_minimum_size);
-    if (min_size.x != -1 || min_size.y != -1)
+    if (code.HasValue(prop_minimum_size))
     {
-        code << "\n" << node->get_node_name() << "->SetMinSize(" << min_size.GetX() << ", " << min_size.GetY() << ");";
+        code.Eol().NodeName().Function("SetMinSize(").WxSize(prop_minimum_size).EndFunction();
     }
 
-    return code;
+    return code.m_code;
 }
 
 void WrapSizerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/, Node* node, bool /* is_preview */)
@@ -56,40 +55,36 @@ void WrapSizerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*
     }
 }
 
-std::optional<ttlib::cstr> WrapSizerGenerator::GenAfterChildren(Node* node)
+std::optional<ttlib::sview> WrapSizerGenerator::CommonAfterChildren(Code& code)
 {
-    ttlib::cstr code;
-    if (node->as_bool(prop_hide_children))
+    if (code.IsTrue(prop_hide_children))
     {
-        code << "\t" << node->get_node_name() << "->ShowItems(false);";
+        code.NodeName().Function("ShowItems(").Str(code.is_cpp() ? "false" : "False").EndFunction();
     }
 
-    auto parent = node->GetParent();
+    auto parent = code.node()->GetParent();
     if (!parent->IsSizer() && !parent->isGen(gen_wxDialog) && !parent->isGen(gen_PanelForm))
     {
-        if (code.size())
-            code << '\n';
-        code << "\n";
-
-        // The parent node is not a sizer -- which is expected if this is the parent sizer underneath a form or
-        // wxPanel.
-
+        code.NewLine(true);
         if (parent->isGen(gen_wxRibbonPanel))
         {
-            code << parent->get_node_name() << "->SetSizerAndFit(" << node->get_node_name() << ");";
+            code.ParentName().Function("SetSizerAndFit(").NodeName().EndFunction();
         }
         else
         {
-            if (GetParentName(node) != "this")
-                code << GetParentName(node) << "->";
-            code << "SetSizerAndFit(" << node->get_node_name() << ");";
+            if (GetParentName(code.node()) != "this")
+            {
+                code.ParentName().Add(".");
+                code.Function("SetSizerAndFit(").NodeName().EndFunction();
+            }
+            else
+            {
+                code.FormFunction("SetSizerAndFit(").NodeName().EndFunction();
+            }
         }
     }
 
-    if (code.size())
-        return code;
-    else
-        return {};
+    return code.m_code;
 }
 
 bool WrapSizerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)

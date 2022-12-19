@@ -259,6 +259,7 @@ void BaseCodeGenerator::GeneratePythonClass(Node* form_node, PANEL_PAGE panel_ty
     m_source->writeLine(txt_PythonCmtBlock);
     m_header->writeLine(ttlib::cstr("# Sample inherited class from ") << form_node->as_string(prop_class_name));
     m_header->writeLine();
+    m_header->writeLine("import wx");
     std::set<std::string> imports;
     GatherImportModules(imports, form_node);
     for (const auto& import: imports)
@@ -468,7 +469,7 @@ bool PythonBundleCode(Code& code, GenEnum::PropName prop)
 
     ttlib::multiview parts(description, BMP_PROP_SEPARATOR, tt::TRIM::both);
 
-    if (parts[IndexImage].empty())
+    if (parts.size() <= 1 || parts[IndexImage].empty())
     {
         code.Add("wxNullBitmap");
         return false;
@@ -495,7 +496,7 @@ bool PythonBundleCode(Code& code, GenEnum::PropName prop)
 
     auto path = MakePythonPath(code.node());
 
-    if (auto bundle = GetProject()->GetPropertyImageBundle(description); bundle)
+    if (auto bundle = GetProject()->GetPropertyImageBundle(description); bundle && bundle->lst_filenames.size())
     {
         ttlib::cstr name(bundle->lst_filenames[0]);
         name.make_absolute();

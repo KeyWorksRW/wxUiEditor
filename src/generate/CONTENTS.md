@@ -20,8 +20,8 @@ The following tables list classes, objects and functions that wxUiEditor can gen
 
 | Class | C++ | Python | XRC |file |
 -----------|-----|--------|------|------|
-| wxDialog | yes| ?? | yes | gen_dialog.cpp |
-| wxFrame | yes| ?? | yes | gen_frame.cpp |
+| wxDialog | yes| yes | yes | gen_dialog.cpp |
+| wxFrame | yes| yes | yes | gen_frame.cpp |
 | wxMenuBar | yes| ?? | yes | menu_widgets.cpp |
 | wxPanel | yes| ?? | yes | gen_panel_form.cpp |
 | wxPopupTransientWindow | yes| ?? | no | gen_popup_trans_win.cpp |
@@ -84,9 +84,9 @@ The following tables list classes, objects and functions that wxUiEditor can gen
 | wxInfoBar | yes |  ?? | yes | gen_infobar.cpp |
 | wxListBox | yes |  ?? | yes | gen_listbox.cpp |
 | wxListView | yes |  ?? | yes | gen_listview.cpp |
-| wxMenu | yes |  ?? | yes | menu_widgets.cpp |
-| wxMenuBar | yes |  ?? | yes | menu_widgets.cpp |
-| wxMenuItem | yes |  ?? | yes | menu_widgets.cpp |
+| wxMenu | yes |  yes | yes | menu_widgets.cpp |
+| wxMenuBar | yes |  yes | yes | menu_widgets.cpp |
+| wxMenuItem | yes |  yes | yes | menu_widgets.cpp |
 | wxPanel | yes |  ?? | yes | gen_panel.cpp |
 | wxPropertyGrid | yes |  ?? | no | gen_prop_grid.cpp |
 | wxPropertyGridManager | yes |  ?? | no | grid_widgets.cpp |

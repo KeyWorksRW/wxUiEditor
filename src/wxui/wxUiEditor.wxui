@@ -4,8 +4,8 @@
   <node
     class="Project"
     art_directory="../art_src"
-    wxWidgets_version="3.1.6"
-    generate_cmake="1">
+    generate_cmake="1"
+    wxWidgets_version="3.1.6">
     <node
       class="Images"
       base_file="ui_images">
@@ -171,8 +171,8 @@
     </node>
     <node
       class="PanelForm"
-      base_file="codedisplay_base"
       class_name="CodeDisplayBase"
+      base_file="codedisplay_base"
       derived_class_name="CodeDisplay">
       <node
         class="wxBoxSizer"
@@ -1860,7 +1860,7 @@
               wxEVT_UPDATE_UI="OnUpdateBrowseDocs" />
             <node
               class="wxMenuItem"
-              bitmap="SVG;../art_src/wxlogo.svg;[16,16]"
+              bitmap="Embed;../art_src/wxPython.png"
               help="Open wxPython documentation in your default browser."
               label="wxPython Documentation"
               var_name="menu_item_9"
@@ -2137,13 +2137,13 @@
       </node>
       <node
         class="PanelForm"
+        class_name="RibbonPanelBase"
+        mockup_size="700,100"
+        size="-1,-1"
         base_file="ribbonpanel_base"
         base_src_includes="#include &quot;ribbon_ids.h&quot;@@#include &quot;gen_enums.h&quot;     // Enumerations for generators@@@@using namespace GenEnum;"
-        class_name="RibbonPanelBase"
         derived_class_name="RibbonPanel"
-        generate_ids="0"
-        mockup_size="700,100"
-        size="-1,-1">
+        generate_ids="0">
         <node
           class="wxBoxSizer"
           class_access="protected:"

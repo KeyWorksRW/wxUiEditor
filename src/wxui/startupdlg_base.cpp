@@ -78,7 +78,8 @@ bool StartupDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     }
     box_sizer->Add(staticText, wxSizerFlags().Border(wxALL));
 
-    m_staticTextRecentProjects = new wxStaticText(this, wxID_ANY, "Recent projects you have opened will appear here");
+    m_staticTextRecentProjects = new wxStaticText(this, wxID_ANY,
+        "Recent projects you have opened will appear here");
     m_staticTextRecentProjects->Wrap(200);
     box_sizer->Add(m_staticTextRecentProjects, wxSizerFlags().Border(wxALL));
 
@@ -87,6 +88,7 @@ bool StartupDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,
         m_recent_flex_grid->AddGrowableCol(1, 1);
         m_recent_flex_grid->SetFlexibleDirection(wxHORIZONTAL);
     }
+
     box_sizer->Add(m_recent_flex_grid, wxSizerFlags().Border(wxALL));
 
     auto* static_line_2 = new wxStaticLine(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_VERTICAL);

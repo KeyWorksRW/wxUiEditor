@@ -39,7 +39,8 @@ bool OptionsDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString& tit
     auto* checkBox_wakatime = new wxCheckBox(this, wxID_ANY, "Enable WakaTime");
     checkBox_wakatime->SetValue(true);
     checkBox_wakatime->SetValidator(wxGenericValidator(&m_isWakaTimeEnabled));
-    checkBox_wakatime->SetToolTip("If you have WakaTime installed, checking this will record time spent in the editor as \"designing\". (See https://wakatime.com/about)");
+    checkBox_wakatime->SetToolTip(
+    "If you have WakaTime installed, checking this will record time spent in the editor as \"designing\". (See https://wakatime.com/about)");
     box_sizer->Add(checkBox_wakatime, wxSizerFlags().Border(wxALL));
 
     auto* stdBtn = CreateStdDialogButtonSizer(wxOK|wxCANCEL);

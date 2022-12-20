@@ -24,12 +24,14 @@ bool NewPanel::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     auto* box_sizer_3 = new wxBoxSizer(wxVERTICAL);
     dlg_sizer->Add(box_sizer_3, wxSizerFlags().Border(wxALL));
 
-    auto* staticText_3 = new wxStaticText(this, wxID_ANY, "These are initial values -- all of them can be changed after the panel is created.");
+    auto* staticText_3 = new wxStaticText(this, wxID_ANY,
+        "These are initial values -- all of them can be changed after the panel is created.");
     staticText_3->Wrap(300);
     box_sizer_3->Add(staticText_3, wxSizerFlags().Border(wxALL));
 
     m_infoBar = new wxInfoBar(this);
     m_infoBar->SetShowHideEffects(wxSHOW_EFFECT_NONE, wxSHOW_EFFECT_NONE);
+    m_infoBar->SetEffectDuration(500);
     box_sizer_3->Add(m_infoBar, wxSizerFlags().Expand().Border(wxALL));
 
     m_class_sizer = new wxBoxSizer(wxHORIZONTAL);
@@ -50,7 +52,8 @@ bool NewPanel::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     auto* staticText_2 = new wxStaticText(this, wxID_ANY, "&Parent sizer type:");
     box_sizer->Add(staticText_2, wxSizerFlags().Center().Border(wxALL));
 
-    auto* comboBox = new wxComboBox(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, nullptr, wxCB_READONLY);
+    auto* comboBox = new wxComboBox(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize,
+        0, nullptr, wxCB_READONLY);
     comboBox->Append("Box");
     comboBox->Append("FlexGrid");
     comboBox->Append("Grid");

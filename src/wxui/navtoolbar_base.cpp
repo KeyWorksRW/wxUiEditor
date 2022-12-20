@@ -32,27 +32,29 @@ NavToolbar::NavToolbar(wxWindow* parent, wxWindowID id,
     wxToolBar(parent, id, pos, size, style)
 {
 
-    AddTool(id_NavCollExpand, wxEmptyString, wxueBundleSVG(wxue_img::nav_coll_expand_svg, 249, 482, wxSize(16, 16)), wxNullBitmap, wxITEM_NORMAL, 
-            "Collapse siblings, expand children", "Expand selected item, collapse all other items at the same level");
+    AddTool(id_NavCollExpand, wxEmptyString,
+        wxueBundleSVG(wxue_img::nav_coll_expand_svg, 249, 482, wxSize(16, 16)), wxNullBitmap, wxITEM_NORMAL,
+        "Collapse siblings, expand children", "Expand selected item, collapse all other items at the same level");
 
-    AddTool(id_NavExpand, wxEmptyString, wxueBundleSVG(wxue_img::nav_expand_svg, 248, 410, wxSize(16, 16)), wxNullBitmap, wxITEM_NORMAL, 
-            "Expand all children", "Expand selected item and all of it\'s sub-items");
+    AddTool(id_NavExpand, wxEmptyString, wxueBundleSVG(wxue_img::nav_expand_svg, 248, 410, wxSize(16, 16)),
+        wxNullBitmap, wxITEM_NORMAL, "Expand all children", "Expand selected item and all of it\'s sub-items");
 
-    AddTool(id_NavCollapse, wxEmptyString, wxueBundleSVG(wxue_img::nav_collapse_svg, 244, 432, wxSize(16, 16)), wxNullBitmap, wxITEM_NORMAL, 
-            "Collapse all siblings", "Collapse selected item and all items at the same level");
+    AddTool(id_NavCollapse, wxEmptyString, wxueBundleSVG(wxue_img::nav_collapse_svg, 244, 432, wxSize(16, 16)),
+        wxNullBitmap, wxITEM_NORMAL, "Collapse all siblings",
+        "Collapse selected item and all items at the same level");
 
     AddSeparator();
-    AddTool(id_NavMoveLeft, wxEmptyString, wxArtProvider::GetBitmapBundle(wxART_GO_BACK, wxART_MENU), wxNullBitmap, wxITEM_NORMAL, 
-            "Move Left", "Move the selected item left");
+    AddTool(id_NavMoveLeft, wxEmptyString, wxArtProvider::GetBitmapBundle(wxART_GO_BACK, wxART_MENU), wxNullBitmap,
+        wxITEM_NORMAL, "Move Left", "Move the selected item left");
 
-    AddTool(id_NavMoveUp, wxEmptyString, wxArtProvider::GetBitmapBundle(wxART_GO_UP, wxART_MENU), wxNullBitmap, wxITEM_NORMAL, 
-            "Move Up", "Move the selected item up");
+    AddTool(id_NavMoveUp, wxEmptyString, wxArtProvider::GetBitmapBundle(wxART_GO_UP, wxART_MENU), wxNullBitmap,
+        wxITEM_NORMAL, "Move Up", "Move the selected item up");
 
-    AddTool(id_NavMoveDown, wxEmptyString, wxArtProvider::GetBitmapBundle(wxART_GO_DOWN, wxART_MENU), wxNullBitmap, wxITEM_NORMAL, 
-            "Move Down", "Move the selected item down");
+    AddTool(id_NavMoveDown, wxEmptyString, wxArtProvider::GetBitmapBundle(wxART_GO_DOWN, wxART_MENU), wxNullBitmap,
+        wxITEM_NORMAL, "Move Down", "Move the selected item down");
 
-    AddTool(id_NavMoveRight, wxEmptyString, wxArtProvider::GetBitmapBundle(wxART_GO_FORWARD, wxART_OTHER), wxNullBitmap, wxITEM_NORMAL, 
-            "Move Right", "Move the selected item right");
+    AddTool(id_NavMoveRight, wxEmptyString, wxArtProvider::GetBitmapBundle(wxART_GO_FORWARD, wxART_OTHER),
+        wxNullBitmap, wxITEM_NORMAL, "Move Right", "Move the selected item right");
 
 }
 

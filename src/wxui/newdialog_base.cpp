@@ -23,12 +23,14 @@ bool NewDialog::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     auto* box_sizer_3 = new wxBoxSizer(wxVERTICAL);
     parent_sizer->Add(box_sizer_3, wxSizerFlags().Border(wxALL));
 
-    auto* staticText_3 = new wxStaticText(this, wxID_ANY, "These are initial values -- all of them can be changed after the dialog is created.");
+    auto* staticText_3 = new wxStaticText(this, wxID_ANY,
+        "These are initial values -- all of them can be changed after the dialog is created.");
     staticText_3->Wrap(300);
     box_sizer_3->Add(staticText_3, wxSizerFlags().Border(wxALL));
 
     m_infoBar = new wxInfoBar(this);
     m_infoBar->SetShowHideEffects(wxSHOW_EFFECT_NONE, wxSHOW_EFFECT_NONE);
+    m_infoBar->SetEffectDuration(500);
     box_sizer_3->Add(m_infoBar, wxSizerFlags().Expand().Border(wxALL));
 
     auto* box_sizer_2 = new wxBoxSizer(wxHORIZONTAL);
@@ -66,10 +68,11 @@ bool NewDialog::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     box_sizer_4->Add(m_check_tabs, wxSizerFlags().Center().Border(wxALL));
 
     auto* staticText_4 = new wxStaticText(this, wxID_ANY, "Tab&s:");
-    box_sizer_4->Add(staticText_4, wxSizerFlags().Center().Border(wxLEFT|wxTOP|wxBOTTOM, wxSizerFlags::GetDefaultBorder()));
+    box_sizer_4->Add(staticText_4,
+        wxSizerFlags().Center().Border(wxLEFT|wxTOP|wxBOTTOM, wxSizerFlags::GetDefaultBorder()));
 
-    m_spinCtrlTabs = new wxSpinCtrl(this, wxID_ANY, wxEmptyString,
-            wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 1, 7, 3);
+    m_spinCtrlTabs = new wxSpinCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize,
+        wxSP_ARROW_KEYS, 1, 7, 3);
     m_spinCtrlTabs->SetValidator(wxGenericValidator(&m_num_tabs));
     m_spinCtrlTabs->Enable(false);
     box_sizer_4->Add(m_spinCtrlTabs, wxSizerFlags().Center().Border(wxALL));

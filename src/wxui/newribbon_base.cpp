@@ -21,12 +21,14 @@ bool NewRibbon::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     auto* box_sizer_3 = new wxBoxSizer(wxVERTICAL);
     box_sizer->Add(box_sizer_3, wxSizerFlags().Border(wxALL));
 
-    auto* staticText_3 = new wxStaticText(this, wxID_ANY, "These are initial values -- all of them can be changed after the ribbon bar is created.");
+    auto* staticText_3 = new wxStaticText(this, wxID_ANY,
+        "These are initial values -- all of them can be changed after the ribbon bar is created.");
     staticText_3->Wrap(300);
     box_sizer_3->Add(staticText_3, wxSizerFlags().Border(wxALL));
 
     m_infoBar = new wxInfoBar(this);
     m_infoBar->SetShowHideEffects(wxSHOW_EFFECT_NONE, wxSHOW_EFFECT_NONE);
+    m_infoBar->SetEffectDuration(500);
     box_sizer_3->Add(m_infoBar, wxSizerFlags().Expand().Border(wxALL));
 
     m_class_sizer = new wxBoxSizer(wxHORIZONTAL);
@@ -47,7 +49,7 @@ bool NewRibbon::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     m_staticText = new wxStaticText(this, wxID_ANY, "&Type:");
     box_sizer_2->Add(m_staticText, wxSizerFlags().Center().Border(wxALL));
 
-    m_comboBox = new wxComboBox(this, wxID_ANY, wxEmptyString);
+    m_comboBox = new wxComboBox(this, wxID_ANY);
     m_comboBox->Append("Tool");
     m_comboBox->Append("Button");
     m_comboBox->Append("Gallery");
@@ -59,10 +61,11 @@ bool NewRibbon::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     box_sizer->Add(box_sizer_4, wxSizerFlags().Border(wxALL));
 
     auto* staticText_4 = new wxStaticText(this, wxID_ANY, "&Pages:");
-    box_sizer_4->Add(staticText_4, wxSizerFlags().Center().Border(wxLEFT|wxTOP|wxBOTTOM, wxSizerFlags::GetDefaultBorder()));
+    box_sizer_4->Add(staticText_4,
+        wxSizerFlags().Center().Border(wxLEFT|wxTOP|wxBOTTOM, wxSizerFlags::GetDefaultBorder()));
 
-    m_spinCtrlPages = new wxSpinCtrl(this, wxID_ANY, wxEmptyString,
-            wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 1, 7, 3);
+    m_spinCtrlPages = new wxSpinCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize,
+        wxSP_ARROW_KEYS, 1, 7, 3);
     m_spinCtrlPages->SetValidator(wxGenericValidator(&m_num_pages));
     box_sizer_4->Add(m_spinCtrlPages, wxSizerFlags().Border(wxALL));
 

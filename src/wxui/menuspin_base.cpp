@@ -27,10 +27,8 @@ MenuSpin::MenuSpin() : wxMenu()
 
     auto* menu_item = Append(gen_wxSpinCtrl, "Insert wxSpinCtrl");
     menu_item->SetBitmap(wxue_img::bundle_spin_ctrl_png());
-
     auto* menu_item_2 = Append(gen_wxSpinCtrlDouble, "Insert wxSpinCtrlDouble");
     menu_item_2->SetBitmap(wxue_img::bundle_spin_ctrl_double_png());
-
     auto* menu_item_3 = Append(gen_wxSpinButton, "Insert wxSpinButton");
     menu_item_3->SetBitmap(wxue_img::bundle_spinbtn_png());
 }

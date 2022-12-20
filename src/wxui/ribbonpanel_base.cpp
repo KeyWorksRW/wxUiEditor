@@ -146,7 +146,7 @@ bool RibbonPanelBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos
     auto* pg_common = new wxRibbonPage(m_rbnBar, wxID_ANY, "Common");
 
     auto* panel_common_controls = new wxRibbonPanel(pg_common, wxID_ANY, "Controls",
-        wxNullBitmap, wxDefaultPosition, wxDefaultSize,
+            wxNullBitmap, wxDefaultPosition, wxDefaultSize,
         wxRIBBON_PANEL_DEFAULT_STYLE|wxRIBBON_PANEL_FLEXIBLE);
 
     auto* common_bar_controls = new wxRibbonToolBar(panel_common_controls, wxID_ANY);
@@ -161,7 +161,7 @@ bool RibbonPanelBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos
     common_bar_controls->Realize();
 
     auto* panel_choices = new wxRibbonPanel(pg_common, wxID_ANY, "Choices",
-        wxNullBitmap, wxDefaultPosition, wxDefaultSize,
+            wxNullBitmap, wxDefaultPosition, wxDefaultSize,
         wxRIBBON_PANEL_DEFAULT_STYLE|wxRIBBON_PANEL_FLEXIBLE);
 
     auto* common_bar_choices = new wxRibbonToolBar(panel_choices, wxID_ANY);
@@ -173,7 +173,7 @@ bool RibbonPanelBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos
     common_bar_choices->Realize();
 
     auto* panel_pickkers = new wxRibbonPanel(pg_common, wxID_ANY, "Pickers",
-        wxNullBitmap, wxDefaultPosition, wxDefaultSize,
+            wxNullBitmap, wxDefaultPosition, wxDefaultSize,
         wxRIBBON_PANEL_DEFAULT_STYLE|wxRIBBON_PANEL_FLEXIBLE);
 
     auto* common_bar_pickers = new wxRibbonToolBar(panel_pickkers, wxID_ANY);
@@ -188,7 +188,7 @@ bool RibbonPanelBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos
     common_bar_pickers->Realize();
 
     auto* panel_other = new wxRibbonPanel(pg_common, wxID_ANY, "Other",
-        wxNullBitmap, wxDefaultPosition, wxDefaultSize,
+            wxNullBitmap, wxDefaultPosition, wxDefaultSize,
         wxRIBBON_PANEL_DEFAULT_STYLE|wxRIBBON_PANEL_FLEXIBLE);
 
     auto* common_bar_other = new wxRibbonToolBar(panel_other, wxID_ANY);

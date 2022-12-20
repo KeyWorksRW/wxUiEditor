@@ -24,12 +24,14 @@ bool NewFrame::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     auto* box_sizer_3 = new wxBoxSizer(wxVERTICAL);
     box_sizer->Add(box_sizer_3, wxSizerFlags().Border(wxALL));
 
-    auto* staticText_3 = new wxStaticText(this, wxID_ANY, "These are initial values -- all of them can be changed after the window is created.");
+    auto* staticText_3 = new wxStaticText(this, wxID_ANY,
+        "These are initial values -- all of them can be changed after the window is created.");
     staticText_3->Wrap(300);
     box_sizer_3->Add(staticText_3, wxSizerFlags().Border(wxALL));
 
     m_infoBar = new wxInfoBar(this);
     m_infoBar->SetShowHideEffects(wxSHOW_EFFECT_NONE, wxSHOW_EFFECT_NONE);
+    m_infoBar->SetEffectDuration(500);
     box_sizer_3->Add(m_infoBar, wxSizerFlags().Expand().Border(wxALL));
 
     auto* class_sizer = new wxBoxSizer(wxHORIZONTAL);
@@ -44,8 +46,7 @@ bool NewFrame::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 
     m_checkBox_mainframe = new wxCheckBox(this, wxID_ANY, "Main Frame Window");
     m_checkBox_mainframe->SetValidator(wxGenericValidator(&m_has_mainframe));
-    auto* static_box = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY,m_checkBox_mainframe), wxVERTICAL);
-    box_sizer->Add(static_box, wxSizerFlags().Expand().DoubleBorder(wxALL));
+    auto* static_box = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, m_checkBox_mainframe), wxVERTICAL);
 
     auto* box_sizer_2 = new wxBoxSizer(wxVERTICAL);
     static_box->Add(box_sizer_2, wxSizerFlags().Expand().DoubleBorder(wxALL));
@@ -64,6 +65,8 @@ bool NewFrame::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     m_checkBox_statusbar->SetValue(true);
     m_checkBox_statusbar->SetValidator(wxGenericValidator(&m_has_statusbar));
     box_sizer_2->Add(m_checkBox_statusbar, wxSizerFlags().Expand().Border(wxALL));
+
+    box_sizer->Add(static_box, wxSizerFlags().Expand().DoubleBorder(wxALL));
 
     auto* stdBtn = CreateStdDialogButtonSizer(wxOK|wxCANCEL);
     box_sizer->Add(CreateSeparatedSizer(stdBtn), wxSizerFlags().Expand().Border(wxALL));

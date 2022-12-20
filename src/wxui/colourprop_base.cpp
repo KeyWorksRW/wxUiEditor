@@ -43,30 +43,32 @@ bool ColourPropBase::Create(wxWindow* parent, wxWindowID id, const wxString& tit
     dlg_sizer->AddSpacer(5 + wxSizerFlags::GetDefaultBorder());
 
     m_radio_custom = new wxRadioButton(this, wxID_ANY, "Custom Colour");
-    m_staticbox_custom = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY,m_radio_custom), wxVERTICAL);
+    m_staticbox_custom = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, m_radio_custom), wxVERTICAL);
     m_staticbox_custom->GetStaticBox()->Enable(false);
-    dlg_sizer->Add(m_staticbox_custom, wxSizerFlags().Expand().Border(wxALL));
 
-    m_colourPicker = new wxColourPickerCtrl(m_staticbox_custom->GetStaticBox(), wxID_ANY, *wxBLACK, wxDefaultPosition, wxDefaultSize,
-        wxCLRP_USE_TEXTCTRL);
+    m_colourPicker = new wxColourPickerCtrl(m_staticbox_custom->GetStaticBox(), wxID_ANY, *wxBLACK,
+        wxDefaultPosition, wxDefaultSize, wxCLRP_USE_TEXTCTRL);
     m_colourPicker->Enable(false);
     m_staticbox_custom->Add(m_colourPicker, wxSizerFlags().Border(wxALL));
+
+    dlg_sizer->Add(m_staticbox_custom, wxSizerFlags().Expand().Border(wxALL));
 
     dlg_sizer->AddSpacer(5 + wxSizerFlags::GetDefaultBorder());
 
     m_radio_system = new wxRadioButton(this, wxID_ANY, "System Colour");
-    m_staticbox_system = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY,m_radio_system), wxVERTICAL);
+    m_staticbox_system = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, m_radio_system), wxVERTICAL);
     m_staticbox_system->GetStaticBox()->Enable(false);
-    dlg_sizer->Add(m_staticbox_system, wxSizerFlags().Expand().Border(wxALL));
 
-    m_combo_system = new wxComboBox(m_staticbox_system->GetStaticBox(), wxID_ANY, wxEmptyString);
+    m_combo_system = new wxComboBox(m_staticbox_system->GetStaticBox(), wxID_ANY);
     m_combo_system->Enable(false);
     m_staticbox_system->Add(m_combo_system, wxSizerFlags().Border(wxALL));
 
-    auto* staticText = new wxStaticText(m_staticbox_system->GetStaticBox(), wxID_ANY, 
+    auto* staticText = new wxStaticText(m_staticbox_system->GetStaticBox(), wxID_ANY,
         "Caution: On Windows, these are classic colours. They may not be the colours the user has set via a Theme or Dark Mode.");
     staticText->Wrap(250);
     m_staticbox_system->Add(staticText, wxSizerFlags().Border(wxALL));
+
+    dlg_sizer->Add(m_staticbox_system, wxSizerFlags().Expand().Border(wxALL));
 
     dlg_sizer->AddSpacer(5 + wxSizerFlags::GetDefaultBorder());
 

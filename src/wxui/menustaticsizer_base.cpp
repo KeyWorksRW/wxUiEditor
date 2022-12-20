@@ -27,10 +27,8 @@ MenuStaticSizer::MenuStaticSizer() : wxMenu()
 
     auto* menu_item = Append(gen_wxStaticBoxSizer, "Insert wxStaticBoxSizer");
     menu_item->SetBitmap(wxue_img::bundle_wxStaticBoxSizer_png());
-
     auto* menu_item_2 = Append(gen_StaticCheckboxBoxSizer, "Insert CheckBox wxStaticBoxSizer");
     menu_item_2->SetBitmap(wxue_img::bundle_wxStaticCheckBoxSizer_png());
-
     auto* menu_item_3 = Append(gen_StaticRadioBtnBoxSizer, "Insert RadioButton wxStaticBoxSizer");
     menu_item_3->SetBitmap(wxue_img::bundle_wxStaticRadioBtnSizer_png());
 }

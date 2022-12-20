@@ -22,26 +22,27 @@ bool GenerateXrcDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString&
 
     m_radio_combined = new wxRadioButton(this, wxID_ANY, "Combined File");
     m_radio_combined->SetValidator(wxGenericValidator(&m_create_combined));
-    m_combined_box = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY,m_radio_combined), wxVERTICAL);
-    dlg_sizer->Add(m_combined_box, wxSizerFlags().Expand().Border(wxALL));
+    m_combined_box = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, m_radio_combined), wxVERTICAL);
 
-    m_filePicker = new wxFilePickerCtrl(m_combined_box->GetStaticBox(), wxID_ANY, wxEmptyString, 
-        "Combined XRC File", 
-        "*.xrc", wxDefaultPosition, wxDefaultSize,
-        wxFLP_USE_TEXTCTRL|wxFLP_SAVE);
+    m_filePicker = new wxFilePickerCtrl(m_combined_box->GetStaticBox(), wxID_ANY, wxEmptyString,
+        "Combined XRC File", "*.xrc", wxDefaultPosition, wxDefaultSize, wxFLP_USE_TEXTCTRL|wxFLP_SAVE);
     m_filePicker->SetMinSize(ConvertDialogToPixels(wxSize(120, -1)));
     m_combined_box->Add(m_filePicker, wxSizerFlags(1).Expand().Border(wxALL));
 
-    m_radio_separate = new wxRadioButton(this, wxID_ANY, "Separate Files");
-    m_separate_box = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY,m_radio_separate), wxVERTICAL);
-    dlg_sizer->Add(m_separate_box, wxSizerFlags().Expand().Border(wxALL));
+    dlg_sizer->Add(m_combined_box, wxSizerFlags().Expand().Border(wxALL));
 
-    auto* staticText = new wxStaticText(m_separate_box->GetStaticBox(), wxID_ANY, "Forms not listed do not have xrc_file set.");
+    m_radio_separate = new wxRadioButton(this, wxID_ANY, "Separate Files");
+    m_separate_box = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, m_radio_separate), wxVERTICAL);
+
+    auto* staticText = new wxStaticText(m_separate_box->GetStaticBox(), wxID_ANY,
+        "Forms not listed do not have xrc_file set.");
     m_separate_box->Add(staticText, wxSizerFlags().Border(wxALL));
 
     m_listbox = new wxListBox(m_separate_box->GetStaticBox(), wxID_ANY);
     m_listbox->SetMinSize(ConvertDialogToPixels(wxSize(-1, 50)));
     m_separate_box->Add(m_listbox, wxSizerFlags(1).Expand().Border(wxALL));
+
+    dlg_sizer->Add(m_separate_box, wxSizerFlags().Expand().Border(wxALL));
 
     auto* stdBtn = new wxStdDialogButtonSizer();
     stdBtn->AddButton(new wxButton(this, wxID_SAVE));

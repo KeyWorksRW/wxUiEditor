@@ -60,14 +60,12 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
     m_menubar = new wxMenuBar();
 
     m_menuFile = new wxMenu();
-
     auto* menuItem = new wxMenuItem(m_menuFile, id_NewProject, "&New Project...\tCtrl+N",
         "Create an empty project", wxITEM_NORMAL);
     menuItem->SetBitmap(wxueBundleSVG(wxue_img::new_project_svg, 921, 2208, wxSize(16, 16)));
     m_menuFile->Append(menuItem);
-
-    auto* menuItem2 = new wxMenuItem(m_menuFile, id_OpenProject, "&Open Project...\tCtrl+O",
-        "Open a project", wxITEM_NORMAL);
+    auto* menuItem2 = new wxMenuItem(m_menuFile, id_OpenProject, "&Open Project...\tCtrl+O", "Open a project",
+        wxITEM_NORMAL);
     menuItem2->SetBitmap(wxArtProvider::GetBitmapBundle(wxART_FILE_OPEN, wxART_OTHER));
     m_menuFile->Append(menuItem2);
 
@@ -77,161 +75,123 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
     auto* menu_import = new wxMenuItem(m_menuFile, wxID_ANY, "&Import...");
     menu_import->SetBitmap(wxue_img::bundle_import_svg(16, 16));
     m_menuFile->Append(menu_import);
-
     m_menuFile->AppendSeparator();
-
-    auto* menu_item = new wxMenuItem(m_menuFile, wxID_SAVE, "&Save\tCtrl+S",
-        "Save current project", wxITEM_NORMAL);
+    auto* menu_item = new wxMenuItem(m_menuFile, wxID_SAVE, "&Save\tCtrl+S", "Save current project", wxITEM_NORMAL);
     menu_item->SetBitmap(wxueBundleSVG(wxue_img::save_svg, 717, 2603, wxSize(16, 16)));
     m_menuFile->Append(menu_item);
-
     auto* menu_item2 = new wxMenuItem(m_menuFile, id_SaveProjectAs, "Save &As...\tCtrl-Shift+S",
         "Save current project to a different filename", wxITEM_NORMAL);
     menu_item2->SetBitmap(wxArtProvider::GetBitmapBundle(wxART_FILE_SAVE_AS, wxART_MENU));
     m_menuFile->Append(menu_item2);
-
     m_menuFile->AppendSeparator();
 
     auto* submenu = new wxMenu();
-
     auto* menu_item_7 = new wxMenuItem(submenu, id_AppendCrafter, "wxCrafter Project...",
         "Append wxCrafter project into current project", wxITEM_NORMAL);
     submenu->Append(menu_item_7);
-
     auto* menu_item_1 = new wxMenuItem(submenu, id_AppendFormBuilder, "wxFormBuilder Project...",
         "Append wxFormBuilder project into current project", wxITEM_NORMAL);
     submenu->Append(menu_item_1);
-
     auto* menu_item_2 = new wxMenuItem(submenu, id_AppendGlade, "wxGlade Project...",
         "Append wxGlade project into current project", wxITEM_NORMAL);
     submenu->Append(menu_item_2);
-
     auto* menu_item_3 = new wxMenuItem(submenu, id_AppendSmith, "wxSmith Project...",
         "Append wxSmith project into current project", wxITEM_NORMAL);
     submenu->Append(menu_item_3);
-
     auto* menu_item_5 = new wxMenuItem(submenu, id_AppendWinRes, "Windows Resource...",
         "Append Windows Resource into current project", wxITEM_NORMAL);
     submenu->Append(menu_item_5);
-
     auto* menu_item_4 = new wxMenuItem(submenu, id_AppendXRC, "XRC Project...",
         "Append XRC project into current project", wxITEM_NORMAL);
     submenu->Append(menu_item_4);
     m_menuFile->AppendSubMenu(submenu, "&Append");
 
     m_menuFile->AppendSeparator();
-
-    auto* menu_preferences = new wxMenuItem(m_menuFile, id_OptionsDlg, "&Options...",
-        "Code generation options", wxITEM_NORMAL);
+    auto* menu_preferences = new wxMenuItem(m_menuFile, id_OptionsDlg, "&Options...", "Code generation options",
+        wxITEM_NORMAL);
     m_menuFile->Append(menu_preferences);
-
     m_menuFile->AppendSeparator();
-
     auto* menu_quit = new wxMenuItem(m_menuFile, wxID_EXIT, wxEmptyString);
     menu_quit->SetBitmap(wxArtProvider::GetBitmapBundle(wxART_QUIT, wxART_MENU));
     m_menuFile->Append(menu_quit);
     m_menubar->Append(m_menuFile, "&File");
 
     m_menuEdit = new wxMenu();
-
     auto* menu_undo = new wxMenuItem(m_menuEdit, wxID_UNDO, wxEmptyString);
     menu_undo->SetBitmap(wxue_img::bundle_undo_svg(16, 16));
     m_menuEdit->Append(menu_undo);
-
     auto* menu_redo = new wxMenuItem(m_menuEdit, wxID_REDO, wxEmptyString);
     menu_redo->SetBitmap(wxue_img::bundle_redo_svg(16, 16));
     m_menuEdit->Append(menu_redo);
-
     m_menuEdit->AppendSeparator();
-
     auto* menu_cut = new wxMenuItem(m_menuEdit, wxID_CUT, wxEmptyString);
     menu_cut->SetBitmap(wxArtProvider::GetBitmapBundle(wxART_CUT, wxART_MENU));
     m_menuEdit->Append(menu_cut);
-
     auto* menu_copy = new wxMenuItem(m_menuEdit, wxID_COPY, wxEmptyString);
     menu_copy->SetBitmap(wxArtProvider::GetBitmapBundle(wxART_COPY, wxART_MENU));
     m_menuEdit->Append(menu_copy);
-
     auto* menu_paste = new wxMenuItem(m_menuEdit, wxID_PASTE, wxEmptyString);
     menu_paste->SetBitmap(wxArtProvider::GetBitmapBundle(wxART_PASTE, wxART_MENU));
     m_menuEdit->Append(menu_paste);
-
     auto* menu_delete = new wxMenuItem(m_menuEdit, wxID_DELETE, wxEmptyString,
         "Delete selected object without using clipboard.", wxITEM_NORMAL);
     menu_delete->SetBitmap(wxArtProvider::GetBitmapBundle(wxART_DELETE, wxART_MENU));
     m_menuEdit->Append(menu_delete);
-
     auto* menu_duplicate = new wxMenuItem(m_menuEdit, wxID_ANY, "Duplicate",
         "Delete selected object without using clipboard.", wxITEM_NORMAL);
     m_menuEdit->Append(menu_duplicate);
-
     m_menuEdit->AppendSeparator();
-
-    auto* menu_find = new wxMenuItem(m_menuEdit, wxID_FIND, wxEmptyString,
-        "Find text in the active code viewer.", wxITEM_NORMAL);
+    auto* menu_find = new wxMenuItem(m_menuEdit, wxID_FIND, wxEmptyString, "Find text in the active code viewer.",
+        wxITEM_NORMAL);
     menu_find->SetBitmap(wxArtProvider::GetBitmapBundle(wxART_FIND, wxART_MENU));
     m_menuEdit->Append(menu_find);
-
     auto* menu_insert_widget = new wxMenuItem(m_menuEdit, id_insert_widget, "&Insert widget...",
         "Find text in the active code viewer.", wxITEM_NORMAL);
     menu_insert_widget->SetBitmap(wxArtProvider::GetBitmapBundle(wxART_EDIT, wxART_MENU));
     m_menuEdit->Append(menu_insert_widget);
-
     m_menuEdit->AppendSeparator();
 
     auto* submenu3 = new wxMenu();
-
-    auto* menu_item4 = new wxMenuItem(submenu3, id_MoveUp, "Up\tAlt+Up",
-        "Moves selected item up", wxITEM_NORMAL);
+    auto* menu_item4 = new wxMenuItem(submenu3, id_MoveUp, "Up\tAlt+Up", "Moves selected item up", wxITEM_NORMAL);
     menu_item4->SetBitmap(wxArtProvider::GetBitmapBundle(wxART_GO_UP, wxART_MENU));
     submenu3->Append(menu_item4);
-
-    auto* menu_item5 = new wxMenuItem(submenu3, id_MoveDown, "Down\tAlt+Down",
-        "Moves selected item down", wxITEM_NORMAL);
+    auto* menu_item5 = new wxMenuItem(submenu3, id_MoveDown, "Down\tAlt+Down", "Moves selected item down",
+        wxITEM_NORMAL);
     menu_item5->SetBitmap(wxArtProvider::GetBitmapBundle(wxART_GO_DOWN, wxART_MENU));
     submenu3->Append(menu_item5);
-
-    auto* menu_item6 = new wxMenuItem(submenu3, id_MoveLeft, "Left\tAlt+Left",
-        "Moves selected item left", wxITEM_NORMAL);
+    auto* menu_item6 = new wxMenuItem(submenu3, id_MoveLeft, "Left\tAlt+Left", "Moves selected item left",
+        wxITEM_NORMAL);
     menu_item6->SetBitmap(wxArtProvider::GetBitmapBundle(wxART_GO_BACK, wxART_MENU));
     submenu3->Append(menu_item6);
-
-    auto* menu_item7 = new wxMenuItem(submenu3, id_MoveRight, "Right\tAlt+Right",
-        "Moves selected item right", wxITEM_NORMAL);
+    auto* menu_item7 = new wxMenuItem(submenu3, id_MoveRight, "Right\tAlt+Right", "Moves selected item right",
+        wxITEM_NORMAL);
     menu_item7->SetBitmap(wxArtProvider::GetBitmapBundle(wxART_GO_FORWARD, wxART_MENU));
     submenu3->Append(menu_item7);
     m_menuEdit->AppendSubMenu(submenu3, "Move");
 
     auto* submenu2 = new wxMenu();
-
     auto* menu_item8 = new wxMenuItem(submenu2, id_AlignLeft, "&Left\tAlt+Shift+Left",
         "Align selected item to the left", wxITEM_CHECK);
     menu_item8->SetBitmap(wxueBundleSVG(wxue_img::alignleft_svg, 688, 1442, wxSize(16, 16)));
     submenu2->Append(menu_item8);
-
     auto* menu_item10 = new wxMenuItem(submenu2, id_AlignCenterHorizontal, "Center &Horizontal\tAlt+Shift+H",
         "Align selected item to the center horizontally", wxITEM_CHECK);
     menu_item10->SetBitmap(wxueBundleSVG(wxue_img::aligncenter_svg, 898, 1976, wxSize(16, 16)));
     submenu2->Append(menu_item10);
     menu_item10->Check();
-
     auto* menu_item9 = new wxMenuItem(submenu2, id_AlignRight, "&Right\tAlt+Shift+Right",
         "Align selected item to the right", wxITEM_CHECK);
     menu_item9->SetBitmap(wxueBundleSVG(wxue_img::alignright_svg, 690, 1441, wxSize(16, 16)));
     submenu2->Append(menu_item9);
-
     submenu2->AppendSeparator();
-
     auto* menu_item11 = new wxMenuItem(submenu2, id_AlignTop, "&Top\tAlt+Shift+Up",
         "Align selected item to the top", wxITEM_CHECK);
     menu_item11->SetBitmap(wxueBundleSVG(wxue_img::aligntop_svg, 688, 1440, wxSize(16, 16)));
     submenu2->Append(menu_item11);
-
     auto* menu_item12 = new wxMenuItem(submenu2, id_AlignCenterVertical, "Center &Vertical\tAlt+Shift+V",
         "Align selected item to the center vertically", wxITEM_CHECK);
     menu_item12->SetBitmap(wxueBundleSVG(wxue_img::alignvertcenter_svg, 911, 2016, wxSize(16, 16)));
     submenu2->Append(menu_item12);
-
     auto* menu_item13 = new wxMenuItem(submenu2, id_AlignBottom, "&Bottom\tAlt+Shift+Down",
         "Align selected item to the bottom", wxITEM_CHECK);
     menu_item13->SetBitmap(wxueBundleSVG(wxue_img::alignright_svg, 690, 1441, wxSize(16, 16)));
@@ -239,41 +199,35 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
     m_menuEdit->AppendSubMenu(submenu2, "Align");
 
     auto* submenu4 = new wxMenu();
-
     auto* menu_item14 = new wxMenuItem(submenu4, id_BorderLeft, "&Left",
         "Toggle border on the left side of the item", wxITEM_CHECK);
     menu_item14->SetBitmap(wxueBundleSVG(wxue_img::left_svg, 585, 1857, wxSize(16, 16)));
     submenu4->Append(menu_item14);
-
     auto* menu_item15 = new wxMenuItem(submenu4, id_BorderRight, "&Right",
         "Toggle border on the right side of the item", wxITEM_CHECK);
     menu_item15->SetBitmap(wxueBundleSVG(wxue_img::right_svg, 599, 1878, wxSize(16, 16)));
     submenu4->Append(menu_item15);
-
-    auto* menu_item16 = new wxMenuItem(submenu4, id_BorderTop, "&Top",
-        "Toggle border on the top side of the item", wxITEM_CHECK);
+    auto* menu_item16 = new wxMenuItem(submenu4, id_BorderTop, "&Top", "Toggle border on the top side of the item",
+        wxITEM_CHECK);
     menu_item16->SetBitmap(wxueBundleSVG(wxue_img::top_svg, 586, 1859, wxSize(16, 16)));
     submenu4->Append(menu_item16);
-
     auto* menu_item17 = new wxMenuItem(submenu4, id_BorderBottom, "&Bottom",
         "Toggle border on the bottom side of the item", wxITEM_CHECK);
     menu_item17->SetBitmap(wxueBundleSVG(wxue_img::bottom_svg, 585, 1859, wxSize(16, 16)));
     submenu4->Append(menu_item17);
     m_menuEdit->AppendSubMenu(submenu4, "Borders");
 
-    auto* menu_item18 = new wxMenuItem(m_menuEdit, id_Expand, "&Expand\tAlt+E",
-        "Toggle the wxEXPAND flag", wxITEM_CHECK);
+    auto* menu_item18 = new wxMenuItem(m_menuEdit, id_Expand, "&Expand\tAlt+E", "Toggle the wxEXPAND flag",
+        wxITEM_CHECK);
     menu_item18->SetBitmap(wxueBundleSVG(wxue_img::expand_svg, 819, 1685, wxSize(16, 16)));
     m_menuEdit->Append(menu_item18);
     m_menubar->Append(m_menuEdit, "&Edit");
 
     m_menuTools = new wxMenu();
-
     auto* menu_item19 = new wxMenuItem(m_menuTools, id_GenerateCode, "Generate &Code...",
         "Generates code for the selected language", wxITEM_NORMAL);
     menu_item19->SetBitmap(wxueBundleSVG(wxue_img::generate_svg, 780, 2716, wxSize(16, 16)));
     m_menuTools->Append(menu_item19);
-
     auto* menu_item_8 = new wxMenuItem(m_menuTools, id_PreviewForm, "&Preview Form...\tF5",
         "Preview form using XRC and/or C++", wxITEM_NORMAL);
     menu_item_8->SetBitmap(wxueBundleSVG(wxue_img::xrc_preview_svg, 469, 1326, wxSize(16, 16)));
@@ -281,16 +235,13 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
     m_menubar->Append(m_menuTools, "&Tools");
 
     m_menuHelp = new wxMenu();
-
     auto* menu_help = new wxMenuItem(m_menuHelp, wxID_ABOUT, wxEmptyString);
     menu_help->SetBitmap(wxArtProvider::GetBitmapBundle(wxART_HELP, wxART_MENU));
     m_menuHelp->Append(menu_help);
-
     auto* menu_item_6 = new wxMenuItem(m_menuHelp, wxID_ANY, "wxWidgets Documentation",
         "Open wxWidgets documentation in your default browser.", wxITEM_NORMAL);
     menu_item_6->SetBitmap(wxue_img::bundle_wxlogo_svg(16, 16));
     m_menuHelp->Append(menu_item_6);
-
     auto* menu_item_9 = new wxMenuItem(m_menuHelp, wxID_ANY, "wxPython Documentation",
         "Open wxPython documentation in your default browser.", wxITEM_NORMAL);
     {
@@ -300,6 +251,7 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
         bitmaps.push_back(wxueImage(wxue_img::wxPython_2x_png, sizeof(wxue_img::wxPython_2x_png)));
         menu_item_9->SetBitmap(wxBitmapBundle::FromBitmaps(bitmaps));
     }
+
     m_menuHelp->Append(menu_item_9);
     m_menubar->Append(m_menuHelp, "&Help");
 
@@ -307,83 +259,81 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
 
     m_toolbar = CreateToolBar(wxTB_FLAT|wxTB_HORIZONTAL);
     m_toolbar->AddTool(id_NewProject, "New", wxueBundleSVG(wxue_img::new_project_svg, 921, 2208, wxSize(24, 24)),
-            "New Project (Ctrl+N)");
+        "New Project (Ctrl+N)");
 
     m_toolbar->AddTool(id_OpenProject, "Open", wxArtProvider::GetBitmapBundle(wxART_FILE_OPEN, wxART_TOOLBAR),
-            "Open Project (Ctrl+O)");
+        "Open Project (Ctrl+O)");
 
     m_toolbar->AddTool(wxID_SAVE, "Save", wxueBundleSVG(wxue_img::save_svg, 717, 2603, wxSize(24, 24)),
-            "Save current project");
+        "Save current project");
 
-    m_toolbar->AddTool(id_GenerateCode, wxEmptyString, wxueBundleSVG(wxue_img::generate_svg, 780, 2716, wxSize(24, 24)),
-            "Generate code");
-
-    m_toolbar->AddSeparator();
-    m_toolbar->AddTool(wxID_UNDO, wxEmptyString, wxue_img::bundle_undo_svg(16, 16),
-            "Undo");
-
-    m_toolbar->AddTool(wxID_REDO, wxEmptyString, wxue_img::bundle_redo_svg(16, 16),
-            "Redo");
+    m_toolbar->AddTool(id_GenerateCode, wxEmptyString,
+        wxueBundleSVG(wxue_img::generate_svg, 780, 2716, wxSize(24, 24)), "Generate code");
 
     m_toolbar->AddSeparator();
-    m_toolbar->AddTool(wxID_CUT, wxEmptyString, wxArtProvider::GetBitmapBundle(wxART_CUT, wxART_TOOLBAR),
-            "Cut");
+    m_toolbar->AddTool(wxID_UNDO, wxEmptyString, wxue_img::bundle_undo_svg(16, 16), "Undo");
 
-    m_toolbar->AddTool(wxID_COPY, wxEmptyString, wxArtProvider::GetBitmapBundle(wxART_COPY, wxART_TOOLBAR),
-            "Copy");
+    m_toolbar->AddTool(wxID_REDO, wxEmptyString, wxue_img::bundle_redo_svg(16, 16), "Redo");
+
+    m_toolbar->AddSeparator();
+    m_toolbar->AddTool(wxID_CUT, wxEmptyString, wxArtProvider::GetBitmapBundle(wxART_CUT, wxART_TOOLBAR), "Cut");
+
+    m_toolbar->AddTool(wxID_COPY, wxEmptyString, wxArtProvider::GetBitmapBundle(wxART_COPY, wxART_TOOLBAR), "Copy");
 
     m_toolbar->AddTool(wxID_PASTE, wxEmptyString, wxArtProvider::GetBitmapBundle(wxART_PASTE, wxART_TOOLBAR),
-            "Paste");
+        "Paste");
 
     m_toolbar->AddTool(wxID_DELETE, wxEmptyString, wxArtProvider::GetBitmapBundle(wxART_DELETE, wxART_TOOLBAR),
-            "Delete selected object without using clipboard.");
+        "Delete selected object without using clipboard.");
 
     m_toolbar->AddSeparator();
-    m_toolbar->AddTool(id_AlignLeft, wxEmptyString, wxueBundleSVG(wxue_img::alignleft_svg, 688, 1442, wxSize(24, 24)),
-            "Align left", wxITEM_CHECK);
+    m_toolbar->AddTool(id_AlignLeft, wxEmptyString,
+        wxueBundleSVG(wxue_img::alignleft_svg, 688, 1442, wxSize(24, 24)), "Align left", wxITEM_CHECK);
 
-    m_toolbar->AddTool(id_AlignCenterHorizontal, wxEmptyString, wxueBundleSVG(wxue_img::aligncenter_svg, 898, 1976, wxSize(24, 24)),
-            "Center horizontally", wxITEM_CHECK);
+    m_toolbar->AddTool(id_AlignCenterHorizontal, wxEmptyString,
+        wxueBundleSVG(wxue_img::aligncenter_svg, 898, 1976, wxSize(24, 24)), "Center horizontally", wxITEM_CHECK);
 
-    m_toolbar->AddTool(id_AlignRight, wxEmptyString, wxueBundleSVG(wxue_img::alignright_svg, 690, 1441, wxSize(24, 24)),
-            "Align right", wxITEM_CHECK);
+    m_toolbar->AddTool(id_AlignRight, wxEmptyString,
+        wxueBundleSVG(wxue_img::alignright_svg, 690, 1441, wxSize(24, 24)), "Align right", wxITEM_CHECK);
 
     m_toolbar->AddSeparator();
-    m_toolbar->AddTool(id_AlignTop, wxEmptyString, wxueBundleSVG(wxue_img::aligntop_svg, 688, 1440, wxSize(24, 24)),
-            "Align top", wxITEM_CHECK);
+    m_toolbar->AddTool(id_AlignTop, wxEmptyString,
+        wxueBundleSVG(wxue_img::aligntop_svg, 688, 1440, wxSize(24, 24)), "Align top", wxITEM_CHECK);
 
-    m_toolbar->AddTool(id_AlignCenterVertical, wxEmptyString, wxueBundleSVG(wxue_img::alignvertcenter_svg, 911, 2016, wxSize(24, 24)),
-            "Center vertically", wxITEM_CHECK);
+    m_toolbar->AddTool(id_AlignCenterVertical, wxEmptyString,
+        wxueBundleSVG(wxue_img::alignvertcenter_svg, 911, 2016, wxSize(24, 24)), "Center vertically", wxITEM_CHECK);
 
-    m_toolbar->AddTool(id_AlignBottom, wxEmptyString, wxueBundleSVG(wxue_img::alignbottom_svg, 658, 1392, wxSize(24, 24)),
-            "Align bottom", wxITEM_CHECK);
+    m_toolbar->AddTool(id_AlignBottom, wxEmptyString,
+        wxueBundleSVG(wxue_img::alignbottom_svg, 658, 1392, wxSize(24, 24)), "Align bottom", wxITEM_CHECK);
 
     m_toolbar->AddSeparator();
     m_toolbar->AddTool(id_BorderLeft, wxEmptyString, wxueBundleSVG(wxue_img::left_svg, 585, 1857, wxSize(24, 24)),
-            "Left border", wxITEM_CHECK);
+        "Left border", wxITEM_CHECK);
 
-    m_toolbar->AddTool(id_BorderRight, wxEmptyString, wxueBundleSVG(wxue_img::right_svg, 599, 1878, wxSize(24, 24)),
-            "Right border", wxITEM_CHECK);
+    m_toolbar->AddTool(id_BorderRight, wxEmptyString,
+        wxueBundleSVG(wxue_img::right_svg, 599, 1878, wxSize(24, 24)), "Right border", wxITEM_CHECK);
 
     m_toolbar->AddTool(id_BorderTop, wxEmptyString, wxueBundleSVG(wxue_img::top_svg, 586, 1859, wxSize(24, 24)),
-            "Top border", wxITEM_CHECK);
+        "Top border", wxITEM_CHECK);
 
-    m_toolbar->AddTool(id_BorderBottom, wxEmptyString, wxueBundleSVG(wxue_img::bottom_svg, 585, 1859, wxSize(24, 24)),
-            "Bottom border", wxITEM_CHECK);
+    m_toolbar->AddTool(id_BorderBottom, wxEmptyString,
+        wxueBundleSVG(wxue_img::bottom_svg, 585, 1859, wxSize(24, 24)), "Bottom border", wxITEM_CHECK);
 
     m_toolbar->AddSeparator();
     m_toolbar->AddTool(id_Expand, wxEmptyString, wxueBundleSVG(wxue_img::expand_svg, 819, 1685, wxSize(24, 24)),
-            "Expand to fill the space", wxITEM_CHECK);
+        "Expand to fill the space", wxITEM_CHECK);
 
     m_toolbar->AddSeparator();
-    m_toolbar->AddTool(id_ShowHidden, wxEmptyString, wxueBundleSVG(wxue_img::hidden_svg, 2111, 5129, wxSize(24, 24)),
-            "Show hidden controls in Mockup panel", wxITEM_CHECK);
+    m_toolbar->AddTool(id_ShowHidden, wxEmptyString,
+        wxueBundleSVG(wxue_img::hidden_svg, 2111, 5129, wxSize(24, 24)), "Show hidden controls in Mockup panel",
+        wxITEM_CHECK);
 
     m_toolbar->AddTool(id_Magnify, wxEmptyString, wxueBundleSVG(wxue_img::magnify_svg, 3953, 8849, wxSize(24, 24)),
-            "Magnify the size of the Mockup window", wxITEM_CHECK);
+        "Magnify the size of the Mockup window", wxITEM_CHECK);
 
-    m_toolbar->AddTool(id_PreviewForm, "Preview Form...", wxueBundleSVG(wxue_img::xrc_preview_svg, 469, 1326, wxSize(24, 24)),
-            "Preview form using XRC and/or C++", wxITEM_CHECK);
+    m_toolbar->AddTool(id_PreviewForm, "Preview Form...",
+        wxueBundleSVG(wxue_img::xrc_preview_svg, 469, 1326, wxSize(24, 24)), "Preview form using XRC and/or C++",
+        wxITEM_CHECK);
 
     m_toolbar->Realize();
 

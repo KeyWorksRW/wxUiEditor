@@ -32,8 +32,8 @@ bool XrcCompareBase::Create(wxWindow* parent, wxWindowID id, const wxString& tit
     staticText->SetForegroundColour(wxColour(255, 0, 0));
     box_sizer->Add(staticText, wxSizerFlags().Border(wxALL));
 
-    m_static_line = new wxStaticLine(this, wxID_ANY, wxDefaultPosition, ConvertDialogToPixels(wxSize(-1, 100)),
-        wxLI_VERTICAL);
+    m_static_line = new wxStaticLine(this, wxID_ANY, wxDefaultPosition,
+        ConvertDialogToPixels(wxSize(-1, 100)), wxLI_VERTICAL);
     m_grid_bag_sizer->Add(m_static_line, wxGBPosition(0, 1), wxGBSpan(3, 1), wxALL, 5);
 
     auto* box_sizer_2 = new wxBoxSizer(wxVERTICAL);

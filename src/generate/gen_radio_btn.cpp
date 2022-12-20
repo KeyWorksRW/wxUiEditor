@@ -59,16 +59,9 @@ std::optional<ttlib::sview> RadioButtonGenerator::CommonConstruction(Code& code)
 
 std::optional<ttlib::sview> RadioButtonGenerator::CommonSettings(Code& code)
 {
-    // If a validator has been specified, then the variable will be initialized with the selection variable.
-    if (code.is_cpp() && code.HasValue(prop_validator_variable))
-        return code.m_code;
-
     if (code.IsTrue(prop_checked))
     {
-        if (code.is_cpp())
-            code.NodeName().Function("SetValue(true").EndFunction();
-        else
-            code.NodeName().Function("SetValue(True").EndFunction();
+        code.NodeName().Function("SetValue(").AddTrue().EndFunction();
     }
     return code.m_code;
 }

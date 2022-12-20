@@ -76,11 +76,7 @@ std::optional<ttlib::sview> SliderGenerator::CommonConstruction(Code& code)
 
 std::optional<ttlib::sview> SliderGenerator::CommonSettings(Code& code)
 {
-    // If a validator has been specified, then the variable will be initialized with the selection variable.
-    if (code.is_python() || !code.HasValue(prop_validator_variable))
-    {
-        code.NodeName().Function("SetValue(").as_string(prop_position).EndFunction();
-    }
+    code.NodeName().Function("SetValue(").as_string(prop_position).EndFunction();
 
     Node* node = code.node();
     if (node->prop_as_int(prop_sel_start) >= 0 && node->prop_as_int(prop_sel_end) >= 0)

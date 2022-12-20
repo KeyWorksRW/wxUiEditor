@@ -51,10 +51,6 @@ std::optional<ttlib::sview> GaugeGenerator::CommonConstruction(Code& code)
 
 std::optional<ttlib::sview> GaugeGenerator::CommonSettings(Code& code)
 {
-    // If a validator has been specified, then the value will be initialized.
-    if (code.is_cpp() && code.HasValue(prop_validator_variable))
-        return code.m_code;
-
     code.NodeName().Function("SetValue(").as_string(prop_position).EndFunction();
 
     return code.m_code;

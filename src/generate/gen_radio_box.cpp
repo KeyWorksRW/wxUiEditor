@@ -132,14 +132,9 @@ std::optional<ttlib::cstr> RadioBoxGenerator::GenSettings(Node* node, size_t& /*
 {
     ttlib::cstr code;
 
-    // If a validator has been specified, then the variable will be initialized with the selection variable.
-    if (node->prop_as_string(prop_validator_variable).empty())
+    if (auto sel = node->prop_as_int(prop_selection); sel > 0)
     {
-        auto sel = node->prop_as_int(prop_selection);
-        if (sel > 0)
-        {
-            code << node->get_node_name() << "->SetSelection(" << sel << ");";
-        }
+        code << node->get_node_name() << "->SetSelection(" << sel << ");";
     }
 
     return code;

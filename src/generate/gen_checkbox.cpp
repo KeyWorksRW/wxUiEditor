@@ -61,10 +61,6 @@ std::optional<ttlib::sview> CheckBoxGenerator::CommonConstruction(Code& code)
 
 std::optional<ttlib::sview> CheckBoxGenerator::CommonSettings(Code& code)
 {
-    // If a validator has been specified, then the variable will be initialized with the selection variable.
-    if (code.is_cpp() && code.HasValue(prop_validator_variable))
-        return code.m_code;
-
     if (code.IsTrue(prop_checked))
     {
         code.NodeName().Function("SetValue(").AddTrue().EndFunction();

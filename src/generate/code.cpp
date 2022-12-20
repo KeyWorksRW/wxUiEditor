@@ -1070,9 +1070,9 @@ void Code::GenWindowSettings()
     {
         Eol(true);
         if (!m_node->IsForm())
-            NodeName().Function("Hide()");
+            NodeName().Function("Hide(");
         else
-            FormFunction("Hide()");
+            FormFunction("Hide(");
         EndFunction();
     }
 

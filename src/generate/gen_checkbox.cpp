@@ -67,10 +67,7 @@ std::optional<ttlib::sview> CheckBoxGenerator::CommonSettings(Code& code)
 
     if (code.IsTrue(prop_checked))
     {
-        if (code.is_cpp())
-            code.NodeName().Function("SetValue(true").EndFunction();
-        else
-            code.NodeName().Function("SetValue(True").EndFunction();
+        code.NodeName().Function("SetValue(").AddTrue().EndFunction();
     }
     return code.m_code;
 }
@@ -78,6 +75,8 @@ std::optional<ttlib::sview> CheckBoxGenerator::CommonSettings(Code& code)
 bool CheckBoxGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
     InsertGeneratorInclude(node, "#include <wx/checkbox.h>", set_src, set_hdr);
+    if (node->prop_as_string(prop_validator_variable).size())
+        InsertGeneratorInclude(node, "#include <wx/valgen.h>", set_src, set_hdr);
     return true;
 }
 

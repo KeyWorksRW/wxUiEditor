@@ -165,6 +165,8 @@ std::optional<ttlib::cstr> BitmapComboBoxGenerator::GenSettings(Node* node, size
 bool BitmapComboBoxGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
     InsertGeneratorInclude(node, "#include <wx/bmpcbox.h>", set_src, set_hdr);
+    if (node->prop_as_string(prop_validator_variable).size())
+        InsertGeneratorInclude(node, "#include <wx/valgen.h>", set_src, set_hdr);
     return true;
 }
 

@@ -49,55 +49,43 @@ bool SpinCtrlGenerator::OnPropertyChange(wxObject* widget, Node* node, NodePrope
     return false;
 }
 
-std::optional<ttlib::cstr> SpinCtrlGenerator::GenConstruction(Node* node)
+std::optional<ttlib::sview> SpinCtrlGenerator::CommonConstruction(Code& code)
 {
-    ttlib::cstr code;
-    if (node->IsLocal())
+    if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
-    code << node->get_node_name() << GenerateNewAssignment(node);
-    code << GetParentName(node) << ", " << node->prop_as_string(prop_id) << ", wxEmptyString, ";
-    GenPos(node, code);
-    code << ", ";
-    GenSize(node, code);
-    code << ", ";
-    GenStyle(node, code);
-    code << ", " << node->prop_as_string(prop_min) << ", " << node->prop_as_string(prop_max) << ", "
-         << node->prop_as_string(prop_initial);
-    if (node->HasValue(prop_window_name))
+    code.NodeName().CreateClass().GetParentName();
+    auto needed_parms = code.WhatParamsNeeded("wxSP_ARROW_KEYS");
+    Node* node = code.node();
+    if (needed_parms == Code::nothing_needed && node->as_int(prop_min) == 0 && node->as_int(prop_max) == 100 &&
+        node->as_int(prop_initial) == 0)
     {
-        code << ", " << node->prop_as_string(prop_window_name);
+        if (node->as_string(prop_id) != "wxID_ANY")
+            code.Comma().as_string(prop_id);
+        code.EndFunction();
+        return code.m_code;
     }
+    code.Comma().as_string(prop_id).Comma().Add("wxEmptyString").Comma().Pos().Comma().WxSize().Comma().Style();
+    code.Comma().as_string(prop_min).Comma().as_string(prop_max).Comma().as_string(prop_initial);
+    if (needed_parms & Code::window_name_needed)
+        code.Comma().QuotedString(prop_window_name);
+    code.EndFunction();
 
-    code << ");";
-
-    code.Replace(", wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 0, 100, 0);", ");");
-
-    if (code.contains("wxEmptyString"))
-    {
-        code.Replace("wxEmptyString, ", "wxEmptyString,\n\t\t\t");
-        code.insert(0, 1, '\t');
-    }
-
-    return code;
+    return code.m_code;
 }
 
-std::optional<ttlib::cstr> SpinCtrlGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
+std::optional<ttlib::sview> SpinCtrlGenerator::CommonSettings(Code& code)
 {
-    ttlib::cstr code;
-    if (node->prop_as_bool(prop_hexadecimal))
+    if (code.IsTrue(prop_hexadecimal))
     {
-        code << node->get_node_name() << "->SetBase(16);";
-        return code;
-    }
-    if (node->prop_as_int(prop_inc) > 1)
-    {
-        code << node->get_node_name() << "->SetIncrement(" << node->prop_as_int(prop_inc) << ");";
+        code.Eol(true).NodeName().Function("SetBase(16").EndFunction();
     }
 
-    if (code.size())
-        return code;
-    else
-        return {};
+    if (code.node()->as_int(prop_inc) > 1)
+    {
+        code.Eol(true).NodeName().Function("SetIncrement(").as_string(prop_inc).EndFunction();
+    }
+
+    return code.m_code;
 }
 
 int SpinCtrlGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)

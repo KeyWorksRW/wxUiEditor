@@ -36,29 +36,29 @@ wxObject* InfoBarGenerator::CreateMockup(Node* node, wxObject* parent)
     return m_infobar;
 }
 
-std::optional<ttlib::cstr> InfoBarGenerator::GenConstruction(Node* node)
+std::optional<ttlib::sview> InfoBarGenerator::CommonConstruction(Code& code)
 {
-    ttlib::cstr code;
-    if (node->IsLocal())
+    if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
-    code << node->get_node_name() << GenerateNewAssignment(node) << GetParentName(node) << ");";
+    code.NodeName().CreateClass();
+    code.GetParentName();
+    if (code.node()->as_string(prop_id) != "wxID_ANY")
+        code.Comma().as_string(prop_id);
+    code.EndFunction();
 
-    return code;
+    return code.m_code;
 }
 
-std::optional<ttlib::cstr> InfoBarGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
+std::optional<ttlib::sview> InfoBarGenerator::CommonSettings(Code& code)
 {
-    ttlib::cstr code;
+    code.NodeName().Function("SetShowHideEffects(");
+    code.Add(code.node()->prop_as_constant(prop_show_effect, "info_"));
+    code.Comma().Add(code.node()->prop_as_constant(prop_hide_effect, "info_"));
+    code.EndFunction();
 
-    code << '\t' << node->get_node_name() << "->SetShowHideEffects(" << node->prop_as_constant(prop_show_effect, "info_")
-         << ", " << node->prop_as_constant(prop_hide_effect, "info_") << ");";
+    code.Eol().NodeName().Function("SetEffectDuration(").as_string(prop_duration).EndFunction();
 
-    if (node->prop_as_int(prop_duration) != 500)
-    {
-        code << "\n" << node->get_node_name() << "->SetEffectDuration(" << node->prop_as_string(prop_duration) << ");";
-    }
-
-    return code;
+    return code.m_code;
 }
 
 void InfoBarGenerator::OnButton(wxCommandEvent& event)

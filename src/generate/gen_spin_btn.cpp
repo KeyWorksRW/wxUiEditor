@@ -31,37 +31,41 @@ wxObject* SpinButtonGenerator::CreateMockup(Node* node, wxObject* parent)
     return widget;
 }
 
-std::optional<ttlib::cstr> SpinButtonGenerator::GenConstruction(Node* node)
+std::optional<ttlib::sview> SpinButtonGenerator::CommonConstruction(Code& code)
 {
-    ttlib::cstr code;
-    if (node->IsLocal())
+    if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
-    code << node->get_node_name() << GenerateNewAssignment(node);
-    code << GetParentName(node) << ", " << node->prop_as_string(prop_id);
-    GeneratePosSizeFlags(node, code, false, "wxSP_VERTICAL");
+    code.NodeName().CreateClass().GetParentName();
+    auto needed_parms = code.WhatParamsNeeded("wxSP_ARROW_KEYS");
+    Node* node = code.node();
+    if (needed_parms == Code::nothing_needed)
+    {
+        if (node->as_string(prop_id) != "wxID_ANY")
+            code.Comma().as_string(prop_id);
+        code.EndFunction();
+        return code.m_code;
+    }
+    code.PosSizeFlags(false, "wxSP_VERTICAL");
+    code.EndFunction();
 
-    code.Replace(", wxID_ANY);", ");");
-
-    return code;
+    return code.m_code;
 }
 
-std::optional<ttlib::cstr> SpinButtonGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
+std::optional<ttlib::sview> SpinButtonGenerator::CommonSettings(Code& code)
 {
-    ttlib::cstr code;
-    code << node->get_node_name() << "->SetRange(" << node->prop_as_int(prop_min) << ", " << node->prop_as_int(prop_max)
-         << ");";
+    code.NodeName().Function("SetRange(").as_string(prop_min).Comma().as_string(prop_max).EndFunction();
 
-    if (node->prop_as_int(prop_initial))
+    if (code.IsTrue(prop_initial))
     {
-        code << '\n' << node->get_node_name() << "->SetValue(" << node->prop_as_int(prop_initial) << ");";
+        code.Eol().NodeName().Function("SetValue(").as_string(prop_initial).EndFunction();
     }
 
-    if (node->prop_as_int(prop_inc) > 1)
+    if (code.node()->as_int(prop_inc) > 1)
     {
-        code << '\n' << node->get_node_name() << "->SetIncrement(" << node->prop_as_int(prop_inc) << ");";
+        code.Eol().NodeName().Function("SetIncrement(").as_string(prop_inc).EndFunction();
     }
 
-    return code;
+    return code.m_code;
 }
 
 bool SpinButtonGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)

@@ -96,7 +96,10 @@ set (file_list
     generate/gen_close_btn.cpp      # wxBitmapButton::CreateCloseButton generator
     generate/gen_combobox.cpp       # wxComboBox generator
     generate/gen_gauge.cpp          # wxGauge generator
+    generate/gen_infobar.cpp        # wxInfoBar generator
     generate/gen_radio_btn.cpp      # wxRadioButton generator
+    generate/gen_spin_btn.cpp       # wxSpinButton generator
+    generate/gen_spin_ctrl.cpp      # wxSpinCtrl generator
     generate/gen_slider.cpp         # wxSlider generator
     generate/gen_static_bmp.cpp     # wxStaticBitmap generator
     generate/gen_static_line.cpp    # wxStaticLine generator
@@ -117,7 +120,6 @@ set (file_list
     generate/gen_html_listbox.cpp   # wxSimpleHtmlListBox generator
     generate/gen_html_window.cpp    # wxHtmlWindow generator
     generate/gen_hyperlink.cpp      # wxHyperlinkCtrl generator
-    generate/gen_infobar.cpp        # wxInfoBar generator
     generate/gen_listbox.cpp        # wxListBox generator
     generate/gen_listview.cpp       # wxListView generator
     generate/gen_panel.cpp          # wxPanel generator
@@ -128,8 +130,6 @@ set (file_list
     generate/gen_rich_text.cpp      # wxRichTextCtrl generator
     generate/gen_scrollbar.cpp      # wxScrollBar generator
     generate/gen_search_ctrl.cpp    # wxSearchCtrl generator
-    generate/gen_spin_btn.cpp       # wxSpinButton generator
-    generate/gen_spin_ctrl.cpp      # wxSpinCtrl generator
     generate/gen_split_win.cpp      # wxSplitterWindow generator
     generate/gen_static_box.cpp     # wxStaticBox generator
     generate/gen_status_bar.cpp     # wxStatusBar generator

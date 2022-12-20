@@ -80,7 +80,7 @@ The following tables list classes, objects and functions that wxUiEditor can gen
 | wxGrid | yes |  ?? | yes | gen_grid.cpp |
 | wxHtmlWindow | yes |  ?? | yes | gen_html_window.cpp |
 | wxHyperlinkCtrl | yes |  ?? | yes | gen_hyperlink.cpp |
-| wxInfoBar | yes |  ?? | yes | gen_infobar.cpp |
+| wxInfoBar | yes |  yes | yes | gen_infobar.cpp |
 | wxListBox | yes |  ?? | yes | gen_listbox.cpp |
 | wxListView | yes |  ?? | yes | gen_listview.cpp |
 | wxMenu | yes |  yes | yes | gen_menu.cpp |
@@ -105,8 +105,8 @@ The following tables list classes, objects and functions that wxUiEditor can gen
 | wxSearchCtrl | yes |  ?? | yes | gen_search_ctrl.cpp |
 | wxSimpleHtmlListBox | yes |  ?? | yes | gen_html_listbox.cpp |
 | wxSlider | yes |  yes | yes | gen_slider.cpp |
-| wxSpinButton | yes |  ?? | yes | gen_spin_btn.cpp |
-| wxSpinCtrl | yes |  ?? | yes | gen_spin_ctrl.cpp |
+| wxSpinButton | yes |  yes | yes | gen_spin_btn.cpp |
+| wxSpinCtrl | yes |  yes | yes | gen_spin_ctrl.cpp |
 | wxSpinCtrlDouble | yes |  ?? | yes | gen_spin_ctrl.cpp |
 | wxSplitterWindow | yes |  ?? | yes | gen_split_win.cpp |
 | wxStaticBitmap | yes |  yes | yes | gen_static_bmp.cpp |

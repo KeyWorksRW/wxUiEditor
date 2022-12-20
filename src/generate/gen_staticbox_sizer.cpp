@@ -44,13 +44,14 @@ void StaticBoxSizerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxpa
     }
 }
 
-std::optional<ttlib::cstr> StaticBoxSizerGenerator::GenConstruction(Node* node)
+std::optional<ttlib::sview> StaticBoxSizerGenerator::CommonConstruction(Code& code)
 {
-    ttlib::cstr code;
-    if (node->IsLocal())
+    if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
 
-    ttlib::cstr parent_name("this");
+    Node* node = code.node();
+
+    ttlib::cstr parent_name(code.is_cpp() ? "this" : "self");
     if (!node->GetParent()->IsForm())
     {
         auto parent = node->GetParent();
@@ -64,84 +65,75 @@ std::optional<ttlib::cstr> StaticBoxSizerGenerator::GenConstruction(Node* node)
             else if (parent->isGen(gen_wxStaticBoxSizer) || parent->isGen(gen_StaticCheckboxBoxSizer) ||
                      parent->isGen(gen_StaticRadioBtnBoxSizer))
             {
-                parent_name.clear();
-                parent_name << parent->get_node_name() << "->GetStaticBox()";
+                parent_name = parent->get_node_name();
+                if (code.is_cpp())
+                    parent_name << "->GetStaticBox()";
+                else
+                    parent_name << ".GetStaticBox()";
                 break;
             }
             parent = parent->GetParent();
         }
     }
+    code.NodeName().CreateClass().as_string(prop_orientation).Comma().Str(parent_name);
 
-    code << node->get_node_name() << " = new wxStaticBoxSizer(" << node->prop_as_string(prop_orientation) << ", "
-         << parent_name;
-
-    auto& label = node->prop_as_string(prop_label);
-    if (label.size())
+    if (auto& label = node->prop_as_string(prop_label); label.size())
     {
-        code << ", " << GenerateQuotedString(label);
+        code.Comma().QuotedString(label);
     }
-    code << ");";
+    code.EndFunction();
 
-    auto min_size = node->prop_as_wxSize(prop_minimum_size);
-    if (min_size.GetX() != -1 || min_size.GetY() != -1)
+    if (code.HasValue(prop_minimum_size))
     {
-        code << "\n" << node->get_node_name() << "->SetMinSize(" << min_size.GetX() << ", " << min_size.GetY() << ");";
+        code.Eol().NodeName().Function("SetMinSize(").WxSize(prop_minimum_size).EndFunction();
     }
 
-    return code;
+    return code.m_code;
 }
 
-std::optional<ttlib::cstr> StaticBoxSizerGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
+std::optional<ttlib::sview> StaticBoxSizerGenerator::CommonSettings(Code& code)
 {
-    ttlib::cstr code;
-    if (node->prop_as_bool(prop_disabled))
+    if (code.IsTrue(prop_disabled))
     {
-        code << node->get_node_name() << "->GetStaticBox()->Enable(false);";
-    }
-    if (node->prop_as_bool(prop_hidden))
-    {
-        if (code.size())
-            code << "\n";
-        code << node->get_node_name() << "->GetStaticBox()->Hide();";
+        if (code.is_cpp())
+            code.NodeName().Function("GetStaticBox()->Enable(false);");
+        else
+            code.NodeName().Function("GetStaticBox().Enable(False)");
     }
 
-    return code;
+    return code.m_code;
 }
 
-std::optional<ttlib::cstr> StaticBoxSizerGenerator::GenAfterChildren(Node* node)
+std::optional<ttlib::sview> StaticBoxSizerGenerator::CommonAfterChildren(Code& code)
 {
-    ttlib::cstr code;
-    if (node->as_bool(prop_hide_children))
+    if (code.IsTrue(prop_hide_children))
     {
-        code << "\t" << node->get_node_name() << "->ShowItems(false);";
+        code.NodeName().Function("ShowItems(").Str(code.is_cpp() ? "false" : "False").EndFunction();
     }
 
-    auto parent = node->GetParent();
+    auto parent = code.node()->GetParent();
     if (!parent->IsSizer() && !parent->isGen(gen_wxDialog) && !parent->isGen(gen_PanelForm))
     {
-        if (code.size())
-            code << '\n';
-        code << "\n";
-
-        // The parent node is not a sizer -- which is expected if this is the parent sizer underneath a form or
-        // wxPanel.
-
+        code.NewLine(true);
         if (parent->isGen(gen_wxRibbonPanel))
         {
-            code << parent->get_node_name() << "->SetSizerAndFit(" << node->get_node_name() << ");";
+            code.ParentName().Function("SetSizerAndFit(").NodeName().EndFunction();
         }
         else
         {
-            if (GetParentName(node) != "this")
-                code << GetParentName(node) << "->";
-            code << "SetSizerAndFit(" << node->get_node_name() << ");";
+            if (GetParentName(code.node()) != "this")
+            {
+                code.ParentName().Add(".");
+                code.Function("SetSizerAndFit(").NodeName().EndFunction();
+            }
+            else
+            {
+                code.FormFunction("SetSizerAndFit(").NodeName().EndFunction();
+            }
         }
     }
 
-    if (code.size())
-        return code;
-    else
-        return {};
+    return code.m_code;
 }
 
 bool StaticBoxSizerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)

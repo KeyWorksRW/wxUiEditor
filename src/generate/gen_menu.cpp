@@ -52,8 +52,8 @@ std::optional<ttlib::sview> MenuGenerator::CommonAdditionalCode(Code& code, GenE
             }
             else
             {
-                code.GetParentName().Function("Bind(wxEVT_RIGHT_DOWN, &") << node->get_form_name()
-                     << "::" << node->get_parent_name() << "OnContextMenu, this);";
+                code.GetParentName().Function("Bind(wxEVT_RIGHT_DOWN, &")
+                    << node->get_form_name() << "::" << node->get_parent_name() << "OnContextMenu, this);";
             }
         }
     }

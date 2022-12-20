@@ -46,7 +46,6 @@ std::optional<ttlib::cstr> SubMenuGenerator::GenSettings(Node* node, size_t& /* 
 
     // BUGBUG: [Randalphwa - 12-16-2022] See issue #865 -- this should be in AdditionalCode, not here
 
-
     if (node->HasValue(prop_bitmap))
     {
         ttlib::cstr bundle_code;

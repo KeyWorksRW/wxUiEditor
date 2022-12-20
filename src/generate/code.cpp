@@ -81,11 +81,36 @@ Code& Code::Eol(bool check_size)
             m_code.pop_back();
         m_code += '\n';
     }
+    if (m_within_braces && is_cpp())
+        m_code += '\t';
 
     if (m_auto_break)
     {
         m_break_at = m_code.size() + m_break_length;
         m_minium_length = m_code.size() + 10;
+    }
+    return *this;
+}
+
+Code& Code::OpenBrace()
+{
+    if (is_cpp())
+    {
+        m_within_braces = true;
+        m_code += "\n{";
+        Eol();
+    }
+    return *this;
+}
+
+Code& Code::CloseBrace()
+{
+    if (is_cpp())
+    {
+        m_within_braces = false;
+        while (ttlib::is_whitespace(m_code.back()))
+            m_code.pop_back();
+        Eol().Str("}").Eol();
     }
     return *this;
 }
@@ -812,7 +837,6 @@ int Code::WhatParamsNeeded(ttlib::sview default_style) const
     }
 
     // This could be done as a single if statement, but it is easier to read this way.
-    bool result = nothing_needed;
     if ((m_node->HasValue(prop_style) && m_node->as_string(prop_style) != default_style))
         return (pos_needed | size_needed | style_needed);
     else if (m_node->HasValue(prop_window_style))

@@ -30,36 +30,23 @@ wxObject* GridSizerGenerator::CreateMockup(Node* node, wxObject* parent)
     return sizer;
 }
 
-std::optional<ttlib::cstr> GridSizerGenerator::GenConstruction(Node* node)
+std::optional<ttlib::sview> GridSizerGenerator::CommonConstruction(Code& code)
 {
-    ttlib::cstr code;
-    if (node->IsLocal())
+    if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
-    code << node->get_node_name() << " = new wxGridSizer(";
-    auto rows = node->prop_as_int(prop_rows);
-    auto cols = node->prop_as_int(prop_cols);
-    auto vgap = node->prop_as_int(prop_vgap);
-    auto hgap = node->prop_as_int(prop_hgap);
-
-    if (rows != 0)
+    code.NodeName().CreateClass();
+    if (code.node()->prop_as_int(prop_rows) != 0)
     {
-        code << rows << ", ";
+        code.as_string(prop_rows).Comma();
     }
-    code << cols;
+    code.as_string(prop_cols).Comma().as_string(prop_vgap).Comma().as_string(prop_hgap).EndFunction();
 
-    if (vgap != 0 || hgap != 0)
+    if (code.HasValue(prop_minimum_size))
     {
-        code << ", " << vgap << ", " << hgap;
-    }
-    code << ");";
-
-    auto min_size = node->prop_as_wxSize(prop_minimum_size);
-    if (min_size.GetX() != -1 || min_size.GetY() != -1)
-    {
-        code << "\n" << node->get_node_name() << "->SetMinSize(" << min_size.GetX() << ", " << min_size.GetY() << ");";
+        code.Eol().NodeName().Function("SetMinSize(").WxSize(prop_minimum_size).EndFunction();
     }
 
-    return code;
+    return code.m_code;
 }
 
 void GridSizerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/, Node* node, bool /* is_preview */)
@@ -71,40 +58,36 @@ void GridSizerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*
     }
 }
 
-std::optional<ttlib::cstr> GridSizerGenerator::GenAfterChildren(Node* node)
+std::optional<ttlib::sview> GridSizerGenerator::CommonAfterChildren(Code& code)
 {
-    ttlib::cstr code;
-    if (node->as_bool(prop_hide_children))
+    if (code.IsTrue(prop_hide_children))
     {
-        code << "\t" << node->get_node_name() << "->ShowItems(false);";
+        code.NodeName().Function("ShowItems(").Str(code.is_cpp() ? "false" : "False").EndFunction();
     }
 
-    auto parent = node->GetParent();
+    auto parent = code.node()->GetParent();
     if (!parent->IsSizer() && !parent->isGen(gen_wxDialog) && !parent->isGen(gen_PanelForm))
     {
-        if (code.size())
-            code << '\n';
-        code << "\n";
-
-        // The parent node is not a sizer -- which is expected if this is the parent sizer underneath a form or
-        // wxPanel.
-
+        code.NewLine(true);
         if (parent->isGen(gen_wxRibbonPanel))
         {
-            code << parent->get_node_name() << "->SetSizerAndFit(" << node->get_node_name() << ");";
+            code.ParentName().Function("SetSizerAndFit(").NodeName().EndFunction();
         }
         else
         {
-            if (GetParentName(node) != "this")
-                code << GetParentName(node) << "->";
-            code << "SetSizerAndFit(" << node->get_node_name() << ");";
+            if (GetParentName(code.node()) != "this")
+            {
+                code.ParentName().Add(".");
+                code.Function("SetSizerAndFit(").NodeName().EndFunction();
+            }
+            else
+            {
+                code.FormFunction("SetSizerAndFit(").NodeName().EndFunction();
+            }
         }
     }
 
-    if (code.size())
-        return code;
-    else
-        return {};
+    return code.m_code;
 }
 
 bool GridSizerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)

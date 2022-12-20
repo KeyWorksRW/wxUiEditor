@@ -13,8 +13,9 @@ class WrapSizerGenerator : public BaseGenerator
 {
 public:
     wxObject* CreateMockup(Node* node, wxObject* /*parent*/) override;
-    std::optional<ttlib::cstr> GenConstruction(Node* node) override;
-    std::optional<ttlib::cstr> GenAfterChildren(Node* node) override;
+
+    std::optional<ttlib::sview> CommonConstruction(Code& code) override;
+    std::optional<ttlib::sview> CommonAfterChildren(Code& code) override;
 
     bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr) override;
     void AfterCreation(wxObject* /*wxobject*/, wxWindow* /*wxparent*/, Node* /* node */, bool /* is_preview */) override;

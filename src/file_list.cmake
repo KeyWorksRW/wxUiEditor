@@ -176,7 +176,7 @@ set (file_list
     generate/gen_gridbag_sizer.cpp      # wxGridBagSizer generator
     generate/gen_spacer_sizer.cpp       # Add space to sizer generator
     generate/gen_statchkbox_sizer.cpp   # wxStaticBoxSizer with wxCheckBox generator
-    generate/gen_staticbox_sizer.cpp    # wxStaticBoxSizer gemeratpr
+    generate/gen_staticbox_sizer.cpp    # wxStaticBoxSizer generator
     generate/gen_statradiobox_sizer.cpp # wxStaticBoxSizer with wxRadioButton generator
     generate/gen_std_dlgbtn_sizer.cpp   # wxStdDialogButtonSizer generator
     generate/gen_text_sizer.cpp         # wxTextSizerWrapper generator

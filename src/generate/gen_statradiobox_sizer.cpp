@@ -9,8 +9,9 @@
 #include <wx/sizer.h>
 #include <wx/statbox.h>
 
-#include "gen_common.h"  // GeneratorLibrary -- Generator classes
-#include "node.h"        // Node class
+#include "gen_common.h"     // GeneratorLibrary -- Generator classes
+#include "node.h"           // Node class
+#include "project_class.h"  // Project class
 
 #include "pugixml.hpp"  // xml read/write/create/process
 
@@ -18,25 +19,34 @@
 
 wxObject* StaticRadioBtnBoxSizerGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    m_radiobtn = new wxRadioButton(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString(prop_label));
-    if (node->prop_as_bool(prop_checked))
-        m_radiobtn->SetValue(true);
+    wxStaticBoxSizer* sizer;
 
-    auto staticbox = new wxStaticBox(wxStaticCast(parent, wxWindow), wxID_ANY, m_radiobtn);
+    if (GetProject()->as_string(prop_code_preference) != "Python")
+    {
+        m_radiobtn = new wxRadioButton(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString(prop_label));
+        if (node->prop_as_bool(prop_checked))
+            m_radiobtn->SetValue(true);
+        if (node->HasValue(prop_tooltip))
+            m_radiobtn->SetToolTip(node->prop_as_wxString(prop_tooltip));
 
-    auto sizer = new wxStaticBoxSizer(staticbox, node->prop_as_int(prop_orientation));
+        auto staticbox = new wxStaticBox(wxStaticCast(parent, wxWindow), wxID_ANY, m_radiobtn);
+
+        sizer = new wxStaticBoxSizer(staticbox, node->prop_as_int(prop_orientation));
+    }
+    else
+    {
+        sizer = new wxStaticBoxSizer(node->prop_as_int(prop_orientation), wxStaticCast(parent, wxWindow),
+                                     node->prop_as_wxString(prop_label));
+    }
+
     if (auto dlg = wxDynamicCast(parent, wxDialog); dlg)
     {
         if (!dlg->GetSizer())
             dlg->SetSizer(sizer);
     }
 
-    auto min_size = node->prop_as_wxSize(prop_minimum_size);
-    if (min_size.x != -1 || min_size.y != -1)
-        sizer->SetMinSize(min_size);
-
-    if (node->HasValue(prop_tooltip))
-        m_radiobtn->SetToolTip(node->prop_as_wxString(prop_tooltip));
+    if (node->HasValue(prop_minimum_size))
+        sizer->SetMinSize(node->as_wxSize(prop_minimum_size));
 
     return sizer;
 }
@@ -61,31 +71,29 @@ bool StaticRadioBtnBoxSizerGenerator::OnPropertyChange(wxObject* /* widget */, N
     return false;
 }
 
-std::optional<ttlib::cstr> StaticRadioBtnBoxSizerGenerator::GenConstruction(Node* node)
+std::optional<ttlib::sview> StaticRadioBtnBoxSizerGenerator::CommonConstruction(Code& code)
 {
-    ttlib::cstr code;
-    code << node->prop_as_string(prop_radiobtn_var_name) << " = new wxRadioButton(";
-    code << GetParentName(node) << ", " << node->prop_as_string(prop_id) << ", ";
-
-    if (node->prop_as_string(prop_label).size())
+    Node* node = code.node();
+    if (code.is_cpp())
     {
-        code << GenerateQuotedString(node->prop_as_string(prop_label));
+        code.as_string(prop_radiobtn_var_name) << " = new wxRadioButton(";
+        code.GetParentName().Comma().as_string(prop_id).Comma().QuotedString(prop_label).EndFunction();
+
+        if (auto result = GenValidatorSettings(node); result)
+        {
+            code.Str(result.value());
+        }
+        code.Eol();
     }
     else
     {
-        code << "wxEmptyString";
-    }
-    code << ");\n";
-
-    if (auto result = GenValidatorSettings(node); result)
-    {
-        code << result.value() << '\n';
+        code.Str("# wxPython currently does not support a radio button as a static box label").Eol();
     }
 
-    if (node->IsLocal())
+    if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
 
-    ttlib::cstr parent_name("this");
+    ttlib::cstr parent_name(code.is_cpp() ? "this" : "self");
     if (!node->GetParent()->IsForm())
     {
         auto parent = node->GetParent();
@@ -99,90 +107,101 @@ std::optional<ttlib::cstr> StaticRadioBtnBoxSizerGenerator::GenConstruction(Node
             else if (parent->isGen(gen_wxStaticBoxSizer) || parent->isGen(gen_StaticCheckboxBoxSizer) ||
                      parent->isGen(gen_StaticRadioBtnBoxSizer))
             {
-                parent_name.clear();
-                parent_name << parent->get_node_name() << "->GetStaticBox()";
+                parent_name = parent->get_node_name();
+                if (code.is_cpp())
+                    parent_name << "->GetStaticBox()";
+                else
+                    parent_name << ".GetStaticBox()";
                 break;
             }
             parent = parent->GetParent();
         }
     }
-
-    code << node->get_node_name() << " = new wxStaticBoxSizer(new wxStaticBox(" << parent_name << ", wxID_ANY,";
-    if (wxGetProject().value(prop_wxWidgets_version) == "3.1")
+    if (code.is_cpp())
     {
-        code << "\n#if wxCHECK_VERSION(3, 1, 1)\n\t";
-        code << node->prop_as_string(prop_radiobtn_var_name) << "),";
-        code << "\n#else\n\t";
-        code << "wxEmptyString),";
-        code << "\n#endif\n";
-        code << node->prop_as_string(prop_orientation) << ");";
-    }
-    else
-    {
-        code << node->prop_as_string(prop_radiobtn_var_name) << "), " << node->prop_as_string(prop_orientation) << ");";
-    }
-
-    auto min_size = node->prop_as_wxSize(prop_minimum_size);
-    if (min_size.GetX() != -1 || min_size.GetY() != -1)
-    {
-        code << "\n" << node->get_node_name() << "->SetMinSize(" << min_size.GetX() << ", " << min_size.GetY() << ");";
-    }
-
-    return code;
-}
-
-std::optional<ttlib::cstr> StaticRadioBtnBoxSizerGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
-{
-    ttlib::cstr code;
-    if (node->prop_as_bool(prop_disabled))
-    {
-        code << node->get_node_name() << "->GetStaticBox()->Enable(false);";
-    }
-    if (node->HasValue(prop_tooltip))
-    {
-        if (code.size())
-            code << "\n";
-        code << node->prop_as_string(prop_radiobtn_var_name) << "->SetToolTip("
-             << GenerateQuotedString(node->prop_as_string(prop_tooltip)) << ");";
-    }
-
-    return code;
-}
-
-std::optional<ttlib::cstr> StaticRadioBtnBoxSizerGenerator::GenAfterChildren(Node* node)
-{
-    ttlib::cstr code;
-    if (node->as_bool(prop_hidden))
-    {
-        code << "\t" << node->get_node_name() << "->ShowItems(false);";
-    }
-
-    auto parent = node->GetParent();
-    if (!parent->IsSizer() && !parent->isGen(gen_wxDialog) && !parent->isGen(gen_PanelForm))
-    {
-        if (code.size())
-            code << '\n';
-        code << "\n";
-
-        // The parent node is not a sizer -- which is expected if this is the parent sizer underneath a form or
-        // wxPanel.
-
-        if (parent->isGen(gen_wxRibbonPanel))
+        code.NodeName() << " = new wxStaticBoxSizer(new wxStaticBox(" << parent_name << ", wxID_ANY";
+        code.Comma();
+        if (wxGetProject().value(prop_wxWidgets_version) == "3.1")
         {
-            code << parent->get_node_name() << "->SetSizerAndFit(" << node->get_node_name() << ");";
+            code.Eol().Str("#if wxCHECK_VERSION(3, 1, 1)").Eol().Tab();
+            code.as_string(prop_radiobtn_var_name) << "),";
+            code.Eol().Str("#else").Eol().Tab().Str("wxEmptyString),");
+            code.Eol().Str("#endif").Eol();
+            code.as_string(prop_orientation).EndFunction();
         }
         else
         {
-            if (GetParentName(node) != "this")
-                code << GetParentName(node) << "->";
-            code << "SetSizerAndFit(" << node->get_node_name() << ");";
+            code.as_string(prop_radiobtn_var_name).Str("), ").as_string(prop_orientation).EndFunction();
+        }
+    }
+    else
+    {
+        code.NodeName().CreateClass(false, "wxStaticBoxSizer").as_string(prop_orientation).Comma().Str(parent_name);
+        auto& label = node->prop_as_string(prop_label);
+        if (label.size())
+        {
+            code.Comma().QuotedString(label);
+        }
+        code.EndFunction();
+    }
+
+    if (code.HasValue(prop_minimum_size))
+    {
+        code.Eol().NodeName().Function("SetMinSize(").WxSize(prop_minimum_size).EndFunction();
+    }
+
+    return code.m_code;
+}
+
+std::optional<ttlib::sview> StaticRadioBtnBoxSizerGenerator::CommonSettings(Code& code)
+{
+    if (code.IsTrue(prop_disabled))
+    {
+        if (code.is_cpp())
+            code.NodeName().Function("GetStaticBox()->Enable(false);");
+        else
+            code.NodeName().Function("GetStaticBox().Enable(False)");
+    }
+
+    if (code.HasValue(prop_tooltip) && code.is_cpp())
+    {
+        code.NewLine(true).as_string(prop_radiobtn_var_name).Function("SetToolTip(");
+        code.QuotedString(prop_tooltip).EndFunction();
+    }
+
+    return code.m_code;
+}
+
+std::optional<ttlib::sview> StaticRadioBtnBoxSizerGenerator::CommonAfterChildren(Code& code)
+{
+    if (code.IsTrue(prop_hide_children))
+    {
+        code.NodeName().Function("ShowItems(").Str(code.is_cpp() ? "false" : "False").EndFunction();
+    }
+
+    auto parent = code.node()->GetParent();
+    if (!parent->IsSizer() && !parent->isGen(gen_wxDialog) && !parent->isGen(gen_PanelForm))
+    {
+        code.NewLine(true);
+        if (parent->isGen(gen_wxRibbonPanel))
+        {
+            code.ParentName().Function("SetSizerAndFit(").NodeName().EndFunction();
+        }
+        else
+        {
+            if (GetParentName(code.node()) != "this")
+            {
+                code.ParentName().Add(".");
+                code.Function("SetSizerAndFit(").NodeName().EndFunction();
+            }
+            else
+            {
+                code.FormFunction("SetSizerAndFit(").NodeName().EndFunction();
+            }
         }
     }
 
-    if (code.size())
-        return code;
-    else
-        return {};
+    return code.m_code;
 }
 
 bool StaticRadioBtnBoxSizerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)

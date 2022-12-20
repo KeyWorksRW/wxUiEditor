@@ -23,33 +23,6 @@ wxObject* GridBagSizerGenerator::CreateMockup(Node* node, wxObject* parent)
             dlg->SetSizer(sizer);
     }
 
-    if (auto& growable = node->prop_as_string(prop_growablecols); growable.size())
-    {
-        ttlib::multiview values(growable, ',');
-        for (auto& iter: values)
-        {
-            int proportion = 0;
-            if (auto pos = iter.find(':'); ttlib::is_found(pos))
-            {
-                proportion = ttlib::atoi(ttlib::find_nonspace(iter.data() + pos + 1));
-            }
-            sizer->AddGrowableCol(iter.atoi(), proportion);
-        }
-    }
-    if (auto& growable = node->prop_as_string(prop_growablerows); growable.size())
-    {
-        ttlib::multiview values(growable, ',');
-        for (auto& iter: values)
-        {
-            int proportion = 0;
-            if (auto pos = iter.find(':'); ttlib::is_found(pos))
-            {
-                proportion = ttlib::atoi(ttlib::find_nonspace(iter.data() + pos + 1));
-            }
-            sizer->AddGrowableRow(iter.atoi(), proportion);
-        }
-    }
-
     sizer->SetMinSize(node->prop_as_wxSize(prop_minimum_size));
     sizer->SetFlexibleDirection(node->prop_as_int(prop_flexible_direction));
     sizer->SetNonFlexibleGrowMode((wxFlexSizerGrowMode) node->prop_as_int(prop_non_flexible_grow_mode));
@@ -138,140 +111,133 @@ void GridBagSizerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxpare
         iter.second->SetPos(position);
         sizer->Add(iter.second);
     }
+
+    auto lambda = [&](GenEnum::PropName prop_name)
+    {
+        if (auto& growable = node->prop_as_string(prop_name); growable.size())
+        {
+            ttlib::multiview values(growable, ',');
+            for (auto& iter: values)
+            {
+                int proportion = 0;
+                if (auto pos = iter.find(':'); ttlib::is_found(pos))
+                {
+                    proportion = ttlib::atoi(ttlib::find_nonspace(iter.data() + pos + 1));
+                }
+                if (prop_name == prop_growablecols)
+                    sizer->AddGrowableCol(iter.atoi(), proportion);
+                else
+                    sizer->AddGrowableRow(iter.atoi(), proportion);
+            }
+        }
+    };
+    lambda(prop_growablecols);
+    lambda(prop_growablerows);
 }
 
-std::optional<ttlib::cstr> GridBagSizerGenerator::GenConstruction(Node* node)
+std::optional<ttlib::sview> GridBagSizerGenerator::CommonConstruction(Code& code)
 {
-    // The leading tab is in case we indent in a brace block later on
-    ttlib::cstr code;
-    if (node->IsLocal())
+    if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
+    code.NodeName().CreateClass();
+    code.as_string(prop_vgap).Comma().as_string(prop_hgap).EndFunction();
 
-    code << node->get_node_name() << " = new wxGridBagSizer(";
-
-    auto vgap = node->prop_as_int(prop_vgap);
-    auto hgap = node->prop_as_int(prop_hgap);
-    if (vgap != 0 || hgap != 0)
+    Node* node = code.node();
+    if (code.HasValue(prop_empty_cell_size))
     {
-        code << vgap << ", " << hgap;
-    }
-    code << ");";
-
-    // If growable settings are used, there can be a lot of lines of code generated. To make it a bit clearer, we put it
-    // in braces
-    bool isExpanded = false;
-
-    if (auto& growable = node->prop_as_string(prop_growablecols); growable.size())
-    {
-        ttlib::multistr values(growable, ',');
-        for (auto& iter: values)
-        {
-            if (!isExpanded)
-            {
-                code << "\n\t{";
-                isExpanded = true;
-            }
-            auto val = iter.atoi();
-            int proportion = 0;
-            if (auto pos = iter.find(':'); ttlib::is_found(pos))
-            {
-                proportion = ttlib::atoi(ttlib::find_nonspace(iter.c_str() + pos + 1));
-            }
-            code << "\n\t    " << node->get_node_name() << "->AddGrowableCol(" << val;
-            if (proportion > 0)
-                code << ", " << proportion;
-            code << ");";
-        }
-    }
-
-    if (auto& growable = node->prop_as_string(prop_growablerows); growable.size())
-    {
-        ttlib::multiview values(growable, ',');
-        for (auto& iter: values)
-        {
-            if (!isExpanded)
-            {
-                code << "\n\t{";
-                isExpanded = true;
-            }
-            auto val = iter.atoi();
-            int proportion = 0;
-            if (auto pos = iter.find(':'); ttlib::is_found(pos))
-            {
-                proportion = ttlib::atoi(ttlib::find_nonspace(iter.data() + pos + 1));
-            }
-            code << "\n\t    " << node->get_node_name() << "->AddGrowableRow(" << val;
-            if (proportion > 0)
-                code << ", " << proportion;
-            code << ");";
-        }
-    }
-
-    if (node->HasValue(prop_empty_cell_size))
-    {
-        code << (isExpanded ? "\n\t    " : "\n") << node->get_node_name() << "->SetEmptyCellSize(";
-        code << GenerateWxSize(node, prop_empty_cell_size) << ");";
+        code.NodeName().Function("SetEmptyCellSize(").WxSize(prop_empty_cell_size).EndFunction();
     }
 
     auto& direction = node->prop_as_string(prop_flexible_direction);
     if (direction.empty() || direction.is_sameas("wxBOTH"))
     {
-        if (isExpanded)
-            code << "\n\t}";
-        return code;
+        return code.m_code;
     }
 
-    code << (isExpanded ? "\n\t    " : "\n") << node->get_node_name() << "->SetFlexibleDirection(" << direction << ");";
+    code.NodeName().Function("SetFlexibleDirection").Add(direction).EndFunction();
 
-    auto non_flex_growth = node->prop_as_string(prop_non_flexible_grow_mode);
+    auto& non_flex_growth = node->prop_as_string(prop_non_flexible_grow_mode);
     if (non_flex_growth.empty() || non_flex_growth.is_sameas("wxFLEX_GROWMODE_SPECIFIED"))
     {
-        if (isExpanded)
-            code << "\n\t}";
-        return code;
+        return code.m_code;
     }
-    code << (isExpanded ? "\n\t    " : "\n") << node->get_node_name() << "->SetNonFlexibleGrowMode(" << non_flex_growth
-         << ");";
+    code.NodeName().Function("SetNonFlexibleGrowMode").Add(non_flex_growth).EndFunction();
 
-    if (isExpanded)
-        code << "\n\t}";
-    return code;
+    return code.m_code;
 }
 
-std::optional<ttlib::cstr> GridBagSizerGenerator::GenAfterChildren(Node* node)
+std::optional<ttlib::sview> GridBagSizerGenerator::CommonAfterChildren(Code& code)
 {
-    ttlib::cstr code;
-    if (node->as_bool(prop_hide_children))
+    Node* node = code.node();
+
+    // If growable settings are used, there can be a lot of lines of code generated. To make
+    // it a bit clearer in C++, we put it in braces.
+    bool is_within_braces = false;
+
+    auto lambda = [&](GenEnum::PropName prop_name)
     {
-        code << "\t" << node->get_node_name() << "->ShowItems(false);";
+        if (auto& growable = node->prop_as_string(prop_name); growable.size())
+        {
+            ttlib::multiview values(growable, ',');
+            for (auto& iter: values)
+            {
+                auto val = iter.atoi();
+                if (!is_within_braces)
+                {
+                    code.OpenBrace();
+                    is_within_braces = true;
+                }
+                int proportion = 0;
+                if (auto pos = iter.find(':'); ttlib::is_found(pos))
+                {
+                    proportion = ttlib::atoi(ttlib::find_nonspace(iter.data() + pos + 1));
+                }
+                if (!code.size() || !ttlib::is_whitespace(code.m_code.back()))
+                    code.Eol();
+
+                // Note that iter may start with a space, so using itoa() ensures that we
+                // don't add any extra space.
+                if (prop_name == prop_growablerows)
+                    code.NodeName().Function("AddGrowableRow(").itoa(val);
+                else
+                    code.NodeName().Function("AddGrowableCol(").itoa(val);
+                if (proportion > 0)
+                    code.Comma().itoa(proportion);
+                code.EndFunction();
+            }
+        }
+    };
+    lambda(prop_growablecols);
+    lambda(prop_growablerows);
+
+    if (code.IsTrue(prop_hide_children))
+    {
+        code.NodeName().Function("ShowItems(").Str(code.is_cpp() ? "false" : "False").EndFunction();
     }
 
-    auto parent = node->GetParent();
+    auto parent = code.node()->GetParent();
     if (!parent->IsSizer() && !parent->isGen(gen_wxDialog) && !parent->isGen(gen_PanelForm))
     {
-        if (code.size())
-            code << '\n';
-        code << "\n";
-
-        // The parent node is not a sizer -- which is expected if this is the parent sizer underneath a form or
-        // wxPanel.
-
+        code.NewLine(true);
         if (parent->isGen(gen_wxRibbonPanel))
         {
-            code << parent->get_node_name() << "->SetSizerAndFit(" << node->get_node_name() << ");";
+            code.ParentName().Function("SetSizerAndFit(").NodeName().EndFunction();
         }
         else
         {
-            if (GetParentName(node) != "this")
-                code << GetParentName(node) << "->";
-            code << "SetSizerAndFit(" << node->get_node_name() << ");";
+            if (GetParentName(code.node()) != "this")
+            {
+                code.ParentName().Add(".");
+                code.Function("SetSizerAndFit(").NodeName().EndFunction();
+            }
+            else
+            {
+                code.FormFunction("SetSizerAndFit(").NodeName().EndFunction();
+            }
         }
     }
 
-    if (code.size())
-        return code;
-    else
-        return {};
+    return code.m_code;
 }
 
 bool GridBagSizerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)

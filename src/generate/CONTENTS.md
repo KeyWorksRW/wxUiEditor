@@ -45,15 +45,14 @@ The following tables list classes, objects and functions that wxUiEditor can gen
 | Class | C++ | Python | XRC |file |
 -----------|-----|--------|------|------|
 | wxBoxSizer | yes | yes | yes | gen_box_sizer.cpp |
-| wxCheckBoxSizer | yes |  ?? | yes | gen_statchkbox_sizer.cpp |
-| wxFlexGridSizer | yes |  ?? | yes | gen_flexgrid_sizer.cpp |
-| wxGridBagSizer | yes |  ?? | yes | gen_gridbag_sizer.cpp |
-| wxGridSizer | yes |  ?? | yes | gen_grid_sizer.cpp |
-| wxRadioButtonSizer | yes |  ?? | yes | gen_statradiobox_sizer.cpp |
-| wxStaticBoxSizer | yes |  ?? | yes | gen_staticbox_sizer.cpp |
+| wxCheckBoxSizer | yes |  no | yes | gen_statchkbox_sizer.cpp |
+| wxFlexGridSizer | yes |  yes | yes | gen_flexgrid_sizer.cpp |
+| wxGridBagSizer | yes |  yes | yes | gen_gridbag_sizer.cpp |
+| wxGridSizer | yes |  yes | yes | gen_grid_sizer.cpp |
+| wxRadioButtonSizer | yes |  no | yes | gen_statradiobox_sizer.cpp |
+| wxStaticBoxSizer | yes |  yes | yes | gen_staticbox_sizer.cpp |
 | wxStdDialogButtonSizer | yes |  yes | yes | gen_std_dlgbtn_sizer.cpp |
-| wxTextSizerWrapper | yes |  ?? | no | gen_text_sizer.cpp |
-| wxWrapSizer | yes |  ?? | yes | gen_wrap_sizer.cpp |
+| wxWrapSizer | yes |  yes | yes | gen_wrap_sizer.cpp |
 
 # Classes
 

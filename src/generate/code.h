@@ -85,9 +85,19 @@ public:
     // Pass true to only add EOL if there is already code in the string
     Code& Eol(bool check_size = false);
 
+    // Pass true to only add EOL if there is already code in the string
+    Code& NewLine(bool check_size = false) { return Eol(check_size); }
+
     // Adds as many '\t' characters as specified by nTabs. Note that tabs are converted to
     // spaces when the line is written.
     Code& Tab(int nTabs = 1);
+
+    // In C++, this adds "{\n" and indents all lines until CloseBrace() is called.
+    //
+    // Ignored by Python.
+    Code& OpenBrace();
+
+    Code& CloseBrace();
 
     void EnableAutoLineBreak(bool auto_break = true) { m_auto_break = auto_break; }
 
@@ -231,8 +241,10 @@ protected:
     void InsertLineBreak(size_t cur_pos);
 
 private:
-    bool m_auto_break { true };
     size_t m_break_length { 80 };
     size_t m_break_at { 80 };       // this should be the same as m_break_length
     size_t m_minium_length { 10 };  // if the line is shorter than this, don't break it
+
+    bool m_auto_break { true };
+    bool m_within_braces { false };
 };

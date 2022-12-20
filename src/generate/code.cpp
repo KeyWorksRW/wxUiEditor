@@ -38,6 +38,7 @@ std::map<std::string_view, std::string_view, std::less<>> g_map_class_prefix
     { "wxBannerWindow", "wx.adv."},
     { "wxCalendarCtrl", "wx.adv."},
     { "wxDatePickerCtrl", "wx.adv."},
+    { "wxTimePickerCtrl", "wx.adv."},
 
 };
 // clang-format on

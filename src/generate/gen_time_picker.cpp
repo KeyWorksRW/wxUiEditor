@@ -26,16 +26,15 @@ wxObject* TimePickerCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
     return widget;
 }
 
-std::optional<ttlib::cstr> TimePickerCtrlGenerator::GenConstruction(Node* node)
+std::optional<ttlib::sview> TimePickerCtrlGenerator::CommonConstruction(Code& code)
 {
-    ttlib::cstr code;
-    if (node->IsLocal())
+    if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
-    code << node->get_node_name() << GenerateNewAssignment(node);
-    code << GetParentName(node) << ", " << node->prop_as_string(prop_id) << ", wxDefaultDateTime";
-    GeneratePosSizeFlags(node, code, true, "wxTP_DEFAULT");
+    code.NodeName().CreateClass();
+    code.GetParentName().Comma().as_string(prop_id).Comma().Add("wxDefaultDateTime");
+    code.PosSizeFlags(true, "wxTP_DEFAULT");
 
-    return code;
+    return code.m_code;
 }
 
 bool TimePickerCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)

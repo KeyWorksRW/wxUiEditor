@@ -33,12 +33,12 @@ The following tables list classes, objects and functions that wxUiEditor can gen
 
 | Class | C++ | Python | XRC |file |
 -----------|-----|--------|------|------|
-| wxColourPickerCtrl | yes |  ?? | yes | gen_clr_picker.cpp |
-| wxDatePickerCtrl | yes |  ?? | yes | gen_date_picker.cpp |
-| wxDirPickerCtrl | yes |  ?? | yes | gen_dir_picker.cpp |
-| wxFilePickerCtrl | yes |  ?? | yes | gen_file_picker.cpp |
-| wxFontPickerCtrl | yes |  ?? | yes | gen_font_picker.cpp |
-| wxTimePickerCtrl | yes |  ?? | yes | gen_time_picker.cpp |
+| wxColourPickerCtrl | yes |  yes | yes | gen_clr_picker.cpp |
+| wxDatePickerCtrl | yes |  yes | yes | gen_date_picker.cpp |
+| wxDirPickerCtrl | yes |  yes | yes | gen_dir_picker.cpp |
+| wxFilePickerCtrl | yes |  yes | yes | gen_file_picker.cpp |
+| wxFontPickerCtrl | yes |  yes | yes | gen_font_picker.cpp |
+| wxTimePickerCtrl | yes |  yes | yes | gen_time_picker.cpp |
 
 ### Sizers
 
@@ -83,9 +83,9 @@ The following tables list classes, objects and functions that wxUiEditor can gen
 | wxInfoBar | yes |  ?? | yes | gen_infobar.cpp |
 | wxListBox | yes |  ?? | yes | gen_listbox.cpp |
 | wxListView | yes |  ?? | yes | gen_listview.cpp |
-| wxMenu | yes |  yes | yes | menu_widgets.cpp |
+| wxMenu | yes |  yes | yes | gen_menu.cpp |
 | wxMenuBar | yes |  yes | yes | menu_widgets.cpp |
-| wxMenuItem | yes |  yes | yes | menu_widgets.cpp |
+| wxMenuItem | yes |  yes | yes | gen_menuitem.cpp |
 | wxPanel | yes |  ?? | yes | gen_panel.cpp |
 | wxPropertyGrid | yes |  ?? | no | gen_prop_grid.cpp |
 | wxPropertyGridManager | yes |  ?? | no | grid_widgets.cpp |
@@ -132,7 +132,7 @@ The following tables list classes, objects and functions that wxUiEditor can gen
 | AuiToolSpacer | yes |  ?? | yes | gen_aui_toolbar.cpp |
 | AuiToolStretchSpacer | yes |  ?? | yes | gen_aui_toolbar.cpp |
 | BookPage | yes |  ?? | yes | gen_book_page.cpp |
-| Check3State | yes |  ?? | yes | gen_checkbox.cpp |
+| Check3State | yes |  yes | yes | gen_checkbox.cpp |
 | CustomControl | yes |  ?? | yes | gen_custom_ctrl.cpp |
 | DataViewColumn | yes |  ?? | yes | dataview_widgets.cpp |
 | DataViewListColumn | yes |  ?? | yes | dataview_widgets.cpp |
@@ -145,10 +145,9 @@ The following tables list classes, objects and functions that wxUiEditor can gen
 | RibbonTool | yes |  ?? | yes | ribbon_widgets.cpp |
 | Separator | yes |  ?? | yes | menu_widgets.cpp |
 | Spacer | yes |  ?? | yes | gen_spacer_sizer.cpp |
-| SubMenu | yes |  ?? | yes | menu_widgets.cpp |
-| SubMenu | yes |  ?? | yes | menu_widgets.cpp |
+| SubMenu | yes |  yes | yes | gen_submenu.cpp |
 | ToolDropDown | yes |  ?? | yes | gen_toolbar.cpp |
-| ToolGenerator | yes |  ?? | yes | gen_toolbar.cpp |
+| ToolGenerator | yes |  yes | yes | gen_toolbar.cpp |
 | ToolSeparator | yes |  ?? | yes | gen_toolbar.cpp |
 | ToolStretchable | yes |  ?? | yes | gen_toolbar.cpp |
 | TreeListCtrlColumn | yes |  ?? | no | gen_tree_list.cpp |

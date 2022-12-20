@@ -41,6 +41,17 @@ std::optional<ttlib::cstr> DatePickerCtrlGenerator::GenConstruction(Node* node)
     return code;
 }
 
+std::optional<ttlib::sview> DatePickerCtrlGenerator::CommonConstruction(Code& code)
+{
+    if (code.is_cpp() && code.is_local_var())
+        code << "auto* ";
+    code.NodeName().CreateClass();
+    code.GetParentName().Comma().as_string(prop_id).Comma().Add("wxDefaultDateTime");
+    code.PosSizeFlags(true, "wxDP_DEFAULT|wxDP_SHOWCENTURY");
+
+    return code.m_code;
+}
+
 std::optional<ttlib::cstr> DatePickerCtrlGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
 {
     if (node->prop_as_string(prop_style).contains("wxDP_ALLOWNONE"))
@@ -52,6 +63,15 @@ std::optional<ttlib::cstr> DatePickerCtrlGenerator::GenSettings(Node* node, size
     }
 
     return {};
+}
+
+std::optional<ttlib::sview> DatePickerCtrlGenerator::CommonSettings(Code& code)
+{
+    if (code.PropContains(prop_style, "wxDP_ALLOWNONE"))
+    {
+        code.NodeName().Function("SetNullText").QuotedString(prop_null_text).EndFunction();
+    }
+    return code.m_code;
 }
 
 bool DatePickerCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)

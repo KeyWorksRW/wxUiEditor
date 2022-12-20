@@ -26,20 +26,21 @@ wxObject* ColourPickerGenerator::CreateMockup(Node* node, wxObject* parent)
     return widget;
 }
 
-std::optional<ttlib::cstr> ColourPickerGenerator::GenConstruction(Node* node)
+std::optional<ttlib::sview> ColourPickerGenerator::CommonConstruction(Code& code)
 {
-    ttlib::cstr code;
-    if (node->IsLocal())
+    if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
-    code << node->get_node_name() << GenerateNewAssignment(node);
-    code << GetParentName(node) << ", " << node->prop_as_string(prop_id) << ", ";
-    if (node->prop_as_string(prop_colour).size())
-        code << GenerateColourCode(node, prop_colour);
+    code.NodeName().CreateClass();
+    code.GetParentName().Comma().as_string(prop_id).Comma();
+    if (code.node()->prop_as_string(prop_colour).size())
+        ColourCode(code, prop_colour);
     else
-        code << "*wxBLACK";
-    GeneratePosSizeFlags(node, code, true, "wxCLRP_DEFAULT_STYLE");
+    {
+        code.Str((code.is_cpp() ? "*wxBLACK" : "wx.BLACK"));
+    }
+    code.PosSizeFlags(true, "wxCLRP_DEFAULT_STYLE");
 
-    return code;
+    return code.m_code;
 }
 
 bool ColourPickerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)

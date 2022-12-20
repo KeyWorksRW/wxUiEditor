@@ -31,64 +31,65 @@ wxObject* FontPickerGenerator::CreateMockup(Node* node, wxObject* parent)
     return widget;
 }
 
-std::optional<ttlib::cstr> FontPickerGenerator::GenConstruction(Node* node)
+std::optional<ttlib::sview> FontPickerGenerator::CommonConstruction(Code& code)
 {
-    ttlib::cstr code;
-    if (node->IsLocal())
+    if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
-    code << node->get_node_name() << GenerateNewAssignment(node);
-    code << GetParentName(node) << ", " << node->prop_as_string(prop_id) << ", ";
-    if (node->prop_as_string(prop_initial_font).size())
+    code.NodeName().CreateClass();
+    code.GetParentName().Comma().as_string(prop_id).Comma();
+    if (code.HasValue(prop_initial_font))
     {
-        auto fontprop = node->prop_as_font_prop(prop_initial_font);
+        auto fontprop = code.node()->prop_as_font_prop(prop_initial_font);
         wxFont font = fontprop.GetFont();
 
-        code << "\n\t\t\twxFont(";
+        code.Add("wxFont(");
 
-        if (fontprop.GetPointSize() <= 0)
-            code << "wxNORMAL_FONT->GetPointSize()";
+        if (fontprop.GetPointSize() <= 0) {
+            code.Add("wxNORMAL_FONT").Function("GetPointSize()");
+        }
         else
-            code << fontprop.GetPointSize();
+            code.itoa(fontprop.GetPointSize());
 
-        code << ", " << ConvertFontFamilyToString(fontprop.GetFamily()) << ", " << font.GetStyleString().wx_str();
-        code << ", " << font.GetWeightString().wx_str() << ", " << (fontprop.IsUnderlined() ? "true" : "false") << ", ";
+        code.Comma().Add(ConvertFontFamilyToString(fontprop.GetFamily())).Comma().Add(font.GetStyleString().utf8_string());
+        code.Comma().Str(font.GetWeightString().utf8_string()).Comma();
+
+        if (fontprop.IsUnderlined())
+            code.AddTrue();
+        else
+            code.AddFalse();
+        code.Comma();
         if (fontprop.GetFaceName().size())
-            code << '\"' << fontprop.GetFaceName().wx_str() << '\"';
+            code.QuotedString(fontprop.GetFaceName().utf8_string());
         else
-            code << "wxEmptyString";
+            code.Add("wxEmptyString");
 
-        code << ")";
-        code.insert(0, 4, ' ');
+        code += ")";
+        code.m_code.insert(0, 4, ' ');
     }
     else
     {
-        code << "wxNullFont";
+        code.Add("wxNullFont");
     }
 
-    GeneratePosSizeFlags(node, code, true, "wxFNTP_DEFAULT_STYLE");
+    code.PosSizeFlags(true);
 
-    return code;
+    return code.m_code;
 }
 
-std::optional<ttlib::cstr> FontPickerGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
+std::optional<ttlib::sview> FontPickerGenerator::CommonSettings(Code& code)
 {
-    ttlib::cstr code;
-
+    Node* node = code.node();
     if (node->prop_as_string(prop_min_point_size) != "0")
     {
-        if (code.size())
-            code << "\n";
-        code << node->get_node_name() << "->SetMinPointSize(" << node->prop_as_string(prop_min_point_size) << ");";
+        code.NodeName().Function("SetMinPointSize(").as_string(prop_min_point_size).EndFunction();
     }
 
     if (node->prop_as_string(prop_max_point_size) != "100")
     {
-        if (code.size())
-            code << "\n";
-        code << node->get_node_name() << "->SetMaxPointSize(" << node->prop_as_string(prop_max_point_size) << ");";
+        code.Eol(true).NodeName().Function("SetMaxPointSize(").as_string(prop_max_point_size).EndFunction();
     }
 
-    return code;
+    return code.m_code;
 }
 
 bool FontPickerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)

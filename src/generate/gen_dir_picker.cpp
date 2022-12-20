@@ -36,59 +36,45 @@ wxObject* DirPickerGenerator::CreateMockup(Node* node, wxObject* parent)
     return widget;
 }
 
-std::optional<ttlib::cstr> DirPickerGenerator::GenConstruction(Node* node)
+std::optional<ttlib::sview> DirPickerGenerator::CommonConstruction(Code& code)
 {
-    ttlib::cstr code;
-    if (node->IsLocal())
+    if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
-    code << node->get_node_name() << GenerateNewAssignment(node);
-    code << GetParentName(node) << ", " << node->prop_as_string(prop_id) << ", ";
+    code.NodeName().CreateClass();
+    code.GetParentName().Comma().as_string(prop_id).Comma();
+
+    if (auto& path = code.node()->prop_as_string(prop_initial_path); path.size())
     {
-        auto& path = node->prop_as_string(prop_initial_path);
-        if (path.size())
-        {
-            code << GenerateQuotedString(path);
-        }
-        else
-        {
-            code << "wxEmptyString";
-        }
+        code.QuotedString(path);
+    }
+    else
+    {
+        code.Add("wxEmptyString");
     }
 
-    code << ", ";
+    code.Comma();
+    if (auto& msg = code.node()->prop_as_string(prop_message); msg.size())
     {
-        auto& msg = node->prop_as_string(prop_message);
-        if (msg.size())
-        {
-            code << "\n\t" << GenerateQuotedString(msg);
-        }
-        else
-        {
-            code << " wxDirSelectorPromptStr";
-        }
+        code.QuotedString(msg);
+    }
+    else
+    {
+        code.Add("wxDirSelectorPromptStr");
     }
 
-    GeneratePosSizeFlags(node, code, true, "wxDIRP_DEFAULT_STYLE");
+    code.PosSizeFlags(false, "wxDIRP_DEFAULT_STYLE");
 
-    return code;
+    return code.m_code;
 }
 
-std::optional<ttlib::cstr> DirPickerGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
+std::optional<ttlib::sview> DirPickerGenerator::CommonSettings(Code& code)
 {
-    ttlib::cstr code;
-
-    if (node->prop_as_bool(prop_focus))
+    if (code.IsTrue(prop_focus))
     {
-        if (code.size())
-            code << '\n';
-        code << node->get_node_name() << "->SetFocus()";
+        code.NodeName().Function("SetFocus(").EndFunction();
     }
 
-    if (code.size())
-        return code;
-    else
-
-        return {};
+    return code.m_code;
 }
 
 bool DirPickerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)

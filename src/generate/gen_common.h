@@ -158,3 +158,7 @@ bool PythonBundleCode(Code& code, GenEnum::PropName prop);
 // Deterimes where the python code will be written to, and returns an absolute path to that
 // location which can be used as the parameter for make_relative().
 ttlib::cstr MakePythonPath(Node* node);
+
+// Creates a string using either wxSystemSettings::GetColour(name) or wxColour(r, g, b).
+// Generates wxNullColour if the property is empty.
+void ColourCode(Code& code, GenEnum::PropName prop_name);

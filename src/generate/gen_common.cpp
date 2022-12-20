@@ -54,6 +54,26 @@ ttlib::cstr GenerateColourCode(Node* node, GenEnum::PropName prop_name)
     return code;
 }
 
+void ColourCode(Code& code, GenEnum::PropName prop_name)
+{
+    if (!code.HasValue(prop_name))
+    {
+        code.Add("wxNullColour");
+    }
+    else
+    {
+        if (code.PropContains(prop_name, "wx"))
+        {
+            code.Add("wxSystemSettings").ClassMethod("GetColour(").as_string(prop_name).Str(")");
+        }
+        else
+        {
+            auto colour = code.node()->prop_as_wxColour(prop_name);
+            code.Add(ttlib::cstr().Format("wxColour(%i, %i, %i)", colour.Red(), colour.Green(), colour.Blue()));
+        }
+    }
+}
+
 ttlib::cstr GenerateQuotedString(const ttlib::cstr& str)
 {
     ttlib::cstr code;

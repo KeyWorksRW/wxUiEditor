@@ -625,7 +625,7 @@ bool GenerateBundleCode(const ttlib::cstr& description, ttlib::cstr& code)
         if (auto function_name = GetProject()->GetBundleFuncName(description); function_name.size())
         {
             // We get here if there is an Image form that contains the function to retrieve this bundle.
-            code = function_name;
+            code << function_name;
             return false;
         }
 
@@ -678,7 +678,7 @@ bool GenerateBundleCode(const ttlib::cstr& description, ttlib::cstr& code)
         if (auto function_name = GetProject()->GetBundleFuncName(description); function_name.size())
         {
             // We get here if there is an Image form that contains the function to retrieve this bundle.
-            code = function_name;
+            code << function_name;
             return false;
         }
 
@@ -705,7 +705,7 @@ bool GenerateBundleCode(const ttlib::cstr& description, ttlib::cstr& code)
         if (auto function_name = GetProject()->GetBundleFuncName(description); function_name.size())
         {
             // We get here if there is an Image form that contains the function to retrieve this bundle.
-            code = function_name;
+            code << function_name;
             return false;
         }
 

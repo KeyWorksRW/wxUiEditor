@@ -140,7 +140,10 @@ std::optional<ttlib::sview> GridBagSizerGenerator::CommonConstruction(Code& code
     if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
     code.NodeName().CreateClass();
-    code.as_string(prop_vgap).Comma().as_string(prop_hgap).EndFunction();
+
+    if (code.HasValue(prop_vgap) || code.HasValue(prop_hgap))
+        code.as_string(prop_vgap).Comma().as_string(prop_hgap);
+    code.EndFunction();
 
     Node* node = code.node();
     if (code.HasValue(prop_empty_cell_size))

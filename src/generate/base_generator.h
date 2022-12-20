@@ -157,7 +157,7 @@ public:
     };
 
     // Add any required Python libraries that need to be imported
-    virtual bool GetPythonImports(Node*, std::set<std::string>& /* set_imports */) { return false; };
+    virtual bool GetPythonImports(Node*, std::set<std::string>& /* set_imports */);
 
     // Return false if the entire Mockup contents should be recreated due to the property change
     virtual bool OnPropertyChange(wxObject*, Node*, NodeProperty*) { return false; }
@@ -175,10 +175,10 @@ public:
     virtual ttlib::cstr GetHelpURL(Node*);
 
     // Get the wxPython Help menu item text
-    virtual ttlib::cstr GetPythonHelpText(Node*) { return {}; }
+    virtual ttlib::cstr GetPythonHelpText(Node*);
 
     // Get the HTML filename to browse to. E.g., "wx.Button.html"
-    virtual ttlib::cstr GetPythonURL(Node*) { return {}; }
+    virtual ttlib::cstr GetPythonURL(Node* node) { return GetPythonHelpText(node) + ".html"; }
 
     // Change the enable/disable states in the Property Grid Panel based on the current
     // property.

@@ -32,11 +32,12 @@ static const std::map<std::string_view, std::string_view, std::less<>> s_map_wx_
 
 };
 
-static const std::map<std::string_view, std::string_view, std::less<>> s_map_class_prefix
+std::map<std::string_view, std::string_view, std::less<>> g_map_class_prefix
 {
     { "wxAnimationCtrl", "wx.adv."},
     { "wxBannerWindow", "wx.adv."},
     { "wxCalendarCtrl", "wx.adv."},
+    { "wxDatePickerCtrl", "wx.adv."},
 
 };
 // clang-format on
@@ -292,7 +293,7 @@ Code& Code::CreateClass(bool use_generic, ttlib::sview override_name)
     else
     {
         std::string_view prefix = "wx.";
-        if (auto wx_iter = s_map_class_prefix.find(class_name); wx_iter != s_map_class_prefix.end())
+        if (auto wx_iter = g_map_class_prefix.find(class_name); wx_iter != g_map_class_prefix.end())
         {
             prefix = wx_iter->second;
         }

@@ -259,6 +259,48 @@ ttlib::cstr BaseGenerator::GetHelpText(Node* node)
     return class_name;
 }
 
+extern std::map<std::string_view, std::string_view, std::less<>> g_map_class_prefix;
+
+ttlib::cstr BaseGenerator::GetPythonHelpText(Node* node)
+{
+    auto class_name = node->DeclName();
+    if (!class_name.starts_with("wx"))
+    {
+        return {};
+    }
+
+    std::string_view prefix = "wx.";
+    if (auto wx_iter = g_map_class_prefix.find(class_name); wx_iter != g_map_class_prefix.end())
+    {
+        prefix = wx_iter->second;
+    }
+    ttlib::cstr help_text;
+    help_text << prefix << class_name.subview(2);
+
+    return help_text;
+}
+
+bool BaseGenerator::GetPythonImports(Node* node, std::set<std::string>& set_imports)
+{
+    auto class_name = node->DeclName();
+    if (!class_name.starts_with("wx"))
+    {
+        return false;
+    }
+
+    std::string_view prefix = "wx.";
+    if (auto wx_iter = g_map_class_prefix.find(class_name); wx_iter != g_map_class_prefix.end())
+    {
+        prefix = wx_iter->second;
+        ttlib::cstr import_lib("import ");
+        import_lib << prefix;
+        import_lib.pop_back();  // remove the trailing '.'
+        set_imports.insert(import_lib);
+        return true;
+    }
+    return false;
+}
+
 void BaseGenerator::ChangeEnableState(wxPropertyGridManager* prop_grid, NodeProperty* changed_prop)
 {
     // auto changed_node = changed_prop->GetNode();

@@ -24,42 +24,34 @@ wxObject* FlexGridSizerGenerator::CreateMockup(Node* node, wxObject* parent)
             dlg->SetSizer(sizer);
     }
 
-    if (auto& growable = node->prop_as_string(prop_growablecols); growable.size())
+    auto lambda = [&](GenEnum::PropName prop_name)
     {
-        auto num_cols = node->prop_as_int(prop_cols);
-        ttlib::multiview values(growable, ',');
-        for (auto& iter: values)
+        if (auto& growable = node->prop_as_string(prop_name); growable.size())
         {
-            auto value = iter.atoi();
-            if (value <= num_cols)
+            ttlib::multiview values(growable, ',');
+            auto rows = node->prop_as_int(prop_rows);
+            auto cols = node->prop_as_int(prop_cols);
+            int row_or_col = (prop_name == prop_growablerows) ? rows : cols;
+            for (auto& iter: values)
             {
-                int proportion = 0;
-                if (auto pos = iter.find(':'); ttlib::is_found(pos))
+                auto value = iter.atoi();
+                if (value <= row_or_col)
                 {
-                    proportion = ttlib::atoi(ttlib::find_nonspace(iter.data() + pos + 1));
+                    int proportion = 0;
+                    if (auto pos = iter.find(':'); ttlib::is_found(pos))
+                    {
+                        proportion = ttlib::atoi(ttlib::find_nonspace(iter.data() + pos + 1));
+                    }
+                    if (prop_name == prop_growablerows)
+                        sizer->AddGrowableCol(value, proportion);
+                    else
+                        sizer->AddGrowableRow(value, proportion);
                 }
-                sizer->AddGrowableCol(value, proportion);
             }
         }
-    }
-    if (auto& growable = node->prop_as_string(prop_growablerows); growable.size())
-    {
-        auto num_rows = node->prop_as_int(prop_rows);
-        ttlib::multiview values(growable, ',');
-        for (auto& iter: values)
-        {
-            auto value = iter.atoi();
-            if (value <= num_rows)
-            {
-                int proportion = 0;
-                if (auto pos = iter.find(':'); ttlib::is_found(pos))
-                {
-                    proportion = ttlib::atoi(ttlib::find_nonspace(iter.data() + pos + 1));
-                }
-                sizer->AddGrowableRow(value, proportion);
-            }
-        }
-    }
+    };
+    lambda(prop_growablecols);
+    lambda(prop_growablerows);
 
     sizer->SetMinSize(node->prop_as_wxSize(prop_minimum_size));
     sizer->SetFlexibleDirection(node->prop_as_int(prop_flexible_direction));
@@ -138,7 +130,7 @@ std::optional<ttlib::sview> FlexGridSizerGenerator::CommonConstruction(Code& cod
         return code.m_code;
     }
 
-    code.NodeName().Function("SetFlexibleDirection").Add(direction).EndFunction();
+    code.Eol(true).NodeName().Function("SetFlexibleDirection").Add(direction).EndFunction();
 
     auto& non_flex_growth = node->prop_as_string(prop_non_flexible_grow_mode);
     if (non_flex_growth.empty() || non_flex_growth.is_sameas("wxFLEX_GROWMODE_SPECIFIED"))

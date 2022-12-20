@@ -6,7 +6,7 @@ inline const char* pickers_xml = R"===(<?xml version="1.0"?>
 		<inherits class="Window Events" />
 		<inherits class="sizer_child" />
 		<property name="var_name" type="string">m_filePicker</property>
-		<property name="initial_path" type="string_escapes" />
+		<property name="initial_path" type="path" />
 		<property name="message" type="string_escapes" />
 		<property name="wildcard" type="string_escapes" />
 		<property name="style" type="bitlist">
@@ -37,7 +37,7 @@ inline const char* pickers_xml = R"===(<?xml version="1.0"?>
 		<inherits class="Window Events" />
 		<inherits class="sizer_child" />
 		<property name="var_name" type="string">m_dirPicker</property>
-		<property name="initial_path" type="string_escapes" />
+		<property name="initial_path" type="path" />
 		<property name="message" type="string_escapes" />
 		<property name="style" type="bitlist">
 			<option name="wxDIRP_DEFAULT_STYLE"

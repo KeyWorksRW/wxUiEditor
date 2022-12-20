@@ -141,7 +141,7 @@ std::optional<ttlib::sview> GridBagSizerGenerator::CommonConstruction(Code& code
         code << "auto* ";
     code.NodeName().CreateClass();
 
-    if (code.HasValue(prop_vgap) || code.HasValue(prop_hgap))
+    if (code.node()->as_int(prop_vgap) != 0 || code.node()->as_int(prop_hgap) != 0)
         code.as_string(prop_vgap).Comma().as_string(prop_hgap);
     code.EndFunction();
 
@@ -157,7 +157,7 @@ std::optional<ttlib::sview> GridBagSizerGenerator::CommonConstruction(Code& code
         return code.m_code;
     }
 
-    code.NodeName().Function("SetFlexibleDirection").Add(direction).EndFunction();
+    code.NodeName().Function("SetFlexibleDirection(").Add(direction).EndFunction();
 
     auto& non_flex_growth = node->prop_as_string(prop_non_flexible_grow_mode);
     if (non_flex_growth.empty() || non_flex_growth.is_sameas("wxFLEX_GROWMODE_SPECIFIED"))

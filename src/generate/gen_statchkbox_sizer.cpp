@@ -87,7 +87,7 @@ std::optional<ttlib::sview> StaticCheckboxBoxSizerGenerator::CommonConstruction(
 
         if (auto result = GenValidatorSettings(node); result)
         {
-            code.Str(result.value());
+            code.Eol().Str(result.value());
         }
         code.Eol();
     }

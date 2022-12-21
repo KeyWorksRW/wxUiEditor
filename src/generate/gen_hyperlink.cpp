@@ -190,9 +190,9 @@ bool HyperlinkGenerator::IsGeneric(Node* node)
 
 bool HyperlinkGenerator::GetIncludes(Node* node, std::set<std::string>& /* set_src */, std::set<std::string>& set_hdr)
 {
-    // There's a bug in the 3.2.0 header files that wx/generic/hyperlink.h doesn't include the
-    // required wx/hyperlink.h file. That means the order of inclusion is critical, hence the
-    // hack below to change the alphabetical order of the two headers.
+    // Unfortunately wx/generic/hyperlink.h doesn't include the required wx/hyperlink.h file.
+    // That means the order of inclusion is critical, hence the hack below to change the
+    // alphabetical order of the two headers. See https://github.com/wxWidgets/wxWidgets/issues/23060
 
     if (!node->as_bool(prop_underlined))
         set_hdr.insert("#include <wx/hyperlink.h>\n#include <wx/generic/hyperlink.h>");

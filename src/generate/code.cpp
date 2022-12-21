@@ -29,6 +29,11 @@ static const std::map<std::string_view, std::string_view, std::less<>> s_map_wx_
     { "wxCAL_SHOW_SURROUNDING_WEEKS", "wx.adv."},
     { "wxCAL_SEQUENTIAL_MONTH_SELECTION", "wx.adv."},
     { "wxCAL_SHOW_WEEK_NUMBERS", "wx.adv."},
+    { "wxHL_DEFAULT_STYLE", "wx.adv."},
+    { "wxHL_ALIGN_LEFT", "wx.adv."},
+    { "wxHL_ALIGN_RIGHT", "wx.adv."},
+    { "wxHL_ALIGN_CENTRE", "wx.adv."},
+    { "wxHL_CONTEXTMENU", "wx.adv."},
 
 };
 
@@ -38,6 +43,7 @@ std::map<std::string_view, std::string_view, std::less<>> g_map_class_prefix
     { "wxBannerWindow", "wx.adv."},
     { "wxCalendarCtrl", "wx.adv."},
     { "wxDatePickerCtrl", "wx.adv."},
+    { "wxHyperlinkCtrl", "wx.adv."},
     { "wxTimePickerCtrl", "wx.adv."},
 
 };
@@ -68,6 +74,11 @@ Code& Code::CheckLineLength(size_t next_str_size)
         Eol().Tab();
     }
     return *this;
+}
+
+Code& Code::CheckLineLength(GenEnum::PropName next_prop_name)
+{
+    return CheckLineLength(m_node->as_string(next_prop_name).size());
 }
 
 Code& Code::Eol(bool check_size)
@@ -424,6 +435,11 @@ bool Code::HasValue(GenEnum::PropName prop_name) const
     return m_node->HasValue(prop_name);
 }
 
+int Code::IntValue(GenEnum::PropName prop_name) const
+{
+    return m_node->as_int(prop_name);
+}
+
 bool Code::IsTrue(GenEnum::PropName prop_name) const
 {
     return m_node->as_bool(prop_name);
@@ -437,6 +453,11 @@ bool Code::IsEqualTo(GenEnum::PropName prop_name, ttlib::sview text) const
 bool Code::PropContains(GenEnum::PropName prop_name, ttlib::sview text) const
 {
     return m_node->as_string(prop_name).contains(text);
+}
+
+size_t Code::PropSize(GenEnum::PropName prop_name) const
+{
+    return m_node->as_string(prop_name).size();
 }
 
 // clang-format off

@@ -54,6 +54,9 @@ public:
     bool is_python() const { return m_language == GEN_LANG_PYTHON; }
     bool is_local_var() const;
 
+    // Equivalent to calling m_node->as_int(prop_name)
+    int IntValue(GenEnum::PropName prop_name) const;
+
     Node* node() const { return m_node; }
 
     bool HasValue(GenEnum::PropName prop_name) const;
@@ -108,12 +111,18 @@ public:
     // table for Python.
     Code& CheckLineLength(size_t next_str_size = 0);
 
+    // Equivalent to calling CheckLineLength(node->prop_as_string(prop_name).size())
+    Code& CheckLineLength(GenEnum::PropName next_prop_name);
+
     // Call this function if you added text directly including a final newline.
     void UpdateBreakAt()
     {
         m_break_at = m_code.size() + m_break_length;
         m_minium_length = m_code.size() + 10;
     }
+
+    // Equivalent to calling node->prop_as_string(prop_name).size()
+    size_t PropSize(GenEnum::PropName prop_name) const;
 
     // If the string starts with "wx", Python code will be converted to "wx." and then the
     // string without the "wx" prefix. Ptyhon code will also handle multiple wx flags
@@ -134,6 +143,9 @@ public:
         m_code += str;
         return *this;
     }
+
+    // Equivalent to calling as_string(prop_name)
+    Code& Str(GenEnum::PropName prop_name) { return as_string(prop_name); }
 
     // Adds -> or . to the string, then wxFunction or wx.Function
     Code& Function(ttlib::sview text);

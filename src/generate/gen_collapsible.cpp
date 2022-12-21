@@ -74,6 +74,30 @@ std::optional<ttlib::cstr> CollapsiblePaneGenerator::GenConstruction(Node* node)
     return code;
 }
 
+std::optional<ttlib::sview> CollapsiblePaneGenerator::CommonConstruction(Code& code)
+{
+    if (code.is_cpp() && code.is_local_var())
+        code << "auto* ";
+    code.NodeName().CreateClass();
+    code.GetParentName().Comma().as_string(prop_id).Comma().QuotedString(prop_label);
+    code.PosSizeFlags(true, "wxCP_DEFAULT_STYLE");
+
+    return code.m_code;
+}
+
+std::optional<ttlib::sview> CollapsiblePaneGenerator::CommonSettings(Code& code)
+{
+    if (code.IsTrue(prop_collapsed))
+    {
+        code.Eol(true).NodeName().Function("Collapse(").EndFunction();
+    }
+    else
+    {
+        code.Eol(true).NodeName().Function("Expand(").EndFunction();
+    }
+    return code.m_code;
+}
+
 std::optional<ttlib::cstr> CollapsiblePaneGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
 {
     ttlib::cstr code;

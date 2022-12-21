@@ -38,59 +38,40 @@ wxObject* SearchCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
     return widget;
 }
 
-std::optional<ttlib::cstr> SearchCtrlGenerator::GenConstruction(Node* node)
+std::optional<ttlib::sview> SearchCtrlGenerator::CommonConstruction(Code& code)
 {
-    ttlib::cstr code;
-    if (node->IsLocal())
+    if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
-    code << node->get_node_name() << GenerateNewAssignment(node);
-    code << GetParentName(node) << ", " << node->prop_as_string(prop_id) << ", ";
+    code.NodeName().CreateClass();
+    code.GetParentName().Comma().as_string(prop_id).Comma().QuotedString(prop_value);
+    code.PosSizeFlags(true);
 
-    if (node->HasValue(prop_value))
-        code << GenerateQuotedString(node->prop_as_string(prop_value));
-    else
-        code << "wxEmptyString";
-
-    GeneratePosSizeFlags(node, code, true);
-
-    code.Replace(", wxEmptyString);", ");");
-
-    return code;
+    return code.m_code;
 }
 
-std::optional<ttlib::cstr> SearchCtrlGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
+std::optional<ttlib::sview> SearchCtrlGenerator::CommonSettings(Code& code)
 {
-    ttlib::cstr code;
-
-    if (node->HasValue(prop_hint))
+    if (code.HasValue(prop_hint))
     {
-        if (code.size())
-            code << '\n';
-        code << node->get_node_name() << "->SetHint(" << GenerateQuotedString(node->prop_as_string(prop_hint)) << ");";
+        code.Eol(true).NodeName().Function("SetHint(").QuotedString(prop_hint).EndFunction();
     }
 
-    if (node->prop_as_bool(prop_focus))
+    if (code.IsTrue(prop_focus))
     {
-        if (code.size())
-            code << '\n';
-        code << node->get_node_name() << "->SetFocus()";
+        code.Eol(true).NodeName().Function("SetFocus(").EndFunction();
     }
 
-    if (node->prop_as_bool(prop_search_button))
+    if (code.IsTrue(prop_search_button))
     {
-        if (code.size())
-            code << "\n";
-        code << node->get_node_name() << "->ShowSearchButton(true);";
+        code.Eol(true).NodeName().Function("ShowSearchButton(").AddTrue().EndFunction();
     }
 
-    if (node->prop_as_bool(prop_cancel_button))
+    if (code.IsTrue(prop_cancel_button))
     {
-        if (code.size())
-            code << "\n";
-        code << node->get_node_name() << "->ShowCancelButton(true);";
+        code.Eol(true).NodeName().Function("ShowCancelButton(").AddTrue().EndFunction();
     }
 
-    return code;
+    return code.m_code;
 }
 
 bool SearchCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)

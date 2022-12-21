@@ -360,7 +360,6 @@ static const PropName NonUiProps[] = {
     prop_validator_variable,
     prop_var_name,
     prop_visited_color,
-    prop_wildcard,
     prop_window_name,
 
 };

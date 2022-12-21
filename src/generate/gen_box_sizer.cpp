@@ -31,7 +31,7 @@ std::optional<ttlib::sview> BoxSizerGenerator::CommonConstruction(Code& code)
     if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
 
-    code.NodeName().CreateClass().as_string(prop_orientation).EndFunction();
+    code.NodeName().CreateClass().Add(prop_orientation).EndFunction();
 
     auto min_size = code.m_node->prop_as_wxSize(prop_minimum_size);
     if (min_size.GetX() != -1 || min_size.GetY() != -1)
@@ -54,36 +54,32 @@ void BoxSizerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/
 
 std::optional<ttlib::sview> BoxSizerGenerator::CommonAfterChildren(Code& code)
 {
-    if (code.m_node->as_bool(prop_hide_children))
+    if (code.IsTrue(prop_hide_children))
     {
-        code.NodeName().Function("ShowItems(false").EndFunction();
+        code.NodeName().Function("ShowItems(").AddFalse().EndFunction();
     }
+
     auto parent = code.m_node->GetParent();
     if (!parent->IsSizer() && !parent->isGen(gen_wxDialog) && !parent->isGen(gen_PanelForm))
     {
-        if (code.size())
-            code.Eol();
-        code.Eol();
+        code.Eol(true);
 
         // The parent node is not a sizer -- which is expected if this is the parent sizer underneath a form or
         // wxPanel.
 
         if (parent->isGen(gen_wxRibbonPanel))
         {
-            code.Add(parent->get_node_name()).Function("SetSizerAndFit(").NodeName().EndFunction();
+            code.ParentName().Function("SetSizerAndFit(").NodeName().EndFunction();
         }
         else
         {
-            if (GetParentName(code.m_node) != "this")
-                code.Add(GetParentName(code.m_node)).Function("");
+            if (GetParentName(code.node()) != "this")
+                code.GetParentName().Function("");
             code.Add("SetSizerAndFit(").NodeName().EndFunction();
         }
     }
 
-    if (code.size())
-        return code.m_code;
-    else
-        return {};
+    return code.m_code;
 }
 
 bool BoxSizerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)

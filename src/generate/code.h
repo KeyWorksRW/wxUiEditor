@@ -131,6 +131,9 @@ public:
     // If needed, the line will be broken *before* the string is added.
     Code& Add(ttlib::sview text);
 
+    // Equivalent to calling as_string(prop_name). Correctly modifies the string for Python.
+    Code& Add(GenEnum::PropName prop_name) { return as_string(prop_name); }
+
     // Adds "true" for C++ or "True" for Python
     Code& AddTrue() { return Str(is_cpp() ? "true" : "True"); }
 

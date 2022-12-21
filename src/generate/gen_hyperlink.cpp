@@ -59,75 +59,51 @@ wxObject* HyperlinkGenerator::CreateMockup(Node* node, wxObject* parent)
     return widget;
 }
 
-std::optional<ttlib::cstr> HyperlinkGenerator::GenConstruction(Node* node)
+std::optional<ttlib::sview> HyperlinkGenerator::CommonConstruction(Code& code)
 {
-    ttlib::cstr code;
-    if (node->IsLocal())
+    if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
-    code << node->get_node_name() << GenerateNewAssignment(node, !node->prop_as_bool(prop_underlined));
+    code.NodeName().CreateClass();
+    if (code.is_cpp() && !code.IsTrue(prop_underlined))
+        code.m_code.Replace("wxHyperlinkCtrl", "wxGenericHyperlinkCtrl");
 
-    code << GetParentName(node) << ", " << node->prop_as_string(prop_id) << ", ";
+    code.GetParentName().Comma().as_string(prop_id).Comma().QuotedString(prop_label);
+    code.Comma().QuotedString(prop_url);
+    code.PosSizeFlags(false, "wxHL_DEFAULT_STYLE");
 
-    auto& label = node->prop_as_string(prop_label);
-    if (label.size())
-    {
-        code << GenerateQuotedString(label);
-    }
-    else
-    {
-        code << "wxEmptyString";
-    }
-    code << ", ";
-    auto& url = node->prop_as_string(prop_url);
-    if (url.size())
-    {
-        code << GenerateQuotedString(url);
-    }
-    else
-    {
-        code << "wxEmptyString";
-    }
-
-    GeneratePosSizeFlags(node, code);
-
-    return code;
+    return code.m_code;
 }
 
-std::optional<ttlib::cstr> HyperlinkGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
+std::optional<ttlib::sview> HyperlinkGenerator::CommonSettings(Code& code)
 {
-    ttlib::cstr code;
-    if (!node->prop_as_bool(prop_underlined) && !node->HasValue(prop_font))
+    if (!code.IsTrue(prop_underlined) && !code.HasValue(prop_font))
     {
-        code << node->get_node_name() << "->SetFont(wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT));";
+        code.Eol(true).NodeName().Function("SetFont(").Add("wxSystemSettings").ClassMethod("GetFont(");
+        code.Add("wxSYS_DEFAULT_GUI_FONT)").EndFunction();
     }
 
-    if (node->HasValue(prop_hover_color))
+    if (code.HasValue(prop_hover_color))
     {
-        if (code.size())
-            code << '\n';
-        code << node->get_node_name() << "->SetHoverColour(" << GenerateColourCode(node, prop_hover_color) << ");";
-    }
-    else if (node->prop_as_bool(prop_sync_hover_colour))
-    {
-        if (code.size())
-            code << '\n';
-        code << node->get_node_name() << "->SetHoverColour(" << node->get_node_name() << "->GetNormalColour());";
+        code.Eol(true).NodeName().Function("SetHoverColour(");
+        ColourCode(code, prop_hover_color);
+        code.EndFunction();
     }
 
-    if (node->HasValue(prop_normal_color))
+    if (code.HasValue(prop_normal_color))
     {
-        if (code.size())
-            code << '\n';
-        code << node->get_node_name() << "->SetNormalColour(" << GenerateColourCode(node, prop_normal_color) << ");";
+        code.Eol(true).NodeName().Function("SetNormalColour(");
+        ColourCode(code, prop_normal_color);
+        code.EndFunction();
     }
 
-    if (node->HasValue(prop_visited_color))
+    if (code.HasValue(prop_visited_color))
     {
-        if (code.size())
-            code << '\n';
-        code << node->get_node_name() << "->SetVisitedColour(" << GenerateColourCode(node, prop_visited_color) << ");";
+        code.Eol(true).NodeName().Function("SetVisitedColour(");
+        ColourCode(code, prop_visited_color);
+        code.EndFunction();
     }
-    return code;
+
+    return code.m_code;
 }
 
 int HyperlinkGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
@@ -204,7 +180,7 @@ int HyperlinkGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t 
 
 void HyperlinkGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>& handlers)
 {
-    handlers.emplace("wxStaticLineXmlHandler");
+    handlers.emplace("wxHyperlinkCtrlXmlHandler");
 }
 
 bool HyperlinkGenerator::IsGeneric(Node* node)
@@ -212,9 +188,16 @@ bool HyperlinkGenerator::IsGeneric(Node* node)
     return (!node->prop_as_bool(prop_underlined));
 }
 
-bool HyperlinkGenerator::GetIncludes(Node* /* node */, std::set<std::string>& /* set_src */, std::set<std::string>& set_hdr)
+bool HyperlinkGenerator::GetIncludes(Node* node, std::set<std::string>& /* set_src */, std::set<std::string>& set_hdr)
 {
-    // If there's an event, then this has to be in the header file.
-    set_hdr.insert("#include <wx/hyperlink.h>");
+    // There's a bug in the 3.2.0 header files that wx/generic/hyperlink.h doesn't include the
+    // required wx/hyperlink.h file. That means the order of inclusion is critical, hence the
+    // hack below to change the alphabetical order of the two headers.
+
+    if (!node->as_bool(prop_underlined))
+        set_hdr.insert("#include <wx/hyperlink.h>\n#include <wx/generic/hyperlink.h>");
+    else
+        set_hdr.insert("#include <wx/hyperlink.h>");
+
     return true;
 }

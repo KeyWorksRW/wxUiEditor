@@ -193,19 +193,13 @@ wxObject* BookPageGenerator::CreateMockup(Node* node, wxObject* parent)
     return widget;
 }
 
-bool BookPageGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
+std::optional<ttlib::sview> BookPageGenerator::CommonConstruction(Code& code)
 {
-    InsertGeneratorInclude(node, "#include <wx/panel.h>", set_src, set_hdr);
-    return true;
-}
-
-std::optional<ttlib::cstr> BookPageGenerator::GenConstruction(Node* node)
-{
-    ttlib::cstr code;
-    if (node->IsLocal())
+    if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
-    code << node->get_node_name() << GenerateNewAssignment(node);
+    code.NodeName().CreateClass();
 
+    Node* node = code.node();
     if (node->GetParent()->isGen(gen_BookPage))
     {
         bool is_display_images = isBookDisplayImages(node);
@@ -215,43 +209,37 @@ std::optional<ttlib::cstr> BookPageGenerator::GenConstruction(Node* node)
             treebook = treebook->GetParent();
         }
 
-        code << treebook->get_node_name() << ", " << node->prop_as_string(prop_id);
-
-        GeneratePosSizeFlags(node, code);
-
-        code << '\n';
-        code << treebook->get_node_name() << "->AddSubPage(" << node->get_node_name() << ", ";
-        code << GenerateQuotedString(node, prop_label);
+        code.Str(treebook->get_node_name()).Comma().Str(prop_id);
+        code.PosSizeFlags();
+        code.Eol().Str(treebook->get_node_name()).Function("AddSubPage(").NodeName().Comma().QuotedString(prop_label);
 
         // Default is false, so only add parameter if it is true.
-        if (node->prop_as_bool(prop_select))
-            code << ", true";
+        if (code.IsTrue(prop_select))
+            code.Comma().AddTrue();
 
-        if (node->HasValue(prop_bitmap) && is_display_images)
+        // TODO: [Randalphwa - 12-21-2022] Add Python support
+        if (code.is_cpp() && node->HasValue(prop_bitmap) && is_display_images)
         {
             int idx_image = GetTreebookImageIndex(node);
             if (!node->prop_as_bool(prop_select))
                 code << ", false";
             code << ", " << idx_image;
         }
-        code << ");";
+        code.EndFunction();
     }
     else
     {
-        code << GetParentName(node) << ", " << node->prop_as_string(prop_id);
-
-        GeneratePosSizeFlags(node, code);
-
-        code << '\n';
-        code << GetParentName(node) << "->AddPage(" << node->get_node_name() << ", ";
-        code << GenerateQuotedString(node, prop_label);
+        code.GetParentName().Comma().as_string(prop_id);
+        code.PosSizeFlags(false);
+        code.Eol().ParentName().Function("AddPage(").NodeName().Comma().QuotedString(prop_label);
 
         // Default is false, so only add parameter if it is true.
-        if (node->prop_as_bool(prop_select))
-            code << ", true";
+        if (code.IsTrue(prop_select))
+            code.Comma().AddTrue();
 
-        if (node->HasValue(prop_bitmap) &&
-            (node->GetParent()->prop_as_bool(prop_display_images) || node->GetParent()->isGen(gen_wxToolbook)))
+        // TODO: [Randalphwa - 12-21-2022] Add Python support
+        if (code.is_cpp() && node->HasValue(prop_bitmap) &&
+            (node->GetParent()->as_bool(prop_display_images) || node->GetParent()->isGen(gen_wxToolbook)))
         {
             auto node_parent = node->GetParent();
             int idx_image = -1;
@@ -277,13 +265,19 @@ std::optional<ttlib::cstr> BookPageGenerator::GenConstruction(Node* node)
                 }
             }
             if (!node->prop_as_bool(prop_select))
-                code << ", false";
-            code << ", " << idx_image;
+                code.Comma().AddFalse();
+            code.Comma() << idx_image;
         }
-
-        code << ");";
+        code.EndFunction();
     }
-    return code;
+
+    return code.m_code;
+}
+
+bool BookPageGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
+{
+    InsertGeneratorInclude(node, "#include <wx/panel.h>", set_src, set_hdr);
+    return true;
 }
 
 // ../../wxSnapShot/src/xrc/xh_bookctrlbase.cpp

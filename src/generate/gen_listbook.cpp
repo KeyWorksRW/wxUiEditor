@@ -39,18 +39,20 @@ void ListbookGenerator::OnPageChanged(wxListbookEvent& event)
     event.Skip();
 }
 
-std::optional<ttlib::cstr> ListbookGenerator::GenConstruction(Node* node)
+std::optional<ttlib::sview> ListbookGenerator::CommonConstruction(Code& code)
 {
-    ttlib::cstr code;
-    if (node->IsLocal())
+    if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
-    code << node->get_node_name() << " = new wxListbook(";
-    code << GetParentName(node) << ", " << node->prop_as_string(prop_id);
+    code.NodeName().CreateClass();
+    code.GetParentName().Comma().as_string(prop_id).PosSizeFlags(false, "wxBK_DEFAULT");
 
-    GeneratePosSizeFlags(node, code);
-    BookCtorAddImagelist(code, node);
+    // TODO: [Randalphwa - 12-21-2022] Add Python support
+    if (code.is_cpp())
+    {
+        BookCtorAddImagelist(code.m_code, code.m_node);
+    }
 
-    return code;
+    return code.m_code;
 }
 
 bool ListbookGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)

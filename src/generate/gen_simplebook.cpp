@@ -42,38 +42,30 @@ void SimplebookGenerator::OnPageChanged(wxBookCtrlEvent& event)
     event.Skip();
 }
 
-std::optional<ttlib::cstr> SimplebookGenerator::GenConstruction(Node* node)
+std::optional<ttlib::sview> SimplebookGenerator::CommonConstruction(Code& code)
 {
-    ttlib::cstr code;
-    if (node->IsLocal())
+    if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
-    code << node->get_node_name() << " = new wxSimplebook(";
-    code << GetParentName(node) << ", " << node->prop_as_string(prop_id);
+    code.NodeName().CreateClass();
+    code.GetParentName().Comma().as_string(prop_id).PosSizeFlags(false);
 
-    GeneratePosSizeFlags(node, code);
-
-    return code;
+    return code.m_code;
 }
 
-std::optional<ttlib::cstr> SimplebookGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
+std::optional<ttlib::sview> SimplebookGenerator::CommonSettings(Code& code)
 {
-    if (node->prop_as_string(prop_show_effect) != "no effects" || node->prop_as_string(prop_hide_effect) != "no effects")
+    if (!code.IsEqualTo(prop_show_effect, "no effects") || !code.IsEqualTo(prop_hide_effect, "no effects"))
     {
-        ttlib::cstr code;
-        code << '\t' << node->get_node_name() << "->SetEffects(" << node->prop_as_constant(prop_show_effect, "info_") << ", "
-             << node->prop_as_constant(prop_hide_effect, "info_") << ");";
+        Node* node = code.node();
+        code.NodeName().Function("SetEffects(").Str(node->as_constant(prop_show_effect, "info_"));
+        code.Comma().Str(node->as_constant(prop_hide_effect, "info_")).EndFunction();
 
-        if (node->prop_as_int(prop_duration))
+        if (code.IntValue(prop_duration) != 0)
         {
-            code << "\n" << node->get_node_name() << "->SetEffectTimeout(" << node->prop_as_string(prop_duration) << ");";
+            code.NodeName().Function("SetEffectTimeout(").Str(prop_duration).EndFunction();
         }
-
-        return code;
     }
-    else
-    {
-        return {};
-    }
+    return code.m_code;
 }
 
 bool SimplebookGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)

@@ -46,38 +46,52 @@ void AuiNotebookGenerator::OnPageChanged(wxNotebookEvent& event)
     event.Skip();
 }
 
-std::optional<ttlib::cstr> AuiNotebookGenerator::GenConstruction(Node* node)
+std::optional<ttlib::sview> AuiNotebookGenerator::CommonConstruction(Code& code)
 {
-    ttlib::cstr code;
-    if (node->IsLocal())
+    if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
-    code << node->get_node_name() << " = new wxAuiNotebook(";
-    code << GetParentName(node) << ", " << node->prop_as_string(prop_id);
+    code.NodeName().CreateClass();
+    code.GetParentName().Comma().as_string(prop_id).PosSizeFlags(false);
 
-    GeneratePosSizeFlags(node, code);
-    BookCtorAddImagelist(code, node);
-
-    if (node->prop_as_string(prop_art_provider).is_sameas("wxAuiGenericTabArt"))
+    // TODO: [Randalphwa - 12-21-2022] Add Python support
+    if (code.is_cpp())
     {
-        code << "\n" << node->get_node_name() << "->SetArtProvider(new wxAuiGenericTabArt());";
-    }
-    else if (node->prop_as_string(prop_art_provider).is_sameas("wxAuiSimpleTabArt"))
-    {
-        code << "\n" << node->get_node_name() << "->SetArtProvider(new wxAuiSimpleTabArt());";
+        BookCtorAddImagelist(code.m_code, code.m_node);
     }
 
-    return code;
+    // REVIEW: [Randalphwa - 12-21-2022] We use this ourselves in base_panel.cpp and it is in wx/aui/tabart.h
+    // without any specific comments, however it is not documented. Should we support it? Currently there
+    // is no setting for it in aui_xml.xml.
+
+    if (code.IsEqualTo(prop_art_provider, "wxAuiGenericTabArt"))
+    {
+        if (code.is_cpp())
+        {
+            code.Eol().NodeName().Function("SetArtProvider(");
+            code.Str(code.is_cpp() ? "new wxAuiGenericTabArt()" : "wx.aui.wxAuiGenericTabArt()").EndFunction();
+        }
+        else
+        {
+            code.Eol() += "# wxPython does not support wxAuiGenericTabArt";
+        }
+    }
+    else if (code.IsEqualTo(prop_art_provider, "wxAuiSimpleTabArt"))
+    {
+        code.Eol().NodeName().Function("SetArtProvider(");
+        code.Str(code.is_cpp() ? "new wxAuiSimpleTabArt()" : "wx.aui.AuiSimpleTabArt()").EndFunction();
+    }
+
+    return code.m_code;
 }
 
-std::optional<ttlib::cstr> AuiNotebookGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
+std::optional<ttlib::sview> AuiNotebookGenerator::CommonSettings(Code& code)
 {
-    if (node->prop_as_int(prop_tab_height) > 0)
+    if (code.IntValue(prop_tab_height) > 0)
     {
-        ttlib::cstr code;
-        code << node->get_node_name() << "->SetTabCtrlHeight(" << node->prop_as_string(prop_tab_height) << ");";
-        return code;
+        code.Eol().NodeName().Function("SetTabCtrlHeight(").Str(prop_tab_height).EndFunction();
     }
-    return {};
+
+    return code.m_code;
 }
 
 bool AuiNotebookGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)

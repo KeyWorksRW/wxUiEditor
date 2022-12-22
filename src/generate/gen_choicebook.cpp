@@ -25,7 +25,6 @@ wxObject* ChoicebookGenerator::CreateMockup(Node* node, wxObject* parent)
 
     return widget;
 }
-
 void ChoicebookGenerator::OnPageChanged(wxBookCtrlEvent& event)
 {
     auto book = wxDynamicCast(event.GetEventObject(), wxChoicebook);
@@ -34,17 +33,14 @@ void ChoicebookGenerator::OnPageChanged(wxBookCtrlEvent& event)
     event.Skip();
 }
 
-std::optional<ttlib::cstr> ChoicebookGenerator::GenConstruction(Node* node)
+std::optional<ttlib::sview> ChoicebookGenerator::CommonConstruction(Code& code)
 {
-    ttlib::cstr code;
-    if (node->IsLocal())
+    if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
-    code << node->get_node_name() << " = new wxChoicebook(";
-    code << GetParentName(node) << ", " << node->prop_as_string(prop_id);
+    code.NodeName().CreateClass();
+    code.GetParentName().Comma().as_string(prop_id).PosSizeFlags(false, "wxCHB_DEFAULT");
 
-    GeneratePosSizeFlags(node, code);
-
-    return code;
+    return code.m_code;
 }
 
 bool ChoicebookGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)

@@ -18,6 +18,19 @@
 // clang-format off
 static const std::map<std::string_view, std::string_view, std::less<>> s_map_wx_prefix
 {
+    { "wxAUI_NB_BOTTOM", "wx.aui."},
+    { "wxAUI_NB_CLOSE_BUTTON", "wx.aui."},
+    { "wxAUI_NB_CLOSE_ON_ACTIVE_TAB", "wx.aui."},
+    { "wxAUI_NB_CLOSE_ON_ALL_TABS", "wx.aui."},
+    { "wxAUI_NB_MIDDLE_CLICK_CLOSE", "wx.aui."},
+    { "wxAUI_NB_SCROLL_BUTTONS", "wx.aui."},
+    { "wxAUI_NB_TAB_EXTERNAL_MOVE", "wx.aui."},
+    { "wxAUI_NB_TAB_FIXED_WIDTH", "wx.aui."},
+    { "wxAUI_NB_TAB_MOVE", "wx.aui."},
+    { "wxAUI_NB_TAB_SPLIT", "wx.aui."},
+    { "wxAUI_NB_TOP", "wx.aui."},
+    { "wxAUI_NB_WINDOWLIST_BUTTON", "wx.aui."},
+
     { "wxAC_DEFAULT_STYLE", "wx.adv."},
     { "wxAC_NO_AUTORESIZE", "wx.adv."},
     { "wxNullAnimation", "wx.adv."},
@@ -45,6 +58,7 @@ std::map<std::string_view, std::string_view, std::less<>> g_map_class_prefix
     { "wxDatePickerCtrl", "wx.adv."},
     { "wxHyperlinkCtrl", "wx.adv."},
     { "wxTimePickerCtrl", "wx.adv."},
+    { "wxAuiNotebook", "wx.aui."},
 
 };
 // clang-format on
@@ -297,7 +311,7 @@ Code& Code::CreateClass(bool use_generic, ttlib::sview override_name)
     }
     else if (m_node->isGen(gen_BookPage))
     {
-        class_name += "wxPanel";
+        class_name = "wxPanel";
     }
 
     if (m_language == GEN_LANG_CPLUSPLUS)

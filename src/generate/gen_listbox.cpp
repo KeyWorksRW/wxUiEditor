@@ -97,6 +97,33 @@ std::optional<ttlib::cstr> ListBoxGenerator::GenConstruction(Node* node)
     return code;
 }
 
+std::optional<ttlib::sview> ListBoxGenerator::CommonConstruction(Code& code)
+{
+    if (code.is_cpp() && code.is_local_var())
+        code << "auto* ";
+    code.NodeName().CreateClass();
+    code.GetParentName().Comma().as_string(prop_id);
+    auto params_needed = code.WhatParamsNeeded();
+    if (params_needed != Code::nothing_needed || !code.IsEqualTo(prop_type, "wxLB_SINGLE"))
+    {
+        code.Comma().Pos().Comma().WxSize();
+        code.Comma();
+        if (code.is_cpp())
+            code += "0, nullptr";
+        else
+            code += "[]";
+        code.Comma().Style(nullptr, code.node()->as_string(prop_type));
+
+        if (params_needed & Code::window_name_needed)
+        {
+            code.Comma().Add("wxDefaultValidator").QuotedString(prop_window_name);
+        }
+    }
+    code.EndFunction();
+
+    return code.m_code;
+}
+
 std::optional<ttlib::cstr> ListBoxGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
 {
     ttlib::cstr code;
@@ -136,6 +163,38 @@ std::optional<ttlib::cstr> ListBoxGenerator::GenSettings(Node* node, size_t& /* 
     }
 
     return code;
+}
+
+std::optional<ttlib::sview> ListBoxGenerator::CommonSettings(Code& code)
+{
+    if (code.IsTrue(prop_focus))
+    {
+        code.Eol(true).NodeName().Function("SetFocus(").EndFunction();
+    }
+
+    if (code.HasValue(prop_contents))
+    {
+        auto array = ConvertToArrayString(code.node()->as_string(prop_contents));
+        for (auto& iter: array)
+        {
+            code.Eol(true).NodeName().Function("Append(").QuotedString(iter).EndFunction();
+        }
+
+        if (code.HasValue(prop_selection_string))
+        {
+            code.Eol(true).NodeName().Function("SetStringSelection(");
+            code.QuotedString(prop_selection_string).EndFunction();
+        }
+        else
+        {
+            int sel = code.IntValue(prop_selection_int);
+            if (sel > -1 && sel < (to_int) array.size())
+            {
+                code.Eol(true).NodeName().Function("SetSelection(").Str(prop_selection_int).EndFunction();
+            }
+        }
+    }
+    return code.m_code;
 }
 
 bool ListBoxGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)

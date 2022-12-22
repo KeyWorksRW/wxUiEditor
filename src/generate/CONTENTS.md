@@ -8,13 +8,13 @@ The following tables list classes, objects and functions that wxUiEditor can gen
 
 | Class | C++ | Python | XRC |file |
 -----------|-----|--------|------|------|
-| wxAuiNotebook | yes | ?? | yes | gen_aui_notebook.cpp |
-| wxChoicebook | yes | ?? |  yes | gen_choicebook.cpp |
-| wxListbook | yes | ?? |  yes | gen_listbook.cpp |
-| wxNotebook | yes | ?? |  yes | gen_notebook.cpp |
-| wxSimplebook | yes | ?? |  yes | gen_simplebook.cpp |
-| wxToolbook | yes | ?? |  yes | gen_toolbook.cpp |
-| wxTreebook | yes | ?? |  yes | gen_treebook.cpp |
+| wxAuiNotebook | yes | yes | yes | gen_aui_notebook.cpp |
+| wxChoicebook | yes | yes | yes | gen_choicebook.cpp |
+| wxListbook | yes | yes |  yes | gen_listbook.cpp |
+| wxNotebook | yes | yes | yes | gen_notebook.cpp |
+| wxSimplebook | yes | yes | yes | gen_simplebook.cpp |
+| wxToolbook | yes | yes | yes | gen_toolbook.cpp |
+| wxTreebook | yes | yes | yes | gen_treebook.cpp |
 
 ### Forms
 
@@ -66,7 +66,7 @@ The following tables list classes, objects and functions that wxUiEditor can gen
 | wxButton | yes |  ?? | yes | gen_button.cpp |
 | wxCalendarCtrl | yes |  ?? | yes | gen_calendar_ctrl.cpp |
 | wxCheckBox | yes |  yes | yes | gen_checkbox.cpp |
-| wxCheckListBox | yes |  ?? | yes | gen_check_listbox.cpp |
+| wxCheckListBox | yes |  yes | yes | gen_check_listbox.cpp |
 | wxChoice | yes |  yes | yes | gen_choice.cpp |
 | wxCollapsiblePane | yes |  yes | yes | gen_collapsible.cpp |
 | wxComboBox | yes |  yes | yes | gen_combobox.cpp |
@@ -81,7 +81,7 @@ The following tables list classes, objects and functions that wxUiEditor can gen
 | wxHtmlWindow | yes |  ?? | yes | gen_html_window.cpp |
 | wxHyperlinkCtrl | yes |  yes | yes | gen_hyperlink.cpp |
 | wxInfoBar | yes |  yes | yes | gen_infobar.cpp |
-| wxListBox | yes |  ?? | yes | gen_listbox.cpp |
+| wxListBox | yes |  yes | yes | gen_listbox.cpp |
 | wxListView | yes |  ?? | yes | gen_listview.cpp |
 | wxMenu | yes |  yes | yes | gen_menu.cpp |
 | wxMenuBar | yes |  yes | yes | menu_widgets.cpp |
@@ -91,7 +91,7 @@ The following tables list classes, objects and functions that wxUiEditor can gen
 | wxPropertyGridManager | yes |  ?? | no | grid_widgets.cpp |
 | wxRadioBox | yes |  ?? | yes | gen_prop_grid.cpp |
 | wxRadioButton | yes |  yes | yes | gen_radio_btn.cpp |
-| wxRearrangeCtrl | yes |  ?? | no | gen_rearrange.cpp |
+| wxRearrangeCtrl | yes |  yes | no | gen_rearrange.cpp |
 | wxRibbonBar | yes |  ?? | yes | ribbon_widgets.cpp |
 | wxRibbonButtonBar | yes |  ?? | yes | ribbon_widgets.cpp |
 | wxRibbonGallery | yes |  ?? | yes | ribbon_widgets.cpp |

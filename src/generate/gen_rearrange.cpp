@@ -49,20 +49,20 @@ wxObject* RearrangeCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
     return widget;
 }
 
-std::optional<ttlib::cstr> RearrangeCtrlGenerator::GenConstruction(Node* node)
+std::optional<ttlib::sview> RearrangeCtrlGenerator::CommonConstruction(Code& code)
 {
-    ttlib::cstr code;
-    if (node->IsLocal())
+    if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
-    code << node->get_node_name() << GenerateNewAssignment(node);
-    code << GetParentName(node) << ", " << node->prop_as_string(prop_id);
+    code.NodeName().CreateClass();
+    code.GetParentName().Comma().as_string(prop_id);
+    code.Comma().Pos().Comma().WxSize();
+    code.Comma();
+    if (code.is_cpp())
+        code += "wxArrayInt(), wxArrayString()";
+    else
+        code += "[], []";
 
-    code << ", ";
-    GenPos(node, code);
-    code << ", ";
-    GenSize(node, code);
-    code << ", wxArrayInt(), wxArrayString()";
-
+    Node* node = code.node();
     auto& type = node->prop_as_string(prop_type);
     auto& style = node->prop_as_string(prop_style);
     auto& win_style = node->prop_as_string(prop_window_style);
@@ -71,44 +71,32 @@ std::optional<ttlib::cstr> RearrangeCtrlGenerator::GenConstruction(Node* node)
     {
         if (node->HasValue(prop_window_name))
         {
-            code << ", 0";
+            code += ", 0";
         }
     }
     else
     {
-        code << ", " << type;
-        if (style.size())
-        {
-            code << '|' << style;
-        }
-        if (win_style.size())
-        {
-            code << '|' << win_style;
-        }
+        code.Comma().Add(type).Comma().Style();
     }
 
-    if (node->prop_as_string(prop_window_name).size())
+    if (node->HasValue(prop_window_name))
     {
-        code << ", wxDefaultValidator, " << node->prop_as_string(prop_window_name);
+        code.Comma().Add("wxDefaultValidator").Comma().QuotedString(prop_window_name);
     }
-    code << ");";
+    code.EndFunction();
 
-    return code;
+    return code.m_code;
 }
 
-std::optional<ttlib::cstr> RearrangeCtrlGenerator::GenSettings(Node* node, size_t& auto_indent)
+std::optional<ttlib::sview> RearrangeCtrlGenerator::CommonSettings(Code& code)
 {
-    ttlib::cstr code;
-
-    if (node->prop_as_bool(prop_focus))
+    if (code.IsTrue(prop_focus))
     {
-        if (code.size())
-            code << '\n';
-        code << node->get_node_name() << "->SetFocus()";
+        code.Eol(true).NodeName().Function("SetFocus(").EndFunction();
     }
-
-    if (node->HasValue(prop_contents))
+    if (code.HasValue(prop_contents))
     {
+        Node* node = code.node();
         auto contents = node->as_checklist_items(prop_contents);
         bool checked_item = false;
         for (auto& iter: contents)
@@ -124,46 +112,46 @@ std::optional<ttlib::cstr> RearrangeCtrlGenerator::GenSettings(Node* node, size_
         {
             for (auto& iter: contents)
             {
-                if (code.size())
-                    code << "\n";
-                code << node->get_node_name() << "->GetList()->Append(" << GenerateQuotedString(iter.label) << ");";
+                code.Eol(true).NodeName().Function("GetList()").Function("Append(").QuotedString(iter.label).EndFunction();
             }
         }
         else
         {
-            auto_indent = indent::auto_keep_whitespace;
-            code << "{\n\t";
-            code << "int item_position;";
+            code.OpenBrace();
+            if (code.is_cpp())
+                code += "int item_position;";
             for (auto& iter: contents)
             {
-                code << "\n";
+                code.Eol(true);
                 if (iter.checked == "1")
-                    code << "item_position = ";
-                code << node->get_node_name() << "->GetList()->Append(" << GenerateQuotedString(iter.label) << ");";
+                    code += "item_position = ";
+                code.NodeName().Function("GetList()").Function("Append(").QuotedString(iter.label).EndFunction();
                 if (iter.checked == "1")
-                    code << "\n" << node->get_node_name() << "->GetList()->Check(item_position);";
+                    code.Eol().NodeName().Function("GetList()").Function("Check(item_position").EndFunction();
             }
-            code << "\n}";
+            code.CloseBrace();
         }
 
-        if (node->prop_as_string(prop_selection_string).size())
+        if (code.HasValue(prop_selection_string))
         {
-            code << "\n";
-            code << node->get_node_name() << "->GetList()->SetStringSelection("
-                 << GenerateQuotedString(node->prop_as_string(prop_selection_string)) << ");";
+            code.Eol(true).NodeName().Function("GetList()").Function("SetStringSelection(");
+            code.QuotedString(prop_selection_string).EndFunction();
         }
         else
         {
             int sel = node->prop_as_int(prop_selection_int);
             if (sel > -1 && sel < (to_int) contents.size())
             {
-                code << "\n";
-                code << node->get_node_name() << "->GetList()->SetSelection(" << node->value(prop_selection_int) << ");";
+                code.Eol(true)
+                    .NodeName()
+                    .Function("GetList()")
+                    .Function("SetSelection(")
+                    .Str(prop_selection_int)
+                    .EndFunction();
             }
         }
     }
-
-    return code;
+    return code.m_code;
 }
 
 int RearrangeCtrlGenerator::GetRequiredVersion(Node* node)

@@ -51,6 +51,7 @@ set (file_list
     # Code generation modules
 
     generate/code.cpp              # Helper class for generating code
+    generate/file_codewriter.cpp   # Classs to write code to disk
     generate/gen_base.cpp          # Generate Src and Hdr files for Base and Derived Class
     generate/gen_construction.cpp  # Top level Object construction code
     generate/gen_cmake.cpp         # Auto-generate a .cmake file

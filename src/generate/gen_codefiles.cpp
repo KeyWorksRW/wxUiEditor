@@ -9,11 +9,12 @@
 
 #include "mainframe.h"
 
-#include "gen_base.h"       // BaseCodeGenerator -- Generate Base class
-#include "generate_dlg.h"   // GenerateDlg -- Dialog for choosing and generating specific language file(s)
-#include "node.h"           // Node class
-#include "project_class.h"  // Project class
-#include "write_code.h"     // Write code to Scintilla or file
+#include "file_codewriter.h"  // FileCodeWriter -- Classs to write code to disk
+#include "gen_base.h"         // BaseCodeGenerator -- Generate Base class
+#include "generate_dlg.h"     // GenerateDlg -- Dialog for choosing and generating specific language file(s)
+#include "node.h"             // Node class
+#include "project_class.h"    // Project class
+#include "write_code.h"       // Write code to Scintilla or file
 
 bool GenerateCodeFiles(GenResults& results, std::vector<ttlib::cstr>* pClassList)
 {

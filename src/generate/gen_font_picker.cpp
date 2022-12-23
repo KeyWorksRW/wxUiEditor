@@ -44,7 +44,8 @@ std::optional<ttlib::sview> FontPickerGenerator::CommonConstruction(Code& code)
 
         code.Add("wxFont(");
 
-        if (fontprop.GetPointSize() <= 0) {
+        if (fontprop.GetPointSize() <= 0)
+        {
             code.Add("wxNORMAL_FONT").Function("GetPointSize()");
         }
         else

@@ -164,6 +164,14 @@ int FileCodeWriter::WriteFile(int language, int flags)
             }
             else
             {
+                // Allocate additional space for the user content, plus a newline for each line
+                size_t expansion_needed = 0;
+                for (auto& iter: org_file)
+                {
+                    expansion_needed += (iter.size() + 1);
+                }
+                m_buffer.reserve(m_buffer.size() + expansion_needed);
+
                 // Add the user content after our generated code comment block
                 for (size_t idx = additional_content; idx < org_file.size(); ++idx)
                 {

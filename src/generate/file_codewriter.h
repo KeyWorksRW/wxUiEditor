@@ -35,7 +35,7 @@ namespace code
 class FileCodeWriter : public WriteCode
 {
 public:
-    FileCodeWriter(const wxString& file, size_t reserved_amount = 4096) : m_filename(file)
+    FileCodeWriter(const wxString& file, size_t reserved_amount = 8 * 1024) : m_filename(file)
     {
         m_buffer.clear();
         m_buffer.reserve(reserved_amount);
@@ -48,7 +48,7 @@ public:
     int WriteFile(int language, int flags = code::flag_none);
 
 protected:
-    void doWrite(ttlib::sview code) override { m_buffer << code; };
+    void doWrite(ttlib::sview code) override { m_buffer += code; };
 
     ttlib::cstr m_buffer;
 

@@ -49,7 +49,6 @@
 #include "panels/propgrid_panel.h"  // PropGridPanel -- Node inspector class
 #include "panels/ribbon_tools.h"    // RibbonPanel -- Displays component tools in a wxRibbonBar
 
-#include "wxui/importwinres_base.h"  // ImportWinResDlg -- Dialog for Importing a Windows resource file
 #include "wxui/insertwidget_base.h"  // InsertWidget -- Dialog to lookup and insert a widget
 #include "wxui/ui_images.h"          // This is generated from the Images form
 
@@ -542,15 +541,6 @@ void MainFrame::OnAppendXRC(wxCommandEvent&)
         wxArrayString files;
         dlg.GetPaths(files);
         wxGetApp().AppendXRC(files);
-    }
-}
-
-void MainFrame::OnImportWindowsResource(wxCommandEvent&)
-{
-    ImportWinRes dlg(this);
-    if (dlg.ShowModal() == wxID_OK)
-    {
-        wxGetApp().AppendWinRes(dlg.GetRcFilename(), dlg.GetDlgNames());
     }
 }
 

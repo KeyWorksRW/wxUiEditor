@@ -18,7 +18,7 @@ set (wxue_generated_code
     ${CMAKE_CURRENT_LIST_DIR}/grid_property_dlg.cpp
     ${CMAKE_CURRENT_LIST_DIR}/gridbag_item_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/import_base.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/importwinres_base.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/import_winres_dlg.cpp
     ${CMAKE_CURRENT_LIST_DIR}/insertwidget_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/mainframe_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/menu_auibar_base.cpp

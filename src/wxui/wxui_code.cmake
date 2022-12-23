@@ -13,13 +13,13 @@ set (wxue_generated_code
     ${CMAKE_CURRENT_LIST_DIR}/editstringdialog_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/eventhandlerdlg_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/fontpropdlg_base.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/generate_dlg.cpp
     ${CMAKE_CURRENT_LIST_DIR}/generate_xrc_dlg_base.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/generatedlg_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/grid_property_dlg.cpp
     ${CMAKE_CURRENT_LIST_DIR}/gridbag_item_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/import_base.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/importwinres_base.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/insertwidget_base.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/import_winres_dlg.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/insert_widget.cpp
     ${CMAKE_CURRENT_LIST_DIR}/mainframe_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/menu_auibar_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/menu_bartools_base.cpp
@@ -37,7 +37,7 @@ set (wxue_generated_code
     ${CMAKE_CURRENT_LIST_DIR}/newpanel_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/newribbon_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/newwizard_base.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/optionsdlg_base.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/optionsdlg.cpp
     ${CMAKE_CURRENT_LIST_DIR}/preview_settings.cpp
     ${CMAKE_CURRENT_LIST_DIR}/ribbonpanel_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/startupdlg_base.cpp

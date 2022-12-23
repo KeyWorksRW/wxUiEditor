@@ -8,11 +8,12 @@
     generate_cmake="1">
     <node
       class="wxDialog"
-      base_file="code_compare_base"
       class_name="CodeCompare"
+      title="Compare Code Generation"
+      base_file="code_compare"
+      derived_class_name="CodeCompare"
       inserted_hdr_code="~CodeCompare();@@@@private:@@    std::vector&lt;ttlib::cstr> m_class_list;"
       private_members="1"
-      title="Compare Code Generation"
       use_derived_class="0"
       wxEVT_INIT_DIALOG="OnInit">
       <node
@@ -78,12 +79,12 @@
     </node>
     <node
       class="wxDialog"
-      base_file="convert_img_base"
       class_name="ConvertImageBase"
-      derived_class_name="convert_img"
+      title="Convert Image"
       minimum_size="-1,-1"
       size="-1,-1"
-      title="Convert Image">
+      base_file="convert_img_base"
+      derived_class_name="convert_img">
       <node
         class="wxBoxSizer"
         orientation="wxVERTICAL"
@@ -364,13 +365,15 @@
     </node>
     <node
       class="wxDialog"
-      base_file="debugsettings_base"
-      class_name="DebugSettingsBase"
-      derived_class_name="DebugSettings"
-      derived_file="debugsettings"
+      class_name="DebugSettings"
       persist="1"
       style="wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER"
       title="Test Settings"
+      base_file="debugsettings"
+      derived_class_name="DebugSettings"
+      derived_file="debugsettings"
+      inserted_hdr_code="private:@@    long m_orgFlags;@@"
+      use_derived_class="0"
       wxEVT_INIT_DIALOG="OnInit">
       <node
         class="wxBoxSizer"
@@ -650,12 +653,15 @@
     </node>
     <node
       class="wxDialog"
-      base_file="nodeinfo_base"
-      class_name="NodeInfoBase"
+      class_name="NodeInfo"
+      title="Node Information"
+      base_file="node_info"
+      base_hdr_includes="#include &quot;node_classes.h&quot;"
       derived_class_name="NodeInfo"
       derived_file="node_info"
+      inserted_hdr_code="void SetNode(Node* node) { m_node = node; }@@@@private:@@Node* m_node { nullptr };"
       private_members="1"
-      title="Node Information"
+      use_derived_class="0"
       wxEVT_INIT_DIALOG="OnInit">
       <node
         class="wxBoxSizer"
@@ -703,14 +709,15 @@
     </node>
     <node
       class="wxDialog"
-      base_file="xrcpreview_base"
-      class_name="XrcPreviewBase"
-      derived_class_name="XrcPreview"
-      derived_file="xrcpreview"
-      minimum_size="800,600d"
+      class_name="XrcPreview"
       persist="1"
       style="wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER"
       title="Test XRC"
+      minimum_size="800,600d"
+      base_file="xrcpreview"
+      derived_class_name="XrcPreview"
+      derived_file="xrcpreview"
+      use_derived_class="0"
       wxEVT_INIT_DIALOG="OnInit">
       <node
         class="wxBoxSizer"

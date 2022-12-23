@@ -252,12 +252,8 @@ set (file_list
     ../pugixml/pugixml.cpp      # XML parser
 
     ui/generate_xrc_dlg.cpp     # Dialog for generating XRC file(s)
-    ui/generate_dlg.cpp         # Dialog for choosing and generating specific language file(s)
     ui/gridbag_item.cpp         # Dialog for inserting an item into a wxGridBagSizer node
     ui/import_dlg.cpp           # Dialog to import one or more projects
-    ui/importwinresdlg.cpp      # Dialog for Importing a Windows resource file
-    ui/insertwidget.cpp         # Dialog to lookup and insert a widget
-    ui/optionsdlg.cpp           # Dialog containing special Debugging commands
     ui/xrccompare.cpp           # C++/XRC UI Comparison dialog
 
     ui/preview_settings_events.cpp  # Event handlers for PreviewSettings dialog
@@ -269,19 +265,34 @@ set (file_list
     $<$<CONFIG:Debug>:internal/node_info.cpp>       # Node memory usage dialog
     $<$<CONFIG:Debug>:internal/xrcpreview.cpp>      # Test XRC
 
-    $<$<CONFIG:Debug>:internal/code_compare_base.cpp>
-    $<$<CONFIG:Debug>:internal/convert_img_base.cpp>
-    $<$<CONFIG:Debug>:internal/nodeinfo_base.cpp>
-    $<$<CONFIG:Debug>:internal/xrcpreview_base.cpp>
-
     $<$<CONFIG:Debug>:internal/debugsettings.cpp>  # Settings while running the Debug version of wxUiEditor
     $<$<CONFIG:Debug>:internal/msg_logging.cpp>    # Message logging class
     $<$<CONFIG:Debug>:internal/msgframe.cpp>       # Stores messages
 
+    $<$<CONFIG:Debug>:internal/convert_img_base.cpp>
     $<$<CONFIG:Debug>:internal/msgframe_base.cpp>       # wxUiEditor generated file
-    $<$<CONFIG:Debug>:internal/debugsettings_base.cpp>  # wxUiEditor generated file
 
     $<$<CONFIG:Debug>:tests/test_xrc_import.cpp>  # XRC Import tests
+)
+
+set (debug_files
+    # These are just here to make it easier to open with a VSCode extension
+
+    internal/code_compare.cpp
+    internal/convert_img.cpp
+    internal/import_panel.cpp
+    internal/node_info.cpp
+    internal/xrcpreview.cpp
+
+    internal/debugsettings.cpp
+    internal/msg_logging.cpp
+    internal/msgframe.cpp
+
+    internal/convert_img_base.cpp
+    internal/msgframe_base.cpp
+
+    tests/test_xrc_import.cpp
+
 )
 
 set (doc_list

@@ -27,6 +27,7 @@ The right-click menu for a widget in the Navigation Panel will sometimes have a 
 ### Changed
 
 - A user can no longer enter an invalid C++ variable name.
+- All C++ generated files include clang-format off and on comments around generated code so that if you add your own code at the end, you can run it through clang-format.
 - `contents` property for wxCheckListBox and wxRearrangeCtrl now supports setting initial checked state for each string.
 - When a form is duplicated, the class name and any filenames specified for the form are now unique within the project.
 - `Generate XRC files...` on Tools menu now launches a dialog allowing you to choose between combined or individually generated XRC files.

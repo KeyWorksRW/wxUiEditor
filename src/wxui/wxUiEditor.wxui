@@ -853,11 +853,12 @@
     </node>
     <node
       class="wxDialog"
-      class_name="GenerateDlgBase"
+      class_name="GenerateDlg"
       title="Generate Code"
-      base_file="generatedlg_base"
+      base_file="generate_dlg"
       derived_class_name="GenerateDlg"
       derived_file="generatedlg"
+      use_derived_class="0"
       wxEVT_INIT_DIALOG="OnInit">
       <node
         class="wxBoxSizer"
@@ -1306,7 +1307,8 @@
       class="wxDialog"
       class_name="ImportWinRes"
       title="Import Windows Resource Dialogs"
-      base_file="importwinres_base"
+      base_file="import_winres_dlg"
+      derived_class_name="ImportWinRes"
       inserted_hdr_code="const ttlib::cstr&amp; GetRcFilename() { return m_rcFilename; }@@std::vector&lt;ttlib::cstr>&amp; GetDlgNames() { return m_dialogs; }@@@@protected:@@void ReadRcFile();@@@@private:@@ttlib::cstr m_rcFilename;@@std::vector&lt;ttlib::cstr> m_dialogs;"
       private_members="1"
       use_derived_class="0"
@@ -1377,7 +1379,8 @@
       icon="Art;wxART_EDIT|wxART_MENU"
       title="Insert Widget"
       minimum_size="-1,-1"
-      base_file="insertwidget_base"
+      base_file="insert_widget"
+      derived_class_name="InsertWidget"
       inserted_hdr_code="ttlib::cstr GetWidget() { return m_widget; }@@@@private:@@ttlib::cstr m_widget;"
       private_members="1"
       use_derived_class="0"
@@ -3788,10 +3791,11 @@
     </node>
     <node
       class="wxDialog"
-      class_name="OptionsDlgBase"
+      class_name="OptionsDlg"
       title="Options"
-      base_file="optionsdlg_base"
+      base_file="optionsdlg"
       derived_class_name="OptionsDlg"
+      use_derived_class="0"
       wxEVT_INIT_DIALOG="OnInit">
       <node
         class="wxBoxSizer"

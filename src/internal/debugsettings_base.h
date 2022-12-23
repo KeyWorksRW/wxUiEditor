@@ -52,6 +52,8 @@ protected:
     wxStdDialogButtonSizer* std_button_sizer;
     wxButton* std_button_sizerOK;
     wxButton* std_button_sizerCancel;
+private:
+    long m_orgFlags;
 };
 
 // ************* End of generated code ***********

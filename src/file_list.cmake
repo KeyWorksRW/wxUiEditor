@@ -265,16 +265,34 @@ set (file_list
     $<$<CONFIG:Debug>:internal/node_info.cpp>       # Node memory usage dialog
     $<$<CONFIG:Debug>:internal/xrcpreview.cpp>      # Test XRC
 
-
     $<$<CONFIG:Debug>:internal/debugsettings.cpp>  # Settings while running the Debug version of wxUiEditor
     $<$<CONFIG:Debug>:internal/msg_logging.cpp>    # Message logging class
     $<$<CONFIG:Debug>:internal/msgframe.cpp>       # Stores messages
 
     $<$<CONFIG:Debug>:internal/convert_img_base.cpp>
     $<$<CONFIG:Debug>:internal/msgframe_base.cpp>       # wxUiEditor generated file
-    $<$<CONFIG:Debug>:internal/debugsettings_base.cpp>  # wxUiEditor generated file
 
     $<$<CONFIG:Debug>:tests/test_xrc_import.cpp>  # XRC Import tests
+)
+
+set (debug_files
+    # These are just here to make it easier to open with a VSCode extension
+
+    internal/code_compare.cpp
+    internal/convert_img.cpp
+    internal/import_panel.cpp
+    internal/node_info.cpp
+    internal/xrcpreview.cpp
+
+    internal/debugsettings.cpp
+    internal/msg_logging.cpp
+    internal/msgframe.cpp
+
+    internal/convert_img_base.cpp
+    internal/msgframe_base.cpp
+
+    tests/test_xrc_import.cpp
+
 )
 
 set (doc_list

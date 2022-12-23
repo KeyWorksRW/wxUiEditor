@@ -365,13 +365,15 @@
     </node>
     <node
       class="wxDialog"
-      class_name="DebugSettingsBase"
+      class_name="DebugSettings"
       persist="1"
       style="wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER"
       title="Test Settings"
-      base_file="debugsettings_base"
+      base_file="debugsettings"
       derived_class_name="DebugSettings"
       derived_file="debugsettings"
+      inserted_hdr_code="private:@@    long m_orgFlags;@@"
+      use_derived_class="0"
       wxEVT_INIT_DIALOG="OnInit">
       <node
         class="wxBoxSizer"

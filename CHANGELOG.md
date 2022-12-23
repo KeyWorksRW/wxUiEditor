@@ -7,6 +7,7 @@ Release summary...
 
 ### Added
 
+- You can now add your own code at the end of generated files. This code will be preserved even when the file is re-generated.
 - Stretchable space can now be added to toolbars.
 - Added support for dropdown toolbar items that contain menu items.
 - wxToolBar and wxAuiToolBar individual tools now have a disabled property.

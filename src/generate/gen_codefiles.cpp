@@ -9,11 +9,14 @@
 
 #include "mainframe.h"
 
-#include "gen_base.h"       // BaseCodeGenerator -- Generate Base class
-#include "generate_dlg.h"   // GenerateDlg -- Dialog for choosing and generating specific language file(s)
-#include "node.h"           // Node class
-#include "project_class.h"  // Project class
-#include "write_code.h"     // Write code to Scintilla or file
+#include "file_codewriter.h"  // FileCodeWriter -- Classs to write code to disk
+#include "gen_base.h"         // BaseCodeGenerator -- Generate Base class
+#include "generate_dlg.h"     // GenerateDlg -- Dialog for choosing and generating specific language file(s)
+#include "node.h"             // Node class
+#include "project_class.h"    // Project class
+#include "write_code.h"       // Write code to Scintilla or file
+
+using namespace code;
 
 bool GenerateCodeFiles(GenResults& results, std::vector<ttlib::cstr>* pClassList)
 {
@@ -108,7 +111,11 @@ bool GenerateCodeFiles(GenResults& results, std::vector<ttlib::cstr>* pClassList
             codegen.GenerateBaseClass(form);
 
             path.replace_extension(header_ext);
-            auto retval = h_cw->WriteFile(pClassList != nullptr);
+
+            int flags = flag_no_ui;
+            if (pClassList)
+                flags |= flag_test_only;
+            auto retval = h_cw->WriteFile(GEN_LANG_CPLUSPLUS, flags);
 
             if (retval > 0)
             {
@@ -142,7 +149,7 @@ bool GenerateCodeFiles(GenResults& results, std::vector<ttlib::cstr>* pClassList
             }
 
             path.replace_extension(source_ext);
-            retval = cpp_cw->WriteFile(pClassList != nullptr);
+            retval = cpp_cw->WriteFile(GEN_LANG_CPLUSPLUS, flags);
 
             if (retval > 0)
             {
@@ -264,7 +271,7 @@ void GenInhertedClass(GenResults& results)
             }
 
             // If we get here, the source file exists, but the header file does not.
-            retval = h_cw->WriteFile();
+            retval = h_cw->WriteFile(GEN_LANG_CPLUSPLUS, flag_no_ui);
             if (retval == result::fail)
             {
                 results.msgs.emplace_back() << "Cannot create or write to the file " << path << '\n';
@@ -289,7 +296,7 @@ void GenInhertedClass(GenResults& results)
         if (path.file_exists())
             retval = result::exists;
         else
-            retval = h_cw->WriteFile();
+            retval = h_cw->WriteFile(GEN_LANG_CPLUSPLUS, flag_no_ui);
 
         if (retval == result::fail)
         {
@@ -305,7 +312,7 @@ void GenInhertedClass(GenResults& results)
         }
 
         path.replace_extension(source_ext);
-        retval = cpp_cw->WriteFile();
+        retval = cpp_cw->WriteFile(GEN_LANG_CPLUSPLUS, flag_no_ui);
         if (retval == result::fail)
         {
             results.msgs.emplace_back() << "Cannot create or write to the file " << path << '\n';
@@ -456,10 +463,10 @@ void GenerateTmpFiles(const std::vector<ttlib::cstr>& ClassList, pugi::xml_node 
                 if (language == GEN_LANG_CPLUSPLUS)
                 {
                     // Currently, only C++ generates code from h_cw
-                    new_hdr = (h_cw->WriteFile(true) > 0);
+                    new_hdr = (h_cw->WriteFile(GEN_LANG_CPLUSPLUS, flag_test_only) > 0);
                 }
 
-                bool new_src = (cpp_cw->WriteFile(true) > 0);
+                bool new_src = (cpp_cw->WriteFile(GEN_LANG_CPLUSPLUS, flag_test_only) > 0);
 
                 if (new_hdr || new_src)
                 {
@@ -499,7 +506,7 @@ void GenerateTmpFiles(const std::vector<ttlib::cstr>& ClassList, pugi::xml_node 
                     {
                         auto paths = root.append_child("paths");
                         tmp_path.replace_extension(header_ext);
-                        h_cw->WriteFile();
+                        h_cw->WriteFile(language, flag_no_ui);
                         path.replace_extension(header_ext);
                         paths.append_child("left").text().set(path.c_str());
                         paths.append_child("left-readonly").text().set("0");
@@ -511,7 +518,7 @@ void GenerateTmpFiles(const std::vector<ttlib::cstr>& ClassList, pugi::xml_node 
                     {
                         auto paths = root.append_child("paths");
                         tmp_path.replace_extension(source_ext);
-                        cpp_cw->WriteFile();
+                        cpp_cw->WriteFile(language, flag_no_ui);
                         path.replace_extension(source_ext);
                         paths.append_child("left").text().set(path.c_str());
                         paths.append_child("left-readonly").text().set("0");

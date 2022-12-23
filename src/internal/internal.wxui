@@ -707,14 +707,15 @@
     </node>
     <node
       class="wxDialog"
-      class_name="XrcPreviewBase"
+      class_name="XrcPreview"
       persist="1"
       style="wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER"
       title="Test XRC"
       minimum_size="800,600d"
-      base_file="xrcpreview_base"
+      base_file="xrcpreview"
       derived_class_name="XrcPreview"
       derived_file="xrcpreview"
+      use_derived_class="0"
       wxEVT_INIT_DIALOG="OnInit">
       <node
         class="wxBoxSizer"

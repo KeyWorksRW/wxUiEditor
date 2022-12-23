@@ -9,6 +9,6 @@ set (wxui_internal
     ${CMAKE_CURRENT_LIST_DIR}/debugsettings_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/msgframe_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/node_info.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/xrcpreview_base.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/xrcpreview.cpp
 
 )

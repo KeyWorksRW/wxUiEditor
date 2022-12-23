@@ -5,6 +5,18 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
+// #define THREADED_CODE_GEN
+
+#if defined(THREADED_CODE_GEN)
+    #include <future>
+    #include <mutex>
+    #include <thread>
+#endif
+
+#if defined(_DEBUG) || defined(INTERNAL_TESTING)
+    #include <chrono>
+#endif
+
 #include "ttcwd_wx.h"  // cwd -- Class for storing and optionally restoring the current directory
 
 #include "mainframe.h"
@@ -17,6 +29,189 @@
 #include "write_code.h"       // Write code to Scintilla or file
 
 using namespace code;
+
+struct GenData
+{
+    GenData(GenResults& results, std::vector<ttlib::cstr>* pClassList)
+    {
+        this->presults = &results;
+        this->pClassList = pClassList;
+    }
+
+    GenResults* presults { nullptr };
+    std::vector<ttlib::cstr>* pClassList { nullptr };
+    ttlib::cstr source_ext;
+    ttlib::cstr header_ext;
+
+#if !defined(THREADED_CODE_GEN)
+    void AddUpdateFilename(ttlib::cstr& path)
+    {
+        presults->updated_files.emplace_back(path);
+    };
+
+    void AddResultMsg(ttlib::cstr& msg)
+    {
+        presults->msgs.emplace_back(msg);
+    };
+
+    void UpdateFileCount()
+    {
+        presults->file_count += 1;
+    };
+
+    void AddClassName(const ttlib::cstr& class_name)
+    {
+        if (pClassList)
+        {
+            pClassList->emplace_back(class_name);
+        }
+    };
+#else
+    std::mutex mutex_results;
+    std::mutex mutex_class_list;
+
+    void AddUpdateFilename(ttlib::cstr& path)
+    {
+        mutex_results.lock();
+        presults->updated_files.emplace_back(path);
+        mutex_results.unlock();
+    };
+
+    void AddResultMsg(ttlib::cstr& msg)
+    {
+        mutex_results.lock();
+        presults->msgs.emplace_back(msg);
+        mutex_results.unlock();
+    };
+
+    void UpdateFileCount()
+    {
+        mutex_results.lock();
+        presults->file_count += 1;
+        mutex_results.unlock();
+    };
+
+    void AddClassName(const ttlib::cstr& class_name)
+    {
+        if (pClassList)
+        {
+            mutex_class_list.lock();
+            pClassList->emplace_back(class_name);
+            mutex_class_list.unlock();
+        }
+    };
+#endif
+};
+
+// While not required, this function can be run from a thread.
+void GenThreadCpp(GenData& gen_data, Node* form)
+{
+    // These are just defined for convenience.
+    ttlib::cstr& source_ext = gen_data.source_ext;
+    ttlib::cstr& header_ext = gen_data.header_ext;
+
+    ttlib::cstr path;
+
+    if (auto& base_file = form->prop_as_string(prop_base_file); base_file.size())
+    {
+        path = base_file;
+        // "filename_base" is the default filename given to all form files. Unless it's changed, no code will be
+        // generated.
+        if (path == "filename_base")
+            return;
+        if (auto* node_folder = form->get_folder(); node_folder && node_folder->HasValue(prop_folder_base_directory))
+        {
+            path = node_folder->as_string(prop_folder_base_directory);
+            path.append_filename(base_file.filename());
+        }
+        else if (GetProject()->HasValue(prop_base_directory) && !path.contains("/"))
+        {
+            path = GetProject()->GetBaseDirectory().utf8_string();
+            path.append_filename(base_file);
+        }
+        path.make_absolute();
+        path.backslashestoforward();
+    }
+    else
+    {
+        gen_data.AddResultMsg(ttlib::cstr()
+                              << "No filename specified for " << form->prop_as_string(prop_class_name) << '\n');
+        return;
+    }
+
+    BaseCodeGenerator codegen(GEN_LANG_CPLUSPLUS);
+
+    path.replace_extension(header_ext);
+    auto h_cw = std::make_unique<FileCodeWriter>(path.wx_str());
+    codegen.SetHdrWriteCode(h_cw.get());
+
+    path.replace_extension(source_ext);
+    auto cpp_cw = std::make_unique<FileCodeWriter>(path.wx_str());
+    codegen.SetSrcWriteCode(cpp_cw.get());
+
+    codegen.GenerateBaseClass(form);
+
+    path.replace_extension(header_ext);
+
+    int flags = flag_no_ui;
+    if (gen_data.pClassList)
+        flags |= flag_test_only;
+    auto retval = h_cw->WriteFile(GEN_LANG_CPLUSPLUS, flags);
+
+    if (retval > 0)
+    {
+        if (!gen_data.pClassList)
+        {
+            gen_data.AddUpdateFilename(path);
+        }
+        else
+        {
+            if (form->isGen(gen_Images))
+            {
+                // While technically this is a "form" it doesn't have the usual properties set
+                gen_data.AddClassName(GenEnum::map_GenNames[gen_Images]);
+            }
+            else
+            {
+                gen_data.AddClassName(form->prop_as_string(prop_class_name));
+            }
+            return;
+        }
+    }
+    else if (retval < 0)
+    {
+        gen_data.AddResultMsg(ttlib::cstr() << "Cannot create or write to the file " << path << '\n');
+    }
+    else  // retval == result::exists)
+    {
+        gen_data.UpdateFileCount();
+    }
+
+    path.replace_extension(source_ext);
+    retval = cpp_cw->WriteFile(GEN_LANG_CPLUSPLUS, flags);
+
+    if (retval > 0)
+    {
+        if (!gen_data.pClassList)
+        {
+            gen_data.AddUpdateFilename(path);
+        }
+        else
+        {
+            gen_data.AddClassName(form->prop_as_string(prop_class_name));
+            return;
+        }
+    }
+
+    else if (retval < 0)
+    {
+        gen_data.AddResultMsg(ttlib::cstr() << "Cannot create or write to the file " << path << '\n');
+    }
+    else  // retval == result::exists
+    {
+        gen_data.UpdateFileCount();
+    }
+}
 
 bool GenerateCodeFiles(GenResults& results, std::vector<ttlib::cstr>* pClassList)
 {
@@ -65,124 +260,82 @@ bool GenerateCodeFiles(GenResults& results, std::vector<ttlib::cstr>* pClassList
         header_ext = extProp;
     }
 
-    bool generate_result = true;
     std::vector<Node*> forms;
     project->CollectForms(forms);
+
+    GenData gen_data(results, pClassList);
+    gen_data.source_ext = source_ext;
+    gen_data.header_ext = header_ext;
+
+#if defined(THREADED_CODE_GEN)
+    auto num_cpus = std::thread::hardware_concurrency();
+
+    // Keep in mind that GenThreadCpp() will itself create two threads when it calls
+    // codegen.GenerateBaseClass(). These additional threads are very short lived, and the
+    // calling thread will often block until they are done. GenThreadCpp() itself can block
+    // any time it needs to update results. We don't want to create too many threads, but we
+    // can rely on some blocking and therefore have more total threads created then there are
+    // CPUs to run them. That means that in theory, setting max_threads = 10 could result in
+    // 30 threads. In practice, threads will block or be deleted before that happens.
+
+    // Also keep in mind that some Intel processors have a few threads that run slower than
+    // normal threads. So even if you get a value of 24 cpus, only 20 of them will run at
+    // full speed. Just another reason to keep the max_threads count below the maximum number
+    // of CPUS.
+
+    size_t max_threads = 2;
+    if (num_cpus > 3)
+        max_threads = num_cpus / 3;
+
+    std::vector<std::thread> threads;
+    size_t thread_idx = 0;
+#endif
+
+#if defined(_DEBUG) || defined(INTERNAL_TESTING)
+    auto begin_time = std::chrono::high_resolution_clock::now();
+#endif
     for (const auto& form: forms)
     {
-        if (auto& base_file = form->prop_as_string(prop_base_file); base_file.size())
+#if defined(THREADED_CODE_GEN)
+        if (threads.size() < max_threads)
         {
-            path = base_file;
-            // "filename_base" is the default filename given to all form files. Unless it's changed, no code will be
-            // generated.
-            if (path == "filename_base")
-                continue;
-            if (auto* node_folder = form->get_folder(); node_folder && node_folder->HasValue(prop_folder_base_directory))
-            {
-                path = node_folder->as_string(prop_folder_base_directory);
-                path.append_filename(base_file.filename());
-            }
-            else if (GetProject()->HasValue(prop_base_directory) && !path.contains("/"))
-            {
-                path = GetProject()->GetBaseDirectory().utf8_string();
-                path.append_filename(base_file);
-            }
-            path.make_absolute();
-            path.backslashestoforward();
+            threads.emplace_back(GenThreadCpp, std::ref(gen_data), form);
         }
         else
         {
-            results.msgs.emplace_back() << "No filename specified for " << form->prop_as_string(prop_class_name) << '\n';
-            continue;
+            threads[thread_idx].join();
+            threads[thread_idx] = std::thread(GenThreadCpp, std::ref(gen_data), form);
+            ++thread_idx;
+            if (thread_idx >= threads.size())
+                thread_idx = 0;
         }
-
-        try
-        {
-            BaseCodeGenerator codegen(GEN_LANG_CPLUSPLUS);
-
-            path.replace_extension(header_ext);
-            auto h_cw = std::make_unique<FileCodeWriter>(path.wx_str());
-            codegen.SetHdrWriteCode(h_cw.get());
-
-            path.replace_extension(source_ext);
-            auto cpp_cw = std::make_unique<FileCodeWriter>(path.wx_str());
-            codegen.SetSrcWriteCode(cpp_cw.get());
-
-            codegen.GenerateBaseClass(form);
-
-            path.replace_extension(header_ext);
-
-            int flags = flag_no_ui;
-            if (pClassList)
-                flags |= flag_test_only;
-            auto retval = h_cw->WriteFile(GEN_LANG_CPLUSPLUS, flags);
-
-            if (retval > 0)
-            {
-                if (!pClassList)
-                {
-                    results.updated_files.emplace_back(path);
-                }
-                else
-                {
-                    if (form->isGen(gen_Images))
-                    {
-                        // While technically this is a "form" it doesn't have the usual properties set
-
-                        pClassList->emplace_back(GenEnum::map_GenNames[gen_Images]);
-                    }
-                    else
-                    {
-                        pClassList->emplace_back(form->prop_as_string(prop_class_name));
-                    }
-                    continue;
-                }
-            }
-            else if (retval < 0)
-            {
-                results.msgs.emplace_back() << "Cannot create or write to the file " << path << '\n';
-                generate_result = false;
-            }
-            else  // retval == result::exists)
-            {
-                ++results.file_count;
-            }
-
-            path.replace_extension(source_ext);
-            retval = cpp_cw->WriteFile(GEN_LANG_CPLUSPLUS, flags);
-
-            if (retval > 0)
-            {
-                if (!pClassList)
-                {
-                    results.updated_files.emplace_back(path);
-                }
-                else
-                {
-                    pClassList->emplace_back(form->prop_as_string(prop_class_name));
-                    continue;
-                }
-            }
-
-            else if (retval < 0)
-            {
-                results.msgs.emplace_back() << "Cannot create or write to the file " << path << '\n';
-            }
-            else  // retval == result::exists
-            {
-                ++results.file_count;
-            }
-        }
-        catch (const std::exception& TESTING_PARAM(e))
-        {
-            MSG_ERROR(e.what());
-            wxMessageBox(ttlib::cstr("An internal error occurred generating code files for ")
-                             << form->prop_as_string(prop_base_file),
-                         "Code generation");
-            continue;
-        }
+#else   // not defined(THREADED_CODE_GEN)
+        GenThreadCpp(gen_data, form);
+#endif  // THREADED_CODE_GEN
     }
-    return generate_result;
+
+#if defined(THREADED_CODE_GEN)
+    for (auto& thread: threads)
+    {
+        thread.join();
+    }
+#endif
+
+#if defined(_DEBUG) || defined(INTERNAL_TESTING)
+    auto end_time = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end_time - begin_time);
+    size_t value = ((to_size_t) duration.count());
+    #if defined(THREADED_CODE_GEN)
+    results.msgs.emplace_back(ttlib::cstr() << "Threaded time: " << value << " milliseconds");
+    #else
+    results.msgs.emplace_back(ttlib::cstr() << "Non-threaded time: " << value << " milliseconds");
+    #endif
+#endif
+
+    if (pClassList)
+        return pClassList->size() > 0;
+    else
+        return results.updated_files.size() > 0;
 }
 
 void GenInhertedClass(GenResults& results)

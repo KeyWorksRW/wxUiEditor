@@ -265,7 +265,6 @@ set (file_list
     $<$<CONFIG:Debug>:internal/node_info.cpp>       # Node memory usage dialog
     $<$<CONFIG:Debug>:internal/xrcpreview.cpp>      # Test XRC
 
-    $<$<CONFIG:Debug>:internal/code_compare_base.cpp>
     $<$<CONFIG:Debug>:internal/convert_img_base.cpp>
     $<$<CONFIG:Debug>:internal/nodeinfo_base.cpp>
     $<$<CONFIG:Debug>:internal/xrcpreview_base.cpp>

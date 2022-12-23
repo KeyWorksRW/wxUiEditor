@@ -49,12 +49,12 @@
 #include "panels/propgrid_panel.h"  // PropGridPanel -- Node inspector class
 #include "panels/ribbon_tools.h"    // RibbonPanel -- Displays component tools in a wxRibbonBar
 
-#include "wxui/ui_images.h"          // This is generated from the Images form
+#include "wxui/ui_images.h"  // This is generated from the Images form
 
 #if defined(INTERNAL_TESTING)
-    #include "internal/code_compare_base.h"  // CodeCompare
-    #include "internal/import_panel.h"       // ImportPanel -- Panel to display original imported file
-    #include "internal/node_info.h"          // NodeInfo
+    #include "internal/code_compare.h"  // CodeCompare
+    #include "internal/import_panel.h"  // ImportPanel -- Panel to display original imported file
+    #include "internal/node_info.h"     // NodeInfo
 #endif
 
 #if defined(_DEBUG) || defined(INTERNAL_TESTING)

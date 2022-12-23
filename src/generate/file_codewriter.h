@@ -35,7 +35,11 @@ namespace code
 class FileCodeWriter : public WriteCode
 {
 public:
-    FileCodeWriter(const wxString& file) : m_filename(file) { m_buffer.clear(); }
+    FileCodeWriter(const wxString& file, size_t reserved_amount = 4096) : m_filename(file)
+    {
+        m_buffer.clear();
+        m_buffer.reserve(reserved_amount);
+    }
 
     void Clear() override { m_buffer.clear(); };
     ttlib::cstr& GetString() { return m_buffer; };

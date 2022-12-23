@@ -5,7 +5,7 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include <wx/stc/stc.h>   // Scintilla
+#include <wx/stc/stc.h>  // Scintilla
 
 #include "write_code.h"
 

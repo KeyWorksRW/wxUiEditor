@@ -534,7 +534,7 @@ bool BaseCodeGenerator::GenAfterChildren(Node* node, bool need_closing_brace)
                 if (!node->HasValue(prop_borders) && !node->HasValue(prop_flags))
                     gen_code.m_code += '0';
 
-                gen_code.as_string(prop_border_size).EndFunction();
+                gen_code.Comma().as_string(prop_border_size).EndFunction();
                 gen_code.m_code.Replace(", 0, 0)", ")");
             }
             else

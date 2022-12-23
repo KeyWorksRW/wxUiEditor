@@ -853,11 +853,12 @@
     </node>
     <node
       class="wxDialog"
-      class_name="GenerateDlgBase"
+      class_name="GenerateDlg"
       title="Generate Code"
-      base_file="generatedlg_base"
+      base_file="generate_dlg"
       derived_class_name="GenerateDlg"
       derived_file="generatedlg"
+      use_derived_class="0"
       wxEVT_INIT_DIALOG="OnInit">
       <node
         class="wxBoxSizer"

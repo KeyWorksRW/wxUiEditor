@@ -266,7 +266,7 @@ set (file_list
     $<$<CONFIG:Debug>:internal/xrcpreview.cpp>      # Test XRC
 
     $<$<CONFIG:Debug>:internal/convert_img_base.cpp>
-    $<$<CONFIG:Debug>:internal/nodeinfo_base.cpp>
+    # $<$<CONFIG:Debug>:internal/nodeinfo_base.cpp>
     $<$<CONFIG:Debug>:internal/xrcpreview_base.cpp>
 
     $<$<CONFIG:Debug>:internal/debugsettings.cpp>  # Settings while running the Debug version of wxUiEditor

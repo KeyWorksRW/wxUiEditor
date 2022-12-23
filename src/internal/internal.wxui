@@ -651,12 +651,15 @@
     </node>
     <node
       class="wxDialog"
-      class_name="NodeInfoBase"
+      class_name="NodeInfo"
       title="Node Information"
-      base_file="nodeinfo_base"
+      base_file="node_info"
+      base_hdr_includes="#include &quot;node_classes.h&quot;"
       derived_class_name="NodeInfo"
       derived_file="node_info"
+      inserted_hdr_code="void SetNode(Node* node) { m_node = node; }@@@@private:@@Node* m_node { nullptr };"
       private_members="1"
+      use_derived_class="0"
       wxEVT_INIT_DIALOG="OnInit">
       <node
         class="wxBoxSizer"

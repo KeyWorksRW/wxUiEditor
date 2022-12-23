@@ -56,7 +56,8 @@ void CodeCompare::OnInit(wxInitDialogEvent& /* event */)
 {
     GenResults results;
 
-    if (GenerateCodeFiles(results, &m_class_list))
+    GenerateCodeFiles(results, &m_class_list);
+    if (m_class_list.size())
     {
         for (auto& iter: m_class_list)
         {

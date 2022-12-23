@@ -49,7 +49,6 @@
 #include "panels/propgrid_panel.h"  // PropGridPanel -- Node inspector class
 #include "panels/ribbon_tools.h"    // RibbonPanel -- Displays component tools in a wxRibbonBar
 
-#include "wxui/insertwidget_base.h"  // InsertWidget -- Dialog to lookup and insert a widget
 #include "wxui/ui_images.h"          // This is generated from the Images form
 
 #if defined(INTERNAL_TESTING)
@@ -541,19 +540,6 @@ void MainFrame::OnAppendXRC(wxCommandEvent&)
         wxArrayString files;
         dlg.GetPaths(files);
         wxGetApp().AppendXRC(files);
-    }
-}
-
-void MainFrame::OnInsertWidget(wxCommandEvent&)
-{
-    InsertWidget dlg(this);
-    if (dlg.ShowModal() == wxID_OK)
-    {
-        if (auto result = rmap_GenNames.find(dlg.GetWidget()); result != rmap_GenNames.end())
-        {
-            return CreateToolNode(result->second);
-        }
-        FAIL_MSG(ttlib::cstr() << "No property enum type exists for dlg.GetWidget()! This should be impossible...")
     }
 }
 
@@ -1896,55 +1882,3 @@ void MainFrame::OnCodeCompare(wxCommandEvent& WXUNUSED(event))
 }
 
 #endif
-
-Node* FindChildNode(Node* node, GenEnum::GenName name)
-{
-    for (const auto& child: node->GetChildNodePtrs())
-    {
-        if (child->isGen(name))
-        {
-            return child.get();
-        }
-        else if (child->GetChildCount() > 0)
-        {
-            if (auto child_node = FindChildNode(child.get(), name); child_node)
-            {
-                return child_node;
-            }
-        }
-    }
-    return nullptr;
-}
-
-#if defined(_DEBUG) || defined(INTERNAL_TESTING)
-
-void MainFrame::OnFindWidget(wxCommandEvent& WXUNUSED(event))
-{
-    InsertWidget dlg(this);
-    if (dlg.ShowModal() == wxID_OK)
-    {
-        if (auto result = rmap_GenNames.find(dlg.GetWidget()); result != rmap_GenNames.end())
-        {
-            auto start_node = GetSelectedNode();
-            if (!start_node)
-            {
-                start_node = GetProject();
-            }
-            auto found_node = FindChildNode(start_node, result->second);
-            if (found_node)
-            {
-                SelectNode(found_node, evt_flags::fire_event | evt_flags::force_selection);
-            }
-            else
-            {
-                wxMessageBox(wxString() << "Unable to find " << dlg.GetWidget().wx_str());
-            }
-        }
-        else
-        {
-            wxMessageBox(wxString() << "Cannot find a generator for " << dlg.GetWidget().wx_str());
-        }
-    }
-}
-
-#endif  // defined(_DEBUG) || defined(INTERNAL_TESTING)

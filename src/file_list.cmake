@@ -254,7 +254,6 @@ set (file_list
     ui/generate_xrc_dlg.cpp     # Dialog for generating XRC file(s)
     ui/gridbag_item.cpp         # Dialog for inserting an item into a wxGridBagSizer node
     ui/import_dlg.cpp           # Dialog to import one or more projects
-    ui/insertwidget.cpp         # Dialog to lookup and insert a widget
     ui/xrccompare.cpp           # C++/XRC UI Comparison dialog
 
     ui/preview_settings_events.cpp  # Event handlers for PreviewSettings dialog

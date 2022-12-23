@@ -3788,10 +3788,11 @@
     </node>
     <node
       class="wxDialog"
-      class_name="OptionsDlgBase"
+      class_name="OptionsDlg"
       title="Options"
-      base_file="optionsdlg_base"
+      base_file="optionsdlg"
       derived_class_name="OptionsDlg"
+      use_derived_class="0"
       wxEVT_INIT_DIALOG="OnInit">
       <node
         class="wxBoxSizer"

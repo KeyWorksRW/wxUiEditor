@@ -13,11 +13,11 @@
 #include <wx/event.h>
 #include <wx/gdicmn.h>
 
-class OptionsDlgBase : public wxDialog
+class OptionsDlg : public wxDialog
 {
 public:
-    OptionsDlgBase() {}
-    OptionsDlgBase(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "Options",
+    OptionsDlg() {}
+    OptionsDlg(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "Options",
         const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_DIALOG_STYLE, const wxString &name = wxDialogNameStr)
     {
@@ -30,10 +30,10 @@ public:
 
 protected:
 
-    // Virtual event handlers -- override them in your derived class
+    // Event handlers
 
-    virtual void OnAffirmative(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnInit(wxInitDialogEvent& event) { event.Skip(); }
+    void OnAffirmative(wxCommandEvent& event);
+    void OnInit(wxInitDialogEvent& event);
 
     // Validator variables
 

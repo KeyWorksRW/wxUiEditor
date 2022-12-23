@@ -12,9 +12,9 @@
 #include <wx/sizer.h>
 #include <wx/valgen.h>
 
-#include "optionsdlg_base.h"
+#include "optionsdlg.h"
 
-bool OptionsDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString& title,
+bool OptionsDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,
         const wxPoint& pos, const wxSize& size, long style, const wxString &name)
 {
     if (!wxDialog::Create(parent, id, title, pos, size, style, name))
@@ -54,8 +54,8 @@ bool OptionsDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString& tit
     Centre(wxBOTH);
 
     // Event handlers
-    Bind(wxEVT_INIT_DIALOG, &OptionsDlgBase::OnInit, this);
-    Bind(wxEVT_BUTTON, &OptionsDlgBase::OnAffirmative, this, wxID_OK);
+    Bind(wxEVT_INIT_DIALOG, &OptionsDlg::OnInit, this);
+    Bind(wxEVT_BUTTON, &OptionsDlg::OnAffirmative, this, wxID_OK);
 
     return true;
 }
@@ -68,3 +68,60 @@ bool OptionsDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString& tit
 //
 // clang-format on
 // ***********************************************
+
+/////////////////// Non-generated Copyright/License Info ////////////////////
+// Author:    Ralph Walden
+// Copyright: Copyright (c) 2021-2022 KeyWorks Software (Ralph Walden)
+// License:   Apache License -- see ../../LICENSE
+/////////////////////////////////////////////////////////////////////////////
+
+#include "mainframe.h"  // MainFrame -- Main window frame
+
+void MainFrame::OnOptionsDlg(wxCommandEvent& WXUNUSED(event))
+{
+    OptionsDlg dlg(this);
+    dlg.ShowModal();
+}
+
+void OptionsDlg::OnInit(wxInitDialogEvent& event)
+{
+    auto& preferences = wxGetApp().Preferences();
+    m_sizers_all_borders = preferences.is_SizersAllBorders();
+    m_sizers_always_expand = preferences.is_SizersExpand();
+    m_isWakaTimeEnabled = preferences.is_WakaTimeEnabled();
+
+    event.Skip();  // transfer all validator data to their windows and update UI
+}
+
+void OptionsDlg::OnAffirmative(wxCommandEvent& WXUNUSED(event))
+{
+    TransferDataFromWindow();
+
+    auto& preferences = wxGetApp().Preferences();
+    bool option_changed = false;
+
+    if (m_sizers_all_borders != preferences.is_SizersAllBorders())
+    {
+        preferences.set_SizersAllBorders(m_sizers_all_borders);
+        option_changed = true;
+    }
+
+    if (m_sizers_always_expand != preferences.is_SizersExpand())
+    {
+        preferences.set_SizersExpand(m_sizers_always_expand);
+        option_changed = true;
+    }
+
+    if (m_isWakaTimeEnabled != preferences.is_WakaTimeEnabled())
+    {
+        preferences.set_isWakaTimeEnabled(m_isWakaTimeEnabled);
+        option_changed = true;
+    }
+
+    if (option_changed)
+    {
+        preferences.WriteConfig();
+    }
+
+    EndModal(wxID_OK);
+}

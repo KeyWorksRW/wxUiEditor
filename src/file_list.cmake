@@ -257,7 +257,7 @@ set (file_list
     ui/import_dlg.cpp           # Dialog to import one or more projects
     ui/importwinresdlg.cpp      # Dialog for Importing a Windows resource file
     ui/insertwidget.cpp         # Dialog to lookup and insert a widget
-    ui/optionsdlg.cpp           # Dialog containing special Debugging commands
+    # ui/optionsdlg.cpp           # Dialog containing special Debugging commands
     ui/xrccompare.cpp           # C++/XRC UI Comparison dialog
 
     ui/preview_settings_events.cpp  # Event handlers for PreviewSettings dialog

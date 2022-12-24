@@ -14,6 +14,8 @@
 
 #include "gen_combobox.h"
 
+using namespace code;
+
 wxObject* ComboBoxGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxComboBox(wxStaticCast(parent, wxWindow), wxID_ANY, wxEmptyString, DlgPoint(parent, node, prop_pos),
@@ -72,7 +74,7 @@ std::optional<ttlib::sview> ComboBoxGenerator::CommonConstruction(Code& code)
     }
     else
     {
-        if (code.WhatParamsNeeded() != Code::nothing_needed)
+        if (code.WhatParamsNeeded() != nothing_needed)
         {
             code.Comma().Add("wxEmptyString");
             code.PosSizeFlags(true);

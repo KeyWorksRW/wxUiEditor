@@ -17,9 +17,8 @@
 
 class Node;
 
-class Code
+namespace code
 {
-public:
     enum
     {
         nothing_needed = 0,
@@ -28,7 +27,11 @@ public:
         style_needed = 1 << 2,
         window_name_needed = 1 << 3,
     };
+};  // namespace code
 
+class Code
+{
+public:
     ttlib::cstr m_code;
     Node* m_node;
     int m_language;

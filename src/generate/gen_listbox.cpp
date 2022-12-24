@@ -13,6 +13,8 @@
 
 #include "gen_listbox.h"
 
+using namespace code;
+
 wxObject* ListBoxGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget =
@@ -50,7 +52,7 @@ std::optional<ttlib::sview> ListBoxGenerator::CommonConstruction(Code& code)
     code.NodeName().CreateClass();
     code.GetParentName().Comma().as_string(prop_id);
     auto params_needed = code.WhatParamsNeeded();
-    if (params_needed != Code::nothing_needed || !code.IsEqualTo(prop_type, "wxLB_SINGLE"))
+    if (params_needed != nothing_needed || !code.IsEqualTo(prop_type, "wxLB_SINGLE"))
     {
         code.Comma().Pos().Comma().WxSize();
         code.Comma();
@@ -60,7 +62,7 @@ std::optional<ttlib::sview> ListBoxGenerator::CommonConstruction(Code& code)
             code += "[]";
         code.Comma().Style(nullptr, code.node()->as_string(prop_type));
 
-        if (params_needed & Code::window_name_needed)
+        if (params_needed & window_name_needed)
         {
             code.Comma().Add("wxDefaultValidator").QuotedString(prop_window_name);
         }

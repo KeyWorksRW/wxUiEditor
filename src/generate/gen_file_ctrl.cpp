@@ -15,6 +15,8 @@
 
 #include "gen_file_ctrl.h"
 
+using namespace code;
+
 wxObject* FileCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     wxString wild;
@@ -55,13 +57,13 @@ std::optional<ttlib::sview> FileCtrlGenerator::CommonConstruction(Code& code)
     // position and size.
 
     auto what_params = code.WhatParamsNeeded("wxFC_DEFAULT_STYLE");
-    if (what_params != Code::nothing_needed)
+    if (what_params != nothing_needed)
     {
         code.Comma().CheckLineLength(prop_style).Style();
-        if (what_params != Code::style_needed)
+        if (what_params != style_needed)
         {
             code.Comma().CheckLineLength().Pos().Comma().CheckLineLength().WxSize();
-            if (what_params & Code::window_name_needed)
+            if (what_params & window_name_needed)
                 code.Comma().QuotedString(prop_window_name);
         }
     }

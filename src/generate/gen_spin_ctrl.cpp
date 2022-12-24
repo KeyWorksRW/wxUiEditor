@@ -14,6 +14,8 @@
 
 #include "gen_spin_ctrl.h"
 
+using namespace code;
+
 //////////////////////////////////////////  SpinCtrlGenerator  //////////////////////////////////////////
 
 wxObject* SpinCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
@@ -56,7 +58,7 @@ std::optional<ttlib::sview> SpinCtrlGenerator::CommonConstruction(Code& code)
     code.NodeName().CreateClass().GetParentName();
     auto needed_parms = code.WhatParamsNeeded("wxSP_ARROW_KEYS");
     Node* node = code.node();
-    if (needed_parms == Code::nothing_needed && node->as_int(prop_min) == 0 && node->as_int(prop_max) == 100 &&
+    if (needed_parms == nothing_needed && node->as_int(prop_min) == 0 && node->as_int(prop_max) == 100 &&
         node->as_int(prop_initial) == 0)
     {
         if (node->as_string(prop_id) != "wxID_ANY")
@@ -66,7 +68,7 @@ std::optional<ttlib::sview> SpinCtrlGenerator::CommonConstruction(Code& code)
     }
     code.Comma().as_string(prop_id).Comma().Add("wxEmptyString").Comma().Pos().Comma().WxSize().Comma().Style();
     code.Comma().as_string(prop_min).Comma().as_string(prop_max).Comma().as_string(prop_initial);
-    if (needed_parms & Code::window_name_needed)
+    if (needed_parms & window_name_needed)
         code.Comma().QuotedString(prop_window_name);
     code.EndFunction();
 

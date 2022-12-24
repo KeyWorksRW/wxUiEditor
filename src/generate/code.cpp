@@ -15,6 +15,8 @@
 #include "node.h"           // Node class
 #include "project_class.h"  // Project class
 
+using namespace code;
+
 // clang-format off
 static const std::map<std::string_view, std::string_view, std::less<>> s_map_wx_prefix
 {

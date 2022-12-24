@@ -15,6 +15,8 @@
 
 #include "gen_spin_btn.h"
 
+using namespace code;
+
 wxObject* SpinButtonGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxSpinButton(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(parent, node, prop_pos),
@@ -38,7 +40,7 @@ std::optional<ttlib::sview> SpinButtonGenerator::CommonConstruction(Code& code)
     code.NodeName().CreateClass().GetParentName();
     auto needed_parms = code.WhatParamsNeeded("wxSP_ARROW_KEYS");
     Node* node = code.node();
-    if (needed_parms == Code::nothing_needed)
+    if (needed_parms == nothing_needed)
     {
         if (node->as_string(prop_id) != "wxID_ANY")
             code.Comma().as_string(prop_id);

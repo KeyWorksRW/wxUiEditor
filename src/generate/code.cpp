@@ -42,6 +42,10 @@ static const std::map<std::string_view, std::string_view, std::less<>> s_map_wx_
     { "wxCAL_SHOW_SURROUNDING_WEEKS", "wx.adv."},
     { "wxCAL_SEQUENTIAL_MONTH_SELECTION", "wx.adv."},
     { "wxCAL_SHOW_WEEK_NUMBERS", "wx.adv."},
+    { "wxEL_ALLOW_NEW", "wx.adv."},
+    { "wxEL_ALLOW_EDIT", "wx.adv."},
+    { "wxEL_ALLOW_DELETE", "wx.adv."},
+    { "wxEL_NO_REORDER", "wx.adv."},
     { "wxHL_DEFAULT_STYLE", "wx.adv."},
     { "wxHL_ALIGN_LEFT", "wx.adv."},
     { "wxHL_ALIGN_RIGHT", "wx.adv."},
@@ -56,8 +60,10 @@ std::map<std::string_view, std::string_view, std::less<>> g_map_class_prefix
     { "wxBannerWindow", "wx.adv."},
     { "wxCalendarCtrl", "wx.adv."},
     { "wxDatePickerCtrl", "wx.adv."},
+    { "wxEditableListBox", "wx.adv."},
     { "wxHyperlinkCtrl", "wx.adv."},
     { "wxTimePickerCtrl", "wx.adv."},
+
     { "wxAuiNotebook", "wx.aui."},
 
 };
@@ -124,7 +130,9 @@ Code& Code::OpenBrace()
     if (is_cpp())
     {
         m_within_braces = true;
-        m_code += "\n{";
+        if (m_code.size() && m_code.back() != '\n')
+            m_code += '\n';
+        m_code += '{';
         Eol();
     }
     return *this;

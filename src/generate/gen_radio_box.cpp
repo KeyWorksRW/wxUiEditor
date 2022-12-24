@@ -60,84 +60,69 @@ void RadioBoxGenerator::OnRadioBox(wxCommandEvent& event)
         GetMockup()->SelectNode(window);
 }
 
-std::optional<ttlib::cstr> RadioBoxGenerator::GenConstruction(Node* node)
+std::optional<ttlib::sview> RadioBoxGenerator::CommonConstruction(Code& code)
 {
-    ttlib::cstr code;
-
-    ttlib::cstr choice_name(node->get_node_name());
-    if (choice_name.starts_with("m_"))
-        choice_name.erase(0, 2);
-    choice_name << "_choices";
-    code << "\twxString " << choice_name << "[] = {";
-    auto array = ConvertToArrayString(node->prop_as_string(prop_contents));
-    for (auto& iter: array)
+    auto array = ConvertToArrayString(code.node()->as_string(prop_contents));
+    ttlib::cstr choice_name;
+    if (code.is_cpp() && array.size())
     {
-        code << "\n\t" << GenerateQuotedString(iter) << ",";
-    }
-    code << "\n\t};\n\t";
-
-    if (node->IsLocal())
-        code << "auto* ";
-    code << node->get_node_name() << GenerateNewAssignment(node);
-    code << GetParentName(node) << ", " << node->prop_as_string(prop_id) << ", ";
-
-    auto& label = node->prop_as_string(prop_label);
-    if (label.size())
-    {
-        code << GenerateQuotedString(label);
-    }
-    else
-    {
-        code << "wxEmptyString";
-    }
-
-    code << ",\n\t\t";
-    GenPos(node, code);
-    code << ", ";
-    GenSize(node, code);
-
-    code << ", " << array.size() << ", " << choice_name;
-
-    bool isDimSet = false;
-    if (node->prop_as_int(prop_majorDimension) > 0)
-    {
-        code << ", " << node->prop_as_string(prop_majorDimension);
-        isDimSet = true;
-    }
-
-    if (node->prop_as_string(prop_window_name).size())
-    {
-        code << ", ";
-        if (!isDimSet)
-            code << "0, ";
-        GenStyle(node, code, "rb_");
-        code << ", wxDefaultValidator, " << node->prop_as_string(prop_window_name) << ");";
-    }
-    else
-    {
-        if (node->prop_as_string(prop_window_style).size() || node->prop_as_string(prop_style) != "columns")
+        code.OpenBrace();
+        choice_name = (code.node()->get_node_name());
+        if (choice_name.starts_with("m_"))
+            choice_name.erase(0, 2);
+        choice_name << "_choices";
+        code.Str("wxString ") << choice_name << "[] = {";
+        for (auto& iter: array)
         {
-            code << ", ";
-            if (!isDimSet)
-                code << "0, ";
-            GenStyle(node, code, "rb_");
+            code.Eol().Tab().QuotedString((iter)) += ",";
         }
-        code << ");";
+        code.m_code.pop_back();  // remove the last comma
+        code.Eol().Str("};").Eol();
     }
 
-    return code;
+    code.Str((code.is_cpp() ? "// " : "# ")).Str("Trailing spaces added to avoid clipping").Eol();
+    if (code.is_cpp() && code.is_local_var())
+        code << "auto* ";
+    code.NodeName().CreateClass();
+    code.GetParentName().Comma().as_string(prop_id).Comma().QuotedString(prop_label);
+    code.Comma().Pos().Comma().WxSize().Comma();
+    if (code.is_cpp())
+    {
+        code.to_a(array.size()).Comma();
+        if (array.size())
+            code << choice_name;
+        else
+            code << "nullptr";
+    }
+    else
+    {
+        code.Str("[");
+        for (auto& iter: array)
+        {
+            code.QuotedString((iter)) += ",";
+        }
+        code.m_code.pop_back();  // remove the last comma
+        code << "]";
+    }
+    code.Comma().CheckLineLength(3).Str(prop_majorDimension);
+    code.Comma().Style("rb_");
+    if (code.HasValue(prop_window_name))
+    {
+        code.Comma().Str("wxDefaultValidator").Comma().QuotedString(prop_window_name);
+    }
+    code.EndFunction();
+
+    return code.m_code;
 }
 
-std::optional<ttlib::cstr> RadioBoxGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
+std::optional<ttlib::sview> RadioBoxGenerator::CommonSettings(Code& code)
 {
-    ttlib::cstr code;
-
-    if (auto sel = node->prop_as_int(prop_selection); sel > 0)
+    if (auto sel = code.IntValue(prop_selection); sel > 0)
     {
-        code << node->get_node_name() << "->SetSelection(" << sel << ");";
+        code.NodeName().Function("SetSelection(").Str(prop_selection).EndFunction();
     }
 
-    return code;
+    return code.m_code;
 }
 
 bool RadioBoxGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)

@@ -113,16 +113,13 @@ std::optional<ttlib::sview> StatusBarGenerator::CommonConstruction(Code& code)
     return code.m_code;
 }
 
-std::optional<ttlib::cstr> StatusBarGenerator::GenSettings(Node* node, size_t& auto_indent)
+std::optional<ttlib::sview> StatusBarGenerator::CommonSettings(Code& code)
 {
-    if (GetRequiredVersion(node) <= minRequiredVer)
-        return {};
+    // A single field can be represeted by 1 which uses the older style of setting.
+    if (GetRequiredVersion(code.node()) <= minRequiredVer)
+        return code.m_code;
 
-    ttlib::cstr code;
-    auto_indent = indent::auto_keep_whitespace;
-    code << "{\n\t";
-
-    auto fields = node->as_statusbar_fields(prop_fields);
+    auto fields = code.node()->as_statusbar_fields(prop_fields);
     ttlib::cstr widths, styles;
     for (auto& iter: fields)
     {
@@ -133,13 +130,32 @@ std::optional<ttlib::cstr> StatusBarGenerator::GenSettings(Node* node, size_t& a
             styles << ", ";
         styles << iter.style;
     }
-    code << "const int sb_field_widths[" << fields.size() << "] = {" << widths << "};\n\t";
-    code << node->get_node_name() << "->SetStatusWidths(" << fields.size() << ", sb_field_widths);\n\t";
-    code << "const int sb_field_styles[" << fields.size() << "] = {" << widths << "};\n\t";
-    code << node->get_node_name() << "->SetStatusStyles(" << fields.size() << ", sb_field_styles);\n";
-    code << "}";
 
-    return code;
+    if (code.is_cpp())
+    {
+        code.OpenBrace();
+        code.m_code << "const int sb_field_widths[" << fields.size() << "] = {" << widths << "};";
+        code.Eol().NodeName().Function("SetStatusWidths(").to_a(fields.size()).Comma().Str("sb_field_widths);");
+        code.Eol().Str("const int sb_field_styles[").to_a(fields.size()).Str("] = {").Str(widths).Str("};");
+        code.Eol().NodeName().Function("SetStatusStyles(").to_a(fields.size()).Comma().Str("sb_field_styles);");
+        code.CloseBrace();
+    }
+    else
+    {
+        code.Eol(true).NodeName().Function("SetStatusWidths([").Str(widths).Str("]").EndFunction();
+        code.Eol(true).NodeName().Function("SetStatusStyles([");
+        bool is_first_style_set = false;
+        for (auto& iter: fields)
+        {
+            if (is_first_style_set)
+                code.Comma();
+            else
+                is_first_style_set = true;
+            code.Add(iter.style);
+        }
+        code.Str("]").EndFunction();
+    }
+    return code.m_code;
 }
 
 int StatusBarGenerator::GetRequiredVersion(Node* node)

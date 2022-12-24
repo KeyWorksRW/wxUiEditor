@@ -32,45 +32,45 @@ wxObject* EditListBoxGenerator::CreateMockup(Node* node, wxObject* parent)
     return widget;
 }
 
-std::optional<ttlib::cstr> EditListBoxGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
+std::optional<ttlib::sview> EditListBoxGenerator::CommonConstruction(Code& code)
 {
-    ttlib::cstr code;
+    if (code.is_cpp() && code.is_local_var())
+        code << "auto* ";
+    code.NodeName().CreateClass();
+    code.GetParentName().Comma().as_string(prop_id).Comma().QuotedString(prop_label);
+    code.PosSizeFlags(true);
 
-    if (node->HasValue(prop_contents))
-    {
-        // auto_indent = false;
-        code << "{\n\twxArrayString tmp_array;\n";
-        auto array = ConvertToArrayString(node->prop_as_string(prop_contents));
-        for (auto& iter: array)
-        {
-            code << "\ttmp_array.push_back(wxString::FromUTF8(\"" << iter << "\"));\n";
-        }
-        code << "\t" << node->get_node_name() << "->SetStrings(tmp_array);\n";
-        code << "}";
-    }
-
-    return code;
+    return code.m_code;
 }
 
-std::optional<ttlib::cstr> EditListBoxGenerator::GenConstruction(Node* node)
+std::optional<ttlib::sview> EditListBoxGenerator::CommonSettings(Code& code)
 {
-    ttlib::cstr code;
-    if (node->IsLocal())
-        code << "auto* ";
-    code << node->get_node_name() << GenerateNewAssignment(node);
-    code << GetParentName(node) << ", " << node->prop_as_string(prop_id) << ", ";
+    if (code.HasValue(prop_contents))
+    {
+        auto array = ConvertToArrayString(code.node()->as_string(prop_contents));
+        if (code.is_cpp())
+        {
+            code.OpenBrace().Str("wxArrayString tmp_array;");
+            for (auto& iter: array)
+            {
+                code.Eol().Str("tmp_array.push_back(wxString::FromUTF8(\"") << iter << "\"));";
+            }
+            code.Eol().NodeName() += "->SetStrings(tmp_array);";
+            code.CloseBrace();
+        }
+        else
+        {
+            code.NodeName().Function("SetStrings([");
+            for (auto& iter: array)
+            {
+                code.Eol().Tab().QuotedString(iter) += ",";
+            }
+            code.m_code.pop_back();  // remove trailing comma
+            code.Eol().Tab().Str("]").EndFunction();
+        }
+    }
 
-    if (node->prop_as_string(prop_label).size())
-        code << GenerateQuotedString(node->prop_as_string(prop_label));
-    else
-        code << "wxEmptyString";
-
-    // Note that the default style is not specified, so that it will always be generated. That makes the generated code
-    // easier to understand since you know exactly which type of list box is being created instead of having to know what
-    // the default is.
-    GeneratePosSizeFlags(node, code);
-
-    return code;
+    return code.m_code;
 }
 
 bool EditListBoxGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)

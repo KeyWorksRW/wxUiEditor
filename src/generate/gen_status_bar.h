@@ -15,7 +15,7 @@ public:
     wxObject* CreateMockup(Node* node, wxObject* parent) override;
 
     std::optional<ttlib::sview> CommonConstruction(Code&) override;
-    std::optional<ttlib::cstr> GenSettings(Node* node, size_t& auto_indent) override;
+    std::optional<ttlib::sview> CommonSettings(Code&) override;
 
     int GetRequiredVersion(Node* node) override;
     bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr) override;

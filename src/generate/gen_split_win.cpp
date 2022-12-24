@@ -160,48 +160,37 @@ void SplitterWindowGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxpa
     }
 }
 
-std::optional<ttlib::cstr> SplitterWindowGenerator::GenConstruction(Node* node)
+std::optional<ttlib::sview> SplitterWindowGenerator::CommonConstruction(Code& code)
 {
-    ttlib::cstr code;
-    if (node->IsLocal())
+    if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
-    code << node->get_node_name() << GenerateNewAssignment(node);
-    code << GetParentName(node) << ", " << node->prop_as_string(prop_id);
+    code.NodeName().CreateClass();
+    code.GetParentName().Comma().as_string(prop_id);
+    code.PosSizeFlags(true);
 
-    GeneratePosSizeFlags(node, code);
-
-    return code;
+    return code.m_code;
 }
 
-std::optional<ttlib::cstr> SplitterWindowGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
+std::optional<ttlib::sview> SplitterWindowGenerator::CommonSettings(Code& code)
 {
-    ttlib::cstr code;
+    Node* node = code.node();
 
     if (node->HasValue(prop_sashgravity) && node->prop_as_string(prop_sashgravity) != "0")
     {
-        if (code.size())
-            code << "\n";
-
-        code << node->get_node_name() << "->SetSashGravity(" << node->prop_as_string(prop_sashgravity) << ");";
+        code.Eol(true).NodeName().Function("SetSashGravity(").Add(prop_sashgravity).EndFunction();
     }
 
     if (node->HasValue(prop_sashsize) && node->prop_as_string(prop_sashsize) != "-1")
     {
-        if (code.size())
-            code << "\n";
-
-        code << node->get_node_name() << "->SetSashSize(" << node->prop_as_string(prop_sashsize) << ");";
+        code.Eol(true).NodeName().Function("SetSashSize(").Add(prop_sashsize).EndFunction();
     }
 
     if (node->HasValue(prop_min_pane_size) && node->prop_as_string(prop_min_pane_size) != "0")
     {
-        if (code.size())
-            code << "\n";
-
-        code << node->get_node_name() << "->SetMinimumPaneSize(" << node->prop_as_string(prop_min_pane_size) << ");";
+        code.Eol(true).NodeName().Function("SetMinimumPaneSize(").Add(prop_min_pane_size).EndFunction();
     }
 
-    return code;
+    return code.m_code;
 }
 
 bool SplitterWindowGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)

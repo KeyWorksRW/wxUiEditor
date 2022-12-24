@@ -75,11 +75,12 @@ set (file_list
     # be used in a Dialog or Frame, then the generator must also be able to create
     # a preview of the object for the Preview display.
 
+    generate/images_form.cpp       # Embedded images generator
+    generate/project.cpp           # Project generator
+
     generate/dataview_widgets.cpp  # wxDataView generation classes
     generate/grid_widgets.cpp      # Grid generation classes
-    generate/images_form.cpp       # Embedded images generator
     generate/menu_widgets.cpp      # Menu generation classes
-    generate/project.cpp           # Project generator
     generate/ribbon_widgets.cpp    # Ribbon generation classes
     generate/styled_text.cpp       # wxStyledText (scintilla) generate
     generate/window_widgets.cpp    # Splitter and Scroll generation classes
@@ -92,27 +93,31 @@ set (file_list
     generate/gen_animation.cpp      # wxAnimationCtrl generator
     generate/gen_banner_window.cpp  # wxBannerWindow generator
     generate/gen_calendar_ctrl.cpp  # wxCalendarCtrl generator
-    generate/gen_checkbox.cpp       # wxCheckBox generator
     generate/gen_check_listbox.cpp  # wxCheckListBox generator
+    generate/gen_checkbox.cpp       # wxCheckBox generator
     generate/gen_choice.cpp         # wxChoice generator
     generate/gen_close_btn.cpp      # wxBitmapButton::CreateCloseButton generator
     generate/gen_collapsible.cpp    # wxCollapsiblePane generator
     generate/gen_combobox.cpp       # wxComboBox generator
+    generate/gen_edit_listbox.cpp   # wxEditableListBox generator
     generate/gen_file_ctrl.cpp      # wxFileCtrl generator
     generate/gen_gauge.cpp          # wxGauge generator
     generate/gen_hyperlink.cpp      # wxHyperlinkCtrl generator
     generate/gen_infobar.cpp        # wxInfoBar generator
     generate/gen_listbox.cpp        # wxListBox generator
     generate/gen_panel.cpp          # wxPanel generator
+    generate/gen_radio_box.cpp      # wxRadioBox generator
     generate/gen_radio_btn.cpp      # wxRadioButton generator
     generate/gen_rearrange.cpp      # wxRearrangeCtrl generator
     generate/gen_search_ctrl.cpp    # wxSearchCtrl generator
+    generate/gen_slider.cpp         # wxSlider generator
     generate/gen_spin_btn.cpp       # wxSpinButton generator
     generate/gen_spin_ctrl.cpp      # wxSpinCtrl generator
-    generate/gen_slider.cpp         # wxSlider generator
+    generate/gen_split_win.cpp      # wxSplitterWindow generator
     generate/gen_static_bmp.cpp     # wxStaticBitmap generator
     generate/gen_static_line.cpp    # wxStaticLine generator
     generate/gen_static_text.cpp    # wxStaticText generator
+    generate/gen_status_bar.cpp     # wxStatusBar generator
     generate/gen_text_ctrl.cpp      # wxTextCtrl generator
 
     generate/gen_aui_toolbar.cpp    # wxAuiToolBar generator
@@ -120,25 +125,23 @@ set (file_list
     generate/gen_button.cpp         # wxButton generator
     generate/gen_cmd_link_btn.cpp   # wxCommandLinkButton generator
     generate/gen_custom_ctrl.cpp    # Custom Control generator
-    generate/gen_dir_ctrl.cpp       # wxGenericDirCtrl generator
-    generate/gen_edit_listbox.cpp   # wxEditableListBox generator
     generate/gen_grid.cpp           # wxGrid generator
     generate/gen_html_listbox.cpp   # wxSimpleHtmlListBox generator
     generate/gen_html_window.cpp    # wxHtmlWindow generator
     generate/gen_listview.cpp       # wxListView generator
     generate/gen_prop_grid.cpp      # wxPropertyGrid generator
     generate/gen_prop_item.cpp      # PropertyGrid/Manager Item generator
-    generate/gen_radio_box.cpp      # wxRadioBox generator
     generate/gen_rich_text.cpp      # wxRichTextCtrl generator
     generate/gen_scrollbar.cpp      # wxScrollBar generator
-    generate/gen_split_win.cpp      # wxSplitterWindow generator
     generate/gen_static_box.cpp     # wxStaticBox generator
-    generate/gen_status_bar.cpp     # wxStatusBar generator
     generate/gen_toggle_btn.cpp     # wxToggleButton generator
     generate/gen_toolbar.cpp        # wxToolBar generator
     generate/gen_tree_ctrl.cpp      # wxTreeCtrl generator
     generate/gen_tree_list.cpp      # wxTreeListCtrl generator
     generate/gen_web_view.cpp       # wxWebView generator
+
+    # Non-python widgets
+    generate/gen_dir_ctrl.cpp       # wxGenericDirCtrl generator
 
     # Books
 

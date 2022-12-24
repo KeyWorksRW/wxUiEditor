@@ -58,7 +58,7 @@ void BaseCodeGenerator::GenConstruction(Node* node)
     if (scode)
     {
         // Don't add blank lines when adding tools to a toolbar, or creating menu items
-        if (type != type_aui_tool && type != type_tool && type != type_menuitem)
+        if (scode.value()[0] != '{' && type != type_aui_tool && type != type_tool && type != type_menuitem)
         {
             m_source->writeLine();
         }
@@ -262,30 +262,28 @@ void BaseCodeGenerator::GenConstruction(Node* node)
     }
     else if (type == type_splitter)
     {
-        ttlib::cstr code(node->get_node_name());
+        gen_code.clear();
+        gen_code.NodeName();
 
         if (node->GetChildCount() == 1)
         {
-            code << LangPtr() << "Initialize(" << node->GetChild(0)->get_node_name() << ");";
-            m_source->writeLine(code);
+            gen_code.Function("Initialize(").Str(node->GetChild(0)->get_node_name()).EndFunction();
         }
         else if (node->GetChildCount() > 1)
         {
             if (node->prop_as_string(prop_splitmode) == "wxSPLIT_VERTICAL")
-                code << LangPtr() << "SplitVertically(";
+                gen_code.Function("SplitVertically(");
             else
-                code << LangPtr() << "SplitHorizontally(";
+                gen_code.Function("SplitHorizontally(");
 
-            code << node->GetChild(0)->get_node_name() << ", " << node->GetChild(1)->get_node_name() << ");";
-            m_source->writeLine(code);
+            gen_code.Str(node->GetChild(0)->get_node_name()).Comma().Str(node->GetChild(1)->get_node_name()).EndFunction();
 
             if (auto sash_pos = node->get_prop_ptr(prop_sashpos)->as_int(); sash_pos != 0 && sash_pos != -1)
             {
-                code = node->get_node_name();
-                code << LangPtr() << "SetSashPosition(" << node->prop_as_string(prop_sashpos) << ");";
-                m_source->writeLine(code);
+                gen_code.Eol().NodeName().Function("SetSashPosition(").Add(prop_sashpos).EndFunction();
             }
         }
+        m_source->writeLine(gen_code.m_code);
     }
 
     else

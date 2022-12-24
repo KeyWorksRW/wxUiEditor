@@ -198,6 +198,12 @@ public:
         return *this;
     }
 
+    Code& to_a(size_t val)
+    {
+        m_code << val;
+        return *this;
+    }
+
     // Handles prop_internationalize and strings containing at least one utf8 character.
     // Generates correct code for C++ or Python.
     Code& QuotedString(GenEnum::PropName prop_name);
@@ -253,6 +259,12 @@ public:
     }
 
     Code& operator<<(int i)
+    {
+        m_code << i;
+        return *this;
+    }
+
+    Code& operator<<(size_t i)
     {
         m_code << i;
         return *this;

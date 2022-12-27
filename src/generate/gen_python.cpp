@@ -466,6 +466,7 @@ bool PythonBitmapList(Code& code, GenEnum::PropName prop)
 
     return true;
 }
+
 bool PythonBundleCode(Code& code, GenEnum::PropName prop)
 {
     auto& description = code.node()->as_string(prop);
@@ -553,6 +554,48 @@ bool PythonBundleCode(Code& code, GenEnum::PropName prop)
     }
 
     return true;
+}
+
+struct BTN_BMP_TYPES
+{
+    GenEnum::PropName prop_name;
+    const char* function_name;
+};
+
+inline const BTN_BMP_TYPES btn_bmp_types[] = {
+    { prop_bitmap, "SetBitmap" },
+    { prop_disabled_bmp, "SetBitmapDisabled" },
+    { prop_pressed_bmp, "SetBitmapPressed" },
+    { prop_focus_bmp, "SetBitmapFocus" },
+    { prop_current, "SetBitmapCurrent" },
+};
+
+void PythonBtnBimapCode(Code& code, bool is_single)
+{
+    for (auto& iter: btn_bmp_types)
+    {
+        code.Eol(eol_if_needed);
+        if (code.HasValue(iter.prop_name))
+        {
+            code.Eol(eol_if_needed);
+            if (PythonBitmapList(code, iter.prop_name))
+            {
+                code.Eol(eol_if_needed).NodeName().Function(iter.function_name) << '(';
+                code += "wx.BitmapBundle.FromBitmaps(bitmaps)";
+            }
+            else
+            {
+                code.Eol(eol_if_needed).NodeName().Function(iter.function_name) << '(';
+                PythonBundleCode(code, iter.prop_name);
+            }
+            code.EndFunction();
+        }
+        if (is_single)
+        {
+            // Means the caller only wants prop_bitmap
+            break;
+        }
+    }
 }
 
 ttlib::cstr MakePythonPath(Node* node)

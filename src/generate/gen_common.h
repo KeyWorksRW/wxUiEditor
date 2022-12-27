@@ -162,3 +162,6 @@ ttlib::cstr MakePythonPath(Node* node);
 // Creates a string using either wxSystemSettings::GetColour(name) or wxColour(r, g, b).
 // Generates wxNullColour if the property is empty.
 void ColourCode(Code& code, GenEnum::PropName prop_name);
+
+// Python version of GenBtnBimapCode()
+void PythonBtnBimapCode(Code& code, bool is_single = false);

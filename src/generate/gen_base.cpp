@@ -667,7 +667,7 @@ void BaseCodeGenerator::GenSrcEventBinding(Node* node, const EventVector& events
                 if (!scode->contains("["))
                 {
                     size_t indentation = scode->contains("\n") ? indent::auto_keep_whitespace : indent::auto_no_whitespace;
-                    m_source->writeLine(*scode, indentation);
+                    m_source->writeLine(scode.value(), indentation);
                 }
                 else  // this is a lambda
                 {
@@ -677,7 +677,7 @@ void BaseCodeGenerator::GenSrcEventBinding(Node* node, const EventVector& events
                     }
                     else
                     {
-                        ttlib::cstr convert(*scode);
+                        ttlib::cstr convert(scode.value());
                         convert.Replace("@@", "\n", tt::REPLACE::all);
                         ttlib::multistr lines(convert, '\n');
                         bool initial_bracket = false;

@@ -68,7 +68,7 @@ void BaseCodeGenerator::GenConstruction(Node* node)
         {
             // Check for any indentation via a brace or line break with multiple tabs, and if so,
             // don't remove the whitespace
-            m_source->writeLine(*scode, (ttlib::is_found(scode->find('{')) || ttlib::is_found(scode->find("\n\t\t"))) ?
+            m_source->writeLine(scode.value(), (ttlib::is_found(scode->find('{')) || ttlib::is_found(scode->find("\n\t\t"))) ?
                                             indent::none :
                                             indent::auto_no_whitespace);
             if (scode->starts_with("\t{"))
@@ -78,10 +78,10 @@ void BaseCodeGenerator::GenConstruction(Node* node)
         }
         else
         {
-            m_source->writeLine(*scode, indent::auto_keep_whitespace);
+            m_source->writeLine(scode.value(), indent::auto_keep_whitespace);
         }
 #else
-        m_source->writeLine(*scode, indent::auto_keep_whitespace);
+        m_source->writeLine(scode.value(), indent::auto_keep_whitespace);
         if (scode->starts_with("{"))
         {
             need_closing_brace = true;
@@ -105,7 +105,7 @@ void BaseCodeGenerator::GenConstruction(Node* node)
                     scode = *result;
             }
             if (scode)
-                m_source->writeLine(*scode);
+                m_source->writeLine(scode.value());
         }
         EndBrace();
         gen_code.clear();
@@ -134,7 +134,7 @@ void BaseCodeGenerator::GenConstruction(Node* node)
                         scode = *result;
                 }
                 if (scode)
-                    m_source->writeLine(*scode);
+                    m_source->writeLine(scode.value());
             }
             GenSettings(child.get());
             // A submenu can have children
@@ -153,7 +153,7 @@ void BaseCodeGenerator::GenConstruction(Node* node)
                                 scode = *result;
                         }
                         if (scode)
-                            m_source->writeLine(*scode);
+                            m_source->writeLine(scode.value());
                     }
                     GenSettings(grandchild.get());
                     // A submenu menu item can also be a submenu with great grandchildren.

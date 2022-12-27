@@ -142,80 +142,71 @@ bool ButtonGenerator::OnPropertyChange(wxObject* widget, Node* node, NodePropert
     return false;
 }
 
-std::optional<ttlib::cstr> ButtonGenerator::GenConstruction(Node* node)
+std::optional<ttlib::sview> ButtonGenerator::CommonConstruction(Code& code)
 {
-    ttlib::cstr code;
-    if (node->IsLocal())
+    if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
-    code << node->get_node_name() << GenerateNewAssignment(node);
-    code << GetParentName(node) << ", " << node->prop_as_string(prop_id) << ", ";
+    code.NodeName().CreateClass();
+    code.GetParentName().Comma().as_string(prop_id).Comma();
 
     // If prop_markup is set, then the label will be set in GenSettings()
-    if (node->HasValue(prop_label) && !node->prop_as_bool(prop_markup))
+    if (code.HasValue(prop_label) && !code.IsTrue(prop_markup))
     {
-        code << GenerateQuotedString(node, prop_label);
+        code.QuotedString(prop_label);
     }
     else
     {
-        code << "wxEmptyString";
+        code.Add("wxEmptyString");
     }
 
-    GeneratePosSizeFlags(node, code, true);
-    if (code.contains("wxEmptyString)"))
-        code.Replace(", wxEmptyString", "");
+    code.PosSizeFlags(true);
 
-    return code;
+    return code.m_code;
 }
 
-std::optional<ttlib::cstr> ButtonGenerator::GenSettings(Node* node, size_t& auto_indent)
+std::optional<ttlib::sview> ButtonGenerator::CommonSettings(Code& code)
 {
-    ttlib::cstr code;
-
-    if (node->prop_as_bool(prop_markup) && node->HasValue(prop_label))
+    if (code.IsTrue(prop_markup) && code.HasValue(prop_label))
     {
-        if (code.size())
-            code << '\n';
-        code << node->get_node_name() << "->SetLabelMarkup(" << GenerateQuotedString(node->prop_as_string(prop_label))
-             << ");";
+        code.Eol(eol_if_needed).NodeName().Function("SetLabelMarkup(").QuotedString(prop_label).EndFunction();
     }
 
-    if (node->prop_as_bool(prop_default))
+    if (code.IsTrue(prop_default))
     {
-        if (code.size())
-            code << '\n';
-
-        code << node->get_node_name() << "->SetDefault();";
+        code.Eol(eol_if_needed).NodeName().Function("SetDefault(").EndFunction();
     }
 
-    if (node->prop_as_bool(prop_auth_needed))
+    if (code.IsTrue(prop_auth_needed))
     {
-        if (code.size())
-            code << '\n';
-        code << node->get_node_name() << "->SetAuthNeeded();";
+        code.Eol(eol_if_needed).NodeName().Function("SetAuthNeeded(").EndFunction();
     }
 
-    if (node->HasValue(prop_bitmap))
+    if (code.HasValue(prop_bitmap))
     {
-        auto_indent = indent::auto_keep_whitespace;
-
-        if (node->HasValue(prop_position))
+        if (code.HasValue(prop_position))
         {
-            if (code.size())
-                code << '\n';
-            code << node->get_node_name() << "->SetBitmapPosition(" << node->prop_as_string(prop_position) << ");";
+            code.Eol(eol_if_needed).NodeName().Function("SetBitmapPosition(").Str(prop_position).EndFunction();
         }
 
-        if (node->HasValue(prop_margins))
+        if (code.HasValue(prop_margins))
         {
-            if (code.size())
-                code << '\n';
-            auto size = node->prop_as_wxSize(prop_margins);
-            code << node->get_node_name() << "->SetBitmapMargins(" << size.GetWidth() << ", " << size.GetHeight() << ");";
+            auto size = code.node()->as_wxSize(prop_margins);
+            code.Eol(eol_if_needed)
+                .NodeName()
+                .Function("SetBitmapMargins(")
+                .itoa(size.GetWidth())
+                .Comma()
+                .itoa(size.GetHeight())
+                .EndFunction();
         }
 
-        GenBtnBimapCode(node, code);
+        if (code.is_cpp())
+            GenBtnBimapCode(code.node(), code.m_code);
+        else
+            PythonBtnBimapCode(code);
     }
-    return code;
+
+    return code.m_code;
 }
 
 int ButtonGenerator::GetRequiredVersion(Node* node)

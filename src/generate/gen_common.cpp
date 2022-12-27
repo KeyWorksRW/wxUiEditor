@@ -386,7 +386,7 @@ struct BTN_BMP_TYPES
     const char* function_name;
 };
 
-const BTN_BMP_TYPES btn_bmp_types[] = {
+inline const BTN_BMP_TYPES btn_bmp_types[] = {
     { prop_bitmap, "SetBitmap" },
     { prop_disabled_bmp, "SetBitmapDisabled" },
     { prop_pressed_bmp, "SetBitmapPressed" },

@@ -7,12 +7,7 @@
 
 // clang-format off
 
-#if wxCHECK_VERSION(3, 1, 6)
-    #include <wx/bmpbndl.h>
-#else
-    #include <wx/bitmap.h>
-#endif
-
+#include <wx/bmpbndl.h>
 #include <wx/collpane.h>
 #include <wx/colour.h>
 #include <wx/panel.h>

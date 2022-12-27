@@ -706,7 +706,7 @@ namespace GenEnum
 
     };
     extern std::map<GenEnum::GenName, const char*> map_GenNames;
-    extern std::unordered_map<std::string_view, GenEnum::GenName, str_view_hash, std::equal_to<>> rmap_GenNames;
+    extern std::unordered_map<ttlib::sview, GenEnum::GenName, str_view_hash, std::equal_to<>> rmap_GenNames;
 
 }  // namespace GenEnum
 

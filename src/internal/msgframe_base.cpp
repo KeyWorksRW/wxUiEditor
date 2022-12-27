@@ -36,62 +36,26 @@ MsgFrameBase::MsgFrameBase(wxWindow* parent, wxWindowID id, const wxString& titl
 
     auto* menu_file = new wxMenu();
     auto* menu_item_saveas = new wxMenuItem(menu_file, wxID_SAVEAS, wxEmptyString);
-    menu_item_saveas->SetBitmap(
-#if wxCHECK_VERSION(3, 1, 6)
-        wxArtProvider::GetBitmapBundle(wxART_FILE_SAVE_AS, wxART_MENU)
-#else
-        wxBitmap(wxArtProvider::GetBitmap(wxART_FILE_SAVE_AS, wxART_MENU))
-#endif
-    );
+    menu_item_saveas->SetBitmap(wxArtProvider::GetBitmapBundle(wxART_FILE_SAVE_AS, wxART_MENU));
     menu_file->Append(menu_item_saveas);
     menu_file->AppendSeparator();
     auto* menu_item_clear = new wxMenuItem(menu_file, wxID_CLEAR, wxEmptyString);
-    menu_item_clear->SetBitmap(
-#if wxCHECK_VERSION(3, 1, 6)
-        wxArtProvider::GetBitmapBundle(wxART_CUT, wxART_MENU)
-#else
-        wxBitmap(wxArtProvider::GetBitmap(wxART_CUT, wxART_MENU))
-#endif
-    );
+    menu_item_clear->SetBitmap(wxArtProvider::GetBitmapBundle(wxART_CUT, wxART_MENU));
     menu_file->Append(menu_item_clear);
     auto* menu_item_hide = new wxMenuItem(menu_file, id_hide, "&Hide");
-    menu_item_hide->SetBitmap(
-#if wxCHECK_VERSION(3, 1, 6)
-        wxBitmapBundle::FromBitmap(wxueImage(wxue_img::hide_png, sizeof(wxue_img::hide_png)))
-#else
-        wxBitmap(wxueImage(wxue_img::hide_png, sizeof(wxue_img::hide_png)))
-#endif
-    );
+    menu_item_hide->SetBitmap(wxBitmapBundle::FromBitmap(wxueImage(wxue_img::hide_png, sizeof(wxue_img::hide_png))));
     menu_file->Append(menu_item_hide);
     menubar->Append(menu_file, "&File");
 
     auto* menu_view = new wxMenu();
     m_menu_item_warnings = new wxMenuItem(menu_view, id_warning_msgs, "Warnings", wxEmptyString, wxITEM_CHECK);
-    m_menu_item_warnings->SetBitmap(
-#if wxCHECK_VERSION(3, 1, 6)
-        wxArtProvider::GetBitmapBundle(wxART_WARNING, wxART_MENU)
-#else
-        wxBitmap(wxArtProvider::GetBitmap(wxART_WARNING, wxART_MENU))
-#endif
-    );
+    m_menu_item_warnings->SetBitmap(wxArtProvider::GetBitmapBundle(wxART_WARNING, wxART_MENU));
     menu_view->Append(m_menu_item_warnings);
     m_menu_item_events = new wxMenuItem(menu_view, id_event_msgs, "Events", wxEmptyString, wxITEM_CHECK);
-    m_menu_item_events->SetBitmap(
-#if wxCHECK_VERSION(3, 1, 6)
-        wxArtProvider::GetBitmapBundle(wxART_TIP, wxART_MENU)
-#else
-        wxBitmap(wxArtProvider::GetBitmap(wxART_TIP, wxART_MENU))
-#endif
-    );
+    m_menu_item_events->SetBitmap(wxArtProvider::GetBitmapBundle(wxART_TIP, wxART_MENU));
     menu_view->Append(m_menu_item_events);
     m_menu_item_info = new wxMenuItem(menu_view, wxID_INFO, wxEmptyString, wxEmptyString, wxITEM_CHECK);
-    m_menu_item_info->SetBitmap(
-#if wxCHECK_VERSION(3, 1, 6)
-        wxArtProvider::GetBitmapBundle(wxART_INFORMATION, wxART_MENU)
-#else
-        wxBitmap(wxArtProvider::GetBitmap(wxART_INFORMATION, wxART_MENU))
-#endif
-    );
+    m_menu_item_info->SetBitmap(wxArtProvider::GetBitmapBundle(wxART_INFORMATION, wxART_MENU));
     menu_view->Append(m_menu_item_info);
     menubar->Append(menu_view, "&View");
 

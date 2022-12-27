@@ -5,7 +5,8 @@
     class="Project"
     cmake_file="wxui_internal.cmake"
     cmake_varname="wxui_internal"
-    generate_cmake="1">
+    generate_cmake="1"
+    wxWidgets_version="3.2">
     <node
       class="wxDialog"
       class_name="CodeCompare"
@@ -786,6 +787,77 @@
           Close="1"
           OK="0"
           default_button="none"
+          flags="wxEXPAND" />
+      </node>
+    </node>
+    <node
+      class="wxDialog"
+      class_name="NodeSearchDlg"
+      title="Node Search"
+      base_file="node_search_dlg"
+      derived_class_name="NodeSearchDlg"
+      private_members="1"
+      use_derived_class="0"
+      wxEVT_INIT_DIALOG="OnInit">
+      <node
+        class="wxBoxSizer"
+        orientation="wxVERTICAL"
+        var_name="dlg_sizer"
+        flags="wxEXPAND">
+        <node
+          class="StaticRadioBtnBoxSizer"
+          label="Search generators"
+          radiobtn_var_name="m_radio_generators"
+          flags="wxEXPAND"
+          get_function="isSearchGenerators"
+          validator_variable="m_search_generators"
+          wxEVT_RADIOBUTTON="OnRadioSearchGenerators">
+          <node
+            class="wxComboBox"
+            style="wxCB_READONLY|wxCB_SORT"
+            var_name="m_combo_generators"
+            get_function="get_GenName"
+            validator_variable="m_gen_name"
+            flags="wxEXPAND" />
+        </node>
+        <node
+          class="StaticRadioBtnBoxSizer"
+          checked="0"
+          label="Search var_names"
+          radiobtn_var_name="m_radio_var_names"
+          var_name="static_box_2"
+          flags="wxEXPAND"
+          get_function="isSearchVarnames"
+          validator_variable="m_search_varnames"
+          wxEVT_RADIOBUTTON="OnRadioSearchVarNames">
+          <node
+            class="wxComboBox"
+            style="wxCB_SORT"
+            var_name="m_combo_variables"
+            get_function="get_VarName"
+            validator_variable="m_var_name"
+            flags="wxEXPAND" />
+        </node>
+        <node
+          class="StaticRadioBtnBoxSizer"
+          checked="0"
+          label="Search labels"
+          radiobtn_var_name="m_radio_labels"
+          var_name="static_box_3"
+          flags="wxEXPAND"
+          get_function="isSearchLabels"
+          validator_variable="m_search_labels"
+          wxEVT_RADIOBUTTON="OnRadioSearchLabels">
+          <node
+            class="wxComboBox"
+            style="wxCB_SORT"
+            var_name="m_combo_labels"
+            get_function="get_Label"
+            validator_variable="m_label_name"
+            flags="wxEXPAND" />
+        </node>
+        <node
+          class="wxStdDialogButtonSizer"
           flags="wxEXPAND" />
       </node>
     </node>

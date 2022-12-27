@@ -1723,9 +1723,9 @@ bool BitmapList(Code& code, GenEnum::PropName prop)
             name.make_relative(path);
             name.backslashestoforward();
 
-            code.Add("wxBitmap(\'") << name << "\'";
+            code.Str("wxBitmap(").QuotedString(name);
             if (is_xpm)
-                code.Add(", wx.BITMAP_TYPE_XPM");
+                code.Comma().Str("wx.BITMAP_TYPE_XPM");
             code += ")";
             needs_comma = true;
         }

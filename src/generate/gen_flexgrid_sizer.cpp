@@ -130,7 +130,7 @@ std::optional<ttlib::sview> FlexGridSizerGenerator::CommonConstruction(Code& cod
         return code.m_code;
     }
 
-    code.Eol(true).NodeName().Function("SetFlexibleDirection(").Add(direction).EndFunction();
+    code.Eol(eol_if_empty).NodeName().Function("SetFlexibleDirection(").Add(direction).EndFunction();
 
     auto& non_flex_growth = node->prop_as_string(prop_non_flexible_grow_mode);
     if (non_flex_growth.empty() || non_flex_growth.is_sameas("wxFLEX_GROWMODE_SPECIFIED"))
@@ -165,8 +165,7 @@ std::optional<ttlib::sview> FlexGridSizerGenerator::CommonAfterChildren(Code& co
         {
             if (GetParentName(code.node()) != "this")
             {
-                code.ParentName().Add(".");
-                code.Function("SetSizerAndFit(").NodeName().EndFunction();
+                code.ParentName().FormFunction("SetSizerAndFit(").NodeName().EndFunction();
             }
             else
             {

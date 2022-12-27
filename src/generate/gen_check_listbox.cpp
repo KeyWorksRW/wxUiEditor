@@ -82,7 +82,7 @@ std::optional<ttlib::sview> CheckListBoxGenerator::CommonSettings(Code& code)
 {
     if (code.IsTrue(prop_focus))
     {
-        code.Eol(true).NodeName().Function("SetFocus(").EndFunction();
+        code.Eol(eol_if_empty).NodeName().Function("SetFocus(").EndFunction();
     }
     if (code.HasValue(prop_contents))
     {
@@ -102,7 +102,7 @@ std::optional<ttlib::sview> CheckListBoxGenerator::CommonSettings(Code& code)
         {
             for (auto& iter: contents)
             {
-                code.Eol(true).NodeName().Function("Append(").QuotedString(iter.label).EndFunction();
+                code.Eol(eol_if_empty).NodeName().Function("Append(").QuotedString(iter.label).EndFunction();
             }
         }
         else
@@ -112,7 +112,7 @@ std::optional<ttlib::sview> CheckListBoxGenerator::CommonSettings(Code& code)
                 code += "int item_position;";
             for (auto& iter: contents)
             {
-                code.Eol(true);
+                code.Eol(eol_if_empty);
                 if (iter.checked == "1")
                     code += "item_position = ";
                 code.NodeName().Function("Append(").QuotedString(iter.label).EndFunction();
@@ -124,7 +124,7 @@ std::optional<ttlib::sview> CheckListBoxGenerator::CommonSettings(Code& code)
 
         if (code.HasValue(prop_selection_string))
         {
-            code.Eol(true).NodeName().Function("SetStringSelection(");
+            code.Eol(eol_if_empty).NodeName().Function("SetStringSelection(");
             code.QuotedString(prop_selection_string).EndFunction();
         }
         else
@@ -132,7 +132,7 @@ std::optional<ttlib::sview> CheckListBoxGenerator::CommonSettings(Code& code)
             int sel = node->prop_as_int(prop_selection_int);
             if (sel > -1 && sel < (to_int) contents.size())
             {
-                code.Eol(true).NodeName().Function("SetSelection(").Str(prop_selection_int).EndFunction();
+                code.Eol(eol_if_empty).NodeName().Function("SetSelection(").Str(prop_selection_int).EndFunction();
             }
         }
     }

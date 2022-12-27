@@ -177,17 +177,17 @@ std::optional<ttlib::sview> SplitterWindowGenerator::CommonSettings(Code& code)
 
     if (node->HasValue(prop_sashgravity) && node->prop_as_string(prop_sashgravity) != "0")
     {
-        code.Eol(true).NodeName().Function("SetSashGravity(").Add(prop_sashgravity).EndFunction();
+        code.Eol(eol_if_empty).NodeName().Function("SetSashGravity(").Add(prop_sashgravity).EndFunction();
     }
 
     if (node->HasValue(prop_sashsize) && node->prop_as_string(prop_sashsize) != "-1")
     {
-        code.Eol(true).NodeName().Function("SetSashSize(").Add(prop_sashsize).EndFunction();
+        code.Eol(eol_if_empty).NodeName().Function("SetSashSize(").Add(prop_sashsize).EndFunction();
     }
 
     if (node->HasValue(prop_min_pane_size) && node->prop_as_string(prop_min_pane_size) != "0")
     {
-        code.Eol(true).NodeName().Function("SetMinimumPaneSize(").Add(prop_min_pane_size).EndFunction();
+        code.Eol(eol_if_empty).NodeName().Function("SetMinimumPaneSize(").Add(prop_min_pane_size).EndFunction();
     }
 
     return code.m_code;

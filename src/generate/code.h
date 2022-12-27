@@ -25,9 +25,23 @@ namespace code
         pos_needed = 1 << 0,
         size_needed = 1 << 1,
         style_needed = 1 << 2,
-        window_name_needed = 1 << 3,
+        window_name_needed = 1 << 3
     };
+
+    enum
+    {
+        // Will add eol if m_code is empty.
+        eol_if_empty = 1,
+        // Will not add eol if m_code is empty, or there is already an eol at the end of
+        // m_code.
+        eol_if_needed,
+        eol_always
+    };
+
 };  // namespace code
+
+// Assume anyone including this header file needs acces to the code namespace
+using namespace code;
 
 class Code
 {
@@ -88,8 +102,8 @@ public:
         return *this;
     }
 
-    // Pass true to only add EOL if there is already code in the string
-    Code& Eol(bool check_size = false);
+    // eol_if_empty, eol_if_needed or eol_always
+    Code& Eol(int flag = code::eol_always);
 
     // Pass true to only add EOL if there is already code in the string
     Code& NewLine(bool check_size = false) { return Eol(check_size); }

@@ -79,12 +79,12 @@ std::optional<ttlib::sview> SpinCtrlGenerator::CommonSettings(Code& code)
 {
     if (code.IsTrue(prop_hexadecimal))
     {
-        code.Eol(true).NodeName().Function("SetBase(16").EndFunction();
+        code.Eol(eol_if_empty).NodeName().Function("SetBase(16").EndFunction();
     }
 
     if (code.node()->as_int(prop_inc) > 1)
     {
-        code.Eol(true).NodeName().Function("SetIncrement(").as_string(prop_inc).EndFunction();
+        code.Eol(eol_if_empty).NodeName().Function("SetIncrement(").as_string(prop_inc).EndFunction();
     }
 
     return code.m_code;

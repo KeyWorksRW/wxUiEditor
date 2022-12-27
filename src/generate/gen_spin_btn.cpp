@@ -47,8 +47,12 @@ std::optional<ttlib::sview> SpinButtonGenerator::CommonConstruction(Code& code)
         code.EndFunction();
         return code.m_code;
     }
+    else
+    {
+        code.Comma().Add(prop_id);
+    }
+
     code.PosSizeFlags(false, "wxSP_VERTICAL");
-    code.EndFunction();
 
     return code.m_code;
 }

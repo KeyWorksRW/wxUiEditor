@@ -467,7 +467,8 @@ std::optional<ttlib::sview> ToolGenerator::CommonConstruction(Code& code)
     {
         if (wxGetProject().value(prop_wxWidgets_version) == "3.1")
         {
-            code.Eol().Add("}").Eol().Add("#else").Eol();
+            code.CloseBrace();
+            code.Add("#else").Eol();
             GenToolCode(code, false);
             code.Eol().Add("#endif").Eol();
         }

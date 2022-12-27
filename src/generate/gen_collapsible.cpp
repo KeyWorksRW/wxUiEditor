@@ -51,29 +51,6 @@ void CollapsiblePaneGenerator::OnCollapse(wxCollapsiblePaneEvent& event)
     wxGetFrame().GetMockup()->Layout();
 }
 
-std::optional<ttlib::cstr> CollapsiblePaneGenerator::GenConstruction(Node* node)
-{
-    ttlib::cstr code;
-    if (node->IsLocal())
-        code << "auto* ";
-    code << node->get_node_name() << GenerateNewAssignment(node);
-    code << GetParentName(node) << ", " << node->prop_as_string(prop_id) << ", ";
-
-    auto& label = node->prop_as_string(prop_label);
-    if (label.size())
-    {
-        code << GenerateQuotedString(label);
-    }
-    else
-    {
-        code << "wxEmptyString";
-    }
-
-    GeneratePosSizeFlags(node, code, true, "wxCP_DEFAULT_STYLE");
-
-    return code;
-}
-
 std::optional<ttlib::sview> CollapsiblePaneGenerator::CommonConstruction(Code& code)
 {
     if (code.is_cpp() && code.is_local_var())
@@ -89,35 +66,13 @@ std::optional<ttlib::sview> CollapsiblePaneGenerator::CommonSettings(Code& code)
 {
     if (code.IsTrue(prop_collapsed))
     {
-        code.Eol(true).NodeName().Function("Collapse(").EndFunction();
+        code.Eol(eol_if_empty).NodeName().Function("Collapse(").EndFunction();
     }
     else
     {
-        code.Eol(true).NodeName().Function("Expand(").EndFunction();
+        code.Eol(eol_if_empty).NodeName().Function("Expand(").EndFunction();
     }
     return code.m_code;
-}
-
-std::optional<ttlib::cstr> CollapsiblePaneGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
-{
-    ttlib::cstr code;
-
-    if (node->prop_as_bool(prop_collapsed))
-    {
-        if (code.size())
-            code << "\n";
-
-        code << node->get_node_name() << "->Collapse();";
-    }
-    else
-    {
-        if (code.size())
-            code << "\n";
-
-        code << node->get_node_name() << "->Expand();";
-    }
-
-    return code;
 }
 
 bool CollapsiblePaneGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)

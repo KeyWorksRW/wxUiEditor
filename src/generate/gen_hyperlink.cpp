@@ -78,27 +78,27 @@ std::optional<ttlib::sview> HyperlinkGenerator::CommonSettings(Code& code)
 {
     if (!code.IsTrue(prop_underlined) && !code.HasValue(prop_font))
     {
-        code.Eol(true).NodeName().Function("SetFont(").Add("wxSystemSettings").ClassMethod("GetFont(");
+        code.Eol(eol_if_empty).NodeName().Function("SetFont(").Add("wxSystemSettings").ClassMethod("GetFont(");
         code.Add("wxSYS_DEFAULT_GUI_FONT)").EndFunction();
     }
 
     if (code.HasValue(prop_hover_color))
     {
-        code.Eol(true).NodeName().Function("SetHoverColour(");
+        code.Eol(eol_if_empty).NodeName().Function("SetHoverColour(");
         ColourCode(code, prop_hover_color);
         code.EndFunction();
     }
 
     if (code.HasValue(prop_normal_color))
     {
-        code.Eol(true).NodeName().Function("SetNormalColour(");
+        code.Eol(eol_if_empty).NodeName().Function("SetNormalColour(");
         ColourCode(code, prop_normal_color);
         code.EndFunction();
     }
 
     if (code.HasValue(prop_visited_color))
     {
-        code.Eol(true).NodeName().Function("SetVisitedColour(");
+        code.Eol(eol_if_empty).NodeName().Function("SetVisitedColour(");
         ColourCode(code, prop_visited_color);
         code.EndFunction();
     }

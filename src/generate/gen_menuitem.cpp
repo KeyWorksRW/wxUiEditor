@@ -95,7 +95,7 @@ std::optional<ttlib::sview> MenuItemGenerator::CommonSettings(Code& code)
 
     if (code.HasValue(prop_bitmap))
     {
-        code.Eol(true);
+        code.Eol(eol_if_empty);
         if (code.is_cpp())
         {
             auto& description = node->as_string(prop_bitmap);
@@ -161,7 +161,7 @@ std::optional<ttlib::sview> MenuItemGenerator::CommonSettings(Code& code)
     }
     if (code.HasValue(prop_unchecked_bitmap))
     {
-        code.Eol(true);
+        code.Eol(eol_if_empty);
         if (code.is_cpp())
         {
             auto& description = node->as_string(prop_unchecked_bitmap);
@@ -215,7 +215,7 @@ std::optional<ttlib::sview> MenuItemGenerator::CommonSettings(Code& code)
         // wxPython version
         else
         {
-            code.Eol(true);
+            code.Eol(eol_if_empty);
             bool is_list_created = PythonBitmapList(code, prop_unchecked_bitmap);
             code.NodeName().Function("SetBitmap(");
             if (is_list_created)
@@ -233,13 +233,13 @@ std::optional<ttlib::sview> MenuItemGenerator::CommonSettings(Code& code)
 
     if (!node->GetParent()->isGen(gen_PopupMenu))
     {
-        code.Eol(true).ParentName().Function("Append(").NodeName().EndFunction();
+        code.Eol(eol_if_empty).ParentName().Function("Append(").NodeName().EndFunction();
     }
 
     if ((node->as_string(prop_kind) == "wxITEM_CHECK" || node->as_string(prop_kind) == "wxITEM_RADIO") &&
         code.IsTrue(prop_checked))
     {
-        code.Eol(true).NodeName().Function("Check(").EndFunction();
+        code.Eol(eol_if_empty).NodeName().Function("Check(").EndFunction();
     }
 
     return code.m_code;

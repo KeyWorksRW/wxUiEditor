@@ -112,7 +112,7 @@ std::optional<ttlib::sview> StaticTextGenerator::CommonSettings(Code& code)
     // Note that wrap MUST be called after the text is set, otherwise it will be ignored.
     if (code.node()->prop_as_int(prop_wrap) > 0)
     {
-        code.Eol(true).NodeName().Function("Wrap(").as_string(prop_wrap).EndFunction();
+        code.Eol(eol_if_empty).NodeName().Function("Wrap(").as_string(prop_wrap).EndFunction();
     }
 
     return code.m_code;

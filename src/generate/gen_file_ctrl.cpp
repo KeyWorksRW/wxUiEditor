@@ -76,17 +76,17 @@ std::optional<ttlib::sview> FileCtrlGenerator::CommonSettings(Code& code)
 {
     if (code.IsTrue(prop_focus))
     {
-        code.Eol(true).NodeName().Function("SetFocus(").EndFunction();
+        code.Eol(eol_if_empty).NodeName().Function("SetFocus(").EndFunction();
     }
 
     if (code.IntValue(prop_filter_index) > 0)
     {
-        code.Eol(true).NodeName().Function("SetFilterIndex(").Str(prop_filter_index).EndFunction();
+        code.Eol(eol_if_empty).NodeName().Function("SetFilterIndex(").Str(prop_filter_index).EndFunction();
     }
 
     if (code.IsTrue(prop_show_hidden))
     {
-        code.Eol(true).NodeName().Function("ShowHidden(").AddTrue().EndFunction();
+        code.Eol(eol_if_empty).NodeName().Function("ShowHidden(").AddTrue().EndFunction();
     }
 
     return code.m_code;

@@ -1584,8 +1584,7 @@ const char* LangPtr(int language)
 void GenToolCode(Code& code, bool is_bitmaps_list)
 {
     Node* node = code.node();
-    if (is_bitmaps_list && code.is_cpp())
-        code.Tab();
+    code.Eol(eol_if_needed);
     if (node->prop_as_bool(prop_disabled) || (node->prop_as_string(prop_id) == "wxID_ANY" && node->GetInUseEventCount()))
     {
         if (node->IsLocal() && code.is_cpp())
@@ -1739,9 +1738,9 @@ bool BitmapList(Code& code, GenEnum::PropName prop)
     //////////////// C++ code starts here ////////////////
     if (wxGetProject().value(prop_wxWidgets_version) == "3.1")
     {
-        code.Add("#if wxCHECK_VERSION(3, 1, 6)").Eol();
+        code.Add("#if wxCHECK_VERSION(3, 1, 6)");
     }
-    code << "{\n";
+    code.OpenBrace().Add("wxVector<wxBitmap> bitmaps;");
 
     for (auto& iter: bundle->lst_filenames)
     {
@@ -1749,7 +1748,7 @@ bool BitmapList(Code& code, GenEnum::PropName prop)
         name.remove_extension();
         if (is_xpm)
         {
-            code << "\tbitmaps.push_back(wxImage(" << name << "_xpm));\n";
+            code.Eol().Str("bitmaps.push_back(wxImage(") << name << "_xpm));";
         }
         else
         {
@@ -1762,10 +1761,10 @@ bool BitmapList(Code& code, GenEnum::PropName prop)
                     name = "wxue_img::" + embed->array_name;
                 }
             }
-            code << "\tbitmaps.push_back(wxueImage(" << name << ", sizeof(" << name << ")));\n";
+            code.Eol().Str("bitmaps.push_back(wxueImage(") << name << ", sizeof(" << name << ")));";
         }
     }
-    code.UpdateBreakAt();
+    code.Eol();
 
     // Caller should add the function that uses the bitmaps, add the closing brace, and if
     // prop_wxWidgets_version == 3.1, follow this with a #else and the alternate code.

@@ -53,22 +53,22 @@ std::optional<ttlib::sview> SearchCtrlGenerator::CommonSettings(Code& code)
 {
     if (code.HasValue(prop_hint))
     {
-        code.Eol(true).NodeName().Function("SetHint(").QuotedString(prop_hint).EndFunction();
+        code.Eol(eol_if_empty).NodeName().Function("SetHint(").QuotedString(prop_hint).EndFunction();
     }
 
     if (code.IsTrue(prop_focus))
     {
-        code.Eol(true).NodeName().Function("SetFocus(").EndFunction();
+        code.Eol(eol_if_empty).NodeName().Function("SetFocus(").EndFunction();
     }
 
     if (code.IsTrue(prop_search_button))
     {
-        code.Eol(true).NodeName().Function("ShowSearchButton(").AddTrue().EndFunction();
+        code.Eol(eol_if_empty).NodeName().Function("ShowSearchButton(").AddTrue().EndFunction();
     }
 
     if (code.IsTrue(prop_cancel_button))
     {
-        code.Eol(true).NodeName().Function("ShowCancelButton(").AddTrue().EndFunction();
+        code.Eol(eol_if_empty).NodeName().Function("ShowCancelButton(").AddTrue().EndFunction();
     }
 
     return code.m_code;

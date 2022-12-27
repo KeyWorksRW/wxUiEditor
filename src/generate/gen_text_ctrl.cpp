@@ -114,17 +114,17 @@ std::optional<ttlib::sview> TextCtrlGenerator::CommonSettings(Code& code)
 {
     if (code.HasValue(prop_hint))
     {
-        code.Eol(true);
-        code.Eol(true).NodeName().Function("SetHint(").QuotedString(prop_hint).EndFunction();
+        code.Eol(eol_if_empty);
+        code.Eol(eol_if_empty).NodeName().Function("SetHint(").QuotedString(prop_hint).EndFunction();
     }
     if (code.IsTrue(prop_focus))
     {
-        code.Eol(true);
+        code.Eol(eol_if_empty);
         code.NodeName().Function("SetFocus(").EndFunction();
     }
     if (code.IsTrue(prop_maxlength))
     {
-        code.Eol(true);
+        code.Eol(eol_if_empty);
         if (code.PropContains(prop_style, "wxTE_MULTILINE"))
         {
             if (code.is_cpp())

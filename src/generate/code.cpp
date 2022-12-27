@@ -103,11 +103,18 @@ Code& Code::CheckLineLength(GenEnum::PropName next_prop_name)
     return CheckLineLength(m_node->as_string(next_prop_name).size());
 }
 
-Code& Code::Eol(bool check_size)
+Code& Code::Eol(int flag)
 {
-    if (check_size)
+    if (flag == eol_if_empty)
     {
         if (m_code.size())
+            m_code += '\n';
+    }
+    else if (flag == eol_if_needed)
+    {
+        if (m_code.size() && m_code.back() != '\n' ||
+            /* If we're in a brace section, the last line will end with \n\t */
+            (m_code.size() > 2 && m_code.back() == '\t' && m_code[m_code.size() - 2] == '\n'))
             m_code += '\n';
     }
     else
@@ -1103,7 +1110,7 @@ void Code::GenWindowSettings()
 
     if (IsTrue(prop_disabled))
     {
-        Eol(true);
+        Eol(eol_if_empty);
         if (!m_node->IsForm())
             NodeName().Function("Enable(false");
         else
@@ -1113,7 +1120,7 @@ void Code::GenWindowSettings()
 
     if (IsTrue(prop_hidden))
     {
-        Eol(true);
+        Eol(eol_if_empty);
         if (!m_node->IsForm())
             NodeName().Function("Hide(");
         else
@@ -1127,7 +1134,7 @@ void Code::GenWindowSettings()
 
     if (allow_minmax && m_node->as_wxSize(prop_minimum_size) != wxDefaultSize)
     {
-        Eol(true);
+        Eol(eol_if_empty);
         if (!m_node->IsForm())
             NodeName().Function("SetMinSize(");
         else
@@ -1138,7 +1145,7 @@ void Code::GenWindowSettings()
 
     if (allow_minmax && m_node->as_wxSize(prop_maximum_size) != wxDefaultSize)
     {
-        Eol(true);
+        Eol(eol_if_empty);
         if (!m_node->IsForm())
             NodeName().Function("SetMaxSize(");
         else
@@ -1149,7 +1156,7 @@ void Code::GenWindowSettings()
 
     if (!m_node->IsForm() && !m_node->isPropValue(prop_variant, "normal"))
     {
-        Eol(true);
+        Eol(eol_if_empty);
         NodeName().Function("SetWindowVariant(");
         if (m_node->isPropValue(prop_variant, "small"))
             Add("wxWINDOW_VARIANT_SMALL");
@@ -1163,7 +1170,7 @@ void Code::GenWindowSettings()
 
     if (HasValue(prop_tooltip))
     {
-        Eol(true);
+        Eol(eol_if_empty);
         if (!m_node->IsForm())
             NodeName().Function("SetToolTip(");
         else
@@ -1173,7 +1180,7 @@ void Code::GenWindowSettings()
 
     if (HasValue(prop_context_help))
     {
-        Eol(true);
+        Eol(eol_if_empty);
         if (!m_node->IsForm())
             NodeName().Function("SetHelpText(");
         else
@@ -1195,7 +1202,7 @@ void Code::GenFontColourSettings()
         auto result = ::GenFontColourSettings(m_node);
         if (result.size())
         {
-            Eol(true);
+            Eol(eol_if_empty);
             Add(result);
         }
     }

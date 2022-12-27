@@ -76,7 +76,7 @@ std::optional<ttlib::sview> ListBoxGenerator::CommonSettings(Code& code)
 {
     if (code.IsTrue(prop_focus))
     {
-        code.Eol(true).NodeName().Function("SetFocus(").EndFunction();
+        code.Eol(eol_if_empty).NodeName().Function("SetFocus(").EndFunction();
     }
 
     if (code.HasValue(prop_contents))
@@ -84,12 +84,12 @@ std::optional<ttlib::sview> ListBoxGenerator::CommonSettings(Code& code)
         auto array = ConvertToArrayString(code.node()->as_string(prop_contents));
         for (auto& iter: array)
         {
-            code.Eol(true).NodeName().Function("Append(").QuotedString(iter).EndFunction();
+            code.Eol(eol_if_empty).NodeName().Function("Append(").QuotedString(iter).EndFunction();
         }
 
         if (code.HasValue(prop_selection_string))
         {
-            code.Eol(true).NodeName().Function("SetStringSelection(");
+            code.Eol(eol_if_empty).NodeName().Function("SetStringSelection(");
             code.QuotedString(prop_selection_string).EndFunction();
         }
         else
@@ -97,7 +97,7 @@ std::optional<ttlib::sview> ListBoxGenerator::CommonSettings(Code& code)
             int sel = code.IntValue(prop_selection_int);
             if (sel > -1 && sel < (to_int) array.size())
             {
-                code.Eol(true).NodeName().Function("SetSelection(").Str(prop_selection_int).EndFunction();
+                code.Eol(eol_if_empty).NodeName().Function("SetSelection(").Str(prop_selection_int).EndFunction();
             }
         }
     }

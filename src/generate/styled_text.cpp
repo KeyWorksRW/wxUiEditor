@@ -518,7 +518,7 @@ std::optional<ttlib::cstr> StyledTextGenerator::GenSettings(Node* node, size_t& 
     // Default is false, so only set if true
     if (node->prop_as_bool(prop_view_eol))
     {
-        code << "\n\t" << node->get_node_name() << "->SetViewEOL(true);";
+        code << "\n\t" << node->get_node_name() << "->SetViewEol(eol_if_empty);";
     }
 
     // Default is false, so only set if true

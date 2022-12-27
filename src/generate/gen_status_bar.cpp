@@ -142,8 +142,8 @@ std::optional<ttlib::sview> StatusBarGenerator::CommonSettings(Code& code)
     }
     else
     {
-        code.Eol(true).NodeName().Function("SetStatusWidths([").Str(widths).Str("]").EndFunction();
-        code.Eol(true).NodeName().Function("SetStatusStyles([");
+        code.Eol(eol_if_empty).NodeName().Function("SetStatusWidths([").Str(widths).Str("]").EndFunction();
+        code.Eol(eol_if_empty).NodeName().Function("SetStatusStyles([");
         bool is_first_style_set = false;
         for (auto& iter: fields)
         {

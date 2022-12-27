@@ -77,8 +77,7 @@ std::optional<ttlib::sview> GridSizerGenerator::CommonAfterChildren(Code& code)
         {
             if (GetParentName(code.node()) != "this")
             {
-                code.ParentName().Add(".");
-                code.Function("SetSizerAndFit(").NodeName().EndFunction();
+                code.ParentName().Function("SetSizerAndFit(").NodeName().EndFunction();
             }
             else
             {

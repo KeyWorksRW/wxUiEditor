@@ -87,7 +87,7 @@ std::optional<ttlib::sview> FontPickerGenerator::CommonSettings(Code& code)
 
     if (node->prop_as_string(prop_max_point_size) != "100")
     {
-        code.Eol(true).NodeName().Function("SetMaxPointSize(").as_string(prop_max_point_size).EndFunction();
+        code.Eol(eol_if_empty).NodeName().Function("SetMaxPointSize(").as_string(prop_max_point_size).EndFunction();
     }
 
     return code.m_code;

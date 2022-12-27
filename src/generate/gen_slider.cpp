@@ -81,7 +81,7 @@ std::optional<ttlib::sview> SliderGenerator::CommonSettings(Code& code)
     Node* node = code.node();
     if (node->prop_as_int(prop_sel_start) >= 0 && node->prop_as_int(prop_sel_end) >= 0)
     {
-        code.Eol(true)
+        code.Eol(eol_if_empty)
             .NodeName()
             .Function("SetSelection(")
             .as_string(prop_sel_start)
@@ -91,19 +91,19 @@ std::optional<ttlib::sview> SliderGenerator::CommonSettings(Code& code)
     }
     if (node->prop_as_int(prop_line_size) > 0)
     {
-        code.Eol(true).NodeName().Function("SetLineSize(").as_string(prop_line_size).EndFunction();
+        code.Eol(eol_if_empty).NodeName().Function("SetLineSize(").as_string(prop_line_size).EndFunction();
     }
     if (node->prop_as_int(prop_page_size) > 0)
     {
-        code.Eol(true).NodeName().Function("SetPageSize(").as_string(prop_page_size).EndFunction();
+        code.Eol(eol_if_empty).NodeName().Function("SetPageSize(").as_string(prop_page_size).EndFunction();
     }
     if (node->prop_as_int(prop_tick_frequency) > 0)
     {
-        code.Eol(true).NodeName().Function("SetTickFreq(").as_string(prop_tick_frequency).EndFunction();
+        code.Eol(eol_if_empty).NodeName().Function("SetTickFreq(").as_string(prop_tick_frequency).EndFunction();
     }
     if (node->prop_as_int(prop_thumb_length) > 0)
     {
-        code.Eol(true).NodeName().Function("SetThumbLength(").as_string(prop_thumb_length).EndFunction();
+        code.Eol(eol_if_empty).NodeName().Function("SetThumbLength(").as_string(prop_thumb_length).EndFunction();
     }
 
     return code.m_code;

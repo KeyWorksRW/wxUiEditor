@@ -106,7 +106,7 @@ std::optional<ttlib::sview> BannerWindowGenerator::CommonSettings(Code& code)
 
     if (code.HasValue(prop_title) || code.HasValue(prop_message))
     {
-        code.Eol(true);
+        code.Eol(eol_if_empty);
         code.NodeName().Function("SetText(").QuotedString(prop_title);
         code.Comma().QuotedString(prop_message).EndFunction();
     }

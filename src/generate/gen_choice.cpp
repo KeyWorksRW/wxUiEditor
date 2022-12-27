@@ -95,7 +95,7 @@ std::optional<ttlib::sview> ChoiceGenerator::CommonSettings(Code& code)
 {
     if (code.IsTrue(prop_focus))
     {
-        code.Eol(true);
+        code.Eol(eol_if_empty);
         code.NodeName().Function("SetFocus(").EndFunction();
     }
 
@@ -104,12 +104,12 @@ std::optional<ttlib::sview> ChoiceGenerator::CommonSettings(Code& code)
         auto array = ConvertToArrayString(code.node()->as_string(prop_contents));
         for (auto& iter: array)
         {
-            code.Eol(true).NodeName().Function("Append(").QuotedString(iter).EndFunction();
+            code.Eol(eol_if_empty).NodeName().Function("Append(").QuotedString(iter).EndFunction();
         }
 
         if (code.HasValue(prop_selection_string))
         {
-            code.Eol(true);
+            code.Eol(eol_if_empty);
             if (code.HasValue(prop_validator_variable))
             {
                 code.as_string(prop_validator_variable) << " = ";
@@ -130,7 +130,7 @@ std::optional<ttlib::sview> ChoiceGenerator::CommonSettings(Code& code)
             int sel = code.node()->as_int(prop_selection_int);
             if (sel > -1 && sel < (to_int) array.size())
             {
-                code.Eol(true).NodeName().Function("SetSelection(").as_string(prop_selection_int).EndFunction();
+                code.Eol(eol_if_empty).NodeName().Function("SetSelection(").as_string(prop_selection_int).EndFunction();
             }
         }
     }

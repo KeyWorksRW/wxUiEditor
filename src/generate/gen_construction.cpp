@@ -244,20 +244,24 @@ void BaseCodeGenerator::GenConstruction(Node* node)
             // The parent node is not a sizer -- which is expected if this is the parent sizer underneath a form or
             // wxPanel.
 
+            gen_code.clear();
+
             ttlib::cstr code;
             if (parent->isGen(gen_wxRibbonPanel))
             {
-                code << parent->get_node_name() << LangPtr() << "SetSizerAndFit(" << node->get_node_name() << ");";
+                gen_code.ParentName().Function("SetSizerAndFit(").NodeName().EndFunction();
             }
             else
             {
                 if (GetParentName(node) != "this")
-                    code << GetParentName(node) << LangPtr();
-                code << "SetSizerAndFit(" << node->get_node_name() << ");";
+                    gen_code.ParentName();
+                else if (gen_code.is_python())
+                    gen_code.Str("self");
+                gen_code.Function("SetSizerAndFit(").NodeName().EndFunction();
             }
 
             m_source->writeLine();
-            m_source->writeLine(code);
+            m_source->writeLine(gen_code.m_code);
         }
     }
     else if (type == type_splitter)

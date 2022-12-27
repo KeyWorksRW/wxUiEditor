@@ -123,8 +123,7 @@ std::optional<ttlib::sview> StaticBoxSizerGenerator::CommonAfterChildren(Code& c
         {
             if (GetParentName(code.node()) != "this")
             {
-                code.ParentName().Add(".");
-                code.Function("SetSizerAndFit(").NodeName().EndFunction();
+                code.ParentName().Function("SetSizerAndFit(").NodeName().EndFunction();
             }
             else
             {

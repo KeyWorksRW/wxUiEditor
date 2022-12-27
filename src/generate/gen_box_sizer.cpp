@@ -62,7 +62,7 @@ std::optional<ttlib::sview> BoxSizerGenerator::CommonAfterChildren(Code& code)
     auto parent = code.m_node->GetParent();
     if (!parent->IsSizer() && !parent->isGen(gen_wxDialog) && !parent->isGen(gen_PanelForm))
     {
-        code.Eol(true);
+        code.Eol(eol_if_empty);
 
         // The parent node is not a sizer -- which is expected if this is the parent sizer underneath a form or
         // wxPanel.
@@ -74,8 +74,14 @@ std::optional<ttlib::sview> BoxSizerGenerator::CommonAfterChildren(Code& code)
         else
         {
             if (GetParentName(code.node()) != "this")
-                code.GetParentName().Function("");
-            code.Add("SetSizerAndFit(").NodeName().EndFunction();
+            {
+                code.GetParentName().Function("SetSizerAndFit(");
+            }
+            else
+            {
+                code.FormFunction("SetSizerAndFit(");
+            }
+            code.NodeName().EndFunction();
         }
     }
 

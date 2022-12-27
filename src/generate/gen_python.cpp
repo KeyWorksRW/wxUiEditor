@@ -455,9 +455,9 @@ bool PythonBitmapList(Code& code, GenEnum::PropName prop)
         name.make_relative(path);
         name.backslashestoforward();
 
-        code.Add("wxBitmap(\'") << name << "\'";
+        code.Str("wx.Bitmap(").QuotedString(name);
         if (is_xpm)
-            code.Add(", wx.BITMAP_TYPE_XPM");
+            code.Comma().Str("wx.BITMAP_TYPE_XPM");
         code += ")";
         needs_comma = true;
     }
@@ -513,8 +513,8 @@ bool PythonBundleCode(Code& code, GenEnum::PropName prop)
 
         if (description.starts_with("SVG"))
         {
-            code += "wx.BitmapBundle.";
-            code << "FromSVGFile(\'" << name << "\'";
+            code += "wx.BitmapBundle.FromSVGFile(";
+            code.QuotedString(name);
             wxSize svg_size { -1, -1 };
             if (parts[IndexSize].size())
             {
@@ -525,8 +525,8 @@ bool PythonBundleCode(Code& code, GenEnum::PropName prop)
 
         else if (bundle->lst_filenames.size() == 1)
         {
-            code += "wx.BitmapBundle.";
-            code << "FromBitmap(wx.Bitmap(\'" << name << "\'))";
+            code += "wx.BitmapBundle.FromBitmap(wx.Bitmap(";
+            code.QuotedString(name) += "))";
         }
         else if (bundle->lst_filenames.size() == 2)
         {
@@ -534,8 +534,9 @@ bool PythonBundleCode(Code& code, GenEnum::PropName prop)
             name2.make_absolute();
             name2.make_relative(path);
             name2.backslashestoforward();
-            code += "wx.BitmapBundle.";
-            code << "FromBitmap(wx.Bitmap(\'" << name << "\', \'" << name2 << "\'))";
+            code += "wx.BitmapBundle.FromBitmaps(";
+            code.CheckLineLength(name.size() + name2.size() + 27);
+            code.Str("wx.Bitmap(").QuotedString(name).Str(", wx.Bitmap(").QuotedString(name2).Str("))");
         }
         else
         {

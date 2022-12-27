@@ -133,60 +133,76 @@ wxObject* PageCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
     return widget;
 }
 
-std::optional<ttlib::cstr> PageCtrlGenerator::GenConstruction(Node* node)
+std::optional<ttlib::sview> PageCtrlGenerator::CommonConstruction(Code& code)
 {
+    Node* node = code.node();
     if (!node->GetChildCount())
-        return {};
+        return code.m_code;
 
-    auto child_node = node->GetChild(0);
-
-    auto child_generator = child_node->GetGenerator();
-    ASSERT(child_generator);
-
-    auto result = child_generator->GenConstruction(child_node);
-    if (!result)
+    if (auto child_node = code.node()->GetChild(0); child_node)
     {
-        return {};
-    }
-
-    ttlib::cstr code;
-    code << result.value() << '\n';
-    code << GetParentName(node) << "->AddPage(" << child_node->get_node_name() << ", ";
-    code << GenerateQuotedString(node, prop_label);
-
-    // Default is false, so only add parameter if it is true.
-    if (node->prop_as_bool(prop_select))
-        code << ", true";
-
-    if (node->HasValue(prop_bitmap) &&
-        (node->GetParent()->prop_as_bool(prop_display_images) || node->isParent(gen_wxToolbook)))
-    {
-        auto node_parent = node->GetParent();
-        int idx_image = -1;
-        for (size_t idx_child = 0; idx_child < node_parent->GetChildCount(); ++idx_child)
+        if (auto child_generator = child_node->GetGenerator(); child_generator)
         {
-            if (node_parent->GetChild(idx_child) == node)
-            {
-                if (idx_image < 0)
-                    idx_image = 0;
+            Code gen_code(child_node, code.m_language);
+            std::optional<ttlib::sview> scode;
+            std::optional<ttlib::cstr> result;
 
-                break;
+            scode = child_generator->CommonConstruction(gen_code);
+            if (!scode)
+            {
+                result = child_generator->GenConstruction(child_node);
+                if (!result)
+                {
+                    return code.m_code;
+                }
+                scode = result.value();
             }
-            if (node_parent->GetChild(idx_child)->HasValue(prop_bitmap))
+            if (scode)
             {
-                if (idx_image < 0)
-                    idx_image = 0;
+                code += gen_code.m_code;
+                code.Eol(eol_if_needed)
+                    .GetParentName()
+                    .Function("AddPage(")
+                    .Str(child_node->get_node_name())
+                    .Comma()
+                    .QuotedString(prop_label);
 
-                ++idx_image;
+                // Default is false, so only add parameter if it is true.
+                if (code.IsTrue(prop_select))
+                    code.Comma().AddTrue();
+
+                if (node->HasValue(prop_bitmap) &&
+                    (node->GetParent()->as_bool(prop_display_images) || node->isParent(gen_wxToolbook)))
+                {
+                    auto node_parent = node->GetParent();
+                    int idx_image = -1;
+                    for (size_t idx_child = 0; idx_child < node_parent->GetChildCount(); ++idx_child)
+                    {
+                        if (node_parent->GetChild(idx_child) == node)
+                        {
+                            if (idx_image < 0)
+                                idx_image = 0;
+
+                            break;
+                        }
+                        if (node_parent->GetChild(idx_child)->HasValue(prop_bitmap))
+                        {
+                            if (idx_image < 0)
+                                idx_image = 0;
+
+                            ++idx_image;
+                        }
+                    }
+
+                    // If it is true, then the parameter has already been added
+                    if (!node->prop_as_bool(prop_select))
+                        code.Comma().AddFalse();
+                    code.Comma().itoa(idx_image);
+                }
+                code.EndFunction();
             }
         }
-
-        if (!node->prop_as_bool(prop_select))
-            code << ", false";
-        code << ", " << idx_image;
     }
 
-    code << ");";
-
-    return code;
+    return code.m_code;
 }

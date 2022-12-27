@@ -14,5 +14,5 @@ class PageCtrlGenerator : public BaseGenerator
 public:
     wxObject* CreateMockup(Node* node, wxObject* parent) override;
 
-    std::optional<ttlib::cstr> GenConstruction(Node* node) override;
+    std::optional<ttlib::sview> CommonConstruction(Code& code) override;
 };

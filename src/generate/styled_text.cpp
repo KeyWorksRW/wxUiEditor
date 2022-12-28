@@ -475,25 +475,12 @@ wxObject* StyledTextGenerator::CreateMockup(Node* node, wxObject* parent)
     return scintilla;
 }
 
-std::optional<ttlib::cstr> StyledTextGenerator::GenConstruction(Node* node)
-{
-    ttlib::cstr code;
-    if (node->IsLocal())
-        code << "auto* ";
-    code << node->get_node_name() << GenerateNewAssignment(node);
-    code << GetParentName(node) << ", " << node->prop_as_string(prop_id);
-
-    GeneratePosSizeFlags(node, code);
-
-    return code;
-}
-
 std::optional<ttlib::sview> StyledTextGenerator::CommonConstruction(Code& code)
 {
     if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
     code.NodeName().CreateClass();
-    code.GetParentName().Comma().as_string(prop_id);
+    code.GetParentName().Comma().Add(prop_id);
     code.PosSizeFlags(true);
 
     return code.m_code;
@@ -501,16 +488,13 @@ std::optional<ttlib::sview> StyledTextGenerator::CommonConstruction(Code& code)
 
 std::optional<ttlib::sview> StyledTextGenerator::CommonSettings(Code& code)
 {
-    if (code.is_cpp())
-        return {};  // Use GenSettings() instead
-
     Node* node = code.node();
 
     // There are potentially a LOT of settings, so we put them all in a bracket pair to make them easier to identifiy. This
     // is only done for C++ as Python syntax checkers don't like
     code.OpenBrace();
 
-    if (code.HasValue(prop_stc_lexer) && !code.IsEqualTo(prop_stc_lexer, "NULL"))
+    if (code.HasValue(prop_stc_lexer) && !code.is_value(prop_stc_lexer, "NULL"))
     {
         code.Eol(eol_if_needed).NodeName().Function("SetLexer(").Add("wxSTC_LEX_").Str(prop_stc_lexer).EndFunction();
     }
@@ -531,7 +515,8 @@ std::optional<ttlib::sview> StyledTextGenerator::CommonSettings(Code& code)
     {
         code.Eol(eol_if_needed).NodeName().Function("SetViewEol(").AddTrue().EndFunction();
     }
-    if (!code.IsEqualTo(prop_view_whitespace, "invisible"))
+
+    if (!code.is_value(prop_view_whitespace, "invisible"))
     {
         code.Eol(eol_if_needed)
             .NodeName()
@@ -539,12 +524,14 @@ std::optional<ttlib::sview> StyledTextGenerator::CommonSettings(Code& code)
             .AddConstant(prop_view_whitespace, "stc_")
             .EndFunction();
         if (code.IsTrue(prop_view_tab_strikeout))
-            code.Eol(eol_if_needed).NodeName().Function("SetTabDrawMode(").Add("wxSTC_TD_STRIKEOUT").EndFunction();
+        {
+            code.Eol().NodeName().Function("SetTabDrawMode(").Add("wxSTC_TD_STRIKEOUT").EndFunction();
+        }
     }
 
     //////////// Wrap category settings ////////////
 
-    if (!code.IsEqualTo(prop_stc_wrap_mode, "no wrapping"))
+    if (!code.is_value(prop_stc_wrap_mode, "no wrapping"))
     {
         code.Eol(eol_if_needed).NodeName().Function("SetWrapMode(").AddConstant(prop_stc_wrap_mode, "stc_").EndFunction();
     }
@@ -565,7 +552,7 @@ std::optional<ttlib::sview> StyledTextGenerator::CommonSettings(Code& code)
         }
     }
 
-    if (!code.IsEqualTo(prop_stc_wrap_indent_mode, "fixed"))
+    if (!code.is_value(prop_stc_wrap_indent_mode, "fixed"))
     {
         code.Eol(eol_if_needed)
             .NodeName()
@@ -603,12 +590,12 @@ std::optional<ttlib::sview> StyledTextGenerator::CommonSettings(Code& code)
     //////////// Margin category settings ////////////
 
     // The default margin is 1, so if that's what it is set to, then don't output any code
-    if (code.IntValue(prop_stc_left_margin_width) != 1)
+    if (!code.is_value(prop_stc_left_margin_width, 1))
     {
-        if (code.IntValue(prop_stc_left_margin_width) == 5)
+        if (code.is_value(prop_stc_left_margin_width, 5))
         {
-            code.Eol(eol_if_needed) += (code.is_cpp() ? "// " : "# ");
-            code += "Sets text margin scaled appropriately for the current DPI on Windows, 5 on wxGTK or wxOSX";
+            code.Eol(eol_if_needed).AddComment("Sets text margin scaled appropriately for the current DPI on Windows,");
+            code.Eol().AddComment("5 on wxGTK or wxOSX");
             code.Eol()
                 .NodeName()
                 .Function("SetMarginLeft(")
@@ -622,26 +609,26 @@ std::optional<ttlib::sview> StyledTextGenerator::CommonSettings(Code& code)
         }
     }
 
-    if (code.IntValue(prop_stc_right_margin_width) != 1)
+    if (!code.is_value(prop_stc_right_margin_width, 1))
     {
-        if (code.IntValue(prop_stc_left_margin_width) != 5 && code.IntValue(prop_stc_right_margin_width) == 5)
+        if (!code.is_value(prop_stc_left_margin_width, 5) && code.is_value(prop_stc_right_margin_width, 5))
         {
-            code.Eol(eol_if_needed) += (code.is_cpp() ? "// " : "# ");
-            code += "Sets text margin scaled appropriately for the current DPI on Windows, 5 on wxGTK or wxOSX";
-            code.Eol()
-                .NodeName()
-                .Function("SetMarginRight(")
-                .Add("wxSizerFlags")
-                .ClassMethod("GetDefaultBorder()")
-                .EndFunction();
+            code.Eol(eol_if_needed);
+            code.AddComment("Sets text margin scaled appropriately for the current DPI on Windows");
+            code.Eol().AddComment("5 on wxGTK or wxOSX");
+        }
+        code.Eol(eol_if_needed).NodeName().Function("SetMarginRight(");
+        if (code.is_value(prop_stc_right_margin_width, 5))
+        {
+            code.Add("wxSizerFlags").ClassMethod("GetDefaultBorder()").EndFunction();
         }
         else
         {
-            code.Eol(eol_if_needed).NodeName().Function("SetMarginRight(").Str(prop_stc_right_margin_width).EndFunction();
+            code.Str(prop_stc_right_margin_width).EndFunction();
         }
     }
 
-    if (code.IsTrue(prop_stc_select_wrapped_line))
+    if (code.IsFalse(prop_stc_select_wrapped_line))
     {
         code.Eol(eol_if_needed)
             .NodeName()
@@ -654,37 +641,29 @@ std::optional<ttlib::sview> StyledTextGenerator::CommonSettings(Code& code)
     // specifically uses it.
     bool is_margin_1_set { false };
 
-    if (node->prop_as_string(prop_fold_margin) == "1")
+    // These values can be set to "none" so you have to do a string comparison
+
     {
-        is_margin_1_set = true;
-    }
-    else if (node->prop_as_string(prop_line_margin) == "1")
-    {
-        is_margin_1_set = true;
-    }
-    else if (node->prop_as_string(prop_separator_margin) == "1")
-    {
-        is_margin_1_set = true;
-    }
-    else if (node->prop_as_string(prop_symbol_margin) == "1")
-    {
-        is_margin_1_set = true;
-    }
-    else if (node->prop_as_string(prop_custom_width) == "1")
-    {
-        is_margin_1_set = true;
+        auto lambda = [&](PropName name)
+        {
+            if (code.is_value(name, "1"))
+            {
+                is_margin_1_set = true;
+            }
+        };
+        lambda(prop_fold_margin);
+        lambda(prop_line_margin);
+        lambda(prop_separator_margin);
+        lambda(prop_symbol_margin);
+        lambda(prop_custom_width);
     }
 
     if (!is_margin_1_set)
     {
-        code.Eol(eol_if_needed)
-            .NodeName()
-            .Function("SetMarginWidth(1, 0")
-            .EndFunction()
-            .AddComment(" Remove default margin");
+        code.Eol(eol_if_needed).NodeName().Function("SetMarginWidth(1, 0").EndFunction().AddComment("Remove default margin");
     }
 
-    if (node->as_string(prop_line_margin) != "none")
+    if (!code.is_value(prop_line_margin, "none"))
     {
         auto& margin = node->as_string(prop_fold_margin);
         int width = node->as_string(prop_line_digits).atoi();
@@ -882,15 +861,15 @@ std::optional<ttlib::sview> StyledTextGenerator::CommonSettings(Code& code)
 
     //////////// Tabs and Indentation settings ////////////
 
-    if (node->HasValue(prop_indentation_guides) && code.IsNotEqualTo(prop_indentation_guides, "no guides") &&
+    if (node->HasValue(prop_indentation_guides) && !code.is_value(prop_indentation_guides, "no guides") &&
         // false was what was used in previous versions as well as in some imported values
-        code.IsNotEqualTo(prop_indentation_guides, "false"))
+        !code.is_value(prop_indentation_guides, "false"))
     {
         code.Eol(eol_if_needed).NodeName().Function("SetIndentationGuides(");
         code.AddConstant(prop_indentation_guides, "stc_").EndFunction();
     }
 
-    if (code.IsNotEqualTo(prop_stc_indentation_size, 0))
+    if (!code.is_value(prop_stc_indentation_size, 0))
     {
         code.Eol(eol_if_needed).NodeName().Function("SetIndent(");
         code.AddConstant(prop_stc_indentation_size, "stc_").EndFunction();
@@ -925,10 +904,16 @@ std::optional<ttlib::sview> StyledTextGenerator::CommonSettings(Code& code)
         code.Eol(eol_if_needed).NodeName().Function("SetFocus(").EndFunction();
     }
 
-    code.CloseBrace();
+    // REVIEW: [Randalphwa - 12-28-2022] The caller closes the brace -- but it makes more sense
+    // for the callee to close it.
+
+    // code.CloseBrace();
 
     return code.m_code;
 }
+
+// TODO: [Randalphwa - 12-28-2022] This is no longer used, however I'm leaving it here for now until I'm sure
+// the the CommonSettings() function is working identically.
 
 std::optional<ttlib::cstr> StyledTextGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
 {

@@ -175,14 +175,20 @@ Code& Code::Eol(int flag)
     if (flag == eol_if_empty)
     {
         if (m_code.size())
+        {
             m_code += '\n';
+        }
     }
     else if (flag == eol_if_needed)
     {
-        if (m_code.size() && m_code.back() != '\n' ||
-            /* If we're in a brace section, the last line will end with \n\t */
-            (m_code.size() > 2 && m_code.back() == '\t' && m_code[m_code.size() - 2] == '\n'))
-            m_code += '\n';
+        if (m_code.size() && m_code.back() != '\n')
+        {
+            // If we're in a brace section, the last line will end with \n\t
+            if (m_code.size() < 3 || m_code.back() != '\t' || m_code[m_code.size() - 2] != '\n')
+            {
+                m_code += '\n';
+            }
+        }
     }
     else
     {
@@ -190,8 +196,11 @@ Code& Code::Eol(int flag)
             m_code.pop_back();
         m_code += '\n';
     }
-    if (m_within_braces && is_cpp())
+
+    if (m_within_braces && is_cpp() && m_code.back() != '\t')
+    {
         m_code += '\t';
+    }
 
     if (m_auto_break)
     {
@@ -207,7 +216,9 @@ Code& Code::OpenBrace()
     {
         m_within_braces = true;
         if (m_code.size() && m_code.back() != '\n')
+        {
             m_code += '\n';
+        }
         m_code += '{';
         Eol();
     }
@@ -549,36 +560,6 @@ bool Code::HasValue(GenEnum::PropName prop_name) const
 int Code::IntValue(GenEnum::PropName prop_name) const
 {
     return m_node->as_int(prop_name);
-}
-
-bool Code::IsTrue(GenEnum::PropName prop_name) const
-{
-    return m_node->as_bool(prop_name);
-}
-
-bool Code::IsFalse(GenEnum::PropName prop_name) const
-{
-    return m_node->as_bool(prop_name);
-}
-
-bool Code::IsEqualTo(GenEnum::PropName prop_name, ttlib::sview text) const
-{
-    return (m_node->as_string(prop_name) == text);
-}
-
-bool Code::IsNotEqualTo(GenEnum::PropName prop_name, ttlib::sview text) const
-{
-    return (m_node->as_string(prop_name) != text);
-}
-
-bool Code::IsEqualTo(GenEnum::PropName prop_name, int val) const
-{
-    return (m_node->as_int(prop_name) == val);
-}
-
-bool Code::IsNotEqualTo(GenEnum::PropName prop_name, int val) const
-{
-    return (m_node->as_int(prop_name) == val);
 }
 
 bool Code::PropContains(GenEnum::PropName prop_name, ttlib::sview text) const

@@ -50,6 +50,8 @@ public:
 
     NodeProperty* get_prop_ptr(PropName name);
 
+    NodeProperty* prop(PropName name) { return get_prop_ptr(name); }
+
     NodeEvent* GetEvent(ttlib::sview name);
     NodeMapEvents& GetMapEvents() { return m_map_events; }
 
@@ -157,6 +159,13 @@ public:
     // value.
     bool isPropValue(PropName name, bool value) const noexcept;
 
+    // Avoid the temptation to use ttlib::sview instead of const char* -- the MSVC compiler will assume value is a bool if
+    // you call  is_value(propm, "string")
+
+    bool is_value(PropName name, const char* value) const noexcept { return isPropValue(name, value); }
+    bool is_value(PropName name, bool value) const noexcept { return isPropValue(name, value); }
+    bool is_value(PropName name, int value) const noexcept;
+
     // Sets value only if the property exists, returns false if it doesn't exist.
     template <typename T>
     bool prop_set_value(PropName name, T value)
@@ -228,7 +237,10 @@ public:
             return false;
         }
     }
+
     const ttlib::cstr& value(PropName name) const { return prop_as_string(name); }
+
+    const ttlib::sview view(PropName name) const { return prop_as_string(name); }
 
     bool as_bool(PropName name) const { return prop_as_bool(name); }
 

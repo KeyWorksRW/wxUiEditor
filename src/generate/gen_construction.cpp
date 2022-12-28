@@ -82,7 +82,7 @@ void BaseCodeGenerator::GenConstruction(Node* node)
         }
 #else
         m_source->writeLine(scode.value(), indent::auto_keep_whitespace);
-        if (scode->starts_with("{"))
+        if (scode->starts_with("{") && !scode->ends_with("}\n"))
         {
             need_closing_brace = true;
         }

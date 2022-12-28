@@ -15,7 +15,7 @@
 
 #include "gen_enums.h"  // Enumerations for generators
 
-class Node;
+#include "node.h"  // Node class
 
 namespace code
 {
@@ -78,23 +78,38 @@ public:
 
     bool HasValue(GenEnum::PropName prop_name) const;
 
-    // Equivalent to calling m_node->prop_as_bool(prop_name)
-    bool IsTrue(GenEnum::PropName prop_name) const;
+    // Avoid the temptation to use ttlib::sview instead of const char* -- the MSVC compiler will assume value is a bool if
+    // you call  is_value(propm, "string")
+
+    bool is_value(PropName name, const char* value) const noexcept { return m_node->is_value(name, value); }
+    bool is_value(PropName name, bool value) const noexcept { return m_node->is_value(name, value); }
+    bool is_value(PropName name, int value) const noexcept { return m_node->is_value(name, value); }
+
+    // Can return nullptr
+    NodeProperty* prop(PropName name) const { return m_node->prop(name); }
+
+    ttlib::sview view(PropName name) const { return m_node->view(name); }
+
+    // Returns m_node->as_bool(prop_name);
+    bool IsTrue(GenEnum::PropName prop_name) const { return m_node->as_bool(prop_name); }
 
     // Equivalent to calling m_node->prop_as_bool(prop_name)
-    bool IsFalse(GenEnum::PropName prop_name) const;
+    bool IsFalse(GenEnum::PropName prop_name) const { return !m_node->as_bool(prop_name); }
 
     // Equivalent to calling (node->as_string(prop_name) == text)
-    bool IsEqualTo(GenEnum::PropName prop_name, ttlib::sview text) const;
+    bool IsEqualTo(GenEnum::PropName prop_name, ttlib::sview text) const { return (m_node->as_string(prop_name) == text); }
 
     // Equivalent to calling (node->as_string(prop_name) != text)
-    bool IsNotEqualTo(GenEnum::PropName prop_name, ttlib::sview text) const;
+    bool IsNotEqualTo(GenEnum::PropName prop_name, ttlib::sview text) const
+    {
+        return (m_node->as_string(prop_name) != text);
+    }
 
     // Equivalent to calling (node->as_int(prop_name) == val)
-    bool IsEqualTo(GenEnum::PropName prop_name, int val) const;
+    bool IsEqualTo(GenEnum::PropName prop_name, int val) const { return (m_node->as_int(prop_name) == val); }
 
     // Equivalent to calling (node->as_int(prop_name) != val)
-    bool IsNotEqualTo(GenEnum::PropName prop_name, int val) const;
+    bool IsNotEqualTo(GenEnum::PropName prop_name, int val) const { return (m_node->as_int(prop_name) != val); }
 
     // Equivalent to calling node->as_string(prop_name).contains(text)
     bool PropContains(GenEnum::PropName prop_name, ttlib::sview text) const;

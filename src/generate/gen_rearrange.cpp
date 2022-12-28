@@ -112,7 +112,12 @@ std::optional<ttlib::sview> RearrangeCtrlGenerator::CommonSettings(Code& code)
         {
             for (auto& iter: contents)
             {
-                code.Eol(eol_if_empty).NodeName().Function("GetList()").Function("Append(").QuotedString(iter.label).EndFunction();
+                code.Eol(eol_if_empty)
+                    .NodeName()
+                    .Function("GetList()")
+                    .Function("Append(")
+                    .QuotedString(iter.label)
+                    .EndFunction();
             }
         }
         else

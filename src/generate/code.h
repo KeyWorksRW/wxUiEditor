@@ -100,7 +100,10 @@ public:
     bool IsEqualTo(GenEnum::PropName prop_name, ttlib::sview text) const { return (m_node->as_string(prop_name) == text); }
 
     // Equivalent to calling (node->as_string(prop_name) != text)
-    bool IsNotEqualTo(GenEnum::PropName prop_name, ttlib::sview text) const { return (m_node->as_string(prop_name) != text); }
+    bool IsNotEqualTo(GenEnum::PropName prop_name, ttlib::sview text) const
+    {
+        return (m_node->as_string(prop_name) != text);
+    }
 
     // Equivalent to calling (node->as_int(prop_name) == val)
     bool IsEqualTo(GenEnum::PropName prop_name, int val) const { return (m_node->as_int(prop_name) == val); }

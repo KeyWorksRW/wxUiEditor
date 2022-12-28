@@ -209,8 +209,13 @@ std::optional<ttlib::sview> BookPageGenerator::CommonConstruction(Code& code)
             treebook = treebook->GetParent();
         }
 
-        code.Str(treebook->get_node_name()).Comma().Str(prop_id);
+        code.Str(treebook->get_node_name()).Comma().Add(prop_id);
         code.PosSizeFlags();
+
+        // If the last parameter is wxID_ANY, then remove it. This is the default value, so it's
+        // not needed.
+        code.m_code.Replace(", wxID_ANY)", ")");
+
         code.Eol().Str(treebook->get_node_name()).Function("AddSubPage(").NodeName().Comma().QuotedString(prop_label);
 
         // Default is false, so only add parameter if it is true.

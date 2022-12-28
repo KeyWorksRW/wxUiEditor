@@ -60,9 +60,12 @@ std::optional<ttlib::sview> HtmlWindowGenerator::CommonConstruction(Code& code)
 {
     if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
-    code.NodeName().CreateClass();
-    code.GetParentName().Comma().as_string(prop_id);
+    code.NodeName().CreateClass().GetParentName().Comma().Add(prop_id);
     code.PosSizeFlags(true, "wxHW_SCROLLBAR_AUTO");
+
+    // If the last parameter is wxID_ANY, then remove it. This is the default value, so it's
+    // not needed.
+    code.m_code.Replace(", wxID_ANY)", ")");
 
     return code.m_code;
 }

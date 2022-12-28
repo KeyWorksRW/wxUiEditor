@@ -483,6 +483,10 @@ std::optional<ttlib::sview> StyledTextGenerator::CommonConstruction(Code& code)
     code.GetParentName().Comma().Add(prop_id);
     code.PosSizeFlags(true);
 
+    // If the last parameter is wxID_ANY, then remove it. This is the default value, so it's
+    // not needed.
+    code.m_code.Replace(", wxID_ANY)", ")");
+
     return code.m_code;
 }
 

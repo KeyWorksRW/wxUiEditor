@@ -37,22 +37,12 @@ std::optional<ttlib::sview> SpinButtonGenerator::CommonConstruction(Code& code)
 {
     if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
-    code.NodeName().CreateClass().GetParentName();
-    auto needed_parms = code.WhatParamsNeeded("wxSP_ARROW_KEYS");
-    Node* node = code.node();
-    if (needed_parms == nothing_needed)
-    {
-        if (node->as_string(prop_id) != "wxID_ANY")
-            code.Comma().as_string(prop_id);
-        code.EndFunction();
-        return code.m_code;
-    }
-    else
-    {
-        code.Comma().Add(prop_id);
-    }
-
+    code.NodeName().CreateClass().GetParentName().Comma().Add(prop_id);
     code.PosSizeFlags(false, "wxSP_VERTICAL");
+
+    // If the last parameter is wxID_ANY, then remove it. This is the default value, so it's
+    // not needed.
+    code.m_code.Replace(", wxID_ANY)", ")");
 
     return code.m_code;
 }

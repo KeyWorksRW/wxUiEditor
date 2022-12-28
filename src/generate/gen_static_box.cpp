@@ -26,28 +26,15 @@ wxObject* StaticBoxGenerator::CreateMockup(Node* node, wxObject* parent)
     return widget;
 }
 
-std::optional<ttlib::cstr> StaticBoxGenerator::GenConstruction(Node* node)
+std::optional<ttlib::sview> StaticBoxGenerator::CommonConstruction(Code& code)
 {
-    ttlib::cstr code;
-    if (node->IsLocal())
+    if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
-    code << node->get_node_name() << GenerateNewAssignment(node);
+    code.NodeName().CreateClass();
+    code.GetParentName().Comma().Add(prop_id).Comma().QuotedString(prop_label);
+    code.PosSizeFlags(true);
 
-    code << GetParentName(node) << ", " << node->prop_as_string(prop_id) << ", ";
-
-    auto& label = node->prop_as_string(prop_label);
-    if (label.size())
-    {
-        code << GenerateQuotedString(label);
-    }
-    else
-    {
-        code << "wxEmptyString";
-    }
-
-    GeneratePosSizeFlags(node, code);
-
-    return code;
+    return code.m_code;
 }
 
 int StaticBoxGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)

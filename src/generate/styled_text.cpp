@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   wxStyledText (scintilla) generate
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2021 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -561,7 +561,7 @@ std::optional<ttlib::sview> StyledTextGenerator::CommonSettings(Code& code)
             .EndFunction();
     }
 
-    if (code.HasValue(prop_stc_wrap_visual_location))
+    if (code.HasValue(prop_stc_wrap_start_indent))
     {
         code.Eol(eol_if_needed).NodeName().Function("SetWrapStartIndent(").Str(prop_stc_wrap_start_indent).EndFunction();
     }
@@ -569,10 +569,10 @@ std::optional<ttlib::sview> StyledTextGenerator::CommonSettings(Code& code)
     //////////// Selection category settings ////////////
     if (code.IsTrue(prop_multiple_selections))
     {
-        code.Eol(eol_if_needed).NodeName().Function("SetMultipleSelection(").Add("wxSTC_MULTIPASTE_EACH");
+        code.Eol(eol_if_needed).NodeName().Function("SetMultipleSelection(").Add("wxSTC_MULTIPASTE_EACH").EndFunction();
         if (code.IsTrue(prop_paste_multiple))
         {
-            code.Eol().NodeName().Function("SetMultiPaste(").Add("wxSTC_MULTIPASTE_EACH");
+            code.Eol().NodeName().Function("SetMultiPaste(").Add("wxSTC_MULTIPASTE_EACH").EndFunction();
         }
         code.Eol().NodeName().Function("SetAdditionalSelectionTyping(");
         code.TrueFalseIf(prop_additional_carets_blink).EndFunction();
@@ -663,9 +663,12 @@ std::optional<ttlib::sview> StyledTextGenerator::CommonSettings(Code& code)
         code.Eol(eol_if_needed).NodeName().Function("SetMarginWidth(1, 0").EndFunction().AddComment("Remove default margin");
     }
 
+    ttlib::cstr margin = node->as_string(prop_fold_margin);
+    if (margin.is_sameas("none"))
+        margin = "0";
+
     if (!code.is_value(prop_line_margin, "none"))
     {
-        auto& margin = node->as_string(prop_fold_margin);
         int width = node->as_string(prop_line_digits).atoi();
 
         ttlib::cstr numbers("_");
@@ -680,9 +683,8 @@ std::optional<ttlib::sview> StyledTextGenerator::CommonSettings(Code& code)
         code.Eol().NodeName().Function("SetMarginType(").Str(margin).Comma().Add("wxSTC_MARGIN_NUMBER").EndFunction();
     }
 
-    if (node->prop_as_string(prop_fold_margin) != "none" && node->prop_as_int(prop_fold_width))
+    if (!code.is_value(prop_fold_margin, "none") && code.IntValue(prop_fold_width) > 0)
     {
-        auto& margin = node->as_string(prop_fold_margin);
         code.Eol(eol_if_needed).NodeName().Function("SetProperty(\"fold\", \"1\"").EndFunction();
         code.Eol().NodeName().Function("SetMarginWidth(").Str(margin).Comma().Str("16").EndFunction();
         code.Eol().NodeName().Function("SetMarginType(").Str(margin).Comma().Add("wxSTC_MARGIN_SYMBOL").EndFunction();
@@ -717,27 +719,27 @@ std::optional<ttlib::sview> StyledTextGenerator::CommonSettings(Code& code)
 
             if (node->HasValue(prop_fold_marker_colour))
             {
-                auto lambda = [&](ttlib::sview name)
+                auto lambda = [&](ttlib::sview name, const std::string& symbol)
                 {
                     code.Eol().NodeName().Function("MarkerDefine(").Add(name).Comma();
-                    code.Add(symbol_folder).Comma().Add("wxNullColour, ").ColourCode(prop_fold_marker_colour).EndFunction();
+                    code.Add(symbol).Comma().Add("wxNullColour, ").ColourCode(prop_fold_marker_colour).EndFunction();
                 };
-                lambda("wxSTC_MARKNUM_FOLDER");
-                lambda("wxSTC_MARKNUM_FOLDEROPEN");
-                lambda("wxSTC_MARKNUM_FOLDEROPENMID");
-                lambda("wxSTC_MARKNUM_FOLDEREND");
+                lambda("wxSTC_MARKNUM_FOLDER", symbol_folder);
+                lambda("wxSTC_MARKNUM_FOLDEROPEN", symbol_open);
+                lambda("wxSTC_MARKNUM_FOLDEROPENMID", symbol_open);
+                lambda("wxSTC_MARKNUM_FOLDEREND", symbol_folder);
             }
             else
             {
-                auto lambda = [&](ttlib::sview name)
+                auto lambda = [&](ttlib::sview name, const std::string& symbol)
                 {
                     code.Eol().NodeName().Function("MarkerDefine(").Add(name).Comma();
-                    code.Add(symbol_folder).EndFunction();
+                    code.Add(symbol).EndFunction();
                 };
-                lambda("wxSTC_MARKNUM_FOLDER");
-                lambda("wxSTC_MARKNUM_FOLDEROPEN");
-                lambda("wxSTC_MARKNUM_FOLDEROPENMID");
-                lambda("wxSTC_MARKNUM_FOLDEREND");
+                lambda("wxSTC_MARKNUM_FOLDER", symbol_folder);
+                lambda("wxSTC_MARKNUM_FOLDEROPEN", symbol_open);
+                lambda("wxSTC_MARKNUM_FOLDEROPENMID", symbol_open);
+                lambda("wxSTC_MARKNUM_FOLDEREND", symbol_folder);
             }
             {
                 auto lambda = [&](ttlib::sview name)
@@ -819,18 +821,20 @@ std::optional<ttlib::sview> StyledTextGenerator::CommonSettings(Code& code)
 
     if (node->prop_as_string(prop_symbol_margin) != "none")
     {
-        auto& margin = node->as_string(prop_fold_margin);
-        code.Eol(eol_if_needed).NodeName().Function("SetProperty(\"fold\", \"1\"").EndFunction();
         code.Eol().NodeName().Function("SetMarginWidth(").Str(margin).Comma().Str("16").EndFunction();
         code.Eol().NodeName().Function("SetMarginType(").Str(margin).Comma().Add("wxSTC_MARGIN_SYMBOL").EndFunction();
-        code.Eol().NodeName().Function("SetMarginMask(").Str(margin).Comma().Add("wxSTC_MASK_FOLDERS").EndFunction();
+        code.Eol().NodeName().Function("SetMarginMask(").Str(margin).Comma();
+        code.Str("~").Add("wxSTC_MASK_FOLDERS").EndFunction();
         code.Eol().NodeName().Function("SetMarginSensitive(").Str(margin).Comma();
         code.TrueFalseIf(prop_symbol_mouse_sensitive).EndFunction();
     }
 
     if (node->prop_as_string(prop_separator_margin) != "none")
     {
-        auto& margin = node->as_string(prop_separator_margin);
+        margin = node->as_string(prop_separator_margin);
+        if (margin.is_sameas("none"))
+            margin = "0";
+
         code.Eol().NodeName().Function("SetMarginWidth(").Add(margin);
         code.Comma().Str(prop_separator_width).EndFunction();
         code.Eol().NodeName().Function("SetMarginType(").Str(margin).Comma().Add("wxSTC_MARGIN_FORE").EndFunction();
@@ -838,7 +842,10 @@ std::optional<ttlib::sview> StyledTextGenerator::CommonSettings(Code& code)
 
     if (node->prop_as_string(prop_custom_margin) != "none" && node->prop_as_int(prop_custom_width))
     {
-        auto& margin = node->prop_as_string(prop_custom_margin);
+        margin = node->prop_as_string(prop_custom_margin);
+        if (margin.is_sameas("none"))
+            margin = "0";
+
         code.Eol().NodeName().Function("SetMarginWidth(").Str(margin).Comma().Str(prop_custom_width).EndFunction();
         code.Eol().NodeName().Function("SetMarginType(").Str(margin);
         code.Comma().AddConstant(prop_custom_type, "stc_").EndFunction();
@@ -851,7 +858,11 @@ std::optional<ttlib::sview> StyledTextGenerator::CommonSettings(Code& code)
         else
         {
             code.Eol().NodeName().Function("SetMarginMask").Str(margin).Comma();
-            code.Add(code.IsTrue(prop_custom_mask_folders) ? "wxSTC_MASK_FOLDERS" : "~wxSTC_MASK_FOLDERS").EndFunction();
+            if (code.IsTrue(prop_custom_mask_folders))
+                code.Add("wxSTC_MASK_FOLDERS");
+            else
+                code.Str("~").Add("wxSTC_MASK_FOLDERS");
+            code.EndFunction();
         }
         if (code.IsTrue(prop_custom_mouse_sensitive))
         {

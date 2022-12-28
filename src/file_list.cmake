@@ -124,6 +124,7 @@ set (file_list
     generate/gen_status_bar.cpp     # wxStatusBar generator
     generate/gen_text_ctrl.cpp      # wxTextCtrl generator
     generate/gen_toggle_btn.cpp     # wxToggleButton generator
+    generate/gen_web_view.cpp       # wxWebView generator
 
     generate/gen_aui_toolbar.cpp    # wxAuiToolBar generator
     generate/gen_bitmap_combo.cpp   # wxBitmapComboBox generator
@@ -138,7 +139,6 @@ set (file_list
     generate/gen_toolbar.cpp        # wxToolBar generator
     generate/gen_tree_ctrl.cpp      # wxTreeCtrl generator
     generate/gen_tree_list.cpp      # wxTreeListCtrl generator
-    generate/gen_web_view.cpp       # wxWebView generator
 
     # Non-python widgets
     generate/gen_dir_ctrl.cpp       # wxGenericDirCtrl generator

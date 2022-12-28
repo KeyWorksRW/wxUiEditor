@@ -29,47 +29,28 @@ wxObject* WebViewGenerator::CreateMockup(Node* node, wxObject* parent)
     return widget;
 }
 
-std::optional<ttlib::cstr> WebViewGenerator::GenConstruction(Node* node)
+std::optional<ttlib::sview> WebViewGenerator::CommonConstruction(Code& code)
 {
-    ttlib::cstr code;
-    if (node->IsLocal())
+    if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
-    code << node->get_node_name() << " = wxWebView::New(";
+    code.NodeName().Str(" = ").Add("wxWebView").ClassMethod("New(");
+    code.GetParentName().Comma().Add(prop_id).Comma().QuotedString(prop_url);
 
-    code << GetParentName(node) << ", " << node->prop_as_string(prop_id) << ", "
-         << GenerateQuotedString(node->prop_as_string(prop_url));
-
-    bool isPosSet { false };
-    auto pos = node->prop_as_wxPoint(prop_pos);
-    if (pos.x != -1 || pos.y != -1)
+    auto params_needed = code.WhatParamsNeeded();
+    if (params_needed == nothing_needed)
     {
-        code << ", wxPoint(" << pos.x << ", " << pos.y << ")";
-        isPosSet = true;
+        code.EndFunction();
+        return code.m_code;
     }
-
-    auto size = node->prop_as_wxSize(prop_size);
-    if (size.x != -1 || size.y != -1)
+    code.Comma().Pos().Comma().WxSize();
+    if (params_needed & style_needed || params_needed & window_name_needed)
     {
-        if (!isPosSet)
-        {
-            code << ", wxDefaultPosition";
-        }
-        code << ", wxSize(" << size.x << ", " << size.y << ")";
+        code.Comma().Add("wxWebViewBackendDefault").Comma().Style();
+        if (params_needed & window_name_needed)
+            code.Comma().QuotedString(prop_window_name);
     }
-
-    ttlib::cstr all_styles;
-    GenStyle(node, all_styles);
-    if (all_styles.is_sameas("0"))
-        all_styles.clear();
-
-    if (all_styles.size())
-    {
-        code << ", wxWebViewBackendDefault, " << all_styles;
-    }
-
-    code << ");";
-
-    return code;
+    code.EndFunction();
+    return code.m_code;
 }
 
 std::optional<ttlib::sview> WebViewGenerator::GenEvents(Code& code, NodeEvent* event, const std::string& class_name)

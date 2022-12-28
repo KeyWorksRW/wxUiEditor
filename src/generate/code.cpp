@@ -117,6 +117,9 @@ static const std::map<std::string_view, std::string_view, std::less<>> s_map_wx_
     { "wxSTC_WS_VISIBLEAFTERINDENT", "wx.stc."},
     { "wxSTC_WS_VISIBLEONLYININDENT", "wx.stc."},
 
+    // This doesn't get created as a class, so we have to add it as if it was a constant.
+    { "wxWebView", "wx.html2."},
+    { "wxWebViewBackendDefault", "wx.html2."},
 };
 
 std::map<std::string_view, std::string_view, std::less<>> g_map_class_prefix
@@ -134,6 +137,7 @@ std::map<std::string_view, std::string_view, std::less<>> g_map_class_prefix
     { "wxStyledTextCtrl", "wx.stc."},
     { "wxTimePickerCtrl", "wx.adv."},
     { "wxStyledTextCtrl", "wx.stc."},
+    { "wxWebView", "wx.html2."},
 
 };
 // clang-format on

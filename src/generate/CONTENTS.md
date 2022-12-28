@@ -64,7 +64,7 @@ The following tables list classes, objects and functions that wxUiEditor can gen
 | wxBannerWindow | yes | yes | yes | gen_banner_window.cpp |
 | wxBitmapComboBox | yes | ?? | yes | gen_bitmap_combo.cpp |
 | wxButton | yes | yes | yes | gen_button.cpp |
-| wxCalendarCtrl | yes | ?? | yes | gen_calendar_ctrl.cpp |
+| wxCalendarCtrl | yes | yes | yes | gen_calendar_ctrl.cpp |
 | wxCheckBox | yes | yes | yes | gen_checkbox.cpp |
 | wxCheckListBox | yes | yes | yes | gen_check_listbox.cpp |
 | wxChoice | yes | yes | yes | gen_choice.cpp |
@@ -110,17 +110,17 @@ The following tables list classes, objects and functions that wxUiEditor can gen
 | wxSpinCtrlDouble | yes | ?? | yes | gen_spin_ctrl.cpp |
 | wxSplitterWindow | yes | yes | yes | gen_split_win.cpp |
 | wxStaticBitmap | yes | yes | yes | gen_static_bmp.cpp |
-| wxStaticBox | yes | ?? | yes | gen_static_box.cpp |
+| wxStaticBox | yes | yes | yes | gen_static_box.cpp |
 | wxStaticLine | yes | yes | yes | gen_static_line.cpp |
 | wxStaticText | yes | yes | yes | gen_static_text.cpp |
 | wxStatusBar | yes | yes | yes | gen_status_bar.cpp |
 | wxStyledTextCtrl | yes | yes | yes | styled_text.cpp |
-| wxTextCtrl | yes | ?? | yes | gen_text_ctrl.cpp |
+| wxTextCtrl | yes | yes | yes | gen_text_ctrl.cpp |
 | wxToggleButton | yes | yes | yes | gen_toggle_btn.cpp |
 | wxToolBar | yes | ?? | yes | gen_toolbar.cpp |
 | wxTreeCtrl | yes | ?? | yes | gen_toolbar.cpp |
 | wxTreeListCtrl | yes | ?? | no | gen_tree_list.cpp |
-| wxWebView | yes | ?? | no | gen_web_view.cpp |
+| wxWebView | yes | yes | no | gen_web_view.cpp |
 | wxWizardPageSimple | yes | ?? | yes | gen_wizard.cpp |
 
 # Objects

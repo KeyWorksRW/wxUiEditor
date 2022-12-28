@@ -197,8 +197,11 @@ public:
     Code& False() { return AddFalse(); }
 
     // Use Str() instead of Add() if you don't need any special wxPython processing.
+    //
+    // This will call CheckLineLength(str.size()) first.
     Code& Str(std::string_view str)
     {
+        CheckLineLength(str.size());
         m_code += str;
         return *this;
     }

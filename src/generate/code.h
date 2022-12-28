@@ -15,7 +15,7 @@
 
 #include "gen_enums.h"  // Enumerations for generators
 
-class Node;
+#include "node.h"  // Node class
 
 namespace code
 {

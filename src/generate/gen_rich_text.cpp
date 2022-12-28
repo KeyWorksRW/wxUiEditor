@@ -29,62 +29,30 @@ wxObject* RichTextCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
     return widget;
 }
 
-std::optional<ttlib::cstr> RichTextCtrlGenerator::GenConstruction(Node* node)
+std::optional<ttlib::sview> RichTextCtrlGenerator::CommonConstruction(Code& code)
 {
-    ttlib::cstr code;
-    if (node->IsLocal())
+    if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
-    code << node->get_node_name() << GenerateNewAssignment(node);
+    code.NodeName().CreateClass();
+    code.GetParentName().Comma().as_string(prop_id).Comma().QuotedString(prop_value);
+    code.PosSizeFlags(true);
 
-    code << GetParentName(node) << ", " << node->prop_as_string(prop_id) << ", ";
-    if (node->prop_as_string(prop_value).size())
-        code << GenerateQuotedString(node->prop_as_string(prop_value));
-    else
-        code << "wxEmptyString";
-
-    if (node->prop_as_string(prop_window_name).empty())
-        GeneratePosSizeFlags(node, code);
-    else
-    {
-        // We have to generate a default validator before the window name, which GeneratePosSizeFlags doesn't do. We don't
-        // actually need that validator, but we have to supply something before the window name.
-
-        code << ", ";
-        GenPos(node, code);
-        code << ", ";
-        GenSize(node, code);
-        code << ", ";
-        GenStyle(node, code);
-        code << ", wxDefaultValidator, " << node->prop_as_string(prop_window_name);
-        code << ");";
-    }
-
-    return code;
+    return code.m_code;
 }
 
-std::optional<ttlib::cstr> RichTextCtrlGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
+std::optional<ttlib::sview> RichTextCtrlGenerator::CommonSettings(Code& code)
 {
-    ttlib::cstr code;
-
-    if (node->HasValue(prop_hint))
+    if (code.HasValue(prop_hint))
     {
-        if (code.size())
-            code << '\n';
-        code << node->get_node_name() << "->SetHint(" << GenerateQuotedString(node->prop_as_string(prop_hint)) << ");";
+        code.Eol(eol_if_needed).NodeName().Function("SetHint(").QuotedString(prop_hint).EndFunction();
     }
 
-    if (node->prop_as_bool(prop_focus))
+    if (code.IsTrue(prop_focus))
     {
-        if (code.size())
-            code << '\n';
-        code << node->get_node_name() << "->SetFocus()";
+        code.Eol(eol_if_needed).NodeName().Function("SetFocus(").EndFunction();
     }
 
-    if (code.size())
-        return code;
-    else
-
-        return {};
+    return code.m_code;
 }
 
 int RichTextCtrlGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)

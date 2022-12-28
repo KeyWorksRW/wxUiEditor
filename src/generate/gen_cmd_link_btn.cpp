@@ -60,48 +60,37 @@ wxObject* CommandLinkBtnGenerator::CreateMockup(Node* node, wxObject* parent)
     return widget;
 }
 
-std::optional<ttlib::cstr> CommandLinkBtnGenerator::GenConstruction(Node* node)
+std::optional<ttlib::sview> CommandLinkBtnGenerator::CommonConstruction(Code& code)
 {
-    ttlib::cstr code;
-    if (node->IsLocal())
+    if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
-    code << node->get_node_name() << GenerateNewAssignment(node);
-    code << GetParentName(node) << ", " << node->prop_as_string(prop_id) << ", ";
+    code.NodeName().CreateClass();
+    code.GetParentName().Comma().as_string(prop_id).Comma().QuotedString(prop_label);
+    code.Comma().QuotedString(prop_note).PosSizeFlags(true);
 
-    code << GenerateQuotedString(node, prop_main_label) << ", " << GenerateQuotedString(node, prop_note);
-
-    GeneratePosSizeFlags(node, code, true);
-
-    return code;
+    return code.m_code;
 }
 
-std::optional<ttlib::cstr> CommandLinkBtnGenerator::GenSettings(Node* node, size_t& auto_indent)
+std::optional<ttlib::sview> CommandLinkBtnGenerator::CommonSettings(Code& code)
 {
-    ttlib::cstr code;
-
-    if (node->prop_as_bool(prop_default))
+    if (code.IsTrue(prop_default))
     {
-        if (code.size())
-            code << '\n';
-
-        code << node->get_node_name() << "->SetDefault();";
+        code.Eol(eol_if_needed).NodeName().Function("SetDefault(").EndFunction();
     }
 
-    if (node->prop_as_bool(prop_auth_needed))
+    if (code.IsTrue(prop_auth_needed))
     {
-        if (code.size())
-            code << '\n';
-        code << node->get_node_name() << "->SetAuthNeeded();";
+        code.Eol(eol_if_needed).NodeName().Function("SetAuthNeeded(").EndFunction();
     }
 
-    if (node->HasValue(prop_bitmap))
+    if (code.HasValue(prop_bitmap))
     {
-        auto_indent = indent::auto_keep_whitespace;
-
-        GenBtnBimapCode(node, code);
+        if (code.is_cpp())
+            GenBtnBimapCode(code.node(), code.m_code);
+        else
+            PythonBtnBimapCode(code);
     }
-
-    return code;
+    return code.m_code;
 }
 
 bool CommandLinkBtnGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)

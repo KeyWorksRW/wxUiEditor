@@ -63,14 +63,14 @@ The following tables list classes, objects and functions that wxUiEditor can gen
 | wxAuiToolBar | yes | ?? | yes | gen_aui_toolbar.cpp |
 | wxBannerWindow | yes | yes | yes | gen_banner_window.cpp |
 | wxBitmapComboBox | yes | ?? | yes | gen_bitmap_combo.cpp |
-| wxButton | yes | ?? | yes | gen_button.cpp |
+| wxButton | yes | yes | yes | gen_button.cpp |
 | wxCalendarCtrl | yes | ?? | yes | gen_calendar_ctrl.cpp |
 | wxCheckBox | yes | yes | yes | gen_checkbox.cpp |
 | wxCheckListBox | yes | yes | yes | gen_check_listbox.cpp |
 | wxChoice | yes | yes | yes | gen_choice.cpp |
 | wxCollapsiblePane | yes | yes | yes | gen_collapsible.cpp |
 | wxComboBox | yes | yes | yes | gen_combobox.cpp |
-| wxCommandLinkButton | yes | ?? | yes | gen_cmd_link_btn.cpp |
+| wxCommandLinkButton | yes | yes | yes | gen_cmd_link_btn.cpp |
 | wxDataViewCtrl | yes | ?? | yes | dataview_widgets.cpp |
 | wxDataViewListCtrl | yes | ?? | yes | dataview_widgets.cpp |
 | wxEditableListBox | yes | yes | yes | gen_edit_listbox.cpp |
@@ -78,7 +78,7 @@ The following tables list classes, objects and functions that wxUiEditor can gen
 | wxGauge | yes | yes | yes | gen_gauge.cpp |
 | wxGenericDirCtrl | yes |  no | yes | gen_dir_ctrl.cpp |
 | wxGrid | yes | ?? | yes | gen_grid.cpp |
-| wxHtmlWindow | yes | ?? | yes | gen_html_window.cpp |
+| wxHtmlWindow | yes | yes | yes | gen_html_window.cpp |
 | wxHyperlinkCtrl | yes | yes | yes | gen_hyperlink.cpp |
 | wxInfoBar | yes | yes | yes | gen_infobar.cpp |
 | wxListBox | yes | yes | yes | gen_listbox.cpp |
@@ -98,7 +98,7 @@ The following tables list classes, objects and functions that wxUiEditor can gen
 | wxRibbonPage | yes | ?? | yes | ribbon_widgets.cpp |
 | wxRibbonPanel | yes | ?? | yes | ribbon_widgets.cpp |
 | wxRibbonToolBar | yes | ?? | yes | ribbon_widgets.cpp |
-| wxRichTextCtrl | yes | ?? | yes | gen_rich_text.cpp |
+| wxRichTextCtrl | yes | yes | yes | gen_rich_text.cpp |
 | wxScrollBar | yes | ?? | yes | gen_scrollbar.cpp |
 | wxScrolled\<wxPanel\> | yes | ?? | yes | styled_text.cpp |
 | wxScrolled\<wxWindow\> | yes | ?? | yes | styled_text.cpp |
@@ -114,9 +114,9 @@ The following tables list classes, objects and functions that wxUiEditor can gen
 | wxStaticLine | yes | yes | yes | gen_static_line.cpp |
 | wxStaticText | yes | yes | yes | gen_static_text.cpp |
 | wxStatusBar | yes | yes | yes | gen_status_bar.cpp |
-| wxStyledTextCtrl | yes | ?? | yes | styled_text.cpp |
+| wxStyledTextCtrl | yes | yes | yes | styled_text.cpp |
 | wxTextCtrl | yes | ?? | yes | gen_text_ctrl.cpp |
-| wxToggleButton | yes | ?? | yes | gen_toggle_btn.cpp |
+| wxToggleButton | yes | yes | yes | gen_toggle_btn.cpp |
 | wxToolBar | yes | ?? | yes | gen_toolbar.cpp |
 | wxTreeCtrl | yes | ?? | yes | gen_toolbar.cpp |
 | wxTreeListCtrl | yes | ?? | no | gen_tree_list.cpp |

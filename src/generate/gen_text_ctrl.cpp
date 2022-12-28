@@ -114,17 +114,17 @@ std::optional<ttlib::sview> TextCtrlGenerator::CommonSettings(Code& code)
 {
     if (code.HasValue(prop_hint))
     {
-        code.Eol(eol_if_empty);
-        code.Eol(eol_if_empty).NodeName().Function("SetHint(").QuotedString(prop_hint).EndFunction();
+        code.Eol(eol_if_needed).NodeName().Function("SetHint(").QuotedString(prop_hint).EndFunction();
     }
+
     if (code.IsTrue(prop_focus))
     {
-        code.Eol(eol_if_empty);
-        code.NodeName().Function("SetFocus(").EndFunction();
+        code.Eol(eol_if_needed).NodeName().Function("SetFocus(").EndFunction();
     }
+
     if (code.IsTrue(prop_maxlength))
     {
-        code.Eol(eol_if_empty);
+        code.Eol(eol_if_needed);
         if (code.PropContains(prop_style, "wxTE_MULTILINE"))
         {
             if (code.is_cpp())
@@ -144,6 +144,7 @@ std::optional<ttlib::sview> TextCtrlGenerator::CommonSettings(Code& code)
             code.NodeName().Function("SetMaxLength(").as_string(prop_maxlength).EndFunction().Eol();
         }
     }
+
     if (code.HasValue(prop_auto_complete))
     {
         if (code.is_cpp())

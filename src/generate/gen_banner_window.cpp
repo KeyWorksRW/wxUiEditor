@@ -64,9 +64,16 @@ std::optional<ttlib::sview> BannerWindowGenerator::CommonSettings(Code& code)
 {
     if (code.HasValue(prop_bitmap) && code.is_cpp())
     {
-        ttlib::cstr tmp;
-        GenBtnBimapCode(code.node(), tmp, true);
-        code << tmp;
+        if (code.is_cpp())
+        {
+            ttlib::cstr tmp;
+            GenBtnBimapCode(code.node(), tmp, true);
+            code += tmp;
+        }
+        else
+        {
+            PythonBtnBimapCode(code, true);
+        }
     }
     else if (code.HasValue(prop_start_colour) && code.HasValue(prop_end_colour))
     {

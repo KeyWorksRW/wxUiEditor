@@ -488,6 +488,448 @@ std::optional<ttlib::cstr> StyledTextGenerator::GenConstruction(Node* node)
     return code;
 }
 
+std::optional<ttlib::sview> StyledTextGenerator::CommonConstruction(Code& code)
+{
+    if (code.is_cpp() && code.is_local_var())
+        code << "auto* ";
+    code.NodeName().CreateClass();
+    code.GetParentName().Comma().as_string(prop_id);
+    code.PosSizeFlags(true);
+
+    return code.m_code;
+}
+
+std::optional<ttlib::sview> StyledTextGenerator::CommonSettings(Code& code)
+{
+    if (code.is_cpp())
+        return {};  // Use GenSettings() instead
+
+    Node* node = code.node();
+
+    // There are potentially a LOT of settings, so we put them all in a bracket pair to make them easier to identifiy. This
+    // is only done for C++ as Python syntax checkers don't like
+    code.OpenBrace();
+
+    if (code.HasValue(prop_stc_lexer) && !code.IsEqualTo(prop_stc_lexer, "NULL"))
+    {
+        code.Eol(eol_if_needed).NodeName().Function("SetLexer(").Add("wxSTC_LEX_").Str(prop_stc_lexer).EndFunction();
+    }
+
+    // Default is false, so only set if true
+    if (code.IsTrue(prop_read_only))
+    {
+        code.Eol(eol_if_needed).NodeName().Function("SetReadOnly(").AddTrue().EndFunction();
+    }
+
+    if (code.HasValue(prop_eol_mode))
+    {
+        code.Eol(eol_if_needed).NodeName().Function("SetEOLMode(").AddConstant(prop_eol_mode, "stc_").EndFunction();
+    }
+
+    // Default is false, so only set if true
+    if (code.IsTrue(prop_view_eol))
+    {
+        code.Eol(eol_if_needed).NodeName().Function("SetViewEol(").AddTrue().EndFunction();
+    }
+    if (!code.IsEqualTo(prop_view_whitespace, "invisible"))
+    {
+        code.Eol(eol_if_needed)
+            .NodeName()
+            .Function("SetViewWhiteSpace(")
+            .AddConstant(prop_view_whitespace, "stc_")
+            .EndFunction();
+        if (code.IsTrue(prop_view_tab_strikeout))
+            code.Eol(eol_if_needed).NodeName().Function("SetTabDrawMode(").Add("wxSTC_TD_STRIKEOUT").EndFunction();
+    }
+
+    //////////// Wrap category settings ////////////
+
+    if (!code.IsEqualTo(prop_stc_wrap_mode, "no wrapping"))
+    {
+        code.Eol(eol_if_needed).NodeName().Function("SetWrapMode(").AddConstant(prop_stc_wrap_mode, "stc_").EndFunction();
+    }
+
+    if (code.HasValue(prop_stc_wrap_visual_flag))
+    {
+        if (auto result = code.node()->prop_as_constant(prop_stc_wrap_visual_flag, "stc_"); result.size())
+        {
+            code.Eol(eol_if_needed).NodeName().Function("SetWrapVisualFlags(").Add(result).EndFunction();
+        }
+    }
+
+    if (code.HasValue(prop_stc_wrap_visual_location))
+    {
+        if (auto result = code.node()->prop_as_constant(prop_stc_wrap_visual_location, "stc_"); result.size())
+        {
+            code.Eol(eol_if_needed).NodeName().Function("SetWrapVisualFlagsLocation(").Add(result).EndFunction();
+        }
+    }
+
+    if (!code.IsEqualTo(prop_stc_wrap_indent_mode, "fixed"))
+    {
+        code.Eol(eol_if_needed)
+            .NodeName()
+            .Function("SetWrapIndentMode(")
+            .AddConstant(prop_stc_wrap_indent_mode, "stc_")
+            .EndFunction();
+    }
+
+    if (code.HasValue(prop_stc_wrap_visual_location))
+    {
+        code.Eol(eol_if_needed).NodeName().Function("SetWrapStartIndent(").Str(prop_stc_wrap_start_indent).EndFunction();
+    }
+
+    //////////// Selection category settings ////////////
+    if (code.IsTrue(prop_multiple_selections))
+    {
+        code.Eol(eol_if_needed).NodeName().Function("SetMultipleSelection(").Add("wxSTC_MULTIPASTE_EACH");
+        if (code.IsTrue(prop_paste_multiple))
+        {
+            code.Eol().NodeName().Function("SetMultiPaste(").Add("wxSTC_MULTIPASTE_EACH");
+        }
+        code.Eol().NodeName().Function("SetAdditionalSelectionTyping(");
+        code.TrueFalseIf(prop_additional_carets_blink).EndFunction();
+
+        if (!code.IsTrue(prop_additional_carets_visible))
+        {
+            code.Eol().NodeName().Function("SetAdditionalCaretsVisible(").AddFalse().EndFunction();
+        }
+        else
+        {
+            code.Eol().NodeName().Function("SetAdditionalCaretsBlink(");
+            code.TrueFalseIf(prop_additional_carets_blink).EndFunction();
+        }
+    }
+    //////////// Margin category settings ////////////
+
+    // The default margin is 1, so if that's what it is set to, then don't output any code
+    if (code.IntValue(prop_stc_left_margin_width) != 1)
+    {
+        if (code.IntValue(prop_stc_left_margin_width) == 5)
+        {
+            code.Eol(eol_if_needed) += (code.is_cpp() ? "// " : "# ");
+            code += "Sets text margin scaled appropriately for the current DPI on Windows, 5 on wxGTK or wxOSX";
+            code.Eol()
+                .NodeName()
+                .Function("SetMarginLeft(")
+                .Add("wxSizerFlags")
+                .ClassMethod("GetDefaultBorder()")
+                .EndFunction();
+        }
+        else
+        {
+            code.Eol(eol_if_needed).NodeName().Function("SetMarginLeft(").Str(prop_stc_left_margin_width).EndFunction();
+        }
+    }
+
+    if (code.IntValue(prop_stc_right_margin_width) != 1)
+    {
+        if (code.IntValue(prop_stc_left_margin_width) != 5 && code.IntValue(prop_stc_right_margin_width) == 5)
+        {
+            code.Eol(eol_if_needed) += (code.is_cpp() ? "// " : "# ");
+            code += "Sets text margin scaled appropriately for the current DPI on Windows, 5 on wxGTK or wxOSX";
+            code.Eol()
+                .NodeName()
+                .Function("SetMarginRight(")
+                .Add("wxSizerFlags")
+                .ClassMethod("GetDefaultBorder()")
+                .EndFunction();
+        }
+        else
+        {
+            code.Eol(eol_if_needed).NodeName().Function("SetMarginRight(").Str(prop_stc_right_margin_width).EndFunction();
+        }
+    }
+
+    if (code.IsTrue(prop_stc_select_wrapped_line))
+    {
+        code.Eol(eol_if_needed)
+            .NodeName()
+            .Function("SetMarginOptions(")
+            .Add("wxSTC_MARGINOPTION_SUBLINESELECT")
+            .EndFunction();
+    }
+
+    // By default, scintilla sets margin one to a width to 16. We want to shut off all margins unless the user
+    // specifically uses it.
+    bool is_margin_1_set { false };
+
+    if (node->prop_as_string(prop_fold_margin) == "1")
+    {
+        is_margin_1_set = true;
+    }
+    else if (node->prop_as_string(prop_line_margin) == "1")
+    {
+        is_margin_1_set = true;
+    }
+    else if (node->prop_as_string(prop_separator_margin) == "1")
+    {
+        is_margin_1_set = true;
+    }
+    else if (node->prop_as_string(prop_symbol_margin) == "1")
+    {
+        is_margin_1_set = true;
+    }
+    else if (node->prop_as_string(prop_custom_width) == "1")
+    {
+        is_margin_1_set = true;
+    }
+
+    if (!is_margin_1_set)
+    {
+        code.Eol(eol_if_needed)
+            .NodeName()
+            .Function("SetMarginWidth(1, 0")
+            .EndFunction()
+            .AddComment(" Remove default margin");
+    }
+
+    if (node->as_string(prop_line_margin) != "none")
+    {
+        auto& margin = node->as_string(prop_fold_margin);
+        int width = node->as_string(prop_line_digits).atoi();
+
+        ttlib::cstr numbers("_");
+        while (width > 0)
+        {
+            numbers << '9';
+            --width;
+        }
+
+        code.Eol(eol_if_needed).NodeName().Function("SetMarginWidth(").Str(margin).Comma();
+        code.NodeName().Function("TextWidth(").Add("wxSTC_STYLE_LINENUMBER, ").QuotedString(numbers).Str(")").EndFunction();
+        code.Eol().NodeName().Function("SetMarginType(").Str(margin).Comma().Add("wxSTC_MARGIN_NUMBER").EndFunction();
+    }
+
+    if (node->prop_as_string(prop_fold_margin) != "none" && node->prop_as_int(prop_fold_width))
+    {
+        auto& margin = node->as_string(prop_fold_margin);
+        code.Eol(eol_if_needed).NodeName().Function("SetProperty(\"fold\", \"1\"").EndFunction();
+        code.Eol().NodeName().Function("SetMarginWidth(").Str(margin).Comma().Str("16").EndFunction();
+        code.Eol().NodeName().Function("SetMarginType(").Str(margin).Comma().Add("wxSTC_MARGIN_SYMBOL").EndFunction();
+        code.Eol().NodeName().Function("SetMarginMask(").Str(margin).Comma().Add("wxSTC_MASK_FOLDERS").EndFunction();
+        code.Eol().NodeName().Function("SetMarginSensitive(").Str(margin).Comma().AddTrue().EndFunction();
+
+        if (node->HasValue(prop_automatic_folding))
+        {
+            code.Eol().NodeName().Function("SetAutomaticFold(").AddConstant(prop_automatic_folding, "stc_").EndFunction();
+        }
+        if (node->HasValue(prop_fold_flags))
+        {
+            code.Eol().NodeName().Function("SetFoldFlags(").AddConstant(prop_fold_flags, "stc_").EndFunction();
+        }
+
+        if (node->prop_as_string(prop_fold_marker_style) == "arrow" ||
+            node->prop_as_string(prop_fold_marker_style) == "plus/minus")
+        {
+            std::string symbol_folder;
+            std::string symbol_open;
+
+            if (node->prop_as_string(prop_fold_marker_style) == "plus/minus")
+            {
+                symbol_folder = "wxSTC_MARK_PLUS";
+                symbol_open = "wxSTC_MARK_MINUS";
+            }
+            else
+            {
+                symbol_folder = "wxSTC_MARK_ARROW";
+                symbol_open = "wxSTC_MARK_ARROWDOWN";
+            }
+
+            if (node->HasValue(prop_fold_marker_colour))
+            {
+                auto lambda = [&](ttlib::sview name)
+                {
+                    code.Eol().NodeName().Function("MarkerDefine(").Add(name).Comma();
+                    code.Add(symbol_folder).Comma().Add("wxNullColour, ").ColourCode(prop_fold_marker_colour).EndFunction();
+                };
+                lambda("wxSTC_MARKNUM_FOLDER");
+                lambda("wxSTC_MARKNUM_FOLDEROPEN");
+                lambda("wxSTC_MARKNUM_FOLDEROPENMID");
+                lambda("wxSTC_MARKNUM_FOLDEREND");
+            }
+            else
+            {
+                auto lambda = [&](ttlib::sview name)
+                {
+                    code.Eol().NodeName().Function("MarkerDefine(").Add(name).Comma();
+                    code.Add(symbol_folder).EndFunction();
+                };
+                lambda("wxSTC_MARKNUM_FOLDER");
+                lambda("wxSTC_MARKNUM_FOLDEROPEN");
+                lambda("wxSTC_MARKNUM_FOLDEROPENMID");
+                lambda("wxSTC_MARKNUM_FOLDEREND");
+            }
+            {
+                auto lambda = [&](ttlib::sview name)
+                {
+                    code.Eol().NodeName().Function("MarkerDefine(").Add(name).Comma();
+                    code.Add("wxSTC_MARK_BACKGROUND").EndFunction();
+                };
+                lambda("wxSTC_MARKNUM_FOLDERMIDTAIL");
+                lambda("wxSTC_MARKNUM_FOLDERSUB");
+                lambda("wxSTC_MARKNUM_FOLDERTAIL");
+            }
+        }
+        else  // circle tree or box tree
+        {
+            code.OpenBrace();
+            code.Eol().AddComment("The outline colour of the circle and box tree symbols is reversed by default.");
+            code.Eol().AddComment("The code below ensures that the symbol is visible.");
+            code.Eol().Str(code.is_cpp() ? "auto clr_foreground" : "_clr_foreground_") += " = ";
+            code.NodeName().Function("StyleGetForeground(").Add("wxSTC_STYLE_DEFAULT").EndFunction();
+            code.Eol().Str(code.is_cpp() ? "clr_background" : "_clr_background_");
+            if (node->HasValue(prop_fold_marker_colour))
+            {
+                code.ColourCode(prop_fold_marker_colour).EndFunction();
+            }
+            else
+            {
+                code.NodeName().Function("StyleGetForeground(").Add("wxSTC_STYLE_DEFAULT").EndFunction();
+            }
+            {
+                auto lambda = [&](ttlib::sview name)
+                {
+                    code.Eol().NodeName().Function("MarkerSetBackground(").Add(name).Comma();
+                    code.Str(code.is_cpp() ? "clr_foreground" : "_clr_foreground_");
+                };
+                lambda("wxSTC_MARKNUM_FOLDER");
+                lambda("wxSTC_MARKNUM_FOLDEROPEN");
+                lambda("wxSTC_MARKNUM_FOLDEROPENMID");
+                lambda("wxSTC_MARKNUM_FOLDERMIDTAIL");
+
+                code.Eol().NodeName().Function("MarkerSetForeground(").Add("wxSTC_MARKNUM_FOLDEROPEN").Comma();
+                code.Str(code.is_cpp() ? "clr_background" : "_clr_background_");
+
+                code.Eol().NodeName().Function("MarkerSetForeground(").Add("wxSTC_MARKNUM_FOLDEROPENMID").Comma();
+                code.Str(code.is_cpp() ? "clr_background" : "_clr_background_");
+            }
+
+            if (node->prop_as_string(prop_fold_marker_style) == "circle tree")
+            {
+                auto lambda = [&](ttlib::sview mark_number, ttlib::sview mark_symbol)
+                {
+                    code.Eol().NodeName().Function("MarkerDefine(").Add(mark_number).Comma();
+                    code.Add(mark_symbol).EndFunction();
+                };
+                lambda("wxSTC_MARKNUM_FOLDER", "wxSTC_MARK_CIRCLE");
+                lambda("wxSTC_MARKNUM_FOLDEROPEN", "wxSTC_MARK_CIRCLEMINUS");
+                lambda("wxSTC_MARKNUM_FOLDEROPENMID", "wxSTC_MARK_CIRCLEMINUSCONNECTED");
+                lambda("wxSTC_MARKNUM_FOLDEREND", "wxSTC_MARK_CIRCLEPLUSCONNECTED");
+                lambda("wxSTC_MARKNUM_FOLDERMIDTAIL", "wxSTC_MARK_CIRCLEPLUSCONNECTED");
+                lambda("wxSTC_MARKNUM_FOLDERSUB", "wxSTC_MARK_VLINE");
+                lambda("wxSTC_MARKNUM_FOLDERTAIL", "wxSTC_MARK_LCORNERCURVE");
+            }
+            else
+            {
+                auto lambda = [&](ttlib::sview mark_number, ttlib::sview mark_symbol)
+                {
+                    code.Eol().NodeName().Function("MarkerDefine(").Add(mark_number).Comma();
+                    code.Add(mark_symbol).EndFunction();
+                };
+                lambda("wxSTC_MARKNUM_FOLDER", "wxSTC_MARK_BOXMINUS");
+                lambda("wxSTC_MARKNUM_FOLDEROPEN", "wxSTC_MARK_BOXPLUS");
+                lambda("wxSTC_MARKNUM_FOLDEROPENMID", "wxSTC_MARK_BOXMINUSCONNECTED");
+                lambda("wxSTC_MARKNUM_FOLDEREND", "wxSTC_MARK_BOXPLUSCONNECTED");
+                lambda("wxSTC_MARKNUM_FOLDERMIDTAIL", "wxSTC_MARK_TCORNER");
+                lambda("wxSTC_MARKNUM_FOLDERSUB", "wxSTC_MARK_VLINE");
+                lambda("wxSTC_MARKNUM_FOLDERTAIL", "wxSTC_MARK_LCORNER");
+            }
+        }
+    }
+
+    if (node->prop_as_string(prop_symbol_margin) != "none")
+    {
+        auto& margin = node->as_string(prop_fold_margin);
+        code.Eol(eol_if_needed).NodeName().Function("SetProperty(\"fold\", \"1\"").EndFunction();
+        code.Eol().NodeName().Function("SetMarginWidth(").Str(margin).Comma().Str("16").EndFunction();
+        code.Eol().NodeName().Function("SetMarginType(").Str(margin).Comma().Add("wxSTC_MARGIN_SYMBOL").EndFunction();
+        code.Eol().NodeName().Function("SetMarginMask(").Str(margin).Comma().Add("wxSTC_MASK_FOLDERS").EndFunction();
+        code.Eol().NodeName().Function("SetMarginSensitive(").Str(margin).Comma();
+        code.TrueFalseIf(prop_symbol_mouse_sensitive).EndFunction();
+    }
+
+    if (node->prop_as_string(prop_separator_margin) != "none")
+    {
+        auto& margin = node->as_string(prop_separator_margin);
+        code.Eol().NodeName().Function("SetMarginWidth(").Add(margin);
+        code.Comma().Str(prop_separator_width).EndFunction();
+        code.Eol().NodeName().Function("SetMarginType(").Str(margin).Comma().Add("wxSTC_MARGIN_FORE").EndFunction();
+    }
+
+    if (node->prop_as_string(prop_custom_margin) != "none" && node->prop_as_int(prop_custom_width))
+    {
+        auto& margin = node->prop_as_string(prop_custom_margin);
+        code.Eol().NodeName().Function("SetMarginWidth(").Str(margin).Comma().Str(prop_custom_width).EndFunction();
+        code.Eol().NodeName().Function("SetMarginType(").Str(margin);
+        code.Comma().AddConstant(prop_custom_type, "stc_").EndFunction();
+
+        if (code.IsEqualTo(prop_custom_type, "colour") && code.HasValue(prop_custom_colour))
+        {
+            code.Eol().NodeName().Function("SetMarginBackground(").Str(margin).Comma();
+            code.ColourCode(prop_custom_colour).EndFunction();
+        }
+        else
+        {
+            code.Eol().NodeName().Function("SetMarginMask").Str(margin).Comma();
+            code.Add(code.IsTrue(prop_custom_mask_folders) ? "wxSTC_MASK_FOLDERS" : "~wxSTC_MASK_FOLDERS").EndFunction();
+        }
+        if (code.IsTrue(prop_custom_mouse_sensitive))
+        {
+            code.Eol().NodeName().Function("SetMarginSensitive(").Str(margin).Comma().True().EndFunction();
+        }
+    }
+
+    //////////// Tabs and Indentation settings ////////////
+
+    if (node->HasValue(prop_indentation_guides) && code.IsNotEqualTo(prop_indentation_guides, "no guides") &&
+        // false was what was used in previous versions as well as in some imported values
+        code.IsNotEqualTo(prop_indentation_guides, "false"))
+    {
+        code.Eol(eol_if_needed).NodeName().Function("SetIndentationGuides(");
+        code.AddConstant(prop_indentation_guides, "stc_").EndFunction();
+    }
+
+    if (code.IsNotEqualTo(prop_stc_indentation_size, 0))
+    {
+        code.Eol(eol_if_needed).NodeName().Function("SetIndent(");
+        code.AddConstant(prop_stc_indentation_size, "stc_").EndFunction();
+    }
+
+    // Default is true, so only set if false
+    if (code.IsFalse(prop_use_tabs))
+    {
+        code.Eol(eol_if_needed).NodeName().Function("SetUseTabs(").False().EndFunction();
+
+        if (code.IntValue(prop_tab_width) != 8)
+        {
+            code.Eol().NodeName().Function("SetTabWidth(").Str(prop_tab_width).EndFunction();
+        }
+    }
+
+    // Default is true, so only set if false
+    if (code.IsFalse(prop_tab_indents))
+    {
+        code.Eol(eol_if_needed).NodeName().Function("SetTabIndents(").False().EndFunction();
+    }
+
+    // Default is false, so only set if true
+    if (code.IsTrue(prop_backspace_unindents))
+    {
+        code.Eol(eol_if_needed).NodeName().Function("SetBackSpaceUnIndents(").True().EndFunction();
+    }
+    code.CloseBrace();
+
+    if (code.IsTrue(prop_focus))
+    {
+        code.Eol(eol_if_needed).NodeName().Function("SetFocus(").EndFunction();
+    }
+
+    code.CloseBrace();
+
+    return code.m_code;
+}
+
 std::optional<ttlib::cstr> StyledTextGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
 {
     ttlib::cstr code;
@@ -518,7 +960,7 @@ std::optional<ttlib::cstr> StyledTextGenerator::GenSettings(Node* node, size_t& 
     // Default is false, so only set if true
     if (node->prop_as_bool(prop_view_eol))
     {
-        code << "\n\t" << node->get_node_name() << "->SetViewEol(eol_if_empty);";
+        code << "\n\t" << node->get_node_name() << "->SetViewEol(true);";
     }
 
     // Default is false, so only set if true
@@ -621,7 +1063,8 @@ std::optional<ttlib::cstr> StyledTextGenerator::GenSettings(Node* node, size_t& 
     {
         if (node->prop_as_int(prop_stc_left_margin_width) != 5 && node->prop_as_int(prop_stc_right_margin_width) == 5)
         {
-            code << "\n\t\t// Sets text margin scaled appropriately for the current DPI on Windows,\n\t\t// 5 on wxGTK or "
+            code << "\n\t\t// Sets text margin scaled appropriately for the current DPI on Windows,\n\t\t// 5 on wxGTK "
+                    "or "
                     "wxOSX";
         }
         code << "\n\t" << node->get_node_name() << "->SetMarginRight(";
@@ -640,8 +1083,8 @@ std::optional<ttlib::cstr> StyledTextGenerator::GenSettings(Node* node, size_t& 
         code << "\n\t" << node->get_node_name() << "->SetMarginOptions(wxSTC_MARGINOPTION_SUBLINESELECT);";
     }
 
-    // By default, scintilla sets margin one to a width to 16. We want to shut off all margins unless the user specifically
-    // uses it.
+    // By default, scintilla sets margin one to a width to 16. We want to shut off all margins unless the user
+    // specifically uses it.
     bool is_margin_1_set { false };
 
     if (node->prop_as_string(prop_fold_margin) == "1")

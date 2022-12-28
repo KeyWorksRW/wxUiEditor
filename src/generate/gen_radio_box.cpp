@@ -90,9 +90,9 @@ std::optional<ttlib::sview> RadioBoxGenerator::CommonConstruction(Code& code)
     {
         code.to_a(array.size()).Comma();
         if (array.size())
-            code << choice_name;
+            code.Str(choice_name);
         else
-            code << "nullptr";
+            code.Str("nullptr");
     }
     else
     {
@@ -111,6 +111,7 @@ std::optional<ttlib::sview> RadioBoxGenerator::CommonConstruction(Code& code)
         code.Comma().Str("wxDefaultValidator").Comma().QuotedString(prop_window_name);
     }
     code.EndFunction();
+    code.CloseBrace();
 
     return code.m_code;
 }

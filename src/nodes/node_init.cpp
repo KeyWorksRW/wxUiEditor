@@ -378,7 +378,7 @@ void NodeCreator::Initialize()
 
     for (auto& iter: GenEnum::map_GenNames)
     {
-        GenEnum::rmap_GenNames[iter.second] = iter.first;
+        rmap_GenNames[iter.second] = iter.first;
     }
 
     for (auto& iter: map_GenTypes)

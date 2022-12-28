@@ -18,7 +18,7 @@ bool CodeDisplayBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos
 
     auto* parent_sizer = new wxBoxSizer(wxVERTICAL);
 
-    m_scintilla = new wxStyledTextCtrl(this, wxID_ANY);
+    m_scintilla = new wxStyledTextCtrl(this);
     {
         m_scintilla->SetLexer(wxSTC_LEX_CPP);
         m_scintilla->SetReadOnly(true);
@@ -31,7 +31,7 @@ bool CodeDisplayBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos
         // 5 on wxGTK or wxOSX
         m_scintilla->SetMarginLeft(wxSizerFlags::GetDefaultBorder());
         m_scintilla->SetMarginRight(wxSizerFlags::GetDefaultBorder());
-        m_scintilla->SetMarginWidth(1, 0);  // Remove default margin
+        m_scintilla->SetMarginWidth(1, 0); // Remove default margin
         m_scintilla->SetMarginWidth(0, 16);
         m_scintilla->SetMarginType(0, wxSTC_MARGIN_SYMBOL);
         m_scintilla->SetMarginMask(0, ~wxSTC_MASK_FOLDERS);

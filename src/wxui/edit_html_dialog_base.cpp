@@ -27,7 +27,7 @@ bool EditHtmlDialogBase::Create(wxWindow* parent, wxWindowID id, const wxString&
     m_splitter->SetMinimumPaneSize(250);
     parent_sizer->Add(m_splitter, wxSizerFlags(1).Expand().Border(wxALL));
 
-    m_scintilla = new wxStyledTextCtrl(m_splitter, wxID_ANY);
+    m_scintilla = new wxStyledTextCtrl(m_splitter);
     {
         m_scintilla->SetLexer(wxSTC_LEX_HTML);
         m_scintilla->SetEOLMode(wxSTC_EOL_LF);
@@ -36,14 +36,13 @@ bool EditHtmlDialogBase::Create(wxWindow* parent, wxWindowID id, const wxString&
         m_scintilla->SetWrapIndentMode(wxSTC_WRAPINDENT_INDENT);
         m_scintilla->SetMultipleSelection(wxSTC_MULTIPASTE_EACH);
         m_scintilla->SetMultiPaste(wxSTC_MULTIPASTE_EACH);
-        m_scintilla->SetMultiPaste(wxSTC_MULTIPASTE_EACH);
         m_scintilla->SetAdditionalSelectionTyping(true);
         m_scintilla->SetAdditionalCaretsBlink(true);
         // Sets text margin scaled appropriately for the current DPI on Windows,
         // 5 on wxGTK or wxOSX
         m_scintilla->SetMarginLeft(wxSizerFlags::GetDefaultBorder());
         m_scintilla->SetMarginRight(wxSizerFlags::GetDefaultBorder());
-        m_scintilla->SetMarginWidth(1, 0);  // Remove default margin
+        m_scintilla->SetMarginWidth(1, 0); // Remove default margin
         m_scintilla->SetMarginWidth(0, 16);
         m_scintilla->SetMarginType(0, wxSTC_MARGIN_SYMBOL);
         m_scintilla->SetMarginMask(0, ~wxSTC_MASK_FOLDERS);

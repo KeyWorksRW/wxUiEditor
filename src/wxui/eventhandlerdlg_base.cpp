@@ -55,7 +55,7 @@ bool EventHandlerDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString
     auto* staticText = new wxStaticText(m_lambda_box->GetStaticBox(), wxID_ANY, "Lambda body:");
     m_lambda_box->Add(staticText, wxSizerFlags().Border(wxALL));
 
-    m_stc = new wxStyledTextCtrl(m_lambda_box->GetStaticBox(), wxID_ANY);
+    m_stc = new wxStyledTextCtrl(m_lambda_box->GetStaticBox());
     {
         m_stc->SetLexer(wxSTC_LEX_CPP);
         m_stc->SetEOLMode(wxSTC_EOL_LF);
@@ -64,14 +64,13 @@ bool EventHandlerDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString
         m_stc->SetWrapIndentMode(wxSTC_WRAPINDENT_INDENT);
         m_stc->SetMultipleSelection(wxSTC_MULTIPASTE_EACH);
         m_stc->SetMultiPaste(wxSTC_MULTIPASTE_EACH);
-        m_stc->SetMultiPaste(wxSTC_MULTIPASTE_EACH);
         m_stc->SetAdditionalSelectionTyping(true);
         m_stc->SetAdditionalCaretsBlink(true);
         // Sets text margin scaled appropriately for the current DPI on Windows,
         // 5 on wxGTK or wxOSX
         m_stc->SetMarginLeft(wxSizerFlags::GetDefaultBorder());
         m_stc->SetMarginRight(wxSizerFlags::GetDefaultBorder());
-        m_stc->SetMarginWidth(1, 0);  // Remove default margin
+        m_stc->SetMarginWidth(1, 0); // Remove default margin
         m_stc->SetMarginWidth(0, 16);
         m_stc->SetMarginType(0, wxSTC_MARGIN_SYMBOL);
         m_stc->SetMarginMask(0, ~wxSTC_MASK_FOLDERS);

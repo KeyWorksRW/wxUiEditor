@@ -54,19 +54,86 @@ static const std::map<std::string_view, std::string_view, std::less<>> s_map_wx_
     { "wxHL_ALIGN_CENTRE", "wx.adv."},
     { "wxHL_CONTEXTMENU", "wx.adv."},
 
+    { "wxHW_SCROLLBAR_AUTO", "wx.html."},
+    { "wxHW_NO_SELECTION", "wx.html."},
+    { "wxHW_NO_SELECTION", "wx.html."},
+
+    { "wxRE_CENTRE_CARET", "wx.richtext."},
+    { "wxRE_READONLY", "wx.richtext."},
+    { "wxRE_MULTILINE", "wx.richtext."},
+
+    { "wxSTC_LEX_", "wx.stc."},
+    { "wxSTC_TD_STRIKEOUT", "wx.stc."},
+    { "wxSTC_MULTIPASTE_EACH", "wx.stc."},
+    { "wxSTC_MARGINOPTION_SUBLINESELECT", "wx.stc."},
+    { "wxSTC_STYLE_LINENUMBER", "wx.stc."},
+
+    { "wxSTC_WRAPVISUALFLAGLOC_END_BY_TEXT", "wx.stc."},
+    { "wxSTC_WRAPVISUALFLAGLOC_START_BY_TEXT", "wx.stc."},
+
+    { "wxSTC_WRAPVISUALFLAG_END", "wx.stc."},
+    { "wxSTC_WRAPVISUALFLAG_START", "wx.stc."},
+    { "wxSTC_WRAPVISUALFLAG_MARGIN", "wx.stc."},
+
+    { "wxSTC_WRAP_NONE", "wx.stc."},
+    { "wxSTC_WRAP_WORD", "wx.stc."},
+    { "wxSTC_WRAP_CHAR", "wx.stc."},
+    { "wxSTC_WRAP_WHITESPACE", "wx.stc."},
+
+    { "wxSTC_WRAPINDENT_FIXED", "wx.stc."},
+    { "wxSTC_WRAPINDENT_SAME", "wx.stc."},
+    { "wxSTC_WRAPINDENT_INDENT", "wx.stc."},
+
+    { "wxSTC_MARGIN_SYMBOL", "wx.stc."},
+    { "wxSTC_MARGIN_NUMBER", "wx.stc."},
+    { "wxSTC_MARGIN_BACK", "wx.stc."},
+    { "wxSTC_MARGIN_FORE", "wx.stc."},
+    { "wxSTC_MARGIN_TEXT", "wx.stc."},
+    { "wxSTC_MARGIN_RTEXT", "wx.stc."},
+    { "wxSTC_MARGIN_COLOUR", "wx.stc."},
+
+    { "wxSTC_IV_NONE", "wx.stc."},
+    { "wxSTC_IV_REAL", "wx.stc."},
+    { "wxSTC_IV_LOOKFORWARD", "wx.stc."},
+    { "wxSTC_IV_LOOKBOTH", "wx.stc."},
+
+    { "wxSTC_AUTOMATICFOLD_SHOW", "wx.stc."},
+    { "wxSTC_AUTOMATICFOLD_CLICK", "wx.stc."},
+    { "wxSTC_AUTOMATICFOLD_CHANGE", "wx.stc."},
+
+    { "wxSTC_FOLDFLAG_LINEBEFORE_EXPANDED", "wx.stc."},
+    { "wxSTC_FOLDFLAG_LINEBEFORE_CONTRACTED", "wx.stc."},
+    { "wxSTC_FOLDFLAG_LINEAFTER_EXPANDED", "wx.stc."},
+    { "wxSTC_FOLDFLAG_LINEAFTER_CONTRACTED", "wx.stc."},
+    { "wxSTC_FOLDFLAG_LEVELNUMBERS", "wx.stc."},
+    { "wxSTC_FOLDFLAG_LINESTATE", "wx.stc."},
+
+    { "wxSTC_EOL_CRLF", "wx.stc."},
+    { "wxSTC_EOL_CR", "wx.stc."},
+    { "wxSTC_EOL_LF", "wx.stc."},
+
+    { "wxSTC_WS_INVISIBLE", "wx.stc."},
+    { "wxSTC_WS_VISIBLEALWAYS", "wx.stc."},
+    { "wxSTC_WS_VISIBLEAFTERINDENT", "wx.stc."},
+    { "wxSTC_WS_VISIBLEONLYININDENT", "wx.stc."},
+
 };
 
 std::map<std::string_view, std::string_view, std::less<>> g_map_class_prefix
 {
     { "wxAnimationCtrl", "wx.adv."},
+    { "wxAuiNotebook", "wx.aui."},
     { "wxBannerWindow", "wx.adv."},
     { "wxCalendarCtrl", "wx.adv."},
+    { "wxCommandLinkButton", "wx.adv."},
     { "wxDatePickerCtrl", "wx.adv."},
     { "wxEditableListBox", "wx.adv."},
+    { "wxHtmlWindow", "wx.html."},
     { "wxHyperlinkCtrl", "wx.adv."},
+    { "wxRichTextCtrl", "wx.richtext."},
+    { "wxStyledTextCtrl", "wx.stc."},
     { "wxTimePickerCtrl", "wx.adv."},
-
-    { "wxAuiNotebook", "wx.aui."},
+    { "wxStyledTextCtrl", "wx.stc."},
 
 };
 // clang-format on
@@ -235,6 +302,19 @@ Code& Code::Add(ttlib::sview text)
         }
     }
     return *this;
+}
+
+Code& Code::TrueFalseIf(GenEnum::PropName prop_name)
+{
+    if (m_node->as_bool(prop_name))
+        return AddTrue();
+    else
+        return AddFalse();
+}
+
+Code& Code::AddConstant(GenEnum::PropName prop_name, ttlib::sview short_name)
+{
+    return Add(m_node->as_constant(prop_name, short_name));
 }
 
 Code& Code::Function(ttlib::sview text)
@@ -476,9 +556,29 @@ bool Code::IsTrue(GenEnum::PropName prop_name) const
     return m_node->as_bool(prop_name);
 }
 
+bool Code::IsFalse(GenEnum::PropName prop_name) const
+{
+    return m_node->as_bool(prop_name);
+}
+
 bool Code::IsEqualTo(GenEnum::PropName prop_name, ttlib::sview text) const
 {
     return (m_node->as_string(prop_name) == text);
+}
+
+bool Code::IsNotEqualTo(GenEnum::PropName prop_name, ttlib::sview text) const
+{
+    return (m_node->as_string(prop_name) != text);
+}
+
+bool Code::IsEqualTo(GenEnum::PropName prop_name, int val) const
+{
+    return (m_node->as_int(prop_name) == val);
+}
+
+bool Code::IsNotEqualTo(GenEnum::PropName prop_name, int val) const
+{
+    return (m_node->as_int(prop_name) == val);
 }
 
 bool Code::PropContains(GenEnum::PropName prop_name, ttlib::sview text) const
@@ -1213,4 +1313,44 @@ void Code::GenFontColourSettings()
         FontProperty fontprop(m_node->get_prop_ptr(prop_font));
     }
 #endif
+}
+
+Code& Code::AddComment(ttlib::sview text)
+{
+    if (m_code.empty() || !ttlib::is_whitespace(m_code.back()))
+    {
+        m_code << ' ';
+    }
+
+    if (is_cpp())
+    {
+        m_code << "// " << text;
+    }
+    else
+    {
+        m_code << "# " << text;
+    }
+    return *this;
+}
+
+Code& Code::ColourCode(GenEnum::PropName prop_name)
+{
+    if (!HasValue(prop_name))
+    {
+        Add("wxNullColour");
+    }
+    else
+    {
+        if (PropContains(prop_name, "wx"))
+        {
+            Add("wxSystemSettings").ClassMethod("GetColour(").as_string(prop_name).Str(")");
+        }
+        else
+        {
+            auto colour = m_node->as_wxColour(prop_name);
+            Add(ttlib::cstr().Format("wxColour(%i, %i, %i)", colour.Red(), colour.Green(), colour.Blue()));
+        }
+    }
+
+    return *this;
 }

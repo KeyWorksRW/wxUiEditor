@@ -81,8 +81,20 @@ public:
     // Equivalent to calling m_node->prop_as_bool(prop_name)
     bool IsTrue(GenEnum::PropName prop_name) const;
 
-    // Equivalent to calling (node->as_strin(prop_name) == text)
+    // Equivalent to calling m_node->prop_as_bool(prop_name)
+    bool IsFalse(GenEnum::PropName prop_name) const;
+
+    // Equivalent to calling (node->as_string(prop_name) == text)
     bool IsEqualTo(GenEnum::PropName prop_name, ttlib::sview text) const;
+
+    // Equivalent to calling (node->as_string(prop_name) != text)
+    bool IsNotEqualTo(GenEnum::PropName prop_name, ttlib::sview text) const;
+
+    // Equivalent to calling (node->as_int(prop_name) == val)
+    bool IsEqualTo(GenEnum::PropName prop_name, int val) const;
+
+    // Equivalent to calling (node->as_int(prop_name) != val)
+    bool IsNotEqualTo(GenEnum::PropName prop_name, int val) const;
 
     // Equivalent to calling node->as_string(prop_name).contains(text)
     bool PropContains(GenEnum::PropName prop_name, ttlib::sview text) const;
@@ -151,11 +163,23 @@ public:
     // Equivalent to calling as_string(prop_name). Correctly modifies the string for Python.
     Code& Add(GenEnum::PropName prop_name) { return as_string(prop_name); }
 
+    // Equibalent to Add(node->prop_as_constant(prop_name, "...")
+    Code& AddConstant(GenEnum::PropName prop_name, ttlib::sview short_name);
+
     // Adds "true" for C++ or "True" for Python
     Code& AddTrue() { return Str(is_cpp() ? "true" : "True"); }
 
+    // Adds "true" for C++ or "True" for Python
+    Code& True() { return AddTrue(); }
+
+    // Calls AddTrue() or AddFalse() depending on the boolean value of the property
+    Code& TrueFalseIf(GenEnum::PropName prop_name);
+
     // Adds "false" for C++ or "False" for Python
     Code& AddFalse() { return Str(is_cpp() ? "false" : "False"); }
+
+    // Adds "false" for C++ or "False" for Python
+    Code& False() { return AddFalse(); }
 
     // Use Str() instead of Add() if you don't need any special wxPython processing.
     Code& Str(std::string_view str)
@@ -235,6 +259,9 @@ public:
         return *this;
     }
 
+    // Will prefix text with "// " for C++ or "# " for Python
+    Code& AddComment(ttlib::sview text);
+
     // Will either generate wxPoint(...) or ConvertDialogToPixels(wxPoint(...))
     Code& Pos(GenEnum::PropName prop_name = GenEnum::PropName::prop_pos);
 
@@ -258,6 +285,10 @@ public:
     void GenWindowSettings();
 
     void GenFontColourSettings();
+
+    // Creates a string using either wxSystemSettings::GetColour(name) or wxColour(r, g, b).
+    // Generates wxNullColour if the property is empty.
+    Code& ColourCode(GenEnum::PropName prop_name);
 
     Code& GenSizerFlags();
 

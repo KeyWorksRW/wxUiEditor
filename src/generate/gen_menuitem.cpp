@@ -64,13 +64,12 @@ std::optional<ttlib::sview> MenuItemGenerator::CommonSettings(Code& code)
     if (code.HasValue(prop_extra_accels) && code.is_cpp())
     {
         // auto_indent = indent::auto_keep_whitespace;
-        code << "{\n\t"
-             << "wxAcceleratorEntry entry;\n";
+        code.OpenBrace().Add("wxAcceleratorEntry entry;").Eol();
 
         bool is_old_widgets = (wxGetProject().value(prop_wxWidgets_version) == "3.1");
         if (is_old_widgets)
         {
-            code << "#if wxCHECK_VERSION(3, 1, 6)\n";
+            code += "#if wxCHECK_VERSION(3, 1, 6)\n";
         }
 
         ttlib::multistr accel_list(node->as_string(prop_extra_accels), "\"", tt::TRIM::both);
@@ -80,16 +79,16 @@ std::optional<ttlib::sview> MenuItemGenerator::CommonSettings(Code& code)
             // need to ignore
             if (accel.size())
             {
-                code << "\tif (entry.FromString(" << GenerateQuotedString(accel) << "))\n";
-                code << "\t\t" << node->get_node_name() << "->AddExtraAccel(entry);\n";
+                code.Eol(eol_if_needed) << "if (entry.FromString(" << GenerateQuotedString(accel) << "))";
+                code.Eol().Tab().NodeName().Function("AddExtraAccel(entry").EndFunction();
             }
         }
 
         if (is_old_widgets)
         {
-            code << "#endif\n";
+            code.Eol(eol_if_needed) += "#endif";
         }
-        code << "}";
+        code.CloseBrace();
         code.UpdateBreakAt();
     }
 
@@ -111,13 +110,13 @@ std::optional<ttlib::sview> MenuItemGenerator::CommonSettings(Code& code)
                 }
                 else
                 {
-                    code += "\n#if wxCHECK_VERSION(3, 1, 6)\n\t";
+                    code.Eol() += "#if wxCHECK_VERSION(3, 1, 6)\n\t";
                     GenerateBundleCode(description, code.m_code);
-                    code += "\n#else\n\t";
-                    code << "wxBitmap(" << GenerateBitmapCode(description) << ")\n";
-                    code << "#endif\n";
+                    code.Eol() += "#else";
+                    code.Eol().Tab() << "wxBitmap(" << GenerateBitmapCode(description) << ")";
+                    code.Eol() += "#endif";
                 }
-                code.UpdateBreakAt();
+                code.Eol(eol_if_needed).UpdateBreakAt();
                 code.EndFunction();
             }
             else
@@ -127,8 +126,7 @@ std::optional<ttlib::sview> MenuItemGenerator::CommonSettings(Code& code)
                 {
                     code += "wxBitmapBundle::FromBitmaps(bitmaps)";
                     code.UpdateBreakAt();
-                    code.EndFunction();
-                    code += "\n}\n";
+                    code.EndFunction().CloseBrace();
                 }
                 else
                 {
@@ -138,7 +136,7 @@ std::optional<ttlib::sview> MenuItemGenerator::CommonSettings(Code& code)
                     code.Tab() << "wxBitmap(" << GenerateBitmapCode(description) << ")\n";
                     code << "#endif\n";
                     code.UpdateBreakAt();
-                    code.Tab().EndFunction();
+                    code.Tab().EndFunction().CloseBrace();
                 }
             }
         }

@@ -498,48 +498,33 @@ int ToolGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_f
 
 //////////////////////////////////////////  ToolDropDownGenerator  //////////////////////////////////////////
 
-std::optional<ttlib::cstr> ToolDropDownGenerator::GenConstruction(Node* node)
+std::optional<ttlib::sview> ToolDropDownGenerator::CommonConstruction(Code& code)
 {
-    if (node->HasValue(prop_bitmap))
+    if (code.HasValue(prop_bitmap))
     {
-        ttlib::cstr code;
-        if (wxGetProject().value(prop_wxWidgets_version) == "3.1")
+        auto is_bitmaps_list = BitmapList(code, prop_bitmap);
+        GenToolCode(code, is_bitmaps_list);
+        if (is_bitmaps_list && code.is_cpp())
         {
-            code << "#if wxCHECK_VERSION(3, 1, 6)\n";
-        }
-
-        ttlib::cstr bundle_code;
-        bool is_code_block = GenerateBundleCode(node->prop_as_string(prop_bitmap), bundle_code);
-        if (is_code_block)
-        {
-            // GenerateBundleCode assumes an indent within an indent
-            bundle_code.Replace("\t\t\t", "\t\t", true);
-            code << '\t' << bundle_code;
-            code << '\t' << GenToolCode(node, "wxBitmapBundle::FromBitmaps(bitmaps)");
-            code << "\n\t}";
             if (wxGetProject().value(prop_wxWidgets_version) == "3.1")
             {
-                code << "\n#else\n";
-                code << GenToolCode(node, GenerateBitmapCode(node->prop_as_string(prop_bitmap)));
-                code << "\n#endif";
+                code.CloseBrace();
+                code.Add("#else").Eol();
+                GenToolCode(code, false);
+                code.Eol().Add("#endif").Eol();
             }
-        }
-        else
-        {
-            code << GenToolCode(node, bundle_code);
-            if (wxGetProject().value(prop_wxWidgets_version) == "3.1")
+            else
             {
-                code << "\n#else\n";
-                code << GenToolCode(node, GenerateBitmapCode(node->prop_as_string(prop_bitmap)));
-                code << "\n#endif";
+                code.Eol() += "}\n";
             }
         }
-        return code;
     }
     else
     {
-        return GenToolCode(node);
+        GenToolCode(code, false);
     }
+
+    return code.m_code;
 }
 
 int ToolDropDownGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
@@ -600,20 +585,19 @@ int ToolDropDownGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size
 
 //////////////////////////////////////////  ToolSeparatorGenerator  //////////////////////////////////////////
 
-std::optional<ttlib::cstr> ToolSeparatorGenerator::GenConstruction(Node* node)
+std::optional<ttlib::sview> ToolSeparatorGenerator::CommonConstruction(Code& code)
 {
-    ttlib::cstr code;
-
+    auto* node = code.node();
     if (node->isParent(gen_wxToolBar) || node->isParent(gen_wxRibbonToolBar) || node->isParent(gen_wxAuiToolBar))
     {
-        code << node->get_parent_name() << "->AddSeparator();";
+        code.ParentName().Function("AddSeparator(").EndFunction();
     }
     else
     {
-        code << "AddSeparator();";
+        code.FormFunction("AddSeparator(").EndFunction();
     }
 
-    return code;
+    return code.m_code;
 }
 
 int ToolSeparatorGenerator::GenXrcObject(Node* /* node */, pugi::xml_node& object, size_t /* xrc_flags */)
@@ -625,24 +609,28 @@ int ToolSeparatorGenerator::GenXrcObject(Node* /* node */, pugi::xml_node& objec
 
 //////////////////////////////////////////  ToolStretchableGenerator  //////////////////////////////////////////
 
-std::optional<ttlib::cstr> ToolStretchableGenerator::GenConstruction(Node* node)
+std::optional<ttlib::sview> ToolStretchableGenerator::CommonConstruction(Code& code)
 {
-    ttlib::cstr code;
-
+    auto* node = code.node();
     if (node->isParent(gen_wxToolBar))
     {
-        code << node->get_parent_name() << "->AddStretchableSpace();";
+        code.ParentName().Function("AddStretchableSpace(").EndFunction();
     }
     else if (node->isParent(gen_wxAuiToolBar))
     {
-        code << node->get_parent_name() << "->AddStretchSpacer();";
+        code.ParentName().Function("AddStretchSpacer(");
+        if (code.IntValue(prop_proportion) != 1)
+        {
+            code.Str(prop_proportion);
+        }
+        code.EndFunction();
     }
     else
     {
-        code << "AddStretchableSpace();";
+        code.FormFunction("AddStretchableSpace(").EndFunction();
     }
 
-    return code;
+    return code.m_code;
 }
 
 int ToolStretchableGenerator::GenXrcObject(Node* /* node */, pugi::xml_node& object, size_t /* xrc_flags */)

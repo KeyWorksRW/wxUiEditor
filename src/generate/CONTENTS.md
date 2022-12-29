@@ -117,7 +117,7 @@ The following tables list classes, objects and functions that wxUiEditor can gen
 | wxStyledTextCtrl | yes | yes | yes | styled_text.cpp |
 | wxTextCtrl | yes | yes | yes | gen_text_ctrl.cpp |
 | wxToggleButton | yes | yes | yes | gen_toggle_btn.cpp |
-| wxToolBar | yes | ?? | yes | gen_toolbar.cpp |
+| wxToolBar | yes | yes | yes | gen_toolbar.cpp |
 | wxTreeCtrl | yes | ?? | yes | gen_toolbar.cpp |
 | wxTreeListCtrl | yes | ?? | no | gen_tree_list.cpp |
 | wxWebView | yes | yes | no | gen_web_view.cpp |
@@ -146,8 +146,8 @@ The following tables list classes, objects and functions that wxUiEditor can gen
 | Separator | yes | ?? | yes | menu_widgets.cpp |
 | Spacer | yes | ?? | yes | gen_spacer_sizer.cpp |
 | SubMenu | yes | yes | yes | gen_submenu.cpp |
-| ToolDropDown | yes | ?? | yes | gen_toolbar.cpp |
+| ToolDropDown | yes | yes | yes | gen_toolbar.cpp |
 | ToolGenerator | yes | yes | yes | gen_toolbar.cpp |
-| ToolSeparator | yes | ?? | yes | gen_toolbar.cpp |
-| ToolStretchable | yes | ?? | yes | gen_toolbar.cpp |
+| ToolSeparator | yes | yes | yes | gen_toolbar.cpp |
+| ToolStretchable | yes | yes | yes | gen_toolbar.cpp |
 | TreeListCtrlColumn | yes | ?? | no | gen_tree_list.cpp |

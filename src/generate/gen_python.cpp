@@ -531,7 +531,7 @@ bool PythonBundleCode(Code& code, GenEnum::PropName prop)
         }
         else if (bundle->lst_filenames.size() == 2)
         {
-            ttlib::cstr name2(bundle->lst_filenames[0]);
+            ttlib::cstr name2(bundle->lst_filenames[1]);
             name2.make_absolute();
             name2.make_relative(path);
             name2.backslashestoforward();

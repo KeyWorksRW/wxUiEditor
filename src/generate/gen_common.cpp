@@ -1004,6 +1004,46 @@ ttlib::cstr GenFormSettings(Node* node)
     return code;
 }
 
+void GenFormSettings(Code& code)
+{
+    const auto* node = code.node();
+    if (!node->isGen(gen_PanelForm) && !node->isGen(gen_wxToolBar))
+    {
+        const auto max_size = node->prop_as_wxSize(prop_maximum_size);
+        const auto min_size = node->prop_as_wxSize(prop_minimum_size);
+        if (min_size != wxDefaultSize || max_size != wxDefaultSize)
+        {
+            code.FormFunction("SetSizeHints(");
+            if (min_size.GetX() != -1 || min_size.GetY() != -1)
+            {
+                code.WxSize(prop_minimum_size);
+            }
+            else
+            {
+                code.Add("wxDefaultSize");
+            }
+
+            if (max_size.GetX() != -1 || max_size.GetY() != -1)
+            {
+                code.WxSize(prop_maximum_size);
+            }
+
+            code.EndFunction();
+        }
+    }
+
+    if (code.HasValue(prop_window_extra_style))
+    {
+        code.Eol(eol_if_needed)
+            .FormFunction("SetExtraStyle(")
+            .FormFunction("GetExtraStyle() | ")
+            .Add(prop_window_extra_style)
+            .EndFunction();
+    }
+
+    code.GenFontColourSettings();
+}
+
 ttlib::cstr GenFontColourSettings(Node* node)
 {
     ttlib::cstr code;
@@ -1581,9 +1621,9 @@ const char* LangPtr(int language)
 }
 
 // This is called to add a tool to either wxToolBar or wxAuiToolBar
-void GenToolCode(Code& code, bool is_bitmaps_list)
+void GenToolCode(Code& code, const bool is_bitmaps_list)
 {
-    Node* node = code.node();
+    const auto* node = code.node();
     code.Eol(eol_if_needed);
     if (node->prop_as_bool(prop_disabled) || (node->prop_as_string(prop_id) == "wxID_ANY" && node->GetInUseEventCount()))
     {
@@ -1615,7 +1655,11 @@ void GenToolCode(Code& code, bool is_bitmaps_list)
     else
     {
         code.Comma();
-        if (code.is_cpp())
+        if (!code.HasValue(prop_bitmap))
+        {
+            code.Add("wxNullBitmap");
+        }
+        else if (code.is_cpp())
         {
             if (wxGetProject().value(prop_wxWidgets_version) == "3.1")
             {
@@ -1679,7 +1723,7 @@ void GenToolCode(Code& code, bool is_bitmaps_list)
     code.EndFunction();
 }
 
-bool BitmapList(Code& code, GenEnum::PropName prop)
+bool BitmapList(Code& code, const GenEnum::PropName prop)
 {
     if (!code.node()->HasValue(prop))
     {

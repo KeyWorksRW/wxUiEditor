@@ -138,14 +138,19 @@ ttlib::cstr GenerateWxSize(Node* node, PropName prop);
 // Generates -> for C++ and . for Python
 const char* LangPtr(int language);
 
+/////////////////////////////////////// Code-enabled Functions ///////////////////////////////////////
+
+// Generate settings common to all forms
+void GenFormSettings(Code& code);
+
 // This is called to add a tool to either wxToolBar or wxAuiToolBar
-void GenToolCode(Code& code, bool is_bitmaps_list);
+void GenToolCode(Code& code, const bool is_bitmaps_list);
 
 // Returns true if a bitmaps vector was created (C++ or Python)
 //
 // C++ Caller should add the function that uses the bitmaps, add the closing brace, and if
 // prop_wxWidgets_version == 3.1, follow this with a #else and the alternate code.
-bool BitmapList(Code& code, GenEnum::PropName prop);
+bool BitmapList(Code& code, const GenEnum::PropName prop);
 
 /////////////////////////////////////// wxPython Functions ///////////////////////////////////////
 

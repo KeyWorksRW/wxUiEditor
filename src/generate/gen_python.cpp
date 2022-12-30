@@ -245,6 +245,13 @@ void BaseCodeGenerator::GeneratePythonClass(Node* form_node, PANEL_PAGE panel_ty
 
     EventVector events;
     std::thread thrd_get_events(&BaseCodeGenerator::CollectEventHandlers, this, form_node, std::ref(events));
+
+    // If the code files are being written to disk, then UpdateEmbedNodes() has already been called.
+    if (panel_type != NOT_PANEL)
+    {
+        GetProject()->UpdateEmbedNodes();
+    }
+
     std::vector<Node*> forms;
     m_project->CollectForms(forms);
 

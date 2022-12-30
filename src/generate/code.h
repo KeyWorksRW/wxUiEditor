@@ -310,6 +310,17 @@ public:
 
     Code& GenSizerFlags();
 
+    void Indent(int amount = 1) { m_indent += amount; }
+    void Unindent(int amount = 1)
+    {
+        while (amount > 0 && m_indent > 0)
+        {
+            --m_indent;
+            --amount;
+        }
+    }
+    void ResetIndent() { m_indent = 0; }
+
     Code& operator<<(std::string_view str)
     {
         m_code += str;
@@ -343,6 +354,8 @@ private:
     size_t m_break_length { 80 };
     size_t m_break_at { 80 };       // this should be the same as m_break_length
     size_t m_minium_length { 10 };  // if the line is shorter than this, don't break it
+
+    int m_indent { 0 };
 
     bool m_auto_break { true };
     bool m_within_braces { false };

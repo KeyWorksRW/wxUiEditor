@@ -217,9 +217,14 @@ Code& Code::Eol(int flag)
         m_code += '\n';
     }
 
+
     if (m_within_braces && is_cpp() && m_code.back() != '\t')
     {
         m_code += '\t';
+    }
+    else if (m_indent > 0)
+    {
+        Tab(m_indent);
     }
 
     if (m_auto_break)

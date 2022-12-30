@@ -5,6 +5,7 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
+#include <array>
 #include <map>
 
 #include <ttmultistr_wx.h>  // ttMultiString -- Class for handling multiple strings
@@ -20,6 +21,20 @@ using namespace code;
 // clang-format off
 static const std::map<std::string_view, std::string_view, std::less<>> s_map_wx_prefix
 {
+    { "wxAUI_ORIENTATION_MASK", "wx.aui."},
+    { "wxAUI_TB_DEFAULT_STYLE", "wx.aui."},
+    { "wxAUI_TB_DEFAULT_STYLE", "wx.aui."},
+    { "wxAUI_TB_GRIPPER", "wx.aui."},
+    { "wxAUI_TB_HORIZONTAL", "wx.aui."},
+    { "wxAUI_TB_HORZ_TEXT", "wx.aui."},
+    { "wxAUI_TB_NO_AUTORESIZE", "wx.aui."},
+    { "wxAUI_TB_NO_TOOLTIPS", "wx.aui."},
+    { "wxAUI_TB_OVERFLOW", "wx.aui."},
+    { "wxAUI_TB_PLAIN_BACKGROUND", "wx.aui."},
+    { "wxAUI_TB_TEXT", "wx.aui."},
+    { "wxAUI_TB_VERTICAL", "wx.aui."},
+    { "wxAUI_TB_VERTICAL", "wx.aui."},
+
     { "wxAUI_NB_BOTTOM", "wx.aui."},
     { "wxAUI_NB_CLOSE_BUTTON", "wx.aui."},
     { "wxAUI_NB_CLOSE_ON_ACTIVE_TAB", "wx.aui."},
@@ -126,6 +141,7 @@ std::map<std::string_view, std::string_view, std::less<>> g_map_class_prefix
 {
     { "wxAnimationCtrl", "wx.adv."},
     { "wxAuiNotebook", "wx.aui."},
+    { "wxAuiToolBar", "wx.aui."},
     { "wxBannerWindow", "wx.adv."},
     { "wxCalendarCtrl", "wx.adv."},
     { "wxCommandLinkButton", "wx.adv."},
@@ -1164,53 +1180,41 @@ void Code::GenWindowSettings()
     if (HasValue(prop_window_extra_style))
     {
         if (m_node->IsForm())
+        {
             FormFunction("SetExtraStyle(");
+        }
         else
+        {
             NodeName().Function("SetExtraStyle(");
-
-        if (is_cpp())
-        {
-            as_string(prop_window_extra_style);
         }
-        else
-        {
-            ttlib::multiview multistr(m_node->as_string(prop_window_extra_style), "|", tt::TRIM::both);
-            bool style_set = false;
 
-            for (auto& iter: multistr)
-            {
-                if (iter.empty())
-                    continue;
-                if (style_set)
-                    m_code += '|';
-                if (iter.is_sameprefix("wx"))
-                    m_code << "wx." << iter.substr(2);
-                else
-                    m_code += iter;
-                style_set = true;
-            }
-        }
-        EndFunction();
+        Add(prop_window_extra_style).EndFunction();
     }
 
     if (IsTrue(prop_disabled))
     {
         Eol(eol_if_empty);
         if (!m_node->IsForm())
-            NodeName().Function("Enable(false");
+        {
+            NodeName().Function("Enable(").AddFalse().EndFunction();
+        }
         else
-            FormFunction("Enable(false");
-        EndFunction();
+        {
+            FormFunction("Enable(").AddFalse().EndFunction();
+        }
     }
 
     if (IsTrue(prop_hidden))
     {
         Eol(eol_if_empty);
         if (!m_node->IsForm())
-            NodeName().Function("Hide(");
+        {
+            NodeName().Function("Hide(").EndFunction();
+        }
         else
-            FormFunction("Hide(");
-        EndFunction();
+        {
+            FormFunction("Hide(").EndFunction();
+        }
     }
 
     bool allow_minmax { true };
@@ -1221,28 +1225,33 @@ void Code::GenWindowSettings()
     {
         Eol(eol_if_empty);
         if (!m_node->IsForm())
+        {
             NodeName().Function("SetMinSize(");
+        }
         else
+        {
             NodeName().FormFunction("SetMinSize(");
-        WxSize(prop_minimum_size);
-        EndFunction();
+        }
+        WxSize(prop_minimum_size).EndFunction();
     }
 
     if (allow_minmax && m_node->as_wxSize(prop_maximum_size) != wxDefaultSize)
     {
         Eol(eol_if_empty);
         if (!m_node->IsForm())
+        {
             NodeName().Function("SetMaxSize(");
+        }
         else
+        {
             FormFunction("SetMaxSize(");
-        WxSize(prop_maximum_size);
-        EndFunction();
+        }
+        WxSize(prop_maximum_size).EndFunction();
     }
 
     if (!m_node->IsForm() && !m_node->isPropValue(prop_variant, "normal"))
     {
-        Eol(eol_if_empty);
-        NodeName().Function("SetWindowVariant(");
+        Eol(eol_if_empty).NodeName().Function("SetWindowVariant(");
         if (m_node->isPropValue(prop_variant, "small"))
             Add("wxWINDOW_VARIANT_SMALL");
         else if (m_node->isPropValue(prop_variant, "mini"))
@@ -1276,28 +1285,177 @@ void Code::GenWindowSettings()
     GenFontColourSettings();
 }
 
-extern ttlib::cstr GenFontColourSettings(Node* node);
-
 void Code::GenFontColourSettings()
 {
-    // TODO: [Randalphwa - 12-08-2022] Need to implement C++/Python version of GenFontColourSettings
-
-    if (is_cpp())
+    auto* node = m_node;
+    if (HasValue(prop_font))
     {
-        auto result = ::GenFontColourSettings(m_node);
-        if (result.size())
+        FontProperty fontprop(node->get_prop_ptr(prop_font));
+        if (fontprop.isDefGuiFont())
         {
-            Eol(eol_if_empty);
-            Add(result);
+            OpenBrace();
+            Add("wxFont font(").Add("wxSystemSettings").ClassMethod("GetFont(").Add("wxSYS_DEFAULT_GUI_FONT").Str(")");
+            EndFunction();
+
+            if (fontprop.GetSymbolSize() != wxFONTSIZE_MEDIUM)
+                Eol().Str("font.SetSymbolicSize(").Add(font_symbol_pairs.GetValue(fontprop.GetSymbolSize())).EndFunction();
+            if (fontprop.GetStyle() != wxFONTSTYLE_NORMAL)
+                Eol().Str("font.SetStyle(").Add(font_style_pairs.GetValue(fontprop.GetStyle())).EndFunction();
+            if (fontprop.GetWeight() != wxFONTWEIGHT_NORMAL)
+                Eol().Str("font.SetWeight(").Str(font_weight_pairs.GetValue(fontprop.GetWeight())).EndFunction();
+            if (fontprop.IsUnderlined())
+                Eol().Str("font.SetUnderlined(").AddTrue().EndFunction();
+            if (fontprop.IsStrikethrough())
+                Eol().Str("font.SetStrikethrough(").AddTrue().EndFunction();
+
+            if (node->IsForm())
+            {
+                Eol().FormFunction("SetFont(font").EndFunction();
+                CloseBrace();
+            }
+            else if (node->isGen(gen_wxStyledTextCtrl))
+            {
+                NodeName().Function("SetFont(font").EndFunction();
+                CloseBrace();
+            }
+            else
+            {
+                NodeName().Function("SetFont(font").EndFunction();
+                CloseBrace();
+            }
         }
+        else  // not isDefGuiFont()
+        {
+            const auto point_size = fontprop.GetFractionalPointSize();
+            OpenBrace();
+            Add("wxFontInfo font_info(");
+            if (point_size != static_cast<int>(point_size))  // is there a fractional value?
+            {
+                if (is_cpp() && wxGetProject().value(prop_wxWidgets_version) == "3.1")
+                {
+                    Eol().Str("#if !wxCHECK_VERSION(3, 1, 2)").Eol().Tab();
+
+                    if (point_size <= 0)
+                    {
+                        Add("wxSystemSettings").ClassMethod("GetFont()").Function("GetPointSize()").EndFunction();
+                    }
+                    else
+                    {
+                        // GetPointSize() will round the result rather than truncating the decimal
+                        itoa(fontprop.GetPointSize()).EndFunction();
+                    }
+                }
+                else
+                {
+                    if (is_cpp() && wxGetProject().value(prop_wxWidgets_version) == "3.1")
+                    {
+                        Eol().Str("#else // fractional point sizes are new to wxWidgets 3.1.2").Eol().Tab();
+                    }
+
+                    std::array<char, 10> float_str;
+                    if (auto [ptr, ec] = std::to_chars(float_str.data(), float_str.data() + float_str.size(), point_size);
+                        ec == std::errc())
+                    {
+                        Str(std::string_view(float_str.data(), ptr - float_str.data())).EndFunction();
+                    }
+
+                    // REVIEW: [Randalphwa - 12-30-2022] We don't output anything if std::to_chars() results in an error
+
+                    if (is_cpp() && wxGetProject().value(prop_wxWidgets_version) == "3.1")
+                    {
+                        Eol().Str("#endif");
+                    }
+                }
+            }
+            else
+            {
+                if (point_size <= 0)
+                {
+                    Add("wxSystemSettings").ClassMethod("GetFont()").Function("GetPointSize()").EndFunction();
+                }
+                else
+                {
+                    // GetPointSize() will round the result rather than truncating the decimal
+                    itoa(fontprop.GetPointSize()).EndFunction();
+                }
+            }
+
+            Eol(eol_if_needed).Str("font_info.");
+            if (fontprop.GetFaceName().size() && fontprop.GetFaceName() != "default")
+                Str("FaceName(").QuotedString(ttlib::cstr() << fontprop.GetFaceName().wx_str()) += ").";
+            if (fontprop.GetFamily() != wxFONTFAMILY_DEFAULT)
+                Str("Family(").Str(font_family_pairs.GetValue(fontprop.GetFamily())) += ").";
+            if (fontprop.GetStyle() != wxFONTSTYLE_NORMAL)
+                Str("Style(").Str(font_style_pairs.GetValue(fontprop.GetStyle())) += ").";
+            if (fontprop.GetWeight() != wxFONTWEIGHT_NORMAL)
+                Str("Weight(").Str(font_weight_pairs.GetValue(fontprop.GetWeight())) += ").";
+            if (fontprop.IsUnderlined())
+                Str("Underlined().");
+            if (fontprop.IsStrikethrough())
+                Str("Strikethrough()");
+
+            if (m_code.back() == '.')
+            {
+                m_code.pop_back();
+            }
+
+            if (node->IsForm())
+            {
+                Eol().FormFunction("SetFont(").Add("wxFont(font_info)").EndFunction();
+            }
+            else
+            {
+                NodeName().Function("SetFont(wxFont(font_info)").EndFunction();
+            }
+            CloseBrace();
+        }
+    }  // End of font handling code
+
+    if (auto& fg_clr = node->prop_as_string(prop_foreground_colour); fg_clr.size())
+    {
+        Eol(eol_if_needed);
+        if (node->IsForm())
+        {
+            FormFunction("SetForegroundColour(");
+        }
+        else
+        {
+            NodeName().Function("SetForegroundColour(");
+        }
+        if (fg_clr.contains("wx"))
+        {
+            Add("wxSystemSettings").ClassMethod("GetColour(").Str(fg_clr) += ")";
+        }
+        else
+        {
+            const auto colour = m_node->as_wxColour(prop_foreground_colour);
+            Add(ttlib::cstr().Format("wxColour(%i, %i, %i)", colour.Red(), colour.Green(), colour.Blue())) += ")";
+        }
+        EndFunction();
     }
 
-#if 0
-    if (m_node->HasValue(prop_font))
+    if (auto& bg_clr = node->prop_as_string(prop_background_colour); bg_clr.size())
     {
-        FontProperty fontprop(m_node->get_prop_ptr(prop_font));
+        Eol(eol_if_needed);
+        if (node->IsForm())
+        {
+            FormFunction("SetBackgroundColour(");
+        }
+        else
+        {
+            NodeName().Function("SetBackgroundColour(");
+        }
+        if (bg_clr.contains("wx"))
+        {
+            Add("wxSystemSettings").ClassMethod("GetColour(").Str(bg_clr);
+        }
+        else
+        {
+            const auto colour = m_node->as_wxColour(prop_background_colour);
+            Add(ttlib::cstr().Format("wxColour(%i, %i, %i)", colour.Red(), colour.Green(), colour.Blue()));
+        }
+        EndFunction();
     }
-#endif
 }
 
 Code& Code::AddComment(ttlib::sview text)

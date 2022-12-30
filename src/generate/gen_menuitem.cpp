@@ -107,6 +107,7 @@ std::optional<ttlib::sview> MenuItemGenerator::CommonSettings(Code& code)
                 if (wxGetProject().value(prop_wxWidgets_version) != "3.1")
                 {
                     GenerateBundleCode(description, code.m_code);
+                    code.EndFunction();
                 }
                 else
                 {
@@ -115,9 +116,9 @@ std::optional<ttlib::sview> MenuItemGenerator::CommonSettings(Code& code)
                     code.Eol() += "#else";
                     code.Eol().Tab() << "wxBitmap(" << GenerateBitmapCode(description) << ")";
                     code.Eol() += "#endif";
+                    code.Eol().EndFunction();
                 }
-                code.Eol(eol_if_needed).UpdateBreakAt();
-                code.EndFunction();
+                code.Eol();
             }
             else
             {

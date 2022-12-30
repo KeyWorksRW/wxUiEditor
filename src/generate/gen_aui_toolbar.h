@@ -15,11 +15,11 @@ class AuiToolBarGenerator : public BaseGenerator
 {
 public:
     wxObject* CreateMockup(Node* node, wxObject* parent) override;
-    void AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/, Node* /* node */, bool /* is_preview */) override;
+    void AfterCreation(wxObject* wxobject, wxWindow* /* wxparent */, Node* /* node */, bool /* is_preview */) override;
 
-    std::optional<ttlib::cstr> GenConstruction(Node* node) override;
-    std::optional<ttlib::cstr> GenSettings(Node* node, size_t& auto_indent) override;
-    std::optional<ttlib::cstr> GenAfterChildren(Node* node) override;
+    std::optional<ttlib::sview> CommonConstruction(Code& code) override;
+    std::optional<ttlib::sview> CommonSettings(Code&) override;
+    std::optional<ttlib::sview> CommonAfterChildren(Code&) override;
 
     bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr) override;
 
@@ -33,7 +33,7 @@ protected:
 class AuiToolGenerator : public BaseGenerator
 {
 public:
-    std::optional<ttlib::cstr> GenConstruction(Node* node) override;
+    std::optional<ttlib::sview> CommonConstruction(Code& code) override;
 
     int GenXrcObject(Node*, pugi::xml_node& /* object */, size_t /* xrc_flags */) override;
 };
@@ -41,7 +41,7 @@ public:
 class AuiToolLabelGenerator : public BaseGenerator
 {
 public:
-    std::optional<ttlib::cstr> GenConstruction(Node* node) override;
+    std::optional<ttlib::sview> CommonConstruction(Code& code) override;
 
     int GenXrcObject(Node*, pugi::xml_node& /* object */, size_t /* xrc_flags */) override;
     int GetRequiredVersion(Node* /*node*/) override { return minRequiredVer + 1; }
@@ -50,7 +50,7 @@ public:
 class AuiToolSpacerGenerator : public BaseGenerator
 {
 public:
-    std::optional<ttlib::cstr> GenConstruction(Node* node) override;
+    std::optional<ttlib::sview> CommonConstruction(Code& code) override;
 
     int GenXrcObject(Node*, pugi::xml_node& /* object */, size_t /* xrc_flags */) override;
     int GetRequiredVersion(Node* /*node*/) override { return minRequiredVer + 1; }
@@ -59,7 +59,7 @@ public:
 class AuiToolStretchSpacerGenerator : public BaseGenerator
 {
 public:
-    std::optional<ttlib::cstr> GenConstruction(Node* node) override;
+    std::optional<ttlib::sview> CommonConstruction(Code& code) override;
 
     int GenXrcObject(Node*, pugi::xml_node& /* object */, size_t /* xrc_flags */) override;
     int GetRequiredVersion(Node* /*node*/) override { return minRequiredVer + 1; }

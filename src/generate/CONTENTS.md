@@ -60,7 +60,7 @@ The following tables list classes, objects and functions that wxUiEditor can gen
 -----------|-----|--------|------|------|
 | wxActivityIndicator | yes | yes | yes | gen_activity.cpp |
 | wxAnimationCtrl | yes | yes | yes | gen_animation.cpp |
-| wxAuiToolBar | yes | ?? | yes | gen_aui_toolbar.cpp |
+| wxAuiToolBar | yes | yes | yes | gen_aui_toolbar.cpp |
 | wxBannerWindow | yes | yes | yes | gen_banner_window.cpp |
 | wxBitmapComboBox | yes | ?? | yes | gen_bitmap_combo.cpp |
 | wxButton | yes | yes | yes | gen_button.cpp |
@@ -127,10 +127,10 @@ The following tables list classes, objects and functions that wxUiEditor can gen
 
 | Object | C++ | Python | XRC |file |
 -----------|-----|--------|------|------|
-| AuiTool | yes | ?? | yes | gen_aui_toolbar.cpp |
-| AuiToolLabel | yes | ?? | yes | gen_aui_toolbar.cpp |
-| AuiToolSpacer | yes | ?? | yes | gen_aui_toolbar.cpp |
-| AuiToolStretchSpacer | yes | ?? | yes | gen_aui_toolbar.cpp |
+| AuiTool | yes | yes | yes | gen_aui_toolbar.cpp |
+| AuiToolLabel | yes | yes | yes | gen_aui_toolbar.cpp |
+| AuiToolSpacer | yes | yes | yes | gen_aui_toolbar.cpp |
+| AuiToolStretchSpacer | yes | yes | yes | gen_aui_toolbar.cpp |
 | BookPage | yes | yes | yes | gen_book_page.cpp |
 | Check3State | yes | yes | yes | gen_checkbox.cpp |
 | CustomControl | yes | ?? | yes | gen_custom_ctrl.cpp |

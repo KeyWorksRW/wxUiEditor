@@ -99,53 +99,44 @@ void AuiToolBarGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent
     toolbar->Realize();
 }
 
-std::optional<ttlib::cstr> AuiToolBarGenerator::GenConstruction(Node* node)
+std::optional<ttlib::sview> AuiToolBarGenerator::CommonConstruction(Code& code)
 {
-    ttlib::cstr code;
-    if (node->IsLocal())
+    if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
-    code << node->prop_as_string(prop_var_name);
+    code.NodeName().CreateClass();
+    code.GetParentName().Comma().Add(prop_id);
+    code.PosSizeFlags(false, "wxAUI_TB_DEFAULT_STYLE");
 
-    code << " = new wxAuiToolBar(" << GetParentName(node) << ", " << node->prop_as_string(prop_id);
-    GeneratePosSizeFlags(node, code, false, "wxAUI_TB_DEFAULT_STYLE");
-
-    return code;
+    return code.m_code;
 }
 
-std::optional<ttlib::cstr> AuiToolBarGenerator::GenAfterChildren(Node* node)
+std::optional<ttlib::sview> AuiToolBarGenerator::CommonAfterChildren(Code& code)
 {
-    ttlib::cstr code;
-    code << '\t' << node->get_node_name() << "->Realize();";
+    code.NodeName().Function("Realize(").EndFunction();
 
-    return code;
+    return code.m_code;
 }
 
-std::optional<ttlib::cstr> AuiToolBarGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
+std::optional<ttlib::sview> AuiToolBarGenerator::CommonSettings(Code& code)
 {
-    auto code = GenFormSettings(node);
+    GenFormSettings(code);
 
-    if (node->prop_as_int(prop_separation) != 5)
+    if (!code.is_value(prop_separation, 5))
     {
-        if (code.size())
-            code << '\n';
-        code << "SetToolSeparation(" << node->prop_as_string(prop_separation) << ");";
+        code.Eol(eol_if_needed).NodeName().Function("SetToolSeparation(").Str(prop_separation).EndFunction();
     }
 
-    if (node->HasValue(prop_margins))
+    if (code.HasValue(prop_margins))
     {
-        if (code.size())
-            code << '\n';
-        code << "SetMargins(" << node->prop_as_string(prop_margins) << ");";
+        code.Eol(eol_if_needed).NodeName().Function("SetMargins(").Str(prop_margins).EndFunction();
     }
 
-    if (node->prop_as_int(prop_packing) != 1)
+    if (!code.is_value(prop_packing, 1))
     {
-        if (code.size())
-            code << '\n';
-        code << "SetToolPacking(" << node->prop_as_string(prop_packing) << ");";
+        code.Eol(eol_if_needed).NodeName().Function("SetToolPacking(").Str(prop_packing).EndFunction();
     }
 
-    return code;
+    return code.m_code;
 }
 
 bool AuiToolBarGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
@@ -204,51 +195,33 @@ void AuiToolBarGenerator::RequiredHandlers(Node* /* node */, std::set<std::strin
 
 //////////////////////////////////////////  AuiToolGenerator  //////////////////////////////////////////
 
-// The code generation between gen_tool and gen_auitool is idenical, but they *MUST* be separate classes because the
-// interface specifies different events for each (e.g., wxEVT_AUITOOLBAR_BEGIN_DRAG)
-
-std::optional<ttlib::cstr> AuiToolGenerator::GenConstruction(Node* node)
+std::optional<ttlib::sview> AuiToolGenerator::CommonConstruction(Code& code)
 {
-    if (node->HasValue(prop_bitmap))
+    if (code.HasValue(prop_bitmap))
     {
-        ttlib::cstr code;
-        if (wxGetProject().value(prop_wxWidgets_version) == "3.1")
+        auto is_bitmaps_list = BitmapList(code, prop_bitmap);
+        GenToolCode(code, is_bitmaps_list);
+        if (is_bitmaps_list && code.is_cpp())
         {
-            code << "#if wxCHECK_VERSION(3, 1, 6)\n";
-        }
-
-        ttlib::cstr bundle_code;
-        bool is_code_block = GenerateBundleCode(node->prop_as_string(prop_bitmap), bundle_code);
-        if (is_code_block)
-        {
-            // GenerateBundleCode assumes an indent within an indent
-            bundle_code.Replace("\t\t\t", "\t\t", true);
-            code << '\t' << bundle_code;
-            code << '\t' << GenToolCode(node, "wxBitmapBundle::FromBitmaps(bitmaps)");
-            code << "\n\t}";
             if (wxGetProject().value(prop_wxWidgets_version) == "3.1")
             {
-                code << "\n#else\n";
-                code << GenToolCode(node, GenerateBitmapCode(node->prop_as_string(prop_bitmap)));
-                code << "\n#endif";
+                code.CloseBrace();
+                code.Add("#else").Eol();
+                GenToolCode(code, false);
+                code.Eol().Add("#endif").Eol();
             }
-        }
-        else
-        {
-            code << GenToolCode(node, bundle_code);
-            if (wxGetProject().value(prop_wxWidgets_version) == "3.1")
+            else
             {
-                code << "\n#else\n";
-                code << GenToolCode(node, GenerateBitmapCode(node->prop_as_string(prop_bitmap)));
-                code << "\n#endif";
+                code.Eol() += "}\n";
             }
         }
-        return code;
     }
     else
     {
-        return GenToolCode(node);
+        GenToolCode(code, false);
     }
+
+    return code.m_code;
 }
 
 int AuiToolGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
@@ -262,23 +235,22 @@ int AuiToolGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xr
 
 //////////////////////////////////////////  AuiToolLabelGenerator  //////////////////////////////////////////
 
-std::optional<ttlib::cstr> AuiToolLabelGenerator::GenConstruction(Node* node)
+std::optional<ttlib::sview> AuiToolLabelGenerator::CommonConstruction(Code& code)
 {
-    ttlib::cstr code;
-
-    if (node->isParent(gen_wxAuiToolBar))
+    if (code.node()->isParent(gen_wxAuiToolBar))
     {
-        code << node->get_parent_name() << "->AddLabel(";
+        code.ParentName().Function("AddLabel(");
     }
     else
     {
-        code << "AddLabel(";
+        code.FormFunction("AddLabel(");
     }
+    code.Add(prop_id).Comma().QuotedString(prop_label);
+    if (code.IntValue(prop_width) >= 0)
+        code.Comma().Str(prop_width);
+    code.EndFunction();
 
-    code << node->value(prop_id) << ", " << GenerateQuotedString(node->value(prop_label)) << ", " << node->value(prop_width)
-         << ");";
-
-    return code;
+    return code.m_code;
 }
 
 int AuiToolLabelGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
@@ -292,21 +264,19 @@ int AuiToolLabelGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size
 
 //////////////////////////////////////////  AuiToolSpacerGenerator  //////////////////////////////////////////
 
-std::optional<ttlib::cstr> AuiToolSpacerGenerator::GenConstruction(Node* node)
+std::optional<ttlib::sview> AuiToolSpacerGenerator::CommonConstruction(Code& code)
 {
-    ttlib::cstr code;
-
-    if (node->isParent(gen_wxAuiToolBar))
+    if (code.node()->isParent(gen_wxAuiToolBar))
     {
-        code << node->get_parent_name() << "->AddSpacer(";
+        code.ParentName().Function("AddSpacer(");
     }
     else
     {
-        code << "AddSpacer(";
+        code.FormFunction("AddSpacer(");
     }
-    code << node->get_parent_name() << "->FromDIP(" << node->value(prop_width) << "));";
+    code.ParentName().Function("FromDIP(").Str(prop_width).Str(")").EndFunction();
 
-    return code;
+    return code.m_code;
 }
 
 int AuiToolSpacerGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t /* xrc_flags */)
@@ -320,21 +290,24 @@ int AuiToolSpacerGenerator::GenXrcObject(Node* node, pugi::xml_node& object, siz
 
 //////////////////////////////////////////  AuiToolStretchSpacerGenerator  //////////////////////////////////////////
 
-std::optional<ttlib::cstr> AuiToolStretchSpacerGenerator::GenConstruction(Node* node)
+std::optional<ttlib::sview> AuiToolStretchSpacerGenerator::CommonConstruction(Code& code)
 {
-    ttlib::cstr code;
-
-    if (node->isParent(gen_wxAuiToolBar))
+    if (code.node()->isParent(gen_wxAuiToolBar))
     {
-        code << node->get_parent_name() << "->AddStretchSpacer(";
+        code.ParentName().Function("AddStretchSpacer(");
     }
     else
     {
-        code << "AddStretchSpacer(";
+        code.FormFunction("AddStretchSpacer(");
     }
-    code << node->value(prop_proportion) << ");";
 
-    return code;
+    if (code.IntValue(prop_proportion) != 1)
+    {
+        code.Str(prop_proportion);
+    }
+    code.EndFunction();
+
+    return code.m_code;
 }
 
 int AuiToolStretchSpacerGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t /* xrc_flags */)

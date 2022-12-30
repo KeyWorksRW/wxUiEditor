@@ -74,6 +74,50 @@ bool PanelFormGenerator::GenConstruction(Node* node, BaseCodeGenerator* code_gen
     return true;
 }
 
+bool PanelFormGenerator::GenPythonForm(Code& code)
+{
+    if (code.is_cpp())
+    {
+        code.Str("bool ").Str((prop_class_name)) += "::Create";
+        code += "(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style, const wxString "
+            "&name)";
+        code.OpenBrace();
+        code += "if (!wxPanel::Create(parent, id, pos, size, style, name))";
+        code.Eol().Tab() += "return false;\n";
+    }
+    else
+    {
+        // Note: this code is called before any indentation is set
+        code.Add("class ").NodeName().Add("(wx.Panel):\n");
+        code.Tab().Add("def __init__(self, parent):").Eol().Tab(2);
+        code << "wx.Panel.__init__(self, parent, id=";
+        code.as_string(prop_id);
+
+        code.Indent(3);
+
+        code.Comma().Eol().Add("pos=").Pos(prop_pos);
+        code.Comma().Add("size=").WxSize(prop_size);
+        code.Comma().Eol().Add("style=");
+        if (code.HasValue(prop_style) && !code.is_value(prop_style, "wxTAB_TRAVERSAL"))
+            code.Style();
+        else
+            code << "wx.wxTAB_TRAVERSAL";
+        code << ")";
+
+        code.Unindent();
+    }
+
+    if (code.HasValue(prop_extra_style))
+    {
+        code.FormFunction("SetExtraStyle(GetExtraStyle() | ").Add(prop_extra_style).Str(")").EndFunction();
+    }
+
+    code.GenFontColourSettings();
+    code.ResetIndent();
+
+    return true;
+}
+
 std::optional<ttlib::cstr> PanelFormGenerator::GenAdditionalCode(GenEnum::GenCodeType cmd, Node* node)
 {
     if (cmd == code_header)

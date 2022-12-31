@@ -590,7 +590,7 @@ std::optional<ttlib::sview> ToolSeparatorGenerator::CommonConstruction(Code& cod
     auto* node = code.node();
     if (node->isParent(gen_wxToolBar) || node->isParent(gen_wxRibbonToolBar) || node->isParent(gen_wxAuiToolBar))
     {
-        code.ParentName().Function("AddSeparator(").EndFunction();
+        code.GetParentName().Function("AddSeparator(").EndFunction();
     }
     else
     {

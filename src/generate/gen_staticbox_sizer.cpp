@@ -44,11 +44,8 @@ void StaticBoxSizerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxpa
     }
 }
 
-std::optional<ttlib::sview> StaticBoxSizerGenerator::CommonConstruction(Code& code)
+bool StaticBoxSizerGenerator::ConstructionCode(Code& code)
 {
-    if (code.is_cpp() && code.is_local_var())
-        code << "auto* ";
-
     Node* node = code.node();
 
     ttlib::cstr parent_name(code.is_cpp() ? "this" : "self");
@@ -75,7 +72,7 @@ std::optional<ttlib::sview> StaticBoxSizerGenerator::CommonConstruction(Code& co
             parent = parent->GetParent();
         }
     }
-    code.NodeName().CreateClass().as_string(prop_orientation).Comma().Str(parent_name);
+    code.AddAuto().NodeName().CreateClass().Str(prop_orientation).Comma().Str(parent_name);
 
     if (auto& label = node->prop_as_string(prop_label); label.size())
     {
@@ -88,27 +85,24 @@ std::optional<ttlib::sview> StaticBoxSizerGenerator::CommonConstruction(Code& co
         code.Eol().NodeName().Function("SetMinSize(").WxSize(prop_minimum_size).EndFunction();
     }
 
-    return code.m_code;
+    return true;
 }
 
-std::optional<ttlib::sview> StaticBoxSizerGenerator::CommonSettings(Code& code)
+bool StaticBoxSizerGenerator::SettingsCode(Code& code)
 {
     if (code.IsTrue(prop_disabled))
     {
-        if (code.is_cpp())
-            code.NodeName().Function("GetStaticBox()->Enable(false);");
-        else
-            code.NodeName().Function("GetStaticBox().Enable(False)");
+        code.NodeName().Function("GetStaticBox()->Enable(").AddFalse().EndFunction();
     }
 
-    return code.m_code;
+    return true;
 }
 
-std::optional<ttlib::sview> StaticBoxSizerGenerator::CommonAfterChildren(Code& code)
+bool StaticBoxSizerGenerator::AfterChildrenCode(Code& code)
 {
     if (code.IsTrue(prop_hide_children))
     {
-        code.NodeName().Function("ShowItems(").Str(code.is_cpp() ? "false" : "False").EndFunction();
+        code.NodeName().Function("ShowItems(").AddFalse().EndFunction();
     }
 
     auto parent = code.node()->GetParent();
@@ -132,7 +126,7 @@ std::optional<ttlib::sview> StaticBoxSizerGenerator::CommonAfterChildren(Code& c
         }
     }
 
-    return code.m_code;
+    return true;
 }
 
 bool StaticBoxSizerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)

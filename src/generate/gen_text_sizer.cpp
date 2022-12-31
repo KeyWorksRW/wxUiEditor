@@ -22,13 +22,10 @@ wxObject* TextSizerGenerator::CreateMockup(Node* node, wxObject* parent)
     return wrapper.CreateSizer(node->prop_as_wxString(prop_text), node->prop_as_int(prop_wrap));
 }
 
-std::optional<ttlib::cstr> TextSizerGenerator::GenConstruction(Node* node)
+bool TextSizerGenerator::ConstructionCode(Code& code)
 {
-    ttlib::cstr code;
-    if (node->IsLocal())
-        code << "auto* ";
-
-    code << node->get_node_name();
+    auto* node = code.node();
+    code.AddAuto().NodeName();
     auto parent = node->GetParent();
     while (parent->IsSizer())
         parent = parent->GetParent();
@@ -42,9 +39,9 @@ std::optional<ttlib::cstr> TextSizerGenerator::GenConstruction(Node* node)
         code << " = wxTextSizerWrapper(" << parent->get_node_name() << ").CreateSizer(";
     }
 
-    code << GenerateQuotedString(node->prop_as_string(prop_text)) << ", " << node->prop_as_string(prop_width) << ");";
+    code.QuotedString(prop_text).Comma().Str(prop_width).EndFunction();
 
-    return code;
+    return true;
 }
 
 bool TextSizerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)

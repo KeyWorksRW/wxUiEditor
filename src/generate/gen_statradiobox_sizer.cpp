@@ -71,7 +71,7 @@ bool StaticRadioBtnBoxSizerGenerator::OnPropertyChange(wxObject* /* widget */, N
     return false;
 }
 
-std::optional<ttlib::sview> StaticRadioBtnBoxSizerGenerator::CommonConstruction(Code& code)
+bool StaticRadioBtnBoxSizerGenerator::ConstructionCode(Code& code)
 {
     Node* node = code.node();
     if (code.is_cpp())
@@ -89,9 +89,6 @@ std::optional<ttlib::sview> StaticRadioBtnBoxSizerGenerator::CommonConstruction(
     {
         code.Str("# wxPython currently does not support a radio button as a static box label").Eol();
     }
-
-    if (code.is_cpp() && code.is_local_var())
-        code << "auto* ";
 
     ttlib::cstr parent_name(code.is_cpp() ? "this" : "self");
     if (!node->GetParent()->IsForm())
@@ -119,7 +116,7 @@ std::optional<ttlib::sview> StaticRadioBtnBoxSizerGenerator::CommonConstruction(
     }
     if (code.is_cpp())
     {
-        code.NodeName() << " = new wxStaticBoxSizer(new wxStaticBox(" << parent_name << ", wxID_ANY";
+        code.AddAuto().NodeName() << " = new wxStaticBoxSizer(new wxStaticBox(" << parent_name << ", wxID_ANY";
         code.Comma();
         if (wxGetProject().value(prop_wxWidgets_version) == "3.1")
         {
@@ -127,7 +124,7 @@ std::optional<ttlib::sview> StaticRadioBtnBoxSizerGenerator::CommonConstruction(
             code.as_string(prop_radiobtn_var_name) << "),";
             code.Eol().Str("#else").Eol().Tab().Str("wxEmptyString),");
             code.Eol().Str("#endif").Eol();
-            code.as_string(prop_orientation).EndFunction();
+            code.Str(prop_orientation).EndFunction();
         }
         else
         {
@@ -136,11 +133,10 @@ std::optional<ttlib::sview> StaticRadioBtnBoxSizerGenerator::CommonConstruction(
     }
     else
     {
-        code.NodeName().CreateClass(false, "wxStaticBoxSizer").as_string(prop_orientation).Comma().Str(parent_name);
-        auto& label = node->prop_as_string(prop_label);
-        if (label.size())
+        code.NodeName().CreateClass(false, "wxStaticBoxSizer").Str(prop_orientation).Comma().Str(parent_name);
+        if (code.HasValue(prop_label))
         {
-            code.Comma().QuotedString(label);
+            code.Comma().QuotedString(prop_label);
         }
         code.EndFunction();
     }
@@ -150,33 +146,30 @@ std::optional<ttlib::sview> StaticRadioBtnBoxSizerGenerator::CommonConstruction(
         code.Eol().NodeName().Function("SetMinSize(").WxSize(prop_minimum_size).EndFunction();
     }
 
-    return code.m_code;
+    return true;
 }
 
-std::optional<ttlib::sview> StaticRadioBtnBoxSizerGenerator::CommonSettings(Code& code)
+bool StaticRadioBtnBoxSizerGenerator::SettingsCode(Code& code)
 {
     if (code.IsTrue(prop_disabled))
     {
-        if (code.is_cpp())
-            code.NodeName().Function("GetStaticBox()->Enable(false);");
-        else
-            code.NodeName().Function("GetStaticBox().Enable(False)");
+        code.NodeName().Function("GetStaticBox()->Enable(").AddFalse().EndFunction();
     }
 
     if (code.HasValue(prop_tooltip) && code.is_cpp())
     {
-        code.NewLine(true).as_string(prop_radiobtn_var_name).Function("SetToolTip(");
+        code.Eol(eol_if_needed).as_string(prop_radiobtn_var_name).Function("SetToolTip(");
         code.QuotedString(prop_tooltip).EndFunction();
     }
 
-    return code.m_code;
+    return true;
 }
 
-std::optional<ttlib::sview> StaticRadioBtnBoxSizerGenerator::CommonAfterChildren(Code& code)
+bool StaticRadioBtnBoxSizerGenerator::AfterChildrenCode(Code& code)
 {
     if (code.IsTrue(prop_hide_children))
     {
-        code.NodeName().Function("ShowItems(").Str(code.is_cpp() ? "false" : "False").EndFunction();
+        code.NodeName().Function("ShowItems(").AddFalse().EndFunction();
     }
 
     auto parent = code.node()->GetParent();
@@ -191,8 +184,7 @@ std::optional<ttlib::sview> StaticRadioBtnBoxSizerGenerator::CommonAfterChildren
         {
             if (GetParentName(code.node()) != "this")
             {
-                code.ParentName().Add(".");
-                code.Function("SetSizerAndFit(").NodeName().EndFunction();
+                code.ParentName().Function("SetSizerAndFit(").NodeName().EndFunction();
             }
             else
             {
@@ -201,7 +193,7 @@ std::optional<ttlib::sview> StaticRadioBtnBoxSizerGenerator::CommonAfterChildren
         }
     }
 
-    return code.m_code;
+    return true;
 }
 
 bool StaticRadioBtnBoxSizerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)

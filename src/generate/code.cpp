@@ -265,7 +265,7 @@ Code& Code::AddAuto()
 {
     if (is_cpp() && is_local_var())
     {
-        m_code += "auto ";
+        m_code += "auto* ";
     }
     return *this;
 }

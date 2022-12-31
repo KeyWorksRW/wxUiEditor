@@ -135,14 +135,14 @@ void GridBagSizerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxpare
     lambda(prop_growablerows);
 }
 
-std::optional<ttlib::sview> GridBagSizerGenerator::CommonConstruction(Code& code)
+bool GridBagSizerGenerator::ConstructionCode(Code& code)
 {
-    if (code.is_cpp() && code.is_local_var())
-        code << "auto* ";
-    code.NodeName().CreateClass();
+    code.AddAuto().NodeName().CreateClass();
 
     if (code.node()->as_int(prop_vgap) != 0 || code.node()->as_int(prop_hgap) != 0)
-        code.as_string(prop_vgap).Comma().as_string(prop_hgap);
+    {
+        code.Str(prop_vgap).Comma().Str(prop_hgap);
+    }
     code.EndFunction();
 
     Node* node = code.node();
@@ -151,25 +151,25 @@ std::optional<ttlib::sview> GridBagSizerGenerator::CommonConstruction(Code& code
         code.NodeName().Function("SetEmptyCellSize(").WxSize(prop_empty_cell_size).EndFunction();
     }
 
-    auto& direction = node->prop_as_string(prop_flexible_direction);
+    auto& direction = node->as_string(prop_flexible_direction);
     if (direction.empty() || direction.is_sameas("wxBOTH"))
     {
-        return code.m_code;
+        return true;
     }
 
     code.NodeName().Function("SetFlexibleDirection(").Add(direction).EndFunction();
 
-    auto& non_flex_growth = node->prop_as_string(prop_non_flexible_grow_mode);
+    auto& non_flex_growth = node->as_string(prop_non_flexible_grow_mode);
     if (non_flex_growth.empty() || non_flex_growth.is_sameas("wxFLEX_GROWMODE_SPECIFIED"))
     {
-        return code.m_code;
+        return true;
     }
     code.NodeName().Function("SetNonFlexibleGrowMode").Add(non_flex_growth).EndFunction();
 
-    return code.m_code;
+    return true;
 }
 
-std::optional<ttlib::sview> GridBagSizerGenerator::CommonAfterChildren(Code& code)
+bool GridBagSizerGenerator::AfterChildrenCode(Code& code)
 {
     Node* node = code.node();
 
@@ -215,13 +215,13 @@ std::optional<ttlib::sview> GridBagSizerGenerator::CommonAfterChildren(Code& cod
 
     if (code.IsTrue(prop_hide_children))
     {
-        code.NodeName().Function("ShowItems(").Str(code.is_cpp() ? "false" : "False").EndFunction();
+        code.NodeName().Function("ShowItems(").AddFalse().EndFunction();
     }
 
     auto parent = code.node()->GetParent();
     if (!parent->IsSizer() && !parent->isGen(gen_wxDialog) && !parent->isGen(gen_PanelForm))
     {
-        code.NewLine(true);
+        code.Eol(eol_if_needed);
         if (parent->isGen(gen_wxRibbonPanel))
         {
             code.ParentName().Function("SetSizerAndFit(").NodeName().EndFunction();
@@ -240,7 +240,7 @@ std::optional<ttlib::sview> GridBagSizerGenerator::CommonAfterChildren(Code& cod
         }
     }
 
-    return code.m_code;
+    return true;
 }
 
 bool GridBagSizerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)

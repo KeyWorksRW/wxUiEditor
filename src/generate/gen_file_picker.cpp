@@ -50,7 +50,7 @@ std::optional<ttlib::sview> FilePickerGenerator::CommonConstruction(Code& code)
     if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
     code.NodeName().CreateClass();
-    code.GetParentName().Comma().as_string(prop_id).Comma();
+    code.ValidParentName().Comma().as_string(prop_id).Comma();
 
     if (auto& path = code.node()->prop_as_string(prop_initial_path); path.size())
     {

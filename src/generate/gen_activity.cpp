@@ -35,7 +35,7 @@ std::optional<ttlib::sview> ActivityIndicatorGenerator::CommonConstruction(Code&
     if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
     code.NodeName().CreateClass();
-    code.GetParentName().Comma().as_string(prop_id);
+    code.ValidParentName().Comma().as_string(prop_id);
     code.PosSizeFlags(true);
 
     return code.m_code;

@@ -83,7 +83,7 @@ std::optional<ttlib::sview> StaticCheckboxBoxSizerGenerator::CommonConstruction(
     if (code.is_cpp())
     {
         code.as_string(prop_checkbox_var_name) << " = new wxCheckBox(";
-        code.GetParentName().Comma().as_string(prop_id).Comma().QuotedString(prop_label).EndFunction();
+        code.ValidParentName().Comma().as_string(prop_id).Comma().QuotedString(prop_label).EndFunction();
 
         if (auto result = GenValidatorSettings(node); result)
         {

@@ -31,7 +31,7 @@ std::optional<ttlib::sview> StaticLineGenerator::CommonConstruction(Code& code)
     if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
     code.NodeName().CreateClass();
-    code.GetParentName();
+    code.ValidParentName();
     if (!code.IsEqualTo(prop_id, "wxID_ANY") || code.HasValue(prop_pos) || code.HasValue(prop_size) ||
         code.HasValue(prop_window_name) || code.PropContains(prop_style, "wxLI_VERTICAL"))
     {

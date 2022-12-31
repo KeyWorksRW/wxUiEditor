@@ -41,7 +41,7 @@ std::optional<ttlib::sview> InfoBarGenerator::CommonConstruction(Code& code)
     if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
     code.NodeName().CreateClass();
-    code.GetParentName();
+    code.ValidParentName();
     if (code.node()->as_string(prop_id) != "wxID_ANY")
         code.Comma().as_string(prop_id);
     code.EndFunction();

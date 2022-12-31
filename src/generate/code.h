@@ -245,9 +245,10 @@ public:
     // m_code += m_node->GetParent()->get_node_name();
     Code& ParentName();
 
-    // This is *NOT* the same as ParentName() -- this will handle wxStaticBox and
-    // wxCollapsiblePane parents as well as non-sizer parents
-    Code& GetParentName();
+    // Find a valid parent for the current node and add it's name. This is *not* the same as
+    // ParentName() -- this will handle wxStaticBox and wxCollapsiblePane parents as well as
+    // non-sizer parents.
+    Code& ValidParentName();
 
     // Handles regular or or'd styles for C++ or Python
     Code& as_string(GenEnum::PropName prop_name);

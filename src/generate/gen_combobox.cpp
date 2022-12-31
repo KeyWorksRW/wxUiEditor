@@ -55,7 +55,7 @@ std::optional<ttlib::sview> ComboBoxGenerator::CommonConstruction(Code& code)
     if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
     code.NodeName().CreateClass();
-    code.GetParentName().Comma().as_string(prop_id);
+    code.ValidParentName().Comma().as_string(prop_id);
     if (code.HasValue(prop_style))
     {
         code.Comma().Add("wxEmptyString");

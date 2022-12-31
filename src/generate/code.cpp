@@ -618,7 +618,7 @@ static constexpr GenType s_GenParentTypes[] = {
 
 // clang-format on
 
-Code& Code::GetParentName()
+Code& Code::ValidParentName()
 {
     auto parent = m_node->GetParent();
     while (parent)

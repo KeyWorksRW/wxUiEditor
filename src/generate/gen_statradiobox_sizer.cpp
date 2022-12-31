@@ -77,7 +77,7 @@ std::optional<ttlib::sview> StaticRadioBtnBoxSizerGenerator::CommonConstruction(
     if (code.is_cpp())
     {
         code.as_string(prop_radiobtn_var_name) << " = new wxRadioButton(";
-        code.GetParentName().Comma().as_string(prop_id).Comma().QuotedString(prop_label).EndFunction();
+        code.ValidParentName().Comma().as_string(prop_id).Comma().QuotedString(prop_label).EndFunction();
 
         if (auto result = GenValidatorSettings(node); result)
         {

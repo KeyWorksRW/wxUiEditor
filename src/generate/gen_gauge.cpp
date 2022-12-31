@@ -43,7 +43,7 @@ std::optional<ttlib::sview> GaugeGenerator::CommonConstruction(Code& code)
     if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
     code.NodeName().CreateClass();
-    code.GetParentName().Comma().as_string(prop_id).Comma().as_string(prop_range);
+    code.ValidParentName().Comma().as_string(prop_id).Comma().as_string(prop_range);
     code.PosSizeFlags(true);
 
     return code.m_code;

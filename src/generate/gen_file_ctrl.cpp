@@ -45,7 +45,7 @@ std::optional<ttlib::sview> FileCtrlGenerator::CommonConstruction(Code& code)
     if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
     code.NodeName().CreateClass();
-    code.GetParentName().Comma().as_string(prop_id);
+    code.ValidParentName().Comma().as_string(prop_id);
     code.Comma().QuotedString(prop_initial_folder).Comma().QuotedString(prop_initial_filename);
     code.Comma();
     if (code.HasValue(prop_wildcard))

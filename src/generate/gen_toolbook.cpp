@@ -51,7 +51,7 @@ std::optional<ttlib::sview> ToolbookGenerator::CommonConstruction(Code& code)
     if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
     code.NodeName().CreateClass();
-    code.GetParentName().Comma().as_string(prop_id).PosSizeFlags(false);
+    code.ValidParentName().Comma().as_string(prop_id).PosSizeFlags(false);
 
     // TODO: [Randalphwa - 12-21-2022] Add Python support
     if (code.is_cpp())

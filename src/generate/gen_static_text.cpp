@@ -76,7 +76,7 @@ std::optional<ttlib::sview> StaticTextGenerator::CommonConstruction(Code& code)
     if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
     code.NodeName().CreateClass((code.m_node->prop_as_bool(prop_markup) && code.m_node->prop_as_int(prop_wrap) <= 0));
-    code.GetParentName().Comma().as_string(prop_id).Comma();
+    code.ValidParentName().Comma().as_string(prop_id).Comma();
     if (code.m_node->prop_as_bool(prop_markup))
     {
         code.EmptyString();

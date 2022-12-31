@@ -52,7 +52,7 @@ std::optional<ttlib::sview> StaticBitmapGenerator::CommonConstruction(Code& code
         if (code.HasValue(prop_bitmap))
         {
             bool is_list_created = PythonBitmapList(code, prop_bitmap);
-            code.NodeName().CreateClass().GetParentName().Comma().as_string(prop_id).Comma();
+            code.NodeName().CreateClass().ValidParentName().Comma().as_string(prop_id).Comma();
 
             if (is_list_created)
             {
@@ -66,7 +66,7 @@ std::optional<ttlib::sview> StaticBitmapGenerator::CommonConstruction(Code& code
         }
         else
         {
-            code.NodeName().CreateClass().GetParentName().Comma().as_string(prop_id).Comma();
+            code.NodeName().CreateClass().ValidParentName().Comma().as_string(prop_id).Comma();
             code.Add("wxNullBitmap");
             code.PosSizeFlags();
         }
@@ -99,7 +99,7 @@ void StaticBitmapGenerator::GenCppConstruction(Code& gen_code)
         else
             gen_code.NodeName() << " = new wxStaticBitmap(";
 
-        gen_code.GetParentName().Comma().as_string(prop_id).Comma();
+        gen_code.ValidParentName().Comma().as_string(prop_id).Comma();
 
         if (!is_vector_code)
         {
@@ -179,7 +179,7 @@ void StaticBitmapGenerator::GenCppConstruction(Code& gen_code)
         else
             gen_code.NodeName() << " = new wxStaticBitmap(";
 
-        gen_code.GetParentName().Comma().as_string(prop_id).Comma();
+        gen_code.ValidParentName().Comma().as_string(prop_id).Comma();
 
         code << "wxNullBitmap";
     }

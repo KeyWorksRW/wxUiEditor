@@ -234,7 +234,7 @@ std::optional<ttlib::sview> BookPageGenerator::CommonConstruction(Code& code)
     }
     else
     {
-        code.GetParentName().Comma().as_string(prop_id);
+        code.ValidParentName().Comma().as_string(prop_id);
         code.PosSizeFlags(false);
         code.Eol().ParentName().Function("AddPage(").NodeName().Comma().QuotedString(prop_label);
 

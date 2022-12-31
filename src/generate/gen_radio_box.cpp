@@ -84,7 +84,7 @@ std::optional<ttlib::sview> RadioBoxGenerator::CommonConstruction(Code& code)
     if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
     code.NodeName().CreateClass();
-    code.GetParentName().Comma().as_string(prop_id).Comma().QuotedString(prop_label);
+    code.ValidParentName().Comma().as_string(prop_id).Comma().QuotedString(prop_label);
     code.Comma().Pos().Comma().WxSize().Comma();
     if (code.is_cpp())
     {

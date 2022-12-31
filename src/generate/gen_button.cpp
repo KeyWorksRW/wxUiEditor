@@ -147,7 +147,7 @@ std::optional<ttlib::sview> ButtonGenerator::CommonConstruction(Code& code)
     if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
     code.NodeName().CreateClass();
-    code.GetParentName().Comma().as_string(prop_id).Comma();
+    code.ValidParentName().Comma().as_string(prop_id).Comma();
 
     // If prop_markup is set, then the label will be set in GenSettings()
     if (code.HasValue(prop_label) && !code.IsTrue(prop_markup))

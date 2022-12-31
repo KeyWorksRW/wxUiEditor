@@ -75,7 +75,7 @@ std::optional<ttlib::sview> BoxSizerGenerator::CommonAfterChildren(Code& code)
         {
             if (GetParentName(code.node()) != "this")
             {
-                code.GetParentName().Function("SetSizerAndFit(");
+                code.ValidParentName().Function("SetSizerAndFit(");
             }
             else
             {

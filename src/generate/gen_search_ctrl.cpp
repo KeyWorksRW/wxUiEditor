@@ -43,7 +43,7 @@ std::optional<ttlib::sview> SearchCtrlGenerator::CommonConstruction(Code& code)
     if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
     code.NodeName().CreateClass();
-    code.GetParentName().Comma().as_string(prop_id).Comma().QuotedString(prop_value);
+    code.ValidParentName().Comma().as_string(prop_id).Comma().QuotedString(prop_value);
     code.PosSizeFlags(true);
 
     return code.m_code;

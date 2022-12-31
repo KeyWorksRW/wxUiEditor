@@ -38,7 +38,7 @@ std::optional<ttlib::sview> ChoicebookGenerator::CommonConstruction(Code& code)
     if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
     code.NodeName().CreateClass();
-    code.GetParentName().Comma().as_string(prop_id).PosSizeFlags(false, "wxCHB_DEFAULT");
+    code.ValidParentName().Comma().as_string(prop_id).PosSizeFlags(false, "wxCHB_DEFAULT");
 
     return code.m_code;
 }

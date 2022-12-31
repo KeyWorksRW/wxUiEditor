@@ -60,7 +60,7 @@ std::optional<ttlib::sview> SliderGenerator::CommonConstruction(Code& code)
     if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
     code.NodeName().CreateClass();
-    code.GetParentName()
+    code.ValidParentName()
         .Comma()
         .as_string(prop_id)
         .Comma()

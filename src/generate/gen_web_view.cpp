@@ -34,7 +34,7 @@ std::optional<ttlib::sview> WebViewGenerator::CommonConstruction(Code& code)
     if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
     code.NodeName().Str(" = ").Add("wxWebView").ClassMethod("New(");
-    code.GetParentName().Comma().Add(prop_id).Comma().QuotedString(prop_url);
+    code.ValidParentName().Comma().Add(prop_id).Comma().QuotedString(prop_url);
 
     auto params_needed = code.WhatParamsNeeded();
     if (params_needed == nothing_needed)

@@ -54,7 +54,7 @@ std::optional<ttlib::sview> RearrangeCtrlGenerator::CommonConstruction(Code& cod
     if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
     code.NodeName().CreateClass();
-    code.GetParentName().Comma().as_string(prop_id);
+    code.ValidParentName().Comma().as_string(prop_id);
     code.Comma().Pos().Comma().WxSize();
     code.Comma();
     if (code.is_cpp())

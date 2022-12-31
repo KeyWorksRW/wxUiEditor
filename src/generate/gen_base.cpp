@@ -1332,13 +1332,19 @@ void BaseCodeGenerator::GenerateClassHeader(Node* form_node, const EventVector& 
     // Clang-format, if enabled would remove the extra blank line, but would not add the missing blank line.
     m_header->writeLine();
 
-    if (auto result = generator->GenAdditionalCode(code_base_class, form_node); result)
+    Code code(form_node, GEN_LANG_CPLUSPLUS);
+    code.Str("class ");
+    if (form_node->HasValue(prop_class_decoration))
+        code.Str(prop_class_decoration) += " ";
+    code.Str(prop_class_name) += " : public ";
+    if (generator->CodeAdditionalCode(code, code_base_class))
     {
-        ttlib::cstr declaration("class ");
-        if (form_node->HasValue(prop_class_decoration))
-            declaration << form_node->prop_as_string(prop_class_decoration) << ' ';
-        declaration << form_node->prop_as_string(prop_class_name) << " : public " << result.value();
-        m_header->writeLine(declaration);
+        m_header->writeLine(code.GetCode(), indent::auto_keep_whitespace);
+    }
+    else if (auto result = generator->GenAdditionalCode(code_base_class, form_node); result)
+    {
+        code += result.value();
+        m_header->writeLine(code.GetCode());
     }
     else
     {
@@ -1363,7 +1369,13 @@ void BaseCodeGenerator::GenerateClassHeader(Node* form_node, const EventVector& 
         m_header->writeLine();
     }
 
-    if (auto result = generator->GenAdditionalCode(code_header, form_node); result)
+    code.clear();
+    if (generator->CodeAdditionalCode(code, code_header))
+    {
+        m_header->writeLine(code.GetCode(), indent::auto_keep_whitespace);
+    }
+
+    else if (auto result = generator->GenAdditionalCode(code_header, form_node); result)
     {
         m_header->writeLine(result.value(), indent::auto_keep_whitespace);
     }
@@ -1459,9 +1471,38 @@ void BaseCodeGenerator::GenerateClassConstructor(Node* form_node, const EventVec
 
     m_source->writeLine();
 
-    auto generator = form_node->GetNodeDeclaration()->GetGenerator();
+    auto* generator = form_node->GetGenerator();
+    Code code(form_node, GEN_LANG_CPLUSPLUS);
+    if (generator->CodeConstruction(code))
+    {
+        m_source->writeLine(code.GetCode(), indent::auto_keep_whitespace);
+        m_source->Indent();
 
-    if (!generator->GenConstruction(form_node, this))
+        if (form_node->isGen(gen_wxFrame))
+        {
+            GenerateHandlers();
+        }
+
+        code.clear();
+        if (generator->CodeSettings(code))
+        {
+            m_source->writeLine(code.GetCode());
+            m_source->writeLine();
+        }
+        else
+        {
+            size_t auto_indent = indent::auto_no_whitespace;
+            if (auto result = generator->GenSettings(form_node, auto_indent); result)
+            {
+                if (result.value().size())
+                {
+                    m_source->writeLine(result.value(), indent::auto_keep_whitespace);
+                    m_source->writeLine();
+                }
+            }
+        }
+    }
+    else if (!generator->GenConstruction(form_node, this))
     {
         if (auto result = generator->GenConstruction(form_node); result)
         {
@@ -1496,7 +1537,7 @@ void BaseCodeGenerator::GenerateClassConstructor(Node* form_node, const EventVec
 
     if (form_node->get_prop_ptr(prop_window_extra_style))
     {
-        Code code(form_node, GEN_LANG_CPLUSPLUS);
+        code.clear();
         code.GenWindowSettings();
         if (code.size())
         {
@@ -1513,7 +1554,16 @@ void BaseCodeGenerator::GenerateClassConstructor(Node* form_node, const EventVec
         GenConstruction(child.get());
     }
 
-    if (auto result = generator->GenAdditionalCode(code_after_children, form_node); result)
+    code.clear();
+    if (generator->CodeAdditionalCode(code, code_after_children))
+    {
+        if (code.size())
+        {
+            m_source->writeLine();
+            m_source->writeLine(code.GetCode(), indent::auto_keep_whitespace);
+        }
+    }
+    else if (auto result = generator->GenAdditionalCode(code_after_children, form_node); result)
     {
         if (result.value().size())
         {
@@ -1525,9 +1575,9 @@ void BaseCodeGenerator::GenerateClassConstructor(Node* form_node, const EventVec
     if (form_node->prop_as_bool(prop_persist))
     {
         m_source->writeLine();
-        ttlib::cstr code("wxPersistentRegisterAndRestore(this, \"");
-        code << form_node->get_node_name() << "\");";
-        m_source->writeLine(code);
+        ttlib::cstr tmp("wxPersistentRegisterAndRestore(this, \"");
+        tmp << form_node->get_node_name() << "\");";
+        m_source->writeLine(tmp);
     }
 
     AddPersistCode(form_node);

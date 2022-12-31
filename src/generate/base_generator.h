@@ -77,6 +77,16 @@ public:
     MockupParent* GetMockup();
 
     // Generate the code used to construct the object using either C++ or Python
+    virtual bool CodeConstruction(Code&) { return false; }
+
+    // Generate any settings the object needs using either C++ or Python
+    virtual bool CodeSettings(Code&) { return false; }
+
+    // Generate either C++ or Python code for any additiional code the object needs.
+    // The GenCodeType parameter indicates what type of code is needed.
+    virtual bool CodeAdditionalCode(Code&, GenEnum::GenCodeType /* command */) { return false; }
+
+    // Generate the code used to construct the object using either C++ or Python
     virtual std::optional<ttlib::sview> CommonConstruction(Code&) { return {}; }
 
     // Generate code after any children have been constructed

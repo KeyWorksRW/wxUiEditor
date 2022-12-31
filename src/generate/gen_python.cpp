@@ -305,7 +305,7 @@ void BaseCodeGenerator::GeneratePythonClass(Node* form_node, PANEL_PAGE panel_ty
     auto generator = form_node->GetNodeDeclaration()->GetGenerator();
     Code code(form_node, GEN_LANG_PYTHON);
 
-    if (generator->GenPythonForm(code))
+    if (generator->CodeConstruction(code) || generator->GenPythonForm(code))
     {
         m_source->writeLine(code.m_code, indent::auto_keep_whitespace);
         m_source->writeLine();

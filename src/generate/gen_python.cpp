@@ -304,8 +304,14 @@ void BaseCodeGenerator::GeneratePythonClass(Node* form_node, PANEL_PAGE panel_ty
 
     auto generator = form_node->GetNodeDeclaration()->GetGenerator();
     Code code(form_node, GEN_LANG_PYTHON);
-
-    if (generator->ConstructionCode(code) || generator->GenPythonForm(code))
+    if (generator->ConstructionCode(code))
+    {
+        m_source->writeLine(code);
+        m_source->writeLine();
+        m_source->Indent();
+        m_source->Indent();
+    }
+    else if (generator->GenPythonForm(code))
     {
         m_source->writeLine(code.m_code, indent::auto_keep_whitespace);
         m_source->writeLine();
@@ -313,24 +319,35 @@ void BaseCodeGenerator::GeneratePythonClass(Node* form_node, PANEL_PAGE panel_ty
         m_source->Indent();
     }
 
-    size_t auto_indent = indent::auto_no_whitespace;
-    if (auto result = generator->GenSettings(form_node, auto_indent, GEN_LANG_PYTHON); result)
+    code.clear();
+    if (generator->SettingsCode(code))
     {
-        if (result.value().size())
+        if (code.size())
         {
-            m_source->writeLine(result.value(), indent::auto_keep_whitespace);
+            m_source->writeLine(code);
             m_source->writeLine();
+        }
+    }
+    else
+    {
+        size_t auto_indent = indent::auto_no_whitespace;
+        if (auto result = generator->GenSettings(form_node, auto_indent, GEN_LANG_PYTHON); result)
+        {
+            if (result.value().size())
+            {
+                m_source->writeLine(result.value(), indent::auto_keep_whitespace);
+                m_source->writeLine();
+            }
         }
     }
 
     if (form_node->get_prop_ptr(prop_window_extra_style))
     {
-        Code win_code(form_node, GEN_LANG_PYTHON);
-        win_code.GenWindowSettings();
-        if (win_code.size())
+        code.clear();
+        code.GenWindowSettings();
+        if (code.size())
         {
-            // GenerateWindowSettings() can result in code within braces, so keep any leading whitespace.
-            m_source->writeLine(win_code.m_code, indent::auto_keep_whitespace);
+            m_source->writeLine(code);
         }
     }
 
@@ -343,8 +360,15 @@ void BaseCodeGenerator::GeneratePythonClass(Node* form_node, PANEL_PAGE panel_ty
     }
 
     code.clear();
-
-    if (auto result = generator->CommonAdditionalCode(code, code_after_children); result)
+    if (generator->AfterChildrenCode(code))
+    {
+        if (code.size())
+        {
+            m_source->writeLine();
+            m_source->writeLine(code);
+        }
+    }
+    else if (auto result = generator->CommonAdditionalCode(code, code_after_children); result)
     {
         if (result.value().size())
         {

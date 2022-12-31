@@ -48,46 +48,38 @@ void BaseCodeGenerator::GenConstruction(Node* node)
     std::optional<ttlib::sview> scode;
     std::optional<ttlib::cstr> result;
 
-    scode = generator->CommonConstruction(gen_code);
-    if (!scode && is_cpp())
+    if (generator->ConstructionCode(gen_code))
     {
-        if (result = generator->GenConstruction(node); result)
-            scode = *result;
-    }
-
-    if (scode)
-    {
-        // Don't add blank lines when adding tools to a toolbar, or creating menu items
-        if (scode.value()[0] != '{' && type != type_aui_tool && type != type_tool && type != type_menuitem)
+        m_source->writeLine(gen_code);
+        if (gen_code.GetCode().starts_with("{") && !gen_code.GetCode().ends_with("}\n"))
         {
-            m_source->writeLine();
+            need_closing_brace = true;
+        }
+    }
+    else
+    {
+        scode = generator->CommonConstruction(gen_code);
+        if (!scode && is_cpp())
+        {
+            if (result = generator->GenConstruction(node); result)
+                scode = *result;
         }
 
-#if 0
-        if (is_cpp())
+        if (scode)
         {
-            // Check for any indentation via a brace or line break with multiple tabs, and if so,
-            // don't remove the whitespace
-            m_source->writeLine(scode.value(), (ttlib::is_found(scode->find('{')) || ttlib::is_found(scode->find("\n\t\t"))) ?
-                                            indent::none :
-                                            indent::auto_no_whitespace);
-            if (scode->starts_with("\t{"))
+            // Don't add blank lines when adding tools to a toolbar, or creating menu items
+            if (scode.value()[0] != '{' && type != type_aui_tool && type != type_tool && type != type_menuitem)
+            {
+                m_source->writeLine();
+            }
+            m_source->writeLine(scode.value(), indent::auto_keep_whitespace);
+            if (scode->starts_with("{") && !scode->ends_with("}\n"))
             {
                 need_closing_brace = true;
             }
         }
-        else
-        {
-            m_source->writeLine(scode.value(), indent::auto_keep_whitespace);
-        }
-#else
-        m_source->writeLine(scode.value(), indent::auto_keep_whitespace);
-        if (scode->starts_with("{") && !scode->ends_with("}\n"))
-        {
-            need_closing_brace = true;
-        }
-#endif
     }
+
     GenSettings(node);
 
     if (type == type_ribbontoolbar)
@@ -96,26 +88,34 @@ void BaseCodeGenerator::GenConstruction(Node* node)
         // A wxRibbonToolBar can only have abstract children that consist of the tools.
         for (const auto& child: node->GetChildNodePtrs())
         {
-            gen_code.clear();
-            scode = child->GetGenerator()->CommonConstruction(gen_code);
-            if (!scode && is_cpp())
+            Code child_code(child.get(), m_language);
+            if (child->GetGenerator()->ConstructionCode(child_code))
             {
-                result = child->GetGenerator()->GenConstruction(child.get());
-                if (result)
-                    scode = *result;
+                m_source->writeLine(child_code);
             }
-            if (scode)
-                m_source->writeLine(scode.value());
+            else
+            {
+                scode = child->GetGenerator()->CommonConstruction(child_code);
+                if (!scode && is_cpp())
+                {
+                    result = child->GetGenerator()->GenConstruction(child.get());
+                    if (result)
+                        scode = *result;
+                }
+                if (scode)
+                    m_source->writeLine(scode.value());
+            }
         }
         EndBrace();
         gen_code.clear();
         gen_code.NodeName().Function("Realize(").EndFunction();
-        m_source->writeLine(gen_code.m_code);
+        m_source->writeLine(gen_code);
         return;
     }
     else if (type == type_tool_dropdown && node->GetChildCount())
     {
         BeginBrace();
+        // BUGBUG: [Randalphwa - 12-31-2022] This is C++ code only!
         m_source->writeLine("wxMenu* menu = new wxMenu;");
         auto menu_node_ptr = g_NodeCreator.NewNode(gen_wxMenu);
         menu_node_ptr->prop_set_value(prop_var_name, "menu");
@@ -125,17 +125,25 @@ void BaseCodeGenerator::GenConstruction(Node* node)
             child->SetParent(menu_node_ptr.get());
             if (auto gen = child->GetNodeDeclaration()->GetGenerator(); gen)
             {
-                gen_code.clear();
-                scode = gen->CommonConstruction(gen_code);
-                if (!scode && is_cpp())
+                Code child_code(child.get(), m_language);
+                if (gen->ConstructionCode(child_code))
                 {
-                    result = gen->GenConstruction(child.get());
-                    if (result)
-                        scode = *result;
+                    m_source->writeLine(child_code);
                 }
-                if (scode)
-                    m_source->writeLine(scode.value());
+                else
+                {
+                    scode = gen->CommonConstruction(child_code);
+                    if (!scode && is_cpp())
+                    {
+                        result = gen->GenConstruction(child.get());
+                        if (result)
+                            scode = *result;
+                    }
+                    if (scode)
+                        m_source->writeLine(scode.value());
+                }
             }
+
             GenSettings(child.get());
             // A submenu can have children
             if (child->GetChildCount())
@@ -297,20 +305,30 @@ void BaseCodeGenerator::GenConstruction(Node* node)
             if (type == aftercode_types[idx])
             {
                 gen_code.clear();
-                scode = generator->CommonAdditionalCode(gen_code, code_after_children);
-                if (!scode)
+                if (generator->AfterChildrenCode(gen_code))
                 {
-                    if (m_language == GEN_LANG_CPLUSPLUS)
-                        result = generator->GenAdditionalCode(code_after_children, node);
-                    else
-                        result = generator->GenAdditionalCode(code_after_children, node, m_language);
-                    if (result)
-                        scode = result.value();
+                    if (gen_code.size())
+                    {
+                        m_source->writeLine(gen_code);
+                    }
                 }
-
-                if (scode && scode.value().size())
+                else
                 {
-                    m_source->writeLine(scode.value(), indent::auto_keep_whitespace);
+                    scode = generator->CommonAdditionalCode(gen_code, code_after_children);
+                    if (!scode)
+                    {
+                        if (m_language == GEN_LANG_CPLUSPLUS)
+                            result = generator->GenAdditionalCode(code_after_children, node);
+                        else
+                            result = generator->GenAdditionalCode(code_after_children, node, m_language);
+                        if (result)
+                            scode = result.value();
+                    }
+
+                    if (scode && scode.value().size())
+                    {
+                        m_source->writeLine(scode.value(), indent::auto_keep_whitespace);
+                    }
                 }
                 m_source->writeLine();
                 break;
@@ -445,23 +463,35 @@ void BaseCodeGenerator::GenSettings(Node* node)
     size_t auto_indent = indent::auto_keep_whitespace;
     auto generator = node->GetGenerator();
 
-    Code gen_code(node, m_language);
-    auto scode = generator->CommonSettings(gen_code);
+    Code code(node, m_language);
     std::optional<ttlib::cstr> result;
-
-    if (!scode)
+    if (generator->SettingsCode(code))
     {
-        if (m_language == GEN_LANG_CPLUSPLUS)
-            result = generator->GenSettings(node, auto_indent);
-        else
-            result = generator->GenSettings(node, auto_indent, m_language);
-        if (result)
-            scode = result.value();
+        if (code.size())
+        {
+            m_source->writeLine(code);
+        }
     }
-
-    if (scode && scode->size())
+    else
     {
-        m_source->writeLine(scode.value(), auto_indent);
+        if (auto scode = generator->CommonSettings(code); scode)
+        {
+            if (code.size())
+            {
+                m_source->writeLine(code);
+            }
+        }
+        else
+        {
+            if (m_language == GEN_LANG_CPLUSPLUS)
+                result = generator->GenSettings(node, auto_indent);
+            else
+                result = generator->GenSettings(node, auto_indent, m_language);
+            if (result)
+            {
+                m_source->writeLine(result.value(), auto_indent);
+            }
+        }
     }
 
     if (node->get_prop_ptr(prop_window_extra_style))
@@ -473,10 +503,10 @@ void BaseCodeGenerator::GenSettings(Node* node)
                 m_source->writeLine(result.value());
             }
         }
-        gen_code.clear();
-        gen_code.GenWindowSettings();
-        if (gen_code.size())
-            m_source->writeLine(gen_code.m_code, indent::auto_keep_whitespace);
+        code.clear();
+        code.GenWindowSettings();
+        if (code.size())
+            m_source->writeLine(code);
     }
 }
 
@@ -484,14 +514,21 @@ bool BaseCodeGenerator::GenAfterChildren(Node* node, bool need_closing_brace)
 {
     auto generator = node->GetGenerator();
     Code gen_code(node, m_language);
-    auto scode = generator->CommonAfterChildren(gen_code);
+    std::optional<ttlib::sview> scode;
+    if (generator->AfterChildrenCode(gen_code))
+    {
+        scode = gen_code.m_code;
+    }
+    else
+    {
+        scode = generator->CommonAfterChildren(gen_code);
+    }
+
     std::optional<ttlib::cstr> result;
     if (!scode)
     {
         if (is_cpp())
             result = generator->GenAfterChildren(node);
-        else if (m_language == GEN_LANG_PYTHON)
-            result = generator->GenPythonAfterChildren(node);
         if (result)
             scode = result.value();
     }
@@ -572,27 +609,33 @@ void BaseCodeGenerator::GenParentSizer(Node* node, bool need_closing_brace)
     auto generator = declaration->GetGenerator();
 
     Code code(node, m_language);
-    auto scode = generator->CommonAdditionalCode(code, code_after_children);
-    std::optional<ttlib::cstr> result;
-    if (!scode)
+    if (generator->AfterChildrenCode(code))
     {
-        if (m_language == GEN_LANG_CPLUSPLUS)
+        m_source->writeLine(code);
+    }
+    else
+    {
+        auto scode = generator->CommonAdditionalCode(code, code_after_children);
+        std::optional<ttlib::cstr> result;
+        if (!scode)
         {
-            if (result = generator->GenAdditionalCode(code_after_children, node); result)
-                scode = result.value();
+            if (m_language == GEN_LANG_CPLUSPLUS)
+            {
+                if (result = generator->GenAdditionalCode(code_after_children, node); result)
+                    scode = result.value();
+            }
+            else
+            {
+                if (result = generator->GenAdditionalCode(code_after_children, node, m_language); result)
+                    scode = result.value();
+            }
         }
-        else
+
+        if (scode && scode.value().size())
         {
-            if (result = generator->GenAdditionalCode(code_after_children, node, m_language); result)
-                scode = result.value();
+            m_source->writeLine(scode.value(), indent::auto_keep_whitespace);
         }
     }
-
-    if (scode && scode.value().size())
-    {
-        m_source->writeLine(scode.value(), indent::auto_keep_whitespace);
-    }
-
     code.clear();
 
     // Code for spacer's is handled by the component's GenConstruction() call

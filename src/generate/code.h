@@ -66,7 +66,7 @@ public:
             m_break_at = 100000;  // initialize this high enough that no line will break unless SetBreakAt() is called
         }
     }
-    auto size() { return m_code.size(); }
+    auto size() const { return m_code.size(); }
 
     bool is_cpp() const { return m_language == GEN_LANG_CPLUSPLUS; }
     bool is_python() const { return m_language == GEN_LANG_PYTHON; }

@@ -24,8 +24,8 @@ wxObject* PanelFormGenerator::CreateMockup(Node* node, wxObject* parent)
     if (node->HasValue(prop_extra_style))
     {
         int ex_style = 0;
-        // Can't use multiview because GetConstantAsInt() searches an unordered_map which requires a std::string to pass to
-        // it
+        // Can't use multiview because GetConstantAsInt() searches an unordered_map which
+        // requires a std::string to pass to it
         ttlib::multistr mstr(node->value(prop_extra_style), '|');
         for (auto& iter: mstr)
         {
@@ -39,8 +39,9 @@ wxObject* PanelFormGenerator::CreateMockup(Node* node, wxObject* parent)
     return widget;
 }
 
-bool PanelFormGenerator::CodeConstruction(Code& code)
+bool PanelFormGenerator::ConstructionCode(Code& code)
 {
+    // Note: Form construction is called before any indentation is set
     if (code.is_cpp())
     {
         code.Str("bool ").Str((prop_class_name)) += "::Create";
@@ -52,7 +53,6 @@ bool PanelFormGenerator::CodeConstruction(Code& code)
     }
     else
     {
-        // Note: this code is called before any indentation is set
         code.Add("class ").NodeName().Add("(wx.Panel):\n");
         code.Tab().Add("def __init__(self, parent):").Eol().Tab(2);
         code << "wx.Panel.__init__(self, parent, id=";
@@ -83,104 +83,105 @@ bool PanelFormGenerator::CodeConstruction(Code& code)
     return true;
 }
 
-std::optional<ttlib::cstr> PanelFormGenerator::GenAdditionalCode(GenEnum::GenCodeType /* cmd */, Node* /* node */)
+bool PanelFormGenerator::AfterChildrenCode(Code& code)
 {
-    FAIL_MSG("This function should NOT be called any more -- see CodeAdditionalCode() below")
+    Node* panel;
+    auto* node = code.node();
+    if (node->IsForm())
+    {
+        panel = node;
+        ASSERT_MSG(panel->GetChildCount(), "Trying to generate code for a wxPanel with no children.")
+        if (!panel->GetChildCount())
+            return true;  // empty dialog, so nothing to do
+        ASSERT_MSG(panel->GetChild(0)->IsSizer(), "Expected first child of a wxPanel to be a sizer.");
+        if (panel->GetChild(0)->IsSizer())
+            node = panel->GetChild(0);
+    }
+    else
+    {
+        panel = node->get_form();
+    }
 
-    return {};
+    const auto min_size = panel->prop_as_wxSize(prop_minimum_size);
+    const auto max_size = panel->prop_as_wxSize(prop_maximum_size);
+    const auto size = panel->prop_as_wxSize(prop_size);
+
+    if (min_size == wxDefaultSize && max_size == wxDefaultSize)
+    {
+        code.FormFunction("SetSizerAndFit(").NodeName(node).EndFunction();
+    }
+    else
+    {
+        code.FormFunction("SetSizer(").NodeName(node).EndFunction();
+        if (min_size != wxDefaultSize)
+        {
+            code.Eol().FormFunction("SetMinSize(").WxSize(prop_minimum_size).EndFunction();
+        }
+        if (max_size != wxDefaultSize)
+        {
+            code.Eol().FormFunction("SetMaxSize(").WxSize(prop_maximum_size).EndFunction();
+        }
+        code.Eol().FormFunction("Fit(").EndFunction();
+    }
+
+    if (size != wxDefaultSize)
+    {
+        code.Eol().FormFunction("SetSize(").WxSize(prop_size).EndFunction();
+    }
+
+    return true;
 }
 
-bool PanelFormGenerator::CodeAdditionalCode(Code& code, GenEnum::GenCodeType cmd)
+bool PanelFormGenerator::HeaderCode(Code& code)
 {
-    if (cmd == code_header && code.is_cpp())
+    if (!code.is_cpp())
+        return false;
+
+    code.NodeName() += "() {}";
+    code.Eol().Str("const wxPoint& pos = ").Pos(prop_pos).Comma();
+    code.Str("const wxSize& size = ").WxSize(prop_size).Comma();
+    code.Str("long style = ");
+    if (code.HasValue(prop_style))
+        code.Str(prop_style);
+    else
+        code += "wxTAB_TRAVERSAL";
+    code.Comma().Str("const wxString &name = ");
+    if (code.HasValue(prop_window_name))
+        code.QuotedString(prop_window_name);
+    else
+        code.Str("wxPanelNameStr");
+    code += ")";
+    code.OpenBrace().Str("Create(parent, id, pos, size, style, name);").CloseBrace();
+    code.Eol() += "bool Create(wxWindow *parent, ";
+    code.Str("wxWindowID id = ").Str(prop_id).Comma();
+    code.Str("const wxPoint& pos = ").Pos(prop_pos).Comma();
+    code.Str("const wxSize& size = ").WxSize(prop_size).Comma();
+    code.Str("long style = ");
+    if (code.HasValue(prop_style))
+        code.Str(prop_style);
+    else
+        code.Str("wxTAB_TRAVERSAL");
+    code.Comma().Str("const wxString &name = ");
+    if (code.HasValue(prop_window_name))
+        code.QuotedString(prop_window_name);
+    else
+        code.Str("wxPanelNameStr");
+    code += ");\n\n";
+    return true;
+}
+
+bool PanelFormGenerator::BaseClassNameCode(Code& code)
+{
+    if (code.HasValue(prop_derived_class))
     {
-        code.NodeName() += "() {}";
-        code.Eol().Str("const wxPoint& pos = ").Pos(prop_pos).Comma();
-        code.Str("const wxSize& size = ").WxSize(prop_size).Comma();
-        code.Str("long style = ");
-        if (code.HasValue(prop_style))
-            code.Str(prop_style);
-        else
-            code += "wxTAB_TRAVERSAL";
-        code.Comma().Str("const wxString &name = ");
-        if (code.HasValue(prop_window_name))
-            code.QuotedString(prop_window_name);
-        else
-            code.Str("wxPanelNameStr");
-        code += ")";
-        code.OpenBrace().Str("Create(parent, id, pos, size, style, name);").CloseBrace();
-        code.Eol() += "bool Create(wxWindow *parent, ";
-        code.Str("wxWindowID id = ").Str(prop_id).Comma();
-        code.Str("const wxPoint& pos = ").Pos(prop_pos).Comma();
-        code.Str("const wxSize& size = ").WxSize(prop_size).Comma();
-        code.Str("long style = ");
-        if (code.HasValue(prop_style))
-            code.Str(prop_style);
-        else
-            code.Str("wxTAB_TRAVERSAL");
-        code.Comma().Str("const wxString &name = ");
-        if (code.HasValue(prop_window_name))
-            code.QuotedString(prop_window_name);
-        else
-            code.Str("wxPanelNameStr");
-        code += ");\n\n";
-        return true;
+        code.Str((prop_derived_class));
     }
-    else if (cmd == code_after_children)
-    {
-        Node* panel;
-        auto* node = code.node();
-        if (node->IsForm())
-        {
-            panel = node;
-            ASSERT_MSG(panel->GetChildCount(), "Trying to generate code for a wxPanel with no children.")
-            if (!panel->GetChildCount())
-                return true;  // empty dialog, so nothing to do
-            ASSERT_MSG(panel->GetChild(0)->IsSizer(), "Expected first child of a wxPanel to be a sizer.");
-            if (panel->GetChild(0)->IsSizer())
-                node = panel->GetChild(0);
-        }
-        else
-        {
-            panel = node->get_form();
-        }
-
-        const auto min_size = panel->prop_as_wxSize(prop_minimum_size);
-        const auto max_size = panel->prop_as_wxSize(prop_maximum_size);
-        const auto size = panel->prop_as_wxSize(prop_size);
-
-        if (min_size == wxDefaultSize && max_size == wxDefaultSize)
-        {
-            code.FormFunction("SetSizerAndFit(").NodeName(node).EndFunction();
-        }
-        else
-        {
-            code.FormFunction("SetSizer(").NodeName(node).EndFunction();
-            if (min_size != wxDefaultSize)
-            {
-                code.Eol().FormFunction("SetMinSize(").WxSize(prop_minimum_size).EndFunction();
-            }
-            if (max_size != wxDefaultSize)
-            {
-                code.Eol().FormFunction("SetMaxSize(").WxSize(prop_maximum_size).EndFunction();
-            }
-            code.Eol().FormFunction("Fit(").EndFunction();
-        }
-
-        if (size != wxDefaultSize)
-        {
-            code.Eol().FormFunction("SetSize(").WxSize(prop_size).EndFunction();
-        }
-
-        return true;
-    }
-    else if (cmd == code_base_class)
+    else
     {
         code += "wxPanel";
-        return true;
     }
 
-    return false;
+    return true;
 }
 
 int PanelFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)

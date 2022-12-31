@@ -14,13 +14,13 @@ class PanelFormGenerator : public BaseGenerator
 public:
     wxObject* CreateMockup(Node* node, wxObject* parent) override;
 
-    bool CodeConstruction(Code&) override;
-    bool CodeAdditionalCode(Code&, GenEnum::GenCodeType cmd) override;
-
-    std::optional<ttlib::cstr> GenAdditionalCode(GenEnum::GenCodeType cmd, Node* node) override;
-
-    bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr) override;
+    bool ConstructionCode(Code&) override;
+    bool AfterChildrenCode(Code&) override;
+    bool HeaderCode(Code&) override;
+    bool BaseClassNameCode(Code&) override;
 
     int GenXrcObject(Node*, pugi::xml_node& /* object */, size_t /* xrc_flags */) override;
+
+    bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr) override;
     void RequiredHandlers(Node*, std::set<std::string>& /* handlers */) override;
 };

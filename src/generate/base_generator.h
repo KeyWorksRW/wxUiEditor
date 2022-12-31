@@ -77,14 +77,27 @@ public:
     MockupParent* GetMockup();
 
     // Generate the code used to construct the object using either C++ or Python
-    virtual bool CodeConstruction(Code&) { return false; }
+    virtual bool ConstructionCode(Code&) { return false; }
 
     // Generate any settings the object needs using either C++ or Python
-    virtual bool CodeSettings(Code&) { return false; }
+    virtual bool SettingsCode(Code&) { return false; }
+
+    // Generate code after any children have been constructed
+    //
+    // Code will be written with indent::auto_keep_whitespace set
+    virtual bool AfterChildrenCode(Code&) { return false; }
+
+    // Generate code to add to a C++ header file -- this is normally the class header
+    // definition
+    virtual bool HeaderCode(Code&) { return false; }
+
+    // Called when generating a C++ header -- this should return the actual name of the class
+    // or it's derived class name. I.e., PanelForm adds wxPanel.
+    virtual bool BaseClassNameCode(Code&) { return false; }
 
     // Generate either C++ or Python code for any additiional code the object needs.
     // The GenCodeType parameter indicates what type of code is needed.
-    virtual bool CodeAdditionalCode(Code&, GenEnum::GenCodeType /* command */) { return false; }
+    virtual bool AdditionalCode(Code&, GenEnum::GenCodeType /* command */) { return false; }
 
     // Generate the code used to construct the object using either C++ or Python
     virtual std::optional<ttlib::sview> CommonConstruction(Code&) { return {}; }

@@ -1337,7 +1337,7 @@ void BaseCodeGenerator::GenerateClassHeader(Node* form_node, const EventVector& 
     if (form_node->HasValue(prop_class_decoration))
         code.Str(prop_class_decoration) += " ";
     code.Str(prop_class_name) += " : public ";
-    if (generator->CodeAdditionalCode(code, code_base_class))
+    if (generator->BaseClassNameCode(code))
     {
         m_header->writeLine(code.GetCode(), indent::auto_keep_whitespace);
     }
@@ -1370,11 +1370,14 @@ void BaseCodeGenerator::GenerateClassHeader(Node* form_node, const EventVector& 
     }
 
     code.clear();
-    if (generator->CodeAdditionalCode(code, code_header))
+    if (generator->HeaderCode(code))
     {
         m_header->writeLine(code.GetCode(), indent::auto_keep_whitespace);
     }
-
+    else if (generator->AdditionalCode(code, code_header))
+    {
+        m_header->writeLine(code.GetCode(), indent::auto_keep_whitespace);
+    }
     else if (auto result = generator->GenAdditionalCode(code_header, form_node); result)
     {
         m_header->writeLine(result.value(), indent::auto_keep_whitespace);
@@ -1473,7 +1476,7 @@ void BaseCodeGenerator::GenerateClassConstructor(Node* form_node, const EventVec
 
     auto* generator = form_node->GetGenerator();
     Code code(form_node, GEN_LANG_CPLUSPLUS);
-    if (generator->CodeConstruction(code))
+    if (generator->ConstructionCode(code))
     {
         m_source->writeLine(code.GetCode(), indent::auto_keep_whitespace);
         m_source->Indent();
@@ -1484,7 +1487,7 @@ void BaseCodeGenerator::GenerateClassConstructor(Node* form_node, const EventVec
         }
 
         code.clear();
-        if (generator->CodeSettings(code))
+        if (generator->SettingsCode(code))
         {
             m_source->writeLine(code.GetCode());
             m_source->writeLine();
@@ -1555,7 +1558,7 @@ void BaseCodeGenerator::GenerateClassConstructor(Node* form_node, const EventVec
     }
 
     code.clear();
-    if (generator->CodeAdditionalCode(code, code_after_children))
+    if (generator->AfterChildrenCode(code))
     {
         if (code.size())
         {

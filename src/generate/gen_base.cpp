@@ -1339,7 +1339,7 @@ void BaseCodeGenerator::GenerateClassHeader(Node* form_node, const EventVector& 
     code.Str(prop_class_name) += " : public ";
     if (generator->BaseClassNameCode(code))
     {
-        m_header->writeLine(code.GetCode(), indent::auto_keep_whitespace);
+        m_header->writeLine(code);
     }
     else if (auto result = generator->GenAdditionalCode(code_base_class, form_node); result)
     {
@@ -1372,11 +1372,11 @@ void BaseCodeGenerator::GenerateClassHeader(Node* form_node, const EventVector& 
     code.clear();
     if (generator->HeaderCode(code))
     {
-        m_header->writeLine(code.GetCode(), indent::auto_keep_whitespace);
+        m_header->writeLine(code);
     }
     else if (generator->AdditionalCode(code, code_header))
     {
-        m_header->writeLine(code.GetCode(), indent::auto_keep_whitespace);
+        m_header->writeLine(code);
     }
     else if (auto result = generator->GenAdditionalCode(code_header, form_node); result)
     {
@@ -1478,7 +1478,7 @@ void BaseCodeGenerator::GenerateClassConstructor(Node* form_node, const EventVec
     Code code(form_node, GEN_LANG_CPLUSPLUS);
     if (generator->ConstructionCode(code))
     {
-        m_source->writeLine(code.GetCode(), indent::auto_keep_whitespace);
+        m_source->writeLine(code);
         m_source->Indent();
 
         if (form_node->isGen(gen_wxFrame))
@@ -1489,7 +1489,7 @@ void BaseCodeGenerator::GenerateClassConstructor(Node* form_node, const EventVec
         code.clear();
         if (generator->SettingsCode(code))
         {
-            m_source->writeLine(code.GetCode());
+            m_source->writeLine(code);
             m_source->writeLine();
         }
         else
@@ -1563,7 +1563,7 @@ void BaseCodeGenerator::GenerateClassConstructor(Node* form_node, const EventVec
         if (code.size())
         {
             m_source->writeLine();
-            m_source->writeLine(code.GetCode(), indent::auto_keep_whitespace);
+            m_source->writeLine(code);
         }
     }
     else if (auto result = generator->GenAdditionalCode(code_after_children, form_node); result)
@@ -1973,17 +1973,30 @@ void BaseCodeGenerator::GenCtxConstruction(Node* node)
         if (node->isGen(gen_submenu))
         {
             gen_code.clear();
-            scode = generator->CommonAdditionalCode(gen_code, code_after_children);
-            if (!scode && is_cpp())
+            if (generator->AfterChildrenCode(gen_code))
             {
-                if (result = generator->GenAdditionalCode(code_after_children, node); result)
-                    scode = *result;
+                ASSERT_MSG(gen_code.size(), "AfterChildrenCode() returned true, but no code was generated");
+                if (gen_code.size())
+                {
+                    if (!node->isGen(gen_wxMenuItem))
+                        m_source->writeLine();
+                    m_source->writeLine(gen_code);
+                }
             }
-            if (scode && scode->size())
+            else
             {
-                if (!node->isGen(gen_wxMenuItem))
-                    m_source->writeLine();
-                m_source->writeLine(scode.value(), indent::auto_keep_whitespace);
+                scode = generator->CommonAdditionalCode(gen_code, code_after_children);
+                if (!scode && is_cpp())
+                {
+                    if (result = generator->GenAdditionalCode(code_after_children, node); result)
+                        scode = *result;
+                }
+                if (scode && scode->size())
+                {
+                    if (!node->isGen(gen_wxMenuItem))
+                        m_source->writeLine();
+                    m_source->writeLine(scode.value(), indent::auto_keep_whitespace);
+                }
             }
         }
         m_source->writeLine();

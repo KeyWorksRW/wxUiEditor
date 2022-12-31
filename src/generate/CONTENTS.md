@@ -23,7 +23,7 @@ The following tables list classes, objects and functions that wxUiEditor can gen
 | wxDialog | yes| yes | yes | gen_dialog.cpp |
 | wxFrame | yes| yes | yes | gen_frame.cpp |
 | wxMenuBar | yes| ?? | yes | menu_widgets.cpp |
-| wxPanel | yes| ?? | yes | gen_panel_form.cpp |
+| wxPanel | yes| yes | yes | gen_panel_form.cpp |
 | wxPopupTransientWindow | yes| ?? | no | gen_popup_trans_win.cpp |
 | wxRibbonBar | yes| ?? | yes | ribbon_widgets.cpp |
 | wxToolBar | yes| ?? | yes | gen_toolbar.cpp |
@@ -144,7 +144,7 @@ The following tables list classes, objects and functions that wxUiEditor can gen
 | RibbonGalleryItem | yes | ?? | yes | ribbon_widgets.cpp |
 | RibbonTool | yes | ?? | yes | ribbon_widgets.cpp |
 | Separator | yes | ?? | yes | menu_widgets.cpp |
-| Spacer | yes | ?? | yes | gen_spacer_sizer.cpp |
+| Spacer | yes | yes | yes | gen_spacer_sizer.cpp |
 | SubMenu | yes | yes | yes | gen_submenu.cpp |
 | ToolDropDown | yes | yes | yes | gen_toolbar.cpp |
 | ToolGenerator | yes | yes | yes | gen_toolbar.cpp |

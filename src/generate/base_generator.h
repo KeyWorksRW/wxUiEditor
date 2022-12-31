@@ -138,7 +138,6 @@ public:
     //
     // Code will be written with indent::none set
     virtual std::optional<ttlib::cstr> GenAfterChildren(Node* /* node */) { return {}; }
-    virtual std::optional<ttlib::cstr> GenPythonAfterChildren(Node* /* node */) { return {}; }
 
     // Generate code to bind the event to a handler -- only override if you need to do
     // something special

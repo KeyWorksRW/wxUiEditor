@@ -14,10 +14,8 @@ class PanelFormGenerator : public BaseGenerator
 public:
     wxObject* CreateMockup(Node* node, wxObject* parent) override;
 
-    // Return true if all construction and settings code was written to src_code
-    bool GenConstruction(Node*, BaseCodeGenerator* code_gen) override;
-
-    bool GenPythonForm(Code&) override;
+    bool CodeConstruction(Code&) override;
+    bool CodeAdditionalCode(Code&, GenEnum::GenCodeType cmd) override;
 
     std::optional<ttlib::cstr> GenAdditionalCode(GenEnum::GenCodeType cmd, Node* node) override;
 

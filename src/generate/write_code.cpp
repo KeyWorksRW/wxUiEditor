@@ -28,6 +28,13 @@ void WriteCode::writeLine(const Code& code)
     ttlib::multiview lines(code.GetCode(), '\n');
     for (auto& line: lines)
     {
+        // Remove any trailing tabs -- this occurs when Code::Eol() is called when an indent
+        // is active.
+        while (line.size() && line.back() == '\t')
+        {
+            line.remove_suffix(1);
+        }
+
         if (line.size())
         {
             // Don't indent #if, #else or #endif
@@ -45,7 +52,8 @@ void WriteCode::writeLine(const Code& code)
                 {
                     doWrite(TabSpaces);
                     line.remove_prefix(1);
-                } while (line[0] == '\t');
+                    ASSERT_MSG(line.size(), "Line ended with nothing but tabs.");
+                } while (line.size() && line[0] == '\t');
             }
 
             doWrite(line);

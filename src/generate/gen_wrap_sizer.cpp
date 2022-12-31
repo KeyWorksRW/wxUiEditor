@@ -27,25 +27,6 @@ wxObject* WrapSizerGenerator::CreateMockup(Node* node, wxObject* parent)
     return sizer;
 }
 
-std::optional<ttlib::sview> WrapSizerGenerator::CommonConstruction(Code& code)
-{
-    if (code.is_cpp() && code.is_local_var())
-        code << "auto* ";
-    code.NodeName().CreateClass().as_string(prop_orientation).Comma();
-    if (code.HasValue(prop_wrap_flags))
-        code.as_string(prop_wrap_flags);
-    else
-        code << "0";
-    code.EndFunction();
-
-    if (code.HasValue(prop_minimum_size))
-    {
-        code.Eol().NodeName().Function("SetMinSize(").WxSize(prop_minimum_size).EndFunction();
-    }
-
-    return code.m_code;
-}
-
 void WrapSizerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/, Node* node, bool /* is_preview */)
 {
     if (node->as_bool(prop_hide_children))
@@ -55,11 +36,28 @@ void WrapSizerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*
     }
 }
 
-std::optional<ttlib::sview> WrapSizerGenerator::CommonAfterChildren(Code& code)
+bool WrapSizerGenerator::ConstructionCode(Code& code)
+{
+    code.AddAuto().NodeName().CreateClass().as_string(prop_orientation).Comma();
+    if (code.HasValue(prop_wrap_flags))
+        code.Str(prop_wrap_flags);
+    else
+        code += "0";
+    code.EndFunction();
+
+    if (code.HasValue(prop_minimum_size))
+    {
+        code.Eol().NodeName().Function("SetMinSize(").WxSize(prop_minimum_size).EndFunction();
+    }
+
+    return true;
+}
+
+bool WrapSizerGenerator::AfterChildrenCode(Code& code)
 {
     if (code.IsTrue(prop_hide_children))
     {
-        code.NodeName().Function("ShowItems(").Str(code.is_cpp() ? "false" : "False").EndFunction();
+        code.NodeName().Function("ShowItems(").AddFalse().EndFunction();
     }
 
     auto parent = code.node()->GetParent();
@@ -74,8 +72,7 @@ std::optional<ttlib::sview> WrapSizerGenerator::CommonAfterChildren(Code& code)
         {
             if (GetParentName(code.node()) != "this")
             {
-                code.ParentName().Add(".");
-                code.Function("SetSizerAndFit(").NodeName().EndFunction();
+                code.ParentName().Function("SetSizerAndFit(").NodeName().EndFunction();
             }
             else
             {
@@ -84,7 +81,7 @@ std::optional<ttlib::sview> WrapSizerGenerator::CommonAfterChildren(Code& code)
         }
     }
 
-    return code.m_code;
+    return true;
 }
 
 bool WrapSizerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)

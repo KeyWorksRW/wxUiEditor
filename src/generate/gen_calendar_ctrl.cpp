@@ -34,7 +34,7 @@ std::optional<ttlib::sview> CalendarCtrlGenerator::CommonConstruction(Code& code
     if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
     code.NodeName().CreateClass();
-    code.GetParentName().Comma().as_string(prop_id).Comma().Add("wxDefaultDateTime");
+    code.ValidParentName().Comma().as_string(prop_id).Comma().Add("wxDefaultDateTime");
     code.PosSizeFlags(true);
 
     return code.m_code;

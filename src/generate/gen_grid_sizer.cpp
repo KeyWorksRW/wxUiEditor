@@ -30,25 +30,6 @@ wxObject* GridSizerGenerator::CreateMockup(Node* node, wxObject* parent)
     return sizer;
 }
 
-std::optional<ttlib::sview> GridSizerGenerator::CommonConstruction(Code& code)
-{
-    if (code.is_cpp() && code.is_local_var())
-        code << "auto* ";
-    code.NodeName().CreateClass();
-    if (code.node()->prop_as_int(prop_rows) != 0)
-    {
-        code.as_string(prop_rows).Comma();
-    }
-    code.as_string(prop_cols).Comma().as_string(prop_vgap).Comma().as_string(prop_hgap).EndFunction();
-
-    if (code.HasValue(prop_minimum_size))
-    {
-        code.Eol().NodeName().Function("SetMinSize(").WxSize(prop_minimum_size).EndFunction();
-    }
-
-    return code.m_code;
-}
-
 void GridSizerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/, Node* node, bool /* is_preview */)
 {
     if (node->as_bool(prop_hide_children))
@@ -58,17 +39,34 @@ void GridSizerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*
     }
 }
 
-std::optional<ttlib::sview> GridSizerGenerator::CommonAfterChildren(Code& code)
+bool GridSizerGenerator::ConstructionCode(Code& code)
+{
+    code.AddAuto().NodeName().CreateClass();
+    if (code.node()->prop_as_int(prop_rows) != 0)
+    {
+        code.Str(prop_rows).Comma();
+    }
+    code.Str(prop_cols).Comma().Str(prop_vgap).Comma().Str(prop_hgap).EndFunction();
+
+    if (code.HasValue(prop_minimum_size))
+    {
+        code.Eol().NodeName().Function("SetMinSize(").WxSize(prop_minimum_size).EndFunction();
+    }
+
+    return true;
+}
+
+bool GridSizerGenerator::AfterChildrenCode(Code& code)
 {
     if (code.IsTrue(prop_hide_children))
     {
-        code.NodeName().Function("ShowItems(").Str(code.is_cpp() ? "false" : "False").EndFunction();
+        code.NodeName().Function("ShowItems(").AddFalse().EndFunction();
     }
 
     auto parent = code.node()->GetParent();
     if (!parent->IsSizer() && !parent->isGen(gen_wxDialog) && !parent->isGen(gen_PanelForm))
     {
-        code.NewLine(true);
+        code.Eol(eol_if_needed);
         if (parent->isGen(gen_wxRibbonPanel))
         {
             code.ParentName().Function("SetSizerAndFit(").NodeName().EndFunction();
@@ -86,7 +84,7 @@ std::optional<ttlib::sview> GridSizerGenerator::CommonAfterChildren(Code& code)
         }
     }
 
-    return code.m_code;
+    return true;
 }
 
 bool GridSizerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)

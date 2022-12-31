@@ -26,23 +26,6 @@ wxObject* BoxSizerGenerator::CreateMockup(Node* node, wxObject* parent)
     return sizer;
 }
 
-std::optional<ttlib::sview> BoxSizerGenerator::CommonConstruction(Code& code)
-{
-    if (code.is_cpp() && code.is_local_var())
-        code << "auto* ";
-
-    code.NodeName().CreateClass().Add(prop_orientation).EndFunction();
-
-    auto min_size = code.m_node->prop_as_wxSize(prop_minimum_size);
-    if (min_size.GetX() != -1 || min_size.GetY() != -1)
-    {
-        code.Eol().Tab().NodeName().Function("SetMinSize(") << min_size.GetX() << ", " << min_size.GetY();
-        code.EndFunction();
-    }
-
-    return code.m_code;
-}
-
 void BoxSizerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/, Node* node, bool /* is_preview */)
 {
     if (node->as_bool(prop_hide_children))
@@ -52,7 +35,21 @@ void BoxSizerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/
     }
 }
 
-std::optional<ttlib::sview> BoxSizerGenerator::CommonAfterChildren(Code& code)
+bool BoxSizerGenerator::ConstructionCode(Code& code)
+{
+    code.AddAuto().NodeName().CreateClass().Add(prop_orientation).EndFunction();
+
+    auto min_size = code.m_node->prop_as_wxSize(prop_minimum_size);
+    if (min_size.GetX() != -1 || min_size.GetY() != -1)
+    {
+        code.Eol().Tab().NodeName().Function("SetMinSize(") << min_size.GetX() << ", " << min_size.GetY();
+        code.EndFunction();
+    }
+
+    return true;
+}
+
+bool BoxSizerGenerator::AfterChildrenCode(Code& code)
 {
     if (code.IsTrue(prop_hide_children))
     {
@@ -75,7 +72,7 @@ std::optional<ttlib::sview> BoxSizerGenerator::CommonAfterChildren(Code& code)
         {
             if (GetParentName(code.node()) != "this")
             {
-                code.GetParentName().Function("SetSizerAndFit(");
+                code.ValidParentName().Function("SetSizerAndFit(");
             }
             else
             {
@@ -85,7 +82,7 @@ std::optional<ttlib::sview> BoxSizerGenerator::CommonAfterChildren(Code& code)
         }
     }
 
-    return code.m_code;
+    return true;
 }
 
 bool BoxSizerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)

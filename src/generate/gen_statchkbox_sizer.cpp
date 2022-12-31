@@ -77,13 +77,13 @@ bool StaticCheckboxBoxSizerGenerator::OnPropertyChange(wxObject* /* widget */, N
     return false;
 }
 
-std::optional<ttlib::sview> StaticCheckboxBoxSizerGenerator::CommonConstruction(Code& code)
+bool StaticCheckboxBoxSizerGenerator::ConstructionCode(Code& code)
 {
     Node* node = code.node();
     if (code.is_cpp())
     {
         code.as_string(prop_checkbox_var_name) << " = new wxCheckBox(";
-        code.GetParentName().Comma().as_string(prop_id).Comma().QuotedString(prop_label).EndFunction();
+        code.ValidParentName().Comma().as_string(prop_id).Comma().QuotedString(prop_label).EndFunction();
 
         if (auto result = GenValidatorSettings(node); result)
         {
@@ -96,8 +96,7 @@ std::optional<ttlib::sview> StaticCheckboxBoxSizerGenerator::CommonConstruction(
         code.Str("# wxPython currently does not support a checkbox as a static box label").Eol();
     }
 
-    if (code.is_cpp() && code.is_local_var())
-        code << "auto* ";
+    code.AddAuto();
 
     ttlib::cstr parent_name(code.is_cpp() ? "this" : "self");
     if (!node->GetParent()->IsForm())
@@ -142,11 +141,10 @@ std::optional<ttlib::sview> StaticCheckboxBoxSizerGenerator::CommonConstruction(
     }
     else
     {
-        code.NodeName().CreateClass(false, "wxStaticBoxSizer").as_string(prop_orientation).Comma().Str(parent_name);
-        auto& label = node->prop_as_string(prop_label);
-        if (label.size())
+        code.NodeName().CreateClass(false, "wxStaticBoxSizer").Str(prop_orientation).Comma().Str(parent_name);
+        if (code.HasValue(prop_label))
         {
-            code.Comma().QuotedString(label);
+            code.Comma().QuotedString(prop_label);
         }
         code.EndFunction();
     }
@@ -156,39 +154,36 @@ std::optional<ttlib::sview> StaticCheckboxBoxSizerGenerator::CommonConstruction(
         code.Eol().NodeName().Function("SetMinSize(").WxSize(prop_minimum_size).EndFunction();
     }
 
-    return code.m_code;
+    return true;
 }
 
-std::optional<ttlib::sview> StaticCheckboxBoxSizerGenerator::CommonSettings(Code& code)
+bool StaticCheckboxBoxSizerGenerator::SettingsCode(Code& code)
 {
     if (code.IsTrue(prop_disabled))
     {
-        if (code.is_cpp())
-            code.NodeName().Function("GetStaticBox()->Enable(false);");
-        else
-            code.NodeName().Function("GetStaticBox().Enable(False)");
+        code.Eol(eol_if_needed).NodeName().Function("GetStaticBox()->Enable(").AddFalse().EndFunction();
     }
 
     if (code.HasValue(prop_tooltip) && code.is_cpp())
     {
-        code.NewLine(true).as_string(prop_checkbox_var_name).Function("SetToolTip(");
+        code.Eol(eol_if_needed).Str(prop_checkbox_var_name).Function("SetToolTip(");
         code.QuotedString(prop_tooltip).EndFunction();
     }
 
-    return code.m_code;
+    return true;
 }
 
-std::optional<ttlib::sview> StaticCheckboxBoxSizerGenerator::CommonAfterChildren(Code& code)
+bool StaticCheckboxBoxSizerGenerator::AfterChildrenCode(Code& code)
 {
     if (code.IsTrue(prop_hide_children))
     {
-        code.NodeName().Function("ShowItems(").Str(code.is_cpp() ? "false" : "False").EndFunction();
+        code.NodeName().Function("ShowItems(").AddFalse().EndFunction();
     }
 
     auto parent = code.node()->GetParent();
     if (!parent->IsSizer() && !parent->isGen(gen_wxDialog) && !parent->isGen(gen_PanelForm))
     {
-        code.NewLine(true);
+        code.Eol(eol_if_needed);
         if (parent->isGen(gen_wxRibbonPanel))
         {
             code.ParentName().Function("SetSizerAndFit(").NodeName().EndFunction();
@@ -207,7 +202,7 @@ std::optional<ttlib::sview> StaticCheckboxBoxSizerGenerator::CommonAfterChildren
         }
     }
 
-    return code.m_code;
+    return true;
 }
 
 bool StaticCheckboxBoxSizerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)

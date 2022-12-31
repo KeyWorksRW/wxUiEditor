@@ -14,64 +14,70 @@
 
 #include "gen_spacer_sizer.h"
 
-std::optional<ttlib::cstr> SpacerGenerator::GenConstruction(Node* node)
+bool SpacerGenerator::ConstructionCode(Code& code)
 {
-    ttlib::cstr code;
-    code << node->GetParent()->get_node_name();
+    auto* node = code.node();
+    code.ParentName();
+    ;
 
     if (node->GetParent()->isGen(gen_wxGridBagSizer))
     {
         auto flags = node->GetSizerFlags();
 
-        code << "->Add(" << node->prop_as_int(prop_width) << ", " << node->prop_as_int(prop_height);
-        code << ", wxGBPosition(" << node->prop_as_int(prop_row) << ", " << node->prop_as_int(prop_column);
-        code << "), wxGBSpan(" << node->prop_as_int(prop_rowspan) << ", " << node->prop_as_int(prop_colspan);
-        code << "), " << flags.GetFlags() << ", " << node->prop_as_int(prop_border_size);
+        code.Function("Add(").Str(prop_width).Comma().Str(prop_height);
+        code.Comma().Add("wxGBPosition(").Str(prop_row).Comma().Str(prop_column) += ")";
+        code.Comma().Add("wxGBSpan(").Str(prop_rowspan).Comma().Str(prop_colspan) += ")";
+        code.Comma().itoa(flags.GetFlags()).Comma().Str(prop_border_size);
         if (node->prop_as_bool(prop_add_default_border))
-            code << " + wxSizerFlags::GetDefaultBorder()";
-        code << ");";
+        {
+            code.Str(" + ").Add("wxSizerFlags").ClassMethod("GetDefaultBorder()");
+        }
+        code.EndFunction();
     }
     else
     {
-        if (node->prop_as_int(prop_proportion) != 0)
+        if (node->as_int(prop_proportion) != 0)
         {
-            code << "->AddStretchSpacer(" << node->prop_as_string(prop_proportion) << ");";
+            code.Function("AddStretchSpacer(").Add(prop_proportion).EndFunction();
         }
         else
         {
             if (node->prop_as_int(prop_width) == node->prop_as_int(prop_height))
             {
-                code << "->AddSpacer(" << node->prop_as_string(prop_width);
+                code.Function("AddSpacer(").Str(prop_width);
             }
             else if (node->GetParent()->HasValue(prop_orientation))
             {
-                code << "->AddSpacer(";
-                if (node->GetParent()->prop_as_string(prop_orientation) == "wxVERTICAL")
+                code.Function("AddSpacer(");
+                if (node->GetParent()->as_string(prop_orientation) == "wxVERTICAL")
                 {
-                    code << node->prop_as_string(prop_height);
+                    code.Str(prop_height);
                 }
                 else
                 {
-                    code << node->prop_as_string(prop_width);
+                    code.Str(prop_width);
                 }
             }
 
             else
             {
-                code << "->Add(" << node->prop_as_string(prop_width);
-                if (node->prop_as_bool(prop_add_default_border))
-                    code << " + wxSizerFlags::GetDefaultBorder()";
-                code << ", " << node->prop_as_string(prop_height);
+                code.Function("Add(").Str(prop_width);
+                if (node->as_bool(prop_add_default_border))
+                {
+                    code.Str(" + ").Add("wxSizerFlags").ClassMethod("GetDefaultBorder()");
+                }
+                code.Comma().Str(prop_height);
             }
 
             if (node->prop_as_bool(prop_add_default_border))
-                code << " + wxSizerFlags::GetDefaultBorder()";
-
-            code << ");";
+            {
+                code.Str(" + ").Add("wxSizerFlags").ClassMethod("GetDefaultBorder()");
+            }
+            code.EndFunction();
         }
     }
 
-    return code;
+    return true;
 }
 
 // ../../wxSnapShot/src/xrc/xh_sizer.cpp

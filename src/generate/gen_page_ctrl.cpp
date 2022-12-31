@@ -161,7 +161,7 @@ std::optional<ttlib::sview> PageCtrlGenerator::CommonConstruction(Code& code)
             {
                 code += gen_code.m_code;
                 code.Eol(eol_if_needed)
-                    .GetParentName()
+                    .ValidParentName()
                     .Function("AddPage(")
                     .Str(child_node->get_node_name())
                     .Comma()

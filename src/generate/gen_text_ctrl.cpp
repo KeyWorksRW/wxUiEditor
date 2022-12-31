@@ -103,7 +103,7 @@ std::optional<ttlib::sview> TextCtrlGenerator::CommonConstruction(Code& code)
     if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
     code.NodeName().CreateClass();
-    code.GetParentName().Comma().as_string(prop_id).Comma().CheckLineLength();
+    code.ValidParentName().Comma().as_string(prop_id).Comma().CheckLineLength();
     code.QuotedString(prop_value);
     code.PosSizeFlags(true);
 

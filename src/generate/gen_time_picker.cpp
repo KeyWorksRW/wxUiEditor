@@ -31,7 +31,7 @@ std::optional<ttlib::sview> TimePickerCtrlGenerator::CommonConstruction(Code& co
     if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
     code.NodeName().CreateClass();
-    code.GetParentName().Comma().as_string(prop_id).Comma().Add("wxDefaultDateTime");
+    code.ValidParentName().Comma().as_string(prop_id).Comma().Add("wxDefaultDateTime");
     code.PosSizeFlags(true, "wxTP_DEFAULT");
 
     return code.m_code;

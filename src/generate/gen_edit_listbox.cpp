@@ -37,7 +37,7 @@ std::optional<ttlib::sview> EditListBoxGenerator::CommonConstruction(Code& code)
     if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
     code.NodeName().CreateClass();
-    code.GetParentName().Comma().as_string(prop_id).Comma().QuotedString(prop_label);
+    code.ValidParentName().Comma().as_string(prop_id).Comma().QuotedString(prop_label);
     code.PosSizeFlags(true);
 
     return code.m_code;

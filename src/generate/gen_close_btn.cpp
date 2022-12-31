@@ -31,7 +31,7 @@ std::optional<ttlib::sview> CloseButtonGenerator::CommonConstruction(Code& code)
     if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
     code.NodeName().Add(" = ").Add("wxBitmapButton") << (code.is_cpp() ? "::" : ".");
-    code.Add("NewCloseButton(").GetParentName().Comma().as_string(prop_id);
+    code.Add("NewCloseButton(").ValidParentName().Comma().as_string(prop_id);
     if (code.HasValue(prop_window_name))
         code.Comma().QuotedString(prop_window_name);
     code.EndFunction();

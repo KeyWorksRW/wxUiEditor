@@ -60,7 +60,7 @@ wxObject* FlexGridSizerGenerator::CreateMockup(Node* node, wxObject* parent)
     return sizer;
 }
 
-std::optional<ttlib::sview> FlexGridSizerGenerator::CommonConstruction(Code& code)
+bool FlexGridSizerGenerator::ConstructionCode(Code& code)
 {
     if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
@@ -127,7 +127,7 @@ std::optional<ttlib::sview> FlexGridSizerGenerator::CommonConstruction(Code& cod
     {
         if (is_within_braces)
             code.CloseBrace();
-        return code.m_code;
+        return true;
     }
 
     code.Eol(eol_if_empty).NodeName().Function("SetFlexibleDirection(").Add(direction).EndFunction();
@@ -137,26 +137,26 @@ std::optional<ttlib::sview> FlexGridSizerGenerator::CommonConstruction(Code& cod
     {
         if (is_within_braces)
             code.CloseBrace();
-        return code.m_code;
+        return true;
     }
     code.NodeName().Function("SetNonFlexibleGrowMode").Add(non_flex_growth).EndFunction();
     if (is_within_braces)
         code.CloseBrace();
 
-    return code.m_code;
+    return true;
 }
 
-std::optional<ttlib::sview> FlexGridSizerGenerator::CommonAfterChildren(Code& code)
+bool FlexGridSizerGenerator::AfterChildrenCode(Code& code)
 {
     if (code.IsTrue(prop_hide_children))
     {
-        code.NodeName().Function("ShowItems(").Str(code.is_cpp() ? "false" : "False").EndFunction();
+        code.NodeName().Function("ShowItems(").AddFalse().EndFunction();
     }
 
     auto parent = code.node()->GetParent();
     if (!parent->IsSizer() && !parent->isGen(gen_wxDialog) && !parent->isGen(gen_PanelForm))
     {
-        code.NewLine(true);
+        code.Eol(eol_if_needed);
         if (parent->isGen(gen_wxRibbonPanel))
         {
             code.ParentName().Function("SetSizerAndFit(").NodeName().EndFunction();
@@ -174,7 +174,7 @@ std::optional<ttlib::sview> FlexGridSizerGenerator::CommonAfterChildren(Code& co
         }
     }
 
-    return code.m_code;
+    return true;
 }
 
 void FlexGridSizerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/, Node* node, bool /* is_preview */)

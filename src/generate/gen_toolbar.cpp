@@ -330,7 +330,7 @@ std::optional<ttlib::sview> ToolBarGenerator::CommonConstruction(Code& code)
     }
     else
     {
-        code.CreateClass().GetParentName().Comma().as_string(prop_id);
+        code.CreateClass().ValidParentName().Comma().as_string(prop_id);
         code.PosSizeFlags();
     }
 
@@ -590,7 +590,7 @@ std::optional<ttlib::sview> ToolSeparatorGenerator::CommonConstruction(Code& cod
     auto* node = code.node();
     if (node->isParent(gen_wxToolBar) || node->isParent(gen_wxRibbonToolBar) || node->isParent(gen_wxAuiToolBar))
     {
-        code.ParentName().Function("AddSeparator(").EndFunction();
+        code.ValidParentName().Function("AddSeparator(").EndFunction();
     }
     else
     {

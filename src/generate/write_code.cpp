@@ -9,6 +9,53 @@
 
 #include "write_code.h"
 
+#include "code.h"  // Code -- Helper class for generating code
+
+// String to write whenever a tab is encountered at the beginning of a line
+constexpr const char* TabSpaces = "    ";
+
+void WriteCode::writeLine(const Code& code)
+{
+    if (!code.size())
+    {
+        writeLine();
+        return;
+    }
+
+    // ttlib::multiview only creates a vector of std::string_views, so it's cheap to create
+    // even for a single line.
+
+    ttlib::multiview lines(code.GetCode(), '\n');
+    for (auto& line: lines)
+    {
+        if (line.size())
+        {
+            // Don't indent #if, #else or #endif
+            if (line[0] != '#' || !(line.starts_with("#if") || line.starts_with("#else") || line.starts_with("#endif")))
+            {
+                for (int i = 0; i < m_indent; ++i)
+                {
+                    doWrite(TabSpaces);
+                }
+            }
+
+            if (line[0] == '\t')
+            {
+                do
+                {
+                    doWrite(TabSpaces);
+                    line.remove_prefix(1);
+                } while (line[0] == '\t');
+            }
+
+            doWrite(line);
+        }
+        doWrite("\n");
+    }
+
+    m_IsLastLineBlank = (lines.back().empty() ? true : false);
+}
+
 void WriteCode::WriteCodeLine(ttlib::sview code, size_t indentation)
 {
     if (indentation == indent::auto_no_whitespace)
@@ -31,7 +78,7 @@ void WriteCode::WriteCodeLine(ttlib::sview code, size_t indentation)
             {
                 for (int i = 0; i < m_indent; ++i)
                 {
-                    doWrite("    ");
+                    doWrite(TabSpaces);
                 }
             }
         }
@@ -46,7 +93,7 @@ void WriteCode::WriteCodeLine(ttlib::sview code, size_t indentation)
         {
             if (ch == '\t')
             {
-                tab_code += "    ";
+                tab_code += TabSpaces;
             }
             else
             {
@@ -131,7 +178,7 @@ void WriteCode::write(ttlib::sview code, bool auto_indent)
         {
             for (int i = 0; i < m_indent; ++i)
             {
-                doWrite("    ");
+                doWrite(TabSpaces);
             }
         }
         m_isLineWriting = true;
@@ -145,7 +192,7 @@ void WriteCode::write(ttlib::sview code, bool auto_indent)
         {
             if (ch == '\t')
             {
-                tab_code += "    ";
+                tab_code += TabSpaces;
             }
             else
             {

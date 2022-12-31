@@ -51,6 +51,7 @@ public:
     int m_language;
 
     Code(Node* node, int language = GEN_LANG_CPLUSPLUS);
+    ttlib::sview GetCode() const { return m_code; }
 
     void clear()
     {
@@ -65,7 +66,7 @@ public:
             m_break_at = 100000;  // initialize this high enough that no line will break unless SetBreakAt() is called
         }
     }
-    auto size() { return m_code.size(); }
+    auto size() const { return m_code.size(); }
 
     bool is_cpp() const { return m_language == GEN_LANG_CPLUSPLUS; }
     bool is_python() const { return m_language == GEN_LANG_PYTHON; }
@@ -145,6 +146,9 @@ public:
     Code& OpenBrace();
 
     Code& CloseBrace();
+
+    // If C++ and node is a local variable, will add "auto* " -- otherwise, it does nothing.
+    Code& AddAuto();
 
     void EnableAutoLineBreak(bool auto_break = true) { m_auto_break = auto_break; }
 
@@ -236,17 +240,18 @@ public:
 
     // For Python code, a non-local, non-form name will be prefixed with "self."
     //
-    // m_code += m_node->get_node_name();
-    Code& NodeName();
+    // m_code += node->get_node_name();
+    Code& NodeName(Node* node = nullptr);
 
     // For Python code, a non-local, non-form name will be prefixed with "self."
     //
     // m_code += m_node->GetParent()->get_node_name();
     Code& ParentName();
 
-    // This is *NOT* the same as ParentName() -- this will handle wxStaticBox and
-    // wxCollapsiblePane parents as well as non-sizer parents
-    Code& GetParentName();
+    // Find a valid parent for the current node and add it's name. This is *not* the same as
+    // ParentName() -- this will handle wxStaticBox and wxCollapsiblePane parents as well as
+    // non-sizer parents.
+    Code& ValidParentName();
 
     // Handles regular or or'd styles for C++ or Python
     Code& as_string(GenEnum::PropName prop_name);
@@ -320,6 +325,7 @@ public:
         }
     }
     void ResetIndent() { m_indent = 0; }
+    void ResetBraces() { m_within_braces = false; }
 
     Code& operator<<(std::string_view str)
     {

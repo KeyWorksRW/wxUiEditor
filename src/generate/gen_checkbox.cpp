@@ -53,7 +53,7 @@ std::optional<ttlib::sview> CheckBoxGenerator::CommonConstruction(Code& code)
     if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
     code.NodeName().CreateClass();
-    code.GetParentName().Comma().as_string(prop_id).Comma().QuotedString(prop_label);
+    code.ValidParentName().Comma().as_string(prop_id).Comma().QuotedString(prop_label);
     code.PosSizeFlags(true);
 
     return code.m_code;
@@ -151,7 +151,7 @@ std::optional<ttlib::sview> Check3StateGenerator::CommonConstruction(Code& code)
     if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
     code.NodeName().CreateClass(false, "wxCheckBox");
-    code.GetParentName().Comma().as_string(prop_id).Comma().QuotedString(prop_label);
+    code.ValidParentName().Comma().as_string(prop_id).Comma().QuotedString(prop_label);
     code.PosSizeForceStyle("wxCHK_3STATE");
 
     return code.m_code;

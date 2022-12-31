@@ -52,7 +52,7 @@ std::optional<ttlib::sview> AnimationGenerator::CommonConstruction(Code& code)
     if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
     code.NodeName().CreateClass();
-    code.GetParentName().Comma().as_string(prop_id).Comma().CheckLineLength();
+    code.ValidParentName().Comma().as_string(prop_id).Comma().CheckLineLength();
     // TODO: [Randalphwa - 12-08-2022] Enable Python support once image handling is worked out
     if (code.HasValue(prop_animation) && code.is_cpp())
     {

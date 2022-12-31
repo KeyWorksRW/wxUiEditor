@@ -36,7 +36,7 @@ std::optional<ttlib::sview> FontPickerGenerator::CommonConstruction(Code& code)
     if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
     code.NodeName().CreateClass();
-    code.GetParentName().Comma().as_string(prop_id).Comma();
+    code.ValidParentName().Comma().as_string(prop_id).Comma();
     if (code.HasValue(prop_initial_font))
     {
         auto fontprop = code.node()->prop_as_font_prop(prop_initial_font);

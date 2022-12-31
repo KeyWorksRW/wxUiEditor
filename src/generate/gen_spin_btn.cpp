@@ -37,7 +37,7 @@ std::optional<ttlib::sview> SpinButtonGenerator::CommonConstruction(Code& code)
 {
     if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
-    code.NodeName().CreateClass().GetParentName().Comma().Add(prop_id);
+    code.NodeName().CreateClass().ValidParentName().Comma().Add(prop_id);
     code.PosSizeFlags(false, "wxSP_VERTICAL");
 
     // If the last parameter is wxID_ANY, then remove it. This is the default value, so it's

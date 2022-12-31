@@ -56,7 +56,7 @@ std::optional<ttlib::sview> CheckListBoxGenerator::CommonConstruction(Code& code
     if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
     code.NodeName().CreateClass();
-    code.GetParentName().Comma().as_string(prop_id);
+    code.ValidParentName().Comma().as_string(prop_id);
     auto params_needed = code.WhatParamsNeeded();
     if (params_needed != nothing_needed || !code.IsEqualTo(prop_type, "wxLB_SINGLE"))
     {

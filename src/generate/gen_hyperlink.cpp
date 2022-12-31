@@ -67,7 +67,7 @@ std::optional<ttlib::sview> HyperlinkGenerator::CommonConstruction(Code& code)
     if (code.is_cpp() && !code.IsTrue(prop_underlined))
         code.m_code.Replace("wxHyperlinkCtrl", "wxGenericHyperlinkCtrl");
 
-    code.GetParentName().Comma().as_string(prop_id).Comma().QuotedString(prop_label);
+    code.ValidParentName().Comma().as_string(prop_id).Comma().QuotedString(prop_label);
     code.Comma().QuotedString(prop_url);
     code.PosSizeFlags(false, "wxHL_DEFAULT_STYLE");
 

@@ -65,7 +65,7 @@ std::optional<ttlib::sview> CommandLinkBtnGenerator::CommonConstruction(Code& co
     if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
     code.NodeName().CreateClass();
-    code.GetParentName().Comma().as_string(prop_id).Comma().QuotedString(prop_main_label);
+    code.ValidParentName().Comma().as_string(prop_id).Comma().QuotedString(prop_main_label);
     code.Comma().QuotedString(prop_note).PosSizeFlags(true);
 
     return code.m_code;

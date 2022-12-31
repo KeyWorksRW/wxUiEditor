@@ -76,7 +76,7 @@ wxObject* StdDialogButtonSizerGenerator::CreateMockup(Node* node, wxObject* pare
     return sizer;
 }
 
-std::optional<ttlib::sview> StdDialogButtonSizerGenerator::CommonConstruction(Code& code)
+bool StdDialogButtonSizerGenerator::ConstructionCode(Code& code)
 {
     // The Python code for StdDialogButtonSizer cannot be implemented the same way as the C++
     // code, so it needs it's own function. Specifically, wx/sizer.h has several public Get
@@ -86,11 +86,10 @@ std::optional<ttlib::sview> StdDialogButtonSizerGenerator::CommonConstruction(Co
     if (code.is_python())
     {
         GenPythonConstruction(code);
-        return code.m_code;
+        return true;
     }
 
-    if (code.is_local_var())
-        code << "auto* ";
+    code.AddAuto();
 
     Node* node = code.node();  // purely for convenience
 
@@ -136,7 +135,7 @@ std::optional<ttlib::sview> StdDialogButtonSizerGenerator::CommonConstruction(Co
         else if (def_btn_name == "Apply")
             code.Eol().NodeName().Function("GetApplyButton()").Function("SetDefault(").EndFunction();
 
-        return code.m_code;
+        return true;
     }
 
     code.NodeName().CreateClass(false, "wxStdDialogButtonSizer").EndFunction();
@@ -237,7 +236,7 @@ std::optional<ttlib::sview> StdDialogButtonSizerGenerator::CommonConstruction(Co
             code.NodeName() << "ContextHelp = wxStaticCast(FindWindowById(wxID_CONTEXT_HELP), wxButton);\n";
     }
 
-    return code.m_code;
+    return true;
 }
 
 void StdDialogButtonSizerGenerator::GenPythonConstruction(Code& code)

@@ -31,7 +31,7 @@ std::optional<ttlib::sview> ColourPickerGenerator::CommonConstruction(Code& code
     if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
     code.NodeName().CreateClass();
-    code.GetParentName().Comma().as_string(prop_id).Comma();
+    code.ValidParentName().Comma().as_string(prop_id).Comma();
     if (code.node()->prop_as_string(prop_colour).size())
         ColourCode(code, prop_colour);
     else

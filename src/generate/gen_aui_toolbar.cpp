@@ -104,7 +104,7 @@ std::optional<ttlib::sview> AuiToolBarGenerator::CommonConstruction(Code& code)
     if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
     code.NodeName().CreateClass();
-    code.GetParentName().Comma().Add(prop_id);
+    code.ValidParentName().Comma().Add(prop_id);
     code.PosSizeFlags(false, "wxAUI_TB_DEFAULT_STYLE");
 
     return code.m_code;

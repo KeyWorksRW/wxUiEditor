@@ -46,7 +46,7 @@ std::optional<ttlib::sview> DatePickerCtrlGenerator::CommonConstruction(Code& co
     if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
     code.NodeName().CreateClass();
-    code.GetParentName().Comma().as_string(prop_id).Comma().Add("wxDefaultDateTime");
+    code.ValidParentName().Comma().as_string(prop_id).Comma().Add("wxDefaultDateTime");
     code.PosSizeFlags(true, "wxDP_DEFAULT|wxDP_SHOWCENTURY");
 
     return code.m_code;

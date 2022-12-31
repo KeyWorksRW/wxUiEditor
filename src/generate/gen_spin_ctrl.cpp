@@ -55,7 +55,7 @@ std::optional<ttlib::sview> SpinCtrlGenerator::CommonConstruction(Code& code)
 {
     if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
-    code.NodeName().CreateClass().GetParentName();
+    code.NodeName().CreateClass().ValidParentName();
     auto needed_parms = code.WhatParamsNeeded("wxSP_ARROW_KEYS");
     Node* node = code.node();
     if (needed_parms == nothing_needed && node->as_int(prop_min) == 0 && node->as_int(prop_max) == 100 &&

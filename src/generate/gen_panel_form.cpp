@@ -24,8 +24,8 @@ wxObject* PanelFormGenerator::CreateMockup(Node* node, wxObject* parent)
     if (node->HasValue(prop_extra_style))
     {
         int ex_style = 0;
-        // Can't use multiview because GetConstantAsInt() searches an unordered_map which requires a std::string to pass to
-        // it
+        // Can't use multiview because GetConstantAsInt() searches an unordered_map which
+        // requires a std::string to pass to it
         ttlib::multistr mstr(node->value(prop_extra_style), '|');
         for (auto& iter: mstr)
         {
@@ -39,55 +39,20 @@ wxObject* PanelFormGenerator::CreateMockup(Node* node, wxObject* parent)
     return widget;
 }
 
-bool PanelFormGenerator::GenConstruction(Node* node, BaseCodeGenerator* code_gen)
+bool PanelFormGenerator::ConstructionCode(Code& code)
 {
-    auto src_code = code_gen->GetSrcWriter();
-
-    ttlib::cstr code;
-    code << "bool " << node->prop_as_string(prop_class_name) << "::Create";
-
-    code << "(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style, const wxString "
-            "&name)\n{";
-    code << "\n\tif (!wxPanel::Create(parent, id, pos, size, style, name))\n\t\treturn false;\n\n";
-
-    src_code->writeLine(code, indent::none);
-    code.clear();
-    src_code->Indent();
-
-    if (node->HasValue(prop_extra_style))
-    {
-        code << "SetExtraStyle(GetExtraStyle() | " << node->prop_as_string(prop_extra_style) << ");";
-        src_code->writeLine(code);
-        code.clear();
-    }
-
-    code << GenFontColourSettings(node);
-    if (code.size())
-    {
-        src_code->writeLine(code);
-        code.clear();
-    }
-
-    src_code->Unindent();
-    src_code->writeLine();
-
-    return true;
-}
-
-bool PanelFormGenerator::GenPythonForm(Code& code)
-{
+    // Note: Form construction is called before any indentation is set
     if (code.is_cpp())
     {
         code.Str("bool ").Str((prop_class_name)) += "::Create";
         code += "(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style, const wxString "
-            "&name)";
+                "&name)";
         code.OpenBrace();
         code += "if (!wxPanel::Create(parent, id, pos, size, style, name))";
         code.Eol().Tab() += "return false;\n";
     }
     else
     {
-        // Note: this code is called before any indentation is set
         code.Add("class ").NodeName().Add("(wx.Panel):\n");
         code.Tab().Add("def __init__(self, parent):").Eol().Tab(2);
         code << "wx.Panel.__init__(self, parent, id=";
@@ -112,140 +77,111 @@ bool PanelFormGenerator::GenPythonForm(Code& code)
         code.FormFunction("SetExtraStyle(GetExtraStyle() | ").Add(prop_extra_style).Str(")").EndFunction();
     }
 
-    code.GenFontColourSettings();
     code.ResetIndent();
+    code.ResetBraces();  // In C++, caller must close the final brace after all construction
 
     return true;
 }
 
-std::optional<ttlib::cstr> PanelFormGenerator::GenAdditionalCode(GenEnum::GenCodeType cmd, Node* node)
+bool PanelFormGenerator::AfterChildrenCode(Code& code)
 {
-    if (cmd == code_header)
+    Node* panel;
+    auto* node = code.node();
+    if (node->IsForm())
     {
-        ttlib::cstr code;
-
-        code << node->get_node_name() << "() {}\n";
-
-        code << node->get_node_name() << "(wxWindow* parent, wxWindowID id = " << node->prop_as_string(prop_id) << ", ";
-        code << "const wxPoint& pos = ";
-
-        auto position = node->prop_as_wxPoint(prop_pos);
-        if (position == wxDefaultPosition)
-            code << "wxDefaultPosition, ";
-        else
-            code << "wxPoint(" << position.x << ", " << position.y << "), ";
-
-        code << "const wxSize& size = ";
-
-        auto size = node->prop_as_wxSize(prop_size);
-        if (size == wxDefaultSize)
-            code << "wxDefaultSize";
-        else
-            code << "wxSize(" << size.x << ", " << size.y << ")";
-
-        code << ",\n\tlong style = ";
-        if (node->HasValue(prop_style))
-            code << node->prop_as_string(prop_style);
-        else
-            code << "wxTAB_TRAVERSAL";
-
-        code << ", const wxString &name = ";
-        if (node->HasValue(prop_window_name))
-            code << GenerateQuotedString(node, prop_window_name);
-        else
-            code << "wxPanelNameStr";
-
-        code << ")\n{\n\tCreate(parent, id, pos, size, style, name);\n}\n";
-
-        code << "\nbool Create(wxWindow *parent, ";
-        code << "wxWindowID id = " << node->prop_as_string(prop_id) << ", ";
-        code << "const wxPoint& pos = ";
-
-        if (position == wxDefaultPosition)
-            code << "wxDefaultPosition, ";
-        else
-            code << "wxPoint(" << position.x << ", " << position.y << "), ";
-
-        code << "const wxSize& size = ";
-
-        if (size == wxDefaultSize)
-            code << "wxDefaultSize";
-        else
-            code << "wxSize(" << size.x << ", " << size.y << ")";
-
-        code << ",\n\tlong style = ";
-        if (node->HasValue(prop_style))
-            code << node->prop_as_string(prop_style);
-        else
-            code << "wxTAB_TRAVERSAL";
-
-        code << ", const wxString &name = ";
-        if (node->HasValue(prop_window_name))
-            code << GenerateQuotedString(node, prop_window_name);
-        else
-            code << "wxPanelNameStr";
-
-        code << ");\n\n";
-
-        return code;
+        panel = node;
+        ASSERT_MSG(panel->GetChildCount(), "Trying to generate code for a wxPanel with no children.")
+        if (!panel->GetChildCount())
+            return true;  // empty dialog, so nothing to do
+        ASSERT_MSG(panel->GetChild(0)->IsSizer(), "Expected first child of a wxPanel to be a sizer.");
+        if (panel->GetChild(0)->IsSizer())
+            node = panel->GetChild(0);
     }
-    else if (cmd == code_after_children)
+    else
     {
-        ttlib::cstr code;
-
-        Node* panel;
-        if (node->IsForm())
-        {
-            panel = node;
-            ASSERT_MSG(panel->GetChildCount(), "Trying to generate code for a wxPanel with no children.")
-            if (!panel->GetChildCount())
-                return {};  // empty dialog, so nothing to do
-            ASSERT_MSG(panel->GetChild(0)->IsSizer(), "Expected first child of a wxPanel to be a sizer.");
-            if (panel->GetChild(0)->IsSizer())
-                node = panel->GetChild(0);
-        }
-        else
-        {
-            panel = node->get_form();
-        }
-
-        auto min_size = panel->prop_as_wxSize(prop_minimum_size);
-        auto max_size = panel->prop_as_wxSize(prop_maximum_size);
-        auto size = panel->prop_as_wxSize(prop_size);
-
-        if (min_size == wxDefaultSize && max_size == wxDefaultSize)
-        {
-            code << "\tSetSizerAndFit(" << node->get_node_name() << ");";
-        }
-        else
-        {
-            code << "\tSetSizer(" << node->get_node_name() << ");";
-            if (min_size != wxDefaultSize)
-            {
-                code << "\n\tSetMinSize(wxSize(" << min_size.GetWidth() << ", " << min_size.GetHeight() << "));";
-            }
-            if (max_size != wxDefaultSize)
-            {
-                code << "\n\tSetMaxSize(wxSize(" << max_size.GetWidth() << ", " << max_size.GetHeight() << "));";
-            }
-            code << "\n\tFit();";
-        }
-
-        if (size != wxDefaultSize)
-        {
-            code << "\n\tSetSize(wxSize(" << size.GetWidth() << ", " << size.GetHeight() << "));";
-        }
-
-        return code;
-    }
-    else if (cmd == code_base_class)
-    {
-        ttlib::cstr code;
-        code << "wxPanel";
-        return code;
+        panel = node->get_form();
     }
 
-    return {};
+    const auto min_size = panel->prop_as_wxSize(prop_minimum_size);
+    const auto max_size = panel->prop_as_wxSize(prop_maximum_size);
+    const auto size = panel->prop_as_wxSize(prop_size);
+
+    if (min_size == wxDefaultSize && max_size == wxDefaultSize)
+    {
+        code.FormFunction("SetSizerAndFit(").NodeName(node).EndFunction();
+    }
+    else
+    {
+        code.FormFunction("SetSizer(").NodeName(node).EndFunction();
+        if (min_size != wxDefaultSize)
+        {
+            code.Eol().FormFunction("SetMinSize(").WxSize(prop_minimum_size).EndFunction();
+        }
+        if (max_size != wxDefaultSize)
+        {
+            code.Eol().FormFunction("SetMaxSize(").WxSize(prop_maximum_size).EndFunction();
+        }
+        code.Eol().FormFunction("Fit(").EndFunction();
+    }
+
+    if (size != wxDefaultSize)
+    {
+        code.Eol().FormFunction("SetSize(").WxSize(prop_size).EndFunction();
+    }
+
+    return true;
+}
+
+bool PanelFormGenerator::HeaderCode(Code& code)
+{
+    if (!code.is_cpp())
+        return false;
+
+    code.NodeName() += "() {}";
+    code.Eol().Str("const wxPoint& pos = ").Pos(prop_pos).Comma();
+    code.Str("const wxSize& size = ").WxSize(prop_size).Comma();
+    code.Str("long style = ");
+    if (code.HasValue(prop_style))
+        code.Str(prop_style);
+    else
+        code += "wxTAB_TRAVERSAL";
+    code.Comma().Str("const wxString &name = ");
+    if (code.HasValue(prop_window_name))
+        code.QuotedString(prop_window_name);
+    else
+        code.Str("wxPanelNameStr");
+    code += ")";
+    code.OpenBrace().Str("Create(parent, id, pos, size, style, name);").CloseBrace();
+    code.Eol() += "bool Create(wxWindow *parent, ";
+    code.Str("wxWindowID id = ").Str(prop_id).Comma();
+    code.Str("const wxPoint& pos = ").Pos(prop_pos).Comma();
+    code.Str("const wxSize& size = ").WxSize(prop_size).Comma();
+    code.Str("long style = ");
+    if (code.HasValue(prop_style))
+        code.Str(prop_style);
+    else
+        code.Str("wxTAB_TRAVERSAL");
+    code.Comma().Str("const wxString &name = ");
+    if (code.HasValue(prop_window_name))
+        code.QuotedString(prop_window_name);
+    else
+        code.Str("wxPanelNameStr");
+    code += ");\n\n";
+    return true;
+}
+
+bool PanelFormGenerator::BaseClassNameCode(Code& code)
+{
+    if (code.HasValue(prop_derived_class))
+    {
+        code.Str((prop_derived_class));
+    }
+    else
+    {
+        code += "wxPanel";
+    }
+
+    return true;
 }
 
 int PanelFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)

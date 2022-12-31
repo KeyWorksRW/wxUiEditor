@@ -480,7 +480,7 @@ std::optional<ttlib::sview> StyledTextGenerator::CommonConstruction(Code& code)
     if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
     code.NodeName().CreateClass();
-    code.GetParentName().Comma().Add(prop_id);
+    code.ValidParentName().Comma().Add(prop_id);
     code.PosSizeFlags(true);
 
     // If the last parameter is wxID_ANY, then remove it. This is the default value, so it's

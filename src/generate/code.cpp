@@ -217,8 +217,7 @@ Code& Code::Eol(int flag)
         m_code += '\n';
     }
 
-
-    if (m_within_braces && is_cpp() && m_code.back() != '\t')
+    if (m_within_braces && is_cpp() && m_code.size() && m_code.back() != '\t')
     {
         m_code += '\t';
     }
@@ -556,11 +555,13 @@ Code& Code::as_string(PropName prop_name)
     return *this;
 }
 
-Code& Code::NodeName()
+Code& Code::NodeName(Node* node)
 {
-    if (is_python() && !m_node->IsLocal() && !m_node->IsForm())
+    if (!node)
+        node = m_node;
+    if (is_python() && !node->IsLocal() && !node->IsForm())
         m_code += "self.";
-    m_code += m_node->get_node_name();
+    m_code += node->get_node_name();
     return *this;
 }
 
@@ -1312,10 +1313,11 @@ void Code::GenFontColourSettings()
                 Eol().Str("font.SetUnderlined(").AddTrue().EndFunction();
             if (fontprop.IsStrikethrough())
                 Eol().Str("font.SetStrikethrough(").AddTrue().EndFunction();
+            Eol();
 
             if (node->IsForm())
             {
-                Eol().FormFunction("SetFont(font").EndFunction();
+                FormFunction("SetFont(font").EndFunction();
                 CloseBrace();
             }
             else if (node->isGen(gen_wxStyledTextCtrl))
@@ -1403,10 +1405,13 @@ void Code::GenFontColourSettings()
             {
                 m_code.pop_back();
             }
+            if (is_cpp())
+                m_code += ';';
+            Eol();
 
             if (node->IsForm())
             {
-                Eol().FormFunction("SetFont(").Add("wxFont(font_info)").EndFunction();
+                FormFunction("SetFont(").Add("wxFont(font_info)").EndFunction();
             }
             else
             {
@@ -1434,7 +1439,7 @@ void Code::GenFontColourSettings()
         else
         {
             const auto colour = m_node->as_wxColour(prop_foreground_colour);
-            Add(ttlib::cstr().Format("wxColour(%i, %i, %i)", colour.Red(), colour.Green(), colour.Blue())) += ")";
+            Add(ttlib::cstr().Format("wxColour(%i, %i, %i)", colour.Red(), colour.Green(), colour.Blue()));
         }
         EndFunction();
     }
@@ -1452,7 +1457,7 @@ void Code::GenFontColourSettings()
         }
         if (bg_clr.contains("wx"))
         {
-            Add("wxSystemSettings").ClassMethod("GetColour(").Str(bg_clr);
+            Add("wxSystemSettings").ClassMethod("GetColour(").Str(bg_clr) += ")";
         }
         else
         {

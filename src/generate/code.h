@@ -51,6 +51,7 @@ public:
     int m_language;
 
     Code(Node* node, int language = GEN_LANG_CPLUSPLUS);
+    ttlib::sview GetCode() const { return m_code; }
 
     void clear()
     {
@@ -236,8 +237,8 @@ public:
 
     // For Python code, a non-local, non-form name will be prefixed with "self."
     //
-    // m_code += m_node->get_node_name();
-    Code& NodeName();
+    // m_code += node->get_node_name();
+    Code& NodeName(Node* node = nullptr);
 
     // For Python code, a non-local, non-form name will be prefixed with "self."
     //
@@ -320,6 +321,7 @@ public:
         }
     }
     void ResetIndent() { m_indent = 0; }
+    void ResetBraces() { m_within_braces = false; }
 
     Code& operator<<(std::string_view str)
     {

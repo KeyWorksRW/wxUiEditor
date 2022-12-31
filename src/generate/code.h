@@ -147,6 +147,9 @@ public:
 
     Code& CloseBrace();
 
+    // If C++ and node is a local variable, will add "auto* " -- otherwise, it does nothing.
+    Code& AddAuto();
+
     void EnableAutoLineBreak(bool auto_break = true) { m_auto_break = auto_break; }
 
     // Only call the following two functions if you called DisableAutoLineBreak() first.

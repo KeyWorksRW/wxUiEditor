@@ -261,6 +261,15 @@ Code& Code::CloseBrace()
     return *this;
 }
 
+Code& Code::AddAuto()
+{
+    if (is_cpp() && is_local_var())
+    {
+        m_code += "auto ";
+    }
+    return *this;
+}
+
 void Code::InsertLineBreak(size_t cur_pos)
 {
     ASSERT(cur_pos > 1 && cur_pos <= m_code.size());

@@ -1481,9 +1481,15 @@ void BaseCodeGenerator::GenerateClassConstructor(Node* form_node, const EventVec
         m_source->writeLine(code);
         m_source->Indent();
 
-        if (form_node->isGen(gen_wxFrame))
+        if (form_node->isGen(gen_wxFrame) || form_node->isGen(gen_wxDialog))
         {
             GenerateHandlers();
+            if (form_node->HasValue(prop_icon))
+            {
+                auto icon_code = GenerateIconCode(form_node->as_string(prop_icon));
+                m_source->writeLine(icon_code, indent::auto_keep_whitespace);
+                m_source->writeLine();
+            }
         }
 
         code.clear();

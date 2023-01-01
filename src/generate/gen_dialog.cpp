@@ -154,7 +154,7 @@ bool DialogFormGenerator::HeaderCode(Code& code)
     if (position == wxDefaultPosition)
         code.Str("wxDefaultPosition");
     else
-        code.Pos();
+        code.Pos(prop_pos, no_dlg_units);
 
     code.Comma().Str("const wxSize& size = ");
 
@@ -162,7 +162,7 @@ bool DialogFormGenerator::HeaderCode(Code& code)
     if (size == wxDefaultSize)
         code.Str("wxDefaultSize");
     else
-        code.WxSize(prop_size);
+        code.WxSize(prop_size, no_dlg_units);
 
     code.Comma().Eol().Tab().Str("long style = ");
     if (node->HasValue(prop_style))
@@ -186,14 +186,14 @@ bool DialogFormGenerator::HeaderCode(Code& code)
     if (position == wxDefaultPosition)
         code.Str("wxDefaultPosition");
     else
-        code.Pos();
+        code.Pos(prop_pos, no_dlg_units);
 
     code.Comma().Str("const wxSize& size = ");
 
     if (size == wxDefaultSize)
         code.Str("wxDefaultSize");
     else
-        code.WxSize(prop_size);
+        code.WxSize(prop_size, no_dlg_units);
 
     code.Comma().Eol().Tab().Str("long style = ");
     if (node->HasValue(prop_style))

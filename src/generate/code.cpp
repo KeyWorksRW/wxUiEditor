@@ -774,7 +774,7 @@ Code& Code::QuotedString(ttlib::sview text)
     return *this;
 }
 
-Code& Code::WxSize(GenEnum::PropName prop_name)
+Code& Code::WxSize(GenEnum::PropName prop_name, bool enable_dlg_units)
 {
     if (m_node->prop_as_wxSize(prop_name) == wxDefaultSize)
     {
@@ -786,7 +786,7 @@ Code& Code::WxSize(GenEnum::PropName prop_name)
     auto cur_pos = m_code.size();
 
     bool dialog_units = m_node->value(prop_name).contains("d", tt::CASE::either);
-    if (dialog_units)
+    if (dialog_units && enable_dlg_units)
     {
         CheckLineLength(sizeof("self.ConvertDialogToPixels(wxSize(999, 999))"));
         FormFunction("ConvertDialogToPixels(");
@@ -795,7 +795,7 @@ Code& Code::WxSize(GenEnum::PropName prop_name)
     auto size = m_node->prop_as_wxSize(prop_name);
     Class("wxSize(").itoa(size.x).Comma().itoa(size.y) << ')';
 
-    if (dialog_units)
+    if (dialog_units && enable_dlg_units)
         m_code += ')';
 
     if (m_auto_break && m_code.size() > m_break_at)
@@ -806,7 +806,7 @@ Code& Code::WxSize(GenEnum::PropName prop_name)
     return *this;
 }
 
-Code& Code::Pos(GenEnum::PropName prop_name)
+Code& Code::Pos(GenEnum::PropName prop_name, bool enable_dlg_units)
 {
     if (m_node->prop_as_wxPoint(prop_name) == wxDefaultPosition)
     {
@@ -818,7 +818,7 @@ Code& Code::Pos(GenEnum::PropName prop_name)
     auto cur_pos = m_code.size();
 
     bool dialog_units = m_node->value(prop_name).contains("d", tt::CASE::either);
-    if (dialog_units)
+    if (dialog_units && enable_dlg_units)
     {
         CheckLineLength(sizeof("self.ConvertDialogToPixels(wxPoint(999, 999))"));
         FormFunction("ConvertDialogToPixels(");
@@ -827,7 +827,7 @@ Code& Code::Pos(GenEnum::PropName prop_name)
     auto size = m_node->prop_as_wxSize(prop_name);
     Class("wxPoint(").itoa(size.x).Comma().itoa(size.y) << ')';
 
-    if (dialog_units)
+    if (dialog_units && enable_dlg_units)
         m_code += ')';
 
     if (m_auto_break && m_code.size() > m_break_at)

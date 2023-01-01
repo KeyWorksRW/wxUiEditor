@@ -38,6 +38,9 @@ namespace code
         eol_always
     };
 
+    constexpr const bool no_dlg_units = false;
+    constexpr const bool allow_dlg_units = true;
+
 };  // namespace code
 
 // Assume anyone including this header file needs acces to the code namespace
@@ -274,7 +277,7 @@ public:
     Code& QuotedString(ttlib::sview text);
 
     // Will either generate wxSize(...) or ConvertDialogToPixels(wxSize(...))
-    Code& WxSize(GenEnum::PropName prop_name = GenEnum::PropName::prop_size);
+    Code& WxSize(GenEnum::PropName prop_name = GenEnum::PropName::prop_size, bool enable_dlg_units = allow_dlg_units);
 
     Code& EmptyString()
     {
@@ -286,7 +289,7 @@ public:
     Code& AddComment(ttlib::sview text);
 
     // Will either generate wxPoint(...) or ConvertDialogToPixels(wxPoint(...))
-    Code& Pos(GenEnum::PropName prop_name = GenEnum::PropName::prop_pos);
+    Code& Pos(GenEnum::PropName prop_name = GenEnum::PropName::prop_pos, bool enable_dlg_units = allow_dlg_units);
 
     // Check for pos, size, style, window_style, and window name, and generate code if needed
     // starting with a comma, e.g. -- ", wxPoint(x, y), wxSize(x, y), styles, name);"

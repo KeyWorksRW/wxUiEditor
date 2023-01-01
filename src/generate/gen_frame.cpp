@@ -119,7 +119,7 @@ bool FrameFormGenerator::HeaderCode(Code& code)
     if (position == wxDefaultPosition)
         code.Str("wxDefaultPosition");
     else
-        code.Pos();
+        code.Pos(prop_pos, no_dlg_units);
 
     code.Comma().Str("const wxSize& size = ");
 
@@ -127,7 +127,7 @@ bool FrameFormGenerator::HeaderCode(Code& code)
     if (size == wxDefaultSize)
         code.Str("wxDefaultSize");
     else
-        code.WxSize(prop_size);
+        code.WxSize(prop_size, no_dlg_units);
 
     auto& style = node->prop_as_string(prop_style);
     auto& win_style = node->prop_as_string(prop_window_style);

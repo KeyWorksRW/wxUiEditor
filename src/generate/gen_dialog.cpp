@@ -42,255 +42,189 @@ wxObject* DialogFormGenerator::CreateMockup(Node* node, wxObject* parent)
     return widget;
 }
 
-bool DialogFormGenerator::GenConstruction(Node* node, BaseCodeGenerator* code_gen)
+bool DialogFormGenerator::ConstructionCode(Code& code)
 {
-    auto src_code = code_gen->GetSrcWriter();
-
-    ttlib::cstr code;
-
-    // Note: this code is called before any indentation is set
-    code << "bool " << node->prop_as_string(prop_class_name)
-         << "::Create(wxWindow* parent, wxWindowID id, const wxString& title,\n\t\tconst wxPoint& pos, const wxSize& size, "
-            "long "
-            "style, const wxString &name)\n{\n\tif (!wxDialog::Create(parent, id, title, pos, size, style, "
-            "name))\n\t\treturn "
-            "false;\n\n";
-
-    src_code->writeLine(code, indent::none);
-    src_code->Indent();
-    code.clear();
-
-    if (node->HasValue(prop_extra_style))
+    if (code.is_cpp())
     {
-        code << "SetExtraStyle(GetExtraStyle() | " << node->prop_as_string(prop_extra_style) << ");";
-        src_code->writeLine(code);
-        code.clear();
+        code.Str("bool ").Str((prop_class_name));
+        code +=
+            "::Create(wxWindow* parent, wxWindowID id, const wxString& title,\n\tconst wxPoint& pos, const wxSize& size, "
+            "long style, const wxString &name)";
+        code.OpenBrace();
+        code += "if (!wxDialog::Create(parent, id, title, pos, size, style, name))";
+        code.Eol().Tab() += "return false;\n";
+    }
+    else
+    {
+        code.Add("class ").NodeName().Add("(wx.Dialog):\n");
+        code.Tab().Add("def __init__(self, parent):").Eol().Tab(2);
+        code << "wx.Dialog.__init__(self, parent, id=";
+        code.as_string(prop_id);
+
+        code.Indent(3);
+        code.Comma(false).Eol().Add("title=");
+
+        if (code.HasValue(prop_title))
+            code.QuotedString(prop_title);
+        else
+            code << "\"\"";
+
+        code.Comma().Eol().Add("pos=").Pos(prop_pos);
+        code.Comma().Add("size=").WxSize(prop_size);
+        code.Comma().Eol().Add("style=");
+        if (code.HasValue(prop_style) && !code.node()->as_string(prop_style).is_sameas("wxDEFAULT_DIALOG_STYLE"))
+            code.Style();
+        else
+            code << "wx.DEFAULT_DIALOG_STYLE";
+        code << ")";
     }
 
-    if (node->HasValue(prop_icon))
+    if (code.HasValue(prop_extra_style))
     {
-        code_gen->GenerateHandlers();
-        auto icon_code = GenerateIconCode(node->prop_as_string(prop_icon));
-        src_code->writeLine(icon_code, indent::auto_keep_whitespace);
+        code.Eol(eol_if_needed)
+            .FormFunction("SetExtraStyle(GetExtraStyle() | ")
+            .Add(prop_extra_style)
+            .Str(")")
+            .EndFunction();
     }
 
-    code << GenFontColourSettings(node);
-    if (code.size())
-    {
-        src_code->writeLine(code);
-        code.clear();
-    }
+    code.Eol(eol_if_needed).GenFontColourSettings();
 
-    src_code->Unindent();
-    src_code->writeLine();
-
+    code.ResetIndent();
+    code.ResetBraces();  // In C++, caller must close the final brace after all construction
     return true;
 }
 
-bool DialogFormGenerator::GenPythonForm(Code& code)
+bool DialogFormGenerator::AfterChildrenCode(Code& code)
 {
-    // Note: this code is called before any indentation is set
-    code.Add("class ").NodeName().Add("(wx.Dialog):\n");
-    code.Tab().Add("def __init__(self, parent):").Eol().Tab(2);
-    code << "wx.Dialog.__init__(self, parent, id=";
-    code.as_string(prop_id).Comma(false).Eol().Tab(3).Add("title=");
-
-    if (code.HasValue(prop_title))
-        code.QuotedString(prop_title);
-    else
-        code << "\"\"";
-
-    code.Comma().Eol().Tab(3).Add("pos=").Pos(prop_pos);
-    code.Comma().Add("size=").WxSize(prop_size);
-    code.Comma().Eol().Tab(3).Add("style=");
-    if (code.HasValue(prop_style) && !code.node()->as_string(prop_style).is_sameas("wxDEFAULT_DIALOG_STYLE"))
-        code.Style();
-    else
-        code << "wx.DEFAULT_DIALOG_STYLE";
-    code << ")";
-
-    return true;
-}
-
-std::optional<ttlib::cstr> DialogFormGenerator::GenAdditionalCode(GenEnum::GenCodeType cmd, Node* node)
-{
-    if (cmd == code_after_children)
-    {
-        ttlib::cstr code;
-
-        Node* dlg;
-        if (node->IsForm())
-        {
-            dlg = node;
-            ASSERT_MSG(dlg->GetChildCount(), "Trying to generate code for a dialog with no children.")
-            if (!dlg->GetChildCount())
-                return {};  // empty dialog, so nothing to do
-            ASSERT_MSG(dlg->GetChild(0)->IsSizer(), "Expected first child of a dialog to be a sizer.");
-            if (dlg->GetChild(0)->IsSizer())
-                node = dlg->GetChild(0);
-        }
-        else
-        {
-            dlg = node->get_form();
-        }
-
-        auto min_size = dlg->prop_as_wxSize(prop_minimum_size);
-        auto max_size = dlg->prop_as_wxSize(prop_maximum_size);
-        auto size = dlg->prop_as_wxSize(prop_size);
-
-        if (min_size == wxDefaultSize && max_size == wxDefaultSize)
-        {
-            code << "\tSetSizerAndFit(" << node->get_node_name() << ");";
-        }
-        else
-        {
-            code << "\tSetSizer(" << node->get_node_name() << ");";
-            if (min_size != wxDefaultSize)
-            {
-                code << "\n\tSetMinSize(wxSize(" << min_size.GetWidth() << ", " << min_size.GetHeight() << "));";
-            }
-            if (max_size != wxDefaultSize)
-            {
-                code << "\n\tSetMaxSize(wxSize(" << max_size.GetWidth() << ", " << max_size.GetHeight() << "));";
-            }
-            code << "\n\tFit();";
-        }
-
-        // REVIEW: [Randalphwa - 11-28-2022] Why are we setting this *after* calling Fit()?
-        if (size != wxDefaultSize)
-        {
-            code << "\n\tSetSize(wxSize(" << size.GetWidth() << ", " << size.GetHeight() << "));";
-        }
-
-        auto& center = dlg->prop_as_string(prop_center);
-        if (center.size() && !center.is_sameas("no"))
-        {
-            code << "\n\tCentre(" << center << ");";
-        }
-
-        return code;
-    }
-    else if (cmd == code_header)
-    {
-        ttlib::cstr code;
-        code.reserve(256);
-
-        code << node->get_node_name() << "() {}\n";
-        code << node->get_node_name() << "(wxWindow *parent, ";
-        code << "wxWindowID id = " << node->prop_as_string(prop_id) << ", ";
-        code << "const wxString& title = " << GenerateQuotedString(node, prop_title) << ",\n\t";
-        code << "const wxPoint& pos = ";
-
-        auto position = node->prop_as_wxPoint(prop_pos);
-        if (position == wxDefaultPosition)
-            code << "wxDefaultPosition, ";
-        else
-            code << "wxPoint(" << position.x << ", " << position.y << "), ";
-
-        code << "const wxSize& size = ";
-
-        auto size = node->prop_as_wxSize(prop_size);
-        if (size == wxDefaultSize)
-            code << "wxDefaultSize";
-        else
-            code << "wxSize(" << size.x << ", " << size.y << ")";
-
-        code << ",\n\tlong style = ";
-        if (node->HasValue(prop_style))
-            code << node->prop_as_string(prop_style);
-        else
-            code << "wxDEFAULT_DIALOG_STYLE";
-
-        code << ", const wxString &name = ";
-        if (node->HasValue(prop_window_name))
-            code << GenerateQuotedString(node, prop_window_name);
-        else
-            code << "wxDialogNameStr";
-
-        code << ")\n{\n\tCreate(parent, id, title, pos, size, style, name);\n}\n";
-
-        code << "\nbool Create(wxWindow *parent, ";
-        code << "wxWindowID id = " << node->prop_as_string(prop_id) << ", ";
-        code << "const wxString& title = " << GenerateQuotedString(node, prop_title) << ",\n\t";
-        code << "const wxPoint& pos = ";
-
-        if (position == wxDefaultPosition)
-            code << "wxDefaultPosition, ";
-        else
-            code << "wxPoint(" << position.x << ", " << position.y << "), ";
-
-        code << "const wxSize& size = ";
-
-        if (size == wxDefaultSize)
-            code << "wxDefaultSize";
-        else
-            code << "wxSize(" << size.x << ", " << size.y << ")";
-
-        code << ",\n\tlong style = ";
-        if (node->HasValue(prop_style))
-            code << node->prop_as_string(prop_style);
-        else
-            code << "wxDEFAULT_DIALOG_STYLE";
-
-        code << ", const wxString &name = ";
-        if (node->HasValue(prop_window_name))
-            code << GenerateQuotedString(node, prop_window_name);
-        else
-            code << "wxDialogNameStr";
-
-        code << ");\n\n";
-
-        return code;
-    }
-
-    else
-    {
-        return GenFormCode(cmd, node);
-    }
-}
-
-std::optional<ttlib::sview> DialogFormGenerator::CommonAdditionalCode(Code& code, GenEnum::GenCodeType cmd)
-{
-    if (code.is_cpp() || cmd != code_after_children)
-        return {};
-
     Node* dlg = code.node();
-    Node* node = dlg;
+    Node* child_node = dlg;
     ASSERT_MSG(dlg->GetChildCount(), "Trying to generate code for a dialog with no children.")
     if (!dlg->GetChildCount())
         return {};  // empty dialog, so nothing to do
     ASSERT_MSG(dlg->GetChild(0)->IsSizer(), "Expected first child of a dialog to be a sizer.");
     if (dlg->GetChild(0)->IsSizer())
-        node = dlg->GetChild(0);
+    {
+        // If the first child is not a sizer, then child_node will still point to the dialog
+        // node, which means the SetSizer...(child_node) calls below will generate invalid
+        // code.
+        child_node = dlg->GetChild(0);
+    }
 
-    auto min_size = dlg->prop_as_wxSize(prop_minimum_size);
-    auto max_size = dlg->prop_as_wxSize(prop_maximum_size);
+    const auto min_size = dlg->as_wxSize(prop_minimum_size);
+    const auto max_size = dlg->as_wxSize(prop_maximum_size);
 
     if (min_size == wxDefaultSize && max_size == wxDefaultSize)
     {
-        code.FormFunction("SetSizerAndFit(") << node->get_node_name() << ")";
+        code.FormFunction("SetSizerAndFit(").NodeName(child_node).EndFunction();
     }
     else
     {
-        code.FormFunction("SetSizer(") << node->get_node_name() << ")";
+        code.FormFunction("SetSizer(").NodeName(child_node).EndFunction();
         if (min_size != wxDefaultSize)
         {
-            code.Eol().FormFunction("SetMinSize(wx.Size(") << min_size.GetWidth() << ", " << min_size.GetHeight() << "))";
+            code.Eol().FormFunction("SetMinSize(").WxSize(prop_minimum_size).EndFunction();
         }
         if (max_size != wxDefaultSize)
         {
-            code.Eol().FormFunction("SetMaxSize(wx.Size(") << max_size.GetWidth() << ", " << max_size.GetHeight() << "))";
+            code.Eol().FormFunction("tSetMaxSize(").WxSize(prop_maximum_size).EndFunction();
         }
-        code.Eol().FormFunction("Fit()");
+        code.Eol().FormFunction("Fit(").EndFunction();
     }
 
     auto& center = dlg->prop_as_string(prop_center);
     if (center.size() && !center.is_sameas("no"))
     {
-        code.Eol().FormFunction("Centre(").Add(center) << ")";
+        code.Eol().FormFunction("Centre(").Add(center).EndFunction();
     }
 
-    return code.m_code;
+    return true;
+}
+
+bool DialogFormGenerator::HeaderCode(Code& code)
+{
+    auto* node = code.node();
+    code.NodeName() += "() {}";
+    code.Eol().NodeName() += "(wxWindow *parent";
+    code.Comma().Str("wxWindowID id = ").Str(prop_id);
+    code.Comma().Str("const wxString& title = ").QuotedString(prop_title);
+    code.Comma().Str("const wxPoint& pos = ");
+
+    auto position = node->as_wxPoint(prop_pos);
+    if (position == wxDefaultPosition)
+        code.Str("wxDefaultPosition");
+    else
+        code.Pos();
+
+    code.Comma().Str("const wxSize& size = ");
+
+    auto size = node->prop_as_wxSize(prop_size);
+    if (size == wxDefaultSize)
+        code.Str("wxDefaultSize");
+    else
+        code.WxSize(prop_size);
+
+    code.Comma().Eol().Tab().Str("long style = ");
+    if (node->HasValue(prop_style))
+        code.Str(prop_style);
+    else
+        code.Str("wxDEFAULT_DIALOG_STYLE");
+
+    code.Comma().Str("const wxString &name = ");
+    if (node->HasValue(prop_window_name))
+        code.QuotedString(prop_window_name);
+    else
+        code.Str("wxDialogNameStr");
+
+    code.Str(")").Eol().OpenBrace().Str("Create(parent, id, title, pos, size, style, name);").CloseBrace();
+
+    code.Eol().Str("bool Create(wxWindow *parent");
+    code.Comma().Str("wxWindowID id = ").Str(prop_id);
+    code.Comma().Str("const wxString& title = ").QuotedString(prop_title);
+    code.Comma().Str("const wxPoint& pos = ");
+
+    if (position == wxDefaultPosition)
+        code.Str("wxDefaultPosition");
+    else
+        code.Pos();
+
+    code.Comma().Str("const wxSize& size = ");
+
+    if (size == wxDefaultSize)
+        code.Str("wxDefaultSize");
+    else
+        code.WxSize(prop_size);
+
+    code.Comma().Eol().Tab().Str("long style = ");
+    if (node->HasValue(prop_style))
+        code.Style();
+    else
+        code.Str("wxDEFAULT_DIALOG_STYLE");
+
+    code.Comma().Str("const wxString &name = ");
+    if (node->HasValue(prop_window_name))
+        code.QuotedString(prop_window_name);
+    else
+        code.Str("wxDialogNameStr");
+
+    // Extra eols at end to force space before "Protected:" section
+    code.EndFunction().Eol().Eol();
+
+    return true;
+}
+
+bool DialogFormGenerator::BaseClassNameCode(Code& code)
+{
+    if (code.HasValue(prop_derived_class))
+    {
+        code.Str((prop_derived_class));
+    }
+    else
+    {
+        code += "wxDialog";
+    }
+
+    return true;
 }
 
 bool DialogFormGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)

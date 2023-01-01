@@ -19,46 +19,161 @@
 
 #include "gen_frame.h"
 
-std::optional<ttlib::cstr> FrameFormGenerator::GenConstruction(Node* node)
+bool FrameFormGenerator::ConstructionCode(Code& code)
 {
-    ttlib::cstr code;
+    if (code.is_cpp())
+    {
+        auto* node = code.node();
+        code.Str(prop_class_name).Str("::").Str(prop_class_name);
+        code.Str("(wxWindow* parent, wxWindowID id, const wxString& title");
+        code.Comma().Str("const wxPoint& pos, const wxSize& size, long style");
+        if (node->prop_as_string(prop_window_name).size())
+            code.Comma().Str("const wxString& name");
+        code += ") :";
+        code.Str(" wxFrame(parent, id, title, pos, size, style");
+        if (node->prop_as_string(prop_window_name).size())
+            code.Comma().Str("name");
+        code += ")\n{";
+    }
+    else
+    {
+        // Note: this code is called before any indentation is set
+        code.Add("class ").NodeName().Add("(wx.Frame):\n");
+        code.Tab().Add("def __init__(self, parent):").Eol().Tab(2);
+        code << "wx.Frame.__init__(self, parent, id=";
+        code.Str(prop_id);
 
-    // This is the code to add to the source file
-    code << node->prop_as_string(prop_class_name) << "::" << node->prop_as_string(prop_class_name);
-    code << "(wxWindow* parent, wxWindowID id, const wxString& title,";
-    code << "\n\t\tconst wxPoint& pos, const wxSize& size, long style";
-    if (node->prop_as_string(prop_window_name).size())
-        code << ", const wxString& name";
-    code << ") :";
-    code << "\n\twxFrame(parent, id, title, pos, size, style";
-    if (node->prop_as_string(prop_window_name).size())
-        code << ", name";
-    code << ")\n{";
+        code.Indent(3);
+        code.Comma(false).Eol().Add("title=");
 
-    return code;
+        if (code.HasValue(prop_title))
+            code.QuotedString(prop_title);
+        else
+            code << "\"\"";
+
+        code.Comma().Eol().Add("pos=").Pos(prop_pos);
+        code.Comma().Add("size=").WxSize(prop_size);
+        code.Comma().Eol().Add("style=");
+        if (code.HasValue(prop_style) && !code.node()->as_string(prop_style).is_sameas("wxDEFAULT_FRAME_STYLE"))
+            code.Style();
+        else
+            code << "wx.DEFAULT_FRAME_STYLE";
+        code << ")";
+    }
+
+    code.ResetIndent();
+    code.ResetBraces();  // In C++, caller must close the final brace after all construction
+
+    return true;
 }
 
-bool FrameFormGenerator::GenPythonForm(Code& code)
+bool FrameFormGenerator::SettingsCode(Code& code)
 {
-    // Note: this code is called before any indentation is set
-    code.Add("class ").NodeName().Add("(wx.Frame):\n");
-    code.Tab().Add("def __init__(self, parent):").Eol().Tab(2);
-    code << "wx.Frame.__init__(self, parent, id=";
-    code.as_string(prop_id).Comma(false).Eol().Tab(3).Add("title=");
+    if (code.is_cpp())
+    {
+        if (auto icon_code = GenerateIconCode(code.node()->as_string(prop_icon)); icon_code.size())
+        {
+            code += icon_code;
+            code.Eol();
+        }
+    }
+    else
+    {
+        // TODO: [Randalphwa - 12-31-2022] Add Python code for setting icon
+    }
 
+    GenFormSettings(code);
+
+    return true;
+}
+
+bool FrameFormGenerator::AfterChildrenCode(Code& code)
+{
+    auto& center = code.node()->as_string(prop_center);
+    if (center.size() && !center.is_sameas("no"))
+    {
+        code.Eol().FormFunction("Centre(").Add(center).EndFunction();
+    }
+
+    return true;
+}
+
+bool FrameFormGenerator::HeaderCode(Code& code)
+{
+    auto* node = code.node();
+
+    code.NodeName().Str("(wxWindow* parent, wxWindowID id = ").Str(prop_id);
+    code.Comma().Str("const wxString& title = ");
+    auto& title = node->prop_as_string(prop_title);
     if (code.HasValue(prop_title))
-        code.QuotedString(prop_title);
+    {
+        code.QuotedString(title);
+    }
     else
-        code << "\"\"";
+    {
+        code.Str("wxEmptyString");
+    }
+    code.Comma().Str("const wxPoint& pos = ");
 
-    code.Comma().Eol().Tab(3).Add("pos=").Pos(prop_pos);
-    code.Comma().Add("size=").WxSize(prop_size);
-    code.Comma().Eol().Tab(3).Add("style=");
-    if (code.HasValue(prop_style) && !code.node()->as_string(prop_style).is_sameas("wxDEFAULT_FRAME_STYLE"))
-        code.Style();
+    auto position = node->as_wxPoint(prop_pos);
+    if (position == wxDefaultPosition)
+        code.Str("wxDefaultPosition");
     else
-        code << "wx.DEFAULT_FRAME_STYLE";
-    code << ")";
+        code.Pos();
+
+    code.Comma().Str("const wxSize& size = ");
+
+    auto size = node->prop_as_wxSize(prop_size);
+    if (size == wxDefaultSize)
+        code.Str("wxDefaultSize");
+    else
+        code.WxSize(prop_size);
+
+    auto& style = node->prop_as_string(prop_style);
+    auto& win_style = node->prop_as_string(prop_window_style);
+    if (style.empty() && win_style.empty())
+        code.Comma().Str("long style = 0");
+    else
+    {
+        code.Comma();
+        code.CheckLineLength(style.size() + win_style.size() + sizeof("long style = "));
+        code.Str("long style = ");
+        if (style.size())
+        {
+            code.CheckLineLength(style.size() + win_style.size());
+            code += style;
+            if (win_style.size())
+            {
+                code << '|' << win_style;
+            }
+        }
+        else if (win_style.size())
+        {
+            code.Str(win_style);
+        }
+    }
+
+    if (node->prop_as_string(prop_window_name).size())
+    {
+        code.Comma().Str("const wxString &name = ").QuotedString(prop_window_name);
+    }
+
+    // Extra eols at end to force space before "Protected:" section
+    code.EndFunction().Eol().Eol();
+
+    return true;
+}
+
+bool FrameFormGenerator::BaseClassNameCode(Code& code)
+{
+    if (code.HasValue(prop_derived_class))
+    {
+        code.Str((prop_derived_class));
+    }
+    else
+    {
+        code += code.node()->DeclName();
+    }
 
     return true;
 }
@@ -137,36 +252,6 @@ void FrameFormGenerator::RequiredHandlers(Node* node, std::set<std::string>& han
         handlers.emplace("wxIconXmlHandler");
         handlers.emplace("wxBitmapXmlHandler");
     }
-}
-
-std::optional<ttlib::cstr> FrameFormGenerator::GenAdditionalCode(GenEnum::GenCodeType cmd, Node* node)
-{
-    return GenFormCode(cmd, node);
-}
-
-std::optional<ttlib::sview> FrameFormGenerator::CommonAdditionalCode(Code& code, GenEnum::GenCodeType cmd)
-{
-    if (code.is_cpp() || cmd != code_after_children)
-        return {};
-
-    auto& center = code.node()->as_string(prop_center);
-    if (center.size() && !center.is_sameas("no"))
-    {
-        code.Eol().FormFunction("Centre(").Add(center) << ")";
-    }
-
-    return code.m_code;
-}
-
-std::optional<ttlib::cstr> FrameFormGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
-{
-    if (auto code = GenerateIconCode(node->prop_as_string(prop_icon)); code.size())
-    {
-        code << GenFormSettings(node);
-        return code;
-    }
-
-    return GenFormSettings(node);
 }
 
 bool FrameFormGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)

@@ -14,12 +14,11 @@
 class FrameFormGenerator : public BaseGenerator
 {
 public:
-    std::optional<ttlib::cstr> GenConstruction(Node* node) override;
-    std::optional<ttlib::cstr> GenAdditionalCode(GenEnum::GenCodeType cmd, Node* node) override;
-    std::optional<ttlib::cstr> GenSettings(Node* node, size_t& auto_indent) override;
-
-    bool GenPythonForm(Code&) override;
-    std::optional<ttlib::sview> CommonAdditionalCode(Code&, GenEnum::GenCodeType cmd) override;
+    bool ConstructionCode(Code&) override;
+    bool SettingsCode(Code&) override;
+    bool AfterChildrenCode(Code&) override;
+    bool HeaderCode(Code&) override;
+    bool BaseClassNameCode(Code&) override;
 
     bool AllowPropertyChange(wxPropertyGridEvent*, NodeProperty*, Node*) override;
 

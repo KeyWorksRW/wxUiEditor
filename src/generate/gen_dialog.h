@@ -14,13 +14,10 @@ class DialogFormGenerator : public BaseGenerator
 public:
     wxObject* CreateMockup(Node* node, wxObject* parent) override;
 
-    // Return true if all construction and settings code was written to src_code
-    bool GenConstruction(Node*, BaseCodeGenerator* code_gen) override;
-
-    bool GenPythonForm(Code&) override;
-    std::optional<ttlib::sview> CommonAdditionalCode(Code&, GenEnum::GenCodeType cmd) override;
-
-    std::optional<ttlib::cstr> GenAdditionalCode(GenEnum::GenCodeType cmd, Node* node) override;
+    bool ConstructionCode(Code&) override;
+    bool AfterChildrenCode(Code&) override;
+    bool HeaderCode(Code&) override;
+    bool BaseClassNameCode(Code&) override;
 
     bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr) override;
 

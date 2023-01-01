@@ -54,7 +54,6 @@ protected:
 
 private:
     ttString m_filename;
-    int m_language = GEN_LANG_CPLUSPLUS;
 
 #if defined(_DEBUG)
     bool hasWriteFileBeenCalled { false };

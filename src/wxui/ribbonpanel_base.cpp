@@ -52,7 +52,6 @@ bool RibbonPanelBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos
 {
     if (!wxPanel::Create(parent, id, pos, size, style, name))
         return false;
-
     if (!wxImage::FindHandler(wxBITMAP_TYPE_PNG))
         wxImage::AddHandler(new wxPNGHandler);
 

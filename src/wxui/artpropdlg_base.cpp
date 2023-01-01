@@ -14,7 +14,7 @@
 #include "artpropdlg_base.h"
 
 bool ArtPropertyDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString& title,
-        const wxPoint& pos, const wxSize& size, long style, const wxString &name)
+    const wxPoint& pos, const wxSize& size, long style, const wxString &name)
 {
     if (!wxDialog::Create(parent, id, title, pos, size, style, name))
         return false;
@@ -26,6 +26,7 @@ bool ArtPropertyDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString&
     auto* box_sizer4 = new wxBoxSizer(wxVERTICAL);
 
     m_list = new wxListView(this, wxID_ANY, wxDefaultPosition, wxSize(250, 400), wxLC_REPORT|wxLC_NO_HEADER|wxLC_SINGLE_SEL|wxBORDER_SUNKEN|wxLC_REPORT);
+
     box_sizer4->Add(m_list, wxSizerFlags().Border(wxRIGHT, 10));
 
     box_sizer->Add(box_sizer4, wxSizerFlags().Border(wxALL));

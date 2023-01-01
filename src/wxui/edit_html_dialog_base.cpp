@@ -15,7 +15,7 @@
 #include "edit_html_dialog_base.h"
 
 bool EditHtmlDialogBase::Create(wxWindow* parent, wxWindowID id, const wxString& title,
-        const wxPoint& pos, const wxSize& size, long style, const wxString &name)
+    const wxPoint& pos, const wxSize& size, long style, const wxString &name)
 {
     if (!wxDialog::Create(parent, id, title, pos, size, style, name))
         return false;
@@ -65,7 +65,6 @@ bool EditHtmlDialogBase::Create(wxWindow* parent, wxWindowID id, const wxString&
     parent_sizer->Add(CreateSeparatedSizer(stdBtn_2), wxSizerFlags().Expand().Border(wxALL));
 
     SetSizerAndFit(parent_sizer);
-    SetSize(wxSize(500, 400));
     Centre(wxBOTH);
 
     wxPersistentRegisterAndRestore(this, "EditHtmlDialogBase");

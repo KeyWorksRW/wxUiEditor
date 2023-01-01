@@ -82,6 +82,7 @@ static const std::map<std::string_view, std::string_view, std::less<>> s_map_wx_
     { "wxSTC_MULTIPASTE_EACH", "wx.stc."},
     { "wxSTC_MARGINOPTION_SUBLINESELECT", "wx.stc."},
     { "wxSTC_STYLE_LINENUMBER", "wx.stc."},
+    { "wxSTC_STYLE_DEFAULT", "wx.stc."},
 
     { "wxSTC_WRAPVISUALFLAGLOC_END_BY_TEXT", "wx.stc."},
     { "wxSTC_WRAPVISUALFLAGLOC_START_BY_TEXT", "wx.stc."},
@@ -1331,7 +1332,8 @@ void Code::GenFontColourSettings()
             }
             else if (node->isGen(gen_wxStyledTextCtrl))
             {
-                NodeName().Function("SetFont(font").EndFunction();
+                NodeName().Function("StyleSetFont(").Add("wxSTC_STYLE_DEFAULT");
+                Comma().Str("font").EndFunction();
                 CloseBrace();
             }
             else

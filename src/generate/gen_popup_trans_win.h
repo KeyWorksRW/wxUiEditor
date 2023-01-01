@@ -12,9 +12,10 @@
 class PopupWinGenerator : public BaseGenerator
 {
 public:
-    std::optional<ttlib::cstr> GenConstruction(Node* node) override;
-    std::optional<ttlib::cstr> GenAdditionalCode(GenEnum::GenCodeType cmd, Node* node) override;
-    std::optional<ttlib::cstr> GenSettings(Node* node, size_t& auto_indent) override;
+    bool ConstructionCode(Code&) override;
+    bool SettingsCode(Code&) override;
+    bool HeaderCode(Code&) override;
+    bool BaseClassNameCode(Code&) override;
 
     ttlib::cstr GetHelpText(Node*) override { return ttlib::cstr("wxPopupTransientWindow"); }
     ttlib::cstr GetHelpURL(Node*) override { return ttlib::cstr("wx_popup_transient_window.html"); }

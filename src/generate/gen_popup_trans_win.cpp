@@ -15,49 +15,59 @@
 
 #include "gen_popup_trans_win.h"
 
-std::optional<ttlib::cstr> PopupWinGenerator::GenConstruction(Node* node)
+bool PopupWinGenerator::ConstructionCode(Code& code)
 {
-    ttlib::cstr code;
-
-    // This is the code to add to the source file
-    code << node->prop_as_string(prop_class_name) << "::" << node->prop_as_string(prop_class_name);
-    code << "(wxWindow* parent, int style) : wxPopupTransientWindow(parent, style)\n{";
-
-    return code;
-}
-
-std::optional<ttlib::cstr> PopupWinGenerator::GenAdditionalCode(GenEnum::GenCodeType cmd, Node* node)
-{
-    ttlib::cstr code;
-
-    if (cmd == code_header)
+    if (code.is_cpp())
     {
-        code << node->get_node_name() << "(wxWindow* parent, int style = " << node->prop_as_string(prop_border);
-        if (node->HasValue(prop_style))
-        {
-            code << " | " << node->prop_as_string(prop_style);
-        }
-        code << ");";
-        return code;
-    }
-    else if (cmd == code_base_class)
-        return GenFormCode(cmd, node);
-
-    return {};
-}
-
-std::optional<ttlib::cstr> PopupWinGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
-{
-    auto code = GenFontColourSettings(node);
-
-    if (code.empty())
-    {
-        return {};
+        code.Str(prop_class_name).Str("::").Str(prop_class_name);
+        code += "(wxWindow* parent, int style) : wxPopupTransientWindow(parent, style)\n{";
     }
     else
     {
-        return code;
+        code.Add("class ").NodeName().Add("(wx.PopupTransientWindow):\n");
+        code.Tab().Add("def __init__(self, parent):").Eol().Tab(2);
+        code << "wx.PopupTransientWindow.__init__(self, parent, flags=";
+        code.Add(prop_border);
+        if (code.HasValue(prop_style))
+        {
+            code.Str(" | ").Add(prop_style);
+        }
+        code.EndFunction();
     }
+
+    return true;
+}
+bool PopupWinGenerator::SettingsCode(Code& code)
+{
+    code.GenFontColourSettings();
+
+    return true;
+}
+
+bool PopupWinGenerator::HeaderCode(Code& code)
+{
+    code.NodeName().Str("(wxWindow* parent, int style = ").Str(prop_border);
+    if (code.HasValue(prop_style))
+    {
+        code.Str(" | ").Add(prop_style);
+    }
+    code.EndFunction();
+
+    return true;
+}
+
+bool PopupWinGenerator::BaseClassNameCode(Code& code)
+{
+    if (code.HasValue(prop_derived_class))
+    {
+        code.Str((prop_derived_class));
+    }
+    else
+    {
+        code += code.node()->DeclName();
+    }
+
+    return true;
 }
 
 bool PopupWinGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)

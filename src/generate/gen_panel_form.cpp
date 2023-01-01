@@ -138,7 +138,8 @@ bool PanelFormGenerator::HeaderCode(Code& code)
         return false;
 
     code.NodeName() += "() {}";
-    code.Eol().Str("const wxPoint& pos = ").Pos(prop_pos).Comma();
+    code.Eol().NodeName().Str("(wxWindow* parent, wxWindowID id = ").Str(prop_id);
+    code.Comma().Str("const wxPoint& pos = ").Pos(prop_pos).Comma();
     code.Str("const wxSize& size = ").WxSize(prop_size).Comma();
     code.Str("long style = ");
     if (code.HasValue(prop_style))

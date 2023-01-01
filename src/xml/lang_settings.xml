@@ -27,6 +27,8 @@ inline const char* language_xml = R"===(<?xml version="1.0"?>
 	<gen class="wxPython Settings" type="interface">
 		<property name="python_file" type="file"
 			help="The filename to use if generating code for wxPython." />
+		<property name="insert_python_code" type="code_edit"
+			help="Specify the code to insert into the python file after the generated import statements. This is usually used to import addtional modules, but can be any valid python code for use before the class definition." />
 		<!-- <property name="python_variable_args" type="bool"
 			help="If checked, the form parameters will be set to (*args, **kwargs) instead of listing all the parameters and their default values.">1</property> -->
 		<property name="python_inherit_name" type="string"

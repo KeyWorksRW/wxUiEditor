@@ -272,6 +272,8 @@ void BaseCodeGenerator::GeneratePythonClass(Node* form_node, PANEL_PAGE panel_ty
 
     if (m_panel_type == NOT_PANEL)
         m_source->writeLine(txt_PythonCmtBlock);
+    else
+        m_source->writeLine("import wx\n");
     m_header->writeLine(ttlib::cstr("# Sample inherited class from ") << form_node->as_string(prop_class_name));
     m_header->writeLine();
     m_header->writeLine("import wx");
@@ -286,6 +288,19 @@ void BaseCodeGenerator::GeneratePythonClass(Node* form_node, PANEL_PAGE panel_ty
     m_header->writeLine();
     m_header->writeLine(ttlib::cstr("import ") << form_node->as_string(prop_python_file) << "\n");
     m_header->writeLine();
+
+    if (m_form_node->HasValue(prop_python_insert))
+    {
+        ttlib::cstr convert(m_form_node->as_string(prop_python_insert));
+        convert.Replace("@@", "\n", tt::REPLACE::all);
+        ttlib::multistr lines(convert, '\n', tt::TRIM::right);
+        for (auto& code: lines)
+        {
+            m_source->doWrite(code);
+            m_source->doWrite("\n");
+        }
+        m_source->doWrite("\n");
+    }
 
     if (form_node->HasValue(prop_python_inherit_name))
     {

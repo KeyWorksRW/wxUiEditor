@@ -422,6 +422,7 @@ std::map<GenEnum::PropName, const char*> GenEnum::map_PropNames = {
     { prop_python_copy_art, "python_copy_art" },
     { prop_python_file, "python_file" },
     { prop_python_inherit_name, "python_inherit_name" },
+    { prop_python_insert, "insert_python_code" },
     { prop_python_output_folder, "python_output_folder" },
     { prop_python_use_xrc, "python_use_xrc" },
     { prop_python_variable_args, "python_variable_args" },

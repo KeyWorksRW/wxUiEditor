@@ -428,6 +428,7 @@ namespace GenEnum
         prop_python_copy_art,  // Copy art files to output folder
         prop_python_file,
         prop_python_inherit_name,
+        prop_python_insert,
         prop_python_output_folder,
         prop_python_use_xrc,
         prop_python_variable_args,

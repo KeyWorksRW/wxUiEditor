@@ -155,6 +155,7 @@ std::map<std::string_view, std::string_view, std::less<>> g_map_class_prefix
     { "wxTimePickerCtrl", "wx.adv."},
     { "wxStyledTextCtrl", "wx.stc."},
     { "wxWebView", "wx.html2."},
+    { "wxWizard", "wx.adv."},
 
 };
 // clang-format on
@@ -165,10 +166,14 @@ Code::Code(Node* node, int language) : m_node(node), m_language(language)
     if (language == GEN_LANG_CPLUSPLUS)
     {
         m_break_length = (to_size_t) GetProject()->as_int(prop_cpp_line_length);
+        // Always assume C++ code has one tab at the beginning of the line
+        m_break_length -= m_indent_size;
     }
     else if (language == GEN_LANG_PYTHON)
     {
         m_break_length = (to_size_t) GetProject()->as_int(prop_python_line_length);
+        // Always assume Python code has two tabs at the beginning of the line
+        m_break_length -= (m_indent_size * 2);
     }
     m_break_at = m_break_length;
 
@@ -178,6 +183,9 @@ Code::Code(Node* node, int language) : m_node(node), m_language(language)
 
 Code& Code::CheckLineLength(size_t next_str_size)
 {
+    if (m_indent)
+        next_str_size += (m_indent * m_indent_size);
+
     if (m_auto_break && m_code.size() > m_minium_length && m_code.size() + next_str_size > m_break_at)
     {
         if (m_code.back() == ' ')

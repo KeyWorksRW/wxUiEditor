@@ -365,6 +365,7 @@ private:
     size_t m_minium_length { 10 };  // if the line is shorter than this, don't break it
 
     int m_indent { 0 };
+    int m_indent_size { 4 };  // amount of spaces to assume tab size is set to
 
     bool m_auto_break { true };
     bool m_within_braces { false };

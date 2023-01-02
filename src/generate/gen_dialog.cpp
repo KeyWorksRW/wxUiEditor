@@ -81,11 +81,8 @@ bool DialogFormGenerator::ConstructionCode(Code& code)
 
     if (code.HasValue(prop_extra_style))
     {
-        code.Eol(eol_if_needed)
-            .FormFunction("SetExtraStyle(GetExtraStyle() | ")
-            .Add(prop_extra_style)
-            .Str(")")
-            .EndFunction();
+        code.Eol(eol_if_needed).FormFunction("SetExtraStyle(GetExtraStyle() | ").Add(prop_extra_style).Str(")");
+        code.EndFunction();
     }
 
     code.Eol(eol_if_needed).GenFontColourSettings();

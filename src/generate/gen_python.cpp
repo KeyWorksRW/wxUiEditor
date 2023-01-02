@@ -572,8 +572,9 @@ bool PythonBundleCode(Code& code, GenEnum::PropName prop)
 
         else if (bundle->lst_filenames.size() == 1)
         {
-            code += "wx.BitmapBundle.FromBitmap(wx.Bitmap(";
-            code.QuotedString(name) += "))";
+            code += "wx.BitmapBundle.FromBitmap(";
+            code.CheckLineLength(name.size() + sizeof("wx.Bitmap()"));
+            code.Str("wx.Bitmap(").QuotedString(name) += "))";
         }
         else if (bundle->lst_filenames.size() == 2)
         {

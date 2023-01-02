@@ -138,6 +138,7 @@ namespace GenEnum
         prop_combine_all_forms,
         prop_combined_xrc_file,
         prop_compiler_standard,
+        prop_const_values,
         prop_contents,
         prop_context_help,
         prop_context_menu,

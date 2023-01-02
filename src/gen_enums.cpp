@@ -132,6 +132,7 @@ std::map<GenEnum::PropName, const char*> GenEnum::map_PropNames = {
     { prop_combine_all_forms, "combine_all_forms" },
     { prop_combined_xrc_file, "combined_xrc_file" },
     { prop_compiler_standard, "compiler_standard" },
+    { prop_const_values, "generate_const_values" },
     { prop_contents, "contents" },
     { prop_context_help, "context_help" },
     { prop_context_menu, "context_menu" },

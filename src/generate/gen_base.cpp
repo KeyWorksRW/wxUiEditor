@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Generate Src and Hdr files for the Base Class
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -1367,6 +1367,34 @@ void BaseCodeGenerator::GenerateClassHeader(Node* form_node, const EventVector& 
     {
         WriteSetLines(m_header, code_lines);
         m_header->writeLine();
+    }
+
+    if (form_node->as_bool(prop_const_values))
+    {
+        code.clear();
+        if (form_node->HasProp(prop_id))
+            code.Eol(eol_if_needed).Str("const int form_id = ").Str(prop_id) += ";";
+        if (form_node->HasProp(prop_style))
+            code.Eol(eol_if_needed).Str("const int form_style = ").Str(prop_style) += ";";
+        if (form_node->HasProp(prop_pos))
+            code.Eol(eol_if_needed).Str("const wxPoint form_pos = ").Pos(prop_pos, no_dlg_units) += ";";
+        if (form_node->HasProp(prop_size))
+            code.Eol(eol_if_needed).Str("const wxSize form_size = ").WxSize(prop_size, no_dlg_units) += ";";
+        if (form_node->HasProp(prop_title))
+        {
+            code.Eol(eol_if_needed).Str("static const wxString form_title() { return ");
+            if (form_node->HasValue(prop_title))
+                code.Str("wxString::FromUTF8(\"").Str(prop_title) += "\"); }";
+            else
+                code.Str("wxEmptyString; }");
+        }
+
+        if (code.size())
+        {
+            m_header->writeLine(code);
+            m_header->writeLine();
+            m_header->writeLine();
+        }
     }
 
     code.clear();

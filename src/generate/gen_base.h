@@ -49,12 +49,6 @@ namespace result
     };
 }  // namespace result
 
-// This determines the longest line when generating embedded images. Do *not* use constexpr for this -- at some point we may
-// want to allow the user to set maximum line length of all generated code, and if so, this will need to reflect the user's
-// preference.
-
-constexpr int max_image_line_length { 125 };
-
 int WriteCMakeFile(Node* parent_node, std::vector<ttlib::cstr>& updated_files,
                    std::vector<ttlib::cstr>& results);  // See gen_cmake.cpp
 

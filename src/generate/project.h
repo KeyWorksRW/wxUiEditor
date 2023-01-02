@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Project generator
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2022-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -17,6 +17,8 @@ public:
     // There are so many additions to the 1.1 version of wxUiEditor that it's easier
     // just to increase the Project's version number.
     int GetRequiredVersion(Node* /*node*/) override { return minRequiredVer + 2; }
+
+    bool AllowPropertyChange(wxPropertyGridEvent*, NodeProperty*, Node*) override;
 };
 
 class FolderGenerator : public BaseGenerator

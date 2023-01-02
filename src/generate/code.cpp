@@ -160,14 +160,15 @@ std::map<std::string_view, std::string_view, std::less<>> g_map_class_prefix
 // clang-format on
 
 Code::Code(Node* node, int language) : m_node(node), m_language(language)
+
 {
     if (language == GEN_LANG_CPLUSPLUS)
     {
-        m_break_length = wxGetApp().Preferences().get_cpp_line_length();
+        m_break_length = (to_size_t) GetProject()->as_int(prop_cpp_line_length);
     }
     else if (language == GEN_LANG_PYTHON)
     {
-        m_break_length = wxGetApp().Preferences().get_python_line_length();
+        m_break_length = (to_size_t) GetProject()->as_int(prop_python_line_length);
     }
     m_break_at = m_break_length;
 

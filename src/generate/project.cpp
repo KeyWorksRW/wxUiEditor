@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Project generator
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2022-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -91,6 +91,22 @@ bool ProjectGenerator::PopupMenuAddCommands(NavPopupMenu* menu, Node* /* node */
         },
         NavPopupMenu::MenuPROJECT_ADD_WIZARD);
 
+    return true;
+}
+
+bool ProjectGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty* prop, Node* /* node */)
+{
+    if (prop->isProp(prop_cpp_line_length) || prop->isProp(prop_python_line_length))
+    {
+        auto variant = event->GetPropertyValue();
+        auto num = variant.GetInteger();
+        if (num < 70)
+        {
+            event->SetValidationFailureMessage("70 is the shortest line length that you can specify.");
+            event->Veto();
+            return false;
+        }
+    }
     return true;
 }
 

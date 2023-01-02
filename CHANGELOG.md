@@ -7,7 +7,9 @@ Release summary...
 
 ### Added
 
+- You can now generate wxPython code
 - You can now add your own code at the end of generated files. This code will be preserved even when the file is re-generated.
+- You can now set a line length in the project file, and most code will be wrapped so that it is less than this limit.
 - Stretchable space can now be added to toolbars.
 - Added support for dropdown toolbar items that contain menu items.
 - wxToolBar and wxAuiToolBar individual tools now have a disabled property.

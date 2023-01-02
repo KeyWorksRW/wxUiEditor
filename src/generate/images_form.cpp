@@ -336,7 +336,7 @@ void BaseCodeGenerator::GenerateImagesForm()
 
             m_source->writeLine();
             ttlib::cstr code;
-            code.reserve(max_image_line_length + 16);
+            code.reserve(GetProject()->as_int(prop_cpp_line_length) + 16);
             // SVG images store the original size in the high 32 bits
             size_t max_pos = (iter_array->array_size & 0xFFFFFFFF);
             code << "const unsigned char " << iter_array->array_name << '[' << max_pos << "] {";
@@ -347,7 +347,7 @@ void BaseCodeGenerator::GenerateImagesForm()
             {
                 code.clear();
                 // -8 to account for 4 indent + max 3 chars for number + comma
-                for (; pos < max_pos && code.size() < (to_size_t) max_image_line_length - 8; ++pos)
+                for (; pos < max_pos && code.size() < (to_size_t) GetProject()->as_int(prop_cpp_line_length) - 8; ++pos)
                 {
                     code << (to_int) iter_array->array_data[pos] << ',';
                 }

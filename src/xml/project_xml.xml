@@ -25,6 +25,8 @@ inline const char* project_xml = R"===(<?xml version="1.0"?>
 			<option name=".hxx" />
 			.h
 		</property>
+		<property name="cpp_line_length" type="uint"
+			help="Specifies a guideline for generated code line length. Most lines will be wrapped so that they do not exceed this length.">110</property>
 		<property name="local_pch_file" type="file"
 			help="The filename of a local precompiled header file. The file will be included in quotes." />
 		<property name="src_preamble" type="code_edit"
@@ -58,8 +60,8 @@ inline const char* project_xml = R"===(<?xml version="1.0"?>
 		</property>
 		<property name="python_output_folder" type="path"
 			help="If a folder name is specified, it will be used for all python code. It will also be used for generated xrc and art files if the matching options below are checked." />
-		<property name="python_copy_art" type="bool"
-			help="If checked, art files will be copied to the python_output_folder. BMP files will be converted to PNG, XPM and SVG files may be reduced in size." />
+		<property name="python_line_length" type="uint"
+			help="Specifies a guideline for generated code line length. Most lines will be wrapped so that they do not exceed this length.">90</property>
 	</gen>
 
 	<gen class="Project" type="project" image="project">

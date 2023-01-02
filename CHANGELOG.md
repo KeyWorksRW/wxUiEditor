@@ -3,13 +3,13 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased (1.1.0)]
 
-Release summary...
+The biggest change is the ability to generate wxPython code. In addition, several improvements have been made for C++ code generation. For both languages, you can now add your own code at the end of the generated files, often eliminating the need to create an inherited class.
 
 ### Added
 
-- You can now generate wxPython code
-- You can now add your own code at the end of generated files. This code will be preserved even when the file is re-generated.
-- You can now set a line length in the project file, and most code will be wrapped so that it is less than this limit.
+- Ability to generate wxPython code (supports wxPython 4.2 including wx.BitmapBundle and roughly 140 widgets).
+- Ability to add your own code at the end of generated files. This code will be preserved even when the file is re-generated.
+- Ability to set a line length in the project file, and most code will be wrapped so that it is less than this limit.
 - Stretchable space can now be added to toolbars.
 - Added support for dropdown toolbar items that contain menu items.
 - wxToolBar and wxAuiToolBar individual tools now have a disabled property.
@@ -18,7 +18,11 @@ Release summary...
 - Menu items can now contain multiple accelerators (requires wxWidgets 3.1.6 or later)
 - XRC now generates XML for toolbar separators.
 
+#### Folders
+
 You can now place forms inside of folders to make it easier to organize your project when you have a large number of forms. Besides organizing the Navigation pane, folders also let you override properties such as the output folder for just the forms contains within that folder. The new folder command is available on the right side of the Forms panel of the toolbar, or from the Move sub-menu when you right-click on a form.
+
+#### Context menu
 
 The right-click menu for a widget in the Navigation Panel will sometimes have a `Change to` option. The 1.0 release supported changing most sizers. New to 1.1 is the ability to change some widgets as well. The following widgets can be changed to another widget in the group:
 
@@ -28,11 +32,11 @@ The right-click menu for a widget in the Navigation Panel will sometimes have a 
 
 ### Changed
 
+- The Generate Code command now let's you choose between C++, Python or XRC code generation.
 - A user can no longer enter an invalid C++ variable name.
 - All C++ generated files include clang-format off and on comments around generated code so that if you add your own code at the end, you can run it through clang-format.
 - `contents` property for wxCheckListBox and wxRearrangeCtrl now supports setting initial checked state for each string.
 - When a form is duplicated, the class name and any filenames specified for the form are now unique within the project.
-- `Generate XRC files...` on Tools menu now launches a dialog allowing you to choose between combined or individually generated XRC files.
 - Improved XRC generation of optional static line above a standard dialog button -- this now matches what the C++ version would look like.
 - XRC files now include a comment warning that regeneration will eliminate any hand edits.
 

@@ -22,9 +22,6 @@ public:
     int GenXrcObject(Node*, pugi::xml_node& /* object */, size_t /* xrc_flags */) override;
     void RequiredHandlers(Node*, std::set<std::string>& /* handlers */) override;
 
-    ttlib::cstr GetPythonHelpText(Node*) override { return "wx.StaticBitmap"; }
-    ttlib::cstr GetPythonURL(Node*) override { return "wx.StaticBitmap.html"; }
-
 protected:
     void GenCppConstruction(Code& gen_code);
 };

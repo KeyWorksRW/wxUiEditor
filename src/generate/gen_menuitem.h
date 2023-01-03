@@ -18,7 +18,4 @@ public:
     bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr) override;
 
     int GenXrcObject(Node*, pugi::xml_node& /* object */, size_t /* xrc_flags */) override;
-
-    ttlib::cstr GetPythonHelpText(Node*) override { return "wx.MenuItem"; }
-    ttlib::cstr GetPythonURL(Node*) override { return "wx.MenuItem.html"; }
 };

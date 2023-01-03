@@ -129,7 +129,7 @@ bool WizardFormGenerator::SettingsCode(Code& code)
     }
     else
     {
-        code.Eol(eol_if_needed).Str("Create(parent, id, title, wxNullBitmap, pos, style").EndFunction();
+        code.Eol(eol_if_needed).FormFunction("Create(").Str("parent, id, title, wxNullBitmap, pos, style").EndFunction();
     }
 
     return true;

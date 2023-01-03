@@ -15,6 +15,7 @@ public:
     wxObject* CreateMockup(Node* node, wxObject* parent) override;
 
     bool ConstructionCode(Code&) override;
+    bool SettingsCode(Code&) override;
     bool AfterChildrenCode(Code&) override;
     bool HeaderCode(Code&) override;
     bool BaseClassNameCode(Code&) override;

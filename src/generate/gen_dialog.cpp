@@ -51,44 +51,62 @@ bool DialogFormGenerator::ConstructionCode(Code& code)
             "::Create(wxWindow* parent, wxWindowID id, const wxString& title,\n\tconst wxPoint& pos, const wxSize& size, "
             "long style, const wxString &name)";
         code.OpenBrace();
-        code += "if (!wxDialog::Create(parent, id, title, pos, size, style, name))";
+
+        if (code.HasValue(prop_extra_style))
+        {
+            code.Eol(eol_if_needed).FormFunction("SetExtraStyle(GetExtraStyle() | ").Add(prop_extra_style).Str(")");
+            code.EndFunction();
+        }
+
+        code.Eol(eol_if_needed) += "if (!wxDialog::Create(parent, id, title, pos, size, style, name))";
         code.Eol().Tab() += "return false;\n";
     }
     else
     {
-        code.Add("class ").NodeName().Add("(wx.Dialog):\n");
-        code.Tab().Add("def __init__(self, parent):").Eol().Tab(2);
-        code << "wx.Dialog.__init__(self, parent, id=";
-        code.as_string(prop_id);
-
+        // The Python version creates an empty wx.Dialog and generates the Create() method in
+        // SettingsCode(). From the user's perspective, it looks like one-step creation, but
+        // it's actually two steps.
+        code.Add("class ").NodeName().Str("(wx.Dialog):");
+        code.Eol().Tab().Add("def __init__(self, parent, id=").Add(prop_id);
         code.Indent(3);
-        code.Comma(false).Eol().Add("title=");
-
-        if (code.HasValue(prop_title))
-            code.QuotedString(prop_title);
+        code.Comma().Str("title=").QuotedString(prop_title).Comma().Add("pos=").Pos(prop_pos);
+        code.Comma().Str("size=").WxSize(prop_size).Comma();
+        code.CheckLineLength(sizeof("style=") + code.node()->as_string(prop_style).size() + 4);
+        code.Add("style=").Style().Comma();
+        size_t name_len =
+            code.HasValue(prop_window_name) ? code.node()->as_string(prop_window_name).size() : sizeof("wx.DialogNameStr");
+        code.CheckLineLength(sizeof("name=") + name_len + 4);
+        code.Str("name=");
+        if (code.HasValue(prop_window_name))
+            code.QuotedString(prop_window_name);
         else
-            code << "\"\"";
-
-        code.Comma().Eol().Add("pos=").Pos(prop_pos);
-        code.Comma().Add("size=").WxSize(prop_size);
-        code.Comma().Eol().Add("style=");
-        if (code.HasValue(prop_style) && !code.node()->as_string(prop_style).is_sameas("wxDEFAULT_DIALOG_STYLE"))
-            code.Style();
-        else
-            code << "wx.DEFAULT_DIALOG_STYLE";
-        code << ")";
+            code.Str("wx.DialogNameStr");
+        code.Str("):");
+        code.Unindent();
+        code.Eol() += "wx.Dialog.__init__(self)";
     }
 
-    if (code.HasValue(prop_extra_style))
+    code.ResetIndent();
+    code.ResetBraces();  // In C++, caller must close the final brace after all construction
+
+    return true;
+}
+
+bool DialogFormGenerator::SettingsCode(Code& code)
+{
+    if (code.is_python())
     {
-        code.Eol(eol_if_needed).FormFunction("SetExtraStyle(GetExtraStyle() | ").Add(prop_extra_style).Str(")");
-        code.EndFunction();
+        if (code.HasValue(prop_extra_style))
+        {
+            code.Eol(eol_if_needed).FormFunction("SetExtraStyle(GetExtraStyle() | ").Add(prop_extra_style).Str(")");
+            code.EndFunction();
+        }
+
+        code.Eol(eol_if_needed) += "self.Create(parent, id, title, pos, size, style, name)";
     }
 
     code.Eol(eol_if_needed).GenFontColourSettings();
 
-    code.ResetIndent();
-    code.ResetBraces();  // In C++, caller must close the final brace after all construction
     return true;
 }
 

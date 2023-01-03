@@ -23,42 +23,32 @@ bool FrameFormGenerator::ConstructionCode(Code& code)
 {
     if (code.is_cpp())
     {
-        auto* node = code.node();
-        code.Str(prop_class_name).Str("::").Str(prop_class_name);
-        code.Str("(wxWindow* parent, wxWindowID id, const wxString& title");
-        code.Comma().Str("const wxPoint& pos, const wxSize& size, long style");
-        if (node->prop_as_string(prop_window_name).size())
-            code.Comma().Str("const wxString& name");
-        code += ") :";
-        code.Str(" wxFrame(parent, id, title, pos, size, style");
-        if (node->prop_as_string(prop_window_name).size())
-            code.Comma().Str("name");
-        code += ")\n{";
+        code.Str((prop_class_name)).Str("::").Str(prop_class_name);
+        code += "(wxWindow* parent, wxWindowID id, const wxString& title";
+        code.Comma().Str("const wxPoint& pos").Comma().Str("const wxSize& size");
+        code.Comma().Str("long style").Comma().Str("const wxString& name)");
+        code.Str(" : wxFrame()").Eol() += "{";
     }
     else
     {
-        // Note: this code is called before any indentation is set
         code.Add("class ").NodeName().Add("(wx.Frame):\n");
-        code.Tab().Add("def __init__(self, parent):").Eol().Tab(2);
-        code << "wx.Frame.__init__(self, parent, id=";
-        code.Str(prop_id);
-
+        code.Eol().Tab().Add("def __init__(self, parent, id=").Add(prop_id);
         code.Indent(3);
-        code.Comma(false).Eol().Add("title=");
-
-        if (code.HasValue(prop_title))
-            code.QuotedString(prop_title);
-        else
-            code << "\"\"";
-
-        code.Comma().Eol().Add("pos=").Pos(prop_pos);
+        code.Comma().Str("title=").QuotedString(prop_title).Comma().Add("pos=").Pos(prop_pos);
         code.Comma().Add("size=").WxSize(prop_size);
-        code.Comma().Eol().Add("style=");
-        if (code.HasValue(prop_style) && !code.node()->as_string(prop_style).is_sameas("wxDEFAULT_FRAME_STYLE"))
-            code.Style();
+        code.Comma().CheckLineLength(sizeof("style=") + code.node()->as_string(prop_style).size() + 4);
+        code.Add("style=").Style().Comma();
+        size_t name_len =
+            code.HasValue(prop_window_name) ? code.node()->as_string(prop_window_name).size() : sizeof("wx.DialogNameStr");
+        code.CheckLineLength(sizeof("name=") + name_len + 4);
+        code.Str("name=");
+        if (code.HasValue(prop_window_name))
+            code.QuotedString(prop_window_name);
         else
-            code << "wx.DEFAULT_FRAME_STYLE";
-        code << ")";
+            code.Str("wx.FrameNameStr");
+        code.Str("):");
+        code.Unindent();
+        code.Eol() += "wx.Frame.__init__(self)";
     }
 
     code.ResetIndent();
@@ -81,6 +71,8 @@ bool FrameFormGenerator::SettingsCode(Code& code)
     {
         // TODO: [Randalphwa - 12-31-2022] Add Python code for setting icon
     }
+
+    code.Eol(eol_if_needed).FormFunction("Create(").Str("parent, id, title, pos, size, style, name").EndFunction();
 
     GenFormSettings(code);
 
@@ -156,6 +148,10 @@ bool FrameFormGenerator::HeaderCode(Code& code)
     if (node->prop_as_string(prop_window_name).size())
     {
         code.Comma().Str("const wxString &name = ").QuotedString(prop_window_name);
+    }
+    else
+    {
+        code.Comma().Str("const wxString &name = wxFrameNameStr");
     }
 
     // Extra eols at end to force space before "Protected:" section

@@ -130,7 +130,7 @@ int FileCodeWriter::WriteFile(int language, int flags)
 
             if (!ttlib::is_found(additional_content))
             {
-                for (++line_index; line_index < org_file.size(); ++line_index)
+                for (; line_index < org_file.size(); ++line_index)
                 {
                     if (org_file[line_index].is_sameprefix(look_for))
                     {

@@ -230,6 +230,8 @@ import wx
 
 // clang-format on
 
+const char* python_triple_quote = "\"\"\"";
+
 // Equivalent to GenerateBaseClass in gen_base.cpp
 
 void BaseCodeGenerator::GeneratePythonClass(Node* form_node, PANEL_PAGE panel_type)
@@ -398,17 +400,24 @@ void BaseCodeGenerator::GeneratePythonClass(Node* form_node, PANEL_PAGE panel_ty
     if (events.size())
     {
         m_source->writeLine();
-        if (m_form_node->HasValue(prop_python_inherit_name))
-            m_source->writeLine(ttlib::cstr("# Bind Event handlers to inherited ")
-                                << m_form_node->as_string(prop_python_inherit_name) << " class functions");
-        else
-            m_source->writeLine("# Bind Event handlers");
+        m_source->writeLine("# Bind Event handlers");
         GenSrcEventBinding(form_node, events);
 
         m_source->ResetIndent();
         m_source->writeLine();
         m_source->Indent();
         GenPythonEventHandlers(events);
+    }
+
+    if (m_form_node->isGen(gen_wxWizard))
+    {
+        code.clear();
+        code.Eol().Str("# Add the following below the comment block to add a simple");
+        code.Eol().Str("# Run() function to launch the wizard").Eol().Str(python_triple_quote);
+        code.Eol().Str("def Run(self):");
+        code.Tab().Str("return self.RunWizard(self.GetPageAreaSizer().GetItem(0).GetWindow())");
+        code.Eol().Str(python_triple_quote).Eol().Eol();
+        m_source->writeLine(code);
     }
 
     // Make certain indentation is reset after all construction code is written
@@ -418,52 +427,50 @@ void BaseCodeGenerator::GeneratePythonClass(Node* form_node, PANEL_PAGE panel_ty
 
 void BaseCodeGenerator::GenPythonEventHandlers(const EventVector& events)
 {
-    bool inherited_class = m_form_node->HasValue(prop_python_inherit_name);
-
     // Multiple events can be bound to the same function, so use a set to make sure we only generate each function once.
     std::set<ttlib::cstr> code_lines;
 
-    for (auto& event: events)
+    Code code(m_form_node, GEN_LANG_PYTHON);
+    if (events.size())
     {
-        // Ignore lambda's and functions in another class
-        if (event->get_value().contains("[") || event->get_value().contains("::"))
-            continue;
-
-        ttlib::cstr code("\tdef ");
-        code << event->get_value() << "(self, event):\n\t\t";
-        if (inherited_class || event->GetNode()->get_form()->prop_as_bool(prop_python_call_skip))
-            code << "event.Skip()";
+        bool inherited_class = m_form_node->HasValue(prop_python_inherit_name);
+        if (!inherited_class)
+        {
+            m_header->Indent();
+        }
         else
-            code << "pass";
-        code_lines.emplace(code);
-    }
-
-    if (code_lines.size())
-    {
-        if (inherited_class)
         {
             m_header->Unindent();
             m_header->writeLine();
-            m_header->writeLine("# Event handler functions");
         }
-        else
+
+        code.Str("# Event handler functions\n# Add these below the comment block, or to your inherited class.");
+        code.Eol().Str(python_triple_quote).Eol();
+        m_source->writeLine(code);
+        code.clear();
+        for (auto& event: events)
         {
-            m_source->writeLine();
-            m_source->writeLine("# Event handler functions");
+            // Ignore lambda's and functions in another class
+            if (event->get_value().contains("[") || event->get_value().contains("::"))
+                continue;
+
+            ttlib::cstr set_code;
+            set_code << "def " << event->get_value() << "(self, event):";
+            if (code_lines.find(set_code) != code_lines.end())
+                continue;
+
+            code.Str(set_code).Eol();
+            code.Tab().Str("event.Skip()").Eol().Eol();
         }
-        for (auto code: code_lines)
+
+        m_header->writeLine("# Event handler functions");
+        m_header->writeLine(code);
+        if (!inherited_class)
         {
-            if (!inherited_class)
-            {
-                m_source->writeLine(code, false);
-                m_source->writeLine();
-            }
-            else
-            {
-                m_header->writeLine(code, false);
-                m_header->writeLine();
-            }
+            m_header->Unindent();
         }
+        code.Eol(eol_if_needed).Str(python_triple_quote).Eol().Eol();
+        m_source->writeLine(code);
     }
 }
 

@@ -1509,7 +1509,7 @@ void BaseCodeGenerator::GenerateClassConstructor(Node* form_node, const EventVec
         m_source->writeLine(code);
         m_source->Indent();
 
-        if (form_node->isGen(gen_wxFrame) || form_node->isGen(gen_wxDialog))
+        if (form_node->isGen(gen_wxFrame) || form_node->isGen(gen_wxDialog) || form_node->isGen(gen_wxWizard))
         {
             GenerateHandlers();
             if (form_node->HasValue(prop_icon))

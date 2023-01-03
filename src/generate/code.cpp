@@ -133,6 +133,23 @@ static const std::map<std::string_view, std::string_view, std::less<>> s_map_wx_
     { "wxSTC_WS_VISIBLEAFTERINDENT", "wx.stc."},
     { "wxSTC_WS_VISIBLEONLYININDENT", "wx.stc."},
 
+    { "wxWIZARD_EX_HELPBUTTON", "wx.adv."},
+    { "wxWIZARD_VALIGN_TOP", "wx.adv."},
+    { "wxWIZARD_VALIGN_CENTRE", "wx.adv."},
+    { "wxWIZARD_VALIGN_BOTTOM", "wx.adv."},
+    { "wxWIZARD_HALIGN_LEFT", "wx.adv."},
+    { "wxWIZARD_HALIGN_CENTRE", "wx.adv."},
+    { "wxWIZARD_HALIGN_RIGHT", "wx.adv."},
+    { "wxWIZARD_TILE", "wx.adv."},
+
+    { "wxEVT_WIZARD_PAGE_CHANGED", "wx.adv."},
+    { "wxEVT_WIZARD_PAGE_CHANGING", "wx.adv."},
+    { "wxEVT_WIZARD_BEFORE_PAGE_CHANGED", "wx.adv."},
+    { "wxEVT_WIZARD_PAGE_SHOWN", "wx.adv."},
+    { "wxEVT_WIZARD_CANCEL", "wx.adv."},
+    { "wxEVT_WIZARD_HELP", "wx.adv."},
+    { "wxEVT_WIZARD_FINISHED", "wx.adv."},
+
     // This doesn't get created as a class, so we have to add it as if it was a constant.
     { "wxWebView", "wx.html2."},
     { "wxWebViewBackendDefault", "wx.html2."},
@@ -156,6 +173,7 @@ std::map<std::string_view, std::string_view, std::less<>> g_map_class_prefix
     { "wxStyledTextCtrl", "wx.stc."},
     { "wxWebView", "wx.html2."},
     { "wxWizard", "wx.adv."},
+    { "wxWizardPageSimple", "wx.adv."},
 
 };
 // clang-format on

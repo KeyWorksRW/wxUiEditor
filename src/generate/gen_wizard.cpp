@@ -25,187 +25,208 @@ wxObject* WizardFormGenerator::CreateMockup(Node* /* node */, wxObject* /* paren
     return nullptr;
 }
 
-bool WizardFormGenerator::GenConstruction(Node* node, BaseCodeGenerator* code_gen)
+bool WizardFormGenerator::ConstructionCode(Code& code)
 {
-    auto src_code = code_gen->GetSrcWriter();
-
-    ttlib::cstr code;
-
-    // By calling the default wxWizard() constructor, we don't need for the caller to pass in wxNullBitmap which will be
-    // ignored if the bitmap property for the wizard has been set. Calling Create() instead gives us the opportunity to
-    // first load the image.
-
-    code << node->prop_as_string(prop_class_name) << "::" << node->prop_as_string(prop_class_name);
-    code << "(wxWindow* parent, wxWindowID id, const wxString& title,";
-    code << "\n\t\tconst wxPoint& pos, long style) : wxWizard()";
-    code << "\n{";
-
-    if (node->HasValue(prop_extra_style))
-        code << "\n\tSetExtraStyle(" << node->prop_as_string(prop_extra_style) << ");";
-    if (node->prop_as_int(prop_border) != 5)
-        code << "\n\tSetBorder(" << node->prop_as_string(prop_border) << ");";
-    if (node->prop_as_int(prop_bmp_placement))
+    if (code.is_cpp())
     {
-        code << "\n\tSetBitmapPlacement(" << node->prop_as_string(prop_bmp_placement) << ");";
-        if (node->prop_as_int(prop_bmp_min_width) > 0)
-            code << "\n\tSetMinimumBitmapWidth(" << node->prop_as_string(prop_bmp_min_width) << ");";
-        if (node->HasValue(prop_bmp_background_colour))
-            code << "\n\tSetBitmapBackgroundColour(" << GenerateColourCode(node, prop_bmp_background_colour) << ");";
-    }
-
-    src_code->writeLine(code, indent::none);
-    code.clear();
-    src_code->writeLine();
-    src_code->Indent();
-    code_gen->GenerateHandlers();
-    src_code->Unindent();
-
-    if (node->HasValue(prop_bitmap))
-    {
-        ttlib::cstr bundle_code;
-        bool is_code_block = GenerateBundleCode(node->prop_as_string(prop_bitmap), bundle_code);
-        if (is_code_block)
-        {
-            if (wxGetProject().value(prop_wxWidgets_version) == "3.1")
-            {
-                code << "#if wxCHECK_VERSION(3, 1, 6)\n";
-            }
-            code << '\t' << bundle_code;
-            code << "\n\tCreate(parent, id, title, wxBitmapBundle::FromBitmaps(bitmaps)";
-            code << ", pos, style);";
-            if (wxGetProject().value(prop_wxWidgets_version) == "3.1")
-            {
-                code << "\n#else";
-                code << "\n\tCreate(parent, id, title, ";
-                code << GenerateBitmapCode(node->prop_as_string(prop_bitmap));
-                code << ", pos, style);";
-                code << "\n#endif";
-            }
-            code << "\n\t}";
-        }
-        else
-        {
-            if (wxGetProject().value(prop_wxWidgets_version) == "3.1")
-            {
-                code << "#if wxCHECK_VERSION(3, 1, 6)";
-            }
-            code << "\n\tCreate(parent, id, title, ";
-            code << bundle_code;
-            code << ", pos, style);";
-            if (wxGetProject().value(prop_wxWidgets_version) == "3.1")
-            {
-                code << "\n#else";
-                code << "\n\tCreate(parent, id, title, ";
-                code << GenerateBitmapCode(node->prop_as_string(prop_bitmap));
-                code << ", pos, style);";
-                code << "\n#endif";
-            }
-        }
+        code.Str((prop_class_name)).Str("::").Str(prop_class_name);
+        code += "(wxWindow* parent, wxWindowID id, const wxString& title";
+        code.Comma().Str("const wxPoint& pos").Comma().Str("long style)");
+        code.Str(" : wxWizard()").Eol() += "{";
     }
     else
     {
-        code << "\n\tCreate(parent, id, title, wxNullBitmap, pos, style);";
-    }
+        code.Add("class ").NodeName().Add("(wx.adv.Wizard):\n");
+        code.Eol().Tab().Add("def __init__(self, parent, id=").Add(prop_id);
+        code.Indent(3);
+        code.Comma().Str("title=").QuotedString(prop_title).Comma().Add("pos=").Pos(prop_pos);
+        // wxWizard does not use a size parameter
+        code.CheckLineLength(sizeof(", style=") + code.node()->as_string(prop_style).size() + 4);
+        code.Comma().Add("style=").Style().Str("):");
+        code.Unindent();
+        code.Eol() += "wx.adv.Wizard.__init__(self)";
 
-    src_code->writeLine(code, indent::none);
+        code.ResetIndent();
+    }
 
     return true;
 }
 
-std::optional<ttlib::cstr> WizardFormGenerator::GenAdditionalCode(GenEnum::GenCodeType cmd, Node* node)
+bool WizardFormGenerator::SettingsCode(Code& code)
 {
-    ttlib::cstr code;
-
-    if (cmd == code_header)
+    if (code.HasValue(prop_extra_style))
     {
-        // This is the code to add to the header file
-        code << node->prop_as_string(prop_class_name)
-             << "(wxWindow* parent, wxWindowID id = " << node->prop_as_string(prop_id);
-        code << ",\n\tconst wxString& title = ";
-        auto& title = node->prop_as_string(prop_title);
-        if (title.size())
-        {
-            code << GenerateQuotedString(title) << ",\n\t";
-        }
-        else
-        {
-            code << "wxEmptyString,\n    ";
-        }
-
-        code << "const wxPoint& pos = ";
-        auto point = node->prop_as_wxPoint(prop_pos);
-        if (point.x != -1 || point.y != -1)
-            code << "wxPoint(" << point.x << ", " << point.y << ")";
-        else
-            code << "wxDefaultPosition";
-
-        code << ",\n\tlong style = ";
-        auto& style = node->prop_as_string(prop_style);
-        auto& win_style = node->prop_as_string(prop_window_style);
-        if (style.empty() && win_style.empty())
-            code << "0";
-        else
-        {
-            if (style.size())
-            {
-                code << style;
-                if (win_style.size())
-                {
-                    code << '|' << win_style;
-                }
-            }
-            else if (win_style.size())
-            {
-                code << win_style;
-            }
-        }
-
-        code << ");\n\n";
-
-        code << "bool Run() { return RunWizard((wxWizardPage*) GetPageAreaSizer()->GetItem((size_t) 0)->GetWindow()); "
-                "}\n\n";
+        code.Eol(eol_if_needed).FormFunction("SetExtraStyle(").FormFunction("GetExtraStyle() | ").Add(prop_extra_style);
+        code.EndFunction();
     }
 
-    else if (cmd == code_base_class)
+    if (!code.is_value(prop_border, 5))
     {
-        if (node->HasValue(prop_derived_class))
+        code.Eol(eol_if_needed).FormFunction("SetBorder(").Str(prop_border).EndFunction();
+    }
+
+    if (code.IntValue(prop_bmp_placement))
+    {
+        code.Eol(eol_if_needed).FormFunction("SetBitmapPlacement(").Str(prop_bmp_placement).EndFunction();
+        if (code.IntValue(prop_bmp_min_width) > 0)
         {
-            code << node->prop_as_string(prop_derived_class);
+            code.Eol().FormFunction("SetBitmapMinWidth(").Str(prop_bmp_min_width).EndFunction();
+        }
+        if (code.HasValue(prop_bmp_background_colour))
+        {
+            code.Eol().FormFunction("SetBitmapBackgroundColour(").ColourCode(prop_bmp_background_colour).EndFunction();
+        }
+    }
+
+    if (code.HasValue(prop_bitmap))
+    {
+        auto is_bitmaps_list = BitmapList(code, prop_bitmap);
+        if (code.is_cpp() && wxGetProject().value(prop_wxWidgets_version) == "3.1")
+        {
+            code.Eol() += "#if wxCHECK_VERSION(3, 1, 6)\n\t";
+        }
+        if (code.is_cpp())
+            code.Eol(eol_if_needed).Str("Create(parent, id, title").Comma();
+        else
+            code.Eol(eol_if_needed).Str("self.Create(parent, id, title").Comma();
+        if (is_bitmaps_list)
+        {
+            if (code.is_cpp())
+                code += "wxBitmapBundle::FromBitmaps(bitmaps)";
+            else
+                code += "wx.BitmapBundle.FromBitmaps(bitmaps)";
         }
         else
         {
-            code << "wxWizard";
-        }
-    }
-    else if (cmd == code_after_children)
-    {
-        auto panes = GetChildPanes(node);
-        if (panes.size())
-        {
-            if (panes.size() > 1)
+            if (code.is_cpp())
             {
-                code << "\t" << panes[0]->prop_as_string(prop_var_name) << "->Chain("
-                     << panes[1]->prop_as_string(prop_var_name) << ")";
-                for (size_t pos = 1; pos + 1 < panes.size(); ++pos)
-                {
-                    code << ".Chain(" << panes[pos + 1]->prop_as_string(prop_var_name) << ")";
-                }
-                code << ";\n";
+                ttlib::cstr bundle_code;
+                GenerateBundleCode(code.node()->as_string(prop_bitmap), bundle_code);
+                code.CheckLineLength(bundle_code.size());
+                code += bundle_code;
             }
-            code << "    GetPageAreaSizer()->Add(" << panes[0]->prop_as_string(prop_var_name) << ");\n";
+            else
+            {
+                PythonBundleCode(code, prop_bitmap);
+            }
         }
-
-        if (auto& center = node->prop_as_string(prop_center); center.size() && !center.is_sameas("no"))
+        if (code.is_cpp())
         {
-            code << "    Center(" << center << ");";
+            code.Comma().Str("pos").Comma().Str("style").EndFunction();
+            if (wxGetProject().value(prop_wxWidgets_version) == "3.1")
+            {
+                code.Eol() += "#else\n\t";
+                code << "wxBitmap(" << GenerateBitmapCode(code.node()->as_string(prop_bitmap)) << ")";
+                code.Comma().Str("pos").Comma().Str("style").EndFunction();
+                ;
+                code.Eol() += "#endif";
+            }
+        }
+        else
+        {
+            code.Comma().Str("pos").Comma().Str("style").EndFunction();
         }
     }
     else
     {
-        return {};
+        code.Eol(eol_if_needed).Str("Create(parent, id, title, wxNullBitmap, pos, style").EndFunction();
     }
 
-    return code;
+    return true;
+}
+
+bool WizardFormGenerator::AfterChildrenCode(Code& code)
+{
+    if (auto panes = GetChildPanes(code.node()); panes.size())
+    {
+        if (panes.size() > 1)
+        {
+            code.Eol(eol_if_needed).Str(panes[0]->prop_as_string(prop_var_name)).Function("Chain(");
+            code.Str(panes[1]->as_string(prop_var_name)) += ")";
+            for (size_t pos = 1; pos + 1 < panes.size(); ++pos)
+            {
+                code.Str(".Chain(").Str(panes[pos + 1]->as_string(prop_var_name)) += ")";
+            }
+            if (code.is_cpp())
+                code += ";";
+        }
+        code.Eol(eol_if_needed).FormFunction("GetPageAreaSizer()").Function("Add(");
+        code.Str(panes[0]->as_string(prop_var_name)).EndFunction();
+    }
+
+    if (auto& center = code.node()->as_string(prop_center); center.size() && !center.is_sameas("no"))
+    {
+        code.Eol(eol_if_needed).FormFunction("Center(").Add(center).EndFunction();
+    }
+
+    return true;
+}
+
+bool WizardFormGenerator::BaseClassNameCode(Code& code)
+{
+    if (code.HasValue(prop_derived_class))
+    {
+        code.Str((prop_derived_class));
+    }
+    else
+    {
+        code += "wxWizard";
+    }
+    return true;
+}
+bool WizardFormGenerator::HeaderCode(Code& code)
+{
+    auto* node = code.node();
+
+    code.Str(prop_class_name).Str("(wxWindow* parent, wxWindowID id = ").Str(prop_id);
+    code.Comma().Str("const wxString& title = ");
+    auto& title = node->prop_as_string(prop_title);
+    if (code.HasValue(prop_title))
+    {
+        code.QuotedString(title);
+    }
+    else
+    {
+        code.Str("wxEmptyString");
+    }
+
+    code.Comma().Str("const wxPoint& pos = ");
+
+    auto position = node->as_wxPoint(prop_pos);
+    if (position == wxDefaultPosition)
+        code.Str("wxDefaultPosition");
+    else
+        code.Pos(prop_pos, no_dlg_units);
+
+    auto& style = node->prop_as_string(prop_style);
+    auto& win_style = node->prop_as_string(prop_window_style);
+    if (style.empty() && win_style.empty())
+        code.Comma().Str("long style = 0");
+    else
+    {
+        code.Comma();
+        code.CheckLineLength(style.size() + win_style.size() + sizeof("long style = "));
+        code.Str("long style = ");
+        if (style.size())
+        {
+            code.CheckLineLength(style.size() + win_style.size());
+            code += style;
+            if (win_style.size())
+            {
+                code << '|' << win_style;
+            }
+        }
+        else if (win_style.size())
+        {
+            code.Str(win_style);
+        }
+    }
+    code.EndFunction();
+    code.Eol().Eol() +=
+        "bool Run() { return RunWizard((wxWizardPage*) GetPageAreaSizer()->GetItem((size_t) 0)->GetWindow()); }";
+    code.Eol().Eol();
+
+    return true;
 }
 
 bool WizardFormGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
@@ -352,6 +373,55 @@ void WizardFormGenerator::RequiredHandlers(Node* node, std::set<std::string>& ha
 wxObject* WizardPageGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     return new MockupWizardPage(node, parent);
+}
+
+bool WizardPageGenerator::ConstructionCode(Code& code)
+{
+    if (!code.HasValue(prop_bitmap))
+    {
+        code.AddAuto().Str(prop_var_name).CreateClass().Str(code.is_cpp() ? "this" : "self").EndFunction();
+    }
+    else
+    {
+        auto is_bitmaps_list = BitmapList(code, prop_bitmap);
+        if (code.is_cpp() && wxGetProject().value(prop_wxWidgets_version) == "3.1")
+        {
+            code.Eol() += "#if wxCHECK_VERSION(3, 1, 6)\n\t";
+        }
+        code.AddAuto().Str(prop_var_name).CreateClass().Str(code.is_cpp() ? "this" : "self");
+        if (code.is_cpp())
+        {
+            code.Comma().Str("nullptr, nullptr").Comma();
+        }
+        else
+        {
+            code.Comma().Str("None, None").Comma();
+        }
+        if (is_bitmaps_list)
+        {
+            if (code.is_cpp())
+                code += "wxBitmapBundle::FromBitmaps(bitmaps)";
+            else
+                code += "wx.BitmapBundle.FromBitmaps(bitmaps)";
+        }
+        else
+        {
+            if (code.is_cpp())
+            {
+                ttlib::cstr bundle_code;
+                GenerateBundleCode(code.node()->as_string(prop_bitmap), bundle_code);
+                code.CheckLineLength(bundle_code.size());
+                code += bundle_code;
+            }
+            else
+            {
+                PythonBundleCode(code, prop_bitmap);
+            }
+        }
+        code.EndFunction();
+    }
+
+    return true;
 }
 
 std::optional<ttlib::cstr> WizardPageGenerator::GenConstruction(Node* node)

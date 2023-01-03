@@ -14,8 +14,12 @@ class WizardFormGenerator : public BaseGenerator
 public:
     wxObject* CreateMockup(Node*, wxObject* parent) override;
 
-    bool GenConstruction(Node*, BaseCodeGenerator* code_gen) override;
-    std::optional<ttlib::cstr> GenAdditionalCode(GenEnum::GenCodeType cmd, Node*) override;
+    bool ConstructionCode(Code&) override;
+    bool SettingsCode(Code&) override;
+    bool AfterChildrenCode(Code&) override;
+
+    bool HeaderCode(Code&) override;
+    bool BaseClassNameCode(Code&) override;
 
     bool GetIncludes(Node*, std::set<std::string>& set_src, std::set<std::string>& set_hdr) override;
 
@@ -32,6 +36,7 @@ class WizardPageGenerator : public BaseGenerator
 {
 public:
     wxObject* CreateMockup(Node*, wxObject* parent) override;
+    bool ConstructionCode(Code&) override;
 
     std::optional<ttlib::cstr> GenConstruction(Node*) override;
 

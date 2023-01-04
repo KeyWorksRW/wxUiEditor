@@ -51,7 +51,8 @@ void BaseCodeGenerator::GenConstruction(Node* node)
     if (generator->ConstructionCode(gen_code))
     {
         // Don't add blank lines when adding tools to a toolbar, or creating menu items
-        if (gen_code.size() && gen_code.GetCode()[0] != '{' && type != type_aui_tool && type != type_tool && type != type_menuitem)
+        if (gen_code.size() && gen_code.GetCode()[0] != '{' && type != type_aui_tool && type != type_tool &&
+            type != type_menuitem)
         {
             m_source->writeLine();
         }

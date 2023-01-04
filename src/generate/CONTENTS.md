@@ -22,12 +22,12 @@ The following tables list classes, objects and functions that wxUiEditor can gen
 -----------|-----|--------|------|------|
 | wxDialog | yes| yes | yes | gen_dialog.cpp |
 | wxFrame | yes| yes | yes | gen_frame.cpp |
-| wxMenuBar | yes| ?? | yes | menu_widgets.cpp |
+| wxMenuBar | yes| yes | yes | menu_widgets.cpp |
 | wxPanel | yes| yes | yes | gen_panel_form.cpp |
 | wxPopupTransientWindow | yes| yes | no | gen_popup_trans_win.cpp |
 | wxRibbonBar | yes| ?? | yes | ribbon_widgets.cpp |
-| wxToolBar | yes| ?? | yes | gen_toolbar.cpp |
-| wxWizard | yes| ?? | yes | gen_wizard.cpp |
+| wxToolBar | yes| yes | yes | gen_toolbar.cpp |
+| wxWizard | yes| yes | yes | gen_wizard.cpp |
 
 ### Pickers
 

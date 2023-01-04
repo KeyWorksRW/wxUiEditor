@@ -101,62 +101,152 @@ void ToolBarFormGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparen
     toolbar->Realize();
 }
 
-std::optional<ttlib::cstr> ToolBarFormGenerator::GenConstruction(Node* node)
+bool ToolBarFormGenerator::ConstructionCode(Code& code)
 {
-    ttlib::cstr code;
+    // Note: Form construction is called before any indentation is set
+    if (code.is_cpp())
+    {
+        code.Str((prop_class_name)).Str("::").Str(prop_class_name);
+        code += "(wxWindow* parent, wxWindowID id";
+        code.Comma().Str("const wxPoint& pos").Comma().Str("const wxSize& size");
+        code.Comma().Str("long style").Comma().Str("const wxString& name)");
+        code.Str(" : wxToolBar(parent, id, pos, size, style, name)").Eol() += "{";
+    }
+    else
+    {
+        code.Add("class ").NodeName().Add("(wx.ToolBar):\n");
+        code.Eol().Tab().Add("def __init__(self, parent, id=").Add(prop_id);
+        code.Indent(3);
+        code.Comma().Add("pos=").Pos(prop_pos);
+        code.Comma().Add("size=").WxSize(prop_size);
+        code.Comma().CheckLineLength(sizeof("style=") + code.node()->as_string(prop_style).size() + 4);
+        code.Add("style=").Style().Comma();
+        size_t name_len =
+            code.HasValue(prop_window_name) ? code.node()->as_string(prop_window_name).size() : sizeof("wx.ToolBarNameStr");
+        code.CheckLineLength(sizeof("name=") + name_len + 4);
+        code.Str("name=");
+        if (code.HasValue(prop_window_name))
+            code.QuotedString(prop_window_name);
+        else
+            code.Str("wx.ToolBarNameStr");
+        code.Str("):");
+        code.Unindent();
+        code.Eol() += "wx.ToolBar.__init__(self, parent, id, pos, size, style, name)";
+    }
 
-    code << node->prop_as_string(prop_class_name) << "::" << node->prop_as_string(prop_class_name);
-    code << "(wxWindow* parent, wxWindowID id, ";
-    code << "\n\t\tconst wxPoint& pos, const wxSize& size, long style";
-    if (node->prop_as_string(prop_window_name).size())
-        code << ", const wxString& name";
-    code << ") :";
-    code << "\n\twxToolBar(parent, id, pos, size, style";
-    if (node->prop_as_string(prop_window_name).size())
-        code << ", name";
-    code << ")\n{";
+    code.ResetIndent();
+    code.ResetBraces();  // In C++, caller must close the final brace after all construction
 
-    return code;
+    return true;
 }
 
-std::optional<ttlib::cstr> ToolBarFormGenerator::GenAdditionalCode(GenEnum::GenCodeType cmd, Node* node)
+bool ToolBarFormGenerator::SettingsCode(Code& code)
 {
-    if (cmd == code_base_class)
+    GenFormSettings(code);
+
+    if (code.IsTrue(prop_disabled))
+        code.Eol(eol_if_needed).FormFunction("Disable()").EndFunction();
+
+    if (code.IsTrue(prop_hidden))
+        code.Eol(eol_if_needed).FormFunction("Hide()").EndFunction();
+
+    if (!code.is_value(prop_separation, 5))
     {
-        ttlib::cstr code;
-        code << "wxToolBar";
-        return code;
+        code.Eol(eol_if_needed).FormFunction("SetToolSeparation(").Add(prop_separation).EndFunction();
     }
 
-    return GenFormCode(cmd, node);
+    if (code.HasValue(prop_margins))
+    {
+        code.FormFunction("SetMargins(").Add(prop_margins).EndFunction();
+    }
+
+    if (!code.is_value(prop_packing, 1))
+    {
+        code.FormFunction("SetToolPacking(").Add(prop_packing).EndFunction();
+    }
+
+    return true;
 }
 
-std::optional<ttlib::cstr> ToolBarFormGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
+bool ToolBarFormGenerator::AfterChildrenCode(Code& code)
 {
-    auto code = GenFormSettings(node);
+    code.FormFunction("Realize(").EndFunction();
 
-    if (node->prop_as_int(prop_separation) != 5)
+    return true;
+}
+
+bool ToolBarFormGenerator::HeaderCode(Code& code)
+{
+    auto* node = code.node();
+
+    code.NodeName().Str("(wxWindow* parent, wxWindowID id = ").Str(prop_id);
+    code.Comma().Str("const wxPoint& pos = ");
+
+    auto position = node->as_wxPoint(prop_pos);
+    if (position == wxDefaultPosition)
+        code.Str("wxDefaultPosition");
+    else
+        code.Pos(prop_pos, no_dlg_units);
+
+    code.Comma().Str("const wxSize& size = ");
+
+    auto size = node->prop_as_wxSize(prop_size);
+    if (size == wxDefaultSize)
+        code.Str("wxDefaultSize");
+    else
+        code.WxSize(prop_size, no_dlg_units);
+
+    auto& style = node->prop_as_string(prop_style);
+    auto& win_style = node->prop_as_string(prop_window_style);
+    if (style.empty() && win_style.empty())
+        code.Comma().Str("long style = 0");
+    else
     {
-        if (code.size())
-            code << '\n';
-        code << "SetToolSeparation(" << node->prop_as_string(prop_separation) << ");";
+        code.Comma();
+        code.CheckLineLength(style.size() + win_style.size() + sizeof("long style = "));
+        code.Str("long style = ");
+        if (style.size())
+        {
+            code.CheckLineLength(style.size() + win_style.size());
+            code += style;
+            if (win_style.size())
+            {
+                code << '|' << win_style;
+            }
+        }
+        else if (win_style.size())
+        {
+            code.Str(win_style);
+        }
     }
 
-    if (node->HasValue(prop_margins))
+    if (node->prop_as_string(prop_window_name).size())
     {
-        if (code.size())
-            code << '\n';
-        code << "SetMargins(" << node->prop_as_string(prop_margins) << ");";
+        code.Comma().Str("const wxString &name = ").QuotedString(prop_window_name);
+    }
+    else
+    {
+        code.Comma().Str("const wxString &name = wxPanelNameStr");
     }
 
-    if (node->prop_as_int(prop_packing) != 1)
+    // Extra eols at end to force space before "Protected:" section
+    code.EndFunction().Eol().Eol();
+
+    return true;
+}
+
+bool ToolBarFormGenerator::BaseClassNameCode(Code& code)
+{
+    if (code.HasValue(prop_derived_class))
     {
-        if (code.size())
-            code << '\n';
-        code << "SetToolPacking(" << node->prop_as_string(prop_packing) << ");";
+        code.Str((prop_derived_class));
+    }
+    else
+    {
+        code += "wxToolBar";
     }
 
-    return code;
+    return true;
 }
 
 std::optional<ttlib::sview> ToolBarFormGenerator::GenEvents(Code& code, NodeEvent* event, const std::string& class_name)

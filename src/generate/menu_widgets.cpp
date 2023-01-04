@@ -224,42 +224,45 @@ void MenuBarGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>&
 
 //////////////////////////////////////////  MenuBarFormGenerator  //////////////////////////////////////////
 
-std::optional<ttlib::cstr> MenuBarFormGenerator::GenConstruction(Node* node)
+bool MenuBarFormGenerator::ConstructionCode(Code& code)
 {
-    ttlib::cstr code;
+    if (code.is_cpp())
+    {
+        code.Str((prop_class_name)).Str("::").Str(prop_class_name);
+        code.Str("(long style) : wxMenuBar(style)\n{");
+    }
+    else
+    {
+        code.Add("class ").NodeName().Add("(wx.MenuBar):\n");
+        code.Eol().Tab().Add("def __init__(self, style=").Style();
+        code.Str("):");
+        code.Indent(3);
+        code.Eol() += "wx.MenuBar.__init__(self, style)";
+        code.ResetIndent();
+    }
 
-    code << node->prop_as_string(prop_class_name) << "::" << node->prop_as_string(prop_class_name);
-    code << "(long style) : wxMenuBar(style)\n{";
-
-    return code;
+    return true;
 }
 
-std::optional<ttlib::cstr> MenuBarFormGenerator::GenAdditionalCode(GenEnum::GenCodeType cmd, Node* node)
+bool MenuBarFormGenerator::HeaderCode(Code& code)
 {
-    ttlib::cstr code;
+    code.NodeName().Str("long style = ").Style().EndFunction();
 
-    if (cmd == code_header)
+    return true;
+}
+
+bool MenuBarFormGenerator::BaseClassNameCode(Code& code)
+{
+    if (code.HasValue(prop_derived_class))
     {
-        // This is the code to add to the header file
-        code << "\t" << node->get_node_name() << "(long style = ";
-        GenStyle(node, code);
-        code << ");";
-        return code;
+        code.Str((prop_derived_class));
+    }
+    else
+    {
+        code += "wxMenuBar";
     }
 
-    else if (cmd == code_base_class)
-    {
-        if (node->HasValue(prop_derived_class))
-        {
-            code << node->prop_as_string(prop_derived_class);
-        }
-        else
-        {
-            code << "wxMenuBar";
-        }
-        return code;
-    }
-    return {};
+    return true;
 }
 
 bool MenuBarFormGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)

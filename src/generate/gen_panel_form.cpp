@@ -44,41 +44,43 @@ bool PanelFormGenerator::ConstructionCode(Code& code)
     // Note: Form construction is called before any indentation is set
     if (code.is_cpp())
     {
-        code.Str("bool ").Str((prop_class_name)) += "::Create";
-        code += "(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style, const wxString "
-                "&name)";
-        code.OpenBrace();
-        code += "if (!wxPanel::Create(parent, id, pos, size, style, name))";
-        code.Eol().Tab() += "return false;\n";
+        code.Str((prop_class_name)).Str("::").Str(prop_class_name);
+        code += "(wxWindow* parent, wxWindowID id";
+        code.Comma().Str("const wxPoint& pos").Comma().Str("const wxSize& size");
+        code.Comma().Str("long style").Comma().Str("const wxString& name)");
+        code.Str(" : wxPanel()").Eol() += "{";
     }
     else
     {
         code.Add("class ").NodeName().Add("(wx.Panel):\n");
-        code.Tab().Add("def __init__(self, parent):").Eol().Tab(2);
-        code << "wx.Panel.__init__(self, parent, id=";
-        code.as_string(prop_id);
-
+        code.Eol().Tab().Add("def __init__(self, parent, id=").Add(prop_id);
         code.Indent(3);
-
-        code.Comma().Eol().Add("pos=").Pos(prop_pos);
+        code.Comma().Add("pos=").Pos(prop_pos);
         code.Comma().Add("size=").WxSize(prop_size);
-        code.Comma().Eol().Add("style=");
-        if (code.HasValue(prop_style) && !code.is_value(prop_style, "wxTAB_TRAVERSAL"))
-            code.Style();
+        code.Comma().CheckLineLength(sizeof("style=") + code.node()->as_string(prop_style).size() + 4);
+        code.Add("style=").Style().Comma();
+        size_t name_len =
+            code.HasValue(prop_window_name) ? code.node()->as_string(prop_window_name).size() : sizeof("wx.DialogNameStr");
+        code.CheckLineLength(sizeof("name=") + name_len + 4);
+        code.Str("name=");
+        if (code.HasValue(prop_window_name))
+            code.QuotedString(prop_window_name);
         else
-            code << "wx.wxTAB_TRAVERSAL";
-        code << ")";
-
+            code.Str("wx.PanelNameStr");
+        code.Str("):");
         code.Unindent();
-    }
-
-    if (code.HasValue(prop_extra_style))
-    {
-        code.FormFunction("SetExtraStyle(GetExtraStyle() | ").Add(prop_extra_style).Str(")").EndFunction();
+        code.Eol() += "wx.Panel.__init__(self)";
     }
 
     code.ResetIndent();
     code.ResetBraces();  // In C++, caller must close the final brace after all construction
+
+    return true;
+}
+
+bool PanelFormGenerator::SettingsCode(Code& code)
+{
+    code.Eol(eol_if_needed).FormFunction("Create(").Str("parent, id, pos, size, style, name").EndFunction();
 
     return true;
 }
@@ -134,40 +136,61 @@ bool PanelFormGenerator::AfterChildrenCode(Code& code)
 
 bool PanelFormGenerator::HeaderCode(Code& code)
 {
-    if (!code.is_cpp())
-        return false;
+    auto* node = code.node();
 
-    code.NodeName() += "() {}";
-    code.Eol().NodeName().Str("(wxWindow* parent, wxWindowID id = ").Str(prop_id);
-    code.Comma().Str("const wxPoint& pos = ").Pos(prop_pos).Comma();
-    code.Str("const wxSize& size = ").WxSize(prop_size).Comma();
-    code.Str("long style = ");
-    if (code.HasValue(prop_style))
-        code.Str(prop_style);
+    code.NodeName().Str("(wxWindow* parent, wxWindowID id = ").Str(prop_id);
+    code.Comma().Str("const wxPoint& pos = ");
+
+    auto position = node->as_wxPoint(prop_pos);
+    if (position == wxDefaultPosition)
+        code.Str("wxDefaultPosition");
     else
-        code += "wxTAB_TRAVERSAL";
-    code.Comma().Str("const wxString &name = ");
-    if (code.HasValue(prop_window_name))
-        code.QuotedString(prop_window_name);
+        code.Pos(prop_pos, no_dlg_units);
+
+    code.Comma().Str("const wxSize& size = ");
+
+    auto size = node->prop_as_wxSize(prop_size);
+    if (size == wxDefaultSize)
+        code.Str("wxDefaultSize");
     else
-        code.Str("wxPanelNameStr");
-    code += ")";
-    code.OpenBrace().Str("Create(parent, id, pos, size, style, name);").CloseBrace();
-    code.Eol() += "bool Create(wxWindow *parent, ";
-    code.Str("wxWindowID id = ").Str(prop_id).Comma();
-    code.Str("const wxPoint& pos = ").Pos(prop_pos).Comma();
-    code.Str("const wxSize& size = ").WxSize(prop_size).Comma();
-    code.Str("long style = ");
-    if (code.HasValue(prop_style))
-        code.Str(prop_style);
+        code.WxSize(prop_size, no_dlg_units);
+
+    auto& style = node->prop_as_string(prop_style);
+    auto& win_style = node->prop_as_string(prop_window_style);
+    if (style.empty() && win_style.empty())
+        code.Comma().Str("long style = 0");
     else
-        code.Str("wxTAB_TRAVERSAL");
-    code.Comma().Str("const wxString &name = ");
-    if (code.HasValue(prop_window_name))
-        code.QuotedString(prop_window_name);
+    {
+        code.Comma();
+        code.CheckLineLength(style.size() + win_style.size() + sizeof("long style = "));
+        code.Str("long style = ");
+        if (style.size())
+        {
+            code.CheckLineLength(style.size() + win_style.size());
+            code += style;
+            if (win_style.size())
+            {
+                code << '|' << win_style;
+            }
+        }
+        else if (win_style.size())
+        {
+            code.Str(win_style);
+        }
+    }
+
+    if (node->prop_as_string(prop_window_name).size())
+    {
+        code.Comma().Str("const wxString &name = ").QuotedString(prop_window_name);
+    }
     else
-        code.Str("wxPanelNameStr");
-    code += ");\n\n";
+    {
+        code.Comma().Str("const wxString &name = wxPanelNameStr");
+    }
+
+    // Extra eols at end to force space before "Protected:" section
+    code.EndFunction().Eol().Eol();
+
     return true;
 }
 

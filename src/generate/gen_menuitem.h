@@ -12,8 +12,8 @@
 class MenuItemGenerator : public BaseGenerator
 {
 public:
-    std::optional<ttlib::sview> CommonConstruction(Code& code) override;
-    std::optional<ttlib::sview> CommonSettings(Code&) override;
+    bool ConstructionCode(Code&) override;
+    bool SettingsCode(Code&) override;
 
     bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr) override;
 

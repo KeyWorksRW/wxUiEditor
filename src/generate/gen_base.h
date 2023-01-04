@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Generate Src and Hdr files for Base Class
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -86,7 +86,6 @@ public:
 protected:
     void WritePropSourceCode(Node* node, GenEnum::PropName prop);
     void WritePropHdrCode(Node* node, GenEnum::PropName prop);
-    void GenCtxConstruction(Node* node);
     void AddPersistCode(Node* node);
     enum Permission
     {
@@ -139,7 +138,7 @@ protected:
     void WriteSetLines(WriteCode* pDest, std::set<std::string>& code_lines);
 
     // Called after base class is fully constructed
-    void GenContextMenuHandler(Node* form_node, Node* node_ctx_menu);
+    void GenContextMenuHandler(Node* node_ctx_menu);
 
 protected:
     const char* LangPtr() const;

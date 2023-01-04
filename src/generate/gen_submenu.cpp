@@ -12,32 +12,25 @@
 
 #include "gen_submenu.h"
 
-std::optional<ttlib::sview> SubMenuGenerator::CommonConstruction(Code& code)
+bool SubMenuGenerator::ConstructionCode(Code& code)
 {
-    if (code.is_cpp() && code.is_local_var())
-        code << "auto* ";
-    code.NodeName().CreateClass(false, "wxMenu").EndFunction();
+    code.AddAuto().NodeName().CreateClass(false, "wxMenu").EndFunction();
 
-    return code.m_code;
+    return true;
 }
 
-std::optional<ttlib::sview> SubMenuGenerator::CommonAdditionalCode(Code& code, GenEnum::GenCodeType cmd)
+bool SubMenuGenerator::AfterChildrenCode(Code& code)
 {
-    if (cmd == code_after_children)
+    if (code.node()->GetParent()->isGen(gen_PopupMenu))
     {
-        if (code.node()->GetParent()->isGen(gen_PopupMenu))
-        {
-            if (code.is_python())
-                code += "self.";
-            code.Add("AppendSubMenu(").NodeName().Comma().QuotedString(prop_label).EndFunction();
-        }
-        else
-        {
-            code.ParentName().Function("AppendSubMenu(").NodeName().Comma().QuotedString(prop_label).EndFunction();
-        }
+        code.FormFunction("AppendSubMenu(").NodeName().Comma().QuotedString(prop_label).EndFunction();
+    }
+    else
+    {
+        code.ParentName().Function("AppendSubMenu(").NodeName().Comma().QuotedString(prop_label).EndFunction();
     }
 
-    return code.m_code;
+    return true;
 }
 
 std::optional<ttlib::cstr> SubMenuGenerator::GenSettings(Node* node, size_t& /* auto_indent */)

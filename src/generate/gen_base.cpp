@@ -1645,7 +1645,9 @@ void BaseCodeGenerator::GenerateClassConstructor(Node* form_node, const EventVec
     }
 
     if (node_ctx_menu)
-        GenContextMenuHandler(form_node, node_ctx_menu);
+    {
+        GenContextMenuHandler(node_ctx_menu);
+    }
 }
 
 void BaseCodeGenerator::CollectIDs(Node* node, std::set<std::string>& set_ids)
@@ -1916,124 +1918,15 @@ void BaseCodeGenerator::WriteSetLines(WriteCode* out, std::set<std::string>& cod
     code_lines.clear();
 }
 
-void BaseCodeGenerator::GenContextMenuHandler(Node* form_node, Node* node_ctx_menu)
+void BaseCodeGenerator::GenContextMenuHandler(Node* node_ctx_menu)
 {
-    ASSERT(m_language == GEN_LANG_CPLUSPLUS);
-
-    m_source->writeLine();
-
-    m_source->writeLine(ttlib::cstr() << "void " << form_node->get_node_name()
-                                      << "::" << node_ctx_menu->prop_as_string(prop_handler_name)
-                                      << "(wxContextMenuEvent& event)\n{");
-
-    m_source->Indent();
-    m_source->writeLine("wxMenu menu;");
-    m_source->writeLine("auto pmenu = &menu;  // convenience variable for the auto-generated code");
-
-    // All of the constructors are expecting a wxMenu parent -- so we need to temporarily create one
-    auto node_menu = g_NodeCreator.NewNode(g_NodeCreator.GetNodeDeclaration("wxMenu"));
-    node_menu->prop_set_value(prop_var_name, "pmenu");
-
-    for (const auto& child: node_ctx_menu->GetChildNodePtrs())
+    if (auto generator = node_ctx_menu->GetGenerator(); generator)
     {
-        auto child_node = g_NodeCreator.MakeCopy(child);
-        node_menu->Adopt(child_node);
-        GenCtxConstruction(child_node.get());
-    }
-    m_source->writeLine();
-
-    for (auto& iter: m_CtxMenuEvents)
-    {
-        if (auto generator = iter->GetNode()->GetNodeDeclaration()->GetGenerator(); generator)
+        Code code(node_ctx_menu, m_language);
+        if (generator->AdditionalCode(code, code_ctx_menu))
         {
-            Code code(form_node, m_language);
-            if (auto result = generator->GenEvents(code, iter, form_node->get_node_name()); result)
-            {
-                m_source->write("menu.");
-                m_source->writeLine(result.value(), result.value().contains("\n") ? indent::auto_keep_whitespace :
-                                                                                    indent::auto_no_whitespace);
-            }
+            m_source->writeLine(code);
         }
-    }
-    m_source->writeLine();
-
-    // Using event.GetObject() instead of this means that the handler isn't limited to just the form base class.
-    m_source->writeLine("wxStaticCast(event.GetEventObject(), wxWindow)->PopupMenu(&menu);");
-    m_source->Unindent();
-    m_source->writeLine("}");
-}
-
-void BaseCodeGenerator::GenCtxConstruction(Node* node)
-{
-    std::optional<ttlib::sview> scode;
-    std::optional<ttlib::cstr> result;
-
-    if (auto generator = node->GetNodeDeclaration()->GetGenerator(); generator)
-    {
-        Code gen_code(node, m_language);
-        scode = generator->CommonConstruction(gen_code);
-        if (!scode && is_cpp())
-        {
-            if (result = generator->GenConstruction(node); result)
-                scode = *result;
-        }
-        if (scode && scode->size())
-        {
-            if (!node->isGen(gen_wxMenuItem))
-                m_source->writeLine();
-            m_source->writeLine(scode.value(), indent::auto_keep_whitespace);
-        }
-
-        gen_code.clear();
-        scode = generator->CommonSettings(gen_code);
-        if (!scode && is_cpp())
-        {
-            size_t auto_indent = indent::auto_keep_whitespace;
-            if (result = generator->GenSettings(node, auto_indent); result)
-                scode = *result;
-        }
-        if (scode && scode->size())
-        {
-            if (!node->isGen(gen_wxMenuItem))
-                m_source->writeLine();
-            m_source->writeLine(scode.value(), indent::auto_keep_whitespace);
-        }
-
-        for (const auto& child: node->GetChildNodePtrs())
-        {
-            GenCtxConstruction(child.get());
-        }
-
-        if (node->isGen(gen_submenu))
-        {
-            gen_code.clear();
-            if (generator->AfterChildrenCode(gen_code))
-            {
-                ASSERT_MSG(gen_code.size(), "AfterChildrenCode() returned true, but no code was generated");
-                if (gen_code.size())
-                {
-                    if (!node->isGen(gen_wxMenuItem))
-                        m_source->writeLine();
-                    m_source->writeLine(gen_code);
-                }
-            }
-            else
-            {
-                scode = generator->CommonAdditionalCode(gen_code, code_after_children);
-                if (!scode && is_cpp())
-                {
-                    if (result = generator->GenAdditionalCode(code_after_children, node); result)
-                        scode = *result;
-                }
-                if (scode && scode->size())
-                {
-                    if (!node->isGen(gen_wxMenuItem))
-                        m_source->writeLine();
-                    m_source->writeLine(scode.value(), indent::auto_keep_whitespace);
-                }
-            }
-        }
-        m_source->writeLine();
     }
 }
 

@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Menu component classes
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -350,20 +350,18 @@ bool PopupMenuGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
 
 //////////////////////////////////////////  SeparatorGenerator  //////////////////////////////////////////
 
-std::optional<ttlib::sview> SeparatorGenerator::CommonConstruction(Code& code)
+bool SeparatorGenerator::ConstructionCode(Code& code)
 {
     if (code.node()->GetParent()->isGen(gen_PopupMenu))
     {
-        if (code.is_python())
-            code += "self.";
-        code.Add("AppendSeparator(").EndFunction();
+        code.FormFunction("AppendSeparator(").EndFunction();
     }
     else
     {
         code.ParentName().Function("AppendSeparator(").EndFunction();
     }
 
-    return code.m_code;
+    return true;
 }
 
 bool SeparatorGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
@@ -378,16 +376,4 @@ int SeparatorGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t 
     auto item = InitializeXrcObject(node, object);
     GenXrcObjectAttributes(node, item, "separator");
     return BaseGenerator::xrc_updated;
-}
-
-//////////////////////////////////////////  CtxMenuGenerator  //////////////////////////////////////////
-
-bool CtxMenuGenerator::GetIncludes(Node* /* node */, std::set<std::string>& set_src, std::set<std::string>&
-                                   /* set_hdr */)
-{
-    set_src.insert("#include <wx/event.h>");
-    set_src.insert("#include <wx/menu.h>");
-    set_src.insert("#include <wx/window.h>");
-
-    return true;
 }

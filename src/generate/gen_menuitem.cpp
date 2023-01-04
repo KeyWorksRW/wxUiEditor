@@ -12,7 +12,7 @@
 
 #include "gen_menuitem.h"
 
-std::optional<ttlib::sview> MenuItemGenerator::CommonConstruction(Code& code)
+bool MenuItemGenerator::ConstructionCode(Code& code)
 {
     Node* node = code.node();
     if (code.is_cpp() && code.is_local_var())
@@ -55,10 +55,10 @@ std::optional<ttlib::sview> MenuItemGenerator::CommonConstruction(Code& code)
     }
     code.EndFunction();
 
-    return code.m_code;
+    return true;
 }
 
-std::optional<ttlib::sview> MenuItemGenerator::CommonSettings(Code& code)
+bool MenuItemGenerator::SettingsCode(Code& code)
 {
     Node* node = code.node();
     if (code.HasValue(prop_extra_accels) && code.is_cpp())
@@ -241,7 +241,7 @@ std::optional<ttlib::sview> MenuItemGenerator::CommonSettings(Code& code)
         code.Eol(eol_if_empty).NodeName().Function("Check(").EndFunction();
     }
 
-    return code.m_code;
+    return true;
 }
 
 bool MenuItemGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)

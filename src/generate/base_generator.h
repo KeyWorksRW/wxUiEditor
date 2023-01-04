@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Base widget generator class
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -40,6 +40,8 @@ namespace GenEnum
         code_header,
         // Generate code after all children of the node have been created.
         code_after_children,
+        // Generate event handler function for context menu
+        code_ctx_menu,
     };
 }
 

@@ -86,6 +86,7 @@ set (file_list
     generate/window_widgets.cpp    # Scroll window component classes
 
     generate/menu_widgets.cpp      # Menu generation classes
+    generate/gen_ctx_menu.cpp      # CtxMenuGenerator -- generates function and includes
     generate/gen_menu.cpp          # Menu Generator
     generate/gen_menuitem.cpp      # Menu Item Generator
     generate/gen_submenu.cpp       # SubMenu Generator

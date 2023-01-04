@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Initialize all generators
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -36,6 +36,7 @@
 #include "gen_cmd_link_btn.h"        // CommandLinkBtnGenerator -- wxCommandLinkButton generator
 #include "gen_collapsible.h"         // CollapsiblePaneGenerator -- wxCollapsiblePane generator
 #include "gen_combobox.h"            // ComboBoxGenerator -- wxComboBox generator
+#include "gen_ctx_menu.h"            // CtxMenuGenerator -- generates function and includes
 #include "gen_custom_ctrl.h"         // CustomControl -- Custom Control generator
 #include "gen_date_picker.h"         // DatePickerCtrlGenerator -- wxDatePickerCtrl generator
 #include "gen_dialog.h"              // DialogFormGenerator -- wxDialog generator

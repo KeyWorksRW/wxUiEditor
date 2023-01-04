@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Menu component classes
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -67,7 +67,7 @@ public:
 class SeparatorGenerator : public BaseGenerator
 {
 public:
-    std::optional<ttlib::sview> CommonConstruction(Code& code) override;
+    bool ConstructionCode(Code&) override;
 
     bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr) override;
 
@@ -75,10 +75,4 @@ public:
 
     ttlib::cstr GetPythonHelpText(Node*) override { return "wx.Menu.AppendSeparator"; }
     ttlib::cstr GetPythonURL(Node*) override { return "wx.Menu.html#wx.Menu.AppendSeparator"; }
-};
-
-class CtxMenuGenerator : public BaseGenerator
-{
-public:
-    bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr) override;
 };

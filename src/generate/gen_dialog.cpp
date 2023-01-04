@@ -102,7 +102,8 @@ bool DialogFormGenerator::SettingsCode(Code& code)
             code.EndFunction();
         }
 
-        code.Eol(eol_if_needed) += "self.Create(parent, id, title, pos, size, style, name)";
+        code.Eol(eol_if_needed) += "if not self.Create(parent, id, title, pos, size, style, name):";
+        code.Eol().Tab().Str("return");
     }
 
     code.Eol(eol_if_needed).GenFontColourSettings();

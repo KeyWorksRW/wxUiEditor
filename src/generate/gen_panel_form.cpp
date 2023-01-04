@@ -80,7 +80,16 @@ bool PanelFormGenerator::ConstructionCode(Code& code)
 
 bool PanelFormGenerator::SettingsCode(Code& code)
 {
-    code.Eol(eol_if_needed).FormFunction("Create(").Str("parent, id, pos, size, style, name").EndFunction();
+    if (code.is_cpp())
+    {
+        code.Eol(eol_if_needed).FormFunction("if (!Create(").Str("parent, id, pos, size, style, name))");
+        code.Eol().Tab().Str("return;");
+    }
+    else
+    {
+        code.Eol(eol_if_needed).Str("if not self.Create(parent, id, pos, size, style, name):");
+        code.Eol().Tab().Str("return");
+    }
 
     return true;
 }

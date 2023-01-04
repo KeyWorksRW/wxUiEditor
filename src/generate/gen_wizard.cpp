@@ -86,9 +86,9 @@ bool WizardFormGenerator::SettingsCode(Code& code)
             code.Eol() += "#if wxCHECK_VERSION(3, 1, 6)\n\t";
         }
         if (code.is_cpp())
-            code.Eol(eol_if_needed).Str("Create(parent, id, title").Comma();
+            code.Eol(eol_if_needed).Str("if (!Create(parent, id, title").Comma();
         else
-            code.Eol(eol_if_needed).Str("self.Create(parent, id, title").Comma();
+            code.Eol(eol_if_needed).Str("if not self.Create(parent, id, title").Comma();
         if (is_bitmaps_list)
         {
             if (code.is_cpp())
@@ -112,24 +112,34 @@ bool WizardFormGenerator::SettingsCode(Code& code)
         }
         if (code.is_cpp())
         {
-            code.Comma().Str("pos").Comma().Str("style").EndFunction();
+            code.Comma().Str("pos").Comma().Str("style))");
             if (wxGetProject().value(prop_wxWidgets_version) == "3.1")
             {
                 code.Eol() += "#else\n\t";
                 code << "wxBitmap(" << GenerateBitmapCode(code.node()->as_string(prop_bitmap)) << ")";
-                code.Comma().Str("pos").Comma().Str("style").EndFunction();
-                ;
+                code.Comma().Str("pos").Comma().Str("style))");
                 code.Eol() += "#endif";
             }
+            code.Eol().Tab().Str("return;");
         }
         else
         {
-            code.Comma().Str("pos").Comma().Str("style").EndFunction();
+            code.Comma().Str("pos").Comma().Str("style):");
+            code.Eol().Tab().Str("return");
         }
     }
     else
     {
-        code.Eol(eol_if_needed).FormFunction("Create(").Str("parent, id, title, wxNullBitmap, pos, style").EndFunction();
+        if (code.is_cpp())
+        {
+            code.Eol(eol_if_needed).FormFunction("if (!Create(").Str("parent, id, title, pos, style, name))");
+            code.Eol().Tab().Str("return;");
+        }
+        else
+        {
+            code.Eol(eol_if_needed).Str("if not self.Create(parent, id, title, pos, style, name):");
+            code.Eol().Tab().Str("return");
+        }
     }
 
     return true;

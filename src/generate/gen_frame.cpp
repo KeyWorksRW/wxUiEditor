@@ -72,7 +72,16 @@ bool FrameFormGenerator::SettingsCode(Code& code)
         // TODO: [Randalphwa - 12-31-2022] Add Python code for setting icon
     }
 
-    code.Eol(eol_if_needed).FormFunction("Create(").Str("parent, id, title, pos, size, style, name").EndFunction();
+    if (code.is_cpp())
+    {
+        code.Eol(eol_if_needed).FormFunction("if (!Create(").Str("parent, id, title, pos, size, style, name))");
+        code.Eol().Tab().Str("return;");
+    }
+    else
+    {
+        code.Eol(eol_if_needed).Str("if not self.Create(parent, id, title, pos, size, style, name):");
+        code.Eol().Tab().Str("return");
+    }
 
     GenFormSettings(code);
 

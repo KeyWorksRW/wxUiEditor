@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
-// Purpose:   Splitter and Scroll window component classes
+// Purpose:   Scroll window component classes
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2021 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -26,34 +26,33 @@ wxObject* ScrolledCanvasGenerator::CreateMockup(Node* node, wxObject* parent)
     return widget;
 }
 
-std::optional<ttlib::cstr> ScrolledCanvasGenerator::GenConstruction(Node* node)
+bool ScrolledCanvasGenerator::ConstructionCode(Code& code)
 {
-    ttlib::cstr code;
-    if (node->IsLocal())
-        code << "auto* ";
-
-    code << node->get_node_name() << " = new wxScrolled<wxWindow>(";
-    code << GetParentName(node) << ", " << node->prop_as_string(prop_id);
-
-    GeneratePosSizeFlags(node, code);
-
-    return code;
-}
-
-std::optional<ttlib::cstr> ScrolledCanvasGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
-{
-    ttlib::cstr code;
-
-    if (node->HasValue(prop_scroll_rate_x) || node->HasValue(prop_scroll_rate_y))
+    if (code.is_cpp())
     {
-        if (code.size())
-            code << "\n";
-
-        code << node->get_node_name() << "->SetScrollRate(" << node->prop_as_string(prop_scroll_rate_x) << ", "
-             << node->prop_as_string(prop_scroll_rate_y) << ");";
+        code.AddAuto().NodeName().Str(" = new wxScrolled<wxWindow>(");
+        code.ValidParentName().Comma().as_string(prop_id);
+        code.PosSizeFlags(true);
+    }
+    else
+    {
+        code.NodeName().Str(" = wx.ScrolledCanvas(");
+        code.ValidParentName().Comma().as_string(prop_id);
+        code.PosSizeFlags(true);
     }
 
-    return code;
+    return true;
+}
+
+bool ScrolledCanvasGenerator::SettingsCode(Code& code)
+{
+    if (code.HasValue(prop_scroll_rate_x) || code.HasValue(prop_scroll_rate_y))
+    {
+        code.Eol(eol_if_needed).NodeName().Function("SetScrollRate(");
+        code.Str(prop_scroll_rate_x).Comma().Str(prop_scroll_rate_y).EndFunction();
+    }
+
+    return true;
 }
 
 bool ScrolledCanvasGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
@@ -76,34 +75,33 @@ wxObject* ScrolledWindowGenerator::CreateMockup(Node* node, wxObject* parent)
     return widget;
 }
 
-std::optional<ttlib::cstr> ScrolledWindowGenerator::GenConstruction(Node* node)
+bool ScrolledWindowGenerator::ConstructionCode(Code& code)
 {
-    ttlib::cstr code;
-    if (node->IsLocal())
-        code << "auto* ";
-
-    code << node->get_node_name() << " = new wxScrolled<wxPanel>(";
-    code << GetParentName(node) << ", " << node->prop_as_string(prop_id);
-
-    GeneratePosSizeFlags(node, code);
-
-    return code;
-}
-
-std::optional<ttlib::cstr> ScrolledWindowGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
-{
-    ttlib::cstr code;
-
-    if (node->HasValue(prop_scroll_rate_x) || node->HasValue(prop_scroll_rate_y))
+    if (code.is_cpp())
     {
-        if (code.size())
-            code << "\n";
-
-        code << node->get_node_name() << "->SetScrollRate(" << node->prop_as_string(prop_scroll_rate_x) << ", "
-             << node->prop_as_string(prop_scroll_rate_y) << ");";
+        code.AddAuto().NodeName().Str(" = new wxScrolled<wxPanel>(");
+        code.ValidParentName().Comma().as_string(prop_id);
+        code.PosSizeFlags(true);
+    }
+    else
+    {
+        code.NodeName().Str(" = wx.ScrolledWindow(");
+        code.ValidParentName().Comma().as_string(prop_id);
+        code.PosSizeFlags(true);
     }
 
-    return code;
+    return true;
+}
+
+bool ScrolledWindowGenerator::SettingsCode(Code& code)
+{
+    if (code.HasValue(prop_scroll_rate_x) || code.HasValue(prop_scroll_rate_y))
+    {
+        code.Eol(eol_if_needed).NodeName().Function("SetScrollRate(");
+        code.Str(prop_scroll_rate_x).Comma().Str(prop_scroll_rate_y).EndFunction();
+    }
+
+    return true;
 }
 
 bool ScrolledWindowGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)

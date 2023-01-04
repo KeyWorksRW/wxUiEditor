@@ -22,6 +22,7 @@ The following tables list classes, objects and functions that wxUiEditor can gen
 -----------|-----|--------|------|------|
 | wxDialog | yes| yes | yes | gen_dialog.cpp |
 | wxFrame | yes| yes | yes | gen_frame.cpp |
+| wxMenu | yes| ??? | yes | menu_widgets.cpp |
 | wxMenuBar | yes| yes | yes | menu_widgets.cpp |
 | wxPanel | yes| yes | yes | gen_panel_form.cpp |
 | wxPopupTransientWindow | yes| yes | no | gen_popup_trans_win.cpp |
@@ -100,8 +101,8 @@ The following tables list classes, objects and functions that wxUiEditor can gen
 | wxRibbonToolBar | yes | ?? | yes | ribbon_widgets.cpp |
 | wxRichTextCtrl | yes | yes | yes | gen_rich_text.cpp |
 | wxScrollBar | yes | ?? | yes | gen_scrollbar.cpp |
-| wxScrolled\<wxPanel\> | yes | ?? | yes | styled_text.cpp |
-| wxScrolled\<wxWindow\> | yes | ?? | yes | styled_text.cpp |
+| wxScrolled\<wxPanel\> | yes | yes | yes | styled_text.cpp |
+| wxScrolled\<wxWindow\> | yes | yes | yes | styled_text.cpp |
 | wxSearchCtrl | yes | yes | yes | gen_search_ctrl.cpp |
 | wxSimpleHtmlListBox | yes | ?? | yes | gen_html_listbox.cpp |
 | wxSlider | yes | yes | yes | gen_slider.cpp |

@@ -115,6 +115,7 @@ set (file_list
     generate/gen_radio_btn.cpp      # wxRadioButton generator
     generate/gen_rearrange.cpp      # wxRearrangeCtrl generator
     generate/gen_rich_text.cpp      # wxRichTextCtrl generator
+    generate/gen_scrollbar.cpp      # wxScrollBar generator
     generate/gen_search_ctrl.cpp    # wxSearchCtrl generator
     generate/gen_slider.cpp         # wxSlider generator
     generate/gen_spin_btn.cpp       # wxSpinButton generator
@@ -125,6 +126,7 @@ set (file_list
     generate/gen_static_text.cpp    # wxStaticText generator
     generate/gen_status_bar.cpp     # wxStatusBar generator
     generate/gen_text_ctrl.cpp      # wxTextCtrl generator
+    generate/gen_toolbar.cpp        # wxToolBar generator
     generate/gen_toggle_btn.cpp     # wxToggleButton generator
     generate/gen_web_view.cpp       # wxWebView generator
 
@@ -135,9 +137,7 @@ set (file_list
     generate/gen_listview.cpp       # wxListView generator
     generate/gen_prop_grid.cpp      # wxPropertyGrid generator
     generate/gen_prop_item.cpp      # PropertyGrid/Manager Item generator
-    generate/gen_scrollbar.cpp      # wxScrollBar generator
     generate/gen_static_box.cpp     # wxStaticBox generator
-    generate/gen_toolbar.cpp        # wxToolBar generator
     generate/gen_tree_ctrl.cpp      # wxTreeCtrl generator
     generate/gen_tree_list.cpp      # wxTreeListCtrl generator
 

@@ -1,7 +1,7 @@
 //////////////////////////////////////////////////////////////////////////
 // Purpose:   wxScrollBar generator
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -28,20 +28,19 @@ wxObject* ScrollBarGenerator::CreateMockup(Node* node, wxObject* parent)
     return widget;
 }
 
-std::optional<ttlib::cstr> ScrollBarGenerator::GenConstruction(Node* node)
+bool ScrollBarGenerator::ConstructionCode(Code& code)
 {
-    ttlib::cstr code;
-    if (node->IsLocal())
-        code << "auto* ";
-    code << node->get_node_name() << GenerateNewAssignment(node);
-    code << GetParentName(node) << ", " << node->prop_as_string(prop_id);
-    GeneratePosSizeFlags(node, code);
+    code.AddAuto().NodeName().CreateClass().ValidParentName().Comma().Add(prop_id);
+    code.PosSizeFlags();
 
-    code << "\n" << node->get_node_name() << "->SetScrollbar(" << node->prop_as_string(prop_position);
-    code << ", " << node->prop_as_string(prop_thumbsize) << ", " << node->prop_as_string(prop_range);
-    code << ", " << node->prop_as_string(prop_pagesize) << ");";
+    return true;
+}
 
-    return code;
+bool ScrollBarGenerator::SettingsCode(Code& code)
+{
+    code.NodeName().Function("SetScrollbar(").Str(prop_position).Comma().Str(prop_thumbsize);
+    code.Comma().Str(prop_range).Comma().Str(prop_pagesize).EndFunction();
+    return true;
 }
 
 int ScrollBarGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)

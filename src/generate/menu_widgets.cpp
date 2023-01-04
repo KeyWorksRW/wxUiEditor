@@ -300,40 +300,45 @@ void MenuBarFormGenerator::RequiredHandlers(Node* /* node */, std::set<std::stri
 
 //////////////////////////////////////////  PopupMenuGenerator  //////////////////////////////////////////
 
-std::optional<ttlib::cstr> PopupMenuGenerator::GenConstruction(Node* node)
+bool PopupMenuGenerator::ConstructionCode(Code& code)
 {
-    ttlib::cstr code;
+    if (code.is_cpp())
+    {
+        code.Str((prop_class_name)).Str("::").Str(prop_class_name);
+        code.Str("() : wxMenu()\n{");
+    }
+    else
+    {
+        code.Add("class ").NodeName().Add("(wx.wxMenu):\n");
+        code.Eol().Tab().Add("def __init__(self");
+        code.Str("):");
+        code.Indent(3);
+        code.Eol() += "wx.wxMenu.__init__(self)";
+        code.ResetIndent();
+    }
 
-    code << node->prop_as_string(prop_class_name) << "::" << node->prop_as_string(prop_class_name);
-    code << "() : wxMenu()\n{";
-
-    return code;
+    return true;
 }
 
-std::optional<ttlib::cstr> PopupMenuGenerator::GenAdditionalCode(GenEnum::GenCodeType cmd, Node* node)
+bool PopupMenuGenerator::HeaderCode(Code& code)
 {
-    ttlib::cstr code;
+    code.NodeName().Str("();");
 
-    if (cmd == code_header)
+    return true;
+}
+
+bool PopupMenuGenerator::BaseClassNameCode(Code& code)
+{
+    if (code.HasValue(prop_derived_class))
     {
-        // This is the code to add to the header file
-        code << node->get_node_name() << "();";
-        return code;
+        code.Str((prop_derived_class));
+    }
+    else
+    {
+        code += "wxMenu";
     }
 
-    else if (cmd == code_base_class)
-    {
-        if (node->HasValue(prop_derived_class))
-        {
-            code << node->prop_as_string(prop_derived_class);
-        }
-        else
-        {
-            code << "wxMenu";
-        }
-        return code;
-    }
-    return {};
+    return true;
 }
 
 bool PopupMenuGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)

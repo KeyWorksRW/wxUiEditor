@@ -80,11 +80,12 @@ set (file_list
 
     generate/dataview_widgets.cpp  # wxDataView generation classes
     generate/grid_widgets.cpp      # Grid generation classes
-    generate/menu_widgets.cpp      # Menu generation classes
     generate/ribbon_widgets.cpp    # Ribbon generation classes
-    generate/styled_text.cpp       # wxStyledText (scintilla) generate
-    generate/window_widgets.cpp    # Splitter and Scroll generation classes
 
+    generate/styled_text.cpp       # wxStyledText (scintilla) generate
+    generate/window_widgets.cpp    # Scroll window component classes
+
+    generate/menu_widgets.cpp      # Menu generation classes
     generate/gen_menu.cpp          # Menu Generator
     generate/gen_menuitem.cpp      # Menu Item Generator
     generate/gen_submenu.cpp       # SubMenu Generator

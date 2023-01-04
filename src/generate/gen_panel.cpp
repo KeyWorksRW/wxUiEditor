@@ -25,15 +25,13 @@ wxObject* PanelGenerator::CreateMockup(Node* node, wxObject* parent)
     return widget;
 }
 
-std::optional<ttlib::sview> PanelGenerator::CommonConstruction(Code& code)
+bool PanelGenerator::ConstructionCode(Code& code)
 {
-    if (code.is_cpp() && code.is_local_var())
-        code << "auto* ";
-    code.NodeName().CreateClass();
+    code.AddAuto().NodeName().CreateClass();
     code.ValidParentName().Comma().as_string(prop_id);
     code.PosSizeFlags(true);
 
-    return code.m_code;
+    return true;
 }
 
 bool PanelGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)

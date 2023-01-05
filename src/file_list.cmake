@@ -56,6 +56,7 @@ set (file_list
     generate/gen_construction.cpp  # Top level Object construction code
     generate/gen_cmake.cpp         # Auto-generate a .cmake file
     generate/write_code.cpp        # Write code to Scintilla or file
+    generate/image_gen.cpp         # Functions for generating embedded images
 
     generate/base_generator.cpp    # Base widget generator class
     generate/gen_initialize.cpp    # Initialize all widget generate classes

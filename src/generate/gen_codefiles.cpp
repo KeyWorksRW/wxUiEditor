@@ -149,7 +149,7 @@ void GenThreadCpp(GenData& gen_data, Node* form)
     auto cpp_cw = std::make_unique<FileCodeWriter>(path.wx_str());
     codegen.SetSrcWriteCode(cpp_cw.get());
 
-    codegen.GenerateBaseClass(form);
+    codegen.GenerateCppClass(form);
 
     path.replace_extension(header_ext);
 
@@ -605,7 +605,7 @@ void GenerateTmpFiles(const std::vector<ttlib::cstr>& ClassList, pugi::xml_node 
 
                 if (language == GEN_LANG_CPLUSPLUS)
                 {
-                    codegen.GenerateBaseClass(form);
+                    codegen.GenerateCppClass(form);
                 }
                 else if (language == GEN_LANG_PYTHON)
                 {
@@ -644,7 +644,7 @@ void GenerateTmpFiles(const std::vector<ttlib::cstr>& ClassList, pugi::xml_node 
 
                     if (language == GEN_LANG_CPLUSPLUS)
                     {
-                        codegen.GenerateBaseClass(form);
+                        codegen.GenerateCppClass(form);
                     }
                     else if (language == GEN_LANG_PYTHON)
                     {

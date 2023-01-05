@@ -227,7 +227,7 @@ void BasePanel::GenerateBaseClass()
     switch (m_panel_type)
     {
         case GEN_LANG_CPLUSPLUS:
-            codegen.GenerateBaseClass(m_cur_form, panel_page);
+            codegen.GenerateCppClass(m_cur_form, panel_page);
 
             m_inherit_src_panel->Clear();
             codegen.SetSrcWriteCode(m_inherit_src_panel);

@@ -9,12 +9,13 @@
 
 #include <set>
 
-#include "node_classes.h"  // Forward defintions of Node classes
-
 #include "../panels/base_panel.h"  // BasePanel -- Base class for all code generation panels
 #include "gen_enums.h"             // Enumerations for generators
 #include "gen_xrc.h"               // BaseXrcGenerator -- Generate XRC file
 
+#include "node_classes.h"  // Forward defintions of Node classes
+
+class Code;
 class ProjectSettings;
 class NodeCreator;
 class WriteCode;
@@ -22,12 +23,12 @@ class wxWindow;
 
 struct EmbeddedImage;
 
-using EventVector = std::vector<NodeEvent*>;
-
 namespace pugi
 {
     class xml_node;
 }
+
+using EventVector = std::vector<NodeEvent*>;
 
 enum PANEL_PAGE : size_t
 {
@@ -60,7 +61,7 @@ public:
     void SetHdrWriteCode(WriteCode* cw) { m_header = cw; }
     void SetSrcWriteCode(WriteCode* cw) { m_source = cw; }
 
-    void GenerateBaseClass(Node* form_node, PANEL_PAGE panel_type = NOT_PANEL);
+    void GenerateCppClass(Node* form_node, PANEL_PAGE panel_type = NOT_PANEL);
     void GeneratePythonClass(Node* form_node, PANEL_PAGE panel_type = NOT_PANEL);
 
     // GenerateDerivedClass() is in gen_derived.cpp
@@ -84,6 +85,22 @@ public:
     bool is_cpp() const { return m_language == GEN_LANG_CPLUSPLUS; }
 
 protected:
+    // Generate extern references to images used in the current form that are defined in the
+    // gen_Images node.
+    //
+    // This will call code.clear() before writing any code.
+    void WriteImagePreConstruction(Code& code);
+
+    // Generate code after the construcor for embedded images not defined in the gen_Images
+    // node.
+    //
+    // This will call code.clear() before writing any code.
+    void WriteImagePostConstruction(Code& code);
+
+    // Generate extern statements after the header definition for embedded images not defined
+    // in the gen_Images node.
+    void WriteImagePostHeader();
+
     void WritePropSourceCode(Node* node, GenEnum::PropName prop);
     void WritePropHdrCode(Node* node, GenEnum::PropName prop);
     void AddPersistCode(Node* node);

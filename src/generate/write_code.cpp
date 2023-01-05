@@ -1,7 +1,7 @@
 //////////////////////////////////////////////////////////////////////////
 // Purpose:   Write code to Scintilla
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -57,6 +57,56 @@ void WriteCode::writeLine(const Code& code)
             }
 
             doWrite(line);
+        }
+        doWrite("\n");
+    }
+
+    m_IsLastLineBlank = (lines.back().empty() ? true : false);
+}
+
+void WriteCode::writeLine(std::vector<std::string>& lines)
+{
+    for (auto& line: lines)
+    {
+        // Remove any trailing tabs -- this occurs when Code::Eol() is called when an indent
+        // is active.
+        while (line.size() && line.back() == '\t')
+        {
+            line.pop_back();
+        }
+
+        if (line.size())
+        {
+            // Don't indent #if, #else or #endif
+            if (line[0] != '#' || !(line.starts_with("#if") || line.starts_with("#else") || line.starts_with("#endif")))
+            {
+                for (int i = 0; i < m_indent; ++i)
+                {
+                    doWrite(TabSpaces);
+                }
+            }
+
+            if (line[0] == '\t')
+            {
+                size_t idx = 0;
+                for (; idx < line.size(); ++idx)
+                {
+                    if (line[idx] == '\t')
+                    {
+                        doWrite(TabSpaces);
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+
+                doWrite(line.substr(idx));
+            }
+            else
+            {
+                doWrite(line);
+            }
         }
         doWrite("\n");
     }

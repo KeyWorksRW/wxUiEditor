@@ -135,9 +135,9 @@ std::optional<ttlib::sview> StatusBarGenerator::CommonSettings(Code& code)
     {
         code.OpenBrace();
         code.m_code << "const int sb_field_widths[" << fields.size() << "] = {" << widths << "};";
-        code.Eol().NodeName().Function("SetStatusWidths(").to_a(fields.size()).Comma().Str("sb_field_widths);");
-        code.Eol().Str("const int sb_field_styles[").to_a(fields.size()).Str("] = {").Str(widths).Str("};");
-        code.Eol().NodeName().Function("SetStatusStyles(").to_a(fields.size()).Comma().Str("sb_field_styles);");
+        code.Eol().NodeName().Function("SetStatusWidths(").itoa(fields.size()).Comma().Str("sb_field_widths);");
+        code.Eol().Str("const int sb_field_styles[").itoa(fields.size()).Str("] = {").Str(widths).Str("};");
+        code.Eol().NodeName().Function("SetStatusStyles(").itoa(fields.size()).Comma().Str("sb_field_styles);");
         code.CloseBrace();
     }
     else

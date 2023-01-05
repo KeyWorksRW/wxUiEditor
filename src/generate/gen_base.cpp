@@ -115,10 +115,12 @@ BaseCodeGenerator::BaseCodeGenerator(int language)
     }
 }
 
-void BaseCodeGenerator::GenerateBaseClass(Node* form_node, PANEL_PAGE panel_type)
+void BaseCodeGenerator::GenerateCppClass(Node* form_node, PANEL_PAGE panel_type)
 {
     ASSERT(form_node)
     ASSERT(m_language == GEN_LANG_CPLUSPLUS)
+
+    Code code(form_node, GEN_LANG_CPLUSPLUS);
 
     m_CtxMenuEvents.clear();
     m_embedded_images.clear();
@@ -292,12 +294,13 @@ void BaseCodeGenerator::GenerateBaseClass(Node* form_node, PANEL_PAGE panel_type
                 src_includes.erase(bitmap_hdr);
             }
 
-            ttlib::cstr code("#if wxCHECK_VERSION(3, 1, 6)\n\t");
-            code << "#include <wx/bmpbndl.h>";
-            code << "\n#else\n\t";
-            code << "#include <wx/bitmap.h>";
-            code << "\n#endif";
-            m_source->writeLine(code, indent::auto_keep_whitespace);
+            code.clear();
+            code += "#if wxCHECK_VERSION(3, 1, 6)";
+            code.Eol().Tab().Str("#include <wx/bmpbndl.h>");
+            code.Eol().Str("#else");
+            code.Eol().Tab().Str("#include <wx/bitmap.h>");
+            code.Eol().Str("#endif");
+            m_source->writeLine(code);
             m_source->writeLine();
         }
     }
@@ -492,30 +495,10 @@ void BaseCodeGenerator::GenerateBaseClass(Node* form_node, PANEL_PAGE panel_type
 
         if (m_embedded_images.size())
         {
-            bool isNameSpaceWritten = false;
-            for (auto iter_array: m_embedded_images)
+            WriteImagePreConstruction(code);
+            if (code.size())
             {
-                // If the image is defined in this form, then it will already have been declared in the class's header file.
-                // For the source code, we only care about images defined in another source module.
-
-                if (iter_array->form == m_form_node)
-                    continue;
-
-                if (!isNameSpaceWritten)
-                {
-                    isNameSpaceWritten = true;
-                    m_source->writeLine();
-                    m_source->writeLine("namespace wxue_img\n{");
-                    m_source->Indent();
-                }
-
-                m_source->writeLine(ttlib::cstr("extern const unsigned char ")
-                                    << iter_array->array_name << '[' << (iter_array->array_size & 0xFFFFFFFF) << "];");
-            }
-            if (isNameSpaceWritten)
-            {
-                m_source->Unindent();
-                m_source->writeLine("}\n");
+                m_source->writeLine(code);
             }
         }
 
@@ -523,49 +506,7 @@ void BaseCodeGenerator::GenerateBaseClass(Node* form_node, PANEL_PAGE panel_type
 
         if (m_embedded_images.size())
         {
-            bool is_namespace_written = false;
-            for (auto iter_array: m_embedded_images)
-            {
-                if (iter_array->form != m_form_node)
-                    continue;
-
-                if (!is_namespace_written)
-                {
-                    m_source->writeLine();
-                    m_source->writeLine("namespace wxue_img\n{");
-                    m_source->Indent();
-                    is_namespace_written = true;
-                }
-                m_source->writeLine();
-                ttlib::cstr code;
-                code.reserve(GetProject()->as_int(prop_cpp_line_length) + 16);
-                // SVG images store the original size in the high 32 bits
-                size_t max_pos = (iter_array->array_size & 0xFFFFFFFF);
-                code << "const unsigned char " << iter_array->array_name << '[' << max_pos << "] {";
-
-                m_source->writeLine(code);
-
-                size_t pos = 0;
-                while (pos < max_pos)
-                {
-                    code.clear();
-                    // -8 to account for 4 indent + max 3 chars for number + comma
-                    for (; pos < max_pos && code.size() < (to_size_t) GetProject()->as_int(prop_cpp_line_length) - 8; ++pos)
-                    {
-                        code << (to_int) iter_array->array_data[pos] << ',';
-                    }
-                    if (pos >= max_pos && code.back() == ',')
-                        code.pop_back();
-                    m_source->writeLine(code);
-                }
-                m_source->writeLine("};");
-            }
-            if (is_namespace_written)
-            {
-                m_source->writeLine();
-                m_source->Unindent();
-                m_source->writeLine("}\n");
-            }
+            WriteImagePostConstruction(code);
         }
     }
 
@@ -581,47 +522,7 @@ void BaseCodeGenerator::GenerateBaseClass(Node* form_node, PANEL_PAGE panel_type
 
     if (m_panel_type != CPP_PANEL && m_embedded_images.size())
     {
-        bool is_namespace_written = false;
-        for (auto iter_array: m_embedded_images)
-        {
-            if (iter_array->form != m_form_node)
-                continue;
-
-            if (!is_namespace_written)
-            {
-                m_header->writeLine();
-                m_header->writeLine("namespace wxue_img\n{");
-
-                if (form_node->isType(type_images))
-                {
-                    ttlib::textfile function;
-                    function.ReadString(txt_wxueImageFunction);
-                    for (auto& iter: function)
-                    {
-                        m_header->write("\t");
-                        if (iter.size() && iter.at(0) == ' ')
-                            m_header->write("\t");
-                        m_header->writeLine(iter);
-                    }
-                    m_header->writeLine();
-                }
-
-                m_header->Indent();
-                if (!form_node->isType(type_images))
-                {
-                    m_header->writeLine("// Images declared in this class module:");
-                    m_header->writeLine();
-                }
-                is_namespace_written = true;
-            }
-            m_header->writeLine(ttlib::cstr("extern const unsigned char ")
-                                << iter_array->array_name << '[' << (iter_array->array_size & 0xFFFFFFFF) << "];");
-        }
-        if (is_namespace_written)
-        {
-            m_header->Unindent();
-            m_header->writeLine("}\n");
-        }
+        WriteImagePostHeader();
     }
 }
 

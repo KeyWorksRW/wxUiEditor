@@ -241,12 +241,25 @@ void BaseCodeGenerator::GeneratePythonClass(Node* form_node, PANEL_PAGE panel_ty
         return;
     }
 
+    Code code(form_node, GEN_LANG_PYTHON);
+
+    m_embedded_images.clear();
+
     m_project = GetProject();
     m_form_node = form_node;
     m_ImagesForm = nullptr;
 
     EventVector events;
     std::thread thrd_get_events(&BaseCodeGenerator::CollectEventHandlers, this, form_node, std::ref(events));
+
+    m_baseFullPath = MakePythonPath(form_node);
+
+    // Caution! CollectImageHeaders() needs access to m_baseFullPath, so don't start this thread until it has been set!
+    std::set<std::string> img_include_set;
+    std::thread thrd_collect_img_headers(&BaseCodeGenerator::CollectImageHeaders, this, form_node,
+                                         std::ref(img_include_set));
+
+    // thrd_collect_img_headers will populate m_embedded_images;
 
     // If the code files are being written to disk, then UpdateEmbedNodes() has already been called.
     if (panel_type != NOT_PANEL)
@@ -279,13 +292,24 @@ void BaseCodeGenerator::GeneratePythonClass(Node* form_node, PANEL_PAGE panel_ty
     m_header->writeLine(ttlib::cstr("# Sample inherited class from ") << form_node->as_string(prop_class_name));
     m_header->writeLine();
     m_header->writeLine("import wx");
+
     std::set<std::string> imports;
     GatherImportModules(imports, form_node);
+
     for (const auto& import: imports)
     {
         m_source->writeLine(import);
         m_header->writeLine(import);
     }
+
+    thrd_collect_img_headers.join();
+    if (m_embedded_images.size())
+    {
+        m_source->writeLine();
+        m_source->writeLine("from wx.lib.embeddedimage import PyEmbeddedImage");
+        WriteImagePostConstruction(code);
+    }
+
     m_source->writeLine();
     m_header->writeLine();
     m_header->writeLine(ttlib::cstr("import ") << form_node->as_string(prop_python_file) << "\n");
@@ -296,9 +320,9 @@ void BaseCodeGenerator::GeneratePythonClass(Node* form_node, PANEL_PAGE panel_ty
         ttlib::cstr convert(m_form_node->as_string(prop_python_insert));
         convert.Replace("@@", "\n", tt::REPLACE::all);
         ttlib::multistr lines(convert, '\n', tt::TRIM::right);
-        for (auto& code: lines)
+        for (auto& line: lines)
         {
-            m_source->doWrite(code);
+            m_source->doWrite(line);
             m_source->doWrite("\n");
         }
         m_source->doWrite("\n");
@@ -320,7 +344,7 @@ void BaseCodeGenerator::GeneratePythonClass(Node* form_node, PANEL_PAGE panel_ty
     thrd_get_events.join();
 
     auto generator = form_node->GetNodeDeclaration()->GetGenerator();
-    Code code(form_node, GEN_LANG_PYTHON);
+    code.clear();
     if (generator->ConstructionCode(code))
     {
         m_source->writeLine(code);
@@ -423,6 +447,12 @@ void BaseCodeGenerator::GeneratePythonClass(Node* form_node, PANEL_PAGE panel_ty
     // Make certain indentation is reset after all construction code is written
     m_source->ResetIndent();
     m_header->ResetIndent();
+
+    std::sort(m_embedded_images.begin(), m_embedded_images.end(),
+              [](const EmbeddedImage* a, const EmbeddedImage* b)
+              {
+                  return (a->array_name.compare(b->array_name) < 0);
+              });
 }
 
 void BaseCodeGenerator::GenPythonEventHandlers(const EventVector& events)
@@ -503,16 +533,31 @@ bool PythonBitmapList(Code& code, GenEnum::PropName prop)
             code.UpdateBreakAt();
             code.Comma(false).Eol().Tab(3);
         }
-        ttlib::cstr name(iter);
-        name.make_absolute();
-        name.make_relative(path);
-        name.backslashestoforward();
 
-        code.Str("wx.Bitmap(").QuotedString(name);
-        if (is_xpm)
-            code.Comma().Str("wx.BITMAP_TYPE_XPM");
-        code += ")";
-        needs_comma = true;
+        bool is_embed_success = false;
+        if (parts[IndexType].starts_with("Embed"))
+        {
+            if (auto embed = GetProject()->GetEmbeddedImage(iter); embed)
+            {
+                code.Str(embed->array_name).Str(".Bitmap");
+                needs_comma = true;
+                is_embed_success = true;
+            }
+        }
+
+        if (!is_embed_success)
+        {
+            ttlib::cstr name(iter);
+            name.make_absolute();
+            name.make_relative(path);
+            name.backslashestoforward();
+
+            code.Str("wx.Bitmap(").QuotedString(name);
+            if (is_xpm)
+                code.Comma().Str("wx.BITMAP_TYPE_XPM");
+            code += ")";
+            needs_comma = true;
+        }
     }
     code += " ]\n";
     code.UpdateBreakAt();
@@ -580,18 +625,58 @@ bool PythonBundleCode(Code& code, GenEnum::PropName prop)
         else if (bundle->lst_filenames.size() == 1)
         {
             code += "wx.BitmapBundle.FromBitmap(";
-            code.CheckLineLength(name.size() + sizeof("wx.Bitmap()"));
-            code.Str("wx.Bitmap(").QuotedString(name) += "))";
+            bool is_embed_success = false;
+
+            if (parts[IndexType].starts_with("Embed"))
+            {
+                if (auto embed = GetProject()->GetEmbeddedImage(bundle->lst_filenames[0]); embed)
+                {
+                    code.CheckLineLength(embed->array_name.size() + sizeof(".Bitmap)"));
+                    code.Str(embed->array_name) += ".Bitmap)";
+                    is_embed_success = true;
+                }
+            }
+
+            if (!is_embed_success)
+            {
+                code.CheckLineLength(name.size() + sizeof("wx.Bitmap()"));
+                code.Str("wx.Bitmap(").QuotedString(name) += "))";
+            }
         }
         else if (bundle->lst_filenames.size() == 2)
         {
-            ttlib::cstr name2(bundle->lst_filenames[1]);
-            name2.make_absolute();
-            name2.make_relative(path);
-            name2.backslashestoforward();
             code += "wx.BitmapBundle.FromBitmaps(";
-            code.CheckLineLength(name.size() + name2.size() + 27);
-            code.Str("wx.Bitmap(").QuotedString(name).Str(", wx.Bitmap(").QuotedString(name2).Str("))");
+            bool is_embed_success = false;
+
+            if (parts[IndexType].starts_with("Embed"))
+            {
+                if (auto embed = GetProject()->GetEmbeddedImage(bundle->lst_filenames[0]); embed)
+                {
+                    code.CheckLineLength(embed->array_name.size() + sizeof(".Bitmap"));
+                    code.Str(embed->array_name) += ".Bitmap";
+
+                    if (auto embed2 = GetProject()->GetEmbeddedImage(bundle->lst_filenames[1]); embed2)
+                    {
+                        code.Comma().CheckLineLength(embed2->array_name.size() + sizeof(".Bitmap)"));
+                        code.Str(embed2->array_name) += ".Bitmap)";
+                    }
+                    else
+                    {
+                        code.Comma().Str("wx.NullBitmap)");
+                    }
+                    is_embed_success = true;
+                }
+            }
+            if (!is_embed_success)
+            {
+                ttlib::cstr name2(bundle->lst_filenames[1]);
+                name2.make_absolute();
+                name2.make_relative(path);
+                name2.backslashestoforward();
+
+                code.CheckLineLength(name.size() + name2.size() + 27);
+                code.Str("wx.Bitmap(").QuotedString(name).Str(", wx.Bitmap(").QuotedString(name2).Str("))");
+            }
         }
         else
         {

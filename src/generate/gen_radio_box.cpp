@@ -88,7 +88,7 @@ std::optional<ttlib::sview> RadioBoxGenerator::CommonConstruction(Code& code)
     code.Comma().Pos().Comma().WxSize().Comma();
     if (code.is_cpp())
     {
-        code.to_a(array.size()).Comma();
+        code.itoa(array.size()).Comma();
         if (array.size())
             code.Str(choice_name);
         else

@@ -387,14 +387,12 @@ void ToolBarGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/,
     toolbar->Realize();
 }
 
-std::optional<ttlib::sview> ToolBarGenerator::CommonConstruction(Code& code)
+bool ToolBarGenerator::ConstructionCode(Code& code)
 {
-    if (code.is_cpp() && code.is_local_var())
-        code << "auto* ";
-    code.NodeName();
+    code.AddAuto().NodeName();
     if (code.node()->isParent(gen_wxFrame))
     {
-        code += (code.is_cpp() ? " = CreateToolBar(" : " = self.CreateToolBar(");
+        code.Str(" = ").FormFunction("CreateToolBar(");
         Node* node = code.node();
         auto& id = node->as_string(prop_id);
         auto& window_name = node->as_string(prop_window_name);
@@ -424,34 +422,34 @@ std::optional<ttlib::sview> ToolBarGenerator::CommonConstruction(Code& code)
         code.PosSizeFlags();
     }
 
-    return code.m_code;
+    return true;
 }
 
-std::optional<ttlib::sview> ToolBarGenerator::CommonAfterChildren(Code& code)
-{
-    code.NodeName().Function("Realize(").EndFunction();
-
-    return code.m_code;
-}
-
-std::optional<ttlib::sview> ToolBarGenerator::CommonSettings(Code& code)
+bool ToolBarGenerator::SettingsCode(Code& code)
 {
     if (code.node()->as_int(prop_separation) != 5)
     {
-        code.Eol().NodeName().Function("SetToolSeparation(").as_string(prop_separation).EndFunction();
+        code.Eol().NodeName().Function("SetToolSeparation(").Str(prop_separation).EndFunction();
     }
 
     if (code.HasValue(prop_margins))
     {
-        code.Eol().NodeName().Function("SetMargins(").as_string(prop_margins).EndFunction();
+        code.Eol().NodeName().Function("SetMargins(").Str(prop_margins).EndFunction();
     }
 
     if (code.node()->as_int(prop_packing) != 1)
     {
-        code.Eol().NodeName().Function("SetToolPacking(").as_string(prop_packing).EndFunction();
+        code.Eol().NodeName().Function("SetToolPacking(").Str(prop_packing).EndFunction();
     }
 
-    return code.m_code;
+    return true;
+}
+
+bool ToolBarGenerator::AfterChildrenCode(Code& code)
+{
+    code.NodeName().Function("Realize(").EndFunction();
+
+    return true;
 }
 
 bool ToolBarGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)

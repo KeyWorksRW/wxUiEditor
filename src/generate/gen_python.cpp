@@ -241,12 +241,25 @@ void BaseCodeGenerator::GeneratePythonClass(Node* form_node, PANEL_PAGE panel_ty
         return;
     }
 
+    Code code(form_node, GEN_LANG_PYTHON);
+
+    m_embedded_images.clear();
+
     m_project = GetProject();
     m_form_node = form_node;
     m_ImagesForm = nullptr;
 
     EventVector events;
     std::thread thrd_get_events(&BaseCodeGenerator::CollectEventHandlers, this, form_node, std::ref(events));
+
+    m_baseFullPath = MakePythonPath(form_node);
+
+    // Caution! CollectImageHeaders() needs access to m_baseFullPath, so don't start this thread until it has been set!
+    std::set<std::string> img_include_set;
+    std::thread thrd_collect_img_headers(&BaseCodeGenerator::CollectImageHeaders, this, form_node,
+                                         std::ref(img_include_set));
+
+    // thrd_collect_img_headers will populate m_embedded_images;
 
     // If the code files are being written to disk, then UpdateEmbedNodes() has already been called.
     if (panel_type != NOT_PANEL)
@@ -279,13 +292,24 @@ void BaseCodeGenerator::GeneratePythonClass(Node* form_node, PANEL_PAGE panel_ty
     m_header->writeLine(ttlib::cstr("# Sample inherited class from ") << form_node->as_string(prop_class_name));
     m_header->writeLine();
     m_header->writeLine("import wx");
+
     std::set<std::string> imports;
     GatherImportModules(imports, form_node);
+
     for (const auto& import: imports)
     {
         m_source->writeLine(import);
         m_header->writeLine(import);
     }
+
+    thrd_collect_img_headers.join();
+    if (m_embedded_images.size())
+    {
+        m_source->writeLine();
+        m_source->writeLine("from wx.lib.embeddedimage import PyEmbeddedImage");
+        WriteImagePostConstruction(code);
+    }
+
     m_source->writeLine();
     m_header->writeLine();
     m_header->writeLine(ttlib::cstr("import ") << form_node->as_string(prop_python_file) << "\n");
@@ -296,9 +320,9 @@ void BaseCodeGenerator::GeneratePythonClass(Node* form_node, PANEL_PAGE panel_ty
         ttlib::cstr convert(m_form_node->as_string(prop_python_insert));
         convert.Replace("@@", "\n", tt::REPLACE::all);
         ttlib::multistr lines(convert, '\n', tt::TRIM::right);
-        for (auto& code: lines)
+        for (auto& line: lines)
         {
-            m_source->doWrite(code);
+            m_source->doWrite(line);
             m_source->doWrite("\n");
         }
         m_source->doWrite("\n");
@@ -320,7 +344,7 @@ void BaseCodeGenerator::GeneratePythonClass(Node* form_node, PANEL_PAGE panel_ty
     thrd_get_events.join();
 
     auto generator = form_node->GetNodeDeclaration()->GetGenerator();
-    Code code(form_node, GEN_LANG_PYTHON);
+    code.clear();
     if (generator->ConstructionCode(code))
     {
         m_source->writeLine(code);
@@ -423,6 +447,12 @@ void BaseCodeGenerator::GeneratePythonClass(Node* form_node, PANEL_PAGE panel_ty
     // Make certain indentation is reset after all construction code is written
     m_source->ResetIndent();
     m_header->ResetIndent();
+
+    std::sort(m_embedded_images.begin(), m_embedded_images.end(),
+              [](const EmbeddedImage* a, const EmbeddedImage* b)
+              {
+                  return (a->array_name.compare(b->array_name) < 0);
+              });
 }
 
 void BaseCodeGenerator::GenPythonEventHandlers(const EventVector& events)

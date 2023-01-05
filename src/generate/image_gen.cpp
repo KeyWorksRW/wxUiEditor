@@ -5,6 +5,9 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
+#include <array>
+#include <vector>
+
 #include <tttextfile_wx.h>  // textfile -- Classes for reading and writing line-oriented files
 
 #include "gen_base.h"
@@ -12,6 +15,8 @@
 #include "code.h"           // Code -- Helper class for generating code
 #include "project_class.h"  // Project class
 #include "write_code.h"     // Write code to Scintilla or file
+
+std::vector<std::string> base64_encode(unsigned char const* data, size_t data_size);
 
 // Generate extern references to images used in the current form that are defined in the
 // gen_Images node. These are written before the class constructor.
@@ -101,6 +106,18 @@ void BaseCodeGenerator::WriteImagePostConstruction(Code& code)
             }
             code += "};\n";
         }
+        else
+        {
+            code.Eol().Str(iter_array->array_name).Str(" = PyEmbeddedImage(");
+            m_source->writeLine(code);
+            code.clear();
+            auto encoded = base64_encode(iter_array->array_data.get(), iter_array->array_size & 0xFFFFFFFF);
+            if (encoded.size())
+            {
+                encoded.back() += ")";
+                m_source->writeLine(encoded);
+            }
+        }
     }
 
     if (code.is_cpp() && is_namespace_written)
@@ -173,4 +190,81 @@ void BaseCodeGenerator::WriteImagePostHeader()
         m_header->Unindent();
         m_header->writeLine("}\n");
     }
+}
+
+std::vector<std::string> base64_encode(unsigned char const* data, size_t data_size)
+{
+    const size_t tab_quote_prefix = 7;  // 4 for tab, 2 for quotes, 1 for 'b' prefix
+    size_t line_length = (to_size_t) GetProject()->as_int(prop_python_line_length) - tab_quote_prefix;
+
+    const std::array<char, 64> base64_chars = { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
+                                                'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
+                                                'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
+                                                'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
+                                                '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '+', '/' };
+
+    std::vector<std::string> result;
+
+    std::string line;
+    line.reserve(line_length + 4);
+    unsigned char char_array_3[3];
+    unsigned char char_array_4[4];
+
+    auto a3_to_a4 = [&]()
+    {
+        char_array_4[0] = (char_array_3[0] & 0xfc) >> 2;
+        char_array_4[1] = ((char_array_3[0] & 0x03) << 4) + ((char_array_3[1] & 0xf0) >> 4);
+        char_array_4[2] = ((char_array_3[1] & 0x0f) << 2) + ((char_array_3[2] & 0xc0) >> 6);
+        char_array_4[3] = char_array_3[2] & 0x3f;
+    };
+
+    line = "\tb\"";
+    size_t line_pos = 3;
+    size_t a3_pos = 0;
+    for (size_t idx = 0; idx < data_size; ++idx)
+    {
+        char_array_3[a3_pos++] = data[idx];
+        if (a3_pos == 3)
+        {
+            a3_to_a4();
+
+            line += base64_chars[char_array_4[0]];
+            line += base64_chars[char_array_4[1]];
+            line += base64_chars[char_array_4[2]];
+            line += base64_chars[char_array_4[3]];
+
+            a3_pos = 0;
+            line_pos += 4;
+            if (line_pos >= line_length)
+            {
+                line += "\"";
+                result.emplace_back(line);
+                line_pos = 3;
+                line.resize(line_pos);
+            }
+        }
+    }
+
+    if (a3_pos)
+    {
+        for (size_t index = a3_pos; index < 3; index++)
+        {
+            char_array_3[index] = '\0';
+        }
+
+        a3_to_a4();
+
+        for (size_t a4_pos = 0; a4_pos < a3_pos + 1; a4_pos++)
+        {
+            line += base64_chars[char_array_4[a4_pos]];
+        }
+        while (a3_pos++ < 3)
+        {
+            line += '=';
+        }
+    }
+    line += "\"";
+    result.emplace_back(line);
+
+    return result;
 }

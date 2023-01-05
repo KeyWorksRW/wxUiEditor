@@ -261,13 +261,13 @@ public:
 
     Code& itoa(int val)
     {
-        m_code << val;
+        m_code += std::to_string(val);
         return *this;
     }
 
-    Code& to_a(size_t val)
+    Code& itoa(size_t val)
     {
-        m_code << val;
+        m_code += std::to_string(val);
         return *this;
     }
 
@@ -344,15 +344,15 @@ public:
         return *this;
     }
 
-    Code& operator<<(int i)
+    Code& operator<<(int val)
     {
-        m_code << i;
+        m_code += std::to_string(val);
         return *this;
     }
 
-    Code& operator<<(size_t i)
+    Code& operator<<(size_t val)
     {
-        m_code << i;
+        m_code += std::to_string(val);
         return *this;
     }
 

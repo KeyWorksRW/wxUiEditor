@@ -150,6 +150,27 @@ static const std::map<std::string_view, std::string_view, std::less<>> s_map_wx_
     { "wxEVT_WIZARD_HELP", "wx.adv."},
     { "wxEVT_WIZARD_FINISHED", "wx.adv."},
 
+    { "wxRIBBON_BAR_DEFAULT_STYLE", "wx.ribbon."},
+    { "wxRIBBON_BAR_FOLDBAR_STYLE", "wx.ribbon."},
+    { "wxRIBBON_BAR_SHOW_PAGE_LABELS", "wx.ribbon."},
+    { "wxRIBBON_BAR_SHOW_PAGE_ICONS", "wx.ribbon."},
+    { "wxRIBBON_BAR_FLOW_HORIZONTAL", "wx.ribbon."},
+    { "wxRIBBON_BAR_FLOW_VERTICAL", "wx.ribbon."},
+    { "wxRIBBON_BAR_SHOW_PANEL_EXT_BUTTONS", "wx.ribbon."},
+    { "wxRIBBON_BAR_SHOW_PANEL_MINIMISE_BUTTONS", "wx.ribbon."},
+    { "wxRIBBON_BAR_SHOW_TOGGLE_BUTTON", "wx.ribbon."},
+    { "wxRIBBON_BAR_SHOW_HELP_BUTTON", "wx.ribbon."},
+
+    { "wxEVT_RIBBONBAR_PAGE_CHANGED", "wx.ribbon."},
+    { "wxEVT_RIBBONBAR_PAGE_CHANGING", "wx.ribbon."},
+    { "wxEVT_RIBBONBAR_TAB_MIDDLE_DOWN", "wx.ribbon."},
+    { "wxEVT_RIBBONBAR_TAB_MIDDLE_UP", "wx.ribbon."},
+    { "wxEVT_RIBBONBAR_TAB_RIGHT_DOWN", "wx.ribbon."},
+    { "wxEVT_RIBBONBAR_TAB_RIGHT_UP", "wx.ribbon."},
+    { "wxEVT_RIBBONBAR_TAB_LEFT_DCLICK", "wx.ribbon."},
+    { "wxEVT_RIBBONBAR_TOGGLED", "wx.ribbon."},
+    { "wxEVT_RIBBONBAR_HELP_CLICKED", "wx.ribbon."},
+
     // This doesn't get created as a class, so we have to add it as if it was a constant.
     { "wxWebView", "wx.html2."},
     { "wxWebViewBackendDefault", "wx.html2."},
@@ -174,6 +195,7 @@ std::map<std::string_view, std::string_view, std::less<>> g_map_class_prefix
     { "wxWebView", "wx.html2."},
     { "wxWizard", "wx.adv."},
     { "wxWizardPageSimple", "wx.adv."},
+    { "wxRibbonBar", "wx.ribbon."},
 
 };
 // clang-format on

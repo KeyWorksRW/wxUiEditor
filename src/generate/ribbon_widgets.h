@@ -17,9 +17,12 @@ public:
     wxObject* CreateMockup(Node* node, wxObject* parent) override;
     void AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/, Node* /* node */, bool /* is_preview */) override;
 
-    std::optional<ttlib::cstr> GenConstruction(Node* node) override;
-    std::optional<ttlib::cstr> GenAdditionalCode(GenEnum::GenCodeType cmd, Node* node) override;
-    std::optional<ttlib::cstr> GenSettings(Node* node, size_t& auto_indent) override;
+    bool ConstructionCode(Code&) override;
+    bool SettingsCode(Code&) override;
+    bool AfterChildrenCode(Code&) override;
+    bool HeaderCode(Code&) override;
+    bool BaseClassNameCode(Code&) override;
+
     std::optional<ttlib::sview> GenEvents(Code&, NodeEvent*, const std::string&) override;
 
     bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr) override;
@@ -34,8 +37,8 @@ public:
     wxObject* CreateMockup(Node* node, wxObject* parent) override;
     void AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/, Node* /* node */, bool /* is_preview */) override;
 
-    std::optional<ttlib::cstr> GenConstruction(Node* node) override;
-    std::optional<ttlib::cstr> GenSettings(Node* node, size_t& auto_indent) override;
+    bool ConstructionCode(Code&) override;
+    bool SettingsCode(Code&) override;
 
     bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr) override;
 
@@ -51,8 +54,8 @@ class RibbonPageGenerator : public BaseGenerator
 public:
     wxObject* CreateMockup(Node* node, wxObject* parent) override;
 
-    std::optional<ttlib::cstr> GenConstruction(Node* node) override;
-    std::optional<ttlib::cstr> GenSettings(Node* node, size_t& auto_indent) override;
+    bool ConstructionCode(Code&) override;
+    bool SettingsCode(Code&) override;
 
     bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr) override;
 

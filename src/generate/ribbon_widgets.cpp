@@ -54,47 +54,126 @@ void RibbonBarFormGenerator::OnPageChanged(wxRibbonBarEvent& event)
     event.Skip();
 }
 
-std::optional<ttlib::cstr> RibbonBarFormGenerator::GenConstruction(Node* node)
+bool RibbonBarFormGenerator::ConstructionCode(Code& code)
 {
-    ttlib::cstr code;
-
-    code << node->prop_as_string(prop_class_name) << "::" << node->prop_as_string(prop_class_name);
-    code << "(wxWindow* parent, wxWindowID id, ";
-    code << "\n\t\tconst wxPoint& pos, const wxSize& size, long style) :";
-
-    code << "\n\twxRibbonBar(parent, id, pos, size, style";
-    if (node->prop_as_string(prop_window_name).size())
-        code << ", name";
-    code << ")\n{";
-
-    return code;
-}
-
-std::optional<ttlib::cstr> RibbonBarFormGenerator::GenAdditionalCode(GenEnum::GenCodeType cmd, Node* node)
-{
-    if (cmd == code_base_class)
+    // Note: Form construction is called before any indentation is set
+    if (code.is_cpp())
     {
-        ttlib::cstr code;
-        code << "wxRibbonBar";
-        return code;
+        code.Str((prop_class_name)).Str("::").Str(prop_class_name);
+        code += "(wxWindow* parent, wxWindowID id";
+        code.Comma().Str("const wxPoint& pos").Comma().Str("const wxSize& size");
+        code.Comma().Str("long style)");
+        code.Str(" : wxRibbonBar(parent, id, pos, size, style)").Eol() += "{";
+    }
+    else
+    {
+        code.Add("class ").NodeName().Add("(wx.RibbonBar):\n");
+        code.Eol().Tab().Add("def __init__(self, parent, id=").Add(prop_id);
+        code.Indent(3);
+        code.Comma().Add("pos=").Pos(prop_pos);
+        code.Comma().Add("size=").WxSize(prop_size);
+        code.Comma().CheckLineLength(sizeof("style=") + code.node()->as_string(prop_style).size() + 4);
+        code.Add("style=").Style();
+        code.Str("):");
+        code.Unindent();
+        code.Eol() += "wx.RibbonBar.__init__(self, parent, id, pos, size, style)";
     }
 
-    return GenFormCode(cmd, node);
+    code.ResetIndent();
+
+    return true;
 }
 
-std::optional<ttlib::cstr> RibbonBarFormGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
+bool RibbonBarFormGenerator::AfterChildrenCode(Code& code)
 {
-    ttlib::cstr code;
+    code.FormFunction("Realize(").EndFunction();
 
-    auto& theme = node->prop_as_string(prop_theme);
+    return true;
+}
+
+bool RibbonBarFormGenerator::HeaderCode(Code& code)
+{
+    auto* node = code.node();
+
+    code.NodeName().Str("(wxWindow* parent, wxWindowID id = ").Str(prop_id);
+    code.Comma().Str("const wxPoint& pos = ");
+
+    auto position = node->as_wxPoint(prop_pos);
+    if (position == wxDefaultPosition)
+        code.Str("wxDefaultPosition");
+    else
+        code.Pos(prop_pos, no_dlg_units);
+
+    code.Comma().Str("const wxSize& size = ");
+
+    auto size = node->prop_as_wxSize(prop_size);
+    if (size == wxDefaultSize)
+        code.Str("wxDefaultSize");
+    else
+        code.WxSize(prop_size, no_dlg_units);
+
+    auto& style = node->prop_as_string(prop_style);
+    auto& win_style = node->prop_as_string(prop_window_style);
+    if (style.empty() && win_style.empty())
+        code.Comma().Str("long style = 0");
+    else
+    {
+        code.Comma();
+        code.CheckLineLength(style.size() + win_style.size() + sizeof("long style = "));
+        code.Str("long style = ");
+        if (style.size())
+        {
+            code.CheckLineLength(style.size() + win_style.size());
+            code += style;
+            if (win_style.size())
+            {
+                code << '|' << win_style;
+            }
+        }
+        else if (win_style.size())
+        {
+            code.Str(win_style);
+        }
+    }
+
+    // Extra eols at end to force space before "Protected:" section
+    code.EndFunction().Eol().Eol();
+
+    return true;
+}
+
+bool RibbonBarFormGenerator::BaseClassNameCode(Code& code)
+{
+    if (code.HasValue(prop_derived_class))
+    {
+        code.Str((prop_derived_class));
+    }
+    else
+    {
+        code += "wxRibbonBar";
+    }
+
+    return true;
+}
+
+bool RibbonBarFormGenerator::SettingsCode(Code& code)
+{
+    auto& theme = code.node()->as_string(prop_theme);
     if (theme.is_sameas("Default"))
-        code << "SetArtProvider(new wxRibbonDefaultArtProvider);";
+    {
+        code.FormFunction("SetArtProvider(").Str(code.is_cpp() ? "new " : "").Add("wxRibbonDefaultArtProvider");
+    }
     else if (theme.is_sameas("Generic"))
-        code << "SetArtProvider(new wxRibbonAUIArtProvider);";
+    {
+        code.FormFunction("SetArtProvider(").Str(code.is_cpp() ? "new " : "").Add("wxRibbonAUIArtProvider");
+    }
     else if (theme.is_sameas("MSW"))
-        code << "SetArtProvider(new wxRibbonMSWArtProvider);";
+    {
+        code.FormFunction("SetArtProvider(").Str(code.is_cpp() ? "new " : "").Add("wxRibbonMSWArtProvider");
+    }
+    code.EndFunction();
 
-    return code;
+    return true;
 }
 
 std::optional<ttlib::sview> RibbonBarFormGenerator::GenEvents(Code& code, NodeEvent* event, const std::string& class_name)
@@ -151,32 +230,33 @@ void RibbonBarGenerator::OnPageChanged(wxRibbonBarEvent& event)
     event.Skip();
 }
 
-std::optional<ttlib::cstr> RibbonBarGenerator::GenConstruction(Node* node)
+bool RibbonBarGenerator::ConstructionCode(Code& code)
 {
-    ttlib::cstr code;
-    if (node->IsLocal())
-        code << "auto* ";
-    code << node->get_node_name() << " = new wxRibbonBar(";
-    code << GetParentName(node) << ", " << node->prop_as_string(prop_id);
+    code.AddAuto().NodeName();
+    code.CreateClass().ValidParentName().Comma().Add(prop_id);
+    code.PosSizeFlags(false, "wxRIBBON_BAR_DEFAULT_STYLE");
 
-    GeneratePosSizeFlags(node, code, false, "wxRIBBON_BAR_DEFAULT_STYLE");
-
-    return code;
+    return true;
 }
 
-std::optional<ttlib::cstr> RibbonBarGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
+bool RibbonBarGenerator::SettingsCode(Code& code)
 {
-    ttlib::cstr code;
-
-    auto& theme = node->prop_as_string(prop_theme);
+    auto& theme = code.node()->as_string(prop_theme);
     if (theme.is_sameas("Default"))
-        code << node->get_node_name() << "->SetArtProvider(new wxRibbonDefaultArtProvider);";
+    {
+        code.Eol().NodeName().Function("SetArtProvider(").Str(code.is_cpp() ? "new " : "").Add("wxRibbonDefaultArtProvider");
+    }
     else if (theme.is_sameas("Generic"))
-        code << node->get_node_name() << "->SetArtProvider(new wxRibbonAUIArtProvider);";
+    {
+        code.Eol().NodeName().Function("SetArtProvider(").Str(code.is_cpp() ? "new " : "").Add("wxRibbonAUIArtProvider");
+    }
     else if (theme.is_sameas("MSW"))
-        code << node->get_node_name() << "->SetArtProvider(new wxRibbonMSWArtProvider);";
+    {
+        code.Eol().NodeName().Function("SetArtProvider(").Str(code.is_cpp() ? "new " : "").Add("wxRibbonMSWArtProvider");
+    }
+    code.EndFunction();
 
-    return code;
+    return true;
 }
 
 bool RibbonBarGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
@@ -238,38 +318,29 @@ wxObject* RibbonPageGenerator::CreateMockup(Node* node, wxObject* parent)
     return widget;
 }
 
-std::optional<ttlib::cstr> RibbonPageGenerator::GenConstruction(Node* node)
+bool RibbonPageGenerator::ConstructionCode(Code& code)
 {
-    ttlib::cstr code;
-    if (node->IsLocal())
-        code << "auto* ";
-    code << node->get_node_name() << " = new wxRibbonPage(";
-    code << node->get_parent_name() << ", " << node->prop_as_string(prop_id);
-    code << ", ";
-
-    auto& label = node->prop_as_string(prop_label);
-    if (label.size())
-        code << GenerateQuotedString(label);
-    else
-        code << "wxEmptyString";
-
-    if (node->prop_as_string(prop_bitmap).size())
+    code.AddAuto().NodeName();
+    code.CreateClass().ParentName().Comma().Add(prop_id);
+    code.Comma().QuotedString(prop_label);
+    if (code.HasValue(prop_bitmap))
     {
-        code << ", " << GenerateBitmapCode(node->prop_as_string(prop_bitmap));
+        code.Comma();
+        GenerateSingleBitmapCode(code, code.node()->as_string(prop_bitmap));
     }
-    code << ");";
+    code.EndFunction();
 
-    return code;
+    return true;
 }
 
-std::optional<ttlib::cstr> RibbonPageGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
+bool RibbonPageGenerator::SettingsCode(Code& code)
 {
-    ttlib::cstr code;
+    if (code.IsTrue(prop_select))
+    {
+        code.ParentName().Function("SetActivePage(").NodeName().EndFunction();
+    }
 
-    if (node->prop_as_bool(prop_select))
-        code << node->get_parent_name() << "->SetActivePage(" << node->get_node_name() << ");";
-
-    return code;
+    return true;
 }
 
 bool RibbonPageGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)

@@ -58,7 +58,6 @@ void CtxMenuGenerator::CollectEventHandlers(Node* node, std::vector<NodeEvent*>&
             }
             continue;
         }
-        CollectEventHandlers(child.get(), events);
     }
 }
 
@@ -99,6 +98,7 @@ bool CtxMenuGenerator::AdditionalCode(Code& code, GenEnum::GenCodeType cmd)
         code.m_node = save_node;
     }
     code.Eol().Eol();
+    m_CtxMenuEvents.clear();
 
     for (const auto& child: code.node()->GetParent()->GetChildNodePtrs())
     {

@@ -1,7 +1,7 @@
 //////////////////////////////////////////////////////////////////////////
 // Purpose:   Write code to Scintilla
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -36,6 +36,11 @@ public:
     // Write one or more lines, adding a trailing \n to the final line. Multiple lines
     // are indicated if the supplied string contains one or more \n characters.
     void writeLine(const Code& code);
+
+    // Will convert tabs to spaces, and adds a \n after each line.
+    //
+    // This WILL modify the strings in the vector
+    void writeLine(std::vector<std::string>& lines);
 
     // Write one or more lines, adding a trailing \n to the final line. Multiple lines
     // are indicated if the supplied string contains one or more \n characters.

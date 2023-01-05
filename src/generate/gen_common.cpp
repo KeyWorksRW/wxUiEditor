@@ -586,6 +586,126 @@ ttlib::cstr GenerateBitmapCode(const ttlib::cstr& description)
     return code;
 }
 
+void GenerateSingleBitmapCode(Code& code, const ttlib::cstr& description)
+{
+    if (description.empty())
+    {
+        code += "wxNullBitmap";
+        return;
+    }
+    ttlib::multiview parts(description, BMP_PROP_SEPARATOR, tt::TRIM::both);
+
+    if (parts[IndexType].starts_with("SVG"))
+    {
+        if (code.is_cpp())
+        {
+            if (wxGetProject().value(prop_wxWidgets_version) == "3.1")
+            {
+                code += "wxNullBitmap /* SVG images require wxWidgets 3.1.6 */";
+                return;
+            }
+        }
+        ttlib::cstr name(parts[IndexImage]);
+
+        if (code.is_python())
+        {
+            name.make_absolute();
+            auto path = MakePythonPath(code.node());
+            name.make_relative(path);
+        }
+        name.backslashestoforward();
+
+        // SVG files don't have an innate size, so we must rely on the size specified in the property
+
+        code.Add("wx.BitmapBundle.FromSVGFile(");
+        code.QuotedString(name);
+        wxSize svg_size { -1, -1 };
+        if (parts[IndexSize].size())
+        {
+            GetSizeInfo(svg_size, parts[IndexSize]);
+        }
+        code.Comma().Add("wxSize(").itoa(svg_size.x).Comma().itoa(svg_size.y) += "))";
+        code.Str("GetBitmap(").Add("wxSize(").itoa(svg_size.x).Comma().itoa(svg_size.y).EndFunction();
+        return;
+    }
+    else if (parts[IndexType].contains("Art"))
+    {
+        ttlib::cstr art_id(parts[IndexArtID]);
+        ttlib::cstr art_client;
+        if (auto pos = art_id.find('|'); ttlib::is_found(pos))
+        {
+            art_client = art_id.subview(pos + 1);
+            art_id.erase(pos);
+        }
+
+        code.Add("wxArtProvider.GetBitmap(").Add(art_id);
+
+        // Note that current documentation states that the client is required, but the header file says otherwise
+        if (art_client.size())
+            code.Comma().Add(art_client);
+        code.EndFunction();
+    }
+    else if (parts[IndexType].is_sameas("XPM"))
+    {
+        if (code.is_cpp())
+        {
+            code.Function("wxImage(");
+
+            ttlib::cstr name(parts[IndexImage].filename());
+            name.remove_extension();
+            code << name << "_xpm)";
+        }
+        else
+        {
+            ttlib::cstr name(parts[IndexImage]);
+            name.make_absolute();
+            auto path = MakePythonPath(code.node());
+            name.make_relative(path);
+            name.backslashestoforward();
+
+            code.Str("wx.Bitmap(").QuotedString(name) += ")";
+        }
+    }
+    else if (parts[IndexImage].empty())
+    {
+        code.Add("wxNullBitmap");
+    }
+    else
+    {
+        if (code.is_cpp())
+        {
+            code << "wxueImage(";
+
+            ttlib::cstr name(parts[1].filename());
+            name.remove_extension();
+            name.Replace(".", "_", true);  // wxFormBuilder writes files with the extra dots that have to be converted to '_'
+
+            if (parts[IndexType].starts_with("Embed"))
+            {
+                auto embed = GetProject()->GetEmbeddedImage(parts[IndexImage]);
+                if (embed)
+                {
+                    name = "wxue_img::" + embed->array_name;
+                }
+            }
+
+            code.Str(name).Comma().Str("sizeof(").Str(name) += "))";
+        }
+        else
+        {
+            if (auto bundle = GetProject()->GetPropertyImageBundle(description); bundle && bundle->lst_filenames.size())
+            {
+                ttlib::cstr name(bundle->lst_filenames[0]);
+                name.make_absolute();
+                auto path = MakePythonPath(code.node());
+                name.make_relative(path);
+                name.backslashestoforward();
+                code.Str("wx.Bitmap(").QuotedString(name) += ")";
+            }
+        }
+    }
+}
+
 bool GenerateBundleCode(const ttlib::cstr& description, ttlib::cstr& code)
 {
     if (description.empty())
@@ -900,68 +1020,74 @@ ttlib::cstr GenFormCode(GenEnum::GenCodeType command, Node* node)
             break;
 
         case code_header:
-            code << node->get_node_name() << "(wxWindow* parent, wxWindowID id = " << node->prop_as_string(prop_id);
-            if (!node->isGen(gen_wxPanel) && !node->isGen(gen_wxToolBar) && !node->isGen(gen_ToolBar) &&
-                !node->isGen(gen_wxAuiToolBar) && !node->isGen(gen_wxPopupTransientWindow) && !node->isGen(gen_PanelForm))
             {
-                code << ",\n\tconst wxString& title = ";
-                auto& title = node->prop_as_string(prop_title);
-                if (title.size())
+                code << node->get_node_name() << "(wxWindow* parent, wxWindowID id = " << node->prop_as_string(prop_id);
+                if (!node->isGen(gen_wxPanel) && !node->isGen(gen_wxToolBar) && !node->isGen(gen_ToolBar) &&
+                    !node->isGen(gen_wxAuiToolBar) && !node->isGen(gen_wxPopupTransientWindow) &&
+                    !node->isGen(gen_PanelForm))
                 {
-                    code << GenerateQuotedString(title) << ",\n\t";
+                    code << ",\n\tconst wxString& title = ";
+                    auto& title = node->prop_as_string(prop_title);
+                    if (title.size())
+                    {
+                        code << GenerateQuotedString(title) << ",\n\t";
+                    }
+                    else
+                    {
+                        code << "wxEmptyString,\n\t";
+                    }
                 }
                 else
                 {
-                    code << "wxEmptyString,\n\t";
+                    code << ", ";
                 }
-            }
-            else
-            {
-                code << ", ";
-            }
-            code << "const wxPoint& pos = ";
-            auto point = node->prop_as_wxPoint(prop_pos);
-            if (point.x != -1 || point.y != -1)
-                code << "wxPoint(" << point.x << ", " << point.y << ")";
-            else
-                code << "wxDefaultPosition";
+                code << "const wxPoint& pos = ";
+                auto point = node->prop_as_wxPoint(prop_pos);
+                if (point.x != -1 || point.y != -1)
+                    code << "wxPoint(" << point.x << ", " << point.y << ")";
+                else
+                    code << "wxDefaultPosition";
 
-            // BUGBUG: [KeyWorks - 05-20-2021] This doesn't make sense in a wxDialog because the generated code calls SetSize
-            // with this value -- and without that call, SetSizerAndFit() will ignore this setting.
-            code << ", const wxSize& size = ";
-            auto size = node->prop_as_wxPoint(prop_size);
-            if (size.x != -1 || size.y != -1)
-                code << "wxSize(" << size.x << ", " << size.y << ")";
-            else
-                code << "wxDefaultSize";
+                // BUGBUG: [KeyWorks - 05-20-2021] This doesn't make sense in a wxDialog because the generated code calls
+                // SetSize with this value -- and without that call, SetSizerAndFit() will ignore this setting.
+                code << ", const wxSize& size = ";
+                auto size = node->prop_as_wxPoint(prop_size);
+                if (size.x != -1 || size.y != -1)
+                    code << "wxSize(" << size.x << ", " << size.y << ")";
+                else
+                    code << "wxDefaultSize";
 
-            code << ",\n\tlong style = ";
-            auto& style = node->prop_as_string(prop_style);
-            auto& win_style = node->prop_as_string(prop_window_style);
-            if (style.empty() && win_style.empty())
-                code << "0";
-            else
-            {
-                if (style.size())
+                code << ",\n\tlong style = ";
+                auto& style = node->prop_as_string(prop_style);
+                auto& win_style = node->prop_as_string(prop_window_style);
+                if (style.empty() && win_style.empty())
+                    code << "0";
+                else
                 {
-                    code << style;
-                    if (win_style.size())
+                    if (style.size())
                     {
-                        code << '|' << win_style;
+                        code << style;
+                        if (win_style.size())
+                        {
+                            code << '|' << win_style;
+                        }
+                    }
+                    else if (win_style.size())
+                    {
+                        code << win_style;
                     }
                 }
-                else if (win_style.size())
+
+                if (node->prop_as_string(prop_window_name).size())
                 {
-                    code << win_style;
+                    code << ", const wxString& name = " << node->prop_as_string(prop_window_name);
                 }
-            }
 
-            if (node->prop_as_string(prop_window_name).size())
-            {
-                code << ", const wxString& name = " << node->prop_as_string(prop_window_name);
+                code << ");\n\n";
             }
+            break;
 
-            code << ");\n\n";
+        default:
             break;
     }
 

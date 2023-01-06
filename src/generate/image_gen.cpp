@@ -197,12 +197,12 @@ void GenerateSingleBitmapCode(Code& code, const ttlib::cstr& description)
             art_id.erase(pos);
         }
 
-        code.Add("wxArtProvider.GetBitmap(").Add(art_id);
+        code.Add("wxArtProvider").ClassMethod("GetBitmap(").Add(art_id);
 
         // Note that current documentation states that the client is required, but the header file says otherwise
         if (art_client.size())
             code.Comma().Add(art_client);
-        code.EndFunction();
+        code += ")";
     }
     else if (parts[IndexType].is_sameas("XPM"))
     {

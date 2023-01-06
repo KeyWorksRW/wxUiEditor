@@ -81,15 +81,10 @@ set (file_list
 
     generate/dataview_widgets.cpp  # wxDataView generation classes
     generate/grid_widgets.cpp      # Grid generation classes
-    generate/ribbon_widgets.cpp    # Ribbon generation classes
 
     generate/styled_text.cpp       # wxStyledText (scintilla) generate
     generate/window_widgets.cpp    # Scroll window component classes
 
-    generate/menu_widgets.cpp      # Menu generation classes
-    generate/gen_ctx_menu.cpp      # CtxMenuGenerator -- generates function and includes
-    generate/gen_menu.cpp          # Menu Generator
-    generate/gen_menuitem.cpp      # Menu Item Generator
     generate/gen_submenu.cpp       # SubMenu Generator
 
     generate/gen_activity.cpp       # wxActivityIndicator generator
@@ -128,7 +123,6 @@ set (file_list
     generate/gen_static_text.cpp    # wxStaticText generator
     generate/gen_status_bar.cpp     # wxStatusBar generator
     generate/gen_text_ctrl.cpp      # wxTextCtrl generator
-    generate/gen_toolbar.cpp        # wxToolBar generator
     generate/gen_toggle_btn.cpp     # wxToggleButton generator
     generate/gen_web_view.cpp       # wxWebView generator
 
@@ -166,14 +160,32 @@ set (file_list
     generate/gen_popup_trans_win.cpp    # wxPopupTransientWindow generator
     generate/gen_wizard.cpp             # wxWizard generator
 
+    # Menus
+
+    generate/menu_widgets.cpp      # Menu generation classes
+    generate/gen_ctx_menu.cpp      # CtxMenuGenerator -- generates function and includes
+    generate/gen_menu.cpp          # Menu Generator
+    generate/gen_menuitem.cpp      # Menu Item Generator
+    generate/gen_submenu.cpp       # SubMenu Generator
+
     # Pickers
 
-    generate/gen_clr_picker.cpp         # wxColourPickerCtrl generator
-    generate/gen_date_picker.cpp        # wxDatePickerCtrl generator
-    generate/gen_dir_picker.cpp         # wxDirPickerCtrl generator
-    generate/gen_file_picker.cpp        # wxFilePickerCtrl generator
-    generate/gen_font_picker.cpp        # wxFontPickerCtrl generator
-    generate/gen_time_picker.cpp        # wxTimePickerCtrl generator
+    generate/gen_clr_picker.cpp     # wxColourPickerCtrl generator
+    generate/gen_date_picker.cpp    # wxDatePickerCtrl generator
+    generate/gen_dir_picker.cpp     # wxDirPickerCtrl generator
+    generate/gen_file_picker.cpp    # wxFilePickerCtrl generator
+    generate/gen_font_picker.cpp    # wxFontPickerCtrl generator
+    generate/gen_time_picker.cpp    # wxTimePickerCtrl generator
+
+    # Toolbars
+
+    generate/gen_toolbar.cpp         # wxToolBar generator
+    generate/gen_ribbon_page.cpp
+    generate/gen_ribbon_bar.cpp      # wxRibbonButtonBar generator
+    generate/gen_ribbon_button.cpp   # wxRibbonBar -- form and regular
+    generate/gen_ribbon_tool.cpp     # wxRibbonToolBar generator
+    generate/gen_ribbon_gallery.cpp  # wxRibbonGallery generator
+
 
     # Sizers
 

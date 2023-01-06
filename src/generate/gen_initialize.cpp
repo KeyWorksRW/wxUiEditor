@@ -13,7 +13,6 @@
 #include "images_form.h"       // ImagesGenerator -- Embedded images generator
 #include "menu_widgets.h"      // Menu component classes
 #include "project.h"           // Project generator
-#include "ribbon_widgets.h"    // RibbonBarGenerator -- Ribbon component classes
 #include "styled_text.h"       // StyledTextGenerator -- wxStyledText (scintilla) generate
 #include "window_widgets.h"    // Splitter and Scroll component classes
 
@@ -99,6 +98,12 @@
 #include "gen_web_view.h"            // WebViewGenerator -- wxWebView generator
 #include "gen_wizard.h"              // WizardFormGenerator -- wxWizard generator
 #include "gen_wrap_sizer.h"          // WrapSizerGenerator -- wxGridSizer generator
+
+#include "gen_ribbon_bar.h"      // RibbonBarFormGenerator -- wxRibbonBar -- form and regular
+#include "gen_ribbon_button.h"   // wxRibbonButtonBar generator
+#include "gen_ribbon_gallery.h"  // RibbonGalleryGenerator -- wxRibbonGallery generator
+#include "gen_ribbon_page.h"     // RibbonPageGenerator -- wxRibbonPage and wxRibbonPanel generators
+#include "gen_ribbon_tool.h"     // RibbonToolBarGenerator -- wxRibbonButtonBar generator
 
 #include "gen_enums.h"  // Enumerations for generators
 

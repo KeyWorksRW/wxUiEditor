@@ -133,11 +133,11 @@ wxObject* PageCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
     return widget;
 }
 
-std::optional<ttlib::sview> PageCtrlGenerator::CommonConstruction(Code& code)
+bool PageCtrlGenerator::ConstructionCode(Code& code)
 {
     Node* node = code.node();
     if (!node->GetChildCount())
-        return code.m_code;
+        return false;
 
     if (auto child_node = code.node()->GetChild(0); child_node)
     {
@@ -153,7 +153,7 @@ std::optional<ttlib::sview> PageCtrlGenerator::CommonConstruction(Code& code)
                 result = child_generator->GenConstruction(child_node);
                 if (!result)
                 {
-                    return code.m_code;
+                    return true;
                 }
                 scode = result.value();
             }
@@ -204,5 +204,5 @@ std::optional<ttlib::sview> PageCtrlGenerator::CommonConstruction(Code& code)
         }
     }
 
-    return code.m_code;
+    return  true;
 }

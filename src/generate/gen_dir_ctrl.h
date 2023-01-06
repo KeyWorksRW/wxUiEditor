@@ -14,8 +14,8 @@ class GenericDirCtrlGenerator : public BaseGenerator
 public:
     wxObject* CreateMockup(Node* node, wxObject* parent) override;
 
-    std::optional<ttlib::cstr> GenConstruction(Node* node) override;
-    std::optional<ttlib::cstr> GenSettings(Node* node, size_t& auto_indent) override;
+    bool ConstructionCode(Code&) override;
+    bool SettingsCode(Code&) override;
 
     ttlib::cstr GetHelpText(Node*) override { return ttlib::cstr("wxGenericDirCtrl"); }
     ttlib::cstr GetHelpURL(Node*) override { return ttlib::cstr("wx_generic_dir_ctrl.html"); }

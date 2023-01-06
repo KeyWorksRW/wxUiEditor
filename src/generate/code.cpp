@@ -69,6 +69,9 @@ static const std::map<std::string_view, std::string_view, std::less<>> s_map_wx_
     { "wxHL_ALIGN_CENTRE", "wx.adv."},
     { "wxHL_CONTEXTMENU", "wx.adv."},
 
+    { "wxHLB_DEFAULT_STYLE", "wx.html."},
+    { "wxHLB_MULTIPLE", "wx.html."},
+
     { "wxHW_SCROLLBAR_AUTO", "wx.html."},
     { "wxHW_NO_SELECTION", "wx.html."},
     { "wxHW_NO_SELECTION", "wx.html."},
@@ -187,6 +190,7 @@ std::map<std::string_view, std::string_view, std::less<>> g_map_class_prefix
     { "wxDatePickerCtrl", "wx.adv."},
     { "wxEditableListBox", "wx.adv."},
     { "wxHtmlWindow", "wx.html."},
+    { "wxSimpleHtmlListBox", "wx.html."},
     { "wxHyperlinkCtrl", "wx.adv."},
     { "wxRichTextCtrl", "wx.richtext."},
     { "wxStyledTextCtrl", "wx.stc."},

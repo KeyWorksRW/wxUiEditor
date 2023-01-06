@@ -30,64 +30,45 @@ wxObject* GenericDirCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
     return widget;
 }
 
-std::optional<ttlib::cstr> GenericDirCtrlGenerator::GenConstruction(Node* node)
+bool GenericDirCtrlGenerator::ConstructionCode(Code& code)
 {
-    ttlib::cstr code;
-    code << '\t';
-    if (node->IsLocal())
-        code << "auto* ";
-    code << node->get_node_name() << GenerateNewAssignment(node);
-    code << GetParentName(node) << ", " << node->prop_as_string(prop_id) << ", ";
-    if (node->HasValue(prop_defaultfolder))
-        code << GenerateQuotedString(node->prop_as_string(prop_defaultfolder));
+    code.AddAuto().NodeName().CreateClass().ValidParentName().Comma().Add(prop_id).Comma();
+    if (code.HasValue(prop_defaultfolder))
+        code.QuotedString(prop_defaultfolder);
     else
-        code << "wxDirDialogDefaultFolderStr";
+        code.Add("wxDirDialogDefaultFolderStr");
 
-    if (!node->HasValue(prop_filter) && node->prop_as_int(prop_defaultfilter) == 0 && !node->HasValue(prop_window_name))
+    if (!code.HasValue(prop_filter) && code.IntValue(prop_defaultfilter) == 0 && !code.HasValue(prop_window_name))
     {
-        GeneratePosSizeFlags(node, code, false, "wxDIRCTRL_DEFAULT_STYLE");
+        code.PosSizeFlags(false, "wxDIRCTRL_DEFAULT_STYLE");
     }
     else
     {
-        code << ",\n\t\t\t";
-        GenPos(node, code);
-        code << ", ";
-        GenSize(node, code);
-        code << ", ";
-        GenStyle(node, code);
-        code << ", " << GenerateQuotedString(node->prop_as_string(prop_filter)) << ", "
-             << node->prop_as_string(prop_defaultfilter);
-        if (node->HasValue(prop_window_name))
+        code.Comma().Pos().Comma().WxSize().Comma().Style();
+        code.Comma().QuotedString(prop_filter).Comma().Add(prop_defaultfilter);
+        if (code.HasValue(prop_window_name))
         {
-            code << ", " << node->prop_as_string(prop_window_name);
+            code.Comma().QuotedString(prop_window_name);
         }
-        code << ");";
+        code.EndFunction();
     }
 
-    if (node->prop_as_bool(prop_show_hidden))
-    {
-        code << "\n" << node->get_node_name() << "->ShowHidden(true);";
-    }
-
-    return code;
+    return true;
 }
 
-std::optional<ttlib::cstr> GenericDirCtrlGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
+bool GenericDirCtrlGenerator::SettingsCode(Code& code)
 {
-    ttlib::cstr code;
-
-    if (node->prop_as_bool(prop_focus))
+    if (code.IsTrue(prop_show_hidden))
     {
-        if (code.size())
-            code << '\n';
-        code << node->get_node_name() << "->SetFocus()";
+        code.NodeName().Function("ShowHidden(").AddTrue().EndFunction();
     }
 
-    if (code.size())
-        return code;
-    else
+    if (code.IsTrue(prop_focus))
+    {
+        code.NodeName().Function("SetFocus(").EndFunction();
+    }
 
-        return {};
+    return true;
 }
 
 bool GenericDirCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)

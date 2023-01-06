@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   wxSimpleHtmlListBox generator
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -45,107 +45,78 @@ wxObject* HtmlListBoxGenerator::CreateMockup(Node* node, wxObject* parent)
     return widget;
 }
 
-std::optional<ttlib::cstr> HtmlListBoxGenerator::GenConstruction(Node* node)
+bool HtmlListBoxGenerator::ConstructionCode(Code& code)
 {
-    ttlib::cstr code;
-    if (node->IsLocal())
-        code << "auto* ";
-    code << node->get_node_name() << GenerateNewAssignment(node);
-    code << GetParentName(node) << ", " << node->prop_as_string(prop_id);
-
-    if (node->prop_as_string(prop_window_name).empty() && node->prop_as_string(prop_type) == "wxLB_SINGLE" &&
-        node->prop_as_string(prop_style).empty() && node->prop_as_string(prop_window_style).empty())
+    code.AddAuto().NodeName().CreateClass().ValidParentName().Comma().Add(prop_id);
+    if (auto params_needed = code.WhatParamsNeeded("wxHLB_DEFAULT_STYLE"); params_needed != nothing_needed)
     {
-        GeneratePosSizeFlags(node, code);
-    }
-    else
-    {
-        // We have to generate a default validator before the window name, which GeneratePosSizeFlags doesn't do. We don't
-        // actually need that validator, since GenSettings will create it, but we have to supply something before the window
-        // name.
-
-        code << ", ";
-        GenPos(node, code);
-        code << ", ";
-        GenSize(node, code);
-        code << ", 0, nullptr, ";
-
-        auto& style = node->prop_as_string(prop_style);
-        auto& win_style = node->prop_as_string(prop_window_style);
-
-        if (style.empty() && win_style.empty())
-            code << "0";
+        code.Comma().Pos().Comma().WxSize();
+        if (code.is_cpp())
+        {
+            code.Comma().CheckLineLength(sizeof("0, nullptr, ") + code.node()->as_string(prop_style).size());
+            code += "0, nullptr";
+        }
         else
         {
-            if (style.size())
-            {
-                code << style;
-            }
-            if (win_style.size())
-            {
-                if (style.size())
-                    code << '|';
-                code << win_style;
-            }
+            code.Comma().CheckLineLength(sizeof("[], ") + code.node()->as_string(prop_style).size());
+            code.Add("[]");
         }
-
-        if (node->prop_as_string(prop_window_name).size())
+        code.Comma().Style();
+        if (params_needed & window_name_needed)
         {
-            code << ", wxDefaultValidator, " << node->prop_as_string(prop_window_name);
+            code.Comma().Add("wxDefaultValidator").Comma().QuotedString(prop_window_name);
         }
-        code << ");";
     }
 
-    return code;
+    code.EndFunction();
+    return true;
 }
 
-std::optional<ttlib::cstr> HtmlListBoxGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
+bool HtmlListBoxGenerator::SettingsCode(Code& code)
 {
-    ttlib::cstr code;
-
-    if (node->prop_as_bool(prop_focus))
+    if (code.IsTrue(prop_focus))
     {
-        if (code.size())
-            code << '\n';
-        code << node->get_node_name() << "->SetFocus()";
+        code.Eol(eol_if_empty);
+        code.NodeName().Function("SetFocus(").EndFunction();
     }
 
-    if (node->HasValue(prop_contents))
+    if (code.HasValue(prop_contents))
     {
-        auto array = ConvertToArrayString(node->prop_as_string(prop_contents));
+        auto array = ConvertToArrayString(code.node()->as_string(prop_contents));
         for (auto& iter: array)
         {
-            if (code.size())
-                code << "\n";
-            code << node->get_node_name() << "->Append(" << GenerateQuotedString(iter) << ");";
+            code.Eol(eol_if_empty).NodeName().Function("Append(").QuotedString(iter).EndFunction();
         }
 
-        if (node->HasValue(prop_selection_string))
+        if (code.HasValue(prop_selection_string))
         {
-            code << "\n";
-            if (node->HasValue(prop_validator_variable))  // as of 3.2.0, there is no validator variable for this property.
+            code.Eol(eol_if_empty);
+            if (code.HasValue(prop_validator_variable))
             {
-                code << node->prop_as_string(prop_validator_variable) << " = ";
-                code << GenerateQuotedString(node, prop_selection_string) << ";  // set validator variable";
+                code.as_string(prop_validator_variable) << " = ";
+                code.QuotedString(prop_selection_string);
+                if (code.is_cpp())
+                    code << ";  // set validator variable";
+                else
+                    code << "  # set validator variable";
             }
             else
             {
-                code << node->get_node_name() << "->SetStringSelection(";
-                code << GenerateQuotedString(node, prop_selection_string) << ");";
+                code.NodeName().Function("SetStringSelection(");
+                code.QuotedString(prop_selection_string).EndFunction();
             }
         }
         else
         {
-            int sel = node->prop_as_int(prop_selection_int);
+            int sel = code.node()->as_int(prop_selection_int);
             if (sel > -1 && sel < (to_int) array.size())
             {
-                code << "\n";
-                code << node->get_node_name() << "->SetSelection(" << node->prop_as_string(prop_selection_int) << ");";
+                code.Eol(eol_if_empty).NodeName().Function("SetSelection(").as_string(prop_selection_int).EndFunction();
             }
         }
     }
 
-    return code;
+    return true;
 }
 
 bool HtmlListBoxGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)

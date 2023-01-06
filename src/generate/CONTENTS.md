@@ -26,7 +26,7 @@ The following tables list classes, objects and functions that wxUiEditor can gen
 | wxMenuBar | yes| yes | yes | menu_widgets.cpp |
 | wxPanel | yes| yes | yes | gen_panel_form.cpp |
 | wxPopupTransientWindow | yes| yes | no | gen_popup_trans_win.cpp |
-| wxRibbonBar | yes| ?? | yes | ribbon_widgets.cpp |
+| wxRibbonBar | yes| yes | yes | gen_ribbon_bar.cpp |
 | wxToolBar | yes| yes | yes | gen_toolbar.cpp |
 | wxWizard | yes| yes | yes | gen_wizard.cpp |
 
@@ -93,12 +93,12 @@ The following tables list classes, objects and functions that wxUiEditor can gen
 | wxRadioBox | yes | yes | yes | gen_prop_grid.cpp |
 | wxRadioButton | yes | yes | yes | gen_radio_btn.cpp |
 | wxRearrangeCtrl | yes | yes | no | gen_rearrange.cpp |
-| wxRibbonBar | yes | ?? | yes | ribbon_widgets.cpp |
-| wxRibbonButtonBar | yes | ?? | yes | ribbon_widgets.cpp |
-| wxRibbonGallery | yes | ?? | yes | ribbon_widgets.cpp |
-| wxRibbonPage | yes | ?? | yes | ribbon_widgets.cpp |
-| wxRibbonPanel | yes | ?? | yes | ribbon_widgets.cpp |
-| wxRibbonToolBar | yes | ?? | yes | ribbon_widgets.cpp |
+| wxRibbonBar | yes | yes | yes | gen_ribbon_bar.cpp |
+| wxRibbonButtonBar | yes | yes | yes | gen_ribbon_button.cpp |
+| wxRibbonGallery | yes | yes | yes | ribbon_widgets.cpp |
+| wxRibbonPage | yes | yes | yes | gen_ribbon_page.cpp |
+| wxRibbonPanel | yes | yes | yes | gen_ribbon_page.cpp |
+| wxRibbonToolBar | yes | yes | yes | ribbon_widgets.cpp |
 | wxRichTextCtrl | yes | yes | yes | gen_rich_text.cpp |
 | wxScrollBar | yes | yes | yes | gen_scrollbar.cpp |
 | wxScrolled\<wxPanel\> | yes | yes | yes | styled_text.cpp |
@@ -122,7 +122,7 @@ The following tables list classes, objects and functions that wxUiEditor can gen
 | wxTreeCtrl | yes | ?? | yes | gen_toolbar.cpp |
 | wxTreeListCtrl | yes | ?? | no | gen_tree_list.cpp |
 | wxWebView | yes | yes | no | gen_web_view.cpp |
-| wxWizardPageSimple | yes | ?? | yes | gen_wizard.cpp |
+| wxWizardPageSimple | yes | yes | yes | gen_wizard.cpp |
 
 # Objects
 
@@ -138,12 +138,12 @@ The following tables list classes, objects and functions that wxUiEditor can gen
 | DataViewColumn | yes | ?? | yes | dataview_widgets.cpp |
 | DataViewListColumn | yes | ?? | yes | dataview_widgets.cpp |
 | NewCloseButton | yes | yes | yes | gen_close_btn.cpp |
-| PageCtrl | yes | ?? | no | gen_page_ctrl.cpp |
+| PageCtrl | yes | yes | no | gen_page_ctrl.cpp |
 | PropertyGridItem | yes | ?? | no | gen_prop_item.cpp |
 | PropertyGridPage | yes | ?? | no | grid_widgets.cpp |
-| RibbonButton | yes | ?? | yes | ribbon_widgets.cpp |
-| RibbonGalleryItem | yes | ?? | yes | ribbon_widgets.cpp |
-| RibbonTool | yes | ?? | yes | ribbon_widgets.cpp |
+| RibbonButton | yes | yes | yes | ribbon_widgets.cpp |
+| RibbonGalleryItem | yes | yes | yes | ribbon_widgets.cpp |
+| RibbonTool | yes | yes | yes | ribbon_widgets.cpp |
 | Separator | yes | ?? | yes | menu_widgets.cpp |
 | Spacer | yes | yes | yes | gen_spacer_sizer.cpp |
 | SubMenu | yes | yes | yes | gen_submenu.cpp |

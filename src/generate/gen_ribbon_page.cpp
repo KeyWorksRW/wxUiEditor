@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   wxRibbonPage and wxRibbonPanel generators
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -97,45 +97,6 @@ wxObject* RibbonPanelGenerator::CreateMockup(Node* node, wxObject* parent)
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
     return widget;
-}
-
-std::optional<ttlib::cstr> RibbonPanelGenerator::GenConstruction(Node* node)
-{
-    ttlib::cstr code;
-    if (node->IsLocal())
-        code << "auto* ";
-    code << node->get_node_name() << " = new wxRibbonPanel(";
-    code << node->get_parent_name() << ", " << node->prop_as_string(prop_id);
-    code << ", ";
-
-    auto& label = node->prop_as_string(prop_label);
-    if (label.size())
-        code << GenerateQuotedString(label);
-    else
-        code << "wxEmptyString";
-
-    if (node->prop_as_string(prop_bitmap).size())
-    {
-        if (label.size())
-        {
-            code << ",\n\t";
-        }
-        else
-        {
-            code << ", ";
-        }
-
-        code << GenerateBitmapCode(node->prop_as_string(prop_bitmap));
-    }
-    else
-        code << ", wxNullBitmap";
-
-    GeneratePosSizeFlags(node, code, false, "wxRIBBON_PANEL_DEFAULT_STYLE");
-
-    code.Replace(", wxNullBitmap);", ");");
-    code.Replace(", wxNullBitmap,", ",\n\t\twxNullBitmap,");
-
-    return code;
 }
 
 bool RibbonPanelGenerator::ConstructionCode(Code& code)

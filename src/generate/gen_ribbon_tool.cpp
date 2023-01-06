@@ -11,6 +11,7 @@
 #include "bitmaps.h"     // Contains various images handling functions
 #include "code.h"        // Code -- Helper class for generating code
 #include "gen_common.h"  // GeneratorLibrary -- Generator classes
+#include "image_gen.h"   // Functions for generating embedded images
 #include "node.h"        // Node class
 #include "utils.h"       // Utility functions that work with properties
 
@@ -55,37 +56,26 @@ void RibbonToolBarGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxpar
     btn_bar->Realize();
 }
 
-std::optional<ttlib::cstr> RibbonToolBarGenerator::GenConstruction(Node* node)
+bool RibbonToolBarGenerator::ConstructionCode(Code& code)
 {
-    ttlib::cstr code;
-    if (node->IsLocal())
-        code << "auto* ";
-    code << node->get_node_name() << " = new wxRibbonToolBar(";
-    code << node->get_parent_name() << ", " << node->prop_as_string(prop_id);
+    code.AddAuto().NodeName();
+    code.CreateClass().ParentName().Comma().Add(prop_id).PosSizeFlags();
 
-    GeneratePosSizeFlags(node, code, false);
-
-    return code;
+    return true;
 }
 
-std::optional<ttlib::cstr> RibbonToolBarGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
+bool RibbonToolBarGenerator::SettingsCode(Code& code)
 {
-    ttlib::cstr code;
-
-    auto min_rows = node->prop_as_int(prop_min_rows);
-    auto max_rows = node->prop_as_int(prop_max_rows);
+    auto min_rows = code.node()->prop_as_int(prop_min_rows);
+    auto max_rows = code.node()->prop_as_int(prop_max_rows);
     if (min_rows != 1 || max_rows != -1)
     {
         if (max_rows < min_rows)
             max_rows = min_rows;
-        code << node->get_node_name() << "->SetRows(" << ttlib::cstr().Format("%d, %d", min_rows, max_rows) << ");";
-    }
-    else
-    {
-        return {};
+        code.NodeName().Function("SetRows(").itoa(min_rows, max_rows).EndFunction();
     }
 
-    return code;
+    return true;
 }
 
 bool RibbonToolBarGenerator::GetIncludes(Node* /* node */, std::set<std::string>& /* set_src */,
@@ -107,32 +97,14 @@ int RibbonToolBarGenerator::GenXrcObject(Node* /* node */, pugi::xml_node& /* ob
 
 //////////////////////////////////////////  RibbonToolGenerator  //////////////////////////////////////////
 
-std::optional<ttlib::cstr> RibbonToolGenerator::GenConstruction(Node* node)
+bool RibbonToolGenerator::ConstructionCode(Code& code)
 {
-    ttlib::cstr code;
+    code.ParentName().Function("AddTool(").Add(prop_id);
+    code.Comma();
+    GenerateSingleBitmapCode(code, code.node()->as_string(prop_bitmap));
+    code.Comma().QuotedString(prop_help).Comma().Add(prop_kind).EndFunction();
 
-    code << node->get_parent_name() << "->AddTool(";
-    if (node->prop_as_string(prop_id).size())
-        code << node->prop_as_string(prop_id);
-    else
-        code << "wxID_ANY";
-    code << ", ";
-
-    if (node->prop_as_string(prop_bitmap).size())
-        code << GenerateBitmapCode(node->prop_as_string(prop_bitmap));
-    else
-        code << "wxNullBitmap";
-
-    code << ", ";
-    auto& help = node->prop_as_string(prop_help);
-    if (help.size())
-        code << GenerateQuotedString(help);
-    else
-        code << "wxEmptyString";
-
-    code << ", " << node->prop_as_string(prop_kind) << ");";
-
-    return code;
+    return true;
 }
 
 int RibbonToolGenerator::GenXrcObject(Node* /* node */, pugi::xml_node& /* object */, size_t /* xrc_flags */)

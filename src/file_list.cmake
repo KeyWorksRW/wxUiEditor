@@ -89,7 +89,6 @@ set (file_list
 
     generate/gen_activity.cpp       # wxActivityIndicator generator
     generate/gen_animation.cpp      # wxAnimationCtrl generator
-    generate/gen_aui_toolbar.cpp    # wxAuiToolBar generator
     generate/gen_banner_window.cpp  # wxBannerWindow generator
     generate/gen_button.cpp         # wxButton generator
     generate/gen_calendar_ctrl.cpp  # wxCalendarCtrl generator
@@ -179,12 +178,13 @@ set (file_list
 
     # Toolbars
 
-    generate/gen_toolbar.cpp         # wxToolBar generator
-    generate/gen_ribbon_page.cpp
+    generate/gen_aui_toolbar.cpp     # wxAuiToolBar generator
     generate/gen_ribbon_bar.cpp      # wxRibbonButtonBar generator
     generate/gen_ribbon_button.cpp   # wxRibbonBar -- form and regular
-    generate/gen_ribbon_tool.cpp     # wxRibbonToolBar generator
     generate/gen_ribbon_gallery.cpp  # wxRibbonGallery generator
+    generate/gen_ribbon_page.cpp     # wxRibbonPage and wxRibbonPanel generators
+    generate/gen_ribbon_tool.cpp     # wxRibbonToolBar generator
+    generate/gen_toolbar.cpp         # wxToolBar generator
 
 
     # Sizers

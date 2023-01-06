@@ -10,6 +10,7 @@
 #include "bitmaps.h"     // Contains various images handling functions
 #include "code.h"        // Code -- Helper class for generating code
 #include "gen_common.h"  // GeneratorLibrary -- Generator classes
+#include "image_gen.h"   // Functions for generating embedded images
 #include "node.h"        // Node class
 #include "utils.h"       // Utility functions that work with properties
 
@@ -41,17 +42,12 @@ void RibbonButtonBarGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxp
     }
 }
 
-std::optional<ttlib::cstr> RibbonButtonBarGenerator::GenConstruction(Node* node)
+bool RibbonButtonBarGenerator::ConstructionCode(Code& code)
 {
-    ttlib::cstr code;
-    if (node->IsLocal())
-        code << "auto* ";
-    code << node->get_node_name() << " = new wxRibbonButtonBar(";
-    code << node->get_parent_name() << ", " << node->prop_as_string(prop_id);
+    code.AddAuto().NodeName();
+    code.CreateClass().ParentName().Comma().Add(prop_id).PosSizeFlags();
 
-    GeneratePosSizeFlags(node, code, false);
-
-    return code;
+    return true;
 }
 
 bool RibbonButtonBarGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
@@ -71,33 +67,14 @@ int RibbonButtonBarGenerator::GenXrcObject(Node* node, pugi::xml_node& object, s
 
 //////////////////////////////////////////  RibbonButtonGenerator  //////////////////////////////////////////
 
-std::optional<ttlib::cstr> RibbonButtonGenerator::GenConstruction(Node* node)
+bool RibbonButtonGenerator::ConstructionCode(Code& code)
 {
-    ttlib::cstr code;
+    code.ParentName().Function("AddButton(").Add(prop_id).Comma().QuotedString(prop_label);
+    code.Comma();
+    GenerateSingleBitmapCode(code, code.node()->as_string(prop_bitmap));
+    code.Comma().QuotedString(prop_help).Comma().Add(prop_kind).EndFunction();
 
-    code << node->get_parent_name() << "->AddButton(" << node->prop_as_string(prop_id) << ", ";
-
-    auto& label = node->prop_as_string(prop_label);
-    if (label.size())
-        code << GenerateQuotedString(label);
-    else
-        code << "wxEmptyString";
-
-    if (node->prop_as_string(prop_bitmap).size())
-        code << ", " << GenerateBitmapCode(node->prop_as_string(prop_bitmap));
-    else
-        code << ", wxNullBitmap";
-
-    code << ", ";
-    auto& help = node->prop_as_string(prop_help);
-    if (help.size())
-        code << GenerateQuotedString(help);
-    else
-        code << "wxEmptyString";
-
-    code << ", " << node->prop_as_string(prop_kind) << ");";
-
-    return code;
+    return true;
 }
 
 int RibbonButtonGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)

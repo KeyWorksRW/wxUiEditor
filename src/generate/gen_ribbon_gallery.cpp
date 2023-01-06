@@ -11,6 +11,7 @@
 #include "bitmaps.h"     // Contains various images handling functions
 #include "code.h"        // Code -- Helper class for generating code
 #include "gen_common.h"  // GeneratorLibrary -- Generator classes
+#include "image_gen.h"   // Functions for generating embedded images
 #include "node.h"        // Node class
 #include "utils.h"       // Utility functions that work with properties
 
@@ -44,17 +45,12 @@ void RibbonGalleryGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxpar
     }
 }
 
-std::optional<ttlib::cstr> RibbonGalleryGenerator::GenConstruction(Node* node)
+bool RibbonGalleryGenerator::ConstructionCode(Code& code)
 {
-    ttlib::cstr code;
-    if (node->IsLocal())
-        code << "auto* ";
-    code << node->get_node_name() << " = new wxRibbonGallery(";
-    code << node->get_parent_name() << ", " << node->prop_as_string(prop_id);
+    code.AddAuto().NodeName();
+    code.CreateClass().ParentName().Comma().Add(prop_id).PosSizeFlags();
 
-    GeneratePosSizeFlags(node, code, false);
-
-    return code;
+    return true;
 }
 
 bool RibbonGalleryGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
@@ -74,20 +70,14 @@ int RibbonGalleryGenerator::GenXrcObject(Node* node, pugi::xml_node& object, siz
 
 //////////////////////////////////////////  RibbonGalleryItemGenerator  //////////////////////////////////////////
 
-std::optional<ttlib::cstr> RibbonGalleryItemGenerator::GenConstruction(Node* node)
+bool RibbonGalleryItemGenerator::ConstructionCode(Code& code)
 {
-    ttlib::cstr code;
+    code.ParentName().Function("Append(").Add(prop_id);
+    code.Comma();
+    GenerateSingleBitmapCode(code, code.node()->as_string(prop_bitmap));
+    code.Comma().Add("wxID_ANY").EndFunction();
 
-    code << node->get_parent_name() << "->Append(";
-
-    if (node->prop_as_string(prop_bitmap).size())
-        code << GenerateBitmapCode(node->prop_as_string(prop_bitmap));
-    else
-        code << "wxNullBitmap";
-
-    code << ", wxID_ANY);";
-
-    return code;
+    return true;
 }
 
 int RibbonGalleryItemGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)

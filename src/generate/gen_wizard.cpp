@@ -434,65 +434,6 @@ bool WizardPageGenerator::ConstructionCode(Code& code)
     return true;
 }
 
-std::optional<ttlib::cstr> WizardPageGenerator::GenConstruction(Node* node)
-{
-    ttlib::cstr code;
-    if (!node->HasValue(prop_bitmap))
-    {
-        if (node->IsLocal())
-            code << "auto* ";
-        code << node->prop_as_string(prop_var_name) << " = new wxWizardPageSimple(this);";
-    }
-    else
-    {
-        if (wxGetProject().value(prop_wxWidgets_version) == "3.1")
-        {
-            code << "#if wxCHECK_VERSION(3, 1, 6)\n";
-        }
-        ttlib::cstr bundle_code;
-        bool is_code_block = GenerateBundleCode(node->prop_as_string(prop_bitmap), bundle_code);
-        if (is_code_block)
-        {
-            // GenerateBundleCode assumes an indent within an indent
-            bundle_code.Replace("\t\t\t", "\t\t", true);
-
-            code << '\t' << bundle_code << "\t\t";
-            if (node->IsLocal())
-                code << "auto* ";
-            code << node->prop_as_string(prop_var_name)
-                 << " = new wxWizardPageSimple(this, nullptr, nullptr, wxBitmapBundle::FromBitmaps(bitmaps));";
-            code << "\n\t}";
-            if (wxGetProject().value(prop_wxWidgets_version) == "3.1")
-            {
-                code << "\n#else\n\t";
-                if (node->IsLocal())
-                    code << "auto* ";
-                code << node->prop_as_string(prop_var_name) << " = new wxWizardPageSimple(this, nullptr, nullptr, ";
-                code << GenerateBitmapCode(node->prop_as_string(prop_bitmap)) << ");";
-                code << "\n#endif";
-            }
-        }
-        else
-        {
-            if (node->IsLocal())
-                code << "auto* ";
-            code << node->prop_as_string(prop_var_name) << " = new wxWizardPageSimple(this, nullptr, nullptr, ";
-            code << bundle_code << ");";
-            if (wxGetProject().value(prop_wxWidgets_version) == "3.1")
-            {
-                code << "\n#else\n";
-                if (node->IsLocal())
-                    code << "auto* ";
-                code << node->value(prop_var_name) << " = new wxWizardPageSimple(this, nullptr, nullptr, ";
-                code << GenerateBitmapCode(node->prop_as_string(prop_bitmap)) << ");";
-                code << "\n#endif";
-            }
-        }
-    }
-
-    return code;
-}
-
 bool WizardPageGenerator::PopupMenuAddCommands(NavPopupMenu* menu, Node* node)
 {
     menu->Append(NavPopupMenu::MenuADD_WIZARD_PAGE, "Add Page");

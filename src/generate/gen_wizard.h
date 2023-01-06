@@ -36,9 +36,8 @@ class WizardPageGenerator : public BaseGenerator
 {
 public:
     wxObject* CreateMockup(Node*, wxObject* parent) override;
-    bool ConstructionCode(Code&) override;
 
-    std::optional<ttlib::cstr> GenConstruction(Node*) override;
+    bool ConstructionCode(Code&) override;
 
     bool PopupMenuAddCommands(NavPopupMenu*, Node*) override;
 

@@ -503,51 +503,7 @@ void ToolBarGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>&
 
 //////////////////////////////////////////  ToolGenerator  //////////////////////////////////////////
 
-std::optional<ttlib::cstr> ToolGenerator::GenConstruction(Node* node)
-{
-    if (node->HasValue(prop_bitmap))
-    {
-        ttlib::cstr code;
-        if (wxGetProject().value(prop_wxWidgets_version) == "3.1")
-        {
-            code << "#if wxCHECK_VERSION(3, 1, 6)\n";
-        }
-
-        ttlib::cstr bundle_code;
-        bool is_code_block = GenerateBundleCode(node->prop_as_string(prop_bitmap), bundle_code);
-        if (is_code_block)
-        {
-            // GenerateBundleCode assumes an indent within an indent
-            bundle_code.Replace("\t\t\t", "\t\t", true);
-            code << '\t' << bundle_code;
-            code << '\t' << GenToolCode(node, "wxBitmapBundle::FromBitmaps(bitmaps)");
-            code << "\n\t}";
-            if (wxGetProject().value(prop_wxWidgets_version) == "3.1")
-            {
-                code << "\n#else\n";
-                code << GenToolCode(node, GenerateBitmapCode(node->prop_as_string(prop_bitmap)));
-                code << "\n#endif";
-            }
-        }
-        else
-        {
-            code << GenToolCode(node, bundle_code);
-            if (wxGetProject().value(prop_wxWidgets_version) == "3.1")
-            {
-                code << "\n#else\n";
-                code << GenToolCode(node, GenerateBitmapCode(node->prop_as_string(prop_bitmap)));
-                code << "\n#endif";
-            }
-        }
-        return code;
-    }
-    else
-    {
-        return GenToolCode(node);
-    }
-}
-
-std::optional<ttlib::sview> ToolGenerator::CommonConstruction(Code& code)
+bool ToolGenerator::ConstructionCode(Code& code)
 {
     auto is_bitmaps_list = BitmapList(code, prop_bitmap);
     GenToolCode(code, is_bitmaps_list);
@@ -572,7 +528,7 @@ std::optional<ttlib::sview> ToolGenerator::CommonConstruction(Code& code)
         code.EndFunction();
     }
 
-    return code.m_code;
+    return true;
 }
 
 int ToolGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)

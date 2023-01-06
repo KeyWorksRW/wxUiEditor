@@ -29,49 +29,23 @@ wxObject* DatePickerCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
     return widget;
 }
 
-std::optional<ttlib::cstr> DatePickerCtrlGenerator::GenConstruction(Node* node)
+bool DatePickerCtrlGenerator::ConstructionCode(Code& code)
 {
-    ttlib::cstr code;
-    if (node->IsLocal())
-        code << "auto* ";
-    code << node->get_node_name() << GenerateNewAssignment(node);
-    code << GetParentName(node) << ", " << node->prop_as_string(prop_id) << ", wxDefaultDateTime";
-    GeneratePosSizeFlags(node, code, true, "wxDP_DEFAULT|wxDP_SHOWCENTURY");
-
-    return code;
-}
-
-std::optional<ttlib::sview> DatePickerCtrlGenerator::CommonConstruction(Code& code)
-{
-    if (code.is_cpp() && code.is_local_var())
-        code << "auto* ";
-    code.NodeName().CreateClass();
-    code.ValidParentName().Comma().as_string(prop_id).Comma().Add("wxDefaultDateTime");
+    code.AddAuto().NodeName().CreateClass();
+    code.ValidParentName().Comma().Add(prop_id).Comma().Add("wxDefaultDateTime");
     code.PosSizeFlags(true, "wxDP_DEFAULT|wxDP_SHOWCENTURY");
 
-    return code.m_code;
+    return true;
 }
 
-std::optional<ttlib::cstr> DatePickerCtrlGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
-{
-    if (node->prop_as_string(prop_style).contains("wxDP_ALLOWNONE"))
-    {
-        ttlib::cstr code;
-        code << node->get_node_name() << "->SetNullText(" << GenerateQuotedString(node->prop_as_string(prop_null_text))
-             << ");";
-        return code;
-    }
-
-    return {};
-}
-
-std::optional<ttlib::sview> DatePickerCtrlGenerator::CommonSettings(Code& code)
+bool DatePickerCtrlGenerator::SettingsCode(Code& code)
 {
     if (code.PropContains(prop_style, "wxDP_ALLOWNONE"))
     {
         code.NodeName().Function("SetNullText").QuotedString(prop_null_text).EndFunction();
     }
-    return code.m_code;
+
+    return true;
 }
 
 bool DatePickerCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)

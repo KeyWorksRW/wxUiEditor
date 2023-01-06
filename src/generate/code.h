@@ -277,6 +277,12 @@ public:
         return *this;
     }
 
+    Code& itoa(GenEnum::PropName prop_name1, GenEnum::PropName prop_name2)
+    {
+        Str(prop_name1).Comma().Str(prop_name2);
+        return *this;
+    }
+
     // Handles prop_internationalize and strings containing at least one utf8 character.
     // Generates correct code for C++ or Python.
     Code& QuotedString(GenEnum::PropName prop_name);

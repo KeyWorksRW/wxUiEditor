@@ -90,7 +90,7 @@ void BaseCodeGenerator::GenConstruction(Node* node)
 
     GenSettings(node);
 
-    if (type == type_ribbontoolbar)
+    if (type == type_ribbontoolbar || type == type_ribbonbuttonbar || type == type_ribbongallery)
     {
         BeginBrace();
         // A wxRibbonToolBar can only have abstract children that consist of the tools.
@@ -344,13 +344,6 @@ void BaseCodeGenerator::GenConstruction(Node* node)
         }
     }
 
-    // A wxRibbonBar needs to be realized after all children have been created
-
-    if (node->isGen(gen_wxRibbonBar))
-    {
-        m_source->writeLine(ttlib::cstr() << node->get_node_name() << LangPtr() << "Realize();");
-    }
-
     if (node->HasValue(prop_platforms) && node->value(prop_platforms) != "Windows|Unix|Mac")
     {
         EndPlatformCode();
@@ -455,15 +448,19 @@ void BaseCodeGenerator::EndPlatformCode()
 void BaseCodeGenerator::BeginBrace()
 {
     if (m_language == GEN_LANG_CPLUSPLUS)
+    {
         m_source->writeLine("{");
-    m_source->Indent();
+        m_source->Indent();
+    }
 }
 
 void BaseCodeGenerator::EndBrace()
 {
-    m_source->Unindent();
     if (m_language == GEN_LANG_CPLUSPLUS)
+    {
+        m_source->Unindent();
         m_source->writeLine("}");
+    }
 }
 
 void BaseCodeGenerator::GenSettings(Node* node)

@@ -265,6 +265,12 @@ public:
         return *this;
     }
 
+    Code& itoa(int val1, int val2)
+    {
+        Str(std::to_string(val1)).Comma() += std::to_string(val2);
+        return *this;
+    }
+
     Code& itoa(size_t val)
     {
         m_code += std::to_string(val);

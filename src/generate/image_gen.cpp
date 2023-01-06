@@ -10,13 +10,12 @@
 
 #include <tttextfile_wx.h>  // textfile -- Classes for reading and writing line-oriented files
 
-#include "gen_base.h"
+#include "image_gen.h"
 
 #include "code.h"           // Code -- Helper class for generating code
+#include "gen_base.h"       // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
 #include "project_class.h"  // Project class
 #include "write_code.h"     // Write code to Scintilla or file
-
-std::vector<std::string> base64_encode(unsigned char const* data, size_t data_size);
 
 // Generate extern references to images used in the current form that are defined in the
 // gen_Images node. These are written before the class constructor.
@@ -53,17 +52,18 @@ void BaseCodeGenerator::WriteImagePreConstruction(Code& code)
 }
 
 // Generate code after the construcor for embedded images not defined in the gen_Images node.
-void BaseCodeGenerator::WriteImagePostConstruction(Code& code)
+void BaseCodeGenerator::WriteImageConstruction(Code& code)
 {
     code.clear();
 
     bool is_namespace_written = false;
+    bool images_import_written = false;
     // -12 to account for 8 indent + max 3 chars for number + comma
     size_t cpp_line_length = (to_size_t) GetProject()->as_int(prop_cpp_line_length) - 12;
 
     for (auto iter_array: m_embedded_images)
     {
-        if (iter_array->form != m_form_node)
+        if (iter_array->form != m_form_node && code.is_cpp())
             continue;
 
         if (code.is_cpp())
@@ -108,6 +108,17 @@ void BaseCodeGenerator::WriteImagePostConstruction(Code& code)
         }
         else
         {
+            if (iter_array->form->isGen(gen_Images))
+            {
+                if (!images_import_written)
+                {
+                    images_import_written = true;
+                    ttlib::cstr import_name = iter_array->form->as_string(prop_python_file).filename();
+                    import_name.remove_extension();
+                    code.Eol().Str("import ").Str(import_name);
+                }
+                continue;
+            }
             code.Eol().Str(iter_array->array_name).Str(" = PyEmbeddedImage(");
             m_source->writeLine(code);
             code.clear();
@@ -267,4 +278,47 @@ std::vector<std::string> base64_encode(unsigned char const* data, size_t data_si
     result.emplace_back(line);
 
     return result;
+}
+
+void BaseCodeGenerator::GeneratePythonImagesForm()
+{
+    if (m_embedded_images.empty() || !m_form_node->GetChildCount())
+    {
+        return;
+    }
+
+    m_source->writeLine();
+    m_source->writeLine("from wx.lib.embeddedimage import PyEmbeddedImage");
+
+    Code code(m_form_node, GEN_LANG_PYTHON);
+
+    for (auto iter_array: m_embedded_images)
+    {
+        if (iter_array->form != m_form_node)
+            continue;
+
+        code.Eol().Str(iter_array->array_name).Str(" = PyEmbeddedImage(");
+        m_source->writeLine(code);
+        code.clear();
+        auto encoded = base64_encode(iter_array->array_data.get(), iter_array->array_size & 0xFFFFFFFF);
+        if (encoded.size())
+        {
+            encoded.back() += ")";
+            m_source->writeLine(encoded);
+        }
+    }
+
+    m_source->writeLine();
+}
+
+void AddPythonImageName(Code& code, const EmbeddedImage* embed)
+{
+    if (embed->form->isGen(gen_Images))
+    {
+        ttlib::cstr import_name = embed->form->as_string(prop_python_file).filename();
+        import_name.remove_extension();
+
+        code.Str(import_name).Str(".");
+    }
+    code.Str(embed->array_name);
 }

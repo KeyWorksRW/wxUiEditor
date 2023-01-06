@@ -3,10 +3,12 @@ inline const char* images_xml = R"===(<?xml version="1.0"?>
 <GeneratorDefinitions>
     <gen class="Images" image="pagectrl" type="images">
         <property name="base_file" type="file"
-            help="The filename to store all the embedded images in.">my_images</property>
+            help="The C++ filename to store all the embedded images in.">my_images</property>
+        <property name="python_file" type="file"
+            help="The Python filename to store all the embedded images in.">images</property>
     </gen>
 
     <gen class="embedded_image" image="static_bitmap" type="embed_image">
-		<property name="bitmap" type="image" />
+		    <property name="bitmap" type="image" />
     </gen>
 </GeneratorDefinitions>)===";

@@ -506,7 +506,7 @@ void BaseCodeGenerator::GenerateCppClass(Node* form_node, PANEL_PAGE panel_type)
 
         if (m_embedded_images.size())
         {
-            WriteImagePostConstruction(code);
+            WriteImageConstruction(code);
         }
     }
 

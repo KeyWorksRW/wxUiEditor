@@ -95,7 +95,7 @@ protected:
     // node.
     //
     // This will call code.clear() before writing any code.
-    void WriteImagePostConstruction(Code& code);
+    void WriteImageConstruction(Code& code);
 
     // Generate extern statements after the header definition for embedded images not defined
     // in the gen_Images node.
@@ -112,6 +112,9 @@ protected:
 
     // This method is in images_form.cpp, and handles both source and header code generation
     void GenerateImagesForm();
+
+    // This method is in image_gen.cpp, and handles Python code generation
+    void GeneratePythonImagesForm();
 
     ttlib::cstr GetDeclaration(Node* node);
 

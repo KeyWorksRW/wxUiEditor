@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Generate Python code files
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2022-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -17,6 +17,7 @@
 #include "gen_base.h"         // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
 #include "gen_common.h"       // Common component functions
 #include "generate_dlg.h"     // GenerateDlg -- Dialog for choosing and generating specific language file(s)
+#include "image_gen.h"        // Functions for generating embedded images
 #include "node.h"             // Node class
 #include "project_class.h"    // Project class
 #include "utils.h"            // Miscellaneous utilities
@@ -225,7 +226,6 @@ R"===(##########################################################################
 # Any changes before that block will be lost if it is re-generated!
 ###############################################################################
 
-import wx
 )===";
 
 // clang-format on
@@ -236,11 +236,6 @@ const char* python_triple_quote = "\"\"\"";
 
 void BaseCodeGenerator::GeneratePythonClass(Node* form_node, PANEL_PAGE panel_type)
 {
-    if (form_node->isGen(gen_Images))
-    {
-        return;
-    }
-
     Code code(form_node, GEN_LANG_PYTHON);
 
     m_embedded_images.clear();
@@ -249,17 +244,41 @@ void BaseCodeGenerator::GeneratePythonClass(Node* form_node, PANEL_PAGE panel_ty
     m_form_node = form_node;
     m_ImagesForm = nullptr;
 
+    for (const auto& form: m_project->GetChildNodePtrs())
+    {
+        if (form->isGen(gen_folder))
+        {
+            for (const auto& child_form: form->GetChildNodePtrs())
+            {
+                if (child_form->isGen(gen_Images))
+                {
+                    m_ImagesForm = child_form.get();
+                    break;
+                }
+            }
+            break;
+        }
+
+        else if (form->isGen(gen_Images))
+        {
+            m_ImagesForm = form.get();
+            break;
+        }
+    }
+
     EventVector events;
     std::thread thrd_get_events(&BaseCodeGenerator::CollectEventHandlers, this, form_node, std::ref(events));
 
     m_baseFullPath = MakePythonPath(form_node);
 
-    // Caution! CollectImageHeaders() needs access to m_baseFullPath, so don't start this thread until it has been set!
+    // Caution! CollectImageHeaders() needs access to m_baseFullPath, so don't start this
+    // thread until it has been set!
+    //
+    // thrd_collect_img_headers will populate m_embedded_images;
+
     std::set<std::string> img_include_set;
     std::thread thrd_collect_img_headers(&BaseCodeGenerator::CollectImageHeaders, this, form_node,
                                          std::ref(img_include_set));
-
-    // thrd_collect_img_headers will populate m_embedded_images;
 
     // If the code files are being written to disk, then UpdateEmbedNodes() has already been called.
     if (panel_type != NOT_PANEL)
@@ -270,15 +289,6 @@ void BaseCodeGenerator::GeneratePythonClass(Node* form_node, PANEL_PAGE panel_ty
     std::vector<Node*> forms;
     m_project->CollectForms(forms);
 
-    for (const auto& form: forms)
-    {
-        if (form->isGen(gen_Images))
-        {
-            m_ImagesForm = form;
-            break;
-        }
-    }
-
     m_panel_type = panel_type;
 
     m_header->Clear();
@@ -286,9 +296,20 @@ void BaseCodeGenerator::GeneratePythonClass(Node* form_node, PANEL_PAGE panel_ty
     m_source->SetLastLineBlank();
 
     if (m_panel_type == NOT_PANEL)
+    {
         m_source->writeLine(txt_PythonCmtBlock);
-    else
-        m_source->writeLine("import wx\n");
+        if (!form_node->isGen(gen_Images))
+            m_source->writeLine("import wx\n");
+    }
+
+    if (form_node->isGen(gen_Images))
+    {
+        thrd_get_events.join();
+        thrd_collect_img_headers.join();
+        GeneratePythonImagesForm();
+        return;
+    }
+
     m_header->writeLine(ttlib::cstr("# Sample inherited class from ") << form_node->as_string(prop_class_name));
     m_header->writeLine();
     m_header->writeLine("import wx");
@@ -306,8 +327,33 @@ void BaseCodeGenerator::GeneratePythonClass(Node* form_node, PANEL_PAGE panel_ty
     if (m_embedded_images.size())
     {
         m_source->writeLine();
-        m_source->writeLine("from wx.lib.embeddedimage import PyEmbeddedImage");
-        WriteImagePostConstruction(code);
+
+        // First see if we need to import the gen_Images form
+        for (auto& iter: m_embedded_images)
+        {
+            if (iter->form == m_ImagesForm)
+            {
+                ttlib::cstr import_name = iter->form->as_string(prop_python_file).filename();
+                import_name.remove_extension();
+                code.Str("import ").Str(import_name);
+                m_source->writeLine(code);
+                code.clear();
+                break;
+            }
+        }
+
+        // Now write any embedded images that aren't declared in the gen_Images form
+        for (auto& iter: m_embedded_images)
+        {
+            // Only write the images that aren't declared in any gen_Images form. Note that
+            // this *WILL* result in duplicate images being written to different forms.
+            if (iter->form != m_ImagesForm)
+            {
+                m_source->writeLine("from wx.lib.embeddedimage import PyEmbeddedImage");
+                WriteImageConstruction(code);
+                break;
+            }
+        }
     }
 
     m_source->writeLine();
@@ -539,7 +585,8 @@ bool PythonBitmapList(Code& code, GenEnum::PropName prop)
         {
             if (auto embed = GetProject()->GetEmbeddedImage(iter); embed)
             {
-                code.Str(embed->array_name).Str(".Bitmap");
+                AddPythonImageName(code, embed);
+                code += ".Bitmap";
                 needs_comma = true;
                 is_embed_success = true;
             }
@@ -632,7 +679,8 @@ bool PythonBundleCode(Code& code, GenEnum::PropName prop)
                 if (auto embed = GetProject()->GetEmbeddedImage(bundle->lst_filenames[0]); embed)
                 {
                     code.CheckLineLength(embed->array_name.size() + sizeof(".Bitmap)"));
-                    code.Str(embed->array_name) += ".Bitmap)";
+                    AddPythonImageName(code, embed);
+                    code += ".Bitmap)";
                     is_embed_success = true;
                 }
             }
@@ -653,12 +701,15 @@ bool PythonBundleCode(Code& code, GenEnum::PropName prop)
                 if (auto embed = GetProject()->GetEmbeddedImage(bundle->lst_filenames[0]); embed)
                 {
                     code.CheckLineLength(embed->array_name.size() + sizeof(".Bitmap"));
-                    code.Str(embed->array_name) += ".Bitmap";
+                    AddPythonImageName(code, embed);
+
+                    code += ".Bitmap";
 
                     if (auto embed2 = GetProject()->GetEmbeddedImage(bundle->lst_filenames[1]); embed2)
                     {
                         code.Comma().CheckLineLength(embed2->array_name.size() + sizeof(".Bitmap)"));
-                        code.Str(embed2->array_name) += ".Bitmap)";
+                        AddPythonImageName(code, embed2);
+                        code += ".Bitmap)";
                     }
                     else
                     {

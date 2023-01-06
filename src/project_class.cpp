@@ -80,7 +80,7 @@ ttlib::cstr& Project::setProjectPath(const ttlib::cstr& file, bool remove_filena
 
 wxImage Project::GetPropertyBitmap(const ttlib::multistr& parts, bool check_image)
 {
-    if (parts[IndexImage].empty())
+    if (parts.size() <= IndexImage || parts[IndexImage].empty())
     {
         return GetInternalImage("unknown");
     }

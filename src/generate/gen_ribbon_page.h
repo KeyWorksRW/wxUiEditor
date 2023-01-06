@@ -28,6 +28,7 @@ class RibbonPanelGenerator : public BaseGenerator
 {
 public:
     wxObject* CreateMockup(Node* node, wxObject* parent) override;
+    bool ConstructionCode(Code&) override;
 
     std::optional<ttlib::cstr> GenConstruction(Node* node) override;
 

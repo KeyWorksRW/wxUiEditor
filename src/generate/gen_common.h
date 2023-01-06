@@ -152,10 +152,6 @@ void GenToolCode(Code& code, const bool is_bitmaps_list);
 // prop_wxWidgets_version == 3.1, follow this with a #else and the alternate code.
 bool BitmapList(Code& code, const GenEnum::PropName prop);
 
-// Primarily designed for wxRibbon which doesn't support wxBitmapBundle.
-// This will generate the code to load a single wxBitmap.
-void GenerateSingleBitmapCode(Code& code, const ttlib::cstr& description);
-
 /////////////////////////////////////// wxPython Functions ///////////////////////////////////////
 
 // Returns true if a list was created. List name will be called "bitmaps".

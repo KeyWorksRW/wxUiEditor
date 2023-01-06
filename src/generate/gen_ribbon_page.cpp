@@ -12,6 +12,7 @@
 #include "gen_common.h"  // GeneratorLibrary -- Generator classes
 #include "node.h"        // Node class
 #include "utils.h"       // Utility functions that work with properties
+#include "image_gen.h"   // Functions for generating embedded images
 
 #include "gen_ribbon_page.h"
 
@@ -135,6 +136,19 @@ std::optional<ttlib::cstr> RibbonPanelGenerator::GenConstruction(Node* node)
     code.Replace(", wxNullBitmap,", ",\n\t\twxNullBitmap,");
 
     return code;
+}
+
+bool RibbonPanelGenerator::ConstructionCode(Code& code)
+{
+    code.AddAuto().NodeName().CreateClass().ParentName().Comma().Add(prop_id).Comma().QuotedString(prop_label);
+    if (code.HasValue(prop_bitmap))
+    {
+        code.Comma();
+        GenerateSingleBitmapCode(code, code.node()->as_string(prop_bitmap));
+    }
+    code.EndFunction();
+
+    return true;
 }
 
 bool RibbonPanelGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)

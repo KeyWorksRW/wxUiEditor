@@ -12,3 +12,7 @@ struct EmbeddedImage;
 
 std::vector<std::string> base64_encode(unsigned char const* data, size_t data_size);
 void AddPythonImageName(Code& code, const EmbeddedImage* embed);
+
+// Primarily designed for wxRibbon which doesn't support wxBitmapBundle.
+// This will generate the code to load a single wxBitmap.
+void GenerateSingleBitmapCode(Code& code, const ttlib::cstr& description);

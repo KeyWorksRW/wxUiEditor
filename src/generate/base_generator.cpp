@@ -443,6 +443,9 @@ std::optional<ttlib::cstr> BaseGenerator::GetHint(NodeProperty* prop)
 }
 
 // clang-format off
+
+// non-sorted order is critical!
+
 static std::vector<std::pair<const char*, const char*>> prefix_pair = {
 
     { "bag", "_bag" },
@@ -493,9 +496,13 @@ ttlib::cstr BaseGenerator::GetHelpURL(Node* node)
         {
             class_name = "context_menu_event";
         }
-        if (class_name == "activityindicator")
+        else if (class_name == "activityindicator")
         {
             class_name = "activity_indicator";
+        }
+        else if (class_name == "simplehtmllistbox")
+        {
+            class_name = "simple_html_list_box";
         }
         else
         {

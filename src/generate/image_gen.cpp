@@ -208,7 +208,7 @@ void GenerateSingleBitmapCode(Code& code, const ttlib::cstr& description)
     {
         if (code.is_cpp())
         {
-            code.Function("wxImage(");
+            code.Add("wxImage(");
 
             ttlib::cstr name(parts[IndexImage].filename());
             name.remove_extension();
@@ -222,7 +222,7 @@ void GenerateSingleBitmapCode(Code& code, const ttlib::cstr& description)
             name.make_relative(path);
             name.backslashestoforward();
 
-            code.Str("wx.Bitmap(").QuotedString(name) += ")";
+            code.Str("wx.Image(").QuotedString(name) += ")";
         }
     }
     else if (parts[IndexImage].empty())
@@ -254,12 +254,28 @@ void GenerateSingleBitmapCode(Code& code, const ttlib::cstr& description)
         {
             if (auto bundle = GetProject()->GetPropertyImageBundle(description); bundle && bundle->lst_filenames.size())
             {
-                ttlib::cstr name(bundle->lst_filenames[0]);
-                name.make_absolute();
-                auto path = MakePythonPath(code.node());
-                name.make_relative(path);
-                name.backslashestoforward();
-                code.Str("wx.Bitmap(").QuotedString(name) += ")";
+                bool is_embed_success = false;
+
+                if (parts[IndexType].starts_with("Embed"))
+                {
+                    if (auto embed = GetProject()->GetEmbeddedImage(bundle->lst_filenames[0]); embed)
+                    {
+                        code.CheckLineLength(embed->array_name.size() + sizeof(".Bitmap)"));
+                        AddPythonImageName(code, embed);
+                        code += ".Bitmap)";
+                        is_embed_success = true;
+                    }
+                }
+
+                if (!is_embed_success)
+                {
+                    ttlib::cstr name(bundle->lst_filenames[0]);
+                    name.make_absolute();
+                    auto path = MakePythonPath(code.node());
+                    name.make_relative(path);
+                    name.backslashestoforward();
+                    code.Str("wx.Bitmap(").QuotedString(name) += ")";
+                }
             }
         }
     }

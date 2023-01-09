@@ -18,8 +18,8 @@ class XrcCompareBase : public wxDialog
 {
 public:
     XrcCompareBase() {}
-    XrcCompareBase(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title =
-        "Compare C++/XRC Generated UI", const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
+    XrcCompareBase(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "Compare C++/XRC Generated UI",
+        const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER, const wxString &name = wxDialogNameStr)
     {
         Create(parent, id, title, pos, size, style, name);

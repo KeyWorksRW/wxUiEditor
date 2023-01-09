@@ -4,6 +4,7 @@
   <node
     class="Project"
     art_directory="../art_src"
+    cpp_line_length="120"
     generate_cmake="1"
     wxWidgets_version="3.1.6">
     <node

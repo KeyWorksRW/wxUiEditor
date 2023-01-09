@@ -14,7 +14,7 @@
 #include "colourprop_base.h"
 
 bool ColourPropBase::Create(wxWindow* parent, wxWindowID id, const wxString& title,
-        const wxPoint& pos, const wxSize& size, long style, const wxString &name)
+    const wxPoint& pos, const wxSize& size, long style, const wxString &name)
 {
     if (!wxDialog::Create(parent, id, title, pos, size, style, name))
         return false;
@@ -52,8 +52,8 @@ bool ColourPropBase::Create(wxWindow* parent, wxWindowID id, const wxString& tit
     m_staticbox_custom = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, m_radio_custom), wxVERTICAL);
     m_staticbox_custom->GetStaticBox()->Enable(false);
 
-    m_colourPicker = new wxColourPickerCtrl(m_staticbox_custom->GetStaticBox(), wxID_ANY, *wxBLACK,
-        wxDefaultPosition, wxDefaultSize, wxCLRP_USE_TEXTCTRL);
+    m_colourPicker = new wxColourPickerCtrl(m_staticbox_custom->GetStaticBox(), wxID_ANY, *wxBLACK, wxDefaultPosition,
+        wxDefaultSize, wxCLRP_USE_TEXTCTRL);
     m_colourPicker->Enable(false);
     m_staticbox_custom->Add(m_colourPicker, wxSizerFlags().Border(wxALL));
 

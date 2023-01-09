@@ -34,8 +34,8 @@ MenuBarTools::MenuBarTools() : wxMenu()
 
     auto* menu_item = Append(gen_tool, "Add Tool", "Insert a normal button tool", wxITEM_NORMAL);
     menu_item->SetBitmap(wxue_img::bundle_tool_png());
-    auto* menu_item_2 = Append(gen_tool_dropdown, "Add Dropdown",
-        "Add Dropdown tool that you can add menu items to.", wxITEM_NORMAL);
+    auto* menu_item_2 = Append(gen_tool_dropdown, "Add Dropdown", "Add Dropdown tool that you can add menu items to.",
+        wxITEM_NORMAL);
     menu_item_2->SetBitmap(wxue_img::bundle_tool_dropdown_png());
     auto* menu_item_4 = Append(gen_toolSeparator, "Add Space", "Add space to separate tools", wxITEM_NORMAL);
     menu_item_4->SetBitmap(wxue_img::bundle_toolspacer_png());

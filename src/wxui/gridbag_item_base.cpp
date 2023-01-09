@@ -14,7 +14,7 @@
 #include "gridbag_item_base.h"
 
 bool GridBagItemBase::Create(wxWindow* parent, wxWindowID id, const wxString& title,
-        const wxPoint& pos, const wxSize& size, long style, const wxString &name)
+    const wxPoint& pos, const wxSize& size, long style, const wxString &name)
 {
     if (!wxDialog::Create(parent, id, title, pos, size, style, name))
         return false;
@@ -27,14 +27,13 @@ bool GridBagItemBase::Create(wxWindow* parent, wxWindowID id, const wxString& ti
     flex_grid_sizer->Add(staticText, wxSizerFlags().Center().Border(wxALL));
 
     m_spin_column = new wxSpinCtrl(this);
-    flex_grid_sizer->Add(m_spin_column,
-        wxSizerFlags().Border(wxRIGHT|wxTOP|wxBOTTOM, wxSizerFlags::GetDefaultBorder()));
+    flex_grid_sizer->Add(m_spin_column, wxSizerFlags().Border(wxRIGHT|wxTOP|wxBOTTOM, wxSizerFlags::GetDefaultBorder()));
 
     auto* staticText_2 = new wxStaticText(this, wxID_ANY, "Span c&olumns:");
     flex_grid_sizer->Add(staticText_2, wxSizerFlags().Center().Border(wxALL));
 
-    m_spin_span_column = new wxSpinCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize,
-        wxSP_ARROW_KEYS, 1, 100, 1);
+    m_spin_span_column = new wxSpinCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS,
+        1, 100, 1);
     flex_grid_sizer->Add(m_spin_span_column,
         wxSizerFlags().Border(wxRIGHT|wxTOP|wxBOTTOM, wxSizerFlags::GetDefaultBorder()));
 
@@ -42,14 +41,13 @@ bool GridBagItemBase::Create(wxWindow* parent, wxWindowID id, const wxString& ti
     flex_grid_sizer->Add(staticText_3, wxSizerFlags().Center().Border(wxALL));
 
     m_spin_row = new wxSpinCtrl(this);
-    flex_grid_sizer->Add(m_spin_row,
-        wxSizerFlags().Border(wxRIGHT|wxTOP|wxBOTTOM, wxSizerFlags::GetDefaultBorder()));
+    flex_grid_sizer->Add(m_spin_row, wxSizerFlags().Border(wxRIGHT|wxTOP|wxBOTTOM, wxSizerFlags::GetDefaultBorder()));
 
     auto* staticText_4 = new wxStaticText(this, wxID_ANY, "Span ro&ws:");
     flex_grid_sizer->Add(staticText_4, wxSizerFlags().Center().Border(wxALL));
 
-    m_spin_span_row = new wxSpinCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize,
-        wxSP_ARROW_KEYS, 1, 100, 1);
+    m_spin_span_row = new wxSpinCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 1,
+        100, 1);
     flex_grid_sizer->Add(m_spin_span_row,
         wxSizerFlags().Border(wxRIGHT|wxTOP|wxBOTTOM, wxSizerFlags::GetDefaultBorder()));
 
@@ -62,8 +60,7 @@ bool GridBagItemBase::Create(wxWindow* parent, wxWindowID id, const wxString& ti
 
     auto* box_sizer = new wxBoxSizer(wxHORIZONTAL);
 
-    m_radio_column = new wxRadioButton(this, wxID_ANY, "Insert &column", wxDefaultPosition, wxDefaultSize,
-        wxRB_GROUP);
+    m_radio_column = new wxRadioButton(this, wxID_ANY, "Insert &column", wxDefaultPosition, wxDefaultSize, wxRB_GROUP);
     m_radio_column->Hide();
     box_sizer->Add(m_radio_column, wxSizerFlags().Border(wxALL));
 

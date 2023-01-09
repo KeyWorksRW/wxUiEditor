@@ -33,7 +33,7 @@ namespace wxue_img
 }
 
 bool ImportBase::Create(wxWindow* parent, wxWindowID id, const wxString& title,
-        const wxPoint& pos, const wxSize& size, long style, const wxString &name)
+    const wxPoint& pos, const wxSize& size, long style, const wxString &name)
 {
     if (!wxDialog::Create(parent, id, title, pos, size, style, name))
         return false;
@@ -50,8 +50,7 @@ bool ImportBase::Create(wxWindow* parent, wxWindowID id, const wxString& title,
         wxDefaultPosition, wxDefaultSize, wxRB_GROUP);
     flex_grid_sizer->Add(m_radio_wxCrafter, wxSizerFlags().Border(wxALL));
 
-    m_radio_wxFormBuilder = new wxRadioButton(m_import_staticbox->GetStaticBox(), wxID_ANY,
-        "wx&FormBuilder Project(s)");
+    m_radio_wxFormBuilder = new wxRadioButton(m_import_staticbox->GetStaticBox(), wxID_ANY, "wx&FormBuilder Project(s)");
     flex_grid_sizer->Add(m_radio_wxFormBuilder, wxSizerFlags().Border(wxALL));
 
     m_radio_wxGlade = new wxRadioButton(m_import_staticbox->GetStaticBox(), wxID_ANY, "wx&Glade Project(s)");
@@ -84,8 +83,7 @@ bool ImportBase::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 
     m_btnAddFile = new wxButton(m_import_staticbox->GetStaticBox(), wxID_ANY, "&Directory...");
     m_btnAddFile->SetToolTip("You can add multiple formbuilder projects to a single wxUiEdtior project.");
-    box_sizer6->Add(m_btnAddFile,
-        wxSizerFlags().Center().Border(wxLEFT|wxRIGHT|wxTOP, wxSizerFlags::GetDefaultBorder()));
+    box_sizer6->Add(m_btnAddFile, wxSizerFlags().Center().Border(wxLEFT|wxRIGHT|wxTOP, wxSizerFlags::GetDefaultBorder()));
 
     m_static_cwd = new wxStaticText(m_import_staticbox->GetStaticBox(), wxID_ANY, "...", wxDefaultPosition,
         wxDefaultSize, wxST_ELLIPSIZE_MIDDLE);
@@ -96,8 +94,7 @@ bool ImportBase::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     auto* box_sizer7 = new wxBoxSizer(wxVERTICAL);
 
     m_staticImportList = new wxStaticText(m_import_staticbox->GetStaticBox(), wxID_ANY, "&Files:");
-    box_sizer7->Add(m_staticImportList,
-        wxSizerFlags().Border(wxLEFT|wxRIGHT|wxTOP, wxSizerFlags::GetDefaultBorder()));
+    box_sizer7->Add(m_staticImportList, wxSizerFlags().Border(wxLEFT|wxRIGHT|wxTOP, wxSizerFlags::GetDefaultBorder()));
 
     m_checkListProjects = new wxCheckListBox(m_import_staticbox->GetStaticBox(), wxID_ANY);
     m_checkListProjects->SetMinSize(wxSize(-1, 240));

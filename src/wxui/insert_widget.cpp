@@ -14,11 +14,10 @@
 #include "insert_widget.h"
 
 bool InsertWidget::Create(wxWindow* parent, wxWindowID id, const wxString& title,
-        const wxPoint& pos, const wxSize& size, long style, const wxString &name)
+    const wxPoint& pos, const wxSize& size, long style, const wxString &name)
 {
     if (!wxDialog::Create(parent, id, title, pos, size, style, name))
         return false;
-
     SetIcon(wxArtProvider::GetBitmapBundle(wxART_EDIT, wxART_MENU).GetIconFor(this));
 
     auto* box_sizer = new wxBoxSizer(wxVERTICAL);
@@ -47,8 +46,7 @@ bool InsertWidget::Create(wxWindow* parent, wxWindowID id, const wxString& title
 
     auto* box_sizer_3 = new wxBoxSizer(wxHORIZONTAL);
 
-    m_listbox = new wxListBox(this, wxID_ANY, wxDefaultPosition, wxSize(-1, 300), 0, nullptr, wxLB_SINGLE|
-        wxLB_SORT);
+    m_listbox = new wxListBox(this, wxID_ANY, wxDefaultPosition, wxSize(-1, 300), 0, nullptr, wxLB_SINGLE|wxLB_SORT);
     box_sizer_3->Add(m_listbox, wxSizerFlags(1).Expand().Border(wxALL));
 
     box_sizer->Add(box_sizer_3, wxSizerFlags(1).Expand().Border(wxALL));

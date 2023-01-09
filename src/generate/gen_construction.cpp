@@ -153,17 +153,16 @@ void BaseCodeGenerator::GenConstruction(Node* node)
     else if (parent->IsToolBar() && !node->isType(type_tool) && !node->isType(type_tool_separator))
     {
         ttlib::cstr code;
+        gen_code.clear();
         if (parent->isType(type_toolbar_form))
-            code << "AddControl(" << node->prop_as_string(prop_var_name) << ");";
+            gen_code.Str("AddControl(").Str(prop_var_name).EndFunction();
         else
-            code << parent->prop_as_string(prop_var_name) << LangPtr() << "AddControl("
-                 << node->prop_as_string(prop_var_name) << ");";
+            gen_code.Str(parent->as_string(prop_var_name)).Function("AddControl(").Str(prop_var_name).EndFunction();
         m_source->writeLine(code);
     }
     else if (node->gen_type() == type_widget && parent->isGen(gen_wxChoicebook))
     {
         gen_code.clear();
-        ttlib::cstr code;
         gen_code.ParentName().Function("GetControlSizer()").Function("Add(").NodeName();
         gen_code.CheckLineLength().Comma().Add("wxSizerFlags()").Add(".Expand().Border(").Add("wxALL)").EndFunction();
         m_source->writeLine(gen_code.m_code);

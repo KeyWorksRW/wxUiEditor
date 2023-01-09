@@ -27,14 +27,6 @@ class FontProperty;
 
 // Common component functions
 
-// Flags are added with no space around '|' character.
-inline void AddBitFlag(ttlib::cstr& strFlags, ttlib::sview flag)
-{
-    if (strFlags.size())
-        strFlags << '|';
-    strFlags << flag;
-}
-
 // Places the string in wxString::FromUTF8(), adds C++ escapes around any characters the
 // compiler wouldn't accept as a normal part of a string, and wraps it all in _() if
 // prop_internationalize is true.
@@ -47,10 +39,6 @@ ttlib::cstr GenerateQuotedString(Node* node, GenEnum::PropName prop_name);
 // Add C++ escapes around any characters the compiler wouldn't accept as a normal part of a string.
 ttlib::cstr ConvertToCodeString(const ttlib::cstr& text);
 
-// Creates a string using either wxSystemSettings::GetColour(name) or wxColour(r, g, b).
-// Generates wxNullColour if the property is empty.
-ttlib::cstr GenerateColourCode(Node* node, GenEnum::PropName prop_name);
-
 // Insert a required include file into either src or hdr set (depending on prop_class_access)
 void InsertGeneratorInclude(Node* node, const std::string& include, std::set<std::string>& set_src,
                             std::set<std::string>& set_hdr);
@@ -58,13 +46,6 @@ void InsertGeneratorInclude(Node* node, const std::string& include, std::set<std
 // This is *NOT* the same as get_node_name() -- this will handle wxStaticBox and
 // wxCollapsiblePane parents as well as "normal" parents
 ttlib::cstr GetParentName(Node* node);
-
-// Check for pos, size, flags, window_flags, and window name, and generate code if needed
-// starting with a comma, e.g. -- ", wxPoint(x, y), wxSize(x, y), styles, name);"
-//
-// If the only style specified is def_style, then it will not be added.
-void GeneratePosSizeFlags(Node* node, ttlib::cstr& code, bool uses_def_validator = false,
-                          ttlib::sview def_style = tt_empty_cstr);
 
 // Used for controls that need to call SetBitmap(bitmap). Returns true if wxVector generated.
 //
@@ -105,18 +86,6 @@ void GenStyle(Node* node, ttlib::cstr& code, const char* prefix = nullptr);
 // If style is a friendly name, add the prefix parameter to prefix lookups.
 int GetStyleInt(Node* node, const char* prefix = nullptr);
 
-// Version of GenAdditionalCode() specifically for forms
-ttlib::cstr GenFormCode(GenEnum::GenCodeType command, Node* node);
-
-ttlib::cstr GenFormSettings(Node* node);
-
-// Generates font, foreground, and background settings if any of them have been specified.
-ttlib::cstr GenFontColourSettings(Node* node);
-
-// Generates " = new class(" -- with class being the derived_class (if specified) or the
-// normal class name. If use_generic specified, Generic will be inserted into the class name.
-ttlib::cstr GenerateNewAssignment(Node* node, bool use_generic = false);
-
 // This generates code for the header file for Get() and Set() functions using function names
 // specified by the user in the project file.
 std::optional<ttlib::cstr> GenGetSetCode(Node* node);
@@ -134,9 +103,6 @@ ttlib::cstr GenToolCode(Node* node, ttlib::sview BitmapCode = "");
 //
 // wxSize will be converted to dialog units if the size contains a 'd' character.
 ttlib::cstr GenerateWxSize(Node* node, PropName prop);
-
-// Generates -> for C++ and . for Python
-const char* LangPtr(int language);
 
 /////////////////////////////////////// Code-enabled Functions ///////////////////////////////////////
 

@@ -97,7 +97,7 @@ std::optional<ttlib::sview> ToggleButtonGenerator::CommonConstruction(Code& code
     code.NodeName().CreateClass();
     code.ValidParentName().Comma().as_string(prop_id).Comma();
 
-    // If prop_markup is set, then the label will be set in GenSettings()
+    // If prop_markup is set, then the label will be set in CommonSettings()
     if (code.HasValue(prop_label) && !code.IsTrue(prop_markup))
     {
         code.QuotedString(prop_label);

@@ -14,7 +14,7 @@
 
 // clang-format off
 
-// These are the types that need to have generator->GenAdditionalCode() called after the type is constructed
+// These are the types that need to have generator->CommonAdditionalCode() called after the type is constructed
 GenType aftercode_types[] = {
     type_menubar,
     type_menu,
@@ -67,12 +67,6 @@ void BaseCodeGenerator::GenConstruction(Node* node)
     else
     {
         scode = generator->CommonConstruction(gen_code);
-        if (!scode && is_cpp())
-        {
-            if (result = generator->GenConstruction(node); result)
-                scode = *result;
-        }
-
         if (scode)
         {
             // Don't add blank lines when adding tools to a toolbar, or creating menu items
@@ -104,12 +98,6 @@ void BaseCodeGenerator::GenConstruction(Node* node)
             else
             {
                 scode = child->GetGenerator()->CommonConstruction(child_code);
-                if (!scode && is_cpp())
-                {
-                    result = child->GetGenerator()->GenConstruction(child.get());
-                    if (result)
-                        scode = *result;
-                }
                 if (scode)
                     m_source->writeLine(scode.value());
             }
@@ -141,12 +129,6 @@ void BaseCodeGenerator::GenConstruction(Node* node)
                 else
                 {
                     scode = gen->CommonConstruction(child_code);
-                    if (!scode && is_cpp())
-                    {
-                        result = gen->GenConstruction(child.get());
-                        if (result)
-                            scode = *result;
-                    }
                     if (scode)
                         m_source->writeLine(scode.value());
                 }
@@ -162,12 +144,6 @@ void BaseCodeGenerator::GenConstruction(Node* node)
                     {
                         gen_code.clear();
                         scode = gen->CommonConstruction(gen_code);
-                        if (!scode && is_cpp())
-                        {
-                            result = gen->GenConstruction(grandchild.get());
-                            if (result)
-                                scode = *result;
-                        }
                         if (scode)
                             m_source->writeLine(scode.value());
                     }
@@ -181,8 +157,6 @@ void BaseCodeGenerator::GenConstruction(Node* node)
                             {
                                 gen_code.clear();
                                 result = gen->CommonConstruction(gen_code);
-                                if (!result && is_cpp())
-                                    result = gen->GenConstruction(great_grandchild.get());
                                 if (result)
                                     m_source->writeLine(result.value());
                             }
@@ -323,16 +297,6 @@ void BaseCodeGenerator::GenConstruction(Node* node)
                 else
                 {
                     scode = generator->CommonAdditionalCode(gen_code, code_after_children);
-                    if (!scode)
-                    {
-                        if (m_language == GEN_LANG_CPLUSPLUS)
-                            result = generator->GenAdditionalCode(code_after_children, node);
-                        else
-                            result = generator->GenAdditionalCode(code_after_children, node, m_language);
-                        if (result)
-                            scode = result.value();
-                    }
-
                     if (scode && scode.value().size())
                     {
                         m_source->writeLine(scode.value(), indent::auto_keep_whitespace);
@@ -465,7 +429,6 @@ void BaseCodeGenerator::EndBrace()
 
 void BaseCodeGenerator::GenSettings(Node* node)
 {
-    size_t auto_indent = indent::auto_keep_whitespace;
     auto generator = node->GetGenerator();
 
     Code code(node, m_language);
@@ -484,17 +447,6 @@ void BaseCodeGenerator::GenSettings(Node* node)
             if (code.size())
             {
                 m_source->writeLine(code);
-            }
-        }
-        else
-        {
-            if (m_language == GEN_LANG_CPLUSPLUS)
-                result = generator->GenSettings(node, auto_indent);
-            else
-                result = generator->GenSettings(node, auto_indent, m_language);
-            if (result)
-            {
-                m_source->writeLine(result.value(), auto_indent);
             }
         }
     }
@@ -529,20 +481,10 @@ bool BaseCodeGenerator::GenAfterChildren(Node* node, bool need_closing_brace)
         scode = generator->CommonAfterChildren(gen_code);
     }
 
-    std::optional<ttlib::cstr> result;
-    if (!scode)
-    {
-        if (is_cpp())
-            result = generator->GenAfterChildren(node);
-        if (result)
-            scode = result.value();
-    }
-
     if (scode)
     {
         // If the node needs to write code after all children are constructed, then create the children first, then write
-        // the post-child code. Note that in this case, no further handling of the node is done, so GenAfterChildren() is
-        // required to handle all post-child construction code.
+        // the post-child code.
 
         for (const auto& child: node->GetChildNodePtrs())
         {
@@ -621,21 +563,6 @@ void BaseCodeGenerator::GenParentSizer(Node* node, bool need_closing_brace)
     else
     {
         auto scode = generator->CommonAdditionalCode(code, code_after_children);
-        std::optional<ttlib::cstr> result;
-        if (!scode)
-        {
-            if (m_language == GEN_LANG_CPLUSPLUS)
-            {
-                if (result = generator->GenAdditionalCode(code_after_children, node); result)
-                    scode = result.value();
-            }
-            else
-            {
-                if (result = generator->GenAdditionalCode(code_after_children, node, m_language); result)
-                    scode = result.value();
-            }
-        }
-
         if (scode && scode.value().size())
         {
             m_source->writeLine(scode.value(), indent::auto_keep_whitespace);

@@ -75,7 +75,6 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
     m_menuFile->Append(menuItem2);
 
     m_submenu_recent = new wxMenu();
-
     m_menuFile->AppendSubMenu(m_submenu_recent, "Open &Recent");
     auto* menu_import = new wxMenuItem(m_menuFile, wxID_ANY, "&Import...");
     menu_import->SetBitmap(wxue_img::bundle_import_svg(16, 16));
@@ -94,7 +93,6 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
     m_menuFile->AppendSeparator();
 
     auto* submenu = new wxMenu();
-
     auto* menu_item_7 = new wxMenuItem(submenu, id_AppendCrafter, "wxCrafter Project...",
         "Append wxCrafter project into current project", wxITEM_NORMAL);
     submenu->Append(menu_item_7);
@@ -169,7 +167,6 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
     m_menuEdit->AppendSeparator();
 
     auto* submenu3 = new wxMenu();
-
     auto* menu_item4 = new wxMenuItem(submenu3, id_MoveUp, "Up\tAlt+Up", "Moves selected item up", wxITEM_NORMAL);
     menu_item4->SetBitmap(wxArtProvider::GetBitmapBundle(wxART_GO_UP, wxART_MENU));
 
@@ -190,7 +187,6 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
     m_menuEdit->AppendSubMenu(submenu3, "Move");
 
     auto* submenu2 = new wxMenu();
-
     auto* menu_item8 = new wxMenuItem(submenu2, id_AlignLeft, "&Left\tAlt+Shift+Left", "Align selected item to the left",
         wxITEM_CHECK);
     menu_item8->SetBitmap(wxueBundleSVG(wxue_img::alignleft_svg, 688, 1442, wxSize(16, 16)));
@@ -226,7 +222,6 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
     m_menuEdit->AppendSubMenu(submenu2, "Align");
 
     auto* submenu4 = new wxMenu();
-
     auto* menu_item14 = new wxMenuItem(submenu4, id_BorderLeft, "&Left", "Toggle border on the left side of the item",
         wxITEM_CHECK);
     menu_item14->SetBitmap(wxueBundleSVG(wxue_img::left_svg, 585, 1857, wxSize(16, 16)));

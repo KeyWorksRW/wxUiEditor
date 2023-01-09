@@ -148,15 +148,6 @@ bool PageCtrlGenerator::ConstructionCode(Code& code)
             std::optional<ttlib::cstr> result;
 
             scode = child_generator->CommonConstruction(gen_code);
-            if (!scode)
-            {
-                result = child_generator->GenConstruction(child_node);
-                if (!result)
-                {
-                    return true;
-                }
-                scode = result.value();
-            }
             if (scode)
             {
                 code += gen_code.m_code;

@@ -1242,14 +1242,9 @@ void BaseCodeGenerator::GenerateClassHeader(Node* form_node, const EventVector& 
     {
         m_header->writeLine(code);
     }
-    else if (auto result = generator->GenAdditionalCode(code_base_class, form_node); result)
-    {
-        code += result.value();
-        m_header->writeLine(code.GetCode());
-    }
     else
     {
-        FAIL_MSG("All form generators need to support code_base_class command to provide the class name to derive from.");
+        FAIL_MSG("All form generators need to support BaseClassNameCode() to provide the class name to derive from.");
 
         // The only way this would be valid is if the base class didn't derive from anything.
         m_header->writeLine(ttlib::cstr() << "class " << form_node->prop_as_string(prop_class_name));
@@ -1306,10 +1301,6 @@ void BaseCodeGenerator::GenerateClassHeader(Node* form_node, const EventVector& 
     else if (generator->AdditionalCode(code, code_header))
     {
         m_header->writeLine(code);
-    }
-    else if (auto result = generator->GenAdditionalCode(code_header, form_node); result)
-    {
-        m_header->writeLine(result.value(), indent::auto_keep_whitespace);
     }
     m_header->SetLastLineBlank();
 
@@ -1427,41 +1418,6 @@ void BaseCodeGenerator::GenerateClassConstructor(Node* form_node, const EventVec
             m_source->writeLine(code);
             m_source->writeLine();
         }
-        else
-        {
-            size_t auto_indent = indent::auto_no_whitespace;
-            if (auto result = generator->GenSettings(form_node, auto_indent); result)
-            {
-                if (result.value().size())
-                {
-                    m_source->writeLine(result.value(), indent::auto_keep_whitespace);
-                    m_source->writeLine();
-                }
-            }
-        }
-    }
-    else if (!generator->GenConstruction(form_node, this))
-    {
-        if (auto result = generator->GenConstruction(form_node); result)
-        {
-            m_source->writeLine(result.value(), indent::none);
-            m_source->Indent();
-        }
-
-        if (form_node->isGen(gen_wxFrame))
-        {
-            GenerateHandlers();
-        }
-
-        size_t auto_indent = indent::auto_no_whitespace;
-        if (auto result = generator->GenSettings(form_node, auto_indent); result)
-        {
-            if (result.value().size())
-            {
-                m_source->writeLine(result.value(), indent::auto_keep_whitespace);
-                m_source->writeLine();
-            }
-        }
     }
     else
     {
@@ -1499,14 +1455,6 @@ void BaseCodeGenerator::GenerateClassConstructor(Node* form_node, const EventVec
         {
             m_source->writeLine();
             m_source->writeLine(code);
-        }
-    }
-    else if (auto result = generator->GenAdditionalCode(code_after_children, form_node); result)
-    {
-        if (result.value().size())
-        {
-            m_source->writeLine();
-            m_source->writeLine(result.value(), indent::none);
         }
     }
 

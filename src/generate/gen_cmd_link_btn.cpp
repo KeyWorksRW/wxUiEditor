@@ -60,7 +60,7 @@ wxObject* CommandLinkBtnGenerator::CreateMockup(Node* node, wxObject* parent)
     return widget;
 }
 
-std::optional<ttlib::sview> CommandLinkBtnGenerator::CommonConstruction(Code& code)
+bool CommandLinkBtnGenerator::ConstructionCode(Code& code)
 {
     if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
@@ -68,10 +68,10 @@ std::optional<ttlib::sview> CommandLinkBtnGenerator::CommonConstruction(Code& co
     code.ValidParentName().Comma().as_string(prop_id).Comma().QuotedString(prop_main_label);
     code.Comma().QuotedString(prop_note).PosSizeFlags(true);
 
-    return code.m_code;
+    return true;
 }
 
-std::optional<ttlib::sview> CommandLinkBtnGenerator::CommonSettings(Code& code)
+bool CommandLinkBtnGenerator::SettingsCode(Code& code)
 {
     if (code.IsTrue(prop_default))
     {
@@ -90,7 +90,7 @@ std::optional<ttlib::sview> CommandLinkBtnGenerator::CommonSettings(Code& code)
         else
             PythonBtnBimapCode(code);
     }
-    return code.m_code;
+    return true;
 }
 
 bool CommandLinkBtnGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)

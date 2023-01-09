@@ -29,7 +29,7 @@ wxObject* RichTextCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
     return widget;
 }
 
-std::optional<ttlib::sview> RichTextCtrlGenerator::CommonConstruction(Code& code)
+bool RichTextCtrlGenerator::ConstructionCode(Code& code)
 {
     if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
@@ -37,10 +37,10 @@ std::optional<ttlib::sview> RichTextCtrlGenerator::CommonConstruction(Code& code
     code.ValidParentName().Comma().as_string(prop_id).Comma().QuotedString(prop_value);
     code.PosSizeFlags(true);
 
-    return code.m_code;
+    return true;
 }
 
-std::optional<ttlib::sview> RichTextCtrlGenerator::CommonSettings(Code& code)
+bool RichTextCtrlGenerator::SettingsCode(Code& code)
 {
     if (code.HasValue(prop_hint))
     {
@@ -52,7 +52,7 @@ std::optional<ttlib::sview> RichTextCtrlGenerator::CommonSettings(Code& code)
         code.Eol(eol_if_needed).NodeName().Function("SetFocus(").EndFunction();
     }
 
-    return code.m_code;
+    return true;
 }
 
 int RichTextCtrlGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)

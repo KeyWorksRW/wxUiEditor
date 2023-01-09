@@ -39,7 +39,7 @@ void ListbookGenerator::OnPageChanged(wxListbookEvent& event)
     event.Skip();
 }
 
-std::optional<ttlib::sview> ListbookGenerator::CommonConstruction(Code& code)
+bool ListbookGenerator::ConstructionCode(Code& code)
 {
     if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
@@ -52,7 +52,7 @@ std::optional<ttlib::sview> ListbookGenerator::CommonConstruction(Code& code)
         BookCtorAddImagelist(code.m_code, code.m_node);
     }
 
-    return code.m_code;
+    return true;
 }
 
 bool ListbookGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)

@@ -26,7 +26,7 @@ wxObject* StaticLineGenerator::CreateMockup(Node* node, wxObject* parent)
     return widget;
 }
 
-std::optional<ttlib::sview> StaticLineGenerator::CommonConstruction(Code& code)
+bool StaticLineGenerator::ConstructionCode(Code& code)
 {
     if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
@@ -42,7 +42,7 @@ std::optional<ttlib::sview> StaticLineGenerator::CommonConstruction(Code& code)
         code.EndFunction();
     }
 
-    return code.m_code;
+    return true;
 }
 
 bool StaticLineGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)

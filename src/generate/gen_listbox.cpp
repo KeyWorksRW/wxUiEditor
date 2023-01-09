@@ -45,7 +45,7 @@ wxObject* ListBoxGenerator::CreateMockup(Node* node, wxObject* parent)
     return widget;
 }
 
-std::optional<ttlib::sview> ListBoxGenerator::CommonConstruction(Code& code)
+bool ListBoxGenerator::ConstructionCode(Code& code)
 {
     if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
@@ -69,10 +69,10 @@ std::optional<ttlib::sview> ListBoxGenerator::CommonConstruction(Code& code)
     }
     code.EndFunction();
 
-    return code.m_code;
+    return true;
 }
 
-std::optional<ttlib::sview> ListBoxGenerator::CommonSettings(Code& code)
+bool ListBoxGenerator::SettingsCode(Code& code)
 {
     if (code.IsTrue(prop_focus))
     {
@@ -101,7 +101,7 @@ std::optional<ttlib::sview> ListBoxGenerator::CommonSettings(Code& code)
             }
         }
     }
-    return code.m_code;
+    return true;
 }
 
 bool ListBoxGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)

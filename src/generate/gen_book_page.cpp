@@ -30,7 +30,7 @@ wxObject* BookPageGenerator::CreateMockup(Node* node, wxObject* parent)
     {
         auto grandparent = node_parent->GetParent();
         ASSERT(grandparent);
-        ASSERT(grandparent->isGen(gen_wxTreebook));
+        ASSERT(grandparent && grandparent->isGen(gen_wxTreebook));
 
         auto grand_window = GetMockup()->GetMockupContent()->Get_wxObject(grandparent);
         widget = new wxPanel(wxStaticCast(grand_window, wxWindow), wxID_ANY, DlgPoint(parent, node, prop_pos),
@@ -193,7 +193,7 @@ wxObject* BookPageGenerator::CreateMockup(Node* node, wxObject* parent)
     return widget;
 }
 
-std::optional<ttlib::sview> BookPageGenerator::CommonConstruction(Code& code)
+bool BookPageGenerator::ConstructionCode(Code& code)
 {
     if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
@@ -276,7 +276,7 @@ std::optional<ttlib::sview> BookPageGenerator::CommonConstruction(Code& code)
         code.EndFunction();
     }
 
-    return code.m_code;
+    return true;
 }
 
 bool BookPageGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)

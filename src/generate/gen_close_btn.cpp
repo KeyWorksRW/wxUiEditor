@@ -26,7 +26,7 @@ wxObject* CloseButtonGenerator::CreateMockup(Node* /* node */, wxObject* parent)
     return widget;
 }
 
-std::optional<ttlib::sview> CloseButtonGenerator::CommonConstruction(Code& code)
+bool CloseButtonGenerator::ConstructionCode(Code& code)
 {
     if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
@@ -36,7 +36,7 @@ std::optional<ttlib::sview> CloseButtonGenerator::CommonConstruction(Code& code)
         code.Comma().QuotedString(prop_window_name);
     code.EndFunction();
 
-    return code.m_code;
+    return true;
 }
 
 bool CloseButtonGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)

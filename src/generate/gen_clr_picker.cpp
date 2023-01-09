@@ -26,7 +26,7 @@ wxObject* ColourPickerGenerator::CreateMockup(Node* node, wxObject* parent)
     return widget;
 }
 
-std::optional<ttlib::sview> ColourPickerGenerator::CommonConstruction(Code& code)
+bool ColourPickerGenerator::ConstructionCode(Code& code)
 {
     if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
@@ -40,7 +40,7 @@ std::optional<ttlib::sview> ColourPickerGenerator::CommonConstruction(Code& code
     }
     code.PosSizeFlags(true, "wxCLRP_DEFAULT_STYLE");
 
-    return code.m_code;
+    return true;
 }
 
 bool ColourPickerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)

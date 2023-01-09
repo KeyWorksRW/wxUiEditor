@@ -12,16 +12,16 @@
 
 #include "gen_menu.h"
 
-std::optional<ttlib::sview> MenuGenerator::CommonConstruction(Code& code)
+bool MenuGenerator::ConstructionCode(Code& code)
 {
     if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
     code.NodeName().CreateClass().EndFunction();
 
-    return code.m_code;
+    return true;
 }
 
-std::optional<ttlib::sview> MenuGenerator::CommonAdditionalCode(Code& code, GenEnum::GenCodeType cmd)
+bool MenuGenerator::AdditionalCode(Code& code, GenEnum::GenCodeType cmd)
 {
     if (cmd == code_after_children)
     {
@@ -42,7 +42,7 @@ std::optional<ttlib::sview> MenuGenerator::CommonAdditionalCode(Code& code, GenE
             // The parent can disable generation of Bind by shutting off the context menu
             if (!node->GetParent()->as_bool(prop_context_menu))
             {
-                return code.m_code;
+                return true;
             }
 
             if (parent_type == type_form || parent_type == type_frame_form || parent_type == type_wizard)
@@ -58,7 +58,7 @@ std::optional<ttlib::sview> MenuGenerator::CommonAdditionalCode(Code& code, GenE
         }
     }
 
-    return code.m_code;
+    return true;
 }
 
 bool MenuGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)

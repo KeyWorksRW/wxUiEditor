@@ -56,7 +56,7 @@ wxObject* HtmlWindowGenerator::CreateMockup(Node* node, wxObject* parent)
     return widget;
 }
 
-std::optional<ttlib::sview> HtmlWindowGenerator::CommonConstruction(Code& code)
+bool HtmlWindowGenerator::ConstructionCode(Code& code)
 {
     if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
@@ -67,10 +67,10 @@ std::optional<ttlib::sview> HtmlWindowGenerator::CommonConstruction(Code& code)
     // not needed.
     code.m_code.Replace(", wxID_ANY)", ")");
 
-    return code.m_code;
+    return true;
 }
 
-std::optional<ttlib::sview> HtmlWindowGenerator::CommonSettings(Code& code)
+bool HtmlWindowGenerator::SettingsCode(Code& code)
 {
     if (code.IntValue(prop_html_borders) >= 0)
     {
@@ -88,7 +88,7 @@ std::optional<ttlib::sview> HtmlWindowGenerator::CommonSettings(Code& code)
         code.Eol(eol_if_needed).NodeName().Function("SetPage(").QuotedString(prop_html_url).EndFunction();
     }
 
-    return code.m_code;
+    return true;
 }
 
 int HtmlWindowGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)

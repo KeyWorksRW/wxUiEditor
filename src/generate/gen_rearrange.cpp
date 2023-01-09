@@ -49,7 +49,7 @@ wxObject* RearrangeCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
     return widget;
 }
 
-std::optional<ttlib::sview> RearrangeCtrlGenerator::CommonConstruction(Code& code)
+bool RearrangeCtrlGenerator::ConstructionCode(Code& code)
 {
     if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
@@ -85,10 +85,10 @@ std::optional<ttlib::sview> RearrangeCtrlGenerator::CommonConstruction(Code& cod
     }
     code.EndFunction();
 
-    return code.m_code;
+    return true;
 }
 
-std::optional<ttlib::sview> RearrangeCtrlGenerator::CommonSettings(Code& code)
+bool RearrangeCtrlGenerator::SettingsCode(Code& code)
 {
     if (code.IsTrue(prop_focus))
     {
@@ -156,7 +156,7 @@ std::optional<ttlib::sview> RearrangeCtrlGenerator::CommonSettings(Code& code)
             }
         }
     }
-    return code.m_code;
+    return true;
 }
 
 int RearrangeCtrlGenerator::GetRequiredVersion(Node* node)

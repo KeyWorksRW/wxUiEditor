@@ -73,7 +73,7 @@ wxObject* StatusBarGenerator::CreateMockup(Node* node, wxObject* parent)
     return widget;
 }
 
-std::optional<ttlib::sview> StatusBarGenerator::CommonConstruction(Code& code)
+bool StatusBarGenerator::ConstructionCode(Code& code)
 {
     Node* node = code.node();  // This is just for convenience
     int num_fields;
@@ -110,14 +110,14 @@ std::optional<ttlib::sview> StatusBarGenerator::CommonConstruction(Code& code)
 
     code.EndFunction();
 
-    return code.m_code;
+    return true;
 }
 
-std::optional<ttlib::sview> StatusBarGenerator::CommonSettings(Code& code)
+bool StatusBarGenerator::SettingsCode(Code& code)
 {
     // A single field can be represeted by 1 which uses the older style of setting.
     if (GetRequiredVersion(code.node()) <= minRequiredVer)
-        return code.m_code;
+        return true;
 
     auto fields = code.node()->as_statusbar_fields(prop_fields);
     ttlib::cstr widths, styles;
@@ -155,7 +155,7 @@ std::optional<ttlib::sview> StatusBarGenerator::CommonSettings(Code& code)
         }
         code.Str("]").EndFunction();
     }
-    return code.m_code;
+    return true;
 }
 
 int StatusBarGenerator::GetRequiredVersion(Node* node)

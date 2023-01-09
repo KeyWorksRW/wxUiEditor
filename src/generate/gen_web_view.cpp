@@ -29,7 +29,7 @@ wxObject* WebViewGenerator::CreateMockup(Node* node, wxObject* parent)
     return widget;
 }
 
-std::optional<ttlib::sview> WebViewGenerator::CommonConstruction(Code& code)
+bool WebViewGenerator::ConstructionCode(Code& code)
 {
     if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
@@ -40,7 +40,7 @@ std::optional<ttlib::sview> WebViewGenerator::CommonConstruction(Code& code)
     if (params_needed == nothing_needed)
     {
         code.EndFunction();
-        return code.m_code;
+        return true;
     }
     code.Comma().Pos().Comma().WxSize();
     if (params_needed & style_needed || params_needed & window_name_needed)
@@ -50,7 +50,7 @@ std::optional<ttlib::sview> WebViewGenerator::CommonConstruction(Code& code)
             code.Comma().QuotedString(prop_window_name);
     }
     code.EndFunction();
-    return code.m_code;
+    return true;
 }
 
 std::optional<ttlib::sview> WebViewGenerator::GenEvents(Code& code, NodeEvent* event, const std::string& class_name)
@@ -68,7 +68,7 @@ std::optional<ttlib::sview> WebViewGenerator::GenEvents(Code& code, NodeEvent* e
     }
     else
     {
-        return BaseGenerator::GenEvents(code, event, class_name);
+        return code.m_code;
     }
 }
 

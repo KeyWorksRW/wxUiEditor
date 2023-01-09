@@ -12,8 +12,8 @@
 class MenuGenerator : public BaseGenerator
 {
 public:
-    std::optional<ttlib::sview> CommonConstruction(Code& code) override;
-    std::optional<ttlib::sview> CommonAdditionalCode(Code& code, GenEnum::GenCodeType cmd) override;
+    bool ConstructionCode(Code& code) override;
+    bool AdditionalCode(Code& code, GenEnum::GenCodeType cmd) override;
 
     bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr) override;
 

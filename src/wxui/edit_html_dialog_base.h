@@ -28,8 +28,8 @@ public:
         Create(parent, id, title, pos, size, style, name);
     }
 
-    bool Create(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = wxEmptyString,
-        const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500, 400),
+    bool Create(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = wxEmptyString, const wxPoint& pos =
+        wxDefaultPosition, const wxSize& size = wxSize(500, 400),
         long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER, const wxString &name = wxDialogNameStr);
 
 protected:

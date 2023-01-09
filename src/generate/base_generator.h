@@ -101,56 +101,12 @@ public:
     // The GenCodeType parameter indicates what type of code is needed.
     virtual bool AdditionalCode(Code&, GenEnum::GenCodeType /* command */) { return false; }
 
-    // Generate the code used to construct the object using either C++ or Python
-    virtual std::optional<ttlib::sview> CommonConstruction(Code&) { return {}; }
-
-    // Generate code after any children have been constructed
-    //
-    // Code will be written with indent::auto_keep_whitespace set
-    virtual std::optional<ttlib::sview> CommonAfterChildren(Code&) { return {}; }
-
-    virtual std::optional<ttlib::sview> CommonSettings(Code&) { return {}; }
-    virtual std::optional<ttlib::sview> CommonAdditionalCode(Code&, GenEnum::GenCodeType /* command */) { return {}; }
-
-    // Generate the C++ code used to construct the object.
-    virtual std::optional<ttlib::cstr> GenConstruction(Node*) { return {}; }  //
-
-    // Generate the code needed to create a Python form class
-    virtual bool GenPythonForm(Code&) { return false; }
-
-    // Return true if all construction and settings code was written to src_code.
-    //
-    // This variant of GenConstruction requires the caller to write the ctor
-    // code, and is only called when output C++ code.
-    virtual bool GenConstruction(Node*, BaseCodeGenerator* /* code_gen */) { return false; }
-
-    // Override this to use a single GenConstruction() for all 4 languages
-    virtual std::optional<ttlib::cstr> GenAdditionalCode(GenEnum::GenCodeType /* command */, Node*, int /* language */)
-    {
-        return {};
-    }
-
-    // Generate specific additional code
-    virtual std::optional<ttlib::cstr> GenAdditionalCode(GenEnum::GenCodeType /* command */, Node* /* node */) { return {}; }
-
-    // Override this to use a single GenAfterChildren() for all 4 languages
-    virtual std::optional<ttlib::cstr> GenAfterChildren(Node*, int /* language */) { return {}; }
-
-    // Generate code after any children have been constructed
-    //
-    // Code will be written with indent::none set
-    virtual std::optional<ttlib::cstr> GenAfterChildren(Node* /* node */) { return {}; }
-
     // Generate code to bind the event to a handler -- only override if you need to do
     // something special
     virtual std::optional<ttlib::sview> GenEvents(Code&, NodeEvent*, const std::string&);
 
     // Generate code to bind the event to a handler
     virtual std::optional<ttlib::cstr> GenEvents(NodeEvent*, const std::string&) { return {}; }
-
-    virtual std::optional<ttlib::cstr> GenSettings(Node*, size_t&, int /* language */) { return {}; }
-
-    virtual std::optional<ttlib::cstr> GenSettings(Node*, size_t&) { return {}; }
 
     // Add attributes to object, and all properties
     //

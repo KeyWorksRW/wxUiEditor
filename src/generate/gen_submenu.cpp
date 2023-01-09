@@ -33,11 +33,13 @@ bool SubMenuGenerator::AfterChildrenCode(Code& code)
     return true;
 }
 
+#if 0
+// BUGBUG: [Randalphwa - 12-16-2022] See issue #865 -- this should be in AdditionalCode, not here
+
 std::optional<ttlib::cstr> SubMenuGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
 {
     ttlib::cstr code;
 
-    // BUGBUG: [Randalphwa - 12-16-2022] See issue #865 -- this should be in AdditionalCode, not here
 
     if (node->HasValue(prop_bitmap))
     {
@@ -92,6 +94,7 @@ std::optional<ttlib::cstr> SubMenuGenerator::GenSettings(Node* node, size_t& /* 
 
     return code;
 }
+#endif
 
 bool SubMenuGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {

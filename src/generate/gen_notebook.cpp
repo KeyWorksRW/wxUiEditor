@@ -38,7 +38,7 @@ void NotebookGenerator::OnPageChanged(wxNotebookEvent& event)
     event.Skip();
 }
 
-std::optional<ttlib::sview> NotebookGenerator::CommonConstruction(Code& code)
+bool NotebookGenerator::ConstructionCode(Code& code)
 {
     if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
@@ -51,7 +51,7 @@ std::optional<ttlib::sview> NotebookGenerator::CommonConstruction(Code& code)
         BookCtorAddImagelist(code.m_code, code.m_node);
     }
 
-    return code.m_code;
+    return true;
 }
 
 bool NotebookGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)

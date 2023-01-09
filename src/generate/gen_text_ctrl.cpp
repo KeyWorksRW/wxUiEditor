@@ -98,7 +98,7 @@ bool TextCtrlGenerator::OnPropertyChange(wxObject* widget, Node* node, NodePrope
     return false;
 }
 
-std::optional<ttlib::sview> TextCtrlGenerator::CommonConstruction(Code& code)
+bool TextCtrlGenerator::ConstructionCode(Code& code)
 {
     if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
@@ -107,10 +107,10 @@ std::optional<ttlib::sview> TextCtrlGenerator::CommonConstruction(Code& code)
     code.QuotedString(prop_value);
     code.PosSizeFlags(true);
 
-    return code.m_code;
+    return true;
 }
 
-std::optional<ttlib::sview> TextCtrlGenerator::CommonSettings(Code& code)
+bool TextCtrlGenerator::SettingsCode(Code& code)
 {
     if (code.HasValue(prop_hint))
     {
@@ -192,7 +192,7 @@ std::optional<ttlib::sview> TextCtrlGenerator::CommonSettings(Code& code)
         }
     }
 
-    return code.m_code;
+    return true;
 }
 
 void TextCtrlGenerator::ChangeEnableState(wxPropertyGridManager* prop_grid, NodeProperty* changed_prop)

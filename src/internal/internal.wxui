@@ -814,7 +814,7 @@
           wxEVT_RADIOBUTTON="OnRadioSearchGenerators">
           <node
             class="wxComboBox"
-            style="wxCB_READONLY|wxCB_SORT"
+            style="wxCB_SORT"
             var_name="m_combo_generators"
             get_function="get_GenName"
             validator_variable="m_gen_name"

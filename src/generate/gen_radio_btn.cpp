@@ -46,7 +46,7 @@ bool RadioButtonGenerator::OnPropertyChange(wxObject* widget, Node* node, NodePr
     return false;
 }
 
-std::optional<ttlib::sview> RadioButtonGenerator::CommonConstruction(Code& code)
+bool RadioButtonGenerator::ConstructionCode(Code& code)
 {
     if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
@@ -54,16 +54,16 @@ std::optional<ttlib::sview> RadioButtonGenerator::CommonConstruction(Code& code)
     code.ValidParentName().Comma().as_string(prop_id).Comma().QuotedString(prop_label);
     code.PosSizeFlags(true);
 
-    return code.m_code;
+    return true;
 }
 
-std::optional<ttlib::sview> RadioButtonGenerator::CommonSettings(Code& code)
+bool RadioButtonGenerator::SettingsCode(Code& code)
 {
     if (code.IsTrue(prop_checked))
     {
         code.NodeName().Function("SetValue(").AddTrue().EndFunction();
     }
-    return code.m_code;
+    return true;
 }
 
 int RadioButtonGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)

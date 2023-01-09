@@ -71,7 +71,7 @@ bool StaticTextGenerator::OnPropertyChange(wxObject* widget, Node* node, NodePro
     return false;
 }
 
-std::optional<ttlib::sview> StaticTextGenerator::CommonConstruction(Code& code)
+bool StaticTextGenerator::ConstructionCode(Code& code)
 {
     if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
@@ -97,10 +97,10 @@ std::optional<ttlib::sview> StaticTextGenerator::CommonConstruction(Code& code)
 
     code.PosSizeFlags();
 
-    return code.m_code;
+    return true;
 }
 
-std::optional<ttlib::sview> StaticTextGenerator::CommonSettings(Code& code)
+bool StaticTextGenerator::SettingsCode(Code& code)
 {
     if (code.m_node->prop_as_bool(prop_markup) && code.m_node->prop_as_int(prop_wrap) <= 0)
     {
@@ -115,7 +115,7 @@ std::optional<ttlib::sview> StaticTextGenerator::CommonSettings(Code& code)
         code.Eol(eol_if_empty).NodeName().Function("Wrap(").as_string(prop_wrap).EndFunction();
     }
 
-    return code.m_code;
+    return true;
 }
 
 int StaticTextGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)

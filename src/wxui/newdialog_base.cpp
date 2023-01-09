@@ -16,7 +16,7 @@
 #include "newdialog_base.h"
 
 bool NewDialog::Create(wxWindow* parent, wxWindowID id, const wxString& title,
-        const wxPoint& pos, const wxSize& size, long style, const wxString &name)
+    const wxPoint& pos, const wxSize& size, long style, const wxString &name)
 {
     if (!wxDialog::Create(parent, id, title, pos, size, style, name))
         return false;
@@ -75,8 +75,8 @@ bool NewDialog::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     box_sizer_4->Add(staticText_4,
         wxSizerFlags().Center().Border(wxLEFT|wxTOP|wxBOTTOM, wxSizerFlags::GetDefaultBorder()));
 
-    m_spinCtrlTabs = new wxSpinCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize,
-        wxSP_ARROW_KEYS, 1, 7, 3);
+    m_spinCtrlTabs = new wxSpinCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 1,
+        7, 3);
     m_spinCtrlTabs->SetValidator(wxGenericValidator(&m_num_tabs));
     m_spinCtrlTabs->Enable(false);
     box_sizer_4->Add(m_spinCtrlTabs, wxSizerFlags().Center().Border(wxALL));

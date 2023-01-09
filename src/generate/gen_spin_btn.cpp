@@ -33,7 +33,7 @@ wxObject* SpinButtonGenerator::CreateMockup(Node* node, wxObject* parent)
     return widget;
 }
 
-std::optional<ttlib::sview> SpinButtonGenerator::CommonConstruction(Code& code)
+bool SpinButtonGenerator::ConstructionCode(Code& code)
 {
     if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
@@ -44,10 +44,10 @@ std::optional<ttlib::sview> SpinButtonGenerator::CommonConstruction(Code& code)
     // not needed.
     code.m_code.Replace(", wxID_ANY)", ")");
 
-    return code.m_code;
+    return true;
 }
 
-std::optional<ttlib::sview> SpinButtonGenerator::CommonSettings(Code& code)
+bool SpinButtonGenerator::SettingsCode(Code& code)
 {
     code.NodeName().Function("SetRange(").as_string(prop_min).Comma().as_string(prop_max).EndFunction();
 
@@ -61,7 +61,7 @@ std::optional<ttlib::sview> SpinButtonGenerator::CommonSettings(Code& code)
         code.Eol().NodeName().Function("SetIncrement(").as_string(prop_inc).EndFunction();
     }
 
-    return code.m_code;
+    return true;
 }
 
 bool SpinButtonGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)

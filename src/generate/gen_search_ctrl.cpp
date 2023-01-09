@@ -38,7 +38,7 @@ wxObject* SearchCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
     return widget;
 }
 
-std::optional<ttlib::sview> SearchCtrlGenerator::CommonConstruction(Code& code)
+bool SearchCtrlGenerator::ConstructionCode(Code& code)
 {
     if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
@@ -46,10 +46,10 @@ std::optional<ttlib::sview> SearchCtrlGenerator::CommonConstruction(Code& code)
     code.ValidParentName().Comma().as_string(prop_id).Comma().QuotedString(prop_value);
     code.PosSizeFlags(true);
 
-    return code.m_code;
+    return true;
 }
 
-std::optional<ttlib::sview> SearchCtrlGenerator::CommonSettings(Code& code)
+bool SearchCtrlGenerator::SettingsCode(Code& code)
 {
     if (code.HasValue(prop_hint))
     {
@@ -71,7 +71,7 @@ std::optional<ttlib::sview> SearchCtrlGenerator::CommonSettings(Code& code)
         code.Eol(eol_if_empty).NodeName().Function("ShowCancelButton(").AddTrue().EndFunction();
     }
 
-    return code.m_code;
+    return true;
 }
 
 bool SearchCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)

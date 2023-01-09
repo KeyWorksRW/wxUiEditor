@@ -19,7 +19,7 @@
 #include "grid_property_dlg.h"
 
 bool GridPropertyDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,
-        const wxPoint& pos, const wxSize& size, long style, const wxString &name)
+    const wxPoint& pos, const wxSize& size, long style, const wxString &name)
 {
     if (!wxDialog::Create(parent, id, title, pos, size, style, name))
         return false;
@@ -49,16 +49,16 @@ bool GridPropertyDlg::Create(wxWindow* parent, wxWindowID id, const wxString& ti
         m_grid->EnableDragGridSize(false);
         m_grid->SetMargins(0, 0);
         m_grid->SetSelectionMode(wxGrid::wxGridSelectRows);
-
         m_grid->SetDefaultCellAlignment(wxALIGN_LEFT, wxALIGN_CENTER);
         m_grid->SetColLabelAlignment(wxALIGN_CENTER, wxALIGN_CENTER);
         m_grid->SetColLabelSize(wxGRID_AUTOSIZE);
         m_grid->SetColLabelValue(0, "name");
         m_grid->SetColLabelValue(1, "value");
-
         m_grid->EnableDragRowSize(false);
         m_grid->SetRowLabelAlignment(wxALIGN_CENTER, wxALIGN_CENTER);
         m_grid->SetRowLabelSize(wxGRID_AUTOSIZE);
+        m_grid->SetColLabelValue(0, "name");
+        m_grid->SetColLabelValue(1, "value");
     }
     dlg_sizer->Add(m_grid, wxSizerFlags(1).Expand().Border(wxALL));
 

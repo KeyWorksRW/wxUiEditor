@@ -18,7 +18,7 @@
 #include "convert_img_base.h"
 
 bool ConvertImageBase::Create(wxWindow* parent, wxWindowID id, const wxString& title,
-        const wxPoint& pos, const wxSize& size, long style, const wxString &name)
+    const wxPoint& pos, const wxSize& size, long style, const wxString &name)
 {
     if (!wxDialog::Create(parent, id, title, pos, size, style, name))
         return false;
@@ -94,8 +94,8 @@ bool ConvertImageBase::Create(wxWindow* parent, wxWindowID id, const wxString& t
 
     box_sizer_3->AddSpacer(10);
 
-    m_comboHdrMask = new wxComboBox(hdr_static_box->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition,
-        wxSize(150, -1), 0, nullptr, wxCB_READONLY);
+    m_comboHdrMask = new wxComboBox(hdr_static_box->GetStaticBox(), wxID_ANY, wxEmptyString,
+        wxDefaultPosition, wxSize(150, -1), 0, nullptr, wxCB_READONLY);
     box_sizer_3->Add(m_comboHdrMask,
         wxSizerFlags().Left().Border(wxLEFT|wxRIGHT|wxBOTTOM, wxSizerFlags::GetDefaultBorder()));
 
@@ -138,8 +138,8 @@ bool ConvertImageBase::Create(wxWindow* parent, wxWindowID id, const wxString& t
 
     box_sizer_4->AddSpacer(10);
 
-    m_comboXpmMask = new wxComboBox(mask_static_box->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition,
-        wxSize(150, -1), 0, nullptr, wxCB_READONLY);
+    m_comboXpmMask = new wxComboBox(mask_static_box->GetStaticBox(), wxID_ANY, wxEmptyString,
+        wxDefaultPosition, wxSize(150, -1), 0, nullptr, wxCB_READONLY);
     box_sizer_4->Add(m_comboXpmMask,
         wxSizerFlags().Left().Border(wxLEFT|wxRIGHT|wxBOTTOM, wxSizerFlags::GetDefaultBorder()));
 

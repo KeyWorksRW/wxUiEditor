@@ -161,7 +161,7 @@ wxMenu* MenuBarBase::MakeSubMenu(Node* menu_node)
 
 //////////////////////////////////////////  MenuBarGenerator  //////////////////////////////////////////
 
-std::optional<ttlib::sview> MenuBarGenerator::CommonConstruction(Code& code)
+bool MenuBarGenerator::ConstructionCode(Code& code)
 {
     if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
@@ -172,10 +172,10 @@ std::optional<ttlib::sview> MenuBarGenerator::CommonConstruction(Code& code)
     }
     code.EndFunction();
 
-    return code.m_code;
+    return true;
 }
 
-std::optional<ttlib::sview> MenuBarGenerator::CommonAdditionalCode(Code& code, GenEnum::GenCodeType cmd)
+bool MenuBarGenerator::AdditionalCode(Code& code, GenEnum::GenCodeType cmd)
 {
     if (cmd == code_after_children)
     {
@@ -186,7 +186,7 @@ std::optional<ttlib::sview> MenuBarGenerator::CommonAdditionalCode(Code& code, G
         code.Add("SetMenuBar(").NodeName().EndFunction();
     }
 
-    return code.m_code;
+    return true;
 }
 
 bool MenuBarGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)

@@ -14,7 +14,7 @@ class WebViewGenerator : public BaseGenerator
 public:
     wxObject* CreateMockup(Node* node, wxObject* parent) override;
 
-    std::optional<ttlib::sview> CommonConstruction(Code& code) override;
+    bool ConstructionCode(Code& code) override;
 
     std::optional<ttlib::sview> GenEvents(Code&, NodeEvent*, const std::string&) override;
 

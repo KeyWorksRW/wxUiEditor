@@ -36,7 +36,7 @@ wxObject* InfoBarGenerator::CreateMockup(Node* node, wxObject* parent)
     return m_infobar;
 }
 
-std::optional<ttlib::sview> InfoBarGenerator::CommonConstruction(Code& code)
+bool InfoBarGenerator::ConstructionCode(Code& code)
 {
     if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
@@ -46,10 +46,10 @@ std::optional<ttlib::sview> InfoBarGenerator::CommonConstruction(Code& code)
         code.Comma().as_string(prop_id);
     code.EndFunction();
 
-    return code.m_code;
+    return true;
 }
 
-std::optional<ttlib::sview> InfoBarGenerator::CommonSettings(Code& code)
+bool InfoBarGenerator::SettingsCode(Code& code)
 {
     code.NodeName().Function("SetShowHideEffects(");
     code.Add(code.node()->prop_as_constant(prop_show_effect, "info_"));
@@ -58,7 +58,7 @@ std::optional<ttlib::sview> InfoBarGenerator::CommonSettings(Code& code)
 
     code.Eol().NodeName().Function("SetEffectDuration(").as_string(prop_duration).EndFunction();
 
-    return code.m_code;
+    return true;
 }
 
 void InfoBarGenerator::OnButton(wxCommandEvent& event)

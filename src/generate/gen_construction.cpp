@@ -14,7 +14,7 @@
 
 // clang-format off
 
-// These are the types that need to have generator->GenAdditionalCode() called after the type is constructed
+// These are the types that need to have generator->AdditionalCode() called after the type is constructed
 GenType aftercode_types[] = {
     type_menubar,
     type_menu,
@@ -45,9 +45,6 @@ void BaseCodeGenerator::GenConstruction(Node* node)
     bool need_closing_brace = false;
     Code gen_code(node, m_language);
 
-    std::optional<ttlib::sview> scode;
-    std::optional<ttlib::cstr> result;
-
     if (generator->ConstructionCode(gen_code))
     {
         // Don't add blank lines when adding tools to a toolbar, or creating menu items
@@ -64,29 +61,6 @@ void BaseCodeGenerator::GenConstruction(Node* node)
             need_closing_brace = true;
         }
     }
-    else
-    {
-        scode = generator->CommonConstruction(gen_code);
-        if (!scode && is_cpp())
-        {
-            if (result = generator->GenConstruction(node); result)
-                scode = *result;
-        }
-
-        if (scode)
-        {
-            // Don't add blank lines when adding tools to a toolbar, or creating menu items
-            if (scode.value()[0] != '{' && type != type_aui_tool && type != type_tool && type != type_menuitem)
-            {
-                m_source->writeLine();
-            }
-            m_source->writeLine(scode.value(), indent::auto_keep_whitespace);
-            if (scode->starts_with("{") && !scode->ends_with("}\n"))
-            {
-                need_closing_brace = true;
-            }
-        }
-    }
 
     GenSettings(node);
 
@@ -100,18 +74,6 @@ void BaseCodeGenerator::GenConstruction(Node* node)
             if (child->GetGenerator()->ConstructionCode(child_code))
             {
                 m_source->writeLine(child_code);
-            }
-            else
-            {
-                scode = child->GetGenerator()->CommonConstruction(child_code);
-                if (!scode && is_cpp())
-                {
-                    result = child->GetGenerator()->GenConstruction(child.get());
-                    if (result)
-                        scode = *result;
-                }
-                if (scode)
-                    m_source->writeLine(scode.value());
             }
         }
         EndBrace();
@@ -138,18 +100,6 @@ void BaseCodeGenerator::GenConstruction(Node* node)
                 {
                     m_source->writeLine(child_code);
                 }
-                else
-                {
-                    scode = gen->CommonConstruction(child_code);
-                    if (!scode && is_cpp())
-                    {
-                        result = gen->GenConstruction(child.get());
-                        if (result)
-                            scode = *result;
-                    }
-                    if (scode)
-                        m_source->writeLine(scode.value());
-                }
             }
 
             GenSettings(child.get());
@@ -161,15 +111,8 @@ void BaseCodeGenerator::GenConstruction(Node* node)
                     if (auto gen = grandchild->GetNodeDeclaration()->GetGenerator(); gen)
                     {
                         gen_code.clear();
-                        scode = gen->CommonConstruction(gen_code);
-                        if (!scode && is_cpp())
-                        {
-                            result = gen->GenConstruction(grandchild.get());
-                            if (result)
-                                scode = *result;
-                        }
-                        if (scode)
-                            m_source->writeLine(scode.value());
+                        if (gen->ConstructionCode(gen_code))
+                            m_source->writeLine(gen_code);
                     }
                     GenSettings(grandchild.get());
                     // A submenu menu item can also be a submenu with great grandchildren.
@@ -180,11 +123,8 @@ void BaseCodeGenerator::GenConstruction(Node* node)
                             if (auto gen = great_grandchild->GetNodeDeclaration()->GetGenerator(); gen)
                             {
                                 gen_code.clear();
-                                result = gen->CommonConstruction(gen_code);
-                                if (!result && is_cpp())
-                                    result = gen->GenConstruction(great_grandchild.get());
-                                if (result)
-                                    m_source->writeLine(result.value());
+                                if (gen->ConstructionCode(gen_code))
+                                    m_source->writeLine(gen_code);
                             }
                             GenSettings(great_grandchild.get());
                             // It's possible to have even more levels of submenus, but we'll stop here.
@@ -213,17 +153,16 @@ void BaseCodeGenerator::GenConstruction(Node* node)
     else if (parent->IsToolBar() && !node->isType(type_tool) && !node->isType(type_tool_separator))
     {
         ttlib::cstr code;
+        gen_code.clear();
         if (parent->isType(type_toolbar_form))
-            code << "AddControl(" << node->prop_as_string(prop_var_name) << ");";
+            gen_code.Str("AddControl(").Str(prop_var_name).EndFunction();
         else
-            code << parent->prop_as_string(prop_var_name) << LangPtr() << "AddControl("
-                 << node->prop_as_string(prop_var_name) << ");";
+            gen_code.Str(parent->as_string(prop_var_name)).Function("AddControl(").Str(prop_var_name).EndFunction();
         m_source->writeLine(code);
     }
     else if (node->gen_type() == type_widget && parent->isGen(gen_wxChoicebook))
     {
         gen_code.clear();
-        ttlib::cstr code;
         gen_code.ParentName().Function("GetControlSizer()").Function("Add(").NodeName();
         gen_code.CheckLineLength().Comma().Add("wxSizerFlags()").Add(".Expand().Border(").Add("wxALL)").EndFunction();
         m_source->writeLine(gen_code.m_code);
@@ -322,20 +261,9 @@ void BaseCodeGenerator::GenConstruction(Node* node)
                 }
                 else
                 {
-                    scode = generator->CommonAdditionalCode(gen_code, code_after_children);
-                    if (!scode)
+                    if (generator->AdditionalCode(gen_code, code_after_children) && gen_code.size())
                     {
-                        if (m_language == GEN_LANG_CPLUSPLUS)
-                            result = generator->GenAdditionalCode(code_after_children, node);
-                        else
-                            result = generator->GenAdditionalCode(code_after_children, node, m_language);
-                        if (result)
-                            scode = result.value();
-                    }
-
-                    if (scode && scode.value().size())
-                    {
-                        m_source->writeLine(scode.value(), indent::auto_keep_whitespace);
+                        m_source->writeLine(gen_code);
                     }
                 }
                 m_source->writeLine();
@@ -465,11 +393,9 @@ void BaseCodeGenerator::EndBrace()
 
 void BaseCodeGenerator::GenSettings(Node* node)
 {
-    size_t auto_indent = indent::auto_keep_whitespace;
     auto generator = node->GetGenerator();
 
     Code code(node, m_language);
-    std::optional<ttlib::cstr> result;
     if (generator->SettingsCode(code))
     {
         if (code.size())
@@ -477,33 +403,12 @@ void BaseCodeGenerator::GenSettings(Node* node)
             m_source->writeLine(code);
         }
     }
-    else
-    {
-        if (auto scode = generator->CommonSettings(code); scode)
-        {
-            if (code.size())
-            {
-                m_source->writeLine(code);
-            }
-        }
-        else
-        {
-            if (m_language == GEN_LANG_CPLUSPLUS)
-                result = generator->GenSettings(node, auto_indent);
-            else
-                result = generator->GenSettings(node, auto_indent, m_language);
-            if (result)
-            {
-                m_source->writeLine(result.value(), auto_indent);
-            }
-        }
-    }
 
     if (node->get_prop_ptr(prop_window_extra_style))
     {
         if (m_language == GEN_LANG_CPLUSPLUS)
         {
-            if (result = GenValidatorSettings(node); result)
+            if (auto result = GenValidatorSettings(node); result)
             {
                 m_source->writeLine(result.value());
             }
@@ -519,37 +424,17 @@ bool BaseCodeGenerator::GenAfterChildren(Node* node, bool need_closing_brace)
 {
     auto generator = node->GetGenerator();
     Code gen_code(node, m_language);
-    std::optional<ttlib::sview> scode;
     if (generator->AfterChildrenCode(gen_code))
     {
-        scode = gen_code.m_code;
-    }
-    else
-    {
-        scode = generator->CommonAfterChildren(gen_code);
-    }
-
-    std::optional<ttlib::cstr> result;
-    if (!scode)
-    {
-        if (is_cpp())
-            result = generator->GenAfterChildren(node);
-        if (result)
-            scode = result.value();
-    }
-
-    if (scode)
-    {
         // If the node needs to write code after all children are constructed, then create the children first, then write
-        // the post-child code. Note that in this case, no further handling of the node is done, so GenAfterChildren() is
-        // required to handle all post-child construction code.
+        // the post-child code.
 
         for (const auto& child: node->GetChildNodePtrs())
         {
             GenConstruction(child.get());
         }
 
-        m_source->writeLine(scode.value(), indent::auto_keep_whitespace);
+        m_source->writeLine(gen_code);
         auto parent = node->GetParent();
 
         // Code for spacer's is handled by the component's GenConstruction() call
@@ -617,29 +502,6 @@ void BaseCodeGenerator::GenParentSizer(Node* node, bool need_closing_brace)
     if (generator->AfterChildrenCode(code))
     {
         m_source->writeLine(code);
-    }
-    else
-    {
-        auto scode = generator->CommonAdditionalCode(code, code_after_children);
-        std::optional<ttlib::cstr> result;
-        if (!scode)
-        {
-            if (m_language == GEN_LANG_CPLUSPLUS)
-            {
-                if (result = generator->GenAdditionalCode(code_after_children, node); result)
-                    scode = result.value();
-            }
-            else
-            {
-                if (result = generator->GenAdditionalCode(code_after_children, node, m_language); result)
-                    scode = result.value();
-            }
-        }
-
-        if (scode && scode.value().size())
-        {
-            m_source->writeLine(scode.value(), indent::auto_keep_whitespace);
-        }
     }
     code.clear();
 

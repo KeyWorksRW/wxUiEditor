@@ -107,27 +107,35 @@ bool StdDialogButtonSizerGenerator::ConstructionCode(Code& code)
         code += " = CreateStdDialogButtonSizer(";
 
         ttlib::cstr flags;
+
+        auto AddBitFlag = [&](ttlib::sview flag)
+        {
+            if (flags.size())
+                flags << '|';
+            flags << flag;
+        };
+
         if (node->prop_as_bool(prop_OK))
-            AddBitFlag(flags, "wxOK");
+            AddBitFlag("wxOK");
         else if (node->prop_as_bool(prop_Yes))
-            AddBitFlag(flags, "wxYES");
+            AddBitFlag("wxYES");
 
         if (node->prop_as_bool(prop_No))
-            AddBitFlag(flags, "wxNO");
+            AddBitFlag("wxNO");
 
         if (node->prop_as_bool(prop_Cancel))
-            AddBitFlag(flags, "wxCANCEL");
+            AddBitFlag("wxCANCEL");
         else if (node->prop_as_bool(prop_Close))
-            AddBitFlag(flags, "wxCLOSE");
+            AddBitFlag("wxCLOSE");
 
         if (node->prop_as_bool(prop_Apply))
-            AddBitFlag(flags, "wxAPPLY");
+            AddBitFlag("wxAPPLY");
 
         if (node->prop_as_bool(prop_Help))
-            AddBitFlag(flags, "wxHELP");
+            AddBitFlag("wxHELP");
 
         if (def_btn_name != "OK" && def_btn_name != "Yes")
-            AddBitFlag(flags, "wxNO_DEFAULT");
+            AddBitFlag("wxNO_DEFAULT");
 
         code.Add(flags).EndFunction();
         if (def_btn_name == "Close" || def_btn_name == "Cancel")

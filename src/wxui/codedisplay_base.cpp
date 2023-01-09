@@ -11,10 +11,12 @@
 
 #include "codedisplay_base.h"
 
-bool CodeDisplayBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style, const wxString &name)
+CodeDisplayBase::CodeDisplayBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style,
+    const wxString& name) : wxPanel()
 {
-    if (!wxPanel::Create(parent, id, pos, size, style, name))
-        return false;
+    if (!Create(parent, id, pos, size, style, name))
+        return;
+
     auto* parent_sizer = new wxBoxSizer(wxVERTICAL);
 
     m_scintilla = new wxStyledTextCtrl(this);
@@ -43,8 +45,6 @@ bool CodeDisplayBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos
     parent_sizer->Add(m_scintilla, wxSizerFlags(1).Expand().Border(wxALL));
 
     SetSizerAndFit(parent_sizer);
-
-    return true;
 }
 
 // ************* End of generated code ***********

@@ -59,7 +59,7 @@ wxObject* HyperlinkGenerator::CreateMockup(Node* node, wxObject* parent)
     return widget;
 }
 
-std::optional<ttlib::sview> HyperlinkGenerator::CommonConstruction(Code& code)
+bool HyperlinkGenerator::ConstructionCode(Code& code)
 {
     if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
@@ -71,10 +71,10 @@ std::optional<ttlib::sview> HyperlinkGenerator::CommonConstruction(Code& code)
     code.Comma().QuotedString(prop_url);
     code.PosSizeFlags(false, "wxHL_DEFAULT_STYLE");
 
-    return code.m_code;
+    return true;
 }
 
-std::optional<ttlib::sview> HyperlinkGenerator::CommonSettings(Code& code)
+bool HyperlinkGenerator::SettingsCode(Code& code)
 {
     if (!code.IsTrue(prop_underlined) && !code.HasValue(prop_font))
     {
@@ -103,7 +103,7 @@ std::optional<ttlib::sview> HyperlinkGenerator::CommonSettings(Code& code)
         code.EndFunction();
     }
 
-    return code.m_code;
+    return true;
 }
 
 int HyperlinkGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)

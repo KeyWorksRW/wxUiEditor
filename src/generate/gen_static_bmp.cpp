@@ -41,7 +41,7 @@ wxObject* StaticBitmapGenerator::CreateMockup(Node* node, wxObject* parent)
     return widget;
 }
 
-std::optional<ttlib::sview> StaticBitmapGenerator::CommonConstruction(Code& code)
+bool StaticBitmapGenerator::ConstructionCode(Code& code)
 {
     if (code.is_cpp())
     {
@@ -72,8 +72,15 @@ std::optional<ttlib::sview> StaticBitmapGenerator::CommonConstruction(Code& code
         }
     }
 
-    return code.m_code;
+    return true;
 }
+
+// Check for pos, size, flags, window_flags, and window name, and generate code if needed
+// starting with a comma, e.g. -- ", wxPoint(x, y), wxSize(x, y), styles, name);"
+//
+// If the only style specified is def_style, then it will not be added.
+static void GeneratePosSizeFlags(Node* node, ttlib::cstr& code, bool uses_def_validator = false,
+                                 ttlib::sview def_style = tt_empty_cstr);
 
 void StaticBitmapGenerator::GenCppConstruction(Code& gen_code)
 {
@@ -131,7 +138,6 @@ void StaticBitmapGenerator::GenCppConstruction(Code& gen_code)
                     // wxStaticBitmap requires a wxGDIImage for the bitmap, and that won't accept a wxImage.
                     code << "wxBitmap(" << GenerateBitmapCode(description) << ")";
                 }
-                // GeneratePosSizeFlags(node, code);
                 gen_code.PosSizeFlags();
                 code << "\n#endif";
                 return;
@@ -160,7 +166,6 @@ void StaticBitmapGenerator::GenCppConstruction(Code& gen_code)
                     // wxStaticBitmap requires a wxGDIImage for the bitmap, and that won't accept a wxImage.
                     code << "wxBitmap(" << GenerateBitmapCode(description) << ")";
                 }
-                // GeneratePosSizeFlags(node, code);
                 gen_code.PosSizeFlags();
 
                 code << "\n#endif";
@@ -184,11 +189,10 @@ void StaticBitmapGenerator::GenCppConstruction(Code& gen_code)
         code << "wxNullBitmap";
     }
 
-    // GeneratePosSizeFlags(node, code);
     gen_code.PosSizeFlags();
 }
 
-std::optional<ttlib::sview> StaticBitmapGenerator::CommonSettings(Code& code)
+bool StaticBitmapGenerator::SettingsCode(Code& code)
 {
     if (code.node()->as_string(prop_scale_mode) != "None")
     {
@@ -203,7 +207,7 @@ std::optional<ttlib::sview> StaticBitmapGenerator::CommonSettings(Code& code)
         }
         code.as_string(prop_scale_mode).EndFunction();
     }
-    return code.m_code;
+    return true;
 }
 
 bool StaticBitmapGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
@@ -247,4 +251,91 @@ void StaticBitmapGenerator::RequiredHandlers(Node* /* node */, std::set<std::str
 {
     handlers.emplace("wxStaticBitmapXmlHandler");
     handlers.emplace("wxBitmapXmlHandler");
+}
+
+static void GeneratePosSizeFlags(Node* node, ttlib::cstr& code, bool uses_def_validator, ttlib::sview def_style)
+{
+    if (node->HasValue(prop_window_name))
+    {
+        // Window name is always the last parameter, so if it is specified, everything has to be generated.
+        if (code.size() < 80)
+            code << ", ";
+        else
+            code << ",\n\t";
+
+        GenPos(node, code);
+        code << ", ";
+        GenSize(node, code);
+        code << ", ";
+        GenStyle(node, code);
+        if (uses_def_validator)
+            code << ", wxDefaultValidator";
+        code << ", " << node->prop_as_string(prop_window_name) << ");";
+        return;
+    }
+
+    ttlib::cstr all_styles;
+    GenStyle(node, all_styles);
+    if (all_styles.is_sameas("0") || all_styles.is_sameas(def_style))
+        all_styles.clear();
+
+    bool isPosSet { false };
+    auto pos = node->prop_as_wxPoint(prop_pos);
+    if (pos.x != -1 || pos.y != -1)
+    {
+        if (node->prop_as_string(prop_pos).contains("d", tt::CASE::either))
+        {
+            code << ", ConvertDialogToPixels(wxPoint(" << pos.x << ", " << pos.y << "))";
+        }
+        else
+        {
+            code << ", wxPoint(" << pos.x << ", " << pos.y << ")";
+        }
+
+        isPosSet = true;
+    }
+
+    bool isSizeSet { false };
+    if (node->as_wxSize(prop_size) != wxDefaultSize)
+    {
+        if (!isPosSet)
+        {
+            code << ", wxDefaultPosition";
+            isPosSet = true;
+        }
+        code << ", " << GenerateWxSize(node, prop_size);
+
+        isSizeSet = true;
+    }
+
+    if (node->HasValue(prop_window_style) && !node->prop_as_string(prop_window_style).is_sameas("wxTAB_TRAVERSAL"))
+    {
+        if (!isPosSet)
+            code << ", wxDefaultPosition";
+        if (!isSizeSet)
+            code << ", wxDefaultSize";
+
+        code << ", " << all_styles << ");";
+        return;
+    }
+
+    if (all_styles.size())
+    {
+        if (!isPosSet)
+            code << ", wxDefaultPosition";
+        if (!isSizeSet)
+            code << ", wxDefaultSize";
+
+        if (code.size() < 100)
+            code << ", ";
+        else
+        {
+            code << ",\n\t";
+        }
+
+        code << all_styles << ");";
+        return;
+    }
+
+    code << ");";
 }

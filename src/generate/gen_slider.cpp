@@ -55,26 +55,19 @@ bool SliderGenerator::OnPropertyChange(wxObject* widget, Node* /* node */, NodeP
     return false;
 }
 
-std::optional<ttlib::sview> SliderGenerator::CommonConstruction(Code& code)
+bool SliderGenerator::ConstructionCode(Code& code)
 {
     if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
     code.NodeName().CreateClass();
-    code.ValidParentName()
-        .Comma()
-        .as_string(prop_id)
-        .Comma()
-        .as_string(prop_position)
-        .Comma()
-        .as_string(prop_minValue)
-        .Comma()
-        .as_string(prop_maxValue);
+    code.ValidParentName().Comma().as_string(prop_id).Comma();
+    code.as_string(prop_position).Comma().as_string(prop_minValue).Comma().as_string(prop_maxValue);
     code.PosSizeFlags(true);
 
-    return code.m_code;
+    return true;
 }
 
-std::optional<ttlib::sview> SliderGenerator::CommonSettings(Code& code)
+bool SliderGenerator::SettingsCode(Code& code)
 {
     code.NodeName().Function("SetValue(").as_string(prop_position).EndFunction();
 
@@ -106,7 +99,7 @@ std::optional<ttlib::sview> SliderGenerator::CommonSettings(Code& code)
         code.Eol(eol_if_empty).NodeName().Function("SetThumbLength(").as_string(prop_thumb_length).EndFunction();
     }
 
-    return code.m_code;
+    return true;
 }
 
 bool SliderGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty* prop, Node* node)

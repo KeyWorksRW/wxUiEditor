@@ -16,7 +16,7 @@
 #include "generate_xrc_dlg_base.h"
 
 bool GenerateXrcDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString& title,
-        const wxPoint& pos, const wxSize& size, long style, const wxString &name)
+    const wxPoint& pos, const wxSize& size, long style, const wxString &name)
 {
     if (!wxDialog::Create(parent, id, title, pos, size, style, name))
         return false;
@@ -27,8 +27,8 @@ bool GenerateXrcDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString&
     m_radio_combined->SetValidator(wxGenericValidator(&m_create_combined));
     m_combined_box = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, m_radio_combined), wxVERTICAL);
 
-    m_filePicker = new wxFilePickerCtrl(m_combined_box->GetStaticBox(), wxID_ANY, wxEmptyString,
-        "Combined XRC File", "*.xrc", wxDefaultPosition, wxDefaultSize, wxFLP_USE_TEXTCTRL|wxFLP_SAVE);
+    m_filePicker = new wxFilePickerCtrl(m_combined_box->GetStaticBox(), wxID_ANY, wxEmptyString, "Combined XRC File",
+        "*.xrc", wxDefaultPosition, wxDefaultSize, wxFLP_USE_TEXTCTRL|wxFLP_SAVE);
     m_filePicker->SetMinSize(ConvertDialogToPixels(wxSize(120, -1)));
     m_combined_box->Add(m_filePicker, wxSizerFlags(1).Expand().Border(wxALL));
 

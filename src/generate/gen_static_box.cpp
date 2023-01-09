@@ -26,7 +26,7 @@ wxObject* StaticBoxGenerator::CreateMockup(Node* node, wxObject* parent)
     return widget;
 }
 
-std::optional<ttlib::sview> StaticBoxGenerator::CommonConstruction(Code& code)
+bool StaticBoxGenerator::ConstructionCode(Code& code)
 {
     if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
@@ -34,7 +34,7 @@ std::optional<ttlib::sview> StaticBoxGenerator::CommonConstruction(Code& code)
     code.ValidParentName().Comma().Add(prop_id).Comma().QuotedString(prop_label);
     code.PosSizeFlags(true);
 
-    return code.m_code;
+    return true;
 }
 
 int StaticBoxGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)

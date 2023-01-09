@@ -48,7 +48,7 @@ bool CheckBoxGenerator::OnPropertyChange(wxObject* widget, Node* node, NodePrope
     return false;
 }
 
-std::optional<ttlib::sview> CheckBoxGenerator::CommonConstruction(Code& code)
+bool CheckBoxGenerator::ConstructionCode(Code& code)
 {
     if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
@@ -56,16 +56,16 @@ std::optional<ttlib::sview> CheckBoxGenerator::CommonConstruction(Code& code)
     code.ValidParentName().Comma().as_string(prop_id).Comma().QuotedString(prop_label);
     code.PosSizeFlags(true);
 
-    return code.m_code;
+    return true;
 }
 
-std::optional<ttlib::sview> CheckBoxGenerator::CommonSettings(Code& code)
+bool CheckBoxGenerator::SettingsCode(Code& code)
 {
     if (code.IsTrue(prop_checked))
     {
         code.NodeName().Function("SetValue(").AddTrue().EndFunction();
     }
-    return code.m_code;
+    return true;
 }
 
 bool CheckBoxGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
@@ -146,7 +146,7 @@ bool Check3StateGenerator::OnPropertyChange(wxObject* widget, Node* node, NodePr
     return false;
 }
 
-std::optional<ttlib::sview> Check3StateGenerator::CommonConstruction(Code& code)
+bool Check3StateGenerator::ConstructionCode(Code& code)
 {
     if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
@@ -154,10 +154,10 @@ std::optional<ttlib::sview> Check3StateGenerator::CommonConstruction(Code& code)
     code.ValidParentName().Comma().as_string(prop_id).Comma().QuotedString(prop_label);
     code.PosSizeForceStyle("wxCHK_3STATE");
 
-    return code.m_code;
+    return true;
 }
 
-std::optional<ttlib::sview> Check3StateGenerator::CommonSettings(Code& code)
+bool Check3StateGenerator::SettingsCode(Code& code)
 {
     auto& state = code.node()->as_string(prop_initial_state);
     if (state == "wxCHK_CHECKED")
@@ -169,7 +169,7 @@ std::optional<ttlib::sview> Check3StateGenerator::CommonSettings(Code& code)
         code.NodeName().Function("Set3StateValue(").Add("wxCHK_UNDETERMINED").EndFunction();
     }
 
-    return code.m_code;
+    return true;
 }
 
 bool Check3StateGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)

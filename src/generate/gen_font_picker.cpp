@@ -31,7 +31,7 @@ wxObject* FontPickerGenerator::CreateMockup(Node* node, wxObject* parent)
     return widget;
 }
 
-std::optional<ttlib::sview> FontPickerGenerator::CommonConstruction(Code& code)
+bool FontPickerGenerator::ConstructionCode(Code& code)
 {
     if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
@@ -74,10 +74,10 @@ std::optional<ttlib::sview> FontPickerGenerator::CommonConstruction(Code& code)
 
     code.PosSizeFlags(true);
 
-    return code.m_code;
+    return true;
 }
 
-std::optional<ttlib::sview> FontPickerGenerator::CommonSettings(Code& code)
+bool FontPickerGenerator::SettingsCode(Code& code)
 {
     Node* node = code.node();
     if (node->prop_as_string(prop_min_point_size) != "0")
@@ -90,7 +90,7 @@ std::optional<ttlib::sview> FontPickerGenerator::CommonSettings(Code& code)
         code.Eol(eol_if_empty).NodeName().Function("SetMaxPointSize(").as_string(prop_max_point_size).EndFunction();
     }
 
-    return code.m_code;
+    return true;
 }
 
 bool FontPickerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)

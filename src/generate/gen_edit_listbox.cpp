@@ -32,7 +32,7 @@ wxObject* EditListBoxGenerator::CreateMockup(Node* node, wxObject* parent)
     return widget;
 }
 
-std::optional<ttlib::sview> EditListBoxGenerator::CommonConstruction(Code& code)
+bool EditListBoxGenerator::ConstructionCode(Code& code)
 {
     if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
@@ -40,10 +40,10 @@ std::optional<ttlib::sview> EditListBoxGenerator::CommonConstruction(Code& code)
     code.ValidParentName().Comma().as_string(prop_id).Comma().QuotedString(prop_label);
     code.PosSizeFlags(true);
 
-    return code.m_code;
+    return true;
 }
 
-std::optional<ttlib::sview> EditListBoxGenerator::CommonSettings(Code& code)
+bool EditListBoxGenerator::SettingsCode(Code& code)
 {
     if (code.HasValue(prop_contents))
     {
@@ -70,7 +70,7 @@ std::optional<ttlib::sview> EditListBoxGenerator::CommonSettings(Code& code)
         }
     }
 
-    return code.m_code;
+    return true;
 }
 
 bool EditListBoxGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)

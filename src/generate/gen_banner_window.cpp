@@ -42,7 +42,7 @@ wxObject* BannerWindowGenerator::CreateMockup(Node* node, wxObject* parent)
     return widget;
 }
 
-std::optional<ttlib::sview> BannerWindowGenerator::CommonConstruction(Code& code)
+bool BannerWindowGenerator::ConstructionCode(Code& code)
 {
     if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
@@ -57,10 +57,10 @@ std::optional<ttlib::sview> BannerWindowGenerator::CommonConstruction(Code& code
     }
     code.PosSizeFlags(true);
 
-    return code.m_code;
+    return true;
 }
 
-std::optional<ttlib::sview> BannerWindowGenerator::CommonSettings(Code& code)
+bool BannerWindowGenerator::SettingsCode(Code& code)
 {
     if (code.HasValue(prop_bitmap) && code.is_cpp())
     {
@@ -118,54 +118,7 @@ std::optional<ttlib::sview> BannerWindowGenerator::CommonSettings(Code& code)
         code.Comma().QuotedString(prop_message).EndFunction();
     }
 
-    return code.m_code;
-}
-
-std::optional<ttlib::cstr> BannerWindowGenerator::GenSettings(Node* node, size_t& auto_indent)
-{
-    ttlib::cstr code;
-    if (node->HasValue(prop_bitmap))
-    {
-        if (GenBtnBimapCode(node, code, true))
-        {
-            auto_indent = indent::auto_keep_whitespace;
-        }
-    }
-    else if (node->HasValue(prop_start_colour) && node->HasValue(prop_end_colour))
-    {
-        auto& start_colour = node->prop_as_string(prop_start_colour);
-        code << node->get_node_name() << "->SetGradient(";
-        if (start_colour.contains("wx"))
-            code << "wxSystemSettings::GetColour(" << start_colour << ")";
-        else
-        {
-            wxColour colour = ConvertToColour(start_colour);
-            code << ttlib::cstr().Format("wxColour(%i, %i, %i)", colour.Red(), colour.Green(), colour.Blue());
-        }
-
-        code << ",\n\t";
-
-        auto& end_colour = node->prop_as_string(prop_end_colour);
-        if (end_colour.contains("wx"))
-            code << "wxSystemSettings::GetColour(" << end_colour << "));";
-        else
-        {
-            wxColour colour = ConvertToColour(end_colour);
-            code << ttlib::cstr().Format("wxColour(%i, %i, %i));", colour.Red(), colour.Green(), colour.Blue());
-        }
-        auto_indent = indent::auto_keep_whitespace;
-    }
-
-    if (node->HasValue(prop_title) || node->HasValue(prop_message))
-    {
-        if (code.size())
-            code << "\n";
-        code << node->get_node_name() << "->SetText(" << GenerateQuotedString(node->prop_as_string(prop_title)) << ",\n\t";
-        code << GenerateQuotedString(node->prop_as_string(prop_message)) << ");";
-        auto_indent = indent::auto_keep_whitespace;
-    }
-
-    return code;
+    return true;
 }
 
 bool BannerWindowGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)

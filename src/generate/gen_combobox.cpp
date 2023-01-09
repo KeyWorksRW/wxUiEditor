@@ -50,7 +50,7 @@ wxObject* ComboBoxGenerator::CreateMockup(Node* node, wxObject* parent)
     return widget;
 }
 
-std::optional<ttlib::sview> ComboBoxGenerator::CommonConstruction(Code& code)
+bool ComboBoxGenerator::ConstructionCode(Code& code)
 {
     if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
@@ -85,10 +85,10 @@ std::optional<ttlib::sview> ComboBoxGenerator::CommonConstruction(Code& code)
         }
     }
 
-    return code.m_code;
+    return true;
 }
 
-std::optional<ttlib::sview> ComboBoxGenerator::CommonSettings(Code& code)
+bool ComboBoxGenerator::SettingsCode(Code& code)
 {
     if (code.HasValue(prop_hint) && !code.PropContains(prop_style, "wxCB_READONLY"))
     {
@@ -138,7 +138,7 @@ std::optional<ttlib::sview> ComboBoxGenerator::CommonSettings(Code& code)
         }
     }
 
-    return code.m_code;
+    return true;
 }
 
 bool ComboBoxGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)

@@ -32,8 +32,8 @@ private:
 class MenuBarGenerator : public MenuBarBase
 {
 public:
-    std::optional<ttlib::sview> CommonConstruction(Code& code) override;
-    std::optional<ttlib::sview> CommonAdditionalCode(Code&, GenEnum::GenCodeType /* command */) override;
+    bool ConstructionCode(Code& code) override;
+    bool AdditionalCode(Code&, GenEnum::GenCodeType /* command */) override;
 
     bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr) override;
 

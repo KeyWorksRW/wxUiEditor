@@ -38,7 +38,7 @@ bool GaugeGenerator::OnPropertyChange(wxObject* widget, Node* /* node */, NodePr
     return false;
 }
 
-std::optional<ttlib::sview> GaugeGenerator::CommonConstruction(Code& code)
+bool GaugeGenerator::ConstructionCode(Code& code)
 {
     if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
@@ -46,14 +46,14 @@ std::optional<ttlib::sview> GaugeGenerator::CommonConstruction(Code& code)
     code.ValidParentName().Comma().as_string(prop_id).Comma().as_string(prop_range);
     code.PosSizeFlags(true);
 
-    return code.m_code;
+    return true;
 }
 
-std::optional<ttlib::sview> GaugeGenerator::CommonSettings(Code& code)
+bool GaugeGenerator::SettingsCode(Code& code)
 {
     code.NodeName().Function("SetValue(").as_string(prop_position).EndFunction();
 
-    return code.m_code;
+    return true;
 }
 
 bool GaugeGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)

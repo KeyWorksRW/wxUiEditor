@@ -62,7 +62,7 @@ public:
 class ToolDropDownGenerator : public BaseGenerator
 {
 public:
-    std::optional<ttlib::sview> CommonConstruction(Code& code) override;
+    bool ConstructionCode(Code& code) override;
 
     int GenXrcObject(Node*, pugi::xml_node& /* object */, size_t /* xrc_flags */) override;
 };
@@ -70,7 +70,7 @@ public:
 class ToolSeparatorGenerator : public BaseGenerator
 {
 public:
-    std::optional<ttlib::sview> CommonConstruction(Code& code) override;
+    bool ConstructionCode(Code& code) override;
 
     int GenXrcObject(Node*, pugi::xml_node& /* object */, size_t /* xrc_flags */) override;
 };
@@ -78,7 +78,7 @@ public:
 class ToolStretchableGenerator : public BaseGenerator
 {
 public:
-    std::optional<ttlib::sview> CommonConstruction(Code& code) override;
+    bool ConstructionCode(Code& code) override;
 
     int GenXrcObject(Node*, pugi::xml_node& /* object */, size_t /* xrc_flags */) override;
     int GetRequiredVersion(Node* /*node*/) override { return minRequiredVer + 1; }

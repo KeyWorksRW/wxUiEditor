@@ -51,7 +51,7 @@ void CollapsiblePaneGenerator::OnCollapse(wxCollapsiblePaneEvent& event)
     wxGetFrame().GetMockup()->Layout();
 }
 
-std::optional<ttlib::sview> CollapsiblePaneGenerator::CommonConstruction(Code& code)
+bool CollapsiblePaneGenerator::ConstructionCode(Code& code)
 {
     if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
@@ -59,10 +59,10 @@ std::optional<ttlib::sview> CollapsiblePaneGenerator::CommonConstruction(Code& c
     code.ValidParentName().Comma().as_string(prop_id).Comma().QuotedString(prop_label);
     code.PosSizeFlags(true, "wxCP_DEFAULT_STYLE");
 
-    return code.m_code;
+    return true;
 }
 
-std::optional<ttlib::sview> CollapsiblePaneGenerator::CommonSettings(Code& code)
+bool CollapsiblePaneGenerator::SettingsCode(Code& code)
 {
     if (code.IsTrue(prop_collapsed))
     {
@@ -72,7 +72,7 @@ std::optional<ttlib::sview> CollapsiblePaneGenerator::CommonSettings(Code& code)
     {
         code.Eol(eol_if_empty).NodeName().Function("Expand(").EndFunction();
     }
-    return code.m_code;
+    return true;
 }
 
 bool CollapsiblePaneGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)

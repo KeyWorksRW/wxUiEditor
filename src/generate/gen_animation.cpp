@@ -47,7 +47,7 @@ wxObject* AnimationGenerator::CreateMockup(Node* node, wxObject* parent)
     }
 }
 
-std::optional<ttlib::sview> AnimationGenerator::CommonConstruction(Code& code)
+bool AnimationGenerator::ConstructionCode(Code& code)
 {
     if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
@@ -83,14 +83,14 @@ std::optional<ttlib::sview> AnimationGenerator::CommonConstruction(Code& code)
         code.EndFunction();
     }
 
-    return code.m_code;
+    return true;
 }
 
-std::optional<ttlib::sview> AnimationGenerator::CommonSettings(Code& code)
+bool AnimationGenerator::SettingsCode(Code& code)
 {
     if (code.IsTrue(prop_play))
         code.NodeName().Function("Play(").EndFunction();
-    return code.m_code;
+    return true;
 }
 
 int AnimationGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)

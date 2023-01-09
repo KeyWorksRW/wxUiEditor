@@ -14,7 +14,7 @@
 #include "newribbon_base.h"
 
 bool NewRibbon::Create(wxWindow* parent, wxWindowID id, const wxString& title,
-        const wxPoint& pos, const wxSize& size, long style, const wxString &name)
+    const wxPoint& pos, const wxSize& size, long style, const wxString &name)
 {
     if (!wxDialog::Create(parent, id, title, pos, size, style, name))
         return false;
@@ -69,8 +69,8 @@ bool NewRibbon::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     box_sizer_4->Add(staticText_4,
         wxSizerFlags().Center().Border(wxLEFT|wxTOP|wxBOTTOM, wxSizerFlags::GetDefaultBorder()));
 
-    m_spinCtrlPages = new wxSpinCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize,
-        wxSP_ARROW_KEYS, 1, 7, 3);
+    m_spinCtrlPages = new wxSpinCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 1,
+        7, 3);
     m_spinCtrlPages->SetValidator(wxGenericValidator(&m_num_pages));
     box_sizer_4->Add(m_spinCtrlPages, wxSizerFlags().Border(wxALL));
 

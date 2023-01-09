@@ -10,9 +10,9 @@
 #include "bitmaps.h"     // Contains various images handling functions
 #include "code.h"        // Code -- Helper class for generating code
 #include "gen_common.h"  // GeneratorLibrary -- Generator classes
+#include "image_gen.h"   // Functions for generating embedded images
 #include "node.h"        // Node class
 #include "utils.h"       // Utility functions that work with properties
-#include "image_gen.h"   // Functions for generating embedded images
 
 #include "gen_ribbon_page.h"
 

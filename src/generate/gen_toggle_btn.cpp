@@ -90,14 +90,14 @@ bool ToggleButtonGenerator::OnPropertyChange(wxObject* widget, Node* node, NodeP
     return false;
 }
 
-std::optional<ttlib::sview> ToggleButtonGenerator::CommonConstruction(Code& code)
+bool ToggleButtonGenerator::ConstructionCode(Code& code)
 {
     if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
     code.NodeName().CreateClass();
     code.ValidParentName().Comma().as_string(prop_id).Comma();
 
-    // If prop_markup is set, then the label will be set in GenSettings()
+    // If prop_markup is set, then the label will be set in SettingsCode()
     if (code.HasValue(prop_label) && !code.IsTrue(prop_markup))
     {
         code.QuotedString(prop_label);
@@ -109,10 +109,10 @@ std::optional<ttlib::sview> ToggleButtonGenerator::CommonConstruction(Code& code
 
     code.PosSizeFlags(true);
 
-    return code.m_code;
+    return true;
 }
 
-std::optional<ttlib::sview> ToggleButtonGenerator::CommonSettings(Code& code)
+bool ToggleButtonGenerator::SettingsCode(Code& code)
 {
     if (code.IsTrue(prop_pressed))
     {
@@ -134,13 +134,8 @@ std::optional<ttlib::sview> ToggleButtonGenerator::CommonSettings(Code& code)
         if (code.HasValue(prop_margins))
         {
             auto size = code.node()->as_wxSize(prop_margins);
-            code.Eol(eol_if_needed)
-                .NodeName()
-                .Function("SetBitmapMargins(")
-                .itoa(size.GetWidth())
-                .Comma()
-                .itoa(size.GetHeight())
-                .EndFunction();
+            code.Eol(eol_if_needed).NodeName().Function("SetBitmapMargins(");
+            code.itoa(size.GetWidth()).Comma().itoa(size.GetHeight()).EndFunction();
         }
 
         if (code.is_cpp())
@@ -149,7 +144,7 @@ std::optional<ttlib::sview> ToggleButtonGenerator::CommonSettings(Code& code)
             PythonBtnBimapCode(code);
     }
 
-    return code.m_code;
+    return true;
 }
 
 bool ToggleButtonGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)

@@ -14,7 +14,7 @@
 #include "xrcpreview.h"
 
 bool XrcPreview::Create(wxWindow* parent, wxWindowID id, const wxString& title,
-        const wxPoint& pos, const wxSize& size, long style, const wxString &name)
+    const wxPoint& pos, const wxSize& size, long style, const wxString &name)
 {
     if (!wxDialog::Create(parent, id, title, pos, size, style, name))
         return false;
@@ -57,7 +57,7 @@ bool XrcPreview::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 
     auto* box_sizer_3 = new wxBoxSizer(wxHORIZONTAL);
 
-    m_scintilla = new wxStyledTextCtrl(this, wxID_ANY);
+    m_scintilla = new wxStyledTextCtrl(this);
     {
         m_scintilla->SetLexer(wxSTC_LEX_XML);
         m_scintilla->SetEOLMode(wxSTC_EOL_LF);
@@ -89,7 +89,7 @@ bool XrcPreview::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     dlg_sizer->Add(CreateSeparatedSizer(stdBtn), wxSizerFlags().Expand().Border(wxALL));
 
     SetSizer(dlg_sizer);
-    SetMinSize(wxSize(800, 600));
+    SetMinSize(ConvertDialogToPixels(wxSize(800, 600)));
     Fit();
     Centre(wxBOTH);
 

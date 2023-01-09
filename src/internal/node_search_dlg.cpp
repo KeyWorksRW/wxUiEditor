@@ -15,7 +15,7 @@
 #include "node_search_dlg.h"
 
 bool NodeSearchDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,
-        const wxPoint& pos, const wxSize& size, long style, const wxString &name)
+    const wxPoint& pos, const wxSize& size, long style, const wxString &name)
 {
     if (!wxDialog::Create(parent, id, title, pos, size, style, name))
         return false;
@@ -26,8 +26,8 @@ bool NodeSearchDlg::Create(wxWindow* parent, wxWindowID id, const wxString& titl
     m_radio_generators->SetValidator(wxGenericValidator(&m_search_generators));
     auto* static_box = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, m_radio_generators), wxVERTICAL);
 
-    m_combo_generators = new wxComboBox(static_box->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition,
-        wxDefaultSize, 0, nullptr, wxCB_READONLY|wxCB_SORT);
+    m_combo_generators = new wxComboBox(static_box->GetStaticBox(), wxID_ANY, wxEmptyString,
+        wxDefaultPosition, wxDefaultSize, 0, nullptr, wxCB_SORT);
     m_combo_generators->SetValidator(wxGenericValidator(&m_gen_name));
     static_box->Add(m_combo_generators, wxSizerFlags().Expand().Border(wxALL));
 
@@ -37,8 +37,8 @@ bool NodeSearchDlg::Create(wxWindow* parent, wxWindowID id, const wxString& titl
     m_radio_var_names->SetValidator(wxGenericValidator(&m_search_varnames));
     auto* static_box_2 = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, m_radio_var_names), wxVERTICAL);
 
-    m_combo_variables = new wxComboBox(static_box_2->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition,
-        wxDefaultSize, 0, nullptr, wxCB_SORT);
+    m_combo_variables = new wxComboBox(static_box_2->GetStaticBox(), wxID_ANY, wxEmptyString,
+        wxDefaultPosition, wxDefaultSize, 0, nullptr, wxCB_SORT);
     m_combo_variables->SetValidator(wxGenericValidator(&m_var_name));
     static_box_2->Add(m_combo_variables, wxSizerFlags().Expand().Border(wxALL));
 

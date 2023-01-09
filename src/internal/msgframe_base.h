@@ -28,10 +28,9 @@
 class MsgFrameBase : public wxFrame
 {
 public:
-    MsgFrameBase(wxWindow* parent, wxWindowID id = wxID_ANY,
-        const wxString& title = "wxUiEditor Messages",
+    MsgFrameBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = "wxUiEditor Messages",
         const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
-        long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL);
+        long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL, const wxString &name = wxFrameNameStr);
 
     enum
     {

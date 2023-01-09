@@ -1,7 +1,7 @@
 //////////////////////////////////////////////////////////////////////////
 // Purpose:   Custom Control generator
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -26,48 +26,47 @@ wxObject* CustomControl::CreateMockup(Node* /* node */, wxObject* parent)
     return widget;
 }
 
-std::optional<ttlib::cstr> CustomControl::GenConstruction(Node* node)
+bool CustomControl::ConstructionCode(Code& code)
 {
-    ttlib::cstr code;
-    if (node->IsLocal())
-        code << "auto* ";
-    code << node->get_node_name() << " = new ";
-    if (node->HasValue(prop_namespace))
-        code << node->prop_as_string(prop_namespace) << "::";
+    if (code.is_python())
+        return false;
 
-    ttlib::cstr parameters(node->prop_as_string(prop_parameters));
-    parameters.Replace("${parent}", node->get_parent_name(), tt::REPLACE::all);
+    code.AddAuto().NodeName();
+    code += " = new ";
+    if (code.HasValue(prop_namespace))
+        code.Str(prop_namespace) += "::";
+
+    ttlib::cstr parameters(code.view(prop_parameters));
+    parameters.Replace("${parent}", code.node()->get_parent_name(), tt::REPLACE::all);
 
     for (auto& iter: map_MacroProps)
     {
         if (parameters.find(iter.first) != tt::npos)
         {
-            if (iter.second == prop_window_style && node->prop_as_string(iter.second).empty())
+            if (iter.second == prop_window_style && code.node()->as_string(iter.second).empty())
                 parameters.Replace(iter.first, "0");
             else
-                parameters.Replace(iter.first, node->prop_as_string(iter.second));
+                parameters.Replace(iter.first, code.view(iter.second));
         }
     }
 
-    code << node->prop_as_string(prop_class_name) << parameters << ';';
+    code.Str(prop_class_name).Str(parameters) << ';';
 
-    return code;
+    return true;
 }
 
-std::optional<ttlib::cstr> CustomControl::GenSettings(Node* node, size_t& auto_indent)
+bool CustomControl::SettingsCode(Code& code)
 {
-    ttlib::cstr code;
-    if (node->HasValue(prop_settings_code))
+    if (code.is_python())
+        return false;
+
+    if (code.HasValue(prop_settings_code))
     {
-        auto_indent = indent::auto_keep_whitespace;
-        code << node->prop_as_string(prop_settings_code);
-        code.Replace("@@", "\n", tt::REPLACE::all);
-        return code;
+        code.Str(prop_settings_code);
+        code.m_code.Replace("@@", "\n", tt::REPLACE::all);
     }
-    else
-    {
-        return std::nullopt;
-    }
+
+    return true;
 }
 
 int CustomControl::GenXrcObject(Node* node, pugi::xml_node& object, size_t /* xrc_flags */)

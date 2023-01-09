@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   wxGrid generator
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -133,228 +133,211 @@ wxObject* GridGenerator::CreateMockup(Node* node, wxObject* parent)
     return grid;
 }
 
-std::optional<ttlib::cstr> GridGenerator::GenConstruction(Node* node)
+bool GridGenerator::ConstructionCode(Code& code)
 {
-    ttlib::cstr code;
-    if (node->IsLocal())
-        code << "auto* ";
-    code << node->get_node_name() << GenerateNewAssignment(node);
-    code << GetParentName(node) << ", " << node->prop_as_string(prop_id);
-    GeneratePosSizeFlags(node, code, false, "wxWANTS_CHARS");
+    code.AddAuto().NodeName().CreateClass().ValidParentName().Comma().Add(prop_id);
+    code.PosSizeFlags(false, "wxWANTS_CHARS");
 
-    return code;
+    return true;
 }
 
-static constexpr const char* braced_indent = "\n\t\t";
-
-std::optional<ttlib::cstr> GridGenerator::GenSettings(Node* node, size_t& auto_indent)
+bool GridGenerator::SettingsCode(Code& code)
 {
-    ttlib::cstr code;
+    code.OpenBrace().NodeName().Function("CreateGrid(").Str(prop_rows).Comma().Str(prop_cols).EndFunction();
 
-    auto_indent = false;
-    code << "    {";
+    if (code.IsFalse(prop_editing))
+        code.Eol().NodeName().Function("EnableEditing(").AddFalse().EndFunction();
+    if (code.IsFalse(prop_grid_lines))
+        code.Eol().NodeName().Function("EnableGridLines(").AddFalse().EndFunction();
+    if (code.HasValue(prop_grid_line_color))
+        code.Eol().NodeName().Function("SetGridLineColour(").ColourCode(prop_grid_line_color).EndFunction();
 
-    code << braced_indent << node->get_node_name() << "->CreateGrid(" << node->prop_as_string(prop_rows) << ", "
-         << node->prop_as_string(prop_cols) << ");";
+    code.Eol().NodeName().Function("EnableDragGridSize(").TrueFalseIf(prop_drag_grid_size).EndFunction();
+    code.Eol().NodeName().Function("SetMargins(").itoa(prop_margin_width, prop_margin_height).EndFunction();
 
-    if (!node->prop_as_bool(prop_editing))
-        code << braced_indent << node->get_node_name() << "->EnableEditing(false);";
-    if (!node->prop_as_bool(prop_grid_lines))
-        code << braced_indent << node->get_node_name() << "->EnableGridLines(false);";
-    if (node->HasValue(prop_grid_line_color))
-        code << braced_indent << node->get_node_name() << "->SetGridLineColour("
-             << GenerateColourCode(node, prop_grid_line_color) << ");";
-
-    code << braced_indent << node->get_node_name() << "->EnableDragGridSize("
-         << (node->prop_as_bool(prop_drag_grid_size) ? "true" : "false") << ");";
-    code << braced_indent << node->get_node_name() << "->SetMargins(" << node->prop_as_string(prop_margin_width) << ", "
-         << node->prop_as_string(prop_margin_height) << ");";
-
-    if (node->prop_as_string(prop_cell_fit) != "overflow")
+    if (!code.is_value(prop_cell_fit, "overflow"))
     {
-        if (node->prop_as_string(prop_cell_fit) == "clip")
+        if (code.is_value(prop_cell_fit, "clip"))
         {
-            if (wxGetProject().value(prop_wxWidgets_version) == "3.1")
+            if (code.is_cpp() && wxGetProject().value(prop_wxWidgets_version) == "3.1")
             {
-                code << "\n#if wxCHECK_VERSION(3, 1, 4)";
-                code << braced_indent << node->get_node_name() << "->SetDefaultCellFitMode(wxGridFitMode::Clip());";
-                code << "\n#endif";
+                code.Eol().Str("#if wxCHECK_VERSION(3, 1, 4)");
+                code.Eol().Tab().NodeName().Function("SetDefaultCellFitMode(");
+                code.Add("wxGridFitMode").ClassMethod("Clip()").EndFunction();
+                code.Eol().Str("#endif");
             }
             else
             {
-                code << braced_indent << node->get_node_name() << "->SetDefaultCellFitMode(wxGridFitMode::Clip());";
+                code.Eol().NodeName().Function("SetDefaultCellFitMode(");
+                code.Add("wxGridFitMode").ClassMethod("Clip()").EndFunction();
             }
         }
-        else if (node->prop_as_string(prop_cell_fit) == "ellipsize")
+        else if (code.is_value(prop_cell_fit, "ellipsize"))
         {
-            if (wxGetProject().value(prop_wxWidgets_version) == "3.1")
+            if (code.is_cpp() && wxGetProject().value(prop_wxWidgets_version) == "3.1")
             {
-                code << "\n#if wxCHECK_VERSION(3, 1, 4)";
-                code << braced_indent << node->get_node_name() << "->SetDefaultCellFitMode(wxGridFitMode::Ellipsize());";
-                code << "\n#endif";
+                code.Eol().Str("#if wxCHECK_VERSION(3, 1, 4)");
+                code.Eol().Tab().NodeName().Function("SetDefaultCellFitMode(");
+                code.Add("wxGridFitMode").ClassMethod("Ellipsize()").EndFunction();
+                code.Eol().Str("#endif");
             }
             else
             {
-                code << braced_indent << node->get_node_name() << "->SetDefaultCellFitMode(wxGridFitMode::Ellipsize());";
+                code.Eol().NodeName().Function("SetDefaultCellFitMode(");
+                code.Add("wxGridFitMode").ClassMethod("Ellipsize()").EndFunction();
             }
         }
     }
 
-    if (node->prop_as_int(prop_selection_mode) != 0)
+    if (code.IntValue(prop_selection_mode) != 0)
     {
-        if (wxGetProject().value(prop_wxWidgets_version) == "3.1" &&
-            node->prop_as_string(prop_selection_mode) == "wxGridSelectNone")
+        if (code.is_cpp() && wxGetProject().value(prop_wxWidgets_version) == "3.1")
         {
-            code << "\n#if wxCHECK_VERSION(3, 1, 5)";
-            code << braced_indent << node->get_node_name()
-                 << "->SetSelectionMode(wxGrid::" << node->prop_as_string(prop_selection_mode) << ");";
-            code << "\n#endif";
+            if (code.is_value(prop_selection_mode, "wxGridSelectNone"))
+            {
+                if (code.is_cpp() && wxGetProject().value(prop_wxWidgets_version) == "3.1")
+                {
+                    code.Eol().Str("#if wxCHECK_VERSION(3, 1, 5)");
+                    code.Eol().Tab().NodeName().Function("SetSelectionMode(");
+                    code.Add("wxGrid").ClassMethod(code.view(prop_selection_mode)).EndFunction();
+                    code.Eol().Str("#endif");
+                }
+                else
+                {
+                    code.Eol().NodeName().Function("SetSelectionMode(");
+                    code.Add("wxGrid").ClassMethod(code.view(prop_selection_mode)).EndFunction();
+                }
+            }
+            else
+            {
+                code.Eol().NodeName().Function("SetSelectionMode(");
+                code.Add("wxGrid").ClassMethod(code.view(prop_selection_mode)).EndFunction();
+            }
         }
         else
         {
-            code << braced_indent << node->get_node_name()
-                 << "->SetSelectionMode(wxGrid::" << node->prop_as_string(prop_selection_mode) << ");";
+            code.Eol().NodeName().Function("SetSelectionMode(");
+            code.Add("wxGrid").ClassMethod(code.view(prop_selection_mode)).EndFunction();
         }
     }
 
-    code << '\n';
-
     // Label category
 
-    if (node->prop_as_bool(prop_native_col_header))
-        code << braced_indent << node->get_node_name() << "->UseNativeColHeader();";
-    else if (node->prop_as_bool(prop_native_col_labels))
-        code << braced_indent << node->get_node_name() << "->SetUseNativeColLabels();";
+    if (code.IsTrue(prop_native_col_header))
+        code.Eol().NodeName().Function("UseNativeColHeader(").EndFunction();
+    else if (code.IsTrue(prop_native_col_labels))
+        code.Eol().NodeName().Function("SetUseNativeColLabels(").EndFunction();
 
-    if (node->HasValue(prop_label_bg))
+    if (code.HasValue(prop_label_bg))
     {
-        code << braced_indent << node->get_node_name() << "->SetLabelBackgroundColour("
-             << GenerateColourCode(node, prop_label_bg) << ");";
+        code.Eol().NodeName().Function("SetLabelBackgroundColour(").ColourCode(prop_label_bg).EndFunction();
     }
 
-    // TODO: [KeyWorks - 02-27-2021] GenerateFontCode() was removed because it was obsolete and broken. It needs to be
-    // replaced, but it should be part of an entire wxGrid overhaul.
+    // TODO: [KeyWorks - 02-27-2021] GenerateFontCode() was removed because it was obsolete and broken. It needs to
+    // be replaced, but it should be part of an entire wxGrid overhaul.
 
 #if 0
     if (node->HasValue(prop_label_font))
         code << braced_indent << node->get_node_name() << "->SetLabelFont(" << GenerateFontCode(node, "label_font") << ");";
 #endif
-    if (node->HasValue(prop_label_text))
-        code << braced_indent << node->get_node_name() << "->SetLabelTextColour("
-             << GenerateColourCode(node, prop_label_text) << ");";
+    if (code.HasValue(prop_label_text))
+        code.Eol().NodeName().Function("SetLabelTextColour(").ColourCode(prop_label_text).EndFunction();
 
     // Cell category
 
-    if (node->HasValue(prop_cell_bg))
-        code << braced_indent << node->get_node_name() << "->SetDefaultCellBackgroundColour("
-             << GenerateColourCode(node, prop_cell_bg) << ");";
-    if (node->HasValue(prop_cell_text))
-        code << braced_indent << node->get_node_name() << "->SetDefaultCellTextColour("
-             << GenerateColourCode(node, prop_cell_text) << ");";
+    if (code.HasValue(prop_cell_bg))
+        code.Eol().NodeName().Function("SetDefaultCellBackgroundColour(").ColourCode(prop_cell_bg).EndFunction();
+    if (code.HasValue(prop_cell_text))
+        code.Eol().NodeName().Function("SetDefaultCellTextColour(").ColourCode(prop_cell_text).EndFunction();
+
 #if 0
     if (node->HasValue(prop_cell_font))
         code << braced_indent << node->get_node_name() << "->SetDefaultCellFont(" << GenerateFontCode(node, "cell_font")
              << ");";
 #endif
 
-    code << braced_indent << node->get_node_name() << "->SetDefaultCellAlignment("
-         << node->prop_as_string(prop_cell_horiz_alignment) << ", " << node->prop_as_string(prop_cell_vert_alignment)
-         << ");";
+    code.Eol()
+        .NodeName()
+        .Function("SetDefaultCellAlignment(")
+        .itoa(prop_cell_horiz_alignment, prop_cell_vert_alignment)
+        .EndFunction();
 
     // Columns category
 
-    if (node->prop_as_int(prop_default_col_size) > 0)
+    if (code.IntValue(prop_default_col_size) > 0)
     {
-        code << braced_indent << node->get_node_name() << "->SetDefaultColSize("
-             << node->prop_as_string(prop_default_col_size) << ");";
+        code.Eol().NodeName().Function("SetDefaultColSize(").Str(prop_default_col_size).EndFunction();
     }
-    else if (node->prop_as_bool(prop_autosize_cols))
+    else if (code.IsTrue(prop_autosize_cols))
     {
-        code << braced_indent << node->get_node_name() << "->AutoSizeColumns();";
+        code.Eol().NodeName().Function("AutoSizeColumns(").EndFunction();
     }
 
-    if (node->prop_as_bool(prop_drag_col_move))
-        code << braced_indent << node->get_node_name() << "->EnableDragColMove(true);";
+    if (code.IsTrue(prop_drag_col_move))
+        code.Eol().NodeName().Function("EnableDragColMove(").AddTrue().EndFunction();
 
-    if (!node->prop_as_bool(prop_drag_col_size))
-        code << braced_indent << node->get_node_name() << "->EnableDragColSize(false);";
+    if (code.IsFalse(prop_drag_col_size))
+        code.Eol().NodeName().Function("EnableDragColSize(").AddFalse().EndFunction();
 
-    code << braced_indent << node->get_node_name() << "->SetColLabelAlignment("
-         << node->prop_as_string(prop_col_label_horiz_alignment) << ", "
-         << node->prop_as_string(prop_col_label_vert_alignment) << ");";
+    code.Eol().NodeName().Function("SetColLabelAlignment(");
+    code.itoa(prop_col_label_horiz_alignment, prop_col_label_vert_alignment).EndFunction();
 
-    if (node->prop_as_int(prop_col_label_size) == -1)
-    {
-        code << braced_indent << node->get_node_name() << "->SetColLabelSize(wxGRID_AUTOSIZE);";
-    }
-    else if (node->prop_as_int(prop_col_label_size) == 0)
-    {
-        code << braced_indent << node->get_node_name() << "->HideColLabels();";
-    }
+    if (code.IntValue(prop_col_label_size) == -1)
+        code.Eol().NodeName().Function("SetColLabelSize(").Add("wxGRID_AUTOSIZE").EndFunction();
+    else if (code.IntValue(prop_col_label_size) == 0)
+        code.Eol().NodeName().Function("HideColLabels(").EndFunction();
     else
-    {
-        code << braced_indent << node->get_node_name() << "->SetColLabelSize(" << node->prop_as_string(prop_col_label_size)
-             << ");";
-    }
+        code.Eol().NodeName().Function("SetColLabelSize(").Str(prop_col_label_size).EndFunction();
 
-    if (node->HasValue(prop_col_label_values))
+    if (code.HasValue(prop_col_label_values))
     {
-        wxArrayString labels = node->prop_as_wxArrayString(prop_col_label_values);
-        for (int i = 0; i < (int) labels.size() && i < node->prop_as_int(prop_cols); ++i)
+        auto labels = code.node()->as_wxArrayString(prop_col_label_values);
+        int num_cols = code.IntValue(prop_cols);
+        for (int col = 0; col < (int) labels.size() && col < num_cols; ++col)
         {
-            code << braced_indent << node->get_node_name() << "->SetColLabelValue(" << i << ", ";
-            code << GenerateQuotedString(ttlib::cstr() << labels[i].wx_str()) << ");";
+            code.Eol().NodeName().Function("SetColLabelValue(").itoa(col);
+            code.Comma().QuotedString(ttlib::cstr() << labels[col].wx_str()).EndFunction();
         }
     }
-
-    code << '\n';
 
     // Rows category
 
-    if (node->prop_as_int(prop_default_row_size) > 0)
+    if (code.IntValue(prop_default_row_size) > 0)
     {
-        code << braced_indent << node->get_node_name() << "->SetDefaultRowSize("
-             << node->prop_as_string(prop_default_row_size) << ");";
+        code.Eol().NodeName().Function("SetDefaultRowSize(").Str(prop_default_row_size).EndFunction();
     }
-    else if (node->prop_as_bool(prop_autosize_rows))
+    else if (code.IsTrue(prop_autosize_rows))
     {
-        code << braced_indent << node->get_node_name() << "->AutoSizeRows();";
+        code.Eol().NodeName().Function("AutoSizeRows(").EndFunction();
     }
 
-    if (!node->prop_as_bool(prop_drag_row_size))
-        code << braced_indent << node->get_node_name() << "->EnableDragRowSize(false);";
+    if (code.IsFalse(prop_drag_row_size))
+        code.Eol().NodeName().Function("EnableDragRowSize(").AddFalse().EndFunction();
 
-    code << braced_indent << node->get_node_name() << "->SetRowLabelAlignment("
-         << node->prop_as_string(prop_row_label_horiz_alignment) << ", "
-         << node->prop_as_string(prop_row_label_vert_alignment) << ");";
+    code.Eol().NodeName().Function("SetRowLabelAlignment(");
+    code.itoa(prop_row_label_horiz_alignment, prop_row_label_vert_alignment).EndFunction();
 
-    if (node->prop_as_int(prop_row_label_size) == -1)
-    {
-        code << braced_indent << node->get_node_name() << "->SetRowLabelSize(wxGRID_AUTOSIZE);";
-    }
-    else if (node->prop_as_int(prop_row_label_size) == 0)
-    {
-        code << braced_indent << node->get_node_name() << "->HideRowLabels();";
-    }
+    if (code.IntValue(prop_row_label_size) == -1)
+        code.Eol().NodeName().Function("SetRowLabelSize(").Add("wxGRID_AUTOSIZE").EndFunction();
+    else if (code.IntValue(prop_row_label_size) == 0)
+        code.Eol().NodeName().Function("HideRowLabels(").EndFunction();
     else
-    {
-        code << braced_indent << node->get_node_name() << "->SetRowLabelSize(" << node->prop_as_string(prop_row_label_size)
-             << ");";
-    }
+        code.Eol().NodeName().Function("SetRowLabelSize(").Str(prop_row_label_size).EndFunction();
 
-    if (node->HasValue(prop_row_label_values))
+    if (code.HasValue(prop_col_label_values))
     {
-        wxArrayString labels = node->prop_as_wxArrayString(prop_row_label_values);
-        for (int i = 0; i < (int) labels.size() && i < node->prop_as_int(prop_rows); ++i)
+        auto labels = code.node()->as_wxArrayString(prop_col_label_values);
+        int num_cols = code.IntValue(prop_cols);
+        for (int col = 0; col < (int) labels.size() && col < num_cols; ++col)
         {
-            code << braced_indent << node->get_node_name() << "->SetRowLabelValue(" << i << ", ";
-            code << GenerateQuotedString(ttlib::cstr() << labels[i].wx_str()) << ");";
+            code.Eol().NodeName().Function("SetColLabelValue(").itoa(col);
+            code.Comma().QuotedString(ttlib::cstr() << labels[col].wx_str()).EndFunction();
         }
     }
 
-    code << "\n\t}";
+    code.CloseBrace();
 
-    return code;
+    return true;
 }
 
 int GridGenerator::GetRequiredVersion(Node* node)

@@ -65,101 +65,95 @@ bool BitmapComboBoxGenerator::OnPropertyChange(wxObject* widget, Node* node, Nod
     return false;
 }
 
-std::optional<ttlib::cstr> BitmapComboBoxGenerator::GenConstruction(Node* node)
+bool BitmapComboBoxGenerator::ConstructionCode(Code& code)
 {
-    ttlib::cstr code;
-    if (node->IsLocal())
+    if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
-    code << node->get_node_name() << GenerateNewAssignment(node);
-    code << GetParentName(node) << ", " << node->prop_as_string(prop_id) << ", ";
-
-    // We don't add any strings until after the constructor, so if an initial selection string is specified, we set it
-    // after all strings have been appended.
-    code << "wxEmptyString";
-
-    if (node->prop_as_string(prop_window_name).empty() && node->prop_as_string(prop_style).empty() &&
-        node->prop_as_string(prop_window_style).empty())
+    code.AddAuto().NodeName().CreateClass();
+    code.ValidParentName().Comma().as_string(prop_id);
+    if (code.HasValue(prop_style))
     {
-        GeneratePosSizeFlags(node, code);
+        code.Comma().Add("wxEmptyString");
+        code.Comma().Pos().Comma().CheckLineLength().WxSize();
+        if (code.is_cpp())
+        {
+            code.Comma().CheckLineLength(sizeof("0, nullptr, ") + code.node()->as_string(prop_style).size());
+            code << "0, nullptr";
+        }
+        else
+        {
+            code.Comma().CheckLineLength(sizeof("[], ") + code.node()->as_string(prop_style).size());
+            code.Add("[]");
+        }
+        code.Comma().Style().EndFunction();
     }
     else
     {
-        // We have to generate a default validator before the window name, which GeneratePosSizeFlags doesn't do. We don't
-        // actually need that validator, since GenSettings will create it, but we have to supply something before the window
-        // name.
-
-        code << ", ";
-        GenPos(node, code);
-        code << ", ";
-        GenSize(node, code);
-        code << ", 0, nullptr, ";
-        GenStyle(node, code);
-        if (node->HasValue(prop_window_name))
+        if (code.WhatParamsNeeded() != nothing_needed)
         {
-            code << ", wxDefaultValidator, " << node->prop_as_string(prop_window_name);
+            code.Comma().Add("wxEmptyString");
+            code.PosSizeFlags(true);
         }
-        code << ");";
+        else
+        {
+            code.EndFunction();
+        }
     }
 
-    code.Replace(", wxID_ANY, wxEmptyString);", ");");
-
-    return code;
+    return true;
 }
 
-std::optional<ttlib::cstr> BitmapComboBoxGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
+bool BitmapComboBoxGenerator::SettingsCode(Code& code)
 {
-    ttlib::cstr code;
-
-    if (node->HasValue(prop_hint))
+    if (code.HasValue(prop_hint) && !code.PropContains(prop_style, "wxCB_READONLY"))
     {
-        if (code.size())
-            code << '\n';
-        code << node->get_node_name() << "->SetHint(" << GenerateQuotedString(node->prop_as_string(prop_hint)) << ");";
+        code.Eol(eol_if_empty);
+        code.NodeName().Function("SetHint(").QuotedString(prop_hint).EndFunction();
     }
 
-    if (node->prop_as_bool(prop_focus))
+    if (code.IsTrue(prop_focus))
     {
-        if (code.size())
-            code << '\n';
-        code << node->get_node_name() << "->SetFocus()";
+        code.Eol(eol_if_empty);
+        code.NodeName().Function("SetFocus(").EndFunction();
     }
 
-    if (node->HasValue(prop_contents))
+    if (code.HasValue(prop_contents))
     {
-        auto array = ConvertToArrayString(node->prop_as_string(prop_contents));
+        auto array = ConvertToArrayString(code.node()->as_string(prop_contents));
         for (auto& iter: array)
         {
-            if (code.size())
-                code << "\n";
-            code << node->get_node_name() << "->Append(" << GenerateQuotedString(iter) << ");";
+            code.Eol(eol_if_empty).NodeName().Function("Append(").QuotedString(iter).EndFunction();
         }
 
-        if (node->HasValue(prop_selection_string))
+        if (code.HasValue(prop_selection_string))
         {
-            code << "\n";
-            if (node->HasValue(prop_validator_variable))
+            code.Eol(eol_if_empty);
+            if (code.HasValue(prop_validator_variable))
             {
-                code << node->prop_as_string(prop_validator_variable) << " = ";
-                code << GenerateQuotedString(node, prop_selection_string) << ";  // set validator variable";
+                code.as_string(prop_validator_variable) << " = ";
+                code.QuotedString(prop_selection_string);
+                if (code.is_cpp())
+                    code << ";  // set validator variable";
+                else
+                    code << "  # set validator variable";
             }
             else
             {
-                code << node->get_node_name() << "->SetStringSelection(";
-                code << GenerateQuotedString(node->prop_as_string(prop_selection_string)) << ");";
+                code.NodeName().Function("SetStringSelection(");
+                code.QuotedString(prop_selection_string).EndFunction();
             }
         }
         else
         {
-            int sel = node->prop_as_int(prop_selection_int);
+            int sel = code.node()->as_int(prop_selection_int);
             if (sel > -1 && sel < (to_int) array.size())
             {
-                code << "\n";
-                code << node->get_node_name() << "->SetSelection(" << node->prop_as_string(prop_selection_int) << ");";
+                code.Eol(eol_if_empty).NodeName().Function("SetSelection(").as_string(prop_selection_int).EndFunction();
             }
         }
     }
 
-    return code;
+    return true;
 }
 
 bool BitmapComboBoxGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)

@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   wxTreeListCtrl generator
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -34,16 +34,12 @@ void TreeListCtrlGenerator::AfterCreation(wxObject* wxobject, wxWindow* /* wxpar
     }
 }
 
-std::optional<ttlib::cstr> TreeListCtrlGenerator::GenConstruction(Node* node)
+bool TreeListCtrlGenerator::ConstructionCode(Code& code)
 {
-    ttlib::cstr code;
-    if (node->IsLocal())
-        code << "auto* ";
-    code << node->get_node_name() << " = new wxTreeListCtrl(";
-    code << GetParentName(node) << ", " << node->prop_as_string(prop_id);
-    GeneratePosSizeFlags(node, code, true, "wxTL_DEFAULT_STYLE");
+    code.AddAuto().NodeName().CreateClass().ValidParentName().Comma().Add(prop_id);
+    code.PosSizeFlags(true, "wxTL_DEFAULT_STYLE");
 
-    return code;
+    return true;
 }
 
 bool TreeListCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
@@ -54,33 +50,32 @@ bool TreeListCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_s
 
 //////////////////////////////////////////  TreeListCtrlColumnGenerator  //////////////////////////////////////////
 
-std::optional<ttlib::cstr> TreeListCtrlColumnGenerator::GenConstruction(Node* node)
+bool TreeListCtrlColumnGenerator::ConstructionCode(Code& code)
 {
-    ttlib::cstr code;
-    code << node->get_parent_name() << "->AppendColumn(" << GenerateQuotedString(node->prop_as_string(prop_label)) << ", ";
-    if (node->prop_as_int(prop_width) == -2)
+    code.NodeName().Function("AppendColumn(").QuotedString(prop_label).Comma();
+    if (code.IntValue(prop_width) == -2)
     {
-        code << "wxCOL_WIDTH_AUTOSIZE";
+        code.Add("wxCOL_WIDTH_AUTOSIZE");
     }
     else
     {
-        code << node->prop_as_int(prop_width);
+        code.itoa(prop_width);
     }
 
-    if (node->prop_as_string(prop_alignment) != "wxALIGN_LEFT" || node->prop_as_string(prop_flags) != "wxCOL_RESIZABLE")
+    if (code.view(prop_alignment) != "wxALIGN_LEFT" || code.view(prop_flags) != "wxCOL_RESIZABLE")
     {
-        code << ", " << node->prop_as_string(prop_alignment) << ", ";
-        if (node->prop_as_string(prop_flags).size())
+        code.Comma().Add(prop_alignment).Comma();
+        if (code.view(prop_flags).size())
         {
-            code << node->prop_as_string(prop_flags);
+            code.Add(prop_flags);
         }
         else
         {
-            code << "0";
+            code += "0";
         }
     }
 
-    code << ")";
+    code.EndFunction();
 
-    return code;
+    return true;
 }

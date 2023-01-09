@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   wxDataView component classes
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -122,16 +122,12 @@ void DataViewCtrl::AfterCreation(wxObject* wxobject, wxWindow* /* wxparent */, N
     }
 }
 
-std::optional<ttlib::cstr> DataViewCtrl::GenConstruction(Node* node)
+bool DataViewCtrl::ConstructionCode(Code& code)
 {
-    ttlib::cstr code;
-    if (node->IsLocal())
-        code << "auto* ";
-    code << node->get_node_name() << GenerateNewAssignment(node);
-    code << GetParentName(node) << ", " << node->prop_as_string(prop_id);
-    GeneratePosSizeFlags(node, code, true);
+    code.AddAuto().NodeName().CreateClass().ValidParentName().Comma().Add(prop_id);
+    code.PosSizeFlags(true);
 
-    return code;
+    return true;
 }
 
 bool DataViewCtrl::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
@@ -237,16 +233,12 @@ void DataViewListCtrl::AfterCreation(wxObject* wxobject, wxWindow* /* wxparent *
     }
 }
 
-std::optional<ttlib::cstr> DataViewListCtrl::GenConstruction(Node* node)
+bool DataViewListCtrl::ConstructionCode(Code& code)
 {
-    ttlib::cstr code;
-    if (node->IsLocal())
-        code << "auto* ";
-    code << node->get_node_name() << GenerateNewAssignment(node);
-    code << GetParentName(node) << ", " << node->prop_as_string(prop_id);
-    GeneratePosSizeFlags(node, code, true);
+    code.AddAuto().NodeName().CreateClass().ValidParentName().Comma().Add(prop_id);
+    code.PosSizeFlags(true);
 
-    return code;
+    return true;
 }
 
 bool DataViewListCtrl::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
@@ -294,16 +286,12 @@ wxObject* DataViewTreeCtrl::CreateMockup(Node* node, wxObject* parent)
     return widget;
 }
 
-std::optional<ttlib::cstr> DataViewTreeCtrl::GenConstruction(Node* node)
+bool DataViewTreeCtrl::ConstructionCode(Code& code)
 {
-    ttlib::cstr code;
-    if (node->IsLocal())
-        code << "auto* ";
-    code << node->get_node_name() << GenerateNewAssignment(node);
-    code << GetParentName(node) << ", " << node->prop_as_string(prop_id);
-    GeneratePosSizeFlags(node, code, true);
+    code.AddAuto().NodeName().CreateClass().ValidParentName().Comma().Add(prop_id);
+    code.PosSizeFlags(true);
 
-    return code;
+    return true;
 }
 
 bool DataViewTreeCtrl::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
@@ -343,56 +331,42 @@ void DataViewTreeCtrl::RequiredHandlers(Node* /* node */, std::set<std::string>&
 
 //////////////////////////////////////////  DataViewColumn  //////////////////////////////////////////
 
-std::optional<ttlib::cstr> DataViewColumn::GenConstruction(Node* node)
+bool DataViewColumn::ConstructionCode(Code& code)
 {
-    ttlib::cstr code;
-    if (node->IsLocal())
-        code << "auto* ";
-    code << node->get_node_name() << " = " << node->get_parent_name() << "->Append";
-    code << node->prop_as_string(prop_type) << "Column(" << GenerateQuotedString(node->prop_as_string(prop_label))
-         << ",\n\t\t\t";
+    code.AddAuto().NodeName().Str(" = ").ParentName().Function("Append").Str(prop_type).Str("Column(");
+    code.QuotedString(prop_label).Comma().Str(prop_model_column).Comma().Str(prop_mode).Comma().Str(prop_width);
+    if (code.is_cpp())
+        code.Str("static_cast<wxAlignment>(");
+    code.Add(prop_align);
+    if (code.is_cpp())
+        code.m_code += ')';
+    code.Comma().Add(prop_flags).EndFunction();
 
-    code << node->prop_as_string(prop_model_column) << ", " << node->prop_as_string(prop_mode) << ", ";
-    code << node->prop_as_string(prop_width) << ", ";
-
-    // BUGBUG: [KeyWorks - 12-14-2020] Currently the user is allowed to combine multiple alignment types such as right and
-    // left which is invalid.
-
-    code << "static_cast<wxAlignment>(" << node->prop_as_string(prop_align) << "), ";
-    code << node->prop_as_string(prop_flags) << ");";
-
-    if (node->HasValue(prop_ellipsize))
+    if (code.HasValue(prop_ellipsize))
     {
-        code << "\n"
-             << node->get_node_name() << "->GetRenderer()->EnableEllipsize(" << node->prop_as_string(prop_ellipsize) << ");";
+        code.Eol().NodeName().Function("GetRenderer()").Function("EnableEllipsize(").Add(prop_ellipsize).EndFunction();
     }
 
-    return code;
+    return true;
 }
 
 //////////////////////////////////////////  DataViewListColumn  //////////////////////////////////////////
 
-std::optional<ttlib::cstr> DataViewListColumn::GenConstruction(Node* node)
+bool DataViewListColumn::ConstructionCode(Code& code)
 {
-    ttlib::cstr code;
-    if (node->IsLocal())
-        code << "auto* ";
-    code << node->get_node_name() << " = " << node->get_parent_name() << "->Append";
-    code << node->prop_as_string(prop_type) << "Column(" << GenerateQuotedString(node->prop_as_string(prop_label))
-         << ",\n\t\t\t";
-    code << node->prop_as_string(prop_mode) << ", " << node->prop_as_string(prop_width) << ", ";
+    code.AddAuto().NodeName().Str(" = ").ParentName().Function("Append").Str(prop_type).Str("Column(");
+    code.QuotedString(prop_label).Comma().Str(prop_mode).Comma().Str(prop_width);
+    if (code.is_cpp())
+        code.Str("static_cast<wxAlignment>(");
+    code.Add(prop_align);
+    if (code.is_cpp())
+        code.m_code += ')';
+    code.Comma().Add(prop_flags).EndFunction();
 
-    // BUGBUG: [KeyWorks - 12-14-2020] Currently the user is allowed to combine multiple alignment types such as right and
-    // left which is invalid.
-
-    code << "static_cast<wxAlignment>(" << node->prop_as_string(prop_align) << "), ";
-    code << node->prop_as_string(prop_flags) << ");";
-
-    if (node->HasValue(prop_ellipsize))
+    if (code.HasValue(prop_ellipsize))
     {
-        code << "\n"
-             << node->get_node_name() << "->GetRenderer()->EnableEllipsize(" << node->prop_as_string(prop_ellipsize) << ");";
+        code.Eol().NodeName().Function("GetRenderer()").Function("EnableEllipsize(").Add(prop_ellipsize).EndFunction();
     }
 
-    return code;
+    return true;
 }

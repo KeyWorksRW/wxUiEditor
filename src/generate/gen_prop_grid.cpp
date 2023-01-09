@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   wxPropertyGrid generator
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -62,21 +62,15 @@ void PropertyGridGenerator::AfterCreation(wxObject* wxobject, wxWindow* /* wxpar
     }
 }
 
-std::optional<ttlib::cstr> PropertyGridGenerator::GenConstruction(Node* node)
+bool PropertyGridGenerator::ConstructionCode(Code& code)
 {
-    ttlib::cstr code;
-    if (node->IsLocal())
-        code << "auto* ";
-    code << node->get_node_name() << GenerateNewAssignment(node);
-    code << GetParentName(node) << ", " << node->prop_as_string(prop_id);
-    GeneratePosSizeFlags(node, code, false, "wxPG_DEFAULT_STYLE");
+    code.AddAuto().NodeName().CreateClass().ValidParentName().Comma().Add(prop_id);
+    code.PosSizeFlags(false, "wxPG_DEFAULT_STYLE");
 
-    code.Replace(", wxID_ANY);", ");");
+    if (code.HasValue(prop_extra_style))
+        code.Eol().NodeName().Function("SetExtraStyle(").Add(prop_extra_style).EndFunction();
 
-    if (node->HasValue(prop_extra_style))
-        code << "\n" << node->get_node_name() << "->SetExtraStyle(" << node->prop_as_string(prop_extra_style) << ");";
-
-    return code;
+    return true;
 }
 
 bool PropertyGridGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)

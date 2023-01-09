@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   wxListView generator
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -50,68 +50,61 @@ wxObject* ListViewGenerator::CreateMockup(Node* node, wxObject* parent)
     return widget;
 }
 
-std::optional<ttlib::cstr> ListViewGenerator::GenConstruction(Node* node)
+bool ListViewGenerator::ConstructionCode(Code& code)
 {
-    ttlib::cstr code;
-    if (node->IsLocal())
-        code << "auto* ";
-    code << node->get_node_name() << GenerateNewAssignment(node);
-    code << GetParentName(node) << ", " << node->prop_as_string(prop_id);
+    code.AddAuto().NodeName().CreateClass().ValidParentName().Comma().Add(prop_id);
 
     // Note that the default style is not specified, so that it will always be generated. That makes the generated code
     // easier to understand since you know exactly which type of list view is being created instead of having to know what
     // the default is.
-    GeneratePosSizeFlags(node, code);
+    code.PosSizeFlags(true);
 
-    return code;
+    return true;
 }
 
-std::optional<ttlib::cstr> ListViewGenerator::GenSettings(Node* node, size_t& auto_indent)
+bool ListViewGenerator::SettingsCode(Code& code)
 {
-    ttlib::cstr code;
-
-    if (node->prop_as_string(prop_mode) == "wxLC_REPORT" && node->HasValue(prop_column_labels))
+    if (code.is_value(prop_mode, "wxLC_REPORT") && code.HasValue(prop_column_labels))
     {
-        if (node->HasValue(prop_contents))
+        if (code.HasValue(prop_contents))
         {
-            auto_indent = indent::auto_keep_whitespace;
-            code << "{";
+            code.OpenBrace();
         }
-        auto headers = ConvertToArrayString(node->prop_as_string(prop_column_labels));
+
+        auto headers = ConvertToArrayString(code.view(prop_column_labels));
         for (auto& iter: headers)
         {
-            if (code.size())
-                code << "\n";
-            code << '\t' << node->get_node_name() << "->AppendColumn(" << GenerateQuotedString(iter) << ");";
+            code.Eol(eol_if_needed).NodeName().Function("AppendColumn(").QuotedString(iter).EndFunction();
         }
-        if (node->HasValue(prop_contents))
+
+        if (code.HasValue(prop_contents))
         {
-            code << "\n\n"
-                 << "\twxListItem info;\n"
-                 << "\tinfo.Clear();\n\n";
-            auto strings = ConvertToArrayString(node->prop_as_string(prop_contents));
+            code.OpenBrace();
+            code.Eol(eol_if_needed).Add("wxListItem ").Str("info").Str(code.is_cpp() ? ";" : "");
+            code.Eol().Str("info.Clear(").EndFunction();
+            auto strings = ConvertToArrayString(code.view(prop_contents));
             int row_id = -1;
             for (auto& row: strings)
             {
                 ++row_id;
-                code << "\n\tinfo.SetId(" << row_id << ");\n";
+                code.Eol().Str("info.SetId(").itoa(row_id).EndFunction();
                 if (row_id == 0)
-                    code << "\tauto index = ";
+                    code.Eol().Str(code.is_cpp() ? "auto " : "").Str("idx = ");
                 else
-                    code << "\tindex = ";
-                code << node->get_node_name() << "->InsertItem(info);\n";
+                    code.Eol().Str("idx = ");
+                code.NodeName().Function("InsertItem(info").EndFunction();
                 ttlib::multistr columns(row, ';', tt::TRIM::both);
                 for (size_t column = 0; column < columns.size() && column < headers.size(); ++column)
                 {
-                    code << '\t' << node->get_node_name() << "->SetItem(index, " << column << ", "
-                         << GenerateQuotedString(columns[column]) << ");\n";
+                    code.Eol().NodeName().Function("SetItem(idx").Comma().itoa(column);
+                    code.Comma().QuotedString(columns[column]).EndFunction();
                 }
             }
-            code << "}";
+            code.CloseBrace();
         }
     }
 
-    return code;
+    return true;
 }
 
 bool ListViewGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)

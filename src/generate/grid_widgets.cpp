@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Grid component classes
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -85,21 +85,15 @@ void PropertyGridManagerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /
     pgm->Update();
 }
 
-std::optional<ttlib::cstr> PropertyGridManagerGenerator::GenConstruction(Node* node)
+bool PropertyGridManagerGenerator::ConstructionCode(Code& code)
 {
-    ttlib::cstr code;
-    if (node->IsLocal())
-        code << "auto* ";
-    code << node->get_node_name() << GenerateNewAssignment(node);
-    code << GetParentName(node) << ", " << node->prop_as_string(prop_id);
-    GeneratePosSizeFlags(node, code, false, "wxPGMAN_DEFAULT_STYLE");
+    code.AddAuto().NodeName().CreateClass().ValidParentName().Comma().Add(prop_id);
+    code.PosSizeFlags(false, "wxPGMAN_DEFAULT_STYLE");
 
-    code.Replace(", wxID_ANY);", ");");
+    if (code.HasValue(prop_extra_style))
+        code.Eol().NodeName().Function("SetExtraStyle(").Add(prop_extra_style).EndFunction();
 
-    if (node->HasValue(prop_extra_style))
-        code << "\n" << node->get_node_name() << "->SetExtraStyle(" << node->prop_as_string(prop_extra_style) << ");";
-
-    return code;
+    return true;
 }
 
 bool PropertyGridManagerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
@@ -114,69 +108,52 @@ bool PropertyGridManagerGenerator::GetIncludes(Node* node, std::set<std::string>
 
 //////////////////////////////////////////  PropertyGridPageGenerator  //////////////////////////////////////////
 
-std::optional<ttlib::cstr> PropertyGridPageGenerator::GenConstruction(Node* node)
+bool PropertyGridPageGenerator::ConstructionCode(Code& code)
 {
-    ttlib::cstr code;
-    if (node->HasValue(prop_bitmap))
+    if (code.HasValue(prop_bitmap))
     {
-        ttlib::cstr bundle_code;
-        bool is_code_block = GenerateBundleCode(node->prop_as_string(prop_bitmap), bundle_code);
-        if (is_code_block)
+        auto is_bitmaps_list = BitmapList(code, prop_bitmap);
+        code.AddAuto().NodeName().Str(" = ").ParentName().Function("AddPage(").Add(prop_label);
+        if (is_bitmaps_list)
         {
-            if (wxGetProject().value(prop_wxWidgets_version) == "3.1")
+            if (code.is_cpp() && wxGetProject().value(prop_wxWidgets_version) == "3.1")
             {
-                code << "#if wxCHECK_VERSION(3, 1, 6)\n";
+                code.Eol() += "#if wxCHECK_VERSION(3, 1, 6)\n\t";
             }
-            // GenerateBundleCode assumes an indent within an indent
-            bundle_code.Replace("\t\t\t", "\t\t", true);
-            code << '\t' << bundle_code;
-            code << "\t\t";
-            if (node->IsLocal())
-                code << "auto* ";
-            code << node->get_node_name() << " = " << node->get_parent_name() << "->AddPage(";
-            code << GenerateQuotedString(node->prop_as_string(prop_label)) << ", "
-                 << "wxBitmapBundle::FromBitmaps(bitmaps));";
-            code << "\n\t}";
-            if (wxGetProject().value(prop_wxWidgets_version) == "3.1")
+            if (code.is_cpp())
+                code += "wxBitmapBundle::FromBitmaps(bitmaps)";
+            else
+                code += "wx.BitmapBundle.FromBitmaps(bitmaps)";
+            if (code.is_cpp() && wxGetProject().value(prop_wxWidgets_version) == "3.1")
             {
-                code << "\n#else\n\t";
-                if (node->IsLocal())
-                    code << "auto* ";
-                code << node->get_node_name() << " = " << node->get_parent_name() << "->AddPage(";
-                code << GenerateQuotedString(node->prop_as_string(prop_label)) << ", "
-                     << GenerateBitmapCode(node->prop_as_string(prop_bitmap)) << ");";
-                code << "\n#endif";
+                code.Eol().Str("#else").Eol();
+                ttlib::cstr bundle_code;
+                GenerateBundleCode(code.node()->as_string(prop_bitmap), bundle_code);
+                code.CheckLineLength(bundle_code.size());
+                code += bundle_code;
+                code.Eol() += "#endif";
             }
         }
         else
         {
-            if (wxGetProject().value(prop_wxWidgets_version) == "3.1")
+            if (code.is_cpp())
             {
-                code << "#if wxCHECK_VERSION(3, 1, 6)\n";
+                ttlib::cstr bundle_code;
+                GenerateBundleCode(code.node()->as_string(prop_bitmap), bundle_code);
+                code.CheckLineLength(bundle_code.size());
+                code += bundle_code;
             }
-            if (node->IsLocal())
-                code << "auto* ";
-            code << node->get_node_name() << " = " << node->get_parent_name() << "->AddPage(";
-            code << GenerateQuotedString(node->prop_as_string(prop_label)) << ", " << bundle_code << ");";
-            if (wxGetProject().value(prop_wxWidgets_version) == "3.1")
+            else
             {
-                code << "\n#else\n";
-                if (node->IsLocal())
-                    code << "auto* ";
-                code << node->get_node_name() << " = " << node->get_parent_name() << "->AddPage(";
-                code << GenerateQuotedString(node->prop_as_string(prop_label)) << ", "
-                     << GenerateBitmapCode(node->prop_as_string(prop_bitmap)) << ");";
-                code << "\n#endif";
+                PythonBundleCode(code, prop_bitmap);
             }
         }
+        code.EndFunction();
     }
     else
     {
-        if (node->IsLocal())
-            code << "auto* ";
-        code << node->get_node_name() << " = " << node->get_parent_name() << "->AddPage(";
-        code << GenerateQuotedString(node->prop_as_string(prop_label)) << ");";
+        code.AddAuto().NodeName().Str(" = ").ParentName().Function("AddPage(").Add(prop_label).EndFunction();
     }
 
-    return code;
+    return true;
 }

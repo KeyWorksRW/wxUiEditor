@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   PropertyGrid/Manager Item generator
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -13,28 +13,23 @@
 
 #include "gen_prop_item.h"
 
-std::optional<ttlib::cstr> PropertyGridItemGenerator::GenConstruction(Node* node)
+bool PropertyGridItemGenerator::ConstructionCode(Code& code)
 {
-    ttlib::cstr code;
+    code.AddAuto().NodeName().Str(" = ").ParentName();
+    // .Function("Append(new wx").PropAs(prop_type).Str("Property(");
 
-    if (node->IsLocal())
-        code << "auto* ";
-    code << node->get_node_name() << " = " << node->get_parent_name();
-
-    if (node->prop_as_string(prop_type) == "Category")
+    if (code.view(prop_type) == "Category")
     {
-        code << "->Append(new wxPropertyCategory(";
-        code << GenerateQuotedString(node->prop_as_string(prop_label)) << ", "
-             << GenerateQuotedString(node->prop_as_string(prop_label)) << "));";
+        code.Function("Append(").Str(code.is_cpp() ? "new " : "").Add("wxPropertyCategory(");
+        code.QuotedString(prop_label).Comma().QuotedString(prop_label).Str(")").EndFunction();
     }
     else
     {
-        code << "->Append(new wx" << node->prop_as_string(prop_type) << "Property(";
-        code << GenerateQuotedString(node->prop_as_string(prop_label)) << ", "
-             << GenerateQuotedString(node->prop_as_string(prop_help)) << "));";
+        code.Function("Append(").Str(code.is_cpp() ? "new " : "").Add("wx").Str(prop_type).Str("PropertyCategory(");
+        code.QuotedString(prop_label).Comma().QuotedString(prop_help).Str(")").EndFunction();
     }
 
-    return code;
+    return true;
 }
 
 ttlib::cstr PropertyGridItemGenerator::GetHelpURL(Node* node)

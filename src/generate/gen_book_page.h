@@ -14,7 +14,7 @@ class BookPageGenerator : public BaseGenerator
 public:
     wxObject* CreateMockup(Node* node, wxObject* parent) override;
 
-    std::optional<ttlib::sview> CommonConstruction(Code& code) override;
+    bool ConstructionCode(Code& code) override;
 
     bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr) override;
 

@@ -51,7 +51,7 @@ wxObject* CheckListBoxGenerator::CreateMockup(Node* node, wxObject* parent)
     return widget;
 }
 
-std::optional<ttlib::sview> CheckListBoxGenerator::CommonConstruction(Code& code)
+bool CheckListBoxGenerator::ConstructionCode(Code& code)
 {
     if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
@@ -75,10 +75,10 @@ std::optional<ttlib::sview> CheckListBoxGenerator::CommonConstruction(Code& code
     }
     code.EndFunction();
 
-    return code.m_code;
+    return true;
 }
 
-std::optional<ttlib::sview> CheckListBoxGenerator::CommonSettings(Code& code)
+bool CheckListBoxGenerator::SettingsCode(Code& code)
 {
     if (code.IsTrue(prop_focus))
     {
@@ -136,7 +136,7 @@ std::optional<ttlib::sview> CheckListBoxGenerator::CommonSettings(Code& code)
             }
         }
     }
-    return code.m_code;
+    return true;
 }
 
 int CheckListBoxGenerator::GetRequiredVersion(Node* node)

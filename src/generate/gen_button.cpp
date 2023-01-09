@@ -142,14 +142,14 @@ bool ButtonGenerator::OnPropertyChange(wxObject* widget, Node* node, NodePropert
     return false;
 }
 
-std::optional<ttlib::sview> ButtonGenerator::CommonConstruction(Code& code)
+bool ButtonGenerator::ConstructionCode(Code& code)
 {
     if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
     code.NodeName().CreateClass();
     code.ValidParentName().Comma().as_string(prop_id).Comma();
 
-    // If prop_markup is set, then the label will be set in CommonSettings()
+    // If prop_markup is set, then the label will be set in SettingsCode()
     if (code.HasValue(prop_label) && !code.IsTrue(prop_markup))
     {
         code.QuotedString(prop_label);
@@ -161,10 +161,10 @@ std::optional<ttlib::sview> ButtonGenerator::CommonConstruction(Code& code)
 
     code.PosSizeFlags(true);
 
-    return code.m_code;
+    return true;
 }
 
-std::optional<ttlib::sview> ButtonGenerator::CommonSettings(Code& code)
+bool ButtonGenerator::SettingsCode(Code& code)
 {
     if (code.IsTrue(prop_markup) && code.HasValue(prop_label))
     {
@@ -206,7 +206,7 @@ std::optional<ttlib::sview> ButtonGenerator::CommonSettings(Code& code)
             PythonBtnBimapCode(code);
     }
 
-    return code.m_code;
+    return true;
 }
 
 int ButtonGenerator::GetRequiredVersion(Node* node)

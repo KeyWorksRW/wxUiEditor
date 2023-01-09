@@ -33,14 +33,14 @@ void ChoicebookGenerator::OnPageChanged(wxBookCtrlEvent& event)
     event.Skip();
 }
 
-std::optional<ttlib::sview> ChoicebookGenerator::CommonConstruction(Code& code)
+bool ChoicebookGenerator::ConstructionCode(Code& code)
 {
     if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
     code.NodeName().CreateClass();
     code.ValidParentName().Comma().as_string(prop_id).PosSizeFlags(false, "wxCHB_DEFAULT");
 
-    return code.m_code;
+    return true;
 }
 
 bool ChoicebookGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)

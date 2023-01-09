@@ -160,7 +160,7 @@ void SplitterWindowGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxpa
     }
 }
 
-std::optional<ttlib::sview> SplitterWindowGenerator::CommonConstruction(Code& code)
+bool SplitterWindowGenerator::ConstructionCode(Code& code)
 {
     if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
@@ -168,10 +168,10 @@ std::optional<ttlib::sview> SplitterWindowGenerator::CommonConstruction(Code& co
     code.ValidParentName().Comma().as_string(prop_id);
     code.PosSizeFlags(true);
 
-    return code.m_code;
+    return true;
 }
 
-std::optional<ttlib::sview> SplitterWindowGenerator::CommonSettings(Code& code)
+bool SplitterWindowGenerator::SettingsCode(Code& code)
 {
     Node* node = code.node();
 
@@ -190,7 +190,7 @@ std::optional<ttlib::sview> SplitterWindowGenerator::CommonSettings(Code& code)
         code.Eol(eol_if_empty).NodeName().Function("SetMinimumPaneSize(").Add(prop_min_pane_size).EndFunction();
     }
 
-    return code.m_code;
+    return true;
 }
 
 bool SplitterWindowGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)

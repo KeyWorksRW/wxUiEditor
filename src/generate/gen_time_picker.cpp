@@ -26,7 +26,7 @@ wxObject* TimePickerCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
     return widget;
 }
 
-std::optional<ttlib::sview> TimePickerCtrlGenerator::CommonConstruction(Code& code)
+bool TimePickerCtrlGenerator::ConstructionCode(Code& code)
 {
     if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
@@ -34,7 +34,7 @@ std::optional<ttlib::sview> TimePickerCtrlGenerator::CommonConstruction(Code& co
     code.ValidParentName().Comma().as_string(prop_id).Comma().Add("wxDefaultDateTime");
     code.PosSizeFlags(true, "wxTP_DEFAULT");
 
-    return code.m_code;
+    return true;
 }
 
 bool TimePickerCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)

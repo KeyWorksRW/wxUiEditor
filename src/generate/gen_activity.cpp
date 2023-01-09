@@ -30,7 +30,7 @@ wxObject* ActivityIndicatorGenerator::CreateMockup(Node* node, wxObject* parent)
     return widget;
 }
 
-std::optional<ttlib::sview> ActivityIndicatorGenerator::CommonConstruction(Code& code)
+bool ActivityIndicatorGenerator::ConstructionCode(Code& code)
 {
     if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
@@ -38,14 +38,14 @@ std::optional<ttlib::sview> ActivityIndicatorGenerator::CommonConstruction(Code&
     code.ValidParentName().Comma().as_string(prop_id);
     code.PosSizeFlags(true);
 
-    return code.m_code;
+    return true;
 }
 
-std::optional<ttlib::sview> ActivityIndicatorGenerator::CommonSettings(Code& code)
+bool ActivityIndicatorGenerator::SettingsCode(Code& code)
 {
     if (code.IsTrue(prop_auto_start))
         code.NodeName().Function("Start()").EndFunction();
-    return code.m_code;
+    return true;
 }
 
 bool ActivityIndicatorGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)

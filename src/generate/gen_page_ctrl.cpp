@@ -144,19 +144,11 @@ bool PageCtrlGenerator::ConstructionCode(Code& code)
         if (auto child_generator = child_node->GetGenerator(); child_generator)
         {
             Code gen_code(child_node, code.m_language);
-            std::optional<ttlib::sview> scode;
-            std::optional<ttlib::cstr> result;
-
-            scode = child_generator->CommonConstruction(gen_code);
-            if (scode)
+            if (child_generator->ConstructionCode(gen_code))
             {
                 code += gen_code.m_code;
-                code.Eol(eol_if_needed)
-                    .ValidParentName()
-                    .Function("AddPage(")
-                    .Str(child_node->get_node_name())
-                    .Comma()
-                    .QuotedString(prop_label);
+                code.Eol(eol_if_needed).ValidParentName().Function("AddPage(");
+                code.Str(child_node->get_node_name()).Comma().QuotedString(prop_label);
 
                 // Default is false, so only add parameter if it is true.
                 if (code.IsTrue(prop_select))
@@ -195,5 +187,5 @@ bool PageCtrlGenerator::ConstructionCode(Code& code)
         }
     }
 
-    return  true;
+    return true;
 }

@@ -542,7 +542,7 @@ int ToolGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_f
 
 //////////////////////////////////////////  ToolDropDownGenerator  //////////////////////////////////////////
 
-std::optional<ttlib::sview> ToolDropDownGenerator::CommonConstruction(Code& code)
+bool ToolDropDownGenerator::ConstructionCode(Code& code)
 {
     if (code.HasValue(prop_bitmap))
     {
@@ -568,7 +568,7 @@ std::optional<ttlib::sview> ToolDropDownGenerator::CommonConstruction(Code& code
         GenToolCode(code, false);
     }
 
-    return code.m_code;
+    return true;
 }
 
 int ToolDropDownGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
@@ -629,7 +629,7 @@ int ToolDropDownGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size
 
 //////////////////////////////////////////  ToolSeparatorGenerator  //////////////////////////////////////////
 
-std::optional<ttlib::sview> ToolSeparatorGenerator::CommonConstruction(Code& code)
+bool ToolSeparatorGenerator::ConstructionCode(Code& code)
 {
     auto* node = code.node();
     if (node->isParent(gen_wxToolBar) || node->isParent(gen_wxRibbonToolBar) || node->isParent(gen_wxAuiToolBar))
@@ -641,7 +641,7 @@ std::optional<ttlib::sview> ToolSeparatorGenerator::CommonConstruction(Code& cod
         code.FormFunction("AddSeparator(").EndFunction();
     }
 
-    return code.m_code;
+    return true;
 }
 
 int ToolSeparatorGenerator::GenXrcObject(Node* /* node */, pugi::xml_node& object, size_t /* xrc_flags */)
@@ -653,7 +653,7 @@ int ToolSeparatorGenerator::GenXrcObject(Node* /* node */, pugi::xml_node& objec
 
 //////////////////////////////////////////  ToolStretchableGenerator  //////////////////////////////////////////
 
-std::optional<ttlib::sview> ToolStretchableGenerator::CommonConstruction(Code& code)
+bool ToolStretchableGenerator::ConstructionCode(Code& code)
 {
     auto* node = code.node();
     if (node->isParent(gen_wxToolBar))
@@ -674,7 +674,7 @@ std::optional<ttlib::sview> ToolStretchableGenerator::CommonConstruction(Code& c
         code.FormFunction("AddStretchableSpace(").EndFunction();
     }
 
-    return code.m_code;
+    return true;
 }
 
 int ToolStretchableGenerator::GenXrcObject(Node* /* node */, pugi::xml_node& object, size_t /* xrc_flags */)

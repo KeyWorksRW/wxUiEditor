@@ -436,14 +436,6 @@ void BaseCodeGenerator::GeneratePythonClass(Node* form_node, PANEL_PAGE panel_ty
             m_source->writeLine(code);
         }
     }
-    else if (auto result = generator->CommonAdditionalCode(code, code_after_children); result)
-    {
-        if (result.value().size())
-        {
-            m_source->writeLine();
-            m_source->writeLine(result.value(), indent::auto_keep_whitespace);
-        }
-    }
 
     // TODO: [Randalphwa - 12-04-2022] Python supports persistence, though it's not as easy as it is in C++.
     // See https://docs.wxpython.org/wx.lib.agw.persist.html?highlight=persist#module-wx.lib.agw.persist

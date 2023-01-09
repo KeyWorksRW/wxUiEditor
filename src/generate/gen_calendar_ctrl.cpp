@@ -29,7 +29,7 @@ wxObject* CalendarCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
     return widget;
 }
 
-std::optional<ttlib::sview> CalendarCtrlGenerator::CommonConstruction(Code& code)
+bool CalendarCtrlGenerator::ConstructionCode(Code& code)
 {
     if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
@@ -37,16 +37,16 @@ std::optional<ttlib::sview> CalendarCtrlGenerator::CommonConstruction(Code& code
     code.ValidParentName().Comma().as_string(prop_id).Comma().Add("wxDefaultDateTime");
     code.PosSizeFlags(true);
 
-    return code.m_code;
+    return true;
 }
 
-std::optional<ttlib::sview> CalendarCtrlGenerator::CommonSettings(Code& code)
+bool CalendarCtrlGenerator::SettingsCode(Code& code)
 {
     if (code.IsTrue(prop_focus))
     {
         code.NodeName().Function("SetFocus(").EndFunction();
     }
-    return code.m_code;
+    return true;
 }
 
 bool CalendarCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)

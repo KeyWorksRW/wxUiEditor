@@ -14,8 +14,8 @@ class TextCtrlGenerator : public BaseGenerator
 public:
     wxObject* CreateMockup(Node* node, wxObject* parent) override;
 
-    std::optional<ttlib::sview> CommonConstruction(Code& code) override;
-    std::optional<ttlib::sview> CommonSettings(Code&) override;
+    bool ConstructionCode(Code& code) override;
+    bool SettingsCode(Code&) override;
 
     bool OnPropertyChange(wxObject* widget, Node* node, NodeProperty* prop) override;
 

@@ -60,7 +60,7 @@ void RadioBoxGenerator::OnRadioBox(wxCommandEvent& event)
         GetMockup()->SelectNode(window);
 }
 
-std::optional<ttlib::sview> RadioBoxGenerator::CommonConstruction(Code& code)
+bool RadioBoxGenerator::ConstructionCode(Code& code)
 {
     auto array = ConvertToArrayString(code.node()->as_string(prop_contents));
     ttlib::cstr choice_name;
@@ -113,17 +113,17 @@ std::optional<ttlib::sview> RadioBoxGenerator::CommonConstruction(Code& code)
     code.EndFunction();
     code.CloseBrace();
 
-    return code.m_code;
+    return true;
 }
 
-std::optional<ttlib::sview> RadioBoxGenerator::CommonSettings(Code& code)
+bool RadioBoxGenerator::SettingsCode(Code& code)
 {
     if (auto sel = code.IntValue(prop_selection); sel > 0)
     {
         code.NodeName().Function("SetSelection(").Str(prop_selection).EndFunction();
     }
 
-    return code.m_code;
+    return true;
 }
 
 bool RadioBoxGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)

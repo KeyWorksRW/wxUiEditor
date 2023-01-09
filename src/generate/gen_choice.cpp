@@ -62,7 +62,7 @@ bool ChoiceGenerator::OnPropertyChange(wxObject* widget, Node* node, NodePropert
     return false;
 }
 
-std::optional<ttlib::sview> ChoiceGenerator::CommonConstruction(Code& code)
+bool ChoiceGenerator::ConstructionCode(Code& code)
 {
     if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
@@ -88,10 +88,10 @@ std::optional<ttlib::sview> ChoiceGenerator::CommonConstruction(Code& code)
         code.PosSizeFlags(true);
     }
 
-    return code.m_code;
+    return true;
 }
 
-std::optional<ttlib::sview> ChoiceGenerator::CommonSettings(Code& code)
+bool ChoiceGenerator::SettingsCode(Code& code)
 {
     if (code.IsTrue(prop_focus))
     {
@@ -135,7 +135,7 @@ std::optional<ttlib::sview> ChoiceGenerator::CommonSettings(Code& code)
         }
     }
 
-    return code.m_code;
+    return true;
 }
 
 bool ChoiceGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)

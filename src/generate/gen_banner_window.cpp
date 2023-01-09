@@ -42,7 +42,7 @@ wxObject* BannerWindowGenerator::CreateMockup(Node* node, wxObject* parent)
     return widget;
 }
 
-std::optional<ttlib::sview> BannerWindowGenerator::CommonConstruction(Code& code)
+bool BannerWindowGenerator::ConstructionCode(Code& code)
 {
     if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
@@ -57,10 +57,10 @@ std::optional<ttlib::sview> BannerWindowGenerator::CommonConstruction(Code& code
     }
     code.PosSizeFlags(true);
 
-    return code.m_code;
+    return true;
 }
 
-std::optional<ttlib::sview> BannerWindowGenerator::CommonSettings(Code& code)
+bool BannerWindowGenerator::SettingsCode(Code& code)
 {
     if (code.HasValue(prop_bitmap) && code.is_cpp())
     {
@@ -118,7 +118,7 @@ std::optional<ttlib::sview> BannerWindowGenerator::CommonSettings(Code& code)
         code.Comma().QuotedString(prop_message).EndFunction();
     }
 
-    return code.m_code;
+    return true;
 }
 
 bool BannerWindowGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)

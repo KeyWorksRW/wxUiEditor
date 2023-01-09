@@ -101,17 +101,6 @@ public:
     // The GenCodeType parameter indicates what type of code is needed.
     virtual bool AdditionalCode(Code&, GenEnum::GenCodeType /* command */) { return false; }
 
-    // Generate the code used to construct the object using either C++ or Python
-    virtual std::optional<ttlib::sview> CommonConstruction(Code&) { return {}; }
-
-    // Generate code after any children have been constructed
-    //
-    // Code will be written with indent::auto_keep_whitespace set
-    virtual std::optional<ttlib::sview> CommonAfterChildren(Code&) { return {}; }
-
-    virtual std::optional<ttlib::sview> CommonSettings(Code&) { return {}; }
-    virtual std::optional<ttlib::sview> CommonAdditionalCode(Code&, GenEnum::GenCodeType /* command */) { return {}; }
-
     // Generate code to bind the event to a handler -- only override if you need to do
     // something special
     virtual std::optional<ttlib::sview> GenEvents(Code&, NodeEvent*, const std::string&);

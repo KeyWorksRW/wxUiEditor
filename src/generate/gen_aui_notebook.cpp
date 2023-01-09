@@ -46,7 +46,7 @@ void AuiNotebookGenerator::OnPageChanged(wxNotebookEvent& event)
     event.Skip();
 }
 
-std::optional<ttlib::sview> AuiNotebookGenerator::CommonConstruction(Code& code)
+bool AuiNotebookGenerator::ConstructionCode(Code& code)
 {
     if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
@@ -81,17 +81,17 @@ std::optional<ttlib::sview> AuiNotebookGenerator::CommonConstruction(Code& code)
         code.Str(code.is_cpp() ? "new wxAuiSimpleTabArt()" : "wx.aui.AuiSimpleTabArt()").EndFunction();
     }
 
-    return code.m_code;
+    return true;
 }
 
-std::optional<ttlib::sview> AuiNotebookGenerator::CommonSettings(Code& code)
+bool AuiNotebookGenerator::SettingsCode(Code& code)
 {
     if (code.IntValue(prop_tab_height) > 0)
     {
         code.Eol().NodeName().Function("SetTabCtrlHeight(").Str(prop_tab_height).EndFunction();
     }
 
-    return code.m_code;
+    return true;
 }
 
 bool AuiNotebookGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)

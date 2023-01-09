@@ -40,7 +40,7 @@ wxObject* FileCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
     return widget;
 }
 
-std::optional<ttlib::sview> FileCtrlGenerator::CommonConstruction(Code& code)
+bool FileCtrlGenerator::ConstructionCode(Code& code)
 {
     if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
@@ -69,10 +69,10 @@ std::optional<ttlib::sview> FileCtrlGenerator::CommonConstruction(Code& code)
     }
     code.EndFunction();
 
-    return code.m_code;
+    return true;
 }
 
-std::optional<ttlib::sview> FileCtrlGenerator::CommonSettings(Code& code)
+bool FileCtrlGenerator::SettingsCode(Code& code)
 {
     if (code.IsTrue(prop_focus))
     {
@@ -89,7 +89,7 @@ std::optional<ttlib::sview> FileCtrlGenerator::CommonSettings(Code& code)
         code.Eol(eol_if_empty).NodeName().Function("ShowHidden(").AddTrue().EndFunction();
     }
 
-    return code.m_code;
+    return true;
 }
 
 bool FileCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)

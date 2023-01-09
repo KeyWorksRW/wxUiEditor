@@ -42,17 +42,17 @@ void SimplebookGenerator::OnPageChanged(wxBookCtrlEvent& event)
     event.Skip();
 }
 
-std::optional<ttlib::sview> SimplebookGenerator::CommonConstruction(Code& code)
+bool SimplebookGenerator::ConstructionCode(Code& code)
 {
     if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
     code.NodeName().CreateClass();
     code.ValidParentName().Comma().as_string(prop_id).PosSizeFlags(false);
 
-    return code.m_code;
+    return true;
 }
 
-std::optional<ttlib::sview> SimplebookGenerator::CommonSettings(Code& code)
+bool SimplebookGenerator::SettingsCode(Code& code)
 {
     if (!code.IsEqualTo(prop_show_effect, "no effects") || !code.IsEqualTo(prop_hide_effect, "no effects"))
     {
@@ -65,7 +65,7 @@ std::optional<ttlib::sview> SimplebookGenerator::CommonSettings(Code& code)
             code.NodeName().Function("SetEffectTimeout(").Str(prop_duration).EndFunction();
         }
     }
-    return code.m_code;
+    return true;
 }
 
 bool SimplebookGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)

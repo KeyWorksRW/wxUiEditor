@@ -475,7 +475,7 @@ wxObject* StyledTextGenerator::CreateMockup(Node* node, wxObject* parent)
     return scintilla;
 }
 
-std::optional<ttlib::sview> StyledTextGenerator::CommonConstruction(Code& code)
+bool StyledTextGenerator::ConstructionCode(Code& code)
 {
     if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
@@ -487,10 +487,10 @@ std::optional<ttlib::sview> StyledTextGenerator::CommonConstruction(Code& code)
     // not needed.
     code.m_code.Replace(", wxID_ANY)", ")");
 
-    return code.m_code;
+    return true;
 }
 
-std::optional<ttlib::sview> StyledTextGenerator::CommonSettings(Code& code)
+bool StyledTextGenerator::SettingsCode(Code& code)
 {
     Node* node = code.node();
 
@@ -924,7 +924,7 @@ std::optional<ttlib::sview> StyledTextGenerator::CommonSettings(Code& code)
 
     // code.CloseBrace();
 
-    return code.m_code;
+    return true;
 }
 
 bool StyledTextGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)

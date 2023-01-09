@@ -36,6 +36,13 @@ inline const GenType lst_form_types[] =
     type_wizard,
 
 };
+
+const std::vector<std::string> reserved_names = {
+    "bitmaps",  // used for wxBitmapBundle
+    "idx",      // used for wxListItem
+    "info"      // used for wxListItem
+};
+
 // clang-format on
 
 bool Node::IsForm() const noexcept
@@ -860,7 +867,11 @@ ttlib::cstr Node::GetUniqueName(const ttlib::cstr& proposed_name)
         return {};
 
     std::unordered_set<std::string> name_set;
-    name_set.emplace("bitmaps");  // reserve this name for generating bitmap bundle vectors/lists
+    for (auto& iter: reserved_names)
+    {
+        name_set.emplace(iter);
+    }
+
     form->CollectUniqueNames(name_set, this);
 
     if (auto it = name_set.find(new_name); it != name_set.end())
@@ -908,7 +919,11 @@ bool Node::FixDuplicateName()
         return false;
 
     std::unordered_set<std::string> name_set;
-    name_set.emplace("bitmaps");  // reserve this name for generating bitmap bundle vectors/lists
+    for (auto& iter: reserved_names)
+    {
+        name_set.emplace(iter);
+    }
+
     form->CollectUniqueNames(name_set, this);
 
     bool replaced = false;
@@ -975,7 +990,11 @@ void Node::FixDuplicateNodeNames(Node* form)
     // wxFormBuilder could have multiple identical names if they didn't do their own name fixups correctly.
 
     std::unordered_set<std::string> name_set;
-    name_set.emplace("bitmaps");  // reserve this name for generating bitmap bundle vectors/lists
+    for (auto& iter: reserved_names)
+    {
+        name_set.emplace(iter);
+    }
+
     form->CollectUniqueNames(name_set, this);
 
     for (auto& iter: s_var_names)

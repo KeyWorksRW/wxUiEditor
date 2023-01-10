@@ -1,18 +1,9 @@
-set (file_list_dir src)
+set (file_list_dir cpp)
 
 set (file_list
 
     cpptest.rc
     mainapp.cpp
-
-    imports/form_base.cpp
-    imports/import_form_base.cpp
-    imports/crafter_base.cpp
-    imports/crafter_bitmaps.cpp
-    imports/import_crafter_base.cpp
-    imports/import_crafter_base.cpp
-
-    custom_ctrls/split_button.cpp  # Split Button Custom widget (button + menu)
 
 )
 

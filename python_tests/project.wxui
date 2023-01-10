@@ -6,6 +6,7 @@
     art_directory="art"
     code_preference="Python"
     base_directory="cpp"
+    cmake_file="cpp/wxui_code.cmake"
     cpp_line_length="120"
     derived_directory="cpp"
     generate_cmake="1"
@@ -417,7 +418,7 @@
           <node
             class="CustomControl"
             class_name="SplitButton"
-            header="../custom_ctrls/split_button.h"
+            header="cpp/custom_ctrls/split_button.h"
             namespace="wxue_ctrl"
             parameters="(this, wxID_ANY, &quot;Play&quot;)"
             settings_code="{@@    const int ID_PLAY { 100 };@@    const int ID_STOP { 101 };@@    m_split_button->GetMenu().Append(ID_PLAY, &quot;Play&quot;);@@    m_split_button->GetMenu().Append(ID_STOP, &quot;Stop&quot;);@@@@    m_split_button->Bind(wxEVT_MENU,@@        [this](wxCommandEvent&amp;)@@        {@@            m_animation_ctrl->Play();@@            m_checkPlayAnimation->SetValue(true);@@        }, ID_PLAY);@@@@    m_split_button->Bind(wxEVT_MENU,@@        [this](wxCommandEvent&amp;)@@        {@@            m_animation_ctrl->Stop();@@            m_checkPlayAnimation->SetValue(false);@@        }, ID_STOP);@@@@    m_split_button->Bind(wxEVT_BUTTON,@@        [this](wxCommandEvent&amp;)@@        {@@            m_animation_ctrl->Play();@@            m_checkPlayAnimation->SetValue(true);@@        } );@@}"

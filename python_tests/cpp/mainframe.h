@@ -18,7 +18,7 @@
 class MainFrame : public wxFrame
 {
 public:
-    MainFrame(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = "wxUiTesting", const wxPoint& pos =
+    MainFrame(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = "pytest", const wxPoint& pos =
         wxDefaultPosition, const wxSize& size = wxSize(500, 300), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL,
         const wxString &name = wxFrameNameStr);
 
@@ -28,7 +28,6 @@ protected:
 
     void OnChoicebook(wxCommandEvent& event);
     void OnCommonDialog(wxCommandEvent& event);
-    void OnImportTest(wxCommandEvent& event);
     void OnListbook(wxCommandEvent& event);
     void OnMultiTestDialog(wxCommandEvent& event);
     void OnNotebook(wxCommandEvent& event);

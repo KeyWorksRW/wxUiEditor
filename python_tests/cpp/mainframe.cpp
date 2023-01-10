@@ -40,27 +40,43 @@ MainFrame::MainFrame(wxWindow* parent, wxWindowID id, const wxString& title, con
     auto* menuDialogs = new wxMenu();
     auto* menu_item_2 = new wxMenuItem(menuDialogs, wxID_ANY, "PythonDlg");
     {
+#if wxCHECK_VERSION(3, 1, 6)
         wxVector<wxBitmap> bitmaps;
         bitmaps.push_back(wxueImage(wxue_img::wxPython_png, sizeof(wxue_img::wxPython_png)));
         bitmaps.push_back(wxueImage(wxue_img::wxPython_1_5x_png, sizeof(wxue_img::wxPython_1_5x_png)));
         bitmaps.push_back(wxueImage(wxue_img::wxPython_2x_png, sizeof(wxue_img::wxPython_2x_png)));
-        menu_item_2->SetBitmap(wxBitmapBundle::FromBitmaps(bitmaps));
+#endif
+        menu_item_2->SetBitmap(
+#if wxCHECK_VERSION(3, 1, 6)
+            wxBitmapBundle::FromBitmaps(bitmaps)
+#else
+            wxBitmap(wxueImage(wxue_img::wxPython_png, sizeof(wxue_img::wxPython_png)))
+#endif
+        );
     }
 
     menuDialogs->Append(menu_item_2);
     auto* menuItem_2 = new wxMenuItem(menuDialogs, wxID_ANY, "Common Controls...", "Common controls", wxITEM_NORMAL);
-    menuItem_2->SetBitmap(wxArtProvider::GetBitmapBundle(wxART_TIP, wxART_MENU));
+    menuItem_2->SetBitmap(
+#if wxCHECK_VERSION(3, 1, 6)
+        wxArtProvider::GetBitmapBundle(wxART_TIP, wxART_MENU)
+#else
+        wxBitmap(wxArtProvider::GetBitmap(wxART_TIP, wxART_MENU))
+#endif
+    );
 
     menuDialogs->Append(menuItem_2);
     auto* menuItem = new wxMenuItem(menuDialogs, wxID_ANY, "DlgMulitTest...", "Launch DlgMultiTest Dialog",
         wxITEM_NORMAL);
-    menuItem->SetBitmap(wxArtProvider::GetBitmapBundle(wxART_INFORMATION, wxART_MENU));
+    menuItem->SetBitmap(
+#if wxCHECK_VERSION(3, 1, 6)
+        wxArtProvider::GetBitmapBundle(wxART_INFORMATION, wxART_MENU)
+#else
+        wxBitmap(wxArtProvider::GetBitmap(wxART_INFORMATION, wxART_MENU))
+#endif
+    );
 
     menuDialogs->Append(menuItem);
-    auto* menu_item = new wxMenuItem(menuDialogs, wxID_ANY, "Import Tests");
-    menu_item->SetBitmap(wxArtProvider::GetBitmapBundle(wxART_GOTO_LAST, wxART_MENU));
-
-    menuDialogs->Append(menu_item);
     auto* menuItem1 = new wxMenuItem(menuDialogs, wxID_ANY, "Other Controls Dialog...");
     menuDialogs->Append(menuItem1);
     auto* menuItem2 = new wxMenuItem(menuDialogs, wxID_ANY, "Ribbon Dialog");
@@ -69,7 +85,6 @@ MainFrame::MainFrame(wxWindow* parent, wxWindowID id, const wxString& title, con
     menuDialogs->Append(menuItem3);
 
     auto* submenu = new wxMenu();
-
     auto* menu_choicebook = new wxMenuItem(submenu, wxID_ANY, "Choicebook");
     submenu->Append(menu_choicebook);
     auto* menu_listbook = new wxMenuItem(submenu, wxID_ANY, "Listbook");
@@ -90,18 +105,29 @@ MainFrame::MainFrame(wxWindow* parent, wxWindowID id, const wxString& title, con
 
     m_toolBar = CreateToolBar();
     auto* tool_4 = m_toolBar->AddTool(wxID_ANY, "PythonDlg",
-        wxBitmapBundle::FromBitmap(wxueImage(wxue_img::wxPython_1_5x_png, sizeof(wxue_img::wxPython_1_5x_png))));
+#if wxCHECK_VERSION(3, 1, 6)
+
+        wxBitmapBundle::FromBitmap(wxueImage(wxue_img::wxPython_1_5x_png, sizeof(wxue_img::wxPython_1_5x_png)))
+#else
+        wxBitmap(wxueImage(wxue_img::wxPython_1_5x_png, sizeof(wxue_img::wxPython_1_5x_png)))
+#endif
+    );
 
     auto* tool_2 = m_toolBar->AddTool(wxID_ANY, "Common Controls...",
-        wxArtProvider::GetBitmapBundle(wxART_TIP, wxART_TOOLBAR));
+#if wxCHECK_VERSION(3, 1, 6)
+        wxArtProvider::GetBitmapBundle(wxART_TIP, wxART_TOOLBAR)
+#else
+        wxBitmap(wxArtProvider::GetBitmap(wxART_TIP, wxART_TOOLBAR))
+#endif
+    );
 
     auto* tool = m_toolBar->AddTool(wxID_ANY, "DlgMulitTest...",
-        wxArtProvider::GetBitmapBundle(wxART_INFORMATION, wxART_TOOLBAR), wxNullBitmap, wxITEM_NORMAL,
-        "Launch DlgMultiTest Dialog", "Launch DlgMultiTest Dialog");
-
-    auto* tool_3 = m_toolBar->AddTool(wxID_ANY, "ImportTest",
-        wxArtProvider::GetBitmapBundle(wxART_GOTO_LAST, wxART_TOOLBAR), wxNullBitmap, wxITEM_NORMAL, "Import Test",
-        "Import Test");
+#if wxCHECK_VERSION(3, 1, 6)
+        wxArtProvider::GetBitmapBundle(wxART_INFORMATION, wxART_TOOLBAR)
+#else
+        wxBitmap(wxArtProvider::GetBitmap(wxART_INFORMATION, wxART_TOOLBAR))
+#endif
+    , wxNullBitmap, wxITEM_NORMAL, "Launch DlgMultiTest Dialog", "Launch DlgMultiTest Dialog");
 
     m_toolBar->Realize();
 
@@ -120,7 +146,6 @@ MainFrame::MainFrame(wxWindow* parent, wxWindowID id, const wxString& title, con
     Bind(wxEVT_MENU, &MainFrame::OnPythonDlg, this, menu_item_2->GetId());
     Bind(wxEVT_MENU, &MainFrame::OnCommonDialog, this, menuItem_2->GetId());
     Bind(wxEVT_MENU, &MainFrame::OnMultiTestDialog, this, menuItem->GetId());
-    Bind(wxEVT_MENU, &MainFrame::OnImportTest, this, menu_item->GetId());
     Bind(wxEVT_MENU, &MainFrame::OnOtherCtrls, this, menuItem1->GetId());
     Bind(wxEVT_MENU, &MainFrame::OnRibbonDialog, this, menuItem2->GetId());
     Bind(wxEVT_MENU, &MainFrame::OnWizard, this, menuItem3->GetId());
@@ -133,7 +158,6 @@ MainFrame::MainFrame(wxWindow* parent, wxWindowID id, const wxString& title, con
     Bind(wxEVT_TOOL, &MainFrame::OnPythonDlg, this, tool_4->GetId());
     Bind(wxEVT_TOOL, &MainFrame::OnCommonDialog, this, tool_2->GetId());
     Bind(wxEVT_TOOL, &MainFrame::OnMultiTestDialog, this, tool->GetId());
-    Bind(wxEVT_TOOL, &MainFrame::OnImportTest, this, tool_3->GetId());
 }
 
 namespace wxue_img

@@ -71,9 +71,6 @@ class MainFrame(wx.Frame):
             "Launch DlgMultiTest Dialog", wx.ITEM_NORMAL)
         menuItem.SetBitmap(wx.ArtProvider.GetBitmapBundle(wx.ART_INFORMATION, wx.ART_MENU))
         menuDialogs.Append(menuItem)
-        menu_item = wx.MenuItem(menuDialogs, wx.ID_ANY, "Import Tests")
-        menu_item.SetBitmap(wx.ArtProvider.GetBitmapBundle(wx.ART_GOTO_LAST, wx.ART_MENU))
-        menuDialogs.Append(menu_item)
         menuItem1 = wx.MenuItem(menuDialogs, wx.ID_ANY, "Other Controls Dialog...")
         menuDialogs.Append(menuItem1)
         menuItem2 = wx.MenuItem(menuDialogs, wx.ID_ANY, "Ribbon Dialog")
@@ -111,10 +108,6 @@ class MainFrame(wx.Frame):
             wx.ArtProvider.GetBitmapBundle(wx.ART_INFORMATION, wx.ART_TOOLBAR), wx.NullBitmap,
             wx.ITEM_NORMAL, "Launch DlgMultiTest Dialog", "Launch DlgMultiTest Dialog")
 
-        tool_3 = self.m_toolBar.AddTool(wx.ID_ANY, "ImportTest",
-            wx.ArtProvider.GetBitmapBundle(wx.ART_GOTO_LAST, wx.ART_TOOLBAR), wx.NullBitmap,
-            wx.ITEM_NORMAL, "Import Test", "Import Test")
-
         self.m_toolBar.Realize()
 
         self.m_statusBar = self.CreateStatusBar(2)
@@ -128,7 +121,6 @@ class MainFrame(wx.Frame):
         self.Bind(wx.EVT_MENU, self.OnPythonDlg, id=menu_item_2.GetId())
         self.Bind(wx.EVT_MENU, self.OnCommonDialog, id=menuItem_2.GetId())
         self.Bind(wx.EVT_MENU, self.OnMultiTestDialog, id=menuItem.GetId())
-        self.Bind(wx.EVT_MENU, self.OnImportTest, id=menu_item.GetId())
         self.Bind(wx.EVT_MENU, self.OnOtherCtrls, id=menuItem1.GetId())
         self.Bind(wx.EVT_MENU, self.OnRibbonDialog, id=menuItem2.GetId())
         self.Bind(wx.EVT_MENU, self.OnWizard, id=menuItem3.GetId())
@@ -141,7 +133,6 @@ class MainFrame(wx.Frame):
         self.Bind(wx.EVT_TOOL, self.OnPythonDlg, id=tool_4.GetId())
         self.Bind(wx.EVT_TOOL, self.OnCommonDialog, id=tool_2.GetId())
         self.Bind(wx.EVT_TOOL, self.OnMultiTestDialog, id=tool.GetId())
-        self.Bind(wx.EVT_TOOL, self.OnImportTest, id=tool_3.GetId())
 
     # Event handler functions
     # Add these below the comment block, or to your inherited class.
@@ -153,9 +144,6 @@ class MainFrame(wx.Frame):
         event.Skip()
 
     def OnMultiTestDialog(self, event):
-        event.Skip()
-
-    def OnImportTest(self, event):
         event.Skip()
 
     def OnOtherCtrls(self, event):
@@ -192,9 +180,6 @@ class MainFrame(wx.Frame):
         event.Skip()
 
     def OnMultiTestDialog(self, event):
-        event.Skip()
-
-    def OnImportTest(self, event):
         event.Skip()
 
     """

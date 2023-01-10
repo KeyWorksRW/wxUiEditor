@@ -65,11 +65,6 @@
             wxEVT_MENU="OnMultiTestDialog" />
           <node
             class="wxMenuItem"
-            bitmap="Art;wxART_GOTO_LAST|wxART_MENU"
-            label="Import Tests"
-            wxEVT_MENU="OnImportTest" />
-          <node
-            class="wxMenuItem"
             label="Other Controls Dialog..."
             var_name="menuItem1"
             wxEVT_MENU="OnOtherCtrls" />
@@ -143,14 +138,6 @@
           statusbar="Launch DlgMultiTest Dialog"
           tooltip="Launch DlgMultiTest Dialog"
           wxEVT_TOOL="OnMultiTestDialog" />
-        <node
-          class="tool"
-          bitmap="Art;wxART_GOTO_LAST|wxART_TOOLBAR"
-          label="ImportTest"
-          statusbar="Import Test"
-          tooltip="Import Test"
-          var_name="tool_3"
-          wxEVT_TOOL="OnImportTest" />
       </node>
       <node
         class="wxStatusBar"
@@ -418,7 +405,7 @@
           <node
             class="CustomControl"
             class_name="SplitButton"
-            header="cpp/custom_ctrls/split_button.h"
+            header="custom_ctrls/split_button.h"
             namespace="wxue_ctrl"
             parameters="(this, wxID_ANY, &quot;Play&quot;)"
             settings_code="{@@    const int ID_PLAY { 100 };@@    const int ID_STOP { 101 };@@    m_split_button->GetMenu().Append(ID_PLAY, &quot;Play&quot;);@@    m_split_button->GetMenu().Append(ID_STOP, &quot;Stop&quot;);@@@@    m_split_button->Bind(wxEVT_MENU,@@        [this](wxCommandEvent&amp;)@@        {@@            m_animation_ctrl->Play();@@            m_checkPlayAnimation->SetValue(true);@@        }, ID_PLAY);@@@@    m_split_button->Bind(wxEVT_MENU,@@        [this](wxCommandEvent&amp;)@@        {@@            m_animation_ctrl->Stop();@@            m_checkPlayAnimation->SetValue(false);@@        }, ID_STOP);@@@@    m_split_button->Bind(wxEVT_BUTTON,@@        [this](wxCommandEvent&amp;)@@        {@@            m_animation_ctrl->Play();@@            m_checkPlayAnimation->SetValue(true);@@        } );@@}"

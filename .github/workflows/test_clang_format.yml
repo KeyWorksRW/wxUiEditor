@@ -7,8 +7,11 @@ on:
       - src/xml
       - src/import/rapidjson
       - pugixml
-      - ttLib
+      - ttLib_wx
       - testing
+      - import_tests
+      - python_tests/python
+      - python_tests/art
 
 jobs:
   build:

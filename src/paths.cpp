@@ -71,7 +71,7 @@ void AllowFileChange(wxPropertyGridEvent& event, NodeProperty* prop, Node* node)
             return;
 
         newValue.make_absolute();
-        newValue.make_relative_wx(GetProject()->GetProjectPath());
+        newValue.make_relative_wx(GetProject()->GetFullProjectPath());
         newValue.backslashestoforward();
 
         auto filename = newValue.sub_cstr();

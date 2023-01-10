@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Project class
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -615,12 +615,12 @@ ttString Project::GetBaseDirectory(int language)
     if (language == GEN_LANG_CPLUSPLUS && HasValue(prop_base_directory))
         result = as_wxString(prop_base_directory);
     else if (language == GEN_LANG_PYTHON && HasValue(prop_python_output_folder))
-        result =  as_wxString(prop_python_output_folder);
+        result = as_wxString(prop_python_output_folder);
     else if (language == GEN_LANG_XRC && HasValue(prop_xrc_directory))
-        result =  as_wxString(prop_xrc_directory);
+        result = as_wxString(prop_xrc_directory);
 
     if (result.empty())
-        result =  GetProjectPath();
+        result = GetProjectPath();
 
     return result;
 }
@@ -631,6 +631,38 @@ ttString Project::GetDerivedDirectory()
         return as_wxString(prop_derived_directory);
     else
         return GetProjectPath();
+}
+
+ttString Project::GetFullBaseDirectory(int language)
+{
+    ttString result;
+    if (language == GEN_LANG_CPLUSPLUS && HasValue(prop_base_directory))
+        result = as_wxString(prop_base_directory);
+    else if (language == GEN_LANG_PYTHON && HasValue(prop_python_output_folder))
+        result = as_wxString(prop_python_output_folder);
+    else if (language == GEN_LANG_XRC && HasValue(prop_xrc_directory))
+        result = as_wxString(prop_xrc_directory);
+
+    if (result.empty())
+        result = GetProjectPath();
+
+    result.make_absolute();
+
+    return result;
+}
+
+ttString Project::GetFullDerivedDirectory()
+{
+    ttString result;
+    if (HasValue(prop_derived_directory))
+        result = as_wxString(prop_derived_directory);
+
+    if (result.empty())
+        result = GetProjectPath();
+
+    result.make_absolute();
+
+    return result;
 }
 
 Node* Project::GetFirstFormChild(Node* node)

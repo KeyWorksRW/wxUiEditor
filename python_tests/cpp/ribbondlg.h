@@ -50,6 +50,15 @@ protected:
     wxStyledTextCtrl* m_scintilla;
 };
 
+namespace wxue_img
+{
+    // Images declared in this class module:
+
+    extern const unsigned char french_png[252];
+    extern const unsigned char left_png[158];
+    extern const unsigned char toggle_button_png[277];
+}
+
 // ************* End of generated code ***********
 // DO NOT EDIT THIS COMMENT BLOCK!
 //

@@ -45,11 +45,28 @@ bool Treebook::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 
     m_treebook = new wxTreebook(this, wxID_ANY);
     {
+#if wxCHECK_VERSION(3, 1, 6)
         wxBookCtrlBase::Images bundle_list;
         bundle_list.push_back(wxBitmapBundle::FromBitmap(wxImage(english_xpm)));
         bundle_list.push_back(wxBitmapBundle::FromBitmap(wxImage(french_xpm)));
         bundle_list.push_back(wxBitmapBundle::FromBitmap(wxImage(japanese_xpm)));
         m_treebook->SetImages(bundle_list);
+
+#else  // older version of wxWidgets that don't support bitmap bundles
+
+        auto img_list = new wxImageList;
+        auto img_0 = wxImage(english_xpm);
+        img_list->Add(img_0);
+        auto img_1 = wxueImage(wxue_img::re_png, sizeof(wxue_img::re_png));
+        img_list->Add(img_1);
+        auto img_2 = wxueImage(wxue_img::er_png, sizeof(wxue_img::er_png));
+        img_list->Add(img_2);
+        auto img_3 = wxImage(french_xpm);
+        img_list->Add(img_3);
+        auto img_4 = wxImage(japanese_xpm);
+        img_list->Add(img_4);
+    m_treebook->AssignImageList(img_list);
+#endif  // wxCHECK_VERSION(3, 1, 6)
     }
     m_treebook->SetMinSize(wxSize(400, 400));
     box_sizer->Add(m_treebook, wxSizerFlags().Border(wxALL));
@@ -60,8 +77,8 @@ bool Treebook::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 
     auto* parent_sizer = new wxBoxSizer(wxVERTICAL);
 
-    m_staticText = new wxStaticText(page, wxID_ANY, "This is a sentence in English.");
-    parent_sizer->Add(m_staticText, wxSizerFlags().Border(wxALL));
+    m_staticText_4 = new wxStaticText(page, wxID_ANY, "This is a sentence in English.");
+    parent_sizer->Add(m_staticText_4, wxSizerFlags().Border(wxALL));
     page->SetSizerAndFit(parent_sizer);
 
     auto* page_4 = new wxPanel(m_treebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
@@ -90,8 +107,8 @@ bool Treebook::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 
     auto* parent_sizer_2 = new wxBoxSizer(wxVERTICAL);
 
-    m_staticText = new wxStaticText(page_2, wxID_ANY, wxString::FromUTF8("Ceci est une phrase en français."));
-    parent_sizer_2->Add(m_staticText, wxSizerFlags().Border(wxALL));
+    m_staticText_5 = new wxStaticText(page_2, wxID_ANY, wxString::FromUTF8("Ceci est une phrase en français."));
+    parent_sizer_2->Add(m_staticText_5, wxSizerFlags().Border(wxALL));
     page_2->SetSizerAndFit(parent_sizer_2);
 
     auto* page_3 = new wxPanel(m_treebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);

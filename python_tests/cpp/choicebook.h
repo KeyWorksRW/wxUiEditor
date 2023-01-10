@@ -37,6 +37,8 @@ protected:
     wxChoicebook* m_choicebook;
     wxStaticText* m_staticText;
     wxStaticText* m_staticText_2;
+    wxStaticText* m_staticText_3;
+    wxStaticText* m_staticText_4;
     wxStaticText* m_staticText__2;
     wxStaticText* m_staticText__3;
 };

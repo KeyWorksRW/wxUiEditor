@@ -34,22 +34,36 @@ MyToolBarBase::MyToolBarBase(wxWindow* parent, wxWindowID id, const wxPoint& pos
         wxImage::AddHandler(new wxPNGHandler);
 
     AddTool(wxID_ANY, wxEmptyString,
-        wxBitmapBundle::FromBitmap(wxueImage(wxue_img::english_png, sizeof(wxue_img::english_png))), wxEmptyString,
-        wxITEM_RADIO);
+#if wxCHECK_VERSION(3, 1, 6)
 
-    AddTool(wxID_ANY, wxEmptyString, wxBitmapBundle::FromBitmap(wxueImage(french_png, sizeof(french_png))),
-        wxEmptyString, wxITEM_RADIO);
+        wxBitmapBundle::FromBitmap(wxueImage(wxue_img::english_png, sizeof(wxue_img::english_png)))
+#else
+        wxBitmap(wxueImage(wxue_img::english_png, sizeof(wxue_img::english_png)))
+#endif
+    , wxEmptyString, wxITEM_RADIO);
 
     AddTool(wxID_ANY, wxEmptyString,
-        wxBitmapBundle::FromBitmap(wxueImage(wxue_img::japanese_png, sizeof(wxue_img::japanese_png))), wxEmptyString,
-        wxITEM_RADIO);
+#if wxCHECK_VERSION(3, 1, 6)
+        wxBitmapBundle::FromBitmap(wxueImage(french_png, sizeof(french_png)))
+#else
+        wxBitmap(wxueImage(french_png, sizeof(french_png)))
+#endif
+    , wxEmptyString, wxITEM_RADIO);
+
+    AddTool(wxID_ANY, wxEmptyString,
+#if wxCHECK_VERSION(3, 1, 6)
+
+        wxBitmapBundle::FromBitmap(wxueImage(wxue_img::japanese_png, sizeof(wxue_img::japanese_png)))
+#else
+        wxBitmap(wxueImage(wxue_img::japanese_png, sizeof(wxue_img::japanese_png)))
+#endif
+    , wxEmptyString, wxITEM_RADIO);
 
     m_comboBox = new wxComboBox(this, wxID_ANY);
     m_comboBox->Append("English");
     m_comboBox->Append("French");
     m_comboBox->Append("Japanese");
     m_comboBox->SetStringSelection("English");
-    AddControl(m_comboBox);
 
     Realize();
 }

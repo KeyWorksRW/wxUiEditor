@@ -76,11 +76,11 @@ bool ImportTest::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 
 #include "mainframe.h"  // MainFrame -- Main window
 
-#include "../imports/form_base.h"
-#include "../imports/import_form_base.h"
+#include "imports/form_base.h"
+#include "imports/import_form_base.h"
 
-#include "../imports/crafter_base.hpp"
-#include "../imports/import_crafter_base.h"
+#include "imports/crafter_base.hpp"
+#include "imports/import_crafter_base.h"
 
 void MainFrame::OnImportTest(wxCommandEvent& WXUNUSED(event))
 {

@@ -7,7 +7,12 @@
 
 // clang-format off
 
-#include <wx/bmpbndl.h>
+#if wxCHECK_VERSION(3, 1, 6)
+    #include <wx/bmpbndl.h>
+#else
+    #include <wx/bitmap.h>
+#endif
+
 #include <wx/event.h>
 #include <wx/menu.h>
 #include <wx/sizer.h>
@@ -17,7 +22,7 @@
 #include <wx/valtext.h>
 #include <wx/window.h>
 
-#include "../custom_ctrls/split_button.h"
+#include "custom_ctrls/split_button.h"
 
 #include "commonctrls.h"
 
@@ -30,6 +35,10 @@
 #include <wx/zstream.h>  // zlib stream classes
 
 #include <memory>  // for std::make_unique
+
+#if !wxCHECK_VERSION(3, 1, 6)
+    #error "You must build with wxWidgets 3.1.6 or later to use SVG images."
+#endif
 
 // Convert compressed SVG string into a wxBitmapBundle
 inline wxBitmapBundle wxueBundleSVG(const unsigned char* data,
@@ -241,7 +250,12 @@ bool CommonCtrls::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 
     auto* box_sizer_2 = new wxBoxSizer(wxVERTICAL);
 
-    auto* bmp = new wxStaticBitmap(this, wxID_ANY, wxueBundleSVG(wxue_img::face_smile_svg, 1781, 7417, wxSize(64, 64)));
+        auto* bmp = new wxStaticBitmap(this, wxID_ANY, 
+#if wxCHECK_VERSION(3, 1, 6)
+            wxueBundleSVG(wxue_img::face_smile_svg, 1781, 7417, wxSize(64, 64)));
+#else
+        wxBitmap(wxNullBitmap /* SVG images require wxWidgets 3.1.6 */));
+#endif
     box_sizer_2->Add(bmp, wxSizerFlags().Border(wxALL));
 
     m_staticText_2 = new wxStaticText(this, wxID_ANY, "SVG image");
@@ -249,12 +263,18 @@ bool CommonCtrls::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 
     flex_grid_sizer->Add(box_sizer_2, wxSizerFlags().Border(wxALL));
 
-    m_bmpComboBox = new wxBitmapComboBox(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, nullptr, wxCB_READONLY);
-
+    m_bmpComboBox = new wxBitmapComboBox(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize,
+        0, nullptr, wxCB_READONLY);
     flex_grid_sizer->Add(m_bmpComboBox, wxSizerFlags().Border(wxALL));
 
     m_checkPlayAnimation = new wxCheckBox(this, wxID_ANY, "Play Animation");
-    auto* static_box_2 = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, m_checkPlayAnimation), wxVERTICAL);
+    auto* static_box_2 = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY,
+#if wxCHECK_VERSION(3, 1, 1)
+        m_checkPlayAnimation),
+#else
+        wxEmptyString),
+#endif
+    wxVERTICAL);
 
     m_toggleBtn = new wxToggleButton(static_box_2->GetStaticBox(), wxID_ANY, "Play Animation", wxDefaultPosition,
         wxDefaultSize, wxBU_EXACTFIT);

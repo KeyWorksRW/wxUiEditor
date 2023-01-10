@@ -35,6 +35,8 @@ protected:
 
     wxNotebook* m_notebook;
     wxStaticText* m_staticText;
+    wxStaticText* m_staticText_2;
+    wxStaticText* m_staticText_3;
 };
 
 // ************* End of generated code ***********

@@ -1,9 +1,11 @@
-set (file_list_dir cpp)
+set (file_list_dir ${CMAKE_CURRENT_LIST_DIR})
 
 set (file_list
 
     cpptest.rc
     mainapp.cpp
+
+    custom_ctrls/split_button.cpp  # Split Button Custom widget (button + menu)
 
 )
 

@@ -32,11 +32,24 @@ bool Toolbook::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 
     m_toolbook = new wxToolbook(this, wxID_ANY);
     {
+#if wxCHECK_VERSION(3, 1, 6)
         wxBookCtrlBase::Images bundle_list;
         bundle_list.push_back(wxBitmapBundle::FromBitmap(wxImage(english_xpm)));
         bundle_list.push_back(wxBitmapBundle::FromBitmap(wxImage(french_xpm)));
         bundle_list.push_back(wxBitmapBundle::FromBitmap(wxImage(japanese_xpm)));
         m_toolbook->SetImages(bundle_list);
+
+#else  // older version of wxWidgets that don't support bitmap bundles
+
+        auto img_list = new wxImageList;
+        auto img_0 = wxImage(english_xpm);
+        img_list->Add(img_0);
+        auto img_1 = wxImage(french_xpm);
+        img_list->Add(img_1);
+        auto img_2 = wxImage(japanese_xpm);
+        img_list->Add(img_2);
+    m_toolbook->AssignImageList(img_list);
+#endif  // wxCHECK_VERSION(3, 1, 6)
     }
     m_toolbook->SetMinSize(wxSize(400, 400));
     box_sizer->Add(m_toolbook, wxSizerFlags().Border(wxALL));
@@ -47,8 +60,8 @@ bool Toolbook::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 
     auto* parent_sizer = new wxBoxSizer(wxVERTICAL);
 
-    m_staticText = new wxStaticText(page, wxID_ANY, "This is a sentence in English.");
-    parent_sizer->Add(m_staticText, wxSizerFlags().Border(wxALL));
+    m_staticText_2 = new wxStaticText(page, wxID_ANY, "This is a sentence in English.");
+    parent_sizer->Add(m_staticText_2, wxSizerFlags().Border(wxALL));
     page->SetSizerAndFit(parent_sizer);
 
     auto* page_2 = new wxPanel(m_toolbook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
@@ -57,8 +70,8 @@ bool Toolbook::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 
     auto* parent_sizer_2 = new wxBoxSizer(wxVERTICAL);
 
-    m_staticText = new wxStaticText(page_2, wxID_ANY, wxString::FromUTF8("Ceci est une phrase en français."));
-    parent_sizer_2->Add(m_staticText, wxSizerFlags().Border(wxALL));
+    m_staticText_3 = new wxStaticText(page_2, wxID_ANY, wxString::FromUTF8("Ceci est une phrase en français."));
+    parent_sizer_2->Add(m_staticText_3, wxSizerFlags().Border(wxALL));
     page_2->SetSizerAndFit(parent_sizer_2);
 
     auto* page_3 = new wxPanel(m_toolbook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);

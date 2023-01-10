@@ -7,7 +7,7 @@
 
 // clang-format off
 
-#include "my_images.h"
+#include "images.h"
 
 #include "wizard.h"
 
@@ -24,7 +24,11 @@ Wizard::Wizard(wxWindow* parent, wxWindowID id, const wxString& title, const wxP
 
     SetExtraStyle(GetExtraStyle() | wxWIZARD_EX_HELPBUTTON);
     SetBorder(15);
-    if (!Create(parent, id, title, wxue_img::bundle_wiztest_png(), pos, style))
+#if wxCHECK_VERSION(3, 1, 6)
+        if (!Create(parent, id, title, wxue_img::bundle_wiztest_png(), pos, style))
+#else
+        wxBitmap(wxueImage(wxue_img::wiztest_png, sizeof(wxue_img::wiztest_png))), pos, style))
+#endif
         return;
 
     auto* wizPage = new wxWizardPageSimple(this);
@@ -43,7 +47,13 @@ Wizard::Wizard(wxWindow* parent, wxWindowID id, const wxString& title, const wxP
     box_sizer2->Add(m_staticText2, wxSizerFlags().Border(wxALL));
     m_wizPage2->SetSizerAndFit(box_sizer2);
 
-    auto* m_wizPage3 = new wxWizardPageSimple(this, nullptr, nullptr, wxue_img::bundle_wiztest2_png());
+    auto* m_wizPage3 = new wxWizardPageSimple(this, nullptr, nullptr,
+#if wxCHECK_VERSION(3, 1, 6)
+        wxue_img::bundle_wiztest2_png()
+#else
+        wxueImage(wxue_img::wiztest2_png, sizeof(wxue_img::wiztest2_png))
+#endif
+    );
 
     auto* box_sizer3 = new wxBoxSizer(wxHORIZONTAL);
 

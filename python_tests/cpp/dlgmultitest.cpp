@@ -13,7 +13,7 @@
 #include <wx/panel.h>
 #include <wx/sizer.h>
 
-#include "my_images.h"
+#include "images.h"
 
 #include "dlgmultitest.h"
 
@@ -63,17 +63,27 @@ bool DlgMultiTest::Create(wxWindow* parent, wxWindowID id, const wxString& title
     grid_bag_sizer->Add(m_btn_2, wxGBPosition(0, 1), wxGBSpan(1, 1), wxALL, 5);
 
     m_btn_bitmaps = new wxButton(page_2, wxID_ANY, "Bitmaps");
+#if wxCHECK_VERSION(3, 1, 6)
     {
         m_btn_bitmaps->SetBitmap(wxBitmapBundle::FromBitmap(wxueImage(wxue_img::normal_png, sizeof(wxue_img::normal_png))));
         m_btn_bitmaps->SetBitmapDisabled(wxBitmapBundle::FromBitmap(wxueImage(wxue_img::no_hour_png, sizeof(wxue_img::no_hour_png))));
         m_btn_bitmaps->SetBitmapCurrent(wxBitmapBundle::FromBitmap(wxueImage(wxue_img::focus_png, sizeof(wxue_img::focus_png))));
     }
+#else
+    m_btn_bitmaps->SetBitmap(wxueImage(wxue_img::normal_png, sizeof(wxue_img::normal_png)));
+    m_btn_bitmaps->SetBitmapDisabled(wxueImage(wxue_img::no_hour_png, sizeof(wxue_img::no_hour_png)));
+    m_btn_bitmaps->SetBitmapCurrent(wxueImage(wxue_img::focus_png, sizeof(wxue_img::focus_png)));
+#endif  // wxCHECK_VERSION(3, 1, 6)
     m_btn_bitmaps->SetToolTip("Bitmap should change when mouse is over button, or button is disabled.");
     grid_bag_sizer->Add(m_btn_bitmaps, wxGBPosition(0, 2), wxGBSpan(1, 1), wxALL, 5);
 
     m_btn_4 = new wxButton(page_2, wxID_ANY, "Right");
     m_btn_4->SetBitmapPosition(wxRIGHT);
+#if wxCHECK_VERSION(3, 1, 6)
         m_btn_4->SetBitmap(wxBitmapBundle::FromBitmap(wxueImage(wxue_img::normal_png, sizeof(wxue_img::normal_png))));
+#else
+    m_btn_4->SetBitmap(wxueImage(wxue_img::normal_png, sizeof(wxue_img::normal_png)));
+#endif  // wxCHECK_VERSION(3, 1, 6)
     m_btn_4->SetToolTip("Bitmap should be on the right side.");
     grid_bag_sizer->Add(m_btn_4, wxGBPosition(0, 3), wxGBSpan(1, 1), wxALL, 5);
 
@@ -89,7 +99,11 @@ bool DlgMultiTest::Create(wxWindow* parent, wxWindowID id, const wxString& title
     auto* box_sizer_7 = new wxBoxSizer(wxHORIZONTAL);
 
     m_btn_5 = new wxCommandLinkButton(page_2, wxID_ANY, "Command", "wxCommandLinkButton");
+#if wxCHECK_VERSION(3, 1, 6)
         m_btn_5->SetBitmap(wxArtProvider::GetBitmapBundle(wxART_GO_FORWARD, wxART_OTHER));
+#else
+    m_btn_5->SetBitmap(wxArtProvider::GetBitmap(wxART_GO_FORWARD, wxART_OTHER));
+#endif  // wxCHECK_VERSION(3, 1, 6)
     m_btn_5->SetToolTip("The bitmap for this is from Art Provider.");
     box_sizer_7->Add(m_btn_5, wxSizerFlags().Border(wxALL));
 
@@ -122,7 +136,11 @@ bool DlgMultiTest::Create(wxWindow* parent, wxWindowID id, const wxString& title
     auto* box_sizer_9 = new wxBoxSizer(wxHORIZONTAL);
 
     m_banner = new wxBannerWindow(page_3, wxLEFT);
+#if wxCHECK_VERSION(3, 1, 6)
         m_banner->SetBitmap(wxue_img::bundle_wiztest_png());
+#else
+    m_banner->SetBitmap(wxueImage(wxue_img::wiztest_png, sizeof(wxue_img::wiztest_png)));
+#endif  // wxCHECK_VERSION(3, 1, 6)
     m_banner->SetText("This is a long title", wxEmptyString);
     box_sizer_9->Add(m_banner, wxSizerFlags().Border(wxALL));
 
@@ -165,14 +183,12 @@ bool DlgMultiTest::Create(wxWindow* parent, wxWindowID id, const wxString& title
     {
         m_listview->AppendColumn("name");
         m_listview->AppendColumn("value");
-
         wxListItem info;
         info.Clear();
-
         info.SetId(0);
-        auto index = m_listview->InsertItem(info);
-        m_listview->SetItem(index, 0, "meaning");
-        m_listview->SetItem(index, 1, "42");
+        auto idx = m_listview->InsertItem(info);
+        m_listview->SetItem(idx, 0, "meaning");
+        m_listview->SetItem(idx, 1, "42");
     }
     m_listview->SetToolTip("Separate content columns with a semi-colon (;)");
     box_sizer_12->Add(m_listview, wxSizerFlags().Border(wxALL));

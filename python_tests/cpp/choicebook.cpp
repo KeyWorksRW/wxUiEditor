@@ -46,8 +46,8 @@ bool ChoiceBook::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 
     auto* parent_sizer_2 = new wxBoxSizer(wxVERTICAL);
 
-    m_staticText = new wxStaticText(page, wxID_ANY, "This is a sentence in English.");
-    parent_sizer_2->Add(m_staticText, wxSizerFlags().Border(wxALL));
+    m_staticText_3 = new wxStaticText(page, wxID_ANY, "This is a sentence in English.");
+    parent_sizer_2->Add(m_staticText_3, wxSizerFlags().Border(wxALL));
 
     auto* box_sizer = new wxBoxSizer(wxVERTICAL);
 
@@ -65,8 +65,8 @@ bool ChoiceBook::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 
     auto* parent_sizer__2 = new wxBoxSizer(wxVERTICAL);
 
-    m_staticText = new wxStaticText(page_2, wxID_ANY, wxString::FromUTF8("Ceci est une phrase en français."));
-    parent_sizer__2->Add(m_staticText, wxSizerFlags().Border(wxALL));
+    m_staticText_4 = new wxStaticText(page_2, wxID_ANY, wxString::FromUTF8("Ceci est une phrase en français."));
+    parent_sizer__2->Add(m_staticText_4, wxSizerFlags().Border(wxALL));
 
     auto* box_sizer_3 = new wxBoxSizer(wxVERTICAL);
 

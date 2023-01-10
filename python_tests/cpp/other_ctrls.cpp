@@ -78,7 +78,6 @@ bool OtherCtrlsDlg::Create(wxWindow* parent, wxWindowID id, const wxString& titl
     parent_sizer3->Add(m_spinCtrl, wxSizerFlags().Border(wxALL));
 
     m_spinCtrlDouble = new wxSpinCtrlDouble(m_panel2);
-
     parent_sizer3->Add(m_spinCtrlDouble, wxSizerFlags().Border(wxALL));
 
     m_spinBtn = new wxSpinButton(m_panel2);
@@ -149,7 +148,8 @@ bool OtherCtrlsDlg::Create(wxWindow* parent, wxWindowID id, const wxString& titl
         wxCAL_SHOW_HOLIDAYS);
     box_sizer2->Add(m_calendar, wxSizerFlags().Border(wxALL));
 
-        m_genericDirCtrl = new wxGenericDirCtrl(m_panel6, wxID_ANY, wxDirDialogDefaultFolderStr, wxDefaultPosition, wxDefaultSize, wxDIRCTRL_3D_INTERNAL|wxSUNKEN_BORDER);
+    m_genericDirCtrl = new wxGenericDirCtrl(m_panel6, wxID_ANY, wxDirDialogDefaultFolderStr, wxDefaultPosition,
+        wxDefaultSize, wxDIRCTRL_3D_INTERNAL|wxSUNKEN_BORDER);
     box_sizer2->Add(m_genericDirCtrl, wxSizerFlags(1).Expand().Border(wxALL));
 
     parent_sizer7->Add(box_sizer2, wxSizerFlags(1).Expand().Border(wxALL));

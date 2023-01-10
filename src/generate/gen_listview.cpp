@@ -79,7 +79,6 @@ bool ListViewGenerator::SettingsCode(Code& code)
 
         if (code.HasValue(prop_contents))
         {
-            code.OpenBrace();
             code.Eol(eol_if_needed).Add("wxListItem ").Str("info").Str(code.is_cpp() ? ";" : "");
             code.Eol().Str("info.Clear(").EndFunction();
             auto strings = ConvertToArrayString(code.view(prop_contents));

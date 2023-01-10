@@ -394,10 +394,6 @@ bool WizardPageGenerator::ConstructionCode(Code& code)
     else
     {
         auto is_bitmaps_list = BitmapList(code, prop_bitmap);
-        if (code.is_cpp() && wxGetProject().value(prop_wxWidgets_version) == "3.1")
-        {
-            code.Eol() += "#if wxCHECK_VERSION(3, 1, 6)\n\t";
-        }
         code.AddAuto().Str(prop_var_name).CreateClass().Str(code.is_cpp() ? "this" : "self");
         if (code.is_cpp())
         {
@@ -410,7 +406,21 @@ bool WizardPageGenerator::ConstructionCode(Code& code)
         if (is_bitmaps_list)
         {
             if (code.is_cpp())
+            {
+                if (wxGetProject().value(prop_wxWidgets_version) == "3.1")
+                {
+                    code.Eol() += "#if wxCHECK_VERSION(3, 1, 6)\n\t";
+                }
+
                 code += "wxBitmapBundle::FromBitmaps(bitmaps)";
+
+                if (wxGetProject().value(prop_wxWidgets_version) == "3.1")
+                {
+                    code += "\n#else\n\t";
+                    code += GenerateBitmapCode(code.node()->as_string(prop_bitmap));
+                    code.Eol() += "#endif";
+                }
+            }
             else
                 code += "wx.BitmapBundle.FromBitmaps(bitmaps)";
         }
@@ -418,10 +428,24 @@ bool WizardPageGenerator::ConstructionCode(Code& code)
         {
             if (code.is_cpp())
             {
-                ttlib::cstr bundle_code;
-                GenerateBundleCode(code.node()->as_string(prop_bitmap), bundle_code);
-                code.CheckLineLength(bundle_code.size());
-                code += bundle_code;
+                if (wxGetProject().value(prop_wxWidgets_version) == "3.1")
+                {
+                    code.Eol() += "#if wxCHECK_VERSION(3, 1, 6)\n\t";
+                    ttlib::cstr bundle_code;
+                    GenerateBundleCode(code.node()->as_string(prop_bitmap), bundle_code);
+                    code.CheckLineLength(bundle_code.size());
+                    code += bundle_code;
+                    code += "\n#else\n\t";
+                    code += GenerateBitmapCode(code.node()->as_string(prop_bitmap));
+                    code.Eol() += "#endif\n";
+                }
+                else
+                {
+                    ttlib::cstr bundle_code;
+                    GenerateBundleCode(code.node()->as_string(prop_bitmap), bundle_code);
+                    code.CheckLineLength(bundle_code.size());
+                    code += bundle_code;
+                }
             }
             else
             {

@@ -5,8 +5,6 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#pragma once
-
 #include <set>
 
 #include "../panels/base_panel.h"  // BasePanel -- Base class for all code generation panels

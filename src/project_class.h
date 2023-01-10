@@ -61,6 +61,9 @@ public:
     // Returns the directory the project file is in as a ttString
     ttString GetProjectPath() { return ttString() << m_projectPath.wx_str(); }
 
+    // Returns the full path to the directory the project file is in.
+    ttString GetFullProjectPath();
+
     ttlib::cstr getArtDirectory();
     ttString GetArtDirectory();
 

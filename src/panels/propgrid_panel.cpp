@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   PropertyGrid class for node properties and events
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -438,35 +438,39 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
     else if (type == type_file)
     {
         new_pg_property = new wxFileProperty(prop->DeclName().wx_str(), wxPG_LABEL, prop->as_string());
+
+        // In order for the wxFileProperty file dialog to have the correct initial directory, you must
+        // specify a *FULL* path for wxPG_FILE_INITIAL_PATH.
+
         if (prop->isProp(prop_base_file))
         {
             new_pg_property->SetAttribute(wxPG_DIALOG_TITLE, "Base class filename");
-            new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH, GetProject()->GetBaseDirectory());
-            new_pg_property->SetAttribute(wxPG_FILE_SHOW_RELATIVE_PATH, GetProject()->GetProjectPath());
+            new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH, GetProject()->GetFullBaseDirectory());
+            new_pg_property->SetAttribute(wxPG_FILE_SHOW_RELATIVE_PATH, GetProject()->GetFullProjectPath());
             new_pg_property->SetAttribute(wxPG_FILE_DIALOG_STYLE, wxFD_SAVE);
             new_pg_property->SetAttribute(wxPG_FILE_WILDCARD, "C++ Files|*.cpp;*.cc;*.cxx");
         }
         else if (prop->isProp(prop_derived_file))
         {
             new_pg_property->SetAttribute(wxPG_DIALOG_TITLE, "Derived class filename");
-            new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH, GetProject()->GetDerivedDirectory());
-            new_pg_property->SetAttribute(wxPG_FILE_SHOW_RELATIVE_PATH, GetProject()->GetProjectPath());
+            new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH, GetProject()->GetFullDerivedDirectory());
+            new_pg_property->SetAttribute(wxPG_FILE_SHOW_RELATIVE_PATH, GetProject()->GetFullProjectPath());
             new_pg_property->SetAttribute(wxPG_FILE_DIALOG_STYLE, wxFD_SAVE);
             new_pg_property->SetAttribute(wxPG_FILE_WILDCARD, "C++ Files|*.cpp;*.cc;*.cxx");
         }
         else if (prop->isProp(prop_xrc_file) || prop->isProp(prop_combined_xrc_file))
         {
             new_pg_property->SetAttribute(wxPG_DIALOG_TITLE, "XRC filename");
-            new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH, GetProject()->GetBaseDirectory(GEN_LANG_XRC));
-            new_pg_property->SetAttribute(wxPG_FILE_SHOW_RELATIVE_PATH, GetProject()->GetProjectPath());
+            new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH, GetProject()->GetFullBaseDirectory(GEN_LANG_XRC));
+            new_pg_property->SetAttribute(wxPG_FILE_SHOW_RELATIVE_PATH, GetProject()->GetFullProjectPath());
             new_pg_property->SetAttribute(wxPG_FILE_DIALOG_STYLE, wxFD_SAVE);
             new_pg_property->SetAttribute(wxPG_FILE_WILDCARD, "XRC Files|*.xrc");
         }
         else if (prop->isProp(prop_python_file) || prop->isProp(prop_python_combined_file))
         {
             new_pg_property->SetAttribute(wxPG_DIALOG_TITLE, "Python filename");
-            new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH, GetProject()->GetBaseDirectory(GEN_LANG_PYTHON));
-            new_pg_property->SetAttribute(wxPG_FILE_SHOW_RELATIVE_PATH, GetProject()->GetProjectPath());
+            new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH, GetProject()->GetFullBaseDirectory(GEN_LANG_PYTHON));
+            new_pg_property->SetAttribute(wxPG_FILE_SHOW_RELATIVE_PATH, GetProject()->GetFullProjectPath());
             new_pg_property->SetAttribute(wxPG_FILE_DIALOG_STYLE, wxFD_SAVE);
             new_pg_property->SetAttribute(wxPG_FILE_WILDCARD, "Python Files|*.py");
         }
@@ -474,24 +478,32 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
         {
             // Python XRC files default to being created in the same directory as python files
             new_pg_property->SetAttribute(wxPG_DIALOG_TITLE, "Python XRC filename");
-            new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH, GetProject()->GetBaseDirectory(GEN_LANG_PYTHON));
-            new_pg_property->SetAttribute(wxPG_FILE_SHOW_RELATIVE_PATH, GetProject()->GetProjectPath());
+            new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH, GetProject()->GetFullBaseDirectory(GEN_LANG_PYTHON));
+            new_pg_property->SetAttribute(wxPG_FILE_SHOW_RELATIVE_PATH, GetProject()->GetFullProjectPath());
             new_pg_property->SetAttribute(wxPG_FILE_DIALOG_STYLE, wxFD_SAVE);
             new_pg_property->SetAttribute(wxPG_FILE_WILDCARD, "XRC Files|*.xrc");
+        }
+        else if (prop->isProp(prop_cmake_file))
+        {
+            new_pg_property->SetAttribute(wxPG_DIALOG_TITLE, "CMake filename");
+            new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH, GetProject()->GetFullBaseDirectory(GEN_LANG_CPLUSPLUS));
+            new_pg_property->SetAttribute(wxPG_FILE_SHOW_RELATIVE_PATH, GetProject()->GetFullProjectPath());
+            new_pg_property->SetAttribute(wxPG_FILE_DIALOG_STYLE, wxFD_SAVE);
+            new_pg_property->SetAttribute(wxPG_FILE_WILDCARD, "CMake Files|*.cmake");
         }
         else if (prop->isProp(prop_header))
         {
             new_pg_property->SetAttribute(wxPG_DIALOG_TITLE, "Custom Control Header");
             new_pg_property->SetAttribute(wxPG_FILE_WILDCARD, "Header Files|*.h;*.hh;*.hpp;*.hxx");
-            new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH, GetProject()->GetProjectPath());
-            new_pg_property->SetAttribute(wxPG_FILE_SHOW_RELATIVE_PATH, GetProject()->GetProjectPath());
+            new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH, GetProject()->GetFullProjectPath());
+            new_pg_property->SetAttribute(wxPG_FILE_SHOW_RELATIVE_PATH, GetProject()->GetFullProjectPath());
         }
         else if (prop->isProp(prop_derived_header))
         {
             new_pg_property->SetAttribute(wxPG_DIALOG_TITLE, "Derived Header");
             new_pg_property->SetAttribute(wxPG_FILE_WILDCARD, "Header Files|*.h;*.hh;*.hpp;*.hxx");
-            new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH, GetProject()->GetProjectPath());
-            new_pg_property->SetAttribute(wxPG_FILE_SHOW_RELATIVE_PATH, GetProject()->GetProjectPath());
+            new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH, GetProject()->GetFullProjectPath());
+            new_pg_property->SetAttribute(wxPG_FILE_SHOW_RELATIVE_PATH, GetProject()->GetFullProjectPath());
         }
         else if (prop->isProp(prop_local_pch_file))
         {
@@ -508,6 +520,7 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
             if (pch.file_exists())
             {
                 pch.remove_filename();
+                pch.make_absolute();
                 new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH, pch);
                 return new_pg_property;
             }
@@ -516,6 +529,7 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
             if (pch.file_exists())
             {
                 pch.remove_filename();
+                pch.make_absolute();
                 new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH, pch);
                 return new_pg_property;
             }
@@ -524,11 +538,12 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
             if (pch.file_exists())
             {
                 pch.remove_filename();
+                pch.make_absolute();
                 new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH, pch);
                 return new_pg_property;
             }
 
-            new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH, GetProject()->GetProjectPath());
+            new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH, GetProject()->GetFullProjectPath());
         }
     }
     else if (type == type_stringlist)
@@ -1200,12 +1215,12 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
 
                 // The base_file property was already processed in OnPropertyGridChanging so only modify the value if
                 // it's a different property
-                if (!prop->isProp(prop_base_file))
+                if (!prop->isProp(prop_base_file) && !prop->isProp(prop_python_file) && !prop->isProp(prop_xrc_file))
                 {
                     if (newValue.size())
                     {
                         newValue.make_absolute();
-                        newValue.make_relative_wx(GetProject()->GetProjectPath());
+                        newValue.make_relative_wx(GetProject()->GetFullProjectPath());
                         newValue.backslashestoforward();
                         property->SetValueFromString(newValue, 0);
                     }

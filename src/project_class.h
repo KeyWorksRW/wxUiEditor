@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Project class
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -61,11 +61,22 @@ public:
     // Returns the directory the project file is in as a ttString
     ttString GetProjectPath() { return ttString() << m_projectPath.wx_str(); }
 
+    // Returns the full path to the directory the project file is in.
+    ttString GetFullProjectPath();
+
     ttlib::cstr getArtDirectory();
     ttString GetArtDirectory();
 
     ttString GetBaseDirectory(int language = GEN_LANG_CPLUSPLUS);
     ttString GetDerivedDirectory();
+
+    // Returns the absolute path to the language-specific property directory.
+    // If the property is empty, this will return the full project path.
+    ttString GetFullBaseDirectory(int language = GEN_LANG_CPLUSPLUS);
+
+    // Returns the absolute path to the prop_derived_directory.
+    // If the property is empty, this will return the full project path.
+    ttString GetFullDerivedDirectory();
 
     // Returns the first project child that is a form, or nullptr if not form children found.
     Node* GetFirstFormChild(Node* node = nullptr);

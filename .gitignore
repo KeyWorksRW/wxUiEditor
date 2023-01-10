@@ -1,6 +1,7 @@
 # Directories to ignore
 bld/
 .private/
+__pycache__/
 
 # File extensions to ignore
 *.backup

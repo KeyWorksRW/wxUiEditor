@@ -64,14 +64,14 @@ void AllowDirectoryChange(wxPropertyGridEvent& event, NodeProperty* /* prop */, 
 
 void AllowFileChange(wxPropertyGridEvent& event, NodeProperty* prop, Node* node)
 {
-    if (prop->isProp(prop_base_file) || prop->isProp(prop_xrc_file))
+    if (prop->isProp(prop_base_file) || prop->isProp(prop_python_file) || prop->isProp(prop_xrc_file))
     {
         ttString newValue = event.GetPropertyValue().GetString();
         if (newValue.empty())
             return;
 
         newValue.make_absolute();
-        newValue.make_relative_wx(GetProject()->GetProjectPath());
+        newValue.make_relative_wx(GetProject()->GetFullProjectPath());
         newValue.backslashestoforward();
 
         auto filename = newValue.sub_cstr();
@@ -93,6 +93,27 @@ void AllowFileChange(wxPropertyGridEvent& event, NodeProperty* prop, Node* node)
                                             << child->prop_as_string(prop_class_name)
                                             << "\n\nEither change the name, or press ESC to restore the original name.",
                                  "Duplicate base filename", wxICON_STOP);
+                    if (focus)
+                    {
+                        focus->SetFocus();
+                    }
+
+                    event.Veto();
+                    event.SetValidationFailureBehavior(wxPG_VFB_MARK_CELL | wxPG_VFB_STAY_IN_PROPERTY);
+                    wxGetFrame().SetStatusField("Either change the name, or press ESC to restore the original value.");
+                    return;
+                }
+            }
+            else if (prop->isProp(prop_python_file))
+            {
+                if (child->as_string(prop_python_file).filename() == filename)
+                {
+                    auto focus = wxWindow::FindFocus();
+
+                    wxMessageBox(wxString() << "The python filename \"" << filename << "\" is already in use by "
+                                            << child->prop_as_string(prop_class_name)
+                                            << "\n\nEither change the name, or press ESC to restore the original name.",
+                                 "Duplicate python filename", wxICON_STOP);
                     if (focus)
                     {
                         focus->SetFocus();

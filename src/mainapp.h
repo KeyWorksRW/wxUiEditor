@@ -10,7 +10,6 @@
 #include <wx/app.h>  // wxAppBase class and macros used for declaration of wxApp
 
 #include "node_classes.h"  // Forward defintions of Node classes
-#include "preferences.h"   // Set/Get wxUiEditor preferences
 
 class Project;
 
@@ -53,11 +52,9 @@ public:
 
     Project* GetProject() { return m_project.get(); };
 
-    PREFS& Preferences() { return m_prefs; }
+    bool isFireCreationMsgs() const;
 
-    bool isFireCreationMsgs() const { return (m_prefs.GetDebugFlags() & PREFS::PREFS_CREATION_MSG); }
-
-    bool IsPjtMemberPrefix() const { return (m_prefs.GetProjectFlags() & PREFS::PREFS_PJT_MEMBER_PREFIX); }
+    bool IsPjtMemberPrefix() const;
 
     void SetLanguage(wxLanguage language) { m_lang = language; }
     wxLanguage GetLanguage() { return m_lang; }
@@ -65,10 +62,7 @@ public:
 #if defined(_DEBUG) || defined(INTERNAL_TESTING)
 
     void ShowMsgWindow();
-    bool AutoMsgWindow() const
-    {
-        return (m_prefs.GetDebugFlags() & PREFS::PREFS_MSG_WINDOW);
-    }
+    bool AutoMsgWindow() const;
 
     void DbgCurrentTest(wxCommandEvent& event);
 #endif
@@ -128,8 +122,6 @@ private:
 
     wxLanguage m_lang;  // language specified by user
     wxLocale m_locale;  // locale we'll be using
-
-    PREFS m_prefs;
 
     int m_ProjectVersion;
     bool m_isMainFrameClosing { false };

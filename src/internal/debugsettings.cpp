@@ -97,7 +97,7 @@ bool DebugSettings::Create(wxWindow* parent, wxWindowID id, const wxString& titl
 /////////////////// Non-generated Copyright/License Info ////////////////////
 // Purpose:   Settings while running the Debug version of wxUiEditor
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -105,9 +105,11 @@ bool DebugSettings::Create(wxWindow* parent, wxWindowID id, const wxString& titl
 
 #include "mainapp.h"  // App -- App class
 
+#include "preferences.h"  // Preferences -- Preferences class
+
 void DebugSettings::OnInit(wxInitDialogEvent& event)
 {
-    m_orgFlags = wxGetApp().Preferences().GetDebugFlags();
+    m_orgFlags = Preferences().GetDebugFlags();
     m_DisplayMsgWindow = (m_orgFlags & PREFS::PREFS_MSG_WINDOW);
     m_DisplayMsgInfo = (m_orgFlags & PREFS::PREFS_MSG_INFO);
     m_DisplayMsgEvent = (m_orgFlags & PREFS::PREFS_MSG_EVENT);
@@ -152,10 +154,10 @@ void DebugSettings::OnOK(wxCommandEvent& event)
     else
         m_orgFlags &= ~PREFS::PREFS_CREATION_MSG;
 
-    if (m_orgFlags != wxGetApp().Preferences().GetDebugFlags())
+    if (m_orgFlags != Preferences().GetDebugFlags())
     {
-        wxGetApp().Preferences().SetDebugFlags(m_orgFlags);
-        wxGetApp().Preferences().WriteConfig();
+        Preferences().SetDebugFlags(m_orgFlags);
+        Preferences().WriteConfig();
     }
 
     event.Skip();  // Need to call this for Persist to work

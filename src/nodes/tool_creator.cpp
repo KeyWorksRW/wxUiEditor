@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Functions for creating new nodes from Ribbon Panel
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -13,6 +13,7 @@
 #include "node_creator.h"            // NodeCreator class
 #include "node_decl.h"               // NodeDeclaration class
 #include "node_prop.h"               // NodeProperty -- NodeProperty class
+#include "preferences.h"             // Preferences -- Stores user preferences
 #include "undo_cmds.h"               // InsertNodeAction -- Undoable command classes derived from UndoAction
 
 using namespace GenEnum;
@@ -171,13 +172,13 @@ bool Node::CreateToolNode(GenName name)
 
         if (auto prop = node->get_prop_ptr(prop_borders); prop)
         {
-            if (wxGetApp().Preferences().is_SizersAllBorders())
+            if (Preferences().is_SizersAllBorders())
                 prop->set_value("wxALL");
         }
 
         if (auto prop = node->get_prop_ptr(prop_flags); prop)
         {
-            if (wxGetApp().Preferences().is_SizersExpand())
+            if (Preferences().is_SizersExpand())
                 prop->set_value("wxEXPAND");
         }
     }

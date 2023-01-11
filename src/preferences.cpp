@@ -9,6 +9,8 @@
 
 #include "preferences.h"
 
+PREFS g_preferences;
+
 void PREFS::ReadConfig()
 {
     auto* config = wxConfig::Get();
@@ -37,4 +39,9 @@ void PREFS::WriteConfig()
     config->Write("var_prefix", m_var_prefix);
 
     config->SetPath("/");
+}
+
+PREFS& Preferences()
+{
+    return g_preferences;
 }

@@ -38,6 +38,7 @@
 #include "node_creator.h"    // NodeCreator class
 #include "node_gridbag.h"    // GridBag -- Create and modify a node containing a wxGridBagSizer
 #include "node_prop.h"       // NodeProperty -- NodeProperty class
+#include "preferences.h"     // Preferences -- Stores user preferences
 #include "project_class.h"   // Project class
 #include "undo_cmds.h"       // InsertNodeAction -- Undoable command classes derived from UndoAction
 #include "utils.h"           // Utility functions that work with properties
@@ -1843,7 +1844,7 @@ Node* MainFrame::FindChildSizerItem(Node* node, bool include_splitter)
 
 void MainFrame::UpdateWakaTime(bool FileSavedEvent)
 {
-    if (m_wakatime && wxGetApp().Preferences().is_WakaTimeEnabled())
+    if (m_wakatime && Preferences().is_WakaTimeEnabled())
     {
         m_wakatime->SendHeartbeat(FileSavedEvent);
     }

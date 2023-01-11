@@ -79,11 +79,12 @@ bool OptionsDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 
 /////////////////// Non-generated Copyright/License Info ////////////////////
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2021-2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2021-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include "mainframe.h"  // MainFrame -- Main window frame
+#include "mainframe.h"    // MainFrame -- Main window frame
+#include "preferences.h"  // Preferences -- Stores user preferences
 
 void MainFrame::OnOptionsDlg(wxCommandEvent& WXUNUSED(event))
 {
@@ -93,7 +94,7 @@ void MainFrame::OnOptionsDlg(wxCommandEvent& WXUNUSED(event))
 
 void OptionsDlg::OnInit(wxInitDialogEvent& event)
 {
-    auto& preferences = wxGetApp().Preferences();
+    auto& preferences = Preferences();
     m_sizers_all_borders = preferences.is_SizersAllBorders();
     m_sizers_always_expand = preferences.is_SizersExpand();
     m_isWakaTimeEnabled = preferences.is_WakaTimeEnabled();
@@ -105,7 +106,7 @@ void OptionsDlg::OnAffirmative(wxCommandEvent& WXUNUSED(event))
 {
     TransferDataFromWindow();
 
-    auto& preferences = wxGetApp().Preferences();
+    auto& preferences = Preferences();
     bool option_changed = false;
 
     if (m_sizers_all_borders != preferences.is_SizersAllBorders())

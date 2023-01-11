@@ -76,3 +76,5 @@ private:
     bool m_enable_wakatime { true };
     bool m_var_prefix { true };  // true to use "m_" prefix for member variables
 };
+
+PREFS& Preferences();

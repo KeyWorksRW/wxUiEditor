@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Updates WakaTime metrics
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2021-2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2021-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -12,6 +12,7 @@
 #include "wakatime.h"  // WakaTime
 
 #include "mainapp.h"        // App -- Main application class
+#include "preferences.h"    // PREFS -- Preferences
 #include "project_class.h"  // Project class
 
 WakaTime::WakaTime()
@@ -120,7 +121,7 @@ constexpr const intmax_t waka_interval = 120;
 
 void WakaTime::SendHeartbeat(bool FileSavedEvent)
 {
-    if (!wxGetApp().Preferences().is_WakaTimeEnabled())
+    if (!Preferences().is_WakaTimeEnabled())
     {
         return;
     }
@@ -155,7 +156,7 @@ void WakaTime::SendHeartbeat(bool FileSavedEvent)
 
 void WakaTime::ResetHeartbeat()
 {
-    if (wxGetApp().Preferences().is_WakaTimeEnabled())
+    if (Preferences().is_WakaTimeEnabled())
     {
         auto result = time(nullptr);
 

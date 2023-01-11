@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Stores messages
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2021 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -18,6 +18,7 @@
 #include "mainapp.h"         // App -- Main application class
 #include "mainframe.h"       // MainFrame -- Main window frame
 #include "node.h"            // Node class
+#include "preferences.h"     // Set/Get wxUiEditor preferences
 #include "project_class.h"   // Project class
 
 #include "pugixml.hpp"
@@ -96,7 +97,7 @@ MsgFrame::MsgFrame(std::vector<ttlib::cstr>* pMsgs, bool* pDestroyed, wxWindow* 
         }
     }
 
-    auto& prefs = wxGetApp().Preferences();
+    auto& prefs = Preferences();
 
     if ((prefs.GetDebugFlags() & PREFS::PREFS_MSG_WARNING))
         m_menu_item_warnings->Check(true);
@@ -122,7 +123,7 @@ MsgFrame::MsgFrame(std::vector<ttlib::cstr>* pMsgs, bool* pDestroyed, wxWindow* 
 
 void MsgFrame::AddWarningMsg(ttlib::sview msg)
 {
-    if (wxGetApp().Preferences().GetDebugFlags() & PREFS::PREFS_MSG_WARNING)
+    if (Preferences().GetDebugFlags() & PREFS::PREFS_MSG_WARNING)
     {
         m_textCtrl->SetDefaultStyle(wxTextAttr(*wxBLUE));
         m_textCtrl->AppendText("Warning: ");
@@ -133,7 +134,7 @@ void MsgFrame::AddWarningMsg(ttlib::sview msg)
 
 void MsgFrame::Add_wxWarningMsg(ttlib::sview msg)
 {
-    if (wxGetApp().Preferences().GetDebugFlags() & PREFS::PREFS_MSG_WARNING)
+    if (Preferences().GetDebugFlags() & PREFS::PREFS_MSG_WARNING)
     {
         m_textCtrl->SetDefaultStyle(wxTextAttr(*wxBLUE));
         m_textCtrl->AppendText("wxWarning: ");
@@ -144,7 +145,7 @@ void MsgFrame::Add_wxWarningMsg(ttlib::sview msg)
 
 void MsgFrame::Add_wxInfoMsg(ttlib::sview msg)
 {
-    if (wxGetApp().Preferences().GetDebugFlags() & PREFS::PREFS_MSG_INFO)
+    if (Preferences().GetDebugFlags() & PREFS::PREFS_MSG_INFO)
     {
         m_textCtrl->SetDefaultStyle(wxTextAttr(*wxCYAN));
         m_textCtrl->AppendText("wxInfo: ");
@@ -217,7 +218,7 @@ void MsgFrame::OnHide(wxCommandEvent& WXUNUSED(event))
 
 void MsgFrame::OnWarnings(wxCommandEvent& WXUNUSED(event))
 {
-    auto& prefs = wxGetApp().Preferences();
+    auto& prefs = Preferences();
 
     if ((prefs.GetDebugFlags() & PREFS::PREFS_MSG_WARNING))
     {
@@ -235,7 +236,7 @@ void MsgFrame::OnWarnings(wxCommandEvent& WXUNUSED(event))
 
 void MsgFrame::OnEvents(wxCommandEvent& WXUNUSED(event))
 {
-    auto& prefs = wxGetApp().Preferences();
+    auto& prefs = Preferences();
 
     if ((prefs.GetDebugFlags() & PREFS::PREFS_MSG_EVENT))
     {
@@ -253,7 +254,7 @@ void MsgFrame::OnEvents(wxCommandEvent& WXUNUSED(event))
 
 void MsgFrame::OnInfo(wxCommandEvent& WXUNUSED(event))
 {
-    auto& prefs = wxGetApp().Preferences();
+    auto& prefs = Preferences();
 
     if ((prefs.GetDebugFlags() & PREFS::PREFS_MSG_INFO))
     {

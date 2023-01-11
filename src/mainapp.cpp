@@ -18,6 +18,7 @@
 #include "mainframe.h"      // MainFrame -- Main window frame
 #include "node.h"           // Node -- Node class
 #include "node_creator.h"   // NodeCreator class
+#include "preferences.h"    // Set/Get wxUiEditor preferences
 #include "project_class.h"  // Project class
 #include "utils.h"          // Utility functions that work with properties
 
@@ -113,7 +114,7 @@ bool App::OnInit()
 #endif  // _DEBUG
 
     SetVendorName("KeyWorks");
-    m_prefs.ReadConfig();
+    Preferences().ReadConfig();
 
     return true;
 }
@@ -233,6 +234,21 @@ int App::OnExit()
     m_project.reset();
 
     return wxApp::OnExit();
+}
+
+bool App::isFireCreationMsgs() const
+{
+    return (Preferences().GetDebugFlags() & PREFS::PREFS_CREATION_MSG);
+}
+
+bool App::IsPjtMemberPrefix() const
+{
+    return (Preferences().GetProjectFlags() & PREFS::PREFS_PJT_MEMBER_PREFIX);
+}
+
+bool App::AutoMsgWindow() const
+{
+    return (Preferences().GetDebugFlags() & PREFS::PREFS_MSG_WINDOW);
 }
 
 #if defined(_DEBUG) && defined(wxUSE_ON_FATAL_EXCEPTION) && defined(wxUSE_STACKWALKER)

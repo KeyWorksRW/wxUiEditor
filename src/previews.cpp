@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Top level Preview functions
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2022-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -24,6 +24,7 @@
 #include "mainapp.h"           // App -- Main application class
 #include "mainframe.h"         // MainFrame -- Main window frame
 #include "node.h"              // Node class
+#include "preferences.h"       // Preferences -- Stores user preferences
 #include "preview_settings.h"  // PreviewSettings
 #include "project_class.h"     // Project class
 #include "utils.h"             // Utility functions that work with properties
@@ -122,7 +123,7 @@ void MainFrame::OnPreviewWinActivate(wxActivateEvent& event)
 void Preview(Node* form_node)
 {
     PreviewSettings dlg_preview_settings(GetMainFrame());
-    auto& prefs = wxGetApp().Preferences();
+    auto& prefs = Preferences();
     if (prefs.GetPreviewType() == PREFS::PREVIEW_TYPE_XRC)
         dlg_preview_settings.set_type_xrc(true);
     else if (prefs.GetPreviewType() == PREFS::PREVIEW_TYPE_BOTH)

@@ -31,6 +31,7 @@
 #include "node_decl.h"       // NodeDeclaration class
 #include "node_prop.h"       // NodeProperty -- NodeProperty class
 #include "paths.h"           // Handles *_directory properties
+#include "preferences.h"     // Set/Get wxUiEditor preferences
 #include "project_class.h"   // Project class
 #include "prop_decl.h"       // PropChildDeclaration and PropDeclaration classes
 #include "utils.h"           // Utility functions that work with properties
@@ -1092,7 +1093,7 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                             grid_property->SetValueFromString(name, 0);
                             modifyProperty(propChange, name);
                         }
-                        else if (value != "none" && !name.starts_with("m_"))
+                        else if (value != "none" && !name.starts_with("m_") && Preferences().is_VarPrefix())
                         {
                             name.insert(0, "m_");
                             auto final_name = node->GetUniqueName(name);

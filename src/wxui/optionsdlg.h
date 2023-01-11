@@ -40,6 +40,7 @@ protected:
     bool m_isWakaTimeEnabled { true };
     bool m_sizers_all_borders { true };
     bool m_sizers_always_expand { true };
+    bool m_var_prefix { true };
 };
 
 // ************* End of generated code ***********

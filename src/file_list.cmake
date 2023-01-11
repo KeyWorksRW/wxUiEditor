@@ -16,6 +16,7 @@ set (file_list
     image_bundle.cpp      # Functions for working with wxBitmapBundle
     lambdas.cpp           # Functions for formatting and storage of lamda events
     paths.cpp             # Handles *_directory properties
+    preferences.cpp       # Set/Get wxUiEditor preferences
     previews.cpp          # Top level Preview functions
     project_class.cpp     # Project class
     startup_dlg.cpp       # Startup dialog

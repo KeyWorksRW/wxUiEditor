@@ -15,7 +15,7 @@
 #include "optionsdlg.h"
 
 bool OptionsDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,
-        const wxPoint& pos, const wxSize& size, long style, const wxString &name)
+    const wxPoint& pos, const wxSize& size, long style, const wxString &name)
 {
     if (!wxDialog::Create(parent, id, title, pos, size, style, name))
         return false;
@@ -35,6 +35,14 @@ bool OptionsDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     checkBox_expand->SetValidator(wxGenericValidator(&m_sizers_always_expand));
     checkBox_expand->SetToolTip("If checked, new sizers will be created with the wxEXPAND flag.");
     box_sizer->Add(checkBox_expand, wxSizerFlags().Border(wxALL));
+
+    box_sizer->AddSpacer(16);
+
+    auto* checkBox_var_prefix = new wxCheckBox(this, wxID_ANY, "Add \"m_\" prefix to class members");
+    checkBox_var_prefix->SetValue(true);
+    checkBox_var_prefix->SetValidator(wxGenericValidator(&m_var_prefix));
+    checkBox_var_prefix->SetToolTip("If checked, new sizers will be created with the wxEXPAND flag.");
+    box_sizer->Add(checkBox_var_prefix, wxSizerFlags().Border(wxALL));
 
     box_sizer->AddSpacer(16);
 
@@ -114,7 +122,7 @@ void OptionsDlg::OnAffirmative(wxCommandEvent& WXUNUSED(event))
 
     if (m_isWakaTimeEnabled != preferences.is_WakaTimeEnabled())
     {
-        preferences.set_isWakaTimeEnabled(m_isWakaTimeEnabled);
+        preferences.set_WakaTimeEnabled(m_isWakaTimeEnabled);
         option_changed = true;
     }
 

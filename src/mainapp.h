@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Main application class
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -10,6 +10,7 @@
 #include <wx/app.h>  // wxAppBase class and macros used for declaration of wxApp
 
 #include "node_classes.h"  // Forward defintions of Node classes
+#include "preferences.h"   // Set/Get wxUiEditor preferences
 
 class Project;
 
@@ -26,71 +27,6 @@ struct EmbeddedImage;
 struct ImageBundle;
 
 constexpr const auto ImportProjectVersion = 13;
-
-struct PREFS
-{
-    enum PREVIEW_TYPE
-    {
-        PREVIEW_TYPE_XRC = 0,
-        PREVIEW_TYPE_BOTH,
-        PREVIEW_TYPE_CPP,
-    };
-
-    void ReadConfig();
-    void WriteConfig();
-
-    bool is_SizersAllBorders() const { return m_sizers_all_borders; }
-    bool is_SizersExpand() const { return m_sizers_always_expand; }
-    bool is_WakaTimeEnabled() const { return m_enable_wakatime; }
-
-    void set_SizersAllBorders(bool setting) { m_sizers_all_borders = setting; }
-    void set_SizersExpand(bool setting) { m_sizers_always_expand = setting; }
-    void set_isWakaTimeEnabled(bool setting) { m_enable_wakatime = setting; }
-
-    long GetDebugFlags() const { return m_flags; }
-    void SetDebugFlags(long flags) { m_flags = flags; }
-
-    long GetProjectFlags() const { return m_project_flags; }
-    void SetProjectFlags(long flags) { m_project_flags = flags; }
-
-    size_t get_cpp_line_length() const { return to_size_t(m_cpp_line_length); }
-    size_t get_python_line_length() const { return to_size_t(m_python_line_length); }
-
-    PREVIEW_TYPE GetPreviewType() const { return m_preview_type; }
-    void SetPreviewType(PREVIEW_TYPE type) { m_preview_type = type; }
-
-    // clang-format off
-    enum : long
-    {
-        PREFS_MSG_WINDOW    = 1 << 2,   // automatically create CMsgFrame window
-        PREFS_MSG_INFO      = 1 << 3,   // filter AddInfoMsg
-        PREFS_MSG_EVENT     = 1 << 4,   // filter AddEventMsg
-        PREFS_MSG_WARNING   = 1 << 5,   // filter AddWarningMsg
-
-        PREFS_CREATION_MSG  = 1 << 6,  // Calls MSG_INFO when nav, prop, or mockup contents recreated
-    };
-
-    enum : long
-    {
-        PREFS_PJT_ALWAYS_LOCAL = 1 << 0,
-        PREFS_PJT_MEMBER_PREFIX = 1 << 1,
-    };
-
-    // clang-format on
-
-private:
-    // These store both Debug and INTERNAL flags
-    long m_flags { 0 };
-    long m_cpp_line_length { 110 };
-    long m_python_line_length { 89 };
-
-    long m_project_flags { 0 };
-    PREVIEW_TYPE m_preview_type { PREVIEW_TYPE_XRC };
-
-    bool m_sizers_all_borders { true };
-    bool m_sizers_always_expand { true };
-    bool m_enable_wakatime { true };
-};
 
 class App : public wxApp
 {

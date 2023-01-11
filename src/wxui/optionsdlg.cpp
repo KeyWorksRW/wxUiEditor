@@ -94,10 +94,10 @@ void MainFrame::OnOptionsDlg(wxCommandEvent& WXUNUSED(event))
 
 void OptionsDlg::OnInit(wxInitDialogEvent& event)
 {
-    auto& preferences = Preferences();
-    m_sizers_all_borders = preferences.is_SizersAllBorders();
-    m_sizers_always_expand = preferences.is_SizersExpand();
-    m_isWakaTimeEnabled = preferences.is_WakaTimeEnabled();
+    m_sizers_all_borders = Preferences().is_SizersAllBorders();
+    m_sizers_always_expand = Preferences().is_SizersExpand();
+    m_isWakaTimeEnabled = Preferences().is_WakaTimeEnabled();
+    m_var_prefix = Preferences().is_VarPrefix();
 
     event.Skip();  // transfer all validator data to their windows and update UI
 }
@@ -106,30 +106,25 @@ void OptionsDlg::OnAffirmative(wxCommandEvent& WXUNUSED(event))
 {
     TransferDataFromWindow();
 
-    auto& preferences = Preferences();
     bool option_changed = false;
 
-    if (m_sizers_all_borders != preferences.is_SizersAllBorders())
+    auto lambda = [&](bool new_value, bool& old_value)
     {
-        preferences.set_SizersAllBorders(m_sizers_all_borders);
-        option_changed = true;
-    }
+        if (new_value != old_value)
+        {
+            old_value = new_value;
+            option_changed = true;
+        }
+    };
 
-    if (m_sizers_always_expand != preferences.is_SizersExpand())
-    {
-        preferences.set_SizersExpand(m_sizers_always_expand);
-        option_changed = true;
-    }
-
-    if (m_isWakaTimeEnabled != preferences.is_WakaTimeEnabled())
-    {
-        preferences.set_WakaTimeEnabled(m_isWakaTimeEnabled);
-        option_changed = true;
-    }
+    lambda(m_var_prefix, Preferences().RefVarPrefix());
+    lambda(m_sizers_all_borders, Preferences().RefSizersAllBorders());
+    lambda(m_sizers_always_expand, Preferences().RefSizersExpand());
+    lambda(m_isWakaTimeEnabled, Preferences().RefWakaTimeEnabled());
 
     if (option_changed)
     {
-        preferences.WriteConfig();
+        Preferences().WriteConfig();
     }
 
     EndModal(wxID_OK);

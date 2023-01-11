@@ -42,6 +42,13 @@ struct PREFS
     long GetProjectFlags() const { return m_project_flags; }
     void SetProjectFlags(long flags) { m_project_flags = flags; }
 
+    // The following are used by the OptionsDlg class to efficiently update the preferences
+
+    bool& RefVarPrefix() { return m_var_prefix; }
+    bool& RefSizersAllBorders() { return m_sizers_all_borders; }
+    bool& RefSizersExpand() { return m_sizers_always_expand; }
+    bool& RefWakaTimeEnabled() { return m_enable_wakatime; }
+
     PREVIEW_TYPE GetPreviewType() const { return m_preview_type; }
     void SetPreviewType(PREVIEW_TYPE type) { m_preview_type = type; }
 

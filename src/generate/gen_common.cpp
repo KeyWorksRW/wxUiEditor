@@ -747,6 +747,7 @@ bool GenerateVectorCode(const ttlib::cstr& description, ttlib::cstr& code)
 
     return true;
 }
+
 void GenFormSettings(Code& code)
 {
     const auto* node = code.node();
@@ -756,7 +757,7 @@ void GenFormSettings(Code& code)
         const auto min_size = node->prop_as_wxSize(prop_minimum_size);
         if (min_size != wxDefaultSize || max_size != wxDefaultSize)
         {
-            code.FormFunction("SetSizeHints(");
+            code.Eol(eol_if_needed).FormFunction("SetSizeHints(");
             if (min_size.GetX() != -1 || min_size.GetY() != -1)
             {
                 code.WxSize(prop_minimum_size);

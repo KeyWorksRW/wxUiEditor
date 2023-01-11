@@ -58,7 +58,8 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
         wxImage::AddHandler(new wxPNGHandler);
 
     if (!Create(parent, id, title, pos, size, style, name))
-        return;SetSizeHints(wxSize(800, 800));
+        return;
+    SetSizeHints(wxSize(800, 800));
 
     m_menubar = new wxMenuBar();
 

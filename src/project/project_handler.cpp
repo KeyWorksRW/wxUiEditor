@@ -143,10 +143,16 @@ void ProjectHandler::FixupDuplicatedNode(Node* new_node)
 
 ttString ProjectHandler::ArtDirectory() const
 {
+    ttString result;
+
     if (m_project_node->HasValue(prop_art_directory))
-        return m_project_node->as_wxString(prop_art_directory);
-    else
-        return m_projectPath;
+        result = m_project_node->as_wxString(prop_art_directory);
+    if (result.empty())
+        result = m_projectPath;
+
+    result.make_absolute();
+
+    return result;
 }
 
 ttString ProjectHandler::BaseDirectory(int language) const
@@ -162,15 +168,24 @@ ttString ProjectHandler::BaseDirectory(int language) const
     if (result.empty())
         result = m_projectPath;
 
+    result.make_absolute();
+
     return result;
 }
 
 ttString ProjectHandler::DerivedDirectory() const
 {
+    ttString result;
+
     if (m_project_node->HasValue(prop_derived_directory))
-        return m_project_node->as_wxString(prop_derived_directory);
-    else
-        return m_projectPath;
+        result = m_project_node->as_wxString(prop_derived_directory);
+
+    if (result.empty())
+        result = m_projectPath;
+
+    result.make_absolute();
+
+    return result;
 }
 
 Node* ProjectHandler::GetFirstFormChild(Node* node) const

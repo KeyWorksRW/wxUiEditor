@@ -172,12 +172,12 @@ std::string GenerateXrcStr(Node* node_start, size_t xrc_flags)
     NodeSharedPtr temp_form = nullptr;
     if (node_start->isGen(gen_MenuBar) || node_start->isGen(gen_RibbonBar) || node_start->isGen(gen_ToolBar))
     {
-        temp_form = g_NodeCreator.CreateNode(gen_PanelForm, nullptr);
+        temp_form = NodeCreation.CreateNode(gen_PanelForm, nullptr);
         if (temp_form)
         {
-            auto sizer = g_NodeCreator.CreateNode(gen_VerticalBoxSizer, temp_form.get());
+            auto sizer = NodeCreation.CreateNode(gen_VerticalBoxSizer, temp_form.get());
             temp_form->Adopt(sizer);
-            auto node_copy = g_NodeCreator.MakeCopy(node_start, sizer.get());
+            auto node_copy = NodeCreation.MakeCopy(node_start, sizer.get());
             sizer->Adopt(node_copy);
             node_start = temp_form.get();
         }

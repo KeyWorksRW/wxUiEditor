@@ -62,7 +62,7 @@
 
 #include "node_creator.h"
 
-// ADD_CONSTANT makes it possible to call g_NodeCreator.GetConstantAsInt(name) and have it return it's value (or zero if
+// ADD_CONSTANT makes it possible to call NodeCreation.GetConstantAsInt(name) and have it return it's value (or zero if
 // not defined)
 
 #define ADD_CONSTANT(name) m_map_constants[#name] = name;

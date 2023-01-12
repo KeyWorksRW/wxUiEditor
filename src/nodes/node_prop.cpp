@@ -41,7 +41,7 @@ int NodeProperty::as_int() const
         case type_editoption:
         case type_option:
         case type_id:
-            return g_NodeCreator.GetConstantAsInt(m_value, 0);
+            return NodeCreation.GetConstantAsInt(m_value, 0);
 
         case type_bitlist:
             {
@@ -49,7 +49,7 @@ int NodeProperty::as_int() const
                 ttlib::multistr mstr(m_value, '|');
                 for (auto& iter: mstr)
                 {
-                    result |= g_NodeCreator.GetConstantAsInt(iter);
+                    result |= NodeCreation.GetConstantAsInt(iter);
                 }
                 return result;
             }
@@ -61,7 +61,7 @@ int NodeProperty::as_int() const
 
 int NodeProperty::as_id() const
 {
-    return g_NodeCreator.GetConstantAsInt(m_value, wxID_ANY);
+    return NodeCreation.GetConstantAsInt(m_value, wxID_ANY);
 }
 
 int NodeProperty::as_mockup(std::string_view prefix) const
@@ -73,7 +73,7 @@ int NodeProperty::as_mockup(std::string_view prefix) const
         case type_id:
             if (m_value.starts_with("wx"))
             {
-                return g_NodeCreator.GetConstantAsInt(m_value, 0);
+                return NodeCreation.GetConstantAsInt(m_value, 0);
             }
             else
             {
@@ -83,14 +83,14 @@ int NodeProperty::as_mockup(std::string_view prefix) const
                     name << prefix << m_value;
                     if (auto result = g_friend_constant.find(name); result != g_friend_constant.end())
                     {
-                        return g_NodeCreator.GetConstantAsInt(result->second, 0);
+                        return NodeCreation.GetConstantAsInt(result->second, 0);
                     }
                 }
                 else
                 {
                     if (auto result = g_friend_constant.find(m_value); result != g_friend_constant.end())
                     {
-                        return g_NodeCreator.GetConstantAsInt(result->second, 0);
+                        return NodeCreation.GetConstantAsInt(result->second, 0);
                     }
                 }
             }
@@ -104,7 +104,7 @@ int NodeProperty::as_mockup(std::string_view prefix) const
                 {
                     if (iter.starts_with("wx"))
                     {
-                        value |= g_NodeCreator.GetConstantAsInt(iter);
+                        value |= NodeCreation.GetConstantAsInt(iter);
                     }
                     else
                     {
@@ -114,7 +114,7 @@ int NodeProperty::as_mockup(std::string_view prefix) const
                         }
                         if (auto result = g_friend_constant.find(iter); result != g_friend_constant.end())
                         {
-                            value |= g_NodeCreator.GetConstantAsInt(result->second);
+                            value |= NodeCreation.GetConstantAsInt(result->second);
                         }
                     }
                 }

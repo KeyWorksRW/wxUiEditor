@@ -19,10 +19,10 @@
 #include "project_handler.h"
 
 #include "bitmaps.h"        // Map of bitmaps accessed by name
+#include "image_handler.h"  // ProjectImage class
 #include "mainapp.h"        // App -- App class
 #include "mainframe.h"      // MainFrame -- Main window frame
 #include "node.h"           // Node class
-#include "image_handler.h"  // ProjectImage class
 #include "utils.h"          // Utility functions that work with properties
 
 ProjectHandler& Project = ProjectHandler::getInstance();

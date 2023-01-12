@@ -70,7 +70,7 @@ CodeDisplay::CodeDisplay(wxWindow* parent, int panel_type) : CodeDisplayBase(par
 
         // clang-format on
 
-        for (auto iter: g_NodeCreator.GetNodeDeclarationArray())
+        for (auto iter: NodeCreation.GetNodeDeclarationArray())
         {
             if (!iter)
             {
@@ -117,7 +117,7 @@ CodeDisplay::CodeDisplay(wxWindow* parent, int panel_type) : CodeDisplayBase(par
 
         // clang-format on
 
-        for (auto iter: g_NodeCreator.GetNodeDeclarationArray())
+        for (auto iter: NodeCreation.GetNodeDeclarationArray())
         {
             if (!iter)
             {

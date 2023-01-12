@@ -11,8 +11,8 @@
 
 #include "wakatime.h"  // WakaTime
 
-#include "mainapp.h"        // App -- Main application class
-#include "preferences.h"    // PREFS -- Preferences
+#include "mainapp.h"          // App -- Main application class
+#include "preferences.h"      // PREFS -- Preferences
 #include "project_handler.h"  // ProjectHandler class
 
 WakaTime::WakaTime()

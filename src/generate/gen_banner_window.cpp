@@ -20,7 +20,7 @@
 wxObject* BannerWindowGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxBannerWindow(wxStaticCast(parent, wxWindow),
-                                     (wxDirection) g_NodeCreator.GetConstantAsInt(node->prop_as_string(prop_direction)));
+                                     (wxDirection) NodeCreation.GetConstantAsInt(node->prop_as_string(prop_direction)));
 
     if (node->HasValue(prop_bitmap))
     {

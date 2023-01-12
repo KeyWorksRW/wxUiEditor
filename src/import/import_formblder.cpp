@@ -141,7 +141,7 @@ bool FormBuilder::Import(const ttString& filename, bool write_doc)
             throw std::runtime_error("Invalid project file");
         }
 
-        m_project = g_NodeCreator.CreateNode(gen_Project, nullptr);
+        m_project = NodeCreation.CreateNode(gen_Project, nullptr);
 
         CreateProjectNode(object, m_project.get());
 
@@ -311,7 +311,7 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
         gen_name = gen_auitool;
     }
 
-    auto newobject = g_NodeCreator.CreateNode(gen_name, parent);
+    auto newobject = NodeCreation.CreateNode(gen_name, parent);
     if (!newobject)
     {
         ttlib::cstr msg("Unable to create ");
@@ -614,7 +614,7 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
     }
 
     auto child = xml_obj.child("object");
-    if (g_NodeCreator.IsOldHostType(newobject->DeclName()))
+    if (NodeCreation.IsOldHostType(newobject->DeclName()))
     {
         newobject = CreateFbpNode(child, parent, newobject.get());
         if (!newobject)

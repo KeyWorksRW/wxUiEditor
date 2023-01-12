@@ -33,12 +33,12 @@ void NewPanel::CreateNode()
     NodeSharedPtr new_node;
     if (m_is_form)
     {
-        new_node = g_NodeCreator.CreateNode(gen_PanelForm, Project.ProjectNode());
+        new_node = NodeCreation.CreateNode(gen_PanelForm, Project.ProjectNode());
         ASSERT(new_node);
     }
     else
     {
-        new_node = g_NodeCreator.CreateNode(gen_wxPanel, wxGetFrame().GetSelectedNode());
+        new_node = NodeCreation.CreateNode(gen_wxPanel, wxGetFrame().GetSelectedNode());
         if (!new_node)
         {
             wxMessageBox("You need to have a sizer selected before you can create a wxPanel.", "Create wxPanel");
@@ -50,27 +50,27 @@ void NewPanel::CreateNode()
 
     if (m_sizer_type == "FlexGrid")
     {
-        sizer = g_NodeCreator.CreateNode(gen_wxFlexGridSizer, new_node.get());
+        sizer = NodeCreation.CreateNode(gen_wxFlexGridSizer, new_node.get());
     }
     else if (m_sizer_type == "Grid")
     {
-        sizer = g_NodeCreator.CreateNode(gen_wxGridSizer, new_node.get());
+        sizer = NodeCreation.CreateNode(gen_wxGridSizer, new_node.get());
     }
     else if (m_sizer_type == "GridBag")
     {
-        sizer = g_NodeCreator.CreateNode(gen_wxGridBagSizer, new_node.get());
+        sizer = NodeCreation.CreateNode(gen_wxGridBagSizer, new_node.get());
     }
     else if (m_sizer_type == "StaticBox")
     {
-        sizer = g_NodeCreator.CreateNode(gen_wxStaticBoxSizer, new_node.get());
+        sizer = NodeCreation.CreateNode(gen_wxStaticBoxSizer, new_node.get());
     }
     else if (m_sizer_type == "Wrap")
     {
-        sizer = g_NodeCreator.CreateNode(gen_wxWrapSizer, new_node.get());
+        sizer = NodeCreation.CreateNode(gen_wxWrapSizer, new_node.get());
     }
     else
     {
-        sizer = g_NodeCreator.CreateNode(gen_VerticalBoxSizer, new_node.get());
+        sizer = NodeCreation.CreateNode(gen_VerticalBoxSizer, new_node.get());
     }
 
     new_node->Adopt(sizer);

@@ -40,7 +40,7 @@ NavigationPanel::NavigationPanel(wxWindow* parent, MainFrame* frame) : wxPanel(p
     int index = 0;
     m_iconList = new wxImageList(GenImageSize, GenImageSize);
 
-    for (auto iter: g_NodeCreator.GetNodeDeclarationArray())
+    for (auto iter: NodeCreation.GetNodeDeclarationArray())
     {
         if (!iter)
         {
@@ -160,8 +160,7 @@ void NavigationPanel::OnProjectUpdated()
     m_tree_node_map.clear();
     m_node_tree_map.clear();
 
-    auto root =
-        m_tree_ctrl->AddRoot(GetDisplayName(Project.ProjectNode()), GetImageIndex(Project.ProjectNode()), -1);
+    auto root = m_tree_ctrl->AddRoot(GetDisplayName(Project.ProjectNode()), GetImageIndex(Project.ProjectNode()), -1);
     m_node_tree_map[Project.ProjectNode()] = root;
     m_tree_node_map[root] = Project.ProjectNode();
 

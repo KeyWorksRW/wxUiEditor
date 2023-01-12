@@ -63,7 +63,7 @@ void resForm::ParseMenu(WinResource* pWinResource, ttlib::textfile& txtfile, siz
         m_is_popup_menu = true;
 
     m_form_type = form_menu;
-    m_form_node = g_NodeCreator.NewNode(m_is_popup_menu ? gen_PopupMenu : gen_MenuBar);
+    m_form_node = NodeCreation.NewNode(m_is_popup_menu ? gen_PopupMenu : gen_MenuBar);
 
 #if defined(_DEBUG) || defined(INTERNAL_TESTING)
     m_form_node->prop_set_value(prop_base_src_includes, ttlib::cstr() << "// " << txtfile.filename());
@@ -119,7 +119,7 @@ void resForm::ParseMenus(ttlib::textfile& txtfile, size_t& curTxtLine)
         if (line.starts_with("POPUP") && !m_is_popup_menu)
         {
             auto& control = m_ctrls.emplace_back();
-            parent = control.SetNodePtr(g_NodeCreator.NewNode(gen_wxMenu));
+            parent = control.SetNodePtr(NodeCreation.NewNode(gen_wxMenu));
             m_form_node->Adopt(parent);
             line.moveto_nextword();
             parent->prop_set_value(prop_label, m_pWinResource->ConvertCodePageString(line.view_substr(0)));
@@ -155,7 +155,7 @@ void resForm::ParseMenuItem(Node* parent, ttlib::textfile& txtfile, size_t& curT
         else if (line.starts_with("POPUP"))
         {
             auto& control = m_ctrls.emplace_back();
-            sub_parent = control.SetNodePtr(g_NodeCreator.NewNode(gen_submenu));
+            sub_parent = control.SetNodePtr(NodeCreation.NewNode(gen_submenu));
             parent->Adopt(sub_parent);
             line.moveto_nextword();
             sub_parent->prop_set_value(prop_label, m_pWinResource->ConvertCodePageString(line.view_substr(0)));
@@ -166,13 +166,13 @@ void resForm::ParseMenuItem(Node* parent, ttlib::textfile& txtfile, size_t& curT
             if (line.starts_with("SEPARATOR"))
             {
                 auto& control = m_ctrls.emplace_back();
-                auto separator = control.SetNodePtr(g_NodeCreator.NewNode(gen_separator));
+                auto separator = control.SetNodePtr(NodeCreation.NewNode(gen_separator));
                 parent->Adopt(separator);
             }
             else
             {
                 auto& control = m_ctrls.emplace_back();
-                auto item = control.SetNodePtr(g_NodeCreator.NewNode(gen_wxMenuItem));
+                auto item = control.SetNodePtr(NodeCreation.NewNode(gen_wxMenuItem));
                 parent->Adopt(item);
                 ttlib::sview label = line.view_substr(0);
                 auto end = label.find("\\t");

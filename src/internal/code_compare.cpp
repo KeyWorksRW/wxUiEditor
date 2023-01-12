@@ -96,9 +96,9 @@ bool CodeCompare::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 
 #include "ttcwd_wx.h"  // cwd -- Class for storing and optionally restoring the current directory
 
-#include "gen_base.h"       // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
-#include "generate_dlg.h"   // GenerateDlg -- Dialog for choosing and generating specific language file(s)
-#include "node.h"           // Node class
+#include "gen_base.h"         // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
+#include "generate_dlg.h"     // GenerateDlg -- Dialog for choosing and generating specific language file(s)
+#include "node.h"             // Node class
 #include "project_handler.h"  // ProjectHandler class
 
 #include "pugixml.hpp"

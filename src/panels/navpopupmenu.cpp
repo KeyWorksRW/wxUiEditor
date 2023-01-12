@@ -927,7 +927,7 @@ void NavPopupMenu::CreateSizerParent(Node* node, ttlib::sview widget)
     // Avoid the temptation to set new_parent to the raw pointer so that .get() doesn't have to be called below. Doing so
     // will result in the reference count being decremented before we are done hooking it up, and you end up crashing.
 
-    auto new_parent = g_NodeCreator.CreateNode(widget, parent);
+    auto new_parent = NodeCreation.CreateNode(widget, parent);
     if (new_parent)
     {
         wxGetFrame().Freeze();

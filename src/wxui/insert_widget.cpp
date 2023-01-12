@@ -142,7 +142,7 @@ void InsertWidget::OnNameText(wxCommandEvent& WXUNUSED(event))
     m_listbox->Clear();
     auto node = wxGetFrame().GetSelectedNode();
 
-    for (auto iter: g_NodeCreator.GetNodeDeclarationArray())
+    for (auto iter: NodeCreation.GetNodeDeclarationArray())
     {
         if (!iter)
         {

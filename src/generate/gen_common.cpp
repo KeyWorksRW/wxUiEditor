@@ -265,7 +265,7 @@ int GetStyleInt(Node* node, const char* prefix)
     for (auto& iter: mstr)
     {
         // Friendly names will have already been converted, so normal lookup works fine.
-        result |= g_NodeCreator.GetConstantAsInt(iter);
+        result |= NodeCreation.GetConstantAsInt(iter);
     }
     return result;
 }

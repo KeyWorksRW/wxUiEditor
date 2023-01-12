@@ -184,7 +184,7 @@ public:
     bool prop_as_bool(PropName name) const;
 
     // If type is option, id, or bitlist, this will convert that constant name to it's value
-    // (see g_NodeCreator.GetConstantAsInt()). Otherwise, it calls atoi().
+    // (see NodeCreation.GetConstantAsInt()). Otherwise, it calls atoi().
     int prop_as_int(PropName name) const;
     int prop_as_mockup(PropName name, std::string_view prefix) const;
 
@@ -245,7 +245,7 @@ public:
     bool as_bool(PropName name) const { return prop_as_bool(name); }
 
     // If type is option, id, or bitlist, this will convert that constant name to it's value
-    // (see g_NodeCreator.GetConstantAsInt()). Otherwise, it calls atoi().
+    // (see NodeCreation.GetConstantAsInt()). Otherwise, it calls atoi().
     int as_int(PropName name) const { return prop_as_int(name); }
 
     // Looks up wx constant, returns it's numerical value.

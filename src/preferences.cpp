@@ -5,7 +5,7 @@
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include <wx/config.h>   // wxConfig base header
+#include <wx/config.h>  // wxConfig base header
 
 #include "preferences.h"
 

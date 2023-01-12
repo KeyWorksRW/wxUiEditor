@@ -643,7 +643,7 @@ Node* Node::CreateChildNode(GenName name)
 {
     auto& frame = wxGetFrame();
 
-    auto new_node = g_NodeCreator.CreateNode(name, this);
+    auto new_node = NodeCreation.CreateNode(name, this);
 
     Node* parent = this;
 
@@ -653,7 +653,7 @@ Node* Node::CreateChildNode(GenName name)
         {
             if (GetChild(0)->gen_type() == type_sizer || GetChild(0)->gen_type() == type_gbsizer)
             {
-                new_node = g_NodeCreator.CreateNode(name, GetChild(0));
+                new_node = NodeCreation.CreateNode(name, GetChild(0));
                 if (!new_node)
                     return nullptr;
                 parent = GetChild(0);
@@ -713,7 +713,7 @@ Node* Node::CreateChildNode(GenName name)
     // then assume the parent is wxRibbonToolBar and retry with "ribbonTool"
     else if (name == gen_ribbonButton)
     {
-        new_node = g_NodeCreator.CreateNode(gen_ribbonTool, this);
+        new_node = NodeCreation.CreateNode(gen_ribbonTool, this);
         if (new_node)
         {
             ttlib::cstr undo_str = "insert ribbon tool";
@@ -735,9 +735,9 @@ Node* Node::CreateChildNode(GenName name)
 
         if (parent)
         {
-            auto decl = g_NodeCreator.get_declaration(name);
+            auto decl = NodeCreation.get_declaration(name);
             auto max_children = GetNodeDeclaration()->GetAllowableChildren(decl->gen_type());
-            auto cur_children = g_NodeCreator.CountChildrenWithSameType(this, decl->gen_type());
+            auto cur_children = NodeCreation.CountChildrenWithSameType(this, decl->gen_type());
             if (max_children > 0 && cur_children >= static_cast<size_t>(max_children))
             {
                 if (isGen(gen_wxSplitterWindow))
@@ -753,7 +753,7 @@ Node* Node::CreateChildNode(GenName name)
                 return nullptr;
             }
 
-            new_node = g_NodeCreator.CreateNode(name, parent);
+            new_node = NodeCreation.CreateNode(name, parent);
             if (new_node)
             {
                 if (parent->isGen(gen_wxGridBagSizer))

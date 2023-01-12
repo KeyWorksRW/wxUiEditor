@@ -89,7 +89,7 @@ bool WxCrafter::Import(const ttString& filename, bool write_doc)
         return false;
     }
 
-    m_project = g_NodeCreator.CreateNode(gen_Project, nullptr);
+    m_project = NodeCreation.CreateNode(gen_Project, nullptr);
 
     try
     {
@@ -186,7 +186,7 @@ void WxCrafter::ProcessForm(const Value& form)
         return;
     }
 
-    auto new_node = g_NodeCreator.CreateNode(gen_name, m_project.get());
+    auto new_node = NodeCreation.CreateNode(gen_name, m_project.get());
     m_project->Adopt(new_node);
 
     if (!m_generate_ids)
@@ -330,7 +330,7 @@ void WxCrafter::ProcessChild(Node* parent, const Value& object)
         gen_name = gen_auitool;
     }
 
-    auto new_node = g_NodeCreator.CreateNode(gen_name, parent);
+    auto new_node = NodeCreation.CreateNode(gen_name, parent);
     if (!new_node)
     {
         m_errors.emplace(ttlib::cstr() << map_GenNames.at(gen_name) << " cannot be a child of " << parent->DeclName());
@@ -380,7 +380,7 @@ void WxCrafter::ProcessChild(Node* parent, const Value& object)
         {
             // We always supply one page even if it's empty so that wxPropertyGridManager::Clear() will work correctly
             gen_name = gen_propGridPage;
-            auto child_node = g_NodeCreator.CreateNode(gen_name, new_node.get());
+            auto child_node = NodeCreation.CreateNode(gen_name, new_node.get());
             if (!child_node)
             {
                 m_errors.emplace(ttlib::cstr()

@@ -112,8 +112,8 @@ void PropertyGrid_Image::RefreshChildren()
                 }
                 else
                 {
-                    if (auto img =
-                            ProjectImages.GetPropertyImageBundle(m_img_props.CombineValues(), wxGetFrame().GetSelectedNode());
+                    if (auto img = ProjectImages.GetPropertyImageBundle(m_img_props.CombineValues(),
+                                                                        wxGetFrame().GetSelectedNode());
                         img)
                     {
                         if (img->bundle.IsOk())

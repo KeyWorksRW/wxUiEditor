@@ -14,13 +14,13 @@
 
 #include "mainapp.h"
 
-#include "bitmaps.h"        // Contains various images handling functions
-#include "mainframe.h"      // MainFrame -- Main window frame
-#include "node.h"           // Node -- Node class
-#include "node_creator.h"   // NodeCreator class
-#include "preferences.h"    // Set/Get wxUiEditor preferences
-#include "utils.h"          // Utility functions that work with properties
+#include "bitmaps.h"          // Contains various images handling functions
+#include "mainframe.h"        // MainFrame -- Main window frame
+#include "node.h"             // Node -- Node class
+#include "node_creator.h"     // NodeCreator class
+#include "preferences.h"      // Set/Get wxUiEditor preferences
 #include "project_handler.h"  // ProjectHandler class
+#include "utils.h"            // Utility functions that work with properties
 
 #include "wxui/startupdlg_base.h"  // CStartup -- Dialog to display is wxUE is launched with no arguments
 
@@ -121,7 +121,7 @@ bool App::OnInit()
 
 int App::OnRun()
 {
-    g_NodeCreator.Initialize();
+    NodeCreation.Initialize();
     m_frame = new MainFrame();
     bool is_project_loaded = false;
 

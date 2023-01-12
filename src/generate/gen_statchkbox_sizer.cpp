@@ -9,8 +9,8 @@
 #include <wx/sizer.h>
 #include <wx/statbox.h>
 
-#include "gen_common.h"     // GeneratorLibrary -- Generator classes
-#include "node.h"           // Node class
+#include "gen_common.h"       // GeneratorLibrary -- Generator classes
+#include "node.h"             // Node class
 #include "project_handler.h"  // ProjectHandler class
 
 #include "pugixml.hpp"  // xml read/write/create/process

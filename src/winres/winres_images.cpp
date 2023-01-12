@@ -93,14 +93,14 @@ void resCtrl::ParseIconControl(ttlib::sview line)
     {
         ttlib::cstr prop;
         prop << "Art; " << stock_image->second << "|wxART_TOOLBAR; [-1; -1]";
-        m_node = g_NodeCreator.NewNode(gen_wxStaticBitmap);
+        m_node = NodeCreation.NewNode(gen_wxStaticBitmap);
         m_node->prop_set_value(prop_bitmap, prop);
     }
     else
     {
         if (icon_name.empty())
         {
-            m_node = g_NodeCreator.NewNode(gen_wxStaticBitmap);
+            m_node = NodeCreation.NewNode(gen_wxStaticBitmap);
         }
         else
         {
@@ -111,7 +111,7 @@ void resCtrl::ParseIconControl(ttlib::sview line)
                 return;
             }
 
-            m_node = g_NodeCreator.NewNode(gen_wxStaticBitmap);
+            m_node = NodeCreation.NewNode(gen_wxStaticBitmap);
             ttlib::cstr prop;
             prop << "Embed;" << result.value() << ";[-1; -1]";
 

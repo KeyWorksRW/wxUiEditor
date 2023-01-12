@@ -84,12 +84,12 @@ bool CtxMenuGenerator::AdditionalCode(Code& code, GenEnum::GenCodeType cmd)
     code.Eol();
 
     // All of the constructors are expecting a wxMenu parent -- so we need to temporarily create one
-    auto node_menu = g_NodeCreator.NewNode(g_NodeCreator.GetNodeDeclaration("wxMenu"));
+    auto node_menu = NodeCreation.NewNode(NodeCreation.GetNodeDeclaration("wxMenu"));
     node_menu->prop_set_value(prop_var_name, code.is_cpp() ? "p_ctx_menu" : "ctx_menu");
 
     for (const auto& child: code.node()->GetChildNodePtrs())
     {
-        auto child_node = g_NodeCreator.MakeCopy(child);
+        auto child_node = NodeCreation.MakeCopy(child);
         node_menu->Adopt(child_node);
         auto save_node = code.node();
         code.m_node = child_node.get();

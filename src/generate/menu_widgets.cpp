@@ -117,7 +117,7 @@ wxMenu* MenuBarBase::MakeSubMenu(Node* menu_node)
 
             int id = wxID_ANY;
             if (menu_item->prop_as_string(prop_id) != "wxID_ANY" && menu_item->prop_as_string(prop_id).starts_with("wxID_"))
-                id = g_NodeCreator.GetConstantAsInt(menu_item->prop_as_string(prop_id), wxID_ANY);
+                id = NodeCreation.GetConstantAsInt(menu_item->prop_as_string(prop_id), wxID_ANY);
 
             auto item = new wxMenuItem(sub_menu, id, menu_label, menu_item->prop_as_wxString(prop_help),
                                        (wxItemKind) menu_item->prop_as_int(prop_kind));

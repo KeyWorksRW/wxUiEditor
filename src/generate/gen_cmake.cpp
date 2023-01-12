@@ -16,8 +16,7 @@
 
 int WriteCMakeFile(Node* parent_node, std::vector<ttlib::cstr>& updated_files, std::vector<ttlib::cstr>& results)
 {
-    if (!Project.as_bool(prop_generate_cmake) ||
-        (parent_node->isGen(gen_Project) && !Project.HasValue(prop_cmake_file)))
+    if (!Project.as_bool(prop_generate_cmake) || (parent_node->isGen(gen_Project) && !Project.HasValue(prop_cmake_file)))
     {
         return result::exists;
     }

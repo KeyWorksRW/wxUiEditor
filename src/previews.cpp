@@ -382,7 +382,7 @@ void MainFrame::PreviewCpp(Node* form_node)
                         for (auto& iter: mstr)
                         {
                             // Friendly names will have already been converted, so normal lookup works fine.
-                            ex_style |= g_NodeCreator.GetConstantAsInt(iter);
+                            ex_style |= NodeCreation.GetConstantAsInt(iter);
                         }
 
                         dlg.SetExtraStyle(dlg.GetExtraStyle() | ex_style);
@@ -464,7 +464,7 @@ void MainFrame::PreviewCpp(Node* form_node)
                         for (auto& iter: mstr)
                         {
                             // Friendly names will have already been converted, so normal lookup works fine.
-                            ex_style |= g_NodeCreator.GetConstantAsInt(iter);
+                            ex_style |= NodeCreation.GetConstantAsInt(iter);
                         }
                         wizard.SetExtraStyle(ex_style);
                     }
@@ -480,7 +480,7 @@ void MainFrame::PreviewCpp(Node* form_node)
                         for (auto& iter: mstr)
                         {
                             // Friendly names will have already been converted, so normal lookup works fine.
-                            placement |= g_NodeCreator.GetConstantAsInt(iter);
+                            placement |= NodeCreation.GetConstantAsInt(iter);
                         }
                         wizard.SetBitmapPlacement(placement);
 

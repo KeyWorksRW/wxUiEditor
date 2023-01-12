@@ -35,7 +35,7 @@ bool WxSmith::Import(const ttString& filename, bool write_doc)
 
     try
     {
-        m_project = g_NodeCreator.CreateNode(gen_Project, nullptr);
+        m_project = NodeCreation.CreateNode(gen_Project, nullptr);
         for (auto& iter: root.children())
         {
             CreateXrcNode(iter, m_project.get());

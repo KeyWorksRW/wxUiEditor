@@ -83,7 +83,7 @@ bool Node::CreateToolNode(GenName name)
         if (parent->isGen(gen_folder) || parent->isGen(gen_sub_folder))
             name = gen_sub_folder;
 
-        if (auto new_node = g_NodeCreator.CreateNode(name, parent); new_node)
+        if (auto new_node = NodeCreation.CreateNode(name, parent); new_node)
         {
             wxGetFrame().Freeze();
             ttlib::cstr undo_string("Insert new folder");

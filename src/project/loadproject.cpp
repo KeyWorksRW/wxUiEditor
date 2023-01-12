@@ -136,7 +136,7 @@ bool ProjectHandler::LoadProject(const ttString& file, bool allow_ui)
         return false;
     }
 
-    // Calling this will also initialize the ProjectImage class
+    // Calling this will also initialize the ImageHandler class
     Project.Initialize(project);
     Project.SetProjectFile(file);
     ProjectImages.CollectBundles();
@@ -147,12 +147,14 @@ bool ProjectHandler::LoadProject(const ttString& file, bool allow_ui)
         m_ProjectVersion = minRequiredVer;
     }
 
-    wxGetFrame().SetImportedFlag(false);
-    wxGetFrame().FireProjectLoadedEvent();
+    if (allow_ui)
+    {
+        wxGetFrame().SetImportedFlag(false);
+        wxGetFrame().FireProjectLoadedEvent();
 
-    if (m_isProject_updated || m_ProjectVersion < minRequiredVer)
-        wxGetFrame().SetModified();
-
+        if (m_isProject_updated || m_ProjectVersion < minRequiredVer)
+            wxGetFrame().SetModified();
+    }
     return true;
 }
 
@@ -174,7 +176,7 @@ NodeSharedPtr ProjectHandler::LoadProject(pugi::xml_document& doc, bool allow_ui
             FAIL_MSG("Project does not have a \"node\" node.");
             throw std::runtime_error("Invalid project file");
         }
-        project = g_NodeCreator.CreateProjectNode(&node);
+        project = NodeCreation.CreateProjectNode(&node);
     }
     catch (const std::exception& TESTING_PARAM(e))
     {
@@ -214,7 +216,7 @@ static const auto lstStdButtonEvents = {
 
 #include "utils.h"  // for old style art indices
 
-NodeSharedPtr NodeCreator::CreateNode(pugi::xml_node& xml_obj, Node* parent, bool check_for_duplicates)
+NodeSharedPtr NodeCreator::CreateNode(pugi::xml_node& xml_obj, Node* parent, bool check_for_duplicates, bool allow_ui)
 {
     auto class_name = xml_obj.attribute("class").as_std_str();
     if (class_name.empty())
@@ -260,7 +262,7 @@ NodeSharedPtr NodeCreator::CreateNode(pugi::xml_node& xml_obj, Node* parent, boo
                 // Imported projects will be set as version ImportProjectVersion to get the fixups of constant to
                 // friendly name, and bit flag conflict resolution.
 
-                else if (wxGetApp().GetProjectVersion() <= ImportProjectVersion)
+                else if (Project.GetProjectVersion() <= ImportProjectVersion)
                 {
                     switch (prop->type())
                     {
@@ -409,15 +411,18 @@ NodeSharedPtr NodeCreator::CreateNode(pugi::xml_node& xml_obj, Node* parent, boo
                 // the user all at once after the project is completely loaded. We also need to flag the project file as
                 // unsaveable (only SaveAs can be used. See https://github.com/KeyWorksRW/wxUiEditor/issues/385 ).
 
-                MSG_WARNING(ttlib::cstr("Unrecognized property: ") << iter.name() << " in class: " << class_name);
+                if (allow_ui)
+                {
+                    MSG_WARNING(ttlib::cstr("Unrecognized property: ") << iter.name() << " in class: " << class_name);
 
-                wxMessageBox(ttlib::cstr().Format(
-                    "The property named \"%v\" of class \"%s\" is not supported by this version of wxUiEditor.\n\n"
-                    "If your project file was just converted from an older version, then the conversion was not "
-                    "complete. Otherwise, this project is from a newer version of wxUiEditor.\n\n"
-                    "The property's value is: %v\n\n"
-                    "If you save this project, YOU WILL LOSE DATA",
-                    iter.name(), class_name.c_str(), value));
+                    wxMessageBox(ttlib::cstr().Format(
+                        "The property named \"%v\" of class \"%s\" is not supported by this version of wxUiEditor.\n\n"
+                        "If your project file was just converted from an older version, then the conversion was not "
+                        "complete. Otherwise, this project is from a newer version of wxUiEditor.\n\n"
+                        "The property's value is: %v\n\n"
+                        "If you save this project, YOU WILL LOSE DATA",
+                        iter.name(), class_name.c_str(), value));
+                }
             }
         }
     }
@@ -444,7 +449,7 @@ NodeSharedPtr NodeCreator::CreateNode(pugi::xml_node& xml_obj, Node* parent, boo
     return new_node;
 }
 
-NodeSharedPtr NodeCreator::CreateProjectNode(pugi::xml_node* xml_obj)
+NodeSharedPtr NodeCreator::CreateProjectNode(pugi::xml_node* xml_obj, bool allow_ui)
 {
     auto node_decl = m_a_declarations[gen_Project];
     auto new_node = std::make_shared<Node>(node_decl);
@@ -510,7 +515,7 @@ NodeSharedPtr NodeCreator::CreateProjectNode(pugi::xml_node* xml_obj)
 
     for (auto child = xml_obj->child("node"); child; child = child.next_sibling("node"))
     {
-        CreateNode(child, new_node.get());
+        CreateNode(child, new_node.get(), false, allow_ui);
     }
 
     if (new_node->isGen(gen_wxGridBagSizer))
@@ -591,7 +596,7 @@ bool ProjectHandler::Import(ImportXML& import, ttString& file, bool append, bool
         }
 #endif  // _DEBUG
 
-        // By having the importer create an XML document, we can pass it through g_NodeCreator.CreateNode() which will
+        // By having the importer create an XML document, we can pass it through NodeCreation.CreateNode() which will
         // fix bitflag conflicts, convert wxWidgets constants to friendly names, and handle old-project style
         // conversions.
 
@@ -611,14 +616,14 @@ bool ProjectHandler::Import(ImportXML& import, ttString& file, bool append, bool
             auto form = project.child("node");
             while (form)
             {
-                g_NodeCreator.CreateNode(form, m_project_node.get());
+                NodeCreation.CreateNode(form, m_project_node.get(), false, allow_ui);
                 form = form.next_sibling("node");
             }
 
             return true;
         }
 
-        auto project_node = g_NodeCreator.CreateProjectNode(&project);
+        auto project_node = NodeCreation.CreateProjectNode(&project);
 
         // Calling this will also initialize the ProjectImage class
         Project.Initialize(project_node, allow_ui);
@@ -674,7 +679,7 @@ bool ProjectHandler::NewProject(bool create_empty, bool allow_ui)
 
     if (create_empty)
     {
-        auto project = g_NodeCreator.CreateProjectNode(nullptr);
+        auto project = NodeCreation.CreateProjectNode(nullptr);
 
         ttString file;
         file.assignCwd();
@@ -698,7 +703,7 @@ bool ProjectHandler::NewProject(bool create_empty, bool allow_ui)
     if (dlg.ShowModal() != wxID_OK)
         return false;
 
-    auto project = g_NodeCreator.CreateProjectNode(nullptr);
+    auto project = NodeCreation.CreateProjectNode(nullptr);
 
     ttString file;
     file.assignCwd();
@@ -812,7 +817,7 @@ void ProjectHandler::AppendWinRes(const ttlib::cstr& rc_file, std::vector<ttlib:
         const auto& project = winres.GetProjectPtr();
         for (const auto& child: project->GetChildNodePtrs())
         {
-            auto new_node = g_NodeCreator.MakeCopy(child);
+            auto new_node = NodeCreation.MakeCopy(child);
             Project.FixupDuplicatedNode(new_node.get());
             m_project_node->Adopt(new_node);
         }
@@ -848,7 +853,7 @@ void ProjectHandler::AppendCrafter(wxArrayString& files)
             auto form = project.child("node");
             while (form)
             {
-                g_NodeCreator.CreateNode(form, m_project_node.get(), true);
+                NodeCreation.CreateNode(form, m_project_node.get(), true, m_allow_ui);
                 form = form.next_sibling("node");
             }
         }
@@ -884,7 +889,7 @@ void ProjectHandler::AppendFormBuilder(wxArrayString& files)
             auto form = project.child("node");
             while (form)
             {
-                g_NodeCreator.CreateNode(form, m_project_node.get(), true);
+                NodeCreation.CreateNode(form, m_project_node.get(), true, m_allow_ui);
                 form = form.next_sibling("node");
             }
         }
@@ -920,7 +925,7 @@ void ProjectHandler::AppendGlade(wxArrayString& files)
             auto form = project.child("node");
             while (form)
             {
-                g_NodeCreator.CreateNode(form, m_project_node.get(), true);
+                NodeCreation.CreateNode(form, m_project_node.get(), true, m_allow_ui);
                 form = form.next_sibling("node");
             }
         }
@@ -956,7 +961,7 @@ void ProjectHandler::AppendSmith(wxArrayString& files)
             auto form = project.child("node");
             while (form)
             {
-                g_NodeCreator.CreateNode(form, m_project_node.get(), true);
+                NodeCreation.CreateNode(form, m_project_node.get(), true, m_allow_ui);
                 form = form.next_sibling("node");
             }
         }
@@ -993,7 +998,7 @@ void ProjectHandler::AppendXRC(wxArrayString& files)
             auto form = project.child("node");
             while (form)
             {
-                g_NodeCreator.CreateNode(form, m_project_node.get(), true);
+                NodeCreation.CreateNode(form, m_project_node.get(), true, m_allow_ui);
                 form = form.next_sibling("node");
             }
         }

@@ -15,7 +15,7 @@ void resForm::CreateDialogLayout()
 {
     if (!m_ctrls.size())
     {
-        m_dlg_sizer = g_NodeCreator.CreateNode(gen_VerticalBoxSizer, m_form_node.get());
+        m_dlg_sizer = NodeCreation.CreateNode(gen_VerticalBoxSizer, m_form_node.get());
         m_dlg_sizer->prop_set_value(prop_var_name, "dlg_sizer");
         m_form_node->Adopt(m_dlg_sizer);
 
@@ -30,7 +30,7 @@ void resForm::CreateDialogLayout()
 
     // dlg_sizer is the top level sizer for the entire dialog
 
-    m_dlg_sizer = g_NodeCreator.CreateNode(gen_VerticalBoxSizer, m_form_node.get());
+    m_dlg_sizer = NodeCreation.CreateNode(gen_VerticalBoxSizer, m_form_node.get());
     ASSERT(m_dlg_sizer);
     m_dlg_sizer->prop_set_value(prop_var_name, "dlg_sizer");
     m_form_node->Adopt(m_dlg_sizer);
@@ -66,14 +66,14 @@ void resForm::CreateDialogLayout()
                 if (m_ctrls[idx_child].GetNode()->prop_as_string(prop_alignment).contains("wxALIGN_RIGHT") ||
                     m_ctrls[idx_child].GetNode()->prop_as_string(prop_alignment).contains("wxALIGN_CENTER_HORIZONTAL"))
                 {
-                    auto vertical_sizer = g_NodeCreator.CreateNode(gen_VerticalBoxSizer, m_dlg_sizer.get());
+                    auto vertical_sizer = NodeCreation.CreateNode(gen_VerticalBoxSizer, m_dlg_sizer.get());
                     vertical_sizer->prop_set_value(prop_flags, "wxEXPAND");
                     m_dlg_sizer->Adopt(vertical_sizer);
                     Adopt(vertical_sizer, m_ctrls[idx_child]);
                 }
                 else
                 {
-                    auto sizer = g_NodeCreator.CreateNode(gen_wxBoxSizer, m_dlg_sizer.get());
+                    auto sizer = NodeCreation.CreateNode(gen_wxBoxSizer, m_dlg_sizer.get());
                     m_dlg_sizer->Adopt(sizer);
                     Adopt(sizer, m_ctrls[idx_child]);
                 }
@@ -132,10 +132,10 @@ void resForm::CreateDialogLayout()
                         is_within_vertical(m_ctrls, idx_child + 2, idx_child))
                     // clang-format on
                     {
-                        auto horizontal_sizer = g_NodeCreator.CreateNode(gen_wxBoxSizer, m_dlg_sizer.get());
+                        auto horizontal_sizer = NodeCreation.CreateNode(gen_wxBoxSizer, m_dlg_sizer.get());
                         m_dlg_sizer->Adopt(horizontal_sizer);
                         Adopt(horizontal_sizer, m_ctrls[idx_child]);
-                        auto vertical_sizer = g_NodeCreator.CreateNode(gen_VerticalBoxSizer, m_dlg_sizer.get());
+                        auto vertical_sizer = NodeCreation.CreateNode(gen_VerticalBoxSizer, m_dlg_sizer.get());
                         horizontal_sizer->Adopt(vertical_sizer);
                         auto listbox_child = idx_child;
                         NextChild(idx_child);
@@ -153,7 +153,7 @@ void resForm::CreateDialogLayout()
                                 m_ctrls[idx_child + 1].isGen(gen_wxButton) && !m_ctrls[idx_child + 1].isAdded() &&
                                 is_same_top(m_ctrls, idx_child, idx_child + 1))
                             {
-                                auto box_sizer = g_NodeCreator.CreateNode(gen_wxBoxSizer, m_dlg_sizer.get());
+                                auto box_sizer = NodeCreation.CreateNode(gen_wxBoxSizer, m_dlg_sizer.get());
                                 vertical_sizer->Adopt(box_sizer);
                                 Adopt(box_sizer, m_ctrls[idx_child]);
                                 Adopt(box_sizer, m_ctrls[idx_child + 1]);
@@ -171,7 +171,7 @@ void resForm::CreateDialogLayout()
 
             // If there is more than one child with the same top position, then create a horizontal box sizer
             // and add all children with the same top position.
-            auto sizer = g_NodeCreator.CreateNode(gen_wxBoxSizer, m_dlg_sizer.get());
+            auto sizer = NodeCreation.CreateNode(gen_wxBoxSizer, m_dlg_sizer.get());
             m_dlg_sizer->Adopt(sizer);
 
             if (m_ctrls[idx_child].GetNode()->isGen(gen_wxStaticBoxSizer))
@@ -247,7 +247,7 @@ void resForm::CreateDialogLayout()
 
                 if (a_left_siblings.size() || a_right_siblings.size())
                 {
-                    auto sizer = g_NodeCreator.CreateNode(gen_wxBoxSizer, m_dlg_sizer.get());
+                    auto sizer = NodeCreation.CreateNode(gen_wxBoxSizer, m_dlg_sizer.get());
                     if (a_left_siblings.size() && !a_left_siblings[0].get().isAdded())
                         AddSiblings(sizer.get(), a_left_siblings, &m_ctrls[idx_child]);
                     Adopt(sizer, m_ctrls[idx_child]);
@@ -263,7 +263,7 @@ void resForm::CreateDialogLayout()
                 continue;
             }
 
-            auto sizer = g_NodeCreator.CreateNode(gen_VerticalBoxSizer, m_dlg_sizer.get());
+            auto sizer = NodeCreation.CreateNode(gen_VerticalBoxSizer, m_dlg_sizer.get());
             m_dlg_sizer->Adopt(sizer);
             Adopt(sizer, m_ctrls[idx_child]);
             auto first_child = idx_child++;
@@ -340,9 +340,9 @@ void resForm::AddSiblings(Node* parent_sizer, std::vector<std::reference_wrapper
             // There's only one item which is positioned below the top of the sibling. We create a vertical box sizer and add
             // a spacer before the control to provide approximately the same amount of vertical space above the control.
 
-            auto vert_sizer = g_NodeCreator.CreateNode(gen_VerticalBoxSizer, parent_sizer);
+            auto vert_sizer = NodeCreation.CreateNode(gen_VerticalBoxSizer, parent_sizer);
             parent_sizer->Adopt(vert_sizer);
-            auto spacer = g_NodeCreator.CreateNode(gen_spacer, vert_sizer.get());
+            auto spacer = NodeCreation.CreateNode(gen_spacer, vert_sizer.get());
             spacer->prop_set_value(prop_height, actrls[0].get().du_top() - pSibling->du_top());
             vert_sizer->Adopt(spacer);
             Adopt(vert_sizer.get(), &actrls[0].get());
@@ -350,7 +350,7 @@ void resForm::AddSiblings(Node* parent_sizer, std::vector<std::reference_wrapper
     }
     else
     {
-        auto vert_sizer = g_NodeCreator.CreateNode(gen_VerticalBoxSizer, parent_sizer);
+        auto vert_sizer = NodeCreation.CreateNode(gen_VerticalBoxSizer, parent_sizer);
         parent_sizer->Adopt(vert_sizer);
 
         for (size_t idx_child = 0; idx_child < actrls.size(); ++idx_child)
@@ -365,7 +365,7 @@ void resForm::AddSiblings(Node* parent_sizer, std::vector<std::reference_wrapper
             {
                 // If there is more than one child with the same top position, then create a horizontal box sizer
                 // and add all children with the same top position.
-                auto horz_sizer = g_NodeCreator.CreateNode(gen_wxBoxSizer, vert_sizer.get());
+                auto horz_sizer = NodeCreation.CreateNode(gen_wxBoxSizer, vert_sizer.get());
                 vert_sizer->Adopt(horz_sizer);
                 horz_sizer->prop_set_value(prop_orientation, "wxHORIZONTAL");
 
@@ -428,7 +428,7 @@ void resForm::AddSiblings(Node* parent_sizer, std::vector<std::reference_wrapper
 
                     if (a_left_siblings.size() || a_right_siblings.size())
                     {
-                        auto horz_sizer = g_NodeCreator.CreateNode(gen_wxBoxSizer, vert_sizer.get());
+                        auto horz_sizer = NodeCreation.CreateNode(gen_wxBoxSizer, vert_sizer.get());
                         if (a_left_siblings.size())
                             AddSiblings(horz_sizer.get(), a_left_siblings, &actrls[idx_child].get());
                         Adopt(horz_sizer, actrls[first_child]);
@@ -482,7 +482,7 @@ void resForm::AddStaticBoxChildren(const resCtrl& box, size_t idx_group_box)
         else if (result == 0)
         {
             // Single row with all control tops the same, so use a horizontal box sizer
-            auto sizer = g_NodeCreator.CreateNode(gen_wxBoxSizer, box.GetNode());
+            auto sizer = NodeCreation.CreateNode(gen_wxBoxSizer, box.GetNode());
             sizer->prop_set_value(prop_orientation, "wxHORIZONTAL");
             static_box.GetNode()->Adopt(sizer);
 
@@ -502,7 +502,7 @@ void resForm::AddStaticBoxChildren(const resCtrl& box, size_t idx_group_box)
             // work, but it would add a lot of complexity to figure that out, and visually it would look the same.
 
             auto total_columns = result;  // This is just for readability
-            auto grid_sizer = g_NodeCreator.CreateNode(gen_wxFlexGridSizer, box.GetNode());
+            auto grid_sizer = NodeCreation.CreateNode(gen_wxFlexGridSizer, box.GetNode());
             grid_sizer->prop_set_value(prop_cols, ttlib::itoa(total_columns));
             static_box.GetNode()->Adopt(grid_sizer);
 
@@ -542,7 +542,7 @@ void resForm::AddStaticBoxChildren(const resCtrl& box, size_t idx_group_box)
                         is_within_vertical(group_ctrls, idx_group_child + 2, idx_group_child))
                     // clang-format on
                     {
-                        auto vertical_sizer = g_NodeCreator.CreateNode(gen_VerticalBoxSizer, m_dlg_sizer.get());
+                        auto vertical_sizer = NodeCreation.CreateNode(gen_VerticalBoxSizer, m_dlg_sizer.get());
                         grid_sizer->Adopt(vertical_sizer);
                         auto listbox_child = idx_group_child;
                         ++idx_group_child;
@@ -562,7 +562,7 @@ void resForm::AddStaticBoxChildren(const resCtrl& box, size_t idx_group_box)
                                 !group_ctrls[idx_group_child + 1].get().isAdded() &&
                                 is_same_top(group_ctrls, idx_group_child, idx_group_child + 1))
                             {
-                                auto box_sizer = g_NodeCreator.CreateNode(gen_wxBoxSizer, m_dlg_sizer.get());
+                                auto box_sizer = NodeCreation.CreateNode(gen_wxBoxSizer, m_dlg_sizer.get());
                                 vertical_sizer->Adopt(box_sizer);
                                 Adopt(box_sizer, group_ctrls[idx_group_child]);
                                 Adopt(box_sizer, group_ctrls[idx_group_child + 1]);
@@ -605,7 +605,7 @@ void resForm::AddStaticBoxChildren(const resCtrl& box, size_t idx_group_box)
                     // out the total number of columns.
                     while (cur_column < total_columns)
                     {
-                        auto spacer = g_NodeCreator.CreateNode(gen_spacer, grid_sizer.get());
+                        auto spacer = NodeCreation.CreateNode(gen_spacer, grid_sizer.get());
                         grid_sizer->Adopt(spacer);
                         ++cur_column;
                     }
@@ -871,7 +871,7 @@ void resForm::CreateStdButton()
 {
     if (!m_stdButtonSizer)
     {
-        m_stdButtonSizer = g_NodeCreator.CreateNode(gen_wxStdDialogButtonSizer, m_dlg_sizer.get());
+        m_stdButtonSizer = NodeCreation.CreateNode(gen_wxStdDialogButtonSizer, m_dlg_sizer.get());
         m_stdButtonSizer->prop_set_value(prop_OK, "0");
         m_stdButtonSizer->prop_set_value(prop_Cancel, "0");
         m_stdButtonSizer->prop_set_value(prop_flags, "wxEXPAND");
@@ -880,7 +880,7 @@ void resForm::CreateStdButton()
 
 size_t resForm::AddTwoColumnPairs(size_t idx_start)
 {
-    auto grid_sizer = g_NodeCreator.CreateNode(gen_wxFlexGridSizer, m_dlg_sizer.get());
+    auto grid_sizer = NodeCreation.CreateNode(gen_wxFlexGridSizer, m_dlg_sizer.get());
     grid_sizer->prop_set_value(prop_cols, 2);
     m_dlg_sizer->Adopt(grid_sizer);
 
@@ -922,7 +922,7 @@ size_t resForm::AddTwoColumnPairs(size_t idx_start)
 
 size_t resForm::AddTwoColumnStaticText(size_t idx_start)
 {
-    auto grid_sizer = g_NodeCreator.CreateNode(gen_wxFlexGridSizer, m_dlg_sizer.get());
+    auto grid_sizer = NodeCreation.CreateNode(gen_wxFlexGridSizer, m_dlg_sizer.get());
     grid_sizer->prop_set_value(prop_cols, 2);
     m_dlg_sizer->Adopt(grid_sizer);
 
@@ -1007,7 +1007,7 @@ void resForm::CheckForFlexGrid(Node* parent)
                 continue;
 
             // If we get here, then the two box sizers can be converted into a single flex grid sizer
-            auto grid_sizer = g_NodeCreator.CreateNode(gen_wxFlexGridSizer, m_dlg_sizer.get());
+            auto grid_sizer = NodeCreation.CreateNode(gen_wxFlexGridSizer, m_dlg_sizer.get());
             grid_sizer->prop_set_value(prop_cols, ttlib::cstr() << first_sizer->GetChildCount());
             for (box_child = 0; box_child < first_sizer->GetChildCount(); ++box_child)
             {

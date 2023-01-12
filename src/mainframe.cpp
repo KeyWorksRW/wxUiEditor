@@ -359,8 +359,7 @@ MainFrame::~MainFrame()
 
 void MainFrame::OnSaveProject(wxCommandEvent& event)
 {
-    if (m_isImported || Project.ProjectFile().empty() ||
-        Project.ProjectFile().filename().is_sameas(txtEmptyProject))
+    if (m_isImported || Project.ProjectFile().empty() || Project.ProjectFile().filename().is_sameas(txtEmptyProject))
         OnSaveAsProject(event);
     else
     {
@@ -1324,7 +1323,7 @@ void MainFrame::CreateToolNode(GenName name)
 void MainFrame::CopyNode(Node* node)
 {
     ASSERT(node);
-    m_clipboard = g_NodeCreator.MakeCopy(node);
+    m_clipboard = NodeCreation.MakeCopy(node);
     if (m_clipboard)
     {
         SmartClipboard clip;
@@ -1397,7 +1396,7 @@ void MainFrame::PasteNode(Node* parent)
         return;
     }
 
-    auto new_node = g_NodeCreator.MakeCopy(m_clipboard.get(), parent);
+    auto new_node = NodeCreation.MakeCopy(m_clipboard.get(), parent);
     if (new_node->IsForm())
         Project.FixupDuplicatedNode(new_node.get());
 
@@ -1433,7 +1432,7 @@ void MainFrame::DuplicateNode(Node* node)
     ASSERT(node);
     ASSERT(node->GetParent());
 
-    auto new_node = g_NodeCreator.MakeCopy(node);
+    auto new_node = NodeCreation.MakeCopy(node);
     if (new_node->IsForm())
         Project.FixupDuplicatedNode(new_node.get());
     auto* parent = node->GetParent();

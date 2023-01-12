@@ -87,7 +87,7 @@ void BaseCodeGenerator::GenConstruction(Node* node)
         BeginBrace();
         // BUGBUG: [Randalphwa - 12-31-2022] This is C++ code only!
         m_source->writeLine("wxMenu* menu = new wxMenu;");
-        auto menu_node_ptr = g_NodeCreator.NewNode(gen_wxMenu);
+        auto menu_node_ptr = NodeCreation.NewNode(gen_wxMenu);
         menu_node_ptr->prop_set_value(prop_var_name, "menu");
         for (const auto& child: node->GetChildNodePtrs())
         {

@@ -11,8 +11,8 @@
 #include "code.h"           // Code -- Helper class for generating code
 #include "gen_common.h"     // GeneratorLibrary -- Generator classes
 #include "gen_xrc_utils.h"  // Common XRC generating functions
+#include "image_handler.h"  // ImageHandler class
 #include "node.h"           // Node class
-#include "project_class.h"  // Project class
 #include "pugixml.hpp"      // xml read/write/create/process
 #include "utils.h"          // Utility functions that work with properties
 
@@ -62,7 +62,7 @@ bool AnimationGenerator::ConstructionCode(Code& code)
         name.LeftTrim();
         if (parts[IndexType].starts_with("Embed"))
         {
-            auto embed = GetProject()->GetEmbeddedImage(parts[IndexImage]);
+            auto embed = ProjectImages.GetEmbeddedImage(parts[IndexImage]);
             if (embed)
             {
                 name = "wxue_img::" + embed->array_name;

@@ -226,6 +226,7 @@ target_include_directories(wxUiEditor PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}/src/
     ${CMAKE_CURRENT_LIST_DIR}/src/nodes
     ${CMAKE_CURRENT_LIST_DIR}/src/generate
+    ${CMAKE_CURRENT_LIST_DIR}/src/project
     ${CMAKE_CURRENT_LIST_DIR}/src/utils
     ${CMAKE_CURRENT_LIST_DIR}/src/customprops
     ${CMAKE_CURRENT_LIST_DIR}/src/ui
@@ -241,6 +242,7 @@ target_include_directories(check_build PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}/src/
     ${CMAKE_CURRENT_LIST_DIR}/src/nodes
     ${CMAKE_CURRENT_LIST_DIR}/src/generate
+    ${CMAKE_CURRENT_LIST_DIR}/src/project
     ${CMAKE_CURRENT_LIST_DIR}/src/utils
     ${CMAKE_CURRENT_LIST_DIR}/src/customprops
     ${CMAKE_CURRENT_LIST_DIR}/src/ui

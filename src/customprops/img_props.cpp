@@ -1,14 +1,15 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Handles property grid image properties
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2021 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2021-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include "img_props.h"      // ImageProperties
-#include "node.h"           // Node -- Node class
-#include "project_class.h"  // Project class
-#include "utils.h"          // Utility functions that work with properties
+#include "img_props.h"        // ImageProperties
+#include "image_handler.h"    // ImageHandler class
+#include "node.h"             // Node -- Node class
+#include "project_handler.h"  // ProjectHandler class
+#include "utils.h"            // Utility functions that work with properties
 
 void ImageProperties::InitValues(const char* value)
 {
@@ -31,7 +32,7 @@ void ImageProperties::InitValues(const char* value)
         }
         else
         {
-            auto img_bundle = GetProject()->GetPropertyImageBundle(value);
+            auto img_bundle = ProjectImages.GetPropertyImageBundle(value);
             if (img_bundle)
             {
                 m_size = img_bundle->bundle.GetDefaultSize();
@@ -49,14 +50,14 @@ ttlib::cstr ImageProperties::CombineValues()
 {
     if (type.size() && type != "Art")
     {
-        if (!image.file_exists() && GetProject()->HasValue(prop_art_directory))
+        if (!image.file_exists() && Project.HasValue(prop_art_directory))
         {
-            auto path = GetProject()->prop_as_string(prop_art_directory);
+            auto path = Project.ArtDirectory();
             path.append_filename(image);
-            path.make_relative(GetProject()->getProjectPath());
+            path.make_relative_wx(Project.ProjectPath());
             if (path.file_exists())
             {
-                image = path;
+                image = path.utf8_string();
             }
         }
     }

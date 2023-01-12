@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Custom property grid class for animations
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2021 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2021-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -14,7 +14,7 @@
 
 #include "img_props.h"        // Handles property grid image properties
 #include "img_string_prop.h"  // wxSingleChoiceDialogAdapter
-#include "project_class.h"    // Project class
+#include "project_handler.h"  // ProjectHandler class
 #include "utils.h"            // Utility functions that work with properties
 
 wxIMPLEMENT_ABSTRACT_CLASS(PropertyGrid_Animation, wxPGProperty);
@@ -61,7 +61,7 @@ void PropertyGrid_Animation::RefreshChildren()
     if (m_old_type != m_img_props.type)
     {
         wxArrayString array_art_ids;
-        auto art_dir = GetProject()->GetArtDirectory();
+        auto art_dir = Project.ArtDirectory();
         if (art_dir.empty())
             art_dir = "./";
         wxDir dir;
@@ -113,10 +113,10 @@ wxVariant PropertyGrid_Animation::ChildChanged(wxVariant& thisValue, int childIn
                 ttString name(childValue.GetString());
                 if (!name.file_exists())
                 {
-                    name = GetProject()->GetArtDirectory();
+                    name = Project.ArtDirectory();
                     name.append_filename_wx(childValue.GetString());
                 }
-                name.make_relative_wx(GetProject()->GetProjectPath());
+                name.make_relative_wx(Project.ProjectPath());
                 name.backslashestoforward();
                 img_props.image.assign_wx(name);
             }

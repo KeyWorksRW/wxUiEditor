@@ -24,9 +24,9 @@
 
 #include "gen_base.h"
 
-#include "node.h"           // Node class
-#include "node_creator.h"   // NodeCreator class
-#include "project_class.h"  // Project class
+#include "node.h"             // Node class
+#include "node_creator.h"     // NodeCreator class
+#include "project_handler.h"  // ProjectHandler class
 
 #include "write_code.h"  // Write code to Scintilla or file
 
@@ -81,9 +81,9 @@ int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_PAG
             derived_file = node_folder->as_string(prop_folder_derived_directory);
             derived_file.append_filename(m_form_node->prop_as_string(prop_derived_file).filename());
         }
-        else if (GetProject()->HasValue(prop_derived_directory) && !derived_file.contains("/"))
+        else if (Project.HasValue(prop_derived_directory) && !derived_file.contains("/"))
         {
-            derived_file = GetProject()->as_string(prop_derived_directory);
+            derived_file = Project.as_string(prop_derived_directory);
             derived_file.append_filename(m_form_node->prop_as_string(prop_derived_file));
         }
         derived_file.make_absolute();
@@ -121,12 +121,12 @@ int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_PAG
         baseFile.backslashestoforward();
         if (auto* node_folder = form->get_folder(); node_folder && node_folder->HasValue(prop_folder_base_directory))
         {
-            baseFile = node_folder->as_string(prop_folder_base_directory);
+            baseFile = node_folder->value(prop_folder_base_directory);
             baseFile.append_filename(file.filename());
         }
-        else if (GetProject()->HasValue(prop_base_directory) && !baseFile.contains("/"))
+        else if (Project.HasValue(prop_base_directory) && !baseFile.contains("/"))
         {
-            baseFile = GetProject()->GetBaseDirectory();
+            baseFile = Project.BaseDirectory();
             baseFile.append_filename(file);
         }
 
@@ -142,7 +142,7 @@ int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_PAG
     ttlib::cstr namespace_using_name;
 
     // Make a copy of the string so that we can tweak it
-    ttlib::cstr namespace_prop = m_project->prop_as_string(prop_name_space);
+    ttlib::cstr namespace_prop = Project.value(prop_name_space);
     if (auto* node_namespace = form->get_folder(); node_namespace && node_namespace->HasValue(prop_folder_namespace))
     {
         namespace_prop = node_namespace->as_string(prop_folder_namespace);

@@ -7,11 +7,12 @@
 
 #include "gen_xrc_utils.h"
 
-#include "gen_base.h"       // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
-#include "node.h"           // Node class
-#include "project_class.h"  // Project class
-#include "utils.h"          // Utility functions that work with properties
-#include "write_code.h"     // WriteCode -- Write code to Scintilla or file
+#include "gen_base.h"         // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
+#include "image_handler.h"    // ImageHandler class
+#include "node.h"             // Node class
+#include "project_handler.h"  // ProjectHandler class
+#include "utils.h"            // Utility functions that work with properties
+#include "write_code.h"       // WriteCode -- Write code to Scintilla or file
 
 // clang-format off
 
@@ -332,7 +333,7 @@ void GenXrcBitmap(Node* node, pugi::xml_node& object, size_t xrc_flags, std::str
             ttlib::cstr xrc_dir;
             if (xrc_flags & xrc::use_xrc_dir)
             {
-                xrc_dir = GetProject()->value(prop_xrc_art_directory);
+                xrc_dir = Project.value(prop_xrc_art_directory);
                 if (xrc_dir.size())
                     xrc_dir.addtrailingslash();
             }
@@ -365,7 +366,7 @@ void GenXrcBitmap(Node* node, pugi::xml_node& object, size_t xrc_flags, std::str
             }
             else
             {
-                if (auto bundle = GetProject()->GetPropertyImageBundle(parts); bundle)
+                if (auto bundle = ProjectImages.GetPropertyImageBundle(parts); bundle)
                 {
                     ttlib::cstr names;
                     for (auto& file: bundle->lst_filenames)

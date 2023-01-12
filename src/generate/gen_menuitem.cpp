@@ -7,8 +7,9 @@
 
 #include <wx/menu.h>  // wxMenu and wxMenuBar classes
 
-#include "gen_common.h"  // GeneratorLibrary -- Generator classes
-#include "node.h"        // Node class
+#include "gen_common.h"       // GeneratorLibrary -- Generator classes
+#include "node.h"             // Node class
+#include "project_handler.h"  // ProjectHandler class
 
 #include "gen_menuitem.h"
 
@@ -66,7 +67,7 @@ bool MenuItemGenerator::SettingsCode(Code& code)
         // auto_indent = indent::auto_keep_whitespace;
         code.OpenBrace().Add("wxAcceleratorEntry entry;").Eol();
 
-        bool is_old_widgets = (wxGetProject().value(prop_wxWidgets_version) == "3.1");
+        bool is_old_widgets = (Project.value(prop_wxWidgets_version) == "3.1");
         if (is_old_widgets)
         {
             code += "#if wxCHECK_VERSION(3, 1, 6)\n";
@@ -104,7 +105,7 @@ bool MenuItemGenerator::SettingsCode(Code& code)
             if (!is_vector_code)
             {
                 code.NodeName().Function("SetBitmap(");
-                if (wxGetProject().value(prop_wxWidgets_version) != "3.1")
+                if (Project.value(prop_wxWidgets_version) != "3.1")
                 {
                     GenerateBundleCode(description, code.m_code);
                     code.EndFunction();
@@ -123,7 +124,7 @@ bool MenuItemGenerator::SettingsCode(Code& code)
             else
             {
                 code.Tab().NodeName().Function("SetBitmap(");
-                if (wxGetProject().value(prop_wxWidgets_version) != "3.1")
+                if (Project.value(prop_wxWidgets_version) != "3.1")
                 {
                     code += "wxBitmapBundle::FromBitmaps(bitmaps)";
                     code.UpdateBreakAt();
@@ -170,7 +171,7 @@ bool MenuItemGenerator::SettingsCode(Code& code)
             if (!is_vector_code)
             {
                 code.NodeName().Function("SetBitmap(");
-                if (wxGetProject().value(prop_wxWidgets_version) != "3.1")
+                if (Project.value(prop_wxWidgets_version) != "3.1")
                 {
                     GenerateBundleCode(description, code.m_code);
                     code.UpdateBreakAt();
@@ -190,7 +191,7 @@ bool MenuItemGenerator::SettingsCode(Code& code)
             else
             {
                 code.Tab().NodeName().Function("SetBitmap(");
-                if (wxGetProject().value(prop_wxWidgets_version) != "3.1")
+                if (Project.value(prop_wxWidgets_version) != "3.1")
                 {
                     code += "wxBitmapBundle::FromBitmaps(bitmaps)";
                     code.UpdateBreakAt();

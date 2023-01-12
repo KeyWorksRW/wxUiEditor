@@ -9,13 +9,14 @@
 
 #include "gen_common.h"
 
-#include "gen_base.h"       // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
-#include "image_bundle.h"   // Functions for working with wxBitmapBundle
-#include "lambdas.h"        // Functions for formatting and storage of lamda events
-#include "node.h"           // Node class
-#include "project_class.h"  // Project class
-#include "utils.h"          // Utility functions that work with properties
-#include "write_code.h"     // WriteCode -- Write code to Scintilla or file
+#include "gen_base.h"         // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
+#include "image_handler.h"    // ProjectImage class
+#include "image_handler.h"    // ImageHandler class
+#include "lambdas.h"          // Functions for formatting and storage of lamda events
+#include "node.h"             // Node class
+#include "project_handler.h"  // ProjectHandler class
+#include "utils.h"            // Utility functions that work with properties
+#include "write_code.h"       // WriteCode -- Write code to Scintilla or file
 
 void InsertGeneratorInclude(Node* node, const std::string& include, std::set<std::string>& set_src,
                             std::set<std::string>& set_hdr)
@@ -71,14 +72,14 @@ ttlib::cstr GenerateQuotedString(const ttlib::cstr& str)
         if (has_utf_char)
         {
             // While this may not be necessary for non-Windows systems, it does ensure the code compiles on all platforms.
-            if (GetProject()->prop_as_bool(prop_internationalize))
+            if (Project.as_bool(prop_internationalize))
                 code << "_(wxString::FromUTF8(\"" << str_with_escapes << "\"))";
             else
                 code << "wxString::FromUTF8(\"" << str_with_escapes << "\")";
         }
         else
         {
-            if (GetProject()->prop_as_bool(prop_internationalize))
+            if (Project.as_bool(prop_internationalize))
                 code << "_(\"" << str_with_escapes << "\")";
             else
                 code << "\"" << str_with_escapes << "\"";
@@ -290,7 +291,7 @@ bool GenBtnBimapCode(Node* node, ttlib::cstr& code, bool is_single)
     if (code.size())
         code << '\n';
 
-    bool is_old_widgets = (wxGetProject().value(prop_wxWidgets_version) == "3.1");
+    bool is_old_widgets = (Project.value(prop_wxWidgets_version) == "3.1");
     if (is_old_widgets)
     {
         if (code.size() && !(code.back() == '\n'))
@@ -463,7 +464,7 @@ ttlib::cstr GenerateBitmapCode(const ttlib::cstr& description)
 
         if (parts[IndexType].starts_with("Embed"))
         {
-            auto embed = GetProject()->GetEmbeddedImage(parts[IndexImage]);
+            auto embed = ProjectImages.GetEmbeddedImage(parts[IndexImage]);
             if (embed)
             {
                 name = "wxue_img::" + embed->array_name;
@@ -511,14 +512,14 @@ bool GenerateBundleCode(const ttlib::cstr& description, ttlib::cstr& code)
 
     else if (parts[IndexType].is_sameas("XPM"))
     {
-        if (auto function_name = GetProject()->GetBundleFuncName(description); function_name.size())
+        if (auto function_name = ProjectImages.GetBundleFuncName(description); function_name.size())
         {
             // We get here if there is an Image form that contains the function to retrieve this bundle.
             code << function_name;
             return false;
         }
 
-        if (auto bundle = GetProject()->GetPropertyImageBundle(description); bundle)
+        if (auto bundle = ProjectImages.GetPropertyImageBundle(description); bundle)
         {
             if (bundle->lst_filenames.size() == 1)
             {
@@ -564,14 +565,14 @@ bool GenerateBundleCode(const ttlib::cstr& description, ttlib::cstr& code)
     }
     else if (description.starts_with("SVG"))
     {
-        if (auto function_name = GetProject()->GetBundleFuncName(description); function_name.size())
+        if (auto function_name = ProjectImages.GetBundleFuncName(description); function_name.size())
         {
             // We get here if there is an Image form that contains the function to retrieve this bundle.
             code << function_name;
             return false;
         }
 
-        auto embed = GetProject()->GetEmbeddedImage(parts[IndexImage]);
+        auto embed = ProjectImages.GetEmbeddedImage(parts[IndexImage]);
         if (!embed)
         {
             FAIL_MSG(ttlib::cstr() << description << " not embedded!")
@@ -591,14 +592,14 @@ bool GenerateBundleCode(const ttlib::cstr& description, ttlib::cstr& code)
     }
     else
     {
-        if (auto function_name = GetProject()->GetBundleFuncName(description); function_name.size())
+        if (auto function_name = ProjectImages.GetBundleFuncName(description); function_name.size())
         {
             // We get here if there is an Image form that contains the function to retrieve this bundle.
             code << function_name;
             return false;
         }
 
-        if (auto bundle = GetProject()->GetPropertyImageBundle(description); bundle)
+        if (auto bundle = ProjectImages.GetPropertyImageBundle(description); bundle)
         {
             if (bundle->lst_filenames.size() == 1)
             {
@@ -609,7 +610,7 @@ bool GenerateBundleCode(const ttlib::cstr& description, ttlib::cstr& code)
 
                 if (parts[IndexType].starts_with("Embed"))
                 {
-                    auto embed = GetProject()->GetEmbeddedImage(bundle->lst_filenames[0]);
+                    auto embed = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[0]);
                     if (embed)
                     {
                         name = "wxue_img::" + embed->array_name;
@@ -627,7 +628,7 @@ bool GenerateBundleCode(const ttlib::cstr& description, ttlib::cstr& code)
 
                 if (parts[IndexType].starts_with("Embed"))
                 {
-                    auto embed = GetProject()->GetEmbeddedImage(bundle->lst_filenames[0]);
+                    auto embed = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[0]);
                     if (embed)
                     {
                         name = "wxue_img::" + embed->array_name;
@@ -641,7 +642,7 @@ bool GenerateBundleCode(const ttlib::cstr& description, ttlib::cstr& code)
 
                 if (parts[IndexType].starts_with("Embed"))
                 {
-                    auto embed = GetProject()->GetEmbeddedImage(bundle->lst_filenames[1]);
+                    auto embed = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[1]);
                     if (embed)
                     {
                         name = "wxue_img::" + embed->array_name;
@@ -659,7 +660,7 @@ bool GenerateBundleCode(const ttlib::cstr& description, ttlib::cstr& code)
                     name.Replace(".", "_", true);  // fix wxFormBuilder header files
                     if (parts[IndexType].starts_with("Embed"))
                     {
-                        auto embed = GetProject()->GetEmbeddedImage(iter);
+                        auto embed = ProjectImages.GetEmbeddedImage(iter);
                         if (embed)
                         {
                             name = "wxue_img::" + embed->array_name;
@@ -698,7 +699,7 @@ bool GenerateVectorCode(const ttlib::cstr& description, ttlib::cstr& code)
         return false;
     }
 
-    auto bundle = GetProject()->GetPropertyImageBundle(description);
+    auto bundle = ProjectImages.GetPropertyImageBundle(description);
 
     if (!bundle || bundle->lst_filenames.size() < 3)
     {
@@ -708,7 +709,7 @@ bool GenerateVectorCode(const ttlib::cstr& description, ttlib::cstr& code)
     // If we get here, then we need to first put the bitmaps into a wxVector in order for wxBitmapBundle to load them.
 
     code << "{\n";
-    if (wxGetProject().value(prop_wxWidgets_version) == "3.1")
+    if (Project.value(prop_wxWidgets_version) == "3.1")
     {
         code << "#if wxCHECK_VERSION(3, 1, 6)\n";
     }
@@ -729,7 +730,7 @@ bool GenerateVectorCode(const ttlib::cstr& description, ttlib::cstr& code)
             name.Replace(".", "_", true);  // fix wxFormBuilder header files
             if (parts[IndexType].starts_with("Embed"))
             {
-                auto embed = GetProject()->GetEmbeddedImage(iter);
+                auto embed = ProjectImages.GetEmbeddedImage(iter);
                 if (embed)
                 {
                     name = "wxue_img::" + embed->array_name;
@@ -738,7 +739,7 @@ bool GenerateVectorCode(const ttlib::cstr& description, ttlib::cstr& code)
             code << "\tbitmaps.push_back(wxueImage(" << name << ", sizeof(" << name << ")));\n";
         }
     }
-    if (wxGetProject().value(prop_wxWidgets_version) == "3.1")
+    if (Project.value(prop_wxWidgets_version) == "3.1")
     {
         code << "#endif\n";
     }
@@ -936,7 +937,7 @@ ttlib::cstr GenerateIconCode(const ttlib::cstr& description)
         return code;
     }
 
-    if (wxGetProject().value(prop_wxWidgets_version) == "3.1" && !parts[IndexType].is_sameas("SVG"))
+    if (Project.value(prop_wxWidgets_version) == "3.1" && !parts[IndexType].is_sameas("SVG"))
     {
         code << "#if wxCHECK_VERSION(3, 1, 6)\n";
     }
@@ -959,7 +960,7 @@ ttlib::cstr GenerateIconCode(const ttlib::cstr& description)
     }
     else if (description.starts_with("SVG"))
     {
-        auto embed = GetProject()->GetEmbeddedImage(parts[IndexImage]);
+        auto embed = ProjectImages.GetEmbeddedImage(parts[IndexImage]);
         if (!embed)
         {
             FAIL_MSG(ttlib::cstr() << description << " not embedded!")
@@ -976,7 +977,7 @@ ttlib::cstr GenerateIconCode(const ttlib::cstr& description)
     }
     else
     {
-        if (auto bundle = GetProject()->GetPropertyImageBundle(description); bundle)
+        if (auto bundle = ProjectImages.GetPropertyImageBundle(description); bundle)
         {
             if (bundle->lst_filenames.size() == 1)
             {
@@ -987,7 +988,7 @@ ttlib::cstr GenerateIconCode(const ttlib::cstr& description)
 
                 if (parts[IndexType].starts_with("Embed"))
                 {
-                    auto embed = GetProject()->GetEmbeddedImage(bundle->lst_filenames[0]);
+                    auto embed = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[0]);
                     if (embed)
                     {
                         name = "wxue_img::" + embed->array_name;
@@ -1007,7 +1008,7 @@ ttlib::cstr GenerateIconCode(const ttlib::cstr& description)
                     name.Replace(".", "_", true);  // fix wxFormBuilder header files
                     if (parts[IndexType].starts_with("Embed"))
                     {
-                        auto embed = GetProject()->GetEmbeddedImage(iter);
+                        auto embed = ProjectImages.GetEmbeddedImage(iter);
                         if (embed)
                         {
                             name = "wxue_img::" + embed->array_name;
@@ -1026,7 +1027,7 @@ ttlib::cstr GenerateIconCode(const ttlib::cstr& description)
         }
     }
 
-    if (wxGetProject().value(prop_wxWidgets_version) == "3.1")
+    if (Project.value(prop_wxWidgets_version) == "3.1")
     {
         code << "#else\n";
         auto image_code = GenerateBitmapCode(description);
@@ -1205,7 +1206,7 @@ void GenToolCode(Code& code, const bool is_bitmaps_list)
         }
         else if (code.is_cpp())
         {
-            if (wxGetProject().value(prop_wxWidgets_version) == "3.1")
+            if (Project.value(prop_wxWidgets_version) == "3.1")
             {
                 code.Eol() += "#if wxCHECK_VERSION(3, 1, 6)\n\t";
             }
@@ -1215,7 +1216,7 @@ void GenToolCode(Code& code, const bool is_bitmaps_list)
             code.CheckLineLength(bundle_code.size());
             code += bundle_code;
 
-            if (wxGetProject().value(prop_wxWidgets_version) == "3.1")
+            if (Project.value(prop_wxWidgets_version) == "3.1")
             {
                 code.Eol() += "#else\n\t";
                 code << "wxBitmap(" << GenerateBitmapCode(node->as_string(prop_bitmap)) << ")";
@@ -1282,7 +1283,7 @@ bool BitmapList(Code& code, const GenEnum::PropName prop)
         return false;
     }
 
-    auto bundle = GetProject()->GetPropertyImageBundle(description);
+    auto bundle = ProjectImages.GetPropertyImageBundle(description);
 
     if (!bundle || bundle->lst_filenames.size() < 3)
     {
@@ -1324,7 +1325,7 @@ bool BitmapList(Code& code, const GenEnum::PropName prop)
     }
 
     //////////////// C++ code starts here ////////////////
-    if (wxGetProject().value(prop_wxWidgets_version) == "3.1")
+    if (Project.value(prop_wxWidgets_version) == "3.1")
     {
         code.Add("#if wxCHECK_VERSION(3, 1, 6)");
     }
@@ -1343,7 +1344,7 @@ bool BitmapList(Code& code, const GenEnum::PropName prop)
             name.Replace(".", "_", true);  // fix wxFormBuilder header files
             if (parts[IndexType].starts_with("Embed"))
             {
-                auto embed = GetProject()->GetEmbeddedImage(iter);
+                auto embed = ProjectImages.GetEmbeddedImage(iter);
                 if (embed)
                 {
                     name = "wxue_img::" + embed->array_name;

@@ -11,10 +11,10 @@
 
 #include "paths.h"
 
-#include "mainframe.h"      // MainFrame -- Main window frame
-#include "node.h"           // Node class
-#include "project_class.h"  // Project class
-#include "undo_cmds.h"      // InsertNodeAction -- Undoable command classes derived from UndoAction
+#include "mainframe.h"        // MainFrame -- Main window frame
+#include "node.h"             // Node class
+#include "project_handler.h"  // ProjectHandler class
+#include "undo_cmds.h"        // InsertNodeAction -- Undoable command classes derived from UndoAction
 
 void AllowDirectoryChange(wxPropertyGridEvent& event, NodeProperty* /* prop */, Node* /* node */)
 {
@@ -23,11 +23,11 @@ void AllowDirectoryChange(wxPropertyGridEvent& event, NodeProperty* /* prop */, 
         return;
 
     newValue.make_absolute();
-    newValue.make_relative_wx(GetProject()->GetProjectPath());
+    newValue.make_relative_wx(Project.ProjectPath());
     newValue.backslashestoforward();
 
     ttSaveCwd cwd;
-    GetProject()->GetProjectPath().ChangeDir();
+    Project.ChangeDir();
 
     if (!newValue.dir_exists())
     {
@@ -71,14 +71,13 @@ void AllowFileChange(wxPropertyGridEvent& event, NodeProperty* prop, Node* node)
             return;
 
         newValue.make_absolute();
-        newValue.make_relative_wx(GetProject()->GetFullProjectPath());
+        newValue.make_relative_wx(Project.ProjectPath());
         newValue.backslashestoforward();
 
         auto filename = newValue.sub_cstr();
-        auto project = GetProject();
 
         std::vector<Node*> forms;
-        project->CollectForms(forms);
+        Project.CollectForms(forms);
         for (const auto& child: forms)
         {
             if (child == node)
@@ -162,11 +161,11 @@ void AllowFileChange(wxPropertyGridEvent& event, NodeProperty* prop, Node* node)
 void OnPathChanged(wxPropertyGridEvent& event, NodeProperty* prop, Node* /* node */)
 {
     // If the user clicked the path button, the current directory may have changed.
-    GetProject()->GetProjectPath().ChangeDir();
+    Project.ChangeDir();
 
     ttString newValue = event.GetPropertyValue().GetString();
     newValue.make_absolute();
-    newValue.make_relative_wx(GetProject()->GetProjectPath());
+    newValue.make_relative_wx(Project.ProjectPath());
     newValue.backslashestoforward();
 
     // Note that on Windows, even though we changed the property to a forward slash, it will still be displayed
@@ -194,7 +193,7 @@ void OnPathChanged(wxPropertyGridEvent& event, NodeProperty* prop, Node* /* node
 
 void ChangeDerivedDirectory(ttlib::cstr& path)
 {
-    auto& old_path = GetProject()->prop_as_string(prop_derived_directory);
+    auto& old_path = Project.value(prop_derived_directory);
     path.backslashestoforward();
     if (path == "./")
         path.clear();
@@ -202,10 +201,10 @@ void ChangeDerivedDirectory(ttlib::cstr& path)
         path.pop_back();
 
     auto undo_derived = std::make_shared<ModifyProperties>("Derived directory");
-    undo_derived->AddProperty(GetProject()->get_prop_ptr(prop_derived_directory), path);
+    undo_derived->AddProperty(Project.ProjectNode()->get_prop_ptr(prop_derived_directory), path);
 
     std::vector<Node*> forms;
-    GetProject()->CollectForms(forms);
+    Project.CollectForms(forms);
 
     for (auto& form: forms)
     {
@@ -234,7 +233,7 @@ void ChangeDerivedDirectory(ttlib::cstr& path)
 
 void ChangeBaseDirectory(ttlib::cstr& path)
 {
-    auto& old_path = GetProject()->prop_as_string(prop_base_directory);
+    auto& old_path = Project.value(prop_base_directory);
     path.backslashestoforward();
     if (path == "./")
         path.clear();
@@ -242,10 +241,10 @@ void ChangeBaseDirectory(ttlib::cstr& path)
         path.pop_back();
 
     auto undo_derived = std::make_shared<ModifyProperties>("Base directory");
-    undo_derived->AddProperty(GetProject()->get_prop_ptr(prop_base_directory), path);
+    undo_derived->AddProperty(Project.ProjectNode()->get_prop_ptr(prop_base_directory), path);
 
     std::vector<Node*> forms;
-    GetProject()->CollectForms(forms);
+    Project.CollectForms(forms);
 
     for (const auto& form: forms)
     {

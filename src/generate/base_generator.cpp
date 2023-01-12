@@ -11,15 +11,15 @@
 
 #include "base_generator.h"
 
-#include "code.h"           // Code -- Helper class for generating code
-#include "gen_common.h"     // Common component functions
-#include "lambdas.h"        // Functions for formatting and storage of lamda events
-#include "mainframe.h"      // MainFrame -- Main window frame
-#include "node.h"           // Node class
-#include "node_decl.h"      // NodeDeclaration class
-#include "node_prop.h"      // NodeProperty -- NodeProperty class
-#include "project_class.h"  // Project class
-#include "utils.h"          // Utility functions that work with properties
+#include "code.h"             // Code -- Helper class for generating code
+#include "gen_common.h"       // Common component functions
+#include "lambdas.h"          // Functions for formatting and storage of lamda events
+#include "mainframe.h"        // MainFrame -- Main window frame
+#include "node.h"             // Node class
+#include "node_decl.h"        // NodeDeclaration class
+#include "node_prop.h"        // NodeProperty -- NodeProperty class
+#include "project_handler.h"  // ProjectHandler class
+#include "utils.h"            // Utility functions that work with properties
 
 #include "../mockup/mockup_parent.h"  // Top-level MockUp Parent window
 
@@ -207,7 +207,7 @@ bool BaseGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty
             return true;
 
         std::vector<Node*> forms;
-        GetProject()->CollectForms(forms);
+        Project.CollectForms(forms);
 
         for (const auto& iter: forms)
         {

@@ -12,7 +12,6 @@
 #include "gen_common.h"     // GeneratorLibrary -- Generator classes
 #include "node.h"           // Node class
 #include "node_prop.h"      // NodeProperty -- NodeProperty class
-#include "project_class.h"  // Project class
 #include "pugixml.hpp"      // xml_object_range
 #include "utils.h"          // Utility functions that work with properties
 #include "write_code.h"     // WriteCode -- Write code to Scintilla or file

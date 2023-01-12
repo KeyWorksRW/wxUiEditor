@@ -7,11 +7,12 @@
 
 #include <wx/grid.h>  // wxGrid base header
 
-#include "gen_common.h"     // GeneratorLibrary -- Generator classes
-#include "gen_xrc_utils.h"  // Common XRC generating functions
-#include "node.h"           // Node class
-#include "pugixml.hpp"      // xml read/write/create/process
-#include "utils.h"          // Utility functions that work with properties
+#include "gen_common.h"       // GeneratorLibrary -- Generator classes
+#include "gen_xrc_utils.h"    // Common XRC generating functions
+#include "node.h"             // Node class
+#include "project_handler.h"  // ProjectHandler class
+#include "pugixml.hpp"        // xml read/write/create/process
+#include "utils.h"            // Utility functions that work with properties
 
 #include "gen_grid.h"
 
@@ -159,7 +160,7 @@ bool GridGenerator::SettingsCode(Code& code)
     {
         if (code.is_value(prop_cell_fit, "clip"))
         {
-            if (code.is_cpp() && wxGetProject().value(prop_wxWidgets_version) == "3.1")
+            if (code.is_cpp() && Project.value(prop_wxWidgets_version) == "3.1")
             {
                 code.Eol().Str("#if wxCHECK_VERSION(3, 1, 4)");
                 code.Eol().Tab().NodeName().Function("SetDefaultCellFitMode(");
@@ -174,7 +175,7 @@ bool GridGenerator::SettingsCode(Code& code)
         }
         else if (code.is_value(prop_cell_fit, "ellipsize"))
         {
-            if (code.is_cpp() && wxGetProject().value(prop_wxWidgets_version) == "3.1")
+            if (code.is_cpp() && Project.value(prop_wxWidgets_version) == "3.1")
             {
                 code.Eol().Str("#if wxCHECK_VERSION(3, 1, 4)");
                 code.Eol().Tab().NodeName().Function("SetDefaultCellFitMode(");
@@ -191,11 +192,11 @@ bool GridGenerator::SettingsCode(Code& code)
 
     if (code.IntValue(prop_selection_mode) != 0)
     {
-        if (code.is_cpp() && wxGetProject().value(prop_wxWidgets_version) == "3.1")
+        if (code.is_cpp() && Project.value(prop_wxWidgets_version) == "3.1")
         {
             if (code.is_value(prop_selection_mode, "wxGridSelectNone"))
             {
-                if (code.is_cpp() && wxGetProject().value(prop_wxWidgets_version) == "3.1")
+                if (code.is_cpp() && Project.value(prop_wxWidgets_version) == "3.1")
                 {
                     code.Eol().Str("#if wxCHECK_VERSION(3, 1, 5)");
                     code.Eol().Tab().NodeName().Function("SetSelectionMode(");

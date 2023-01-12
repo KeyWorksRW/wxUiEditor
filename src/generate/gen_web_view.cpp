@@ -7,12 +7,13 @@
 
 #include <wx/webview.h>  // Common interface and events for web view component
 
-#include "code.h"           // Code -- Helper class for generating code
-#include "gen_common.h"     // GeneratorLibrary -- Generator classes
-#include "gen_xrc_utils.h"  // Common XRC generating functions
-#include "node.h"           // Node class
-#include "pugixml.hpp"      // xml read/write/create/process
-#include "utils.h"          // Utility functions that work with properties
+#include "code.h"             // Code -- Helper class for generating code
+#include "gen_common.h"       // GeneratorLibrary -- Generator classes
+#include "gen_xrc_utils.h"    // Common XRC generating functions
+#include "node.h"             // Node class
+#include "project_handler.h"  // ProjectHandler class
+#include "pugixml.hpp"        // xml read/write/create/process
+#include "utils.h"            // Utility functions that work with properties
 
 #include "gen_web_view.h"
 
@@ -59,7 +60,7 @@ std::optional<ttlib::sview> WebViewGenerator::GenEvents(Code& code, NodeEvent* e
         return BaseGenerator::GenEvents(code, event, class_name);
     if ((event->get_name() == "wxEVT_WEBVIEW_FULL_SCREEN_CHANGED" ||
          event->get_name() == "wxEVT_WEBVIEW_SCRIPT_MESSAGE_RECEIVED") &&
-        wxGetProject().value(prop_wxWidgets_version) == "3.1")
+        Project.value(prop_wxWidgets_version) == "3.1")
     {
         code.Add("\n#if wxCHECK_VERSION(3, 1, 5)\n");
         BaseGenerator::GenEvents(code, event, class_name);

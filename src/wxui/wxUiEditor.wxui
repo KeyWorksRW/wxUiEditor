@@ -1449,7 +1449,7 @@
         class="wxFrame"
         class_name="MainFrameBase"
         base_file="mainframe_base"
-        base_src_includes="#include &quot;mainframe.h&quot;"
+        base_src_includes="#include &quot;mainframe.h&quot;@@#include &quot;project_handler.h&quot;"
         derived_class_name="MainFrame"
         minimum_size="800,800"
         size="1000,1000"
@@ -1468,7 +1468,7 @@
               id="id_NewProject"
               label="&amp;New Project...&#09;Ctrl+N"
               var_name="menuItem"
-              wxEVT_MENU="[](wxCommandEvent&amp;)@@{@@wxGetApp().NewProject(true);@@}" />
+              wxEVT_MENU="[](wxCommandEvent&amp;)@@{@@ProjectClass().NewProject(true);@@}" />
             <node
               class="wxMenuItem"
               bitmap="Art;wxART_FILE_OPEN|wxART_OTHER"
@@ -1487,7 +1487,7 @@
               bitmap="SVG;../art_src/import.svg;[16,16]"
               label="&amp;Import..."
               var_name="menu_import"
-              wxEVT_MENU="[](wxCommandEvent&amp;)@@{@@wxGetApp().NewProject(false);@@}" />
+              wxEVT_MENU="[](wxCommandEvent&amp;)@@{@@ProjectClass().NewProject(false);@@}" />
             <node
               class="separator" />
             <node

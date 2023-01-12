@@ -8,12 +8,13 @@
 #include <wx/generic/statbmpg.h>  // wxGenericStaticBitmap header
 #include <wx/statbmp.h>           // wxStaticBitmap class interface
 
-#include "code.h"           // Code -- Helper class for generating code
-#include "gen_common.h"     // GeneratorLibrary -- Generator classes
-#include "gen_xrc_utils.h"  // Common XRC generating functions
-#include "node.h"           // Node class
-#include "pugixml.hpp"      // xml read/write/create/process
-#include "utils.h"          // Utility functions that work with properties
+#include "code.h"             // Code -- Helper class for generating code
+#include "gen_common.h"       // GeneratorLibrary -- Generator classes
+#include "gen_xrc_utils.h"    // Common XRC generating functions
+#include "node.h"             // Node class
+#include "project_handler.h"  // ProjectHandler class
+#include "pugixml.hpp"        // xml read/write/create/process
+#include "utils.h"            // Utility functions that work with properties
 
 #include "gen_static_bmp.h"
 
@@ -111,14 +112,14 @@ void StaticBitmapGenerator::GenCppConstruction(Code& gen_code)
         if (!is_vector_code)
         {
             ttlib::cstr bundle_code;
-            if (wxGetProject().value(prop_wxWidgets_version) != "3.1")
+            if (Project.value(prop_wxWidgets_version) != "3.1")
             {
                 GenerateBundleCode(description, bundle_code);
                 code << bundle_code;
             }
             else
             {
-                if (wxGetProject().value(prop_wxWidgets_version) == "3.1")
+                if (Project.value(prop_wxWidgets_version) == "3.1")
                 {
                     code.insert(0, "\t");
                     code += "\n#if wxCHECK_VERSION(3, 1, 6)\n\t\t";
@@ -145,7 +146,7 @@ void StaticBitmapGenerator::GenCppConstruction(Code& gen_code)
         }
         else
         {
-            if (wxGetProject().value(prop_wxWidgets_version) != "3.1")
+            if (Project.value(prop_wxWidgets_version) != "3.1")
             {
                 code += "wxBitmapBundle::FromBitmaps(bitmaps)";
             }

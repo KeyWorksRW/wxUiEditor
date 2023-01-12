@@ -13,12 +13,10 @@ set (file_list
     cstm_event.cpp        # Custom Event handling
     frame_status_bar.cpp  # MainFrame status bar functions
     gen_enums.cpp         # Enumerations for generators
-    image_bundle.cpp      # Functions for working with wxBitmapBundle
     lambdas.cpp           # Functions for formatting and storage of lamda events
     paths.cpp             # Handles *_directory properties
     preferences.cpp       # Set/Get wxUiEditor preferences
     previews.cpp          # Top level Preview functions
-    project_class.cpp     # Project class
     startup_dlg.cpp       # Startup dialog
     undo_cmds.cpp         # Undoable command classes derived from UndoStackCmd
     undo_stack.cpp        # Maintain an undo and redo stack
@@ -244,8 +242,10 @@ set (file_list
     panels/propgrid_panel.cpp   # Property panel
     panels/ribbon_tools.cpp     # Displays node creation tools in a wxRibbonBar
 
-    # Misc
+    # Project classes
 
+    project/project_handler.cpp # ProjectHandler class
+    project/image_handler.cpp   # ProjectImage class
     project/loadproject.cpp     # Load wxUiEditor project
     project/saveproject.cpp     # Save a wxUiEditor project file
 

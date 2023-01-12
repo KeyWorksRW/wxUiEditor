@@ -1,20 +1,20 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Load wxUiEditor project
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
 #include <wx/stc/stc.h>  // A wxWidgets implementation of Scintilla.
 #include <wx/utils.h>    // Miscellaneous utilities
 
-#include "../nodes/node_creator.h"  // NodeCreator class
-#include "base_generator.h"         // BaseGenerator -- Base widget generator class
-#include "gen_enums.h"              // Enumerations for generators
-#include "mainapp.h"                // App -- Main application class
-#include "mainframe.h"              // MainFrame -- Main window frame
-#include "node.h"                   // Node class
-#include "project_class.h"          // Project class
+#include "base_generator.h"   // BaseGenerator -- Base widget generator class
+#include "gen_enums.h"        // Enumerations for generators
+#include "image_handler.h"    // ProjectImage class
+#include "mainframe.h"        // MainFrame -- Main window frame
+#include "node.h"             // Node class
+#include "node_creator.h"     // NodeCreator class
+#include "project_handler.h"  // ProjectHandler class
 
 using namespace GenEnum;
 
@@ -32,41 +32,53 @@ using namespace GenEnum;
 
 using namespace GenEnum;
 
-bool App::LoadProject(const ttString& file)
+bool ProjectHandler::LoadProject(const ttString& file, bool allow_ui)
 {
     pugi::xml_document doc;
     auto result = doc.load_file(file.wx_str());
     if (!result)
     {
         ASSERT_MSG(result, ttlib::cstr() << "pugi failed trying to load " << file.wx_str());
-        wxMessageBox(wxString("Cannot open ") << file << "\n\n" << result.description(), "Load Project");
+        if (allow_ui)
+        {
+            wxMessageBox(wxString("Cannot open ") << file << "\n\n" << result.description(), "Load Project");
+        }
         return false;
     }
 
     auto root = doc.first_child();
     if (!ttlib::is_sameas(root.name(), "wxUiEditorData", tt::CASE::either))
     {
-        wxMessageBox(wxString() << file << " is not a wxUiEditor XML file", "Load Project");
+        if (allow_ui)
+        {
+            wxMessageBox(wxString() << file << " is not a wxUiEditor XML file", "Load Project");
+        }
         return false;
     }
 
-    ProjectSharedPtr project;
+    NodeSharedPtr project;
 
     m_ProjectVersion = root.attribute("data_version").as_int(curSupportedVer);
 
     if (m_ProjectVersion > curSupportedVer)
     {
-        if (wxMessageBox("wxUiEditor does not recognize this version of the data file.\n"
-                         "You may be able to load the file, but if you then save it you could lose data.\n\n"
-                         "Do you want to try to open it anyway?",
-                         "Unrecognized Version", wxYES_NO) != wxYES)
+        if (allow_ui)
         {
-            return false;
+            if (wxMessageBox("wxUiEditor does not recognize this version of the data file.\n"
+                             "You may be able to load the file, but if you then save it you could lose data.\n\n"
+                             "Do you want to try to open it anyway?",
+                             "Unrecognized Version", wxYES_NO) != wxYES)
+            {
+                return false;
+            }
+            else
+            {
+                project = LoadProject(doc, allow_ui);
+            }
         }
         else
         {
-            wxBusyCursor wait;
-            project = LoadProject(doc);
+            return false;
         }
     }
 
@@ -74,32 +86,42 @@ bool App::LoadProject(const ttString& file)
     {
         if (!root.child("object") && !root.child("node"))
         {
-            wxMessageBox(wxString() << "The data file " << file << " is invalid and cannot be opened.");
+            if (allow_ui)
+            {
+                wxMessageBox(wxString() << "The data file " << file << " is invalid and cannot be opened.");
+            }
             return false;
         }
         else if (m_ProjectVersion < 11)
         {
-            if (wxMessageBox(ttlib::cstr() << "Project version " << m_ProjectVersion / 10 << '.' << m_ProjectVersion % 10
-                                           << " is not supported.\n\nDo you want to attempt to load it anyway?",
-                             "Unsupported Project Version", wxYES_NO) == wxNO)
+            if (allow_ui)
+            {
+                if (wxMessageBox(ttlib::cstr() << "Project version " << m_ProjectVersion / 10 << '.' << m_ProjectVersion % 10
+                                               << " is not supported.\n\nDo you want to attempt to load it anyway?",
+                                 "Unsupported Project Version", wxYES_NO) == wxNO)
+                {
+                    return false;
+                }
+            }
+            else
             {
                 return false;
             }
+
+            project = LoadProject(doc, allow_ui);
         }
-
-        wxBusyCursor wait;
-        project = LoadProject(doc);
     }
-
     else
     {
         if (!root.child("node"))
         {
-            wxMessageBox(wxString() << "The data file " << file << " is invalid and cannot be opened.");
+            if (allow_ui)
+            {
+                wxMessageBox(wxString() << "The data file " << file << " is invalid and cannot be opened.");
+            }
             return false;
         }
 
-        wxBusyCursor wait;
         project = LoadProject(doc);
     }
 
@@ -107,21 +129,17 @@ bool App::LoadProject(const ttString& file)
     {
         ASSERT_MSG(project, ttlib::cstr() << "Failed trying to load " << file.wx_str());
 
-        wxMessageBox(wxString() << "The project file " << file << " is invalid and cannot be opened.");
+        if (allow_ui)
+        {
+            wxMessageBox(wxString() << "The project file " << file << " is invalid and cannot be opened.");
+        }
         return false;
     }
 
-    m_project = project;
-    m_project->SetProjectFile(file);
-    m_project->SetProjectPath(file);
-
-    {
-        wxBusyCursor wait;
-
-        ttSaveCwd cwd;
-        m_project->GetProjectPath().ChangeDir();
-        m_project->CollectBundles();
-    }
+    // Calling this will also initialize the ProjectImage class
+    Project.Initialize(project);
+    Project.SetProjectFile(file);
+    ProjectImages.CollectBundles();
 
     // Imported projects start with an older version so that they pass through the old project fixups.
     if (m_ProjectVersion == ImportProjectVersion)
@@ -138,9 +156,9 @@ bool App::LoadProject(const ttString& file)
     return true;
 }
 
-ProjectSharedPtr App::LoadProject(pugi::xml_document& doc)
+NodeSharedPtr ProjectHandler::LoadProject(pugi::xml_document& doc, bool allow_ui)
 {
-    ProjectSharedPtr project;
+    NodeSharedPtr project;
     try
     {
         auto root = doc.first_child();
@@ -156,12 +174,15 @@ ProjectSharedPtr App::LoadProject(pugi::xml_document& doc)
             FAIL_MSG("Project does not have a \"node\" node.");
             throw std::runtime_error("Invalid project file");
         }
-        project = g_NodeCreator.CreateProjectClass(&node);
+        project = g_NodeCreator.CreateProjectNode(&node);
     }
     catch (const std::exception& TESTING_PARAM(e))
     {
-        MSG_ERROR(e.what());
-        wxMessageBox("This wxUiEditor project file is invalid and cannot be loaded.", "Load Project");
+        if (allow_ui)
+        {
+            MSG_ERROR(e.what());
+            wxMessageBox("This wxUiEditor project file is invalid and cannot be loaded.", "Load Project");
+        }
     }
 
     return project;
@@ -236,8 +257,8 @@ NodeSharedPtr NodeCreator::CreateNode(pugi::xml_node& xml_obj, Node* parent, boo
                     prop->set_value(iter.as_bool());
                 }
 
-                // Imported projects will be set as version ImportProjectVersion to get the fixups of constant to friendly
-                // name, and bit flag conflict resolution.
+                // Imported projects will be set as version ImportProjectVersion to get the fixups of constant to
+                // friendly name, and bit flag conflict resolution.
 
                 else if (wxGetApp().GetProjectVersion() <= ImportProjectVersion)
                 {
@@ -355,9 +376,9 @@ NodeSharedPtr NodeCreator::CreateNode(pugi::xml_node& xml_obj, Node* parent, boo
             if (auto value = iter.value(); value.size())
             {
                 {
-                    // REVIEW: [KeyWorks - 11-30-2021] This code block deals with changes to the 1.2 project format prior to
-                    // it being released in beta. Once we make a full release, we should be able to safely remove all of
-                    // this.
+                    // REVIEW: [KeyWorks - 11-30-2021] This code block deals with changes to the 1.2 project format prior
+                    // to it being released in beta. Once we make a full release, we should be able to safely remove all
+                    // of this.
 
                     if (ttlib::is_sameas(iter.name(), "converted_art"))
                     {
@@ -405,8 +426,8 @@ NodeSharedPtr NodeCreator::CreateNode(pugi::xml_node& xml_obj, Node* parent, boo
     {
         // Order is important -- don't call GetProject() if check_for_duplicates is false
         // because there may not be a project yet.
-        if (check_for_duplicates && parent == GetProject())
-            GetProject()->FixupDuplicatedNode(new_node.get());
+        if (check_for_duplicates && parent == Project.ProjectNode())
+            Project.FixupDuplicatedNode(new_node.get());
         parent->Adopt(new_node);
     }
 
@@ -423,10 +444,10 @@ NodeSharedPtr NodeCreator::CreateNode(pugi::xml_node& xml_obj, Node* parent, boo
     return new_node;
 }
 
-ProjectSharedPtr NodeCreator::CreateProjectClass(pugi::xml_node* xml_obj)
+NodeSharedPtr NodeCreator::CreateProjectNode(pugi::xml_node* xml_obj)
 {
     auto node_decl = m_a_declarations[gen_Project];
-    auto new_node = std::make_shared<Project>(node_decl);
+    auto new_node = std::make_shared<Node>(node_decl);
 
     // Calling GetBaseClassCount() is expensive, so do it once and store the result
     auto node_info_base_count = m_a_declarations[gen_Project]->GetBaseClassCount();
@@ -500,7 +521,7 @@ ProjectSharedPtr NodeCreator::CreateProjectClass(pugi::xml_node* xml_obj)
     return new_node;
 }
 
-bool App::ImportProject(ttString& file)
+bool ProjectHandler::ImportProject(ttString& file, bool allow_ui)
 {
 #if defined(INTERNAL_TESTING)
     // Importers will change the file extension, so make a copy here
@@ -512,7 +533,7 @@ bool App::ImportProject(ttString& file)
         WxCrafter crafter;
         result = Import(crafter, file);
 #if defined(INTERNAL_TESTING)
-        if (result)
+        if (result && allow_ui)
             wxGetFrame().GetImportPanel()->SetImportFile(import_file, wxSTC_LEX_JSON);
 #endif
     }
@@ -521,7 +542,7 @@ bool App::ImportProject(ttString& file)
         FormBuilder fb;
         result = Import(fb, file);
 #if defined(INTERNAL_TESTING)
-        if (result)
+        if (result && allow_ui)
             wxGetFrame().GetImportPanel()->SetImportFile(import_file, wxSTC_LEX_XML);
 #endif
     }
@@ -530,7 +551,7 @@ bool App::ImportProject(ttString& file)
         WinResource winres;
         result = Import(winres, file);
 #if defined(INTERNAL_TESTING)
-        if (result)
+        if (result && allow_ui)
             wxGetFrame().GetImportPanel()->SetImportFile(import_file, wxSTC_LEX_CPP);
 #endif
     }
@@ -539,7 +560,7 @@ bool App::ImportProject(ttString& file)
         WxSmith smith;
         result = Import(smith, file);
 #if defined(INTERNAL_TESTING)
-        if (result)
+        if (result && allow_ui)
             wxGetFrame().GetImportPanel()->SetImportFile(import_file, wxSTC_LEX_XML);
 #endif
     }
@@ -548,7 +569,7 @@ bool App::ImportProject(ttString& file)
         WxGlade glade;
         result = Import(glade, file);
 #if defined(INTERNAL_TESTING)
-        if (result)
+        if (result && allow_ui)
             wxGetFrame().GetImportPanel()->SetImportFile(import_file, wxSTC_LEX_XML);
 #endif
     }
@@ -556,19 +577,23 @@ bool App::ImportProject(ttString& file)
     return result;
 }
 
-bool App::Import(ImportXML& import, ttString& file, bool append)
+bool ProjectHandler::Import(ImportXML& import, ttString& file, bool append, bool allow_ui)
 {
     m_ProjectVersion = ImportProjectVersion;
     if (import.Import(file))
     {
 #if defined(_DEBUG) || defined(INTERNAL_TESTING)
-        ttString full_path(file);
-        full_path.make_absolute();
-        wxGetFrame().GetAppendImportHistory()->AddFileToHistory(full_path);
+        if (allow_ui)
+        {
+            ttString full_path(file);
+            full_path.make_absolute();
+            wxGetFrame().GetAppendImportHistory()->AddFileToHistory(full_path);
+        }
 #endif  // _DEBUG
 
         // By having the importer create an XML document, we can pass it through g_NodeCreator.CreateNode() which will
-        // fix bitflag conflicts, convert wxWidgets constants to friendly names, and handle old-project style conversions.
+        // fix bitflag conflicts, convert wxWidgets constants to friendly names, and handle old-project style
+        // conversions.
 
         auto& doc = import.GetDocument();
         auto root = doc.first_child();
@@ -581,62 +606,60 @@ bool App::Import(ImportXML& import, ttString& file, bool append)
             return false;
         }
 
-        if (append && m_project->GetChildCount())
+        if (append && m_project_node->GetChildCount())
         {
             auto form = project.child("node");
             while (form)
             {
-                g_NodeCreator.CreateNode(form, m_project.get());
+                g_NodeCreator.CreateNode(form, m_project_node.get());
                 form = form.next_sibling("node");
             }
 
             return true;
         }
 
-        m_project = g_NodeCreator.CreateProjectClass(&project);
+        auto project_node = g_NodeCreator.CreateProjectNode(&project);
 
-        file.remove_extension();
-        m_project->SetProjectFile(file);
-        m_project->SetProjectPath(file);
-
-        {
-            wxBusyCursor wait;
-
-            ttSaveCwd cwd;
-            m_project->GetProjectPath().ChangeDir();
-            m_project->CollectBundles();
-        }
+        // Calling this will also initialize the ProjectImage class
+        Project.Initialize(project_node, allow_ui);
+        Project.SetProjectFile(file);
+        ProjectImages.CollectBundles();
 
 #if defined(_DEBUG)
-        // If the file has been created once before, then for the first form, copy the old classname and base filename to the
-        // re-converted first form.
+        // If the file has been created once before, then for the first form, copy the old classname and base filename to
+        // the re-converted first form.
 
         file.replace_extension(".wxui");
-        if (m_project->GetChildCount() && file.file_exists())
+        if (m_project_node->GetChildCount() && file.file_exists())
         {
             doc.reset();
             auto result = doc.load_file(file.wx_str());
             if (!result)
             {
                 ASSERT_MSG(result, ttlib::cstr() << "pugi failed trying to load " << file.wx_str());
-                wxMessageBox(wxString("Cannot open ") << file << "\n\n" << result.description(), "Load Project");
+                if (allow_ui)
+                {
+                    wxMessageBox(wxString("Cannot open ") << file << "\n\n" << result.description(), "Load Project");
+                }
             }
             else
             {
-                if (auto old_project = LoadProject(doc); old_project && old_project->GetChildCount())
+                if (auto old_project = LoadProject(doc, allow_ui); old_project && old_project->GetChildCount())
                 {
                     auto old_form = old_project->GetChild(0);
-                    auto new_form = m_project->GetChild(0);
-                    new_form->prop_set_value(prop_class_name, old_form->prop_as_string(prop_class_name));
-                    new_form->prop_set_value(prop_base_file, old_form->prop_as_string(prop_base_file));
+                    auto new_form = m_project_node->GetChild(0);
+                    new_form->prop_set_value(prop_class_name, old_form->value(prop_class_name));
+                    new_form->prop_set_value(prop_base_file, old_form->value(prop_base_file));
                 }
             }
         }
 #endif  // _DEBUG
-
-        wxGetFrame().SetImportedFlag(true);
-        wxGetFrame().FireProjectLoadedEvent();
-        wxGetFrame().SetModified();
+        if (allow_ui)
+        {
+            wxGetFrame().SetImportedFlag(true);
+            wxGetFrame().FireProjectLoadedEvent();
+            wxGetFrame().SetModified();
+        }
 
         return true;
     }
@@ -644,36 +667,46 @@ bool App::Import(ImportXML& import, ttString& file, bool append)
     return false;
 }
 
-bool App::NewProject(bool create_empty)
+bool ProjectHandler::NewProject(bool create_empty, bool allow_ui)
 {
-    if (m_frame->IsModified() && m_frame && !m_frame->SaveWarning())
+    if (allow_ui && wxGetFrame().IsModified() && GetMainFrame() && !wxGetFrame().SaveWarning())
         return false;
 
     if (create_empty)
     {
-        m_project = g_NodeCreator.CreateProjectClass(nullptr);
+        auto project = g_NodeCreator.CreateProjectNode(nullptr);
 
         ttString file;
         file.assignCwd();
         file.append_filename(txtEmptyProject);
-        m_project->SetProjectFile(file);
-        m_project->SetProjectPath(file);
 
-        wxGetFrame().FireProjectLoadedEvent();
+        // Calling this will also initialize the ProjectImage class
+        Project.Initialize(project);
+        Project.SetProjectFile(file);
+
+        if (allow_ui)
+        {
+            wxGetFrame().FireProjectLoadedEvent();
+        }
         return true;
     }
 
-    ImportDlg dlg(m_frame);
+    if (!allow_ui)
+        return false;
+
+    ImportDlg dlg(GetMainFrame());
     if (dlg.ShowModal() != wxID_OK)
         return false;
 
-    m_project = g_NodeCreator.CreateProjectClass(nullptr);
+    auto project = g_NodeCreator.CreateProjectNode(nullptr);
 
     ttString file;
     file.assignCwd();
     file.append_filename("MyImportedProject");
-    m_project->SetProjectFile(file);
-    m_project->SetProjectPath(file);
+
+    // Calling this will also initialize the ProjectImage class
+    Project.Initialize(project);
+    Project.SetProjectFile(file);
 
     ttlib::cstr imported_from;
 
@@ -742,11 +775,11 @@ bool App::NewProject(bool create_empty)
 
         if (imported_from.size())
         {
-            ttlib::cstr preamble = m_project->prop_as_string(prop_src_preamble);
+            ttlib::cstr preamble = m_project_node->value(prop_src_preamble);
             if (preamble.size())
                 preamble << "@@@@";
             preamble << imported_from;
-            m_project->prop_set_value(prop_src_preamble, preamble);
+            m_project_node->prop_set_value(prop_src_preamble, preamble);
         }
 
         // Set the current working directory to the first file imported.
@@ -756,28 +789,22 @@ bool App::NewProject(bool create_empty)
             path.replace_extension_wx(".wxui");
             path.make_absolute();
             path.backslashestoforward();
-            m_project->SetProjectFile(path);
-            path.remove_filename();
-            m_project->SetProjectPath(path);
+            m_projectFile = path;
+            m_projectPath = m_projectFile;
+            m_projectPath.make_absolute();
+            m_projectPath.remove_filename();
         }
-        m_frame->SetImportedFlag();
+        wxGetFrame().SetImportedFlag();
     }
-
-    {
-        wxBusyCursor wait;
-
-        ttSaveCwd cwd;
-        m_project->GetProjectPath().ChangeDir();
-        m_project->CollectBundles();
-    }
+    ProjectImages.CollectBundles();
 
     wxGetFrame().FireProjectLoadedEvent();
-    if (m_project->GetChildCount())
+    if (m_project_node->GetChildCount())
         wxGetFrame().SetModified();
     return true;
 }
 
-void App::AppendWinRes(const ttlib::cstr& rc_file, std::vector<ttlib::cstr>& dialogs)
+void ProjectHandler::AppendWinRes(const ttlib::cstr& rc_file, std::vector<ttlib::cstr>& dialogs)
 {
     WinResource winres;
     if (winres.ImportRc(rc_file, dialogs))
@@ -786,16 +813,18 @@ void App::AppendWinRes(const ttlib::cstr& rc_file, std::vector<ttlib::cstr>& dia
         for (const auto& child: project->GetChildNodePtrs())
         {
             auto new_node = g_NodeCreator.MakeCopy(child);
-            GetProject()->FixupDuplicatedNode(new_node.get());
-            m_project->Adopt(new_node);
+            Project.FixupDuplicatedNode(new_node.get());
+            m_project_node->Adopt(new_node);
         }
-
-        wxGetFrame().FireProjectUpdatedEvent();
-        wxGetFrame().SetModified();
+        if (m_allow_ui)
+        {
+            wxGetFrame().FireProjectUpdatedEvent();
+            wxGetFrame().SetModified();
+        }
     }
 }
 
-void App::AppendCrafter(wxArrayString& files)
+void ProjectHandler::AppendCrafter(wxArrayString& files)
 {
     for (const auto& file: files)
     {
@@ -808,24 +837,30 @@ void App::AppendCrafter(wxArrayString& files)
             auto project = root.child("node");
             if (!project || project.attribute("class").as_cstr() != "Project")
             {
-                wxMessageBox(wxString("The project file ") << file << " is invalid and cannot be opened.",
-                             "Import wxCrafter project");
+                if (m_allow_ui)
+                {
+                    wxMessageBox(wxString("The project file ") << file << " is invalid and cannot be opened.",
+                                 "Import wxCrafter project");
+                }
                 return;
             }
 
             auto form = project.child("node");
             while (form)
             {
-                g_NodeCreator.CreateNode(form, m_project.get(), true);
+                g_NodeCreator.CreateNode(form, m_project_node.get(), true);
                 form = form.next_sibling("node");
             }
         }
     }
-    wxGetFrame().FireProjectUpdatedEvent();
-    wxGetFrame().SetModified();
+    if (m_allow_ui)
+    {
+        wxGetFrame().FireProjectUpdatedEvent();
+        wxGetFrame().SetModified();
+    }
 }
 
-void App::AppendFormBuilder(wxArrayString& files)
+void ProjectHandler::AppendFormBuilder(wxArrayString& files)
 {
     for (auto& file: files)
     {
@@ -838,24 +873,30 @@ void App::AppendFormBuilder(wxArrayString& files)
             auto project = root.child("node");
             if (!project || project.attribute("class").as_cstr() != "Project")
             {
-                wxMessageBox(wxString("The project file ") << file << " is invalid and cannot be opened.",
-                             "Import wxFormBuilder project");
+                if (m_allow_ui)
+                {
+                    wxMessageBox(wxString("The project file ") << file << " is invalid and cannot be opened.",
+                                 "Import wxFormBuilder project");
+                }
                 return;
             }
 
             auto form = project.child("node");
             while (form)
             {
-                g_NodeCreator.CreateNode(form, m_project.get(), true);
+                g_NodeCreator.CreateNode(form, m_project_node.get(), true);
                 form = form.next_sibling("node");
             }
         }
     }
-    wxGetFrame().FireProjectUpdatedEvent();
-    wxGetFrame().SetModified();
+    if (m_allow_ui)
+    {
+        wxGetFrame().FireProjectUpdatedEvent();
+        wxGetFrame().SetModified();
+    }
 }
 
-void App::AppendGlade(wxArrayString& files)
+void ProjectHandler::AppendGlade(wxArrayString& files)
 {
     for (auto& file: files)
     {
@@ -868,24 +909,30 @@ void App::AppendGlade(wxArrayString& files)
             auto project = root.child("node");
             if (!project || project.attribute("class").as_cstr() != "Project")
             {
-                wxMessageBox(wxString("The project file ") << file << " is invalid and cannot be opened.",
-                             "Import wxGlade project");
+                if (m_allow_ui)
+                {
+                    wxMessageBox(wxString("The project file ") << file << " is invalid and cannot be opened.",
+                                 "Import wxGlade project");
+                }
                 return;
             }
 
             auto form = project.child("node");
             while (form)
             {
-                g_NodeCreator.CreateNode(form, m_project.get(), true);
+                g_NodeCreator.CreateNode(form, m_project_node.get(), true);
                 form = form.next_sibling("node");
             }
         }
     }
-    wxGetFrame().FireProjectUpdatedEvent();
-    wxGetFrame().SetModified();
+    if (m_allow_ui)
+    {
+        wxGetFrame().FireProjectUpdatedEvent();
+        wxGetFrame().SetModified();
+    }
 }
 
-void App::AppendSmith(wxArrayString& files)
+void ProjectHandler::AppendSmith(wxArrayString& files)
 {
     for (auto& file: files)
     {
@@ -898,24 +945,30 @@ void App::AppendSmith(wxArrayString& files)
             auto project = root.child("node");
             if (!project || project.attribute("class").as_cstr() != "Project")
             {
-                wxMessageBox(wxString("The project file ") << file << " is invalid and cannot be opened.",
-                             "Import wxSmith project");
+                if (m_allow_ui)
+                {
+                    wxMessageBox(wxString("The project file ") << file << " is invalid and cannot be opened.",
+                                 "Import wxSmith project");
+                }
                 return;
             }
 
             auto form = project.child("node");
             while (form)
             {
-                g_NodeCreator.CreateNode(form, m_project.get(), true);
+                g_NodeCreator.CreateNode(form, m_project_node.get(), true);
                 form = form.next_sibling("node");
             }
         }
     }
-    wxGetFrame().FireProjectUpdatedEvent();
-    wxGetFrame().SetModified();
+    if (m_allow_ui)
+    {
+        wxGetFrame().FireProjectUpdatedEvent();
+        wxGetFrame().SetModified();
+    }
 }
 
-void App::AppendXRC(wxArrayString& files)
+void ProjectHandler::AppendXRC(wxArrayString& files)
 {
     for (auto& file: files)
     {
@@ -929,19 +982,25 @@ void App::AppendXRC(wxArrayString& files)
             auto project = root.child("node");
             if (!project || project.attribute("class").as_cstr() != "Project")
             {
-                wxMessageBox(wxString("The project file ") << file << " is invalid and cannot be opened.",
-                             "Import XRC project");
+                if (m_allow_ui)
+                {
+                    wxMessageBox(wxString("The project file ") << file << " is invalid and cannot be opened.",
+                                 "Import XRC project");
+                }
                 return;
             }
 
             auto form = project.child("node");
             while (form)
             {
-                g_NodeCreator.CreateNode(form, m_project.get(), true);
+                g_NodeCreator.CreateNode(form, m_project_node.get(), true);
                 form = form.next_sibling("node");
             }
         }
     }
-    wxGetFrame().FireProjectUpdatedEvent();
-    wxGetFrame().SetModified();
+    if (m_allow_ui)
+    {
+        wxGetFrame().FireProjectUpdatedEvent();
+        wxGetFrame().SetModified();
+    }
 }

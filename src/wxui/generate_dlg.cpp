@@ -73,8 +73,9 @@ bool GenerateDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 /////////////////////////////////////////////////////////////////////////////
 
 #include "gen_base.h"       // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
+#include "image_handler.h"  // ImageHandler class
 #include "mainframe.h"      // MainFrame -- Main application window
-#include "project_class.h"  // Project class
+#include "project_handler.h"  // ProjectHandler class
 
 #include "../wxui/dlg_gen_results.h"
 
@@ -90,7 +91,9 @@ enum
 // in generate/gen_codefiles.cpp
 void MainFrame::OnGenerateCode(wxCommandEvent&)
 {
-    GetProject()->UpdateEmbedNodes();
+    ProjectImages.UpdateEmbedNodes();
+    ProjectImages.UpdateEmbedNodes();
+
     GenerateDlg dlg(this);
     if (dlg.ShowModal() == wxID_OK)
     {
@@ -119,7 +122,7 @@ void MainFrame::OnGenerateCode(wxCommandEvent&)
             results_dlg.Create(this);
             for (auto& iter: results.updated_files)
             {
-                iter.make_relative(GetProject()->getProjectPath());
+                iter.make_relative(Project.ProjectPath().utf8_string());
                 results_dlg.m_lb_files->Append(iter);
             }
 
@@ -148,19 +151,19 @@ void MainFrame::OnGenerateCode(wxCommandEvent&)
 
 void GenerateDlg::OnInit(wxInitDialogEvent& event)
 {
-    if (GetProject()->as_string(prop_code_preference) == "C++")
+    if (Project.value(prop_code_preference) == "C++")
     {
         m_gen_python_code = false;
         m_gen_base_code = true;
         m_gen_xrc_code = false;
     }
-    else if (GetProject()->as_string(prop_code_preference) == "Python")
+    else if (Project.value(prop_code_preference) == "Python")
     {
         m_gen_python_code = true;
         m_gen_base_code = false;
         m_gen_xrc_code = false;
     }
-    else if (GetProject()->as_string(prop_code_preference) == "XRC")
+    else if (Project.value(prop_code_preference) == "XRC")
     {
         m_gen_python_code = false;
         m_gen_base_code = false;

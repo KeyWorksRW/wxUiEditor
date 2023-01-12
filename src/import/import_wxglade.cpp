@@ -10,7 +10,6 @@
 #include "base_generator.h"  // BaseGenerator -- Base Generator class
 #include "node.h"            // Node class
 #include "node_creator.h"    // NodeCreator class
-#include "project_class.h"   // Project class
 #include "utils.h"           // Utility functions that work with properties
 
 WxGlade::WxGlade() {}
@@ -171,7 +170,6 @@ NodeSharedPtr WxGlade::CreateGladeNode(pugi::xml_node& xml_obj, Node* parent, No
     if (isBitmapButton)
     {
         new_node->prop_set_value(prop_label, "");
-        isBitmapButton = false;
     }
 
     if (auto prop = new_node->get_prop_ptr(prop_var_name); prop)

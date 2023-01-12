@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Derived wxStringProperty class for handling wxImage files or art
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2021 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2021-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -10,10 +10,10 @@
 
 #include "img_string_prop.h"
 
-#include "art_prop_dlg.h"   // ArtBrowserDialog -- Art Property Dialog for image property
-#include "node.h"           // Node -- Node class
-#include "project_class.h"  // Project class
-#include "utils.h"          // Utility functions that work with properties
+#include "art_prop_dlg.h"     // ArtBrowserDialog -- Art Property Dialog for image property
+#include "node.h"             // Node -- Node class
+#include "project_handler.h"  // ProjectHandler class
+#include "utils.h"            // Utility functions that work with properties
 
 bool ImageDialogAdapter::DoShowDialog(wxPropertyGrid* propGrid, wxPGProperty* WXUNUSED(property))
 {
@@ -30,9 +30,9 @@ bool ImageDialogAdapter::DoShowDialog(wxPropertyGrid* propGrid, wxPGProperty* WX
     else if (m_img_props.type.contains("Embed"))
     {
         ttSaveCwd cwd;
-        if (GetProject()->HasValue(prop_art_directory))
+        if (Project.HasValue(prop_art_directory))
         {
-            auto dir = GetProject()->GetArtDirectory();
+            auto dir = Project.ArtDirectory();
             if (dir.dir_exists())
             {
                 wxFileName::SetCwd(dir);
@@ -55,7 +55,7 @@ bool ImageDialogAdapter::DoShowDialog(wxPropertyGrid* propGrid, wxPGProperty* WX
         if (dlg.ShowModal() == wxID_OK)
         {
             ttString name(dlg.GetPath());
-            name.make_relative_wx(GetProject()->GetProjectPath());
+            name.make_relative_wx(Project.ProjectPath());
             name.backslashestoforward();
             SetValue(name);
             return true;
@@ -65,9 +65,9 @@ bool ImageDialogAdapter::DoShowDialog(wxPropertyGrid* propGrid, wxPGProperty* WX
     else if (m_img_props.type.contains("XPM") || m_img_props.type.contains("SVG"))
     {
         ttSaveCwd cwd;
-        if (GetProject()->HasValue(prop_art_directory) && GetProject()->GetArtDirectory().dir_exists())
+        if (Project.HasValue(prop_art_directory) && Project.ArtDirectory().dir_exists())
         {
-            wxFileName::SetCwd(GetProject()->GetArtDirectory());
+            wxFileName::SetCwd(Project.ArtDirectory());
         }
 
         wxString pattern;
@@ -85,7 +85,7 @@ bool ImageDialogAdapter::DoShowDialog(wxPropertyGrid* propGrid, wxPGProperty* WX
         if (dlg.ShowModal() == wxID_OK)
         {
             ttString name(dlg.GetPath());
-            name.make_relative_wx(GetProject()->GetProjectPath());
+            name.make_relative_wx(Project.ProjectPath());
             name.backslashestoforward();
             SetValue(name);
             return true;

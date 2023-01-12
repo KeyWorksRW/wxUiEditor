@@ -14,7 +14,7 @@
 #include "node.h"                 // Node class
 #include "node_creator.h"         // NodeCreator -- Class used to create nodes
 #include "node_gridbag.h"         // GridBag -- Create and modify a node containing a wxGridBagSizer
-#include "project_class.h"        // Project class
+#include "project_handler.h"      // ProjectHandler class
 
 ///////////////////////////////// InsertNodeAction ////////////////////////////////////
 
@@ -662,18 +662,17 @@ SortProjectAction::SortProjectAction()
 
     m_undo_string = "Sort Project";
 
-    m_old_project = g_NodeCreator.MakeCopy(GetProject());
+    m_old_project = g_NodeCreator.MakeCopy(Project.ProjectNode());
 }
 
 void SortProjectAction::Change()
 {
-    m_old_project = g_NodeCreator.MakeCopy(wxGetApp().GetProjectPtr());
-    auto project = GetProject();
+    m_old_project = g_NodeCreator.MakeCopy(Project.ProjectNode());
 
-    auto& children = project->GetChildNodePtrs();
+    auto& children = Project.ChildNodePtrs();
     std::sort(children.begin(), children.end(), CompareClassNames);
 
-    for (auto& iter: project->GetChildNodePtrs())
+    for (auto& iter: Project.ChildNodePtrs())
     {
         if (iter->isGen(gen_folder))
         {
@@ -682,7 +681,7 @@ void SortProjectAction::Change()
     }
 
     wxGetFrame().FireProjectUpdatedEvent();
-    wxGetFrame().SelectNode(project);
+    wxGetFrame().SelectNode(Project.ProjectNode());
 }
 
 void SortProjectAction::SortFolder(Node* folder)
@@ -701,13 +700,12 @@ void SortProjectAction::SortFolder(Node* folder)
 
 void SortProjectAction::Revert()
 {
-    auto project = GetProject();
-    project->RemoveAllChildren();
+    Project.ProjectNode()->RemoveAllChildren();
     for (const auto& child: m_old_project->GetChildNodePtrs())
     {
-        project->Adopt(g_NodeCreator.MakeCopy(child.get()));
+        Project.ProjectNode()->Adopt(g_NodeCreator.MakeCopy(child.get()));
     }
 
     wxGetFrame().FireProjectUpdatedEvent();
-    wxGetFrame().SelectNode(project);
+    wxGetFrame().SelectNode(Project.ProjectNode());
 }

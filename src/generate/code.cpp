@@ -12,9 +12,9 @@
 
 #include "code.h"
 
-#include "mainapp.h"        // App class
-#include "node.h"           // Node class
-#include "project_class.h"  // Project class
+#include "mainapp.h"          // App class
+#include "node.h"             // Node class
+#include "project_handler.h"  // ProjectHandler class
 
 using namespace code;
 
@@ -297,13 +297,13 @@ Code::Code(Node* node, int language) : m_node(node), m_language(language)
 {
     if (language == GEN_LANG_CPLUSPLUS)
     {
-        m_break_length = (to_size_t) GetProject()->as_int(prop_cpp_line_length);
+        m_break_length = Project.as_size_t(prop_cpp_line_length);
         // Always assume C++ code has one tab at the beginning of the line
         m_break_length -= m_indent_size;
     }
     else if (language == GEN_LANG_PYTHON)
     {
-        m_break_length = (to_size_t) GetProject()->as_int(prop_python_line_length);
+        m_break_length = Project.as_size_t(prop_python_line_length);
         // Always assume Python code has two tabs at the beginning of the line
         m_break_length -= (m_indent_size * 2);
     }
@@ -837,7 +837,7 @@ Code& Code::QuotedString(ttlib::sview text)
 {
     auto cur_pos = m_code.size();
 
-    if (GetProject()->prop_as_bool(prop_internationalize))
+    if (Project.as_bool(prop_internationalize))
     {
         m_code += is_cpp() ? "_(" : "wx.GetTranslation(";
     }
@@ -902,7 +902,7 @@ Code& Code::QuotedString(ttlib::sview text)
     {
         m_code += ')';
     }
-    if (GetProject()->prop_as_bool(prop_internationalize))
+    if (Project.as_bool(prop_internationalize))
     {
         m_code += ')';
     }
@@ -1490,7 +1490,7 @@ void Code::GenFontColourSettings()
             Add("wxFontInfo font_info(");
             if (point_size != static_cast<int>(point_size))  // is there a fractional value?
             {
-                if (is_cpp() && wxGetProject().value(prop_wxWidgets_version) == "3.1")
+                if (is_cpp() && Project.value(prop_wxWidgets_version) == "3.1")
                 {
                     Eol().Str("#if !wxCHECK_VERSION(3, 1, 2)").Eol().Tab();
 
@@ -1506,7 +1506,7 @@ void Code::GenFontColourSettings()
                 }
                 else
                 {
-                    if (is_cpp() && wxGetProject().value(prop_wxWidgets_version) == "3.1")
+                    if (is_cpp() && Project.value(prop_wxWidgets_version) == "3.1")
                     {
                         Eol().Str("#else // fractional point sizes are new to wxWidgets 3.1.2").Eol().Tab();
                     }
@@ -1520,7 +1520,7 @@ void Code::GenFontColourSettings()
 
                     // REVIEW: [Randalphwa - 12-30-2022] We don't output anything if std::to_chars() results in an error
 
-                    if (is_cpp() && wxGetProject().value(prop_wxWidgets_version) == "3.1")
+                    if (is_cpp() && Project.value(prop_wxWidgets_version) == "3.1")
                     {
                         Eol().Str("#endif");
                     }

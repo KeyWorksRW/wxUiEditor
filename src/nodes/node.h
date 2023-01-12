@@ -373,6 +373,3 @@ private:
 };
 
 using NodeMapEvents = std::unordered_map<std::string, NodeEvent, str_view_hash, std::equal_to<>>;
-
-// Same as wxGetApp() only this returns a reference to the project node
-Node& wxGetProject();

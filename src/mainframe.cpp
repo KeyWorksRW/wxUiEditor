@@ -28,22 +28,22 @@
 
 #include "mainframe.h"
 
-#include "base_generator.h"  // BaseGenerator -- Base widget generator class
-#include "bitmaps.h"         // Map of bitmaps accessed by name
-#include "clipboard.h"       // wxUiEditorData -- Handles reading and writing OS clipboard data
-#include "cstm_event.h"      // CustomEvent -- Custom Event class
-#include "gen_base.h"        // Generate Base class
-#include "gen_enums.h"       // Enumerations for generators
-#include "node.h"            // Node class
-#include "node_creator.h"    // NodeCreator class
-#include "node_gridbag.h"    // GridBag -- Create and modify a node containing a wxGridBagSizer
-#include "node_prop.h"       // NodeProperty -- NodeProperty class
-#include "preferences.h"     // Preferences -- Stores user preferences
-#include "project_class.h"   // Project class
-#include "undo_cmds.h"       // InsertNodeAction -- Undoable command classes derived from UndoAction
-#include "utils.h"           // Utility functions that work with properties
-#include "wakatime.h"        // WakaTime -- Updates WakaTime metrics
-#include "write_code.h"      // Write code to Scintilla or file
+#include "base_generator.h"   // BaseGenerator -- Base widget generator class
+#include "bitmaps.h"          // Map of bitmaps accessed by name
+#include "clipboard.h"        // wxUiEditorData -- Handles reading and writing OS clipboard data
+#include "cstm_event.h"       // CustomEvent -- Custom Event class
+#include "gen_base.h"         // Generate Base class
+#include "gen_enums.h"        // Enumerations for generators
+#include "node.h"             // Node class
+#include "node_creator.h"     // NodeCreator class
+#include "node_gridbag.h"     // GridBag -- Create and modify a node containing a wxGridBagSizer
+#include "node_prop.h"        // NodeProperty -- NodeProperty class
+#include "preferences.h"      // Preferences -- Stores user preferences
+#include "project_handler.h"  // ProjectHandler class
+#include "undo_cmds.h"        // InsertNodeAction -- Undoable command classes derived from UndoAction
+#include "utils.h"            // Utility functions that work with properties
+#include "wakatime.h"         // WakaTime -- Updates WakaTime metrics
+#include "write_code.h"       // Write code to Scintilla or file
 
 #include "panels/base_panel.h"      // BasePanel -- C++ panel
 #include "panels/nav_panel.h"       // NavigationPanel -- Node tree class
@@ -359,35 +359,35 @@ MainFrame::~MainFrame()
 
 void MainFrame::OnSaveProject(wxCommandEvent& event)
 {
-    if (m_isImported || GetProject()->getProjectFile().empty() ||
-        GetProject()->getProjectFile().filename().is_sameas(txtEmptyProject))
+    if (m_isImported || Project.ProjectFile().empty() ||
+        Project.ProjectFile().filename().is_sameas(txtEmptyProject))
         OnSaveAsProject(event);
     else
     {
         pugi::xml_document doc;
-        GetProject()->CreateDoc(doc);
-        if (doc.save_file(GetProject()->getProjectFile().c_str(), "  ", pugi::format_indent_attributes))
+        Project.ProjectNode()->CreateDoc(doc);
+        if (doc.save_file(Project.ProjectFile().utf8_string().c_str(), "  ", pugi::format_indent_attributes))
         {
             m_isProject_modified = false;
             ProjectSaved();
         }
         else
         {
-            wxMessageBox(wxString("Unable to save the project: ") << GetProject()->GetProjectFile(), "Save Project");
+            wxMessageBox(wxString("Unable to save the project: ") << Project.ProjectFile(), "Save Project");
         }
     }
 }
 
 void MainFrame::OnSaveAsProject(wxCommandEvent&)
 {
-    auto filename = GetProject()->GetProjectFile().filename();
+    auto filename = Project.ProjectFile().filename();
     if (filename.is_sameas(txtEmptyProject))
     {
         filename = "MyProject";
     }
 
     // The ".wxue" extension is only used for testing -- all normal projects should have a .wxui extension
-    wxFileDialog dialog(this, "Save Project As", GetProject()->GetProjectPath(), filename,
+    wxFileDialog dialog(this, "Save Project As", Project.ProjectPath(), filename,
                         "wxUiEditor Project File (*.wxui)|*.wxui;*.wxue", wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
 
     if (dialog.ShowModal() == wxID_OK)
@@ -429,14 +429,13 @@ void MainFrame::OnSaveAsProject(wxCommandEvent&)
         }
 
         pugi::xml_document doc;
-        GetProject()->CreateDoc(doc);
+        Project.ProjectNode()->CreateDoc(doc);
         if (doc.save_file(filename.sub_cstr().c_str(), "  ", pugi::format_indent_attributes))
         {
             m_isProject_modified = false;
             m_isImported = false;
             m_FileHistory.AddFileToHistory(filename);
-            GetProject()->SetProjectFile(filename);
-            GetProject()->SetProjectPath(filename);
+            Project.SetProjectFile(filename);
             ProjectSaved();
             FireProjectLoadedEvent();
         }
@@ -470,11 +469,11 @@ void MainFrame::OnOpenProject(wxCommandEvent&)
         if (filename.extension().is_sameas(".wxui", tt::CASE::either) ||
             filename.extension().is_sameas(".wxue", tt::CASE::either))
         {
-            wxGetApp().LoadProject(filename);
+            Project.LoadProject(filename);
         }
         else
         {
-            wxGetApp().ImportProject(filename);
+            Project.ImportProject(filename);
         }
     };
 }
@@ -488,7 +487,7 @@ void MainFrame::OnAppendCrafter(wxCommandEvent&)
     {
         wxArrayString files;
         dlg.GetPaths(files);
-        wxGetApp().AppendCrafter(files);
+        Project.AppendCrafter(files);
     }
 }
 
@@ -501,7 +500,7 @@ void MainFrame::OnAppendFormBuilder(wxCommandEvent&)
     {
         wxArrayString files;
         dlg.GetPaths(files);
-        wxGetApp().AppendFormBuilder(files);
+        Project.AppendFormBuilder(files);
     }
 }
 
@@ -514,7 +513,7 @@ void MainFrame::OnAppendGlade(wxCommandEvent&)
     {
         wxArrayString files;
         dlg.GetPaths(files);
-        wxGetApp().AppendGlade(files);
+        Project.AppendGlade(files);
     }
 }
 
@@ -527,7 +526,7 @@ void MainFrame::OnAppendSmith(wxCommandEvent&)
     {
         wxArrayString files;
         dlg.GetPaths(files);
-        wxGetApp().AppendSmith(files);
+        Project.AppendSmith(files);
     }
 }
 
@@ -540,7 +539,7 @@ void MainFrame::OnAppendXRC(wxCommandEvent&)
     {
         wxArrayString files;
         dlg.GetPaths(files);
-        wxGetApp().AppendXRC(files);
+        Project.AppendXRC(files);
     }
 }
 
@@ -553,7 +552,7 @@ void MainFrame::OnOpenRecentProject(wxCommandEvent& event)
 
     if (file.file_exists())
     {
-        wxGetApp().LoadProject(file);
+        Project.LoadProject(file);
     }
     else if (wxMessageBox(
                  wxString().Format(
@@ -573,15 +572,15 @@ void MainFrame::OnImportRecent(wxCommandEvent& event)
     files.Add(file);
     auto extension = file.extension();
     if (extension == ".wxcp")
-        wxGetApp().AppendCrafter(files);
+        Project.AppendCrafter(files);
     else if (extension == ".fbp")
-        wxGetApp().AppendFormBuilder(files);
+        Project.AppendFormBuilder(files);
     else if (extension == ".wxg")
-        wxGetApp().AppendGlade(files);
+        Project.AppendGlade(files);
     else if (extension == ".wxs")
-        wxGetApp().AppendSmith(files);
+        Project.AppendSmith(files);
     else if (extension == ".xrc")
-        wxGetApp().AppendXRC(files);
+        Project.AppendXRC(files);
 }
 #endif  // defined(_DEBUG) || defined(INTERNAL_TESTING)
 
@@ -591,7 +590,7 @@ void MainFrame::OnNewProject(wxCommandEvent&)
         return;
 
     // true means create an empty project
-    wxGetApp().NewProject(true);
+    Project.NewProject(true);
 }
 
 void MainFrame::OnImportProject(wxCommandEvent&)
@@ -599,7 +598,7 @@ void MainFrame::OnImportProject(wxCommandEvent&)
     if (!SaveWarning())
         return;
 
-    wxGetApp().NewProject();
+    Project.NewProject();
 }
 
 namespace wxue_img
@@ -678,13 +677,13 @@ void MainFrame::OnClose(wxCloseEvent& event)
 
 void MainFrame::ProjectLoaded()
 {
-    GetProject()->GetProjectPath().ChangeDir();
+    Project.ChangeDir();
     setStatusText("Project loaded");
     if (!m_isImported)
     {
-        if (!GetProject()->GetProjectFile().filename().is_sameas(txtEmptyProject))
+        if (!Project.ProjectFile().filename().is_sameas(txtEmptyProject))
         {
-            m_FileHistory.AddFileToHistory(GetProject()->GetProjectFile());
+            m_FileHistory.AddFileToHistory(Project.ProjectFile());
         }
         m_isProject_modified = false;
     }
@@ -703,12 +702,12 @@ void MainFrame::ProjectLoaded()
              });
     }
 
-    m_selected_node = wxGetApp().GetProjectPtr();
+    m_selected_node = Project.ProjectNode()->GetSharedPtr();
 }
 
 void MainFrame::ProjectSaved()
 {
-    setStatusText(ttlib::cstr(GetProject()->getProjectFile().filename()) << " saved");
+    setStatusText(ttlib::cstr(Project.ProjectFile().filename().utf8_string()) << " saved");
     UpdateFrame();
 }
 
@@ -814,7 +813,7 @@ void MainFrame::UpdateLayoutTools()
 
 void MainFrame::UpdateFrame()
 {
-    ttString filename = GetProject()->GetProjectFile().filename();
+    ttString filename = Project.ProjectFile().filename();
 
     if (filename.empty())
     {
@@ -1400,7 +1399,7 @@ void MainFrame::PasteNode(Node* parent)
 
     auto new_node = g_NodeCreator.MakeCopy(m_clipboard.get(), parent);
     if (new_node->IsForm())
-        GetProject()->FixupDuplicatedNode(new_node.get());
+        Project.FixupDuplicatedNode(new_node.get());
 
     if (!parent->IsChildAllowed(new_node))
     {
@@ -1436,7 +1435,7 @@ void MainFrame::DuplicateNode(Node* node)
 
     auto new_node = g_NodeCreator.MakeCopy(node);
     if (new_node->IsForm())
-        GetProject()->FixupDuplicatedNode(new_node.get());
+        Project.FixupDuplicatedNode(new_node.get());
     auto* parent = node->GetParent();
     if (parent->isGen(gen_wxGridBagSizer))
     {

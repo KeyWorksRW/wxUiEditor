@@ -18,7 +18,6 @@
 
 #include "../panels/propgrid_panel.h"  // PropGridPanel -- PropertyGrid class for node properties and events
 #include "node.h"                      // Node class
-#include "project_class.h"             // Project class
 #include "utils.h"                     // Utility functions that work with properties
 
 #ifndef SCI_SETKEYWORDS

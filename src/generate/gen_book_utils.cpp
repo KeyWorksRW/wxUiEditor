@@ -1,14 +1,15 @@
 //////////////////////////////////////////////////////////////////////////
 // Purpose:   Common Book utilities
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
 #include <wx/bookctrl.h>  // wxBookCtrlBase: common base class for wxList/Tree/Notebook
 
-#include "gen_common.h"  // Common component functions
-#include "node.h"        // Node class
+#include "gen_common.h"       // Common component functions
+#include "node.h"             // Node class
+#include "project_handler.h"  // ProjectHandler class
 
 #include "gen_book_utils.h"
 
@@ -117,7 +118,7 @@ void BookCtorAddImagelist(ttlib::cstr& code, Node* node)
         // code more readable.
 
         code << "\n{";
-        if (wxGetProject().value(prop_wxWidgets_version) == "3.1")
+        if (Project.value(prop_wxWidgets_version) == "3.1")
         {
             code << "\n#if wxCHECK_VERSION(3, 1, 6)";
         }
@@ -144,7 +145,7 @@ void BookCtorAddImagelist(ttlib::cstr& code, Node* node)
         }
         code << "\n\t" << node->get_node_name() << "->SetImages(bundle_list);";
 
-        if (wxGetProject().value(prop_wxWidgets_version) == "3.1")
+        if (Project.value(prop_wxWidgets_version) == "3.1")
         {
             code << "\n\n#else  // older version of wxWidgets that don't support bitmap bundles\n";
 

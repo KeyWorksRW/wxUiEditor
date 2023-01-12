@@ -91,7 +91,6 @@ bool InsertWidget::Create(wxWindow* parent, wxWindowID id, const wxString& title
 #include "mainframe.h"      // MainFrame -- Main window frame
 #include "node.h"           // Node class
 #include "node_creator.h"   // NodeCreator -- Class used to create nodes
-#include "project_class.h"  // Project class
 
 void MainFrame::OnInsertWidget(wxCommandEvent&)
 {

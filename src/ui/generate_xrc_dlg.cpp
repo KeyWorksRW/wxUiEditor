@@ -9,7 +9,7 @@
 
 #include "generate_xrc_dlg.h"  // auto-generated: ../wxui/generate_xrc_dlg_base.h and ../wxui/generate_xrc_dlg_base.cpp
 
-#include "project_class.h"  // Project class
+#include "project_handler.h"  // ProjectHandler class
 
 // If this constructor is used, the caller must call Create(parent)
 GenerateXrcDlg::GenerateXrcDlg() {}
@@ -21,15 +21,13 @@ GenerateXrcDlg::GenerateXrcDlg(wxWindow* parent)
 
 void GenerateXrcDlg::OnInit(wxInitDialogEvent& event)
 {
-    m_project = GetProject();
-
-    if (m_project->HasValue(prop_combined_xrc_file))
+    if (Project.HasValue(prop_combined_xrc_file))
     {
-        m_filename = m_project->value(prop_combined_xrc_file).wx_str();
+        m_filename = Project.value(prop_combined_xrc_file).wx_str();
         m_filePicker->SetPath(m_filename);
     }
     std::vector<Node*> forms;
-    m_project->CollectForms(forms);
+    Project.CollectForms(forms);
 
     for (auto& form: forms)
     {
@@ -39,7 +37,7 @@ void GenerateXrcDlg::OnInit(wxInitDialogEvent& event)
         }
     }
 
-    m_create_combined = m_project->as_bool(prop_combine_all_forms);
+    m_create_combined = Project.as_bool(prop_combine_all_forms);
     wxCommandEvent dummy;
     if (m_create_combined)
     {

@@ -14,12 +14,13 @@
 
 #include "images_form.h"
 
-#include "bitmaps.h"        // Contains various images handling functions
-#include "gen_base.h"       // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
-#include "mainframe.h"      // MainFrame -- Main window frame
-#include "node.h"           // Node class
-#include "project_class.h"  // Project class
-#include "write_code.h"     // Write code to Scintilla or file
+#include "bitmaps.h"          // Contains various images handling functions
+#include "gen_base.h"         // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
+#include "image_handler.h"    // ImageHandler class
+#include "mainframe.h"        // MainFrame -- Main window frame
+#include "node.h"             // Node class
+#include "project_handler.h"  // ProjectHandler class
+#include "write_code.h"       // Write code to Scintilla or file
 
 #include "ui_images.h"
 
@@ -42,7 +43,7 @@ wxObject* ImagesGenerator::CreateMockup(Node* /* node */, wxObject* wxobject)
     auto node = wxGetFrame().GetSelectedNode();
     if (node->isGen(gen_embedded_image))
     {
-        auto bundle = GetProject()->GetPropertyImageBundle(node->prop_as_string(prop_bitmap));
+        auto bundle = ProjectImages.GetPropertyImageBundle(node->prop_as_string(prop_bitmap));
 
         ttlib::multiview mstr(node->prop_as_string(prop_bitmap), ';');
 
@@ -151,7 +152,7 @@ void BaseCodeGenerator::GenerateImagesForm()
         return;
     }
 
-    bool is_old_widgets = (GetProject()->value(prop_wxWidgets_version) == "3.1");
+    bool is_old_widgets = (Project.value(prop_wxWidgets_version) == "3.1");
 
     if (m_panel_type != HDR_PANEL)
     {
@@ -248,10 +249,10 @@ void BaseCodeGenerator::GenerateImagesForm()
 
             for (const auto& child: m_form_node->GetChildNodePtrs())
             {
-                if (auto bundle = GetProject()->GetPropertyImageBundle(child->prop_as_string(prop_bitmap));
+                if (auto bundle = ProjectImages.GetPropertyImageBundle(child->prop_as_string(prop_bitmap));
                     bundle && bundle->lst_filenames.size())
                 {
-                    auto embed = GetProject()->GetEmbeddedImage(bundle->lst_filenames[0]);
+                    auto embed = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[0]);
                     if (embed->type == wxBITMAP_TYPE_INVALID)
                     {
                         continue;  // This is an SVG image which we already handled
@@ -273,11 +274,11 @@ void BaseCodeGenerator::GenerateImagesForm()
                         m_source->writeLine("return wxueBundleBitmaps(");
                         m_source->Indent();
                         code = "wxBitmap(wxueImage(";
-                        embed = GetProject()->GetEmbeddedImage(bundle->lst_filenames[0]);
+                        embed = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[0]);
                         code << embed->array_name << ", " << embed->array_size << ")),";
                         m_source->writeLine(code);
                         code.clear();
-                        embed = GetProject()->GetEmbeddedImage(bundle->lst_filenames[1]);
+                        embed = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[1]);
                         code << "wxBitmap(wxueImage(" << embed->array_name << ", " << embed->array_size << ")),";
                         m_source->writeLine(code);
                         code.clear();
@@ -287,7 +288,7 @@ void BaseCodeGenerator::GenerateImagesForm()
                         }
                         else
                         {
-                            embed = GetProject()->GetEmbeddedImage(bundle->lst_filenames[2]);
+                            embed = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[2]);
                             code = "wxBitmap(wxueImage(";
                             code << embed->array_name << ", " << embed->array_size << ")));";
                         }
@@ -336,7 +337,7 @@ void BaseCodeGenerator::GenerateImagesForm()
 
             m_source->writeLine();
             ttlib::cstr code;
-            code.reserve(GetProject()->as_int(prop_cpp_line_length) + 16);
+            code.reserve(Project.as_size_t(prop_cpp_line_length) + 16);
             // SVG images store the original size in the high 32 bits
             size_t max_pos = (iter_array->array_size & 0xFFFFFFFF);
             code << "const unsigned char " << iter_array->array_name << '[' << max_pos << "] {";
@@ -347,7 +348,7 @@ void BaseCodeGenerator::GenerateImagesForm()
             {
                 code.clear();
                 // -8 to account for 4 indent + max 3 chars for number + comma
-                for (; pos < max_pos && code.size() < (to_size_t) GetProject()->as_int(prop_cpp_line_length) - 8; ++pos)
+                for (; pos < max_pos && code.size() < Project.as_size_t(prop_cpp_line_length) - 8; ++pos)
                 {
                     code << (to_int) iter_array->array_data[pos] << ',';
                 }
@@ -417,10 +418,10 @@ void BaseCodeGenerator::GenerateImagesForm()
 
         for (const auto& child: m_form_node->GetChildNodePtrs())
         {
-            if (auto bundle = GetProject()->GetPropertyImageBundle(child->prop_as_string(prop_bitmap));
+            if (auto bundle = ProjectImages.GetPropertyImageBundle(child->prop_as_string(prop_bitmap));
                 bundle && bundle->lst_filenames.size())
             {
-                auto embed = GetProject()->GetEmbeddedImage(bundle->lst_filenames[0]);
+                auto embed = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[0]);
                 if (embed->type == wxBITMAP_TYPE_INVALID)
                 {
                     continue;  // This is an SVG image which we already handled

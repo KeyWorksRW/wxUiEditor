@@ -19,8 +19,8 @@
 #include "node.h"           // Node -- Node class
 #include "node_creator.h"   // NodeCreator class
 #include "preferences.h"    // Set/Get wxUiEditor preferences
-#include "project_class.h"  // Project class
 #include "utils.h"          // Utility functions that work with properties
+#include "project_handler.h"  // ProjectHandler class
 
 #include "wxui/startupdlg_base.h"  // CStartup -- Dialog to display is wxUE is launched with no arguments
 
@@ -138,11 +138,11 @@ int App::OnRun()
             if (!filename.extension().is_sameas(".wxui", tt::CASE::either) &&
                 !filename.extension().is_sameas(".wxue", tt::CASE::either))
             {
-                is_project_loaded = ImportProject(filename);
+                is_project_loaded = Project.ImportProject(filename);
             }
             else
             {
-                is_project_loaded = LoadProject(filename);
+                is_project_loaded = Project.LoadProject(filename);
             }
         }
     }
@@ -158,20 +158,20 @@ int App::OnRun()
                     if (!start_dlg.GetProjectFile().extension().is_sameas(".wxui", tt::CASE::either) &&
                         !start_dlg.GetProjectFile().extension().is_sameas(".wxue", tt::CASE::either))
                     {
-                        is_project_loaded = ImportProject(start_dlg.GetProjectFile());
+                        is_project_loaded = Project.ImportProject(start_dlg.GetProjectFile());
                     }
                     else
                     {
-                        is_project_loaded = LoadProject(start_dlg.GetProjectFile());
+                        is_project_loaded = Project.LoadProject(start_dlg.GetProjectFile());
                     }
                     break;
 
                 case StartupDlg::START_EMPTY:
-                    is_project_loaded = NewProject(true);
+                    is_project_loaded = Project.NewProject(true);
                     break;
 
                 case StartupDlg::START_CONVERT:
-                    is_project_loaded = NewProject(false);
+                    is_project_loaded = Project.NewProject(false);
                     break;
 
                 case StartupDlg::START_OPEN:
@@ -196,11 +196,11 @@ int App::OnRun()
                             if (!filename.extension().is_sameas(".wxui", tt::CASE::either) &&
                                 !filename.extension().is_sameas(".wxue", tt::CASE::either))
                             {
-                                is_project_loaded = ImportProject(filename);
+                                is_project_loaded = Project.ImportProject(filename);
                             }
                             else
                             {
-                                is_project_loaded = LoadProject(dialog.GetPath());
+                                is_project_loaded = Project.LoadProject(dialog.GetPath());
                             }
                         }
                     }
@@ -230,9 +230,6 @@ int App::OnRun()
 
 int App::OnExit()
 {
-    // This must get deleted in order to stop any thread it started to process embedded images
-    m_project.reset();
-
     return wxApp::OnExit();
 }
 

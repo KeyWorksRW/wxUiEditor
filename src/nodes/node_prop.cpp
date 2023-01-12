@@ -13,10 +13,10 @@
 #include <wx/propgrid/propgriddefs.h>  // wxPropertyGrid miscellaneous definitions
 
 #include "font_prop.h"      // FontProperty -- FontProperty class
+#include "image_handler.h"  // ImageHandler class
 #include "mainapp.h"        // App -- Main application class
 #include "node.h"           // Node -- Node class
 #include "node_creator.h"   // NodeCreator class
-#include "project_class.h"  // Project class
 #include "utils.h"          // Utility functions that work with properties
 
 #include "node_prop.h"
@@ -290,16 +290,22 @@ FontProperty NodeProperty::as_font_prop() const
 
 wxBitmap NodeProperty::as_bitmap() const
 {
-    auto image = GetProject()->GetImage(m_value);
+    auto image = ProjectImages.GetImage(m_value);
     if (!image.IsOk())
-        return wxNullBitmap;
-    else
-        return image;
+    {
+        image = ProjectImages.GetImage(m_value);
+        if (!image.IsOk())
+        {
+            return wxNullBitmap;
+        }
+    }
+
+    return image;
 }
 
 wxBitmapBundle NodeProperty::as_bitmap_bundle() const
 {
-    auto bundle = GetProject()->GetBitmapBundle(m_value, m_node);
+    auto bundle = ProjectImages.GetBitmapBundle(m_value, m_node);
     if (!bundle.IsOk())
         return wxNullBitmap;
     else
@@ -308,7 +314,7 @@ wxBitmapBundle NodeProperty::as_bitmap_bundle() const
 
 const ImageBundle* NodeProperty::as_image_bundle() const
 {
-    auto bundle_ptr = GetProject()->GetPropertyImageBundle(m_value);
+    auto bundle_ptr = ProjectImages.GetPropertyImageBundle(m_value);
     if (!bundle_ptr || !bundle_ptr->bundle.IsOk())
         return nullptr;
     else
@@ -317,7 +323,7 @@ const ImageBundle* NodeProperty::as_image_bundle() const
 
 wxAnimation NodeProperty::as_animation() const
 {
-    return GetProject()->GetPropertyAnimation(m_value);
+    return ProjectImages.GetPropertyAnimation(m_value);
 }
 
 ttlib::cstr NodeProperty::as_escape_text() const

@@ -12,7 +12,7 @@
 #include "new_common.h"           // Contains code common between all new_ dialogs
 #include "node.h"                 // Node class
 #include "node_creator.h"         // NodeCreator -- Class used to create nodes
-#include "project_class.h"        // Project class
+#include "project_handler.h"      // ProjectHandler class
 #include "undo_cmds.h"            // InsertNodeAction -- Undoable command classes derived from UndoAction
 
 void NewWizard::OnInit(wxInitDialogEvent& event)
@@ -61,11 +61,11 @@ void NewWizard::CreateNode()
         UpdateFormClass(new_node.get());
     }
 
-    auto project = GetProject();
-    wxGetFrame().SelectNode(project);
+    wxGetFrame().SelectNode(Project.ProjectNode());
 
     ttlib::cstr undo_str("New wxWizard");
-    wxGetFrame().PushUndoAction(std::make_shared<InsertNodeAction>(new_node.get(), project, undo_str, -1));
+    wxGetFrame().PushUndoAction(
+        std::make_shared<InsertNodeAction>(new_node.get(), Project.ProjectNode(), undo_str, -1));
     wxGetFrame().FireCreatedEvent(new_node);
     wxGetFrame().SelectNode(new_node, evt_flags::fire_event | evt_flags::force_selection);
     wxGetFrame().GetNavigationPanel()->ChangeExpansion(new_node.get(), true, true);

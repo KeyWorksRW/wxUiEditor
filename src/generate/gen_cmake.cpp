@@ -1,7 +1,7 @@
 //////////////////////////////////////////////////////////////////////////
 // Purpose:   Auto-generate a .cmake file
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2021-2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2021-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -10,16 +10,14 @@
 #include <ttcwd_wx.h>       // cwd -- Class for storing and optionally restoring the current directory
 #include <tttextfile_wx.h>  // textfile -- Classes for reading and writing line-oriented files
 
-#include "gen_base.h"       // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
-#include "node.h"           // Node class
-#include "project_class.h"  // Project class
+#include "gen_base.h"         // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
+#include "node.h"             // Node class
+#include "project_handler.h"  // ProjectHandler class
 
 int WriteCMakeFile(Node* parent_node, std::vector<ttlib::cstr>& updated_files, std::vector<ttlib::cstr>& results)
 {
-    auto project = GetProject();
-
-    if (!project->prop_as_bool(prop_generate_cmake) ||
-        (parent_node->isGen(gen_Project) && !project->HasValue(prop_cmake_file)))
+    if (!Project.as_bool(prop_generate_cmake) ||
+        (parent_node->isGen(gen_Project) && !Project.HasValue(prop_cmake_file)))
     {
         return result::exists;
     }
@@ -33,10 +31,10 @@ int WriteCMakeFile(Node* parent_node, std::vector<ttlib::cstr>& updated_files, s
     // The generated files make be in a different directory then the project file, and if so, we
     // need to tread that directory as the root of the file.
 
-    ttlib::cstr cmake_file = project->as_string(prop_cmake_file);
+    ttlib::cstr cmake_file = Project.value(prop_cmake_file);
     if (parent_node->isGen(gen_folder) && parent_node->HasValue(prop_folder_cmake_file))
     {
-        cmake_file = parent_node->as_string(prop_folder_cmake_file);
+        cmake_file = parent_node->value(prop_folder_cmake_file);
     }
     if (cmake_file.starts_with(".."))
     {
@@ -46,7 +44,7 @@ int WriteCMakeFile(Node* parent_node, std::vector<ttlib::cstr>& updated_files, s
     }
     else
     {
-        ttlib::ChangeDir(GetProject()->getProjectPath());
+        Project.ProjectPath().ChangeDir();
     }
     if (cmake_file.find('.') == tt::npos)
     {
@@ -69,24 +67,24 @@ int WriteCMakeFile(Node* parent_node, std::vector<ttlib::cstr>& updated_files, s
     out.emplace_back();
 
     out.emplace_back();
-    ttlib::cstr var_name(project->as_string(prop_cmake_varname));
+    ttlib::cstr var_name(Project.value(prop_cmake_varname));
     if (parent_node->isGen(gen_folder) && parent_node->HasValue(prop_folder_cmake_varname))
     {
-        var_name = parent_node->as_string(prop_folder_cmake_varname);
+        var_name = parent_node->value(prop_folder_cmake_varname);
     }
     out.at(out.size() - 1) << "set (" << var_name;
     out.emplace_back();
 
     std::set<ttlib::cstr> base_files;
     std::vector<Node*> forms;
-    project->CollectForms(forms, parent_node);
+    Project.CollectForms(forms, parent_node);
 
     for (const auto& iter: forms)
     {
         if (!iter->HasValue(prop_base_file))
             continue;
 
-        if (parent_node == project)
+        if (parent_node == Project.ProjectNode())
         {
             if (auto* node_folder = iter->get_folder(); node_folder && node_folder->HasValue(prop_folder_cmake_file))
             {
@@ -96,18 +94,18 @@ int WriteCMakeFile(Node* parent_node, std::vector<ttlib::cstr>& updated_files, s
         }
 
         // ttlib::cstr path = iter->prop_as_string(prop_base_file);
-        ttlib::cstr path = project->as_string(prop_base_directory);
+        ttlib::cstr path = Project.value(prop_base_directory);
         if (parent_node->isGen(gen_folder) && parent_node->HasValue(prop_folder_base_directory))
         {
-            path = parent_node->as_string(prop_folder_base_directory);
+            path = parent_node->value(prop_folder_base_directory);
         }
         if (path.size())
         {
-            path.append_filename(iter->prop_as_string(prop_base_file).filename());
+            path.append_filename(iter->value(prop_base_file).filename());
         }
         else
         {
-            path = iter->prop_as_string(prop_base_file);
+            path = iter->value(prop_base_file);
         }
 
         if (cmake_file_dir.size())
@@ -123,7 +121,7 @@ int WriteCMakeFile(Node* parent_node, std::vector<ttlib::cstr>& updated_files, s
         base_file.remove_extension();
 
         ttlib::cstr source_ext(".cpp");
-        if (auto& extProp = project->prop_as_string(prop_source_ext); extProp.size())
+        if (auto& extProp = Project.value(prop_source_ext); extProp.size())
         {
             source_ext = extProp;
         }

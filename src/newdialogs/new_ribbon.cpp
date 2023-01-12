@@ -101,8 +101,7 @@ void NewRibbon::CreateNode()
         wxGetFrame().SelectNode(Project.ProjectNode());
 
         ttlib::cstr undo_str("New wxRibbonBar");
-        wxGetFrame().PushUndoAction(
-            std::make_shared<InsertNodeAction>(bar_node.get(), Project.ProjectNode(), undo_str, -1));
+        wxGetFrame().PushUndoAction(std::make_shared<InsertNodeAction>(bar_node.get(), Project.ProjectNode(), undo_str, -1));
     }
 
     wxGetFrame().FireCreatedEvent(bar_node);

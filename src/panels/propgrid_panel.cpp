@@ -454,7 +454,7 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
         else if (prop->isProp(prop_derived_file))
         {
             new_pg_property->SetAttribute(wxPG_DIALOG_TITLE, "Derived class filename");
-            new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH,Project.DerivedDirectory());
+            new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH, Project.DerivedDirectory());
             new_pg_property->SetAttribute(wxPG_FILE_SHOW_RELATIVE_PATH, Project.ProjectPath());
             new_pg_property->SetAttribute(wxPG_FILE_DIALOG_STYLE, wxFD_SAVE);
             new_pg_property->SetAttribute(wxPG_FILE_WILDCARD, "C++ Files|*.cpp;*.cc;*.cxx");
@@ -1615,8 +1615,7 @@ void PropGridPanel::CreatePropCategory(ttlib::sview name, Node* node, NodeDeclar
     else if (name.contains("wxPython"))
     {
         m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#fff1d2"));
-        if (Project.value(prop_code_preference) != "any" &&
-            Project.value(prop_code_preference) != "Python")
+        if (Project.value(prop_code_preference) != "any" && Project.value(prop_code_preference) != "Python")
         {
             m_prop_grid->Collapse(id);
         }

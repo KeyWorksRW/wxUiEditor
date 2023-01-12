@@ -88,9 +88,9 @@ bool InsertWidget::Create(wxWindow* parent, wxWindowID id, const wxString& title
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include "mainframe.h"      // MainFrame -- Main window frame
-#include "node.h"           // Node class
-#include "node_creator.h"   // NodeCreator -- Class used to create nodes
+#include "mainframe.h"     // MainFrame -- Main window frame
+#include "node.h"          // Node class
+#include "node_creator.h"  // NodeCreator -- Class used to create nodes
 
 void MainFrame::OnInsertWidget(wxCommandEvent&)
 {

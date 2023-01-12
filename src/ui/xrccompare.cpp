@@ -22,8 +22,8 @@
 
 #include "xrccompare.h"  // auto-generated: xrccompare_base.h and xrccompare_base.cpp
 
-#include "mainframe.h"      // MainFrame -- Main window frame
-#include "node.h"           // Node class
+#include "mainframe.h"  // MainFrame -- Main window frame
+#include "node.h"       // Node class
 
 // Defined in mockup_preview.cpp
 void CreateMockupChildren(Node* node, wxWindow* parent, wxObject* parentNode, wxSizer* parent_sizer, wxWindow* form_window);

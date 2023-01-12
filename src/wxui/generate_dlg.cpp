@@ -72,9 +72,9 @@ bool GenerateDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include "gen_base.h"       // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
-#include "image_handler.h"  // ImageHandler class
-#include "mainframe.h"      // MainFrame -- Main application window
+#include "gen_base.h"         // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
+#include "image_handler.h"    // ImageHandler class
+#include "mainframe.h"        // MainFrame -- Main application window
 #include "project_handler.h"  // ProjectHandler class
 
 #include "../wxui/dlg_gen_results.h"

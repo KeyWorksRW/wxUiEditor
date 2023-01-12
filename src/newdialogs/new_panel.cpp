@@ -101,8 +101,7 @@ void NewPanel::CreateNode()
         wxGetFrame().SelectNode(Project.ProjectNode());
 
         ttlib::cstr undo_str("New wxPanel");
-        wxGetFrame().PushUndoAction(
-            std::make_shared<InsertNodeAction>(new_node.get(), Project.ProjectNode(), undo_str, -1));
+        wxGetFrame().PushUndoAction(std::make_shared<InsertNodeAction>(new_node.get(), Project.ProjectNode(), undo_str, -1));
     }
 
     wxGetFrame().FireCreatedEvent(new_node);

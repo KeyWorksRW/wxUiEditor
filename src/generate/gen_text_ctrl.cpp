@@ -9,14 +9,15 @@
 #include <wx/propgrid/manager.h>  // wxPropertyGridManager
 #include <wx/textctrl.h>          // wxTextAttr and wxTextCtrlBase class - the interface of wxTextCtrl
 
-#include "code.h"           // Code -- Helper class for generating code
-#include "gen_common.h"     // GeneratorLibrary -- Generator classes
-#include "gen_xrc_utils.h"  // Common XRC generating functions
-#include "mainframe.h"      // MainFrame -- Main window frame
-#include "node.h"           // Node class
-#include "pugixml.hpp"      // xml read/write/create/process
-#include "utils.h"          // Utility functions that work with properties
-#include "write_code.h"     // WriteCode -- Write code to Scintilla or file
+#include "code.h"             // Code -- Helper class for generating code
+#include "gen_common.h"       // GeneratorLibrary -- Generator classes
+#include "gen_xrc_utils.h"    // Common XRC generating functions
+#include "mainframe.h"        // MainFrame -- Main window frame
+#include "node.h"             // Node class
+#include "project_handler.h"  // ProjectHandler class
+#include "pugixml.hpp"        // xml read/write/create/process
+#include "utils.h"            // Utility functions that work with properties
+#include "write_code.h"       // WriteCode -- Write code to Scintilla or file
 
 #include "gen_text_ctrl.h"
 
@@ -169,7 +170,7 @@ bool TextCtrlGenerator::SettingsCode(Code& code)
     {
         if (code.is_cpp())
         {
-            if (wxGetProject().value(prop_wxWidgets_version) == "3.1")
+            if (Project.value(prop_wxWidgets_version) == "3.1")
             {
                 code.Eol() << "#if wxCHECK_VERSION(3, 1, 6)";
                 code.Eol().Tab().NodeName() << "->EnableProofCheck(wxTextProofOptions::Default()";

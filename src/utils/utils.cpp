@@ -132,7 +132,7 @@ int ConvertBitlistToInt(ttlib::sview list)
         ttlib::multistr mstr(list, '|');
         for (auto& iter: mstr)
         {
-            result |= g_NodeCreator.GetConstantAsInt(iter);
+            result |= NodeCreation.GetConstantAsInt(iter);
         }
     }
     return result;

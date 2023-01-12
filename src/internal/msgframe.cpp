@@ -13,13 +13,13 @@
 
 #include "msgframe.h"  // auto-generated: msgframe_base.h and msgframe_base.cpp
 
-#include "base_generator.h"  // BaseGenerator -- Base widget generator class
-#include "gen_xrc.h"         // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
-#include "mainapp.h"         // App -- Main application class
-#include "mainframe.h"       // MainFrame -- Main window frame
-#include "node.h"            // Node class
-#include "preferences.h"     // Set/Get wxUiEditor preferences
-#include "project_class.h"   // Project class
+#include "base_generator.h"   // BaseGenerator -- Base widget generator class
+#include "gen_xrc.h"          // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
+#include "mainapp.h"          // App -- Main application class
+#include "mainframe.h"        // MainFrame -- Main window frame
+#include "node.h"             // Node class
+#include "preferences.h"      // Set/Get wxUiEditor preferences
+#include "project_handler.h"  // ProjectHandler class
 
 #include "pugixml.hpp"
 
@@ -339,8 +339,7 @@ void MsgFrame::UpdateNodeInfo()
             m_hyperlink->SetURL(url);
         }
 
-        auto project = GetProject();
-        CalcNodeMemory(project, node_memory);
+        CalcNodeMemory(Project.ProjectNode(), node_memory);
 
         label.Format("Project: %kzu (%kzu nodes)", node_memory.size, node_memory.children);
         m_txt_project->SetLabel(label);

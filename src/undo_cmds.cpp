@@ -14,7 +14,7 @@
 #include "node.h"                 // Node class
 #include "node_creator.h"         // NodeCreator -- Class used to create nodes
 #include "node_gridbag.h"         // GridBag -- Create and modify a node containing a wxGridBagSizer
-#include "project_class.h"        // Project class
+#include "project_handler.h"      // ProjectHandler class
 
 ///////////////////////////////// InsertNodeAction ////////////////////////////////////
 
@@ -264,7 +264,7 @@ ChangeSizerType::ChangeSizerType(Node* node, GenEnum::GenName new_gen_sizer)
     m_parent = node->GetParentPtr();
     m_new_gen_sizer = new_gen_sizer;
 
-    m_node = g_NodeCreator.NewNode(m_new_gen_sizer);
+    m_node = NodeCreation.NewNode(m_new_gen_sizer);
     ASSERT(m_node);
     if (m_node)
     {
@@ -284,7 +284,7 @@ ChangeSizerType::ChangeSizerType(Node* node, GenEnum::GenName new_gen_sizer)
 
         for (const auto& iter: m_old_node->GetChildNodePtrs())
         {
-            m_node->Adopt(g_NodeCreator.MakeCopy(iter.get()));
+            m_node->Adopt(NodeCreation.MakeCopy(iter.get()));
         }
     }
 }
@@ -379,7 +379,7 @@ ChangeNodeType::ChangeNodeType(Node* node, GenEnum::GenName new_node)
     m_parent = node->GetParentPtr();
     m_new_gen_node = new_node;
 
-    m_node = g_NodeCreator.NewNode(m_new_gen_node);
+    m_node = NodeCreation.NewNode(m_new_gen_node);
     ASSERT(m_node);
     if (m_node)
     {
@@ -391,7 +391,7 @@ ChangeNodeType::ChangeNodeType(Node* node, GenEnum::GenName new_node)
 
         for (const auto& iter: m_old_node->GetChildNodePtrs())
         {
-            m_node->Adopt(g_NodeCreator.MakeCopy(iter.get()));
+            m_node->Adopt(NodeCreation.MakeCopy(iter.get()));
         }
     }
 }
@@ -554,7 +554,7 @@ GridBagAction::GridBagAction(Node* cur_gbsizer, const ttlib::cstr& undo_str) : U
     m_UndoSelectEventGenerated = true;
 
     m_cur_gbsizer = cur_gbsizer->GetSharedPtr();
-    m_old_gbsizer = g_NodeCreator.MakeCopy(cur_gbsizer);
+    m_old_gbsizer = NodeCreation.MakeCopy(cur_gbsizer);
 
     auto nav_panel = wxGetFrame().GetNavigationPanel();
 
@@ -579,12 +579,12 @@ void GridBagAction::Change()
             nav_panel->EraseAllMaps(child.get());
         }
 
-        auto save = g_NodeCreator.MakeCopy(m_cur_gbsizer);
+        auto save = NodeCreation.MakeCopy(m_cur_gbsizer);
         m_cur_gbsizer->RemoveAllChildren();
 
         for (const auto& child: m_old_gbsizer->GetChildNodePtrs())
         {
-            m_cur_gbsizer->Adopt(g_NodeCreator.MakeCopy(child.get()));
+            m_cur_gbsizer->Adopt(NodeCreation.MakeCopy(child.get()));
         }
         m_old_gbsizer = std::move(save);
         m_isReverted = false;
@@ -607,11 +607,11 @@ void GridBagAction::Revert()
         nav_panel->EraseAllMaps(child.get());
     }
 
-    auto save = g_NodeCreator.MakeCopy(m_cur_gbsizer);
+    auto save = NodeCreation.MakeCopy(m_cur_gbsizer);
     m_cur_gbsizer->RemoveAllChildren();
     for (const auto& child: m_old_gbsizer->GetChildNodePtrs())
     {
-        m_cur_gbsizer->Adopt(g_NodeCreator.MakeCopy(child.get()));
+        m_cur_gbsizer->Adopt(NodeCreation.MakeCopy(child.get()));
     }
     m_old_gbsizer = std::move(save);
     m_isReverted = true;
@@ -662,18 +662,17 @@ SortProjectAction::SortProjectAction()
 
     m_undo_string = "Sort Project";
 
-    m_old_project = g_NodeCreator.MakeCopy(GetProject());
+    m_old_project = NodeCreation.MakeCopy(Project.ProjectNode());
 }
 
 void SortProjectAction::Change()
 {
-    m_old_project = g_NodeCreator.MakeCopy(wxGetApp().GetProjectPtr());
-    auto project = GetProject();
+    m_old_project = NodeCreation.MakeCopy(Project.ProjectNode());
 
-    auto& children = project->GetChildNodePtrs();
+    auto& children = Project.ChildNodePtrs();
     std::sort(children.begin(), children.end(), CompareClassNames);
 
-    for (auto& iter: project->GetChildNodePtrs())
+    for (auto& iter: Project.ChildNodePtrs())
     {
         if (iter->isGen(gen_folder))
         {
@@ -682,7 +681,7 @@ void SortProjectAction::Change()
     }
 
     wxGetFrame().FireProjectUpdatedEvent();
-    wxGetFrame().SelectNode(project);
+    wxGetFrame().SelectNode(Project.ProjectNode());
 }
 
 void SortProjectAction::SortFolder(Node* folder)
@@ -701,13 +700,12 @@ void SortProjectAction::SortFolder(Node* folder)
 
 void SortProjectAction::Revert()
 {
-    auto project = GetProject();
-    project->RemoveAllChildren();
+    Project.ProjectNode()->RemoveAllChildren();
     for (const auto& child: m_old_project->GetChildNodePtrs())
     {
-        project->Adopt(g_NodeCreator.MakeCopy(child.get()));
+        Project.ProjectNode()->Adopt(NodeCreation.MakeCopy(child.get()));
     }
 
     wxGetFrame().FireProjectUpdatedEvent();
-    wxGetFrame().SelectNode(project);
+    wxGetFrame().SelectNode(Project.ProjectNode());
 }

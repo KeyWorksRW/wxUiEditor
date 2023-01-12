@@ -106,7 +106,7 @@ bool WinResource::ImportRc(const ttlib::cstr& rc_file, std::vector<ttlib::cstr>&
 
     if (!isNested)
     {
-        m_project = g_NodeCreator.CreateNode(gen_Project, nullptr);
+        m_project = NodeCreation.CreateNode(gen_Project, nullptr);
         m_codepage = 1252;
     }
 
@@ -459,14 +459,14 @@ void WinResource::FormToNode(resForm& form)
         case resForm::form_dialog:
         case resForm::form_panel:
             {
-                auto node = g_NodeCreator.MakeCopy(form.GetFormNode());
+                auto node = NodeCreation.MakeCopy(form.GetFormNode());
                 m_project->Adopt(node);
             }
             return;
 
         case resForm::form_menu:
             {
-                auto node = g_NodeCreator.MakeCopy(form.GetFormNode());
+                auto node = NodeCreation.MakeCopy(form.GetFormNode());
                 m_project->Adopt(node);
             }
             return;

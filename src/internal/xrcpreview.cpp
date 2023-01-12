@@ -133,10 +133,10 @@ bool XrcPreview::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 
 #include <tttextfile_wx.h>  // ttlib::viewfile
 
-#include "gen_xrc.h"        // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
-#include "mainframe.h"      // MainFrame -- Main window frame
-#include "node.h"           // Node class
-#include "project_class.h"  // Project class
+#include "gen_xrc.h"          // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
+#include "mainframe.h"        // MainFrame -- Main window frame
+#include "node.h"             // Node class
+#include "project_handler.h"  // ProjectHandler class
 
 #include "pugixml.hpp"
 
@@ -280,8 +280,8 @@ void XrcPreview::OnInit(wxInitDialogEvent& event)
 
 void XrcPreview::OnExport(wxCommandEvent& WXUNUSED(event))
 {
-    wxFileDialog dialog(this, "Export Project As XRC", GetProject()->GetProjectPath(), "preview_test.xrc",
-                        "XRC File (*.xrc)|*.xrc", wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
+    wxFileDialog dialog(this, "Export Project As XRC", Project.ProjectPath(), "preview_test.xrc", "XRC File (*.xrc)|*.xrc",
+                        wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
 
     if (dialog.ShowModal() == wxID_OK)
     {

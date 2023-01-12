@@ -12,7 +12,7 @@
 #include "new_common.h"           // Contains code common between all new_ dialogs
 #include "node.h"                 // Node class
 #include "node_creator.h"         // NodeCreator -- Class used to create nodes
-#include "project_class.h"        // Project class
+#include "project_handler.h"      // ProjectHandler class
 #include "undo_cmds.h"            // InsertNodeAction -- Undoable command classes derived from UndoAction
 
 void NewPanel::OnInit(wxInitDialogEvent& event)
@@ -33,12 +33,12 @@ void NewPanel::CreateNode()
     NodeSharedPtr new_node;
     if (m_is_form)
     {
-        new_node = g_NodeCreator.CreateNode(gen_PanelForm, GetProject());
+        new_node = NodeCreation.CreateNode(gen_PanelForm, Project.ProjectNode());
         ASSERT(new_node);
     }
     else
     {
-        new_node = g_NodeCreator.CreateNode(gen_wxPanel, wxGetFrame().GetSelectedNode());
+        new_node = NodeCreation.CreateNode(gen_wxPanel, wxGetFrame().GetSelectedNode());
         if (!new_node)
         {
             wxMessageBox("You need to have a sizer selected before you can create a wxPanel.", "Create wxPanel");
@@ -50,27 +50,27 @@ void NewPanel::CreateNode()
 
     if (m_sizer_type == "FlexGrid")
     {
-        sizer = g_NodeCreator.CreateNode(gen_wxFlexGridSizer, new_node.get());
+        sizer = NodeCreation.CreateNode(gen_wxFlexGridSizer, new_node.get());
     }
     else if (m_sizer_type == "Grid")
     {
-        sizer = g_NodeCreator.CreateNode(gen_wxGridSizer, new_node.get());
+        sizer = NodeCreation.CreateNode(gen_wxGridSizer, new_node.get());
     }
     else if (m_sizer_type == "GridBag")
     {
-        sizer = g_NodeCreator.CreateNode(gen_wxGridBagSizer, new_node.get());
+        sizer = NodeCreation.CreateNode(gen_wxGridBagSizer, new_node.get());
     }
     else if (m_sizer_type == "StaticBox")
     {
-        sizer = g_NodeCreator.CreateNode(gen_wxStaticBoxSizer, new_node.get());
+        sizer = NodeCreation.CreateNode(gen_wxStaticBoxSizer, new_node.get());
     }
     else if (m_sizer_type == "Wrap")
     {
-        sizer = g_NodeCreator.CreateNode(gen_wxWrapSizer, new_node.get());
+        sizer = NodeCreation.CreateNode(gen_wxWrapSizer, new_node.get());
     }
     else
     {
-        sizer = g_NodeCreator.CreateNode(gen_VerticalBoxSizer, new_node.get());
+        sizer = NodeCreation.CreateNode(gen_VerticalBoxSizer, new_node.get());
     }
 
     new_node->Adopt(sizer);
@@ -98,11 +98,10 @@ void NewPanel::CreateNode()
             UpdateFormClass(new_node.get());
         }
 
-        auto project = GetProject();
-        wxGetFrame().SelectNode(project);
+        wxGetFrame().SelectNode(Project.ProjectNode());
 
         ttlib::cstr undo_str("New wxPanel");
-        wxGetFrame().PushUndoAction(std::make_shared<InsertNodeAction>(new_node.get(), project, undo_str, -1));
+        wxGetFrame().PushUndoAction(std::make_shared<InsertNodeAction>(new_node.get(), Project.ProjectNode(), undo_str, -1));
     }
 
     wxGetFrame().FireCreatedEvent(new_node);

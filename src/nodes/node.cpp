@@ -10,15 +10,15 @@
 
 #include "node.h"
 
-#include "gridbag_item.h"   // GridBagItem -- Dialog for inserting an item into a wxGridBagSizer node
-#include "image_bundle.h"   // This will #include wx/bmpbndl.h and wx/bitmap.h
-#include "mainframe.h"      // MainFrame -- Main window frame
-#include "node_creator.h"   // NodeCreator class
-#include "node_decl.h"      // NodeDeclaration class
-#include "node_gridbag.h"   // GridBag -- Create and modify a node containing a wxGridBagSizer
-#include "node_prop.h"      // NodeProperty -- NodeProperty class
-#include "project_class.h"  // Project class
-#include "undo_cmds.h"      // InsertNodeAction -- Undoable command classes derived from UndoAction
+#include "gridbag_item.h"     // GridBagItem -- Dialog for inserting an item into a wxGridBagSizer node
+#include "image_handler.h"    // ProjectImage class
+#include "mainframe.h"        // MainFrame -- Main window frame
+#include "node_creator.h"     // NodeCreator class
+#include "node_decl.h"        // NodeDeclaration class
+#include "node_gridbag.h"     // GridBag -- Create and modify a node containing a wxGridBagSizer
+#include "node_prop.h"        // NodeProperty -- NodeProperty class
+#include "project_handler.h"  // ProjectHandler class
+#include "undo_cmds.h"        // InsertNodeAction -- Undoable command classes derived from UndoAction
 
 using namespace GenEnum;
 
@@ -53,13 +53,6 @@ bool Node::IsForm() const noexcept
             return true;
     }
     return false;
-}
-
-// Same as wxGetApp() only this returns a reference to the project node
-Node& wxGetProject()
-{
-    ASSERT_MSG(wxGetApp().GetProjectPtr(), "MainFrame hasn't been created yet.");
-    return *wxGetApp().GetProjectPtr().get();
 }
 
 Node::Node(NodeDeclaration* declaration) : m_declaration(declaration) {}
@@ -650,7 +643,7 @@ Node* Node::CreateChildNode(GenName name)
 {
     auto& frame = wxGetFrame();
 
-    auto new_node = g_NodeCreator.CreateNode(name, this);
+    auto new_node = NodeCreation.CreateNode(name, this);
 
     Node* parent = this;
 
@@ -660,7 +653,7 @@ Node* Node::CreateChildNode(GenName name)
         {
             if (GetChild(0)->gen_type() == type_sizer || GetChild(0)->gen_type() == type_gbsizer)
             {
-                new_node = g_NodeCreator.CreateNode(name, GetChild(0));
+                new_node = NodeCreation.CreateNode(name, GetChild(0));
                 if (!new_node)
                     return nullptr;
                 parent = GetChild(0);
@@ -720,7 +713,7 @@ Node* Node::CreateChildNode(GenName name)
     // then assume the parent is wxRibbonToolBar and retry with "ribbonTool"
     else if (name == gen_ribbonButton)
     {
-        new_node = g_NodeCreator.CreateNode(gen_ribbonTool, this);
+        new_node = NodeCreation.CreateNode(gen_ribbonTool, this);
         if (new_node)
         {
             ttlib::cstr undo_str = "insert ribbon tool";
@@ -742,9 +735,9 @@ Node* Node::CreateChildNode(GenName name)
 
         if (parent)
         {
-            auto decl = g_NodeCreator.get_declaration(name);
+            auto decl = NodeCreation.get_declaration(name);
             auto max_children = GetNodeDeclaration()->GetAllowableChildren(decl->gen_type());
-            auto cur_children = g_NodeCreator.CountChildrenWithSameType(this, decl->gen_type());
+            auto cur_children = NodeCreation.CountChildrenWithSameType(this, decl->gen_type());
             if (max_children > 0 && cur_children >= static_cast<size_t>(max_children))
             {
                 if (isGen(gen_wxSplitterWindow))
@@ -760,7 +753,7 @@ Node* Node::CreateChildNode(GenName name)
                 return nullptr;
             }
 
-            new_node = g_NodeCreator.CreateNode(name, parent);
+            new_node = NodeCreation.CreateNode(name, parent);
             if (new_node)
             {
                 if (parent->isGen(gen_wxGridBagSizer))

@@ -18,8 +18,9 @@
 #include "gen_common.h"       // Common component functions
 #include "generate_dlg.h"     // GenerateDlg -- Dialog for choosing and generating specific language file(s)
 #include "image_gen.h"        // Functions for generating embedded images
+#include "image_handler.h"    // ImageHandler class
 #include "node.h"             // Node class
-#include "project_class.h"    // Project class
+#include "project_handler.h"  // ProjectHandler class
 #include "utils.h"            // Miscellaneous utilities
 #include "write_code.h"       // Write code to Scintilla or file
 
@@ -72,19 +73,18 @@ static void GatherImportModules(std::set<std::string>& imports, Node* node)
 
 bool GeneratePythonFiles(GenResults& results, std::vector<ttlib::cstr>* pClassList)
 {
-    auto project = GetProject();
-    if (project->GetChildCount() == 0)
+    if (Project.ChildCount() == 0)
     {
         wxMessageBox("You cannot generate any code until you have added a top level form.", "Code Generation");
         return false;
     }
     ttSaveCwd cwd;
-    GetProject()->GetProjectPath().ChangeDir();
+    Project.ChangeDir();
     ttlib::cstr path;
 
     bool generate_result = true;
     std::vector<Node*> forms;
-    project->CollectForms(forms);
+    Project.CollectForms(forms);
     for (const auto& form: forms)
     {
         if (auto& base_file = form->prop_as_string(prop_python_file); base_file.size())
@@ -99,9 +99,9 @@ bool GeneratePythonFiles(GenResults& results, std::vector<ttlib::cstr>* pClassLi
                 path = node_folder->as_string(prop_folder_python_output_folder);
                 path.append_filename(base_file.filename());
             }
-            else if (GetProject()->HasValue(prop_python_output_folder) && !path.contains("/"))
+            else if (Project.HasValue(prop_python_output_folder) && !path.contains("/"))
             {
-                path = GetProject()->GetBaseDirectory(GEN_LANG_PYTHON).utf8_string();
+                path = Project.BaseDirectory(GEN_LANG_PYTHON).utf8_string();
                 path.append_filename(base_file);
             }
             path.backslashestoforward();
@@ -180,9 +180,9 @@ bool GeneratePythonFiles(GenResults& results, std::vector<ttlib::cstr>* pClassLi
                     path = node_folder->as_string(prop_folder_python_output_folder);
                     path.append_filename(xrc_base_file.filename());
                 }
-                else if (GetProject()->HasValue(prop_python_output_folder) && !path.contains("/"))
+                else if (Project.HasValue(prop_python_output_folder) && !path.contains("/"))
                 {
-                    path = GetProject()->GetBaseDirectory(GEN_LANG_PYTHON).utf8_string();
+                    path = Project.BaseDirectory(GEN_LANG_PYTHON).utf8_string();
                     path.append_filename(xrc_base_file);
                 }
                 path.backslashestoforward();
@@ -240,11 +240,10 @@ void BaseCodeGenerator::GeneratePythonClass(Node* form_node, PANEL_PAGE panel_ty
 
     m_embedded_images.clear();
 
-    m_project = GetProject();
     m_form_node = form_node;
     m_ImagesForm = nullptr;
 
-    for (const auto& form: m_project->GetChildNodePtrs())
+    for (const auto& form: Project.ChildNodePtrs())
     {
         if (form->isGen(gen_folder))
         {
@@ -283,11 +282,11 @@ void BaseCodeGenerator::GeneratePythonClass(Node* form_node, PANEL_PAGE panel_ty
     // If the code files are being written to disk, then UpdateEmbedNodes() has already been called.
     if (panel_type != NOT_PANEL)
     {
-        GetProject()->UpdateEmbedNodes();
+        ProjectImages.UpdateEmbedNodes();
     }
 
     std::vector<Node*> forms;
-    m_project->CollectForms(forms);
+    Project.CollectForms(forms);
 
     m_panel_type = panel_type;
 
@@ -533,7 +532,7 @@ bool PythonBitmapList(Code& code, GenEnum::PropName prop)
         return false;
     }
 
-    auto bundle = GetProject()->GetPropertyImageBundle(description);
+    auto bundle = ProjectImages.GetPropertyImageBundle(description);
 
     if (!bundle || bundle->lst_filenames.size() < 3)
     {
@@ -556,7 +555,7 @@ bool PythonBitmapList(Code& code, GenEnum::PropName prop)
         bool is_embed_success = false;
         if (parts[IndexType].starts_with("Embed"))
         {
-            if (auto embed = GetProject()->GetEmbeddedImage(iter); embed)
+            if (auto embed = ProjectImages.GetEmbeddedImage(iter); embed)
             {
                 AddPythonImageName(code, embed);
                 code += ".Bitmap";
@@ -623,7 +622,7 @@ bool PythonBundleCode(Code& code, GenEnum::PropName prop)
 
     auto path = MakePythonPath(code.node());
 
-    if (auto bundle = GetProject()->GetPropertyImageBundle(description); bundle && bundle->lst_filenames.size())
+    if (auto bundle = ProjectImages.GetPropertyImageBundle(description); bundle && bundle->lst_filenames.size())
     {
         ttlib::cstr name(bundle->lst_filenames[0]);
         name.make_absolute();
@@ -649,7 +648,7 @@ bool PythonBundleCode(Code& code, GenEnum::PropName prop)
 
             if (parts[IndexType].starts_with("Embed"))
             {
-                if (auto embed = GetProject()->GetEmbeddedImage(bundle->lst_filenames[0]); embed)
+                if (auto embed = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[0]); embed)
                 {
                     code.CheckLineLength(embed->array_name.size() + sizeof(".Bitmap)"));
                     AddPythonImageName(code, embed);
@@ -671,14 +670,14 @@ bool PythonBundleCode(Code& code, GenEnum::PropName prop)
 
             if (parts[IndexType].starts_with("Embed"))
             {
-                if (auto embed = GetProject()->GetEmbeddedImage(bundle->lst_filenames[0]); embed)
+                if (auto embed = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[0]); embed)
                 {
                     code.CheckLineLength(embed->array_name.size() + sizeof(".Bitmap"));
                     AddPythonImageName(code, embed);
 
                     code += ".Bitmap";
 
-                    if (auto embed2 = GetProject()->GetEmbeddedImage(bundle->lst_filenames[1]); embed2)
+                    if (auto embed2 = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[1]); embed2)
                     {
                         code.Comma().CheckLineLength(embed2->array_name.size() + sizeof(".Bitmap)"));
                         AddPythonImageName(code, embed2);
@@ -775,9 +774,9 @@ ttlib::cstr MakePythonPath(Node* node)
             path = node_folder->as_string(prop_folder_python_output_folder);
             path.append_filename(base_file.filename());
         }
-        else if (GetProject()->HasValue(prop_python_output_folder) && !path.contains("/"))
+        else if (Project.HasValue(prop_python_output_folder) && !path.contains("/"))
         {
-            path = GetProject()->GetBaseDirectory(GEN_LANG_PYTHON).utf8_string();
+            path = Project.BaseDirectory(GEN_LANG_PYTHON).utf8_string();
             path.append_filename(base_file);
         }
     }

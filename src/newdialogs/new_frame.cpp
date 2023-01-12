@@ -13,7 +13,7 @@
 #include "new_common.h"              // Contains code common between all new_ dialogs
 #include "node.h"                    // Node class
 #include "node_creator.h"            // NodeCreator -- Class used to create nodes
-#include "project_class.h"           // Project class
+#include "project_handler.h"         // ProjectHandler class
 #include "undo_cmds.h"               // InsertNodeAction -- Undoable command classes derived from UndoAction
 
 void NewFrame::OnCheckMainFrame(wxCommandEvent& WXUNUSED(event))
@@ -34,26 +34,26 @@ void NewFrame::OnCheckMainFrame(wxCommandEvent& WXUNUSED(event))
 
 void NewFrame::CreateNode()
 {
-    auto form_node = g_NodeCreator.CreateNode(gen_wxFrame, nullptr);
+    auto form_node = NodeCreation.CreateNode(gen_wxFrame, nullptr);
     ASSERT(form_node);
 
     if (m_has_mainframe)
     {
         if (m_has_toolbar)
         {
-            auto bar = g_NodeCreator.CreateNode(gen_wxToolBar, form_node.get());
+            auto bar = NodeCreation.CreateNode(gen_wxToolBar, form_node.get());
             ASSERT(bar);
             form_node->Adopt(bar);
         }
         if (m_has_menu)
         {
-            auto bar = g_NodeCreator.CreateNode(gen_wxMenuBar, form_node.get());
+            auto bar = NodeCreation.CreateNode(gen_wxMenuBar, form_node.get());
             ASSERT(bar);
             form_node->Adopt(bar);
         }
         if (m_has_statusbar)
         {
-            auto bar = g_NodeCreator.CreateNode(gen_wxStatusBar, form_node.get());
+            auto bar = NodeCreation.CreateNode(gen_wxStatusBar, form_node.get());
             ASSERT(bar);
             form_node->Adopt(bar);
         }
@@ -65,11 +65,10 @@ void NewFrame::CreateNode()
         UpdateFormClass(form_node.get());
     }
 
-    auto project = GetProject();
-    wxGetFrame().SelectNode(project);
+    wxGetFrame().SelectNode(Project.ProjectNode());
 
     ttlib::cstr undo_str("New wxFrame");
-    wxGetFrame().PushUndoAction(std::make_shared<InsertNodeAction>(form_node.get(), project, undo_str, -1));
+    wxGetFrame().PushUndoAction(std::make_shared<InsertNodeAction>(form_node.get(), Project.ProjectNode(), undo_str, -1));
     wxGetFrame().FireCreatedEvent(form_node);
     wxGetFrame().SelectNode(form_node, evt_flags::fire_event | evt_flags::force_selection);
     wxGetFrame().GetNavigationPanel()->ChangeExpansion(form_node.get(), true, true);

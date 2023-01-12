@@ -8,9 +8,10 @@
 #include <wx/event.h>             // Event classes
 #include <wx/propgrid/manager.h>  // wxPropertyGridManager
 
-#include "gen_common.h"  // GeneratorLibrary -- Generator classes
-#include "node.h"        // Node class
-#include "utils.h"       // Utility functions that work with properties
+#include "gen_common.h"       // GeneratorLibrary -- Generator classes
+#include "node.h"             // Node class
+#include "project_handler.h"  // ProjectHandler class
+#include "utils.h"            // Utility functions that work with properties
 
 #include "grid_widgets.h"
 
@@ -116,7 +117,7 @@ bool PropertyGridPageGenerator::ConstructionCode(Code& code)
         code.AddAuto().NodeName().Str(" = ").ParentName().Function("AddPage(").Add(prop_label);
         if (is_bitmaps_list)
         {
-            if (code.is_cpp() && wxGetProject().value(prop_wxWidgets_version) == "3.1")
+            if (code.is_cpp() && Project.value(prop_wxWidgets_version) == "3.1")
             {
                 code.Eol() += "#if wxCHECK_VERSION(3, 1, 6)\n\t";
             }
@@ -124,7 +125,7 @@ bool PropertyGridPageGenerator::ConstructionCode(Code& code)
                 code += "wxBitmapBundle::FromBitmaps(bitmaps)";
             else
                 code += "wx.BitmapBundle.FromBitmaps(bitmaps)";
-            if (code.is_cpp() && wxGetProject().value(prop_wxWidgets_version) == "3.1")
+            if (code.is_cpp() && Project.value(prop_wxWidgets_version) == "3.1")
             {
                 code.Eol().Str("#else").Eol();
                 ttlib::cstr bundle_code;

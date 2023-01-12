@@ -12,7 +12,7 @@
 #include "new_common.h"           // Contains code common between all new_ dialogs
 #include "node.h"                 // Node class
 #include "node_creator.h"         // NodeCreator -- Class used to create nodes
-#include "project_class.h"        // Project class
+#include "project_handler.h"      // ProjectHandler class
 #include "undo_cmds.h"            // InsertNodeAction -- Undoable command classes derived from UndoAction
 
 void NewDialog::OnInit(wxInitDialogEvent& event)
@@ -25,7 +25,7 @@ void NewDialog::OnInit(wxInitDialogEvent& event)
 
 void NewDialog::CreateNode()
 {
-    auto form_node = g_NodeCreator.CreateNode(gen_wxDialog, nullptr);
+    auto form_node = NodeCreation.CreateNode(gen_wxDialog, nullptr);
     ASSERT(form_node);
 
     if (m_title.size())
@@ -33,29 +33,29 @@ void NewDialog::CreateNode()
         form_node->prop_set_value(prop_title, m_title.utf8_string());
     }
 
-    auto parent_sizer = g_NodeCreator.CreateNode(gen_VerticalBoxSizer, form_node.get());
+    auto parent_sizer = NodeCreation.CreateNode(gen_VerticalBoxSizer, form_node.get());
     ASSERT(parent_sizer);
     parent_sizer->prop_set_value(prop_var_name, "dlg_sizer");
     form_node->Adopt(parent_sizer);
 
     if (m_has_tabs)
     {
-        auto notebook = g_NodeCreator.CreateNode(gen_wxNotebook, parent_sizer.get());
+        auto notebook = NodeCreation.CreateNode(gen_wxNotebook, parent_sizer.get());
         ASSERT(notebook);
         parent_sizer->Adopt(notebook);
 
         for (int count = 0; count < m_num_tabs; ++count)
         {
-            auto book_page = g_NodeCreator.CreateNode(gen_BookPage, notebook.get());
+            auto book_page = NodeCreation.CreateNode(gen_BookPage, notebook.get());
             notebook->Adopt(book_page);
 
             ttlib::cstr label("Tab ");
             label << count + 1;
             book_page->prop_set_value(prop_label, label);
-            auto page_sizer = g_NodeCreator.CreateNode(gen_VerticalBoxSizer, book_page.get());
+            auto page_sizer = NodeCreation.CreateNode(gen_VerticalBoxSizer, book_page.get());
             page_sizer->prop_set_value(prop_var_name, ttlib::cstr() << "page_sizer_" << count + 1);
             book_page->Adopt(page_sizer);
-            auto static_text = g_NodeCreator.CreateNode(gen_wxStaticText, page_sizer.get());
+            auto static_text = NodeCreation.CreateNode(gen_wxStaticText, page_sizer.get());
             page_sizer->Adopt(static_text);
             static_text->prop_set_value(prop_label, "TODO: replace this control with something more useful...");
             static_text->prop_set_value(prop_wrap, "200");
@@ -64,7 +64,7 @@ void NewDialog::CreateNode()
 
     if (m_has_std_btns)
     {
-        auto std_btn = g_NodeCreator.CreateNode(gen_wxStdDialogButtonSizer, parent_sizer.get());
+        auto std_btn = NodeCreation.CreateNode(gen_wxStdDialogButtonSizer, parent_sizer.get());
         parent_sizer->Adopt(std_btn);
 
         std_btn->prop_set_value(prop_OK, "1");
@@ -80,11 +80,10 @@ void NewDialog::CreateNode()
         UpdateFormClass(form_node.get());
     }
 
-    auto project = GetProject();
-    wxGetFrame().SelectNode(project);
+    wxGetFrame().SelectNode(Project.ProjectNode());
 
     ttlib::cstr undo_str("New wxDialog");
-    wxGetFrame().PushUndoAction(std::make_shared<InsertNodeAction>(form_node.get(), project, undo_str, -1));
+    wxGetFrame().PushUndoAction(std::make_shared<InsertNodeAction>(form_node.get(), Project.ProjectNode(), undo_str, -1));
     wxGetFrame().FireCreatedEvent(form_node);
     wxGetFrame().SelectNode(form_node, evt_flags::fire_event | evt_flags::force_selection);
     wxGetFrame().GetNavigationPanel()->ChangeExpansion(form_node.get(), true, true);

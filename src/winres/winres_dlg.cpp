@@ -37,7 +37,7 @@ void resForm::ParseDialog(WinResource* pWinResource, ttlib::textfile& txtfile, s
     }
 
     m_form_type = isDialog ? form_dialog : form_panel;
-    m_form_node = g_NodeCreator.NewNode(isDialog ? gen_wxDialog : gen_PanelForm);
+    m_form_node = NodeCreation.NewNode(isDialog ? gen_wxDialog : gen_PanelForm);
 
 #if defined(_DEBUG) || defined(INTERNAL_TESTING)
     ttlib::cstr fullpath;

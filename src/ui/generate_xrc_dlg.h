@@ -29,6 +29,5 @@ protected:
     void OnSave(wxCommandEvent& event) override;
 
 private:
-    Project* m_project { nullptr };
     wxString m_filename;
 };

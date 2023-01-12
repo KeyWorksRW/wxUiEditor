@@ -13,7 +13,7 @@
 #include "new_common.h"              // Contains code common between all new_ dialogs
 #include "node.h"                    // Node class
 #include "node_creator.h"            // NodeCreator -- Class used to create nodes
-#include "project_class.h"           // Project class
+#include "project_handler.h"         // ProjectHandler class
 #include "undo_cmds.h"               // InsertNodeAction -- Undoable command classes derived from UndoAction
 
 void NewRibbon::OnInit(wxInitDialogEvent& event)
@@ -34,12 +34,12 @@ void NewRibbon::CreateNode()
     NodeSharedPtr bar_node;
     if (m_is_form)
     {
-        bar_node = g_NodeCreator.CreateNode(gen_RibbonBar, GetProject());
+        bar_node = NodeCreation.CreateNode(gen_RibbonBar, Project.ProjectNode());
         ASSERT(bar_node);
     }
     else
     {
-        bar_node = g_NodeCreator.CreateNode(gen_wxRibbonBar, wxGetFrame().GetSelectedNode());
+        bar_node = NodeCreation.CreateNode(gen_wxRibbonBar, wxGetFrame().GetSelectedNode());
         if (!bar_node)
         {
             wxMessageBox("You need to have a sizer selected before you can create a wxRibbonBar.", "Create wxRibbonBar");
@@ -49,36 +49,36 @@ void NewRibbon::CreateNode()
 
     for (int count = 0; count < m_num_pages; ++count)
     {
-        auto ribbon_page = g_NodeCreator.CreateNode(gen_wxRibbonPage, bar_node.get());
+        auto ribbon_page = NodeCreation.CreateNode(gen_wxRibbonPage, bar_node.get());
         bar_node->Adopt(ribbon_page);
         ttlib::cstr label("Page ");
         label << count + 1;
         ribbon_page->prop_set_value(prop_label, label);
 
-        auto ribbon_panel = g_NodeCreator.CreateNode(gen_wxRibbonPanel, ribbon_page.get());
+        auto ribbon_panel = NodeCreation.CreateNode(gen_wxRibbonPanel, ribbon_page.get());
         ribbon_page->Adopt(ribbon_panel);
         label << ", panel 1";
         ribbon_panel->prop_set_value(prop_label, label);
 
         if (m_panel_type == "Tool")
         {
-            auto tool_bar = g_NodeCreator.CreateNode(gen_wxRibbonToolBar, ribbon_panel.get());
+            auto tool_bar = NodeCreation.CreateNode(gen_wxRibbonToolBar, ribbon_panel.get());
             ribbon_panel->Adopt(tool_bar);
-            auto tool = g_NodeCreator.CreateNode(gen_ribbonTool, tool_bar.get());
+            auto tool = NodeCreation.CreateNode(gen_ribbonTool, tool_bar.get());
             tool_bar->Adopt(tool);
         }
         else if (m_panel_type == "Button")
         {
-            auto button_bar = g_NodeCreator.CreateNode(gen_wxRibbonButtonBar, ribbon_panel.get());
+            auto button_bar = NodeCreation.CreateNode(gen_wxRibbonButtonBar, ribbon_panel.get());
             ribbon_panel->Adopt(button_bar);
-            auto button = g_NodeCreator.CreateNode(gen_ribbonButton, button_bar.get());
+            auto button = NodeCreation.CreateNode(gen_ribbonButton, button_bar.get());
             button_bar->Adopt(button);
         }
         else if (m_panel_type == "Gallery")
         {
-            auto gallery_bar = g_NodeCreator.CreateNode(gen_wxRibbonGallery, ribbon_panel.get());
+            auto gallery_bar = NodeCreation.CreateNode(gen_wxRibbonGallery, ribbon_panel.get());
             ribbon_panel->Adopt(gallery_bar);
-            auto item = g_NodeCreator.CreateNode(gen_ribbonGalleryItem, gallery_bar.get());
+            auto item = NodeCreation.CreateNode(gen_ribbonGalleryItem, gallery_bar.get());
             gallery_bar->Adopt(item);
         }
     }
@@ -98,11 +98,10 @@ void NewRibbon::CreateNode()
             UpdateFormClass(bar_node.get());
         }
 
-        auto project = GetProject();
-        wxGetFrame().SelectNode(project);
+        wxGetFrame().SelectNode(Project.ProjectNode());
 
         ttlib::cstr undo_str("New wxRibbonBar");
-        wxGetFrame().PushUndoAction(std::make_shared<InsertNodeAction>(bar_node.get(), project, undo_str, -1));
+        wxGetFrame().PushUndoAction(std::make_shared<InsertNodeAction>(bar_node.get(), Project.ProjectNode(), undo_str, -1));
     }
 
     wxGetFrame().FireCreatedEvent(bar_node);

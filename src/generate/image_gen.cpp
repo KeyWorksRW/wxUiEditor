@@ -12,12 +12,13 @@
 
 #include "image_gen.h"
 
-#include "code.h"           // Code -- Helper class for generating code
-#include "gen_base.h"       // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
-#include "gen_common.h"     // Common component functions
-#include "project_class.h"  // Project class
-#include "utils.h"          // Utility functions that work with properties
-#include "write_code.h"     // Write code to Scintilla or file
+#include "code.h"             // Code -- Helper class for generating code
+#include "gen_base.h"         // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
+#include "gen_common.h"       // Common component functions
+#include "image_handler.h"    // ImageHandler class
+#include "project_handler.h"  // ProjectHandler class
+#include "utils.h"            // Utility functions that work with properties
+#include "write_code.h"       // Write code to Scintilla or file
 
 // Generate extern references to images used in the current form that are defined in the
 // gen_Images node. These are written before the class constructor.
@@ -61,7 +62,7 @@ void BaseCodeGenerator::WriteImageConstruction(Code& code)
     bool is_namespace_written = false;
     bool images_import_written = false;
     // -12 to account for 8 indent + max 3 chars for number + comma
-    size_t cpp_line_length = (to_size_t) GetProject()->as_int(prop_cpp_line_length) - 12;
+    size_t cpp_line_length = Project.as_size_t(prop_cpp_line_length) - 12;
 
     for (auto iter_array: m_embedded_images)
     {
@@ -158,7 +159,7 @@ void GenerateSingleBitmapCode(Code& code, const ttlib::cstr& description)
     {
         if (code.is_cpp())
         {
-            if (wxGetProject().value(prop_wxWidgets_version) == "3.1")
+            if (Project.value(prop_wxWidgets_version) == "3.1")
             {
                 code += "wxNullBitmap /* SVG images require wxWidgets 3.1.6 */";
                 return;
@@ -241,7 +242,7 @@ void GenerateSingleBitmapCode(Code& code, const ttlib::cstr& description)
 
             if (parts[IndexType].starts_with("Embed"))
             {
-                auto embed = GetProject()->GetEmbeddedImage(parts[IndexImage]);
+                auto embed = ProjectImages.GetEmbeddedImage(parts[IndexImage]);
                 if (embed)
                 {
                     name = "wxue_img::" + embed->array_name;
@@ -252,13 +253,13 @@ void GenerateSingleBitmapCode(Code& code, const ttlib::cstr& description)
         }
         else
         {
-            if (auto bundle = GetProject()->GetPropertyImageBundle(description); bundle && bundle->lst_filenames.size())
+            if (auto bundle = ProjectImages.GetPropertyImageBundle(description); bundle && bundle->lst_filenames.size())
             {
                 bool is_embed_success = false;
 
                 if (parts[IndexType].starts_with("Embed"))
                 {
-                    if (auto embed = GetProject()->GetEmbeddedImage(bundle->lst_filenames[0]); embed)
+                    if (auto embed = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[0]); embed)
                     {
                         code.CheckLineLength(embed->array_name.size() + sizeof(".Bitmap)"));
                         AddPythonImageName(code, embed);
@@ -344,7 +345,7 @@ void BaseCodeGenerator::WriteImagePostHeader()
 std::vector<std::string> base64_encode(unsigned char const* data, size_t data_size)
 {
     const size_t tab_quote_prefix = 7;  // 4 for tab, 2 for quotes, 1 for 'b' prefix
-    size_t line_length = (to_size_t) GetProject()->as_int(prop_python_line_length) - tab_quote_prefix;
+    size_t line_length = Project.as_size_t(prop_python_line_length) - tab_quote_prefix;
 
     const std::array<char, 64> base64_chars = { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
                                                 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',

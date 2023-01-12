@@ -13,7 +13,7 @@
 #include "gen_xrc.h"                   // Generate XRC file
 #include "mainframe.h"                 // MainFrame -- Main window frame
 #include "node.h"                      // Node class
-#include "project_class.h"             // Project class
+#include "project_handler.h"           // ProjectHandler class
 #include "undo_cmds.h"                 // InsertNodeAction -- Undoable command classes derived from UndoAction
 
 #include "pugixml.hpp"
@@ -102,7 +102,7 @@ void MainFrame::OnTestXrcDuplicate(wxCommandEvent& /* event */)
         return;
     }
 
-    if (m_selected_node.get() == GetProject())
+    if (m_selected_node.get() == Project.ProjectNode())
     {
         wxMessageBox("You cannot duplicate the entire project, only forms.", "Test XRC Duplicate");
         return;
@@ -140,11 +140,11 @@ void MainFrame::OnTestXrcDuplicate(wxCommandEvent& /* event */)
     auto new_node = doc_import.CreateXrcNode(first_child, nullptr);
     if (new_node)
     {
-        GetProject()->FixupDuplicatedNode(new_node.get());
+        Project.FixupDuplicatedNode(new_node.get());
         ttlib::cstr undo_str("duplicate ");
         undo_str << new_node->DeclName();
-        auto pos = GetProject()->FindInsertionPos(form_node);
-        PushUndoAction(std::make_shared<InsertNodeAction>(new_node.get(), GetProject(), undo_str, pos));
+        auto pos = Project.ProjectNode()->FindInsertionPos(form_node);
+        PushUndoAction(std::make_shared<InsertNodeAction>(new_node.get(), Project.ProjectNode(), undo_str, pos));
         FireCreatedEvent(new_node);
         SelectNode(new_node, evt_flags::fire_event | evt_flags::force_selection);
     }

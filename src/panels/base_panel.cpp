@@ -12,16 +12,16 @@
 
 #include "base_panel.h"
 
-#include "bitmaps.h"        // Map of bitmaps accessed by name
-#include "code_display.h"   // CodeDisplay -- CodeDisplay class
-#include "cstm_event.h"     // CustomEvent -- Custom Event class
-#include "gen_base.h"       // Generate Base class
-#include "gen_xrc.h"        // BaseXrcGenerator -- Generate XRC file
-#include "mainframe.h"      // MainFrame -- Main window frame
-#include "node.h"           // Node class
-#include "node_creator.h"   // NodeCreator -- Class used to create nodes
-#include "project_class.h"  // Project class
-#include "write_code.h"     // Write code to Scintilla or file
+#include "bitmaps.h"          // Map of bitmaps accessed by name
+#include "code_display.h"     // CodeDisplay -- CodeDisplay class
+#include "cstm_event.h"       // CustomEvent -- Custom Event class
+#include "gen_base.h"         // Generate Base class
+#include "gen_xrc.h"          // BaseXrcGenerator -- Generate XRC file
+#include "mainframe.h"        // MainFrame -- Main window frame
+#include "node.h"             // Node class
+#include "node_creator.h"     // NodeCreator -- Class used to create nodes
+#include "project_handler.h"  // ProjectHandler class
+#include "write_code.h"       // Write code to Scintilla or file
 
 // These are used everywhere we use scintilla to edit C++ code
 const char* g_u8_cpp_keywords = "alignas alignof and and_eq atomic_cancel atomic_commit atomic_noexcept auto"
@@ -183,15 +183,13 @@ void BasePanel::GenerateBaseClass()
     if (!IsShown())
         return;
 
-    auto project = GetProject();
-
     // If no form is selected, display the first child form of the project
     m_cur_form = wxGetFrame().GetSelectedForm();
     if (!m_cur_form)
     {
-        if (project->GetChildCount() > 0)
+        if (Project.ChildCount() > 0)
         {
-            m_cur_form = GetProject()->GetFirstFormChild();
+            m_cur_form = Project.GetFirstFormChild();
         }
         else
         {
@@ -234,7 +232,7 @@ void BasePanel::GenerateBaseClass()
             m_inherit_hdr_panel->Clear();
             codegen.SetHdrWriteCode(m_inherit_hdr_panel);
 
-            codegen.GenerateDerivedClass(project, m_cur_form, panel_page);
+            codegen.GenerateDerivedClass(Project.ProjectNode(), m_cur_form, panel_page);
             break;
 
         case GEN_LANG_PYTHON:

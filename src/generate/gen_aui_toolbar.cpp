@@ -8,10 +8,11 @@
 #include <wx/aui/auibar.h>  // wxaui: wx advanced user interface - docking window manager
 #include <wx/toolbar.h>     // wxToolBar interface declaration
 
-#include "bitmaps.h"     // Map of bitmaps accessed by name
-#include "gen_common.h"  // GeneratorLibrary -- Generator classes
-#include "node.h"        // Node class
-#include "utils.h"       // Utility functions that work with properties
+#include "bitmaps.h"          // Map of bitmaps accessed by name
+#include "gen_common.h"       // GeneratorLibrary -- Generator classes
+#include "node.h"             // Node class
+#include "project_handler.h"  // ProjectHandler class
+#include "utils.h"            // Utility functions that work with properties
 
 #include "gen_aui_toolbar.h"
 
@@ -203,7 +204,7 @@ bool AuiToolGenerator::ConstructionCode(Code& code)
         GenToolCode(code, is_bitmaps_list);
         if (is_bitmaps_list && code.is_cpp())
         {
-            if (wxGetProject().value(prop_wxWidgets_version) == "3.1")
+            if (Project.value(prop_wxWidgets_version) == "3.1")
             {
                 code.CloseBrace();
                 code.Add("#else").Eol();

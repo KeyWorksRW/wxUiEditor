@@ -17,14 +17,14 @@ using namespace wxue_img;
 
 #include "pg_image.h"
 
-#include "bitmaps.h"        // Contains various images handling functions
-#include "mainframe.h"      // MainFrame -- Main window frame
-#include "node.h"           // Node -- Node class
-#include "project_class.h"  // Project class
-#include "utils.h"          // Utility functions that work with properties
-
+#include "bitmaps.h"          // Contains various images handling functions
+#include "image_handler.h"    // ImageHandler class
 #include "img_string_prop.h"  // wxSingleChoiceDialogAdapter
+#include "mainframe.h"        // MainFrame -- Main window frame
+#include "node.h"             // Node -- Node class
 #include "pg_point.h"         // CustomPointProperty -- Custom property grid class for wxPoint
+#include "project_handler.h"  // ProjectHandler class
+#include "utils.h"            // Utility functions that work with properties
 
 #include "art_ids.cpp"  // wxART_ strings
 
@@ -98,7 +98,7 @@ void PropertyGrid_Image::RefreshChildren()
             {
                 if (m_img_props.type == "XPM")
                 {
-                    wxImage img = GetProject()->GetPropertyBitmap(m_img_props.CombineValues(), false);
+                    wxImage img = ProjectImages.GetPropertyBitmap(m_img_props.CombineValues(), false);
                     if (img.IsOk())
                     {
                         // SetValueImage expects a bitmap with an alpha channel, so if it doesn't have one, make one now.
@@ -112,7 +112,7 @@ void PropertyGrid_Image::RefreshChildren()
                 }
                 else
                 {
-                    if (auto img = GetProject()->GetPropertyImageBundle(m_img_props.CombineValues(),
+                    if (auto img = ProjectImages.GetPropertyImageBundle(m_img_props.CombineValues(),
                                                                         wxGetFrame().GetSelectedNode());
                         img)
                     {
@@ -162,7 +162,7 @@ void PropertyGrid_Image::SetAutoComplete()
     }
     else
     {
-        auto art_dir = GetProject()->prop_as_string(prop_art_directory);
+        auto art_dir = Project.value(prop_art_directory);
         if (art_dir.empty())
             art_dir = "./";
         wxDir dir;
@@ -243,10 +243,10 @@ wxVariant PropertyGrid_Image::ChildChanged(wxVariant& thisValue, int childIndex,
                     {
                         if (!name.file_exists())
                         {
-                            name = GetProject()->GetArtDirectory();
+                            name = Project.ArtDirectory();
                             name.append_filename_wx(childValue.GetString());
                         }
-                        name.make_relative_wx(GetProject()->GetProjectPath());
+                        name.make_relative_wx(Project.ProjectPath());
                         name.backslashestoforward();
                     }
                     img_props.image.assign_wx(name);

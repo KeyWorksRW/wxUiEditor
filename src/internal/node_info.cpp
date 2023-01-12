@@ -81,11 +81,11 @@ bool NodeInfo::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     #error "INTERNAL_TESTING must be defined if you include this moduel!"
 #endif
 
-#include "mainapp.h"        // App -- Main application class
-#include "mainframe.h"      // Main window frame
-#include "node.h"           // Node class
-#include "project_class.h"  // Project class
-#include "undo_stack.h"     // UndoAction -- Maintain a undo and redo stack
+#include "mainapp.h"          // App -- Main application class
+#include "mainframe.h"        // Main window frame
+#include "node.h"             // Node class
+#include "project_handler.h"  // ProjectHandler class
+#include "undo_stack.h"       // UndoAction -- Maintain a undo and redo stack
 
 struct NodeMemory
 {
@@ -128,8 +128,7 @@ void NodeInfo::OnInit(wxInitDialogEvent& /* event */)
         m_txt_memory->SetLabel(label);
     }
 
-    auto project = GetProject();
-    CalcNodeMemory(project, node_memory);
+    CalcNodeMemory(Project.ProjectNode(), node_memory);
 
     label.Format("Project: %kzu (%kzu nodes)", node_memory.size, node_memory.children);
     m_txt_project->SetLabel(label);

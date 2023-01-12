@@ -90,14 +90,15 @@ bool ImportWinRes::Create(wxWindow* parent, wxWindowID id, const wxString& title
 
 #include <tttextfile_wx.h>  // textfile -- Classes for reading and writing line-oriented files
 
-#include "mainframe.h"  // MainFrame -- Main window frame
+#include "mainframe.h"        // MainFrame -- Main window frame
+#include "project_handler.h"  // ProjectHandler class
 
 void MainFrame::OnImportWindowsResource(wxCommandEvent&)
 {
     ImportWinRes dlg(this);
     if (dlg.ShowModal() == wxID_OK)
     {
-        wxGetApp().AppendWinRes(dlg.GetRcFilename(), dlg.GetDlgNames());
+        Project.AppendWinRes(dlg.GetRcFilename(), dlg.GetDlgNames());
     }
 }
 

@@ -11,17 +11,9 @@
 #include "node.h"       // Node class
 #include "prop_decl.h"  // PropChildDeclaration and PropDeclaration classes
 
-NodeCreator g_NodeCreator;
+NodeCreator& NodeCreation = NodeCreator::getInstance();
 
 using namespace GenEnum;
-
-NodeCreator::~NodeCreator()
-{
-    for (auto& iter: m_a_declarations)
-    {
-        delete iter;
-    }
-}
 
 NodeDeclaration* NodeCreator::GetNodeDeclaration(ttlib::sview className)
 {

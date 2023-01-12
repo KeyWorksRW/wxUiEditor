@@ -7,8 +7,8 @@
 
 #include "new_common.h"
 
-#include "mainapp.h"        // App -- Main application class
-#include "project_class.h"  // Project class
+#include "mainapp.h"          // App -- Main application class
+#include "project_handler.h"  // ProjectHandler class
 
 void UpdateFormClass(Node* form_node)
 {
@@ -21,8 +21,8 @@ void UpdateFormClass(Node* form_node)
     }
     baseName.MakeLower();
     baseName << "_base";
-    if (GetProject()->HasValue(prop_base_directory))
-        baseName.insert(0, GetProject()->as_wxString(prop_base_directory) << '/');
+    if (Project.HasValue(prop_base_directory))
+        baseName.insert(0, Project.as_ttString(prop_base_directory) << '/');
 
     form_node->prop_set_value(prop_base_file, baseName);
     if (is_base_class)
@@ -49,8 +49,10 @@ void UpdateFormClass(Node* form_node)
         }
 
         drvName.MakeLower();
-        if (GetProject()->HasValue(prop_derived_class_name))
-            drvName.insert(0, GetProject()->prop_as_wxString(prop_base_directory) << '/');
+        if (Project.HasValue(prop_derived_class_name))
+        {
+            drvName.insert(0, Project.as_ttString(prop_base_directory) << '/');
+        }
 
         form_node->prop_set_value(prop_derived_file, drvName);
     }
@@ -61,7 +63,7 @@ bool IsClassNameUnique(wxString classname)
     auto new_classname = classname.utf8_string();
 
     std::vector<Node*> forms;
-    GetProject()->CollectForms(forms);
+    Project.CollectForms(forms);
 
     for (const auto& iter: forms)
     {

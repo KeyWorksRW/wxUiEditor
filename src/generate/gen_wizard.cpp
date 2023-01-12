@@ -7,12 +7,12 @@
 
 #include <wx/wizard.h>  // wxWizard class: a GUI control presenting the user with a
 
-#include "gen_base.h"       // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
-#include "gen_common.h"     // GeneratorLibrary -- Generator classes
-#include "node.h"           // Node class
-#include "project_class.h"  // Project class
-#include "utils.h"          // Utility functions that work with properties
-#include "write_code.h"     // WriteCode -- Write code to Scintilla or file
+#include "gen_base.h"         // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
+#include "gen_common.h"       // GeneratorLibrary -- Generator classes
+#include "node.h"             // Node class
+#include "project_handler.h"  // ProjectHandler class
+#include "utils.h"            // Utility functions that work with properties
+#include "write_code.h"       // WriteCode -- Write code to Scintilla or file
 
 #include "../mockup/mockup_wizard.h"  // WizardPageSimple
 #include "../panels/navpopupmenu.h"   // NavPopupMenu -- Context-menu for Navigation Panel
@@ -81,7 +81,7 @@ bool WizardFormGenerator::SettingsCode(Code& code)
     if (code.HasValue(prop_bitmap))
     {
         auto is_bitmaps_list = BitmapList(code, prop_bitmap);
-        if (code.is_cpp() && wxGetProject().value(prop_wxWidgets_version) == "3.1")
+        if (code.is_cpp() && Project.value(prop_wxWidgets_version) == "3.1")
         {
             code.Eol() += "#if wxCHECK_VERSION(3, 1, 6)\n\t";
         }
@@ -113,7 +113,7 @@ bool WizardFormGenerator::SettingsCode(Code& code)
         if (code.is_cpp())
         {
             code.Comma().Str("pos").Comma().Str("style))");
-            if (wxGetProject().value(prop_wxWidgets_version) == "3.1")
+            if (Project.value(prop_wxWidgets_version) == "3.1")
             {
                 code.Eol() += "#else\n\t";
                 code << "wxBitmap(" << GenerateBitmapCode(code.node()->as_string(prop_bitmap)) << ")";
@@ -407,14 +407,14 @@ bool WizardPageGenerator::ConstructionCode(Code& code)
         {
             if (code.is_cpp())
             {
-                if (wxGetProject().value(prop_wxWidgets_version) == "3.1")
+                if (Project.value(prop_wxWidgets_version) == "3.1")
                 {
                     code.Eol() += "#if wxCHECK_VERSION(3, 1, 6)\n\t";
                 }
 
                 code += "wxBitmapBundle::FromBitmaps(bitmaps)";
 
-                if (wxGetProject().value(prop_wxWidgets_version) == "3.1")
+                if (Project.value(prop_wxWidgets_version) == "3.1")
                 {
                     code += "\n#else\n\t";
                     code += GenerateBitmapCode(code.node()->as_string(prop_bitmap));
@@ -428,7 +428,7 @@ bool WizardPageGenerator::ConstructionCode(Code& code)
         {
             if (code.is_cpp())
             {
-                if (wxGetProject().value(prop_wxWidgets_version) == "3.1")
+                if (Project.value(prop_wxWidgets_version) == "3.1")
                 {
                     code.Eol() += "#if wxCHECK_VERSION(3, 1, 6)\n\t";
                     ttlib::cstr bundle_code;

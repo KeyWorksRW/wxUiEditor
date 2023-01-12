@@ -22,7 +22,7 @@
 #include "node.h"             // Node class
 #include "node_creator.h"     // NodeCreator class
 #include "node_decl.h"        // NodeDeclaration class
-#include "project_class.h"    // Project class
+#include "project_handler.h"  // ProjectHandler class
 #include "propgrid_panel.h"   // PropGridPanel -- PropertyGrid class for node properties and events
 #include "undo_cmds.h"        // Undoable command classes derived from UndoAction
 #include "utils.h"            // Utility functions that work with properties
@@ -40,7 +40,7 @@ NavigationPanel::NavigationPanel(wxWindow* parent, MainFrame* frame) : wxPanel(p
     int index = 0;
     m_iconList = new wxImageList(GenImageSize, GenImageSize);
 
-    for (auto iter: g_NodeCreator.GetNodeDeclarationArray())
+    for (auto iter: NodeCreation.GetNodeDeclarationArray())
     {
         if (!iter)
         {
@@ -160,36 +160,33 @@ void NavigationPanel::OnProjectUpdated()
     m_tree_node_map.clear();
     m_node_tree_map.clear();
 
-    if (auto project = GetProject(); project)
+    auto root = m_tree_ctrl->AddRoot(GetDisplayName(Project.ProjectNode()), GetImageIndex(Project.ProjectNode()), -1);
+    m_node_tree_map[Project.ProjectNode()] = root;
+    m_tree_node_map[root] = Project.ProjectNode();
+
+    AddAllChildren(Project.ProjectNode());
+
+    // First we expand everything, then we collapse all forms and folders
+    ExpandAllNodes(Project.ProjectNode());
+
+    std::vector<Node*> forms;
+    Project.CollectForms(forms);
+
+    for (const auto& form: forms)
     {
-        auto root = m_tree_ctrl->AddRoot(GetDisplayName(project), GetImageIndex(project), -1);
-        m_node_tree_map[project] = root;
-        m_tree_node_map[root] = project;
-
-        AddAllChildren(project);
-
-        // First we expand everything, then we collapse all forms and folders
-        ExpandAllNodes(project);
-
-        std::vector<Node*> forms;
-        GetProject()->CollectForms(forms);
-
-        for (const auto& form: forms)
+        if (auto result = m_node_tree_map.find(form); result != m_node_tree_map.end())
         {
-            if (auto result = m_node_tree_map.find(form); result != m_node_tree_map.end())
+            m_tree_ctrl->Collapse(result->second);
+        }
+    }
+
+    for (const auto& folder: Project.ChildNodePtrs())
+    {
+        if (folder->isGen(gen_folder))
+        {
+            if (auto result = m_node_tree_map.find(folder.get()); result != m_node_tree_map.end())
             {
                 m_tree_ctrl->Collapse(result->second);
-            }
-        }
-
-        for (const auto& folder: project->GetChildNodePtrs())
-        {
-            if (folder->isGen(gen_folder))
-            {
-                if (auto result = m_node_tree_map.find(folder.get()); result != m_node_tree_map.end())
-                {
-                    m_tree_ctrl->Collapse(result->second);
-                }
             }
         }
     }
@@ -472,7 +469,7 @@ ttlib::cstr NavigationPanel::GetDisplayName(Node* node) const
     else
     {
         if (node->isGen(gen_Project))
-            display_name << "Project: " << GetProject()->getProjectFile().filename();
+            display_name << "Project: " << Project.ProjectFile().filename().utf8_string();
         else if (node->isGen(gen_wxContextMenuEvent))
         {
             display_name = node->prop_as_string(prop_handler_name);

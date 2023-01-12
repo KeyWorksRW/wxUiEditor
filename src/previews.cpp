@@ -26,7 +26,7 @@
 #include "node.h"              // Node class
 #include "preferences.h"       // Preferences -- Stores user preferences
 #include "preview_settings.h"  // PreviewSettings
-#include "project_class.h"     // Project class
+#include "project_handler.h"   // ProjectHandler class
 #include "utils.h"             // Utility functions that work with properties
 
 #include "pugixml.hpp"
@@ -189,7 +189,7 @@ void PreviewXrc(Node* form_node)
 
     // Our directory is probably already set correctly, but this will make certain that it is.
     ttSaveCwd save_cwd;
-    wxSetWorkingDirectory(wxGetApp().GetProject()->GetProjectPath());
+    Project.ChangeDir();
 
     ttlib::cstr style = form_node->prop_as_string(prop_style);
     if (form_node->isGen(gen_wxDialog) &&
@@ -382,7 +382,7 @@ void MainFrame::PreviewCpp(Node* form_node)
                         for (auto& iter: mstr)
                         {
                             // Friendly names will have already been converted, so normal lookup works fine.
-                            ex_style |= g_NodeCreator.GetConstantAsInt(iter);
+                            ex_style |= NodeCreation.GetConstantAsInt(iter);
                         }
 
                         dlg.SetExtraStyle(dlg.GetExtraStyle() | ex_style);
@@ -464,7 +464,7 @@ void MainFrame::PreviewCpp(Node* form_node)
                         for (auto& iter: mstr)
                         {
                             // Friendly names will have already been converted, so normal lookup works fine.
-                            ex_style |= g_NodeCreator.GetConstantAsInt(iter);
+                            ex_style |= NodeCreation.GetConstantAsInt(iter);
                         }
                         wizard.SetExtraStyle(ex_style);
                     }
@@ -480,7 +480,7 @@ void MainFrame::PreviewCpp(Node* form_node)
                         for (auto& iter: mstr)
                         {
                             // Friendly names will have already been converted, so normal lookup works fine.
-                            placement |= g_NodeCreator.GetConstantAsInt(iter);
+                            placement |= NodeCreation.GetConstantAsInt(iter);
                         }
                         wizard.SetBitmapPlacement(placement);
 

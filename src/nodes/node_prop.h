@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include "image_bundle.h"  // Functions for working with wxBitmapBundle
+#include "image_handler.h"  // ProjectImage class
 
 #include "font_prop.h"     // FontProperty class
 #include "node_classes.h"  // Forward defintions of Node classes

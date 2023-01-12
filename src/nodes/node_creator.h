@@ -32,10 +32,20 @@ using NodeDeclarationArray = std::array<NodeDeclaration*, gen_name_array_size>;
 // Contains definitions of all components
 class NodeCreator
 {
-public:
-    NodeCreator() {};
-    ~NodeCreator();
+private:
+    NodeCreator() {}
 
+public:
+    NodeCreator(NodeCreator const&) = delete;
+    void operator=(NodeCreator const&) = delete;
+
+    static NodeCreator& getInstance()
+    {
+        static NodeCreator instance;
+        return instance;
+    }
+
+public:
     void Initialize();
 
     // Only creates the node if the parent allows it as a child
@@ -59,10 +69,11 @@ public:
     // This returns the integer value of most wx constants used in various components
     int GetConstantAsInt(const std::string& name, int defValue = 0) const;
 
-    NodeSharedPtr CreateNode(pugi::xml_node& node, Node* parent = nullptr, bool check_for_duplicates = false);
+    NodeSharedPtr CreateNode(pugi::xml_node& node, Node* parent = nullptr, bool check_for_duplicates = false,
+                             bool allow_ui = true);
 
     // Only use this with .wxui projects -- it will fail on a .fbp project
-    ProjectSharedPtr CreateProjectClass(pugi::xml_node* xml_obj);
+    NodeSharedPtr CreateProjectNode(pugi::xml_node* xml_obj, bool allow_ui = true);
 
     // Makes a copy, including the entire child heirarchy. The copy does not have a parent.
     NodeSharedPtr MakeCopy(Node* node, Node* parent = nullptr);
@@ -100,7 +111,7 @@ private:
     std::map<std::string, pugi::xml_node, std::less<>> m_interfaces;
 };
 
-extern NodeCreator g_NodeCreator;
+extern NodeCreator& NodeCreation;
 
 // Map of friendly name to wxWidgets constant string
 extern std::unordered_map<std::string, const char*> g_friend_constant;

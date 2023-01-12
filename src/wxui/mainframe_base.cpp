@@ -15,6 +15,7 @@
 #include "ui_images.h"
 
 #include "mainframe.h"
+#include "project_handler.h"
 
 #include "mainframe_base.h"
 
@@ -374,14 +375,14 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
     Bind(wxEVT_MENU,
         [](wxCommandEvent&)
         {
-            wxGetApp().NewProject(true);
+            Project.NewProject(true);
         },
         id_NewProject);
     Bind(wxEVT_MENU, &MainFrameBase::OnOpenProject, this, id_OpenProject);
     Bind(wxEVT_MENU,
         [](wxCommandEvent&)
         {
-            wxGetApp().NewProject(false);
+            Project.NewProject(false);
         },
         menu_import->GetId());
     Bind(wxEVT_MENU, &MainFrameBase::OnSaveProject, this, wxID_SAVE);

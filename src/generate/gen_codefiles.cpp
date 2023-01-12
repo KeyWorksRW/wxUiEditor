@@ -25,7 +25,7 @@
 #include "gen_base.h"         // BaseCodeGenerator -- Generate Base class
 #include "generate_dlg.h"     // GenerateDlg -- Dialog for choosing and generating specific language file(s)
 #include "node.h"             // Node class
-#include "project_class.h"    // Project class
+#include "project_handler.h"  // ProjectHandler class
 #include "write_code.h"       // Write code to Scintilla or file
 
 using namespace code;
@@ -124,9 +124,9 @@ void GenThreadCpp(GenData& gen_data, Node* form)
             path = node_folder->as_string(prop_folder_base_directory);
             path.append_filename(base_file.filename());
         }
-        else if (GetProject()->HasValue(prop_base_directory) && !path.contains("/"))
+        else if (Project.HasValue(prop_base_directory) && !path.contains("/"))
         {
-            path = GetProject()->GetBaseDirectory().utf8_string();
+            path = Project.BaseDirectory().utf8_string();
             path.append_filename(base_file);
         }
         path.make_absolute();
@@ -215,18 +215,17 @@ void GenThreadCpp(GenData& gen_data, Node* form)
 
 bool GenerateCodeFiles(GenResults& results, std::vector<ttlib::cstr>* pClassList)
 {
-    auto project = GetProject();
-    if (project->GetChildCount() == 0)
+    if (Project.ChildCount() == 0)
     {
         wxMessageBox("You cannot generate any code until you have added a top level form.", "Code Generation");
         return false;
     }
     ttSaveCwd cwd;
-    GetProject()->GetProjectPath().ChangeDir();
+    Project.ChangeDir();
 
-    if (project->prop_as_bool(prop_generate_cmake) && !pClassList)
+    if (Project.as_bool(prop_generate_cmake) && !pClassList)
     {
-        for (auto& iter: project->GetChildNodePtrs())
+        for (auto& iter: Project.ChildNodePtrs())
         {
             if (iter->isGen(gen_folder) && iter->HasValue(prop_folder_cmake_file))
             {
@@ -236,9 +235,9 @@ bool GenerateCodeFiles(GenResults& results, std::vector<ttlib::cstr>* pClassList
                 }
             }
         }
-        if (project->HasValue(prop_cmake_file))
+        if (Project.HasValue(prop_cmake_file))
         {
-            if (WriteCMakeFile(project, results.updated_files, results.msgs) == result::created)
+            if (WriteCMakeFile(Project.ProjectNode(), results.updated_files, results.msgs) == result::created)
             {
                 ++results.file_count;
             }
@@ -250,18 +249,18 @@ bool GenerateCodeFiles(GenResults& results, std::vector<ttlib::cstr>* pClassList
     ttlib::cstr source_ext(".cpp");
     ttlib::cstr header_ext(".h");
 
-    if (auto& extProp = project->prop_as_string(prop_source_ext); extProp.size())
+    if (auto& extProp = Project.value(prop_source_ext); extProp.size())
     {
         source_ext = extProp;
     }
 
-    if (auto& extProp = project->prop_as_string(prop_header_ext); extProp.size())
+    if (auto& extProp = Project.value(prop_header_ext); extProp.size())
     {
         header_ext = extProp;
     }
 
     std::vector<Node*> forms;
-    project->CollectForms(forms);
+    Project.CollectForms(forms);
 
     GenData gen_data(results, pClassList);
     gen_data.source_ext = source_ext;
@@ -340,26 +339,25 @@ bool GenerateCodeFiles(GenResults& results, std::vector<ttlib::cstr>* pClassList
 
 void GenInhertedClass(GenResults& results)
 {
-    auto project = GetProject();
     ttlib::cwd cwd;
-    ttlib::ChangeDir(GetProject()->getProjectPath());
+    Project.ChangeDir();
     ttlib::cstr path;
 
     ttlib::cstr source_ext(".cpp");
     ttlib::cstr header_ext(".h");
 
-    if (auto& extProp = project->prop_as_string(prop_source_ext); extProp.size())
+    if (auto& extProp = Project.value(prop_source_ext); extProp.size())
     {
         source_ext = extProp;
     }
 
-    if (auto extProp = project->prop_as_string(prop_header_ext); extProp.size())
+    if (auto extProp = Project.value(prop_header_ext); extProp.size())
     {
         header_ext = extProp;
     }
 
     std::vector<Node*> forms;
-    project->CollectForms(forms);
+    Project.CollectForms(forms);
 
     for (const auto& form: forms)
     {
@@ -369,9 +367,9 @@ void GenInhertedClass(GenResults& results)
             if (path.empty())
                 continue;
             path.backslashestoforward();
-            if (GetProject()->HasValue(prop_derived_directory) && !path.contains("/"))
+            if (Project.HasValue(prop_derived_directory) && !path.contains("/"))
             {
-                path = GetProject()->as_string(prop_derived_directory);
+                path = Project.value(prop_derived_directory);
                 path.append_filename(file);
             }
             path.make_absolute();
@@ -408,7 +406,7 @@ void GenInhertedClass(GenResults& results)
         auto cpp_cw = std::make_unique<FileCodeWriter>(path.wx_str());
         codegen.SetSrcWriteCode(cpp_cw.get());
 
-        auto retval = codegen.GenerateDerivedClass(project, form);
+        auto retval = codegen.GenerateDerivedClass(Project.ProjectNode(), form);
         if (retval == result::fail)
         {
             results.msgs.emplace_back() << "Cannot create or write to the file " << path << '\n';
@@ -487,10 +485,8 @@ void GenInhertedClass(GenResults& results)
 
 void GenerateTmpFiles(const std::vector<ttlib::cstr>& ClassList, pugi::xml_node root, int language)
 {
-    auto project = GetProject();
-
     ttSaveCwd cwd;
-    ttlib::ChangeDir(GetProject()->getProjectPath());
+    Project.ChangeDir();
     ttlib::cstr path;
     std::vector<ttlib::cstr> results;
 
@@ -499,7 +495,7 @@ void GenerateTmpFiles(const std::vector<ttlib::cstr>& ClassList, pugi::xml_node 
 
     if (language == GEN_LANG_CPLUSPLUS)
     {
-        if (auto& extProp = project->prop_as_string(prop_source_ext); extProp.size())
+        if (auto& extProp = Project.value(prop_source_ext); extProp.size())
         {
             source_ext = extProp;
         }
@@ -507,7 +503,7 @@ void GenerateTmpFiles(const std::vector<ttlib::cstr>& ClassList, pugi::xml_node 
         {
             source_ext = ".cpp";
         }
-        if (auto& extProp = project->prop_as_string(prop_header_ext); extProp.size())
+        if (auto& extProp = Project.value(prop_header_ext); extProp.size())
         {
             header_ext = extProp;
         }
@@ -523,7 +519,7 @@ void GenerateTmpFiles(const std::vector<ttlib::cstr>& ClassList, pugi::xml_node 
     }
 
     std::vector<Node*> forms;
-    project->CollectForms(forms);
+    Project.CollectForms(forms);
 
     for (auto& iter_class: ClassList)
     {
@@ -559,9 +555,9 @@ void GenerateTmpFiles(const std::vector<ttlib::cstr>& ClassList, pugi::xml_node 
                             path = node_folder->as_string(prop_folder_base_directory);
                             path.append_filename(base_file.filename());
                         }
-                        else if (GetProject()->HasValue(prop_base_directory) && !path.contains("/"))
+                        else if (Project.HasValue(prop_base_directory) && !path.contains("/"))
                         {
-                            path = GetProject()->GetBaseDirectory().utf8_string();
+                            path = Project.BaseDirectory().utf8_string();
                             path.append_filename(base_file);
                         }
                         path.backslashestoforward();
@@ -581,9 +577,9 @@ void GenerateTmpFiles(const std::vector<ttlib::cstr>& ClassList, pugi::xml_node 
                             path = node_folder->as_string(prop_folder_python_output_folder);
                             path.append_filename(base_file.filename());
                         }
-                        else if (GetProject()->HasValue(prop_python_output_folder) && !path.contains("/"))
+                        else if (Project.HasValue(prop_python_output_folder) && !path.contains("/"))
                         {
-                            path = GetProject()->GetBaseDirectory(GEN_LANG_PYTHON).utf8_string();
+                            path = Project.BaseDirectory(GEN_LANG_PYTHON).utf8_string();
                             path.append_filename(base_file);
                         }
                         path.backslashestoforward();

@@ -10,7 +10,6 @@
 #include "base_generator.h"  // BaseGenerator -- Base Generator class
 #include "node.h"            // Node class
 #include "node_creator.h"    // NodeCreator class
-#include "project_class.h"   // Project class
 #include "utils.h"           // Utility functions that work with properties
 
 WxGlade::WxGlade() {}
@@ -35,7 +34,7 @@ bool WxGlade::Import(const ttString& filename, bool write_doc)
 
     try
     {
-        m_project = g_NodeCreator.CreateNode(gen_Project, nullptr);
+        m_project = NodeCreation.CreateNode(gen_Project, nullptr);
         for (auto& iter: root.children())
         {
             CreateGladeNode(iter, m_project.get());
@@ -112,7 +111,7 @@ NodeSharedPtr WxGlade::CreateGladeNode(pugi::xml_node& xml_obj, Node* parent, No
         }
     }
 
-    auto new_node = g_NodeCreator.CreateNode(gen_name, parent);
+    auto new_node = NodeCreation.CreateNode(gen_name, parent);
     if (gen_name == gen_BookPage && new_node)
     {
         if (!xml_obj.attribute("name").empty())
@@ -130,7 +129,7 @@ NodeSharedPtr WxGlade::CreateGladeNode(pugi::xml_node& xml_obj, Node* parent, No
         {
             if (gen_name == gen_wxPanel)
             {
-                new_node = g_NodeCreator.CreateNode(gen_BookPage, parent);
+                new_node = NodeCreation.CreateNode(gen_BookPage, parent);
                 if (new_node)
                 {
                     if (!xml_obj.attribute("name").empty())
@@ -146,7 +145,7 @@ NodeSharedPtr WxGlade::CreateGladeNode(pugi::xml_node& xml_obj, Node* parent, No
             }
             else
             {
-                if (auto page = g_NodeCreator.CreateNode(gen_PageCtrl, parent); page)
+                if (auto page = NodeCreation.CreateNode(gen_PageCtrl, parent); page)
                 {
                     parent->Adopt(page);
                     if (!xml_obj.attribute("name").empty())
@@ -158,7 +157,7 @@ NodeSharedPtr WxGlade::CreateGladeNode(pugi::xml_node& xml_obj, Node* parent, No
                         }
                     }
 
-                    new_node = g_NodeCreator.CreateNode(gen_name, page.get());
+                    new_node = NodeCreation.CreateNode(gen_name, page.get());
                     if (new_node)
                         continue;
                 }
@@ -171,7 +170,6 @@ NodeSharedPtr WxGlade::CreateGladeNode(pugi::xml_node& xml_obj, Node* parent, No
     if (isBitmapButton)
     {
         new_node->prop_set_value(prop_label, "");
-        isBitmapButton = false;
     }
 
     if (auto prop = new_node->get_prop_ptr(prop_var_name); prop)
@@ -219,7 +217,7 @@ NodeSharedPtr WxGlade::CreateGladeNode(pugi::xml_node& xml_obj, Node* parent, No
     }
 
     auto child = xml_obj.child("object");
-    if (g_NodeCreator.IsOldHostType(new_node->DeclName()))
+    if (NodeCreation.IsOldHostType(new_node->DeclName()))
     {
         ProcessAttributes(xml_obj, new_node.get());
         ProcessProperties(xml_obj, new_node.get(), parent);

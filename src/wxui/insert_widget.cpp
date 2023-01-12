@@ -88,10 +88,9 @@ bool InsertWidget::Create(wxWindow* parent, wxWindowID id, const wxString& title
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include "mainframe.h"      // MainFrame -- Main window frame
-#include "node.h"           // Node class
-#include "node_creator.h"   // NodeCreator -- Class used to create nodes
-#include "project_class.h"  // Project class
+#include "mainframe.h"     // MainFrame -- Main window frame
+#include "node.h"          // Node class
+#include "node_creator.h"  // NodeCreator -- Class used to create nodes
 
 void MainFrame::OnInsertWidget(wxCommandEvent&)
 {
@@ -143,7 +142,7 @@ void InsertWidget::OnNameText(wxCommandEvent& WXUNUSED(event))
     m_listbox->Clear();
     auto node = wxGetFrame().GetSelectedNode();
 
-    for (auto iter: g_NodeCreator.GetNodeDeclarationArray())
+    for (auto iter: NodeCreation.GetNodeDeclarationArray())
     {
         if (!iter)
         {

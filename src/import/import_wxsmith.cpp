@@ -10,7 +10,6 @@
 #include "base_generator.h"  // BaseGenerator -- Base Generator class
 #include "node.h"            // Node class
 #include "node_creator.h"    // NodeCreator class
-#include "project_class.h"   // Project class
 #include "utils.h"           // Utility functions that work with properties
 
 WxSmith::WxSmith() {}
@@ -36,7 +35,7 @@ bool WxSmith::Import(const ttString& filename, bool write_doc)
 
     try
     {
-        m_project = g_NodeCreator.CreateNode(gen_Project, nullptr);
+        m_project = NodeCreation.CreateNode(gen_Project, nullptr);
         for (auto& iter: root.children())
         {
             CreateXrcNode(iter, m_project.get());

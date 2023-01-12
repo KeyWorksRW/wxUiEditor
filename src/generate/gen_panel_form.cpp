@@ -30,7 +30,7 @@ wxObject* PanelFormGenerator::CreateMockup(Node* node, wxObject* parent)
         for (auto& iter: mstr)
         {
             // Friendly names will have already been converted, so normal lookup works fine.
-            ex_style |= g_NodeCreator.GetConstantAsInt(iter);
+            ex_style |= NodeCreation.GetConstantAsInt(iter);
         }
 
         widget->SetExtraStyle(widget->GetExtraStyle() | ex_style);

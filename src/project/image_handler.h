@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Purpose:   Project class
+// Purpose:   ImageHandler class
 // Author:    Ralph Walden
 // Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
@@ -9,13 +9,18 @@
 
 #include <map>
 #include <mutex>
-#include <thread>
 
-#include "image_bundle.h"  // This will #include wx/bmpbndl.h and wx/bitmap.h
+#include <wx/bmpbndl.h>  // includes wx/bitmap.h, wxBitmapBundle class interface
 
-#include "node.h"  // Node class
+#include "node_classes.h"  // Forward defintions of Node classes
 
 class wxAnimation;
+
+struct ImageBundle
+{
+    wxBitmapBundle bundle;
+    std::vector<ttlib::cstr> lst_filenames;
+};
 
 struct EmbeddedImage
 {
@@ -28,15 +33,22 @@ struct EmbeddedImage
 
 wxBitmapBundle LoadSVG(EmbeddedImage* embed, ttlib::sview size_description);
 
-class Project : public Node
+class ImageHandler
 {
+private:
+    ImageHandler() {}
+
 public:
-    Project(NodeDeclaration* declaration) : Node(declaration) {}
+    ImageHandler(ImageHandler const&) = delete;
+    void operator=(ImageHandler const&) = delete;
 
-    void CollectForms(std::vector<Node*>& forms, Node* node_start = nullptr);
+    static ImageHandler& getInstance()
+    {
+        static ImageHandler instance;
+        return instance;
+    }
 
-    // Make class and filenames unique to the project
-    void FixupDuplicatedNode(Node* new_node);
+    void Initialize(NodeSharedPtr project, bool allow_ui = true);
 
     // This will parse the entire project, and ensure that each embedded image is associated
     // with the form node of the form it first appears in.
@@ -44,49 +56,9 @@ public:
     // Returns true if an associated node changed
     bool UpdateEmbedNodes();
 
-    // lower-case version returns cstr, GetProjectFile returns ttString.
-    ttlib::cstr& getProjectFile() { return m_projectFile; }
-
-    // upper-case version returns ttString, getProjectFile returns cstr.
-    ttString GetProjectFile() { return ttString() << m_projectFile.wx_str(); }
-
-    ttlib::cstr& SetProjectFile(const ttString& file);
-    ttlib::cstr& setProjectFile(const ttlib::cstr& file);
-    ttlib::cstr& SetProjectPath(const ttString& path, bool remove_filename = true);
-    ttlib::cstr& setProjectPath(const ttlib::cstr& path, bool remove_filename = true);
-
-    // Returns the directory the project file is in as a ttlib::cstr
-    ttlib::cstr& getProjectPath() { return m_projectPath; }
-
-    // Returns the directory the project file is in as a ttString
-    ttString GetProjectPath() { return ttString() << m_projectPath.wx_str(); }
-
-    // Returns the full path to the directory the project file is in.
-    ttString GetFullProjectPath();
-
-    ttlib::cstr getArtDirectory();
-    ttString GetArtDirectory();
-
-    ttString GetBaseDirectory(int language = GEN_LANG_CPLUSPLUS);
-    ttString GetDerivedDirectory();
-
-    // Returns the absolute path to the language-specific property directory.
-    // If the property is empty, this will return the full project path.
-    ttString GetFullBaseDirectory(int language = GEN_LANG_CPLUSPLUS);
-
-    // Returns the absolute path to the prop_derived_directory.
-    // If the property is empty, this will return the full project path.
-    ttString GetFullDerivedDirectory();
-
-    // Returns the first project child that is a form, or nullptr if not form children found.
-    Node* GetFirstFormChild(Node* node = nullptr);
-
     wxImage GetImage(const ttlib::cstr& description);
 
     wxBitmapBundle GetBitmapBundle(const ttlib::cstr& description, Node* node);
-
-    // If there is an Image form containing this bundle, return it's name
-    ttlib::cstr GetBundleFuncName(const ttlib::cstr& description);
 
     // This takes the full bitmap property description and uses that to determine the image
     // to load. The image is cached for as long as the project is open.
@@ -113,6 +85,9 @@ public:
         return GetPropertyImageBundle(parts, node);
     }
 
+    // If there is an Image form containing this bundle, return it's name
+    ttlib::cstr GetBundleFuncName(const ttlib::cstr& description);
+
     ImageBundle* ProcessBundleProperty(const ttlib::multistr& parts, Node* node);
 
     inline ImageBundle* ProcessBundleProperty(const ttlib::cstr& description, Node* node)
@@ -131,9 +106,6 @@ public:
     bool AddEmbeddedImage(ttlib::cstr path, Node* form, bool is_animation = false);
     EmbeddedImage* GetEmbeddedImage(ttlib::sview path);
 
-    // Converts filename to a valid string name and sets EmbeddedImage::array_name
-    void InitializeArrayName(EmbeddedImage* embed, ttlib::sview filename);
-
     // This will collect bundles for the entire project -- it initializes
     // std::map<std::string, ImageBundle> m_bundles for every image.
     void CollectBundles();
@@ -142,6 +114,14 @@ protected:
     bool CheckNode(Node* node);
 
     void CollectNodeBundles(Node* node, Node* form);
+
+    // Converts filename to a valid string name and sets EmbeddedImage::array_name
+    void InitializeArrayName(EmbeddedImage* embed, ttlib::sview filename);
+
+    bool AddNewEmbeddedImage(ttlib::cstr path, Node* form, std::unique_lock<std::mutex>& add_lock);
+
+    // Reads the image and stores it in m_map_embedded
+    bool AddEmbeddedBundleImage(ttlib::cstr path, Node* form);
 
     bool AddNewEmbeddedBundle(const ttlib::multistr& parts, ttlib::cstr path, Node* form);
 
@@ -152,16 +132,10 @@ protected:
     }
 
     // Reads the image and stores it in m_map_embedded
-    bool AddEmbeddedBundleImage(ttlib::cstr path, Node* form);
-
-    // Reads the image and stores it in m_map_embedded
     bool AddSvgBundleImage(ttlib::cstr path, Node* form);
 
-    bool AddNewEmbeddedImage(ttlib::cstr path, Node* form, std::unique_lock<std::mutex>& add_lock);
-
 private:
-    ttlib::cstr m_projectFile;
-    ttlib::cstr m_projectPath;
+    NodeSharedPtr m_project_node { nullptr };
 
     std::mutex m_mutex_embed_add;
     std::mutex m_mutex_embed_retrieve;
@@ -173,6 +147,8 @@ private:
 
     // std::string is parts[IndexImage].filename()
     std::map<std::string, std::unique_ptr<EmbeddedImage>, std::less<>> m_map_embedded;
+
+    bool m_allow_ui { true };
 };
 
-Project* GetProject();
+extern ImageHandler& ProjectImages;

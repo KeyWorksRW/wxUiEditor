@@ -11,9 +11,9 @@
 
 #include "wakatime.h"  // WakaTime
 
-#include "mainapp.h"        // App -- Main application class
-#include "preferences.h"    // PREFS -- Preferences
-#include "project_class.h"  // Project class
+#include "mainapp.h"          // App -- Main application class
+#include "preferences.h"      // PREFS -- Preferences
+#include "project_handler.h"  // ProjectHandler class
 
 WakaTime::WakaTime()
 {
@@ -140,10 +140,10 @@ void WakaTime::SendHeartbeat(bool FileSavedEvent)
             ttString cmd;
             cmd << m_waka_cli.wx_str()
                 << " --plugin \"wxUiEditor/0.5.0 wxUiEditor-wakatime/0.5.0\" --category designing --project ";
-            ttString name = GetProject()->GetProjectFile().filename();
+            ttString name = Project.ProjectFile().filename();
             name.remove_extension();
             cmd << name.wx_str();
-            cmd << " --entity \"" << GetProject()->GetProjectFile() << "\"";
+            cmd << " --entity \"" << Project.ProjectFile() << "\"";
             if (FileSavedEvent)
             {
                 cmd << " --write";

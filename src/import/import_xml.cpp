@@ -12,7 +12,6 @@
 #include "mainframe.h"       // Main window frame
 #include "node.h"            // Node class
 #include "node_creator.h"    // NodeCreator class
-#include "project_class.h"   // Project class
 #include "utils.h"           // Utility functions that work with properties
 
 using namespace GenEnum;
@@ -1152,7 +1151,7 @@ NodeSharedPtr ImportXML::CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, No
         // switch to the form version
         gen_name = gen_ToolBar;
 
-    auto new_node = g_NodeCreator.CreateNode(gen_name, parent);
+    auto new_node = NodeCreation.CreateNode(gen_name, parent);
     if (new_node && is_generic_version)
     {
         new_node->set_value(prop_use_generic, true);
@@ -1161,7 +1160,7 @@ NodeSharedPtr ImportXML::CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, No
     {
         if (sizeritem && sizeritem->isGen(gen_oldbookpage))
         {
-            if (auto page = g_NodeCreator.CreateNode(gen_PageCtrl, parent); page)
+            if (auto page = NodeCreation.CreateNode(gen_PageCtrl, parent); page)
             {
                 if (sizeritem->HasValue(prop_label))
                 {
@@ -1173,10 +1172,10 @@ NodeSharedPtr ImportXML::CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, No
         }
         else if (parent && parent->isGen(gen_wxPanel))
         {
-            auto sizer = g_NodeCreator.CreateNode(gen_VerticalBoxSizer, parent);
+            auto sizer = NodeCreation.CreateNode(gen_VerticalBoxSizer, parent);
             if (sizer)
             {
-                new_node = g_NodeCreator.CreateNode(gen_name, sizer.get());
+                new_node = NodeCreation.CreateNode(gen_name, sizer.get());
                 if (new_node)
                 {
                     parent->Adopt(sizer);
@@ -1266,7 +1265,7 @@ NodeSharedPtr ImportXML::CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, No
     }
 
     auto child = xml_obj.child("object");
-    if (g_NodeCreator.IsOldHostType(new_node->DeclName()))
+    if (NodeCreation.IsOldHostType(new_node->DeclName()))
     {
         ProcessAttributes(xml_obj, new_node.get());
         ProcessProperties(xml_obj, new_node.get(), parent);

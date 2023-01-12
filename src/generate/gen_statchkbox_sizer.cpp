@@ -9,9 +9,9 @@
 #include <wx/sizer.h>
 #include <wx/statbox.h>
 
-#include "gen_common.h"     // GeneratorLibrary -- Generator classes
-#include "node.h"           // Node class
-#include "project_class.h"  // Project class
+#include "gen_common.h"       // GeneratorLibrary -- Generator classes
+#include "node.h"             // Node class
+#include "project_handler.h"  // ProjectHandler class
 
 #include "pugixml.hpp"  // xml read/write/create/process
 
@@ -21,7 +21,7 @@ wxObject* StaticCheckboxBoxSizerGenerator::CreateMockup(Node* node, wxObject* pa
 {
     wxStaticBoxSizer* sizer;
 
-    if (GetProject()->as_string(prop_code_preference) != "Python")
+    if (Project.value(prop_code_preference) != "Python")
     {
         long style_value = 0;
         if (node->prop_as_string(prop_style).contains("wxALIGN_RIGHT"))
@@ -126,7 +126,7 @@ bool StaticCheckboxBoxSizerGenerator::ConstructionCode(Code& code)
     {
         code.NodeName() << " = new wxStaticBoxSizer(new wxStaticBox(" << parent_name << ", wxID_ANY";
         code.Comma();
-        if (wxGetProject().value(prop_wxWidgets_version) == "3.1")
+        if (Project.value(prop_wxWidgets_version) == "3.1")
         {
             code.Eol().Str("#if wxCHECK_VERSION(3, 1, 1)").Eol().Tab();
             code.as_string(prop_checkbox_var_name) << "),";

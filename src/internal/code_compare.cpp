@@ -84,7 +84,7 @@ bool CodeCompare::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 /////////////////// Non-generated Copyright/License Info ////////////////////
 // Purpose:   Compare code generation
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2021-2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2021-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -96,10 +96,10 @@ bool CodeCompare::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 
 #include "ttcwd_wx.h"  // cwd -- Class for storing and optionally restoring the current directory
 
-#include "gen_base.h"       // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
-#include "generate_dlg.h"   // GenerateDlg -- Dialog for choosing and generating specific language file(s)
-#include "node.h"           // Node class
-#include "project_class.h"  // Project class
+#include "gen_base.h"         // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
+#include "generate_dlg.h"     // GenerateDlg -- Dialog for choosing and generating specific language file(s)
+#include "node.h"             // Node class
+#include "project_handler.h"  // ProjectHandler class
 
 #include "pugixml.hpp"
 
@@ -117,10 +117,9 @@ CodeCompare::~CodeCompare()
         wxRemoveFile(iter);
     }
 
-    auto project = GetProject();
-    if (project->HasValue(prop_base_directory))
+    if (Project.HasValue(prop_base_directory))
     {
-        dir.GetAllFiles(project->prop_as_wxString(prop_base_directory), &files, "~wxue_**.*");
+        dir.GetAllFiles(Project.as_ttString(prop_base_directory), &files, "~wxue_**.*");
 
         for (auto& iter: files)
         {

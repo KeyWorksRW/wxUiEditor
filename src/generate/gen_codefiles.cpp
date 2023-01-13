@@ -13,10 +13,6 @@
     #include <thread>
 #endif
 
-#if defined(_DEBUG) || defined(INTERNAL_TESTING)
-    #include <chrono>
-#endif
-
 #include "ttcwd_wx.h"  // cwd -- Class for storing and optionally restoring the current directory
 
 #include "mainframe.h"
@@ -291,7 +287,7 @@ bool GenerateCodeFiles(GenResults& results, std::vector<ttlib::cstr>* pClassList
 #endif
 
 #if defined(_DEBUG) || defined(INTERNAL_TESTING)
-    auto begin_time = std::chrono::high_resolution_clock::now();
+    results.StartClock();
 #endif
     for (const auto& form: forms)
     {
@@ -321,14 +317,7 @@ bool GenerateCodeFiles(GenResults& results, std::vector<ttlib::cstr>* pClassList
 #endif
 
 #if defined(_DEBUG) || defined(INTERNAL_TESTING)
-    auto end_time = std::chrono::high_resolution_clock::now();
-    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end_time - begin_time);
-    size_t value = ((to_size_t) duration.count());
-    #if defined(THREADED_CODE_GEN)
-    results.msgs.emplace_back(ttlib::cstr() << "Threaded time: " << value << " milliseconds");
-    #else
-    results.msgs.emplace_back(ttlib::cstr() << "Non-threaded time: " << value << " milliseconds");
-    #endif
+    results.EndClock();
 #endif
 
     if (pClassList)

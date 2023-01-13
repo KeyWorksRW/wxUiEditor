@@ -85,6 +85,11 @@ bool GeneratePythonFiles(GenResults& results, std::vector<ttlib::cstr>* pClassLi
     bool generate_result = true;
     std::vector<Node*> forms;
     Project.CollectForms(forms);
+
+#if defined(_DEBUG) || defined(INTERNAL_TESTING)
+    results.StartClock();
+#endif
+
     for (const auto& form: forms)
     {
         if (auto& base_file = form->prop_as_string(prop_python_file); base_file.size())
@@ -211,6 +216,11 @@ bool GeneratePythonFiles(GenResults& results, std::vector<ttlib::cstr>* pClassLi
             continue;
         }
     }
+
+#if defined(_DEBUG) || defined(INTERNAL_TESTING)
+    results.EndClock();
+#endif
+
     return generate_result;
 }
 

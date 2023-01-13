@@ -322,6 +322,10 @@ bool GenerateXrcFiles(GenResults& results, ttlib::cstr out_file, std::vector<ttl
     Project.CollectForms(forms);
     ttlib::cstr path;
 
+#if defined(_DEBUG) || defined(INTERNAL_TESTING)
+    results.EndClock();
+#endif
+
     for (auto& form: forms)
     {
         if (auto& base_file = form->prop_as_string(prop_xrc_file); base_file.size())
@@ -402,6 +406,10 @@ bool GenerateXrcFiles(GenResults& results, ttlib::cstr out_file, std::vector<ttl
             results.updated_files.emplace_back(path);
         }
     }
+
+#if defined(_DEBUG) || defined(INTERNAL_TESTING)
+    results.EndClock();
+#endif
 
     return true;
 }

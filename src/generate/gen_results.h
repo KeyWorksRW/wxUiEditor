@@ -12,11 +12,34 @@ namespace pugi
     class xml_node;
 }
 
+#if defined(_DEBUG) || defined(INTERNAL_TESTING)
+    #include <chrono>
+#endif
+
 struct GenResults
 {
     size_t file_count { 0 };
     std::vector<ttlib::cstr> msgs;
     std::vector<ttlib::cstr> updated_files;
+
+#if defined(_DEBUG) || defined(INTERNAL_TESTING)
+    std::chrono::steady_clock::time_point start_time;
+    size_t elapsed;
+
+    void StartClock()
+    {
+        start_time = std::chrono::steady_clock::now();
+    }
+
+    void EndClock()
+    {
+        auto end_time = std::chrono::steady_clock::now();
+        elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time).count();
+        ttlib::cstr msg;
+        msg << "Elapsed time: " << elapsed << " milliseconds";
+        msgs.emplace_back(msg);
+    }
+#endif
 };
 
 // If pClassList is non-null, it must contain the base class name of every form that needs

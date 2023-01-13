@@ -5,6 +5,8 @@
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
+#include <iostream>
+
 #include <wx/cmdline.h>  // wxCmdLineParser and related classes for parsing the command
 #include <wx/config.h>   // wxConfig base header
 #include <wx/cshelp.h>   // Context-sensitive help support classes
@@ -15,6 +17,7 @@
 #include "mainapp.h"
 
 #include "bitmaps.h"          // Contains various images handling functions
+#include "gen_results.h"      // Code generation file writing functions
 #include "mainframe.h"        // MainFrame -- Main window frame
 #include "node.h"             // Node -- Node class
 #include "node_creator.h"     // NodeCreator class
@@ -128,22 +131,127 @@ int App::OnRun()
     wxCmdLineParser parser(argc, argv);
     OnInitCmdLine(parser);
     parser.AddParam("Filename", wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL);
+
+    parser.AddLongOption("gen_python", "generate python files and exit", wxCMD_LINE_VAL_STRING, wxCMD_LINE_HIDDEN);
+    parser.AddLongOption("gen_cpp", "generate C++ files and exit", wxCMD_LINE_VAL_STRING, wxCMD_LINE_HIDDEN);
+    parser.AddLongOption("gen_xrc", "generate XRC files and exit", wxCMD_LINE_VAL_STRING, wxCMD_LINE_HIDDEN);
+
+    parser.AddLongOption("test_python", "generate python files and exit", wxCMD_LINE_VAL_STRING, wxCMD_LINE_HIDDEN);
+    parser.AddLongOption("test_cpp", "generate C++ files and exit", wxCMD_LINE_VAL_STRING, wxCMD_LINE_HIDDEN);
+    parser.AddLongOption("test_xrc", "generate XRC files and exit", wxCMD_LINE_VAL_STRING, wxCMD_LINE_HIDDEN);
+
     parser.Parse();
-    if (parser.GetParamCount())
+    if (parser.GetParamCount() || parser.GetArguments().size())
     {
-        ttString filename = parser.GetParam(0);
+        ttString filename;
+        auto generate_type = GEN_LANG_NONE;
+        bool test_only = false;
+        if (parser.Found("gen_python", &filename))
+        {
+            generate_type = GEN_LANG_PYTHON;
+        }
+        else if (parser.Found("gen_cpp", &filename))
+        {
+            generate_type = GEN_LANG_CPLUSPLUS;
+        }
+        else if (parser.Found("gen_xrc", &filename))
+        {
+            generate_type = GEN_LANG_XRC;
+        }
+        else if (parser.Found("test_python", &filename))
+        {
+            generate_type = GEN_LANG_PYTHON;
+            test_only = true;
+        }
+        else if (parser.Found("test_cpp", &filename))
+        {
+            generate_type = GEN_LANG_CPLUSPLUS;
+            test_only = true;
+        }
+        else if (parser.Found("test_xrc", &filename))
+        {
+            generate_type = GEN_LANG_XRC;
+            test_only = true;
+        }
+        else
+        {
+            filename = parser.GetParam(0);
+        }
+
         filename.make_absolute();
         if (filename.file_exists())
         {
             if (!filename.extension().is_sameas(".wxui", tt::CASE::either) &&
                 !filename.extension().is_sameas(".wxue", tt::CASE::either))
             {
-                is_project_loaded = Project.ImportProject(filename);
+                is_project_loaded = Project.ImportProject(filename, false);
             }
             else
             {
-                is_project_loaded = Project.LoadProject(filename);
+                is_project_loaded = Project.LoadProject(filename, false);
             }
+        }
+        else
+        {
+            if (generate_type != GEN_LANG_NONE)
+            {
+                std::cerr << "Unable to find project file: " << filename << std::endl;
+                return 1;
+            }
+        }
+
+        if (generate_type != GEN_LANG_NONE)
+        {
+            if (!is_project_loaded)
+            {
+                std::cerr << "Unable to load project file: " << filename << std::endl;
+                return 1;
+            }
+
+            GenResults results;
+            std::vector<ttlib::cstr> class_list;
+
+            switch (generate_type)
+            {
+                case GEN_LANG_PYTHON:
+                    GeneratePythonFiles(results, test_only ? &class_list : nullptr);
+                    break;
+
+                case GEN_LANG_CPLUSPLUS:
+                    GenerateCodeFiles(results, test_only ? &class_list : nullptr);
+                    break;
+
+                case GEN_LANG_XRC:
+                    GenerateXrcFiles(results, {}, test_only ? &class_list : nullptr);
+                    break;
+
+                default:
+                    break;
+            }
+
+            if (results.updated_files.size() || class_list.size())
+            {
+                if (test_only)
+                {
+                    for (auto& iter: class_list)
+                    {
+                        std::cout << "Needs updating: " << iter << std::endl;
+                    }
+                }
+                else
+                {
+                    for (auto& iter: results.updated_files)
+                    {
+                        std::cout << "Needs updating: " << iter << std::endl;
+                    }
+                }
+            }
+            else
+            {
+                std::cout << "All " << results.file_count << " generated files are current" << std::endl;
+            }
+
+            return 0;
         }
     }
 

@@ -658,9 +658,11 @@ void GenerateTmpFiles(const std::vector<ttlib::cstr>& ClassList, pugi::xml_node 
                         tmp_path.replace_extension(source_ext);
                         cpp_cw->WriteFile(language, flag_no_ui);
                         path.replace_extension(source_ext);
+                        path.make_relative(Project.ProjectPath().utf8_string());
                         paths.append_child("left").text().set(path.c_str());
                         paths.append_child("left-readonly").text().set("0");
 
+                        tmp_path.make_relative(Project.ProjectPath().utf8_string());
                         paths.append_child("right").text().set(tmp_path.c_str());
                         paths.append_child("right-readonly").text().set("1");
                     }

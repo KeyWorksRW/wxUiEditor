@@ -29,7 +29,7 @@
       derived_class_name="MainFrame"
       derived_file="../ui/mainframe"
       use_derived_class="0"
-      insert_python_code="import python_dlg@@import wizard@@"
+      import_all_dialogs="1"
       python_file="mainframe"
       python_inherit_name="mainframe"
       size="500,300"

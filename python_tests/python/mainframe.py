@@ -6,6 +6,8 @@
 ###############################################################################
 
 import wx
+import wizard
+import python_dlg
 
 from wx.lib.embeddedimage import PyEmbeddedImage
 
@@ -39,9 +41,6 @@ wxPython_2x_png = PyEmbeddedImage(
     b"1BkYMEabAVda/ShQ5Q+gAoEsnLqZkQ4EtIqcDqp4CA1cEwDqwswSRgBbj3lA7iYgJAuvmJvgzlWQia3f"
     b"ESgF1AlW7xNgwGkC/QTYQbqkCwcAASIYkOfH20U9gXTSA3R74wD9q0o6Cii/V60hHOoPwvkD1WDE+MAA"
     b"AAAASUVORK5CYII=")
-
-import python_dlg
-import wizard
 
 class MainFrame(wx.Frame):
 

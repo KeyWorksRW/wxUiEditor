@@ -33,8 +33,8 @@
 #include "../ui/xrccompare.h"          // auto-generated: xrccompare_base.h and xrccompare_base.cpp
 #include "cstm_event.h"                // CustomEvent -- Custom Event class
 #include "gen_common.h"                // GeneratorLibrary -- Generator classes
+#include "gen_results.h"               // Code generation file writing functions
 #include "gen_xrc_utils.h"             // Common XRC generating functions
-#include "generate_dlg.h"              // GenerateDlg -- Dialog for choosing and generating specific language file(s)
 #include "generate_xrc_dlg.h"          // GenerateXrcDlg -- Dialog for generating XRC file(s)
 #include "mainframe.h"                 // MainFrame -- Main window frame
 #include "node.h"                      // Node class

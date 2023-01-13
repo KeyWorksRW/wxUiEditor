@@ -16,7 +16,7 @@
 #include "file_codewriter.h"  // FileCodeWriter -- Classs to write code to disk
 #include "gen_base.h"         // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
 #include "gen_common.h"       // Common component functions
-#include "generate_dlg.h"     // GenerateDlg -- Dialog for choosing and generating specific language file(s)
+#include "gen_results.h"      // Code generation file writing functions
 #include "image_gen.h"        // Functions for generating embedded images
 #include "image_handler.h"    // ImageHandler class
 #include "node.h"             // Node class

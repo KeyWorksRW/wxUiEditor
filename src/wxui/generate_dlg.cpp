@@ -76,6 +76,7 @@ bool GenerateDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 #include "image_handler.h"    // ImageHandler class
 #include "mainframe.h"        // MainFrame -- Main application window
 #include "project_handler.h"  // ProjectHandler class
+#include "gen_results.h"      // Code generation file writing functions
 
 #include "../wxui/dlg_gen_results.h"
 

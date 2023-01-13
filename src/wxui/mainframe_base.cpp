@@ -382,6 +382,7 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
     Bind(wxEVT_MENU,
         [](wxCommandEvent&)
         {
+            // Specifying false tells NewProject to import
             Project.NewProject(false);
         },
         menu_import->GetId());

@@ -211,7 +211,9 @@ bool CommonCtrls::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     static_box_sizer5->Add(m_staticText9, wxSizerFlags().Border(wxALL));
 
     m_checkList = new wxCheckListBox(static_box_sizer5->GetStaticBox(), wxID_ANY);
-    m_checkList->Append("\"item #1\" \"item #2\" \"item #0\"");
+    m_checkList->Append("item #1");
+    m_checkList->Append("item #2");
+    m_checkList->Append("item #0");
     static_box_sizer5->Add(m_checkList, wxSizerFlags().Border(wxALL));
 
     m_staticText10 = new wxStaticText(static_box_sizer5->GetStaticBox(), wxID_ANY, "Sorted");
@@ -219,7 +221,9 @@ bool CommonCtrls::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 
     m_checkList2 = new wxCheckListBox(static_box_sizer5->GetStaticBox(), wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, nullptr,
         wxLB_SINGLE|wxLB_SORT);
-    m_checkList2->Append("\"item #1\" \"item #2\" \"item #0\"");
+    m_checkList2->Append("item #1");
+    m_checkList2->Append("item #2");
+    m_checkList2->Append("item #0");
     static_box_sizer5->Add(m_checkList2, wxSizerFlags().Border(wxALL));
 
     box_sizer3->Add(static_box_sizer5, wxSizerFlags().Expand().Border(wxALL));

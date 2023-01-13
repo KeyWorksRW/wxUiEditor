@@ -5,6 +5,8 @@
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
+#include <iostream>
+
 #include <wx/cmdline.h>  // wxCmdLineParser and related classes for parsing the command
 #include <wx/config.h>   // wxConfig base header
 #include <wx/cshelp.h>   // Context-sensitive help support classes
@@ -12,9 +14,12 @@
 #include <wx/sysopt.h>   // wxSystemOptions
 #include <wx/utils.h>    // Miscellaneous utilities
 
+#include <tttextfile_wx.h>  // textfile -- Classes for reading and writing line-oriented files
+
 #include "mainapp.h"
 
 #include "bitmaps.h"          // Contains various images handling functions
+#include "gen_results.h"      // Code generation file writing functions
 #include "mainframe.h"        // MainFrame -- Main window frame
 #include "node.h"             // Node -- Node class
 #include "node_creator.h"     // NodeCreator class
@@ -49,7 +54,15 @@
 ttlib::cstr widgets_build_signature = WX_BUILD_OPTIONS_SIGNATURE;
 #endif  // _DEBUG
 
+// add_executable(wxUiEditor WIN32 -- this must be used if wxIMPLEMENT_APP is used.
+
+// If wxIMPLEMENT_APP is used, then std::cout and std::cerr will not work.
+
+// If wxIMPLEMENT_APP_CONSOLE is used, a console will be created if the app isn't being run from a console,
+// however std::cout and std::cerr will work.
+
 wxIMPLEMENT_APP(App);
+// wxIMPLEMENT_APP_CONSOLE(App);
 
 #if defined(_WIN32) && defined(_DEBUG)
 
@@ -104,15 +117,6 @@ bool App::OnInit()
     // If we're just providing text-popups for help, then this is all we need.
     wxHelpProvider::Set(new wxSimpleHelpProvider);
 
-#if defined(_DEBUG) || defined(INTERNAL_TESTING)
-    g_pMsgLogging = new MsgLogging();
-#endif
-
-#if defined(_DEBUG)
-    // wxLog only exists in _DEBUG builds
-    wxLog::SetActiveTarget(g_pMsgLogging);
-#endif  // _DEBUG
-
     SetVendorName("KeyWorks");
     Preferences().ReadConfig();
 
@@ -122,29 +126,189 @@ bool App::OnInit()
 int App::OnRun()
 {
     NodeCreation.Initialize();
-    m_frame = new MainFrame();
     bool is_project_loaded = false;
 
     wxCmdLineParser parser(argc, argv);
     OnInitCmdLine(parser);
     parser.AddParam("Filename", wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL);
+
+    parser.AddLongOption("gen_python", "generate python files and exit", wxCMD_LINE_VAL_STRING, wxCMD_LINE_HIDDEN);
+    parser.AddLongOption("gen_cpp", "generate C++ files and exit", wxCMD_LINE_VAL_STRING, wxCMD_LINE_HIDDEN);
+    parser.AddLongOption("gen_xrc", "generate XRC files and exit", wxCMD_LINE_VAL_STRING, wxCMD_LINE_HIDDEN);
+
+    parser.AddLongOption("test_python", "generate python files and exit", wxCMD_LINE_VAL_STRING, wxCMD_LINE_HIDDEN);
+    parser.AddLongOption("test_cpp", "generate C++ files and exit", wxCMD_LINE_VAL_STRING, wxCMD_LINE_HIDDEN);
+    parser.AddLongOption("test_xrc", "generate XRC files and exit", wxCMD_LINE_VAL_STRING, wxCMD_LINE_HIDDEN);
+
     parser.Parse();
-    if (parser.GetParamCount())
+    if (parser.GetParamCount() || parser.GetArguments().size())
     {
-        ttString filename = parser.GetParam(0);
+        ttString filename;
+        ttString log_file;
+        auto generate_type = GEN_LANG_NONE;
+        bool test_only = false;
+        if (parser.Found("gen_python", &filename))
+        {
+            generate_type = GEN_LANG_PYTHON;
+        }
+        else if (parser.Found("gen_cpp", &filename))
+        {
+            generate_type = GEN_LANG_CPLUSPLUS;
+        }
+        else if (parser.Found("gen_xrc", &filename))
+        {
+            generate_type = GEN_LANG_XRC;
+        }
+        else if (parser.Found("test_python", &filename))
+        {
+            generate_type = GEN_LANG_PYTHON;
+            test_only = true;
+        }
+        else if (parser.Found("test_cpp", &filename))
+        {
+            generate_type = GEN_LANG_CPLUSPLUS;
+            test_only = true;
+        }
+        else if (parser.Found("test_xrc", &filename))
+        {
+            generate_type = GEN_LANG_XRC;
+            test_only = true;
+        }
+        else
+        {
+            filename = parser.GetParam(0);
+        }
+
+        if (generate_type == GEN_LANG_NONE)
+        {
+            // If we're not generating code, then we need to create the main frame so that
+            // LoadProject() and ImportProject() can fire events.
+            m_frame = new MainFrame();
+
+#if defined(_DEBUG) || defined(INTERNAL_TESTING)
+            g_pMsgLogging = new MsgLogging();
+#endif
+
+#if defined(_DEBUG)
+            // wxLog only exists in _DEBUG builds
+            wxLog::SetActiveTarget(g_pMsgLogging);
+#endif  // _DEBUG
+        }
+
         filename.make_absolute();
+        GenResults results;
         if (filename.file_exists())
         {
+#if defined(_DEBUG) || defined(INTERNAL_TESTING)
+            if (generate_type != GEN_LANG_NONE)
+            {
+                log_file = filename;
+                log_file.replace_extension(".log");
+                results.StartClock();
+            }
+#endif
             if (!filename.extension().is_sameas(".wxui", tt::CASE::either) &&
                 !filename.extension().is_sameas(".wxue", tt::CASE::either))
             {
-                is_project_loaded = Project.ImportProject(filename);
+                is_project_loaded = Project.ImportProject(filename, generate_type == GEN_LANG_NONE);
             }
             else
             {
-                is_project_loaded = Project.LoadProject(filename);
+                is_project_loaded = Project.LoadProject(filename, generate_type == GEN_LANG_NONE);
             }
         }
+        else
+        {
+            if (generate_type != GEN_LANG_NONE)
+            {
+                std::cerr << "Unable to find project file: " << filename << std::endl;
+                return 1;
+            }
+        }
+
+        if (generate_type != GEN_LANG_NONE)
+        {
+            if (!is_project_loaded)
+            {
+                std::cerr << "Unable to load project file: " << filename << std::endl;
+                return 1;
+            }
+
+            std::vector<ttlib::cstr> class_list;
+#if defined(_DEBUG) || defined(INTERNAL_TESTING)
+            results.StartClock();
+#endif
+            switch (generate_type)
+            {
+                case GEN_LANG_PYTHON:
+                    GeneratePythonFiles(results, test_only ? &class_list : nullptr);
+                    break;
+
+                case GEN_LANG_CPLUSPLUS:
+                    GenerateCodeFiles(results, test_only ? &class_list : nullptr);
+                    break;
+
+                case GEN_LANG_XRC:
+                    GenerateXrcFiles(results, {}, test_only ? &class_list : nullptr);
+                    break;
+
+                default:
+                    break;
+            }
+#if defined(_DEBUG) || defined(INTERNAL_TESTING)
+            results.EndClock();
+#endif
+
+            ttlib::textfile log;
+
+            if (results.updated_files.size() || class_list.size())
+            {
+                if (test_only)
+                {
+                    for (auto& iter: class_list)
+                    {
+                        auto& msg = log.emplace_back();
+                        msg << "Needs updating: " << iter;
+                    }
+                }
+                else
+                {
+                    for (auto& iter: results.updated_files)
+                    {
+                        auto& msg = log.emplace_back();
+                        msg << "Updated: " << iter;
+                    }
+                }
+            }
+            else
+            {
+                auto& msg = log.emplace_back();
+                msg << "All " << results.file_count << " generated files are current";
+            }
+
+            for (auto& iter: results.msgs)
+            {
+                auto& msg = log.emplace_back();
+                msg << iter;
+            }
+            log.WriteFile(log_file.utf8_string());
+
+            return 0;
+        }
+    }
+
+    if (!m_frame)  // nothing passed on the command line, so frame not created yet
+    {
+        m_frame = new MainFrame();
+
+#if defined(_DEBUG) || defined(INTERNAL_TESTING)
+        g_pMsgLogging = new MsgLogging();
+#endif
+
+#if defined(_DEBUG)
+        // wxLog only exists in _DEBUG builds
+        wxLog::SetActiveTarget(g_pMsgLogging);
+#endif  // _DEBUG
     }
 
     if (!is_project_loaded)

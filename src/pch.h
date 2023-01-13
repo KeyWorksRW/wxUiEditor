@@ -104,6 +104,7 @@ enum class MoveDirection
 // This is used to determine the type of file that is being generated
 enum
 {
+    GEN_LANG_NONE,
     GEN_LANG_CPLUSPLUS,
     GEN_LANG_PYTHON,
     GEN_LANG_XRC,

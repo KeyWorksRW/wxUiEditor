@@ -196,7 +196,7 @@ void EventHandlerDlg::OnOK(wxCommandEvent& event)
         auto len = m_stc->GetTextLength() + 1;
         auto buf = std::make_unique<char[]>(len);
         m_stc->SendMsg(SCI_GETTEXT_MSG, len, (wxIntPtr) buf.get());
-        handler << ")@@{" << std::string_view(buf.get(), len - 1);
+        handler << ")@@{@@" << std::string_view(buf.get(), len - 1);
         handler.Replace("\r\n", "@@", tt::REPLACE::all);
         handler.RightTrim();
         handler << "@@}";

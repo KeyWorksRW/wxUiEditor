@@ -63,7 +63,7 @@ void EditCodeDialog::OnOK(wxCommandEvent& event)
     m_stc->ConvertEOLs(wxSTC_EOL_CRLF);
 
     m_value = m_stc->GetText();
-    m_value.Replace(" \r", "\r");  // trim trailing space in lines
+    m_value.Replace(" \r", "");  // trim trailing space in lines
     m_value.Replace("\r\n", "@@");
     m_value.Trim();
 

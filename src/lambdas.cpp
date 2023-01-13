@@ -24,11 +24,3 @@ void ExpandLambda(ttlib::cstr& lambda)
     lambda.Replace("@@", "\n", tt::REPLACE::all);
     lambda.RightTrim();
 }
-
-void CompressLambda(ttlib::cstr& lambda)
-{
-    lambda.insert(0, "@@");
-    lambda.Replace("\r", "", tt::REPLACE::all);  // Remove Windows EOL
-    lambda.Replace("\n", "@@", tt::REPLACE::all);
-    lambda.RightTrim();
-}

@@ -7,5 +7,3 @@
 
 // Replaces @@ with \n
 void ExpandLambda(ttlib::cstr& lambda);
-
-void CompressLambda(ttlib::cstr& lambda);

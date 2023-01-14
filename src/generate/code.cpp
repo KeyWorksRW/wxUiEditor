@@ -1425,7 +1425,7 @@ void Code::GenFontColourSettings()
         }
         if (fg_clr.contains("wx"))
         {
-            Add("wxSystemSettings").ClassMethod("GetColour(").Str(fg_clr) += ")";
+            Add("wxSystemSettings").ClassMethod("GetColour(").Add(fg_clr) += ")";
         }
         else
         {
@@ -1448,7 +1448,7 @@ void Code::GenFontColourSettings()
         }
         if (bg_clr.contains("wx"))
         {
-            Add("wxSystemSettings").ClassMethod("GetColour(").Str(bg_clr) += ")";
+            Add("wxSystemSettings").ClassMethod("GetColour(").Add(bg_clr) += ")";
         }
         else
         {
@@ -1487,7 +1487,7 @@ Code& Code::ColourCode(GenEnum::PropName prop_name)
     {
         if (PropContains(prop_name, "wx"))
         {
-            Add("wxSystemSettings").ClassMethod("GetColour(").as_string(prop_name).Str(")");
+            Add("wxSystemSettings").ClassMethod("GetColour(").Add(prop_name).Str(")");
         }
         else
         {

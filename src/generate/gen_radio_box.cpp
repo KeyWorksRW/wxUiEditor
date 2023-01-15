@@ -66,7 +66,6 @@ bool RadioBoxGenerator::ConstructionCode(Code& code)
     ttlib::cstr choice_name;
     if (code.is_cpp() && array.size())
     {
-        code.OpenBrace();
         choice_name = (code.node()->get_node_name());
         if (choice_name.starts_with("m_"))
             choice_name.erase(0, 2);
@@ -111,7 +110,6 @@ bool RadioBoxGenerator::ConstructionCode(Code& code)
         code.Comma().Str("wxDefaultValidator").Comma().QuotedString(prop_window_name);
     }
     code.EndFunction();
-    code.CloseBrace();
 
     return true;
 }

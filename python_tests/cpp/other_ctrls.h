@@ -10,14 +10,8 @@
 #pragma once
 
 #include <wx/calctrl.h>
-#include <wx/clrpicker.h>
-#include <wx/datectrl.h>
-#include <wx/dateevt.h>
 #include <wx/dialog.h>
 #include <wx/dirctrl.h>
-#include <wx/filepicker.h>
-#include <wx/font.h>
-#include <wx/fontpicker.h>
 #include <wx/gdicmn.h>
 #include <wx/html/htmlwin.h>
 #include <wx/hyperlink.h>
@@ -29,7 +23,6 @@
 #include <wx/srchctrl.h>
 #include <wx/stc/stc.h>
 #include <wx/tglbtn.h>
-#include <wx/timectrl.h>
 
 class OtherCtrlsDlg : public wxDialog
 {
@@ -57,11 +50,6 @@ protected:
     // Class member variables
 
     wxCalendarCtrl* m_calendar;
-    wxColourPickerCtrl* m_colourPicker;
-    wxDatePickerCtrl* m_datePicker;
-    wxDirPickerCtrl* m_dirPicker;
-    wxFilePickerCtrl* m_filePicker;
-    wxFontPickerCtrl* m_fontPicker;
     wxGenericDirCtrl* m_genericDirCtrl;
     wxHyperlinkCtrl* m_hyperlink;
     wxNotebook* m_notebook;
@@ -72,7 +60,6 @@ protected:
     wxSpinCtrl* m_spinCtrl;
     wxSpinCtrlDouble* m_spinCtrlDouble;
     wxStyledTextCtrl* m_scintilla;
-    wxTimePickerCtrl* m_timePicker;
     wxToggleButton* m_toggleBtn;
 };
 

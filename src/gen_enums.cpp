@@ -220,7 +220,8 @@ std::map<GenEnum::PropName, const char*> GenEnum::map_PropNames = {
     { prop_html_url, "html_url" },
     { prop_icon, "icon" },
     { prop_id, "id" },
-    { prop_image_size, "image_size" },  // currently unused
+    { prop_image_size, "image_size" },                  // currently unused
+    { prop_import_all_dialogs, "import_all_dialogs" },  // currently unused
     { prop_inactive_bitmap, "inactive_bitmap" },
     { prop_inc, "inc" },
     { prop_include_advanced, "include_advanced" },
@@ -513,6 +514,7 @@ std::map<GenEnum::GenName, const char*> GenEnum::map_GenNames = {
     { gen_Choice_Validator, "Choice Validator" },
     { gen_Code, "C++" },
     { gen_CPlusSettings, "C++ Settings" },
+    { gen_PythonFrameSettings, "wxPython Frame Settings" },
     { gen_PythonSettings, "wxPython Settings" },
     { gen_XrcSettings, "XRC Settings" },
     { gen_DlgWindowSettings, "Dialog Window Settings" },

@@ -29,6 +29,7 @@ protected:
     void OnChoicebook(wxCommandEvent& event);
     void OnCommonDialog(wxCommandEvent& event);
     void OnListbook(wxCommandEvent& event);
+    void OnMainTestDlg(wxCommandEvent& event);
     void OnMultiTestDialog(wxCommandEvent& event);
     void OnNotebook(wxCommandEvent& event);
     void OnOtherCtrls(wxCommandEvent& event);
@@ -49,6 +50,7 @@ namespace wxue_img
 {
     // Images declared in this class module:
 
+    extern const unsigned char debug_32_png[1701];
     extern const unsigned char wxPython_1_5x_png[765];
     extern const unsigned char wxPython_2x_png[251];
     extern const unsigned char wxPython_png[399];

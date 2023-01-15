@@ -79,7 +79,10 @@ bool ListViewGenerator::SettingsCode(Code& code)
 
         if (code.HasValue(prop_contents))
         {
-            code.Eol(eol_if_needed).Add("wxListItem ").Str("info").Str(code.is_cpp() ? ";" : "");
+            code.Eol(eol_if_needed);
+            if (code.is_cpp())
+                code.Str("auto ");
+            code.Str("info = ").Add("wxListItem(").EndFunction();
             code.Eol().Str("info.Clear(").EndFunction();
             auto strings = ConvertToArrayString(code.view(prop_contents));
             int row_id = -1;

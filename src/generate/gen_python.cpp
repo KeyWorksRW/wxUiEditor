@@ -332,6 +332,17 @@ void BaseCodeGenerator::GeneratePythonClass(Node* form_node, PANEL_PAGE panel_ty
         m_header->writeLine(import);
     }
 
+    if (form_node->isGen(gen_wxFrame) && form_node->as_bool(prop_import_all_dialogs))
+    {
+        for (auto& form: forms)
+        {
+            if ((form->isGen(gen_wxDialog) || form->isGen(gen_wxWizard)) && form->HasValue(prop_python_file))
+            {
+                m_source->writeLine(ttlib::cstr("import ") << form->value(prop_python_file).filename());
+            }
+        }
+    }
+
     thrd_collect_img_headers.join();
     if (m_embedded_images.size())
     {

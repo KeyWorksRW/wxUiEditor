@@ -19,46 +19,33 @@
 using namespace code;
 
 // clang-format off
+
+static const std::map<ttlib::sview, std::string_view, std::less<>> s_short_map
+{
+    { "wxAUI_", "wx.aui."},
+    { "wxCAL_", "wx.adv."},
+    { "wxDV_", "wx.dataview."},
+    { "wxEVT_DATAVIEW_", "wx.dataview."},
+    { "wxEVT_GRID_", "wx.grid." },
+    { "wxEVT_RIBBON", "wx.ribbon." },
+    { "wxEVT_STC_", "wx.stc." },
+    { "wxEVT_STC_", "wx.stc."},
+    { "wxEVT_DATE_", "wx.adv."},
+    { "wxEVT_TIME_", "wx.adv."},
+    { "wxEVT_WIZARD_", "wx.adv."},
+    { "wxPG_", "wx.propgrid."},
+    { "wxRE_", "wx.richtext."},
+    { "wxRIBBON_BAR_", "wx.ribbon."},
+    { "wxSTC_", "wx.stc."},
+    { "wxWIZARD_", "wx.adv."},
+
+};
+
 static const std::map<std::string_view, std::string_view, std::less<>> s_map_wx_prefix
 {
-    { "wxAUI_ORIENTATION_MASK", "wx.aui."},
-    { "wxAUI_TB_DEFAULT_STYLE", "wx.aui."},
-    { "wxAUI_TB_DEFAULT_STYLE", "wx.aui."},
-    { "wxAUI_TB_GRIPPER", "wx.aui."},
-    { "wxAUI_TB_HORIZONTAL", "wx.aui."},
-    { "wxAUI_TB_HORZ_TEXT", "wx.aui."},
-    { "wxAUI_TB_NO_AUTORESIZE", "wx.aui."},
-    { "wxAUI_TB_NO_TOOLTIPS", "wx.aui."},
-    { "wxAUI_TB_OVERFLOW", "wx.aui."},
-    { "wxAUI_TB_PLAIN_BACKGROUND", "wx.aui."},
-    { "wxAUI_TB_TEXT", "wx.aui."},
-    { "wxAUI_TB_VERTICAL", "wx.aui."},
-    { "wxAUI_TB_VERTICAL", "wx.aui."},
-
-    { "wxAUI_NB_BOTTOM", "wx.aui."},
-    { "wxAUI_NB_CLOSE_BUTTON", "wx.aui."},
-    { "wxAUI_NB_CLOSE_ON_ACTIVE_TAB", "wx.aui."},
-    { "wxAUI_NB_CLOSE_ON_ALL_TABS", "wx.aui."},
-    { "wxAUI_NB_MIDDLE_CLICK_CLOSE", "wx.aui."},
-    { "wxAUI_NB_SCROLL_BUTTONS", "wx.aui."},
-    { "wxAUI_NB_TAB_EXTERNAL_MOVE", "wx.aui."},
-    { "wxAUI_NB_TAB_FIXED_WIDTH", "wx.aui."},
-    { "wxAUI_NB_TAB_MOVE", "wx.aui."},
-    { "wxAUI_NB_TAB_SPLIT", "wx.aui."},
-    { "wxAUI_NB_TOP", "wx.aui."},
-    { "wxAUI_NB_WINDOWLIST_BUTTON", "wx.aui."},
-
     { "wxAC_DEFAULT_STYLE", "wx.adv."},
     { "wxAC_NO_AUTORESIZE", "wx.adv."},
     { "wxNullAnimation", "wx.adv."},
-    { "wxCAL_SUNDAY_FIRST", "wx.adv."},
-    { "wxCAL_MONDAY_FIRST", "wx.adv."},
-    { "wxCAL_SHOW_HOLIDAYS", "wx.adv."},
-    { "wxCAL_NO_YEAR_CHANGE", "wx.adv."},
-    { "wxCAL_NO_MONTH_CHANGE", "wx.adv."},
-    { "wxCAL_SHOW_SURROUNDING_WEEKS", "wx.adv."},
-    { "wxCAL_SEQUENTIAL_MONTH_SELECTION", "wx.adv."},
-    { "wxCAL_SHOW_WEEK_NUMBERS", "wx.adv."},
     { "wxEL_ALLOW_NEW", "wx.adv."},
     { "wxEL_ALLOW_EDIT", "wx.adv."},
     { "wxEL_ALLOW_DELETE", "wx.adv."},
@@ -76,185 +63,8 @@ static const std::map<std::string_view, std::string_view, std::less<>> s_map_wx_
     { "wxHW_NO_SELECTION", "wx.html."},
     { "wxHW_NO_SELECTION", "wx.html."},
 
-    { "wxPG_ALPHABETIC_MODE", "wx.propgrid."},
-    { "wxPG_AUTO_SORT", "wx.propgrid."},
-    { "wxPG_BOLD_MODIFIED", "wx.propgrid."},
-    { "wxPG_DEFAULT_STYLE", "wx.propgrid."},
-    { "wxPG_EX_AUTO_UNSPECIFIED_VALUES", "wx.propgrid."},
-    { "wxPG_EX_ENABLE_TLP_TRACKING", "wx.propgrid."},
-    { "wxPG_EX_HELP_AS_TOOLTIPS", "wx.propgrid."},
-    { "wxPG_EX_INIT_NOCAT", "wx.propgrid."},
-    { "wxPG_EX_MULTIPLE_SELECTION", "wx.propgrid."},
-    { "wxPG_EX_NATIVE_DOUBLE_BUFFERING", "wx.propgrid."},
-    { "wxPG_EX_WRITEONLY_BUILTIN_ATTRIBUTES", "wx.propgrid."},
-    { "wxPG_HIDE_CATEGORIES", "wx.propgrid."},
-    { "wxPG_HIDE_MARGIN", "wx.propgrid."},
-    { "wxPG_LIMITED_EDITING", "wx.propgrid."},
-    { "wxPG_SPLITTER_AUTO_CENTER", "wx.propgrid."},
-    { "wxPG_STATIC_LAYOUT", "wx.propgrid."},
-    { "wxPG_STATIC_SPLITTER", "wx.propgrid."},
-    { "wxPG_TOOLTIPS", "wx.propgrid."},
-
     { "wxEVT_PG_CHANGED", "wx.propgrid." },
     { "wxEVT_PG_CHANGING", "wx.propgrid." },
-
-    { "wxRE_CENTRE_CARET", "wx.richtext."},
-    { "wxRE_READONLY", "wx.richtext."},
-    { "wxRE_MULTILINE", "wx.richtext."},
-
-    { "wxSTC_LEX_", "wx.stc."},
-    { "wxSTC_TD_STRIKEOUT", "wx.stc."},
-    { "wxSTC_MULTIPASTE_EACH", "wx.stc."},
-    { "wxSTC_MARGINOPTION_SUBLINESELECT", "wx.stc."},
-    { "wxSTC_STYLE_LINENUMBER", "wx.stc."},
-    { "wxSTC_STYLE_DEFAULT", "wx.stc."},
-
-    { "wxSTC_WRAPVISUALFLAGLOC_END_BY_TEXT", "wx.stc."},
-    { "wxSTC_WRAPVISUALFLAGLOC_START_BY_TEXT", "wx.stc."},
-
-    { "wxSTC_WRAPVISUALFLAG_END", "wx.stc."},
-    { "wxSTC_WRAPVISUALFLAG_START", "wx.stc."},
-    { "wxSTC_WRAPVISUALFLAG_MARGIN", "wx.stc."},
-
-    { "wxSTC_WRAP_NONE", "wx.stc."},
-    { "wxSTC_WRAP_WORD", "wx.stc."},
-    { "wxSTC_WRAP_CHAR", "wx.stc."},
-    { "wxSTC_WRAP_WHITESPACE", "wx.stc."},
-
-    { "wxSTC_WRAPINDENT_FIXED", "wx.stc."},
-    { "wxSTC_WRAPINDENT_SAME", "wx.stc."},
-    { "wxSTC_WRAPINDENT_INDENT", "wx.stc."},
-
-    { "wxSTC_MARGIN_SYMBOL", "wx.stc."},
-    { "wxSTC_MARGIN_NUMBER", "wx.stc."},
-    { "wxSTC_MARGIN_BACK", "wx.stc."},
-    { "wxSTC_MARGIN_FORE", "wx.stc."},
-    { "wxSTC_MARGIN_TEXT", "wx.stc."},
-    { "wxSTC_MARGIN_RTEXT", "wx.stc."},
-    { "wxSTC_MARGIN_COLOUR", "wx.stc."},
-
-    { "wxSTC_IV_NONE", "wx.stc."},
-    { "wxSTC_IV_REAL", "wx.stc."},
-    { "wxSTC_IV_LOOKFORWARD", "wx.stc."},
-    { "wxSTC_IV_LOOKBOTH", "wx.stc."},
-
-    { "wxSTC_AUTOMATICFOLD_SHOW", "wx.stc."},
-    { "wxSTC_AUTOMATICFOLD_CLICK", "wx.stc."},
-    { "wxSTC_AUTOMATICFOLD_CHANGE", "wx.stc."},
-
-    { "wxSTC_FOLDFLAG_LINEBEFORE_EXPANDED", "wx.stc."},
-    { "wxSTC_FOLDFLAG_LINEBEFORE_CONTRACTED", "wx.stc."},
-    { "wxSTC_FOLDFLAG_LINEAFTER_EXPANDED", "wx.stc."},
-    { "wxSTC_FOLDFLAG_LINEAFTER_CONTRACTED", "wx.stc."},
-    { "wxSTC_FOLDFLAG_LEVELNUMBERS", "wx.stc."},
-    { "wxSTC_FOLDFLAG_LINESTATE", "wx.stc."},
-
-    { "wxSTC_EOL_CRLF", "wx.stc."},
-    { "wxSTC_EOL_CR", "wx.stc."},
-    { "wxSTC_EOL_LF", "wx.stc."},
-
-    { "wxSTC_WS_INVISIBLE", "wx.stc."},
-    { "wxSTC_WS_VISIBLEALWAYS", "wx.stc."},
-    { "wxSTC_WS_VISIBLEAFTERINDENT", "wx.stc."},
-    { "wxSTC_WS_VISIBLEONLYININDENT", "wx.stc."},
-
-    { "wxWIZARD_EX_HELPBUTTON", "wx.adv."},
-    { "wxWIZARD_VALIGN_TOP", "wx.adv."},
-    { "wxWIZARD_VALIGN_CENTRE", "wx.adv."},
-    { "wxWIZARD_VALIGN_BOTTOM", "wx.adv."},
-    { "wxWIZARD_HALIGN_LEFT", "wx.adv."},
-    { "wxWIZARD_HALIGN_CENTRE", "wx.adv."},
-    { "wxWIZARD_HALIGN_RIGHT", "wx.adv."},
-    { "wxWIZARD_TILE", "wx.adv."},
-
-    { "wxEVT_WIZARD_PAGE_CHANGED", "wx.adv."},
-    { "wxEVT_WIZARD_PAGE_CHANGING", "wx.adv."},
-    { "wxEVT_WIZARD_BEFORE_PAGE_CHANGED", "wx.adv."},
-    { "wxEVT_WIZARD_PAGE_SHOWN", "wx.adv."},
-    { "wxEVT_WIZARD_CANCEL", "wx.adv."},
-    { "wxEVT_WIZARD_HELP", "wx.adv."},
-    { "wxEVT_WIZARD_FINISHED", "wx.adv."},
-
-    { "wxRIBBON_BAR_DEFAULT_STYLE", "wx.ribbon."},
-    { "wxRIBBON_BAR_FOLDBAR_STYLE", "wx.ribbon."},
-    { "wxRIBBON_BAR_SHOW_PAGE_LABELS", "wx.ribbon."},
-    { "wxRIBBON_BAR_SHOW_PAGE_ICONS", "wx.ribbon."},
-    { "wxRIBBON_BAR_FLOW_HORIZONTAL", "wx.ribbon."},
-    { "wxRIBBON_BAR_FLOW_VERTICAL", "wx.ribbon."},
-    { "wxRIBBON_BAR_SHOW_PANEL_EXT_BUTTONS", "wx.ribbon."},
-    { "wxRIBBON_BAR_SHOW_PANEL_MINIMISE_BUTTONS", "wx.ribbon."},
-    { "wxRIBBON_BAR_SHOW_TOGGLE_BUTTON", "wx.ribbon."},
-    { "wxRIBBON_BAR_SHOW_HELP_BUTTON", "wx.ribbon."},
-
-    { "wxEVT_RIBBONBAR_HELP_CLICKED", "wx.ribbon." },
-    { "wxEVT_RIBBONBAR_PAGE_CHANGED", "wx.ribbon." },
-    { "wxEVT_RIBBONBAR_PAGE_CHANGING", "wx.ribbon." },
-    { "wxEVT_RIBBONBAR_TAB_LEFT_DCLICK", "wx.ribbon." },
-    { "wxEVT_RIBBONBAR_TAB_MIDDLE_DOWN", "wx.ribbon." },
-    { "wxEVT_RIBBONBAR_TAB_MIDDLE_UP", "wx.ribbon." },
-    { "wxEVT_RIBBONBAR_TAB_RIGHT_DOWN", "wx.ribbon." },
-    { "wxEVT_RIBBONBAR_TAB_RIGHT_UP", "wx.ribbon." },
-    { "wxEVT_RIBBONBAR_TOGGLED", "wx.ribbon." },
-    { "wxEVT_RIBBONBUTTON_CLICKED", "wx.ribbon." },
-    { "wxEVT_RIBBONBUTTON_DROPDOWN_CLICKED", "wx.ribbon." },
-    { "wxEVT_RIBBONGALLERY_CLICKED", "wx.ribbon." },
-    { "wxEVT_RIBBONGALLERY_HOVER_CHANGED", "wx.ribbon." },
-    { "wxEVT_RIBBONGALLERY_SELECTED", "wx.ribbon." },
-    { "wxEVT_RIBBONPANEL_EXTBUTTON_ACTIVATED", "wx.ribbon." },
-    { "wxEVT_RIBBONTOOL_DROPDOWN_CLICKED", "wx.ribbon." },
-
-    { "wxDATAVIEW_COL_RESIZABLE", "wx.dataview."},
-    { "wxDATAVIEW_COL_SORTABLE", "wx.dataview."},
-    { "wxDATAVIEW_COL_REORDERABLE", "wx.dataview."},
-    { "wxDATAVIEW_COL_HIDDEN", "wx.dataview."},
-    { "wxDATAVIEW_CELL_INERT", "wx.dataview."},
-    { "wxDATAVIEW_CELL_ACTIVATABLE", "wx.dataview."},
-    { "wxDATAVIEW_CELL_EDITABLE", "wx.dataview."},
-
-    { "wxDV_SINGLE", "wx.dataview."},
-    { "wxDV_MULTIPLE", "wx.dataview."},
-    { "wxDV_ROW_LINES", "wx.dataview."},
-    { "wxDV_HORIZ_RULES", "wx.dataview."},
-    { "wxDV_VERT_RULES", "wx.dataview."},
-    { "wxDV_VARIABLE_LINE_HEIGHT", "wx.dataview."},
-    { "wxDV_NO_HEADER", "wx.dataview."},
-
-    { "wxEVT_DATAVIEW_COLUMN_HEADER_CLICK", "wx.dataview."},
-    { "wxEVT_DATAVIEW_COLUMN_HEADER_RIGHT_CLICK", "wx.dataview."},
-    { "wxEVT_DATAVIEW_COLUMN_REORDERED", "wx.dataview."},
-    { "wxEVT_DATAVIEW_COLUMN_SORTED", "wx.dataview."},
-    { "wxEVT_DATAVIEW_ITEM_ACTIVATED", "wx.dataview."},
-    { "wxEVT_DATAVIEW_ITEM_BEGIN_DRAG", "wx.dataview."},
-    { "wxEVT_DATAVIEW_ITEM_COLLAPSED", "wx.dataview."},
-    { "wxEVT_DATAVIEW_ITEM_COLLAPSING", "wx.dataview."},
-    { "wxEVT_DATAVIEW_ITEM_CONTEXT_MENU", "wx.dataview."},
-    { "wxEVT_DATAVIEW_ITEM_DROP", "wx.dataview."},
-    { "wxEVT_DATAVIEW_ITEM_DROP_POSSIBLE", "wx.dataview."},
-    { "wxEVT_DATAVIEW_ITEM_EDITING_DONE", "wx.dataview."},
-    { "wxEVT_DATAVIEW_ITEM_EDITING_STARTED", "wx.dataview."},
-    { "wxEVT_DATAVIEW_ITEM_EXPANDED", "wx.dataview."},
-    { "wxEVT_DATAVIEW_ITEM_EXPANDING", "wx.dataview."},
-    { "wxEVT_DATAVIEW_ITEM_START_EDITING", "wx.dataview."},
-    { "wxEVT_DATAVIEW_ITEM_VALUE_CHANGED", "wx.dataview."},
-    { "wxEVT_DATAVIEW_SELECTION_CHANGED", "wx.dataview."},
-
-    { "wxEVT_GRID_CELL_CHANGED", "wx.grid." },
-    { "wxEVT_GRID_CELL_CHANGED", "wx.grid." },
-    { "wxEVT_GRID_CELL_LEFT_CLICK", "wx.grid." },
-    { "wxEVT_GRID_CELL_LEFT_DCLICK", "wx.grid." },
-    { "wxEVT_GRID_CELL_RIGHT_CLICK", "wx.grid." },
-    { "wxEVT_GRID_CELL_RIGHT_DCLICK", "wx.grid." },
-    { "wxEVT_GRID_COL_SIZE", "wx.grid." },
-    { "wxEVT_GRID_EDITOR_CREATED", "wx.grid." },
-    { "wxEVT_GRID_EDITOR_HIDDEN", "wx.grid." },
-    { "wxEVT_GRID_EDITOR_SHOWN", "wx.grid." },
-    { "wxEVT_GRID_LABEL_LEFT_CLICK", "wx.grid." },
-    { "wxEVT_GRID_LABEL_LEFT_DCLICK", "wx.grid." },
-    { "wxEVT_GRID_LABEL_RIGHT_CLICK", "wx.grid." },
-    { "wxEVT_GRID_LABEL_RIGHT_DCLICK", "wx.grid." },
-    { "wxEVT_GRID_RANGE_SELECT", "wx.grid." },
-    { "wxEVT_GRID_ROW_SIZE", "wx.grid." },
-    { "wxEVT_GRID_SELECT_CELL", "wx.grid." },
 
     // This doesn't get created as a class, so we have to add it as if it was a constant.
     { "wxWebView", "wx.html2."},
@@ -448,6 +258,27 @@ Code& Code::Add(ttlib::sview text)
     }
     else
     {
+        auto lambda = [&](ttlib::sview candidate)
+        {
+            // Note that you can *NOT* allocate anything on the stack and return a
+            // std::string_view to it!
+            std::string_view wx_prefix = "wx.";
+            for (auto& iter_prefix: s_short_map)
+            {
+                if (candidate.starts_with(iter_prefix.first))
+                {
+                    wx_prefix = iter_prefix.second;
+                    return wx_prefix;
+                }
+            }
+            if (auto wx_iter = s_map_wx_prefix.find(candidate); wx_iter != s_map_wx_prefix.end())
+            {
+                wx_prefix = wx_iter->second;
+                return wx_prefix;
+            }
+            return wx_prefix;
+        };
+
         if (text.find('|') != tt::npos)
         {
             bool style_set = false;
@@ -460,12 +291,7 @@ Code& Code::Add(ttlib::sview text)
                     m_code += '|';
                 if (iter.is_sameprefix("wx"))
                 {
-                    std::string_view wx_prefix = "wx.";
-                    if (auto wx_iter = s_map_wx_prefix.find(iter); wx_iter != s_map_wx_prefix.end())
-                    {
-                        wx_prefix = wx_iter->second;
-                    }
-
+                    auto wx_prefix = lambda(iter);
                     m_code << wx_prefix << iter.substr(2);
                 }
                 else
@@ -475,12 +301,8 @@ Code& Code::Add(ttlib::sview text)
         }
         else if (text.is_sameprefix("wx"))
         {
-            std::string_view prefix = "wx.";
-            if (auto iter = s_map_wx_prefix.find(text); iter != s_map_wx_prefix.end())
-            {
-                prefix = iter->second;
-            }
-            m_code << prefix << text.substr(2);
+            auto wx_prefix = lambda(text);
+            m_code << wx_prefix << text.substr(2);
         }
         else
         {
@@ -645,6 +467,23 @@ Code& Code::as_string(PropName prop_name)
         m_code += str;
         return *this;
     }
+    std::string_view wx_prefix = "wx.";
+    auto lambda = [&](ttlib::sview candidate)
+    {
+        for (auto& iter_prefix: s_short_map)
+        {
+            if (candidate.starts_with(iter_prefix.first))
+            {
+                wx_prefix = iter_prefix.second;
+                return;
+            }
+        }
+        if (auto wx_iter = s_map_wx_prefix.find(candidate); wx_iter != s_map_wx_prefix.end())
+        {
+            wx_prefix = wx_iter->second;
+            return;
+        }
+    };
 
     if (!ttlib::is_found(str.find('|')))
     {
@@ -657,12 +496,8 @@ Code& Code::as_string(PropName prop_name)
             CheckLineLength(str.size());
             if (str.is_sameprefix("wx"))
             {
-                std::string_view prefix = "wx.";
-                if (auto iter = s_map_wx_prefix.find(str); iter != s_map_wx_prefix.end())
-                {
-                    prefix = iter->second;
-                }
-                m_code << prefix << str.substr(2);
+                lambda(str);
+                m_code << wx_prefix << str.substr(2);
             }
             else
                 m_code += str;
@@ -687,12 +522,8 @@ Code& Code::as_string(PropName prop_name)
             m_code += "\"\"";
         else if (iter.is_sameprefix("wx"))
         {
-            std::string_view prefix = "wx.";
-            if (auto wx_iter = s_map_wx_prefix.find(iter); wx_iter != s_map_wx_prefix.end())
-            {
-                prefix = wx_iter->second;
-            }
-            m_code << prefix << iter.substr(2);
+            lambda(iter);
+            m_code << wx_prefix << iter.substr(2);
         }
         else
             m_code += iter;
@@ -1027,6 +858,24 @@ Code& Code::Style(const char* prefix, ttlib::sview force_style)
             else
             {
                 ttlib::multiview multistr(m_node->prop_as_constant(prop_style, prefix), "|", tt::TRIM::both);
+                std::string_view wx_prefix = "wx.";
+                auto lambda = [&](ttlib::sview candidate)
+                {
+                    for (auto& iter_prefix: s_short_map)
+                    {
+                        if (candidate.starts_with(iter_prefix.first))
+                        {
+                            wx_prefix = iter_prefix.second;
+                            return;
+                        }
+                    }
+                    if (auto wx_iter = s_map_wx_prefix.find(candidate); wx_iter != s_map_wx_prefix.end())
+                    {
+                        wx_prefix = wx_iter->second;
+                        return;
+                    }
+                };
+
                 for (auto& iter: multistr)
                 {
                     if (iter.empty())
@@ -1035,12 +884,7 @@ Code& Code::Style(const char* prefix, ttlib::sview force_style)
                         m_code += '|';
                     if (iter.is_sameprefix("wx"))
                     {
-                        std::string_view wx_prefix = "wx.";
-                        if (auto wx_iter = s_map_wx_prefix.find(iter); wx_iter != s_map_wx_prefix.end())
-                        {
-                            wx_prefix = wx_iter->second;
-                        }
-
+                        lambda(iter);
                         m_code << wx_prefix << iter.substr(2);
                     }
                     else
@@ -1586,7 +1430,7 @@ void Code::GenFontColourSettings()
         }
         if (fg_clr.contains("wx"))
         {
-            Add("wxSystemSettings").ClassMethod("GetColour(").Str(fg_clr) += ")";
+            Add("wxSystemSettings").ClassMethod("GetColour(").Add(fg_clr) += ")";
         }
         else
         {
@@ -1609,7 +1453,7 @@ void Code::GenFontColourSettings()
         }
         if (bg_clr.contains("wx"))
         {
-            Add("wxSystemSettings").ClassMethod("GetColour(").Str(bg_clr) += ")";
+            Add("wxSystemSettings").ClassMethod("GetColour(").Add(bg_clr) += ")";
         }
         else
         {
@@ -1648,7 +1492,7 @@ Code& Code::ColourCode(GenEnum::PropName prop_name)
     {
         if (PropContains(prop_name, "wx"))
         {
-            Add("wxSystemSettings").ClassMethod("GetColour(").as_string(prop_name).Str(")");
+            Add("wxSystemSettings").ClassMethod("GetColour(").Add(prop_name).Str(")");
         }
         else
         {

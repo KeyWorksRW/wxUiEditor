@@ -33,9 +33,7 @@ wxObject* FontPickerGenerator::CreateMockup(Node* node, wxObject* parent)
 
 bool FontPickerGenerator::ConstructionCode(Code& code)
 {
-    if (code.is_cpp() && code.is_local_var())
-        code << "auto* ";
-    code.NodeName().CreateClass();
+    code.AddAuto().NodeName().CreateClass();
     code.ValidParentName().Comma().as_string(prop_id).Comma();
     if (code.HasValue(prop_initial_font))
     {
@@ -52,7 +50,7 @@ bool FontPickerGenerator::ConstructionCode(Code& code)
             code.itoa(fontprop.GetPointSize());
 
         code.Comma().Add(ConvertFontFamilyToString(fontprop.GetFamily())).Comma().Add(font.GetStyleString().utf8_string());
-        code.Comma().Str(font.GetWeightString().utf8_string()).Comma();
+        code.Comma().Add(font.GetWeightString().utf8_string()).Comma();
 
         if (fontprop.IsUnderlined())
             code.AddTrue();
@@ -65,7 +63,6 @@ bool FontPickerGenerator::ConstructionCode(Code& code)
             code.Add("wxEmptyString");
 
         code += ")";
-        code.m_code.insert(0, 4, ' ');
     }
     else
     {

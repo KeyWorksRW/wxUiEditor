@@ -15,7 +15,6 @@
 #include <wx/persist.h>
 #include <wx/persist/toplevel.h>
 #include <wx/sizer.h>
-#include <wx/statbox.h>
 #include <wx/valgen.h>
 
 #include "other_ctrls.h"
@@ -30,38 +29,6 @@ bool OtherCtrlsDlg::Create(wxWindow* parent, wxWindowID id, const wxString& titl
 
     m_notebook = new wxNotebook(this, wxID_ANY);
     parent_sizer->Add(m_notebook, wxSizerFlags(1).Expand().Border(wxALL));
-
-    auto* page = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxBORDER_THEME|wxTAB_TRAVERSAL);
-    m_notebook->AddPage(page, "Pickers");
-
-    auto* parent_sizer2 = new wxBoxSizer(wxVERTICAL);
-
-    auto* static_box = new wxStaticBoxSizer(wxVERTICAL, page, "Pickers");
-
-    m_filePicker = new wxFilePickerCtrl(static_box->GetStaticBox(), wxID_ANY, wxEmptyString, wxFileSelectorPromptStr,
-        "BMP files|*.bmp", wxDefaultPosition, wxDefaultSize, wxFLP_USE_TEXTCTRL|wxFLP_OPEN|wxFLP_FILE_MUST_EXIST);
-    static_box->Add(m_filePicker, wxSizerFlags().Border(wxALL));
-
-    m_dirPicker = new wxDirPickerCtrl(static_box->GetStaticBox(), wxID_ANY, ".", wxDirSelectorPromptStr,
-        wxDefaultPosition, wxDefaultSize, wxDIRP_DEFAULT_STYLE|wxDIRP_SMALL);
-    static_box->Add(m_dirPicker, wxSizerFlags().Border(wxALL));
-
-    m_colourPicker = new wxColourPickerCtrl(static_box->GetStaticBox(), wxID_ANY, *wxBLACK);
-    static_box->Add(m_colourPicker, wxSizerFlags().Border(wxALL));
-
-    m_datePicker = new wxDatePickerCtrl(static_box->GetStaticBox(), wxID_ANY, wxDefaultDateTime);
-    static_box->Add(m_datePicker, wxSizerFlags().Border(wxALL));
-
-    m_timePicker = new wxTimePickerCtrl(static_box->GetStaticBox(), wxID_ANY, wxDefaultDateTime);
-    static_box->Add(m_timePicker, wxSizerFlags().Border(wxALL));
-
-        m_fontPicker = new wxFontPickerCtrl(static_box->GetStaticBox(), wxID_ANY, wxFont(wxNORMAL_FONT->GetPointSize(),
-        wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, "Comic Sans MS"), wxDefaultPosition,
-        wxDefaultSize, wxFNTP_DEFAULT_STYLE|wxFNTP_USE_TEXTCTRL);
-    static_box->Add(m_fontPicker, wxSizerFlags().Border(wxALL));
-
-    parent_sizer2->Add(static_box, wxSizerFlags().Expand().Border(wxALL));
-    page->SetSizerAndFit(parent_sizer2);
 
     auto* m_panel2 = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxBORDER_RAISED|wxTAB_TRAVERSAL);
     m_notebook->AddPage(m_panel2, "Spinners", true);

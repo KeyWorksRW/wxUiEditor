@@ -491,134 +491,41 @@ class MainTestDialog(wx.Dialog):
         self.Centre(wx.BOTH)
 
         # Bind Event handlers
-        self.Bind(wx.EVT_INIT_DIALOG, self.OnInit)
-        self.m_notebook.Bind(wx.EVT_NOTEBOOK_PAGE_CHANGED, self.OnPageChanged)
-        self.m_text_ctrl.Bind(wx.EVT_TEXT, self.OnText)
-        self.m_richText.Bind(wx.EVT_TEXT, self.OnRichText)
-        self.m_scintilla.Bind(wx.stc.EVT_STC_CHANGE, self.OnStcChange)
         self.m_btn.Bind(wx.EVT_BUTTON, self.OnButton)
         self.m_btn_bitmaps.Bind(wx.EVT_BUTTON, self.OnButton)
-        self.m_toggleBtn.Bind(wx.EVT_TOGGLEBUTTON, self.OnToggle)
-        disable_bitmaps.Bind(wx.EVT_CHECKBOX, self.OnDisableBitmapsBtn)
         self.m_btn_5.Bind(wx.EVT_BUTTON, self.OnButton)
-        radioBox.Bind(wx.EVT_RADIOBOX, self.OnRadioBox)
         self.m_btn_3.Bind(wx.EVT_BUTTON, self.OnButton)
         btn2.Bind(wx.EVT_BUTTON, self.OnPopupBtn)
-        self.m_radioBtn.Bind(wx.EVT_RADIOBUTTON, self.OnRadioButton)
-        self.m_radioBtn2.Bind(wx.EVT_RADIOBUTTON, self.OnRadioButton)
+        btn.Bind(wx.EVT_BUTTON, self.OnClearList)
+        disable_bitmaps.Bind(wx.EVT_CHECKBOX, self.OnDisableBitmapsBtn)
         self.m_checkBox2.Bind(wx.EVT_CHECKBOX, self.OnCheckBox)
-        self.m_comboBox.Bind(wx.EVT_COMBOBOX, self.OnCombobox)
-        self.m_comboBox2.Bind(wx.EVT_COMBOBOX, self.OnCombobox)
-        self.m_choice.Bind(wx.EVT_CHOICE, self.OnChoice)
-        self.m_choice2.Bind(wx.EVT_CHOICE, self.OnChoice)
-        self.m_listbox.Bind(wx.EVT_LISTBOX, self.OnListBox)
-        self.m_listBox2.Bind(wx.EVT_LISTBOX, self.OnListBox)
         self.m_checkList_2.Bind(wx.EVT_CHECKLISTBOX, self.OnListChecked)
         self.m_checkList2.Bind(wx.EVT_CHECKLISTBOX, self.OnListChecked)
-        self.m_filePicker.Bind(wx.EVT_FILEPICKER_CHANGED, self.OnFileChanged)
-        self.m_dirPicker.Bind(wx.EVT_DIRPICKER_CHANGED, self.OnDirChanged)
+        self.m_choice.Bind(wx.EVT_CHOICE, self.OnChoice)
+        self.m_choice2.Bind(wx.EVT_CHOICE, self.OnChoice)
         self.m_colourPicker.Bind(wx.EVT_COLOURPICKER_CHANGED, self.OnColourChanged)
+        self.m_comboBox.Bind(wx.EVT_COMBOBOX, self.OnCombobox)
+        self.m_comboBox2.Bind(wx.EVT_COMBOBOX, self.OnCombobox)
         self.m_datePicker.Bind(wx.adv.EVT_DATE_CHANGED, self.OnDateChanged)
-        self.m_timePicker.Bind(wx.adv.EVT_TIME_CHANGED, self.OnTimeChanged)
+        self.m_dirPicker.Bind(wx.EVT_DIRPICKER_CHANGED, self.OnDirChanged)
+        self.m_filePicker.Bind(wx.EVT_FILEPICKER_CHANGED, self.OnFileChanged)
         self.m_fontPicker.Bind(wx.EVT_FONTPICKER_CHANGED, self.OnFontChanged)
-        btn.Bind(wx.EVT_BUTTON, self.OnClearList)
+        self.Bind(wx.EVT_INIT_DIALOG, self.OnInit)
+        self.m_listbox.Bind(wx.EVT_LISTBOX, self.OnListBox)
+        self.m_listBox2.Bind(wx.EVT_LISTBOX, self.OnListBox)
+        self.m_notebook.Bind(wx.EVT_NOTEBOOK_PAGE_CHANGED, self.OnPageChanged)
+        radioBox.Bind(wx.EVT_RADIOBOX, self.OnRadioBox)
+        self.m_radioBtn.Bind(wx.EVT_RADIOBUTTON, self.OnRadioButton)
+        self.m_radioBtn2.Bind(wx.EVT_RADIOBUTTON, self.OnRadioButton)
+        self.m_scintilla.Bind(wx.stc.EVT_STC_CHANGE, self.OnStcChange)
+        self.m_text_ctrl.Bind(wx.EVT_TEXT, self.OnText)
+        self.m_richText.Bind(wx.EVT_TEXT, self.OnRichText)
+        self.m_timePicker.Bind(wx.adv.EVT_TIME_CHANGED, self.OnTimeChanged)
+        self.m_toggleBtn.Bind(wx.EVT_TOGGLEBUTTON, self.OnToggle)
 
-    # Event handler functions
-    # Add these below the comment block, or to your inherited class.
+    # Unimplemented Event handler functions
+    # Copy any listed and paste them below the comment block, or to your inherited class.
     """
-    def OnInit(self, event):
-        event.Skip()
-
-    def OnPageChanged(self, event):
-        event.Skip()
-
-    def OnText(self, event):
-        event.Skip()
-
-    def OnRichText(self, event):
-        event.Skip()
-
-    def OnStcChange(self, event):
-        event.Skip()
-
-    def OnButton(self, event):
-        event.Skip()
-
-    def OnButton(self, event):
-        event.Skip()
-
-    def OnToggle(self, event):
-        event.Skip()
-
-    def OnDisableBitmapsBtn(self, event):
-        event.Skip()
-
-    def OnButton(self, event):
-        event.Skip()
-
-    def OnRadioBox(self, event):
-        event.Skip()
-
-    def OnButton(self, event):
-        event.Skip()
-
-    def OnPopupBtn(self, event):
-        event.Skip()
-
-    def OnRadioButton(self, event):
-        event.Skip()
-
-    def OnRadioButton(self, event):
-        event.Skip()
-
-    def OnCheckBox(self, event):
-        event.Skip()
-
-    def OnCombobox(self, event):
-        event.Skip()
-
-    def OnCombobox(self, event):
-        event.Skip()
-
-    def OnChoice(self, event):
-        event.Skip()
-
-    def OnChoice(self, event):
-        event.Skip()
-
-    def OnListBox(self, event):
-        event.Skip()
-
-    def OnListBox(self, event):
-        event.Skip()
-
-    def OnListChecked(self, event):
-        event.Skip()
-
-    def OnListChecked(self, event):
-        event.Skip()
-
-    def OnFileChanged(self, event):
-        event.Skip()
-
-    def OnDirChanged(self, event):
-        event.Skip()
-
-    def OnColourChanged(self, event):
-        event.Skip()
-
-    def OnDateChanged(self, event):
-        event.Skip()
-
-    def OnTimeChanged(self, event):
-        event.Skip()
-
-    def OnFontChanged(self, event):
-        event.Skip()
-
-    def OnClearList(self, event):
-        event.Skip()
-
     """
 
 # ************* End of generated code ***********

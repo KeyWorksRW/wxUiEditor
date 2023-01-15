@@ -169,57 +169,9 @@ class MainFrame(wx.Frame):
         self.Bind(wx.EVT_TOOL, self.OnCommonDialog, id=tool_2.GetId())
         self.Bind(wx.EVT_TOOL, self.OnMultiTestDialog, id=tool.GetId())
 
-    # Event handler functions
-    # Add these below the comment block, or to your inherited class.
+    # Unimplemented Event handler functions
+    # Copy any listed and paste them below the comment block, or to your inherited class.
     """
-    def OnMainTestDlg(self, event):
-        event.Skip()
-
-    def OnPythonDlg(self, event):
-        event.Skip()
-
-    def OnCommonDialog(self, event):
-        event.Skip()
-
-    def OnMultiTestDialog(self, event):
-        event.Skip()
-
-    def OnOtherCtrls(self, event):
-        event.Skip()
-
-    def OnRibbonDialog(self, event):
-        event.Skip()
-
-    def OnWizard(self, event):
-        event.Skip()
-
-    def OnChoicebook(self, event):
-        event.Skip()
-
-    def OnListbook(self, event):
-        event.Skip()
-
-    def OnNotebook(self, event):
-        event.Skip()
-
-    def OnToolbook(self, event):
-        event.Skip()
-
-    def OnTreebook(self, event):
-        event.Skip()
-
-    def OnQuit(self, event):
-        event.Skip()
-
-    def OnPythonDlg(self, event):
-        event.Skip()
-
-    def OnCommonDialog(self, event):
-        event.Skip()
-
-    def OnMultiTestDialog(self, event):
-        event.Skip()
-
     """
 
 # ************* End of generated code ***********

@@ -124,11 +124,11 @@ protected:
     void CollectValidatorVariables(Node* node, std::set<std::string>& code_lines);
 
     void GenerateClassHeader(Node* form_node, const EventVector& events);
-    void GenerateClassConstructor(Node* form_node, const EventVector& events);
+    void GenerateClassConstructor(Node* form_node, EventVector& events);
 
-    void GenSrcEventBinding(Node* class_node, const EventVector& events);
+    void GenSrcEventBinding(Node* class_node, EventVector& events);
     void GenHdrEvents(const EventVector& events);
-    void GenPythonEventHandlers(const EventVector& events);
+    void GenPythonEventHandlers(EventVector& events);
 
     // Generates all the code lines for validator_variables initialized in the header file
     void GenValVarsBase(const NodeDeclaration* info, Node* node, std::set<std::string>& code_lines);

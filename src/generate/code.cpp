@@ -30,6 +30,8 @@ static const std::map<ttlib::sview, std::string_view, std::less<>> s_short_map
     { "wxEVT_RIBBON", "wx.ribbon." },
     { "wxEVT_STC_", "wx.stc." },
     { "wxEVT_STC_", "wx.stc."},
+    { "wxEVT_DATE_", "wx.adv."},
+    { "wxEVT_TIME_", "wx.adv."},
     { "wxEVT_WIZARD_", "wx.adv."},
     { "wxPG_", "wx.propgrid."},
     { "wxRE_", "wx.richtext."},
@@ -256,22 +258,25 @@ Code& Code::Add(ttlib::sview text)
     }
     else
     {
-        std::string_view wx_prefix = "wx.";
         auto lambda = [&](ttlib::sview candidate)
         {
+            // Note that you can *NOT* allocate anything on the stack and return a
+            // std::string_view to it!
+            std::string_view wx_prefix = "wx.";
             for (auto& iter_prefix: s_short_map)
             {
                 if (candidate.starts_with(iter_prefix.first))
                 {
                     wx_prefix = iter_prefix.second;
-                    return;
+                    return wx_prefix;
                 }
             }
             if (auto wx_iter = s_map_wx_prefix.find(candidate); wx_iter != s_map_wx_prefix.end())
             {
                 wx_prefix = wx_iter->second;
-                return;
+                return wx_prefix;
             }
+            return wx_prefix;
         };
 
         if (text.find('|') != tt::npos)
@@ -286,7 +291,7 @@ Code& Code::Add(ttlib::sview text)
                     m_code += '|';
                 if (iter.is_sameprefix("wx"))
                 {
-                    lambda(iter);
+                    auto wx_prefix = lambda(iter);
                     m_code << wx_prefix << iter.substr(2);
                 }
                 else
@@ -296,7 +301,7 @@ Code& Code::Add(ttlib::sview text)
         }
         else if (text.is_sameprefix("wx"))
         {
-            lambda(text);
+            auto wx_prefix = lambda(text);
             m_code << wx_prefix << text.substr(2);
         }
         else

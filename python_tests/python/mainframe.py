@@ -6,10 +6,42 @@
 ###############################################################################
 
 import wx
+import main_test_dlg
 import wizard
 import python_dlg
 
 from wx.lib.embeddedimage import PyEmbeddedImage
+
+debug_32_png = PyEmbeddedImage(
+    b"iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAACXBIWXMAAAsTAAALEwEAmpwYAAAGV0lE"
+    b"QVRYw+2XXYhdVxXHf3ufc+6de28mMxkzU5NxSg02CZMW0VS0ChFrNFXQUOKDoIgPCvokQXyTEEGIT348"
+    b"2CCIRasvEkFKLKTUSI1Oa2uSMtZ06IxlaobEzFdu5n6du7+WD+fcc+dmSmzNgy9uWOxz9jln7f9a67/W"
+    b"Xgf+x0MBzM/PS71eJ4SA1nrghVhrAmxZv+MIgQCEEG5b7t+Pjo6yb98+FQMsLS1x4sQJKpUKAFqDUpo4"
+    b"jgGIIo1SEVGk+shVNKBcxBfXzjm8D0SRxvswsAbQ7XY5efJkZiCAMQbnHNZavvXkM29qlBVwQYh1H0Tv"
+    b"3gXJ7v3gN04E8aAiMB7+2RbOf+MIxhiMMZmxANZavMtA9DbrSccLLScYn292bZ7UZvfOQ2qzuRoM8coC"
+    b"ToRuyMR4CBoaDq5sBFa7UoTBWtsHwKbLjs+VBymUh5BJ0wTS0gitpx5H11eKjaauvczN584wPvFOvIAP"
+    b"mUTAjVT4ez2QbvKOzw0tQuC9xzpHGWh1hSgC8RBuC4NzgqrtZKXbZej1WRZnf89wJaH64Cd5fWmJWjxM"
+    b"2/S/utoSNqwM6MjIHPDe9wEURAo+J4ncFsucxbFi1KfUJkpMRSf44VNNlm9c42c/eIbtu7+MSS0mVaQh"
+    b"i7f1glIKkWzOrLdYF4pw6x5DIeBzt6c2DIoTUhMwbc9ymvDcmSf55neafODhR2ibiEe/8DIvPn2Gqxuw"
+    b"3BHm1jztTsAawXSz2blMevv1MizezAHvHKkJoFXxsgQB+h6p/+40X/zLdZojgfP1v3Lko/fxiZlFxl9a"
+    b"4o1Xn+Xy2MeKVNabMibkOnzogxggYW8hNUKr6emmAecEazIpdW7iL/2W8Jtf8Z7GOo9Nf5DXXgv8bc7w"
+    b"KSpMri3DE4+zd+lpJpN2YXFPrBG8ky3prfsu0ZRKCcYIPoB10G4LqYG2gfK/XqFx/2f5h4bn84L1NQXf"
+    b"3jFKtVzm10NlVp2hvvsQu1YuIR68lUJCyIDEcUwcx6RpOhiCWrVGUirTMbK5ohZjYeTDYIVDjQ0qnZSf"
+    b"zPyZ95XKTOzYwfc3bvHxZpNXri8x263wRvIwccg27YVBZ1W/IPpAGjrnWFu/yfC2KjZ3k/VbgXgvfGio"
+    b"zPdizQVjOL7RYLnV5Kda0daaz1WrnDeCjjIOZQB66ZeBMcbSarW2AgCwLtBOs92ME0qxwmyK265ym1dL"
+    b"ZY51Uh6MY/YHz4FWyvVE84CxzO8Yw1lBeSnOjUCWgs5lYKwzWznQK0YQ6BrBOME6aKXZbB10usLCpQtc"
+    b"fP8RfqQ1e52jIaBV4NPG8mOtWNg5weStlzJSW8F7QQKE3Jshz4BeGd5SiJwLtIwQKbCbKpgTaDQ8snKL"
+    b"8kNfonP2CZ5dW8UBLRFqCmTXbt71+a/zwosLhOpDqAgIIHn44qSfkpHWW9Mw5KXRdAMbnYDxQscJ9aZn"
+    b"7aajaq6xfwIWZZzJr/wSvWOsj358nKmv/pw/1HfzwETCrvhWRjjft7rnEecCfhO7Cx0+BEQ89VSIJXNd"
+    b"22XEA7j/HYHn9WMoJ2zc817GvjuDnvsjSaRR04dY726HLtwYepSP1Ja5uradOM7LrxWiRCFhsG8YBOA9"
+    b"3gvGSlGSN48/rU1mFdFDFCkWmtuJ3/2ZzI3tvPIpcEpxYfUe4kRl1gdIyrpISV/wIWzlAIDtBuybNCSS"
+    b"u1LlSjZ3Rzov3T2LteqX8jjOgIjPAi6hfxIWAHoHg4RA4xePFC1XJIJKEpJYA5oojtFaoXSE1rroE30I"
+    b"KMCGgARPJwfr80Ouk5qi3AfJnpVKpT6AqakpTp06VTCz5x6t9UAj+VYb015ze/tcWB3HTE1N9bvitztO"
+    b"nz4t1Wp1YLP19XWOHz/+tvXF/w2Aw4cPE/JY1ut1VlZW7u6/4D+NixcvyurqKjt37sQ5R6PRKOq5cw7n"
+    b"HKOjo1QqFWq1Gr13Dx48qO4awOXLl2VkZCT/P4iK06m+sTEQguHh4ex5CHiRrM+0lunp6TvucUdWzczM"
+    b"yNjYGJFSRGpQT5IkVKtVtm3bxtDQUP88yckWRRG1SoWZmRm5Kw+cPXtW9u/diyiFtZYoigbyuKjv+XqS"
+    b"JIVXZmdnOXbsmLprDgCcO3dO5ubmOHDgAPfdey+VWi3zRBxjnaPZbLK4uMiVK1fYs2cPR48eVfx/vIXx"
+    b"bzHIEML53VwZAAAAAElFTkSuQmCC")
 
 wxPython_png = PyEmbeddedImage(
     b"iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAACXBIWXMAAAsTAAALEwEAmpwYAAABQUlE"
@@ -56,6 +88,9 @@ class MainFrame(wx.Frame):
         menubar = wx.MenuBar()
 
         menuDialogs = wx.Menu()
+        menu_item_3 = wx.MenuItem(menuDialogs, wx.ID_ANY, "MainTestDlg")
+        menu_item_3.SetBitmap(wx.BitmapBundle.FromBitmap(debug_32_png.Bitmap))
+        menuDialogs.Append(menu_item_3)
         menu_item_2 = wx.MenuItem(menuDialogs, wx.ID_ANY, "PythonDlg")
         bitmaps = [ wxPython_png.Bitmap,
                     wxPython_1_5x_png.Bitmap,
@@ -117,6 +152,7 @@ class MainFrame(wx.Frame):
         self.Centre(wx.BOTH)
 
         # Bind Event handlers
+        self.Bind(wx.EVT_MENU, self.OnMainTestDlg, id=menu_item_3.GetId())
         self.Bind(wx.EVT_MENU, self.OnPythonDlg, id=menu_item_2.GetId())
         self.Bind(wx.EVT_MENU, self.OnCommonDialog, id=menuItem_2.GetId())
         self.Bind(wx.EVT_MENU, self.OnMultiTestDialog, id=menuItem.GetId())
@@ -136,6 +172,9 @@ class MainFrame(wx.Frame):
     # Event handler functions
     # Add these below the comment block, or to your inherited class.
     """
+    def OnMainTestDlg(self, event):
+        event.Skip()
+
     def OnPythonDlg(self, event):
         event.Skip()
 
@@ -223,6 +262,11 @@ class MainFrame(wx.Frame):
 
     def OnTreebook(self, event):
         event.Skip()
+
+    def OnMainTestDlg(self, event):
+        dlg = main_test_dlg.MainTestDialog(self, title="Main Dialog Tests")
+        dlg.ShowModal()
+        dlg.Destroy()
 
     def OnWizard(self, event):
         my_wizard = wizard.Wizard(self)

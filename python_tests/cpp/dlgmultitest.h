@@ -73,15 +73,6 @@ protected:
     wxToggleButton* m_toggleBtn;
 };
 
-namespace wxue_img
-{
-    // Images declared in this class module:
-
-    extern const unsigned char focus_png[517];
-    extern const unsigned char no_hour_png[347];
-    extern const unsigned char normal_png[508];
-}
-
 // ************* End of generated code ***********
 // DO NOT EDIT THIS COMMENT BLOCK!
 //

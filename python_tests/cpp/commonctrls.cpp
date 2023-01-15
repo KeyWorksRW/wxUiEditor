@@ -238,16 +238,15 @@ bool CommonCtrls::Create(wxWindow* parent, wxWindowID id, const wxString& title,
         "On Windows 10, the items may be be clipped unless they have a trailing space.");
     m_staticText11->Wrap(200);
     flex_grid_sizer->Add(m_staticText11, wxSizerFlags().Border(wxALL));
-    {
-        wxString radioBox_choices[] = {
-            "Button zero ",
-            "Button one ",
-            "Button two "
-        };
-        // Trailing spaces added to avoid clipping
-        m_radioBox = new wxRadioBox(this, wxID_ANY, "Radio Box", wxDefaultPosition, wxDefaultSize, 3, radioBox_choices, 0,
+
+    wxString radioBox_choices[] = {
+        "Button zero ",
+        "Button one ",
+        "Button two "
+    };
+    // Trailing spaces added to avoid clipping
+    m_radioBox = new wxRadioBox(this, wxID_ANY, "Radio Box", wxDefaultPosition, wxDefaultSize, 3, radioBox_choices, 0,
         wxRA_SPECIFY_ROWS);
-    }
     m_radioBox->SetSelection(1);
     m_radioBox->SetValidator(wxGenericValidator(&m_valRadio));
     flex_grid_sizer->Add(m_radioBox, wxSizerFlags().Border(wxALL));

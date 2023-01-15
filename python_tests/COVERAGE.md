@@ -14,7 +14,7 @@ XRC is listed, but there is currently no testing code for it. "---" in the XRC c
 | wxAuiNotebook | ??? | ??? | --- | ../src/generate/gen_aui_notebook.cpp |
 | wxChoicebook | ??? | ??? | --- | ../src/generate/gen_choicebook.cpp |
 | wxListbook | ??? | ??? | --- | ../src/generate/gen_listbook.cpp |
-| wxNotebook | ??? | ??? | --- | ../src/generate/gen_notebook.cpp |
+| wxNotebook | yes | yes | --- | ../src/generate/gen_notebook.cpp |
 | wxSimplebook | ??? | ??? | --- | ../src/generate/gen_simplebook.cpp |
 | wxToolbook | ??? | ??? | --- | ../src/generate/gen_toolbook.cpp |
 | wxTreebook | ??? | ??? | --- | ../src/generate/gen_treebook.cpp |
@@ -23,39 +23,39 @@ XRC is listed, but there is currently no testing code for it. "---" in the XRC c
 
 | Class | C++ | Python | XRC |file |
 -----------|-----|--------|------|------|
-| wxDialog | ??? | ??? | --- | ../src/generate/gen_dialog.cpp |
-| wxFrame | ??? | ??? | --- | ../src/generate/gen_frame.cpp |
-| wxMenu | ??? | ??? | --- | ../src/generate/menu_widgets.cpp |
-| wxMenuBar | ??? | ??? | --- | ../src/generate/menu_widgets.cpp |
+| wxDialog | yes | yes | yes | ../src/generate/gen_dialog.cpp |
+| wxFrame | yes | yes | yes | ../src/generate/gen_frame.cpp |
+| wxMenu | yes | yes | --- | ../src/generate/menu_widgets.cpp |
+| wxMenuBar | yes | yes | --- | ../src/generate/menu_widgets.cpp |
 | wxPanel | ??? | ??? | --- | ../src/generate/gen_panel_form.cpp |
 | wxPopupTransientWindow | ??? | ??? | no | ../src/generate/gen_popup_trans_win.cpp |
 | wxRibbonBar | ??? | ??? | --- | ../src/generate/gen_ribbon_bar.cpp |
-| wxToolBar | ??? | ??? | --- | ../src/generate/gen_toolbar.cpp |
-| wxWizard | ??? | ??? | --- | ../src/generate/gen_wizard.cpp |
+| wxToolBar | yes | yes | --- | ../src/generate/gen_toolbar.cpp |
+| wxWizard | yes | yes | --- | ../src/generate/gen_wizard.cpp |
 
 ### Pickers
 
 | Class | C++ | Python | XRC |file |
 -----------|-----|--------|------|------|
-| wxColourPickerCtrl | ??? | ??? | --- | ../src/generate/gen_clr_picker.cpp |
-| wxDatePickerCtrl | ??? | ??? | --- | ../src/generate/gen_date_picker.cpp |
-| wxDirPickerCtrl | ??? | ??? | --- | ../src/generate/gen_dir_picker.cpp |
-| wxFilePickerCtrl | ??? | ??? | --- | ../src/generate/gen_file_picker.cpp |
-| wxFontPickerCtrl | ??? | ??? | --- | ../src/generate/gen_font_picker.cpp |
-| wxTimePickerCtrl | ??? | ??? | --- | ../src/generate/gen_time_picker.cpp |
+| wxColourPickerCtrl | yes | yes | --- | ../src/generate/gen_clr_picker.cpp |
+| wxDatePickerCtrl | yes | yes | --- | ../src/generate/gen_date_picker.cpp |
+| wxDirPickerCtrl | yes | yes | --- | ../src/generate/gen_dir_picker.cpp |
+| wxFilePickerCtrl | yes | yes | --- | ../src/generate/gen_file_picker.cpp |
+| wxFontPickerCtrl | yes | yes | --- | ../src/generate/gen_font_picker.cpp |
+| wxTimePickerCtrl | yes | yes | --- | ../src/generate/gen_time_picker.cpp |
 
 ### Sizers
 
 | Class | C++ | Python | XRC |file |
 -----------|-----|--------|------|------|
-| wxBoxSizer | ??? | ??? | --- | ../src/generate/gen_box_sizer.cpp |
+| wxBoxSizer | yes | yes | --- | ../src/generate/gen_box_sizer.cpp |
 | wxCheckBoxSizer | ??? | no | --- | ../src/generate/gen_statchkbox_sizer.cpp |
-| wxFlexGridSizer | ??? | ??? | --- | ../src/generate/gen_flexgrid_sizer.cpp |
-| wxGridBagSizer | ??? | ??? | --- | ../src/generate/gen_gridbag_sizer.cpp |
+| wxFlexGridSizer | yes | yes | --- | ../src/generate/gen_flexgrid_sizer.cpp |
+| wxGridBagSizer | yes | yes | --- | ../src/generate/gen_gridbag_sizer.cpp |
 | wxGridSizer | ??? | ??? | --- | ../src/generate/gen_grid_sizer.cpp |
 | wxRadioButtonSizer | ??? | no | --- | ../src/generate/gen_statradiobox_sizer.cpp |
 | wxStaticBoxSizer | ??? | ??? | --- | ../src/generate/gen_staticbox_sizer.cpp |
-| wxStdDialogButtonSizer | ??? | ??? | --- | ../src/generate/gen_std_dlgbtn_sizer.cpp |
+| wxStdDialogButtonSizer | yes | yes | --- | ../src/generate/gen_std_dlgbtn_sizer.cpp |
 | wxWrapSizer | ??? | ??? | --- | ../src/generate/gen_wrap_sizer.cpp |
 
 # Classes
@@ -69,12 +69,12 @@ XRC is listed, but there is currently no testing code for it. "---" in the XRC c
 | wxBitmapComboBox | ??? | ??? | --- | ../src/generate/gen_bitmap_combo.cpp |
 | wxButton | ??? | ??? | --- | ../src/generate/gen_button.cpp |
 | wxCalendarCtrl | ??? | ??? | --- | ../src/generate/gen_calendar_ctrl.cpp |
-| wxCheckBox | ??? | ??? | --- | ../src/generate/gen_checkbox.cpp |
-| wxCheckListBox | ??? | ??? | --- | ../src/generate/gen_check_listbox.cpp |
-| wxChoice | ??? | ??? | --- | ../src/generate/gen_choice.cpp |
+| wxCheckBox | yes | yes | --- | ../src/generate/gen_checkbox.cpp |
+| wxCheckListBox | yes | yes | --- | ../src/generate/gen_check_listbox.cpp |
+| wxChoice | yes | yes | --- | ../src/generate/gen_choice.cpp |
 | wxCollapsiblePane | ??? | ??? | --- | ../src/generate/gen_collapsible.cpp |
-| wxComboBox | ??? | ??? | --- | ../src/generate/gen_combobox.cpp |
-| wxCommandLinkButton | ??? | ??? | --- | ../src/generate/gen_cmd_link_btn.cpp |
+| wxComboBox | yes | yes | --- | ../src/generate/gen_combobox.cpp |
+| wxCommandLinkButton | yes | yes | --- | ../src/generate/gen_cmd_link_btn.cpp |
 | wxDataViewListCtrl | ??? | ??? | --- | ../src/generate/dataview_widgets.cpp |
 | wxDataViewCtrl | ??? | ??? | --- | ../src/generate/dataview_widgets.cpp |
 | wxEditableListBox | ??? | ??? | --- | ../src/generate/gen_edit_listbox.cpp |
@@ -85,7 +85,7 @@ XRC is listed, but there is currently no testing code for it. "---" in the XRC c
 | wxHtmlWindow | ??? | ??? | --- | ../src/generate/gen_html_window.cpp |
 | wxHyperlinkCtrl | ??? | ??? | --- | ../src/generate/gen_hyperlink.cpp |
 | wxInfoBar | ??? | ??? | --- | ../src/generate/gen_infobar.cpp |
-| wxListBox | ??? | ??? | --- | ../src/generate/gen_listbox.cpp |
+| wxListBox | yes | yes | --- | ../src/generate/gen_listbox.cpp |
 | wxListView | ??? | ??? | --- | ../src/generate/gen_listview.cpp |
 | wxMenu | ??? | ??? | --- | ../src/generate/gen_menu.cpp |
 | wxMenuBar | ??? | ??? | --- | ../src/generate/menu_widgets.cpp |
@@ -102,7 +102,7 @@ XRC is listed, but there is currently no testing code for it. "---" in the XRC c
 | wxRibbonPage | ??? | ??? | --- | ../src/generate/gen_ribbon_page.cpp |
 | wxRibbonPanel | ??? | ??? | --- | ../src/generate/gen_ribbon_page.cpp |
 | wxRibbonToolBar | ??? | ??? | --- | ../src/generate/ribbon_widgets.cpp |
-| wxRichTextCtrl | ??? | ??? | --- | ../src/generate/gen_rich_text.cpp |
+| wxRichTextCtrl | yes | yes | --- | ../src/generate/gen_rich_text.cpp |
 | wxScrollBar | ??? | ??? | --- | ../src/generate/gen_scrollbar.cpp |
 | wxScrolled\<wxPanel\> | ??? | ??? | --- | ../src/generate/styled_text.cpp |
 | wxScrolled\<wxWindow\> | ??? | ??? | --- | ../src/generate/styled_text.cpp |
@@ -118,14 +118,14 @@ XRC is listed, but there is currently no testing code for it. "---" in the XRC c
 | wxStaticLine | ??? | ??? | --- | ../src/generate/gen_static_line.cpp |
 | wxStaticText | ??? | ??? | --- | ../src/generate/gen_static_text.cpp |
 | wxStatusBar | ??? | ??? | --- | ../src/generate/gen_status_bar.cpp |
-| wxStyledTextCtrl | ??? | ??? | --- | ../src/generate/styled_text.cpp |
-| wxTextCtrl | ??? | ??? | --- | ../src/generate/gen_text_ctrl.cpp |
+| wxStyledTextCtrl | yes | yes | --- | ../src/generate/styled_text.cpp |
+| wxTextCtrl | yes | yes | --- | ../src/generate/gen_text_ctrl.cpp |
 | wxToggleButton | ??? | ??? | --- | ../src/generate/gen_toggle_btn.cpp |
-| wxToolBar | ??? | ??? | --- | ../src/generate/gen_toolbar.cpp |
+| wxToolBar | yes | yes | --- | ../src/generate/gen_toolbar.cpp |
 | wxTreeCtrl | ??? | ??? | --- | ../src/generate/gen_tree_ctrl.cpp |
 | wxTreeListCtrl | ??? | ??? | no | ../src/generate/gen_tree_list.cpp |
 | wxWebView | ??? | ??? | no | ../src/generate/gen_web_view.cpp |
-| wxWizardPageSimple | ??? | ??? | --- | ../src/generate/gen_wizard.cpp |
+| wxWizardPageSimple | yes | yes | --- | ../src/generate/gen_wizard.cpp |
 
 # Objects
 

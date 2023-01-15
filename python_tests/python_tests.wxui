@@ -45,6 +45,12 @@
           var_name="menuDialogs">
           <node
             class="wxMenuItem"
+            bitmap="Embed;../src/art_src/debug_32.png"
+            label="MainTestDlg"
+            var_name="menu_item_3"
+            wxEVT_MENU="OnMainTestDlg" />
+          <node
+            class="wxMenuItem"
             bitmap="Embed;../art/wxPython.png"
             label="PythonDlg"
             var_name="menu_item_2"
@@ -145,343 +151,501 @@
     </node>
     <node
       class="wxDialog"
-      class_name="CommonCtrls"
-      style="wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER"
-      title="Common controls"
-      base_file="commonctrls"
-      base_hdr_includes="#include &quot;popupwin.h&quot;  // PopupWin -- Popup Window"
-      derived_class_name="CommonCtrls"
-      derived_file="../ui/commonctrls"
-      inserted_hdr_code="public:@@    ~CommonCtrls();@@@@private:@@    PopupWin* m_popup_win { nullptr };"
-      use_derived_class="0"
-      wxEVT_INIT_DIALOG="OnInit"
-      wxEVT_CONTEXT_MENU="OnContextMenu">
+      class_name="MainTestDialog"
+      base_file="maintestdialog"
+      insert_python_code="import popupwin"
+      python_file="main_test_dlg"
+      wxEVT_INIT_DIALOG="OnInit">
       <node
         class="wxBoxSizer"
         orientation="wxVERTICAL"
-        var_name="parent_sizer">
+        var_name="dlg_sizer">
         <node
-          class="wxBoxSizer"
-          orientation="wxVERTICAL"
-          var_name="box_sizer6"
-          flags="wxEXPAND">
+          class="wxNotebook"
+          style="wxNB_MULTILINE"
+          tab_position="wxBK_TOP"
+          flags="wxEXPAND"
+          wxEVT_NOTEBOOK_PAGE_CHANGED="OnPageChanged">
           <node
-            class="wxInfoBar"
-            show_effect="expand"
-            flags="wxEXPAND" />
+            class="BookPage"
+            label="Text"
+            var_name="page_2"
+            window_style="wxTAB_TRAVERSAL">
+            <node
+              class="wxBoxSizer"
+              orientation="wxVERTICAL"
+              var_name="page_sizer_1"
+              minimum_size="-1,-1d">
+              <node
+                class="wxTextCtrl"
+                hint="wxTextCtrl"
+                style="wxTE_RICH2"
+                var_name="m_text_ctrl"
+                flags="wxEXPAND"
+                wxEVT_TEXT="OnText" />
+              <node
+                class="wxRichTextCtrl"
+                hint="wxRichTextCtrl"
+                minimum_size="150,30d"
+                window_style="wxVSCROLL | wxHSCROLL | wxNO_BORDER | wxWANTS_CHARS"
+                flags="wxEXPAND"
+                wxEVT_TEXT="OnRichText" />
+              <node
+                class="wxStyledTextCtrl"
+                view_whitespace="always visible"
+                minimum_size="150,60d"
+                flags="wxEXPAND"
+                wxEVT_STC_CHANGE="OnStcChange" />
+            </node>
+          </node>
+          <node
+            class="BookPage"
+            label="Buttons"
+            var_name="page_4"
+            window_style="wxTAB_TRAVERSAL">
+            <node
+              class="wxBoxSizer"
+              orientation="wxVERTICAL"
+              var_name="box_sizer_3"
+              flags="wxEXPAND">
+              <node
+                class="wxGridBagSizer">
+                <node
+                  class="wxButton"
+                  label="Normal"
+                  tooltip="A normal button"
+                  wxEVT_BUTTON="OnButton" />
+                <node
+                  class="wxButton"
+                  label="&lt;b>&lt;span foreground='red'>Markup&lt;/span>&lt;/b>"
+                  markup="1"
+                  var_name="m_btn_2"
+                  tooltip="Text should be Bold and Red."
+                  column="1" />
+                <node
+                  class="wxButton"
+                  label="Bitmaps"
+                  var_name="m_btn_bitmaps"
+                  bitmap="Embed;../art/normal.png"
+                  current="Embed;../art/focus.png"
+                  disabled_bmp="Embed;../art/no_hour.png"
+                  tooltip="Bitmap should change when mouse is over button, or button is disabled."
+                  column="2"
+                  wxEVT_BUTTON="OnButton" />
+                <node
+                  class="wxButton"
+                  label="Right"
+                  var_name="m_btn_4"
+                  bitmap="Embed;../art/normal.png"
+                  position="wxRIGHT"
+                  tooltip="Bitmap should be on the right side (fails in wxPython 4.2)."
+                  column="3" />
+                <node
+                  class="wxToggleButton"
+                  label="Toggle"
+                  style="wxBU_EXACTFIT"
+                  tooltip="Style set to exact fit, so it should be a bit smaller than usual."
+                  column="4"
+                  wxEVT_TOGGLEBUTTON="OnToggle" />
+                <node
+                  class="wxCheckBox"
+                  class_access="none"
+                  label="Disable"
+                  var_name="disable_bitmaps"
+                  tooltip="This will change the enable state and bitmap of the Bitmaps button."
+                  column="2"
+                  row="2"
+                  wxEVT_CHECKBOX="OnDisableBitmapsBtn" />
+              </node>
+              <node
+                class="wxBoxSizer"
+                var_name="box_sizer_7">
+                <node
+                  class="wxCommandLinkButton"
+                  main_label="Command"
+                  note="wxCommandLinkButton"
+                  var_name="m_btn_5"
+                  bitmap="Art;wxART_GO_FORWARD|wxART_OTHER"
+                  tooltip="The bitmap for this is from Art Provider."
+                  row="1"
+                  wxEVT_BUTTON="OnButton" />
+                <node
+                  class="wxRadioBox"
+                  class_access="none"
+                  contents="&quot;Button zero &quot; &quot;Button one &quot; &quot;Button two &quot;"
+                  label="Radio Box"
+                  selection="1"
+                  style="rows"
+                  var_name="radioBox"
+                  validator_variable="m_valRadio"
+                  wxEVT_RADIOBOX="OnRadioBox" />
+              </node>
+              <node
+                class="wxBoxSizer"
+                var_name="box_sizer2"
+                flags="wxEXPAND">
+                <node
+                  class="wxButton"
+                  label="First btn"
+                  var_name="m_btn_3"
+                  minimum_size="-1,-1d"
+                  wxEVT_BUTTON="OnButton" />
+                <node
+                  class="wxButton"
+                  class_access="none"
+                  label="Popup"
+                  var_name="btn2"
+                  wxEVT_BUTTON="OnPopupBtn" />
+                <node
+                  class="wxRadioButton"
+                  label="First radio"
+                  style="wxRB_GROUP"
+                  alignment="wxALIGN_CENTER"
+                  wxEVT_RADIOBUTTON="OnRadioButton" />
+                <node
+                  class="wxRadioButton"
+                  label="Second radio"
+                  var_name="m_radioBtn2"
+                  alignment="wxALIGN_CENTER"
+                  wxEVT_RADIOBUTTON="OnRadioButton" />
+                <node
+                  class="wxCheckBox"
+                  label="Checkbox"
+                  var_name="m_checkBox2"
+                  alignment="wxALIGN_CENTER"
+                  wxEVT_CHECKBOX="OnCheckBox" />
+              </node>
+            </node>
+          </node>
+          <node
+            class="BookPage"
+            label="Lists"
+            var_name="page_5"
+            window_style="wxTAB_TRAVERSAL">
+            <node
+              class="wxBoxSizer"
+              orientation="wxVERTICAL"
+              var_name="box_sizer_5"
+              flags="wxEXPAND">
+              <node
+                class="wxFlexGridSizer">
+                <node
+                  class="wxBoxSizer"
+                  orientation="wxVERTICAL"
+                  var_name="box_sizer_10">
+                  <node
+                    class="wxStaticText"
+                    label="wxRearrangeCtrl"
+                    var_name="m_staticText_2"
+                    flags="wxEXPAND" />
+                  <node
+                    class="wxRearrangeCtrl" />
+                </node>
+                <node
+                  class="wxBoxSizer"
+                  orientation="wxVERTICAL"
+                  var_name="box_sizer_11">
+                  <node
+                    class="wxStaticText"
+                    class_access="none"
+                    label="wxCheckListBox"
+                    var_name="staticText_3"
+                    flags="wxEXPAND" />
+                  <node
+                    class="wxCheckListBox" />
+                </node>
+                <node
+                  class="wxBoxSizer"
+                  orientation="wxVERTICAL"
+                  var_name="box_sizer_12">
+                  <node
+                    class="wxStaticText"
+                    label="wxListView"
+                    var_name="m_staticText_4" />
+                  <node
+                    class="wxListView"
+                    column_labels="&quot;name&quot; &quot;value&quot;"
+                    contents="&quot;meaning ; 42 &quot;"
+                    style="wxLC_SINGLE_SEL"
+                    tooltip="Separate content columns with a semi-colon (;)" />
+                </node>
+                <node
+                  class="wxBoxSizer"
+                  var_name="box_sizer_13">
+                  <node
+                    class="wxEditableListBox" />
+                </node>
+              </node>
+            </node>
+          </node>
+          <node
+            class="BookPage"
+            label="Combos"
+            var_name="page_3"
+            window_style="wxTAB_TRAVERSAL">
+            <node
+              class="wxBoxSizer"
+              orientation="wxVERTICAL"
+              var_name="page_sizer_2">
+              <node
+                class="wxStaticBoxSizer"
+                label="Combos and Choices"
+                flags="wxEXPAND">
+                <node
+                  class="wxBoxSizer"
+                  var_name="box_sizer3"
+                  flags="wxEXPAND">
+                  <node
+                    class="wxStaticBoxSizer"
+                    label="Combo"
+                    var_name="static_box_sizer2"
+                    flags="wxEXPAND">
+                    <node
+                      class="wxStaticText"
+                      label="Unsorted"
+                      var_name="m_staticText3" />
+                    <node
+                      class="wxComboBox"
+                      contents="&quot;item #1&quot; &quot;item #2&quot; &quot;item #0&quot;"
+                      selection_int="2"
+                      selection_string="item #2"
+                      tooltip="Item #0 should be selected by default"
+                      flags="wxEXPAND"
+                      wxEVT_COMBOBOX="OnCombobox" />
+                    <node
+                      class="wxStaticText"
+                      label="Sorted"
+                      var_name="m_staticText4" />
+                    <node
+                      class="wxComboBox"
+                      contents="&quot;item #1&quot; &quot;item #2&quot; &quot;item #0&quot;"
+                      selection_int="2"
+                      selection_string="item #2"
+                      style="wxCB_SORT"
+                      var_name="m_comboBox2"
+                      tooltip="Item #2 should be selected by default"
+                      wxEVT_COMBOBOX="OnCombobox" />
+                  </node>
+                  <node
+                    class="wxStaticBoxSizer"
+                    label="Choice"
+                    var_name="static_box_sizer3"
+                    flags="wxEXPAND">
+                    <node
+                      class="wxStaticText"
+                      label="Unsorted"
+                      var_name="m_staticText5" />
+                    <node
+                      class="wxChoice"
+                      contents="&quot;item #1&quot; &quot;item #2&quot; &quot;item #0&quot;"
+                      selection_int="2"
+                      tooltip="Item #0 should be selected by default"
+                      wxEVT_CHOICE="OnChoice" />
+                    <node
+                      class="wxStaticText"
+                      label="Sorted"
+                      var_name="m_staticText6" />
+                    <node
+                      class="wxChoice"
+                      contents="&quot;item #1&quot; &quot;item #2&quot; &quot;item #0&quot;"
+                      selection_int="2"
+                      style="wxCB_SORT"
+                      var_name="m_choice2"
+                      tooltip="Item #2 should be selected by default"
+                      wxEVT_CHOICE="OnChoice" />
+                  </node>
+                  <node
+                    class="wxStaticBoxSizer"
+                    label="List"
+                    var_name="static_box_sizer4"
+                    flags="wxEXPAND">
+                    <node
+                      class="wxStaticText"
+                      label="Unsorted"
+                      var_name="m_staticText7" />
+                    <node
+                      class="wxListBox"
+                      contents="&quot;item #1&quot; &quot;item #2&quot; &quot;item #0&quot;"
+                      wxEVT_LISTBOX="OnListBox" />
+                    <node
+                      class="wxStaticText"
+                      label="Sorted"
+                      var_name="m_staticText8" />
+                    <node
+                      class="wxListBox"
+                      contents="&quot;item #1&quot; &quot;item #2&quot; &quot;item #0&quot;"
+                      style="wxLB_SORT"
+                      var_name="m_listBox2"
+                      wxEVT_LISTBOX="OnListBox" />
+                  </node>
+                  <node
+                    class="wxStaticBoxSizer"
+                    label="Checked"
+                    var_name="static_box_sizer5"
+                    flags="wxEXPAND">
+                    <node
+                      class="wxStaticText"
+                      label="Unsorted"
+                      var_name="m_staticText9" />
+                    <node
+                      class="wxCheckListBox"
+                      contents="&quot;item #1&quot; &quot;item #2&quot; &quot;item #0&quot;"
+                      var_name="m_checkList_2"
+                      wxEVT_CHECKLISTBOX="OnListChecked" />
+                    <node
+                      class="wxStaticText"
+                      label="Sorted"
+                      var_name="m_staticText10" />
+                    <node
+                      class="wxCheckListBox"
+                      contents="&quot;item #1&quot; &quot;item #2&quot; &quot;item #0&quot;"
+                      style="wxLB_SORT"
+                      var_name="m_checkList2"
+                      wxEVT_CHECKLISTBOX="OnListChecked" />
+                  </node>
+                </node>
+              </node>
+            </node>
+          </node>
+          <node
+            class="BookPage"
+            bitmap="Art;wxART_FILE_OPEN|wxART_OTHER"
+            label="Pickers"
+            var_name="page_6"
+            window_style="wxBORDER_THEME|wxTAB_TRAVERSAL">
+            <node
+              class="wxBoxSizer"
+              orientation="wxVERTICAL"
+              var_name="parent_sizer2">
+              <node
+                class="wxStaticBoxSizer"
+                label="Pickers"
+                var_name="static_box_2"
+                flags="wxEXPAND">
+                <node
+                  class="wxBoxSizer">
+                  <node
+                    class="wxStaticText"
+                    class_access="none"
+                    label="File:"
+                    var_name="staticText__2"
+                    alignment="wxALIGN_CENTER_VERTICAL" />
+                  <node
+                    class="wxFilePickerCtrl"
+                    wildcard="BMP files|*.bmp"
+                    wxEVT_FILEPICKER_CHANGED="OnFileChanged" />
+                </node>
+                <node
+                  class="wxBoxSizer"
+                  var_name="box_sizer_2">
+                  <node
+                    class="wxStaticText"
+                    class_access="none"
+                    label="Directory:"
+                    var_name="staticText__3"
+                    alignment="wxALIGN_CENTER_VERTICAL" />
+                  <node
+                    class="wxDirPickerCtrl"
+                    initial_path="."
+                    style="wxDIRP_DEFAULT_STYLE|wxDIRP_SMALL"
+                    wxEVT_DIRPICKER_CHANGED="OnDirChanged" />
+                </node>
+                <node
+                  class="wxBoxSizer"
+                  var_name="box_sizer_4">
+                  <node
+                    class="wxStaticText"
+                    class_access="none"
+                    label="Colour:"
+                    var_name="staticText__4"
+                    alignment="wxALIGN_CENTER_VERTICAL" />
+                  <node
+                    class="wxColourPickerCtrl"
+                    wxEVT_COLOURPICKER_CHANGED="OnColourChanged" />
+                </node>
+                <node
+                  class="wxBoxSizer"
+                  var_name="box_sizer_6">
+                  <node
+                    class="wxStaticText"
+                    class_access="none"
+                    label="Date:"
+                    var_name="staticText__5"
+                    alignment="wxALIGN_CENTER_VERTICAL" />
+                  <node
+                    class="wxDatePickerCtrl"
+                    wxEVT_DATE_CHANGED="OnDateChanged" />
+                </node>
+                <node
+                  class="wxBoxSizer"
+                  var_name="box_sizer_8">
+                  <node
+                    class="wxStaticText"
+                    class_access="none"
+                    label="Time:"
+                    var_name="staticText__6"
+                    alignment="wxALIGN_CENTER_VERTICAL" />
+                  <node
+                    class="wxTimePickerCtrl"
+                    wxEVT_TIME_CHANGED="OnTimeChanged" />
+                </node>
+                <node
+                  class="wxBoxSizer"
+                  var_name="box_sizer_9">
+                  <node
+                    class="wxStaticText"
+                    class_access="none"
+                    label="Font:"
+                    var_name="staticText__7"
+                    alignment="wxALIGN_CENTER_VERTICAL" />
+                  <node
+                    class="wxFontPickerCtrl"
+                    initial_font="Comic Sans MS,90,400,-1,70,0"
+                    style="wxFNTP_DEFAULT_STYLE|wxFNTP_USE_TEXTCTRL"
+                    wxEVT_FONTPICKER_CHANGED="OnFontChanged" />
+                </node>
+              </node>
+            </node>
+          </node>
+          <node
+            class="BookPage"
+            label="Tab 3"
+            window_style="wxTAB_TRAVERSAL">
+            <node
+              class="wxBoxSizer"
+              orientation="wxVERTICAL"
+              var_name="page_sizer_3">
+              <node
+                class="wxStaticText"
+                label="TODO: replace this control with something more useful..."
+                wrap="200" />
+            </node>
+          </node>
         </node>
         <node
           class="wxBoxSizer"
-          flags="wxEXPAND">
+          var_name="box_sizer_14">
           <node
             class="wxStaticText"
-            label="Text:"
-            alignment="wxALIGN_CENTER"
-            borders="wxLEFT|wxTOP|wxBOTTOM" />
-          <node
-            class="wxTextCtrl"
-            auto_complete="&quot;foo&quot; &quot;bar&quot;"
-            style="wxTE_PROCESS_ENTER"
-            value="Text &quot;ctrl&quot;"
-            validator_variable="m_textCtrlValidate"
-            tooltip="Auto-complete contains &quot;foo&quot; and &quot;bar&quot;"
-            wxEVT_TEXT_ENTER="[this](wxCommandEvent&amp;)@@{@@m_infoBar->ShowMessage(&quot;wxEVT_TEXT_ENTER event&quot;);@@Fit();@@}" />
-          <node
-            class="wxStaticText"
-            label="More text:"
-            var_name="m_staticText2"
-            alignment="wxALIGN_CENTER"
-            borders="wxLEFT|wxTOP|wxBOTTOM" />
-          <node
-            class="wxTextCtrl"
-            value="Another ctrl"
-            var_name="m_textCtrl2" />
-          <node
-            class="wxCheckBox"
-            label="2-state Checkbox"
-            alignment="wxALIGN_CENTER"
-            wxEVT_CHECKBOX="[this](wxCommandEvent&amp;)@@{@@    m_infoBar->ShowMessage(&quot;wxEVT_CHECKBOX event&quot;);@@    Fit();@@@@}" />
-        </node>
-        <node
-          class="wxBoxSizer"
-          var_name="box_sizer2"
-          flags="wxEXPAND">
-          <node
-            class="wxButton"
-            label="First btn"
-            minimum_size="-1,-1d"
-            wxEVT_BUTTON="[this](wxCommandEvent&amp;)@@{@@m_infoBar->ShowMessage(&quot;wxEVT_BUTTON event&quot;);@@Fit();@@}" />
+            class_access="none"
+            label="Events:"
+            var_name="staticText_4"
+            alignment="wxALIGN_CENTER_VERTICAL" />
           <node
             class="wxButton"
             class_access="none"
-            label="Popup"
-            var_name="btn2"
-            wxEVT_BUTTON="OnPopupBtn" />
-          <node
-            class="wxRadioButton"
-            label="First radio"
-            style="wxRB_GROUP"
-            alignment="wxALIGN_CENTER"
-            wxEVT_RADIOBUTTON="[this](wxCommandEvent&amp;)@@{@@m_infoBar->ShowMessage(&quot;wxEVT_RADIOBUTTON event&quot;);@@Fit();@@}" />
-          <node
-            class="wxRadioButton"
-            label="Second radio"
-            var_name="m_radioBtn2"
-            alignment="wxALIGN_CENTER"
-            wxEVT_RADIOBUTTON="OnRadio" />
-          <node
-            class="wxCheckBox"
-            label="Checkbox"
-            var_name="m_checkBox2"
-            alignment="wxALIGN_CENTER"
-            wxEVT_CHECKBOX="OnCheckBox" />
+            label="Clear Events"
+            var_name="btn"
+            wxEVT_BUTTON="OnClearList" />
         </node>
         <node
-          class="wxStaticBoxSizer"
-          label="Combos and Choices"
-          flags="wxEXPAND">
-          <node
-            class="wxBoxSizer"
-            var_name="box_sizer3"
-            flags="wxEXPAND">
-            <node
-              class="wxStaticBoxSizer"
-              label="Combo"
-              var_name="static_box_sizer2"
-              flags="wxEXPAND">
-              <node
-                class="wxStaticText"
-                label="Unsorted"
-                var_name="m_staticText3" />
-              <node
-                class="wxComboBox"
-                contents="&quot;item #1&quot; &quot;item #2&quot; &quot;item #0&quot;"
-                selection_int="2"
-                selection_string="item #2"
-                tooltip="Item #0 should be selected by default"
-                flags="wxEXPAND"
-                wxEVT_COMBOBOX="[this](wxCommandEvent&amp;)@@{@@m_infoBar->ShowMessage(&quot;wxEVT_COMBOBOX event&quot;);@@Fit();@@}" />
-              <node
-                class="wxStaticText"
-                label="Sorted"
-                var_name="m_staticText4" />
-              <node
-                class="wxComboBox"
-                contents="&quot;item #1&quot; &quot;item #2&quot; &quot;item #0&quot;"
-                selection_int="2"
-                selection_string="item #2"
-                style="wxCB_SORT"
-                var_name="m_comboBox2"
-                tooltip="Item #2 should be selected by default"
-                wxEVT_COMBOBOX="[this](wxCommandEvent&amp;)@@{@@m_infoBar->ShowMessage(&quot;wxEVT_COMBOBOX event&quot;);@@Fit();@@}"
-                wxEVT_COMBOBOX_CLOSEUP="[this](wxCommandEvent&amp;)@@{@@m_infoBar->ShowMessage(&quot;wxEVT_COMBOBOX_CLOSEUP event&quot;);@@Fit();@@}" />
-            </node>
-            <node
-              class="wxStaticBoxSizer"
-              label="Choice"
-              var_name="static_box_sizer3"
-              flags="wxEXPAND">
-              <node
-                class="wxStaticText"
-                label="Unsorted"
-                var_name="m_staticText5" />
-              <node
-                class="wxChoice"
-                contents="&quot;item #1&quot; &quot;item #2&quot; &quot;item #0&quot;"
-                selection_int="2"
-                tooltip="Item #0 should be selected by default"
-                wxEVT_CHOICE="[this](wxCommandEvent&amp;)@@{@@m_infoBar->ShowMessage(&quot;wxEVT_CHOICE event&quot;);@@Fit();@@}" />
-              <node
-                class="wxStaticText"
-                label="Sorted"
-                var_name="m_staticText6" />
-              <node
-                class="wxChoice"
-                contents="&quot;item #1&quot; &quot;item #2&quot; &quot;item #0&quot;"
-                selection_int="2"
-                style="wxCB_SORT"
-                var_name="m_choice2"
-                tooltip="Item #2 should be selected by default"
-                wxEVT_CHOICE="OnChoice" />
-            </node>
-            <node
-              class="wxStaticBoxSizer"
-              label="List"
-              var_name="static_box_sizer4"
-              flags="wxEXPAND">
-              <node
-                class="wxStaticText"
-                label="Unsorted"
-                var_name="m_staticText7" />
-              <node
-                class="wxListBox"
-                contents="&quot;item #1&quot; &quot;item #2&quot; &quot;item #0&quot;"
-                wxEVT_LISTBOX="OnListBox" />
-              <node
-                class="wxStaticText"
-                label="Sorted"
-                var_name="m_staticText8" />
-              <node
-                class="wxListBox"
-                contents="&quot;item #1&quot; &quot;item #2&quot; &quot;item #0&quot;"
-                style="wxLB_SORT"
-                var_name="m_listBox2"
-                wxEVT_LISTBOX="OnListBox" />
-            </node>
-            <node
-              class="wxStaticBoxSizer"
-              label="Checked"
-              var_name="static_box_sizer5"
-              flags="wxEXPAND">
-              <node
-                class="wxStaticText"
-                label="Unsorted"
-                var_name="m_staticText9" />
-              <node
-                class="wxCheckListBox"
-                contents="&quot;item #1&quot; &quot;item #2&quot; &quot;item #0&quot;"
-                wxEVT_CHECKLISTBOX="OnListChecked" />
-              <node
-                class="wxStaticText"
-                label="Sorted"
-                var_name="m_staticText10" />
-              <node
-                class="wxCheckListBox"
-                contents="&quot;item #1&quot; &quot;item #2&quot; &quot;item #0&quot;"
-                style="wxLB_SORT"
-                var_name="m_checkList2" />
-            </node>
-          </node>
-        </node>
-        <node
-          class="wxFlexGridSizer"
-          cols="4"
-          flags="wxEXPAND">
-          <node
-            class="wxStaticText"
-            label="On Windows 10, the items may be be clipped unless they have a trailing space."
-            var_name="m_staticText11"
-            wrap="200" />
-          <node
-            class="wxRadioBox"
-            contents="&quot;Button zero &quot; &quot;Button one &quot; &quot;Button two &quot;"
-            label="Radio Box"
-            selection="1"
-            style="rows"
-            validator_variable="m_valRadio"
-            wxEVT_RADIOBOX="OnRadioBox" />
-          <node
-            class="wxBoxSizer"
-            orientation="wxVERTICAL"
-            var_name="box_sizer_2">
-            <node
-              class="wxStaticBitmap"
-              bitmap="SVG;../art/face-smile.svg;[64,64]" />
-            <node
-              class="wxStaticText"
-              label="SVG image"
-              var_name="m_staticText_2" />
-          </node>
-          <node
-            class="wxBitmapComboBox"
-            style="wxCB_READONLY" />
-          <node
-            class="StaticCheckboxBoxSizer"
-            checkbox_var_name="m_checkPlayAnimation"
-            checked="0"
-            label="Play Animation"
-            var_name="static_box_2"
-            wxEVT_CHECKBOX="[this](wxCommandEvent&amp;)@@{@@if (m_checkPlayAnimation->GetValue()) @@{@@    m_animation_ctrl->Play();@@}@@else @@{  @@    m_animation_ctrl->Stop();@@}@@@@}">
-            <node
-              class="wxToggleButton"
-              label="Play Animation"
-              style="wxBU_EXACTFIT"
-              wxEVT_TOGGLEBUTTON="[this](wxCommandEvent&amp;)@@{@@if (m_toggleBtn->GetValue()) @@{@@    m_animation_ctrl->Play();@@    m_checkPlayAnimation->SetValue(true);@@}@@else @@{  @@    m_animation_ctrl->Stop();@@    m_checkPlayAnimation->SetValue(false);@@}@@@@m_infoBar->ShowMessage(&quot;wxEVT_TOGGLEBUTTON event&quot;);@@Fit();@@}" />
-            <node
-              class="wxAnimationCtrl"
-              animation="Header;../art/clr_hourglass_gif.hxx"
-              inactive_bitmap="XPM;../art/empty.xpm" />
-          </node>
-          <node
-            class="CustomControl"
-            class_name="SplitButton"
-            header="custom_ctrls/split_button.h"
-            namespace="wxue_ctrl"
-            parameters="(this, wxID_ANY, &quot;Play&quot;)"
-            settings_code="{@@    const int ID_PLAY { 100 };@@    const int ID_STOP { 101 };@@    m_split_button->GetMenu().Append(ID_PLAY, &quot;Play&quot;);@@    m_split_button->GetMenu().Append(ID_STOP, &quot;Stop&quot;);@@@@    m_split_button->Bind(wxEVT_MENU,@@        [this](wxCommandEvent&amp;)@@        {@@            m_animation_ctrl->Play();@@            m_checkPlayAnimation->SetValue(true);@@        }, ID_PLAY);@@@@    m_split_button->Bind(wxEVT_MENU,@@        [this](wxCommandEvent&amp;)@@        {@@            m_animation_ctrl->Stop();@@            m_checkPlayAnimation->SetValue(false);@@        }, ID_STOP);@@@@    m_split_button->Bind(wxEVT_BUTTON,@@        [this](wxCommandEvent&amp;)@@        {@@            m_animation_ctrl->Play();@@            m_checkPlayAnimation->SetValue(true);@@        } );@@}"
-            var_comment="control with button + menu"
-            var_name="m_split_button"
-            border_size="10"
-            column="3"
-            row="4" />
-          <node
-            class="spacer" />
-          <node
-            class="wxEditableListBox"
-            contents="&quot;item #1&quot; &quot;item #2&quot; &quot;item #3&quot;"
-            wxEVT_LIST_BEGIN_DRAG="[this](wxListEvent&amp;)@@{@@m_infoBar->ShowMessage(&quot;wxEVT_LIST_BEGIN_DRAG event&quot;);@@Fit();@@}" />
-        </node>
-        <node
-          class="wxBoxSizer"
-          var_name="box_sizer5"
-          flags="wxEXPAND">
-          <node
-            class="wxStaticText"
-            label="Slider:"
-            var_name="m_staticText12"
-            alignment="wxALIGN_CENTER"
-            borders="wxLEFT|wxTOP|wxBOTTOM" />
-          <node
-            class="wxSlider"
-            wxEVT_SLIDER="OnSlider" />
-          <node
-            class="wxStaticText"
-            label="Gauge:"
-            var_name="m_staticText13"
-            alignment="wxALIGN_CENTER"
-            borders="wxLEFT|wxTOP|wxBOTTOM" />
-          <node
-            class="wxGauge"
-            alignment="wxALIGN_CENTER" />
-        </node>
+          class="wxListBox"
+          var_name="m_events_list"
+          minimum_size="-1,60d"
+          flags="wxEXPAND" />
         <node
           class="wxStdDialogButtonSizer"
-          Help="1"
           flags="wxEXPAND" />
-      </node>
-      <node
-        class="wxContextMenuEvent">
-        <node
-          class="wxMenuItem"
-          label="Play Animation"
-          wxEVT_MENU="[this](wxCommandEvent&amp;) { m_animation_ctrl->Play(); }" />
-        <node
-          class="wxMenuItem"
-          label="Stop Animation"
-          var_name="menu_item_2"
-          wxEVT_MENU="[this](wxCommandEvent&amp;) { m_animation_ctrl->Stop(); }" />
-        <node
-          class="separator" />
-        <node
-          class="wxMenuItem"
-          label="Set Slider to 25"
-          var_name="menu_item_3"
-          wxEVT_MENU="[this](wxCommandEvent&amp;) { m_slider->SetValue(25); }" />
-        <node
-          class="wxMenuItem"
-          label="Set Slider to 75"
-          var_name="menu_item_4"
-          wxEVT_MENU="[this](wxCommandEvent&amp;) { m_slider->SetValue(75); }" />
-        <node
-          class="wxMenuItem"
-          label="Set Gauge to 25"
-          var_name="menu_item_5"
-          wxEVT_MENU="[this](wxCommandEvent&amp;) { m_gauge->SetValue(25); }" />
-        <node
-          class="wxMenuItem"
-          label="Set Gauge to 75"
-          var_name="menu_item_6"
-          wxEVT_MENU="[this](wxCommandEvent&amp;) { m_gauge->SetValue(75); }" />
       </node>
     </node>
     <node
@@ -816,7 +980,8 @@
       base_file="popupwin"
       derived_class_name="PopupWin"
       derived_file="../ui/popupwin"
-      use_derived_class="0">
+      use_derived_class="0"
+      python_file="popupwin">
       <node
         class="wxBoxSizer"
         orientation="wxVERTICAL"
@@ -1003,39 +1168,6 @@
           class="wxNotebook"
           flags="wxEXPAND"
           proportion="1">
-          <node
-            class="BookPage"
-            bitmap="Art;wxART_FILE_OPEN|wxART_OTHER"
-            label="Pickers"
-            window_style="wxBORDER_THEME|wxTAB_TRAVERSAL">
-            <node
-              class="wxBoxSizer"
-              orientation="wxVERTICAL"
-              var_name="parent_sizer2">
-              <node
-                class="wxStaticBoxSizer"
-                label="Pickers"
-                flags="wxEXPAND">
-                <node
-                  class="wxFilePickerCtrl"
-                  wildcard="BMP files|*.bmp" />
-                <node
-                  class="wxDirPickerCtrl"
-                  initial_path="."
-                  style="wxDIRP_DEFAULT_STYLE|wxDIRP_SMALL" />
-                <node
-                  class="wxColourPickerCtrl" />
-                <node
-                  class="wxDatePickerCtrl" />
-                <node
-                  class="wxTimePickerCtrl" />
-                <node
-                  class="wxFontPickerCtrl"
-                  initial_font="Comic Sans MS,90,400,-1,70,0"
-                  style="wxFNTP_DEFAULT_STYLE|wxFNTP_USE_TEXTCTRL" />
-              </node>
-            </node>
-          </node>
           <node
             class="BookPage"
             bitmap="Art;wxART_HELP_SIDE_PANEL|wxART_OTHER"
@@ -1678,6 +1810,351 @@
           class="wxComboBox"
           contents="&quot;English&quot; &quot;French&quot; &quot;Japanese&quot;"
           selection_string="English" />
+      </node>
+    </node>
+    <node
+      class="folder"
+      label="C++ Only">
+      <node
+        class="wxDialog"
+        class_name="CommonCtrls"
+        style="wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER"
+        title="Common controls"
+        base_file="commonctrls"
+        base_hdr_includes="#include &quot;popupwin.h&quot;  // PopupWin -- Popup Window"
+        derived_class_name="CommonCtrls"
+        derived_file="../ui/commonctrls"
+        inserted_hdr_code="public:@@    ~CommonCtrls();@@@@private:@@    PopupWin* m_popup_win { nullptr };"
+        use_derived_class="0"
+        wxEVT_INIT_DIALOG="OnInit"
+        wxEVT_CONTEXT_MENU="OnContextMenu">
+        <node
+          class="wxBoxSizer"
+          orientation="wxVERTICAL"
+          var_name="parent_sizer">
+          <node
+            class="wxBoxSizer"
+            orientation="wxVERTICAL"
+            var_name="box_sizer6"
+            flags="wxEXPAND">
+            <node
+              class="wxInfoBar"
+              show_effect="expand"
+              flags="wxEXPAND" />
+          </node>
+          <node
+            class="wxBoxSizer"
+            flags="wxEXPAND">
+            <node
+              class="wxStaticText"
+              label="Text:"
+              alignment="wxALIGN_CENTER"
+              borders="wxLEFT|wxTOP|wxBOTTOM" />
+            <node
+              class="wxTextCtrl"
+              auto_complete="&quot;foo&quot; &quot;bar&quot;"
+              style="wxTE_PROCESS_ENTER"
+              value="Text &quot;ctrl&quot;"
+              validator_variable="m_textCtrlValidate"
+              tooltip="Auto-complete contains &quot;foo&quot; and &quot;bar&quot;"
+              wxEVT_TEXT_ENTER="[this](wxCommandEvent&amp;)@@{@@m_infoBar->ShowMessage(&quot;wxEVT_TEXT_ENTER event&quot;);@@Fit();@@}" />
+            <node
+              class="wxStaticText"
+              label="More text:"
+              var_name="m_staticText2"
+              alignment="wxALIGN_CENTER"
+              borders="wxLEFT|wxTOP|wxBOTTOM" />
+            <node
+              class="wxTextCtrl"
+              value="Another ctrl"
+              var_name="m_textCtrl2" />
+            <node
+              class="wxCheckBox"
+              label="2-state Checkbox"
+              alignment="wxALIGN_CENTER"
+              wxEVT_CHECKBOX="[this](wxCommandEvent&amp;)@@{@@    m_infoBar->ShowMessage(&quot;wxEVT_CHECKBOX event&quot;);@@    Fit();@@@@}" />
+          </node>
+          <node
+            class="wxBoxSizer"
+            var_name="box_sizer2"
+            flags="wxEXPAND">
+            <node
+              class="wxButton"
+              label="First btn"
+              minimum_size="-1,-1d"
+              wxEVT_BUTTON="[this](wxCommandEvent&amp;)@@{@@m_infoBar->ShowMessage(&quot;wxEVT_BUTTON event&quot;);@@Fit();@@}" />
+            <node
+              class="wxButton"
+              class_access="none"
+              label="Popup"
+              var_name="btn2"
+              wxEVT_BUTTON="OnPopupBtn" />
+            <node
+              class="wxRadioButton"
+              label="First radio"
+              style="wxRB_GROUP"
+              alignment="wxALIGN_CENTER"
+              wxEVT_RADIOBUTTON="[this](wxCommandEvent&amp;)@@{@@m_infoBar->ShowMessage(&quot;wxEVT_RADIOBUTTON event&quot;);@@Fit();@@}" />
+            <node
+              class="wxRadioButton"
+              label="Second radio"
+              var_name="m_radioBtn2"
+              alignment="wxALIGN_CENTER"
+              wxEVT_RADIOBUTTON="OnRadio" />
+            <node
+              class="wxCheckBox"
+              label="Checkbox"
+              var_name="m_checkBox2"
+              alignment="wxALIGN_CENTER"
+              wxEVT_CHECKBOX="OnCheckBox" />
+          </node>
+          <node
+            class="wxStaticBoxSizer"
+            label="Combos and Choices"
+            flags="wxEXPAND">
+            <node
+              class="wxBoxSizer"
+              var_name="box_sizer3"
+              flags="wxEXPAND">
+              <node
+                class="wxStaticBoxSizer"
+                label="Combo"
+                var_name="static_box_sizer2"
+                flags="wxEXPAND">
+                <node
+                  class="wxStaticText"
+                  label="Unsorted"
+                  var_name="m_staticText3" />
+                <node
+                  class="wxComboBox"
+                  contents="&quot;item #1&quot; &quot;item #2&quot; &quot;item #0&quot;"
+                  selection_int="2"
+                  selection_string="item #2"
+                  tooltip="Item #0 should be selected by default"
+                  flags="wxEXPAND"
+                  wxEVT_COMBOBOX="[this](wxCommandEvent&amp;)@@{@@m_infoBar->ShowMessage(&quot;wxEVT_COMBOBOX event&quot;);@@Fit();@@}" />
+                <node
+                  class="wxStaticText"
+                  label="Sorted"
+                  var_name="m_staticText4" />
+                <node
+                  class="wxComboBox"
+                  contents="&quot;item #1&quot; &quot;item #2&quot; &quot;item #0&quot;"
+                  selection_int="2"
+                  selection_string="item #2"
+                  style="wxCB_SORT"
+                  var_name="m_comboBox2"
+                  tooltip="Item #2 should be selected by default"
+                  wxEVT_COMBOBOX="[this](wxCommandEvent&amp;)@@{@@m_infoBar->ShowMessage(&quot;wxEVT_COMBOBOX event&quot;);@@Fit();@@}"
+                  wxEVT_COMBOBOX_CLOSEUP="[this](wxCommandEvent&amp;)@@{@@m_infoBar->ShowMessage(&quot;wxEVT_COMBOBOX_CLOSEUP event&quot;);@@Fit();@@}" />
+              </node>
+              <node
+                class="wxStaticBoxSizer"
+                label="Choice"
+                var_name="static_box_sizer3"
+                flags="wxEXPAND">
+                <node
+                  class="wxStaticText"
+                  label="Unsorted"
+                  var_name="m_staticText5" />
+                <node
+                  class="wxChoice"
+                  contents="&quot;item #1&quot; &quot;item #2&quot; &quot;item #0&quot;"
+                  selection_int="2"
+                  tooltip="Item #0 should be selected by default"
+                  wxEVT_CHOICE="[this](wxCommandEvent&amp;)@@{@@m_infoBar->ShowMessage(&quot;wxEVT_CHOICE event&quot;);@@Fit();@@}" />
+                <node
+                  class="wxStaticText"
+                  label="Sorted"
+                  var_name="m_staticText6" />
+                <node
+                  class="wxChoice"
+                  contents="&quot;item #1&quot; &quot;item #2&quot; &quot;item #0&quot;"
+                  selection_int="2"
+                  style="wxCB_SORT"
+                  var_name="m_choice2"
+                  tooltip="Item #2 should be selected by default"
+                  wxEVT_CHOICE="OnChoice" />
+              </node>
+              <node
+                class="wxStaticBoxSizer"
+                label="List"
+                var_name="static_box_sizer4"
+                flags="wxEXPAND">
+                <node
+                  class="wxStaticText"
+                  label="Unsorted"
+                  var_name="m_staticText7" />
+                <node
+                  class="wxListBox"
+                  contents="&quot;item #1&quot; &quot;item #2&quot; &quot;item #0&quot;"
+                  wxEVT_LISTBOX="OnListBox" />
+                <node
+                  class="wxStaticText"
+                  label="Sorted"
+                  var_name="m_staticText8" />
+                <node
+                  class="wxListBox"
+                  contents="&quot;item #1&quot; &quot;item #2&quot; &quot;item #0&quot;"
+                  style="wxLB_SORT"
+                  var_name="m_listBox2"
+                  wxEVT_LISTBOX="OnListBox" />
+              </node>
+              <node
+                class="wxStaticBoxSizer"
+                label="Checked"
+                var_name="static_box_sizer5"
+                flags="wxEXPAND">
+                <node
+                  class="wxStaticText"
+                  label="Unsorted"
+                  var_name="m_staticText9" />
+                <node
+                  class="wxCheckListBox"
+                  contents="&quot;item #1&quot; &quot;item #2&quot; &quot;item #0&quot;"
+                  wxEVT_CHECKLISTBOX="OnListChecked" />
+                <node
+                  class="wxStaticText"
+                  label="Sorted"
+                  var_name="m_staticText10" />
+                <node
+                  class="wxCheckListBox"
+                  contents="&quot;item #1&quot; &quot;item #2&quot; &quot;item #0&quot;"
+                  style="wxLB_SORT"
+                  var_name="m_checkList2" />
+              </node>
+            </node>
+          </node>
+          <node
+            class="wxFlexGridSizer"
+            cols="4"
+            flags="wxEXPAND">
+            <node
+              class="wxStaticText"
+              label="On Windows 10, the items may be be clipped unless they have a trailing space."
+              var_name="m_staticText11"
+              wrap="200" />
+            <node
+              class="wxRadioBox"
+              contents="&quot;Button zero &quot; &quot;Button one &quot; &quot;Button two &quot;"
+              label="Radio Box"
+              selection="1"
+              style="rows"
+              validator_variable="m_valRadio"
+              wxEVT_RADIOBOX="OnRadioBox" />
+            <node
+              class="wxBoxSizer"
+              orientation="wxVERTICAL"
+              var_name="box_sizer_2">
+              <node
+                class="wxStaticBitmap"
+                bitmap="SVG;../art/face-smile.svg;[64,64]" />
+              <node
+                class="wxStaticText"
+                label="SVG image"
+                var_name="m_staticText_2" />
+            </node>
+            <node
+              class="wxBitmapComboBox"
+              style="wxCB_READONLY" />
+            <node
+              class="StaticCheckboxBoxSizer"
+              checkbox_var_name="m_checkPlayAnimation"
+              checked="0"
+              label="Play Animation"
+              var_name="static_box_2"
+              wxEVT_CHECKBOX="[this](wxCommandEvent&amp;)@@{@@if (m_checkPlayAnimation->GetValue()) @@{@@    m_animation_ctrl->Play();@@}@@else @@{  @@    m_animation_ctrl->Stop();@@}@@@@}">
+              <node
+                class="wxToggleButton"
+                label="Play Animation"
+                style="wxBU_EXACTFIT"
+                wxEVT_TOGGLEBUTTON="[this](wxCommandEvent&amp;)@@{@@if (m_toggleBtn->GetValue()) @@{@@    m_animation_ctrl->Play();@@    m_checkPlayAnimation->SetValue(true);@@}@@else @@{  @@    m_animation_ctrl->Stop();@@    m_checkPlayAnimation->SetValue(false);@@}@@@@m_infoBar->ShowMessage(&quot;wxEVT_TOGGLEBUTTON event&quot;);@@Fit();@@}" />
+              <node
+                class="wxAnimationCtrl"
+                animation="Header;../art/clr_hourglass_gif.hxx"
+                inactive_bitmap="XPM;../art/empty.xpm" />
+            </node>
+            <node
+              class="CustomControl"
+              class_name="SplitButton"
+              header="custom_ctrls/split_button.h"
+              namespace="wxue_ctrl"
+              parameters="(this, wxID_ANY, &quot;Play&quot;)"
+              settings_code="{@@    const int ID_PLAY { 100 };@@    const int ID_STOP { 101 };@@    m_split_button->GetMenu().Append(ID_PLAY, &quot;Play&quot;);@@    m_split_button->GetMenu().Append(ID_STOP, &quot;Stop&quot;);@@@@    m_split_button->Bind(wxEVT_MENU,@@        [this](wxCommandEvent&amp;)@@        {@@            m_animation_ctrl->Play();@@            m_checkPlayAnimation->SetValue(true);@@        }, ID_PLAY);@@@@    m_split_button->Bind(wxEVT_MENU,@@        [this](wxCommandEvent&amp;)@@        {@@            m_animation_ctrl->Stop();@@            m_checkPlayAnimation->SetValue(false);@@        }, ID_STOP);@@@@    m_split_button->Bind(wxEVT_BUTTON,@@        [this](wxCommandEvent&amp;)@@        {@@            m_animation_ctrl->Play();@@            m_checkPlayAnimation->SetValue(true);@@        } );@@}"
+              var_comment="control with button + menu"
+              var_name="m_split_button"
+              border_size="10"
+              column="3"
+              row="4" />
+            <node
+              class="spacer" />
+            <node
+              class="wxEditableListBox"
+              contents="&quot;item #1&quot; &quot;item #2&quot; &quot;item #3&quot;"
+              wxEVT_LIST_BEGIN_DRAG="[this](wxListEvent&amp;)@@{@@m_infoBar->ShowMessage(&quot;wxEVT_LIST_BEGIN_DRAG event&quot;);@@Fit();@@}" />
+          </node>
+          <node
+            class="wxBoxSizer"
+            var_name="box_sizer5"
+            flags="wxEXPAND">
+            <node
+              class="wxStaticText"
+              label="Slider:"
+              var_name="m_staticText12"
+              alignment="wxALIGN_CENTER"
+              borders="wxLEFT|wxTOP|wxBOTTOM" />
+            <node
+              class="wxSlider"
+              wxEVT_SLIDER="OnSlider" />
+            <node
+              class="wxStaticText"
+              label="Gauge:"
+              var_name="m_staticText13"
+              alignment="wxALIGN_CENTER"
+              borders="wxLEFT|wxTOP|wxBOTTOM" />
+            <node
+              class="wxGauge"
+              alignment="wxALIGN_CENTER" />
+          </node>
+          <node
+            class="wxStdDialogButtonSizer"
+            Help="1"
+            flags="wxEXPAND" />
+        </node>
+        <node
+          class="wxContextMenuEvent">
+          <node
+            class="wxMenuItem"
+            label="Play Animation"
+            wxEVT_MENU="[this](wxCommandEvent&amp;) { m_animation_ctrl->Play(); }" />
+          <node
+            class="wxMenuItem"
+            label="Stop Animation"
+            var_name="menu_item_2"
+            wxEVT_MENU="[this](wxCommandEvent&amp;) { m_animation_ctrl->Stop(); }" />
+          <node
+            class="separator" />
+          <node
+            class="wxMenuItem"
+            label="Set Slider to 25"
+            var_name="menu_item_3"
+            wxEVT_MENU="[this](wxCommandEvent&amp;) { m_slider->SetValue(25); }" />
+          <node
+            class="wxMenuItem"
+            label="Set Slider to 75"
+            var_name="menu_item_4"
+            wxEVT_MENU="[this](wxCommandEvent&amp;) { m_slider->SetValue(75); }" />
+          <node
+            class="wxMenuItem"
+            label="Set Gauge to 25"
+            var_name="menu_item_5"
+            wxEVT_MENU="[this](wxCommandEvent&amp;) { m_gauge->SetValue(25); }" />
+          <node
+            class="wxMenuItem"
+            label="Set Gauge to 75"
+            var_name="menu_item_6"
+            wxEVT_MENU="[this](wxCommandEvent&amp;) { m_gauge->SetValue(75); }" />
+        </node>
       </node>
     </node>
   </node>

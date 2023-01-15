@@ -58,15 +58,9 @@ class Wizard(wx.adv.Wizard):
         self.Bind(wx.EVT_INIT_DIALOG, self.OnInit)
         self.Bind(wx.adv.EVT_WIZARD_BEFORE_PAGE_CHANGED, self.OnBeforeChange)
 
-    # Event handler functions
-    # Add these below the comment block, or to your inherited class.
+    # Unimplemented Event handler functions
+    # Copy any listed and paste them below the comment block, or to your inherited class.
     """
-    def OnInit(self, event):
-        event.Skip()
-
-    def OnBeforeChange(self, event):
-        event.Skip()
-
     """
 
 

@@ -6,8 +6,10 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include <set>
+#include <unordered_set>
 
-#include "ttcwd_wx.h"  // cwd -- Class for storing and optionally restoring the current directory
+#include "ttcwd_wx.h"       // cwd -- Class for storing and optionally restoring the current directory
+#include <tttextfile_wx.h>  // textfile -- Classes for reading and writing line-oriented files
 
 #include "mainframe.h"
 
@@ -27,6 +29,8 @@
 #include "pugixml.hpp"
 
 using namespace code;
+
+extern const char* python_end_cmt_line;  // "# ************* End of generated code"
 
 // defined in gen_xrc.cpp
 int GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags);
@@ -394,17 +398,23 @@ void BaseCodeGenerator::GeneratePythonClass(Node* form_node, PANEL_PAGE panel_ty
         m_source->doWrite("\n");
     }
 
-    if (form_node->HasValue(prop_python_inherit_name))
+    ttlib::cstr inherit_name = form_node->value(prop_python_inherit_name);
+    if (inherit_name.empty())
+    {
+        inherit_name += "inherit_" + form_node->value(prop_class_name);
+    }
+    if (inherit_name.size())
     {
         ttlib::cstr inherit("class ");
-        inherit << form_node->prop_as_string(prop_python_inherit_name) << "(";
+        inherit << inherit_name << "(";
         inherit << form_node->as_string(prop_python_file) << "." << form_node->as_string(prop_class_name) << "):";
 
         m_header->writeLine(inherit);
         m_header->Indent();
         m_header->writeLine("def __init__(self, parent):");
-        m_header->Indent();
         m_header->writeLine("super().__init__(parent)");
+        m_header->Unindent();
+        m_header->writeLine();
     }
 
     thrd_get_events.join();
@@ -494,14 +504,22 @@ void BaseCodeGenerator::GeneratePythonClass(Node* form_node, PANEL_PAGE panel_ty
               });
 }
 
-void BaseCodeGenerator::GenPythonEventHandlers(const EventVector& events)
+void BaseCodeGenerator::GenPythonEventHandlers(EventVector& events)
 {
     // Multiple events can be bound to the same function, so use a set to make sure we only generate each function once.
-    std::set<ttlib::cstr> code_lines;
+    std::unordered_set<std::string> code_lines;
 
     Code code(m_form_node, GEN_LANG_PYTHON);
     if (events.size())
     {
+        auto lambda = [](NodeEvent* a, NodeEvent* b)
+        {
+            return (a->get_value() < b->get_value());
+        };
+
+        // Sort events by function name
+        std::sort(events.begin(), events.end(), lambda);
+
         bool inherited_class = m_form_node->HasValue(prop_python_inherit_name);
         if (!inherited_class)
         {
@@ -513,9 +531,67 @@ void BaseCodeGenerator::GenPythonEventHandlers(const EventVector& events)
             m_header->writeLine();
         }
 
-        code.Str("# Event handler functions\n# Add these below the comment block, or to your inherited class.");
-        code.Eol().Str(python_triple_quote).Eol();
+        bool found_user_handlers = false;
+        if (m_panel_type == NOT_PANEL)
+        {
+            ttlib::viewfile org_file;
+            ttlib::cstr path;
+            if (auto& base_file = m_form_node->prop_as_string(prop_python_file); base_file.size())
+            {
+                path = base_file;
+                if (path.size())
+                {
+                    if (auto* node_folder = m_form_node->get_folder();
+                        node_folder && node_folder->HasValue(prop_folder_python_output_folder))
+                    {
+                        path = node_folder->as_string(prop_folder_python_output_folder);
+                        path.append_filename(base_file.filename());
+                    }
+                    else if (Project.HasValue(prop_python_output_folder) && !path.contains("/"))
+                    {
+                        path = Project.BaseDirectory(GEN_LANG_PYTHON).utf8_string();
+                        path.append_filename(base_file);
+                        path += ".py";
+                    }
+                    path.backslashestoforward();
+                }
+            }
+
+            if (path.size() && org_file.ReadFile(path))
+            {
+                size_t line_index;
+                for (line_index = 0; line_index < org_file.size(); ++line_index)
+                {
+                    if (org_file[line_index].is_sameprefix(python_end_cmt_line))
+                    {
+                        break;
+                    }
+                }
+                for (++line_index; line_index < org_file.size(); ++line_index)
+                {
+                    auto def = org_file[line_index].view_nonspace();
+                    if (org_file[line_index].view_nonspace().starts_with("def "))
+                    {
+                        code_lines.emplace(def);
+                        found_user_handlers = true;
+                    }
+                }
+            }
+        }
+
+        if (found_user_handlers)
+        {
+            code.Str("# Unimplemented Event handler functions\n# Copy any listed and paste them below the comment block, or "
+                     "to your inherited class.");
+            code.Eol().Str(python_triple_quote).Eol();
+        }
+        else
+        {
+            code.Str("# Event handler functions\n# Add these below the comment block, or to your inherited class.");
+            code.Eol().Str(python_triple_quote).Eol();
+        }
         m_source->writeLine(code);
+
         code.clear();
         for (auto& event: events)
         {
@@ -527,13 +603,22 @@ void BaseCodeGenerator::GenPythonEventHandlers(const EventVector& events)
             set_code << "def " << event->get_value() << "(self, event):";
             if (code_lines.find(set_code) != code_lines.end())
                 continue;
+            code_lines.emplace(set_code);
 
             code.Str(set_code).Eol();
             code.Tab().Str("event.Skip()").Eol().Eol();
         }
 
-        m_header->writeLine("# Event handler functions");
+        if (found_user_handlers)
+        {
+            m_header->writeLine("# Unimplemented Event handler functions");
+        }
+        else
+        {
+            m_header->writeLine("# Event handler functions");
+        }
         m_header->writeLine(code);
+
         if (!inherited_class)
         {
             m_header->Unindent();

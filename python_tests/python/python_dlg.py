@@ -90,12 +90,9 @@ class PythonDlg(wx.Dialog):
         # Bind Event handlers
         self.Bind(wx.EVT_INIT_DIALOG, self.OnInit)
 
-    # Event handler functions
-    # Add these below the comment block, or to your inherited class.
+    # Unimplemented Event handler functions
+    # Copy any listed and paste them below the comment block, or to your inherited class.
     """
-    def OnInit(self, event):
-        event.Skip()
-
     """
 
 # ************* End of generated code ***********

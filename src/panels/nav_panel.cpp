@@ -6,6 +6,7 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include <wx/imaglist.h>  // wxImageList base header
+#include <wx/infobar.h>   // declaration of wxInfoBarBase defining common API of wxInfoBar
 #include <wx/panel.h>     // Base header for wxPanel
 #include <wx/sizer.h>     // provide wxSizer class for layout
 #include <wx/toolbar.h>   // wxToolBar interface declaration
@@ -28,6 +29,33 @@
 #include "utils.h"            // Utility functions that work with properties
 
 constexpr size_t MaxLabelLength = 24;
+
+// clang-format off
+inline const std::vector<GenEnum::GenName> unsupported_gen_python = {
+
+    gen_StaticCheckboxBoxSizer,
+    gen_StaticRadioBtnBoxSizer,
+
+    gen_wxContextMenuEvent,
+    gen_CustomControl,
+
+};
+
+inline const std::vector<GenEnum::GenName> unsupported_gen_XRC = {
+
+    gen_TreeListCtrlColumn,
+    gen_propGridItem,
+    gen_propGridPage,
+    gen_wxContextMenuEvent,
+    gen_wxPopupTransientWindow,
+    gen_wxPropertyGrid,
+    gen_wxPropertyGridManager,
+    gen_wxRearrangeCtrl,
+    gen_wxTreeListCtrl,
+    gen_wxWebView,
+
+};
+// clang-format on
 
 NavigationPanel::NavigationPanel(wxWindow* parent, MainFrame* frame) : wxPanel(parent)
 {
@@ -221,6 +249,28 @@ void NavigationPanel::OnSelChanged(wxTreeEvent& event)
             m_pMainFrame->SelectNode(iter->second);
         else
             m_pMainFrame->GetPropPanel()->Create();
+
+        if (Project.value(prop_code_preference) == "Python")
+        {
+            if (std::find(unsupported_gen_python.begin(), unsupported_gen_python.end(), iter->second->gen_name()) !=
+                unsupported_gen_python.end())
+            {
+                auto info = wxGetFrame().GetPropInfoBar();
+                info->Dismiss();
+                info->ShowMessage("This control is not supported by wxPython.", wxICON_INFORMATION);
+            }
+        }
+        else if (Project.value(prop_code_preference) == "XRC")
+        {
+            if (std::find(unsupported_gen_XRC.begin(), unsupported_gen_XRC.end(), iter->second->gen_name()) !=
+                unsupported_gen_XRC.end())
+            {
+                auto info = wxGetFrame().GetPropInfoBar();
+                info->Dismiss();
+                info->ShowMessage("This control is not supported by XRC.", wxICON_INFORMATION);
+            }
+        }
+
         m_isSelChangeSuspended = false;
     }
 }
@@ -381,6 +431,7 @@ void NavigationPanel::AddAllChildren(Node* node_parent)
     {
         auto node = iter_child.get();
         auto new_item = m_tree_ctrl->AppendItem(tree_parent, GetDisplayName(node).wx_str(), GetImageIndex(node), -1);
+
         m_node_tree_map[node] = new_item;
         m_tree_node_map[new_item] = node;
 

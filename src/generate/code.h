@@ -203,7 +203,8 @@ public:
     // Adds "false" for C++ or "False" for Python
     Code& False() { return AddFalse(); }
 
-    // Use Str() instead of Add() if you don't need any special wxPython processing.
+    // Use Str() instead of Add() if you are *absolutely* certain you will never need
+    // wxPython processing.
     //
     // This will call CheckLineLength(str.size()) first.
     Code& Str(std::string_view str)

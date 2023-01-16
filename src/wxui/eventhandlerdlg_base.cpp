@@ -14,7 +14,7 @@
 #include "eventhandlerdlg_base.h"
 
 bool EventHandlerDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString& title,
-        const wxPoint& pos, const wxSize& size, long style, const wxString &name)
+    const wxPoint& pos, const wxSize& size, long style, const wxString &name)
 {
     if (!wxDialog::Create(parent, id, title, pos, size, style, name))
         return false;
@@ -97,14 +97,14 @@ bool EventHandlerDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString
     wxPersistentRegisterAndRestore(this, "EventHandlerDlgBase");
 
     // Event handlers
-    Bind(wxEVT_INIT_DIALOG, &EventHandlerDlgBase::OnInit, this);
-    m_radio_use_function->Bind(wxEVT_RADIOBUTTON, &EventHandlerDlgBase::OnUseFunction, this);
-    m_text_function->Bind(wxEVT_TEXT, &EventHandlerDlgBase::OnFunctionText, this);
-    m_radio_use_lambda->Bind(wxEVT_RADIOBUTTON, &EventHandlerDlgBase::OnUseLambda, this);
+    Bind(wxEVT_BUTTON, &EventHandlerDlgBase::OnOK, this, wxID_OK);
     m_check_capture_this->Bind(wxEVT_CHECKBOX, &EventHandlerDlgBase::OnCapture, this);
     m_check_include_event->Bind(wxEVT_CHECKBOX, &EventHandlerDlgBase::OnIncludeEvent, this);
+    Bind(wxEVT_INIT_DIALOG, &EventHandlerDlgBase::OnInit, this);
+    m_radio_use_function->Bind(wxEVT_RADIOBUTTON, &EventHandlerDlgBase::OnUseFunction, this);
+    m_radio_use_lambda->Bind(wxEVT_RADIOBUTTON, &EventHandlerDlgBase::OnUseLambda, this);
     m_stc->Bind(wxEVT_STC_CHANGE, &EventHandlerDlgBase::OnChange, this);
-    Bind(wxEVT_BUTTON, &EventHandlerDlgBase::OnOK, this, wxID_OK);
+    m_text_function->Bind(wxEVT_TEXT, &EventHandlerDlgBase::OnFunctionText, this);
 
     return true;
 }

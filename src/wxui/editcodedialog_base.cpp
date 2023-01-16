@@ -15,7 +15,7 @@
 #include "editcodedialog_base.h"
 
 bool EditCodeDialogBase::Create(wxWindow* parent, wxWindowID id, const wxString& title,
-        const wxPoint& pos, const wxSize& size, long style, const wxString &name)
+    const wxPoint& pos, const wxSize& size, long style, const wxString &name)
 {
     if (!wxDialog::Create(parent, id, title, pos, size, style, name))
         return false;
@@ -58,9 +58,9 @@ bool EditCodeDialogBase::Create(wxWindow* parent, wxWindowID id, const wxString&
     wxPersistentRegisterAndRestore(this, "EditCodeDialogBase");
 
     // Event handlers
+    Bind(wxEVT_BUTTON, &EditCodeDialogBase::OnOK, this, wxID_OK);
     Bind(wxEVT_INIT_DIALOG, &EditCodeDialogBase::OnInit, this);
     m_stc->Bind(wxEVT_STC_CHANGE, &EditCodeDialogBase::OnChange, this);
-    Bind(wxEVT_BUTTON, &EditCodeDialogBase::OnOK, this, wxID_OK);
 
     return true;
 }

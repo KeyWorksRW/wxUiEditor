@@ -15,7 +15,7 @@
 #include "WinMerge.xpm"
 
 bool CodeCompare::Create(wxWindow* parent, wxWindowID id, const wxString& title,
-        const wxPoint& pos, const wxSize& size, long style, const wxString &name)
+    const wxPoint& pos, const wxSize& size, long style, const wxString &name)
 {
     if (!wxDialog::Create(parent, id, title, pos, size, style, name))
         return false;
@@ -64,10 +64,10 @@ bool CodeCompare::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     Centre(wxBOTH);
 
     // Event handlers
+    m_btn->Bind(wxEVT_BUTTON, &CodeCompare::OnWinMerge, this);
     Bind(wxEVT_INIT_DIALOG, &CodeCompare::OnInit, this);
     m_radio_cplusplus->Bind(wxEVT_RADIOBUTTON, &CodeCompare::OnCPlusPlus, this);
     m_radio_python->Bind(wxEVT_RADIOBUTTON, &CodeCompare::OnPython, this);
-    m_btn->Bind(wxEVT_BUTTON, &CodeCompare::OnWinMerge, this);
 
     return true;
 }

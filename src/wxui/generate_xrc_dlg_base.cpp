@@ -59,11 +59,11 @@ bool GenerateXrcDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString&
     wxPersistentRegisterAndRestore(this, "GenerateXrcDlgBase");
 
     // Event handlers
+    Bind(wxEVT_BUTTON, &GenerateXrcDlgBase::OnSave, this, wxID_SAVE);
+    m_filePicker->Bind(wxEVT_FILEPICKER_CHANGED, &GenerateXrcDlgBase::OnCombinedFilenameChanged, this);
     Bind(wxEVT_INIT_DIALOG, &GenerateXrcDlgBase::OnInit, this);
     m_radio_combined->Bind(wxEVT_RADIOBUTTON, &GenerateXrcDlgBase::OnCombinedFile, this);
-    m_filePicker->Bind(wxEVT_FILEPICKER_CHANGED, &GenerateXrcDlgBase::OnCombinedFilenameChanged, this);
     m_radio_separate->Bind(wxEVT_RADIOBUTTON, &GenerateXrcDlgBase::OnSeparateFiles, this);
-    Bind(wxEVT_BUTTON, &GenerateXrcDlgBase::OnSave, this, wxID_SAVE);
 
     return true;
 }

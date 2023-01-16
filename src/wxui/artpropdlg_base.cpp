@@ -60,8 +60,8 @@ bool ArtPropertyDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString&
     Centre(wxBOTH);
 
     // Event handlers
-    m_list->Bind(wxEVT_LIST_ITEM_SELECTED, &ArtPropertyDlgBase::OnSelectItem, this);
     m_choice_client->Bind(wxEVT_CHOICE, &ArtPropertyDlgBase::OnChooseClient, this);
+    m_list->Bind(wxEVT_LIST_ITEM_SELECTED, &ArtPropertyDlgBase::OnSelectItem, this);
 
     return true;
 }

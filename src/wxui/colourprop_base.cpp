@@ -85,13 +85,13 @@ bool ColourPropBase::Create(wxWindow* parent, wxWindowID id, const wxString& tit
     Centre(wxBOTH);
 
     // Event handlers
+    Bind(wxEVT_BUTTON, &ColourPropBase::OnOK, this, wxID_OK);
+    m_colourPicker->Bind(wxEVT_COLOURPICKER_CHANGED, &ColourPropBase::OnColourChanged, this);
+    m_combo_system->Bind(wxEVT_COMBOBOX, &ColourPropBase::OnSystemColourChange, this);
     Bind(wxEVT_INIT_DIALOG, &ColourPropBase::OnInit, this);
     m_radio_default->Bind(wxEVT_RADIOBUTTON, &ColourPropBase::OnSetDefault, this);
     m_radio_custom->Bind(wxEVT_RADIOBUTTON, &ColourPropBase::OnRadioCustomColour, this);
-    m_colourPicker->Bind(wxEVT_COLOURPICKER_CHANGED, &ColourPropBase::OnColourChanged, this);
     m_radio_system->Bind(wxEVT_RADIOBUTTON, &ColourPropBase::OnRadioSystemColour, this);
-    m_combo_system->Bind(wxEVT_COMBOBOX, &ColourPropBase::OnSystemColourChange, this);
-    Bind(wxEVT_BUTTON, &ColourPropBase::OnOK, this, wxID_OK);
 
     return true;
 }

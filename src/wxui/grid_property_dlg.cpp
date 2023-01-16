@@ -74,13 +74,13 @@ bool GridPropertyDlg::Create(wxWindow* parent, wxWindowID id, const wxString& ti
     Centre(wxBOTH);
 
     // Event handlers
+    Bind(wxEVT_BUTTON, &GridPropertyDlg::OnCancel, this, wxID_CANCEL);
+    Bind(wxEVT_BUTTON, &GridPropertyDlg::OnOK, this, wxID_OK);
     Bind(wxEVT_INIT_DIALOG, &GridPropertyDlg::OnInit, this);
-    Bind(wxEVT_UPDATE_UI, &GridPropertyDlg::OnUpdateUI, this);
     Bind(wxEVT_TOOL, &GridPropertyDlg::OnNewRow, this, id_NewRow);
     Bind(wxEVT_TOOL, &GridPropertyDlg::OnDeleteRow, this, id_DeleteRow);
     Bind(wxEVT_TOOL, &GridPropertyDlg::OnUndoDelete, this, id_UndoDeleteRow);
-    Bind(wxEVT_BUTTON, &GridPropertyDlg::OnCancel, this, wxID_CANCEL);
-    Bind(wxEVT_BUTTON, &GridPropertyDlg::OnOK, this, wxID_OK);
+    Bind(wxEVT_UPDATE_UI, &GridPropertyDlg::OnUpdateUI, this);
 
     return true;
 }

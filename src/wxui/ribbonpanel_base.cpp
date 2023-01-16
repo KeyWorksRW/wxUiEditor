@@ -468,33 +468,33 @@ RibbonPanelBase::RibbonPanelBase(wxWindow* parent, wxWindowID id, const wxPoint&
     forms_bar_bars_2->Bind(wxEVT_RIBBONTOOLBAR_CLICKED, &RibbonPanelBase::OnToolClick, this);
     forms_bar_images->Bind(wxEVT_RIBBONTOOLBAR_CLICKED, &RibbonPanelBase::OnToolClick, this);
     sizer_bar_basic->Bind(wxEVT_RIBBONTOOLBAR_CLICKED, &RibbonPanelBase::OnToolClick, this);
-    sizer_bar_basic->Bind(wxEVT_RIBBONTOOLBAR_DROPDOWN_CLICKED, &RibbonPanelBase::OnDropDown, this);
+    bars_bar_other->Bind(wxEVT_RIBBONTOOLBAR_CLICKED, &RibbonPanelBase::OnToolClick, this);
     sizer_bar_grids->Bind(wxEVT_RIBBONTOOLBAR_CLICKED, &RibbonPanelBase::OnToolClick, this);
     sizer_bar_other->Bind(wxEVT_RIBBONTOOLBAR_CLICKED, &RibbonPanelBase::OnToolClick, this);
     common_bar_controls->Bind(wxEVT_RIBBONTOOLBAR_CLICKED, &RibbonPanelBase::OnToolClick, this);
-    common_bar_controls->Bind(wxEVT_RIBBONTOOLBAR_DROPDOWN_CLICKED, &RibbonPanelBase::OnDropDown, this);
+    other_bar_editors->Bind(wxEVT_RIBBONTOOLBAR_CLICKED, &RibbonPanelBase::OnToolClick, this);
     common_bar_choices->Bind(wxEVT_RIBBONTOOLBAR_CLICKED, &RibbonPanelBase::OnToolClick, this);
-    common_bar_choices->Bind(wxEVT_RIBBONTOOLBAR_DROPDOWN_CLICKED, &RibbonPanelBase::OnDropDown, this);
+    other_bar_ctrls->Bind(wxEVT_RIBBONTOOLBAR_CLICKED, &RibbonPanelBase::OnToolClick, this);
     common_bar_pickers->Bind(wxEVT_RIBBONTOOLBAR_CLICKED, &RibbonPanelBase::OnToolClick, this);
     common_bar_other->Bind(wxEVT_RIBBONTOOLBAR_CLICKED, &RibbonPanelBase::OnToolClick, this);
     container_bar_windows->Bind(wxEVT_RIBBONTOOLBAR_CLICKED, &RibbonPanelBase::OnToolClick, this);
-    container_bar_windows->Bind(wxEVT_RIBBONTOOLBAR_DROPDOWN_CLICKED, &RibbonPanelBase::OnDropDown, this);
+    other_bar_html->Bind(wxEVT_RIBBONTOOLBAR_CLICKED, &RibbonPanelBase::OnToolClick, this);
     container_bar_books->Bind(wxEVT_RIBBONTOOLBAR_CLICKED, &RibbonPanelBase::OnToolClick, this);
     container_bar_page->Bind(wxEVT_RIBBONTOOLBAR_CLICKED, &RibbonPanelBase::OnToolClick, this);
     data_bar_grid->Bind(wxEVT_RIBBONTOOLBAR_CLICKED, &RibbonPanelBase::OnToolClick, this);
     data_bar_properties->Bind(wxEVT_RIBBONTOOLBAR_CLICKED, &RibbonPanelBase::OnToolClick, this);
     data_bar_trees->Bind(wxEVT_RIBBONTOOLBAR_CLICKED, &RibbonPanelBase::OnToolClick, this);
     data_bar_dataview->Bind(wxEVT_RIBBONTOOLBAR_CLICKED, &RibbonPanelBase::OnToolClick, this);
-    data_bar_dataview->Bind(wxEVT_RIBBONTOOLBAR_DROPDOWN_CLICKED, &RibbonPanelBase::OnDropDown, this);
     bars_bar_menu->Bind(wxEVT_RIBBONTOOLBAR_CLICKED, &RibbonPanelBase::OnToolClick, this);
     bars_bar_tool->Bind(wxEVT_RIBBONTOOLBAR_CLICKED, &RibbonPanelBase::OnToolClick, this);
-    bars_bar_tool->Bind(wxEVT_RIBBONTOOLBAR_DROPDOWN_CLICKED, &RibbonPanelBase::OnDropDown, this);
     bars_bar_ribbon->Bind(wxEVT_RIBBONTOOLBAR_CLICKED, &RibbonPanelBase::OnToolClick, this);
+    sizer_bar_basic->Bind(wxEVT_RIBBONTOOLBAR_DROPDOWN_CLICKED, &RibbonPanelBase::OnDropDown, this);
+    common_bar_controls->Bind(wxEVT_RIBBONTOOLBAR_DROPDOWN_CLICKED, &RibbonPanelBase::OnDropDown, this);
+    common_bar_choices->Bind(wxEVT_RIBBONTOOLBAR_DROPDOWN_CLICKED, &RibbonPanelBase::OnDropDown, this);
+    bars_bar_tool->Bind(wxEVT_RIBBONTOOLBAR_DROPDOWN_CLICKED, &RibbonPanelBase::OnDropDown, this);
+    data_bar_dataview->Bind(wxEVT_RIBBONTOOLBAR_DROPDOWN_CLICKED, &RibbonPanelBase::OnDropDown, this);
     bars_bar_ribbon->Bind(wxEVT_RIBBONTOOLBAR_DROPDOWN_CLICKED, &RibbonPanelBase::OnDropDown, this);
-    bars_bar_other->Bind(wxEVT_RIBBONTOOLBAR_CLICKED, &RibbonPanelBase::OnToolClick, this);
-    other_bar_editors->Bind(wxEVT_RIBBONTOOLBAR_CLICKED, &RibbonPanelBase::OnToolClick, this);
-    other_bar_ctrls->Bind(wxEVT_RIBBONTOOLBAR_CLICKED, &RibbonPanelBase::OnToolClick, this);
-    other_bar_html->Bind(wxEVT_RIBBONTOOLBAR_CLICKED, &RibbonPanelBase::OnToolClick, this);
+    container_bar_windows->Bind(wxEVT_RIBBONTOOLBAR_DROPDOWN_CLICKED, &RibbonPanelBase::OnDropDown, this);
 }
 
 namespace wxue_img

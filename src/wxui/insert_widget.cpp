@@ -58,8 +58,8 @@ bool InsertWidget::Create(wxWindow* parent, wxWindowID id, const wxString& title
     Centre(wxBOTH);
 
     // Event handlers
+    Bind(wxEVT_BUTTON, &InsertWidget::OnOK, this, wxID_OK);
     Bind(wxEVT_INIT_DIALOG, &InsertWidget::OnInit, this);
-    m_text_name->Bind(wxEVT_TEXT, &InsertWidget::OnNameText, this);
     m_text_name->Bind(wxEVT_KEY_DOWN, &InsertWidget::OnKeyDown, this);
     m_listbox->Bind(wxEVT_LISTBOX,
         [this](wxCommandEvent&)
@@ -67,7 +67,7 @@ bool InsertWidget::Create(wxWindow* parent, wxWindowID id, const wxString& title
             m_stdBtn->GetAffirmativeButton()->Enable();
         } );
     m_listbox->Bind(wxEVT_LISTBOX_DCLICK, &InsertWidget::OnListBoxDblClick, this);
-    Bind(wxEVT_BUTTON, &InsertWidget::OnOK, this, wxID_OK);
+    m_text_name->Bind(wxEVT_TEXT, &InsertWidget::OnNameText, this);
 
     return true;
 }

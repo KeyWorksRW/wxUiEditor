@@ -160,10 +160,10 @@ bool StartupDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     Centre(wxBOTH);
 
     // Event handlers
-    Bind(wxEVT_INIT_DIALOG, &StartupDlg::OnInit, this);
     hyperlink_2->Bind(wxEVT_HYPERLINK, &StartupDlg::OnOpen, this);
     hyperlink->Bind(wxEVT_HYPERLINK, &StartupDlg::OnImport, this);
     hyperlink_3->Bind(wxEVT_HYPERLINK, &StartupDlg::OnNew, this);
+    Bind(wxEVT_INIT_DIALOG, &StartupDlg::OnInit, this);
 
     return true;
 }

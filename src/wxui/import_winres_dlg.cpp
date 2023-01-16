@@ -12,7 +12,7 @@
 #include "import_winres_dlg.h"
 
 bool ImportWinRes::Create(wxWindow* parent, wxWindowID id, const wxString& title,
-        const wxPoint& pos, const wxSize& size, long style, const wxString &name)
+    const wxPoint& pos, const wxSize& size, long style, const wxString &name)
 {
     if (!wxDialog::Create(parent, id, title, pos, size, style, name))
         return false;
@@ -61,11 +61,11 @@ bool ImportWinRes::Create(wxWindow* parent, wxWindowID id, const wxString& title
     Centre(wxBOTH);
 
     // Event handlers
-    Bind(wxEVT_INIT_DIALOG, &ImportWinRes::OnInit, this);
-    m_fileResource->Bind(wxEVT_FILEPICKER_CHANGED, &ImportWinRes::OnResourceFile, this);
+    Bind(wxEVT_BUTTON, &ImportWinRes::OnOk, this, wxID_OK);
     m_btnSelectAll->Bind(wxEVT_BUTTON, &ImportWinRes::OnSelectAll, this);
     m_btnClearAll->Bind(wxEVT_BUTTON, &ImportWinRes::OnClearAll, this);
-    Bind(wxEVT_BUTTON, &ImportWinRes::OnOk, this, wxID_OK);
+    m_fileResource->Bind(wxEVT_FILEPICKER_CHANGED, &ImportWinRes::OnResourceFile, this);
+    Bind(wxEVT_INIT_DIALOG, &ImportWinRes::OnInit, this);
 
     return true;
 }

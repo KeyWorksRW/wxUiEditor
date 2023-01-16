@@ -97,15 +97,15 @@ bool NewDialog::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     Centre(wxBOTH);
 
     // Event handlers
-    Bind(wxEVT_INIT_DIALOG, &NewDialog::OnInit, this);
-    m_classname->Bind(wxEVT_TEXT,
-        [this](wxCommandEvent&)
-        {VerifyClassName();
-        } );
     m_check_tabs->Bind(wxEVT_CHECKBOX,
         [this](wxCommandEvent&)
         {
             m_spinCtrlTabs->Enable(m_check_tabs->GetValue());
+        } );
+    Bind(wxEVT_INIT_DIALOG, &NewDialog::OnInit, this);
+    m_classname->Bind(wxEVT_TEXT,
+        [this](wxCommandEvent&)
+        {VerifyClassName();
         } );
 
     return true;

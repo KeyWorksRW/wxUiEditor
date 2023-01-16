@@ -219,16 +219,16 @@ bool ConvertImageBase::Create(wxWindow* parent, wxWindowID id, const wxString& t
     Centre(wxBOTH);
 
     // Event handlers
-    m_fileOriginal->Bind(wxEVT_FILEPICKER_CHANGED, &ConvertImageBase::OnInputChange, this);
-    m_fileOutput->Bind(wxEVT_FILEPICKER_CHANGED, &ConvertImageBase::OnOutputChange, this);
-    m_choicebook->Bind(wxEVT_CHOICEBOOK_PAGE_CHANGED, &ConvertImageBase::OnPageChanged, this);
+    m_btnConvert->Bind(wxEVT_BUTTON, &ConvertImageBase::OnConvert, this);
     m_check_make_png->Bind(wxEVT_CHECKBOX, &ConvertImageBase::OnCheckPngConversion, this);
     m_ForceHdrMask->Bind(wxEVT_CHECKBOX, &ConvertImageBase::OnForceHdrMask, this);
-    m_comboHdrMask->Bind(wxEVT_COMBOBOX, &ConvertImageBase::OnComboHdrMask, this);
     m_ConvertAlphaChannel->Bind(wxEVT_CHECKBOX, &ConvertImageBase::OnConvertAlpha, this);
     m_ForceXpmMask->Bind(wxEVT_CHECKBOX, &ConvertImageBase::OnForceXpmMask, this);
+    m_choicebook->Bind(wxEVT_CHOICEBOOK_PAGE_CHANGED, &ConvertImageBase::OnPageChanged, this);
+    m_comboHdrMask->Bind(wxEVT_COMBOBOX, &ConvertImageBase::OnComboHdrMask, this);
     m_comboXpmMask->Bind(wxEVT_COMBOBOX, &ConvertImageBase::OnComboXpmMask, this);
-    m_btnConvert->Bind(wxEVT_BUTTON, &ConvertImageBase::OnConvert, this);
+    m_fileOriginal->Bind(wxEVT_FILEPICKER_CHANGED, &ConvertImageBase::OnInputChange, this);
+    m_fileOutput->Bind(wxEVT_FILEPICKER_CHANGED, &ConvertImageBase::OnOutputChange, this);
 
     return true;
 }

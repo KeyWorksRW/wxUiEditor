@@ -77,10 +77,10 @@ bool GridBagItemBase::Create(wxWindow* parent, wxWindowID id, const wxString& ti
     Centre(wxBOTH);
 
     // Event handlers
+    Bind(wxEVT_BUTTON, &GridBagItemBase::OnOK, this, wxID_OK);
     Bind(wxEVT_INIT_DIALOG, &GridBagItemBase::OnInit, this);
     m_spin_column->Bind(wxEVT_SPINCTRL, &GridBagItemBase::OnColumn, this);
     m_spin_row->Bind(wxEVT_SPINCTRL, &GridBagItemBase::OnRow, this);
-    Bind(wxEVT_BUTTON, &GridBagItemBase::OnOK, this, wxID_OK);
 
     return true;
 }

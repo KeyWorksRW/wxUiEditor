@@ -16,7 +16,7 @@
 #include "debugsettings.h"
 
 bool DebugSettings::Create(wxWindow* parent, wxWindowID id, const wxString& title,
-        const wxPoint& pos, const wxSize& size, long style, const wxString &name)
+    const wxPoint& pos, const wxSize& size, long style, const wxString &name)
 {
     if (!wxDialog::Create(parent, id, title, pos, size, style, name))
         return false;
@@ -78,9 +78,9 @@ bool DebugSettings::Create(wxWindow* parent, wxWindowID id, const wxString& titl
     wxPersistentRegisterAndRestore(this, "DebugSettings");
 
     // Event handlers
-    Bind(wxEVT_INIT_DIALOG, &DebugSettings::OnInit, this);
-    m_btn->Bind(wxEVT_BUTTON, &DebugSettings::OnShowNow, this);
     Bind(wxEVT_BUTTON, &DebugSettings::OnOK, this, wxID_OK);
+    m_btn->Bind(wxEVT_BUTTON, &DebugSettings::OnShowNow, this);
+    Bind(wxEVT_INIT_DIALOG, &DebugSettings::OnInit, this);
 
     return true;
 }

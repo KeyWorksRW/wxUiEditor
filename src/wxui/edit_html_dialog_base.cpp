@@ -70,9 +70,9 @@ bool EditHtmlDialogBase::Create(wxWindow* parent, wxWindowID id, const wxString&
     wxPersistentRegisterAndRestore(this, "EditHtmlDialogBase");
 
     // Event handlers
+    Bind(wxEVT_BUTTON, &EditHtmlDialogBase::OnOK, this, wxID_OK);
     Bind(wxEVT_INIT_DIALOG, &EditHtmlDialogBase::OnInit, this);
     m_scintilla->Bind(wxEVT_STC_CHANGE, &EditHtmlDialogBase::OnTextChange, this);
-    Bind(wxEVT_BUTTON, &EditHtmlDialogBase::OnOK, this, wxID_OK);
 
     return true;
 }

@@ -12,7 +12,7 @@
 #include "fontpropdlg_base.h"
 
 bool FontPropDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString& title,
-        const wxPoint& pos, const wxSize& size, long style, const wxString &name)
+    const wxPoint& pos, const wxSize& size, long style, const wxString &name)
 {
     if (!wxDialog::Create(parent, id, title, pos, size, style, name))
         return false;
@@ -148,8 +148,8 @@ bool FontPropDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString& ti
     auto* staticText_4 = new wxStaticText(m_custom_box->GetStaticBox(), wxID_ANY, "&Point Size:");
     box_sizer_6->Add(staticText_4, wxSizerFlags().Border(wxLEFT|wxRIGHT|wxTOP, wxSizerFlags::GetDefaultBorder()));
 
-        m_spinCustomPointSize = new wxSpinCtrlDouble(m_custom_box->GetStaticBox(), wxID_ANY, wxEmptyString,
-                wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 4, 72, 9, 0.5);
+    m_spinCustomPointSize = new wxSpinCtrlDouble(m_custom_box->GetStaticBox(), wxID_ANY, wxEmptyString,
+        wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 4, 72, 9, 0.5);
     m_spinCustomPointSize->SetDigits(1);
     box_sizer_6->Add(m_spinCustomPointSize, wxSizerFlags().Border(wxALL));
 
@@ -191,23 +191,23 @@ bool FontPropDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString& ti
     Centre(wxBOTH);
 
     // Event handlers
-    Bind(wxEVT_INIT_DIALOG, &FontPropDlgBase::OnInit, this);
-    m_radioSystem->Bind(wxEVT_RADIOBUTTON, &FontPropDlgBase::OnSystemRadio, this);
+    Bind(wxEVT_BUTTON, &FontPropDlgBase::OnOK, this, wxID_OK);
+    m_checkSystemUnderlined->Bind(wxEVT_CHECKBOX, &FontPropDlgBase::OnUnderlined, this);
+    m_checkSystemStrikeThrough->Bind(wxEVT_CHECKBOX, &FontPropDlgBase::OnStrikeThrough, this);
+    m_checkCustomUnderlined->Bind(wxEVT_CHECKBOX, &FontPropDlgBase::OnUnderlined, this);
+    m_checkCustomStrikeThrough->Bind(wxEVT_CHECKBOX, &FontPropDlgBase::OnStrikeThrough, this);
     m_comboSymbolSize->Bind(wxEVT_COMBOBOX, &FontPropDlgBase::OnSymbolSize, this);
     m_comboSystemStyles->Bind(wxEVT_COMBOBOX, &FontPropDlgBase::OnStyle, this);
     m_comboSystemWeight->Bind(wxEVT_COMBOBOX, &FontPropDlgBase::OnWeight, this);
-    m_checkSystemUnderlined->Bind(wxEVT_CHECKBOX, &FontPropDlgBase::OnUnderlined, this);
-    m_checkSystemStrikeThrough->Bind(wxEVT_CHECKBOX, &FontPropDlgBase::OnStrikeThrough, this);
-    m_radioCustom->Bind(wxEVT_RADIOBUTTON, &FontPropDlgBase::OnCustomRadio, this);
     m_comboFamily->Bind(wxEVT_COMBOBOX, &FontPropDlgBase::OnFamily, this);
     m_comboCustomStyles->Bind(wxEVT_COMBOBOX, &FontPropDlgBase::OnStyle, this);
     m_comboCustomWeight->Bind(wxEVT_COMBOBOX, &FontPropDlgBase::OnWeight, this);
     m_comboFacenames->Bind(wxEVT_COMBOBOX, &FontPropDlgBase::OnFacename, this);
+    Bind(wxEVT_INIT_DIALOG, &FontPropDlgBase::OnInit, this);
+    m_radioSystem->Bind(wxEVT_RADIOBUTTON, &FontPropDlgBase::OnSystemRadio, this);
+    m_radioCustom->Bind(wxEVT_RADIOBUTTON, &FontPropDlgBase::OnCustomRadio, this);
     m_spinCustomPointSize->Bind(wxEVT_SPINCTRLDOUBLE, &FontPropDlgBase::OnPointSize, this);
     m_spinCustomPointSize->Bind(wxEVT_TEXT, &FontPropDlgBase::OnEditPointSize, this);
-    m_checkCustomUnderlined->Bind(wxEVT_CHECKBOX, &FontPropDlgBase::OnUnderlined, this);
-    m_checkCustomStrikeThrough->Bind(wxEVT_CHECKBOX, &FontPropDlgBase::OnStrikeThrough, this);
-    Bind(wxEVT_BUTTON, &FontPropDlgBase::OnOK, this, wxID_OK);
 
     return true;
 }

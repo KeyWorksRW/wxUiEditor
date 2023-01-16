@@ -62,8 +62,8 @@ bool OptionsDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     Centre(wxBOTH);
 
     // Event handlers
-    Bind(wxEVT_INIT_DIALOG, &OptionsDlg::OnInit, this);
     Bind(wxEVT_BUTTON, &OptionsDlg::OnAffirmative, this, wxID_OK);
+    Bind(wxEVT_INIT_DIALOG, &OptionsDlg::OnInit, this);
 
     return true;
 }

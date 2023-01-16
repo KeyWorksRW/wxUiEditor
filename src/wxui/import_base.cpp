@@ -121,6 +121,13 @@ bool ImportBase::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     Centre(wxBOTH);
 
     // Event handlers
+    Bind(wxEVT_BUTTON, &ImportBase::OnOK, this, wxID_OK);
+    m_btnRemove->Bind(wxEVT_BUTTON, &ImportBase::OnRemove, this);
+    m_btnAddFile->Bind(wxEVT_BUTTON, &ImportBase::OnDirectory, this);
+    btn_2->Bind(wxEVT_BUTTON, &ImportBase::OnSelectAll, this);
+    btn__2->Bind(wxEVT_BUTTON, &ImportBase::OnSelectNone, this);
+    m_checkListProjects->Bind(wxEVT_CHECKLISTBOX, &ImportBase::OnCheckFiles, this);
+    m_combo_recent_dirs->Bind(wxEVT_COMBOBOX, &ImportBase::OnRecentDir, this);
     Bind(wxEVT_INIT_DIALOG, &ImportBase::OnInitDialog, this);
     m_radio_wxCrafter->Bind(wxEVT_RADIOBUTTON, &ImportBase::OnCrafter, this);
     m_radio_wxFormBuilder->Bind(wxEVT_RADIOBUTTON, &ImportBase::OnFormBuilder, this);
@@ -128,13 +135,6 @@ bool ImportBase::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     m_radio_wxSmith->Bind(wxEVT_RADIOBUTTON, &ImportBase::OnWxSmith, this);
     m_radio_WindowsResource->Bind(wxEVT_RADIOBUTTON, &ImportBase::OnWindowsResource, this);
     m_radio_XRC->Bind(wxEVT_RADIOBUTTON, &ImportBase::OnXRC, this);
-    m_combo_recent_dirs->Bind(wxEVT_COMBOBOX, &ImportBase::OnRecentDir, this);
-    m_btnRemove->Bind(wxEVT_BUTTON, &ImportBase::OnRemove, this);
-    m_btnAddFile->Bind(wxEVT_BUTTON, &ImportBase::OnDirectory, this);
-    m_checkListProjects->Bind(wxEVT_CHECKLISTBOX, &ImportBase::OnCheckFiles, this);
-    btn_2->Bind(wxEVT_BUTTON, &ImportBase::OnSelectAll, this);
-    btn__2->Bind(wxEVT_BUTTON, &ImportBase::OnSelectNone, this);
-    Bind(wxEVT_BUTTON, &ImportBase::OnOK, this, wxID_OK);
 
     return true;
 }

@@ -17,7 +17,7 @@
 #include "newframe_base.h"
 
 bool NewFrame::Create(wxWindow* parent, wxWindowID id, const wxString& title,
-        const wxPoint& pos, const wxSize& size, long style, const wxString &name)
+    const wxPoint& pos, const wxSize& size, long style, const wxString &name)
 {
     if (!wxDialog::Create(parent, id, title, pos, size, style, name))
         return false;
@@ -81,6 +81,7 @@ bool NewFrame::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     Centre(wxBOTH);
 
     // Event handlers
+    m_checkBox_mainframe->Bind(wxEVT_CHECKBOX, &NewFrame::OnCheckMainFrame, this);
     Bind(wxEVT_INIT_DIALOG,
         [this](wxInitDialogEvent& event)
         {
@@ -91,7 +92,6 @@ bool NewFrame::Create(wxWindow* parent, wxWindowID id, const wxString& title,
         [this](wxCommandEvent&)
         {VerifyClassName();
         } );
-    m_checkBox_mainframe->Bind(wxEVT_CHECKBOX, &NewFrame::OnCheckMainFrame, this);
 
     return true;
 }

@@ -170,6 +170,7 @@ MsgFrameBase::MsgFrameBase(wxWindow* parent, wxWindowID id, const wxString& titl
     Centre(wxBOTH);
 
     // Event handlers
+    btn->Bind(wxEVT_BUTTON, &MsgFrameBase::OnParent, this);
     Bind(wxEVT_CLOSE_WINDOW, &MsgFrameBase::OnClose, this);
     Bind(wxEVT_MENU, &MsgFrameBase::OnSaveAs, this, wxID_SAVEAS);
     Bind(wxEVT_MENU, &MsgFrameBase::OnClear, this, wxID_CLEAR);
@@ -178,7 +179,6 @@ MsgFrameBase::MsgFrameBase(wxWindow* parent, wxWindowID id, const wxString& titl
     Bind(wxEVT_MENU, &MsgFrameBase::OnEvents, this, id_event_msgs);
     Bind(wxEVT_MENU, &MsgFrameBase::OnInfo, this, wxID_INFO);
     m_notebook->Bind(wxEVT_NOTEBOOK_PAGE_CHANGED, &MsgFrameBase::OnPageChanged, this);
-    btn->Bind(wxEVT_BUTTON, &MsgFrameBase::OnParent, this);
 }
 
 namespace wxue_img

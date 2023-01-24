@@ -120,9 +120,6 @@ namespace wxue_img
     extern const unsigned char right_svg[599];
     extern const unsigned char save_svg[717];
     extern const unsigned char top_svg[586];
-    extern const unsigned char wxPython_1_5x_png[765];
-    extern const unsigned char wxPython_2x_png[251];
-    extern const unsigned char wxPython_png[399];
     extern const unsigned char xrc_preview_svg[469];
 }
 

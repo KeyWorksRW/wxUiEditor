@@ -17,6 +17,7 @@ wxImage wxueImage(const unsigned char* data, size_t size_data);
 
 namespace wxue_img
 {
+    wxBitmapBundle bundle_cpp_logo_svg(int width, int height);
     wxBitmapBundle bundle_import_svg(int width, int height);
     wxBitmapBundle bundle_redo_svg(int width, int height);
     wxBitmapBundle bundle_undo_svg(int width, int height);
@@ -59,6 +60,7 @@ namespace wxue_img
     wxBitmapBundle bundle_wxListBox_png();
     wxBitmapBundle bundle_wxListView_png();
     wxBitmapBundle bundle_wxRearrangeCtrl_png();
+    wxBitmapBundle bundle_wxPython_png();
     wxBitmapBundle bundle_wxSimpleHtmlListBox_png();
     wxBitmapBundle bundle_wxStaticBoxSizer_png();
     wxBitmapBundle bundle_wxStaticCheckBoxSizer_png();
@@ -76,6 +78,7 @@ namespace wxue_img
     extern const unsigned char bmp_combo_box_png[492];
     extern const unsigned char check3state_png[194];
     extern const unsigned char close_btn_png[956];
+    extern const unsigned char cpp_logo_svg[587];
     extern const unsigned char dataview_ctrl_png[231];
     extern const unsigned char dataviewlist_ctrl_png[685];
     extern const unsigned char dataviewtree_ctrl_png[238];
@@ -117,6 +120,9 @@ namespace wxue_img
     extern const unsigned char wxEditListBox_png[707];
     extern const unsigned char wxListBox_png[310];
     extern const unsigned char wxListView_png[356];
+    extern const unsigned char wxPython_1_5x_png[765];
+    extern const unsigned char wxPython_2x_png[251];
+    extern const unsigned char wxPython_png[399];
     extern const unsigned char wxRearrangeCtrl_png[332];
     extern const unsigned char wxSimpleHtmlListBox_png[676];
     extern const unsigned char wxStaticBoxSizer_png[199];

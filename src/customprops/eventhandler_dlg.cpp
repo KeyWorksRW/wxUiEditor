@@ -7,7 +7,7 @@
 
 #include <unordered_map>
 
-#include "eventhandler_dlg.h"  // auto-generated: wxui/eventhandlerdlg_base.h and wxui/eventhandlerdlg_base.cpp
+#include "eventhandler_dlg.h"  // auto-generated: wxui/eventhandler_dlg_base.h and wxui/eventhandler_dlg_base.cpp
 
 #include "code.h"             // Code -- Helper class for generating code
 #include "lambdas.h"          // Functions for formatting and storage of lamda events

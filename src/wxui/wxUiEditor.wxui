@@ -1946,7 +1946,7 @@
         persist="1"
         style="wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER"
         title="Event Handler"
-        base_file="eventhandlerdlg_base"
+        base_file="eventhandler_dlg_base"
         derived_class_name="EventHandlerDlg"
         wxEVT_INIT_DIALOG="OnInit">
         <node

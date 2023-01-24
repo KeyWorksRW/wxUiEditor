@@ -7,7 +7,7 @@
 
 #pragma once  // NOLINT(#pragma once in main file)
 
-#include "wxui/eventhandlerdlg_base.h"  // EventHandlerDlgBase
+#include "wxui/eventhandler_dlg_base.h"  // EventHandlerDlgBase
 
 class NodeEvent;
 class Node;

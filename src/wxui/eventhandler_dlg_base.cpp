@@ -16,7 +16,7 @@
 
 #include "ui_images.h"
 
-#include "eventhandlerdlg_base.h"
+#include "eventhandler_dlg_base.h"
 
 namespace wxue_img
 {

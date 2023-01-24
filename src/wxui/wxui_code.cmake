@@ -11,7 +11,7 @@ set (wxue_generated_code
     ${CMAKE_CURRENT_LIST_DIR}/edit_html_dialog_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/editcodedialog_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/editstringdialog_base.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/eventhandlerdlg_base.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/eventhandler_dlg_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/fontpropdlg_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/generate_dlg.cpp
     ${CMAKE_CURRENT_LIST_DIR}/generate_xrc_dlg_base.cpp

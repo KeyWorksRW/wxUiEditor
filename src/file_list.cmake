@@ -13,7 +13,7 @@ set (file_list
     cstm_event.cpp        # Custom Event handling
     frame_status_bar.cpp  # MainFrame status bar functions
     gen_enums.cpp         # Enumerations for generators
-    lambdas.cpp           # Functions for formatting and storage of lamda events
+    # lambdas.cpp           # Functions for formatting and storage of lamda events
     paths.cpp             # Handles *_directory properties
     preferences.cpp       # Set/Get wxUiEditor preferences
     previews.cpp          # Top level Preview functions

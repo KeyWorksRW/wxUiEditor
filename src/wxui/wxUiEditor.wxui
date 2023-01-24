@@ -120,6 +120,9 @@
         bitmap="Embed;../art_src/wxRearrangeCtrl.png" />
       <node
         class="embedded_image"
+        bitmap="Embed;../art_src/wxPython.png" />
+      <node
+        class="embedded_image"
         bitmap="Embed;../art_src/wxSimpleHtmlListBox.png" />
       <node
         class="embedded_image"
@@ -165,10 +168,13 @@
         bitmap="Embed;../art_src/tool.png" />
       <node
         class="embedded_image"
-        bitmap="SVG;../art_src/xrc_compare.svg;[16,16]" />
+        bitmap="SVG;../art_src/cpp_logo.svg;[16,16]" />
       <node
         class="embedded_image"
         bitmap="SVG;../art_src/import.svg;[16,16]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;../art_src/xrc_compare.svg;[16,16]" />
     </node>
     <node
       class="folder"
@@ -1936,6 +1942,170 @@
       </node>
       <node
         class="wxDialog"
+        class_name="EventHandlerDlgBase"
+        persist="1"
+        style="wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER"
+        title="Event Handler"
+        base_file="eventhandlerdlg_base"
+        derived_class_name="EventHandlerDlg"
+        wxEVT_INIT_DIALOG="OnInit">
+        <node
+          class="wxBoxSizer"
+          orientation="wxVERTICAL"
+          var_name="parent_sizer"
+          flags="wxEXPAND">
+          <node
+            class="wxBoxSizer"
+            orientation="wxVERTICAL"
+            flags="wxEXPAND"
+            proportion="1">
+            <node
+              class="wxStaticText"
+              label="..."
+              var_name="m_static_bind_text"
+              wrap="400" />
+            <node
+              class="wxNotebook"
+              display_images="1"
+              wxEVT_NOTEBOOK_PAGE_CHANGED="OnPageChanged">
+              <node
+                class="BookPage"
+                bitmap="SVG;../art_src/cpp_logo.svg;[16,16]"
+                label="C++"
+                var_name="cpp_page"
+                background_colour="wxSYS_COLOUR_BTNFACE"
+                window_style="wxTAB_TRAVERSAL">
+                <node
+                  class="wxBoxSizer"
+                  orientation="wxVERTICAL"
+                  var_name="page_sizer">
+                  <node
+                    class="StaticRadioBtnBoxSizer"
+                    checked="0"
+                    class_access="protected:"
+                    label="Use function"
+                    radiobtn_var_name="m_cpp_radio_use_function"
+                    var_name="m_cpp_function_box"
+                    flags="wxEXPAND"
+                    wxEVT_RADIOBUTTON="OnUseFunction">
+                    <node
+                      class="wxTextCtrl"
+                      var_name="m_cpp_text_function"
+                      flags="wxEXPAND"
+                      wxEVT_TEXT="OnChange" />
+                  </node>
+                  <node
+                    class="StaticRadioBtnBoxSizer"
+                    checked="0"
+                    class_access="protected:"
+                    label="Use lambda"
+                    radiobtn_var_name="m_cpp_radio_use_lambda"
+                    var_name="m_cpp_lambda_box"
+                    flags="wxEXPAND"
+                    proportion="1"
+                    wxEVT_RADIOBUTTON="OnUseLambda">
+                    <node
+                      class="wxBoxSizer"
+                      var_name="box_sizer_2">
+                      <node
+                        class="wxCheckBox"
+                        label="&amp;Capture this"
+                        var_name="m_check_capture_this"
+                        wxEVT_CHECKBOX="OnChange" />
+                      <node
+                        class="wxCheckBox"
+                        label="&amp;Include event parameter"
+                        var_name="m_check_include_event"
+                        wxEVT_CHECKBOX="OnChange" />
+                    </node>
+                    <node
+                      class="wxStaticText"
+                      class_access="none"
+                      label="Lambda body:"
+                      var_name="staticText" />
+                    <node
+                      class="wxStyledTextCtrl"
+                      additional_carets_blink="1"
+                      indentation_guides="forward"
+                      multiple_selection_typing="1"
+                      multiple_selections="1"
+                      paste_multiple="1"
+                      symbol_margin="0"
+                      use_tabs="0"
+                      var_name="m_cpp_stc_lambda"
+                      wrap_indent_mode="indent"
+                      wrap_mode="word"
+                      wrap_visual_flag="end"
+                      minimum_size="200,-1d"
+                      border_size="10"
+                      flags="wxEXPAND"
+                      proportion="1" />
+                  </node>
+                </node>
+              </node>
+              <node
+                class="BookPage"
+                bitmap="Embed;../art_src/wxPython.png"
+                label="Python"
+                var_name="python_page"
+                background_colour="wxSYS_COLOUR_BTNFACE"
+                window_style="wxTAB_TRAVERSAL">
+                <node
+                  class="wxBoxSizer"
+                  orientation="wxVERTICAL"
+                  var_name="page_sizer_2">
+                  <node
+                    class="StaticRadioBtnBoxSizer"
+                    checked="0"
+                    class_access="protected:"
+                    label="Use function"
+                    radiobtn_var_name="m_py_radio_use_function"
+                    var_name="m_py_function_box"
+                    flags="wxEXPAND"
+                    wxEVT_RADIOBUTTON="OnUsePythonFunction">
+                    <node
+                      class="wxTextCtrl"
+                      var_name="m_py_text_function"
+                      flags="wxEXPAND"
+                      wxEVT_TEXT="OnChange" />
+                  </node>
+                  <node
+                    class="StaticRadioBtnBoxSizer"
+                    checked="0"
+                    class_access="protected:"
+                    label="Use lambda"
+                    radiobtn_var_name="m_py_radio_use_lambda"
+                    var_name="m_py_lambda_box"
+                    flags="wxEXPAND"
+                    proportion="1"
+                    wxEVT_RADIOBUTTON="OnUsePythonLambda">
+                    <node
+                      class="wxStaticText"
+                      class_access="none"
+                      label="Lambda expression (event is the parameter):"
+                      var_name="staticText_2" />
+                    <node
+                      class="wxTextCtrl"
+                      var_name="m_py_text_lambda"
+                      flags="wxEXPAND"
+                      wxEVT_TEXT="OnChange" />
+                  </node>
+                </node>
+              </node>
+            </node>
+          </node>
+          <node
+            class="spacer"
+            add_default_border="1"
+            height="10" />
+          <node
+            class="wxStdDialogButtonSizer"
+            flags="wxEXPAND"
+            OKButtonClicked="OnOK" />
+        </node>
+      </node>
+      <node
+        class="wxDialog"
         class_name="EditHtmlDialogBase"
         persist="1"
         style="wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER"
@@ -2009,111 +2179,6 @@
             class="wxStdDialogButtonSizer"
             var_name="stdBtn_2"
             flags="wxEXPAND" />
-        </node>
-      </node>
-      <node
-        class="wxDialog"
-        class_name="EventHandlerDlgBase"
-        persist="1"
-        style="wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER"
-        title="Event Handler"
-        base_file="eventhandlerdlg_base"
-        derived_class_name="EventHandlerDlg"
-        wxEVT_INIT_DIALOG="OnInit">
-        <node
-          class="wxBoxSizer"
-          orientation="wxVERTICAL"
-          var_name="parent_sizer"
-          flags="wxEXPAND">
-          <node
-            class="wxBoxSizer"
-            orientation="wxVERTICAL"
-            flags="wxEXPAND"
-            proportion="1">
-            <node
-              class="wxStaticText"
-              label="..."
-              var_name="m_static_bind_text"
-              wrap="400" />
-            <node
-              class="spacer"
-              add_default_border="1"
-              height="10" />
-            <node
-              class="StaticRadioBtnBoxSizer"
-              class_access="protected:"
-              label="Use function"
-              radiobtn_var_name="m_radio_use_function"
-              var_name="m_function_box"
-              flags="wxEXPAND"
-              wxEVT_RADIOBUTTON="OnUseFunction">
-              <node
-                class="wxTextCtrl"
-                var_name="m_text_function"
-                flags="wxEXPAND"
-                wxEVT_TEXT="OnFunctionText" />
-            </node>
-            <node
-              class="spacer"
-              add_default_border="1"
-              height="10" />
-            <node
-              class="StaticRadioBtnBoxSizer"
-              checked="0"
-              class_access="protected:"
-              label="Use C++ lambda"
-              radiobtn_var_name="m_radio_use_lambda"
-              var_name="m_lambda_box"
-              flags="wxEXPAND"
-              proportion="1"
-              wxEVT_RADIOBUTTON="OnUseLambda">
-              <node
-                class="wxBoxSizer"
-                var_name="box_sizer_2">
-                <node
-                  class="wxCheckBox"
-                  label="&amp;Capture this"
-                  var_name="m_check_capture_this"
-                  wxEVT_CHECKBOX="OnCapture" />
-                <node
-                  class="wxCheckBox"
-                  label="&amp;Include event parameter"
-                  var_name="m_check_include_event"
-                  wxEVT_CHECKBOX="OnIncludeEvent" />
-              </node>
-              <node
-                class="wxStaticText"
-                class_access="none"
-                label="Lambda body:"
-                var_name="staticText" />
-              <node
-                class="wxStyledTextCtrl"
-                additional_carets_blink="1"
-                indentation_guides="forward"
-                multiple_selection_typing="1"
-                multiple_selections="1"
-                paste_multiple="1"
-                symbol_margin="0"
-                use_tabs="0"
-                var_name="m_stc"
-                wrap_indent_mode="indent"
-                wrap_mode="word"
-                wrap_visual_flag="end"
-                minimum_size="-1,-1"
-                border_size="10"
-                flags="wxEXPAND"
-                proportion="1"
-                wxEVT_STC_CHANGE="OnChange" />
-            </node>
-          </node>
-          <node
-            class="spacer"
-            add_default_border="1"
-            height="10" />
-          <node
-            class="wxStdDialogButtonSizer"
-            flags="wxEXPAND"
-            OKButtonClicked="OnOK" />
         </node>
       </node>
       <node

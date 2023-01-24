@@ -252,7 +252,7 @@ Code& Code::Add(ttlib::sview text)
 {
     CheckLineLength(text.size());
 
-    if (is_cpp())
+    if (is_cpp() || text.size() < 3)
     {
         m_code += text;
     }
@@ -299,7 +299,8 @@ Code& Code::Add(ttlib::sview text)
                 style_set = true;
             }
         }
-        else if (text.is_sameprefix("wx"))
+        // text.size() has already been checked to be certain it is at least 3 characters
+        else if (text.is_sameprefix("wx") && text[2] != '.')
         {
             auto wx_prefix = lambda(text);
             m_code << wx_prefix << text.substr(2);

@@ -102,12 +102,12 @@ void EventHandlerDlg::OnInit(wxInitDialogEvent& WXUNUSED(event))
                 m_cpp_function_box->GetStaticBox()->Enable(false);
                 m_cpp_lambda_box->GetStaticBox()->Enable(true);
 
-                if (value.find("this") != wxNOT_FOUND)
+                if (value.contains("this"))
                     m_check_capture_this->SetValue(true);
-                if (value.find("& event)") != wxNOT_FOUND)
+                if (value.contains("& event)"))
                     m_check_include_event->SetValue(true);
 
-                if (auto pos = value.find('{'); pos != wxNOT_FOUND)
+                if (auto pos = value.find('{'); ttlib::is_found(pos))
                 {
                     ttlib::cstr lamda = value.substr(pos + 1);
                     if (lamda.back() == '}')
@@ -180,7 +180,7 @@ void EventHandlerDlg::OnUseFunction(wxCommandEvent& WXUNUSED(event))
 
         auto value = GetCppValue(m_value.utf8_string());
 
-        if (value.empty() || value.find('[') != wxNOT_FOUND)
+        if (value.empty() || value.contains("["))
         {
             if (auto default_name = s_EventNames.find(m_event->get_name()); default_name != s_EventNames.end())
             {
@@ -207,7 +207,7 @@ void EventHandlerDlg::OnUsePythonFunction(wxCommandEvent& WXUNUSED(event))
 
         auto value = GetPythonValue(m_value.utf8_string());
 
-        if (value.empty() || value.find('[') != wxNOT_FOUND)
+        if (value.empty() || value.contains("["))
         {
             if (auto default_name = s_EventNames.find(m_event->get_name()); default_name != s_EventNames.end())
             {
@@ -330,8 +330,7 @@ void EventHandlerDlg::FormatBindText()
         {
             handler.Add(m_event->get_name()) += ", lambda event: ";
 
-            // handler += "body";
-            handler += m_py_text_lambda->GetValue().utf8_string();
+            handler += "body";
         }
     }
 

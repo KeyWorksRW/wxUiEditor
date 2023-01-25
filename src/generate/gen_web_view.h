@@ -16,7 +16,7 @@ public:
 
     bool ConstructionCode(Code& code) override;
 
-    std::optional<ttlib::sview> GenEvents(Code&, NodeEvent*, const std::string&) override;
+    void GenEvent(Code&, NodeEvent*, const std::string&) override;
 
     bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr) override;
 };

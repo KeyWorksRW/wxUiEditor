@@ -5,7 +5,7 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#pragma once
+#pragma once  // NOLINT(#pragma once in main file)
 
 #include "base_generator.h"  // BaseGenerator -- Base Generator class
 
@@ -21,7 +21,7 @@ public:
     bool HeaderCode(Code&) override;
     bool BaseClassNameCode(Code&) override;
 
-    std::optional<ttlib::sview> GenEvents(Code&, NodeEvent*, const std::string&) override;
+    void GenEvent(Code&, NodeEvent*, const std::string&) override;
 
     bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr) override;
 

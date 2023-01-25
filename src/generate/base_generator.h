@@ -103,10 +103,7 @@ public:
 
     // Generate code to bind the event to a handler -- only override if you need to do
     // something special
-    virtual std::optional<ttlib::sview> GenEvents(Code&, NodeEvent*, const std::string&);
-
-    // Generate code to bind the event to a handler
-    virtual std::optional<ttlib::cstr> GenEvents(NodeEvent*, const std::string&) { return {}; }
+    virtual void GenEvent(Code&, NodeEvent*, const std::string&);
 
     // Add attributes to object, and all properties
     //

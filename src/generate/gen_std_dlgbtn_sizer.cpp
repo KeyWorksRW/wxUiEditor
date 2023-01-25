@@ -498,8 +498,7 @@ void StdDialogButtonSizerGenerator::RequiredHandlers(Node* /* node */, std::set<
     handlers.emplace("wxStdDialogButtonSizerXmlHandler");
 }
 
-std::optional<ttlib::sview> StdDialogButtonSizerGenerator::GenEvents(Code& code, NodeEvent* event,
-                                                                     const std::string& class_name)
+void StdDialogButtonSizerGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& class_name)
 {
     Code handler(event->GetNode(), code.m_language);
 
@@ -509,7 +508,7 @@ std::optional<ttlib::sview> StdDialogButtonSizerGenerator::GenEvents(Code& code,
     if (event->get_value().contains("["))
     {
         if (!code.is_cpp())
-            return {};
+            return;
         handler << event->get_name() << ',' << event->get_value();
         // Put the lambda expression on it's own line
         handler.m_code.Replace("[", "\n\t[");
@@ -557,9 +556,8 @@ std::optional<ttlib::sview> StdDialogButtonSizerGenerator::GenEvents(Code& code,
         code.Add("wxID_CONTEXT_HELP");
 
     code.EndFunction();
-
-    return code.m_code;
 }
+
 bool StdDialogButtonSizerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
     InsertGeneratorInclude(node, "#include <wx/button.h>", set_src, set_hdr);

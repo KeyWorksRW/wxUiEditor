@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   wxWebView generator
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -54,22 +54,21 @@ bool WebViewGenerator::ConstructionCode(Code& code)
     return true;
 }
 
-std::optional<ttlib::sview> WebViewGenerator::GenEvents(Code& code, NodeEvent* event, const std::string& class_name)
+void WebViewGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& class_name)
 {
     if (code.is_python())
-        return BaseGenerator::GenEvents(code, event, class_name);
+    {
+        BaseGenerator::GenEvent(code, event, class_name);
+        return;
+    }
     if ((event->get_name() == "wxEVT_WEBVIEW_FULL_SCREEN_CHANGED" ||
          event->get_name() == "wxEVT_WEBVIEW_SCRIPT_MESSAGE_RECEIVED") &&
         Project.value(prop_wxWidgets_version) == "3.1")
     {
         code.Add("\n#if wxCHECK_VERSION(3, 1, 5)\n");
-        BaseGenerator::GenEvents(code, event, class_name);
+        BaseGenerator::GenEvent(code, event, class_name);
         code.Add("\n#endif");
-        return code.m_code;
-    }
-    else
-    {
-        return code.m_code;
+        return;
     }
 }
 

@@ -171,13 +171,12 @@ bool RibbonBarFormGenerator::SettingsCode(Code& code)
     return true;
 }
 
-std::optional<ttlib::sview> RibbonBarFormGenerator::GenEvents(Code& code, NodeEvent* event, const std::string& class_name)
+void RibbonBarFormGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& class_name)
 {
-    BaseGenerator::GenEvents(code, event, class_name);
+    BaseGenerator::GenEvent(code, event, class_name);
 
     // Since this is the base class, we don't want to use the pointer that GenEventCode() would normally create
     code.m_code.Replace(ttlib::cstr() << event->GetNode()->as_string(prop_var_name) << "->", "");
-    return code.m_code;
 }
 
 bool RibbonBarFormGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)

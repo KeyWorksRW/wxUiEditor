@@ -7,7 +7,7 @@
 
 // This header file is used to create a pre-compiled header for use in the entire project
 
-#pragma once
+#pragma once  // NOLINT(#pragma once in main file)
 
 // Ensure that _DEBUG is defined in non-release builds
 #if !defined(NDEBUG) && !defined(_DEBUG)
@@ -85,6 +85,14 @@
 #include <ttmultistr_wx.h>  // ttlib::multistr -- breaks a single string into multiple strings
 #include <ttstring_wx.h>    // ttString -- wxString with ttlib::cstr equivalent functions
 #include <ttsview_wx.h>     // ttlib::sview -- std::string_view with additional methods
+
+#include "tt/tt.h"  // tt namespace functions and declarations
+
+#include "tt/tt_string.h"         // tt_string -- std::string with additional methods
+#include "tt/tt_string_vector.h"  // tt_string_vector -- Class for reading and writing line-oriented strings/files
+#include "tt/tt_string_view.h"    // tt_string_view -- std::string_view with additional methods
+#include "tt/tt_view_vector.h"    // tt_view_vector -- Class for reading and writing line-oriented strings/files
+#include "tt/tt_wxString.h"       // tt_wxString -- wxString with additional methods similar to ttlib::cstr
 
 #if !defined(int_t)
 

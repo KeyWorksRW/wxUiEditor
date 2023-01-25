@@ -187,6 +187,20 @@ public:
     // Equivalent to calling as_string(prop_name). Correctly modifies the string for Python.
     Code& Add(GenEnum::PropName prop_name) { return as_string(prop_name); }
 
+    Code& AddIfCpp(ttlib::sview text)
+    {
+        if (is_cpp())
+            Add(text);
+        return *this;
+    }
+
+    Code& AddIfPython(ttlib::sview text)
+    {
+        if (is_python())
+            Add(text);
+        return *this;
+    }
+
     // Equibalent to Add(node->prop_as_constant(prop_name, "...")
     Code& AddConstant(GenEnum::PropName prop_name, ttlib::sview short_name);
 

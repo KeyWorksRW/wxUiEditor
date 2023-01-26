@@ -25,9 +25,6 @@ struct PREFS
     // Add expand flag to all new sizers
     bool is_SizersExpand() const { return m_sizers_always_expand; }
 
-    // Add "m_" prefix to all new non-local member variables
-    bool is_VarPrefix() const { return m_var_prefix; }
-
     // Enable WakaTime support
     bool is_WakaTimeEnabled() const { return m_enable_wakatime; }
 

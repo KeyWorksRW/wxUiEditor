@@ -1093,7 +1093,8 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                             grid_property->SetValueFromString(name, 0);
                             modifyProperty(propChange, name);
                         }
-                        else if (value != "none" && !name.starts_with("m_") && Preferences().is_VarPrefix())
+                        else if (value != "none" && !name.starts_with("m_") &&
+                                 Project.get_PreferredLanguage() == GEN_LANG_CPLUSPLUS)
                         {
                             name.insert(0, "m_");
                             auto final_name = node->GetUniqueName(name);

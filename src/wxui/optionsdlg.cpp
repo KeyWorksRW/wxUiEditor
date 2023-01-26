@@ -38,14 +38,6 @@ bool OptionsDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 
     box_sizer->AddSpacer(16);
 
-    auto* checkBox_var_prefix = new wxCheckBox(this, wxID_ANY, "Add \"m_\" prefix to class members");
-    checkBox_var_prefix->SetValue(true);
-    checkBox_var_prefix->SetValidator(wxGenericValidator(&m_var_prefix));
-    checkBox_var_prefix->SetToolTip("If checked, new sizers will be created with the wxEXPAND flag.");
-    box_sizer->Add(checkBox_var_prefix, wxSizerFlags().Border(wxALL));
-
-    box_sizer->AddSpacer(16);
-
     auto* checkBox_wakatime = new wxCheckBox(this, wxID_ANY, "Enable WakaTime");
     checkBox_wakatime->SetValue(true);
     checkBox_wakatime->SetValidator(wxGenericValidator(&m_isWakaTimeEnabled));
@@ -97,7 +89,6 @@ void OptionsDlg::OnInit(wxInitDialogEvent& event)
     m_sizers_all_borders = Preferences().is_SizersAllBorders();
     m_sizers_always_expand = Preferences().is_SizersExpand();
     m_isWakaTimeEnabled = Preferences().is_WakaTimeEnabled();
-    m_var_prefix = Preferences().is_VarPrefix();
 
     event.Skip();  // transfer all validator data to their windows and update UI
 }
@@ -117,7 +108,6 @@ void OptionsDlg::OnAffirmative(wxCommandEvent& WXUNUSED(event))
         }
     };
 
-    lambda(m_var_prefix, Preferences().RefVarPrefix());
     lambda(m_sizers_all_borders, Preferences().RefSizersAllBorders());
     lambda(m_sizers_always_expand, Preferences().RefSizersExpand());
     lambda(m_isWakaTimeEnabled, Preferences().RefWakaTimeEnabled());

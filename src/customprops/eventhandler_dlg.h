@@ -86,5 +86,4 @@ private:
 
     bool m_is_cpp_lambda { false };
     bool m_is_python_lambda { false };
-
 };

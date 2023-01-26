@@ -130,19 +130,19 @@ public:
 
     int atoi(size_t start = 0) const
     {
-        return  tt::atoi(data() + start);
+        return tt::atoi(data() + start);
     }
 
     /// Returns true if current filename contains the specified case-insensitive extension.
     bool has_extension(std::string_view ext) const
     {
-        return  tt::is_sameas(extension(), ext, tt::CASE::either);
+        return tt::is_sameas(extension(), ext, tt::CASE::either);
     }
 
     /// Returns true if current filename contains the specified case-insensitive file name.
     bool has_filename(std::string_view name) const
     {
-        return  tt::is_sameas(filename(), name, tt::CASE::either);
+        return tt::is_sameas(filename(), name, tt::CASE::either);
     }
 
     /// Returns a tt_string_view to the current extension. View is empty if there is no extension.
@@ -176,7 +176,7 @@ public:
     tt_string_view subview(size_t start = 0) const
     {
         if (start > length())
-            return  tt::emptystring;
+            return tt::emptystring;
         else
             return tt_string_view(data() + start, length() - start);
     }

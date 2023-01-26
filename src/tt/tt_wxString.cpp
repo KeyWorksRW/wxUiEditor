@@ -780,8 +780,17 @@ tt_wxString tt_wxString::find_file(const tt_wxString& dir, const tt_wxString& fi
     return wxEmptyString;
 }
 
-std::string tt_wxString::sub_find_nonspace(size_t start) const { return sub_cstr(find_nonspace(start)); }
+std::string tt_wxString::sub_find_nonspace(size_t start) const
+{
+    return sub_cstr(find_nonspace(start));
+}
 
-std::string tt_wxString::sub_find_space(size_t start) const { return sub_cstr(find_space(start)); }
+std::string tt_wxString::sub_find_space(size_t start) const
+{
+    return sub_cstr(find_space(start));
+}
 
-std::string tt_wxString::sub_stepover(size_t start) const { return sub_cstr(stepover(start)); }
+std::string tt_wxString::sub_stepover(size_t start) const
+{
+    return sub_cstr(stepover(start));
+}

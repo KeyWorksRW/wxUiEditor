@@ -1076,13 +1076,49 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                     }
                     else if (prop->isProp(prop_class_access) && wxGetApp().IsPjtMemberPrefix())
                     {
-                        // TODO: [KeyWorks - 08-23-2020] This needs to be a preference
-
-                        // If access is changed to local and the name starts with "m_", then the "m_" will be stripped
-                        // off. Conversely, if the name is changed from local to a class member, a "m_" is added as a
-                        // prefix (if it doesn't already have one).
                         tt_string name = node->prop_as_string(prop_var_name);
-                        if (value == "none" && name.starts_with("m_"))
+                        if (Project.get_PreferredLanguage() == GEN_LANG_PYTHON)
+                        {
+                            // The convention in python is to use a leading underscore for
+                            // local members.
+
+                            if (value == "none" && !name.starts_with("_"))
+                            {
+                                if (name.starts_with("_"))
+                                {
+                                    name.erase(0, 1);
+                                }
+                                else
+                                {
+                                    name.insert(0, "_");
+                                }
+                                auto final_name = node->GetUniqueName(name);
+                                if (final_name.size())
+                                    name = final_name;
+                                auto propChange = selected_node->get_prop_ptr(prop_var_name);
+                                auto grid_property = m_prop_grid->GetPropertyByLabel("var_name");
+                                grid_property->SetValueFromString(name, 0);
+                                modifyProperty(propChange, name);
+                            }
+                            else if (value != "none" && name.starts_with("_"))
+                            {
+                                name.erase(0, 1);
+                                auto final_name = node->GetUniqueName(name);
+                                if (final_name.size())
+                                    name = final_name;
+                                auto propChange = selected_node->get_prop_ptr(prop_var_name);
+                                auto grid_property = m_prop_grid->GetPropertyByLabel("var_name");
+                                grid_property->SetValueFromString(name, 0);
+                                modifyProperty(propChange, name);
+                            }
+                        }
+
+                        // If access is changed to local and the name starts with "m_", then
+                        // the "m_" will be stripped off. Conversely, if the name is changed
+                        // from local to a class member, a "m_" is added as a prefix if
+                        // preferred language isw C++.
+
+                        else if (value == "none" && name.starts_with("m_"))
                         {
                             name.erase(0, 2);
                             auto final_name = node->GetUniqueName(name);

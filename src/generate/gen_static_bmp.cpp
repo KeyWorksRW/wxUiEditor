@@ -80,13 +80,13 @@ bool StaticBitmapGenerator::ConstructionCode(Code& code)
 // starting with a comma, e.g. -- ", wxPoint(x, y), wxSize(x, y), styles, name);"
 //
 // If the only style specified is def_style, then it will not be added.
-static void GeneratePosSizeFlags(Node* node, ttlib::cstr& code, bool uses_def_validator = false,
-                                 ttlib::sview def_style = tt_empty_cstr);
+static void GeneratePosSizeFlags(Node* node, tt_string& code, bool uses_def_validator = false,
+                                 tt_string_view def_style = tt_empty_cstr);
 
 void StaticBitmapGenerator::GenCppConstruction(Code& gen_code)
 {
     Node* node = gen_code.node();
-    ttlib::cstr& code = gen_code.m_code;
+    tt_string& code = gen_code.m_code;
     if (node->HasValue(prop_bitmap))
     {
         auto& description = node->as_string(prop_bitmap);
@@ -111,7 +111,7 @@ void StaticBitmapGenerator::GenCppConstruction(Code& gen_code)
 
         if (!is_vector_code)
         {
-            ttlib::cstr bundle_code;
+            tt_string bundle_code;
             if (Project.value(prop_wxWidgets_version) != "3.1")
             {
                 GenerateBundleCode(description, bundle_code);
@@ -254,7 +254,7 @@ void StaticBitmapGenerator::RequiredHandlers(Node* /* node */, std::set<std::str
     handlers.emplace("wxBitmapXmlHandler");
 }
 
-static void GeneratePosSizeFlags(Node* node, ttlib::cstr& code, bool uses_def_validator, ttlib::sview def_style)
+static void GeneratePosSizeFlags(Node* node, tt_string& code, bool uses_def_validator, tt_string_view def_style)
 {
     if (node->HasValue(prop_window_name))
     {
@@ -275,7 +275,7 @@ static void GeneratePosSizeFlags(Node* node, ttlib::cstr& code, bool uses_def_va
         return;
     }
 
-    ttlib::cstr all_styles;
+    tt_string all_styles;
     GenStyle(node, all_styles);
     if (all_styles.is_sameas("0") || all_styles.is_sameas(def_style))
         all_styles.clear();

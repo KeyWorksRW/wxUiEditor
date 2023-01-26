@@ -42,7 +42,7 @@ public:
     bool ReadFile(std::string_view filename);
 
     // This will be the filename passed to ReadFile()
-    ttlib::cstr& filename() { return m_filename; }
+    tt_string& filename() { return m_filename; }
 
     // Call this if ReadFile() was not used and you need to store a filename.
     void set_filename(std::string_view filename) { m_filename = filename; }
@@ -55,7 +55,7 @@ public:
 
     // Returns the string storing the entire file. If you change this string, all
     // the string_view vector entries will be invalid!
-    ttlib::cstr& GetBuffer() { return m_buffer; }
+    tt_string& GetBuffer() { return m_buffer; }
 
     // Call this if you change the buffer returned by GetBuffer() to turn the buffer
     // into an array of string_views.
@@ -89,6 +89,6 @@ protected:
     void ParseLines(std::string_view str);
 
 private:
-    ttlib::cstr m_buffer;
-    ttlib::cstr m_filename;
+    tt_string m_buffer;
+    tt_string m_filename;
 };

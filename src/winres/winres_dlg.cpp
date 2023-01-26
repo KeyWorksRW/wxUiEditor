@@ -5,8 +5,6 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include <tttextfile_wx.h>  // textfile -- Classes for reading and writing line-oriented files
-
 #include "winres_form.h"
 
 #include "import_winres.h"  // WinResource -- Parse a Windows resource file
@@ -14,10 +12,10 @@
 
 resForm::resForm() {}
 
-void resForm::ParseDialog(WinResource* pWinResource, ttlib::textfile& txtfile, size_t& curTxtLine)
+void resForm::ParseDialog(WinResource* pWinResource, tt_string_vector& txtfile, size_t& curTxtLine)
 {
     m_pWinResource = pWinResource;
-    ttlib::sview line = txtfile[curTxtLine].subview();
+    tt_string_view line = txtfile[curTxtLine].subview();
     auto end = line.find_space();
     if (end == tt::npos)
         throw std::invalid_argument("Expected an ID then a DIALOG or DIALOGEX.");
@@ -40,17 +38,17 @@ void resForm::ParseDialog(WinResource* pWinResource, ttlib::textfile& txtfile, s
     m_form_node = NodeCreation.NewNode(isDialog ? gen_wxDialog : gen_PanelForm);
 
 #if defined(_DEBUG) || defined(INTERNAL_TESTING)
-    ttlib::cstr fullpath;
+    tt_string fullpath;
     fullpath.assignCwd();
     fullpath.append_filename(txtfile.filename().filename());
     #if defined(_WIN32)
     // VSCode File Open dialog can't handle forward slashes on Windows
     fullpath.forwardslashestoback();
     #endif  // _WIN32
-    m_form_node->prop_set_value(prop_base_src_includes, ttlib::cstr() << "// " << fullpath);
+    m_form_node->prop_set_value(prop_base_src_includes, tt_string() << "// " << fullpath);
 #endif
 
-    ttlib::cstr value;  // General purpose string we can use throughout this function
+    tt_string value;  // General purpose string we can use throughout this function
     value = line.substr(0, end);
     m_form_node->prop_set_value(prop_class_name, ConvertFormID(value));
 
@@ -93,9 +91,9 @@ void resForm::ParseDialog(WinResource* pWinResource, ttlib::textfile& txtfile, s
     // TODO: [KeyWorks - 10-18-2020] The last step will be to figure what to use for the base and derived filenames.
 }
 
-void resForm::AddStyle(ttlib::textfile& txtfile, size_t& curTxtLine)
+void resForm::AddStyle(tt_string_vector& txtfile, size_t& curTxtLine)
 {
-    ttlib::cstr style(txtfile[curTxtLine]);
+    tt_string style(txtfile[curTxtLine]);
 
     // A line ending with a , or | character means it is continued onto the next line.
 
@@ -104,7 +102,7 @@ void resForm::AddStyle(ttlib::textfile& txtfile, size_t& curTxtLine)
         std::string_view tmp("");
         for (++curTxtLine; curTxtLine < txtfile.size(); ++curTxtLine)
         {
-            tmp = ttlib::find_nonspace(txtfile[curTxtLine]);
+            tmp = tt::find_nonspace(txtfile[curTxtLine]);
             if (!tmp.empty() && tmp[0] != '/')  // ignore blank lines and comments
                 break;
         }
@@ -116,7 +114,7 @@ void resForm::AddStyle(ttlib::textfile& txtfile, size_t& curTxtLine)
     if (style.contains("WS_EX_CONTEXTHELP"))
         m_form_node->prop_set_value(prop_extra_style, "wxDIALOG_EX_CONTEXTHELP");
 
-    ttlib::cstr original_styles(ttlib::stepover(style));
+    tt_string original_styles(tt::stepover(style));
 
     if (original_styles.contains("DS_MODALFRAME"))
     {
@@ -182,7 +180,7 @@ void resForm::AddStyle(ttlib::textfile& txtfile, size_t& curTxtLine)
     }
 }
 
-void resForm::ParseControls(ttlib::textfile& txtfile, size_t& curTxtLine)
+void resForm::ParseControls(tt_string_vector& txtfile, size_t& curTxtLine)
 {
     for (; curTxtLine < txtfile.size(); ++curTxtLine)
     {
@@ -215,24 +213,24 @@ void resForm::ParseControls(ttlib::textfile& txtfile, size_t& curTxtLine)
     }
 }
 
-void resForm::AppendStyle(GenEnum::PropName prop_name, ttlib::sview style)
+void resForm::AppendStyle(GenEnum::PropName prop_name, tt_string_view style)
 {
-    ttlib::cstr updated_style = m_form_node->prop_as_string(prop_name);
+    tt_string updated_style = m_form_node->prop_as_string(prop_name);
     if (updated_style.size())
         updated_style << '|';
     updated_style << style;
     m_form_node->prop_set_value(prop_name, updated_style);
 }
 
-ttlib::cstr resForm::ConvertFormID(ttlib::sview id)
+tt_string resForm::ConvertFormID(tt_string_view id)
 {
     id.moveto_nonspace();
-    ttlib::cstr value;
+    tt_string value;
     if (id.at(0) == '"')
     {
         value.AssignSubString(id);
     }
-    else if (ttlib::is_digit(value[0]))
+    else if (tt::is_digit(value[0]))
     {
         value << "id_" << id;
     }

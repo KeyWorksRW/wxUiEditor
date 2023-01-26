@@ -43,7 +43,7 @@ EventHandlerDlg::EventHandlerDlg(wxWindow* parent, NodeEvent* event) : EventHand
     {
         std::set<std::string> variables;
         CollectMemberVariables(form, variables);
-        ttlib::cstr keywords;
+        tt_string keywords;
         for (auto& iter: variables)
         {
             keywords << iter << ' ';
@@ -107,9 +107,9 @@ void EventHandlerDlg::OnInit(wxInitDialogEvent& WXUNUSED(event))
                 if (value.contains("& event)"))
                     m_check_include_event->SetValue(true);
 
-                if (auto pos = value.find('{'); ttlib::is_found(pos))
+                if (auto pos = value.find('{'); tt::is_found(pos))
                 {
-                    ttlib::cstr lamda = value.substr(pos + 1);
+                    tt_string lamda = value.substr(pos + 1);
                     if (lamda.back() == '}')
                         lamda.pop_back();
                     ExpandLambda(lamda);
@@ -405,8 +405,8 @@ void EventHandlerDlg::OnOK(wxCommandEvent& event)
 
 void EventHandlerDlg::Update_m_value()
 {
-    ttlib::cstr cpp_value;
-    ttlib::cstr py_value;
+    tt_string cpp_value;
+    tt_string py_value;
 
     if (m_cpp_radio_use_function->GetValue())
     {
@@ -414,7 +414,7 @@ void EventHandlerDlg::Update_m_value()
     }
     else
     {
-        ttlib::cstr handler;
+        tt_string handler;
 
         if (m_check_capture_this->GetValue())
             handler << "[this](";
@@ -474,27 +474,27 @@ void EventHandlerDlg::Update_m_value()
     // At this point, either C++ and wxPython are using different function names, or at least
     // one of them is using a lambda.
 
-    ttlib::cstr combined_value = cpp_value + py_value;
+    tt_string combined_value = cpp_value + py_value;
     m_value = combined_value.wx_str();
     return;
 }
 
 // This is a static function
-ttlib::cstr EventHandlerDlg::GetCppValue(ttlib::sview value)
+tt_string EventHandlerDlg::GetCppValue(tt_string_view value)
 {
     if (auto pos_python = value.find("[python:"); pos_python != tt::npos)
     {
         value.remove_suffix(value.size() - pos_python);
     }
 
-    ttlib::cstr result(value);
+    tt_string result(value);
     return result;
 }
 
 // This is a static function
-ttlib::cstr EventHandlerDlg::GetPythonValue(ttlib::sview value)
+tt_string EventHandlerDlg::GetPythonValue(tt_string_view value)
 {
-    ttlib::cstr result;
+    tt_string result;
     auto pos_python = value.find("[python:");
     if (pos_python == tt::npos)
     {

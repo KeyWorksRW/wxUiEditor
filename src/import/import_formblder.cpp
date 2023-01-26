@@ -105,7 +105,7 @@ FormBuilder::FormBuilder()
     }
 }
 
-bool FormBuilder::Import(const ttString& filename, bool write_doc)
+bool FormBuilder::Import(const tt_wxString& filename, bool write_doc)
 {
     auto result = LoadDocFile(filename);
     if (!result)
@@ -114,7 +114,7 @@ bool FormBuilder::Import(const ttString& filename, bool write_doc)
     }
     auto root = result.value().first_child();
 
-    if (!ttlib::is_sameas(root.name(), "wxFormBuilder_Project", tt::CASE::either))
+    if (!tt::is_sameas(root.name(), "wxFormBuilder_Project", tt::CASE::either))
     {
         wxMessageBox(wxString() << filename << " is not a wxFormBuilder file", "Import wxFormBuilder project");
         return false;
@@ -159,8 +159,8 @@ bool FormBuilder::Import(const ttString& filename, bool write_doc)
 
     if (m_errors.size())
     {
-        ttlib::cstr errMsg("Not everything in the wxFormBuilder project could be converted:\n\n");
-        MSG_ERROR(ttlib::cstr() << "------  " << m_importProjectFile.filename().wx_str() << "------");
+        tt_string errMsg("Not everything in the wxFormBuilder project could be converted:\n\n");
+        MSG_ERROR(tt_string() << "------  " << m_importProjectFile.filename().wx_str() << "------");
         for (auto& iter: m_errors)
         {
             MSG_ERROR(iter);
@@ -201,16 +201,16 @@ void FormBuilder::CreateProjectNode(pugi::xml_node& xml_obj, Node* new_node)
                 else if (prop_name.as_string() == "embedded_files_path")
                 {
                     // Unlike wxString, this ctor will call FromUTF8() on Windows
-                    ttString path(xml_prop.text().as_string());
-                    ttString root(m_importProjectFile);
+                    tt_wxString path(xml_prop.text().as_string());
+                    tt_wxString root(m_importProjectFile);
                     root.remove_filename();
                     path.make_relative_wx(root);
                     m_project->prop_set_value(prop_art_directory, path);
                 }
                 else if (prop_name.as_string() == "path")
                 {
-                    ttString path(xml_prop.text().as_string());
-                    ttString root(m_importProjectFile);
+                    tt_wxString path(xml_prop.text().as_string());
+                    tt_wxString root(m_importProjectFile);
                     root.remove_filename();
                     path.make_relative_wx(root);
                     m_project->prop_set_value(prop_base_directory, path);
@@ -271,7 +271,7 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
 
         else
         {
-            m_errors.emplace(ttlib::cstr() << class_name << " is not supported in wxUiEditor");
+            m_errors.emplace(tt_string() << class_name << " is not supported in wxUiEditor");
             return {};
         }
     }
@@ -314,7 +314,7 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
     auto newobject = NodeCreation.CreateNode(gen_name, parent);
     if (!newobject)
     {
-        ttlib::cstr msg("Unable to create ");
+        tt_string msg("Unable to create ");
         msg << class_name;
         if (parent)
         {
@@ -410,7 +410,7 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
                 {
                     if (!xml_prop.text().empty())
                     {
-                        ttlib::cstr animation("Embed;");
+                        tt_string animation("Embed;");
                         animation << xml_prop.text().as_string() << ";[-1,-1]";
                         prop_ptr->set_value(animation);
                     }
@@ -488,12 +488,12 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
             }
             else if (prop_name == "construction")
             {
-                ttlib::cstr copy = xml_prop.text().as_string();
-                if (auto pos = copy.find('('); ttlib::is_found(pos))
+                tt_string copy = xml_prop.text().as_string();
+                if (auto pos = copy.find('('); tt::is_found(pos))
                 {
                     copy.erase(0, pos);
                 }
-                if (auto pos = copy.find(';'); ttlib::is_found(pos))
+                if (auto pos = copy.find(';'); tt::is_found(pos))
                 {
                     copy.erase_from(';');
                 }
@@ -507,7 +507,7 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
             }
             else if (prop_name == "include")
             {
-                ttlib::cstr header;
+                tt_string header;
                 header.ExtractSubString(xml_prop.text().as_sview().view_stepover());
                 if (header.size())
                 {
@@ -599,7 +599,7 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
                     continue;
                 }
 
-                MSG_INFO(ttlib::cstr() << event_name << " event not supported");
+                MSG_INFO(tt_string() << event_name << " event not supported");
                 xml_event = xml_event.next_sibling("event");
                 continue;
             }
@@ -679,7 +679,7 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
     return newobject;
 }
 
-void FormBuilder::ProcessPropValue(pugi::xml_node& xml_prop, ttlib::sview prop_name, ttlib::sview class_name,
+void FormBuilder::ProcessPropValue(pugi::xml_node& xml_prop, tt_string_view prop_name, tt_string_view class_name,
                                    Node* newobject)
 {
     if (g_setIgnoreProps.contains(std::string(prop_name)))
@@ -824,8 +824,8 @@ void FormBuilder::ProcessPropValue(pugi::xml_node& xml_prop, ttlib::sview prop_n
     else if (prop_name == "style" && class_name == "wxCheckBox")
     {
         // wxCHK_2STATE and wxCHK_3STATE are part of the type property instead of style
-        ttlib::multiview styles(xml_prop.text().as_string());
-        ttlib::cstr new_style;
+        tt_view_vector styles(xml_prop.text().as_string());
+        tt_string new_style;
         for (auto& iter: styles)
         {
             if (iter.is_sameas("wxCHK_2STATE"))
@@ -868,7 +868,7 @@ void FormBuilder::ProcessPropValue(pugi::xml_node& xml_prop, ttlib::sview prop_n
     }
     else if (prop_name == "subclass")
     {
-        ttlib::multistr parts(xml_prop.text().as_string(), ';', tt::TRIM::both);
+        tt_string_vector parts(xml_prop.text().as_string(), ';', tt::TRIM::both);
         if (parts[0].empty())
             return;
         if (auto prop = newobject->get_prop_ptr(prop_derived_class); prop)
@@ -908,8 +908,8 @@ void FormBuilder::ProcessPropValue(pugi::xml_node& xml_prop, ttlib::sview prop_n
                 return;
             else if (xml_prop.text().as_string() == "wxWS_EX_VALIDATE_RECURSIVELY")
                 return;
-            MSG_INFO(ttlib::cstr() << prop_name << "(" << xml_prop.text().as_string() << ") property in " << class_name
-                                   << " class not supported");
+            MSG_INFO(tt_string() << prop_name << "(" << xml_prop.text().as_string() << ") property in " << class_name
+                                 << " class not supported");
         }
     }
 }
@@ -920,9 +920,9 @@ void FormBuilder::BitmapProperty(pugi::xml_node& xml_prop, NodeProperty* prop)
     if (org_value.contains("Load From File") || org_value.contains("Load From Embedded File"))
     {
         auto pos_semi = org_value.find(';');
-        if (!ttlib::is_found(pos_semi))
+        if (!tt::is_found(pos_semi))
             return;
-        ttlib::cstr filename;
+        tt_string filename;
         if (org_value.subview(pos_semi) == "; Load From File")
         {
             // Older version of wxFB placed the filename first
@@ -938,14 +938,14 @@ void FormBuilder::BitmapProperty(pugi::xml_node& xml_prop, NodeProperty* prop)
 
         if (filename.has_extension(".xpm"))
         {
-            ttlib::cstr value("XPM; ");
+            tt_string value("XPM; ");
             value << filename << ";[-1,-1]";
             prop->set_value(value);
         }
         else
         {
-            ttlib::cstr bitmap("Embed;");
-            ttString relative(filename.wx_str());
+            tt_string bitmap("Embed;");
+            tt_wxString relative(filename.wx_str());
             relative.make_relative_wx(wxGetCwd());
             relative.backslashestoforward();
             bitmap << relative.wx_str();
@@ -955,7 +955,7 @@ void FormBuilder::BitmapProperty(pugi::xml_node& xml_prop, NodeProperty* prop)
     }
     else if (org_value.contains("Load From Art") && xml_prop.text().as_string() != "Load From Art Provider; ;")
     {
-        ttlib::cstr value = xml_prop.text().as_std_str();
+        tt_string value = xml_prop.text().as_std_str();
         value.Replace("Load From Art Provider; ", "Art;", false, tt::CASE::either);
         value.Replace("; ", "|", false, tt::CASE::either);
         if (value.back() == '|')
@@ -982,11 +982,11 @@ void FormBuilder::ConvertNameSpaceProp(NodeProperty* prop, std::string_view org_
     if (org_names.empty())
         return;
 
-    ttlib::cstr names;
+    tt_string names;
     size_t offset = 0;
     while (offset < org_names.size())
     {
-        ttlib::cstr temp;
+        tt_string temp;
         offset = temp.ExtractSubString(org_names, offset) + 1;
         if (temp.empty())
             break;

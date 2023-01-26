@@ -176,7 +176,7 @@ void RibbonBarFormGenerator::GenEvent(Code& code, NodeEvent* event, const std::s
     BaseGenerator::GenEvent(code, event, class_name);
 
     // Since this is the base class, we don't want to use the pointer that GenEventCode() would normally create
-    code.m_code.Replace(ttlib::cstr() << event->GetNode()->as_string(prop_var_name) << "->", "");
+    code.m_code.Replace(tt_string() << event->GetNode()->as_string(prop_var_name) << "->", "");
 }
 
 bool RibbonBarFormGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
@@ -273,7 +273,7 @@ int RibbonBarGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t 
 
     GenXrcObjectAttributes(node, item, "wxRibbonBar");
 
-    ttlib::cstr art(node->value(prop_theme));
+    tt_string art(node->value(prop_theme));
     if (art == "Generic")
         art = "aui";
     else if (art == "MSW")

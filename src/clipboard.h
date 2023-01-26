@@ -32,10 +32,10 @@ public:
     bool GetDataHere(void* buf) const override;
 
     // Note that this ia *not* a const return, so you can modify it if needed
-    ttlib::cstr& GetText() { return m_text; }
+    tt_string& GetText() { return m_text; }
 
 private:
-    ttlib::cstr m_text;
+    tt_string m_text;
 };
 
 // We only use this class to indicate what format wxDF_TEXT is in.

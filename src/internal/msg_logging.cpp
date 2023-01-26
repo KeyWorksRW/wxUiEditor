@@ -31,7 +31,7 @@ void MsgLogging::CloseLogger()
         m_msgFrame->Close(true);
 }
 
-void MsgLogging::AddInfoMsg(ttlib::sview msg)
+void MsgLogging::AddInfoMsg(tt_string_view msg)
 {
     if (wxGetApp().isMainFrameClosing())
         return;
@@ -56,7 +56,7 @@ void MsgLogging::AddInfoMsg(ttlib::sview msg)
         frame->SetRightStatusField(msg);
 }
 
-void MsgLogging::AddEventMsg(ttlib::sview msg)
+void MsgLogging::AddEventMsg(tt_string_view msg)
 {
     if (wxGetApp().isMainFrameClosing())
         return;
@@ -78,10 +78,10 @@ void MsgLogging::AddEventMsg(ttlib::sview msg)
 
     auto frame = wxGetApp().GetMainFrame();
     if (frame && frame->IsShown())
-        frame->SetRightStatusField(ttlib::cstr("Event: ") << msg);
+        frame->SetRightStatusField(tt_string("Event: ") << msg);
 }
 
-void MsgLogging::AddWarningMsg(ttlib::sview msg)
+void MsgLogging::AddWarningMsg(tt_string_view msg)
 {
     if (wxGetApp().isMainFrameClosing())
         return;
@@ -107,10 +107,10 @@ void MsgLogging::AddWarningMsg(ttlib::sview msg)
 
     auto frame = wxGetApp().GetMainFrame();
     if (frame && frame->IsShown())
-        frame->SetRightStatusField(ttlib::cstr("Warning: ") << msg);
+        frame->SetRightStatusField(tt_string("Warning: ") << msg);
 }
 
-void MsgLogging::AddErrorMsg(ttlib::sview msg)
+void MsgLogging::AddErrorMsg(tt_string_view msg)
 {
     if (wxGetApp().isMainFrameClosing())
         return;
@@ -234,7 +234,7 @@ void MsgLogging::DoLogRecord(wxLogLevel level, const wxString& msg, const wxLogR
             {
                 auto frame = wxGetApp().GetMainFrame();
                 if (frame && frame->IsShown())
-                    frame->SetRightStatusField(ttlib::cstr() << msg.wx_str());
+                    frame->SetRightStatusField(tt_string() << msg.wx_str());
             }
             break;
 

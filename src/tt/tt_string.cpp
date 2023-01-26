@@ -138,13 +138,13 @@ tt_string& tt_string::trim(tt::TRIM where)
     {
         // Assume that most strings won't start with whitespace, so return as quickly as possible if that is the
         // case.
-        if (!ttlib::is_whitespace(front()))
+        if (!tt::is_whitespace(front()))
             return *this;
 
         size_t pos;
         for (pos = 1; pos < length(); ++pos)
         {
-            if (!ttlib::is_whitespace(c_str()[pos]))
+            if (!tt::is_whitespace(c_str()[pos]))
                 break;
         }
         replace(0, length(), substr(pos, length() - pos));
@@ -157,17 +157,17 @@ tt_string& tt_string::trim(tt::TRIM where)
  * @param chBegin -- character that prefixes the string
  * @param chEnd -- character that terminates the string.
  */
-ttlib::sview tt_string::view_substr(size_t offset, char chBegin, char chEnd)
+tt_string_view tt_string::view_substr(size_t offset, char chBegin, char chEnd)
 {
     if (empty() || offset >= size())
     {
-        return ttlib::sview(ttlib::emptystring);
+        return tt_string_view(tt::emptystring);
     }
 
     // step over any leading whitespace unless chBegin is a whitespace character
-    if (!ttlib::is_whitespace(chBegin))
+    if (!tt::is_whitespace(chBegin))
     {
-        while (ttlib::is_whitespace(at(offset)))
+        while (tt::is_whitespace(at(offset)))
             ++offset;
     }
 
@@ -211,15 +211,15 @@ size_t tt_string::AssignSubString(std::string_view src, char chBegin, char chEnd
 {
     if (src.empty())
     {
-        assign(ttlib::emptystring);
+        assign(tt::emptystring);
         return npos;
     }
 
     size_t pos = 0;
     // step over any leading whitespace unless chBegin is a whitespace character
-    if (!ttlib::is_whitespace(chBegin))
+    if (!tt::is_whitespace(chBegin))
     {
-        while (ttlib::is_whitespace(src[pos]))
+        while (tt::is_whitespace(src[pos]))
             ++pos;
     }
 
@@ -266,13 +266,13 @@ size_t tt_string::ExtractSubString(std::string_view src, size_t start)
 {
     if (src.empty())
     {
-        assign(ttlib::emptystring);
+        assign(tt::emptystring);
         return npos;
     }
 
     // start by finding the first non-whitespace character
     size_t pos = start;
-    while (pos < src.length() && ttlib::is_whitespace(src[pos]))
+    while (pos < src.length() && tt::is_whitespace(src[pos]))
     {
         ++pos;
     }
@@ -333,7 +333,7 @@ size_t tt_string::Replace(std::string_view oldtext, std::string_view newtext, bo
         return false;
 
     size_t replacements = 0;
-    if (auto pos = locate(oldtext, 0, checkcase); ttlib::is_found(pos))
+    if (auto pos = locate(oldtext, 0, checkcase); tt::is_found(pos))
     {
         do
         {
@@ -354,7 +354,7 @@ size_t tt_string::Replace(std::string_view oldtext, std::string_view newtext, bo
             if (pos >= size() || !replace_all)
                 break;
             pos = locate(oldtext, pos, checkcase);
-        } while (ttlib::is_found(pos));
+        } while (tt::is_found(pos));
     }
 
     return replacements;
@@ -480,10 +480,10 @@ tt_string& tt_string::replace_extension(std::string_view newExtension)
     }
 
     auto pos_file = find_filename();
-    if (!ttlib::is_found(pos_file))
+    if (!tt::is_found(pos_file))
         pos_file = 0;
 
-    if (auto pos = find_last_of('.'); ttlib::is_found(pos) && pos > pos_file)
+    if (auto pos = find_last_of('.'); tt::is_found(pos) && pos > pos_file)
     {
         // If the string only contains . or .. then it is a folder
         if (pos == 0 || (pos == 1 && at(0) != '.'))
@@ -513,13 +513,13 @@ tt_string& tt_string::replace_extension(std::string_view newExtension)
     return *this;
 }
 
-ttlib::sview tt_string::extension() const noexcept
+tt_string_view tt_string::extension() const noexcept
 {
     if (empty())
         return "";
 
     auto pos = find_last_of('.');
-    if (!ttlib::is_found(pos))
+    if (!tt::is_found(pos))
         return "";
 
     // . by itself is a folder
@@ -532,7 +532,7 @@ ttlib::sview tt_string::extension() const noexcept
     return { c_str() + pos, length() - pos };
 }
 
-ttlib::sview tt_string::filename() const noexcept
+tt_string_view tt_string::filename() const noexcept
 {
     if (empty())
         return "";
@@ -656,9 +656,9 @@ tt_string& tt_string::make_relative(std::string_view relative_to)
 
 #ifdef _WIN32
     auto current = std::filesystem::absolute(std::filesystem::path(to_utf16()));
-    auto rel_to = std::filesystem::absolute(std::filesystem::path(ttlib::utf8to16(relative_to)));
+    auto rel_to = std::filesystem::absolute(std::filesystem::path(tt::utf8to16(relative_to)));
     clear();
-    ttlib::utf16to8(current.lexically_relative(rel_to).wstring(), *this);
+    tt::utf16to8(current.lexically_relative(rel_to).wstring(), *this);
 #else
     auto current = std::filesystem::absolute(std::filesystem::path(c_str()));
     auto rel_to = std::filesystem::absolute(std::filesystem::path(std::string(relative_to)));
@@ -674,7 +674,7 @@ tt_string& tt_string::make_absolute()
 #ifdef _WIN32
         auto current = std::filesystem::path(to_utf16());
         clear();
-        ttlib::utf16to8(std::filesystem::absolute(current).wstring(), *this);
+        tt::utf16to8(std::filesystem::absolute(current).wstring(), *this);
 #else
         auto current = std::filesystem::path(c_str());
         assign(std::filesystem::absolute(current).string());
@@ -761,14 +761,14 @@ size_t tt_string::stepover(size_t start) const
 std::wstring tt_string::to_utf16() const
 {
     std::wstring str16;
-    ttlib::utf8to16(*this, str16);
+    tt::utf8to16(*this, str16);
     return str16;
 }
 
-ttlib::sview tt_string::subview(size_t start, size_t len) const
+tt_string_view tt_string::subview(size_t start, size_t len) const
 {
     if (start >= size())
-        return ttlib::sview(ttlib::emptystring);
+        return tt_string_view(tt::emptystring);
 #ifdef min
     return std::string_view(c_str() + start, min(size() - start, len));
 #else
@@ -915,14 +915,14 @@ tt_string& tt_string::Format(std::string_view format, ...)
                 ++pos;
             }
 
-            if (ttlib::is_digit(format.at(pos)))
+            if (tt::is_digit(format.at(pos)))
             {
-                auto fieldWidth = ttlib::atoi(format.substr(pos));
+                auto fieldWidth = tt::atoi(format.substr(pos));
                 buffer << std::setw(fieldWidth);
                 do
                 {
                     ++pos;
-                } while (pos < format.length() && ttlib::is_digit(format.at(pos)));
+                } while (pos < format.length() && tt::is_digit(format.at(pos)));
             }
 
             // For both %lc and %ls we assume a UTF16 string and convert it to UTF8.
@@ -936,7 +936,7 @@ tt_string& tt_string::Format(std::string_view format, ...)
                     std::wstring str16;
                     str16 += va_arg(args, wchar_t);
                     std::string str8;
-                    ttlib::utf16to8(str16, str8);
+                    tt::utf16to8(str16, str8);
                     buffer << str8;
                 }
             }
@@ -954,7 +954,7 @@ tt_string& tt_string::Format(std::string_view format, ...)
                     std::wstring str16;
                     str16 += va_arg(args, const wchar_t*);
                     std::string str8;
-                    ttlib::utf16to8(str16, str8);
+                    tt::utf16to8(str16, str8);
                     if (kflag)
                         buffer << std::quoted(str8);
                     else
@@ -1101,7 +1101,7 @@ tt_string& tt_string::Format(std::string_view format, ...)
     return *this;
 }
 
-ttlib::sview tt_string::subview(size_t start) const
+tt_string_view tt_string::subview(size_t start) const
 {
     if (static_cast<ptrdiff_t>(start) == -1)
         start = length();
@@ -1109,8 +1109,17 @@ ttlib::sview tt_string::subview(size_t start) const
     return std::string_view(c_str() + start, length() - start);
 }
 
-ttlib::sview tt_string::view_space(size_t start) const { return subview(find_space(start)); }
+tt_string_view tt_string::view_space(size_t start) const
+{
+    return subview(find_space(start));
+}
 
-ttlib::sview tt_string::view_nonspace(size_t start) const { return subview(find_nonspace(start)); }
+tt_string_view tt_string::view_nonspace(size_t start) const
+{
+    return subview(find_nonspace(start));
+}
 
-ttlib::sview tt_string::view_stepover(size_t start) const { return subview(stepover(start)); }
+tt_string_view tt_string::view_stepover(size_t start) const
+{
+    return subview(stepover(start));
+}

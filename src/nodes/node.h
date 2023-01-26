@@ -52,7 +52,7 @@ public:
 
     NodeProperty* prop(PropName name) { return get_prop_ptr(name); }
 
-    NodeEvent* GetEvent(ttlib::sview name);
+    NodeEvent* GetEvent(tt_string_view name);
     NodeMapEvents& GetMapEvents() { return m_map_events; }
 
     auto GetPropertyCount() const { return m_properties.size(); }
@@ -116,10 +116,7 @@ public:
     bool IsSpacer() const noexcept { return isGen(gen_spacer); }
 
     bool IsSizer() const noexcept { return (isType(type_sizer) || isType(type_gbsizer)); }
-    bool IsContainer() const noexcept
-    {
-        return (isType(type_container) || ttlib::contains(map_GenTypes[gen_type()], "book"));
-    }
+    bool IsContainer() const noexcept { return (isType(type_container) || tt::contains(map_GenTypes[gen_type()], "book")); }
 
     // Returns true if access property == none or there is no access property
     bool IsLocal() const noexcept;
@@ -128,16 +125,16 @@ public:
     auto GetGenerator() const { return m_declaration->GetGenerator(); }
 
     // Returns the value of the property "var_name" or "class_name"
-    const ttlib::cstr& get_node_name() const;
+    const tt_string& get_node_name() const;
 
     // Returns the value of the parent property "var_name" or "class_name"
-    const ttlib::cstr& get_parent_name() const;
+    const tt_string& get_parent_name() const;
 
     // Returns this if the node is a form, else walks up node tree to find the parent form.
     Node* get_form() noexcept;
 
     // Finds the parent form and returns the value of the it's property "class_name"
-    const ttlib::cstr& get_form_name();
+    const tt_string& get_form_name();
 
     // Returns the folder node if there is one, nullptr otherwise.
     Node* get_folder() noexcept;
@@ -159,7 +156,7 @@ public:
     // value.
     bool isPropValue(PropName name, bool value) const noexcept;
 
-    // Avoid the temptation to use ttlib::sview instead of const char* -- the MSVC compiler will assume value is a bool if
+    // Avoid the temptation to use tt_string_view instead of const char* -- the MSVC compiler will assume value is a bool if
     // you call  is_value(propm, "string")
 
     bool is_value(PropName name, const char* value) const noexcept { return isPropValue(name, value); }
@@ -207,15 +204,15 @@ public:
     FontProperty prop_as_font_prop(PropName name) const;
     double prop_as_double(PropName name) const;
 
-    const ttlib::cstr& prop_as_string(PropName name) const;
-    const ttlib::cstr& prop_as_constant(PropName name, std::string_view prefix);
+    const tt_string& prop_as_string(PropName name) const;
+    const tt_string& prop_as_constant(PropName name, std::string_view prefix);
 
     // Use with caution! This allows you to modify the property string directly.
     //
     // Returns nullptr if the property doesn't exist.
-    ttlib::cstr* prop_as_raw_ptr(PropName name);
+    tt_string* prop_as_raw_ptr(PropName name);
 
-    const ttlib::cstr& prop_default_value(PropName name);
+    const tt_string& prop_default_value(PropName name);
 
     // This will convert the string from UTF8 to UTF16 on Windows
     wxString prop_as_wxString(PropName name) const;
@@ -238,9 +235,9 @@ public:
         }
     }
 
-    const ttlib::cstr& value(PropName name) const { return prop_as_string(name); }
+    const tt_string& value(PropName name) const { return prop_as_string(name); }
 
-    const ttlib::sview view(PropName name) const { return prop_as_string(name); }
+    const tt_string_view view(PropName name) const { return prop_as_string(name); }
 
     bool as_bool(PropName name) const { return prop_as_bool(name); }
 
@@ -255,8 +252,8 @@ public:
 
     double as_double(PropName name) const { return prop_as_double(name); }
 
-    const ttlib::cstr& as_string(PropName name) const { return prop_as_string(name); }
-    const ttlib::cstr& as_constant(PropName name, std::string_view prefix) { return prop_as_constant(name, prefix); }
+    const tt_string& as_string(PropName name) const { return prop_as_string(name); }
+    const tt_string& as_constant(PropName name, std::string_view prefix) { return prop_as_constant(name, prefix); }
 
     wxColour as_wxColour(PropName name) const { return prop_as_wxColour(name); }
     wxFont as_wxFont(PropName name) const { return prop_as_font(name); }
@@ -301,22 +298,22 @@ public:
 
     // This will modify the property and fire a EVT_NodePropChange event if the property
     // actually changed
-    void ModifyProperty(PropName name, ttlib::sview value);
+    void ModifyProperty(PropName name, tt_string_view value);
 
     // This will modify the property and fire a EVT_NodePropChange event
-    void ModifyProperty(ttlib::sview name, ttlib::sview value);
+    void ModifyProperty(tt_string_view name, tt_string_view value);
 
     // This will modify the property and fire a EVT_NodePropChange event
-    void ModifyProperty(ttlib::sview name, int value);
+    void ModifyProperty(tt_string_view name, int value);
 
     // This will modify the property and fire a EVT_NodePropChange event
-    void ModifyProperty(NodeProperty* prop, ttlib::sview value);
+    void ModifyProperty(NodeProperty* prop, tt_string_view value);
 
     // This will modify the property and fire a EVT_NodePropChange event
     void ModifyProperty(NodeProperty* prop, int value);
 
     // Both var_name and validator_variable properties are checked
-    ttlib::cstr GetUniqueName(const ttlib::cstr& proposed_name);
+    tt_string GetUniqueName(const tt_string& proposed_name);
 
     // Fix duplicate names in the current node and all of it's children
     void FixDuplicateNodeNames(Node* form = nullptr);

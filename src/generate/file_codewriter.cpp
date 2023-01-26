@@ -8,8 +8,6 @@
 #include <wx/file.h>      // wxFile - encapsulates low-level "file descriptor"
 #include <wx/filename.h>  // wxFileName - encapsulates a file path
 
-#include <tttextfile_wx.h>  // textfile -- Classes for reading and writing line-oriented files
-
 #include "file_codewriter.h"
 
 #include "mainapp.h"  // App -- Main application class
@@ -69,10 +67,10 @@ int FileCodeWriter::WriteFile(int language, int flags)
         // our generated portion, ignoring initial whitespace and end-of-line character(s).
         // If all of the generated code matches, then we don't need to write the file.
 
-        ttlib::viewfile org_file;
+        tt_view_vector org_file;
         if (is_comparing)
         {
-            ttlib::cstr org_filename(m_filename.utf8_string());
+            tt_string org_filename(m_filename.utf8_string());
             org_filename.Replace("~wxue_", "");
             if (!org_file.ReadFile(org_filename))
             {
@@ -84,7 +82,7 @@ int FileCodeWriter::WriteFile(int language, int flags)
             return write_cant_read;
         }
 
-        ttlib::viewfile new_file;
+        tt_view_vector new_file;
         new_file.ReadString(m_buffer);
 
         std::string_view look_for = {};
@@ -130,7 +128,7 @@ int FileCodeWriter::WriteFile(int language, int flags)
             if (!files_are_different)
                 return write_current;
 
-            if (!ttlib::is_found(additional_content))
+            if (!tt::is_found(additional_content))
             {
                 for (; line_index < org_file.size(); ++line_index)
                 {
@@ -142,14 +140,14 @@ int FileCodeWriter::WriteFile(int language, int flags)
                 }
             }
 
-            if (!ttlib::is_found(additional_content))
+            if (!tt::is_found(additional_content))
             {
                 // This is bad -- it means the original file no longer has the comment block
                 // ending the generated code. We don't want to overwrite the changes, so instead
                 // we add a comment to the end of the new file indicating that the original
                 // comment block is missing, and copying the new file after that comment block.
 
-                ttlib::cstr comment_begin;
+                tt_string comment_begin;
                 if (language == GEN_LANG_CPLUSPLUS)
                     comment_begin = "\n// ";
                 else if (language == GEN_LANG_PYTHON)
@@ -192,7 +190,7 @@ int FileCodeWriter::WriteFile(int language, int flags)
     // line endings are forced to '\n'.
 
     // Make certain the folder we are supposed to write to exists
-    ttString copy(m_filename);
+    tt_wxString copy(m_filename);
     copy.remove_filename();
     if (copy.size() && !copy.dir_exists() && !wxGetApp().AskedAboutMissingDir(copy))
     {
@@ -222,7 +220,7 @@ int FileCodeWriter::WriteFile(int language, int flags)
         return write_error;
     }
 
-    if (ttlib::is_found(additional_content))
+    if (tt::is_found(additional_content))
         return write_edited;
     else
         return write_success;

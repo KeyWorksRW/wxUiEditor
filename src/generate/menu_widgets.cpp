@@ -57,7 +57,7 @@ void MenuBarBase::OnLeftMenuClick(wxMouseEvent& event)
     // child, and create a popup menu based on that child.
 
     auto menu_label = wxStaticCast(event.GetEventObject(), wxStaticText);
-    ttlib::cstr text = menu_label->GetLabel().utf8_str().data();
+    tt_string text = menu_label->GetLabel().utf8_str().data();
 
     Node* menu_node = nullptr;
 

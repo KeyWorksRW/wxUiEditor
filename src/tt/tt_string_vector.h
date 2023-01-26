@@ -21,6 +21,8 @@ class tt_view_vector;
 class tt_string_vector : public std::vector<tt_string>
 {
 public:
+    tt_string_vector() {}
+
     // Use this constructor to break apart a single string into a vector of strings
     tt_string_vector(std::string_view str, char separator = ';', tt::TRIM trim = tt::TRIM::none)
     {
@@ -109,8 +111,8 @@ public:
     tt_string& insertEmptyLine(size_t pos)
     {
         if (pos >= size())
-            return emplace_back(ttlib::emptystring);
-        emplace(begin() + pos, ttlib::emptystring);
+            return emplace_back(tt::emptystring);
+        emplace(begin() + pos, tt::emptystring);
         return at(pos);
     }
 
@@ -127,7 +129,7 @@ public:
     template <typename T>
     tt_string& append(T str, tt::CASE checkcase = tt::CASE::exact)
     {
-        if (auto index = find(0, str, checkcase); ttlib::is_found(index))
+        if (auto index = find(0, str, checkcase); tt::is_found(index))
         {
             return at(index);
         }

@@ -681,7 +681,7 @@ std::map<GenEnum::GenName, const char*> GenEnum::map_GenNames = {
     { gen_wxWrapSizer, "wxWrapSizer" },
 
 };
-std::unordered_map<ttlib::sview, GenEnum::GenName, str_view_hash, std::equal_to<>> rmap_GenNames;
+std::unordered_map<tt_string_view, GenEnum::GenName, str_view_hash, std::equal_to<>> rmap_GenNames;
 
 std::map<GenEnum::PropName, const char*> map_PropMacros = {
 

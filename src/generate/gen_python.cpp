@@ -8,9 +8,6 @@
 #include <set>
 #include <unordered_set>
 
-#include "ttcwd_wx.h"       // cwd -- Class for storing and optionally restoring the current directory
-#include <tttextfile_wx.h>  // textfile -- Classes for reading and writing line-oriented files
-
 #include "mainframe.h"
 
 #include "base_generator.h"   // BaseGenerator -- Base widget generator class
@@ -42,7 +39,7 @@ void MainFrame::OnGeneratePython(wxCommandEvent& WXUNUSED(event))
     GenResults results;
     GeneratePythonFiles(results);
 
-    ttlib::cstr msg;
+    tt_string msg;
     if (results.updated_files.size() || results.msgs.size())
     {
         if (results.updated_files.size())
@@ -75,16 +72,16 @@ static void GatherImportModules(std::set<std::string>& imports, Node* node)
     }
 }
 
-bool GeneratePythonFiles(GenResults& results, std::vector<ttlib::cstr>* pClassList)
+bool GeneratePythonFiles(GenResults& results, std::vector<tt_string>* pClassList)
 {
     if (Project.ChildCount() == 0)
     {
         wxMessageBox("You cannot generate any code until you have added a top level form.", "Code Generation");
         return false;
     }
-    ttSaveCwd cwd;
+    tt_cwd cwd(true);
     Project.ChangeDir();
-    ttlib::cstr path;
+    tt_string path;
 
     bool generate_result = true;
     std::vector<Node*> forms;
@@ -214,7 +211,7 @@ bool GeneratePythonFiles(GenResults& results, std::vector<ttlib::cstr>* pClassLi
         catch (const std::exception& TESTING_PARAM(e))
         {
             MSG_ERROR(e.what());
-            wxMessageBox(ttlib::cstr("An internal error occurred generating code files for ")
+            wxMessageBox(tt_string("An internal error occurred generating code files for ")
                              << form->prop_as_string(prop_python_file),
                          "Code generation");
             continue;
@@ -323,7 +320,7 @@ void BaseCodeGenerator::GeneratePythonClass(Node* form_node, PANEL_PAGE panel_ty
         return;
     }
 
-    m_header->writeLine(ttlib::cstr("# Sample inherited class from ") << form_node->as_string(prop_class_name));
+    m_header->writeLine(tt_string("# Sample inherited class from ") << form_node->as_string(prop_class_name));
     m_header->writeLine();
     m_header->writeLine("import wx");
 
@@ -342,7 +339,7 @@ void BaseCodeGenerator::GeneratePythonClass(Node* form_node, PANEL_PAGE panel_ty
         {
             if ((form->isGen(gen_wxDialog) || form->isGen(gen_wxWizard)) && form->HasValue(prop_python_file))
             {
-                m_source->writeLine(ttlib::cstr("import ") << form->value(prop_python_file).filename());
+                m_source->writeLine(tt_string("import ") << form->value(prop_python_file).filename());
             }
         }
     }
@@ -357,7 +354,7 @@ void BaseCodeGenerator::GeneratePythonClass(Node* form_node, PANEL_PAGE panel_ty
         {
             if (iter->form == m_ImagesForm)
             {
-                ttlib::cstr import_name = iter->form->as_string(prop_python_file).filename();
+                tt_string import_name = iter->form->as_string(prop_python_file).filename();
                 import_name.remove_extension();
                 code.Str("import ").Str(import_name);
                 m_source->writeLine(code);
@@ -382,14 +379,14 @@ void BaseCodeGenerator::GeneratePythonClass(Node* form_node, PANEL_PAGE panel_ty
 
     m_source->writeLine();
     m_header->writeLine();
-    m_header->writeLine(ttlib::cstr("import ") << form_node->as_string(prop_python_file) << "\n");
+    m_header->writeLine(tt_string("import ") << form_node->as_string(prop_python_file) << "\n");
     m_header->writeLine();
 
     if (m_form_node->HasValue(prop_python_insert))
     {
-        ttlib::cstr convert(m_form_node->as_string(prop_python_insert));
+        tt_string convert(m_form_node->as_string(prop_python_insert));
         convert.Replace("@@", "\n", tt::REPLACE::all);
-        ttlib::multistr lines(convert, '\n', tt::TRIM::right);
+        tt_string_vector lines(convert, '\n', tt::TRIM::right);
         for (auto& line: lines)
         {
             m_source->doWrite(line);
@@ -398,14 +395,14 @@ void BaseCodeGenerator::GeneratePythonClass(Node* form_node, PANEL_PAGE panel_ty
         m_source->doWrite("\n");
     }
 
-    ttlib::cstr inherit_name = form_node->value(prop_python_inherit_name);
+    tt_string inherit_name = form_node->value(prop_python_inherit_name);
     if (inherit_name.empty())
     {
         inherit_name += "inherit_" + form_node->value(prop_class_name);
     }
     if (inherit_name.size())
     {
-        ttlib::cstr inherit("class ");
+        tt_string inherit("class ");
         inherit << inherit_name << "(";
         inherit << form_node->as_string(prop_python_file) << "." << form_node->as_string(prop_class_name) << "):";
 
@@ -507,7 +504,7 @@ void BaseCodeGenerator::GeneratePythonClass(Node* form_node, PANEL_PAGE panel_ty
 bool PythonBitmapList(Code& code, GenEnum::PropName prop)
 {
     auto& description = code.node()->as_string(prop);
-    ttlib::multiview parts(description, BMP_PROP_SEPARATOR, tt::TRIM::both);
+    tt_view_vector parts(description, BMP_PROP_SEPARATOR, tt::TRIM::both);
 
     if (parts[IndexImage].empty() || parts[IndexType].contains("Art") || parts[IndexType].contains("SVG"))
     {
@@ -548,7 +545,7 @@ bool PythonBitmapList(Code& code, GenEnum::PropName prop)
 
         if (!is_embed_success)
         {
-            ttlib::cstr name(iter);
+            tt_string name(iter);
             name.make_absolute();
             name.make_relative(path);
             name.backslashestoforward();
@@ -575,7 +572,7 @@ bool PythonBundleCode(Code& code, GenEnum::PropName prop)
         return false;
     }
 
-    ttlib::multiview parts(description, BMP_PROP_SEPARATOR, tt::TRIM::both);
+    tt_view_vector parts(description, BMP_PROP_SEPARATOR, tt::TRIM::both);
 
     if (parts.size() <= 1 || parts[IndexImage].empty())
     {
@@ -585,9 +582,9 @@ bool PythonBundleCode(Code& code, GenEnum::PropName prop)
 
     if (parts[IndexType].contains("Art"))
     {
-        ttlib::cstr art_id(parts[IndexArtID]);
-        ttlib::cstr art_client;
-        if (auto pos = art_id.find('|'); ttlib::is_found(pos))
+        tt_string art_id(parts[IndexArtID]);
+        tt_string art_client;
+        if (auto pos = art_id.find('|'); tt::is_found(pos))
         {
             art_client = art_id.subview(pos + 1);
             art_id.erase(pos);
@@ -606,7 +603,7 @@ bool PythonBundleCode(Code& code, GenEnum::PropName prop)
 
     if (auto bundle = ProjectImages.GetPropertyImageBundle(description); bundle && bundle->lst_filenames.size())
     {
-        ttlib::cstr name(bundle->lst_filenames[0]);
+        tt_string name(bundle->lst_filenames[0]);
         name.make_absolute();
         name.make_relative(path);
         name.backslashestoforward();
@@ -674,7 +671,7 @@ bool PythonBundleCode(Code& code, GenEnum::PropName prop)
             }
             if (!is_embed_success)
             {
-                ttlib::cstr name2(bundle->lst_filenames[1]);
+                tt_string name2(bundle->lst_filenames[1]);
                 name2.make_absolute();
                 name2.make_relative(path);
                 name2.backslashestoforward();
@@ -742,9 +739,9 @@ void PythonBtnBimapCode(Code& code, bool is_single)
     }
 }
 
-ttlib::cstr MakePythonPath(Node* node)
+tt_string MakePythonPath(Node* node)
 {
-    ttlib::cstr path;
+    tt_string path;
     Node* form = node->get_form();
 
     if (auto& base_file = form->prop_as_string(prop_python_file); base_file.size())

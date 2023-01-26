@@ -28,7 +28,7 @@ wxObject* FlexGridSizerGenerator::CreateMockup(Node* node, wxObject* parent)
     {
         if (auto& growable = node->prop_as_string(prop_name); growable.size())
         {
-            ttlib::multiview values(growable, ',');
+            tt_view_vector values(growable, ',');
             auto rows = node->prop_as_int(prop_rows);
             auto cols = node->prop_as_int(prop_cols);
             int row_or_col = (prop_name == prop_growablerows) ? rows : cols;
@@ -38,9 +38,9 @@ wxObject* FlexGridSizerGenerator::CreateMockup(Node* node, wxObject* parent)
                 if (value <= row_or_col)
                 {
                     int proportion = 0;
-                    if (auto pos = iter.find(':'); ttlib::is_found(pos))
+                    if (auto pos = iter.find(':'); tt::is_found(pos))
                     {
-                        proportion = ttlib::atoi(ttlib::find_nonspace(iter.data() + pos + 1));
+                        proportion = tt::atoi(tt::find_nonspace(iter.data() + pos + 1));
                     }
                     if (prop_name == prop_growablerows)
                         sizer->AddGrowableCol(value, proportion);
@@ -84,7 +84,7 @@ bool FlexGridSizerGenerator::ConstructionCode(Code& code)
     {
         if (auto& growable = node->prop_as_string(prop_name); growable.size())
         {
-            ttlib::multiview values(growable, ',');
+            tt_view_vector values(growable, ',');
             auto rows = node->prop_as_int(prop_rows);
             auto cols = node->prop_as_int(prop_cols);
             int row_or_col = (prop_name == prop_growablerows) ? rows : cols;
@@ -99,11 +99,11 @@ bool FlexGridSizerGenerator::ConstructionCode(Code& code)
                         is_within_braces = true;
                     }
                     int proportion = 0;
-                    if (auto pos = iter.find(':'); ttlib::is_found(pos))
+                    if (auto pos = iter.find(':'); tt::is_found(pos))
                     {
-                        proportion = ttlib::atoi(ttlib::find_nonspace(iter.data() + pos + 1));
+                        proportion = tt::atoi(tt::find_nonspace(iter.data() + pos + 1));
                     }
-                    if (!ttlib::is_whitespace(code.m_code.back()))
+                    if (!tt::is_whitespace(code.m_code.back()))
                         code.Eol();
 
                     // Note that iter may start with a space, so using itoa() ensures that we

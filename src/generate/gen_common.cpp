@@ -46,14 +46,14 @@ void ColourCode(Code& code, GenEnum::PropName prop_name)
         else
         {
             auto colour = code.node()->prop_as_wxColour(prop_name);
-            code.Add(ttlib::cstr().Format("wxColour(%i, %i, %i)", colour.Red(), colour.Green(), colour.Blue()));
+            code.Add(tt_string().Format("wxColour(%i, %i, %i)", colour.Red(), colour.Green(), colour.Blue()));
         }
     }
 }
 
-ttlib::cstr GenerateQuotedString(const ttlib::cstr& str)
+tt_string GenerateQuotedString(const tt_string& str)
 {
-    ttlib::cstr code;
+    tt_string code;
 
     if (str.size())
     {
@@ -93,7 +93,7 @@ ttlib::cstr GenerateQuotedString(const ttlib::cstr& str)
     return code;
 }
 
-ttlib::cstr GenerateQuotedString(Node* node, GenEnum::PropName prop_name)
+tt_string GenerateQuotedString(Node* node, GenEnum::PropName prop_name)
 {
     if (node->HasValue(prop_name))
     {
@@ -101,7 +101,7 @@ ttlib::cstr GenerateQuotedString(Node* node, GenEnum::PropName prop_name)
     }
     else
     {
-        return ttlib::cstr("wxEmptyString");
+        return tt_string("wxEmptyString");
     }
 }
 
@@ -125,7 +125,7 @@ static constexpr GenType s_GenParentTypes[] = {
 
 // clang-format on
 
-ttlib::cstr GetParentName(Node* node)
+tt_string GetParentName(Node* node)
 {
     auto parent = node->GetParent();
     while (parent)
@@ -134,19 +134,19 @@ ttlib::cstr GetParentName(Node* node)
         {
             if (parent->IsStaticBoxSizer())
             {
-                return (ttlib::cstr() << parent->get_node_name() << "->GetStaticBox()");
+                return (tt_string() << parent->get_node_name() << "->GetStaticBox()");
             }
         }
         if (parent->IsForm())
         {
-            return ttlib::cstr("this");
+            return tt_string("this");
         }
 
         for (auto iter: s_GenParentTypes)
         {
             if (parent->isType(iter))
             {
-                ttlib::cstr name = parent->get_node_name();
+                tt_string name = parent->get_node_name();
                 if (parent->isGen(gen_wxCollapsiblePane))
                 {
                     name << "->GetPane()";
@@ -157,11 +157,11 @@ ttlib::cstr GetParentName(Node* node)
         parent = parent->GetParent();
     }
 
-    ASSERT_MSG(parent, ttlib::cstr() << node->get_node_name() << " has no parent!");
-    return ttlib::cstr("internal error");
+    ASSERT_MSG(parent, tt_string() << node->get_node_name() << " has no parent!");
+    return tt_string("internal error");
 }
 
-void GenPos(Node* node, ttlib::cstr& code)
+void GenPos(Node* node, tt_string& code)
 {
     auto point = node->prop_as_wxPoint(prop_pos);
     if (point.x != -1 || point.y != -1)
@@ -179,7 +179,7 @@ void GenPos(Node* node, ttlib::cstr& code)
         code << "wxDefaultPosition";
 }
 
-void GenSize(Node* node, ttlib::cstr& code)
+void GenSize(Node* node, tt_string& code)
 {
     if (node->as_wxSize(prop_size) != wxDefaultSize)
         code << GenerateWxSize(node, prop_size);
@@ -187,9 +187,9 @@ void GenSize(Node* node, ttlib::cstr& code)
         code << "wxDefaultSize";
 }
 
-void GenStyle(Node* node, ttlib::cstr& code, const char* prefix)
+void GenStyle(Node* node, tt_string& code, const char* prefix)
 {
-    ttlib::cstr all_styles;
+    tt_string all_styles;
 
     if (node->HasValue(prop_tab_position) && !node->prop_as_string(prop_tab_position).is_sameas("wxBK_DEFAULT"))
     {
@@ -254,14 +254,14 @@ void GenStyle(Node* node, ttlib::cstr& code, const char* prefix)
 
 int GetStyleInt(Node* node, const char* prefix)
 {
-    ttlib::cstr styles;
+    tt_string styles;
 
     // If prefix is non-null, this will convert friendly names to wxWidgets constants
     GenStyle(node, styles, prefix);
 
     int result = 0;
     // Can't use multiview because GetConstantAsInt() searches an unordered_map which requires a std::string to pass to it
-    ttlib::multistr mstr(styles, '|');
+    tt_string_vector mstr(styles, '|');
     for (auto& iter: mstr)
     {
         // Friendly names will have already been converted, so normal lookup works fine.
@@ -284,7 +284,7 @@ inline const BTN_BMP_TYPES btn_bmp_types[] = {
     { prop_current, "SetBitmapCurrent" },
 };
 
-bool GenBtnBimapCode(Node* node, ttlib::cstr& code, bool is_single)
+bool GenBtnBimapCode(Node* node, tt_string& code, bool is_single)
 {
     bool has_additional_bitmaps = (node->HasValue(prop_disabled_bmp) || node->HasValue(prop_pressed_bmp) ||
                                    node->HasValue(prop_focus_bmp) || node->HasValue(prop_current));
@@ -306,7 +306,7 @@ bool GenBtnBimapCode(Node* node, ttlib::cstr& code, bool is_single)
         code << "{\n";
     }
 
-    ttlib::cstr bundle_code;
+    tt_string bundle_code;
     bool is_vector_generated = false;
 
     for (auto& iter: btn_bmp_types)
@@ -404,9 +404,9 @@ bool GenBtnBimapCode(Node* node, ttlib::cstr& code, bool is_single)
     return is_vector_generated;
 }
 
-ttlib::cstr GenerateBitmapCode(const ttlib::cstr& description)
+tt_string GenerateBitmapCode(const tt_string& description)
 {
-    ttlib::cstr code;
+    tt_string code;
 
     if (description.empty())
     {
@@ -414,7 +414,7 @@ ttlib::cstr GenerateBitmapCode(const ttlib::cstr& description)
         return code;
     }
 
-    ttlib::multiview parts(description, BMP_PROP_SEPARATOR, tt::TRIM::both);
+    tt_view_vector parts(description, BMP_PROP_SEPARATOR, tt::TRIM::both);
 
     if (parts[IndexType].starts_with("SVG"))
     {
@@ -429,9 +429,9 @@ ttlib::cstr GenerateBitmapCode(const ttlib::cstr& description)
 
     if (parts[IndexType].contains("Art"))
     {
-        ttlib::cstr art_id(parts[IndexArtID]);
-        ttlib::cstr art_client;
-        if (auto pos = art_id.find('|'); ttlib::is_found(pos))
+        tt_string art_id(parts[IndexArtID]);
+        tt_string art_client;
+        if (auto pos = art_id.find('|'); tt::is_found(pos))
         {
             art_client = art_id.subview(pos + 1);
             art_id.erase(pos);
@@ -445,12 +445,12 @@ ttlib::cstr GenerateBitmapCode(const ttlib::cstr& description)
         return code;
     }
 
-    ttlib::cstr result;
+    tt_string result;
     if (parts[IndexType].is_sameas("XPM"))
     {
         code << "wxImage(";
 
-        ttlib::cstr name(parts[IndexImage].filename());
+        tt_string name(parts[IndexImage].filename());
         name.remove_extension();
         code << name << "_xpm)";
     }
@@ -458,7 +458,7 @@ ttlib::cstr GenerateBitmapCode(const ttlib::cstr& description)
     {
         code << "wxueImage(";
 
-        ttlib::cstr name(parts[1].filename());
+        tt_string name(parts[1].filename());
         name.remove_extension();
         name.Replace(".", "_", true);  // wxFormBuilder writes files with the extra dots that have to be converted to '_'
 
@@ -476,7 +476,7 @@ ttlib::cstr GenerateBitmapCode(const ttlib::cstr& description)
     return code;
 }
 
-bool GenerateBundleCode(const ttlib::cstr& description, ttlib::cstr& code)
+bool GenerateBundleCode(const tt_string& description, tt_string& code)
 {
     if (description.empty())
     {
@@ -484,7 +484,7 @@ bool GenerateBundleCode(const ttlib::cstr& description, ttlib::cstr& code)
         return false;
     }
 
-    ttlib::multiview parts(description, BMP_PROP_SEPARATOR, tt::TRIM::both);
+    tt_view_vector parts(description, BMP_PROP_SEPARATOR, tt::TRIM::both);
 
     if (parts[IndexImage].empty())
     {
@@ -494,9 +494,9 @@ bool GenerateBundleCode(const ttlib::cstr& description, ttlib::cstr& code)
 
     if (parts[IndexType].contains("Art"))
     {
-        ttlib::cstr art_id(parts[IndexArtID]);
-        ttlib::cstr art_client;
-        if (auto pos = art_id.find('|'); ttlib::is_found(pos))
+        tt_string art_id(parts[IndexArtID]);
+        tt_string art_client;
+        if (auto pos = art_id.find('|'); tt::is_found(pos))
         {
             art_client = art_id.subview(pos + 1);
             art_id.erase(pos);
@@ -524,14 +524,14 @@ bool GenerateBundleCode(const ttlib::cstr& description, ttlib::cstr& code)
             if (bundle->lst_filenames.size() == 1)
             {
                 code << "wxBitmapBundle::FromBitmap(wxImage(";
-                ttlib::cstr name(bundle->lst_filenames[0].filename());
+                tt_string name(bundle->lst_filenames[0].filename());
                 name.remove_extension();
                 code << name << "_xpm))";
             }
             else if (bundle->lst_filenames.size() == 2)
             {
                 code << "wxBitmapBundle::FromBitmaps(wxImage(";
-                ttlib::cstr name(bundle->lst_filenames[0].filename());
+                tt_string name(bundle->lst_filenames[0].filename());
                 name.remove_extension();
                 code << name << "_xpm), ";
                 name = bundle->lst_filenames[1].filename();
@@ -543,7 +543,7 @@ bool GenerateBundleCode(const ttlib::cstr& description, ttlib::cstr& code)
                 code << "{\n\t\t\twxVector<wxBitmap> bitmaps;\n";
                 for (auto& iter: bundle->lst_filenames)
                 {
-                    ttlib::cstr name(iter.filename());
+                    tt_string name(iter.filename());
                     name.remove_extension();
                     code << "\t\t\tbitmaps.push_back(wxImage(" << name << "_xpm));\n";
                 }
@@ -554,11 +554,11 @@ bool GenerateBundleCode(const ttlib::cstr& description, ttlib::cstr& code)
         }
         else
         {
-            FAIL_MSG(ttlib::cstr(description) << " was not converted to a bundle ahead of time!")
+            FAIL_MSG(tt_string(description) << " was not converted to a bundle ahead of time!")
 
             // This should never happen, but if it does, at least generate something that will compiler
             code << "wxImage(";
-            ttlib::cstr name(parts[IndexImage].filename());
+            tt_string name(parts[IndexImage].filename());
             name.remove_extension();
             code << name << "_xpm)";
         }
@@ -575,7 +575,7 @@ bool GenerateBundleCode(const ttlib::cstr& description, ttlib::cstr& code)
         auto embed = ProjectImages.GetEmbeddedImage(parts[IndexImage]);
         if (!embed)
         {
-            FAIL_MSG(ttlib::cstr() << description << " not embedded!")
+            FAIL_MSG(tt_string() << description << " not embedded!")
             code << "wxNullBitmap";
             return false;
         }
@@ -586,7 +586,7 @@ bool GenerateBundleCode(const ttlib::cstr& description, ttlib::cstr& code)
             GetSizeInfo(svg_size, parts[IndexSize]);
         }
 
-        ttlib::cstr name = "wxue_img::" + embed->array_name;
+        tt_string name = "wxue_img::" + embed->array_name;
         code << "wxueBundleSVG(" << name << ", " << (embed->array_size & 0xFFFFFFFF) << ", ";
         code << (embed->array_size >> 32) << ", wxSize(" << svg_size.x << ", " << svg_size.y << "))";
     }
@@ -604,7 +604,7 @@ bool GenerateBundleCode(const ttlib::cstr& description, ttlib::cstr& code)
             if (bundle->lst_filenames.size() == 1)
             {
                 code << "wxBitmapBundle::FromBitmap(wxueImage(";
-                ttlib::cstr name(bundle->lst_filenames[0].filename());
+                tt_string name(bundle->lst_filenames[0].filename());
                 name.remove_extension();
                 name.Replace(".", "_", true);  // fix wxFormBuilder header files
 
@@ -622,7 +622,7 @@ bool GenerateBundleCode(const ttlib::cstr& description, ttlib::cstr& code)
             else if (bundle->lst_filenames.size() == 2)
             {
                 code << "wxBitmapBundle::FromBitmaps(wxueImage(";
-                ttlib::cstr name(bundle->lst_filenames[0].filename());
+                tt_string name(bundle->lst_filenames[0].filename());
                 name.remove_extension();
                 name.Replace(".", "_", true);  // fix wxFormBuilder header files
 
@@ -655,7 +655,7 @@ bool GenerateBundleCode(const ttlib::cstr& description, ttlib::cstr& code)
                 code << "{\n\t\t\twxVector<wxBitmap> bitmaps;\n";
                 for (auto& iter: bundle->lst_filenames)
                 {
-                    ttlib::cstr name(iter.filename());
+                    tt_string name(iter.filename());
                     name.remove_extension();
                     name.Replace(".", "_", true);  // fix wxFormBuilder header files
                     if (parts[IndexType].starts_with("Embed"))
@@ -675,7 +675,7 @@ bool GenerateBundleCode(const ttlib::cstr& description, ttlib::cstr& code)
         }
         else
         {
-            FAIL_MSG(ttlib::cstr(description) << " was not converted to a bundle ahead of time!")
+            FAIL_MSG(tt_string(description) << " was not converted to a bundle ahead of time!")
 
             // This should never happen, but if it does, at least generate something that will compiler
             code << "wxNullBitmsap";
@@ -685,14 +685,14 @@ bool GenerateBundleCode(const ttlib::cstr& description, ttlib::cstr& code)
     return false;
 }
 
-bool GenerateVectorCode(const ttlib::cstr& description, ttlib::cstr& code)
+bool GenerateVectorCode(const tt_string& description, tt_string& code)
 {
     if (description.empty())
     {
         return false;
     }
 
-    ttlib::multiview parts(description, BMP_PROP_SEPARATOR, tt::TRIM::both);
+    tt_view_vector parts(description, BMP_PROP_SEPARATOR, tt::TRIM::both);
 
     if (parts[IndexImage].empty() || parts[IndexType].contains("Art") || parts[IndexType].contains("SVG"))
     {
@@ -719,7 +719,7 @@ bool GenerateVectorCode(const ttlib::cstr& description, ttlib::cstr& code)
 
     for (auto& iter: bundle->lst_filenames)
     {
-        ttlib::cstr name(iter.filename());
+        tt_string name(iter.filename());
         name.remove_extension();
         if (is_xpm)
         {
@@ -788,9 +788,9 @@ void GenFormSettings(Code& code)
 
 // Add C++ escapes around any characters the compiler wouldn't accept as a normal part of a string. Used when generating
 // code.
-ttlib::cstr ConvertToCodeString(const ttlib::cstr& text)
+tt_string ConvertToCodeString(const tt_string& text)
 {
-    ttlib::cstr result;
+    tt_string result;
 
     for (auto c: text)
     {
@@ -829,7 +829,7 @@ ttlib::cstr ConvertToCodeString(const ttlib::cstr& text)
     return result;
 }
 
-std::optional<ttlib::cstr> GenGetSetCode(Node* node)
+std::optional<tt_string> GenGetSetCode(Node* node)
 {
     auto& get_name = node->prop_as_string(prop_get_function);
     auto& set_name = node->prop_as_string(prop_set_function);
@@ -841,7 +841,7 @@ std::optional<ttlib::cstr> GenGetSetCode(Node* node)
         auto& val_data_type = node->prop_as_string(prop_validator_data_type);
         if (val_data_type.empty())
             return {};
-        ttlib::cstr code;
+        tt_string code;
         if (val_data_type == "wxString" || val_data_type == "wxFileName" || val_data_type == "wxArrayInt")
         {
             if (get_name.size())
@@ -875,7 +875,7 @@ std::optional<ttlib::cstr> GenGetSetCode(Node* node)
     return {};
 }
 
-std::optional<ttlib::cstr> GenValidatorSettings(Node* node)
+std::optional<tt_string> GenValidatorSettings(Node* node)
 {
     if (auto& var_name = node->prop_as_string(prop_validator_variable); var_name.size())
     {
@@ -883,7 +883,7 @@ std::optional<ttlib::cstr> GenValidatorSettings(Node* node)
         if (val_data_type.empty())
             return {};
 
-        ttlib::cstr code;
+        tt_string code;
         auto& validator_type = node->prop_as_string(prop_validator_type);
         if (validator_type.is_sameas("wxTextValidator"))
         {
@@ -913,16 +913,16 @@ std::optional<ttlib::cstr> GenValidatorSettings(Node* node)
 // Generates code for any class inheriting from wxTopLevelWindow -- this will generate everything needed to set the
 // window's icon.
 
-ttlib::cstr GenerateIconCode(const ttlib::cstr& description)
+tt_string GenerateIconCode(const tt_string& description)
 {
-    ttlib::cstr code;
+    tt_string code;
 
     if (description.empty())
     {
         return code;
     }
 
-    ttlib::multiview parts(description, BMP_PROP_SEPARATOR, tt::TRIM::both);
+    tt_view_vector parts(description, BMP_PROP_SEPARATOR, tt::TRIM::both);
 
     if (parts.size() < 2 || parts[IndexImage].empty())
     {
@@ -944,9 +944,9 @@ ttlib::cstr GenerateIconCode(const ttlib::cstr& description)
 
     if (parts[IndexType].contains("Art"))
     {
-        ttlib::cstr art_id(parts[IndexArtID]);
-        ttlib::cstr art_client;
-        if (auto pos = art_id.find('|'); ttlib::is_found(pos))
+        tt_string art_id(parts[IndexArtID]);
+        tt_string art_client;
+        if (auto pos = art_id.find('|'); tt::is_found(pos))
         {
             art_client = art_id.subview(pos + 1);
             art_id.erase(pos);
@@ -963,13 +963,13 @@ ttlib::cstr GenerateIconCode(const ttlib::cstr& description)
         auto embed = ProjectImages.GetEmbeddedImage(parts[IndexImage]);
         if (!embed)
         {
-            FAIL_MSG(ttlib::cstr() << description << " not embedded!")
+            FAIL_MSG(tt_string() << description << " not embedded!")
             return code;
         }
 
         auto svg_size = get_image_prop_size(parts[IndexSize]);
 
-        ttlib::cstr name = "wxue_img::" + embed->array_name;
+        tt_string name = "wxue_img::" + embed->array_name;
         code << "SetIcon(wxueBundleSVG(" << name << ", " << (embed->array_size & 0xFFFFFFFF) << ", ";
         code << (embed->array_size >> 32) << ", wxSize(" << svg_size.x << ", " << svg_size.y << "))";
         code << ".GetIconFor(this));\n";
@@ -982,7 +982,7 @@ ttlib::cstr GenerateIconCode(const ttlib::cstr& description)
             if (bundle->lst_filenames.size() == 1)
             {
                 code << "SetIcon(wxBitmapBundle::FromBitmap(wxueImage(";
-                ttlib::cstr name(bundle->lst_filenames[0].filename());
+                tt_string name(bundle->lst_filenames[0].filename());
                 name.remove_extension();
                 name.Replace(".", "_", true);  // fix wxFormBuilder header files
 
@@ -1003,7 +1003,7 @@ ttlib::cstr GenerateIconCode(const ttlib::cstr& description)
                 code << "{\n\twxIconBundle icon_bundle;\n\twxIcon icon;\n";
                 for (auto& iter: bundle->lst_filenames)
                 {
-                    ttlib::cstr name(iter.filename());
+                    tt_string name(iter.filename());
                     name.remove_extension();
                     name.Replace(".", "_", true);  // fix wxFormBuilder header files
                     if (parts[IndexType].starts_with("Embed"))
@@ -1022,7 +1022,7 @@ ttlib::cstr GenerateIconCode(const ttlib::cstr& description)
         }
         else
         {
-            FAIL_MSG(ttlib::cstr(description) << " was not converted to a bundle ahead of time!")
+            FAIL_MSG(tt_string(description) << " was not converted to a bundle ahead of time!")
             return code;
         }
     }
@@ -1050,9 +1050,9 @@ ttlib::cstr GenerateIconCode(const ttlib::cstr& description)
 }
 
 // This is called to add a tool to either wxToolBar or wxAuiToolBar
-ttlib::cstr GenToolCode(Node* node, ttlib::sview BitmapCode)
+tt_string GenToolCode(Node* node, tt_string_view BitmapCode)
 {
-    ttlib::cstr code;
+    tt_string code;
     code << '\t';
 
     if (node->prop_as_bool(prop_disabled) || (node->prop_as_string(prop_id) == "wxID_ANY" && node->GetInUseEventCount()))
@@ -1150,9 +1150,9 @@ ttlib::cstr GenToolCode(Node* node, ttlib::sview BitmapCode)
     return code;
 }
 
-ttlib::cstr GenerateWxSize(Node* node, PropName prop)
+tt_string GenerateWxSize(Node* node, PropName prop)
 {
-    ttlib::cstr code;
+    tt_string code;
     auto size = node->prop_as_wxSize(prop);
     if (node->value(prop).contains("d", tt::CASE::either))
     {
@@ -1211,7 +1211,7 @@ void GenToolCode(Code& code, const bool is_bitmaps_list)
                 code.Eol() += "#if wxCHECK_VERSION(3, 1, 6)\n\t";
             }
 
-            ttlib::cstr bundle_code;
+            tt_string bundle_code;
             GenerateBundleCode(node->prop_as_string(prop_bitmap), bundle_code);
             code.CheckLineLength(bundle_code.size());
             code += bundle_code;
@@ -1276,7 +1276,7 @@ bool BitmapList(Code& code, const GenEnum::PropName prop)
     }
 
     auto& description = code.node()->as_string(prop);
-    ttlib::multiview parts(description, BMP_PROP_SEPARATOR, tt::TRIM::both);
+    tt_view_vector parts(description, BMP_PROP_SEPARATOR, tt::TRIM::both);
 
     if (parts[IndexImage].empty() || parts[IndexType].contains("Art") || parts[IndexType].contains("SVG"))
     {
@@ -1307,7 +1307,7 @@ bool BitmapList(Code& code, const GenEnum::PropName prop)
                 code.UpdateBreakAt();
                 code.Comma(false).Eol().Tab(3);
             }
-            ttlib::cstr name(iter);
+            tt_string name(iter);
             name.make_absolute();
             name.make_relative(path);
             name.backslashestoforward();
@@ -1333,7 +1333,7 @@ bool BitmapList(Code& code, const GenEnum::PropName prop)
 
     for (auto& iter: bundle->lst_filenames)
     {
-        ttlib::cstr name(iter.filename());
+        tt_string name(iter.filename());
         name.remove_extension();
         if (is_xpm)
         {

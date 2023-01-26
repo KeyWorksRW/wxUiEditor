@@ -13,7 +13,7 @@
 
 void ImageProperties::InitValues(const char* value)
 {
-    ttlib::multiview mstr(value, ';', tt::TRIM::both);
+    tt_view_vector mstr(value, ';', tt::TRIM::both);
 
     if (mstr.size() > IndexImage)
         image = mstr[IndexImage];
@@ -46,7 +46,7 @@ void ImageProperties::InitValues(const char* value)
     }
 }
 
-ttlib::cstr ImageProperties::CombineValues()
+tt_string ImageProperties::CombineValues()
 {
     if (type.size() && type != "Art")
     {
@@ -62,7 +62,7 @@ ttlib::cstr ImageProperties::CombineValues()
         }
     }
 
-    ttlib::cstr value;
+    tt_string value;
     image.backslashestoforward();
     value << type << ';' << image;
     if (type == "SVG")

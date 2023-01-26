@@ -37,7 +37,7 @@ public:
     ~CodeCompare();
 
 private:
-    std::vector<ttlib::cstr> m_class_list;
+    std::vector<tt_string> m_class_list;
 
 protected:
 

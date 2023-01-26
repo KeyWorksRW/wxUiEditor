@@ -56,12 +56,12 @@ protected:
     // needed.
     void OnPostPropChange(CustomEvent& event);
 
-    void CreatePropCategory(ttlib::sview name, Node* node, NodeDeclaration* obj_info, PropNameSet& prop_set);
-    void CreateEventCategory(ttlib::sview name, Node* node, NodeDeclaration* obj_info, EventSet& event_set);
+    void CreatePropCategory(tt_string_view name, Node* node, NodeDeclaration* obj_info, PropNameSet& prop_set);
+    void CreateEventCategory(tt_string_view name, Node* node, NodeDeclaration* obj_info, EventSet& event_set);
     void CreateLayoutCategory(Node* node);
 
-    void AddEvents(ttlib::sview name, Node* node, NodeCategory& category, EventSet& event_set);
-    void AddProperties(ttlib::sview name, Node* node, NodeCategory& category, PropNameSet& prop_set,
+    void AddEvents(tt_string_view name, Node* node, NodeCategory& category, EventSet& event_set);
+    void AddProperties(tt_string_view name, Node* node, NodeCategory& category, PropNameSet& prop_set,
                        bool is_child_cat = false);
 
     void ReplaceDerivedName(const wxString& formName, NodeProperty* propType);
@@ -78,7 +78,7 @@ protected:
     void ReselectItem();
 
     void ModifyProperty(NodeProperty* prop, const wxString& str);
-    void modifyProperty(NodeProperty* prop, ttlib::sview str);
+    void modifyProperty(NodeProperty* prop, tt_string_view str);
 
     int GetBitlistValue(const wxString& strVal, wxPGChoices& bit_flags);
 

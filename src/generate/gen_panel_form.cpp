@@ -26,7 +26,7 @@ wxObject* PanelFormGenerator::CreateMockup(Node* node, wxObject* parent)
         int ex_style = 0;
         // Can't use multiview because GetConstantAsInt() searches an unordered_map which
         // requires a std::string to pass to it
-        ttlib::multistr mstr(node->value(prop_extra_style), '|');
+        tt_string_vector mstr(node->value(prop_extra_style), '|');
         for (auto& iter: mstr)
         {
             // Friendly names will have already been converted, so normal lookup works fine.

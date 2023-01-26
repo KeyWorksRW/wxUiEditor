@@ -108,7 +108,7 @@ std::map<std::string, const char*> g_sys_colour_pair = {
 
 EditColourDialog::EditColourDialog(wxWindow* parent, NodeProperty* prop) : ColourPropBase(parent)
 {
-    SetTitle(ttlib::cstr() << prop->DeclName() << " property editor");
+    SetTitle(tt_string() << prop->DeclName() << " property editor");
     m_value = prop->as_color();
     m_node = prop->GetNode();
     m_prop_name = prop->get_name();

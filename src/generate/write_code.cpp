@@ -22,10 +22,10 @@ void WriteCode::writeLine(const Code& code)
         return;
     }
 
-    // ttlib::multiview only creates a vector of std::string_views, so it's cheap to create
+    // tt_view_vector only creates a vector of std::string_views, so it's cheap to create
     // even for a single line.
 
-    ttlib::multiview lines(code.GetCode(), '\n');
+    tt_view_vector lines(code.GetCode(), '\n');
     for (auto& line: lines)
     {
         // Remove any trailing tabs -- this occurs when Code::Eol() is called when an indent
@@ -114,7 +114,7 @@ void WriteCode::writeLine(std::vector<std::string>& lines)
     m_IsLastLineBlank = (lines.back().empty() ? true : false);
 }
 
-void WriteCode::WriteCodeLine(ttlib::sview code, size_t indentation)
+void WriteCode::WriteCodeLine(tt_string_view code, size_t indentation)
 {
     if (indentation == indent::auto_no_whitespace)
     {
@@ -143,7 +143,7 @@ void WriteCode::WriteCodeLine(ttlib::sview code, size_t indentation)
         m_isLineWriting = true;
     }
 
-    if (ttlib::is_found(code.find('\t')))
+    if (tt::is_found(code.find('\t')))
     {
         std::string tab_code;
         tab_code.reserve(code.size() + 16);
@@ -178,9 +178,9 @@ void WriteCode::writeLine(std::string& code, size_t indentation)
         writeLine();
         return;
     }
-    if (ttlib::is_found(code.find('\n')))
+    if (tt::is_found(code.find('\n')))
     {
-        ttlib::multiview lines(code, '\n');
+        tt_view_vector lines(code, '\n');
         for (auto& iter: lines)
         {
             WriteCodeLine(iter, indentation);
@@ -192,16 +192,16 @@ void WriteCode::writeLine(std::string& code, size_t indentation)
     }
 }
 
-void WriteCode::writeLine(ttlib::sview code, size_t indentation)
+void WriteCode::writeLine(tt_string_view code, size_t indentation)
 {
     if (code.empty())
     {
         writeLine();
         return;
     }
-    if (ttlib::is_found(code.find('\n')))
+    if (tt::is_found(code.find('\n')))
     {
-        ttlib::multiview lines(code, '\n');
+        tt_view_vector lines(code, '\n');
         for (auto& iter: lines)
         {
             WriteCodeLine(iter, indentation);
@@ -222,7 +222,7 @@ void WriteCode::writeLine()
     m_IsLastLineBlank = true;
 }
 
-void WriteCode::write(ttlib::sview code, bool auto_indent)
+void WriteCode::write(tt_string_view code, bool auto_indent)
 {
     // Early abort to not produce lines with trailing whitespace
     if (code.empty())
@@ -242,7 +242,7 @@ void WriteCode::write(ttlib::sview code, bool auto_indent)
         m_isLineWriting = true;
     }
 
-    if (ttlib::is_found(code.find('\t')))
+    if (tt::is_found(code.find('\t')))
     {
         std::string tab_code;
         tab_code.reserve(code.size() + 16);

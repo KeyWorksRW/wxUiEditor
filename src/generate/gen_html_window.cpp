@@ -35,14 +35,14 @@ wxObject* HtmlWindowGenerator::CreateMockup(Node* node, wxObject* parent)
     {
         wxBusyInfo wait(wxBusyInfoFlags()
                             .Parent(wxStaticCast(parent, wxWindow))
-                            .Title(ttString("Parsing ") << node->prop_as_wxString(prop_html_url))
+                            .Title(tt_wxString("Parsing ") << node->prop_as_wxString(prop_html_url))
                             .Text("This could take awhile..."));
         widget->LoadPage(node->prop_as_wxString(prop_html_url));
     }
 #else
     else if (node->HasValue(prop_html_url))
     {
-        widget->SetPage(ttlib::cstr("Contents of<br>    ")
+        widget->SetPage(tt_string("Contents of<br>    ")
                         << node->prop_as_string(prop_html_url) << "<br>will be displayed here.");
     }
 #endif

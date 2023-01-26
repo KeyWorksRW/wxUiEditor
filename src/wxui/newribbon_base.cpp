@@ -87,7 +87,7 @@ bool NewRibbon::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     m_classname->Bind(wxEVT_TEXT,
         [this](wxCommandEvent&)
         {VerifyClassName();
-        } );
+        });
 
     return true;
 }

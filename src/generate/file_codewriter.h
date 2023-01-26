@@ -42,18 +42,18 @@ public:
     }
 
     void Clear() override { m_buffer.clear(); };
-    ttlib::cstr& GetString() { return m_buffer; };
+    tt_string& GetString() { return m_buffer; };
 
     // Returns one of code::write_ enums
     int WriteFile(int language, int flags = code::flag_none);
 
 protected:
-    void doWrite(ttlib::sview code) override { m_buffer += code; };
+    void doWrite(tt_string_view code) override { m_buffer += code; };
 
-    ttlib::cstr m_buffer;
+    tt_string m_buffer;
 
 private:
-    ttString m_filename;
+    tt_wxString m_filename;
 
 #if defined(_DEBUG)
     bool hasWriteFileBeenCalled { false };

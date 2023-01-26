@@ -9,8 +9,6 @@
 
 #include <wx/panel.h>
 
-#include <tttextfile_wx.h>  // ttlib::viewfile
-
 #include "codedisplay_base.h"
 
 #include "write_code.h"  // WriteCode -- Write code to Scintilla or file
@@ -44,9 +42,9 @@ protected:
 
     // The following two functions are required to inherit from WriteCode
 
-    void doWrite(ttlib::sview code) override;
+    void doWrite(tt_string_view code) override;
 
 private:
-    ttlib::viewfile m_view;
+    tt_view_vector m_view;
     int m_panel_type;
 };

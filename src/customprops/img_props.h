@@ -18,13 +18,13 @@ inline constexpr std::array<const char*, 5> s_type_names = { "Art", "Embed", "SV
 struct ImageProperties
 {
 public:
-    ttlib::cstr type { s_type_names[1] };
-    ttlib::cstr image;
+    tt_string type { s_type_names[1] };
+    tt_string image;
 
     NodeProperty* node_property;
 
     void InitValues(const char* value);
-    ttlib::cstr CombineValues();
+    tt_string CombineValues();
     wxString CombineDefaultSize();
 
     void SetWidth(int width) { m_size.x = width; }

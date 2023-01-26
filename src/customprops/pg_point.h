@@ -30,8 +30,8 @@ public:
 
     const wxPGEditor* DoGetEditorClass() const override { return wxPGEditor_TextCtrl; }
 
-    void InitValues(ttlib::sview value);
-    ttlib::cstr CombineValues();
+    void InitValues(tt_string_view value);
+    tt_string CombineValues();
 
 private:
     wxPoint m_point { wxDefaultPosition };

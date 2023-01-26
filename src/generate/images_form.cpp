@@ -10,8 +10,6 @@
 #include <wx/statbmp.h>   // wxStaticBitmap class interface
 #include <wx/stattext.h>  // wxStaticText base header
 
-#include <tttextfile_wx.h>  // textfile -- Classes for reading and writing line-oriented files
-
 #include "images_form.h"
 
 #include "bitmaps.h"          // Contains various images handling functions
@@ -45,13 +43,13 @@ wxObject* ImagesGenerator::CreateMockup(Node* /* node */, wxObject* wxobject)
     {
         auto bundle = ProjectImages.GetPropertyImageBundle(node->prop_as_string(prop_bitmap));
 
-        ttlib::multiview mstr(node->prop_as_string(prop_bitmap), ';');
+        tt_view_vector mstr(node->prop_as_string(prop_bitmap), ';');
 
         if (mstr.size() > 1)
         {
             if (bundle && bundle->lst_filenames.size())
             {
-                ttlib::cstr list;
+                tt_string list;
                 for (auto& iter: bundle->lst_filenames)
                 {
                     if (list.size())
@@ -84,7 +82,7 @@ wxObject* ImagesGenerator::CreateMockup(Node* /* node */, wxObject* wxobject)
             m_bitmap->SetBitmap(bmp);
             auto default_size = bmp.GetDefaultSize();
 
-            ttlib::cstr info("Default wxSize: ");
+            tt_string info("Default wxSize: ");
             info << default_size.GetWidth() << " x " << default_size.GetHeight();
             m_text_info->SetLabel(info);
         }
@@ -175,7 +173,7 @@ void BaseCodeGenerator::GenerateImagesForm()
                 m_source->writeLine("#endif", indent::none);
             }
 
-            ttlib::textfile function;
+            tt_string_vector function;
             function.ReadString(txt_GetBundleFromSVG);
             for (auto& iter: function)
             {
@@ -185,7 +183,7 @@ void BaseCodeGenerator::GenerateImagesForm()
 
         if (m_NeedImageFunction)
         {
-            ttlib::textfile function;
+            tt_string_vector function;
             function.ReadString(txt_wxueImageFunction);
             for (auto& iter: function)
             {
@@ -222,7 +220,7 @@ void BaseCodeGenerator::GenerateImagesForm()
             {
                 if (embed->form != m_form_node || embed->type != wxBITMAP_TYPE_INVALID)
                     continue;
-                ttlib::cstr code("wxBitmapBundle bundle_");
+                tt_string code("wxBitmapBundle bundle_");
                 code << embed->array_name << "(int width, int height)";
                 m_source->writeLine(code);
                 m_source->writeLine("{");
@@ -258,7 +256,7 @@ void BaseCodeGenerator::GenerateImagesForm()
                         continue;  // This is an SVG image which we already handled
                     }
                     m_source->writeLine();
-                    ttlib::cstr code("wxBitmapBundle bundle_");
+                    tt_string code("wxBitmapBundle bundle_");
                     code << embed->array_name << "()";
                     m_source->writeLine(code);
                     m_source->writeLine("{");
@@ -309,7 +307,7 @@ void BaseCodeGenerator::GenerateImagesForm()
                     if (embed->form != m_form_node || embed->type == wxBITMAP_TYPE_INVALID)
                         continue;
                     m_source->writeLine();
-                    ttlib::cstr code("wxImage image_");
+                    tt_string code("wxImage image_");
                     code << embed->array_name << "()";
                     m_source->writeLine(code);
                     m_source->writeLine("{");
@@ -336,7 +334,7 @@ void BaseCodeGenerator::GenerateImagesForm()
                 continue;
 
             m_source->writeLine();
-            ttlib::cstr code;
+            tt_string code;
             code.reserve(Project.as_size_t(prop_cpp_line_length) + 16);
             // SVG images store the original size in the high 32 bits
             size_t max_pos = (iter_array->array_size & 0xFFFFFFFF);
@@ -379,7 +377,7 @@ void BaseCodeGenerator::GenerateImagesForm()
         }
         else if (!m_NeedSVGFunction && is_old_widgets)
         {
-            ttlib::cstr code("#if wxCHECK_VERSION(3, 1, 6)\n\t");
+            tt_string code("#if wxCHECK_VERSION(3, 1, 6)\n\t");
             code << "#include <wx/bmpbndl.h>";
             code << "\n#else\n\t";
             code << "#include <wx/image.h>";
@@ -404,7 +402,7 @@ void BaseCodeGenerator::GenerateImagesForm()
             {
                 if (embed->form != m_form_node || embed->type != wxBITMAP_TYPE_INVALID)
                     continue;
-                ttlib::cstr code("wxBitmapBundle bundle_");
+                tt_string code("wxBitmapBundle bundle_");
                 code << embed->array_name << "(int width, int height);";
                 m_header->writeLine(code);
             }
@@ -426,7 +424,7 @@ void BaseCodeGenerator::GenerateImagesForm()
                 {
                     continue;  // This is an SVG image which we already handled
                 }
-                ttlib::cstr code("wxBitmapBundle bundle_");
+                tt_string code("wxBitmapBundle bundle_");
                 code << embed->array_name << "();";
                 m_header->writeLine(code);
             }
@@ -442,7 +440,7 @@ void BaseCodeGenerator::GenerateImagesForm()
                 {
                     if (embed->form != m_form_node || embed->type == wxBITMAP_TYPE_INVALID)
                         continue;
-                    ttlib::cstr code("wxImage image_");
+                    tt_string code("wxImage image_");
                     code << embed->array_name << "();";
                     m_header->writeLine(code);
                 }
@@ -461,7 +459,7 @@ void BaseCodeGenerator::GenerateImagesForm()
         if (iter_array->form != m_form_node)
             continue;
 
-        m_header->writeLine(ttlib::cstr("extern const unsigned char ")
+        m_header->writeLine(tt_string("extern const unsigned char ")
                             << iter_array->array_name << '[' << (iter_array->array_size & 0xFFFFFFFF) << "];");
     }
 

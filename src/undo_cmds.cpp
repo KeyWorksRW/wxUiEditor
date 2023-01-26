@@ -18,7 +18,7 @@
 
 ///////////////////////////////// InsertNodeAction ////////////////////////////////////
 
-InsertNodeAction::InsertNodeAction(Node* node, Node* parent, const ttlib::cstr& undo_str, int pos) :
+InsertNodeAction::InsertNodeAction(Node* node, Node* parent, const tt_string& undo_str, int pos) :
     UndoAction(undo_str.c_str()), m_pos(pos)
 {
     m_old_selected = wxGetFrame().GetSelectedNodePtr();
@@ -74,8 +74,7 @@ void InsertNodeAction::Revert()
 
 ///////////////////////////////// RemoveNodeAction ////////////////////////////////////
 
-RemoveNodeAction::RemoveNodeAction(Node* node, const ttlib::cstr& undo_str, bool AddToClipboard) :
-    UndoAction(undo_str.c_str())
+RemoveNodeAction::RemoveNodeAction(Node* node, const tt_string& undo_str, bool AddToClipboard) : UndoAction(undo_str.c_str())
 {
     m_AddToClipboard = AddToClipboard;
     m_node = node->GetSharedPtr();
@@ -119,7 +118,7 @@ void RemoveNodeAction::Revert()
 
 ///////////////////////////////// ModifyPropertyAction ////////////////////////////////////
 
-ModifyPropertyAction::ModifyPropertyAction(NodeProperty* prop, ttlib::sview value) : m_property(prop)
+ModifyPropertyAction::ModifyPropertyAction(NodeProperty* prop, tt_string_view value) : m_property(prop)
 {
     m_undo_string << "change " << prop->DeclName();
 
@@ -153,14 +152,14 @@ void ModifyPropertyAction::Revert()
 
 ///////////////////////////////// ModifyProperties ////////////////////////////////////
 
-ModifyProperties::ModifyProperties(ttlib::sview undo_string, bool fire_events) : UndoAction(undo_string)
+ModifyProperties::ModifyProperties(tt_string_view undo_string, bool fire_events) : UndoAction(undo_string)
 {
     m_fire_events = fire_events;
     m_RedoEventGenerated = true;
     m_UndoEventGenerated = true;
 }
 
-void ModifyProperties::AddProperty(NodeProperty* prop, ttlib::sview value)
+void ModifyProperties::AddProperty(NodeProperty* prop, tt_string_view value)
 {
     auto& entry = m_properties.emplace_back();
     entry.property = prop;
@@ -200,7 +199,7 @@ void ModifyProperties::Revert()
 
 ///////////////////////////////// ModifyEventAction ////////////////////////////////////
 
-ModifyEventAction::ModifyEventAction(NodeEvent* event, ttlib::sview value) : m_event(event), m_change_value(value)
+ModifyEventAction::ModifyEventAction(NodeEvent* event, tt_string_view value) : m_event(event), m_change_value(value)
 {
     m_undo_string << "change " << event->get_name() << " handler";
 
@@ -546,7 +545,7 @@ void AppendGridBagAction::Revert()
 
 ///////////////////////////////// GridBagAction ////////////////////////////////////
 
-GridBagAction::GridBagAction(Node* cur_gbsizer, const ttlib::cstr& undo_str) : UndoAction(undo_str.c_str())
+GridBagAction::GridBagAction(Node* cur_gbsizer, const tt_string& undo_str) : UndoAction(undo_str.c_str())
 {
     m_RedoEventGenerated = true;
     m_RedoSelectEventGenerated = true;

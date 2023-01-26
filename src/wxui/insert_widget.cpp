@@ -65,7 +65,7 @@ bool InsertWidget::Create(wxWindow* parent, wxWindowID id, const wxString& title
         [this](wxCommandEvent&)
         {
             m_stdBtn->GetAffirmativeButton()->Enable();
-        } );
+        });
     m_listbox->Bind(wxEVT_LISTBOX_DCLICK, &InsertWidget::OnListBoxDblClick, this);
     m_text_name->Bind(wxEVT_TEXT, &InsertWidget::OnNameText, this);
 
@@ -101,7 +101,7 @@ void MainFrame::OnInsertWidget(wxCommandEvent&)
         {
             return CreateToolNode(result->second);
         }
-        FAIL_MSG(ttlib::cstr() << "No property enum type exists for dlg.GetWidget()! This should be impossible...")
+        FAIL_MSG(tt_string() << "No property enum type exists for dlg.GetWidget()! This should be impossible...")
     }
 }
 
@@ -138,7 +138,7 @@ void InsertWidget::OnInit(wxInitDialogEvent& WXUNUSED(event))
 
 void InsertWidget::OnNameText(wxCommandEvent& WXUNUSED(event))
 {
-    ttlib::cstr name = m_text_name->GetValue().utf8_str().data();
+    tt_string name = m_text_name->GetValue().utf8_str().data();
     m_listbox->Clear();
     auto node = wxGetFrame().GetSelectedNode();
 

@@ -173,7 +173,7 @@ protected:
 
     void ChangeNode(GenEnum::GenName new_node_gen);
     void ChangeSizer(GenEnum::GenName new_sizer_gen);
-    void CreateSizerParent(Node* node, ttlib::sview widget);
+    void CreateSizerParent(Node* node, tt_string_view widget);
 
 private:
     Node* m_node { nullptr };

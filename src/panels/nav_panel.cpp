@@ -346,13 +346,13 @@ void NavigationPanel::OnEndDrag(wxTreeEvent& event)
     {
         if (dst_parent->IsSizer())
         {
-            wxMessageBox(ttlib::cstr() << "You can't drop a " << node_src->DeclName() << " onto a sizer.");
+            wxMessageBox(tt_string() << "You can't drop a " << node_src->DeclName() << " onto a sizer.");
             return;
         }
         else if (dst_parent->IsContainer())
         {
-            wxMessageBox(ttlib::cstr() << "You can't drop a " << node_src->DeclName() << " onto a " << dst_parent->DeclName()
-                                       << '.');
+            wxMessageBox(tt_string() << "You can't drop a " << node_src->DeclName() << " onto a " << dst_parent->DeclName()
+                                     << '.');
             return;
         }
         else if (dst_parent->isGen(gen_Project))
@@ -363,14 +363,14 @@ void NavigationPanel::OnEndDrag(wxTreeEvent& event)
         dst_parent = dst_parent->GetParent();
         if (!dst_parent)
         {
-            wxMessageBox(ttlib::cstr() << node_src->DeclName() << " can't be dropped onto this target.");
+            wxMessageBox(tt_string() << node_src->DeclName() << " can't be dropped onto this target.");
             return;
         }
     }
 
     if (dst_parent->isGen(gen_wxStdDialogButtonSizer))
     {
-        wxMessageBox(ttlib::cstr() << "You can't drop a " << node_src->DeclName() << " onto a wxStdDialogBtnSizer.");
+        wxMessageBox(tt_string() << "You can't drop a " << node_src->DeclName() << " onto a wxStdDialogBtnSizer.");
         return;
     }
 
@@ -462,9 +462,9 @@ void NavigationPanel::UpdateDisplayName(wxTreeItemId id, Node* node)
     m_tree_ctrl->SetItemText(id, GetDisplayName(node).wx_str());
 }
 
-ttlib::cstr NavigationPanel::GetDisplayName(Node* node) const
+tt_string NavigationPanel::GetDisplayName(Node* node) const
 {
-    ttlib::cstr display_name;
+    tt_string display_name;
     if (node->HasValue(prop_label))
         display_name = node->prop_as_string(prop_label);
     else if (node->HasValue(prop_main_label))  // used by wxCommandLinkButton
@@ -477,7 +477,7 @@ ttlib::cstr NavigationPanel::GetDisplayName(Node* node) const
         display_name = node->prop_as_string(prop_id);
     else if (node->isGen(gen_embedded_image))
     {
-        ttlib::multiview mstr(node->prop_as_string(prop_bitmap), ';');
+        tt_view_vector mstr(node->prop_as_string(prop_bitmap), ';');
 
         if (mstr.size() > IndexImage)
         {
@@ -493,7 +493,7 @@ ttlib::cstr NavigationPanel::GetDisplayName(Node* node) const
         }
         else
         {
-            ttlib::multiview mstr(node->prop_as_string(prop_bitmap), ';');
+            tt_view_vector mstr(node->prop_as_string(prop_bitmap), ';');
             if (mstr.size() > IndexImage)
             {
                 display_name = mstr[IndexImage].filename();
@@ -586,8 +586,8 @@ void NavigationPanel::OnNodeSelected(CustomEvent& event)
     auto node = event.GetNode();
     if (node->GetParent() && node->GetParent()->isGen(gen_wxGridBagSizer))
     {
-        wxGetFrame().setStatusText(ttlib::cstr() << "Row: " << node->prop_as_int(prop_row)
-                                                 << ", Column: " << node->prop_as_int(prop_column));
+        wxGetFrame().setStatusText(tt_string() << "Row: " << node->prop_as_int(prop_row)
+                                               << ", Column: " << node->prop_as_int(prop_column));
     }
     else
     {
@@ -607,7 +607,7 @@ void NavigationPanel::OnNodeSelected(CustomEvent& event)
     }
     else
     {
-        FAIL_MSG(ttlib::cstr("There is no tree item associated with this object.\n\tClass: ")
+        FAIL_MSG(tt_string("There is no tree item associated with this object.\n\tClass: ")
                  << node->DeclName() << "\n\tName: " << node->prop_as_string(prop_var_name).wx_str());
     }
 }

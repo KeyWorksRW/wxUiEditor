@@ -297,7 +297,7 @@ bool GridGenerator::SettingsCode(Code& code)
         for (int col = 0; col < (int) labels.size() && col < num_cols; ++col)
         {
             code.Eol().NodeName().Function("SetColLabelValue(").itoa(col);
-            code.Comma().QuotedString(ttlib::cstr() << labels[col].wx_str()).EndFunction();
+            code.Comma().QuotedString(tt_string() << labels[col].wx_str()).EndFunction();
         }
     }
 
@@ -332,7 +332,7 @@ bool GridGenerator::SettingsCode(Code& code)
         for (int col = 0; col < (int) labels.size() && col < num_cols; ++col)
         {
             code.Eol().NodeName().Function("SetColLabelValue(").itoa(col);
-            code.Comma().QuotedString(ttlib::cstr() << labels[col].wx_str()).EndFunction();
+            code.Comma().QuotedString(tt_string() << labels[col].wx_str()).EndFunction();
         }
     }
 

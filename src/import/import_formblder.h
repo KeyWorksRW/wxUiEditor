@@ -23,14 +23,14 @@ public:
     FormBuilder();
     ~FormBuilder() {};
 
-    bool Import(const ttString& filename, bool write_doc = true) override;
+    bool Import(const tt_wxString& filename, bool write_doc = true) override;
     NodeSharedPtr CreateFbpNode(pugi::xml_node& xml_prop, Node* parent, Node* sizeritem = nullptr);
 
 protected:
     void ConvertNameSpaceProp(NodeProperty* prop, std::string_view org_names);
 
     // Called when a property is unknown and has a value set.
-    void ProcessPropValue(pugi::xml_node& xml_prop, ttlib::sview prop_name, ttlib::sview class_name, Node* newobject);
+    void ProcessPropValue(pugi::xml_node& xml_prop, tt_string_view prop_name, tt_string_view class_name, Node* newobject);
 
     void BitmapProperty(pugi::xml_node& xml_obj, NodeProperty* prop);
     void CreateProjectNode(pugi::xml_node& xml_obj, Node* new_node);
@@ -38,10 +38,10 @@ protected:
 private:
     ImportNameMap m_mapEventNames;
 
-    ttlib::cstr m_embedPath;
-    ttlib::cstr m_eventGeneration;
-    ttlib::cstr m_baseFile;
-    ttlib::cstr m_class_decoration;
+    tt_string m_embedPath;
+    tt_string m_eventGeneration;
+    tt_string m_baseFile;
+    tt_string m_class_decoration;
 
     int m_VerMinor { 0 };
 };

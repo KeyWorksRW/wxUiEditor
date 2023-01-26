@@ -15,7 +15,7 @@
 class InsertNodeAction : public UndoAction
 {
 public:
-    InsertNodeAction(Node* node, Node* parent, const ttlib::cstr& undo_str, int pos = -1);
+    InsertNodeAction(Node* node, Node* parent, const tt_string& undo_str, int pos = -1);
 
     // Called when pushed to the Undo stack and when Redo is called
     void Change() override;
@@ -35,7 +35,7 @@ private:
 class RemoveNodeAction : public UndoAction
 {
 public:
-    RemoveNodeAction(Node* node, const ttlib::cstr& undo_str, bool AddToClipboard = false);
+    RemoveNodeAction(Node* node, const tt_string& undo_str, bool AddToClipboard = false);
 
     // Called when pushed to the Undo stack and when Redo is called
     void Change() override;
@@ -55,15 +55,15 @@ private:
 class ModifyPropertyAction : public UndoAction
 {
 public:
-    ModifyPropertyAction(NodeProperty* prop, ttlib::sview value);
+    ModifyPropertyAction(NodeProperty* prop, tt_string_view value);
     ModifyPropertyAction(NodeProperty* prop, int value);
     void Change() override;
     void Revert() override;
 
 private:
     NodeProperty* m_property;
-    ttlib::cstr m_revert_value;
-    ttlib::cstr m_change_value;
+    tt_string m_revert_value;
+    tt_string m_change_value;
 };
 
 // Used to modify multiple properties as a single undo/redo command.
@@ -72,9 +72,9 @@ private:
 class ModifyProperties : public UndoAction
 {
 public:
-    ModifyProperties(ttlib::sview undo_string, bool fire_events = true);
+    ModifyProperties(tt_string_view undo_string, bool fire_events = true);
 
-    void AddProperty(NodeProperty* prop, ttlib::sview value);
+    void AddProperty(NodeProperty* prop, tt_string_view value);
     void AddProperty(NodeProperty* prop, int value);
 
     void Change() override;
@@ -84,8 +84,8 @@ public:
     {
         NodeProperty* property;
         // All properties are stored as a string, no matter what their original data type
-        ttlib::cstr revert_value;
-        ttlib::cstr change_value;
+        tt_string revert_value;
+        tt_string change_value;
     };
     auto& GetVector() { return m_properties; }
 
@@ -98,14 +98,14 @@ private:
 class ModifyEventAction : public UndoAction
 {
 public:
-    ModifyEventAction(NodeEvent* event, ttlib::sview value);
+    ModifyEventAction(NodeEvent* event, tt_string_view value);
     void Change() override;
     void Revert() override;
 
 private:
     NodeEvent* m_event;
-    ttlib::cstr m_revert_value;
-    ttlib::cstr m_change_value;
+    tt_string m_revert_value;
+    tt_string m_change_value;
 };
 
 // Specify node and position.
@@ -211,7 +211,7 @@ private:
 class GridBagAction : public UndoAction
 {
 public:
-    GridBagAction(Node* cur_gbsizer, const ttlib::cstr& undo_str);
+    GridBagAction(Node* cur_gbsizer, const tt_string& undo_str);
     void Change() override;
     void Revert() override;
 

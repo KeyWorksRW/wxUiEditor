@@ -6,7 +6,7 @@
 /////////////////////////////////////////////////////////////////////////////
 
 // Replaces @@ with \n
-inline void ExpandLambda(ttlib::cstr& lambda)
+inline void ExpandLambda(tt_string& lambda)
 {
     lambda.LeftTrim();
     if (lambda.starts_with("@@"))

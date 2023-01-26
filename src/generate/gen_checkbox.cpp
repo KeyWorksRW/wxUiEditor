@@ -196,7 +196,7 @@ int Check3StateGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_
         item.append_child("checked").text().set("2");
     }
 
-    ttlib::cstr styles(node->prop_as_string(prop_style));
+    tt_string styles(node->prop_as_string(prop_style));
     if (styles.size())
     {
         styles << '|';

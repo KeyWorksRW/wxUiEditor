@@ -106,7 +106,7 @@ static void CalcNodeMemory(Node* node, NodeMemory& node_memory)
 
 void NodeInfo::OnInit(wxInitDialogEvent& /* event */)
 {
-    ttlib::cstr label;
+    tt_string label;
     NodeMemory node_memory;
 
     auto* cur_sel = m_node ? m_node : wxGetFrame().GetSelectedNode();

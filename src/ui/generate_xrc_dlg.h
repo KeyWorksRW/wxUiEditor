@@ -17,7 +17,7 @@ public:
     GenerateXrcDlg();  // If you use this constructor, you must call Create(parent)
     GenerateXrcDlg(wxWindow* parent);
 
-    ttlib::cstr GetCombinedFilename() { return m_filename.utf8_string(); }
+    tt_string GetCombinedFilename() { return m_filename.utf8_string(); }
     bool CombineFiles() { return m_create_combined; }
 
 protected:

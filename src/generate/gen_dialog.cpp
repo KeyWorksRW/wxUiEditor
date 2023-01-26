@@ -29,7 +29,7 @@ wxObject* DialogFormGenerator::CreateMockup(Node* node, wxObject* parent)
         int ex_style = 0;
         // Can't use multiview because GetConstantAsInt() searches an unordered_map which requires a std::string to pass to
         // it
-        ttlib::multistr mstr(node->value(prop_extra_style), '|');
+        tt_string_vector mstr(node->value(prop_extra_style), '|');
         for (auto& iter: mstr)
         {
             // Friendly names will have already been converted, so normal lookup works fine.
@@ -271,7 +271,7 @@ int DialogFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t
         }
         else
         {
-            ttlib::cstr all_styles = node->prop_as_string(prop_style);
+            tt_string all_styles = node->prop_as_string(prop_style);
             all_styles << '|' << node->prop_as_string(prop_extra_style);
             item.append_child("style").text().set(all_styles);
         }
@@ -290,7 +290,7 @@ int DialogFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t
             if (xrc_flags & xrc::add_comments)
             {
                 item.append_child(pugi::node_comment)
-                    .set_value((ttlib::cstr(node->prop_as_string(prop_center)) << " cannot be be set in the XRC file."));
+                    .set_value((tt_string(node->prop_as_string(prop_center)) << " cannot be be set in the XRC file."));
             }
             item.append_child("centered").text().set(1);
         }
@@ -302,11 +302,11 @@ int DialogFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t
 
     if (node->HasValue(prop_icon))
     {
-        ttlib::multistr parts(node->prop_as_string(prop_icon), ';', tt::TRIM::both);
+        tt_string_vector parts(node->prop_as_string(prop_icon), ';', tt::TRIM::both);
         ASSERT(parts.size() > 1)
         if (parts[IndexType].is_sameas("Art"))
         {
-            ttlib::multistr art_parts(parts[IndexArtID], '|');
+            tt_string_vector art_parts(parts[IndexArtID], '|');
             auto icon = item.append_child("icon");
             icon.append_attribute("stock_id").set_value(art_parts[0]);
             icon.append_attribute("stock_client").set_value(art_parts[1]);

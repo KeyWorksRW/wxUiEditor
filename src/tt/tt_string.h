@@ -11,7 +11,11 @@
     #error "The contents of <tt_string.h> are available only with C++17 or later."
 #endif
 
+#include <filesystem>
+
 #include "tt.h"  // tt namespace functions and declarations
+
+#include "tt_string_view.h"  // tt_string_view -- std::string_view with additional methods
 
 // std::string with additional methods.
 //
@@ -22,7 +26,7 @@ class tt_string : public std::basic_string<char, std::char_traits<char>, std::al
     using std_base = std::basic_string<char, std::char_traits<char>, std::allocator<char>>;
 
 public:
-    tt_string(void) { assign(ttlib::emptystring); }
+    tt_string(void) { assign(tt::emptystring); }
     tt_string(const char* psz) { assign(psz); }
     tt_string(std::string_view view) : std_base(view) {}
     tt_string(const tt_string& str) : std_base(str) {}
@@ -68,8 +72,8 @@ public:
     }
 #endif  // _WIN32
 
-    // Caution: std::string_view will be invalid if ttlib::tt_string is modified or destroyed.
-    ttlib::sview subview(size_t start = 0) const;
+    // Caution: std::string_view will be invalid if tt_string is modified or destroyed.
+    tt_string_view subview(size_t start = 0) const;
 
     // Case-insensitive comparison.
     int comparei(std::string_view str) const;
@@ -121,21 +125,21 @@ public:
     //
     // A whitespace character is a space, tab, eol or form feed character.
     size_t find_space(size_t start = 0) const;
-    ttlib::sview view_space(size_t start = 0) const;
+    tt_string_view view_space(size_t start = 0) const;
 
     // Returns offset to the next non-whitespace character starting with pos. Returns npos
     // if there are no more non-whitespace characters.
     //
     // A whitespace character is a space, tab, eol or form feed character.
     size_t find_nonspace(size_t start = 0) const;
-    ttlib::sview view_nonspace(size_t start = 0) const;
+    tt_string_view view_nonspace(size_t start = 0) const;
 
     // Returns an offset to the next word -- i.e., find the first non-whitedspace character
     // after the next whitespace character.
     //
     // Equivalent to find_nonspace(find_space(start)).
     size_t stepover(size_t start = 0) const;
-    ttlib::sview view_stepover(size_t start = 0) const;
+    tt_string_view view_stepover(size_t start = 0) const;
 
     // Returns true if the sub-string is identical to the first part of the main string
     bool is_sameas(std::string_view str, tt::CASE checkcase = tt::CASE::exact) const;
@@ -145,7 +149,7 @@ public:
 
     int atoi(size_t start = 0) const
     {
-        return ttlib::atoi(c_str() + start);
+        return tt::atoi(c_str() + start);
     }
 
     // If character is found, line is truncated from the character on, and then
@@ -196,7 +200,7 @@ public:
     //
     // Unless chBegin is a whitespace character, all whitespace characters starting with
     // offset will be ignored.
-    ttlib::sview view_substr(size_t offset, char chBegin = '"', char chEnd = '"');
+    tt_string_view view_substr(size_t offset, char chBegin = '"', char chEnd = '"');
 
     // Assigns the string between chBegin and chEnd. This is typically used to copy the
     // contents of a quoted string. Returns the position of the ending character in src.
@@ -213,7 +217,7 @@ public:
     // ending character was found.
     size_t ExtractSubString(std::string_view src, size_t offset = 0);
 
-    // Identical to ExtractSubString only it returns ttlib::tt_string& instead of a size_t
+    // Identical to ExtractSubString only it returns tt_string& instead of a size_t
     tt_string& CreateSubString(std::string_view src, size_t offset = 0)
     {
         ExtractSubString(src, offset);
@@ -254,7 +258,7 @@ public:
     tt_string& Format(std::string_view format, ...);
 
     // Caution: view is only valid until tt_string is modified or destroyed!
-    ttlib::sview subview(size_t start, size_t len) const;
+    tt_string_view subview(size_t start, size_t len) const;
 
     // Converts all backslashes in the string to forward slashes.
     //
@@ -277,24 +281,24 @@ public:
     // Returns true if current filename contains the specified case-insensitive extension.
     bool has_extension(std::string_view ext) const
     {
-        return ttlib::is_sameas(extension(), ext, tt::CASE::either);
+        return tt::is_sameas(extension(), ext, tt::CASE::either);
     }
 
     // Returns true if current filename contains the specified case-insensitive file name.
     bool has_filename(std::string_view name) const
     {
-        return ttlib::is_sameas(filename(), name, tt::CASE::either);
+        return tt::is_sameas(filename(), name, tt::CASE::either);
     }
 
     // Returns a view to the current extension. View is empty if there is no extension.
     //
     // Caution: view is only valid until tt_string is modified or destroyed.
-    ttlib::sview extension() const noexcept;
+    tt_string_view extension() const noexcept;
 
     // Returns a view to the current filename. View is empty if there is no filename.
     //
     // Caution: view is only valid until tt_string is modified or destroyed.
-    ttlib::sview filename() const noexcept;
+    tt_string_view filename() const noexcept;
 
     // Returns offset to the current filename or tt::npos if there is no filename.
     size_t find_filename() const noexcept;

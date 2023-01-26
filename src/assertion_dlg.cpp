@@ -19,7 +19,7 @@ bool AssertionDlg(const std::source_location& location, const char* cond, std::s
     // This is in case additional message processing results in an assert while this one is already being displayed.
     std::unique_lock<std::mutex> classLock(g_mutexAssert);
 
-    ttlib::cstr str;
+    tt_string str;
 
     if (cond)
         str << "Expression: " << cond << "\n\n";
@@ -54,7 +54,7 @@ bool AssertionDlg(const char* filename, const char* function, int line, const ch
     // This is in case additional message processing results in an assert while this one is already being displayed.
     std::unique_lock<std::mutex> classLock(g_mutexAssert);
 
-    ttlib::cstr str;
+    tt_string str;
 
     if (cond)
         str << "Expression: " << cond << "\n\n";

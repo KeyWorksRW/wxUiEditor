@@ -17,14 +17,14 @@ public:
     {
     }
 
-    const ttlib::cstr& get_name() const noexcept { return m_name; }
-    const ttlib::cstr& get_event_class() const noexcept { return m_event_class; }
-    const ttlib::cstr& get_help() const noexcept { return m_help; }
+    const tt_string& get_name() const noexcept { return m_name; }
+    const tt_string& get_event_class() const noexcept { return m_event_class; }
+    const tt_string& get_help() const noexcept { return m_help; }
 
 private:
-    ttlib::cstr m_name;
-    ttlib::cstr m_event_class;
-    ttlib::cstr m_help;
+    tt_string m_name;
+    tt_string m_event_class;
+    tt_string m_help;
 };
 
 class NodeEvent
@@ -33,8 +33,8 @@ public:
     NodeEvent(const NodeEventInfo* info, Node* node) : m_info(info), m_node(node) {}
 
     void set_value(std::string_view value) { m_value = value; }
-    const ttlib::cstr& get_value() const noexcept { return m_value; }
-    const ttlib::cstr& get_name() const noexcept { return m_info->get_name(); }
+    const tt_string& get_value() const noexcept { return m_value; }
+    const tt_string& get_name() const noexcept { return m_info->get_name(); }
 
     Node* GetNode() const noexcept { return m_node; }
     const NodeEventInfo* GetEventInfo() const noexcept { return m_info; }
@@ -46,5 +46,5 @@ private:
     const NodeEventInfo* m_info;
     Node* m_node;
 
-    ttlib::cstr m_value;  // handler function name
+    tt_string m_value;  // handler function name
 };

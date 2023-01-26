@@ -51,7 +51,7 @@ void NewRibbon::CreateNode()
     {
         auto ribbon_page = NodeCreation.CreateNode(gen_wxRibbonPage, bar_node.get());
         bar_node->Adopt(ribbon_page);
-        ttlib::cstr label("Page ");
+        tt_string label("Page ");
         label << count + 1;
         ribbon_page->prop_set_value(prop_label, label);
 
@@ -87,7 +87,7 @@ void NewRibbon::CreateNode()
     {
         auto parent = wxGetFrame().GetSelectedNode();
         auto pos = parent->FindInsertionPos(parent);
-        ttlib::cstr undo_str("New wxRibbonBar");
+        tt_string undo_str("New wxRibbonBar");
         wxGetFrame().PushUndoAction(std::make_shared<InsertNodeAction>(bar_node.get(), parent, undo_str, pos));
     }
     else
@@ -100,7 +100,7 @@ void NewRibbon::CreateNode()
 
         wxGetFrame().SelectNode(Project.ProjectNode());
 
-        ttlib::cstr undo_str("New wxRibbonBar");
+        tt_string undo_str("New wxRibbonBar");
         wxGetFrame().PushUndoAction(std::make_shared<InsertNodeAction>(bar_node.get(), Project.ProjectNode(), undo_str, -1));
     }
 

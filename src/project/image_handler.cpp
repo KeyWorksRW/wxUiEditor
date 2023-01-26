@@ -51,12 +51,12 @@ inline wxAnimation GetAnimFromHdr(const unsigned char* data, size_t size_data)
     return animation;
 };
 
-inline ttlib::cstr ConvertToLookup(const ttlib::cstr& description)
+inline tt_string ConvertToLookup(const tt_string& description)
 {
-    ttlib::multiview parts(description, ';', tt::TRIM::both);
+    tt_view_vector parts(description, ';', tt::TRIM::both);
     ASSERT(parts.size() > 1)
 
-    ttlib::cstr lookup_str;
+    tt_string lookup_str;
     lookup_str << parts[0] << ';' << parts[1].filename();
     return lookup_str;
 }
@@ -104,7 +104,7 @@ bool ImageHandler::CheckNode(Node* node)
     {
         if ((iter.type() == type_image || iter.type() == type_animation) && iter.HasValue())
         {
-            ttlib::multiview parts(iter.as_string(), BMP_PROP_SEPARATOR, tt::TRIM::both);
+            tt_view_vector parts(iter.as_string(), BMP_PROP_SEPARATOR, tt::TRIM::both);
             if (parts[IndexType] != "Embed")
                 continue;
 
@@ -152,7 +152,7 @@ bool ImageHandler::CheckNode(Node* node)
     return is_changed;
 }
 
-wxImage ImageHandler::GetImage(const ttlib::cstr& description)
+wxImage ImageHandler::GetImage(const tt_string& description)
 {
     if (description.starts_with("Embed;") || description.starts_with("XPM;") || description.starts_with("Header;") ||
         description.starts_with("Art;"))
@@ -163,7 +163,7 @@ wxImage ImageHandler::GetImage(const ttlib::cstr& description)
         return GetInternalImage("unknown");
 }
 
-wxBitmapBundle ImageHandler::GetBitmapBundle(const ttlib::cstr& description, Node* node)
+wxBitmapBundle ImageHandler::GetBitmapBundle(const tt_string& description, Node* node)
 {
     if (description.starts_with("Embed;") || description.starts_with("XPM;") || description.starts_with("Header;") ||
         description.starts_with("Art;") || description.starts_with("SVG;"))
@@ -174,7 +174,7 @@ wxBitmapBundle ImageHandler::GetBitmapBundle(const ttlib::cstr& description, Nod
         return GetInternalImage("unknown");
 }
 
-wxImage ImageHandler::GetPropertyBitmap(const ttlib::multistr& parts, bool check_image)
+wxImage ImageHandler::GetPropertyBitmap(const tt_string_vector& parts, bool check_image)
 {
     if (parts.size() <= IndexImage || parts[IndexImage].empty())
     {
@@ -183,7 +183,7 @@ wxImage ImageHandler::GetPropertyBitmap(const ttlib::multistr& parts, bool check
 
     wxImage image;
 
-    ttlib::cstr path = parts[IndexImage];
+    tt_string path = parts[IndexImage];
 
     auto result = m_images.find(path);
     if (result != m_images.end())
@@ -194,7 +194,7 @@ wxImage ImageHandler::GetPropertyBitmap(const ttlib::multistr& parts, bool check
     {
         if (parts[IndexArtID].contains("|"))
         {
-            ttlib::multistr id_client(parts[IndexArtID], '|');
+            tt_string_vector id_client(parts[IndexArtID], '|');
             ASSERT_MSG(m_allow_ui, "We should never get here if m_allow_ui is false");
             image = (wxArtProvider::GetBitmapBundle(id_client[0], wxART_MAKE_CLIENT_ID_FROM_STR(id_client[1]))
                          .GetBitmapFor(wxGetFrame().GetWindow()))
@@ -269,7 +269,7 @@ wxImage ImageHandler::GetPropertyBitmap(const ttlib::multistr& parts, bool check
     return image;
 }
 
-EmbeddedImage* ImageHandler::GetEmbeddedImage(ttlib::sview path)
+EmbeddedImage* ImageHandler::GetEmbeddedImage(tt_string_view path)
 {
     // REVIEW: [KeyWorks - 05-03-2022] Do we still need this lock?
     std::unique_lock<std::mutex> add_lock(m_mutex_embed_add);
@@ -285,7 +285,7 @@ EmbeddedImage* ImageHandler::GetEmbeddedImage(ttlib::sview path)
     }
 }
 
-bool ImageHandler::AddEmbeddedImage(ttlib::cstr path, Node* form, bool is_animation)
+bool ImageHandler::AddEmbeddedImage(tt_string path, Node* form, bool is_animation)
 {
     std::unique_lock<std::mutex> add_lock(m_mutex_embed_add);
 
@@ -293,7 +293,7 @@ bool ImageHandler::AddEmbeddedImage(ttlib::cstr path, Node* form, bool is_animat
     {
         if (m_project_node->HasValue(prop_art_directory))
         {
-            ttlib::cstr art_path = m_project_node->prop_as_string(prop_art_directory);
+            tt_string art_path = m_project_node->prop_as_string(prop_art_directory);
             art_path.append_filename(path);
             if (!art_path.file_exists())
                 return false;
@@ -316,7 +316,7 @@ bool ImageHandler::AddEmbeddedImage(ttlib::cstr path, Node* form, bool is_animat
 
     add_lock.lock();
 
-    if (auto pos = path.find_last_of('.'); ttlib::is_found(pos))
+    if (auto pos = path.find_last_of('.'); tt::is_found(pos))
     {
         if (path.contains("_16x16."))
         {
@@ -368,7 +368,7 @@ bool ImageHandler::AddEmbeddedImage(ttlib::cstr path, Node* form, bool is_animat
     return final_result;
 }
 
-bool ImageHandler::AddNewEmbeddedImage(ttlib::cstr path, Node* form, std::unique_lock<std::mutex>& add_lock)
+bool ImageHandler::AddNewEmbeddedImage(tt_string path, Node* form, std::unique_lock<std::mutex>& add_lock)
 {
     wxFFileInputStream stream(path.wx_str());
     if (!stream.IsOk())
@@ -425,7 +425,7 @@ bool ImageHandler::AddNewEmbeddedImage(ttlib::cstr path, Node* form, std::unique
 #if defined(_DEBUG) || defined(INTERNAL_TESTING)
                         size_t org_size = (to_size_t) stream.GetLength();
                         auto png_size = read_stream->GetBufferSize();
-                        ttlib::cstr size_comparison;
+                        tt_string size_comparison;
                         size_comparison.Format("Original: %ku, new: %ku", org_size, png_size);
 #endif  // _DEBUG
 
@@ -454,12 +454,12 @@ bool ImageHandler::AddNewEmbeddedImage(ttlib::cstr path, Node* form, std::unique
     return false;
 }
 
-void ImageHandler::InitializeArrayName(EmbeddedImage* embed, ttlib::sview filename)
+void ImageHandler::InitializeArrayName(EmbeddedImage* embed, tt_string_view filename)
 {
     embed->array_name = filename;
     for (size_t idx = 0; idx < embed->array_name.size(); ++idx)
     {
-        if (ttlib::is_alnum(embed->array_name[idx]) || embed->array_name[idx] == '_')
+        if (tt::is_alnum(embed->array_name[idx]) || embed->array_name[idx] == '_')
         {
             continue;
         }
@@ -513,7 +513,7 @@ void ImageHandler::CollectBundles()
     if (m_allow_ui)
         wxBusyCursor wait;
 
-    ttSaveCwd cwd;
+    tt_cwd save_cwd(true);
     Project.ProjectPath().ChangeDir();
 
     std::vector<Node*> forms;
@@ -552,7 +552,7 @@ void ImageHandler::CollectNodeBundles(Node* node, Node* form)
             auto& value = iter.as_string();
             if (value.starts_with("Embed"))
             {
-                ttlib::multiview parts(value, BMP_PROP_SEPARATOR, tt::TRIM::both);
+                tt_view_vector parts(value, BMP_PROP_SEPARATOR, tt::TRIM::both);
                 if (parts[IndexImage].size())
                 {
                     if (!m_map_embedded.contains(parts[IndexImage].filename()))
@@ -570,11 +570,11 @@ void ImageHandler::CollectNodeBundles(Node* node, Node* form)
     }
 }
 
-bool ImageHandler::AddNewEmbeddedBundle(const ttlib::multistr& parts, ttlib::cstr path, Node* form)
+bool ImageHandler::AddNewEmbeddedBundle(const tt_string_vector& parts, tt_string path, Node* form)
 {
     ASSERT(parts.size() > 1)
 
-    ttlib::cstr lookup_str;
+    tt_string lookup_str;
     lookup_str << parts[0] << ';' << parts[1].filename();
 
     ImageBundle img_bundle;
@@ -583,7 +583,7 @@ bool ImageHandler::AddNewEmbeddedBundle(const ttlib::multistr& parts, ttlib::cst
     {
         if (m_project_node->HasValue(prop_art_directory))
         {
-            ttlib::cstr art_path = m_project_node->prop_as_string(prop_art_directory);
+            tt_string art_path = m_project_node->prop_as_string(prop_art_directory);
             art_path.append_filename(path);
             if (!art_path.file_exists())
             {
@@ -630,7 +630,7 @@ bool ImageHandler::AddNewEmbeddedBundle(const ttlib::multistr& parts, ttlib::cst
 
     */
 
-    if (auto pos = path.find_last_of('.'); ttlib::is_found(pos))
+    if (auto pos = path.find_last_of('.'); tt::is_found(pos))
     {
         if (path.contains("_16x16."))
         {
@@ -672,7 +672,7 @@ bool ImageHandler::AddNewEmbeddedBundle(const ttlib::multistr& parts, ttlib::cst
         }
         else
         {
-            ttlib::cstr additional_path;
+            tt_string additional_path;
             for (auto& iter: suffixes)
             {
                 additional_path = path;
@@ -719,7 +719,7 @@ bool ImageHandler::AddNewEmbeddedBundle(const ttlib::multistr& parts, ttlib::cst
     return true;
 }
 
-bool ImageHandler::AddEmbeddedBundleImage(ttlib::cstr path, Node* form)
+bool ImageHandler::AddEmbeddedBundleImage(tt_string path, Node* form)
 {
     wxFFileInputStream stream(path.wx_str());
     if (!stream.IsOk())
@@ -768,7 +768,7 @@ bool ImageHandler::AddEmbeddedBundleImage(ttlib::cstr path, Node* form)
 #if defined(_DEBUG) || defined(INTERNAL_TESTING)
                         size_t org_size = (to_size_t) stream.GetLength();
                         auto png_size = read_stream->GetBufferSize();
-                        ttlib::cstr size_comparison;
+                        tt_string size_comparison;
                         size_comparison.Format("Original: %ku, new: %ku", org_size, png_size);
 #endif
 
@@ -795,11 +795,11 @@ bool ImageHandler::AddEmbeddedBundleImage(ttlib::cstr path, Node* form)
     return false;
 }
 
-ImageBundle* ImageHandler::ProcessBundleProperty(const ttlib::multistr& parts, Node* node)
+ImageBundle* ImageHandler::ProcessBundleProperty(const tt_string_vector& parts, Node* node)
 {
     ASSERT(parts.size() > 1)
 
-    ttlib::cstr lookup_str;
+    tt_string lookup_str;
     lookup_str << parts[0] << ';' << parts[1].filename();
 
     ASSERT_MSG(!m_bundles.contains(lookup_str), "ProcessBundleProperty should not be called if bundle already exists!")
@@ -815,7 +815,7 @@ ImageBundle* ImageHandler::ProcessBundleProperty(const ttlib::multistr& parts, N
     {
         if (parts[IndexArtID].contains("|"))
         {
-            ttlib::multistr id_client(parts[IndexArtID], '|');
+            tt_string_vector id_client(parts[IndexArtID], '|');
             img_bundle.bundle = wxArtProvider::GetBitmapBundle(id_client[0], wxART_MAKE_CLIENT_ID_FROM_STR(id_client[1]));
         }
         else
@@ -858,11 +858,11 @@ ImageBundle* ImageHandler::ProcessBundleProperty(const ttlib::multistr& parts, N
 
     img_bundle.lst_filenames.emplace_back(parts[IndexImage]);
 
-    if (auto pos = parts[IndexImage].find_last_of('.'); ttlib::is_found(pos))
+    if (auto pos = parts[IndexImage].find_last_of('.'); tt::is_found(pos))
     {
         if (parts[IndexImage].contains("_16x16."))
         {
-            ttlib::cstr path(parts[IndexImage]);
+            tt_string path(parts[IndexImage]);
             path.Replace("_16x16.", "_24x24.");
             if (!path.file_exists())
             {
@@ -891,7 +891,7 @@ ImageBundle* ImageHandler::ProcessBundleProperty(const ttlib::multistr& parts, N
         }
         else if (parts[IndexImage].contains("_24x24."))
         {
-            ttlib::cstr path(parts[IndexImage]);
+            tt_string path(parts[IndexImage]);
             path.Replace("_24x24.", "_36x36.");
             if (!path.file_exists())
             {
@@ -920,7 +920,7 @@ ImageBundle* ImageHandler::ProcessBundleProperty(const ttlib::multistr& parts, N
         }
         else
         {
-            ttlib::cstr path;
+            tt_string path;
             for (auto& iter: suffixes)
             {
                 path = parts[IndexImage];
@@ -929,7 +929,7 @@ ImageBundle* ImageHandler::ProcessBundleProperty(const ttlib::multistr& parts, N
                 {
                     if (m_project_node->HasValue(prop_art_directory))
                     {
-                        ttlib::cstr tmp_path = m_project_node->prop_as_string(prop_art_directory);
+                        tt_string tmp_path = m_project_node->prop_as_string(prop_art_directory);
                         tmp_path.append_filename(path);
                         if (tmp_path.file_exists())
                         {
@@ -955,7 +955,7 @@ ImageBundle* ImageHandler::ProcessBundleProperty(const ttlib::multistr& parts, N
     {
         wxVector<wxBitmap> bitmaps;
         bitmaps.push_back(image_first);
-        ttlib::cstr new_description;
+        tt_string new_description;
         new_description << parts[IndexType] << ';';
         new_description << img_bundle.lst_filenames[1];
         auto image_second = GetPropertyBitmap(new_description, false);
@@ -983,12 +983,12 @@ ImageBundle* ImageHandler::ProcessBundleProperty(const ttlib::multistr& parts, N
     return &m_bundles[lookup_str];
 }
 
-void ImageHandler::UpdateBundle(const ttlib::multistr& parts, Node* node)
+void ImageHandler::UpdateBundle(const tt_string_vector& parts, Node* node)
 {
     if (parts.size() < 2 || node->IsFormParent())
         return;
 
-    ttlib::cstr lookup_str;
+    tt_string lookup_str;
     lookup_str << parts[0] << ';' << parts[1].filename();
 
     auto result = m_bundles.find(lookup_str);
@@ -1020,15 +1020,15 @@ void ImageHandler::UpdateBundle(const ttlib::multistr& parts, Node* node)
     }
 }
 
-wxBitmapBundle ImageHandler::GetPropertyBitmapBundle(const ttlib::cstr& description, Node* node)
+wxBitmapBundle ImageHandler::GetPropertyBitmapBundle(const tt_string& description, Node* node)
 {
-    ttlib::multistr parts(description, ';', tt::TRIM::both);
+    tt_string_vector parts(description, ';', tt::TRIM::both);
     if (parts.size() < 2)
     {
         return GetInternalImage("unknown");
     }
 
-    ttlib::cstr lookup_str;
+    tt_string lookup_str;
     lookup_str << parts[0] << ';' << parts[1].filename();
 
     if (auto result = m_bundles.find(lookup_str); result != m_bundles.end())
@@ -1044,14 +1044,14 @@ wxBitmapBundle ImageHandler::GetPropertyBitmapBundle(const ttlib::cstr& descript
     return GetInternalImage("unknown");
 }
 
-const ImageBundle* ImageHandler::GetPropertyImageBundle(const ttlib::multistr& parts, Node* node)
+const ImageBundle* ImageHandler::GetPropertyImageBundle(const tt_string_vector& parts, Node* node)
 {
     if (parts.size() < 2)
     {
         return nullptr;
     }
 
-    ttlib::cstr lookup_str;
+    tt_string lookup_str;
     lookup_str << parts[0] << ';' << parts[1].filename();
 
     if (auto result = m_bundles.find(lookup_str); result != m_bundles.end())
@@ -1068,9 +1068,9 @@ const ImageBundle* ImageHandler::GetPropertyImageBundle(const ttlib::multistr& p
     }
 }
 
-wxAnimation ImageHandler::GetPropertyAnimation(const ttlib::cstr& description)
+wxAnimation ImageHandler::GetPropertyAnimation(const tt_string& description)
 {
-    ttlib::multiview parts(description, BMP_PROP_SEPARATOR, tt::TRIM::both);
+    tt_view_vector parts(description, BMP_PROP_SEPARATOR, tt::TRIM::both);
 
     wxAnimation image;
 
@@ -1079,7 +1079,7 @@ wxAnimation ImageHandler::GetPropertyAnimation(const ttlib::cstr& description)
         return GetAnimFromHdr(wxue_img::pulsing_unknown_gif, sizeof(wxue_img::pulsing_unknown_gif));
     }
 
-    ttlib::cstr path = parts[IndexImage];
+    tt_string path = parts[IndexImage];
     if (!path.file_exists())
     {
         path = Project.value(prop_art_directory);
@@ -1117,7 +1117,7 @@ wxAnimation ImageHandler::GetPropertyAnimation(const ttlib::cstr& description)
 
     return image;
 }
-bool ImageHandler::AddSvgBundleImage(ttlib::cstr path, Node* form)
+bool ImageHandler::AddSvgBundleImage(tt_string path, Node* form)
 {
     // Run the file through an XML parser so that we can remove content that isn't used, as well as removing line breaks,
     // leading spaces, etc.
@@ -1170,7 +1170,7 @@ bool ImageHandler::AddSvgBundleImage(ttlib::cstr path, Node* form)
     if (file_original.IsOpened())
     {
         auto file_size = file_original.Length();
-        ttlib::cstr size_comparison;
+        tt_string size_comparison;
         int percent = static_cast<int>(100 - (100 / (file_size / compressed_size)));
         size_comparison.Format("%v -- Original: %ku, compressed: %ku, %u percent", path.filename(), file_size,
                                compressed_size, percent);
@@ -1182,7 +1182,7 @@ bool ImageHandler::AddSvgBundleImage(ttlib::cstr path, Node* form)
     return true;
 }
 
-wxBitmapBundle LoadSVG(EmbeddedImage* embed, ttlib::sview size_description)
+wxBitmapBundle LoadSVG(EmbeddedImage* embed, tt_string_view size_description)
 {
     size_t org_size = (embed->array_size >> 32);
     auto str = std::make_unique<char[]>(org_size);
@@ -1192,15 +1192,15 @@ wxBitmapBundle LoadSVG(EmbeddedImage* embed, ttlib::sview size_description)
     return wxBitmapBundle::FromSVG(str.get(), get_image_prop_size(size_description));
 }
 
-ttlib::cstr ImageHandler::GetBundleFuncName(const ttlib::cstr& description)
+tt_string ImageHandler::GetBundleFuncName(const tt_string& description)
 {
-    ttlib::cstr name;
+    tt_string name;
 
     for (const auto& form: Project.ChildNodePtrs())
     {
         if (form->isGen(gen_Images))
         {
-            ttlib::multiview parts(description, BMP_PROP_SEPARATOR, tt::TRIM::both);
+            tt_view_vector parts(description, BMP_PROP_SEPARATOR, tt::TRIM::both);
             if (parts.size() < 2)
             {
                 // caller's description does not include a filename
@@ -1209,7 +1209,7 @@ ttlib::cstr ImageHandler::GetBundleFuncName(const ttlib::cstr& description)
 
             for (const auto& child: form->GetChildNodePtrs())
             {
-                ttlib::multiview form_image_parts(child->prop_as_string(prop_bitmap), BMP_PROP_SEPARATOR, tt::TRIM::both);
+                tt_view_vector form_image_parts(child->prop_as_string(prop_bitmap), BMP_PROP_SEPARATOR, tt::TRIM::both);
                 if (form_image_parts.size() < 2)
                 {
                     continue;

@@ -16,5 +16,5 @@ class WxSmith : public ImportXML
 public:
     WxSmith();
 
-    bool Import(const ttString& filename, bool write_doc = true) override;
+    bool Import(const tt_wxString& filename, bool write_doc = true) override;
 };

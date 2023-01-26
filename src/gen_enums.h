@@ -717,4 +717,4 @@ namespace GenEnum
 
 extern std::map<GenEnum::PropName, const char*> map_PropMacros;
 extern std::map<std::string_view, GenEnum::PropName, std::less<>> map_MacroProps;
-extern std::unordered_map<ttlib::sview, GenEnum::GenName, str_view_hash, std::equal_to<>> rmap_GenNames;
+extern std::unordered_map<tt_string_view, GenEnum::GenName, str_view_hash, std::equal_to<>> rmap_GenNames;

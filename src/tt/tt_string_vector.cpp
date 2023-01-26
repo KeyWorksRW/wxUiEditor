@@ -111,7 +111,7 @@ void tt_string_vector::SetString(std::string_view str, std::string_view separato
             auto temp_end = end;
             if (end == tt::npos)
                 temp_end = str.length();
-            while (temp_end > start && ttlib::is_whitespace(str.at(temp_end - 1)))
+            while (temp_end > start && tt::is_whitespace(str.at(temp_end - 1)))
             {
                 --temp_end;
             }
@@ -188,7 +188,7 @@ bool tt_string_vector::ReadFile(std::string_view filename)
         if (buf[0] == static_cast<char>(0xFF) && buf[1] == static_cast<char>(0xFE))
         {
             // BOM LE format, so convert to utf-8 before parsing
-            auto utf8_buf = ttlib::utf16to8(reinterpret_cast<const wchar_t*>(buf.c_str() + 2));
+            auto utf8_buf = tt::utf16to8(reinterpret_cast<const wchar_t*>(buf.c_str() + 2));
             ParseLines(utf8_buf);
         }
         else if (buf[0] == static_cast<char>(0xEF) && buf[1] == static_cast<char>(0xBB) && buf[1] == static_cast<char>(0xBF))
@@ -268,7 +268,7 @@ void tt_string_vector::ParseLines(std::string_view str)
             }
             else
             {
-                back().assign(ttlib::emptystring);
+                back().assign(tt::emptystring);
             }
 
             // Some Apple format files only use \r. Windows files tend to use \r\n.
@@ -285,7 +285,7 @@ void tt_string_vector::ParseLines(std::string_view str)
             }
             else
             {
-                back().assign(ttlib::emptystring);
+                back().assign(tt::emptystring);
             }
             posBeginLine = pos + 1;
         }

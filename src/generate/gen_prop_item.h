@@ -14,6 +14,6 @@ class PropertyGridItemGenerator : public BaseGenerator
 public:
     bool ConstructionCode(Code&) override;
 
-    ttlib::cstr GetHelpText(Node*) override;
-    ttlib::cstr GetHelpURL(Node*) override;
+    tt_string GetHelpText(Node*) override;
+    tt_string GetHelpURL(Node*) override;
 };

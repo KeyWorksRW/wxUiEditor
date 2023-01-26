@@ -35,10 +35,10 @@ public:
         const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_DIALOG_STYLE, const wxString &name = wxDialogNameStr);
 
-    ttlib::cstr GetWidget() { return m_widget; }
+    tt_string GetWidget() { return m_widget; }
 
 private:
-    ttlib::cstr m_widget;
+    tt_string m_widget;
 
 protected:
 

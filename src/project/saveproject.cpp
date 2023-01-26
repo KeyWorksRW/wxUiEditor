@@ -58,11 +58,11 @@ void Node::AddNodeToDoc(pugi::xml_node& node, int& project_version)
                 {
                     // Normalize using forward slashes, no spaces after ';' and no size info unless it is an SVG file
 
-                    ttlib::multistr parts(value, ';', tt::TRIM::both);
+                    tt_string_vector parts(value, ';', tt::TRIM::both);
                     if (parts.size() < 2)
                         continue;
 
-                    ttlib::cstr description(parts[0]);
+                    tt_string description(parts[0]);
                     parts[1].backslashestoforward();
                     description << ';' << parts[1];
 

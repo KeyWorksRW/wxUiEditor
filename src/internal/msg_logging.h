@@ -32,10 +32,10 @@ public:
     void ShowLogger();
     void CloseLogger();
 
-    void AddInfoMsg(ttlib::sview msg);
-    void AddEventMsg(ttlib::sview msg);
-    void AddWarningMsg(ttlib::sview msg);
-    void AddErrorMsg(ttlib::sview msg);
+    void AddInfoMsg(tt_string_view msg);
+    void AddEventMsg(tt_string_view msg);
+    void AddWarningMsg(tt_string_view msg);
+    void AddErrorMsg(tt_string_view msg);
 
     void OnNodeSelected();
 
@@ -45,7 +45,7 @@ public:
 
 private:
     MsgFrame* m_msgFrame { nullptr };
-    std::vector<ttlib::cstr> m_Msgs;
+    std::vector<tt_string> m_Msgs;
 
     bool m_bDestroyed { true };
     bool m_isFirstShown { false };  // If false, and PREFS_MSG_WINDOW is set, then show the window

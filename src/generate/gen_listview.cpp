@@ -36,7 +36,7 @@ wxObject* ListViewGenerator::CreateMockup(Node* node, wxObject* parent)
             {
                 info.SetId(++row_id);
                 auto index = widget->InsertItem(info);
-                ttlib::multistr columns(row, ';', tt::TRIM::both);
+                tt_string_vector columns(row, ';', tt::TRIM::both);
                 for (size_t column = 0; column < columns.size() && column < headers.size(); ++column)
                 {
                     widget->SetItem(index, (to_int) column, columns[column].wx_str());
@@ -95,7 +95,7 @@ bool ListViewGenerator::SettingsCode(Code& code)
                 else
                     code.Eol().Str("idx = ");
                 code.NodeName().Function("InsertItem(info").EndFunction();
-                ttlib::multistr columns(row, ';', tt::TRIM::both);
+                tt_string_vector columns(row, ';', tt::TRIM::both);
                 for (size_t column = 0; column < columns.size() && column < headers.size(); ++column)
                 {
                     code.Eol().NodeName().Function("SetItem(idx").Comma().itoa(column);

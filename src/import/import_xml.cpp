@@ -125,7 +125,7 @@ std::map<std::string_view, std::string_view, std::less<>> s_map_old_events = {
 
 using namespace xrc_import;
 
-std::optional<pugi::xml_document> ImportXML::LoadDocFile(const ttString& file)
+std::optional<pugi::xml_document> ImportXML::LoadDocFile(const tt_wxString& file)
 {
     pugi::xml_document doc;
 
@@ -144,7 +144,7 @@ void ImportXML::HandleSizerItemProperty(const pugi::xml_node& xml_prop, Node* no
 {
     auto flag_value = xml_prop.text().as_sview();
 
-    ttlib::cstr border_value;
+    tt_string border_value;
     if (flag_value.contains("wxALL"))
         border_value = "wxALL";
     else
@@ -189,7 +189,7 @@ void ImportXML::HandleSizerItemProperty(const pugi::xml_node& xml_prop, Node* no
             is_HorizontalSizer = true;
     }
 
-    ttlib::cstr align_value;
+    tt_string align_value;
     if (flag_value.contains("wxALIGN_LEFT") && !is_HorizontalSizer)
     {
         align_value << "wxALIGN_LEFT";
@@ -251,7 +251,7 @@ void ImportXML::HandleSizerItemProperty(const pugi::xml_node& xml_prop, Node* no
         node->prop_set_value(prop_alignment, align_value);
     }
 
-    ttlib::cstr flags_value;
+    tt_string flags_value;
     if (flag_value.contains("wxEXPAND") || flag_value.contains("wxGROW"))
     {
         // You can't use wxEXPAND with any alignment flags
@@ -296,7 +296,7 @@ void ImportXML::ProcessStyle(pugi::xml_node& xml_prop, Node* node, NodeProperty*
         // A list box selection type can only be single, multiple, or extended, so wxUiEditor stores this setting in a
         // type property so that the user can only choose one.
 
-        ttlib::cstr style(xml_prop.text().as_string());
+        tt_string style(xml_prop.text().as_string());
         if (style.contains("wxLB_SINGLE"))
         {
             node->prop_set_value(prop_type, "wxLB_SINGLE");
@@ -325,7 +325,7 @@ void ImportXML::ProcessStyle(pugi::xml_node& xml_prop, Node* node, NodeProperty*
     }
     else if (node->isGen(gen_wxRadioBox))
     {
-        ttlib::cstr style(xml_prop.text().as_string());
+        tt_string style(xml_prop.text().as_string());
         // It's a bug to specifiy both styles, we fix that here
         if (style.contains("wxRA_SPECIFY_ROWS") && style.contains("wxRA_SPECIFY_COLS"))
         {
@@ -341,7 +341,7 @@ void ImportXML::ProcessStyle(pugi::xml_node& xml_prop, Node* node, NodeProperty*
         // A list box selection type can only be single, multiple, or extended, so wxUiEditor stores this setting in a
         // type property so that the user can only choose one.
 
-        ttlib::cstr style(xml_prop.text().as_string());
+        tt_string style(xml_prop.text().as_string());
         if (style.contains("wxGA_VERTICAL"))
         {
             auto prop_type = node->get_prop_ptr(prop_orientation);
@@ -374,7 +374,7 @@ void ImportXML::ProcessStyle(pugi::xml_node& xml_prop, Node* node, NodeProperty*
         // A list box selection type can only be single, multiple, or extended, so wxUiEditor stores this setting in a
         // type property so that the user can only choose one.
 
-        ttlib::cstr style(xml_prop.text().as_string());
+        tt_string style(xml_prop.text().as_string());
         if (style.contains("wxSL_HORIZONTAL"))
         {
             auto prop_type = node->get_prop_ptr(prop_orientation);
@@ -397,7 +397,7 @@ void ImportXML::ProcessStyle(pugi::xml_node& xml_prop, Node* node, NodeProperty*
     }
     else if (node->isGen(gen_wxFontPickerCtrl))
     {
-        ttlib::cstr style(xml_prop.text().as_string());
+        tt_string style(xml_prop.text().as_string());
         if (style.contains("wxFNTP_DEFAULT_STYLE"))
         {
             node->prop_set_value(prop_style, "wxFNTP_FONTDESC_AS_LABEL|wxFNTP_USEFONT_FOR_LABEL");
@@ -405,8 +405,8 @@ void ImportXML::ProcessStyle(pugi::xml_node& xml_prop, Node* node, NodeProperty*
     }
     else if (node->isGen(gen_wxListView))
     {
-        ttlib::cstr style(xml_prop.text().as_string());
-        ttlib::multistr mstr(style, '|');
+        tt_string style(xml_prop.text().as_string());
+        tt_string_vector mstr(style, '|');
         style.clear();
         for (auto& iter: mstr)
         {
@@ -429,7 +429,7 @@ void ImportXML::ProcessStyle(pugi::xml_node& xml_prop, Node* node, NodeProperty*
     }
     else if (node->isGen(gen_wxToolBar))
     {
-        ttlib::cstr style(xml_prop.text().as_string());
+        tt_string style(xml_prop.text().as_string());
         style.Replace("wxAUI_TB_DEFAULT_STYLE", "wxTB_HORIZONTAL");
         style.Replace("wxAUI_TB_HORZ_LAYOUT", "wxTB_HORZ_LAYOUT");
         style.Replace("wxAUI_TB_TEXT", "wxTB_TEXT");
@@ -501,7 +501,7 @@ void ImportXML::ProcessStyle(pugi::xml_node& xml_prop, Node* node, NodeProperty*
     }
 }
 
-GenEnum::GenName ImportXML::ConvertToGenName(const ttlib::cstr& object_name, Node* parent)
+GenEnum::GenName ImportXML::ConvertToGenName(const tt_string& object_name, Node* parent)
 {
     auto gen_name = MapClassName(object_name);
 
@@ -588,7 +588,7 @@ void ImportXML::ProcessAttributes(const pugi::xml_node& xml_obj, Node* new_node)
 
                 if (auto prop = new_node->get_prop_ptr(prop_var_name); prop)
                 {
-                    ttlib::cstr org_name(iter.value());
+                    tt_string org_name(iter.value());
                     auto new_name = new_node->GetUniqueName(org_name);
                     prop->set_value(new_name);
                 }
@@ -598,7 +598,7 @@ void ImportXML::ProcessAttributes(const pugi::xml_node& xml_obj, Node* new_node)
         {
             if (auto prop = new_node->get_prop_ptr(prop_var_name); prop)
             {
-                ttlib::cstr org_name(iter.value());
+                tt_string org_name(iter.value());
                 auto new_name = new_node->GetUniqueName(org_name);
                 prop->set_value(new_name);
             }
@@ -655,10 +655,10 @@ void ImportXML::ProcessProperties(const pugi::xml_node& xml_obj, Node* node, Nod
         }
         else if (wxue_prop == prop_label)
         {
-            ttlib::cstr label = ConvertEscapeSlashes(iter.text().as_string());
+            tt_string label = ConvertEscapeSlashes(iter.text().as_string());
             label.Replace("_", "&");
             auto pos = label.find("\\t");
-            if (ttlib::is_found(pos))
+            if (tt::is_found(pos))
             {
                 label[pos] = 0;
                 node->prop_set_value(prop_shortcut, label.subview(pos + 2));
@@ -671,7 +671,7 @@ void ImportXML::ProcessProperties(const pugi::xml_node& xml_obj, Node* node, Nod
         }
         else if (wxue_prop == prop_extra_accels)
         {
-            ttlib::cstr accel_list;
+            tt_string accel_list;
             for (auto& accel: iter.children())
             {
                 if (accel_list.size())
@@ -779,7 +779,7 @@ void ImportXML::ProcessUnknownProperty(const pugi::xml_node& xml_obj, Node* node
                 return;
 
             case xrc_cellpos:
-                if (ttlib::multistr mstr(xml_obj.text().as_string(), ','); mstr.size())
+                if (tt_string_vector mstr(xml_obj.text().as_string(), ','); mstr.size())
                 {
                     if (mstr[0].size())
                         node->prop_set_value(prop_column, mstr[0]);
@@ -789,11 +789,11 @@ void ImportXML::ProcessUnknownProperty(const pugi::xml_node& xml_obj, Node* node
                 return;
 
             case xrc_cellspan:
-                if (ttlib::multistr mstr(xml_obj.text().as_string(), ','); mstr.size())
+                if (tt_string_vector mstr(xml_obj.text().as_string(), ','); mstr.size())
                 {
-                    if (mstr[0].size() && ttlib::atoi(mstr[0]) > 0)
+                    if (mstr[0].size() && tt::atoi(mstr[0]) > 0)
                         node->prop_set_value(prop_rowspan, mstr[0]);
-                    if (mstr.size() > 1 && mstr[1].size() && ttlib::atoi(mstr[1]) > 0)
+                    if (mstr.size() > 1 && mstr[1].size() && tt::atoi(mstr[1]) > 0)
                         node->prop_set_value(prop_colspan, mstr[1]);
                 }
                 return;
@@ -835,8 +835,7 @@ void ImportXML::ProcessUnknownProperty(const pugi::xml_node& xml_obj, Node* node
                     }
                     else
                     {
-                        MSG_INFO(ttlib::cstr()
-                                 << "Unrecognized property: " << xml_obj.name() << " for " << node->DeclName());
+                        MSG_INFO(tt_string() << "Unrecognized property: " << xml_obj.name() << " for " << node->DeclName());
                     }
                     return;
                 }
@@ -863,7 +862,7 @@ void ImportXML::ProcessUnknownProperty(const pugi::xml_node& xml_obj, Node* node
                 else if (!node->isGen(gen_spacer))
                 {
                     // spacer's don't use alignment or border styles
-                    MSG_INFO(ttlib::cstr() << xml_obj.name() << " not supported for " << node->DeclName());
+                    MSG_INFO(tt_string() << xml_obj.name() << " not supported for " << node->DeclName());
                 }
                 return;
 
@@ -885,8 +884,8 @@ void ImportXML::ProcessUnknownProperty(const pugi::xml_node& xml_obj, Node* node
                 }
                 else
                 {
-                    MSG_INFO(ttlib::cstr()
-                             << "\"option\" specified for node that doesn't have prop_proportion: " << node->DeclName());
+                    MSG_INFO(tt_string() << "\"option\" specified for node that doesn't have prop_proportion: "
+                                         << node->DeclName());
                 }
                 return;
 
@@ -928,7 +927,7 @@ void ImportXML::ProcessUnknownProperty(const pugi::xml_node& xml_obj, Node* node
             case xrc_size:
                 if (node->isGen(gen_spacer))
                 {
-                    if (ttlib::multistr mstr(xml_obj.text().as_string(), ','); mstr.size())
+                    if (tt_string_vector mstr(xml_obj.text().as_string(), ','); mstr.size())
                     {
                         if (mstr[0].size())
                             node->prop_set_value(prop_width, mstr[0]);
@@ -947,7 +946,7 @@ void ImportXML::ProcessUnknownProperty(const pugi::xml_node& xml_obj, Node* node
                         // wxFormBuilder breaks this into three fields: class, header, forward_declare. Or at least it is
                         // supposed to. In version 3.10, it doesn't properly handle an empty class name, so the header file
                         // can appear first.
-                        ttlib::multistr parts(value, ';', tt::TRIM::both);
+                        tt_string_vector parts(value, ';', tt::TRIM::both);
                         if (parts.size() > 0)
                         {
                             if (parts[0].contains(".h"))
@@ -982,12 +981,12 @@ void ImportXML::ProcessUnknownProperty(const pugi::xml_node& xml_obj, Node* node
         }
     }
 
-    MSG_INFO(ttlib::cstr() << "Unrecognized property: " << xml_obj.name() << " for " << node->DeclName());
+    MSG_INFO(tt_string() << "Unrecognized property: " << xml_obj.name() << " for " << node->DeclName());
 }
 
 void ImportXML::ProcessContent(const pugi::xml_node& xml_obj, Node* node)
 {
-    ttlib::cstr choices;
+    tt_string choices;
     for (auto& iter: xml_obj.children())
     {
         if (iter.name() == "item")
@@ -1023,7 +1022,7 @@ void ImportXML::ProcessBitmap(const pugi::xml_node& xml_obj, Node* node, GenEnum
 {
     if (!xml_obj.attribute("stock_id").empty())
     {
-        ttlib::cstr bitmap("Art; ");
+        tt_string bitmap("Art; ");
         bitmap << xml_obj.attribute("stock_id").value() << "|";
         if (!xml_obj.attribute("stock_client").empty())
             bitmap << xml_obj.attribute("stock_client").value();
@@ -1041,7 +1040,7 @@ void ImportXML::ProcessBitmap(const pugi::xml_node& xml_obj, Node* node, GenEnum
         auto file = xml_obj.child_as_cstr();
         if (file.contains(".xpm", tt::CASE::either))
         {
-            ttlib::cstr bitmap("XPM; ");
+            tt_string bitmap("XPM; ");
             bitmap << file;
             bitmap << ";[-1,-1]";
 
@@ -1054,13 +1053,13 @@ void ImportXML::ProcessBitmap(const pugi::xml_node& xml_obj, Node* node, GenEnum
         }
         else
         {
-            ttlib::cstr bitmap("Embed;");
+            tt_string bitmap("Embed;");
 
             // wxGlade doubles the backslash after the drive letter on Windows, and that causes the conversion to a relative
             // path to be incorrect
             file.Replace(":\\\\", ":\\");
 
-            ttString relative(file.wx_str());
+            tt_wxString relative(file.wx_str());
             relative.make_relative_wx(wxGetCwd());
             relative.backslashestoforward();
             bitmap << relative.wx_str();
@@ -1081,7 +1080,7 @@ void ImportXML::ProcessHandler(const pugi::xml_node& xml_obj, Node* node)
     if (xml_obj.attribute("function").empty() || xml_obj.attribute("entry").empty())
         return;
 
-    ttlib::cstr event_name("wx");
+    tt_string event_name("wx");
     event_name << xml_obj.attribute("entry").value();
     auto event = node->GetEvent(event_name);
     if (event)
@@ -1114,7 +1113,7 @@ NodeSharedPtr ImportXML::CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, No
 
         else
         {
-            MSG_INFO(ttlib::cstr() << "Unrecognized object: " << object_name);
+            MSG_INFO(tt_string() << "Unrecognized object: " << object_name);
             return NodeSharedPtr();
         }
     }
@@ -1137,7 +1136,7 @@ NodeSharedPtr ImportXML::CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, No
         if (xml_obj.find_node(
                 [](const pugi::xml_node& node)
                 {
-                    return ttlib::is_sameas(node.name(), "dropdown", tt::CASE::either);
+                    return tt::is_sameas(node.name(), "dropdown", tt::CASE::either);
                 }))
         {
             gen_name = gen_tool_dropdown;
@@ -1185,7 +1184,7 @@ NodeSharedPtr ImportXML::CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, No
             }
         }
 
-        ttlib::cstr msg("Unable to create ");
+        tt_string msg("Unable to create ");
         msg << object_name;
         if (parent)
         {
@@ -1393,7 +1392,7 @@ GenEnum::GenName ImportXML::MapClassName(std::string_view name) const
     return gen_unknown;
 }
 
-ttlib::sview ImportXML::GetCorrectEventName(ttlib::sview name)
+tt_string_view ImportXML::GetCorrectEventName(tt_string_view name)
 {
     if (auto result = s_map_old_events.find(name); result != s_map_old_events.end())
     {

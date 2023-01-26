@@ -58,7 +58,7 @@ CodeDisplay::CodeDisplay(wxWindow* parent, int panel_type) : CodeDisplayBase(par
         // On Windows, this saves converting the UTF8 to UTF16 and then back to ANSI.
         m_scintilla->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_python_keywords);
 
-        ttlib::cstr wxPython_keywords("\
+        tt_string wxPython_keywords("\
         ToolBar \
         MenuBar \
         BitmapBundle \
@@ -103,7 +103,7 @@ CodeDisplay::CodeDisplay(wxWindow* parent, int panel_type) : CodeDisplayBase(par
 
     // Add regular classes that have different generator class names
 
-    ttlib::cstr widget_keywords("\
+    tt_string widget_keywords("\
         wxToolBar \
         wxMenuBar \
         wxBitmapBundle \
@@ -204,7 +204,7 @@ void CodeDisplay::Clear()
     m_scintilla->ClearAll();
 }
 
-void CodeDisplay::doWrite(ttlib::sview code)
+void CodeDisplay::doWrite(tt_string_view code)
 {
     m_view.GetBuffer() << code;
 }
@@ -231,7 +231,7 @@ void CodeDisplay::OnNodeSelected(Node* node)
 
     // Find where the node is created.
 
-    ttlib::cstr name(" ");
+    tt_string name(" ");
     if (m_panel_type == GEN_LANG_PYTHON && !node->IsLocal())
         name << "self.";
     name << node->prop_as_string(prop_var_name);
@@ -240,7 +240,7 @@ void CodeDisplay::OnNodeSelected(Node* node)
     {
         name << "->Bind";
         line = (to_int) m_view.FindLineContaining(name);
-        if (!ttlib::is_found(line))
+        if (!tt::is_found(line))
         {
             name.Replace("->Bind", " = ");
             line = (to_int) m_view.FindLineContaining(name);
@@ -248,7 +248,7 @@ void CodeDisplay::OnNodeSelected(Node* node)
     }
     else if (m_panel_type == GEN_LANG_XRC)
     {
-        ttlib::cstr search("name=\"");
+        tt_string search("name=\"");
         if (node->HasProp(prop_id) && node->prop_as_string(prop_id) != "wxID_ANY")
         {
             search << node->prop_as_string(prop_id);
@@ -269,7 +269,7 @@ void CodeDisplay::OnNodeSelected(Node* node)
         line = (to_int) m_view.FindLineContaining(name);
     }
 
-    if (!ttlib::is_found(line))
+    if (!tt::is_found(line))
         return;
 
     m_scintilla->MarkerDeleteAll(node_marker);

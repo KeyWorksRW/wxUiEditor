@@ -5,14 +5,12 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include <tttextfile_wx.h>  // textfile -- Classes for reading and writing line-oriented files
-
 #include "winres_form.h"
 
 #include "import_winres.h"  // WinResource -- Parse a Windows resource file
 #include "node_creator.h"   // NodeCreator -- Class used to create nodes
 
-void resForm::ParseMenu(WinResource* pWinResource, ttlib::textfile& txtfile, size_t& curTxtLine)
+void resForm::ParseMenu(WinResource* pWinResource, tt_string_vector& txtfile, size_t& curTxtLine)
 {
     m_pWinResource = pWinResource;
     auto line = txtfile[curTxtLine].subview();
@@ -66,10 +64,10 @@ void resForm::ParseMenu(WinResource* pWinResource, ttlib::textfile& txtfile, siz
     m_form_node = NodeCreation.NewNode(m_is_popup_menu ? gen_PopupMenu : gen_MenuBar);
 
 #if defined(_DEBUG) || defined(INTERNAL_TESTING)
-    m_form_node->prop_set_value(prop_base_src_includes, ttlib::cstr() << "// " << txtfile.filename());
+    m_form_node->prop_set_value(prop_base_src_includes, tt_string() << "// " << txtfile.filename());
 #endif  // _DEBUG
 
-    ttlib::cstr value;  // General purpose string we can use throughout this function
+    tt_string value;  // General purpose string we can use throughout this function
 
     value = line.substr(0, end);
     m_form_node->prop_set_value(prop_class_name, ConvertFormID(value));
@@ -90,7 +88,7 @@ void resForm::ParseMenu(WinResource* pWinResource, ttlib::textfile& txtfile, siz
     }
 }
 
-void resForm::ParseMenus(ttlib::textfile& txtfile, size_t& curTxtLine)
+void resForm::ParseMenus(tt_string_vector& txtfile, size_t& curTxtLine)
 {
     NodeSharedPtr parent = m_is_popup_menu ? m_form_node : nullptr;
 
@@ -127,7 +125,7 @@ void resForm::ParseMenus(ttlib::textfile& txtfile, size_t& curTxtLine)
     }
 }
 
-void resForm::ParseMenuItem(Node* parent, ttlib::textfile& txtfile, size_t& curTxtLine)
+void resForm::ParseMenuItem(Node* parent, tt_string_vector& txtfile, size_t& curTxtLine)
 {
     NodeSharedPtr sub_parent { nullptr };
     for (; curTxtLine < txtfile.size(); ++curTxtLine)
@@ -174,9 +172,9 @@ void resForm::ParseMenuItem(Node* parent, ttlib::textfile& txtfile, size_t& curT
                 auto& control = m_ctrls.emplace_back();
                 auto item = control.SetNodePtr(NodeCreation.NewNode(gen_wxMenuItem));
                 parent->Adopt(item);
-                ttlib::sview label = line.view_substr(0);
+                tt_string_view label = line.view_substr(0);
                 auto end = label.find("\\t");
-                if (ttlib::is_found(end))
+                if (tt::is_found(end))
                 {
                     item->prop_set_value(prop_label, m_pWinResource->ConvertCodePageString(label.substr(0, end)));
                     label.remove_prefix(end < label.size() ? end + 2 : end);
@@ -188,16 +186,16 @@ void resForm::ParseMenuItem(Node* parent, ttlib::textfile& txtfile, size_t& curT
                 }
 
                 auto pos = line.find("\",");
-                if (ttlib::is_found(pos))
+                if (tt::is_found(pos))
                 {
-                    ttlib::sview id = line.subview(pos + 3);
+                    tt_string_view id = line.subview(pos + 3);
                     id.moveto_nonspace();
                     end = id.find_first_of(',');
-                    if (!ttlib::is_found(end))
+                    if (!tt::is_found(end))
                     {
                         id.trim(tt::TRIM::right);
                         item->prop_set_value(prop_id, id);
-                        auto help = m_pWinResource->FindStringID(ttlib::cstr() << id);
+                        auto help = m_pWinResource->FindStringID(tt_string() << id);
                         if (help)
                         {
                             item->prop_set_value(prop_help, help.value());
@@ -205,7 +203,7 @@ void resForm::ParseMenuItem(Node* parent, ttlib::textfile& txtfile, size_t& curT
                     }
                     else
                     {
-                        ttlib::sview item_id = id.substr(0, end);
+                        tt_string_view item_id = id.substr(0, end);
                         item_id.trim(tt::TRIM::right);
                         item->prop_set_value(prop_id, item_id);
                         id.remove_prefix(end < id.size() ? end + 1 : end);
@@ -218,7 +216,7 @@ void resForm::ParseMenuItem(Node* parent, ttlib::textfile& txtfile, size_t& curT
                         {
                             item->prop_set_value(prop_disabled, true);
                         }
-                        auto help = m_pWinResource->FindStringID(ttlib::cstr() << item_id);
+                        auto help = m_pWinResource->FindStringID(tt_string() << item_id);
                         if (help)
                         {
                             item->prop_set_value(prop_help, help.value());

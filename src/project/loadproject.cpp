@@ -32,13 +32,13 @@ using namespace GenEnum;
 
 using namespace GenEnum;
 
-bool ProjectHandler::LoadProject(const ttString& file, bool allow_ui)
+bool ProjectHandler::LoadProject(const tt_wxString& file, bool allow_ui)
 {
     pugi::xml_document doc;
     auto result = doc.load_file(file.wx_str());
     if (!result)
     {
-        ASSERT_MSG(result, ttlib::cstr() << "pugi failed trying to load " << file.wx_str());
+        ASSERT_MSG(result, tt_string() << "pugi failed trying to load " << file.wx_str());
         if (allow_ui)
         {
             wxMessageBox(wxString("Cannot open ") << file << "\n\n" << result.description(), "Load Project");
@@ -47,7 +47,7 @@ bool ProjectHandler::LoadProject(const ttString& file, bool allow_ui)
     }
 
     auto root = doc.first_child();
-    if (!ttlib::is_sameas(root.name(), "wxUiEditorData", tt::CASE::either))
+    if (!tt::is_sameas(root.name(), "wxUiEditorData", tt::CASE::either))
     {
         if (allow_ui)
         {
@@ -96,8 +96,8 @@ bool ProjectHandler::LoadProject(const ttString& file, bool allow_ui)
         {
             if (allow_ui)
             {
-                if (wxMessageBox(ttlib::cstr() << "Project version " << m_ProjectVersion / 10 << '.' << m_ProjectVersion % 10
-                                               << " is not supported.\n\nDo you want to attempt to load it anyway?",
+                if (wxMessageBox(tt_string() << "Project version " << m_ProjectVersion / 10 << '.' << m_ProjectVersion % 10
+                                             << " is not supported.\n\nDo you want to attempt to load it anyway?",
                                  "Unsupported Project Version", wxYES_NO) == wxNO)
                 {
                     return false;
@@ -127,7 +127,7 @@ bool ProjectHandler::LoadProject(const ttString& file, bool allow_ui)
 
     if (!project)
     {
-        ASSERT_MSG(project, ttlib::cstr() << "Failed trying to load " << file.wx_str());
+        ASSERT_MSG(project, tt_string() << "Failed trying to load " << file.wx_str());
 
         if (allow_ui)
         {
@@ -229,7 +229,7 @@ NodeSharedPtr NodeCreator::CreateNode(pugi::xml_node& xml_obj, Node* parent, boo
     auto new_node = CreateNode(class_name, parent);
     if (!new_node)
     {
-        FAIL_MSG(ttlib::cstr() << "Invalid project file: could not create " << class_name);
+        FAIL_MSG(tt_string() << "Invalid project file: could not create " << class_name);
         throw std::runtime_error("Invalid project file");
     }
 
@@ -272,7 +272,7 @@ NodeSharedPtr NodeCreator::CreateNode(pugi::xml_node& xml_obj, Node* parent, boo
                                 bool found = false;
                                 for (auto& friendly_pair: g_friend_constant)
                                 {
-                                    if (ttlib::is_sameas(friendly_pair.second, iter.value()))
+                                    if (tt::is_sameas(friendly_pair.second, iter.value()))
                                     {
                                         prop->set_value(friendly_pair.first.c_str() + friendly_pair.first.find('_') + 1);
                                         found = true;
@@ -288,14 +288,14 @@ NodeSharedPtr NodeCreator::CreateNode(pugi::xml_node& xml_obj, Node* parent, boo
 
                         case type_bitlist:
                             {
-                                ttlib::multistr mstr(iter.value(), '|', tt::TRIM::both);
+                                tt_string_vector mstr(iter.value(), '|', tt::TRIM::both);
                                 bool found = false;
-                                ttlib::cstr new_value;
+                                tt_string new_value;
                                 for (auto& bit_value: mstr)
                                 {
                                     for (auto& friendly_pair: g_friend_constant)
                                     {
-                                        if (ttlib::is_sameas(friendly_pair.second, bit_value))
+                                        if (tt::is_sameas(friendly_pair.second, bit_value))
                                         {
                                             if (new_value.size())
                                             {
@@ -330,7 +330,7 @@ NodeSharedPtr NodeCreator::CreateNode(pugi::xml_node& xml_obj, Node* parent, boo
 
                         case type_image:
                             {
-                                ttlib::multistr parts(iter.value(), ';', tt::TRIM::both);
+                                tt_string_vector parts(iter.value(), ';', tt::TRIM::both);
                                 if (parts.size() < 3)
                                 {
                                     prop->set_value(iter.value());
@@ -338,7 +338,7 @@ NodeSharedPtr NodeCreator::CreateNode(pugi::xml_node& xml_obj, Node* parent, boo
                                 else
                                 {
                                     parts[1].backslashestoforward();
-                                    ttlib::cstr description(parts[0]);
+                                    tt_string description(parts[0]);
                                     description << ';' << parts[1];
                                     if (parts[0].starts_with("SVG"))
                                         description << ';' << parts[2];
@@ -361,7 +361,7 @@ NodeSharedPtr NodeCreator::CreateNode(pugi::xml_node& xml_obj, Node* parent, boo
             bool is_event = false;
             for (auto& iterStdBtns: lstStdButtonEvents)
             {
-                if (ttlib::is_sameas(iter.name(), iterStdBtns))
+                if (tt::is_sameas(iter.name(), iterStdBtns))
                 {
                     if (auto event = new_node->GetEvent(iter.name()); event)
                     {
@@ -382,22 +382,22 @@ NodeSharedPtr NodeCreator::CreateNode(pugi::xml_node& xml_obj, Node* parent, boo
                     // to it being released in beta. Once we make a full release, we should be able to safely remove all
                     // of this.
 
-                    if (ttlib::is_sameas(iter.name(), "converted_art"))
+                    if (tt::is_sameas(iter.name(), "converted_art"))
                     {
                         // Just ignore it
                         continue;
                     }
-                    else if (ttlib::is_sameas(iter.name(), "original_art"))
+                    else if (tt::is_sameas(iter.name(), "original_art"))
                     {
                         new_node->prop_set_value(prop_art_directory, value);
                         continue;
                     }
-                    else if (ttlib::is_sameas(iter.name(), "virtual_events"))
+                    else if (tt::is_sameas(iter.name(), "virtual_events"))
                     {
                         new_node->prop_set_value(prop_use_derived_class, value);
                         continue;
                     }
-                    else if (ttlib::is_sameas(iter.name(), "choices") || ttlib::is_sameas(iter.name(), "strings"))
+                    else if (tt::is_sameas(iter.name(), "choices") || tt::is_sameas(iter.name(), "strings"))
                     {
                         new_node->prop_set_value(prop_contents, value);
                         continue;
@@ -413,9 +413,9 @@ NodeSharedPtr NodeCreator::CreateNode(pugi::xml_node& xml_obj, Node* parent, boo
 
                 if (allow_ui)
                 {
-                    MSG_WARNING(ttlib::cstr("Unrecognized property: ") << iter.name() << " in class: " << class_name);
+                    MSG_WARNING(tt_string("Unrecognized property: ") << iter.name() << " in class: " << class_name);
 
-                    wxMessageBox(ttlib::cstr().Format(
+                    wxMessageBox(tt_string().Format(
                         "The property named \"%v\" of class \"%s\" is not supported by this version of wxUiEditor.\n\n"
                         "If your project file was just converted from an older version, then the conversion was not "
                         "complete. Otherwise, this project is from a newer version of wxUiEditor.\n\n"
@@ -526,7 +526,7 @@ NodeSharedPtr NodeCreator::CreateProjectNode(pugi::xml_node* xml_obj, bool allow
     return new_node;
 }
 
-bool ProjectHandler::ImportProject(ttString& file, bool allow_ui)
+bool ProjectHandler::ImportProject(tt_wxString& file, bool allow_ui)
 {
 #if defined(INTERNAL_TESTING)
     // Importers will change the file extension, so make a copy here
@@ -582,7 +582,7 @@ bool ProjectHandler::ImportProject(ttString& file, bool allow_ui)
     return result;
 }
 
-bool ProjectHandler::Import(ImportXML& import, ttString& file, bool append, bool allow_ui)
+bool ProjectHandler::Import(ImportXML& import, tt_wxString& file, bool append, bool allow_ui)
 {
     m_ProjectVersion = ImportProjectVersion;
     if (import.Import(file))
@@ -590,7 +590,7 @@ bool ProjectHandler::Import(ImportXML& import, ttString& file, bool append, bool
 #if defined(_DEBUG) || defined(INTERNAL_TESTING)
         if (allow_ui)
         {
-            ttString full_path(file);
+            tt_wxString full_path(file);
             full_path.make_absolute();
             wxGetFrame().GetAppendImportHistory()->AddFileToHistory(full_path);
         }
@@ -605,7 +605,7 @@ bool ProjectHandler::Import(ImportXML& import, ttString& file, bool append, bool
         auto project = root.child("node");
         if (!project || project.attribute("class").as_string() != "Project")
         {
-            ASSERT_MSG(project, ttlib::cstr() << "Failed trying to load converted xml document: " << file.wx_str());
+            ASSERT_MSG(project, tt_string() << "Failed trying to load converted xml document: " << file.wx_str());
 
             // TODO: [KeyWorks - 10-23-2020] Need to let the user know
             return false;
@@ -641,7 +641,7 @@ bool ProjectHandler::Import(ImportXML& import, ttString& file, bool append, bool
             auto result = doc.load_file(file.wx_str());
             if (!result)
             {
-                ASSERT_MSG(result, ttlib::cstr() << "pugi failed trying to load " << file.wx_str());
+                ASSERT_MSG(result, tt_string() << "pugi failed trying to load " << file.wx_str());
                 if (allow_ui)
                 {
                     wxMessageBox(wxString("Cannot open ") << file << "\n\n" << result.description(), "Load Project");
@@ -681,7 +681,7 @@ bool ProjectHandler::NewProject(bool create_empty, bool allow_ui)
     {
         auto project = NodeCreation.CreateProjectNode(nullptr);
 
-        ttString file;
+        tt_wxString file;
         file.assignCwd();
         file.append_filename(txtEmptyProject);
 
@@ -705,7 +705,7 @@ bool ProjectHandler::NewProject(bool create_empty, bool allow_ui)
 
     auto project = NodeCreation.CreateProjectNode(nullptr);
 
-    ttString file;
+    tt_wxString file;
     file.assignCwd();
     file.append_filename("MyImportedProject");
 
@@ -713,7 +713,7 @@ bool ProjectHandler::NewProject(bool create_empty, bool allow_ui)
     Project.Initialize(project);
     Project.SetProjectFile(file);
 
-    ttlib::cstr imported_from;
+    tt_string imported_from;
 
     auto& file_list = dlg.GetFileList();
     if (file_list.size())
@@ -780,7 +780,7 @@ bool ProjectHandler::NewProject(bool create_empty, bool allow_ui)
 
         if (imported_from.size())
         {
-            ttlib::cstr preamble = m_project_node->value(prop_src_preamble);
+            tt_string preamble = m_project_node->value(prop_src_preamble);
             if (preamble.size())
                 preamble << "@@@@";
             preamble << imported_from;
@@ -788,7 +788,7 @@ bool ProjectHandler::NewProject(bool create_empty, bool allow_ui)
         }
 
         // Set the current working directory to the first file imported.
-        ttString path(file_list[0]);
+        tt_wxString path(file_list[0]);
         if (path.size())
         {
             path.replace_extension_wx(".wxui");
@@ -809,7 +809,7 @@ bool ProjectHandler::NewProject(bool create_empty, bool allow_ui)
     return true;
 }
 
-void ProjectHandler::AppendWinRes(const ttlib::cstr& rc_file, std::vector<ttlib::cstr>& dialogs)
+void ProjectHandler::AppendWinRes(const tt_string& rc_file, std::vector<tt_string>& dialogs)
 {
     WinResource winres;
     if (winres.ImportRc(rc_file, dialogs))

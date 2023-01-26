@@ -51,7 +51,7 @@ void GenXrcSizerItem(Node* node, pugi::xml_node& object)
 {
     if (node->HasValue(prop_platforms) && node->value(prop_platforms) != "Windows|Unix|Mac")
     {
-        ttlib::cstr platforms;
+        tt_string platforms;
         if (node->value(prop_platforms).contains("Windows"))
             platforms << "msw";
         if (node->value(prop_platforms).contains("Unix"))
@@ -73,7 +73,7 @@ void GenXrcSizerItem(Node* node, pugi::xml_node& object)
 
     if (node->GetParent()->isGen(gen_wxGridBagSizer))
     {
-        ttlib::cstr size;
+        tt_string size;
         size << node->prop_as_string(prop_row) << ',' << node->prop_as_string(prop_column);
         object.append_child("cellpos").text().set(size);
         size.clear();
@@ -81,7 +81,7 @@ void GenXrcSizerItem(Node* node, pugi::xml_node& object)
         object.append_child("cellspan").text().set(size);
     }
 
-    ttlib::cstr flags;
+    tt_string flags;
     flags << node->prop_as_string(prop_borders);
     if (node->HasValue(prop_flags))
     {
@@ -128,7 +128,7 @@ void GenXrcComments(Node* node, pugi::xml_node& object, size_t supported_flags)
 
 void GenXrcStylePosSize(Node* node, pugi::xml_node& object, PropName other_style)
 {
-    ttlib::cstr combined_style(node->prop_as_string(prop_style));
+    tt_string combined_style(node->prop_as_string(prop_style));
     if (other_style != prop_unknown && node->HasValue(other_style))
     {
         if (combined_style.size())
@@ -164,7 +164,7 @@ void GenXrcStylePosSize(Node* node, pugi::xml_node& object, PropName other_style
 
 void GenXrcPreStylePosSize(Node* node, pugi::xml_node& object, std::string_view processed_style)
 {
-    ttlib::cstr combined_style(processed_style);
+    tt_string combined_style(processed_style);
 
     if (node->HasValue(prop_window_style))
     {
@@ -330,18 +330,18 @@ void GenXrcBitmap(Node* node, pugi::xml_node& object, size_t xrc_flags, std::str
     {
         if (node->HasValue(prop_pair.prop))
         {
-            ttlib::cstr xrc_dir;
+            tt_string xrc_dir;
             if (xrc_flags & xrc::use_xrc_dir)
             {
                 xrc_dir = Project.value(prop_xrc_art_directory);
                 if (xrc_dir.size())
                     xrc_dir.addtrailingslash();
             }
-            ttlib::multistr parts(node->prop_as_string(prop_pair.prop), ';', tt::TRIM::both);
+            tt_string_vector parts(node->prop_as_string(prop_pair.prop), ';', tt::TRIM::both);
             ASSERT(parts.size() > 1)
             if (parts[IndexType].is_sameas("Art"))
             {
-                ttlib::multistr art_parts(parts[IndexArtID], '|');
+                tt_string_vector art_parts(parts[IndexArtID], '|');
                 auto bmp = object.append_child(param_name.empty() ? prop_pair.xrc_name : param_name);
                 bmp.append_attribute("stock_id").set_value(art_parts[0].c_str());
                 bmp.append_attribute("stock_client").set_value(art_parts[1].c_str());
@@ -353,7 +353,7 @@ void GenXrcBitmap(Node* node, pugi::xml_node& object, size_t xrc_flags, std::str
                 // Optionally replace the directory portion with the xrc art directory.
                 if ((xrc_flags & xrc::use_xrc_dir) && xrc_dir.size())
                 {
-                    ttlib::cstr path(xrc_dir);
+                    tt_string path(xrc_dir);
                     path << parts[IndexImage].filename();
                     svg_object.text().set(path);
                 }
@@ -362,13 +362,13 @@ void GenXrcBitmap(Node* node, pugi::xml_node& object, size_t xrc_flags, std::str
                     svg_object.text().set(parts[IndexImage]);
                 }
                 auto size = get_image_prop_size(parts[IndexSize]);
-                svg_object.append_attribute("default_size").set_value(ttlib::cstr() << size.x << ',' << size.y);
+                svg_object.append_attribute("default_size").set_value(tt_string() << size.x << ',' << size.y);
             }
             else
             {
                 if (auto bundle = ProjectImages.GetPropertyImageBundle(parts); bundle)
                 {
-                    ttlib::cstr names;
+                    tt_string names;
                     for (auto& file: bundle->lst_filenames)
                     {
                         if (names.size())
@@ -379,7 +379,7 @@ void GenXrcBitmap(Node* node, pugi::xml_node& object, size_t xrc_flags, std::str
                         // Optionally replace the directory portion with the xrc art directory.
                         if ((xrc_flags & xrc::use_xrc_dir) && xrc_dir.size())
                         {
-                            ttlib::cstr path(xrc_dir);
+                            tt_string path(xrc_dir);
                             path << file.filename();
                             names << path;
                         }

@@ -211,7 +211,7 @@ size_t tt_wxString::find_oneof(std::string_view set) const
         return npos;
 
 #if defined(_WIN32)
-    auto wset = ttlib::utf8to16(set);
+    auto wset = tt::utf8to16(set);
     auto found = std::wcspbrk(c_str(), wset.c_str());
 #else
     std::string wset(set);
@@ -293,7 +293,7 @@ bool tt_wxString::is_sameprefix(std::string_view vstr, tt::CASE checkcase) const
         return false;
 
 #if defined(_WIN32)
-    auto str = ttlib::utf8to16(vstr);
+    auto str = tt::utf8to16(vstr);
 #else
     std::string str(vstr);
 #endif  // _WIN32
@@ -444,7 +444,7 @@ void tt_wxString::erase_from(char ch)
 void tt_wxString::erase_from(std::string_view sub)
 {
 #if defined(_WIN32)
-    auto pos = find(ttlib::utf8to16(sub));
+    auto pos = find(tt::utf8to16(sub));
 #else
     auto pos = find(sub.data(), 0, sub.size());
 #endif  // _WIN32
@@ -483,7 +483,7 @@ tt_wxString& tt_wxString::replace_extension(std::string_view newExtension)
     }
 
     auto pos_file = find_filename();
-    if (!ttlib::is_found(pos_file))
+    if (!tt::is_found(pos_file))
         pos_file = 0;
 
     if (auto pos = find_last_of('.'); is_found(pos) && pos > pos_file)
@@ -529,7 +529,7 @@ tt_wxString& tt_wxString::replace_extension_wx(const wxString& newExtension)
     }
 
     auto pos_file = find_filename();
-    if (!ttlib::is_found(pos_file))
+    if (!tt::is_found(pos_file))
         pos_file = 0;
 
     if (auto pos = find_last_of('.'); is_found(pos) && pos > pos_file)
@@ -719,7 +719,7 @@ tt_wxString& tt_wxString::make_relative(std::string_view pathBase)
 {
     wxFileName file(*this);
 #if defined(_WIN32)
-    file.MakeRelativeTo(ttlib::utf8to16(pathBase));
+    file.MakeRelativeTo(tt::utf8to16(pathBase));
 #else
     file.MakeRelativeTo(std::string(pathBase));
 #endif  // _WIN32

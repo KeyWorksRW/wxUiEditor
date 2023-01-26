@@ -94,8 +94,6 @@ bool CodeCompare::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 
 #include <wx/dir.h>  // wxDir is a class for enumerating the files in a directory
 
-#include "ttcwd_wx.h"  // cwd -- Class for storing and optionally restoring the current directory
-
 #include "gen_base.h"         // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
 #include "gen_results.h"      // Code generation file writing functions
 #include "node.h"             // Node class
@@ -196,11 +194,11 @@ HINSTANCE winShellRun(std::string_view filename, std::string_view args, std::str
 HINSTANCE winShellRun(std::string_view filename, std::string_view args, std::string_view dir, INT nShow, HWND hwndParent)
 {
     std::wstring name16;
-    ttlib::utf8to16(filename, name16);
+    tt::utf8to16(filename, name16);
     std::wstring args16;
-    ttlib::utf8to16(args, args16);
+    tt::utf8to16(args, args16);
     std::wstring dir16;
-    ttlib::utf8to16(dir, dir16);
+    tt::utf8to16(dir, dir16);
 
     return ShellExecuteW(hwndParent, NULL, name16.c_str(), args16.c_str(), dir16.c_str(), nShow);
 }
@@ -221,7 +219,7 @@ void CodeCompare::OnWinMerge(wxCommandEvent& /* event */)
     // WinMergeU.exe typically is not in the system PATH, and as such, wxExecute won't be able to find it. ShellExecute will
     // find the registered location for the program.
 
-    ttlib::cwd cwd;
+    tt_cwd cwd;
 
     // /e -- terminate with escape
     // /u -- don't add files to MRU

@@ -58,8 +58,8 @@ int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_PAG
     m_form_node = form;
     m_is_derived_class = m_form_node->prop_as_bool(prop_use_derived_class);
 
-    ttlib::cstr source_ext(".cpp");
-    ttlib::cstr header_ext(".h");
+    tt_string source_ext(".cpp");
+    tt_string header_ext(".h");
 
     if (auto& extProp = project->prop_as_string(prop_source_ext); extProp.size())
     {
@@ -71,7 +71,7 @@ int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_PAG
         header_ext = extProp;
     }
 
-    ttlib::cstr derived_file;
+    tt_string derived_file;
     if (m_is_derived_class && m_form_node->HasValue(prop_derived_file))
     {
         derived_file = m_form_node->prop_as_string(prop_derived_file);
@@ -114,7 +114,7 @@ int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_PAG
     EventVector events;
     std::thread thrd_get_events(&BaseCodeGenerator::CollectEventHandlers, this, m_form_node, std::ref(events));
 
-    ttlib::cstr baseFile;
+    tt_string baseFile;
     if (auto& file = m_form_node->prop_as_string(prop_base_file); file.size())
     {
         baseFile = file;
@@ -131,7 +131,7 @@ int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_PAG
         }
 
         baseFile.replace_extension(header_ext);
-        ttlib::cstr root(derived_file);
+        tt_string root(derived_file);
         root.remove_filename();
         if (root.size())
             baseFile.make_relative(root);
@@ -139,10 +139,10 @@ int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_PAG
         baseFile.remove_extension();
     }
 
-    ttlib::cstr namespace_using_name;
+    tt_string namespace_using_name;
 
     // Make a copy of the string so that we can tweak it
-    ttlib::cstr namespace_prop = Project.value(prop_name_space);
+    tt_string namespace_prop = Project.value(prop_name_space);
     if (auto* node_namespace = form->get_folder(); node_namespace && node_namespace->HasValue(prop_folder_namespace))
     {
         namespace_prop = node_namespace->as_string(prop_folder_namespace);
@@ -152,12 +152,12 @@ int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_PAG
         // BUGBUG: [KeyWorks - 01-25-2021] Need to look for base_class_name property of all children, and add each name
         // as a forwarded class.
 
-        // ttlib::multistr works with a single char, not a string.
+        // tt_string_vector works with a single char, not a string.
         namespace_prop.Replace("::", ":");
         // we also accept using semi-colons to separate the namespaces
         namespace_prop.Replace(";", ":");
 
-        ttlib::multistr names(namespace_prop, ':');
+        tt_string_vector names(namespace_prop, ':');
         for (auto& iter: names)
         {
             if (namespace_using_name.size())
@@ -168,7 +168,7 @@ int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_PAG
         }
     }
 
-    ttlib::cstr derived_name = m_form_node->prop_as_string(prop_derived_class_name);
+    tt_string derived_name = m_form_node->prop_as_string(prop_derived_class_name);
     if (!m_is_derived_class)
     {
         // If this is not a derived class, then use the base class name
@@ -176,7 +176,7 @@ int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_PAG
     }
     else if (derived_name.empty())
     {
-        ttlib::cstr base_name(m_form_node->prop_as_string(prop_class_name));
+        tt_string base_name(m_form_node->prop_as_string(prop_class_name));
         base_name.Replace("My", "");
         base_name.Replace("Base", "");
         derived_name << "MyDerived" << base_name;
@@ -210,12 +210,12 @@ int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_PAG
         else
         {
             baseFile.replace_extension(header_ext);
-            m_header->writeLine(ttlib::cstr().Format("#include %ks", baseFile.c_str()));
+            m_header->writeLine(tt_string().Format("#include %ks", baseFile.c_str()));
             baseFile.remove_extension();
         }
         m_header->writeLine();
 
-        ttlib::cstr line;
+        tt_string line;
         line << "class " << derived_name << " : public ";
         if (namespace_using_name.size())
         {
@@ -230,9 +230,9 @@ int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_PAG
         m_header->writeLine("public:");
         m_header->Indent();
 
-        m_header->writeLine(ttlib::cstr() << derived_name
-                                          << "();  // If you use this constructor, you must call Create(parent)");
-        m_header->writeLine(ttlib::cstr() << derived_name << "(wxWindow* parent);");
+        m_header->writeLine(tt_string() << derived_name
+                                        << "();  // If you use this constructor, you must call Create(parent)");
+        m_header->writeLine(tt_string() << derived_name << "(wxWindow* parent);");
 
         m_header->Unindent();
     }
@@ -241,7 +241,7 @@ int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_PAG
     {
         if (auto prop = project->prop_as_string(prop_local_pch_file); prop.size())
         {
-            ttlib::cstr pch("#include ");
+            tt_string pch("#include ");
             pch << "\"" << prop << "\"";
 
             m_source->writeLine();
@@ -251,9 +251,9 @@ int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_PAG
 
         if (project->HasValue(prop_src_preamble))
         {
-            ttlib::cstr convert(project->prop_as_string(prop_src_preamble));
+            tt_string convert(project->prop_as_string(prop_src_preamble));
             convert.Replace("@@", "\n", tt::REPLACE::all);
-            ttlib::multistr lines(convert, '\n');
+            tt_string_vector lines(convert, '\n');
             bool initial_bracket = false;
             for (auto& code: lines)
             {
@@ -288,18 +288,18 @@ int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_PAG
             }
             else
             {
-                ttlib::cstr inc;
+                tt_string inc;
 
                 // Add a comment to the header that specifies the generated header and source filenames
                 baseFile.replace_extension(header_ext);
                 derived_file.replace_extension(header_ext);
                 inc.Format("#include %ks", std::string(derived_file.filename()).c_str());
 
-                ttlib::cstr comment(ttlib::cstr(header_ext) << "\"  // auto-generated: ");
+                tt_string comment(tt_string(header_ext) << "\"  // auto-generated: ");
                 comment << baseFile << " and ";
                 baseFile.replace_extension(source_ext);
                 comment << baseFile;
-                inc.Replace(ttlib::cstr(header_ext) << '"', comment);
+                inc.Replace(tt_string(header_ext) << '"', comment);
 
                 if (header_ext != ".h")
                     inc.Replace(".h", header_ext);
@@ -320,7 +320,7 @@ int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_PAG
             else
             {
                 baseFile.replace_extension(header_ext);
-                ttlib::cstr inc;
+                tt_string inc;
                 inc.Format("#include %ks", baseFile.c_str());
                 m_source->writeLine("// Non-generated additions to base class (virtual events is unchecked)");
                 m_source->writeLine("// Copy and paste into your own code as needed.");
@@ -332,13 +332,13 @@ int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_PAG
 
         if (namespace_using_name.size())
         {
-            m_source->writeLine(ttlib::cstr() << "using namespace " << namespace_using_name << ';');
+            m_source->writeLine(tt_string() << "using namespace " << namespace_using_name << ';');
             m_source->writeLine();
         }
 
         if (m_is_derived_class)  // non-derived class doesn't have a constructor
         {
-            ttlib::cstr code;
+            tt_string code;
             if (m_form_node->isGen(gen_wxDialog))
             {
                 code << "// If this constructor is used, the caller must call Create(parent)\n";
@@ -363,7 +363,7 @@ int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_PAG
         m_header->writeLine("protected:");
         m_header->Indent();
         m_header->SetLastLineBlank();
-        m_header->writeLine(ttlib::cstr() << "// Handlers for " << m_form_node->get_node_name() << " events");
+        m_header->writeLine(tt_string() << "// Handlers for " << m_form_node->get_node_name() << " events");
 
         std::set<std::string> generatedHandlers;
         for (auto event: events)
@@ -384,7 +384,7 @@ int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_PAG
                     }
                 }
 
-                ttlib::cstr prototype;
+                tt_string prototype;
 
                 // If this is a button that closes a dialog, and the dialog is marked as persist, then event.Skip() must be
                 // called.
@@ -400,7 +400,7 @@ int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_PAG
                     prototype.Format("%s(%s& WXUNUSED(event))", event->get_value().c_str(),
                                      event->GetEventInfo()->get_event_class().c_str());
                 }
-                m_header->writeLine(ttlib::cstr().Format("void %s override;", prototype.c_str()));
+                m_header->writeLine(tt_string().Format("void %s override;", prototype.c_str()));
 
                 if (panel_type != HDR_PANEL)
                 {
@@ -421,7 +421,7 @@ int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_PAG
                             continue;
                     }
                     m_source->writeLine();
-                    m_source->writeLine(ttlib::cstr() << "void " << derived_name << "::" << prototype);
+                    m_source->writeLine(tt_string() << "void " << derived_name << "::" << prototype);
                     m_source->writeLine("{");
                     m_source->Indent();
                     auto name = event->GetEventInfo()->get_name();
@@ -460,7 +460,7 @@ int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_PAG
                     }
                     else
                     {
-                        m_source->writeLine(ttlib::cstr().Format("    // TODO: Implement %s", event->get_value().c_str()),
+                        m_source->writeLine(tt_string().Format("    // TODO: Implement %s", event->get_value().c_str()),
                                             indent::auto_no_whitespace);
                     }
                     m_source->Unindent();

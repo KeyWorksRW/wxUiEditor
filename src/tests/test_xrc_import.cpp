@@ -52,13 +52,13 @@ void MainFrame::OnTestXrcImport(wxCommandEvent& /* event */)
         auto result = doc.load_string(doc_str.c_str());
         if (!result)
         {
-            wxMessageBox("Error parsing XRC document: " + ttlib::cstr(result.description()), "XRC Import Test");
+            wxMessageBox("Error parsing XRC document: " + tt_string(result.description()), "XRC Import Test");
             return;
         }
     }
 
     auto root = doc.first_child();
-    if (!ttlib::is_sameas(root.name(), "resource", tt::CASE::either))
+    if (!tt::is_sameas(root.name(), "resource", tt::CASE::either))
     {
         wxMessageBox("Invalid XRC -- no resource object", "Import XRC Test");
         return;
@@ -85,8 +85,8 @@ void MainFrame::OnTestXrcImport(wxCommandEvent& /* event */)
     if (original_node_count != new_node_count)
     {
         // This isn't always a problem, but it's an indication that something might be wrong.
-        MSG_INFO(ttlib::cstr("Original node count: ") << original_node_count);
-        MSG_INFO(ttlib::cstr("New node count: ") << new_node_count);
+        MSG_INFO(tt_string("Original node count: ") << original_node_count);
+        MSG_INFO(tt_string("New node count: ") << new_node_count);
     }
     else
     {
@@ -122,13 +122,13 @@ void MainFrame::OnTestXrcDuplicate(wxCommandEvent& /* event */)
         auto result = doc.load_string(doc_str.c_str());
         if (!result)
         {
-            wxMessageBox("Error parsing XRC document: " + ttlib::cstr(result.description()), "XRC Import Test");
+            wxMessageBox("Error parsing XRC document: " + tt_string(result.description()), "XRC Import Test");
             return;
         }
     }
 
     auto root = doc.first_child();
-    if (!ttlib::is_sameas(root.name(), "resource", tt::CASE::either))
+    if (!tt::is_sameas(root.name(), "resource", tt::CASE::either))
     {
         wxMessageBox("Invalid XRC -- no resource object", "Import XRC Test");
         return;
@@ -141,7 +141,7 @@ void MainFrame::OnTestXrcDuplicate(wxCommandEvent& /* event */)
     if (new_node)
     {
         Project.FixupDuplicatedNode(new_node.get());
-        ttlib::cstr undo_str("duplicate ");
+        tt_string undo_str("duplicate ");
         undo_str << new_node->DeclName();
         auto pos = Project.ProjectNode()->FindInsertionPos(form_node);
         PushUndoAction(std::make_shared<InsertNodeAction>(new_node.get(), Project.ProjectNode(), undo_str, pos));

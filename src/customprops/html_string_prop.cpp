@@ -23,7 +23,7 @@ EditHtmlProperty::EditHtmlProperty(const wxString& label, NodeProperty* prop) :
 
 EditHtmlDialog::EditHtmlDialog(wxWindow* parent, NodeProperty* prop) : EditHtmlDialogBase(parent)
 {
-    SetTitle(ttlib::cstr() << prop->DeclName() << " property editor");
+    SetTitle(tt_string() << prop->DeclName() << " property editor");
     m_value = prop->as_wxString();
 
     m_scintilla->StyleSetBold(wxSTC_H_TAG, true);

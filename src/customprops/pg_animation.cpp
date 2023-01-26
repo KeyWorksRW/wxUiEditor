@@ -110,7 +110,7 @@ wxVariant PropertyGrid_Animation::ChildChanged(wxVariant& thisValue, int childIn
 
         case IndexImage:
             {
-                ttString name(childValue.GetString());
+                tt_wxString name(childValue.GetString());
                 if (!name.file_exists())
                 {
                     name = Project.ArtDirectory();

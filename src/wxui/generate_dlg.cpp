@@ -141,7 +141,7 @@ void MainFrame::OnGenerateCode(wxCommandEvent&)
         }
         else if (results.file_count)
         {
-            ttlib::cstr msg;
+            tt_string msg;
             msg << '\n' << "All " << results.file_count << " generated files are current";
             wxMessageBox(msg, "Code Generation", wxOK, this);
         }

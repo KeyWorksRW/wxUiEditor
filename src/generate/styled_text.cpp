@@ -432,7 +432,7 @@ wxObject* StyledTextGenerator::CreateMockup(Node* node, wxObject* parent)
 
     // Now that all settings have been called, add some sample text.
 
-    ttlib::cstr sample(txt_styled_sample);
+    tt_string sample(txt_styled_sample);
     if (node->prop_as_string(prop_stc_lexer) == "CPP")
     {
         scintilla->StyleSetForeground(wxSTC_C_COMMENTLINE, wxColour(0, 128, 0));
@@ -667,7 +667,7 @@ bool StyledTextGenerator::SettingsCode(Code& code)
         code.Eol(eol_if_needed).NodeName().Function("SetMarginWidth(1, 0").EndFunction().AddComment("Remove default margin");
     }
 
-    ttlib::cstr margin = node->as_string(prop_fold_margin);
+    tt_string margin = node->as_string(prop_fold_margin);
     if (margin.is_sameas("none"))
         margin = "0";
 
@@ -675,7 +675,7 @@ bool StyledTextGenerator::SettingsCode(Code& code)
     {
         int width = node->as_string(prop_line_digits).atoi();
 
-        ttlib::cstr numbers("_");
+        tt_string numbers("_");
         while (width > 0)
         {
             numbers << '9';
@@ -723,7 +723,7 @@ bool StyledTextGenerator::SettingsCode(Code& code)
 
             if (node->HasValue(prop_fold_marker_colour))
             {
-                auto lambda = [&](ttlib::sview name, const std::string& symbol)
+                auto lambda = [&](tt_string_view name, const std::string& symbol)
                 {
                     code.Eol().NodeName().Function("MarkerDefine(").Add(name).Comma();
                     code.Add(symbol).Comma().Add("wxNullColour, ").ColourCode(prop_fold_marker_colour).EndFunction();
@@ -735,7 +735,7 @@ bool StyledTextGenerator::SettingsCode(Code& code)
             }
             else
             {
-                auto lambda = [&](ttlib::sview name, const std::string& symbol)
+                auto lambda = [&](tt_string_view name, const std::string& symbol)
                 {
                     code.Eol().NodeName().Function("MarkerDefine(").Add(name).Comma();
                     code.Add(symbol).EndFunction();
@@ -746,7 +746,7 @@ bool StyledTextGenerator::SettingsCode(Code& code)
                 lambda("wxSTC_MARKNUM_FOLDEREND", symbol_folder);
             }
             {
-                auto lambda = [&](ttlib::sview name)
+                auto lambda = [&](tt_string_view name)
                 {
                     code.Eol().NodeName().Function("MarkerDefine(").Add(name).Comma();
                     code.Add("wxSTC_MARK_BACKGROUND").EndFunction();
@@ -773,7 +773,7 @@ bool StyledTextGenerator::SettingsCode(Code& code)
                 code.NodeName().Function("StyleGetForeground(").Add("wxSTC_STYLE_DEFAULT").EndFunction();
             }
             {
-                auto lambda = [&](ttlib::sview name)
+                auto lambda = [&](tt_string_view name)
                 {
                     code.Eol().NodeName().Function("MarkerSetBackground(").Add(name).Comma();
                     code.Str(code.is_cpp() ? "clr_foreground" : "_clr_foreground_");
@@ -792,7 +792,7 @@ bool StyledTextGenerator::SettingsCode(Code& code)
 
             if (node->prop_as_string(prop_fold_marker_style) == "circle tree")
             {
-                auto lambda = [&](ttlib::sview mark_number, ttlib::sview mark_symbol)
+                auto lambda = [&](tt_string_view mark_number, tt_string_view mark_symbol)
                 {
                     code.Eol().NodeName().Function("MarkerDefine(").Add(mark_number).Comma();
                     code.Add(mark_symbol).EndFunction();
@@ -807,7 +807,7 @@ bool StyledTextGenerator::SettingsCode(Code& code)
             }
             else
             {
-                auto lambda = [&](ttlib::sview mark_number, ttlib::sview mark_symbol)
+                auto lambda = [&](tt_string_view mark_number, tt_string_view mark_symbol)
                 {
                     code.Eol().NodeName().Function("MarkerDefine(").Add(mark_number).Comma();
                     code.Add(mark_symbol).EndFunction();

@@ -478,7 +478,7 @@ void NodeCreator::ParseGeneratorFile(const char* xml_data)
 #if defined(_DEBUG) || defined(INTERNAL_TESTING)
         if (!rmap_GenNames.contains(class_name))
         {
-            MSG_WARNING(ttlib::cstr("Unrecognized class name -- ") << class_name);
+            MSG_WARNING(tt_string("Unrecognized class name -- ") << class_name);
         }
 #endif  // _DEBUG
 
@@ -496,7 +496,7 @@ void NodeCreator::ParseGeneratorFile(const char* xml_data)
 #if defined(_DEBUG) || defined(INTERNAL_TESTING)
         if (type == gen_type_unknown)
         {
-            MSG_WARNING(ttlib::cstr("Unrecognized class type -- ") << type_name);
+            MSG_WARNING(tt_string("Unrecognized class type -- ") << type_name);
         }
 #endif  // _DEBUG
 
@@ -519,7 +519,7 @@ void NodeCreator::ParseGeneratorFile(const char* xml_data)
             auto image = GetInternalImage(image_name);
             if (image.GetWidth() != GenImageSize || image.GetHeight() != GenImageSize)
             {
-                MSG_INFO(ttlib::cstr() << image_name << " width: " << image.GetWidth() << "height: " << image.GetHeight());
+                MSG_INFO(tt_string() << image_name << " width: " << image.GetWidth() << "height: " << image.GetHeight());
                 declaration->SetImage(image.Scale(GenImageSize, GenImageSize));
             }
             else
@@ -571,7 +571,7 @@ void NodeCreator::ParseGeneratorFile(const char* xml_data)
                         auto lookup_name = rmap_PropNames.find(inheritedProperty.attribute("name").as_string());
                         if (lookup_name == rmap_PropNames.end())
                         {
-                            MSG_ERROR(ttlib::cstr("Unrecognized inherited property name -- ")
+                            MSG_ERROR(tt_string("Unrecognized inherited property name -- ")
                                       << inheritedProperty.attribute("name").as_string());
                             inheritedProperty = inheritedProperty.next_sibling("property");
                             continue;
@@ -586,7 +586,7 @@ void NodeCreator::ParseGeneratorFile(const char* xml_data)
                         auto lookup_name = rmap_PropNames.find(inheritedProperty.attribute("name").as_string());
                         if (lookup_name == rmap_PropNames.end())
                         {
-                            MSG_ERROR(ttlib::cstr("Unrecognized inherited property name -- ")
+                            MSG_ERROR(tt_string("Unrecognized inherited property name -- ")
                                       << inheritedProperty.attribute("name").as_string());
                             inheritedProperty = inheritedProperty.next_sibling("hide");
                             continue;
@@ -634,7 +634,7 @@ void NodeCreator::ParseProperties(pugi::xml_node& elem_obj, NodeDeclaration* obj
         auto lookup_name = rmap_PropNames.find(name);
         if (lookup_name == rmap_PropNames.end())
         {
-            MSG_ERROR(ttlib::cstr("Unrecognized property name -- ") << name);
+            MSG_ERROR(tt_string("Unrecognized property name -- ") << name);
             elem_prop = elem_prop.next_sibling("property");
             continue;
         }
@@ -656,16 +656,16 @@ void NodeCreator::ParseProperties(pugi::xml_node& elem_obj, NodeDeclaration* obj
 
         if (property_type == type_unknown)
         {
-            MSG_ERROR(ttlib::cstr("Unrecognized property type -- ") << prop_type);
+            MSG_ERROR(tt_string("Unrecognized property type -- ") << prop_type);
             elem_prop = elem_prop.next_sibling("property");
             continue;
         }
 
-        ttlib::cstr def_value;
+        tt_string def_value;
         if (auto lastChild = elem_prop.last_child(); lastChild && !lastChild.text().empty())
         {
             def_value = lastChild.text().get();
-            if (ttlib::is_found(def_value.find('\n')))
+            if (tt::is_found(def_value.find('\n')))
             {
                 def_value.trim(tt::TRIM::both);
             }
@@ -691,7 +691,7 @@ void NodeCreator::ParseProperties(pugi::xml_node& elem_obj, NodeDeclaration* obj
         // Any time there is a var_name property, it needs to be followed by a var_comment and class_access property. Rather
         // than add this to all the XML generator specifications, we simply insert it here if it doesn't exist.
 
-        if (ttlib::is_sameas(name, map_PropNames[prop_var_name]))
+        if (tt::is_sameas(name, map_PropNames[prop_var_name]))
         {
             category.AddProperty(prop_var_comment);
             prop_info = std::make_shared<PropDeclaration>(prop_var_comment, type_string_edit_single, tt_empty_cstr,
@@ -701,7 +701,7 @@ void NodeCreator::ParseProperties(pugi::xml_node& elem_obj, NodeDeclaration* obj
             obj_info->GetPropInfoMap()[map_PropNames[prop_var_comment]] = prop_info;
 
             category.AddProperty(prop_class_access);
-            ttlib::cstr access("protected:");
+            tt_string access("protected:");
 
             // Most widgets will default to protected: as their class access. Those in the lst_no_class_access array should
             // have "none" as the default class access.

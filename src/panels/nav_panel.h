@@ -43,7 +43,7 @@ protected:
     Node* GetNode(wxTreeItemId item);
 
     int GetImageIndex(Node* node);
-    ttlib::cstr GetDisplayName(Node* node) const;
+    tt_string GetDisplayName(Node* node) const;
     void UpdateDisplayName(wxTreeItemId id, Node* node);
 
     // Event handlers without parameters are called by lamda's, which means the function can also be called directly without

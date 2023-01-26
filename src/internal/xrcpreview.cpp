@@ -131,8 +131,6 @@ bool XrcPreview::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 #include <wx/xml/xml.h>     // wxXmlDocument - XML parser & data holder class
 #include <wx/xrc/xmlres.h>  // XML resources
 
-#include <tttextfile_wx.h>  // ttlib::viewfile
-
 #include "gen_xrc.h"          // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
 #include "mainframe.h"        // MainFrame -- Main window frame
 #include "node.h"             // Node class
@@ -171,10 +169,10 @@ void XrcPreview::OnXrcCopy(wxCommandEvent& WXUNUSED(event))
     m_scintilla->AddTextRaw(doc_str.c_str(), (to_int) doc_str.size());
     m_scintilla->SetEmptySelection(0);
 
-    ttlib::viewfile m_view;
+    tt_view_vector m_view;
     m_view.ReadString(doc_str);
 
-    ttlib::cstr search("name=\"");
+    tt_string search("name=\"");
     evt_flags = wxGetFrame().GetSelectedNode();
 
     if (evt_flags->HasProp(prop_id) && evt_flags->prop_as_string(prop_id) != "wxID_ANY")
@@ -192,7 +190,7 @@ void XrcPreview::OnXrcCopy(wxCommandEvent& WXUNUSED(event))
 
     int line = (to_int) m_view.FindLineContaining(search);
 
-    if (!ttlib::is_found(line))
+    if (!tt::is_found(line))
         return;
 
     m_scintilla->MarkerDeleteAll(node_marker);
@@ -207,7 +205,7 @@ void XrcPreview::OnPreview(wxCommandEvent& WXUNUSED(event))
     auto xrc_text = m_scintilla->GetText();
     wxString dlg_name;
     auto pos = xrc_text.Find("name=\"");
-    if (!ttlib::is_found(pos))
+    if (!tt::is_found(pos))
     {
         wxMessageBox("Could not locate the dialog's name.", "XRC Dialog Preview");
         return;
@@ -285,7 +283,7 @@ void XrcPreview::OnExport(wxCommandEvent& WXUNUSED(event))
 
     if (dialog.ShowModal() == wxID_OK)
     {
-        ttString filename = dialog.GetPath();
+        tt_wxString filename = dialog.GetPath();
 
         std::string buf;
         buf.reserve(m_scintilla->GetTextLength() + 1);

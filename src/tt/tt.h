@@ -11,6 +11,7 @@
     #error "The contents of <tt.h> are available only with C++17 or later."
 #endif
 
+#include <filesystem>
 #include <string_view>
 
 #ifndef assertm

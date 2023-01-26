@@ -73,7 +73,7 @@ void MockupContent::CreateAllGenerators()
     }
     else if (form->isGen(gen_Images))
     {
-        ASSERT_MSG(form->GetGenerator(), ttlib::cstr() << "Missing component for " << form->DeclName());
+        ASSERT_MSG(form->GetGenerator(), tt_string() << "Missing component for " << form->DeclName());
         auto generator = form->GetGenerator();
         if (!generator)
             return;
@@ -110,9 +110,9 @@ void MockupContent::CreateAllGenerators()
 
             // First create the menu and toolbar if they exist
 
-            if (ttlib::is_found(pos_menu))
+            if (tt::is_found(pos_menu))
                 CreateChildren(form->GetChild(pos_menu), this, this, m_parent_sizer);
-            if (ttlib::is_found(pos_toolbar))
+            if (tt::is_found(pos_toolbar))
                 CreateChildren(form->GetChild(pos_toolbar), this, this, m_parent_sizer);
 
             for (size_t i = 0; i < form->GetChildCount(); i++)
@@ -121,7 +121,7 @@ void MockupContent::CreateAllGenerators()
                     CreateChildren(form->GetChild(i), this, this, m_parent_sizer);
             }
 
-            if (ttlib::is_found(pos_statusbar))
+            if (tt::is_found(pos_statusbar))
                 CreateChildren(form->GetChild(pos_statusbar), this, this, m_parent_sizer);
         }
 
@@ -144,7 +144,7 @@ void MockupContent::CreateAllGenerators()
 
 void MockupContent::CreateChildren(Node* node, wxWindow* parent, wxObject* parent_object, wxBoxSizer* parent_sizer)
 {
-    ASSERT_MSG(node->GetGenerator(), ttlib::cstr() << "Missing component for " << node->DeclName());
+    ASSERT_MSG(node->GetGenerator(), tt_string() << "Missing component for " << node->DeclName());
     auto generator = node->GetGenerator();
     if (!generator)
         return;

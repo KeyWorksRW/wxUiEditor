@@ -38,7 +38,7 @@ void ProjectHandler::Initialize(NodeSharedPtr project, bool allow_ui)
     ProjectImages.Initialize(m_project_node, allow_ui);
 }
 
-void ProjectHandler::SetProjectFile(const ttString& file)
+void ProjectHandler::SetProjectFile(const tt_wxString& file)
 {
     m_projectFile = file;
     m_projectPath = m_projectFile;
@@ -104,13 +104,13 @@ void ProjectHandler::FixupDuplicatedNode(Node* new_node)
         {
             if (set_names.contains(new_node->value(prop)))
             {
-                ttlib::cstr new_name = new_node->value(prop);
+                tt_string new_name = new_node->value(prop);
                 if (!new_name.contains("_copy"))
                     new_name += "_copy";
                 if (set_names.contains(new_name))
                 {
-                    ttlib::cstr copy_name = new_name;
-                    while (ttlib::is_digit(copy_name.back()))
+                    tt_string copy_name = new_name;
+                    while (tt::is_digit(copy_name.back()))
                     {
                         // remove any trailing digits
                         copy_name.erase(copy_name.size() - 1, 1);
@@ -141,9 +141,9 @@ void ProjectHandler::FixupDuplicatedNode(Node* new_node)
     lambda(python_filenames, prop_xrc_file);
 }
 
-ttString ProjectHandler::ArtDirectory() const
+tt_wxString ProjectHandler::ArtDirectory() const
 {
-    ttString result;
+    tt_wxString result;
 
     if (m_project_node->HasValue(prop_art_directory))
         result = m_project_node->as_wxString(prop_art_directory);
@@ -155,9 +155,9 @@ ttString ProjectHandler::ArtDirectory() const
     return result;
 }
 
-ttString ProjectHandler::BaseDirectory(int language) const
+tt_wxString ProjectHandler::BaseDirectory(int language) const
 {
-    ttString result;
+    tt_wxString result;
     if (language == GEN_LANG_CPLUSPLUS && m_project_node->HasValue(prop_base_directory))
         result = m_project_node->as_wxString(prop_base_directory);
     else if (language == GEN_LANG_PYTHON && m_project_node->HasValue(prop_python_output_folder))
@@ -173,9 +173,9 @@ ttString ProjectHandler::BaseDirectory(int language) const
     return result;
 }
 
-ttString ProjectHandler::DerivedDirectory() const
+tt_wxString ProjectHandler::DerivedDirectory() const
 {
-    ttString result;
+    tt_wxString result;
 
     if (m_project_node->HasValue(prop_derived_directory))
         result = m_project_node->as_wxString(prop_derived_directory);

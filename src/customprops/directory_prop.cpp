@@ -34,7 +34,7 @@ bool DirectoryDialogAdapter::DoShowDialog(wxPropertyGrid* propGrid, wxPGProperty
         dlg_pos = propGrid->GetGoodEditorDialogPosition(property, dlg_sz);
     }
 
-    ttString path = Project.ProjectPath();
+    tt_wxString path = Project.ProjectPath();
     path.append_filename(m_prop->as_string());
     path.make_absolute();
 

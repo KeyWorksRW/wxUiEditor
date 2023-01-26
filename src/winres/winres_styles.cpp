@@ -57,7 +57,7 @@ static const StylePair lst_styles[] = {
 
 // clang-format on
 
-void resCtrl::ParseStyles(ttlib::sview line)
+void resCtrl::ParseStyles(tt_string_view line)
 {
     for (auto& iter: lst_styles)
     {
@@ -66,7 +66,7 @@ void resCtrl::ParseStyles(ttlib::sview line)
     }
 }
 
-void resCtrl::ParseButtonStyles(ttlib::sview line)
+void resCtrl::ParseButtonStyles(tt_string_view line)
 {
     if (line.contains("BS_RIGHTBUTTON"))
     {
@@ -115,7 +115,7 @@ void resCtrl::ParseButtonStyles(ttlib::sview line)
         AppendStyle(prop_window_style, "wxBORDER_STATIC");
 }
 
-void resCtrl::ParseListViewStyles(ttlib::sview line)
+void resCtrl::ParseListViewStyles(tt_string_view line)
 {
     m_node->prop_set_value(prop_style, "");
 
@@ -149,7 +149,7 @@ void resCtrl::ParseListViewStyles(ttlib::sview line)
         AppendStyle(prop_style, "wxLC_SORT_DESCENDING");
 }
 
-void resCtrl::AddSpecialStyles(ttlib::sview line)
+void resCtrl::AddSpecialStyles(tt_string_view line)
 {
     //////////// Edit control styles ////////////
 

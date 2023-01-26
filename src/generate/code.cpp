@@ -8,8 +8,6 @@
 #include <array>
 #include <map>
 
-#include <ttmultistr_wx.h>  // ttMultiString -- Class for handling multiple strings
-
 #include "code.h"
 
 #include "mainapp.h"          // App class
@@ -20,7 +18,7 @@ using namespace code;
 
 // clang-format off
 
-static const std::map<ttlib::sview, std::string_view, std::less<>> s_short_map
+static const std::map<tt_string_view, std::string_view, std::less<>> s_short_map
 {
     { "wxAUI_", "wx.aui."},
     { "wxCAL_", "wx.adv."},
@@ -206,7 +204,7 @@ Code& Code::CloseBrace()
     if (is_cpp())
     {
         m_within_braces = false;
-        while (ttlib::is_whitespace(m_code.back()))
+        while (tt::is_whitespace(m_code.back()))
             m_code.pop_back();
         Eol().Str("}").Eol();
     }
@@ -248,7 +246,7 @@ Code& Code::Tab(int tabs)
     return *this;
 }
 
-Code& Code::Add(ttlib::sview text)
+Code& Code::Add(tt_string_view text)
 {
     CheckLineLength(text.size());
 
@@ -258,7 +256,7 @@ Code& Code::Add(ttlib::sview text)
     }
     else
     {
-        auto lambda = [&](ttlib::sview candidate)
+        auto lambda = [&](tt_string_view candidate)
         {
             // Note that you can *NOT* allocate anything on the stack and return a
             // std::string_view to it!
@@ -282,7 +280,7 @@ Code& Code::Add(ttlib::sview text)
         if (text.find('|') != tt::npos)
         {
             bool style_set = false;
-            ttlib::multiview multistr(text, "|", tt::TRIM::both);
+            tt_view_vector multistr(text, "|", tt::TRIM::both);
             for (auto& iter: multistr)
             {
                 if (iter.empty())
@@ -321,12 +319,12 @@ Code& Code::TrueFalseIf(GenEnum::PropName prop_name)
         return AddFalse();
 }
 
-Code& Code::AddConstant(GenEnum::PropName prop_name, ttlib::sview short_name)
+Code& Code::AddConstant(GenEnum::PropName prop_name, tt_string_view short_name)
 {
     return Add(m_node->as_constant(prop_name, short_name));
 }
 
-Code& Code::Function(ttlib::sview text)
+Code& Code::Function(tt_string_view text)
 {
     if (is_cpp())
     {
@@ -347,7 +345,7 @@ Code& Code::Function(ttlib::sview text)
     return *this;
 }
 
-Code& Code::ClassMethod(ttlib::sview function_name)
+Code& Code::ClassMethod(tt_string_view function_name)
 {
     if (is_cpp())
     {
@@ -362,7 +360,7 @@ Code& Code::ClassMethod(ttlib::sview function_name)
     return *this;
 }
 
-Code& Code::FormFunction(ttlib::sview text)
+Code& Code::FormFunction(tt_string_view text)
 {
     if (is_python())
     {
@@ -372,7 +370,7 @@ Code& Code::FormFunction(ttlib::sview text)
     return *this;
 }
 
-Code& Code::Class(ttlib::sview text)
+Code& Code::Class(tt_string_view text)
 {
     if (is_cpp())
     {
@@ -392,7 +390,7 @@ Code& Code::Class(ttlib::sview text)
     return *this;
 }
 
-Code& Code::CreateClass(bool use_generic, ttlib::sview override_name)
+Code& Code::CreateClass(bool use_generic, tt_string_view override_name)
 {
     m_code += " = ";
     if (is_cpp())
@@ -406,7 +404,7 @@ Code& Code::CreateClass(bool use_generic, ttlib::sview override_name)
         }
     }
 
-    ttlib::cstr class_name;
+    tt_string class_name;
     if (override_name.empty())
         class_name = m_node->DeclName();
     else
@@ -435,7 +433,7 @@ Code& Code::CreateClass(bool use_generic, ttlib::sview override_name)
     return *this;
 }
 
-Code& Code::Assign(ttlib::sview class_name)
+Code& Code::Assign(tt_string_view class_name)
 {
     m_code += " = ";
     if (m_language == GEN_LANG_CPLUSPLUS)
@@ -469,7 +467,7 @@ Code& Code::as_string(PropName prop_name)
         return *this;
     }
     std::string_view wx_prefix = "wx.";
-    auto lambda = [&](ttlib::sview candidate)
+    auto lambda = [&](tt_string_view candidate)
     {
         for (auto& iter_prefix: s_short_map)
         {
@@ -486,7 +484,7 @@ Code& Code::as_string(PropName prop_name)
         }
     };
 
-    if (!ttlib::is_found(str.find('|')))
+    if (!tt::is_found(str.find('|')))
     {
         if (str == "wxEmptyString")
         {
@@ -508,7 +506,7 @@ Code& Code::as_string(PropName prop_name)
 
     auto cur_pos = m_code.size();
 
-    ttlib::multiview multistr(str, "|", tt::TRIM::both);
+    tt_view_vector multistr(str, "|", tt::TRIM::both);
     bool first = true;
     for (auto& iter: multistr)
     {
@@ -571,7 +569,7 @@ int Code::IntValue(GenEnum::PropName prop_name) const
     return m_node->as_int(prop_name);
 }
 
-bool Code::PropContains(GenEnum::PropName prop_name, ttlib::sview text) const
+bool Code::PropContains(GenEnum::PropName prop_name, tt_string_view text) const
 {
     return m_node->as_string(prop_name).contains(text);
 }
@@ -640,7 +638,7 @@ Code& Code::ValidParentName()
         parent = parent->GetParent();
     }
 
-    ASSERT_MSG(parent, ttlib::cstr() << m_node->get_node_name() << " has no parent!");
+    ASSERT_MSG(parent, tt_string() << m_node->get_node_name() << " has no parent!");
     return *this;
 }
 
@@ -665,7 +663,7 @@ Code& Code::QuotedString(GenEnum::PropName prop_name)
     }
 }
 
-Code& Code::QuotedString(ttlib::sview text)
+Code& Code::QuotedString(tt_string_view text)
 {
     auto cur_pos = m_code.size();
 
@@ -811,7 +809,7 @@ Code& Code::Pos(GenEnum::PropName prop_name, bool enable_dlg_units)
     return *this;
 }
 
-Code& Code::Style(const char* prefix, ttlib::sview force_style)
+Code& Code::Style(const char* prefix, tt_string_view force_style)
 {
     bool style_set = false;
     if (force_style.size())
@@ -858,9 +856,9 @@ Code& Code::Style(const char* prefix, ttlib::sview force_style)
             }
             else
             {
-                ttlib::multiview multistr(m_node->prop_as_constant(prop_style, prefix), "|", tt::TRIM::both);
+                tt_view_vector multistr(m_node->prop_as_constant(prop_style, prefix), "|", tt::TRIM::both);
                 std::string_view wx_prefix = "wx.";
-                auto lambda = [&](ttlib::sview candidate)
+                auto lambda = [&](tt_string_view candidate)
                 {
                     for (auto& iter_prefix: s_short_map)
                     {
@@ -933,7 +931,7 @@ Code& Code::Style(const char* prefix, ttlib::sview force_style)
     return *this;
 }
 
-Code& Code::PosSizeFlags(bool uses_def_validator, ttlib::sview def_style)
+Code& Code::PosSizeFlags(bool uses_def_validator, tt_string_view def_style)
 {
     if (m_node->HasValue(prop_window_name))
     {
@@ -986,7 +984,7 @@ Code& Code::PosSizeFlags(bool uses_def_validator, ttlib::sview def_style)
     return *this;
 }
 
-int Code::WhatParamsNeeded(ttlib::sview default_style) const
+int Code::WhatParamsNeeded(tt_string_view default_style) const
 {
     if (m_node->HasValue(prop_window_name))
     {
@@ -1014,7 +1012,7 @@ int Code::WhatParamsNeeded(ttlib::sview default_style) const
     return nothing_needed;
 }
 
-Code& Code::PosSizeForceStyle(ttlib::sview force_style, bool uses_def_validator)
+Code& Code::PosSizeForceStyle(tt_string_view force_style, bool uses_def_validator)
 {
     if (m_node->HasValue(prop_window_name))
     {
@@ -1126,7 +1124,7 @@ Code& Code::GenSizerFlags()
         else
         {
             m_code << ".Border(";
-            ttlib::cstr border_flags;
+            tt_string border_flags;
 
             if (prop.contains("wxLEFT"))
             {
@@ -1386,7 +1384,7 @@ void Code::GenFontColourSettings()
 
             Eol(eol_if_needed).Str("font_info.");
             if (fontprop.GetFaceName().size() && fontprop.GetFaceName() != "default")
-                Str("FaceName(").QuotedString(ttlib::cstr() << fontprop.GetFaceName().wx_str()) += ").";
+                Str("FaceName(").QuotedString(tt_string() << fontprop.GetFaceName().wx_str()) += ").";
             if (fontprop.GetFamily() != wxFONTFAMILY_DEFAULT)
                 Str("Family(").Str(font_family_pairs.GetValue(fontprop.GetFamily())) += ").";
             if (fontprop.GetStyle() != wxFONTSTYLE_NORMAL)
@@ -1436,7 +1434,7 @@ void Code::GenFontColourSettings()
         else
         {
             const auto colour = m_node->as_wxColour(prop_foreground_colour);
-            Add(ttlib::cstr().Format("wxColour(%i, %i, %i)", colour.Red(), colour.Green(), colour.Blue()));
+            Add(tt_string().Format("wxColour(%i, %i, %i)", colour.Red(), colour.Green(), colour.Blue()));
         }
         EndFunction();
     }
@@ -1459,15 +1457,15 @@ void Code::GenFontColourSettings()
         else
         {
             const auto colour = m_node->as_wxColour(prop_background_colour);
-            Add(ttlib::cstr().Format("wxColour(%i, %i, %i)", colour.Red(), colour.Green(), colour.Blue()));
+            Add(tt_string().Format("wxColour(%i, %i, %i)", colour.Red(), colour.Green(), colour.Blue()));
         }
         EndFunction();
     }
 }
 
-Code& Code::AddComment(ttlib::sview text)
+Code& Code::AddComment(tt_string_view text)
 {
-    if (m_code.empty() || !ttlib::is_whitespace(m_code.back()))
+    if (m_code.empty() || !tt::is_whitespace(m_code.back()))
     {
         m_code << ' ';
     }
@@ -1498,7 +1496,7 @@ Code& Code::ColourCode(GenEnum::PropName prop_name)
         else
         {
             auto colour = m_node->as_wxColour(prop_name);
-            Add(ttlib::cstr().Format("wxColour(%i, %i, %i)", colour.Red(), colour.Green(), colour.Blue()));
+            Add(tt_string().Format("wxColour(%i, %i, %i)", colour.Red(), colour.Green(), colour.Blue()));
         }
     }
 

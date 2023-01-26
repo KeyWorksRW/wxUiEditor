@@ -26,6 +26,6 @@ protected:
     void SetWakaExePath();
 
 private:
-    ttlib::cstr m_waka_cli;
+    tt_string m_waka_cli;
     intmax_t m_last_heartbeat { 0 };  // last second tick
 };

@@ -34,7 +34,7 @@ void SBarFieldsDialog::OnInit(wxInitDialogEvent& WXUNUSED(event))
     m_grid->SetColFormatCustom(1, wxGRID_VALUE_NUMBER);
 
     auto fields = m_prop->as_statusbar_fields();
-    if (ttlib::is_digit(m_prop->as_string()[0]))
+    if (tt::is_digit(m_prop->as_string()[0]))
     {
         fields.clear();
         auto total_fields = m_prop->as_int();

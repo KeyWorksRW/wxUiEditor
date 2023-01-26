@@ -14,20 +14,20 @@
 class MsgFrame : public MsgFrameBase
 {
 public:
-    MsgFrame(std::vector<ttlib::cstr>* pMsgs, bool* pDestroyed, wxWindow* parent = nullptr);
+    MsgFrame(std::vector<tt_string>* pMsgs, bool* pDestroyed, wxWindow* parent = nullptr);
 
     void OnNodeSelected();
 
-    void AddErrorMsg(ttlib::sview msg);
-    void Add_wxErrorMsg(ttlib::sview msg);
+    void AddErrorMsg(tt_string_view msg);
+    void Add_wxErrorMsg(tt_string_view msg);
 
-    void AddWarningMsg(ttlib::sview msg);
-    void Add_wxWarningMsg(ttlib::sview msg);
+    void AddWarningMsg(tt_string_view msg);
+    void Add_wxWarningMsg(tt_string_view msg);
 
-    void AddInfoMsg(ttlib::sview msg) { m_textCtrl->AppendText(msg.wx_str()); };
-    void AddEventMsg(ttlib::sview msg) { m_textCtrl->AppendText(msg.wx_str()); };
+    void AddInfoMsg(tt_string_view msg) { m_textCtrl->AppendText(msg.wx_str()); };
+    void AddEventMsg(tt_string_view msg) { m_textCtrl->AppendText(msg.wx_str()); };
 
-    void Add_wxInfoMsg(ttlib::sview msg);
+    void Add_wxInfoMsg(tt_string_view msg);
 
 protected:
     void UpdateNodeInfo();
@@ -44,7 +44,7 @@ protected:
     void OnWarnings(wxCommandEvent& WXUNUSED(event)) override;
 
 private:
-    std::vector<ttlib::cstr>* m_pMsgs;
+    std::vector<tt_string>* m_pMsgs;
     bool* m_pDestroyed;
 
     bool m_isNodeInfoPage { false };

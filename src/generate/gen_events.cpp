@@ -5,8 +5,6 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include <tttextfile_wx.h>  // textfile -- Classes for reading and writing line-oriented files
-
 #include "gen_base.h"
 
 #include "../customprops/eventhandler_dlg.h"  // EventHandlerDlg static functions
@@ -26,7 +24,7 @@ extern const char* python_triple_quote;  // "\"\"\"";
 void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& class_name)
 {
     Code handler(event->GetNode(), code.m_language);
-    ttlib::cstr event_code;
+    tt_string event_code;
     if (code.m_language == GEN_LANG_CPLUSPLUS)
     {
         event_code = EventHandlerDlg::GetCppValue(event->get_value());
@@ -113,7 +111,6 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
         }
         code.Function("Bind(") << handler.m_code;
 
-        code.AddIfCpp(" ");
         code.EndFunction();
     }
     else if (event->GetNode()->isGen(gen_wxMenuItem) || event->GetNode()->isGen(gen_tool))
@@ -150,7 +147,6 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
     {
         code.AddIfPython("self.");
         code << "Bind(" << handler.m_code;
-        code.AddIfCpp(" ");
         code.EndFunction();
     }
     else
@@ -158,7 +154,6 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
         if (code.is_python() && !event->GetNode()->IsLocal())
             code.Add("self.");
         code.Add(event->GetNode()->get_node_name()).Function("Bind(") << handler.m_code;
-        code.AddIfCpp(" ");
         code.EndFunction();
     }
 
@@ -178,7 +173,7 @@ void BaseCodeGenerator::GenSrcEventBinding(Node* node, EventVector& events)
     auto propName = node->get_prop_ptr(prop_class_name);
     if (!propName)
     {
-        FAIL_MSG(ttlib::cstr("Missing \"name\" property in ") << node->DeclName() << " class.");
+        FAIL_MSG(tt_string("Missing \"name\" property in ") << node->DeclName() << " class.");
         return;
     }
 
@@ -216,9 +211,9 @@ void BaseCodeGenerator::GenSrcEventBinding(Node* node, EventVector& events)
                     }
                     else
                     {
-                        ttlib::cstr convert(code.GetCode());
+                        tt_string convert(code.GetCode());
                         convert.Replace("@@", "\n", tt::REPLACE::all);
-                        ttlib::multistr lines(convert, '\n');
+                        tt_string_vector lines(convert, '\n');
                         bool initial_bracket = false;
                         for (auto& line: lines)
                         {
@@ -254,7 +249,7 @@ void BaseCodeGenerator::GenHdrEvents(const EventVector& events)
 
     if (events.size() || m_CtxMenuEvents.size())
     {
-        std::set<ttlib::cstr> code_lines;
+        std::set<tt_string> code_lines;
 
         for (auto& event: events)
         {
@@ -262,7 +257,7 @@ void BaseCodeGenerator::GenHdrEvents(const EventVector& events)
             if (event->get_value().contains("[") || event->get_value().contains("::"))
                 continue;
 
-            ttlib::cstr code;
+            tt_string code;
 
             // If the form has a wxContextMenuEvent node, then the handler for the form's wxEVT_CONTEXT_MENU is a method of
             // the base class and is not virtual.
@@ -327,7 +322,7 @@ void BaseCodeGenerator::GenHdrEvents(const EventVector& events)
             if (event->get_value().contains("[") || event->get_value().contains("::"))
                 continue;
 
-            ttlib::cstr code;
+            tt_string code;
 
             if (m_form_node->prop_as_bool(prop_use_derived_class))
             {
@@ -399,8 +394,8 @@ void BaseCodeGenerator::GenPythonEventHandlers(EventVector& events)
     bool found_user_handlers = false;
     if (m_panel_type == NOT_PANEL)
     {
-        ttlib::viewfile org_file;
-        ttlib::cstr path;
+        tt_view_vector org_file;
+        tt_string path;
 
         // Set path to the output file
         if (auto& base_file = m_form_node->prop_as_string(prop_python_file); base_file.size())
@@ -468,7 +463,7 @@ void BaseCodeGenerator::GenPythonEventHandlers(EventVector& events)
         if (event->get_value().contains("lambda "))
             continue;
 
-        ttlib::cstr set_code;
+        tt_string set_code;
         set_code << "def " << event->get_value() << "(self, event):";
         if (code_lines.find(set_code) != code_lines.end())
             continue;

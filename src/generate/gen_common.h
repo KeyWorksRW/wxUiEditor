@@ -32,12 +32,12 @@ class FontProperty;
 // prop_internationalize is true.
 //
 // Will return "wxEmptyString" if prop_name is empty.
-ttlib::cstr GenerateQuotedString(const ttlib::cstr& str);
+tt_string GenerateQuotedString(const tt_string& str);
 
-ttlib::cstr GenerateQuotedString(Node* node, GenEnum::PropName prop_name);
+tt_string GenerateQuotedString(Node* node, GenEnum::PropName prop_name);
 
 // Add C++ escapes around any characters the compiler wouldn't accept as a normal part of a string.
-ttlib::cstr ConvertToCodeString(const ttlib::cstr& text);
+tt_string ConvertToCodeString(const tt_string& text);
 
 // Insert a required include file into either src or hdr set (depending on prop_class_access)
 void InsertGeneratorInclude(Node* node, const std::string& include, std::set<std::string>& set_src,
@@ -45,40 +45,40 @@ void InsertGeneratorInclude(Node* node, const std::string& include, std::set<std
 
 // This is *NOT* the same as get_node_name() -- this will handle wxStaticBox and
 // wxCollapsiblePane parents as well as "normal" parents
-ttlib::cstr GetParentName(Node* node);
+tt_string GetParentName(Node* node);
 
 // Used for controls that need to call SetBitmap(bitmap). Returns true if wxVector generated.
 //
 // Set is_single to true for a non-button control.
-bool GenBtnBimapCode(Node* node, ttlib::cstr& code, bool is_single = false);
+bool GenBtnBimapCode(Node* node, tt_string& code, bool is_single = false);
 
 // Converts bitmap property into code. Code is set to wxNullBitmap if no bitmap. Art will
 // return either a bitmap or an image if scaling is requested. XPM returns wxImage and HDR
 // returns wxueImage() (which is a wxImage). pDpiWindow is the name of the window
 // to use for wxBitmapBundle::GetBitmapFrom()
-ttlib::cstr GenerateBitmapCode(const ttlib::cstr& description);
+tt_string GenerateBitmapCode(const tt_string& description);
 
 // If a wxVector is required to create the wxBitmapBundle, this will generate the opening
 // brace and the vector code and returns true with code filled in.
 //
 // Call this before calling GenerateBundleCode()
-bool GenerateVectorCode(const ttlib::cstr& description, ttlib::cstr& code);
+bool GenerateVectorCode(const tt_string& description, tt_string& code);
 
 // Generates the code necessary to create a wxBitmapBundle used to pass as an argument to a
 // function, or the start of a code block containing: { wxVector<wxBitmap> bitmaps;
 //
 // Returns true if the returned string starts with a '{' character and a wxVector was
 // generated.
-bool GenerateBundleCode(const ttlib::cstr& description, ttlib::cstr& code);
+bool GenerateBundleCode(const tt_string& description, tt_string& code);
 
 // Will generate "wxDefaultPosition" if prop_pos is -1;-1
-void GenPos(Node* node, ttlib::cstr& code);
-void GenSize(Node* node, ttlib::cstr& code);
+void GenPos(Node* node, tt_string& code);
+void GenSize(Node* node, tt_string& code);
 
 // This will output "0" if there are no styles (style, window_style, tab_position etc.)
 //
 // If style is a friendly name, add the prefix parameter to prefix lookups.
-void GenStyle(Node* node, ttlib::cstr& code, const char* prefix = nullptr);
+void GenStyle(Node* node, tt_string& code, const char* prefix = nullptr);
 
 // Returns the integer value of all style properties for the node. Includes style,
 // window_style, tab_position etc.
@@ -88,21 +88,21 @@ int GetStyleInt(Node* node, const char* prefix = nullptr);
 
 // This generates code for the header file for Get() and Set() functions using function names
 // specified by the user in the project file.
-std::optional<ttlib::cstr> GenGetSetCode(Node* node);
+std::optional<tt_string> GenGetSetCode(Node* node);
 
-std::optional<ttlib::cstr> GenValidatorSettings(Node* node);
+std::optional<tt_string> GenValidatorSettings(Node* node);
 
 // Generates code for any class inheriting from wxTopLevelWindow -- this will generate
 // everything needed to set the window's icon.
-ttlib::cstr GenerateIconCode(const ttlib::cstr& description);
+tt_string GenerateIconCode(const tt_string& description);
 
 // This is called to add a tool to either wxToolBar or wxAuiToolBar
-ttlib::cstr GenToolCode(Node* node, ttlib::sview BitmapCode = "");
+tt_string GenToolCode(Node* node, tt_string_view BitmapCode = "");
 
 // Generates wxSize(x,y) or ConvertDialogToPixels(wxSize(x,y))
 //
 // wxSize will be converted to dialog units if the size contains a 'd' character.
-ttlib::cstr GenerateWxSize(Node* node, PropName prop);
+tt_string GenerateWxSize(Node* node, PropName prop);
 
 /////////////////////////////////////// Code-enabled Functions ///////////////////////////////////////
 
@@ -128,7 +128,7 @@ bool PythonBundleCode(Code& code, GenEnum::PropName prop);
 
 // Deterimes where the python code will be written to, and returns an absolute path to that
 // location which can be used as the parameter for make_relative().
-ttlib::cstr MakePythonPath(Node* node);
+tt_string MakePythonPath(Node* node);
 
 // Creates a string using either wxSystemSettings::GetColour(name) or wxColour(r, g, b).
 // Generates wxNullColour if the property is empty.

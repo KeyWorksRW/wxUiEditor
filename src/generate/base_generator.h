@@ -146,26 +146,26 @@ public:
     void OnLeftClick(wxMouseEvent& event);
 
     // Get the Help menu item text
-    virtual ttlib::cstr GetHelpText(Node*);
+    virtual tt_string GetHelpText(Node*);
 
     // Get the HTML filename to browse to. Caller needs to supply the prefix.
-    virtual ttlib::cstr GetHelpURL(Node*);
+    virtual tt_string GetHelpURL(Node*);
 
     // Get the wxPython Help menu item text
-    virtual ttlib::cstr GetPythonHelpText(Node*);
+    virtual tt_string GetPythonHelpText(Node*);
 
     // Get the HTML filename to browse to. E.g., "wx.Button.html"
-    virtual ttlib::cstr GetPythonURL(Node* node) { return GetPythonHelpText(node) + ".html"; }
+    virtual tt_string GetPythonURL(Node* node) { return GetPythonHelpText(node) + ".html"; }
 
     // Change the enable/disable states in the Property Grid Panel based on the current
     // property.
     virtual void ChangeEnableState(wxPropertyGridManager*, NodeProperty*);
 
     // Call this to retrieve hint text for the property
-    virtual std::optional<ttlib::cstr> GetHint(NodeProperty*);
+    virtual std::optional<tt_string> GetHint(NodeProperty*);
 
     // Call this to use different help text then GetPropDeclaration()->GetDescription()
-    virtual std::optional<ttlib::cstr> GetPropertyDescription(NodeProperty*) { return {}; }
+    virtual std::optional<tt_string> GetPropertyDescription(NodeProperty*) { return {}; }
 
     // Call this to convert wxWidgets constants to friendly names, and to fix conflicting bit
     // flags. Returns true if a change was made. Note that the change is *not* pushed to the

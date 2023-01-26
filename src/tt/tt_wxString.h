@@ -1,5 +1,5 @@
 ///////////////////////////////////
-// Purpose:   wxString with additional methods similar to ttlib::cstr
+// Purpose:   wxString with additional methods similar to tt_string
 // Author:    Ralph Walden
 // Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
@@ -149,7 +149,7 @@ public:
     //
     // A whitespace character is a space, tab, eol or form feed character.
     std::string sub_find_nonspace(size_t start = 0) const;
-    // ttlib::cstr sub_find_nonspace(size_t start = 0) const { return sub_cstr(find_nonspace(start)); }
+    // tt_string sub_find_nonspace(size_t start = 0) const { return sub_cstr(find_nonspace(start)); }
 
     // Returns an offset to the next word -- i.e., find the first non-whitespace character
     // after the next whitespace character.

@@ -11,7 +11,7 @@
 #include "node.h"            // Contains the user-modifiable node
 #include "prop_decl.h"       // PropChildDeclaration and PropDeclaration classes
 
-NodeDeclaration::NodeDeclaration(ttlib::sview class_name, NodeType* type) : m_type(type), m_category(class_name)
+NodeDeclaration::NodeDeclaration(tt_string_view class_name, NodeType* type) : m_type(type), m_category(class_name)
 {
     m_gen_name = rmap_GenNames[class_name];
     m_gen_type = type->gen_type();
@@ -41,7 +41,7 @@ PropDeclaration* NodeDeclaration::GetPropDeclaration(size_t idx) const
     return nullptr;
 }
 
-NodeEventInfo* NodeDeclaration::GetEventInfo(ttlib::sview name)
+NodeEventInfo* NodeDeclaration::GetEventInfo(tt_string_view name)
 {
     if (auto it = m_events.find(name); it != m_events.end())
         return it->second.get();
@@ -150,7 +150,7 @@ int_t NodeDeclaration::GetAllowableChildren(GenType child_gen_type) const
     return m_type->GetAllowableChildren(child_gen_type);
 }
 
-std::optional<ttlib::cstr> NodeDeclaration::GetOverRideDefValue(GenEnum::PropName prop_name)
+std::optional<tt_string> NodeDeclaration::GetOverRideDefValue(GenEnum::PropName prop_name)
 {
     if (auto result = m_override_def_values.find(prop_name); result != m_override_def_values.end())
         return result->second;

@@ -74,7 +74,7 @@ int TreebookGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t x
 
     GenXrcObjectAttributes(node, item, "wxTreebook");
 
-    ttlib::cstr styles;  // Ignore wxNB_NOPAGETHEM which is not supported by XRC
+    tt_string styles;  // Ignore wxNB_NOPAGETHEM which is not supported by XRC
 
     if (node->prop_as_string(prop_tab_position) != "wxBK_DEFAULT")
     {

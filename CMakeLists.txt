@@ -121,16 +121,6 @@ endif()
 
 ####################### Libraries and Executables #######################
 
-# Instructions for building the ttlib_wx library using this project's precompiled header
-include( ttLib_wx/src/ttlib_file_list.cmake )
-add_library(ttLib_wx STATIC ${ttlib_file_list})
-target_precompile_headers(ttLib_wx PRIVATE "src/pch.h")
-target_include_directories(ttLib_wx PRIVATE
-    ${widget_dir}/include
-    ${setup_dir}
-    ${CMAKE_CURRENT_LIST_DIR}/src/
-    ${CMAKE_CURRENT_LIST_DIR}/ttLib_wx/src
-)
 
 # Setting CMAKE_MODULE_PATH causes ninja to fail rebuilding until CMake re-generates. Specifying the full path and extension
 # means ninja sees this as a normal dependency that didn't change any time one of the files it specifies changes.
@@ -154,7 +144,6 @@ add_library(check_build STATIC EXCLUDE_FROM_ALL
 
 if (BUILD_SHARED_LIBS)
     target_compile_definitions(wxUiEditor PRIVATE WXUSINGDLL)
-    target_compile_definitions(ttLib_wx PRIVATE WXUSINGDLL)
     target_compile_definitions(check_build PRIVATE WXUSINGDLL)
 else()
     # This is built into wxWidgets if a shared library is created
@@ -163,21 +152,21 @@ endif()
 
 if (NOT INTERNAL_BLD_FORK)
     if (WIN32)
-        target_link_libraries(wxUiEditor PRIVATE ttLib_wx wxWidgets ${CLib} comctl32 Imm32 Shlwapi Version UxTheme)
+        target_link_libraries(wxUiEditor PRIVATE wxWidgets ${CLib} comctl32 Imm32 Shlwapi Version UxTheme)
     else()
-        target_link_libraries(wxUiEditor PRIVATE ttLib_wx wxWidgets ${CLib})
+        target_link_libraries(wxUiEditor PRIVATE wxWidgets ${CLib})
     endif()
 else()
     if (WIN32)
         if (INTERNAL_BLD_WX_CMAKE)
             # Both Debug and Release libaries are in the same location
             target_link_directories(wxUiEditor PRIVATE ${widget_lib_dir})
-            target_link_libraries(wxUiEditor PRIVATE ttLib_wx ${fork_wxlibraries})
+            target_link_libraries(wxUiEditor PRIVATE ${fork_wxlibraries})
         else()
-            target_link_libraries(wxUiEditor PRIVATE ttLib_wx wxWidgets ${CLib})
+            target_link_libraries(wxUiEditor PRIVATE wxWidgets ${CLib})
         endif()
     else()
-        target_link_libraries(wxUiEditor PRIVATE ttLib_wx wxWidgets ${CLib})
+        target_link_libraries(wxUiEditor PRIVATE wxWidgets ${CLib})
         target_link_directories(wxUiEditor PRIVATE
             $<$<CONFIG:Debug>:${widget_lib_dir}>
             $<$<CONFIG:Release>:${widget_lib_dir}>
@@ -233,7 +222,6 @@ target_include_directories(wxUiEditor PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}/src/ui
     ${CMAKE_CURRENT_LIST_DIR}/src/wxui
     ${CMAKE_CURRENT_LIST_DIR}/pugixml
-    ${CMAKE_CURRENT_LIST_DIR}/ttLib_wx/src
 )
 
 target_include_directories(check_build PRIVATE
@@ -250,7 +238,6 @@ target_include_directories(check_build PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}/src/ui
     ${CMAKE_CURRENT_LIST_DIR}/src/wxui
     ${CMAKE_CURRENT_LIST_DIR}/pugixml
-    ${CMAKE_CURRENT_LIST_DIR}/ttLib_wx/src
 )
 
 ####################### Packaging Instructions #######################

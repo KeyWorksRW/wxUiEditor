@@ -7,8 +7,6 @@
 
 // This module handles changes to art_directory, base_directory, and derived_directory
 
-#include <ttcwd_wx.h>  // cwd -- Class for storing and optionally restoring the current directory
-
 #include "paths.h"
 
 #include "mainframe.h"        // MainFrame -- Main window frame
@@ -18,7 +16,7 @@
 
 void AllowDirectoryChange(wxPropertyGridEvent& event, NodeProperty* /* prop */, Node* /* node */)
 {
-    ttString newValue = event.GetPropertyValue().GetString();
+    tt_wxString newValue = event.GetPropertyValue().GetString();
     if (newValue.empty())
         return;
 
@@ -26,7 +24,7 @@ void AllowDirectoryChange(wxPropertyGridEvent& event, NodeProperty* /* prop */, 
     newValue.make_relative_wx(Project.ProjectPath());
     newValue.backslashestoforward();
 
-    ttSaveCwd cwd;
+    tt_cwd cwd(true);
     Project.ChangeDir();
 
     if (!newValue.dir_exists())
@@ -35,8 +33,8 @@ void AllowDirectoryChange(wxPropertyGridEvent& event, NodeProperty* /* prop */, 
         // processing. Preserve the focus to avoid validating twice.
         auto focus = wxWindow::FindFocus();
 
-        auto result = wxMessageBox(ttlib::cstr() << "The directory \"" << newValue.wx_str()
-                                                 << "\" does not exist. Do you want to use this name anyway?",
+        auto result = wxMessageBox(tt_string() << "The directory \"" << newValue.wx_str()
+                                               << "\" does not exist. Do you want to use this name anyway?",
                                    "Directory doesn't exist", wxYES_NO | wxICON_WARNING, GetMainFrame());
         if (focus)
         {
@@ -66,7 +64,7 @@ void AllowFileChange(wxPropertyGridEvent& event, NodeProperty* prop, Node* node)
 {
     if (prop->isProp(prop_base_file) || prop->isProp(prop_python_file) || prop->isProp(prop_xrc_file))
     {
-        ttString newValue = event.GetPropertyValue().GetString();
+        tt_wxString newValue = event.GetPropertyValue().GetString();
         if (newValue.empty())
             return;
 
@@ -163,7 +161,7 @@ void OnPathChanged(wxPropertyGridEvent& event, NodeProperty* prop, Node* /* node
     // If the user clicked the path button, the current directory may have changed.
     Project.ChangeDir();
 
-    ttString newValue = event.GetPropertyValue().GetString();
+    tt_wxString newValue = event.GetPropertyValue().GetString();
     newValue.make_absolute();
     newValue.make_relative_wx(Project.ProjectPath());
     newValue.backslashestoforward();
@@ -173,7 +171,7 @@ void OnPathChanged(wxPropertyGridEvent& event, NodeProperty* prop, Node* /* node
     // display isn't correct, it will be stored in the project file correctly.
 
     event.GetProperty()->SetValueFromString(newValue, 0);
-    ttlib::cstr value(newValue.wx_str());
+    tt_string value(newValue.wx_str());
     if (value != prop->as_string())
     {
         if (prop->isProp(prop_derived_directory))
@@ -191,7 +189,7 @@ void OnPathChanged(wxPropertyGridEvent& event, NodeProperty* prop, Node* /* node
     }
 }
 
-void ChangeDerivedDirectory(ttlib::cstr& path)
+void ChangeDerivedDirectory(tt_string& path)
 {
     auto& old_path = Project.value(prop_derived_directory);
     path.backslashestoforward();
@@ -210,7 +208,7 @@ void ChangeDerivedDirectory(ttlib::cstr& path)
     {
         if (form->prop_as_bool(prop_use_derived_class) && form->HasValue(prop_derived_file))
         {
-            ttlib::cstr cur_path = form->prop_as_string(prop_derived_file);
+            tt_string cur_path = form->prop_as_string(prop_derived_file);
             cur_path.backslashestoforward();
             cur_path.remove_filename();
             if (cur_path.size() && cur_path.back() == '/')
@@ -231,7 +229,7 @@ void ChangeDerivedDirectory(ttlib::cstr& path)
     wxGetFrame().PushUndoAction(undo_derived);
 }
 
-void ChangeBaseDirectory(ttlib::cstr& path)
+void ChangeBaseDirectory(tt_string& path)
 {
     auto& old_path = Project.value(prop_base_directory);
     path.backslashestoforward();
@@ -250,7 +248,7 @@ void ChangeBaseDirectory(ttlib::cstr& path)
     {
         if (form->HasValue(prop_base_file))
         {
-            ttlib::cstr cur_path = form->prop_as_string(prop_base_directory);
+            tt_string cur_path = form->prop_as_string(prop_base_directory);
             cur_path.backslashestoforward();
             cur_path.remove_filename();
             if (cur_path.size() && cur_path.back() == '/')

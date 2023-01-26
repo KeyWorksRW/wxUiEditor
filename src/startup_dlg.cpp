@@ -19,7 +19,7 @@ void StartupDlg::OnInit(wxInitDialogEvent& event)
     bool file_added = false;
     for (size_t idx = 0; idx < history.GetCount(); ++idx)
     {
-        ttString project_file = history.GetHistoryFile(idx);
+        tt_wxString project_file = history.GetHistoryFile(idx);
         if (project_file.file_exists())
         {
             auto shortname = project_file.filename();
@@ -56,7 +56,7 @@ void StartupDlg::OnInit(wxInitDialogEvent& event)
     auto append_history_ptr = wxGetFrame().GetAppendImportHistory();
     for (size_t idx = 0; idx < append_history_ptr->GetCount(); ++idx)
     {
-        ttString project_file = append_history_ptr->GetHistoryFile(idx);
+        tt_wxString project_file = append_history_ptr->GetHistoryFile(idx);
         if (project_file.file_exists())
         {
             auto shortname = project_file.filename();

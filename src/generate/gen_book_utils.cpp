@@ -108,7 +108,7 @@ void AddBookImageList(Node* node_book, wxObject* widget)
     }
 }
 
-void BookCtorAddImagelist(ttlib::cstr& code, Node* node)
+void BookCtorAddImagelist(tt_string& code, Node* node)
 {
     if ((node->prop_as_bool(prop_display_images) || node->isGen(gen_wxToolbook)) && isBookHasImage(node))
     {
@@ -128,7 +128,7 @@ void BookCtorAddImagelist(ttlib::cstr& code, Node* node)
         {
             if (child_node->HasValue(prop_bitmap))
             {
-                ttlib::cstr bundle_code;
+                tt_string bundle_code;
                 if (GenerateBundleCode(child_node->prop_as_string(prop_bitmap), bundle_code))
                 {
                     code << "\n" << bundle_code;
@@ -197,7 +197,7 @@ void AddTreebookSubImages(Node* node, wxBookCtrlBase::Images& bundle_list)
     }
 }
 
-void AddTreebookImageCode(ttlib::cstr& code, Node* child_node, size_t& image_index)
+void AddTreebookImageCode(tt_string& code, Node* child_node, size_t& image_index)
 {
     for (const auto& grand_child: child_node->GetChildNodePtrs())
     {

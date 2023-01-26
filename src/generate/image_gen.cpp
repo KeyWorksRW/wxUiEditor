@@ -8,8 +8,6 @@
 #include <array>
 #include <vector>
 
-#include <tttextfile_wx.h>  // textfile -- Classes for reading and writing line-oriented files
-
 #include "image_gen.h"
 
 #include "code.h"             // Code -- Helper class for generating code
@@ -116,7 +114,7 @@ void BaseCodeGenerator::WriteImageConstruction(Code& code)
                 if (!images_import_written)
                 {
                     images_import_written = true;
-                    ttlib::cstr import_name = iter_array->form->as_string(prop_python_file).filename();
+                    tt_string import_name = iter_array->form->as_string(prop_python_file).filename();
                     import_name.remove_extension();
                     code.Eol().Str("import ").Str(import_name);
                 }
@@ -146,14 +144,14 @@ void BaseCodeGenerator::WriteImageConstruction(Code& code)
     }
 }
 
-void GenerateSingleBitmapCode(Code& code, const ttlib::cstr& description)
+void GenerateSingleBitmapCode(Code& code, const tt_string& description)
 {
     if (description.empty())
     {
         code += "wxNullBitmap";
         return;
     }
-    ttlib::multiview parts(description, BMP_PROP_SEPARATOR, tt::TRIM::both);
+    tt_view_vector parts(description, BMP_PROP_SEPARATOR, tt::TRIM::both);
 
     if (parts[IndexType].starts_with("SVG"))
     {
@@ -165,7 +163,7 @@ void GenerateSingleBitmapCode(Code& code, const ttlib::cstr& description)
                 return;
             }
         }
-        ttlib::cstr name(parts[IndexImage]);
+        tt_string name(parts[IndexImage]);
 
         if (code.is_python())
         {
@@ -190,9 +188,9 @@ void GenerateSingleBitmapCode(Code& code, const ttlib::cstr& description)
     }
     else if (parts[IndexType].contains("Art"))
     {
-        ttlib::cstr art_id(parts[IndexArtID]);
-        ttlib::cstr art_client;
-        if (auto pos = art_id.find('|'); ttlib::is_found(pos))
+        tt_string art_id(parts[IndexArtID]);
+        tt_string art_client;
+        if (auto pos = art_id.find('|'); tt::is_found(pos))
         {
             art_client = art_id.subview(pos + 1);
             art_id.erase(pos);
@@ -211,13 +209,13 @@ void GenerateSingleBitmapCode(Code& code, const ttlib::cstr& description)
         {
             code.Add("wxImage(");
 
-            ttlib::cstr name(parts[IndexImage].filename());
+            tt_string name(parts[IndexImage].filename());
             name.remove_extension();
             code << name << "_xpm)";
         }
         else
         {
-            ttlib::cstr name(parts[IndexImage]);
+            tt_string name(parts[IndexImage]);
             name.make_absolute();
             auto path = MakePythonPath(code.node());
             name.make_relative(path);
@@ -236,7 +234,7 @@ void GenerateSingleBitmapCode(Code& code, const ttlib::cstr& description)
         {
             code << "wxueImage(";
 
-            ttlib::cstr name(parts[1].filename());
+            tt_string name(parts[1].filename());
             name.remove_extension();
             name.Replace(".", "_", true);  // wxFormBuilder writes files with the extra dots that have to be converted to '_'
 
@@ -270,7 +268,7 @@ void GenerateSingleBitmapCode(Code& code, const ttlib::cstr& description)
 
                 if (!is_embed_success)
                 {
-                    ttlib::cstr name(bundle->lst_filenames[0]);
+                    tt_string name(bundle->lst_filenames[0]);
                     name.make_absolute();
                     auto path = MakePythonPath(code.node());
                     name.make_relative(path);
@@ -312,7 +310,7 @@ void BaseCodeGenerator::WriteImagePostHeader()
 
             if (m_form_node->isType(type_images))
             {
-                ttlib::viewfile function;
+                tt_view_vector function;
                 function.ReadString(txt_wxueImageFunction);
                 for (auto& iter: function)
                 {
@@ -332,7 +330,7 @@ void BaseCodeGenerator::WriteImagePostHeader()
             }
             is_namespace_written = true;
         }
-        m_header->writeLine(ttlib::cstr("extern const unsigned char ")
+        m_header->writeLine(tt_string("extern const unsigned char ")
                             << iter_array->array_name << '[' << (iter_array->array_size & 0xFFFFFFFF) << "];");
     }
     if (is_namespace_written)
@@ -454,7 +452,7 @@ void AddPythonImageName(Code& code, const EmbeddedImage* embed)
 {
     if (embed->form->isGen(gen_Images))
     {
-        ttlib::cstr import_name = embed->form->as_string(prop_python_file).filename();
+        tt_string import_name = embed->form->as_string(prop_python_file).filename();
         import_name.remove_extension();
 
         code.Str(import_name).Str(".");

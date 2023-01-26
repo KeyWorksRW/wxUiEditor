@@ -67,7 +67,7 @@ void NewFrame::CreateNode()
 
     wxGetFrame().SelectNode(Project.ProjectNode());
 
-    ttlib::cstr undo_str("New wxFrame");
+    tt_string undo_str("New wxFrame");
     wxGetFrame().PushUndoAction(std::make_shared<InsertNodeAction>(form_node.get(), Project.ProjectNode(), undo_str, -1));
     wxGetFrame().FireCreatedEvent(form_node);
     wxGetFrame().SelectNode(form_node, evt_flags::fire_event | evt_flags::force_selection);

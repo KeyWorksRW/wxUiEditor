@@ -94,7 +94,7 @@ static const ClassGenPair lst_name_gen[] = {
 
 */
 
-void resCtrl::ParseDirective(WinResource* pWinResource, ttlib::sview line)
+void resCtrl::ParseDirective(WinResource* pWinResource, tt_string_view line)
 {
 #if defined(_DEBUG) || defined(INTERNAL_TESTING)
     // Create a copy of the original line without the extra spaces that can be used to send to our log window if there are
@@ -106,9 +106,9 @@ void resCtrl::ParseDirective(WinResource* pWinResource, ttlib::sview line)
     // First copy the diretive name without the leading whitespace
     temp_view.moveto_nonspace();
     auto pos_space = temp_view.find_space();
-    if (!ttlib::is_found(pos_space))
+    if (!tt::is_found(pos_space))
     {
-        MSG_ERROR(ttlib::cstr() << "Invalid directive: " << line);
+        MSG_ERROR(tt_string() << "Invalid directive: " << line);
         return;
     }
 
@@ -139,7 +139,7 @@ void resCtrl::ParseDirective(WinResource* pWinResource, ttlib::sview line)
             if (line.contains(iter.class_name, tt::CASE::either))
             {
                 m_node = NodeCreation.NewNode(iter.gen_name);
-                if (ttlib::is_sameprefix(iter.class_name, "\"Rich", tt::CASE::either))
+                if (tt::is_sameprefix(iter.class_name, "\"Rich", tt::CASE::either))
                 {
                     m_node->prop_set_value(prop_style, "wxTE_RICH2");
                 }
@@ -222,7 +222,7 @@ void resCtrl::ParseDirective(WinResource* pWinResource, ttlib::sview line)
         else
         {
 #if defined(_DEBUG) || defined(INTERNAL_TESTING)
-            ttlib::cstr msg("Unrecognized CONTROL: ");
+            tt_string msg("Unrecognized CONTROL: ");
             auto pos = line.find_space();
             msg << line.subview(0, pos);
             line.moveto_nextword();
@@ -307,7 +307,7 @@ void resCtrl::ParseDirective(WinResource* pWinResource, ttlib::sview line)
             // is still the current documentation. So, if we get here the control is unrecognizable.
 
 #if defined(_DEBUG) || defined(INTERNAL_TESTING)
-            ttlib::cstr msg("Unrecognized resource directive: ");
+            tt_string msg("Unrecognized resource directive: ");
             auto pos = line.find_space();
             msg << line.subview(0, pos);
             line.moveto_nextword();
@@ -321,7 +321,7 @@ void resCtrl::ParseDirective(WinResource* pWinResource, ttlib::sview line)
 
     if (line.empty())
     {
-        MSG_ERROR(ttlib::cstr() << "Unparsable control :" << m_original_line);
+        MSG_ERROR(tt_string() << "Unparsable control :" << m_original_line);
         m_node.reset();
         return;
     }
@@ -347,14 +347,14 @@ void resCtrl::ParseDirective(WinResource* pWinResource, ttlib::sview line)
         // This should be the class
         if (line.size() && line.at(0) == '"')
         {
-            ttlib::cstr value;
+            tt_string value;
             line = StepOverQuote(line, value);
 
             // This could be a system control like "SysTabControl32"
         }
         else
         {
-            MSG_ERROR(ttlib::cstr() << "CONTROL missing class :" << m_original_line);
+            MSG_ERROR(tt_string() << "CONTROL missing class :" << m_original_line);
             // Without a class, style and dimensions are probably wrong, so just ignore the entire control.
             m_node.reset();
             return;
@@ -448,7 +448,7 @@ void resCtrl::ParseDirective(WinResource* pWinResource, ttlib::sview line)
         AddSpecialStyles(line);
     }
 
-    ttlib::cstr value;
+    tt_string value;
 
     if (is_control)
     {
@@ -458,16 +458,16 @@ void resCtrl::ParseDirective(WinResource* pWinResource, ttlib::sview line)
 
     if (line.empty())
     {
-        MSG_ERROR(ttlib::cstr() << "Missing dimensions :" << m_original_line);
+        MSG_ERROR(tt_string() << "Missing dimensions :" << m_original_line);
         return;
     }
 
     // This should be the dimensions.
-    if (line.size() && (ttlib::is_digit(line.at(0)) || line.at(0) == ','))
+    if (line.size() && (tt::is_digit(line.at(0)) || line.at(0) == ','))
     {
         if (!ParseDimensions(line, m_du_rect, m_pixel_rect))
         {
-            MSG_ERROR(ttlib::cstr() << "Missing dimensions :" << m_original_line);
+            MSG_ERROR(tt_string() << "Missing dimensions :" << m_original_line);
             return;
         }
 
@@ -478,11 +478,11 @@ void resCtrl::ParseDirective(WinResource* pWinResource, ttlib::sview line)
 
         if (m_add_min_width_property || m_node->isGen(gen_wxTextCtrl) || m_node->isGen(gen_wxComboBox))
         {
-            m_node->prop_set_value(prop_minimum_size, ttlib::cstr() << m_du_rect.GetWidth() << ",-1d");
+            m_node->prop_set_value(prop_minimum_size, tt_string() << m_du_rect.GetWidth() << ",-1d");
         }
     }
     else
     {
-        MSG_ERROR(ttlib::cstr() << "Missing dimensions :" << m_original_line);
+        MSG_ERROR(tt_string() << "Missing dimensions :" << m_original_line);
     }
 }

@@ -894,7 +894,7 @@ void NavPopupMenu::MenuAddStandardCommands(Node* node)
     }
 }
 
-void NavPopupMenu::CreateSizerParent(Node* node, ttlib::sview widget)
+void NavPopupMenu::CreateSizerParent(Node* node, tt_string_view widget)
 {
     auto parent = node->GetParent();
     if (!parent)
@@ -931,7 +931,7 @@ void NavPopupMenu::CreateSizerParent(Node* node, ttlib::sview widget)
     if (new_parent)
     {
         wxGetFrame().Freeze();
-        ttlib::cstr undo_string("Insert new ");
+        tt_string undo_string("Insert new ");
         if (widget == "folder" || widget == "sub_folder")
             undo_string << "folder";
         else

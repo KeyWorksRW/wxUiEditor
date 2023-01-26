@@ -101,12 +101,12 @@ bool NewDialog::Create(wxWindow* parent, wxWindowID id, const wxString& title,
         [this](wxCommandEvent&)
         {
             m_spinCtrlTabs->Enable(m_check_tabs->GetValue());
-        } );
+        });
     Bind(wxEVT_INIT_DIALOG, &NewDialog::OnInit, this);
     m_classname->Bind(wxEVT_TEXT,
         [this](wxCommandEvent&)
         {VerifyClassName();
-        } );
+        });
 
     return true;
 }

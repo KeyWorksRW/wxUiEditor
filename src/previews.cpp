@@ -188,14 +188,14 @@ void PreviewXrc(Node* form_node)
     }
 
     // Our directory is probably already set correctly, but this will make certain that it is.
-    ttSaveCwd save_cwd;
+    tt_cwd save_cwd(true);
     Project.ChangeDir();
 
-    ttlib::cstr style = form_node->prop_as_string(prop_style);
+    tt_string style = form_node->prop_as_string(prop_style);
     if (form_node->isGen(gen_wxDialog) &&
         (style.empty() || (!style.contains("wxDEFAULT_DIALOG_STYLE") && !style.contains("wxCLOSE_BOX"))))
     {
-        ttlib::cstr modified_style("wxCLOSE_BOX|wxCAPTION");
+        tt_string modified_style("wxCLOSE_BOX|wxCAPTION");
         if (style.size())
             modified_style << '|' << style;
         form_node->prop_set_value(prop_style, modified_style);
@@ -245,7 +245,7 @@ void PreviewXrc(Node* form_node)
                     }
                     else
                     {
-                        wxMessageBox(ttlib::cstr("Could not load ")
+                        wxMessageBox(tt_string("Could not load ")
                                          << form_node->prop_as_string(prop_class_name) << " resource.",
                                      "XRC Preview");
                     }
@@ -266,8 +266,7 @@ void PreviewXrc(Node* form_node)
                 }
                 else
                 {
-                    wxMessageBox(ttlib::cstr("Could not load ")
-                                     << form_node->prop_as_string(prop_class_name) << " resource.",
+                    wxMessageBox(tt_string("Could not load ") << form_node->prop_as_string(prop_class_name) << " resource.",
                                  "XRC Preview");
                 }
                 break;
@@ -290,8 +289,7 @@ void PreviewXrc(Node* form_node)
                 }
                 else
                 {
-                    wxMessageBox(ttlib::cstr("Could not load ")
-                                     << form_node->prop_as_string(prop_class_name) << " resource.",
+                    wxMessageBox(tt_string("Could not load ") << form_node->prop_as_string(prop_class_name) << " resource.",
                                  "XRC Preview");
                 }
                 break;
@@ -325,11 +323,11 @@ void MainFrame::PreviewCpp(Node* form_node)
         }
     }
 
-    ttlib::cstr style = form_node->prop_as_string(prop_style);
+    tt_string style = form_node->prop_as_string(prop_style);
     if (form_node->isGen(gen_wxDialog) &&
         (style.empty() || (!style.contains("wxDEFAULT_DIALOG_STYLE") && !style.contains("wxCLOSE_BOX"))))
     {
-        ttlib::cstr modified_style("wxCLOSE_BOX|wxCAPTION");
+        tt_string modified_style("wxCLOSE_BOX|wxCAPTION");
         if (style.size())
             modified_style << '|' << style;
         form_node->prop_set_value(prop_style, modified_style);
@@ -378,7 +376,7 @@ void MainFrame::PreviewCpp(Node* form_node)
                         int ex_style = 0;
                         // Can't use multiview because GetConstantAsInt() searches an unordered_map which requires a
                         // std::string to pass to it
-                        ttlib::multistr mstr(form_node->value(prop_extra_style), '|');
+                        tt_string_vector mstr(form_node->value(prop_extra_style), '|');
                         for (auto& iter: mstr)
                         {
                             // Friendly names will have already been converted, so normal lookup works fine.
@@ -460,7 +458,7 @@ void MainFrame::PreviewCpp(Node* form_node)
                         int ex_style = 0;
                         // Can't use multiview because GetConstantAsInt() searches an unordered_map which requires a
                         // std::string to pass to it
-                        ttlib::multistr mstr(form_node->value(prop_extra_style), '|');
+                        tt_string_vector mstr(form_node->value(prop_extra_style), '|');
                         for (auto& iter: mstr)
                         {
                             // Friendly names will have already been converted, so normal lookup works fine.
@@ -476,7 +474,7 @@ void MainFrame::PreviewCpp(Node* form_node)
                         int placement = 0;
                         // Can't use multiview because GetConstantAsInt() searches an unordered_map which requires a
                         // std::string to pass to it
-                        ttlib::multistr mstr(form_node->value(prop_bmp_placement), '|');
+                        tt_string_vector mstr(form_node->value(prop_bmp_placement), '|');
                         for (auto& iter: mstr)
                         {
                             // Friendly names will have already been converted, so normal lookup works fine.

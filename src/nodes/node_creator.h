@@ -52,7 +52,7 @@ public:
     NodeSharedPtr CreateNode(GenName name, Node* parent);
 
     // Only creates the node if the parent allows it as a child
-    NodeSharedPtr CreateNode(ttlib::sview name, Node* parent);
+    NodeSharedPtr CreateNode(tt_string_view name, Node* parent);
 
     // Creates an orphaned node.
     NodeSharedPtr NewNode(GenEnum::GenName gen_name) { return NewNode(m_a_declarations[gen_name]); }
@@ -64,7 +64,7 @@ public:
     // pointer.
     NodeDeclaration* get_declaration(GenEnum::GenName gen_name) { return m_a_declarations[gen_name]; }
 
-    NodeDeclaration* GetNodeDeclaration(ttlib::sview class_name);
+    NodeDeclaration* GetNodeDeclaration(tt_string_view class_name);
 
     // This returns the integer value of most wx constants used in various components
     int GetConstantAsInt(const std::string& name, int defValue = 0) const;
@@ -81,7 +81,7 @@ public:
 
     void InitGenerators();
 
-    bool IsOldHostType(ttlib::sview old_type) const { return m_setOldHostTypes.contains(old_type); }
+    bool IsOldHostType(tt_string_view old_type) const { return m_setOldHostTypes.contains(old_type); }
 
     const NodeDeclarationArray& GetNodeDeclarationArray() const { return m_a_declarations; }
 

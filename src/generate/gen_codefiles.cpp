@@ -13,8 +13,6 @@
     #include <thread>
 #endif
 
-#include "ttcwd_wx.h"  // cwd -- Class for storing and optionally restoring the current directory
-
 #include "mainframe.h"
 
 #include "file_codewriter.h"  // FileCodeWriter -- Classs to write code to disk
@@ -28,24 +26,24 @@ using namespace code;
 
 struct GenData
 {
-    GenData(GenResults& results, std::vector<ttlib::cstr>* pClassList)
+    GenData(GenResults& results, std::vector<tt_string>* pClassList)
     {
         this->presults = &results;
         this->pClassList = pClassList;
     }
 
     GenResults* presults { nullptr };
-    std::vector<ttlib::cstr>* pClassList { nullptr };
-    ttlib::cstr source_ext;
-    ttlib::cstr header_ext;
+    std::vector<tt_string>* pClassList { nullptr };
+    tt_string source_ext;
+    tt_string header_ext;
 
 #if !defined(THREADED_CODE_GEN)
-    void AddUpdateFilename(ttlib::cstr& path)
+    void AddUpdateFilename(tt_string& path)
     {
         presults->updated_files.emplace_back(path);
     };
 
-    void AddResultMsg(ttlib::cstr& msg)
+    void AddResultMsg(tt_string& msg)
     {
         presults->msgs.emplace_back(msg);
     };
@@ -55,7 +53,7 @@ struct GenData
         presults->file_count += 1;
     };
 
-    void AddClassName(const ttlib::cstr& class_name)
+    void AddClassName(const tt_string& class_name)
     {
         if (pClassList)
         {
@@ -66,14 +64,14 @@ struct GenData
     std::mutex mutex_results;
     std::mutex mutex_class_list;
 
-    void AddUpdateFilename(ttlib::cstr& path)
+    void AddUpdateFilename(tt_string& path)
     {
         mutex_results.lock();
         presults->updated_files.emplace_back(path);
         mutex_results.unlock();
     };
 
-    void AddResultMsg(ttlib::cstr& msg)
+    void AddResultMsg(tt_string& msg)
     {
         mutex_results.lock();
         presults->msgs.emplace_back(msg);
@@ -87,7 +85,7 @@ struct GenData
         mutex_results.unlock();
     };
 
-    void AddClassName(const ttlib::cstr& class_name)
+    void AddClassName(const tt_string& class_name)
     {
         if (pClassList)
         {
@@ -103,10 +101,10 @@ struct GenData
 void GenThreadCpp(GenData& gen_data, Node* form)
 {
     // These are just defined for convenience.
-    ttlib::cstr& source_ext = gen_data.source_ext;
-    ttlib::cstr& header_ext = gen_data.header_ext;
+    tt_string& source_ext = gen_data.source_ext;
+    tt_string& header_ext = gen_data.header_ext;
 
-    ttlib::cstr path;
+    tt_string path;
 
     if (auto& base_file = form->prop_as_string(prop_base_file); base_file.size())
     {
@@ -130,8 +128,7 @@ void GenThreadCpp(GenData& gen_data, Node* form)
     }
     else
     {
-        gen_data.AddResultMsg(ttlib::cstr()
-                              << "No filename specified for " << form->prop_as_string(prop_class_name) << '\n');
+        gen_data.AddResultMsg(tt_string() << "No filename specified for " << form->prop_as_string(prop_class_name) << '\n');
         return;
     }
 
@@ -176,7 +173,7 @@ void GenThreadCpp(GenData& gen_data, Node* form)
     }
     else if (retval < 0)
     {
-        gen_data.AddResultMsg(ttlib::cstr() << "Cannot create or write to the file " << path << '\n');
+        gen_data.AddResultMsg(tt_string() << "Cannot create or write to the file " << path << '\n');
     }
     else  // retval == result::exists)
     {
@@ -201,7 +198,7 @@ void GenThreadCpp(GenData& gen_data, Node* form)
 
     else if (retval < 0)
     {
-        gen_data.AddResultMsg(ttlib::cstr() << "Cannot create or write to the file " << path << '\n');
+        gen_data.AddResultMsg(tt_string() << "Cannot create or write to the file " << path << '\n');
     }
     else  // retval == result::exists
     {
@@ -209,14 +206,14 @@ void GenThreadCpp(GenData& gen_data, Node* form)
     }
 }
 
-bool GenerateCodeFiles(GenResults& results, std::vector<ttlib::cstr>* pClassList)
+bool GenerateCodeFiles(GenResults& results, std::vector<tt_string>* pClassList)
 {
     if (Project.ChildCount() == 0)
     {
         wxMessageBox("You cannot generate any code until you have added a top level form.", "Code Generation");
         return false;
     }
-    ttSaveCwd cwd;
+    tt_cwd cwd(true);
     Project.ChangeDir();
 
     if (Project.as_bool(prop_generate_cmake) && !pClassList)
@@ -240,10 +237,10 @@ bool GenerateCodeFiles(GenResults& results, std::vector<ttlib::cstr>* pClassList
         }
     }
 
-    ttlib::cstr path;
+    tt_string path;
 
-    ttlib::cstr source_ext(".cpp");
-    ttlib::cstr header_ext(".h");
+    tt_string source_ext(".cpp");
+    tt_string header_ext(".h");
 
     if (auto& extProp = Project.value(prop_source_ext); extProp.size())
     {
@@ -328,12 +325,12 @@ bool GenerateCodeFiles(GenResults& results, std::vector<ttlib::cstr>* pClassList
 
 void GenInhertedClass(GenResults& results)
 {
-    ttlib::cwd cwd;
+    tt_cwd cwd;
     Project.ChangeDir();
-    ttlib::cstr path;
+    tt_string path;
 
-    ttlib::cstr source_ext(".cpp");
-    ttlib::cstr header_ext(".h");
+    tt_string source_ext(".cpp");
+    tt_string header_ext(".h");
 
     if (auto& extProp = Project.value(prop_source_ext); extProp.size())
     {
@@ -472,15 +469,15 @@ void GenInhertedClass(GenResults& results)
 
     #include "pugixml.hpp"
 
-void GenerateTmpFiles(const std::vector<ttlib::cstr>& ClassList, pugi::xml_node root, int language)
+void GenerateTmpFiles(const std::vector<tt_string>& ClassList, pugi::xml_node root, int language)
 {
-    ttSaveCwd cwd;
+    tt_cwd cwd(true);
     Project.ChangeDir();
-    ttlib::cstr path;
-    std::vector<ttlib::cstr> results;
+    tt_string path;
+    std::vector<tt_string> results;
 
-    ttlib::cstr source_ext(".cpp");
-    ttlib::cstr header_ext(".h");
+    tt_string source_ext(".cpp");
+    tt_string header_ext(".h");
 
     if (language == GEN_LANG_CPLUSPLUS)
     {
@@ -518,7 +515,7 @@ void GenerateTmpFiles(const std::vector<ttlib::cstr>& ClassList, pugi::xml_node 
             // form where the user set the class name to "Images". If this wasn't an Internal function, then we would need to
             // store nodes rather than class names.
 
-            ttlib::cstr class_name(form->prop_as_string(prop_class_name));
+            tt_string class_name(form->prop_as_string(prop_class_name));
             if (form->isGen(gen_Images))
             {
                 if (language != GEN_LANG_CPLUSPLUS)
@@ -608,8 +605,8 @@ void GenerateTmpFiles(const std::vector<ttlib::cstr>& ClassList, pugi::xml_node 
 
                 if (new_hdr || new_src)
                 {
-                    ttlib::cstr tmp_path(path);
-                    if (auto pos_file = path.find_filename(); ttlib::is_found(pos_file))
+                    tt_string tmp_path(path);
+                    if (auto pos_file = path.find_filename(); tt::is_found(pos_file))
                     {
                         tmp_path.insert(pos_file, "~wxue_");
                     }

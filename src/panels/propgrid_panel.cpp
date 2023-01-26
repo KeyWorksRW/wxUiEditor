@@ -515,7 +515,7 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
             // directory. If we can find a standard precompiled header filename in the parent directory, then use that
             // as the starting directory.
 
-            ttString pch(Project.ProjectPath());
+            tt_wxString pch(Project.ProjectPath());
             pch.append_filename("../");
             pch.append_filename("pch.h");
             if (pch.file_exists())
@@ -573,7 +573,7 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
         {
             if (iter.second == type)
             {
-                MSG_ERROR(ttlib::cstr("NodeProperty type is unsupported: ") << iter.first);
+                MSG_ERROR(tt_string("NodeProperty type is unsupported: ") << iter.first);
                 break;
             }
         }
@@ -583,7 +583,7 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
     return new_pg_property;
 }
 
-void PropGridPanel::AddProperties(ttlib::sview name, Node* node, NodeCategory& category, PropNameSet& prop_set,
+void PropGridPanel::AddProperties(tt_string_view name, Node* node, NodeCategory& category, PropNameSet& prop_set,
                                   bool is_child_cat)
 {
     size_t propCount = category.GetPropNameCount();
@@ -675,7 +675,7 @@ void PropGridPanel::AddProperties(ttlib::sview name, Node* node, NodeCategory& c
         }
         else
         {
-            MSG_WARNING(ttlib::cstr("The property ")
+            MSG_WARNING(tt_string("The property ")
                         << map_PropNames[prop_name] << " appears more than once in " << node->DeclName());
         }
     }
@@ -761,7 +761,7 @@ inline constexpr const char* lst_mouse_events[] = {
 };
 // clang-format on
 
-void PropGridPanel::AddEvents(ttlib::sview name, Node* node, NodeCategory& category, EventSet& event_set)
+void PropGridPanel::AddEvents(tt_string_view name, Node* node, NodeCategory& category, EventSet& event_set)
 {
     auto& eventList = category.GetEvents();
     for (auto& eventName: eventList)
@@ -773,7 +773,7 @@ void PropGridPanel::AddEvents(ttlib::sview name, Node* node, NodeCategory& categ
 
         auto eventInfo = event->GetEventInfo();
 
-        ASSERT_MSG(event_set.find(eventName) == event_set.end(), ttlib::cstr("Encountered a duplicate event in ")
+        ASSERT_MSG(event_set.find(eventName) == event_set.end(), tt_string("Encountered a duplicate event in ")
                                                                      << node->DeclName());
         if (event_set.find(eventName) == event_set.end())
         {
@@ -1081,7 +1081,7 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                         // If access is changed to local and the name starts with "m_", then the "m_" will be stripped
                         // off. Conversely, if the name is changed from local to a class member, a "m_" is added as a
                         // prefix (if it doesn't already have one).
-                        ttlib::cstr name = node->prop_as_string(prop_var_name);
+                        tt_string name = node->prop_as_string(prop_var_name);
                         if (value == "none" && name.starts_with("m_"))
                         {
                             name.erase(0, 2);
@@ -1112,7 +1112,7 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
         case type_string_escapes:
         case type_string_edit_escapes:
             {
-                auto value = ConvertEscapeSlashes(ttlib::cstr() << m_prop_grid->GetPropertyValueAsString(property).wx_str());
+                auto value = ConvertEscapeSlashes(tt_string() << m_prop_grid->GetPropertyValueAsString(property).wx_str());
                 modifyProperty(prop, value);
             }
             break;
@@ -1137,7 +1137,7 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
 
         case type_bitlist:
             {
-                ttString value = m_prop_grid->GetPropertyValueAsString(property);
+                tt_wxString value = m_prop_grid->GetPropertyValueAsString(property);
                 value.Replace(" ", "");
                 value.Replace(",", "|");
                 if (prop->isProp(prop_style))
@@ -1191,10 +1191,10 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
         case type_animation:
         case type_image:
             {
-                ttlib::cstr value;
+                tt_string value;
                 // Do NOT call GetValueAsString() -- we need to return the value the way the custom property formatted it
                 value << m_prop_grid->GetPropertyValue(property).GetString().wx_str();
-                ttlib::multistr parts(value, BMP_PROP_SEPARATOR, tt::TRIM::both);
+                tt_string_vector parts(value, BMP_PROP_SEPARATOR, tt::TRIM::both);
                 // If the image field is empty, then the entire property needs to be cleared
                 if (parts.size() > IndexImage && parts[IndexImage].empty())
                 {
@@ -1212,7 +1212,7 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
 
         case type_file:
             {
-                ttString newValue = property->GetValueAsString();
+                tt_wxString newValue = property->GetValueAsString();
 
                 // The base_file property was already processed in OnPropertyGridChanging so only modify the value if
                 // it's a different property
@@ -1240,7 +1240,7 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
 
         default:
             {
-                ttString newValue = property->GetValueAsString();
+                tt_wxString newValue = property->GetValueAsString();
 
                 if (prop->isProp(prop_var_name))
                 {
@@ -1267,7 +1267,7 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                         for (size_t pos = 0; pos < newValue.size();)
                         {
                             result = newValue.find("\" \"", pos);
-                            if (ttlib::is_found(result))
+                            if (tt::is_found(result))
                             {
                                 if (newValue.at(result - 1) != ' ')
                                     newValue.insert(result, ' ');
@@ -1280,7 +1280,7 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                         }
 
                         result = newValue.find_last_of('"');
-                        if (ttlib::is_found(result))
+                        if (tt::is_found(result))
                         {
                             if (newValue.at(result - 1) != ' ')
                                 newValue.insert(result, ' ');
@@ -1346,7 +1346,7 @@ void PropGridPanel::OnEventGridChanged(wxPropertyGridEvent& event)
     {
         NodeEvent* evt = it->second;
         wxString handler = event.GetPropertyValue();
-        auto value = ConvertEscapeSlashes(ttlib::cstr() << handler.wx_str());
+        auto value = ConvertEscapeSlashes(tt_string() << handler.wx_str());
         value.trim(tt::TRIM::both);
         wxGetFrame().ChangeEventHandler(evt, value);
     }
@@ -1509,11 +1509,11 @@ void PropGridPanel::OnNodePropChange(CustomEvent& event)
 void PropGridPanel::ModifyProperty(NodeProperty* prop, const wxString& str)
 {
     m_isPropChangeSuspended = true;
-    wxGetFrame().ModifyProperty(prop, ttlib::cstr() << str.wx_str());
+    wxGetFrame().ModifyProperty(prop, tt_string() << str.wx_str());
     m_isPropChangeSuspended = false;
 }
 
-void PropGridPanel::modifyProperty(NodeProperty* prop, ttlib::sview str)
+void PropGridPanel::modifyProperty(NodeProperty* prop, tt_string_view str)
 {
     m_isPropChangeSuspended = true;
     wxGetFrame().ModifyProperty(prop, str);
@@ -1583,7 +1583,7 @@ wxString PropGridPanel::GetCategoryDisplayName(const wxString& original)
     return category_name;
 }
 
-void PropGridPanel::CreatePropCategory(ttlib::sview name, Node* node, NodeDeclaration* declaration, PropNameSet& prop_set)
+void PropGridPanel::CreatePropCategory(tt_string_view name, Node* node, NodeDeclaration* declaration, PropNameSet& prop_set)
 {
     auto& category = declaration->GetCategory();
 
@@ -1727,7 +1727,7 @@ void PropGridPanel::CreateLayoutCategory(Node* node)
     m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#e1f3f8"));
 }
 
-void PropGridPanel::CreateEventCategory(ttlib::sview name, Node* node, NodeDeclaration* declaration, EventSet& event_set)
+void PropGridPanel::CreateEventCategory(tt_string_view name, Node* node, NodeDeclaration* declaration, EventSet& event_set)
 {
     auto& category = declaration->GetCategory();
 
@@ -1777,7 +1777,7 @@ void PropGridPanel::ReplaceDerivedName(const wxString& newValue, NodeProperty* p
 
 void PropGridPanel::ReplaceBaseFile(const wxString& newValue, NodeProperty* propType)
 {
-    ttString baseName = newValue;
+    tt_wxString baseName = newValue;
     if (baseName.Right(4) == "Base")
         baseName.Replace("Base", wxEmptyString);
     baseName.MakeLower();
@@ -1791,7 +1791,7 @@ void PropGridPanel::ReplaceBaseFile(const wxString& newValue, NodeProperty* prop
 
 void PropGridPanel::ReplaceDerivedFile(const wxString& newValue, NodeProperty* propType)
 {
-    ttString drvName = newValue;
+    tt_wxString drvName = newValue;
     if (drvName.Right(4) == "Base")
         drvName.Replace("Base", wxEmptyString);
     else if (drvName.Right(7) == "Derived")

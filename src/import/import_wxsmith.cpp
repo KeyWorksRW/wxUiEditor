@@ -14,7 +14,7 @@
 
 WxSmith::WxSmith() {}
 
-bool WxSmith::Import(const ttString& filename, bool write_doc)
+bool WxSmith::Import(const tt_wxString& filename, bool write_doc)
 {
     auto result = LoadDocFile(filename);
     if (!result)
@@ -23,8 +23,8 @@ bool WxSmith::Import(const ttString& filename, bool write_doc)
     }
     auto root = result.value().first_child();
 
-    if (!ttlib::is_sameas(root.name(), "wxsmith", tt::CASE::either) &&
-        !ttlib::is_sameas(root.name(), "resource", tt::CASE::either))
+    if (!tt::is_sameas(root.name(), "wxsmith", tt::CASE::either) &&
+        !tt::is_sameas(root.name(), "resource", tt::CASE::either))
     {
         wxMessageBox(wxString() << filename << " is not a wxSmith or XRC file", "Import");
         return false;
@@ -60,8 +60,8 @@ bool WxSmith::Import(const ttString& filename, bool write_doc)
 
     if (m_errors.size())
     {
-        ttlib::cstr errMsg("Not everything in the project could be converted:\n\n");
-        MSG_ERROR(ttlib::cstr() << "------  " << m_importProjectFile.filename().wx_str() << "------");
+        tt_string errMsg("Not everything in the project could be converted:\n\n");
+        MSG_ERROR(tt_string() << "------  " << m_importProjectFile.filename().wx_str() << "------");
         for (auto& iter: m_errors)
         {
             MSG_ERROR(iter);

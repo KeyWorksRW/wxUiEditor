@@ -48,8 +48,8 @@ namespace result
     };
 }  // namespace result
 
-int WriteCMakeFile(Node* parent_node, std::vector<ttlib::cstr>& updated_files,
-                   std::vector<ttlib::cstr>& results);  // See gen_cmake.cpp
+int WriteCMakeFile(Node* parent_node, std::vector<tt_string>& updated_files,
+                   std::vector<tt_string>& results);  // See gen_cmake.cpp
 
 class BaseCodeGenerator
 {
@@ -114,7 +114,7 @@ protected:
     // This method is in image_gen.cpp, and handles Python code generation
     void GeneratePythonImagesForm();
 
-    ttlib::cstr GetDeclaration(Node* node);
+    tt_string GetDeclaration(Node* node);
 
     void CollectEventHandlers(Node* node, EventVector& events);
     void CollectIDs(Node* node, std::set<std::string>& set_ids);
@@ -177,8 +177,8 @@ private:
     WriteCode* m_header;
     WriteCode* m_source;
 
-    ttlib::cstr m_baseFullPath;
-    ttlib::cstr m_header_ext { ".h" };
+    tt_string m_baseFullPath;
+    tt_string m_header_ext { ".h" };
 
     EventVector m_CtxMenuEvents;
 

@@ -325,7 +325,7 @@ int BookPageGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t x
 
     auto item = InitializeXrcObject(node, object);
 
-    ttlib::cstr page_type;
+    tt_string page_type;
     if (node->GetParent()->isGen(gen_wxNotebook) || node->GetParent()->isGen(gen_wxAuiNotebook))
         page_type = "notebookpage";
     else if (node->GetParent()->isGen(gen_wxChoicebook))

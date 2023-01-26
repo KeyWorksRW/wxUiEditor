@@ -19,8 +19,8 @@ namespace pugi
 struct GenResults
 {
     size_t file_count { 0 };
-    std::vector<ttlib::cstr> msgs;
-    std::vector<ttlib::cstr> updated_files;
+    std::vector<tt_string> msgs;
+    std::vector<tt_string> updated_files;
 
 #if defined(_DEBUG) || defined(INTERNAL_TESTING)
     std::chrono::steady_clock::time_point start_time;
@@ -35,7 +35,7 @@ struct GenResults
     {
         auto end_time = std::chrono::steady_clock::now();
         elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time).count();
-        ttlib::cstr msg;
+        tt_string msg;
         msg << "Elapsed time: " << elapsed << " milliseconds";
         msgs.emplace_back(msg);
     }
@@ -46,13 +46,13 @@ struct GenResults
 // updating.
 //
 // ../generate/gen_codefiles.cpp
-bool GenerateCodeFiles(GenResults& results, std::vector<ttlib::cstr>* pClassList = nullptr);
+bool GenerateCodeFiles(GenResults& results, std::vector<tt_string>* pClassList = nullptr);
 
 // ../generate/gen_codefiles.cpp
 void GenInhertedClass(GenResults& results);
 
 // ../generate/gen_python.cpp
-bool GeneratePythonFiles(GenResults& results, std::vector<ttlib::cstr>* pClassList = nullptr);
+bool GeneratePythonFiles(GenResults& results, std::vector<tt_string>* pClassList = nullptr);
 
 // If out_file contains a file, it will override project xrc_file and combine_xrc settings.
 //
@@ -63,8 +63,8 @@ bool GeneratePythonFiles(GenResults& results, std::vector<ttlib::cstr>* pClassLi
 // updating.
 //
 // ../generate/gen_xrc.cpp
-bool GenerateXrcFiles(GenResults& results, ttlib::cstr out_file = {}, std::vector<ttlib::cstr>* pClassList = nullptr);
+bool GenerateXrcFiles(GenResults& results, tt_string out_file = {}, std::vector<tt_string>* pClassList = nullptr);
 
 #if defined(INTERNAL_TESTING)
-void GenerateTmpFiles(const std::vector<ttlib::cstr>& ClassList, pugi::xml_node root, int language = GEN_LANG_CPLUSPLUS);
+void GenerateTmpFiles(const std::vector<tt_string>& ClassList, pugi::xml_node root, int language = GEN_LANG_CPLUSPLUS);
 #endif

@@ -26,6 +26,8 @@ using namespace GenEnum;
 #include "import_dlg.h"                  // ImportDlg -- Dialog to create a new project
 #include "node_gridbag.h"                // GridBag -- Create and modify a node containing a wxGridBagSizer
 
+#include "../wxui/code_preference_dlg.h"  // CodePreferenceDlg -- Dialog to set code generation preference
+
 #if defined(INTERNAL_TESTING)
     #include "../internal/import_panel.h"  // ImportPanel -- Panel to display original imported file
 #endif
@@ -624,6 +626,25 @@ bool ProjectHandler::Import(ImportXML& import, tt_wxString& file, bool append, b
         }
 
         auto project_node = NodeCreation.CreateProjectNode(&project);
+        if (allow_ui)
+        {
+            CodePreferenceDlg dlg(GetMainFrame());
+            if (dlg.ShowModal() == wxID_OK)
+            {
+                if (dlg.is_gen_python())
+                {
+                    project_node->prop_set_value(prop_code_preference, "Python");
+                }
+                else if (dlg.is_gen_xrc())
+                {
+                    project_node->prop_set_value(prop_code_preference, "XRC");
+                }
+                else  // default to C++
+                {
+                    project_node->prop_set_value(prop_code_preference, "C++");
+                }
+            }
+        }
 
         // Calling this will also initialize the ProjectImage class
         Project.Initialize(project_node, allow_ui);
@@ -684,6 +705,26 @@ bool ProjectHandler::NewProject(bool create_empty, bool allow_ui)
         tt_wxString file;
         file.assignCwd();
         file.append_filename(txtEmptyProject);
+
+        if (allow_ui)
+        {
+            CodePreferenceDlg dlg(GetMainFrame());
+            if (dlg.ShowModal() == wxID_OK)
+            {
+                if (dlg.is_gen_python())
+                {
+                    project->prop_set_value(prop_code_preference, "Python");
+                }
+                else if (dlg.is_gen_xrc())
+                {
+                    project->prop_set_value(prop_code_preference, "XRC");
+                }
+                else  // default to C++
+                {
+                    project->prop_set_value(prop_code_preference, "C++");
+                }
+            }
+        }
 
         // Calling this will also initialize the ProjectImage class
         Project.Initialize(project);

@@ -297,6 +297,8 @@ set (file_list
     $<$<CONFIG:Debug>:tests/test_xrc_import.cpp>  # XRC Import tests
 )
 
+# wxui/wxui_code.cmake
+
 set (debug_files
     # These are just here to make it easier to open with a VSCode extension
 

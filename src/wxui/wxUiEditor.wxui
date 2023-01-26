@@ -1733,6 +1733,53 @@
       </node>
     </node>
     <node
+      class="wxDialog"
+      class_name="CodePreferenceDlg"
+      title="Choose Code Preference"
+      base_file="code_preference_dlg"
+      use_derived_class="0">
+      <node
+        class="wxBoxSizer"
+        orientation="wxVERTICAL"
+        var_name="dlg_sizer">
+        <node
+          class="wxStaticText"
+          class_access="none"
+          label="Choose the code you prefer to generate. This will set the project's initial code preference property (which you can change at any time)."
+          var_name="staticText"
+          wrap="350" />
+        <node
+          class="wxBoxSizer"
+          alignment="wxALIGN_CENTER_HORIZONTAL">
+          <node
+            class="wxRadioButton"
+            checked="1"
+            class_access="none"
+            label="&amp;C++"
+            style="wxRB_GROUP"
+            var_name="m_radioBtn_2"
+            get_function="is_gen_cpp"
+            validator_variable="m_gen_cpp_code" />
+          <node
+            class="wxRadioButton"
+            class_access="none"
+            label="&amp;Python"
+            var_name="m_radioBtn_3"
+            get_function="is_gen_python"
+            validator_variable="m_gen_python_code" />
+          <node
+            class="wxRadioButton"
+            class_access="none"
+            label="&amp;XRC"
+            get_function="is_gen_xrc"
+            validator_variable="m_gen_xrc_code" />
+        </node>
+        <node
+          class="wxStdDialogButtonSizer"
+          flags="wxEXPAND" />
+      </node>
+    </node>
+    <node
       class="folder"
       label="Custom Property Editors">
       <node

@@ -3894,18 +3894,6 @@
             class="wxCheckBox"
             checked="1"
             class_access="none"
-            label="Add &quot;m_&quot; prefix to class members"
-            var_comment="// controls whether m_ is automatically added to non-local var_name"
-            var_name="checkBox_var_prefix"
-            validator_variable="m_var_prefix"
-            tooltip="If checked, new sizers will be created with the wxEXPAND flag." />
-          <node
-            class="spacer"
-            height="16" />
-          <node
-            class="wxCheckBox"
-            checked="1"
-            class_access="none"
             label="Enable WakaTime"
             var_name="checkBox_wakatime"
             validator_variable="m_isWakaTimeEnabled"

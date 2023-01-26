@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Contains user-modifiable node
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2021 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -17,6 +17,7 @@
 #include "node_decl.h"        // NodeDeclaration class
 #include "node_gridbag.h"     // GridBag -- Create and modify a node containing a wxGridBagSizer
 #include "node_prop.h"        // NodeProperty -- NodeProperty class
+#include "preferences.h"      // Preferences -- Stores user preferences
 #include "project_handler.h"  // ProjectHandler class
 #include "undo_cmds.h"        // InsertNodeAction -- Undoable command classes derived from UndoAction
 
@@ -782,6 +783,25 @@ Node* Node::CreateChildNode(GenName name)
 
     if (new_node)
     {
+        if (Project.get_PreferredLanguage() != GEN_LANG_CPLUSPLUS)
+        {
+            tt_string member_name = new_node->value(prop_var_name);
+            if (member_name.starts_with("m_"))
+            {
+                member_name.erase(0, 2);
+                if (member_name.ends_with("_2"))
+                {
+                    // This is unlikely, but the previous check for duplication assumed a m_
+                    // prefix, so without the prefix, it's possible that the name isn't a
+                    // duplicate. We only check for _2 since a mix of names with/without a m_
+                    // prefix is unlikely.
+                    member_name.erase(member_name.size() - 2);
+                }
+                new_node->prop_set_value(prop_var_name, member_name);
+                new_node->FixDuplicateName();
+            }
+        }
+
         frame.FireCreatedEvent(new_node.get());
         frame.SelectNode(new_node.get(), evt_flags::fire_event | evt_flags::force_selection);
     }

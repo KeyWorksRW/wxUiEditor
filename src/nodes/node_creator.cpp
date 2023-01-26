@@ -15,7 +15,7 @@ NodeCreator& NodeCreation = NodeCreator::getInstance();
 
 using namespace GenEnum;
 
-NodeDeclaration* NodeCreator::GetNodeDeclaration(ttlib::sview className)
+NodeDeclaration* NodeCreator::GetNodeDeclaration(tt_string_view className)
 {
     if (auto result = rmap_GenNames.find(className); result != rmap_GenNames.end())
     {
@@ -25,7 +25,7 @@ NodeDeclaration* NodeCreator::GetNodeDeclaration(ttlib::sview className)
     // Failure can happen for a new category that didn't get added to the interface section
     // of map_GenNames in gen_enums.cpp
 
-    FAIL_MSG(ttlib::cstr() << "Attempt to get non-existant node declaration for " << className);
+    FAIL_MSG(tt_string() << "Attempt to get non-existant node declaration for " << className);
     return nullptr;
 }
 
@@ -208,14 +208,14 @@ NodeSharedPtr NodeCreator::CreateNode(GenName name, Node* parent)
 }
 
 // Called when the GenName isn't availalble
-NodeSharedPtr NodeCreator::CreateNode(ttlib::sview name, Node* parent)
+NodeSharedPtr NodeCreator::CreateNode(tt_string_view name, Node* parent)
 {
     if (auto result = rmap_GenNames.find(name); result != rmap_GenNames.end())
     {
         return CreateNode(result->second, parent);
     }
 
-    FAIL_MSG(ttlib::cstr() << "No component definition for " << name);
+    FAIL_MSG(tt_string() << "No component definition for " << name);
     return {};
 }
 

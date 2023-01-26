@@ -463,7 +463,7 @@ void MainFrame::OnOpenProject(wxCommandEvent&)
 
     if (dialog.ShowModal() == wxID_OK)
     {
-        ttString filename = dialog.GetPath();
+        tt_wxString filename = dialog.GetPath();
         // The ".wxue" extension is only used for testing -- all normal projects should have a .wxui extension
         if (filename.extension().is_sameas(".wxui", tt::CASE::either) ||
             filename.extension().is_sameas(".wxue", tt::CASE::either))
@@ -479,7 +479,7 @@ void MainFrame::OnOpenProject(wxCommandEvent&)
 
 void MainFrame::OnAppendCrafter(wxCommandEvent&)
 {
-    ttSaveCwd cwd;
+    tt_cwd cwd(true);
     wxFileDialog dlg(this, "Open or Import Project", cwd, wxEmptyString, "wxCrafter Project File (*.wxcp)|*.wxcp||",
                      wxFD_OPEN | wxFD_FILE_MUST_EXIST | wxFD_MULTIPLE);
     if (dlg.ShowModal() == wxID_OK)
@@ -492,7 +492,7 @@ void MainFrame::OnAppendCrafter(wxCommandEvent&)
 
 void MainFrame::OnAppendFormBuilder(wxCommandEvent&)
 {
-    ttSaveCwd cwd;
+    tt_cwd cwd(true);
     wxFileDialog dlg(this, "Open or Import Project", cwd, wxEmptyString, "wxFormBuilder Project File (*.fbp)|*.fbp||",
                      wxFD_OPEN | wxFD_FILE_MUST_EXIST | wxFD_MULTIPLE);
     if (dlg.ShowModal() == wxID_OK)
@@ -505,7 +505,7 @@ void MainFrame::OnAppendFormBuilder(wxCommandEvent&)
 
 void MainFrame::OnAppendGlade(wxCommandEvent&)
 {
-    ttSaveCwd cwd;
+    tt_cwd cwd(true);
     wxFileDialog dlg(this, "Open or Import Project", cwd, wxEmptyString, "wxGlade Project File (*.wxg)|*.wxg||",
                      wxFD_OPEN | wxFD_FILE_MUST_EXIST | wxFD_MULTIPLE);
     if (dlg.ShowModal() == wxID_OK)
@@ -518,7 +518,7 @@ void MainFrame::OnAppendGlade(wxCommandEvent&)
 
 void MainFrame::OnAppendSmith(wxCommandEvent&)
 {
-    ttSaveCwd cwd;
+    tt_cwd cwd(true);
     wxFileDialog dlg(this, "Open or Import Project", cwd, wxEmptyString, "wxSmith File (*.wxs)|*.wxs||",
                      wxFD_OPEN | wxFD_FILE_MUST_EXIST | wxFD_MULTIPLE);
     if (dlg.ShowModal() == wxID_OK)
@@ -531,7 +531,7 @@ void MainFrame::OnAppendSmith(wxCommandEvent&)
 
 void MainFrame::OnAppendXRC(wxCommandEvent&)
 {
-    ttSaveCwd cwd;
+    tt_cwd cwd(true);
     wxFileDialog dlg(this, "Open or Import Project", cwd, wxEmptyString, "XRC File (*.xrc)|*.xrc||",
                      wxFD_OPEN | wxFD_FILE_MUST_EXIST | wxFD_MULTIPLE);
     if (dlg.ShowModal() == wxID_OK)
@@ -547,7 +547,7 @@ void MainFrame::OnOpenRecentProject(wxCommandEvent& event)
     if (!SaveWarning())
         return;
 
-    ttString file = m_FileHistory.GetHistoryFile(event.GetId() - wxID_FILE1);
+    tt_wxString file = m_FileHistory.GetHistoryFile(event.GetId() - wxID_FILE1);
 
     if (file.file_exists())
     {
@@ -566,7 +566,7 @@ void MainFrame::OnOpenRecentProject(wxCommandEvent& event)
 #if defined(_DEBUG) || defined(INTERNAL_TESTING)
 void MainFrame::OnImportRecent(wxCommandEvent& event)
 {
-    ttString file = m_ImportHistory.GetHistoryFile(event.GetId() - (wxID_FILE1 + 1000));
+    tt_wxString file = m_ImportHistory.GetHistoryFile(event.GetId() - (wxID_FILE1 + 1000));
     wxArrayString files;
     files.Add(file);
     auto extension = file.extension();
@@ -613,8 +613,8 @@ void MainFrame::OnAbout(wxCommandEvent&)
     aboutInfo.SetName(txtVersion);
 
     // Use trailing spaces to make the dialog width a bit wider
-    aboutInfo.SetDescription(ttlib::cstr() << "wxWidgets GUI designer for C++/XRC applications  \n\n\tBuilt using "
-                                           << wxVERSION_STRING << '\n');
+    aboutInfo.SetDescription(tt_string() << "wxWidgets GUI designer for C++/XRC applications  \n\n\tBuilt using "
+                                         << wxVERSION_STRING << '\n');
     aboutInfo.SetCopyright(txtCopyRight);
     aboutInfo.SetWebSite("https://github.com/KeyWorksRW/wxUiEditor");
 
@@ -706,7 +706,7 @@ void MainFrame::ProjectLoaded()
 
 void MainFrame::ProjectSaved()
 {
-    setStatusText(ttlib::cstr(Project.ProjectFile().filename().utf8_string()) << " saved");
+    setStatusText(tt_string(Project.ProjectFile().filename().utf8_string()) << " saved");
     UpdateFrame();
 }
 
@@ -812,7 +812,7 @@ void MainFrame::UpdateLayoutTools()
 
 void MainFrame::UpdateFrame()
 {
-    ttString filename = Project.ProjectFile().filename();
+    tt_wxString filename = Project.ProjectFile().filename();
 
     if (filename.empty())
     {
@@ -1213,7 +1213,7 @@ void MainFrame::CreateSplitters()
     // SetMinSize(wxSize(700, 380));
 }
 
-void MainFrame::SetStatusField(const ttlib::cstr text, int position)
+void MainFrame::SetStatusField(const tt_string text, int position)
 {
     if (position == -1)
         position = m_posPropGridStatusField;
@@ -1315,8 +1315,8 @@ void MainFrame::CreateToolNode(GenName name)
             return;  // The user has already been notified of the problem
         }
 
-        wxMessageBox(ttlib::cstr() << "Unable to create " << map_GenNames[name] << " as a child of "
-                                   << m_selected_node->DeclName());
+        wxMessageBox(tt_string() << "Unable to create " << map_GenNames[name] << " as a child of "
+                                 << m_selected_node->DeclName());
     }
 }
 
@@ -1341,7 +1341,7 @@ void MainFrame::CopyNode(Node* node)
 
             // Skip over the XML header
             auto begin = strm.str().find("<node");
-            if (ttlib::is_found(begin))
+            if (tt::is_found(begin))
             {
                 u8_data->GetText() = strm.str().c_str() + begin;
                 auto hash_data = new wxUEDataObject();
@@ -1405,7 +1405,7 @@ void MainFrame::PasteNode(Node* parent)
         auto grandparent = parent->GetParent();
         if (!grandparent || !grandparent->IsChildAllowed(new_node))
         {
-            wxMessageBox(ttlib::cstr() << "You cannot paste " << new_node->DeclName() << " into " << parent->DeclName());
+            wxMessageBox(tt_string() << "You cannot paste " << new_node->DeclName() << " into " << parent->DeclName());
             return;
         }
         parent = grandparent;
@@ -1418,7 +1418,7 @@ void MainFrame::PasteNode(Node* parent)
         return;
     }
 
-    ttlib::cstr undo_str("paste ");
+    tt_string undo_str("paste ");
     undo_str << m_clipboard->DeclName();
 
     auto pos = parent->FindInsertionPos(m_selected_node);
@@ -1444,7 +1444,7 @@ void MainFrame::DuplicateNode(Node* node)
     }
     else
     {
-        ttlib::cstr undo_str("duplicate ");
+        tt_string undo_str("duplicate ");
         undo_str << node->DeclName();
         auto pos = parent->FindInsertionPos(m_selected_node);
         PushUndoAction(std::make_shared<InsertNodeAction>(new_node.get(), parent, undo_str, pos));
@@ -1557,7 +1557,7 @@ void MainFrame::ToggleBorderFlag(Node* node, int border)
     ModifyProperty(propFlag, value);
 }
 
-void MainFrame::ModifyProperty(NodeProperty* prop, ttlib::sview value)
+void MainFrame::ModifyProperty(NodeProperty* prop, tt_string_view value)
 {
     if (prop && value != prop->as_string())
     {
@@ -1575,7 +1575,7 @@ void MainFrame::ChangeAlignment(Node* node, int align, bool vertical)
     if (!propFlag)
         return;
 
-    ttlib::cstr value;
+    tt_string value;
 
     // First we delete the flags from the previous configuration, in order to avoid alignment conflicts.
 
@@ -1781,7 +1781,7 @@ bool MainFrame::MoveNode(Node* node, MoveDirection where, bool check_only)
             PushUndoAction(std::make_shared<ChangePositionAction>(node, pos));
             return true;
         }
-        wxMessageBox(ttlib::cstr() << node->DeclName() << " cannot be moved down any lower.", "Move item");
+        wxMessageBox(tt_string() << node->DeclName() << " cannot be moved down any lower.", "Move item");
     }
 
     return false;
@@ -1798,20 +1798,20 @@ void MainFrame::RemoveNode(Node* node, bool isCutMode)
 
     if (isCutMode)
     {
-        ttlib::cstr undo_str;
+        tt_string undo_str;
         undo_str << "cut " << node->DeclName();
         PushUndoAction(std::make_shared<RemoveNodeAction>(node, undo_str, true));
     }
     else
     {
-        ttlib::cstr undo_str;
+        tt_string undo_str;
         undo_str << "delete " << node->DeclName();
         PushUndoAction(std::make_shared<RemoveNodeAction>(node, undo_str, false));
     }
     UpdateWakaTime();
 }
 
-void MainFrame::ChangeEventHandler(NodeEvent* event, const ttlib::cstr& value)
+void MainFrame::ChangeEventHandler(NodeEvent* event, const tt_string& value)
 {
     if (event && value != event->get_value())
     {
@@ -1848,7 +1848,7 @@ void MainFrame::UpdateWakaTime(bool FileSavedEvent)
     }
 }
 
-void MainFrame::RemoveFileFromHistory(ttString file)
+void MainFrame::RemoveFileFromHistory(tt_wxString file)
 {
     if (file.empty())
         return;

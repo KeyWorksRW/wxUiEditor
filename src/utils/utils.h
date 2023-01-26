@@ -26,35 +26,35 @@ enum PropIndex
     IndexSize
 };
 
-ttlib::cstr ClearPropFlag(ttlib::sview flag, ttlib::sview currentValue);
-ttlib::cstr ClearMultiplePropFlags(ttlib::sview flags, ttlib::sview currentValue);
-ttlib::cstr SetPropFlag(ttlib::sview flag, ttlib::sview currentValue);
+tt_string ClearPropFlag(tt_string_view flag, tt_string_view currentValue);
+tt_string ClearMultiplePropFlags(tt_string_view flags, tt_string_view currentValue);
+tt_string SetPropFlag(tt_string_view flag, tt_string_view currentValue);
 
 // Convert a double to a string without needing to switch locales
-ttlib::cstr DoubleToStr(double val);
+tt_string DoubleToStr(double val);
 
-bool isPropFlagSet(ttlib::sview flag, ttlib::sview currentValue);
+bool isPropFlagSet(tt_string_view flag, tt_string_view currentValue);
 
-wxSystemColour ConvertToSystemColour(ttlib::sview value);
-int ConvertBitlistToInt(ttlib::sview list);
+wxSystemColour ConvertToSystemColour(tt_string_view value);
+int ConvertBitlistToInt(tt_string_view list);
 
-ttlib::cstr ConvertColourToString(const wxColour& colour);
-ttlib::cstr ConvertSystemColourToString(long colour);
+tt_string ConvertColourToString(const wxColour& colour);
+tt_string ConvertSystemColourToString(long colour);
 const char* ConvertFontFamilyToString(wxFontFamily family);
 
 // Used to add escapes to a string that will be handed off to a wxWidgets property editor
-ttlib::cstr CreateEscapedText(ttlib::sview str);
+tt_string CreateEscapedText(tt_string_view str);
 
 // if value begins with 'wx' then it is assumed to be a wxSystemColour
-wxColour ConvertToColour(ttlib::sview value);
+wxColour ConvertToColour(tt_string_view value);
 
 // Replace escape slashes with the actual character. Affects \\, \\n, \\r, and \\t
-ttlib::cstr ConvertEscapeSlashes(ttlib::sview str);
+tt_string ConvertEscapeSlashes(tt_string_view str);
 
-std::vector<ttlib::cstr> ConvertToArrayString(ttlib::sview value);
+std::vector<tt_string> ConvertToArrayString(tt_string_view value);
 
 // Use ConvertToArrayString() to get a vector, this function to get a wxArrayString
-wxArrayString ConvertToWxArrayString(ttlib::sview value);
+wxArrayString ConvertToWxArrayString(tt_string_view value);
 
 // Converts an unsigned char array into an image. This is typically used for loading internal
 // #included images
@@ -67,10 +67,10 @@ wxPoint DlgPoint(wxObject* parent, Node* node, GenEnum::PropName prop);
 wxSize DlgSize(wxObject* parent, Node* node, GenEnum::PropName prop);
 
 // Convert the parts[IndexSize] or equivalent string into wxSize dimensions
-void GetSizeInfo(wxSize& size, ttlib::sview size_description);
+void GetSizeInfo(wxSize& size, tt_string_view size_description);
 
 // Convert the parts[IndexSize] or equivalent string into wxSize dimensions
-wxSize get_image_prop_size(ttlib::sview size_description);
+wxSize get_image_prop_size(tt_string_view size_description);
 
 // Friendly name/wxSYS_COLOUR_ pairs (e.g. "tooltip"/wxSYS_COLOUR_INFOBK)
 extern std::map<std::string, const char*> g_sys_colour_pair;
@@ -78,7 +78,7 @@ extern std::map<std::string, const char*> g_sys_colour_pair;
 // Friendly name/wxSTC_WRAP_ constant
 extern std::map<std::string, const char*> g_stc_wrap_mode;
 
-bool isConvertibleMime(const ttString& suffix);
+bool isConvertibleMime(const tt_wxString& suffix);
 
 // Checks whether a string is a valid C++ variable name.
 bool isValidVarName(const std::string& str);

@@ -90,7 +90,7 @@ bool StaticRadioBtnBoxSizerGenerator::ConstructionCode(Code& code)
         code.Str("# wxPython currently does not support a radio button as a static box label").Eol();
     }
 
-    ttlib::cstr parent_name(code.is_cpp() ? "this" : "self");
+    tt_string parent_name(code.is_cpp() ? "this" : "self");
     if (!node->GetParent()->IsForm())
     {
         auto parent = node->GetParent();

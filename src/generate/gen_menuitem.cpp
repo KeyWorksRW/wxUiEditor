@@ -38,7 +38,7 @@ bool MenuItemGenerator::ConstructionCode(Code& code)
     {
         if (node->HasValue(prop_shortcut))
         {
-            code.QuotedString(ttlib::cstr() << label << '\t' << node->as_string(prop_shortcut));
+            code.QuotedString(tt_string() << label << '\t' << node->as_string(prop_shortcut));
         }
         else
         {
@@ -73,7 +73,7 @@ bool MenuItemGenerator::SettingsCode(Code& code)
             code += "#if wxCHECK_VERSION(3, 1, 6)\n";
         }
 
-        ttlib::multistr accel_list(node->as_string(prop_extra_accels), "\"", tt::TRIM::both);
+        tt_string_vector accel_list(node->as_string(prop_extra_accels), "\"", tt::TRIM::both);
         for (auto& accel: accel_list)
         {
             // There are spaces between the quoted strings which will create an entry that we
@@ -268,7 +268,7 @@ int MenuItemGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t x
     if (node->HasValue(prop_extra_accels))
     {
         auto child = item.append_child("extra-accels");
-        ttlib::multistr accel_list(node->as_string(prop_extra_accels), "\"", tt::TRIM::both);
+        tt_string_vector accel_list(node->as_string(prop_extra_accels), "\"", tt::TRIM::both);
         for (auto& accel: accel_list)
         {
             // There are spaces between the quoted strings which will create an entry that we

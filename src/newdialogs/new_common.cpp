@@ -13,7 +13,7 @@
 void UpdateFormClass(Node* form_node)
 {
     bool is_base_class = false;
-    ttString baseName = form_node->prop_as_wxString(prop_class_name);
+    tt_wxString baseName = form_node->prop_as_wxString(prop_class_name);
     if (baseName.Right(4) == "Base")
     {
         baseName.Replace("Base", wxEmptyString);
@@ -40,7 +40,7 @@ void UpdateFormClass(Node* form_node)
         }
         form_node->prop_set_value(prop_derived_class_name, class_name);
 
-        ttString drvName = form_node->prop_as_wxString(prop_derived_class_name);
+        tt_wxString drvName = form_node->prop_as_wxString(prop_derived_class_name);
         if (drvName.Right(7) == "Derived")
             drvName.Replace("Derived", "_derived");
         else if (!is_base_class)

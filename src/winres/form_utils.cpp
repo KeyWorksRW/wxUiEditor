@@ -176,7 +176,7 @@ void resForm::SortCtrls()
 // This is almost identical to the function of the same name in resCtrl -- however that one needs to access m_node in order
 // to handle a wxComboBox which has a different height then specified in the resource file.
 
-bool resForm::ParseDimensions(ttlib::sview line, wxRect& duRect, wxRect& pixelRect)
+bool resForm::ParseDimensions(tt_string_view line, wxRect& duRect, wxRect& pixelRect)
 {
     duRect = { 0, 0, 0, 0 };
     pixelRect = { 0, 0, 0, 0 };
@@ -188,39 +188,39 @@ bool resForm::ParseDimensions(ttlib::sview line, wxRect& duRect, wxRect& pixelRe
     if (line.at(0) == ',')
         line.moveto_digit();
 
-    if (line.empty() || !ttlib::is_digit(line.at(0)))
+    if (line.empty() || !tt::is_digit(line.at(0)))
         return false;
-    duRect.SetLeft(ttlib::atoi(line));
+    duRect.SetLeft(tt::atoi(line));
 
     auto pos = line.find_first_of(',');
-    if (!ttlib::is_found(pos))
+    if (!tt::is_found(pos))
         return false;
 
     line.remove_prefix(pos);
     line.moveto_digit();
-    if (line.empty() || !ttlib::is_digit(line.at(0)))
+    if (line.empty() || !tt::is_digit(line.at(0)))
         return false;
-    duRect.SetTop(ttlib::atoi(line));
+    duRect.SetTop(tt::atoi(line));
 
     pos = line.find_first_of(',');
-    if (!ttlib::is_found(pos))
+    if (!tt::is_found(pos))
         return false;
 
     line.remove_prefix(pos);
     line.moveto_digit();
-    if (line.empty() || !ttlib::is_digit(line.at(0)))
+    if (line.empty() || !tt::is_digit(line.at(0)))
         return false;
-    duRect.SetWidth(ttlib::atoi(line));
+    duRect.SetWidth(tt::atoi(line));
 
     pos = line.find_first_of(',');
-    if (!ttlib::is_found(pos))
+    if (!tt::is_found(pos))
         return false;
 
     line.remove_prefix(pos);
     line.moveto_digit();
-    if (line.empty() || !ttlib::is_digit(line.at(0)))
+    if (line.empty() || !tt::is_digit(line.at(0)))
         return false;
-    duRect.SetHeight(ttlib::atoi(line));
+    duRect.SetHeight(tt::atoi(line));
 
     /*
 

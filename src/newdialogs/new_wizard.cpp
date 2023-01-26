@@ -37,14 +37,14 @@ void NewWizard::CreateNode()
     {
         if (auto page = NodeCreation.CreateNode(gen_wxWizardPageSimple, new_node.get()); page)
         {
-            page->prop_set_value(prop_var_name, ttlib::cstr("wizard_page_") << count + 1);
+            page->prop_set_value(prop_var_name, tt_string("wizard_page_") << count + 1);
             auto sizer = NodeCreation.CreateNode(gen_VerticalBoxSizer, page.get());
 
             auto static_text = NodeCreation.CreateNode(gen_wxStaticText, sizer.get());
             static_text->prop_set_value(prop_class_access, "none");
-            static_text->prop_set_value(prop_var_name, ttlib::cstr("static_text_") << count + 1);
+            static_text->prop_set_value(prop_var_name, tt_string("static_text_") << count + 1);
             sizer->Adopt(static_text);
-            static_text->prop_set_value(prop_label, ttlib::cstr("Page #")
+            static_text->prop_set_value(prop_label, tt_string("Page #")
                                                         << count + 1
                                                         << " -- TODO: replace this control with something more useful...");
             static_text->prop_set_value(prop_wrap, "200");
@@ -63,7 +63,7 @@ void NewWizard::CreateNode()
 
     wxGetFrame().SelectNode(Project.ProjectNode());
 
-    ttlib::cstr undo_str("New wxWizard");
+    tt_string undo_str("New wxWizard");
     wxGetFrame().PushUndoAction(std::make_shared<InsertNodeAction>(new_node.get(), Project.ProjectNode(), undo_str, -1));
     wxGetFrame().FireCreatedEvent(new_node);
     wxGetFrame().SelectNode(new_node, evt_flags::fire_event | evt_flags::force_selection);

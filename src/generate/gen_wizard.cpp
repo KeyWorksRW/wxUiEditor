@@ -100,7 +100,7 @@ bool WizardFormGenerator::SettingsCode(Code& code)
         {
             if (code.is_cpp())
             {
-                ttlib::cstr bundle_code;
+                tt_string bundle_code;
                 GenerateBundleCode(code.node()->as_string(prop_bitmap), bundle_code);
                 code.CheckLineLength(bundle_code.size());
                 code += bundle_code;
@@ -263,11 +263,11 @@ std::vector<Node*> WizardFormGenerator::GetChildPanes(Node* parent)
     return panes;
 }
 
-std::optional<ttlib::cstr> WizardFormGenerator::GetHint(NodeProperty* prop)
+std::optional<tt_string> WizardFormGenerator::GetHint(NodeProperty* prop)
 {
     if (prop->isProp(prop_title) && !prop->GetNode()->HasValue(prop_title))
     {
-        return (ttlib::cstr() << "Title bar text");
+        return (tt_string() << "Title bar text");
     }
     else
     {
@@ -310,7 +310,7 @@ int WizardFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t
             if (xrc_flags & xrc::add_comments)
             {
                 item.append_child(pugi::node_comment)
-                    .set_value((ttlib::cstr(node->prop_as_string(prop_center)) << " cannot be be set in the XRC file."));
+                    .set_value((tt_string(node->prop_as_string(prop_center)) << " cannot be be set in the XRC file."));
             }
             item.append_child("centered").text().set(1);
         }
@@ -333,7 +333,7 @@ int WizardFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t
         }
         else
         {
-            ttlib::cstr all_styles = node->prop_as_string(prop_style);
+            tt_string all_styles = node->prop_as_string(prop_style);
             all_styles << '|' << node->prop_as_string(prop_extra_style);
             item.append_child("style").text().set(all_styles);
         }
@@ -431,7 +431,7 @@ bool WizardPageGenerator::ConstructionCode(Code& code)
                 if (Project.value(prop_wxWidgets_version) == "3.1")
                 {
                     code.Eol() += "#if wxCHECK_VERSION(3, 1, 6)\n\t";
-                    ttlib::cstr bundle_code;
+                    tt_string bundle_code;
                     GenerateBundleCode(code.node()->as_string(prop_bitmap), bundle_code);
                     code.CheckLineLength(bundle_code.size());
                     code += bundle_code;
@@ -441,7 +441,7 @@ bool WizardPageGenerator::ConstructionCode(Code& code)
                 }
                 else
                 {
-                    ttlib::cstr bundle_code;
+                    tt_string bundle_code;
                     GenerateBundleCode(code.node()->as_string(prop_bitmap), bundle_code);
                     code.CheckLineLength(bundle_code.size());
                     code += bundle_code;

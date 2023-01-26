@@ -32,15 +32,15 @@ public:
         const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_DIALOG_STYLE, const wxString &name = wxDialogNameStr);
 
-    const ttlib::cstr& GetRcFilename() { return m_rcFilename; }
-    std::vector<ttlib::cstr>& GetDlgNames() { return m_dialogs; }
+    const tt_string& GetRcFilename() { return m_rcFilename; }
+    std::vector<tt_string>& GetDlgNames() { return m_dialogs; }
 
 protected:
     void ReadRcFile();
 
 private:
-    ttlib::cstr m_rcFilename;
-    std::vector<ttlib::cstr> m_dialogs;
+    tt_string m_rcFilename;
+    std::vector<tt_string> m_dialogs;
 
 protected:
 

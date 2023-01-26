@@ -205,11 +205,11 @@ int FrameFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t 
     }
     if (node->HasValue(prop_icon))
     {
-        ttlib::multistr parts(node->prop_as_string(prop_icon), ';', tt::TRIM::both);
+        tt_string_vector parts(node->prop_as_string(prop_icon), ';', tt::TRIM::both);
         ASSERT(parts.size() > 1)
         if (parts[IndexType].is_sameas("Art"))
         {
-            ttlib::multistr art_parts(parts[IndexArtID], '|');
+            tt_string_vector art_parts(parts[IndexArtID], '|');
             auto icon = object.append_child("icon");
             icon.append_attribute("stock_id").set_value(art_parts[0]);
             icon.append_attribute("stock_client").set_value(art_parts[1]);
@@ -271,7 +271,7 @@ bool FrameFormGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodePro
     {
         auto property = wxStaticCast(event->GetProperty(), wxFlagsProperty);
         auto variant = event->GetPropertyValue();
-        ttString newValue = property->ValueToString(variant);
+        tt_wxString newValue = property->ValueToString(variant);
         if (newValue.IsEmpty())
             return true;
 

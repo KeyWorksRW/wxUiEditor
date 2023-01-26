@@ -5,8 +5,6 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include <tttextfile_wx.h>  // textfile -- Classes for reading and writing line-oriented files
-
 #include "winres_form.h"
 
 #include "node_creator.h"  // NodeCreator -- Class used to create nodes
@@ -503,7 +501,7 @@ void resForm::AddStaticBoxChildren(const resCtrl& box, size_t idx_group_box)
 
             auto total_columns = result;  // This is just for readability
             auto grid_sizer = NodeCreation.CreateNode(gen_wxFlexGridSizer, box.GetNode());
-            grid_sizer->prop_set_value(prop_cols, ttlib::itoa(total_columns));
+            grid_sizer->prop_set_value(prop_cols, tt::itoa(total_columns));
             static_box.GetNode()->Adopt(grid_sizer);
 
             // TODO: [KeyWorks - 11-08-2021] The following code will handle cases where there are missing right columns in a
@@ -740,7 +738,7 @@ void resForm::Adopt(const NodeSharedPtr& node, resCtrl& child)
     ASSERT_MSG(!child.isAdded(), "Logic problem, child has already been added.");
     if (child.isAdded())
     {
-        MSG_ERROR(ttlib::cstr() << "Control already added: " << m_form_id << ":: " << child.GetOrginalLine());
+        MSG_ERROR(tt_string() << "Control already added: " << m_form_id << ":: " << child.GetOrginalLine());
     }
 #endif  // _DEBUG
 
@@ -1008,7 +1006,7 @@ void resForm::CheckForFlexGrid(Node* parent)
 
             // If we get here, then the two box sizers can be converted into a single flex grid sizer
             auto grid_sizer = NodeCreation.CreateNode(gen_wxFlexGridSizer, m_dlg_sizer.get());
-            grid_sizer->prop_set_value(prop_cols, ttlib::cstr() << first_sizer->GetChildCount());
+            grid_sizer->prop_set_value(prop_cols, tt_string() << first_sizer->GetChildCount());
             for (box_child = 0; box_child < first_sizer->GetChildCount(); ++box_child)
             {
                 grid_sizer->Adopt(first_sizer->GetChildPtr(box_child));

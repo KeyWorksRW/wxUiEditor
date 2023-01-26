@@ -34,7 +34,7 @@ bool WakaTime::IsWakaTimeAvailable()
         return false;
     }
 
-    ttlib::cstr waka_cli(result.utf8_string());
+    tt_string waka_cli(result.utf8_string());
     waka_cli.append_filename(".wakatime");
     if (!waka_cli.dir_exists())
     {
@@ -84,7 +84,7 @@ void WakaTime::SetWakaExePath()
     }
 
 #if defined(_WIN32)
-    ttlib::cstr win_cli(m_waka_cli);
+    tt_string win_cli(m_waka_cli);
     win_cli.append_filename("wakatime-cli-windows-amd64.exe");
     if (win_cli.file_exists())
     {
@@ -137,10 +137,10 @@ void WakaTime::SendHeartbeat(bool FileSavedEvent)
         if (FileSavedEvent || (result > m_last_heartbeat && (result - m_last_heartbeat >= waka_interval)))
         {
             m_last_heartbeat = static_cast<intmax_t>(result);
-            ttString cmd;
+            tt_wxString cmd;
             cmd << m_waka_cli.wx_str()
                 << " --plugin \"wxUiEditor/0.5.0 wxUiEditor-wakatime/0.5.0\" --category designing --project ";
-            ttString name = Project.ProjectFile().filename();
+            tt_wxString name = Project.ProjectFile().filename();
             name.remove_extension();
             cmd << name.wx_str();
             cmd << " --entity \"" << Project.ProjectFile() << "\"";

@@ -21,7 +21,7 @@ CustomPointProperty::CustomPointProperty(const wxString& label, NodeProperty* pr
 
     if (type == CustomPointProperty::type_SVG && prop->HasValue() && prop->as_string().contains("["))
     {
-        ttlib::cstr value(prop->as_string().substr(prop->as_string().find('[') + 1));
+        tt_string value(prop->as_string().substr(prop->as_string().find('[') + 1));
         if (value.back() == ']')
             value.pop_back();
         m_value = value;
@@ -97,7 +97,7 @@ wxVariant CustomPointProperty::ChildChanged(wxVariant& /* thisValue */, int chil
     return value;
 }
 
-void CustomPointProperty::InitValues(ttlib::sview value)
+void CustomPointProperty::InitValues(tt_string_view value)
 {
     if (value.empty())
     {
@@ -107,7 +107,7 @@ void CustomPointProperty::InitValues(ttlib::sview value)
     }
     else
     {
-        ttlib::multiview parts;
+        tt_view_vector parts;
         if (value.contains(";"))
             parts.SetString(value, ';');
         else
@@ -121,16 +121,16 @@ void CustomPointProperty::InitValues(ttlib::sview value)
             return;
         }
 
-        // We don't need to trim, because ttlib::atoi() skips leading whitespace
-        m_point.x = ttlib::atoi(parts[0]);
-        m_point.y = ttlib::atoi(parts[1]);
-        m_dialog_units = ttlib::contains(value, "d", tt::CASE::either);
+        // We don't need to trim, because tt::atoi() skips leading whitespace
+        m_point.x = tt::atoi(parts[0]);
+        m_point.y = tt::atoi(parts[1]);
+        m_dialog_units = tt::contains(value, "d", tt::CASE::either);
     }
 }
 
-ttlib::cstr CustomPointProperty::CombineValues()
+tt_string CustomPointProperty::CombineValues()
 {
-    ttlib::cstr value;
+    tt_string value;
     value << m_point.x << ',' << m_point.y;
     if (m_dialog_units)
         value << 'd';

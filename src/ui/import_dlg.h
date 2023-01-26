@@ -23,7 +23,7 @@ public:
     bool isImportXRC() { return m_radio_XRC->GetValue(); }
     bool isImportWinRes() { return m_radio_WindowsResource->GetValue(); }
 
-    std::vector<ttString>& GetFileList() { return m_lstProjects; };
+    std::vector<tt_wxString>& GetFileList() { return m_lstProjects; };
 
 protected:
     void CheckResourceFiles(wxArrayString& files);
@@ -49,7 +49,7 @@ protected:
 #endif
 
 private:
-    std::vector<ttString> m_lstProjects;
+    std::vector<tt_wxString> m_lstProjects;
 #if defined(_DEBUG) || defined(INTERNAL_TESTING)
     wxFileHistory m_FileHistory;
 #endif

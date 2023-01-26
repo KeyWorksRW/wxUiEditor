@@ -134,7 +134,7 @@ void BaseCodeGenerator::GenConstruction(Node* node)
             }
             child->SetParent(old_parent);
         }
-        m_source->writeLine(ttlib::cstr() << node->get_node_name() << LangPtr() << "SetDropdownMenu(menu);");
+        m_source->writeLine(tt_string() << node->get_node_name() << LangPtr() << "SetDropdownMenu(menu);");
         EndBrace();
         return;
     }
@@ -152,7 +152,7 @@ void BaseCodeGenerator::GenConstruction(Node* node)
     }
     else if (parent->IsToolBar() && !node->isType(type_tool) && !node->isType(type_tool_separator))
     {
-        ttlib::cstr code;
+        tt_string code;
         gen_code.clear();
         if (parent->isType(type_toolbar_form))
             gen_code.Str("AddControl(").Str(prop_var_name).EndFunction();
@@ -201,7 +201,7 @@ void BaseCodeGenerator::GenConstruction(Node* node)
 
             gen_code.clear();
 
-            ttlib::cstr code;
+            tt_string code;
             if (parent->isGen(gen_wxRibbonPanel))
             {
                 gen_code.ParentName().Function("SetSizerAndFit(").NodeName().EndFunction();
@@ -296,7 +296,7 @@ const char* BaseCodeGenerator::LangPtr() const
 
 void BaseCodeGenerator::BeginPlatformCode(Node* node)
 {
-    ttlib::cstr code;
+    tt_string code;
     if (node->value(prop_platforms).contains("Windows"))
     {
         switch (m_language)
@@ -533,7 +533,7 @@ void BaseCodeGenerator::GenParentSizer(Node* node, bool need_closing_brace)
         {
             code.Add("wxGBPosition(").as_string(prop_row).Comma().as_string(prop_column) << "), ";
             code.Add("wxGBSpan(").as_string(prop_rowspan).Comma().as_string(prop_colspan) << "), ";
-            ttlib::cstr flags(node->prop_as_string(prop_borders));
+            tt_string flags(node->prop_as_string(prop_borders));
             if (node->prop_as_string(prop_flags).size())
             {
                 if (flags.size())

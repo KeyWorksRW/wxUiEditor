@@ -96,7 +96,7 @@ bool GridBag::InsertNode(Node* gbsizer, Node* new_node)
     // If we get here, then either the row or the column must be inserted. That means any duplicate row/column needs to be
     // incremented, which has to be done recursively.
 
-    ttlib::cstr undo_str;
+    tt_string undo_str;
     undo_str << "Insert " << map_GenNames[new_node->gen_name()];
 
     // Unlike a normal undo command, this one will simply make a copy of the current gbsizer and the current selection.
@@ -265,7 +265,7 @@ bool GridBag::MoveNode(Node* node, MoveDirection where, bool check_only)
 void GridBag::MoveLeft(Node* node)
 {
     auto gbsizer = node->GetParent();
-    ttlib::cstr undo_str;
+    tt_string undo_str;
     undo_str << "Change column of " << map_GenNames[node->gen_name()];
 
     // Unlike a normal undo command, this one will make a copy of the current gbsizer rather than the current node.
@@ -313,7 +313,7 @@ void GridBag::MoveRight(Node* node)
 {
     auto gbsizer = node->GetParent();
 
-    ttlib::cstr undo_str;
+    tt_string undo_str;
     undo_str << "Change column of " << map_GenNames[node->gen_name()];
     // Unlike a normal undo command, this one will make a copy of the current gbsizer rather than the current node.
     auto undo_cmd = std::make_shared<GridBagAction>(gbsizer, undo_str);
@@ -359,7 +359,7 @@ void GridBag::MoveUp(Node* node)
 {
     auto gbsizer = node->GetParent();
 
-    ttlib::cstr undo_str;
+    tt_string undo_str;
     undo_str << "Change row";
 
     // Unlike a normal undo command, this one will make a copy of the current gbsizer rather than the current node.
@@ -433,7 +433,7 @@ void GridBag::MoveDown(Node* node)
 {
     auto gbsizer = node->GetParent();
 
-    ttlib::cstr undo_str;
+    tt_string undo_str;
     undo_str << "Change row";
 
     // Unlike a normal undo command, this one will make a copy of the current gbsizer rather than the current node.

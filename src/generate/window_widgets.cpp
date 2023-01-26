@@ -126,7 +126,7 @@ int ScrolledWindowGenerator::GenXrcObject(Node* node, pugi::xml_node& object, si
 
     if (node->as_int(prop_scroll_rate_x) >= 0 || node->as_int(prop_scroll_rate_y) >= 0)
     {
-        ttlib::cstr scroll_rate;
+        tt_string scroll_rate;
         scroll_rate << node->as_int(prop_scroll_rate_x) << ',' << node->as_int(prop_scroll_rate_y);
         item.append_child("scrollrate").text().set(scroll_rate);
     }

@@ -46,7 +46,7 @@ bool BaseGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty
     {
         auto property = wxStaticCast(event->GetProperty(), wxFlagsProperty);
         auto variant = event->GetPropertyValue();
-        ttString newValue = property->ValueToString(variant);
+        tt_wxString newValue = property->ValueToString(variant);
         if (newValue.IsEmpty())
             return true;
 
@@ -88,7 +88,7 @@ bool BaseGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty
     {
         auto property = wxStaticCast(event->GetProperty(), wxFlagsProperty);
         auto variant = event->GetPropertyValue();
-        ttString newValue = property->ValueToString(variant);
+        tt_wxString newValue = property->ValueToString(variant);
         if (newValue.IsEmpty())
             return true;
 
@@ -123,7 +123,7 @@ bool BaseGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty
     {
         auto property = wxStaticCast(event->GetProperty(), wxStringProperty);
         auto variant = event->GetPropertyValue();
-        ttlib::cstr newValue = property->ValueToString(variant).utf8_string();
+        tt_string newValue = property->ValueToString(variant).utf8_string();
         if (newValue.empty())
             return true;
 
@@ -202,7 +202,7 @@ bool BaseGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty
     {
         auto property = wxStaticCast(event->GetProperty(), wxStringProperty);
         auto variant = event->GetPropertyValue();
-        ttlib::cstr newValue = property->ValueToString(variant).utf8_string();
+        tt_string newValue = property->ValueToString(variant).utf8_string();
         if (newValue.empty())
             return true;
 
@@ -228,9 +228,9 @@ bool BaseGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty
     return true;
 }
 
-ttlib::cstr BaseGenerator::GetHelpText(Node* node)
+tt_string BaseGenerator::GetHelpText(Node* node)
 {
-    ttlib::cstr class_name(map_GenNames[node->gen_name()]);
+    tt_string class_name(map_GenNames[node->gen_name()]);
     if (!class_name.starts_with("wx"))
     {
         if (class_name == "BookPage")
@@ -261,7 +261,7 @@ ttlib::cstr BaseGenerator::GetHelpText(Node* node)
 
 extern std::map<std::string_view, std::string_view, std::less<>> g_map_class_prefix;
 
-ttlib::cstr BaseGenerator::GetPythonHelpText(Node* node)
+tt_string BaseGenerator::GetPythonHelpText(Node* node)
 {
     auto class_name = node->DeclName();
     if (!class_name.starts_with("wx"))
@@ -274,7 +274,7 @@ ttlib::cstr BaseGenerator::GetPythonHelpText(Node* node)
     {
         prefix = wx_iter->second;
     }
-    ttlib::cstr help_text;
+    tt_string help_text;
     help_text << prefix << class_name.subview(2);
 
     return help_text;
@@ -292,7 +292,7 @@ bool BaseGenerator::GetPythonImports(Node* node, std::set<std::string>& set_impo
     if (auto wx_iter = g_map_class_prefix.find(class_name); wx_iter != g_map_class_prefix.end())
     {
         prefix = wx_iter->second;
-        ttlib::cstr import_lib("import ");
+        tt_string import_lib("import ");
         import_lib << prefix;
         import_lib.pop_back();  // remove the trailing '.'
         set_imports.insert(import_lib);
@@ -417,24 +417,24 @@ bool BaseGenerator::VerifyProperty(NodeProperty* prop)
     return result;
 }
 
-std::optional<ttlib::cstr> BaseGenerator::GetHint(NodeProperty* prop)
+std::optional<tt_string> BaseGenerator::GetHint(NodeProperty* prop)
 {
     if (prop->isProp(prop_derived_class_name) && !prop->HasValue())
     {
         // Note that once set, this won't change until the property grid gets recreated.
-        return ttlib::cstr(!prop->GetNode()->prop_as_bool(prop_use_derived_class) ? "requires use_derived_class" : "");
+        return tt_string(!prop->GetNode()->prop_as_bool(prop_use_derived_class) ? "requires use_derived_class" : "");
     }
     else if (prop->isProp(prop_derived_file) && !prop->HasValue())
     {
-        return ttlib::cstr(!prop->GetNode()->prop_as_bool(prop_use_derived_class) ? "requires use_derived_class" : "");
+        return tt_string(!prop->GetNode()->prop_as_bool(prop_use_derived_class) ? "requires use_derived_class" : "");
     }
     else if (prop->isProp(prop_python_xrc_file) && !prop->HasValue())
     {
-        return ttlib::cstr(!prop->GetNode()->prop_as_bool(prop_use_derived_class) ? "requires python_use_xrc" : "");
+        return tt_string(!prop->GetNode()->prop_as_bool(prop_use_derived_class) ? "requires python_use_xrc" : "");
     }
     else if (prop->isProp(prop_base_file) && !prop->HasValue())
     {
-        return ttlib::cstr("change class_name to auto-fill");
+        return tt_string("change class_name to auto-fill");
     }
     else
     {
@@ -484,9 +484,9 @@ static std::vector<std::pair<const char*, const char*>> prefix_pair = {
 };
 // clang-format on
 
-ttlib::cstr BaseGenerator::GetHelpURL(Node* node)
+tt_string BaseGenerator::GetHelpURL(Node* node)
 {
-    ttlib::cstr class_name(map_GenNames[node->gen_name()]);
+    tt_string class_name(map_GenNames[node->gen_name()]);
     if (class_name.starts_with("wx"))
     {
         class_name.erase(0, 2);
@@ -513,60 +513,60 @@ ttlib::cstr BaseGenerator::GetHelpURL(Node* node)
             }
         }
 
-        ttlib::cstr url = "wx_";
+        tt_string url = "wx_";
         url << class_name << ".html";
         return url;
     }
     else if (class_name == "BookPage")
     {
-        return ttlib::cstr("wx_book_ctrl_base.html");
+        return tt_string("wx_book_ctrl_base.html");
     }
     else if (class_name == "dataViewColumn")
     {
-        return ttlib::cstr("wx_data_view_ctrl.html");
+        return tt_string("wx_data_view_ctrl.html");
     }
     else if (class_name == "dataViewListColumn")
     {
-        return ttlib::cstr("wx_data_view_list_ctrl.html");
+        return tt_string("wx_data_view_list_ctrl.html");
     }
     else if (class_name == "PanelForm")
     {
-        return ttlib::cstr("wx_panel.html");
+        return tt_string("wx_panel.html");
     }
     else if (class_name == "PopupMenu" || class_name == "submenu")
     {
-        return ttlib::cstr("wx_menu.html");
+        return tt_string("wx_menu.html");
     }
     else if (class_name == "propGridPage")
     {
-        return ttlib::cstr("wx_property_grid_page.html");
+        return tt_string("wx_property_grid_page.html");
     }
     else if (class_name == "RibbonBar")
     {
-        return ttlib::cstr("wx_ribbon_bar.html");
+        return tt_string("wx_ribbon_bar.html");
     }
     else if (class_name == "RibbonToolBar")
     {
-        return ttlib::cstr("wx_ribbon_tool_bar.html");
+        return tt_string("wx_ribbon_tool_bar.html");
     }
     else if (class_name == "StaticCheckboxBoxSizer" || class_name == "StaticRadioBtnBoxSizer")
     {
-        return ttlib::cstr("wx_static_box_sizer.html");
+        return tt_string("wx_static_box_sizer.html");
     }
     else if (class_name == "ToolBar")
     {
-        return ttlib::cstr("wx_tool_bar.html");
+        return tt_string("wx_tool_bar.html");
     }
     else if (class_name == "AuiToolBar")  // in case we add a form version
     {
-        return ttlib::cstr("wx_aui_tool_bar.html");
+        return tt_string("wx_aui_tool_bar.html");
     }
     else if (class_name == "TreeListCtrlColumn")
     {
-        return ttlib::cstr("wx_tree_list_ctrl.html");
+        return tt_string("wx_tree_list_ctrl.html");
     }
 
-    return ttlib::cstr();
+    return tt_string();
 }
 
 // clang-format off

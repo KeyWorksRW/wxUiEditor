@@ -23,7 +23,7 @@ public:
 
     bool GetIncludes(Node*, std::set<std::string>& set_src, std::set<std::string>& set_hdr) override;
 
-    std::optional<ttlib::cstr> GetHint(NodeProperty*) override;
+    std::optional<tt_string> GetHint(NodeProperty*) override;
     bool PopupMenuAddCommands(NavPopupMenu*, Node*) override;
 
     std::vector<Node*> GetChildPanes(Node* parent);

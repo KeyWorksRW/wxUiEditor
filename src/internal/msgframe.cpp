@@ -9,8 +9,6 @@
 #include <wx/filedlg.h>           // wxFileDialog base header
 #include <wx/persist/toplevel.h>  // persistence support for wxTLW
 
-#include <tttextfile_wx.h>  // textfile -- Classes for reading and writing line-oriented files
-
 #include "msgframe.h"  // auto-generated: msgframe_base.h and msgframe_base.cpp
 
 #include "base_generator.h"   // BaseGenerator -- Base widget generator class
@@ -51,7 +49,7 @@ static void CalcNodeMemory(Node* node, NodeMemory& node_memory)
 
 extern const char* g_xrc_keywords;
 
-MsgFrame::MsgFrame(std::vector<ttlib::cstr>* pMsgs, bool* pDestroyed, wxWindow* parent) :
+MsgFrame::MsgFrame(std::vector<tt_string>* pMsgs, bool* pDestroyed, wxWindow* parent) :
     MsgFrameBase(parent), m_pMsgs(pMsgs), m_pDestroyed(pDestroyed)
 {
     for (auto& iter: *m_pMsgs)
@@ -121,7 +119,7 @@ MsgFrame::MsgFrame(std::vector<ttlib::cstr>* pMsgs, bool* pDestroyed, wxWindow* 
     wxPersistentRegisterAndRestore(this, "MsgWindow");
 }
 
-void MsgFrame::AddWarningMsg(ttlib::sview msg)
+void MsgFrame::AddWarningMsg(tt_string_view msg)
 {
     if (Preferences().GetDebugFlags() & PREFS::PREFS_MSG_WARNING)
     {
@@ -132,7 +130,7 @@ void MsgFrame::AddWarningMsg(ttlib::sview msg)
     }
 }
 
-void MsgFrame::Add_wxWarningMsg(ttlib::sview msg)
+void MsgFrame::Add_wxWarningMsg(tt_string_view msg)
 {
     if (Preferences().GetDebugFlags() & PREFS::PREFS_MSG_WARNING)
     {
@@ -143,7 +141,7 @@ void MsgFrame::Add_wxWarningMsg(ttlib::sview msg)
     }
 }
 
-void MsgFrame::Add_wxInfoMsg(ttlib::sview msg)
+void MsgFrame::Add_wxInfoMsg(tt_string_view msg)
 {
     if (Preferences().GetDebugFlags() & PREFS::PREFS_MSG_INFO)
     {
@@ -154,7 +152,7 @@ void MsgFrame::Add_wxInfoMsg(ttlib::sview msg)
     }
 }
 
-void MsgFrame::AddErrorMsg(ttlib::sview msg)
+void MsgFrame::AddErrorMsg(tt_string_view msg)
 {
     // Note that we always display error messages
 
@@ -164,7 +162,7 @@ void MsgFrame::AddErrorMsg(ttlib::sview msg)
     m_textCtrl->AppendText(msg.wx_str());
 }
 
-void MsgFrame::Add_wxErrorMsg(ttlib::sview msg)
+void MsgFrame::Add_wxErrorMsg(tt_string_view msg)
 {
     // Note that we always display error messages
 
@@ -187,7 +185,7 @@ void MsgFrame::OnSaveAs(wxCommandEvent& WXUNUSED(event))
     if (filename.empty())
         return;
 
-    ttlib::textfile file;
+    tt_string_vector file;
 
     auto totalLines = m_textCtrl->GetNumberOfLines();
     for (int curLine = 0; curLine < totalLines; ++curLine)
@@ -195,7 +193,7 @@ void MsgFrame::OnSaveAs(wxCommandEvent& WXUNUSED(event))
         file.addEmptyLine().utf(m_textCtrl->GetLineText(curLine).wx_str());
     }
 
-    if (auto result = file.WriteFile(ttlib::cstr().utf(filename.wx_str())); !result)
+    if (auto result = file.WriteFile(tt_string().utf(filename.wx_str())); !result)
     {
         wxMessageBox(wxString("Cannot create or write to the file ") << filename, "Save messages");
     }
@@ -290,7 +288,7 @@ void MsgFrame::OnNodeSelected()
 
 void MsgFrame::UpdateNodeInfo()
 {
-    ttlib::cstr label;
+    tt_string label;
     NodeMemory node_memory;
 
     auto cur_sel = wxGetFrame().GetSelectedNode();

@@ -33,7 +33,7 @@ void GenerateXrcDlg::OnInit(wxInitDialogEvent& event)
     {
         if (form->HasValue(prop_xrc_file))
         {
-            m_listbox->AppendString(ttlib::cstr(form->value(prop_xrc_file)) << '(' << form->value(prop_class_name) << ')');
+            m_listbox->AppendString(tt_string(form->value(prop_xrc_file)) << '(' << form->value(prop_class_name) << ')');
         }
     }
 

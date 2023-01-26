@@ -17,8 +17,8 @@ public:
     bool ConstructionCode(Code&) override;
     bool SettingsCode(Code&) override;
 
-    ttlib::cstr GetHelpText(Node*) override { return ttlib::cstr("wxGenericDirCtrl"); }
-    ttlib::cstr GetHelpURL(Node*) override { return ttlib::cstr("wx_generic_dir_ctrl.html"); }
+    tt_string GetHelpText(Node*) override { return tt_string("wxGenericDirCtrl"); }
+    tt_string GetHelpURL(Node*) override { return tt_string("wx_generic_dir_ctrl.html"); }
 
     bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr) override;
 

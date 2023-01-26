@@ -24,7 +24,7 @@
  * Next we create a custom statusbar and when it is notified that text was sent to panel #0 it copies it to panel #2 and
  * erases the text in panel #0.
  *
- * As long as we have a custom bar anyway, we add a setText method that takes a ttlib::cstr (std::string). On Windows,
+ * As long as we have a custom bar anyway, we add a setText method that takes a tt_string (std::string). On Windows,
  * that gets converted to UTF16 before handing it off to the normal SetStatusText().
  */
 
@@ -50,7 +50,7 @@ public:
         wxStatusBar::DoUpdateStatusText(number);
     }
 
-    void setText(const ttlib::cstr& txt, int pane = 1) { SetStatusText(txt.wx_str(), pane); }
+    void setText(const tt_string& txt, int pane = 1) { SetStatusText(txt.wx_str(), pane); }
 };
 
 wxStatusBar* MainFrame::OnCreateStatusBar(int number, long style, wxWindowID id, const wxString& name)
@@ -65,7 +65,7 @@ wxStatusBar* MainFrame::OnCreateStatusBar(int number, long style, wxWindowID id,
     return m_statBar;
 }
 
-void MainFrame::setStatusText(const ttlib::cstr& txt, int pane)
+void MainFrame::setStatusText(const tt_string& txt, int pane)
 {
     if (m_statBar)
         m_statBar->setText(txt, pane);

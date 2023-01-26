@@ -11,8 +11,7 @@
 #include <wx/filedlg.h>   // wxFileDialog base header
 #include <wx/filename.h>  // wxFileName - encapsulates a file path
 
-#include "pugixml.hpp"      // xml processing
-#include <tttextfile_wx.h>  // textfile -- Classes for reading and writing line-oriented files
+#include "pugixml.hpp"  // xml processing
 
 #include "import_dlg.h"  // auto-generated: import_base.h and import_base.cpp
 
@@ -38,7 +37,7 @@ void ImportDlg::OnInitDialog(wxInitDialogEvent& WXUNUSED(event))
     m_stdBtn->GetAffirmativeButton()->Disable();
     m_radio_wxFormBuilder->SetFocus();
 
-    ttString cwd;
+    tt_wxString cwd;
     cwd.assignCwd();
     m_static_cwd->SetLabel(cwd);
 
@@ -181,9 +180,9 @@ void ImportDlg::OnDirectory(wxCommandEvent& WXUNUSED(event))
     m_combo_recent_dirs->AppendString(dlg.GetPath());
 #endif
 
-    ttlib::ChangeDir(dlg.GetPath().utf8_str().data());
+    tt::ChangeDir(dlg.GetPath().utf8_str().data());
 
-    ttString cwd;
+    tt_wxString cwd;
     cwd.assignCwd();
     m_static_cwd->SetLabel(cwd);
 
@@ -220,9 +219,9 @@ void ImportDlg::OnRecentDir(wxCommandEvent& WXUNUSED(event))
 {
     auto result = m_combo_recent_dirs->GetValue();
     m_FileHistory.AddFileToHistory(result);
-    ttlib::ChangeDir(result.utf8_str().data());
+    tt::ChangeDir(result.utf8_str().data());
 
-    ttString cwd;
+    tt_wxString cwd;
     cwd.assignCwd();
     m_static_cwd->SetLabel(cwd);
 
@@ -385,7 +384,7 @@ void ImportDlg::CheckResourceFiles(wxArrayString& files)
 {
     wxBusyCursor busy;
 
-    ttlib::viewfile rc_file;
+    tt_view_vector rc_file;
 
     for (size_t idx = 0; idx < files.size(); ++idx)
     {
@@ -394,7 +393,7 @@ void ImportDlg::CheckResourceFiles(wxArrayString& files)
         {
             for (auto& line: rc_file)
             {
-                if (line.empty() || !ttlib::is_alpha(line[0]))
+                if (line.empty() || !tt::is_alpha(line[0]))
                     continue;
 
                 auto type = line.view_stepover();

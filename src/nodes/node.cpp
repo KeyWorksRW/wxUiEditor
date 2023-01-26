@@ -65,7 +65,7 @@ NodeProperty* Node::get_prop_ptr(PropName name)
         return nullptr;
 }
 
-NodeEvent* Node::GetEvent(ttlib::sview name)
+NodeEvent* Node::GetEvent(tt_string_view name)
 {
     if (auto iter = m_map_events.find(name); iter != m_map_events.end())
     {
@@ -479,7 +479,7 @@ wxString Node::prop_as_wxString(PropName name) const
         return wxString();
 }
 
-const ttlib::cstr& Node::prop_as_string(PropName name) const
+const tt_string& Node::prop_as_string(PropName name) const
 {
     if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
         return m_properties[result->second].as_string();
@@ -487,7 +487,7 @@ const ttlib::cstr& Node::prop_as_string(PropName name) const
         return tt_empty_cstr;
 }
 
-const ttlib::cstr& Node::prop_as_constant(PropName name, std::string_view prefix)
+const tt_string& Node::prop_as_constant(PropName name, std::string_view prefix)
 {
     if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
         return m_properties[result->second].as_constant(prefix);
@@ -495,7 +495,7 @@ const ttlib::cstr& Node::prop_as_constant(PropName name, std::string_view prefix
         return tt_empty_cstr;
 }
 
-ttlib::cstr* Node::prop_as_raw_ptr(PropName name)
+tt_string* Node::prop_as_raw_ptr(PropName name)
 {
     if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
         return m_properties[result->second].as_raw_ptr();
@@ -535,11 +535,11 @@ std::vector<NODEPROP_BMP_COMBO_ITEM> Node::as_bmp_combo_items(PropName name)
         return std::vector<NODEPROP_BMP_COMBO_ITEM>();
 }
 
-const ttlib::cstr& Node::prop_default_value(PropName name)
+const tt_string& Node::prop_default_value(PropName name)
 {
     auto prop = get_prop_ptr(name);
 
-    ASSERT_MSG(prop, ttlib::cstr(get_node_name()) << " doesn't have the property " << map_PropNames[name]);
+    ASSERT_MSG(prop, tt_string(get_node_name()) << " doesn't have the property " << map_PropNames[name]);
 
     if (prop)
         return prop->GetDefaultValue();
@@ -547,7 +547,7 @@ const ttlib::cstr& Node::prop_default_value(PropName name)
         return tt_empty_cstr;
 }
 
-const ttlib::cstr& Node::get_node_name() const
+const tt_string& Node::get_node_name() const
 {
     if (auto it = m_prop_indices.find(prop_var_name); it != m_prop_indices.end())
         return m_properties[it->second].as_string();
@@ -557,7 +557,7 @@ const ttlib::cstr& Node::get_node_name() const
         return tt_empty_cstr;
 }
 
-const ttlib::cstr& Node::get_parent_name() const
+const tt_string& Node::get_parent_name() const
 {
     if (m_parent)
         return m_parent->get_node_name();
@@ -565,7 +565,7 @@ const ttlib::cstr& Node::get_parent_name() const
     return tt_empty_cstr;
 }
 
-const ttlib::cstr& Node::get_form_name()
+const tt_string& Node::get_form_name()
 {
     if (auto form = get_form(); form)
     {
@@ -704,7 +704,7 @@ Node* Node::CreateChildNode(GenName name)
         }
 #endif  // _WIN32
 
-        ttlib::cstr undo_str;
+        tt_string undo_str;
         undo_str << "insert " << map_GenNames[name];
         frame.PushUndoAction(std::make_shared<InsertNodeAction>(new_node.get(), parent, undo_str));
     }
@@ -716,7 +716,7 @@ Node* Node::CreateChildNode(GenName name)
         new_node = NodeCreation.CreateNode(gen_ribbonTool, this);
         if (new_node)
         {
-            ttlib::cstr undo_str = "insert ribbon tool";
+            tt_string undo_str = "insert ribbon tool";
             frame.PushUndoAction(std::make_shared<InsertNodeAction>(new_node.get(), this, undo_str));
         }
         else
@@ -746,8 +746,8 @@ Node* Node::CreateChildNode(GenName name)
                 }
                 else
                 {
-                    wxMessageBox(ttlib::cstr() << "You can only add " << (to_size_t) max_children << ' '
-                                               << map_GenNames[name] << " as a child of " << DeclName());
+                    wxMessageBox(tt_string() << "You can only add " << (to_size_t) max_children << ' ' << map_GenNames[name]
+                                             << " as a child of " << DeclName());
                 }
 
                 return nullptr;
@@ -768,14 +768,14 @@ Node* Node::CreateChildNode(GenName name)
                 }
 
                 auto pos = parent->FindInsertionPos(this);
-                ttlib::cstr undo_str;
+                tt_string undo_str;
                 undo_str << "insert " << map_GenNames[name];
                 frame.PushUndoAction(std::make_shared<InsertNodeAction>(new_node.get(), parent, undo_str, pos));
             }
         }
         else
         {
-            wxMessageBox(ttlib::cstr() << "You cannot add " << map_GenNames[name] << " as a child of " << DeclName());
+            wxMessageBox(tt_string() << "You cannot add " << map_GenNames[name] << " as a child of " << DeclName());
             return nullptr;
         }
     }
@@ -800,7 +800,7 @@ Node* Node::CreateNode(GenName name)
     return cur_selection->CreateChildNode(name);
 }
 
-void Node::ModifyProperty(PropName name, ttlib::sview value)
+void Node::ModifyProperty(PropName name, tt_string_view value)
 {
     auto prop = get_prop_ptr(name);
     if (prop && value != prop->as_string())
@@ -809,7 +809,7 @@ void Node::ModifyProperty(PropName name, ttlib::sview value)
     }
 }
 
-void Node::ModifyProperty(ttlib::sview name, int value)
+void Node::ModifyProperty(tt_string_view name, int value)
 {
     NodeProperty* prop = nullptr;
     if (auto find_prop = rmap_PropNames.find(name); find_prop != rmap_PropNames.end())
@@ -821,7 +821,7 @@ void Node::ModifyProperty(ttlib::sview name, int value)
     }
 }
 
-void Node::ModifyProperty(ttlib::sview name, ttlib::sview value)
+void Node::ModifyProperty(tt_string_view name, tt_string_view value)
 {
     NodeProperty* prop = nullptr;
     if (auto find_prop = rmap_PropNames.find(name); find_prop != rmap_PropNames.end())
@@ -841,7 +841,7 @@ void Node::ModifyProperty(NodeProperty* prop, int value)
     }
 }
 
-void Node::ModifyProperty(NodeProperty* prop, ttlib::sview value)
+void Node::ModifyProperty(NodeProperty* prop, tt_string_view value)
 {
     if (prop && value != prop->as_string())
     {
@@ -849,9 +849,9 @@ void Node::ModifyProperty(NodeProperty* prop, ttlib::sview value)
     }
 }
 
-ttlib::cstr Node::GetUniqueName(const ttlib::cstr& proposed_name)
+tt_string Node::GetUniqueName(const tt_string& proposed_name)
 {
-    ttlib::cstr new_name(proposed_name);
+    tt_string new_name(proposed_name);
     if (IsForm())
         return {};
 
@@ -872,7 +872,7 @@ ttlib::cstr Node::GetUniqueName(const ttlib::cstr& proposed_name)
         // We get here if the name has already been used.
 
         std::string org_name(proposed_name);
-        while (ttlib::is_digit(org_name.back()))
+        while (tt::is_digit(org_name.back()))
         {
             // remove any trailing digits
             org_name.erase(org_name.size() - 1, 1);
@@ -929,7 +929,7 @@ bool Node::FixDuplicateName()
                 // We get here if the name has already been used.
 
                 std::string org_name(name);
-                while (ttlib::is_digit(org_name.back()))
+                while (tt::is_digit(org_name.back()))
                 {
                     // remove any trailing digits
                     org_name.erase(org_name.size() - 1, 1);
@@ -937,7 +937,7 @@ bool Node::FixDuplicateName()
                 if (org_name.back() == '_')
                     org_name.erase(org_name.size() - 1, 1);
 
-                ttlib::cstr new_name;
+                tt_string new_name;
                 for (int i = 2; it != name_set.end(); it = name_set.find(new_name), ++i)
                 {
                     new_name.clear();
@@ -999,7 +999,7 @@ void Node::FixDuplicateNodeNames(Node* form)
                 // We get here if the name has already been used.
 
                 std::string org_name(name);
-                while (ttlib::is_digit(org_name.back()))
+                while (tt::is_digit(org_name.back()))
                 {
                     // remove any trailing digits
                     org_name.erase(org_name.size() - 1, 1);
@@ -1007,7 +1007,7 @@ void Node::FixDuplicateNodeNames(Node* form)
                 if (org_name.back() == '_')
                     org_name.erase(org_name.size() - 1, 1);
 
-                ttlib::cstr new_name;
+                tt_string new_name;
                 for (int i = 2; it != name_set.end(); it = name_set.find(new_name), ++i)
                 {
                     new_name.clear();

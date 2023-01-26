@@ -106,9 +106,9 @@ bool StdDialogButtonSizerGenerator::ConstructionCode(Code& code)
         code.NodeName();
         code += " = CreateStdDialogButtonSizer(";
 
-        ttlib::cstr flags;
+        tt_string flags;
 
-        auto AddBitFlag = [&](ttlib::sview flag)
+        auto AddBitFlag = [&](tt_string_view flag)
         {
             if (flags.size())
                 flags << '|';
@@ -530,8 +530,7 @@ void StdDialogButtonSizerGenerator::GenEvent(Code& code, NodeEvent* event, const
             handler.Add("self.") << event->get_value();
     }
 
-    ttlib::cstr evt_str =
-        (event->GetEventInfo()->get_event_class() == "wxCommandEvent" ? "wxEVT_BUTTON" : "wxEVT_UPDATE_UI");
+    tt_string evt_str = (event->GetEventInfo()->get_event_class() == "wxCommandEvent" ? "wxEVT_BUTTON" : "wxEVT_UPDATE_UI");
     if (code.is_python())
         code.Add("self.");
     code.Add("Bind(").Add(evt_str) << comma << handler.m_code << comma;

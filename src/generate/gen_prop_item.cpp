@@ -32,11 +32,11 @@ bool PropertyGridItemGenerator::ConstructionCode(Code& code)
     return true;
 }
 
-ttlib::cstr PropertyGridItemGenerator::GetHelpURL(Node* node)
+tt_string PropertyGridItemGenerator::GetHelpURL(Node* node)
 {
-    ttlib::cstr type = node->prop_as_string(prop_type);
+    tt_string type = node->prop_as_string(prop_type);
     type.MakeLower();
-    ttlib::cstr url = "wx_";
+    tt_string url = "wx_";
 
     if (type == "category")
     {
@@ -64,9 +64,9 @@ ttlib::cstr PropertyGridItemGenerator::GetHelpURL(Node* node)
     return url;
 }
 
-ttlib::cstr PropertyGridItemGenerator::GetHelpText(Node* node)
+tt_string PropertyGridItemGenerator::GetHelpText(Node* node)
 {
-    ttlib::cstr help_text("wx");
+    tt_string help_text("wx");
     if (node->prop_as_string(prop_type) == "Category")
         help_text << "PropertyCategory";
     else

@@ -33,7 +33,7 @@ namespace pugi
 class NodeDeclaration
 {
 public:
-    NodeDeclaration(ttlib::sview class_name, NodeType* type);
+    NodeDeclaration(tt_string_view class_name, NodeType* type);
     ~NodeDeclaration();
 
     NodeCategory& GetCategory() { return m_category; }
@@ -43,7 +43,7 @@ public:
 
     PropDeclaration* GetPropDeclaration(size_t idx) const;
 
-    NodeEventInfo* GetEventInfo(ttlib::sview name);
+    NodeEventInfo* GetEventInfo(tt_string_view name);
     const NodeEventInfo* GetEventInfo(size_t idx) const;
 
     PropDeclarationMap& GetPropInfoMap() { return m_properties; }
@@ -56,7 +56,7 @@ public:
     bool isType(GenType type) const noexcept { return (type == m_gen_type); }
     bool isGen(GenName name) const noexcept { return (name == m_gen_name); }
 
-    ttlib::sview DeclName() const noexcept { return ttlib::sview(m_name); }
+    tt_string_view DeclName() const noexcept { return tt_string_view(m_name); }
 
     size_t AddBaseClass(NodeDeclaration* base)
     {
@@ -81,7 +81,7 @@ public:
 
     void ParseEvents(pugi::xml_node& elem_obj, NodeCategory& category);
 
-    const ttlib::cstr& GetGeneratorFlags() { return m_internal_flags; }
+    const tt_string& GetGeneratorFlags() { return m_internal_flags; }
     void SetGeneratorFlags(std::string_view flags) { m_internal_flags = flags; }
 
     int_t GetAllowableChildren(GenType child_gen_type) const;
@@ -90,13 +90,13 @@ public:
     {
         m_override_def_values[prop_name] = new_value;
     }
-    std::optional<ttlib::cstr> GetOverRideDefValue(GenEnum::PropName prop_name);
+    std::optional<tt_string> GetOverRideDefValue(GenEnum::PropName prop_name);
 
     void HideProperty(GenEnum::PropName prop_name) { m_hide_properties.emplace(prop_name); }
     bool IsPropHidden(GenEnum::PropName prop_name) { return (m_hide_properties.find(prop_name) != m_hide_properties.end()); }
 
 private:
-    ttlib::cstr m_internal_flags;
+    tt_string m_internal_flags;
 
     wxImage m_image;  // The node's image, primarily used in the navigation pane
 

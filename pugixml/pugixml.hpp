@@ -23,7 +23,7 @@
 
 // if TTLIB_ADDITIONS is defined:
 //
-// Same as above, but adding as_sview and add_cstr variations which return ttlib::sview and ttlib::cstr repectively
+// Same as above, but adding as_sview and add_cstr variations which return tt_string_view and tt_string repectively
 // The only difference is that these classes add additional methods to std::string_view and std::string
 
 #pragma once
@@ -558,8 +558,8 @@ namespace pugi
         std::string as_std_str(string_view_t def = PUGIXML_EMPTY_SV) const { return std::string(as_string(def)); }
 
 	#if defined(TTLIB_ADDITIONS)
-        ttlib::sview as_sview(string_view_t def = PUGIXML_EMPTY_SV) const { return as_string(def); }
-        ttlib::cstr as_cstr(string_view_t def = PUGIXML_EMPTY_SV) const { return as_std_str(def); }
+        tt_string_view as_sview(string_view_t def = PUGIXML_EMPTY_SV) const { return as_string(def); }
+        tt_string as_cstr(string_view_t def = PUGIXML_EMPTY_SV) const { return as_std_str(def); }
 	#endif
 
 		// Get attribute value as a number, or the default value if conversion did not succeed or attribute is empty
@@ -679,15 +679,15 @@ namespace pugi
         std::string child_as_std_str(string_view_t name) const { return std::string(child_value(name)); }
 
 	#if defined(TTLIB_ADDITIONS)
-		ttlib::sview as_sview() const { return value(); }
-        ttlib::cstr  as_cstr() const { return as_std_str(); }
+		tt_string_view as_sview() const { return value(); }
+        tt_string  as_cstr() const { return as_std_str(); }
 
-        ttlib::sview child_as_sview() const { return child_value(); }
-        ttlib::cstr  child_as_cstr() const { return child_as_std_str(); }
+        tt_string_view child_as_sview() const { return child_value(); }
+        tt_string  child_as_cstr() const { return child_as_std_str(); }
 
         // Get child value of child with specified name. Equivalent to child(name).child_as_cstr().
-        ttlib::sview child_as_sview(string_view_t name) const { return child_value(name); }
-        ttlib::cstr  child_as_cstr(string_view_t name) const { return child_as_std_str(name); }
+        tt_string_view child_as_sview(string_view_t name) const { return child_value(name); }
+        tt_string  child_as_cstr(string_view_t name) const { return child_as_std_str(name); }
 	#endif
 
 		// Get attribute list
@@ -941,8 +941,8 @@ namespace pugi
 		std::string as_std_str(string_view_t def = PUGIXML_EMPTY_SV) const { return std::string(as_string(def)); }
 
 	#if defined(TTLIB_ADDITIONS)
-        ttlib::sview as_sview(string_view_t def = PUGIXML_EMPTY_SV) const { return as_string(def); }
-        ttlib::cstr as_cstr(string_view_t def = PUGIXML_EMPTY_SV) const { return ttlib::cstr(as_string(def)); }
+        tt_string_view as_sview(string_view_t def = PUGIXML_EMPTY_SV) const { return as_string(def); }
+        tt_string as_cstr(string_view_t def = PUGIXML_EMPTY_SV) const { return tt_string(as_string(def)); }
 	#endif
 		// Get text as a number, or the default value if conversion did not succeed or object is empty
 		int as_int(int def = 0) const;

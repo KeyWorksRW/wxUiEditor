@@ -25,8 +25,6 @@
 #include <wx/xrc/xh_richtext.h>        // XML resource handler for wxRichTextCtrl
 #include <wx/xrc/xh_styledtextctrl.h>  // XML resource handler for wxStyledTextCtrl
 
-#include <tttextfile_wx.h>  // textfile -- Classes for reading and writing line-oriented files
-
 #include "gen_base.h"  // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
 
 #include "../panels/propgrid_panel.h"  // PropGridPanel -- Node inspector class
@@ -262,7 +260,7 @@ void BaseCodeGenerator::GenerateXrcClass(Node* form_node, PANEL_PAGE panel_type)
     {
         if (form_node != Project.ProjectNode())
         {
-            m_header->writeLine(ttlib::cstr("Resource name is ") << m_form_node->prop_as_string(prop_class_name));
+            m_header->writeLine(tt_string("Resource name is ") << m_form_node->prop_as_string(prop_class_name));
             m_header->writeLine();
         }
         m_header->writeLine("Required handlers:");
@@ -278,7 +276,7 @@ void BaseCodeGenerator::GenerateXrcClass(Node* form_node, PANEL_PAGE panel_type)
     }
 }
 
-bool GenerateXrcFiles(GenResults& results, ttlib::cstr out_file, std::vector<ttlib::cstr>* /* pClassList */)
+bool GenerateXrcFiles(GenResults& results, tt_string out_file, std::vector<tt_string>* /* pClassList */)
 {
     if (Project.ChildCount() == 0)
     {
@@ -286,7 +284,7 @@ bool GenerateXrcFiles(GenResults& results, ttlib::cstr out_file, std::vector<ttl
         return false;
     }
 
-    ttSaveCwd cwd;
+    tt_cwd cwd(true);
     Project.ProjectPath().ChangeDir();
 
     if (out_file.size())
@@ -320,7 +318,7 @@ bool GenerateXrcFiles(GenResults& results, ttlib::cstr out_file, std::vector<ttl
     }
     std::vector<Node*> forms;
     Project.CollectForms(forms);
-    ttlib::cstr path;
+    tt_string path;
 
 #if defined(_DEBUG) || defined(INTERNAL_TESTING)
     results.EndClock();

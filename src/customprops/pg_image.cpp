@@ -238,7 +238,7 @@ wxVariant PropertyGrid_Image::ChildChanged(wxVariant& thisValue, int childIndex,
                 }
                 else
                 {
-                    ttString name(childValue.GetString());
+                    tt_wxString name(childValue.GetString());
                     if (name.size())
                     {
                         if (!name.file_exists())
@@ -257,7 +257,7 @@ wxVariant PropertyGrid_Image::ChildChanged(wxVariant& thisValue, int childIndex,
         case IndexSize:
             {
                 auto u8_value = childValue.GetString().utf8_string();
-                ttlib::multiview mstr(u8_value, ',');
+                tt_view_vector mstr(u8_value, ',');
                 img_props.SetWidth(mstr[0].atoi());
                 img_props.SetHeight(mstr[1].atoi());
             }

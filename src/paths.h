@@ -14,5 +14,5 @@ void AllowFileChange(wxPropertyGridEvent& event, NodeProperty* prop, Node* node)
 
 void OnPathChanged(wxPropertyGridEvent& event, NodeProperty* prop, Node* node);
 
-void ChangeDerivedDirectory(ttlib::cstr& path);
-void ChangeBaseDirectory(ttlib::cstr& path);
+void ChangeDerivedDirectory(tt_string& path);
+void ChangeBaseDirectory(tt_string& path);

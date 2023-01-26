@@ -10,7 +10,7 @@
 #include "import_winres.h"  // WinResource -- Parse a Windows resource file
 #include "utils.h"          // Utility functions that work with properties
 
-void resCtrl::ParseCommonStyles(ttlib::sview line)
+void resCtrl::ParseCommonStyles(tt_string_view line)
 {
     if (line.contains("WS_DISABLED"))
         m_node->prop_set_value(prop_disabled, true);
@@ -23,7 +23,7 @@ void resCtrl::ParseCommonStyles(ttlib::sview line)
         AppendStyle(prop_window_style, "wxVSCROLL");
 }
 
-bool resCtrl::ParseDimensions(ttlib::sview line, wxRect& duRect, wxRect& pixelRect)
+bool resCtrl::ParseDimensions(tt_string_view line, wxRect& duRect, wxRect& pixelRect)
 {
     duRect = { 0, 0, 0, 0 };
     pixelRect = { 0, 0, 0, 0 };
@@ -35,39 +35,39 @@ bool resCtrl::ParseDimensions(ttlib::sview line, wxRect& duRect, wxRect& pixelRe
     if (line.at(0) == ',')
         line.moveto_digit();
 
-    if (line.empty() || !ttlib::is_digit(line.at(0)))
+    if (line.empty() || !tt::is_digit(line.at(0)))
         return false;
-    duRect.SetLeft(ttlib::atoi(line));
+    duRect.SetLeft(tt::atoi(line));
 
     auto pos = line.find_first_of(',');
-    if (!ttlib::is_found(pos))
+    if (!tt::is_found(pos))
         return false;
 
     line.remove_prefix(pos);
     line.moveto_digit();
-    if (line.empty() || !ttlib::is_digit(line.at(0)))
+    if (line.empty() || !tt::is_digit(line.at(0)))
         return false;
-    duRect.SetTop(ttlib::atoi(line));
+    duRect.SetTop(tt::atoi(line));
 
     pos = line.find_first_of(',');
-    if (!ttlib::is_found(pos))
+    if (!tt::is_found(pos))
         return false;
 
     line.remove_prefix(pos);
     line.moveto_digit();
-    if (line.empty() || !ttlib::is_digit(line.at(0)))
+    if (line.empty() || !tt::is_digit(line.at(0)))
         return false;
-    duRect.SetWidth(ttlib::atoi(line));
+    duRect.SetWidth(tt::atoi(line));
 
     pos = line.find_first_of(',');
-    if (!ttlib::is_found(pos))
+    if (!tt::is_found(pos))
         return false;
 
     line.remove_prefix(pos);
     line.moveto_digit();
-    if (line.empty() || !ttlib::is_digit(line.at(0)))
+    if (line.empty() || !tt::is_digit(line.at(0)))
         return false;
-    duRect.SetHeight(ttlib::atoi(line));
+    duRect.SetHeight(tt::atoi(line));
 
     if (m_node->isGen(gen_wxComboBox) && !m_node->prop_as_string(prop_style).contains("wxCB_SIMPLE"))
     {
@@ -79,7 +79,7 @@ bool resCtrl::ParseDimensions(ttlib::sview line, wxRect& duRect, wxRect& pixelRe
 
     if (m_node->isGen(gen_wxListBox))
     {
-        m_node->prop_set_value(prop_minimum_size, ttlib::cstr() << duRect.GetWidth() << ',' << duRect.GetHeight() << 'd');
+        m_node->prop_set_value(prop_minimum_size, tt_string() << duRect.GetWidth() << ',' << duRect.GetHeight() << 'd');
     }
 
     /*
@@ -104,17 +104,17 @@ bool resCtrl::ParseDimensions(ttlib::sview line, wxRect& duRect, wxRect& pixelRe
     return true;
 }
 
-ttlib::sview resCtrl::GetID(ttlib::sview line)
+tt_string_view resCtrl::GetID(tt_string_view line)
 {
     line.moveto_nonspace();
 
     if (line.empty())
     {
-        MSG_ERROR(ttlib::cstr() << "Missing ID :" << m_original_line);
+        MSG_ERROR(tt_string() << "Missing ID :" << m_original_line);
         return line;
     }
 
-    ttlib::cstr id;
+    tt_string id;
     if (line.at(0) == ',')
     {
         line = StepOverComma(line, id);
@@ -123,7 +123,7 @@ ttlib::sview resCtrl::GetID(ttlib::sview line)
         {
             id = "wxID_ANY";
         }
-        else if (ttlib::is_digit(id[0]))
+        else if (tt::is_digit(id[0]))
         {
             id.insert(0, "id_");
         }
@@ -131,9 +131,9 @@ ttlib::sview resCtrl::GetID(ttlib::sview line)
     else
     {
         auto end = line.find_first_of(',');
-        if (!ttlib::is_found(end))
+        if (!tt::is_found(end))
         {
-            MSG_WARNING(ttlib::cstr() << "Missing comma after ID :" << m_original_line);
+            MSG_WARNING(tt_string() << "Missing comma after ID :" << m_original_line);
             end = line.size();
         }
         id = line.substr(0, end);
@@ -168,17 +168,17 @@ ttlib::sview resCtrl::GetID(ttlib::sview line)
     return line;
 }
 
-ttlib::sview resCtrl::GetLabel(ttlib::sview line)
+tt_string_view resCtrl::GetLabel(tt_string_view line)
 {
     line.moveto_nonspace();
 
     if (line.empty())
     {
-        MSG_ERROR(ttlib::cstr() << "Missing label :" << m_original_line);
+        MSG_ERROR(tt_string() << "Missing label :" << m_original_line);
         return line;
     }
 
-    ttlib::cstr label;
+    tt_string label;
 
     if (line.at(0) == '"')
     {
@@ -187,7 +187,7 @@ ttlib::sview resCtrl::GetLabel(ttlib::sview line)
     else
     {
         auto pos = line.find(',');
-        if (!ttlib::is_found(pos))
+        if (!tt::is_found(pos))
         {
             throw std::invalid_argument("Expected a quoted label.");
         }
@@ -201,14 +201,14 @@ ttlib::sview resCtrl::GetLabel(ttlib::sview line)
     if (m_node->isGen(gen_wxHyperlinkCtrl))
     {
         auto begin_anchor = label.locate("<a", 0, tt::CASE::either);
-        if (!ttlib::is_found(begin_anchor))
+        if (!tt::is_found(begin_anchor))
         {
             // Without an anchor, there is no URL
             m_node->prop_set_value(prop_label, ConvertEscapeSlashes(label));
         }
         else
         {
-            ttlib::sview view_url = label.view_nonspace(begin_anchor);
+            tt_string_view view_url = label.view_nonspace(begin_anchor);
             if (view_url.is_sameprefix("<a>", tt::CASE::either))
             {
                 view_url.remove_prefix(3);
@@ -221,7 +221,7 @@ ttlib::sview resCtrl::GetLabel(ttlib::sview line)
                 view_url.remove_prefix(9);
                 view_url.erase_from("\">", tt::CASE::either);
                 m_node->prop_set_value(prop_url, view_url);
-                ttlib::cstr actual_label;
+                tt_string actual_label;
                 view_url = label.view_nonspace(label.find("\">"));
                 view_url.remove_prefix(2);
                 view_url.erase_from("</a", tt::CASE::either);
@@ -234,7 +234,7 @@ ttlib::sview resCtrl::GetLabel(ttlib::sview line)
                 view_url.remove_prefix(8);
                 view_url.erase_from("\">", tt::CASE::either);
                 m_node->prop_set_value(prop_url, view_url);
-                ttlib::cstr actual_label;
+                tt_string actual_label;
                 view_url = label.view_nonspace(label.find("\">"));
                 view_url.remove_prefix(2);
                 view_url.erase_from("</a", tt::CASE::either);
@@ -253,7 +253,7 @@ ttlib::sview resCtrl::GetLabel(ttlib::sview line)
     return line;
 }
 
-ttlib::sview resCtrl::StepOverQuote(ttlib::sview line, ttlib::cstr& str)
+tt_string_view resCtrl::StepOverQuote(tt_string_view line, tt_string& str)
 {
     ASSERT(line.at(0) == '"');
 
@@ -283,11 +283,11 @@ ttlib::sview resCtrl::StepOverQuote(ttlib::sview line, ttlib::cstr& str)
     return line.subview(idx);
 }
 
-ttlib::sview resCtrl::StepOverComma(ttlib::sview line, ttlib::cstr& str)
+tt_string_view resCtrl::StepOverComma(tt_string_view line, tt_string& str)
 {
     auto pos = str.AssignSubString(line, ',', ',');
-    if (!ttlib::is_found(pos))
-        return ttlib::emptystring;
+    if (!tt::is_found(pos))
+        return tt::emptystring;
 
     if (pos + 1 >= line.size())
     {
@@ -301,9 +301,9 @@ ttlib::sview resCtrl::StepOverComma(ttlib::sview line, ttlib::cstr& str)
     return line;
 }
 
-void resCtrl::AppendStyle(GenEnum::PropName prop_name, ttlib::sview style)
+void resCtrl::AppendStyle(GenEnum::PropName prop_name, tt_string_view style)
 {
-    ttlib::cstr updated_style = m_node->prop_as_string(prop_name);
+    tt_string updated_style = m_node->prop_as_string(prop_name);
     if (updated_style.size())
         updated_style << '|';
     updated_style << style;

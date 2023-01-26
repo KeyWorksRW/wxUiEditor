@@ -41,7 +41,7 @@ void CreateMockupChildren(Node* node, wxWindow* parent, wxObject* parent_object,
 #endif
 
     auto generator = node->GetGenerator();
-    ASSERT_MSG(generator, ttlib::cstr() << "Missing component for " << node->DeclName());
+    ASSERT_MSG(generator, tt_string() << "Missing component for " << node->DeclName());
     if (!generator)
         return;
 

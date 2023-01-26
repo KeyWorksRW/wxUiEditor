@@ -30,7 +30,7 @@ ArtBrowserDialog::ArtBrowserDialog(wxWindow* parent, const ImageProperties& img_
     m_choice_client->Append("wxART_MESSAGE_BOX");
     m_choice_client->Append("wxART_OTHER");
 
-    if (auto pos = img_props.image.find('|'); ttlib::is_found(pos))
+    if (auto pos = img_props.image.find('|'); tt::is_found(pos))
     {
         m_client = img_props.image.subview(pos + 1).wx_str();
     }
@@ -109,7 +109,7 @@ void ArtBrowserDialog::OnSelectItem(wxListEvent& event)
     {
         m_canvas->SetSize(bmp.GetWidth(), bmp.GetHeight());
         m_canvas->SetBitmap(bmp);
-        m_text->SetLabel(ttlib::cstr().Format("Size: %d x %d", bmp.GetWidth(), bmp.GetHeight()));
+        m_text->SetLabel(tt_string().Format("Size: %d x %d", bmp.GetWidth(), bmp.GetHeight()));
     }
     Refresh();
 }

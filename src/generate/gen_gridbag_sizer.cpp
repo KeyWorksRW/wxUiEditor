@@ -116,13 +116,13 @@ void GridBagSizerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxpare
     {
         if (auto& growable = node->prop_as_string(prop_name); growable.size())
         {
-            ttlib::multiview values(growable, ',');
+            tt_view_vector values(growable, ',');
             for (auto& iter: values)
             {
                 int proportion = 0;
-                if (auto pos = iter.find(':'); ttlib::is_found(pos))
+                if (auto pos = iter.find(':'); tt::is_found(pos))
                 {
-                    proportion = ttlib::atoi(ttlib::find_nonspace(iter.data() + pos + 1));
+                    proportion = tt::atoi(tt::find_nonspace(iter.data() + pos + 1));
                 }
                 if (prop_name == prop_growablecols)
                     sizer->AddGrowableCol(iter.atoi(), proportion);
@@ -181,7 +181,7 @@ bool GridBagSizerGenerator::AfterChildrenCode(Code& code)
     {
         if (auto& growable = node->prop_as_string(prop_name); growable.size())
         {
-            ttlib::multiview values(growable, ',');
+            tt_view_vector values(growable, ',');
             for (auto& iter: values)
             {
                 auto val = iter.atoi();
@@ -191,11 +191,11 @@ bool GridBagSizerGenerator::AfterChildrenCode(Code& code)
                     is_within_braces = true;
                 }
                 int proportion = 0;
-                if (auto pos = iter.find(':'); ttlib::is_found(pos))
+                if (auto pos = iter.find(':'); tt::is_found(pos))
                 {
-                    proportion = ttlib::atoi(ttlib::find_nonspace(iter.data() + pos + 1));
+                    proportion = tt::atoi(tt::find_nonspace(iter.data() + pos + 1));
                 }
-                if (!code.size() || !ttlib::is_whitespace(code.m_code.back()))
+                if (!code.size() || !tt::is_whitespace(code.m_code.back()))
                     code.Eol();
 
                 // Note that iter may start with a space, so using itoa() ensures that we

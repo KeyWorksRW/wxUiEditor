@@ -5,7 +5,7 @@
 // License:   Apache License ( see ../LICENSE )
 /////////////////////////////////////////////////////////////////////////////
 
-#pragma once
+#pragma once  // NOLINT(#pragma once in main file)
 
 #include <source_location>
 

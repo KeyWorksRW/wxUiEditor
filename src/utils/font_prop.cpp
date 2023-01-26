@@ -72,10 +72,10 @@ FontProperty::FontProperty(const wxFont& font)
 
 FontProperty::FontProperty(wxVariant font)
 {
-    Convert(ttlib::cstr() << font.GetString().wx_str());
+    Convert(tt_string() << font.GetString().wx_str());
 }
 
-FontProperty::FontProperty(ttlib::sview font)
+FontProperty::FontProperty(tt_string_view font)
 {
     Convert(font);
 }
@@ -99,7 +99,7 @@ FontProperty::FontProperty(NodeProperty* prop)
 // facename font (point is a floating-point number)
 //     facename, point size, family, style, weight, underlined, strikethrough
 
-void FontProperty::Convert(ttlib::sview font)
+void FontProperty::Convert(tt_string_view font)
 {
     if (font.empty())
     {
@@ -111,7 +111,7 @@ void FontProperty::Convert(ttlib::sview font)
         return;
     }
 
-    ttlib::multiview mstr(font, ',');
+    tt_view_vector mstr(font, ',');
 
     // If font was empty, then we would have already returned, so we know that mstr[0] is valid.
 
@@ -267,7 +267,7 @@ wxString FontProperty::as_wxString() const
     {
         // symbol size, style, weight, underlined, strikethrough
 
-        ttlib::cstr prop_str(font_symbol_pairs.GetName(GetSymbolSize()));
+        tt_string prop_str(font_symbol_pairs.GetName(GetSymbolSize()));
         prop_str << "," << (GetStyle() == wxFONTSTYLE_NORMAL ? "" : font_style_pairs.GetName(GetStyle()));
         prop_str << "," << (GetWeight() == wxFONTWEIGHT_NORMAL ? "" : font_weight_pairs.GetName(GetWeight()));
         prop_str.Replace(",normal", ",", true);
@@ -292,7 +292,7 @@ wxString FontProperty::as_wxString() const
     }
     else if (GetFaceName().empty())
     {
-        ttlib::cstr prop_str(font_family_pairs.GetName(GetFamily()));
+        tt_string prop_str(font_family_pairs.GetName(GetFamily()));
         {
             // std::to_chars will return the smallest number of digits needed to represent the number. Point sizes are
             // usually whole numbers, so most of the time this will return a numnber without a decimal point.
@@ -330,7 +330,7 @@ wxString FontProperty::as_wxString() const
     }
     else  // facename specified
     {
-        ttlib::cstr prop_str(GetFaceName());
+        tt_string prop_str(GetFaceName());
         {
             std::array<char, 10> float_str;
             if (auto [ptr, ec] =
@@ -367,9 +367,9 @@ wxString FontProperty::as_wxString() const
     return str;
 }
 
-ttlib::cstr FontProperty::as_string() const
+tt_string FontProperty::as_string() const
 {
-    ttlib::cstr str(as_wxString().wx_str());
+    tt_string str(as_wxString().wx_str());
     return str;
 }
 

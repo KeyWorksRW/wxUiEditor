@@ -19,7 +19,7 @@ public:
     auto GetNode() const { return m_node.get(); }
     auto GetNodePtr() const { return m_node; }
 
-    void ParseDirective(WinResource* pWinResource, ttlib::sview line);
+    void ParseDirective(WinResource* pWinResource, tt_string_view line);
 
     // left position in pixels
     auto GetLeft() const { return m_pixel_rect.GetLeft(); }
@@ -63,7 +63,7 @@ public:
         GetNode()->prop_set_value(name, value);
     }
 
-    bool ParseDimensions(ttlib::sview line, wxRect& duRect, wxRect& pixelRect);
+    bool ParseDimensions(tt_string_view line, wxRect& duRect, wxRect& pixelRect);
 #if defined(_DEBUG) || defined(INTERNAL_TESTING)
     auto& GetOrginalLine()
     {
@@ -79,48 +79,48 @@ public:
 
 protected:
     // This will map window styles to wxWidgets styles and append them to prop_style
-    void ParseStyles(ttlib::sview line);
+    void ParseStyles(tt_string_view line);
 
-    void ParseListViewStyles(ttlib::sview line);
-    void ParseButtonStyles(ttlib::sview line);
+    void ParseListViewStyles(tt_string_view line);
+    void ParseButtonStyles(tt_string_view line);
 
-    void AddSpecialStyles(ttlib::sview line);
-    void AppendStyle(GenEnum::PropName prop_name, ttlib::sview style);
+    void AddSpecialStyles(tt_string_view line);
+    void AppendStyle(GenEnum::PropName prop_name, tt_string_view style);
 
     // Set prop_ to common values (disabled, hidden, scroll, etc.)
-    void ParseCommonStyles(ttlib::sview line);
+    void ParseCommonStyles(tt_string_view line);
 
     // This will set prop_id, and return a sview to the position past the id
-    ttlib::sview GetID(ttlib::sview line);
+    tt_string_view GetID(tt_string_view line);
 
     // This will set prop_label, and return a sview to the position past the id
-    ttlib::sview GetLabel(ttlib::sview line);
+    tt_string_view GetLabel(tt_string_view line);
 
     // Returns a view past the closing quote, or an empty view if there was no closing quote
-    ttlib::sview StepOverQuote(ttlib::sview line, ttlib::cstr& str);
+    tt_string_view StepOverQuote(tt_string_view line, tt_string& str);
 
     // Retrieves any string between commas, returns view past the closing comma
-    ttlib::sview StepOverComma(ttlib::sview line, ttlib::cstr& str);
+    tt_string_view StepOverComma(tt_string_view line, tt_string& str);
 
     // Similar to ParseIconControl only in this case line is pointing to the id, and the Node
     // has already been created.
     //
     // Works with either SS_BITMAP or SS_ICON.
-    void ParseImageControl(ttlib::sview line);
+    void ParseImageControl(tt_string_view line);
 
     // Icon controls require too much special processing to be inside the ParseDirective()
     // function.
-    void ParseIconControl(ttlib::sview line);
+    void ParseIconControl(tt_string_view line);
 
 private:
     NodeSharedPtr m_node;
     WinResource* m_pWinResource;
 
     // Some styles like UDS_AUTOBUDDY have to be post-processed during actual layout.
-    ttlib::cstr m_non_processed_style;
+    tt_string m_non_processed_style;
 
 #if defined(_DEBUG) || defined(INTERNAL_TESTING)
-    ttlib::cstr m_original_line;
+    tt_string m_original_line;
 #endif
 
     // Caution -- wxRect is *NOT* the same as a Windows RECT structure. wxRect stores width and height, RECT stores right and

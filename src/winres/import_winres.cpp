@@ -5,8 +5,6 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include <tttextfile_wx.h>  // ttTextFile -- Similar to wxTextFile, but uses UTF8 strings
-
 #include "import_winres.h"
 
 #include "mainapp.h"       // App -- App class
@@ -16,10 +14,10 @@
 
 WinResource::WinResource() {}
 
-bool WinResource::Import(const ttString& filename, bool write_doc)
+bool WinResource::Import(const tt_wxString& filename, bool write_doc)
 {
-    std::vector<ttlib::cstr> forms;
-    if (ImportRc(ttlib::cstr() << filename.wx_str(), forms))
+    std::vector<tt_string> forms;
+    if (ImportRc(tt_string() << filename.wx_str(), forms))
     {
         if (write_doc)
             m_project->CreateDoc(m_docOut);
@@ -39,7 +37,7 @@ static const std::set<std::string_view> lst_ignored_includes = {
 };
 // clang-format on
 
-bool WinResource::ImportRc(const ttlib::cstr& rc_file, std::vector<ttlib::cstr>& forms, bool isNested)
+bool WinResource::ImportRc(const tt_string& rc_file, std::vector<tt_string>& forms, bool isNested)
 {
     wxBusyCursor busy;
 
@@ -48,19 +46,19 @@ bool WinResource::ImportRc(const ttlib::cstr& rc_file, std::vector<ttlib::cstr>&
         m_RcFilename = rc_file;
     }
 
-    ttSaveCwd save_cwd;
+    tt_cwd save_cwd(true);
 
-    ttlib::textfile file;
+    tt_string_vector file;
     if (!file.ReadFile(rc_file))
     {
         return false;
     }
 
-    ttlib::cstr cwd(rc_file);
+    tt_string cwd(rc_file);
     cwd.remove_filename();
     if (cwd.size())
     {
-        ttlib::ChangeDir(cwd);
+        tt::ChangeDir(cwd);
     }
 
     if (m_OutDirectory.empty() && !isNested)
@@ -75,12 +73,12 @@ bool WinResource::ImportRc(const ttlib::cstr& rc_file, std::vector<ttlib::cstr>&
     {
         if (iter.contains("#include"))
         {
-            ttlib::cstr name;
-            ttlib::sview curline = iter.view_nonspace();
+            tt_string name;
+            tt_string_view curline = iter.view_nonspace();
             name.ExtractSubString(curline, curline.stepover());
             if (name.size())
             {
-                ttlib::sview ext = name.extension();
+                tt_string_view ext = name.extension();
                 if (ext.is_sameas(".h"))
                 {
                     if (!lst_ignored_includes.contains(name))
@@ -91,7 +89,7 @@ bool WinResource::ImportRc(const ttlib::cstr& rc_file, std::vector<ttlib::cstr>&
                 else if (ext.is_sameas(".dlg") || ext.contains(".rc"))
                 {
                     curline.moveto_nextword();
-                    ttlib::cstr path;
+                    tt_string path;
                     path.ExtractSubString(curline);
                     if (!path.file_exists())
                     {
@@ -124,7 +122,7 @@ bool WinResource::ImportRc(const ttlib::cstr& rc_file, std::vector<ttlib::cstr>&
             file.RemoveLine(idx + 1);
         }
 
-        if (file[idx].size() > 3 && ttlib::is_found(file[idx].find("NOT", file[idx].size() - 4)))
+        if (file[idx].size() > 3 && tt::is_found(file[idx].find("NOT", file[idx].size() - 4)))
         {
             file[idx] << ' ' << file[idx + 1].view_nonspace();
             file[idx].trim();
@@ -133,14 +131,14 @@ bool WinResource::ImportRc(const ttlib::cstr& rc_file, std::vector<ttlib::cstr>&
 
         if (file[idx].contains("ICON") || file[idx].contains("BITMAP"))
         {
-            ttlib::sview line = file[idx].view_nonspace();
-            ttlib::cstr id;
+            tt_string_view line = file[idx].view_nonspace();
+            tt_string id;
             if (line.at(0) == '"')
                 id.AssignSubString(line);
             else
                 id = line.subview(0, line.find_space());
             line.moveto_nextword();
-            ttlib::cstr type = line.subview(0, line.find_space());
+            tt_string type = line.subview(0, line.find_space());
             if (!type.is_sameas("ICON") && !type.is_sameas("BITMAP"))
                 continue;  // type must be an exact match at this point.
 
@@ -153,7 +151,7 @@ bool WinResource::ImportRc(const ttlib::cstr& rc_file, std::vector<ttlib::cstr>&
                 // This could be another command, such as DISCARDABLE
             }
 
-            ttlib::cstr filename;
+            tt_string filename;
             filename.AssignSubString(line);
             filename.make_relative(cwd);
             filename.make_absolute();
@@ -169,12 +167,12 @@ bool WinResource::ImportRc(const ttlib::cstr& rc_file, std::vector<ttlib::cstr>&
     {
         // String tables need to be processed first because we need the id in case it's used as the help string for a menu.
         m_curline = file.FindLineContaining("STRINGTABLE");
-        if (ttlib::is_found(m_curline))
+        if (tt::is_found(m_curline))
         {
             // We have to restart at zero in order to pickup code page changes
             for (m_curline = 0; m_curline < file.size(); ++m_curline)
             {
-                ttlib::sview curline = file[m_curline].view_nonspace();
+                tt_string_view curline = file[m_curline].view_nonspace();
                 if (curline.starts_with("STRINGTABLE"))
                 {
                     ParseStringTable(file);
@@ -182,14 +180,14 @@ bool WinResource::ImportRc(const ttlib::cstr& rc_file, std::vector<ttlib::cstr>&
                 else if (curline.starts_with("#pragma code_page"))
                 {
                     auto code = curline.find('(');
-                    m_codepage = ttlib::atoi(curline.subview(code + 1));
+                    m_codepage = tt::atoi(curline.subview(code + 1));
                 }
             }
         }
 
         for (m_curline = 0; m_curline < file.size(); ++m_curline)
         {
-            ttlib::sview curline = file[m_curline].view_nonspace();
+            tt_string_view curline = file[m_curline].view_nonspace();
             auto start = curline.find_nonspace();
             if (curline.empty() || curline[start] == '/')  // Ignore blank lines and comments.
                 continue;
@@ -263,7 +261,7 @@ bool WinResource::ImportRc(const ttlib::cstr& rc_file, std::vector<ttlib::cstr>&
                     if (curline.contains(" code_page("))
                     {
                         auto code = curline.find('(');
-                        m_codepage = ttlib::atoi(curline.subview(code + 1));
+                        m_codepage = tt::atoi(curline.subview(code + 1));
                     }
                 }
             }
@@ -309,9 +307,9 @@ bool WinResource::ImportRc(const ttlib::cstr& rc_file, std::vector<ttlib::cstr>&
     catch (const std::exception& e)
     {
         MSG_ERROR(e.what());
-        wxMessageBox((ttlib::cstr() << "Problem parsing " << m_RcFilename << " at around line "
-                                    << ttlib::itoa(m_curline << 1) << "\n\n"
-                                    << e.what())
+        wxMessageBox((tt_string() << "Problem parsing " << m_RcFilename << " at around line " << tt::itoa(m_curline << 1)
+                                  << "\n\n"
+                                  << e.what())
                          .wx_str(),
                      "RC Parser");
         return false;
@@ -330,7 +328,7 @@ bool WinResource::ImportRc(const ttlib::cstr& rc_file, std::vector<ttlib::cstr>&
     return true;
 }
 
-void WinResource::ParseDialog(ttlib::textfile& file)
+void WinResource::ParseDialog(tt_string_vector& file)
 {
     try
     {
@@ -344,7 +342,7 @@ void WinResource::ParseDialog(ttlib::textfile& file)
         if (!settings.starts_with("DIALOG"))  // verify this is a dialog
             throw std::invalid_argument("Expected an ID then a DIALOG or DIALOGEX.");
 
-        auto pos = ttlib::stepover_pos(settings);
+        auto pos = tt::stepover_pos(settings);
         if (pos == tt::npos)
             throw std::invalid_argument("Expected dimensions following DIALOG or DIALOGEX.");
 
@@ -354,14 +352,14 @@ void WinResource::ParseDialog(ttlib::textfile& file)
     catch (const std::exception& e)
     {
         MSG_ERROR(e.what());
-        wxMessageBox((ttlib::cstr() << "Problem parsing " << m_RcFilename << " at around line " << m_curline + 1 << "\n\n"
-                                    << e.what())
+        wxMessageBox((tt_string() << "Problem parsing " << m_RcFilename << " at around line " << m_curline + 1 << "\n\n"
+                                  << e.what())
                          .wx_str(),
                      "RC Parser");
     }
 }
 
-void WinResource::ParseMenu(ttlib::textfile& file)
+void WinResource::ParseMenu(tt_string_vector& file)
 {
     try
     {
@@ -381,14 +379,14 @@ void WinResource::ParseMenu(ttlib::textfile& file)
     catch (const std::exception& e)
     {
         MSG_ERROR(e.what());
-        wxMessageBox((ttlib::cstr() << "Problem parsing " << m_RcFilename << " at around line " << m_curline + 1 << "\n\n"
-                                    << e.what())
+        wxMessageBox((tt_string() << "Problem parsing " << m_RcFilename << " at around line " << m_curline + 1 << "\n\n"
+                                  << e.what())
                          .wx_str(),
                      "RC Parser");
     }
 }
 
-void WinResource::ParseStringTable(ttlib::textfile& file)
+void WinResource::ParseStringTable(tt_string_vector& file)
 {
     for (++m_curline; m_curline < file.size(); ++m_curline)
     {
@@ -406,25 +404,25 @@ void WinResource::ParseStringTable(ttlib::textfile& file)
         }
 
         auto pos = line.find_space();
-        if (ttlib::is_found(pos))
+        if (tt::is_found(pos))
         {
-            ttlib::cstr id(line.substr(0, pos));
+            tt_string id(line.substr(0, pos));
             id.trim(tt::TRIM::right);
             if (id.back() == ',')
                 id.pop_back();
 
             pos = line.find_nonspace(pos);
-            if (ttlib::is_found(pos))
+            if (tt::is_found(pos))
             {
                 auto text = ConvertCodePageString(line.view_substr(pos));
-                // ttlib::cstr text(line.view_substr(pos));
+                // tt_string text(line.view_substr(pos));
                 m_map_stringtable[id] = text;
             }
         }
     }
 }
 
-void WinResource::InsertDialogs(std::vector<ttlib::cstr>& dialogs)
+void WinResource::InsertDialogs(std::vector<tt_string>& dialogs)
 {
     if (dialogs.size())
     {
@@ -473,7 +471,7 @@ void WinResource::FormToNode(resForm& form)
     }
 }
 
-std::optional<ttlib::cstr> WinResource::FindIcon(const std::string& id)
+std::optional<tt_string> WinResource::FindIcon(const std::string& id)
 {
     if (auto result = m_map_icons.find(id); result != m_map_icons.end())
         return result->second;
@@ -481,7 +479,7 @@ std::optional<ttlib::cstr> WinResource::FindIcon(const std::string& id)
         return {};
 }
 
-std::optional<ttlib::cstr> WinResource::FindBitmap(const std::string& id)
+std::optional<tt_string> WinResource::FindBitmap(const std::string& id)
 {
     if (auto result = m_map_bitmaps.find(id); result != m_map_bitmaps.end())
         return result->second;
@@ -489,7 +487,7 @@ std::optional<ttlib::cstr> WinResource::FindBitmap(const std::string& id)
         return {};
 }
 
-std::optional<ttlib::cstr> WinResource::FindStringID(const std::string& id)
+std::optional<tt_string> WinResource::FindStringID(const std::string& id)
 {
     if (auto result = m_map_stringtable.find(id); result != m_map_stringtable.end())
         return result->second;
@@ -497,17 +495,17 @@ std::optional<ttlib::cstr> WinResource::FindStringID(const std::string& id)
         return {};
 }
 
-ttlib::cstr WinResource::ConvertCodePageString(std::string_view str)
+tt_string WinResource::ConvertCodePageString(std::string_view str)
 {
     if (m_codepage == 65001)  // utf8 code page
-        return ttlib::cstr(str);
+        return tt_string(str);
 #if defined(_WIN32)
     std::wstring result;
     auto out_size = (str.size() * sizeof(wchar_t)) + sizeof(wchar_t);
     result.reserve(out_size);
     auto count_chars = MultiByteToWideChar(m_codepage, 0, str.data(), (to_int) str.size(), result.data(), (to_int) out_size);
-    return ttlib::utf16to8(std::wstring_view(result.c_str(), count_chars));
+    return tt::utf16to8(std::wstring_view(result.c_str(), count_chars));
 #else
-    return ttlib::cstr(str);
+    return tt_string(str);
 #endif  // _WIN32
 }

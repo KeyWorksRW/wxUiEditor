@@ -66,7 +66,7 @@ bool BannerWindowGenerator::SettingsCode(Code& code)
     {
         if (code.is_cpp())
         {
-            ttlib::cstr tmp;
+            tt_string tmp;
             GenBtnBimapCode(code.node(), tmp, true);
             code += tmp;
         }
@@ -86,7 +86,7 @@ bool BannerWindowGenerator::SettingsCode(Code& code)
         else
         {
             wxColour colour = ConvertToColour(start_colour);
-            ttlib::cstr clr_format;
+            tt_string clr_format;
             clr_format.Format("wxColour(%i, %i, %i)", colour.Red(), colour.Green(), colour.Blue());
             code.CheckLineLength(clr_format.size());
             code.Add(clr_format);
@@ -103,7 +103,7 @@ bool BannerWindowGenerator::SettingsCode(Code& code)
         else
         {
             wxColour colour = ConvertToColour(end_colour);
-            ttlib::cstr clr_format;
+            tt_string clr_format;
             clr_format.Format("wxColour(%i, %i, %i)", colour.Red(), colour.Green(), colour.Blue());
             code.CheckLineLength(clr_format.size());
             code.Add(clr_format);

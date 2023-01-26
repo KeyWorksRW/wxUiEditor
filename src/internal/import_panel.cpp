@@ -68,13 +68,13 @@ ImportPanel::ImportPanel(wxWindow* parent) : wxScrolled<wxPanel>(parent)
     SetSizerAndFit(parent_sizer);
 }
 
-void ImportPanel::SetImportFile(const ttlib::cstr& file, int lexer)
+void ImportPanel::SetImportFile(const tt_string& file, int lexer)
 {
     m_view.clear();
     m_view.GetBuffer().clear();
     if (!m_view.ReadFile(file))
     {
-        FAIL_MSG(ttlib::cstr("Can't read ") << file);
+        FAIL_MSG(tt_string("Can't read ") << file);
         return;
     }
 
@@ -137,7 +137,7 @@ void ImportPanel::SetImportFile(const ttlib::cstr& file, int lexer)
             break;
 
         default:
-            FAIL_MSG(ttlib::cstr("Unsupported lexer: ") << lexer);
+            FAIL_MSG(tt_string("Unsupported lexer: ") << lexer);
             break;
     }
 
@@ -201,11 +201,11 @@ void ImportPanel::Clear()
 void ImportPanel::OnNodeSelected(Node* node)
 {
     // Find where the node is created.
-    ttlib::cstr name(" ");
+    tt_string name(" ");
     name << node->prop_as_string(prop_var_name);
     int line = 0;
 
-    ttlib::cstr search(m_lexer != wxSTC_LEX_JSON ? "name=\"" : "\"");
+    tt_string search(m_lexer != wxSTC_LEX_JSON ? "name=\"" : "\"");
     if (node->HasProp(prop_id) && node->prop_as_string(prop_id) != "wxID_ANY")
     {
         search << node->prop_as_string(prop_id);
@@ -220,7 +220,7 @@ void ImportPanel::OnNodeSelected(Node* node)
     }
     line = (to_int) m_view.FindLineContaining(search);
 
-    if (!ttlib::is_found(line))
+    if (!tt::is_found(line))
         return;
 
     m_scintilla->MarkerDeleteAll(node_marker);

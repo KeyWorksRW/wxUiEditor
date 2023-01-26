@@ -56,8 +56,8 @@ bool AnimationGenerator::ConstructionCode(Code& code)
     // TODO: [Randalphwa - 12-08-2022] Enable Python support once image handling is worked out
     if (code.HasValue(prop_animation) && code.is_cpp())
     {
-        ttlib::multiview parts(code.node()->as_string(prop_animation), ';');
-        ttlib::cstr name(parts[IndexImage].filename());
+        tt_view_vector parts(code.node()->as_string(prop_animation), ';');
+        tt_string name(parts[IndexImage].filename());
         name.remove_extension();
         name.LeftTrim();
         if (parts[IndexType].starts_with("Embed"))
@@ -106,17 +106,17 @@ int AnimationGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t 
 
     if (node->HasValue(prop_animation))
     {
-        ttlib::multistr parts(node->prop_as_string(prop_animation), ';', tt::TRIM::both);
+        tt_string_vector parts(node->prop_as_string(prop_animation), ';', tt::TRIM::both);
         ASSERT(parts.size() > 1)
         item.append_child("animation").text().set(parts[IndexImage]);
     }
     if (node->HasValue(prop_inactive_bitmap))
     {
-        ttlib::multistr parts(node->prop_as_string(prop_inactive_bitmap), ';', tt::TRIM::both);
+        tt_string_vector parts(node->prop_as_string(prop_inactive_bitmap), ';', tt::TRIM::both);
         ASSERT(parts.size() > 1)
         if (parts[IndexType].is_sameas("Art"))
         {
-            ttlib::multistr art_parts(parts[IndexArtID], '|');
+            tt_string_vector art_parts(parts[IndexArtID], '|');
             auto bmp = item.append_child("inactive-bitmap");
             bmp.append_attribute("stock_id").set_value(art_parts[0]);
             bmp.append_attribute("stock_client").set_value(art_parts[1]);

@@ -49,11 +49,11 @@ void NewDialog::CreateNode()
             auto book_page = NodeCreation.CreateNode(gen_BookPage, notebook.get());
             notebook->Adopt(book_page);
 
-            ttlib::cstr label("Tab ");
+            tt_string label("Tab ");
             label << count + 1;
             book_page->prop_set_value(prop_label, label);
             auto page_sizer = NodeCreation.CreateNode(gen_VerticalBoxSizer, book_page.get());
-            page_sizer->prop_set_value(prop_var_name, ttlib::cstr() << "page_sizer_" << count + 1);
+            page_sizer->prop_set_value(prop_var_name, tt_string() << "page_sizer_" << count + 1);
             book_page->Adopt(page_sizer);
             auto static_text = NodeCreation.CreateNode(gen_wxStaticText, page_sizer.get());
             page_sizer->Adopt(static_text);
@@ -82,7 +82,7 @@ void NewDialog::CreateNode()
 
     wxGetFrame().SelectNode(Project.ProjectNode());
 
-    ttlib::cstr undo_str("New wxDialog");
+    tt_string undo_str("New wxDialog");
     wxGetFrame().PushUndoAction(std::make_shared<InsertNodeAction>(form_node.get(), Project.ProjectNode(), undo_str, -1));
     wxGetFrame().FireCreatedEvent(form_node);
     wxGetFrame().SelectNode(form_node, evt_flags::fire_event | evt_flags::force_selection);

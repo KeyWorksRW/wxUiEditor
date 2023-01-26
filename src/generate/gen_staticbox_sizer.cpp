@@ -48,7 +48,7 @@ bool StaticBoxSizerGenerator::ConstructionCode(Code& code)
 {
     Node* node = code.node();
 
-    ttlib::cstr parent_name(code.is_cpp() ? "this" : "self");
+    tt_string parent_name(code.is_cpp() ? "this" : "self");
     if (!node->GetParent()->IsForm())
     {
         auto parent = node->GetParent();

@@ -26,7 +26,7 @@ public:
     WxCrafter();
     ~WxCrafter() {};
 
-    bool Import(const ttString& filename, bool write_doc = true) override;
+    bool Import(const tt_wxString& filename, bool write_doc = true) override;
     NodeSharedPtr CreateFbpNode(pugi::xml_node& xml_prop, Node* parent, Node* sizeritem = nullptr);
 
 protected:
@@ -43,7 +43,7 @@ protected:
 
     // Called when the property isn't recognized. Will return prop_processed if it was
     // processed, or a valid prop_name if it was converted, but needs further handling.
-    GenEnum::PropName UnknownProperty(Node* node, const rapidjson::Value& value, ttlib::cstr& name);
+    GenEnum::PropName UnknownProperty(Node* node, const rapidjson::Value& value, tt_string& name);
 
     // Called when prop_name is a valid property. This will set the property's value after
     // any possible additional processing.
@@ -54,7 +54,7 @@ protected:
     void ValueProperty(Node* node, const rapidjson::Value& value);
 
 private:
-    ttlib::cstr m_output_name;
+    tt_string m_output_name;
 
     bool m_is_output_name_used { false };
 

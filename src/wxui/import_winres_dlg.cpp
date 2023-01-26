@@ -88,8 +88,6 @@ bool ImportWinRes::Create(wxWindow* parent, wxWindowID id, const wxString& title
 
 #include <wx/dir.h>
 
-#include <tttextfile_wx.h>  // textfile -- Classes for reading and writing line-oriented files
-
 #include "mainframe.h"        // MainFrame -- Main window frame
 #include "project_handler.h"  // ProjectHandler class
 
@@ -124,7 +122,7 @@ void ImportWinRes::OnInit(wxInitDialogEvent& WXUNUSED(event))
 void ImportWinRes::ReadRcFile()
 {
     m_rcFilename.utf(m_fileResource->GetPath().wx_str());
-    ttlib::textfile rc_file;
+    tt_string_vector rc_file;
     if (!rc_file.ReadFile(m_rcFilename))
     {
         wxMessageBox(wxString("Unable to read the file ") << m_fileResource->GetPath());
@@ -133,7 +131,7 @@ void ImportWinRes::ReadRcFile()
 
     for (auto& iter: rc_file)
     {
-        if (iter.empty() || !ttlib::is_alpha(iter[0]))
+        if (iter.empty() || !tt::is_alpha(iter[0]))
             continue;
 
         auto type = iter.view_stepover();
@@ -146,7 +144,7 @@ void ImportWinRes::ReadRcFile()
         {
             auto pos_end = iter.find(' ');
             auto name = iter.substr(0, pos_end);
-            if (ttlib::is_alnum(name[0]) || name[0] == '"')
+            if (tt::is_alnum(name[0]) || name[0] == '"')
             {
                 auto sel = m_checkListResUI->Append(name);
                 m_checkListResUI->Check(sel);

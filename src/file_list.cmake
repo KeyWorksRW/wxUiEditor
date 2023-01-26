@@ -13,7 +13,6 @@ set (file_list
     cstm_event.cpp        # Custom Event handling
     frame_status_bar.cpp  # MainFrame status bar functions
     gen_enums.cpp         # Enumerations for generators
-    # lambdas.cpp           # Functions for formatting and storage of lamda events
     paths.cpp             # Handles *_directory properties
     preferences.cpp       # Set/Get wxUiEditor preferences
     previews.cpp          # Top level Preview functions
@@ -21,6 +20,13 @@ set (file_list
     undo_cmds.cpp         # Undoable command classes derived from UndoStackCmd
     undo_stack.cpp        # Maintain an undo and redo stack
     wakatime.cpp          # Updates WakaTime metrics
+
+    tt/tt.cpp               # tt namespace functions
+    tt/tt_wxString.cpp      # Enhanced version of wxString
+    tt/tt_string.cpp        # std::string with additional methods
+    tt/tt_string_view.cpp   # std::string_view with additional methods
+    tt/tt_string_vector.cpp # Class for reading and writing line-oriented strings/files
+    tt/tt_view_vector.cpp   # Class for reading and writing line-oriented strings/files
 
     # Custom property handling for Property Grid panel
 

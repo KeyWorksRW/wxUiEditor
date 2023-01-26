@@ -16,9 +16,9 @@
 #include "node_creator.h"  // NodeCreator class
 #include "utils.h"         // Utility functions that work with properties
 
-ttlib::cstr DoubleToStr(double val)
+tt_string DoubleToStr(double val)
 {
-    ttlib::cstr result;
+    tt_string result;
 
     std::array<char, 20> str;
     if (auto [ptr, ec] = std::to_chars(str.data(), str.data() + str.size(), val); ec == std::errc())
@@ -28,16 +28,16 @@ ttlib::cstr DoubleToStr(double val)
     return result;
 }
 
-ttlib::cstr ClearPropFlag(ttlib::sview flag, ttlib::sview currentValue)
+tt_string ClearPropFlag(tt_string_view flag, tt_string_view currentValue)
 {
-    ttlib::cstr result;
+    tt_string result;
     if (flag.empty() || currentValue.empty())
     {
         result = currentValue;
         return result;
     }
 
-    ttlib::multiview mstr(currentValue, '|');
+    tt_view_vector mstr(currentValue, '|');
     for (auto& iter: mstr)
     {
         if (iter != flag)
@@ -50,18 +50,18 @@ ttlib::cstr ClearPropFlag(ttlib::sview flag, ttlib::sview currentValue)
     return result;
 }
 
-ttlib::cstr ClearMultiplePropFlags(ttlib::sview flags, ttlib::sview currentValue)
+tt_string ClearMultiplePropFlags(tt_string_view flags, tt_string_view currentValue)
 {
-    ttlib::cstr result;
+    tt_string result;
     if (flags.empty() || currentValue.empty())
     {
         result = currentValue;
         return result;
     }
 
-    ttlib::multistr mflags(flags, '|');
+    tt_string_vector mflags(flags, '|');
 
-    ttlib::multistr mstr(currentValue, '|');
+    tt_string_vector mstr(currentValue, '|');
     for (auto& iter: mstr)
     {
         bool isFlagged = false;
@@ -84,15 +84,15 @@ ttlib::cstr ClearMultiplePropFlags(ttlib::sview flags, ttlib::sview currentValue
     return result;
 }
 
-ttlib::cstr SetPropFlag(ttlib::sview flag, ttlib::sview currentValue)
+tt_string SetPropFlag(tt_string_view flag, tt_string_view currentValue)
 {
-    ttlib::cstr result(currentValue);
+    tt_string result(currentValue);
     if (flag.empty())
     {
         return result;
     }
 
-    ttlib::multiview mstr(currentValue, '|');
+    tt_view_vector mstr(currentValue, '|');
     for (auto& iter: mstr)
     {
         if (iter.is_sameas(flag))
@@ -106,14 +106,14 @@ ttlib::cstr SetPropFlag(ttlib::sview flag, ttlib::sview currentValue)
     return result;
 }
 
-bool isPropFlagSet(ttlib::sview flag, ttlib::sview currentValue)
+bool isPropFlagSet(tt_string_view flag, tt_string_view currentValue)
 {
     if (flag.empty() || currentValue.empty())
     {
         return false;
     }
 
-    ttlib::multiview mstr(currentValue, '|');
+    tt_view_vector mstr(currentValue, '|');
     for (auto& iter: mstr)
     {
         if (iter.is_sameas(flag))
@@ -124,12 +124,12 @@ bool isPropFlagSet(ttlib::sview flag, ttlib::sview currentValue)
     return false;
 }
 
-int ConvertBitlistToInt(ttlib::sview list)
+int ConvertBitlistToInt(tt_string_view list)
 {
     int result = 0;
     if (list.size())
     {
-        ttlib::multistr mstr(list, '|');
+        tt_string_vector mstr(list, '|');
         for (auto& iter: mstr)
         {
             result |= NodeCreation.GetConstantAsInt(iter);
@@ -138,16 +138,16 @@ int ConvertBitlistToInt(ttlib::sview list)
     return result;
 }
 
-ttlib::cstr ConvertColourToString(const wxColour& colour)
+tt_string ConvertColourToString(const wxColour& colour)
 {
-    ttlib::cstr str;
+    tt_string str;
     str << colour.Red() << ',' << colour.Green() << ',' << colour.Blue();
     return str;
 }
 
-ttlib::cstr ConvertSystemColourToString(long colour)
+tt_string ConvertSystemColourToString(long colour)
 {
-    ttlib::cstr str;
+    tt_string str;
 
 #define SystemColourConvertCase(name) \
     case name:                        \
@@ -198,7 +198,7 @@ ttlib::cstr ConvertSystemColourToString(long colour)
     return str;
 }
 
-wxSystemColour ConvertToSystemColour(ttlib::sview value)
+wxSystemColour ConvertToSystemColour(tt_string_view value)
 {
     // clang-format off
 
@@ -245,7 +245,7 @@ wxSystemColour ConvertToSystemColour(ttlib::sview value)
     // clang-format on
 }
 
-wxColour ConvertToColour(ttlib::sview value)
+wxColour ConvertToColour(tt_string_view value)
 {
     // check for system colour
     if (value.starts_with("wx"))
@@ -254,7 +254,7 @@ wxColour ConvertToColour(ttlib::sview value)
     }
     else
     {
-        ttlib::multiview mstr(value, ',');
+        tt_view_vector mstr(value, ',');
         unsigned long rgb = 0;
         if (mstr.size() > 2)
         {
@@ -314,9 +314,9 @@ const char* ConvertFontFamilyToString(wxFontFamily family)
     return result;
 }
 
-ttlib::cstr ConvertEscapeSlashes(ttlib::sview str)
+tt_string ConvertEscapeSlashes(tt_string_view str)
 {
-    ttlib::cstr result;
+    tt_string result;
 
     for (size_t pos = 0; pos < str.size(); ++pos)
     {
@@ -360,9 +360,9 @@ ttlib::cstr ConvertEscapeSlashes(ttlib::sview str)
     return result;
 }
 
-ttlib::cstr CreateEscapedText(ttlib::sview str)
+tt_string CreateEscapedText(tt_string_view str)
 {
-    ttlib::cstr result;
+    tt_string result;
 
     for (auto ch: str)
     {
@@ -393,14 +393,14 @@ ttlib::cstr CreateEscapedText(ttlib::sview str)
     return result;
 }
 
-std::vector<ttlib::cstr> ConvertToArrayString(ttlib::sview value)
+std::vector<tt_string> ConvertToArrayString(tt_string_view value)
 {
-    std::vector<ttlib::cstr> array;
+    std::vector<tt_string> array;
     if (value.empty())
         return array;
-    ttlib::cstr parse;
+    tt_string parse;
     auto pos = parse.ExtractSubString(value);
-    if (!ttlib::is_found(pos))
+    if (!tt::is_found(pos))
     {
         // This usually means a property that was hand-edited incorrectly, or a newer version of the project
         // file where the property is encoded differently.
@@ -408,11 +408,11 @@ std::vector<ttlib::cstr> ConvertToArrayString(ttlib::sview value)
     }
     array.emplace_back(parse);
 
-    for (auto tmp_value = ttlib::stepover(value.data() + pos); tmp_value.size();
-         tmp_value = ttlib::stepover(tmp_value.data() + pos))
+    for (auto tmp_value = tt::stepover(value.data() + pos); tmp_value.size();
+         tmp_value = tt::stepover(tmp_value.data() + pos))
     {
         pos = parse.ExtractSubString(tmp_value);
-        if (!ttlib::is_found(pos))
+        if (!tt::is_found(pos))
             break;
         array.emplace_back(parse);
     }
@@ -420,17 +420,17 @@ std::vector<ttlib::cstr> ConvertToArrayString(ttlib::sview value)
     return array;
 }
 
-wxArrayString ConvertToWxArrayString(ttlib::sview value)
+wxArrayString ConvertToWxArrayString(tt_string_view value)
 {
     wxArrayString array;
     if (value.empty())
         return array;
-    ttlib::cstr parse;
+    tt_string parse;
     auto pos = parse.ExtractSubString(value);
     array.push_back(parse.wx_str());
 
-    for (auto tmp_value = ttlib::stepover(value.data() + pos); tmp_value.size();
-         tmp_value = ttlib::stepover(tmp_value.data() + pos))
+    for (auto tmp_value = tt::stepover(value.data() + pos); tmp_value.size();
+         tmp_value = tt::stepover(tmp_value.data() + pos))
     {
         pos = parse.ExtractSubString(tmp_value);
         array.push_back(parse.wx_str());
@@ -463,9 +463,9 @@ wxSize DlgSize(wxObject* parent, Node* node, GenEnum::PropName prop)
     }
 }
 
-void GetSizeInfo(wxSize& size, ttlib::sview description)
+void GetSizeInfo(wxSize& size, tt_string_view description)
 {
-    ttlib::multiview size_description;
+    tt_view_vector size_description;
     if (description.contains(";"))
         size_description.SetString(description, ';', tt::TRIM::left);
     else
@@ -486,7 +486,7 @@ void GetSizeInfo(wxSize& size, ttlib::sview description)
         size.y = size_description[1].atoi();
 }
 
-wxSize get_image_prop_size(ttlib::sview size_description)
+wxSize get_image_prop_size(tt_string_view size_description)
 {
     wxSize size;
     GetSizeInfo(size, size_description);
@@ -507,7 +507,7 @@ inline constexpr const char* lst_no_png_conversion[] = {
 };
 // clang-format on
 
-bool isConvertibleMime(const ttString& suffix)
+bool isConvertibleMime(const tt_wxString& suffix)
 {
     for (auto& iter: lst_no_png_conversion)
     {
@@ -537,7 +537,7 @@ bool isValidVarName(const std::string& str)
     // The set is only initialized the first time this function is called.
     if (g_set_cpp_keywords.empty())
     {
-        ttlib::multistr keywords(g_u8_cpp_keywords, ' ');
+        tt_string_vector keywords(g_u8_cpp_keywords, ' ');
         for (auto& iter: keywords)
         {
             g_set_cpp_keywords.emplace(iter);

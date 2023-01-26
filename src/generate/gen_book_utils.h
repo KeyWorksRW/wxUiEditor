@@ -20,10 +20,10 @@ bool isBookHasImage(Node* node);
 
 void AddBookImageList(Node* node_book, wxObject* widget);
 
-void BookCtorAddImagelist(ttlib::cstr& code, Node* node);
+void BookCtorAddImagelist(tt_string& code, Node* node);
 
 void AddTreebookSubImages(Node* node, wxBookCtrlBase::Images& bundle_list);
 
-void AddTreebookImageCode(ttlib::cstr& code, Node* child_node, size_t& image_index);
+void AddTreebookImageCode(tt_string& code, Node* child_node, size_t& image_index);
 
 int GetTreebookImageIndex(Node* node);

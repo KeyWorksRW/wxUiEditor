@@ -18,12 +18,12 @@ public:
 
     bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr) override;
 
-    ttlib::cstr GetHelpText(Node*) override { return ttlib::cstr("CreateCloseButton"); }
-    ttlib::cstr GetHelpURL(Node*) override { return ttlib::cstr("wx_bitmap_button.html#a558bf8e66279a784260950d9e585baf7"); }
+    tt_string GetHelpText(Node*) override { return tt_string("CreateCloseButton"); }
+    tt_string GetHelpURL(Node*) override { return tt_string("wx_bitmap_button.html#a558bf8e66279a784260950d9e585baf7"); }
 
     int GenXrcObject(Node*, pugi::xml_node& /* object */, size_t /* xrc_flags */) override;
     void RequiredHandlers(Node*, std::set<std::string>& /* handlers */) override;
 
-    ttlib::cstr GetPythonHelpText(Node*) override { return "NewCloseButton"; }
-    ttlib::cstr GetPythonURL(Node*) override { return "wx.BitmapButton.html#wx.BitmapButton.NewCloseButton"; }
+    tt_string GetPythonHelpText(Node*) override { return "NewCloseButton"; }
+    tt_string GetPythonURL(Node*) override { return "wx.BitmapButton.html#wx.BitmapButton.NewCloseButton"; }
 };

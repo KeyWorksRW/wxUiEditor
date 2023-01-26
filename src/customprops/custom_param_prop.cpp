@@ -24,7 +24,7 @@ class EditParamDialog : public EditStringDialogBase
 public:
     EditParamDialog(wxWindow* parent, NodeProperty* prop) : EditStringDialogBase(parent)
     {
-        SetTitle(ttlib::cstr() << prop->DeclName() << " property editor");
+        SetTitle(tt_string() << prop->DeclName() << " property editor");
         m_value = prop->as_wxString();
         m_static_hdr_text->Show();
         m_node = prop->GetNode();
@@ -35,7 +35,7 @@ public:
 
     void UpdateStaticText(wxCommandEvent& /* event */)
     {
-        ttlib::cstr ctor;
+        tt_string ctor;
         if (m_node->isPropValue(prop_class_access, "none"))
             ctor << "auto ";
         ctor << m_node->prop_as_string(prop_var_name) << " = new " << m_node->prop_as_string(prop_class_name);

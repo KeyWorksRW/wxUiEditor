@@ -11,8 +11,6 @@
 
 #include <wx/filename.h>  // wxFileName - encapsulates a file path
 
-#include <tttextfile_wx.h>  // textfile -- Classes for reading and writing line-oriented files
-
 #include "gen_base.h"
 
 #include "code.h"             // Code -- Helper class for generating code
@@ -181,10 +179,10 @@ void BaseCodeGenerator::GenerateCppClass(Node* form_node, PANEL_PAGE panel_type)
         m_source->writeLine(txt_BaseCmtBlock);
     }
 
-    ttlib::cstr file;
+    tt_string file;
     if (auto& base_file = form_node->prop_as_string(prop_base_file); base_file.size())
     {
-        ttSaveCwd cwd;
+        tt_cwd cwd(true);
         Project.ChangeDir();
         file = base_file;
         file.make_relative(Project.ProjectPath().utf8_string());
@@ -231,8 +229,8 @@ void BaseCodeGenerator::GenerateCppClass(Node* form_node, PANEL_PAGE panel_type)
         // First output all the wxWidget header files
         for (auto& iter: hdr_includes)
         {
-            if (ttlib::contains(iter, "<wx"))
-                m_header->writeLine((ttlib::cstr&) iter);
+            if (tt::contains(iter, "<wx"))
+                m_header->writeLine((tt_string&) iter);
         }
 
         m_header->writeLine();
@@ -240,8 +238,8 @@ void BaseCodeGenerator::GenerateCppClass(Node* form_node, PANEL_PAGE panel_type)
         // Now output all the other header files (this will include forward class declarations)
         for (auto& iter: hdr_includes)
         {
-            if (!ttlib::contains(iter, "<wx"))
-                m_header->writeLine((ttlib::cstr&) iter);
+            if (!tt::contains(iter, "<wx"))
+                m_header->writeLine((tt_string&) iter);
         }
 
         m_header->writeLine();
@@ -254,7 +252,7 @@ void BaseCodeGenerator::GenerateCppClass(Node* form_node, PANEL_PAGE panel_type)
 
     if (Project.HasValue(prop_local_pch_file))
     {
-        m_source->writeLine(ttlib::cstr() << "#include \"" << Project.value(prop_local_pch_file) << '"');
+        m_source->writeLine(tt_string() << "#include \"" << Project.value(prop_local_pch_file) << '"');
         m_source->writeLine();
     }
 
@@ -308,8 +306,8 @@ void BaseCodeGenerator::GenerateCppClass(Node* form_node, PANEL_PAGE panel_type)
     // First output all the wxWidget header files
     for (auto& iter: src_includes)
     {
-        if (ttlib::contains(iter, "<wx"))
-            m_source->writeLine((ttlib::cstr&) iter);
+        if (tt::contains(iter, "<wx"))
+            m_source->writeLine((tt_string&) iter);
     }
 
     m_source->writeLine();
@@ -317,8 +315,8 @@ void BaseCodeGenerator::GenerateCppClass(Node* form_node, PANEL_PAGE panel_type)
     // Now output all the other header files (this will include derived_class header files)
     for (auto& iter: src_includes)
     {
-        if (!ttlib::contains(iter, "<wx"))
-            m_source->writeLine((ttlib::cstr&) iter);
+        if (!tt::contains(iter, "<wx"))
+            m_source->writeLine((tt_string&) iter);
     }
 
     m_source->writeLine();
@@ -348,7 +346,7 @@ void BaseCodeGenerator::GenerateCppClass(Node* form_node, PANEL_PAGE panel_type)
     {
         file.replace_extension(m_header_ext);
         m_source->writeLine();
-        m_source->writeLine(ttlib::cstr() << "#include \"" << file.filename() << "\"");
+        m_source->writeLine(tt_string() << "#include \"" << file.filename() << "\"");
     }
 
     m_source->writeLine();
@@ -374,28 +372,28 @@ void BaseCodeGenerator::GenerateCppClass(Node* form_node, PANEL_PAGE panel_type)
     }
 
     // Make a copy of the string so that we can tweak it
-    ttlib::cstr namespace_prop = Project.value(prop_name_space);
+    tt_string namespace_prop = Project.value(prop_name_space);
     if (auto* node_namespace = form_node->get_folder(); node_namespace && node_namespace->HasValue(prop_folder_namespace))
     {
         namespace_prop = node_namespace->as_string(prop_folder_namespace);
     }
     size_t indent = 0;
-    ttlib::multistr names;
+    tt_string_vector names;
     if (namespace_prop.size())
     {
-        // BUGBUG: [KeyWorks - 09-01-2021] ttlib::multistr works fine with a string as the separator. So does
-        // ttlib::multiview which is what we should be using here.
+        // BUGBUG: [KeyWorks - 09-01-2021] tt_string_vector works fine with a string as the separator. So does
+        // tt_view_vector which is what we should be using here.
 
-        // ttlib::multistr works with a single char, not a string.
+        // tt_string_vector works with a single char, not a string.
         namespace_prop.Replace("::", ":");
         // we also accept using semi-colons to separate the namespaces
         namespace_prop.Replace(";", ":");
         names.SetString(namespace_prop, ':');
-        ttlib::cstr using_name;
+        tt_string using_name;
         m_header->writeLine();
         for (auto& iter: names)
         {
-            m_header->writeLine(ttlib::cstr() << "namespace " << iter);
+            m_header->writeLine(tt_string() << "namespace " << iter);
             m_header->writeLine("{");
             m_header->Indent();
             ++indent;
@@ -452,7 +450,7 @@ void BaseCodeGenerator::GenerateCppClass(Node* form_node, PANEL_PAGE panel_type)
 
         if (m_NeedImageFunction || m_NeedHeaderFunction)
         {
-            ttlib::textfile function;
+            tt_string_vector function;
             function.ReadString(txt_wxueImageFunction);
             for (auto& iter: function)
             {
@@ -474,7 +472,7 @@ void BaseCodeGenerator::GenerateCppClass(Node* form_node, PANEL_PAGE panel_type)
                 m_source->writeLine("#endif", indent::none);
             }
 
-            ttlib::textfile function;
+            tt_string_vector function;
             function.ReadString(txt_GetBundleFromSVG);
             for (auto& iter: function)
             {
@@ -485,7 +483,7 @@ void BaseCodeGenerator::GenerateCppClass(Node* form_node, PANEL_PAGE panel_type)
 
         if (m_NeedAnimationFunction)
         {
-            ttlib::textfile function;
+            tt_string_vector function;
             function.ReadString(txt_GetAnimFromHdrFunction);
             for (auto& iter: function)
             {
@@ -515,7 +513,7 @@ void BaseCodeGenerator::GenerateCppClass(Node* form_node, PANEL_PAGE panel_type)
         while (indent > 0)
         {
             m_header->Unindent();
-            m_header->writeLine(ttlib::cstr() << "} // namespace " << names[--indent]);
+            m_header->writeLine(tt_string() << "} // namespace " << names[--indent]);
         }
         m_header->writeLine();
     }
@@ -604,7 +602,7 @@ void BaseCodeGenerator::GenValVarsBase(const NodeDeclaration* declaration, Node*
         // All validators must have a validator_data_type property, so we don't check if it exists.
         if (auto& val_data_type = node->prop_as_string(prop_validator_data_type); val_data_type.size())
         {
-            ttlib::cstr code;
+            tt_string code;
 
             if (node->HasValue(prop_platforms) && node->value(prop_platforms) != "Windows|Unix|Mac")
             {
@@ -755,14 +753,14 @@ void BaseCodeGenerator::GatherGeneratorIncludes(Node* node, std::set<std::string
 
     if (node->HasValue(prop_derived_header))
     {
-        ttlib::cstr header("#include \"");
+        tt_string header("#include \"");
         header << node->prop_as_string(prop_derived_header) << '"';
         set_src.insert(header);
     }
 
     if (node->HasValue(prop_derived_class) && !node->isPropValue(prop_class_access, "none"))
     {
-        set_hdr.insert(ttlib::cstr() << "class " << node->prop_as_string(prop_derived_class) << ';');
+        set_hdr.insert(tt_string() << "class " << node->prop_as_string(prop_derived_class) << ';');
     }
 
     // A lot of widgets have wxWindow and/or wxAnyButton as derived classes, and those classes contain properties for
@@ -813,7 +811,7 @@ void BaseCodeGenerator::GatherGeneratorIncludes(Node* node, std::set<std::string
                                 image_file.append_filename_wx(form->as_wxString(prop_base_file));
                                 image_file.replace_extension(m_header_ext);
                                 image_file.make_relative(m_baseFullPath);
-                                set_src.insert(ttlib::cstr() << "#include \"" << image_file.utf8_string() << '\"');
+                                set_src.insert(tt_string() << "#include \"" << image_file.utf8_string() << '\"');
                                 break;
                             }
                         }
@@ -848,9 +846,9 @@ void BaseCodeGenerator::GatherGeneratorIncludes(Node* node, std::set<std::string
     }
 }
 
-ttlib::cstr BaseCodeGenerator::GetDeclaration(Node* node)
+tt_string BaseCodeGenerator::GetDeclaration(Node* node)
 {
-    ttlib::cstr code;
+    tt_string code;
     if (node->HasValue(prop_platforms) && node->value(prop_platforms) != "Windows|Unix|Mac")
     {
         if (node->value(prop_platforms).contains("Windows"))
@@ -874,7 +872,7 @@ ttlib::cstr BaseCodeGenerator::GetDeclaration(Node* node)
         code << "\n";
     }
 
-    ttlib::cstr class_name(node->DeclName());
+    tt_string class_name(node->DeclName());
 
     if (class_name.starts_with("wx"))
     {
@@ -1024,7 +1022,7 @@ void BaseCodeGenerator::GenerateClassHeader(Node* form_node, const EventVector& 
 
     if (!form_node->HasValue(prop_class_name))
     {
-        FAIL_MSG(ttlib::cstr("Missing \"name\" property in ") << form_node->DeclName());
+        FAIL_MSG(tt_string("Missing \"name\" property in ") << form_node->DeclName());
         return;
     }
 
@@ -1048,7 +1046,7 @@ void BaseCodeGenerator::GenerateClassHeader(Node* form_node, const EventVector& 
         FAIL_MSG("All form generators need to support BaseClassNameCode() to provide the class name to derive from.");
 
         // The only way this would be valid is if the base class didn't derive from anything.
-        m_header->writeLine(ttlib::cstr() << "class " << form_node->prop_as_string(prop_class_name));
+        m_header->writeLine(tt_string() << "class " << form_node->prop_as_string(prop_class_name));
     }
 
     m_header->writeLine("{");
@@ -1262,7 +1260,7 @@ void BaseCodeGenerator::GenerateClassConstructor(Node* form_node, EventVector& e
     if (form_node->prop_as_bool(prop_persist))
     {
         m_source->writeLine();
-        ttlib::cstr tmp("wxPersistentRegisterAndRestore(this, \"");
+        tt_string tmp("wxPersistentRegisterAndRestore(this, \"");
         tmp << form_node->get_node_name() << "\");";
         m_source->writeLine(tmp);
     }
@@ -1382,9 +1380,9 @@ void BaseCodeGenerator::CollectImageHeaders(Node* node, std::set<std::string>& e
                 {
                     for (auto& idx_image: bundle->lst_filenames)
                     {
-                        ttlib::cstr path(idx_image);
+                        tt_string path(idx_image);
                         path.backslashestoforward();
-                        embedset.insert(ttlib::cstr() << "#include \"" << path << "\"");
+                        embedset.insert(tt_string() << "#include \"" << path << "\"");
                     }
                 }
             }
@@ -1399,7 +1397,7 @@ void BaseCodeGenerator::CollectImageHeaders(Node* node, std::set<std::string>& e
         {
             if (value.starts_with("Embed"))
             {
-                ttlib::multiview parts(value, BMP_PROP_SEPARATOR, tt::TRIM::both);
+                tt_view_vector parts(value, BMP_PROP_SEPARATOR, tt::TRIM::both);
 
                 if (parts[IndexImage].size())
                 {
@@ -1432,15 +1430,15 @@ void BaseCodeGenerator::CollectImageHeaders(Node* node, std::set<std::string>& e
             }
             else if (value.starts_with("Header") || value.starts_with("XPM"))
             {
-                ttlib::multiview parts(value);
-                if (ttlib::is_whitespace(parts[IndexImage].front()))
+                tt_view_vector parts(value);
+                if (tt::is_whitespace(parts[IndexImage].front()))
                 {
                     parts[IndexImage].remove_prefix(1);
                 }
-                ttlib::cstr path = parts[IndexImage];
+                tt_string path = parts[IndexImage];
                 path.make_relative(m_baseFullPath);
                 path.backslashestoforward();
-                ttlib::cstr inc;
+                tt_string inc;
                 inc << "#include \"" << path << "\"";
                 embedset.insert(inc);
             }
@@ -1462,7 +1460,7 @@ void BaseCodeGenerator::ParseImageProperties(Node* node)
     ASSERT(node);
     if (node->IsForm() && node->HasValue(prop_icon))
     {
-        ttlib::multiview parts(node->prop_as_string(prop_icon), BMP_PROP_SEPARATOR, tt::TRIM::both);
+        tt_view_vector parts(node->prop_as_string(prop_icon), BMP_PROP_SEPARATOR, tt::TRIM::both);
         if (parts.size() >= IndexImage + 1)
         {
             if (parts[IndexType] == "Header")
@@ -1490,7 +1488,7 @@ void BaseCodeGenerator::ParseImageProperties(Node* node)
         {
             if ((iter.type() == type_image || iter.type() == type_animation) && iter.HasValue())
             {
-                ttlib::multistr parts(iter.as_string(), BMP_PROP_SEPARATOR, tt::TRIM::both);
+                tt_string_vector parts(iter.as_string(), BMP_PROP_SEPARATOR, tt::TRIM::both);
                 if (parts.size() < IndexImage + 1)
                     continue;
 
@@ -1531,7 +1529,7 @@ void BaseCodeGenerator::ParseImageProperties(Node* node)
                 {
                     if (iter.type() == type_animation)
                         m_NeedAnimationFunction = true;
-                    else if (!ttlib::is_sameas(parts[IndexImage].extension(), ".xpm", tt::CASE::either))
+                    else if (!tt::is_sameas(parts[IndexImage].extension(), ".xpm", tt::CASE::either))
                         m_NeedHeaderFunction = true;
                 }
             }
@@ -1547,7 +1545,7 @@ void BaseCodeGenerator::AddPersistCode(Node* node)
 {
     if (node->HasValue(prop_persist_name))
     {
-        ttlib::cstr code("wxPersistentRegisterAndRestore(");
+        tt_string code("wxPersistentRegisterAndRestore(");
         code << node->get_node_name() << ", \"" << node->prop_as_string(prop_persist_name) << "\");";
         m_source->writeLine(code);
     }
@@ -1562,7 +1560,7 @@ void BaseCodeGenerator::WriteSetLines(WriteCode* out, std::set<std::string>& cod
 {
     for (auto iter: code_lines)
     {
-        // out->writeLine((ttlib::cstr&) (iter));
+        // out->writeLine((tt_string&) (iter));
         out->writeLine(iter);
     }
     code_lines.clear();
@@ -1592,9 +1590,9 @@ void BaseCodeGenerator::GenerateHandlers()
             if (iter_img->type != wxBITMAP_TYPE_BMP && iter_img->type != wxBITMAP_TYPE_INVALID &&
                 m_type_generated.find(iter_img->type) == m_type_generated.end())
             {
-                m_source->writeLine(ttlib::cstr("if (!wxImage::FindHandler(") << g_map_types[iter_img->type] << "))");
+                m_source->writeLine(tt_string("if (!wxImage::FindHandler(") << g_map_types[iter_img->type] << "))");
                 m_source->Indent();
-                m_source->writeLine(ttlib::cstr("\twxImage::AddHandler(new ") << g_map_handlers[iter_img->type] << ");");
+                m_source->writeLine(tt_string("\twxImage::AddHandler(new ") << g_map_handlers[iter_img->type] << ");");
                 m_source->Unindent();
                 m_type_generated.insert(iter_img->type);
             }
@@ -1605,9 +1603,9 @@ void BaseCodeGenerator::GenerateHandlers()
 
 void BaseCodeGenerator::WritePropSourceCode(Node* node, GenEnum::PropName prop)
 {
-    ttlib::cstr convert(node->prop_as_string(prop));
+    tt_string convert(node->prop_as_string(prop));
     convert.Replace("@@", "\n", tt::REPLACE::all);
-    ttlib::multistr lines(convert, '\n');
+    tt_string_vector lines(convert, '\n');
     bool initial_bracket = false;
     for (auto& code: lines)
     {
@@ -1634,9 +1632,9 @@ void BaseCodeGenerator::WritePropSourceCode(Node* node, GenEnum::PropName prop)
 
 void BaseCodeGenerator::WritePropHdrCode(Node* node, GenEnum::PropName prop)
 {
-    ttlib::cstr convert(node->prop_as_string(prop));
+    tt_string convert(node->prop_as_string(prop));
     convert.Replace("@@", "\n", tt::REPLACE::all);
-    ttlib::multistr lines(convert, '\n', tt::TRIM::right);
+    tt_string_vector lines(convert, '\n', tt::TRIM::right);
     bool initial_bracket = false;
     for (auto& code: lines)
     {

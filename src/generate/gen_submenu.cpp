@@ -37,14 +37,14 @@ bool SubMenuGenerator::AfterChildrenCode(Code& code)
 #if 0
 // BUGBUG: [Randalphwa - 12-16-2022] See issue #865 -- this should be in AdditionalCode, not here
 
-std::optional<ttlib::cstr> SubMenuGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
+std::optional<tt_string> SubMenuGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
 {
-    ttlib::cstr code;
+    tt_string code;
 
 
     if (node->HasValue(prop_bitmap))
     {
-        ttlib::cstr bundle_code;
+        tt_string bundle_code;
         bool is_code_block = GenerateBundleCode(node->prop_as_string(prop_bitmap), bundle_code);
         if (is_code_block)
         {

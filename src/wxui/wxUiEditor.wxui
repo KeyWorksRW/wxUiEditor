@@ -2908,7 +2908,7 @@
       title="Import Windows Resource Dialogs"
       base_file="import_winres_dlg"
       derived_class_name="ImportWinRes"
-      inserted_hdr_code="const ttlib::cstr&amp; GetRcFilename() { return m_rcFilename; }@@std::vector&lt;ttlib::cstr>&amp; GetDlgNames() { return m_dialogs; }@@@@protected:@@void ReadRcFile();@@@@private:@@ttlib::cstr m_rcFilename;@@std::vector&lt;ttlib::cstr> m_dialogs;"
+      inserted_hdr_code="const tt_string&amp; GetRcFilename() { return m_rcFilename; }@@std::vector&lt;tt_string>&amp; GetDlgNames() { return m_dialogs; }@@@@protected:@@void ReadRcFile();@@@@private:@@tt_string m_rcFilename;@@std::vector&lt;tt_string> m_dialogs;"
       private_members="1"
       use_derived_class="0"
       wxEVT_INIT_DIALOG="OnInit">
@@ -2980,7 +2980,7 @@
       minimum_size="-1,-1"
       base_file="insert_widget"
       derived_class_name="InsertWidget"
-      inserted_hdr_code="ttlib::cstr GetWidget() { return m_widget; }@@@@private:@@ttlib::cstr m_widget;"
+      inserted_hdr_code="tt_string GetWidget() { return m_widget; }@@@@private:@@tt_string m_widget;"
       private_members="1"
       use_derived_class="0"
       wxEVT_INIT_DIALOG="OnInit">
@@ -3923,7 +3923,7 @@
       icon="SVG;../art_src/logo.svg;[16,16]"
       title="Open, Import, or Create Project"
       base_file="startupdlg_base"
-      inserted_hdr_code="enum : size_t@@{@@    START_MRU,@@    START_CONVERT,@@    START_OPEN,@@    START_EMPTY,@@};@@@@auto GetCommandType() const { return m_cmdType; }@@ttString&amp; GetProjectFile() { return m_value; }@@@@protected:@@void OnHyperlink(wxHyperlinkEvent&amp; event);@@@@private:@@ttString m_value;@@size_t m_cmdType { START_EMPTY };"
+      inserted_hdr_code="enum : size_t@@{@@    START_MRU,@@    START_CONVERT,@@    START_OPEN,@@    START_EMPTY,@@};@@@@auto GetCommandType() const { return m_cmdType; }@@tt_wxString&amp; GetProjectFile() { return m_value; }@@@@protected:@@void OnHyperlink(wxHyperlinkEvent&amp; event);@@@@private:@@tt_wxString m_value;@@size_t m_cmdType { START_EMPTY };"
       private_members="1"
       use_derived_class="0"
       wxEVT_INIT_DIALOG="OnInit">

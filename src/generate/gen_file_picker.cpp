@@ -102,12 +102,12 @@ bool FilePickerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src
     return true;
 }
 
-std::optional<ttlib::cstr> FilePickerGenerator::GetPropertyDescription(NodeProperty* prop)
+std::optional<tt_string> FilePickerGenerator::GetPropertyDescription(NodeProperty* prop)
 {
     if (prop->isProp(prop_message))
     {
         return (
-            ttlib::cstr() << "Title bar text for the file picker dialog. If not specified, \"Select a file\" will be used.");
+            tt_string() << "Title bar text for the file picker dialog. If not specified, \"Select a file\" will be used.");
     }
     else
     {

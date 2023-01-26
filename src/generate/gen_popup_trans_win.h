@@ -17,8 +17,8 @@ public:
     bool HeaderCode(Code&) override;
     bool BaseClassNameCode(Code&) override;
 
-    ttlib::cstr GetHelpText(Node*) override { return ttlib::cstr("wxPopupTransientWindow"); }
-    ttlib::cstr GetHelpURL(Node*) override { return ttlib::cstr("wx_popup_transient_window.html"); }
+    tt_string GetHelpText(Node*) override { return tt_string("wxPopupTransientWindow"); }
+    tt_string GetHelpURL(Node*) override { return tt_string("wx_popup_transient_window.html"); }
 
     int GenXrcObject(Node*, pugi::xml_node& /* object */, size_t /* xrc_flags */) override;
 

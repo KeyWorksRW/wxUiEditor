@@ -52,11 +52,11 @@ public:
 
     // Given a complete C++/wxPython value, this will return a string as if C++ was the only
     // value specified.
-    static ttlib::cstr GetCppValue(ttlib::sview value);
+    static tt_string GetCppValue(tt_string_view value);
 
     // Given a complete C++/wxPython value, this will return a string as if wxPython was the
     // only value specified.
-    static ttlib::cstr GetPythonValue(ttlib::sview value);
+    static tt_string GetPythonValue(tt_string_view value);
 
 protected:
     // This is used to colorize member variables in the C++ lambda
@@ -86,5 +86,4 @@ private:
 
     bool m_is_cpp_lambda { false };
     bool m_is_python_lambda { false };
-
 };

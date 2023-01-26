@@ -86,7 +86,7 @@ bool Node::CreateToolNode(GenName name)
         if (auto new_node = NodeCreation.CreateNode(name, parent); new_node)
         {
             wxGetFrame().Freeze();
-            ttlib::cstr undo_string("Insert new folder");
+            tt_string undo_string("Insert new folder");
             auto childPos = IsForm() ? parent->GetChildPosition(this) : 0;
             wxGetFrame().PushUndoAction(
                 std::make_shared<InsertNodeAction>(new_node.get(), parent, "Insert new folder", childPos));

@@ -22,15 +22,15 @@ class FontProperty
 public:
     FontProperty();
     FontProperty(const wxFont& font);
-    FontProperty(ttlib::sview font);
+    FontProperty(tt_string_view font);
     FontProperty(NodeProperty* prop);
     FontProperty(wxVariant font);
 
     wxFont GetFont() const;
 
-    void Convert(ttlib::sview font);
+    void Convert(tt_string_view font);
     wxString as_wxString() const;
-    ttlib::cstr as_string() const;
+    tt_string as_string() const;
 
     bool isDefGuiFont() const { return m_isDefGuiFont; }
     void setDefGuiFont(bool use_default = true) { m_isDefGuiFont = use_default; }
@@ -188,7 +188,7 @@ struct FontSymbolPairs
 
     auto GetPairs() const { return pairs; }
 
-    auto GetValue(ttlib::sview name) const
+    auto GetValue(tt_string_view name) const
     {
         if (name.empty())
             return wxFONTSIZE_MEDIUM;
@@ -224,7 +224,7 @@ struct FontSymbolPairs
         }
     }
 
-    bool HasName(ttlib::sview name) const
+    bool HasName(tt_string_view name) const
     {
         if (name.empty())
             return false;
@@ -266,7 +266,7 @@ struct FontFamilyPairs
 
     auto GetPairs() const { return pairs; }
 
-    auto GetValue(ttlib::sview name) const
+    auto GetValue(tt_string_view name) const
     {
         if (name.empty())
             return wxFONTFAMILY_DEFAULT;
@@ -302,7 +302,7 @@ struct FontFamilyPairs
         }
     }
 
-    bool HasName(ttlib::sview name) const
+    bool HasName(tt_string_view name) const
     {
         if (name.empty())
             return false;
@@ -347,7 +347,7 @@ struct FontWeightPairs
 
     auto GetPairs() const { return pairs; }
 
-    auto GetValue(ttlib::sview name) const
+    auto GetValue(tt_string_view name) const
     {
         if (name.empty())
             return wxFONTWEIGHT_NORMAL;
@@ -414,7 +414,7 @@ struct FontStylePairs
 
     auto GetPairs() const { return pairs; }
 
-    auto GetValue(ttlib::sview name) const
+    auto GetValue(tt_string_view name) const
     {
         if (name.empty())
             return wxFONTSTYLE_NORMAL;

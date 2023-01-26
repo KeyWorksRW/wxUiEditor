@@ -113,7 +113,7 @@ bool RadioButtonGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeP
 
         auto property = wxStaticCast(event->GetProperty(), wxFlagsProperty);
         auto variant = event->GetPropertyValue();
-        ttString newValue = property->ValueToString(variant);
+        tt_wxString newValue = property->ValueToString(variant);
 
         if (newValue.contains("wxRB_GROUP"))
         {

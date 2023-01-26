@@ -54,11 +54,11 @@ static std::map<std::string, const char*> map_win_wx_stock = {
 
 // clang-format on
 
-void resCtrl::ParseIconControl(ttlib::sview line)
+void resCtrl::ParseIconControl(tt_string_view line)
 {
     line.moveto_nextword();
 
-    ttlib::cstr icon_name;
+    tt_string icon_name;
 
     // Unlike a normal text parameter, for the ICON directive it might or might not be in quotes.
     if (line.at(0) == '"')
@@ -68,21 +68,21 @@ void resCtrl::ParseIconControl(ttlib::sview line)
     else
     {
         auto pos_comma = line.find(',');
-        if (!ttlib::is_found(pos_comma))
+        if (!tt::is_found(pos_comma))
         {
-            MSG_ERROR(ttlib::cstr() << "Missing comma after control text :" << m_original_line);
+            MSG_ERROR(tt_string() << "Missing comma after control text :" << m_original_line);
             return;
         }
         icon_name = line.subview(0, pos_comma);
         line.remove_prefix(pos_comma);
 
-        if (ttlib::is_digit(icon_name[0]))
+        if (tt::is_digit(icon_name[0]))
         {
-            if (auto icon = map_win_stock_icons.find(ttlib::atoi(icon_name)); icon != map_win_stock_icons.end())
+            if (auto icon = map_win_stock_icons.find(tt::atoi(icon_name)); icon != map_win_stock_icons.end())
             {
                 icon_name = icon->second;
             }
-            else if (auto cursor = map_win_stock_cursors.find(ttlib::atoi(icon_name)); cursor != map_win_stock_cursors.end())
+            else if (auto cursor = map_win_stock_cursors.find(tt::atoi(icon_name)); cursor != map_win_stock_cursors.end())
             {
                 icon_name = cursor->second;
             }
@@ -91,7 +91,7 @@ void resCtrl::ParseIconControl(ttlib::sview line)
 
     if (auto stock_image = map_win_wx_stock.find(icon_name); stock_image != map_win_wx_stock.end())
     {
-        ttlib::cstr prop;
+        tt_string prop;
         prop << "Art; " << stock_image->second << "|wxART_TOOLBAR; [-1; -1]";
         m_node = NodeCreation.NewNode(gen_wxStaticBitmap);
         m_node->prop_set_value(prop_bitmap, prop);
@@ -107,12 +107,12 @@ void resCtrl::ParseIconControl(ttlib::sview line)
             auto result = m_pWinResource->FindIcon(icon_name);
             if (!result)
             {
-                MSG_ERROR(ttlib::cstr() << "Icon not found :" << m_original_line);
+                MSG_ERROR(tt_string() << "Icon not found :" << m_original_line);
                 return;
             }
 
             m_node = NodeCreation.NewNode(gen_wxStaticBitmap);
-            ttlib::cstr prop;
+            tt_string prop;
             prop << "Embed;" << result.value() << ";[-1; -1]";
 
             // Note that this sets up the filename to convert, but doesn't actually do the conversion -- that will require
@@ -128,9 +128,9 @@ void resCtrl::ParseIconControl(ttlib::sview line)
 // has already been created.
 //
 // Works with either SS_BITMAP or SS_ICON.
-void resCtrl::ParseImageControl(ttlib::sview line)
+void resCtrl::ParseImageControl(tt_string_view line)
 {
-    ttlib::cstr image_name;
+    tt_string image_name;
 
     // Unlike a normal text parameter, for the ICON directive it might or might not be in quotes.
     if (line.at(0) == '"')
@@ -140,22 +140,21 @@ void resCtrl::ParseImageControl(ttlib::sview line)
     else
     {
         auto pos_comma = line.find(',');
-        if (!ttlib::is_found(pos_comma))
+        if (!tt::is_found(pos_comma))
         {
-            MSG_ERROR(ttlib::cstr() << "Missing comma after control text :" << m_original_line);
+            MSG_ERROR(tt_string() << "Missing comma after control text :" << m_original_line);
             return;
         }
         image_name = line.subview(0, pos_comma);
         line.remove_prefix(pos_comma);
 
-        if (ttlib::is_digit(image_name[0]))
+        if (tt::is_digit(image_name[0]))
         {
-            if (auto icon = map_win_stock_icons.find(ttlib::atoi(image_name)); icon != map_win_stock_icons.end())
+            if (auto icon = map_win_stock_icons.find(tt::atoi(image_name)); icon != map_win_stock_icons.end())
             {
                 image_name = icon->second;
             }
-            else if (auto cursor = map_win_stock_cursors.find(ttlib::atoi(image_name));
-                     cursor != map_win_stock_cursors.end())
+            else if (auto cursor = map_win_stock_cursors.find(tt::atoi(image_name)); cursor != map_win_stock_cursors.end())
             {
                 image_name = cursor->second;
             }
@@ -164,21 +163,21 @@ void resCtrl::ParseImageControl(ttlib::sview line)
 
     if (auto stock_image = map_win_wx_stock.find(image_name); stock_image != map_win_wx_stock.end())
     {
-        ttlib::cstr prop;
+        tt_string prop;
         prop << "Art; " << stock_image->second << "; wxART_TOOLBAR; [-1; -1]";
         m_node->prop_set_value(prop_bitmap, prop);
     }
     else
     {
-        ttlib::cstr final_name;
-        std::optional<ttlib::cstr> result;
+        tt_string final_name;
+        std::optional<tt_string> result;
 
         if (line.contains("SS_ICON"))
         {
             result = m_pWinResource->FindIcon(image_name);
             if (!result)
             {
-                MSG_ERROR(ttlib::cstr() << "Image not found :" << m_original_line);
+                MSG_ERROR(tt_string() << "Image not found :" << m_original_line);
                 return;
             }
             final_name = result.value();
@@ -200,7 +199,7 @@ void resCtrl::ParseImageControl(ttlib::sview line)
             }
             else
             {
-                MSG_ERROR(ttlib::cstr() << "Image not found :" << m_original_line);
+                MSG_ERROR(tt_string() << "Image not found :" << m_original_line);
             }
         }
 
@@ -211,7 +210,7 @@ void resCtrl::ParseImageControl(ttlib::sview line)
                 final_name << "_ico.h";
             else
                 final_name << "_png.h";
-            ttlib::cstr prop;
+            tt_string prop;
             prop << "Header; " << final_name << "; " << result.value() << "; [-1; -1]";
 
             // Note that this sets up the filename to convert, but doesn't actually do the conversion -- that will require
@@ -224,7 +223,7 @@ void resCtrl::ParseImageControl(ttlib::sview line)
 
     if (line.empty())
     {
-        MSG_ERROR(ttlib::cstr() << "Missing class :" << m_original_line);
+        MSG_ERROR(tt_string() << "Missing class :" << m_original_line);
         return;
     }
 
@@ -232,23 +231,23 @@ void resCtrl::ParseImageControl(ttlib::sview line)
     if (line.size() && line.at(0) == '"')
     {
         auto pos_comma = line.find(',');
-        if (!ttlib::is_found(pos_comma))
+        if (!tt::is_found(pos_comma))
         {
-            MSG_ERROR(ttlib::cstr() << "Missing style after class :" << m_original_line);
+            MSG_ERROR(tt_string() << "Missing style after class :" << m_original_line);
             return;
         }
         // Now step over the style
         pos_comma = line.find(',');
-        if (!ttlib::is_found(pos_comma))
+        if (!tt::is_found(pos_comma))
         {
-            MSG_ERROR(ttlib::cstr() << "Missing dimension after style :" << m_original_line);
+            MSG_ERROR(tt_string() << "Missing dimension after style :" << m_original_line);
             return;
         }
         line.remove_prefix(pos_comma);
     }
     else
     {
-        MSG_ERROR(ttlib::cstr() << "Missing class :" << m_original_line);
+        MSG_ERROR(tt_string() << "Missing class :" << m_original_line);
     }
 
     ParseDimensions(line, m_du_rect, m_pixel_rect);

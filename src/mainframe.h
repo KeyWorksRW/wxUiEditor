@@ -132,7 +132,7 @@ public:
         FireSelectedEvent(node.get(), flags);
     }
 
-    void ChangeEventHandler(NodeEvent* event, const ttlib::cstr& value);
+    void ChangeEventHandler(NodeEvent* event, const tt_string& value);
 
     // This will first call cmd->Change() and then push cmd onto the undo stack.
     void PushUndoAction(UndoActionPtr cmd, bool add_to_stack = true);
@@ -206,7 +206,7 @@ public:
     void RemoveNode(Node* node, bool isCutMode);
 
     // Call this MainFrame version if you don't have access to a node.
-    void ModifyProperty(NodeProperty* prop, ttlib::sview value);
+    void ModifyProperty(NodeProperty* prop, tt_string_view value);
 
     void ChangeAlignment(Node* node, int align, bool vertical);
 
@@ -223,11 +223,11 @@ public:
 
     // This does an exact comparison, so file needs to be identical to what was added to the
     // history.
-    void RemoveFileFromHistory(ttString file);
+    void RemoveFileFromHistory(tt_wxString file);
 
     // Display the text in a specific field of the status bar -- the default is the field
     // that aligns with the PropertyGrid panel.
-    void SetStatusField(const ttlib::cstr text, int position = -1);
+    void SetStatusField(const tt_string text, int position = -1);
 
     // Search for a sizer to move the node into.
     // Set include_splitter to treat a splitter window like a sizer.
@@ -238,7 +238,7 @@ public:
     }
 
     // This is the only variable length field, and therefore can hold the most text
-    void SetRightStatusField(const ttlib::cstr text)
+    void SetRightStatusField(const tt_string text)
     {
         SetStatusField(text, m_posRightStatusField);
     }
@@ -267,7 +267,7 @@ public:
     // This does not use the internal clipboard
     void DuplicateNode(Node* node);
 
-    void setStatusText(const ttlib::cstr& txt, int pane = 1);
+    void setStatusText(const tt_string& txt, int pane = 1);
     wxStatusBar* OnCreateStatusBar(int number, long style, wxWindowID id, const wxString& name) override;
 
     bool SaveWarning();

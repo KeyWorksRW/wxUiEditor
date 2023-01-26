@@ -19,8 +19,6 @@
 #include <wx/wfstream.h>  // File stream classes
 #include <wx/wupdlock.h>  // wxWindowUpdateLocker prevents window redrawing
 
-#include <tttextfile_wx.h>  // textfile -- Classes for reading and writing line-oriented files
-
 #include "convert_img.h"  // auto-generated: convert_img_base.h and convert_img_base.cpp
 
 #include "bitmaps.h"          // Map of bitmaps accessed by name
@@ -43,7 +41,7 @@ ConvertImageDlg::ConvertImageDlg(wxWindow* parent) : ConvertImageBase(parent)
 {
     m_cwd.assignCwd();
 
-    ttString dir;
+    tt_wxString dir;
     auto dir_property = Project.ArtDirectory();
     if (dir_property.size())
         dir = dir_property;
@@ -106,7 +104,7 @@ ConvertImageDlg::ConvertImageDlg(wxWindow* parent) : ConvertImageBase(parent)
 
 void ConvertImageDlg::OnInputChange(wxFileDirPickerEvent& WXUNUSED(event))
 {
-    ttString file = m_fileOriginal->GetTextCtrlValue();
+    tt_wxString file = m_fileOriginal->GetTextCtrlValue();
 
     if (!file.file_exists())
         return;
@@ -297,7 +295,7 @@ void ConvertImageDlg::OnInputChange(wxFileDirPickerEvent& WXUNUSED(event))
         m_staticDimensions->Show();
 
         // Now that we have a loaded image, set the output file.
-        ttString outFilename;
+        tt_wxString outFilename;
         auto dir_property = Project.ArtDirectory();
         if (dir_property.size())
         {
@@ -404,7 +402,7 @@ void ConvertImageDlg::OnConvert(wxCommandEvent& WXUNUSED(event))
 
 void ConvertImageDlg::ImgageInHeaderOut()
 {
-    ttString in_filename = m_fileOriginal->GetTextCtrlValue();
+    tt_wxString in_filename = m_fileOriginal->GetTextCtrlValue();
     if (in_filename.empty())
     {
         wxMessageBox("You need to specify a file to convert.");
@@ -449,13 +447,13 @@ void ConvertImageDlg::ImgageInHeaderOut()
 
     auto read_stream = save_stream.GetOutputStreamBuffer();
 
-    ttString out_name = m_fileOutput->GetPath();
-    ttlib::cstr string_name = out_name.sub_cstr();
+    tt_wxString out_name = m_fileOutput->GetPath();
+    tt_string string_name = out_name.sub_cstr();
 
     string_name.remove_extension();
     string_name.Replace(".", "_", true);
 
-    ttlib::textfile file;
+    tt_string_vector file;
 
     file.addEmptyLine().Format("static const unsigned char %v[%zu] = {", string_name.filename(),
                                read_stream->GetBufferSize());
@@ -486,7 +484,7 @@ void ConvertImageDlg::ImgageInHeaderOut()
     if (out_name.empty())
     {
         m_staticSize->SetLabelText(
-            ttlib::cstr().Format("Original size: %kzu -- Output size if saved: %kzu", m_orginal_size, buf_size));
+            tt_string().Format("Original size: %kzu -- Output size if saved: %kzu", m_orginal_size, buf_size));
         m_staticSize->Show();
     }
     else
@@ -496,7 +494,7 @@ void ConvertImageDlg::ImgageInHeaderOut()
             m_staticSave->SetLabelText(wxString() << out_name << " saved.");
             m_staticSave->Show();
             m_staticSize->SetLabelText(
-                ttlib::cstr().Format("Original size: %kzu -- Output size: %kzu", m_orginal_size, buf_size));
+                tt_string().Format("Original size: %kzu -- Output size: %kzu", m_orginal_size, buf_size));
             m_staticSize->Show();
             m_lastOutputFile = out_name;
             m_btnConvert->Disable();
@@ -511,7 +509,7 @@ void ConvertImageDlg::ImgageInHeaderOut()
 
 void ConvertImageDlg::ImageInXpmOut()
 {
-    ttString in_filename = m_fileOriginal->GetTextCtrlValue();
+    tt_wxString in_filename = m_fileOriginal->GetTextCtrlValue();
     if (in_filename.empty())
     {
         wxMessageBox("You need to specify a file to convert.");
@@ -529,7 +527,7 @@ void ConvertImageDlg::ImageInXpmOut()
         return;
     }
 
-    ttString out_name = m_fileOutput->GetPath();
+    tt_wxString out_name = m_fileOutput->GetPath();
     if (out_name.size())
     {
         out_name.replace_extension(".xpm");
@@ -540,7 +538,7 @@ void ConvertImageDlg::ImageInXpmOut()
             m_staticSave->SetLabelText(wxString() << out_name << " saved.");
             m_staticSave->Show();
             m_staticSize->SetLabelText(
-                ttlib::cstr().Format("Original size: %kzu -- XPM size: %kzu", m_orginal_size, output_size));
+                tt_string().Format("Original size: %kzu -- XPM size: %kzu", m_orginal_size, output_size));
             m_staticSize->Show();
             m_lastOutputFile = out_name;
             m_btnConvert->Disable();
@@ -551,7 +549,7 @@ void ConvertImageDlg::ImageInXpmOut()
 wxColor ConvertImageDlg::GetXpmTransparencyColor()
 {
     wxColor rgb { 0, 0, 0 };
-    ttString transparency = m_comboXpmMask->GetStringSelection();
+    tt_wxString transparency = m_comboXpmMask->GetStringSelection();
     if (transparency == "none" || transparency == "custom")
     {
         rgb = { m_xpmImage.GetMaskRed(), m_xpmImage.GetMaskGreen(), m_xpmImage.GetMaskBlue() };
@@ -596,7 +594,7 @@ wxColor ConvertImageDlg::GetXpmTransparencyColor()
 wxColor ConvertImageDlg::GetHdrTransparencyColor()
 {
     wxColor rgb { 0, 0, 0 };
-    ttString transparency = m_comboHdrMask->GetStringSelection();
+    tt_wxString transparency = m_comboHdrMask->GetStringSelection();
     if (transparency == "none" || transparency == "custom")
     {
         rgb = { m_hdrImage.GetMaskRed(), m_hdrImage.GetMaskGreen(), m_hdrImage.GetMaskBlue() };
@@ -650,7 +648,7 @@ void ConvertImageDlg::OnPageChanged(wxBookCtrlEvent& WXUNUSED(event))
     }
     else
     {
-        ttString filename = m_fileOutput->GetPath();
+        tt_wxString filename = m_fileOutput->GetPath();
         if (filename.size())
         {
             filename.Replace("_png", "");
@@ -738,7 +736,7 @@ void ConvertImageDlg::OnForceXpmMask(wxCommandEvent& event)
 
     if (m_ForceXpmMask->GetValue())
     {
-        ttString transparency = m_comboXpmMask->GetStringSelection();
+        tt_wxString transparency = m_comboXpmMask->GetStringSelection();
         if (transparency == "none")
         {
             // Magenta is rarely used in graphics making it ideal as a mask color. If a mask is being forced, check the
@@ -803,7 +801,7 @@ void ConvertImageDlg::OnForceHdrMask(wxCommandEvent& event)
             m_hdrImage.ConvertAlphaToMask(wxIMAGE_ALPHA_THRESHOLD);
         }
 
-        ttString transparency = m_comboHdrMask->GetStringSelection();
+        tt_wxString transparency = m_comboHdrMask->GetStringSelection();
         if (transparency == "none")
         {
             // Magenta is rarely used in graphics making it ideal as a mask color. If a mask is being forced, check the
@@ -877,7 +875,7 @@ void ConvertImageDlg::SetOutputBitmap()
         return;
     }
 
-    ttString out_file = m_fileOutput->GetPath();
+    tt_wxString out_file = m_fileOutput->GetPath();
     if (out_file.empty() || !out_file.file_exists())
     {
         m_bmpOutput->Hide();
@@ -935,10 +933,10 @@ void ConvertImageDlg::OnCheckPngConversion(wxCommandEvent& WXUNUSED(event))
 
 void ConvertImageDlg::AdjustOutputFilename()
 {
-    ttString filename = m_fileOutput->GetPath();
+    tt_wxString filename = m_fileOutput->GetPath();
     if (filename.size())
     {
-        ttString suffix(m_mime_type);
+        tt_wxString suffix(m_mime_type);
         suffix.Replace("image/", "_");
         suffix.Replace("x-", "");  // if something like x-bmp, just use bmp
 

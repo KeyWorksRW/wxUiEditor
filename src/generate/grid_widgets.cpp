@@ -128,7 +128,7 @@ bool PropertyGridPageGenerator::ConstructionCode(Code& code)
             if (code.is_cpp() && Project.value(prop_wxWidgets_version) == "3.1")
             {
                 code.Eol().Str("#else").Eol();
-                ttlib::cstr bundle_code;
+                tt_string bundle_code;
                 GenerateBundleCode(code.node()->as_string(prop_bitmap), bundle_code);
                 code.CheckLineLength(bundle_code.size());
                 code += bundle_code;
@@ -139,7 +139,7 @@ bool PropertyGridPageGenerator::ConstructionCode(Code& code)
         {
             if (code.is_cpp())
             {
-                ttlib::cstr bundle_code;
+                tt_string bundle_code;
                 GenerateBundleCode(code.node()->as_string(prop_bitmap), bundle_code);
                 code.CheckLineLength(bundle_code.size());
                 code += bundle_code;

@@ -98,7 +98,7 @@ bool StaticCheckboxBoxSizerGenerator::ConstructionCode(Code& code)
 
     code.AddAuto();
 
-    ttlib::cstr parent_name(code.is_cpp() ? "this" : "self");
+    tt_string parent_name(code.is_cpp() ? "this" : "self");
     if (!node->GetParent()->IsForm())
     {
         auto parent = node->GetParent();

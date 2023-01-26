@@ -40,20 +40,20 @@ public:
     void Initialize(NodeSharedPtr project, bool allow_ui = true);
 
     // This will convert the project path into a full path
-    void SetProjectFile(const ttString& file);
+    void SetProjectFile(const tt_wxString& file);
 
     // Returns the full path to the directory the project file is in
-    ttString ProjectPath() const { return m_projectPath; }
+    tt_wxString ProjectPath() const { return m_projectPath; }
 
     // Returns the full path to the directory the project file is in
-    ttString ProjectFile() const { return m_projectFile; }
+    tt_wxString ProjectFile() const { return m_projectFile; }
 
     // Change to the project's directory
     bool ChangeDir() const { return m_projectPath.ChangeDir(); }
 
-    ttString ArtDirectory() const;
-    ttString BaseDirectory(int language = GEN_LANG_CPLUSPLUS) const;
-    ttString DerivedDirectory() const;
+    tt_wxString ArtDirectory() const;
+    tt_wxString BaseDirectory(int language = GEN_LANG_CPLUSPLUS) const;
+    tt_wxString DerivedDirectory() const;
 
     Node* ProjectNode() const { return m_project_node.get(); }
     auto& ChildNodePtrs() { return m_project_node->GetChildNodePtrs(); }
@@ -72,10 +72,10 @@ public:
 
     size_t ChildCount() const { return m_project_node->GetChildCount(); }
 
-    const ttlib::cstr& value(GenEnum::PropName name) const { return m_project_node->prop_as_string(name); }
-    const ttlib::sview view(PropName name) const { return m_project_node->prop_as_string(name); }
-    const ttlib::cstr& as_string(PropName name) const { return m_project_node->prop_as_string(name); }
-    ttString as_ttString(PropName name) const { return m_project_node->prop_as_wxString(name); }
+    const tt_string& value(GenEnum::PropName name) const { return m_project_node->prop_as_string(name); }
+    const tt_string_view view(PropName name) const { return m_project_node->prop_as_string(name); }
+    const tt_string& as_string(PropName name) const { return m_project_node->prop_as_string(name); }
+    tt_wxString as_ttString(PropName name) const { return m_project_node->prop_as_wxString(name); }
 
     bool as_bool(PropName name) const { return m_project_node->prop_as_bool(name); }
     size_t as_size_t(PropName name) const { return (to_size_t) m_project_node->prop_as_int(name); }
@@ -84,26 +84,26 @@ public:
     // wxDefaultPosition, or non-sepcified bitmap)
     bool HasValue(PropName name) const { return m_project_node->HasValue(name); }
 
-    bool LoadProject(const ttString& file, bool allow_ui = true);
+    bool LoadProject(const tt_wxString& file, bool allow_ui = true);
     NodeSharedPtr LoadProject(pugi::xml_document& doc, bool allow_ui = true);
 
-    bool Import(ImportXML& import, ttString& file, bool append = false, bool allow_ui = true);
-    bool ImportProject(ttString& file, bool allow_ui = true);
+    bool Import(ImportXML& import, tt_wxString& file, bool append = false, bool allow_ui = true);
+    bool ImportProject(tt_wxString& file, bool allow_ui = true);
 
     void AppendCrafter(wxArrayString& files);
     void AppendFormBuilder(wxArrayString& files);
     void AppendGlade(wxArrayString& files);
     void AppendSmith(wxArrayString& files);
     void AppendXRC(wxArrayString& files);
-    void AppendWinRes(const ttlib::cstr& rc_file, std::vector<ttlib::cstr>& dialogs);
+    void AppendWinRes(const tt_string& rc_file, std::vector<tt_string>& dialogs);
 
     bool NewProject(bool create_empty = false, bool allow_ui = true);
 
 private:
     NodeSharedPtr m_project_node { nullptr };
 
-    ttString m_projectFile;
-    ttString m_projectPath;
+    tt_wxString m_projectFile;
+    tt_wxString m_projectPath;
 
     int m_ProjectVersion;
 

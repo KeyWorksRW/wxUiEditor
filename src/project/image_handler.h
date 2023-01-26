@@ -19,19 +19,19 @@ class wxAnimation;
 struct ImageBundle
 {
     wxBitmapBundle bundle;
-    std::vector<ttlib::cstr> lst_filenames;
+    std::vector<tt_string> lst_filenames;
 };
 
 struct EmbeddedImage
 {
     Node* form;  // the form node the image is declared in
-    ttlib::cstr array_name;
+    tt_string array_name;
     size_t array_size;
     std::unique_ptr<unsigned char[]> array_data;
     wxBitmapType type;
 };
 
-wxBitmapBundle LoadSVG(EmbeddedImage* embed, ttlib::sview size_description);
+wxBitmapBundle LoadSVG(EmbeddedImage* embed, tt_string_view size_description);
 
 class ImageHandler
 {
@@ -56,55 +56,55 @@ public:
     // Returns true if an associated node changed
     bool UpdateEmbedNodes();
 
-    wxImage GetImage(const ttlib::cstr& description);
+    wxImage GetImage(const tt_string& description);
 
-    wxBitmapBundle GetBitmapBundle(const ttlib::cstr& description, Node* node);
+    wxBitmapBundle GetBitmapBundle(const tt_string& description, Node* node);
 
     // This takes the full bitmap property description and uses that to determine the image
     // to load. The image is cached for as long as the project is open.
     //
     // If check_image is true, and !image.IsOK(), GetInternalImage() is returned
-    wxImage GetPropertyBitmap(const ttlib::multistr& parts, bool check_image = true);
+    wxImage GetPropertyBitmap(const tt_string_vector& parts, bool check_image = true);
 
-    inline wxImage GetPropertyBitmap(const ttlib::cstr& description, bool check_image = true)
+    inline wxImage GetPropertyBitmap(const tt_string& description, bool check_image = true)
     {
-        ttlib::multistr parts(description, BMP_PROP_SEPARATOR, tt::TRIM::both);
+        tt_string_vector parts(description, BMP_PROP_SEPARATOR, tt::TRIM::both);
         return GetPropertyBitmap(parts, check_image);
     }
 
-    wxBitmapBundle GetPropertyBitmapBundle(const ttlib::cstr& description, Node* node);
+    wxBitmapBundle GetPropertyBitmapBundle(const tt_string& description, Node* node);
 
     // ImageBundle contains the filenames of each image in the bundle, needed to generate the
     // code for the bundle.
     //
     // Returns nullptr if there is no ImageBundle
-    const ImageBundle* GetPropertyImageBundle(const ttlib::multistr& parts, Node* node = nullptr);
-    const ImageBundle* GetPropertyImageBundle(const ttlib::cstr& description, Node* node = nullptr)
+    const ImageBundle* GetPropertyImageBundle(const tt_string_vector& parts, Node* node = nullptr);
+    const ImageBundle* GetPropertyImageBundle(const tt_string& description, Node* node = nullptr)
     {
-        ttlib::multistr parts(description, ';', tt::TRIM::both);
+        tt_string_vector parts(description, ';', tt::TRIM::both);
         return GetPropertyImageBundle(parts, node);
     }
 
     // If there is an Image form containing this bundle, return it's name
-    ttlib::cstr GetBundleFuncName(const ttlib::cstr& description);
+    tt_string GetBundleFuncName(const tt_string& description);
 
-    ImageBundle* ProcessBundleProperty(const ttlib::multistr& parts, Node* node);
+    ImageBundle* ProcessBundleProperty(const tt_string_vector& parts, Node* node);
 
-    inline ImageBundle* ProcessBundleProperty(const ttlib::cstr& description, Node* node)
+    inline ImageBundle* ProcessBundleProperty(const tt_string& description, Node* node)
     {
-        ttlib::multistr parts(description, BMP_PROP_SEPARATOR, tt::TRIM::both);
+        tt_string_vector parts(description, BMP_PROP_SEPARATOR, tt::TRIM::both);
         return ProcessBundleProperty(parts, node);
     }
 
     // This adds the bundle if new, or updates the embed->form if the node has changed
-    void UpdateBundle(const ttlib::multistr& parts, Node* node);
+    void UpdateBundle(const tt_string_vector& parts, Node* node);
 
     // This takes the full animation property description and uses that to determine the image
     // to load. The image is cached for as long as the project is open.
-    wxAnimation GetPropertyAnimation(const ttlib::cstr& description);
+    wxAnimation GetPropertyAnimation(const tt_string& description);
 
-    bool AddEmbeddedImage(ttlib::cstr path, Node* form, bool is_animation = false);
-    EmbeddedImage* GetEmbeddedImage(ttlib::sview path);
+    bool AddEmbeddedImage(tt_string path, Node* form, bool is_animation = false);
+    EmbeddedImage* GetEmbeddedImage(tt_string_view path);
 
     // This will collect bundles for the entire project -- it initializes
     // std::map<std::string, ImageBundle> m_bundles for every image.
@@ -116,23 +116,23 @@ protected:
     void CollectNodeBundles(Node* node, Node* form);
 
     // Converts filename to a valid string name and sets EmbeddedImage::array_name
-    void InitializeArrayName(EmbeddedImage* embed, ttlib::sview filename);
+    void InitializeArrayName(EmbeddedImage* embed, tt_string_view filename);
 
-    bool AddNewEmbeddedImage(ttlib::cstr path, Node* form, std::unique_lock<std::mutex>& add_lock);
+    bool AddNewEmbeddedImage(tt_string path, Node* form, std::unique_lock<std::mutex>& add_lock);
 
     // Reads the image and stores it in m_map_embedded
-    bool AddEmbeddedBundleImage(ttlib::cstr path, Node* form);
+    bool AddEmbeddedBundleImage(tt_string path, Node* form);
 
-    bool AddNewEmbeddedBundle(const ttlib::multistr& parts, ttlib::cstr path, Node* form);
+    bool AddNewEmbeddedBundle(const tt_string_vector& parts, tt_string path, Node* form);
 
-    inline bool AddNewEmbeddedBundle(const ttlib::cstr& description, ttlib::cstr path, Node* form)
+    inline bool AddNewEmbeddedBundle(const tt_string& description, tt_string path, Node* form)
     {
-        ttlib::multistr parts(description, BMP_PROP_SEPARATOR, tt::TRIM::both);
+        tt_string_vector parts(description, BMP_PROP_SEPARATOR, tt::TRIM::both);
         return AddNewEmbeddedBundle(parts, path, form);
     }
 
     // Reads the image and stores it in m_map_embedded
-    bool AddSvgBundleImage(ttlib::cstr path, Node* form);
+    bool AddSvgBundleImage(tt_string path, Node* form);
 
 private:
     NodeSharedPtr m_project_node { nullptr };

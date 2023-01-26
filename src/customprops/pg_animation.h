@@ -30,6 +30,6 @@ public:
 private:
     ImageProperties m_img_props;
 
-    ttlib::cstr m_old_type;
-    ttlib::cstr m_old_image;
+    tt_string m_old_type;
+    tt_string m_old_image;
 };

@@ -14,8 +14,6 @@
 #include <wx/sysopt.h>   // wxSystemOptions
 #include <wx/utils.h>    // Miscellaneous utilities
 
-#include <tttextfile_wx.h>  // textfile -- Classes for reading and writing line-oriented files
-
 #include "mainapp.h"
 
 #include "bitmaps.h"          // Contains various images handling functions
@@ -51,7 +49,7 @@
 #endif
 
 #if defined(_DEBUG)
-ttlib::cstr widgets_build_signature = WX_BUILD_OPTIONS_SIGNATURE;
+tt_string widgets_build_signature = WX_BUILD_OPTIONS_SIGNATURE;
 #endif  // _DEBUG
 
 // add_executable(wxUiEditor WIN32 -- this must be used if wxIMPLEMENT_APP is used.
@@ -74,7 +72,7 @@ wxIMPLEMENT_APP(App);
 
 #endif  // _WIN32 && defined(_DEBUG)
 
-ttlib::cstr tt_empty_cstr;
+tt_string tt_empty_cstr;
 
 App::App()
 {
@@ -143,8 +141,8 @@ int App::OnRun()
     parser.Parse();
     if (parser.GetParamCount() || parser.GetArguments().size())
     {
-        ttString filename;
-        ttString log_file;
+        tt_wxString filename;
+        tt_wxString log_file;
         auto generate_type = GEN_LANG_NONE;
         bool test_only = false;
         if (parser.Found("gen_python", &filename))
@@ -234,7 +232,7 @@ int App::OnRun()
                 return 1;
             }
 
-            std::vector<ttlib::cstr> class_list;
+            std::vector<tt_string> class_list;
 #if defined(_DEBUG) || defined(INTERNAL_TESTING)
             results.StartClock();
 #endif
@@ -259,7 +257,7 @@ int App::OnRun()
             results.EndClock();
 #endif
 
-            ttlib::textfile log;
+            tt_string_vector log;
 
             if (results.updated_files.size() || class_list.size())
             {
@@ -356,7 +354,7 @@ int App::OnRun()
 
                         if (dialog.ShowModal() == wxID_OK)
                         {
-                            ttString filename = dialog.GetPath();
+                            tt_wxString filename = dialog.GetPath();
                             if (!filename.extension().is_sameas(".wxui", tt::CASE::either) &&
                                 !filename.extension().is_sameas(".wxue", tt::CASE::either))
                             {
@@ -426,7 +424,7 @@ protected:
     {
         if (frame.HasSourceLocation())
         {
-            ttlib::cstr source;
+            tt_string source;
             source << frame.GetFileName().wx_str() << ':' << (to_int) frame.GetLine();
 
             wxString params;
@@ -458,7 +456,7 @@ protected:
         }
     }
 
-    std::vector<ttlib::cstr> m_calls;
+    std::vector<tt_string> m_calls;
 };
 
 #endif  // defined(_DEBUG) && defined(wxUSE_ON_FATAL_EXCEPTION) && defined(wxUSE_STACKWALKER)

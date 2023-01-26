@@ -14,7 +14,7 @@
 
 WxGlade::WxGlade() {}
 
-bool WxGlade::Import(const ttString& filename, bool write_doc)
+bool WxGlade::Import(const tt_wxString& filename, bool write_doc)
 {
     auto result = LoadDocFile(filename);
     if (!result)
@@ -23,7 +23,7 @@ bool WxGlade::Import(const ttString& filename, bool write_doc)
     }
     auto root = result.value().first_child();
 
-    if (!ttlib::is_sameas(root.name(), "application", tt::CASE::either))
+    if (!tt::is_sameas(root.name(), "application", tt::CASE::either))
     {
         wxMessageBox(wxString() << filename << " is not a wxGlade file", "Import");
         return false;
@@ -93,7 +93,7 @@ NodeSharedPtr WxGlade::CreateGladeNode(pugi::xml_node& xml_obj, Node* parent, No
             if (object_name == "sizerslot")
                 return NodeSharedPtr();
 
-            MSG_INFO(ttlib::cstr() << "Unrecognized object: " << object_name);
+            MSG_INFO(tt_string() << "Unrecognized object: " << object_name);
             return NodeSharedPtr();
         }
     }
@@ -163,7 +163,7 @@ NodeSharedPtr WxGlade::CreateGladeNode(pugi::xml_node& xml_obj, Node* parent, No
                 }
             }
         }
-        MSG_INFO(ttlib::cstr() << "Unable to create " << map_GenNames[gen_name] << " as a child of " << parent->DeclName());
+        MSG_INFO(tt_string() << "Unable to create " << map_GenNames[gen_name] << " as a child of " << parent->DeclName());
         return NodeSharedPtr();
     }
 

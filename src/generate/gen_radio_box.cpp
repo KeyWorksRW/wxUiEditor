@@ -63,7 +63,7 @@ void RadioBoxGenerator::OnRadioBox(wxCommandEvent& event)
 bool RadioBoxGenerator::ConstructionCode(Code& code)
 {
     auto array = ConvertToArrayString(code.node()->as_string(prop_contents));
-    ttlib::cstr choice_name;
+    tt_string choice_name;
     if (code.is_cpp() && array.size())
     {
         choice_name = (code.node()->get_node_name());

@@ -55,7 +55,7 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
         }
         else
         {
-            handler.Add(event->get_name()) += ", lambda event:\n\t";
+            handler.Add(event->get_name()) += ", lambda event:";
             auto body_pos = event_code.find(']') + 1;
             event_code.erase(0, body_pos);
             handler.Str(event_code);
@@ -372,13 +372,13 @@ void BaseCodeGenerator::GenPythonEventHandlers(EventVector& events)
     std::unordered_set<std::string> code_lines;
 
     Code code(m_form_node, GEN_LANG_PYTHON);
-    auto lambda = [](NodeEvent* a, NodeEvent* b)
+    auto sort_event_handlers = [](NodeEvent* a, NodeEvent* b)
     {
-        return (a->get_value() < b->get_value());
+        return (EventHandlerDlg::GetPythonValue(a->get_value()) < EventHandlerDlg::GetPythonValue(b->get_value()));
     };
 
     // Sort events by function name
-    std::sort(events.begin(), events.end(), lambda);
+    std::sort(events.begin(), events.end(), sort_event_handlers);
 
     bool inherited_class = m_form_node->HasValue(prop_python_inherit_name);
     if (!inherited_class)
@@ -459,12 +459,13 @@ void BaseCodeGenerator::GenPythonEventHandlers(EventVector& events)
     code.clear();
     for (auto& event: events)
     {
+        auto python_handler = EventHandlerDlg::GetPythonValue(event->get_value());
         // Ignore lambda's
-        if (event->get_value().contains("lambda "))
+        if (python_handler.starts_with("[python:lambda]"))
             continue;
 
         tt_string set_code;
-        set_code << "def " << event->get_value() << "(self, event):";
+        set_code << "def " << python_handler << "(self, event):";
         if (code_lines.find(set_code) != code_lines.end())
             continue;
         code_lines.emplace(set_code);

@@ -98,8 +98,9 @@ void EventHandlerDlg::OnInit(wxInitDialogEvent& WXUNUSED(event))
             if (value.contains("["))
             {
                 m_cpp_radio_use_function->SetValue(false);
-                m_cpp_radio_use_lambda->SetValue(true);
                 m_cpp_function_box->GetStaticBox()->Enable(false);
+
+                m_cpp_radio_use_lambda->SetValue(true);
                 m_cpp_lambda_box->GetStaticBox()->Enable(true);
 
                 if (value.contains("this"))
@@ -120,6 +121,11 @@ void EventHandlerDlg::OnInit(wxInitDialogEvent& WXUNUSED(event))
             }
             else
             {
+                m_cpp_radio_use_lambda->SetValue(false);
+                m_cpp_lambda_box->GetStaticBox()->Enable(false);
+
+                m_cpp_function_box->GetStaticBox()->Enable(true);
+                m_cpp_radio_use_function->SetValue(true);
                 m_cpp_text_function->SetValue(value.wx_str());
             }
         }

@@ -206,3 +206,16 @@ Node* ProjectHandler::GetFirstFormChild(Node* node) const
 
     return nullptr;
 }
+
+int ProjectHandler::get_PreferredLanguage()
+{
+    auto& value = Project.value(prop_code_preference);
+    if (value == "C++")
+        return GEN_LANG_CPLUSPLUS;
+    else if (value == "Python")
+        return GEN_LANG_PYTHON;
+    else if (value == "XRC")
+        return GEN_LANG_XRC;
+    else
+        return GEN_LANG_CPLUSPLUS;
+}

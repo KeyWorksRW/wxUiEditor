@@ -5,7 +5,7 @@
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#pragma once
+#pragma once  // NOLINT(#pragma once in main file)
 
 #include <map>
 #include <mutex>
@@ -28,6 +28,7 @@ private:
 
 public:
     ProjectHandler(ProjectHandler const&) = delete;
+
     void operator=(ProjectHandler const&) = delete;
 
     static ProjectHandler& getInstance()
@@ -71,6 +72,9 @@ public:
     bool is_UiAllowed() const { return m_allow_ui; }
 
     size_t ChildCount() const { return m_project_node->GetChildCount(); }
+
+    // Returns a GEN_LANG_... enum value
+    int get_PreferredLanguage();
 
     const tt_string& value(GenEnum::PropName name) const { return m_project_node->prop_as_string(name); }
     const tt_string_view view(PropName name) const { return m_project_node->prop_as_string(name); }

@@ -48,9 +48,9 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
         {
             handler << event->get_name() << ',' << event_code;
             // Put the lambda expression on it's own line
-            handler.m_code.Replace("[", "\n\t[");
+            handler.GetCode().Replace("[", "\n\t[");
             comma = ",\n\t";
-            ExpandLambda(handler.m_code);
+            ExpandLambda(handler.GetCode());
             is_lambda = true;
         }
         else
@@ -109,14 +109,14 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
         {
             code.NodeName().Function("GetStaticBox()");
         }
-        code.Function("Bind(") << handler.m_code;
+        code.Function("Bind(") << handler.GetCode();
 
         code.EndFunction();
     }
     else if (event->GetNode()->isGen(gen_wxMenuItem) || event->GetNode()->isGen(gen_tool))
     {
         code.AddIfPython("self.");
-        code << "Bind(" << handler.m_code << comma;
+        code << "Bind(" << handler.GetCode() << comma;
         if (event->GetNode()->value(prop_id) != "wxID_ANY")
         {
             code.AddIfPython("id=").Add(event->GetNode()->value(prop_id)).EndFunction();
@@ -134,26 +134,26 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
         {
             code.AddIfCpp("// ").AddIfPython("# ");
             code << "**WARNING** -- tool id not specified, event handler may never be called\n";
-            code << "Bind(" << handler.m_code << comma;
+            code << "Bind(" << handler.GetCode() << comma;
             code.Add("wxID_ANY").EndFunction();
         }
         else
         {
-            code << "Bind(" << handler.m_code << comma;
+            code << "Bind(" << handler.GetCode() << comma;
             code.Add(event->GetNode()->as_string(prop_id)).EndFunction();
         }
     }
     else if (event->GetNode()->IsForm())
     {
         code.AddIfPython("self.");
-        code << "Bind(" << handler.m_code;
+        code << "Bind(" << handler.GetCode();
         code.EndFunction();
     }
     else
     {
         if (code.is_python() && !event->GetNode()->IsLocal())
             code.Add("self.");
-        code.Add(event->GetNode()->get_node_name()).Function("Bind(") << handler.m_code;
+        code.Add(event->GetNode()->get_node_name()).Function("Bind(") << handler.GetCode();
         code.EndFunction();
     }
 
@@ -199,7 +199,7 @@ void BaseCodeGenerator::GenSrcEventBinding(Node* node, EventVector& events)
             Code code(node, m_language);
             if (generator->GenEvent(code, iter, class_name); code.size())
             {
-                if (!code.m_code.contains("["))
+                if (!code.GetCode().contains("["))
                 {
                     m_source->writeLine(code);
                 }

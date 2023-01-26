@@ -103,7 +103,7 @@ bool FlexGridSizerGenerator::ConstructionCode(Code& code)
                     {
                         proportion = tt::atoi(tt::find_nonspace(iter.data() + pos + 1));
                     }
-                    if (!tt::is_whitespace(code.m_code.back()))
+                    if (!tt::is_whitespace(code.GetCode().back()))
                         code.Eol();
 
                     // Note that iter may start with a space, so using itoa() ensures that we

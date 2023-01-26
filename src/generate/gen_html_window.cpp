@@ -65,7 +65,7 @@ bool HtmlWindowGenerator::ConstructionCode(Code& code)
 
     // If the last parameter is wxID_ANY, then remove it. This is the default value, so it's
     // not needed.
-    code.m_code.Replace(", wxID_ANY)", ")");
+    code.Replace(", wxID_ANY)", ")");
 
     return true;
 }

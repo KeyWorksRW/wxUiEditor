@@ -86,7 +86,7 @@ static void GeneratePosSizeFlags(Node* node, tt_string& code, bool uses_def_vali
 void StaticBitmapGenerator::GenCppConstruction(Code& gen_code)
 {
     Node* node = gen_code.node();
-    tt_string& code = gen_code.m_code;
+    tt_string& code = gen_code.GetCode();
     if (node->HasValue(prop_bitmap))
     {
         auto& description = node->as_string(prop_bitmap);

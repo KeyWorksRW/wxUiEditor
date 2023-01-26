@@ -65,7 +65,7 @@ bool HyperlinkGenerator::ConstructionCode(Code& code)
         code << "auto* ";
     code.NodeName().CreateClass();
     if (code.is_cpp() && !code.IsTrue(prop_underlined))
-        code.m_code.Replace("wxHyperlinkCtrl", "wxGenericHyperlinkCtrl");
+        code.Replace("wxHyperlinkCtrl", "wxGenericHyperlinkCtrl");
 
     code.ValidParentName().Comma().as_string(prop_id).Comma().QuotedString(prop_label);
     code.Comma().QuotedString(prop_url);

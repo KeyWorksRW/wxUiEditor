@@ -63,7 +63,7 @@ bool CustomControl::SettingsCode(Code& code)
     if (code.HasValue(prop_settings_code))
     {
         code.Str(prop_settings_code);
-        code.m_code.Replace("@@", "\n", tt::REPLACE::all);
+        code.Replace("@@", "\n", tt::REPLACE::all);
     }
 
     return true;

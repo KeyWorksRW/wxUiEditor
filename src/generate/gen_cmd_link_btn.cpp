@@ -86,7 +86,7 @@ bool CommandLinkBtnGenerator::SettingsCode(Code& code)
     if (code.HasValue(prop_bitmap))
     {
         if (code.is_cpp())
-            GenBtnBimapCode(code.node(), code.m_code);
+            GenBtnBimapCode(code.node(), code);
         else
             PythonBtnBimapCode(code);
     }

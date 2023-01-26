@@ -65,7 +65,7 @@ bool EditListBoxGenerator::SettingsCode(Code& code)
             {
                 code.Eol().Tab().QuotedString(iter) += ",";
             }
-            code.m_code.pop_back();  // remove trailing comma
+            code.GetCode().pop_back();  // remove trailing comma
             code.Eol().Tab().Str("]").EndFunction();
         }
     }

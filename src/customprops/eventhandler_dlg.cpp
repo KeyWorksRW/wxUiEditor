@@ -338,11 +338,11 @@ void EventHandlerDlg::FormatBindText()
 
     if (m_event->GetNode()->IsForm())
     {
-        code.Add("Bind(").Add(handler.GetCode()).EndFunction();
+        code.Add("Bind(").Add(handler).EndFunction();
     }
     else if (m_event->GetNode()->isGen(gen_wxMenuItem) || m_event->GetNode()->isGen(gen_tool))
     {
-        code << "Bind(" << handler.GetCode() << ", ";
+        code << "Bind(" << handler << ", ";
         if (m_event->GetNode()->value(prop_id) != "wxID_ANY")
             code.Add(prop_id).EndFunction();
         else
@@ -364,7 +364,7 @@ void EventHandlerDlg::FormatBindText()
         code.Add(m_event->GetNode()->get_node_name()).Function("Bind(").Add(handler).EndFunction();
     }
 
-    m_static_bind_text->SetLabel(code.GetCode().wx_str());
+    m_static_bind_text->SetLabel(code.wx_str());
 }
 
 void EventHandlerDlg::CollectMemberVariables(Node* node, std::set<std::string>& variables)

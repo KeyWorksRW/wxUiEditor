@@ -100,9 +100,15 @@ std::map<std::string_view, std::string_view, std::less<>> g_map_class_prefix
 };
 // clang-format on
 
-Code::Code(Node* node, int language) : m_node(node), m_language(language)
-
+Code::Code(Node* node, int language)
 {
+    Init(node, language);
+}
+
+void Code::Init(Node* node, int language)
+{
+    m_node = node;
+    m_language = language;
     if (language == GEN_LANG_CPLUSPLUS)
     {
         m_break_length = Project.as_size_t(prop_cpp_line_length);
@@ -118,7 +124,7 @@ Code::Code(Node* node, int language) : m_node(node), m_language(language)
     m_break_at = m_break_length;
 
     // Reserve large enough for multiple lines -- goal is to avoid multiple reallocations
-    m_code.reserve(256);
+    reserve(256);
 }
 
 Code& Code::CheckLineLength(size_t next_str_size)
@@ -126,10 +132,10 @@ Code& Code::CheckLineLength(size_t next_str_size)
     if (m_indent)
         next_str_size += (m_indent * m_indent_size);
 
-    if (m_auto_break && m_code.size() > m_minium_length && m_code.size() + next_str_size > m_break_at)
+    if (m_auto_break && size() > m_minium_length && size() + next_str_size > m_break_at)
     {
-        if (m_code.back() == ' ')
-            m_code.pop_back();
+        if (back() == ' ')
+            pop_back();
         Eol().Tab();
     }
     return *this;
@@ -144,32 +150,32 @@ Code& Code::Eol(int flag)
 {
     if (flag == eol_if_empty)
     {
-        if (m_code.size())
+        if (size())
         {
-            m_code += '\n';
+            *this += '\n';
         }
     }
     else if (flag == eol_if_needed)
     {
-        if (m_code.size() && m_code.back() != '\n')
+        if (size() && back() != '\n')
         {
             // If we're in a brace section, the last line will end with \n\t
-            if (m_code.size() < 3 || m_code.back() != '\t' || m_code[m_code.size() - 2] != '\n')
+            if (size() < 3 || back() != '\t' || at(size() - 2) != '\n')
             {
-                m_code += '\n';
+                *this += '\n';
             }
         }
     }
     else
     {
-        if (m_code.size() && m_code.back() == ' ')
-            m_code.pop_back();
-        m_code += '\n';
+        if (size() && back() == ' ')
+            pop_back();
+        *this += '\n';
     }
 
-    if (m_within_braces && is_cpp() && m_code.size() && m_code.back() != '\t')
+    if (m_within_braces && is_cpp() && size() && back() != '\t')
     {
-        m_code += '\t';
+        *this += '\t';
     }
     else if (m_indent > 0)
     {
@@ -178,8 +184,8 @@ Code& Code::Eol(int flag)
 
     if (m_auto_break)
     {
-        m_break_at = m_code.size() + m_break_length;
-        m_minium_length = m_code.size() + 10;
+        m_break_at = size() + m_break_length;
+        m_minium_length = size() + 10;
     }
     return *this;
 }
@@ -189,11 +195,11 @@ Code& Code::OpenBrace()
     if (is_cpp())
     {
         m_within_braces = true;
-        if (m_code.size() && m_code.back() != '\n')
+        if (size() && back() != '\n')
         {
-            m_code += '\n';
+            *this += '\n';
         }
-        m_code += '{';
+        *this += '{';
         Eol();
     }
     return *this;
@@ -204,8 +210,8 @@ Code& Code::CloseBrace()
     if (is_cpp())
     {
         m_within_braces = false;
-        while (tt::is_whitespace(m_code.back()))
-            m_code.pop_back();
+        while (tt::is_whitespace(back()))
+            pop_back();
         Eol().Str("}").Eol();
     }
     return *this;
@@ -215,22 +221,22 @@ Code& Code::AddAuto()
 {
     if (is_cpp() && is_local_var())
     {
-        m_code += "auto* ";
+        *this += "auto* ";
     }
     return *this;
 }
 
 void Code::InsertLineBreak(size_t cur_pos)
 {
-    ASSERT(cur_pos > 1 && cur_pos <= m_code.size());
-    if (m_code[cur_pos - 1] == ' ')
+    ASSERT(cur_pos > 1 && cur_pos <= size());
+    if (at(cur_pos - 1) == ' ')
     {
-        m_code[cur_pos - 1] = '\n';
-        m_code.insert(cur_pos, "\t");
+        at(cur_pos - 1) = '\n';
+        insert(cur_pos, "\t");
     }
     else
     {
-        m_code.insert(cur_pos, "\n");
+        insert(cur_pos, "\n");
     }
     m_break_at = cur_pos + m_break_length;
     m_minium_length = cur_pos + 10;
@@ -240,7 +246,7 @@ Code& Code::Tab(int tabs)
 {
     while (tabs)
     {
-        m_code += '\t';
+        *this += '\t';
         --tabs;
     }
     return *this;
@@ -252,7 +258,7 @@ Code& Code::Add(tt_string_view text)
 
     if (is_cpp() || text.size() < 3)
     {
-        m_code += text;
+        *this += text;
     }
     else
     {
@@ -286,14 +292,14 @@ Code& Code::Add(tt_string_view text)
                 if (iter.empty())
                     continue;
                 if (style_set)
-                    m_code += '|';
+                    *this += '|';
                 if (iter.is_sameprefix("wx"))
                 {
                     auto wx_prefix = lambda(iter);
-                    m_code << wx_prefix << iter.substr(2);
+                    *this << wx_prefix << iter.substr(2);
                 }
                 else
-                    m_code += iter;
+                    *this += iter;
                 style_set = true;
             }
         }
@@ -301,11 +307,11 @@ Code& Code::Add(tt_string_view text)
         else if (text.is_sameprefix("wx") && text[2] != '.')
         {
             auto wx_prefix = lambda(text);
-            m_code << wx_prefix << text.substr(2);
+            *this << wx_prefix << text.substr(2);
         }
         else
         {
-            m_code += text;
+            *this += text;
         }
     }
     return *this;
@@ -328,18 +334,18 @@ Code& Code::Function(tt_string_view text)
 {
     if (is_cpp())
     {
-        m_code << "->" << text;
+        *this << "->" << text;
     }
     else
     {
-        m_code << '.';
+        *this << '.';
         if (text.is_sameprefix("wx"))
         {
-            m_code << "wx." << text.substr(2);
+            *this << "wx." << text.substr(2);
         }
         else
         {
-            m_code += text;
+            *this += text;
         }
     }
     return *this;
@@ -349,14 +355,14 @@ Code& Code::ClassMethod(tt_string_view function_name)
 {
     if (is_cpp())
     {
-        m_code += "::";
+        *this += "::";
     }
     else
     {
-        m_code += '.';
+        *this += '.';
     }
 
-    m_code += function_name;
+    *this += function_name;
     return *this;
 }
 
@@ -364,9 +370,9 @@ Code& Code::FormFunction(tt_string_view text)
 {
     if (is_python())
     {
-        m_code += "self.";
+        *this += "self.";
     }
-    m_code += text;
+    *this += text;
     return *this;
 }
 
@@ -374,17 +380,17 @@ Code& Code::Class(tt_string_view text)
 {
     if (is_cpp())
     {
-        m_code += text;
+        *this += text;
     }
     else
     {
         if (text.is_sameprefix("wx"))
         {
-            m_code << "wx." << text.substr(2);
+            *this << "wx." << text.substr(2);
         }
         else
         {
-            m_code += text;
+            *this += text;
         }
     }
     return *this;
@@ -392,14 +398,14 @@ Code& Code::Class(tt_string_view text)
 
 Code& Code::CreateClass(bool use_generic, tt_string_view override_name)
 {
-    m_code += " = ";
+    *this += " = ";
     if (is_cpp())
     {
-        m_code += "new ";
+        *this += "new ";
         if (m_node->HasValue(prop_derived_class))
         {
-            m_code += m_node->prop_as_string(prop_derived_class);
-            m_code += '(';
+            *this += m_node->prop_as_string(prop_derived_class);
+            *this += '(';
             return *this;
         }
     }
@@ -419,7 +425,7 @@ Code& Code::CreateClass(bool use_generic, tt_string_view override_name)
     }
 
     if (m_language == GEN_LANG_CPLUSPLUS)
-        m_code += class_name;
+        *this += class_name;
     else
     {
         std::string_view prefix = "wx.";
@@ -427,32 +433,32 @@ Code& Code::CreateClass(bool use_generic, tt_string_view override_name)
         {
             prefix = wx_iter->second;
         }
-        m_code << prefix << class_name.substr(2);
+        *this << prefix << class_name.substr(2);
     }
-    m_code += '(';
+    *this += '(';
     return *this;
 }
 
 Code& Code::Assign(tt_string_view class_name)
 {
-    m_code += " = ";
+    *this += " = ";
     if (m_language == GEN_LANG_CPLUSPLUS)
     {
-        m_code += "new ";
+        *this += "new ";
     }
     else
     {
-        m_code << "wx." << class_name.substr(2);
+        *this << "wx." << class_name.substr(2);
     }
     return *this;
 }
 
 Code& Code::EndFunction()
 {
-    m_code += ')';
+    *this += ')';
     if (is_cpp())
     {
-        m_code += ';';
+        *this += ';';
     }
     return *this;
 }
@@ -463,7 +469,7 @@ Code& Code::as_string(PropName prop_name)
     if (is_cpp())
     {
         CheckLineLength(str.size());
-        m_code += str;
+        *this += str;
         return *this;
     }
     std::string_view wx_prefix = "wx.";
@@ -488,7 +494,7 @@ Code& Code::as_string(PropName prop_name)
     {
         if (str == "wxEmptyString")
         {
-            m_code += "\"\"";
+            *this += "\"\"";
         }
         else
         {
@@ -496,15 +502,15 @@ Code& Code::as_string(PropName prop_name)
             if (str.is_sameprefix("wx"))
             {
                 lambda(str);
-                m_code << wx_prefix << str.substr(2);
+                *this << wx_prefix << str.substr(2);
             }
             else
-                m_code += str;
+                *this += str;
             return *this;
         }
     }
 
-    auto cur_pos = m_code.size();
+    auto cur_pos = size();
 
     tt_view_vector multistr(str, "|", tt::TRIM::both);
     bool first = true;
@@ -513,22 +519,22 @@ Code& Code::as_string(PropName prop_name)
         if (iter.empty())
             continue;
         if (!first)
-            m_code += '|';
+            *this += '|';
         else
             first = false;
 
         if (iter == "wxEmptyString")
-            m_code += "\"\"";
+            *this += "\"\"";
         else if (iter.is_sameprefix("wx"))
         {
             lambda(iter);
-            m_code << wx_prefix << iter.substr(2);
+            *this << wx_prefix << iter.substr(2);
         }
         else
-            m_code += iter;
+            *this += iter;
     }
 
-    if (m_auto_break && m_code.size() > m_break_at)
+    if (m_auto_break && size() > m_break_at)
     {
         InsertLineBreak(cur_pos);
     }
@@ -541,16 +547,16 @@ Code& Code::NodeName(Node* node)
     if (!node)
         node = m_node;
     if (is_python() && !node->IsLocal() && !node->IsForm())
-        m_code += "self.";
-    m_code += node->get_node_name();
+        *this += "self.";
+    *this += node->get_node_name();
     return *this;
 }
 
 Code& Code::ParentName()
 {
     if (is_python() && !m_node->GetParent()->IsLocal() && !m_node->GetParent()->IsForm())
-        m_code += "self.";
-    m_code << m_node->GetParent()->get_node_name();
+        *this += "self.";
+    *this << m_node->GetParent()->get_node_name();
     return *this;
 }
 
@@ -609,15 +615,15 @@ Code& Code::ValidParentName()
             if (parent->IsStaticBoxSizer())
             {
                 if (is_python() && !parent->IsLocal() && !parent->IsForm())
-                    m_code += "self.";
-                m_code += parent->get_node_name();
+                    *this += "self.";
+                *this += parent->get_node_name();
                 Function("GetStaticBox()");
                 return *this;
             }
         }
         if (parent->IsForm())
         {
-            m_code += (is_cpp()) ? "this" : "self";
+            *this += (is_cpp()) ? "this" : "self";
             return *this;
         }
 
@@ -626,8 +632,8 @@ Code& Code::ValidParentName()
             if (parent->isType(iter))
             {
                 if (is_python() && !parent->IsLocal() && !parent->IsForm())
-                    m_code += "self.";
-                m_code += parent->get_node_name();
+                    *this += "self.";
+                *this += parent->get_node_name();
                 if (parent->isGen(gen_wxCollapsiblePane))
                 {
                     Function("GetPane()");
@@ -649,11 +655,11 @@ Code& Code::QuotedString(GenEnum::PropName prop_name)
         if (is_cpp())
         {
             CheckLineLength(sizeof("wxEmptyString"));
-            m_code += "wxEmptyString";
+            *this += "wxEmptyString";
         }
         else
         {
-            m_code += "\"\"";
+            *this += "\"\"";
         }
         return *this;
     }
@@ -665,11 +671,11 @@ Code& Code::QuotedString(GenEnum::PropName prop_name)
 
 Code& Code::QuotedString(tt_string_view text)
 {
-    auto cur_pos = m_code.size();
+    auto cur_pos = size();
 
     if (Project.as_bool(prop_internationalize))
     {
-        m_code += is_cpp() ? "_(" : "wx.GetTranslation(";
+        *this += is_cpp() ? "_(" : "wx.GetTranslation(";
     }
 
     // This is only used by C++, but we need to know if it was set in order to generate closing parenthesis.
@@ -687,57 +693,57 @@ Code& Code::QuotedString(tt_string_view text)
 
         if (has_utf_char)
         {
-            m_code += "wxString::FromUTF8(";
+            *this += "wxString::FromUTF8(";
         }
     }
 
-    m_code += '"';
+    *this += '"';
     for (auto c: text)
     {
         switch (c)
         {
             case '"':
-                m_code += "\\\"";
+                *this += "\\\"";
                 break;
 
             // This generally isn't needed for C++, but is needed for Python
             case '\'':
-                m_code += "\\'";
+                *this += "\\'";
                 break;
 
             case '\\':
-                m_code += "\\\\";
+                *this += "\\\\";
                 break;
 
             case '\t':
-                m_code += "\\t";
+                *this += "\\t";
                 break;
 
             case '\n':
-                m_code += "\\n";
+                *this += "\\n";
                 break;
 
             case '\r':
-                m_code += "\\r";
+                *this += "\\r";
                 break;
 
             default:
-                m_code += c;
+                *this += c;
                 break;
         }
     }
-    m_code += '"';
+    *this += '"';
 
     if (has_utf_char)
     {
-        m_code += ')';
+        *this += ')';
     }
     if (Project.as_bool(prop_internationalize))
     {
-        m_code += ')';
+        *this += ')';
     }
 
-    if (m_auto_break && m_code.size() > m_break_at)
+    if (m_auto_break && size() > m_break_at)
     {
         InsertLineBreak(cur_pos);
     }
@@ -750,11 +756,11 @@ Code& Code::WxSize(GenEnum::PropName prop_name, bool enable_dlg_units)
     if (m_node->prop_as_wxSize(prop_name) == wxDefaultSize)
     {
         CheckLineLength(sizeof("wxDefaultSize"));
-        m_code += is_cpp() ? "wxDefaultSize" : "wx.DefaultSize";
+        *this += is_cpp() ? "wxDefaultSize" : "wx.DefaultSize";
         return *this;
     }
 
-    auto cur_pos = m_code.size();
+    auto cur_pos = size();
 
     bool dialog_units = m_node->value(prop_name).contains("d", tt::CASE::either);
     if (dialog_units && enable_dlg_units)
@@ -767,9 +773,9 @@ Code& Code::WxSize(GenEnum::PropName prop_name, bool enable_dlg_units)
     Class("wxSize(").itoa(size.x).Comma().itoa(size.y) << ')';
 
     if (dialog_units && enable_dlg_units)
-        m_code += ')';
+        *this += ')';
 
-    if (m_auto_break && m_code.size() > m_break_at)
+    if (m_auto_break && this->size() > m_break_at)
     {
         InsertLineBreak(cur_pos);
     }
@@ -782,11 +788,11 @@ Code& Code::Pos(GenEnum::PropName prop_name, bool enable_dlg_units)
     if (m_node->prop_as_wxPoint(prop_name) == wxDefaultPosition)
     {
         CheckLineLength(sizeof("wxDefaultPosition"));
-        m_code += is_cpp() ? "wxDefaultPosition" : "wx.DefaultPosition";
+        *this += is_cpp() ? "wxDefaultPosition" : "wx.DefaultPosition";
         return *this;
     }
 
-    auto cur_pos = m_code.size();
+    auto cur_pos = size();
 
     bool dialog_units = m_node->value(prop_name).contains("d", tt::CASE::either);
     if (dialog_units && enable_dlg_units)
@@ -799,9 +805,9 @@ Code& Code::Pos(GenEnum::PropName prop_name, bool enable_dlg_units)
     Class("wxPoint(").itoa(size.x).Comma().itoa(size.y) << ')';
 
     if (dialog_units && enable_dlg_units)
-        m_code += ')';
+        *this += ')';
 
-    if (m_auto_break && m_code.size() > m_break_at)
+    if (m_auto_break && this->size() > m_break_at)
     {
         InsertLineBreak(cur_pos);
     }
@@ -821,25 +827,25 @@ Code& Code::Style(const char* prefix, tt_string_view force_style)
     if (m_node->HasValue(prop_tab_position) && !m_node->prop_as_string(prop_tab_position).is_sameas("wxBK_DEFAULT"))
     {
         if (style_set)
-            m_code += '|';
+            *this += '|';
         style_set = true;
         as_string(prop_tab_position);
     }
     if (m_node->HasValue(prop_orientation) && !m_node->prop_as_string(prop_orientation).is_sameas("wxGA_HORIZONTAL"))
     {
         if (style_set)
-            m_code += '|';
+            *this += '|';
         style_set = true;
         as_string(prop_orientation);
     }
 
     // Note that as_string() may break the line, so recalculate any time as_string() is called
-    auto cur_pos = m_code.size();
+    auto cur_pos = size();
 
     if (m_node->isGen(gen_wxRichTextCtrl))
     {
         if (style_set)
-            m_code += '|';
+            *this += '|';
         style_set = true;
         Add("wxRE_MULTILINE");
     }
@@ -847,12 +853,12 @@ Code& Code::Style(const char* prefix, tt_string_view force_style)
     if (m_node->HasValue(prop_style))
     {
         if (style_set)
-            m_code += '|';
+            *this += '|';
         if (prefix)
         {
             if (is_cpp())
             {
-                m_code += m_node->prop_as_constant(prop_style, prefix);
+                *this += m_node->prop_as_constant(prop_style, prefix);
             }
             else
             {
@@ -880,14 +886,14 @@ Code& Code::Style(const char* prefix, tt_string_view force_style)
                     if (iter.empty())
                         continue;
                     if (style_set)
-                        m_code += '|';
+                        *this += '|';
                     if (iter.is_sameprefix("wx"))
                     {
                         lambda(iter);
-                        m_code << wx_prefix << iter.substr(2);
+                        *this << wx_prefix << iter.substr(2);
                     }
                     else
-                        m_code += iter;
+                        *this += iter;
                     style_set = true;
                 }
             }
@@ -895,7 +901,7 @@ Code& Code::Style(const char* prefix, tt_string_view force_style)
         else
         {
             as_string(prop_style);
-            cur_pos = m_code.size();
+            cur_pos = size();
         }
         style_set = true;
     }
@@ -903,27 +909,27 @@ Code& Code::Style(const char* prefix, tt_string_view force_style)
     if (m_node->HasValue(prop_window_style))
     {
         if (style_set)
-            m_code += '|';
+            *this += '|';
         style_set = true;
         as_string(prop_window_style);
-        cur_pos = m_code.size();
+        cur_pos = size();
     }
 
     if (m_node->isGen(gen_wxListView))
     {
         if (style_set)
-            m_code += '|';
+            *this += '|';
         style_set = true;
         as_string(prop_mode);
-        cur_pos = m_code.size();
+        cur_pos = size();
     }
 
     if (!style_set)
     {
-        m_code += "0";
+        *this += "0";
     }
 
-    if (m_auto_break && m_code.size() > m_break_at)
+    if (m_auto_break && size() > m_break_at)
     {
         InsertLineBreak(cur_pos);
     }
@@ -965,9 +971,9 @@ Code& Code::PosSizeFlags(bool uses_def_validator, tt_string_view def_style)
     {
         Comma();
         Pos().Comma().WxSize().Comma().Style();
-        if (def_style.size() && m_code.ends_with(def_style))
+        if (def_style.size() && ends_with(def_style))
         {
-            m_code.erase(m_code.size() - def_style.size());
+            erase(size() - def_style.size());
         }
     }
     else if (m_node->prop_as_wxSize(prop_size) != wxDefaultSize)
@@ -1043,17 +1049,17 @@ Code& Code::GenSizerFlags()
 
     bool save_auto_break = m_auto_break;
     m_auto_break = false;
-    auto cur_pos = m_code.size();
+    auto cur_pos = size();
 
     Add("wxSizerFlags");
 
     if (auto& prop = m_node->prop_as_string(prop_proportion); prop != "0")
     {
-        m_code << '(' << prop << ')';
+        *this << '(' << prop << ')';
     }
     else
     {
-        m_code << "()";
+        *this << "()";
     }
 
     if (auto& prop = m_node->prop_as_string(prop_alignment); prop.size())
@@ -1063,25 +1069,25 @@ Code& Code::GenSizerFlags()
             // Note that CenterHorizontal() and CenterVertical() require wxWidgets 3.1 or higher. Their advantage is
             // generating an assert if you try to use one that is invalid if the sizer parent's orientation doesn't
             // support it. Center() just works without the assertion check.
-            m_code << ".Center()";
+            *this << ".Center()";
         }
 
         if (prop.contains("wxALIGN_LEFT"))
         {
-            m_code += ".Left()";
+            *this += ".Left()";
         }
         else if (prop.contains("wxALIGN_RIGHT"))
         {
-            m_code += ".Right()";
+            *this += ".Right()";
         }
 
         if (prop.contains("wxALIGN_TOP"))
         {
-            m_code += ".Top()";
+            *this += ".Top()";
         }
         else if (prop.contains("wxALIGN_BOTTOM"))
         {
-            m_code += ".Bottom()";
+            *this += ".Bottom()";
         }
     }
 
@@ -1089,19 +1095,19 @@ Code& Code::GenSizerFlags()
     {
         if (prop.contains("wxEXPAND"))
         {
-            m_code += ".Expand()";
+            *this += ".Expand()";
         }
         if (prop.contains("wxSHAPED"))
         {
-            m_code += ".Shaped()";
+            *this += ".Shaped()";
         }
         if (prop.contains("wxFIXED_MINSIZE"))
         {
-            m_code += ".FixedMinSize()";
+            *this += ".FixedMinSize()";
         }
         if (prop.contains("wxRESERVE_SPACE_EVEN_IF_HIDDEN"))
         {
-            m_code += ".ReserveSpaceEvenIfHidden()";
+            *this += ".ReserveSpaceEvenIfHidden()";
         }
     }
 
@@ -1123,7 +1129,7 @@ Code& Code::GenSizerFlags()
         }
         else
         {
-            m_code << ".Border(";
+            *this << ".Border(";
             tt_string border_flags;
 
             if (prop.contains("wxLEFT"))
@@ -1153,21 +1159,21 @@ Code& Code::GenSizerFlags()
             if (border_flags.empty())
                 border_flags = "0";
 
-            m_code << border_flags << ", ";
+            *this << border_flags << ", ";
             if (border_size == "5")
             {
-                m_code += is_cpp() ? "wxSizerFlags::GetDefaultBorder())" : "wx.SizerFlags.GetDefaultBorder())";
+                *this += is_cpp() ? "wxSizerFlags::GetDefaultBorder())" : "wx.SizerFlags.GetDefaultBorder())";
             }
             else
             {
-                m_code << border_size << ')';
+                *this << border_size << ')';
             }
         }
     }
 
     m_auto_break = save_auto_break;
 
-    if (m_auto_break && m_code.size() > m_break_at)
+    if (m_auto_break && size() > m_break_at)
     {
         InsertLineBreak(cur_pos);
     }
@@ -1396,12 +1402,12 @@ void Code::GenFontColourSettings()
             if (fontprop.IsStrikethrough())
                 Str("Strikethrough()");
 
-            if (m_code.back() == '.')
+            if (back() == '.')
             {
-                m_code.pop_back();
+                pop_back();
             }
             if (is_cpp())
-                m_code += ';';
+                *this += ';';
             Eol();
 
             if (node->IsForm())
@@ -1465,18 +1471,18 @@ void Code::GenFontColourSettings()
 
 Code& Code::AddComment(tt_string_view text)
 {
-    if (m_code.empty() || !tt::is_whitespace(m_code.back()))
+    if (empty() || !tt::is_whitespace(back()))
     {
-        m_code << ' ';
+        *this << ' ';
     }
 
     if (is_cpp())
     {
-        m_code << "// " << text;
+        *this << "// " << text;
     }
     else
     {
-        m_code << "# " << text;
+        *this << "# " << text;
     }
     return *this;
 }

@@ -134,7 +134,7 @@ bool StatusBarGenerator::SettingsCode(Code& code)
     if (code.is_cpp())
     {
         code.OpenBrace();
-        code.m_code << "const int sb_field_widths[" << fields.size() << "] = {" << widths << "};";
+        code << "const int sb_field_widths[" << fields.size() << "] = {" << widths << "};";
         code.Eol().NodeName().Function("SetStatusWidths(").itoa(fields.size()).Comma().Str("sb_field_widths);");
         code.Eol().Str("const int sb_field_styles[").itoa(fields.size()).Str("] = {").Str(widths).Str("};");
         code.Eol().NodeName().Function("SetStatusStyles(").itoa(fields.size()).Comma().Str("sb_field_styles);");

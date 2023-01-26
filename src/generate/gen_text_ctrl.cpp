@@ -132,7 +132,7 @@ bool TextCtrlGenerator::SettingsCode(Code& code)
             {
                 code << "#if !defined(__WXGTK__)";
                 code.Eol().Tab().NodeName().Function("SetMaxLength(").as_string(prop_maxlength).EndFunction().Eol();
-                code.m_code += "#endif";
+                code.GetCode() += "#endif";
             }
             else
             {

@@ -146,7 +146,7 @@ bool PageCtrlGenerator::ConstructionCode(Code& code)
             Code gen_code(child_node, code.m_language);
             if (child_generator->ConstructionCode(gen_code))
             {
-                code += gen_code.m_code;
+                code += gen_code.GetCode();
                 code.Eol(eol_if_needed).ValidParentName().Function("AddPage(");
                 code.Str(child_node->get_node_name()).Comma().QuotedString(prop_label);
 

@@ -92,18 +92,18 @@ void BaseCodeGenerator::WriteImageConstruction(Code& code)
                 {
                     code.itoa(iter_array->array_data[pos]) += ",";
                 }
-                if (pos >= max_pos && code.m_code.back() == ',')
+                if (pos >= max_pos && code.GetCode().back() == ',')
                 {
-                    code.m_code.pop_back();
+                    code.GetCode().pop_back();
                 }
                 m_source->writeLine(code);
                 code.clear();
                 // Since we don't call Eol() in this loop, the indentation is not processed.
                 code.Tab(2);
             }
-            if (code.m_code.back() == '\t')
+            if (code.GetCode().back() == '\t')
             {
-                code.m_code.pop_back();
+                code.pop_back();
             }
             code += "};\n";
         }

@@ -511,9 +511,9 @@ void StdDialogButtonSizerGenerator::GenEvent(Code& code, NodeEvent* event, const
             return;
         handler << event->get_name() << ',' << event->get_value();
         // Put the lambda expression on it's own line
-        handler.m_code.Replace("[", "\n\t[");
+        handler.GetCode().Replace("[", "\n\t[");
         comma = ",\n\t";
-        ExpandLambda(handler.m_code);
+        ExpandLambda(handler.GetCode());
     }
     else if (event->get_value().contains("::"))
     {
@@ -533,7 +533,7 @@ void StdDialogButtonSizerGenerator::GenEvent(Code& code, NodeEvent* event, const
     tt_string evt_str = (event->GetEventInfo()->get_event_class() == "wxCommandEvent" ? "wxEVT_BUTTON" : "wxEVT_UPDATE_UI");
     if (code.is_python())
         code.Add("self.");
-    code.Add("Bind(").Add(evt_str) << comma << handler.m_code << comma;
+    code.Add("Bind(").Add(evt_str) << comma << handler.GetCode() << comma;
 
     if (event->get_name().starts_with("OKButton"))
         code.Add("wxID_OK");

@@ -79,7 +79,7 @@ bool AnimationGenerator::ConstructionCode(Code& code)
     if (code.HasValue(prop_inactive_bitmap) && code.is_cpp())
     {
         code.Eol().NodeName().Function("SetInactiveBitmap(");
-        code.m_code << GenerateBitmapCode(code.node()->as_string(prop_inactive_bitmap));
+        code << GenerateBitmapCode(code.node()->as_string(prop_inactive_bitmap));
         code.EndFunction();
     }
 

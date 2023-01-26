@@ -48,15 +48,14 @@ void BaseCodeGenerator::GenConstruction(Node* node)
     if (generator->ConstructionCode(gen_code))
     {
         // Don't add blank lines when adding tools to a toolbar, or creating menu items
-        if (gen_code.size() && gen_code.GetCode()[0] != '{' && type != type_aui_tool && type != type_tool &&
-            type != type_menuitem)
+        if (gen_code.size() && gen_code[0] != '{' && type != type_aui_tool && type != type_tool && type != type_menuitem)
         {
             m_source->writeLine();
         }
 
         m_source->writeLine(gen_code);
 
-        if (gen_code.GetCode().starts_with("{") && !gen_code.GetCode().ends_with("}\n"))
+        if (gen_code.starts_with("{") && !gen_code.ends_with("}\n"))
         {
             need_closing_brace = true;
         }
@@ -165,7 +164,7 @@ void BaseCodeGenerator::GenConstruction(Node* node)
         gen_code.clear();
         gen_code.ParentName().Function("GetControlSizer()").Function("Add(").NodeName();
         gen_code.CheckLineLength().Comma().Add("wxSizerFlags()").Add(".Expand().Border(").Add("wxALL)").EndFunction();
-        m_source->writeLine(gen_code.m_code);
+        m_source->writeLine(gen_code.GetCode());
     }
 
     if (node->isGen(gen_PageCtrl) && node->GetChildCount())
@@ -216,7 +215,7 @@ void BaseCodeGenerator::GenConstruction(Node* node)
             }
 
             m_source->writeLine();
-            m_source->writeLine(gen_code.m_code);
+            m_source->writeLine(gen_code.GetCode());
         }
     }
     else if (type == type_splitter)
@@ -242,7 +241,7 @@ void BaseCodeGenerator::GenConstruction(Node* node)
                 gen_code.Eol().NodeName().Function("SetSashPosition(").Add(prop_sashpos).EndFunction();
             }
         }
-        m_source->writeLine(gen_code.m_code);
+        m_source->writeLine(gen_code.GetCode());
     }
 
     else
@@ -456,15 +455,15 @@ bool BaseCodeGenerator::GenAfterChildren(Node* node, bool need_closing_brace)
                 if (node->prop_as_string(prop_flags).size())
                 {
                     if (node->HasValue(prop_borders))
-                        gen_code.m_code += '|';
+                        gen_code.GetCode() += '|';
                     gen_code.as_string(prop_flags);
                 }
 
                 if (!node->HasValue(prop_borders) && !node->HasValue(prop_flags))
-                    gen_code.m_code += '0';
+                    gen_code.GetCode() += '0';
 
                 gen_code.Comma().as_string(prop_border_size).EndFunction();
-                gen_code.m_code.Replace(", 0, 0)", ")");
+                gen_code.GetCode().Replace(", 0, 0)", ")");
             }
             else
             {
@@ -473,7 +472,7 @@ bool BaseCodeGenerator::GenAfterChildren(Node* node, bool need_closing_brace)
 
             if (need_closing_brace)
             {
-                m_source->writeLine(gen_code.m_code, indent::auto_keep_whitespace);
+                m_source->writeLine(gen_code.GetCode(), indent::auto_keep_whitespace);
                 if (m_language == GEN_LANG_CPLUSPLUS)
                 {
                     m_source->writeLine("}");
@@ -481,7 +480,7 @@ bool BaseCodeGenerator::GenAfterChildren(Node* node, bool need_closing_brace)
             }
             else
             {
-                m_source->writeLine(gen_code.m_code);
+                m_source->writeLine(gen_code.GetCode());
             }
         }
 
@@ -546,9 +545,9 @@ void BaseCodeGenerator::GenParentSizer(Node* node, bool need_closing_brace)
 
             code.Add(flags).Comma().as_string(prop_border_size).EndFunction();
             if (is_cpp())
-                code.m_code.Replace(", 0, 0);", ");");
+                code.Replace(", 0, 0);", ");");
             else
-                code.m_code.Replace(", 0, 0)", ")");
+                code.Replace(", 0, 0)", ")");
         }
         else
         {
@@ -559,7 +558,7 @@ void BaseCodeGenerator::GenParentSizer(Node* node, bool need_closing_brace)
 
     if (need_closing_brace)
     {
-        m_source->writeLine(code.m_code, indent::auto_keep_whitespace);
+        m_source->writeLine(code.GetCode(), indent::auto_keep_whitespace);
         if (m_language == GEN_LANG_CPLUSPLUS)
         {
             m_source->writeLine("}");
@@ -567,6 +566,6 @@ void BaseCodeGenerator::GenParentSizer(Node* node, bool need_closing_brace)
     }
     else
     {
-        m_source->writeLine(code.m_code, indent::auto_keep_whitespace);
+        m_source->writeLine(code.GetCode(), indent::auto_keep_whitespace);
     }
 }

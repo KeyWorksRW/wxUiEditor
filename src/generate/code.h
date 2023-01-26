@@ -30,10 +30,10 @@ namespace code
 
     enum
     {
-        // Will add eol if m_code is empty.
+        // Will add eol if empty.
         eol_if_empty = 1,
-        // Will not add eol if m_code is empty, or there is already an eol at the end of
-        // m_code.
+        // Will not add eol if empty, or there is already an eol at the end of
+        // the current string.
         eol_if_needed,
         eol_always
     };
@@ -46,19 +46,21 @@ namespace code
 // Assume anyone including this header file needs acces to the code namespace
 using namespace code;
 
-class Code
+class Code : public tt_string
 {
 public:
-    tt_string m_code;
     Node* m_node;
     int m_language;
 
     Code(Node* node, int language = GEN_LANG_CPLUSPLUS);
-    tt_string_view GetCode() const { return m_code; }
+    void Init(Node* node, int language = GEN_LANG_CPLUSPLUS);
+
+    tt_string& GetCode() { return *this; }
+    tt_string_view GetView() const { return *this; }
 
     void clear()
     {
-        m_code.clear();
+        tt_string::clear();
         if (m_auto_break)
         {
             m_break_at = m_break_length;
@@ -69,7 +71,6 @@ public:
             m_break_at = 100000;  // initialize this high enough that no line will break unless SetBreakAt() is called
         }
     }
-    auto size() const { return m_code.size(); }
 
     bool is_cpp() const { return m_language == GEN_LANG_CPLUSPLUS; }
     bool is_python() const { return m_language == GEN_LANG_PYTHON; }
@@ -79,6 +80,7 @@ public:
     int IntValue(GenEnum::PropName prop_name) const;
 
     Node* node() const { return m_node; }
+    int get_language() const { return m_language; }
 
     bool HasValue(GenEnum::PropName prop_name) const;
 
@@ -127,9 +129,9 @@ public:
     // Adds comma and optional trailing space: ", "
     Code& Comma(bool trailing_space = true)
     {
-        m_code += ',';
+        *this += ',';
         if (trailing_space)
-            m_code += ' ';
+            *this += ' ';
         return *this;
     }
 
@@ -168,8 +170,8 @@ public:
     // Call this function if you added text directly including a final newline.
     void UpdateBreakAt()
     {
-        m_break_at = m_code.size() + m_break_length;
-        m_minium_length = m_code.size() + 10;
+        m_break_at = size() + m_break_length;
+        m_minium_length = size() + 10;
     }
 
     // Equivalent to calling node->prop_as_string(prop_name).size()
@@ -182,7 +184,7 @@ public:
     // If needed, the line will be broken *before* the string is added.
     Code& Add(tt_string_view text);
 
-    Code& Add(const Code text) { return Add(text.m_code); }
+    Code& Add(const Code& text) { return Add(text.GetView()); }
 
     // Equivalent to calling as_string(prop_name). Correctly modifies the string for Python.
     Code& Add(GenEnum::PropName prop_name) { return as_string(prop_name); }
@@ -226,7 +228,7 @@ public:
     Code& Str(std::string_view str)
     {
         CheckLineLength(str.size());
-        m_code += str;
+        *this += str;
         return *this;
     }
 
@@ -260,12 +262,12 @@ public:
 
     // For Python code, a non-local, non-form name will be prefixed with "self."
     //
-    // m_code += node->get_node_name();
+    // *this += node->get_node_name();
     Code& NodeName(Node* node = nullptr);
 
     // For Python code, a non-local, non-form name will be prefixed with "self."
     //
-    // m_code += m_node->GetParent()->get_node_name();
+    // *this += m_node->GetParent()->get_node_name();
     Code& ParentName();
 
     // Find a valid parent for the current node and add it's name. This is *not* the same as
@@ -278,7 +280,7 @@ public:
 
     Code& itoa(int val)
     {
-        m_code += std::to_string(val);
+        *this += std::to_string(val);
         return *this;
     }
 
@@ -290,7 +292,7 @@ public:
 
     Code& itoa(size_t val)
     {
-        m_code += std::to_string(val);
+        *this += std::to_string(val);
         return *this;
     }
 
@@ -310,7 +312,7 @@ public:
 
     Code& EmptyString()
     {
-        m_code += is_cpp() ? "wxEmptyString" : "\"\"";
+        *this += is_cpp() ? "wxEmptyString" : "\"\"";
         return *this;
     }
 
@@ -358,32 +360,6 @@ public:
     }
     void ResetIndent() { m_indent = 0; }
     void ResetBraces() { m_within_braces = false; }
-
-    Code& operator<<(std::string_view str)
-    {
-        m_code += str;
-        return *this;
-    }
-
-    void operator+=(std::string_view str) { m_code += str; }
-
-    Code& operator<<(char ch)
-    {
-        m_code += ch;
-        return *this;
-    }
-
-    Code& operator<<(int val)
-    {
-        m_code += std::to_string(val);
-        return *this;
-    }
-
-    Code& operator<<(size_t val)
-    {
-        m_code += std::to_string(val);
-        return *this;
-    }
 
 protected:
     void InsertLineBreak(size_t cur_pos);

@@ -75,7 +75,7 @@ bool RadioBoxGenerator::ConstructionCode(Code& code)
         {
             code.Eol().Tab().QuotedString((iter)) += ",";
         }
-        code.m_code.pop_back();  // remove the last comma
+        code.GetCode().pop_back();  // remove the last comma
         code.Eol().Str("};").Eol();
     }
 
@@ -100,7 +100,7 @@ bool RadioBoxGenerator::ConstructionCode(Code& code)
         {
             code.QuotedString((iter)) += ",";
         }
-        code.m_code.pop_back();  // remove the last comma
+        code.GetCode().pop_back();  // remove the last comma
         code << "]";
     }
     code.Comma().CheckLineLength(3).Str(prop_majorDimension);

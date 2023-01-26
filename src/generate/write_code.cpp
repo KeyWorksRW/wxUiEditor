@@ -25,7 +25,7 @@ void WriteCode::writeLine(const Code& code)
     // tt_view_vector only creates a vector of std::string_views, so it's cheap to create
     // even for a single line.
 
-    tt_view_vector lines(code.GetCode(), '\n');
+    tt_view_vector lines(code.GetView(), '\n');
     for (auto& line: lines)
     {
         // Remove any trailing tabs -- this occurs when Code::Eol() is called when an indent

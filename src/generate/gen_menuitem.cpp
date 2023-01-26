@@ -99,7 +99,7 @@ bool MenuItemGenerator::SettingsCode(Code& code)
         if (code.is_cpp())
         {
             auto& description = node->as_string(prop_bitmap);
-            bool is_vector_code = GenerateVectorCode(description, code.m_code);
+            bool is_vector_code = GenerateVectorCode(description, code.GetCode());
             code.UpdateBreakAt();
 
             if (!is_vector_code)
@@ -107,13 +107,13 @@ bool MenuItemGenerator::SettingsCode(Code& code)
                 code.NodeName().Function("SetBitmap(");
                 if (Project.value(prop_wxWidgets_version) != "3.1")
                 {
-                    GenerateBundleCode(description, code.m_code);
+                    GenerateBundleCode(description, code.GetCode());
                     code.EndFunction();
                 }
                 else
                 {
                     code.Eol() += "#if wxCHECK_VERSION(3, 1, 6)\n\t";
-                    GenerateBundleCode(description, code.m_code);
+                    GenerateBundleCode(description, code.GetCode());
                     code.Eol() += "#else";
                     code.Eol().Tab() << "wxBitmap(" << GenerateBitmapCode(description) << ")";
                     code.Eol() += "#endif";
@@ -165,7 +165,7 @@ bool MenuItemGenerator::SettingsCode(Code& code)
         if (code.is_cpp())
         {
             auto& description = node->as_string(prop_unchecked_bitmap);
-            bool is_vector_code = GenerateVectorCode(description, code.m_code);
+            bool is_vector_code = GenerateVectorCode(description, code.GetCode());
             code.UpdateBreakAt();
 
             if (!is_vector_code)
@@ -173,14 +173,14 @@ bool MenuItemGenerator::SettingsCode(Code& code)
                 code.NodeName().Function("SetBitmap(");
                 if (Project.value(prop_wxWidgets_version) != "3.1")
                 {
-                    GenerateBundleCode(description, code.m_code);
+                    GenerateBundleCode(description, code.GetCode());
                     code.UpdateBreakAt();
                     code.Comma() += "false";
                 }
                 else
                 {
                     code += "\n#if wxCHECK_VERSION(3, 1, 6)\n\t";
-                    GenerateBundleCode(description, code.m_code);
+                    GenerateBundleCode(description, code.GetCode());
                     code += "\n#else\n\t";
                     code << "wxBitmap(" << GenerateBitmapCode(description) << ", false)\n";
                     code << "#endif\n";

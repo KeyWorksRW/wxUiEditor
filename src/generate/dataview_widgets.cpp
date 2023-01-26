@@ -339,7 +339,7 @@ bool DataViewColumn::ConstructionCode(Code& code)
         code.Str("static_cast<wxAlignment>(");
     code.Add(prop_align);
     if (code.is_cpp())
-        code.m_code += ')';
+        code << ')';
     code.Comma().Add(prop_flags).EndFunction();
 
     if (code.HasValue(prop_ellipsize))
@@ -360,7 +360,7 @@ bool DataViewListColumn::ConstructionCode(Code& code)
         code.Str("static_cast<wxAlignment>(");
     code.Add(prop_align);
     if (code.is_cpp())
-        code.m_code += ')';
+        code << ')';
     code.Comma().Add(prop_flags).EndFunction();
 
     if (code.HasValue(prop_ellipsize))

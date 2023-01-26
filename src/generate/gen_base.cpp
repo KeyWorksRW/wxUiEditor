@@ -1235,7 +1235,7 @@ void BaseCodeGenerator::GenerateClassConstructor(Node* form_node, EventVector& e
         if (code.size())
         {
             // GenerateWindowSettings() can result in code within braces, so keep any leading whitespace.
-            m_source->writeLine(code.m_code, indent::auto_keep_whitespace);
+            m_source->writeLine(code.GetView(), indent::auto_keep_whitespace);
         }
     }
 

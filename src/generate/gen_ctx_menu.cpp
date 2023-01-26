@@ -118,7 +118,7 @@ bool CtxMenuGenerator::AdditionalCode(Code& code, GenEnum::GenCodeType cmd)
             Code event_code(iter->GetNode(), code.m_language);
             if (generator->GenEvent(event_code, iter, code.node()->get_parent_name()); event_code.size())
             {
-                event_code.m_code.Replace("\t", "\t\t", true);
+                event_code.GetCode().Replace("\t", "\t\t", true);
                 code.Eol(eol_if_needed).Str("ctx_menu.") += event_code.GetCode();
             }
         }

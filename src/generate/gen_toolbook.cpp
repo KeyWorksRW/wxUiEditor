@@ -56,7 +56,7 @@ bool ToolbookGenerator::ConstructionCode(Code& code)
     // TODO: [Randalphwa - 12-21-2022] Add Python support
     if (code.is_cpp())
     {
-        BookCtorAddImagelist(code.m_code, code.m_node);
+        BookCtorAddImagelist(code.GetCode(), code.m_node);
     }
 
     return true;

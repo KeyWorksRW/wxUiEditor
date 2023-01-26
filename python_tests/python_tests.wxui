@@ -214,14 +214,15 @@
                   class="wxButton"
                   label="Normal"
                   tooltip="A normal button"
-                  wxEVT_BUTTON="OnButton" />
+                  wxEVT_BUTTON="OnButton[python:lambda]self.m_events_list.Select(self.m_events_list.Append(&quot;Button: wx.EVT_BUTTON&quot;))" />
                 <node
                   class="wxButton"
                   label="&lt;b>&lt;span foreground='red'>Markup&lt;/span>&lt;/b>"
                   markup="1"
                   var_name="m_btn_2"
                   tooltip="Text should be Bold and Red."
-                  column="1" />
+                  column="1"
+                  wxEVT_BUTTON="OnButton[python:lambda]self.m_events_list.Select(self.m_events_list.Append(&quot;Button: wx.EVT_BUTTON&quot;))" />
                 <node
                   class="wxButton"
                   label="Bitmaps"
@@ -231,7 +232,7 @@
                   disabled_bmp="Embed;../art/no_hour.png"
                   tooltip="Bitmap should change when mouse is over button, or button is disabled."
                   column="2"
-                  wxEVT_BUTTON="OnButton" />
+                  wxEVT_BUTTON="OnButton[python:lambda]self.m_events_list.Select(self.m_events_list.Append(&quot;Button: wx.EVT_BUTTON&quot;))" />
                 <node
                   class="wxButton"
                   label="Right"
@@ -239,7 +240,8 @@
                   bitmap="Embed;../art/normal.png"
                   position="wxRIGHT"
                   tooltip="Bitmap should be on the right side (fails in wxPython 4.2)."
-                  column="3" />
+                  column="3"
+                  wxEVT_BUTTON="OnButton[python:lambda]self.m_events_list.Select(self.m_events_list.Append(&quot;Button: wx.EVT_BUTTON&quot;))" />
                 <node
                   class="wxToggleButton"
                   label="Toggle"
@@ -268,7 +270,7 @@
                   bitmap="Art;wxART_GO_FORWARD|wxART_OTHER"
                   tooltip="The bitmap for this is from Art Provider."
                   row="1"
-                  wxEVT_BUTTON="OnButton" />
+                  wxEVT_BUTTON="OnButton[python:lambda]self.m_events_list.Select(self.m_events_list.Append(&quot;CmdLinkBtn: wx.EVT_BUTTON&quot;))" />
                 <node
                   class="wxRadioBox"
                   class_access="none"
@@ -301,7 +303,7 @@
                   label="First radio"
                   style="wxRB_GROUP"
                   alignment="wxALIGN_CENTER"
-                  wxEVT_RADIOBUTTON="OnRadioButton" />
+                  wxEVT_RADIOBUTTON="OnRadioButton[python:lambda]self.m_events_list.Select(self.m_events_list.Append(&quot;Radio: wx.EVT_BUTTON&quot;))" />
                 <node
                   class="wxRadioButton"
                   label="Second radio"

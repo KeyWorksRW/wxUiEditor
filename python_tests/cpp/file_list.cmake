@@ -34,6 +34,7 @@ set(wxui_file_list
 set (python_files
 
     ../python/mainframe.py
+    ../python/main_test_dlg.py
     ../python/python_dlg.py
 
 )

@@ -491,21 +491,28 @@ class MainTestDialog(wx.Dialog):
         self.Centre(wx.BOTH)
 
         # Bind Event handlers
-        self.m_btn.Bind(wx.EVT_BUTTON, self.OnButton)
-        self.m_btn_bitmaps.Bind(wx.EVT_BUTTON, self.OnButton)
-        self.m_btn_5.Bind(wx.EVT_BUTTON, self.OnButton)
+        btn.Bind(wx.EVT_BUTTON, self.OnClearList)
+        self.m_btn.Bind(wx.EVT_BUTTON, lambda event:
+            self.m_events_list.Select(self.m_events_list.Append("Button: wx.EVT_BUTTON")))
+        self.m_btn_2.Bind(wx.EVT_BUTTON, lambda event:
+            self.m_events_list.Select(self.m_events_list.Append("Button: wx.EVT_BUTTON")))
+        self.m_btn_bitmaps.Bind(wx.EVT_BUTTON, lambda event:
+            self.m_events_list.Select(self.m_events_list.Append("Button: wx.EVT_BUTTON")))
+        self.m_btn_4.Bind(wx.EVT_BUTTON, lambda event:
+            self.m_events_list.Select(self.m_events_list.Append("Button: wx.EVT_BUTTON")))
+        self.m_btn_5.Bind(wx.EVT_BUTTON, lambda event:
+            self.m_events_list.Select(self.m_events_list.Append("CmdLinkBtn: wx.EVT_BUTTON")))
         self.m_btn_3.Bind(wx.EVT_BUTTON, self.OnButton)
         btn2.Bind(wx.EVT_BUTTON, self.OnPopupBtn)
-        btn.Bind(wx.EVT_BUTTON, self.OnClearList)
         disable_bitmaps.Bind(wx.EVT_CHECKBOX, self.OnDisableBitmapsBtn)
         self.m_checkBox2.Bind(wx.EVT_CHECKBOX, self.OnCheckBox)
-        self.m_checkList_2.Bind(wx.EVT_CHECKLISTBOX, self.OnListChecked)
         self.m_checkList2.Bind(wx.EVT_CHECKLISTBOX, self.OnListChecked)
-        self.m_choice.Bind(wx.EVT_CHOICE, self.OnChoice)
+        self.m_checkList_2.Bind(wx.EVT_CHECKLISTBOX, self.OnListChecked)
         self.m_choice2.Bind(wx.EVT_CHOICE, self.OnChoice)
+        self.m_choice.Bind(wx.EVT_CHOICE, self.OnChoice)
         self.m_colourPicker.Bind(wx.EVT_COLOURPICKER_CHANGED, self.OnColourChanged)
-        self.m_comboBox.Bind(wx.EVT_COMBOBOX, self.OnCombobox)
         self.m_comboBox2.Bind(wx.EVT_COMBOBOX, self.OnCombobox)
+        self.m_comboBox.Bind(wx.EVT_COMBOBOX, self.OnCombobox)
         self.m_datePicker.Bind(wx.adv.EVT_DATE_CHANGED, self.OnDateChanged)
         self.m_dirPicker.Bind(wx.EVT_DIRPICKER_CHANGED, self.OnDirChanged)
         self.m_filePicker.Bind(wx.EVT_FILEPICKER_CHANGED, self.OnFileChanged)
@@ -515,7 +522,8 @@ class MainTestDialog(wx.Dialog):
         self.m_listBox2.Bind(wx.EVT_LISTBOX, self.OnListBox)
         self.m_notebook.Bind(wx.EVT_NOTEBOOK_PAGE_CHANGED, self.OnPageChanged)
         radioBox.Bind(wx.EVT_RADIOBOX, self.OnRadioBox)
-        self.m_radioBtn.Bind(wx.EVT_RADIOBUTTON, self.OnRadioButton)
+        self.m_radioBtn.Bind(wx.EVT_RADIOBUTTON, lambda event:
+            self.m_events_list.Select(self.m_events_list.Append("Radio: wx.EVT_BUTTON")))
         self.m_radioBtn2.Bind(wx.EVT_RADIOBUTTON, self.OnRadioButton)
         self.m_scintilla.Bind(wx.stc.EVT_STC_CHANGE, self.OnStcChange)
         self.m_text_ctrl.Bind(wx.EVT_TEXT, self.OnText)
@@ -564,9 +572,7 @@ class MainTestDialog(wx.Dialog):
         event.Skip()
 
     def OnButton(self, event):
-        pos = self.m_events_list.Append("Button: wx.EVT_BUTTON")
-        self.m_events_list.Select(pos)
-        event.Skip()
+        self.m_events_list.Select(self.m_events_list.Append("Button: wx.EVT_BUTTON"))
 
     def OnToggle(self, event):
         pos = self.m_events_list.Append("OnToggle: wx.EVT_BUTTON")

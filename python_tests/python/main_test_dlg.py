@@ -502,34 +502,44 @@ class MainTestDialog(wx.Dialog):
             self.m_events_list.Select(self.m_events_list.Append("Button: wx.EVT_BUTTON")))
         self.m_btn_5.Bind(wx.EVT_BUTTON, lambda event:
             self.m_events_list.Select(self.m_events_list.Append("CmdLinkBtn: wx.EVT_BUTTON")))
-        self.m_btn_3.Bind(wx.EVT_BUTTON, self.OnButton)
+        self.m_btn_3.Bind(wx.EVT_BUTTON, lambda event:self.OnEventName("Button: wx.EVT_BUTTON"))
         btn2.Bind(wx.EVT_BUTTON, self.OnPopupBtn)
         disable_bitmaps.Bind(wx.EVT_CHECKBOX, self.OnDisableBitmapsBtn)
-        self.m_checkBox2.Bind(wx.EVT_CHECKBOX, self.OnCheckBox)
-        self.m_checkList2.Bind(wx.EVT_CHECKLISTBOX, self.OnListChecked)
-        self.m_checkList_2.Bind(wx.EVT_CHECKLISTBOX, self.OnListChecked)
-        self.m_choice2.Bind(wx.EVT_CHOICE, self.OnChoice)
-        self.m_choice.Bind(wx.EVT_CHOICE, self.OnChoice)
-        self.m_colourPicker.Bind(wx.EVT_COLOURPICKER_CHANGED, self.OnColourChanged)
-        self.m_comboBox2.Bind(wx.EVT_COMBOBOX, self.OnCombobox)
-        self.m_comboBox.Bind(wx.EVT_COMBOBOX, self.OnCombobox)
-        self.m_datePicker.Bind(wx.adv.EVT_DATE_CHANGED, self.OnDateChanged)
-        self.m_dirPicker.Bind(wx.EVT_DIRPICKER_CHANGED, self.OnDirChanged)
-        self.m_filePicker.Bind(wx.EVT_FILEPICKER_CHANGED, self.OnFileChanged)
-        self.m_fontPicker.Bind(wx.EVT_FONTPICKER_CHANGED, self.OnFontChanged)
+        self.m_checkBox2.Bind(wx.EVT_CHECKBOX, lambda event:self.OnEventName("OnCheckBox:wx.EVT_CHECKBOX"))
+        self.m_checkList2.Bind(wx.EVT_CHECKLISTBOX, lambda event:
+            self.OnEventName("wx.CheckListBox: wx.EVT_CHECKLISTBOX"))
+        self.m_checkList_2.Bind(wx.EVT_CHECKLISTBOX, lambda event:
+            self.OnEventName("wx.CheckListBox: wx.EVT_CHECKLISTBOX"))
+        self.m_choice2.Bind(wx.EVT_CHOICE, lambda event:self.OnEventName("OnChoice: wx.EVT_CHOICE"))
+        self.m_choice.Bind(wx.EVT_CHOICE, lambda event:self.OnEventName("OnChoice: wx.EVT_CHOICE"))
+        self.m_colourPicker.Bind(wx.EVT_COLOURPICKER_CHANGED, lambda event:
+            self.OnEventName("OnColourChanged: wx.EVT_COLOURPICKER_CHANGED"))
+        self.m_comboBox2.Bind(wx.EVT_COMBOBOX, lambda event:self.OnEventName("OnCombobox: wx.EVT_COMBOBOX"))
+        self.m_comboBox.Bind(wx.EVT_COMBOBOX, lambda event:self.OnEventName("OnCombobox: wx.EVT_COMBOBOX"))
+        self.m_datePicker.Bind(wx.adv.EVT_DATE_CHANGED, lambda event:
+            self.OnEventName("OnDateChanged: wx.EVT_DATE_CHANGED"))
+        self.m_dirPicker.Bind(wx.EVT_DIRPICKER_CHANGED, lambda event:
+            self.OnEventName("OnDirChanged: wx.EVT_DIRPICKER_CHANGED"))
+        self.m_filePicker.Bind(wx.EVT_FILEPICKER_CHANGED, lambda event:
+            self.OnEventName("OnFileChanged: wx.EVT_FILEPICKER_CHANGED"))
+        self.m_fontPicker.Bind(wx.EVT_FONTPICKER_CHANGED, lambda event:
+            self.OnEventName("OnFontChanged: wx.OnFontChanged"))
         self.Bind(wx.EVT_INIT_DIALOG, self.OnInit)
-        self.m_listbox.Bind(wx.EVT_LISTBOX, self.OnListBox)
-        self.m_listBox2.Bind(wx.EVT_LISTBOX, self.OnListBox)
+        self.m_listbox.Bind(wx.EVT_LISTBOX, lambda event:self.OnEventName("wx.ListBox: wx.EVT_LISTBOX"))
+        self.m_listBox2.Bind(wx.EVT_LISTBOX, lambda event:self.OnEventName("wx.ListBox: wx.EVT_LISTBOX"))
         self.m_notebook.Bind(wx.EVT_NOTEBOOK_PAGE_CHANGED, self.OnPageChanged)
-        radioBox.Bind(wx.EVT_RADIOBOX, self.OnRadioBox)
+        radioBox.Bind(wx.EVT_RADIOBOX, lambda event:self.OnEventName("OnRadioBox: wx.EVT_RADIOBOX"))
         self.m_radioBtn.Bind(wx.EVT_RADIOBUTTON, lambda event:
-            self.m_events_list.Select(self.m_events_list.Append("Radio: wx.EVT_BUTTON")))
-        self.m_radioBtn2.Bind(wx.EVT_RADIOBUTTON, self.OnRadioButton)
-        self.m_scintilla.Bind(wx.stc.EVT_STC_CHANGE, self.OnStcChange)
-        self.m_text_ctrl.Bind(wx.EVT_TEXT, self.OnText)
-        self.m_richText.Bind(wx.EVT_TEXT, self.OnRichText)
-        self.m_timePicker.Bind(wx.adv.EVT_TIME_CHANGED, self.OnTimeChanged)
-        self.m_toggleBtn.Bind(wx.EVT_TOGGLEBUTTON, self.OnToggle)
+            self.OnEventName("OnRadioButton: wx.EVT_RADIOBUTTON"))
+        self.m_radioBtn2.Bind(wx.EVT_RADIOBUTTON, lambda event:
+            self.OnEventName("OnRadioButton: wx.EVT_RADIOBUTTON"))
+        self.m_scintilla.Bind(wx.stc.EVT_STC_CHANGE, lambda event:
+            self.OnEventName("wx.StyledTextCtrl: wx.EVT_STC_CHANGE"))
+        self.m_text_ctrl.Bind(wx.EVT_TEXT, lambda event:self.OnEventName("wx.TextCtrl: wx.EVT_TEXT"))
+        self.m_richText.Bind(wx.EVT_TEXT, lambda event:self.OnEventName("wx.RichTextCtrl: wx.EVT_TEXT"))
+        self.m_timePicker.Bind(wx.adv.EVT_TIME_CHANGED, lambda event:
+            self.OnEventName("OnTimeChanged: wx.EVT_TIME_CHANGED"))
+        self.m_toggleBtn.Bind(wx.EVT_TOGGLEBUTTON, lambda event:self.OnEventName("OnToggle: wx.EVT_BUTTON"))
 
     # Unimplemented Event handler functions
     # Copy any listed and paste them below the comment block, or to your inherited class.
@@ -556,83 +566,6 @@ class MainTestDialog(wx.Dialog):
         self.m_events_list.Clear()
         event.Skip()
 
-    def OnText(self, event):
-        pos = self.m_events_list.Append("wx.TextCtrl: wx.EVT_TEXT")
-        self.m_events_list.Select(pos)
-        event.Skip()
-
-    def OnRichText(self, event):
-        pos = self.m_events_list.Append("wx.RichTextCtrl: wx.EVT_TEXT")
-        self.m_events_list.Select(pos)
-        event.Skip()
-
-    def OnStcChange(self, event):
-        pos = self.m_events_list.Append("wx.StyledTextCtrl: wx.EVT_STC_CHANGE")
-        self.m_events_list.Select(pos)
-        event.Skip()
-
-    def OnButton(self, event):
-        self.m_events_list.Select(self.m_events_list.Append("Button: wx.EVT_BUTTON"))
-
-    def OnToggle(self, event):
-        pos = self.m_events_list.Append("OnToggle: wx.EVT_BUTTON")
-        self.m_events_list.Select(pos)
-        event.Skip()
-
-    def OnChoice(self, event):
-        pos = self.m_events_list.Append("OnChoice: wx.EVT_CHOICE")
-        self.m_events_list.Select(pos)
-        event.Skip()
-
-    def OnCombobox(self, event):
-        pos = self.m_events_list.Append("OnCombobox: wx.EVT_COMBOBOX")
-        self.m_events_list.Select(pos)
-        event.Skip()
-
-    def OnRadioBox(self, event):
-        pos = self.m_events_list.Append("OnRadioBox: wx.EVT_RADIOBOX")
-        self.m_events_list.Select(pos)
-        event.Skip()
-
-    def OnCheckBox(self, event):
-        pos = self.m_events_list.Append("OnCheckBox:wx.EVT_CHECKBOX")
-        self.m_events_list.Select(pos)
-
-    def OnRadioButton(self, event):
-        pos = self.m_events_list.Append("OnRadioButton: wx.EVT_RADIOBUTTON")
-        self.m_events_list.Select(pos)
-        event.Skip()
-
-    def OnFileChanged(self, event):
-        pos = self.m_events_list.Append("OnFileChanged: wx.EVT_FILEPICKER_CHANGED")
-        self.m_events_list.Select(pos)
-        event.Skip()
-
-    def OnDirChanged(self, event):
-        pos = self.m_events_list.Append("OnDirChanged: wx.EVT_DIRPICKER_CHANGED")
-        self.m_events_list.Select(pos)
-        event.Skip()
-
-    def OnColourChanged(self, event):
-        pos = self.m_events_list.Append("OnColourChanged: wx.EVT_COLOURPICKER_CHANGED")
-        self.m_events_list.Select(pos)
-        event.Skip()
-
-    def OnDateChanged(self, event):
-        pos = self.m_events_list.Append("OnDateChanged: wx.EVT_DATE_CHANGED")
-        self.m_events_list.Select(pos)
-        event.Skip()
-
-    def OnTimeChanged(self, event):
-        pos = self.m_events_list.Append("OnTimeChanged: wx.EVT_TIME_CHANGED")
-        self.m_events_list.Select(pos)
-        event.Skip()
-
-    def OnFontChanged(self, event):
-        pos = self.m_events_list.Append("OnFontChanged: wx.OnFontChanged")
-        self.m_events_list.Select(pos)
-        event.Skip()
-
     def OnPopupBtn(self, event):
         self.popupwin = popupwin.PopupWin(self)
         btn = event.GetEventObject()
@@ -640,12 +573,6 @@ class MainTestDialog(wx.Dialog):
         self.popupwin.Position(pos, btn.GetSize());
         self.popupwin.Show()
 
-    def OnListBox(self, event):
-        pos = self.m_events_list.Append("wx.ListBox: wx.EVT_LISTBOX")
+    def OnEventName(self, event_name):
+        pos = self.m_events_list.Append(event_name)
         self.m_events_list.Select(pos)
-        event.Skip()
-
-    def OnListChecked(self, event):
-        pos = self.m_events_list.Append("wx.CheckListBox: wx.EVT_CHECKLISTBOX")
-        self.m_events_list.Select(pos)
-        event.Skip()

@@ -2014,6 +2014,7 @@
             <node
               class="wxNotebook"
               display_images="1"
+              flags="wxEXPAND"
               wxEVT_NOTEBOOK_PAGE_CHANGED="OnPageChanged">
               <node
                 class="BookPage"

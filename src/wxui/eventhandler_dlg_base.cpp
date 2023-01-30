@@ -49,7 +49,7 @@ bool EventHandlerDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString
         bundle_list.push_back(wxue_img::bundle_wxPython_png());
         m_notebook->SetImages(bundle_list);
     }
-    box_sizer->Add(m_notebook, wxSizerFlags().Border(wxALL));
+    box_sizer->Add(m_notebook, wxSizerFlags().Expand().Border(wxALL));
 
     auto* cpp_page = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
     m_notebook->AddPage(cpp_page, "C++", false, 0);

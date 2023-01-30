@@ -135,7 +135,12 @@ bool ImageHandler::CheckNode(Node* node)
                 auto child_pos = m_project_node->GetChildPosition(embed->form);
                 if (child_pos > node_position)
                 {
-                    FAIL_MSG("If this is valid, we need to document why.")
+                    // The original embed->form is setup by parsing all of the nodes. However,
+                    // code generation may not actually have a file set for a form, in which
+                    // case the first use of the image for generated code can be in a different
+                    // image. You'll see this in the python_tests project where some forms are
+                    // only generated for C++, but not Python.
+
                     embed->form = node_form;
                     is_changed = true;
                 }

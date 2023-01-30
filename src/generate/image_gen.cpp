@@ -261,7 +261,7 @@ void GenerateSingleBitmapCode(Code& code, const tt_string& description)
                     {
                         code.CheckLineLength(embed->array_name.size() + sizeof(".Bitmap)"));
                         AddPythonImageName(code, embed);
-                        code += ".Bitmap)";
+                        code += ".Bitmap";
                         is_embed_success = true;
                     }
                 }

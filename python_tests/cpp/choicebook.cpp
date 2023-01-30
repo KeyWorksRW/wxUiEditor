@@ -109,12 +109,12 @@ bool ChoiceBook::Create(wxWindow* parent, wxWindowID id, const wxString& title,
         [this](wxCommandEvent&)
         {
             m_choicebook->SetSelection(0);
-        } );
+        });
     btn_2->Bind(wxEVT_BUTTON,
         [this](wxCommandEvent&)
         {
             m_choicebook->SetSelection(2);
-        } );
+        });
 
     return true;
 }

@@ -64,6 +64,10 @@ static const std::map<std::string_view, std::string_view, std::less<>> s_map_wx_
     { "wxEVT_PG_CHANGED", "wx.propgrid." },
     { "wxEVT_PG_CHANGING", "wx.propgrid." },
 
+    { "wxRibbonAUIArtProvider", "wx.ribbon." },
+    { "wxRibbonDefaultArtProvider", "wx.ribbon." },
+    { "wxRibbonMSWArtProvider", "wx.ribbon." },
+
     // This doesn't get created as a class, so we have to add it as if it was a constant.
     { "wxWebView", "wx.html2."},
     { "wxWebViewBackendDefault", "wx.html2."},
@@ -90,6 +94,8 @@ std::map<std::string_view, std::string_view, std::less<>> g_map_class_prefix
     { "wxWizard", "wx.adv."},
     { "wxWizardPageSimple", "wx.adv."},
     { "wxRibbonBar", "wx.ribbon."},
+    { "wxRibbonPage", "wx.ribbon."},
+    { "wxRibbonPanel", "wx.ribbon."},
     { "wxBitmapComboBox", "wx.adv."},
     { "wxDataViewCtrl", "wx.dataview."},
     { "wxDataViewListCtrl", "wx.dataview."},

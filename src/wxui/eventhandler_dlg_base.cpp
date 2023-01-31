@@ -71,6 +71,7 @@ bool EventHandlerDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString
     auto* box_sizer_2 = new wxBoxSizer(wxHORIZONTAL);
 
     m_check_capture_this = new wxCheckBox(m_cpp_lambda_box->GetStaticBox(), wxID_ANY, "&Capture this");
+    m_check_capture_this->SetValue(true);
     box_sizer_2->Add(m_check_capture_this, wxSizerFlags().Border(wxALL));
 
     m_check_include_event = new wxCheckBox(m_cpp_lambda_box->GetStaticBox(), wxID_ANY, "&Include event parameter");

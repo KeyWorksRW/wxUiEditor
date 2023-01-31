@@ -2057,6 +2057,7 @@
                       var_name="box_sizer_2">
                       <node
                         class="wxCheckBox"
+                        checked="1"
                         label="&amp;Capture this"
                         var_name="m_check_capture_this"
                         wxEVT_CHECKBOX="OnChange" />

@@ -23,19 +23,19 @@ static const std::map<tt_string_view, std::string_view, std::less<>> s_short_map
     { "wxAUI_", "wx.aui."},
     { "wxCAL_", "wx.adv."},
     { "wxDV_", "wx.dataview."},
+    { "wxPG_", "wx.propgrid."},
+    { "wxRE_", "wx.richtext."},
+    { "wxRIBBON", "wx.ribbon."},
+    { "wxSTC_", "wx.stc."},
+    { "wxWIZARD_", "wx.adv."},
+
     { "wxEVT_DATAVIEW_", "wx.dataview."},
+    { "wxEVT_DATE_", "wx.adv."},
     { "wxEVT_GRID_", "wx.grid." },
     { "wxEVT_RIBBON", "wx.ribbon." },
     { "wxEVT_STC_", "wx.stc." },
-    { "wxEVT_STC_", "wx.stc."},
-    { "wxEVT_DATE_", "wx.adv."},
     { "wxEVT_TIME_", "wx.adv."},
     { "wxEVT_WIZARD_", "wx.adv."},
-    { "wxPG_", "wx.propgrid."},
-    { "wxRE_", "wx.richtext."},
-    { "wxRIBBON_BAR_", "wx.ribbon."},
-    { "wxSTC_", "wx.stc."},
-    { "wxWIZARD_", "wx.adv."},
 
 };
 
@@ -64,6 +64,10 @@ static const std::map<std::string_view, std::string_view, std::less<>> s_map_wx_
     { "wxEVT_PG_CHANGED", "wx.propgrid." },
     { "wxEVT_PG_CHANGING", "wx.propgrid." },
 
+    { "wxRibbonAUIArtProvider", "wx.ribbon." },
+    { "wxRibbonDefaultArtProvider", "wx.ribbon." },
+    { "wxRibbonMSWArtProvider", "wx.ribbon." },
+
     // This doesn't get created as a class, so we have to add it as if it was a constant.
     { "wxWebView", "wx.html2."},
     { "wxWebViewBackendDefault", "wx.html2."},
@@ -90,6 +94,11 @@ std::map<std::string_view, std::string_view, std::less<>> g_map_class_prefix
     { "wxWizard", "wx.adv."},
     { "wxWizardPageSimple", "wx.adv."},
     { "wxRibbonBar", "wx.ribbon."},
+    { "wxRibbonButtonBar", "wx.ribbon."},
+    { "wxRibbonPage", "wx.ribbon."},
+    { "wxRibbonPanel", "wx.ribbon."},
+    { "wxRibbonToolBar", "wx.ribbon."},
+    { "wxRibbonGallery", "wx.ribbon."},
     { "wxBitmapComboBox", "wx.adv."},
     { "wxDataViewCtrl", "wx.dataview."},
     { "wxDataViewListCtrl", "wx.dataview."},

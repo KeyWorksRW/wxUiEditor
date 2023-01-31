@@ -9,6 +9,7 @@ import wx
 import main_test_dlg
 import wizard
 import python_dlg
+import booktest_dlg
 
 from wx.lib.embeddedimage import PyEmbeddedImage
 
@@ -42,6 +43,11 @@ debug_32_png = PyEmbeddedImage(
     b"yNjYGJFSRGpQT5IkVKtVtm3bxtDQUP88yckWRRG1SoWZmRm5Kw+cPXtW9u/diyiFtZYoigbyuKjv+XqS"
     b"JIVXZmdnOXbsmLprDgCcO3dO5ubmOHDgAPfdey+VWi3zRBxjnaPZbLK4uMiVK1fYs2cPR48eVfx/vIXx"
     b"bzHIEML53VwZAAAAAElFTkSuQmCC")
+
+wxNotebook_png = PyEmbeddedImage(
+    b"iVBORw0KGgoAAAANSUhEUgAAABYAAAAWCAYAAADEtGw7AAAACXBIWXMAAAsTAAALEwEAmpwYAAAAY0lE"
+    b"QVQ4y2NgoCX4jwcU9OwlWgzZTBYY4+bNmzgtnjlzJpqIKlYxZMBEq1CgmcGMsDC+evEkVgXa+uYkGVjY"
+    b"u49hQokzIwshhbgsHLCgGDV41OBRg0cNJgbAS7c5e74yDAkAAH7rWT+isfNfAAAAAElFTkSuQmCC")
 
 wxPython_png = PyEmbeddedImage(
     b"iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAACXBIWXMAAAsTAAALEwEAmpwYAAABQUlE"
@@ -91,6 +97,9 @@ class MainFrame(wx.Frame):
         menu_item_3 = wx.MenuItem(menuDialogs, wx.ID_ANY, "MainTestDlg")
         menu_item_3.SetBitmap(wx.BitmapBundle.FromBitmap(debug_32_png.Bitmap))
         menuDialogs.Append(menu_item_3)
+        menu_item_4 = wx.MenuItem(menuDialogs, wx.ID_ANY, "BookTestDlg")
+        menu_item_4.SetBitmap(wx.BitmapBundle.FromBitmap(wxNotebook_png.Bitmap))
+        menuDialogs.Append(menu_item_4)
         menu_item_2 = wx.MenuItem(menuDialogs, wx.ID_ANY, "PythonDlg")
         bitmaps = [ wxPython_png.Bitmap,
                     wxPython_1_5x_png.Bitmap,
@@ -132,7 +141,13 @@ class MainFrame(wx.Frame):
         self.SetMenuBar(menubar)
 
         self.m_toolBar = self.CreateToolBar()
-        tool_4 = self.m_toolBar.AddTool(wx.ID_ANY, "PythonDlg", wx.BitmapBundle.FromBitmap(
+        tool_4 = self.m_toolBar.AddTool(wx.ID_ANY, "MainTestDlg", wx.BitmapBundle.FromBitmap(
+            debug_32_png.Bitmap))
+
+        tool_5 = self.m_toolBar.AddTool(wx.ID_ANY, "BookTestDlg", wx.BitmapBundle.FromBitmap(
+            wxNotebook_png.Bitmap))
+
+        tool_3 = self.m_toolBar.AddTool(wx.ID_ANY, "PythonDlg", wx.BitmapBundle.FromBitmap(
             wxPython_1_5x_png.Bitmap))
 
         tool_2 = self.m_toolBar.AddTool(wx.ID_ANY, "Common Controls...",
@@ -153,6 +168,7 @@ class MainFrame(wx.Frame):
 
         # Bind Event handlers
         self.Bind(wx.EVT_MENU, self.OnMainTestDlg, id=menu_item_3.GetId())
+        self.Bind(wx.EVT_MENU, self.OnBookTestDlg, id=menu_item_4.GetId())
         self.Bind(wx.EVT_MENU, self.OnPythonDlg, id=menu_item_2.GetId())
         self.Bind(wx.EVT_MENU, self.OnCommonDialog, id=menuItem_2.GetId())
         self.Bind(wx.EVT_MENU, self.OnMultiTestDialog, id=menuItem.GetId())
@@ -165,7 +181,9 @@ class MainFrame(wx.Frame):
         self.Bind(wx.EVT_MENU, self.OnToolbook, id=menu_toolbook.GetId())
         self.Bind(wx.EVT_MENU, self.OnTreebook, id=menu_treebook.GetId())
         self.Bind(wx.EVT_MENU, self.OnQuit, id=wx.ID_EXIT)
-        self.Bind(wx.EVT_TOOL, self.OnPythonDlg, id=tool_4.GetId())
+        self.Bind(wx.EVT_TOOL, self.OnMainTestDlg, id=tool_4.GetId())
+        self.Bind(wx.EVT_TOOL, self.OnBookTestDlg, id=tool_5.GetId())
+        self.Bind(wx.EVT_TOOL, self.OnPythonDlg, id=tool_3.GetId())
         self.Bind(wx.EVT_TOOL, self.OnCommonDialog, id=tool_2.GetId())
         self.Bind(wx.EVT_TOOL, self.OnMultiTestDialog, id=tool.GetId())
 
@@ -217,6 +235,11 @@ class MainFrame(wx.Frame):
 
     def OnMainTestDlg(self, event):
         dlg = main_test_dlg.MainTestDialog(self, title="Main Dialog Tests")
+        dlg.ShowModal()
+        dlg.Destroy()
+
+    def OnBookTestDlg(self, event):
+        dlg = booktest_dlg.BookTestDlg(self)
         dlg.ShowModal()
         dlg.Destroy()
 

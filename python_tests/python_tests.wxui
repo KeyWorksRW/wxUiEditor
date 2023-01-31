@@ -20,6 +20,15 @@
       <node
         class="embedded_image"
         bitmap="Embed;../art/wiztest2.png" />
+      <node
+        class="embedded_image"
+        bitmap="Embed;art/english.png" />
+      <node
+        class="embedded_image"
+        bitmap="Embed;art/french.png" />
+      <node
+        class="embedded_image"
+        bitmap="Embed;art/japanese.png" />
     </node>
     <node
       class="wxFrame"
@@ -49,6 +58,12 @@
             label="MainTestDlg"
             var_name="menu_item_3"
             wxEVT_MENU="OnMainTestDlg" />
+          <node
+            class="wxMenuItem"
+            bitmap="Embed;../src/art_src/wxNotebook.png"
+            label="BookTestDlg"
+            var_name="menu_item_4"
+            wxEVT_MENU="OnBookTestDlg" />
           <node
             class="wxMenuItem"
             bitmap="Embed;../art/wxPython.png"
@@ -127,9 +142,21 @@
         class="wxToolBar">
         <node
           class="tool"
+          bitmap="Embed;../src/art_src/debug_32.png"
+          label="MainTestDlg"
+          var_name="tool_4"
+          wxEVT_TOOL="OnMainTestDlg" />
+        <node
+          class="tool"
+          bitmap="Embed;../src/art_src/wxNotebook.png"
+          label="BookTestDlg"
+          var_name="tool_5"
+          wxEVT_TOOL="OnBookTestDlg" />
+        <node
+          class="tool"
           bitmap="Embed;../art/wxPython_1_5x.png"
           label="PythonDlg"
-          var_name="tool_4"
+          var_name="tool_3"
           wxEVT_TOOL="OnPythonDlg" />
         <node
           class="tool"
@@ -153,6 +180,7 @@
       class="wxDialog"
       class_name="MainTestDialog"
       base_file="maintestdialog"
+      inserted_hdr_code="void OnEventName(const std::string&amp; event_name)@@{@@    m_events_list->Select(m_events_list->Append(wxString().FromUTF8(event_name)));@@}"
       insert_python_code="import popupwin"
       python_file="main_test_dlg"
       wxEVT_INIT_DIALOG="OnInit">
@@ -182,20 +210,20 @@
                 style="wxTE_RICH2"
                 var_name="m_text_ctrl"
                 flags="wxEXPAND"
-                wxEVT_TEXT="OnText" />
+                wxEVT_TEXT="[this](wxCommandEvent&amp;)@@{@@OnEventName(&quot;wxTextCtrl: wxEVT_TEXT&quot;);@@}[python:lambda]self.OnEventName(&quot;wx.TextCtrl: wx.EVT_TEXT&quot;)" />
               <node
                 class="wxRichTextCtrl"
                 hint="wxRichTextCtrl"
                 minimum_size="150,30d"
                 window_style="wxVSCROLL | wxHSCROLL | wxNO_BORDER | wxWANTS_CHARS"
                 flags="wxEXPAND"
-                wxEVT_TEXT="OnRichText" />
+                wxEVT_TEXT="[this](wxCommandEvent&amp;)@@{@@OnEventName(&quot;wxRichTextCtrl: wxEVT_TEXT&quot;);@@}[python:lambda]self.OnEventName(&quot;wx.RichTextCtrl: wx.EVT_TEXT&quot;)" />
               <node
                 class="wxStyledTextCtrl"
                 view_whitespace="always visible"
                 minimum_size="150,60d"
                 flags="wxEXPAND"
-                wxEVT_STC_CHANGE="OnStcChange" />
+                wxEVT_STC_CHANGE="[this](wxStyledTextEvent&amp;)@@{@@OnEventName(&quot;wxStyledTextCtrl: wxEVT_STC_CHANGE&quot;);@@}[python:lambda]self.OnEventName(&quot;wx.StyledTextCtrl: wx.EVT_STC_CHANGE&quot;)" />
             </node>
           </node>
           <node
@@ -214,7 +242,7 @@
                   class="wxButton"
                   label="Normal"
                   tooltip="A normal button"
-                  wxEVT_BUTTON="OnButton[python:lambda]self.m_events_list.Select(self.m_events_list.Append(&quot;Button: wx.EVT_BUTTON&quot;))" />
+                  wxEVT_BUTTON="[this](wxCommandEvent&amp;)@@{@@OnEventName(&quot;Button: wxEVT_BUTTON&quot;);@@}[python:lambda]self.m_events_list.Select(self.m_events_list.Append(&quot;Button: wx.EVT_BUTTON&quot;))" />
                 <node
                   class="wxButton"
                   label="&lt;b>&lt;span foreground='red'>Markup&lt;/span>&lt;/b>"
@@ -222,7 +250,7 @@
                   var_name="m_btn_2"
                   tooltip="Text should be Bold and Red."
                   column="1"
-                  wxEVT_BUTTON="OnButton[python:lambda]self.m_events_list.Select(self.m_events_list.Append(&quot;Button: wx.EVT_BUTTON&quot;))" />
+                  wxEVT_BUTTON="[this](wxCommandEvent&amp;)@@{@@OnEventName(&quot;Button: wxEVT_BUTTON&quot;);@@}[python:lambda]self.m_events_list.Select(self.m_events_list.Append(&quot;Button: wx.EVT_BUTTON&quot;))" />
                 <node
                   class="wxButton"
                   label="Bitmaps"
@@ -232,7 +260,7 @@
                   disabled_bmp="Embed;../art/no_hour.png"
                   tooltip="Bitmap should change when mouse is over button, or button is disabled."
                   column="2"
-                  wxEVT_BUTTON="OnButton[python:lambda]self.m_events_list.Select(self.m_events_list.Append(&quot;Button: wx.EVT_BUTTON&quot;))" />
+                  wxEVT_BUTTON="[this](wxCommandEvent&amp;)@@{@@OnEventName(&quot;Button: wxEVT_BUTTON&quot;);@@}[python:lambda]self.m_events_list.Select(self.m_events_list.Append(&quot;Button: wx.EVT_BUTTON&quot;))" />
                 <node
                   class="wxButton"
                   label="Right"
@@ -241,14 +269,14 @@
                   position="wxRIGHT"
                   tooltip="Bitmap should be on the right side (fails in wxPython 4.2)."
                   column="3"
-                  wxEVT_BUTTON="OnButton[python:lambda]self.m_events_list.Select(self.m_events_list.Append(&quot;Button: wx.EVT_BUTTON&quot;))" />
+                  wxEVT_BUTTON="[this](wxCommandEvent&amp;)@@{@@OnEventName(&quot;Button: wxEVT_BUTTON&quot;);@@}[python:lambda]self.m_events_list.Select(self.m_events_list.Append(&quot;Button: wx.EVT_BUTTON&quot;))" />
                 <node
                   class="wxToggleButton"
                   label="Toggle"
                   style="wxBU_EXACTFIT"
                   tooltip="Style set to exact fit, so it should be a bit smaller than usual."
                   column="4"
-                  wxEVT_TOGGLEBUTTON="OnToggle" />
+                  wxEVT_TOGGLEBUTTON="[this](wxCommandEvent&amp;)@@{@@OnEventName(&quot;Button: wxEVT_BUTTON&quot;);@@}[python:lambda]self.OnEventName(&quot;OnToggle: wx.EVT_BUTTON&quot;)" />
                 <node
                   class="wxCheckBox"
                   class_access="none"
@@ -270,7 +298,7 @@
                   bitmap="Art;wxART_GO_FORWARD|wxART_OTHER"
                   tooltip="The bitmap for this is from Art Provider."
                   row="1"
-                  wxEVT_BUTTON="OnButton[python:lambda]self.m_events_list.Select(self.m_events_list.Append(&quot;CmdLinkBtn: wx.EVT_BUTTON&quot;))" />
+                  wxEVT_BUTTON="[this](wxCommandEvent&amp;)@@{@@OnEventName(&quot;CmdLinkBtn: wxEVT_BUTTON&quot;);@@}[python:lambda]self.m_events_list.Select(self.m_events_list.Append(&quot;CmdLinkBtn: wx.EVT_BUTTON&quot;))" />
                 <node
                   class="wxRadioBox"
                   class_access="none"
@@ -280,7 +308,7 @@
                   style="rows"
                   var_name="radioBox"
                   validator_variable="m_valRadio"
-                  wxEVT_RADIOBOX="OnRadioBox" />
+                  wxEVT_RADIOBOX="[this](wxCommandEvent&amp;)@@{@@OnEventName(&quot;RadioBox: wxEVT_RADIOBOX&quot;);@@}[python:lambda]self.OnEventName(&quot;RadioBox: wx.EVT_RADIOBOX&quot;)" />
               </node>
               <node
                 class="wxBoxSizer"
@@ -291,7 +319,7 @@
                   label="First btn"
                   var_name="m_btn_3"
                   minimum_size="-1,-1d"
-                  wxEVT_BUTTON="OnButton" />
+                  wxEVT_BUTTON="[this](wxCommandEvent&amp;)@@{@@OnEventName(&quot;Button: wxEVT_BUTTON&quot;);@@}[python:lambda]self.OnEventName(&quot;Button: wx.EVT_BUTTON&quot;)" />
                 <node
                   class="wxButton"
                   class_access="none"
@@ -303,19 +331,19 @@
                   label="First radio"
                   style="wxRB_GROUP"
                   alignment="wxALIGN_CENTER"
-                  wxEVT_RADIOBUTTON="OnRadioButton[python:lambda]self.m_events_list.Select(self.m_events_list.Append(&quot;Radio: wx.EVT_BUTTON&quot;))" />
+                  wxEVT_RADIOBUTTON="[this](wxCommandEvent&amp;)@@{@@OnEventName(&quot;RadioButton: wxEVT_RADIOBUTTON&quot;);@@}[python:lambda]self.OnEventName(&quot;RadioButton: wx.EVT_RADIOBUTTON&quot;)" />
                 <node
                   class="wxRadioButton"
                   label="Second radio"
                   var_name="m_radioBtn2"
                   alignment="wxALIGN_CENTER"
-                  wxEVT_RADIOBUTTON="OnRadioButton" />
+                  wxEVT_RADIOBUTTON="[this](wxCommandEvent&amp;)@@{@@OnEventName(&quot;RadioButton: wxEVT_RADIOBUTTON&quot;);@@}[python:lambda]self.OnEventName(&quot;RadioButton: wx.EVT_RADIOBUTTON&quot;)" />
                 <node
                   class="wxCheckBox"
                   label="Checkbox"
                   var_name="m_checkBox2"
                   alignment="wxALIGN_CENTER"
-                  wxEVT_CHECKBOX="OnCheckBox" />
+                  wxEVT_CHECKBOX="[this](wxCommandEvent&amp;)@@{@@OnEventName(&quot;CheckBox: wxEVT_CHECKBOX&quot;);@@}[python:lambda]self.OnEventName(&quot;CheckBox: wx.EVT_CHECKBOX&quot;)" />
               </node>
             </node>
           </node>
@@ -413,7 +441,7 @@
                       selection_string="item #2"
                       tooltip="Item #0 should be selected by default"
                       flags="wxEXPAND"
-                      wxEVT_COMBOBOX="OnCombobox" />
+                      wxEVT_COMBOBOX="[this](wxCommandEvent&amp;)@@{@@OnEventName(&quot;Combobox: wxEVT_COMBOBOX&quot;);@@}[python:lambda]self.OnEventName(&quot;Combobox: wx.EVT_COMBOBOX&quot;)" />
                     <node
                       class="wxStaticText"
                       label="Sorted"
@@ -426,7 +454,7 @@
                       style="wxCB_SORT"
                       var_name="m_comboBox2"
                       tooltip="Item #2 should be selected by default"
-                      wxEVT_COMBOBOX="OnCombobox" />
+                      wxEVT_COMBOBOX="[this](wxCommandEvent&amp;)@@{@@OnEventName(&quot;Combobox: wxEVT_COMBOBOX&quot;);@@}[python:lambda]self.OnEventName(&quot;OnCombobox: wx.EVT_COMBOBOX&quot;)" />
                   </node>
                   <node
                     class="wxStaticBoxSizer"
@@ -442,7 +470,7 @@
                       contents="&quot;item #1&quot; &quot;item #2&quot; &quot;item #0&quot;"
                       selection_int="2"
                       tooltip="Item #0 should be selected by default"
-                      wxEVT_CHOICE="OnChoice" />
+                      wxEVT_CHOICE="[this](wxCommandEvent&amp;)@@{@@OnEventName(&quot;Choice: wx.EVT_CHOICE&quot;);@@}[python:lambda]self.OnEventName(&quot;Choice: wx.EVT_CHOICE&quot;)" />
                     <node
                       class="wxStaticText"
                       label="Sorted"
@@ -454,7 +482,7 @@
                       style="wxCB_SORT"
                       var_name="m_choice2"
                       tooltip="Item #2 should be selected by default"
-                      wxEVT_CHOICE="OnChoice" />
+                      wxEVT_CHOICE="[this](wxCommandEvent&amp;)@@{@@OnEventName(&quot;Choice: wx.EVT_CHOICE&quot;);@@}[python:lambda]self.OnEventName(&quot;OnChoice: wx.EVT_CHOICE&quot;)" />
                   </node>
                   <node
                     class="wxStaticBoxSizer"
@@ -468,7 +496,7 @@
                     <node
                       class="wxListBox"
                       contents="&quot;item #1&quot; &quot;item #2&quot; &quot;item #0&quot;"
-                      wxEVT_LISTBOX="OnListBox" />
+                      wxEVT_LISTBOX="[this](wxCommandEvent&amp;)@@{@@OnEventName(&quot;ListBox1: wxEVT_LISTBOX&quot;);@@}[python:lambda]self.OnEventName(&quot;ListBox1: wx.EVT_LISTBOX&quot;)" />
                     <node
                       class="wxStaticText"
                       label="Sorted"
@@ -478,7 +506,7 @@
                       contents="&quot;item #1&quot; &quot;item #2&quot; &quot;item #0&quot;"
                       style="wxLB_SORT"
                       var_name="m_listBox2"
-                      wxEVT_LISTBOX="OnListBox" />
+                      wxEVT_LISTBOX="[this](wxCommandEvent&amp;)@@{@@OnEventName(&quot;ListBox2: wxEVT_LISTBOX&quot;);@@}[python:lambda]self.OnEventName(&quot;ListBox2: wx.EVT_LISTBOX&quot;)" />
                   </node>
                   <node
                     class="wxStaticBoxSizer"
@@ -493,7 +521,7 @@
                       class="wxCheckListBox"
                       contents="&quot;item #1&quot; &quot;item #2&quot; &quot;item #0&quot;"
                       var_name="m_checkList_2"
-                      wxEVT_CHECKLISTBOX="OnListChecked" />
+                      wxEVT_CHECKLISTBOX="[this](wxCommandEvent&amp;)@@{@@OnEventName(&quot;CheckListBox1: wx.EVT_CHECKLISTBOX&quot;);@@}[python:lambda]self.OnEventName(&quot;CheckListBox1: wx.EVT_CHECKLISTBOX&quot;)" />
                     <node
                       class="wxStaticText"
                       label="Sorted"
@@ -503,7 +531,7 @@
                       contents="&quot;item #1&quot; &quot;item #2&quot; &quot;item #0&quot;"
                       style="wxLB_SORT"
                       var_name="m_checkList2"
-                      wxEVT_CHECKLISTBOX="OnListChecked" />
+                      wxEVT_CHECKLISTBOX="[this](wxCommandEvent&amp;)@@{@@OnEventName(&quot;CheckListBox2: wx.EVT_CHECKLISTBOX&quot;);@@}[python:lambda]self.OnEventName(&quot;CheckListBox2: wx.EVT_CHECKLISTBOX&quot;)" />
                   </node>
                 </node>
               </node>
@@ -535,7 +563,7 @@
                   <node
                     class="wxFilePickerCtrl"
                     wildcard="BMP files|*.bmp"
-                    wxEVT_FILEPICKER_CHANGED="OnFileChanged" />
+                    wxEVT_FILEPICKER_CHANGED="[this](wxFileDirPickerEvent&amp;)@@{@@OnEventName(&quot;FilePicker: wxEVT_FILEPICKER_CHANGED&quot;);@@}[python:lambda]self.OnEventName(&quot;FilePicker: wx.EVT_FILEPICKER_CHANGED&quot;)" />
                 </node>
                 <node
                   class="wxBoxSizer"
@@ -550,7 +578,7 @@
                     class="wxDirPickerCtrl"
                     initial_path="."
                     style="wxDIRP_DEFAULT_STYLE|wxDIRP_SMALL"
-                    wxEVT_DIRPICKER_CHANGED="OnDirChanged" />
+                    wxEVT_DIRPICKER_CHANGED="[this](wxFileDirPickerEvent&amp;)@@{@@OnEventName(&quot;DirPicker: wxEVT_DIRPICKER_CHANGED&quot;);@@}[python:lambda]self.OnEventName(&quot;DirPicker: wx.EVT_DIRPICKER_CHANGED&quot;)" />
                 </node>
                 <node
                   class="wxBoxSizer"
@@ -563,7 +591,7 @@
                     alignment="wxALIGN_CENTER_VERTICAL" />
                   <node
                     class="wxColourPickerCtrl"
-                    wxEVT_COLOURPICKER_CHANGED="OnColourChanged" />
+                    wxEVT_COLOURPICKER_CHANGED="[this](wxColourPickerEvent&amp;)@@{@@OnEventName(&quot;ColourPicker: wxEVT_COLOURPICKER_CHANGED&quot;);@@}[python:lambda]self.OnEventName(&quot;ColourPicker: wx.EVT_COLOURPICKER_CHANGED&quot;)" />
                 </node>
                 <node
                   class="wxBoxSizer"
@@ -576,7 +604,7 @@
                     alignment="wxALIGN_CENTER_VERTICAL" />
                   <node
                     class="wxDatePickerCtrl"
-                    wxEVT_DATE_CHANGED="OnDateChanged" />
+                    wxEVT_DATE_CHANGED="[this](wxDateEvent&amp;)@@{@@OnEventName(&quot;DatePicker: wx.EVT_DATE_CHANGED&quot;);@@}[python:lambda]self.OnEventName(&quot;DatePicker: wx.EVT_DATE_CHANGED&quot;)" />
                 </node>
                 <node
                   class="wxBoxSizer"
@@ -589,7 +617,7 @@
                     alignment="wxALIGN_CENTER_VERTICAL" />
                   <node
                     class="wxTimePickerCtrl"
-                    wxEVT_TIME_CHANGED="OnTimeChanged" />
+                    wxEVT_TIME_CHANGED="[this](wxDateEvent&amp;)@@{@@OnEventName(&quot;TimePicker: wxEVT_TIME_CHANGED&quot;);@@}[python:lambda]self.OnEventName(&quot;TimePicker: wx.EVT_TIME_CHANGED&quot;)" />
                 </node>
                 <node
                   class="wxBoxSizer"
@@ -604,23 +632,148 @@
                     class="wxFontPickerCtrl"
                     initial_font="Comic Sans MS,90,400,-1,70,0"
                     style="wxFNTP_DEFAULT_STYLE|wxFNTP_USE_TEXTCTRL"
-                    wxEVT_FONTPICKER_CHANGED="OnFontChanged" />
+                    wxEVT_FONTPICKER_CHANGED="[this](wxFontPickerEvent&amp;)@@{@@OnEventName(&quot;FontPicker: wx.OnFontChanged&quot;);@@}[python:lambda]self.OnEventName(&quot;FontPicker: wx.OnFontChanged&quot;)" />
                 </node>
               </node>
             </node>
           </node>
           <node
             class="BookPage"
-            label="Tab 3"
+            label="RibbonBar"
             window_style="wxTAB_TRAVERSAL">
             <node
               class="wxBoxSizer"
               orientation="wxVERTICAL"
               var_name="page_sizer_3">
               <node
-                class="wxStaticText"
-                label="TODO: replace this control with something more useful..."
-                wrap="200" />
+                class="wxRibbonBar"
+                style="wxRIBBON_BAR_SHOW_PAGE_LABELS|wxRIBBON_BAR_SHOW_PAGE_ICONS|wxRIBBON_BAR_FLOW_HORIZONTAL"
+                theme="Generic"
+                flags="wxEXPAND">
+                <node
+                  class="wxRibbonPage"
+                  label="First"
+                  select="1">
+                  <node
+                    class="wxRibbonPanel"
+                    bitmap="Embed;art/english.png"
+                    label="English">
+                    <node
+                      class="wxBoxSizer"
+                      orientation="wxVERTICAL"
+                      var_name="first_parent_sizer"
+                      flags="wxEXPAND">
+                      <node
+                        class="wxBoxSizer"
+                        orientation="wxVERTICAL"
+                        var_name="box_sizer_15"
+                        flags="wxEXPAND"
+                        proportion="1">
+                        <node
+                          class="wxStaticText"
+                          label="This is a sentence in English."
+                          wrap="200" />
+                        <node
+                          class="wxButton"
+                          label="Switch"
+                          var_name="m_btn_6"
+                          alignment="wxALIGN_CENTER_HORIZONTAL"
+                          wxEVT_BUTTON="[this](wxCommandEvent&amp;)@@{@@OnEventName(&quot;This is a sentence in English.&quot;);@@}[python:lambda]self.OnEventName(&quot;This is a sentence in English.&quot;)" />
+                      </node>
+                    </node>
+                  </node>
+                  <node
+                    class="wxRibbonPanel"
+                    bitmap="Embed;../art/french.png"
+                    label="French"
+                    var_name="rbnPanel_2"
+                    background_colour="wxSYS_COLOUR_MENU">
+                    <node
+                      class="wxBoxSizer"
+                      orientation="wxVERTICAL"
+                      var_name="first_parent_sizer_2"
+                      flags="wxEXPAND">
+                      <node
+                        class="wxBoxSizer"
+                        orientation="wxVERTICAL"
+                        var_name="box_sizer_16"
+                        flags="wxEXPAND"
+                        proportion="1">
+                        <node
+                          class="wxStaticText"
+                          label="Ceci est une phrase en français."
+                          var_name="m_staticText_3"
+                          wrap="200" />
+                        <node
+                          class="wxButton"
+                          label="Switch"
+                          var_name="m_btn_7"
+                          alignment="wxALIGN_CENTER_HORIZONTAL"
+                          wxEVT_BUTTON="[this](wxCommandEvent&amp;)@@{@@OnEventName(&quot;Ceci est une phrase en français.&quot;);@@}[python:lambda]self.OnEventName(&quot;Ceci est une phrase en français.&quot;)" />
+                      </node>
+                    </node>
+                  </node>
+                </node>
+                <node
+                  class="wxRibbonPage"
+                  label="Second"
+                  var_name="ribbonPage2">
+                  <node
+                    class="wxRibbonPanel"
+                    label="Button Panel"
+                    style="wxRIBBON_PANEL_DEFAULT_STYLE|wxRIBBON_PANEL_STRETCH"
+                    var_name="ribbonPanel2">
+                    <node
+                      class="wxRibbonButtonBar">
+                      <node
+                        class="ribbonButton"
+                        bitmap="Art;wxART_GO_FORWARD|wxART_OTHER"
+                        label="Forward" />
+                      <node
+                        class="ribbonButton"
+                        bitmap="Embed;../art/left.png"
+                        label="Backward" />
+                    </node>
+                  </node>
+                </node>
+                <node
+                  class="wxRibbonPage"
+                  label="Third"
+                  var_name="ribbonPage_2">
+                  <node
+                    class="wxRibbonPanel"
+                    label="Tool Panel"
+                    var_name="ribbonPanel_2">
+                    <node
+                      class="wxRibbonToolBar">
+                      <node
+                        class="ribbonTool"
+                        bitmap="Art;wxART_GOTO_FIRST|wxART_TOOLBAR"
+                        id="wxID_FILE1" />
+                      <node
+                        class="ribbonTool"
+                        bitmap="Art;wxART_GOTO_LAST|wxART_TOOLBAR"
+                        id="wxID_FILE9" />
+                    </node>
+                  </node>
+                </node>
+                <node
+                  class="wxRibbonPage"
+                  label="Fourth"
+                  var_name="ribbonPage_3">
+                  <node
+                    class="wxRibbonPanel"
+                    label="Gallery Panel"
+                    var_name="rbnPanel_3">
+                    <node
+                      class="wxRibbonGallery">
+                      <node
+                        class="ribbonGalleryItem"
+                        bitmap="Embed;../art/toggle_button.png" />
+                    </node>
+                  </node>
+                </node>
+              </node>
             </node>
           </node>
         </node>
@@ -1317,7 +1470,7 @@
               wxEVT_BUTTON="[this](wxCommandEvent&amp;)@@{@@m_choicebook->SetSelection(2);@@}" />
             <node
               class="BookPage"
-              bitmap="XPM;../art/english.xpm"
+              bitmap="Embed;art/english.png"
               label="English"
               background_colour="wxSYS_COLOUR_BTNFACE"
               window_style="wxTAB_TRAVERSAL">
@@ -1344,7 +1497,7 @@
             </node>
             <node
               class="BookPage"
-              bitmap="XPM;../art/french.xpm"
+              bitmap="Embed;art/french.png"
               label="Français"
               var_name="page_2"
               background_colour="wxSYS_COLOUR_BTNFACE"
@@ -1372,7 +1525,7 @@
             </node>
             <node
               class="BookPage"
-              bitmap="XPM;../art/japanese.xpm"
+              bitmap="Embed;art/japanese.png"
               label="日本語"
               var_name="page_3"
               background_colour="wxSYS_COLOUR_BTNFACE"
@@ -1424,7 +1577,7 @@
             minimum_size="400,400">
             <node
               class="BookPage"
-              bitmap="XPM;../art/english.xpm"
+              bitmap="Embed;art/english.png"
               label="English"
               background_colour="wxSYS_COLOUR_BTNFACE"
               window_style="wxTAB_TRAVERSAL">
@@ -1440,7 +1593,7 @@
             </node>
             <node
               class="BookPage"
-              bitmap="XPM;../art/french.xpm"
+              bitmap="Embed;art/french.png"
               label="Français"
               var_name="page_2"
               background_colour="wxSYS_COLOUR_BTNFACE"
@@ -1457,7 +1610,7 @@
             </node>
             <node
               class="BookPage"
-              bitmap="XPM;../art/japanese.xpm"
+              bitmap="Embed;art/japanese.png"
               label="日本語"
               var_name="page_3"
               background_colour="wxSYS_COLOUR_BTNFACE"
@@ -1500,7 +1653,7 @@
             flags="wxEXPAND">
             <node
               class="BookPage"
-              bitmap="XPM;../art/english.xpm"
+              bitmap="Embed;art/english.png"
               label="English"
               background_colour="wxSYS_COLOUR_BTNFACE"
               window_style="wxTAB_TRAVERSAL">
@@ -1516,7 +1669,7 @@
             </node>
             <node
               class="BookPage"
-              bitmap="XPM;../art/french.xpm"
+              bitmap="Embed;art/french.png"
               label="Français"
               var_name="page_2"
               background_colour="wxSYS_COLOUR_BTNFACE"
@@ -1533,7 +1686,7 @@
             </node>
             <node
               class="BookPage"
-              bitmap="XPM;../art/japanese.xpm"
+              bitmap="Embed;art/japanese.png"
               label="日本語"
               var_name="page_3"
               background_colour="wxSYS_COLOUR_BTNFACE"
@@ -1572,7 +1725,7 @@
             minimum_size="400,400">
             <node
               class="BookPage"
-              bitmap="XPM;../art/english.xpm"
+              bitmap="Embed;art/english.png"
               label="English"
               background_colour="wxSYS_COLOUR_BTNFACE"
               window_style="wxTAB_TRAVERSAL">
@@ -1588,7 +1741,7 @@
             </node>
             <node
               class="BookPage"
-              bitmap="XPM;../art/french.xpm"
+              bitmap="Embed;art/french.png"
               label="Français"
               var_name="page_2"
               background_colour="wxSYS_COLOUR_BTNFACE"
@@ -1605,7 +1758,7 @@
             </node>
             <node
               class="BookPage"
-              bitmap="XPM;../art/japanese.xpm"
+              bitmap="Embed;art/japanese.png"
               label="日本語"
               var_name="page_3"
               background_colour="wxSYS_COLOUR_BTNFACE"
@@ -1645,7 +1798,7 @@
             minimum_size="400,400">
             <node
               class="BookPage"
-              bitmap="XPM;../art/english.xpm"
+              bitmap="Embed;art/english.png"
               label="English"
               background_colour="wxSYS_COLOUR_BTNFACE"
               window_style="wxTAB_TRAVERSAL">
@@ -1695,7 +1848,7 @@
             </node>
             <node
               class="BookPage"
-              bitmap="XPM;../art/french.xpm"
+              bitmap="Embed;art/french.png"
               label="Français"
               var_name="page_2"
               background_colour="wxSYS_COLOUR_BTNFACE"
@@ -1712,7 +1865,7 @@
             </node>
             <node
               class="BookPage"
-              bitmap="XPM;../art/japanese.xpm"
+              bitmap="Embed;art/japanese.png"
               label="日本語"
               var_name="page_3"
               background_colour="wxSYS_COLOUR_BTNFACE"
@@ -2157,6 +2310,346 @@
             var_name="menu_item_6"
             wxEVT_MENU="[this](wxCommandEvent&amp;) { m_gauge->SetValue(75); }" />
         </node>
+      </node>
+    </node>
+    <node
+      class="wxDialog"
+      class_name="BookTestDlg"
+      title="Book tests"
+      base_file="booktest_dlg"
+      use_derived_class="0"
+      python_file="booktest_dlg">
+      <node
+        class="wxBoxSizer"
+        orientation="wxVERTICAL"
+        var_name="dlg_sizer"
+        minimum_size="400,400d">
+        <node
+          class="wxNotebook"
+          flags="wxEXPAND"
+          proportion="1">
+          <node
+            class="BookPage"
+            label="Tab 1"
+            var_name="page_2"
+            window_style="wxTAB_TRAVERSAL">
+            <node
+              class="wxBoxSizer"
+              orientation="wxVERTICAL"
+              var_name="page_sizer_1">
+              <node
+                class="wxStaticText"
+                label="TODO: replace this control with something more useful..."
+                var_name="m_staticText_2"
+                wrap="200" />
+            </node>
+          </node>
+          <node
+            class="BookPage"
+            label="ListBook"
+            var_name="page_3"
+            window_style="wxTAB_TRAVERSAL">
+            <node
+              class="wxBoxSizer"
+              orientation="wxVERTICAL"
+              var_name="page_sizer_2">
+              <node
+                class="wxListbook"
+                display_images="1"
+                style="wxLB_LEFT"
+                minimum_size="400,400">
+                <node
+                  class="BookPage"
+                  bitmap="Embed;art/english.png"
+                  label="English"
+                  var_name="page_6"
+                  background_colour="wxSYS_COLOUR_BTNFACE"
+                  window_style="wxTAB_TRAVERSAL">
+                  <node
+                    class="wxBoxSizer"
+                    orientation="wxVERTICAL"
+                    var_name="parent_sizer">
+                    <node
+                      class="wxStaticText"
+                      label="This is a sentence in English."
+                      var_name="m_staticText_6" />
+                  </node>
+                </node>
+                <node
+                  class="BookPage"
+                  bitmap="Embed;art/french.png"
+                  label="Français"
+                  var_name="page_7"
+                  background_colour="wxSYS_COLOUR_BTNFACE"
+                  window_style="wxTAB_TRAVERSAL">
+                  <node
+                    class="wxBoxSizer"
+                    orientation="wxVERTICAL"
+                    var_name="parent_sizer_2">
+                    <node
+                      class="wxStaticText"
+                      label="Ceci est une phrase en français."
+                      var_name="m_staticText_3" />
+                  </node>
+                </node>
+                <node
+                  class="BookPage"
+                  bitmap="Embed;art/japanese.png"
+                  label="日本語"
+                  var_name="page_8"
+                  background_colour="wxSYS_COLOUR_BTNFACE"
+                  window_style="wxTAB_TRAVERSAL">
+                  <node
+                    class="wxBoxSizer"
+                    orientation="wxVERTICAL"
+                    var_name="parent_sizer_3">
+                    <node
+                      class="wxStaticText"
+                      label="これは日本語の文章です。"
+                      var_name="m_staticText_7" />
+                  </node>
+                </node>
+              </node>
+            </node>
+          </node>
+          <node
+            class="BookPage"
+            label="NoteBook"
+            var_name="page_4"
+            window_style="wxTAB_TRAVERSAL">
+            <node
+              class="wxBoxSizer"
+              orientation="wxVERTICAL"
+              var_name="page_sizer_3">
+              <node
+                class="wxNotebook"
+                display_images="1"
+                var_name="m_notebook_2"
+                minimum_size="400,400"
+                flags="wxEXPAND">
+                <node
+                  class="BookPage"
+                  bitmap="Embed;art/english.png"
+                  label="English"
+                  var_name="page_9"
+                  background_colour="wxSYS_COLOUR_BTNFACE"
+                  window_style="wxTAB_TRAVERSAL">
+                  <node
+                    class="wxBoxSizer"
+                    orientation="wxVERTICAL"
+                    var_name="parent_sizer_4">
+                    <node
+                      class="wxStaticText"
+                      label="This is a sentence in English."
+                      var_name="m_staticText_4" />
+                  </node>
+                </node>
+                <node
+                  class="BookPage"
+                  bitmap="Embed;art/french.png"
+                  label="Français"
+                  var_name="page_10"
+                  background_colour="wxSYS_COLOUR_BTNFACE"
+                  window_style="wxTAB_TRAVERSAL">
+                  <node
+                    class="wxBoxSizer"
+                    orientation="wxVERTICAL"
+                    var_name="parent_sizer_5">
+                    <node
+                      class="wxStaticText"
+                      label="Ceci est une phrase en français."
+                      var_name="m_staticText_8" />
+                  </node>
+                </node>
+                <node
+                  class="BookPage"
+                  bitmap="Embed;art/japanese.png"
+                  label="日本語"
+                  var_name="page_11"
+                  background_colour="wxSYS_COLOUR_BTNFACE"
+                  window_style="wxTAB_TRAVERSAL">
+                  <node
+                    class="wxBoxSizer"
+                    orientation="wxVERTICAL"
+                    var_name="parent_sizer_6">
+                    <node
+                      class="wxStaticText"
+                      label="これは日本語の文章です。"
+                      var_name="m_staticText_9" />
+                  </node>
+                </node>
+              </node>
+            </node>
+          </node>
+          <node
+            class="BookPage"
+            label="ToolBook"
+            var_name="page_5"
+            window_style="wxTAB_TRAVERSAL">
+            <node
+              class="wxBoxSizer"
+              orientation="wxVERTICAL"
+              var_name="page_sizer_4">
+              <node
+                class="wxToolbook"
+                minimum_size="400,400">
+                <node
+                  class="BookPage"
+                  bitmap="Embed;art/english.png"
+                  label="English"
+                  var_name="page_12"
+                  background_colour="wxSYS_COLOUR_BTNFACE"
+                  window_style="wxTAB_TRAVERSAL">
+                  <node
+                    class="wxBoxSizer"
+                    orientation="wxVERTICAL"
+                    var_name="parent_sizer_7">
+                    <node
+                      class="wxStaticText"
+                      label="This is a sentence in English."
+                      var_name="m_staticText_5" />
+                  </node>
+                </node>
+                <node
+                  class="BookPage"
+                  bitmap="Embed;art/french.png"
+                  label="Français"
+                  var_name="page_13"
+                  background_colour="wxSYS_COLOUR_BTNFACE"
+                  window_style="wxTAB_TRAVERSAL">
+                  <node
+                    class="wxBoxSizer"
+                    orientation="wxVERTICAL"
+                    var_name="parent_sizer_8">
+                    <node
+                      class="wxStaticText"
+                      label="Ceci est une phrase en français."
+                      var_name="m_staticText_10" />
+                  </node>
+                </node>
+                <node
+                  class="BookPage"
+                  bitmap="Embed;art/japanese.png"
+                  label="日本語"
+                  var_name="page_14"
+                  background_colour="wxSYS_COLOUR_BTNFACE"
+                  window_style="wxTAB_TRAVERSAL">
+                  <node
+                    class="wxBoxSizer"
+                    orientation="wxVERTICAL"
+                    var_name="parent_sizer_9">
+                    <node
+                      class="wxStaticText"
+                      label="これは日本語の文章です。"
+                      var_name="m_staticText_11" />
+                  </node>
+                </node>
+              </node>
+            </node>
+          </node>
+          <node
+            class="BookPage"
+            label="TreeBook"
+            window_style="wxTAB_TRAVERSAL">
+            <node
+              class="wxBoxSizer"
+              orientation="wxVERTICAL"
+              var_name="page_sizer_5">
+              <node
+                class="wxTreebook"
+                display_images="1"
+                minimum_size="400,400">
+                <node
+                  class="BookPage"
+                  bitmap="Embed;art/english.png"
+                  label="English"
+                  var_name="page_15"
+                  background_colour="wxSYS_COLOUR_BTNFACE"
+                  window_style="wxTAB_TRAVERSAL">
+                  <node
+                    class="wxBoxSizer"
+                    orientation="wxVERTICAL"
+                    var_name="parent_sizer_10">
+                    <node
+                      class="wxStaticText"
+                      label="This is a sentence in English."
+                      var_name="m_staticText_12" />
+                  </node>
+                  <node
+                    class="BookPage"
+                    bitmap="Embed;../art/re.png"
+                    label="British"
+                    var_name="page_16"
+                    background_colour="wxSYS_COLOUR_BTNFACE"
+                    window_style="wxTAB_TRAVERSAL">
+                    <node
+                      class="wxBoxSizer"
+                      orientation="wxVERTICAL"
+                      var_name="page_sizer">
+                      <node
+                        class="wxStaticText"
+                        label="Theatre"
+                        var_name="m_staticText_13" />
+                    </node>
+                  </node>
+                  <node
+                    class="BookPage"
+                    bitmap="Embed;../art/er.png"
+                    label="United States"
+                    var_name="page_17"
+                    background_colour="wxSYS_COLOUR_BTNFACE"
+                    window_style="wxTAB_TRAVERSAL">
+                    <node
+                      class="wxBoxSizer"
+                      orientation="wxVERTICAL"
+                      var_name="page_sizer_6">
+                      <node
+                        class="wxStaticText"
+                        label="Theater"
+                        var_name="m_staticText_14" />
+                    </node>
+                  </node>
+                </node>
+                <node
+                  class="BookPage"
+                  bitmap="Embed;art/french.png"
+                  label="Français"
+                  var_name="page_18"
+                  background_colour="wxSYS_COLOUR_BTNFACE"
+                  window_style="wxTAB_TRAVERSAL">
+                  <node
+                    class="wxBoxSizer"
+                    orientation="wxVERTICAL"
+                    var_name="parent_sizer_11">
+                    <node
+                      class="wxStaticText"
+                      label="Ceci est une phrase en français."
+                      var_name="m_staticText_15" />
+                  </node>
+                </node>
+                <node
+                  class="BookPage"
+                  bitmap="Embed;art/japanese.png"
+                  label="日本語"
+                  var_name="page_19"
+                  background_colour="wxSYS_COLOUR_BTNFACE"
+                  window_style="wxTAB_TRAVERSAL">
+                  <node
+                    class="wxBoxSizer"
+                    orientation="wxVERTICAL"
+                    var_name="parent_sizer_12">
+                    <node
+                      class="wxStaticText"
+                      label="これは日本語の文章です。" />
+                  </node>
+                </node>
+              </node>
+            </node>
+          </node>
+        </node>
+        <node
+          class="wxStdDialogButtonSizer"
+          flags="wxEXPAND" />
       </node>
     </node>
   </node>

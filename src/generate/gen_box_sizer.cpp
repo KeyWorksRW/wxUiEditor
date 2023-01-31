@@ -42,7 +42,7 @@ bool BoxSizerGenerator::ConstructionCode(Code& code)
     auto min_size = code.m_node->prop_as_wxSize(prop_minimum_size);
     if (min_size.GetX() != -1 || min_size.GetY() != -1)
     {
-        code.Eol().Tab().NodeName().Function("SetMinSize(") << min_size.GetX() << ", " << min_size.GetY();
+        code.Eol().NodeName().Function("SetMinSize(") << min_size.GetX() << ", " << min_size.GetY();
         code.EndFunction();
     }
 

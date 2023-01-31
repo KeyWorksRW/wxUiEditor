@@ -58,7 +58,6 @@ void BaseCodeGenerator::WriteImageConstruction(Code& code)
     code.clear();
 
     bool is_namespace_written = false;
-    bool images_import_written = false;
     // -12 to account for 8 indent + max 3 chars for number + comma
     size_t cpp_line_length = Project.as_size_t(prop_cpp_line_length) - 12;
 
@@ -111,13 +110,6 @@ void BaseCodeGenerator::WriteImageConstruction(Code& code)
         {
             if (iter_array->form->isGen(gen_Images))
             {
-                if (!images_import_written)
-                {
-                    images_import_written = true;
-                    tt_string import_name = iter_array->form->as_string(prop_python_file).filename();
-                    import_name.remove_extension();
-                    code.Eol().Str("import ").Str(import_name);
-                }
                 continue;
             }
             code.Eol().Str(iter_array->array_name).Str(" = PyEmbeddedImage(");
@@ -261,7 +253,7 @@ void GenerateSingleBitmapCode(Code& code, const tt_string& description)
                     {
                         code.CheckLineLength(embed->array_name.size() + sizeof(".Bitmap)"));
                         AddPythonImageName(code, embed);
-                        code += ".Bitmap)";
+                        code += ".Bitmap";
                         is_embed_success = true;
                     }
                 }

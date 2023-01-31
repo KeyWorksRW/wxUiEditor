@@ -29,7 +29,7 @@ XRC is listed, but there is currently no testing code for it. "---" in the XRC c
 | wxMenuBar | yes | yes | --- | ../src/generate/menu_widgets.cpp |
 | wxPanel | ??? | ??? | --- | ../src/generate/gen_panel_form.cpp |
 | wxPopupTransientWindow | ??? | ??? | no | ../src/generate/gen_popup_trans_win.cpp |
-| wxRibbonBar | ??? | ??? | --- | ../src/generate/gen_ribbon_bar.cpp |
+| wxRibbonBar | yes | yes | --- | ../src/generate/gen_ribbon_bar.cpp |
 | wxToolBar | yes | yes | --- | ../src/generate/gen_toolbar.cpp |
 | wxWizard | yes | yes | --- | ../src/generate/gen_wizard.cpp |
 
@@ -96,12 +96,12 @@ XRC is listed, but there is currently no testing code for it. "---" in the XRC c
 | wxRadioBox | ??? | ??? | --- | ../src/generate/gen_prop_grid.cpp |
 | wxRadioButton | ??? | ??? | --- | ../src/generate/gen_radio_btn.cpp |
 | wxRearrangeCtrl | ??? | ??? | no | ../src/generate/gen_rearrange.cpp |
-| wxRibbonBar | ??? | ??? | --- | ../src/generate/gen_ribbon_bar.cpp |
-| wxRibbonButtonBar | ??? | ??? | --- | ../src/generate/gen_ribbon_button.cpp |
-| wxRibbonGallery | ??? | ??? | --- | ../src/generate/ribbon_widgets.cpp |
-| wxRibbonPage | ??? | ??? | --- | ../src/generate/gen_ribbon_page.cpp |
-| wxRibbonPanel | ??? | ??? | --- | ../src/generate/gen_ribbon_page.cpp |
-| wxRibbonToolBar | ??? | ??? | --- | ../src/generate/ribbon_widgets.cpp |
+| wxRibbonBar | yes | yes | --- | ../src/generate/gen_ribbon_bar.cpp |
+| wxRibbonButtonBar | yes | yes | --- | ../src/generate/gen_ribbon_button.cpp |
+| wxRibbonGallery | yes | yes | --- | ../src/generate/ribbon_widgets.cpp |
+| wxRibbonPage | yes | yes | --- | ../src/generate/gen_ribbon_page.cpp |
+| wxRibbonPanel | yes | yes | --- | ../src/generate/gen_ribbon_page.cpp |
+| wxRibbonToolBar | yes | yes | --- | ../src/generate/ribbon_widgets.cpp |
 | wxRichTextCtrl | yes | yes | --- | ../src/generate/gen_rich_text.cpp |
 | wxScrollBar | ??? | ??? | --- | ../src/generate/gen_scrollbar.cpp |
 | wxScrolled\<wxPanel\> | ??? | ??? | --- | ../src/generate/styled_text.cpp |
@@ -144,9 +144,9 @@ XRC is listed, but there is currently no testing code for it. "---" in the XRC c
 | PageCtrl | ??? | ??? | no | ../src/generate/gen_page_ctrl.cpp |
 | PropertyGridItem | ??? | ??? | no | ../src/generate/gen_prop_item.cpp |
 | PropertyGridPage | ??? | ??? | no | ../src/generate/grid_widgets.cpp |
-| RibbonButton | ??? | ??? | --- | ../src/generate/ribbon_widgets.cpp |
-| RibbonGalleryItem | ??? | ??? | --- | ../src/generate/ribbon_widgets.cpp |
-| RibbonTool | ??? | ??? | --- | ../src/generate/ribbon_widgets.cpp |
+| RibbonButton | yes | yes | --- | ../src/generate/ribbon_widgets.cpp |
+| RibbonGalleryItem | yes | yes | --- | ../src/generate/ribbon_widgets.cpp |
+| RibbonTool | yes | yes | --- | ../src/generate/ribbon_widgets.cpp |
 | Separator | ??? | ??? | --- | ../src/generate/menu_widgets.cpp |
 | Spacer | ??? | ??? | --- | ../src/generate/gen_spacer_sizer.cpp |
 | SubMenu | ??? | ??? | --- | ../src/generate/gen_submenu.cpp |

@@ -105,7 +105,7 @@ bool ImageHandler::CheckNode(Node* node)
         if ((iter.type() == type_image || iter.type() == type_animation) && iter.HasValue())
         {
             tt_view_vector parts(iter.as_string(), BMP_PROP_SEPARATOR, tt::TRIM::both);
-            if (parts[IndexType] != "Embed")
+            if (parts[IndexType] != "Embed" || parts.size() <= IndexImage)
                 continue;
 
             auto result = m_map_embedded.find(parts[IndexImage].filename());
@@ -135,7 +135,12 @@ bool ImageHandler::CheckNode(Node* node)
                 auto child_pos = m_project_node->GetChildPosition(embed->form);
                 if (child_pos > node_position)
                 {
-                    FAIL_MSG("If this is valid, we need to document why.")
+                    // The original embed->form is setup by parsing all of the nodes. However,
+                    // code generation may not actually have a file set for a form, in which
+                    // case the first use of the image for generated code can be in a different
+                    // image. You'll see this in the python_tests project where some forms are
+                    // only generated for C++, but not Python.
+
                     embed->form = node_form;
                     is_changed = true;
                 }

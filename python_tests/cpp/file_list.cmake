@@ -31,10 +31,31 @@ set(wxui_file_list
 
 )
 
+# Currently, these are not used in CMakeLists.txt, it's just a reference to which python files
+# are being generated.
+
 set (python_files
 
+    ../python/images.py
     ../python/mainframe.py
     ../python/main_test_dlg.py
+    ../python/popwin.py
     ../python/python_dlg.py
+    ../python/wizard.py
+
+)
+
+# These aren't actually used in CMAkeLists.txt, they are here just to provide a quick way to
+# load them into an IDE that supports loading a file from the filenmae underneath the cursor.
+
+set (other_files
+
+    ../COVERAGE.md
+    ../README.md
+
+    ../pytest.py
+
+    ../run_pytest.cmd
+    ../run_cpp_build.cmd
 
 )

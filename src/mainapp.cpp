@@ -130,9 +130,16 @@ int App::OnRun()
     OnInitCmdLine(parser);
     parser.AddParam("Filename", wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL);
 
+    // Because this is a GUI app and may not have been run from a console, std::cout and
+    // std::cerr will not work. Instead, messages are written to a log file. The log file is
+    // the project filename with the extension changed to ".log".
+
     parser.AddLongOption("gen_python", "generate python files and exit", wxCMD_LINE_VAL_STRING, wxCMD_LINE_HIDDEN);
     parser.AddLongOption("gen_cpp", "generate C++ files and exit", wxCMD_LINE_VAL_STRING, wxCMD_LINE_HIDDEN);
     parser.AddLongOption("gen_xrc", "generate XRC files and exit", wxCMD_LINE_VAL_STRING, wxCMD_LINE_HIDDEN);
+
+    // The "test" options will not write any files, it simply runs the code generation skipping
+    // the part where files get written, and generates the log file.
 
     parser.AddLongOption("test_python", "generate python files and exit", wxCMD_LINE_VAL_STRING, wxCMD_LINE_HIDDEN);
     parser.AddLongOption("test_cpp", "generate C++ files and exit", wxCMD_LINE_VAL_STRING, wxCMD_LINE_HIDDEN);
@@ -236,6 +243,13 @@ int App::OnRun()
 #if defined(_DEBUG) || defined(INTERNAL_TESTING)
             results.StartClock();
 #endif
+
+            // Passing a class_list reference will cause the code generator to process all the
+            // top-level forms, but only populate class_list with the names of the forms that
+            // would be changed if the file was written. If test_only is set, then we use this
+            // mechanism and write any special messages that code generation caused (warnings,
+            // errors, timing, etc.) to a log file.
+
             switch (generate_type)
             {
                 case GEN_LANG_PYTHON:
@@ -253,9 +267,6 @@ int App::OnRun()
                 default:
                     break;
             }
-#if defined(_DEBUG) || defined(INTERNAL_TESTING)
-            results.EndClock();
-#endif
 
             tt_string_vector log;
 
@@ -265,29 +276,29 @@ int App::OnRun()
                 {
                     for (auto& iter: class_list)
                     {
-                        auto& msg = log.emplace_back();
-                        msg << "Needs updating: " << iter;
+                        auto& log_msg = log.emplace_back();
+                        log_msg << "Needs updating: " << iter;
                     }
                 }
                 else
                 {
                     for (auto& iter: results.updated_files)
                     {
-                        auto& msg = log.emplace_back();
-                        msg << "Updated: " << iter;
+                        auto& log_msg = log.emplace_back();
+                        log_msg << "Updated: " << iter;
                     }
                 }
             }
             else
             {
-                auto& msg = log.emplace_back();
-                msg << "All " << results.file_count << " generated files are current";
+                auto& log_msg = log.emplace_back();
+                log_msg << "All " << results.file_count << " generated files are current";
             }
 
             for (auto& iter: results.msgs)
             {
-                auto& msg = log.emplace_back();
-                msg << iter;
+                auto& log_msg = log.emplace_back();
+                log_msg << iter;
             }
             log.WriteFile(log_file.utf8_string());
 

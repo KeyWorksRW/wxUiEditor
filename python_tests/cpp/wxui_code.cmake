@@ -4,6 +4,7 @@
 
 set (wxue_generated_code
 
+    ${CMAKE_CURRENT_LIST_DIR}/booktest_dlg.cpp
     ${CMAKE_CURRENT_LIST_DIR}/choicebook.cpp
     ${CMAKE_CURRENT_LIST_DIR}/commonctrls.cpp
     ${CMAKE_CURRENT_LIST_DIR}/dlgmultitest.cpp

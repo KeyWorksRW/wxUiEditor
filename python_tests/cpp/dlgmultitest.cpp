@@ -237,12 +237,12 @@ bool DlgMultiTest::Create(wxWindow* parent, wxWindowID id, const wxString& title
     Centre(wxBOTH);
 
     // Event handlers
-    Bind(wxEVT_INIT_DIALOG, &DlgMultiTest::OnInit, this);
     disable_bitmaps->Bind(wxEVT_CHECKBOX,
         [this](wxCommandEvent& event)
         {
             m_btn_bitmaps->Enable(!event.IsChecked());
-        } );
+        });
+    Bind(wxEVT_INIT_DIALOG, &DlgMultiTest::OnInit, this);
 
     return true;
 }

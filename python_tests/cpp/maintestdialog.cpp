@@ -8,12 +8,20 @@
 // clang-format off
 
 #include <wx/artprov.h>
+#include <wx/colour.h>
 #include <wx/gbsizer.h>
 #include <wx/panel.h>
 #include <wx/radiobox.h>
+#include <wx/ribbon/buttonbar.h>
+#include <wx/ribbon/gallery.h>
+#include <wx/ribbon/page.h>
+#include <wx/ribbon/panel.h>
+#include <wx/settings.h>
 #include <wx/sizer.h>
 #include <wx/statbox.h>
 #include <wx/valgen.h>
+
+#include "images.h"
 
 #include "maintestdialog.h"
 
@@ -27,6 +35,12 @@ inline wxImage wxueImage(const unsigned char* data, size_t size_data)
     image.LoadFile(strm);
     return image;
 };
+
+namespace wxue_img
+{
+    extern const unsigned char english_png[541];
+    extern const unsigned char french_png[252];
+}
 
 bool MainTestDialog::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     const wxPoint& pos, const wxSize& size, long style, const wxString &name)
@@ -416,13 +430,89 @@ bool MainTestDialog::Create(wxWindow* parent, wxWindowID id, const wxString& tit
     page_6->SetSizerAndFit(parent_sizer2);
 
     auto* page = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
-    m_notebook->AddPage(page, "Tab 3");
+    m_notebook->AddPage(page, "RibbonBar");
 
     auto* page_sizer_3 = new wxBoxSizer(wxVERTICAL);
 
-    m_staticText = new wxStaticText(page, wxID_ANY, "TODO: replace this control with something more useful...");
+    m_rbnBar = new wxRibbonBar(page, wxID_ANY, wxDefaultPosition, wxDefaultSize,
+        wxRIBBON_BAR_SHOW_PAGE_LABELS|wxRIBBON_BAR_SHOW_PAGE_ICONS|wxRIBBON_BAR_FLOW_HORIZONTAL);
+
+    m_rbnBar->SetArtProvider(new wxRibbonAUIArtProvider);
+    page_sizer_3->Add(m_rbnBar, wxSizerFlags().Expand().Border(wxALL));
+
+    auto* rbnPage = new wxRibbonPage(m_rbnBar, wxID_ANY, "First");
+    m_rbnBar->SetActivePage(rbnPage);
+
+    auto* rbnPanel = new wxRibbonPanel(rbnPage, wxID_ANY, "English", wxueImage(wxue_img::english_png, sizeof(
+        wxue_img::english_png)));
+
+    auto* first_parent_sizer = new wxBoxSizer(wxVERTICAL);
+
+    auto* box_sizer_15 = new wxBoxSizer(wxVERTICAL);
+
+    m_staticText = new wxStaticText(rbnPanel, wxID_ANY, "This is a sentence in English.");
     m_staticText->Wrap(200);
-    page_sizer_3->Add(m_staticText, wxSizerFlags().Border(wxALL));
+    box_sizer_15->Add(m_staticText, wxSizerFlags().Border(wxALL));
+
+    m_btn_6 = new wxButton(rbnPanel, wxID_ANY, "Switch");
+    box_sizer_15->Add(m_btn_6, wxSizerFlags().Center().Border(wxALL));
+
+    first_parent_sizer->Add(box_sizer_15, wxSizerFlags(1).Expand().Border(wxALL));
+    rbnPanel->SetSizerAndFit(first_parent_sizer);
+
+    auto* rbnPanel_2 = new wxRibbonPanel(rbnPage, wxID_ANY, "French", wxueImage(wxue_img::french_png, sizeof(
+        wxue_img::french_png)));
+    rbnPanel_2->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_MENU));
+
+    auto* first_parent_sizer_2 = new wxBoxSizer(wxVERTICAL);
+
+    auto* box_sizer_16 = new wxBoxSizer(wxVERTICAL);
+
+    m_staticText_3 = new wxStaticText(rbnPanel_2, wxID_ANY, wxString::FromUTF8("Ceci est une phrase en français."));
+    m_staticText_3->Wrap(200);
+    box_sizer_16->Add(m_staticText_3, wxSizerFlags().Border(wxALL));
+
+    m_btn_7 = new wxButton(rbnPanel_2, wxID_ANY, "Switch");
+    box_sizer_16->Add(m_btn_7, wxSizerFlags().Center().Border(wxALL));
+
+    first_parent_sizer_2->Add(box_sizer_16, wxSizerFlags(1).Expand().Border(wxALL));
+    rbnPanel_2->SetSizerAndFit(first_parent_sizer_2);
+
+    auto* ribbonPage2 = new wxRibbonPage(m_rbnBar, wxID_ANY, "Second");
+
+    auto* ribbonPanel2 = new wxRibbonPanel(ribbonPage2, wxID_ANY, "Button Panel");
+
+    auto* rbnBtnBar = new wxRibbonButtonBar(ribbonPanel2, wxID_ANY);
+    {
+        rbnBtnBar->AddButton(wxID_ANY, "Forward", wxArtProvider::GetBitmap(wxART_GO_FORWARD, wxART_OTHER), wxEmptyString,
+            wxRIBBON_BUTTON_NORMAL);
+        rbnBtnBar->AddButton(wxID_ANY, "Backward", wxueImage(wxue_img::left_png, sizeof(wxue_img::left_png)), wxEmptyString,
+            wxRIBBON_BUTTON_NORMAL);
+    }
+    rbnBtnBar->Realize();
+
+    auto* ribbonPage_2 = new wxRibbonPage(m_rbnBar, wxID_ANY, "Third");
+
+    auto* ribbonPanel_2 = new wxRibbonPanel(ribbonPage_2, wxID_ANY, "Tool Panel");
+
+    auto* rbnToolBar = new wxRibbonToolBar(ribbonPanel_2, wxID_ANY);
+    {
+        rbnToolBar->AddTool(wxID_FILE1, wxArtProvider::GetBitmap(wxART_GOTO_FIRST, wxART_TOOLBAR), wxEmptyString,
+            wxRIBBON_BUTTON_NORMAL);
+        rbnToolBar->AddTool(wxID_FILE9, wxArtProvider::GetBitmap(wxART_GOTO_LAST, wxART_TOOLBAR), wxEmptyString,
+            wxRIBBON_BUTTON_NORMAL);
+    }
+    rbnToolBar->Realize();
+
+    auto* ribbonPage_3 = new wxRibbonPage(m_rbnBar, wxID_ANY, "Fourth");
+
+    auto* rbnPanel_3 = new wxRibbonPanel(ribbonPage_3, wxID_ANY, "Gallery Panel");
+
+    auto* rbnGallery = new wxRibbonGallery(rbnPanel_3, wxID_ANY);
+    {
+        rbnGallery->Append(wxueImage(wxue_img::toggle_button_png, sizeof(wxue_img::toggle_button_png)), wxID_ANY);
+    }
+    rbnGallery->Realize();
     page->SetSizerAndFit(page_sizer_3);
 
     auto* box_sizer_14 = new wxBoxSizer(wxHORIZONTAL);
@@ -446,37 +536,161 @@ bool MainTestDialog::Create(wxWindow* parent, wxWindowID id, const wxString& tit
     Centre(wxBOTH);
 
     // Event handlers
-    Bind(wxEVT_INIT_DIALOG, &MainTestDialog::OnInit, this);
-    m_notebook->Bind(wxEVT_NOTEBOOK_PAGE_CHANGED, &MainTestDialog::OnPageChanged, this);
-    m_text_ctrl->Bind(wxEVT_TEXT, &MainTestDialog::OnText, this);
-    m_richText->Bind(wxEVT_TEXT, &MainTestDialog::OnRichText, this);
-    m_scintilla->Bind(wxEVT_STC_CHANGE, &MainTestDialog::OnStcChange, this);
-    m_btn->Bind(wxEVT_BUTTON, &MainTestDialog::OnButton, this);
-    m_btn_bitmaps->Bind(wxEVT_BUTTON, &MainTestDialog::OnButton, this);
-    m_toggleBtn->Bind(wxEVT_TOGGLEBUTTON, &MainTestDialog::OnToggle, this);
-    disable_bitmaps->Bind(wxEVT_CHECKBOX, &MainTestDialog::OnDisableBitmapsBtn, this);
-    m_btn_5->Bind(wxEVT_BUTTON, &MainTestDialog::OnButton, this);
-    radioBox->Bind(wxEVT_RADIOBOX, &MainTestDialog::OnRadioBox, this);
-    m_btn_3->Bind(wxEVT_BUTTON, &MainTestDialog::OnButton, this);
-    btn2->Bind(wxEVT_BUTTON, &MainTestDialog::OnPopupBtn, this);
-    m_radioBtn->Bind(wxEVT_RADIOBUTTON, &MainTestDialog::OnRadioButton, this);
-    m_radioBtn2->Bind(wxEVT_RADIOBUTTON, &MainTestDialog::OnRadioButton, this);
-    m_checkBox2->Bind(wxEVT_CHECKBOX, &MainTestDialog::OnCheckBox, this);
-    m_comboBox->Bind(wxEVT_COMBOBOX, &MainTestDialog::OnCombobox, this);
-    m_comboBox2->Bind(wxEVT_COMBOBOX, &MainTestDialog::OnCombobox, this);
-    m_choice->Bind(wxEVT_CHOICE, &MainTestDialog::OnChoice, this);
-    m_choice2->Bind(wxEVT_CHOICE, &MainTestDialog::OnChoice, this);
-    m_listbox->Bind(wxEVT_LISTBOX, &MainTestDialog::OnListBox, this);
-    m_listBox2->Bind(wxEVT_LISTBOX, &MainTestDialog::OnListBox, this);
-    m_checkList_2->Bind(wxEVT_CHECKLISTBOX, &MainTestDialog::OnListChecked, this);
-    m_checkList2->Bind(wxEVT_CHECKLISTBOX, &MainTestDialog::OnListChecked, this);
-    m_filePicker->Bind(wxEVT_FILEPICKER_CHANGED, &MainTestDialog::OnFileChanged, this);
-    m_dirPicker->Bind(wxEVT_DIRPICKER_CHANGED, &MainTestDialog::OnDirChanged, this);
-    m_colourPicker->Bind(wxEVT_COLOURPICKER_CHANGED, &MainTestDialog::OnColourChanged, this);
-    m_datePicker->Bind(wxEVT_DATE_CHANGED, &MainTestDialog::OnDateChanged, this);
-    m_timePicker->Bind(wxEVT_TIME_CHANGED, &MainTestDialog::OnTimeChanged, this);
-    m_fontPicker->Bind(wxEVT_FONTPICKER_CHANGED, &MainTestDialog::OnFontChanged, this);
     btn->Bind(wxEVT_BUTTON, &MainTestDialog::OnClearList, this);
+    m_btn_7->Bind(wxEVT_BUTTON,
+        [this](wxCommandEvent&)
+        {
+            OnEventName("Ceci est une phrase en français.");
+        });
+    m_btn_5->Bind(wxEVT_BUTTON,
+        [this](wxCommandEvent&)
+        {
+            OnEventName("CmdLinkBtn: wxEVT_BUTTON");
+        });
+    m_btn_6->Bind(wxEVT_BUTTON,
+        [this](wxCommandEvent&)
+        {
+            OnEventName("This is a sentence in English.");
+        });
+    m_btn_3->Bind(wxEVT_BUTTON,
+        [this](wxCommandEvent&)
+        {
+            OnEventName("Button: wxEVT_BUTTON");
+        });
+    m_btn->Bind(wxEVT_BUTTON,
+        [this](wxCommandEvent&)
+        {
+            OnEventName("Button: wxEVT_BUTTON");
+        });
+    m_btn_2->Bind(wxEVT_BUTTON,
+        [this](wxCommandEvent&)
+        {
+            OnEventName("Button: wxEVT_BUTTON");
+        });
+    m_btn_bitmaps->Bind(wxEVT_BUTTON,
+        [this](wxCommandEvent&)
+        {
+            OnEventName("Button: wxEVT_BUTTON");
+        });
+    m_btn_4->Bind(wxEVT_BUTTON,
+        [this](wxCommandEvent&)
+        {
+            OnEventName("Button: wxEVT_BUTTON");
+        });
+    btn2->Bind(wxEVT_BUTTON, &MainTestDialog::OnPopupBtn, this);
+    m_checkBox2->Bind(wxEVT_CHECKBOX,
+        [this](wxCommandEvent&)
+        {
+            OnEventName("CheckBox: wxEVT_CHECKBOX");
+        });
+    disable_bitmaps->Bind(wxEVT_CHECKBOX, &MainTestDialog::OnDisableBitmapsBtn, this);
+    m_checkList_2->Bind(wxEVT_CHECKLISTBOX,
+        [this](wxCommandEvent&)
+        {
+            OnEventName("CheckListBox1: wx.EVT_CHECKLISTBOX");
+        });
+    m_checkList2->Bind(wxEVT_CHECKLISTBOX,
+        [this](wxCommandEvent&)
+        {
+            OnEventName("CheckListBox2: wx.EVT_CHECKLISTBOX");
+        });
+    m_choice->Bind(wxEVT_CHOICE,
+        [this](wxCommandEvent&)
+        {
+            OnEventName("Choice: wx.EVT_CHOICE");
+        });
+    m_choice2->Bind(wxEVT_CHOICE,
+        [this](wxCommandEvent&)
+        {
+            OnEventName("Choice: wx.EVT_CHOICE");
+        });
+    m_colourPicker->Bind(wxEVT_COLOURPICKER_CHANGED,
+        [this](wxColourPickerEvent&)
+        {
+            OnEventName("ColourPicker: wxEVT_COLOURPICKER_CHANGED");
+        });
+    m_comboBox->Bind(wxEVT_COMBOBOX,
+        [this](wxCommandEvent&)
+        {
+            OnEventName("Combobox: wxEVT_COMBOBOX");
+        });
+    m_comboBox2->Bind(wxEVT_COMBOBOX,
+        [this](wxCommandEvent&)
+        {
+            OnEventName("Combobox: wxEVT_COMBOBOX");
+        });
+    m_datePicker->Bind(wxEVT_DATE_CHANGED,
+        [this](wxDateEvent&)
+        {
+            OnEventName("DatePicker: wx.EVT_DATE_CHANGED");
+        });
+    m_dirPicker->Bind(wxEVT_DIRPICKER_CHANGED,
+        [this](wxFileDirPickerEvent&)
+        {
+            OnEventName("DirPicker: wxEVT_DIRPICKER_CHANGED");
+        });
+    m_filePicker->Bind(wxEVT_FILEPICKER_CHANGED,
+        [this](wxFileDirPickerEvent&)
+        {
+            OnEventName("FilePicker: wxEVT_FILEPICKER_CHANGED");
+        });
+    m_fontPicker->Bind(wxEVT_FONTPICKER_CHANGED,
+        [this](wxFontPickerEvent&)
+        {
+            OnEventName("FontPicker: wx.OnFontChanged");
+        });
+    Bind(wxEVT_INIT_DIALOG, &MainTestDialog::OnInit, this);
+    m_listbox->Bind(wxEVT_LISTBOX,
+        [this](wxCommandEvent&)
+        {
+            OnEventName("ListBox1: wxEVT_LISTBOX");
+        });
+    m_listBox2->Bind(wxEVT_LISTBOX,
+        [this](wxCommandEvent&)
+        {
+            OnEventName("ListBox2: wxEVT_LISTBOX");
+        });
+    m_notebook->Bind(wxEVT_NOTEBOOK_PAGE_CHANGED, &MainTestDialog::OnPageChanged, this);
+    radioBox->Bind(wxEVT_RADIOBOX,
+        [this](wxCommandEvent&)
+        {
+            OnEventName("RadioBox: wxEVT_RADIOBOX");
+        });
+    m_radioBtn2->Bind(wxEVT_RADIOBUTTON,
+        [this](wxCommandEvent&)
+        {
+            OnEventName("RadioButton: wxEVT_RADIOBUTTON");
+        });
+    m_radioBtn->Bind(wxEVT_RADIOBUTTON,
+        [this](wxCommandEvent&)
+        {
+            OnEventName("RadioButton: wxEVT_RADIOBUTTON");
+        });
+    m_scintilla->Bind(wxEVT_STC_CHANGE,
+        [this](wxStyledTextEvent&)
+        {
+            OnEventName("wxStyledTextCtrl: wxEVT_STC_CHANGE");
+        });
+    m_text_ctrl->Bind(wxEVT_TEXT,
+        [this](wxCommandEvent&)
+        {
+            OnEventName("wxTextCtrl: wxEVT_TEXT");
+        });
+    m_richText->Bind(wxEVT_TEXT,
+        [this](wxCommandEvent&)
+        {
+            OnEventName("wxRichTextCtrl: wxEVT_TEXT");
+        });
+    m_timePicker->Bind(wxEVT_TIME_CHANGED,
+        [this](wxDateEvent&)
+        {
+            OnEventName("TimePicker: wxEVT_TIME_CHANGED");
+        });
+    m_toggleBtn->Bind(wxEVT_TOGGLEBUTTON,
+        [this](wxCommandEvent&)
+        {
+            OnEventName("Button: wxEVT_BUTTON");
+        });
 
     return true;
 }
@@ -502,6 +716,14 @@ namespace wxue_img
         239,191,89,153,227,56,171,48,12,157,40,138,136,162,136,95,113,12,65,0,187,29,42,105,10,183,183,40,138,34,0,
         1,136,233,116,122,233,39,126,57,198,21,16,188,188,64,154,254,7,183,248,27,183,73,156,116,14,159,88,75,0,0,
         0,0,73,69,78,68,174,66,96,130
+    };
+
+    const unsigned char left_png[158] {
+        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,24,0,0,0,24,8,6,0,0,0,224,119,61,248,0,0,0,9,112,72,89,
+        115,0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,0,80,73,68,65,84,72,199,237,208,193,13,128,48,12,4,193,77,68,73,
+        169,201,69,165,38,247,116,60,16,52,128,19,9,116,247,218,151,37,15,252,103,145,34,82,165,13,244,109,15,8,36,
+        80,245,221,190,148,218,68,38,50,145,137,76,84,180,227,142,22,121,197,28,60,47,206,209,94,245,86,162,207,238,
+        4,125,50,96,158,11,39,216,122,0,0,0,0,73,69,78,68,174,66,96,130
     };
 
     const unsigned char no_hour_png[347] {
@@ -536,6 +758,18 @@ namespace wxue_img
         206,16,182,239,101,225,187,227,4,168,42,152,38,220,222,190,20,31,31,225,224,65,10,203,130,135,7,153,164,241,
         120,7,23,23,217,56,199,49,132,97,54,137,142,3,187,157,2,240,27,89,2,185,55,227,129,139,244,0,0,0,0,73,69,78,
         68,174,66,96,130
+    };
+
+    const unsigned char toggle_button_png[277] {
+        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,
+        115,0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,0,199,73,68,65,84,56,203,99,96,24,5,163,0,29,48,158,191,249,230,
+        191,97,212,90,170,26,122,126,89,48,3,35,131,241,204,255,167,119,164,81,213,96,83,143,89,12,76,12,12,12,12,
+        127,254,99,199,166,162,140,12,166,162,140,40,124,116,121,116,61,172,76,16,195,89,24,24,24,24,56,153,49,109,
+        53,16,102,100,184,240,246,63,6,219,82,12,193,198,166,23,198,199,105,48,186,56,140,125,243,195,127,6,117,1,
+        70,134,155,31,254,99,53,152,139,5,201,96,24,7,29,32,139,195,216,184,104,24,32,24,20,184,92,204,201,204,192,
+        240,230,251,127,6,17,78,70,172,46,102,65,54,152,3,139,139,191,252,254,207,192,195,202,8,103,195,0,76,45,76,
+        158,3,135,111,89,24,24,24,24,216,152,176,75,254,250,251,159,36,62,93,50,200,40,24,5,152,0,0,191,144,85,198,
+        46,125,47,182,0,0,0,0,73,69,78,68,174,66,96,130
     };
 
 }

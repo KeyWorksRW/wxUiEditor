@@ -362,65 +362,21 @@ bool CommonCtrls::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     Centre(wxBOTH);
 
     // Event handlers
-    Bind(wxEVT_INIT_DIALOG, &CommonCtrls::OnInit, this);
-    Bind(wxEVT_CONTEXT_MENU, &CommonCtrls::OnContextMenu, this);
-    m_textCtrl->Bind(wxEVT_TEXT_ENTER,
+    m_btn->Bind(wxEVT_BUTTON,
         [this](wxCommandEvent&)
         {
-            m_infoBar->ShowMessage("wxEVT_TEXT_ENTER event");
+            m_infoBar->ShowMessage("wxEVT_BUTTON event");
             Fit();
-        } );
+        });
+    btn2->Bind(wxEVT_BUTTON, &CommonCtrls::OnPopupBtn, this);
     m_checkBox->Bind(wxEVT_CHECKBOX,
         [this](wxCommandEvent&)
         {
             m_infoBar->ShowMessage("wxEVT_CHECKBOX event");
             Fit();
 
-        } );
-    m_btn->Bind(wxEVT_BUTTON,
-        [this](wxCommandEvent&)
-        {
-            m_infoBar->ShowMessage("wxEVT_BUTTON event");
-            Fit();
-        } );
-    btn2->Bind(wxEVT_BUTTON, &CommonCtrls::OnPopupBtn, this);
-    m_radioBtn->Bind(wxEVT_RADIOBUTTON,
-        [this](wxCommandEvent&)
-        {
-            m_infoBar->ShowMessage("wxEVT_RADIOBUTTON event");
-            Fit();
-        } );
-    m_radioBtn2->Bind(wxEVT_RADIOBUTTON, &CommonCtrls::OnRadio, this);
+        });
     m_checkBox2->Bind(wxEVT_CHECKBOX, &CommonCtrls::OnCheckBox, this);
-    m_comboBox->Bind(wxEVT_COMBOBOX,
-        [this](wxCommandEvent&)
-        {
-            m_infoBar->ShowMessage("wxEVT_COMBOBOX event");
-            Fit();
-        } );
-    m_comboBox2->Bind(wxEVT_COMBOBOX,
-        [this](wxCommandEvent&)
-        {
-            m_infoBar->ShowMessage("wxEVT_COMBOBOX event");
-            Fit();
-        } );
-    m_comboBox2->Bind(wxEVT_COMBOBOX_CLOSEUP,
-        [this](wxCommandEvent&)
-        {
-            m_infoBar->ShowMessage("wxEVT_COMBOBOX_CLOSEUP event");
-            Fit();
-        } );
-    m_choice->Bind(wxEVT_CHOICE,
-        [this](wxCommandEvent&)
-        {
-            m_infoBar->ShowMessage("wxEVT_CHOICE event");
-            Fit();
-        } );
-    m_choice2->Bind(wxEVT_CHOICE, &CommonCtrls::OnChoice, this);
-    m_listbox->Bind(wxEVT_LISTBOX, &CommonCtrls::OnListBox, this);
-    m_listBox2->Bind(wxEVT_LISTBOX, &CommonCtrls::OnListBox, this);
-    m_checkList->Bind(wxEVT_CHECKLISTBOX, &CommonCtrls::OnListChecked, this);
-    m_radioBox->Bind(wxEVT_RADIOBOX, &CommonCtrls::OnRadioBox, this);
     m_checkPlayAnimation->Bind(wxEVT_CHECKBOX,
         [this](wxCommandEvent&)
         {
@@ -433,7 +389,58 @@ bool CommonCtrls::Create(wxWindow* parent, wxWindowID id, const wxString& title,
                 m_animation_ctrl->Stop();
             }
 
-        } );
+        });
+    m_checkList->Bind(wxEVT_CHECKLISTBOX, &CommonCtrls::OnListChecked, this);
+    m_choice->Bind(wxEVT_CHOICE,
+        [this](wxCommandEvent&)
+        {
+            m_infoBar->ShowMessage("wxEVT_CHOICE event");
+            Fit();
+        });
+    m_choice2->Bind(wxEVT_CHOICE, &CommonCtrls::OnChoice, this);
+    m_comboBox->Bind(wxEVT_COMBOBOX,
+        [this](wxCommandEvent&)
+        {
+            m_infoBar->ShowMessage("wxEVT_COMBOBOX event");
+            Fit();
+        });
+    m_comboBox2->Bind(wxEVT_COMBOBOX,
+        [this](wxCommandEvent&)
+        {
+            m_infoBar->ShowMessage("wxEVT_COMBOBOX event");
+            Fit();
+        });
+    m_comboBox2->Bind(wxEVT_COMBOBOX_CLOSEUP,
+        [this](wxCommandEvent&)
+        {
+            m_infoBar->ShowMessage("wxEVT_COMBOBOX_CLOSEUP event");
+            Fit();
+        });
+    Bind(wxEVT_CONTEXT_MENU, &CommonCtrls::OnContextMenu, this);
+    Bind(wxEVT_INIT_DIALOG, &CommonCtrls::OnInit, this);
+    m_listbox->Bind(wxEVT_LISTBOX, &CommonCtrls::OnListBox, this);
+    m_listBox2->Bind(wxEVT_LISTBOX, &CommonCtrls::OnListBox, this);
+    m_edit_listbox->Bind(wxEVT_LIST_BEGIN_DRAG,
+        [this](wxListEvent&)
+        {
+            m_infoBar->ShowMessage("wxEVT_LIST_BEGIN_DRAG event");
+            Fit();
+        });
+    m_radioBox->Bind(wxEVT_RADIOBOX, &CommonCtrls::OnRadioBox, this);
+    m_radioBtn->Bind(wxEVT_RADIOBUTTON,
+        [this](wxCommandEvent&)
+        {
+            m_infoBar->ShowMessage("wxEVT_RADIOBUTTON event");
+            Fit();
+        });
+    m_radioBtn2->Bind(wxEVT_RADIOBUTTON, &CommonCtrls::OnRadio, this);
+    m_slider->Bind(wxEVT_SLIDER, &CommonCtrls::OnSlider, this);
+    m_textCtrl->Bind(wxEVT_TEXT_ENTER,
+        [this](wxCommandEvent&)
+        {
+            m_infoBar->ShowMessage("wxEVT_TEXT_ENTER event");
+            Fit();
+        });
     m_toggleBtn->Bind(wxEVT_TOGGLEBUTTON,
         [this](wxCommandEvent&)
         {
@@ -450,14 +457,7 @@ bool CommonCtrls::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 
             m_infoBar->ShowMessage("wxEVT_TOGGLEBUTTON event");
             Fit();
-        } );
-    m_edit_listbox->Bind(wxEVT_LIST_BEGIN_DRAG,
-        [this](wxListEvent&)
-        {
-            m_infoBar->ShowMessage("wxEVT_LIST_BEGIN_DRAG event");
-            Fit();
-        } );
-    m_slider->Bind(wxEVT_SLIDER, &CommonCtrls::OnSlider, this);
+        });
 
     return true;
 }

@@ -174,7 +174,7 @@ void BookCtorAddImagelist(tt_string& code, Node* node)
                     AddTreebookImageCode(code, child_node.get(), image_index);
                 }
             }
-            code << "\n" << node->get_node_name() << "->AssignImageList(img_list);";
+            code << "\n\t" << node->get_node_name() << "->AssignImageList(img_list);";
 
             code << "\n#endif  // wxCHECK_VERSION(3, 1, 6)";
         }

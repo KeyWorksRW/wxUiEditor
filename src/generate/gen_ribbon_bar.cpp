@@ -157,14 +157,17 @@ bool RibbonBarFormGenerator::SettingsCode(Code& code)
     if (theme.is_sameas("Default"))
     {
         code.FormFunction("SetArtProvider(").Str(code.is_cpp() ? "new " : "").Add("wxRibbonDefaultArtProvider");
+        code.AddIfPython("()");
     }
     else if (theme.is_sameas("Generic"))
     {
         code.FormFunction("SetArtProvider(").Str(code.is_cpp() ? "new " : "").Add("wxRibbonAUIArtProvider");
+        code.AddIfPython("()");
     }
     else if (theme.is_sameas("MSW"))
     {
         code.FormFunction("SetArtProvider(").Str(code.is_cpp() ? "new " : "").Add("wxRibbonMSWArtProvider");
+        code.AddIfPython("()");
     }
     code.EndFunction();
 
@@ -239,14 +242,17 @@ bool RibbonBarGenerator::SettingsCode(Code& code)
     if (theme.is_sameas("Default"))
     {
         code.Eol().NodeName().Function("SetArtProvider(").Str(code.is_cpp() ? "new " : "").Add("wxRibbonDefaultArtProvider");
+        code.AddIfPython("()");
     }
     else if (theme.is_sameas("Generic"))
     {
         code.Eol().NodeName().Function("SetArtProvider(").Str(code.is_cpp() ? "new " : "").Add("wxRibbonAUIArtProvider");
+        code.AddIfPython("()");
     }
     else if (theme.is_sameas("MSW"))
     {
         code.Eol().NodeName().Function("SetArtProvider(").Str(code.is_cpp() ? "new " : "").Add("wxRibbonMSWArtProvider");
+        code.AddIfPython("()");
     }
     code.EndFunction();
 

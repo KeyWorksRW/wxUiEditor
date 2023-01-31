@@ -11,6 +11,7 @@ import wx.ribbon
 import wx.richtext
 import wx.stc
 
+import images
 from wx.lib.embeddedimage import PyEmbeddedImage
 
 normal_png = PyEmbeddedImage(
@@ -42,13 +43,6 @@ no_hour_png = PyEmbeddedImage(
     b"K03T/IBneR7AAINuohZxi3ejEWVZArgxBQcRkaW1VhXcZa3VoiiCOWBJStBmmmXZhw9E8JSeqRJw/4jI"
     b"/b8FIjK58Qk3QSMijz4gIioiKYn7iQPP8TTL89fu4f18JrXFrUSJTUGJqtR13f8gxfBvSVTCMOiD/Z6H"
     b"4xGAt8slKcm9+hXUBO08n//djVUFux3aVvoF3WivIiuis94AAAAASUVORK5CYII=")
-
-french_png = PyEmbeddedImage(
-    b"iVBORw0KGgoAAAANSUhEUgAAABMAAAAPCAIAAACJJmN7AAAAA3NCSVQICAjb4U/gAAAACXBIWXMAAArw"
-    b"AAAK8AFCrDSYAAAAn0lEQVQoz2P8/Pnr7z///v37zwADbGzMLMyMDEjg/5/f/3//gHMZmZgZWVhZ3r77"
-    b"cef+56/ffjP8Z2BgZGBgYNDVEhIVZoebxMjA8Pft81/XjjAwMDD8/8/AyMjMzceqqM9y/+GXZavuPn/5"
-    b"DW5kfqYWP78Isp0/7178PK8czmURVxCIqGZiIBeM6hzVCU2VDx6+JZxu3zzBTLeMZOcVAMZLUf3cV8UE"
-    b"AAAAAElFTkSuQmCC")
 
 left_png = PyEmbeddedImage(
     b"iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAACXBIWXMAAAsTAAALEwEAmpwYAAAAUElE"
@@ -485,8 +479,8 @@ class MainTestDialog(wx.Dialog):
         rbnPage = wx.ribbon.RibbonPage(self.m_rbnBar, wx.ID_ANY, "First")
         self.m_rbnBar.SetActivePage(rbnPage)
 
-        rbnPanel = wx.ribbon.RibbonPanel(rbnPage, wx.ID_ANY, "English", wx.Image(
-        "../art/english.xpm"))
+        rbnPanel = wx.ribbon.RibbonPanel(rbnPage, wx.ID_ANY, "English",
+            images.english_png.Bitmap)
 
         first_parent_sizer = wx.BoxSizer(wx.VERTICAL)
 
@@ -504,7 +498,7 @@ class MainTestDialog(wx.Dialog):
         rbnPanel.SetSizerAndFit(first_parent_sizer)
 
         rbnPanel_2 = wx.ribbon.RibbonPanel(rbnPage, wx.ID_ANY, "French",
-            french_png.Bitmap)
+            images.french_png.Bitmap)
         rbnPanel_2.SetBackgroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_MENU))
 
         first_parent_sizer_2 = wx.BoxSizer(wx.VERTICAL)
@@ -526,29 +520,29 @@ class MainTestDialog(wx.Dialog):
 
         ribbonPanel2 = wx.ribbon.RibbonPanel(ribbonPage2, wx.ID_ANY, "Button Panel")
 
-        rbnBtnBar = wx.RibbonButtonBar(ribbonPanel2, wx.ID_ANY)
+        rbnBtnBar = wx.ribbon.RibbonButtonBar(ribbonPanel2, wx.ID_ANY)
         rbnBtnBar.AddButton(wx.ID_ANY, "Forward", wx.ArtProvider.GetBitmap(
-            wx.ART_GO_FORWARD, wx.ART_OTHER), "", wx.RIBBON_BUTTON_NORMAL)
+            wx.ART_GO_FORWARD, wx.ART_OTHER), "", wx.ribbon.RIBBON_BUTTON_NORMAL)
         rbnBtnBar.AddButton(wx.ID_ANY, "Backward", left_png.Bitmap, "",
-            wx.RIBBON_BUTTON_NORMAL)
+            wx.ribbon.RIBBON_BUTTON_NORMAL)
         rbnBtnBar.Realize()
 
         ribbonPage_2 = wx.ribbon.RibbonPage(self.m_rbnBar, wx.ID_ANY, "Third")
 
         ribbonPanel_2 = wx.ribbon.RibbonPanel(ribbonPage_2, wx.ID_ANY, "Tool Panel")
 
-        rbnToolBar = wx.RibbonToolBar(ribbonPanel_2, wx.ID_ANY)
+        rbnToolBar = wx.ribbon.RibbonToolBar(ribbonPanel_2, wx.ID_ANY)
         rbnToolBar.AddTool(wx.ID_FILE1, wx.ArtProvider.GetBitmap(wx.ART_GOTO_FIRST,
-            wx.ART_TOOLBAR), "", wx.RIBBON_BUTTON_NORMAL)
+            wx.ART_TOOLBAR), "", wx.ribbon.RIBBON_BUTTON_NORMAL)
         rbnToolBar.AddTool(wx.ID_FILE9, wx.ArtProvider.GetBitmap(wx.ART_GOTO_LAST,
-            wx.ART_TOOLBAR), "", wx.RIBBON_BUTTON_NORMAL)
+            wx.ART_TOOLBAR), "", wx.ribbon.RIBBON_BUTTON_NORMAL)
         rbnToolBar.Realize()
 
         ribbonPage_3 = wx.ribbon.RibbonPage(self.m_rbnBar, wx.ID_ANY, "Fourth")
 
         rbnPanel_3 = wx.ribbon.RibbonPanel(ribbonPage_3, wx.ID_ANY, "Gallery Panel")
 
-        rbnGallery = wx.RibbonGallery(rbnPanel_3, wx.ID_ANY)
+        rbnGallery = wx.ribbon.RibbonGallery(rbnPanel_3, wx.ID_ANY)
         rbnGallery.Append(toggle_button_png.Bitmap, wx.ID_ANY)
         rbnGallery.Realize()
         page.SetSizerAndFit(page_sizer_3)
@@ -585,10 +579,10 @@ class MainTestDialog(wx.Dialog):
 
         # Bind Event handlers
         btn.Bind(wx.EVT_BUTTON, self.OnClearList)
-        self.m_btn_7.Bind(wx.EVT_BUTTON, self.OnEvent)
+        self.m_btn_7.Bind(wx.EVT_BUTTON, lambda event:self.OnEventName("Ceci est une phrase en français."))
         self.m_btn_5.Bind(wx.EVT_BUTTON, lambda event:
             self.m_events_list.Select(self.m_events_list.Append("CmdLinkBtn: wx.EVT_BUTTON")))
-        self.m_btn_6.Bind(wx.EVT_BUTTON, self.OnEvent)
+        self.m_btn_6.Bind(wx.EVT_BUTTON, lambda event:self.OnEventName("This is a sentence in English."))
         self.m_btn_3.Bind(wx.EVT_BUTTON, lambda event:self.OnEventName("Button: wx.EVT_BUTTON"))
         self.m_btn.Bind(wx.EVT_BUTTON, lambda event:
             self.m_events_list.Select(self.m_events_list.Append("Button: wx.EVT_BUTTON")))
@@ -599,49 +593,46 @@ class MainTestDialog(wx.Dialog):
         self.m_btn_4.Bind(wx.EVT_BUTTON, lambda event:
             self.m_events_list.Select(self.m_events_list.Append("Button: wx.EVT_BUTTON")))
         btn2.Bind(wx.EVT_BUTTON, self.OnPopupBtn)
-        self.m_checkBox2.Bind(wx.EVT_CHECKBOX, lambda event:self.OnEventName("OnCheckBox:wx.EVT_CHECKBOX"))
+        self.m_checkBox2.Bind(wx.EVT_CHECKBOX, lambda event:self.OnEventName("CheckBox: wx.EVT_CHECKBOX"))
         disable_bitmaps.Bind(wx.EVT_CHECKBOX, self.OnDisableBitmapsBtn)
         self.m_checkList_2.Bind(wx.EVT_CHECKLISTBOX, lambda event:
-            self.OnEventName("wx.CheckListBox: wx.EVT_CHECKLISTBOX"))
+            self.OnEventName("CheckListBox1: wx.EVT_CHECKLISTBOX"))
         self.m_checkList2.Bind(wx.EVT_CHECKLISTBOX, lambda event:
-            self.OnEventName("wx.CheckListBox: wx.EVT_CHECKLISTBOX"))
-        self.m_choice.Bind(wx.EVT_CHOICE, lambda event:self.OnEventName("OnChoice: wx.EVT_CHOICE"))
+            self.OnEventName("CheckListBox2: wx.EVT_CHECKLISTBOX"))
+        self.m_choice.Bind(wx.EVT_CHOICE, lambda event:self.OnEventName("Choice: wx.EVT_CHOICE"))
         self.m_choice2.Bind(wx.EVT_CHOICE, lambda event:self.OnEventName("OnChoice: wx.EVT_CHOICE"))
         self.m_colourPicker.Bind(wx.EVT_COLOURPICKER_CHANGED, lambda event:
-            self.OnEventName("OnColourChanged: wx.EVT_COLOURPICKER_CHANGED"))
-        self.m_comboBox.Bind(wx.EVT_COMBOBOX, lambda event:self.OnEventName("OnCombobox: wx.EVT_COMBOBOX"))
+            self.OnEventName("ColourPicker: wx.EVT_COLOURPICKER_CHANGED"))
+        self.m_comboBox.Bind(wx.EVT_COMBOBOX, lambda event:self.OnEventName("Combobox: wx.EVT_COMBOBOX"))
         self.m_comboBox2.Bind(wx.EVT_COMBOBOX, lambda event:self.OnEventName("OnCombobox: wx.EVT_COMBOBOX"))
         self.m_datePicker.Bind(wx.adv.EVT_DATE_CHANGED, lambda event:
-            self.OnEventName("OnDateChanged: wx.EVT_DATE_CHANGED"))
+            self.OnEventName("DatePicker: wx.EVT_DATE_CHANGED"))
         self.m_dirPicker.Bind(wx.EVT_DIRPICKER_CHANGED, lambda event:
-            self.OnEventName("OnDirChanged: wx.EVT_DIRPICKER_CHANGED"))
+            self.OnEventName("DirPicker: wx.EVT_DIRPICKER_CHANGED"))
         self.m_filePicker.Bind(wx.EVT_FILEPICKER_CHANGED, lambda event:
-            self.OnEventName("OnFileChanged: wx.EVT_FILEPICKER_CHANGED"))
+            self.OnEventName("FilePicker: wx.EVT_FILEPICKER_CHANGED"))
         self.m_fontPicker.Bind(wx.EVT_FONTPICKER_CHANGED, lambda event:
-            self.OnEventName("OnFontChanged: wx.OnFontChanged"))
+            self.OnEventName("FontPicker: wx.OnFontChanged"))
         self.Bind(wx.EVT_INIT_DIALOG, self.OnInit)
-        self.m_listbox.Bind(wx.EVT_LISTBOX, lambda event:self.OnEventName("wx.ListBox: wx.EVT_LISTBOX"))
-        self.m_listBox2.Bind(wx.EVT_LISTBOX, lambda event:self.OnEventName("wx.ListBox: wx.EVT_LISTBOX"))
+        self.m_listbox.Bind(wx.EVT_LISTBOX, lambda event:self.OnEventName("ListBox1: wx.EVT_LISTBOX"))
+        self.m_listBox2.Bind(wx.EVT_LISTBOX, lambda event:self.OnEventName("ListBox2: wx.EVT_LISTBOX"))
         self.m_notebook.Bind(wx.EVT_NOTEBOOK_PAGE_CHANGED, self.OnPageChanged)
-        radioBox.Bind(wx.EVT_RADIOBOX, lambda event:self.OnEventName("OnRadioBox: wx.EVT_RADIOBOX"))
+        radioBox.Bind(wx.EVT_RADIOBOX, lambda event:self.OnEventName("RadioBox: wx.EVT_RADIOBOX"))
         self.m_radioBtn2.Bind(wx.EVT_RADIOBUTTON, lambda event:
-            self.OnEventName("OnRadioButton: wx.EVT_RADIOBUTTON"))
+            self.OnEventName("RadioButton: wx.EVT_RADIOBUTTON"))
         self.m_radioBtn.Bind(wx.EVT_RADIOBUTTON, lambda event:
-            self.OnEventName("OnRadioButton: wx.EVT_RADIOBUTTON"))
+            self.OnEventName("RadioButton: wx.EVT_RADIOBUTTON"))
         self.m_scintilla.Bind(wx.stc.EVT_STC_CHANGE, lambda event:
             self.OnEventName("wx.StyledTextCtrl: wx.EVT_STC_CHANGE"))
         self.m_text_ctrl.Bind(wx.EVT_TEXT, lambda event:self.OnEventName("wx.TextCtrl: wx.EVT_TEXT"))
         self.m_richText.Bind(wx.EVT_TEXT, lambda event:self.OnEventName("wx.RichTextCtrl: wx.EVT_TEXT"))
         self.m_timePicker.Bind(wx.adv.EVT_TIME_CHANGED, lambda event:
-            self.OnEventName("OnTimeChanged: wx.EVT_TIME_CHANGED"))
+            self.OnEventName("TimePicker: wx.EVT_TIME_CHANGED"))
         self.m_toggleBtn.Bind(wx.EVT_TOGGLEBUTTON, lambda event:self.OnEventName("OnToggle: wx.EVT_BUTTON"))
 
     # Unimplemented Event handler functions
     # Copy any listed and paste them below the comment block, or to your inherited class.
     """
-    def OnEvent(self, event):
-        event.Skip()
-
     """
 
 # ************* End of generated code ***********

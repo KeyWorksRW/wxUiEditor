@@ -26,13 +26,6 @@ protected:
     wxComboBox* m_comboBox;
 };
 
-namespace wxue_img
-{
-    // Images declared in this class module:
-
-    extern const unsigned char japanese_png[377];
-}
-
 // ************* End of generated code ***********
 // DO NOT EDIT THIS COMMENT BLOCK!
 //

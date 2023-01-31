@@ -20,6 +20,15 @@
       <node
         class="embedded_image"
         bitmap="Embed;../art/wiztest2.png" />
+      <node
+        class="embedded_image"
+        bitmap="Embed;art/english.png" />
+      <node
+        class="embedded_image"
+        bitmap="Embed;art/french.png" />
+      <node
+        class="embedded_image"
+        bitmap="Embed;art/japanese.png" />
     </node>
     <node
       class="wxFrame"
@@ -153,7 +162,7 @@
       class="wxDialog"
       class_name="MainTestDialog"
       base_file="maintestdialog"
-      inserted_hdr_code="void OnEventName(const std::string&amp; event_name)@@{@@    m_events_list->Select(m_events_list->Append(event_name));@@}"
+      inserted_hdr_code="void OnEventName(const std::string&amp; event_name)@@{@@    m_events_list->Select(m_events_list->Append(wxString().FromUTF8(event_name)));@@}"
       insert_python_code="import popupwin"
       python_file="main_test_dlg"
       wxEVT_INIT_DIALOG="OnInit">
@@ -651,7 +660,7 @@
                           label="Switch"
                           var_name="m_btn_6"
                           alignment="wxALIGN_CENTER_HORIZONTAL"
-                          wxEVT_BUTTON="[this](wxCommandEvent&amp;)@@{@@m_scintilla->ClearAll();  m_scintilla->AddTextRaw(&quot;This is a sentence in English.&quot;);@@}" />
+                          wxEVT_BUTTON="[this](wxCommandEvent&amp;)@@{@@OnEventName(&quot;This is a sentence in English.&quot;);@@}[python:lambda]self.OnEventName(&quot;This is a sentence in English.&quot;)" />
                       </node>
                     </node>
                   </node>
@@ -682,7 +691,7 @@
                           label="Switch"
                           var_name="m_btn_7"
                           alignment="wxALIGN_CENTER_HORIZONTAL"
-                          wxEVT_BUTTON="[this](wxCommandEvent&amp;)@@{@@m_scintilla->ClearAll();  m_scintilla->AddTextRaw(&quot;Ceci est une phrase en français.&quot;);@@}" />
+                          wxEVT_BUTTON="[this](wxCommandEvent&amp;)@@{@@OnEventName(&quot;Ceci est une phrase en français.&quot;);@@}[python:lambda]self.OnEventName(&quot;Ceci est une phrase en français.&quot;)" />
                       </node>
                     </node>
                   </node>

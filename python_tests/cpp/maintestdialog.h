@@ -62,7 +62,7 @@ public:
 
     void OnEventName(const std::string& event_name)
     {
-        m_events_list->Select(m_events_list->Append(event_name));
+        m_events_list->Select(m_events_list->Append(wxString().FromUTF8(event_name)));
     }
 
 protected:
@@ -135,9 +135,7 @@ namespace wxue_img
 {
     // Images declared in this class module:
 
-    extern const unsigned char english_png[541];
     extern const unsigned char focus_png[517];
-    extern const unsigned char french_png[252];
     extern const unsigned char left_png[158];
     extern const unsigned char no_hour_png[347];
     extern const unsigned char normal_png[508];

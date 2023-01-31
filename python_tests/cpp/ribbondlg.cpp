@@ -16,6 +16,8 @@
 #include <wx/settings.h>
 #include <wx/sizer.h>
 
+#include "images.h"
+
 #include "ribbondlg.h"
 
 #include "../art/english.xpm"

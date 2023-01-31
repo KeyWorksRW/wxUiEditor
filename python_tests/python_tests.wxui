@@ -60,6 +60,12 @@
             wxEVT_MENU="OnMainTestDlg" />
           <node
             class="wxMenuItem"
+            bitmap="Embed;../src/art_src/wxNotebook.png"
+            label="BookTestDlg"
+            var_name="menu_item_4"
+            wxEVT_MENU="OnBookTestDlg" />
+          <node
+            class="wxMenuItem"
             bitmap="Embed;../art/wxPython.png"
             label="PythonDlg"
             var_name="menu_item_2"
@@ -136,9 +142,21 @@
         class="wxToolBar">
         <node
           class="tool"
+          bitmap="Embed;../src/art_src/debug_32.png"
+          label="MainTestDlg"
+          var_name="tool_4"
+          wxEVT_TOOL="OnMainTestDlg" />
+        <node
+          class="tool"
+          bitmap="Embed;../src/art_src/wxNotebook.png"
+          label="BookTestDlg"
+          var_name="tool_5"
+          wxEVT_TOOL="OnBookTestDlg" />
+        <node
+          class="tool"
           bitmap="Embed;../art/wxPython_1_5x.png"
           label="PythonDlg"
-          var_name="tool_4"
+          var_name="tool_3"
           wxEVT_TOOL="OnPythonDlg" />
         <node
           class="tool"
@@ -1452,7 +1470,7 @@
               wxEVT_BUTTON="[this](wxCommandEvent&amp;)@@{@@m_choicebook->SetSelection(2);@@}" />
             <node
               class="BookPage"
-              bitmap="XPM;../art/english.xpm"
+              bitmap="Embed;art/english.png"
               label="English"
               background_colour="wxSYS_COLOUR_BTNFACE"
               window_style="wxTAB_TRAVERSAL">
@@ -1479,7 +1497,7 @@
             </node>
             <node
               class="BookPage"
-              bitmap="XPM;../art/french.xpm"
+              bitmap="Embed;art/french.png"
               label="Français"
               var_name="page_2"
               background_colour="wxSYS_COLOUR_BTNFACE"
@@ -1507,7 +1525,7 @@
             </node>
             <node
               class="BookPage"
-              bitmap="XPM;../art/japanese.xpm"
+              bitmap="Embed;art/japanese.png"
               label="日本語"
               var_name="page_3"
               background_colour="wxSYS_COLOUR_BTNFACE"
@@ -1559,7 +1577,7 @@
             minimum_size="400,400">
             <node
               class="BookPage"
-              bitmap="XPM;../art/english.xpm"
+              bitmap="Embed;art/english.png"
               label="English"
               background_colour="wxSYS_COLOUR_BTNFACE"
               window_style="wxTAB_TRAVERSAL">
@@ -1575,7 +1593,7 @@
             </node>
             <node
               class="BookPage"
-              bitmap="XPM;../art/french.xpm"
+              bitmap="Embed;art/french.png"
               label="Français"
               var_name="page_2"
               background_colour="wxSYS_COLOUR_BTNFACE"
@@ -1592,7 +1610,7 @@
             </node>
             <node
               class="BookPage"
-              bitmap="XPM;../art/japanese.xpm"
+              bitmap="Embed;art/japanese.png"
               label="日本語"
               var_name="page_3"
               background_colour="wxSYS_COLOUR_BTNFACE"
@@ -1635,7 +1653,7 @@
             flags="wxEXPAND">
             <node
               class="BookPage"
-              bitmap="XPM;../art/english.xpm"
+              bitmap="Embed;art/english.png"
               label="English"
               background_colour="wxSYS_COLOUR_BTNFACE"
               window_style="wxTAB_TRAVERSAL">
@@ -1651,7 +1669,7 @@
             </node>
             <node
               class="BookPage"
-              bitmap="XPM;../art/french.xpm"
+              bitmap="Embed;art/french.png"
               label="Français"
               var_name="page_2"
               background_colour="wxSYS_COLOUR_BTNFACE"
@@ -1668,7 +1686,7 @@
             </node>
             <node
               class="BookPage"
-              bitmap="XPM;../art/japanese.xpm"
+              bitmap="Embed;art/japanese.png"
               label="日本語"
               var_name="page_3"
               background_colour="wxSYS_COLOUR_BTNFACE"
@@ -1707,7 +1725,7 @@
             minimum_size="400,400">
             <node
               class="BookPage"
-              bitmap="XPM;../art/english.xpm"
+              bitmap="Embed;art/english.png"
               label="English"
               background_colour="wxSYS_COLOUR_BTNFACE"
               window_style="wxTAB_TRAVERSAL">
@@ -1723,7 +1741,7 @@
             </node>
             <node
               class="BookPage"
-              bitmap="XPM;../art/french.xpm"
+              bitmap="Embed;art/french.png"
               label="Français"
               var_name="page_2"
               background_colour="wxSYS_COLOUR_BTNFACE"
@@ -1740,7 +1758,7 @@
             </node>
             <node
               class="BookPage"
-              bitmap="XPM;../art/japanese.xpm"
+              bitmap="Embed;art/japanese.png"
               label="日本語"
               var_name="page_3"
               background_colour="wxSYS_COLOUR_BTNFACE"
@@ -1780,7 +1798,7 @@
             minimum_size="400,400">
             <node
               class="BookPage"
-              bitmap="XPM;../art/english.xpm"
+              bitmap="Embed;art/english.png"
               label="English"
               background_colour="wxSYS_COLOUR_BTNFACE"
               window_style="wxTAB_TRAVERSAL">
@@ -1830,7 +1848,7 @@
             </node>
             <node
               class="BookPage"
-              bitmap="XPM;../art/french.xpm"
+              bitmap="Embed;art/french.png"
               label="Français"
               var_name="page_2"
               background_colour="wxSYS_COLOUR_BTNFACE"
@@ -1847,7 +1865,7 @@
             </node>
             <node
               class="BookPage"
-              bitmap="XPM;../art/japanese.xpm"
+              bitmap="Embed;art/japanese.png"
               label="日本語"
               var_name="page_3"
               background_colour="wxSYS_COLOUR_BTNFACE"
@@ -2292,6 +2310,346 @@
             var_name="menu_item_6"
             wxEVT_MENU="[this](wxCommandEvent&amp;) { m_gauge->SetValue(75); }" />
         </node>
+      </node>
+    </node>
+    <node
+      class="wxDialog"
+      class_name="BookTestDlg"
+      title="Book tests"
+      base_file="booktest_dlg"
+      use_derived_class="0"
+      python_file="booktest_dlg">
+      <node
+        class="wxBoxSizer"
+        orientation="wxVERTICAL"
+        var_name="dlg_sizer"
+        minimum_size="400,400d">
+        <node
+          class="wxNotebook"
+          flags="wxEXPAND"
+          proportion="1">
+          <node
+            class="BookPage"
+            label="Tab 1"
+            var_name="page_2"
+            window_style="wxTAB_TRAVERSAL">
+            <node
+              class="wxBoxSizer"
+              orientation="wxVERTICAL"
+              var_name="page_sizer_1">
+              <node
+                class="wxStaticText"
+                label="TODO: replace this control with something more useful..."
+                var_name="m_staticText_2"
+                wrap="200" />
+            </node>
+          </node>
+          <node
+            class="BookPage"
+            label="ListBook"
+            var_name="page_3"
+            window_style="wxTAB_TRAVERSAL">
+            <node
+              class="wxBoxSizer"
+              orientation="wxVERTICAL"
+              var_name="page_sizer_2">
+              <node
+                class="wxListbook"
+                display_images="1"
+                style="wxLB_LEFT"
+                minimum_size="400,400">
+                <node
+                  class="BookPage"
+                  bitmap="Embed;art/english.png"
+                  label="English"
+                  var_name="page_6"
+                  background_colour="wxSYS_COLOUR_BTNFACE"
+                  window_style="wxTAB_TRAVERSAL">
+                  <node
+                    class="wxBoxSizer"
+                    orientation="wxVERTICAL"
+                    var_name="parent_sizer">
+                    <node
+                      class="wxStaticText"
+                      label="This is a sentence in English."
+                      var_name="m_staticText_6" />
+                  </node>
+                </node>
+                <node
+                  class="BookPage"
+                  bitmap="Embed;art/french.png"
+                  label="Français"
+                  var_name="page_7"
+                  background_colour="wxSYS_COLOUR_BTNFACE"
+                  window_style="wxTAB_TRAVERSAL">
+                  <node
+                    class="wxBoxSizer"
+                    orientation="wxVERTICAL"
+                    var_name="parent_sizer_2">
+                    <node
+                      class="wxStaticText"
+                      label="Ceci est une phrase en français."
+                      var_name="m_staticText_3" />
+                  </node>
+                </node>
+                <node
+                  class="BookPage"
+                  bitmap="Embed;art/japanese.png"
+                  label="日本語"
+                  var_name="page_8"
+                  background_colour="wxSYS_COLOUR_BTNFACE"
+                  window_style="wxTAB_TRAVERSAL">
+                  <node
+                    class="wxBoxSizer"
+                    orientation="wxVERTICAL"
+                    var_name="parent_sizer_3">
+                    <node
+                      class="wxStaticText"
+                      label="これは日本語の文章です。"
+                      var_name="m_staticText_7" />
+                  </node>
+                </node>
+              </node>
+            </node>
+          </node>
+          <node
+            class="BookPage"
+            label="NoteBook"
+            var_name="page_4"
+            window_style="wxTAB_TRAVERSAL">
+            <node
+              class="wxBoxSizer"
+              orientation="wxVERTICAL"
+              var_name="page_sizer_3">
+              <node
+                class="wxNotebook"
+                display_images="1"
+                var_name="m_notebook_2"
+                minimum_size="400,400"
+                flags="wxEXPAND">
+                <node
+                  class="BookPage"
+                  bitmap="Embed;art/english.png"
+                  label="English"
+                  var_name="page_9"
+                  background_colour="wxSYS_COLOUR_BTNFACE"
+                  window_style="wxTAB_TRAVERSAL">
+                  <node
+                    class="wxBoxSizer"
+                    orientation="wxVERTICAL"
+                    var_name="parent_sizer_4">
+                    <node
+                      class="wxStaticText"
+                      label="This is a sentence in English."
+                      var_name="m_staticText_4" />
+                  </node>
+                </node>
+                <node
+                  class="BookPage"
+                  bitmap="Embed;art/french.png"
+                  label="Français"
+                  var_name="page_10"
+                  background_colour="wxSYS_COLOUR_BTNFACE"
+                  window_style="wxTAB_TRAVERSAL">
+                  <node
+                    class="wxBoxSizer"
+                    orientation="wxVERTICAL"
+                    var_name="parent_sizer_5">
+                    <node
+                      class="wxStaticText"
+                      label="Ceci est une phrase en français."
+                      var_name="m_staticText_8" />
+                  </node>
+                </node>
+                <node
+                  class="BookPage"
+                  bitmap="Embed;art/japanese.png"
+                  label="日本語"
+                  var_name="page_11"
+                  background_colour="wxSYS_COLOUR_BTNFACE"
+                  window_style="wxTAB_TRAVERSAL">
+                  <node
+                    class="wxBoxSizer"
+                    orientation="wxVERTICAL"
+                    var_name="parent_sizer_6">
+                    <node
+                      class="wxStaticText"
+                      label="これは日本語の文章です。"
+                      var_name="m_staticText_9" />
+                  </node>
+                </node>
+              </node>
+            </node>
+          </node>
+          <node
+            class="BookPage"
+            label="ToolBook"
+            var_name="page_5"
+            window_style="wxTAB_TRAVERSAL">
+            <node
+              class="wxBoxSizer"
+              orientation="wxVERTICAL"
+              var_name="page_sizer_4">
+              <node
+                class="wxToolbook"
+                minimum_size="400,400">
+                <node
+                  class="BookPage"
+                  bitmap="Embed;art/english.png"
+                  label="English"
+                  var_name="page_12"
+                  background_colour="wxSYS_COLOUR_BTNFACE"
+                  window_style="wxTAB_TRAVERSAL">
+                  <node
+                    class="wxBoxSizer"
+                    orientation="wxVERTICAL"
+                    var_name="parent_sizer_7">
+                    <node
+                      class="wxStaticText"
+                      label="This is a sentence in English."
+                      var_name="m_staticText_5" />
+                  </node>
+                </node>
+                <node
+                  class="BookPage"
+                  bitmap="Embed;art/french.png"
+                  label="Français"
+                  var_name="page_13"
+                  background_colour="wxSYS_COLOUR_BTNFACE"
+                  window_style="wxTAB_TRAVERSAL">
+                  <node
+                    class="wxBoxSizer"
+                    orientation="wxVERTICAL"
+                    var_name="parent_sizer_8">
+                    <node
+                      class="wxStaticText"
+                      label="Ceci est une phrase en français."
+                      var_name="m_staticText_10" />
+                  </node>
+                </node>
+                <node
+                  class="BookPage"
+                  bitmap="Embed;art/japanese.png"
+                  label="日本語"
+                  var_name="page_14"
+                  background_colour="wxSYS_COLOUR_BTNFACE"
+                  window_style="wxTAB_TRAVERSAL">
+                  <node
+                    class="wxBoxSizer"
+                    orientation="wxVERTICAL"
+                    var_name="parent_sizer_9">
+                    <node
+                      class="wxStaticText"
+                      label="これは日本語の文章です。"
+                      var_name="m_staticText_11" />
+                  </node>
+                </node>
+              </node>
+            </node>
+          </node>
+          <node
+            class="BookPage"
+            label="TreeBook"
+            window_style="wxTAB_TRAVERSAL">
+            <node
+              class="wxBoxSizer"
+              orientation="wxVERTICAL"
+              var_name="page_sizer_5">
+              <node
+                class="wxTreebook"
+                display_images="1"
+                minimum_size="400,400">
+                <node
+                  class="BookPage"
+                  bitmap="Embed;art/english.png"
+                  label="English"
+                  var_name="page_15"
+                  background_colour="wxSYS_COLOUR_BTNFACE"
+                  window_style="wxTAB_TRAVERSAL">
+                  <node
+                    class="wxBoxSizer"
+                    orientation="wxVERTICAL"
+                    var_name="parent_sizer_10">
+                    <node
+                      class="wxStaticText"
+                      label="This is a sentence in English."
+                      var_name="m_staticText_12" />
+                  </node>
+                  <node
+                    class="BookPage"
+                    bitmap="Embed;../art/re.png"
+                    label="British"
+                    var_name="page_16"
+                    background_colour="wxSYS_COLOUR_BTNFACE"
+                    window_style="wxTAB_TRAVERSAL">
+                    <node
+                      class="wxBoxSizer"
+                      orientation="wxVERTICAL"
+                      var_name="page_sizer">
+                      <node
+                        class="wxStaticText"
+                        label="Theatre"
+                        var_name="m_staticText_13" />
+                    </node>
+                  </node>
+                  <node
+                    class="BookPage"
+                    bitmap="Embed;../art/er.png"
+                    label="United States"
+                    var_name="page_17"
+                    background_colour="wxSYS_COLOUR_BTNFACE"
+                    window_style="wxTAB_TRAVERSAL">
+                    <node
+                      class="wxBoxSizer"
+                      orientation="wxVERTICAL"
+                      var_name="page_sizer_6">
+                      <node
+                        class="wxStaticText"
+                        label="Theater"
+                        var_name="m_staticText_14" />
+                    </node>
+                  </node>
+                </node>
+                <node
+                  class="BookPage"
+                  bitmap="Embed;art/french.png"
+                  label="Français"
+                  var_name="page_18"
+                  background_colour="wxSYS_COLOUR_BTNFACE"
+                  window_style="wxTAB_TRAVERSAL">
+                  <node
+                    class="wxBoxSizer"
+                    orientation="wxVERTICAL"
+                    var_name="parent_sizer_11">
+                    <node
+                      class="wxStaticText"
+                      label="Ceci est une phrase en français."
+                      var_name="m_staticText_15" />
+                  </node>
+                </node>
+                <node
+                  class="BookPage"
+                  bitmap="Embed;art/japanese.png"
+                  label="日本語"
+                  var_name="page_19"
+                  background_colour="wxSYS_COLOUR_BTNFACE"
+                  window_style="wxTAB_TRAVERSAL">
+                  <node
+                    class="wxBoxSizer"
+                    orientation="wxVERTICAL"
+                    var_name="parent_sizer_12">
+                    <node
+                      class="wxStaticText"
+                      label="これは日本語の文章です。" />
+                  </node>
+                </node>
+              </node>
+            </node>
+          </node>
+        </node>
+        <node
+          class="wxStdDialogButtonSizer"
+          flags="wxEXPAND" />
       </node>
     </node>
   </node>

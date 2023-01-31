@@ -48,6 +48,16 @@ MainFrame::MainFrame(wxWindow* parent, wxWindowID id, const wxString& title, con
     );
 
     menuDialogs->Append(menu_item_3);
+    auto* menu_item_4 = new wxMenuItem(menuDialogs, wxID_ANY, "BookTestDlg");
+    menu_item_4->SetBitmap(
+#if wxCHECK_VERSION(3, 1, 6)
+        wxBitmapBundle::FromBitmap(wxueImage(wxue_img::wxNotebook_png, sizeof(wxue_img::wxNotebook_png)))
+#else
+        wxBitmap(wxueImage(wxue_img::wxNotebook_png, sizeof(wxue_img::wxNotebook_png)))
+#endif
+    );
+
+    menuDialogs->Append(menu_item_4);
     auto* menu_item_2 = new wxMenuItem(menuDialogs, wxID_ANY, "PythonDlg");
     {
 #if wxCHECK_VERSION(3, 1, 6)
@@ -114,7 +124,25 @@ MainFrame::MainFrame(wxWindow* parent, wxWindowID id, const wxString& title, con
     SetMenuBar(menubar);
 
     m_toolBar = CreateToolBar();
-    auto* tool_4 = m_toolBar->AddTool(wxID_ANY, "PythonDlg",
+    auto* tool_4 = m_toolBar->AddTool(wxID_ANY, "MainTestDlg",
+#if wxCHECK_VERSION(3, 1, 6)
+
+        wxBitmapBundle::FromBitmap(wxueImage(wxue_img::debug_32_png, sizeof(wxue_img::debug_32_png)))
+#else
+        wxBitmap(wxueImage(wxue_img::debug_32_png, sizeof(wxue_img::debug_32_png)))
+#endif
+    );
+
+    auto* tool_5 = m_toolBar->AddTool(wxID_ANY, "BookTestDlg",
+#if wxCHECK_VERSION(3, 1, 6)
+
+        wxBitmapBundle::FromBitmap(wxueImage(wxue_img::wxNotebook_png, sizeof(wxue_img::wxNotebook_png)))
+#else
+        wxBitmap(wxueImage(wxue_img::wxNotebook_png, sizeof(wxue_img::wxNotebook_png)))
+#endif
+    );
+
+    auto* tool_3 = m_toolBar->AddTool(wxID_ANY, "PythonDlg",
 #if wxCHECK_VERSION(3, 1, 6)
 
         wxBitmapBundle::FromBitmap(wxueImage(wxue_img::wxPython_1_5x_png, sizeof(wxue_img::wxPython_1_5x_png)))
@@ -154,6 +182,7 @@ MainFrame::MainFrame(wxWindow* parent, wxWindowID id, const wxString& title, con
 
     // Event handlers
     Bind(wxEVT_MENU, &MainFrame::OnMainTestDlg, this, menu_item_3->GetId());
+    Bind(wxEVT_MENU, &MainFrame::OnBookTestDlg, this, menu_item_4->GetId());
     Bind(wxEVT_MENU, &MainFrame::OnPythonDlg, this, menu_item_2->GetId());
     Bind(wxEVT_MENU, &MainFrame::OnCommonDialog, this, menuItem_2->GetId());
     Bind(wxEVT_MENU, &MainFrame::OnMultiTestDialog, this, menuItem->GetId());
@@ -166,7 +195,9 @@ MainFrame::MainFrame(wxWindow* parent, wxWindowID id, const wxString& title, con
     Bind(wxEVT_MENU, &MainFrame::OnToolbook, this, menu_toolbook->GetId());
     Bind(wxEVT_MENU, &MainFrame::OnTreebook, this, menu_treebook->GetId());
     Bind(wxEVT_MENU, &MainFrame::OnQuit, this, wxID_EXIT);
-    Bind(wxEVT_TOOL, &MainFrame::OnPythonDlg, this, tool_4->GetId());
+    Bind(wxEVT_TOOL, &MainFrame::OnMainTestDlg, this, tool_4->GetId());
+    Bind(wxEVT_TOOL, &MainFrame::OnBookTestDlg, this, tool_5->GetId());
+    Bind(wxEVT_TOOL, &MainFrame::OnPythonDlg, this, tool_3->GetId());
     Bind(wxEVT_TOOL, &MainFrame::OnCommonDialog, this, tool_2->GetId());
     Bind(wxEVT_TOOL, &MainFrame::OnMultiTestDialog, this, tool->GetId());
 }
@@ -232,6 +263,15 @@ namespace wxue_img
         59,119,78,230,230,230,56,112,224,0,247,221,123,47,149,90,45,243,68,28,99,157,163,217,108,178,184,184,200,149,
         43,87,216,179,103,15,71,143,30,85,252,127,188,133,241,111,49,200,16,194,249,221,92,25,0,0,0,0,73,69,78,68,
         174,66,96,130
+    };
+
+    const unsigned char wxNotebook_png[177] {
+        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,
+        115,0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,0,99,73,68,65,84,56,203,99,96,160,37,248,143,7,20,244,236,37,90,
+        12,217,76,22,24,227,230,205,155,56,45,158,57,115,38,154,136,42,86,49,100,192,68,171,80,160,153,193,140,176,
+        48,190,122,241,36,86,5,218,250,230,36,25,88,216,187,143,97,66,137,51,35,11,33,133,184,44,28,176,160,24,53,
+        120,212,224,81,131,71,13,38,6,192,75,183,57,123,190,50,12,9,0,0,126,235,89,63,162,177,243,95,0,0,0,0,73,69,
+        78,68,174,66,96,130
     };
 
     const unsigned char wxPython_1_5x_png[765] {
@@ -306,8 +346,6 @@ namespace wxue_img
 // Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
-
-#include "maintestdialog.h"
 
 void MainFrame::OnQuit(wxCommandEvent& WXUNUSED(event))
 {

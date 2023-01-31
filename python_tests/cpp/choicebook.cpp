@@ -7,26 +7,30 @@
 
 // clang-format off
 
-#include <wx/bitmap.h>
 #include <wx/button.h>
 #include <wx/colour.h>
-#include <wx/icon.h>
-#include <wx/image.h>
 #include <wx/panel.h>
 #include <wx/settings.h>
 #include <wx/sizer.h>
 
+#include "images.h"
+
 #include "choicebook.h"
 
-#include "../art/english.xpm"
-#include "../art/french.xpm"
-#include "../art/japanese.xpm"
+namespace wxue_img
+{
+    extern const unsigned char english_png[541];
+    extern const unsigned char french_png[252];
+    extern const unsigned char japanese_png[377];
+}
 
 bool ChoiceBook::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     const wxPoint& pos, const wxSize& size, long style, const wxString &name)
 {
     if (!wxDialog::Create(parent, id, title, pos, size, style, name))
         return false;
+    if (!wxImage::FindHandler(wxBITMAP_TYPE_PNG))
+        wxImage::AddHandler(new wxPNGHandler);
 
     auto* parent_sizer = new wxBoxSizer(wxVERTICAL);
 

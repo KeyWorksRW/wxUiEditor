@@ -16,11 +16,9 @@
 #include <wx/settings.h>
 #include <wx/sizer.h>
 
-#include "treebook.h"
+#include "images.h"
 
-#include "../art/english.xpm"
-#include "../art/french.xpm"
-#include "../art/japanese.xpm"
+#include "treebook.h"
 
 #include <wx/mstream.h>  // memory stream classes
 
@@ -32,6 +30,13 @@ inline wxImage wxueImage(const unsigned char* data, size_t size_data)
     image.LoadFile(strm);
     return image;
 };
+
+namespace wxue_img
+{
+    extern const unsigned char english_png[541];
+    extern const unsigned char french_png[252];
+    extern const unsigned char japanese_png[377];
+}
 
 bool Treebook::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     const wxPoint& pos, const wxSize& size, long style, const wxString &name)
@@ -47,23 +52,23 @@ bool Treebook::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     {
 #if wxCHECK_VERSION(3, 1, 6)
         wxBookCtrlBase::Images bundle_list;
-        bundle_list.push_back(wxBitmapBundle::FromBitmap(wxImage(english_xpm)));
-        bundle_list.push_back(wxBitmapBundle::FromBitmap(wxImage(french_xpm)));
-        bundle_list.push_back(wxBitmapBundle::FromBitmap(wxImage(japanese_xpm)));
+        bundle_list.push_back(wxue_img::bundle_english_png());
+        bundle_list.push_back(wxue_img::bundle_french_png());
+        bundle_list.push_back(wxue_img::bundle_japanese_png());
         m_treebook->SetImages(bundle_list);
 
 #else  // older version of wxWidgets that don't support bitmap bundles
 
         auto img_list = new wxImageList;
-        auto img_0 = wxImage(english_xpm);
+        auto img_0 = wxueImage(wxue_img::english_png, sizeof(wxue_img::english_png));
         img_list->Add(img_0);
         auto img_1 = wxueImage(wxue_img::re_png, sizeof(wxue_img::re_png));
         img_list->Add(img_1);
         auto img_2 = wxueImage(wxue_img::er_png, sizeof(wxue_img::er_png));
         img_list->Add(img_2);
-        auto img_3 = wxImage(french_xpm);
+        auto img_3 = wxueImage(wxue_img::french_png, sizeof(wxue_img::french_png));
         img_list->Add(img_3);
-        auto img_4 = wxImage(japanese_xpm);
+        auto img_4 = wxueImage(wxue_img::japanese_png, sizeof(wxue_img::japanese_png));
         img_list->Add(img_4);
     m_treebook->AssignImageList(img_list);
 #endif  // wxCHECK_VERSION(3, 1, 6)

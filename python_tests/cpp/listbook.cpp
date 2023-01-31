@@ -7,26 +7,30 @@
 
 // clang-format off
 
-#include <wx/bitmap.h>
 #include <wx/button.h>
 #include <wx/colour.h>
-#include <wx/icon.h>
-#include <wx/image.h>
 #include <wx/panel.h>
 #include <wx/settings.h>
 #include <wx/sizer.h>
 
+#include "images.h"
+
 #include "listbook.h"
 
-#include "../art/english.xpm"
-#include "../art/french.xpm"
-#include "../art/japanese.xpm"
+namespace wxue_img
+{
+    extern const unsigned char english_png[541];
+    extern const unsigned char french_png[252];
+    extern const unsigned char japanese_png[377];
+}
 
 bool Listbook::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     const wxPoint& pos, const wxSize& size, long style, const wxString &name)
 {
     if (!wxDialog::Create(parent, id, title, pos, size, style, name))
         return false;
+    if (!wxImage::FindHandler(wxBITMAP_TYPE_PNG))
+        wxImage::AddHandler(new wxPNGHandler);
 
     auto* box_sizer = new wxBoxSizer(wxVERTICAL);
 
@@ -34,19 +38,19 @@ bool Listbook::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     {
 #if wxCHECK_VERSION(3, 1, 6)
         wxBookCtrlBase::Images bundle_list;
-        bundle_list.push_back(wxBitmapBundle::FromBitmap(wxImage(english_xpm)));
-        bundle_list.push_back(wxBitmapBundle::FromBitmap(wxImage(french_xpm)));
-        bundle_list.push_back(wxBitmapBundle::FromBitmap(wxImage(japanese_xpm)));
+        bundle_list.push_back(wxue_img::bundle_english_png());
+        bundle_list.push_back(wxue_img::bundle_french_png());
+        bundle_list.push_back(wxue_img::bundle_japanese_png());
         m_listbook->SetImages(bundle_list);
 
 #else  // older version of wxWidgets that don't support bitmap bundles
 
         auto img_list = new wxImageList;
-        auto img_0 = wxImage(english_xpm);
+        auto img_0 = wxueImage(wxue_img::english_png, sizeof(wxue_img::english_png));
         img_list->Add(img_0);
-        auto img_1 = wxImage(french_xpm);
+        auto img_1 = wxueImage(wxue_img::french_png, sizeof(wxue_img::french_png));
         img_list->Add(img_1);
-        auto img_2 = wxImage(japanese_xpm);
+        auto img_2 = wxueImage(wxue_img::japanese_png, sizeof(wxue_img::japanese_png));
         img_list->Add(img_2);
     m_listbook->AssignImageList(img_list);
 #endif  // wxCHECK_VERSION(3, 1, 6)

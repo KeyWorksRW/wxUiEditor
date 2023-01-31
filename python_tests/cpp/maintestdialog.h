@@ -34,6 +34,10 @@
 #include <wx/notebook.h>
 #include <wx/radiobut.h>
 #include <wx/rearrangectrl.h>
+#include <wx/ribbon/art.h>
+#include <wx/ribbon/bar.h>
+#include <wx/ribbon/control.h>
+#include <wx/ribbon/toolbar.h>
 #include <wx/richtext/richtextctrl.h>
 #include <wx/stattext.h>
 #include <wx/stc/stc.h>
@@ -56,33 +60,20 @@ public:
         wxDefaultPosition, const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_DIALOG_STYLE, const wxString &name = wxDialogNameStr);
 
+    void OnEventName(const std::string& event_name)
+    {
+        m_events_list->Select(m_events_list->Append(event_name));
+    }
+
 protected:
 
     // Virtual event handlers -- override them in your derived class
 
-    virtual void OnButton(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnCheckBox(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnChoice(wxCommandEvent& event) { event.Skip(); }
     virtual void OnClearList(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnColourChanged(wxColourPickerEvent& event) { event.Skip(); }
-    virtual void OnCombobox(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnDateChanged(wxDateEvent& event) { event.Skip(); }
-    virtual void OnDirChanged(wxFileDirPickerEvent& event) { event.Skip(); }
     virtual void OnDisableBitmapsBtn(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnFileChanged(wxFileDirPickerEvent& event) { event.Skip(); }
-    virtual void OnFontChanged(wxFontPickerEvent& event) { event.Skip(); }
     virtual void OnInit(wxInitDialogEvent& event) { event.Skip(); }
-    virtual void OnListBox(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnListChecked(wxCommandEvent& event) { event.Skip(); }
     virtual void OnPageChanged(wxBookCtrlEvent& event) { event.Skip(); }
     virtual void OnPopupBtn(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnRadioBox(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnRadioButton(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnRichText(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnStcChange(wxStyledTextEvent& event) { event.Skip(); }
-    virtual void OnText(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnTimeChanged(wxDateEvent& event) { event.Skip(); }
-    virtual void OnToggle(wxCommandEvent& event) { event.Skip(); }
 
     // Validator variables
 
@@ -94,6 +85,8 @@ protected:
     wxButton* m_btn_2;
     wxButton* m_btn_3;
     wxButton* m_btn_4;
+    wxButton* m_btn_6;
+    wxButton* m_btn_7;
     wxButton* m_btn_bitmaps;
     wxCheckBox* m_checkBox2;
     wxCheckListBox* m_checkList2;
@@ -118,6 +111,7 @@ protected:
     wxRadioButton* m_radioBtn2;
     wxRadioButton* m_radioBtn;
     wxRearrangeCtrl* m_rearrange;
+    wxRibbonBar* m_rbnBar;
     wxRichTextCtrl* m_richText;
     wxStaticText* m_staticText10;
     wxStaticText* m_staticText3;
@@ -129,6 +123,7 @@ protected:
     wxStaticText* m_staticText9;
     wxStaticText* m_staticText;
     wxStaticText* m_staticText_2;
+    wxStaticText* m_staticText_3;
     wxStaticText* m_staticText_4;
     wxStyledTextCtrl* m_scintilla;
     wxTextCtrl* m_text_ctrl;
@@ -140,9 +135,13 @@ namespace wxue_img
 {
     // Images declared in this class module:
 
+    extern const unsigned char english_png[541];
     extern const unsigned char focus_png[517];
+    extern const unsigned char french_png[252];
+    extern const unsigned char left_png[158];
     extern const unsigned char no_hour_png[347];
     extern const unsigned char normal_png[508];
+    extern const unsigned char toggle_button_png[277];
 }
 
 // ************* End of generated code ***********

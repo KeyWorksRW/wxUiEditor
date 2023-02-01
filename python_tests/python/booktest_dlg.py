@@ -43,14 +43,84 @@ class BookTestDlg(wx.Dialog):
 
         page_2 = wx.Panel(self.m_notebook, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize,
             wx.TAB_TRAVERSAL)
-        self.m_notebook.AddPage(page_2, "Tab 1")
+        self.m_notebook.AddPage(page_2, "ChoiceBook")
 
         page_sizer_1 = wx.BoxSizer(wx.VERTICAL)
 
-        self.m_staticText_2 = wx.StaticText(page_2, wx.ID_ANY,
-            "TODO: replace this control with something more useful...")
-        self.m_staticText_2.Wrap(200)
-        page_sizer_1.Add(self.m_staticText_2, wx.SizerFlags().Border(wx.ALL))
+        self.m_choicebook = wx.Choicebook(page_2, wx.ID_ANY)
+        self.m_choicebook.SetMinSize(wx.Size(400, 400))
+        page_sizer_1.Add(self.m_choicebook, wx.SizerFlags().Border(wx.ALL))
+
+        btn = wx.Button(self.m_choicebook, wx.ID_ANY, "First")
+        # wxPython 4.2.0 does not support wx.Choicebook.GetControlSizer()
+        # so btn cannot be added to the Choicebook.
+
+        btn_2 = wx.Button(self.m_choicebook, wx.ID_ANY, "Last")
+        # wxPython 4.2.0 does not support wx.Choicebook.GetControlSizer()
+        # so btn_2 cannot be added to the Choicebook.
+
+        page_20 = wx.Panel(self.m_choicebook, wx.ID_ANY, wx.DefaultPosition,
+            wx.DefaultSize, wx.TAB_TRAVERSAL)
+        self.m_choicebook.AddPage(page_20, "English")
+        page_20.SetBackgroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_BTNFACE))
+
+        parent_sizer_13 = wx.BoxSizer(wx.VERTICAL)
+
+        self.m_staticText_16 = wx.StaticText(page_20, wx.ID_ANY,
+            "This is a sentence in English.")
+        parent_sizer_13.Add(self.m_staticText_16, wx.SizerFlags().Border(wx.ALL))
+
+        box_sizer = wx.BoxSizer(wx.VERTICAL)
+
+        self.m_staticText_2 = wx.StaticText(page_20, wx.ID_ANY,
+            "The First and Last buttons above are children of the wcChoicebook. They are added using choicebook->GetControlSizer() which allows them to share the layout space for the wxChoice control.")
+        self.m_staticText_2.Wrap(380)
+        box_sizer.Add(self.m_staticText_2, wx.SizerFlags().Expand().Border(wx.ALL))
+
+        parent_sizer_13.Add(box_sizer, wx.SizerFlags().Border(wx.ALL))
+        page_20.SetSizerAndFit(parent_sizer_13)
+
+        page_21 = wx.Panel(self.m_choicebook, wx.ID_ANY, wx.DefaultPosition,
+            wx.DefaultSize, wx.TAB_TRAVERSAL)
+        self.m_choicebook.AddPage(page_21, "Français")
+        page_21.SetBackgroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_BTNFACE))
+
+        parent_sizer__2 = wx.BoxSizer(wx.VERTICAL)
+
+        self.m_staticText_17 = wx.StaticText(page_21, wx.ID_ANY,
+            "Ceci est une phrase en français.")
+        parent_sizer__2.Add(self.m_staticText_17, wx.SizerFlags().Border(wx.ALL))
+
+        box_sizer_3 = wx.BoxSizer(wx.VERTICAL)
+
+        self.m_staticText__3 = wx.StaticText(page_21, wx.ID_ANY,
+            "The First and Last buttons above are children of the wcChoicebook. They are added using choicebook->GetControlSizer() which allows them to share the layout space for the wxChoice control.")
+        self.m_staticText__3.Wrap(390)
+        box_sizer_3.Add(self.m_staticText__3, wx.SizerFlags().Expand().Border(wx.ALL))
+
+        parent_sizer__2.Add(box_sizer_3, wx.SizerFlags().Border(wx.ALL))
+        page_21.SetSizerAndFit(parent_sizer__2)
+
+        page_22 = wx.Panel(self.m_choicebook, wx.ID_ANY, wx.DefaultPosition,
+            wx.DefaultSize, wx.TAB_TRAVERSAL)
+        self.m_choicebook.AddPage(page_22, "日本語")
+        page_22.SetBackgroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_BTNFACE))
+
+        parent_sizer_14 = wx.BoxSizer(wx.VERTICAL)
+
+        self.m_staticText_18 = wx.StaticText(page_22, wx.ID_ANY,
+            "これは日本語の文章です。")
+        parent_sizer_14.Add(self.m_staticText_18, wx.SizerFlags().Border(wx.ALL))
+
+        box_sizer_2 = wx.BoxSizer(wx.VERTICAL)
+
+        self.m_staticText__2 = wx.StaticText(page_22, wx.ID_ANY,
+            "The First and Last buttons above are children of the wcChoicebook. They are added using choicebook->GetControlSizer() which allows them to share the layout space for the wxChoice control.")
+        self.m_staticText__2.Wrap(390)
+        box_sizer_2.Add(self.m_staticText__2, wx.SizerFlags().Expand().Border(wx.ALL))
+
+        parent_sizer_14.Add(box_sizer_2, wx.SizerFlags().Border(wx.ALL))
+        page_22.SetSizerAndFit(parent_sizer_14)
         page_2.SetSizerAndFit(page_sizer_1)
 
         page_3 = wx.Panel(self.m_notebook, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize,
@@ -323,6 +393,16 @@ class BookTestDlg(wx.Dialog):
 
         self.SetSizerAndFit(dlg_sizer)
         self.Centre(wx.BOTH)
+
+        # Bind Event handlers
+        btn.Bind(wx.EVT_BUTTON, lambda event:self.m_choicebook.SetSelection(0))
+        btn_2.Bind(wx.EVT_BUTTON, lambda event:self.m_choicebook.SetSelection(2))
+
+    # Event handler functions
+    # Add these below the comment block, or to your inherited class.
+    """
+    """
+
 # ************* End of generated code ***********
 # DO NOT EDIT THIS COMMENT BLOCK!
 #

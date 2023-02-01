@@ -9,7 +9,9 @@
 
 #pragma once
 
+#include <wx/choicebk.h>
 #include <wx/dialog.h>
+#include <wx/event.h>
 #include <wx/gdicmn.h>
 #include <wx/listbook.h>
 #include <wx/notebook.h>
@@ -36,6 +38,7 @@ protected:
 
     // Class member variables
 
+    wxChoicebook* m_choicebook;
     wxListbook* m_listbook;
     wxNotebook* m_notebook;
     wxNotebook* m_notebook_2;
@@ -46,6 +49,9 @@ protected:
     wxStaticText* m_staticText_13;
     wxStaticText* m_staticText_14;
     wxStaticText* m_staticText_15;
+    wxStaticText* m_staticText_16;
+    wxStaticText* m_staticText_17;
+    wxStaticText* m_staticText_18;
     wxStaticText* m_staticText_2;
     wxStaticText* m_staticText_3;
     wxStaticText* m_staticText_4;
@@ -54,6 +60,8 @@ protected:
     wxStaticText* m_staticText_7;
     wxStaticText* m_staticText_8;
     wxStaticText* m_staticText_9;
+    wxStaticText* m_staticText__2;
+    wxStaticText* m_staticText__3;
     wxToolbook* m_toolbook;
     wxTreebook* m_treebook;
 };

@@ -100,35 +100,6 @@
             var_name="menuItem3"
             wxEVT_MENU="OnWizard" />
           <node
-            class="submenu"
-            label="Book Controls">
-            <node
-              class="wxMenuItem"
-              label="Choicebook"
-              var_name="menu_choicebook"
-              wxEVT_MENU="OnChoicebook" />
-            <node
-              class="wxMenuItem"
-              label="Listbook"
-              var_name="menu_listbook"
-              wxEVT_MENU="OnListbook" />
-            <node
-              class="wxMenuItem"
-              label="Notebook"
-              var_name="menu_notebook"
-              wxEVT_MENU="OnNotebook" />
-            <node
-              class="wxMenuItem"
-              label="Toolbook"
-              var_name="menu_toolbook"
-              wxEVT_MENU="OnToolbook" />
-            <node
-              class="wxMenuItem"
-              label="Treebook"
-              var_name="menu_treebook"
-              wxEVT_MENU="OnTreebook" />
-          </node>
-          <node
             class="separator" />
           <node
             class="wxMenuItem"
@@ -1441,457 +1412,6 @@
     </node>
     <node
       class="folder"
-      label="Books">
-      <node
-        class="wxDialog"
-        class_name="ChoiceBook"
-        title="Choicebook"
-        base_file="choicebook"
-        derived_class_name="ChoiceBook"
-        use_derived_class="0">
-        <node
-          class="wxBoxSizer"
-          orientation="wxVERTICAL"
-          var_name="parent_sizer">
-          <node
-            class="wxChoicebook"
-            minimum_size="400,400">
-            <node
-              class="wxButton"
-              class_access="none"
-              label="First"
-              var_name="btn"
-              wxEVT_BUTTON="[this](wxCommandEvent&amp;)@@{@@m_choicebook->SetSelection(0);@@}" />
-            <node
-              class="wxButton"
-              class_access="none"
-              label="Last"
-              var_name="btn_2"
-              wxEVT_BUTTON="[this](wxCommandEvent&amp;)@@{@@m_choicebook->SetSelection(2);@@}" />
-            <node
-              class="BookPage"
-              bitmap="Embed;art/english.png"
-              label="English"
-              background_colour="wxSYS_COLOUR_BTNFACE"
-              window_style="wxTAB_TRAVERSAL">
-              <node
-                class="wxBoxSizer"
-                orientation="wxVERTICAL"
-                var_name="parent_sizer_2"
-                flags="wxEXPAND">
-                <node
-                  class="wxStaticText"
-                  label="This is a sentence in English."
-                  var_name="m_staticText_3" />
-                <node
-                  class="wxBoxSizer"
-                  orientation="wxVERTICAL">
-                  <node
-                    class="wxStaticText"
-                    label="The First and Last buttons above are children of the wcChoicebook. They are added using choicebook->GetControlSizer() which allows them to share the layout space for the wxChoice control."
-                    var_name="m_staticText_2"
-                    wrap="380"
-                    flags="wxEXPAND" />
-                </node>
-              </node>
-            </node>
-            <node
-              class="BookPage"
-              bitmap="Embed;art/french.png"
-              label="Français"
-              var_name="page_2"
-              background_colour="wxSYS_COLOUR_BTNFACE"
-              window_style="wxTAB_TRAVERSAL">
-              <node
-                class="wxBoxSizer"
-                orientation="wxVERTICAL"
-                var_name="parent_sizer__2">
-                <node
-                  class="wxStaticText"
-                  label="Ceci est une phrase en français."
-                  var_name="m_staticText_4" />
-                <node
-                  class="wxBoxSizer"
-                  orientation="wxVERTICAL"
-                  var_name="box_sizer_3">
-                  <node
-                    class="wxStaticText"
-                    label="The First and Last buttons above are children of the wcChoicebook. They are added using choicebook->GetControlSizer() which allows them to share the layout space for the wxChoice control."
-                    var_name="m_staticText__3"
-                    wrap="390"
-                    flags="wxEXPAND" />
-                </node>
-              </node>
-            </node>
-            <node
-              class="BookPage"
-              bitmap="Embed;art/japanese.png"
-              label="日本語"
-              var_name="page_3"
-              background_colour="wxSYS_COLOUR_BTNFACE"
-              window_style="wxTAB_TRAVERSAL">
-              <node
-                class="wxBoxSizer"
-                orientation="wxVERTICAL"
-                var_name="parent_sizer_3">
-                <node
-                  class="wxStaticText"
-                  label="これは日本語の文章です。" />
-                <node
-                  class="wxBoxSizer"
-                  orientation="wxVERTICAL"
-                  var_name="box_sizer_2">
-                  <node
-                    class="wxStaticText"
-                    label="The First and Last buttons above are children of the wcChoicebook. They are added using choicebook->GetControlSizer() which allows them to share the layout space for the wxChoice control."
-                    var_name="m_staticText__2"
-                    wrap="390"
-                    flags="wxEXPAND" />
-                </node>
-              </node>
-            </node>
-          </node>
-          <node
-            class="wxStdDialogButtonSizer"
-            Cancel="0"
-            Close="1"
-            OK="0"
-            default_button="Close"
-            flags="wxEXPAND" />
-        </node>
-      </node>
-      <node
-        class="wxDialog"
-        class_name="Listbook"
-        title="Listbook"
-        base_file="listbook"
-        derived_class_name="Listbook"
-        use_derived_class="0">
-        <node
-          class="wxBoxSizer"
-          orientation="wxVERTICAL">
-          <node
-            class="wxListbook"
-            display_images="1"
-            style="wxLB_LEFT"
-            minimum_size="400,400">
-            <node
-              class="BookPage"
-              bitmap="Embed;art/english.png"
-              label="English"
-              background_colour="wxSYS_COLOUR_BTNFACE"
-              window_style="wxTAB_TRAVERSAL">
-              <node
-                class="wxBoxSizer"
-                orientation="wxVERTICAL"
-                var_name="parent_sizer">
-                <node
-                  class="wxStaticText"
-                  label="This is a sentence in English."
-                  var_name="m_staticText_2" />
-              </node>
-            </node>
-            <node
-              class="BookPage"
-              bitmap="Embed;art/french.png"
-              label="Français"
-              var_name="page_2"
-              background_colour="wxSYS_COLOUR_BTNFACE"
-              window_style="wxTAB_TRAVERSAL">
-              <node
-                class="wxBoxSizer"
-                orientation="wxVERTICAL"
-                var_name="parent_sizer_2">
-                <node
-                  class="wxStaticText"
-                  label="Ceci est une phrase en français."
-                  var_name="m_staticText_3" />
-              </node>
-            </node>
-            <node
-              class="BookPage"
-              bitmap="Embed;art/japanese.png"
-              label="日本語"
-              var_name="page_3"
-              background_colour="wxSYS_COLOUR_BTNFACE"
-              window_style="wxTAB_TRAVERSAL">
-              <node
-                class="wxBoxSizer"
-                orientation="wxVERTICAL"
-                var_name="parent_sizer_3">
-                <node
-                  class="wxStaticText"
-                  label="これは日本語の文章です。" />
-              </node>
-            </node>
-          </node>
-          <node
-            class="wxStdDialogButtonSizer"
-            Cancel="0"
-            Close="1"
-            OK="0"
-            default_button="Close"
-            flags="wxEXPAND" />
-        </node>
-      </node>
-      <node
-        class="wxDialog"
-        class_name="Notebook"
-        title="Notebook"
-        minimum_size="-1,-1"
-        size="-1,-1"
-        base_file="notebook"
-        derived_class_name="Notebook"
-        use_derived_class="0">
-        <node
-          class="wxBoxSizer"
-          orientation="wxVERTICAL">
-          <node
-            class="wxNotebook"
-            display_images="1"
-            minimum_size="400,400"
-            flags="wxEXPAND">
-            <node
-              class="BookPage"
-              bitmap="Embed;art/english.png"
-              label="English"
-              background_colour="wxSYS_COLOUR_BTNFACE"
-              window_style="wxTAB_TRAVERSAL">
-              <node
-                class="wxBoxSizer"
-                orientation="wxVERTICAL"
-                var_name="parent_sizer">
-                <node
-                  class="wxStaticText"
-                  label="This is a sentence in English."
-                  var_name="m_staticText_2" />
-              </node>
-            </node>
-            <node
-              class="BookPage"
-              bitmap="Embed;art/french.png"
-              label="Français"
-              var_name="page_2"
-              background_colour="wxSYS_COLOUR_BTNFACE"
-              window_style="wxTAB_TRAVERSAL">
-              <node
-                class="wxBoxSizer"
-                orientation="wxVERTICAL"
-                var_name="parent_sizer_2">
-                <node
-                  class="wxStaticText"
-                  label="Ceci est une phrase en français."
-                  var_name="m_staticText_3" />
-              </node>
-            </node>
-            <node
-              class="BookPage"
-              bitmap="Embed;art/japanese.png"
-              label="日本語"
-              var_name="page_3"
-              background_colour="wxSYS_COLOUR_BTNFACE"
-              window_style="wxTAB_TRAVERSAL">
-              <node
-                class="wxBoxSizer"
-                orientation="wxVERTICAL"
-                var_name="parent_sizer_3">
-                <node
-                  class="wxStaticText"
-                  label="これは日本語の文章です。" />
-              </node>
-            </node>
-          </node>
-          <node
-            class="wxStdDialogButtonSizer"
-            Cancel="0"
-            Close="1"
-            OK="0"
-            default_button="Close"
-            flags="wxEXPAND" />
-        </node>
-      </node>
-      <node
-        class="wxDialog"
-        class_name="Toolbook"
-        title="wxToolbook"
-        base_file="toolbook"
-        derived_class_name="Toolbook"
-        use_derived_class="0">
-        <node
-          class="wxBoxSizer"
-          orientation="wxVERTICAL">
-          <node
-            class="wxToolbook"
-            minimum_size="400,400">
-            <node
-              class="BookPage"
-              bitmap="Embed;art/english.png"
-              label="English"
-              background_colour="wxSYS_COLOUR_BTNFACE"
-              window_style="wxTAB_TRAVERSAL">
-              <node
-                class="wxBoxSizer"
-                orientation="wxVERTICAL"
-                var_name="parent_sizer">
-                <node
-                  class="wxStaticText"
-                  label="This is a sentence in English."
-                  var_name="m_staticText_2" />
-              </node>
-            </node>
-            <node
-              class="BookPage"
-              bitmap="Embed;art/french.png"
-              label="Français"
-              var_name="page_2"
-              background_colour="wxSYS_COLOUR_BTNFACE"
-              window_style="wxTAB_TRAVERSAL">
-              <node
-                class="wxBoxSizer"
-                orientation="wxVERTICAL"
-                var_name="parent_sizer_2">
-                <node
-                  class="wxStaticText"
-                  label="Ceci est une phrase en français."
-                  var_name="m_staticText_3" />
-              </node>
-            </node>
-            <node
-              class="BookPage"
-              bitmap="Embed;art/japanese.png"
-              label="日本語"
-              var_name="page_3"
-              background_colour="wxSYS_COLOUR_BTNFACE"
-              window_style="wxTAB_TRAVERSAL">
-              <node
-                class="wxBoxSizer"
-                orientation="wxVERTICAL"
-                var_name="parent_sizer_3">
-                <node
-                  class="wxStaticText"
-                  label="これは日本語の文章です。" />
-              </node>
-            </node>
-          </node>
-          <node
-            class="wxStdDialogButtonSizer"
-            Cancel="0"
-            Close="1"
-            OK="0"
-            default_button="Close"
-            flags="wxEXPAND" />
-        </node>
-      </node>
-      <node
-        class="wxDialog"
-        class_name="Treebook"
-        title="Treebook"
-        base_file="treebook"
-        derived_class_name="Treebook"
-        use_derived_class="0">
-        <node
-          class="wxBoxSizer"
-          orientation="wxVERTICAL">
-          <node
-            class="wxTreebook"
-            display_images="1"
-            minimum_size="400,400">
-            <node
-              class="BookPage"
-              bitmap="Embed;art/english.png"
-              label="English"
-              background_colour="wxSYS_COLOUR_BTNFACE"
-              window_style="wxTAB_TRAVERSAL">
-              <node
-                class="wxBoxSizer"
-                orientation="wxVERTICAL"
-                var_name="parent_sizer">
-                <node
-                  class="wxStaticText"
-                  label="This is a sentence in English."
-                  var_name="m_staticText_4" />
-              </node>
-              <node
-                class="BookPage"
-                bitmap="Embed;../art/re.png"
-                label="British"
-                var_name="page_4"
-                background_colour="wxSYS_COLOUR_BTNFACE"
-                window_style="wxTAB_TRAVERSAL">
-                <node
-                  class="wxBoxSizer"
-                  orientation="wxVERTICAL"
-                  var_name="page_sizer">
-                  <node
-                    class="wxStaticText"
-                    label="Theatre"
-                    var_name="m_staticText_2" />
-                </node>
-              </node>
-              <node
-                class="BookPage"
-                bitmap="Embed;../art/er.png"
-                label="United States"
-                var_name="page_5"
-                background_colour="wxSYS_COLOUR_BTNFACE"
-                window_style="wxTAB_TRAVERSAL">
-                <node
-                  class="wxBoxSizer"
-                  orientation="wxVERTICAL"
-                  var_name="page_sizer_2">
-                  <node
-                    class="wxStaticText"
-                    label="Theater"
-                    var_name="m_staticText_3" />
-                </node>
-              </node>
-            </node>
-            <node
-              class="BookPage"
-              bitmap="Embed;art/french.png"
-              label="Français"
-              var_name="page_2"
-              background_colour="wxSYS_COLOUR_BTNFACE"
-              window_style="wxTAB_TRAVERSAL">
-              <node
-                class="wxBoxSizer"
-                orientation="wxVERTICAL"
-                var_name="parent_sizer_2">
-                <node
-                  class="wxStaticText"
-                  label="Ceci est une phrase en français."
-                  var_name="m_staticText_5" />
-              </node>
-            </node>
-            <node
-              class="BookPage"
-              bitmap="Embed;art/japanese.png"
-              label="日本語"
-              var_name="page_3"
-              background_colour="wxSYS_COLOUR_BTNFACE"
-              window_style="wxTAB_TRAVERSAL">
-              <node
-                class="wxBoxSizer"
-                orientation="wxVERTICAL"
-                var_name="parent_sizer_3">
-                <node
-                  class="wxStaticText"
-                  label="これは日本語の文章です。" />
-              </node>
-            </node>
-          </node>
-          <node
-            class="wxStdDialogButtonSizer"
-            Cancel="0"
-            Close="1"
-            OK="0"
-            default_button="Close"
-            flags="wxEXPAND" />
-        </node>
-      </node>
-    </node>
-    <node
-      class="folder"
       label="Forms">
       <node
         class="MenuBar">
@@ -2330,7 +1850,7 @@
           proportion="1">
           <node
             class="BookPage"
-            label="Tab 1"
+            label="ChoiceBook"
             var_name="page_2"
             window_style="wxTAB_TRAVERSAL">
             <node
@@ -2338,10 +1858,105 @@
               orientation="wxVERTICAL"
               var_name="page_sizer_1">
               <node
-                class="wxStaticText"
-                label="TODO: replace this control with something more useful..."
-                var_name="m_staticText_2"
-                wrap="200" />
+                class="wxChoicebook"
+                minimum_size="400,400">
+                <node
+                  class="wxButton"
+                  class_access="none"
+                  label="First"
+                  var_name="btn"
+                  wxEVT_BUTTON="[this](wxCommandEvent&amp;)@@{@@m_choicebook->SetSelection(0);@@}[python:lambda]self.m_choicebook.SetSelection(0)" />
+                <node
+                  class="wxButton"
+                  class_access="none"
+                  label="Last"
+                  var_name="btn_2"
+                  wxEVT_BUTTON="[this](wxCommandEvent&amp;)@@{@@m_choicebook->SetSelection(2);@@}[python:lambda]self.m_choicebook.SetSelection(2)" />
+                <node
+                  class="BookPage"
+                  bitmap="Embed;art/english.png"
+                  label="English"
+                  var_name="page_20"
+                  background_colour="wxSYS_COLOUR_BTNFACE"
+                  window_style="wxTAB_TRAVERSAL">
+                  <node
+                    class="wxBoxSizer"
+                    orientation="wxVERTICAL"
+                    var_name="parent_sizer_13"
+                    flags="wxEXPAND">
+                    <node
+                      class="wxStaticText"
+                      label="This is a sentence in English."
+                      var_name="m_staticText_16" />
+                    <node
+                      class="wxBoxSizer"
+                      orientation="wxVERTICAL">
+                      <node
+                        class="wxStaticText"
+                        label="The First and Last buttons above are children of the wcChoicebook. They are added using choicebook->GetControlSizer() which allows them to share the layout space for the wxChoice control."
+                        var_name="m_staticText_2"
+                        wrap="380"
+                        flags="wxEXPAND" />
+                    </node>
+                  </node>
+                </node>
+                <node
+                  class="BookPage"
+                  bitmap="Embed;art/french.png"
+                  label="Français"
+                  var_name="page_21"
+                  background_colour="wxSYS_COLOUR_BTNFACE"
+                  window_style="wxTAB_TRAVERSAL">
+                  <node
+                    class="wxBoxSizer"
+                    orientation="wxVERTICAL"
+                    var_name="parent_sizer__2">
+                    <node
+                      class="wxStaticText"
+                      label="Ceci est une phrase en français."
+                      var_name="m_staticText_17" />
+                    <node
+                      class="wxBoxSizer"
+                      orientation="wxVERTICAL"
+                      var_name="box_sizer_3">
+                      <node
+                        class="wxStaticText"
+                        label="The First and Last buttons above are children of the wcChoicebook. They are added using choicebook->GetControlSizer() which allows them to share the layout space for the wxChoice control."
+                        var_name="m_staticText__3"
+                        wrap="390"
+                        flags="wxEXPAND" />
+                    </node>
+                  </node>
+                </node>
+                <node
+                  class="BookPage"
+                  bitmap="Embed;art/japanese.png"
+                  label="日本語"
+                  var_name="page_22"
+                  background_colour="wxSYS_COLOUR_BTNFACE"
+                  window_style="wxTAB_TRAVERSAL">
+                  <node
+                    class="wxBoxSizer"
+                    orientation="wxVERTICAL"
+                    var_name="parent_sizer_14">
+                    <node
+                      class="wxStaticText"
+                      label="これは日本語の文章です。"
+                      var_name="m_staticText_18" />
+                    <node
+                      class="wxBoxSizer"
+                      orientation="wxVERTICAL"
+                      var_name="box_sizer_2">
+                      <node
+                        class="wxStaticText"
+                        label="The First and Last buttons above are children of the wcChoicebook. They are added using choicebook->GetControlSizer() which allows them to share the layout space for the wxChoice control."
+                        var_name="m_staticText__2"
+                        wrap="390"
+                        flags="wxEXPAND" />
+                    </node>
+                  </node>
+                </node>
+              </node>
             </node>
           </node>
           <node

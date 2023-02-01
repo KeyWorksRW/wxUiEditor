@@ -103,19 +103,6 @@ MainFrame::MainFrame(wxWindow* parent, wxWindowID id, const wxString& title, con
     menuDialogs->Append(menuItem2);
     auto* menuItem3 = new wxMenuItem(menuDialogs, wxID_ANY, "Wizard");
     menuDialogs->Append(menuItem3);
-
-    auto* submenu = new wxMenu();
-    auto* menu_choicebook = new wxMenuItem(submenu, wxID_ANY, "Choicebook");
-    submenu->Append(menu_choicebook);
-    auto* menu_listbook = new wxMenuItem(submenu, wxID_ANY, "Listbook");
-    submenu->Append(menu_listbook);
-    auto* menu_notebook = new wxMenuItem(submenu, wxID_ANY, "Notebook");
-    submenu->Append(menu_notebook);
-    auto* menu_toolbook = new wxMenuItem(submenu, wxID_ANY, "Toolbook");
-    submenu->Append(menu_toolbook);
-    auto* menu_treebook = new wxMenuItem(submenu, wxID_ANY, "Treebook");
-    submenu->Append(menu_treebook);
-    menuDialogs->AppendSubMenu(submenu, "Book Controls");
     menuDialogs->AppendSeparator();
     auto* menuItem4 = new wxMenuItem(menuDialogs, wxID_EXIT, "Exit");
     menuDialogs->Append(menuItem4);
@@ -189,11 +176,6 @@ MainFrame::MainFrame(wxWindow* parent, wxWindowID id, const wxString& title, con
     Bind(wxEVT_MENU, &MainFrame::OnOtherCtrls, this, menuItem1->GetId());
     Bind(wxEVT_MENU, &MainFrame::OnRibbonDialog, this, menuItem2->GetId());
     Bind(wxEVT_MENU, &MainFrame::OnWizard, this, menuItem3->GetId());
-    Bind(wxEVT_MENU, &MainFrame::OnChoicebook, this, menu_choicebook->GetId());
-    Bind(wxEVT_MENU, &MainFrame::OnListbook, this, menu_listbook->GetId());
-    Bind(wxEVT_MENU, &MainFrame::OnNotebook, this, menu_notebook->GetId());
-    Bind(wxEVT_MENU, &MainFrame::OnToolbook, this, menu_toolbook->GetId());
-    Bind(wxEVT_MENU, &MainFrame::OnTreebook, this, menu_treebook->GetId());
     Bind(wxEVT_MENU, &MainFrame::OnQuit, this, wxID_EXIT);
     Bind(wxEVT_TOOL, &MainFrame::OnMainTestDlg, this, tool_4->GetId());
     Bind(wxEVT_TOOL, &MainFrame::OnBookTestDlg, this, tool_5->GetId());

@@ -27,18 +27,13 @@ protected:
     // Event handlers
 
     void OnBookTestDlg(wxCommandEvent& event);
-    void OnChoicebook(wxCommandEvent& event);
     void OnCommonDialog(wxCommandEvent& event);
-    void OnListbook(wxCommandEvent& event);
     void OnMainTestDlg(wxCommandEvent& event);
     void OnMultiTestDialog(wxCommandEvent& event);
-    void OnNotebook(wxCommandEvent& event);
     void OnOtherCtrls(wxCommandEvent& event);
     void OnPythonDlg(wxCommandEvent& event);
     void OnQuit(wxCommandEvent& event);
     void OnRibbonDialog(wxCommandEvent& event);
-    void OnToolbook(wxCommandEvent& event);
-    void OnTreebook(wxCommandEvent& event);
     void OnWizard(wxCommandEvent& event);
 
     // Class member variables

@@ -9,9 +9,10 @@ set (file_list
 
 )
 
-# Manually maintained from wxui_generated.cmake
+# Manually maintained from wxui_code.cmake
 set(wxui_file_list
 
+    booktest_dlg.cpp    
     choicebook.cpp
     commonctrls.cpp
     dlgmultitest.cpp

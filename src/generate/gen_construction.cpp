@@ -162,8 +162,16 @@ void BaseCodeGenerator::GenConstruction(Node* node)
     else if (node->gen_type() == type_widget && parent->isGen(gen_wxChoicebook))
     {
         gen_code.clear();
-        gen_code.ParentName().Function("GetControlSizer()").Function("Add(").NodeName();
-        gen_code.CheckLineLength().Comma().Add("wxSizerFlags()").Add(".Expand().Border(").Add("wxALL)").EndFunction();
+        if (gen_code.is_python())
+        {
+            gen_code << "# wxPython 4.2.0 does not support wx.Choicebook.GetControlSizer()";
+            gen_code.Eol().Str("# so ").NodeName().Str(" cannot be added to the Choicebook.");
+        }
+        else
+        {
+            gen_code.ParentName().Function("GetControlSizer()").Function("Add(").NodeName();
+            gen_code.CheckLineLength().Comma().Add("wxSizerFlags()").Add(".Expand().Border(").Add("wxALL)").EndFunction();
+        }
         m_source->writeLine(gen_code.GetCode());
     }
 

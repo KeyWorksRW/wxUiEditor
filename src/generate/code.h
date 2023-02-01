@@ -117,6 +117,8 @@ public:
     // Equivalent to calling (node->as_int(prop_name) != val)
     bool IsNotEqualTo(GenEnum::PropName prop_name, int val) const { return (m_node->as_int(prop_name) != val); }
 
+    bool IsGen(GenEnum::GenName gen_name) const { return m_node->isGen(gen_name); }
+
     // Equivalent to calling node->as_string(prop_name).contains(text)
     bool PropContains(GenEnum::PropName prop_name, tt_string_view text) const;
 

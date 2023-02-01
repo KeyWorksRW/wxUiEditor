@@ -40,6 +40,20 @@ inline const GenType lst_form_types[] =
 
 const std::vector<std::string> reserved_names = {
     "bitmaps",  // used for wxBitmapBundle
+
+    "bundle_list",  // used for wxBitmapBundle, primarily for books
+
+    // These are used when generating Python code for wxBitmapBundle
+    "bundle_1",
+    "bundle_2",
+    "bundle_3",
+    "bundle_4",
+    "bundle_5",
+    "bundle_6",
+    "bundle_7",
+    "bundle_8",
+    "bundle_9",
+
     "idx",      // used for wxListItem
     "info"      // used for wxListItem
 };

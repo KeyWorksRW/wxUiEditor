@@ -43,12 +43,7 @@ bool TreebookGenerator::ConstructionCode(Code& code)
         code << "auto* ";
     code.NodeName().CreateClass();
     code.ValidParentName().Comma().as_string(prop_id).PosSizeFlags(false);
-
-    // TODO: [Randalphwa - 12-21-2022] Add Python support
-    if (code.is_cpp())
-    {
-        BookCtorAddImagelist(code.GetCode(), code.m_node);
-    }
+    BookCtorAddImagelist(code);
 
     return true;
 }

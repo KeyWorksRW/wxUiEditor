@@ -1,7 +1,7 @@
 //////////////////////////////////////////////////////////////////////////
 // Purpose:   Book page generator
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -209,26 +209,27 @@ bool BookPageGenerator::ConstructionCode(Code& code)
             treebook = treebook->GetParent();
         }
 
-        code.Str(treebook->get_node_name()).Comma().Add(prop_id);
+        code.NodeName(treebook).Comma().Add(prop_id);
         code.PosSizeFlags();
 
         // If the last parameter is wxID_ANY, then remove it. This is the default value, so it's
         // not needed.
         code.Replace(", wxID_ANY)", ")");
 
-        code.Eol().Str(treebook->get_node_name()).Function("AddSubPage(").NodeName().Comma().QuotedString(prop_label);
+        code.Eol().NodeName(treebook).Function("AddSubPage(").NodeName().Comma().QuotedString(prop_label);
 
         // Default is false, so only add parameter if it is true.
         if (code.IsTrue(prop_select))
             code.Comma().AddTrue();
 
-        // TODO: [Randalphwa - 12-21-2022] Add Python support
-        if (code.is_cpp() && node->HasValue(prop_bitmap) && is_display_images)
+        if (node->HasValue(prop_bitmap) && is_display_images)
         {
             int idx_image = GetTreebookImageIndex(node);
             if (!node->prop_as_bool(prop_select))
-                code << ", false";
-            code << ", " << idx_image;
+            {
+                code.Comma().AddFalse();
+            }
+            code.Comma() << idx_image;
         }
         code.EndFunction();
     }
@@ -242,14 +243,15 @@ bool BookPageGenerator::ConstructionCode(Code& code)
         if (code.IsTrue(prop_select))
             code.Comma().AddTrue();
 
-        // TODO: [Randalphwa - 12-21-2022] Add Python support
-        if (code.is_cpp() && node->HasValue(prop_bitmap) &&
+        if (node->HasValue(prop_bitmap) &&
             (node->GetParent()->as_bool(prop_display_images) || node->GetParent()->isGen(gen_wxToolbook)))
         {
             auto node_parent = node->GetParent();
             int idx_image = -1;
             if (node_parent->isGen(gen_wxTreebook))
+            {
                 idx_image = GetTreebookImageIndex(node);
+            }
             else
             {
                 for (const auto& child: node_parent->GetChildNodePtrs())

@@ -61,12 +61,22 @@ class BookTestDlg(wx.Dialog):
 
         self.m_listbook = wx.Listbook(page_3, wx.ID_ANY, wx.DefaultPosition,
             wx.DefaultSize, wx.LB_LEFT)
+
+        bundle_1 = wx.BitmapBundle.FromBitmap(images.english_png.Bitmap)
+        bundle_2 = wx.BitmapBundle.FromBitmap(images.french_png.Bitmap)
+        bundle_3 = wx.BitmapBundle.FromBitmap(images.japanese_png.Bitmap)
+        bundle_list = [
+            bundle_1,
+            bundle_2,
+            bundle_3
+        ]
+        self.m_listbook.SetImages(bundle_list)
         self.m_listbook.SetMinSize(wx.Size(400, 400))
         page_sizer_2.Add(self.m_listbook, wx.SizerFlags().Border(wx.ALL))
 
         page_6 = wx.Panel(self.m_listbook, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize,
             wx.TAB_TRAVERSAL)
-        self.m_listbook.AddPage(page_6, "English")
+        self.m_listbook.AddPage(page_6, "English", False, 0)
         page_6.SetBackgroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_BTNFACE))
 
         parent_sizer = wx.BoxSizer(wx.VERTICAL)
@@ -78,7 +88,7 @@ class BookTestDlg(wx.Dialog):
 
         page_7 = wx.Panel(self.m_listbook, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize,
             wx.TAB_TRAVERSAL)
-        self.m_listbook.AddPage(page_7, "Français")
+        self.m_listbook.AddPage(page_7, "Français", False, 1)
         page_7.SetBackgroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_BTNFACE))
 
         parent_sizer_2 = wx.BoxSizer(wx.VERTICAL)
@@ -90,7 +100,7 @@ class BookTestDlg(wx.Dialog):
 
         page_8 = wx.Panel(self.m_listbook, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize,
             wx.TAB_TRAVERSAL)
-        self.m_listbook.AddPage(page_8, "日本語")
+        self.m_listbook.AddPage(page_8, "日本語", False, 2)
         page_8.SetBackgroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_BTNFACE))
 
         parent_sizer_3 = wx.BoxSizer(wx.VERTICAL)
@@ -109,12 +119,22 @@ class BookTestDlg(wx.Dialog):
         page_sizer_3 = wx.BoxSizer(wx.VERTICAL)
 
         self.m_notebook_2 = wx.Notebook(page_4, wx.ID_ANY)
+
+        bundle_1 = wx.BitmapBundle.FromBitmap(images.english_png.Bitmap)
+        bundle_2 = wx.BitmapBundle.FromBitmap(images.french_png.Bitmap)
+        bundle_3 = wx.BitmapBundle.FromBitmap(images.japanese_png.Bitmap)
+        bundle_list = [
+            bundle_1,
+            bundle_2,
+            bundle_3
+        ]
+        self.m_notebook_2.SetImages(bundle_list)
         self.m_notebook_2.SetMinSize(wx.Size(400, 400))
         page_sizer_3.Add(self.m_notebook_2, wx.SizerFlags().Expand().Border(wx.ALL))
 
         page_9 = wx.Panel(self.m_notebook_2, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize,
             wx.TAB_TRAVERSAL)
-        self.m_notebook_2.AddPage(page_9, "English")
+        self.m_notebook_2.AddPage(page_9, "English", False, 0)
         page_9.SetBackgroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_BTNFACE))
 
         parent_sizer_4 = wx.BoxSizer(wx.VERTICAL)
@@ -126,7 +146,7 @@ class BookTestDlg(wx.Dialog):
 
         page_10 = wx.Panel(self.m_notebook_2, wx.ID_ANY, wx.DefaultPosition,
             wx.DefaultSize, wx.TAB_TRAVERSAL)
-        self.m_notebook_2.AddPage(page_10, "Français")
+        self.m_notebook_2.AddPage(page_10, "Français", False, 1)
         page_10.SetBackgroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_BTNFACE))
 
         parent_sizer_5 = wx.BoxSizer(wx.VERTICAL)
@@ -138,7 +158,7 @@ class BookTestDlg(wx.Dialog):
 
         page_11 = wx.Panel(self.m_notebook_2, wx.ID_ANY, wx.DefaultPosition,
             wx.DefaultSize, wx.TAB_TRAVERSAL)
-        self.m_notebook_2.AddPage(page_11, "日本語")
+        self.m_notebook_2.AddPage(page_11, "日本語", False, 2)
         page_11.SetBackgroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_BTNFACE))
 
         parent_sizer_6 = wx.BoxSizer(wx.VERTICAL)
@@ -157,12 +177,22 @@ class BookTestDlg(wx.Dialog):
         page_sizer_4 = wx.BoxSizer(wx.VERTICAL)
 
         self.m_toolbook = wx.Toolbook(page_5, wx.ID_ANY)
+
+        bundle_1 = wx.BitmapBundle.FromBitmap(images.english_png.Bitmap)
+        bundle_2 = wx.BitmapBundle.FromBitmap(images.french_png.Bitmap)
+        bundle_3 = wx.BitmapBundle.FromBitmap(images.japanese_png.Bitmap)
+        bundle_list = [
+            bundle_1,
+            bundle_2,
+            bundle_3
+        ]
+        self.m_toolbook.SetImages(bundle_list)
         self.m_toolbook.SetMinSize(wx.Size(400, 400))
         page_sizer_4.Add(self.m_toolbook, wx.SizerFlags().Border(wx.ALL))
 
         page_12 = wx.Panel(self.m_toolbook, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize,
             wx.TAB_TRAVERSAL)
-        self.m_toolbook.AddPage(page_12, "English")
+        self.m_toolbook.AddPage(page_12, "English", False, 0)
         page_12.SetBackgroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_BTNFACE))
 
         parent_sizer_7 = wx.BoxSizer(wx.VERTICAL)
@@ -174,7 +204,7 @@ class BookTestDlg(wx.Dialog):
 
         page_13 = wx.Panel(self.m_toolbook, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize,
             wx.TAB_TRAVERSAL)
-        self.m_toolbook.AddPage(page_13, "Français")
+        self.m_toolbook.AddPage(page_13, "Français", False, 1)
         page_13.SetBackgroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_BTNFACE))
 
         parent_sizer_8 = wx.BoxSizer(wx.VERTICAL)
@@ -186,7 +216,7 @@ class BookTestDlg(wx.Dialog):
 
         page_14 = wx.Panel(self.m_toolbook, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize,
             wx.TAB_TRAVERSAL)
-        self.m_toolbook.AddPage(page_14, "日本語")
+        self.m_toolbook.AddPage(page_14, "日本語", False, 2)
         page_14.SetBackgroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_BTNFACE))
 
         parent_sizer_9 = wx.BoxSizer(wx.VERTICAL)
@@ -205,12 +235,22 @@ class BookTestDlg(wx.Dialog):
         page_sizer_5 = wx.BoxSizer(wx.VERTICAL)
 
         self.m_treebook = wx.Treebook(page, wx.ID_ANY)
+
+        bundle_1 = wx.BitmapBundle.FromBitmap(images.english_png.Bitmap)
+        bundle_2 = wx.BitmapBundle.FromBitmap(images.french_png.Bitmap)
+        bundle_3 = wx.BitmapBundle.FromBitmap(images.japanese_png.Bitmap)
+        bundle_list = [
+            bundle_1,
+            bundle_2,
+            bundle_3
+        ]
+        self.m_treebook.SetImages(bundle_list)
         self.m_treebook.SetMinSize(wx.Size(400, 400))
         page_sizer_5.Add(self.m_treebook, wx.SizerFlags().Border(wx.ALL))
 
         page_15 = wx.Panel(self.m_treebook, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize,
             wx.TAB_TRAVERSAL)
-        self.m_treebook.AddPage(page_15, "English")
+        self.m_treebook.AddPage(page_15, "English", False, 0)
         page_15.SetBackgroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_BTNFACE))
 
         parent_sizer_10 = wx.BoxSizer(wx.VERTICAL)
@@ -220,9 +260,9 @@ class BookTestDlg(wx.Dialog):
         parent_sizer_10.Add(self.m_staticText_12, wx.SizerFlags().Border(wx.ALL))
         page_15.SetSizerAndFit(parent_sizer_10)
 
-        page_16 = wx.Panel(m_treebook, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize,
+        page_16 = wx.Panel(self.m_treebook, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize,
             wx.TAB_TRAVERSAL)
-        m_treebook.AddSubPage(page_16, "British")
+        self.m_treebook.AddSubPage(page_16, "British", False, 1)
         page_16.SetBackgroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_BTNFACE))
 
         page_sizer = wx.BoxSizer(wx.VERTICAL)
@@ -231,9 +271,9 @@ class BookTestDlg(wx.Dialog):
         page_sizer.Add(self.m_staticText_13, wx.SizerFlags().Border(wx.ALL))
         page_16.SetSizerAndFit(page_sizer)
 
-        page_17 = wx.Panel(m_treebook, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize,
+        page_17 = wx.Panel(self.m_treebook, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize,
             wx.TAB_TRAVERSAL)
-        m_treebook.AddSubPage(page_17, "United States")
+        self.m_treebook.AddSubPage(page_17, "United States", False, 2)
         page_17.SetBackgroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_BTNFACE))
 
         page_sizer_6 = wx.BoxSizer(wx.VERTICAL)
@@ -244,7 +284,7 @@ class BookTestDlg(wx.Dialog):
 
         page_18 = wx.Panel(self.m_treebook, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize,
             wx.TAB_TRAVERSAL)
-        self.m_treebook.AddPage(page_18, "Français")
+        self.m_treebook.AddPage(page_18, "Français", False, 3)
         page_18.SetBackgroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_BTNFACE))
 
         parent_sizer_11 = wx.BoxSizer(wx.VERTICAL)
@@ -256,7 +296,7 @@ class BookTestDlg(wx.Dialog):
 
         page_19 = wx.Panel(self.m_treebook, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize,
             wx.TAB_TRAVERSAL)
-        self.m_treebook.AddPage(page_19, "日本語")
+        self.m_treebook.AddPage(page_19, "日本語", False, 4)
         page_19.SetBackgroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_BTNFACE))
 
         parent_sizer_12 = wx.BoxSizer(wx.VERTICAL)

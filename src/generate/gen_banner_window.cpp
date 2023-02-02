@@ -62,7 +62,7 @@ bool BannerWindowGenerator::ConstructionCode(Code& code)
 
 bool BannerWindowGenerator::SettingsCode(Code& code)
 {
-    if (code.HasValue(prop_bitmap) && code.is_cpp())
+    if (code.HasValue(prop_bitmap))
     {
         if (code.is_cpp())
         {

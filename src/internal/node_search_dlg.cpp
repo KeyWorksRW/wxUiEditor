@@ -22,16 +22,23 @@ bool NodeSearchDlg::Create(wxWindow* parent, wxWindowID id, const wxString& titl
 
     auto* dlg_sizer = new wxBoxSizer(wxVERTICAL);
 
+    auto* box_sizer_2 = new wxBoxSizer(wxHORIZONTAL);
+    box_sizer_2->SetMinSize(250, 400);
+
+    auto* box_sizer = new wxBoxSizer(wxVERTICAL);
+
     m_radio_generators = new wxRadioButton(this, wxID_ANY, "Search generators");
     m_radio_generators->SetValidator(wxGenericValidator(&m_search_generators));
     auto* static_box = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, m_radio_generators), wxVERTICAL);
 
     m_combo_generators = new wxComboBox(static_box->GetStaticBox(), wxID_ANY, wxEmptyString,
         wxDefaultPosition, wxDefaultSize, 0, nullptr, wxCB_SORT);
+    m_combo_generators->SetFocus();
     m_combo_generators->SetValidator(wxGenericValidator(&m_gen_name));
-    static_box->Add(m_combo_generators, wxSizerFlags().Expand().Border(wxALL));
+    m_combo_generators->SetMinSize(ConvertDialogToPixels(wxSize(100, -1)));
+    static_box->Add(m_combo_generators, wxSizerFlags().Border(wxALL));
 
-    dlg_sizer->Add(static_box, wxSizerFlags().Expand().Border(wxALL));
+    box_sizer->Add(static_box, wxSizerFlags().Expand().Border(wxALL));
 
     m_radio_var_names = new wxRadioButton(this, wxID_ANY, "Search var_names");
     m_radio_var_names->SetValidator(wxGenericValidator(&m_search_varnames));
@@ -40,9 +47,10 @@ bool NodeSearchDlg::Create(wxWindow* parent, wxWindowID id, const wxString& titl
     m_combo_variables = new wxComboBox(static_box_2->GetStaticBox(), wxID_ANY, wxEmptyString,
         wxDefaultPosition, wxDefaultSize, 0, nullptr, wxCB_SORT);
     m_combo_variables->SetValidator(wxGenericValidator(&m_var_name));
-    static_box_2->Add(m_combo_variables, wxSizerFlags().Expand().Border(wxALL));
+    m_combo_variables->SetMinSize(ConvertDialogToPixels(wxSize(100, -1)));
+    static_box_2->Add(m_combo_variables, wxSizerFlags().Border(wxALL));
 
-    dlg_sizer->Add(static_box_2, wxSizerFlags().Expand().Border(wxALL));
+    box_sizer->Add(static_box_2, wxSizerFlags().Expand().Border(wxALL));
 
     m_radio_labels = new wxRadioButton(this, wxID_ANY, "Search labels");
     m_radio_labels->SetValidator(wxGenericValidator(&m_search_labels));
@@ -51,9 +59,29 @@ bool NodeSearchDlg::Create(wxWindow* parent, wxWindowID id, const wxString& titl
     m_combo_labels = new wxComboBox(static_box_3->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition,
         wxDefaultSize, 0, nullptr, wxCB_SORT);
     m_combo_labels->SetValidator(wxGenericValidator(&m_label_name));
-    static_box_3->Add(m_combo_labels, wxSizerFlags().Expand().Border(wxALL));
+    m_combo_labels->SetMinSize(ConvertDialogToPixels(wxSize(100, -1)));
+    m_combo_labels->SetMaxSize(ConvertDialogToPixels(wxSize(100, -1)));
+    static_box_3->Add(m_combo_labels, wxSizerFlags().Border(wxALL));
 
-    dlg_sizer->Add(static_box_3, wxSizerFlags().Expand().Border(wxALL));
+    box_sizer->Add(static_box_3, wxSizerFlags().Expand().Border(wxALL));
+
+    box_sizer_2->Add(box_sizer, wxSizerFlags().Expand().Border(wxALL));
+
+    m_scintilla = new wxStyledTextCtrl(this);
+    {
+        m_scintilla->SetLexer(wxSTC_LEX_CPP);
+        m_scintilla->SetEOLMode(wxSTC_EOL_LF);
+        // Sets text margin scaled appropriately for the current DPI on Windows,
+        // 5 on wxGTK or wxOSX
+        m_scintilla->SetMarginLeft(wxSizerFlags::GetDefaultBorder());
+        m_scintilla->SetMarginRight(wxSizerFlags::GetDefaultBorder());
+        m_scintilla->SetMarginWidth(1, 0); // Remove default margin
+        m_scintilla->SetBackSpaceUnIndents(true);
+    }
+    m_scintilla->SetMinSize(ConvertDialogToPixels(wxSize(120, -1)));
+    box_sizer_2->Add(m_scintilla, wxSizerFlags(1).Expand().Border(wxALL));
+
+    dlg_sizer->Add(box_sizer_2, wxSizerFlags(1).Expand().Border(wxALL));
 
     auto* stdBtn = CreateStdDialogButtonSizer(wxOK|wxCANCEL);
     dlg_sizer->Add(CreateSeparatedSizer(stdBtn), wxSizerFlags().Expand().Border(wxALL));
@@ -201,10 +229,7 @@ void PopulateGenerators(Node* node, std::set<std::string>& set_generators)
             PopulateGenerators(child.get(), set_generators);
         }
     }
-    else
-    {
-        set_generators.insert(map_GenNames[node->gen_name()]);
-    }
+    set_generators.insert(map_GenNames[node->gen_name()]);
 }
 
 void PopulateVarNames(Node* node, wxComboBox* combo)
@@ -252,6 +277,8 @@ void NodeSearchDlg::OnInit(wxInitDialogEvent& event)
         for (auto& iter: set_generators)
         {
             m_combo_generators->Append(iter);
+            m_scintilla->AddTextRaw(iter.c_str());
+            m_scintilla->AddTextRaw("\n");
         }
         PopulateVarNames(cur_sel, m_combo_variables);
         PopulateLabels(cur_sel, m_combo_labels);

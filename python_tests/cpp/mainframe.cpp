@@ -86,21 +86,8 @@ MainFrame::MainFrame(wxWindow* parent, wxWindowID id, const wxString& title, con
     );
 
     menuDialogs->Append(menuItem_2);
-    auto* menuItem = new wxMenuItem(menuDialogs, wxID_ANY, "DlgMulitTest...", "Launch DlgMultiTest Dialog",
-        wxITEM_NORMAL);
-    menuItem->SetBitmap(
-#if wxCHECK_VERSION(3, 1, 6)
-        wxArtProvider::GetBitmapBundle(wxART_INFORMATION, wxART_MENU)
-#else
-        wxBitmap(wxArtProvider::GetBitmap(wxART_INFORMATION, wxART_MENU))
-#endif
-    );
-
-    menuDialogs->Append(menuItem);
     auto* menuItem1 = new wxMenuItem(menuDialogs, wxID_ANY, "Other Controls Dialog...");
     menuDialogs->Append(menuItem1);
-    auto* menuItem2 = new wxMenuItem(menuDialogs, wxID_ANY, "Ribbon Dialog");
-    menuDialogs->Append(menuItem2);
     auto* menuItem3 = new wxMenuItem(menuDialogs, wxID_ANY, "Wizard");
     menuDialogs->Append(menuItem3);
     menuDialogs->AppendSeparator();
@@ -146,14 +133,6 @@ MainFrame::MainFrame(wxWindow* parent, wxWindowID id, const wxString& title, con
 #endif
     );
 
-    auto* tool = m_toolBar->AddTool(wxID_ANY, "DlgMulitTest...",
-#if wxCHECK_VERSION(3, 1, 6)
-        wxArtProvider::GetBitmapBundle(wxART_INFORMATION, wxART_TOOLBAR)
-#else
-        wxBitmap(wxArtProvider::GetBitmap(wxART_INFORMATION, wxART_TOOLBAR))
-#endif
-    , wxNullBitmap, wxITEM_NORMAL, "Launch DlgMultiTest Dialog", "Launch DlgMultiTest Dialog");
-
     m_toolBar->Realize();
 
     m_statusBar = CreateStatusBar(2);
@@ -172,16 +151,13 @@ MainFrame::MainFrame(wxWindow* parent, wxWindowID id, const wxString& title, con
     Bind(wxEVT_MENU, &MainFrame::OnBookTestDlg, this, menu_item_4->GetId());
     Bind(wxEVT_MENU, &MainFrame::OnPythonDlg, this, menu_item_2->GetId());
     Bind(wxEVT_MENU, &MainFrame::OnCommonDialog, this, menuItem_2->GetId());
-    Bind(wxEVT_MENU, &MainFrame::OnMultiTestDialog, this, menuItem->GetId());
     Bind(wxEVT_MENU, &MainFrame::OnOtherCtrls, this, menuItem1->GetId());
-    Bind(wxEVT_MENU, &MainFrame::OnRibbonDialog, this, menuItem2->GetId());
     Bind(wxEVT_MENU, &MainFrame::OnWizard, this, menuItem3->GetId());
     Bind(wxEVT_MENU, &MainFrame::OnQuit, this, wxID_EXIT);
     Bind(wxEVT_TOOL, &MainFrame::OnMainTestDlg, this, tool_4->GetId());
     Bind(wxEVT_TOOL, &MainFrame::OnBookTestDlg, this, tool_5->GetId());
     Bind(wxEVT_TOOL, &MainFrame::OnPythonDlg, this, tool_3->GetId());
     Bind(wxEVT_TOOL, &MainFrame::OnCommonDialog, this, tool_2->GetId());
-    Bind(wxEVT_TOOL, &MainFrame::OnMultiTestDialog, this, tool->GetId());
 }
 
 namespace wxue_img

@@ -8,7 +8,6 @@
 // clang-format off
 
 #include <wx/artprov.h>
-#include <wx/colour.h>
 #include <wx/gbsizer.h>
 #include <wx/panel.h>
 #include <wx/radiobox.h>
@@ -16,7 +15,6 @@
 #include <wx/ribbon/gallery.h>
 #include <wx/ribbon/page.h>
 #include <wx/ribbon/panel.h>
-#include <wx/settings.h>
 #include <wx/sizer.h>
 #include <wx/statbox.h>
 #include <wx/valgen.h>
@@ -40,6 +38,7 @@ namespace wxue_img
 {
     extern const unsigned char english_png[541];
     extern const unsigned char french_png[252];
+    extern const unsigned char wiztest_png[1239];
 }
 
 bool MainTestDialog::Create(wxWindow* parent, wxWindowID id, const wxString& title,
@@ -84,6 +83,11 @@ bool MainTestDialog::Create(wxWindow* parent, wxWindowID id, const wxString& tit
     }
     m_scintilla->SetMinSize(ConvertDialogToPixels(wxSize(150, 60)));
     page_sizer_1->Add(m_scintilla, wxSizerFlags().Expand().Border(wxALL));
+
+    m_htmlWin = new wxHtmlWindow(page_2);
+    m_htmlWin->SetPage("This is an <b>HTML</b> window");
+    m_htmlWin->SetMinSize(ConvertDialogToPixels(wxSize(100, 60)));
+    page_sizer_1->Add(m_htmlWin, wxSizerFlags().Expand().Border(wxALL));
     page_2->SetSizerAndFit(page_sizer_1);
 
     auto* page_4 = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
@@ -515,6 +519,44 @@ bool MainTestDialog::Create(wxWindow* parent, wxWindowID id, const wxString& tit
     rbnGallery->Realize();
     page->SetSizerAndFit(page_sizer_3);
 
+    auto* page_7 = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
+    m_notebook->AddPage(page_7, "Banners");
+    page_7->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
+
+    auto* page_sizer = new wxBoxSizer(wxVERTICAL);
+
+    auto* box_sizer_17 = new wxBoxSizer(wxHORIZONTAL);
+
+    m_banner_left = new wxBannerWindow(page_7, wxLEFT);
+    m_banner_left->SetText("Left Banner", wxEmptyString);
+    box_sizer_17->Add(m_banner_left, wxSizerFlags().Border(wxALL));
+
+    m_banner_top = new wxBannerWindow(page_7, wxTOP);
+    m_banner_top->SetGradient(wxSystemSettings::GetColour(wxSYS_COLOUR_INACTIVECAPTION),
+        wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT));
+    m_banner_top->SetText("Top Banner", "This is the top banner message");
+    box_sizer_17->Add(m_banner_top, wxSizerFlags().Border(wxALL));
+
+    m_banner_right = new wxBannerWindow(page_7, wxRIGHT);
+    m_banner_right->SetText("Right Banner", wxEmptyString);
+    box_sizer_17->Add(m_banner_right, wxSizerFlags().Border(wxALL));
+
+    page_sizer->Add(box_sizer_17, wxSizerFlags(1).Border(wxALL));
+
+    auto* box_sizer_18 = new wxBoxSizer(wxHORIZONTAL);
+
+    m_banner = new wxBannerWindow(page_7, wxLEFT);
+#if wxCHECK_VERSION(3, 1, 6)
+        m_banner->SetBitmap(wxue_img::bundle_wiztest_png());
+#else
+    m_banner->SetBitmap(wxueImage(wxue_img::wiztest_png, sizeof(wxue_img::wiztest_png)));
+#endif  // wxCHECK_VERSION(3, 1, 6)
+    m_banner->SetText("This is a long title", wxEmptyString);
+    box_sizer_18->Add(m_banner, wxSizerFlags().Border(wxALL));
+
+    page_sizer->Add(box_sizer_18, wxSizerFlags().Border(wxALL));
+    page_7->SetSizerAndFit(page_sizer);
+
     auto* box_sizer_14 = new wxBoxSizer(wxHORIZONTAL);
 
     auto* staticText_4 = new wxStaticText(this, wxID_ANY, "Events:");
@@ -527,7 +569,7 @@ bool MainTestDialog::Create(wxWindow* parent, wxWindowID id, const wxString& tit
 
     m_events_list = new wxListBox(this, wxID_ANY);
     m_events_list->SetMinSize(ConvertDialogToPixels(wxSize(-1, 60)));
-    dlg_sizer->Add(m_events_list, wxSizerFlags().Expand().Border(wxALL));
+    dlg_sizer->Add(m_events_list, wxSizerFlags(1).Expand().Border(wxALL));
 
     auto* stdBtn = CreateStdDialogButtonSizer(wxOK|wxCANCEL);
     dlg_sizer->Add(CreateSeparatedSizer(stdBtn), wxSizerFlags().Expand().Border(wxALL));

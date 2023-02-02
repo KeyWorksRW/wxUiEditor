@@ -9,11 +9,17 @@
 
 #pragma once
 
+#include <wx/calctrl.h>
 #include <wx/colour.h>
 #include <wx/event.h>
 #include <wx/gdicmn.h>
+#include <wx/hyperlink.h>
+#include <wx/scrolbar.h>
 #include <wx/settings.h>
 #include <wx/sizer.h>
+#include <wx/spinbutt.h>
+#include <wx/spinctrl.h>
+#include <wx/srchctrl.h>
 #include <wx/stattext.h>
 #include <wx/wizard.h>
 
@@ -32,11 +38,26 @@ protected:
     void OnBeforeChange(wxWizardEvent& event);
     void OnInit(wxInitDialogEvent& event);
 
+    // Validator variables
+
+    int m_spinValidate { 4 };
+
     // Class member variables
 
+    wxCalendarCtrl* m_calendar;
+    wxHyperlinkCtrl* m_hyperlink;
+    wxScrollBar* m_scrollBar;
+    wxSearchCtrl* m_searchCtrl;
+    wxSpinButton* m_spinBtn;
+    wxSpinCtrl* m_spinCtrl;
+    wxSpinCtrlDouble* m_spinCtrlDouble;
     wxStaticText* m_staticText2;
     wxStaticText* m_staticText3;
     wxStaticText* m_staticText;
+    wxStaticText* staticText;
+    wxStaticText* staticText_2;
+    wxStaticText* staticText_3;
+    wxStaticText* staticText_4;
 };
 
 // ************* End of generated code ***********

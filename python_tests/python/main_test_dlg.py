@@ -7,6 +7,7 @@
 
 import wx
 import wx.adv
+import wx.html
 import wx.ribbon
 import wx.richtext
 import wx.stc
@@ -103,6 +104,11 @@ class MainTestDialog(wx.Dialog):
         self.m_scintilla.SetBackSpaceUnIndents(True)
         self.m_scintilla.SetMinSize(self.ConvertDialogToPixels(wx.Size(150, 60)))
         page_sizer_1.Add(self.m_scintilla, wx.SizerFlags().Expand().Border(wx.ALL))
+
+        self.m_htmlWin = wx.html.HtmlWindow(page_2, wx.ID_ANY)
+        self.m_htmlWin.SetPage("This is an <b>HTML</b> window")
+        self.m_htmlWin.SetMinSize(self.ConvertDialogToPixels(wx.Size(100, 60)))
+        page_sizer_1.Add(self.m_htmlWin, wx.SizerFlags().Expand().Border(wx.ALL))
         page_2.SetSizerAndFit(page_sizer_1)
 
         page_4 = wx.Panel(self.m_notebook, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize,
@@ -547,6 +553,42 @@ class MainTestDialog(wx.Dialog):
         rbnGallery.Realize()
         page.SetSizerAndFit(page_sizer_3)
 
+        page_7 = wx.Panel(self.m_notebook, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize,
+            wx.TAB_TRAVERSAL)
+        self.m_notebook.AddPage(page_7, "Banners")
+        page_7.SetBackgroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_BTNFACE))
+
+        page_sizer = wx.BoxSizer(wx.VERTICAL)
+
+        box_sizer_17 = wx.BoxSizer(wx.HORIZONTAL)
+
+        self.m_banner_left = wx.adv.BannerWindow(page_7, wx.ID_ANY, wx.LEFT)
+        self.m_banner_left.SetText("Left Banner", "")
+        box_sizer_17.Add(self.m_banner_left, wx.SizerFlags().Border(wx.ALL))
+
+        self.m_banner_top = wx.adv.BannerWindow(page_7, wx.ID_ANY, wx.TOP)
+        self.m_banner_top.SetGradient(wx.SystemSettings.GetColour(
+            wx.SYS_COLOUR_INACTIVECAPTION),
+            wx.SystemSettings.GetColour(wx.SYS_COLOUR_HIGHLIGHT))
+        self.m_banner_top.SetText("Top Banner", "This is the top banner message")
+        box_sizer_17.Add(self.m_banner_top, wx.SizerFlags().Border(wx.ALL))
+
+        self.m_banner_right = wx.adv.BannerWindow(page_7, wx.ID_ANY, wx.RIGHT)
+        self.m_banner_right.SetText("Right Banner", "")
+        box_sizer_17.Add(self.m_banner_right, wx.SizerFlags().Border(wx.ALL))
+
+        page_sizer.Add(box_sizer_17, wx.SizerFlags(1).Border(wx.ALL))
+
+        box_sizer_18 = wx.BoxSizer(wx.HORIZONTAL)
+
+        self.m_banner = wx.adv.BannerWindow(page_7, wx.ID_ANY, wx.LEFT)
+        self.m_banner.SetBitmap(wx.BitmapBundle.FromBitmap(images.wiztest_png.Bitmap))
+        self.m_banner.SetText("This is a long title", "")
+        box_sizer_18.Add(self.m_banner, wx.SizerFlags().Border(wx.ALL))
+
+        page_sizer.Add(box_sizer_18, wx.SizerFlags().Border(wx.ALL))
+        page_7.SetSizerAndFit(page_sizer)
+
         box_sizer_14 = wx.BoxSizer(wx.HORIZONTAL)
 
         staticText_4 = wx.StaticText(self, wx.ID_ANY, "Events:")
@@ -559,7 +601,7 @@ class MainTestDialog(wx.Dialog):
 
         self.m_events_list = wx.ListBox(self, wx.ID_ANY)
         self.m_events_list.SetMinSize(self.ConvertDialogToPixels(wx.Size(-1, 60)))
-        dlg_sizer.Add(self.m_events_list, wx.SizerFlags().Expand().Border(wx.ALL))
+        dlg_sizer.Add(self.m_events_list, wx.SizerFlags(1).Expand().Border(wx.ALL))
 
         if "wxMac" not in wx.PlatformInfo:
             stdBtn_line = wx.StaticLine(self, wx.ID_ANY, wx.DefaultPosition, wx.Size(20, -1))

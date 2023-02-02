@@ -14,6 +14,7 @@
 #include <wx/event.h>
 #include <wx/gdicmn.h>
 #include <wx/radiobut.h>
+#include <wx/stc/stc.h>
 
 class NodeSearchDlg : public wxDialog
 {
@@ -21,14 +22,14 @@ public:
     NodeSearchDlg() {}
     NodeSearchDlg(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "Node Search",
         const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
-        long style = wxDEFAULT_DIALOG_STYLE, const wxString &name = wxDialogNameStr)
+        long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER, const wxString &name = wxDialogNameStr)
     {
         Create(parent, id, title, pos, size, style, name);
     }
 
     bool Create(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "Node Search",
         const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
-        long style = wxDEFAULT_DIALOG_STYLE, const wxString &name = wxDialogNameStr);
+        long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER, const wxString &name = wxDialogNameStr);
 
     bool isSearchGenerators() const { return m_search_generators; }
     const wxString& get_GenName() const { return m_gen_name; }
@@ -65,6 +66,7 @@ private:
     wxRadioButton* m_radio_generators;
     wxRadioButton* m_radio_labels;
     wxRadioButton* m_radio_var_names;
+    wxStyledTextCtrl* m_scintilla;
 };
 
 // ************* End of generated code ***********

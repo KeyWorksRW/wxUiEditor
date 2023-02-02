@@ -7,6 +7,8 @@
 
 // clang-format off
 
+#include <wx/valgen.h>
+
 #include "images.h"
 
 #include "wizard.h"
@@ -33,18 +35,70 @@ Wizard::Wizard(wxWindow* parent, wxWindowID id, const wxString& title, const wxP
 
     auto* wizPage = new wxWizardPageSimple(this);
 
-    auto* box_sizer = new wxBoxSizer(wxHORIZONTAL);
+    auto* box_sizer = new wxBoxSizer(wxVERTICAL);
 
     m_staticText = new wxStaticText(wizPage, wxID_ANY, "This is the first Wizard page");
     box_sizer->Add(m_staticText, wxSizerFlags().Border(wxALL));
+
+    m_calendar = new wxCalendarCtrl(wizPage, wxID_ANY, wxDefaultDateTime, wxDefaultPosition, wxDefaultSize,
+        wxCAL_SHOW_HOLIDAYS);
+    box_sizer->Add(m_calendar, wxSizerFlags().Border(wxALL));
     wizPage->SetSizerAndFit(box_sizer);
 
     auto* m_wizPage2 = new wxWizardPageSimple(this);
 
-    auto* box_sizer2 = new wxBoxSizer(wxHORIZONTAL);
+    auto* box_sizer2 = new wxBoxSizer(wxVERTICAL);
 
     m_staticText2 = new wxStaticText(m_wizPage2, wxID_ANY, "This is the second Wizard page which is wider.");
     box_sizer2->Add(m_staticText2, wxSizerFlags().Border(wxALL));
+
+    auto* parent_sizer3 = new wxBoxSizer(wxVERTICAL);
+
+    auto* box_sizer_2 = new wxBoxSizer(wxHORIZONTAL);
+
+    staticText = new wxStaticText(m_wizPage2, wxID_ANY, "Scrollbar:");
+    box_sizer_2->Add(staticText, wxSizerFlags().Border(wxALL));
+
+    m_scrollBar = new wxScrollBar(m_wizPage2, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSB_HORIZONTAL);
+    m_scrollBar->SetScrollbar(0, 1, 100, 1);
+    box_sizer_2->Add(m_scrollBar, wxSizerFlags(1).Expand().Border(wxALL));
+
+    parent_sizer3->Add(box_sizer_2, wxSizerFlags().Border(wxALL));
+
+    auto* box_sizer_3 = new wxBoxSizer(wxHORIZONTAL);
+
+    staticText_2 = new wxStaticText(m_wizPage2, wxID_ANY, "Normal SpinCtrl");
+    box_sizer_3->Add(staticText_2, wxSizerFlags().Border(wxALL));
+
+    m_spinCtrl = new wxSpinCtrl(m_wizPage2, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS,
+        0, 100, 4);
+    m_spinCtrl->SetValidator(wxGenericValidator(&m_spinValidate));
+    box_sizer_3->Add(m_spinCtrl, wxSizerFlags().Border(wxALL));
+
+    parent_sizer3->Add(box_sizer_3, wxSizerFlags().Border(wxALL));
+
+    auto* box_sizer_4 = new wxBoxSizer(wxHORIZONTAL);
+
+    staticText_3 = new wxStaticText(m_wizPage2, wxID_ANY, "Double SpinCtrl");
+    box_sizer_4->Add(staticText_3, wxSizerFlags().Border(wxALL));
+
+    m_spinCtrlDouble = new wxSpinCtrlDouble(m_wizPage2);
+    box_sizer_4->Add(m_spinCtrlDouble, wxSizerFlags().Border(wxALL));
+
+    parent_sizer3->Add(box_sizer_4, wxSizerFlags().Border(wxALL));
+
+    auto* box_sizer_5 = new wxBoxSizer(wxHORIZONTAL);
+
+    staticText_4 = new wxStaticText(m_wizPage2, wxID_ANY, "Spin Button");
+    box_sizer_5->Add(staticText_4, wxSizerFlags().Border(wxALL));
+
+    m_spinBtn = new wxSpinButton(m_wizPage2);
+    m_spinBtn->SetRange(0, 10);
+    box_sizer_5->Add(m_spinBtn, wxSizerFlags().Border(wxALL));
+
+    parent_sizer3->Add(box_sizer_5, wxSizerFlags().Border(wxALL));
+
+    box_sizer2->Add(parent_sizer3, wxSizerFlags().Border(wxALL));
     m_wizPage2->SetSizerAndFit(box_sizer2);
 
     auto* m_wizPage3 = new wxWizardPageSimple(this, nullptr, nullptr,
@@ -55,10 +109,23 @@ Wizard::Wizard(wxWindow* parent, wxWindowID id, const wxString& title, const wxP
 #endif
     );
 
-    auto* box_sizer3 = new wxBoxSizer(wxHORIZONTAL);
+    auto* box_sizer3 = new wxBoxSizer(wxVERTICAL);
 
     m_staticText3 = new wxStaticText(m_wizPage3, wxID_ANY, "This is the final Wizard page");
     box_sizer3->Add(m_staticText3, wxSizerFlags().Border(wxALL));
+
+    auto* box_sizer_6 = new wxBoxSizer(wxHORIZONTAL);
+
+    m_hyperlink = new wxHyperlinkCtrl(m_wizPage3, wxID_ANY, "Blank Page", "https://blank.page/");
+    box_sizer_6->Add(m_hyperlink, wxSizerFlags().Center().Border(wxALL));
+
+    m_searchCtrl = new wxSearchCtrl(m_wizPage3, wxID_ANY, wxEmptyString);
+    m_searchCtrl->SetHint("Search for something...");
+    m_searchCtrl->ShowSearchButton(true);
+    m_searchCtrl->ShowCancelButton(true);
+    box_sizer_6->Add(m_searchCtrl, wxSizerFlags(1).Border(wxALL));
+
+    box_sizer3->Add(box_sizer_6, wxSizerFlags().Expand().Border(wxALL));
     m_wizPage3->SetSizerAndFit(box_sizer3);
 
     wizPage->Chain(m_wizPage2).Chain(m_wizPage3);

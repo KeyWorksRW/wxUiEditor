@@ -9,12 +9,14 @@
 
 #pragma once
 
+#include <wx/bannerwindow.h>
 #include <wx/bitmap.h>
 #include <wx/button.h>
 #include <wx/checkbox.h>
 #include <wx/checklst.h>
 #include <wx/choice.h>
 #include <wx/clrpicker.h>
+#include <wx/colour.h>
 #include <wx/combobox.h>
 #include <wx/commandlinkbutton.h>
 #include <wx/datectrl.h>
@@ -26,6 +28,7 @@
 #include <wx/font.h>
 #include <wx/fontpicker.h>
 #include <wx/gdicmn.h>
+#include <wx/html/htmlwin.h>
 #include <wx/icon.h>
 #include <wx/image.h>
 #include <wx/listbase.h>
@@ -39,6 +42,7 @@
 #include <wx/ribbon/control.h>
 #include <wx/ribbon/toolbar.h>
 #include <wx/richtext/richtextctrl.h>
+#include <wx/settings.h>
 #include <wx/stattext.h>
 #include <wx/stc/stc.h>
 #include <wx/textctrl.h>
@@ -48,6 +52,8 @@
 class MainTestDialog : public wxDialog
 {
 public:
+    wxHtmlWindow* m_htmlWin;
+
     MainTestDialog() {}
     MainTestDialog(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = wxEmptyString,
         const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
@@ -81,6 +87,10 @@ protected:
 
     // Class member variables
 
+    wxBannerWindow* m_banner;
+    wxBannerWindow* m_banner_left;
+    wxBannerWindow* m_banner_right;
+    wxBannerWindow* m_banner_top;
     wxButton* m_btn;
     wxButton* m_btn_2;
     wxButton* m_btn_3;

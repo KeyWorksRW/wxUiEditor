@@ -298,6 +298,7 @@ set (file_list
 )
 
 # wxui/wxui_code.cmake
+# internal/wxui_internal.cmake
 
 set (debug_files
     # These are just here to make it easier to open with a VSCode extension
@@ -306,6 +307,7 @@ set (debug_files
     internal/convert_img.cpp
     internal/import_panel.cpp
     internal/node_info.cpp
+    internal/node_search_dlg.cpp
     internal/xrcpreview.cpp
 
     internal/debugsettings.cpp

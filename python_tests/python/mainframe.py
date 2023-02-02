@@ -7,9 +7,9 @@
 
 import wx
 import main_test_dlg
+import booktest_dlg
 import wizard
 import python_dlg
-import booktest_dlg
 
 from wx.lib.embeddedimage import PyEmbeddedImage
 
@@ -110,14 +110,8 @@ class MainFrame(wx.Frame):
             "Common controls", wx.ITEM_NORMAL)
         menuItem_2.SetBitmap(wx.ArtProvider.GetBitmapBundle(wx.ART_TIP, wx.ART_MENU))
         menuDialogs.Append(menuItem_2)
-        menuItem = wx.MenuItem(menuDialogs, wx.ID_ANY, "DlgMulitTest...",
-            "Launch DlgMultiTest Dialog", wx.ITEM_NORMAL)
-        menuItem.SetBitmap(wx.ArtProvider.GetBitmapBundle(wx.ART_INFORMATION, wx.ART_MENU))
-        menuDialogs.Append(menuItem)
         menuItem1 = wx.MenuItem(menuDialogs, wx.ID_ANY, "Other Controls Dialog...")
         menuDialogs.Append(menuItem1)
-        menuItem2 = wx.MenuItem(menuDialogs, wx.ID_ANY, "Ribbon Dialog")
-        menuDialogs.Append(menuItem2)
         menuItem3 = wx.MenuItem(menuDialogs, wx.ID_ANY, "Wizard")
         menuDialogs.Append(menuItem3)
         menuDialogs.AppendSeparator()
@@ -140,10 +134,6 @@ class MainFrame(wx.Frame):
         tool_2 = self.m_toolBar.AddTool(wx.ID_ANY, "Common Controls...",
             wx.ArtProvider.GetBitmapBundle(wx.ART_TIP, wx.ART_TOOLBAR))
 
-        tool = self.m_toolBar.AddTool(wx.ID_ANY, "DlgMulitTest...",
-            wx.ArtProvider.GetBitmapBundle(wx.ART_INFORMATION, wx.ART_TOOLBAR), wx.NullBitmap,
-            wx.ITEM_NORMAL, "Launch DlgMultiTest Dialog", "Launch DlgMultiTest Dialog")
-
         self.m_toolBar.Realize()
 
         self.m_statusBar = self.CreateStatusBar(2)
@@ -158,16 +148,13 @@ class MainFrame(wx.Frame):
         self.Bind(wx.EVT_MENU, self.OnBookTestDlg, id=menu_item_4.GetId())
         self.Bind(wx.EVT_MENU, self.OnPythonDlg, id=menu_item_2.GetId())
         self.Bind(wx.EVT_MENU, self.OnCommonDialog, id=menuItem_2.GetId())
-        self.Bind(wx.EVT_MENU, self.OnMultiTestDialog, id=menuItem.GetId())
         self.Bind(wx.EVT_MENU, self.OnOtherCtrls, id=menuItem1.GetId())
-        self.Bind(wx.EVT_MENU, self.OnRibbonDialog, id=menuItem2.GetId())
         self.Bind(wx.EVT_MENU, self.OnWizard, id=menuItem3.GetId())
         self.Bind(wx.EVT_MENU, self.OnQuit, id=wx.ID_EXIT)
         self.Bind(wx.EVT_TOOL, self.OnMainTestDlg, id=tool_4.GetId())
         self.Bind(wx.EVT_TOOL, self.OnBookTestDlg, id=tool_5.GetId())
         self.Bind(wx.EVT_TOOL, self.OnPythonDlg, id=tool_3.GetId())
         self.Bind(wx.EVT_TOOL, self.OnCommonDialog, id=tool_2.GetId())
-        self.Bind(wx.EVT_TOOL, self.OnMultiTestDialog, id=tool.GetId())
 
     # Unimplemented Event handler functions
     # Copy any listed and paste them below the comment block, or to your inherited class.

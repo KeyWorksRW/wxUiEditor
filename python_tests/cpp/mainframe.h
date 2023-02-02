@@ -29,11 +29,9 @@ protected:
     void OnBookTestDlg(wxCommandEvent& event);
     void OnCommonDialog(wxCommandEvent& event);
     void OnMainTestDlg(wxCommandEvent& event);
-    void OnMultiTestDialog(wxCommandEvent& event);
     void OnOtherCtrls(wxCommandEvent& event);
     void OnPythonDlg(wxCommandEvent& event);
     void OnQuit(wxCommandEvent& event);
-    void OnRibbonDialog(wxCommandEvent& event);
     void OnWizard(wxCommandEvent& event);
 
     // Class member variables

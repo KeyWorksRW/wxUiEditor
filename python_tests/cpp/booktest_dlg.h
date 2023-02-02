@@ -66,6 +66,14 @@ protected:
     wxTreebook* m_treebook;
 };
 
+namespace wxue_img
+{
+    // Images declared in this class module:
+
+    extern const unsigned char er_png[302];
+    extern const unsigned char re_png[305];
+}
+
 // ************* End of generated code ***********
 // DO NOT EDIT THIS COMMENT BLOCK!
 //

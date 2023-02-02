@@ -6,7 +6,6 @@ set (wxue_generated_code
 
     ${CMAKE_CURRENT_LIST_DIR}/booktest_dlg.cpp
     ${CMAKE_CURRENT_LIST_DIR}/commonctrls.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/dlgmultitest.cpp
     ${CMAKE_CURRENT_LIST_DIR}/form_toolbar_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/images.cpp
     ${CMAKE_CURRENT_LIST_DIR}/mainframe.cpp
@@ -14,7 +13,6 @@ set (wxue_generated_code
     ${CMAKE_CURRENT_LIST_DIR}/other_ctrls.cpp
     ${CMAKE_CURRENT_LIST_DIR}/popupwin.cpp
     ${CMAKE_CURRENT_LIST_DIR}/python_dlg.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/ribbondlg.cpp
     ${CMAKE_CURRENT_LIST_DIR}/wizard.cpp
 
 )

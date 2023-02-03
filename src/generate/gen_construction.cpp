@@ -233,7 +233,7 @@ void BaseCodeGenerator::GenConstruction(Node* node)
         if (node->GetChildCount() == 1)
         {
             gen_code.NodeName();
-            gen_code.Function("Initialize(").Str(node->GetChild(0)->get_node_name()).EndFunction();
+            gen_code.Function("Initialize(").NodeName(node->GetChild(0)).EndFunction();
         }
         else if (node->GetChildCount() > 1)
         {
@@ -243,7 +243,7 @@ void BaseCodeGenerator::GenConstruction(Node* node)
             else
                 gen_code.Function("SplitHorizontally(");
 
-            gen_code.Str(node->GetChild(0)->get_node_name()).Comma().Str(node->GetChild(1)->get_node_name()).EndFunction();
+            gen_code.NodeName(node->GetChild(0)).Comma().Str(node->GetChild(1)->get_node_name()).EndFunction();
 
             if (auto sash_pos = node->get_prop_ptr(prop_sashpos)->as_int(); sash_pos != 0 && sash_pos != -1)
             {

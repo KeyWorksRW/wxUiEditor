@@ -622,6 +622,31 @@ void NavPopupMenu::MenuAddCommands(Node* node)
 
             break;
 
+        case gen_wxPropertyGridManager:
+            add_sizer = false;
+            Append(MenuADD_PROPGRID_PAGE, "Add Page");
+            Bind(
+                wxEVT_MENU,
+                [](wxCommandEvent&)
+                {
+                    wxGetFrame().CreateToolNode(gen_propGridPage);
+                },
+                MenuADD_PROPGRID_PAGE);
+            break;
+
+        case gen_wxPropertyGrid:
+        case gen_propGridPage:
+            add_sizer = false;
+            Append(MenuADD_PROPGRID_ITEM, "Add Item");
+            Bind(
+                wxEVT_MENU,
+                [](wxCommandEvent&)
+                {
+                    wxGetFrame().CreateToolNode(gen_propGridItem);
+                },
+                MenuADD_PROPGRID_ITEM);
+            break;
+
         default:
             if (m_is_parent_toolbar)
             {

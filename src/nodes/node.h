@@ -44,6 +44,7 @@ public:
 
     NodeSharedPtr GetParentPtr() const noexcept { return m_parent; }
     Node* GetParent() const noexcept { return m_parent.get(); }
+    Node* get_parent() const noexcept { return m_parent.get(); }
 
     void SetParent(NodeSharedPtr parent) { m_parent = parent; }
     void SetParent(Node* parent) { m_parent = parent->GetSharedPtr(); }
@@ -313,15 +314,18 @@ public:
     void ModifyProperty(NodeProperty* prop, int value);
 
     // Both var_name and validator_variable properties are checked
-    tt_string GetUniqueName(const tt_string& proposed_name);
+    tt_string GetUniqueName(const tt_string& proposed_name, PropName prop_name = prop_var_name);
 
     // Fix duplicate names in the current node and all of it's children
     void FixDuplicateNodeNames(Node* form = nullptr);
 
     bool FixDuplicateName();
 
-    // Collects all unique var_name and validator_variable properties in the current form
-    void CollectUniqueNames(std::unordered_set<std::string>& name_set, Node* cur_node);
+    // Collects all unique var_name, checkbox_var_name, radiobtn_var_name and
+    // validator_variable properties in the current form
+    //
+    // If prop_name is != prop_var_name, only that property is collected.
+    void CollectUniqueNames(std::unordered_set<std::string>& name_set, Node* cur_node, PropName prop_name = prop_var_name);
 
     int_t FindInsertionPos(Node* child) const;
     int_t FindInsertionPos(const NodeSharedPtr& child) const { return FindInsertionPos(child.get()); }

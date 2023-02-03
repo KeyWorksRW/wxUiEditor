@@ -105,6 +105,7 @@ std::map<std::string_view, std::string_view, std::less<>> g_map_class_prefix
     { "wxDataViewTreeCtrl", "wx.dataview."},
     { "wxGrid", "wx.grid."},
     { "wxPropertyGridManager", "wx.propgrid."},
+    { "wxPropertyGrid", "wx.propgrid."},
 
 };
 // clang-format on

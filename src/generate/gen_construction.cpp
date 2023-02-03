@@ -229,14 +229,15 @@ void BaseCodeGenerator::GenConstruction(Node* node)
     else if (type == type_splitter)
     {
         gen_code.clear();
-        gen_code.NodeName();
 
         if (node->GetChildCount() == 1)
         {
+            gen_code.NodeName();
             gen_code.Function("Initialize(").Str(node->GetChild(0)->get_node_name()).EndFunction();
         }
         else if (node->GetChildCount() > 1)
         {
+            gen_code.NodeName();
             if (node->prop_as_string(prop_splitmode) == "wxSPLIT_VERTICAL")
                 gen_code.Function("SplitVertically(");
             else
@@ -249,7 +250,7 @@ void BaseCodeGenerator::GenConstruction(Node* node)
                 gen_code.Eol().NodeName().Function("SetSashPosition(").Add(prop_sashpos).EndFunction();
             }
         }
-        m_source->writeLine(gen_code.GetCode());
+        m_source->writeLine(gen_code);
     }
 
     else

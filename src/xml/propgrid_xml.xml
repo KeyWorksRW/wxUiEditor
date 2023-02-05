@@ -62,6 +62,8 @@ inline const char* propgrid_xml = R"===(<?xml version="1.0"?>
 		<inherits class="Window Events" />
 		<inherits class="sizer_child" />
 		<property name="var_name" type="string">m_propertyGridManager</property>
+		<property name="show_header" type="bool"
+			help="Show or hide the property grid header control.">0</property>
 		<property name="style" type="bitlist">
 			<option name="wxPG_AUTO_SORT"
 				help="This will cause Sort() automatically after an item is added. When inserting a lot of items in this mode, it may make sense to use Freeze() before operations and Thaw() afterwards to increase performance." />

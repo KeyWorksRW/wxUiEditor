@@ -37,15 +37,11 @@ void PropertyGridManagerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /
                                                  bool /* is_preview */)
 {
     auto pgm = wxStaticCast(wxobject, wxPropertyGridManager);
-
-    bool has_pages = false;
-
     for (auto& child: node->GetChildNodePtrs())
     {
         if (child->isGen(gen_propGridPage))
         {
             auto* page = pgm->AddPage(child->prop_as_wxString(prop_label), child->prop_as_wxBitmapBundle(prop_bitmap));
-            has_pages = true;
 
             AfterCreationAddItems(page, child.get());
         }
@@ -56,7 +52,7 @@ void PropertyGridManagerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /
         pgm->SelectPage(0);
     }
 
-    if (has_pages)
+    if (node->as_bool(prop_show_header))
     {
         pgm->ShowHeader();
     }
@@ -85,6 +81,19 @@ bool PropertyGridManagerGenerator::GetIncludes(Node* node, std::set<std::string>
     }
 
     return true;
+}
+bool PropertyGridManagerGenerator::AfterChildrenCode(Code& code)
+{
+    if (code.IsTrue(prop_show_header))
+    {
+        code.NodeName().Function("ShowHeader(").AddTrue().EndFunction();
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+
 }
 
 //////////////////////////////////////////  PropertyGridPageGenerator  //////////////////////////////////////////

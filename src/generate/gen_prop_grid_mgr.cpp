@@ -44,8 +44,7 @@ void PropertyGridManagerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /
     {
         if (child->isGen(gen_propGridPage))
         {
-            auto* page =
-                pgm->AddPage(child->prop_as_wxString(prop_label), child->prop_as_wxBitmapBundle(prop_bitmap));
+            auto* page = pgm->AddPage(child->prop_as_wxString(prop_label), child->prop_as_wxBitmapBundle(prop_bitmap));
             has_pages = true;
 
             AfterCreationAddItems(page, child.get());
@@ -80,8 +79,11 @@ bool PropertyGridManagerGenerator::GetIncludes(Node* node, std::set<std::string>
     InsertGeneratorInclude(node, "#include <wx/propgrid/propgrid.h>", set_src, set_hdr);
     InsertGeneratorInclude(node, "#include <wx/propgrid/manager.h>", set_src, set_hdr);
 
-    // TODO: [Randalphwa - 02-05-2023] This needs to be determined based on what items have been added
-    // InsertGeneratorInclude(node, "#include <wx/propgrid/advprops.h>", set_src, set_hdr);
+    if (CheckAdvancePropertyInclude(node))
+    {
+        InsertGeneratorInclude(node, "#include <wx/propgrid/advprops.h>", set_src, set_hdr);
+    }
+
     return true;
 }
 

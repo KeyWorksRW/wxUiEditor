@@ -47,17 +47,14 @@ bool PropertyGridGenerator::ConstructionCode(Code& code)
     return true;
 }
 
-const auto advanced_items = {
-
-    "Colour",
-
-};
-
 bool PropertyGridGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
     InsertGeneratorInclude(node, "#include <wx/propgrid/propgrid.h>", set_src, set_hdr);
 
-    // TODO: [Randalphwa - 02-05-2023] This needs to be determined based on what items have been added
-    // InsertGeneratorInclude(node, "#include <wx/propgrid/advprops.h>", set_src, set_hdr);
+    if (CheckAdvancePropertyInclude(node))
+    {
+        InsertGeneratorInclude(node, "#include <wx/propgrid/advprops.h>", set_src, set_hdr);
+    }
+
     return true;
 }

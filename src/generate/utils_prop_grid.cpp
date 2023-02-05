@@ -20,7 +20,8 @@ void AfterCreationAddItems(wxPropertyGridInterface* pgi, Node* node)
         {
             if (child->prop_as_string(prop_type) == "Category")
             {
-                pgi->Append(new wxPropertyCategory(child->prop_as_wxString(prop_label), child->prop_as_wxString(prop_label)));
+                pgi->Append(
+                    new wxPropertyCategory(child->prop_as_wxString(prop_label), child->prop_as_wxString(prop_label)));
             }
             else
             {
@@ -40,4 +41,44 @@ void AfterCreationAddItems(wxPropertyGridInterface* pgi, Node* node)
             }
         }
     }
+}
+
+// clang-format off
+static const auto advanced_items = {
+
+    "Colour",
+    "Cursor",
+    "Date",
+    "Font",
+    "ImageFile",
+    "MultiChoice",
+    "SystemColour",
+
+};
+// clang-format on
+
+bool CheckAdvancePropertyInclude(Node* node)
+{
+    for (const auto& child: node->GetChildNodePtrs())
+    {
+        if (child->isGen(gen_propGridItem))
+        {
+            auto& value = child->value(prop_type);
+            for (auto& iter: advanced_items)
+            {
+                if (value == iter)
+                {
+                    return true;
+                }
+            }
+        }
+        else if (child->isGen(gen_propGridPage))
+        {
+            if (CheckAdvancePropertyInclude(child.get()))
+            {
+                return true;
+            }
+        }
+    }
+    return false;
 }

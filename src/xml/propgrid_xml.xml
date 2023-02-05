@@ -150,7 +150,7 @@ inline const char* propgrid_xml = R"===(<?xml version="1.0"?>
 			help="Type of the property item.">
 			<option name="Category"
 				help="Append properties category." />
-			<option name="wxArrayStringProperty"
+			<option name="ArrayString"
 				help="Property that manages a list of strings. Allows editing of a list of strings in wxTextCtrl and in a separate dialog." />
 			<option name="Bool"
 				help="Represents a boolean value. wxChoice is used as editor control, by default." />

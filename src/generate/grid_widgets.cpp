@@ -27,9 +27,6 @@ wxObject* PropertyGridManagerGenerator::CreateMockup(Node* node, wxObject* paren
         widget->SetExtraStyle(node->prop_as_int(prop_extra_style));
     }
 
-    // BUGBUG: [KeyWorks - 04-11-2021] There is no "show_header" property
-    // widget->ShowHeader(node->prop_as_int(prop_show_header) != 0);
-
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
     return widget;
@@ -40,13 +37,15 @@ void PropertyGridManagerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /
 {
     auto pgm = wxStaticCast(wxobject, wxPropertyGridManager);
 
+    bool has_pages = false;
+
     for (const auto& child: node->GetChildNodePtrs())
     {
         if (child->isGen(gen_propGridPage))
         {
             wxPropertyGridPage* page =
                 pgm->AddPage(child->prop_as_wxString(prop_label), child->prop_as_wxBitmapBundle(prop_bitmap));
-
+            has_pages = true;
             for (const auto& inner_child: child->GetChildNodePtrs())
             {
                 if (inner_child->isGen(gen_propGridItem))
@@ -83,6 +82,10 @@ void PropertyGridManagerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /
         pgm->SelectPage(0);
     }
 
+    if (has_pages)
+    {
+        pgm->ShowHeader();
+    }
     pgm->Update();
 }
 
@@ -102,8 +105,8 @@ bool PropertyGridManagerGenerator::GetIncludes(Node* node, std::set<std::string>
     InsertGeneratorInclude(node, "#include <wx/propgrid/propgrid.h>", set_src, set_hdr);
     InsertGeneratorInclude(node, "#include <wx/propgrid/manager.h>", set_src, set_hdr);
 
-    if (node->prop_as_bool(prop_include_advanced))
-        InsertGeneratorInclude(node, "#include <wx/propgrid/advprops.h>", set_src, set_hdr);
+    // TODO: [Randalphwa - 02-05-2023] This needs to be determined based on what items have been added
+    // InsertGeneratorInclude(node, "#include <wx/propgrid/advprops.h>", set_src, set_hdr);
     return true;
 }
 
@@ -114,7 +117,8 @@ bool PropertyGridPageGenerator::ConstructionCode(Code& code)
     if (code.HasValue(prop_bitmap))
     {
         auto is_bitmaps_list = BitmapList(code, prop_bitmap);
-        code.AddAuto().NodeName().Str(" = ").ParentName().Function("AddPage(").Add(prop_label);
+        code.AddAuto().NodeName().Str(" = ").ParentName().Function("AddPage(").QuotedString(prop_label);
+        code.Comma();
         if (is_bitmaps_list)
         {
             if (code.is_cpp() && Project.value(prop_wxWidgets_version) == "3.1")
@@ -153,7 +157,7 @@ bool PropertyGridPageGenerator::ConstructionCode(Code& code)
     }
     else
     {
-        code.AddAuto().NodeName().Str(" = ").ParentName().Function("AddPage(").Add(prop_label).EndFunction();
+        code.AddAuto().NodeName().Str(" = ").ParentName().Function("AddPage(").QuotedString(prop_label).EndFunction();
     }
 
     return true;

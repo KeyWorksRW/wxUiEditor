@@ -538,6 +538,7 @@ Code& Code::as_string(PropName prop_name)
         else if (iter.is_sameprefix("wx"))
         {
             lambda(iter);
+            CheckLineLength(iter.size());
             *this << wx_prefix << iter.substr(2);
         }
         else

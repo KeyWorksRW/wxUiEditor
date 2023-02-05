@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Purpose:   PropertyGrid/Manager Item generator
+// Purpose:   PropertyGridItem (propGridItem) generator
 // Author:    Ralph Walden
 // Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
@@ -25,7 +25,7 @@ bool PropertyGridItemGenerator::ConstructionCode(Code& code)
     }
     else
     {
-        code.Function("Append(").Str(code.is_cpp() ? "new " : "").Add("wx").Str(prop_type).Str("PropertyCategory(");
+        code.Function("Append(").Str(code.is_cpp() ? "new " : "").Add("wx").Str(prop_type).Str("Property(");
         code.QuotedString(prop_label).Comma().QuotedString(prop_help).Str(")").EndFunction();
     }
 

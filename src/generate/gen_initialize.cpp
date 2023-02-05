@@ -9,7 +9,6 @@
 #include "node_creator.h"  // NodeCreator
 
 #include "dataview_widgets.h"  // DataViewCtrl -- wxDataView component classes
-#include "grid_widgets.h"      // PropertyGridGenerator -- Grid component classes
 #include "images_form.h"       // ImagesGenerator -- Embedded images generator
 #include "menu_widgets.h"      // Menu component classes
 #include "project.h"           // Project generator
@@ -64,6 +63,7 @@
 #include "gen_panel_form.h"          // PanelFormGenerator -- wxPanel Form generator
 #include "gen_popup_trans_win.h"     // PopupWinGenerator -- wxPopupTransientWindow generator
 #include "gen_prop_grid.h"           // PropertyGridGenerator -- wxPropertyGrid generator
+#include "gen_prop_grid_mgr.h"       // wxPropertyGridManager and wxPropertyGridPage generators
 #include "gen_prop_item.h"           // PropertyGridItemGenerator -- PropertyGrid/Manager Item generator
 #include "gen_radio_box.h"           // RadioBoxGenerator -- wxRadioBox generator
 #include "gen_radio_btn.h"           // RadioButtonGenerator -- Radio button and Radio box component classes

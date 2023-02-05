@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Purpose:   Grid component classes
+// Purpose:   wxPropertyGridManager and wxPropertyGridPage generators
 // Author:    Ralph Walden
 // Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
@@ -13,7 +13,7 @@
 #include "project_handler.h"  // ProjectHandler class
 #include "utils.h"            // Utility functions that work with properties
 
-#include "grid_widgets.h"
+#include "gen_prop_grid_mgr.h"
 
 //////////////////////////////////////////  PropertyGridManagerGenerator  //////////////////////////////////////////
 

@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Purpose:   Grid component classes
+// Purpose:   wxPropertyGridManager and wxPropertyGridPage generators
 // Author:    Ralph Walden
 // Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE

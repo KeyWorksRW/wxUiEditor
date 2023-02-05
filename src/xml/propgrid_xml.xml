@@ -6,8 +6,6 @@ inline const char* propgrid_xml = R"===(<?xml version="1.0"?>
 		<inherits class="Window Events" />
 		<inherits class="sizer_child" />
 		<property name="var_name" type="string">m_propertyGrid</property>
-		<property name="include_advanced" type="bool"
-			help="Include Advanced Properties">1</property>
 		<property name="bitmap" type="image"
 			help="This is the bitmap shown in the default state, it must be always valid while all the other bitmaps are optional and don't have to be set." />
 		<property name="style" type="bitlist">
@@ -64,8 +62,6 @@ inline const char* propgrid_xml = R"===(<?xml version="1.0"?>
 		<inherits class="Window Events" />
 		<inherits class="sizer_child" />
 		<property name="var_name" type="string">m_propertyGridManager</property>
-		<property name="include_advanced" type="bool"
-			help="Include Advanced Properties">1</property>
 		<property name="style" type="bitlist">
 			<option name="wxPG_AUTO_SORT"
 				help="This will cause Sort() automatically after an item is added. When inserting a lot of items in this mode, it may make sense to use Freeze() before operations and Thaw() afterwards to increase performance." />

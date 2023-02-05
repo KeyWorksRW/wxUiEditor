@@ -77,7 +77,7 @@ bool PropertyGridGenerator::GetIncludes(Node* node, std::set<std::string>& set_s
 {
     InsertGeneratorInclude(node, "#include <wx/propgrid/propgrid.h>", set_src, set_hdr);
 
-    if (node->prop_as_bool(prop_include_advanced))
-        InsertGeneratorInclude(node, "#include <wx/propgrid/advprops.h>", set_src, set_hdr);
+    // TODO: [Randalphwa - 02-05-2023] This needs to be determined based on what items have been added
+    // InsertGeneratorInclude(node, "#include <wx/propgrid/advprops.h>", set_src, set_hdr);
     return true;
 }

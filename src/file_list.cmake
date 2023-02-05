@@ -89,6 +89,8 @@ set (file_list
     generate/styled_text.cpp       # wxStyledText (scintilla) generate
     generate/window_widgets.cpp    # Scroll window component classes
 
+    generate/utils_prop_grid.cpp   # PropertyGrid utilities
+
     generate/gen_activity.cpp       # wxActivityIndicator generator
     generate/gen_animation.cpp      # wxAnimationCtrl generator
     generate/gen_banner_window.cpp  # wxBannerWindow generator

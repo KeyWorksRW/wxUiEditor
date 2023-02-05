@@ -12,6 +12,7 @@
 #include "node.h"             // Node class
 #include "project_handler.h"  // ProjectHandler class
 #include "utils.h"            // Utility functions that work with properties
+#include "utils_prop_grid.h"  // PropertyGrid utilities
 
 #include "gen_prop_grid_mgr.h"
 
@@ -39,41 +40,15 @@ void PropertyGridManagerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /
 
     bool has_pages = false;
 
-    for (const auto& child: node->GetChildNodePtrs())
+    for (auto& child: node->GetChildNodePtrs())
     {
         if (child->isGen(gen_propGridPage))
         {
-            wxPropertyGridPage* page =
+            auto* page =
                 pgm->AddPage(child->prop_as_wxString(prop_label), child->prop_as_wxBitmapBundle(prop_bitmap));
             has_pages = true;
-            for (const auto& inner_child: child->GetChildNodePtrs())
-            {
-                if (inner_child->isGen(gen_propGridItem))
-                {
-                    if (inner_child->prop_as_string(prop_type) == "Category")
-                    {
-                        page->Append(new wxPropertyCategory(inner_child->prop_as_wxString(prop_label),
-                                                            inner_child->prop_as_wxString(prop_label)));
-                    }
-                    else
-                    {
-                        wxPGProperty* prop = wxDynamicCast(
-                            wxCreateDynamicObject("wx" + (inner_child->prop_as_string(prop_type)) + "Property"),
-                            wxPGProperty);
-                        if (prop)
-                        {
-                            prop->SetLabel(inner_child->prop_as_wxString(prop_label));
-                            prop->SetName(inner_child->prop_as_wxString(prop_label));
-                            page->Append(prop);
 
-                            if (inner_child->HasValue(prop_help))
-                            {
-                                page->SetPropertyHelpString(prop, inner_child->prop_as_wxString(prop_help));
-                            }
-                        }
-                    }
-                }
-            }
+            AfterCreationAddItems(page, child.get());
         }
     }
 

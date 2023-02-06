@@ -9,9 +9,15 @@
 
 #pragma once
 
+#include <wx/bitmap.h>
 #include <wx/event.h>
 #include <wx/frame.h>
 #include <wx/gdicmn.h>
+#include <wx/icon.h>
+#include <wx/image.h>
+#include <wx/propgrid/manager.h>
+#include <wx/propgrid/propgrid.h>
+#include <wx/splitter.h>
 #include <wx/statusbr.h>
 #include <wx/toolbar.h>
 
@@ -36,6 +42,16 @@ protected:
 
     // Class member variables
 
+    wxPGProperty* propertyGridItem;
+    wxPGProperty* propertyGridItem_2;
+    wxPGProperty* propertyGridItem_3;
+    wxPGProperty* propertyGridItem_4;
+    wxPGProperty* propertyGridItem_5;
+    wxPGProperty* propertyGridItem_6;
+    wxPropertyGridManager* propertyGridManager;
+    wxPropertyGridPage* propertyGridPage;
+    wxPropertyGridPage* propertyGridPage_2;
+    wxSplitterWindow* splitter;
     wxStatusBar* m_statusBar;
     wxToolBar* m_toolBar;
 };

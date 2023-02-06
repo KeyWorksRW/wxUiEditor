@@ -44,6 +44,59 @@
       size="500,300"
       window_style="wxTAB_TRAVERSAL">
       <node
+        class="wxSplitterWindow"
+        splitmode="wxSPLIT_HORIZONTAL"
+        var_name="splitter"
+        minimum_size="200,200d"
+        flags="wxEXPAND"
+        proportion="1">
+        <node
+          class="wxPropertyGridManager"
+          style="wxPG_AUTO_SORT|wxPG_BOLD_MODIFIED|wxPG_SPLITTER_AUTO_CENTER|wxPG_DESCRIPTION|wxPG_TOOLBAR|wxPG_NO_INTERNAL_BORDER"
+          var_name="propertyGridManager">
+          <node
+            class="propGridPage"
+            bitmap="Embed;art/wxPython_1_5x.png"
+            label="Animal Page"
+            var_name="propertyGridPage">
+            <node
+              class="propGridItem"
+              label="Animals"
+              type="Category"
+              var_name="propertyGridItem_5" />
+            <node
+              class="propGridItem"
+              label="dog"
+              var_name="propertyGridItem_2" />
+            <node
+              class="propGridItem"
+              label="cat"
+              var_name="propertyGridItem" />
+          </node>
+          <node
+            class="propGridPage"
+            bitmap="Embed;art/english.png"
+            label="Number Page"
+            var_name="propertyGridPage_2">
+            <node
+              class="propGridItem"
+              label="Numbers"
+              type="Category"
+              var_name="propertyGridItem_6" />
+            <node
+              class="propGridItem"
+              label="1"
+              type="Int"
+              var_name="propertyGridItem_3" />
+            <node
+              class="propGridItem"
+              label="2"
+              type="Int"
+              var_name="propertyGridItem_4" />
+          </node>
+        </node>
+      </node>
+      <node
         class="wxMenuBar"
         class_access="none"
         var_name="menubar">

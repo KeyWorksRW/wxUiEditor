@@ -93,7 +93,6 @@ bool PropertyGridManagerGenerator::AfterChildrenCode(Code& code)
     {
         return false;
     }
-
 }
 
 //////////////////////////////////////////  PropertyGridPageGenerator  //////////////////////////////////////////

@@ -944,7 +944,7 @@ tt_string BaseCodeGenerator::GetDeclaration(Node* node)
         }
     }
 
-    else if (class_name == "propGridItem")
+    else if (class_name == "propGridItem" || class_name == "propGridCategory")
     {
         code << "wxPGProperty* " << node->get_node_name() << ';';
     }

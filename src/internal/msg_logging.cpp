@@ -33,7 +33,7 @@ void MsgLogging::CloseLogger()
 
 void MsgLogging::AddInfoMsg(tt_string_view msg)
 {
-    if (wxGetApp().isMainFrameClosing())
+    if (wxGetApp().isMainFrameClosing() || !g_pMsgLogging)
         return;
 
     if (Preferences().GetDebugFlags() & PREFS::PREFS_MSG_INFO)
@@ -58,7 +58,7 @@ void MsgLogging::AddInfoMsg(tt_string_view msg)
 
 void MsgLogging::AddEventMsg(tt_string_view msg)
 {
-    if (wxGetApp().isMainFrameClosing())
+    if (wxGetApp().isMainFrameClosing() || !g_pMsgLogging)
         return;
 
     if (Preferences().GetDebugFlags() & PREFS::PREFS_MSG_EVENT)
@@ -83,7 +83,7 @@ void MsgLogging::AddEventMsg(tt_string_view msg)
 
 void MsgLogging::AddWarningMsg(tt_string_view msg)
 {
-    if (wxGetApp().isMainFrameClosing())
+    if (wxGetApp().isMainFrameClosing() || !g_pMsgLogging)
         return;
 
     if (Preferences().GetDebugFlags() & PREFS::PREFS_MSG_WARNING)
@@ -112,7 +112,7 @@ void MsgLogging::AddWarningMsg(tt_string_view msg)
 
 void MsgLogging::AddErrorMsg(tt_string_view msg)
 {
-    if (wxGetApp().isMainFrameClosing())
+    if (wxGetApp().isMainFrameClosing() || !g_pMsgLogging)
         return;
 
     auto& str = m_Msgs.emplace_back("Error: ");

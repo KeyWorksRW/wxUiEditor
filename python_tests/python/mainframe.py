@@ -93,14 +93,11 @@ class MainFrame(wx.Frame):
         if not self.Create(parent, id, title, pos, size, style, name):
             return
 
-        box_sizer = wx.BoxSizer(wx.VERTICAL)
-
         self.splitter = wx.SplitterWindow(self, wx.ID_ANY, wx.DefaultPosition,
             wx.DefaultSize, wx.SP_3D)
         self.splitter.SetSashGravity(0.0)
         self.splitter.SetMinimumPaneSize(150)
         self.splitter.SetMinSize(self.ConvertDialogToPixels(wx.Size(200, 200)))
-        box_sizer.Add(self.splitter, wx.SizerFlags(1).Expand().Border(wx.ALL))
 
         self.propertyGridManager = wx.propgrid.PropertyGridManager(self.splitter, wx.ID_ANY,
             wx.DefaultPosition, wx.DefaultSize, wx.propgrid.PG_AUTO_SORT|wx.propgrid.PG_BOLD_MODIFIED|
@@ -111,8 +108,8 @@ class MainFrame(wx.Frame):
         self.propertyGridPage = self.propertyGridManager.AddPage("Animal Page", wx.BitmapBundle.FromBitmap(
             wxPython_1_5x_png.Bitmap))
 
-        self.propertyGridItem_5 = self.propertyGridPage.Append(wx.propgrid.PropertyCategory
-            ("Animals", "Animals"))
+        self.propertyGridItem_7 = self.propertyGridPage.Append(wx.propgrid.PropertyCategory
+            ("Pets", "Pets"))
 
         self.propertyGridItem_2 = self.propertyGridPage.Append(wx.propgrid.StringProperty(
         "dog", ""))
@@ -132,7 +129,6 @@ class MainFrame(wx.Frame):
         self.propertyGridItem_4 = self.propertyGridPage_2.Append(wx.propgrid.IntProperty(
         "2", ""))
         self.splitter.Initialize(self.propertyGridManager)
-        self.SetSizerAndFit(box_sizer)
 
         menubar = wx.MenuBar()
 

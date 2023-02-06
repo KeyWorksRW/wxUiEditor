@@ -191,6 +191,16 @@ inline const char* propgrid_xml = R"===(<?xml version="1.0"?>
 			String
 		</property>
 		<property name="help" type="string_escapes"
-			help="Property item's name." />
+			help="Text to display in help description box." />
 	</gen>
+
+	<gen class="propGridCategory" image="book_page" type="propgrid_category">
+		<property name="var_name" type="string"
+			help="Instance name and an internal name of the property category.">m_propertyGridItem</property>
+		<property name="label" type="string_escapes"
+			help="Label shown in parent property grid or page.">CategoryName</property>
+		<property name="help" type="string_escapes"
+			help="Text to display in help description box." />
+	</gen>
+
 </GeneratorDefinitions>)===";

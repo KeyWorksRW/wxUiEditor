@@ -224,7 +224,8 @@ bool BaseGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty
             }
         }
     }
-    else if (prop->isProp(prop_label) && prop->GetNode()->isGen(gen_propGridItem))
+    else if (prop->isProp(prop_label) &&
+             (prop->GetNode()->isGen(gen_propGridItem) || prop->GetNode()->isGen(gen_propGridCategory)))
     {
         auto property = wxStaticCast(event->GetProperty(), wxStringProperty);
         auto variant = event->GetPropertyValue();

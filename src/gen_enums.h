@@ -489,6 +489,7 @@ namespace GenEnum
         type_popup_menu,
         type_project,
         type_propgrid,
+        type_propgrid_category,  // This is for a propGridItem used as a category
         type_propgriditem,
         type_propgridman,
         type_propgridpage,
@@ -598,6 +599,7 @@ namespace GenEnum
         gen_embedded_image,
         gen_gbsizeritem,
         gen_oldbookpage,
+        gen_propGridCategory,
         gen_propGridItem,
         gen_propGridPage,
         gen_ribbonButton,

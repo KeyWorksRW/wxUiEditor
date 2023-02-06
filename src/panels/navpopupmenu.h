@@ -115,6 +115,7 @@ public:
 
         MenuADD_PROPGRID_PAGE,
         MenuADD_PROPGRID_ITEM,
+        MenuADD_PROPGRID_CATEGORY,
 
         MenuADD_MENU,
         MenuADD_MENUITEM,

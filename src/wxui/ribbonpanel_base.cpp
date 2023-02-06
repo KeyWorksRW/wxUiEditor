@@ -310,6 +310,8 @@ RibbonPanelBase::RibbonPanelBase(wxWindow* parent, wxWindowID id, const wxPoint&
             wxue_img::wxPropertyGridManager_png)), "wxPropertyGridManager", wxRIBBON_BUTTON_NORMAL);
         data_bar_properties->AddTool(gen_propGridPage, wxueImage(wxue_img::propgridpage_png, sizeof(
             wxue_img::propgridpage_png)), "wxPropertyGrid Page", wxRIBBON_BUTTON_NORMAL);
+        data_bar_properties->AddTool(gen_propGridCategory, wxueImage(wxue_img::book_page_png, sizeof(wxue_img::book_page_png)),
+            "wxPropertyGrid Category", wxRIBBON_BUTTON_NORMAL);
         data_bar_properties->AddTool(gen_propGridItem, wxueImage(wxue_img::propgriditem_png, sizeof(
             wxue_img::propgriditem_png)), "wxPropertyGrid Item", wxRIBBON_BUTTON_NORMAL);
     }

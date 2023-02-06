@@ -60,18 +60,27 @@
             label="Animal Page"
             var_name="propertyGridPage">
             <node
-              class="propGridItem"
-              label="Animals"
-              type="Category"
-              var_name="propertyGridItem_5" />
+              class="propGridCategory"
+              label="Pets"
+              var_name="propertyGridItem_7">
+              <node
+                class="propGridItem"
+                label="dog"
+                var_name="propertyGridItem_2" />
+              <node
+                class="propGridItem"
+                label="cat"
+                var_name="propertyGridItem" />
+            </node>
             <node
-              class="propGridItem"
-              label="dog"
-              var_name="propertyGridItem_2" />
-            <node
-              class="propGridItem"
-              label="cat"
-              var_name="propertyGridItem" />
+              class="propGridCategory"
+              label="Big Animals"
+              var_name="propertyGridItem_5">
+              <node
+                class="propGridItem"
+                label="horses"
+                var_name="propertyGridItem_8" />
+            </node>
           </node>
           <node
             class="propGridPage"

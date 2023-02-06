@@ -62,6 +62,7 @@
 #include "gen_panel.h"               // PanelGenerator -- wxPanel generator
 #include "gen_panel_form.h"          // PanelFormGenerator -- wxPanel Form generator
 #include "gen_popup_trans_win.h"     // PopupWinGenerator -- wxPopupTransientWindow generator
+#include "gen_prop_category.h"       // PropertyGridCategoryGenerator -- PropertyGrid/Manager Category generator
 #include "gen_prop_grid.h"           // PropertyGridGenerator -- wxPropertyGrid generator
 #include "gen_prop_grid_mgr.h"       // wxPropertyGridManager and wxPropertyGridPage generators
 #include "gen_prop_item.h"           // PropertyGridItemGenerator -- PropertyGrid/Manager Item generator
@@ -200,6 +201,7 @@ void NodeCreator::InitGenerators()
 
     SET_GENERATOR(gen_wxPropertyGrid, PropertyGridGenerator)
     SET_GENERATOR(gen_wxPropertyGridManager, PropertyGridManagerGenerator)
+    SET_GENERATOR(gen_propGridCategory, PropertyGridCategoryGenerator)
     SET_GENERATOR(gen_propGridItem, PropertyGridItemGenerator)
     SET_GENERATOR(gen_propGridPage, PropertyGridPageGenerator)
 

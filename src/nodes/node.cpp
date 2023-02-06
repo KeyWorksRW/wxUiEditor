@@ -904,7 +904,7 @@ tt_string Node::GetUniqueName(const tt_string& proposed_name, PropName prop_name
 
         form->CollectUniqueNames(name_set, this);
     }
-    else if (isGen(gen_propGridItem))
+    else if (isGen(gen_propGridItem) || isGen(gen_propGridCategory))
     {
         auto parent = get_parent();
         if (parent->isGen(gen_propGridPage))
@@ -1008,7 +1008,7 @@ bool Node::FixDuplicateName()
         }
     }
 
-    if (isGen(gen_propGridItem))
+    if (isGen(gen_propGridItem) || isGen(gen_propGridCategory))
     {
         name_set.clear();
         form->CollectUniqueNames(name_set, this, prop_label);
@@ -1096,7 +1096,7 @@ void Node::FixDuplicateNodeNames(Node* form)
         child->FixDuplicateNodeNames(form);
     }
 
-    if (isGen(gen_propGridItem))
+    if (isGen(gen_propGridItem) || isGen(gen_propGridCategory))
     {
         name_set.clear();
         auto parent = get_parent();

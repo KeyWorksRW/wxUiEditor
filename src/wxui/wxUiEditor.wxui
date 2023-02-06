@@ -1401,6 +1401,11 @@
                     id="gen_propGridPage" />
                   <node
                     class="ribbonTool"
+                    bitmap="Embed;../art_src/book_page.png"
+                    help="wxPropertyGrid Category"
+                    id="gen_propGridCategory" />
+                  <node
+                    class="ribbonTool"
                     bitmap="Embed;../art_src/propgriditem.png"
                     help="wxPropertyGrid Item"
                     id="gen_propGridItem" />

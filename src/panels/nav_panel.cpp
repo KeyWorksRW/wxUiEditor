@@ -44,6 +44,7 @@ inline const std::vector<GenEnum::GenName> unsupported_gen_python = {
 inline const std::vector<GenEnum::GenName> unsupported_gen_XRC = {
 
     gen_TreeListCtrlColumn,
+    gen_propGridCategory,
     gen_propGridItem,
     gen_propGridPage,
     gen_wxContextMenuEvent,

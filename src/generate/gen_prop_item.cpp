@@ -15,7 +15,7 @@
 
 bool PropertyGridItemGenerator::ConstructionCode(Code& code)
 {
-    code.AddAuto().NodeName().Str(" = ").ParentName();
+    code.AddAuto().NodeName().Str(" = ").ValidParentName();
     // .Function("Append(new wx").PropAs(prop_type).Str("Property(");
 
     if (code.view(prop_type) == "Category")
@@ -27,10 +27,9 @@ bool PropertyGridItemGenerator::ConstructionCode(Code& code)
     }
     else
     {
-        if (code.is_cpp())
-            code.Function("Append(").Str("new wx").Str(prop_type).Str("Property(");
-        else
-            code.Function("Append(").Add("wx.propgrid.").Str(prop_type).Str("Property(");
+        tt_string name("wx");
+        name << code.node()->value(prop_type) << "Property";
+        code.Function("Append(").AddIfCpp("new ").Add(name).Str("(");
         code.QuotedString(prop_label).Comma().QuotedString(prop_help).Str(")").EndFunction();
     }
 

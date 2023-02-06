@@ -116,6 +116,7 @@ set (file_list
     generate/gen_listbox.cpp        # wxListBox generator
     generate/gen_listview.cpp       # wxListView generator
     generate/gen_panel.cpp          # wxPanel generator
+    generate/gen_prop_category.cpp  # PropertyGridCategory (propGridItem) generator
     generate/gen_prop_grid.cpp      # wxPropertyGrid generator
     generate/gen_prop_grid_mgr.cpp  # wxPropertyGridManager and wxPropertyGridPage generators
     generate/gen_prop_item.cpp      # PropertyGridItem (propGridItem) generator

@@ -269,8 +269,12 @@ static const ParentChild lstParentChild[] = {
     { type_dataviewlistctrl, type_dataviewlistcolumn, infinite },
 
     { type_propgrid, type_propgriditem, infinite },
+    { type_propgrid, type_propgrid_category, infinite },
+    { type_propgrid_category, type_propgrid_category, infinite },
+    { type_propgrid_category, type_propgriditem, infinite },
     { type_propgriditem, type_propgridpage, infinite },
     { type_propgridman, type_propgridpage, infinite },
+    { type_propgridpage, type_propgrid_category, infinite },
     { type_propgridpage, type_propgriditem, infinite },
 
     // Ribbon bar
@@ -494,9 +498,11 @@ void NodeCreator::ParseGeneratorFile(const char* xml_data)
         }
 
 #if defined(_DEBUG) || defined(INTERNAL_TESTING)
+        ASSERT_MSG(type != gen_type_unknown, tt_string("Unrecognized class type -- ") << type_name);
         if (type == gen_type_unknown)
         {
-            MSG_WARNING(tt_string("Unrecognized class type -- ") << type_name);
+            generator = generator.next_sibling("gen");
+            continue;
         }
 #endif  // _DEBUG
 

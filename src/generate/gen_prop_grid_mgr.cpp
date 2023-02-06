@@ -9,6 +9,7 @@
 #include <wx/propgrid/manager.h>  // wxPropertyGridManager
 
 #include "gen_common.h"       // GeneratorLibrary -- Generator classes
+#include "mainframe.h"        // MainFrame -- Main window frame
 #include "node.h"             // Node class
 #include "project_handler.h"  // ProjectHandler class
 #include "utils.h"            // Utility functions that work with properties
@@ -29,8 +30,32 @@ wxObject* PropertyGridManagerGenerator::CreateMockup(Node* node, wxObject* paren
     }
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
+    widget->Bind(wxEVT_PG_PAGE_CHANGED, &PropertyGridManagerGenerator::OnPageChanged, this);
 
     return widget;
+}
+
+void PropertyGridManagerGenerator::OnPageChanged(wxPropertyGridEvent& event)
+{
+    if (auto pgm = wxDynamicCast(event.GetEventObject(), wxPropertyGridManager); pgm)
+    {
+        if (auto cur_page = pgm->GetCurrentPage(); cur_page)
+        {
+            auto page_index = cur_page->GetIndex();
+            if (auto parent = GetMockup()->GetNode(event.GetEventObject()); parent)
+            {
+                for (size_t idx_page = 0; idx_page < parent->GetChildCount(); ++idx_page)
+                {
+                    if ((to_int) idx_page == page_index)
+                    {
+                        wxGetFrame().SelectNode(parent->GetChildNodePtrs()[idx_page].get());
+                        break;
+                    }
+                }
+            }
+        }
+    }
+    event.Skip();
 }
 
 void PropertyGridManagerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /* wxparent */, Node* node,

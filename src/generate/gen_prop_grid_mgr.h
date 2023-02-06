@@ -17,6 +17,9 @@ public:
     bool ConstructionCode(Code&) override;
 
     bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr) override;
+
+protected:
+    void OnPageChanged(wxPropertyGridEvent& event);
 };
 
 class PropertyGridPageGenerator : public BaseGenerator

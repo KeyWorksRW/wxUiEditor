@@ -9,16 +9,17 @@
 // notable exception is a MockupWizard -- in this case we create a MockupWizard child which itself is a wxPanel that
 // substitutes for the wxWizard form.
 
-#include <wx/aui/auibook.h>  // wxaui: wx advanced user interface - notebook
-#include <wx/bookctrl.h>     // wxBookCtrlBase: common base class for wxList/Tree/Notebook
-#include <wx/choicebk.h>     // wxChoicebook: wxChoice and wxNotebook combination
-#include <wx/collpane.h>     // wxCollapsiblePane
-#include <wx/gbsizer.h>      // wxGridBagSizer:  A sizer that can lay out items in a grid,
-#include <wx/ribbon/bar.h>   // Top-level component of the ribbon-bar-style interface
-#include <wx/sizer.h>        // provide wxSizer class for layout
-#include <wx/statbox.h>      // wxStaticBox base header
-#include <wx/statline.h>     // wxStaticLine class interface
-#include <wx/wupdlock.h>     // wxWindowUpdateLocker prevents window redrawing
+#include <wx/aui/auibook.h>       // wxaui: wx advanced user interface - notebook
+#include <wx/bookctrl.h>          // wxBookCtrlBase: common base class for wxList/Tree/Notebook
+#include <wx/choicebk.h>          // wxChoicebook: wxChoice and wxNotebook combination
+#include <wx/collpane.h>          // wxCollapsiblePane
+#include <wx/gbsizer.h>           // wxGridBagSizer:  A sizer that can lay out items in a grid,
+#include <wx/propgrid/manager.h>  // wxPropertyGridManager
+#include <wx/ribbon/bar.h>        // Top-level component of the ribbon-bar-style interface
+#include <wx/sizer.h>             // provide wxSizer class for layout
+#include <wx/statbox.h>           // wxStaticBox base header
+#include <wx/statline.h>          // wxStaticLine class interface
+#include <wx/wupdlock.h>          // wxWindowUpdateLocker prevents window redrawing
 
 #include "mockup_content.h"
 
@@ -237,7 +238,10 @@ void MockupContent::CreateChildren(Node* node, wxWindow* parent, wxObject* paren
 
     if (node->isType(type_images))
     {
-        parent_sizer->Add(created_window, wxSizerFlags().Expand());
+        if (parent_sizer)
+        {
+            parent_sizer->Add(created_window, wxSizerFlags().Expand());
+        }
         return;
     }
 
@@ -437,15 +441,17 @@ wxObject* MockupContent::Get_wxObject(Node* node)
 // on it's children.
 static const GenEnum::GenName lst_select_nodes[] = {
 
-    gen_wxWizardPageSimple,
     gen_BookPage,
     gen_PageCtrl,
-    gen_wxRibbonPage,
-    gen_wxRibbonPanel,
-    gen_wxRibbonButtonBar,
-    gen_wxRibbonToolBar,
+    gen_propGridPage,
     gen_ribbonButton,
     gen_ribbonTool,
+    gen_wxPropertyGridManager,
+    gen_wxRibbonButtonBar,
+    gen_wxRibbonPage,
+    gen_wxRibbonPanel,
+    gen_wxRibbonToolBar,
+    gen_wxWizardPageSimple,
 
 };
 // clang-format on
@@ -588,7 +594,27 @@ void MockupContent::OnNodeSelected(Node* node)
 
         return;
     }
+    else if (node->isGen(gen_propGridPage))
+    {
+        auto parent = node->GetParent();
+        if (!parent)
+            return;
 
+        if (parent->isGen(gen_wxPropertyGridManager))
+        {
+            for (size_t idx_child = 0; idx_child < parent->GetChildCount(); ++idx_child)
+            {
+                auto* child = parent->GetChildNodePtrs()[idx_child].get();
+                if (child == node)
+                {
+                    if (auto pgm = wxStaticCast(Get_wxObject(parent), wxPropertyGridManager); pgm)
+                    {
+                        pgm->SelectPage((to_int) idx_child);
+                    }
+                }
+            }
+        }
+    }
     else if (node->isGen(gen_wxRibbonPage))
     {
         ASSERT(node->GetParent());

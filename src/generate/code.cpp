@@ -626,6 +626,7 @@ static constexpr GenType s_GenParentTypes[] = {
     type_container,
     type_listbook,
     type_notebook,
+    type_propgridpage,
     type_ribbonpanel,
     type_simplebook,
     type_splitter,
@@ -651,7 +652,7 @@ Code& Code::ValidParentName()
                 return *this;
             }
         }
-        if (parent->IsForm())
+        else if (parent->IsForm())
         {
             *this += (is_cpp()) ? "this" : "self";
             return *this;

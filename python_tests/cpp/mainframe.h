@@ -13,6 +13,7 @@
 #include <wx/event.h>
 #include <wx/frame.h>
 #include <wx/gdicmn.h>
+#include <wx/grid.h>
 #include <wx/icon.h>
 #include <wx/image.h>
 #include <wx/propgrid/manager.h>
@@ -35,19 +36,21 @@ protected:
     void OnBookTestDlg(wxCommandEvent& event);
     void OnCommonDialog(wxCommandEvent& event);
     void OnMainTestDlg(wxCommandEvent& event);
-    void OnOtherCtrls(wxCommandEvent& event);
     void OnPythonDlg(wxCommandEvent& event);
     void OnQuit(wxCommandEvent& event);
     void OnWizard(wxCommandEvent& event);
 
     // Class member variables
 
+    wxGrid* grid;
     wxPGProperty* propertyGridItem;
     wxPGProperty* propertyGridItem_2;
     wxPGProperty* propertyGridItem_3;
     wxPGProperty* propertyGridItem_4;
     wxPGProperty* propertyGridItem_5;
     wxPGProperty* propertyGridItem_6;
+    wxPGProperty* propertyGridItem_7;
+    wxPGProperty* propertyGridItem_8;
     wxPropertyGridManager* propertyGridManager;
     wxPropertyGridPage* propertyGridPage;
     wxPropertyGridPage* propertyGridPage_2;

@@ -6,6 +6,7 @@
 ###############################################################################
 
 import wx
+import wx.grid
 import wx.propgrid
 import main_test_dlg
 import booktest_dlg
@@ -112,10 +113,16 @@ class MainFrame(wx.Frame):
             ("Pets", "Pets"))
 
         self.propertyGridItem_2 = self.propertyGridPage.Append(wx.propgrid.StringProperty(
-        "dog", ""))
+        "dog", "Woof!"))
 
         self.propertyGridItem = self.propertyGridPage.Append(wx.propgrid.StringProperty(
-        "cat", ""))
+        "cat", "Meow!"))
+
+        self.propertyGridItem_5 = self.propertyGridPage.Append(wx.propgrid.PropertyCategory
+            ("Big Animals", "Big Animals"))
+
+        self.propertyGridItem_8 = self.propertyGridPage.Append(wx.propgrid.StringProperty(
+        "horses", ""))
 
         self.propertyGridPage_2 = self.propertyGridManager.AddPage("Number Page", wx.BitmapBundle.FromBitmap(
             images.english_png.Bitmap))
@@ -128,7 +135,17 @@ class MainFrame(wx.Frame):
 
         self.propertyGridItem_4 = self.propertyGridPage_2.Append(wx.propgrid.IntProperty(
         "2", ""))
-        self.splitter.Initialize(self.propertyGridManager)
+
+        self.grid = wx.grid.Grid(self.splitter, wx.ID_ANY)
+        self.grid.CreateGrid(5, 5)
+        self.grid.EnableDragGridSize(False)
+        self.grid.SetMargins(0, 0)
+        self.grid.SetDefaultCellAlignment(wx.ALIGN_LEFT, wx.ALIGN_TOP)
+        self.grid.SetColLabelAlignment(wx.ALIGN_CENTER, wx.ALIGN_CENTER)
+        self.grid.SetColLabelSize(wx.grid.GRID_AUTOSIZE)
+        self.grid.SetRowLabelAlignment(wx.ALIGN_CENTER, wx.ALIGN_CENTER)
+        self.grid.SetRowLabelSize(wx.grid.GRID_AUTOSIZE)
+        self.splitter.SplitHorizontally(self.propertyGridManager, self.grid)
 
         menubar = wx.MenuBar()
 
@@ -149,8 +166,6 @@ class MainFrame(wx.Frame):
             "Common controls", wx.ITEM_NORMAL)
         menuItem_2.SetBitmap(wx.ArtProvider.GetBitmapBundle(wx.ART_TIP, wx.ART_MENU))
         menuDialogs.Append(menuItem_2)
-        menuItem1 = wx.MenuItem(menuDialogs, wx.ID_ANY, "Other Controls Dialog...")
-        menuDialogs.Append(menuItem1)
         menuItem3 = wx.MenuItem(menuDialogs, wx.ID_ANY, "Wizard")
         menuDialogs.Append(menuItem3)
         menuDialogs.AppendSeparator()
@@ -187,7 +202,6 @@ class MainFrame(wx.Frame):
         self.Bind(wx.EVT_MENU, self.OnBookTestDlg, id=menu_item_4.GetId())
         self.Bind(wx.EVT_MENU, self.OnPythonDlg, id=menu_item_2.GetId())
         self.Bind(wx.EVT_MENU, self.OnCommonDialog, id=menuItem_2.GetId())
-        self.Bind(wx.EVT_MENU, self.OnOtherCtrls, id=menuItem1.GetId())
         self.Bind(wx.EVT_MENU, self.OnWizard, id=menuItem3.GetId())
         self.Bind(wx.EVT_MENU, self.OnQuit, id=wx.ID_EXIT)
         self.Bind(wx.EVT_TOOL, self.OnMainTestDlg, id=tool_4.GetId())

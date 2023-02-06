@@ -270,7 +270,6 @@ static const ParentChild lstParentChild[] = {
 
     { type_propgrid, type_propgriditem, infinite },
     { type_propgrid, type_propgrid_category, infinite },
-    { type_propgrid_category, type_propgrid_category, infinite },
     { type_propgrid_category, type_propgriditem, infinite },
     { type_propgriditem, type_propgridpage, infinite },
     { type_propgridman, type_propgridpage, infinite },

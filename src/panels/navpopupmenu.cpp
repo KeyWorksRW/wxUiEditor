@@ -636,7 +636,20 @@ void NavPopupMenu::MenuAddCommands(Node* node)
 
         case gen_wxPropertyGrid:
         case gen_propGridPage:
+        case gen_propGridCategory:
+        case gen_propGridItem:
             add_sizer = false;
+            if (!node->isGen(gen_propGridCategory) && !node->isGen(gen_propGridItem))
+            {
+                Append(MenuADD_PROPGRID_CATEGORY, "Add Category");
+                Bind(
+                    wxEVT_MENU,
+                    [](wxCommandEvent&)
+                    {
+                        wxGetFrame().CreateToolNode(gen_propGridCategory);
+                    },
+                    MenuADD_PROPGRID_CATEGORY);
+            }
             Append(MenuADD_PROPGRID_ITEM, "Add Item");
             Bind(
                 wxEVT_MENU,

@@ -6,12 +6,29 @@
 ###############################################################################
 
 import wx
+import wx.propgrid
 import main_test_dlg
 import booktest_dlg
 import wizard
 import python_dlg
 
+import images
 from wx.lib.embeddedimage import PyEmbeddedImage
+
+wxPython_1_5x_png = PyEmbeddedImage(
+    b"iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAACXBIWXMAAAsTAAALEwEAmpwYAAACr0lE"
+    b"QVRIx62Uz0sUYRjHP+sPSOiweEkicEDsIrjToZPQjhc7dGitW6Cup/SwsJt6dj2XTCBk0GFW+gPsbId3"
+    b"FSo9OSsIYSwzXrQgdkeUTsbbYV63cXbGVesLL8877/v84P3O83zbiYaeTqcPNU0rdnZ2HtVqtU3+I9K5"
+    b"XM6RCpZlSWA+sP4JOuAIIaRhGNKyLCmllLquSyGEFEJIwLxOYo0BtnmCZA5pvjPPHiANw5D1el2Wy+WG"
+    b"BYqXTdyh7AST6KT8j8JagaOFIwBc18XzPIQQ9Pb2XpOWDA4fkHwMrFd/Vz6fb7xIf6pLMjiKzpZIqAKr"
+    b"TKBxM8arCrxR+0VlZ4EKiVYF2oHvfCXJfQx6Yry6gYdqBfGZfcC+qECbsitY2CxHeCzHRI4AkL0MRWcs"
+    b"6Fvw+lnYI0+KOyTpAW413dnsMgq4QFqdVgDvXIGqfzncF91+WUDjAWk0DMYCNzvADAuAwxglALYoscdk"
+    b"uE0NoBzzSj9wA40NNE4QTDf5VNhRtL0gyxQeUABoq/rttg88bsXn0BDmdgm0G+pgEJhjntsYVEjwkiIn"
+    b"wAAGoF11XuaFQEqJLFZDM5NCNpjI4LDIlaYdQORyOPW6X8D5hdQ3AwXeEtQowSqNYey4IGmSfky6yDIO"
+    b"3ceQTCrh6oJkMLIPgHvqa5gikhQaIbfz6MfkOVlSqluuAtk8aGGYzKjkEVg5BPu46TgVNXhtMdJtqGf7"
+    b"OjTDeq2G63ngnUK57ttQ+iRzWAwiG3oVU8CX7vNSYSwtUbJtKOxB6SAUsaZoGVFi+APYZx1wO1ryOQ1M"
+    b"IcigFX6DfRDhswb8pMCs6qRTbHbJAm4iUhrymDwieWHhKnACfMJlldE4VY3T8yzjWAyqXxfEe2W/sMI3"
+    b"XCUx5ZZqGgGDu0zQFeqMCsNqZwdVMw5/ANThGfS+jW3VAAAAAElFTkSuQmCC")
 
 debug_32_png = PyEmbeddedImage(
     b"iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAACXBIWXMAAAsTAAALEwEAmpwYAAAGV0lE"
@@ -58,21 +75,6 @@ wxPython_png = PyEmbeddedImage(
     b"p1ulpKOBnrC6lDXyfed4d66VYcojk1DGJfM8rx53CNIQ4f0Qwbib0/wL4k3LkQG70AtP5IBGvZl4GBBm"
     b"C3wCS+KhZurXPm1mIoh2dhZ+Ad+Nn/PyqjymAAAAAElFTkSuQmCC")
 
-wxPython_1_5x_png = PyEmbeddedImage(
-    b"iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAACXBIWXMAAAsTAAALEwEAmpwYAAACr0lE"
-    b"QVRIx62Uz0sUYRjHP+sPSOiweEkicEDsIrjToZPQjhc7dGitW6Cup/SwsJt6dj2XTCBk0GFW+gPsbId3"
-    b"FSo9OSsIYSwzXrQgdkeUTsbbYV63cXbGVesLL8877/v84P3O83zbiYaeTqcPNU0rdnZ2HtVqtU3+I9K5"
-    b"XM6RCpZlSWA+sP4JOuAIIaRhGNKyLCmllLquSyGEFEJIwLxOYo0BtnmCZA5pvjPPHiANw5D1el2Wy+WG"
-    b"BYqXTdyh7AST6KT8j8JagaOFIwBc18XzPIQQ9Pb2XpOWDA4fkHwMrFd/Vz6fb7xIf6pLMjiKzpZIqAKr"
-    b"TKBxM8arCrxR+0VlZ4EKiVYF2oHvfCXJfQx6Yry6gYdqBfGZfcC+qECbsitY2CxHeCzHRI4AkL0MRWcs"
-    b"6Fvw+lnYI0+KOyTpAW413dnsMgq4QFqdVgDvXIGqfzncF91+WUDjAWk0DMYCNzvADAuAwxglALYoscdk"
-    b"uE0NoBzzSj9wA40NNE4QTDf5VNhRtL0gyxQeUABoq/rttg88bsXn0BDmdgm0G+pgEJhjntsYVEjwkiIn"
-    b"wAAGoF11XuaFQEqJLFZDM5NCNpjI4LDIlaYdQORyOPW6X8D5hdQ3AwXeEtQowSqNYey4IGmSfky6yDIO"
-    b"3ceQTCrh6oJkMLIPgHvqa5gikhQaIbfz6MfkOVlSqluuAtk8aGGYzKjkEVg5BPu46TgVNXhtMdJtqGf7"
-    b"OjTDeq2G63ngnUK57ttQ+iRzWAwiG3oVU8CX7vNSYSwtUbJtKOxB6SAUsaZoGVFi+APYZx1wO1ryOQ1M"
-    b"IcigFX6DfRDhswb8pMCs6qRTbHbJAm4iUhrymDwieWHhKnACfMJlldE4VY3T8yzjWAyqXxfEe2W/sMI3"
-    b"XCUx5ZZqGgGDu0zQFeqMCsNqZwdVMw5/ANThGfS+jW3VAAAAAElFTkSuQmCC")
-
 wxPython_2x_png = PyEmbeddedImage(
     b"iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAAElBMVEUBAAAAAAAAuwD//wD////dAABp"
     b"I5D7AAAAAXRSTlMAQObYZgAAAJdJREFUeNp900sKxDAAw9BKTe5/5SFDawjEzVYP0+/1HuD6Oowx+O5L"
@@ -90,6 +92,47 @@ class MainFrame(wx.Frame):
 
         if not self.Create(parent, id, title, pos, size, style, name):
             return
+
+        box_sizer = wx.BoxSizer(wx.VERTICAL)
+
+        self.splitter = wx.SplitterWindow(self, wx.ID_ANY, wx.DefaultPosition,
+            wx.DefaultSize, wx.SP_3D)
+        self.splitter.SetSashGravity(0.0)
+        self.splitter.SetMinimumPaneSize(150)
+        self.splitter.SetMinSize(self.ConvertDialogToPixels(wx.Size(200, 200)))
+        box_sizer.Add(self.splitter, wx.SizerFlags(1).Expand().Border(wx.ALL))
+
+        self.propertyGridManager = wx.propgrid.PropertyGridManager(self.splitter, wx.ID_ANY,
+            wx.DefaultPosition, wx.DefaultSize, wx.propgrid.PG_AUTO_SORT|wx.propgrid.PG_BOLD_MODIFIED|
+            wx.propgrid.PG_SPLITTER_AUTO_CENTER|wx.propgrid.PG_DESCRIPTION|wx.propgrid.PG_TOOLBAR|
+            wx.propgrid.PG_NO_INTERNAL_BORDER)
+        self.propertyGridManager.SetExtraStyle(wx.propgrid.PG_EX_MODE_BUTTONS)
+
+        self.propertyGridPage = self.propertyGridManager.AddPage("Animal Page", wx.BitmapBundle.FromBitmap(
+            wxPython_1_5x_png.Bitmap))
+
+        self.propertyGridItem_5 = self.propertyGridPage.Append(wx.propgrid.PropertyCategory
+            ("Animals", "Animals"))
+
+        self.propertyGridItem_2 = self.propertyGridPage.Append(wx.propgrid.StringProperty(
+        "dog", ""))
+
+        self.propertyGridItem = self.propertyGridPage.Append(wx.propgrid.StringProperty(
+        "cat", ""))
+
+        self.propertyGridPage_2 = self.propertyGridManager.AddPage("Number Page", wx.BitmapBundle.FromBitmap(
+            images.english_png.Bitmap))
+
+        self.propertyGridItem_6 = self.propertyGridPage_2.Append(wx.propgrid.PropertyCategory
+            ("Numbers", "Numbers"))
+
+        self.propertyGridItem_3 = self.propertyGridPage_2.Append(wx.propgrid.IntProperty(
+        "1", ""))
+
+        self.propertyGridItem_4 = self.propertyGridPage_2.Append(wx.propgrid.IntProperty(
+        "2", ""))
+        self.splitter.Initialize(self.propertyGridManager)
+        self.SetSizerAndFit(box_sizer)
 
         menubar = wx.MenuBar()
 

@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Purpose:   PropertyGrid/Manager Item generator
+// Purpose:   PropertyGridItem (propGridItem) generator
 // Author:    Ralph Walden
 // Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
@@ -20,12 +20,17 @@ bool PropertyGridItemGenerator::ConstructionCode(Code& code)
 
     if (code.view(prop_type) == "Category")
     {
-        code.Function("Append(").Str(code.is_cpp() ? "new " : "").Add("wxPropertyCategory(");
+        // Break out the final '(' so that lookup for wxPropertyCategory will find the propgrid
+        // library
+        code.Function("Append(").Str(code.is_cpp() ? "new " : "").Add("wxPropertyCategory").Str("(");
         code.QuotedString(prop_label).Comma().QuotedString(prop_label).Str(")").EndFunction();
     }
     else
     {
-        code.Function("Append(").Str(code.is_cpp() ? "new " : "").Add("wx").Str(prop_type).Str("PropertyCategory(");
+        if (code.is_cpp())
+            code.Function("Append(").Str("new wx").Str(prop_type).Str("Property(");
+        else
+            code.Function("Append(").Add("wx.propgrid.").Str(prop_type).Str("Property(");
         code.QuotedString(prop_label).Comma().QuotedString(prop_help).Str(")").EndFunction();
     }
 

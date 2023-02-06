@@ -883,7 +883,7 @@ void Node::ModifyProperty(NodeProperty* prop, tt_string_view value)
     }
 }
 
-tt_string Node::GetUniqueName(const tt_string& proposed_name)
+tt_string Node::GetUniqueName(const tt_string& proposed_name, PropName prop_name)
 {
     tt_string new_name(proposed_name);
     if (IsForm())
@@ -894,12 +894,31 @@ tt_string Node::GetUniqueName(const tt_string& proposed_name)
         return {};
 
     std::unordered_set<std::string> name_set;
-    for (auto& iter: reserved_names)
-    {
-        name_set.emplace(iter);
-    }
 
-    form->CollectUniqueNames(name_set, this);
+    if (prop_name == prop_var_name)
+    {
+        for (auto& iter: reserved_names)
+        {
+            name_set.emplace(iter);
+        }
+
+        form->CollectUniqueNames(name_set, this);
+    }
+    else if (isGen(gen_propGridItem))
+    {
+        auto parent = get_parent();
+        if (parent->isGen(gen_propGridPage))
+        {
+            parent = parent->get_parent();
+        }
+
+        parent->CollectUniqueNames(name_set, this, prop_name);
+    }
+    else
+    {
+        FAIL_MSG("unsupported prop_name");
+        return new_name;
+    }
 
     if (auto it = name_set.find(new_name); it != name_set.end())
     {
@@ -915,6 +934,10 @@ tt_string Node::GetUniqueName(const tt_string& proposed_name)
         for (int i = 2; it != name_set.end(); it = name_set.find(new_name), ++i)
         {
             new_name.clear();
+            if (org_name.back() == '_')
+            {
+                org_name.pop_back();
+            }
             new_name << org_name << '_' << i;
         }
     }
@@ -982,6 +1005,20 @@ bool Node::FixDuplicateName()
                 fix_name->set_value(new_name);
                 replaced = true;
             }
+        }
+    }
+
+    if (isGen(gen_propGridItem))
+    {
+        name_set.clear();
+        form->CollectUniqueNames(name_set, this, prop_label);
+
+        tt_string org_name(value(prop_label));
+        auto result = GetUniqueName(org_name, prop_label);
+        if (result != value(prop_label))
+        {
+            auto fix_name = get_prop_ptr(prop_label);
+            fix_name->set_value(result);
         }
     }
 
@@ -1058,15 +1095,45 @@ void Node::FixDuplicateNodeNames(Node* form)
     {
         child->FixDuplicateNodeNames(form);
     }
+
+    if (isGen(gen_propGridItem))
+    {
+        name_set.clear();
+        auto parent = get_parent();
+        if (parent->isGen(gen_propGridPage))
+        {
+            parent = parent->get_parent();
+        }
+
+        parent->CollectUniqueNames(name_set, this, prop_label);
+
+        tt_string org_name(value(prop_label));
+        auto result = GetUniqueName(org_name, prop_label);
+        if (result != value(prop_label))
+        {
+            auto fix_name = get_prop_ptr(prop_label);
+            fix_name->set_value(result);
+        }
+    }
 }
 
-void Node::CollectUniqueNames(std::unordered_set<std::string>& name_set, Node* cur_node)
+void Node::CollectUniqueNames(std::unordered_set<std::string>& name_set, Node* cur_node, PropName prop_name)
 {
-    if (!IsForm() && cur_node != this)
+    if (!IsForm() && cur_node != this && !isGen(gen_wxPropertyGrid) && !isGen(gen_wxPropertyGridManager))
     {
-        for (auto& iter: s_var_names)
+        if (prop_name == prop_var_name)
         {
-            if (auto& name = prop_as_string(iter); name.size())
+            for (auto& iter: s_var_names)
+            {
+                if (auto& name = prop_as_string(iter); name.size())
+                {
+                    name_set.emplace(name);
+                }
+            }
+        }
+        else
+        {
+            if (auto& name = prop_as_string(prop_name); name.size())
             {
                 name_set.emplace(name);
             }
@@ -1075,7 +1142,7 @@ void Node::CollectUniqueNames(std::unordered_set<std::string>& name_set, Node* c
 
     for (const auto& iter: GetChildNodePtrs())
     {
-        iter->CollectUniqueNames(name_set, cur_node);
+        iter->CollectUniqueNames(name_set, cur_node, prop_name);
     }
 }
 

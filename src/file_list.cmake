@@ -86,9 +86,10 @@ set (file_list
     generate/project.cpp           # Project generator
 
     generate/dataview_widgets.cpp  # wxDataView generation classes
-    generate/grid_widgets.cpp      # Grid generation classes
     generate/styled_text.cpp       # wxStyledText (scintilla) generate
     generate/window_widgets.cpp    # Scroll window component classes
+
+    generate/utils_prop_grid.cpp   # PropertyGrid utilities
 
     generate/gen_activity.cpp       # wxActivityIndicator generator
     generate/gen_animation.cpp      # wxAnimationCtrl generator
@@ -116,7 +117,8 @@ set (file_list
     generate/gen_listview.cpp       # wxListView generator
     generate/gen_panel.cpp          # wxPanel generator
     generate/gen_prop_grid.cpp      # wxPropertyGrid generator
-    generate/gen_prop_item.cpp      # PropertyGrid/Manager Item generator
+    generate/gen_prop_grid_mgr.cpp  # wxPropertyGridManager and wxPropertyGridPage generators
+    generate/gen_prop_item.cpp      # PropertyGridItem (propGridItem) generator
     generate/gen_radio_box.cpp      # wxRadioBox generator
     generate/gen_radio_btn.cpp      # wxRadioButton generator
     generate/gen_rearrange.cpp      # wxRearrangeCtrl generator

@@ -86,8 +86,8 @@ class MainTestDialog(wx.Dialog):
         page_sizer_1.Add(self.m_text_ctrl, wx.SizerFlags().Expand().Border(wx.ALL))
 
         self.m_richText = wx.richtext.RichTextCtrl(page_2, wx.ID_ANY, "",
-            wx.DefaultPosition, wx.DefaultSize, wx.richtext.RE_MULTILINE|
-        wx.VSCROLL|wx.HSCROLL|wx.NO_BORDER|wx.WANTS_CHARS)
+            wx.DefaultPosition, wx.DefaultSize, wx.richtext.RE_MULTILINE|wx.VSCROLL|wx.HSCROLL|
+            wx.NO_BORDER|wx.WANTS_CHARS)
         self.m_richText.SetHint("wxRichTextCtrl")
         self.m_richText.SetMinSize(self.ConvertDialogToPixels(wx.Size(150, 30)))
         page_sizer_1.Add(self.m_richText, wx.SizerFlags().Expand().Border(wx.ALL))
@@ -251,8 +251,8 @@ class MainTestDialog(wx.Dialog):
         box_sizer_13 = wx.BoxSizer(wx.HORIZONTAL)
 
         self.m_edit_listbox = wx.adv.EditableListBox(page_5, wx.ID_ANY,
-            "My Editable ListBox", wx.DefaultPosition, wx.DefaultSize,
-            wx.adv.EL_ALLOW_NEW|wx.adv.EL_ALLOW_EDIT|wx.adv.EL_ALLOW_DELETE)
+            "My Editable ListBox", wx.DefaultPosition, wx.DefaultSize, wx.adv.EL_ALLOW_NEW|
+            wx.adv.EL_ALLOW_EDIT|wx.adv.EL_ALLOW_DELETE)
         box_sizer_13.Add(self.m_edit_listbox, wx.SizerFlags().Border(wx.ALL))
 
         flex_grid_sizer.Add(box_sizer_13, wx.SizerFlags().Border(wx.ALL))
@@ -413,8 +413,8 @@ class MainTestDialog(wx.Dialog):
         box_sizer_2.Add(staticText__3, wx.SizerFlags().Center().Border(wx.ALL))
 
         self.m_dirPicker = wx.DirPickerCtrl(static_box_2.GetStaticBox(), wx.ID_ANY, ".",
-            wx.DirSelectorPromptStr, wx.DefaultPosition, wx.DefaultSize,
-            wx.DIRP_DEFAULT_STYLE|wx.DIRP_SMALL)
+            wx.DirSelectorPromptStr, wx.DefaultPosition, wx.DefaultSize, wx.DIRP_DEFAULT_STYLE|
+            wx.DIRP_SMALL)
         box_sizer_2.Add(self.m_dirPicker, wx.SizerFlags().Border(wx.ALL))
 
         static_box_2.Add(box_sizer_2, wx.SizerFlags().Border(wx.ALL))
@@ -475,9 +475,8 @@ class MainTestDialog(wx.Dialog):
         page_sizer_3 = wx.BoxSizer(wx.VERTICAL)
 
         self.m_rbnBar = wx.ribbon.RibbonBar(page, wx.ID_ANY, wx.DefaultPosition,
-            wx.DefaultSize,
-            wx.ribbon.RIBBON_BAR_SHOW_PAGE_LABELS|wx.ribbon.RIBBON_BAR_SHOW_PAGE_ICONS|wx.ribbon.RIBBON_BAR_FLOW_HORIZONTAL
-        )
+            wx.DefaultSize, wx.ribbon.RIBBON_BAR_SHOW_PAGE_LABELS|
+            wx.ribbon.RIBBON_BAR_SHOW_PAGE_ICONS|wx.ribbon.RIBBON_BAR_FLOW_HORIZONTAL)
 
         self.m_rbnBar.SetArtProvider(wx.ribbon.RibbonAUIArtProvider())
         page_sizer_3.Add(self.m_rbnBar, wx.SizerFlags().Expand().Border(wx.ALL))

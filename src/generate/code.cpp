@@ -63,6 +63,25 @@ static const std::map<std::string_view, std::string_view, std::less<>> s_map_wx_
 
     { "wxEVT_PG_CHANGED", "wx.propgrid." },
     { "wxEVT_PG_CHANGING", "wx.propgrid." },
+    { "wxPropertyCategory", "wx.propgrid." },
+    { "wxBoolProperty", "wx.propgrid." },
+    { "wxColourProperty", "wx.propgrid." },
+    { "wxCursorProperty", "wx.propgrid." },
+    { "wxDateProperty", "wx.propgrid." },
+    { "wxDirProperty", "wx.propgrid." },
+    { "wxEditEnumProperty", "wx.propgrid." },
+    { "wxEnumProperty", "wx.propgrid." },
+    { "wxFileProperty", "wx.propgrid." },
+    { "wxFlagsProperty", "wx.propgrid." },
+    { "wxFloatProperty", "wx.propgrid." },
+    { "wxFontProperty", "wx.propgrid." },
+    { "wxImageFileProperty", "wx.propgrid." },
+    { "wxIntProperty", "wx.propgrid." },
+    { "wxLongStringProperty", "wx.propgrid." },
+    { "wxMultiChoiceProperty", "wx.propgrid." },
+    { "wxStringProperty", "wx.propgrid." },
+    { "wxSystemColourProperty", "wx.propgrid." },
+    { "wxUIntProperty", "wx.propgrid." },
 
     { "wxRibbonAUIArtProvider", "wx.ribbon." },
     { "wxRibbonDefaultArtProvider", "wx.ribbon." },
@@ -105,6 +124,7 @@ std::map<std::string_view, std::string_view, std::less<>> g_map_class_prefix
     { "wxDataViewTreeCtrl", "wx.dataview."},
     { "wxGrid", "wx.grid."},
     { "wxPropertyGridManager", "wx.propgrid."},
+    { "wxPropertyGrid", "wx.propgrid."},
 
 };
 // clang-format on
@@ -537,6 +557,7 @@ Code& Code::as_string(PropName prop_name)
         else if (iter.is_sameprefix("wx"))
         {
             lambda(iter);
+            CheckLineLength(iter.size());
             *this << wx_prefix << iter.substr(2);
         }
         else

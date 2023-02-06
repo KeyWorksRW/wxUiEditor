@@ -224,6 +224,21 @@ bool BaseGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty
             }
         }
     }
+    else if (prop->isProp(prop_label) && prop->GetNode()->isGen(gen_propGridItem))
+    {
+        auto property = wxStaticCast(event->GetProperty(), wxStringProperty);
+        auto variant = event->GetPropertyValue();
+        tt_wxString newValue = property->ValueToString(variant);
+        tt_string final_name(newValue);
+        auto result = node->GetUniqueName(final_name, prop_label);
+        if (!newValue.is_sameas(result))
+        {
+            event->SetValidationFailureMessage("This label is already in use by another PropertyGrid item.");
+            event->Veto();
+            wxGetFrame().SetStatusField("Either change the name, or press ESC to restore the original value.");
+            return false;
+        }
+    }
 
     return true;
 }

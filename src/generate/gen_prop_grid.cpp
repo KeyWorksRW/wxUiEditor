@@ -7,11 +7,12 @@
 
 #include <wx/propgrid/propgrid.h>  // wxPropertyGrid
 
-#include "gen_common.h"     // GeneratorLibrary -- Generator classes
-#include "gen_xrc_utils.h"  // Common XRC generating functions
-#include "node.h"           // Node class
-#include "pugixml.hpp"      // xml read/write/create/process
-#include "utils.h"          // Utility functions that work with properties
+#include "gen_common.h"       // GeneratorLibrary -- Generator classes
+#include "gen_xrc_utils.h"    // Common XRC generating functions
+#include "node.h"             // Node class
+#include "pugixml.hpp"        // xml read/write/create/process
+#include "utils.h"            // Utility functions that work with general properties
+#include "utils_prop_grid.h"  // PropertyGrid utilities
 
 #include "gen_prop_grid.h"
 
@@ -32,34 +33,7 @@ wxObject* PropertyGridGenerator::CreateMockup(Node* node, wxObject* parent)
 
 void PropertyGridGenerator::AfterCreation(wxObject* wxobject, wxWindow* /* wxparent */, Node* node, bool /* is_preview */)
 {
-    auto pg = wxStaticCast(wxobject, wxPropertyGrid);
-
-    for (const auto& child: node->GetChildNodePtrs())
-    {
-        if (child->isGen(gen_propGridItem))
-        {
-            if (child->prop_as_string(prop_type) == "Category")
-            {
-                pg->Append(new wxPropertyCategory(child->prop_as_wxString(prop_label), child->prop_as_wxString(prop_label)));
-            }
-            else
-            {
-                wxPGProperty* prop = wxDynamicCast(
-                    wxCreateDynamicObject("wx" + (child->prop_as_string(prop_type)) + "Property"), wxPGProperty);
-                if (prop)
-                {
-                    prop->SetLabel(child->prop_as_wxString(prop_label));
-                    prop->SetName(child->prop_as_wxString(prop_label));
-                    pg->Append(prop);
-
-                    if (child->HasValue(prop_help))
-                    {
-                        pg->SetPropertyHelpString(prop, child->prop_as_wxString(prop_help));
-                    }
-                }
-            }
-        }
-    }
+    AfterCreationAddItems(wxStaticCast(wxobject, wxPropertyGrid), node);
 }
 
 bool PropertyGridGenerator::ConstructionCode(Code& code)
@@ -77,7 +51,10 @@ bool PropertyGridGenerator::GetIncludes(Node* node, std::set<std::string>& set_s
 {
     InsertGeneratorInclude(node, "#include <wx/propgrid/propgrid.h>", set_src, set_hdr);
 
-    if (node->prop_as_bool(prop_include_advanced))
+    if (CheckAdvancePropertyInclude(node))
+    {
         InsertGeneratorInclude(node, "#include <wx/propgrid/advprops.h>", set_src, set_hdr);
+    }
+
     return true;
 }

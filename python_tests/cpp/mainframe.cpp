@@ -8,10 +8,9 @@
 // clang-format off
 
 #include <wx/artprov.h>
-#include <wx/bitmap.h>
-#include <wx/icon.h>
-#include <wx/image.h>
 #include <wx/menu.h>
+
+#include "images.h"
 
 #include "mainframe.h"
 
@@ -26,6 +25,11 @@ inline wxImage wxueImage(const unsigned char* data, size_t size_data)
     return image;
 };
 
+namespace wxue_img
+{
+    extern const unsigned char english_png[541];
+}
+
 MainFrame::MainFrame(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size,
     long style, const wxString& name) : wxFrame()
 {
@@ -34,6 +38,33 @@ MainFrame::MainFrame(wxWindow* parent, wxWindowID id, const wxString& title, con
 
     if (!Create(parent, id, title, pos, size, style, name))
         return;
+
+    splitter = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_3D);
+    splitter->SetSashGravity(0.0);
+    splitter->SetMinimumPaneSize(150);
+    splitter->SetMinSize(ConvertDialogToPixels(wxSize(200, 200)));
+
+    propertyGridManager = new wxPropertyGridManager(splitter, wxID_ANY, wxDefaultPosition, wxDefaultSize,
+        wxPG_AUTO_SORT|wxPG_BOLD_MODIFIED|wxPG_SPLITTER_AUTO_CENTER|wxPG_DESCRIPTION|wxPG_TOOLBAR|wxPG_NO_INTERNAL_BORDER);
+    propertyGridManager->SetExtraStyle(wxPG_EX_MODE_BUTTONS);
+
+    propertyGridPage = propertyGridManager->AddPage("Animal Page",
+        wxBitmapBundle::FromBitmap(wxueImage(wxue_img::wxPython_1_5x_png, sizeof(wxue_img::wxPython_1_5x_png))));
+
+    propertyGridItem_5 = propertyGridPage->Append(new wxPropertyCategory("Animals", "Animals"));
+
+    propertyGridItem_2 = propertyGridPage->Append(new wxStringProperty("dog", wxEmptyString));
+
+    propertyGridItem = propertyGridPage->Append(new wxStringProperty("cat", wxEmptyString));
+
+    propertyGridPage_2 = propertyGridManager->AddPage("Number Page", wxue_img::bundle_english_png());
+
+    propertyGridItem_6 = propertyGridPage_2->Append(new wxPropertyCategory("Numbers", "Numbers"));
+
+    propertyGridItem_3 = propertyGridPage_2->Append(new wxIntProperty("1", wxEmptyString));
+
+    propertyGridItem_4 = propertyGridPage_2->Append(new wxIntProperty("2", wxEmptyString));
+    splitter->Initialize(propertyGridManager);
 
     auto* menubar = new wxMenuBar();
 
@@ -145,6 +176,7 @@ MainFrame::MainFrame(wxWindow* parent, wxWindowID id, const wxString& title, con
 
 
     Centre(wxBOTH);
+    splitter->UpdateSize();
 
     // Event handlers
     Bind(wxEVT_MENU, &MainFrame::OnMainTestDlg, this, menu_item_3->GetId());

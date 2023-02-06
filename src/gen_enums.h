@@ -343,6 +343,7 @@ namespace GenEnum
         prop_show,
         prop_show_effect,
         prop_show_hidden,
+        prop_show_header,
         prop_size,
         prop_smart_size,
         prop_source_ext,

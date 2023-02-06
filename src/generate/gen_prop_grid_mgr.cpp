@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Purpose:   Grid component classes
+// Purpose:   wxPropertyGridManager and wxPropertyGridPage generators
 // Author:    Ralph Walden
 // Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
@@ -12,8 +12,9 @@
 #include "node.h"             // Node class
 #include "project_handler.h"  // ProjectHandler class
 #include "utils.h"            // Utility functions that work with properties
+#include "utils_prop_grid.h"  // PropertyGrid utilities
 
-#include "grid_widgets.h"
+#include "gen_prop_grid_mgr.h"
 
 //////////////////////////////////////////  PropertyGridManagerGenerator  //////////////////////////////////////////
 
@@ -27,9 +28,6 @@ wxObject* PropertyGridManagerGenerator::CreateMockup(Node* node, wxObject* paren
         widget->SetExtraStyle(node->prop_as_int(prop_extra_style));
     }
 
-    // BUGBUG: [KeyWorks - 04-11-2021] There is no "show_header" property
-    // widget->ShowHeader(node->prop_as_int(prop_show_header) != 0);
-
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
     return widget;
@@ -39,42 +37,13 @@ void PropertyGridManagerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /
                                                  bool /* is_preview */)
 {
     auto pgm = wxStaticCast(wxobject, wxPropertyGridManager);
-
-    for (const auto& child: node->GetChildNodePtrs())
+    for (auto& child: node->GetChildNodePtrs())
     {
         if (child->isGen(gen_propGridPage))
         {
-            wxPropertyGridPage* page =
-                pgm->AddPage(child->prop_as_wxString(prop_label), child->prop_as_wxBitmapBundle(prop_bitmap));
+            auto* page = pgm->AddPage(child->prop_as_wxString(prop_label), child->prop_as_wxBitmapBundle(prop_bitmap));
 
-            for (const auto& inner_child: child->GetChildNodePtrs())
-            {
-                if (inner_child->isGen(gen_propGridItem))
-                {
-                    if (inner_child->prop_as_string(prop_type) == "Category")
-                    {
-                        page->Append(new wxPropertyCategory(inner_child->prop_as_wxString(prop_label),
-                                                            inner_child->prop_as_wxString(prop_label)));
-                    }
-                    else
-                    {
-                        wxPGProperty* prop = wxDynamicCast(
-                            wxCreateDynamicObject("wx" + (inner_child->prop_as_string(prop_type)) + "Property"),
-                            wxPGProperty);
-                        if (prop)
-                        {
-                            prop->SetLabel(inner_child->prop_as_wxString(prop_label));
-                            prop->SetName(inner_child->prop_as_wxString(prop_label));
-                            page->Append(prop);
-
-                            if (inner_child->HasValue(prop_help))
-                            {
-                                page->SetPropertyHelpString(prop, inner_child->prop_as_wxString(prop_help));
-                            }
-                        }
-                    }
-                }
-            }
+            AfterCreationAddItems(page, child.get());
         }
     }
 
@@ -83,6 +52,10 @@ void PropertyGridManagerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /
         pgm->SelectPage(0);
     }
 
+    if (node->as_bool(prop_show_header))
+    {
+        pgm->ShowHeader();
+    }
     pgm->Update();
 }
 
@@ -102,9 +75,24 @@ bool PropertyGridManagerGenerator::GetIncludes(Node* node, std::set<std::string>
     InsertGeneratorInclude(node, "#include <wx/propgrid/propgrid.h>", set_src, set_hdr);
     InsertGeneratorInclude(node, "#include <wx/propgrid/manager.h>", set_src, set_hdr);
 
-    if (node->prop_as_bool(prop_include_advanced))
+    if (CheckAdvancePropertyInclude(node))
+    {
         InsertGeneratorInclude(node, "#include <wx/propgrid/advprops.h>", set_src, set_hdr);
+    }
+
     return true;
+}
+bool PropertyGridManagerGenerator::AfterChildrenCode(Code& code)
+{
+    if (code.IsTrue(prop_show_header))
+    {
+        code.NodeName().Function("ShowHeader(").AddTrue().EndFunction();
+        return true;
+    }
+    else
+    {
+        return false;
+    }
 }
 
 //////////////////////////////////////////  PropertyGridPageGenerator  //////////////////////////////////////////
@@ -114,7 +102,8 @@ bool PropertyGridPageGenerator::ConstructionCode(Code& code)
     if (code.HasValue(prop_bitmap))
     {
         auto is_bitmaps_list = BitmapList(code, prop_bitmap);
-        code.AddAuto().NodeName().Str(" = ").ParentName().Function("AddPage(").Add(prop_label);
+        code.AddAuto().NodeName().Str(" = ").ParentName().Function("AddPage(").QuotedString(prop_label);
+        code.Comma();
         if (is_bitmaps_list)
         {
             if (code.is_cpp() && Project.value(prop_wxWidgets_version) == "3.1")
@@ -153,7 +142,7 @@ bool PropertyGridPageGenerator::ConstructionCode(Code& code)
     }
     else
     {
-        code.AddAuto().NodeName().Str(" = ").ParentName().Function("AddPage(").Add(prop_label).EndFunction();
+        code.AddAuto().NodeName().Str(" = ").ParentName().Function("AddPage(").QuotedString(prop_label).EndFunction();
     }
 
     return true;

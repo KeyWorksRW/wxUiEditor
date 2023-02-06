@@ -336,6 +336,7 @@ std::map<GenEnum::PropName, const char*> GenEnum::map_PropNames = {
     { prop_shortcut, "shortcut" },
     { prop_show, "show" },
     { prop_show_effect, "show_effect" },
+    { prop_show_header, "show_header" },
     { prop_show_hidden, "show_hidden" },
     { prop_size, "size" },
     { prop_smart_size, "smart_size" },

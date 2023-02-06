@@ -113,6 +113,9 @@ public:
         MenuADD_RIBBON_TOOLBAR,
         MenuADD_RIBBON_GALLERY,
 
+        MenuADD_PROPGRID_PAGE,
+        MenuADD_PROPGRID_ITEM,
+
         MenuADD_MENU,
         MenuADD_MENUITEM,
         MenuADD_SUBMENU,

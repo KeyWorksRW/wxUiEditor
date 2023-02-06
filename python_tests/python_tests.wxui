@@ -65,10 +65,12 @@
               var_name="propertyGridItem_7">
               <node
                 class="propGridItem"
+                help="Woof!"
                 label="dog"
                 var_name="propertyGridItem_2" />
               <node
                 class="propGridItem"
+                help="Meow!"
                 label="cat"
                 var_name="propertyGridItem" />
             </node>

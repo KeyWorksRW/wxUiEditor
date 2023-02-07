@@ -9,6 +9,7 @@
 
 #pragma once
 
+#include <wx/animate.h>
 #include <wx/bannerwindow.h>
 #include <wx/bitmap.h>
 #include <wx/button.h>
@@ -87,6 +88,7 @@ protected:
 
     // Class member variables
 
+    wxAnimationCtrl* m_animation_ctrl;
     wxBannerWindow* m_banner;
     wxBannerWindow* m_banner_left;
     wxBannerWindow* m_banner_right;
@@ -99,6 +101,7 @@ protected:
     wxButton* m_btn_7;
     wxButton* m_btn_bitmaps;
     wxCheckBox* m_checkBox2;
+    wxCheckBox* m_checkPlayAnimation;
     wxCheckListBox* m_checkList2;
     wxCheckListBox* m_checkList;
     wxCheckListBox* m_checkList_2;
@@ -139,12 +142,15 @@ protected:
     wxTextCtrl* m_text_ctrl;
     wxTimePickerCtrl* m_timePicker;
     wxToggleButton* m_toggleBtn;
+    wxToggleButton* m_toggleBtn_2;
 };
 
 namespace wxue_img
 {
     // Images declared in this class module:
 
+    extern const unsigned char clr_hourglass_gif[2017];
+    extern const unsigned char disabled_png[437];
     extern const unsigned char focus_png[517];
     extern const unsigned char left_png[158];
     extern const unsigned char no_hour_png[347];

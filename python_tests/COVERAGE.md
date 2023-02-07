@@ -11,7 +11,7 @@ XRC is listed, but there is currently no testing code for it. "---" in the XRC c
 
 | Class | C++ | Python | XRC |file |
 -----------|-----|--------|------|------|
-| wxAuiNotebook | ??? | ??? | --- | ../src/generate/gen_aui_notebook.cpp |
+| wxAuiNotebook | yes | yes | --- | ../src/generate/gen_aui_notebook.cpp |
 | wxChoicebook | yes | yes | --- | ../src/generate/gen_choicebook.cpp |
 | wxListbook | yes | yes | --- | ../src/generate/gen_listbook.cpp |
 | wxNotebook | yes | yes | --- | ../src/generate/gen_notebook.cpp |
@@ -56,7 +56,7 @@ XRC is listed, but there is currently no testing code for it. "---" in the XRC c
 | wxRadioButtonSizer | ??? | no | --- | ../src/generate/gen_statradiobox_sizer.cpp |
 | wxStaticBoxSizer | yes | yes | --- | ../src/generate/gen_staticbox_sizer.cpp |
 | wxStdDialogButtonSizer | yes | yes | --- | ../src/generate/gen_std_dlgbtn_sizer.cpp |
-| wxWrapSizer | ??? | ??? | --- | ../src/generate/gen_wrap_sizer.cpp |
+| wxWrapSizer | yes | yes | --- | ../src/generate/gen_wrap_sizer.cpp |
 
 # Classes
 
@@ -81,7 +81,7 @@ XRC is listed, but there is currently no testing code for it. "---" in the XRC c
 | wxFileCtrl | ??? | ??? | --- | ../src/generate/gen_file_ctrl.cpp |
 | wxGauge | ??? | ??? | --- | ../src/generate/gen_gauge.cpp |
 | wxGenericDirCtrl | ??? | ??? | --- | ../src/generate/gen_dir_ctrl.cpp |
-| wxGrid | ??? | ??? | --- | ../src/generate/gen_grid.cpp |
+| wxGrid | yes | yes | --- | ../src/generate/gen_grid.cpp |
 | wxHtmlWindow | yes | yes | --- | ../src/generate/gen_html_window.cpp |
 | wxHyperlinkCtrl | yes | yes | --- | ../src/generate/gen_hyperlink.cpp |
 | wxInfoBar | ??? | ??? | --- | ../src/generate/gen_infobar.cpp |
@@ -92,7 +92,7 @@ XRC is listed, but there is currently no testing code for it. "---" in the XRC c
 | wxMenuItem | yes | yes | --- | ../src/generate/gen_menuitem.cpp |
 | wxPanel | ??? | ??? | --- | ../src/generate/gen_panel.cpp |
 | wxPropertyGrid | ??? | ??? | no | ../src/generate/gen_prop_grid.cpp |
-| wxPropertyGridManager | ??? | ??? | no | ../src/generate/grid_widgets.cpp |
+| wxPropertyGridManager | yes | yes | no | ../src/generate/grid_widgets.cpp |
 | wxRadioBox | yes | yes | --- | ../src/generate/gen_prop_grid.cpp |
 | wxRadioButton | yes | yes | --- | ../src/generate/gen_radio_btn.cpp |
 | wxRearrangeCtrl | yes | yes | no | ../src/generate/gen_rearrange.cpp |
@@ -142,8 +142,8 @@ XRC is listed, but there is currently no testing code for it. "---" in the XRC c
 | DataViewListColumn | ??? | ??? | --- | ../src/generate/dataview_widgets.cpp |
 | NewCloseButton | ??? | ??? | --- | ../src/generate/gen_close_btn.cpp |
 | PageCtrl | ??? | ??? | no | ../src/generate/gen_page_ctrl.cpp |
-| PropertyGridItem | ??? | ??? | no | ../src/generate/gen_prop_item.cpp |
-| PropertyGridPage | ??? | ??? | no | ../src/generate/grid_widgets.cpp |
+| PropertyGridItem | yes | yes | no | ../src/generate/gen_prop_item.cpp |
+| PropertyGridPage | yes | yes | no | ../src/generate/grid_widgets.cpp |
 | RibbonButton | yes | yes | --- | ../src/generate/ribbon_widgets.cpp |
 | RibbonGalleryItem | yes | yes | --- | ../src/generate/ribbon_widgets.cpp |
 | RibbonTool | yes | yes | --- | ../src/generate/ribbon_widgets.cpp |

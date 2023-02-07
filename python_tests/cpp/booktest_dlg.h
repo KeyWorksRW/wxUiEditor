@@ -9,6 +9,7 @@
 
 #pragma once
 
+#include <wx/aui/auibook.h>
 #include <wx/choicebk.h>
 #include <wx/dialog.h>
 #include <wx/event.h>
@@ -38,9 +39,9 @@ protected:
 
     // Class member variables
 
+    wxAuiNotebook* m_notebook;
     wxChoicebook* m_choicebook;
     wxListbook* m_listbook;
-    wxNotebook* m_notebook;
     wxNotebook* m_notebook_2;
     wxStaticText* m_staticText;
     wxStaticText* m_staticText_10;

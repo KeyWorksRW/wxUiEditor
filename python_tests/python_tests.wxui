@@ -332,38 +332,60 @@
               </node>
               <node
                 class="wxBoxSizer"
-                var_name="box_sizer2"
+                var_name="box_sizer_19"
                 flags="wxEXPAND">
                 <node
-                  class="wxButton"
-                  label="First btn"
-                  var_name="m_btn_3"
-                  minimum_size="-1,-1d"
-                  wxEVT_BUTTON="[this](wxCommandEvent&amp;)@@{@@OnEventName(&quot;Button: wxEVT_BUTTON&quot;);@@}[python:lambda]self.OnEventName(&quot;Button: wx.EVT_BUTTON&quot;)" />
+                  class="wxWrapSizer"
+                  flags="wxEXPAND">
+                  <node
+                    class="wxButton"
+                    label="First btn"
+                    var_name="m_btn_3"
+                    minimum_size="-1,-1d"
+                    wxEVT_BUTTON="[this](wxCommandEvent&amp;)@@{@@OnEventName(&quot;Button: wxEVT_BUTTON&quot;);@@}[python:lambda]self.OnEventName(&quot;Button: wx.EVT_BUTTON&quot;)" />
+                  <node
+                    class="wxButton"
+                    class_access="none"
+                    label="Popup"
+                    var_name="btn2"
+                    wxEVT_BUTTON="OnPopupBtn" />
+                  <node
+                    class="wxRadioButton"
+                    label="First radio"
+                    style="wxRB_GROUP"
+                    alignment="wxALIGN_CENTER"
+                    wxEVT_RADIOBUTTON="[this](wxCommandEvent&amp;)@@{@@OnEventName(&quot;RadioButton: wxEVT_RADIOBUTTON&quot;);@@}[python:lambda]self.OnEventName(&quot;RadioButton: wx.EVT_RADIOBUTTON&quot;)" />
+                  <node
+                    class="wxRadioButton"
+                    label="Second radio"
+                    var_name="m_radioBtn2"
+                    alignment="wxALIGN_CENTER"
+                    wxEVT_RADIOBUTTON="[this](wxCommandEvent&amp;)@@{@@OnEventName(&quot;RadioButton: wxEVT_RADIOBUTTON&quot;);@@}[python:lambda]self.OnEventName(&quot;RadioButton: wx.EVT_RADIOBUTTON&quot;)" />
+                  <node
+                    class="wxCheckBox"
+                    label="Checkbox"
+                    var_name="m_checkBox2"
+                    alignment="wxALIGN_CENTER"
+                    wxEVT_CHECKBOX="[this](wxCommandEvent&amp;)@@{@@OnEventName(&quot;CheckBox: wxEVT_CHECKBOX&quot;);@@}[python:lambda]self.OnEventName(&quot;CheckBox: wx.EVT_CHECKBOX&quot;)" />
+                </node>
                 <node
-                  class="wxButton"
-                  class_access="none"
-                  label="Popup"
-                  var_name="btn2"
-                  wxEVT_BUTTON="OnPopupBtn" />
-                <node
-                  class="wxRadioButton"
-                  label="First radio"
-                  style="wxRB_GROUP"
-                  alignment="wxALIGN_CENTER"
-                  wxEVT_RADIOBUTTON="[this](wxCommandEvent&amp;)@@{@@OnEventName(&quot;RadioButton: wxEVT_RADIOBUTTON&quot;);@@}[python:lambda]self.OnEventName(&quot;RadioButton: wx.EVT_RADIOBUTTON&quot;)" />
-                <node
-                  class="wxRadioButton"
-                  label="Second radio"
-                  var_name="m_radioBtn2"
-                  alignment="wxALIGN_CENTER"
-                  wxEVT_RADIOBUTTON="[this](wxCommandEvent&amp;)@@{@@OnEventName(&quot;RadioButton: wxEVT_RADIOBUTTON&quot;);@@}[python:lambda]self.OnEventName(&quot;RadioButton: wx.EVT_RADIOBUTTON&quot;)" />
-                <node
-                  class="wxCheckBox"
-                  label="Checkbox"
-                  var_name="m_checkBox2"
-                  alignment="wxALIGN_CENTER"
-                  wxEVT_CHECKBOX="[this](wxCommandEvent&amp;)@@{@@OnEventName(&quot;CheckBox: wxEVT_CHECKBOX&quot;);@@}[python:lambda]self.OnEventName(&quot;CheckBox: wx.EVT_CHECKBOX&quot;)" />
+                  class="StaticCheckboxBoxSizer"
+                  checkbox_var_name="m_checkPlayAnimation"
+                  checked="0"
+                  label="Play Animation"
+                  var_name="static_box_3"
+                  wxEVT_CHECKBOX="[this](wxCommandEvent&amp;)@@{@@if (m_checkPlayAnimation->GetValue()) @@{@@    m_animation_ctrl->Play();@@}@@else @@{  @@    m_animation_ctrl->Stop();@@}@@}[python:]">
+                  <node
+                    class="wxToggleButton"
+                    label="Play Animation"
+                    style="wxBU_EXACTFIT"
+                    var_name="m_toggleBtn_2"
+                    wxEVT_TOGGLEBUTTON="[this](wxCommandEvent&amp;)@@{@@if (m_toggleBtn->GetValue()) @@{@@    m_animation_ctrl->Play();@@    m_checkPlayAnimation->SetValue(true);@@}@@else @@{  @@    m_animation_ctrl->Stop();@@    m_checkPlayAnimation->SetValue(false);@@}@@@@}[python:OnToggleButton]" />
+                  <node
+                    class="wxAnimationCtrl"
+                    animation="Embed;art/clr_hourglass.gif"
+                    inactive_bitmap="Embed;art/disabled.png" />
+                </node>
               </node>
             </node>
           </node>
@@ -880,7 +902,7 @@
         var_name="dlg_sizer"
         minimum_size="400,400d">
         <node
-          class="wxNotebook"
+          class="wxAuiNotebook"
           flags="wxEXPAND"
           proportion="1">
           <node

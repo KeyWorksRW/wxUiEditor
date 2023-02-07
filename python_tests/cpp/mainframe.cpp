@@ -51,11 +51,15 @@ MainFrame::MainFrame(wxWindow* parent, wxWindowID id, const wxString& title, con
     propertyGridPage = propertyGridManager->AddPage("Animal Page",
         wxBitmapBundle::FromBitmap(wxueImage(wxue_img::wxPython_1_5x_png, sizeof(wxue_img::wxPython_1_5x_png))));
 
-    propertyGridItem_5 = propertyGridPage->Append(new wxPropertyCategory("Animals", "Animals"));
+    propertyGridItem_7 = propertyGridPage->Append(new wxPropertyCategory("Pets", "Pets"));
 
-    propertyGridItem_2 = propertyGridPage->Append(new wxStringProperty("dog", wxEmptyString));
+    propertyGridItem_2 = propertyGridPage->Append(new wxStringProperty("dog", "Woof!"));
 
-    propertyGridItem = propertyGridPage->Append(new wxStringProperty("cat", wxEmptyString));
+    propertyGridItem = propertyGridPage->Append(new wxStringProperty("cat", "Meow!"));
+
+    propertyGridItem_5 = propertyGridPage->Append(new wxPropertyCategory("Big Animals", "Big Animals"));
+
+    propertyGridItem_8 = propertyGridPage->Append(new wxStringProperty("horses", wxEmptyString));
 
     propertyGridPage_2 = propertyGridManager->AddPage("Number Page", wxue_img::bundle_english_png());
 
@@ -64,7 +68,19 @@ MainFrame::MainFrame(wxWindow* parent, wxWindowID id, const wxString& title, con
     propertyGridItem_3 = propertyGridPage_2->Append(new wxIntProperty("1", wxEmptyString));
 
     propertyGridItem_4 = propertyGridPage_2->Append(new wxIntProperty("2", wxEmptyString));
-    splitter->Initialize(propertyGridManager);
+
+    grid = new wxGrid(splitter, wxID_ANY);
+    {
+        grid->CreateGrid(5, 5);
+        grid->EnableDragGridSize(false);
+        grid->SetMargins(0, 0);
+        grid->SetDefaultCellAlignment(wxALIGN_LEFT, wxALIGN_TOP);
+        grid->SetColLabelAlignment(wxALIGN_CENTER, wxALIGN_CENTER);
+        grid->SetColLabelSize(wxGRID_AUTOSIZE);
+        grid->SetRowLabelAlignment(wxALIGN_CENTER, wxALIGN_CENTER);
+        grid->SetRowLabelSize(wxGRID_AUTOSIZE);
+    }
+    splitter->SplitHorizontally(propertyGridManager, grid);
 
     auto* menubar = new wxMenuBar();
 
@@ -117,8 +133,6 @@ MainFrame::MainFrame(wxWindow* parent, wxWindowID id, const wxString& title, con
     );
 
     menuDialogs->Append(menuItem_2);
-    auto* menuItem1 = new wxMenuItem(menuDialogs, wxID_ANY, "Other Controls Dialog...");
-    menuDialogs->Append(menuItem1);
     auto* menuItem3 = new wxMenuItem(menuDialogs, wxID_ANY, "Wizard");
     menuDialogs->Append(menuItem3);
     menuDialogs->AppendSeparator();
@@ -176,14 +190,12 @@ MainFrame::MainFrame(wxWindow* parent, wxWindowID id, const wxString& title, con
 
 
     Centre(wxBOTH);
-    splitter->UpdateSize();
 
     // Event handlers
     Bind(wxEVT_MENU, &MainFrame::OnMainTestDlg, this, menu_item_3->GetId());
     Bind(wxEVT_MENU, &MainFrame::OnBookTestDlg, this, menu_item_4->GetId());
     Bind(wxEVT_MENU, &MainFrame::OnPythonDlg, this, menu_item_2->GetId());
     Bind(wxEVT_MENU, &MainFrame::OnCommonDialog, this, menuItem_2->GetId());
-    Bind(wxEVT_MENU, &MainFrame::OnOtherCtrls, this, menuItem1->GetId());
     Bind(wxEVT_MENU, &MainFrame::OnWizard, this, menuItem3->GetId());
     Bind(wxEVT_MENU, &MainFrame::OnQuit, this, wxID_EXIT);
     Bind(wxEVT_TOOL, &MainFrame::OnMainTestDlg, this, tool_4->GetId());

@@ -49,7 +49,9 @@ bool BookTestDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     auto* dlg_sizer = new wxBoxSizer(wxVERTICAL);
     dlg_sizer->SetMinSize(400, 400);
 
-    m_notebook = new wxNotebook(this, wxID_ANY);
+    m_notebook = new wxAuiNotebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize,
+        wxAUI_NB_TOP|wxAUI_NB_TAB_SPLIT|wxAUI_NB_TAB_MOVE|wxAUI_NB_SCROLL_BUTTONS|wxAUI_NB_CLOSE_ON_ACTIVE_TAB|wxAUI_NB_MIDDLE_CLICK_CLOSE
+    );
     dlg_sizer->Add(m_notebook, wxSizerFlags(1).Expand().Border(wxALL));
 
     auto* page_2 = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);

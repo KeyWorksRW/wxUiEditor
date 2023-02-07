@@ -28,6 +28,7 @@ static const std::map<tt_string_view, std::string_view, std::less<>> s_short_map
     { "wxRIBBON", "wx.ribbon."},
     { "wxSTC_", "wx.stc."},
     { "wxWIZARD_", "wx.adv."},
+    { "wxGRID_", "wx.grid."},
 
     { "wxEVT_DATAVIEW_", "wx.dataview."},
     { "wxEVT_DATE_", "wx.adv."},

@@ -34,6 +34,9 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
         event_code = EventHandlerDlg::GetPythonValue(event->get_value());
     }
 
+    if (event_code.empty())
+        return;
+
     // This is what we normally use if an ID is needed. However, a C++ lambda needs to put the
     // ID on it's own line, so we use a string for this to allow the lambda processing code to
     // replace it.

@@ -243,7 +243,7 @@ void BaseCodeGenerator::GenConstruction(Node* node)
             else
                 gen_code.Function("SplitHorizontally(");
 
-            gen_code.NodeName(node->GetChild(0)).Comma().Str(node->GetChild(1)->get_node_name()).EndFunction();
+            gen_code.NodeName(node->GetChild(0)).Comma().NodeName(node->GetChild(1)).EndFunction();
 
             if (auto sash_pos = node->get_prop_ptr(prop_sashpos)->as_int(); sash_pos != 0 && sash_pos != -1)
             {

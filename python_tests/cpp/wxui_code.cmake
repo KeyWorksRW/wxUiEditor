@@ -10,7 +10,6 @@ set (wxue_generated_code
     ${CMAKE_CURRENT_LIST_DIR}/images.cpp
     ${CMAKE_CURRENT_LIST_DIR}/mainframe.cpp
     ${CMAKE_CURRENT_LIST_DIR}/maintestdialog.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/other_ctrls.cpp
     ${CMAKE_CURRENT_LIST_DIR}/popupwin.cpp
     ${CMAKE_CURRENT_LIST_DIR}/python_dlg.cpp
     ${CMAKE_CURRENT_LIST_DIR}/wizard.cpp

@@ -11,6 +11,7 @@
 #include "code.h"           // Code -- Helper class for generating code
 #include "gen_common.h"     // GeneratorLibrary -- Generator classes
 #include "gen_xrc_utils.h"  // Common XRC generating functions
+#include "image_gen.h"      // Functions for generating embedded images
 #include "image_handler.h"  // ImageHandler class
 #include "node.h"           // Node class
 #include "pugixml.hpp"      // xml read/write/create/process
@@ -54,32 +55,65 @@ bool AnimationGenerator::ConstructionCode(Code& code)
     code.NodeName().CreateClass();
     code.ValidParentName().Comma().as_string(prop_id).Comma().CheckLineLength();
     // TODO: [Randalphwa - 12-08-2022] Enable Python support once image handling is worked out
-    if (code.HasValue(prop_animation) && code.is_cpp())
+    if (code.HasValue(prop_animation))
     {
-        tt_view_vector parts(code.node()->as_string(prop_animation), ';');
-        tt_string name(parts[IndexImage].filename());
-        name.remove_extension();
-        name.LeftTrim();
-        if (parts[IndexType].starts_with("Embed"))
+        if (code.is_cpp())
         {
-            auto embed = ProjectImages.GetEmbeddedImage(parts[IndexImage]);
-            if (embed)
+            tt_view_vector parts(code.node()->as_string(prop_animation), ';');
+            tt_string name(parts[IndexImage].filename());
+            name.remove_extension();
+            name.LeftTrim();
+            if (parts[IndexType].starts_with("Embed"))
             {
-                name = "wxue_img::" + embed->array_name;
+                auto embed = ProjectImages.GetEmbeddedImage(parts[IndexImage]);
+                if (embed)
+                {
+                    name = "wxue_img::" + embed->array_name;
+                }
             }
-        }
 
-        code << "wxueAnimation(" << name << ", sizeof(" << name << "))";
+            code << "wxueAnimation(" << name << ", sizeof(" << name << "))";
+        }
+        else
+        {
+            tt_view_vector parts(code.node()->as_string(prop_animation), ';');
+            tt_string name(parts[IndexImage].filename());
+            name.remove_extension();
+            name.LeftTrim();
+            if (parts[IndexType].starts_with("Embed"))
+            {
+                if (auto embed = ProjectImages.GetEmbeddedImage(parts[IndexImage]); embed)
+                {
+                    name = "" + embed->array_name;
+                }
+            }
+            // GenerateSingleBitmapCode(code, code.node()->value(prop_animation));
+        }
     }
     else
     {
         code.Add("wxNullAnimation");
     }
     code.PosSizeFlags(false);
-    if (code.HasValue(prop_inactive_bitmap) && code.is_cpp())
+    if (code.HasValue(prop_inactive_bitmap))
     {
-        code.Eol().NodeName().Function("SetInactiveBitmap(");
-        code << GenerateBitmapCode(code.node()->as_string(prop_inactive_bitmap));
+        code.Eol(eol_if_needed).NodeName().Function("SetInactiveBitmap(");
+        if (code.is_cpp())
+        {
+            code << GenerateBitmapCode(code.node()->as_string(prop_inactive_bitmap));
+        }
+        else
+        {
+            bool is_list_created = PythonBitmapList(code, prop_inactive_bitmap);
+            if (is_list_created)
+            {
+                code += "wx.BitmapBundle.FromBitmaps(bitmaps)";
+            }
+            else
+            {
+                PythonBundleCode(code, prop_bitmap);
+            }
+        }
         code.EndFunction();
     }
 

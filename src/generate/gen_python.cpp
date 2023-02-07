@@ -504,6 +504,7 @@ void BaseCodeGenerator::GeneratePythonClass(Node* form_node, PANEL_PAGE panel_ty
 bool PythonBitmapList(Code& code, GenEnum::PropName prop)
 {
     auto& description = code.node()->as_string(prop);
+    ASSERT_MSG(description.size(), "PythonBitmapList called with empty description");
     tt_view_vector parts(description, BMP_PROP_SEPARATOR, tt::TRIM::both);
 
     if (parts[IndexImage].empty() || parts[IndexType].contains("Art") || parts[IndexType].contains("SVG"))

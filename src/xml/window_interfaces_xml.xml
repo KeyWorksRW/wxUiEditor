@@ -114,8 +114,7 @@ inline const char* window_interfaces_xml = R"===(<?xml version="1.0"?>
 			help="If you have derived a class from a wxWidget class and you want this component to use your derived class, then specify that class name here. You will need to add the header file for your class to the derived_header property." />
 		<property name="derived_header" type="file"
 			help="Specify the name of the header file that declares your derived class." />
-		<property name="window_name" type="string_escapes"
-			help="The name of the window. This parameter is used to associate a name with the item, allowing the application user to set Motif resource values for individual windows." />
+		<property name="window_name" type="string_escapes" />
 		<property name="platforms" type="bitlist">
 			<option name="Windows"
 				help="Create this control when running on Windows." />

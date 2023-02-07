@@ -116,8 +116,7 @@ inline const char* dialogs_xml = R"===(<?xml version="1.0"?>
 				help="Shows or hides the window.">0</property>
 			<property name="background_colour" type="wxColour"
 				help="Sets the background colour of the window. Use &quot;Window&quot; to let wxWidgets choose the color, otherwise specify one of the system colors in the list." />
-			<property name="window_name" type="string_escapes"
-				help="Used to associate a name with the window, allowing the application user to set Motif resource values for individual panel boxes." />
+			<property name="window_name" type="string_escapes" />
 			<property name="derived_class" type="string"
 				help="If you have derived a class from wxPanel and you want to use your derived class, then specify that class name here. You will need to add the header file for your class to the base_hdr_includes property." />
 		</category>

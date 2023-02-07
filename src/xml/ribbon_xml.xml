@@ -147,7 +147,7 @@ inline const char* ribbon_xml = R"===(<?xml version="1.0"?>
 
 	<gen class="ribbonTool" image="ribbon_button" type="ribbontool">
 		<property name="id" type="id"
-			help="ID of the tool (used for event callbacks)." />
+			help="The identifier of the tool (used for event callbacks)." />
 		<property name="bitmap" type="image"
 			help="ribbonTool bitmap." />
 		<property name="help" type="string_escapes"

@@ -721,6 +721,8 @@ std::map<GenEnum::PropName, const char*> GenEnum::map_PropHelp = {
     // Use \\n to add a line break
 
     { prop_persist, "Use wxPersistentRegisterAndRestore to save/restore the size and position of the form.\\n\\nOnly available for C++ code." },
+    { prop_window_name, "The name of the window. This parameter is used to associate a name with the item, allowing the application user to set Motif resource values for individual windows." },
+    { prop_platforms, "Specifies the platforms to create this item on. If a platform is unchecked, the code to create the item will be placed in a conditional block." },
 
 };
 

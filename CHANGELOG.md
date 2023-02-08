@@ -9,7 +9,8 @@ The biggest change is the ability to generate wxPython code. In addition, severa
 
 - Ability to generate wxPython code (supports wxPython 4.2 including wx.BitmapBundle and roughly 140 widgets).
 - Ability to add your own code at the end of generated files. This code will be preserved even when the file is re-generated.
-- Ability to set a line length in the project file, and most code will be wrapped so that it is less than this limit.
+- A line length property has been added to the C++ and Python Project properties, and most code will be wrapped so that it is less than this limit.
+- `--gen_cpp` and `--gen_python` command line switches added. Using one of these switches will generate any code that needs to be updated, and then exit. A log file will be created containing any code generation messages. This will be the project file with the extension replaced by `.log`.
 - Stretchable space can now be added to toolbars.
 - Added support for dropdown toolbar items that contain menu items.
 - wxToolBar and wxAuiToolBar individual tools now have a disabled property.

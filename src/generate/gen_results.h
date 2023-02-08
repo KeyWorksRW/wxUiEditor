@@ -39,6 +39,9 @@ struct GenResults
         msg << "Elapsed time: " << elapsed << " milliseconds";
         msgs.emplace_back(msg);
     }
+#else
+    void StartClock() {}
+    void EndClock() {}
 #endif
 };
 

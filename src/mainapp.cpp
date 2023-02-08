@@ -7,9 +7,11 @@
 
 #include <iostream>
 
+#include <wx/arrstr.h>   // wxArrayString class
 #include <wx/cmdline.h>  // wxCmdLineParser and related classes for parsing the command
 #include <wx/config.h>   // wxConfig base header
 #include <wx/cshelp.h>   // Context-sensitive help support classes
+#include <wx/dir.h>      // wxDir is a class for enumerating the files in a directory
 #include <wx/filedlg.h>  // wxFileDialog base header
 #include <wx/sysopt.h>   // wxSystemOptions
 #include <wx/utils.h>    // Miscellaneous utilities
@@ -128,31 +130,42 @@ int App::OnRun()
 
     wxCmdLineParser parser(argc, argv);
     OnInitCmdLine(parser);
-    parser.AddParam("Filename", wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL);
+    parser.AddParam("Project filename", wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL);
 
     // Because this is a GUI app and may not have been run from a console, std::cout and
     // std::cerr will not work. Instead, messages are written to a log file. The log file is
     // the project filename with the extension changed to ".log".
 
-    parser.AddLongOption("gen_python", "generate python files and exit", wxCMD_LINE_VAL_STRING, wxCMD_LINE_HIDDEN);
-    parser.AddLongOption("gen_cpp", "generate C++ files and exit", wxCMD_LINE_VAL_STRING, wxCMD_LINE_HIDDEN);
-    parser.AddLongOption("gen_xrc", "generate XRC files and exit", wxCMD_LINE_VAL_STRING, wxCMD_LINE_HIDDEN);
+    parser.AddLongSwitch("gen_python", "generate python files and exit");
+    parser.AddLongSwitch("gen_cpp", "generate C++ files and exit");
+
+    // [Randalphwa - 02-08-2023] This probably works, but will remain hidden until it is
+    // tested. That said, I'm doubtful that it has any actual value other than for testing -- I
+    // just don't see a reason for a user to want to use the command line to generate XRC
+    // files.
+    parser.AddLongSwitch("gen_xrc", "generate XRC files and exit", wxCMD_LINE_HIDDEN);
 
     // The "test" options will not write any files, it simply runs the code generation skipping
     // the part where files get written, and generates the log file.
 
-    parser.AddLongOption("test_python", "generate python files and exit", wxCMD_LINE_VAL_STRING, wxCMD_LINE_HIDDEN);
-    parser.AddLongOption("test_cpp", "generate C++ files and exit", wxCMD_LINE_VAL_STRING, wxCMD_LINE_HIDDEN);
-    parser.AddLongOption("test_xrc", "generate XRC files and exit", wxCMD_LINE_VAL_STRING, wxCMD_LINE_HIDDEN);
+    parser.AddLongSwitch("test_python", "generate python files and exit", wxCMD_LINE_HIDDEN);
+    parser.AddLongSwitch("test_cpp", "generate C++ files and exit", wxCMD_LINE_HIDDEN);
+    parser.AddLongSwitch("test_xrc", "generate XRC files and exit", wxCMD_LINE_HIDDEN);
 
     parser.Parse();
     if (parser.GetParamCount() || parser.GetArguments().size())
     {
         tt_wxString filename;
+        if (parser.GetParamCount())
+        {
+            filename = parser.GetParam(0);
+        }
+
         tt_wxString log_file;
         auto generate_type = GEN_LANG_NONE;
         bool test_only = false;
-        if (parser.Found("gen_python", &filename))
+        // if (parser.Found("gen_python", &filename))
+        if (parser.Found("gen_python"))
         {
             generate_type = GEN_LANG_PYTHON;
         }
@@ -179,9 +192,17 @@ int App::OnRun()
             generate_type = GEN_LANG_XRC;
             test_only = true;
         }
-        else
+
+        if (generate_type != GEN_LANG_NONE && filename.empty())
         {
-            filename = parser.GetParam(0);
+            wxDir dir;
+            dir.Open("./");
+            if (!dir.GetFirst(&filename, "*.wxui", wxDIR_FILES))
+            {
+                wxMessageBox("No project file found in current directory. Filenane is required if switch is used.",
+                             "Command-line Switch Error", wxOK | wxICON_ERROR);
+                return 1;
+            }
         }
 
         if (generate_type == GEN_LANG_NONE)
@@ -204,14 +225,14 @@ int App::OnRun()
         GenResults results;
         if (filename.file_exists())
         {
-#if defined(_DEBUG) || defined(INTERNAL_TESTING)
             if (generate_type != GEN_LANG_NONE)
             {
                 log_file = filename;
                 log_file.replace_extension(".log");
+#if defined(_DEBUG) || defined(INTERNAL_TESTING)
                 results.StartClock();
-            }
 #endif
+            }
             if (!filename.extension().is_sameas(".wxui", tt::CASE::either) &&
                 !filename.extension().is_sameas(".wxue", tt::CASE::either))
             {

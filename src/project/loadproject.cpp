@@ -643,6 +643,24 @@ bool ProjectHandler::Import(ImportXML& import, tt_wxString& file, bool append, b
                 {
                     project_node->prop_set_value(prop_code_preference, "C++");
                 }
+
+                for (const auto& iter: project_node->GetChildNodePtrs())
+                {
+                    if (iter->HasValue(prop_base_file) && project_node->value(prop_code_preference) != "C++")
+                    {
+                        if (project_node->value(prop_code_preference) == "Python")
+                        {
+                            iter->prop_set_value(prop_python_file, iter->value(prop_base_file));
+                        }
+                        else if (project_node->value(prop_code_preference) == "XRC")
+                        {
+                            iter->prop_set_value(prop_xrc_file, iter->value(prop_base_file));
+                            // XRC files can be combined into a single file so we
+                            if (!project_node->HasValue(prop_combined_xrc_file))
+                                project_node->prop_set_value(prop_combined_xrc_file, iter->value(prop_base_file));
+                        }
+                    }
+                }
             }
         }
 

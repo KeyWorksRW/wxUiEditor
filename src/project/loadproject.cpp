@@ -661,6 +661,12 @@ bool ProjectHandler::Import(ImportXML& import, tt_wxString& file, bool append, b
                         }
                     }
                 }
+
+                if (project_node->GetChildCount() > 1 && project_node->value(prop_code_preference) != "XRC")
+                {
+                    wxMessageBox("Each form must have a unique base filename when generating Python or C++ code.\nCurrently, only one form has a unique filename. You will need to add names to the other forms before generating code for them.",
+                                 "Code Import Change", wxOK | wxICON_WARNING);
+                }
             }
         }
 

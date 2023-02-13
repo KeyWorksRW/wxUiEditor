@@ -51,6 +51,25 @@ bool WxGlade::Import(const tt_wxString& filename, bool write_doc)
     try
     {
         m_project = NodeCreation.CreateNode(gen_Project, nullptr);
+        if (auto src_ext = root.attribute("source_extension").as_string(); src_ext.size())
+        {
+            if (src_ext == ".cpp" || src_ext == ".cc" || src_ext == ".cxx")
+            {
+                m_project->prop_set_value(prop_source_ext, src_ext);
+            }
+        }
+        if (auto hdr_ext = root.attribute("header_extension").as_string(); hdr_ext.size())
+        {
+            if (hdr_ext == ".h" || hdr_ext == ".hh" || hdr_ext == ".hpp" || hdr_ext == ".hxx")
+            {
+                m_project->prop_set_value(prop_header_ext, hdr_ext);
+            }
+        }
+        if (root.attribute("use_gettext").as_bool())
+        {
+            m_project->prop_set_value(prop_internationalize, true);
+        }
+
         for (auto& iter: root.children())
         {
             auto new_node = CreateGladeNode(iter, m_project.get());

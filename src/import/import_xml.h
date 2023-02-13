@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Base class for XML importing
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2021 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2021-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -27,6 +27,9 @@ public:
     NodeSharedPtr GetProjectPtr() { return m_project; }
 
     auto GetErrors() { return m_errors; }
+
+    // Returns a GEN_LANG_* value -- default is GEN_LANG_NONE
+    auto GetLanguage() const { return m_language; }
 
     // This will check for an obsolete event name, and if found, it will return the 3.x
     // version of the name. Otherwise, it returns name unmodified.
@@ -61,4 +64,6 @@ protected:
     std::map<std::string, std::string, std::less<>> m_notebook_tabs;
 
     std::set<tt_string> m_errors;
+
+    int m_language = GEN_LANG_NONE;
 };

@@ -232,6 +232,15 @@ void FormBuilder::CreateProjectNode(pugi::xml_node& xml_obj, Node* new_node)
                 {
                     ConvertNameSpaceProp(new_node->get_prop_ptr(prop_name_space), xml_prop.text().as_string());
                 }
+                else if (prop_name.as_string() == "code_generation")
+                {
+                    if (tt::contains(xml_prop.text().as_string(), "Python"))
+                        m_language = GEN_LANG_PYTHON;
+                    else if (tt::contains(xml_prop.text().as_string(), "C++"))
+                        m_language = GEN_LANG_CPLUSPLUS;
+                    else if (tt::contains(xml_prop.text().as_string(), "XRC"))
+                        m_language = GEN_LANG_XRC;
+                }
             }
         }
     }

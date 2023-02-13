@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Import a WxGlade file
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2021 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2021-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -29,6 +29,22 @@ bool WxGlade::Import(const tt_wxString& filename, bool write_doc)
         return false;
     }
 
+    if (auto language = root.attribute("language").as_string(); language.size())
+    {
+        if (language == "XRC")
+        {
+            m_language = GEN_LANG_XRC;
+        }
+        else if (language == "python")
+        {
+            m_language = GEN_LANG_PYTHON;
+        }
+        else if (language == "C++")
+        {
+            m_language = GEN_LANG_CPLUSPLUS;
+        }
+    }
+
     // Using a try block means that if at any point it becomes obvious the project file is invalid and we cannot recover,
     // then we can throw an error and give a standard response about an invalid file.
 
@@ -37,7 +53,29 @@ bool WxGlade::Import(const tt_wxString& filename, bool write_doc)
         m_project = NodeCreation.CreateNode(gen_Project, nullptr);
         for (auto& iter: root.children())
         {
-            CreateGladeNode(iter, m_project.get());
+            auto new_node = CreateGladeNode(iter, m_project.get());
+            // In wxGlade, if option is true, then the class name is used as the file name
+            if (auto single_files = root.attribute("option").as_bool(); single_files)
+            {
+                // wxGlade uses the class name as the filename if each class has it's own file.
+                if (new_node->HasValue(prop_class_name))
+                {
+                    switch (m_language)
+                    {
+                        case GEN_LANG_CPLUSPLUS:
+                            new_node->prop_set_value(prop_base_file, new_node->value(prop_class_name));
+                            break;
+
+                        case GEN_LANG_PYTHON:
+                            new_node->prop_set_value(prop_python_file, new_node->value(prop_class_name));
+                            break;
+
+                        case GEN_LANG_XRC:
+                            new_node->prop_set_value(prop_xrc_file, new_node->value(prop_class_name));
+                            break;
+                    }
+                }
+            }
         }
 
         if (!m_project->GetChildCount())

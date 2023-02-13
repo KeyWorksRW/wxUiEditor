@@ -631,16 +631,18 @@ bool ProjectHandler::Import(ImportXML& import, tt_wxString& file, bool append, b
         {
             for (const auto& iter: project_node->GetChildNodePtrs())
             {
+                // If importing from wxGlade, then either a combined file will be set, or the individual file for
+                // the language will be already set.
                 if (iter->HasValue(prop_base_file) && project_node->value(prop_code_preference) != "C++")
                 {
-                    if (project_node->value(prop_code_preference) == "Python")
+                    if (project_node->value(prop_code_preference) == "Python" && !iter->HasValue(prop_python_file))
                     {
                         iter->prop_set_value(prop_python_file, iter->value(prop_base_file));
                     }
-                    else if (project_node->value(prop_code_preference) == "XRC")
+                    else if (project_node->value(prop_code_preference) == "XRC" && !iter->HasValue(prop_xrc_file))
                     {
                         iter->prop_set_value(prop_xrc_file, iter->value(prop_base_file));
-                        // XRC files can be combined into a single file so we
+                        // XRC files can be combined into a single file
                         if (!project_node->HasValue(prop_combined_xrc_file))
                             project_node->prop_set_value(prop_combined_xrc_file, iter->value(prop_base_file));
                     }

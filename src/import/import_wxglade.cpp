@@ -73,25 +73,40 @@ bool WxGlade::Import(const tt_wxString& filename, bool write_doc)
         for (auto& iter: root.children())
         {
             auto new_node = CreateGladeNode(iter, m_project.get());
-            // In wxGlade, if option is true, then the class name is used as the file name
-            if (auto single_files = root.attribute("option").as_bool(); single_files)
+            // In wxGlade, if option is true, then the class name is used for each individual
+            // file name
+            if (auto single_files = root.attribute("option").as_bool())
             {
-                // wxGlade uses the class name as the filename if each class has it's own file.
-                if (new_node->HasValue(prop_class_name))
+                if (single_files)
                 {
-                    switch (m_language)
+                    // wxGlade uses the class name as the filename if each class has it's own file.
+                    if (new_node->HasValue(prop_class_name))
                     {
-                        case GEN_LANG_CPLUSPLUS:
-                            new_node->prop_set_value(prop_base_file, new_node->value(prop_class_name));
-                            break;
+                        switch (m_language)
+                        {
+                            case GEN_LANG_CPLUSPLUS:
+                                new_node->prop_set_value(prop_base_file, new_node->value(prop_class_name));
+                                break;
 
-                        case GEN_LANG_PYTHON:
-                            new_node->prop_set_value(prop_python_file, new_node->value(prop_class_name));
-                            break;
+                            case GEN_LANG_PYTHON:
+                                new_node->prop_set_value(prop_python_file, new_node->value(prop_class_name));
+                                break;
 
-                        case GEN_LANG_XRC:
-                            new_node->prop_set_value(prop_xrc_file, new_node->value(prop_class_name));
-                            break;
+                            case GEN_LANG_XRC:
+                                new_node->prop_set_value(prop_xrc_file, new_node->value(prop_class_name));
+                                break;
+                        }
+                    }
+                }
+                else
+                {
+                    if (m_language == GEN_LANG_PYTHON)
+                    {
+                        m_project->prop_set_value(prop_python_combine_forms, true);
+                        tt_string combined_filename = root.attribute("path").as_string();
+                        tt_cwd cwd;
+                        combined_filename.make_relative(cwd.utf8_string());
+                        m_project->prop_set_value(prop_python_combined_file, combined_filename);
                     }
                 }
             }
@@ -101,6 +116,38 @@ bool WxGlade::Import(const tt_wxString& filename, bool write_doc)
         {
             wxMessageBox(wxString() << filename << " does not contain any top level forms.", "Import");
             return false;
+        }
+
+        if (!root.attribute("option").as_bool())
+        {
+            tt_string combined_filename = root.attribute("path").as_string();
+            tt_cwd cwd;
+            combined_filename.make_relative(cwd.utf8_string());
+
+            if (m_project->GetChildCount() > 1)
+            {
+                if (m_language == GEN_LANG_PYTHON)
+                {
+                    m_project->prop_set_value(prop_python_combine_forms, true);
+                    m_project->prop_set_value(prop_python_combined_file, combined_filename);
+                }
+                else if (m_language == GEN_LANG_XRC)
+                {
+                    m_project->prop_set_value(prop_combine_all_forms, true);
+                    m_project->prop_set_value(prop_combined_xrc_file, combined_filename);
+                }
+            }
+            else
+            {
+                if (m_language == GEN_LANG_PYTHON)
+                {
+                    m_project->GetChild(0)->set_value(prop_python_file, combined_filename);
+                }
+                else if (m_language == GEN_LANG_XRC)
+                {
+                    m_project->GetChild(0)->set_value(prop_xrc_file, combined_filename);
+                }
+            }
         }
 
         if (write_doc)

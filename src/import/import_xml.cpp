@@ -623,7 +623,11 @@ void ImportXML::ProcessProperties(const pugi::xml_node& xml_obj, Node* node, Nod
 
         if (wxue_prop == prop_unknown)
         {
-            ProcessUnknownProperty(iter, node, parent);
+            // Give inherited classes a chance to process unknown properties.
+            if (!HandleUnknownProperty(iter, node, parent))
+            {
+                ProcessUnknownProperty(iter, node, parent);
+            }
             continue;
         }
 

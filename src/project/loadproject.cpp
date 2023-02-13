@@ -626,7 +626,54 @@ bool ProjectHandler::Import(ImportXML& import, tt_wxString& file, bool append, b
         }
 
         auto project_node = NodeCreation.CreateProjectNode(&project);
-        if (allow_ui)
+
+        auto SetLangFilenames = [&]()
+        {
+            for (const auto& iter: project_node->GetChildNodePtrs())
+            {
+                if (iter->HasValue(prop_base_file) && project_node->value(prop_code_preference) != "C++")
+                {
+                    if (project_node->value(prop_code_preference) == "Python")
+                    {
+                        iter->prop_set_value(prop_python_file, iter->value(prop_base_file));
+                    }
+                    else if (project_node->value(prop_code_preference) == "XRC")
+                    {
+                        iter->prop_set_value(prop_xrc_file, iter->value(prop_base_file));
+                        // XRC files can be combined into a single file so we
+                        if (!project_node->HasValue(prop_combined_xrc_file))
+                            project_node->prop_set_value(prop_combined_xrc_file, iter->value(prop_base_file));
+                    }
+                }
+            }
+
+            if (project_node->GetChildCount() > 1 && project_node->value(prop_code_preference) != "XRC")
+            {
+                wxMessageBox("Each form must have a unique base filename when generating Python or C++ code.\nCurrently, "
+                             "only one form has a unique filename. You will need to add names to the other forms before "
+                             "generating code for them.",
+                             "Code Import Change", wxOK | wxICON_WARNING);
+            }
+        };
+
+        if (auto language = import.GetLanguage(); language != GEN_LANG_NONE)
+        {
+            switch (language)
+            {
+                case GEN_LANG_CPLUSPLUS:
+                    project_node->prop_set_value(prop_code_preference, "C++");
+                    break;
+                case GEN_LANG_PYTHON:
+                    project_node->prop_set_value(prop_code_preference, "Python");
+                    break;
+                case GEN_LANG_XRC:
+                    project_node->prop_set_value(prop_code_preference, "XRC");
+                    break;
+            }
+            SetLangFilenames();
+        }
+
+        if (allow_ui && import.GetLanguage() == GEN_LANG_NONE)
         {
             CodePreferenceDlg dlg(GetMainFrame());
             if (dlg.ShowModal() == wxID_OK)
@@ -643,30 +690,7 @@ bool ProjectHandler::Import(ImportXML& import, tt_wxString& file, bool append, b
                 {
                     project_node->prop_set_value(prop_code_preference, "C++");
                 }
-
-                for (const auto& iter: project_node->GetChildNodePtrs())
-                {
-                    if (iter->HasValue(prop_base_file) && project_node->value(prop_code_preference) != "C++")
-                    {
-                        if (project_node->value(prop_code_preference) == "Python")
-                        {
-                            iter->prop_set_value(prop_python_file, iter->value(prop_base_file));
-                        }
-                        else if (project_node->value(prop_code_preference) == "XRC")
-                        {
-                            iter->prop_set_value(prop_xrc_file, iter->value(prop_base_file));
-                            // XRC files can be combined into a single file so we
-                            if (!project_node->HasValue(prop_combined_xrc_file))
-                                project_node->prop_set_value(prop_combined_xrc_file, iter->value(prop_base_file));
-                        }
-                    }
-                }
-
-                if (project_node->GetChildCount() > 1 && project_node->value(prop_code_preference) != "XRC")
-                {
-                    wxMessageBox("Each form must have a unique base filename when generating Python or C++ code.\nCurrently, only one form has a unique filename. You will need to add names to the other forms before generating code for them.",
-                                 "Code Import Change", wxOK | wxICON_WARNING);
-                }
+                SetLangFilenames();
             }
         }
 

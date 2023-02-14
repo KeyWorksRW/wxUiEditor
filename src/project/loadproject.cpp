@@ -797,6 +797,7 @@ bool ProjectHandler::NewProject(bool create_empty, bool allow_ui)
     auto project = NodeCreation.CreateProjectNode(nullptr);
 
     tt_wxString file;
+    tt_cwd starting_cwd;
     file.assignCwd();
     file.append_filename("MyImportedProject");
 

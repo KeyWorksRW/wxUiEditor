@@ -202,6 +202,7 @@ static const ParentChild lstParentChild[] = {
 
     { type_frame_form, type_statusbar, one },
     { type_frame_form, type_toolbar, one },
+    { type_frame_form, type_aui_toolbar, one },
     { type_frame_form, type_menubar, one },
     { type_frame_form, type_ctx_menu, one },
 
@@ -209,6 +210,7 @@ static const ParentChild lstParentChild[] = {
     { type_frame_form, type_listbook, infinite },
     { type_frame_form, type_simplebook, infinite },
     { type_frame_form, type_notebook, infinite },
+    { type_frame_form, type_widget, infinite },
 
     { type_form, type_ctx_menu, one },
     { type_form, type_gbsizer, one },

@@ -915,6 +915,12 @@ void FormBuilder::ProcessPropValue(pugi::xml_node& xml_prop, tt_string_view prop
         {
             if (prop_name == "hidden" && newobject->isGen(gen_ribbonTool))
                 return;
+            else if (prop_name == "bitmapsize" && (newobject->isGen(gen_wxToolBar) || newobject->isGen(gen_wxAuiToolBar)))
+            {
+                // wxFormBuilder uses this to call SetToolBitmapSize. However, this is *NOT* recommended since it forces
+                // scaling on high DPI systems, ignoring any use of wxBitmapBundle to property handle scaling.
+                return;
+            }
             else if (xml_prop.text().as_string() == "wxWS_EX_VALIDATE_RECURSIVELY")
                 return;
             MSG_INFO(tt_string() << prop_name << "(" << xml_prop.text().as_string() << ") property in " << class_name

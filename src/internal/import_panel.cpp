@@ -72,7 +72,7 @@ void ImportPanel::SetImportFile(const tt_string& file, int lexer)
 {
     m_view.clear();
     m_view.GetBuffer().clear();
-    if (!m_view.ReadFile(file))
+    if (!m_view.ReadFile(file) && !m_view.ReadFile(file.filename()))
     {
         FAIL_MSG(tt_string("Can't read ") << file);
         return;

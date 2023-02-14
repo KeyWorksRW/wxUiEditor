@@ -141,7 +141,10 @@ void ImportDlg::OnOK(wxCommandEvent& event)
     {
         if (m_checkListProjects->IsChecked(pos))
         {
-            m_lstProjects.emplace_back(m_checkListProjects->GetString(pos));
+            tt_wxString path = m_checkListProjects->GetString(pos);
+            path.make_absolute();
+            // m_lstProjects.emplace_back(m_checkListProjects->GetString(pos));
+            m_lstProjects.emplace_back(path);
         }
     }
 

@@ -631,6 +631,11 @@ void ImportXML::ProcessProperties(const pugi::xml_node& xml_obj, Node* node, Nod
             continue;
         }
 
+        if (HandleNormalProperty(iter, node, parent, wxue_prop))
+        {
+            continue;
+        }
+
         // Start by processing names that wxUiEditor might use but that need special processing when importing.
 
         if (wxue_prop == prop_bitmap)

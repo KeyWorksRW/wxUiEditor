@@ -367,6 +367,7 @@ NodeSharedPtr WxGlade::CreateGladeNode(pugi::xml_node& xml_obj, Node* parent, No
     return new_node;
 }
 
+// Called by ImportXML -- return true if the property is processed.
 bool WxGlade::HandleUnknownProperty(const pugi::xml_node& xml_obj, Node* node, Node* /* parent */)
 {
     auto node_name = xml_obj.name();
@@ -378,7 +379,7 @@ bool WxGlade::HandleUnknownProperty(const pugi::xml_node& xml_obj, Node* node, N
         node->set_value(prop_class_access, "protected:");
         return true;
     }
-    if (node_name == "events")
+    else if (node_name == "events")
     {
         for (auto& handler: xml_obj.children())
         {
@@ -391,6 +392,30 @@ bool WxGlade::HandleUnknownProperty(const pugi::xml_node& xml_obj, Node* node, N
         }
 
         return true;
+    }
+
+    return false;
+}
+
+// Called by ImportXML -- return true if the property is processed. Use this when the property conversion
+// is incorrect for the type of note being processed.
+bool WxGlade::HandleNormalProperty(const pugi::xml_node& xml_obj, Node* node, Node* parent, GenEnum::PropName wxue_prop)
+{
+    if (node->isGen(gen_sizeritem))
+    {
+        // wxGlade sizeritems use slightly different property names then we do, so handle those
+        // here.
+        if (wxue_prop == prop_border)
+        {
+            // wxGlade uses border for border_size in a sizer
+            node->prop_set_value(prop_border_size, xml_obj.text().as_string());
+            return true;
+        }
+        else if (wxue_prop == prop_flag)
+        {
+            HandleSizerItemProperty(xml_obj, node, parent);
+            return true;
+        }
     }
 
     return false;

@@ -381,10 +381,6 @@
                     style="wxBU_EXACTFIT"
                     var_name="m_toggleBtn_2"
                     wxEVT_TOGGLEBUTTON="[this](wxCommandEvent&amp;)@@{@@if (m_toggleBtn->GetValue()) @@{@@    m_animation_ctrl->Play();@@    m_checkPlayAnimation->SetValue(true);@@}@@else @@{  @@    m_animation_ctrl->Stop();@@    m_checkPlayAnimation->SetValue(false);@@}@@@@}[python:OnToggleButton]" />
-                  <node
-                    class="wxAnimationCtrl"
-                    animation="Embed;art/clr_hourglass.gif"
-                    inactive_bitmap="Embed;art/disabled.png" />
                 </node>
               </node>
             </node>

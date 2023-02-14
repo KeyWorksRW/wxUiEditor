@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Import a WxGlade file
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2021 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2021-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -29,21 +29,125 @@ bool WxGlade::Import(const tt_wxString& filename, bool write_doc)
         return false;
     }
 
+    if (auto language = root.attribute("language").as_string(); language.size())
+    {
+        if (language == "XRC")
+        {
+            m_language = GEN_LANG_XRC;
+        }
+        else if (language == "python")
+        {
+            m_language = GEN_LANG_PYTHON;
+        }
+        else if (language == "C++")
+        {
+            m_language = GEN_LANG_CPLUSPLUS;
+        }
+    }
+
     // Using a try block means that if at any point it becomes obvious the project file is invalid and we cannot recover,
     // then we can throw an error and give a standard response about an invalid file.
 
     try
     {
         m_project = NodeCreation.CreateNode(gen_Project, nullptr);
+        if (auto src_ext = root.attribute("source_extension").as_string(); src_ext.size())
+        {
+            if (src_ext == ".cpp" || src_ext == ".cc" || src_ext == ".cxx")
+            {
+                m_project->prop_set_value(prop_source_ext, src_ext);
+            }
+        }
+        if (auto hdr_ext = root.attribute("header_extension").as_string(); hdr_ext.size())
+        {
+            if (hdr_ext == ".h" || hdr_ext == ".hh" || hdr_ext == ".hpp" || hdr_ext == ".hxx")
+            {
+                m_project->prop_set_value(prop_header_ext, hdr_ext);
+            }
+        }
+        if (root.attribute("use_gettext").as_bool())
+        {
+            m_project->prop_set_value(prop_internationalize, true);
+        }
+
         for (auto& iter: root.children())
         {
-            CreateGladeNode(iter, m_project.get());
+            auto new_node = CreateGladeNode(iter, m_project.get());
+            // In wxGlade, if option is true, then the class name is used for each individual
+            // file name
+            if (auto single_files = root.attribute("option").as_bool())
+            {
+                if (single_files)
+                {
+                    // wxGlade uses the class name as the filename if each class has it's own file.
+                    if (new_node->HasValue(prop_class_name))
+                    {
+                        switch (m_language)
+                        {
+                            case GEN_LANG_CPLUSPLUS:
+                                new_node->prop_set_value(prop_base_file, new_node->value(prop_class_name));
+                                break;
+
+                            case GEN_LANG_PYTHON:
+                                new_node->prop_set_value(prop_python_file, new_node->value(prop_class_name));
+                                break;
+
+                            case GEN_LANG_XRC:
+                                new_node->prop_set_value(prop_xrc_file, new_node->value(prop_class_name));
+                                break;
+                        }
+                    }
+                }
+                else
+                {
+                    if (m_language == GEN_LANG_PYTHON)
+                    {
+                        m_project->prop_set_value(prop_python_combine_forms, true);
+                        tt_string combined_filename = root.attribute("path").as_string();
+                        tt_cwd cwd;
+                        combined_filename.make_relative(cwd.utf8_string());
+                        m_project->prop_set_value(prop_python_combined_file, combined_filename);
+                    }
+                }
+            }
         }
 
         if (!m_project->GetChildCount())
         {
             wxMessageBox(wxString() << filename << " does not contain any top level forms.", "Import");
             return false;
+        }
+
+        if (!root.attribute("option").as_bool())
+        {
+            tt_string combined_filename = root.attribute("path").as_string();
+            tt_cwd cwd;
+            combined_filename.make_relative(cwd.utf8_string());
+
+            if (m_project->GetChildCount() > 1)
+            {
+                if (m_language == GEN_LANG_PYTHON)
+                {
+                    m_project->prop_set_value(prop_python_combine_forms, true);
+                    m_project->prop_set_value(prop_python_combined_file, combined_filename);
+                }
+                else if (m_language == GEN_LANG_XRC)
+                {
+                    m_project->prop_set_value(prop_combine_all_forms, true);
+                    m_project->prop_set_value(prop_combined_xrc_file, combined_filename);
+                }
+            }
+            else
+            {
+                if (m_language == GEN_LANG_PYTHON)
+                {
+                    m_project->GetChild(0)->set_value(prop_python_file, combined_filename);
+                }
+                else if (m_language == GEN_LANG_XRC)
+                {
+                    m_project->GetChild(0)->set_value(prop_xrc_file, combined_filename);
+                }
+            }
         }
 
         if (write_doc)
@@ -186,29 +290,87 @@ NodeSharedPtr WxGlade::CreateGladeNode(pugi::xml_node& xml_obj, Node* parent, No
         ProcessAttributes(xml_obj, new_node.get());
         ProcessProperties(xml_obj, new_node.get());
 
-        for (auto& button: xml_obj.children())
+        tt_string last_handler;
+
+        for (auto& child: xml_obj.children())
         {
-            for (auto& btn_id: button.children())
+            if (child.name() != "object")
+                continue;
+            ASSERT(child.attribute("class").as_string() == "sizeritem");
+
+            for (auto& button: child.children())
             {
-                auto id = btn_id.attribute("name").as_string();
-                if (id == "wxID_OK")
-                    new_node->get_prop_ptr(prop_OK)->set_value("1");
-                else if (id == "wxID_YES")
-                    new_node->get_prop_ptr(prop_Yes)->set_value("1");
-                else if (id == "wxID_SAVE")
-                    new_node->get_prop_ptr(prop_Save)->set_value("1");
-                else if (id == "wxID_APPLY")
-                    new_node->get_prop_ptr(prop_Apply)->set_value("1");
-                else if (id == "wxID_NO")
-                    new_node->get_prop_ptr(prop_No)->set_value("1");
-                else if (id == "wxID_CANCEL")
-                    new_node->get_prop_ptr(prop_Cancel)->set_value("1");
-                else if (id == "wxID_CLOSE")
-                    new_node->get_prop_ptr(prop_Close)->set_value("1");
-                else if (id == "wxID_HELP")
-                    new_node->get_prop_ptr(prop_Help)->set_value("1");
-                else if (id == "wxID_CONTEXT_HELP")
-                    new_node->get_prop_ptr(prop_ContextHelp)->set_value("1");
+                if (button.name() != "object")
+                    continue;
+                last_handler.clear();
+                for (auto& btn_props: button.children())
+                {
+                    auto SetBtnAndHandler = [&](PropName prop_name, tt_string_view event_name)
+                    {
+                        new_node->get_prop_ptr(prop_name)->set_value("1");
+                        if (last_handler.size())
+                        {
+                            if (auto* event = new_node->GetEvent(event_name); event)
+                            {
+                                event->set_value(last_handler);
+                            }
+                        }
+                    };
+
+                    if (btn_props.name() == "events")
+                    {
+                        for (auto& handler: btn_props.children())
+                        {
+                            last_handler = handler.text().as_string();
+                        }
+                    }
+                    else if (btn_props.name() == "id")
+                    {
+                        if (auto id = btn_props.text().as_string(); tt::is_sameprefix(id, "wxID_"))
+                        {
+                            if (id == "wxID_OK")
+                                SetBtnAndHandler(prop_OK, "OKButtonClicked");
+                            else if (id == "wxID_YES")
+                                SetBtnAndHandler(prop_Yes, "YesButtonClicked");
+                            else if (id == "wxID_SAVE")
+                                SetBtnAndHandler(prop_Save, "SaveButtonClicked");
+                            else if (id == "wxID_APPLY")
+                                SetBtnAndHandler(prop_Apply, "ApplyButtonClicked");
+                            else if (id == "wxID_NO")
+                                SetBtnAndHandler(prop_No, "NoButtonClicked");
+                            else if (id == "wxID_CANCEL")
+                                SetBtnAndHandler(prop_Cancel, "CancelButtonClicked");
+                            else if (id == "wxID_CLOSE")
+                                SetBtnAndHandler(prop_Close, "CloseButtonClicked");
+                            else if (id == "wxID_HELP")
+                                SetBtnAndHandler(prop_Help, "HelpButtonClicked");
+                            else if (id == "wxID_CONTEXT_HELP")
+                                SetBtnAndHandler(prop_ContextHelp, "ContextHelpButtonClicked");
+                        }
+                    }
+                    else if (btn_props.name() == "stockitem")
+                    {
+                        if (auto id = btn_props.text().as_string(); id.size())
+                        {
+                            if (id == "OK")
+                                SetBtnAndHandler(prop_OK, "OKButtonClicked");
+                            else if (id == "YES")
+                                SetBtnAndHandler(prop_Yes, "YesButtonClicked");
+                            else if (id == "SAVE")
+                                SetBtnAndHandler(prop_Save, "SaveButtonClicked");
+                            else if (id == "APPLY")
+                                SetBtnAndHandler(prop_Apply, "ApplyButtonClicked");
+                            else if (id == "NO")
+                                SetBtnAndHandler(prop_No, "NoButtonClicked");
+                            else if (id == "CANCEL")
+                                SetBtnAndHandler(prop_Cancel, "CancelButtonClicked");
+                            else if (id == "CLOSE")
+                                SetBtnAndHandler(prop_Close, "CloseButtonClicked");
+                            else if (id == "HELP")
+                                SetBtnAndHandler(prop_Help, "HelpButtonClicked");
+                        }
+                    }
+                }
             }
         }
 
@@ -261,4 +423,68 @@ NodeSharedPtr WxGlade::CreateGladeNode(pugi::xml_node& xml_obj, Node* parent, No
     }
 
     return new_node;
+}
+
+// Called by ImportXML -- return true if the property is processed.
+bool WxGlade::HandleUnknownProperty(const pugi::xml_node& xml_obj, Node* node, Node* /* parent */)
+{
+    auto node_name = xml_obj.name();
+    if (node_name == "attribute")
+    {
+        // Technically, this is a bool value, but currently wxGlade only outputs it if the
+        // value is 1. It is used to indicate that the variable name should be prefixed with
+        // "self." to make it a class member variable.
+        node->set_value(prop_class_access, "protected:");
+        return true;
+    }
+    else if (node_name == "events")
+    {
+        for (auto& handler: xml_obj.children())
+        {
+            tt_string event_name("wx");
+            event_name += handler.attribute("event").as_string();
+            if (auto* event = node->GetEvent(event_name); event)
+            {
+                event->set_value(handler.text().as_string());
+            }
+        }
+
+        return true;
+    }
+    else if (node_name == "extracode_post")
+    {
+        // wxGlade adds this after the class is constructed, but before any Bind functions are called.
+        // Currently, wxUiEditor doesn't support this, so just ignore it.
+
+        return true;
+    }
+    else if (node_name == "affirmative" || node_name == "escape")
+    {
+        // wxGlade adds these even when the exact same buttons
+    }
+    return false;
+}
+
+// Called by ImportXML -- return true if the property is processed. Use this when the property conversion
+// is incorrect for the type of note being processed.
+bool WxGlade::HandleNormalProperty(const pugi::xml_node& xml_obj, Node* node, Node* parent, GenEnum::PropName wxue_prop)
+{
+    if (node->isGen(gen_sizeritem))
+    {
+        // wxGlade sizeritems use slightly different property names then we do, so handle those
+        // here.
+        if (wxue_prop == prop_border)
+        {
+            // wxGlade uses border for border_size in a sizer
+            node->prop_set_value(prop_border_size, xml_obj.text().as_string());
+            return true;
+        }
+        else if (wxue_prop == prop_flag)
+        {
+            HandleSizerItemProperty(xml_obj, node, parent);
+            return true;
+        }
+    }
+
+    return false;
 }

@@ -366,3 +366,18 @@ NodeSharedPtr WxGlade::CreateGladeNode(pugi::xml_node& xml_obj, Node* parent, No
 
     return new_node;
 }
+
+bool WxGlade::HandleUnknownProperty(const pugi::xml_node& xml_obj, Node* node, Node* /* parent */)
+{
+    auto node_name = xml_obj.name();
+    if (node_name == "attribute")
+    {
+        // Technically, this is a bool value, but currently wxGlade only outputs it if the
+        // value is 1. It is used to indicate that the variable name should be prefixed with
+        // "self." to make it a class member variable.
+        node->set_value(prop_class_access, "protected:");
+        return true;
+    }
+
+    return false;
+}

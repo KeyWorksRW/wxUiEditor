@@ -378,6 +378,20 @@ bool WxGlade::HandleUnknownProperty(const pugi::xml_node& xml_obj, Node* node, N
         node->set_value(prop_class_access, "protected:");
         return true;
     }
+    if (node_name == "events")
+    {
+        for (auto& handler: xml_obj.children())
+        {
+            tt_string event_name("wx");
+            event_name += handler.attribute("event").as_string();
+            if (auto* event = node->GetEvent(event_name); event)
+            {
+                event->set_value(handler.text().as_string());
+            }
+        }
+
+        return true;
+    }
 
     return false;
 }

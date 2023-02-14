@@ -290,29 +290,87 @@ NodeSharedPtr WxGlade::CreateGladeNode(pugi::xml_node& xml_obj, Node* parent, No
         ProcessAttributes(xml_obj, new_node.get());
         ProcessProperties(xml_obj, new_node.get());
 
-        for (auto& button: xml_obj.children())
+        tt_string last_handler;
+
+        for (auto& child: xml_obj.children())
         {
-            for (auto& btn_id: button.children())
+            if (child.name() != "object")
+                continue;
+            ASSERT(child.attribute("class").as_string() == "sizeritem");
+
+            for (auto& button: child.children())
             {
-                auto id = btn_id.attribute("name").as_string();
-                if (id == "wxID_OK")
-                    new_node->get_prop_ptr(prop_OK)->set_value("1");
-                else if (id == "wxID_YES")
-                    new_node->get_prop_ptr(prop_Yes)->set_value("1");
-                else if (id == "wxID_SAVE")
-                    new_node->get_prop_ptr(prop_Save)->set_value("1");
-                else if (id == "wxID_APPLY")
-                    new_node->get_prop_ptr(prop_Apply)->set_value("1");
-                else if (id == "wxID_NO")
-                    new_node->get_prop_ptr(prop_No)->set_value("1");
-                else if (id == "wxID_CANCEL")
-                    new_node->get_prop_ptr(prop_Cancel)->set_value("1");
-                else if (id == "wxID_CLOSE")
-                    new_node->get_prop_ptr(prop_Close)->set_value("1");
-                else if (id == "wxID_HELP")
-                    new_node->get_prop_ptr(prop_Help)->set_value("1");
-                else if (id == "wxID_CONTEXT_HELP")
-                    new_node->get_prop_ptr(prop_ContextHelp)->set_value("1");
+                if (button.name() != "object")
+                    continue;
+                last_handler.clear();
+                for (auto& btn_props: button.children())
+                {
+                    auto SetBtnAndHandler = [&](PropName prop_name, tt_string_view event_name)
+                    {
+                        new_node->get_prop_ptr(prop_name)->set_value("1");
+                        if (last_handler.size())
+                        {
+                            if (auto* event = new_node->GetEvent(event_name); event)
+                            {
+                                event->set_value(last_handler);
+                            }
+                        }
+                    };
+
+                    if (btn_props.name() == "events")
+                    {
+                        for (auto& handler: btn_props.children())
+                        {
+                            last_handler = handler.text().as_string();
+                        }
+                    }
+                    else if (btn_props.name() == "id")
+                    {
+                        if (auto id = btn_props.text().as_string(); tt::is_sameprefix(id, "wxID_"))
+                        {
+                            if (id == "wxID_OK")
+                                SetBtnAndHandler(prop_OK, "OKButtonClicked");
+                            else if (id == "wxID_YES")
+                                SetBtnAndHandler(prop_Yes, "YesButtonClicked");
+                            else if (id == "wxID_SAVE")
+                                SetBtnAndHandler(prop_Save, "SaveButtonClicked");
+                            else if (id == "wxID_APPLY")
+                                SetBtnAndHandler(prop_Apply, "ApplyButtonClicked");
+                            else if (id == "wxID_NO")
+                                SetBtnAndHandler(prop_No, "NoButtonClicked");
+                            else if (id == "wxID_CANCEL")
+                                SetBtnAndHandler(prop_Cancel, "CancelButtonClicked");
+                            else if (id == "wxID_CLOSE")
+                                SetBtnAndHandler(prop_Close, "CloseButtonClicked");
+                            else if (id == "wxID_HELP")
+                                SetBtnAndHandler(prop_Help, "HelpButtonClicked");
+                            else if (id == "wxID_CONTEXT_HELP")
+                                SetBtnAndHandler(prop_ContextHelp, "ContextHelpButtonClicked");
+                        }
+                    }
+                    else if (btn_props.name() == "stockitem")
+                    {
+                        if (auto id = btn_props.text().as_string(); id.size())
+                        {
+                            if (id == "OK")
+                                SetBtnAndHandler(prop_OK, "OKButtonClicked");
+                            else if (id == "YES")
+                                SetBtnAndHandler(prop_Yes, "YesButtonClicked");
+                            else if (id == "SAVE")
+                                SetBtnAndHandler(prop_Save, "SaveButtonClicked");
+                            else if (id == "APPLY")
+                                SetBtnAndHandler(prop_Apply, "ApplyButtonClicked");
+                            else if (id == "NO")
+                                SetBtnAndHandler(prop_No, "NoButtonClicked");
+                            else if (id == "CANCEL")
+                                SetBtnAndHandler(prop_Cancel, "CancelButtonClicked");
+                            else if (id == "CLOSE")
+                                SetBtnAndHandler(prop_Close, "CloseButtonClicked");
+                            else if (id == "HELP")
+                                SetBtnAndHandler(prop_Help, "HelpButtonClicked");
+                        }
+                    }
+                }
             }
         }
 
@@ -393,7 +451,17 @@ bool WxGlade::HandleUnknownProperty(const pugi::xml_node& xml_obj, Node* node, N
 
         return true;
     }
+    else if (node_name == "extracode_post")
+    {
+        // wxGlade adds this after the class is constructed, but before any Bind functions are called.
+        // Currently, wxUiEditor doesn't support this, so just ignore it.
 
+        return true;
+    }
+    else if (node_name == "affirmative" || node_name == "escape")
+    {
+        // wxGlade adds these even when the exact same buttons
+    }
     return false;
 }
 

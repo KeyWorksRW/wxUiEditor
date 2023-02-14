@@ -1170,7 +1170,7 @@ void GenToolCode(Code& code, const bool is_bitmaps_list)
 {
     const auto* node = code.node();
     code.Eol(eol_if_needed);
-    if (node->prop_as_bool(prop_disabled) || (node->prop_as_string(prop_id) == "wxID_ANY" && node->GetInUseEventCount()))
+    if (node->prop_as_bool(prop_disabled) || node->GetInUseEventCount())
     {
         if (node->IsLocal() && code.is_cpp())
             code << "auto* ";

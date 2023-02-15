@@ -116,7 +116,8 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
 
         code.EndFunction();
     }
-    else if (event->GetNode()->isGen(gen_wxMenuItem) || event->GetNode()->isGen(gen_tool))
+    else if (event->GetNode()->isGen(gen_wxMenuItem) || event->GetNode()->isGen(gen_tool) ||
+             event->GetNode()->isGen(gen_auitool))
     {
         code.AddIfPython("self.");
         code << "Bind(" << handler.GetCode() << comma;

@@ -96,9 +96,6 @@ std::optional<tt_string> GenValidatorSettings(Node* node);
 // everything needed to set the window's icon.
 tt_string GenerateIconCode(const tt_string& description);
 
-// This is called to add a tool to either wxToolBar or wxAuiToolBar
-tt_string GenToolCode(Node* node, tt_string_view BitmapCode = "");
-
 // Generates wxSize(x,y) or ConvertDialogToPixels(wxSize(x,y))
 //
 // wxSize will be converted to dialog units if the size contains a 'd' character.

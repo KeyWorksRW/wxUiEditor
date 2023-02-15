@@ -1049,107 +1049,6 @@ tt_string GenerateIconCode(const tt_string& description)
     return code;
 }
 
-// This is called to add a tool to either wxToolBar or wxAuiToolBar
-tt_string GenToolCode(Node* node, tt_string_view BitmapCode)
-{
-    tt_string code;
-    code << '\t';
-
-    if (node->prop_as_bool(prop_disabled) || (node->prop_as_string(prop_id) == "wxID_ANY" && node->GetInUseEventCount()))
-    {
-        if (node->IsLocal())
-            code << "auto* ";
-        code << node->get_node_name() << " = ";
-    }
-
-    // If the user doesn't want access, then we have no use for the return value.
-    if (node->IsLocal())
-    {
-        if (node->isParent(gen_wxToolBar) || node->isParent(gen_wxAuiToolBar))
-            code << node->get_parent_name() << "->AddTool(" << node->prop_as_string(prop_id) << ", ";
-        else
-            code << "AddTool(" << node->prop_as_string(prop_id) << ", ";
-    }
-    else
-    {
-        if (node->isParent(gen_wxToolBar) || node->isParent(gen_wxAuiToolBar))
-            code << node->get_node_name() << " = " << node->get_parent_name() << "->AddTool("
-                 << node->prop_as_string(prop_id) << ", ";
-        else
-            code << node->get_node_name() << " = AddTool(" << node->prop_as_string(prop_id) << ", ";
-    }
-
-    auto& label = node->prop_as_string(prop_label);
-    if (label.size())
-    {
-        code << GenerateQuotedString(label);
-    }
-    else
-    {
-        code << "wxEmptyString";
-    }
-
-    if (BitmapCode.size())
-    {
-        code << ", " << BitmapCode;
-    }
-    else
-    {
-        code << ", " << GenerateBitmapCode(node->prop_as_string(prop_bitmap));
-    }
-
-    if (!node->HasValue(prop_tooltip) && !node->HasValue(prop_statusbar))
-    {
-        if (node->isGen(gen_tool_dropdown))
-        {
-            code << ", wxEmptyString, wxITEM_DROPDOWN";
-        }
-        else if (node->prop_as_string(prop_kind) != "wxITEM_NORMAL")
-        {
-            code << ", wxEmptyString, " << node->prop_as_string(prop_kind);
-        }
-    }
-
-    else if (node->HasValue(prop_tooltip) && !node->HasValue(prop_statusbar))
-    {
-        code << ",\n\t\t\t" << GenerateQuotedString(node->prop_as_string(prop_tooltip));
-        if (node->isGen(gen_tool_dropdown))
-        {
-            code << ", wxITEM_DROPDOWN";
-        }
-        else if (node->prop_as_string(prop_kind) != "wxITEM_NORMAL")
-        {
-            code << ", " << node->prop_as_string(prop_kind);
-        }
-    }
-
-    else if (node->HasValue(prop_statusbar))
-    {
-        code << ", wxNullBitmap, ";
-        code << node->prop_as_string(prop_kind) << ", \n\t\t\t";
-
-        if (node->HasValue(prop_tooltip))
-        {
-            code << GenerateQuotedString(node->prop_as_string(prop_tooltip));
-        }
-        else
-        {
-            code << "wxEmptyString";
-        }
-
-        code << ", " << GenerateQuotedString(node->prop_as_string(prop_statusbar));
-    }
-
-    code << ");";
-
-    if (node->prop_as_bool(prop_disabled))
-    {
-        code << "\n" << node->get_node_name() << "->Enable(false);";
-    }
-
-    return code;
-}
-
 tt_string GenerateWxSize(Node* node, PropName prop)
 {
     tt_string code;
@@ -1170,7 +1069,7 @@ void GenToolCode(Code& code, const bool is_bitmaps_list)
 {
     const auto* node = code.node();
     code.Eol(eol_if_needed);
-    if (node->prop_as_bool(prop_disabled) || node->GetInUseEventCount())
+    if (node->prop_as_bool(prop_disabled) || (node->prop_as_string(prop_id) == "wxID_ANY" && node->GetInUseEventCount()))
     {
         if (node->IsLocal() && code.is_cpp())
             code << "auto* ";

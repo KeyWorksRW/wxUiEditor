@@ -143,7 +143,7 @@ bool DialogFormGenerator::AfterChildrenCode(Code& code)
         }
         if (max_size != wxDefaultSize)
         {
-            code.Eol().FormFunction("tSetMaxSize(").WxSize(prop_maximum_size).EndFunction();
+            code.Eol().FormFunction("SetMaxSize(").WxSize(prop_maximum_size).EndFunction();
         }
         code.Eol().FormFunction("Fit(").EndFunction();
     }

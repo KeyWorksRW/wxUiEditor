@@ -668,7 +668,6 @@ bool MainTestDialog::Create(wxWindow* parent, wxWindowID id, const wxString& tit
             {  
                 m_animation_ctrl->Stop();
             }
-
         });
     m_checkBox2->Bind(wxEVT_CHECKBOX,
         [this](wxCommandEvent&)

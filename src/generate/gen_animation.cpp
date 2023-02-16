@@ -77,17 +77,13 @@ bool AnimationGenerator::ConstructionCode(Code& code)
         else
         {
             tt_view_vector parts(code.node()->as_string(prop_animation), ';');
-            tt_string name(parts[IndexImage].filename());
-            name.remove_extension();
-            name.LeftTrim();
-            if (parts[IndexType].starts_with("Embed"))
-            {
-                if (auto embed = ProjectImages.GetEmbeddedImage(parts[IndexImage]); embed)
-                {
-                    name = "" + embed->array_name;
-                }
-            }
-            // GenerateSingleBitmapCode(code, code.node()->value(prop_animation));
+            tt_string name(parts[IndexImage]);
+            name.make_absolute();
+            auto form_path = MakePythonPath(code.node());
+            name.make_relative(form_path);
+            name.backslashestoforward();
+
+            code.Str("wx.adv.Animation(").QuotedString(name) += ")";
         }
     }
     else

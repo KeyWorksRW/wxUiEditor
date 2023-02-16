@@ -12,22 +12,14 @@ set (file_list
 # Manually maintained from wxui_code.cmake
 set(wxui_file_list
 
-    booktest_dlg.cpp    
-    choicebook.cpp
+    booktest_dlg.cpp
     commonctrls.cpp
-    dlgmultitest.cpp
     form_toolbar_base.cpp
-    import_test.cpp
-    listbook.cpp
+    images.cpp
     mainframe.cpp
-    my_images.cpp
-    notebook.cpp
-    other_ctrls.cpp
+    maintestdialog.cpp
     popupwin.cpp
     python_dlg.cpp
-    ribbondlg.cpp
-    toolbook.cpp
-    treebook.cpp
     wizard.cpp
 
 )

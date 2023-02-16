@@ -8,4 +8,7 @@
 echo Generating python files...
 ..\build\stage\bin\debug\wxUiEditor.exe --gen_python python_tests.wxui
 type python_tests.log
-python pytest.py
+cd python
+python mainframe.py
+cd ..
+

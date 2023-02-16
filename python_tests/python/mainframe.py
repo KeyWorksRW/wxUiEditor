@@ -274,3 +274,14 @@ class MainFrame(wx.Frame):
         dlg = python_dlg.PythonDlg(self, title="PythonDlg")
         dlg.ShowModal()
         dlg.Destroy()
+
+class MyApp(wx.App):
+    def OnInit(self):
+        frame = MainFrame(None)
+        self.SetTopWindow(frame)
+
+        frame.Show(True)
+        return True
+
+app = MyApp()
+app.MainLoop()

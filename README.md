@@ -38,8 +38,6 @@ See [Developer notes](docs/DEV_NOTES.md) for more information about the current 
 - All KeyWorks Software code uses the Apache License 2.0 [LICENSE](LICENSE).
 - The pugixml code uses a MIT [LICENSE](pugixml/LICENSE.md).
 - The rapidjson code uses a MIT [LICENSE](src/import/rapidjson/license.txt).
-- The Lua code in the wxSnapshot module uses the MIT [LICENSE](wxSnapshot/lua/LUA_LICENSE.md).
-- The wxLua code in the wxSnapshot module uses the wxWindows [LICENSE](wxSnapshot/lua/wxLUA_LICENSE.md).
 - The wxWidgets code in the wxSnapshot module uses the wxWindows  [LICENSE](wxSnapshot/License.txt).
 
 ## Screen shots

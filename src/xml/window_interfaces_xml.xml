@@ -30,10 +30,8 @@ inline const char* window_interfaces_xml = R"===(<?xml version="1.0"?>
 
 	<gen class="wxWindow" type="interface">
 		<property name="id" type="id">wxID_ANY</property>
-		<!-- <property name="smart_size" type="wxSize"
-			help="If a positive value is used, the minimum size of the window will be set to that if it is larger then what automatic layout would have calculated. A -1 indicates that the value should always be calculated automatically." /> -->
 		<property name="minimum_size" type="wxSize"
-			help="Sets the minimum size of the window. Any positive value will override the automatic size calculation that would normally be done. This property is ignored if the smart_size property is used." />
+			help="Sets the minimum size of the window. Any positive value will override the automatic size calculation that would normally be done." />
 		<property name="variant" type="option"
 			help="Chooses a different variant of the window display to use (calls SetWindowVariant).">
 			<option name="normal"

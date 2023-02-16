@@ -761,7 +761,7 @@ tt_string MakePythonPath(Node* node)
         }
     }
     if (path.empty())
-        path = "./z";
+        path = "./";
     path.make_absolute();
     path.remove_filename();
     return path;

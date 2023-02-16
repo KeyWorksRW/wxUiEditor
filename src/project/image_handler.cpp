@@ -1034,10 +1034,20 @@ wxBitmapBundle ImageHandler::GetPropertyBitmapBundle(const tt_string& descriptio
     }
 
     tt_string lookup_str;
-    lookup_str << parts[0] << ';' << parts[1].filename();
+    lookup_str << parts[IndexType] << ';' << parts[IndexImage].filename();
 
     if (auto result = m_bundles.find(lookup_str); result != m_bundles.end())
     {
+        // At this point we know that the bundle has been stored, but the actual size for
+        // display can change any time the property is used to retrieve the bundle.
+        if (description.starts_with("SVG;"))
+        {
+            if (auto* embed = GetEmbeddedImage(parts[IndexImage]); embed)
+            {
+                ASSERT(parts.size() > IndexSize);
+                return LoadSVG(embed, parts[IndexSize]);
+            }
+        }
         return result->second.bundle;
     }
 

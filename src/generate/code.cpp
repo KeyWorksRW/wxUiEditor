@@ -1268,7 +1268,7 @@ void Code::GenWindowSettings()
         }
         else
         {
-            NodeName().FormFunction("SetMinSize(");
+            FormFunction("SetMinSize(");
         }
         WxSize(prop_minimum_size).EndFunction();
     }

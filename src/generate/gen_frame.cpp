@@ -82,7 +82,24 @@ bool FrameFormGenerator::SettingsCode(Code& code)
         code.Eol().Tab().Str("return");
     }
 
-    GenFormSettings(code);
+    Node* frame = code.node();
+    const auto min_size = frame->as_wxSize(prop_minimum_size);
+    const auto max_size = frame->as_wxSize(prop_maximum_size);
+    if (min_size != wxDefaultSize)
+    {
+        code.Eol().FormFunction("SetMinSize(").WxSize(prop_minimum_size).EndFunction();
+    }
+    if (max_size != wxDefaultSize)
+    {
+        code.Eol().FormFunction("SetMaxSize(").WxSize(prop_maximum_size).EndFunction();
+    }
+    if (code.HasValue(prop_window_extra_style))
+    {
+        code.Eol(eol_if_needed).FormFunction("SetExtraStyle(").FormFunction("GetExtraStyle() | ");
+        code.Add(prop_window_extra_style).EndFunction();
+    }
+
+    code.GenFontColourSettings();
 
     return true;
 }

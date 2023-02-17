@@ -82,7 +82,7 @@ inline const char* widgets_xml = R"===(<?xml version="1.0"?>
 		<property name="class_name" type="string"
 			help="The name of the custom class.">CustomClass</property>
 		<property name="parameters" type="string_code_single"
-			help="The parameters to use when the class is constructed. When generating C++, self will be replaced with this. When generating Python, this will be replaced with self.">(this)</property>
+			help="The parameters to use when the class is constructed. The macros ${id}, ${pos}, ${size}, ${window_extra_style}, ${window_name}, and ${window_style} will be replaced with the matching property. In Python, this will be replaced with self.">(this)</property>
 		<property name="settings_code" type="code_edit"
 			help="Additional code to include after the class is constructed." />
 	</gen>

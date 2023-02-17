@@ -485,6 +485,14 @@ bool WxGlade::HandleNormalProperty(const pugi::xml_node& xml_obj, Node* node, No
             return true;
         }
     }
+    else if (wxue_prop == prop_id)
+    {
+        tt_string id = xml_obj.text().as_string();
+        id.erase_from('=');
+        id.trim();
+        node->prop_set_value(prop_id, id);
+        return true;
+    }
 
     return false;
 }

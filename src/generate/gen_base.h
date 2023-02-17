@@ -82,6 +82,8 @@ public:
 
     bool is_cpp() const { return m_language == GEN_LANG_CPLUSPLUS; }
 
+    static void CollectIDs(Node* node, std::set<std::string>& set_ids);
+
 protected:
     // Generate extern references to images used in the current form that are defined in the
     // gen_Images node.
@@ -117,7 +119,6 @@ protected:
     tt_string GetDeclaration(Node* node);
 
     void CollectEventHandlers(Node* node, EventVector& events);
-    void CollectIDs(Node* node, std::set<std::string>& set_ids);
     void CollectImageHeaders(Node* node, std::set<std::string>& embedset);
     void CollectIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr);
     void CollectMemberVariables(Node* node, Permission perm, std::set<std::string>& code_lines);
@@ -184,6 +185,7 @@ private:
 
     std::vector<const EmbeddedImage*> m_embedded_images;
     std::set<wxBitmapType> m_type_generated;
+    std::set<std::string> m_set_ids;
 
     Node* m_form_node { nullptr };
     Node* m_ImagesForm { nullptr };

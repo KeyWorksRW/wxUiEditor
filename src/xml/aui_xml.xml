@@ -114,7 +114,8 @@ inline const char* aui_xml = R"===(<?xml version="1.0"?>
 			help="Help string used in the tooltip." />
 		<property name="statusbar" type="string_edit"
 			help="This string is shown in the statusbar (if any) of the parent frame when the mouse pointer is inside the tool." />
-		<property name="id" type="id">wxID_ANY</property>
+		<property name="id" type="id"
+			help="Specifies the tool identifier. When generating Python code, a non wx.Widgets id will be global unless prefixed with self.">wxID_ANY</property>
 		<event name="wxEVT_TOOL" class="wxCommandEvent"
 		help="Same as wxEVT_MENU -- generated when the item is chosen in the toolbar or menu (if the same id was added to a menu)." />
 		<event name="wxEVT_UPDATE_UI" class="wxUpdateUIEvent"
@@ -135,7 +136,9 @@ inline const char* aui_xml = R"===(<?xml version="1.0"?>
 		<property name="var_name" type="string">tool</property>
 		<property name="label" type="string_escapes">My Label</property>
 		<property name="width" type="int">-1</property>
-		<property name="id" type="id">wxID_ANY</property>
+		<property name="id" type="id"
+			help="Specifies the label identifier. When generating Python code, a non wx.Widgets id will be global unless prefixed with self.">wxID_ANY</property>
+
 		<event name="wxEVT_TOOL" class="wxCommandEvent"
 			help="Same as wxEVT_MENU -- generated when the item is chosen in the toolbar or menu (if the same id was added to a menu)." />
 		<event name="wxEVT_UPDATE_UI" class="wxUpdateUIEvent"

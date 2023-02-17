@@ -29,7 +29,8 @@ inline const char* window_interfaces_xml = R"===(<?xml version="1.0"?>
 	</gen>
 
 	<gen class="wxWindow" type="interface">
-		<property name="id" type="id">wxID_ANY</property>
+		<property name="id" type="id"
+			help="Specifies the window identifier. When generating Python code, a non wx.Widgets id will be global unless prefixed with self.">wxID_ANY</property>
 		<property name="minimum_size" type="wxSize"
 			help="Sets the minimum size of the window. Any positive value will override the automatic size calculation that would normally be done." />
 		<property name="variant" type="option"

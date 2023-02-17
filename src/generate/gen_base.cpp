@@ -1149,6 +1149,7 @@ void BaseCodeGenerator::GenerateClassHeader(Node* form_node, const EventVector& 
     m_header->writeLine("};");
 }
 
+// This should only be called to generate C++ code.
 void BaseCodeGenerator::GenEnumIds(Node* class_node)
 {
     ASSERT(m_language == GEN_LANG_CPLUSPLUS);
@@ -1168,7 +1169,10 @@ void BaseCodeGenerator::GenEnumIds(Node* class_node)
     size_t item = 0;
     for (auto& iter: set_ids)
     {
-        m_header->write(iter);
+        if (iter.starts_with("self."))
+            m_header->write(iter.c_str() + (sizeof("self.") - 1));
+        else
+            m_header->write(iter);
         if (item == 0)
         {
             m_header->write(" = wxID_HIGHEST + 1", true);

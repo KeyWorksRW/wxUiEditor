@@ -344,6 +344,18 @@ void BaseCodeGenerator::GeneratePythonClass(Node* form_node, PANEL_PAGE panel_ty
         }
     }
 
+    m_set_ids.clear();
+    BaseCodeGenerator::CollectIDs(form_node, m_set_ids);
+    // set to highest wx
+    auto id_value = 1;
+    for (auto& iter: m_set_ids)
+    {
+        if (!iter.starts_with("self."))
+        {
+            m_source->writeLine(tt_string() << iter << " = wxID_HIGHEST + " << id_value++);
+        }
+    }
+
     thrd_collect_img_headers.join();
     if (m_embedded_images.size())
     {
@@ -424,6 +436,20 @@ void BaseCodeGenerator::GeneratePythonClass(Node* form_node, PANEL_PAGE panel_ty
         m_source->writeLine();
         m_source->Indent();
         m_source->Indent();
+
+        id_value = 1;
+        for (auto& iter: m_set_ids)
+        {
+            if (iter.starts_with("self."))
+            {
+                m_source->writeLine(tt_string() << iter << " = wxID_HIGHEST + " << id_value++);
+            }
+        }
+        if (id_value > 1)
+        {
+            // If at least one id was set, add a blank line
+            m_source->writeLine();
+        }
     }
 
     code.clear();

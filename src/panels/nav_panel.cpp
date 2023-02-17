@@ -37,7 +37,6 @@ inline const std::vector<GenEnum::GenName> unsupported_gen_python = {
     gen_StaticRadioBtnBoxSizer,
 
     gen_wxContextMenuEvent,
-    gen_CustomControl,
 
 };
 

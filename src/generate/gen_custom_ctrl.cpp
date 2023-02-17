@@ -54,9 +54,24 @@ bool CustomControl::ConstructionCode(Code& code)
         if (parameters.find(iter.first) != tt::npos)
         {
             if (iter.second == prop_window_style && code.node()->as_string(iter.second).empty())
+            {
                 parameters.Replace(iter.first, "0");
+            }
             else
-                parameters.Replace(iter.first, code.view(iter.second));
+            {
+                // In C++ we can just replace the macro with the string from the property, but in Python we need to
+                // do additional processing on most strings.
+                if (code.is_cpp())
+                {
+                    parameters.Replace(iter.first, code.view(iter.second));
+                }
+                else
+                {
+                    Code macro(code.node(), GEN_LANG_PYTHON);
+                    macro.Add(code.view(iter.second));
+                    parameters.Replace(iter.first, macro);
+                }
+            }
         }
     }
 

@@ -60,10 +60,11 @@ inline const char* project_xml = R"===(<?xml version="1.0"?>
 		</property>
 		<property name="python_output_folder" type="path"
 			help="If a folder name is specified, it will be used for all python code. It will also be used for generated xrc and art files if the matching options below are checked." />
-		<property name="python_combine_forms" type="bool"
+<!-- <property name="python_combine_forms" type="bool"
 			help="If checked, all code will be generated to a single file.\n\nThe code preview will only display code for the currently selected form, even if this is checked.">0</property>
 		<property name="python_combined_file" type="file"
 			help="This filename will be used to write all Python content to unless you unchecked the python_combine_forms property above." />
+-->
 		<property name="python_line_length" type="uint"
 			help="Specifies a guideline for generated code line length. Most lines will be wrapped so that they do not exceed this length.">90</property>
 	</gen>
@@ -111,10 +112,11 @@ inline const char* project_xml = R"===(<?xml version="1.0"?>
 	<gen class="Folder wxPython Overrides" type="interface">
 		<property name="folder_python_output_folder" type="path"
 			help="Overrides any project setting of the output folder used for all generated python code. Only affects the forms within this folder." />
-		<property name="folder_python_combine_forms" type="bool"
+<!-- 		<property name="folder_python_combine_forms" type="bool"
 			help="If checked, the code for all forms in this folder will be generated to a single file.\n\nThe code preview will only display code for the currently selected form, even if this is checked.">0</property>
 		<property name="folder_python_combined_file" type="file"
 			help="Overrides any project setting of the combined filename. Only affects the forms within this folder, and is only used if the folder_python_combine_forms above is checked." />
+-->
 	</gen>
 
 	<gen class="Folder XRC Overrides" type="interface">

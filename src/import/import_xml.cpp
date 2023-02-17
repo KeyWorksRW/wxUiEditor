@@ -73,6 +73,7 @@ std::map<std::string_view, GenEnum::PropName, std::less<>> import_PropNames = {
  std::map<std::string_view, GenEnum::GenName, std::less<>> import_GenNames = {
 
     { "Custom", gen_CustomControl },
+    { "CustomWidget", gen_CustomControl },
     { "Dialog", gen_wxDialog },
     { "Frame", gen_wxFrame },
     { "Panel", gen_PanelForm },
@@ -1119,7 +1120,6 @@ NodeSharedPtr ImportXML::CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, No
             is_generic_version = true;
             gen_name = gen_wxAnimationCtrl;
         }
-
         else
         {
             MSG_INFO(tt_string() << "Unrecognized object: " << object_name);

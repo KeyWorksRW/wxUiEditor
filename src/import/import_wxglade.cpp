@@ -451,6 +451,24 @@ bool WxGlade::HandleUnknownProperty(const pugi::xml_node& xml_obj, Node* node, N
 
         return true;
     }
+    else if (node_name == "arguments" && node->isGen(gen_CustomControl))
+    {
+        tt_string parameters;
+        for (auto& argument: xml_obj.children())
+        {
+            tt_string param = argument.text().as_string();
+            param.Replace("$parent", "${parent}");
+            param.Replace("$id", "${id}");
+            if (parameters.size())
+                parameters += ", ";
+            parameters += param;
+        }
+
+        if (parameters.size())
+            node->set_value(prop_parameters, parameters);
+
+        return true;
+    }
     else if (node_name == "extracode_post")
     {
         // wxGlade adds this after the class is constructed, but before any Bind functions are called.

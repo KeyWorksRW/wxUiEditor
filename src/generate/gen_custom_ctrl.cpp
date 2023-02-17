@@ -26,44 +26,86 @@ wxObject* CustomControl::CreateMockup(Node* /* node */, wxObject* parent)
     return widget;
 }
 
+// map_MacroProps is in gen_enums.cpp and provides conversion for ${id}, ${pos}, ${size},
+// ${window_extra_style}, ${window_name}, ${window_style}
+
 bool CustomControl::ConstructionCode(Code& code)
 {
-    if (code.is_python())
-        return false;
-
     code.AddAuto().NodeName();
-    code += " = new ";
-    if (code.HasValue(prop_namespace))
+    code.Str(" = ").AddIfCpp("new ");
+    if (code.HasValue(prop_namespace) && code.is_cpp())
         code.Str(prop_namespace) += "::";
 
     tt_string parameters(code.view(prop_parameters));
     parameters.Replace("${parent}", code.node()->get_parent_name(), tt::REPLACE::all);
+    if (code.is_cpp())
+    {
+        parameters.Replace("self", "this", tt::REPLACE::all);
+        parameters.Replace("wx.ID_ANY", "wxID_ANY", tt::REPLACE::all);
+    }
+    else
+    {
+        parameters.Replace("this", "self", tt::REPLACE::all);
+        parameters.Replace("wxID_ANY", "wx.ID_ANY", tt::REPLACE::all);
+    }
 
     for (auto& iter: map_MacroProps)
     {
         if (parameters.find(iter.first) != tt::npos)
         {
             if (iter.second == prop_window_style && code.node()->as_string(iter.second).empty())
+            {
                 parameters.Replace(iter.first, "0");
+            }
             else
-                parameters.Replace(iter.first, code.view(iter.second));
+            {
+                // In C++ we can just replace the macro with the string from the property, but in Python we need to
+                // do additional processing on most strings.
+                if (code.is_cpp())
+                {
+                    parameters.Replace(iter.first, code.view(iter.second));
+                }
+                else
+                {
+                    Code macro(code.node(), GEN_LANG_PYTHON);
+                    macro.Add(code.view(iter.second));
+                    parameters.Replace(iter.first, macro);
+                }
+            }
         }
     }
 
-    code.Str(prop_class_name).Str(parameters) << ';';
+    if (!parameters.starts_with("("))
+        parameters.insert(0, "(");
+    if (parameters.back() != ')')
+        parameters += ")";
+
+    code.Str(prop_class_name).Str(parameters).AddIfCpp(";");
 
     return true;
 }
 
 bool CustomControl::SettingsCode(Code& code)
 {
-    if (code.is_python())
-        return false;
-
     if (code.HasValue(prop_settings_code))
     {
-        code.Str(prop_settings_code);
-        code.Replace("@@", "\n", tt::REPLACE::all);
+        // Unless the code is fairly simple, it's not really practical to have one settings
+        // section that works for both C++ and Python. We do, however, make some basic
+        // conversions.
+
+        tt_string settings = code.view(prop_settings_code);
+        settings.Replace("@@", "\n", tt::REPLACE::all);
+        if (code.is_python())
+        {
+            settings.Replace("->", ".", tt::REPLACE::all);
+            settings.Replace("wxID_ANY", "wx.ID_ANY", tt::REPLACE::all);
+        }
+        else
+        {
+            settings.Replace("wx.", "wx", tt::REPLACE::all);
+        }
+
+        code.Str(settings);
     }
 
     return true;

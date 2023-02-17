@@ -1298,6 +1298,7 @@ void BaseCodeGenerator::GenerateClassConstructor(Node* form_node, EventVector& e
     }
 }
 
+// This is a static function
 void BaseCodeGenerator::CollectIDs(Node* node, std::set<std::string>& set_ids)
 {
     for (auto& iter: node->get_props_vector())

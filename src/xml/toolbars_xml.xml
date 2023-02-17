@@ -106,7 +106,8 @@ inline const char* toolbars_xml = R"===(<?xml version="1.0"?>
 			help="String to display in the tooltip." />
 		<property name="statusbar" type="string_edit"
 			help="This string is shown in the statusbar (if any) of the parent frame when the mouse pointer is inside the tool." />
-		<property name="id" type="id">wxID_ANY</property>
+		<property name="id" type="id"
+			help="Specifies the tool identifier. When generating Python code, a non wx.Widgets id will be global unless prefixed with self.">wxID_ANY</property>
 		<event name="wxEVT_TOOL" class="wxCommandEvent"
 			help="" />
 		<event name="wxEVT_TOOL_DROPDOWN" class="wxCommandEvent"
@@ -128,7 +129,8 @@ inline const char* toolbars_xml = R"===(<?xml version="1.0"?>
 			help="String to display in the tooltip." />
 		<property name="statusbar" type="string_edit"
 			help="This string is shown in the statusbar (if any) of the parent frame when the mouse pointer is inside the tool." />
-		<property name="id" type="id">wxID_ANY</property>
+		<property name="id" type="id"
+			help="Specifies the tool identifier. When generating Python code, a non wx.Widgets id will be global unless prefixed with self.">wxID_ANY</property>
 		<event name="wxEVT_TOOL_DROPDOWN" class="wxCommandEvent"
 			help="" />
 		<event name="wxEVT_UPDATE_UI" class="wxUpdateUIEvent"

@@ -62,7 +62,8 @@ inline const char* menus_xml = R"===(<?xml version="1.0"?>
 			help="Additional accelerators. The syntax is any combination of &quot;CTRL&quot;, &quot;ALT&quot; and &quot;SHIFT&quot; strings (case doesn't matter) separated by either '-' or '+' characters and followed by the accelerator itself. The accelerator may be any alphanumeric character, or any function key (from F1 to F12)" />
 		<property name="help" type="string_edit"
 			help="Optional string that will be shown on the status bar." />
-		<property name="id" type="id">wxID_ANY</property>
+		<property name="id" type="id"
+			help="Specifies the menu item identifier. When generating Python code, a non wx.Widgets id will be global unless prefixed with self.">wxID_ANY</property>
 		<property name="bitmap" type="image"
 			help="Bitmap for the menu item. This doubles as the checked bitmap if the menu item is wxITEM_CHECK." />
 		<property name="unchecked_bitmap" type="image"

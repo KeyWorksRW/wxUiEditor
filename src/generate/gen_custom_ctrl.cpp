@@ -75,7 +75,12 @@ bool CustomControl::ConstructionCode(Code& code)
         }
     }
 
-    code.Str(prop_class_name).Str(parameters) << ';';
+    if (!parameters.starts_with("("))
+        parameters.insert(0, "(");
+    if (parameters.back() != ')')
+        parameters += ")";
+
+    code.Str(prop_class_name).Str(parameters).AddIfCpp(";");
 
     return true;
 }

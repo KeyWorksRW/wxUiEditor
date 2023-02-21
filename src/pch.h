@@ -22,7 +22,7 @@
 #define wxUSE_NO_MANIFEST 1
 #define wxUSE_UNICODE     1
 
-// Allows ttLib additions to pugixml
+// Allows tt additions to pugixml (e.g. as_sview(), as_cstr(), etc.)
 #define TTLIB_ADDITIONS 1
 
 #ifdef _MSC_VER

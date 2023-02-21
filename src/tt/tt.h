@@ -23,7 +23,6 @@ class tt_string;
 
 namespace tt
 {
-#if not defined(_TTLIB_WX_HEADER_)
     /// Use to compare a size_t against -1
     constexpr size_t npos = static_cast<size_t>(-1);
 
@@ -47,7 +46,6 @@ namespace tt
         once = false,
         all = true,
     };
-#endif
 
     extern const std::string emptystring;
 

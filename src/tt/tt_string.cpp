@@ -1091,7 +1091,7 @@ tt_string& tt_string::Format(std::string_view format, ...)
     }
     catch (const std::exception& /* e */)
     {
-        assert(!"exception in ttlib::tt_string.Format()");
+        assert(!"exception in tt_string.Format()");
     }
 
     va_end(args);

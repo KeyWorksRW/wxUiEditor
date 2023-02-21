@@ -62,14 +62,7 @@
 
     <!-- ttLib visualizers -->
 
-    <Type Name="ttlib::winff">
-      <DisplayString>{m_filename,s}</DisplayString>
-    </Type>
-    <Type Name="ttlib::openfile">
-      <DisplayString>{m_filename,s}</DisplayString>
-    </Type>
-
-    <Type Name="ttlib::cview">
+    <Type Name="tt_string_view">
       <Intrinsic Name="size" Expression="_Mysize" />
       <Intrinsic Name="data" Expression="_Mydata" />
       <DisplayString>{_Mydata,s8}</DisplayString>
@@ -82,7 +75,7 @@
       </Expand>
     </Type>
 
-    <Type Name="ttlib::cstr">
+    <Type Name="tt_string">
         <DisplayString Condition="_Myres &lt; _BUF_SIZE">{_Bx._Buf,s8}</DisplayString>
         <DisplayString Condition="_Myres &gt;= _BUF_SIZE">{_Bx._Ptr,s8}</DisplayString>
         <StringView Condition="_Myres &lt; _BUF_SIZE">_Bx._Buf,s8</StringView>
@@ -97,6 +90,41 @@
             </ArrayItems>
         </Expand>
     </Type>
+
+    <Type Name="tt_wxString">
+        <DisplayString>"{m_impl,sb}"</DisplayString>
+        <StringView>m_impl</StringView>
+    </Type>
+
+    <Type Name="tt_string_vector">
+        <DisplayString>{{ size={size()} }}</DisplayString>
+        <DisplayString>{m_filename,s8}</DisplayString>
+        <Intrinsic Name="size" Expression="_Mypair._Myval2._Mylast - _Mypair._Myval2._Myfirst" />
+        <Intrinsic Name="capacity" Expression="_Mypair._Myval2._Myend - _Mypair._Myval2._Myfirst" />
+        <Expand>
+          <Item Name="[capacity]" ExcludeView="simple">capacity()</Item>
+          <Item Name="[allocator]" ExcludeView="simple">_Mypair</Item>
+          <ArrayItems>
+            <Size>size()</Size>
+            <ValuePointer>_Mypair._Myval2._Myfirst</ValuePointer>
+            </ArrayItems>
+        </Expand>
+        </Type>
+
+    <Type Name="tt_view_vector">
+        <DisplayString>{{ size={size()} }}</DisplayString>
+        <DisplayString>{m_filename,s8}</DisplayString>
+        <Intrinsic Name="size" Expression="_Mypair._Myval2._Mylast - _Mypair._Myval2._Myfirst" />
+        <Intrinsic Name="capacity" Expression="_Mypair._Myval2._Myend - _Mypair._Myval2._Myfirst" />
+        <Expand>
+          <Item Name="[capacity]" ExcludeView="simple">capacity()</Item>
+          <Item Name="[allocator]" ExcludeView="simple">_Mypair</Item>
+          <ArrayItems>
+            <Size>size()</Size>
+            <ValuePointer>_Mypair._Myval2._Myfirst</ValuePointer>
+            </ArrayItems>
+        </Expand>
+        </Type>
 
     <!-- pugixml visualizers -->
 

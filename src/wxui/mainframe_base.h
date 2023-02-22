@@ -9,9 +9,12 @@
 
 #pragma once
 
+#include <wx/bitmap.h>
 #include <wx/event.h>
 #include <wx/frame.h>
 #include <wx/gdicmn.h>
+#include <wx/icon.h>
+#include <wx/image.h>
 #include <wx/menu.h>
 #include <wx/toolbar.h>
 
@@ -97,6 +100,7 @@ protected:
     wxMenu* m_menuTools;
     wxMenu* m_submenu_recent;
     wxMenuBar* m_menubar;
+    wxMenuItem* m_mi_preview;
     wxToolBar* m_toolbar;
 };
 

@@ -283,19 +283,19 @@ set (file_list
 
     ui/preview_settings_events.cpp  # Event handlers for PreviewSettings dialog
 
-    # Debug-only files
+    # Debug-only files from wxui_internal.cmake
     $<$<CONFIG:Debug>:internal/code_compare.cpp>    # Compare code generation
-    $<$<CONFIG:Debug>:internal/convert_img.cpp>     # Convert image
-    $<$<CONFIG:Debug>:internal/import_panel.cpp>    # Panel to display original imported file
+    $<$<CONFIG:Debug>:internal/convert_img_base.cpp>
+    $<$<CONFIG:Debug>:internal/debugsettings.cpp>  # Settings while running the Debug version of wxUiEditor
+    $<$<CONFIG:Debug>:internal/msgframe_base.cpp>       # wxUiEditor generated file
     $<$<CONFIG:Debug>:internal/node_info.cpp>       # Node memory usage dialog
+    $<$<CONFIG:Debug>:internal/node_search_dlg.cpp> # Dialog to search for a node
     $<$<CONFIG:Debug>:internal/xrcpreview.cpp>      # Test XRC
 
-    $<$<CONFIG:Debug>:internal/debugsettings.cpp>  # Settings while running the Debug version of wxUiEditor
-    $<$<CONFIG:Debug>:internal/msg_logging.cpp>    # Message logging class
+    $<$<CONFIG:Debug>:internal/convert_img.cpp>     # Convert image
+    $<$<CONFIG:Debug>:internal/import_panel.cpp>    # Panel to display original imported file
     $<$<CONFIG:Debug>:internal/msgframe.cpp>       # Stores messages
-
-    $<$<CONFIG:Debug>:internal/convert_img_base.cpp>
-    $<$<CONFIG:Debug>:internal/msgframe_base.cpp>       # wxUiEditor generated file
+    $<$<CONFIG:Debug>:internal/msg_logging.cpp>    # Message logging class
 
     $<$<CONFIG:Debug>:tests/test_xrc_import.cpp>  # XRC Import tests
 )

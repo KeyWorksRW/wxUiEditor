@@ -143,10 +143,10 @@ int CheckListBoxGenerator::GetRequiredVersion(Node* node)
 {
     if (node->HasValue(prop_contents))
     {
-        return minRequiredVer + 1;
+        return std::max(minRequiredVer + 1, BaseGenerator::GetRequiredVersion(node));
     }
 
-    return minRequiredVer;
+    return BaseGenerator::GetRequiredVersion(node);
 }
 
 bool CheckListBoxGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)

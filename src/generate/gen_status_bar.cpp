@@ -161,10 +161,14 @@ bool StatusBarGenerator::SettingsCode(Code& code)
 int StatusBarGenerator::GetRequiredVersion(Node* node)
 {
     if (!node->HasValue(prop_fields))
-        return minRequiredVer;
+    {
+        return BaseGenerator::GetRequiredVersion(node);
+    }
     if (tt::is_digit(node->value(prop_fields)[0]))
-        return minRequiredVer;
-    return minRequiredVer + 1;
+    {
+        return BaseGenerator::GetRequiredVersion(node);
+    }
+    return std::max(minRequiredVer + 1, BaseGenerator::GetRequiredVersion(node));
 }
 
 bool StatusBarGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)

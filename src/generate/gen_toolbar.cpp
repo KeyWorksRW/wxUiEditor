@@ -535,9 +535,9 @@ int ToolGenerator::GetRequiredVersion(Node* node)
 {
     if (node->as_bool(prop_disabled))
     {
-        return minRequiredVer + 1;
+        return std::max(minRequiredVer + 1, BaseGenerator::GetRequiredVersion(node));
     }
-    return minRequiredVer;
+    return BaseGenerator::GetRequiredVersion(node);
 }
 
 int ToolGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)

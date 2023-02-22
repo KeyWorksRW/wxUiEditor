@@ -635,3 +635,13 @@ bool BaseGenerator::CanChangeParent(Node* node)
 
     return true;
 }
+
+int BaseGenerator::GetRequiredVersion(Node* node)
+{
+    if (node->HasValue(prop_platforms) && node->value(prop_platforms) != "Windows|Unix|Mac")
+    {
+        return minRequiredVer + 1;
+    }
+
+    return minRequiredVer;
+}

@@ -125,7 +125,7 @@ public:
     // Return the lowest required version of wxUiEditor to support this generator. Override
     // this if the generator or any of it's non-default properties require a newer version of
     // wxUiEditor.
-    virtual int GetRequiredVersion(Node* /*node*/) { return minRequiredVer; }
+    virtual int GetRequiredVersion(Node* /*node*/);
 
     // Add any required include files to base source and/or header file
     virtual bool GetIncludes(Node*, std::set<std::string>& /* set_src */, std::set<std::string>& /* set_hdr */)

@@ -344,11 +344,13 @@ bool GridGenerator::SettingsCode(Code& code)
 int GridGenerator::GetRequiredVersion(Node* node)
 {
     // Code generation was invalid in minRequiredVer, so a newer version is required if this property is set.
-    if (node->prop_as_int(prop_selection_mode) != 0) {
+    if (node->prop_as_int(prop_selection_mode) != 0)
+    {
         return std::max(minRequiredVer + 1, BaseGenerator::GetRequiredVersion(node));
     }
     // There was no code generation for a non-default setting in minRequiredVer
-    if (node->prop_as_int(prop_row_label_size) != -1) {
+    if (node->prop_as_int(prop_row_label_size) != -1)
+    {
         return std::max(minRequiredVer + 1, BaseGenerator::GetRequiredVersion(node));
     }
     return BaseGenerator::GetRequiredVersion(node);

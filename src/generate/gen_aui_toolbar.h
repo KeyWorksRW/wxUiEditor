@@ -36,6 +36,7 @@ public:
     bool ConstructionCode(Code& code) override;
 
     int GenXrcObject(Node*, pugi::xml_node& /* object */, size_t /* xrc_flags */) override;
+    int GetRequiredVersion(Node* /*node*/) override;
 };
 
 class AuiToolLabelGenerator : public BaseGenerator

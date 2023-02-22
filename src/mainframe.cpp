@@ -207,6 +207,10 @@ MainFrame::MainFrame() :
 
     m_toolbar->Realize();
 
+#else
+    // For version 1.1.0.0, preview isn't reliable enough to be included in the release version
+    m_menuTools->Delete(m_mi_preview);
+    m_toolbar->DeleteTool(id_PreviewForm);
 #endif
 
     CreateStatusBar(StatusPanels);

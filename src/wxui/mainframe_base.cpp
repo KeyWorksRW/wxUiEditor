@@ -8,9 +8,6 @@
 // clang-format off
 
 #include <wx/artprov.h>
-#include <wx/bitmap.h>
-#include <wx/icon.h>
-#include <wx/image.h>
 
 #include "ui_images.h"
 
@@ -54,7 +51,7 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
 
     if (!Create(parent, id, title, pos, size, style, name))
         return;
-    SetSizeHints(wxSize(800, 800));
+    SetMinSize(wxSize(800, 800));
 
     m_menubar = new wxMenuBar();
 
@@ -251,11 +248,11 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
     menu_item19->SetBitmap(wxueBundleSVG(wxue_img::generate_svg, 780, 2716, wxSize(16, 16)));
 
     m_menuTools->Append(menu_item19);
-    auto* menu_item_8 = new wxMenuItem(m_menuTools, id_PreviewForm, "&Preview Form...\tF5",
+    m_mi_preview = new wxMenuItem(m_menuTools, id_PreviewForm, "&Preview Form...\tF5",
         "Preview form using XRC and/or C++", wxITEM_NORMAL);
-    menu_item_8->SetBitmap(wxueBundleSVG(wxue_img::xrc_preview_svg, 469, 1326, wxSize(16, 16)));
+    m_mi_preview->SetBitmap(wxueBundleSVG(wxue_img::xrc_preview_svg, 469, 1326, wxSize(16, 16)));
 
-    m_menuTools->Append(menu_item_8);
+    m_menuTools->Append(m_mi_preview);
     m_menubar->Append(m_menuTools, "&Tools");
 
     m_menuHelp = new wxMenu();

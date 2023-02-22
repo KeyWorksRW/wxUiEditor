@@ -528,7 +528,13 @@ NodeSharedPtr NodeCreator::CreateProjectNode(pugi::xml_node* xml_obj, bool allow
     return new_node;
 }
 
-bool ProjectHandler::ImportProject(tt_wxString& file, bool allow_ui)
+bool ProjectHandler::ImportProject(tt_wxString& file,
+#if defined(INTERNAL_TESTING)
+                                   bool allow_ui
+#else
+                                   bool /* allow_ui */
+#endif
+)
 {
 #if defined(INTERNAL_TESTING)
     // Importers will change the file extension, so make a copy here

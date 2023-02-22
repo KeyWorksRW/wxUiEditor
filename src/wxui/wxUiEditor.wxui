@@ -570,11 +570,12 @@
             <node
               class="wxMenuItem"
               bitmap="SVG;../art_src/xrc_preview.svg;[16,16]"
+              class_access="protected:"
               help="Preview form using XRC and/or C++"
               id="id_PreviewForm"
               label="&amp;Preview Form..."
               shortcut="F5"
-              var_name="menu_item_8"
+              var_name="m_mi_preview"
               wxEVT_MENU="OnPreviewXrc" />
           </node>
           <node

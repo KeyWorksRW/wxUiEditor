@@ -437,10 +437,12 @@ bool App::IsPjtMemberPrefix() const
     return (Preferences().GetProjectFlags() & PREFS::PREFS_PJT_MEMBER_PREFIX);
 }
 
+#if defined(_DEBUG) || defined(INTERNAL_TESTING)
 bool App::AutoMsgWindow() const
 {
     return (Preferences().GetDebugFlags() & PREFS::PREFS_MSG_WINDOW);
 }
+#endif
 
 #if defined(_DEBUG) && defined(wxUSE_ON_FATAL_EXCEPTION) && defined(wxUSE_STACKWALKER)
 

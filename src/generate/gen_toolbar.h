@@ -57,6 +57,7 @@ public:
     bool ConstructionCode(Code&) override;
 
     int GenXrcObject(Node*, pugi::xml_node& /* object */, size_t /* xrc_flags */) override;
+    int GetRequiredVersion(Node* /*node*/) override;
 };
 
 class ToolDropDownGenerator : public BaseGenerator
@@ -65,6 +66,7 @@ public:
     bool ConstructionCode(Code& code) override;
 
     int GenXrcObject(Node*, pugi::xml_node& /* object */, size_t /* xrc_flags */) override;
+    int GetRequiredVersion(Node* /*node*/) override { return minRequiredVer + 1; }
 };
 
 class ToolSeparatorGenerator : public BaseGenerator

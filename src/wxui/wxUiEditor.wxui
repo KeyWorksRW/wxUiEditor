@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <wxUiEditorData
-  data_version="17">
+  data_version="16">
   <node
     class="Project"
     art_directory="../art_src"

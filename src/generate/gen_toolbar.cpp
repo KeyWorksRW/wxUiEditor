@@ -531,6 +531,15 @@ bool ToolGenerator::ConstructionCode(Code& code)
     return true;
 }
 
+int ToolGenerator::GetRequiredVersion(Node* node)
+{
+    if (node->as_bool(prop_disabled))
+    {
+        return std::max(minRequiredVer + 1, BaseGenerator::GetRequiredVersion(node));
+    }
+    return BaseGenerator::GetRequiredVersion(node);
+}
+
 int ToolGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
     auto item = InitializeXrcObject(node, object);

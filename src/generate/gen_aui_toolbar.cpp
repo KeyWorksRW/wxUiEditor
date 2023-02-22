@@ -225,6 +225,15 @@ bool AuiToolGenerator::ConstructionCode(Code& code)
     return true;
 }
 
+int AuiToolGenerator::GetRequiredVersion(Node* node)
+{
+    if (node->as_bool(prop_disabled))
+    {
+        return std::max(minRequiredVer + 1, BaseGenerator::GetRequiredVersion(node));
+    }
+    return BaseGenerator::GetRequiredVersion(node);
+}
+
 int AuiToolGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
     auto item = InitializeXrcObject(node, object);

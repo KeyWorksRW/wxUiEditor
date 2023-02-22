@@ -213,9 +213,11 @@ int ButtonGenerator::GetRequiredVersion(Node* node)
 {
     // Code generation was invalid in minRequiredVer when there no label was set
     if (!node->HasValue(prop_label) && !node->prop_as_bool(prop_markup))
-        return minRequiredVer + 1;
+    {
+        return std::max(minRequiredVer + 1, BaseGenerator::GetRequiredVersion(node));
+    }
 
-    return minRequiredVer;
+    return BaseGenerator::GetRequiredVersion(node);
 }
 
 int ButtonGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)

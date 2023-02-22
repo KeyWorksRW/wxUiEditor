@@ -130,8 +130,8 @@ namespace xrc
     };
 }  // namespace xrc
 
-constexpr const char* txtVersion = "wxUiEditor 1.0.1";
-constexpr const char* txtCopyRight = "Copyright (c) 2019-2022 KeyWorks Software";
+constexpr const char* txtVersion = "wxUiEditor 1.1.0";
+constexpr const char* txtCopyRight = "Copyright (c) 2019-2023 KeyWorks Software";
 constexpr const char* txtAppname = "wxUiEditor";
 
 // This is the highest project number supported by this build of wxUiEditor. It should be

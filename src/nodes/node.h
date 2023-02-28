@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Node class
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2021 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -103,7 +103,10 @@ public:
     bool IsWidget() const noexcept { return isType(type_widget); }
     bool IsWizard() const noexcept { return isType(type_wizard); }
     bool IsMenuBar() const noexcept { return (isType(type_menubar_form) || isType(type_menubar)); }
-    bool IsToolBar() const noexcept { return (isType(type_toolbar) || isType(type_toolbar_form)); }
+    bool IsToolBar() const noexcept
+    {
+        return (isType(type_toolbar) || isType(type_toolbar_form) || isType(type_aui_toolbar));
+    }
     bool IsStatusBar() const noexcept { return isType(type_statusbar); }
     bool IsRibbonBar() const noexcept { return isType(type_ribbonbar); }
 

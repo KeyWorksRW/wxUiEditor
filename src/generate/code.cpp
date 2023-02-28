@@ -621,6 +621,7 @@ size_t Code::PropSize(GenEnum::PropName prop_name) const
 // List of valid component parent types
 static constexpr GenType s_GenParentTypes[] = {
 
+    type_aui_toolbar,
     type_auinotebook,
     type_bookpage,
     type_choicebook,
@@ -631,6 +632,7 @@ static constexpr GenType s_GenParentTypes[] = {
     type_ribbonpanel,
     type_simplebook,
     type_splitter,
+    type_toolbar,
     type_wizardpagesimple,
 
 };

@@ -149,15 +149,16 @@ void BaseCodeGenerator::GenConstruction(Node* node)
     {
         GenParentSizer(node, need_closing_brace);
     }
-    else if (parent->IsToolBar() && !node->isType(type_tool) && !node->isType(type_tool_separator))
+    else if (parent->IsToolBar() && !node->isType(type_tool) && !node->isType(type_aui_tool) &&
+             !node->isType(type_tool_separator))
     {
         tt_string code;
         gen_code.clear();
         if (parent->isType(type_toolbar_form))
             gen_code.Str("AddControl(").Str(prop_var_name).EndFunction();
         else
-            gen_code.Str(parent->as_string(prop_var_name)).Function("AddControl(").Str(prop_var_name).EndFunction();
-        m_source->writeLine(code);
+            gen_code.ParentName().Function("AddControl(").NodeName().EndFunction();
+        m_source->writeLine(gen_code);
     }
     else if (node->gen_type() == type_widget && parent->isGen(gen_wxChoicebook))
     {
@@ -172,7 +173,7 @@ void BaseCodeGenerator::GenConstruction(Node* node)
             gen_code.ParentName().Function("GetControlSizer()").Function("Add(").NodeName();
             gen_code.CheckLineLength().Comma().Add("wxSizerFlags()").Add(".Expand().Border(").Add("wxALL)").EndFunction();
         }
-        m_source->writeLine(gen_code.GetCode());
+        m_source->writeLine(gen_code);
     }
 
     if (node->isGen(gen_PageCtrl) && node->GetChildCount())

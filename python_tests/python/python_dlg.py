@@ -6,8 +6,24 @@
 ###############################################################################
 
 import wx
+import wx.aui
 
 from wx.lib.embeddedimage import PyEmbeddedImage
+
+fontPicker_png = PyEmbeddedImage(
+    b"iVBORw0KGgoAAAANSUhEUgAAABYAAAAWCAYAAADEtGw7AAAACXBIWXMAAAsTAAALEwEAmpwYAAACrUlE"
+    b"QVQ4y63U30sUURTA8a/r6oaSv9OEotJMDX3xwYwgikDIh9LwjwjqIeyh/yCIoh/QQ9hrPQRFVpJmYWRU"
+    b"IFpG0W5Zku3SqmtJLTu7ztw7pwed1XE317DzdOfO3M/cOefMxbZtsW1btNaitRallChliWWZYpqmjE1E"
+    b"pH80JIlEQhKJuMTjhhiGIYYRE9u25dKVC0Ka8AKILNwTkcWxIAJK2/SOTlNekLs4J65nVwvvcmj5GITn"
+    b"/ll+RE2UpVLQTLAnHSoi/DJMPn2PkuuB8JyBqfSaUQBPOhSEvjczHGrcROlGL5ZlM/UzviJVkgmWFfkT"
+    b"vkUM5k3NjvI8ygtysZQiOBtLs4GMqVjKqy1C7+gUbU3liAiVRT4sSxOcMVK+KmPxHFREGPk8x9YSH8X5"
+    b"OYgIm4s3oJQmGInS1T3oWnzt1JHV4CU0YWoejIRp2VnIk7EpbNsmlrCwLEVodorm+m0c3bcbgHsvPnD8"
+    b"8n3qszO2m/D47TRN2wupKNqAiKC1pjDPS0WRmUQD4RhA8gXD/r/ADhr5Pc/YxBxnjtWS7SGZy9PXB11o"
+    b"JGomFzs4F3uku6s9K6UrbIGbzyY50FDmQp0CpUMjUZNAOLaEp0vFS/8Pvk7HOHG4asXPsgD/iiveBaOM"
+    b"T8dci2sq8qks8qVvt1cfZ7n1fJJ4wuTR6zDzpnIVE2BgOEBrYxk1FfkutLWxjIHhQPodt+wqZU9NiatH"
+    b"nRb05XjoqFPcDQQBaG2uSy500LHxIJ25t+n+l0NIRGjZexB4moIvR7fU72fgKtJ68kaygFmylhMF6O+7"
+    b"w92A1zXnoNUNzXx5P0zIP4SDe8+dP8tao6Oh1nWtaSfk7wGguqF54UsWd57FOqPv4W3JnuhJ2fm64ZV4"
+    b"yD+Ermr/P/ByXFe1c7it87+5SdwZ/wEbdB5O3H8yKAAAAABJRU5ErkJggg==")
 
 wxPython_png = PyEmbeddedImage(
     b"iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAACXBIWXMAAAsTAAALEwEAmpwYAAABQUlE"
@@ -43,8 +59,7 @@ wxPython_2x_png = PyEmbeddedImage(
 class PythonDlg(wx.Dialog):
     def __init__(self, parent, id=wx.ID_ANY, title="Hello Python Dialog!",
                 pos=wx.DefaultPosition, size=wx.DefaultSize,
-                style=wx.DEFAULT_DIALOG_STYLE|wx.RESIZE_BORDER,
-                name=wx.DialogNameStr):
+                style=wx.DEFAULT_DIALOG_STYLE, name=wx.DialogNameStr):
         wx.Dialog.__init__(self)
 
         if not self.Create(parent, id, title, pos, size, style, name):
@@ -53,6 +68,18 @@ class PythonDlg(wx.Dialog):
         bSizer1 = wx.BoxSizer(wx.VERTICAL)
 
         box_sizer = wx.BoxSizer(wx.VERTICAL)
+
+        self.auiToolBar = wx.aui.AuiToolBar(self, wx.ID_ANY, wx.DefaultPosition,
+            wx.DefaultSize, wx.aui.AUI_TB_PLAIN_BACKGROUND|wx.aui.AUI_TB_DEFAULT_STYLE)
+        self.auiToolBar.AddLabel(wx.ID_ANY, "Label")
+        self.auiToolBar.AddTool(wx.ID_ANY, "Search", wx.BitmapBundle.FromBitmap(
+            fontPicker_png.Bitmap))
+        self.auiToolBar.AddSpacer(self.auiToolBar.FromDIP(10))
+
+        self.spinCtrl = wx.SpinCtrl(self.auiToolBar)
+        self.auiToolBar.AddControl(self.spinCtrl)
+        self.auiToolBar.Realize()
+        box_sizer.Add(self.auiToolBar, wx.SizerFlags().Border(wx.ALL))
 
         self.m_staticText = wx.StaticText(self, wx.ID_ANY,
             "wxPython est génial n\'est-ce pas?",

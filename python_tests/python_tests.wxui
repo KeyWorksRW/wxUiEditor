@@ -1448,7 +1448,6 @@
     <node
       class="wxDialog"
       class_name="PythonDlg"
-      style="wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER"
       title="Hello Python Dialog!"
       size="-1,-1"
       base_file="python_dlg"
@@ -1466,6 +1465,24 @@
           class="wxBoxSizer"
           orientation="wxVERTICAL"
           flags="wxEXPAND">
+          <node
+            class="wxAuiToolBar"
+            style="wxAUI_TB_PLAIN_BACKGROUND|wxAUI_TB_DEFAULT_STYLE"
+            var_name="auiToolBar">
+            <node
+              class="auitool_label"
+              label="Label" />
+            <node
+              class="auitool"
+              bitmap="Embed;art/fontPicker.png"
+              label="Search"
+              var_name="tool_2" />
+            <node
+              class="auitool_spacer" />
+            <node
+              class="wxSpinCtrl"
+              var_name="spinCtrl" />
+          </node>
           <node
             class="wxStaticText"
             label="wxPython est génial n'est-ce pas?"

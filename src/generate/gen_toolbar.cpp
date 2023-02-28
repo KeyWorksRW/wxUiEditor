@@ -21,7 +21,7 @@ wxObject* ToolBarFormGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget =
         new wxToolBar(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(parent, node, prop_pos),
-                      DlgSize(parent, node, prop_size), GetStyleInt(node) | wxTB_NOALIGN | wxTB_NODIVIDER | wxNO_BORDER);
+                      DlgSize(parent, node, prop_size), GetStyleInt(node) | wxTB_NOALIGN | wxTB_NODIVIDER);
 
     if (node->HasValue(prop_margins))
     {

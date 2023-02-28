@@ -9,11 +9,13 @@
 
 #pragma once
 
+#include <wx/aui/auibar.h>
 #include <wx/colour.h>
 #include <wx/dialog.h>
 #include <wx/event.h>
 #include <wx/gdicmn.h>
 #include <wx/settings.h>
+#include <wx/spinctrl.h>
 #include <wx/stattext.h>
 
 class PythonDlg : public wxDialog
@@ -39,8 +41,17 @@ protected:
 
     // Class member variables
 
+    wxAuiToolBar* auiToolBar;
+    wxSpinCtrl* spinCtrl;
     wxStaticText* m_staticText;
 };
+
+namespace wxue_img
+{
+    // Images declared in this class module:
+
+    extern const unsigned char fontPicker_png[763];
+}
 
 // ************* End of generated code ***********
 // DO NOT EDIT THIS COMMENT BLOCK!

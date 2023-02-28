@@ -70,6 +70,7 @@ MyToolBarBase::MyToolBarBase(wxWindow* parent, wxWindowID id, const wxPoint& pos
     m_comboBox->Append("French");
     m_comboBox->Append("Japanese");
     m_comboBox->SetStringSelection("English");
+    AddControl(m_comboBox);
 
     Realize();
 }

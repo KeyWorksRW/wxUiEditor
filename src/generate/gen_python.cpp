@@ -362,16 +362,37 @@ void BaseCodeGenerator::GeneratePythonClass(Node* form_node, PANEL_PAGE panel_ty
         m_source->writeLine();
 
         // First see if we need to import the gen_Images form
+        bool images_file_imported = false;
+        bool svg_import_libs = false;
         for (auto& iter: m_embedded_images)
         {
             if (iter->form == m_ImagesForm)
             {
-                tt_string import_name = iter->form->as_string(prop_python_file).filename();
-                import_name.remove_extension();
-                code.Str("import ").Str(import_name);
-                m_source->writeLine(code);
-                code.clear();
-                break;
+                if (!images_file_imported)
+                {
+                    tt_string import_name = iter->form->as_string(prop_python_file).filename();
+                    import_name.remove_extension();
+                    code.Str("import ").Str(import_name);
+                    m_source->writeLine(code);
+                    code.clear();
+                    images_file_imported = true;
+                }
+                if (iter->type == wxBITMAP_TYPE_INVALID)
+                {
+                    m_source->writeLine("import zlib");
+                    m_source->writeLine("import base64");
+                    svg_import_libs = true;
+                }
+            }
+            else if (!svg_import_libs)
+            {
+                // SVG images have a wxBITMAP_TYPE_INVALID type
+                if (iter->type == wxBITMAP_TYPE_INVALID)
+                {
+                    m_source->writeLine("import zlib");
+                    m_source->writeLine("import base64");
+                    svg_import_libs = true;
+                }
             }
         }
 
@@ -637,8 +658,21 @@ bool PythonBundleCode(Code& code, GenEnum::PropName prop)
 
         if (description.starts_with("SVG"))
         {
-            code += "wx.BitmapBundle.FromSVGFile(";
-            code.QuotedString(name);
+            auto embed = ProjectImages.GetEmbeddedImage(parts[IndexImage]);
+            ASSERT(embed);
+            tt_string svg_name;
+            if (embed->form != code.node()->get_form())
+            {
+                svg_name = embed->form->as_string(prop_python_file).filename();
+                svg_name.remove_extension();
+                svg_name << '.' << embed->array_name;
+            }
+            else
+            {
+                svg_name = embed->array_name;
+            }
+            code.insert(0, tt_string("_svg_string_ = zlib.decompress(base64.b64decode(") << svg_name << "))\n");
+            code += "wx.BitmapBundle.FromSVG(_svg_string_";
             wxSize svg_size { -1, -1 };
             if (parts[IndexSize].size())
             {

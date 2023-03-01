@@ -8,53 +8,9 @@
 import wx
 import wx.aui
 
-from wx.lib.embeddedimage import PyEmbeddedImage
-
-fontPicker_png = PyEmbeddedImage(
-    b"iVBORw0KGgoAAAANSUhEUgAAABYAAAAWCAYAAADEtGw7AAAACXBIWXMAAAsTAAALEwEAmpwYAAACrUlE"
-    b"QVQ4y63U30sUURTA8a/r6oaSv9OEotJMDX3xwYwgikDIh9LwjwjqIeyh/yCIoh/QQ9hrPQRFVpJmYWRU"
-    b"IFpG0W5Zku3SqmtJLTu7ztw7pwed1XE317DzdOfO3M/cOefMxbZtsW1btNaitRallChliWWZYpqmjE1E"
-    b"pH80JIlEQhKJuMTjhhiGIYYRE9u25dKVC0Ka8AKILNwTkcWxIAJK2/SOTlNekLs4J65nVwvvcmj5GITn"
-    b"/ll+RE2UpVLQTLAnHSoi/DJMPn2PkuuB8JyBqfSaUQBPOhSEvjczHGrcROlGL5ZlM/UzviJVkgmWFfkT"
-    b"vkUM5k3NjvI8ygtysZQiOBtLs4GMqVjKqy1C7+gUbU3liAiVRT4sSxOcMVK+KmPxHFREGPk8x9YSH8X5"
-    b"OYgIm4s3oJQmGInS1T3oWnzt1JHV4CU0YWoejIRp2VnIk7EpbNsmlrCwLEVodorm+m0c3bcbgHsvPnD8"
-    b"8n3qszO2m/D47TRN2wupKNqAiKC1pjDPS0WRmUQD4RhA8gXD/r/ADhr5Pc/YxBxnjtWS7SGZy9PXB11o"
-    b"JGomFzs4F3uku6s9K6UrbIGbzyY50FDmQp0CpUMjUZNAOLaEp0vFS/8Pvk7HOHG4asXPsgD/iiveBaOM"
-    b"T8dci2sq8qks8qVvt1cfZ7n1fJJ4wuTR6zDzpnIVE2BgOEBrYxk1FfkutLWxjIHhQPodt+wqZU9NiatH"
-    b"nRb05XjoqFPcDQQBaG2uSy500LHxIJ25t+n+l0NIRGjZexB4moIvR7fU72fgKtJ68kaygFmylhMF6O+7"
-    b"w92A1zXnoNUNzXx5P0zIP4SDe8+dP8tao6Oh1nWtaSfk7wGguqF54UsWd57FOqPv4W3JnuhJ2fm64ZV4"
-    b"yD+Ermr/P/ByXFe1c7it87+5SdwZ/wEbdB5O3H8yKAAAAABJRU5ErkJggg==")
-
-wxPython_png = PyEmbeddedImage(
-    b"iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAACXBIWXMAAAsTAAALEwEAmpwYAAABQUlE"
-    b"QVQ4y42TMVLDQAxFnwMHoKTMDXKDIB/CJb5CTsCgDG3uwBB3OQIUckpmSBF6MzEHIG06UXgd27ET+DOa"
-    b"3dXO/pW+JOhCVNWTJDH+idHJYwNYrVYiIq6qDsjfNFOMBS4zcXd3VXUzczOrSS5CWOC8BUsrMzN3d5eZ"
-    b"XIziuue5r5Z4E8NzOO8xlkRDBFfAjgPCDWNug3cLTIIR1owIyIcIKErK6JXyPWNNxpoD8M34SABQAiUv"
-    b"gAbP7nhXNM5T6FGflEqLFGdBo0sBUpwRKUkw+2kJPKXqj7S1vwA1w91x+QgEzc/aiaJX1lBK98q0aEVR"
-    b"p1ulpKOBnrC6lDXyfed4d66VYcojk1DGJfM8rx53CNIQ4f0Qwbib0/wL4k3LkQG70AtP5IBGvZl4GBBm"
-    b"C3wCS+KhZurXPm1mIoh2dhZ+Ad+Nn/PyqjymAAAAAElFTkSuQmCC")
-
-wxPython_1_5x_png = PyEmbeddedImage(
-    b"iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAACXBIWXMAAAsTAAALEwEAmpwYAAACr0lE"
-    b"QVRIx62Uz0sUYRjHP+sPSOiweEkicEDsIrjToZPQjhc7dGitW6Cup/SwsJt6dj2XTCBk0GFW+gPsbId3"
-    b"FSo9OSsIYSwzXrQgdkeUTsbbYV63cXbGVesLL8877/v84P3O83zbiYaeTqcPNU0rdnZ2HtVqtU3+I9K5"
-    b"XM6RCpZlSWA+sP4JOuAIIaRhGNKyLCmllLquSyGEFEJIwLxOYo0BtnmCZA5pvjPPHiANw5D1el2Wy+WG"
-    b"BYqXTdyh7AST6KT8j8JagaOFIwBc18XzPIQQ9Pb2XpOWDA4fkHwMrFd/Vz6fb7xIf6pLMjiKzpZIqAKr"
-    b"TKBxM8arCrxR+0VlZ4EKiVYF2oHvfCXJfQx6Yry6gYdqBfGZfcC+qECbsitY2CxHeCzHRI4AkL0MRWcs"
-    b"6Fvw+lnYI0+KOyTpAW413dnsMgq4QFqdVgDvXIGqfzncF91+WUDjAWk0DMYCNzvADAuAwxglALYoscdk"
-    b"uE0NoBzzSj9wA40NNE4QTDf5VNhRtL0gyxQeUABoq/rttg88bsXn0BDmdgm0G+pgEJhjntsYVEjwkiIn"
-    b"wAAGoF11XuaFQEqJLFZDM5NCNpjI4LDIlaYdQORyOPW6X8D5hdQ3AwXeEtQowSqNYey4IGmSfky6yDIO"
-    b"3ceQTCrh6oJkMLIPgHvqa5gikhQaIbfz6MfkOVlSqluuAtk8aGGYzKjkEVg5BPu46TgVNXhtMdJtqGf7"
-    b"OjTDeq2G63ngnUK57ttQ+iRzWAwiG3oVU8CX7vNSYSwtUbJtKOxB6SAUsaZoGVFi+APYZx1wO1ryOQ1M"
-    b"IcigFX6DfRDhswb8pMCs6qRTbHbJAm4iUhrymDwieWHhKnACfMJlldE4VY3T8yzjWAyqXxfEe2W/sMI3"
-    b"XCUx5ZZqGgGDu0zQFeqMCsNqZwdVMw5/ANThGfS+jW3VAAAAAElFTkSuQmCC")
-
-wxPython_2x_png = PyEmbeddedImage(
-    b"iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAAElBMVEUBAAAAAAAAuwD//wD////dAABp"
-    b"I5D7AAAAAXRSTlMAQObYZgAAAJdJREFUeNp900sKxDAAw9BKTe5/5SFDawjEzVYP0+/1HuD6Oowx+O5L"
-    b"1BkYMEabAVda/ShQ5Q+gAoEsnLqZkQ4EtIqcDqp4CA1cEwDqwswSRgBbj3lA7iYgJAuvmJvgzlWQia3f"
-    b"ESgF1AlW7xNgwGkC/QTYQbqkCwcAASIYkOfH20U9gXTSA3R74wD9q0o6Cii/V60hHOoPwvkD1WDE+MAA"
-    b"AAAASUVORK5CYII=")
+import images
+import zlib
+import base64
 
 class PythonDlg(wx.Dialog):
     def __init__(self, parent, id=wx.ID_ANY, title="Hello Python Dialog!",
@@ -73,7 +29,7 @@ class PythonDlg(wx.Dialog):
             wx.DefaultSize, wx.aui.AUI_TB_PLAIN_BACKGROUND|wx.aui.AUI_TB_DEFAULT_STYLE)
         self.auiToolBar.AddLabel(wx.ID_ANY, "Label")
         self.auiToolBar.AddTool(wx.ID_ANY, "Search", wx.BitmapBundle.FromBitmap(
-            fontPicker_png.Bitmap))
+            images.fontPicker_png.Bitmap))
         self.auiToolBar.AddSpacer(self.auiToolBar.FromDIP(10))
 
         self.spinCtrl = wx.SpinCtrl(self.auiToolBar)
@@ -90,10 +46,9 @@ class PythonDlg(wx.Dialog):
         self.m_staticText.SetForegroundColour(wx.Colour(0, 128, 0))
         box_sizer.Add(self.m_staticText, wx.SizerFlags().Center().Border(wx.ALL))
 
-        bitmaps = [ wxPython_png.Bitmap,
-                    wxPython_1_5x_png.Bitmap,
-                    wxPython_2x_png.Bitmap ]
-        bmp = wx.StaticBitmap(self, wx.ID_ANY, wx.BitmapBundle.FromBitmaps(bitmaps))
+        _svg_string_ = zlib.decompress(base64.b64decode(images.face_smile_svg))
+        bmp = wx.StaticBitmap(self, wx.ID_ANY, wx.BitmapBundle.FromSVG(_svg_string_,
+            wx.Size(32, 32)))
         box_sizer.Add(bmp, wx.SizerFlags().Border(wx.ALL))
 
         bSizer1.Add(box_sizer, wx.SizerFlags().Expand().Border(wx.ALL))

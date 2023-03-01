@@ -112,7 +112,15 @@ void BaseCodeGenerator::WriteImageConstruction(Code& code)
             {
                 continue;
             }
-            code.Eol().Str(iter_array->array_name).Str(" = PyEmbeddedImage(");
+            code.Eol().Str(iter_array->array_name);
+            if (iter_array->type == wxBITMAP_TYPE_INVALID)
+            {
+                code.Str(" = (");
+            }
+            else
+            {
+                code.Str(" = PyEmbeddedImage(");
+            }
             m_source->writeLine(code);
             code.clear();
             auto encoded = base64_encode(iter_array->array_data.get(), iter_array->array_size & 0xFFFFFFFF);
@@ -426,7 +434,16 @@ void BaseCodeGenerator::GeneratePythonImagesForm()
         if (iter_array->form != m_form_node)
             continue;
 
-        code.Eol().Str(iter_array->array_name).Str(" = PyEmbeddedImage(");
+        code.Eol().Str(iter_array->array_name);
+        if (iter_array->type == wxBITMAP_TYPE_INVALID)
+        {
+            code.Str(" = (");
+        }
+        else
+        {
+            code.Str(" = PyEmbeddedImage(");
+        }
+
         m_source->writeLine(code);
         code.clear();
         auto encoded = base64_encode(iter_array->array_data.get(), iter_array->array_size & 0xFFFFFFFF);

@@ -40,6 +40,7 @@ inline const GenType lst_form_types[] =
 
 const std::vector<std::string> reserved_names = {
     "bitmaps",  // used for wxBitmapBundle
+    "_svg_string_", // used for python SVG image processing
 
     "bundle_list",  // used for wxBitmapBundle, primarily for books
 

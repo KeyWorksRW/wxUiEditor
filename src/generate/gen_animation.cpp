@@ -107,7 +107,7 @@ bool AnimationGenerator::ConstructionCode(Code& code)
             }
             else
             {
-                PythonBundleCode(code, prop_bitmap);
+                PythonBundleCode(code, prop_inactive_bitmap);
             }
         }
         code.EndFunction();

@@ -24,14 +24,14 @@ public:
     PythonDlg() {}
     PythonDlg(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "Hello Python Dialog!",
         const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
-        long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER, const wxString &name = wxDialogNameStr)
+        long style = wxDEFAULT_DIALOG_STYLE, const wxString &name = wxDialogNameStr)
     {
         Create(parent, id, title, pos, size, style, name);
     }
 
     bool Create(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "Hello Python Dialog!",
         const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
-        long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER, const wxString &name = wxDialogNameStr);
+        long style = wxDEFAULT_DIALOG_STYLE, const wxString &name = wxDialogNameStr);
 
 protected:
 
@@ -45,13 +45,6 @@ protected:
     wxSpinCtrl* spinCtrl;
     wxStaticText* m_staticText;
 };
-
-namespace wxue_img
-{
-    // Images declared in this class module:
-
-    extern const unsigned char fontPicker_png[763];
-}
 
 // ************* End of generated code ***********
 // DO NOT EDIT THIS COMMENT BLOCK!

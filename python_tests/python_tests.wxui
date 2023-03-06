@@ -1502,6 +1502,23 @@
           <node
             class="wxStaticBitmap"
             bitmap="SVG;art/face-smile.svg;[32,32]" />
+          <node
+            class="StaticCheckboxBoxSizer"
+            checkbox_var_name="m_checkPlayAnimation"
+            checked="0"
+            label="Play Animation"
+            var_name="static_box_2"
+            wxEVT_CHECKBOX="[this](wxCommandEvent&amp;)@@{@@if (m_checkPlayAnimation->GetValue()) @@{@@    m_animation_ctrl->Play();@@}@@else @@{  @@    m_animation_ctrl->Stop();@@}@@}[python:]">
+            <node
+              class="wxToggleButton"
+              label="Play Animation"
+              style="wxBU_EXACTFIT"
+              wxEVT_TOGGLEBUTTON="[this](wxCommandEvent&amp;)@@{@@if (m_toggleBtn->GetValue()) @@{@@    m_animation_ctrl->Play();@@    m_checkPlayAnimation->SetValue(true);@@}@@else @@{  @@    m_animation_ctrl->Stop();@@    m_checkPlayAnimation->SetValue(false);@@}@@Fit();@@}[python:lambda]self.m_animation_ctrl.Play()" />
+            <node
+              class="wxAnimationCtrl"
+              animation="Embed;art/clr_hourglass.gif"
+              inactive_bitmap="Embed;art/disabled.png" />
+          </node>
         </node>
         <node
           class="wxStdDialogButtonSizer"
@@ -1864,8 +1881,8 @@
                 wxEVT_TOGGLEBUTTON="[this](wxCommandEvent&amp;)@@{@@if (m_toggleBtn->GetValue()) @@{@@    m_animation_ctrl->Play();@@    m_checkPlayAnimation->SetValue(true);@@}@@else @@{  @@    m_animation_ctrl->Stop();@@    m_checkPlayAnimation->SetValue(false);@@}@@@@m_infoBar->ShowMessage(&quot;wxEVT_TOGGLEBUTTON event&quot;);@@Fit();@@}" />
               <node
                 class="wxAnimationCtrl"
-                animation="Header;../art/clr_hourglass_gif.hxx"
-                inactive_bitmap="XPM;../art/empty.xpm" />
+                animation="Embed;art/clr_hourglass.gif"
+                inactive_bitmap="Embed;art/disabled.png" />
             </node>
             <node
               class="CustomControl"

@@ -27,12 +27,18 @@
 
 #include "commonctrls.h"
 
-#include "../art/clr_hourglass_gif.hxx"
-#include "../art/empty.xpm"
-
 #include <wx/animate.h>
 
 #include <wx/mstream.h>  // memory stream classes
+
+// Convert a data array into a wxImage
+inline wxImage wxueImage(const unsigned char* data, size_t size_data)
+{
+    wxMemoryInputStream strm(data, size_data);
+    wxImage image;
+    image.LoadFile(strm);
+    return image;
+};
 
 // Convert a data array into a wxAnimation
 inline wxAnimation wxueAnimation(const unsigned char* data, size_t size_data)
@@ -44,6 +50,8 @@ inline wxAnimation wxueAnimation(const unsigned char* data, size_t size_data)
 };
 namespace wxue_img
 {
+    extern const unsigned char clr_hourglass_gif[2017];
+    extern const unsigned char disabled_png[437];
     extern const unsigned char face_smile_svg[1781];
 }
 
@@ -52,6 +60,10 @@ bool CommonCtrls::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 {
     if (!wxDialog::Create(parent, id, title, pos, size, style, name))
         return false;
+    if (!wxImage::FindHandler(wxBITMAP_TYPE_GIF))
+        wxImage::AddHandler(new wxGIFHandler);
+    if (!wxImage::FindHandler(wxBITMAP_TYPE_PNG))
+        wxImage::AddHandler(new wxPNGHandler);
 
     auto* parent_sizer = new wxBoxSizer(wxVERTICAL);
 
@@ -270,9 +282,9 @@ bool CommonCtrls::Create(wxWindow* parent, wxWindowID id, const wxString& title,
         wxDefaultSize, wxBU_EXACTFIT);
     static_box_2->Add(m_toggleBtn, wxSizerFlags().Border(wxALL));
 
-    m_animation_ctrl = new wxAnimationCtrl(static_box_2->GetStaticBox(), wxID_ANY, wxueAnimation(clr_hourglass_gif, sizeof(clr_hourglass_gif)),
+    m_animation_ctrl = new wxAnimationCtrl(static_box_2->GetStaticBox(), wxID_ANY, wxueAnimation(wxue_img::clr_hourglass_gif, sizeof(wxue_img::clr_hourglass_gif)),
         wxDefaultPosition, wxDefaultSize, wxAC_DEFAULT_STYLE);
-    m_animation_ctrl->SetInactiveBitmap(wxImage(empty_xpm));
+    m_animation_ctrl->SetInactiveBitmap(wxueImage(wxue_img::disabled_png, sizeof(wxue_img::disabled_png)));
     static_box_2->Add(m_animation_ctrl, wxSizerFlags().Border(wxALL));
 
     flex_grid_sizer->Add(static_box_2, wxSizerFlags().Border(wxALL));

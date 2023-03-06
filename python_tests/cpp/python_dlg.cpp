@@ -16,13 +16,37 @@
 #include <wx/button.h>
 #include <wx/sizer.h>
 #include <wx/statbmp.h>
+#include <wx/statbox.h>
 
 #include "images.h"
 
 #include "python_dlg.h"
 
+#include <wx/animate.h>
+
+#include <wx/mstream.h>  // memory stream classes
+
+// Convert a data array into a wxImage
+inline wxImage wxueImage(const unsigned char* data, size_t size_data)
+{
+    wxMemoryInputStream strm(data, size_data);
+    wxImage image;
+    image.LoadFile(strm);
+    return image;
+};
+
+// Convert a data array into a wxAnimation
+inline wxAnimation wxueAnimation(const unsigned char* data, size_t size_data)
+{
+    wxMemoryInputStream strm(data, size_data);
+    wxAnimation animation;
+    animation.Load(strm);
+    return animation;
+};
 namespace wxue_img
 {
+    extern const unsigned char clr_hourglass_gif[2017];
+    extern const unsigned char disabled_png[437];
     extern const unsigned char face_smile_svg[1781];
     extern const unsigned char fontPicker_png[763];
 }
@@ -32,6 +56,8 @@ bool PythonDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 {
     if (!wxDialog::Create(parent, id, title, pos, size, style, name))
         return false;
+    if (!wxImage::FindHandler(wxBITMAP_TYPE_GIF))
+        wxImage::AddHandler(new wxGIFHandler);
     if (!wxImage::FindHandler(wxBITMAP_TYPE_PNG))
         wxImage::AddHandler(new wxPNGHandler);
 
@@ -71,6 +97,26 @@ bool PythonDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 #endif
     box_sizer->Add(bmp, wxSizerFlags().Border(wxALL));
 
+    m_checkPlayAnimation = new wxCheckBox(this, wxID_ANY, "Play Animation");
+    auto* static_box_2 = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY,
+#if wxCHECK_VERSION(3, 1, 1)
+        m_checkPlayAnimation),
+#else
+        wxEmptyString),
+#endif
+    wxVERTICAL);
+
+    m_toggleBtn = new wxToggleButton(static_box_2->GetStaticBox(), wxID_ANY, "Play Animation", wxDefaultPosition,
+        wxDefaultSize, wxBU_EXACTFIT);
+    static_box_2->Add(m_toggleBtn, wxSizerFlags().Border(wxALL));
+
+    m_animation_ctrl = new wxAnimationCtrl(static_box_2->GetStaticBox(), wxID_ANY, wxueAnimation(wxue_img::clr_hourglass_gif, sizeof(wxue_img::clr_hourglass_gif)),
+        wxDefaultPosition, wxDefaultSize, wxAC_DEFAULT_STYLE);
+    m_animation_ctrl->SetInactiveBitmap(wxueImage(wxue_img::disabled_png, sizeof(wxue_img::disabled_png)));
+    static_box_2->Add(m_animation_ctrl, wxSizerFlags().Border(wxALL));
+
+    box_sizer->Add(static_box_2, wxSizerFlags().Border(wxALL));
+
     bSizer1->Add(box_sizer, wxSizerFlags().Expand().Border(wxALL));
 
     auto* stdBtn = CreateStdDialogButtonSizer(wxOK|wxCANCEL);
@@ -80,7 +126,34 @@ bool PythonDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     Centre(wxBOTH);
 
     // Event handlers
+    m_checkPlayAnimation->Bind(wxEVT_CHECKBOX,
+        [this](wxCommandEvent&)
+        {
+            if (m_checkPlayAnimation->GetValue()) 
+            {
+                m_animation_ctrl->Play();
+            }
+            else 
+            {  
+                m_animation_ctrl->Stop();
+            }
+        });
     Bind(wxEVT_INIT_DIALOG, &PythonDlg::OnInit, this);
+    m_toggleBtn->Bind(wxEVT_TOGGLEBUTTON,
+        [this](wxCommandEvent&)
+        {
+            if (m_toggleBtn->GetValue()) 
+            {
+                m_animation_ctrl->Play();
+                m_checkPlayAnimation->SetValue(true);
+            }
+            else 
+            {  
+                m_animation_ctrl->Stop();
+                m_checkPlayAnimation->SetValue(false);
+            }
+            Fit();
+        });
 
     return true;
 }

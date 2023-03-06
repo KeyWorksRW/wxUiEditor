@@ -9,14 +9,20 @@
 
 #pragma once
 
+#include <wx/animate.h>
 #include <wx/aui/auibar.h>
+#include <wx/bitmap.h>
+#include <wx/checkbox.h>
 #include <wx/colour.h>
 #include <wx/dialog.h>
 #include <wx/event.h>
 #include <wx/gdicmn.h>
+#include <wx/icon.h>
+#include <wx/image.h>
 #include <wx/settings.h>
 #include <wx/spinctrl.h>
 #include <wx/stattext.h>
+#include <wx/tglbtn.h>
 
 class PythonDlg : public wxDialog
 {
@@ -41,9 +47,12 @@ protected:
 
     // Class member variables
 
+    wxAnimationCtrl* m_animation_ctrl;
     wxAuiToolBar* auiToolBar;
+    wxCheckBox* m_checkPlayAnimation;
     wxSpinCtrl* spinCtrl;
     wxStaticText* m_staticText;
+    wxToggleButton* m_toggleBtn;
 };
 
 // ************* End of generated code ***********

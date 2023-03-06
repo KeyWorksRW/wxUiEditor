@@ -1008,6 +1008,8 @@ Code& Code::PosSizeFlags(bool uses_def_validator, tt_string_view def_style)
         if (def_style.size() && ends_with(def_style))
         {
             erase(size() - def_style.size());
+            if (back() == '|')
+                pop_back();
         }
     }
     else if (m_node->prop_as_wxSize(prop_size) != wxDefaultSize)

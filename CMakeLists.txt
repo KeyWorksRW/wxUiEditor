@@ -16,14 +16,26 @@ endif()
 
 option(INTERNAL_BLD_TESTING "Build with internal testing functionality")
 
-# This option is designed to make it possible to check changes to a wxWidgets fork, and/or to build with the current
-# wxWidgets sources (assuming the wxWidgets fork is in sync). Realistically, this is only going to be usable by the
-# maintainers of this project.
+# This option is designed to make it possible to check changes to a wxWidgets fork, and/or to
+# build with the current wxWidgets sources (assuming the wxWidgets fork is in sync).
+# Realistically, this is only going to be usable by the maintainers of this project.
 option(INTERNAL_BLD_FORK "Assumes the existance of ../wxWidgets/bld/CMakeLists.txt")
 
-# If this is set, you must build the library yourself. This is required if you build a UNIX version as otherwise wxCLib will
-# conflict with Unix dll versions of the sub-libraries such as wxpng.
+# If this is set, you must build the library yourself. This is required if you build a UNIX
+# version as otherwise wxCLib will conflict with Unix dll versions of the sub-libraries such as
+# wxpng.
 option(INTERNAL_BLD_WX_CMAKE "When building fork, use wxWidgets build system")
+
+# The following options cannot be combined, are only usable for MSVC compiler, and are only for
+# a Release build.
+
+# [Randalphwa - 03-06-2023] Using MSVC Version 19.32.31332 with profiling on changes how
+# node->as_checklist_items() works, resulting in invalid C++ code generation for
+# wxCheckListBox. As such, the options to profile have been disabled until this can be tested
+# again on a newer compiler.
+
+# option(INTERNAL_PGO_GENERATE "Create instrumented build for profiling run (MSVC only)" OFF)
+# option(INTERNAL_PGO_USEPROFILE "Create optimized build using profile data (MSVC only)" OFF)
 
 ####################### Check for Multi-Config Generator #######################
 
@@ -53,8 +65,8 @@ if (MSVC)
     string(REPLACE "/O2" "/O1" cl_optimize "${CMAKE_CXX_FLAGS_RELEASE}")
     set(CMAKE_CXX_FLAGS_RELEASE ${cl_optimize} CACHE STRING "C++ Release flags" FORCE)
 
-    # Using /Z7 instead of /Zi to avoid blocking while parallel compilers write to the pdb file.
-    # This can considerably speed up build times at the cost of larger object files.
+    # Using /Z7 instead of /Zi to avoid blocking while parallel compilers write to the pdb
+    # file. This can considerably speed up build times at the cost of larger object files.
     string(REPLACE "/Zi" "/Z7" z_seven "${CMAKE_CXX_FLAGS_DEBUG}")
     set(CMAKE_CXX_FLAGS_DEBUG ${z_seven} CACHE STRING "C++ Debug flags" FORCE)
 
@@ -122,8 +134,9 @@ endif()
 ####################### Libraries and Executables #######################
 
 
-# Setting CMAKE_MODULE_PATH causes ninja to fail rebuilding until CMake re-generates. Specifying the full path and extension
-# means ninja sees this as a normal dependency that didn't change any time one of the files it specifies changes.
+# Setting CMAKE_MODULE_PATH causes ninja to fail rebuilding until CMake re-generates.
+# Specifying the full path and extension means ninja sees this as a normal dependency that
+# didn't change any time one of the files it specifies changes.
 
 include( src/wxui/wxui_code.cmake )  # This will set ${wxue_generated_code} with list of generated files
 include( src/file_list.cmake )       # This will set ${file_list} with a list of source files
@@ -180,9 +193,9 @@ if (MSVC)
     target_compile_options(wxUiEditor PRIVATE "$<$<CONFIG:Release>:/GL>" "/FC" "/W4" "/Zc:__cplusplus" "/utf-8")
     target_link_options(wxUiEditor PRIVATE "$<$<CONFIG:Release>:/LTCG>")
 
-    if (PGO_GENERATE)
-        if (PGO_USEPROFILE)
-            message(FATAL_ERROR "You cannot set both PGO_GENERATE and PGO_USEPROFILE")
+    if (INTERNAL_PGO_GENERATE)
+        if (INTERNAL_PGO_USEPROFILE)
+            message(FATAL_ERROR "You cannot set both INTERNAL_PGO_GENERATE and INTERNAL_PGO_USEPROFILE")
         endif()
 
         message(NOTICE "Creating instrumented build for profiling run")
@@ -190,7 +203,7 @@ if (MSVC)
         target_link_options(wxUiEditor PRIVATE "$<$<CONFIG:Release>:/GENPROFILE:EXACT>")
     endif()
 
-    if (PGO_USEPROFILE)
+    if (INTERNAL_PGO_USEPROFILE)
         message(NOTICE "Creating optimized build using profile data")
 
         target_link_options(wxUiEditor PRIVATE "$<$<CONFIG:Release>:/USEPROFILE>")

@@ -145,10 +145,10 @@ bool ToolBarFormGenerator::SettingsCode(Code& code)
     GenFormSettings(code);
 
     if (code.IsTrue(prop_disabled))
-        code.Eol(eol_if_needed).FormFunction("Disable()").EndFunction();
+        code.Eol(eol_if_needed).FormFunction("Disable(").EndFunction();
 
     if (code.IsTrue(prop_hidden))
-        code.Eol(eol_if_needed).FormFunction("Hide()").EndFunction();
+        code.Eol(eol_if_needed).FormFunction("Hide(").EndFunction();
 
     if (!code.is_value(prop_separation, 5))
     {

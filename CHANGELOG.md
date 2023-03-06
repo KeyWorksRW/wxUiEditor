@@ -1,7 +1,7 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
-## [Unreleased (1.1.0)]
+## [Released (1.1.0)]
 
 The biggest change is the ability to generate wxPython code. In addition, several improvements have been made for C++ code generation. For both languages, you can now add your own code at the end of the generated files, often eliminating the need to create an inherited class.
 
@@ -52,3 +52,5 @@ The right-click menu for a widget in the Navigation Panel will sometimes have a 
 - Fixed non-combined XRC generation.
 - Fixed several problems when importing XRC files.
 - #include \<wx/aui/auibar.h\> now added when creating a wxAuiToolBar
+
+## [Unreleased (1.1.1)]

@@ -1,6 +1,6 @@
 # ![logo](src/art_src/logo64.png) wxUiEditor
 
-This WYSIWYG tool is used to create and maintain [wxWidgets](https://docs.wxwidgets.org/trunk/index.html) UI elements (dialogs, menus, etc.), generating either C++ or XRC code. Minimal requirement for compiling C++ output files is a C++11 compliant compiler and **wxWidgets** 3.0 (version 3.2 needed for full functionality).
+This WYSIWYG tool is used to create and maintain [wxWidgets](https://docs.wxwidgets.org/trunk/index.html) UI elements (dialogs, menus, etc.), generating either C++, Python or XRC code. Minimal requirement for compiling C++ output files is a C++11 compliant compiler and **wxWidgets** 3.0 (version 3.2 needed for full functionality). Minimal requirement for Python code is wxPython 4.2.
 
 In addition to creating new projects, the following project types can be imported:
 

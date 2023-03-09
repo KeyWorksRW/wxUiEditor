@@ -345,7 +345,6 @@ namespace GenEnum
         prop_show_hidden,
         prop_show_header,
         prop_size,
-        prop_smart_size,
         prop_source_ext,
         prop_spellcheck,
         prop_splitmode,
@@ -426,10 +425,8 @@ namespace GenEnum
 
         prop_folder_python_combined_file,
         prop_folder_python_output_folder,
-        prop_python_call_skip,
         prop_python_combine_forms,
         prop_python_combined_file,
-        prop_python_copy_art,  // Copy art files to output folder
         prop_python_file,
         prop_python_inherit_name,
         prop_python_insert,

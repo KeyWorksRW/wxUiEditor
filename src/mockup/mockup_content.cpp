@@ -338,31 +338,12 @@ void MockupContent::CreateChildren(Node* node, wxWindow* parent, wxObject* paren
 // Note that this is a static function also called by CreateMockupChildren in mockup_preview.cpp
 void MockupContent::SetWindowProperties(Node* node, wxWindow* window, wxWindow* convert_win)
 {
-    bool is_smart_size { false };  // true means prop_size and prop_minimum_size will be ignored
-
-    if (auto size = node->prop_as_wxSize(prop_smart_size); size != wxDefaultSize)
+    if (auto minsize = node->prop_as_wxSize(prop_minimum_size); minsize != wxDefaultSize)
     {
-        is_smart_size = true;
-        if (size.x > 0)
-            size.x = (size.x > window->GetBestSize().x ? size.x : -1);
-        if (size.y > 0)
-            size.y = (size.y > window->GetBestSize().y ? size.y : -1);
-
-        if (node->prop_as_string(prop_smart_size).contains("d", tt::CASE::either))
-            window->SetInitialSize(convert_win->ConvertDialogToPixels(size));
+        if (node->prop_as_string(prop_minimum_size).contains("d", tt::CASE::either))
+            window->SetMinSize(convert_win->ConvertDialogToPixels(minsize));
         else
-            window->SetInitialSize(size);
-    }
-
-    if (!is_smart_size)
-    {
-        if (auto minsize = node->prop_as_wxSize(prop_minimum_size); minsize != wxDefaultSize)
-        {
-            if (node->prop_as_string(prop_minimum_size).contains("d", tt::CASE::either))
-                window->SetMinSize(convert_win->ConvertDialogToPixels(minsize));
-            else
-                window->SetMinSize(minsize);
-        }
+            window->SetMinSize(minsize);
     }
 
     if (auto maxsize = node->prop_as_wxSize(prop_maximum_size); maxsize != wxDefaultSize)

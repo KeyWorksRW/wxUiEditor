@@ -339,7 +339,6 @@ std::map<GenEnum::PropName, const char*> GenEnum::map_PropNames = {
     { prop_show_header, "show_header" },
     { prop_show_hidden, "show_hidden" },
     { prop_size, "size" },
-    { prop_smart_size, "smart_size" },
     { prop_source_ext, "source_ext" },
     { prop_spellcheck, "spellcheck" },
     { prop_splitmode, "splitmode" },
@@ -420,10 +419,8 @@ std::map<GenEnum::PropName, const char*> GenEnum::map_PropNames = {
 
     { prop_folder_python_combined_file, "folder_python_combined_file" },
     { prop_folder_python_output_folder, "folder_python_output_folder" },
-    { prop_python_call_skip, "python_call_skip" },
     { prop_python_combine_forms, "python_combine_forms" },
     { prop_python_combined_file, "python_combined_file" },
-    { prop_python_copy_art, "python_copy_art" },
     { prop_python_file, "python_file" },
     { prop_python_inherit_name, "python_inherit_name" },
     { prop_python_insert, "insert_python_code" },

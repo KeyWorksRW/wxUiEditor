@@ -116,10 +116,6 @@ void GenXrcSizerItem(Node* node, pugi::xml_node& object)
 
 void GenXrcComments(Node* node, pugi::xml_node& object, size_t supported_flags)
 {
-    if (node->HasValue(prop_smart_size))
-    {
-        object.append_child(pugi::node_comment).set_value(" smart size cannot be be set in the XRC file. ");
-    }
     if (node->HasValue(prop_maximum_size) && !(supported_flags & xrc::max_size_supported))
     {
         object.append_child(pugi::node_comment).set_value(" maximum size cannot be be set in the XRC file. ");

@@ -1,0 +1,12 @@
+inline const char* doc_view_app_xml = R"===(<?xml version="1.0"?>
+<!DOCTYPE GeneratorDefinitions SYSTEM "gen.dtd">
+<GeneratorDefinitions>
+    <gen class="DocViewApp" image="wxFrame" type="DocViewApp">
+	</gen>
+
+    <gen class="DocumentTextCtrl" image="wxTextCtrl" type="wx_document">
+	</gen>
+
+    <gen class="ViewTextCtrl" image="wxTextCtrl" type="wx_view">
+	</gen>
+</GeneratorDefinitions>)===";

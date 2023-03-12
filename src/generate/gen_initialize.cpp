@@ -106,6 +106,11 @@
 #include "gen_ribbon_page.h"     // RibbonPageGenerator -- wxRibbonPage and wxRibbonPanel generators
 #include "gen_ribbon_tool.h"     // RibbonToolBarGenerator -- wxRibbonButtonBar generator
 
+#include "gen_doc_view_app.h"  // Generates base class for wxDocument/wView applications
+
+#include "gen_doc_textctrl.h"   // wxTextCtrl document class
+#include "gen_view_textctrl.h"  // wxTextCtrl view class
+
 #include "gen_enums.h"  // Enumerations for generators
 
 using namespace GenEnum;
@@ -260,6 +265,10 @@ void NodeCreator::InitGenerators()
     SET_GENERATOR(gen_TextSizer, TextSizerGenerator)
 
     SET_GENERATOR(gen_CustomControl, CustomControl)
+
+    SET_GENERATOR(gen_DocViewApp, DocViewAppGenerator)
+    SET_GENERATOR(gen_DocumentTextCtrl, TextDocumentGenerator)
+    SET_GENERATOR(gen_ViewTextCtrl, TextViewGenerator)
 
     SET_GENERATOR(gen_Project, ProjectGenerator)
     SET_GENERATOR(gen_folder, FolderGenerator)

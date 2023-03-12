@@ -57,6 +57,13 @@ namespace GenEnum
 
     enum PropName : size_t
     {
+        prop_template_description,
+        prop_template_directory,
+        prop_template_extension,
+        prop_template_filter,
+        prop_template_visible,
+        prop_template_view_name,
+
         prop_Apply,
         prop_BottomDockable,
         prop_Cancel,
@@ -520,6 +527,13 @@ namespace GenEnum
         type_wizard,
         type_wizardpagesimple,
 
+        type_DocViewApp,
+        type_wx_document,
+        type_wx_view,
+
+        type_empty_menubar,
+        type_doc_menubar,
+
         // This must always be the last item as it is used to calculate the array size needed to store all items
         gen_type_array_size,
         gen_type_unknown = gen_type_array_size
@@ -564,9 +578,18 @@ namespace GenEnum
         gen_wxTopLevelWindow,
         gen_wxWindow,
 
+        // These are special purpose generators. gen_Images is used for code, but gen_folder is
+        // just for organtizing forms in the Navigation panel.
+
         gen_Images,
         gen_folder,
         gen_sub_folder,
+
+        // These are for DocViewApp
+
+        gen_DocViewApp,
+        gen_DocumentTextCtrl,
+        gen_ViewTextCtrl,
 
         // The following are the rergular generators
 

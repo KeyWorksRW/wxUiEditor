@@ -164,6 +164,13 @@ set (file_list
     generate/gen_popup_trans_win.cpp    # wxPopupTransientWindow generator
     generate/gen_wizard.cpp             # wxWizard generator
 
+    # Document Management
+
+    generate/gen_doc_view_app.cpp   # Generates base class for wxDocument/wView applications
+
+    generate/gen_doc_textctrl.cpp   # wxTextCtrl document class
+    generate/gen_view_textctrl.cpp  # wxTextCtrl view class
+
     # Menus
 
     generate/menu_widgets.cpp      # Menu generation classes

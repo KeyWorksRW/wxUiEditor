@@ -51,6 +51,13 @@ std::unordered_map<std::string_view, PropType, str_view_hash, std::equal_to<>> G
 
 std::map<GenEnum::PropName, const char*> GenEnum::map_PropNames = {
 
+    { prop_template_description, "template_description" },
+    { prop_template_directory, "template_directory" },
+    { prop_template_extension, "template_extension" },
+    { prop_template_filter, "template_filter" },
+    { prop_template_visible, "template_visible" },
+    { prop_template_view_name, "prop_template_view_name" },
+
     { prop_Apply, "Apply" },
     { prop_BottomDockable, "BottomDockable" },
     { prop_Cancel, "Cancel" },
@@ -500,6 +507,13 @@ std::map<GenType, std::string_view> GenEnum::map_GenTypes = {
     { type_wizard, "wizard" },
     { type_wizardpagesimple, "wizardpagesimple" },
 
+    { type_DocViewApp, "DocViewApp" },
+    { type_wx_document, "wx_document" },
+    { type_wx_view, "wx_view" },
+
+    { type_empty_menubar, "empty_menubar" },
+    { type_doc_menubar, "type_doc_menubar" },
+
 };
 
 std::map<GenEnum::GenName, const char*> GenEnum::map_GenNames = {
@@ -541,6 +555,12 @@ std::map<GenEnum::GenName, const char*> GenEnum::map_GenNames = {
     { gen_Images, "Images" },
     { gen_folder, "folder" },
     { gen_sub_folder, "sub_folder" },
+
+    // These are for wxDocManager
+
+    { gen_DocViewApp, "DocViewApp" },
+    { gen_DocumentTextCtrl, "DocumentTextCtrl" },
+    { gen_ViewTextCtrl, "ViewTextCtrl" },
 
     // The following are the regular generators
 

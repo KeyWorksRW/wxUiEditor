@@ -137,14 +137,15 @@ constexpr const char* txtAppname = "wxUiEditor";
 // This is the highest project number supported by this build of wxUiEditor. It should be
 // updated after every release, if there are any changes to the project format that might
 // require a newer version.
-constexpr const int curSupportedVer = 16;
+constexpr const int curSupportedVer = 17;
 
 // This is the default minimum required version for all generators. It is the version used by
 // the 1.0.0 release.
 constexpr const int minRequiredVer = 15;
 
-// 1.0 == version 15
-// 1.1 == version 16
+// 1.0.0 == version 15
+// 1.1.0 == version 16
+// 1.1.1 == version 17
 
 // Use when you need to return an empty const tt_string&
 extern tt_string tt_empty_cstr;

@@ -250,6 +250,16 @@ void BaseCodeGenerator::GenerateCppClass(Node* form_node, PANEL_PAGE panel_type)
         }
     }
 
+    if (form_node->HasValue(prop_cpp_conditional))
+    {
+        if (!form_node->value(prop_cpp_conditional).starts_with("#"))
+            code.Str("#if ");
+        code.Str(form_node->value(prop_cpp_conditional));
+        m_source->writeLine(code);
+        m_source->writeLine();
+        code.clear();
+    }
+
     if (Project.HasValue(prop_local_pch_file))
     {
         m_source->writeLine(tt_string() << "#include \"" << Project.value(prop_local_pch_file) << '"');
@@ -521,6 +531,12 @@ void BaseCodeGenerator::GenerateCppClass(Node* form_node, PANEL_PAGE panel_type)
     if (m_panel_type != CPP_PANEL && m_embedded_images.size())
     {
         WriteImagePostHeader();
+    }
+
+    if (form_node->HasValue(prop_cpp_conditional))
+    {
+        code.Eol().Str("#endif  // ").Str(form_node->value(prop_cpp_conditional));
+        m_source->writeLine(code);
     }
 }
 

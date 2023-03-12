@@ -45,6 +45,7 @@ inline const char* lst_xml_interfaces[] = {
 #include "../xml/containers_xml.xml"
 #include "../xml/dataview_xml.xml"
 #include "../xml/dialogs_xml.xml"
+#include "../xml/doc_view_app_xml.xml"
 #include "../xml/forms_xml.xml"
 #include "../xml/grid_xml.xml"
 #include "../xml/images_xml.xml"
@@ -74,6 +75,7 @@ inline const char* lst_xml_generators[] = {
     containers_xml,
     dataview_xml,
     dialogs_xml,
+    doc_view_app_xml,
     forms_xml,
     grid_xml,
     images_xml,

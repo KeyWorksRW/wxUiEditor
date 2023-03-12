@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Enumerations for generators
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2021-2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2021-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -149,8 +149,9 @@ namespace GenEnum
         prop_contents,
         prop_context_help,
         prop_context_menu,
-        prop_current,
+        prop_cpp_conditional,
         prop_cpp_line_length,
+        prop_current,
         prop_custom_colour,
         prop_custom_margin,
         prop_custom_mask_folders,
@@ -315,6 +316,7 @@ namespace GenEnum
         prop_pressed_bmp,
         prop_private_members,
         prop_proportion,
+        prop_python_conditional,
         prop_radiobtn_var_name,
         prop_range,
         prop_read_only,
@@ -349,8 +351,8 @@ namespace GenEnum
         prop_shortcut,
         prop_show,
         prop_show_effect,
-        prop_show_hidden,
         prop_show_header,
+        prop_show_hidden,
         prop_size,
         prop_source_ext,
         prop_spellcheck,

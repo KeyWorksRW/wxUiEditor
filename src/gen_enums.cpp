@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Enumerations for generators
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2021-2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2021-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -143,6 +143,7 @@ std::map<GenEnum::PropName, const char*> GenEnum::map_PropNames = {
     { prop_contents, "contents" },
     { prop_context_help, "context_help" },
     { prop_context_menu, "context_menu" },
+    { prop_cpp_conditional, "cpp_conditional" },
     { prop_cpp_line_length, "cpp_line_length" },
     { prop_current, "current" },
     { prop_custom_colour, "custom_colour" },
@@ -309,6 +310,7 @@ std::map<GenEnum::PropName, const char*> GenEnum::map_PropNames = {
     { prop_pressed_bmp, "pressed_bmp" },
     { prop_private_members, "private_members" },
     { prop_proportion, "proportion" },
+    { prop_python_conditional, "python_conditional" },
     { prop_radiobtn_var_name, "radiobtn_var_name" },
     { prop_range, "range" },
     { prop_read_only, "read_only" },

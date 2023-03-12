@@ -11,5 +11,4 @@ class TextDocumentGenerator : public BaseGenerator
 {
 public:
     bool ConstructionCode(Code&) override;
-
 };

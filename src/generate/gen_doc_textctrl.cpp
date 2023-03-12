@@ -10,7 +10,7 @@
 #include "code.h"  // Code -- Helper class for generating code
 
 inline constexpr const auto txt_TextCtrlViewBlock =
-R"===(wxIMPLEMENT_DYNAMIC_CLASS(%class%, wxDocument);
+    R"===(wxIMPLEMENT_DYNAMIC_CLASS(%class%, wxDocument);
 
 bool %class%::OnCreate(const wxString& path, long flags)
 {

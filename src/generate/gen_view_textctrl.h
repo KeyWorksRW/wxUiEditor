@@ -11,5 +11,4 @@ class TextViewGenerator : public BaseGenerator
 {
 public:
     bool ConstructionCode(Code&) override;
-
 };

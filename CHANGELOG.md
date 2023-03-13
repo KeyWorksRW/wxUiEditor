@@ -5,7 +5,8 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 
-Code generation for Dialogs with an extra_style property fixed.
+- Code generation for Dialogs with an extra_style property fixed.
+- Code generation for wxToolBar drop-down tools with menu items fixed.
 
 ## [Released (1.1.0)]
 

@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Common component functions
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -1076,9 +1076,16 @@ void GenToolCode(Code& code, const bool is_bitmaps_list)
         code.NodeName() << " = ";
     }
 
+    if (node->IsLocal() && node->isGen(gen_tool_dropdown))
+    {
+        code.AddIfCpp("auto* ").NodeName().Add(" = ");
+    }
     // If the user doesn't want access, then we have no use for the return value.
-    if (!node->IsLocal() || node->isGen(gen_tool_dropdown))
+    else if (!node->IsLocal())
+    {
         code.NodeName().Add(" = ");
+    }
+
     if (node->isParent(gen_wxToolBar) || node->isParent(gen_wxAuiToolBar))
         code.ParentName().Function("AddTool(").as_string(prop_id).Comma();
     else

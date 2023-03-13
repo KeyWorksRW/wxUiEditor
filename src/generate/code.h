@@ -253,7 +253,7 @@ public:
     // Adds wxClass or wx.Class
     Code& Class(tt_string_view text);
 
-    // Adds " = new wxClass" or " = wx.Class'
+    // Adds " = new wxClass;" or " = wx.Class"
     Code& Assign(tt_string_view class_name);
 
     // Adds " = new wxClass(" or " = wx.Class('.

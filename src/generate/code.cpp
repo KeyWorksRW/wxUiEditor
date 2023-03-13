@@ -472,9 +472,9 @@ Code& Code::CreateClass(bool use_generic, tt_string_view override_name)
 Code& Code::Assign(tt_string_view class_name)
 {
     *this += " = ";
-    if (m_language == GEN_LANG_CPLUSPLUS)
+    if (is_cpp())
     {
-        *this += "new ";
+        *this << "new " << class_name << ';';
     }
     else
     {

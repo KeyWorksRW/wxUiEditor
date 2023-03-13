@@ -1077,7 +1077,7 @@ void GenToolCode(Code& code, const bool is_bitmaps_list)
     }
 
     // If the user doesn't want access, then we have no use for the return value.
-    if (!node->IsLocal())
+    if (!node->IsLocal() || node->isGen(gen_tool_dropdown))
         code.NodeName().Add(" = ");
     if (node->isParent(gen_wxToolBar) || node->isParent(gen_wxAuiToolBar))
         code.ParentName().Function("AddTool(").as_string(prop_id).Comma();

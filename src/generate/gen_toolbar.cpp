@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   wxToolBar generator
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -548,6 +548,26 @@ int ToolGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_f
     return BaseGenerator::xrc_updated;
 }
 
+tt_string ToolGenerator::GetHelpURL(Node*)
+{
+    return "wx_tool_bar.html";
+}
+
+tt_string ToolGenerator::GetHelpText(Node*)
+{
+    return "wxToolBar";
+}
+
+tt_string ToolGenerator::GetPythonURL(Node*)
+{
+    return "wx.ToolBar.html";
+}
+
+tt_string ToolGenerator::GetPythonHelpText(Node*)
+{
+    return "wx.ToolBar";
+}
+
 //////////////////////////////////////////  ToolDropDownGenerator  //////////////////////////////////////////
 
 bool ToolDropDownGenerator::ConstructionCode(Code& code)
@@ -575,6 +595,81 @@ bool ToolDropDownGenerator::ConstructionCode(Code& code)
     {
         GenToolCode(code, false);
     }
+
+    return true;
+}
+
+bool ToolDropDownGenerator::SettingsCode(Code& code)
+{
+    tt_string menu_name = code.node()->value(prop_var_name);
+    menu_name += "_menu";
+    code.AddIfCpp("auto* ").Str(menu_name).Assign("wxMenu");
+    auto menu_node_ptr = NodeCreation.NewNode(gen_wxMenu);
+    menu_node_ptr->SetParent(code.node());  // Python code generation needs this set
+    menu_node_ptr->prop_set_value(prop_var_name, menu_name);
+
+    for (const auto& child: code.node()->GetChildNodePtrs())
+    {
+        auto old_parent = child->GetParent();
+        child->SetParent(menu_node_ptr.get());
+        if (auto gen = child->GetNodeDeclaration()->GetGenerator(); gen)
+        {
+            Code child_code(child.get(), code.m_language);
+            if (gen->ConstructionCode(child_code))
+            {
+                code.Eol() += child_code;
+                child_code.clear();
+                if (gen->SettingsCode(child_code) && child_code.size())
+                {
+                    code.Eol() += child_code;
+                }
+            }
+        }
+
+        // A submenu can have children
+        if (child->GetChildCount())
+        {
+            for (const auto& grandchild: child->GetChildNodePtrs())
+            {
+                if (auto gen = grandchild->GetNodeDeclaration()->GetGenerator(); gen)
+                {
+                    Code child_code(grandchild.get(), code.m_language);
+                    if (gen->ConstructionCode(child_code))
+                    {
+                        code.Eol() += child_code;
+                        child_code.clear();
+                        if (gen->SettingsCode(child_code) && child_code.size())
+                        {
+                            code.Eol() += child_code;
+                        }
+                    }
+                }
+                // A submenu menu item can also be a submenu with great grandchildren.
+                if (grandchild->GetChildCount())
+                {
+                    for (const auto& great_grandchild: grandchild->GetChildNodePtrs())
+                    {
+                        if (auto gen = great_grandchild->GetNodeDeclaration()->GetGenerator(); gen)
+                        {
+                            Code child_code(great_grandchild.get(), code.m_language);
+                            if (gen->ConstructionCode(child_code))
+                            {
+                                code.Eol() += child_code;
+                                child_code.clear();
+                                if (gen->SettingsCode(child_code) && child_code.size())
+                                {
+                                    code.Eol() += child_code;
+                                }
+                            }
+                        }
+                        // It's possible to have even more levels of submenus, but we'll stop here.
+                    }
+                }
+            }
+        }
+        child->SetParent(old_parent);
+    }
+    code.Eol().NodeName().Function("SetDropdownMenu(").Str(menu_name).EndFunction();
 
     return true;
 }
@@ -635,6 +730,26 @@ int ToolDropDownGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size
     return BaseGenerator::xrc_updated;
 }
 
+tt_string ToolDropDownGenerator::GetHelpURL(Node*)
+{
+    return "wx_tool_bar.html";
+}
+
+tt_string ToolDropDownGenerator::GetHelpText(Node*)
+{
+    return "wxToolBar";
+}
+
+tt_string ToolDropDownGenerator::GetPythonURL(Node*)
+{
+    return "wx.ToolBar.html";
+}
+
+tt_string ToolDropDownGenerator::GetPythonHelpText(Node*)
+{
+    return "wx.ToolBar";
+}
+
 //////////////////////////////////////////  ToolSeparatorGenerator  //////////////////////////////////////////
 
 bool ToolSeparatorGenerator::ConstructionCode(Code& code)
@@ -657,6 +772,26 @@ int ToolSeparatorGenerator::GenXrcObject(Node* /* node */, pugi::xml_node& objec
     object.append_attribute("class").set_value("separator");
 
     return BaseGenerator::xrc_updated;
+}
+
+tt_string ToolSeparatorGenerator::GetHelpURL(Node*)
+{
+    return "wx_tool_bar.html";
+}
+
+tt_string ToolSeparatorGenerator::GetHelpText(Node*)
+{
+    return "wxToolBar";
+}
+
+tt_string ToolSeparatorGenerator::GetPythonURL(Node*)
+{
+    return "wx.ToolBar.html";
+}
+
+tt_string ToolSeparatorGenerator::GetPythonHelpText(Node*)
+{
+    return "wx.ToolBar";
 }
 
 //////////////////////////////////////////  ToolStretchableGenerator  //////////////////////////////////////////
@@ -690,4 +825,24 @@ int ToolStretchableGenerator::GenXrcObject(Node* /* node */, pugi::xml_node& obj
     object.append_attribute("class").set_value("space");
 
     return BaseGenerator::xrc_updated;
+}
+
+tt_string ToolStretchableGenerator::GetHelpURL(Node*)
+{
+    return "wx_tool_bar.html";
+}
+
+tt_string ToolStretchableGenerator::GetHelpText(Node*)
+{
+    return "wxToolBar";
+}
+
+tt_string ToolStretchableGenerator::GetPythonURL(Node*)
+{
+    return "wx.ToolBar.html";
+}
+
+tt_string ToolStretchableGenerator::GetPythonHelpText(Node*)
+{
+    return "wx.ToolBar";
 }

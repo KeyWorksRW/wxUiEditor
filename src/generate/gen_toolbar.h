@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   wxToolBar generator
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -58,15 +58,24 @@ public:
 
     int GenXrcObject(Node*, pugi::xml_node& /* object */, size_t /* xrc_flags */) override;
     int GetRequiredVersion(Node* /*node*/) override;
+    tt_string GetHelpText(Node*) override;
+    tt_string GetHelpURL(Node*) override;
+    tt_string GetPythonHelpText(Node*) override;
+    tt_string GetPythonURL(Node*) override;
 };
 
 class ToolDropDownGenerator : public BaseGenerator
 {
 public:
     bool ConstructionCode(Code& code) override;
+    bool SettingsCode(Code&) override;
 
     int GenXrcObject(Node*, pugi::xml_node& /* object */, size_t /* xrc_flags */) override;
     int GetRequiredVersion(Node* /*node*/) override { return minRequiredVer + 1; }
+    tt_string GetHelpText(Node*) override;
+    tt_string GetHelpURL(Node*) override;
+    tt_string GetPythonHelpText(Node*) override;
+    tt_string GetPythonURL(Node*) override;
 };
 
 class ToolSeparatorGenerator : public BaseGenerator
@@ -75,6 +84,10 @@ public:
     bool ConstructionCode(Code& code) override;
 
     int GenXrcObject(Node*, pugi::xml_node& /* object */, size_t /* xrc_flags */) override;
+    tt_string GetHelpText(Node*) override;
+    tt_string GetHelpURL(Node*) override;
+    tt_string GetPythonHelpText(Node*) override;
+    tt_string GetPythonURL(Node*) override;
 };
 
 class ToolStretchableGenerator : public BaseGenerator
@@ -84,4 +97,8 @@ public:
 
     int GenXrcObject(Node*, pugi::xml_node& /* object */, size_t /* xrc_flags */) override;
     int GetRequiredVersion(Node* /*node*/) override { return minRequiredVer + 1; }
+    tt_string GetHelpText(Node*) override;
+    tt_string GetHelpURL(Node*) override;
+    tt_string GetPythonHelpText(Node*) override;
+    tt_string GetPythonURL(Node*) override;
 };

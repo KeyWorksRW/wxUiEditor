@@ -54,7 +54,7 @@ bool DialogFormGenerator::ConstructionCode(Code& code)
 
         if (code.HasValue(prop_extra_style))
         {
-            code.Eol(eol_if_needed).FormFunction("SetExtraStyle(GetExtraStyle() | ").Add(prop_extra_style).Str(")");
+            code.Eol(eol_if_needed).FormFunction("SetExtraStyle(GetExtraStyle() | ").Add(prop_extra_style);
             code.EndFunction();
         }
 
@@ -98,7 +98,7 @@ bool DialogFormGenerator::SettingsCode(Code& code)
     {
         if (code.HasValue(prop_extra_style))
         {
-            code.Eol(eol_if_needed).FormFunction("SetExtraStyle(GetExtraStyle() | ").Add(prop_extra_style).Str(")");
+            code.Eol(eol_if_needed).FormFunction("SetExtraStyle(GetExtraStyle() | ").Add(prop_extra_style);
             code.EndFunction();
         }
 

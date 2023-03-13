@@ -548,6 +548,26 @@ int ToolGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_f
     return BaseGenerator::xrc_updated;
 }
 
+tt_string ToolGenerator::GetHelpURL(Node*)
+{
+    return "wx_tool_bar.html";
+}
+
+tt_string ToolGenerator::GetHelpText(Node*)
+{
+    return "wxToolbar";
+}
+
+tt_string ToolGenerator::GetPythonURL(Node*)
+{
+    return "wx.ToolBar.html";
+}
+
+tt_string ToolGenerator::GetPythonHelpText(Node*)
+{
+    return "wx.ToolBar";
+}
+
 //////////////////////////////////////////  ToolDropDownGenerator  //////////////////////////////////////////
 
 bool ToolDropDownGenerator::ConstructionCode(Code& code)
@@ -635,6 +655,26 @@ int ToolDropDownGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size
     return BaseGenerator::xrc_updated;
 }
 
+tt_string ToolDropDownGenerator::GetHelpURL(Node*)
+{
+    return "wx_tool_bar.html";
+}
+
+tt_string ToolDropDownGenerator::GetHelpText(Node*)
+{
+    return "wxToolbar";
+}
+
+tt_string ToolDropDownGenerator::GetPythonURL(Node*)
+{
+    return "wx.ToolBar.html";
+}
+
+tt_string ToolDropDownGenerator::GetPythonHelpText(Node*)
+{
+    return "wx.ToolBar";
+}
+
 //////////////////////////////////////////  ToolSeparatorGenerator  //////////////////////////////////////////
 
 bool ToolSeparatorGenerator::ConstructionCode(Code& code)
@@ -657,6 +697,26 @@ int ToolSeparatorGenerator::GenXrcObject(Node* /* node */, pugi::xml_node& objec
     object.append_attribute("class").set_value("separator");
 
     return BaseGenerator::xrc_updated;
+}
+
+tt_string ToolSeparatorGenerator::GetHelpURL(Node*)
+{
+    return "wx_tool_bar.html";
+}
+
+tt_string ToolSeparatorGenerator::GetHelpText(Node*)
+{
+    return "wxToolbar";
+}
+
+tt_string ToolSeparatorGenerator::GetPythonURL(Node*)
+{
+    return "wx.ToolBar.html";
+}
+
+tt_string ToolSeparatorGenerator::GetPythonHelpText(Node*)
+{
+    return "wx.ToolBar";
 }
 
 //////////////////////////////////////////  ToolStretchableGenerator  //////////////////////////////////////////
@@ -690,4 +750,24 @@ int ToolStretchableGenerator::GenXrcObject(Node* /* node */, pugi::xml_node& obj
     object.append_attribute("class").set_value("space");
 
     return BaseGenerator::xrc_updated;
+}
+
+tt_string ToolStretchableGenerator::GetHelpURL(Node*)
+{
+    return "wx_tool_bar.html";
+}
+
+tt_string ToolStretchableGenerator::GetHelpText(Node*)
+{
+    return "wxToolbar";
+}
+
+tt_string ToolStretchableGenerator::GetPythonURL(Node*)
+{
+    return "wx.ToolBar.html";
+}
+
+tt_string ToolStretchableGenerator::GetPythonHelpText(Node*)
+{
+    return "wx.ToolBar";
 }

@@ -73,6 +73,7 @@ namespace wxue_img
     wxBitmapBundle bundle_toolseparator_png();
     wxBitmapBundle bundle_slider_png();
     wxBitmapBundle bundle_tool_png();
+    wxBitmapBundle bundle_hide_png();
 
     extern const unsigned char auitoolbar_png[476];
     extern const unsigned char bmp_combo_box_png[492];
@@ -87,6 +88,7 @@ namespace wxue_img
     extern const unsigned char default_png[518];
     extern const unsigned char empty_png[101];
     extern const unsigned char folder_png[641];
+    extern const unsigned char hide_png[242];
     extern const unsigned char import_svg[418];
     extern const unsigned char logo16_png[639];
     extern const unsigned char logo32_png[1470];

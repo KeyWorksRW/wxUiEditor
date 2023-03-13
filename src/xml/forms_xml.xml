@@ -64,6 +64,8 @@ inline const char* forms_xml = R"===(<?xml version="1.0"?>
 		</property>
 		<property name="icon" type="image"
 			help="Specifies the image to display in the title bar of the frame." />
+		<property name="cpp_conditional" type="string_code_single"
+			help="In C++ code, any value in this property will be used to place a conditional (#if/#endif) block around the Frame's generated code." />
 	</gen>
 
 	<gen class="wxPopupTransientWindow" image="wxPopupTransientWindow" type="form">
@@ -95,6 +97,8 @@ inline const char* forms_xml = R"===(<?xml version="1.0"?>
 			help="Sets the foreground colour of the window." />
 		<property name="background_colour" type="wxColour"
 			help="Sets the background colour of the window." />
+		<property name="cpp_conditional" type="string_code_single"
+			help="In C++ code, any value in this property will be used to place a conditional (#if/#endif) block around the Window's generated code." />
 		<event name="wxEVT_CONTEXT_MENU" class="wxContextMenuEvent"
 			help="Either provide your own handler function, or add a wxContextMenuEvent to create a popup menu." />
 		<event name="wxEVT_DESTROY" class="wxWindowDestroyEvent"
@@ -144,6 +148,8 @@ inline const char* forms_xml = R"===(<?xml version="1.0"?>
 				help="Causes a help button to appear on the ribbon bar at the top-right corner." />
 			wxRIBBON_BAR_DEFAULT_STYLE
 		</property>
+		<property name="cpp_conditional" type="string_code_single"
+			help="In C++ code, any value in this property will be used to place a conditional (#if/#endif) block around the RibbonBar's generated code." />
 		<event name="wxEVT_RIBBONBAR_PAGE_CHANGED" class="wxRibbonBarEvent"
 			help="Triggered after the transition from one page being active to a different page being active." />
 		<event name="wxEVT_RIBBONBAR_PAGE_CHANGING" class="wxRibbonBarEvent"

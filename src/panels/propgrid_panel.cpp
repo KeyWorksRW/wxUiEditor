@@ -1370,6 +1370,9 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
 
 void PropGridPanel::ChangeEnableState(NodeProperty* changed_prop)
 {
+    if (!changed_prop)
+        return;
+
     // Project properties don't have a generator, so always check if generator exists
     if (auto gen = changed_prop->GetNode()->GetGenerator(); gen)
     {

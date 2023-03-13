@@ -7,23 +7,21 @@
 
 // clang-format off
 
+#if defined(INTERNAL_TESTING)
+
 #include <wx/artprov.h>
 #include <wx/button.h>
 #include <wx/sizer.h>
 #include <wx/statbox.h>
 
+#include "..\wxui\ui_images.h"
+
 #include "msgframe_base.h"
 
-#include <wx/mstream.h>  // memory stream classes
-
-// Convert a data array into a wxImage
-inline wxImage wxueImage(const unsigned char* data, size_t size_data)
+namespace wxue_img
 {
-    wxMemoryInputStream strm(data, size_data);
-    wxImage image;
-    image.LoadFile(strm);
-    return image;
-};
+    extern const unsigned char hide_png[242];
+}
 
 MsgFrameBase::MsgFrameBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos,
     const wxSize& size, long style, const wxString& name) : wxFrame()
@@ -47,7 +45,7 @@ MsgFrameBase::MsgFrameBase(wxWindow* parent, wxWindowID id, const wxString& titl
 
     menu_file->Append(menu_item_clear);
     auto* menu_item_hide = new wxMenuItem(menu_file, id_hide, "&Hide");
-    menu_item_hide->SetBitmap(wxBitmapBundle::FromBitmap(wxueImage(wxue_img::hide_png, sizeof(wxue_img::hide_png))));
+    menu_item_hide->SetBitmap(wxue_img::bundle_hide_png());
 
     menu_file->Append(menu_item_hide);
     menubar->Append(menu_file, "&File");
@@ -181,21 +179,7 @@ MsgFrameBase::MsgFrameBase(wxWindow* parent, wxWindowID id, const wxString& titl
     m_notebook->Bind(wxEVT_NOTEBOOK_PAGE_CHANGED, &MsgFrameBase::OnPageChanged, this);
 }
 
-namespace wxue_img
-{
-
-    const unsigned char hide_png[242] {
-        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,24,0,0,0,24,8,6,0,0,0,224,119,61,248,0,0,0,9,
-        112,72,89,115,0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,0,164,73,68,65,84,72,199,237,149,75,2,128,32,
-        8,68,25,239,127,103,90,212,66,17,100,176,218,201,14,133,158,124,19,57,146,8,140,174,34,34,170,122,
-        95,2,248,5,208,67,30,16,235,79,25,84,33,75,80,116,225,66,38,231,25,138,82,4,12,196,1,13,74,219,73,
-        143,213,205,3,52,162,165,31,183,231,54,50,47,146,86,73,135,133,37,145,12,17,104,104,224,116,79,161,
-        38,104,236,192,20,90,86,188,34,35,115,180,57,143,108,251,215,83,69,206,192,11,40,232,85,177,1,65,
-        121,85,48,93,213,157,35,26,180,145,14,208,5,13,107,146,53,79,117,61,63,243,1,122,221,38,32,4,54,
-        175,255,35,159,69,124,68,46,21,182,88,38,116,19,247,168,0,0,0,0,73,69,78,68,174,66,96,130
-    };
-
-}
+#endif  // defined(INTERNAL_TESTING)
 
 // ************* End of generated code ***********
 // DO NOT EDIT THIS COMMENT BLOCK!

@@ -7,6 +7,8 @@
 
 // clang-format off
 
+#if defined(INTERNAL_TESTING)
+
 #include <wx/button.h>
 #include <wx/sizer.h>
 #include <wx/statbox.h>
@@ -14,7 +16,7 @@
 #include "node_info.h"
 
 bool NodeInfo::Create(wxWindow* parent, wxWindowID id, const wxString& title,
-        const wxPoint& pos, const wxSize& size, long style, const wxString &name)
+    const wxPoint& pos, const wxSize& size, long style, const wxString &name)
 {
     if (!wxDialog::Create(parent, id, title, pos, size, style, name))
         return false;
@@ -57,6 +59,8 @@ bool NodeInfo::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     return true;
 }
 
+#endif  // defined(INTERNAL_TESTING)
+
 // ************* End of generated code ***********
 // DO NOT EDIT THIS COMMENT BLOCK!
 //
@@ -77,15 +81,13 @@ bool NodeInfo::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#if !defined(INTERNAL_TESTING)
-    #error "INTERNAL_TESTING must be defined if you include this moduel!"
-#endif
+#if defined(INTERNAL_TESTING)
 
-#include "mainapp.h"          // App -- Main application class
-#include "mainframe.h"        // Main window frame
-#include "node.h"             // Node class
-#include "project_handler.h"  // ProjectHandler class
-#include "undo_stack.h"       // UndoAction -- Maintain a undo and redo stack
+    #include "mainapp.h"          // App -- Main application class
+    #include "mainframe.h"        // Main window frame
+    #include "node.h"             // Node class
+    #include "project_handler.h"  // ProjectHandler class
+    #include "undo_stack.h"       // UndoAction -- Maintain a undo and redo stack
 
 struct NodeMemory
 {
@@ -146,3 +148,5 @@ void NodeInfo::OnInit(wxInitDialogEvent& /* event */)
 
     Fit();
 }
+
+#endif  // defined(INTERNAL_TESTING)

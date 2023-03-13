@@ -4,6 +4,13 @@
 
 set (wxue_generated_code
 
+    ${CMAKE_CURRENT_LIST_DIR}/../internal/code_compare.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/../internal/convert_img_base.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/../internal/debugsettings.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/../internal/msgframe_base.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/../internal/node_info.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/../internal/node_search_dlg.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/../internal/xrcpreview.cpp
     ${CMAKE_CURRENT_LIST_DIR}/artpropdlg_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/code_preference_dlg.cpp
     ${CMAKE_CURRENT_LIST_DIR}/codedisplay_base.cpp

@@ -7,6 +7,8 @@
 
 // clang-format off
 
+#if defined(INTERNAL_TESTING)
+
 #include <wx/bmpbndl.h>
 #include <wx/collpane.h>
 #include <wx/colour.h>
@@ -40,8 +42,7 @@ bool ConvertImageBase::Create(wxWindow* parent, wxWindowID id, const wxString& t
     box_sizer2->Add(m_staticDescription, wxSizerFlags().Border(wxALL));
     collapsiblePane->GetPane()->SetSizerAndFit(box_sizer2);
 
-    parent_sizer->Add(box_sizer,
-    wxSizerFlags().Expand().Border(wxLEFT|wxRIGHT|wxTOP, wxSizerFlags::GetDefaultBorder()));
+    parent_sizer->Add(box_sizer, wxSizerFlags().Expand().Border(wxLEFT|wxRIGHT|wxTOP, wxSizerFlags::GetDefaultBorder()));
 
     auto* flex_grid_sizer = new wxFlexGridSizer(2, 0, 0);
     {
@@ -59,16 +60,15 @@ bool ConvertImageBase::Create(wxWindow* parent, wxWindowID id, const wxString& t
     m_staticHeader = new wxStaticText(this, wxID_ANY, "O&utput:");
     flex_grid_sizer->Add(m_staticHeader, wxSizerFlags().Center().Border(wxALL));
 
-    m_fileOutput = new wxFilePickerCtrl(this, wxID_ANY, wxEmptyString, wxFileSelectorPromptStr,
-        "Header files|*.h_img||", wxDefaultPosition, wxDefaultSize, wxFLP_SAVE|wxFLP_USE_TEXTCTRL);
+    m_fileOutput = new wxFilePickerCtrl(this, wxID_ANY, wxEmptyString, wxFileSelectorPromptStr, "Header files|*.h_img||",
+        wxDefaultPosition, wxDefaultSize, wxFLP_SAVE|wxFLP_USE_TEXTCTRL);
     flex_grid_sizer->Add(m_fileOutput, wxSizerFlags().Expand().Border(wxALL));
 
     parent_sizer->Add(flex_grid_sizer, wxSizerFlags().Expand().Border(wxALL));
 
     auto* static_box = new wxStaticBoxSizer(wxVERTICAL, this, "Output Type");
 
-    m_choicebook = new wxChoicebook(static_box->GetStaticBox(), wxID_ANY, wxDefaultPosition, wxDefaultSize,
-        wxCHB_LEFT);
+    m_choicebook = new wxChoicebook(static_box->GetStaticBox(), wxID_ANY, wxDefaultPosition, wxDefaultSize, wxCHB_LEFT);
     static_box->Add(m_choicebook, wxSizerFlags().Border(wxALL));
 
     auto* header_page = new wxPanel(m_choicebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
@@ -94,8 +94,8 @@ bool ConvertImageBase::Create(wxWindow* parent, wxWindowID id, const wxString& t
 
     box_sizer_3->AddSpacer(10);
 
-    m_comboHdrMask = new wxComboBox(hdr_static_box->GetStaticBox(), wxID_ANY, wxEmptyString,
-        wxDefaultPosition, wxSize(150, -1), 0, nullptr, wxCB_READONLY);
+    m_comboHdrMask = new wxComboBox(hdr_static_box->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition,
+        wxSize(150, -1), 0, nullptr, wxCB_READONLY);
     box_sizer_3->Add(m_comboHdrMask,
         wxSizerFlags().Left().Border(wxLEFT|wxRIGHT|wxBOTTOM, wxSizerFlags::GetDefaultBorder()));
 
@@ -138,8 +138,8 @@ bool ConvertImageBase::Create(wxWindow* parent, wxWindowID id, const wxString& t
 
     box_sizer_4->AddSpacer(10);
 
-    m_comboXpmMask = new wxComboBox(mask_static_box->GetStaticBox(), wxID_ANY, wxEmptyString,
-        wxDefaultPosition, wxSize(150, -1), 0, nullptr, wxCB_READONLY);
+    m_comboXpmMask = new wxComboBox(mask_static_box->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition,
+        wxSize(150, -1), 0, nullptr, wxCB_READONLY);
     box_sizer_4->Add(m_comboXpmMask,
         wxSizerFlags().Left().Border(wxLEFT|wxRIGHT|wxBOTTOM, wxSizerFlags::GetDefaultBorder()));
 
@@ -232,6 +232,8 @@ bool ConvertImageBase::Create(wxWindow* parent, wxWindowID id, const wxString& t
 
     return true;
 }
+
+#endif  // defined(INTERNAL_TESTING)
 
 // ************* End of generated code ***********
 // DO NOT EDIT THIS COMMENT BLOCK!

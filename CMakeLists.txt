@@ -87,6 +87,12 @@ if (INTERNAL_BLD_TESTING)
     # In addition to enabling testing-only functionality, this enables ASSERT(), ASSERT_MSG(),
     # and FAIL_MSG() in a Release build.
     add_compile_definitions(INTERNAL_TESTING)
+    set (wxui_internal_files
+        src/internal/msg_logging.cpp
+        src/internal/msgframe.cpp
+        src/internal/import_panel.cpp
+        src/internal/convert_img.cpp
+    )
 endif()
 
 add_compile_definitions($<$<CONFIG:Release>:NDEBUG>)
@@ -117,17 +123,13 @@ if (NOT INTERNAL_BLD_FORK)
     add_subdirectory(${widget_cmake_dir})
 endif()
 
-include( internal.cmake )
-
 if (WIN32)
     if (NOT INTERNAL_BLD_FORK)
         set(setup_dir ${widget_cmake_dir}/win)
-        # internal.cmake will have handled the INTERNAL_BLD_FORK settings
     endif()
 else()
     if (NOT INTERNAL_BLD_FORK)
         set(setup_dir ${widget_cmake_dir}/unix)
-        # internal.cmake will have handled the INTERNAL_BLD_FORK settings
     endif()
 endif()
 
@@ -146,7 +148,7 @@ list(TRANSFORM file_list PREPEND "${file_list_dir}/")
 add_executable(wxUiEditor WIN32
     ${file_list}
     ${wxue_generated_code}
-    ${wxui_internal_files}
+    ${wxui_internal_files}  # This will be empty unless INTERNAL_BLD_TESTING is set
 )
 
 # This is just used by a github action to confirm that all the source code can be compiled

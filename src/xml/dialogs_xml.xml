@@ -60,7 +60,8 @@ inline const char* dialogs_xml = R"===(<?xml version="1.0"?>
 		</property>
 		<property name="icon" type="image"
 			help="Specifies the image to display in the title bar of the dialog." />
-
+		<property name="cpp_conditional" type="string_code_single"
+			help="In C++ code, any value in this property will be used to place a conditional (#if/#endif) block around the Dialog's generated code." />
 		<event name="wxEVT_INIT_DIALOG" class="wxInitDialogEvent"
 			help="Generated when the dialog is being initialized." />
 	</gen>
@@ -73,6 +74,8 @@ inline const char* dialogs_xml = R"===(<?xml version="1.0"?>
 			help="The name of the base class.">MyPanelBase</property>
 		<property name="mockup_size" type="wxSize"
 			help="This is the minimum size to display the panel in the Mockup Panel. It does not affect the actual size of the panel in your compiled code. Note that for a wxRibbonBar this needs to be as wide as the widest ribbon panel or you will see a question mark for the wxRibbonPage.">200, 200</property>
+		<property name="cpp_conditional" type="string_code_single"
+			help="In C++ code, any value in this property will be used to place a conditional (#if/#endif) block around the Panel's generated code." />
 
 		<category name="Window Settings">
 			<property name="id" type="id"

@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Derived wxStringProperty class for custom control parameters
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2021 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2021-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -28,6 +28,7 @@ public:
         m_value = prop->as_wxString();
         m_static_hdr_text->Show();
         m_node = prop->GetNode();
+        m_prop = prop;
 
         m_textCtrl->Bind(wxEVT_TEXT, &EditParamDialog::UpdateStaticText, this);
         Fit();
@@ -35,16 +36,27 @@ public:
 
     void UpdateStaticText(wxCommandEvent& /* event */)
     {
-        tt_string ctor;
-        if (m_node->isPropValue(prop_class_access, "none"))
-            ctor << "auto ";
-        ctor << m_node->prop_as_string(prop_var_name) << " = new " << m_node->prop_as_string(prop_class_name);
-        ctor << m_textCtrl->GetValue().utf8_string() << ';';
-        m_static_hdr_text->SetLabel(ctor.wx_str());
+        tt_string static_text;
+        if (m_prop->isProp(prop_cpp_conditional))
+        {
+            auto text = m_textCtrl->GetValue().utf8_string();
+            if (!text.starts_with("#"))
+                static_text << "#if ";
+            static_text << m_textCtrl->GetValue().utf8_string();
+        }
+        else
+        {
+            if (m_node->isPropValue(prop_class_access, "none"))
+                static_text << "auto ";
+            static_text << m_node->prop_as_string(prop_var_name) << " = new " << m_node->prop_as_string(prop_class_name);
+            static_text << m_textCtrl->GetValue().utf8_string() << ';';
+        }
+        m_static_hdr_text->SetLabel(static_text.wx_str());
     }
 
 private:
     Node* m_node;
+    NodeProperty* m_prop;
 };
 
 bool EditParamDialogAdapter::DoShowDialog(wxPropertyGrid* propGrid, wxPGProperty* WXUNUSED(property))

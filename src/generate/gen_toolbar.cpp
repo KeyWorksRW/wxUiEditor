@@ -555,7 +555,7 @@ tt_string ToolGenerator::GetHelpURL(Node*)
 
 tt_string ToolGenerator::GetHelpText(Node*)
 {
-    return "wxToolbar";
+    return "wxToolBar";
 }
 
 tt_string ToolGenerator::GetPythonURL(Node*)
@@ -737,7 +737,7 @@ tt_string ToolDropDownGenerator::GetHelpURL(Node*)
 
 tt_string ToolDropDownGenerator::GetHelpText(Node*)
 {
-    return "wxToolbar";
+    return "wxToolBar";
 }
 
 tt_string ToolDropDownGenerator::GetPythonURL(Node*)
@@ -781,7 +781,7 @@ tt_string ToolSeparatorGenerator::GetHelpURL(Node*)
 
 tt_string ToolSeparatorGenerator::GetHelpText(Node*)
 {
-    return "wxToolbar";
+    return "wxToolBar";
 }
 
 tt_string ToolSeparatorGenerator::GetPythonURL(Node*)
@@ -834,7 +834,7 @@ tt_string ToolStretchableGenerator::GetHelpURL(Node*)
 
 tt_string ToolStretchableGenerator::GetHelpText(Node*)
 {
-    return "wxToolbar";
+    return "wxToolBar";
 }
 
 tt_string ToolStretchableGenerator::GetPythonURL(Node*)

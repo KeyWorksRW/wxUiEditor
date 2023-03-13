@@ -7,12 +7,14 @@
 
 // clang-format off
 
+#if defined(INTERNAL_TESTING)
+
 #include <wx/sizer.h>
 #include <wx/stattext.h>
 
 #include "code_compare.h"
 
-#include "WinMerge.xpm"
+#include "../internal/WinMerge.xpm"
 
 bool CodeCompare::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     const wxPoint& pos, const wxSize& size, long style, const wxString &name)
@@ -72,6 +74,8 @@ bool CodeCompare::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     return true;
 }
 
+#endif  // defined(INTERNAL_TESTING)
+
 // ************* End of generated code ***********
 // DO NOT EDIT THIS COMMENT BLOCK!
 //
@@ -88,18 +92,16 @@ bool CodeCompare::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#if !defined(INTERNAL_TESTING)
-    #error "INTERNAL_TESTING must be defined if you include this moduel!"
-#endif
+#if defined(INTERNAL_TESTING)
 
-#include <wx/dir.h>  // wxDir is a class for enumerating the files in a directory
+    #include <wx/dir.h>  // wxDir is a class for enumerating the files in a directory
 
-#include "gen_base.h"         // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
-#include "gen_results.h"      // Code generation file writing functions
-#include "node.h"             // Node class
-#include "project_handler.h"  // ProjectHandler class
+    #include "gen_base.h"         // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
+    #include "gen_results.h"      // Code generation file writing functions
+    #include "node.h"             // Node class
+    #include "project_handler.h"  // ProjectHandler class
 
-#include "pugixml.hpp"
+    #include "pugixml.hpp"
 
 // clang-format on
 
@@ -226,4 +228,6 @@ void CodeCompare::OnWinMerge(wxCommandEvent& /* event */)
     winShellRun("WinMergeU.exe", "/e /u ~wxue_.WinMerge", cwd.sub_cstr().c_str());
 }
 
-#endif  // _WIN32
+    #endif  // _WIN32
+
+#endif  // defined(INTERNAL_TESTING)

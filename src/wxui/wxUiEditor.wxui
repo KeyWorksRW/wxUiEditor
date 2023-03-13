@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <wxUiEditorData
-  data_version="16">
+  data_version="17">
   <node
     class="Project"
     art_directory="../art_src"
@@ -175,6 +175,9 @@
       <node
         class="embedded_image"
         bitmap="SVG;../art_src/xrc_compare.svg;[16,16]" />
+      <node
+        class="embedded_image"
+        bitmap="Embed;../art_src/hide.png" />
     </node>
     <node
       class="folder"
@@ -4202,6 +4205,891 @@
             font="default family,9,,,underlined"
             foreground_colour="0,128,0"
             column="2" />
+        </node>
+      </node>
+    </node>
+    <node
+      class="folder"
+      label="Internal">
+      <node
+        class="wxDialog"
+        class_name="DebugSettings"
+        cpp_conditional="defined(INTERNAL_TESTING)"
+        persist="1"
+        style="wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER"
+        title="Test Settings"
+        base_file="..\internal\debugsettings"
+        derived_class_name="DebugSettings"
+        derived_file="debugsettings"
+        inserted_hdr_code="private:@@    long m_orgFlags;@@"
+        use_derived_class="0"
+        wxEVT_INIT_DIALOG="OnInit">
+        <node
+          class="wxBoxSizer"
+          orientation="wxVERTICAL"
+          var_name="parent_sizer">
+          <node
+            class="wxStaticBoxSizer"
+            label="MSG Window Settings"
+            flags="wxEXPAND">
+            <node
+              class="wxBoxSizer"
+              flags="wxEXPAND">
+              <node
+                class="wxCheckBox"
+                class_access="none"
+                label="Display MSG Window"
+                var_name="checkBox"
+                validator_variable="m_DisplayMsgWindow"
+                tooltip="If checked, the MSG window will be displayed the first time it receives a non-filtered MSG. If unchecked, the window is never displayed unless you go here and click the Show Now button."
+                alignment="wxALIGN_CENTER" />
+              <node
+                class="spacer"
+                width="15"
+                flags="wxEXPAND" />
+              <node
+                class="wxButton"
+                label="Show Now"
+                wxEVT_BUTTON="OnShowNow" />
+            </node>
+            <node
+              class="wxBoxSizer"
+              orientation="wxVERTICAL"
+              var_name="box_sizer2"
+              flags="wxEXPAND">
+              <node
+                class="wxCheckBox"
+                class_access="none"
+                label="Display MSG_INFO() messages"
+                var_name="checkBox2"
+                validator_variable="m_DisplayMsgInfo" />
+              <node
+                class="wxCheckBox"
+                class_access="none"
+                label="Display MSG_EVENT() messages"
+                var_name="checkBox3"
+                validator_variable="m_DisplayMsgEvent" />
+              <node
+                class="wxCheckBox"
+                class_access="none"
+                label="Display MSG_WARNING() messages"
+                var_name="checkBox4"
+                validator_variable="m_DisplayMsgWarnng" />
+            </node>
+            <node
+              class="spacer"
+              height="10" />
+            <node
+              class="wxBoxSizer"
+              orientation="wxVERTICAL"
+              var_name="box_sizer_2"
+              flags="wxEXPAND">
+              <node
+                class="wxCheckBox"
+                class_access="none"
+                label="Display creation info"
+                var_name="checkBox_2"
+                validator_variable="m_FireCreationMsgs"
+                tooltip="MSG_INFO called when nav, prop, and mockup panels have their contents recreated." />
+            </node>
+          </node>
+          <node
+            class="wxStdDialogButtonSizer"
+            class_access="protected:"
+            static_line="0"
+            var_name="std_button_sizer"
+            flags="wxEXPAND"
+            OKButtonClicked="OnOK" />
+        </node>
+      </node>
+      <node
+        class="wxDialog"
+        class_name="CodeCompare"
+        cpp_conditional="defined(INTERNAL_TESTING)"
+        title="Compare Code Generation"
+        base_file="..\internal\code_compare"
+        derived_class_name="CodeCompare"
+        inserted_hdr_code="~CodeCompare();@@@@private:@@    std::vector&lt;tt_string> m_class_list;"
+        private_members="1"
+        use_derived_class="0"
+        wxEVT_INIT_DIALOG="OnInit">
+        <node
+          class="wxBoxSizer"
+          orientation="wxVERTICAL"
+          var_name="dlg_sizer"
+          flags="wxEXPAND">
+          <node
+            class="wxBoxSizer"
+            orientation="wxVERTICAL">
+            <node
+              class="wxStaticText"
+              class_access="none"
+              label="If you have WinMergeU.exe installed, and you have previously generated classes, then you can use this to compare what would be generated now. This can be helpful if you need to confirm code generation changes without having to actually write out the code.&#10;"
+              var_name="staticText_2"
+              wrap="320"
+              borders="wxTOP|wxRIGHT|wxLEFT" />
+            <node
+              class="wxGridSizer"
+              cols="3"
+              alignment="wxALIGN_CENTER_HORIZONTAL">
+              <node
+                class="wxRadioButton"
+                label="&amp;C++"
+                style="wxRB_GROUP"
+                var_name="m_radio_cplusplus"
+                wxEVT_RADIOBUTTON="OnCPlusPlus" />
+              <node
+                class="wxRadioButton"
+                label="&amp;Python"
+                var_name="m_radio_python"
+                wxEVT_RADIOBUTTON="OnPython" />
+            </node>
+            <node
+              class="spacer"
+              height="15" />
+            <node
+              class="wxStaticText"
+              class_access="none"
+              label="C&amp;hanged Classes:"
+              var_name="staticText" />
+            <node
+              class="wxListBox"
+              var_name="m_list_changes"
+              disabled="1"
+              minimum_size="250,200"
+              flags="wxEXPAND" />
+            <node
+              class="wxButton"
+              label="&amp;WinMerge..."
+              bitmap="XPM;../internal/WinMerge.xpm"
+              disabled="1"
+              wxEVT_BUTTON="OnWinMerge" />
+          </node>
+          <node
+            class="wxStdDialogButtonSizer"
+            Cancel="0"
+            Close="1"
+            OK="0"
+            default_button="Close"
+            flags="wxEXPAND" />
+        </node>
+      </node>
+      <node
+        class="wxDialog"
+        class_name="ConvertImageBase"
+        cpp_conditional="defined(INTERNAL_TESTING)"
+        title="Convert Image"
+        minimum_size="-1,-1"
+        size="-1,-1"
+        base_file="..\internal\convert_img_base"
+        derived_class_name="convert_img">
+        <node
+          class="wxBoxSizer"
+          orientation="wxVERTICAL"
+          var_name="parent_sizer"
+          flags="wxEXPAND">
+          <node
+            class="wxBoxSizer"
+            borders="wxLEFT|wxRIGHT|wxTOP"
+            flags="wxEXPAND">
+            <node
+              class="wxCollapsiblePane"
+              class_access="none"
+              collapsed="1"
+              label="Dialog Description"
+              var_name="collapsiblePane"
+              borders="wxLEFT|wxRIGHT|wxTOP"
+              flags="wxEXPAND"
+              proportion="1">
+              <node
+                class="wxBoxSizer"
+                var_name="box_sizer2">
+                <node
+                  class="wxStaticText"
+                  label="This dialog can be used to convert an image into a file that can be #included into a source file. The original image can be any file format that wxWidgets supports.&#10;&#10;The header output type is an array containing the image data in whatever format you choose. While the disk file size might be larger than an XPM file, the size in your executable will typically be quite a bit smaller."
+                  var_name="m_staticDescription"
+                  wrap="400" />
+              </node>
+            </node>
+          </node>
+          <node
+            class="wxFlexGridSizer"
+            growablecols="1"
+            flags="wxEXPAND">
+            <node
+              class="wxStaticText"
+              label="&amp;Source:"
+              var_name="m_staticOriginal_2"
+              alignment="wxALIGN_CENTER" />
+            <node
+              class="wxFilePickerCtrl"
+              var_name="m_fileOriginal"
+              wildcard="Select file(s)&quot;, &quot;All files|*.*|PNG|*.png|XPM|*.xpm|Tiff|*.tif;*.tiff|Bitmaps|*.bmp|Icon|*.ico||"
+              size="300,-1"
+              flags="wxEXPAND"
+              wxEVT_FILEPICKER_CHANGED="OnInputChange" />
+            <node
+              class="wxStaticText"
+              label="O&amp;utput:"
+              var_name="m_staticHeader"
+              alignment="wxALIGN_CENTER" />
+            <node
+              class="wxFilePickerCtrl"
+              style="wxFLP_SAVE|wxFLP_USE_TEXTCTRL"
+              var_name="m_fileOutput"
+              wildcard="Header files|*.h_img||"
+              flags="wxEXPAND"
+              wxEVT_FILEPICKER_CHANGED="OnOutputChange" />
+          </node>
+          <node
+            class="wxStaticBoxSizer"
+            label="Output Type">
+            <node
+              class="wxChoicebook"
+              style="wxCHB_LEFT"
+              wxEVT_CHOICEBOOK_PAGE_CHANGED="OnPageChanged">
+              <node
+                class="BookPage"
+                label="Header"
+                var_name="header_page"
+                background_colour="wxSYS_COLOUR_BTNFACE"
+                window_style="wxTAB_TRAVERSAL">
+                <node
+                  class="wxBoxSizer"
+                  orientation="wxVERTICAL"
+                  var_name="parent_sizer_2">
+                  <node
+                    class="wxStaticBoxSizer"
+                    label="Settings"
+                    var_name="hdr_static_box">
+                    <node
+                      class="wxBoxSizer"
+                      orientation="wxVERTICAL"
+                      var_name="box_sizer_2"
+                      flags="wxEXPAND">
+                      <node
+                        class="wxCheckBox"
+                        checked="1"
+                        label="Convert to &amp;PNG"
+                        var_name="m_check_make_png"
+                        tooltip="If checked, image will be converted to PNG before being saved."
+                        wxEVT_CHECKBOX="OnCheckPngConversion" />
+                      <node
+                        class="wxCheckBox"
+                        label="&amp;Force Mask"
+                        var_name="m_ForceHdrMask"
+                        tooltip="Check this to override any mask specified in the original image file."
+                        wxEVT_CHECKBOX="OnForceHdrMask" />
+                      <node
+                        class="wxBoxSizer"
+                        var_name="box_sizer_3">
+                        <node
+                          class="spacer"
+                          width="10" />
+                        <node
+                          class="wxComboBox"
+                          style="wxCB_READONLY"
+                          var_name="m_comboHdrMask"
+                          size="150,-1"
+                          alignment="wxALIGN_LEFT"
+                          borders="wxLEFT|wxRIGHT|wxBOTTOM"
+                          wxEVT_COMBOBOX="OnComboHdrMask" />
+                      </node>
+                      <node
+                        class="wxBoxSizer"
+                        var_name="box_sizer_5"
+                        borders="wxRIGHT|wxLEFT">
+                        <node
+                          class="spacer"
+                          width="10" />
+                        <node
+                          class="wxStaticText"
+                          label="0 0 0"
+                          var_name="m_staticHdrRGB"
+                          borders="wxRIGHT|wxLEFT" />
+                      </node>
+                    </node>
+                  </node>
+                </node>
+              </node>
+              <node
+                class="BookPage"
+                label="XPM"
+                var_name="xpm_page"
+                background_colour="wxSYS_COLOUR_BTNFACE"
+                window_style="wxTAB_TRAVERSAL">
+                <node
+                  class="wxBoxSizer"
+                  orientation="wxVERTICAL"
+                  var_name="parent_sizer_3">
+                  <node
+                    class="wxStaticBoxSizer"
+                    label="Settings"
+                    var_name="mask_static_box">
+                    <node
+                      class="wxBoxSizer"
+                      orientation="wxVERTICAL"
+                      var_name="box_sizer7"
+                      flags="wxEXPAND">
+                      <node
+                        class="wxCheckBox"
+                        checked="1"
+                        label="&amp;Alpha Channel to Mask"
+                        var_name="m_ConvertAlphaChannel"
+                        tooltip="Check this to replace any alpha channel with a mask."
+                        flags="wxEXPAND"
+                        wxEVT_CHECKBOX="OnConvertAlpha" />
+                      <node
+                        class="wxCheckBox"
+                        label="&amp;Force Mask"
+                        var_name="m_ForceXpmMask"
+                        tooltip="Check this to override any mask specified in the original image file."
+                        wxEVT_CHECKBOX="OnForceXpmMask" />
+                      <node
+                        class="wxBoxSizer"
+                        var_name="box_sizer_4">
+                        <node
+                          class="spacer"
+                          width="10" />
+                        <node
+                          class="wxComboBox"
+                          style="wxCB_READONLY"
+                          var_name="m_comboXpmMask"
+                          size="150,-1"
+                          alignment="wxALIGN_LEFT"
+                          borders="wxLEFT|wxRIGHT|wxBOTTOM"
+                          wxEVT_COMBOBOX="OnComboXpmMask" />
+                      </node>
+                      <node
+                        class="wxBoxSizer"
+                        var_name="box_sizer_6"
+                        borders="wxRIGHT|wxLEFT">
+                        <node
+                          class="spacer"
+                          width="10" />
+                        <node
+                          class="wxStaticText"
+                          label="0 0 0"
+                          var_name="m_staticXpmRGB"
+                          borders="wxRIGHT|wxLEFT" />
+                      </node>
+                    </node>
+                  </node>
+                </node>
+              </node>
+            </node>
+          </node>
+          <node
+            class="wxBoxSizer"
+            var_name="box_sizer6"
+            borders="wxTOP|wxRIGHT|wxLEFT"
+            flags="wxEXPAND">
+            <node
+              class="wxStaticText"
+              label="16 x 16"
+              var_name="m_staticDimensions"
+              hidden="1"
+              alignment="wxALIGN_CENTER"
+              borders="wxTOP|wxRIGHT|wxLEFT"
+              proportion="1" />
+          </node>
+          <node
+            class="wxGridSizer"
+            var_name="grid_sizer2"
+            flags="wxEXPAND"
+            proportion="1">
+            <node
+              class="wxStaticText"
+              label="Source"
+              var_name="m_staticOriginal"
+              hidden="1"
+              alignment="wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_HORIZONTAL"
+              borders="wxLEFT|wxRIGHT|wxTOP" />
+            <node
+              class="wxStaticText"
+              label="Current"
+              var_name="m_staticOutput"
+              hidden="1"
+              alignment="wxALIGN_CENTER"
+              borders="wxLEFT|wxRIGHT|wxTOP" />
+            <node
+              class="wxStaticBitmap"
+              class_access="protected:"
+              var_name="m_bmpOriginal"
+              hidden="1"
+              alignment="wxALIGN_CENTER" />
+            <node
+              class="wxStaticBitmap"
+              class_access="protected:"
+              var_name="m_bmpOutput"
+              hidden="1"
+              alignment="wxALIGN_CENTER" />
+          </node>
+          <node
+            class="wxFlexGridSizer"
+            cols="1"
+            rows="2"
+            var_name="flex_grid_sizer2"
+            flags="wxEXPAND">
+            <node
+              class="wxStaticText"
+              label="save"
+              var_name="m_staticSave"
+              hidden="1"
+              flags="wxEXPAND" />
+            <node
+              class="wxStaticText"
+              label="size"
+              var_name="m_staticSize"
+              hidden="1"
+              flags="wxEXPAND" />
+          </node>
+          <node
+            class="wxGridSizer"
+            flags="wxEXPAND">
+            <node
+              class="wxButton"
+              label="Convert"
+              var_name="m_btnConvert"
+              wxEVT_BUTTON="OnConvert" />
+            <node
+              class="wxButton"
+              label="Close"
+              var_name="m_btnClose"
+              id="wxID_OK"
+              alignment="wxALIGN_RIGHT" />
+          </node>
+        </node>
+      </node>
+      <node
+        class="wxDialog"
+        class_name="NodeInfo"
+        cpp_conditional="defined(INTERNAL_TESTING)"
+        title="Node Information"
+        base_file="..\internal\node_info"
+        base_hdr_includes="#include &quot;node_classes.h&quot;"
+        derived_class_name="NodeInfo"
+        derived_file="node_info"
+        inserted_hdr_code="void SetNode(Node* node) { m_node = node; }@@@@private:@@Node* m_node { nullptr };"
+        private_members="1"
+        use_derived_class="0"
+        wxEVT_INIT_DIALOG="OnInit">
+        <node
+          class="wxBoxSizer"
+          orientation="wxVERTICAL"
+          var_name="parent_sizer"
+          flags="wxEXPAND">
+          <node
+            class="wxStaticBoxSizer"
+            label="Selected Node"
+            var_name="static_box_2">
+            <node
+              class="wxStaticText"
+              label="Name:"
+              var_name="m_txt_generator" />
+            <node
+              class="wxStaticText"
+              label="Type:"
+              var_name="m_txt_type" />
+            <node
+              class="wxStaticText"
+              label="Memory:"
+              var_name="m_txt_memory" />
+          </node>
+          <node
+            class="wxStaticBoxSizer"
+            label="Memory Usage"
+            flags="wxEXPAND">
+            <node
+              class="wxStaticText"
+              label="Project:"
+              var_name="m_txt_project" />
+            <node
+              class="wxStaticText"
+              label="Clipboard:"
+              var_name="m_txt_clipboard" />
+          </node>
+          <node
+            class="wxStdDialogButtonSizer"
+            Cancel="0"
+            Close="1"
+            OK="0"
+            default_button="Close"
+            flags="wxEXPAND" />
+        </node>
+      </node>
+      <node
+        class="wxDialog"
+        class_name="XrcPreview"
+        cpp_conditional="defined(INTERNAL_TESTING)"
+        persist="1"
+        style="wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER"
+        title="Test XRC"
+        minimum_size="800,600d"
+        base_file="..\internal\xrcpreview"
+        derived_class_name="XrcPreview"
+        derived_file="xrcpreview"
+        use_derived_class="0"
+        wxEVT_INIT_DIALOG="OnInit">
+        <node
+          class="wxBoxSizer"
+          orientation="wxVERTICAL"
+          var_name="dlg_sizer"
+          flags="wxEXPAND">
+          <node
+            class="wxBoxSizer"
+            orientation="wxVERTICAL"
+            flags="wxEXPAND"
+            proportion="1">
+            <node
+              class="wxBoxSizer"
+              var_name="box_sizer_4">
+              <node
+                class="wxStaticText"
+                label="Preview only works with Dialogs. Be certain the dialog will be visible and has a close box in the title bar!" />
+            </node>
+            <node
+              class="wxBoxSizer"
+              var_name="box_sizer_2"
+              flags="wxEXPAND">
+              <node
+                class="wxButton"
+                label="&amp;Blank"
+                var_name="m_btn_2"
+                tooltip="Create XRC with a single empty object"
+                wxEVT_BUTTON="OnCreate" />
+              <node
+                class="wxButton"
+                label="&amp;Generate"
+                var_name="m_btn_3"
+                tooltip="Generate XRC from current selected form."
+                wxEVT_BUTTON="OnXrcCopy" />
+              <node
+                class="wxButton"
+                label="&amp;Export..."
+                var_name="m_btn_4"
+                tooltip="Generate XRC from current selected form."
+                wxEVT_BUTTON="OnExport" />
+              <node
+                class="wxButton"
+                label="&amp;Preview..."
+                tooltip="Load the XRC into a dialog and display it."
+                wxEVT_BUTTON="OnPreview" />
+              <node
+                class="wxSearchCtrl"
+                wxEVT_SEARCHCTRL_SEARCH_BTN="OnSearch" />
+            </node>
+            <node
+              class="wxBoxSizer"
+              var_name="box_sizer_3"
+              flags="wxEXPAND"
+              proportion="1">
+              <node
+                class="wxStyledTextCtrl"
+                fold_margin="1"
+                lexer="XML"
+                flags="wxEXPAND"
+                proportion="1" />
+            </node>
+          </node>
+          <node
+            class="wxStdDialogButtonSizer"
+            Cancel="0"
+            Close="1"
+            OK="0"
+            default_button="none"
+            flags="wxEXPAND" />
+        </node>
+      </node>
+      <node
+        class="wxDialog"
+        class_name="NodeSearchDlg"
+        cpp_conditional="defined(INTERNAL_TESTING)"
+        style="wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER"
+        title="Node Search"
+        base_file="..\internal\node_search_dlg"
+        derived_class_name="NodeSearchDlg"
+        private_members="1"
+        use_derived_class="0"
+        wxEVT_INIT_DIALOG="OnInit">
+        <node
+          class="wxBoxSizer"
+          orientation="wxVERTICAL"
+          var_name="dlg_sizer"
+          flags="wxEXPAND">
+          <node
+            class="wxBoxSizer"
+            var_name="box_sizer_2"
+            minimum_size="250,400d"
+            flags="wxEXPAND"
+            proportion="1">
+            <node
+              class="wxBoxSizer"
+              orientation="wxVERTICAL"
+              flags="wxEXPAND">
+              <node
+                class="StaticRadioBtnBoxSizer"
+                label="Search generators"
+                radiobtn_var_name="m_radio_generators"
+                flags="wxEXPAND"
+                get_function="isSearchGenerators"
+                validator_variable="m_search_generators"
+                wxEVT_RADIOBUTTON="OnRadioSearchGenerators">
+                <node
+                  class="wxComboBox"
+                  focus="1"
+                  style="wxCB_SORT"
+                  var_name="m_combo_generators"
+                  get_function="get_GenName"
+                  validator_variable="m_gen_name"
+                  minimum_size="100,-1d" />
+              </node>
+              <node
+                class="StaticRadioBtnBoxSizer"
+                checked="0"
+                label="Search var_names"
+                radiobtn_var_name="m_radio_var_names"
+                var_name="static_box_2"
+                flags="wxEXPAND"
+                get_function="isSearchVarnames"
+                validator_variable="m_search_varnames"
+                wxEVT_RADIOBUTTON="OnRadioSearchVarNames">
+                <node
+                  class="wxComboBox"
+                  style="wxCB_SORT"
+                  var_name="m_combo_variables"
+                  get_function="get_VarName"
+                  validator_variable="m_var_name"
+                  minimum_size="100,-1d" />
+              </node>
+              <node
+                class="StaticRadioBtnBoxSizer"
+                checked="0"
+                label="Search labels"
+                radiobtn_var_name="m_radio_labels"
+                var_name="static_box_3"
+                flags="wxEXPAND"
+                get_function="isSearchLabels"
+                validator_variable="m_search_labels"
+                wxEVT_RADIOBUTTON="OnRadioSearchLabels">
+                <node
+                  class="wxComboBox"
+                  style="wxCB_SORT"
+                  var_name="m_combo_labels"
+                  get_function="get_Label"
+                  validator_variable="m_label_name"
+                  maximum_size="100,-1d"
+                  minimum_size="100,-1d" />
+              </node>
+            </node>
+            <node
+              class="wxStyledTextCtrl"
+              minimum_size="120,-1d"
+              flags="wxEXPAND"
+              proportion="1" />
+          </node>
+          <node
+            class="wxStdDialogButtonSizer"
+            flags="wxEXPAND" />
+        </node>
+      </node>
+      <node
+        class="wxFrame"
+        class_name="MsgFrameBase"
+        cpp_conditional="defined(INTERNAL_TESTING)"
+        title="wxUiEditor Messages"
+        base_file="..\internal\msgframe_base"
+        derived_class_name="MsgFrame"
+        derived_file="msgframe"
+        size="-1,-1"
+        window_style="wxTAB_TRAVERSAL"
+        wxEVT_CLOSE_WINDOW="OnClose">
+        <node
+          class="wxMenuBar"
+          class_access="none"
+          var_name="menubar">
+          <node
+            class="wxMenu"
+            class_access="none"
+            label="&amp;File"
+            var_name="menu_file">
+            <node
+              class="wxMenuItem"
+              bitmap="Art;wxART_FILE_SAVE_AS|wxART_MENU"
+              id="wxID_SAVEAS"
+              label=""
+              var_name="menu_item_saveas"
+              wxEVT_MENU="OnSaveAs" />
+            <node
+              class="separator" />
+            <node
+              class="wxMenuItem"
+              bitmap="Art;wxART_CUT|wxART_MENU"
+              id="wxID_CLEAR"
+              label=""
+              var_name="menu_item_clear"
+              wxEVT_MENU="OnClear" />
+            <node
+              class="wxMenuItem"
+              bitmap="Embed;../art_src/hide.png"
+              id="id_hide"
+              label="&amp;Hide"
+              var_name="menu_item_hide"
+              wxEVT_MENU="OnHide" />
+          </node>
+          <node
+            class="wxMenu"
+            class_access="none"
+            label="&amp;View"
+            var_name="menu_view">
+            <node
+              class="wxMenuItem"
+              bitmap="Art;wxART_WARNING|wxART_MENU"
+              class_access="protected:"
+              id="id_warning_msgs"
+              kind="wxITEM_CHECK"
+              label="Warnings"
+              var_name="m_menu_item_warnings"
+              wxEVT_MENU="OnWarnings" />
+            <node
+              class="wxMenuItem"
+              bitmap="Art;wxART_TIP|wxART_MENU"
+              class_access="protected:"
+              id="id_event_msgs"
+              kind="wxITEM_CHECK"
+              label="Events"
+              var_name="m_menu_item_events"
+              wxEVT_MENU="OnEvents" />
+            <node
+              class="wxMenuItem"
+              bitmap="Art;wxART_INFORMATION|wxART_MENU"
+              class_access="protected:"
+              id="wxID_INFO"
+              kind="wxITEM_CHECK"
+              label=""
+              var_name="m_menu_item_info"
+              wxEVT_MENU="OnInfo" />
+          </node>
+        </node>
+        <node
+          class="wxBoxSizer"
+          orientation="wxVERTICAL"
+          var_name="parent_sizer">
+          <node
+            class="wxNotebook"
+            background_colour="wxSYS_COLOUR_BTNFACE"
+            flags="wxEXPAND"
+            proportion="1"
+            wxEVT_NOTEBOOK_PAGE_CHANGED="OnPageChanged">
+            <node
+              class="BookPage"
+              class_access="protected:"
+              label="Log"
+              var_name="m_page_log"
+              background_colour="wxSYS_COLOUR_BTNFACE"
+              window_style="wxTAB_TRAVERSAL">
+              <node
+                class="wxBoxSizer"
+                orientation="wxVERTICAL"
+                var_name="log_sizer">
+                <node
+                  class="wxTextCtrl"
+                  style="wxTE_MULTILINE|wxTE_READONLY|wxTE_RICH|wxHSCROLL"
+                  minimum_size="350,300"
+                  border_size="0"
+                  flags="wxEXPAND"
+                  proportion="1" />
+              </node>
+            </node>
+            <node
+              class="BookPage"
+              class_access="protected:"
+              label="Node"
+              var_name="m_page_node"
+              background_colour="wxSYS_COLOUR_BTNFACE"
+              window_style="wxTAB_TRAVERSAL">
+              <node
+                class="wxBoxSizer"
+                orientation="wxVERTICAL"
+                var_name="node_sizer">
+                <node
+                  class="wxStaticBoxSizer"
+                  label="Selected Node"
+                  var_name="static_box_2"
+                  flags="wxEXPAND">
+                  <node
+                    class="wxBoxSizer"
+                    flags="wxEXPAND">
+                    <node
+                      class="wxStaticText"
+                      label="Name:"
+                      var_name="m_txt_generator"
+                      flags="wxEXPAND"
+                      proportion="1" />
+                    <node
+                      class="wxButton"
+                      class_access="none"
+                      label="Parent..."
+                      var_name="btn"
+                      alignment="wxALIGN_CENTER_VERTICAL"
+                      wxEVT_BUTTON="OnParent" />
+                  </node>
+                  <node
+                    class="wxStaticText"
+                    label="Type:"
+                    var_name="m_txt_type" />
+                  <node
+                    class="wxStaticText"
+                    label="Memory:"
+                    var_name="m_txt_memory" />
+                  <node
+                    class="wxHyperlinkCtrl"
+                    label="wxWidgets Documentation"
+                    url="https://docs.wxwidgets.org/trunk/"
+                    flags="wxEXPAND" />
+                </node>
+                <node
+                  class="wxStaticBoxSizer"
+                  label="Memory Usage"
+                  flags="wxEXPAND">
+                  <node
+                    class="wxStaticText"
+                    label="Project:"
+                    var_name="m_txt_project" />
+                  <node
+                    class="wxStaticText"
+                    label="Clipboard:"
+                    var_name="m_txt_clipboard" />
+                </node>
+              </node>
+            </node>
+            <node
+              class="BookPage"
+              class_access="protected:"
+              label="XRC"
+              var_name="m_page_xrc"
+              background_colour="wxSYS_COLOUR_BTNFACE"
+              window_style="wxTAB_TRAVERSAL">
+              <node
+                class="wxBoxSizer"
+                orientation="wxVERTICAL"
+                var_name="page_sizer">
+                <node
+                  class="wxBoxSizer"
+                  var_name="box_sizer_3"
+                  flags="wxEXPAND"
+                  proportion="1">
+                  <node
+                    class="wxStyledTextCtrl"
+                    fold_margin="1"
+                    lexer="XML"
+                    read_only="1"
+                    flags="wxEXPAND"
+                    proportion="1" />
+                </node>
+              </node>
+            </node>
+          </node>
         </node>
       </node>
     </node>

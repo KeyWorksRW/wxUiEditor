@@ -21,15 +21,15 @@ class XrcPreview : public wxDialog
 {
 public:
     XrcPreview() {}
-    XrcPreview(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "Test XRC",
-        const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
+    XrcPreview(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "Test XRC", const wxPoint& pos =
+        wxDefaultPosition, const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER, const wxString &name = wxDialogNameStr)
     {
         Create(parent, id, title, pos, size, style, name);
     }
 
-    bool Create(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "Test XRC",
-        const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
+    bool Create(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "Test XRC", const wxPoint& pos =
+        wxDefaultPosition, const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER, const wxString &name = wxDialogNameStr);
 
 protected:

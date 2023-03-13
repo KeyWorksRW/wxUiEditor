@@ -7,6 +7,8 @@
 
 // clang-format off
 
+#if defined(INTERNAL_TESTING)
+
 #include <wx/checkbox.h>
 #include <wx/persist.h>
 #include <wx/persist/toplevel.h>
@@ -85,6 +87,8 @@ bool DebugSettings::Create(wxWindow* parent, wxWindowID id, const wxString& titl
     return true;
 }
 
+#endif  // defined(INTERNAL_TESTING)
+
 // ************* End of generated code ***********
 // DO NOT EDIT THIS COMMENT BLOCK!
 //
@@ -101,11 +105,13 @@ bool DebugSettings::Create(wxWindow* parent, wxWindowID id, const wxString& titl
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include <wx/config.h>  // wxConfig base header
+#if defined(INTERNAL_TESTING)
 
-#include "mainapp.h"  // App -- App class
+    #include <wx/config.h>  // wxConfig base header
 
-#include "preferences.h"  // Preferences -- Preferences class
+    #include "mainapp.h"  // App -- App class
+
+    #include "preferences.h"  // Preferences -- Preferences class
 
 void DebugSettings::OnInit(wxInitDialogEvent& event)
 {
@@ -162,3 +168,5 @@ void DebugSettings::OnOK(wxCommandEvent& event)
 
     event.Skip();  // Need to call this for Persist to work
 }
+
+#endif  // defined(INTERNAL_TESTING)

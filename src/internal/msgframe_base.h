@@ -72,13 +72,6 @@ protected:
     wxTextCtrl* m_textCtrl;
 };
 
-namespace wxue_img
-{
-    // Images declared in this class module:
-
-    extern const unsigned char hide_png[242];
-}
-
 // ************* End of generated code ***********
 // DO NOT EDIT THIS COMMENT BLOCK!
 //

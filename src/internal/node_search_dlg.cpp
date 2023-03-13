@@ -7,6 +7,8 @@
 
 // clang-format off
 
+#if defined(INTERNAL_TESTING)
+
 #include <wx/button.h>
 #include <wx/sizer.h>
 #include <wx/statbox.h>
@@ -31,8 +33,8 @@ bool NodeSearchDlg::Create(wxWindow* parent, wxWindowID id, const wxString& titl
     m_radio_generators->SetValidator(wxGenericValidator(&m_search_generators));
     auto* static_box = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, m_radio_generators), wxVERTICAL);
 
-    m_combo_generators = new wxComboBox(static_box->GetStaticBox(), wxID_ANY, wxEmptyString,
-        wxDefaultPosition, wxDefaultSize, 0, nullptr, wxCB_SORT);
+    m_combo_generators = new wxComboBox(static_box->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition,
+        wxDefaultSize, 0, nullptr, wxCB_SORT);
     m_combo_generators->SetFocus();
     m_combo_generators->SetValidator(wxGenericValidator(&m_gen_name));
     m_combo_generators->SetMinSize(ConvertDialogToPixels(wxSize(100, -1)));
@@ -44,8 +46,8 @@ bool NodeSearchDlg::Create(wxWindow* parent, wxWindowID id, const wxString& titl
     m_radio_var_names->SetValidator(wxGenericValidator(&m_search_varnames));
     auto* static_box_2 = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, m_radio_var_names), wxVERTICAL);
 
-    m_combo_variables = new wxComboBox(static_box_2->GetStaticBox(), wxID_ANY, wxEmptyString,
-        wxDefaultPosition, wxDefaultSize, 0, nullptr, wxCB_SORT);
+    m_combo_variables = new wxComboBox(static_box_2->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition,
+        wxDefaultSize, 0, nullptr, wxCB_SORT);
     m_combo_variables->SetValidator(wxGenericValidator(&m_var_name));
     m_combo_variables->SetMinSize(ConvertDialogToPixels(wxSize(100, -1)));
     static_box_2->Add(m_combo_variables, wxSizerFlags().Border(wxALL));
@@ -98,6 +100,8 @@ bool NodeSearchDlg::Create(wxWindow* parent, wxWindowID id, const wxString& titl
     return true;
 }
 
+#endif  // defined(INTERNAL_TESTING)
+
 // ************* End of generated code ***********
 // DO NOT EDIT THIS COMMENT BLOCK!
 //
@@ -114,11 +118,13 @@ bool NodeSearchDlg::Create(wxWindow* parent, wxWindowID id, const wxString& titl
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include <set>  // std::set
+#if defined(INTERNAL_TESTING)
 
-#include "mainframe.h"         // MainFrame -- Main window frame
-#include "node.h"              // Node class
-#include "panels/nav_panel.h"  // NavigationPanel -- Node tree class
+    #include <set>  // std::set
+
+    #include "mainframe.h"         // MainFrame -- Main window frame
+    #include "node.h"              // Node class
+    #include "panels/nav_panel.h"  // NavigationPanel -- Node tree class
 
 Node* FindNodeByGenerator(Node* node, GenEnum::GenName gen_name)
 {
@@ -307,3 +313,5 @@ void NodeSearchDlg::OnRadioSearchLabels(wxCommandEvent& WXUNUSED(event))
     m_radio_labels->SetValue(true);
     m_radio_var_names->SetValue(false);
 }
+
+#endif  // defined(INTERNAL_TESTING)

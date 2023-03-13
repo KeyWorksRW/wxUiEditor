@@ -15,6 +15,8 @@ inline const char* menus_xml = R"===(<?xml version="1.0"?>
 			<option name="wxMB_DOCKABLE"
 				help="Allows the menu bar to be detached (wxGTK only)." />
 		</property>
+		<property name="cpp_conditional" type="string_code_single"
+			help="In C++ code, any value in this property will be used to place a conditional (#if/#endif) block around the Menu Bar's generated code." />
 	</gen>
 
 	<gen class="PopupMenu" image="menu" type="popup_menu">

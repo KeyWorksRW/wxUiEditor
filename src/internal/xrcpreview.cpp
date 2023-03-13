@@ -7,6 +7,8 @@
 
 // clang-format off
 
+#if defined(INTERNAL_TESTING)
+
 #include <wx/persist.h>
 #include <wx/persist/toplevel.h>
 #include <wx/sizer.h>
@@ -106,6 +108,8 @@ bool XrcPreview::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     return true;
 }
 
+#endif  // defined(INTERNAL_TESTING)
+
 // ************* End of generated code ***********
 // DO NOT EDIT THIS COMMENT BLOCK!
 //
@@ -122,21 +126,19 @@ bool XrcPreview::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#if !defined(INTERNAL_TESTING)
-    #error "INTERNAL_TESTING must be defined if you include this moduel!"
-#endif
+#if defined(INTERNAL_TESTING)
 
-#include <wx/filedlg.h>     // wxFileDialog base header
-#include <wx/mstream.h>     // Memory stream classes
-#include <wx/xml/xml.h>     // wxXmlDocument - XML parser & data holder class
-#include <wx/xrc/xmlres.h>  // XML resources
+    #include <wx/filedlg.h>     // wxFileDialog base header
+    #include <wx/mstream.h>     // Memory stream classes
+    #include <wx/xml/xml.h>     // wxXmlDocument - XML parser & data holder class
+    #include <wx/xrc/xmlres.h>  // XML resources
 
-#include "gen_xrc.h"          // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
-#include "mainframe.h"        // MainFrame -- Main window frame
-#include "node.h"             // Node class
-#include "project_handler.h"  // ProjectHandler class
+    #include "gen_xrc.h"          // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
+    #include "mainframe.h"        // MainFrame -- Main window frame
+    #include "node.h"             // Node class
+    #include "project_handler.h"  // ProjectHandler class
 
-#include "pugixml.hpp"
+    #include "pugixml.hpp"
 
 const int node_marker = 1;
 
@@ -247,10 +249,10 @@ void XrcPreview::OnPreview(wxCommandEvent& WXUNUSED(event))
     xrc_resource->Unload(res_name);
 }
 
-#ifndef SCI_SETKEYWORDS
-    #define SCI_SETKEYWORDS 4005
-    #define SCI_GETTEXT_MSG 2182
-#endif
+    #ifndef SCI_SETKEYWORDS
+        #define SCI_SETKEYWORDS 4005
+        #define SCI_GETTEXT_MSG 2182
+    #endif
 
 extern const char* g_xrc_keywords;
 
@@ -316,3 +318,5 @@ void XrcPreview::OnSearch(wxCommandEvent& event)
         m_scintilla->EnsureCaretVisible();
     }
 }
+
+#endif  // defined(INTERNAL_TESTING)

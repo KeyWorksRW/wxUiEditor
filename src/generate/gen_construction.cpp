@@ -150,7 +150,7 @@ void BaseCodeGenerator::GenConstruction(Node* node)
         GenParentSizer(node, need_closing_brace);
     }
     else if (parent->IsToolBar() && !node->isType(type_tool) && !node->isType(type_aui_tool) &&
-             !node->isType(type_tool_separator))
+             !node->isType(type_tool_separator) && !node->isType(type_tool_dropdown))
     {
         tt_string code;
         gen_code.clear();

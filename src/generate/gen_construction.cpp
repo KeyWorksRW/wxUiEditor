@@ -81,60 +81,8 @@ void BaseCodeGenerator::GenConstruction(Node* node)
         m_source->writeLine(gen_code);
         return;
     }
-    else if (type == type_tool_dropdown && node->GetChildCount())
+    else if (type == type_tool_dropdown)
     {
-        BeginBrace();
-        // BUGBUG: [Randalphwa - 12-31-2022] This is C++ code only!
-        m_source->writeLine("wxMenu* menu = new wxMenu;");
-        auto menu_node_ptr = NodeCreation.NewNode(gen_wxMenu);
-        menu_node_ptr->prop_set_value(prop_var_name, "menu");
-        for (const auto& child: node->GetChildNodePtrs())
-        {
-            auto old_parent = child->GetParent();
-            child->SetParent(menu_node_ptr.get());
-            if (auto gen = child->GetNodeDeclaration()->GetGenerator(); gen)
-            {
-                Code child_code(child.get(), m_language);
-                if (gen->ConstructionCode(child_code))
-                {
-                    m_source->writeLine(child_code);
-                }
-            }
-
-            GenSettings(child.get());
-            // A submenu can have children
-            if (child->GetChildCount())
-            {
-                for (const auto& grandchild: child->GetChildNodePtrs())
-                {
-                    if (auto gen = grandchild->GetNodeDeclaration()->GetGenerator(); gen)
-                    {
-                        gen_code.clear();
-                        if (gen->ConstructionCode(gen_code))
-                            m_source->writeLine(gen_code);
-                    }
-                    GenSettings(grandchild.get());
-                    // A submenu menu item can also be a submenu with great grandchildren.
-                    if (grandchild->GetChildCount())
-                    {
-                        for (const auto& great_grandchild: grandchild->GetChildNodePtrs())
-                        {
-                            if (auto gen = great_grandchild->GetNodeDeclaration()->GetGenerator(); gen)
-                            {
-                                gen_code.clear();
-                                if (gen->ConstructionCode(gen_code))
-                                    m_source->writeLine(gen_code);
-                            }
-                            GenSettings(great_grandchild.get());
-                            // It's possible to have even more levels of submenus, but we'll stop here.
-                        }
-                    }
-                }
-            }
-            child->SetParent(old_parent);
-        }
-        m_source->writeLine(tt_string() << node->get_node_name() << LangPtr() << "SetDropdownMenu(menu);");
-        EndBrace();
         return;
     }
 

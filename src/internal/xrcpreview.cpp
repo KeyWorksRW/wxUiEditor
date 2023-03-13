@@ -130,6 +130,7 @@ bool XrcPreview::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 
     #include <wx/filedlg.h>     // wxFileDialog base header
     #include <wx/mstream.h>     // Memory stream classes
+    #include <wx/scopedptr.h>   // scoped smart pointer class
     #include <wx/xml/xml.h>     // wxXmlDocument - XML parser & data holder class
     #include <wx/xrc/xmlres.h>  // XML resources
 

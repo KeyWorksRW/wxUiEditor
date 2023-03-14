@@ -161,7 +161,8 @@ bool MenuItemGenerator::SettingsCode(Code& code)
     }
     if (code.HasValue(prop_unchecked_bitmap))
     {
-        code.Eol(eol_if_empty);
+        code.Eol();
+        code.AddComment("Set the unchecked bitmap").Eol();
         if (code.is_cpp())
         {
             auto& description = node->as_string(prop_unchecked_bitmap);
@@ -215,7 +216,7 @@ bool MenuItemGenerator::SettingsCode(Code& code)
         // wxPython version
         else
         {
-            code.Eol(eol_if_empty);
+            code.Eol(eol_if_needed);
             bool is_list_created = PythonBitmapList(code, prop_unchecked_bitmap);
             code.NodeName().Function("SetBitmap(");
             if (is_list_created)

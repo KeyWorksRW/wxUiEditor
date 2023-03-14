@@ -60,16 +60,10 @@ public:
 
 #if defined(_WIN32)
     // Returns a copy of the string converted to UTF16 on Windows, or a normal copy on other platforms
-    std::wstring wx_str() const
-    {
-        return to_utf16();
-    };
+    std::wstring wx_str() const { return to_utf16(); };
 #else
     // Returns a copy of the string converted to UTF16 on Windows, or a normal copy on other platforms
-    std::string wx_str() const
-    {
-        return substr();
-    }
+    std::string wx_str() const { return substr(); }
 #endif  // _WIN32
 
     // Caution: std::string_view will be invalid if tt_string is modified or destroyed.
@@ -86,10 +80,7 @@ public:
     // case-insensitive (normal and utf8).
 
     // Returns true if the sub string exists
-    bool contains(std::string_view sub, tt::CASE checkcase) const
-    {
-        return (locate(sub, 0, checkcase) != npos);
-    }
+    bool contains(std::string_view sub, tt::CASE checkcase) const { return (locate(sub, 0, checkcase) != npos); }
 #else
     // Returns true if the sub string exists
     bool contains(std::string_view sub, tt::CASE checkcase = tt::CASE::exact) const
@@ -147,10 +138,7 @@ public:
     // Returns true if the sub-string is identical to the first part of the main string
     bool is_sameprefix(std::string_view str, tt::CASE checkcase = tt::CASE::exact) const;
 
-    int atoi(size_t start = 0) const
-    {
-        return tt::atoi(c_str() + start);
-    }
+    int atoi(size_t start = 0) const { return tt::atoi(c_str() + start); }
 
     // If character is found, line is truncated from the character on, and then
     // any trailing space is removed.
@@ -279,16 +267,10 @@ public:
     }
 
     // Returns true if current filename contains the specified case-insensitive extension.
-    bool has_extension(std::string_view ext) const
-    {
-        return tt::is_sameas(extension(), ext, tt::CASE::either);
-    }
+    bool has_extension(std::string_view ext) const { return tt::is_sameas(extension(), ext, tt::CASE::either); }
 
     // Returns true if current filename contains the specified case-insensitive file name.
-    bool has_filename(std::string_view name) const
-    {
-        return tt::is_sameas(filename(), name, tt::CASE::either);
-    }
+    bool has_filename(std::string_view name) const { return tt::is_sameas(filename(), name, tt::CASE::either); }
 
     // Returns a view to the current extension. View is empty if there is no extension.
     //
@@ -310,31 +292,19 @@ public:
     tt_string& replace_extension(std::string_view newExtension);
 
     // Replaces the extension portion of the string. Returns a view to the entire string.
-    tt_string& remove_extension()
-    {
-        return replace_extension(std::string_view {});
-    };
+    tt_string& remove_extension() { return replace_extension(std::string_view {}); };
 
     // Replaces the filename portion of the string. Returns a view to the entire string.
     tt_string& replace_filename(std::string_view newFilename);
-    tt_string& replace_filename(std::wstring_view newFilename)
-    {
-        return replace_filename(tt::utf16to8(newFilename));
-    }
+    tt_string& replace_filename(std::wstring_view newFilename) { return replace_filename(tt::utf16to8(newFilename)); }
 
     // Removes the filename portion of the string. Returns a view to the entire string.
-    tt_string& remove_filename()
-    {
-        return replace_filename("");
-    }
+    tt_string& remove_filename() { return replace_filename(""); }
 
     // Appends the filename -- assumes current string is a path. This will add a trailing
     // slash (if needed) before adding the filename.
     tt_string& append_filename(std::string_view filename);
-    tt_string& append_filename(std::wstring_view filename)
-    {
-        return append_filename(tt::utf16to8(filename));
-    }
+    tt_string& append_filename(std::wstring_view filename) { return append_filename(tt::utf16to8(filename)); }
 
     // Makes the current path relative to the supplied path. Use "." to be relative to the current
     // directory. Supplied path should not contain a filename.
@@ -389,16 +359,10 @@ public:
 
     #if defined(_WIN32)
     // Calls FromUTF8() on Windows, normal conversion on other platforms
-    wxString as_wxStr() const
-    {
-        return wxString::FromUTF8(data(), size());
-    }
+    wxString as_wxStr() const { return wxString::FromUTF8(data(), size()); }
     #else
     // Calls FromUTF8() on Windows, normal conversion on other platforms
-    wxString as_wxStr() const
-    {
-        return wxString(data(), size());
-    }
+    wxString as_wxStr() const { return wxString(data(), size()); }
     #endif
 
     tt_string& assign_wx(const wxString& str);

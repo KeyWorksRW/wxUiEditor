@@ -38,20 +38,11 @@ struct GenData
     tt_string header_ext;
 
 #if !defined(THREADED_CODE_GEN)
-    void AddUpdateFilename(tt_string& path)
-    {
-        presults->updated_files.emplace_back(path);
-    };
+    void AddUpdateFilename(tt_string& path) { presults->updated_files.emplace_back(path); };
 
-    void AddResultMsg(tt_string& msg)
-    {
-        presults->msgs.emplace_back(msg);
-    };
+    void AddResultMsg(tt_string& msg) { presults->msgs.emplace_back(msg); };
 
-    void UpdateFileCount()
-    {
-        presults->file_count += 1;
-    };
+    void UpdateFileCount() { presults->file_count += 1; };
 
     void AddClassName(const tt_string& class_name)
     {

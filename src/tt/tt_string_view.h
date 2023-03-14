@@ -27,39 +27,21 @@ public:
 
 #if defined(_WIN32)
     /// Returns a copy of the string converted to UTF16 on Windows, or a normal copy on other platforms
-    std::wstring wx_str() const
-    {
-        return to_utf16();
-    };
+    std::wstring wx_str() const { return to_utf16(); };
     #if defined(_WX_DEFS_H_)
     // Calls FromUTF8() on Windows, normal conversion on other platforms
-    wxString as_wxStr() const
-    {
-        return wxString::FromUTF8(data(), size());
-    }
+    wxString as_wxStr() const { return wxString::FromUTF8(data(), size()); }
     #endif
 #else
     /// Returns a copy of the string converted to UTF16 on Windows, or a normal copy on other platforms
-    std::string wx_str() const
-    {
-        return std::string(*this);
-    }
+    std::string wx_str() const { return std::string(*this); }
     #if defined(_WX_DEFS_H_)
-    wxString as_wxStr() const
-    {
-        return wxString(data(), size());
-    }
+    wxString as_wxStr() const { return wxString(data(), size()); }
     #endif
 #endif  // _WIN32
 
-    std::string as_str() const
-    {
-        return std::string(*this);
-    }
-    std::wstring as_utf16() const
-    {
-        return to_utf16();
-    };
+    std::string as_str() const { return std::string(*this); }
+    std::wstring as_utf16() const { return to_utf16(); };
 
     std::wstring to_utf16() const;
 
@@ -74,10 +56,7 @@ public:
     // case-insensitive (normal and utf8).
 
     /// Returns true if the sub string exists
-    bool contains(std::string_view sub, tt::CASE checkcase) const
-    {
-        return (locate(sub, 0, checkcase) != npos);
-    }
+    bool contains(std::string_view sub, tt::CASE checkcase) const { return (locate(sub, 0, checkcase) != npos); }
 #else
     /// Returns true if the sub string exists
     bool contains(std::string_view sub, tt::CASE checkcase = tt::CASE::exact) const
@@ -128,22 +107,13 @@ public:
     /// Returns true if the sub-string is identical to the first part of the main string
     bool is_sameprefix(std::string_view str, tt::CASE checkcase = tt::CASE::exact) const;
 
-    int atoi(size_t start = 0) const
-    {
-        return tt::atoi(data() + start);
-    }
+    int atoi(size_t start = 0) const { return tt::atoi(data() + start); }
 
     /// Returns true if current filename contains the specified case-insensitive extension.
-    bool has_extension(std::string_view ext) const
-    {
-        return tt::is_sameas(extension(), ext, tt::CASE::either);
-    }
+    bool has_extension(std::string_view ext) const { return tt::is_sameas(extension(), ext, tt::CASE::either); }
 
     /// Returns true if current filename contains the specified case-insensitive file name.
-    bool has_filename(std::string_view name) const
-    {
-        return tt::is_sameas(filename(), name, tt::CASE::either);
-    }
+    bool has_filename(std::string_view name) const { return tt::is_sameas(filename(), name, tt::CASE::either); }
 
     /// Returns a tt_string_view to the current extension. View is empty if there is no extension.
     ///
@@ -193,18 +163,9 @@ public:
     // All of the following view_() functions will return an empty tt_string_view if the specified character cannot be
     // found, or the start position is out of range (including start == npos).
 
-    tt_string_view view_space(size_t start = 0) const
-    {
-        return subview(find_space(start));
-    }
-    tt_string_view view_nonspace(size_t start = 0) const
-    {
-        return subview(find_nonspace(start));
-    }
-    tt_string_view view_stepover(size_t start = 0) const
-    {
-        return subview(stepover(start));
-    }
+    tt_string_view view_space(size_t start = 0) const { return subview(find_space(start)); }
+    tt_string_view view_nonspace(size_t start = 0) const { return subview(find_nonspace(start)); }
+    tt_string_view view_stepover(size_t start = 0) const { return subview(stepover(start)); }
     tt_string_view view_digit(size_t start = 0) const;
     tt_string_view view_nondigit(size_t start = 0) const;
 
@@ -259,8 +220,5 @@ public:
     /// character found after substr.
     bool moveto_substr(std::string_view substr, bool StepOverIfFound = false) noexcept;
 
-    bool operator==(tt_string_view str)
-    {
-        return this->is_sameas(str);
-    }
+    bool operator==(tt_string_view str) { return this->is_sameas(str); }
 };

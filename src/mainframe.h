@@ -93,16 +93,10 @@ public:
     BasePanel* GetGeneratedPanel() { return m_generatedPanel; }
 
 #if defined(INTERNAL_TESTING)
-    ImportPanel* GetImportPanel()
-    {
-        return m_imnportPanel;
-    }
+    ImportPanel* GetImportPanel() { return m_imnportPanel; }
 #endif
 
-    void AddCustomEventHandler(wxEvtHandler* handler)
-    {
-        m_custom_event_handlers.push_back(handler);
-    }
+    void AddCustomEventHandler(wxEvtHandler* handler) { m_custom_event_handlers.push_back(handler); }
 
     void FireChangeEventHandler(NodeEvent* event);
     void FireCreatedEvent(Node* node);
@@ -119,14 +113,8 @@ public:
     // These are just here for convenience so you don't have to remember whether you have the raw pointer or the shared
     // pointer.
 
-    void FireCreatedEvent(NodeSharedPtr node)
-    {
-        FireCreatedEvent(node.get());
-    }
-    void FireDeletedEvent(NodeSharedPtr node)
-    {
-        FireDeletedEvent(node.get());
-    }
+    void FireCreatedEvent(NodeSharedPtr node) { FireCreatedEvent(node.get()); }
+    void FireDeletedEvent(NodeSharedPtr node) { FireDeletedEvent(node.get()); }
     void FireSelectedEvent(NodeSharedPtr node, size_t flags = evt_flags::fire_event)
     {
         FireSelectedEvent(node.get(), flags);
@@ -140,37 +128,16 @@ public:
     void Undo();
     void Redo();
 
-    bool CanUndo()
-    {
-        return m_undo_stack.IsUndoAvailable();
-    }
-    bool CanRedo()
-    {
-        return m_undo_stack.IsRedoAvailable();
-    }
+    bool CanUndo() { return m_undo_stack.IsUndoAvailable(); }
+    bool CanRedo() { return m_undo_stack.IsRedoAvailable(); }
 
-    const NodeSharedPtr& GetSelectedNodePtr()
-    {
-        return m_selected_node;
-    };
-    Node* GetSelectedNode()
-    {
-        return (m_selected_node ? m_selected_node.get() : nullptr);
-    };
+    const NodeSharedPtr& GetSelectedNodePtr() { return m_selected_node; };
+    Node* GetSelectedNode() { return (m_selected_node ? m_selected_node.get() : nullptr); };
     Node* GetSelectedForm();
 
-    NodeSharedPtr GetClipboardPtr()
-    {
-        return (m_clipboard ? m_clipboard : nullptr);
-    }
-    Node* GetClipboard()
-    {
-        return (m_clipboard ? m_clipboard.get() : nullptr);
-    }
-    size_t GetClipHash()
-    {
-        return (m_clipboard ? m_clip_hash : 0);
-    }
+    NodeSharedPtr GetClipboardPtr() { return (m_clipboard ? m_clipboard : nullptr); }
+    Node* GetClipboard() { return (m_clipboard ? m_clipboard.get() : nullptr); }
+    size_t GetClipHash() { return (m_clipboard ? m_clip_hash : 0); }
 
     // No event will be fired if the node is already selected, unless evt_flags::force_selection
     // is set.
@@ -179,10 +146,7 @@ public:
     // removed.
     bool SelectNode(Node* node, size_t flags = evt_flags::fire_event);
 
-    bool SelectNode(NodeSharedPtr node, size_t flags = evt_flags::fire_event)
-    {
-        return SelectNode(node.get(), flags);
-    }
+    bool SelectNode(NodeSharedPtr node, size_t flags = evt_flags::fire_event) { return SelectNode(node.get(), flags); }
 
     bool MoveNode(Node* node, MoveDirection where, bool check_only = false);
     bool MoveNode(MoveDirection where, bool check_only = false)
@@ -191,16 +155,10 @@ public:
     }
 
     // Removes the node and places it in the internal clipboard
-    void CutNode(Node* node)
-    {
-        RemoveNode(node, true);
-    };
+    void CutNode(Node* node) { RemoveNode(node, true); };
 
     // Erase the node without placing it in the clipboard
-    void DeleteNode(Node* node)
-    {
-        RemoveNode(node, false);
-    };
+    void DeleteNode(Node* node) { RemoveNode(node, false); };
 
     // Cut or Delete a node.
     void RemoveNode(Node* node, bool isCutMode);
@@ -216,10 +174,7 @@ public:
     // specific components.
     void CreateToolNode(GenEnum::GenName name);
 
-    wxFileHistory& GetFileHistory()
-    {
-        return m_FileHistory;
-    }
+    wxFileHistory& GetFileHistory() { return m_FileHistory; }
 
     // This does an exact comparison, so file needs to be identical to what was added to the
     // history.
@@ -238,15 +193,9 @@ public:
     }
 
     // This is the only variable length field, and therefore can hold the most text
-    void SetRightStatusField(const tt_string text)
-    {
-        SetStatusField(text, m_posRightStatusField);
-    }
+    void SetRightStatusField(const tt_string text) { SetStatusField(text, m_posRightStatusField); }
 
-    int GetDebugStatusField()
-    {
-        return m_posRightStatusField;
-    }
+    int GetDebugStatusField() { return m_posRightStatusField; }
     void UpdateStatusWidths();
 
     void CopyNode(Node* node);
@@ -259,10 +208,7 @@ public:
     bool CanPasteNode();
 
     // Returns true if there is data in either the internal or external clipboard.
-    bool isPasteAvailable()
-    {
-        return (m_clipboard.get() || isClipboardDataAvailable());
-    }
+    bool isPasteAvailable() { return (m_clipboard.get() || isClipboardDataAvailable()); }
 
     // This does not use the internal clipboard
     void DuplicateNode(Node* node);
@@ -273,10 +219,7 @@ public:
     bool SaveWarning();
     void UpdateFrame();
 
-    bool IsModified()
-    {
-        return m_isProject_modified;
-    }
+    bool IsModified() { return m_isProject_modified; }
 
     // Used by LoadProject when an old version was converted
     void SetModified()
@@ -285,21 +228,12 @@ public:
         UpdateFrame();
     }
 
-    void SetImportedFlag(bool imported = true)
-    {
-        m_isImported = imported;
-    }
+    void SetImportedFlag(bool imported = true) { m_isImported = imported; }
 
-    wxInfoBar* GetPropInfoBar()
-    {
-        return m_info_bar;
-    }
+    wxInfoBar* GetPropInfoBar() { return m_info_bar; }
 
 #if defined(_DEBUG) || defined(INTERNAL_TESTING)
-    wxFileHistory* GetAppendImportHistory()
-    {
-        return &m_ImportHistory;
-    }
+    wxFileHistory* GetAppendImportHistory() { return &m_ImportHistory; }
 #endif  // _DEBUG
 
     void ProjectLoaded();
@@ -318,14 +252,8 @@ public:
     // destroy the preview window.
     void OnPreviewWinActivate(wxActivateEvent& event);
 
-    void SetPreviewDlgPtr(wxDialog* dlg)
-    {
-        m_pxrc_dlg = dlg;
-    }
-    void SetPreviewWinPtr(wxFrame* frame)
-    {
-        m_pxrc_win = frame;
-    }
+    void SetPreviewDlgPtr(wxDialog* dlg) { m_pxrc_dlg = dlg; }
+    void SetPreviewWinPtr(wxFrame* frame) { m_pxrc_win = frame; }
 
 protected:
     void OnAbout(wxCommandEvent& event) override;

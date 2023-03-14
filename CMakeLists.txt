@@ -212,7 +212,7 @@ if (MSVC)
     endif()
 
     target_link_options(wxUiEditor PRIVATE
-        "$<$<CONFIG:Debug>:/natvis:${CMAKE_SOURCE_DIR}/src/wxui.natvis>"
+        # "$<$<CONFIG:Debug>:/natvis:${CMAKE_CURRENT_LIST_DIR}/src/wxui.natvis>"
         "$<$<CONFIG:Debug>:/OPT:REF>"
     )
 

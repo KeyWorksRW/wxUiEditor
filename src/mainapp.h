@@ -49,30 +49,15 @@ public:
     void DbgCurrentTest(wxCommandEvent& event);
 #endif
 
-    void SetMainFrameClosing()
-    {
-        m_isMainFrameClosing = true;
-    }
-    bool isMainFrameClosing()
-    {
-        return m_isMainFrameClosing;
-    }
+    void SetMainFrameClosing() { m_isMainFrameClosing = true; }
+    bool isMainFrameClosing() { return m_isMainFrameClosing; }
 
     void ShowPreferences(wxWindow* parent);
 
-    auto GetProjectVersion()
-    {
-        return m_ProjectVersion;
-    }
+    auto GetProjectVersion() { return m_ProjectVersion; }
 
-    bool AskedAboutMissingDir(const wxString path)
-    {
-        return (m_missing_dirs.find(path) != m_missing_dirs.end());
-    }
-    void AddMissingDir(const wxString path)
-    {
-        m_missing_dirs.insert(path);
-    }
+    bool AskedAboutMissingDir(const wxString path) { return (m_missing_dirs.find(path) != m_missing_dirs.end()); }
+    void AddMissingDir(const wxString path) { m_missing_dirs.insert(path); }
 
 protected:
     bool OnInit() override;

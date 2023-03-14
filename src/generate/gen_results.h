@@ -26,10 +26,7 @@ struct GenResults
     std::chrono::steady_clock::time_point start_time;
     size_t elapsed;
 
-    void StartClock()
-    {
-        start_time = std::chrono::steady_clock::now();
-    }
+    void StartClock() { start_time = std::chrono::steady_clock::now(); }
 
     void EndClock()
     {

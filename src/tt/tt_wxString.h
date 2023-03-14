@@ -33,27 +33,12 @@ public:
 #if defined(_WIN32)
     // When compiling for Windows, assume all char* are utf8 strings and convert them to utf16 before assigning them.
 
-    tt_wxString(const char* str)
-    {
-        this->assign(wxString::FromUTF8(str));
-    }
-    tt_wxString(const std::string& str)
-    {
-        this->assign(wxString::FromUTF8(str.data(), str.size()));
-    }
-    tt_wxString(std::string_view str)
-    {
-        this->assign(wxString::FromUTF8(str.data(), str.size()));
-    }
+    tt_wxString(const char* str) { this->assign(wxString::FromUTF8(str)); }
+    tt_wxString(const std::string& str) { this->assign(wxString::FromUTF8(str.data(), str.size())); }
+    tt_wxString(std::string_view str) { this->assign(wxString::FromUTF8(str.data(), str.size())); }
 #else
-    tt_wxString(const std::string& str)
-    {
-        this->assign(str.data(), str.size());
-    }
-    tt_wxString(std::string_view str)
-    {
-        this->assign(str.data(), str.size());
-    }
+    tt_wxString(const std::string& str) { this->assign(str.data(), str.size()); }
+    tt_wxString(std::string_view str) { this->assign(str.data(), str.size()); }
 #endif  // _WIN32
 
     // On Windows, converts to UTF8 before creating a std::string copy.
@@ -67,10 +52,7 @@ public:
     int comparei(std::string_view str) const;
 
     // Case-insensitive comparison.
-    int comparei_wx(const wxString& str) const
-    {
-        return CmpNoCase(str);
-    };
+    int comparei_wx(const wxString& str) const { return CmpNoCase(str); };
 
     // Locates the position of a substring.
     size_t locate(std::string_view str, size_t posStart = 0, tt::CASE checkcase = tt::CASE::exact) const;
@@ -198,10 +180,7 @@ public:
     // Replace first (or all) occurrences of substring with another one
     size_t replace_view(std::string_view oldtext, std::string_view newtext, bool replace_all = tt::REPLACE::once);
 
-    bool is_found(size_t pos) const
-    {
-        return (pos != npos);
-    }
+    bool is_found(size_t pos) const { return (pos != npos); }
 
     ////////// filename functions ////////////
     //
@@ -270,18 +249,12 @@ public:
     tt_wxString& replace_extension_wx(const wxString& newExtension);
 
     // Removes the extension portion of the file name.
-    tt_wxString& remove_extension()
-    {
-        return replace_extension(std::string_view());
-    };
+    tt_wxString& remove_extension() { return replace_extension(std::string_view()); };
 
     tt_wxString& replace_filename(std::string_view newFilename = std::string_view());
     tt_wxString& replace_filename_wx(const wxString& newFilename);
 
-    tt_wxString& remove_filename()
-    {
-        return replace_filename(std::string_view());
-    };
+    tt_wxString& remove_filename() { return replace_filename(std::string_view()); };
 
     // Appends the file name -- assumes current string is a directory. This will add a
     // trailing slash (if needed) before adding the file name.
@@ -308,16 +281,10 @@ public:
     tt_wxString& make_relative(std::string_view pathBase);
 
     // Returns true if the current string refers to an existing file.
-    bool file_exists() const
-    {
-        return wxFileExists(*this);
-    };
+    bool file_exists() const { return wxFileExists(*this); };
 
     // Returns true if the current string refers to an existing directory.
-    bool dir_exists() const
-    {
-        return wxDirExists(*this);
-    };
+    bool dir_exists() const { return wxDirExists(*this); };
 
     // Confirms current string is an existing directory and then changes to that directory.
     //
@@ -341,21 +308,12 @@ public:
     // part of wxString.
 
     // Like std::string.back(), return is undefined if string is empty
-    auto back()
-    {
-        return GetChar(size() - 1);
-    }
+    auto back() { return GetChar(size() - 1); }
 
     // Like std::string.front(), return is undefined if string is empty
-    auto front()
-    {
-        return GetChar(0);
-    }
+    auto front() { return GetChar(0); }
 
-    void pop_back()
-    {
-        RemoveLast();
-    }
+    void pop_back() { RemoveLast(); }
 };
 
 // Retrieves the current working directory. Construct with (true) to restore the

@@ -339,7 +339,9 @@ void BaseCodeGenerator::GeneratePythonClass(Node* form_node, PANEL_PAGE panel_ty
         {
             if ((form->isGen(gen_wxDialog) || form->isGen(gen_wxWizard)) && form->HasValue(prop_python_file))
             {
-                m_source->writeLine(tt_string("import ") << form->value(prop_python_file).filename());
+                tt_string import_name(form->value(prop_python_file).filename());
+                import_name.remove_extension();
+                m_source->writeLine(tt_string("import ") << import_name);
             }
         }
     }

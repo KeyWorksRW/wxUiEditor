@@ -1988,7 +1988,7 @@
         class_name="DlgIssue_956"
         title="colspan codegen issue"
         base_file="dlgissue_956.cpp"
-        python_file="dlgissue_956">
+        python_file="dlgissue_956.py">
         <node
           class="wxBoxSizer"
           orientation="wxVERTICAL"

@@ -213,6 +213,11 @@ bool GridBagSizerGenerator::AfterChildrenCode(Code& code)
     lambda(prop_growablecols);
     lambda(prop_growablerows);
 
+    if (is_within_braces)
+    {
+        code.CloseBrace();
+    }
+
     if (code.IsTrue(prop_hide_children))
     {
         code.NodeName().Function("ShowItems(").AddFalse().EndFunction();
@@ -230,8 +235,7 @@ bool GridBagSizerGenerator::AfterChildrenCode(Code& code)
         {
             if (GetParentName(code.node()) != "this")
             {
-                code.ParentName().Add(".");
-                code.Function("SetSizerAndFit(").NodeName().EndFunction();
+                code.ParentName().Function("SetSizerAndFit(").NodeName().EndFunction();
             }
             else
             {

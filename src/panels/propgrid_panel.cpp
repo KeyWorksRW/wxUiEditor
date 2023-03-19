@@ -651,7 +651,8 @@ void PropGridPanel::AddProperties(tt_string_view name, Node* node, NodeCategory&
                 }
             }
 
-            if (name.is_sameas("wxWindow") || category.GetName().Contains("Window Settings"))
+            if (name.is_sameas("wxWindow") || name.is_sameas("wxMdiWindow") ||
+                category.GetName().Contains("Window Settings"))
                 m_prop_grid->SetPropertyBackgroundColour(pg, wxColour("#e7f4e4"));
 
             // Automatically collapse properties that are rarely used
@@ -1615,7 +1616,7 @@ wxString PropGridPanel::GetCategoryDisplayName(const wxString& original)
     else if (category_name == "ToolBar")
         category_name = "wxToolBar";
 
-    else if (category_name == "wxWindow")
+    else if (category_name == "wxWindow" || category_name == "wxMdiWindow")
         category_name = "wxWindow Properties";
     else if (category_name == "Project")
         category_name = "Project Settings";

@@ -27,6 +27,7 @@ using namespace GenEnum;
 inline const GenType lst_form_types[] =
 {
 
+    type_DocViewApp,
     type_form,
     type_frame_form,
     type_images,

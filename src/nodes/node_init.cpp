@@ -196,6 +196,8 @@ static const ParentChild lstParentChild[] = {
 
     // Forms
 
+    { type_DocViewApp, type_wx_document, infinite },
+
     { type_frame_form, type_gbsizer, one },
     { type_frame_form, type_sizer, one },
 
@@ -227,6 +229,7 @@ static const ParentChild lstParentChild[] = {
     { type_images, type_embed_image, infinite },
     { type_wizard, type_wizardpagesimple, infinite },
 
+    { type_project, type_DocViewApp, infinite },
     { type_project, type_form, infinite },
     { type_project, type_folder, infinite },
     { type_project, type_frame_form, infinite },
@@ -354,6 +357,8 @@ static const ParentChild lstParentChild[] = {
     { type_splitter, type_widget, two },
 
     { type_treelistctrl, type_treelistctrlcolumn, infinite },
+
+    { type_wx_document, type_wx_view, infinite },
 
     { type_wizardpagesimple, type_gbsizer, one },
     { type_wizardpagesimple, type_sizer, one },

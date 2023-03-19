@@ -79,7 +79,7 @@ inline const char* doc_view_app_xml = R"===(<?xml version="1.0"?>
 	</gen>
 
 	<gen class="ViewTextCtrl" image="wxTextCtrl" type="wx_view">
-		<inherits class="wxMdiWindow">
+		<inherits class="wxMdiWindow" />
 		<property name="var_name" type="string">m_textCtrl</property>
 		<property name="spellcheck" type="bitlist">
 			<option name="enabled"

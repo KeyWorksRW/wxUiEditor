@@ -124,4 +124,17 @@ inline const char* window_interfaces_xml = R"===(<?xml version="1.0"?>
 			Windows|Unix|Mac
 		</property>
 	</gen>
+
+	<gen class="wxMdiWindow" type="interface">
+		<property name="id" type="id"
+			help="Specifies the window identifier. When generating Python code, a non wx.Widgets id will be global unless prefixed with self.">
+			wxID_ANY
+		</property>
+		<property name="pos" type="wxPoint"
+			help="Specifies the position to pass to the constructor for the window. A -1 indicates that the value should be calculated automatically." />
+		<property name="size" type="wxSize"
+			help="Specifies the size to pass to the constructor for the window. A -1 indicates that the value should be calculated automatically. Automatic layout (such as calling SetSizerAndFit) may override these values." />
+		<property name="window_name" type="string_escapes" />
+	</gen>
+
 </GeneratorDefinitions>)===";

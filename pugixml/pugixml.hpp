@@ -6,7 +6,7 @@
  *
  * Github location: https://github.com/zeux/pugixml
  *
- * Forked version with std::string_view: https://github.com/zeux/pugixml
+ * Forked version with std::string_view: https://github.com/halx99/pugixml
  *
  * This library is distributed under the MIT License. See notice at the end
  * of this file.

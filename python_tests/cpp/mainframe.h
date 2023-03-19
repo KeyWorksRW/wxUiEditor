@@ -35,6 +35,7 @@ protected:
 
     void OnBookTestDlg(wxCommandEvent& event);
     void OnCommonDialog(wxCommandEvent& event);
+    void OnDlgIssue_956(wxCommandEvent& event);
     void OnMainTestDlg(wxCommandEvent& event);
     void OnPythonDlg(wxCommandEvent& event);
     void OnQuit(wxCommandEvent& event);

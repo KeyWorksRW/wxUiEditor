@@ -35,6 +35,7 @@ set (python_files
     ../python/popwin.py
     ../python/python_dlg.py
     ../python/wizard.py
+    ../python/dlgissue_956.py
 
 )
 

@@ -136,6 +136,20 @@ MainFrame::MainFrame(wxWindow* parent, wxWindowID id, const wxString& title, con
     auto* menuItem3 = new wxMenuItem(menuDialogs, wxID_ANY, "Wizard");
     menuDialogs->Append(menuItem3);
     menuDialogs->AppendSeparator();
+
+    auto* submenu = new wxMenu();
+    auto* menu_item_5 = new wxMenuItem(submenu, wxID_ANY, "DlgIssue_956");
+    menu_item_5->SetBitmap(
+#if wxCHECK_VERSION(3, 1, 6)
+        wxBitmapBundle::FromBitmap(wxueImage(wxue_img::debug_32_png, sizeof(wxue_img::debug_32_png)))
+#else
+        wxBitmap(wxueImage(wxue_img::debug_32_png, sizeof(wxue_img::debug_32_png)))
+#endif
+    );
+
+    submenu->Append(menu_item_5);
+    menuDialogs->AppendSubMenu(submenu, "Issue Dialogs");
+    menuDialogs->AppendSeparator();
     auto* menuItem4 = new wxMenuItem(menuDialogs, wxID_EXIT, "Exit");
     menuDialogs->Append(menuItem4);
     menubar->Append(menuDialogs, "&Dialogs");
@@ -197,6 +211,7 @@ MainFrame::MainFrame(wxWindow* parent, wxWindowID id, const wxString& title, con
     Bind(wxEVT_MENU, &MainFrame::OnPythonDlg, this, menu_item_2->GetId());
     Bind(wxEVT_MENU, &MainFrame::OnCommonDialog, this, menuItem_2->GetId());
     Bind(wxEVT_MENU, &MainFrame::OnWizard, this, menuItem3->GetId());
+    Bind(wxEVT_MENU, &MainFrame::OnDlgIssue_956, this, menu_item_5->GetId());
     Bind(wxEVT_MENU, &MainFrame::OnQuit, this, wxID_EXIT);
     Bind(wxEVT_TOOL, &MainFrame::OnMainTestDlg, this, tool_4->GetId());
     Bind(wxEVT_TOOL, &MainFrame::OnBookTestDlg, this, tool_5->GetId());

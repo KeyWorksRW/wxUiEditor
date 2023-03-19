@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0"?>
 <wxUiEditorData
   data_version="16">
   <node
@@ -155,6 +155,19 @@
             label="Wizard"
             var_name="menuItem3"
             wxEVT_MENU="OnWizard" />
+          <node
+            class="separator"
+            var_name="separator_2" />
+          <node
+            class="submenu"
+            label="Issue Dialogs">
+            <node
+              class="wxMenuItem"
+              bitmap="Embed;../src/art_src/debug_32.png"
+              label="DlgIssue_956"
+              var_name="menu_item_5"
+              wxEVT_MENU="OnDlgIssue_956" />
+          </node>
           <node
             class="separator" />
           <node
@@ -1964,6 +1977,83 @@
             label="Set Gauge to 75"
             var_name="menu_item_6"
             wxEVT_MENU="[this](wxCommandEvent&amp;) { m_gauge->SetValue(75); }" />
+        </node>
+      </node>
+    </node>
+    <node
+      class="folder"
+      label="Issues">
+      <node
+        class="wxDialog"
+        class_name="DlgIssue_956"
+        title="colspan codegen issue"
+        base_file="dlgissue_956.cpp"
+        python_file="dlgissue_956">
+        <node
+          class="wxBoxSizer"
+          orientation="wxVERTICAL"
+          var_name="dlg_sizer">
+          <node
+            class="wxPanel"
+            var_name="panel_2"
+            window_style="wxBORDER_THEME|wxTAB_TRAVERSAL"
+            flags="wxEXPAND">
+            <node
+              class="wxGridBagSizer"
+              growablecols="1"
+              growablerows="1"
+              non_flexible_grow_mode="wxFLEX_GROWMODE_ALL"
+              flags="wxEXPAND"
+              proportion="1">
+              <node
+                class="wxStaticText"
+                label="list test"
+                var_name="m_staticText_4" />
+              <node
+                class="wxChoice"
+                column="1"
+                flags="wxEXPAND"
+                proportion="1" />
+              <node
+                class="wxButton"
+                label="&amp;Refresh"
+                markup="1"
+                column="2" />
+              <node
+                class="wxButton"
+                label="&amp;New"
+                markup="1"
+                var_name="m_btn_2"
+                column="3" />
+              <node
+                class="wxButton"
+                label="&amp;Edit"
+                markup="1"
+                var_name="m_btn_3"
+                column="4" />
+              <node
+                class="wxButton"
+                label="&amp;Delete"
+                markup="1"
+                var_name="m_btn_4"
+                column="5" />
+              <node
+                class="wxStaticText"
+                label="test type"
+                var_name="m_staticText_5"
+                row="1" />
+              <node
+                class="wxChoice"
+                var_name="m_choice_2"
+                colspan="5"
+                column="1"
+                flags="wxEXPAND"
+                row="1" />
+            </node>
+          </node>
+          <node
+            class="wxStdDialogButtonSizer"
+            flags="wxEXPAND" />
         </node>
       </node>
     </node>

@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file.
 
 - Code generation for Dialogs with an extra_style property fixed.
 - Code generation for wxToolBar drop-down tools with menu items fixed.
+- Code generation for wxGridBagSizer when growablecols or growablerows specified
 
 ## [Released (1.1.0)]
 

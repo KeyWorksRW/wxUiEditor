@@ -30,14 +30,15 @@ namespace wxue_img
     extern const unsigned char english_png[541];
 }
 
-MainFrame::MainFrame(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size,
-    long style, const wxString& name) : wxFrame()
+bool MainFrame::Create(wxWindow* parent, wxWindowID id, const wxString& title,
+    const wxPoint& pos, const wxSize& size, long style, const wxString &name)
 {
+
     if (!wxImage::FindHandler(wxBITMAP_TYPE_PNG))
         wxImage::AddHandler(new wxPNGHandler);
 
-    if (!Create(parent, id, title, pos, size, style, name))
-        return;
+    if (!wxFrame::Create(parent, id, title, pos, size, style, name))
+        return false;
 
     splitter = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_3D);
     splitter->SetSashGravity(0.0);
@@ -217,6 +218,8 @@ MainFrame::MainFrame(wxWindow* parent, wxWindowID id, const wxString& title, con
     Bind(wxEVT_TOOL, &MainFrame::OnBookTestDlg, this, tool_5->GetId());
     Bind(wxEVT_TOOL, &MainFrame::OnPythonDlg, this, tool_3->GetId());
     Bind(wxEVT_TOOL, &MainFrame::OnCommonDialog, this, tool_2->GetId());
+
+    return true;
 }
 
 namespace wxue_img

@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Utility functions that work with properties
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -82,3 +82,7 @@ bool isConvertibleMime(const tt_wxString& suffix);
 
 // Checks whether a string is a valid C++ variable name.
 bool isValidVarName(const std::string& str);
+
+tt_string CreateBaseFilename(Node* form_node, const tt_string& class_name);
+
+tt_string CreateDerivedFilename(Node* form_node, const tt_string& class_name);

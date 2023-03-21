@@ -82,7 +82,7 @@ bool PanelFormGenerator::SettingsCode(Code& code)
 {
     if (code.is_cpp())
     {
-        code.Eol(eol_if_needed).FormFunction("if (!!wxPanel::Create(").Str("parent, id, pos, size, style, name))");
+        code.Eol(eol_if_needed).FormFunction("if (!wxPanel::Create(").Str("parent, id, pos, size, style, name))");
         code.Eol().Tab().Str("return false;\n");
     }
     else

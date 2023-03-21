@@ -11,26 +11,30 @@
 
 #include <wx/gdicmn.h>
 #include <wx/panel.h>
-#include <wx/stc/stc.h>
+#include <wx/splitter.h>
+#include <wx/stattext.h>
 
-class CodeDisplayBase : public wxPanel
+class FormPanelTest : public wxPanel
 {
 public:
-    CodeDisplayBase() {}
-    CodeDisplayBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
-        const wxSize& size = wxDefaultSize, long style = wxTAB_TRAVERSAL, const wxString &name = wxPanelNameStr)
+    FormPanelTest() {}
+    FormPanelTest(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
+        const wxSize& size = wxSize(500, 300), long style = wxTAB_TRAVERSAL, const wxString &name = wxPanelNameStr)
     {
-        Create(parent, id, pos, size, style, name);
+        Create(parent, id, title, pos, size, style, name);
     }
 
-    bool Create(wxWindow *parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
-        const wxSize& size = wxDefaultSize, long style = wxTAB_TRAVERSAL, const wxString &name = wxPanelNameStr);
+    bool Create(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = wxEmptyString, const wxPoint& pos =
+        wxDefaultPosition, const wxSize& size = wxSize(500, 300),
+        long style = , long style = wxTAB_TRAVERSAL, const wxString &name = wxPanelNameStr);
 
 protected:
 
     // Class member variables
 
-    wxStyledTextCtrl* m_scintilla;
+    wxSplitterWindow* m_splitter;
+    wxStaticText* m_staticText2;
+    wxStaticText* m_staticText;
 };
 
 // ************* End of generated code ***********

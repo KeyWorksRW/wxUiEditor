@@ -44,11 +44,11 @@ bool PanelFormGenerator::ConstructionCode(Code& code)
     // Note: Form construction is called before any indentation is set
     if (code.is_cpp())
     {
-        code.Str((prop_class_name)).Str("::").Str(prop_class_name);
-        code += "(wxWindow* parent, wxWindowID id";
+        code.Str("bool ").Str((prop_class_name));
+        code += "::Create(wxWindow* parent, wxWindowID id";
         code.Comma().Str("const wxPoint& pos").Comma().Str("const wxSize& size");
         code.Comma().Str("long style").Comma().Str("const wxString& name)");
-        code.Str(" : wxPanel()").Eol() += "{";
+        code.OpenBrace();
     }
     else
     {
@@ -82,8 +82,8 @@ bool PanelFormGenerator::SettingsCode(Code& code)
 {
     if (code.is_cpp())
     {
-        code.Eol(eol_if_needed).FormFunction("if (!Create(").Str("parent, id, pos, size, style, name))");
-        code.Eol().Tab().Str("return;");
+        code.Eol(eol_if_needed).FormFunction("if (!wxPanel::Create(").Str("parent, id, pos, size, style, name))");
+        code.Eol().Tab().Str("return false;\n");
     }
     else
     {
@@ -139,7 +139,8 @@ bool PanelFormGenerator::HeaderCode(Code& code)
 {
     auto* node = code.node();
 
-    code.NodeName().Str("(wxWindow* parent, wxWindowID id = ").Str(prop_id);
+    code.NodeName() += "() {}";
+    code.Eol().NodeName().Str("(wxWindow* parent, wxWindowID id = ").Str(prop_id);
     code.Comma().Str("const wxPoint& pos = ");
 
     auto position = node->as_wxPoint(prop_pos);
@@ -188,6 +189,52 @@ bool PanelFormGenerator::HeaderCode(Code& code)
     {
         code.Comma().Str("const wxString &name = wxPanelNameStr");
     }
+
+    code.Str(")").Eol().OpenBrace().Str("Create(parent, id, pos, size, style, name);").CloseBrace();
+
+    code.Eol().Str("bool Create(wxWindow *parent");
+    code.Comma().Str("wxWindowID id = ").Str(prop_id);
+    code.Comma().Str("const wxPoint& pos = ");
+
+    if (position == wxDefaultPosition)
+        code.Str("wxDefaultPosition");
+    else
+        code.Pos(prop_pos, no_dlg_units);
+
+    code.Comma().Str("const wxSize& size = ");
+
+    if (size == wxDefaultSize)
+        code.Str("wxDefaultSize");
+    else
+        code.WxSize(prop_size, no_dlg_units);
+
+    if (style.empty() && win_style.empty())
+        code.Comma().Str("long style = 0");
+    else
+    {
+        code.Comma();
+        code.CheckLineLength(style.size() + win_style.size() + sizeof("long style = "));
+        code.Str("long style = ");
+        if (style.size())
+        {
+            code.CheckLineLength(style.size() + win_style.size());
+            code += style;
+            if (win_style.size())
+            {
+                code << '|' << win_style;
+            }
+        }
+        else if (win_style.size())
+        {
+            code.Str(win_style);
+        }
+    }
+
+    code.Comma().Str("const wxString &name = ");
+    if (node->HasValue(prop_window_name))
+        code.QuotedString(prop_window_name);
+    else
+        code.Str("wxPanelNameStr");
 
     // Extra eols at end to force space before "Protected:" section
     code.EndFunction().Eol().Eol();

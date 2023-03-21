@@ -25,7 +25,15 @@
 class MainFrame : public wxFrame
 {
 public:
+    MainFrame() {}
     MainFrame(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = "pytest", const wxPoint& pos =
+        wxDefaultPosition, const wxSize& size = wxSize(500, 300), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL,
+        const wxString &name = wxFrameNameStr)
+    {
+        Create(parent, id, title, pos, size, style, name);
+    }
+
+    bool Create(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "pytest", const wxPoint& pos =
         wxDefaultPosition, const wxSize& size = wxSize(500, 300), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL,
         const wxString &name = wxFrameNameStr);
 

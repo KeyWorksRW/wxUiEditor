@@ -9,9 +9,9 @@
 
 #include <wx/sizer.h>
 
-#include "testformpanel.h"
+#include "formpaneltest_base.h"
 
-bool TestFormPanel::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style,
+bool FormPanelTest::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style,
     const wxString& name)
 {
 

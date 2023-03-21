@@ -1568,7 +1568,13 @@
       </node>
       <node
         class="PanelForm"
-        size="500,300">
+        class_name="TestFormPanel"
+        size="500,300"
+        base_file="testformpanel"
+        derived_class_name="TestFormPanelDerived"
+        derived_file="testformpanel_derived"
+        use_derived_class="0"
+        python_file="testformpanel">
         <node
           class="wxBoxSizer"
           orientation="wxVERTICAL"

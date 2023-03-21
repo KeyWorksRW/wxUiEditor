@@ -1801,14 +1801,14 @@ void PropGridPanel::CreateEventCategory(tt_string_view name, Node* node, NodeDec
 
 void PropGridPanel::ReplaceDerivedName(const wxString& newValue, NodeProperty* propType)
 {
-    wxString drvName = newValue;
-    if (drvName.Right(4) == "Base")
+    auto drvName = newValue.utf8_string();
+    if (drvName.ends_with("Base"))
     {
-        drvName.Replace("Base", wxEmptyString);
+        drvName.erase(drvName.size() - (sizeof("Base") - 1));
     }
     else
     {
-        drvName << "Derived";
+        drvName += "Derived";
     }
 
     auto grid_property = m_prop_grid->GetPropertyByLabel("derived_class_name");
@@ -1818,36 +1818,26 @@ void PropGridPanel::ReplaceDerivedName(const wxString& newValue, NodeProperty* p
 
 void PropGridPanel::ReplaceBaseFile(const wxString& newValue, NodeProperty* propType)
 {
-    tt_wxString baseName = newValue;
-    if (baseName.Right(4) == "Base")
-        baseName.Replace("Base", wxEmptyString);
-    baseName.MakeLower();
-    baseName << "_base";
-    if (Project.HasValue(prop_base_directory))
-        baseName.insert(0, Project.as_ttString(prop_base_directory) << '/');
+    auto form_node = propType->GetNode()->get_form();
+    auto base_filename = CreateBaseFilename(form_node, newValue.utf8_string());
     auto grid_property = m_prop_grid->GetPropertyByLabel("base_file");
-    grid_property->SetValueFromString(baseName, 0);
-    ModifyProperty(propType, baseName);
+    grid_property->SetValueFromString(base_filename, 0);
+    ModifyProperty(propType, base_filename);
+
+    if (Project.value(prop_code_preference) == "Python" && !form_node->HasValue(prop_python_file))
+    {
+        grid_property = m_prop_grid->GetPropertyByLabel("python_file");
+        grid_property->SetValueFromString(base_filename, 0);
+        ModifyProperty(form_node->get_prop_ptr(prop_python_file), base_filename);
+    }
 }
 
 void PropGridPanel::ReplaceDerivedFile(const wxString& newValue, NodeProperty* propType)
 {
-    tt_wxString drvName = newValue;
-    if (drvName.Right(4) == "Base")
-        drvName.Replace("Base", wxEmptyString);
-    else if (drvName.Right(7) == "Derived")
-        drvName.Replace("Derived", "_derived");
-    else if (propType->GetNode()->prop_as_wxString(prop_base_file).Right(5) != "_base")
-    {
-        drvName << "_derived";
-    }
-
-    drvName.MakeLower();
-    if (Project.HasValue(prop_base_directory))
-        drvName.insert(0, Project.as_ttString(prop_base_directory) << '/');
+    auto derived_filename = CreateDerivedFilename(propType->GetNode()->get_form(), newValue.utf8_string());
     auto grid_property = m_prop_grid->GetPropertyByLabel("derived_file");
-    grid_property->SetValueFromString(drvName, 0);
-    ModifyProperty(propType, drvName);
+    grid_property->SetValueFromString(derived_filename, 0);
+    ModifyProperty(propType, derived_filename);
 }
 
 bool PropGridPanel::IsPropAllowed(Node* /* node */, NodeProperty* /* prop */)

@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Utility functions that work with properties
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -548,4 +548,53 @@ bool isValidVarName(const std::string& str)
         return false;
 
     return true;
+}
+
+tt_string CreateBaseFilename(Node* form_node, const tt_string& class_name)
+{
+    tt_string filename;
+    if (class_name.size())
+    {
+        filename = class_name;
+    }
+    else
+    {
+        filename = form_node->value(prop_class_name);
+    }
+
+    if (filename.ends_with("Base"))
+    {
+        filename.erase(filename.size() - (sizeof("Base") - 1));
+        filename += "_base";
+    }
+
+    filename.MakeLower();
+
+    return filename;
+}
+
+tt_string CreateDerivedFilename(Node* form_node, const tt_string& class_name)
+{
+    tt_string filename;
+    if (class_name.size())
+    {
+        filename = class_name;
+    }
+    else
+    {
+        filename = form_node->value(prop_derived_class_name);
+    }
+
+    if (filename.ends_with("Derived"))
+    {
+        filename.erase(filename.size() - (sizeof("Derived") - 1));
+        filename += "_derived";
+    }
+    else if (!form_node->value(prop_base_file).ends_with("_base"))
+    {
+        filename += "_derived";
+    }
+    filename.MakeLower();
+
+    return filename;
 }

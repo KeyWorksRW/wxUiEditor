@@ -9,6 +9,7 @@ All notable changes to this project will be documented in this file.
 
 - Improved generation of default filenames for a class when the class name is changed
 - wxFrame and the form version of wxPanel now also support 2-step construction
+- Handle embedded filenames that contain characters that are invalid as variable names
 
 ### Fixed
 

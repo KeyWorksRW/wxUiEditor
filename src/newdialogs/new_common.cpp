@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Contains code common between all new_ dialogs
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2022-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -9,52 +9,34 @@
 
 #include "mainapp.h"          // App -- Main application class
 #include "project_handler.h"  // ProjectHandler class
+#include "utils.h"            // Utility functions that work with properties
 
 void UpdateFormClass(Node* form_node)
 {
-    bool is_base_class = false;
-    tt_wxString baseName = form_node->prop_as_wxString(prop_class_name);
-    if (baseName.Right(4) == "Base")
-    {
-        baseName.Replace("Base", wxEmptyString);
-        is_base_class = true;
-    }
-    baseName.MakeLower();
-    baseName << "_base";
-    if (Project.HasValue(prop_base_directory))
-        baseName.insert(0, Project.as_ttString(prop_base_directory) << '/');
+    bool is_base_class = form_node->value(prop_class_name).ends_with("Base");
+    auto filename = CreateBaseFilename(form_node, form_node->value(prop_class_name));
+    form_node->prop_set_value(prop_base_file, filename);
 
-    form_node->prop_set_value(prop_base_file, baseName);
+    if (Project.value(prop_code_preference) == "Python")
+    {
+        form_node->prop_set_value(prop_python_file, filename);
+    }
+
     if (is_base_class)
     {
-        form_node->prop_set_value(prop_base_file, baseName);
-
-        wxString class_name = form_node->prop_as_wxString(prop_class_name);
-        if (class_name.Right(4) == "Base")
+        auto class_name = form_node->value(prop_class_name);
+        if (class_name.ends_with("Base"))
         {
-            class_name.Replace("Base", wxEmptyString);
+            class_name.erase(class_name.size() - (sizeof("Base") - 1));
         }
         else
         {
-            class_name << "Derived";
+            class_name += "Derived";
         }
         form_node->prop_set_value(prop_derived_class_name, class_name);
 
-        tt_wxString drvName = form_node->prop_as_wxString(prop_derived_class_name);
-        if (drvName.Right(7) == "Derived")
-            drvName.Replace("Derived", "_derived");
-        else if (!is_base_class)
-        {
-            drvName << "_derived";
-        }
-
-        drvName.MakeLower();
-        if (Project.HasValue(prop_derived_class_name))
-        {
-            drvName.insert(0, Project.as_ttString(prop_base_directory) << '/');
-        }
-
-        form_node->prop_set_value(prop_derived_file, drvName);
+        filename = CreateDerivedFilename(form_node, class_name);
+        form_node->prop_set_value(prop_derived_file, filename);
     }
 }
 

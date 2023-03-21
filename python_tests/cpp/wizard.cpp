@@ -26,10 +26,11 @@ Wizard::Wizard(wxWindow* parent, wxWindowID id, const wxString& title, const wxP
 
     SetExtraStyle(GetExtraStyle() | wxWIZARD_EX_HELPBUTTON);
     SetBorder(15);
+    if (!Create(parent, id, title,
 #if wxCHECK_VERSION(3, 1, 6)
-        if (!Create(parent, id, title, wxue_img::bundle_wiztest_png(), pos, style))
+            wxue_img::bundle_wiztest_png(), pos, style))
 #else
-        wxBitmap(wxueImage(wxue_img::wiztest_png, sizeof(wxue_img::wiztest_png))), pos, style))
+            wxBitmap(wxueImage(wxue_img::wiztest_png, sizeof(wxue_img::wiztest_png))), pos, style))
 #endif
         return;
 

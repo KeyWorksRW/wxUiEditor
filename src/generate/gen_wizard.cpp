@@ -92,14 +92,18 @@ bool WizardFormGenerator::SettingsCode(Code& code)
     if (code.HasValue(prop_bitmap))
     {
         auto is_bitmaps_list = BitmapList(code, prop_bitmap);
+        if (code.is_cpp())
+        {
+            code.Eol(eol_if_needed).Str("if (!Create(parent, id, title").Comma();
+        }
+        else
+        {
+            code.Eol(eol_if_needed).Str("if not self.Create(parent, id, title").Comma();
+        }
         if (code.is_cpp() && Project.value(prop_wxWidgets_version) == "3.1")
         {
-            code.Eol() += "#if wxCHECK_VERSION(3, 1, 6)\n\t";
+            code.Eol() += "#if wxCHECK_VERSION(3, 1, 6)\n\t\t";
         }
-        if (code.is_cpp())
-            code.Eol(eol_if_needed).Str("if (!Create(parent, id, title").Comma();
-        else
-            code.Eol(eol_if_needed).Str("if not self.Create(parent, id, title").Comma();
         if (is_bitmaps_list)
         {
             if (code.is_cpp())
@@ -126,7 +130,7 @@ bool WizardFormGenerator::SettingsCode(Code& code)
             code.Comma().Str("pos").Comma().Str("style))");
             if (Project.value(prop_wxWidgets_version) == "3.1")
             {
-                code.Eol() += "#else\n\t";
+                code.Eol() += "#else\n\t\t";
                 code << "wxBitmap(" << GenerateBitmapCode(code.node()->as_string(prop_bitmap)) << ")";
                 code.Comma().Str("pos").Comma().Str("style))");
                 code.Eol() += "#endif";

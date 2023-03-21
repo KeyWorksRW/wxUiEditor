@@ -3,11 +3,18 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased (1.1.1)]
 
+### Added
+
+### Changed
+
+- Improved generation of default filenames for a class when the class name is changed
+
 ### Fixed
 
 - Code generation for Dialogs with an extra_style property fixed.
 - Code generation for wxToolBar drop-down tools with menu items fixed.
 - Code generation for wxGridBagSizer when growablecols or growablerows specified
+- Code generation for Wizard using wxWidgets 3.1 corrected
 
 ## [Released (1.1.0)]
 

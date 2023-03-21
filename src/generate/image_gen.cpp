@@ -40,6 +40,10 @@ void BaseCodeGenerator::WriteImagePreConstruction(Code& code)
                 is_namespace_written = true;
                 code.Str("namespace wxue_img").OpenBrace();
             }
+            if (iter_array->filename.size())
+            {
+                code.Eol(eol_if_needed).Str("// ").Str(iter_array->filename);
+            }
             code.Eol(eol_if_needed).Str("extern const unsigned char ").Str(iter_array->array_name);
             code.Str("[").itoa(iter_array->array_size & 0xFFFFFFFF).Str("];");
         }
@@ -77,6 +81,10 @@ void BaseCodeGenerator::WriteImageConstruction(Code& code)
             // SVG images store the original size in the high 32 bits
             size_t max_pos = (iter_array->array_size & 0xFFFFFFFF);
 
+            if (iter_array->filename.size())
+            {
+                code.Eol(eol_if_needed).Str("// ").Str(iter_array->filename);
+            }
             code.Eol().Str("const unsigned char ").Str(iter_array->array_name);
             code.Str("[").itoa(max_pos).Str("] {");
             m_source->writeLine(code);
@@ -111,6 +119,10 @@ void BaseCodeGenerator::WriteImageConstruction(Code& code)
             if (iter_array->form->isGen(gen_Images))
             {
                 continue;
+            }
+            if (iter_array->filename.size())
+            {
+                code.Eol().Str("# ").Str(iter_array->filename);
             }
             code.Eol().Str(iter_array->array_name);
             if (iter_array->type == wxBITMAP_TYPE_INVALID)
@@ -330,6 +342,10 @@ void BaseCodeGenerator::WriteImagePostHeader()
             }
             is_namespace_written = true;
         }
+        if (iter_array->filename.size())
+        {
+            m_header->writeLine(tt_string("// ") << iter_array->filename);
+        }
         m_header->writeLine(tt_string("extern const unsigned char ")
                             << iter_array->array_name << '[' << (iter_array->array_size & 0xFFFFFFFF) << "];");
     }
@@ -434,6 +450,10 @@ void BaseCodeGenerator::GeneratePythonImagesForm()
         if (iter_array->form != m_form_node)
             continue;
 
+        if (iter_array->filename.size())
+        {
+            code.Eol().Str("# ").Str(iter_array->filename);
+        }
         code.Eol().Str(iter_array->array_name);
         if (iter_array->type == wxBITMAP_TYPE_INVALID)
         {

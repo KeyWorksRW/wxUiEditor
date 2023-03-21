@@ -461,7 +461,13 @@ bool ImageHandler::AddNewEmbeddedImage(tt_string path, Node* form, std::unique_l
 
 void ImageHandler::InitializeArrayName(EmbeddedImage* embed, tt_string_view filename)
 {
-    embed->array_name = filename;
+    auto result = FileNameToVarName(filename);
+    embed->array_name = result.value_or("image_");
+    if (embed->array_name != filename)
+    {
+        embed->filename = filename;
+    }
+
     for (size_t idx = 0; idx < embed->array_name.size(); ++idx)
     {
         if (tt::is_alnum(embed->array_name[idx]) || embed->array_name[idx] == '_')
@@ -1259,6 +1265,63 @@ tt_string ImageHandler::GetBundleFuncName(const tt_string& description)
     }
 
     return name;
+}
+
+std::optional<tt_string> ImageHandler::FileNameToVarName(tt_string_view filename)
+{
+    if (filename.empty())
+    {
+        // caller's description does not include a filename
+        return {};
+    }
+
+    tt_string var_name;
+
+    if (tt::is_digit(filename[0]))
+    {
+        var_name += "img_";
+    }
+
+    for (auto iter: filename)
+    {
+        if (tt::is_alnum(iter) || iter == '_')
+        {
+            var_name += iter;
+        }
+        else
+        {
+            if (iter == '.')
+            {
+                // Always convert a period to an underscore in case it is preceeding the extension
+                var_name += '_';
+            }
+            else if (var_name.back() != '_')
+            {
+                var_name += '_';
+            }
+            else
+            {
+                // convert char to hex string
+                tt_string hex;
+                hex.Format("%x", static_cast<int>(iter) & 0xFF);
+
+                // Ignore any 0xff characters which are utf-8 bytes
+                if (hex != "ff")
+                {
+                    var_name += hex;
+                }
+            }
+        }
+
+        if (var_name.size() > 135)
+        {
+            // We don't want to create a variable name that is too long
+            var_name += "_name_truncated";
+            break;
+        }
+    }
+
+    return var_name;
 }
 
 namespace wxue_img

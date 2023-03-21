@@ -459,6 +459,10 @@ void BaseCodeGenerator::GenerateImagesForm()
         if (iter_array->form != m_form_node)
             continue;
 
+        if (iter_array->filename.size())
+        {
+            m_header->writeLine(tt_string("// ") << iter_array->filename);
+        }
         m_header->writeLine(tt_string("extern const unsigned char ")
                             << iter_array->array_name << '[' << (iter_array->array_size & 0xFFFFFFFF) << "];");
     }

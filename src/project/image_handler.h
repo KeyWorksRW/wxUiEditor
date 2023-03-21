@@ -26,6 +26,7 @@ struct EmbeddedImage
 {
     Node* form;  // the form node the image is declared in
     tt_string array_name;
+    tt_string filename;  // only filled in if this differs from array_name
     size_t array_size;
     std::unique_ptr<unsigned char[]> array_data;
     wxBitmapType type;
@@ -40,6 +41,7 @@ private:
 
 public:
     ImageHandler(ImageHandler const&) = delete;
+
     void operator=(ImageHandler const&) = delete;
 
     static ImageHandler& getInstance()
@@ -109,6 +111,10 @@ public:
     // This will collect bundles for the entire project -- it initializes
     // std::map<std::string, ImageBundle> m_bundles for every image.
     void CollectBundles();
+
+    // Convert a filename to a valid variable name. This will handle filnames with leading
+    // numbers, utf8 characters, and other characters that are not valid in a variable name.
+    std::optional<tt_string> FileNameToVarName(tt_string_view filename);
 
 protected:
     bool CheckNode(Node* node);

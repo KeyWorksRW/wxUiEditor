@@ -23,14 +23,15 @@ namespace wxue_img
     extern const unsigned char hide_png[242];
 }
 
-MsgFrameBase::MsgFrameBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos,
-    const wxSize& size, long style, const wxString& name) : wxFrame()
+bool MsgFrameBase::Create(wxWindow* parent, wxWindowID id, const wxString& title,
+    const wxPoint& pos, const wxSize& size, long style, const wxString &name)
 {
+
     if (!wxImage::FindHandler(wxBITMAP_TYPE_PNG))
         wxImage::AddHandler(new wxPNGHandler);
 
-    if (!Create(parent, id, title, pos, size, style, name))
-        return;
+    if (!wxFrame::Create(parent, id, title, pos, size, style, name))
+        return false;
 
     auto* menubar = new wxMenuBar();
 
@@ -177,6 +178,8 @@ MsgFrameBase::MsgFrameBase(wxWindow* parent, wxWindowID id, const wxString& titl
     Bind(wxEVT_MENU, &MsgFrameBase::OnEvents, this, id_event_msgs);
     Bind(wxEVT_MENU, &MsgFrameBase::OnInfo, this, wxID_INFO);
     m_notebook->Bind(wxEVT_NOTEBOOK_PAGE_CHANGED, &MsgFrameBase::OnPageChanged, this);
+
+    return true;
 }
 
 #endif  // defined(INTERNAL_TESTING)

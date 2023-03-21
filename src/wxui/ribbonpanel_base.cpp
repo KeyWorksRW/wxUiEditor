@@ -48,11 +48,12 @@ namespace wxue_img
     extern const unsigned char wxStaticText_png[290];
 }
 
-RibbonPanelBase::RibbonPanelBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style,
-    const wxString& name) : wxPanel()
+bool RibbonPanelBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style,
+    const wxString& name)
 {
-    if (!Create(parent, id, pos, size, style, name))
-        return;
+
+    if (!wxPanel::Create(parent, id, pos, size, style, name))
+        return false;
 
     if (!wxImage::FindHandler(wxBITMAP_TYPE_PNG))
         wxImage::AddHandler(new wxPNGHandler);
@@ -497,6 +498,8 @@ RibbonPanelBase::RibbonPanelBase(wxWindow* parent, wxWindowID id, const wxPoint&
     data_bar_dataview->Bind(wxEVT_RIBBONTOOLBAR_DROPDOWN_CLICKED, &RibbonPanelBase::OnDropDown, this);
     bars_bar_ribbon->Bind(wxEVT_RIBBONTOOLBAR_DROPDOWN_CLICKED, &RibbonPanelBase::OnDropDown, this);
     container_bar_windows->Bind(wxEVT_RIBBONTOOLBAR_DROPDOWN_CLICKED, &RibbonPanelBase::OnDropDown, this);
+
+    return true;
 }
 
 namespace wxue_img

@@ -43,14 +43,15 @@ namespace wxue_img
     extern const unsigned char wxlogo_svg[1331];
 }
 
-MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos,
-    const wxSize& size, long style, const wxString& name) : wxFrame()
+bool MainFrameBase::Create(wxWindow* parent, wxWindowID id, const wxString& title,
+    const wxPoint& pos, const wxSize& size, long style, const wxString &name)
 {
+
     if (!wxImage::FindHandler(wxBITMAP_TYPE_PNG))
         wxImage::AddHandler(new wxPNGHandler);
 
-    if (!Create(parent, id, title, pos, size, style, name))
-        return;
+    if (!wxFrame::Create(parent, id, title, pos, size, style, name))
+        return false;
     SetMinSize(wxSize(800, 800));
 
     m_menubar = new wxMenuBar();
@@ -491,6 +492,8 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
         },
         menu_duplicate->GetId());
     Bind(wxEVT_UPDATE_UI, &MainFrameBase::OnUpdateBrowsePython, this, menu_item_9->GetId());
+
+    return true;
 }
 
 namespace wxue_img

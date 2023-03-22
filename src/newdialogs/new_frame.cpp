@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Dialog for creating a new project wxFrame
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2021-2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2021-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -65,10 +65,20 @@ void NewFrame::CreateNode()
         UpdateFormClass(form_node.get());
     }
 
-    wxGetFrame().SelectNode(Project.ProjectNode());
+    auto parent_node = wxGetFrame().GetSelectedNode();
+    if (!parent_node)
+    {
+        parent_node = Project.ProjectNode();
+    }
+    else
+    {
+        parent_node = parent_node->get_ValidFormParent();
+    }
+
+    wxGetFrame().SelectNode(parent_node);
 
     tt_string undo_str("New wxFrame");
-    wxGetFrame().PushUndoAction(std::make_shared<InsertNodeAction>(form_node.get(), Project.ProjectNode(), undo_str, -1));
+    wxGetFrame().PushUndoAction(std::make_shared<InsertNodeAction>(form_node.get(), parent_node, undo_str, -1));
     wxGetFrame().FireCreatedEvent(form_node);
     wxGetFrame().SelectNode(form_node, evt_flags::fire_event | evt_flags::force_selection);
     wxGetFrame().GetNavigationPanel()->ChangeExpansion(form_node.get(), true, true);

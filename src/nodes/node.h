@@ -143,6 +143,10 @@ public:
     // Returns the folder node if there is one, nullptr otherwise.
     Node* get_folder() noexcept;
 
+    // This will walk up the parent tree until it finds a sub-folder, folder, or project
+    // node. Use this to find a parent for a new form.
+    Node* get_ValidFormParent() noexcept;
+
     NodeDeclaration* GetNodeDeclaration() { return m_declaration; }
 
     // Returns true if the property exists, has a value (!= wxDefaultSize, !=

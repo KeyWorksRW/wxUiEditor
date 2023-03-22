@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Dialog for creating a new wizard
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2021-2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2021-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -61,10 +61,20 @@ void NewWizard::CreateNode()
         UpdateFormClass(new_node.get());
     }
 
-    wxGetFrame().SelectNode(Project.ProjectNode());
+    auto parent_node = wxGetFrame().GetSelectedNode();
+    if (!parent_node)
+    {
+        parent_node = Project.ProjectNode();
+    }
+    else
+    {
+        parent_node = parent_node->get_ValidFormParent();
+    }
+
+    wxGetFrame().SelectNode(parent_node);
 
     tt_string undo_str("New wxWizard");
-    wxGetFrame().PushUndoAction(std::make_shared<InsertNodeAction>(new_node.get(), Project.ProjectNode(), undo_str, -1));
+    wxGetFrame().PushUndoAction(std::make_shared<InsertNodeAction>(new_node.get(), parent_node, undo_str, -1));
     wxGetFrame().FireCreatedEvent(new_node);
     wxGetFrame().SelectNode(new_node, evt_flags::fire_event | evt_flags::force_selection);
     wxGetFrame().GetNavigationPanel()->ChangeExpansion(new_node.get(), true, true);

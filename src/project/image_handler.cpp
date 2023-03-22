@@ -463,7 +463,11 @@ void ImageHandler::InitializeArrayName(EmbeddedImage* embed, tt_string_view file
 {
     auto result = FileNameToVarName(filename);
     embed->array_name = result.value_or("image_");
-    if (embed->array_name != filename)
+    tt_string check_filename(filename);
+    check_filename.Replace(".", "_");
+    // If the only thing that changed is replacing the '.' with '_', then there is no need to
+    // store the filename (which would cause a comment string to be generated).
+    if (embed->array_name != check_filename)
     {
         embed->filename = filename;
     }

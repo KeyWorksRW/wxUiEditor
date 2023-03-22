@@ -167,6 +167,21 @@ Node* Node::get_folder() noexcept
     return nullptr;
 }
 
+Node* Node::get_ValidFormParent() noexcept
+{
+    auto parent = this;
+    while (parent)
+    {
+        if (parent->IsFormParent())
+        {
+            return parent;
+        }
+        parent = parent->GetParent();
+    }
+
+    return nullptr;
+}
+
 bool Node::Adopt(NodeSharedPtr child)
 {
     ASSERT_MSG(child != GetSharedPtr(), "A node can't adopt itself!");

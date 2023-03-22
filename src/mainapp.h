@@ -38,9 +38,6 @@ public:
 
     bool IsPjtMemberPrefix() const;
 
-    void SetLanguage(wxLanguage language) { m_lang = language; }
-    wxLanguage GetLanguage() { return m_lang; }
-
 #if defined(_DEBUG) || defined(INTERNAL_TESTING)
 
     void ShowMsgWindow();
@@ -79,7 +76,6 @@ private:
 
     MainFrame* m_frame { nullptr };
 
-    wxLanguage m_lang;  // language specified by user
     wxLocale m_locale;  // locale we'll be using
 
     int m_ProjectVersion;

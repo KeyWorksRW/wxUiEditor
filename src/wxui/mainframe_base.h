@@ -128,6 +128,7 @@ namespace wxue_img
     extern const unsigned char hidden_svg[2111];
     extern const unsigned char left_svg[585];
     extern const unsigned char magnify_svg[3953];
+    // new-project.svg
     extern const unsigned char new_project_svg[921];
     extern const unsigned char right_svg[599];
     extern const unsigned char save_svg[717];

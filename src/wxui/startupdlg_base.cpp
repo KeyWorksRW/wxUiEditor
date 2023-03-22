@@ -37,6 +37,7 @@ inline wxBitmapBundle wxueBundleSVG(const unsigned char* data,
 namespace wxue_img
 {
     extern const unsigned char import_svg[418];
+    // new-project.svg
     extern const unsigned char new_project_svg[921];
 }
 

@@ -76,10 +76,7 @@ wxIMPLEMENT_APP(App);
 
 tt_string tt_empty_cstr;
 
-App::App()
-{
-    m_lang = wxLANGUAGE_DEFAULT;
-}
+App::App() {}
 
 bool App::OnInit()
 {

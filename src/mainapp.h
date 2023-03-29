@@ -76,8 +76,6 @@ private:
 
     MainFrame* m_frame { nullptr };
 
-    wxLocale m_locale;  // locale we'll be using
-
     int m_ProjectVersion;
     bool m_isMainFrameClosing { false };
     bool m_isProject_updated { false };

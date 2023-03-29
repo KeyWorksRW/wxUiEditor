@@ -44,7 +44,11 @@ void AllowDirectoryChange(wxPropertyGridEvent& event, NodeProperty* /* prop */, 
         if (result != wxYES)
         {
             event.Veto();
+#if wxCHECK_VERSION(3, 3, 0)
+            event.SetValidationFailureBehavior(wxPGVFBFlags::MarkCell | wxPGVFBFlags::StayInProperty);
+#else
             event.SetValidationFailureBehavior(wxPG_VFB_MARK_CELL | wxPG_VFB_STAY_IN_PROPERTY);
+#endif
             wxGetFrame().SetStatusField("Either change the directory, or press ESC to restore the original value.");
             return;
         }
@@ -96,7 +100,11 @@ void AllowFileChange(wxPropertyGridEvent& event, NodeProperty* prop, Node* node)
                     }
 
                     event.Veto();
+#if wxCHECK_VERSION(3, 3, 0)
+                    event.SetValidationFailureBehavior(wxPGVFBFlags::MarkCell | wxPGVFBFlags::StayInProperty);
+#else
                     event.SetValidationFailureBehavior(wxPG_VFB_MARK_CELL | wxPG_VFB_STAY_IN_PROPERTY);
+#endif
                     wxGetFrame().SetStatusField("Either change the name, or press ESC to restore the original value.");
                     return;
                 }
@@ -117,7 +125,11 @@ void AllowFileChange(wxPropertyGridEvent& event, NodeProperty* prop, Node* node)
                     }
 
                     event.Veto();
+#if wxCHECK_VERSION(3, 3, 0)
+                    event.SetValidationFailureBehavior(wxPGVFBFlags::MarkCell | wxPGVFBFlags::StayInProperty);
+#else
                     event.SetValidationFailureBehavior(wxPG_VFB_MARK_CELL | wxPG_VFB_STAY_IN_PROPERTY);
+#endif
                     wxGetFrame().SetStatusField("Either change the name, or press ESC to restore the original value.");
                     return;
                 }
@@ -142,7 +154,11 @@ void AllowFileChange(wxPropertyGridEvent& event, NodeProperty* prop, Node* node)
                     }
 
                     event.Veto();
+#if wxCHECK_VERSION(3, 3, 0)
+                    event.SetValidationFailureBehavior(wxPGVFBFlags::MarkCell | wxPGVFBFlags::StayInProperty);
+#else
                     event.SetValidationFailureBehavior(wxPG_VFB_MARK_CELL | wxPG_VFB_STAY_IN_PROPERTY);
+#endif
                     wxGetFrame().SetStatusField("Either change the name, or press ESC to restore the original value.");
                     return;
                 }

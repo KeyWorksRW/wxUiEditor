@@ -169,7 +169,7 @@ void FontPropDlg::OnSymbolSize(wxCommandEvent& WXUNUSED(event))
 
 void FontPropDlg::OnEditPointSize(wxCommandEvent& event)
 {
-    if (auto digit = std::atof(event.GetString()); digit >= 4.0 && digit <= 72.0)
+    if (auto digit = std::atof(event.GetString().ToStdString().c_str()); digit >= 4.0 && digit <= 72.0)
     {
         auto control = wxDynamicCast(event.GetEventObject(), wxSpinCtrlDouble);
         control->SetValue(digit);

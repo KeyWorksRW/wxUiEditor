@@ -219,7 +219,7 @@ void XrcPreview::OnPreview(wxCommandEvent& WXUNUSED(event))
         dlg_name << xrc_text[pos++];
     }
 
-    wxMemoryInputStream stream(xrc_text, xrc_text.size());
+    wxMemoryInputStream stream(xrc_text.data(), xrc_text.size());
     wxScopedPtr<wxXmlDocument> xmlDoc(new wxXmlDocument(stream));
     if (!xmlDoc->IsOk())
     {

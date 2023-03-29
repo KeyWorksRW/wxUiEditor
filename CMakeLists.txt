@@ -12,6 +12,8 @@ option(BUILD_SHARED_LIBS "Build with wxWidgets shared libraries" OFF)
 
 if (BUILD_SHARED_LIBS)
     message(NOTICE "Building with wxWidgets shared libraries")
+else()
+    message(NOTICE "Building with wxWidgets static libraries")
 endif()
 
 option(INTERNAL_BLD_TESTING "Build with internal testing functionality")
@@ -20,6 +22,10 @@ option(INTERNAL_BLD_TESTING "Build with internal testing functionality")
 # build with the current wxWidgets sources (assuming the wxWidgets fork is in sync).
 # Realistically, this is only going to be usable by the maintainers of this project.
 option(INTERNAL_BLD_FORK "Assumes the existance of ../wxWidgets/bld/CMakeLists.txt")
+
+if (INTERNAL_BLD_FORK)
+    message(NOTICE "Building with forked version of wxWidgets")
+endif()
 
 # If this is set, you must build the library yourself. This is required if you build a UNIX
 # version as otherwise wxCLib will conflict with Unix dll versions of the sub-libraries such as
@@ -121,11 +127,15 @@ if (NOT INTERNAL_BLD_FORK)
 
     # This will build wxCLib.lib and wxWidgets.lib
     add_subdirectory(${widget_cmake_dir})
+else()
+    set (widget_dir ${CMAKE_CURRENT_LIST_DIR}/../wxWidgets)
 endif()
 
 if (WIN32)
     if (NOT INTERNAL_BLD_FORK)
         set(setup_dir ${widget_cmake_dir}/win)
+    else()
+        set(setup_dir ${CMAKE_CURRENT_LIST_DIR}/../wxWidgets/bld/win)
     endif()
 else()
     if (NOT INTERNAL_BLD_FORK)
@@ -168,16 +178,28 @@ endif()
 if (NOT INTERNAL_BLD_FORK)
     if (WIN32)
         target_link_libraries(wxUiEditor PRIVATE wxWidgets ${CLib} comctl32 Imm32 Shlwapi Version UxTheme)
-    else()
-        target_link_libraries(wxUiEditor PRIVATE wxWidgets ${CLib})
     endif()
 else()
     if (WIN32)
         if (INTERNAL_BLD_WX_CMAKE)
-            # Both Debug and Release libaries are in the same location
-            target_link_directories(wxUiEditor PRIVATE ${widget_lib_dir})
-            target_link_libraries(wxUiEditor PRIVATE ${fork_wxlibraries})
+            # If using wxWidgets CMakeLists.txt, then names, version, etc. are for the current build
+            target_link_directories(wxUiEditor PRIVATE ${widget_dir}/build/lib/vc_x64_dll)
+            target_link_libraries(wxUiEditor PRIVATE
+                comctl32 Imm32 Shlwapi Version UxTheme
+                wxmsw33ud
+                wxexpatd
+                wxjpegd
+                wxlexillad
+                wxpngd
+                wxregexud
+                wxscintillad
+                wxtiffd
+                wxzlibd)
         else()
+            target_link_directories(wxUiEditor PRIVATE
+                $<$<CONFIG:Debug>:${widget_dir}/bld/build/Debug>
+                $<$<CONFIG:Release>:${widget_dir}/bld/build/Release>
+            )
             target_link_libraries(wxUiEditor PRIVATE wxWidgets ${CLib})
         endif()
     else()

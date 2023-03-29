@@ -9,6 +9,12 @@
 
 #include <wx/app.h>  // wxAppBase class and macros used for declaration of wxApp
 
+#if wxCHECK_VERSION(3, 3, 0)
+    #if defined(_WIN32)
+        #include <wx/msw/darkmode.h>
+    #endif
+#endif
+
 #include "node_classes.h"  // Forward defintions of Node classes
 
 class Project;
@@ -26,6 +32,18 @@ struct EmbeddedImage;
 struct ImageBundle;
 
 constexpr const auto ImportProjectVersion = 13;
+
+#if wxCHECK_VERSION(3, 3, 0)
+    #if defined(_WIN32)
+
+class DarkSettings : public wxDarkModeSettings
+{
+public:
+    wxColour GetColour(wxSystemColour index);
+};
+
+    #endif  // _WIN32
+#endif      // wxCHECK_VERSION(3, 3, 0)
 
 class App : public wxApp
 {
@@ -56,6 +74,9 @@ public:
     bool AskedAboutMissingDir(const wxString path) { return (m_missing_dirs.find(path) != m_missing_dirs.end()); }
     void AddMissingDir(const wxString path) { m_missing_dirs.insert(path); }
 
+    bool isDarkMode() const noexcept { return m_isDarkMode; }
+    bool isDarkHighContrast() const noexcept { return m_isDarkHighContrast; }
+
 protected:
     bool OnInit() override;
 
@@ -79,6 +100,14 @@ private:
     int m_ProjectVersion;
     bool m_isMainFrameClosing { false };
     bool m_isProject_updated { false };
+
+#if defined(_DEBUG) || defined(INTERNAL_TESTING)
+    bool m_isDarkMode { true };
+    bool m_isDarkHighContrast { true };
+#else
+    bool m_isDarkMode { false };
+    bool m_isDarkHighContrast { false };
+#endif
 };
 
 DECLARE_APP(App)

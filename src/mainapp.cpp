@@ -16,6 +16,12 @@
 #include <wx/sysopt.h>   // wxSystemOptions
 #include <wx/utils.h>    // Miscellaneous utilities
 
+#if wxCHECK_VERSION(3, 3, 0)
+    #if defined(_WIN32)
+        #include <wx/msw/darkmode.h>
+    #endif
+#endif
+
 #include "mainapp.h"
 
 #include "bitmaps.h"          // Contains various images handling functions
@@ -76,6 +82,37 @@ wxIMPLEMENT_APP(App);
 
 tt_string tt_empty_cstr;
 
+#if wxCHECK_VERSION(3, 3, 0)
+    #if defined(_WIN32)
+
+wxColour DarkSettings::GetColour(wxSystemColour index)
+{
+    switch (index)
+    {
+        case wxSYS_COLOUR_WINDOW:
+        case wxSYS_COLOUR_LISTBOX:
+        case wxSYS_COLOUR_BTNFACE:
+            if (wxGetApp().isDarkHighContrast())
+                return wxColour(0, 0, 0);
+            else
+                return wxColour(0x202020);
+
+        #if 0
+            case wxSYS_COLOUR_ACTIVECAPTION:
+            case wxSYS_COLOUR_APPWORKSPACE:
+            case wxSYS_COLOUR_INFOBK:
+                // Default colour used here is 0x202020.
+                return wxColour(0x202020);
+        #endif
+
+        default:
+            return wxDarkModeSettings::GetColour(index);
+    }
+}
+
+    #endif  // _WIN32
+#endif      // wxCHECK_VERSION(3, 3, 0)
+
 App::App() {}
 
 bool App::OnInit()
@@ -95,6 +132,19 @@ bool App::OnInit()
 #endif
 
     wxInitAllImageHandlers();
+
+#if wxCHECK_VERSION(3, 3, 0)
+    #if defined(_WIN32)
+
+    // [Randalphwa - 03-29-2023] Currently, this isn't really usable because we hard-code
+    // colors in our property sheet and scintilla code displays.
+    if (isDarkMode())
+    {
+        auto* darkSettings = new DarkSettings;
+        MSWEnableDarkMode(0, darkSettings);
+    }
+    #endif
+#endif
 
     // The name is sort of a standard. More importantly, it is sometimes used as the mask in Windows bitmaps for toolbar
     // images.

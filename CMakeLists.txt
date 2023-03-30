@@ -22,16 +22,8 @@ option(INTERNAL_BLD_TESTING "Build with internal testing functionality")
 # This option is designed to make it possible to check changes to a wxWidgets fork, and/or to
 # build with the current wxWidgets sources (assuming the wxWidgets fork is in sync).
 # Realistically, this is only going to be usable by the maintainers of this project.
-option(INTERNAL_BLD_FORK "Assumes the existance of ../wxWidgets/bld/CMakeLists.txt")
 
-if (INTERNAL_BLD_FORK)
-    message(NOTICE "Building with forked version of wxWidgets")
-endif()
-
-# If this is set, you must build the library yourself. This is required if you build a UNIX
-# version as otherwise wxCLib will conflict with Unix dll versions of the sub-libraries such as
-# wxpng.
-option(INTERNAL_BLD_WX_CMAKE "When building fork, use wxWidgets build system")
+option(BUILD_FORK "Builds wxWidgets using wxWidgets/wx_3_3")
 
 # The following options cannot be combined, are only usable for MSVC compiler, and are only for
 # a Release build.
@@ -48,14 +40,20 @@ option(INTERNAL_BLD_WX_CMAKE "When building fork, use wxWidgets build system")
 # wxWidgets. Currently, this is being used internally to verfiy backports from 3.3 to 3.2, and
 # to verify the wxUSE_UNICODE_UTF8 build option for MSW.
 
-option(INTERNAL_BLD_VADZ "Assumes the existance of ../vadz/bld/CMakeLists.txt")
+option(BUILD_UTF8 "Builds wxWidgets using wxWidgets/wx_utf8")
 
-if (INTERNAL_BLD_VADZ)
-    if (INTERNAL_BLD_FORK)
-        message(FATAL_ERROR "INTERNAL_BLD_FORK and INTERNAL_BLD_VADZ cannot be combined")
-    else()
-        message(NOTICE "Building with vadz version of wxWidgets")
-    endif()
+if (BUILD_UTF8 AND BUILD_FORK)
+    message(FATAL_ERROR "BUILD_FORK and BUILD_UTF8 cannot be combined")
+endif()
+
+if (BUILD_FORK)
+    set(BUILD_ROOT ${BUILD_FORK_DIR} CACHE PATH "${CMAKE_CURRENT_LIST_DIR}/../wxWidgets" FORCE)
+    message(NOTICE "Building with forked/cloned version of wxWidgets")
+elseif (BUILD_UTF8)
+    set(BUILD_ROOT ${BUILD_UTF8_DIR} CACHE PATH "${CMAKE_CURRENT_LIST_DIR}/../vadz" FORCE)
+    message(NOTICE "Building with UTF8 build of wxWidgets")
+else()
+    set(BUILD_ROOT wxWidgets CACHE PATH "wxWidgets" FORCE)
 endif()
 
 option(INTERNAL_DARK_MODE "Enable dark mode (used with wxWidgets 3.3 in _WIN32 builds)" OFF)
@@ -117,6 +115,13 @@ if (INTERNAL_BLD_TESTING)
         src/internal/import_panel.cpp
         src/internal/convert_img.cpp
     )
+else()
+    set (wxui_internal_files
+        $<$<CONFIG:Debug>:src/internal/msg_logging.cpp>
+        $<$<CONFIG:Debug>:src/internal/msgframe.cpp>
+        $<$<CONFIG:Debug>:src/internal/import_panel.cpp>
+        $<$<CONFIG:Debug>:src/internal/convert_img.cpp>
+    )
 endif()
 
 add_compile_definitions($<$<CONFIG:Release>:NDEBUG>)
@@ -139,29 +144,30 @@ endif()
 
 ####################### Set wxWidgets location macros #######################
 
-if (INTERNAL_BLD_FORK)
-    set (widget_dir ${CMAKE_CURRENT_LIST_DIR}/../wxWidgets)
-elseif(INTERNAL_BLD_VADZ)
-    set (widget_dir ${CMAKE_CURRENT_LIST_DIR}/../vadz)
+if (BUILD_FORK)
+    set (widget_dir ${CMAKE_CURRENT_LIST_DIR}/wxWidgets/wx_3_3)
+    add_subdirectory(${widget_dir})
+elseif(BUILD_UTF8)
+    set (widget_dir ${CMAKE_CURRENT_LIST_DIR}/wxWidgets/wx_utf8)
+    add_subdirectory(${widget_dir})
 else()
-    set (widget_dir ${CMAKE_CURRENT_LIST_DIR}/wxSnapshot)
-    set (widget_cmake_dir ${CMAKE_CURRENT_LIST_DIR}/wxSnapshot)
-
-    # This will build wxCLib.lib and wxWidgets.lib
-    add_subdirectory(${widget_cmake_dir})
+    set (widget_dir ${CMAKE_CURRENT_LIST_DIR}/wxWidgets)
+    add_subdirectory(${widget_dir}/wx_3_2)
 endif()
 
+message(STATUS "widget_dir: ${widget_dir}")
+
 if (WIN32)
-    if (INTERNAL_BLD_FORK)
-        set(setup_dir ${CMAKE_CURRENT_LIST_DIR}/../wxWidgets/bld/win)
-    elseif(INTERNAL_BLD_VADZ)
-        set(setup_dir ${CMAKE_CURRENT_LIST_DIR}/../vadz/bld/win)
+    if (BUILD_FORK)
+        set(setup_dir ${CMAKE_CURRENT_LIST_DIR}/wxWidgets/wx_3_3/setup/win)
+    elseif(BUILD_UTF8)
+        set(setup_dir ${CMAKE_CURRENT_LIST_DIR}/wxWidgets/wx_utf8/setup/win)
     else()
-        set(setup_dir ${widget_cmake_dir}/win)
+        set(setup_dir ${CMAKE_CURRENT_LIST_DIR}/wxWidgets/wx_3_2/setup/win)
     endif()
 else()
-    if (NOT INTERNAL_BLD_FORK)
-        set(setup_dir ${widget_cmake_dir}/unix)
+    if (NOT BUILD_FORK)
+        set(setup_dir ${CMAKE_CURRENT_LIST_DIR}/wxWidgets/wx_3_3/setup/unix)
     endif()
 endif()
 
@@ -196,7 +202,7 @@ else()
     set(CLib wxCLib)
 endif()
 
-if (NOT INTERNAL_BLD_VADZ)
+if (NOT BUILD_UTF8)
     target_compile_definitions(wxUiEditor PRIVATE wxUSE_UNICODE=1)
     target_compile_definitions(check_build PRIVATE wxUSE_UNICODE=1)
 else()
@@ -205,7 +211,7 @@ else()
 endif()
 
 if (INTERNAL_DARK_MODE)
-    if (NOT INTERNAL_BLD_FORK AND NOT INTERNAL_BLD_VADZ)
+    if (NOT BUILD_FORK AND NOT BUILD_UTF8)
         message(FATAL_ERROR "DARK mode is only supported for the fork and vadz builds")
     endif()
 
@@ -220,33 +226,17 @@ if (INTERNAL_DARK_MODE)
     endif()
 endif()
 
-if (NOT INTERNAL_BLD_FORK AND NOT INTERNAL_BLD_VADZ)
+if (NOT BUILD_FORK AND NOT BUILD_UTF8)
     if (WIN32)
         target_link_libraries(wxUiEditor PRIVATE wxWidgets ${CLib} comctl32 Imm32 Shlwapi Version UxTheme)
     endif()
 else()
     if (WIN32)
-        if (INTERNAL_BLD_WX_CMAKE)
-            # If using wxWidgets CMakeLists.txt, then names, version, etc. are for the current build
-            target_link_directories(wxUiEditor PRIVATE ${widget_dir}/build/lib/vc_x64_dll)
-            target_link_libraries(wxUiEditor PRIVATE
-                comctl32 Imm32 Shlwapi Version UxTheme
-                wxmsw33ud
-                wxexpatd
-                wxjpegd
-                wxlexillad
-                wxpngd
-                wxregexud
-                wxscintillad
-                wxtiffd
-                wxzlibd)
-        else()
-            target_link_directories(wxUiEditor PRIVATE
-                $<$<CONFIG:Debug>:${widget_dir}/bld/build/Debug>
-                $<$<CONFIG:Release>:${widget_dir}/bld/build/Release>
-            )
-            target_link_libraries(wxUiEditor PRIVATE wxWidgets ${CLib})
-        endif()
+        target_link_directories(wxUiEditor PRIVATE
+            $<$<CONFIG:Debug>:${widget_dir}/bld/build/Debug>
+            $<$<CONFIG:Release>:${widget_dir}/bld/build/Release>
+        )
+        target_link_libraries(wxUiEditor PRIVATE wxWidgets ${CLib})
     else()
         target_link_libraries(wxUiEditor PRIVATE wxWidgets ${CLib})
         target_link_directories(wxUiEditor PRIVATE
@@ -291,7 +281,7 @@ target_precompile_headers(wxUiEditor PRIVATE "src/pch.h")
 target_precompile_headers(check_build PRIVATE "src/pch.h")
 
 target_include_directories(wxUiEditor PRIVATE
-    ${widget_dir}/include
+    ${BUILD_ROOT}/include
     ${setup_dir}
 
     ${CMAKE_CURRENT_LIST_DIR}/src/
@@ -307,7 +297,7 @@ target_include_directories(wxUiEditor PRIVATE
 )
 
 target_include_directories(check_build PRIVATE
-    ${widget_dir}/include
+    ${BUILD_ROOT}/include
     ${setup_dir}
 
     ${CMAKE_CURRENT_LIST_DIR}/src/

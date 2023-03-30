@@ -16,11 +16,18 @@
 #include <wx/sysopt.h>   // wxSystemOptions
 #include <wx/utils.h>    // Miscellaneous utilities
 
+// clang-format off
 #if wxCHECK_VERSION(3, 3, 0)
     #if defined(_WIN32)
         #include <wx/msw/darkmode.h>
+        class DarkSettings : public wxDarkModeSettings
+        {
+        public:
+            wxColour GetColour(wxSystemColour index);
+        };
     #endif
 #endif
+// clang-format on
 
 #include "mainapp.h"
 

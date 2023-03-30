@@ -9,12 +9,6 @@
 
 #include <wx/app.h>  // wxAppBase class and macros used for declaration of wxApp
 
-#if wxCHECK_VERSION(3, 3, 0)
-    #if defined(_WIN32)
-        #include <wx/msw/darkmode.h>
-    #endif
-#endif
-
 #include "node_classes.h"  // Forward defintions of Node classes
 
 class Project;
@@ -32,18 +26,6 @@ struct EmbeddedImage;
 struct ImageBundle;
 
 constexpr const auto ImportProjectVersion = 13;
-
-#if wxCHECK_VERSION(3, 3, 0)
-    #if defined(_WIN32)
-
-class DarkSettings : public wxDarkModeSettings
-{
-public:
-    wxColour GetColour(wxSystemColour index);
-};
-
-    #endif  // _WIN32
-#endif      // wxCHECK_VERSION(3, 3, 0)
 
 class App : public wxApp
 {
@@ -101,11 +83,15 @@ private:
     bool m_isMainFrameClosing { false };
     bool m_isProject_updated { false };
 
-#if defined(_DEBUG) || defined(INTERNAL_TESTING)
-    bool m_isDarkMode { false };
-    bool m_isDarkHighContrast { false };
+#if (DARK_MODE)
+    bool m_isDarkMode { true };
 #else
     bool m_isDarkMode { false };
+#endif
+
+#if (DARK_MODE && DARK_HIGH_CONTRAST)
+    bool m_isDarkHighContrast { true };
+#else
     bool m_isDarkHighContrast { false };
 #endif
 };

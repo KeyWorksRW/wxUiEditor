@@ -8,6 +8,7 @@ project(wxUiEditor
 
 ####################### Options #######################
 
+# Shared libs should *never* be used for a Release build!
 option(BUILD_SHARED_LIBS "Build with wxWidgets shared libraries" OFF)
 
 if (BUILD_SHARED_LIBS)
@@ -56,6 +57,9 @@ if (INTERNAL_BLD_VADZ)
         message(NOTICE "Building with vadz version of wxWidgets")
     endif()
 endif()
+
+option(INTERNAL_DARK_MODE "Enable dark mode (used with wxWidgets 3.3 in _WIN32 builds)" OFF)
+option(INTERNAL_DARK_HIGH_CONTRAST "Enable dark mode high contrast (used with wxWidgets 3.3 in _WIN32 builds)" OFF)
 
 ####################### Check for Multi-Config Generator #######################
 
@@ -198,6 +202,22 @@ if (NOT INTERNAL_BLD_VADZ)
 else()
     target_compile_definitions(wxUiEditor PRIVATE wxUSE_UNICODE_UTF8=1 wxUSE_UTF8_LOCALE_ONLY=1)
     target_compile_definitions(check_build PRIVATE wxUSE_UNICODE_UTF8=1 wxUSE_UTF8_LOCALE_ONLY=1)
+endif()
+
+if (INTERNAL_DARK_MODE)
+    if (NOT INTERNAL_BLD_FORK AND NOT INTERNAL_BLD_VADZ)
+        message(FATAL_ERROR "DARK mode is only supported for the fork and vadz builds")
+    endif()
+
+    if (WIN32)
+        target_compile_definitions(wxUiEditor PRIVATE DARK_MODE=1)
+        if (INTERNAL_DARK_HIGH_CONTRAST)
+            message(NOTICE "Building with Dark mode and High Contrast")
+            target_compile_definitions(wxUiEditor PRIVATE DARK_HIGH_CONTRAST=1)
+        else()
+            message(NOTICE "Building with Dark mode, but not High Contrast")
+        endif()
+    endif()
 endif()
 
 if (NOT INTERNAL_BLD_FORK AND NOT INTERNAL_BLD_VADZ)

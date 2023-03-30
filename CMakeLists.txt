@@ -43,6 +43,20 @@ option(INTERNAL_BLD_WX_CMAKE "When building fork, use wxWidgets build system")
 # option(INTERNAL_PGO_GENERATE "Create instrumented build for profiling run (MSVC only)" OFF)
 # option(INTERNAL_PGO_USEPROFILE "Create optimized build using profile data (MSVC only)" OFF)
 
+# This option is makes it possible to test against long-running branches from vadz's fork of
+# wxWidgets. Currently, this is being used internally to verfiy backports from 3.3 to 3.2, and
+# to verify the wxUSE_UNICODE_UTF8 build option for MSW.
+
+option(INTERNAL_BLD_VADZ "Assumes the existance of ../vadz/bld/CMakeLists.txt")
+
+if (INTERNAL_BLD_VADZ)
+    if (INTERNAL_BLD_FORK)
+        message(FATAL_ERROR "INTERNAL_BLD_FORK and INTERNAL_BLD_VADZ cannot be combined")
+    else()
+        message(NOTICE "Building with vadz version of wxWidgets")
+    endif()
+endif()
+
 ####################### Check for Multi-Config Generator #######################
 
 get_property(isMultiConfig GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
@@ -121,21 +135,25 @@ endif()
 
 ####################### Set wxWidgets location macros #######################
 
-if (NOT INTERNAL_BLD_FORK)
+if (INTERNAL_BLD_FORK)
+    set (widget_dir ${CMAKE_CURRENT_LIST_DIR}/../wxWidgets)
+elseif(INTERNAL_BLD_VADZ)
+    set (widget_dir ${CMAKE_CURRENT_LIST_DIR}/../vadz)
+else()
     set (widget_dir ${CMAKE_CURRENT_LIST_DIR}/wxSnapshot)
     set (widget_cmake_dir ${CMAKE_CURRENT_LIST_DIR}/wxSnapshot)
 
     # This will build wxCLib.lib and wxWidgets.lib
     add_subdirectory(${widget_cmake_dir})
-else()
-    set (widget_dir ${CMAKE_CURRENT_LIST_DIR}/../wxWidgets)
 endif()
 
 if (WIN32)
-    if (NOT INTERNAL_BLD_FORK)
-        set(setup_dir ${widget_cmake_dir}/win)
-    else()
+    if (INTERNAL_BLD_FORK)
         set(setup_dir ${CMAKE_CURRENT_LIST_DIR}/../wxWidgets/bld/win)
+    elseif(INTERNAL_BLD_VADZ)
+        set(setup_dir ${CMAKE_CURRENT_LIST_DIR}/../vadz/bld/win)
+    else()
+        set(setup_dir ${widget_cmake_dir}/win)
     endif()
 else()
     if (NOT INTERNAL_BLD_FORK)
@@ -144,7 +162,6 @@ else()
 endif()
 
 ####################### Libraries and Executables #######################
-
 
 # Setting CMAKE_MODULE_PATH causes ninja to fail rebuilding until CMake re-generates.
 # Specifying the full path and extension means ninja sees this as a normal dependency that
@@ -175,7 +192,15 @@ else()
     set(CLib wxCLib)
 endif()
 
-if (NOT INTERNAL_BLD_FORK)
+if (NOT INTERNAL_BLD_VADZ)
+    target_compile_definitions(wxUiEditor PRIVATE wxUSE_UNICODE=1)
+    target_compile_definitions(check_build PRIVATE wxUSE_UNICODE=1)
+else()
+    target_compile_definitions(wxUiEditor PRIVATE wxUSE_UNICODE_UTF8=1 wxUSE_UTF8_LOCALE_ONLY=1)
+    target_compile_definitions(check_build PRIVATE wxUSE_UNICODE_UTF8=1 wxUSE_UTF8_LOCALE_ONLY=1)
+endif()
+
+if (NOT INTERNAL_BLD_FORK AND NOT INTERNAL_BLD_VADZ)
     if (WIN32)
         target_link_libraries(wxUiEditor PRIVATE wxWidgets ${CLib} comctl32 Imm32 Shlwapi Version UxTheme)
     endif()

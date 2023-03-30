@@ -20,7 +20,6 @@
 
 #define wxUSE_GUI         1
 #define wxUSE_NO_MANIFEST 1
-#define wxUSE_UNICODE     1
 
 // Allows tt additions to pugixml (e.g. as_sview(), as_cstr(), etc.)
 #define TTLIB_ADDITIONS 1

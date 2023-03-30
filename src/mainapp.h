@@ -102,8 +102,8 @@ private:
     bool m_isProject_updated { false };
 
 #if defined(_DEBUG) || defined(INTERNAL_TESTING)
-    bool m_isDarkMode { true };
-    bool m_isDarkHighContrast { true };
+    bool m_isDarkMode { false };
+    bool m_isDarkHighContrast { false };
 #else
     bool m_isDarkMode { false };
     bool m_isDarkHighContrast { false };

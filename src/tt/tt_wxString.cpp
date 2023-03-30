@@ -19,7 +19,7 @@ std::string tt_wxString::sub_cstr(size_type start_pos, size_type count) const
     std::string str;
     if (start_pos == 0 && count == tt::npos)
     {
-#if defined(_WIN32)
+#if defined(_WIN32) && !(wxUSE_UNICODE_UTF8)
         tt::utf16to8(wx_str(), str);
 #else
         str = *this;

@@ -13,8 +13,12 @@
 
 tt_string::tt_string(const wxString& str)
 {
-#ifdef _WIN32
+#if defined(_WIN32)
+    #if (wxUSE_UNICODE_UTF8)
+    *this = str.utf8_str().data();
+    #else
     tt::utf16to8(str.wx_str(), *this);
+    #endif
 #else
     *this = str;
 #endif
@@ -22,7 +26,7 @@ tt_string::tt_string(const wxString& str)
 
 tt_string& tt_string::assign_wx(const wxString& str)
 {
-#ifdef _WIN32
+#if defined(_WIN32) && !(wxUSE_UNICODE_UTF8)
     clear();
     tt::utf16to8(str.wx_str(), *this);
 #else
@@ -33,8 +37,12 @@ tt_string& tt_string::assign_wx(const wxString& str)
 
 tt_string& tt_string::append_wx(const wxString& str)
 {
-#ifdef _WIN32
+#if defined(_WIN32)
+    #if (wxUSE_UNICODE_UTF8)
+    *this += str.utf8_str().data();
+    #else
     tt::utf16to8(str.wx_str(), *this);
+    #endif
 #else
     *this += str;
 #endif

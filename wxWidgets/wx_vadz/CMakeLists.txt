@@ -12,15 +12,15 @@ project(wxWidgets
 
 option(BUILD_SHARED_LIBS "Build wxWidgets shared libraries" OFF)
 
-set(BUILD_UTF8_DIR "${CMAKE_CURRENT_LIST_DIR}/../../../vadz" CACHE PATH "Root directory of wxWidgets UTF8 repository")
-if (NOT EXISTS ${BUILD_UTF8_DIR})
-    message(FATAL_ERROR "Can't find directory in ${BUILD_UTF8_DIR}")
+set(BUILD_VADZ_DIR "${CMAKE_CURRENT_LIST_DIR}/../../../vadz" CACHE PATH "Root directory of wxWidgets UTF8 repository")
+if (NOT EXISTS ${BUILD_VADZ_DIR})
+    message(FATAL_ERROR "Can't find directory in ${BUILD_VADZ_DIR}")
 endif()
 
 if (BUILD_SHARED_LIBS)
-    message(NOTICE "Building wxWidgets UTF8 shared libraries")
+    message(NOTICE "Building wxWidgets vadz shared libraries")
 else()
-    message(NOTICE "Building wxWidgets UTF8 static libraries")
+    message(NOTICE "Building wxWidgets vadz static libraries")
 endif()
 
 ####################### Check for Multi-Config Generator #######################
@@ -76,13 +76,13 @@ else()
 endif()
 
 include( wxWidgets.cmake )  # This will set ${common_sources}, ${msw_sources}, ${unix_sources} and ${osx_sources}
-list(TRANSFORM common_sources PREPEND "${BUILD_UTF8_DIR}/")
-list(TRANSFORM msw_sources PREPEND "${BUILD_UTF8_DIR}/")
-list(TRANSFORM unix_sources PREPEND "${BUILD_UTF8_DIR}/")
-list(TRANSFORM osx_sources PREPEND "${BUILD_UTF8_DIR}/")
-list(TRANSFORM wxCLib_sources PREPEND "${BUILD_UTF8_DIR}/")
+list(TRANSFORM common_sources PREPEND "${BUILD_VADZ_DIR}/")
+list(TRANSFORM msw_sources PREPEND "${BUILD_VADZ_DIR}/")
+list(TRANSFORM unix_sources PREPEND "${BUILD_VADZ_DIR}/")
+list(TRANSFORM osx_sources PREPEND "${BUILD_VADZ_DIR}/")
+list(TRANSFORM wxCLib_sources PREPEND "${BUILD_VADZ_DIR}/")
 
-message(STATUS "common_sources: ${BUILD_UTF8_DIR}/src")
+message(STATUS "common_sources: ${BUILD_VADZ_DIR}/src")
 
 if (WIN32)
     add_library(wxWidgets ${common_sources} ${msw_sources} )
@@ -146,7 +146,7 @@ if (WIN32)
     )
 endif()
 
-target_precompile_headers(wxWidgets PRIVATE "${BUILD_UTF8_DIR}/include/wx/wxprec.h")
+target_precompile_headers(wxWidgets PRIVATE "${BUILD_VADZ_DIR}/include/wx/wxprec.h")
 
 if (WIN32)
     set(setup_dir ${CMAKE_CURRENT_LIST_DIR}/setup/win)
@@ -155,31 +155,31 @@ endif()
 message(STATUS "setup_dir: ${setup_dir}")
 
 target_include_directories(wxWidgets PRIVATE
-    ${BUILD_UTF8_DIR}/include
+    ${BUILD_VADZ_DIR}/include
     ${setup_dir}
-    ${BUILD_UTF8_DIR}/src/tiff/libtiff
-    ${BUILD_UTF8_DIR}/src/jpeg
-    ${BUILD_UTF8_DIR}/src/png
-    ${BUILD_UTF8_DIR}/src/zlib
-    ${BUILD_UTF8_DIR}/3rdparty/pcre/src/wx
-    ${BUILD_UTF8_DIR}/src/expat/expat/lib
+    ${BUILD_VADZ_DIR}/src/tiff/libtiff
+    ${BUILD_VADZ_DIR}/src/jpeg
+    ${BUILD_VADZ_DIR}/src/png
+    ${BUILD_VADZ_DIR}/src/zlib
+    ${BUILD_VADZ_DIR}/3rdparty/pcre/src/wx
+    ${BUILD_VADZ_DIR}/src/expat/expat/lib
 
     # Needed for the wx_stc library
-    ${BUILD_UTF8_DIR}/src/stc/scintilla/include
-    ${BUILD_UTF8_DIR}/src/stc/lexilla/include
-    ${BUILD_UTF8_DIR}/src/stc/lexilla/access
-    ${BUILD_UTF8_DIR}/src/stc/lexilla/lexlib
-    ${BUILD_UTF8_DIR}/src/stc/scintilla/src
+    ${BUILD_VADZ_DIR}/src/stc/scintilla/include
+    ${BUILD_VADZ_DIR}/src/stc/lexilla/include
+    ${BUILD_VADZ_DIR}/src/stc/lexilla/access
+    ${BUILD_VADZ_DIR}/src/stc/lexilla/lexlib
+    ${BUILD_VADZ_DIR}/src/stc/scintilla/src
 )
 
 target_include_directories(wxCLib PRIVATE
-    ${BUILD_UTF8_DIR}/include
+    ${BUILD_VADZ_DIR}/include
     ${setup_dir}
-    ${BUILD_UTF8_DIR}/src/tiff/libtiff
-    ${BUILD_UTF8_DIR}/src/jpeg
-    ${BUILD_UTF8_DIR}/src/zlib
-    ${BUILD_UTF8_DIR}/3rdparty/pcre/src/wx
-    ${BUILD_UTF8_DIR}/src/expat/expat/lib
+    ${BUILD_VADZ_DIR}/src/tiff/libtiff
+    ${BUILD_VADZ_DIR}/src/jpeg
+    ${BUILD_VADZ_DIR}/src/zlib
+    ${BUILD_VADZ_DIR}/3rdparty/pcre/src/wx
+    ${BUILD_VADZ_DIR}/src/expat/expat/lib
 )
 
 if (BUILD_SHARED_LIBS)

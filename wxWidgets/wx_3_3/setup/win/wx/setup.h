@@ -124,7 +124,7 @@
 //
 // Recommended setting: 0 but can be set to 1 if your program is always run in
 // an UTF-8 locale.
-#define wxUSE_UTF8_LOCALE_ONLY 0
+#define wxUSE_UTF8_LOCALE_ONLY 1
 
 // ----------------------------------------------------------------------------
 // debugging settings

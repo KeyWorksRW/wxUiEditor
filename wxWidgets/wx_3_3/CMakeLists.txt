@@ -121,8 +121,9 @@ target_compile_definitions(wxWidgets PRIVATE
 )
 
 if (WIN32)
+
     target_compile_definitions(wxCLib PRIVATE
-        PCRE2_CODE_UNIT_WIDTH=16
+        PCRE2_CODE_UNIT_WIDTH=8
         NEWLINE_DEFAULT=2
         LINK_SIZE=2
         PARENS_NEST_LIMIT=250

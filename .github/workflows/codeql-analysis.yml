@@ -7,10 +7,12 @@ on:
     paths-ignore:
       - src/art_src
       - src/internal
+      - src/tests
+      - src/xml
+      - src/winres
       - docs
       - import_tests
-      - ttLib_wx
-      - wxSnapshot
+      - wxWidgets
 
 env:
   BUILD_TYPE: Debug
@@ -30,13 +32,7 @@ jobs:
         language: [ 'cpp' ]
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
-      with:
-        submodules: true
-
-    - run: mkdir ${{github.workspace}}/build/Debug
-    - run: mkdir ${{github.workspace}}/build/wxSnapshot/Debug
+    - run: mkdir ${{github.workspace}}/build
 
     - name: Configure CMake
       run: cmake -G "Visual Studio 16 2019" -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}

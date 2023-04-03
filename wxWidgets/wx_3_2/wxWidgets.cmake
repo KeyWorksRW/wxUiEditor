@@ -598,6 +598,8 @@ set (common_sources
     ../src/xrc/xmlres.cpp
     ../src/xrc/xmlreshandler.cpp
     ../src/xrc/xmlrsall.cpp
+
+    ../src/common/extended.cpp  # C++ copy of extended.c
 )
 
 set (msw_sources
@@ -1172,5 +1174,5 @@ set (wxCLib_sources
     ../src/expat/expat/lib/xmltok.c
 
     # wxBase
-    ../src/common/extended.c
+    # ../src/common/extended.c
 )

@@ -32,6 +32,9 @@ jobs:
         language: [ 'cpp' ]
 
     steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
     - run: mkdir ${{github.workspace}}/build
 
     - name: Configure CMake

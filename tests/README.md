@@ -1,23 +1,11 @@
-This directory is primarily used to test wxPython code generation, though it can be used to test C++ code generation as well.
+# Building
 
-## pytest
-
-The current requirements for running the `pytest.py` app is Python version 3.10 and wxPython 4.2.x. If they are installed then you can run the app via:
+To build the C++ apps, you will need build from the root of the repository (_not_ the directory this README file is in) using a `--target` command to build a specific app. For example, to build sdi_test.exe, you would run (from the root):
 
 ```
-    python pytest.py
+    cmake.exe --build build --config Debug --target sdi_test
 ```
 
-## cpptest
+This will create the executable: `build/stage/bin/Debug/sdi_test.exe`
 
-Before you can build cpptest.exe for the first time, you must run:
-
-```
-    cmake -G "Ninja Multi-Config" . -B build
-```
-
-After the initial configuration, you can build using:
-
-```
-    cmake --build build
-```
+The file `app_tests.cmake` is used to specify everything needed to build a target using whatever configuration for the wxWidgets library was specified in the root.

@@ -7,30 +7,14 @@
 
 // clang-format off
 
-#include <wx/bitmap.h>
-#include <wx/icon.h>
-#include <wx/image.h>
-
 #include "images.h"
 
 #include "form_toolbar_base.h"
 
-#include "../art/french_png.h_img"
-
-#include <wx/mstream.h>  // memory stream classes
-
-// Convert a data array into a wxImage
-inline wxImage wxueImage(const unsigned char* data, size_t size_data)
-{
-    wxMemoryInputStream strm(data, size_data);
-    wxImage image;
-    image.LoadFile(strm);
-    return image;
-};
-
 namespace wxue_img
 {
     extern const unsigned char english_png[541];
+    extern const unsigned char french_png[252];
     extern const unsigned char japanese_png[377];
 }
 
@@ -51,9 +35,9 @@ MyToolBarBase::MyToolBarBase(wxWindow* parent, wxWindowID id, const wxPoint& pos
 
     AddTool(wxID_ANY, wxEmptyString,
 #if wxCHECK_VERSION(3, 1, 6)
-        wxBitmapBundle::FromBitmap(wxueImage(french_png, sizeof(french_png)))
+        wxue_img::bundle_french_png()
 #else
-        wxBitmap(wxueImage(french_png, sizeof(french_png)))
+        wxBitmap(wxueImage(wxue_img::french_png, sizeof(wxue_img::french_png)))
 #endif
     , wxEmptyString, wxITEM_RADIO);
 

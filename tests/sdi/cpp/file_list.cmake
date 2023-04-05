@@ -1,6 +1,6 @@
-set (file_list_dir ${CMAKE_CURRENT_LIST_DIR})
+set (sdi_test_dir ${CMAKE_CURRENT_LIST_DIR})
 
-set (file_list
+set (sdi_file_list
 
     cpptest.rc
     mainapp.cpp
@@ -10,7 +10,7 @@ set (file_list
 )
 
 # Manually maintained from wxui_code.cmake
-set(wxui_file_list
+set(sdi_wxui_file_list
 
     booktest_dlg.cpp
     commonctrls.cpp
@@ -27,7 +27,7 @@ set(wxui_file_list
 # Currently, these are not used in CMakeLists.txt, it's just a reference to which python files
 # are being generated.
 
-set (python_files
+set (sdi_python_files
 
     ../python/images.py
     ../python/mainframe.py
@@ -42,12 +42,10 @@ set (python_files
 # These aren't actually used in CMAkeLists.txt, they are here just to provide a quick way to
 # load them into an IDE that supports loading a file from the filenmae underneath the cursor.
 
-set (other_files
+set (sdi_other_files
 
-    ../COVERAGE.md
-    ../README.md
-
-    ../pytest.py
+    ../../COVERAGE.md
+    ../../README.md
 
     ../run_pytest.cmd
     ../run_cpp_build.cmd

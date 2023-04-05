@@ -312,6 +312,10 @@ target_include_directories(check_build PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}/pugixml
 )
 
+####################### Testing #######################
+
+include( tests/app_tests.cmake )  # This will set ${wxue_generated_code} with list of generated files
+
 ####################### Packaging Instructions #######################
 
 # Note: packing is currently only set for a static wxWidgets library build

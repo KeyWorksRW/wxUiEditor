@@ -47,6 +47,7 @@ namespace wxue_img
 {
     extern const unsigned char clr_hourglass_gif[2017];
     extern const unsigned char disabled_png[437];
+    // face-smile.svg
     extern const unsigned char face_smile_svg[1781];
     extern const unsigned char fontPicker_png[763];
 }

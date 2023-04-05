@@ -6,7 +6,7 @@
 @REM build\stage\bin\debug directory.
 
 echo Generating python files...
-..\build\stage\bin\debug\wxUiEditor.exe --gen_python python_tests.wxui
+..\..\build\stage\bin\debug\wxUiEditor.exe --gen_python sdi_test.wxui
 type python_tests.log
 cd python
 python mainframe.py

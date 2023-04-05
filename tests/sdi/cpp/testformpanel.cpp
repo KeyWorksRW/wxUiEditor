@@ -15,7 +15,7 @@ bool TestFormPanel::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos, 
     const wxString& name)
 {
 
-    if (!!wxPanel::Create(parent, id, pos, size, style, name))
+    if (!wxPanel::Create(parent, id, pos, size, style, name))
         return false;
 
     auto* parent_sizer = new wxBoxSizer(wxVERTICAL);

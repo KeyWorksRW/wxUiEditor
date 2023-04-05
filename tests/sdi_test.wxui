@@ -5,12 +5,13 @@
     class="Project"
     art_directory="art"
     code_preference="Python"
-    base_directory="cpp"
+    base_directory="sdi/cpp"
     cmake_file="cpp/wxui_code.cmake"
+    cmake_varname="sdi_generated_code"
     cpp_line_length="120"
-    derived_directory="cpp"
+    derived_directory="sdi/cpp"
     generate_cmake="1"
-    python_output_folder="python">
+    python_output_folder="sdi/python">
     <node
       class="Images"
       base_file="images">
@@ -1624,7 +1625,7 @@
           var_name="english" />
         <node
           class="tool"
-          bitmap="Header;../art/french_png.h_img"
+          bitmap="Embed;art/french.png"
           kind="wxITEM_RADIO"
           label=""
           var_comment="Uses header file"

@@ -7,7 +7,7 @@ on:
       - src/xml
       - src/import/rapidjson
       - pugixml
-      - testing
+      - tests
       - import_tests
       - python_tests/python
       - python_tests/art

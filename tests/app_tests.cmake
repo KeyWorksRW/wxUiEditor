@@ -35,7 +35,7 @@ target_precompile_headers(sdi_test PRIVATE "${CMAKE_CURRENT_LIST_DIR}/sdi/cpp/pc
 
 target_include_directories(sdi_test PRIVATE
     ${setup_dir}
-    ${widget_dir}/include
+    ${BUILD_ROOT}/include
     ${sdi_test_dir}/
 )
 

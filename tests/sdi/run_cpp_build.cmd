@@ -6,7 +6,7 @@
 @REM the build\stage\bin\debug directory.
 
 echo Generating C++ files...
-..\build\stage\bin\debug\wxUiEditor.exe --gen_cpp python_tests.wxui
+..\..\build\stage\bin\debug\wxUiEditor.exe --gen_cpp sdi_test.wxui
 type python_tests.log
 cd build
 ninja -f build-Debug.ninja

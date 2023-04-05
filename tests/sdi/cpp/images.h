@@ -29,6 +29,7 @@ namespace wxue_img
     wxBitmapBundle bundle_fontPicker_png();
 
     extern const unsigned char english_png[541];
+    // face-smile.svg
     extern const unsigned char face_smile_svg[1781];
     extern const unsigned char fontPicker_png[763];
     extern const unsigned char french_png[252];

@@ -1625,7 +1625,7 @@
           var_name="english" />
         <node
           class="tool"
-          bitmap="Header;../art/french_png.h_img"
+          bitmap="Embed;art/french.png"
           kind="wxITEM_RADIO"
           label=""
           var_comment="Uses header file"

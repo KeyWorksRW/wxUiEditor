@@ -13,6 +13,7 @@ import booktest_dlg
 import wizard
 import python_dlg
 import dlgissue_956
+import dlgissue_960
 
 import images
 from wx.lib.embeddedimage import PyEmbeddedImage

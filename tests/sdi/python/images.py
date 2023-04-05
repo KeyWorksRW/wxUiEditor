@@ -174,6 +174,7 @@ japanese_png = PyEmbeddedImage(
     b"9bSIth944UrNFmcY1WzhhSvlB514ug4JZU+WawDoeNsPBrU2/SbczvPUhGHyPx3CI9FjvcWH/8ovkz2p"
     b"KOW+1XoAAAAASUVORK5CYII=")
 
+# face-smile.svg
 face_smile_svg = (
     b"eNrtWUtv3DYQ7k8R5EsMrBW+H2uvgSKHXlL00OZcKCuuo0ZeLSTZif3rO9SDoiTuIw2CAkW1cCx/HM4M"
     b"Z74Zkpu7+vnh/i4zuzrKs01sX2h8f5fvP9fb9GDWB1PVB7Nt8mcT1WWWH+Bn3bwczCaeytAsjhzyfPjz"

@@ -107,8 +107,8 @@ class PythonDlg(wx.Dialog):
         static_box_2.Add(self.m_toggleBtn, wx.SizerFlags().Border(wx.ALL))
 
         self.m_animation_ctrl = wx.adv.AnimationCtrl(static_box_2.GetStaticBox(), wx.ID_ANY,
-            wx.adv.Animation("../art/clr_hourglass.gif"), wx.DefaultPosition, wx.DefaultSize,
-            wx.adv.AC_DEFAULT_STYLE)
+            wx.adv.Animation("../../art/clr_hourglass.gif"), wx.DefaultPosition,
+            wx.DefaultSize, wx.adv.AC_DEFAULT_STYLE)
         self.m_animation_ctrl.SetInactiveBitmap(wx.BitmapBundle.FromBitmap(
             disabled_png.Bitmap))
         static_box_2.Add(self.m_animation_ctrl, wx.SizerFlags().Border(wx.ALL))

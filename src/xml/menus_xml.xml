@@ -90,4 +90,17 @@ inline const char* menus_xml = R"===(<?xml version="1.0"?>
 	<gen class="separator" image="separator" type="menuitem">
 		<property name="var_name" type="string">separator</property>
 	</gen>
+
+	<gen class="MdiFrameMenuBar" image="wxMenuBar" type="mdi_menubar">
+		<inherits class="wxWindow" />
+		<inherits class="Window Events" />
+		<property name="var_name" type="string">m_default_menubar</property>
+	</gen>
+
+	<gen class="MdiDocMenuBar" image="wxMenuBar" type="mdi_doc_menubar">
+		<inherits class="wxWindow" />
+		<inherits class="Window Events" />
+		<property name="var_name" type="string">m_doc_menubar</property>
+	</gen>
+
 </GeneratorDefinitions>)===";

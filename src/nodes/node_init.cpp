@@ -359,6 +359,10 @@ static const ParentChild lstParentChild[] = {
     { type_treelistctrl, type_treelistctrlcolumn, infinite },
 
     { type_wx_document, type_wx_view, infinite },
+    { type_wx_document, type_mdi_menubar, one },  // default menu bar when no document is loaded
+    { type_wx_document, type_doc_menubar, one },  // menu bar when a document is loaded
+    { type_mdi_menubar, type_menu, infinite },
+    { type_doc_menubar, type_menu, infinite },
 
     { type_wizardpagesimple, type_gbsizer, one },
     { type_wizardpagesimple, type_sizer, one },

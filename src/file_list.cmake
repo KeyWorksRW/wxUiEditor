@@ -175,6 +175,7 @@ set (file_list
 
     generate/menu_widgets.cpp      # Menu generation classes
     generate/gen_ctx_menu.cpp      # CtxMenuGenerator -- generates function and includes
+    generate/gen_mdi_menu.cpp      # Menu bar classes for an MDI frame
     generate/gen_menu.cpp          # Menu Generator
     generate/gen_menuitem.cpp      # Menu Item Generator
     generate/gen_submenu.cpp       # SubMenu Generator

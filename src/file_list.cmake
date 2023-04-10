@@ -235,6 +235,7 @@ set (file_list
     newdialogs/new_common.cpp   # Contains code common between all new_ dialogs
     newdialogs/new_dialog.cpp   # Dialog for creating a new project dialog
     newdialogs/new_frame.cpp    # Dialog for creating a new project wxFrame
+    newdialogs/new_mdi.cpp      # Dialog for creating a new MDI application
     newdialogs/new_panel.cpp    # Dialog for creating a new form panel
     newdialogs/new_ribbon.cpp   # Dialog for creating a new wxRibbonBar
     newdialogs/new_wizard.cpp   # Dialog for creating a new wxWizard

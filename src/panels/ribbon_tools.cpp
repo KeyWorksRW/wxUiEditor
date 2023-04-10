@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Displays node creation tools in a wxRibbonBar
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -19,6 +19,7 @@
 
 #include "newdialog_base.h"  // NewDialog -- Dialog for creating a new project dialog
 #include "newframe_base.h"   // NewFrame -- Dialog for creating a new project wxFrame
+#include "newmdi_base.h"     // NewMdiForm -- Dialog for creating a new MDI application
 #include "newpanel_base.h"   // NewPanel -- Dialog for creating a new form panel
 #include "newribbon_base.h"  // NewRibbon -- Dialog for creating a new wxRibbonBar
 #include "newwizard_base.h"  // NewWizard -- Dialog for creating a new wizard
@@ -71,6 +72,17 @@ void RibbonPanel::OnToolClick(wxRibbonToolBarEvent& event)
             case CreateNewFrame:
                 {
                     NewFrame dlg(wxGetFrame().GetWindow());
+                    if (dlg.ShowModal() == wxID_OK)
+                    {
+                        dlg.CreateNode();
+                    }
+                    return;
+                }
+                break;
+
+            case CreateMdiFrame:
+                {
+                    NewMdiForm dlg(wxGetFrame().GetWindow());
                     if (dlg.ShowModal() == wxID_OK)
                     {
                         dlg.CreateNode();

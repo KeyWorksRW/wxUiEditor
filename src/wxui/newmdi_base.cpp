@@ -10,6 +10,9 @@
 #include <wx/button.h>
 #include <wx/sizer.h>
 #include <wx/stattext.h>
+#include <wx/textctrl.h>
+#include <wx/valgen.h>
+#include <wx/valtext.h>
 
 #include "newmdi_base.h"
 
@@ -33,7 +36,18 @@ bool NewMdiForm::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     m_infoBar->SetEffectDuration(500);
     box_sizer_3->Add(m_infoBar, wxSizerFlags().Expand().Border(wxALL));
 
-    box_sizer->Add(box_sizer_3, wxSizerFlags().Border(wxALL));
+    auto* box_sizer_2 = new wxBoxSizer(wxHORIZONTAL);
+
+    auto* staticText_9 = new wxStaticText(this, wxID_ANY, "&Base class name:");
+    staticText_9->SetToolTip("Change this to something unique to your project.");
+    box_sizer_2->Add(staticText_9, wxSizerFlags().Center().Border(wxALL));
+
+    auto* classname = new wxTextCtrl(this, wxID_ANY, "MyMdiAppBase");
+    classname->SetValidator(wxTextValidator(wxFILTER_NONE, &m_base_class));
+    classname->SetToolTip("Change this to something unique to your project.");
+    box_sizer_2->Add(classname, wxSizerFlags(1).Border(wxALL));
+
+    box_sizer_3->Add(box_sizer_2, wxSizerFlags().Expand().Border(wxALL));
 
     auto* class_sizer = new wxBoxSizer(wxHORIZONTAL);
 
@@ -43,11 +57,11 @@ bool NewMdiForm::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     m_choice_type = new wxChoice(this, wxID_ANY);
     m_choice_type->Append("wxAuiMDIParentFrame");
     m_choice_type->Append("wxDocMDIParentFrame");
-    m_choice_type->Append("");
-    m_choice_type->SetSelection(1);
+    m_mdi_type = "wxDocMDIParentFrame";  // set validator variable
+    m_choice_type->SetValidator(wxGenericValidator(&m_mdi_type));
     class_sizer->Add(m_choice_type, wxSizerFlags(1).Border(wxALL));
 
-    box_sizer->Add(class_sizer, wxSizerFlags().Expand().Border(wxALL));
+    box_sizer_3->Add(class_sizer, wxSizerFlags().Expand().Border(wxALL));
 
     auto* flex_grid_sizer = new wxFlexGridSizer(2, 0, 0);
     {
@@ -57,55 +71,62 @@ bool NewMdiForm::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     auto* staticText_2 = new wxStaticText(this, wxID_ANY, "&Description:");
     flex_grid_sizer->Add(staticText_2, wxSizerFlags().Center().Border(wxALL));
 
-    m_description = new wxTextCtrl(this, wxID_ANY, wxEmptyString);
-    m_description->SetHint("Text");
-    m_description->SetToolTip(
+    auto* description = new wxTextCtrl(this, wxID_ANY, wxEmptyString);
+    description->SetHint("Text");
+    description->SetValidator(wxTextValidator(wxFILTER_NONE, &m_description));
+    description->SetToolTip(
     "A short description of what the template is for. This string will be displayed in the file filter list of Windows file selectors. ");
-    flex_grid_sizer->Add(m_description, wxSizerFlags().Expand().Border(wxALL));
+    flex_grid_sizer->Add(description, wxSizerFlags().Expand().Border(wxALL));
 
     auto* staticText_6 = new wxStaticText(this, wxID_ANY, "&View Type:");
     flex_grid_sizer->Add(staticText_6, wxSizerFlags().Border(wxALL));
 
-    m_choice_view = new wxChoice(this, wxID_ANY);
-    m_choice_view->Append("Text Control");
-    m_choice_view->Append("Scrolled Canvas (for images)");
-    m_choice_view->Append("");
-    m_choice_view->SetSelection(0);
-    flex_grid_sizer->Add(m_choice_view, wxSizerFlags(1).Border(wxALL));
+    auto* choice_view = new wxChoice(this, wxID_ANY);
+    choice_view->Append("Text Control");
+    choice_view->Append("Image");
+    m_view_type = "Text Control";  // set validator variable
+    choice_view->SetValidator(wxGenericValidator(&m_view_type));
+    flex_grid_sizer->Add(choice_view, wxSizerFlags(1).Border(wxALL));
 
     auto* staticText_4 = new wxStaticText(this, wxID_ANY, "&Filter:");
     flex_grid_sizer->Add(staticText_4, wxSizerFlags().Center().Border(wxALL));
 
-    m_filter = new wxTextCtrl(this, wxID_ANY, wxEmptyString);
-    m_filter->SetHint("*.txt");
-    m_filter->SetToolTip("An appropriate file filter such as \"*.txt\". ");
-    flex_grid_sizer->Add(m_filter, wxSizerFlags().Expand().Border(wxALL));
+    auto* filter = new wxTextCtrl(this, wxID_ANY, wxEmptyString);
+    filter->SetHint("*.txt");
+    filter->SetValidator(wxTextValidator(wxFILTER_NONE, &m_filter));
+    filter->SetToolTip("An appropriate file filter such as \"*.txt\". ");
+    flex_grid_sizer->Add(filter, wxSizerFlags().Expand().Border(wxALL));
 
     auto* staticText_5 = new wxStaticText(this, wxID_ANY, "&Extension:");
     flex_grid_sizer->Add(staticText_5, wxSizerFlags().Center().Border(wxALL));
 
-    m_extension = new wxTextCtrl(this, wxID_ANY, wxEmptyString);
-    m_extension->SetHint("txt");
-    m_extension->SetToolTip("An appropriate file filter such as \"*.txt\". ");
-    flex_grid_sizer->Add(m_extension, wxSizerFlags().Expand().Border(wxALL));
+    auto* extension = new wxTextCtrl(this, wxID_ANY, wxEmptyString);
+    extension->SetHint("txt");
+    extension->SetValidator(wxTextValidator(wxFILTER_NONE, &m_default_extension));
+    extension->SetToolTip("An appropriate file filter such as \"*.txt\". ");
+    flex_grid_sizer->Add(extension, wxSizerFlags().Expand().Border(wxALL));
 
     auto* staticText_7 = new wxStaticText(this, wxID_ANY, "D&oc Name:");
     flex_grid_sizer->Add(staticText_7, wxSizerFlags().Border(wxALL));
 
-    m_doc_name = new wxTextCtrl(this, wxID_ANY, wxEmptyString);
-    m_doc_name->SetHint("Text Document");
-    m_doc_name->SetToolTip("An appropriate file filter such as \"*.txt\". ");
-    flex_grid_sizer->Add(m_doc_name, wxSizerFlags().Expand().Border(wxALL));
+    auto* doc_name = new wxTextCtrl(this, wxID_ANY, wxEmptyString);
+    doc_name->SetHint("Text Document");
+    doc_name->SetValidator(wxTextValidator(wxFILTER_NONE, &m_doc_name));
+    doc_name->SetToolTip("An appropriate file filter such as \"*.txt\". ");
+    flex_grid_sizer->Add(doc_name, wxSizerFlags().Expand().Border(wxALL));
 
     auto* staticText_8 = new wxStaticText(this, wxID_ANY, "V&iew Name:");
     flex_grid_sizer->Add(staticText_8, wxSizerFlags().Border(wxALL));
 
-    m_view_name = new wxTextCtrl(this, wxID_ANY, wxEmptyString);
-    m_view_name->SetHint("Text View");
-    m_view_name->SetToolTip("An appropriate file filter such as \"*.txt\". ");
-    flex_grid_sizer->Add(m_view_name, wxSizerFlags().Expand().Border(wxALL));
+    auto* view_name = new wxTextCtrl(this, wxID_ANY, wxEmptyString);
+    view_name->SetHint("Text View");
+    view_name->SetValidator(wxTextValidator(wxFILTER_NONE, &m_view_name));
+    view_name->SetToolTip("An appropriate file filter such as \"*.txt\". ");
+    flex_grid_sizer->Add(view_name, wxSizerFlags().Expand().Border(wxALL));
 
-    box_sizer->Add(flex_grid_sizer, wxSizerFlags(1).Expand().Border(wxALL));
+    box_sizer_3->Add(flex_grid_sizer, wxSizerFlags(1).Expand().Border(wxALL));
+
+    box_sizer->Add(box_sizer_3, wxSizerFlags().Border(wxALL));
 
     auto* stdBtn = CreateStdDialogButtonSizer(wxOK|wxCANCEL);
     box_sizer->Add(CreateSeparatedSizer(stdBtn), wxSizerFlags().Expand().Border(wxALL));
@@ -114,12 +135,17 @@ bool NewMdiForm::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     Centre(wxBOTH);
 
     // Event handlers
-    m_choice_view->Bind(wxEVT_CHOICE, &NewMdiForm::OnViewType, this);
+    Bind(wxEVT_BUTTON, &NewMdiForm::OnOK, this, wxID_OK);
+    choice_view->Bind(wxEVT_CHOICE, &NewMdiForm::OnViewType, this);
     Bind(wxEVT_INIT_DIALOG,
         [this](wxInitDialogEvent& event)
         {
             m_choice_type->SetFocus();
             event.Skip();
+        });
+    classname->Bind(wxEVT_TEXT,
+        [this](wxCommandEvent&)
+        {VerifyClassName();
         });
 
     return true;

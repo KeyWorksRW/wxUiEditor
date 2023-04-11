@@ -14,7 +14,6 @@
 #include <wx/event.h>
 #include <wx/gdicmn.h>
 #include <wx/infobar.h>
-#include <wx/textctrl.h>
 
 class NewMdiForm : public wxDialog
 {
@@ -31,6 +30,15 @@ public:
         const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_DIALOG_STYLE, const wxString &name = wxDialogNameStr);
 
+    const wxString& get_base_class() const { return m_base_class; }
+    const wxString& get_mdi_type() const { return m_mdi_type; }
+    const wxString& get_description() const { return m_description; }
+    const wxString& get_view_type() const { return m_view_type; }
+    const wxString& get_filter() const { return m_filter; }
+    const wxString& get_default_extension() const { return m_default_extension; }
+    const wxString& get_doc_name() const { return m_doc_name; }
+    const wxString& get_view_name() const { return m_view_name; }
+
     void CreateNode();
     void VerifyClassName();
 
@@ -41,20 +49,26 @@ protected:
 
     // Event handlers
 
+    void OnOK(wxCommandEvent& event);
     void OnViewType(wxCommandEvent& event);
 
 private:
 
+    // Validator variables
+
+    wxString m_base_class { "MyMdiAppBase" };
+    wxString m_default_extension;
+    wxString m_description;
+    wxString m_doc_name;
+    wxString m_filter;
+    wxString m_mdi_type;
+    wxString m_view_name;
+    wxString m_view_type;
+
     // Class member variables
 
     wxChoice* m_choice_type;
-    wxChoice* m_choice_view;
     wxInfoBar* m_infoBar;
-    wxTextCtrl* m_description;
-    wxTextCtrl* m_doc_name;
-    wxTextCtrl* m_extension;
-    wxTextCtrl* m_filter;
-    wxTextCtrl* m_view_name;
 };
 
 // ************* End of generated code ***********

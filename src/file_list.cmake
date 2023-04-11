@@ -175,6 +175,7 @@ set (file_list
 
     generate/menu_widgets.cpp      # Menu generation classes
     generate/gen_ctx_menu.cpp      # CtxMenuGenerator -- generates function and includes
+    generate/gen_mdi_menu.cpp      # Menu bar classes for an MDI frame
     generate/gen_menu.cpp          # Menu Generator
     generate/gen_menuitem.cpp      # Menu Item Generator
     generate/gen_submenu.cpp       # SubMenu Generator
@@ -234,6 +235,7 @@ set (file_list
     newdialogs/new_common.cpp   # Contains code common between all new_ dialogs
     newdialogs/new_dialog.cpp   # Dialog for creating a new project dialog
     newdialogs/new_frame.cpp    # Dialog for creating a new project wxFrame
+    newdialogs/new_mdi.cpp      # Dialog for creating a new MDI application
     newdialogs/new_panel.cpp    # Dialog for creating a new form panel
     newdialogs/new_ribbon.cpp   # Dialog for creating a new wxRibbonBar
     newdialogs/new_wizard.cpp   # Dialog for creating a new wxWizard

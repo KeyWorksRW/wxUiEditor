@@ -130,6 +130,36 @@ bool RibbonPanelBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos
     }
     forms_bar_images->Realize();
 
+    auto* rbnPage = new wxRibbonPage(m_rbnBar, wxID_ANY, "MDI");
+
+    auto* panel_mmdi = new wxRibbonPanel(rbnPage, wxID_ANY, "MDI");
+
+    auto* forms_bar_mdi = new wxRibbonToolBar(panel_mmdi, wxID_ANY);
+    {
+        forms_bar_mdi->AddTool(CreateMdiFrame, wxueImage(wxue_img::wxFrame_png, sizeof(wxue_img::wxFrame_png)),
+            "Creates MDI Frame and wxDocTemplate", wxRIBBON_BUTTON_NORMAL);
+        forms_bar_mdi->AddTool(CreateView, wxueImage(wxue_img::wxPopupTransientWindow_png, sizeof(
+            wxue_img::wxPopupTransientWindow_png)), "Creates a wxDocChildFrame view", wxRIBBON_BUTTON_DROPDOWN);
+    }
+    forms_bar_mdi->Realize();
+
+    auto* panel_bars_menu_2 = new wxRibbonPanel(rbnPage, wxID_ANY, "Menu");
+
+    auto* bars_bar_menu_2 = new wxRibbonToolBar(panel_bars_menu_2, wxID_ANY);
+    {
+        bars_bar_menu_2->AddTool(MdiMenuBar, wxueImage(wxue_img::wxmenuBar_png, sizeof(wxue_img::wxmenuBar_png)),
+            "Creates a frame or child window menu bar", wxRIBBON_BUTTON_DROPDOWN);
+        bars_bar_menu_2->AddTool(gen_wxMenu, wxueImage(wxue_img::menu_png, sizeof(wxue_img::menu_png)), "wxMenu",
+            wxRIBBON_BUTTON_NORMAL);
+        bars_bar_menu_2->AddTool(gen_wxMenuItem, wxueImage(wxue_img::menuitem_png, sizeof(wxue_img::menuitem_png)),
+            "wxMenuItem", wxRIBBON_BUTTON_NORMAL);
+        bars_bar_menu_2->AddTool(gen_submenu, wxueImage(wxue_img::submenu_png, sizeof(wxue_img::submenu_png)), "submenu",
+            wxRIBBON_BUTTON_NORMAL);
+        bars_bar_menu_2->AddTool(gen_separator, wxueImage(wxue_img::separator_png, sizeof(wxue_img::separator_png)),
+            "separator", wxRIBBON_BUTTON_NORMAL);
+    }
+    bars_bar_menu_2->Realize();
+
     auto* pg_sizer = new wxRibbonPage(m_rbnBar, wxID_ANY, "Sizers");
 
     auto* panel_basic = new wxRibbonPanel(pg_sizer, wxID_ANY, "Basic");
@@ -470,18 +500,19 @@ bool RibbonPanelBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos
     forms_bar_bars->Bind(wxEVT_RIBBONTOOLBAR_CLICKED, &RibbonPanelBase::OnToolClick, this);
     forms_bar_bars_2->Bind(wxEVT_RIBBONTOOLBAR_CLICKED, &RibbonPanelBase::OnToolClick, this);
     forms_bar_images->Bind(wxEVT_RIBBONTOOLBAR_CLICKED, &RibbonPanelBase::OnToolClick, this);
+    forms_bar_mdi->Bind(wxEVT_RIBBONTOOLBAR_CLICKED, &RibbonPanelBase::OnToolClick, this);
+    bars_bar_menu_2->Bind(wxEVT_RIBBONTOOLBAR_CLICKED, &RibbonPanelBase::OnToolClick, this);
     sizer_bar_basic->Bind(wxEVT_RIBBONTOOLBAR_CLICKED, &RibbonPanelBase::OnToolClick, this);
-    bars_bar_other->Bind(wxEVT_RIBBONTOOLBAR_CLICKED, &RibbonPanelBase::OnToolClick, this);
+    other_bar_editors->Bind(wxEVT_RIBBONTOOLBAR_CLICKED, &RibbonPanelBase::OnToolClick, this);
     sizer_bar_grids->Bind(wxEVT_RIBBONTOOLBAR_CLICKED, &RibbonPanelBase::OnToolClick, this);
     sizer_bar_other->Bind(wxEVT_RIBBONTOOLBAR_CLICKED, &RibbonPanelBase::OnToolClick, this);
     common_bar_controls->Bind(wxEVT_RIBBONTOOLBAR_CLICKED, &RibbonPanelBase::OnToolClick, this);
-    other_bar_editors->Bind(wxEVT_RIBBONTOOLBAR_CLICKED, &RibbonPanelBase::OnToolClick, this);
-    common_bar_choices->Bind(wxEVT_RIBBONTOOLBAR_CLICKED, &RibbonPanelBase::OnToolClick, this);
     other_bar_ctrls->Bind(wxEVT_RIBBONTOOLBAR_CLICKED, &RibbonPanelBase::OnToolClick, this);
+    common_bar_choices->Bind(wxEVT_RIBBONTOOLBAR_CLICKED, &RibbonPanelBase::OnToolClick, this);
+    other_bar_html->Bind(wxEVT_RIBBONTOOLBAR_CLICKED, &RibbonPanelBase::OnToolClick, this);
     common_bar_pickers->Bind(wxEVT_RIBBONTOOLBAR_CLICKED, &RibbonPanelBase::OnToolClick, this);
     common_bar_other->Bind(wxEVT_RIBBONTOOLBAR_CLICKED, &RibbonPanelBase::OnToolClick, this);
     container_bar_windows->Bind(wxEVT_RIBBONTOOLBAR_CLICKED, &RibbonPanelBase::OnToolClick, this);
-    other_bar_html->Bind(wxEVT_RIBBONTOOLBAR_CLICKED, &RibbonPanelBase::OnToolClick, this);
     container_bar_books->Bind(wxEVT_RIBBONTOOLBAR_CLICKED, &RibbonPanelBase::OnToolClick, this);
     container_bar_page->Bind(wxEVT_RIBBONTOOLBAR_CLICKED, &RibbonPanelBase::OnToolClick, this);
     data_bar_grid->Bind(wxEVT_RIBBONTOOLBAR_CLICKED, &RibbonPanelBase::OnToolClick, this);
@@ -491,13 +522,14 @@ bool RibbonPanelBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos
     bars_bar_menu->Bind(wxEVT_RIBBONTOOLBAR_CLICKED, &RibbonPanelBase::OnToolClick, this);
     bars_bar_tool->Bind(wxEVT_RIBBONTOOLBAR_CLICKED, &RibbonPanelBase::OnToolClick, this);
     bars_bar_ribbon->Bind(wxEVT_RIBBONTOOLBAR_CLICKED, &RibbonPanelBase::OnToolClick, this);
+    bars_bar_other->Bind(wxEVT_RIBBONTOOLBAR_CLICKED, &RibbonPanelBase::OnToolClick, this);
     sizer_bar_basic->Bind(wxEVT_RIBBONTOOLBAR_DROPDOWN_CLICKED, &RibbonPanelBase::OnDropDown, this);
     common_bar_controls->Bind(wxEVT_RIBBONTOOLBAR_DROPDOWN_CLICKED, &RibbonPanelBase::OnDropDown, this);
     common_bar_choices->Bind(wxEVT_RIBBONTOOLBAR_DROPDOWN_CLICKED, &RibbonPanelBase::OnDropDown, this);
-    bars_bar_tool->Bind(wxEVT_RIBBONTOOLBAR_DROPDOWN_CLICKED, &RibbonPanelBase::OnDropDown, this);
     data_bar_dataview->Bind(wxEVT_RIBBONTOOLBAR_DROPDOWN_CLICKED, &RibbonPanelBase::OnDropDown, this);
-    bars_bar_ribbon->Bind(wxEVT_RIBBONTOOLBAR_DROPDOWN_CLICKED, &RibbonPanelBase::OnDropDown, this);
+    bars_bar_tool->Bind(wxEVT_RIBBONTOOLBAR_DROPDOWN_CLICKED, &RibbonPanelBase::OnDropDown, this);
     container_bar_windows->Bind(wxEVT_RIBBONTOOLBAR_DROPDOWN_CLICKED, &RibbonPanelBase::OnDropDown, this);
+    bars_bar_ribbon->Bind(wxEVT_RIBBONTOOLBAR_DROPDOWN_CLICKED, &RibbonPanelBase::OnDropDown, this);
 
     return true;
 }
@@ -1511,6 +1543,20 @@ namespace wxue_img
         156,97,136,2,25,20,8,64,10,8,160,164,64,202,239,46,89,76,124,10,200,141,128,193,182,51,83,17,161,30,0,36,9,
         219,190,175,83,189,108,123,211,58,143,12,122,73,197,21,87,92,113,197,63,143,3,96,90,14,235,43,30,175,247,19,
         231,168,234,87,216,0,0,0,0,73,69,78,68,174,66,96,130
+    };
+
+    const unsigned char wxPopupTransientWindow_png[358] {
+        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,
+        115,0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,1,24,73,68,65,84,56,203,237,149,189,138,132,48,20,133,207,13,130,
+        96,33,40,216,45,83,41,104,97,163,190,129,236,83,216,249,168,218,216,40,22,118,106,101,43,164,17,219,76,179,
+        186,235,223,56,178,59,197,194,28,8,9,132,124,220,123,110,114,3,188,245,37,2,128,170,170,196,111,32,66,44,143,
+        187,174,75,211,198,159,41,73,18,1,0,236,85,86,72,211,162,239,123,112,206,49,12,195,156,154,16,98,30,11,255,
+        136,64,68,243,90,85,85,152,166,185,15,38,34,140,227,8,206,249,67,240,79,224,52,75,146,116,28,49,0,24,134,1,
+        203,178,158,78,87,81,148,115,43,136,8,93,215,33,203,178,77,165,215,86,0,128,166,105,8,195,240,28,204,24,131,
+        109,219,112,28,103,99,193,30,88,215,245,231,138,71,68,40,203,18,109,219,30,194,54,143,128,8,66,136,217,239,
+        56,142,247,35,246,60,15,190,239,47,10,183,150,170,170,215,174,27,17,161,40,10,52,77,51,71,178,150,44,203,136,
+        162,232,58,56,8,2,4,65,112,90,184,75,96,198,24,242,60,71,93,215,15,123,193,119,54,4,34,32,12,63,113,187,125,
+        28,54,145,127,214,43,210,52,125,127,32,175,211,29,234,70,24,38,1,20,79,179,0,0,0,0,73,69,78,68,174,66,96,130
     };
 
     const unsigned char wxPropertyGridManager_png[225] {

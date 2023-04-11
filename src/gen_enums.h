@@ -532,10 +532,9 @@ namespace GenEnum
 
         type_DocViewApp,
         type_wx_document,
-        type_wx_view,
-
-        type_empty_menubar,
+        type_mdi_menubar,
         type_doc_menubar,
+        type_wx_view,
 
         // This must always be the last item as it is used to calculate the array size needed to store all items
         gen_type_array_size,
@@ -592,6 +591,8 @@ namespace GenEnum
         // These are for DocViewApp
 
         gen_DocViewApp,
+        gen_MdiFrameMenuBar,
+        gen_MdiDocMenuBar,
         gen_DocumentTextCtrl,
         gen_ViewTextCtrl,
 

@@ -107,6 +107,7 @@
 #include "gen_ribbon_tool.h"     // RibbonToolBarGenerator -- wxRibbonButtonBar generator
 
 #include "gen_doc_view_app.h"  // Generates base class for wxDocument/wView applications
+#include "gen_mdi_menu.h"      // Menu bar classes for an MDI frame
 
 #include "gen_doc_textctrl.h"   // wxTextCtrl document class
 #include "gen_view_textctrl.h"  // wxTextCtrl view class

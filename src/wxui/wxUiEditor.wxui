@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0"?>
 <wxUiEditorData
   data_version="17">
   <node
@@ -1018,6 +1018,67 @@
                     bitmap="Embed;../art_src/folder.png"
                     help="Create a folder that can be used to organize forms."
                     id="gen_folder" />
+                </node>
+              </node>
+            </node>
+            <node
+              class="wxRibbonPage"
+              label="MDI">
+              <node
+                class="wxRibbonPanel"
+                label="MDI"
+                var_name="panel_mmdi">
+                <node
+                  class="wxRibbonToolBar"
+                  var_name="forms_bar_mdi"
+                  wxEVT_RIBBONTOOLBAR_CLICKED="OnToolClick">
+                  <node
+                    class="ribbonTool"
+                    bitmap="Embed;../art_src/wxFrame.png"
+                    help="Creates MDI Frame and wxDocTemplate"
+                    id="CreateMdiFrame" />
+                  <node
+                    class="ribbonTool"
+                    bitmap="Embed;../art_src/wxPopupTransientWindow.png"
+                    help="Creates a wxDocChildFrame view"
+                    id="CreateView"
+                    kind="wxRIBBON_BUTTON_DROPDOWN" />
+                </node>
+              </node>
+              <node
+                class="wxRibbonPanel"
+                label="Menu"
+                var_name="panel_bars_menu_2">
+                <node
+                  class="wxRibbonToolBar"
+                  var_name="bars_bar_menu_2"
+                  wxEVT_RIBBONTOOLBAR_CLICKED="OnToolClick">
+                  <node
+                    class="ribbonTool"
+                    bitmap="Embed;../art_src/wxmenuBar.png"
+                    help="Creates a frame or child window menu bar"
+                    id="MdiMenuBar"
+                    kind="wxRIBBON_BUTTON_DROPDOWN" />
+                  <node
+                    class="ribbonTool"
+                    bitmap="Embed;../art_src/menu.png"
+                    help="wxMenu"
+                    id="gen_wxMenu" />
+                  <node
+                    class="ribbonTool"
+                    bitmap="Embed;../art_src/menuitem.png"
+                    help="wxMenuItem"
+                    id="gen_wxMenuItem" />
+                  <node
+                    class="ribbonTool"
+                    bitmap="Embed;../art_src/submenu.png"
+                    help="submenu"
+                    id="gen_submenu" />
+                  <node
+                    class="ribbonTool"
+                    bitmap="Embed;../art_src/separator.png"
+                    help="separator"
+                    id="gen_separator" />
                 </node>
               </node>
             </node>
@@ -3650,6 +3711,174 @@
           <node
             class="wxStdDialogButtonSizer"
             flags="wxEXPAND" />
+        </node>
+      </node>
+      <node
+        class="wxDialog"
+        class_name="NewMdiForm"
+        title="New MDI Application"
+        base_file="newmdi_base"
+        inserted_hdr_code="void CreateNode();@@void VerifyClassName();@@@@private:@@bool m_is_info_shown { false };"
+        private_members="1"
+        use_derived_class="0"
+        wxEVT_INIT_DIALOG="[this](wxInitDialogEvent&amp; event)@@{@@m_choice_type->SetFocus();@@event.Skip();@@}[python:OnInit]">
+        <node
+          class="wxBoxSizer"
+          orientation="wxVERTICAL"
+          flags="wxEXPAND">
+          <node
+            class="wxBoxSizer"
+            orientation="wxVERTICAL"
+            var_name="box_sizer_3">
+            <node
+              class="wxStaticText"
+              class_access="none"
+              label="These are initial values -- all of them can be changed after the frame is created."
+              var_name="staticText_3"
+              wrap="300" />
+            <node
+              class="wxInfoBar"
+              flags="wxEXPAND" />
+            <node
+              class="wxBoxSizer"
+              var_name="box_sizer_2"
+              flags="wxEXPAND">
+              <node
+                class="wxStaticText"
+                class_access="none"
+                label="&amp;Base class name:"
+                var_name="staticText_9"
+                tooltip="Change this to something unique to your project."
+                alignment="wxALIGN_CENTER_VERTICAL" />
+              <node
+                class="wxTextCtrl"
+                class_access="none"
+                value="MyMdiAppBase"
+                var_name="classname"
+                get_function="get_base_class"
+                validator_variable="m_base_class"
+                tooltip="Change this to something unique to your project."
+                proportion="1"
+                wxEVT_TEXT="[this](wxCommandEvent&amp;)@@{VerifyClassName();@@}" />
+            </node>
+            <node
+              class="wxBoxSizer"
+              var_name="class_sizer"
+              flags="wxEXPAND">
+              <node
+                class="wxStaticText"
+                class_access="none"
+                label="&amp;Frame type:"
+                var_name="staticText"
+                alignment="wxALIGN_CENTER_VERTICAL" />
+              <node
+                class="wxChoice"
+                contents="&quot;wxAuiMDIParentFrame&quot; &quot;wxDocMDIParentFrame&quot;"
+                selection_string="wxDocMDIParentFrame"
+                var_name="m_choice_type"
+                get_function="get_mdi_type"
+                validator_variable="m_mdi_type"
+                proportion="1" />
+            </node>
+            <node
+              class="wxFlexGridSizer"
+              growablecols="1:1"
+              flags="wxEXPAND"
+              proportion="1">
+              <node
+                class="wxStaticText"
+                class_access="none"
+                label="&amp;Description:"
+                var_name="staticText_2"
+                alignment="wxALIGN_CENTER_VERTICAL" />
+              <node
+                class="wxTextCtrl"
+                class_access="none"
+                hint="Text"
+                var_name="description"
+                get_function="get_description"
+                validator_variable="m_description"
+                tooltip="A short description of what the template is for. This string will be displayed in the file filter list of Windows file selectors. "
+                flags="wxEXPAND" />
+              <node
+                class="wxStaticText"
+                class_access="none"
+                label="&amp;View Type:"
+                var_name="staticText_6" />
+              <node
+                class="wxChoice"
+                class_access="none"
+                contents="&quot;Text Control&quot; &quot;Image&quot;"
+                selection_string="Text Control"
+                var_name="choice_view"
+                get_function="get_view_type"
+                validator_variable="m_view_type"
+                proportion="1"
+                wxEVT_CHOICE="OnViewType" />
+              <node
+                class="wxStaticText"
+                class_access="none"
+                label="&amp;Filter:"
+                var_name="staticText_4"
+                alignment="wxALIGN_CENTER_VERTICAL" />
+              <node
+                class="wxTextCtrl"
+                class_access="none"
+                hint="*.txt"
+                var_name="filter"
+                get_function="get_filter"
+                validator_variable="m_filter"
+                tooltip="An appropriate file filter such as &quot;*.txt&quot;. "
+                flags="wxEXPAND" />
+              <node
+                class="wxStaticText"
+                class_access="none"
+                label="&amp;Extension:"
+                var_name="staticText_5"
+                alignment="wxALIGN_CENTER_VERTICAL" />
+              <node
+                class="wxTextCtrl"
+                class_access="none"
+                hint="txt"
+                var_name="extension"
+                get_function="get_default_extension"
+                validator_variable="m_default_extension"
+                tooltip="An appropriate file filter such as &quot;*.txt&quot;. "
+                flags="wxEXPAND" />
+              <node
+                class="wxStaticText"
+                class_access="none"
+                label="D&amp;oc Name:"
+                var_name="staticText_7" />
+              <node
+                class="wxTextCtrl"
+                class_access="none"
+                hint="Text Document"
+                var_name="doc_name"
+                get_function="get_doc_name"
+                validator_variable="m_doc_name"
+                tooltip="An appropriate file filter such as &quot;*.txt&quot;. "
+                flags="wxEXPAND" />
+              <node
+                class="wxStaticText"
+                class_access="none"
+                label="V&amp;iew Name:"
+                var_name="staticText_8" />
+              <node
+                class="wxTextCtrl"
+                class_access="none"
+                hint="Text View"
+                var_name="view_name"
+                get_function="get_view_name"
+                validator_variable="m_view_name"
+                tooltip="An appropriate file filter such as &quot;*.txt&quot;. "
+                flags="wxEXPAND" />
+            </node>
+          </node>
+          <node
+            class="wxStdDialogButtonSizer"
+            flags="wxEXPAND"
+            OKButtonClicked="OnOK" />
         </node>
       </node>
       <node

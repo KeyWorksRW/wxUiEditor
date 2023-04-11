@@ -5,7 +5,7 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include <wx/menu.h>      // wxMenu and wxMenuBar classes
+#include <wx/menu.h>  // wxMenu and wxMenuBar classes
 
 #include "gen_mdi_menu.h"
 

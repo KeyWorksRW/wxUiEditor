@@ -12,7 +12,6 @@
 class MdiFrameMenuBar : public BaseGenerator
 {
 public:
-
 private:
     Node* m_node_menubar;
 };
@@ -20,7 +19,6 @@ private:
 class MdiDocumentMenuBar : public BaseGenerator
 {
 public:
-
 private:
     Node* m_node_menubar;
 };

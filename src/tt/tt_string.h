@@ -354,22 +354,7 @@ public:
         return *this;
     }
 
-#if defined(_WX_DEFS_H_)
-
-    #if defined(_WIN32)
-    // Calls FromUTF8() on Windows, normal conversion on other platforms
-    wxString as_wxStr() const { return wxString::FromUTF8(data(), size()); }
-    #else
-    // Calls FromUTF8() on Windows, normal conversion on other platforms
-    wxString as_wxStr() const { return wxString(data(), size()); }
-    #endif
-
     tt_string& assign_wx(const wxString& str);
     tt_string& append_wx(const wxString& str);
 
-    #if defined(_WIN32)
-    HINSTANCE ShellRun_wx(const wxString& filename, const wxString& args, const wxString& dir, INT nShow, HWND hwndParent);
-    #endif
-
-#endif
 };  // end tt_string class

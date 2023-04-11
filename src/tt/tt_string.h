@@ -58,11 +58,10 @@ public:
         return *this;
     }
 
-#if defined(_WIN32)
-    // Returns a copy of the string converted to UTF16 on Windows, or a normal copy on other platforms
+// If on Windows, and not a wxUSE_UNICODE_UTF8 build, return value converts to UTF16
+#if defined(_WIN32) && (!defined(wxUSE_UNICODE_UTF8) || !(wxUSE_UNICODE_UTF8))
     std::wstring wx_str() const { return to_utf16(); };
 #else
-    // Returns a copy of the string converted to UTF16 on Windows, or a normal copy on other platforms
     std::string wx_str() const { return substr(); }
 #endif  // _WIN32
 

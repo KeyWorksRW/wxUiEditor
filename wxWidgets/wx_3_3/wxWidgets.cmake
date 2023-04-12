@@ -624,6 +624,12 @@ set (common_sources
 
 )
 
+set (override_sources
+
+    ${CMAKE_CURRENT_LIST_DIR}/../src/override/extended.cpp  # C++ copy of extended.c
+
+)
+
 set (msw_sources
     src/aui/barartmsw.cpp
     src/aui/tabartmsw.cpp
@@ -1193,5 +1199,5 @@ set (wxCLib_sources
     src/expat/expat/lib/xmlparse.c
     src/expat/expat/lib/xmlrole.c
     src/expat/expat/lib/xmltok.c
-    src/common/extended.c
+    # src/common/extended.c
 )

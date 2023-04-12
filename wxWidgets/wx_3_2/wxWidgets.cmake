@@ -598,8 +598,12 @@ set (common_sources
     ../src/xrc/xmlres.cpp
     ../src/xrc/xmlreshandler.cpp
     ../src/xrc/xmlrsall.cpp
+)
 
-    ../src/common/extended.cpp  # C++ copy of extended.c
+set (override_sources
+
+    ${CMAKE_CURRENT_LIST_DIR}/../src/override/extended.cpp  # C++ copy of extended.c
+
 )
 
 set (msw_sources

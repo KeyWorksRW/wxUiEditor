@@ -30,7 +30,7 @@ public:
     tt_wxString(const wxString& str) : wxString(str) {}
     tt_wxString(void) : wxString() {}
 
-#if defined(_WIN32)
+#if defined(_WIN32) && !(wxUSE_UNICODE)
     // When compiling for Windows, assume all char* are utf8 strings and convert them to utf16 before assigning them.
 
     tt_wxString(const char* str) { this->assign(wxString::FromUTF8(str)); }
@@ -102,11 +102,6 @@ public:
     //
     // This is equivalent to calling std::strpbrk but returns an offset instead of a pointer.
     size_t find_oneof(std::string_view set) const;
-
-    // Find any one of the characters in a set. Returns offset if found, npos if not.
-    //
-    // This is equivalent to calling std::wcspbrk but returns an offset instead of a pointer.
-    size_t find_oneof_wx(const wxString& set) const;
 
     // Returns offset to the next whitespace character starting with pos. Returns npos if
     // there are no more whitespaces.

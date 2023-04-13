@@ -16,20 +16,17 @@
 
 std::string tt_wxString::sub_cstr(size_type start_pos, size_type count) const
 {
-    std::string str;
     if (start_pos == 0 && count == tt::npos)
     {
-#if defined(_WIN32) && !(wxUSE_UNICODE_UTF8)
-        tt::utf16to8(wx_str(), str);
-#else
-        str = utf8_string();
-#endif  // _WIN32
+        return utf8_string();
     }
-    else if (start_pos < size())
+
+    if (start_pos < size())
     {
-        str = Mid(start_pos, size() - start_pos).utf8_string();
+        return Mid(start_pos, size() - start_pos).utf8_string();
     }
-    return str;
+
+    return std::string();
 }
 
 tt_wxString& tt_wxString::append_view(std::string_view str, size_t posStart, size_t len)
@@ -41,7 +38,7 @@ tt_wxString& tt_wxString::append_view(std::string_view str, size_t posStart, siz
     }
     if (len == npos)
         len = (str.size() - posStart);
-#if defined(_WIN32)
+#if defined(_WIN32) && !(wxUSE_UNICODE_UTF8)
     this->append(wxString::FromUTF8(str.data() + posStart, len));
 #else
     this->append(str.data() + posStart, len);
@@ -63,7 +60,7 @@ tt_wxString& tt_wxString::assign_view(std::string_view str, size_t posStart, siz
     }
     if (len == npos)
         len = (str.size() - posStart);
-#if defined(_WIN32)
+#if defined(_WIN32) && !(wxUSE_UNICODE_UTF8)
     this->assign(wxString::FromUTF8(str.data() + posStart, len));
 #else
     this->assign(str.data() + posStart, len);
@@ -73,21 +70,27 @@ tt_wxString& tt_wxString::assign_view(std::string_view str, size_t posStart, siz
 
 int tt_wxString::comparei(std::string_view str) const
 {
-    tt_wxString tmp(str);
+    const tt_wxString tmp(str);
     return CmpNoCase(tmp);
 }
 
 size_t tt_wxString::locate(std::string_view vstr, size_t posStart, tt::CASE checkcase) const
 {
     if (vstr.empty() || posStart >= size())
+    {
         return npos;
+    }
 
+#if !(wxUSE_UNICODE_UTF8)
     tt_wxString str(vstr);
+#else
+    std::string str;
+#endif
 
     if (checkcase == tt::CASE::exact)
         return find(str, posStart);
 
-#if defined(_WIN32)
+#if defined(_WIN32) && !(wxUSE_UNICODE_UTF8)
     // Note that we don't support tt::CASE::utf8 under windows
 
     auto chLower = std::towlower(str[0]);
@@ -159,12 +162,16 @@ size_t tt_wxString::locate(std::string_view vstr, size_t posStart, tt::CASE chec
 size_t tt_wxString::locate_wx(const wxString& str, size_t posStart, tt::CASE checkcase) const
 {
     if (str.empty() || posStart >= size())
+    {
         return npos;
+    }
 
     if (checkcase == tt::CASE::exact)
+    {
         return find(str, posStart);
+    }
 
-#if defined(_WIN32)
+#if defined(_WIN32) && !(wxUSE_UNICODE_UTF8)
     auto chLower = std::towlower(str[0]);
     for (auto pos = posStart; pos < length(); ++pos)
     {
@@ -208,9 +215,11 @@ size_t tt_wxString::locate_wx(const wxString& str, size_t posStart, tt::CASE che
 size_t tt_wxString::find_oneof(std::string_view set) const
 {
     if (set.empty())
+    {
         return npos;
+    }
 
-#if defined(_WIN32)
+#if defined(_WIN32) && !(wxUSE_UNICODE_UTF8)
     auto wset = tt::utf8to16(set);
     auto found = std::wcspbrk(c_str(), wset.c_str());
 #else
@@ -219,37 +228,28 @@ size_t tt_wxString::find_oneof(std::string_view set) const
 #endif  // _WIN32
 
     if (!found)
+    {
         return npos;
+    }
     return (static_cast<size_t>(found - c_str()));
 }
-
-#if defined(_WIN32)
-
-size_t tt_wxString::find_oneof_wx(const wxString& set) const
-{
-    if (set.empty())
-        return npos;
-
-    auto found = std::wcspbrk(c_str(), set.c_str());
-    if (!found)
-        return npos;
-    return (static_cast<size_t>(found - c_str()));
-}
-
-#endif
 
 size_t tt_wxString::find_space(size_t start) const
 {
     if (start >= length())
+    {
         return npos;
+    }
 
-#if defined(_WIN32)
-    auto found = std::wcspbrk(c_str() + start, L" \t\r\n\f");
+#if defined(_WIN32) && !(wxUSE_UNICODE_UTF8)
+    const auto* found = std::wcspbrk(c_str() + start, L" \t\r\n\f");
 #else
-    auto found = std::strpbrk(c_str() + start, " \t\r\n\f");
+    const auto* found = std::strpbrk(c_str() + start, " \t\r\n\f");
 #endif
     if (!found)
+    {
         return npos;
+    }
     return (static_cast<size_t>(found - c_str()));
 }
 
@@ -257,7 +257,7 @@ size_t tt_wxString::find_nonspace(size_t start) const
 {
     for (; start < size(); ++start)
     {
-#if defined(_WIN32)
+#if defined(_WIN32) && !(wxUSE_UNICODE_UTF8)
         if (!std::wcschr(L" \t\r\n\f", at(start)))
             break;
 #else
@@ -280,61 +280,37 @@ size_t tt_wxString::stepover(size_t start) const
 
 bool tt_wxString::is_sameas(std::string_view str, tt::CASE checkcase) const
 {
-    tt_wxString tmp(str);
-    return IsSameAs(tmp, checkcase == tt::CASE::exact);
+    return tt::is_sameas(utf8_string(), str, checkcase);
 }
 
 bool tt_wxString::is_sameprefix(std::string_view vstr, tt::CASE checkcase) const
 {
     if (vstr.empty())
-        return empty();
+    {
+        return false;
+    }
 
     if (empty() || size() < vstr.size())
+    {
         return false;
-
-#if defined(_WIN32)
-    auto str = tt::utf8to16(vstr);
-#else
-    std::string str(vstr);
-#endif  // _WIN32
-
-    if (checkcase == tt::CASE::exact)
-    {
-        auto iterMain = begin();
-        for (auto iterSub: str)
-        {
-            if (*iterMain++ != iterSub)
-                return false;
-        }
-        return true;
-    }
-    else
-    {
-        auto iterMain = begin();
-        for (auto iterSub: str)
-        {
-#if defined(_WIN32)
-            if (std::towlower(*iterMain++) != std::towlower(iterSub))
-                return false;
-#else
-            if (std::tolower(*iterMain++) != std::tolower(iterSub))
-                return false;
-#endif
-        }
-        return true;
     }
 
-    return false;
+    return tt::is_sameprefix(utf8_string(), vstr, checkcase);
 }
 
 bool tt_wxString::is_sameprefix_wx(const wxString& str, tt::CASE checkcase) const
 {
     if (str.empty())
-        return empty();
+    {
+        return false;
+    }
 
     if (empty() || size() < str.size())
+    {
         return false;
+    }
 
+#if !(wxUSE_UNICODE_UTF8)
     if (checkcase == tt::CASE::exact)
     {
         auto iterMain = begin();
@@ -345,21 +321,22 @@ bool tt_wxString::is_sameprefix_wx(const wxString& str, tt::CASE checkcase) cons
         }
         return true;
     }
-    else
+
+    auto iterMain = begin();
+    for (auto iterSub: str)
     {
-        auto iterMain = begin();
-        for (auto iterSub: str)
-        {
-#if defined(_WIN32)
-            if (std::towlower(*iterMain++) != std::towlower(iterSub))
-                return false;
-#else
-            if (std::tolower(*iterMain++) != std::tolower(iterSub))
-                return false;
-#endif  // _WIN32
-        }
-        return true;
+    #if defined(_WIN32) && !(wxUSE_UNICODE_UTF8)
+        if (std::towlower(*iterMain++) != std::towlower(iterSub))
+            return false;
+    #else
+        if (std::tolower(*iterMain++) != std::tolower(iterSub))
+            return false;
+    #endif  // _WIN32
     }
+    return true;
+#else  // wxUSE_UNICODE_UTF8
+    return tt::is_sameprefix(utf8_string(), str.utf8_string(), checkcase);
+#endif
 }
 
 tt_wxString& tt_wxString::backslashestoforward()
@@ -390,11 +367,11 @@ tt_wxString tt_wxString::extension() const
         return wxEmptyString;
 
     // . by itself is a folder
-    else if (pos + 1 >= length())
+    if (pos + 1 >= length())
         return wxEmptyString;
 
     // .. is not a valid extension (it's usually part of a folder as in "../dir/")
-    else if (c_str()[pos + 1] == '.')
+    if (c_str()[pos + 1] == '.')
         return wxEmptyString;
 
     tt_wxString dest(*this, pos, size() - pos);
@@ -443,7 +420,7 @@ void tt_wxString::erase_from(char ch)
 
 void tt_wxString::erase_from(std::string_view sub)
 {
-#if defined(_WIN32)
+#if defined(_WIN32) && !(wxUSE_UNICODE_UTF8)
     auto pos = find(tt::utf8to16(sub));
 #else
     auto pos = find(sub.data(), 0, sub.size());

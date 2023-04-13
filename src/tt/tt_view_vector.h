@@ -8,7 +8,7 @@
 #pragma once  // NOLINT(#pragma once in main file)
 
 #if !(__cplusplus >= 201703L || (defined(_MSVC_LANG) && _MSVC_LANG >= 201703L))
-    #error "The contents of <tttextfile.h> are available only with C++17 or later."
+    #error "The contents of <tt_view_vector.h> are available only with C++17 or later."
 #endif
 
 #include <vector>

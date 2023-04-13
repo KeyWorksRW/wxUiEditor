@@ -25,19 +25,12 @@ public:
     tt_string_view(const char* str) : bsv(str) {}
     tt_string_view(std::string_view view) : bsv(view) {}
 
-#if defined(_WIN32)
+#if defined(_WIN32) && !(wxUSE_UNICODE_UTF8)
     /// Returns a copy of the string converted to UTF16 on Windows, or a normal copy on other platforms
     std::wstring wx_str() const { return to_utf16(); };
-    #if defined(_WX_DEFS_H_)
-    // Calls FromUTF8() on Windows, normal conversion on other platforms
-    wxString as_wxStr() const { return wxString::FromUTF8(data(), size()); }
-    #endif
 #else
     /// Returns a copy of the string converted to UTF16 on Windows, or a normal copy on other platforms
     std::string wx_str() const { return std::string(*this); }
-    #if defined(_WX_DEFS_H_)
-    wxString as_wxStr() const { return wxString(data(), size()); }
-    #endif
 #endif  // _WIN32
 
     std::string as_str() const { return std::string(*this); }

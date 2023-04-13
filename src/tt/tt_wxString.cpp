@@ -36,13 +36,9 @@ tt_wxString& tt_wxString::append_view(std::string_view str, size_t posStart, siz
         assertm(posStart < str.size(), "invalid starting position for append_view");
         return *this;
     }
-    if (len == npos)
-        len = (str.size() - posStart);
-#if defined(_WIN32) && !(wxUSE_UNICODE_UTF8)
+    if (len == tt::npos)
+        len = str.size() - posStart;
     this->append(wxString::FromUTF8(str.data() + posStart, len));
-#else
-    this->append(str.data() + posStart, len);
-#endif  // _WIN32
     return *this;
 }
 
@@ -58,13 +54,9 @@ tt_wxString& tt_wxString::assign_view(std::string_view str, size_t posStart, siz
         assertm(posStart < str.size(), "invalid starting position for append_view");
         return *this;
     }
-    if (len == npos)
-        len = (str.size() - posStart);
-#if defined(_WIN32) && !(wxUSE_UNICODE_UTF8)
+    if (len == tt::npos)
+        len = str.size() - posStart;
     this->assign(wxString::FromUTF8(str.data() + posStart, len));
-#else
-    this->assign(str.data() + posStart, len);
-#endif  // _WIN32
     return *this;
 }
 
@@ -441,10 +433,8 @@ void tt_wxString::erase_from_wx(const wxString& sub)
 
 size_t tt_wxString::replace_view(std::string_view oldtext, std::string_view newtext, bool replace_all)
 {
-    tt_wxString old_text(oldtext);
-    tt_wxString new_text(newtext);
-
-    return Replace(old_text, new_text, replace_all);
+    return Replace(wxString::FromUTF8(oldtext.data(), oldtext.size()), wxString::FromUTF8(newtext.data(), newtext.size()),
+                   replace_all);
 }
 
 tt_wxString& tt_wxString::replace_extension(std::string_view newExtension)

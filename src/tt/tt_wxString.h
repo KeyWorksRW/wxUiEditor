@@ -30,8 +30,11 @@ public:
     tt_wxString(const wxString& str) : wxString(str) {}
     tt_wxString(void) : wxString() {}
 
-#if defined(_WIN32) && !(wxUSE_UNICODE)
-    // When compiling for Windows, assume all char* are utf8 strings and convert them to utf16 before assigning them.
+#if defined(_WIN32)
+    // Currently, even with wxUSE_UNICODE_UTF8 enabled and a UTF8 code page enabled via /utf8
+    // compiler switch, and setting the app to UTF8 in the manifest, calling assign() still
+    // converts the string to UTF16 then back down to UTF8. So, we use FromUTF8() instead which
+    // is highly efficient if wxUSE_UNICODE_UTF8 is set.
 
     tt_wxString(const char* str) { this->assign(wxString::FromUTF8(str)); }
     tt_wxString(const std::string& str) { this->assign(wxString::FromUTF8(str.data(), str.size())); }

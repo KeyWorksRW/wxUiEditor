@@ -11,44 +11,6 @@
 
 #include "tt_string.h"
 
-tt_string::tt_string(const wxString& str)
-{
-#if defined(_WIN32)
-    #if (wxUSE_UNICODE_UTF8)
-    *this = str.utf8_str().data();
-    #else
-    tt::utf16to8(str.wx_str(), *this);
-    #endif
-#else
-    *this = str;
-#endif
-}
-
-tt_string& tt_string::assign_wx(const wxString& str)
-{
-#if defined(_WIN32) && !(wxUSE_UNICODE_UTF8)
-    clear();
-    tt::utf16to8(str.wx_str(), *this);
-#else
-    *this = str;
-#endif
-    return *this;
-}
-
-tt_string& tt_string::append_wx(const wxString& str)
-{
-#if defined(_WIN32)
-    #if (wxUSE_UNICODE_UTF8)
-    *this += str.utf8_str().data();
-    #else
-    tt::utf16to8(str.wx_str(), *this);
-    #endif
-#else
-    *this += str;
-#endif
-    return *this;
-}
-
 bool tt_string::is_sameas(std::string_view str, tt::CASE checkcase) const
 {
     if (size() != str.size())

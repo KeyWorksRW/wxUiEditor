@@ -211,6 +211,7 @@ namespace tt
         tt::RightTrim(s);
     }
 #if (defined(_WIN32))
-    HINSTANCE ShellRun_wx(const wxString& filename, const wxString& args, const wxString& dir, INT nShow, HWND hwndParent);
+    HINSTANCE ShellRun_wx(const wxString& filename, const wxString& args, const wxString& directory,
+                          INT nShow = SW_SHOWNORMAL, HWND hwndParent = NULL);
 #endif
 }  // namespace tt

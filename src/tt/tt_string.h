@@ -34,7 +34,7 @@ public:
 
     tt_string(const std::filesystem::directory_entry& dir) : std_base(dir.path().string(), dir.path().string().size()) {}
 
-    tt_string(const wxString& str);
+    tt_string(const wxString& str) { *this = str.utf8_string(); }
 
     tt_string& from_utf16(std::wstring_view str)
     {
@@ -59,7 +59,7 @@ public:
     }
 
 // If on Windows, and not a wxUSE_UNICODE_UTF8 build, return value converts to UTF16
-#if defined(_WIN32) && (!defined(wxUSE_UNICODE_UTF8) || !(wxUSE_UNICODE_UTF8))
+#if defined(_WIN32) && !(wxUSE_UNICODE_UTF8)
     std::wstring wx_str() const { return to_utf16(); };
 #else
     std::string wx_str() const { return substr(); }
@@ -354,7 +354,15 @@ public:
         return *this;
     }
 
-    tt_string& assign_wx(const wxString& str);
-    tt_string& append_wx(const wxString& str);
+    tt_string& assign_wx(const wxString& str)
+    {
+        *this = str.utf8_string();
+        return *this;
+    }
+    tt_string& append_wx(const wxString& str)
+    {
+        *this += str.utf8_string();
+        return *this;
+    }
 
 };  // end tt_string class

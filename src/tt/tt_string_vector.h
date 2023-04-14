@@ -8,7 +8,7 @@
 #pragma once  // NOLINT(#pragma once in main file)
 
 #if !(__cplusplus >= 201703L || (defined(_MSVC_LANG) && _MSVC_LANG >= 201703L))
-    #error "The contents of <tttextfile.h> are available only with C++17 or later."
+    #error "The contents of <tt_string_vector.h> are available only with C++17 or later."
 #endif
 
 #include <vector>
@@ -134,6 +134,17 @@ public:
             return at(index);
         }
         return emplace_back(str);
+    }
+
+    // Only adds the filename if it doesn't already exist. On Windows, the case of the
+    // filename is ignored when checking to see if the filename already exists.
+    tt_string& addfilename(std::string_view filename)
+    {
+#if defined(_WIN32)
+        return append(filename, tt::CASE::either);
+#else
+        return append(filename, tt::CASE::exact);
+#endif  // _WIN32
     }
 
     void RemoveLine(size_t line)

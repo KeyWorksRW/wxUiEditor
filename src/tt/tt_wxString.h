@@ -31,7 +31,10 @@ public:
     tt_wxString(void) : wxString() {}
 
 #if defined(_WIN32)
-    // When compiling for Windows, assume all char* are utf8 strings and convert them to utf16 before assigning them.
+    // Currently, even with wxUSE_UNICODE_UTF8 enabled and a UTF8 code page enabled via /utf8
+    // compiler switch, and setting the app to UTF8 in the manifest, calling assign() still
+    // converts the string to UTF16 then back down to UTF8. So, we use FromUTF8() instead which
+    // is highly efficient if wxUSE_UNICODE_UTF8 is set.
 
     tt_wxString(const char* str) { this->assign(wxString::FromUTF8(str)); }
     tt_wxString(const std::string& str) { this->assign(wxString::FromUTF8(str.data(), str.size())); }
@@ -102,11 +105,6 @@ public:
     //
     // This is equivalent to calling std::strpbrk but returns an offset instead of a pointer.
     size_t find_oneof(std::string_view set) const;
-
-    // Find any one of the characters in a set. Returns offset if found, npos if not.
-    //
-    // This is equivalent to calling std::wcspbrk but returns an offset instead of a pointer.
-    size_t find_oneof_wx(const wxString& set) const;
 
     // Returns offset to the next whitespace character starting with pos. Returns npos if
     // there are no more whitespaces.

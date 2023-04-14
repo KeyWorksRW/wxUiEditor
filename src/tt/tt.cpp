@@ -571,3 +571,21 @@ void tt::utf8to16(std::string_view str, std::wstring& dest)
         }
     }
 }
+
+#if (defined(_WIN32))
+
+    #include <shellapi.h>
+
+    #include <wx/string.h>  // wxString class
+
+HINSTANCE tt::ShellRun_wx(const wxString& filename, const wxString& args, const wxString& dir, INT nShow, HWND hwndParent)
+{
+    #if !(wxUSE_UNICODE_UTF8)
+    return ShellExecuteW(hwndParent, NULL, filename.c_str(), args.c_str(), dir.c_str(), nShow);
+    #else
+    return ShellExecuteW(hwndParent, NULL, tt::utf8to16(filename.utf8_string()).c_str(),
+                         tt::utf8to16(args.utf8_string()).c_str(), tt::utf8to16(dir.utf8_string()).c_str(), nShow);
+    #endif
+}
+
+#endif  // defined(_WX_DEFS_H_)

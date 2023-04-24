@@ -13,12 +13,12 @@ class MdiFrameMenuBar : public BaseGenerator
 {
 public:
 private:
-    Node* m_node_menubar;
+    // Node* m_node_menubar;
 };
 
 class MdiDocumentMenuBar : public BaseGenerator
 {
 public:
 private:
-    Node* m_node_menubar;
+    // Node* m_node_menubar;
 };

@@ -20,7 +20,7 @@ wxObject* FilePickerGenerator::CreateMockup(Node* node, wxObject* parent)
     wxString msg;
     if (node->HasValue(prop_message))
     {
-        msg = std::move(node->prop_as_wxString(prop_message));
+        msg = node->prop_as_wxString(prop_message);
     }
     else
     {
@@ -29,7 +29,7 @@ wxObject* FilePickerGenerator::CreateMockup(Node* node, wxObject* parent)
     wxString wildcard;
     if (node->HasValue(prop_wildcard))
     {
-        wildcard = std::move(node->prop_as_wxString(prop_wildcard));
+        wildcard = node->prop_as_wxString(prop_wildcard);
     }
     else
     {

@@ -52,11 +52,14 @@
 #endif
 
 // included here so that C5054 gets disabled
-#include <wx/propgrid/propgridpagestate.h>
+// #include <wx/propgrid/propgridpagestate.h>
 
 #include <wx/gdicmn.h>  // Common GDI classes, types and declarations
 #include <wx/msgdlg.h>  // common header and base class for wxMessageDialog
 #include <wx/string.h>  // wxString class
+
+// Clang-cl needs this because propgrid.h doesn't include it
+#include <wx/textctrl.h>  // wxTextAttr and wxTextCtrlBase class - the interface of wxTextCtrl
 
 #ifdef _MSC_VER
     #pragma warning(pop)

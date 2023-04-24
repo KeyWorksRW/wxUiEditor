@@ -74,14 +74,14 @@ public:
         return GetPropertyBitmap(parts, check_image);
     }
 
-    wxBitmapBundle GetPropertyBitmapBundle(const tt_string& description, Node* node);
+    wxBitmapBundle GetPropertyBitmapBundle(tt_string_view description, Node* node);
 
     // ImageBundle contains the filenames of each image in the bundle, needed to generate the
     // code for the bundle.
     //
     // Returns nullptr if there is no ImageBundle
     const ImageBundle* GetPropertyImageBundle(const tt_string_vector& parts, Node* node = nullptr);
-    const ImageBundle* GetPropertyImageBundle(const tt_string& description, Node* node = nullptr)
+    const ImageBundle* GetPropertyImageBundle(tt_string_view description, Node* node = nullptr)
     {
         tt_string_vector parts(description, ';', tt::TRIM::both);
         return GetPropertyImageBundle(parts, node);

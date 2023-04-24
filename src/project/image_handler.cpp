@@ -1035,7 +1035,7 @@ void ImageHandler::UpdateBundle(const tt_string_vector& parts, Node* node)
     }
 }
 
-wxBitmapBundle ImageHandler::GetPropertyBitmapBundle(const tt_string& description, Node* node)
+wxBitmapBundle ImageHandler::GetPropertyBitmapBundle(tt_string_view description, Node* node)
 {
     tt_string_vector parts(description, ';', tt::TRIM::both);
     if (parts.size() < 2)

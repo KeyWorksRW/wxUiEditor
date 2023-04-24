@@ -183,7 +183,7 @@ void ImportDlg::OnDirectory(wxCommandEvent& WXUNUSED(event))
     m_combo_recent_dirs->AppendString(dlg.GetPath());
 #endif
 
-    tt::ChangeDir(dlg.GetPath().utf8_str().data());
+    tt::ChangeDir(dlg.GetPath().utf8_string());
 
     tt_wxString cwd;
     cwd.assignCwd();
@@ -222,7 +222,7 @@ void ImportDlg::OnRecentDir(wxCommandEvent& WXUNUSED(event))
 {
     auto result = m_combo_recent_dirs->GetValue();
     m_FileHistory.AddFileToHistory(result);
-    tt::ChangeDir(result.utf8_str().data());
+    tt::ChangeDir(result.utf8_string());
 
     tt_wxString cwd;
     cwd.assignCwd();

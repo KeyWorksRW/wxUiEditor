@@ -89,7 +89,7 @@ wxVariant PropertyGrid_Animation::ChildChanged(wxVariant& thisValue, int childIn
     ImageProperties img_props;
     if (value.size())
     {
-        img_props.InitValues(value.utf8_str().data());
+        img_props.InitValues(value.utf8_string().c_str());
     }
 
     switch (childIndex)

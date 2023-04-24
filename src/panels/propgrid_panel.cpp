@@ -1395,7 +1395,7 @@ void PropGridPanel::OnEventGridChanged(wxPropertyGridEvent& event)
 
 void PropGridPanel::OnPropertyGridExpand(wxPropertyGridEvent& event)
 {
-    m_expansion_map[event.GetPropertyName().utf8_str().data()] = event.GetProperty()->IsExpanded();
+    m_expansion_map[event.GetPropertyName().utf8_string()] = event.GetProperty()->IsExpanded();
 
     auto egProp = m_event_grid->GetProperty(event.GetProperty()->GetName());
     if (egProp)
@@ -1413,7 +1413,7 @@ void PropGridPanel::OnPropertyGridExpand(wxPropertyGridEvent& event)
 
 void PropGridPanel::OnEventGridExpand(wxPropertyGridEvent& event)
 {
-    m_expansion_map[event.GetPropertyName().utf8_str().data()] = event.GetProperty()->IsExpanded();
+    m_expansion_map[event.GetPropertyName().utf8_string()] = event.GetProperty()->IsExpanded();
 
     auto grid_property = m_prop_grid->GetProperty(event.GetProperty()->GetName());
     if (grid_property)

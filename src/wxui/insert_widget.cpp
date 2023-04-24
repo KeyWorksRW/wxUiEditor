@@ -138,7 +138,7 @@ void InsertWidget::OnInit(wxInitDialogEvent& WXUNUSED(event))
 
 void InsertWidget::OnNameText(wxCommandEvent& WXUNUSED(event))
 {
-    tt_string name = m_text_name->GetValue().utf8_str().data();
+    tt_string name = m_text_name->GetValue().utf8_string();
     m_listbox->Clear();
     auto node = wxGetFrame().GetSelectedNode();
 

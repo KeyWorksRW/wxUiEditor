@@ -489,7 +489,7 @@ void ConvertImageDlg::ImgageInHeaderOut()
     }
     else
     {
-        if (file.WriteFile(out_name.utf8_str().data()))
+        if (file.WriteFile(out_name.utf8_string()))
         {
             m_staticSave->SetLabelText(wxString() << out_name << " saved.");
             m_staticSave->Show();

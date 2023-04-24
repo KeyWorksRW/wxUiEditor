@@ -68,7 +68,7 @@ void PropertyGrid_Image::RefreshChildren()
     wxString value = m_value;
     if (value.size())
     {
-        m_img_props.InitValues(value.utf8_str().data());
+        m_img_props.InitValues(value.utf8_string().c_str());
 
         if (m_img_props.type == "Art")
         {

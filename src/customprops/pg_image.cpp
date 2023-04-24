@@ -36,7 +36,7 @@ PropertyGrid_Image::PropertyGrid_Image(const wxString& label, NodeProperty* prop
     m_value = prop->as_wxString();
     if (prop->HasValue())
     {
-        m_img_props.InitValues(prop->as_string().c_str());
+        m_img_props.InitValues(prop->as_string());
     }
 
     wxPGChoices types;
@@ -68,7 +68,7 @@ void PropertyGrid_Image::RefreshChildren()
     wxString value = m_value;
     if (value.size())
     {
-        m_img_props.InitValues(value.utf8_string().c_str());
+        m_img_props.InitValues(value.utf8_string());
 
         if (m_img_props.type == "Art")
         {
@@ -202,7 +202,7 @@ wxVariant PropertyGrid_Image::ChildChanged(wxVariant& thisValue, int childIndex,
     auto value = thisValue.GetString();
     if (value.size())
     {
-        img_props.InitValues(value.utf8_string().c_str());
+        img_props.InitValues(value.utf8_string());
     }
 
     switch (childIndex)

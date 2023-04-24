@@ -26,7 +26,7 @@ PropertyGrid_Animation::PropertyGrid_Animation(const wxString& label, NodeProper
     m_value = prop->as_wxString();
     if (prop->HasValue())
     {
-        m_img_props.InitValues(prop->as_string().c_str());
+        m_img_props.InitValues(prop->as_string());
     }
 
     wxPGChoices types;
@@ -42,7 +42,7 @@ void PropertyGrid_Animation::RefreshChildren()
     wxString value = m_value;
     if (value.size())
     {
-        m_img_props.InitValues(value.utf8_string().c_str());
+        m_img_props.InitValues(value.utf8_string());
 
         if (m_img_props.type == "Embed")
         {
@@ -89,7 +89,7 @@ wxVariant PropertyGrid_Animation::ChildChanged(wxVariant& thisValue, int childIn
     ImageProperties img_props;
     if (value.size())
     {
-        img_props.InitValues(value.utf8_string().c_str());
+        img_props.InitValues(value.utf8_string());
     }
 
     switch (childIndex)

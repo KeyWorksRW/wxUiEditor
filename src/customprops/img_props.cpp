@@ -11,7 +11,7 @@
 #include "project_handler.h"  // ProjectHandler class
 #include "utils.h"            // Utility functions that work with properties
 
-void ImageProperties::InitValues(const char* value)
+void ImageProperties::InitValues(tt_string_view value)
 {
     tt_view_vector mstr(value, ';', tt::TRIM::both);
 

@@ -23,7 +23,7 @@ public:
 
     NodeProperty* node_property;
 
-    void InitValues(const char* value);
+    void InitValues(tt_string_view value);
     tt_string CombineValues();
     wxString CombineDefaultSize();
 

@@ -7,27 +7,19 @@
     </Type>
 
     <Type Name="Node">
-        <DisplayString>class:{m_declaration->m_name,s8} type:{m_declaration->m_gen_type}</DisplayString>
-    </Type>
-
-    <Type Name="NodeType">
-        <DisplayString>{m_name,s}</DisplayString>
+        <DisplayString>{*m_declaration}</DisplayString>
     </Type>
 
     <Type Name="PropDeclaration">
-        <DisplayString>{m_name_str,s}: defval:{m_def_value,s}</DisplayString>
+        <DisplayString>{m_name_str,s}</DisplayString>
     </Type>
 
     <Type Name="NodeProperty">
-        <DisplayString>{m_declaration->m_name,s} = {m_value,s8}</DisplayString>
-        <Expand>
-          <Item Name="decl">m_declaration</Item>
-          <Item Name="owner">m_node</Item>
-        </Expand>
+        <DisplayString>{*m_declaration} = {m_value,s8}</DisplayString>
     </Type>
 
     <Type Name="NodeCategory">
-        <DisplayString>{m_name,su}</DisplayString>
+        <DisplayString>{m_name}</DisplayString>
         <Expand>
           <Item Name="properties">m_prop_names</Item>
           <Item Name="events">m_events</Item>
@@ -40,7 +32,7 @@
     </Type>
 
     <Type Name="NodeEvent">
-        <DisplayString>{m_info->m_name,s} class:{m_node->m_info->m_classname,s}</DisplayString>
+        <DisplayString>{m_info-&gt;m_name,s} class:{m_node-&gt;m_info-&gt;m_classname,s}</DisplayString>
     </Type>
 
     <Type Name="resCtrl">
@@ -50,72 +42,46 @@
     <!-- tt visualizers -->
 
     <Type Name="tt_string">
-        <Intrinsic Name="size" Expression="_Mypair._Myval2._Mysize" />
-        <Intrinsic Name="capacity" Expression="_Mypair._Myval2._Myres" />
-        <!-- _BUF_SIZE = 16 / sizeof(char) &lt; 1 ? 1 : 16 / sizeof(char) == 16 -->
-        <Intrinsic Name="bufSize" Expression="16" />
-        <Intrinsic Name="isShortString" Expression="capacity() &lt; bufSize()" />
-        <Intrinsic Name="isLongString" Expression="capacity() &gt;= bufSize()" />
-        <DisplayString Condition="isShortString()">{_Mypair._Myval2._Bx._Buf,na}</DisplayString>
-        <DisplayString Condition="isLongString()">{_Mypair._Myval2._Bx._Ptr,na}</DisplayString>
-        <Expand>
-          <ArrayItems>
-            <Size>_Mypair._Myval2._Mysize</Size>
-            <ValuePointer Condition="isShortString()">_Mypair._Myval2._Bx._Buf</ValuePointer>
-            <ValuePointer Condition="isLongString()">_Mypair._Myval2._Bx._Ptr</ValuePointer>
-          </ArrayItems>
-        </Expand>
-      </Type>
+        <DisplayString>{_Mypair._Myval2._Bx._Buf,na}</DisplayString>
+    </Type>
 
-      <Type Name="tt_string_vector">
-        <DisplayString>{{ size={size()} }}</DisplayString>
-        <DisplayString>{m_filename,s8}</DisplayString>
-        <Intrinsic Name="size" Expression="_Mypair._Myval2._Mylast - _Mypair._Myval2._Myfirst" />
-        <Intrinsic Name="capacity" Expression="_Mypair._Myval2._Myend - _Mypair._Myval2._Myfirst" />
-        <Expand>
-          <Item Name="[capacity]" ExcludeView="simple">capacity()</Item>
-          <ArrayItems>
-            <Size>size()</Size>
-            <ValuePointer>_Mypair._Myval2._Myfirst</ValuePointer>
-            </ArrayItems>
-        </Expand>
-        </Type>
+    <Type Name="tt_string_view">
+        <Intrinsic Name="size" Expression="_Mysize" />
+        <DisplayString>{_Mydata,[_Mysize]}</DisplayString>
+    </Type>
+
+    <Type Name="tt_string_vector">
+        <DisplayString>{m_filename}, {size()}</DisplayString>
+    </Type>
 
     <Type Name="tt_view_vector">
-        <DisplayString>{{ size={size()} }}</DisplayString>
-        <DisplayString>{m_filename,s8}</DisplayString>
-        <Intrinsic Name="size" Expression="_Mypair._Myval2._Mylast - _Mypair._Myval2._Myfirst" />
-        <Intrinsic Name="capacity" Expression="_Mypair._Myval2._Myend - _Mypair._Myval2._Myfirst" />
-        <Expand>
-          <Item Name="[capacity]" ExcludeView="simple">capacity()</Item>
-          <ArrayItems>
-            <Size>size()</Size>
-            <ValuePointer>_Mypair._Myval2._Myfirst</ValuePointer>
-            </ArrayItems>
-        </Expand>
-        </Type>
+        <DisplayString>{m_filename}, {size()}</DisplayString>
+    </Type>
 
     <!-- pugixml visualizers -->
 
     <Type Name="pugi::xml_node">
-        <DisplayString>name:{_root->name,s} value:{_root->value,s} attr:{_root->first_attribute->name,s} = {_root->first_attribute->value,s}</DisplayString>
+        <DisplayString>name:{_root-&gt;name,s} value:{_root-&gt;value,s} attr:{_root-&gt;first_attribute-&gt;name,s} = {_root-&gt;first_attribute-&gt;value,s}</DisplayString>
         <Expand>
-            <Item Name="parent: ">_root->parent->name,s</Item>
-            <Item Name="1st child: ">_root->first_child->name,s</Item>
-            <Item Name="1st attr name: ">_root->first_attribute->name,s</Item>
-            <Item Name="1st attr value: ">_root->first_attribute->value,s</Item>
+            <Item Name="parent: ">_root-&gt;parent-&gt;name,s</Item>
+            <Item Name="1st child: ">_root-&gt;first_child-&gt;name,s</Item>
+            <Item Name="1st attr name: ">_root-&gt;first_attribute-&gt;name,s</Item>
+            <Item Name="1st attr value: ">_root-&gt;first_attribute-&gt;value,s</Item>
         </Expand>
     </Type>
 
     <Type Name="pugi::xml_attribute">
-        <DisplayString>name:{_attr->name,s} value:{_attr->value,s}</DisplayString>
+        <DisplayString>name:{_attr-&gt;name,s} value:{_attr-&gt;value,s}</DisplayString>
     </Type>
 
     <!-- wxWidgets visualizers -->
 
     <Type Name="wxString">
         <DisplayString>"{m_impl,sb}"</DisplayString>
-        <StringView>m_impl</StringView>
+        <StringView>m_impl,sb</StringView>
+        <Expand>
+            <Item Name="m_impl">m_impl,sb</Item>
+        </Expand>
     </Type>
 
 </AutoVisualizer>

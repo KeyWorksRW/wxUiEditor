@@ -164,6 +164,11 @@ public:
     // Call this to retrieve hint text for the property
     virtual std::optional<tt_string> GetHint(NodeProperty*);
 
+    // Called by MainFrame when the user modifies a property. Return false to let MainFrame
+    // call PushUndoAction() to push a single prop change to the undo stack. Return true if
+    // the generator handles pushing to the undo stack.
+    virtual bool ModifyProperty(NodeProperty* /* prop */, tt_string_view /* value */) { return false; }
+
     // Call this to use different help text then GetPropDeclaration()->GetDescription()
     virtual std::optional<tt_string> GetPropertyDescription(NodeProperty*) { return {}; }
 

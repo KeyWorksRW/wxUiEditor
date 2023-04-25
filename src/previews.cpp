@@ -6,7 +6,6 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include <wx/mstream.h>    // Memory stream classes
-#include <wx/scopedptr.h>  // scoped smart pointer class
 #include <wx/sizer.h>
 #include <wx/wizard.h>   // wxWizard class: a GUI control presenting the user with a
 #include <wx/xml/xml.h>  // wxXmlDocument - XML parser & data holder class
@@ -212,7 +211,7 @@ void PreviewXrc(Node* form_node)
     {
         auto doc_str = GenerateXrcStr(form_node, xrc::previewing);
         wxMemoryInputStream stream(doc_str.c_str(), doc_str.size());
-        wxScopedPtr<wxXmlDocument> xmlDoc(new wxXmlDocument(stream, "UTF-8"));
+        auto xmlDoc = std::make_unique<wxXmlDocument>(wxXmlDocument(stream, "UTF-8"));
         if (!xmlDoc->IsOk())
         {
             wxMessageBox("Invalid XRC file generated -- it cannot be loaded.", "XRC Preview");

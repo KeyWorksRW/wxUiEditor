@@ -130,7 +130,6 @@ bool XrcPreview::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 
     #include <wx/filedlg.h>     // wxFileDialog base header
     #include <wx/mstream.h>     // Memory stream classes
-    #include <wx/scopedptr.h>   // scoped smart pointer class
     #include <wx/xml/xml.h>     // wxXmlDocument - XML parser & data holder class
     #include <wx/xrc/xmlres.h>  // XML resources
 
@@ -220,7 +219,7 @@ void XrcPreview::OnPreview(wxCommandEvent& WXUNUSED(event))
     }
 
     wxMemoryInputStream stream(xrc_text.data(), xrc_text.size());
-    wxScopedPtr<wxXmlDocument> xmlDoc(new wxXmlDocument(stream));
+    auto xmlDoc = std::make_unique<wxXmlDocument>(wxXmlDocument(stream));
     if (!xmlDoc->IsOk())
     {
         wxMessageBox("Invalid XRC -- wxXmlDocument can't parse it.", "XRC Dialog Preview");

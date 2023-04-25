@@ -28,11 +28,6 @@
     #pragma warning(push)
 #endif
 
-#if defined(__clang__)
-    // warning: unused typedef 'complete' in scopedptr.h
-    #pragma clang diagnostic ignored "-Wunused-local-typedef"
-#endif
-
 #include <wx/defs.h>  // Declarations/definitions common to all wx source files
 
 #if !wxCHECK_VERSION(3, 2, 0)

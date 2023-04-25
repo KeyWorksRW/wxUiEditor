@@ -1,14 +1,19 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Menu Generator
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include <wx/menu.h>  // wxMenu and wxMenuBar classes
+#include <wx/menu.h>               // wxMenu and wxMenuBar classes
+#include <wx/propgrid/manager.h>   // wxPropertyGridManager
+#include <wx/propgrid/propgrid.h>  // wxPropertyGrid
 
-#include "gen_common.h"  // GeneratorLibrary -- Generator classes
-#include "node.h"        // Node class
+#include "gen_common.h"    // GeneratorLibrary -- Generator classes
+#include "mainframe.h"     // MainFrame -- Main window frame
+#include "node.h"          // Node class
+#include "node_creator.h"  // NodeCreator -- NodeCreator class
+#include "undo_cmds.h"     // InsertNodeAction -- Undoable command classes derived from UndoAction
 
 #include "gen_menu.h"
 
@@ -29,7 +34,16 @@ bool MenuGenerator::AdditionalCode(Code& code, GenEnum::GenCodeType cmd)
         auto parent_type = node->GetParent()->gen_type();
         if (parent_type == type_menubar)
         {
-            code.ParentName().Function("Append(").NodeName().Comma().QuotedString(prop_label).EndFunction();
+            code.ParentName().Function("Append(").NodeName().Comma();
+            if (node->value(prop_stock_id) != "none")
+            {
+                code.Add("wxGetStockLabel(").Add(node->value(prop_stock_id)).Str(")");
+            }
+            else
+            {
+                code.QuotedString(prop_label);
+            }
+            code.EndFunction();
         }
         else if (parent_type == type_menubar_form)
         {
@@ -86,4 +100,32 @@ int MenuGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_f
 void MenuGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>& handlers)
 {
     handlers.emplace("wxMenuXmlHandler");
+}
+
+void MenuGenerator::ChangeEnableState(wxPropertyGridManager* prop_grid, NodeProperty* changed_prop)
+{
+    if (changed_prop->isProp(prop_stock_id))
+    {
+        if (auto pg_setting = prop_grid->GetProperty(map_PropNames[prop_label]); pg_setting)
+        {
+            pg_setting->Enable(changed_prop->as_string() == "none");
+        }
+    }
+}
+
+bool MenuGenerator::ModifyProperty(NodeProperty* prop, tt_string_view value)
+{
+    if (prop->isProp(prop_stock_id))
+    {
+        if (value != "none")
+        {
+            auto undo_stock_id = std::make_shared<ModifyProperties>("Stock ID");
+            undo_stock_id->AddProperty(prop, value);
+            undo_stock_id->AddProperty(prop->GetNode()->get_prop_ptr(prop_label),
+                                       wxGetStockLabel(NodeCreation.GetConstantAsInt(value.as_str())).utf8_string());
+            wxGetFrame().PushUndoAction(undo_stock_id);
+            return true;
+        }
+    }
+    return false;
 }

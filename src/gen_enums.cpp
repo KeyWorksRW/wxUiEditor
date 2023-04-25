@@ -366,6 +366,7 @@ std::map<GenEnum::PropName, const char*> GenEnum::map_PropNames = {
     { prop_stc_wrap_start_indent, "wrap_start_indent" },
     { prop_stc_wrap_visual_flag, "wrap_visual_flag" },
     { prop_stc_wrap_visual_location, "wrap_visual_location" },
+    { prop_stock_id, "stock_id" },
     { prop_style, "style" },
     { prop_symbol_margin, "symbol_margin" },
     { prop_symbol_mouse_sensitive, "symbol_mouse_sensitive" },

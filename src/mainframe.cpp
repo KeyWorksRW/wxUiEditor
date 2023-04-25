@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Main window frame
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -1565,7 +1565,10 @@ void MainFrame::ModifyProperty(NodeProperty* prop, tt_string_view value)
 {
     if (prop && value != prop->as_string())
     {
-        PushUndoAction(std::make_shared<ModifyPropertyAction>(prop, value));
+        if (auto* gen = prop->GetNode()->GetGenerator(); !gen || !gen->ModifyProperty(prop, value))
+        {
+            PushUndoAction(std::make_shared<ModifyPropertyAction>(prop, value));
+        }
     }
 }
 

@@ -222,7 +222,9 @@ public:
 
     const tt_string& prop_default_value(PropName name);
 
-    // This will convert the string from UTF8 to UTF16 on Windows
+    // On Windows this will first convert to UTF-16 unless wxUSE_UNICODE_UTF8 is set.
+    //
+    // The string will be empty if the property doesn't exist.
     wxString prop_as_wxString(PropName name) const;
 
     // The following are shorter versions of the above functions. These are only here to save typing, and enhance code
@@ -270,6 +272,10 @@ public:
     wxBitmap as_wxBitmap(PropName name) const { return prop_as_wxBitmap(name); }
     wxArrayString as_wxArrayString(PropName name) const { return prop_as_wxArrayString(name); }
     wxBitmapBundle as_wxBitmapBundle(PropName name) const { return prop_as_wxBitmapBundle(name); }
+
+    // On Windows this will first convert to UTF-16 unless wxUSE_UNICODE_UTF8 is set.
+    //
+    // The string will be empty if the property doesn't exist.
     wxString as_wxString(PropName name) const { return prop_as_wxString(name); }
 
     // If the following vector properties don't exist, they will return an empty vector

@@ -29,7 +29,16 @@ bool MenuGenerator::AdditionalCode(Code& code, GenEnum::GenCodeType cmd)
         auto parent_type = node->GetParent()->gen_type();
         if (parent_type == type_menubar)
         {
-            code.ParentName().Function("Append(").NodeName().Comma().QuotedString(prop_label).EndFunction();
+            code.ParentName().Function("Append(").NodeName().Comma();
+            if (node->value(prop_stock_id) != "none")
+            {
+                code.Add("wxGetStockLabel(").Add(node->value(prop_stock_id)).Str(")");
+            }
+            else
+            {
+                code.QuotedString(prop_label);
+            }
+            code.EndFunction();
         }
         else if (parent_type == type_menubar_form)
         {

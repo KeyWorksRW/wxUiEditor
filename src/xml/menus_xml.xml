@@ -44,6 +44,13 @@ inline const char* menus_xml = R"===(<?xml version="1.0"?>
 
 	<gen class="wxMenu" image="menu" type="menu">
 		<property name="var_name" type="string">m_menu</property>
+		<property name="stock_id" type="option">
+			<option name="none" />
+			<option name="wxID_FILE" help="Use wxGetStockLabel(wxID_FILE) to retrieve the label." />
+			<option name="wxID_EDIT" help="Use wxGetStockLabel(wxID_EDIT) to retrieve the label."/>
+			<option name="wxID_HELP" help="Use wxGetStockLabel(wxID_HELP) to retrieve the label."/>
+			none
+		</property>
 		<property name="label" type="string_escapes">MyMenu</property>
 	</gen>
 

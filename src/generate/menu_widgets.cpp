@@ -39,9 +39,14 @@ wxObject* MenuBarBase::CreateMockup(Node* node, wxObject* parent)
     {
         for (const auto& iter: node->GetChildNodePtrs())
         {
-            auto label = new wxStaticText(panel, wxID_ANY, iter->prop_as_wxString(prop_label));
-            sizer->Add(label, wxSizerFlags().Border(wxALL));
-            label->Bind(wxEVT_LEFT_DOWN, &MenuBarBase::OnLeftMenuClick, this);
+            wxString label;
+            if (iter->value(prop_stock_id) != "none")
+                label = wxGetStockLabel(NodeCreation.GetConstantAsInt(iter->value(prop_stock_id)));
+            else
+                label = iter->as_wxString(prop_label);
+            auto menu_name = new wxStaticText(panel, wxID_ANY, label);
+            sizer->Add(menu_name, wxSizerFlags().Border(wxALL));
+            menu_name->Bind(wxEVT_LEFT_DOWN, &MenuBarBase::OnLeftMenuClick, this);
         }
     }
 
@@ -57,7 +62,7 @@ void MenuBarBase::OnLeftMenuClick(wxMouseEvent& event)
     // child, and create a popup menu based on that child.
 
     auto menu_label = wxStaticCast(event.GetEventObject(), wxStaticText);
-    tt_string text = menu_label->GetLabel().utf8_str().data();
+    tt_string text = menu_label->GetLabel().utf8_string();
 
     Node* menu_node = nullptr;
 
@@ -69,7 +74,12 @@ void MenuBarBase::OnLeftMenuClick(wxMouseEvent& event)
     {
         for (const auto& child: m_node_menubar->GetChildNodePtrs())
         {
-            if (child->prop_as_string(prop_label) == text)
+            wxString label;
+            if (child->value(prop_stock_id) != "none")
+                label = wxGetStockLabel(NodeCreation.GetConstantAsInt(child->value(prop_stock_id)));
+            else
+                label = child->as_wxString(prop_label);
+            if (label == text)
             {
                 menu_node = child.get();
                 break;

@@ -151,6 +151,11 @@ class MainFrame(wx.Frame):
 
         menubar = wx.MenuBar()
 
+        self.menu = wx.Menu()
+        menuItem4 = wx.MenuItem(self.menu, wx.ID_EXIT, "Exit")
+        self.menu.Append(menuItem4)
+        menubar.Append(self.menu, wx.GetStockLabel(wx.ID_FILE))
+
         menuDialogs = wx.Menu()
         menu_item_3 = wx.MenuItem(menuDialogs, wx.ID_ANY, "MainTestDlg")
         menu_item_3.SetBitmap(wx.BitmapBundle.FromBitmap(debug_32_png.Bitmap))
@@ -177,9 +182,6 @@ class MainFrame(wx.Frame):
         menu_item_5.SetBitmap(wx.BitmapBundle.FromBitmap(debug_32_png.Bitmap))
         submenu.Append(menu_item_5)
         menuDialogs.AppendSubMenu(submenu, "Issue Dialogs")
-        menuDialogs.AppendSeparator()
-        menuItem4 = wx.MenuItem(menuDialogs, wx.ID_EXIT, "Exit")
-        menuDialogs.Append(menuItem4)
         menubar.Append(menuDialogs, "&Dialogs")
 
         self.SetMenuBar(menubar)
@@ -207,13 +209,13 @@ class MainFrame(wx.Frame):
         self.Centre(wx.BOTH)
 
         # Bind Event handlers
+        self.Bind(wx.EVT_MENU, self.OnQuit, id=wx.ID_EXIT)
         self.Bind(wx.EVT_MENU, self.OnMainTestDlg, id=menu_item_3.GetId())
         self.Bind(wx.EVT_MENU, self.OnBookTestDlg, id=menu_item_4.GetId())
         self.Bind(wx.EVT_MENU, self.OnPythonDlg, id=menu_item_2.GetId())
         self.Bind(wx.EVT_MENU, self.OnCommonDialog, id=menuItem_2.GetId())
         self.Bind(wx.EVT_MENU, self.OnWizard, id=menuItem3.GetId())
         self.Bind(wx.EVT_MENU, self.OnDlgIssue_956, id=menu_item_5.GetId())
-        self.Bind(wx.EVT_MENU, self.OnQuit, id=wx.ID_EXIT)
         self.Bind(wx.EVT_TOOL, self.OnMainTestDlg, id=tool_4.GetId())
         self.Bind(wx.EVT_TOOL, self.OnBookTestDlg, id=tool_5.GetId())
         self.Bind(wx.EVT_TOOL, self.OnPythonDlg, id=tool_3.GetId())

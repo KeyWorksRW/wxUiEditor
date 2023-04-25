@@ -123,6 +123,18 @@
         var_name="menubar">
         <node
           class="wxMenu"
+          label=""
+          stock_id="wxID_FILE"
+          var_name="menu">
+          <node
+            class="wxMenuItem"
+            id="wxID_EXIT"
+            label="Exit"
+            var_name="menuItem4"
+            wxEVT_MENU="OnQuit" />
+        </node>
+        <node
+          class="wxMenu"
           class_access="none"
           label="&amp;Dialogs"
           var_name="menuDialogs">
@@ -169,14 +181,6 @@
               var_name="menu_item_5"
               wxEVT_MENU="OnDlgIssue_956" />
           </node>
-          <node
-            class="separator" />
-          <node
-            class="wxMenuItem"
-            id="wxID_EXIT"
-            label="Exit"
-            var_name="menuItem4"
-            wxEVT_MENU="OnQuit" />
         </node>
       </node>
       <node

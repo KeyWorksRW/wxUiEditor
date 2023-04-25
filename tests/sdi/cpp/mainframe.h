@@ -16,6 +16,7 @@
 #include <wx/grid.h>
 #include <wx/icon.h>
 #include <wx/image.h>
+#include <wx/menu.h>
 #include <wx/propgrid/manager.h>
 #include <wx/propgrid/propgrid.h>
 #include <wx/splitter.h>
@@ -52,6 +53,7 @@ protected:
     // Class member variables
 
     wxGrid* grid;
+    wxMenu* menu;
     wxPGProperty* propertyGridItem;
     wxPGProperty* propertyGridItem_2;
     wxPGProperty* propertyGridItem_3;

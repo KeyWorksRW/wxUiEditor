@@ -8,7 +8,6 @@
 // clang-format off
 
 #include <wx/artprov.h>
-#include <wx/menu.h>
 
 #include "images.h"
 
@@ -85,6 +84,11 @@ bool MainFrame::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 
     auto* menubar = new wxMenuBar();
 
+    menu = new wxMenu();
+    auto* menuItem4 = new wxMenuItem(menu, wxID_EXIT, "Exit");
+    menu->Append(menuItem4);
+    menubar->Append(menu, wxGetStockLabel(wxID_FILE));
+
     auto* menuDialogs = new wxMenu();
     auto* menu_item_3 = new wxMenuItem(menuDialogs, wxID_ANY, "MainTestDlg");
     menu_item_3->SetBitmap(
@@ -150,9 +154,6 @@ bool MainFrame::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 
     submenu->Append(menu_item_5);
     menuDialogs->AppendSubMenu(submenu, "Issue Dialogs");
-    menuDialogs->AppendSeparator();
-    auto* menuItem4 = new wxMenuItem(menuDialogs, wxID_EXIT, "Exit");
-    menuDialogs->Append(menuItem4);
     menubar->Append(menuDialogs, "&Dialogs");
 
     SetMenuBar(menubar);
@@ -207,13 +208,13 @@ bool MainFrame::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     Centre(wxBOTH);
 
     // Event handlers
+    Bind(wxEVT_MENU, &MainFrame::OnQuit, this, wxID_EXIT);
     Bind(wxEVT_MENU, &MainFrame::OnMainTestDlg, this, menu_item_3->GetId());
     Bind(wxEVT_MENU, &MainFrame::OnBookTestDlg, this, menu_item_4->GetId());
     Bind(wxEVT_MENU, &MainFrame::OnPythonDlg, this, menu_item_2->GetId());
     Bind(wxEVT_MENU, &MainFrame::OnCommonDialog, this, menuItem_2->GetId());
     Bind(wxEVT_MENU, &MainFrame::OnWizard, this, menuItem3->GetId());
     Bind(wxEVT_MENU, &MainFrame::OnDlgIssue_956, this, menu_item_5->GetId());
-    Bind(wxEVT_MENU, &MainFrame::OnQuit, this, wxID_EXIT);
     Bind(wxEVT_TOOL, &MainFrame::OnMainTestDlg, this, tool_4->GetId());
     Bind(wxEVT_TOOL, &MainFrame::OnBookTestDlg, this, tool_5->GetId());
     Bind(wxEVT_TOOL, &MainFrame::OnPythonDlg, this, tool_3->GetId());

@@ -677,7 +677,6 @@ set (msw_sources
     ../src/msw/fswatcher.cpp
     ../src/msw/gauge.cpp
     ../src/msw/gdiimage.cpp
-    ../src/msw/gdiobj.cpp
     ../src/msw/gdiplus.cpp
     ../src/msw/glcanvas.cpp
     ../src/msw/graphics.cpp

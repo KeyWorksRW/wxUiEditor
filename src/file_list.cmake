@@ -164,7 +164,7 @@ set (file_list
     generate/gen_popup_trans_win.cpp    # wxPopupTransientWindow generator
     generate/gen_wizard.cpp             # wxWizard generator
 
-    # Document Management
+    # Document Management (MDI)
 
     generate/gen_doc_view_app.cpp   # Generates base class for wxDocument/wView applications
 
@@ -198,7 +198,6 @@ set (file_list
     generate/gen_ribbon_page.cpp     # wxRibbonPage and wxRibbonPanel generators
     generate/gen_ribbon_tool.cpp     # wxRibbonToolBar generator
     generate/gen_toolbar.cpp         # wxToolBar generator
-
 
     # Sizers
 
@@ -301,11 +300,11 @@ set (file_list
     $<$<CONFIG:Debug>:internal/convert_img.cpp>     # Convert image
 
     $<$<CONFIG:Debug>:tests/test_xrc_import.cpp>  # XRC Import tests
-    )
+)
 
-    # wxui/wxui_code.cmake
+# wxui/wxui_code.cmake
 
-    set (debug_files
+set (debug_files
     # These are just here to make it easier to open with a VSCode extension
 
     internal/code_compare.cpp
@@ -364,6 +363,7 @@ set (xml_list
     xml/buttons_xml.xml
     xml/containers_xml.xml
     xml/dataview_xml.xml
+    xml/doc_view_app_xml.xml
     xml/dialogs_xml.xml
     xml/forms_xml.xml
     xml/grid_xml.xml

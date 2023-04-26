@@ -5,6 +5,8 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
+- wxMenu and wxMenu items now have a stock_id property allowing you to choose from wxWidgets stock items.
+
 ### Changed
 
 - Improved generation of default filenames for a class when the class name is changed

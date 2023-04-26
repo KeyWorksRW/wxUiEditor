@@ -85,7 +85,15 @@ bool MainFrame::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     auto* menubar = new wxMenuBar();
 
     menu = new wxMenu();
-    auto* menuItem4 = new wxMenuItem(menu, wxID_EXIT, "Exit");
+    auto* menuItem4 = new wxMenuItem(menu, wxID_EXIT);
+    menuItem4->SetBitmap(
+#if wxCHECK_VERSION(3, 1, 6)
+        wxArtProvider::GetBitmapBundle(wxART_QUIT, wxART_MENU)
+#else
+        wxBitmap(wxArtProvider::GetBitmap(wxART_QUIT, wxART_MENU))
+#endif
+    );
+
     menu->Append(menuItem4);
     menubar->Append(menu, wxGetStockLabel(wxID_FILE));
 

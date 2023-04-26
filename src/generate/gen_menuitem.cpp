@@ -1,17 +1,94 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Menu Item Generator
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include <wx/menu.h>  // wxMenu and wxMenuBar classes
+#include <unordered_map>
+#include <unordered_set>
+
+#include <wx/artprov.h>            // wxArtProvider class
+#include <wx/menu.h>               // wxMenu and wxMenuBar classes
+#include <wx/propgrid/manager.h>   // wxPropertyGridManager
+#include <wx/propgrid/propgrid.h>  // wxPropertyGrid
 
 #include "gen_common.h"       // GeneratorLibrary -- Generator classes
+#include "mainframe.h"        // MainFrame -- Main window frame
 #include "node.h"             // Node class
+#include "node_creator.h"     // NodeCreator -- NodeCreator class
 #include "project_handler.h"  // ProjectHandler class
+#include "undo_cmds.h"        // InsertNodeAction -- Undoable command classes derived from UndoAction
 
 #include "gen_menuitem.h"
+
+// clang-format off
+
+// List of menu ids that can be used as stock ids.
+std::unordered_set<std::string> lst_menu_ids = {
+
+    "wxID_ABOUT",
+    "wxID_ADD",
+    "wxID_CLEAR",
+    "wxID_CLOSE",
+    "wxID_CONVERT",
+    "wxID_COPY",
+    "wxID_CUT",
+    "wxID_DELETE",
+    "wxID_EDIT",
+    "wxID_EXIT",
+    "wxID_FIND",
+    "wxID_FIRST",
+    "wxID_HELP",
+    "wxID_INDENT",
+    "wxID_INDEX",
+    "wxID_INFO",
+    "wxID_LAST",
+    "wxID_NEW",
+    "wxID_OPEN",
+    "wxID_PASTE",
+    "wxID_PREFERENCES",
+    "wxID_PREVIEW",
+    "wxID_PRINT",
+    "wxID_PROPERTIES",
+    "wxID_REDO",
+    "wxID_REMOVE",
+    "wxID_REPLACE",
+    "wxID_SAVE",
+    "wxID_SAVEAS",
+    "wxID_SELECTALL",
+    "wxID_UNDELETE",
+    "wxID_UNDO",
+    "wxID_UNINDENT",
+
+};
+
+std::unordered_map<std::string, std::string> map_id_artid = {
+
+    { "wxID_OPEN", "wxART_FILE_OPEN" },
+    { "wxID_SAVE", "wxART_FILE_SAVE" },
+    { "wxID_SAVEAS", "wxART_FILE_SAVE_AS" },
+    { "wxID_PRINT", "wxART_PRINT" },
+    { "wxID_NEW", "wxART_NEW" },
+    { "wxID_CLOSE", "wxART_CLOSE" },
+    { "wxID_EXIT", "wxART_QUIT" },
+
+    { "wxID_EDIT", "wxART_EDIT" },
+    { "wxID_COPY", "wxART_COPY" },
+    { "wxID_CUT", "wxART_CUT" },
+    { "wxID_PASTE", "wxART_PASTE" },
+    { "wxID_DELETE", "wxART_DELETE" },
+
+    { "wxID_FIRST", "wxART_GOTO_FIRST" },
+    { "wxID_LAST", "wxART_GOTO_LAST" },
+    { "wxID_FIND", "wxART_FIND" },
+    { "wxID_REPLACE", "wxART_FIND_AND_REPLACE" },
+    { "wxID_UNDO", "wxART_UNDO" },
+    { "wxID_REDO", "wxART_REDO" },
+
+};
+
+// clang-format on
 
 bool MenuItemGenerator::ConstructionCode(Code& code)
 {
@@ -30,7 +107,13 @@ bool MenuItemGenerator::ConstructionCode(Code& code)
     }
     else
     {
-        code.NodeName().CreateClass().ParentName().Comma().as_string(prop_id).Comma();
+        code.NodeName().CreateClass().ParentName().Comma();
+        if (node->value(prop_stock_id) != "none")
+        {
+            code.as_string(prop_stock_id).EndFunction();
+            return true;
+        }
+        code.as_string(prop_id).Comma();
     }
 
     auto& label = node->as_string(prop_label);
@@ -264,6 +347,18 @@ int MenuItemGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t x
 
     GenXrcObjectAttributes(node, item, "wxMenuItem");
 
+    if (node->value(prop_stock_id) != "none")
+    {
+        GenXrcBitmap(node, item, xrc_flags);
+
+        if (xrc_flags & xrc::add_comments)
+        {
+            GenXrcComments(node, item);
+        }
+
+        return result;
+    }
+
     ADD_ITEM_PROP(prop_label, "label")
     ADD_ITEM_PROP(prop_shortcut, "accel")
     if (node->HasValue(prop_extra_accels))
@@ -296,4 +391,49 @@ int MenuItemGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t x
     }
 
     return result;
+}
+
+void MenuItemGenerator::ChangeEnableState(wxPropertyGridManager* prop_grid, NodeProperty* changed_prop)
+{
+    if (changed_prop->isProp(prop_stock_id))
+    {
+        if (auto pg_setting = prop_grid->GetProperty(map_PropNames[prop_label]); pg_setting)
+        {
+            pg_setting->Enable(changed_prop->as_string() == "none");
+        }
+        if (auto pg_setting = prop_grid->GetProperty(map_PropNames[prop_help]); pg_setting)
+        {
+            pg_setting->Enable(changed_prop->as_string() == "none");
+        }
+        if (auto pg_setting = prop_grid->GetProperty(map_PropNames[prop_id]); pg_setting)
+        {
+            pg_setting->Enable(changed_prop->as_string() == "none");
+        }
+    }
+}
+
+bool MenuItemGenerator::ModifyProperty(NodeProperty* prop, tt_string_view value)
+{
+    if (prop->isProp(prop_stock_id))
+    {
+        if (value != "none")
+        {
+            auto undo_stock_id = std::make_shared<ModifyProperties>("Stock ID");
+            undo_stock_id->AddProperty(prop, value);
+            undo_stock_id->AddProperty(prop->GetNode()->get_prop_ptr(prop_label),
+                                       wxGetStockLabel(NodeCreation.GetConstantAsInt(value.as_str())).utf8_string());
+            undo_stock_id->AddProperty(prop->GetNode()->get_prop_ptr(prop_help),
+                                       wxGetStockHelpString(NodeCreation.GetConstantAsInt(value.as_str())).utf8_string());
+            undo_stock_id->AddProperty(prop->GetNode()->get_prop_ptr(prop_id), value);
+
+            if (auto result = map_id_artid.find(value.as_str()); result != map_id_artid.end())
+            {
+                undo_stock_id->AddProperty(prop->GetNode()->get_prop_ptr(prop_bitmap),
+                                           tt_string("Art;") << result->second << "|wxART_MENU");
+            }
+            wxGetFrame().PushUndoAction(undo_stock_id);
+            return true;
+        }
+    }
+    return false;
 }

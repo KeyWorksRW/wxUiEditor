@@ -63,6 +63,45 @@ inline const char* menus_xml = R"===(<?xml version="1.0"?>
 
 	<gen class="wxMenuItem" image="menuitem" type="menuitem">
 		<property name="var_name" type="string">menu_item</property>
+		<!-- These need to be the same as the ones in lst_menu_ids in gen_menuitem.cpp -->
+		<property name="stock_id" type="option">
+			<option name="none" />
+			<option name="wxID_ABOUT" help="Sets the label and help text, and changes the id to the stock id." />
+			<option name="wxID_ADD" help="Sets the label and help text, and changes the id to the stock id." />
+			<option name="wxID_CLEAR" help="Sets the label and help text, and changes the id to the stock id." />
+			<option name="wxID_CLOSE" help="Sets the label and help text, and changes the id to the stock id." />
+			<option name="wxID_CONVERT" help="Sets the label and help text, and changes the id to the stock id." />
+			<option name="wxID_COPY" help="Sets the label and help text, and changes the id to the stock id." />
+			<option name="wxID_CUT" help="Sets the label and help text, and changes the id to the stock id." />
+			<option name="wxID_DELETE" help="Sets the label and help text, and changes the id to the stock id." />
+			<option name="wxID_EDIT" help="Sets the label and help text, and changes the id to the stock id." />
+			<option name="wxID_EXIT" help="Sets the label and help text, and changes the id to the stock id." />
+			<option name="wxID_FIND" help="Sets the label and help text, and changes the id to the stock id." />
+			<option name="wxID_FIRST" help="Sets the label and help text, and changes the id to the stock id." />
+			<option name="wxID_HELP" help="Sets the label and help text, and changes the id to the stock id." />
+			<option name="wxID_INDEX" help="Sets the label and help text, and changes the id to the stock id." />
+			<option name="wxID_INDENT" help="Sets the label and help text, and changes the id to the stock id." />
+			<option name="wxID_INFO" help="Sets the label and help text, and changes the id to the stock id." />
+			<option name="wxID_LAST" help="Sets the label and help text, and changes the id to the stock id." />
+			<option name="wxID_NEW" help="Sets the label and help text, and changes the id to the stock id." />
+			<option name="wxID_NEW" help="Sets the label and help text, and changes the id to the stock id." />
+			<option name="wxID_OPEN" help="Sets the label and help text, and changes the id to the stock id." />
+			<option name="wxID_PASTE" help="Sets the label and help text, and changes the id to the stock id." />
+			<option name="wxID_PREFERENCES" help="Sets the label and help text, and changes the id to the stock id." />
+			<option name="wxID_PREVIEW" help="Sets the label and help text, and changes the id to the stock id." />
+			<option name="wxID_PRINT" help="Sets the label and help text, and changes the id to the stock id." />
+			<option name="wxID_PROPERTIES" help="Sets the label and help text, and changes the id to the stock id." />
+			<option name="wxID_REDO" help="Sets the label and help text, and changes the id to the stock id." />
+			<option name="wxID_REMOVE" help="Sets the label and help text, and changes the id to the stock id." />
+			<option name="wxID_REPLACE" help="Sets the label and help text, and changes the id to the stock id." />
+			<option name="wxID_SAVE" help="Sets the label and help text, and changes the id to the stock id." />
+			<option name="wxID_SAVEAS" help="Sets the label and help text, and changes the id to the stock id." />
+			<option name="wxID_SELECTALL" help="Sets the label and help text, and changes the id to the stock id." />
+			<option name="wxID_UNDELETE" help="Sets the label and help text, and changes the id to the stock id." />
+			<option name="wxID_UNDO" help="Sets the label and help text, and changes the id to the stock id." />
+			<option name="wxID_UNINDENT" help="Sets the label and help text, and changes the id to the stock id." />
+			none
+		</property>
 		<property name="label" type="string_escapes"
 			help="Text for the menu item, as shown on the menu. An accelerator key can be specified using the ampersand &quot;&amp;&quot; character.">MyMenuItem</property>
 		<property name="shortcut" type="string_escapes"

@@ -123,13 +123,16 @@
         var_name="menubar">
         <node
           class="wxMenu"
-          label=""
+          label="&amp;File"
           stock_id="wxID_FILE"
           var_name="menu">
           <node
             class="wxMenuItem"
+            bitmap="Art;wxART_QUIT|wxART_MENU"
+            help="Quit this program"
             id="wxID_EXIT"
-            label="Exit"
+            label="&amp;Quit"
+            stock_id="wxID_EXIT"
             var_name="menuItem4"
             wxEVT_MENU="OnQuit" />
         </node>

@@ -1,26 +1,3 @@
-# Cloning
-
-If you are cloning, rather than forking, then ideally you want to clone the repository with the following command:
-
-```
-    git clone --recurse-submodules https://github.com/KeyWorksRW/wxUiEditor.git
-```
-
-If the above was not used, then the following two commands need to be run after cloning:
-
-```
-	git submodule init
-	git submodule update
-```
-
-To get submodule updates, run:
-
-```
-	git submodule update --remote
-```
-
-There are two submodules: `ttLib` and `wxSnapshot`.
-
 # Developer notes
 
 If you are planning on contributing code, the following sections contain information about the code that might not be immediately obvious. Reading these sections may make the code easier to understand, as well as ensuring that PR's are written in a way that matches the rest of the code base. In addition, some of the directories also have README files that provide explanations specific to the files in that directory. See [generate](../src/generate/README.md), [nodes](../src/nodes/README.md), [winres](../src/winres/README.md) and [xml](../src/xml/README.md).

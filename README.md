@@ -19,7 +19,7 @@ In addition to creating new projects, the following project types can be importe
 
 ## Building
 
-It's fine to create a build/ directory in the root of the repository as .gitignore tells git to ignore it. It's also fine to create your own setup.h file in wxSnapshot/wx/include as the wxSnapshot module will ignore this file.
+It's fine to create a `build/` directory in the root of the repository as .gitignore tells git to ignore it.
 
 You will need a C++20 compliant compiler to build **wxUiEditor**. Currently only Windows builds are supported. To build, run the following two commands from the root of the repository:
 
@@ -29,7 +29,6 @@ You will need a C++20 compliant compiler to build **wxUiEditor**. Currently only
 ```
 
 Note that the linking stage of the Release build will take quite a bit of time in order to perform a global optimization pass on the entire codebase (including the wxWidgets static libraries).
-
 
 See [Developer notes](docs/DEV_NOTES.md) for more information about the current branches, and some high level overview of the code.
 

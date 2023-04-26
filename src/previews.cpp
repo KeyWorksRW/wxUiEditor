@@ -5,8 +5,8 @@
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include <wx/mstream.h>    // Memory stream classes
-#include <wx/sizer.h>
+#include <wx/mstream.h>  // Memory stream classes
+#include <wx/sizer.h>    // provide wxSizer class for layout
 #include <wx/wizard.h>   // wxWizard class: a GUI control presenting the user with a
 #include <wx/xml/xml.h>  // wxXmlDocument - XML parser & data holder class
 

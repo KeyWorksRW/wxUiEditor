@@ -70,6 +70,8 @@ set (file_list
     generate/gen_xrc_utils.cpp     # Common XRC generating functions
     generate/gen_book_utils.cpp    # Common Book utilities
 
+    ############################# begin generators ##############################
+
     # Code generation output languages
 
     generate/gen_codefiles.cpp     # Generate code files
@@ -87,9 +89,10 @@ set (file_list
 
     generate/dataview_widgets.cpp  # wxDataView generation classes
     generate/styled_text.cpp       # wxStyledText (scintilla) generate
-    generate/window_widgets.cpp    # Scroll window component classes
 
     generate/utils_prop_grid.cpp   # PropertyGrid utilities
+
+    # Misc widgets
 
     generate/gen_activity.cpp       # wxActivityIndicator generator
     generate/gen_animation.cpp      # wxAnimationCtrl generator
@@ -102,7 +105,6 @@ set (file_list
     generate/gen_choice.cpp         # wxChoice generator
     generate/gen_close_btn.cpp      # wxBitmapButton::CreateCloseButton generator
     generate/gen_cmd_link_btn.cpp   # wxCommandLinkButton generator
-    generate/gen_collapsible.cpp    # wxCollapsiblePane generator
     generate/gen_combobox.cpp       # wxComboBox generator
     generate/gen_custom_ctrl.cpp    # Custom Control generator
     generate/gen_edit_listbox.cpp   # wxEditableListBox generator
@@ -115,11 +117,6 @@ set (file_list
     generate/gen_infobar.cpp        # wxInfoBar generator
     generate/gen_listbox.cpp        # wxListBox generator
     generate/gen_listview.cpp       # wxListView generator
-    generate/gen_panel.cpp          # wxPanel generator
-    generate/gen_prop_category.cpp  # PropertyGridCategory (propGridItem) generator
-    generate/gen_prop_grid.cpp      # wxPropertyGrid generator
-    generate/gen_prop_grid_mgr.cpp  # wxPropertyGridManager and wxPropertyGridPage generators
-    generate/gen_prop_item.cpp      # PropertyGridItem (propGridItem) generator
     generate/gen_radio_box.cpp      # wxRadioBox generator
     generate/gen_radio_btn.cpp      # wxRadioButton generator
     generate/gen_rearrange.cpp      # wxRearrangeCtrl generator
@@ -129,7 +126,6 @@ set (file_list
     generate/gen_slider.cpp         # wxSlider generator
     generate/gen_spin_btn.cpp       # wxSpinButton generator
     generate/gen_spin_ctrl.cpp      # wxSpinCtrl generator
-    generate/gen_split_win.cpp      # wxSplitterWindow generator
     generate/gen_static_bmp.cpp     # wxStaticBitmap generator
     generate/gen_static_box.cpp     # wxStaticBox generator
     generate/gen_static_line.cpp    # wxStaticLine generator
@@ -156,13 +152,12 @@ set (file_list
     generate/gen_toolbook.cpp           # wxToolbook generator
     generate/gen_treebook.cpp           # wxTreebook generator
 
-    # Forms
+    # Containers
 
-    generate/gen_dialog.cpp             # wxDialog generator
-    generate/gen_frame.cpp              # wxFrame generator
-    generate/gen_panel_form.cpp         # wxPanel Form generator
-    generate/gen_popup_trans_win.cpp    # wxPopupTransientWindow generator
-    generate/gen_wizard.cpp             # wxWizard generator
+    generate/gen_collapsible.cpp    # wxCollapsiblePane generator
+    generate/gen_panel.cpp          # wxPanel generator
+    generate/gen_split_win.cpp      # wxSplitterWindow generator
+    generate/window_widgets.cpp     # ScrolledCanvasGenerator and ScrolledWindowGenerator
 
     # Document Management (MDI)
 
@@ -170,6 +165,14 @@ set (file_list
 
     generate/gen_doc_textctrl.cpp   # wxTextCtrl document class
     generate/gen_view_textctrl.cpp  # wxTextCtrl view class
+
+    # Forms
+
+    generate/gen_dialog.cpp             # wxDialog generator
+    generate/gen_frame.cpp              # wxFrame generator
+    generate/gen_panel_form.cpp         # wxPanel Form generator
+    generate/gen_popup_trans_win.cpp    # wxPopupTransientWindow generator
+    generate/gen_wizard.cpp             # wxWizard generator
 
     # Menus
 
@@ -189,15 +192,12 @@ set (file_list
     generate/gen_font_picker.cpp    # wxFontPickerCtrl generator
     generate/gen_time_picker.cpp    # wxTimePickerCtrl generator
 
-    # Toolbars
+    # PropertyGrid
 
-    generate/gen_aui_toolbar.cpp     # wxAuiToolBar generator
-    generate/gen_ribbon_bar.cpp      # wxRibbonButtonBar generator
-    generate/gen_ribbon_button.cpp   # wxRibbonBar -- form and regular
-    generate/gen_ribbon_gallery.cpp  # wxRibbonGallery generator
-    generate/gen_ribbon_page.cpp     # wxRibbonPage and wxRibbonPanel generators
-    generate/gen_ribbon_tool.cpp     # wxRibbonToolBar generator
-    generate/gen_toolbar.cpp         # wxToolBar generator
+    generate/gen_prop_category.cpp  # PropertyGridCategory (propGridItem) generator
+    generate/gen_prop_grid.cpp      # wxPropertyGrid generator
+    generate/gen_prop_grid_mgr.cpp  # wxPropertyGridManager and wxPropertyGridPage generators
+    generate/gen_prop_item.cpp      # PropertyGridItem (propGridItem) generator
 
     # Sizers
 
@@ -212,6 +212,18 @@ set (file_list
     generate/gen_std_dlgbtn_sizer.cpp   # wxStdDialogButtonSizer generator
     generate/gen_text_sizer.cpp         # wxTextSizerWrapper generator
     generate/gen_wrap_sizer.cpp         # wxWrapSizer generator
+
+    # Toolbars
+
+    generate/gen_aui_toolbar.cpp     # wxAuiToolBar generator
+    generate/gen_ribbon_bar.cpp      # wxRibbonButtonBar generator
+    generate/gen_ribbon_button.cpp   # wxRibbonBar -- form and regular
+    generate/gen_ribbon_gallery.cpp  # wxRibbonGallery generator
+    generate/gen_ribbon_page.cpp     # wxRibbonPage and wxRibbonPanel generators
+    generate/gen_ribbon_tool.cpp     # wxRibbonToolBar generator
+    generate/gen_toolbar.cpp         # wxToolBar generator
+
+    ############################# end generators ##############################
 
     # Importers (also see Windows Resource importer below)
 

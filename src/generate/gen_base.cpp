@@ -753,6 +753,10 @@ void BaseCodeGenerator::GatherGeneratorIncludes(Node* node, std::set<std::string
         isAddToSrc = true;
 
     auto generator = node->GetNodeDeclaration()->GetGenerator();
+    ASSERT(generator);
+    if (!generator)
+        return;
+
     generator->GetIncludes(node, set_src, set_hdr);
     if (node->HasValue(prop_validator_variable))
     {

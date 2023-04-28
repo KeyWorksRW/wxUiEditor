@@ -69,9 +69,10 @@ void NewMdiForm::CreateNode()
     }
     if (m_view_type == "Text Control")
     {
-        auto doc_node = NodeCreation.CreateNode(gen_DocumentTextCtrl, form_node.get());
+        auto doc_node = NodeCreation.CreateNode(gen_DocumentTextCtrl, folder.get());
         ASSERT(doc_node);
-        form_node->Adopt(doc_node);
+        folder->Adopt(doc_node);
+        doc_node->prop_set_value(prop_mdi_class_name, form_node->value(prop_class_name));
         if (m_description.size())
         {
             doc_node->prop_set_value(prop_template_description, m_description);
@@ -270,9 +271,10 @@ void NewMdiForm::CreateNode()
         doc_menu->Adopt(help_menu);
 
         doc_node->Adopt(doc_menu);
-        auto view = NodeCreation.CreateNode(gen_ViewTextCtrl, doc_node.get());
+        auto view = NodeCreation.CreateNode(gen_ViewTextCtrl, folder.get());
         ASSERT(view);
-        doc_node->Adopt(view);
+        view->prop_set_value(prop_mdi_doc_name, doc_node->value(prop_class_name));
+        folder->Adopt(view);
     }
 
     auto parent_node = wxGetFrame().GetSelectedNode();

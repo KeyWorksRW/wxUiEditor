@@ -59,10 +59,10 @@ private:
 
     bool m_aui_frame { true };
     bool m_doc_frame { false };
-    wxString m_app_class { "MdiAppBase" };
+    wxString m_app_class { "DocViewAppBase" };
     wxString m_default_extension;
     wxString m_description;
-    wxString m_doc_class { "TextDocumentBase" };
+    wxString m_doc_class { "DocumentTextCtrlBase" };
     wxString m_filter;
     wxString m_folder_name { "Mdi Application" };
     wxString m_view_class { "TextViewBase" };

@@ -3729,7 +3729,8 @@
           <node
             class="wxBoxSizer"
             orientation="wxVERTICAL"
-            var_name="box_sizer_3">
+            var_name="box_sizer_3"
+            flags="wxEXPAND">
             <node
               class="wxStaticText"
               class_access="none"
@@ -3779,10 +3780,11 @@
                 <node
                   class="wxTextCtrl"
                   class_access="none"
-                  value="MdiAppBase"
+                  value="DocViewAppBase"
                   var_name="app_classname"
                   get_function="get_app_class"
                   validator_variable="m_app_class"
+                  minimum_size="100,-1d"
                   tooltip="Change this to something unique to your project."
                   proportion="1"
                   wxEVT_TEXT="[this](wxCommandEvent&amp;)@@{VerifyClassName();@@}" />
@@ -3850,21 +3852,10 @@
               var_name="static_box_3"
               flags="wxEXPAND">
               <node
-                class="wxBoxSizer"
-                var_name="box_sizer_6"
-                flags="wxEXPAND">
-                <node
-                  class="wxBoxSizer"
-                  var_name="box_sizer_5" />
-                <node
-                  class="wxBoxSizer"
-                  var_name="box_sizer_4"
-                  flags="wxEXPAND" />
-              </node>
-              <node
                 class="wxFlexGridSizer"
                 cols="4"
-                flexible_direction="wxHORIZONTAL">
+                flexible_direction="wxHORIZONTAL"
+                flags="wxEXPAND">
                 <node
                   class="wxStaticText"
                   class_access="none"
@@ -3890,10 +3881,11 @@
                 <node
                   class="wxTextCtrl"
                   class_access="none"
-                  value="TextDocumentBase"
+                  value="DocumentTextCtrlBase"
                   var_name="doc_classname"
                   get_function="get_doc_class"
                   validator_variable="m_doc_class"
+                  minimum_size="100,-1d"
                   tooltip="Change this to something unique to your project."
                   proportion="1"
                   wxEVT_TEXT="[this](wxCommandEvent&amp;)@@{VerifyClassName();@@}" />

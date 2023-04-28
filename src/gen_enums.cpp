@@ -58,6 +58,8 @@ std::map<GenEnum::PropName, const char*> GenEnum::map_PropNames = {
     { prop_template_filter, "template_filter" },
     { prop_template_view_name, "template_view_name" },
     { prop_template_visible, "template_visible" },
+    { prop_mdi_class_name, "mdi_class_name" },
+    { prop_mdi_doc_name, "mdi_doc_name" },
 
     { prop_Apply, "Apply" },
     { prop_BottomDockable, "BottomDockable" },

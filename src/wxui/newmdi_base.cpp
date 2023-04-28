@@ -61,8 +61,9 @@ bool NewMdiForm::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     staticText_9->SetToolTip("Change this to something unique to your project.");
     box_sizer_2->Add(staticText_9, wxSizerFlags().Center().Border(wxALL));
 
-    auto* app_classname = new wxTextCtrl(this, wxID_ANY, "MdiAppBase");
+    auto* app_classname = new wxTextCtrl(this, wxID_ANY, "DocViewAppBase");
     app_classname->SetValidator(wxTextValidator(wxFILTER_NONE, &m_app_class));
+    app_classname->SetMinSize(ConvertDialogToPixels(wxSize(100, -1)));
     app_classname->SetToolTip("Change this to something unique to your project.");
     box_sizer_2->Add(app_classname, wxSizerFlags(1).Border(wxALL));
 
@@ -106,18 +107,6 @@ bool NewMdiForm::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 
     auto* static_box_3 = new wxStaticBoxSizer(wxVERTICAL, this, "Document");
 
-    auto* box_sizer_6 = new wxBoxSizer(wxHORIZONTAL);
-
-    auto* box_sizer_5 = new wxBoxSizer(wxHORIZONTAL);
-
-    box_sizer_6->Add(box_sizer_5, wxSizerFlags().Border(wxALL));
-
-    auto* box_sizer_4 = new wxBoxSizer(wxHORIZONTAL);
-
-    box_sizer_6->Add(box_sizer_4, wxSizerFlags().Expand().Border(wxALL));
-
-    static_box_3->Add(box_sizer_6, wxSizerFlags().Expand().Border(wxALL));
-
     auto* flex_grid_sizer = new wxFlexGridSizer(4, 0, 0);
     flex_grid_sizer->SetFlexibleDirection(wxHORIZONTAL);
 
@@ -135,8 +124,9 @@ bool NewMdiForm::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     staticText_10->SetToolTip("Change this to something unique to your project.");
     flex_grid_sizer->Add(staticText_10, wxSizerFlags().Center().Border(wxALL));
 
-    auto* doc_classname = new wxTextCtrl(static_box_3->GetStaticBox(), wxID_ANY, "TextDocumentBase");
+    auto* doc_classname = new wxTextCtrl(static_box_3->GetStaticBox(), wxID_ANY, "DocumentTextCtrlBase");
     doc_classname->SetValidator(wxTextValidator(wxFILTER_NONE, &m_doc_class));
+    doc_classname->SetMinSize(ConvertDialogToPixels(wxSize(100, -1)));
     doc_classname->SetToolTip("Change this to something unique to your project.");
     flex_grid_sizer->Add(doc_classname, wxSizerFlags(1).Border(wxALL));
 
@@ -158,11 +148,11 @@ bool NewMdiForm::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     filter->SetToolTip("An appropriate file filter such as \"*.txt\". ");
     flex_grid_sizer->Add(filter, wxSizerFlags().Expand().Border(wxALL));
 
-    static_box_3->Add(flex_grid_sizer, wxSizerFlags().Border(wxALL));
+    static_box_3->Add(flex_grid_sizer, wxSizerFlags().Expand().Border(wxALL));
 
     box_sizer_3->Add(static_box_3, wxSizerFlags().Expand().Border(wxALL));
 
-    box_sizer->Add(box_sizer_3, wxSizerFlags().Border(wxALL));
+    box_sizer->Add(box_sizer_3, wxSizerFlags().Expand().Border(wxALL));
 
     auto* stdBtn = CreateStdDialogButtonSizer(wxOK|wxCANCEL);
     box_sizer->Add(CreateSeparatedSizer(stdBtn), wxSizerFlags().Expand().Border(wxALL));

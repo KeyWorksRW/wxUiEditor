@@ -38,6 +38,7 @@ void NewMdiForm::OnOK(wxCommandEvent& WXUNUSED(event))
             m_description = "Text";
         }
 
+#if 0
         if (m_doc_name.empty())
         {
             m_doc_name = "Text Document";
@@ -46,6 +47,7 @@ void NewMdiForm::OnOK(wxCommandEvent& WXUNUSED(event))
         {
             m_view_name = "Text View";
         }
+#endif
     }
 
     ASSERT(IsModal());
@@ -54,10 +56,13 @@ void NewMdiForm::OnOK(wxCommandEvent& WXUNUSED(event))
 
 void NewMdiForm::CreateNode()
 {
-    auto form_node = NodeCreation.CreateNode(gen_DocViewApp, nullptr);
+    auto folder = NodeCreation.CreateNode(gen_folder, nullptr);
+    folder->prop_set_value(prop_label, get_folder_name());
+    auto form_node = NodeCreation.CreateNode(gen_DocViewApp, folder.get());
     ASSERT(form_node);
+    folder->Adopt(form_node);
 
-    form_node->prop_set_value(prop_class_name, m_base_class.utf8_string());
+    form_node->prop_set_value(prop_class_name, get_app_class().utf8_string());
     if (form_node->prop_as_string(prop_class_name) != form_node->prop_default_value(prop_class_name))
     {
         UpdateFormClass(form_node.get());
@@ -79,13 +84,13 @@ void NewMdiForm::CreateNode()
         {
             doc_node->prop_set_value(prop_template_extension, m_default_extension);
         }
-        if (m_view_name.size())
+        if (get_view_class().size())
         {
-            doc_node->prop_set_value(prop_template_view_name, m_view_name);
+            doc_node->prop_set_value(prop_template_view_name, get_view_class());
         }
-        if (m_doc_name.size())
+        if (get_doc_class().size())
         {
-            doc_node->prop_set_value(prop_template_doc_name, m_doc_name);
+            doc_node->prop_set_value(prop_template_doc_name, get_doc_class());
         }
 
         auto frame_menu = NodeCreation.CreateNode(gen_MdiFrameMenuBar, doc_node.get());
@@ -283,10 +288,11 @@ void NewMdiForm::CreateNode()
     wxGetFrame().SelectNode(parent_node);
 
     tt_string undo_str("New MDI App");
-    wxGetFrame().PushUndoAction(std::make_shared<InsertNodeAction>(form_node.get(), parent_node, undo_str, -1));
-    wxGetFrame().FireCreatedEvent(form_node);
-    wxGetFrame().SelectNode(form_node, evt_flags::fire_event | evt_flags::force_selection);
-    wxGetFrame().GetNavigationPanel()->ChangeExpansion(form_node.get(), true, true);
+
+    wxGetFrame().PushUndoAction(std::make_shared<InsertNodeAction>(folder.get(), parent_node, undo_str, -1));
+    wxGetFrame().FireCreatedEvent(folder);
+    wxGetFrame().SelectNode(folder, evt_flags::fire_event | evt_flags::force_selection);
+    wxGetFrame().GetNavigationPanel()->ChangeExpansion(folder.get(), true, true);
 }
 
 // Called whenever m_classname changes

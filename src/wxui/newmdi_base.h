@@ -9,7 +9,6 @@
 
 #pragma once
 
-#include <wx/choice.h>
 #include <wx/dialog.h>
 #include <wx/event.h>
 #include <wx/gdicmn.h>
@@ -30,14 +29,16 @@ public:
         const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_DIALOG_STYLE, const wxString &name = wxDialogNameStr);
 
-    const wxString& get_base_class() const { return m_base_class; }
-    const wxString& get_mdi_type() const { return m_mdi_type; }
-    const wxString& get_description() const { return m_description; }
+    const wxString& get_folder_name() const { return m_folder_name; }
+    const wxString& get_app_class() const { return m_app_class; }
+    bool is_aui_frame() const { return m_aui_frame; }
+    bool is_doc_frame() const { return m_doc_frame; }
     const wxString& get_view_type() const { return m_view_type; }
-    const wxString& get_filter() const { return m_filter; }
+    const wxString& get_view_class() const { return m_view_class; }
+    const wxString& get_description() const { return m_description; }
+    const wxString& get_doc_class() const { return m_doc_class; }
     const wxString& get_default_extension() const { return m_default_extension; }
-    const wxString& get_doc_name() const { return m_doc_name; }
-    const wxString& get_view_name() const { return m_view_name; }
+    const wxString& get_filter() const { return m_filter; }
 
     void CreateNode();
     void VerifyClassName();
@@ -56,18 +57,19 @@ private:
 
     // Validator variables
 
-    wxString m_base_class { "MyMdiAppBase" };
+    bool m_aui_frame { true };
+    bool m_doc_frame { false };
+    wxString m_app_class { "MdiAppBase" };
     wxString m_default_extension;
     wxString m_description;
-    wxString m_doc_name;
+    wxString m_doc_class { "TextDocumentBase" };
     wxString m_filter;
-    wxString m_mdi_type;
-    wxString m_view_name;
+    wxString m_folder_name { "Mdi Application" };
+    wxString m_view_class { "TextViewBase" };
     wxString m_view_type;
 
     // Class member variables
 
-    wxChoice* m_choice_type;
     wxInfoBar* m_infoBar;
 };
 

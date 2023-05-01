@@ -346,15 +346,23 @@ void BaseCodeGenerator::GeneratePythonClass(Node* form_node, PANEL_PAGE panel_ty
         }
     }
 
-    m_set_ids.clear();
-    BaseCodeGenerator::CollectIDs(form_node, m_set_ids);
+    m_set_enum_ids.clear();
+    m_set_const_ids.clear();
+    BaseCodeGenerator::CollectIDs(form_node, m_set_enum_ids, m_set_const_ids);
     // set to highest wx
     auto id_value = 1;
-    for (auto& iter: m_set_ids)
+    for (auto& iter: m_set_enum_ids)
     {
         if (!iter.starts_with("self."))
         {
             m_source->writeLine(tt_string() << iter << " = wxID_HIGHEST + " << id_value++);
+        }
+    }
+    for (auto& iter: m_set_const_ids)
+    {
+        if (!iter.starts_with("self."))
+        {
+            m_source->writeLine(iter);
         }
     }
 
@@ -461,7 +469,7 @@ void BaseCodeGenerator::GeneratePythonClass(Node* form_node, PANEL_PAGE panel_ty
         m_source->Indent();
 
         id_value = 1;
-        for (auto& iter: m_set_ids)
+        for (auto& iter: m_set_enum_ids)
         {
             if (iter.starts_with("self."))
             {

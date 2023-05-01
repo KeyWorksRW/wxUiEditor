@@ -1187,38 +1187,54 @@ void BaseCodeGenerator::GenEnumIds(Node* class_node)
     if (!class_node->prop_as_bool(prop_generate_ids))
         return;
 
-    std::set<std::string> set_ids;
-    CollectIDs(class_node, set_ids);
-    if (set_ids.empty())
-        return;
+    std::set<std::string> set_enum_ids;
+    std::set<std::string> set_const_ids;
+    CollectIDs(class_node, set_enum_ids, set_const_ids);
 
-    m_header->writeLine("enum");
-    m_header->writeLine("{");
-    m_header->Indent();
-
-    size_t item = 0;
-    for (auto& iter: set_ids)
+    if (set_const_ids.size())
     {
-        if (iter.starts_with("self."))
-            m_header->write(iter.c_str() + (sizeof("self.") - 1));
-        else
-            m_header->write(iter);
-        if (item == 0)
+        for (auto& iter: set_const_ids)
         {
-            m_header->write(" = wxID_HIGHEST + 1", true);
+            tt_string id = "static const int ";
+            if (iter.starts_with("self."))
+                m_header->write(id + (iter.c_str() + (sizeof("self.") - 1)));
+            else
+                m_header->write(id + iter);
+            m_header->writeLine(";");
         }
-
-        if (item < set_ids.size() - 1)
-        {
-            m_header->writeLine(",");
-        }
-        ++item;
+        m_header->writeLine();
     }
 
-    m_header->Unindent();
-    m_header->writeLine();
-    m_header->writeLine("};");
-    m_header->writeLine();
+    if (set_enum_ids.size())
+    {
+        m_header->writeLine("enum");
+        m_header->writeLine("{");
+        m_header->Indent();
+
+        size_t item = 0;
+        for (auto& iter: set_enum_ids)
+        {
+            if (iter.starts_with("self."))
+                m_header->write(iter.c_str() + (sizeof("self.") - 1));
+            else
+                m_header->write(iter);
+            if (item == 0)
+            {
+                m_header->write(" = wxID_HIGHEST + 1", true);
+            }
+
+            if (item < set_enum_ids.size() - 1)
+            {
+                m_header->writeLine(",");
+            }
+            ++item;
+        }
+
+        m_header->Unindent();
+        m_header->writeLine();
+        m_header->writeLine("};");
+        m_header->writeLine();
+    }
 }
 
 void BaseCodeGenerator::GenerateClassConstructor(Node* form_node, EventVector& events)
@@ -1365,7 +1381,7 @@ void BaseCodeGenerator::GenerateClassConstructor(Node* form_node, EventVector& e
 }
 
 // This is a static function
-void BaseCodeGenerator::CollectIDs(Node* node, std::set<std::string>& set_ids)
+void BaseCodeGenerator::CollectIDs(Node* node, std::set<std::string>& set_enum_ids, std::set<std::string>& set_const_ids)
 {
     for (auto& iter: node->get_props_vector())
     {
@@ -1373,13 +1389,18 @@ void BaseCodeGenerator::CollectIDs(Node* node, std::set<std::string>& set_ids)
         {
             auto& prop_id = iter.as_string();
             if (prop_id.size() && !prop_id.starts_with("wxID_"))
-                set_ids.insert(prop_id);
+            {
+                if (tt::is_found(prop_id.find('=')))  // If it has an assignment operator, it's a constant
+                    set_const_ids.insert(prop_id);
+                else
+                    set_enum_ids.insert(prop_id);
+            }
         }
     }
 
     for (const auto& iter: node->GetChildNodePtrs())
     {
-        CollectIDs(iter.get(), set_ids);
+        CollectIDs(iter.get(), set_enum_ids, set_const_ids);
     }
 }
 

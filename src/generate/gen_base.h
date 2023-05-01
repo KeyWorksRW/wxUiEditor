@@ -82,7 +82,7 @@ public:
 
     bool is_cpp() const { return m_language == GEN_LANG_CPLUSPLUS; }
 
-    static void CollectIDs(Node* node, std::set<std::string>& set_ids);
+    static void CollectIDs(Node* node, std::set<std::string>& set_enum_ids, std::set<std::string>& set_const_ids);
 
 protected:
     // Generate extern references to images used in the current form that are defined in the
@@ -185,7 +185,8 @@ private:
 
     std::vector<const EmbeddedImage*> m_embedded_images;
     std::set<wxBitmapType> m_type_generated;
-    std::set<std::string> m_set_ids;
+    std::set<std::string> m_set_enum_ids;
+    std::set<std::string> m_set_const_ids;
 
     Node* m_form_node { nullptr };
     Node* m_ImagesForm { nullptr };

@@ -9,7 +9,7 @@
 
 #include "gen_mdi_menu.h"
 
-#include "gen_common.h"    // GeneratorLibrary -- Generator classes
+#include "gen_common.h"  // GeneratorLibrary -- Generator classes
 
 //////////////////////////////////////////  MdiFrameMenuBar  //////////////////////////////////////////
 

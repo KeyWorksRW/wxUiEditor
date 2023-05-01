@@ -10,7 +10,7 @@
 #include "code.h"  // Code -- Helper class for generating code
 
 inline constexpr const auto txt_TextCtrlViewBlock =
-R"===(wxIMPLEMENT_DYNAMIC_CLASS(%class%, wxDocument);
+    R"===(wxIMPLEMENT_DYNAMIC_CLASS(%class%, wxDocument);
 
 bool %class%::OnCreate(const wxString& path, long flags)
 {
@@ -93,7 +93,8 @@ bool TextDocumentGenerator::ConstructionCode(Code& code)
     return true;
 }
 
-bool TextDocumentGenerator::GetIncludes(Node* /* node */, std::set<std::string>& set_src, std::set<std::string>& /* set_hdr */)
+bool TextDocumentGenerator::GetIncludes(Node* /* node */, std::set<std::string>& set_src,
+                                        std::set<std::string>& /* set_hdr */)
 {
     set_src.insert("#include <wx/docmdi.h");
     set_src.insert("#include <wx/docview.h");

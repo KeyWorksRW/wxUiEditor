@@ -8,7 +8,7 @@
 
 #include "code.h"  // Code -- Helper class for generating code
 inline constexpr const auto txt_DocViewPreHeader =
-R"===(// Base class for wxDocument/wxView applications.
+    R"===(// Base class for wxDocument/wxView applications.
 // App class should inherit from this in addition to wxApp.
 
 // In your app's OnRun() function, call this class's Create() function to
@@ -51,7 +51,7 @@ bool Show(bool show = true) { return m_frame->Show(show); }
 )===";
 
 inline constexpr const auto txt_DocViewAppCppSrc =
-R"===(wxFrame* %class%::Create(wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style,
+    R"===(wxFrame* %class%::Create(wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style,
                                 const wxString& name)
 {
     m_docManager = new wxDocManager;
@@ -69,7 +69,7 @@ R"===(wxFrame* %class%::Create(wxWindowID id, const wxString& title, const wxPoi
 )===";
 
 inline constexpr const auto txt_DocViewAppAfterCtor =
-R"===(
+    R"===(
 wxFrame* %class%::CreateChildFrame(wxView* view)
 {
     auto doc = view->GetDocument();

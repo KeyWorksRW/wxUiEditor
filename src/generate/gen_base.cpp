@@ -1053,6 +1053,12 @@ void BaseCodeGenerator::GenerateClassHeader(Node* form_node, const EventVector& 
     m_header->writeLine();
 
     Code code(form_node, GEN_LANG_CPLUSPLUS);
+    if (generator->PreClassHeaderCode(code))
+    {
+        m_header->writeLine(code);
+        code.clear();
+    }
+
     code.Str("class ");
     if (form_node->HasValue(prop_class_decoration))
         code.Str(prop_class_decoration) += " ";
@@ -1063,8 +1069,10 @@ void BaseCodeGenerator::GenerateClassHeader(Node* form_node, const EventVector& 
     }
     else
     {
-        FAIL_MSG("All form generators need to support BaseClassNameCode() to provide the class name to derive from.");
-
+        if (!form_node->isType(type_DocViewApp))
+        {
+            FAIL_MSG("All form generators need to support BaseClassNameCode() to provide the class name to derive from.");
+        }
         // The only way this would be valid is if the base class didn't derive from anything.
         m_header->writeLine(tt_string() << "class " << form_node->prop_as_string(prop_class_name));
     }
@@ -1157,6 +1165,8 @@ void BaseCodeGenerator::GenerateClassHeader(Node* form_node, const EventVector& 
     }
 
     CollectMemberVariables(form_node, Permission::Protected, code_lines);
+    generator->AddProtectedHdrMembers(code_lines);
+
     if (code_lines.size())
     {
         m_header->writeLine();
@@ -1226,6 +1236,7 @@ void BaseCodeGenerator::GenerateClassConstructor(Node* form_node, EventVector& e
 
         if (form_node->isGen(gen_wxFrame) || form_node->isGen(gen_wxDialog) || form_node->isGen(gen_wxWizard))
         {
+            // Write code to m_source that will load any image handlers needed by the form's class
             GenerateHandlers();
             if (form_node->HasValue(prop_icon))
             {
@@ -1249,6 +1260,7 @@ void BaseCodeGenerator::GenerateClassConstructor(Node* form_node, EventVector& e
 
     if (!form_node->isGen(gen_wxWizard) && !form_node->isGen(gen_wxFrame))
     {
+        // Write code to m_source that will load any image handlers needed by the form's class
         GenerateHandlers();
     }
 
@@ -1264,47 +1276,77 @@ void BaseCodeGenerator::GenerateClassConstructor(Node* form_node, EventVector& e
     }
 
     m_source->SetLastLineBlank();
-    for (const auto& child: form_node->GetChildNodePtrs())
+    if (!form_node->isGen(gen_DocViewApp))
     {
-        if (child->isGen(gen_wxContextMenuEvent))
-            continue;
-        GenConstruction(child.get());
-    }
+        for (const auto& child: form_node->GetChildNodePtrs())
+        {
+            if (child->isGen(gen_wxContextMenuEvent))
+                continue;
+            GenConstruction(child.get());
+        }
 
-    code.clear();
-    if (generator->AfterChildrenCode(code))
-    {
-        if (code.size())
+        code.clear();
+        if (generator->AfterChildrenCode(code))
+        {
+            if (code.size())
+            {
+                m_source->writeLine();
+                m_source->writeLine(code);
+            }
+        }
+
+        if (form_node->prop_as_bool(prop_persist))
         {
             m_source->writeLine();
-            m_source->writeLine(code);
+            tt_string tmp("wxPersistentRegisterAndRestore(this, \"");
+            tmp << form_node->get_node_name() << "\");";
+            m_source->writeLine(tmp);
+        }
+
+        AddPersistCode(form_node);
+
+        if (events.size())
+        {
+            m_source->writeLine();
+            m_source->writeLine("// Event handlers");
+            GenSrcEventBinding(form_node, events);
         }
     }
-
-    if (form_node->prop_as_bool(prop_persist))
-    {
-        m_source->writeLine();
-        tt_string tmp("wxPersistentRegisterAndRestore(this, \"");
-        tmp << form_node->get_node_name() << "\");";
-        m_source->writeLine(tmp);
-    }
-
-    AddPersistCode(form_node);
-
-    if (events.size())
-    {
-        m_source->writeLine();
-        m_source->writeLine("// Event handlers");
-        GenSrcEventBinding(form_node, events);
-    }
-
-    if (form_node->isGen(gen_wxDialog) || form_node->isGen(gen_wxFrame) || form_node->isGen(gen_PanelForm))
+    if (form_node->isGen(gen_wxDialog) || form_node->isGen(gen_wxFrame) || form_node->isGen(gen_PanelForm) ||
+        form_node->isGen(gen_DocViewApp))
     {
         m_source->writeLine("\nreturn true;");
     }
 
     m_source->Unindent();
     m_source->writeLine("}");
+
+    if (form_node->isGen(gen_DocViewApp))
+    {
+        for (const auto& child: form_node->GetChildNodePtrs())
+        {
+            if (child->isGen(gen_wxContextMenuEvent))
+                continue;
+            GenConstruction(child.get());
+        }
+
+        code.clear();
+        if (generator->AfterChildrenCode(code))
+        {
+            if (code.size())
+            {
+                m_source->writeLine();
+                m_source->writeLine(code);
+            }
+        }
+    }
+
+    code.clear();
+    if (generator->AfterConstructionCode(code))
+    {
+        m_source->writeLine();
+        m_source->writeLine(code);
+    }
 
     Node* node_ctx_menu = nullptr;
     for (const auto& child: form_node->GetChildNodePtrs())

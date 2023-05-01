@@ -28,6 +28,9 @@ inline const GenType lst_form_types[] =
 {
 
     type_DocViewApp,
+    type_wx_document,
+    type_wx_view,
+
     type_form,
     type_frame_form,
     type_images,

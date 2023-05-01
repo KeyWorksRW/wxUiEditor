@@ -196,6 +196,9 @@ void NodeCreator::InitGenerators()
     SET_GENERATOR(gen_separator, SeparatorGenerator)
     SET_GENERATOR(gen_wxContextMenuEvent, CtxMenuGenerator)
 
+    SET_GENERATOR(gen_MdiFrameMenuBar, MdiFrameMenuBar)
+    SET_GENERATOR(gen_MdiDocMenuBar, MdiDocumentMenuBar)
+
     SET_GENERATOR(gen_Images, ImagesGenerator)
     SET_GENERATOR(gen_embedded_image, EmbeddedImageGenerator)
 

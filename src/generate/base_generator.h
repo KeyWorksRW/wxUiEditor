@@ -81,6 +81,9 @@ public:
     // Generate the code used to construct the object using either C++ or Python
     virtual bool ConstructionCode(Code&) { return false; }
 
+    // Generate code after the class has been constructed in the source file
+    virtual bool AfterConstructionCode(Code&) { return false; }
+
     // Generate any settings the object needs using either C++ or Python
     virtual bool SettingsCode(Code&) { return false; }
 
@@ -89,9 +92,15 @@ public:
     // Code will be written with indent::auto_keep_whitespace set
     virtual bool AfterChildrenCode(Code&) { return false; }
 
+    // Called if code needs to be generated before the class definition is generated
+    virtual bool PreClassHeaderCode(Code&) { return false; }
+
     // Generate code to add to a C++ header file -- this is normally the class header
     // definition
     virtual bool HeaderCode(Code&) { return false; }
+
+    // Called to add protected members to the class definition
+    virtual void AddProtectedHdrMembers(std::set<std::string>&) {}
 
     // Called when generating a C++ header -- this should return the actual name of the class
     // or it's derived class name. I.e., PanelForm adds wxPanel.

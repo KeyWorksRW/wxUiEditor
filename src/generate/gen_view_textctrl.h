@@ -11,4 +11,6 @@ class TextViewGenerator : public BaseGenerator
 {
 public:
     bool ConstructionCode(Code&) override;
+
+    bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr) override;
 };

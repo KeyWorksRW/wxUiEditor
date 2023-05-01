@@ -64,6 +64,8 @@ namespace GenEnum
         prop_template_filter,
         prop_template_view_name,
         prop_template_visible,
+        prop_mdi_class_name,
+        prop_mdi_doc_name,
 
         prop_Apply,
         prop_BottomDockable,

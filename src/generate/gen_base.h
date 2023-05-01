@@ -75,7 +75,7 @@ public:
     auto GetHeaderWriter() { return m_header; }
     auto GetSrcWriter() { return m_source; }
 
-    // Write code to m_source that will load any handlers needed by the form's class
+    // Write code to m_source that will load any image handlers needed by the form's class
     void GenerateHandlers();
 
     PANEL_PAGE GetPanelType() { return m_panel_type; }

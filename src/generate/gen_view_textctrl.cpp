@@ -7,7 +7,8 @@
 
 #include "gen_view_textctrl.h"
 
-#include "code.h"  // Code -- Helper class for generating code
+#include "code.h"             // Code -- Helper class for generating code
+#include "project_handler.h"  // ProjectHandler class
 
 inline constexpr const auto txt_TextCtrlViewBlock =
     R"===(wxIMPLEMENT_DYNAMIC_CLASS(%class%, wxView);
@@ -67,6 +68,37 @@ bool TextViewGenerator::ConstructionCode(Code& code)
         {
             line.Replace("%class%", class_name, true);
             code.Str(line).Eol();
+        }
+    }
+
+    return true;
+}
+
+bool TextViewGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& /* set_hdr */)
+{
+    set_src.insert("#include <wx/docmdi.h");
+    set_src.insert("#include <wx/docview.h");
+    set_src.insert("#include <wx/textctrl.h");
+
+    auto parent = node->GetParent();
+    for (auto& iter: parent->GetChildNodePtrs())
+    {
+        if (iter.get() == node)
+            continue;
+        if (iter->value(prop_class_name) == node->value(prop_mdi_doc_name))
+        {
+            tt_string hdr_file = iter->value(prop_base_file);
+            if (hdr_file.size())
+            {
+                hdr_file += Project.value(prop_header_ext);
+                set_src.insert(tt_string().Format("#include %ks", hdr_file.c_str()));
+            }
+            else
+            {
+                set_src.insert("// Either the Document class cannot be found, or it doesn't specify a base filename.");
+            }
+
+            break;
         }
     }
 

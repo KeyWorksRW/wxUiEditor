@@ -22,8 +22,11 @@ inline const char* language_xml = R"===(<?xml version="1.0"?>
 		<property name="class_decoration" type="string"
 			help="This specifies the keyword or macro to add to the class declaration (such as __declspec(dllexport) )." />
 		<property name="generate_ids" type="bool"
-			help="If checked, any non-wxWidgets ids will be created as an enumerated list. If you want to use your own id values, uncheck this and add the header file containing the ids to either base_src_includes or base_hdr_includes.">
+			help="If checked, any non-wxWidgets ids will be created as an enumerated list unless you specically assign the value of the id (e.g., myid=100).">
 			1</property>
+		<property name="initial_enum_string" type="string"
+			help="The first id in a generated enum will be set to this value.">
+			wxID_HIGHEST + 1</property>
 		<property name="generate_const_values" type="bool"
 			help="If checked, each form's header file will have const values declared for some of the possible parameters. E.g., const int form_id = your_id. You can use this when creating multiple instances of a form with different construction parameters.">
 			0</property>

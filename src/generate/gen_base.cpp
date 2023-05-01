@@ -1220,7 +1220,10 @@ void BaseCodeGenerator::GenEnumIds(Node* class_node)
                 m_header->write(iter);
             if (item == 0)
             {
-                m_header->write(" = wxID_HIGHEST + 1", true);
+                if (class_node->HasValue(prop_initial_enum_string))
+                    m_header->write(" = " + class_node->value(prop_initial_enum_string));
+                else
+                    m_header->write(" = wxID_HIGHEST + 1", true);
             }
 
             if (item < set_enum_ids.size() - 1)

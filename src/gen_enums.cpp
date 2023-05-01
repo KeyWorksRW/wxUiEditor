@@ -238,6 +238,7 @@ std::map<GenEnum::PropName, const char*> GenEnum::map_PropNames = {
     { prop_include_advanced, "include_advanced" },
     { prop_indentation_guides, "indentation_guides" },
     { prop_initial, "initial" },
+    { prop_initial_enum_string, "initial_enum_string" },
     { prop_initial_filename, "initial_filename" },
     { prop_initial_folder, "initial_folder" },
     { prop_initial_font, "initial_font" },

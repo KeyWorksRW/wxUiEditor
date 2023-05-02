@@ -244,6 +244,7 @@ namespace GenEnum
         prop_include_advanced,
         prop_indentation_guides,
         prop_initial,
+        prop_initial_enum_string,
         prop_initial_filename,
         prop_initial_folder,
         prop_initial_font,

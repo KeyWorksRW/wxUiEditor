@@ -20,6 +20,8 @@ public:
 
     bool Import(const tt_wxString& filename, bool write_doc = true) override;
 
+    int GetLanguage() const override { return GEN_LANG_CPLUSPLUS; }
+
 protected:
     void CreateFormNode(pugi::xml_node& form_xml);
     void CreateChildNode(pugi::xml_node& child_node, const NodeSharedPtr& parent);

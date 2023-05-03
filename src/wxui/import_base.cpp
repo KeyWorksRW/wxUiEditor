@@ -62,6 +62,9 @@ bool ImportBase::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     m_radio_WindowsResource = new wxRadioButton(m_import_staticbox->GetStaticBox(), wxID_ANY, "&Windows Resource");
     flex_grid_sizer->Add(m_radio_WindowsResource, wxSizerFlags().Border(wxALL));
 
+    m_radio_DialogBlocks = new wxRadioButton(m_import_staticbox->GetStaticBox(), wxID_ANY, "&DialogBlocks File(s)");
+    flex_grid_sizer->Add(m_radio_DialogBlocks, wxSizerFlags().Border(wxALL));
+
     m_radio_XRC = new wxRadioButton(m_import_staticbox->GetStaticBox(), wxID_ANY, "&XRC File(s)");
     flex_grid_sizer->Add(m_radio_XRC, wxSizerFlags().Border(wxALL));
 
@@ -134,6 +137,7 @@ bool ImportBase::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     m_radio_wxGlade->Bind(wxEVT_RADIOBUTTON, &ImportBase::OnWxGlade, this);
     m_radio_wxSmith->Bind(wxEVT_RADIOBUTTON, &ImportBase::OnWxSmith, this);
     m_radio_WindowsResource->Bind(wxEVT_RADIOBUTTON, &ImportBase::OnWindowsResource, this);
+    m_radio_DialogBlocks->Bind(wxEVT_RADIOBUTTON, &ImportBase::OnDialogBlocks, this);
     m_radio_XRC->Bind(wxEVT_RADIOBUTTON, &ImportBase::OnXRC, this);
 
     return true;

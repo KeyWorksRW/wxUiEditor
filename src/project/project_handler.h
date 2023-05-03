@@ -95,6 +95,7 @@ public:
     bool ImportProject(tt_wxString& file, bool allow_ui = true);
 
     void AppendCrafter(wxArrayString& files);
+    void AppendDialogBlocks(wxArrayString& files);
     void AppendFormBuilder(wxArrayString& files);
     void AppendGlade(wxArrayString& files);
     void AppendSmith(wxArrayString& files);

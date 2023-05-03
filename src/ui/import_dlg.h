@@ -22,6 +22,7 @@ public:
     bool isImportSmith() { return m_radio_wxSmith->GetValue(); }
     bool isImportXRC() { return m_radio_XRC->GetValue(); }
     bool isImportWinRes() { return m_radio_WindowsResource->GetValue(); }
+    bool isImportDialogBlocks() { return m_radio_DialogBlocks->GetValue(); }
 
     std::vector<tt_wxString>& GetFileList() { return m_lstProjects; };
 
@@ -32,6 +33,7 @@ protected:
     void OnCrafter(wxCommandEvent& event) override;
     void OnDirectory(wxCommandEvent& event) override;
     void OnFormBuilder(wxCommandEvent& event) override;
+    void OnDialogBlocks(wxCommandEvent& event) override;
     void OnInitDialog(wxInitDialogEvent& event) override;
     void OnWxGlade(wxCommandEvent& event) override;
 

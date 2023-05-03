@@ -44,6 +44,7 @@ protected:
 
     virtual void OnCheckFiles(wxCommandEvent& event) { event.Skip(); }
     virtual void OnCrafter(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnDialogBlocks(wxCommandEvent& event) { event.Skip(); }
     virtual void OnDirectory(wxCommandEvent& event) { event.Skip(); }
     virtual void OnFormBuilder(wxCommandEvent& event) { event.Skip(); }
     virtual void OnInitDialog(wxInitDialogEvent& event) { event.Skip(); }
@@ -63,6 +64,7 @@ protected:
     wxButton* m_btnRemove;  // Remove file from history
     wxCheckListBox* m_checkListProjects;
     wxComboBox* m_combo_recent_dirs;
+    wxRadioButton* m_radio_DialogBlocks;
     wxRadioButton* m_radio_WindowsResource;
     wxRadioButton* m_radio_XRC;
     wxRadioButton* m_radio_wxCrafter;

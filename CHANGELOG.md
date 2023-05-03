@@ -7,12 +7,13 @@ All notable changes to this project will be documented in this file.
 
 - The C++ Settings in forms now have a `initial_enum_string` property that allows you to set the initial enumeration value to something other than the default "wxID_HIGHEST + 1".
 - wxMenu and wxMenu items now have a stock_id property allowing you to choose from wxWidgets stock items.
+- You can now import DialogBlocks projects directly (instead of exporting an XRC) as long as the project was saved in XML format rather than binary format.
 
 ### Changed
 
 - Improved generation of default filenames for a class when the class name is changed
-- wxFrame and the form version of wxPanel now also support 2-step construction
-- Handle embedded filenames that contain characters that are invalid as variable names
+- wxFrame and the form version of wxPanel now also support 2-step construction.
+- Embedded image filenames can now contain characters that are invalid as part of a variable name.
 - Allow custom ids to have an assignment to a value as part of the id. In C++, the id will then be generated as a `static const int` instead of an enumerated value. In Python, this will be added verbatim after any auto-generated ids.
 
 ### Fixed

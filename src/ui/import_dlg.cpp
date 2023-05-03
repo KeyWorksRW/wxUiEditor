@@ -20,6 +20,7 @@ ImportDlg::ImportDlg(wxWindow* parent) : ImportBase(parent) {}
 enum
 {
     IMPORT_CRAFTER,
+    IMPORT_DIALOGBLOCKS,
     IMPORT_FB,
     IMPORT_WINRES,
     IMPORT_GLADE,
@@ -66,6 +67,10 @@ void ImportDlg::OnInitDialog(wxInitDialogEvent& WXUNUSED(event))
             m_radio_wxCrafter->SetValue(true);
             break;
 
+        case IMPORT_DIALOGBLOCKS:
+            m_radio_DialogBlocks->SetValue(true);
+            break;
+
         case IMPORT_WINRES:
             m_radio_WindowsResource->SetValue(true);
             m_staticImportList->SetLabel("&Files containing Dialogs or Menus:");
@@ -105,6 +110,8 @@ void ImportDlg::OnInitDialog(wxInitDialogEvent& WXUNUSED(event))
         dir.GetAllFiles(".", &files, "*.wxg");
     else if (m_radio_XRC->GetValue())
         dir.GetAllFiles(".", &files, "*.xrc");
+    else if (m_radio_DialogBlocks->GetValue())
+        dir.GetAllFiles(".", &files, "*.pjd");
     else if (m_radio_WindowsResource->GetValue())
     {
         dir.GetAllFiles(".", &files, "*.rc");
@@ -160,6 +167,8 @@ void ImportDlg::OnOK(wxCommandEvent& event)
         config->Write("import_type", static_cast<long>(IMPORT_XRC));
     else if (m_radio_WindowsResource->GetValue())
         config->Write("import_type", static_cast<long>(IMPORT_WINRES));
+    else if (m_radio_DialogBlocks->GetValue())
+        config->Write("import_type", static_cast<long>(IMPORT_DIALOGBLOCKS));
     else
         config->Write("import_type", static_cast<long>(IMPORT_FB));
 
@@ -206,6 +215,8 @@ void ImportDlg::OnDirectory(wxCommandEvent& WXUNUSED(event))
         dir.GetAllFiles(".", &files, "*.wxg");
     else if (m_radio_XRC->GetValue())
         dir.GetAllFiles(".", &files, "*.xrc");
+    else if (m_radio_DialogBlocks->GetValue())
+        dir.GetAllFiles(".", &files, "*.pjd");
     else if (m_radio_WindowsResource->GetValue())
     {
         dir.GetAllFiles(".", &files, "*.rc");
@@ -245,6 +256,8 @@ void ImportDlg::OnRecentDir(wxCommandEvent& WXUNUSED(event))
         dir.GetAllFiles(".", &files, "*.wxg");
     else if (m_radio_XRC->GetValue())
         dir.GetAllFiles(".", &files, "*.xrc");
+    else if (m_radio_DialogBlocks->GetValue())
+        dir.GetAllFiles(".", &files, "*.pjd");
     else if (m_radio_WindowsResource->GetValue())
     {
         dir.GetAllFiles(".", &files, "*.rc");
@@ -307,6 +320,19 @@ void ImportDlg::OnFormBuilder(wxCommandEvent& WXUNUSED(event))
     wxDir dir;
     wxArrayString files;
     dir.GetAllFiles(".", &files, "*.fbp");
+
+    if (files.size())
+        m_checkListProjects->InsertItems(files, 0);
+}
+
+void ImportDlg::OnDialogBlocks(wxCommandEvent& WXUNUSED(event))
+{
+    m_checkListProjects->Clear();
+    m_staticImportList->SetLabel("&Files:");
+
+    wxDir dir;
+    wxArrayString files;
+    dir.GetAllFiles(".", &files, "*.pjd");
 
     if (files.size())
         m_checkListProjects->InsertItems(files, 0);

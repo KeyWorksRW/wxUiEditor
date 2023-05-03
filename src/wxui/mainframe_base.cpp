@@ -99,6 +99,9 @@ bool MainFrameBase::Create(wxWindow* parent, wxWindowID id, const wxString& titl
     auto* menu_item_3 = new wxMenuItem(submenu, id_AppendSmith, "wxSmith Project...",
         "Append wxSmith project into current project", wxITEM_NORMAL);
     submenu->Append(menu_item_3);
+    auto* menu_item_8 = new wxMenuItem(submenu, id_AppendDialogBlocks, "DialogBlocks Project...",
+        "Append DialogBlocks project into current project", wxITEM_NORMAL);
+    submenu->Append(menu_item_8);
     auto* menu_item_5 = new wxMenuItem(submenu, id_AppendWinRes, "Windows Resource...",
         "Append Windows Resource into current project", wxITEM_NORMAL);
     submenu->Append(menu_item_5);
@@ -385,6 +388,7 @@ bool MainFrameBase::Create(wxWindow* parent, wxWindowID id, const wxString& titl
     Bind(wxEVT_MENU, &MainFrameBase::OnAppendFormBuilder, this, id_AppendFormBuilder);
     Bind(wxEVT_MENU, &MainFrameBase::OnAppendGlade, this, id_AppendGlade);
     Bind(wxEVT_MENU, &MainFrameBase::OnAppendSmith, this, id_AppendSmith);
+    Bind(wxEVT_MENU, &MainFrameBase::OnAppendDialogBlocks, this, id_AppendDialogBlocks);
     Bind(wxEVT_MENU, &MainFrameBase::OnImportWindowsResource, this, id_AppendWinRes);
     Bind(wxEVT_MENU, &MainFrameBase::OnAppendXRC, this, id_AppendXRC);
     Bind(wxEVT_MENU, &MainFrameBase::OnOptionsDlg, this, id_OptionsDlg);

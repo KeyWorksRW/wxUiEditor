@@ -18,13 +18,14 @@
 
 using namespace GenEnum;
 
-#include "../import/import_formblder.h"  // FormBuilder -- Import a wxFormBuider project
-#include "../import/import_wxcrafter.h"  // WxCrafter -- Import a wxCrafter project
-#include "../import/import_wxglade.h"    // WxGlade -- Import a wxGlade file
-#include "../import/import_wxsmith.h"    // WxSmith -- Import a wxSmith file
-#include "../winres/import_winres.h"     // WinResource -- Parse a Windows resource file
-#include "import_dlg.h"                  // ImportDlg -- Dialog to create a new project
-#include "node_gridbag.h"                // GridBag -- Create and modify a node containing a wxGridBagSizer
+#include "../import/import_dialogblocks.h"  // DialogBlocks -- Import a DialogBlocks project
+#include "../import/import_formblder.h"     // FormBuilder -- Import a wxFormBuider project
+#include "../import/import_wxcrafter.h"     // WxCrafter -- Import a wxCrafter project
+#include "../import/import_wxglade.h"       // WxGlade -- Import a wxGlade file
+#include "../import/import_wxsmith.h"       // WxSmith -- Import a wxSmith file
+#include "../winres/import_winres.h"        // WinResource -- Parse a Windows resource file
+#include "import_dlg.h"                     // ImportDlg -- Dialog to create a new project
+#include "node_gridbag.h"                   // GridBag -- Create and modify a node containing a wxGridBagSizer
 
 #include "../wxui/code_preference_dlg.h"  // CodePreferenceDlg -- Dialog to set code generation preference
 
@@ -586,6 +587,11 @@ bool ProjectHandler::ImportProject(tt_wxString& file,
             wxGetFrame().GetImportPanel()->SetImportFile(import_file, wxSTC_LEX_XML);
 #endif
     }
+    else if (file.has_extension(".pjd"))
+    {
+        DialogBlocks db;
+        result = Import(db, file);
+    }
 
     return result;
 }
@@ -865,6 +871,11 @@ bool ProjectHandler::NewProject(bool create_empty, bool allow_ui)
                     wxGetFrame().GetImportPanel()->SetImportFile(import_file, wxSTC_LEX_CPP);
 #endif
                 }
+                else if (iter.has_extension(".pjd"))
+                {
+                    DialogBlocks db;
+                    Import(db, iter, true);
+                }
 
                 if (imported_from.size())
                     imported_from << "@@";
@@ -972,6 +983,42 @@ void ProjectHandler::AppendFormBuilder(wxArrayString& files)
         if (fb.Import(file))
         {
             auto& doc = fb.GetDocument();
+            auto root = doc.first_child();
+            auto project = root.child("node");
+            if (!project || project.attribute("class").as_cstr() != "Project")
+            {
+                if (m_allow_ui)
+                {
+                    wxMessageBox(wxString("The project file ") << file << " is invalid and cannot be opened.",
+                                 "Import wxFormBuilder project");
+                }
+                return;
+            }
+
+            auto form = project.child("node");
+            while (form)
+            {
+                NodeCreation.CreateNode(form, m_project_node.get(), true, m_allow_ui);
+                form = form.next_sibling("node");
+            }
+        }
+    }
+    if (m_allow_ui)
+    {
+        wxGetFrame().FireProjectUpdatedEvent();
+        wxGetFrame().SetModified();
+    }
+}
+
+void ProjectHandler::AppendDialogBlocks(wxArrayString& files)
+{
+    for (auto& file: files)
+    {
+        DialogBlocks db;
+
+        if (db.Import(file))
+        {
+            auto& doc = db.GetDocument();
             auto root = doc.first_child();
             auto project = root.child("node");
             if (!project || project.attribute("class").as_cstr() != "Project")

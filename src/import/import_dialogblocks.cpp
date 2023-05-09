@@ -382,6 +382,26 @@ void DialogBlocks::CreateChildNode(pugi::xml_node& child_xml, Node* parent)
         }
     }
 
+    if (auto prop = node->get_prop_ptr(prop_orientation); prop)
+    {
+        if (auto value = child_xml.find_child_by_attribute("string", "name", "proxy-Orientation"); value)
+        {
+            auto direction = ExtractQuotedString(value);
+            if (direction.is_sameas("Vertical", tt::CASE::either))
+            {
+                prop->set_value("wxVERTICAL");
+            }
+            else if (direction.is_sameas("Horizontal", tt::CASE::either))
+            {
+                prop->set_value("wxHORIZONTAL");
+            }
+            else
+            {
+                m_errors.emplace(tt_string("Unrecognized orientation: ") << direction);
+            }
+        }
+    }
+
     // These Set...() functions can be called whether or not the property exists, so no need to
     // check for it first.
 
@@ -704,6 +724,14 @@ auto lst_borders_flags = std::to_array({
 
 });
 
+// These are used to set prop_style
+auto lst_style = std::to_array({
+
+    "wxLI_HORIZONTAL",
+    "wxLI_VERTICAL",
+
+});
+
 std::map<std::string_view, std::string_view, std::less<>> s_map_old_borders = {
 
     { "wxDOUBLE_BORDER", "wxBORDER_DOUBLE" },
@@ -777,6 +805,21 @@ void DialogBlocks::ProcessStyles(pugi::xml_node& node_xml, const NodeSharedPtr& 
         new_node->set_value(prop_window_extra_style, style_str);
     }
 
+    style_str.clear();
+    for (auto& style: lst_style)
+    {
+        if (styles.contains(style))
+        {
+            if (style_str.size())
+                style_str << '|';
+            style_str << style;
+        }
+    }
+    if (style_str.size())
+    {
+        new_node->set_value(prop_style, style_str);
+    }
+
     if (new_node->isGen(gen_wxDialog))
     {
         style_str.clear();
@@ -826,6 +869,38 @@ void DialogBlocks::ProcessStyles(pugi::xml_node& node_xml, const NodeSharedPtr& 
                 style_str << style;
             }
         }
+        if (auto value = node_xml.find_child_by_attribute("string", "name", "proxy-AlignH"); value)
+        {
+            auto alignment = ExtractQuotedString(value);
+            if (alignment.is_sameas("Right", tt::CASE::either))
+            {
+                if (style_str.size())
+                    style_str << '|';
+                style_str << "wxRIGHT";
+            }
+            else if (alignment.is_sameas("Centre", tt::CASE::either))
+            {
+                if (style_str.size())
+                    style_str << '|';
+                style_str << "wxALIGN_CENTER";
+            }
+        }
+        if (auto value = node_xml.find_child_by_attribute("string", "name", "proxy-AlignV"); value)
+        {
+            auto alignment = ExtractQuotedString(value);
+            if (alignment.is_sameas("Bottom", tt::CASE::either))
+            {
+                if (style_str.size())
+                    style_str << '|';
+                style_str << "wxBOTTOM";
+            }
+            else if (alignment.is_sameas("Centre", tt::CASE::either))
+            {
+                if (style_str.size())
+                    style_str << '|';
+                style_str << "wxALIGN_CENTER";
+            }
+        }
         if (style_str.size())
         {
             new_node->set_value(prop_alignment, style_str);
@@ -842,6 +917,26 @@ void DialogBlocks::ProcessStyles(pugi::xml_node& node_xml, const NodeSharedPtr& 
                 style_str << style;
             }
         }
+
+        if (auto value = node_xml.find_child_by_attribute("string", "name", "proxy-AlignH"); value)
+        {
+            if (ExtractQuotedString(value).is_sameas("Expand", tt::CASE::either))
+            {
+                if (style_str.size())
+                    style_str << '|';
+                style_str << "wxEXPAND";
+            }
+        }
+        if (auto value = node_xml.find_child_by_attribute("string", "name", "proxy-AlignV"); value)
+        {
+            if (ExtractQuotedString(value).is_sameas("Expand", tt::CASE::either))
+            {
+                if (style_str.size())
+                    style_str << '|';
+                style_str << "wxEXPAND";
+            }
+        }
+
         if (style_str.size())
         {
             new_node->set_value(prop_flags, style_str);

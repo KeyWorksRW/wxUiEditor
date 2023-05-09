@@ -29,6 +29,9 @@ public:
     bool Import(const tt_wxString& filename, bool write_doc = true) override;
     NodeSharedPtr CreateFbpNode(pugi::xml_node& xml_prop, Node* parent, Node* sizeritem = nullptr);
 
+    // wxCrafter only supports C++ code generation
+    int GetLanguage() const override { return GEN_LANG_CPLUSPLUS; }
+
 protected:
     bool ProcessFont(Node* node, const rapidjson::Value& object);
     bool ProcessScintillaProperty(Node* node, const rapidjson::Value& object);

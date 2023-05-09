@@ -228,6 +228,7 @@ set (file_list
     # Importers (also see Windows Resource importer below)
 
     import/import_crafter_maps.cpp  # wxCrafter mappings
+    import/import_dialogblocks.cpp  # Import a DialogBlocks project
     import/import_formblder.cpp     # Import a wxFormBuider project
     import/import_wxcrafter.cpp     # Import a wxCrafter project
     import/import_wxglade.cpp       # Import a Import a wxGlade file
@@ -346,6 +347,7 @@ set (doc_list
     ../docs/DEV_NOTES.md
     ../docs/images.md
     ../docs/import_crafter.md
+    ../docs/import_dialogblocks.md
     ../docs/import_formbuilder.md
     ../docs/import_winres.md
     ../docs/xrc.md

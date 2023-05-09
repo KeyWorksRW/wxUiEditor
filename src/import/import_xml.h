@@ -29,7 +29,7 @@ public:
     auto GetErrors() { return m_errors; }
 
     // Returns a GEN_LANG_* value -- default is GEN_LANG_NONE
-    auto GetLanguage() const { return m_language; }
+    virtual int GetLanguage() const { return m_language; }
 
     // This will check for an obsolete event name, and if found, it will return the 3.x
     // version of the name. Otherwise, it returns name unmodified.

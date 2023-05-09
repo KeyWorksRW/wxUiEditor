@@ -17,4 +17,7 @@ public:
     WxSmith();
 
     bool Import(const tt_wxString& filename, bool write_doc = true) override;
+
+    // wxSmith only supports C++ code generation
+    int GetLanguage() const override { return GEN_LANG_CPLUSPLUS; }
 };

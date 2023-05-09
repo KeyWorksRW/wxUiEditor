@@ -409,6 +409,11 @@ void MainFrame::OnSaveAsProject(wxCommandEvent&)
             wxMessageBox("You cannot save the project as a wxFormBuilder project file", "Save Project As");
             return;
         }
+        else if (filename.extension().is_sameas(".fjd", tt::CASE::either))
+        {
+            wxMessageBox("You cannot save the project as a DialogBlocks project file", "Save Project As");
+            return;
+        }
         else if (filename.extension().is_sameas(".wxg", tt::CASE::either))
         {
             wxMessageBox("You cannot save the project as a wxGlade file", "Save Project As");
@@ -459,6 +464,7 @@ void MainFrame::OnOpenProject(wxCommandEvent&)
                         "wxUiEditor Project File (*.wxui)|*.wxui;*.wxue"
                         "|Windows Resource File (*.rc)|*.rc"
                         "|wxCrafter Project File (*.wxcp)|*.wxcp"
+                        "|DialogBlocks Project File (*.fjd)|*.fjd"
                         "|wxFormBuilder Project File (*.fbp)|*.fbp"
                         "|wxGlade File (*.wxg)|*.wxg"
                         "|wxSmith File (*.wxs)|*.wxs"
@@ -491,6 +497,19 @@ void MainFrame::OnAppendCrafter(wxCommandEvent&)
         wxArrayString files;
         dlg.GetPaths(files);
         Project.AppendCrafter(files);
+    }
+}
+
+void MainFrame::OnAppendDialogBlocks(wxCommandEvent&)
+{
+    tt_cwd cwd(true);
+    wxFileDialog dlg(this, "Open or Import Project", cwd, wxEmptyString, "DialogBlocks Project File (*.pjd)|*.pjd||",
+                     wxFD_OPEN | wxFD_FILE_MUST_EXIST | wxFD_MULTIPLE);
+    if (dlg.ShowModal() == wxID_OK)
+    {
+        wxArrayString files;
+        dlg.GetPaths(files);
+        Project.AppendDialogBlocks(files);
     }
 }
 
@@ -584,6 +603,8 @@ void MainFrame::OnImportRecent(wxCommandEvent& event)
         Project.AppendSmith(files);
     else if (extension == ".xrc")
         Project.AppendXRC(files);
+    else if (extension == ".fjd")
+        Project.AppendDialogBlocks(files);
 }
 #endif  // defined(_DEBUG) || defined(INTERNAL_TESTING)
 

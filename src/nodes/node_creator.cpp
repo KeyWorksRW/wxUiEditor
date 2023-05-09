@@ -103,6 +103,10 @@ NodeSharedPtr NodeCreator::CreateNode(GenName name, Node* parent)
     NodeSharedPtr node;
     NodeDeclaration* node_decl;
 
+    ASSERT(name != gen_unknown);
+    if (name == gen_unknown)
+        return node;
+
     // This is a way for a ribbon panel button to indicate a wxBoxSizer with vertical orientation
     if (name == gen_VerticalBoxSizer)
         node_decl = m_a_declarations[gen_wxBoxSizer];

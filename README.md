@@ -8,6 +8,7 @@ In addition to creating new projects, the following project types can be importe
 - **wxFormBuilder** (Click [here](docs/import_formbuilder.md) for more information)
 - **wxGlade**
 - **wxSmith**
+- **DialogBlocks** (Click [here](docs/import_dialogblocks.md) for more information)
 - **XRC** (including exports from **DialogBlocks**)
 - **Windows Resource Dialogs** (Click [here](docs/import_winres.md) for more information)
 

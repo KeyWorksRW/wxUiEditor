@@ -41,11 +41,11 @@ jobs:
       run: cmake -G "Visual Studio 16 2019" -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
 
     - name: Initialize CodeQL
-      uses: github/codeql-action/init@v1
+      uses: github/codeql-action/init@v2
       with:
         languages: ${{ matrix.language }}
 
     - run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --target check_build
 
     - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@v1
+      uses: github/codeql-action/analyze@v2

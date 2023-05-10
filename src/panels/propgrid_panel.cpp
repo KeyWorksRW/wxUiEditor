@@ -45,6 +45,7 @@
 #include "../customprops/evt_string_prop.h"     // EventStringProperty -- dialog for editing event handlers
 #include "../customprops/font_string_prop.h"  // FontStringDialogAdapter -- Derived wxStringProperty class for font property
 #include "../customprops/html_string_prop.h"  // EditHtmlDialogAdapter -- Derived wxStringProperty class for HTML
+#include "../customprops/id_prop.h"           // ID_Property -- Uses IDEditorDlg to edit a custom ID
 #include "../customprops/pg_animation.h"      // PropertyGrid_Animation -- Custom property grid class for animations
 #include "../customprops/pg_image.h"          // PropertyGrid_Image -- Custom property grid class for images
 #include "../customprops/pg_point.h"          // CustomPointProperty -- custom wxPGProperty for handling wxPoint
@@ -268,7 +269,7 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
     switch (type)
     {
         case type_id:
-            return new wxStringProperty(prop->DeclName().wx_str(), wxPG_LABEL, prop->as_wxString());
+            return new ID_Property(prop->DeclName().wx_str(), prop);
 
         case type_int:
             return new wxIntProperty(prop->DeclName().wx_str(), wxPG_LABEL, prop->as_int());

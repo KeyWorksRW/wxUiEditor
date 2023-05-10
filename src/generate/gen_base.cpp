@@ -1134,6 +1134,17 @@ void BaseCodeGenerator::GenerateClassHeader(Node* form_node, const EventVector& 
     GenValidatorFunctions(form_node);
     m_header->writeLine();
 
+    if (m_form_node->HasValue(prop_class_methods))
+    {
+        m_header->writeLine();
+        tt_string_vector class_list(m_form_node->as_string(prop_class_methods), "\"", tt::TRIM::both);
+        for (auto& iter: class_list)
+        {
+            m_header->writeLine(iter);
+        }
+        m_header->writeLine();
+    }
+
     GenEnumIds(form_node);
 
     if (m_form_node->HasValue(prop_inserted_hdr_code))
@@ -1173,6 +1184,15 @@ void BaseCodeGenerator::GenerateClassHeader(Node* form_node, const EventVector& 
         m_header->writeLine("// Class member variables");
         m_header->writeLine();
         WriteSetLines(m_header, code_lines);
+    }
+
+    if (m_form_node->HasValue(prop_class_members))
+    {
+        tt_string_vector class_list(m_form_node->as_string(prop_class_members), "\"", tt::TRIM::both);
+        for (auto& iter: class_list)
+        {
+            m_header->writeLine(iter);
+        }
     }
 
     m_header->Unindent();

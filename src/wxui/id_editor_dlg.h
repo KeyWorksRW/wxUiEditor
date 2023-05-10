@@ -16,8 +16,11 @@
 #include <wx/gdicmn.h>
 #include <wx/radiobut.h>
 #include <wx/sizer.h>
+#include <wx/statbox.h>
 #include <wx/stattext.h>
 #include <wx/textctrl.h>
+
+class Node;
 
 class IDEditorDlg : public wxDialog
 {
@@ -34,6 +37,10 @@ public:
         wxDefaultPosition, const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_DIALOG_STYLE, const wxString &name = wxDialogNameStr);
 
+    wxString GetResults() { return m_result; }
+
+    void SetNode(Node* node) { m_node = node; }
+
 protected:
 
     // Event handlers
@@ -44,7 +51,8 @@ protected:
     void OnPrefixEdit(wxCommandEvent& event);
     void OnPrefixEnter(wxCommandEvent& event);
     void OnPrefixSelect(wxCommandEvent& event);
-    void OnStockID(wxCommandEvent& event);
+    void OnStandardID(wxCommandEvent& event);
+    void OnStdChange(wxCommandEvent& event);
     void OnSuffixEdit(wxCommandEvent& event);
     void OnSuffixEnter(wxCommandEvent& event);
     void OnSuffixSelect(wxCommandEvent& event);
@@ -55,17 +63,23 @@ private:
 
     // Class member variables
 
-    wxChoice* m_choice_stockids;
+    wxChoice* m_standard_ids;
     wxComboBox* m_comboPrefixes;
     wxComboBox* m_comboSuffix;
     wxFlexGridSizer* m_flex_grid_sizer;
     wxRadioButton* m_radioBtn_Custom;
-    wxRadioButton* m_radioBtn_Stock;
+    wxStaticBoxSizer* m_cstm_id_box;
+    wxRadioButton* m_radioBtn_Standard;
+    wxStaticBoxSizer* m_std_id_box;
     wxStaticText* m_final_id;
     wxStaticText* m_help_text;
     wxStaticText* m_stock_label;
     wxTextCtrl* m_textID;
     wxTextCtrl* m_textValue;
+
+    wxString m_result;
+
+    Node* m_node;
 };
 
 // ************* End of generated code ***********

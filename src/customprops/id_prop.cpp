@@ -22,9 +22,10 @@ ID_Property::ID_Property(const wxString& label, NodeProperty* prop) :
 bool ID_DialogAdapter::DoShowDialog(wxPropertyGrid* WXUNUSED(propGrid), wxPGProperty* WXUNUSED(property))
 {
     IDEditorDlg dlg(wxGetFrame().GetWindow());
+    dlg.SetNode(m_prop->GetNode());
     if (dlg.ShowModal() == wxID_OK)
     {
-        // SetValue(dlg.GetResults());
+        SetValue(dlg.GetResults());
         return true;
     }
 

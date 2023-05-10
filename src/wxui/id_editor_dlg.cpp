@@ -8,7 +8,6 @@
 // clang-format off
 
 #include <wx/button.h>
-#include <wx/statbox.h>
 
 #include "id_editor_dlg.h"
 
@@ -20,73 +19,72 @@ bool IDEditorDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 
     auto* dlg_sizer = new wxBoxSizer(wxVERTICAL);
 
-    m_radioBtn_Stock = new wxRadioButton(this, wxID_ANY, "wxWidgets Stock ID");
-    auto* static_box = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, m_radioBtn_Stock), wxVERTICAL);
+    m_radioBtn_Standard = new wxRadioButton(this, wxID_ANY, "wxWidgets Standard ID");
+    m_std_id_box = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, m_radioBtn_Standard), wxVERTICAL);
 
-    m_choice_stockids = new wxChoice(static_box->GetStaticBox(), wxID_ANY);
-    static_box->Add(m_choice_stockids, wxSizerFlags().Expand().Border(wxALL));
+    m_standard_ids = new wxChoice(m_std_id_box->GetStaticBox(), wxID_ANY);
+    m_std_id_box->Add(m_standard_ids, wxSizerFlags().Expand().Border(wxALL));
 
     m_flex_grid_sizer = new wxFlexGridSizer(2, 0, 0);
 
-    auto* staticText = new wxStaticText(static_box->GetStaticBox(), wxID_ANY, "Label:");
+    auto* staticText = new wxStaticText(m_std_id_box->GetStaticBox(), wxID_ANY, "Label:");
     m_flex_grid_sizer->Add(staticText, wxSizerFlags().Border(wxALL));
 
-    m_stock_label = new wxStaticText(static_box->GetStaticBox(), wxID_ANY, "stock label");
+    m_stock_label = new wxStaticText(m_std_id_box->GetStaticBox(), wxID_ANY, "stock label");
     m_flex_grid_sizer->Add(m_stock_label, wxSizerFlags().Expand().Border(wxALL));
 
-    auto* staticText_2 = new wxStaticText(static_box->GetStaticBox(), wxID_ANY, "Help:");
+    auto* staticText_2 = new wxStaticText(m_std_id_box->GetStaticBox(), wxID_ANY, "Help:");
     m_flex_grid_sizer->Add(staticText_2, wxSizerFlags().Border(wxALL));
 
-    m_help_text = new wxStaticText(static_box->GetStaticBox(), wxID_ANY, "help text");
+    m_help_text = new wxStaticText(m_std_id_box->GetStaticBox(), wxID_ANY, "help text");
     m_flex_grid_sizer->Add(m_help_text, wxSizerFlags().Border(wxALL));
     m_flex_grid_sizer->ShowItems(false);
-    static_box->Add(m_flex_grid_sizer, wxSizerFlags().Border(wxALL));
+    m_std_id_box->Add(m_flex_grid_sizer, wxSizerFlags().Border(wxALL));
 
-    dlg_sizer->Add(static_box, wxSizerFlags().Expand().Border(wxALL));
+    dlg_sizer->Add(m_std_id_box, wxSizerFlags().Expand().Border(wxALL));
 
     m_radioBtn_Custom = new wxRadioButton(this, wxID_ANY, "Custom ID");
-    auto* static_box_3 = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, m_radioBtn_Custom), wxVERTICAL);
-    static_box_3->GetStaticBox()->Enable(false);
+    m_cstm_id_box = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, m_radioBtn_Custom), wxVERTICAL);
 
     auto* box_sizer = new wxBoxSizer(wxHORIZONTAL);
 
-    auto* staticText_5 = new wxStaticText(static_box_3->GetStaticBox(), wxID_ANY, "ID:");
+    auto* staticText_5 = new wxStaticText(m_cstm_id_box->GetStaticBox(), wxID_ANY, "ID:");
     box_sizer->Add(staticText_5, wxSizerFlags().Center().Border(wxALL));
 
-    m_textID = new wxTextCtrl(static_box_3->GetStaticBox(), wxID_ANY, wxEmptyString);
+    m_textID = new wxTextCtrl(m_cstm_id_box->GetStaticBox(), wxID_ANY, wxEmptyString);
     box_sizer->Add(m_textID, wxSizerFlags(1).Expand().Border(wxALL));
 
-    auto* staticText_4 = new wxStaticText(static_box_3->GetStaticBox(), wxID_ANY, "Value:");
+    auto* staticText_4 = new wxStaticText(m_cstm_id_box->GetStaticBox(), wxID_ANY, "Value:");
     box_sizer->Add(staticText_4, wxSizerFlags().Center().Border(wxALL));
 
-    m_textValue = new wxTextCtrl(static_box_3->GetStaticBox(), wxID_ANY, wxEmptyString);
+    m_textValue = new wxTextCtrl(m_cstm_id_box->GetStaticBox(), wxID_ANY, wxEmptyString);
     m_textValue->SetHint("wxID_HIGHEST + 1");
     box_sizer->Add(m_textValue, wxSizerFlags(1).Border(wxALL));
 
-    static_box_3->Add(box_sizer, wxSizerFlags().Expand().Border(wxALL));
+    m_cstm_id_box->Add(box_sizer, wxSizerFlags().Expand().Border(wxALL));
 
     auto* box_sizer_2 = new wxBoxSizer(wxHORIZONTAL);
 
-    auto* staticText_3 = new wxStaticText(static_box_3->GetStaticBox(), wxID_ANY, "Prefix:");
+    auto* staticText_3 = new wxStaticText(m_cstm_id_box->GetStaticBox(), wxID_ANY, "Prefix:");
     box_sizer_2->Add(staticText_3, wxSizerFlags().Center().Border(wxALL));
 
-    m_comboPrefixes = new wxComboBox(static_box_3->GetStaticBox(), wxID_ANY);
+    m_comboPrefixes = new wxComboBox(m_cstm_id_box->GetStaticBox(), wxID_ANY);
     m_comboPrefixes->Append("none");
     m_comboPrefixes->SetStringSelection("none");
     box_sizer_2->Add(m_comboPrefixes, wxSizerFlags(1).Border(wxALL));
 
-    auto* staticText_7 = new wxStaticText(static_box_3->GetStaticBox(), wxID_ANY, "Suffix:");
+    auto* staticText_7 = new wxStaticText(m_cstm_id_box->GetStaticBox(), wxID_ANY, "Suffix:");
     box_sizer_2->Add(staticText_7, wxSizerFlags().Center().Border(wxALL));
 
-    m_comboSuffix = new wxComboBox(static_box_3->GetStaticBox(), wxID_ANY);
+    m_comboSuffix = new wxComboBox(m_cstm_id_box->GetStaticBox(), wxID_ANY);
     m_comboSuffix->Append("none");
     m_comboSuffix->Append("");
     m_comboSuffix->SetStringSelection("none");
     box_sizer_2->Add(m_comboSuffix, wxSizerFlags(1).Border(wxALL));
 
-    static_box_3->Add(box_sizer_2, wxSizerFlags().Expand().Border(wxALL));
+    m_cstm_id_box->Add(box_sizer_2, wxSizerFlags().Expand().Border(wxALL));
 
-    dlg_sizer->Add(static_box_3, wxSizerFlags().Border(wxALL));
+    dlg_sizer->Add(m_cstm_id_box, wxSizerFlags().Border(wxALL));
 
     auto* box_sizer_3 = new wxBoxSizer(wxHORIZONTAL);
 
@@ -106,10 +104,11 @@ bool IDEditorDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 
     // Event handlers
     Bind(wxEVT_UPDATE_UI, &IDEditorDlg::OnAffirmative, this, wxID_OK);
+    m_standard_ids->Bind(wxEVT_CHOICE, &IDEditorDlg::OnStdChange, this);
     m_comboPrefixes->Bind(wxEVT_COMBOBOX, &IDEditorDlg::OnPrefixSelect, this);
     m_comboSuffix->Bind(wxEVT_COMBOBOX, &IDEditorDlg::OnSuffixSelect, this);
     Bind(wxEVT_INIT_DIALOG, &IDEditorDlg::OnInit, this);
-    m_radioBtn_Stock->Bind(wxEVT_RADIOBUTTON, &IDEditorDlg::OnStockID, this);
+    m_radioBtn_Standard->Bind(wxEVT_RADIOBUTTON, &IDEditorDlg::OnStandardID, this);
     m_radioBtn_Custom->Bind(wxEVT_RADIOBUTTON, &IDEditorDlg::OnCustomID, this);
     m_textID->Bind(wxEVT_TEXT, &IDEditorDlg::OnTextID, this);
     m_textValue->Bind(wxEVT_TEXT, &IDEditorDlg::OnTextValue, this);
@@ -139,27 +138,74 @@ bool IDEditorDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 
 #include <array>
 
+#include <wx/stockitem.h>  // stock items helpers
+
 #include "id_lists.h"
 
+#include "node.h"          // Node class
+#include "node_creator.h"  // NodeCreator -- Class used to create nodes
 
 void IDEditorDlg::OnInit(wxInitDialogEvent& event)
 {
     for (auto& iter: list_wx_ids)
     {
-        m_choice_stockids->Append(iter);
+        m_standard_ids->Append(iter);
+    }
+
+    ASSERT_MSG(m_node, "You must call SetNode() before calling OnInit()")
+    auto& cur_id = m_node->value(prop_id);
+    if (cur_id.starts_with("wxID_"))
+    {
+        m_radioBtn_Standard->SetValue(true);
+        m_standard_ids->SetStringSelection(cur_id);
+        m_final_id->SetLabel(cur_id);
+
+        m_radioBtn_Custom->SetValue(false);
+        m_cstm_id_box->GetStaticBox()->Enable(false);
     }
 
     event.Skip();  // transfer all validator data to their windows and update UI
 }
 
-void IDEditorDlg::OnStockID(wxCommandEvent& WXUNUSED(event))
+void IDEditorDlg::OnStdChange(wxCommandEvent& WXUNUSED(event))
 {
-    // TODO: Implement OnStockID
+    m_result = m_standard_ids->GetStringSelection();
+    m_final_id->SetLabel(m_result);
+
+    for (auto& iter: lst_stock_ids)
+    {
+        if (iter == m_result)
+        {
+            if (auto stock_id = NodeCreation.GetConstantAsInt(m_result.utf8_string()); stock_id > 0)
+            {
+                m_flex_grid_sizer->ShowItems(true);
+                m_stock_label->SetLabel(wxGetStockLabel(stock_id));
+                m_help_text->SetLabel(wxGetStockHelpString(stock_id));
+                Fit();
+                return;
+            }
+        }
+    }
+    m_flex_grid_sizer->ShowItems(false);
+    Fit();
+}
+
+void IDEditorDlg::OnStandardID(wxCommandEvent& WXUNUSED(event))
+{
+    m_radioBtn_Custom->SetValue(false);
+    m_cstm_id_box->GetStaticBox()->Enable(false);
+
+    m_std_id_box->GetStaticBox()->Enable(true);
+    m_radioBtn_Standard->SetValue(true);
 }
 
 void IDEditorDlg::OnCustomID(wxCommandEvent& WXUNUSED(event))
 {
-    // TODO: Implement OnCustomID
+    m_radioBtn_Custom->SetValue(true);
+    m_cstm_id_box->GetStaticBox()->Enable(true);
+
+    m_std_id_box->GetStaticBox()->Enable(false);
+    m_radioBtn_Standard->SetValue(false);
 }
 
 void IDEditorDlg::OnTextID(wxCommandEvent& WXUNUSED(event))

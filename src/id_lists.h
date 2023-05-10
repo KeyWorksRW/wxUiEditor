@@ -1,14 +1,19 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   wxID_ strings
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
+#pragma once
+
 // This file is designed to be #included into propgrid_panel.cpp, so it doesn't have the normal precompiled header.
 
+#include <array>
+
 // clang-format off
-inline const char*  list_wx_ids[] = {
+
+auto inline list_wx_ids = std::to_array({
 
     "wxID_ABORT",
     "wxID_ABOUT",
@@ -141,5 +146,81 @@ inline const char*  list_wx_ids[] = {
     "wxID_ZOOM_IN",
     "wxID_ZOOM_OUT",
 
-};
+});
+
+auto inline lst_stock_ids = std::to_array({
+    "wxID_ABOUT",
+    "wxID_ADD",
+    "wxID_APPLY",
+    "wxID_BACKWARD",
+    "wxID_BOLD",
+    "wxID_BOTTOM",
+    "wxID_CANCEL",
+    "wxID_CDROM",
+    "wxID_CLEAR",
+    "wxID_CLOSE",
+    "wxID_CONVERT",
+    "wxID_COPY",
+    "wxID_CUT",
+    "wxID_DELETE",
+    "wxID_DOWN",
+    "wxID_EDIT",
+    "wxID_EXECUTE",
+    "wxID_EXIT",
+    "wxID_FILE",
+    "wxID_FIND",
+    "wxID_FIRST",
+    "wxID_FLOPPY",
+    "wxID_FORWARD",
+    "wxID_HARDDISK",
+    "wxID_HELP",
+    "wxID_HOME",
+    "wxID_INDENT",
+    "wxID_INDEX",
+    "wxID_INFO",
+    "wxID_ITALIC",
+    "wxID_JUMP_TO",
+    "wxID_JUSTIFY_CENTER",
+    "wxID_JUSTIFY_FILL",
+    "wxID_JUSTIFY_LEFT",
+    "wxID_JUSTIFY_RIGHT",
+    "wxID_LAST",
+    "wxID_NETWORK",
+    "wxID_NEW",
+    "wxID_NO",
+    "wxID_OK",
+    "wxID_OPEN",
+    "wxID_PASTE",
+    "wxID_PREFERENCES",
+    "wxID_PREVIEW",
+    "wxID_PRINT",
+    "wxID_PROPERTIES",
+    "wxID_REDO",
+    "wxID_REFRESH",
+    "wxID_REMOVE",
+    "wxID_REPLACE",
+    "wxID_REVERT_TO_SAVED",
+    "wxID_SAVE",
+    "wxID_SAVEAS",
+    "wxID_SELECTALL",
+    "wxID_SELECT_COLOR",
+    "wxID_SELECT_FONT",
+    "wxID_SORT_ASCENDING",
+    "wxID_SORT_DESCENDING",
+    "wxID_SPELL_CHECK",
+    "wxID_STOP",
+    "wxID_STRIKETHROUGH",
+    "wxID_TOP",
+    "wxID_UNDELETE",
+    "wxID_UNDERLINE",
+    "wxID_UNDO",
+    "wxID_UNINDENT",
+    "wxID_UP",
+    "wxID_YES",
+    "wxID_ZOOM_100",
+    "wxID_ZOOM_FIT",
+    "wxID_ZOOM_IN",
+    "wxID_ZOOM_OUT",
+});
+
 // clang-format on

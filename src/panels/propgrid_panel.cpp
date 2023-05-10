@@ -52,7 +52,7 @@
 #include "../customprops/sb_fields_prop.h"    // SBarFieldsProperty -- Property editor for status bar fields
 #include "../customprops/txt_string_prop.h"   // EditStringProperty -- dialog for editing single-line strings
 
-#include "wx_id_list.cpp"  // wxID_ strings
+#include "id_lists.h"  // wxID_ strings
 
 using namespace GenEnum;
 

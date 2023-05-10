@@ -129,6 +129,8 @@ namespace GenEnum
         prop_checked,
         prop_class_access,
         prop_class_decoration,
+        prop_class_members,
+        prop_class_methods,
         prop_class_name,
         prop_close_button,
         prop_cmake_file,

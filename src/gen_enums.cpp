@@ -123,6 +123,8 @@ std::map<GenEnum::PropName, const char*> GenEnum::map_PropNames = {
     { prop_checked, "checked" },
     { prop_class_access, "class_access" },
     { prop_class_decoration, "class_decoration" },
+    { prop_class_members, "class_members" },
+    { prop_class_methods, "class_methods" },
     { prop_class_name, "class_name" },
     { prop_close_button, "close_button" },
     { prop_cmake_file, "cmake_file" },

@@ -94,6 +94,10 @@ inline const char* project_xml = R"===(<?xml version="1.0"?>
 				help="Use wxHelpControllerHelpProvider to provide context-sensitive help." />
 			none
 		</property>
+		<property name="id_prefixes" type="stringlist_escapes"
+			help="Optional prefixes to apply before a custom id. These can be added in the ID Editor dialog." />
+		<property name="id_suffixes" type="stringlist_escapes"
+			help="Optional suffixes to apply after a custom id. These can be added in the ID Editor dialog." />
 	</gen>
 
 	<gen class="Folder C++ Overrides" type="interface">

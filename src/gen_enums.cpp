@@ -233,6 +233,9 @@ std::map<GenEnum::PropName, const char*> GenEnum::map_PropNames = {
     { prop_html_url, "html_url" },
     { prop_icon, "icon" },
     { prop_id, "id" },
+    { prop_id_initial_value, "id_initial_value" },
+    { prop_id_prefixes, "id_prefixes" },
+    { prop_id_suffixes, "id_suffixes" },
     { prop_image_size, "image_size" },                  // currently unused
     { prop_import_all_dialogs, "import_all_dialogs" },  // currently unused
     { prop_inactive_bitmap, "inactive_bitmap" },

@@ -41,6 +41,7 @@ set (file_list
     customprops/rearrange_prop.cpp      # wxRearangeList contents editor
     customprops/sb_fields_prop.cpp      # Property editor for status bar fields
     customprops/txt_string_prop.cpp     # Derived wxStringProperty class for single-line text
+    customprops/id_prop.cpp             # Uses IDEditorDlg to edit a custom ID
 
     customprops/art_prop_dlg.cpp        # Art Property Dialog for image property
     customprops/eventhandler_dlg.cpp    # Dialog for editing event handlers

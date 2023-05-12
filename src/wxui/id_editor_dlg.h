@@ -9,6 +9,7 @@
 
 #pragma once
 
+#include <wx/checkbox.h>
 #include <wx/choice.h>
 #include <wx/combobox.h>
 #include <wx/dialog.h>
@@ -46,23 +47,18 @@ protected:
     // Event handlers
 
     void OnAffirmative(wxUpdateUIEvent& event);
+    void OnComboSelect(wxCommandEvent& event);
     void OnCustomID(wxCommandEvent& event);
     void OnInit(wxInitDialogEvent& event);
-    void OnPrefixEdit(wxCommandEvent& event);
-    void OnPrefixEnter(wxCommandEvent& event);
-    void OnPrefixSelect(wxCommandEvent& event);
     void OnStandardID(wxCommandEvent& event);
     void OnStdChange(wxCommandEvent& event);
-    void OnSuffixEdit(wxCommandEvent& event);
-    void OnSuffixEnter(wxCommandEvent& event);
-    void OnSuffixSelect(wxCommandEvent& event);
-    void OnTextID(wxCommandEvent& event);
-    void OnTextValue(wxCommandEvent& event);
 
 private:
 
     // Class member variables
 
+    wxCheckBox* m_checkAddPrefix;
+    wxCheckBox* m_checkAddSuffix;
     wxChoice* m_standard_ids;
     wxComboBox* m_comboPrefixes;
     wxComboBox* m_comboSuffix;
@@ -77,9 +73,9 @@ private:
     wxTextCtrl* m_textID;
     wxTextCtrl* m_textValue;
 
-    wxString m_result;
-
     Node* m_node;
+
+    wxString m_result;
 };
 
 // ************* End of generated code ***********

@@ -2581,7 +2581,7 @@
         title="ID Editor"
         base_file="id_editor_dlg"
         base_hdr_includes="class Node;"
-        class_members="&quot;wxString m_result;&quot; &quot;Node* m_node;&quot;"
+        class_members="&quot;Node* m_node;&quot; &quot;wxString m_result;&quot;"
         class_methods="&quot;wxString GetResults() { return m_result; }&quot; &quot;void SetNode(Node* node) { m_node = node; }&quot;"
         private_members="1"
         use_derived_class="0"
@@ -2594,7 +2594,7 @@
           <node
             class="StaticRadioBtnBoxSizer"
             class_access="protected:"
-            label="wxWidgets Standard ID"
+            label="&amp;wxWidgets Standard ID"
             radiobtn_var_name="m_radioBtn_Standard"
             var_name="m_std_id_box"
             flags="wxEXPAND"
@@ -2634,9 +2634,10 @@
             class="StaticRadioBtnBoxSizer"
             checked="0"
             class_access="protected:"
-            label="Custom ID"
+            label="&amp;Custom ID"
             radiobtn_var_name="m_radioBtn_Custom"
             var_name="m_cstm_id_box"
+            flags="wxEXPAND"
             wxEVT_RADIOBUTTON="OnCustomID">
             <node
               class="wxBoxSizer"
@@ -2644,62 +2645,90 @@
               <node
                 class="wxStaticText"
                 class_access="none"
-                label="ID:"
+                label="&amp;ID:"
                 var_name="staticText_5"
                 alignment="wxALIGN_CENTER_VERTICAL" />
               <node
                 class="wxTextCtrl"
+                hint="MYID"
+                style="wxTE_PROCESS_ENTER"
                 var_name="m_textID"
                 flags="wxEXPAND"
                 proportion="1"
-                wxEVT_TEXT="OnTextID" />
+                wxEVT_TEXT="[this](wxCommandEvent&amp; event)@@{@@OnComboSelect(event);@@}[python:OnTextID]"
+                wxEVT_TEXT_ENTER="[this](wxCommandEvent&amp; event)@@{@@OnComboSelect(event);@@}[python:OnTextID]" />
               <node
                 class="wxStaticText"
                 class_access="none"
-                label="Value:"
+                label="&amp;Value:"
                 var_name="staticText_4"
                 alignment="wxALIGN_CENTER_VERTICAL" />
               <node
                 class="wxTextCtrl"
                 hint="wxID_HIGHEST + 1"
+                style="wxTE_PROCESS_ENTER"
                 var_name="m_textValue"
                 proportion="1"
-                wxEVT_TEXT="OnTextValue" />
+                wxEVT_TEXT="[this](wxCommandEvent&amp; event)@@{@@OnComboSelect(event);@@}[python:OnTextValue]"
+                wxEVT_TEXT_ENTER="[this](wxCommandEvent&amp; event)@@{@@OnComboSelect(event);@@}[python:OnTextEnter]" />
             </node>
             <node
-              class="wxBoxSizer"
-              var_name="box_sizer_2"
+              class="wxGridBagSizer"
               flags="wxEXPAND">
               <node
+                class="wxCheckBox"
+                label="Add &amp;prefix"
+                var_name="m_checkAddPrefix"
+                colspan="2"
+                wxEVT_CHECKBOX="[this](wxCommandEvent&amp; event)@@{@@m_comboPrefixes->Enable(m_checkAddPrefix->GetValue());@@OnComboSelect(event);@@}[python:OnCheckBox]" />
+              <node
+                class="wxCheckBox"
+                label="Add &amp;suffix"
+                var_name="m_checkAddSuffix"
+                colspan="2"
+                column="2"
+                wxEVT_CHECKBOX="[this](wxCommandEvent&amp; event)@@{@@m_comboSuffix->Enable(m_checkAddSuffix->GetValue());@@OnComboSelect(event);@@}[python:OnCheckBox]" />
+              <node
                 class="wxStaticText"
                 class_access="none"
-                label="Prefix:"
-                var_name="staticText_3"
-                alignment="wxALIGN_CENTER_VERTICAL" />
+                label="Pr&amp;efix:"
+                var_name="staticText_8"
+                tooltip="The prefix list is edited in the Project's id_prefixes property."
+                alignment="wxALIGN_CENTER_VERTICAL"
+                row="1" />
               <node
                 class="wxComboBox"
-                contents="&quot;none&quot;"
-                selection_string="none"
+                hint="MYPREFIX_"
+                style="wxCB_READONLY|wxCB_SORT"
                 var_name="m_comboPrefixes"
+                disabled="1"
+                minimum_size="75,-1d"
+                tooltip="The prefix list is edited in the Project's id_prefixes property."
+                column="1"
                 proportion="1"
-                wxEVT_COMBOBOX="OnPrefixSelect"
-                wxEVT_TEXT="OnPrefixEdit"
-                wxEVT_TEXT_ENTER="OnPrefixEnter" />
+                row="1"
+                wxEVT_COMBOBOX="OnComboSelect" />
               <node
                 class="wxStaticText"
                 class_access="none"
-                label="Suffix:"
-                var_name="staticText_7"
-                alignment="wxALIGN_CENTER_VERTICAL" />
+                label="S&amp;uffix:"
+                var_name="staticText_9"
+                tooltip="The suffix list is edited in the Project's id_suffixes property."
+                alignment="wxALIGN_CENTER_VERTICAL"
+                column="2"
+                row="1" />
               <node
                 class="wxComboBox"
-                contents="&quot;none&quot; &quot;&quot;"
-                selection_string="none"
+                hint="_MYSUFFIX"
+                style="wxCB_READONLY|wxCB_SORT"
                 var_name="m_comboSuffix"
+                disabled="1"
+                minimum_size="75,-1d"
+                tooltip="The suffix list is edited in the Project's id_suffixes property."
+                column="3"
                 proportion="1"
-                wxEVT_COMBOBOX="OnSuffixSelect"
-                wxEVT_TEXT="OnSuffixEdit"
-                wxEVT_TEXT_ENTER="OnSuffixEnter" />
+                row="1"
+                wxEVT_COMBOBOX="OnComboSelect" />
             </node>
           </node>
           <node

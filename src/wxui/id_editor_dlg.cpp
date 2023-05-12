@@ -8,6 +8,7 @@
 // clang-format off
 
 #include <wx/button.h>
+#include <wx/gbsizer.h>
 
 #include "id_editor_dlg.h"
 
@@ -19,7 +20,7 @@ bool IDEditorDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 
     auto* dlg_sizer = new wxBoxSizer(wxVERTICAL);
 
-    m_radioBtn_Standard = new wxRadioButton(this, wxID_ANY, "wxWidgets Standard ID");
+    m_radioBtn_Standard = new wxRadioButton(this, wxID_ANY, "&wxWidgets Standard ID");
     m_std_id_box = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, m_radioBtn_Standard), wxVERTICAL);
 
     m_standard_ids = new wxChoice(m_std_id_box->GetStaticBox(), wxID_ANY);
@@ -43,48 +44,62 @@ bool IDEditorDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 
     dlg_sizer->Add(m_std_id_box, wxSizerFlags().Expand().Border(wxALL));
 
-    m_radioBtn_Custom = new wxRadioButton(this, wxID_ANY, "Custom ID");
+    m_radioBtn_Custom = new wxRadioButton(this, wxID_ANY, "&Custom ID");
     m_cstm_id_box = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, m_radioBtn_Custom), wxVERTICAL);
 
     auto* box_sizer = new wxBoxSizer(wxHORIZONTAL);
 
-    auto* staticText_5 = new wxStaticText(m_cstm_id_box->GetStaticBox(), wxID_ANY, "ID:");
+    auto* staticText_5 = new wxStaticText(m_cstm_id_box->GetStaticBox(), wxID_ANY, "&ID:");
     box_sizer->Add(staticText_5, wxSizerFlags().Center().Border(wxALL));
 
-    m_textID = new wxTextCtrl(m_cstm_id_box->GetStaticBox(), wxID_ANY, wxEmptyString);
+    m_textID = new wxTextCtrl(m_cstm_id_box->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize,
+        wxTE_PROCESS_ENTER);
+    m_textID->SetHint("MYID");
     box_sizer->Add(m_textID, wxSizerFlags(1).Expand().Border(wxALL));
 
-    auto* staticText_4 = new wxStaticText(m_cstm_id_box->GetStaticBox(), wxID_ANY, "Value:");
+    auto* staticText_4 = new wxStaticText(m_cstm_id_box->GetStaticBox(), wxID_ANY, "&Value:");
     box_sizer->Add(staticText_4, wxSizerFlags().Center().Border(wxALL));
 
-    m_textValue = new wxTextCtrl(m_cstm_id_box->GetStaticBox(), wxID_ANY, wxEmptyString);
+    m_textValue = new wxTextCtrl(m_cstm_id_box->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition,
+        wxDefaultSize, wxTE_PROCESS_ENTER);
     m_textValue->SetHint("wxID_HIGHEST + 1");
     box_sizer->Add(m_textValue, wxSizerFlags(1).Border(wxALL));
 
     m_cstm_id_box->Add(box_sizer, wxSizerFlags().Expand().Border(wxALL));
 
-    auto* box_sizer_2 = new wxBoxSizer(wxHORIZONTAL);
+    auto* grid_bag_sizer = new wxGridBagSizer();
 
-    auto* staticText_3 = new wxStaticText(m_cstm_id_box->GetStaticBox(), wxID_ANY, "Prefix:");
-    box_sizer_2->Add(staticText_3, wxSizerFlags().Center().Border(wxALL));
+    m_checkAddPrefix = new wxCheckBox(m_cstm_id_box->GetStaticBox(), wxID_ANY, "Add &prefix");
+    grid_bag_sizer->Add(m_checkAddPrefix, wxGBPosition(0, 0), wxGBSpan(1, 2), wxALL, 5);
 
-    m_comboPrefixes = new wxComboBox(m_cstm_id_box->GetStaticBox(), wxID_ANY);
-    m_comboPrefixes->Append("none");
-    m_comboPrefixes->SetStringSelection("none");
-    box_sizer_2->Add(m_comboPrefixes, wxSizerFlags(1).Border(wxALL));
+    m_checkAddSuffix = new wxCheckBox(m_cstm_id_box->GetStaticBox(), wxID_ANY, "Add &suffix");
+    grid_bag_sizer->Add(m_checkAddSuffix, wxGBPosition(0, 2), wxGBSpan(1, 2), wxALL, 5);
 
-    auto* staticText_7 = new wxStaticText(m_cstm_id_box->GetStaticBox(), wxID_ANY, "Suffix:");
-    box_sizer_2->Add(staticText_7, wxSizerFlags().Center().Border(wxALL));
+    auto* staticText_8 = new wxStaticText(m_cstm_id_box->GetStaticBox(), wxID_ANY, "Pr&efix:");
+    staticText_8->SetToolTip("The prefix list is edited in the Project\'s id_prefixes property.");
+    grid_bag_sizer->Add(staticText_8, wxGBPosition(1, 0), wxGBSpan(1, 1), wxALL, 5);
 
-    m_comboSuffix = new wxComboBox(m_cstm_id_box->GetStaticBox(), wxID_ANY);
-    m_comboSuffix->Append("none");
-    m_comboSuffix->Append("");
-    m_comboSuffix->SetStringSelection("none");
-    box_sizer_2->Add(m_comboSuffix, wxSizerFlags(1).Border(wxALL));
+    m_comboPrefixes = new wxComboBox(m_cstm_id_box->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition,
+        wxDefaultSize, 0, nullptr, wxCB_READONLY|wxCB_SORT);
+    m_comboPrefixes->Enable(false);
+    m_comboPrefixes->SetMinSize(ConvertDialogToPixels(wxSize(75, -1)));
+    m_comboPrefixes->SetToolTip("The prefix list is edited in the Project\'s id_prefixes property.");
+    grid_bag_sizer->Add(m_comboPrefixes, wxGBPosition(1, 1), wxGBSpan(1, 1), wxALL, 5);
 
-    m_cstm_id_box->Add(box_sizer_2, wxSizerFlags().Expand().Border(wxALL));
+    auto* staticText_9 = new wxStaticText(m_cstm_id_box->GetStaticBox(), wxID_ANY, "S&uffix:");
+    staticText_9->SetToolTip("The suffix list is edited in the Project\'s id_suffixes property.");
+    grid_bag_sizer->Add(staticText_9, wxGBPosition(1, 2), wxGBSpan(1, 1), wxALL, 5);
 
-    dlg_sizer->Add(m_cstm_id_box, wxSizerFlags().Border(wxALL));
+    m_comboSuffix = new wxComboBox(m_cstm_id_box->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition,
+        wxDefaultSize, 0, nullptr, wxCB_READONLY|wxCB_SORT);
+    m_comboSuffix->Enable(false);
+    m_comboSuffix->SetMinSize(ConvertDialogToPixels(wxSize(75, -1)));
+    m_comboSuffix->SetToolTip("The suffix list is edited in the Project\'s id_suffixes property.");
+    grid_bag_sizer->Add(m_comboSuffix, wxGBPosition(1, 3), wxGBSpan(1, 1), wxALL, 5);
+
+    m_cstm_id_box->Add(grid_bag_sizer, wxSizerFlags().Expand().Border(wxALL));
+
+    dlg_sizer->Add(m_cstm_id_box, wxSizerFlags().Expand().Border(wxALL));
 
     auto* box_sizer_3 = new wxBoxSizer(wxHORIZONTAL);
 
@@ -104,18 +119,44 @@ bool IDEditorDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 
     // Event handlers
     Bind(wxEVT_UPDATE_UI, &IDEditorDlg::OnAffirmative, this, wxID_OK);
+    m_checkAddPrefix->Bind(wxEVT_CHECKBOX,
+        [this](wxCommandEvent& event)
+        {
+            m_comboPrefixes->Enable(m_checkAddPrefix->GetValue());
+            OnComboSelect(event);
+        });
+    m_checkAddSuffix->Bind(wxEVT_CHECKBOX,
+        [this](wxCommandEvent& event)
+        {
+            m_comboSuffix->Enable(m_checkAddSuffix->GetValue());
+            OnComboSelect(event);
+        });
     m_standard_ids->Bind(wxEVT_CHOICE, &IDEditorDlg::OnStdChange, this);
-    m_comboPrefixes->Bind(wxEVT_COMBOBOX, &IDEditorDlg::OnPrefixSelect, this);
-    m_comboSuffix->Bind(wxEVT_COMBOBOX, &IDEditorDlg::OnSuffixSelect, this);
+    m_comboPrefixes->Bind(wxEVT_COMBOBOX, &IDEditorDlg::OnComboSelect, this);
+    m_comboSuffix->Bind(wxEVT_COMBOBOX, &IDEditorDlg::OnComboSelect, this);
     Bind(wxEVT_INIT_DIALOG, &IDEditorDlg::OnInit, this);
     m_radioBtn_Standard->Bind(wxEVT_RADIOBUTTON, &IDEditorDlg::OnStandardID, this);
     m_radioBtn_Custom->Bind(wxEVT_RADIOBUTTON, &IDEditorDlg::OnCustomID, this);
-    m_textID->Bind(wxEVT_TEXT, &IDEditorDlg::OnTextID, this);
-    m_textValue->Bind(wxEVT_TEXT, &IDEditorDlg::OnTextValue, this);
-    m_comboPrefixes->Bind(wxEVT_TEXT, &IDEditorDlg::OnPrefixEdit, this);
-    m_comboSuffix->Bind(wxEVT_TEXT, &IDEditorDlg::OnSuffixEdit, this);
-    m_comboPrefixes->Bind(wxEVT_TEXT_ENTER, &IDEditorDlg::OnPrefixEnter, this);
-    m_comboSuffix->Bind(wxEVT_TEXT_ENTER, &IDEditorDlg::OnSuffixEnter, this);
+    m_textID->Bind(wxEVT_TEXT,
+        [this](wxCommandEvent& event)
+        {
+            OnComboSelect(event);
+        });
+    m_textValue->Bind(wxEVT_TEXT,
+        [this](wxCommandEvent& event)
+        {
+            OnComboSelect(event);
+        });
+    m_textID->Bind(wxEVT_TEXT_ENTER,
+        [this](wxCommandEvent& event)
+        {
+            OnComboSelect(event);
+        });
+    m_textValue->Bind(wxEVT_TEXT_ENTER,
+        [this](wxCommandEvent& event)
+        {
+            OnComboSelect(event);
+        });
 
     return true;
 }
@@ -142,8 +183,9 @@ bool IDEditorDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 
 #include "id_lists.h"
 
-#include "node.h"          // Node class
-#include "node_creator.h"  // NodeCreator -- Class used to create nodes
+#include "node.h"             // Node class
+#include "node_creator.h"     // NodeCreator -- Class used to create nodes
+#include "project_handler.h"  // ProjectHandler class
 
 void IDEditorDlg::OnInit(wxInitDialogEvent& event)
 {
@@ -162,6 +204,23 @@ void IDEditorDlg::OnInit(wxInitDialogEvent& event)
 
         m_radioBtn_Custom->SetValue(false);
         m_cstm_id_box->GetStaticBox()->Enable(false);
+    }
+
+    if (auto list = Project.ProjectNode()->as_wxArrayString(prop_id_prefixes); list.size())
+    {
+        for (auto& iter: list)
+        {
+            m_comboPrefixes->Append(iter);
+        }
+        m_comboPrefixes->SetSelection(0);
+    }
+    if (auto list = Project.ProjectNode()->as_wxArrayString(prop_id_suffixes); list.size())
+    {
+        for (auto& iter: list)
+        {
+            m_comboSuffix->Append(iter);
+        }
+        m_comboSuffix->SetSelection(0);
     }
 
     event.Skip();  // transfer all validator data to their windows and update UI
@@ -199,56 +258,69 @@ void IDEditorDlg::OnStandardID(wxCommandEvent& WXUNUSED(event))
     m_radioBtn_Standard->SetValue(true);
 }
 
-void IDEditorDlg::OnCustomID(wxCommandEvent& WXUNUSED(event))
+void IDEditorDlg::OnCustomID(wxCommandEvent& event)
 {
     m_radioBtn_Custom->SetValue(true);
     m_cstm_id_box->GetStaticBox()->Enable(true);
 
     m_std_id_box->GetStaticBox()->Enable(false);
     m_radioBtn_Standard->SetValue(false);
+
+    m_comboPrefixes->Enable(m_checkAddPrefix->GetValue());
+    m_comboSuffix->Enable(m_checkAddSuffix->GetValue());
+
+    OnComboSelect(event);
 }
 
-void IDEditorDlg::OnTextID(wxCommandEvent& WXUNUSED(event))
+void IDEditorDlg::OnComboSelect(wxCommandEvent& WXUNUSED(event))
 {
-    // TODO: Implement OnTextID
+    wxString complete_id;
+    if (m_checkAddPrefix->GetValue())
+    {
+        complete_id << m_comboPrefixes->GetStringSelection();
+    }
+
+    complete_id << m_textID->GetValue();
+
+    if (m_checkAddSuffix->GetValue())
+    {
+        complete_id << m_comboSuffix->GetStringSelection();
+    }
+
+    if (m_textValue->GetValue().size())
+    {
+        complete_id << " = " << m_textValue->GetValue();
+    }
+
+    m_final_id->SetLabel(complete_id);
 }
 
-void IDEditorDlg::OnTextValue(wxCommandEvent& WXUNUSED(event))
+void IDEditorDlg::OnAffirmative(wxUpdateUIEvent& event)
 {
-    // TODO: Implement OnTextValue
-}
+    m_result.clear();
+    if (m_radioBtn_Standard->GetValue())
+    {
+        m_result = m_standard_ids->GetStringSelection();
+    }
+    else
+    {
+        if (m_checkAddPrefix->GetValue())
+        {
+            m_result << m_comboPrefixes->GetStringSelection();
+        }
 
-void IDEditorDlg::OnPrefixSelect(wxCommandEvent& WXUNUSED(event))
-{
-    // TODO: Implement OnPrefixSelect
-}
+        m_result << m_textID->GetValue();
 
-void IDEditorDlg::OnPrefixEdit(wxCommandEvent& WXUNUSED(event))
-{
-    // TODO: Implement OnPrefixEdit
-}
+        if (m_checkAddSuffix->GetValue())
+        {
+            m_result << m_comboSuffix->GetStringSelection();
+        }
 
-void IDEditorDlg::OnPrefixEnter(wxCommandEvent& WXUNUSED(event))
-{
-    // TODO: Implement OnPrefixEnter
-}
+        if (m_textValue->GetValue().size())
+        {
+            m_result << " = " << m_textValue->GetValue();
+        }
+    }
 
-void IDEditorDlg::OnSuffixSelect(wxCommandEvent& WXUNUSED(event))
-{
-    // TODO: Implement OnSuffixSelect
-}
-
-void IDEditorDlg::OnSuffixEdit(wxCommandEvent& WXUNUSED(event))
-{
-    // TODO: Implement OnSuffixEdit
-}
-
-void IDEditorDlg::OnSuffixEnter(wxCommandEvent& WXUNUSED(event))
-{
-    // TODO: Implement OnSuffixEnter
-}
-
-void IDEditorDlg::OnAffirmative(wxUpdateUIEvent& WXUNUSED(event))
-{
-    // TODO: Implement OnAffirmative
+    event.Skip();
 }

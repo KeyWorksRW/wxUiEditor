@@ -127,7 +127,6 @@ bool DialogBlocks::Import(const tt_wxString& filename, bool write_doc)
 
         if (write_doc)
             m_project->CreateDoc(m_docOut);
-        return true;
     }
 
     catch (const std::exception& TESTING_PARAM(e))
@@ -136,6 +135,19 @@ bool DialogBlocks::Import(const tt_wxString& filename, bool write_doc)
         wxMessageBox(wxString("This DialogBlocks project file is invalid and cannot be loaded: ") << filename,
                      "Import DialogBlocks project");
         return false;
+    }
+
+    if (m_errors.size())
+    {
+        tt_string errMsg("Not everything in the DialogBlocks project could be converted:\n\n");
+        MSG_ERROR(tt_string() << "------  " << m_importProjectFile.filename().wx_str() << "------");
+        for (auto& iter: m_errors)
+        {
+            MSG_ERROR(iter);
+            errMsg << iter << '\n';
+        }
+
+        wxMessageBox(errMsg, "Import DialogBlocks project");
     }
 
     return true;
@@ -189,6 +201,12 @@ bool DialogBlocks::CreateFormNode(pugi::xml_node& form_xml, const NodeSharedPtr&
         gen_name = MapClassName(type_name);
         if (gen_name == gen_unknown)
         {
+            if (type_name == "wxApp")
+            {
+                // Currently, we don't support creating an app class, but we return true since we know
+                // it's not a folder.
+                return true;
+            }
             ASSERT_MSG(gen_name != gen_unknown, tt_string("Unrecognized proxy-type class: ") << type_name);
             m_errors.emplace(tt_string("Unrecognized form class: ") << type_name);
             return false;
@@ -414,6 +432,7 @@ void DialogBlocks::CreateChildNode(pugi::xml_node& child_xml, Node* parent)
 
     ProcessStyles(child_xml, node);  // Set all styles for the current node
     ProcessEvents(child_xml, node);  // Add all events for the current node
+    ProcessValues(child_xml, node);  // Set all values (min, max, initial, etc.) for the current node
 
     // Now add all the children of this child node
     for (auto& grand_child_xml: child_xml.children("document"))
@@ -438,6 +457,20 @@ GenEnum::GenName DialogBlocks::FindGenerator(pugi::xml_node& node_xml, Node* par
         }
         type_name.Replace("Proxy", "");
         gen_name = MapClassName(type_name);
+        if (gen_name == gen_unknown)
+        {
+            if (type_name == "wxWizardPage")
+            {
+                return gen_wxWizardPageSimple;
+            }
+            else
+            {
+                if (auto value = node_xml.find_child_by_attribute("string", "name", "proxy-Class"); value)
+                {
+                    gen_name = MapClassName(ExtractQuotedString(value));
+                }
+            }
+        }
     }
     if (gen_name == gen_wxPanel)
     {
@@ -967,4 +1000,31 @@ void DialogBlocks::ProcessStyles(pugi::xml_node& node_xml, const NodeSharedPtr& 
 
     // REVIEW: [Randalphwa - 05-07-2023] What happens when something like wxRIGHT is used to indicate a bitmap position?
     // wxBannerWindow has a direction property that also uses wxLEFT, wxRIGHT etc.
+}
+
+void DialogBlocks::ProcessValues(pugi::xml_node& node_xml, const NodeSharedPtr& new_node)
+{
+    if (auto prop = new_node->get_prop_ptr(prop_initial); prop)
+    {
+        if (auto value = node_xml.find_child_by_attribute("string", "name", "Initial value"); value)
+        {
+            prop->set_value(value.text().as_int());
+        }
+    }
+
+    if (auto prop = new_node->get_prop_ptr(prop_min); prop)
+    {
+        if (auto value = node_xml.find_child_by_attribute("string", "name", "Minimum value"); value)
+        {
+            prop->set_value(value.text().as_int());
+        }
+    }
+
+    if (auto prop = new_node->get_prop_ptr(prop_max); prop)
+    {
+        if (auto value = node_xml.find_child_by_attribute("string", "name", "Maximum value"); value)
+        {
+            prop->set_value(value.text().as_int());
+        }
+    }
 }

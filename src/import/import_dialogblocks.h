@@ -23,6 +23,7 @@ public:
     int GetLanguage() const override { return GEN_LANG_CPLUSPLUS; }
 
 protected:
+    void ProcessValues(pugi::xml_node& node_xml, const NodeSharedPtr& new_node);
     // Sets prop_context_help and prop_tooltip
     void SetNodeHelpTipText(pugi::xml_node& node_xml, const NodeSharedPtr& new_node);
 

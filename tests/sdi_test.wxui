@@ -11,7 +11,11 @@
     cpp_line_length="120"
     derived_directory="sdi/cpp"
     generate_cmake="1"
-    python_output_folder="sdi/python">
+    python_output_folder="sdi/python"
+    combine_all_forms="0"
+    combined_xrc_file="combined"
+    xrc_art_directory="art"
+    xrc_directory="sdi/xrc">
     <node
       class="Images"
       base_file="images">
@@ -48,6 +52,7 @@
       import_all_dialogs="1"
       python_file="mainframe"
       python_inherit_name="mainframe"
+      xrc_file="mainframe"
       size="500,300"
       window_style="wxTAB_TRAVERSAL">
       <node
@@ -224,6 +229,7 @@
       inserted_hdr_code="void OnEventName(const std::string&amp; event_name)@@{@@    m_events_list->Select(m_events_list->Append(wxString().FromUTF8(event_name)));@@}"
       insert_python_code="import popupwin"
       python_file="main_test_dlg"
+      xrc_file="main_test_dlg"
       wxEVT_INIT_DIALOG="OnInit">
       <node
         class="wxBoxSizer"
@@ -922,7 +928,8 @@
       title="Book tests"
       base_file="booktest_dlg"
       use_derived_class="0"
-      python_file="booktest_dlg">
+      python_file="booktest_dlg"
+      xrc_file="booktest_dlg">
       <node
         class="wxBoxSizer"
         orientation="wxVERTICAL"
@@ -1366,6 +1373,7 @@
       use_derived_class="0"
       python_file="wizard"
       python_inherit_name="Wizard"
+      xrc_file="wizard"
       wxEVT_INIT_DIALOG="OnInit"
       wxEVT_WIZARD_BEFORE_PAGE_CHANGED="OnBeforeChange">
       <node
@@ -1582,7 +1590,8 @@
         derived_class_name="TestFormPanelDerived"
         derived_file="testformpanel_derived"
         use_derived_class="0"
-        python_file="testformpanel">
+        python_file="testformpanel"
+        xrc_file="testformpanel">
         <node
           class="wxBoxSizer"
           orientation="wxVERTICAL"
@@ -1663,6 +1672,7 @@
         derived_file="../ui/commonctrls"
         inserted_hdr_code="public:@@    ~CommonCtrls();@@@@private:@@    PopupWin* m_popup_win { nullptr };"
         use_derived_class="0"
+        xrc_file="commonctrls"
         wxEVT_INIT_DIALOG="OnInit"
         wxEVT_CONTEXT_MENU="OnContextMenu">
         <node
@@ -2002,7 +2012,8 @@
         class_name="DlgIssue_956"
         title="colspan codegen issue"
         base_file="dlgissue_956.cpp"
-        python_file="dlgissue_956.py">
+        python_file="dlgissue_956.py"
+        xrc_file="dlgissue_956.py">
         <node
           class="wxBoxSizer"
           orientation="wxVERTICAL"
@@ -2076,7 +2087,8 @@
         base_file="dlgissue_960"
         derived_class_name="DlgIssue_960Derived"
         derived_file="dlgissue_960_derived"
-        python_file="dlgissue_960">
+        python_file="dlgissue_960"
+        xrc_file="dlgissue_960">
         <node
           class="wxBoxSizer"
           orientation="wxVERTICAL"

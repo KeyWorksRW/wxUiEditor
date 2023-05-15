@@ -59,6 +59,12 @@ RELEASE-DATE
 SConstruct
 *-RELEASE
 
+# Ignore generated DialogBlocks code files -- we just want the project file
+tests/DialogBlocks/sdi/*.cpp
+tests/DialogBlocks/sdi/*.h
+tests/DialogBlocks/sdi/*.rc
+tests/DialogBlocks/sdi/*.xrc
+
 # cmake
 CMakeFiles/
 build/

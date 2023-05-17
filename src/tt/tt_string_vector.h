@@ -66,7 +66,10 @@ public:
     void ReadArray(const char** begin, size_t count);
 
     // Clears the current vector of parsed strings and creates a new vector
+    // If the separator is a quote, then assume each substring is contained within quotes.
     void SetString(std::string_view str, char separator = ';', tt::TRIM trim = tt::TRIM::none);
+
+    // Clears the current vector of parsed strings and creates a new vector
     void SetString(std::string_view str, std::string_view separator, tt::TRIM trim = tt::TRIM::none);
 
     // Writes each line to the file adding a '\n' to the end of the line.

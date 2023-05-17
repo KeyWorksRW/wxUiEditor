@@ -1137,7 +1137,7 @@ void BaseCodeGenerator::GenerateClassHeader(Node* form_node, const EventVector& 
     if (m_form_node->HasValue(prop_class_methods))
     {
         m_header->writeLine();
-        tt_string_vector class_list(m_form_node->as_string(prop_class_methods), "\"", tt::TRIM::both);
+        tt_string_vector class_list(m_form_node->as_string(prop_class_methods), '"', tt::TRIM::both);
         for (auto& iter: class_list)
         {
             m_header->writeLine(iter);
@@ -1188,7 +1188,8 @@ void BaseCodeGenerator::GenerateClassHeader(Node* form_node, const EventVector& 
 
     if (m_form_node->HasValue(prop_class_members))
     {
-        tt_string_vector class_list(m_form_node->as_string(prop_class_members), "\"", tt::TRIM::both);
+        tt_string_vector class_list(m_form_node->as_string(prop_class_members), '"', tt::TRIM::both);
+        m_header->writeLine();
         for (auto& iter: class_list)
         {
             m_header->writeLine(iter);

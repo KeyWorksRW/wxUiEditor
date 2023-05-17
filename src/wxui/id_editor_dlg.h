@@ -42,6 +42,8 @@ public:
 
     void SetNode(Node* node) { m_node = node; }
 
+    bool SelectPrefixSuffix(Node* node);
+
 protected:
 
     // Event handlers
@@ -76,6 +78,11 @@ private:
     Node* m_node;
 
     wxString m_result;
+
+    bool m_prefix_selected { false };
+
+    bool m_suffix_selected { false };
+
 };
 
 // ************* End of generated code ***********

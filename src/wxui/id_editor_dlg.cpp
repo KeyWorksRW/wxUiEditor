@@ -223,6 +223,11 @@ void IDEditorDlg::OnInit(wxInitDialogEvent& event)
         m_comboSuffix->SetSelection(0);
     }
 
+    if (Project.ProjectNode()->HasValue(prop_id_prefixes) || Project.ProjectNode()->HasValue(prop_id_suffixes))
+    {
+        SelectPrefixSuffix(m_node->get_form());
+    }
+
     event.Skip();  // transfer all validator data to their windows and update UI
 }
 
@@ -323,4 +328,58 @@ void IDEditorDlg::OnAffirmative(wxUpdateUIEvent& event)
     }
 
     event.Skip();
+}
+
+bool IDEditorDlg::SelectPrefixSuffix(Node* node)
+{
+    if (node->HasProp(prop_id))
+    {
+        auto& id = node->value(prop_id);
+        if (!id.starts_with("wxID_"))
+        {
+            if (!m_prefix_selected)
+            {
+                tt_string_vector prefixes;
+                prefixes.SetString(Project.ProjectNode()->value(prop_id_prefixes), '"', tt::TRIM::both);
+                for (auto& iter: prefixes)
+                {
+                    if (id.starts_with(iter))
+                    {
+                        m_comboPrefixes->SetStringSelection(iter);
+                        m_prefix_selected = true;
+                        break;
+                    }
+                }
+            }
+            if (!m_suffix_selected)
+            {
+                tt_string_vector suffixes;
+                suffixes.SetString(Project.ProjectNode()->value(prop_id_prefixes), '"', tt::TRIM::both);
+                for (auto& iter: suffixes)
+                {
+                    if (id.ends_with(iter))
+                    {
+                        m_comboSuffix->SetStringSelection(iter);
+                        m_suffix_selected = true;
+                        break;
+                    }
+                }
+            }
+
+            if (m_prefix_selected && m_suffix_selected)
+            {
+                return true;
+            }
+        }
+    }
+
+    for (auto& iter: node->GetChildNodePtrs())
+    {
+        if (SelectPrefixSuffix(iter.get()))
+        {
+            return true;
+        }
+    }
+
+    return false;
 }

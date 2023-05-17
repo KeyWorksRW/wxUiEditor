@@ -14,6 +14,61 @@
 void tt_string_vector::SetString(std::string_view str, char separator, tt::TRIM trim)
 {
     clear();
+
+    // If the separator is a quote, then assume each substring is contained within quotes.
+    if (separator == '"')
+    {
+        auto start = str.find_first_of(separator);
+        if (start == tt::npos)
+        {
+            return;
+        }
+
+        str.remove_prefix(start);
+        emplace_back();
+        auto& first_item = back();
+        auto end = first_item.ExtractSubString(str);
+        if (first_item.empty())
+        {
+            // Ignore empty items
+            pop_back();
+        }
+        else
+        {
+            if (trim != tt::TRIM::none)
+            {
+                first_item.trim(trim);
+            }
+        }
+
+        while (end != tt::npos && end + 1 < str.length())
+        {
+            start = str.find_first_of(separator, end + 1);
+            if (start == tt::npos)
+            {
+                return;
+            }
+            str.remove_prefix(start);
+            emplace_back();
+            auto& last_item = back();
+            end = last_item.ExtractSubString(str);
+            if (last_item.empty())
+            {
+                // Ignore empty items
+                pop_back();
+            }
+            else
+            {
+                if (trim != tt::TRIM::none)
+                {
+                    last_item.trim(trim);
+                }
+            }
+        }
+
+        return;
+    }
+
     size_t start = 0;
     size_t end = str.find_first_of(separator);
 

@@ -195,37 +195,82 @@ void IDEditorDlg::OnInit(wxInitDialogEvent& event)
     }
 
     ASSERT_MSG(m_node, "You must call SetNode() before calling OnInit()")
-    auto& cur_id = m_node->value(prop_id);
-    if (cur_id.starts_with("wxID_"))
-    {
-        m_radioBtn_Standard->SetValue(true);
-        m_standard_ids->SetStringSelection(cur_id);
-        m_final_id->SetLabel(cur_id);
 
-        m_radioBtn_Custom->SetValue(false);
-        m_cstm_id_box->GetStaticBox()->Enable(false);
-    }
+    tt_string_vector prefixes;
+    prefixes.SetString(Project.ProjectNode()->value(prop_id_prefixes), '"', tt::TRIM::both);
 
-    if (auto list = Project.ProjectNode()->as_wxArrayString(prop_id_prefixes); list.size())
+    tt_string_vector suffixes;
+    suffixes.SetString(Project.ProjectNode()->value(prop_id_suffixes), '"', tt::TRIM::both);
+
+    if (prefixes.size())
     {
-        for (auto& iter: list)
+        for (auto& iter: prefixes)
         {
             m_comboPrefixes->Append(iter);
         }
         m_comboPrefixes->SetSelection(0);
     }
-    if (auto list = Project.ProjectNode()->as_wxArrayString(prop_id_suffixes); list.size())
+    if (suffixes.size())
     {
-        for (auto& iter: list)
+        for (auto& iter: suffixes)
         {
             m_comboSuffix->Append(iter);
         }
         m_comboSuffix->SetSelection(0);
     }
 
-    if (Project.ProjectNode()->HasValue(prop_id_prefixes) || Project.ProjectNode()->HasValue(prop_id_suffixes))
+    if (prefixes.size() || suffixes.size())
     {
         SelectPrefixSuffix(m_node->get_form());
+    }
+
+    // Dummy event so that we can call event handlers (which don't actually use the event)
+    wxCommandEvent dummy_event;
+
+    // Make a copy of the id, because if it's a custom id, then we need to remove the prefix,
+    // suffix and value.
+    tt_string cur_id = m_node->value(prop_id);
+    if (cur_id.starts_with("wxID_"))
+    {
+        m_standard_ids->SetStringSelection(cur_id);
+        OnStandardID(dummy_event);
+    }
+    else
+    {
+        if (auto pos = cur_id.find_first_of('='); pos != tt::npos)
+        {
+            // Until wxWidgets supports C++17, wxString doesn't support std::string_view, so we
+            // use tt_wxString which does.
+            tt_wxString value = tt::find_nonspace(cur_id.substr(pos + 1));
+            m_textValue->SetValue(value);
+            cur_id.erase(pos);
+            cur_id.trim();
+        }
+
+        for (auto& iter: prefixes)
+        {
+            if (cur_id.starts_with(iter))
+            {
+                m_comboPrefixes->SetStringSelection(iter);
+                cur_id.erase(0, iter.size());
+                m_checkAddPrefix->SetValue(true);
+                break;
+            }
+        }
+        for (auto& iter: suffixes)
+        {
+            if (cur_id.ends_with(iter))
+            {
+                m_comboSuffix->SetStringSelection(iter);
+                cur_id.erase(cur_id.size() - iter.size());
+                m_checkAddSuffix->SetValue(true);
+                break;
+            }
+        }
+
+        m_textID->SetValue(cur_id);
+
+        OnCustomID(dummy_event);
     }
 
     event.Skip();  // transfer all validator data to their windows and update UI
@@ -254,13 +299,15 @@ void IDEditorDlg::OnStdChange(wxCommandEvent& WXUNUSED(event))
     Fit();
 }
 
-void IDEditorDlg::OnStandardID(wxCommandEvent& WXUNUSED(event))
+void IDEditorDlg::OnStandardID(wxCommandEvent& event)
 {
     m_radioBtn_Custom->SetValue(false);
     m_cstm_id_box->GetStaticBox()->Enable(false);
 
     m_std_id_box->GetStaticBox()->Enable(true);
     m_radioBtn_Standard->SetValue(true);
+
+    OnComboSelect(event);
 }
 
 void IDEditorDlg::OnCustomID(wxCommandEvent& event)
@@ -280,21 +327,28 @@ void IDEditorDlg::OnCustomID(wxCommandEvent& event)
 void IDEditorDlg::OnComboSelect(wxCommandEvent& WXUNUSED(event))
 {
     wxString complete_id;
-    if (m_checkAddPrefix->GetValue())
+    if (m_radioBtn_Custom->GetValue())
     {
-        complete_id << m_comboPrefixes->GetStringSelection();
+        if (m_checkAddPrefix->GetValue())
+        {
+            complete_id << m_comboPrefixes->GetStringSelection();
+        }
+
+        complete_id << m_textID->GetValue();
+
+        if (m_checkAddSuffix->GetValue())
+        {
+            complete_id << m_comboSuffix->GetStringSelection();
+        }
+
+        if (m_textValue->GetValue().size())
+        {
+            complete_id << " = " << m_textValue->GetValue();
+        }
     }
-
-    complete_id << m_textID->GetValue();
-
-    if (m_checkAddSuffix->GetValue())
+    else
     {
-        complete_id << m_comboSuffix->GetStringSelection();
-    }
-
-    if (m_textValue->GetValue().size())
-    {
-        complete_id << " = " << m_textValue->GetValue();
+        complete_id = m_standard_ids->GetStringSelection();
     }
 
     m_final_id->SetLabel(complete_id);

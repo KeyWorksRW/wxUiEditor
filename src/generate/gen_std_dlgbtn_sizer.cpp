@@ -223,6 +223,7 @@ bool StdDialogButtonSizerGenerator::ConstructionCode(Code& code)
 
     if (!node->IsLocal())
     {
+        code.Eol(eol_if_needed);
         if (node->prop_as_bool(prop_OK))
             code.NodeName() << "OK = wxStaticCast(FindWindowById(wxID_OK), wxButton);\n";
         if (node->prop_as_bool(prop_Yes))

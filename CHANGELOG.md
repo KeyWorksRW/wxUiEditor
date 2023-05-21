@@ -22,6 +22,7 @@ All notable changes to this project will be documented in this file.
 - Code generation for wxToolBar drop-down tools with menu items fixed.
 - Code generation for wxGridBagSizer when growablecols or growablerows specified
 - Code generation for Wizard using wxWidgets 3.1 corrected
+- Header file code generation could create uninitialized wxStdDialogButtonSizer buttons under special circumstances -- this has been fixed.
 
 ## [Released (1.1.0)]
 

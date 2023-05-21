@@ -912,24 +912,27 @@ tt_string BaseCodeGenerator::GetDeclaration(Node* node)
 
         if (class_name == "wxStdDialogButtonSizer")
         {
-            if (node->prop_as_bool(prop_OK))
-                code << "\n\twxButton* " << node->get_node_name() << "OK;";
-            if (node->prop_as_bool(prop_Yes))
-                code << "\n\twxButton* " << node->get_node_name() << "Yes;";
-            if (node->prop_as_bool(prop_Save))
-                code << "\n\twxButton* " << node->get_node_name() << "Save;";
-            if (node->prop_as_bool(prop_Apply))
-                code << "\n\twxButton* " << node->get_node_name() << "Apply;";
-            if (node->prop_as_bool(prop_No))
-                code << "\n\twxButton* " << node->get_node_name() << "No;";
-            if (node->prop_as_bool(prop_Cancel))
-                code << "\n\twxButton* " << node->get_node_name() << "Cancel;";
-            if (node->prop_as_bool(prop_Close))
-                code << "\n\twxButton* " << node->get_node_name() << "Close;";
-            if (node->prop_as_bool(prop_Help))
-                code << "\n\twxButton* " << node->get_node_name() << "Help;";
-            if (node->prop_as_bool(prop_ContextHelp))
-                code << "\n\twxButton* " << node->get_node_name() << "ContextHelp;";
+            if (!node->get_form()->isGen(gen_wxDialog) || node->as_bool(prop_Save) || node->as_bool(prop_ContextHelp))
+            {
+                if (node->prop_as_bool(prop_OK))
+                    code << "\n\twxButton* " << node->get_node_name() << "OK;";
+                if (node->prop_as_bool(prop_Yes))
+                    code << "\n\twxButton* " << node->get_node_name() << "Yes;";
+                if (node->prop_as_bool(prop_Save))
+                    code << "\n\twxButton* " << node->get_node_name() << "Save;";
+                if (node->prop_as_bool(prop_Apply))
+                    code << "\n\twxButton* " << node->get_node_name() << "Apply;";
+                if (node->prop_as_bool(prop_No))
+                    code << "\n\twxButton* " << node->get_node_name() << "No;";
+                if (node->prop_as_bool(prop_Cancel))
+                    code << "\n\twxButton* " << node->get_node_name() << "Cancel;";
+                if (node->prop_as_bool(prop_Close))
+                    code << "\n\twxButton* " << node->get_node_name() << "Close;";
+                if (node->prop_as_bool(prop_Help))
+                    code << "\n\twxButton* " << node->get_node_name() << "Help;";
+                if (node->prop_as_bool(prop_ContextHelp))
+                    code << "\n\twxButton* " << node->get_node_name() << "ContextHelp;";
+            }
         }
         else if (class_name == "wxStaticBitmap")
         {

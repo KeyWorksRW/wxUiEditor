@@ -190,8 +190,8 @@ int App::OnRun()
     // std::cerr will not work. Instead, messages are written to a log file. The log file is
     // the project filename with the extension changed to ".log".
 
-    parser.AddLongSwitch("gen_python", "generate python files and exit");
-    parser.AddLongSwitch("gen_cpp", "generate C++ files and exit");
+    parser.AddLongOption("gen_python", "generate python files and exit");
+    parser.AddLongOption("gen_cpp", "generate C++ files and exit");
 
     // [Randalphwa - 02-08-2023] This probably works, but will remain hidden until it is
     // tested. That said, I'm doubtful that it has any actual value other than for testing -- I
@@ -218,8 +218,7 @@ int App::OnRun()
         tt_wxString log_file;
         auto generate_type = GEN_LANG_NONE;
         bool test_only = false;
-        // if (parser.Found("gen_python", &filename))
-        if (parser.Found("gen_python"))
+        if (parser.Found("gen_python", &filename))
         {
             generate_type = GEN_LANG_PYTHON;
         }

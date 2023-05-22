@@ -187,7 +187,12 @@ void BasePanel::GenerateBaseClass()
     m_cur_form = wxGetFrame().GetSelectedForm();
     if (!m_cur_form)
     {
-        if (Project.ChildCount() > 0)
+        auto* cur_selection = wxGetFrame().GetSelectedNode();
+        if ((cur_selection->isGen(gen_folder) || cur_selection->isGen(gen_sub_folder)) && cur_selection->GetChildCount() > 0)
+        {
+            m_cur_form = cur_selection->GetChild(0);
+        }
+        else if (Project.ChildCount() > 0)
         {
             m_cur_form = Project.GetFirstFormChild();
         }

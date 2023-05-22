@@ -75,8 +75,6 @@ protected:
     wxStaticText* m_staticImportList;
     wxStaticText* m_static_cwd;
     wxStdDialogButtonSizer* m_stdBtn;
-    wxButton* m_stdBtnOK;
-    wxButton* m_stdBtnCancel;
 };
 
 // ************* End of generated code ***********

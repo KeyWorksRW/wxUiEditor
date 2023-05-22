@@ -56,8 +56,6 @@ private:
 
     wxListBox* m_listbox;
     wxStdDialogButtonSizer* m_stdBtn;
-    wxButton* m_stdBtnOK;
-    wxButton* m_stdBtnCancel;
     wxTextCtrl* m_text_name;
 };
 

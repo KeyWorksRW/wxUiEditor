@@ -270,6 +270,19 @@ int GetStyleInt(Node* node, const char* prefix)
     return result;
 }
 
+int GetBitlistInt(Node* node, GenEnum::PropName prop_name)
+{
+    int result = 0;
+    // Can't use multiview because GetConstantAsInt() searches an unordered_map which requires a std::string to pass to it
+    tt_string_vector mstr(node->value(prop_name), '|');
+    for (auto& iter: mstr)
+    {
+        // Friendly names will have already been converted, so normal lookup works fine.
+        result |= NodeCreation.GetConstantAsInt(iter);
+    }
+    return result;
+}
+
 struct BTN_BMP_TYPES
 {
     GenEnum::PropName prop_name;
@@ -1076,7 +1089,8 @@ void GenToolCode(Code& code, const bool is_bitmaps_list)
         code.NodeName() << " = ";
     }
 
-    if (node->IsLocal() && node->isGen(gen_tool_dropdown))
+    if (node->IsLocal() && node->isGen(gen_tool_dropdown) ||
+        (node->isGen(gen_auitool) && node->value(prop_initial_state) != "wxAUI_BUTTON_STATE_NORMAL"))
     {
         code.AddIfCpp("auto* ").NodeName().Add(" = ");
     }

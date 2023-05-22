@@ -1089,7 +1089,7 @@ void GenToolCode(Code& code, const bool is_bitmaps_list)
         code.NodeName() << " = ";
     }
 
-    if (node->IsLocal() && node->isGen(gen_tool_dropdown) ||
+    if ((node->IsLocal() && node->isGen(gen_tool_dropdown)) ||
         (node->isGen(gen_auitool) && node->value(prop_initial_state) != "wxAUI_BUTTON_STATE_NORMAL"))
     {
         code.AddIfCpp("auto* ").NodeName().Add(" = ");

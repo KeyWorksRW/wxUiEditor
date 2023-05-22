@@ -275,13 +275,13 @@ int App::OnRun()
         }
 
         filename.make_absolute();
+        log_file = filename;
+        log_file.replace_extension(".log");
         GenResults results;
         if (filename.file_exists())
         {
             if (generate_type != GEN_LANG_NONE)
             {
-                log_file = filename;
-                log_file.replace_extension(".log");
 #if defined(_DEBUG) || defined(INTERNAL_TESTING)
                 results.StartClock();
 #endif
@@ -300,7 +300,9 @@ int App::OnRun()
         {
             if (generate_type != GEN_LANG_NONE)
             {
-                std::cerr << "Unable to find project file: " << filename << std::endl;
+                tt_string_vector log;
+                log.emplace_back(tt_string("Unable to find project file: ") << filename.utf8_string());
+                log.WriteFile(log_file.utf8_string());
                 return 1;
             }
         }
@@ -309,7 +311,9 @@ int App::OnRun()
         {
             if (!is_project_loaded)
             {
-                std::cerr << "Unable to load project file: " << filename << std::endl;
+                tt_string_vector log;
+                log.emplace_back(tt_string("Unable to load project file: ") << filename.utf8_string());
+                log.WriteFile(log_file.utf8_string());
                 return 1;
             }
 

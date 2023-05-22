@@ -15,6 +15,7 @@
 #include <wx/anybutton.h>              // wxAnyButtonBase class
 #include <wx/aui/auibar.h>             // wxaui: wx advanced user interface - docking window manager
 #include <wx/aui/auibook.h>            // wxaui: wx advanced user interface - notebook
+#include <wx/aui/framemanager.h>       // wxaui: wx advanced user interface - docking window manager
 #include <wx/calctrl.h>                // date-picker control
 #include <wx/checkbox.h>               // wxCheckBox class interface
 #include <wx/choicebk.h>               // wxChoicebook: wxChoice and wxNotebook combination
@@ -510,6 +511,13 @@ void NodeCreator::AddAllConstants()
     ADD_CONSTANT(wxAUI_NB_MIDDLE_CLICK_CLOSE)
     ADD_CONSTANT(wxAUI_NB_TOP)
     ADD_CONSTANT(wxAUI_NB_BOTTOM)
+
+    ADD_CONSTANT(wxAUI_BUTTON_STATE_NORMAL)
+    ADD_CONSTANT(wxAUI_BUTTON_STATE_HOVER)
+    ADD_CONSTANT(wxAUI_BUTTON_STATE_PRESSED)
+    ADD_CONSTANT(wxAUI_BUTTON_STATE_DISABLED)
+    ADD_CONSTANT(wxAUI_BUTTON_STATE_HIDDEN)
+    ADD_CONSTANT(wxAUI_BUTTON_STATE_CHECKED)
 
     // wxFrame style macros
     ADD_CONSTANT(wxDEFAULT_FRAME_STYLE)

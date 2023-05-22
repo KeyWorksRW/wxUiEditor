@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <wxUiEditorData
-  data_version="16">
+  data_version="17">
   <node
     class="Project"
     art_directory="art"
@@ -1510,7 +1510,10 @@
             <node
               class="auitool"
               bitmap="Embed;art/fontPicker.png"
+              initial_state="wxAUI_BUTTON_STATE_NORMAL|wxAUI_BUTTON_STATE_DISABLED"
               label="Search"
+              statusbar="This tool should be initially disabled."
+              tooltip="This tool should be initially disabled."
               var_name="tool_2" />
             <node
               class="auitool_spacer" />

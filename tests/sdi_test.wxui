@@ -6,7 +6,7 @@
     art_directory="art"
     code_preference="Python"
     base_directory="sdi/cpp"
-    cmake_file="cpp/wxui_code.cmake"
+    cmake_file="sdi/cpp/wxui_code.cmake"
     cmake_varname="sdi_generated_code"
     cpp_line_length="120"
     derived_directory="sdi/cpp"

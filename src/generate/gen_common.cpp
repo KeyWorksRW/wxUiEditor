@@ -1184,6 +1184,12 @@ void GenToolCode(Code& code, const bool is_bitmaps_list)
         code.Comma().Add("wxNullBitmap").Comma().as_string(prop_kind).Comma();
 
         code.QuotedString(prop_tooltip).Comma().QuotedString(prop_statusbar);
+        if (node->isGen(gen_auitool))
+        {
+            code.Comma();
+            code.AddIfCpp("nullptr");
+            code.AddIfPython("None");
+        }
     }
     code.EndFunction();
 }

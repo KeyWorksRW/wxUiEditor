@@ -164,7 +164,7 @@ bool NewMdiForm::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     Bind(wxEVT_BUTTON, &NewMdiForm::OnOK, this, wxID_OK);
     choice_view->Bind(wxEVT_CHOICE, &NewMdiForm::OnViewType, this);
     Bind(wxEVT_INIT_DIALOG,
-        [this](wxInitDialogEvent& event)
+        [](wxInitDialogEvent& event)
         {
             event.Skip();
         });

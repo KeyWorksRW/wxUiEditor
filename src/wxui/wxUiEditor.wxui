@@ -3911,7 +3911,7 @@
         inserted_hdr_code="void CreateNode();@@void VerifyClassName();@@@@private:@@bool m_is_info_shown { false };"
         private_members="1"
         use_derived_class="0"
-        wxEVT_INIT_DIALOG="[this](wxInitDialogEvent&amp; event)@@{@@event.Skip();@@}[python:OnInit]">
+        wxEVT_INIT_DIALOG="[](wxInitDialogEvent&amp; event)@@{@@event.Skip();@@}[python:OnInit]">
         <node
           class="wxBoxSizer"
           orientation="wxVERTICAL"

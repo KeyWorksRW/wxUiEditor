@@ -1,12 +1,13 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   wxAuiToolBar generator
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include <wx/aui/auibar.h>  // wxaui: wx advanced user interface - docking window manager
-#include <wx/toolbar.h>     // wxToolBar interface declaration
+#include <wx/aui/auibar.h>        // wxaui: wx advanced user interface - docking window manager
+#include <wx/aui/framemanager.h>  // wxaui: wx advanced user interface - docking window manager
+#include <wx/toolbar.h>           // wxToolBar interface declaration
 
 #include "bitmaps.h"          // Map of bitmaps accessed by name
 #include "gen_common.h"       // GeneratorLibrary -- Generator classes
@@ -59,6 +60,11 @@ void AuiToolBarGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent
             added_tool = toolbar->AddTool(wxID_ANY, childObj->prop_as_wxString(prop_label), bmp, wxNullBitmap,
                                           (wxItemKind) childObj->prop_as_int(prop_kind),
                                           childObj->prop_as_wxString(prop_help), wxEmptyString, nullptr);
+            if (childObj->value(prop_initial_state) != "wxAUI_BUTTON_STATE_NORMAL")
+            {
+                auto cur_state = GetBitlistInt(childObj.get(), prop_initial_state);
+                added_tool->SetState(cur_state);
+            }
         }
         else if (childObj->isGen(gen_auitool_label))
         {
@@ -222,12 +228,21 @@ bool AuiToolGenerator::ConstructionCode(Code& code)
         GenToolCode(code, false);
     }
 
+    if (code.node()->value(prop_initial_state) != "wxAUI_BUTTON_STATE_NORMAL")
+    {
+        code.Eol().NodeName().Function("SetState(").Str(prop_initial_state).EndFunction();
+    }
+
     return true;
 }
 
 int AuiToolGenerator::GetRequiredVersion(Node* node)
 {
-    if (node->as_bool(prop_disabled))
+    if (node->HasProp(prop_initial_state) && node->value(prop_initial_state) != "wxAUI_BUTTON_STATE_NORMAL")
+    {
+        return std::max(minRequiredVer + 2, BaseGenerator::GetRequiredVersion(node));
+    }
+    else if (node->as_bool(prop_disabled))
     {
         return std::max(minRequiredVer + 1, BaseGenerator::GetRequiredVersion(node));
     }
@@ -241,6 +256,19 @@ int AuiToolGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xr
     GenXrcToolProps(node, item, xrc_flags);
 
     return BaseGenerator::xrc_updated;
+}
+
+bool AuiToolGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& /* set_hdr */)
+{
+    if (node->value(prop_initial_state) != "wxAUI_BUTTON_STATE_NORMAL")
+    {
+        set_src.insert("#include <wx/aui/framemanager.h>");
+        return true;
+    }
+    else
+    {
+        return false;
+    }
 }
 
 //////////////////////////////////////////  AuiToolLabelGenerator  //////////////////////////////////////////

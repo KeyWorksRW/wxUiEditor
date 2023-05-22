@@ -76,8 +76,10 @@ class PythonDlg(wx.Dialog):
         self.auiToolBar = wx.aui.AuiToolBar(self, wx.ID_ANY, wx.DefaultPosition,
             wx.DefaultSize, wx.aui.AUI_TB_PLAIN_BACKGROUND|wx.aui.AUI_TB_DEFAULT_STYLE)
         self.auiToolBar.AddLabel(wx.ID_ANY, "Label")
-        self.auiToolBar.AddTool(wx.ID_ANY, "Search", wx.BitmapBundle.FromBitmap(
-            images.fontPicker_png.Bitmap))
+        tool_2 = self.auiToolBar.AddTool(wx.ID_ANY, "Search", wx.BitmapBundle.FromBitmap(
+            images.fontPicker_png.Bitmap), wx.NullBitmap, wx.ITEM_NORMAL,
+            "This tool should be initially disabled.", "stat", None)
+        tool_2.SetState(wx.aui.AUI_BUTTON_STATE_NORMAL|wx.aui.AUI_BUTTON_STATE_DISABLED)
         self.auiToolBar.AddSpacer(self.auiToolBar.FromDIP(10))
 
         self.spinCtrl = wx.SpinCtrl(self.auiToolBar)

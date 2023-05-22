@@ -86,6 +86,11 @@ void GenStyle(Node* node, tt_string& code, const char* prefix = nullptr);
 // If style is a friendly name, add the prefix parameter to prefix lookups.
 int GetStyleInt(Node* node, const char* prefix = nullptr);
 
+// Returns the integer value of the type_bitlist property for the node.
+//
+// Note: requires each bitlist option to have been added to node_constants.cpp
+int GetBitlistInt(Node* node, GenEnum::PropName prop_name);
+
 // This generates code for the header file for Get() and Set() functions using function names
 // specified by the user in the project file.
 std::optional<tt_string> GenGetSetCode(Node* node);

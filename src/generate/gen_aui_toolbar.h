@@ -34,6 +34,7 @@ class AuiToolGenerator : public BaseGenerator
 {
 public:
     bool ConstructionCode(Code& code) override;
+    bool GetIncludes(Node*, std::set<std::string>& /* set_src */, std::set<std::string>& /* set_hdr */) override;
 
     int GenXrcObject(Node*, pugi::xml_node& /* object */, size_t /* xrc_flags */) override;
     int GetRequiredVersion(Node* /*node*/) override;

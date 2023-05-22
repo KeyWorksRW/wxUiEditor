@@ -13,6 +13,7 @@
     #include <wx/bitmap.h>
 #endif
 
+#include <wx/aui/framemanager.h>
 #include <wx/button.h>
 #include <wx/sizer.h>
 #include <wx/statbmp.h>
@@ -69,13 +70,14 @@ bool PythonDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     auiToolBar = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize,
         wxAUI_TB_PLAIN_BACKGROUND);
     auiToolBar->AddLabel(wxID_ANY, "Label");
-    auiToolBar->AddTool(wxID_ANY, "Search",
+    auto* tool_2 = auiToolBar->AddTool(wxID_ANY, "Search",
 #if wxCHECK_VERSION(3, 1, 6)
         wxue_img::bundle_fontPicker_png()
 #else
         wxBitmap(wxueImage(wxue_img::fontPicker_png, sizeof(wxue_img::fontPicker_png)))
 #endif
-    );
+    , wxNullBitmap, wxITEM_NORMAL, "This tool should be initially disabled.", "stat", nullptr);
+    tool_2->SetState(wxAUI_BUTTON_STATE_NORMAL|wxAUI_BUTTON_STATE_DISABLED);
     auiToolBar->AddSpacer(auiToolBar->FromDIP(10));
 
     spinCtrl = new wxSpinCtrl(auiToolBar);

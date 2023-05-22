@@ -8,6 +8,7 @@ All notable changes to this project will be documented in this file.
 - The C++ Settings in forms now have a `initial_enum_string` property that allows you to set the initial enumeration value to something other than the default "wxID_HIGHEST + 1".
 - wxMenu and wxMenu items now have a stock_id property allowing you to choose from wxWidgets stock items.
 - You can now import DialogBlocks projects directly (instead of exporting an XRC) as long as the project was saved in XML format rather than binary format.
+- Added support for wxAUI_BUTTON_STATE flags when creating a wxAuiToolBar tool.
 
 ### Changed
 

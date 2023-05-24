@@ -145,35 +145,47 @@ bool MenuItemGenerator::ConstructionCode(Code& code)
 bool MenuItemGenerator::SettingsCode(Code& code)
 {
     Node* node = code.node();
-    if (code.HasValue(prop_extra_accels) && code.is_cpp())
+    if (code.HasValue(prop_extra_accels))
     {
-        // auto_indent = indent::auto_keep_whitespace;
-        code.OpenBrace().Add("wxAcceleratorEntry entry;").Eol();
+        tt_string_vector accel_list;
+        accel_list.SetString(node->value(prop_extra_accels), '"', tt::TRIM::both);
 
-        bool is_old_widgets = (Project.value(prop_wxWidgets_version) == "3.1");
-        if (is_old_widgets)
+        if (code.is_cpp())
         {
-            code += "#if wxCHECK_VERSION(3, 1, 6)\n";
-        }
+            // auto_indent = indent::auto_keep_whitespace;
+            code.OpenBrace().Add("wxAcceleratorEntry entry;").Eol();
 
-        tt_string_vector accel_list(node->as_string(prop_extra_accels), "\"", tt::TRIM::both);
-        for (auto& accel: accel_list)
-        {
-            // There are spaces between the quoted strings which will create an entry that we
-            // need to ignore
-            if (accel.size())
+            bool is_old_widgets = (Project.value(prop_wxWidgets_version) == "3.1");
+            if (is_old_widgets)
             {
-                code.Eol(eol_if_needed) << "if (entry.FromString(" << GenerateQuotedString(accel) << "))";
-                code.Eol().Tab().NodeName().Function("AddExtraAccel(entry").EndFunction();
+                code += "#if wxCHECK_VERSION(3, 1, 6)\n";
+            }
+
+            for (auto& accel: accel_list)
+            {
+                if (accel.size())
+                {
+                    code.Eol(eol_if_needed) << "if (entry.FromString(" << GenerateQuotedString(accel) << "))";
+                    code.Eol().Tab().NodeName().Function("AddExtraAccel(entry").EndFunction();
+                }
+            }
+
+            if (is_old_widgets)
+            {
+                code.Eol(eol_if_needed) += "#endif";
+            }
+            code.CloseBrace();
+            code.UpdateBreakAt();
+        }
+        else  // python
+        {
+            code.Str("entry = ").Add("wxAcceleratorEntry()").Eol();
+            for (auto& accel: accel_list)
+            {
+                code.Str("if entry.FromString(").QuotedString(accel).Str(") :").Eol();
+                code.Tab().Str("menuQuit.AddExtraAccel(entry)").Eol();
             }
         }
-
-        if (is_old_widgets)
-        {
-            code.Eol(eol_if_needed) += "#endif";
-        }
-        code.CloseBrace();
-        code.UpdateBreakAt();
     }
 
     if (code.HasValue(prop_bitmap))

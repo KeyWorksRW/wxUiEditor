@@ -19,57 +19,53 @@
 
 bool MenuGenerator::ConstructionCode(Code& code)
 {
-    if (code.is_cpp() && code.is_local_var())
-        code << "auto* ";
-    code.NodeName().CreateClass().EndFunction();
+    code.AddAuto().NodeName().CreateClass().EndFunction();
 
     return true;
 }
 
 bool MenuGenerator::AfterChildrenCode(Code& code)
 {
+    auto* node = code.node();  // This is just for code readability -- could just use code.node() everywhere
+    auto parent_type = node->GetParent()->gen_type();
+    if (parent_type == type_menubar)
     {
-        Node* node = code.node();
-        auto parent_type = node->GetParent()->gen_type();
-        if (parent_type == type_menubar)
+        code.ParentName().Function("Append(").NodeName().Comma();
+        if (node->value(prop_stock_id) != "none")
         {
-            code.ParentName().Function("Append(").NodeName().Comma();
-            if (node->value(prop_stock_id) != "none")
-            {
-                code.Add("wxGetStockLabel(").Add(node->value(prop_stock_id)).Str(")");
-            }
-            else
-            {
-                code.QuotedString(prop_label);
-            }
-            code.EndFunction();
+            code.Add("wxGetStockLabel(").Add(prop_stock_id).Str(")");
         }
-        else if (parent_type == type_menubar_form)
+        else
         {
-            if (code.is_python())
-                code += "self.";
-            code.Add("Append(").NodeName().Comma().QuotedString(prop_label).EndFunction();
+            code.QuotedString(prop_label);
         }
-        else if (code.is_cpp())
+        code.EndFunction();
+    }
+    else if (parent_type == type_menubar_form)
+    {
+        code.AddIfPython("self.");
+        code.Add("Append(").NodeName().Comma().QuotedString(prop_label).EndFunction();
+    }
+    else if (code.is_cpp())
+    {
+        // The parent can disable generation of Bind by shutting off the context menu
+        if (!node->GetParent()->as_bool(prop_context_menu))
         {
-            // The parent can disable generation of Bind by shutting off the context menu
-            if (!node->GetParent()->as_bool(prop_context_menu))
-            {
-                return true;
-            }
+            return true;
+        }
 
-            if (parent_type == type_form || parent_type == type_frame_form || parent_type == type_wizard)
-            {
-                code << "Bind(wxEVT_RIGHT_DOWN, &" << node->get_parent_name() << "::" << node->get_parent_name()
-                     << "OnContextMenu, this);";
-            }
-            else
-            {
-                code.ValidParentName().Function("Bind(wxEVT_RIGHT_DOWN, &")
-                    << node->get_form_name() << "::" << node->get_parent_name() << "OnContextMenu, this);";
-            }
+        if (parent_type == type_form || parent_type == type_frame_form || parent_type == type_wizard)
+        {
+            code << "Bind(wxEVT_RIGHT_DOWN, &" << node->get_parent_name() << "::" << node->get_parent_name()
+                 << "OnContextMenu, this);";
+        }
+        else
+        {
+            code.ValidParentName().Function("Bind(wxEVT_RIGHT_DOWN, &")
+                << node->get_form_name() << "::" << node->get_parent_name() << "OnContextMenu, this);";
         }
     }
+    code.Eol(eol_if_needed);
 
     return true;
 }

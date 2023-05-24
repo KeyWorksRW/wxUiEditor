@@ -22,9 +22,10 @@
 
 wxObject* MenuBarBase::CreateMockup(Node* node, wxObject* parent)
 {
-    // A real wxMenubar requires a frame window, which we don't have in the Mockup panel. Instead, we create a panel
-    // with static text for each top level menu. If the user clicks on one of the static text controls, then we locate
-    // which child menu node contains that label and then create a Popup menu to display it.
+    // A real wxMenubar requires a frame window, which we don't have in the Mockup panel.
+    // Instead, we create a panel with static text for each top level menu. If the user clicks
+    // on one of the static text controls, then we locate which child menu node contains that
+    // label and then create a Popup menu to display it.
 
     auto panel = new wxPanel(wxStaticCast(parent, wxWindow));
     auto sizer = new wxBoxSizer(wxHORIZONTAL);
@@ -37,13 +38,17 @@ wxObject* MenuBarBase::CreateMockup(Node* node, wxObject* parent)
     }
     else
     {
-        for (const auto& iter: node->GetChildNodePtrs())
+        for (const auto& child: node->GetChildNodePtrs())
         {
             wxString label;
-            if (iter->value(prop_stock_id) != "none")
-                label = wxGetStockLabel(NodeCreation.GetConstantAsInt(iter->value(prop_stock_id)));
+            if (child->value(prop_stock_id) != "none")
+            {
+                label = wxGetStockLabel(NodeCreation.GetConstantAsInt(child->value(prop_stock_id)));
+            }
             else
-                label = iter->as_wxString(prop_label);
+            {
+                label = child->as_wxString(prop_label);
+            }
             auto menu_name = new wxStaticText(panel, wxID_ANY, label);
             sizer->Add(menu_name, wxSizerFlags().Border(wxALL));
             menu_name->Bind(wxEVT_LEFT_DOWN, &MenuBarBase::OnLeftMenuClick, this);
@@ -58,8 +63,8 @@ wxObject* MenuBarBase::CreateMockup(Node* node, wxObject* parent)
 
 void MenuBarBase::OnLeftMenuClick(wxMouseEvent& event)
 {
-    // To simulate what a real wxMenuBar would do, we get the label from the static text control, find the matching
-    // child, and create a popup menu based on that child.
+    // To simulate what a real wxMenuBar would do, we get the label from the static text
+    // control, find the matching child, and create a popup menu based on that child.
 
     auto menu_label = wxStaticCast(event.GetEventObject(), wxStaticText);
     tt_string text = menu_label->GetLabel().utf8_string();
@@ -76,9 +81,13 @@ void MenuBarBase::OnLeftMenuClick(wxMouseEvent& event)
         {
             wxString label;
             if (child->value(prop_stock_id) != "none")
+            {
                 label = wxGetStockLabel(NodeCreation.GetConstantAsInt(child->value(prop_stock_id)));
+            }
             else
+            {
                 label = child->as_wxString(prop_label);
+            }
             if (label == text)
             {
                 menu_node = child.get();
@@ -91,9 +100,9 @@ void MenuBarBase::OnLeftMenuClick(wxMouseEvent& event)
     if (!menu_node)
         return;
 
-    auto popup = MakeSubMenu(menu_node);
-    GetMockup()->PopupMenu(popup);
-    delete popup;
+    auto* popup_menu = MakeSubMenu(menu_node);
+    GetMockup()->PopupMenu(popup_menu);
+    delete popup_menu;
 }
 
 wxMenu* MenuBarBase::MakeSubMenu(Node* menu_node)
@@ -115,8 +124,8 @@ wxMenu* MenuBarBase::MakeSubMenu(Node* menu_node)
         }
         else
         {
-            auto menu_label = menu_item->prop_as_string(prop_label);
-            auto shortcut = menu_item->prop_as_string(prop_shortcut);
+            auto menu_label = menu_item->value(prop_label);
+            auto shortcut = menu_item->value(prop_shortcut);
             if (shortcut.size())
             {
                 menu_label << "\t" << shortcut;
@@ -126,25 +135,29 @@ wxMenu* MenuBarBase::MakeSubMenu(Node* menu_node)
             // label and bitmap.
 
             int id = wxID_ANY;
-            if (menu_item->prop_as_string(prop_id) != "wxID_ANY" && menu_item->prop_as_string(prop_id).starts_with("wxID_"))
-                id = NodeCreation.GetConstantAsInt(menu_item->prop_as_string(prop_id), wxID_ANY);
+            if (menu_item->value(prop_id) != "wxID_ANY" && menu_item->value(prop_id).starts_with("wxID_"))
+                id = NodeCreation.GetConstantAsInt(menu_item->value(prop_id), wxID_ANY);
 
             auto item = new wxMenuItem(sub_menu, id, menu_label, menu_item->prop_as_wxString(prop_help),
                                        (wxItemKind) menu_item->prop_as_int(prop_kind));
 
             if (menu_item->HasValue(prop_bitmap))
+#if !defined(__WXMSW__)
             {
-#ifdef __WXMSW__
+                item->SetBitmap(menu_item->prop_as_wxBitmapBundle(prop_bitmap));
+            }
+#else  // defined(__WXMSW__)
+            {
                 if (menu_item->HasValue(prop_unchecked_bitmap))
                 {
                     auto unchecked = menu_item->prop_as_wxBitmapBundle(prop_unchecked_bitmap);
                     item->SetBitmaps(menu_item->prop_as_wxBitmapBundle(prop_bitmap), unchecked);
                 }
                 else
-#endif
+                {
                     item->SetBitmap(menu_item->prop_as_wxBitmapBundle(prop_bitmap));
+                }
             }
-#ifdef __WXMSW__
             else
             {
                 if (menu_item->HasValue(prop_unchecked_bitmap))
@@ -162,7 +175,9 @@ wxMenu* MenuBarBase::MakeSubMenu(Node* menu_node)
             }
 
             if (menu_item->prop_as_bool(prop_disabled))
+            {
                 item->Enable(false);
+            }
         }
     }
 
@@ -185,17 +200,14 @@ bool MenuBarGenerator::ConstructionCode(Code& code)
     return true;
 }
 
-bool MenuBarGenerator::AdditionalCode(Code& code, GenEnum::GenCodeType cmd)
+bool MenuBarGenerator::AfterChildrenCode(Code& code)
 {
-    if (cmd == code_after_children)
+    code.Eol();
+    if (code.is_python())
     {
-        if (code.is_python())
-        {
-            code += "self.";
-        }
-        code.Add("SetMenuBar(").NodeName().EndFunction();
+        code += "self.";
     }
-
+    code.Add("SetMenuBar(").NodeName().EndFunction();
     return true;
 }
 

@@ -24,45 +24,6 @@
 
 // clang-format off
 
-// List of menu ids that can be used as stock ids.
-std::unordered_set<std::string> lst_menu_ids = {
-
-    "wxID_ABOUT",
-    "wxID_ADD",
-    "wxID_CLEAR",
-    "wxID_CLOSE",
-    "wxID_CONVERT",
-    "wxID_COPY",
-    "wxID_CUT",
-    "wxID_DELETE",
-    "wxID_EDIT",
-    "wxID_EXIT",
-    "wxID_FIND",
-    "wxID_FIRST",
-    "wxID_HELP",
-    "wxID_INDENT",
-    "wxID_INDEX",
-    "wxID_INFO",
-    "wxID_LAST",
-    "wxID_NEW",
-    "wxID_OPEN",
-    "wxID_PASTE",
-    "wxID_PREFERENCES",
-    "wxID_PREVIEW",
-    "wxID_PRINT",
-    "wxID_PROPERTIES",
-    "wxID_REDO",
-    "wxID_REMOVE",
-    "wxID_REPLACE",
-    "wxID_SAVE",
-    "wxID_SAVEAS",
-    "wxID_SELECTALL",
-    "wxID_UNDELETE",
-    "wxID_UNDO",
-    "wxID_UNINDENT",
-
-};
-
 std::unordered_map<std::string, std::string> map_id_artid = {
 
     { "wxID_OPEN", "wxART_FILE_OPEN" },

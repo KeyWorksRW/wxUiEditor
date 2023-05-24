@@ -26,9 +26,8 @@ bool MenuGenerator::ConstructionCode(Code& code)
     return true;
 }
 
-bool MenuGenerator::AdditionalCode(Code& code, GenEnum::GenCodeType cmd)
+bool MenuGenerator::AfterChildrenCode(Code& code)
 {
-    if (cmd == code_after_children)
     {
         Node* node = code.node();
         auto parent_type = node->GetParent()->gen_type();

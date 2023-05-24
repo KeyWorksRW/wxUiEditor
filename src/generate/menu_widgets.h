@@ -33,7 +33,7 @@ class MenuBarGenerator : public MenuBarBase
 {
 public:
     bool ConstructionCode(Code& code) override;
-    bool AdditionalCode(Code&, GenEnum::GenCodeType /* command */) override;
+    bool AfterChildrenCode(Code& code) override;
 
     bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr) override;
 

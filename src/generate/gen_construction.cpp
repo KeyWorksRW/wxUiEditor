@@ -216,13 +216,6 @@ void BaseCodeGenerator::GenConstruction(Node* node)
                         m_source->writeLine(gen_code);
                     }
                 }
-                else
-                {
-                    if (generator->AdditionalCode(gen_code, code_after_children) && gen_code.size())
-                    {
-                        m_source->writeLine(gen_code);
-                    }
-                }
                 m_source->writeLine();
                 break;
             }

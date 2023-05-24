@@ -76,7 +76,8 @@ bool PythonDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 #else
         wxBitmap(wxueImage(wxue_img::fontPicker_png, sizeof(wxue_img::fontPicker_png)))
 #endif
-    , wxNullBitmap, wxITEM_NORMAL, "This tool should be initially disabled.", "stat", nullptr);
+    , wxNullBitmap, wxITEM_NORMAL, "This tool should be initially disabled.", "This tool should be initially disabled.",
+        nullptr);
     tool_2->SetState(wxAUI_BUTTON_STATE_NORMAL|wxAUI_BUTTON_STATE_DISABLED);
     auiToolBar->AddSpacer(auiToolBar->FromDIP(10));
 

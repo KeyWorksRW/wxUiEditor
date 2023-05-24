@@ -78,7 +78,8 @@ class PythonDlg(wx.Dialog):
         self.auiToolBar.AddLabel(wx.ID_ANY, "Label")
         tool_2 = self.auiToolBar.AddTool(wx.ID_ANY, "Search", wx.BitmapBundle.FromBitmap(
             images.fontPicker_png.Bitmap), wx.NullBitmap, wx.ITEM_NORMAL,
-            "This tool should be initially disabled.", "stat", None)
+            "This tool should be initially disabled.",
+            "This tool should be initially disabled.", None)
         tool_2.SetState(wx.aui.AUI_BUTTON_STATE_NORMAL|wx.aui.AUI_BUTTON_STATE_DISABLED)
         self.auiToolBar.AddSpacer(self.auiToolBar.FromDIP(10))
 

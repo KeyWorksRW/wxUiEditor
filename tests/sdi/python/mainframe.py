@@ -152,9 +152,13 @@ class MainFrame(wx.Frame):
         menubar = wx.MenuBar()
 
         self.menu = wx.Menu()
-        menuItem4 = wx.MenuItem(self.menu, wx.ID_EXIT)
-        menuItem4.SetBitmap(wx.ArtProvider.GetBitmapBundle(wx.ART_QUIT, wx.ART_MENU))
-        self.menu.Append(menuItem4)
+        menuQuit = wx.MenuItem(self.menu, wx.ID_EXIT)
+        entry = wx.AcceleratorEntry()
+        if entry.FromString("ALT+X") :
+            menuQuit.AddExtraAccel(entry)
+
+        menuQuit.SetBitmap(wx.ArtProvider.GetBitmapBundle(wx.ART_QUIT, wx.ART_MENU))
+        self.menu.Append(menuQuit)
         menubar.Append(self.menu, wx.GetStockLabel(wx.ID_FILE))
 
         menuDialogs = wx.Menu()

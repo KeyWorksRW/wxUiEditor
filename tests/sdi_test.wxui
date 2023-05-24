@@ -134,11 +134,12 @@
           <node
             class="wxMenuItem"
             bitmap="Art;wxART_QUIT|wxART_MENU"
+            extra_accels="&quot;ALT+X&quot;"
             help="Quit this program"
             id="wxID_EXIT"
             label="&amp;Quit"
             stock_id="wxID_EXIT"
-            var_name="menuItem4"
+            var_name="menuQuit"
             wxEVT_MENU="OnQuit" />
         </node>
         <node

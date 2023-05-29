@@ -38,6 +38,11 @@ class DlgIssue_960(wx.Dialog):
 
         dlg_sizer = wx.BoxSizer(wx.VERTICAL)
 
+        self.staticText = wx.StaticText(self, wx.ID_ANY,
+            "The following are bitmaps that have filenames which are invalid as C++ or Python variables. This is used to test resolution of issue #960.")
+        self.staticText.Wrap(300)
+        dlg_sizer.Add(self.staticText, wx.SizerFlags().Border(wx.ALL))
+
         box_sizer = wx.BoxSizer(wx.HORIZONTAL)
 
         bmp = wx.StaticBitmap(self, wx.ID_ANY, wx.BitmapBundle.FromBitmap(

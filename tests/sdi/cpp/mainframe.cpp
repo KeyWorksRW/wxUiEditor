@@ -170,6 +170,16 @@ bool MainFrame::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     );
 
     submenu->Append(menu_item_5);
+    auto* menu_item_6 = new wxMenuItem(submenu, wxID_ANY, "DlgIssue_960");
+    menu_item_6->SetBitmap(
+#if wxCHECK_VERSION(3, 1, 6)
+        wxBitmapBundle::FromBitmap(wxueImage(wxue_img::Ainsi_c3_a_se_passe_png, sizeof(wxue_img::Ainsi_c3_a_se_passe_png)))
+#else
+        wxBitmap(wxueImage(wxue_img::Ainsi_c3_a_se_passe_png, sizeof(wxue_img::Ainsi_c3_a_se_passe_png)))
+#endif
+    );
+
+    submenu->Append(menu_item_6);
     auto* submenu_item = menuDialogs->AppendSubMenu(submenu, "Issue Dialogs");
     submenu_item->SetBitmap(
 #if wxCHECK_VERSION(3, 1, 6)
@@ -239,6 +249,7 @@ bool MainFrame::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     Bind(wxEVT_MENU, &MainFrame::OnCommonDialog, this, menuItem_2->GetId());
     Bind(wxEVT_MENU, &MainFrame::OnWizard, this, menuItem3->GetId());
     Bind(wxEVT_MENU, &MainFrame::OnDlgIssue_956, this, menu_item_5->GetId());
+    Bind(wxEVT_MENU, &MainFrame::OnDlgIssue_960, this, menu_item_6->GetId());
     Bind(wxEVT_TOOL, &MainFrame::OnMainTestDlg, this, tool_4->GetId());
     Bind(wxEVT_TOOL, &MainFrame::OnBookTestDlg, this, tool_5->GetId());
     Bind(wxEVT_TOOL, &MainFrame::OnPythonDlg, this, tool_3->GetId());
@@ -249,6 +260,14 @@ bool MainFrame::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 
 namespace wxue_img
 {
+    // Ainsi ça se passe.png
+    const unsigned char Ainsi_c3_a_se_passe_png[148] {
+        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,24,0,0,0,24,8,6,0,0,0,224,119,61,248,0,0,0,9,112,72,89,
+        115,0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,0,70,73,68,65,84,72,199,99,96,24,62,32,237,204,127,134,180,51,255,
+        169,202,102,96,96,96,26,166,65,68,69,115,70,131,104,52,136,70,131,104,52,136,70,131,136,26,128,17,197,107,
+        12,12,12,255,103,153,80,102,96,218,25,8,99,150,9,227,112,75,69,52,2,0,227,151,80,146,60,123,246,21,0,0,0,0,
+        73,69,78,68,174,66,96,130
+    };
 
     const unsigned char debug_32_png[1701] {
         137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,32,0,0,0,32,8,6,0,0,0,115,122,122,244,0,0,0,9,112,72,89,

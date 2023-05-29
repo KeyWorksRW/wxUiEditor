@@ -190,6 +190,12 @@
               label="DlgIssue_956"
               var_name="menu_item_5"
               wxEVT_MENU="OnDlgIssue_956" />
+            <node
+              class="wxMenuItem"
+              bitmap="Embed;art/Ainsi ça se passe.png"
+              label="DlgIssue_960"
+              var_name="menu_item_6"
+              wxEVT_MENU="OnDlgIssue_960" />
           </node>
         </node>
       </node>
@@ -2099,6 +2105,11 @@
           orientation="wxVERTICAL"
           var_name="dlg_sizer"
           flags="wxEXPAND">
+          <node
+            class="wxStaticText"
+            label="The following are bitmaps that have filenames which are invalid as C++ or Python variables. This is used to test resolution of issue #960."
+            var_name="staticText"
+            wrap="300" />
           <node
             class="wxBoxSizer">
             <node

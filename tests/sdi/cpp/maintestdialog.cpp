@@ -983,6 +983,7 @@ namespace wxue_img
 #include "mainframe.h"  // auto-generated: ../wxui_generated/mainframe_base.h and ../wxui_generated/mainframe_base.cpp
 
 #include "dlgissue_956.h"
+#include "dlgissue_960.h"
 
 void MainFrame::OnMainTestDlg(wxCommandEvent& WXUNUSED(event))
 {
@@ -993,5 +994,11 @@ void MainFrame::OnMainTestDlg(wxCommandEvent& WXUNUSED(event))
 void MainFrame::OnDlgIssue_956(wxCommandEvent& WXUNUSED(event))
 {
     DlgIssue_956 dlg(this);
+    dlg.ShowModal();
+}
+
+void MainFrame::OnDlgIssue_960(wxCommandEvent& WXUNUSED(event))
+{
+    DlgIssue_960 dlg(this);
     dlg.ShowModal();
 }

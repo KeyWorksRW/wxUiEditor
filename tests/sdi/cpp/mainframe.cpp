@@ -7,6 +7,7 @@
 
 // clang-format off
 
+#include <wx/accel.h>
 #include <wx/artprov.h>
 
 #include "images.h"
@@ -85,8 +86,16 @@ bool MainFrame::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     auto* menubar = new wxMenuBar();
 
     menu = new wxMenu();
-    auto* menuItem4 = new wxMenuItem(menu, wxID_EXIT);
-    menuItem4->SetBitmap(
+    auto* menuQuit = new wxMenuItem(menu, wxID_EXIT);
+    {
+        wxAcceleratorEntry entry;
+        #if wxCHECK_VERSION(3, 1, 6)
+        if (entry.FromString("ALT+X"))
+            menuQuit->AddExtraAccel(entry);
+        #endif
+    }
+
+    menuQuit->SetBitmap(
 #if wxCHECK_VERSION(3, 1, 6)
         wxArtProvider::GetBitmapBundle(wxART_QUIT, wxART_MENU)
 #else
@@ -94,7 +103,7 @@ bool MainFrame::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 #endif
     );
 
-    menu->Append(menuItem4);
+    menu->Append(menuQuit);
     menubar->Append(menu, wxGetStockLabel(wxID_FILE));
 
     auto* menuDialogs = new wxMenu();

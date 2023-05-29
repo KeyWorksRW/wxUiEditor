@@ -98,6 +98,12 @@ wxDialog_png = PyEmbeddedImage(
     b"Z7VNOO4PhrSH11CViNIa9b2TopHYOkTJxq+MnauScx2GhwN6B2byqn7w8pOKRE+NiiBqtTFIfKDlvIok"
     b"zRDRS6MXTZTdNw8dLlL+A4iuUQ4KRZVvAAAAAElFTkSuQmCC")
 
+# Ainsi ça se passe.png
+Ainsi_c3_a_se_passe_png = PyEmbeddedImage(
+    b"iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAACXBIWXMAAAsTAAALEwEAmpwYAAAARklE"
+    b"QVRIx2NgGD4g7cx/hrQz/6nKZmBgYBqmQURFc0aDaDSIRoNoNIhGg4gagBHFawwMDP9nmVBmYNoZCGOW"
+    b"CeNwS0U0AgDjl1CSPHv2FQAAAABJRU5ErkJggg==")
+
 class MainFrame(wx.Frame):
 
     def __init__(self, parent, id=wx.ID_ANY, title="pytest", pos=
@@ -199,6 +205,9 @@ class MainFrame(wx.Frame):
         menu_item_5 = wx.MenuItem(submenu, wx.ID_ANY, "DlgIssue_956")
         menu_item_5.SetBitmap(wx.BitmapBundle.FromBitmap(debug_32_png.Bitmap))
         submenu.Append(menu_item_5)
+        menu_item_6 = wx.MenuItem(submenu, wx.ID_ANY, "DlgIssue_960")
+        menu_item_6.SetBitmap(wx.BitmapBundle.FromBitmap(Ainsi_c3_a_se_passe_png.Bitmap))
+        submenu.Append(menu_item_6)
         submenu_item = menuDialogs.AppendSubMenu(submenu, "Issue Dialogs")
         submenu_item.SetBitmap(wx.BitmapBundle.FromBitmap(wxDialog_png.Bitmap))
         menubar.Append(menuDialogs, "&Dialogs")
@@ -235,6 +244,7 @@ class MainFrame(wx.Frame):
         self.Bind(wx.EVT_MENU, self.OnCommonDialog, id=menuItem_2.GetId())
         self.Bind(wx.EVT_MENU, self.OnWizard, id=menuItem3.GetId())
         self.Bind(wx.EVT_MENU, self.OnDlgIssue_956, id=menu_item_5.GetId())
+        self.Bind(wx.EVT_MENU, self.OnDlgIssue_960, id=menu_item_6.GetId())
         self.Bind(wx.EVT_TOOL, self.OnMainTestDlg, id=tool_4.GetId())
         self.Bind(wx.EVT_TOOL, self.OnBookTestDlg, id=tool_5.GetId())
         self.Bind(wx.EVT_TOOL, self.OnPythonDlg, id=tool_3.GetId())
@@ -307,7 +317,12 @@ class MainFrame(wx.Frame):
         dlg.Destroy()
 
     def OnDlgIssue_956(self, event):
-        dlg = DlgIssue_956.PythonDlg(self)
+        dlg = dlgissue_956.DlgIssue_956(self)
+        dlg.ShowModal()
+        dlg.Destroy()
+
+    def OnDlgIssue_960(self, event):
+        dlg = dlgissue_960.DlgIssue_960(self)
         dlg.ShowModal()
         dlg.Destroy()
 

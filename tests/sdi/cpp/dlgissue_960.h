@@ -11,6 +11,7 @@
 
 #include <wx/dialog.h>
 #include <wx/gdicmn.h>
+#include <wx/stattext.h>
 
 class DlgIssue_960 : public wxDialog
 {
@@ -28,14 +29,16 @@ public:
         long style = wxDEFAULT_DIALOG_STYLE, const wxString &name = wxDialogNameStr);
 
 protected:
+
+    // Class member variables
+
+    wxStaticText* staticText;
 };
 
 namespace wxue_img
 {
     // Images declared in this class module:
 
-    // Ainsi ça se passe.png
-    extern const unsigned char Ainsi_c3_a_se_passe_png[148];
     // bottom(1).png
     extern const unsigned char bottom_1__png[148];
     // 1_bottom.png

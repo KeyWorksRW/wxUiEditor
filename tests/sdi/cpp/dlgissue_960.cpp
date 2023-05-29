@@ -32,6 +32,12 @@ inline wxImage wxueImage(const unsigned char* data, size_t size_data)
     return image;
 };
 
+namespace wxue_img
+{
+    // Ainsi ça se passe.png
+    extern const unsigned char Ainsi_c3_a_se_passe_png[148];
+}
+
 bool DlgIssue_960::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     const wxPoint& pos, const wxSize& size, long style, const wxString &name)
 {
@@ -41,6 +47,11 @@ bool DlgIssue_960::Create(wxWindow* parent, wxWindowID id, const wxString& title
         wxImage::AddHandler(new wxPNGHandler);
 
     auto* dlg_sizer = new wxBoxSizer(wxVERTICAL);
+
+    staticText = new wxStaticText(this, wxID_ANY,
+        "The following are bitmaps that have filenames which are invalid as C++ or Python variables. This is used to test resolution of issue #960.");
+    staticText->Wrap(300);
+    dlg_sizer->Add(staticText, wxSizerFlags().Border(wxALL));
 
     auto* box_sizer = new wxBoxSizer(wxHORIZONTAL);
 
@@ -81,14 +92,6 @@ bool DlgIssue_960::Create(wxWindow* parent, wxWindowID id, const wxString& title
 
 namespace wxue_img
 {
-    // Ainsi ça se passe.png
-    const unsigned char Ainsi_c3_a_se_passe_png[148] {
-        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,24,0,0,0,24,8,6,0,0,0,224,119,61,248,0,0,0,9,112,72,89,
-        115,0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,0,70,73,68,65,84,72,199,99,96,24,62,32,237,204,127,134,180,51,255,
-        169,202,102,96,96,96,26,166,65,68,69,115,70,131,104,52,136,70,131,104,52,136,70,131,136,26,128,17,197,107,
-        12,12,12,255,103,153,80,102,96,218,25,8,99,150,9,227,112,75,69,52,2,0,227,151,80,146,60,123,246,21,0,0,0,0,
-        73,69,78,68,174,66,96,130
-    };
     // bottom(1).png
     const unsigned char bottom_1__png[148] {
         137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,24,0,0,0,24,8,6,0,0,0,224,119,61,248,0,0,0,9,112,72,89,

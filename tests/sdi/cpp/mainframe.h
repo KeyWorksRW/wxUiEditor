@@ -45,6 +45,7 @@ protected:
     void OnBookTestDlg(wxCommandEvent& event);
     void OnCommonDialog(wxCommandEvent& event);
     void OnDlgIssue_956(wxCommandEvent& event);
+    void OnDlgIssue_960(wxCommandEvent& event);
     void OnMainTestDlg(wxCommandEvent& event);
     void OnPythonDlg(wxCommandEvent& event);
     void OnQuit(wxCommandEvent& event);
@@ -74,6 +75,8 @@ namespace wxue_img
 {
     // Images declared in this class module:
 
+    // Ainsi ça se passe.png
+    extern const unsigned char Ainsi_c3_a_se_passe_png[148];
     extern const unsigned char debug_32_png[1701];
     extern const unsigned char wxDialog_png[636];
     extern const unsigned char wxNotebook_png[177];

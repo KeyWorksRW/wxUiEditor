@@ -56,16 +56,12 @@ void CtxMenuGenerator::CollectEventHandlers(Node* node, std::vector<NodeEvent*>&
             {
                 CollectEventHandlers(ctx_child.get(), m_CtxMenuEvents);
             }
-            continue;
         }
     }
 }
 
-bool CtxMenuGenerator::AdditionalCode(Code& code, GenEnum::GenCodeType cmd)
+bool CtxMenuGenerator::AfterChildrenCode(Code& code)
 {
-    if (cmd != code_ctx_menu)
-        return false;
-
     if (code.is_cpp())
     {
         code.Str("void ").Str(code.node()->get_form_name()).Str("::").Str(prop_handler_name);
@@ -91,7 +87,7 @@ bool CtxMenuGenerator::AdditionalCode(Code& code, GenEnum::GenCodeType cmd)
     {
         auto child_node = NodeCreation.MakeCopy(child);
         node_menu->Adopt(child_node);
-        auto save_node = code.node();
+        auto* save_node = code.node();
         code.m_node = child_node.get();
         code.Eol(eol_if_needed);
         GenCtxConstruction(code);

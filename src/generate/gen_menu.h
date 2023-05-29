@@ -13,7 +13,7 @@ class MenuGenerator : public BaseGenerator
 {
 public:
     bool ConstructionCode(Code& code) override;
-    bool AdditionalCode(Code& code, GenEnum::GenCodeType cmd) override;
+    bool AfterChildrenCode(Code& code) override;
 
     bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr) override;
 

@@ -82,6 +82,8 @@ public:
     // NodeProperty.
     tt_string& get_value() { return m_value; }
 
+    const tt_string& value() const { return m_value; }
+
     int as_int() const;
     bool as_bool() const { return (as_int() != 0); };
     double as_float() const;

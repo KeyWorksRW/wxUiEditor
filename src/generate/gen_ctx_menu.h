@@ -14,7 +14,7 @@
 class CtxMenuGenerator : public BaseGenerator
 {
 public:
-    bool AdditionalCode(Code&, GenEnum::GenCodeType /* cmd */) override;
+    bool AfterChildrenCode(Code& code) override;
 
     bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr) override;
 

@@ -24,45 +24,6 @@
 
 // clang-format off
 
-// List of menu ids that can be used as stock ids.
-std::unordered_set<std::string> lst_menu_ids = {
-
-    "wxID_ABOUT",
-    "wxID_ADD",
-    "wxID_CLEAR",
-    "wxID_CLOSE",
-    "wxID_CONVERT",
-    "wxID_COPY",
-    "wxID_CUT",
-    "wxID_DELETE",
-    "wxID_EDIT",
-    "wxID_EXIT",
-    "wxID_FIND",
-    "wxID_FIRST",
-    "wxID_HELP",
-    "wxID_INDENT",
-    "wxID_INDEX",
-    "wxID_INFO",
-    "wxID_LAST",
-    "wxID_NEW",
-    "wxID_OPEN",
-    "wxID_PASTE",
-    "wxID_PREFERENCES",
-    "wxID_PREVIEW",
-    "wxID_PRINT",
-    "wxID_PROPERTIES",
-    "wxID_REDO",
-    "wxID_REMOVE",
-    "wxID_REPLACE",
-    "wxID_SAVE",
-    "wxID_SAVEAS",
-    "wxID_SELECTALL",
-    "wxID_UNDELETE",
-    "wxID_UNDO",
-    "wxID_UNINDENT",
-
-};
-
 std::unordered_map<std::string, std::string> map_id_artid = {
 
     { "wxID_OPEN", "wxART_FILE_OPEN" },
@@ -92,36 +53,33 @@ std::unordered_map<std::string, std::string> map_id_artid = {
 
 bool MenuItemGenerator::ConstructionCode(Code& code)
 {
-    Node* node = code.node();
-    if (code.is_cpp() && code.is_local_var())
-        code << "auto* ";
+    Node* node = code.node();  // This is just for code readability -- could just use code.node() everywhere
+    code.AddAuto();
 
     if (node->GetParent()->isGen(gen_PopupMenu))
     {
         code.NodeName();
-        if (code.is_cpp())
-            code += " = Append(";
-        else
-            code += " = self.Append(";
-        code.as_string(prop_id).Comma();
+        code.AddIfCpp(" = Append(");
+        code.AddIfPython(" = self.Append(");
+        code.Add(prop_id).Comma();
     }
     else
     {
         code.NodeName().CreateClass().ParentName().Comma();
         if (node->value(prop_stock_id) != "none")
         {
-            code.as_string(prop_stock_id).EndFunction();
+            code.Add(prop_stock_id).EndFunction();
             return true;
         }
-        code.as_string(prop_id).Comma();
+        code.Add(prop_id).Comma();
     }
 
-    auto& label = node->as_string(prop_label);
+    auto& label = node->value(prop_label);
     if (label.size())
     {
         if (node->HasValue(prop_shortcut))
         {
-            code.QuotedString(tt_string() << label << '\t' << node->as_string(prop_shortcut));
+            code.QuotedString(tt_string() << label << '\t' << node->value(prop_shortcut));
         }
         else
         {
@@ -133,9 +91,9 @@ bool MenuItemGenerator::ConstructionCode(Code& code)
         code.Add("wxEmptyString");
     }
 
-    if (code.HasValue(prop_help) || node->as_string(prop_kind) != "wxITEM_NORMAL")
+    if (code.HasValue(prop_help) || node->value(prop_kind) != "wxITEM_NORMAL")
     {
-        code.Comma().CheckLineLength().QuotedString(prop_help).Comma().as_string(prop_kind);
+        code.Comma().CheckLineLength().QuotedString(prop_help).Comma().Add(prop_kind);
     }
     code.EndFunction();
 
@@ -193,7 +151,7 @@ bool MenuItemGenerator::SettingsCode(Code& code)
         code.Eol(eol_if_empty);
         if (code.is_cpp())
         {
-            auto& description = node->as_string(prop_bitmap);
+            auto& description = node->value(prop_bitmap);
             bool is_vector_code = GenerateVectorCode(description, code.GetCode());
             code.UpdateBreakAt();
 
@@ -260,7 +218,7 @@ bool MenuItemGenerator::SettingsCode(Code& code)
         code.AddComment("Set the unchecked bitmap").Eol();
         if (code.is_cpp())
         {
-            auto& description = node->as_string(prop_unchecked_bitmap);
+            auto& description = node->value(prop_unchecked_bitmap);
             bool is_vector_code = GenerateVectorCode(description, code.GetCode());
             code.UpdateBreakAt();
 
@@ -332,8 +290,7 @@ bool MenuItemGenerator::SettingsCode(Code& code)
         code.Eol(eol_if_empty).ParentName().Function("Append(").NodeName().EndFunction();
     }
 
-    if ((node->as_string(prop_kind) == "wxITEM_CHECK" || node->as_string(prop_kind) == "wxITEM_RADIO") &&
-        code.IsTrue(prop_checked))
+    if ((node->value(prop_kind) == "wxITEM_CHECK" || node->value(prop_kind) == "wxITEM_RADIO") && code.IsTrue(prop_checked))
     {
         code.Eol(eol_if_empty).NodeName().Function("Check(").EndFunction();
     }
@@ -376,13 +333,14 @@ int MenuItemGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t x
     if (node->HasValue(prop_extra_accels))
     {
         auto child = item.append_child("extra-accels");
-        tt_string_vector accel_list(node->as_string(prop_extra_accels), "\"", tt::TRIM::both);
+        tt_string_vector accel_list;
+        accel_list.SetString(node->value(prop_extra_accels), '"', tt::TRIM::both);
         for (auto& accel: accel_list)
         {
-            // There are spaces between the quoted strings which will create an entry that we
-            // need to ignore
             if (accel.size())
+            {
                 child.append_child("accel").text().set(accel);
+            }
         }
     }
     ADD_ITEM_PROP(prop_help, "help")
@@ -411,15 +369,15 @@ void MenuItemGenerator::ChangeEnableState(wxPropertyGridManager* prop_grid, Node
     {
         if (auto pg_setting = prop_grid->GetProperty(map_PropNames[prop_label]); pg_setting)
         {
-            pg_setting->Enable(changed_prop->as_string() == "none");
+            pg_setting->Enable(changed_prop->value() == "none");
         }
         if (auto pg_setting = prop_grid->GetProperty(map_PropNames[prop_help]); pg_setting)
         {
-            pg_setting->Enable(changed_prop->as_string() == "none");
+            pg_setting->Enable(changed_prop->value() == "none");
         }
         if (auto pg_setting = prop_grid->GetProperty(map_PropNames[prop_id]); pg_setting)
         {
-            pg_setting->Enable(changed_prop->as_string() == "none");
+            pg_setting->Enable(changed_prop->value() == "none");
         }
     }
 }

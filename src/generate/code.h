@@ -143,7 +143,7 @@ public:
     // Pass true to only add EOL if there is already code in the string
     Code& NewLine(bool check_size = false) { return Eol(check_size); }
 
-    // Adds as many '\t' characters as specified by nTabs. Note that tabs are converted to
+    // Adds as many tab characters as specified by nTabs. Note that tabs are converted to
     // spaces when the line is written.
     Code& Tab(int nTabs = 1);
 

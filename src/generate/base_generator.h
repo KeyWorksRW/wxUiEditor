@@ -30,21 +30,6 @@ namespace pugi
     class xml_node;
 }
 
-namespace GenEnum
-{
-    enum GenCodeType : size_t
-    {
-        // Generate the name of the base class to use (e.g "wxWizard").
-        code_base_class,
-        // Generate the header declaration
-        code_header,
-        // Generate code after all children of the node have been created.
-        code_after_children,
-        // Generate event handler function for context menu
-        code_ctx_menu,
-    };
-}
-
 using OptionalIncludes = std::optional<std::vector<std::string>>;
 
 #define ADD_ITEM_PROP(name_prop, name_child)                                       \
@@ -105,10 +90,6 @@ public:
     // Called when generating a C++ header -- this should return the actual name of the class
     // or it's derived class name. I.e., PanelForm adds wxPanel.
     virtual bool BaseClassNameCode(Code&) { return false; }
-
-    // Generate either C++ or Python code for any additiional code the object needs.
-    // The GenCodeType parameter indicates what type of code is needed.
-    virtual bool AdditionalCode(Code&, GenEnum::GenCodeType /* command */) { return false; }
 
     // Generate code to bind the event to a handler -- only override if you need to do
     // something special

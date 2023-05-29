@@ -1128,10 +1128,6 @@ void BaseCodeGenerator::GenerateClassHeader(Node* form_node, const EventVector& 
     {
         m_header->writeLine(code);
     }
-    else if (generator->AdditionalCode(code, code_header))
-    {
-        m_header->writeLine(code);
-    }
     m_header->SetLastLineBlank();
 
     GenValidatorFunctions(form_node);
@@ -1686,7 +1682,7 @@ void BaseCodeGenerator::GenContextMenuHandler(Node* node_ctx_menu)
     if (auto generator = node_ctx_menu->GetGenerator(); generator)
     {
         Code code(node_ctx_menu, m_language);
-        if (generator->AdditionalCode(code, code_ctx_menu))
+        if (generator->AfterChildrenCode(code))
         {
             m_source->writeLine(code);
         }

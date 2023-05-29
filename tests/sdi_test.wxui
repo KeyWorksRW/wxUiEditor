@@ -182,6 +182,7 @@
             var_name="separator_2" />
           <node
             class="submenu"
+            bitmap="Embed;../src/art_src/wxDialog.png"
             label="Issue Dialogs">
             <node
               class="wxMenuItem"

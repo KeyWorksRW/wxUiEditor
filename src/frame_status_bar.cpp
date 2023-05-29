@@ -34,7 +34,9 @@ public:
     ueStatusBar(wxWindow* parent, wxWindowID id = wxID_ANY, long style = wxSTB_DEFAULT_STYLE,
                 const wxString& name = wxStatusBarNameStr)
     {
+        #if !wxCHECK_VERSION(3, 3, 0)
         m_pDC = nullptr;
+        #endif
         Create(parent, id, style, name);
     }
 

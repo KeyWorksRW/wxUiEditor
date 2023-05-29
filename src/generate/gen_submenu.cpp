@@ -22,7 +22,20 @@ bool SubMenuGenerator::ConstructionCode(Code& code)
 
 bool SubMenuGenerator::AfterChildrenCode(Code& code)
 {
-    if (code.node()->GetParent()->isGen(gen_PopupMenu))
+    auto* node = code.node();  // This is just for code readability -- could just use code.node() everywhere
+    tt_string submenu_item_name;
+
+    if (node->HasValue(prop_bitmap))
+    {
+        if (code.is_cpp())
+        {
+            code += "auto* ";
+        }
+        code.NodeName().Str("_item = ");
+        submenu_item_name = node->get_node_name() + "_item";
+    }
+
+    if (node->GetParent()->isGen(gen_PopupMenu))
     {
         code.FormFunction("AppendSubMenu(").NodeName().Comma().QuotedString(prop_label).EndFunction();
     }
@@ -31,71 +44,75 @@ bool SubMenuGenerator::AfterChildrenCode(Code& code)
         code.ParentName().Function("AppendSubMenu(").NodeName().Comma().QuotedString(prop_label).EndFunction();
     }
 
-    return true;
-}
-
-#if 0
-// BUGBUG: [Randalphwa - 12-16-2022] See issue #865 -- this should be in AdditionalCode, not here
-
-std::optional<tt_string> SubMenuGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
-{
-    tt_string code;
-
-
     if (node->HasValue(prop_bitmap))
     {
-        tt_string bundle_code;
-        bool is_code_block = GenerateBundleCode(node->prop_as_string(prop_bitmap), bundle_code);
-        if (is_code_block)
+        code.Eol();
+        if (code.is_cpp())
         {
-            if (Project.value(prop_wxWidgets_version) == "3.1")
-            {
-                code << "#if wxCHECK_VERSION(3, 1, 6)\n";
-            }
-            // GenerateBundleCode assumes an indent within an indent
-            bundle_code.Replace("\t\t\t", "\t", true);
-            code << bundle_code;
-            code << "\t";
-            if (node->IsLocal())
-                code << "auto* ";
-            code << node->get_node_name() << "Item->SetBitmap(wxBitmapBundle::FromBitmaps(bitmaps));";
-            code << "\n}";
-            if (Project.value(prop_wxWidgets_version) == "3.1")
-            {
-                code << "\n#else\n";
-                if (node->IsLocal())
-                    code << "auto* ";
+            auto& description = node->value(prop_bitmap);
+            bool is_vector_code = GenerateVectorCode(description, code.GetCode());
+            code.UpdateBreakAt();
 
-                code << node->get_node_name() << "Item->SetBitmap(" << GenerateBitmapCode(node->prop_as_string(prop_bitmap))
-                     << ");";
-                code << "\n#endif";
+            if (!is_vector_code)
+            {
+                code.Str(submenu_item_name).Function("SetBitmap(");
+                if (Project.value(prop_wxWidgets_version) != "3.1")
+                {
+                    GenerateBundleCode(description, code.GetCode());
+                    code.EndFunction();
+                }
+                else
+                {
+                    code.Eol() += "#if wxCHECK_VERSION(3, 1, 6)\n\t";
+                    GenerateBundleCode(description, code.GetCode());
+                    code.Eol() += "#else";
+                    code.Eol().Tab() << "wxBitmap(" << GenerateBitmapCode(description) << ")";
+                    code.Eol() += "#endif";
+                    code.Eol().EndFunction();
+                }
+                code.Eol();
+            }
+            else
+            {
+                code.Tab().Str(submenu_item_name).Function("SetBitmap(");
+                if (Project.value(prop_wxWidgets_version) != "3.1")
+                {
+                    code += "wxBitmapBundle::FromBitmaps(bitmaps)";
+                    code.UpdateBreakAt();
+                    code.EndFunction().CloseBrace();
+                }
+                else
+                {
+                    code += "\n#if wxCHECK_VERSION(3, 1, 6)\n\t";
+                    code.Tab() += "wxBitmapBundle::FromBitmaps(bitmaps)";
+                    code += "\n#else\n\t";
+                    code.Tab() << "wxBitmap(" << GenerateBitmapCode(description) << ")\n";
+                    code << "#endif\n";
+                    code.UpdateBreakAt();
+                    code.Tab().EndFunction().CloseBrace();
+                }
             }
         }
+
+        // wxPython version
         else
         {
-            if (Project.value(prop_wxWidgets_version) == "3.1")
+            bool is_list_created = PythonBitmapList(code, prop_bitmap);
+            code.Str(submenu_item_name).Function("SetBitmap(");
+            if (is_list_created)
             {
-                code << "#if wxCHECK_VERSION(3, 1, 6)\n";
+                code += "wx.BitmapBundle.FromBitmaps(bitmaps)";
             }
-            if (node->IsLocal())
-                code << "auto* ";
-            code << node->get_node_name() << "Item->SetBitmap(" << bundle_code << ");";
-            if (Project.value(prop_wxWidgets_version) == "3.1")
+            else
             {
-                code << "\n#else\n";
-                if (node->IsLocal())
-                    code << "auto* ";
-
-                code << node->get_node_name() << "Item->SetBitmap(" << GenerateBitmapCode(node->prop_as_string(prop_bitmap))
-                     << ");";
-                code << "\n#endif";
+                PythonBundleCode(code, prop_bitmap);
             }
+            code.EndFunction();
         }
     }
 
-    return code;
+    return true;
 }
-#endif
 
 bool SubMenuGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {

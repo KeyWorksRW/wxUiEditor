@@ -42,7 +42,7 @@
     <!-- tt visualizers -->
 
     <Type Name="tt_string">
-        <DisplayString>{_Mypair._Myval2._Bx._Buf,na}</DisplayString>
+        <DisplayString>{_Mypair._Myval2._Bx._Ptr,na}</DisplayString>
     </Type>
 
     <Type Name="tt_string_view">

@@ -127,14 +127,14 @@ namespace xrc
     };
 }  // namespace xrc
 
-constexpr const char* txtVersion = "wxUiEditor 1.1.0";
+constexpr const char* txtVersion = "wxUiEditor 1.1.1";
 constexpr const char* txtCopyRight = "Copyright (c) 2019-2023 KeyWorks Software";
 constexpr const char* txtAppname = "wxUiEditor";
 
 // This is the highest project number supported by this build of wxUiEditor. It should be
 // updated after every release, if there are any changes to the project format that might
 // require a newer version.
-constexpr const int curSupportedVer = 17;
+constexpr const int curSupportedVer = 18;
 
 // This is the default minimum required version for all generators. It is the version used by
 // the 1.0.0 release.

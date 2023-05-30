@@ -83,6 +83,7 @@ namespace GenEnum
         prop_add_default_border,
         prop_additional_carets_blink,
         prop_additional_carets_visible,
+        prop_additional_inheritance,
         prop_align,
         prop_alignment,
         prop_allow_mouse_rectangle,

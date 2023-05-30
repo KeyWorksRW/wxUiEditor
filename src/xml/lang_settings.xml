@@ -29,6 +29,8 @@ inline const char* language_xml = R"===(<?xml version="1.0"?>
 			help="The name of the derived class. Ignored if use_derived_class is unchecked." />
 		<property name="derived_file" type="file"
 			help="The filename of the derived class. You can leave this empty if you have already generated the file. Ignored if use_derived_class is unchecked." />
+		<property name="additional_inheritance" type="stringlist_escapes"
+			help="Additional classes to inherit from (these can be your own classes if you specified their header file in base_hdr_includes in the C++ Settings section above)." />
 		<property name="class_methods" type="stringlist_escapes"
 			help="Additional class methods to add (useful if you are *not* using a derived class." />
 		<property name="class_members" type="stringlist_escapes"

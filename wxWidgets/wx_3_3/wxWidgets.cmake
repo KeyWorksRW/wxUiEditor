@@ -214,7 +214,7 @@ set (common_sources
     src/common/textentrycmn.cpp
     src/common/textfile.cpp
     src/common/textmeasurecmn.cpp
-    src/common/threadinfo.cpp
+    # src/common/threadinfo.cpp  # not used in 3.3
     src/common/time.cpp
     src/common/timercmn.cpp
     src/common/timerimpl.cpp

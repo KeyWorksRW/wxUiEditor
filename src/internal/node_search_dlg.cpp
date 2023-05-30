@@ -7,8 +7,6 @@
 
 // clang-format off
 
-#if defined(INTERNAL_TESTING)
-
 #include <wx/button.h>
 #include <wx/sizer.h>
 #include <wx/statbox.h>
@@ -99,8 +97,6 @@ bool NodeSearchDlg::Create(wxWindow* parent, wxWindowID id, const wxString& titl
 
     return true;
 }
-
-#endif  // defined(INTERNAL_TESTING)
 
 // ************* End of generated code ***********
 // DO NOT EDIT THIS COMMENT BLOCK!

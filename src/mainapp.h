@@ -59,6 +59,8 @@ public:
     bool isDarkMode() const noexcept { return m_isDarkMode; }
     bool isDarkHighContrast() const noexcept { return m_isDarkHighContrast; }
 
+    bool isTestingMenuEnabled() const noexcept { return m_TestingMenuEnabled; }
+
 protected:
     bool OnInit() override;
 
@@ -82,6 +84,7 @@ private:
     int m_ProjectVersion;
     bool m_isMainFrameClosing { false };
     bool m_isProject_updated { false };
+    bool m_TestingMenuEnabled { false };
 
 #if (DARK_MODE)
     bool m_isDarkMode { true };

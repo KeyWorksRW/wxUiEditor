@@ -298,7 +298,6 @@ protected:
     void OnQueueSelect(CustomEvent& event);
 
 #if defined(_DEBUG) || defined(INTERNAL_TESTING)
-    void OnCodeCompare(wxCommandEvent& event);
     void OnConvertImageDlg(wxCommandEvent& event);
     void OnFindWidget(wxCommandEvent& event);
     void OnGeneratePython(wxCommandEvent& event);

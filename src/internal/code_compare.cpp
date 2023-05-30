@@ -7,8 +7,6 @@
 
 // clang-format off
 
-#if defined(INTERNAL_TESTING)
-
 #include <wx/sizer.h>
 #include <wx/stattext.h>
 
@@ -73,8 +71,6 @@ bool CodeCompare::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 
     return true;
 }
-
-#endif  // defined(INTERNAL_TESTING)
 
 // ************* End of generated code ***********
 // DO NOT EDIT THIS COMMENT BLOCK!

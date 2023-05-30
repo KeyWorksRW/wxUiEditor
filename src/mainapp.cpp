@@ -124,6 +124,10 @@ App::App() {}
 
 bool App::OnInit()
 {
+#if defined(INTERNAL_TESTING) || defined(_DEBUG)
+    m_TestingMenuEnabled = true;
+#endif
+
 #if defined(_WIN32) && defined(_DEBUG)
     #if !defined(USE_CRT_MEMORY_DUMP)
 
@@ -206,7 +210,15 @@ int App::OnRun()
     parser.AddLongSwitch("test_cpp", "generate C++ files and exit", wxCMD_LINE_HIDDEN);
     parser.AddLongSwitch("test_xrc", "generate XRC files and exit", wxCMD_LINE_HIDDEN);
 
+    parser.AddLongSwitch("test_menu", "create test menu to the right of the Help menu",
+                         wxCMD_LINE_HIDDEN | wxCMD_LINE_SWITCH_NEGATABLE);
+
     parser.Parse();
+    if (auto result = parser.FoundSwitch("test_menu"); result != wxCMD_SWITCH_NOT_FOUND)
+    {
+        m_TestingMenuEnabled = (result == wxCMD_SWITCH_ON ? true : false);
+    }
+
     if (parser.GetParamCount() || parser.GetArguments().size())
     {
         tt_wxString filename;

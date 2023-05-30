@@ -52,10 +52,11 @@
 
 #include "wxui/ui_images.h"  // This is generated from the Images form
 
+#include "internal/code_compare.h"  // CodeCompare
+#include "internal/node_info.h"     // NodeInfo
+
 #if defined(INTERNAL_TESTING)
-    #include "internal/code_compare.h"  // CodeCompare
     #include "internal/import_panel.h"  // ImportPanel -- Panel to display original imported file
-    #include "internal/node_info.h"     // NodeInfo
 #endif
 
 #if defined(_DEBUG) || defined(INTERNAL_TESTING)
@@ -155,13 +156,18 @@ MainFrame::MainFrame() :
     m_FileHistory.UseMenu(m_submenu_recent);
     m_FileHistory.AddFilesToMenu();
 
+    if (wxGetApp().isTestingMenuEnabled())
+    {
+        auto menuTesting = new wxMenu;
+        menuTesting->Append(id_CodeDiffDlg, "Compare Code &Generation...",
+                            "Dialog showing what class have changed, and optional viewing in WinMerge");
+        menuTesting->Append(id_FindWidget, "&Find Widget...", "Search for a widget starting with the current selected node");
+        menuTesting->Append(id_NodeMemory, "Node &Information...", "Show node memory usage");
+        m_menubar->Append(menuTesting, "Testing");
+    }
+
 #if defined(_DEBUG) || defined(INTERNAL_TESTING)
     auto menuInternal = new wxMenu;
-
-    menuInternal->Append(id_CodeDiffDlg, "Compare Code &Generation...",
-                         "Dialog showing what class have changed, and optional viewing in WinMerge");
-    menuInternal->Append(id_NodeMemory, "Node &Information...", "Show node memory usage");
-    menuInternal->Append(id_FindWidget, "&Find Widget...", "Search for a widget starting with the current selected node");
 
     // We want these available in internal Release builds
 
@@ -302,28 +308,29 @@ MainFrame::MainFrame() :
         },
         id_Magnify);
 
-#if defined(INTERNAL_TESTING)
-    Bind(
-        wxEVT_MENU,
-        [this](wxCommandEvent&)
-        {
-            CodeCompare dlg(this);
-            dlg.ShowModal();
-        },
-        id_CodeDiffDlg);
+    if (wxGetApp().isTestingMenuEnabled())
+    {
+        Bind(
+            wxEVT_MENU,
+            [this](wxCommandEvent&)
+            {
+                CodeCompare dlg(this);
+                dlg.ShowModal();
+            },
+            id_CodeDiffDlg);
 
-    Bind(
-        wxEVT_MENU,
-        [this](wxCommandEvent&)
-        {
-            NodeInfo dlg(this);
-            dlg.ShowModal();
-        },
-        id_NodeMemory);
-#endif
+        Bind(
+            wxEVT_MENU,
+            [this](wxCommandEvent&)
+            {
+                NodeInfo dlg(this);
+                dlg.ShowModal();
+            },
+            id_NodeMemory);
+        Bind(wxEVT_MENU, &MainFrame::OnFindWidget, this, id_FindWidget);
+    }
 
 #if defined(_DEBUG) || defined(INTERNAL_TESTING)
-    Bind(wxEVT_MENU, &MainFrame::OnFindWidget, this, id_FindWidget);
     Bind(wxEVT_MENU, &MainFrame::OnConvertImageDlg, this, id_ConvertImage);
 
     Bind(
@@ -1899,13 +1906,3 @@ void MainFrame::PushUndoAction(UndoActionPtr cmd, bool add_to_stack)
     else
         m_undo_stack.Push(cmd);
 }
-
-#if defined(INTERNAL_TESTING)
-
-void MainFrame::OnCodeCompare(wxCommandEvent& WXUNUSED(event))
-{
-    CodeCompare dlg(this);
-    dlg.ShowModal();
-}
-
-#endif

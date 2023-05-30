@@ -568,6 +568,7 @@ namespace GenEnum
         gen_Code,
         gen_Code_Generation,
         gen_Command_Bitmaps,
+        gen_DerivedCPlusSettings,
         gen_DlgWindowSettings,
         gen_Integer_Validator,
         gen_List_Validator,

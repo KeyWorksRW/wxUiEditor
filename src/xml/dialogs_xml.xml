@@ -4,6 +4,7 @@ inline const char* dialogs_xml = R"===(<?xml version="1.0"?>
 	<gen class="wxDialog" image="wxDialog" type="form">
 		<inherits class="Dialog Window Settings" />
 		<inherits class="C++ Settings" />
+		<inherits class="C++ Derived Class Settings" />
 		<inherits class="wxPython Settings" />
 		<inherits class="XRC Settings" />
 		<inherits class="wxTopLevelWindow" />
@@ -68,6 +69,7 @@ inline const char* dialogs_xml = R"===(<?xml version="1.0"?>
 
 	<gen class="PanelForm" image="wxPanel" type="form">
 		<inherits class="C++ Settings" />
+		<inherits class="C++ Derived Class Settings" />
 		<inherits class="wxPython Settings" />
 		<inherits class="XRC Settings" />
 		<property name="class_name" type="string"

@@ -77,6 +77,7 @@ std::map<GenEnum::PropName, const char*> GenEnum::map_PropNames = {
     { prop_add_default_border, "add_default_border" },
     { prop_additional_carets_blink, "additional_carets_blink" },
     { prop_additional_carets_visible, "additional_carets_visible" },
+    { prop_additional_inheritance, "additional_inheritance" },
     { prop_align, "align" },
     { prop_alignment, "alignment" },
     { prop_allow_mouse_rectangle, "allow_mouse_rectangle" },

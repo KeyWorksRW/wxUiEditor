@@ -1068,6 +1068,14 @@ void BaseCodeGenerator::GenerateClassHeader(Node* form_node, const EventVector& 
     code.Str(prop_class_name) += " : public ";
     if (generator->BaseClassNameCode(code))
     {
+        if (m_form_node->HasValue(prop_additional_inheritance))
+        {
+            tt_string_vector class_list(m_form_node->as_string(prop_additional_inheritance), '"', tt::TRIM::both);
+            for (auto& iter: class_list)
+            {
+                code.Str(", public ").Str(iter);
+            }
+        }
         m_header->writeLine(code);
     }
     else

@@ -540,6 +540,7 @@ std::map<GenEnum::GenName, const char*> GenEnum::map_GenNames = {
     { gen_Code, "C++" },
     { gen_Code_Generation, "Code Generation" },
     { gen_Command_Bitmaps, "Command Bitmaps" },
+    { gen_DerivedCPlusSettings, "C++ Derived Class Settings" },
     { gen_DlgWindowSettings, "Dialog Window Settings" },
     { gen_Integer_Validator, "Integer Validator" },
     { gen_List_Validator, "List Validator" },

@@ -59,6 +59,12 @@ void BaseCodeGenerator::WriteImagePreConstruction(Code& code)
 // Generate code after the construcor for embedded images not defined in the gen_Images node.
 void BaseCodeGenerator::WriteImageConstruction(Code& code)
 {
+    WriteCode* save_writer = m_TranslationUnit ? nullptr : m_source;
+    if (!m_TranslationUnit)
+    {
+        m_source = m_header;
+    }
+
     code.clear();
 
     bool is_namespace_written = false;
@@ -153,6 +159,11 @@ void BaseCodeGenerator::WriteImageConstruction(Code& code)
     if (code.size())
     {
         m_source->writeLine(code);
+    }
+
+    if (save_writer)
+    {
+        m_source = save_writer;
     }
 }
 

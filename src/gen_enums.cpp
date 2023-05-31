@@ -393,6 +393,7 @@ std::map<GenEnum::PropName, const char*> GenEnum::map_PropNames = {
     { prop_title, "title" },
     { prop_toolbar_pane, "toolbar_pane" },
     { prop_tooltip, "tooltip" },
+    { prop_generate_translation_unit, "generate_translation_unit" },
     { prop_type, "type" },
     { prop_unchecked_bitmap, "unchecked_bitmap" },
     { prop_underlined, "underlined" },

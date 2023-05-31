@@ -124,7 +124,7 @@ protected:
     void CollectMemberVariables(Node* node, Permission perm, std::set<std::string>& code_lines);
     void CollectValidatorVariables(Node* node, std::set<std::string>& code_lines);
 
-    void GenerateClassHeader(Node* form_node, const EventVector& events);
+    void GenerateClassHeader(Node* form_node, EventVector& events);
     void GenerateClassConstructor(Node* form_node, EventVector& events);
 
     void GenSrcEventBinding(Node* class_node, EventVector& events);
@@ -203,4 +203,5 @@ private:
     bool m_NeedAnimationFunction { false };  // Set when an Animation image is used
     bool m_NeedSVGFunction { false };        // Set when SVG image type is used
     bool m_NeedImageFunction { false };      // Set when Embed type is used
+    bool m_TranslationUnit { true };         // Reflects form->as_bool(prop_generate_translation_unit)
 };

@@ -399,6 +399,7 @@ namespace GenEnum
         prop_title,
         prop_toolbar_pane,
         prop_tooltip,
+        prop_generate_translation_unit,
         prop_type,
         prop_unchecked_bitmap,
         prop_underlined,

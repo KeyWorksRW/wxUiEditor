@@ -171,6 +171,12 @@ void GenThreadCpp(GenData& gen_data, Node* form)
         gen_data.UpdateFileCount();
     }
 
+    if (!form->as_bool(prop_generate_translation_unit))
+    {
+        gen_data.UpdateFileCount();
+        return;
+    }
+
     path.replace_extension(source_ext);
     retval = cpp_cw->WriteFile(GEN_LANG_CPLUSPLUS, flags);
 
@@ -640,7 +646,7 @@ void GenerateTmpFiles(const std::vector<tt_string>& ClassList, pugi::xml_node ro
                         paths.append_child("right").text().set(tmp_path.c_str());
                         paths.append_child("right-readonly").text().set("1");
                     }
-                    if (new_src)
+                    if (new_src && form->as_bool(prop_generate_translation_unit))
                     {
                         auto paths = root.append_child("paths");
                         tmp_path.replace_extension(source_ext);

@@ -225,10 +225,36 @@ void BaseCodeGenerator::GenerateCppClass(Node* form_node, PANEL_PAGE panel_type)
         hdr_includes.insert("#include <wx/event.h>");
     }
 
+    if (form_node->prop_as_bool(prop_persist))
+    {
+        src_includes.insert("#include <wx/persist.h>");
+        src_includes.insert("#include <wx/persist/toplevel.h>");
+    }
+
+    if (form_node->HasValue(prop_icon))
+    {
+        src_includes.insert("#include <wx/icon.h>");
+    }
+
+    thrd_need_img_func.join();
+
+    if (m_NeedArtProviderHeader)
+    {
+        src_includes.insert("#include <wx/artprov.h>");
+    }
+
     if (panel_type != CPP_PANEL)
     {
         // BUGBUG: [KeyWorks - 01-25-2021] Need to look for base_class_name property of all children, and add each name
         // as a forwarded class.
+
+        if (!m_TranslationUnit)
+        {
+            for (auto& iter: src_includes)
+            {
+                hdr_includes.insert(iter);
+            }
+        }
 
         // First output all the wxWidget header files
         for (auto& iter: hdr_includes)
@@ -268,32 +294,6 @@ void BaseCodeGenerator::GenerateCppClass(Node* form_node, PANEL_PAGE panel_type)
     {
         m_source->writeLine(tt_string() << "#include \"" << Project.value(prop_local_pch_file) << '"');
         m_source->writeLine();
-    }
-
-    if (form_node->prop_as_bool(prop_persist))
-    {
-        src_includes.insert("#include <wx/persist.h>");
-        src_includes.insert("#include <wx/persist/toplevel.h>");
-    }
-
-    if (form_node->HasValue(prop_icon))
-    {
-        src_includes.insert("#include <wx/icon.h>");
-    }
-
-    thrd_need_img_func.join();
-
-    if (m_NeedArtProviderHeader)
-    {
-        src_includes.insert("#include <wx/artprov.h>");
-    }
-
-    if (!m_TranslationUnit)
-    {
-        for (auto& iter: src_includes)
-        {
-            hdr_includes.insert(iter);
-        }
     }
 
     // Make certain there is a blank line before the the wxWidget #includes

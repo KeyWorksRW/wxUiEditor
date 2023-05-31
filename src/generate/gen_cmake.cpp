@@ -77,7 +77,7 @@ int WriteCMakeFile(Node* parent_node, std::vector<tt_string>& updated_files, std
 
     for (const auto& form: forms)
     {
-        if (!form->HasValue(prop_base_file))
+        if (!form->HasValue(prop_base_file) || !form->as_bool(prop_generate_translation_unit))
             continue;
 
         if (parent_node == Project.ProjectNode())

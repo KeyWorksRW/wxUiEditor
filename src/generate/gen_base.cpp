@@ -177,7 +177,10 @@ void BaseCodeGenerator::GenerateCppClass(Node* form_node, PANEL_PAGE panel_type)
     if (m_panel_type == NOT_PANEL)
     {
         m_header->writeLine(txt_BaseCmtBlock);
-        m_source->writeLine(txt_BaseCmtBlock);
+        if (m_TranslationUnit)
+        {
+            m_source->writeLine(txt_BaseCmtBlock);
+        }
     }
 
     tt_string file;

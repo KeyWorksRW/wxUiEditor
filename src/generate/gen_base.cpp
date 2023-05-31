@@ -1239,19 +1239,27 @@ void BaseCodeGenerator::GenerateClassHeader(Node* form_node, EventVector& events
     {
         if (!m_TranslationUnit)
         {
+            // We need to use the header version of the Create() declaration to get the default
+            // parameters, but since we will be defining rather than declaring the function, we
+            // have to remove the trailing ';'. When GenerateClassConstructor() is called, it
+            // will remove it's initial definition of the Create() function, starting with a
+            // '{' instead. All of this is required because you can't have a declaration and
+            // definition in a class header file, and we need the default parameters for 2-step
+            // construction to work.
             if (auto start = code.find("bool Create"); tt::is_found(start))
             {
-                do
-                {
-                    --start;
-                } while (start > 0 && tt::is_whitespace(code[start]));
-                ++start;  // keep whatever the non-whitespace character was
-
                 if (auto end = code.find(';', start); tt::is_found(end))
                 {
-                    code.erase(start, end - start + 1);
+                    // Remove all trailing whitespace -- when GenerateClassConstructor() is
+                    // called, it will start with an opening brace.
+                    size_t count = 2;
+                    for (; end + count < code.size(); ++count)
+                    {
+                        if (!tt::is_whitespace(code[end + count]))
+                            break;
+                    }
+                    code.erase(end, count);
                 }
-                m_header->SetLastLineBlank();
             }
         }
         m_header->writeLine(code);
@@ -1420,8 +1428,10 @@ void BaseCodeGenerator::GenerateClassConstructor(Node* form_node, EventVector& e
     {
         m_source = m_header;
     }
-
-    m_source->writeLine();
+    else
+    {
+        m_source->writeLine();
+    }
 
     auto* generator = form_node->GetGenerator();
     Code code(form_node, GEN_LANG_CPLUSPLUS);
@@ -1429,9 +1439,17 @@ void BaseCodeGenerator::GenerateClassConstructor(Node* form_node, EventVector& e
     {
         if (!m_TranslationUnit)
         {
+            // Don't use the source code version of the Create() functions parameters. This is
+            // set in the header file already with default parameters.
             tt_string find_str;
-            find_str << form_node->value(prop_class_name) << "::Create";
-            code.Replace(find_str, "Create");
+            find_str << "bool " << form_node->value(prop_class_name) << "::Create";
+            if (auto start = code.find(find_str); tt::is_found(start))
+            {
+                if (auto end = code.find('{', start); tt::is_found(end))
+                {
+                    code.erase(start, end - start);
+                }
+            }
         }
 
         m_source->writeLine(code);

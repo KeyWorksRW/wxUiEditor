@@ -75,21 +75,21 @@ int WriteCMakeFile(Node* parent_node, std::vector<tt_string>& updated_files, std
     std::vector<Node*> forms;
     Project.CollectForms(forms, parent_node);
 
-    for (const auto& iter: forms)
+    for (const auto& form: forms)
     {
-        if (!iter->HasValue(prop_base_file))
+        if (!form->HasValue(prop_base_file))
             continue;
 
         if (parent_node == Project.ProjectNode())
         {
-            if (auto* node_folder = iter->get_folder(); node_folder && node_folder->HasValue(prop_folder_cmake_file))
+            if (auto* node_folder = form->get_folder(); node_folder && node_folder->HasValue(prop_folder_cmake_file))
             {
                 // This file already got added to a different .cmake file
                 continue;
             }
         }
 
-        // tt_string path = iter->prop_as_string(prop_base_file);
+        // tt_string path = form->prop_as_string(prop_base_file);
         tt_string path = Project.value(prop_base_directory);
         if (parent_node->isGen(gen_folder) && parent_node->HasValue(prop_folder_base_directory))
         {
@@ -97,11 +97,11 @@ int WriteCMakeFile(Node* parent_node, std::vector<tt_string>& updated_files, std
         }
         if (path.size())
         {
-            path.append_filename(iter->value(prop_base_file).filename());
+            path.append_filename(form->value(prop_base_file).filename());
         }
         else
         {
-            path = iter->value(prop_base_file);
+            path = form->value(prop_base_file);
         }
 
         if (cmake_file_dir.size())

@@ -60,6 +60,7 @@ void BaseCodeGenerator::WriteImagePreConstruction(Code& code)
 void BaseCodeGenerator::WriteImageConstruction(Code& code)
 {
     WriteCode* save_writer = m_TranslationUnit ? nullptr : m_source;
+    bool inlined_warning = false;
     if (!m_TranslationUnit)
     {
         m_source = m_header;
@@ -91,7 +92,23 @@ void BaseCodeGenerator::WriteImageConstruction(Code& code)
             {
                 code.Eol(eol_if_needed).Str("// ").Str(iter_array->filename);
             }
-            code.Eol().Str("const unsigned char ").Str(iter_array->array_name);
+            code.Eol();
+
+            if (!m_TranslationUnit)
+            {
+                if (!inlined_warning)
+                {
+                    inlined_warning = true;
+                    code.Str("// WARNING: This will only work if compiled with C++17 or later.");
+                    code.Eol().Str("// Add an Images form and add your image to that to prevent it from being");
+                    code.Eol().Str("// added to this header file.").Eol();
+                }
+                // The header file can be included multiple times, so we need to set this to
+                // inline to avoid multiple definitions. Note that this requires C++17 --
+                // anything earlier will result in duplication.
+                code << "inline ";
+            }
+            code.Str("const unsigned char ").Str(iter_array->array_name);
             code.Str("[").itoa(max_pos).Str("] {");
             m_source->writeLine(code);
             code.clear();

@@ -250,6 +250,10 @@ void BaseCodeGenerator::GenerateCppClass(Node* form_node, PANEL_PAGE panel_type)
 
         if (!m_TranslationUnit)
         {
+            // Without a translation unit, all the code that requires specific header files
+            // will be generated in the header file, so add all the header files that were for
+            // the source file to the header file instead. hdr_includes is a set, so this will
+            // prevent duplicates.
             for (auto& iter: src_includes)
             {
                 hdr_includes.insert(iter);
@@ -1084,7 +1088,6 @@ void BaseCodeGenerator::GenerateClassHeader(Node* form_node, EventVector& events
     Code code(form_node, GEN_LANG_CPLUSPLUS);
 
     // This may result in two blank lines, but without it there may be a case where there is no blank line at all.
-    // Clang-format, if enabled would remove the extra blank line, but would not add the missing blank line.
     m_header->writeLine();
     if (!m_TranslationUnit)
     {
@@ -1423,6 +1426,11 @@ void BaseCodeGenerator::GenerateClassConstructor(Node* form_node, EventVector& e
 {
     ASSERT(m_language == GEN_LANG_CPLUSPLUS);
 
+    // If we aren't generating a translation unit, then the construction code needs to be
+    // written to the header file instead. Because we also call functions that assume we are
+    // writing to m_source, we change m_source to m_header temporarily, restoring it at before
+    // returning from this function.
+
     WriteCode* save_writer = m_TranslationUnit ? nullptr : m_source;
     if (!m_TranslationUnit)
     {
@@ -1584,6 +1592,8 @@ void BaseCodeGenerator::GenerateClassConstructor(Node* form_node, EventVector& e
         GenContextMenuHandler(node_ctx_menu);
     }
 
+    // This is critical! m_source will have been changed to m_header if there is no translation
+    // unit, so we *must* restore it here.
     if (save_writer)
     {
         m_source = save_writer;

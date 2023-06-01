@@ -127,6 +127,7 @@ void BaseCodeGenerator::GenerateCppClass(Node* form_node, PANEL_PAGE panel_type)
 
     m_form_node = form_node;
     m_ImagesForm = nullptr;
+    m_TranslationUnit = form_node->as_bool(prop_generate_translation_unit);
 
     for (const auto& form: Project.ChildNodePtrs())
     {
@@ -176,7 +177,10 @@ void BaseCodeGenerator::GenerateCppClass(Node* form_node, PANEL_PAGE panel_type)
     if (m_panel_type == NOT_PANEL)
     {
         m_header->writeLine(txt_BaseCmtBlock);
-        m_source->writeLine(txt_BaseCmtBlock);
+        if (m_TranslationUnit)
+        {
+            m_source->writeLine(txt_BaseCmtBlock);
+        }
     }
 
     tt_string file;
@@ -221,10 +225,40 @@ void BaseCodeGenerator::GenerateCppClass(Node* form_node, PANEL_PAGE panel_type)
         hdr_includes.insert("#include <wx/event.h>");
     }
 
+    if (form_node->prop_as_bool(prop_persist))
+    {
+        src_includes.insert("#include <wx/persist.h>");
+        src_includes.insert("#include <wx/persist/toplevel.h>");
+    }
+
+    if (form_node->HasValue(prop_icon))
+    {
+        src_includes.insert("#include <wx/icon.h>");
+    }
+
+    thrd_need_img_func.join();
+
+    if (m_NeedArtProviderHeader)
+    {
+        src_includes.insert("#include <wx/artprov.h>");
+    }
+
     if (panel_type != CPP_PANEL)
     {
         // BUGBUG: [KeyWorks - 01-25-2021] Need to look for base_class_name property of all children, and add each name
         // as a forwarded class.
+
+        if (!m_TranslationUnit)
+        {
+            // Without a translation unit, all the code that requires specific header files
+            // will be generated in the header file, so add all the header files that were for
+            // the source file to the header file instead. hdr_includes is a set, so this will
+            // prevent duplicates.
+            for (auto& iter: src_includes)
+            {
+                hdr_includes.insert(iter);
+            }
+        }
 
         // First output all the wxWidget header files
         for (auto& iter: hdr_includes)
@@ -250,7 +284,7 @@ void BaseCodeGenerator::GenerateCppClass(Node* form_node, PANEL_PAGE panel_type)
         }
     }
 
-    if (form_node->HasValue(prop_cpp_conditional))
+    if (form_node->HasValue(prop_cpp_conditional) && m_TranslationUnit)
     {
         if (!form_node->value(prop_cpp_conditional).starts_with("#"))
             code.Str("#if ");
@@ -260,28 +294,10 @@ void BaseCodeGenerator::GenerateCppClass(Node* form_node, PANEL_PAGE panel_type)
         code.clear();
     }
 
-    if (Project.HasValue(prop_local_pch_file))
+    if (Project.HasValue(prop_local_pch_file) && m_TranslationUnit)
     {
         m_source->writeLine(tt_string() << "#include \"" << Project.value(prop_local_pch_file) << '"');
         m_source->writeLine();
-    }
-
-    if (form_node->prop_as_bool(prop_persist))
-    {
-        src_includes.insert("#include <wx/persist.h>");
-        src_includes.insert("#include <wx/persist/toplevel.h>");
-    }
-
-    if (form_node->HasValue(prop_icon))
-    {
-        src_includes.insert("#include <wx/icon.h>");
-    }
-
-    thrd_need_img_func.join();
-
-    if (m_NeedArtProviderHeader)
-    {
-        src_includes.insert("#include <wx/artprov.h>");
     }
 
     // Make certain there is a blank line before the the wxWidget #includes
@@ -308,37 +324,18 @@ void BaseCodeGenerator::GenerateCppClass(Node* form_node, PANEL_PAGE panel_type)
             code.Eol().Str("#else");
             code.Eol().Tab().Str("#include <wx/bitmap.h>");
             code.Eol().Str("#endif");
-            m_source->writeLine(code);
-            m_source->writeLine();
+
+            if (m_TranslationUnit)
+            {
+                m_source->writeLine(code);
+                m_source->writeLine();
+            }
+            else
+            {
+                m_header->writeLine(code);
+                m_header->writeLine();
+            }
         }
-    }
-
-    // First output all the wxWidget header files
-    for (auto& iter: src_includes)
-    {
-        if (tt::contains(iter, "<wx"))
-            m_source->writeLine((tt_string&) iter);
-    }
-
-    m_source->writeLine();
-
-    // Now output all the other header files (this will include derived_class header files)
-    for (auto& iter: src_includes)
-    {
-        if (!tt::contains(iter, "<wx"))
-            m_source->writeLine((tt_string&) iter);
-    }
-
-    m_source->writeLine();
-
-    if (Project.HasValue(prop_src_preamble))
-    {
-        WritePropSourceCode(Project.ProjectNode(), prop_src_preamble);
-    }
-
-    if (form_node->HasValue(prop_base_src_includes))
-    {
-        WritePropSourceCode(form_node, prop_base_src_includes);
     }
 
     if (auto& hdr_extension = Project.value(prop_header_ext); hdr_extension.size())
@@ -346,20 +343,51 @@ void BaseCodeGenerator::GenerateCppClass(Node* form_node, PANEL_PAGE panel_type)
         m_header_ext = hdr_extension;
     }
 
-    if (file.empty())
+    if (m_TranslationUnit)
     {
-        m_source->writeLine();
-        m_source->writeLine("// Specify the filename to use in the base_file property");
-        m_source->writeLine("#include \"Your filename here\"");
-    }
-    else
-    {
-        file.replace_extension(m_header_ext);
-        m_source->writeLine();
-        m_source->writeLine(tt_string() << "#include \"" << file.filename() << "\"");
-    }
+        // First output all the wxWidget header files
+        for (auto& iter: src_includes)
+        {
+            if (tt::contains(iter, "<wx"))
+                m_source->writeLine((tt_string&) iter);
+        }
 
-    m_source->writeLine();
+        m_source->writeLine();
+
+        // Now output all the other header files (this will include derived_class header files)
+        for (auto& iter: src_includes)
+        {
+            if (!tt::contains(iter, "<wx"))
+                m_source->writeLine((tt_string&) iter);
+        }
+
+        m_source->writeLine();
+
+        if (Project.HasValue(prop_src_preamble))
+        {
+            WritePropSourceCode(Project.ProjectNode(), prop_src_preamble);
+        }
+
+        if (form_node->HasValue(prop_base_src_includes))
+        {
+            WritePropSourceCode(form_node, prop_base_src_includes);
+        }
+
+        if (file.empty())
+        {
+            m_source->writeLine();
+            m_source->writeLine("// Specify the filename to use in the base_file property");
+            m_source->writeLine("#include \"Your filename here\"");
+        }
+        else
+        {
+            file.replace_extension(m_header_ext);
+            m_source->writeLine();
+            m_source->writeLine(tt_string() << "#include \"" << file.filename() << "\"");
+        }
+
+        m_source->writeLine();
+    }
 
     thrd_collect_img_headers.join();
     std::sort(m_embedded_images.begin(), m_embedded_images.end(),
@@ -434,9 +462,11 @@ void BaseCodeGenerator::GenerateCppClass(Node* form_node, PANEL_PAGE panel_type)
     }
 
     if (m_panel_type != CPP_PANEL)
+    {
         GenerateClassHeader(form_node, events);
+    }
 
-    if (m_panel_type != HDR_PANEL)
+    if (m_panel_type != HDR_PANEL && m_TranslationUnit)
     {
         // First, generate the header files needed
 
@@ -528,15 +558,20 @@ void BaseCodeGenerator::GenerateCppClass(Node* form_node, PANEL_PAGE panel_type)
         m_header->writeLine();
     }
 
-    if (m_panel_type != CPP_PANEL && m_embedded_images.size())
+    if (m_panel_type != CPP_PANEL && m_embedded_images.size() && m_TranslationUnit)
     {
         WriteImagePostHeader();
     }
 
-    if (form_node->HasValue(prop_cpp_conditional))
+    if (form_node->HasValue(prop_cpp_conditional) && m_TranslationUnit)
     {
         code.Eol().Str("#endif  // ").Str(form_node->value(prop_cpp_conditional));
         m_source->writeLine(code);
+    }
+
+    if (!m_TranslationUnit)
+    {
+        m_source->writeLine("// No code generated since generate_translation_unit is unchecked");
     }
 }
 
@@ -1033,7 +1068,7 @@ tt_string BaseCodeGenerator::GetDeclaration(Node* node)
     return code;
 }
 
-void BaseCodeGenerator::GenerateClassHeader(Node* form_node, const EventVector& events)
+void BaseCodeGenerator::GenerateClassHeader(Node* form_node, EventVector& events)
 {
     ASSERT(m_language == GEN_LANG_CPLUSPLUS);
 
@@ -1050,12 +1085,83 @@ void BaseCodeGenerator::GenerateClassHeader(Node* form_node, const EventVector& 
     }
 
     auto generator = form_node->GetNodeDeclaration()->GetGenerator();
+    Code code(form_node, GEN_LANG_CPLUSPLUS);
 
     // This may result in two blank lines, but without it there may be a case where there is no blank line at all.
-    // Clang-format, if enabled would remove the extra blank line, but would not add the missing blank line.
     m_header->writeLine();
+    if (!m_TranslationUnit)
+    {
+        WriteImagePreConstruction(code);
+        if (code.size())
+        {
+            m_header->writeLine(code);
+        }
 
-    Code code(form_node, GEN_LANG_CPLUSPLUS);
+        // First, generate the header files needed
+
+        m_header->writeLine();
+        if (m_NeedAnimationFunction)
+        {
+            m_header->writeLine("#include <wx/animate.h>", indent::none);
+        }
+        if (m_NeedImageFunction || m_NeedHeaderFunction || m_NeedSVGFunction || m_NeedAnimationFunction)
+        {
+            m_header->writeLine("\n#include <wx/mstream.h>  // memory stream classes", indent::none);
+        }
+        if (m_NeedSVGFunction)
+        {
+            m_header->writeLine("#include <wx/zstream.h>  // zlib stream classes", indent::none);
+            m_header->writeLine();
+            m_header->writeLine("#include <memory>  // for std::make_unique", indent::none);
+        }
+
+        if (m_NeedImageFunction || m_NeedHeaderFunction)
+        {
+            tt_string_vector function;
+            function.ReadString(txt_wxueImageFunction);
+            for (auto& iter: function)
+            {
+                m_header->writeLine(iter, indent::none);
+            }
+            m_header->writeLine();
+        }
+
+        if (m_NeedSVGFunction)
+        {
+            if (Project.value(prop_wxWidgets_version) == "3.1")
+            {
+                m_header->writeLine();
+                m_header->writeLine("#if !wxCHECK_VERSION(3, 1, 6)", indent::none);
+                m_header->Indent();
+                m_header->writeLine("#error \"You must build with wxWidgets 3.1.6 or later to use SVG images.\"",
+                                    indent::auto_no_whitespace);
+                m_header->Unindent();
+                m_header->writeLine("#endif", indent::none);
+            }
+
+            tt_string_vector function;
+            function.ReadString(txt_GetBundleFromSVG);
+            for (auto& iter: function)
+            {
+                m_header->writeLine(iter, indent::none);
+            }
+            m_header->writeLine();
+        }
+
+        if (m_NeedAnimationFunction)
+        {
+            tt_string_vector function;
+            function.ReadString(txt_GetAnimFromHdrFunction);
+            for (auto& iter: function)
+            {
+                m_header->writeLine(iter, indent::none);
+            }
+        }
+
+        WriteImagePostHeader();
+        m_header->writeLine();
+    }
+
     if (generator->PreClassHeaderCode(code))
     {
         m_header->writeLine(code);
@@ -1134,8 +1240,40 @@ void BaseCodeGenerator::GenerateClassHeader(Node* form_node, const EventVector& 
     code.clear();
     if (generator->HeaderCode(code))
     {
+        if (!m_TranslationUnit)
+        {
+            // We need to use the header version of the Create() declaration to get the default
+            // parameters, but since we will be defining rather than declaring the function, we
+            // have to remove the trailing ';'. When GenerateClassConstructor() is called, it
+            // will remove it's initial definition of the Create() function, starting with a
+            // '{' instead. All of this is required because you can't have a declaration and
+            // definition in a class header file, and we need the default parameters for 2-step
+            // construction to work.
+            if (auto start = code.find("bool Create"); tt::is_found(start))
+            {
+                if (auto end = code.find(';', start); tt::is_found(end))
+                {
+                    // Remove all trailing whitespace -- when GenerateClassConstructor() is
+                    // called, it will start with an opening brace.
+                    size_t count = 2;
+                    for (; end + count < code.size(); ++count)
+                    {
+                        if (!tt::is_whitespace(code[end + count]))
+                            break;
+                    }
+                    code.erase(end, count);
+                }
+            }
+        }
         m_header->writeLine(code);
     }
+
+    if (!m_TranslationUnit)
+    {
+        GenerateClassConstructor(form_node, events);
+        m_header->writeLine();
+    }
+
     m_header->SetLastLineBlank();
 
     GenValidatorFunctions(form_node);
@@ -1205,6 +1343,22 @@ void BaseCodeGenerator::GenerateClassHeader(Node* form_node, const EventVector& 
 
     m_header->Unindent();
     m_header->writeLine("};");
+
+    if (m_embedded_images.size() && !m_TranslationUnit)
+    {
+        code.clear();
+
+        if (m_embedded_images.size())
+        {
+            WriteImagePreConstruction(code);
+            if (code.size())
+            {
+                m_header->writeLine(code);
+            }
+        }
+
+        WriteImageConstruction(code);
+    }
 }
 
 // This should only be called to generate C++ code.
@@ -1272,12 +1426,40 @@ void BaseCodeGenerator::GenerateClassConstructor(Node* form_node, EventVector& e
 {
     ASSERT(m_language == GEN_LANG_CPLUSPLUS);
 
-    m_source->writeLine();
+    // If we aren't generating a translation unit, then the construction code needs to be
+    // written to the header file instead. Because we also call functions that assume we are
+    // writing to m_source, we change m_source to m_header temporarily, restoring it at before
+    // returning from this function.
+
+    WriteCode* save_writer = m_TranslationUnit ? nullptr : m_source;
+    if (!m_TranslationUnit)
+    {
+        m_source = m_header;
+    }
+    else
+    {
+        m_source->writeLine();
+    }
 
     auto* generator = form_node->GetGenerator();
     Code code(form_node, GEN_LANG_CPLUSPLUS);
     if (generator->ConstructionCode(code))
     {
+        if (!m_TranslationUnit)
+        {
+            // Don't use the source code version of the Create() functions parameters. This is
+            // set in the header file already with default parameters.
+            tt_string find_str;
+            find_str << "bool " << form_node->value(prop_class_name) << "::Create";
+            if (auto start = code.find(find_str); tt::is_found(start))
+            {
+                if (auto end = code.find('{', start); tt::is_found(end))
+                {
+                    code.erase(start, end - start);
+                }
+            }
+        }
+
         m_source->writeLine(code);
         m_source->Indent();
 
@@ -1408,6 +1590,13 @@ void BaseCodeGenerator::GenerateClassConstructor(Node* form_node, EventVector& e
     if (node_ctx_menu)
     {
         GenContextMenuHandler(node_ctx_menu);
+    }
+
+    // This is critical! m_source will have been changed to m_header if there is no translation
+    // unit, so we *must* restore it here.
+    if (save_writer)
+    {
+        m_source = save_writer;
     }
 }
 

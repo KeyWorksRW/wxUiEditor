@@ -29,8 +29,8 @@ Ainsi_c3_a_se_passe_png = PyEmbeddedImage(
 
 class DlgIssue_960(wx.Dialog):
     def __init__(self, parent, id=wx.ID_ANY, title="", pos=
-                wx.DefaultPosition, size=wx.DefaultSize,
-                style=wx.DEFAULT_DIALOG_STYLE, name=wx.DialogNameStr):
+                wx.DefaultPosition, size=wx.DefaultSize, style=0,
+                name=wx.DialogNameStr):
         wx.Dialog.__init__(self)
 
         if not self.Create(parent, id, title, pos, size, style, name):

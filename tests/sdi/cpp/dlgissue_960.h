@@ -16,6 +16,12 @@
 class DlgIssue_960 : public wxDialog
 {
 public:
+    const int form_id = wxID_ANY;
+    const int form_style = 0;
+    const wxPoint form_pos = wxDefaultPosition;
+    const wxSize form_size = wxDefaultSize;
+    static const wxString form_title() { return wxEmptyString; }
+
     DlgIssue_960() {}
     DlgIssue_960(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = wxEmptyString,
         const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,

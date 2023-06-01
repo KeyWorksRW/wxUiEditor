@@ -2096,6 +2096,7 @@
         class="wxDialog"
         class_name="DlgIssue_960"
         base_file="dlgissue_960"
+        generate_const_values="1"
         derived_class_name="DlgIssue_960Derived"
         derived_file="dlgissue_960_derived"
         python_file="dlgissue_960"

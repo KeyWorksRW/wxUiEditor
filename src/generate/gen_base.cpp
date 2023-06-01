@@ -1213,9 +1213,21 @@ void BaseCodeGenerator::GenerateClassHeader(Node* form_node, EventVector& events
     {
         code.clear();
         if (form_node->HasProp(prop_id))
-            code.Eol(eol_if_needed).Str("const int form_id = ").Str(prop_id) += ";";
+        {
+            code.Eol(eol_if_needed).Str("const int form_id = ");
+            if (form_node->value(prop_id).size())
+                code.Str(prop_id) += ";";
+            else
+                code.Str("wxID_ANY;");
+        }
         if (form_node->HasProp(prop_style))
-            code.Eol(eol_if_needed).Str("const int form_style = ").Str(prop_style) += ";";
+        {
+            code.Eol(eol_if_needed).Str("const int form_style = ");
+            if (form_node->value(prop_style).size())
+                code.Str(prop_style) += ";";
+            else
+                code.Str("0;");
+        }
         if (form_node->HasProp(prop_pos))
             code.Eol(eol_if_needed).Str("const wxPoint form_pos = ").Pos(prop_pos, no_dlg_units) += ";";
         if (form_node->HasProp(prop_size))

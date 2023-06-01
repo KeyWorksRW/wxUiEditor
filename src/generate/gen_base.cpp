@@ -1228,6 +1228,14 @@ void BaseCodeGenerator::GenerateClassHeader(Node* form_node, EventVector& events
             else
                 code.Str("0;");
         }
+        else if (form_node->HasProp(prop_window_style))
+        {
+            code.Eol(eol_if_needed).Str("const int form_style = ");
+            if (form_node->value(prop_window_style).size())
+                code.Str(prop_window_style) += ";";
+            else
+                code.Str("0;");
+        }
         if (form_node->HasProp(prop_pos))
             code.Eol(eol_if_needed).Str("const wxPoint form_pos = ").Pos(prop_pos, no_dlg_units) += ";";
         if (form_node->HasProp(prop_size))

@@ -111,6 +111,8 @@ inline const char* window_interfaces_xml = R"===(<?xml version="1.0"?>
 			help="Sets the help text to be used as context-sensitive help for this window." />
 		<property name="derived_class" type="string"
 			help="If you have derived a class from a wxWidget class and you want this component to use your derived class, then specify that class name here. You will need to add the header file for your class to the derived_header property." />
+		<property name="derived_params" type="string_escapes"
+			help="Specifies additional parameters to insert before the normal wxWidget class parameters." />
 		<property name="derived_header" type="file"
 			help="Specify the name of the header file that declares your derived class." />
 		<property name="window_name" type="string_escapes" />

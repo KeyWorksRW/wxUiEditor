@@ -436,6 +436,14 @@ Code& Code::CreateClass(bool use_generic, tt_string_view override_name)
         {
             *this += m_node->prop_as_string(prop_derived_class);
             *this += '(';
+            if (m_node->HasValue(prop_derived_params))
+            {
+                *this += m_node->value(prop_derived_params);
+                if (back() != ',')
+                    *this += ", ";
+                if (back() != ' ')
+                    *this += ' ';
+            }
             return *this;
         }
     }

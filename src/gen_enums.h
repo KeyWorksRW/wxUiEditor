@@ -176,6 +176,7 @@ namespace GenEnum
         prop_derived_directory,
         prop_derived_file,
         prop_derived_header,
+        prop_derived_params,
         prop_digits,
         prop_direction,
         prop_disabled,

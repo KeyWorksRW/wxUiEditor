@@ -170,6 +170,7 @@ std::map<GenEnum::PropName, const char*> GenEnum::map_PropNames = {
     { prop_derived_directory, "derived_directory" },
     { prop_derived_file, "derived_file" },
     { prop_derived_header, "derived_header" },
+    { prop_derived_params, "derived_params" },
     { prop_digits, "digits" },
     { prop_direction, "direction" },
     { prop_disabled, "disabled" },

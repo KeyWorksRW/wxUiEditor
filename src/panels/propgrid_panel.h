@@ -80,6 +80,11 @@ protected:
     void ModifyProperty(NodeProperty* prop, const wxString& str);
     void modifyProperty(NodeProperty* prop, tt_string_view str);
 
+    void ModifyBitlistProperty(NodeProperty* node_prop, wxPGProperty* grid_prop);
+    void ModifyBoolProperty(NodeProperty* node_prop, wxPGProperty* grid_prop);
+    void ModifyFileProperty(NodeProperty* node_prop, wxPGProperty* grid_prop);
+    void ModifyOptionsProperty(NodeProperty* node_prop, wxPGProperty* grid_prop);
+
     int GetBitlistValue(const wxString& strVal, wxPGChoices& bit_flags);
 
     // Event handlers

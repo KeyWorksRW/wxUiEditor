@@ -242,6 +242,24 @@ private:
     NodeSharedPtr m_old_project;
 };
 
+// This is used to check whether Update Images is at the top of the undo stack
+extern const char* txt_update_images_undo_string;
+
+// This is used when an Images form has the auto_update property changed
+class AutoImagesAction : public UndoAction
+{
+public:
+    AutoImagesAction(Node* node);
+    void Change() override;
+    void Revert() override;
+
+private:
+    NodeSharedPtr m_parent;
+    NodeSharedPtr m_node;
+    NodeSharedPtr m_old_images;
+    size_t m_old_pos;
+};
+
 // This is used to check whether Sort Images is at the top of the undo stack
 extern const char* txt_sort_images_undo_string;
 

@@ -5,6 +5,8 @@
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
+#include <set>
+
 #include <wx/wupdlock.h>  // wxWindowUpdateLocker prevents window redrawing
 
 #include "undo_cmds.h"
@@ -16,6 +18,8 @@
 #include "node_gridbag.h"         // GridBag -- Create and modify a node containing a wxGridBagSizer
 #include "project_handler.h"      // ProjectHandler class
 #include "utils.h"                // Utility functions that work with properties
+
+#include "generate/images_form.h"  // Needed for GatherImages() declaration
 
 ///////////////////////////////// InsertNodeAction ////////////////////////////////////
 
@@ -774,6 +778,81 @@ void SortImagesAction::Change()
 }
 
 void SortImagesAction::Revert()
+{
+    m_parent->RemoveChild(m_node);
+    m_node.reset();
+    m_node = m_old_images;
+    m_old_images.reset();
+    m_parent->AddChild(m_node);
+    m_node->SetParent(m_parent);
+    m_parent->ChangeChildPosition(m_node, m_old_pos);
+
+    wxGetFrame().FireProjectUpdatedEvent();
+    wxGetFrame().SelectNode(m_node);
+}
+
+///////////////////////////////// AutoImagesAction ////////////////////////////////////
+
+const char* txt_update_images_undo_string = "Update Images";
+
+AutoImagesAction::AutoImagesAction(Node* node)
+{
+    m_node = node->GetSharedPtr();
+    m_parent = node->GetParentPtr();
+    m_old_pos = m_parent->GetChildPosition(node);
+
+    m_RedoEventGenerated = true;
+    m_UndoEventGenerated = true;
+
+    m_undo_string = txt_update_images_undo_string;
+}
+
+void AutoImagesAction::Change()
+{
+    m_old_images = NodeCreation.MakeCopy(m_node);
+
+    m_node->set_value(prop_auto_update, true);
+
+    std::set<std::string> image_names;
+    for (auto& iter: m_node->GetChildNodePtrs())
+    {
+        image_names.insert(iter->value(prop_bitmap));
+    }
+
+    std::vector<std::string> new_images;
+    for (auto& child: m_node->GetParent()->GetChildNodePtrs())
+    {
+        // Note that GatherImages will update both image_names and new_images
+        GatherImages(child.get(), image_names, new_images);
+    }
+
+    if (m_node->as_bool(prop_sorted))
+    {
+        // The set contains the sorted list of image descriptions, so use that instead of
+        // new_images since it is already sorted.
+        m_node->RemoveAllChildren();
+        for (auto& iter: image_names)
+        {
+            auto new_image = NodeCreation.CreateNode(gen_embedded_image, m_node.get());
+            new_image->set_value(prop_bitmap, iter);
+            m_node->AddChild(new_image);
+        }
+    }
+    else
+    {
+        for (auto& iter: new_images)
+        {
+            auto new_image = NodeCreation.CreateNode(gen_embedded_image, m_node.get());
+            new_image->set_value(prop_bitmap, iter);
+            m_node->AddChild(new_image);
+        }
+    }
+
+    wxGetFrame().FireProjectUpdatedEvent();
+    wxGetFrame().SelectNode(m_node);
+}
+
+void AutoImagesAction::Revert()
 {
     m_parent->RemoveChild(m_node);
     m_node.reset();

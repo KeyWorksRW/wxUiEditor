@@ -509,10 +509,93 @@ bool ImagesGenerator::ModifyProperty(NodeProperty* prop, tt_string_view value)
     }
     else if (prop->isProp(prop_auto_update))
     {
-        return false;  // Let mainframe handle the undo
+        if (value == "0")
+        {
+            auto& undo_stack = wxGetFrame().GetUndoStack();
+            if (undo_stack.GetUndoString() == txt_update_images_undo_string)
+            {
+                wxGetFrame().Undo();
+                return true;
+            }
+            else
+            {
+                return false;  // Let mainframe handle the undo
+            }
+        }
+        else
+        {
+            auto images_node = prop->GetNode();
+            std::set<std::string> image_names;
+            for (auto& iter: images_node->GetChildNodePtrs())
+            {
+                image_names.insert(iter->value(prop_bitmap));
+            }
+
+            std::vector<std::string> new_images;
+            for (auto& child: images_node->GetParent()->GetChildNodePtrs())
+            {
+                // Note that GatherImages will update both image_names and new_images
+                GatherImages(child.get(), image_names, new_images);
+            }
+
+            if (new_images.empty())
+            {
+                return false;  // Let mainframe handle the undo
+            }
+            else
+            {
+                // We've gathered all the information to change the node now, but we don't have
+                // a way to pass the set and vector to the undo action in a way that it can use
+                // it in the normal flow. Pushing the Undo here will simply regenerate the set
+                // and vector before actually changing the node.
+                auto undo_update_images = std::make_shared<AutoImagesAction>(images_node);
+                wxGetFrame().PushUndoAction(undo_update_images);
+
+                return true;
+            }
+        }
     }
     else
     {
         return false;
+    }
+}
+
+void GatherImages(Node* parent, std::set<std::string>& images, std::vector<std::string>& new_images)
+{
+    if (parent->isGen(gen_Images))
+    {
+        return;
+    }
+    else if (parent->isGen(gen_folder))
+    {
+        // If a folder also contains a gen_Images form, then we don't process anything in the
+        // folder
+        for (const auto& child: parent->GetChildNodePtrs())
+        {
+            if (child->isGen(gen_Images))
+                return;
+        }
+    }
+
+    for (const auto& child: parent->GetChildNodePtrs())
+    {
+        if (child->HasValue(prop_bitmap))
+        {
+            if (images.contains(child->value(prop_bitmap)))
+            {
+                continue;
+            }
+            auto& description = child->value(prop_bitmap);
+            if (description.starts_with("Embed") || description.starts_with("SVG"))
+            {
+                images.insert(description);
+                new_images.push_back(description);
+            }
+        }
+        if (child->GetChildCount())
+        {
+            GatherImages(child.get(), images, new_images);
+        }
     }
 }

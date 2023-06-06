@@ -30,3 +30,5 @@ class EmbeddedImageGenerator : public BaseGenerator
 {
 public:
 };
+
+void GatherImages(Node* parent, std::set<std::string>& images, std::vector<std::string>& new_images);

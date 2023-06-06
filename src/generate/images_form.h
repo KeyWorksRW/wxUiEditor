@@ -16,6 +16,9 @@ class ImagesGenerator : public BaseGenerator
 {
 public:
     wxObject* CreateMockup(Node* node, wxObject* parent) override;
+    int GetRequiredVersion(Node* /*node*/) override;
+
+    bool ModifyProperty(NodeProperty* prop, tt_string_view value) override;
 
 private:
     wxStaticBitmap* m_bitmap;

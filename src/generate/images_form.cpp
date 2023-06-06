@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Embedded images generator
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2021-2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2021-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -18,6 +18,7 @@
 #include "mainframe.h"        // MainFrame -- Main window frame
 #include "node.h"             // Node class
 #include "project_handler.h"  // ProjectHandler class
+#include "undo_cmds.h"        // InsertNodeAction -- Undoable command classes derived from UndoAction
 #include "write_code.h"       // Write code to Scintilla or file
 
 #include "ui_images.h"
@@ -469,4 +470,49 @@ void BaseCodeGenerator::GenerateImagesForm()
 
     m_header->Unindent();
     m_header->writeLine("}\n");
+}
+
+int ImagesGenerator::GetRequiredVersion(Node* node)
+{
+    if (node->HasValue(prop_sorted) || node->HasValue(prop_auto_update))
+    {
+        return minRequiredVer + 2;  // 1.1.1 release
+    }
+
+    return minRequiredVer;
+}
+
+// Called by MainFrame when the user modifies a property. Return true if the generator handles
+// pushing to the undo stack.
+bool ImagesGenerator::ModifyProperty(NodeProperty* prop, tt_string_view value)
+{
+    if (prop->isProp(prop_sorted))
+    {
+        if (value == "0")
+        {
+            auto& undo_stack = wxGetFrame().GetUndoStack();
+            if (undo_stack.GetUndoString() == txt_sort_images_undo_string)
+            {
+                wxGetFrame().Undo();
+                return true;
+            }
+            else
+            {
+                return false;  // Let mainframe handle the undo
+            }
+        }
+
+        auto undo_sort_images = std::make_shared<SortImagesAction>(prop->GetNode());
+        wxGetFrame().PushUndoAction(undo_sort_images);
+
+        return true;
+    }
+    else if (prop->isProp(prop_auto_update))
+    {
+        return false;  // Let mainframe handle the undo
+    }
+    else
+    {
+        return false;
+    }
 }

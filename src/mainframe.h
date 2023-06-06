@@ -131,6 +131,8 @@ public:
     bool CanUndo() { return m_undo_stack.IsUndoAvailable(); }
     bool CanRedo() { return m_undo_stack.IsRedoAvailable(); }
 
+    UndoStack& GetUndoStack() { return m_undo_stack; }
+
     const NodeSharedPtr& GetSelectedNodePtr() { return m_selected_node; };
     Node* GetSelectedNode() { return (m_selected_node ? m_selected_node.get() : nullptr); };
     Node* GetSelectedForm();

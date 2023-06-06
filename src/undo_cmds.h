@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Undoable command classes derived from UndoAction
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2021-2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2021-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -240,4 +240,22 @@ protected:
 
 private:
     NodeSharedPtr m_old_project;
+};
+
+// This is used to check whether Sort Images is at the top of the undo stack
+extern const char* txt_sort_images_undo_string;
+
+// This sorts all the children of the project based on their class_name property
+class SortImagesAction : public UndoAction
+{
+public:
+    SortImagesAction(Node* node);
+    void Change() override;
+    void Revert() override;
+
+private:
+    NodeSharedPtr m_parent;
+    NodeSharedPtr m_node;
+    NodeSharedPtr m_old_images;
+    size_t m_old_pos;
 };

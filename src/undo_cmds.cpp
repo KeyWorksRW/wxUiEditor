@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Undoable command classes derived from UndoAction
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2021-2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2021-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -15,6 +15,7 @@
 #include "node_creator.h"         // NodeCreator -- Class used to create nodes
 #include "node_gridbag.h"         // GridBag -- Create and modify a node containing a wxGridBagSizer
 #include "project_handler.h"      // ProjectHandler class
+#include "utils.h"                // Utility functions that work with properties
 
 ///////////////////////////////// InsertNodeAction ////////////////////////////////////
 
@@ -727,4 +728,61 @@ void SortProjectAction::Revert()
     wxGetFrame().FireProjectUpdatedEvent();
     if (isAllowedSelectEvent())
         wxGetFrame().SelectNode(Project.ProjectNode());
+}
+
+///////////////////////////////// SortImagesAction ////////////////////////////////////
+
+static bool CompareImageNames(NodeSharedPtr a, NodeSharedPtr b)
+{
+    auto& description_a = a->value(prop_bitmap);
+    tt_view_vector parts_a(description_a, BMP_PROP_SEPARATOR, tt::TRIM::both);
+    if (parts_a[IndexImage].empty())
+        return true;
+
+    auto& description_b = b->value(prop_bitmap);
+    tt_view_vector parts_b(description_b, BMP_PROP_SEPARATOR, tt::TRIM::both);
+    if (parts_b[IndexImage].empty())
+        return false;
+
+    return (parts_a[IndexImage].compare(parts_b[IndexImage]) < 0);
+}
+
+const char* txt_sort_images_undo_string = "Sort Images";
+
+SortImagesAction::SortImagesAction(Node* node)
+{
+    m_node = node->GetSharedPtr();
+    m_parent = node->GetParentPtr();
+    m_old_pos = m_parent->GetChildPosition(node);
+
+    m_RedoEventGenerated = true;
+    m_UndoEventGenerated = true;
+
+    m_undo_string = txt_sort_images_undo_string;
+}
+
+void SortImagesAction::Change()
+{
+    m_old_images = NodeCreation.MakeCopy(m_node);
+
+    auto& children = m_node->GetChildNodePtrs();
+    std::sort(children.begin(), children.end(), CompareImageNames);
+    m_node->set_value(prop_sorted, true);
+
+    wxGetFrame().FireProjectUpdatedEvent();
+    wxGetFrame().SelectNode(m_node);
+}
+
+void SortImagesAction::Revert()
+{
+    m_parent->RemoveChild(m_node);
+    m_node.reset();
+    m_node = m_old_images;
+    m_old_images.reset();
+    m_parent->AddChild(m_node);
+    m_node->SetParent(m_parent);
+    m_parent->ChangeChildPosition(m_node, m_old_pos);
+
+    wxGetFrame().FireProjectUpdatedEvent();
+    wxGetFrame().SelectNode(m_node);
 }

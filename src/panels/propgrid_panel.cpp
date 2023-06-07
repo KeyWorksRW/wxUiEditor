@@ -1454,20 +1454,26 @@ void PropGridPanel::ModifyEmbeddedProperty(NodeProperty* node_prop, wxPGProperty
         ProjectImages.UpdateBundle(parts, node_prop->GetNode());
     }
 
-    modifyProperty(node_prop, value);
-
     if (value.empty() || node_prop->type() == type_animation || value.starts_with("Art") || value.starts_with("XPM"))
     {
+        modifyProperty(node_prop, value);
         return;  // Don't do anything else for animations, art providers or XPMs
     }
     if (value == "Embed;" || value == "SVG;")
     {
-        return;  // Don't do anything else for empty embedded images
+        // Don't do anything else for empty embedded images
+        modifyProperty(node_prop, value);
+        return;
     }
+
+    // We do *not* call modifyProperty() until we are certain that we aren't going to add an
+    // image to a gen_Images node. That's because if we do add it, the GroupUndoActions will
+    // handle the modification of the property via an ModifyPropertyAction class.
 
     auto* node = node_prop->GetNode();
     auto* parent = node->GetParent();
-    while (parent)
+    bool done = false;
+    while (!done && parent)
     {
         if (parent->isGen(gen_folder) || parent->isGen(gen_Project))
         {
@@ -1481,31 +1487,54 @@ void PropGridPanel::ModifyEmbeddedProperty(NodeProperty* node_prop, wxPGProperty
                         {
                             if (iter->value(prop_bitmap) == value)
                             {
-                                return;  // It's already been added, so we're done
+                                done = true;
+                                break;  // It's already been added, so we're done
                             }
                         }
 
-                        // It wasn't found, so add it
-                        auto* new_embedded = child->CreateChildNode(gen_embedded_image);
-                        new_embedded->set_value(prop_bitmap, value);
+                        if (!done)
+                        {
+                            // It wasn't found, so add it
+                            auto group = std::make_shared<GroupUndoActions>("Update bitmap property", node);
 
-                        wxGetFrame().PushUndoAction(
-                            std::make_shared<InsertNodeAction>(new_embedded, child.get(), "Add image to Images file", -1));
+                            auto* new_embedded = child->CreateChildNode(gen_embedded_image);
+                            auto insert_action =
+                                std::make_shared<InsertNodeAction>(new_embedded, child.get(), tt_empty_cstr);
+                            insert_action->AllowSelectEvent(false);
+                            group->Add(insert_action);
+
+                            auto prop_embed_action =
+                                std::make_shared<ModifyPropertyAction>(new_embedded->get_prop_ptr(prop_bitmap), value);
+                            prop_embed_action->AllowSelectEvent(false);
+                            group->Add(prop_embed_action);
+
+                            auto prop_bitmap_action = std::make_shared<ModifyPropertyAction>(node_prop, value);
+                            prop_bitmap_action->AllowSelectEvent(false);
+                            group->Add(prop_bitmap_action);
+
+                            wxGetFrame().PushUndoAction(group);
+                            return;  // The group Undo will handle modifying the bitmap property, so simply return
+                        }
                     }
 
-                    // There was a parent with an Images node so whether we updated it or not,
-                    // we're done
-                    return;
+                    // There was a parent with an Images node so even if we didn't update it,
+                    // we're done.
+                    done = true;
+                    break;
                 }
             }
 
-            if (parent->isGen(gen_Project))
+            if (done || parent->isGen(gen_Project))
             {
-                return;  // The Project node did not have an Images node, so we're done
+                break;  // The Project node did not have an Images node, so we're done
             }
         }
         parent = parent->GetParent();
     }
+
+    // If we get here, then we didn't find an Images node at all, or it didn't need updating,
+    // so just modify the property.
+    modifyProperty(node_prop, value);
 }
 
 void PropGridPanel::ModifyOptionsProperty(NodeProperty* node_prop, wxPGProperty* grid_prop)

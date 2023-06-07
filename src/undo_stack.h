@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Maintain a undo and redo stack
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2021 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2021-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -34,6 +34,12 @@ public:
     bool wasUndoSelectEventGenerated() { return m_UndoSelectEventGenerated; }
     bool wasRedoSelectEventGenerated() { return m_RedoSelectEventGenerated; }
 
+    // Note that these will affect individual UndoActions added to GroupUndoActions, but will
+    // not affect the GroupUndoActions class itself.
+
+    void AllowSelectEvent(bool allow) { m_AllowSelectEvent = allow; }
+    bool isAllowedSelectEvent() { return m_AllowSelectEvent; }
+
 protected:
     tt_string m_undo_string;
 
@@ -41,9 +47,36 @@ protected:
     bool m_RedoEventGenerated { false };
     bool m_UndoSelectEventGenerated { false };
     bool m_RedoSelectEventGenerated { false };
+
+    bool m_AllowSelectEvent { true };
 };
 
+class Node;
 using UndoActionPtr = std::shared_ptr<UndoAction>;
+using NodeSharedPtr = std::shared_ptr<Node>;
+
+// This class can be used when you want to group multiple UndoActions into a single UndoAction
+// with a single undo string.
+class GroupUndoActions : public UndoAction
+{
+public:
+    // Specify sel_node if you want the current selection changed after all the UndoActions
+    // have been called by Change() or Revert()
+    GroupUndoActions(const tt_string& undo_str, Node* sel_node = nullptr);
+
+    // Called when pushed to the Undo stack and when Redo is called
+    void Change() override;
+
+    // Called when Undo is requested
+    void Revert() override;
+
+    void Add(UndoActionPtr ptr) { m_actions.push_back(ptr); }
+
+private:
+    std::vector<UndoActionPtr> m_actions;
+    NodeSharedPtr m_selected_node { nullptr };
+    NodeSharedPtr m_old_selected { nullptr };
+};
 
 class UndoStack
 {

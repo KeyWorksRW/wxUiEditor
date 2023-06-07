@@ -62,14 +62,16 @@ void InsertNodeAction::Change()
 
     // Probably not necessary, but with both parameters set to false, this simply ensures the mainframe has it's selection
     // node set correctly.
-    wxGetFrame().SelectNode(m_node.get(), evt_flags::no_event);
+    if (isAllowedSelectEvent())
+        wxGetFrame().SelectNode(m_node.get(), evt_flags::no_event);
 }
 
 void InsertNodeAction::Revert()
 {
     m_parent->RemoveChild(m_node);
     m_node->SetParent(NodeSharedPtr());  // Remove the parent pointer
-    wxGetFrame().SelectNode(m_old_selected.get());
+    if (isAllowedSelectEvent())
+        wxGetFrame().SelectNode(m_old_selected.get());
 }
 
 ///////////////////////////////// RemoveNodeAction ////////////////////////////////////
@@ -99,11 +101,13 @@ void RemoveNodeAction::Change()
     if (m_parent->GetChildCount())
     {
         auto pos = (m_old_pos < m_parent->GetChildCount() ? m_old_pos : m_parent->GetChildCount() - 1);
-        wxGetFrame().SelectNode(m_parent->GetChild(pos));
+        if (isAllowedSelectEvent())
+            wxGetFrame().SelectNode(m_parent->GetChild(pos));
     }
     else
     {
-        wxGetFrame().SelectNode(m_parent.get());
+        if (isAllowedSelectEvent())
+            wxGetFrame().SelectNode(m_parent.get());
     }
 }
 
@@ -113,7 +117,8 @@ void RemoveNodeAction::Revert()
     m_node->SetParent(m_parent);
     m_parent->ChangeChildPosition(m_node, m_old_pos);
 
-    wxGetFrame().SelectNode(m_old_selected.get(), evt_flags::force_selection);
+    if (isAllowedSelectEvent())
+        wxGetFrame().SelectNode(m_old_selected.get(), evt_flags::force_selection);
 }
 
 ///////////////////////////////// ModifyPropertyAction ////////////////////////////////////
@@ -243,14 +248,16 @@ void ChangePositionAction::Change()
 {
     m_parent->ChangeChildPosition(m_node, m_change_pos);
     wxGetFrame().FirePositionChangedEvent(this);
-    wxGetFrame().SelectNode(m_node);
+    if (isAllowedSelectEvent())
+        wxGetFrame().SelectNode(m_node);
 }
 
 void ChangePositionAction::Revert()
 {
     m_parent->ChangeChildPosition(m_node, m_revert_pos);
     wxGetFrame().FirePositionChangedEvent(this);
-    wxGetFrame().SelectNode(m_node);
+    if (isAllowedSelectEvent())
+        wxGetFrame().SelectNode(m_node);
 }
 
 ///////////////////////////////// ChangeSizerType ////////////////////////////////////
@@ -302,7 +309,8 @@ void ChangeSizerType::Change()
 
     wxGetFrame().FireDeletedEvent(m_old_node.get());
     wxGetFrame().FireCreatedEvent(m_node);
-    wxGetFrame().SelectNode(m_node.get());
+    if (isAllowedSelectEvent())
+        wxGetFrame().SelectNode(m_node.get());
     wxGetFrame().GetNavigationPanel()->ChangeExpansion(m_node.get(), true, true);
 }
 
@@ -316,7 +324,8 @@ void ChangeSizerType::Revert()
 
     wxGetFrame().FireDeletedEvent(m_node.get());
     wxGetFrame().FireCreatedEvent(m_old_node);
-    wxGetFrame().SelectNode(m_old_node.get());
+    if (isAllowedSelectEvent())
+        wxGetFrame().SelectNode(m_old_node.get());
 }
 
 ///////////////////////////////// ChangeNodeType ////////////////////////////////////
@@ -409,7 +418,8 @@ void ChangeNodeType::Change()
 
     wxGetFrame().FireDeletedEvent(m_old_node.get());
     wxGetFrame().FireCreatedEvent(m_node);
-    wxGetFrame().SelectNode(m_node.get());
+    if (isAllowedSelectEvent())
+        wxGetFrame().SelectNode(m_node.get());
     wxGetFrame().GetNavigationPanel()->ChangeExpansion(m_node.get(), true, true);
 }
 
@@ -423,7 +433,8 @@ void ChangeNodeType::Revert()
 
     wxGetFrame().FireDeletedEvent(m_node.get());
     wxGetFrame().FireCreatedEvent(m_old_node);
-    wxGetFrame().SelectNode(m_old_node.get());
+    if (isAllowedSelectEvent())
+        wxGetFrame().SelectNode(m_old_node.get());
 }
 
 ///////////////////////////////// ChangeParentAction ////////////////////////////////////
@@ -460,7 +471,8 @@ void ChangeParentAction::Change()
             m_revert_parent->ChangeChildPosition(m_node, m_revert_position);
             // Since we deleted it from Navigation Panel, need to add it back
             wxGetFrame().FireParentChangedEvent(this);
-            wxGetFrame().SelectNode(m_node);
+            if (isAllowedSelectEvent())
+                wxGetFrame().SelectNode(m_node);
         }
     }
     else if (m_change_parent->AddChild(m_node))
@@ -468,7 +480,8 @@ void ChangeParentAction::Change()
         m_node->SetParent(m_change_parent);
 
         wxGetFrame().FireParentChangedEvent(this);
-        wxGetFrame().SelectNode(m_node);
+        if (isAllowedSelectEvent())
+            wxGetFrame().SelectNode(m_node);
     }
 }
 
@@ -485,7 +498,8 @@ void ChangeParentAction::Revert()
         prop->set_value(m_revert_col);
 
     wxGetFrame().FireParentChangedEvent(this);
-    wxGetFrame().SelectNode(m_node);
+    if (isAllowedSelectEvent())
+        wxGetFrame().SelectNode(m_node);
 }
 
 ///////////////////////////////// AppendGridBagAction ////////////////////////////////////
@@ -531,7 +545,8 @@ void AppendGridBagAction::Change()
     }
 
     wxGetFrame().FireCreatedEvent(m_node);
-    wxGetFrame().SelectNode(m_node, evt_flags::fire_event | evt_flags::force_selection);
+    if (isAllowedSelectEvent())
+        wxGetFrame().SelectNode(m_node, evt_flags::fire_event | evt_flags::force_selection);
 }
 
 void AppendGridBagAction::Revert()
@@ -540,7 +555,8 @@ void AppendGridBagAction::Revert()
     m_node->SetParent(NodeSharedPtr());
 
     wxGetFrame().FireDeletedEvent(m_node.get());
-    wxGetFrame().SelectNode(m_old_selected.get());
+    if (isAllowedSelectEvent())
+        wxGetFrame().SelectNode(m_old_selected.get());
 }
 
 ///////////////////////////////// GridBagAction ////////////////////////////////////
@@ -592,7 +608,8 @@ void GridBagAction::Change()
         nav_panel->ExpandAllNodes(m_cur_gbsizer.get());
 
         wxGetFrame().FireGridBagActionEvent(this);
-        wxGetFrame().SelectNode(m_cur_gbsizer);
+        if (isAllowedSelectEvent())
+            wxGetFrame().SelectNode(m_cur_gbsizer);
     }
 }
 
@@ -619,7 +636,8 @@ void GridBagAction::Revert()
     nav_panel->ExpandAllNodes(m_cur_gbsizer.get());
 
     wxGetFrame().FireGridBagActionEvent(this);
-    wxGetFrame().SelectNode(m_cur_gbsizer);
+    if (isAllowedSelectEvent())
+        wxGetFrame().SelectNode(m_cur_gbsizer);
 }
 
 void GridBagAction::Update()
@@ -680,7 +698,8 @@ void SortProjectAction::Change()
     }
 
     wxGetFrame().FireProjectUpdatedEvent();
-    wxGetFrame().SelectNode(Project.ProjectNode());
+    if (isAllowedSelectEvent())
+        wxGetFrame().SelectNode(Project.ProjectNode());
 }
 
 void SortProjectAction::SortFolder(Node* folder)
@@ -706,5 +725,6 @@ void SortProjectAction::Revert()
     }
 
     wxGetFrame().FireProjectUpdatedEvent();
-    wxGetFrame().SelectNode(Project.ProjectNode());
+    if (isAllowedSelectEvent())
+        wxGetFrame().SelectNode(Project.ProjectNode());
 }

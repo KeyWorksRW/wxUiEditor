@@ -7,6 +7,11 @@
 
 #include "undo_stack.h"  // UndoStack
 
+#include "mainframe.h"  // MainFrame -- Main window frame
+#include "node.h"       // Node class
+
+///////////////////////////////// UndoStack ////////////////////////////////////
+
 void UndoStack::Push(UndoActionPtr ptr)
 {
     if (!m_locked)
@@ -57,4 +62,41 @@ wxString UndoStack::GetRedoString()
         str = m_redo.back()->GetUndoString().wx_str();
     }
     return str;
+}
+
+///////////////////////////////// GroupUndoActions ////////////////////////////////////
+
+GroupUndoActions::GroupUndoActions(const tt_string& undo_str, Node* sel_node) : UndoAction(undo_str.c_str())
+{
+    if (sel_node)
+    {
+        m_old_selected = wxGetFrame().GetSelectedNodePtr();
+        m_selected_node = sel_node->GetSharedPtr();
+    }
+}
+
+void GroupUndoActions::Change()
+{
+    for (auto& iter: m_actions)
+    {
+        iter->Change();
+    }
+
+    if (m_selected_node)
+    {
+        wxGetFrame().SelectNode(m_selected_node);
+    }
+}
+
+void GroupUndoActions::Revert()
+{
+    for (auto& iter: m_actions)
+    {
+        iter->Revert();
+    }
+
+    if (m_old_selected)
+    {
+        wxGetFrame().SelectNode(m_old_selected);
+    }
 }

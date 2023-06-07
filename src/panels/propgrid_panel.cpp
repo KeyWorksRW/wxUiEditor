@@ -1051,24 +1051,7 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
 
         case type_animation:
         case type_image:
-            {
-                tt_string value;
-                // Do NOT call GetValueAsString() -- we need to return the value the way the custom property formatted it
-                value << m_prop_grid->GetPropertyValue(property).GetString().wx_str();
-                tt_string_vector parts(value, BMP_PROP_SEPARATOR, tt::TRIM::both);
-                // If the image field is empty, then the entire property needs to be cleared
-                if (parts.size() > IndexImage && parts[IndexImage].empty())
-                {
-                    value.clear();
-                }
-                else
-                {
-                    // This ensures that all images from a bitmap bundle get added
-                    ProjectImages.UpdateBundle(parts, prop->GetNode());
-                }
-
-                modifyProperty(prop, value);
-            }
+            ModifyEmbeddedProperty(prop, property);
             break;
 
         case type_file:
@@ -1452,6 +1435,77 @@ void PropGridPanel::ModifyFileProperty(NodeProperty* node_prop, wxPGProperty* gr
         }
     }
     ModifyProperty(node_prop, newValue);
+}
+
+void PropGridPanel::ModifyEmbeddedProperty(NodeProperty* node_prop, wxPGProperty* grid_prop)
+{
+    // Do NOT call GetPropertyValueAsString() -- we need to return the value the way the custom property formatted it
+    auto value = m_prop_grid->GetPropertyValue(grid_prop).GetString().utf8_string();
+    tt_string_vector parts(value, BMP_PROP_SEPARATOR, tt::TRIM::both);
+    // If the image field is empty, then the entire property needs to be cleared
+    if (parts.size() > IndexImage && parts[IndexImage].empty())
+    {
+        value.clear();
+    }
+    else
+    {
+        // This ensures that all images from a bitmap bundle get added
+
+        ProjectImages.UpdateBundle(parts, node_prop->GetNode());
+    }
+
+    modifyProperty(node_prop, value);
+
+    if (value.empty() || node_prop->type() == type_animation || value.starts_with("Art") || value.starts_with("XPM"))
+    {
+        return;  // Don't do anything else for animations, art providers or XPMs
+    }
+    if (value == "Embed;" || value == "SVG;")
+    {
+        return;  // Don't do anything else for empty embedded images
+    }
+
+    auto* node = node_prop->GetNode();
+    auto* parent = node->GetParent();
+    while (parent)
+    {
+        if (parent->isGen(gen_folder) || parent->isGen(gen_Project))
+        {
+            for (const auto& child: parent->GetChildNodePtrs())
+            {
+                if (child->isGen(gen_Images))
+                {
+                    if (child->as_bool(prop_auto_update))
+                    {
+                        for (auto& iter: child->GetChildNodePtrs())
+                        {
+                            if (iter->value(prop_bitmap) == value)
+                            {
+                                return;  // It's already been added, so we're done
+                            }
+                        }
+
+                        // It wasn't found, so add it
+                        auto* new_embedded = child->CreateChildNode(gen_embedded_image);
+                        new_embedded->set_value(prop_bitmap, value);
+
+                        wxGetFrame().PushUndoAction(
+                            std::make_shared<InsertNodeAction>(new_embedded, child.get(), "Add image to Images file", -1));
+                    }
+
+                    // There was a parent with an Images node so whether we updated it or not,
+                    // we're done
+                    return;
+                }
+            }
+
+            if (parent->isGen(gen_Project))
+            {
+                return;  // The Project node did not have an Images node, so we're done
+            }
+        }
+        parent = parent->GetParent();
+    }
 }
 
 void PropGridPanel::ModifyOptionsProperty(NodeProperty* node_prop, wxPGProperty* grid_prop)

@@ -1414,7 +1414,7 @@ void PropGridPanel::ModifyBitlistProperty(NodeProperty* node_prop, wxPGProperty*
         }
     }
 
-    modifyProperty(node_prop, value.wx_str());
+    modifyProperty(node_prop, value.utf8_string());
 }
 
 void PropGridPanel::ModifyBoolProperty(NodeProperty* node_prop, wxPGProperty* grid_prop)
@@ -1459,7 +1459,7 @@ void PropGridPanel::ModifyOptionsProperty(NodeProperty* node_prop, wxPGProperty*
     auto node = node_prop->GetNode();
 
     tt_wxString value = m_prop_grid->GetPropertyValueAsString(grid_prop);
-    modifyProperty(node_prop, value.wx_str());
+    modifyProperty(node_prop, value.utf8_string());
 
     // Update displayed description for the new selection
     auto propInfo = node_prop->GetPropDeclaration();

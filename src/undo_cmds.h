@@ -23,12 +23,16 @@ public:
     // Called when Undo is requested
     void Revert() override;
 
+    // Set this to true if you created the node without firing a created event.
+    void SetFireCreatedEvent(bool fire) { m_fire_created_event = fire; }
+
 private:
     NodeSharedPtr m_parent;
     NodeSharedPtr m_node;
     NodeSharedPtr m_old_selected;
     int m_pos;
     bool m_fix_duplicate_names { true };
+    bool m_fire_created_event { false };
 };
 
 // Specify node, undo string, and whether or not to add to the clipboard.
@@ -254,6 +258,8 @@ public:
     void Revert() override;
 
 private:
+    std::vector<UndoActionPtr> m_actions;
+
     NodeSharedPtr m_parent;
     NodeSharedPtr m_node;
     NodeSharedPtr m_old_images;

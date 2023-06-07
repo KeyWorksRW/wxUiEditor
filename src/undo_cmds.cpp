@@ -65,6 +65,11 @@ void InsertNodeAction::Change()
         m_fix_duplicate_names = false;
     }
 
+    if (m_fire_created_event)
+    {
+        wxGetFrame().FireCreatedEvent(m_node.get());
+    }
+
     // Probably not necessary, but with both parameters set to false, this simply ensures the mainframe has it's selection
     // node set correctly.
     if (isAllowedSelectEvent())
@@ -75,6 +80,10 @@ void InsertNodeAction::Revert()
 {
     m_parent->RemoveChild(m_node);
     m_node->SetParent(NodeSharedPtr());  // Remove the parent pointer
+    if (m_fire_created_event)
+    {
+        wxGetFrame().FireDeletedEvent(m_node.get());
+    }
     if (isAllowedSelectEvent())
         wxGetFrame().SelectNode(m_old_selected.get());
 }
@@ -805,13 +814,10 @@ AutoImagesAction::AutoImagesAction(Node* node)
     m_UndoEventGenerated = true;
 
     m_undo_string = txt_update_images_undo_string;
-}
 
-void AutoImagesAction::Change()
-{
-    m_old_images = NodeCreation.MakeCopy(m_node);
-
-    m_node->set_value(prop_auto_update, true);
+    // This should either be a folder or a project
+    auto* parent = node->GetParent();
+    ASSERT(parent->isGen(gen_folder) || parent->isGen(gen_Project));
 
     std::set<std::string> image_names;
     for (auto& iter: m_node->GetChildNodePtrs())
@@ -820,48 +826,44 @@ void AutoImagesAction::Change()
     }
 
     std::vector<std::string> new_images;
-    for (auto& child: m_node->GetParent()->GetChildNodePtrs())
+    for (auto& child: m_parent->GetChildNodePtrs())
     {
         // Note that GatherImages will update both image_names and new_images
         GatherImages(child.get(), image_names, new_images);
     }
 
-    if (m_node->as_bool(prop_sorted))
-    {
-        // The set contains the sorted list of image descriptions, so use that instead of
-        // new_images since it is already sorted.
-        m_node->RemoveAllChildren();
-        for (auto& iter: image_names)
-        {
-            auto new_image = NodeCreation.CreateNode(gen_embedded_image, m_node.get());
-            new_image->set_value(prop_bitmap, iter);
-            m_node->AddChild(new_image);
-        }
-    }
-    else
+    if (new_images.size())
     {
         for (auto& iter: new_images)
         {
-            auto new_image = NodeCreation.CreateNode(gen_embedded_image, m_node.get());
-            new_image->set_value(prop_bitmap, iter);
-            m_node->AddChild(new_image);
+            auto new_node = NodeCreation.CreateNode(gen_embedded_image, m_node.get());
+            new_node->set_value(prop_bitmap, iter);
+            auto insert_action = std::make_shared<InsertNodeAction>(new_node.get(), m_node.get(), tt_empty_cstr);
+            insert_action->AllowSelectEvent(false);
+            insert_action->SetFireCreatedEvent(true);
+            m_actions.push_back(insert_action);
         }
     }
 
-    wxGetFrame().FireProjectUpdatedEvent();
+    auto prop_action = std::make_shared<ModifyPropertyAction>(m_node->get_prop_ptr(prop_auto_update), true);
+    prop_action->AllowSelectEvent(false);
+    m_actions.push_back(prop_action);
+}
+
+void AutoImagesAction::Change()
+{
+    for (auto& iter: m_actions)
+    {
+        iter->Change();
+    }
     wxGetFrame().SelectNode(m_node);
 }
 
 void AutoImagesAction::Revert()
 {
-    m_parent->RemoveChild(m_node);
-    m_node.reset();
-    m_node = m_old_images;
-    m_old_images.reset();
-    m_parent->AddChild(m_node);
-    m_node->SetParent(m_parent);
-    m_parent->ChangeChildPosition(m_node, m_old_pos);
-
-    wxGetFrame().FireProjectUpdatedEvent();
+    for (auto& iter: m_actions)
+    {
+        iter->Revert();
+    }
     wxGetFrame().SelectNode(m_node);
 }

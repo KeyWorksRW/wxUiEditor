@@ -34,6 +34,12 @@ public:
     bool wasUndoSelectEventGenerated() { return m_UndoSelectEventGenerated; }
     bool wasRedoSelectEventGenerated() { return m_RedoSelectEventGenerated; }
 
+    // Note that these will affect individual UndoActions added to GroupUndoActions, but will
+    // not affect the GroupUndoActions class itself.
+
+    void AllowSelectEvent(bool allow) { m_AllowSelectEvent = allow; }
+    bool isAllowedSelectEvent() { return m_AllowSelectEvent; }
+
 protected:
     tt_string m_undo_string;
 
@@ -41,6 +47,8 @@ protected:
     bool m_RedoEventGenerated { false };
     bool m_UndoSelectEventGenerated { false };
     bool m_RedoSelectEventGenerated { false };
+
+    bool m_AllowSelectEvent { true };
 };
 
 class Node;

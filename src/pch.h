@@ -28,6 +28,11 @@
     #pragma warning(push)
 #endif
 
+#if defined(__clang__)
+    // suppress warnings caused by wxCHECKED_DELETE
+    #pragma clang diagnostic ignored "-Wunused-local-typedef"
+#endif
+
 #include <wx/defs.h>  // Declarations/definitions common to all wx source files
 
 #if !wxCHECK_VERSION(3, 2, 0)

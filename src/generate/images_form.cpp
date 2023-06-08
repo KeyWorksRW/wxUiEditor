@@ -474,7 +474,7 @@ void BaseCodeGenerator::GenerateImagesForm()
 
 int ImagesGenerator::GetRequiredVersion(Node* node)
 {
-    if (node->HasValue(prop_sorted) || node->HasValue(prop_auto_update))
+    if (node->HasValue(prop_auto_update))
     {
         return minRequiredVer + 2;  // 1.1.1 release
     }
@@ -486,32 +486,10 @@ int ImagesGenerator::GetRequiredVersion(Node* node)
 // pushing to the undo stack.
 bool ImagesGenerator::ModifyProperty(NodeProperty* prop, tt_string_view value)
 {
-    if (prop->isProp(prop_sorted))
-    {
-        if (value == "0")
-        {
-            auto& undo_stack = wxGetFrame().GetUndoStack();
-            if (undo_stack.GetUndoString() == txt_sort_images_undo_string)
-            {
-                wxGetFrame().Undo();
-                return true;
-            }
-            else
-            {
-                return false;  // Let mainframe handle the undo
-            }
-        }
-
-        auto undo_sort_images = std::make_shared<SortImagesAction>(prop->GetNode());
-        wxGetFrame().PushUndoAction(undo_sort_images);
-
-        return true;
-    }
-    else if (prop->isProp(prop_auto_update) && value != "0")
+    if (prop->isProp(prop_auto_update) && value != "0")
     {
         auto undo_update_images = std::make_shared<AutoImagesAction>(prop->GetNode());
         wxGetFrame().PushUndoAction(undo_update_images);
-
         return true;
     }
     else

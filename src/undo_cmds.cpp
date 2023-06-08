@@ -60,7 +60,7 @@ void InsertNodeAction::Change()
         // Add the child BEFORE any wxStdDialogButtonSizer
         m_parent->ChangeChildPosition(m_node, m_parent->GetChildCount() - 2);
     }
-    else if (m_parent->isGen(gen_Images) && m_parent->as_bool(prop_sorted))
+    else if (m_parent->isGen(gen_Images) && m_parent->as_bool(prop_auto_update))
     {
         m_pos = 0;
         for (const auto& embedded_image: m_parent->GetChildNodePtrs())

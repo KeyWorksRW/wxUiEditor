@@ -267,7 +267,7 @@ private:
 // This is used to check whether Update Images is at the top of the undo stack
 extern const char* txt_update_images_undo_string;
 
-// This is used when an Images form has the auto_update property changed
+// This is used when an Images List has the auto_update property changed
 class AutoImagesAction : public UndoAction
 {
 public:

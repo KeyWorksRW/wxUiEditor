@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////////////////////
 // Purpose:   Navigation Panel
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2021 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -397,6 +397,17 @@ void NavigationPanel::OnNodeCreated(CustomEvent& event)
 {
     wxWindowUpdateLocker freeze(this);
     InsertNode(event.GetNode());
+}
+
+void NavigationPanel::RefreshParent(Node* parent)
+{
+    wxWindowUpdateLocker freeze(this);
+    for (const auto& child: parent->GetChildNodePtrs())
+    {
+        EraseAllMaps(child.get());
+    }
+    AddAllChildren(parent);
+    ExpandAllNodes(parent);
 }
 
 void NavigationPanel::InsertNode(Node* node)

@@ -28,6 +28,7 @@
 #include "font_prop.h"        // FontProperty -- FontProperty class
 #include "mainframe.h"        // MainFrame -- Main window frame
 #include "node.h"             // Node class
+#include "node_creator.h"     // NodeCreator -- Class used to create nodes
 #include "node_decl.h"        // NodeDeclaration class
 #include "node_prop.h"        // NodeProperty -- NodeProperty class
 #include "paths.h"            // Handles *_directory properties
@@ -1472,6 +1473,46 @@ void PropGridPanel::ModifyEmbeddedProperty(NodeProperty* node_prop, wxPGProperty
 
     auto* node = node_prop->GetNode();
     auto* parent = node->GetParent();
+
+    if (parent->isGen(gen_Images))
+    {
+        if (!parent->as_bool(prop_sorted))
+        {
+            modifyProperty(node_prop, value);
+            return;
+        }
+        size_t pos = 0;
+        for (const auto& embedded_image: parent->GetChildNodePtrs())
+        {
+            auto& description_a = embedded_image->value(prop_bitmap);
+            tt_view_vector parts_a(description_a, BMP_PROP_SEPARATOR, tt::TRIM::both);
+            if (parts_a.size() <= IndexImage || parts_a[IndexImage].empty())
+                break;
+            if (parts_a[IndexImage].compare(value) >= 0)
+                // We found the position where the new image should be inserted
+                break;
+            ++pos;
+        }
+        if (pos < parent->GetChildCount())
+        {
+            auto group = std::make_shared<GroupUndoActions>("Update bitmap property", node);
+
+            auto prop_bitmap_action = std::make_shared<ModifyPropertyAction>(node_prop, value);
+            prop_bitmap_action->AllowSelectEvent(false);
+            group->Add(prop_bitmap_action);
+
+            auto change_pos_action = std::make_shared<ChangePositionAction>(node, pos);
+            group->Add(change_pos_action);
+            wxGetFrame().PushUndoAction(group);
+            return;  // The group Undo will handle modifying the bitmap property, so simply return
+        }
+        else
+        {
+            modifyProperty(node_prop, value);
+            return;
+        }
+    }
+
     bool done = false;
     while (!done && parent)
     {
@@ -1497,16 +1538,14 @@ void PropGridPanel::ModifyEmbeddedProperty(NodeProperty* node_prop, wxPGProperty
                             // It wasn't found, so add it
                             auto group = std::make_shared<GroupUndoActions>("Update bitmap property", node);
 
-                            auto* new_embedded = child->CreateChildNode(gen_embedded_image);
+                            // auto* new_embedded = child->CreateChildNode(gen_embedded_image);
+                            auto new_embedded = NodeCreation.CreateNode(gen_embedded_image, child.get());
+                            new_embedded->set_value(prop_bitmap, value);
                             auto insert_action =
-                                std::make_shared<InsertNodeAction>(new_embedded, child.get(), tt_empty_cstr);
+                                std::make_shared<InsertNodeAction>(new_embedded.get(), child.get(), tt_empty_cstr);
                             insert_action->AllowSelectEvent(false);
+                            insert_action->SetFireCreatedEvent(true);
                             group->Add(insert_action);
-
-                            auto prop_embed_action =
-                                std::make_shared<ModifyPropertyAction>(new_embedded->get_prop_ptr(prop_bitmap), value);
-                            prop_embed_action->AllowSelectEvent(false);
-                            group->Add(prop_embed_action);
 
                             auto prop_bitmap_action = std::make_shared<ModifyPropertyAction>(node_prop, value);
                             prop_bitmap_action->AllowSelectEvent(false);

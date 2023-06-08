@@ -16,6 +16,7 @@ class InsertNodeAction : public UndoAction
 {
 public:
     InsertNodeAction(Node* node, Node* parent, const tt_string& undo_str, int pos = -1);
+    InsertNodeAction(const NodeSharedPtr node, const NodeSharedPtr parent, tt_string_view undo_str, int pos = -1);
 
     // Called when pushed to the Undo stack and when Redo is called
     void Change() override;
@@ -25,6 +26,9 @@ public:
 
     // Set this to true if you created the node without firing a created event.
     void SetFireCreatedEvent(bool fire) { m_fire_created_event = fire; }
+
+protected:
+    void Init(const NodeSharedPtr node, const NodeSharedPtr parent, tt_string_view undo_str, int pos = -1);
 
 private:
     NodeSharedPtr m_parent;
@@ -40,12 +44,16 @@ class RemoveNodeAction : public UndoAction
 {
 public:
     RemoveNodeAction(Node* node, const tt_string& undo_str, bool AddToClipboard = false);
+    RemoveNodeAction(const NodeSharedPtr node, const tt_string& undo_str, bool AddToClipboard = false);
 
     // Called when pushed to the Undo stack and when Redo is called
     void Change() override;
 
     // Called when Undo is requested
     void Revert() override;
+
+protected:
+    void Init(const NodeSharedPtr node, tt_string_view undo_str, bool AddToClipboard = false);
 
 private:
     NodeSharedPtr m_parent;
@@ -117,11 +125,16 @@ class ChangePositionAction : public UndoAction
 {
 public:
     ChangePositionAction(Node* node, size_t position);
+    ChangePositionAction(const NodeSharedPtr node, size_t position);
+
     void Change() override;
     void Revert() override;
 
     Node* GetParent() { return m_parent.get(); }
     Node* GetNode() { return m_node.get(); }
+
+protected:
+    void Init(const NodeSharedPtr node, size_t position);
 
 private:
     NodeSharedPtr m_parent;
@@ -135,12 +148,17 @@ class ChangeParentAction : public UndoAction
 {
 public:
     ChangeParentAction(Node* node, Node* parent);
+    ChangeParentAction(const NodeSharedPtr node, const NodeSharedPtr parent);
+
     void Change() override;
     void Revert() override;
 
     Node* GetOldParent() { return m_revert_parent.get(); }
     Node* GetNewParent() { return m_change_parent.get(); }
     Node* GetNode() { return m_node.get(); }
+
+protected:
+    void Init(const NodeSharedPtr node, const NodeSharedPtr parent);
 
 private:
     NodeSharedPtr m_node;

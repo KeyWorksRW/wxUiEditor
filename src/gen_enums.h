@@ -367,7 +367,6 @@ namespace GenEnum
         prop_show_header,
         prop_show_hidden,
         prop_size,
-        prop_sorted,
         prop_source_ext,
         prop_spellcheck,
         prop_splitmode,

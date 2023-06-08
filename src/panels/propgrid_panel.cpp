@@ -1476,11 +1476,6 @@ void PropGridPanel::ModifyEmbeddedProperty(NodeProperty* node_prop, wxPGProperty
 
     if (parent->isGen(gen_Images))
     {
-        if (!parent->as_bool(prop_sorted))
-        {
-            modifyProperty(node_prop, value);
-            return;
-        }
         size_t pos = 0;
         for (const auto& embedded_image: parent->GetChildNodePtrs())
         {

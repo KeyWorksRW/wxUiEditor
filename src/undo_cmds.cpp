@@ -799,61 +799,6 @@ void SortProjectAction::Revert()
         wxGetFrame().SelectNode(Project.ProjectNode());
 }
 
-///////////////////////////////// SortImagesAction ////////////////////////////////////
-
-const char* txt_sort_images_undo_string = "Sort Images";
-
-SortImagesAction::SortImagesAction(Node* node)
-{
-    m_node = node->GetSharedPtr();
-    m_parent = node->GetParentPtr();
-    m_old_pos = m_parent->GetChildPosition(node);
-
-    m_RedoEventGenerated = true;
-    m_UndoEventGenerated = true;
-
-    m_undo_string = txt_sort_images_undo_string;
-}
-
-void SortImagesAction::Change()
-{
-    m_old_images = NodeCreation.MakeCopy(m_node);
-
-    auto& children = m_node->GetChildNodePtrs();
-    std::sort(children.begin(), children.end(), CompareImageNames);
-    m_node->set_value(prop_sorted, true);
-
-    wxGetFrame().GetNavigationPanel()->RefreshParent(m_node.get());
-    if (isAllowedSelectEvent())
-        wxGetFrame().SelectNode(m_node);
-    wxGetFrame().FirePropChangeEvent(m_node->get_prop_ptr(prop_sorted));
-}
-
-void SortImagesAction::Revert()
-{
-    auto nav_panel = wxGetFrame().GetNavigationPanel();
-    wxWindowUpdateLocker freeze(nav_panel);
-
-    for (const auto& child: m_node->GetChildNodePtrs())
-    {
-        nav_panel->EraseAllMaps(child.get());
-    }
-
-    m_node->RemoveAllChildren();
-
-    for (const auto& child: m_old_images->GetChildNodePtrs())
-    {
-        m_node->Adopt(child);
-    }
-    m_node->set_value(prop_sorted, false);
-    m_old_images.reset();
-
-    nav_panel->AddAllChildren(m_node.get());
-    if (isAllowedSelectEvent())
-        wxGetFrame().SelectNode(m_node);
-    wxGetFrame().FirePropChangeEvent(m_node->get_prop_ptr(prop_sorted));
-}
-
 ///////////////////////////////// AutoImagesAction ////////////////////////////////////
 
 const char* txt_update_images_undo_string = "Update Images";

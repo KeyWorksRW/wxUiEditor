@@ -504,16 +504,6 @@ void GatherImages(Node* parent, std::set<std::string>& images, std::vector<std::
     {
         return;
     }
-    else if (parent->isGen(gen_folder))
-    {
-        // If a folder also contains a gen_Images form, then we don't process anything in the
-        // folder
-        for (const auto& child: parent->GetChildNodePtrs())
-        {
-            if (child->isGen(gen_Images))
-                return;
-        }
-    }
 
     for (const auto& child: parent->GetChildNodePtrs())
     {

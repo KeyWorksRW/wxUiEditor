@@ -49,6 +49,19 @@ void InsertNodeAction::Change()
         // Add the child BEFORE any wxStdDialogButtonSizer
         m_parent->ChangeChildPosition(m_node, m_parent->GetChildCount() - 2);
     }
+    else if (m_parent->isGen(gen_Images) && m_parent->as_bool(prop_sorted))
+    {
+        m_pos = 0;
+        for (const auto& embedded_image: m_parent->GetChildNodePtrs())
+        {
+            if (CompareImageNames(m_node, embedded_image))
+                break;
+            ++m_pos;
+        }
+        m_parent->AddChild(m_node);
+        if (m_pos < m_parent->GetChildCount())
+            m_parent->ChangeChildPosition(m_node, m_pos);
+    }
     else
     {
         m_parent->AddChild(m_node);
@@ -745,21 +758,6 @@ void SortProjectAction::Revert()
 
 ///////////////////////////////// SortImagesAction ////////////////////////////////////
 
-static bool CompareImageNames(NodeSharedPtr a, NodeSharedPtr b)
-{
-    auto& description_a = a->value(prop_bitmap);
-    tt_view_vector parts_a(description_a, BMP_PROP_SEPARATOR, tt::TRIM::both);
-    if (parts_a[IndexImage].empty())
-        return true;
-
-    auto& description_b = b->value(prop_bitmap);
-    tt_view_vector parts_b(description_b, BMP_PROP_SEPARATOR, tt::TRIM::both);
-    if (parts_b[IndexImage].empty())
-        return false;
-
-    return (parts_a[IndexImage].compare(parts_b[IndexImage]) < 0);
-}
-
 const char* txt_sort_images_undo_string = "Sort Images";
 
 SortImagesAction::SortImagesAction(Node* node)
@@ -782,22 +780,35 @@ void SortImagesAction::Change()
     std::sort(children.begin(), children.end(), CompareImageNames);
     m_node->set_value(prop_sorted, true);
 
-    wxGetFrame().FireProjectUpdatedEvent();
-    wxGetFrame().SelectNode(m_node);
+    wxGetFrame().GetNavigationPanel()->RefreshParent(m_node.get());
+    if (isAllowedSelectEvent())
+        wxGetFrame().SelectNode(m_node);
+    wxGetFrame().FirePropChangeEvent(m_node->get_prop_ptr(prop_sorted));
 }
 
 void SortImagesAction::Revert()
 {
-    m_parent->RemoveChild(m_node);
-    m_node.reset();
-    m_node = m_old_images;
-    m_old_images.reset();
-    m_parent->AddChild(m_node);
-    m_node->SetParent(m_parent);
-    m_parent->ChangeChildPosition(m_node, m_old_pos);
+    auto nav_panel = wxGetFrame().GetNavigationPanel();
+    wxWindowUpdateLocker freeze(nav_panel);
 
-    wxGetFrame().FireProjectUpdatedEvent();
-    wxGetFrame().SelectNode(m_node);
+    for (const auto& child: m_node->GetChildNodePtrs())
+    {
+        nav_panel->EraseAllMaps(child.get());
+    }
+
+    m_node->RemoveAllChildren();
+
+    for (const auto& child: m_old_images->GetChildNodePtrs())
+    {
+        m_node->Adopt(child);
+    }
+    m_node->set_value(prop_sorted, false);
+    m_old_images.reset();
+
+    nav_panel->AddAllChildren(m_node.get());
+    if (isAllowedSelectEvent())
+        wxGetFrame().SelectNode(m_node);
+    wxGetFrame().FirePropChangeEvent(m_node->get_prop_ptr(prop_sorted));
 }
 
 ///////////////////////////////// AutoImagesAction ////////////////////////////////////
@@ -861,9 +872,22 @@ void AutoImagesAction::Change()
 
 void AutoImagesAction::Revert()
 {
+    auto nav_panel = wxGetFrame().GetNavigationPanel();
+    wxWindowUpdateLocker freeze(nav_panel);
+
+#if 0
+    for (const auto& child: m_node->GetChildNodePtrs())
+    {
+        nav_panel->EraseAllMaps(child.get());
+    }
+#endif
+
     for (auto& iter: m_actions)
     {
         iter->Revert();
     }
+
+    // nav_panel->AddAllChildren(m_node.get());
+
     wxGetFrame().SelectNode(m_node);
 }

@@ -298,6 +298,7 @@ void Node::RemoveChild(Node* node)
             break;
         }
         ++pos;
+        ASSERT_MSG(pos < m_children.size(), "failed to find child node!");
     }
 }
 

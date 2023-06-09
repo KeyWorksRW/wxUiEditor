@@ -831,6 +831,10 @@ AutoImagesAction::AutoImagesAction(Node* node)
         img_list::GatherImages(child.get(), image_names, new_images);
     }
 
+    auto prop_action = std::make_shared<ModifyPropertyAction>(m_node->get_prop_ptr(prop_auto_update), true);
+    prop_action->AllowSelectEvent(false);
+    m_actions.push_back(prop_action);
+
     if (new_images.size())
     {
         for (auto& iter: new_images)
@@ -843,10 +847,6 @@ AutoImagesAction::AutoImagesAction(Node* node)
             m_actions.push_back(insert_action);
         }
     }
-
-    auto prop_action = std::make_shared<ModifyPropertyAction>(m_node->get_prop_ptr(prop_auto_update), true);
-    prop_action->AllowSelectEvent(false);
-    m_actions.push_back(prop_action);
 }
 
 void AutoImagesAction::Change()

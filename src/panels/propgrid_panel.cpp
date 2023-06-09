@@ -1501,69 +1501,51 @@ void PropGridPanel::ModifyEmbeddedProperty(NodeProperty* node_prop, wxPGProperty
             wxGetFrame().PushUndoAction(group);
             return;  // The group Undo will handle modifying the bitmap property, so simply return
         }
-        else
-        {
-            modifyProperty(node_prop, value);
-            return;
-        }
     }
-
-    bool done = false;
-    while (!done && parent)
+    else
     {
-        if (parent->isGen(gen_folder) || parent->isGen(gen_Project))
+        Node* image_node = nullptr;
+        for (const auto& iter: Project.ChildNodePtrs())
         {
-            for (const auto& child: parent->GetChildNodePtrs())
+            if (iter->isGen(gen_Images))
             {
-                if (child->isGen(gen_Images))
+                image_node = iter.get();
+                break;
+            }
+        }
+        if (image_node && image_node->as_bool(prop_auto_update))
+        {
+            bool done = false;
+            for (auto& iter: image_node->GetChildNodePtrs())
+            {
+                if (iter->value(prop_bitmap) == value)
                 {
-                    if (child->as_bool(prop_auto_update))
-                    {
-                        for (auto& iter: child->GetChildNodePtrs())
-                        {
-                            if (iter->value(prop_bitmap) == value)
-                            {
-                                done = true;
-                                break;  // It's already been added, so we're done
-                            }
-                        }
-
-                        if (!done)
-                        {
-                            // It wasn't found, so add it
-                            auto group = std::make_shared<GroupUndoActions>("Update bitmap property", node);
-
-                            // auto* new_embedded = child->CreateChildNode(gen_embedded_image);
-                            auto new_embedded = NodeCreation.CreateNode(gen_embedded_image, child.get());
-                            new_embedded->set_value(prop_bitmap, value);
-                            auto insert_action =
-                                std::make_shared<InsertNodeAction>(new_embedded.get(), child.get(), tt_empty_cstr);
-                            insert_action->AllowSelectEvent(false);
-                            insert_action->SetFireCreatedEvent(true);
-                            group->Add(insert_action);
-
-                            auto prop_bitmap_action = std::make_shared<ModifyPropertyAction>(node_prop, value);
-                            prop_bitmap_action->AllowSelectEvent(false);
-                            group->Add(prop_bitmap_action);
-
-                            wxGetFrame().PushUndoAction(group);
-                            return;  // The group Undo will handle modifying the bitmap property, so simply return
-                        }
-                    }
-
-                    // There was a parent with an Images node so even if we didn't update it,
-                    // we're done.
                     done = true;
-                    break;
+                    break;  // It's already been added, so we're done
                 }
             }
 
-            if (done || parent->isGen(gen_Project))
+            if (!done)
             {
-                break;  // The Project node did not have an Images node, so we're done
+                // It wasn't found, so add it
+                auto group = std::make_shared<GroupUndoActions>("Update bitmap property", node);
+
+                // auto* new_embedded = child->CreateChildNode(gen_embedded_image);
+                auto new_embedded = NodeCreation.CreateNode(gen_embedded_image, image_node);
+                new_embedded->set_value(prop_bitmap, value);
+                auto insert_action = std::make_shared<InsertNodeAction>(new_embedded.get(), image_node, tt_empty_cstr);
+                insert_action->AllowSelectEvent(false);
+                insert_action->SetFireCreatedEvent(true);
+                group->Add(insert_action);
+
+                auto prop_bitmap_action = std::make_shared<ModifyPropertyAction>(node_prop, value);
+                prop_bitmap_action->AllowSelectEvent(false);
+                group->Add(prop_bitmap_action);
+
+                wxGetFrame().PushUndoAction(group);
+                return;  // The group Undo will handle modifying the bitmap property, so simply return
             }
         }
-        parent = parent->GetParent();
     }
 
     // If we get here, then we didn't find an Images node at all, or it didn't need updating,

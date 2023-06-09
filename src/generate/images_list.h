@@ -35,8 +35,10 @@ namespace img_list
 {
     void GatherImages(Node* parent, std::set<std::string>& images, std::vector<std::string>& new_images);
 
-    // Call this when a 1.1.0 or older project is loaded. It will update the images list to the new
-    // format.
-    void UpdateOldImagesList();
+    // Ensure any Images List is in the first position and that all it's children are sorted.
+    void UpdateImagesList();
+
+    // Used to compare prop_bitmap descriptions -- this can be used in a sort() function
+    bool CompareImageNames(NodeSharedPtr a, NodeSharedPtr b);
 
 };  // namespace img_list

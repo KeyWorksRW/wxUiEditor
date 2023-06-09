@@ -19,6 +19,7 @@
 #include "node.h"             // Node class
 #include "project_handler.h"  // ProjectHandler class
 #include "undo_cmds.h"        // InsertNodeAction -- Undoable command classes derived from UndoAction
+#include "utils.h"            // Utility functions that work with properties
 #include "write_code.h"       // Write code to Scintilla or file
 
 #include "ui_images.h"
@@ -228,7 +229,7 @@ void BaseCodeGenerator::GenerateImagesForm()
                 m_source->Indent();
                 code = "return wxueBundleSVG(wxue_img::";
                 code << embed->array_name << ", " << (embed->array_size & 0xFFFFFFFF) << ", ";
-                code << (embed->array_size >> 32) << ", wxSize(width, height));";
+                code << (embed->array_size >> (to_size_t) 32) << ", wxSize(width, height));";
                 m_source->writeLine(code);
                 m_source->Unindent();
                 m_source->writeLine("}");
@@ -529,21 +530,49 @@ void img_list::GatherImages(Node* parent, std::set<std::string>& images, std::ve
     }
 }
 
-// Version 18 (1.1.1) made changes to gen_Images that need to be fixed when an older version is
-// loaded. The position needs to be set to zero, and multiple versions need to be combined so
-// that there is only one gen_Images. Finally, the new auto_update property defaults to on, so
-// the old version needs to be changed to off.
-void img_list::UpdateOldImagesList()
+bool img_list::CompareImageNames(NodeSharedPtr a, NodeSharedPtr b)
 {
-    for (const auto& iter: Project.ChildNodePtrs())
-    {
-        if (iter->isGen(gen_Images))
-        {
-            iter->set_value(prop_auto_update, "0");
-            Project.ProjectNode()->ChangeChildPosition(iter, 0);
+    auto& description_a = a->value(prop_bitmap);
+    tt_view_vector parts_a(description_a, BMP_PROP_SEPARATOR, tt::TRIM::both);
+    if (parts_a.size() <= IndexImage || parts_a[IndexImage].empty())
+        return true;
 
-            // Version 1.1.0 only allowed one gen_Images, so we can stop now
-            return;
+    auto& description_b = b->value(prop_bitmap);
+    tt_view_vector parts_b(description_b, BMP_PROP_SEPARATOR, tt::TRIM::both);
+    if (parts_b.size() <= IndexImage || parts_b[IndexImage].empty())
+        return false;
+
+    return (parts_a[IndexImage].compare(parts_b[IndexImage]) < 0);
+}
+
+void img_list::UpdateImagesList()
+{
+    Node* image_node = nullptr;
+    if (Project.ChildCount() > 0)
+    {
+        if (Project.GetChild(0)->isGen(gen_Images))
+        {
+            image_node = Project.GetChild(0);
+        }
+        else
+        {
+            for (const auto& iter: Project.ChildNodePtrs())
+            {
+                if (iter->isGen(gen_Images))
+                {
+                    image_node = iter.get();
+                    Project.ProjectNode()->ChangeChildPosition(iter, 0);
+                    break;
+                }
+            }
         }
     }
+
+    if (!image_node)
+    {
+        return;
+    }
+
+    auto& children = image_node->GetChildNodePtrs();
+    std::sort(children.begin(), children.end(), img_list::CompareImageNames);
 }

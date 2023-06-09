@@ -24,9 +24,9 @@ using namespace GenEnum;
 #include "../import/import_wxglade.h"       // WxGlade -- Import a wxGlade file
 #include "../import/import_wxsmith.h"       // WxSmith -- Import a wxSmith file
 #include "../winres/import_winres.h"        // WinResource -- Parse a Windows resource file
-#include "import_dlg.h"                     // ImportDlg -- Dialog to create a new project
-#include "node_gridbag.h"                   // GridBag -- Create and modify a node containing a wxGridBagSizer
 #include "images_list.h"
+#include "import_dlg.h"    // ImportDlg -- Dialog to create a new project
+#include "node_gridbag.h"  // GridBag -- Create and modify a node containing a wxGridBagSizer
 
 #include "../wxui/code_preference_dlg.h"  // CodePreferenceDlg -- Dialog to set code generation preference
 
@@ -151,14 +151,9 @@ bool ProjectHandler::LoadProject(const tt_wxString& file, bool allow_ui)
         m_ProjectVersion = minRequiredVer;
     }
 
-    if (m_ProjectVersion < 18)
-    {
-        // Version 18 (1.1.1) made changes to gen_Images that need to be fixed when an older version is loaded.
-        // The position needs to be set to zero, and multiple versions need to be combined so that there is only
-        // one gen_Images. Finally, the new auto_update property defaults to on, so the old version needs to be
-        // changed to off.
-        img_list::UpdateOldImagesList();
-    }
+    // We need to ensure any Images List is sorted (in case it's an old project or the user
+    // hand-edited the project file)
+    img_list::UpdateImagesList();
 
     if (allow_ui)
     {

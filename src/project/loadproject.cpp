@@ -26,7 +26,7 @@ using namespace GenEnum;
 #include "../winres/import_winres.h"        // WinResource -- Parse a Windows resource file
 #include "import_dlg.h"                     // ImportDlg -- Dialog to create a new project
 #include "node_gridbag.h"                   // GridBag -- Create and modify a node containing a wxGridBagSizer
-#include "images_form.h"
+#include "images_list.h"
 
 #include "../wxui/code_preference_dlg.h"  // CodePreferenceDlg -- Dialog to set code generation preference
 

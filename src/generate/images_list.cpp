@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Purpose:   Embedded images generator
+// Purpose:   Images List Embedded images generator
 // Author:    Ralph Walden
 // Copyright: Copyright (c) 2021-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
@@ -10,7 +10,7 @@
 #include <wx/statbmp.h>   // wxStaticBitmap class interface
 #include <wx/stattext.h>  // wxStaticText base header
 
-#include "images_form.h"
+#include "images_list.h"
 
 #include "bitmaps.h"          // Contains various images handling functions
 #include "gen_base.h"         // BaseCodeGenerator -- Generate Src and Hdr files for Base Class

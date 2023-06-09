@@ -9,6 +9,7 @@
 
 #include "../panels/nav_panel.h"     // NavigationPanel -- Navigation Panel
 #include "../panels/ribbon_tools.h"  // RibbonPanel -- Displays component tools in a wxRibbonBar
+#include "images_list.h"             // ImagesGenerator -- Images List Embedded images generator
 #include "mainframe.h"               // MainFrame -- Main window frame
 #include "node_creator.h"            // NodeCreator class
 #include "node_decl.h"               // NodeDeclaration class
@@ -129,6 +130,18 @@ bool Node::CreateToolNode(GenName name)
         insert_node->SetFireCreatedEvent(true);
         wxGetFrame().PushUndoAction(insert_node);
         wxGetFrame().SelectNode(new_node, evt_flags::fire_event | evt_flags::force_selection);
+        return true;
+    }
+    else if (name == gen_embedded_image)
+    {
+        auto* image_node = img_list::FindImageList();
+        if (!image_node)
+        {
+            wxMessageBox("An Images List must be created before you can add an embedded image.",
+                         "Cannot create embedded image", wxOK | wxICON_ERROR);
+            return true;  // indicate that we have fully processed creation even though it's just an error message
+        }
+        image_node->CreateChildNode(name);
         return true;
     }
 

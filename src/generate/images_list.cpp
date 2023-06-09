@@ -535,4 +535,15 @@ void img_list::GatherImages(Node* parent, std::set<std::string>& images, std::ve
 // the old version needs to be changed to off.
 void img_list::UpdateOldImagesList()
 {
+    for (const auto& iter: Project.ChildNodePtrs())
+    {
+        if (iter->isGen(gen_Images))
+        {
+            iter->set_value(prop_auto_update, "0");
+            Project.ProjectNode()->ChangeChildPosition(iter, 0);
+
+            // Version 1.1.0 only allowed one gen_Images, so we can stop now
+            return;
+        }
+    }
 }

@@ -1483,7 +1483,7 @@ void PropGridPanel::ModifyEmbeddedProperty(NodeProperty* node_prop, wxPGProperty
             tt_view_vector parts_a(description_a, BMP_PROP_SEPARATOR, tt::TRIM::both);
             if (parts_a.size() <= IndexImage || parts_a[IndexImage].empty())
                 break;
-            if (parts_a[IndexImage].compare(value) >= 0)
+            if (parts_a[IndexImage].compare(value) < 0)
                 // We found the position where the new image should be inserted
                 break;
             ++pos;

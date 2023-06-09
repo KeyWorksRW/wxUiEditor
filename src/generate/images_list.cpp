@@ -545,7 +545,7 @@ bool img_list::CompareImageNames(NodeSharedPtr a, NodeSharedPtr b)
     return (parts_a[IndexImage].compare(parts_b[IndexImage]) < 0);
 }
 
-void img_list::UpdateImagesList()
+Node* img_list::FindImageList()
 {
     Node* image_node = nullptr;
     if (Project.ChildCount() > 0)
@@ -561,16 +561,25 @@ void img_list::UpdateImagesList()
                 if (iter->isGen(gen_Images))
                 {
                     image_node = iter.get();
-                    Project.ProjectNode()->ChangeChildPosition(iter, 0);
                     break;
                 }
             }
         }
     }
+    return image_node;
+}
 
+void img_list::UpdateImagesList()
+{
+    Node* image_node = FindImageList();
     if (!image_node)
     {
         return;
+    }
+
+    if (Project.ProjectNode()->GetChildCount() != 0)
+    {
+        Project.ProjectNode()->ChangeChildPosition(image_node->GetSharedPtr(), 0);
     }
 
     auto& children = image_node->GetChildNodePtrs();

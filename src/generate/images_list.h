@@ -41,4 +41,6 @@ namespace img_list
     // Used to compare prop_bitmap descriptions -- this can be used in a sort() function
     bool CompareImageNames(NodeSharedPtr a, NodeSharedPtr b);
 
+    Node* FindImageList();
+
 };  // namespace img_list

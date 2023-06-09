@@ -1691,6 +1691,15 @@ bool MainFrame::MoveNode(Node* node, MoveDirection where, bool check_only)
     if (!parent)
         return false;
 
+    if (node->isGen(gen_Images) || parent->isGen(gen_Images))
+    {
+        if (!check_only)
+        {
+            wxMessageBox("You can't move images within Images List", "Error", wxICON_ERROR);
+        }
+        return false;
+    }
+
     if (parent->isGen(gen_wxGridBagSizer))
         return GridBag::MoveNode(node, where, check_only);
 

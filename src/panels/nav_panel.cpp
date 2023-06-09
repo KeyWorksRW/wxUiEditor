@@ -295,6 +295,16 @@ void NavigationPanel::OnBeginDrag(wxTreeEvent& event)
     }
 
     m_drag_node = event.GetItem();
+    auto* node = GetNode(m_drag_node);
+    if (node)
+    {
+        auto* parent = node->get_parent();
+        if (node->isGen(gen_Images) || parent->isGen(gen_Images))
+        {
+            event.Veto();
+            return;
+        }
+    }
     event.Allow();
 }
 

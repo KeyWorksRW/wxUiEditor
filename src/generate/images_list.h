@@ -31,8 +31,12 @@ class EmbeddedImageGenerator : public BaseGenerator
 public:
 };
 
-void GatherImages(Node* parent, std::set<std::string>& images, std::vector<std::string>& new_images);
+namespace img_list
+{
+    void GatherImages(Node* parent, std::set<std::string>& images, std::vector<std::string>& new_images);
 
-// Call this when a 1.1.0 or older project is loaded. It will update the images list to the new
-// format.
-void UpdateOldImagesList();
+    // Call this when a 1.1.0 or older project is loaded. It will update the images list to the new
+    // format.
+    void UpdateOldImagesList();
+
+};  // namespace img_list

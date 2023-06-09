@@ -498,7 +498,9 @@ bool ImagesGenerator::ModifyProperty(NodeProperty* prop, tt_string_view value)
     }
 }
 
-void GatherImages(Node* parent, std::set<std::string>& images, std::vector<std::string>& new_images)
+//////////////////////////////////////////  Image List Functions  //////////////////////////////////////////
+
+void img_list::GatherImages(Node* parent, std::set<std::string>& images, std::vector<std::string>& new_images)
 {
     if (parent->isGen(gen_Images))
     {
@@ -531,6 +533,6 @@ void GatherImages(Node* parent, std::set<std::string>& images, std::vector<std::
 // loaded. The position needs to be set to zero, and multiple versions need to be combined so
 // that there is only one gen_Images. Finally, the new auto_update property defaults to on, so
 // the old version needs to be changed to off.
-void UpdateOldImagesList()
+void img_list::UpdateOldImagesList()
 {
 }

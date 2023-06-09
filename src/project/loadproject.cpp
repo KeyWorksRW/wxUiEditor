@@ -157,7 +157,7 @@ bool ProjectHandler::LoadProject(const tt_wxString& file, bool allow_ui)
         // The position needs to be set to zero, and multiple versions need to be combined so that there is only
         // one gen_Images. Finally, the new auto_update property defaults to on, so the old version needs to be
         // changed to off.
-        UpdateOldImagesList();
+        img_list::UpdateOldImagesList();
     }
 
     if (allow_ui)

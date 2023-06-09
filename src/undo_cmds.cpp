@@ -803,6 +803,7 @@ void SortProjectAction::Revert()
 
 const char* txt_update_images_undo_string = "Update Images";
 
+
 AutoImagesAction::AutoImagesAction(Node* node)
 {
     m_node = node->GetSharedPtr();
@@ -827,7 +828,7 @@ AutoImagesAction::AutoImagesAction(Node* node)
     for (auto& child: m_parent->GetChildNodePtrs())
     {
         // Note that GatherImages will update both image_names and new_images
-        GatherImages(child.get(), image_names, new_images);
+        img_list::GatherImages(child.get(), image_names, new_images);
     }
 
     if (new_images.size())

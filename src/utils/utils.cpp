@@ -598,18 +598,3 @@ tt_string CreateDerivedFilename(Node* form_node, const tt_string& class_name)
 
     return filename;
 }
-
-bool CompareImageNames(NodeSharedPtr a, NodeSharedPtr b)
-{
-    auto& description_a = a->value(prop_bitmap);
-    tt_view_vector parts_a(description_a, BMP_PROP_SEPARATOR, tt::TRIM::both);
-    if (parts_a.size() <= IndexImage || parts_a[IndexImage].empty())
-        return true;
-
-    auto& description_b = b->value(prop_bitmap);
-    tt_view_vector parts_b(description_b, BMP_PROP_SEPARATOR, tt::TRIM::both);
-    if (parts_b.size() <= IndexImage || parts_b[IndexImage].empty())
-        return false;
-
-    return (parts_a[IndexImage].compare(parts_b[IndexImage]) < 0);
-}

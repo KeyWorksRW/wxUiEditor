@@ -86,6 +86,3 @@ bool isValidVarName(const std::string& str);
 tt_string CreateBaseFilename(Node* form_node, const tt_string& class_name);
 
 tt_string CreateDerivedFilename(Node* form_node, const tt_string& class_name);
-
-// Used to compare prop_bitmap descriptions -- this can be used in a sort() function
-bool CompareImageNames(NodeSharedPtr a, NodeSharedPtr b);

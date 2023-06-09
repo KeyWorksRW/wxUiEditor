@@ -65,7 +65,7 @@ void InsertNodeAction::Change()
         m_pos = 0;
         for (const auto& embedded_image: m_parent->GetChildNodePtrs())
         {
-            if (CompareImageNames(m_node, embedded_image))
+            if (img_list::CompareImageNames(m_node, embedded_image))
                 break;
             ++m_pos;
         }

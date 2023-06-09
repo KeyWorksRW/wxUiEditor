@@ -526,3 +526,11 @@ void GatherImages(Node* parent, std::set<std::string>& images, std::vector<std::
         }
     }
 }
+
+// Version 18 (1.1.1) made changes to gen_Images that need to be fixed when an older version is
+// loaded. The position needs to be set to zero, and multiple versions need to be combined so
+// that there is only one gen_Images. Finally, the new auto_update property defaults to on, so
+// the old version needs to be changed to off.
+void UpdateOldImagesList()
+{
+}

@@ -278,8 +278,5 @@ public:
 private:
     std::vector<UndoActionPtr> m_actions;
 
-    NodeSharedPtr m_parent;
     NodeSharedPtr m_node;
-    NodeSharedPtr m_old_images;
-    size_t m_old_pos;
 };

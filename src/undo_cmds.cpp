@@ -807,16 +807,11 @@ const char* txt_update_images_undo_string = "Update Images";
 AutoImagesAction::AutoImagesAction(Node* node)
 {
     m_node = node->GetSharedPtr();
-    m_parent = node->GetParentPtr();
-    m_old_pos = m_parent->GetChildPosition(node);
 
     m_RedoEventGenerated = true;
     m_UndoEventGenerated = true;
 
     m_undo_string = txt_update_images_undo_string;
-
-    // This should either be a folder or a project
-    ASSERT(m_parent->isGen(gen_folder) || m_parent->isGen(gen_Project));
 
     std::set<std::string> image_names;
     for (auto& iter: m_node->GetChildNodePtrs())
@@ -825,7 +820,7 @@ AutoImagesAction::AutoImagesAction(Node* node)
     }
 
     std::vector<std::string> new_images;
-    for (auto& child: m_parent->GetChildNodePtrs())
+    for (auto& child: Project.ChildNodePtrs())
     {
         // Note that GatherImages will update both image_names and new_images
         img_list::GatherImages(child.get(), image_names, new_images);
@@ -862,13 +857,6 @@ void AutoImagesAction::Revert()
 {
     auto nav_panel = wxGetFrame().GetNavigationPanel();
     wxWindowUpdateLocker freeze(nav_panel);
-
-#if 0
-    for (const auto& child: m_node->GetChildNodePtrs())
-    {
-        nav_panel->EraseAllMaps(child.get());
-    }
-#endif
 
     for (auto& iter: m_actions)
     {

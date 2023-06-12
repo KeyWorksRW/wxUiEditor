@@ -48,20 +48,6 @@ void ImageProperties::InitValues(tt_string_view value)
 
 tt_string ImageProperties::CombineValues()
 {
-    if (type.size() && type != "Art")
-    {
-        if (!image.file_exists() && Project.HasValue(prop_art_directory))
-        {
-            auto path = Project.ArtDirectory();
-            path.append_filename(image);
-            path.make_relative_wx(Project.ProjectPath());
-            if (path.file_exists())
-            {
-                image = path.utf8_string();
-            }
-        }
-    }
-
     tt_string value;
     image.backslashestoforward();
     value << type << ';' << image;

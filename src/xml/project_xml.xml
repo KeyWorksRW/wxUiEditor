@@ -49,7 +49,7 @@ inline const char* project_xml = R"===(<?xml version="1.0"?>
 		<property name="combined_xrc_file" type="file"
 			help="This filename will be used to write all XRC content to unless you unchecked the combine_all_forms property above." />
 		<property name="xrc_art_directory" type="path"
-			help="The directory containing the images your XRC file will load." />
+			help="The directory containing the images your XRC file will load.">./</property>
 	</gen>
 
 	<gen class="wxPython" type="interface">
@@ -81,7 +81,7 @@ inline const char* project_xml = R"===(<?xml version="1.0"?>
 			C++
 		</property>
 		<property name="art_directory" type="path"
-			help="The directory containing your images (png, ico, xpm, etc.)." />
+			help="The directory containing your images (png, ico, xpm, etc.).">./</property>
 		<property name="internationalize" type="bool"
 			help="Wrap strings in a _() macro which expands into a call to wxGetTranslation().">0</property>
 		<property name="help_provider" type="option"

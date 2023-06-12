@@ -532,6 +532,9 @@ void img_list::GatherImages(Node* parent, std::set<std::string>& images, std::ve
 
 void img_list::FixPropBitmap(Node* parent)
 {
+    tt_cwd cwd(tt_cwd::restore);
+    Project.ChangeDir();
+
     tt_string art_directory = Project.value(prop_art_directory);
 
     for (const auto& child: parent->GetChildNodePtrs())
@@ -544,11 +547,13 @@ void img_list::FixPropBitmap(Node* parent)
                 tt_view_vector parts(description, BMP_PROP_SEPARATOR, tt::TRIM::both);
                 if (parts.size() > IndexImage && parts[IndexImage].size())
                 {
-                    tt_string image_path(parts[IndexImage]);
-                    image_path.make_absolute();
-                    image_path.make_relative(art_directory);
-                    if (image_path != parts[IndexImage])
+                    tt_string check_path(art_directory);
+                    check_path.append_filename(parts[IndexImage]);
+                    if (!check_path.file_exists())
                     {
+                        tt_string image_path = parts[IndexImage];
+                        image_path.make_absolute();
+                        image_path.make_relative(art_directory);
                         tt_string new_description;
                         new_description << parts[IndexType] << BMP_PROP_SEPARATOR << image_path;
                         for (size_t idx = IndexImage + 1; idx < parts.size(); idx++)

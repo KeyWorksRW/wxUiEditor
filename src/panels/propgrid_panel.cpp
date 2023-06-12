@@ -1441,15 +1441,28 @@ void PropGridPanel::ModifyFileProperty(NodeProperty* node_prop, wxPGProperty* gr
 void PropGridPanel::ModifyEmbeddedProperty(NodeProperty* node_prop, wxPGProperty* grid_prop)
 {
     // Do NOT call GetPropertyValueAsString() -- we need to return the value the way the custom property formatted it
-    auto value = m_prop_grid->GetPropertyValue(grid_prop).GetString().utf8_string();
+    tt_string value = m_prop_grid->GetPropertyValue(grid_prop).GetString().utf8_string();
     tt_string_vector parts(value, BMP_PROP_SEPARATOR, tt::TRIM::both);
     // If the image field is empty, then the entire property needs to be cleared
-    if (parts.size() > IndexImage && parts[IndexImage].empty())
+    if (parts.size() <= IndexImage || parts[IndexImage].empty())
     {
         value.clear();
     }
     else
     {
+        tt_string image_path(parts[IndexImage]);
+        image_path.make_absolute();
+        image_path.make_relative(Project.value(prop_art_directory));
+        if (image_path != parts[IndexImage])
+        {
+            parts[IndexImage] = image_path;
+            value.clear();
+            value << parts[IndexType] << BMP_PROP_SEPARATOR << image_path;
+            for (size_t idx = IndexImage + 1; idx < parts.size(); idx++)
+            {
+                value << BMP_PROP_SEPARATOR << parts[idx];
+            }
+        }
         // This ensures that all images from a bitmap bundle get added
 
         ProjectImages.UpdateBundle(parts, node_prop->GetNode());

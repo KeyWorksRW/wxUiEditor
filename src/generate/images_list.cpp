@@ -596,7 +596,7 @@ bool img_list::CompareImageNames(NodeSharedPtr a, NodeSharedPtr b)
     if (parts_b.size() <= IndexImage || parts_b[IndexImage].empty())
         return false;
 
-    return (parts_a[IndexImage].compare(parts_b[IndexImage]) < 0);
+    return (parts_a[IndexImage].filename().compare(parts_b[IndexImage].filename()) < 0);
 }
 
 Node* img_list::FindImageList()

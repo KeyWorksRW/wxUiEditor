@@ -530,6 +530,44 @@ void img_list::GatherImages(Node* parent, std::set<std::string>& images, std::ve
     }
 }
 
+void img_list::FixPropBitmap(Node* parent)
+{
+    tt_string art_directory = Project.value(prop_art_directory);
+
+    for (const auto& child: parent->GetChildNodePtrs())
+    {
+        if (child->HasValue(prop_bitmap))
+        {
+            auto& description = child->value(prop_bitmap);
+            if (description.starts_with("Embed") || description.starts_with("SVG") || description.starts_with("XPM"))
+            {
+                tt_view_vector parts(description, BMP_PROP_SEPARATOR, tt::TRIM::both);
+                if (parts.size() > IndexImage && parts[IndexImage].size())
+                {
+                    tt_string image_path(parts[IndexImage]);
+                    image_path.make_absolute();
+                    image_path.make_relative(art_directory);
+                    if (image_path != parts[IndexImage])
+                    {
+                        tt_string new_description;
+                        new_description << parts[IndexType] << BMP_PROP_SEPARATOR << image_path;
+                        for (size_t idx = IndexImage + 1; idx < parts.size(); idx++)
+                        {
+                            new_description << BMP_PROP_SEPARATOR << parts[idx];
+                        }
+
+                        child->set_value(prop_bitmap, new_description);
+                    }
+                }
+            }
+        }
+        if (child->GetChildCount())
+        {
+            FixPropBitmap(child.get());
+        }
+    }
+}
+
 bool img_list::CompareImageNames(NodeSharedPtr a, NodeSharedPtr b)
 {
     auto& description_a = a->value(prop_bitmap);
@@ -569,8 +607,18 @@ Node* img_list::FindImageList()
     return image_node;
 }
 
-void img_list::UpdateImagesList()
+void img_list::UpdateImagesList(int ProjectVersion)
 {
+    if (ProjectVersion < curSupportedVer)
+    {
+        if (Project.value(prop_art_directory).empty())
+        {
+            Project.ProjectNode()->set_value(prop_art_directory, "./");
+        }
+
+        FixPropBitmap(Project.ProjectNode());
+    }
+
     Node* image_node = FindImageList();
     if (!image_node)
     {

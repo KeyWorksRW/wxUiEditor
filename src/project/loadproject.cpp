@@ -153,7 +153,7 @@ bool ProjectHandler::LoadProject(const tt_wxString& file, bool allow_ui)
 
     // We need to ensure any Images List is sorted (in case it's an old project or the user
     // hand-edited the project file)
-    img_list::UpdateImagesList();
+    img_list::UpdateImagesList(m_ProjectVersion);
 
     if (allow_ui)
     {

@@ -517,7 +517,20 @@ void img_list::GatherImages(Node* parent, std::set<std::string>& images, std::ve
                 continue;
             }
             auto& description = child->value(prop_bitmap);
-            if (description.starts_with("Embed") || description.starts_with("SVG"))
+            // We need the size for bundle processing, but we don't need every possible size added
+            // to gen_Images, so we simply force it to be 16x16 to avoid duplication.
+            if (description.starts_with("SVG;"))
+            {
+                tt_string new_description(description);
+                new_description.erase(new_description.find_last_of(';'));
+                new_description << ";[16,16]";
+                if (!images.contains(new_description))
+                {
+                    images.insert(new_description);
+                    new_images.push_back(new_description);
+                }
+            }
+            else if (description.starts_with("Embed"))
             {
                 images.insert(description);
                 new_images.push_back(description);
@@ -548,14 +561,12 @@ void img_list::FixPropBitmap(Node* parent)
                 if (parts.size() > IndexImage && parts[IndexImage].size())
                 {
                     tt_string check_path(art_directory);
-                    check_path.append_filename(parts[IndexImage]);
-                    if (!check_path.file_exists())
+                    tt_string file_part = parts[IndexImage].filename();
+                    check_path.append_filename(file_part);
+                    if (check_path.file_exists() && file_part != parts[IndexImage])
                     {
-                        tt_string image_path = parts[IndexImage];
-                        image_path.make_absolute();
-                        image_path.make_relative(art_directory);
                         tt_string new_description;
-                        new_description << parts[IndexType] << BMP_PROP_SEPARATOR << image_path;
+                        new_description << parts[IndexType] << BMP_PROP_SEPARATOR << file_part;
                         for (size_t idx = IndexImage + 1; idx < parts.size(); idx++)
                         {
                             new_description << BMP_PROP_SEPARATOR << parts[idx];

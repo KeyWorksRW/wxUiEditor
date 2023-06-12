@@ -448,13 +448,16 @@ void NavPopupMenu::CreateCommonMenu(Node* node)
 
     MenuAddCommands(node);
     MenuAddMoveCommands(node);
-    AppendSeparator();
+    if (!node->isGen(gen_Images) && !node->isGen(gen_embedded_image))
+    {
+        AppendSeparator();
+    }
     MenuAddStandardCommands(node);
 }
 
 void NavPopupMenu::MenuAddCommands(Node* node)
 {
-    if (node->IsForm())
+    if (node->IsForm() || node->isGen(gen_Images) || node->isGen(gen_embedded_image))
     {
         if (!node->isGen(gen_wxWizard))
         {
@@ -713,7 +716,7 @@ void NavPopupMenu::MenuAddChildSizerCommands(Node* child)
 
 void NavPopupMenu::MenuAddMoveCommands(Node* node)
 {
-    if (node->isGen(gen_Project))
+    if (node->isGen(gen_Project) || node->isGen(gen_Images) || node->isGen(gen_embedded_image))
     {
         return;
     }
@@ -884,6 +887,15 @@ void NavPopupMenu::MenuAddMoveCommands(Node* node)
 
 void NavPopupMenu::MenuAddStandardCommands(Node* node)
 {
+    if (node->isGen(gen_Images) || node->isGen(gen_embedded_image))
+    {
+        auto* menu_item = Append(wxID_DELETE);
+        menu_item->SetBitmap(wxArtProvider::GetBitmapBundle(wxART_DELETE, wxART_MENU));
+
+        m_isPasteAllowed = false;
+        return;
+    }
+
     m_isPasteAllowed = false;
 
     if (!node->isGen(gen_wxStatusBar))

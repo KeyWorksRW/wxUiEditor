@@ -1489,6 +1489,14 @@ void PropGridPanel::ModifyEmbeddedProperty(NodeProperty* node_prop, wxPGProperty
 
     if (parent->isGen(gen_Images))
     {
+        // We need the size for bundle processing, but we don't need every possible size added
+        // to gen_Images, so we simply force it to be 16x16 to avoid duplication.
+        if (value.starts_with("SVG;"))
+        {
+            value.erase(value.find_last_of(';'));
+            value << ";[16,16]";
+        }
+
         size_t pos = 0;
         for (const auto& embedded_image: parent->GetChildNodePtrs())
         {

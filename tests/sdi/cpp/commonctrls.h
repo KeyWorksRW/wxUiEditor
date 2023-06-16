@@ -10,7 +10,6 @@
 #pragma once
 
 #include <wx/animate.h>
-#include <wx/bitmap.h>
 #include <wx/bmpcbox.h>
 #include <wx/button.h>
 #include <wx/checkbox.h>
@@ -22,8 +21,6 @@
 #include <wx/event.h>
 #include <wx/gauge.h>
 #include <wx/gdicmn.h>
-#include <wx/icon.h>
-#include <wx/image.h>
 #include <wx/infobar.h>
 #include <wx/listbase.h>
 #include <wx/listbox.h>

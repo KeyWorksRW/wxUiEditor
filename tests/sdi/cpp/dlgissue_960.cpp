@@ -14,28 +14,21 @@
 #endif
 
 #include <wx/button.h>
-#include <wx/icon.h>
-#include <wx/image.h>
 #include <wx/sizer.h>
 #include <wx/statbmp.h>
 
+#include "images.h"
+
 #include "dlgissue_960.h"
-
-#include <wx/mstream.h>  // memory stream classes
-
-// Convert a data array into a wxImage
-inline wxImage wxueImage(const unsigned char* data, size_t size_data)
-{
-    wxMemoryInputStream strm(data, size_data);
-    wxImage image;
-    image.LoadFile(strm);
-    return image;
-};
 
 namespace wxue_img
 {
     // Ainsi ça se passe.png
     extern const unsigned char Ainsi_c3_a_se_passe_png[148];
+    // bottom(1).png
+    extern const unsigned char bottom_1__png[148];
+    // 1_bottom.png
+    extern const unsigned char img_1_bottom_png[148];
 }
 
 bool DlgIssue_960::Create(wxWindow* parent, wxWindowID id, const wxString& title,
@@ -57,7 +50,7 @@ bool DlgIssue_960::Create(wxWindow* parent, wxWindowID id, const wxString& title
 
         auto* bmp = new wxStaticBitmap(this, wxID_ANY, 
 #if wxCHECK_VERSION(3, 1, 6)
-            wxBitmapBundle::FromBitmap(wxueImage(wxue_img::img_1_bottom_png, sizeof(wxue_img::img_1_bottom_png))));
+            wxue_img::bundle_img_1_bottom_png());
 #else
         wxBitmap(wxueImage(wxue_img::img_1_bottom_png, sizeof(wxue_img::img_1_bottom_png))));
 #endif
@@ -65,7 +58,7 @@ bool DlgIssue_960::Create(wxWindow* parent, wxWindowID id, const wxString& title
 
         auto* bmp_2 = new wxStaticBitmap(this, wxID_ANY, 
 #if wxCHECK_VERSION(3, 1, 6)
-            wxBitmapBundle::FromBitmap(wxueImage(wxue_img::bottom_1__png, sizeof(wxue_img::bottom_1__png))));
+            wxue_img::bundle_bottom_1__png());
 #else
         wxBitmap(wxueImage(wxue_img::bottom_1__png, sizeof(wxue_img::bottom_1__png))));
 #endif
@@ -75,7 +68,7 @@ bool DlgIssue_960::Create(wxWindow* parent, wxWindowID id, const wxString& title
 
         auto* bmp_3 = new wxStaticBitmap(this, wxID_ANY, 
 #if wxCHECK_VERSION(3, 1, 6)
-            wxBitmapBundle::FromBitmap(wxueImage(wxue_img::Ainsi_c3_a_se_passe_png, sizeof(wxue_img::Ainsi_c3_a_se_passe_png))));
+            wxue_img::bundle_Ainsi_c3_a_se_passe_png());
 #else
         wxBitmap(wxueImage(wxue_img::Ainsi_c3_a_se_passe_png, sizeof(wxue_img::Ainsi_c3_a_se_passe_png))));
 #endif
@@ -88,27 +81,6 @@ bool DlgIssue_960::Create(wxWindow* parent, wxWindowID id, const wxString& title
     Centre(wxBOTH);
 
     return true;
-}
-
-namespace wxue_img
-{
-    // bottom(1).png
-    const unsigned char bottom_1__png[148] {
-        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,24,0,0,0,24,8,6,0,0,0,224,119,61,248,0,0,0,9,112,72,89,
-        115,0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,0,70,73,68,65,84,72,199,99,96,24,62,32,237,204,127,134,180,51,255,
-        169,202,102,96,96,96,26,166,65,68,69,115,70,131,104,52,136,70,131,104,52,136,70,131,136,26,128,17,197,107,
-        12,12,12,255,103,153,80,102,96,218,25,8,99,150,9,227,112,75,69,52,2,0,227,151,80,146,60,123,246,21,0,0,0,0,
-        73,69,78,68,174,66,96,130
-    };
-    // 1_bottom.png
-    const unsigned char img_1_bottom_png[148] {
-        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,24,0,0,0,24,8,6,0,0,0,224,119,61,248,0,0,0,9,112,72,89,
-        115,0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,0,70,73,68,65,84,72,199,99,96,24,62,32,237,204,127,134,180,51,255,
-        169,202,102,96,96,96,26,166,65,68,69,115,70,131,104,52,136,70,131,104,52,136,70,131,136,26,128,17,197,107,
-        12,12,12,255,103,153,80,102,96,218,25,8,99,150,9,227,112,75,69,52,2,0,227,151,80,146,60,123,246,21,0,0,0,0,
-        73,69,78,68,174,66,96,130
-    };
-
 }
 
 // ************* End of generated code ***********

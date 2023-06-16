@@ -11,14 +11,11 @@
 
 #include <wx/animate.h>
 #include <wx/aui/auibar.h>
-#include <wx/bitmap.h>
 #include <wx/checkbox.h>
 #include <wx/colour.h>
 #include <wx/dialog.h>
 #include <wx/event.h>
 #include <wx/gdicmn.h>
-#include <wx/icon.h>
-#include <wx/image.h>
 #include <wx/settings.h>
 #include <wx/spinctrl.h>
 #include <wx/stattext.h>

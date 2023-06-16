@@ -16,93 +16,6 @@ import dlgissue_956
 import dlgissue_960
 
 import images
-from wx.lib.embeddedimage import PyEmbeddedImage
-
-wxPython_1_5x_png = PyEmbeddedImage(
-    b"iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAACXBIWXMAAAsTAAALEwEAmpwYAAACr0lE"
-    b"QVRIx62Uz0sUYRjHP+sPSOiweEkicEDsIrjToZPQjhc7dGitW6Cup/SwsJt6dj2XTCBk0GFW+gPsbId3"
-    b"FSo9OSsIYSwzXrQgdkeUTsbbYV63cXbGVesLL8877/v84P3O83zbiYaeTqcPNU0rdnZ2HtVqtU3+I9K5"
-    b"XM6RCpZlSWA+sP4JOuAIIaRhGNKyLCmllLquSyGEFEJIwLxOYo0BtnmCZA5pvjPPHiANw5D1el2Wy+WG"
-    b"BYqXTdyh7AST6KT8j8JagaOFIwBc18XzPIQQ9Pb2XpOWDA4fkHwMrFd/Vz6fb7xIf6pLMjiKzpZIqAKr"
-    b"TKBxM8arCrxR+0VlZ4EKiVYF2oHvfCXJfQx6Yry6gYdqBfGZfcC+qECbsitY2CxHeCzHRI4AkL0MRWcs"
-    b"6Fvw+lnYI0+KOyTpAW413dnsMgq4QFqdVgDvXIGqfzncF91+WUDjAWk0DMYCNzvADAuAwxglALYoscdk"
-    b"uE0NoBzzSj9wA40NNE4QTDf5VNhRtL0gyxQeUABoq/rttg88bsXn0BDmdgm0G+pgEJhjntsYVEjwkiIn"
-    b"wAAGoF11XuaFQEqJLFZDM5NCNpjI4LDIlaYdQORyOPW6X8D5hdQ3AwXeEtQowSqNYey4IGmSfky6yDIO"
-    b"3ceQTCrh6oJkMLIPgHvqa5gikhQaIbfz6MfkOVlSqluuAtk8aGGYzKjkEVg5BPu46TgVNXhtMdJtqGf7"
-    b"OjTDeq2G63ngnUK57ttQ+iRzWAwiG3oVU8CX7vNSYSwtUbJtKOxB6SAUsaZoGVFi+APYZx1wO1ryOQ1M"
-    b"IcigFX6DfRDhswb8pMCs6qRTbHbJAm4iUhrymDwieWHhKnACfMJlldE4VY3T8yzjWAyqXxfEe2W/sMI3"
-    b"XCUx5ZZqGgGDu0zQFeqMCsNqZwdVMw5/ANThGfS+jW3VAAAAAElFTkSuQmCC")
-
-debug_32_png = PyEmbeddedImage(
-    b"iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAACXBIWXMAAAsTAAALEwEAmpwYAAAGV0lE"
-    b"QVRYw+2XXYhdVxXHf3ufc+6de28mMxkzU5NxSg02CZMW0VS0ChFrNFXQUOKDoIgPCvokQXyTEEGIT348"
-    b"2CCIRasvEkFKLKTUSI1Oa2uSMtZ06IxlaobEzFdu5n6du7+WD+fcc+dmSmzNgy9uWOxz9jln7f9a67/W"
-    b"Xgf+x0MBzM/PS71eJ4SA1nrghVhrAmxZv+MIgQCEEG5b7t+Pjo6yb98+FQMsLS1x4sQJKpUKAFqDUpo4"
-    b"jgGIIo1SEVGk+shVNKBcxBfXzjm8D0SRxvswsAbQ7XY5efJkZiCAMQbnHNZavvXkM29qlBVwQYh1H0Tv"
-    b"3gXJ7v3gN04E8aAiMB7+2RbOf+MIxhiMMZmxANZavMtA9DbrSccLLScYn292bZ7UZvfOQ2qzuRoM8coC"
-    b"ToRuyMR4CBoaDq5sBFa7UoTBWtsHwKbLjs+VBymUh5BJ0wTS0gitpx5H11eKjaauvczN584wPvFOvIAP"
-    b"mUTAjVT4ez2QbvKOzw0tQuC9xzpHGWh1hSgC8RBuC4NzgqrtZKXbZej1WRZnf89wJaH64Cd5fWmJWjxM"
-    b"2/S/utoSNqwM6MjIHPDe9wEURAo+J4ncFsucxbFi1KfUJkpMRSf44VNNlm9c42c/eIbtu7+MSS0mVaQh"
-    b"i7f1glIKkWzOrLdYF4pw6x5DIeBzt6c2DIoTUhMwbc9ymvDcmSf55neafODhR2ibiEe/8DIvPn2Gqxuw"
-    b"3BHm1jztTsAawXSz2blMevv1MizezAHvHKkJoFXxsgQB+h6p/+40X/zLdZojgfP1v3Lko/fxiZlFxl9a"
-    b"4o1Xn+Xy2MeKVNabMibkOnzogxggYW8hNUKr6emmAecEazIpdW7iL/2W8Jtf8Z7GOo9Nf5DXXgv8bc7w"
-    b"KSpMri3DE4+zd+lpJpN2YXFPrBG8ky3prfsu0ZRKCcYIPoB10G4LqYG2gfK/XqFx/2f5h4bn84L1NQXf"
-    b"3jFKtVzm10NlVp2hvvsQu1YuIR68lUJCyIDEcUwcx6RpOhiCWrVGUirTMbK5ohZjYeTDYIVDjQ0qnZSf"
-    b"zPyZ95XKTOzYwfc3bvHxZpNXri8x263wRvIwccg27YVBZ1W/IPpAGjrnWFu/yfC2KjZ3k/VbgXgvfGio"
-    b"zPdizQVjOL7RYLnV5Kda0daaz1WrnDeCjjIOZQB66ZeBMcbSarW2AgCwLtBOs92ME0qxwmyK265ym1dL"
-    b"ZY51Uh6MY/YHz4FWyvVE84CxzO8Yw1lBeSnOjUCWgs5lYKwzWznQK0YQ6BrBOME6aKXZbB10usLCpQtc"
-    b"fP8RfqQ1e52jIaBV4NPG8mOtWNg5weStlzJSW8F7QQKE3Jshz4BeGd5SiJwLtIwQKbCbKpgTaDQ8snKL"
-    b"8kNfonP2CZ5dW8UBLRFqCmTXbt71+a/zwosLhOpDqAgIIHn44qSfkpHWW9Mw5KXRdAMbnYDxQscJ9aZn"
-    b"7aajaq6xfwIWZZzJr/wSvWOsj358nKmv/pw/1HfzwETCrvhWRjjft7rnEecCfhO7Cx0+BEQ89VSIJXNd"
-    b"22XEA7j/HYHn9WMoJ2zc817GvjuDnvsjSaRR04dY726HLtwYepSP1Ja5uradOM7LrxWiRCFhsG8YBOA9"
-    b"3gvGSlGSN48/rU1mFdFDFCkWmtuJ3/2ZzI3tvPIpcEpxYfUe4kRl1gdIyrpISV/wIWzlAIDtBuybNCSS"
-    b"u1LlSjZ3Rzov3T2LteqX8jjOgIjPAi6hfxIWAHoHg4RA4xePFC1XJIJKEpJYA5oojtFaoXSE1rroE30I"
-    b"KMCGgARPJwfr80Ouk5qi3AfJnpVKpT6AqakpTp06VTCz5x6t9UAj+VYb015ze/tcWB3HTE1N9bvitztO"
-    b"nz4t1Wp1YLP19XWOHz/+tvXF/w2Aw4cPE/JY1ut1VlZW7u6/4D+NixcvyurqKjt37sQ5R6PRKOq5cw7n"
-    b"HKOjo1QqFWq1Gr13Dx48qO4awOXLl2VkZCT/P4iK06m+sTEQguHh4ex5CHiRrM+0lunp6TvucUdWzczM"
-    b"yNjYGJFSRGpQT5IkVKtVtm3bxtDQUP88yckWRRG1SoWZmRm5Kw+cPXtW9u/diyiFtZYoigbyuKjv+XqS"
-    b"JIVXZmdnOXbsmLprDgCcO3dO5ubmOHDgAPfdey+VWi3zRBxjnaPZbLK4uMiVK1fYs2cPR48eVfx/vIXx"
-    b"bzHIEML53VwZAAAAAElFTkSuQmCC")
-
-wxNotebook_png = PyEmbeddedImage(
-    b"iVBORw0KGgoAAAANSUhEUgAAABYAAAAWCAYAAADEtGw7AAAACXBIWXMAAAsTAAALEwEAmpwYAAAAY0lE"
-    b"QVQ4y2NgoCX4jwcU9OwlWgzZTBYY4+bNmzgtnjlzJpqIKlYxZMBEq1CgmcGMsDC+evEkVgXa+uYkGVjY"
-    b"u49hQokzIwshhbgsHLCgGDV41OBRg0cNJgbAS7c5e74yDAkAAH7rWT+isfNfAAAAAElFTkSuQmCC")
-
-wxPython_png = PyEmbeddedImage(
-    b"iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAACXBIWXMAAAsTAAALEwEAmpwYAAABQUlE"
-    b"QVQ4y42TMVLDQAxFnwMHoKTMDXKDIB/CJb5CTsCgDG3uwBB3OQIUckpmSBF6MzEHIG06UXgd27ET+DOa"
-    b"3dXO/pW+JOhCVNWTJDH+idHJYwNYrVYiIq6qDsjfNFOMBS4zcXd3VXUzczOrSS5CWOC8BUsrMzN3d5eZ"
-    b"XIziuue5r5Z4E8NzOO8xlkRDBFfAjgPCDWNug3cLTIIR1owIyIcIKErK6JXyPWNNxpoD8M34SABQAiUv"
-    b"gAbP7nhXNM5T6FGflEqLFGdBo0sBUpwRKUkw+2kJPKXqj7S1vwA1w91x+QgEzc/aiaJX1lBK98q0aEVR"
-    b"p1ulpKOBnrC6lDXyfed4d66VYcojk1DGJfM8rx53CNIQ4f0Qwbib0/wL4k3LkQG70AtP5IBGvZl4GBBm"
-    b"C3wCS+KhZurXPm1mIoh2dhZ+Ad+Nn/PyqjymAAAAAElFTkSuQmCC")
-
-wxPython_2x_png = PyEmbeddedImage(
-    b"iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAAElBMVEUBAAAAAAAAuwD//wD////dAABp"
-    b"I5D7AAAAAXRSTlMAQObYZgAAAJdJREFUeNp900sKxDAAw9BKTe5/5SFDawjEzVYP0+/1HuD6Oowx+O5L"
-    b"1BkYMEabAVda/ShQ5Q+gAoEsnLqZkQ4EtIqcDqp4CA1cEwDqwswSRgBbj3lA7iYgJAuvmJvgzlWQia3f"
-    b"ESgF1AlW7xNgwGkC/QTYQbqkCwcAASIYkOfH20U9gXTSA3R74wD9q0o6Cii/V60hHOoPwvkD1WDE+MAA"
-    b"AAAASUVORK5CYII=")
-
-wxDialog_png = PyEmbeddedImage(
-    b"iVBORw0KGgoAAAANSUhEUgAAABYAAAAWCAYAAADEtGw7AAAACXBIWXMAAAsTAAALEwEAmpwYAAACLklE"
-    b"QVQ4y7WVQWsTURDHf7vZLompaVPQg+jFa8DiqQe/gMceetNCEQX9Bl5ERBD8AF4qKt562EPqKQfpPSJK"
-    b"MBEEb8FcckmTGmmzb8bDvt1skm6bUjqwzHs7782b+c9/3oMLEicevNrtqACoggIqqOrEB6Bi/2PXiCKq"
-    b"LLiKKyOeb95yAFyAFzu/tLAA4fdtir5D2HhLMZ/D/HiPND9wuejDz4+UFn2WSnmWSwXKpQLlpSIr5UX8"
-    b"zcc4955QLJV4+u6bAngA6nrsf9kGiHRlK5lT2aJvx/2/o4x8I+n/M4yMMzY92/mt11f8TLCcaQ/HinJ0"
-    b"FNLu7PP60W3HA8jn4M7VzrkL1nVvcjg4IIEijieo1thYv5voWCqra6c6bTXqXPIdvBxjx9iKp50G1Vry"
-    b"709nvmxEBSNCwgpLnnNLDhAj44jVnhJHmNYAvW57LsehCJKOWFTPhGfWmtBIEqSbxjjeEOugWku+aafT"
-    b"ayKQSTo0giJqZlqNOpXVNVqN+gwc6epnrRHb7mMoUhjHG06jVgYvEE0VzxgzYV6+cmNmS1zAk2wgmNCk"
-    b"WTFLt8+NyXuhuRewdX/jRJsYQW2Q7jTd5pG8by8ah6TToszHHeEdt7HXbdPcC8iyfa0FWfdQIl5WVHHa"
-    b"Z7VNOO4PhrSH11CViNIa9b2TopHYOkTJxq+MnauScx2GhwN6B2byqn7w8pOKRE+NiiBqtTFIfKDlvIok"
-    b"zRDRS6MXTZTdNw8dLlL+A4iuUQ4KRZVvAAAAAElFTkSuQmCC")
-
-# Ainsi ça se passe.png
-Ainsi_c3_a_se_passe_png = PyEmbeddedImage(
-    b"iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAACXBIWXMAAAsTAAALEwEAmpwYAAAARklE"
-    b"QVRIx2NgGD4g7cx/hrQz/6nKZmBgYBqmQURFc0aDaDSIRoNoNIhGg4gagBHFawwMDP9nmVBmYNoZCGOW"
-    b"CeNwS0U0AgDjl1CSPHv2FQAAAABJRU5ErkJggg==")
 
 class MainFrame(wx.Frame):
 
@@ -128,7 +41,7 @@ class MainFrame(wx.Frame):
         self.propertyGridManager.SetExtraStyle(wx.propgrid.PG_EX_MODE_BUTTONS)
 
         self.propertyGridPage = self.propertyGridManager.AddPage("Animal Page", wx.BitmapBundle.FromBitmap(
-            wxPython_1_5x_png.Bitmap))
+            images.wxPython_1_5x_png.Bitmap))
 
         self.propertyGridItem_7 = self.propertyGridPage.Append(wx.propgrid.PropertyCategory
             ("Pets", "Pets"))
@@ -182,15 +95,15 @@ class MainFrame(wx.Frame):
 
         menuDialogs = wx.Menu()
         menu_item_3 = wx.MenuItem(menuDialogs, wx.ID_ANY, "MainTestDlg")
-        menu_item_3.SetBitmap(wx.BitmapBundle.FromBitmap(debug_32_png.Bitmap))
+        menu_item_3.SetBitmap(wx.BitmapBundle.FromBitmap(images.debug_32_png.Bitmap))
         menuDialogs.Append(menu_item_3)
         menu_item_4 = wx.MenuItem(menuDialogs, wx.ID_ANY, "BookTestDlg")
-        menu_item_4.SetBitmap(wx.BitmapBundle.FromBitmap(wxNotebook_png.Bitmap))
+        menu_item_4.SetBitmap(wx.BitmapBundle.FromBitmap(images.wxNotebook_png.Bitmap))
         menuDialogs.Append(menu_item_4)
         menu_item_2 = wx.MenuItem(menuDialogs, wx.ID_ANY, "PythonDlg")
-        bitmaps = [ wxPython_png.Bitmap,
-                    wxPython_1_5x_png.Bitmap,
-                    wxPython_2x_png.Bitmap ]
+        bitmaps = [ images.wxPython_png.Bitmap,
+                    images.wxPython_1_5x_png.Bitmap,
+                    images.wxPython_2x_png.Bitmap ]
         menu_item_2.SetBitmap(wx.BitmapBundle.FromBitmaps(bitmaps))
         menuDialogs.Append(menu_item_2)
         menuItem_2 = wx.MenuItem(menuDialogs, wx.ID_ANY, "Common Controls...",
@@ -203,26 +116,26 @@ class MainFrame(wx.Frame):
 
         submenu = wx.Menu()
         menu_item_5 = wx.MenuItem(submenu, wx.ID_ANY, "DlgIssue_956")
-        menu_item_5.SetBitmap(wx.BitmapBundle.FromBitmap(debug_32_png.Bitmap))
+        menu_item_5.SetBitmap(wx.BitmapBundle.FromBitmap(images.debug_32_png.Bitmap))
         submenu.Append(menu_item_5)
         menu_item_6 = wx.MenuItem(submenu, wx.ID_ANY, "DlgIssue_960")
-        menu_item_6.SetBitmap(wx.BitmapBundle.FromBitmap(Ainsi_c3_a_se_passe_png.Bitmap))
+        menu_item_6.SetBitmap(wx.BitmapBundle.FromBitmap(images.Ainsi_c3_a_se_passe_png.Bitmap))
         submenu.Append(menu_item_6)
         submenu_item = menuDialogs.AppendSubMenu(submenu, "Issue Dialogs")
-        submenu_item.SetBitmap(wx.BitmapBundle.FromBitmap(wxDialog_png.Bitmap))
+        submenu_item.SetBitmap(wx.BitmapBundle.FromBitmap(images.wxDialog_png.Bitmap))
         menubar.Append(menuDialogs, "&Dialogs")
 
         self.SetMenuBar(menubar)
 
         self.m_toolBar = self.CreateToolBar()
         tool_4 = self.m_toolBar.AddTool(wx.ID_ANY, "MainTestDlg", wx.BitmapBundle.FromBitmap(
-            debug_32_png.Bitmap))
+            images.debug_32_png.Bitmap))
 
         tool_5 = self.m_toolBar.AddTool(wx.ID_ANY, "BookTestDlg", wx.BitmapBundle.FromBitmap(
-            wxNotebook_png.Bitmap))
+            images.wxNotebook_png.Bitmap))
 
         tool_3 = self.m_toolBar.AddTool(wx.ID_ANY, "PythonDlg", wx.BitmapBundle.FromBitmap(
-            wxPython_1_5x_png.Bitmap))
+            images.wxPython_1_5x_png.Bitmap))
 
         tool_2 = self.m_toolBar.AddTool(wx.ID_ANY, "Common Controls...",
             wx.ArtProvider.GetBitmapBundle(wx.ART_TIP, wx.ART_TOOLBAR))

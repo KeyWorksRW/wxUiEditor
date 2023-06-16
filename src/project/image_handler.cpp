@@ -85,16 +85,6 @@ bool ImageHandler::UpdateEmbedNodes()
     return is_changed;
 }
 
-// REVIEW: [KeyWorks - 04-07-2022] We should eliminate this call if possible --
-// ImageHandler::CollectBundles() processed all nodes initially, and the only reason this would
-// be needed is if adding or changing a bitmap property did not get set up correctly (highly
-// unlikely).
-
-// REVIEW: [Randalphwa - 06-08-2023] I just hit the Assert while working on gen_Images, so the
-// function should be left intact, though we might be able to only call it in Debug or Internal
-// Testing builds. First we would need to add an ASSERT on the result being false -- if it ever
-// returns true, then something was changed and the function was needed.
-
 bool ImageHandler::CheckNode(Node* node)
 {
     if (node->IsFormParent())
@@ -131,7 +121,6 @@ bool ImageHandler::CheckNode(Node* node)
             {
                 if (embed->form != node_form)
                 {
-                    FAIL_MSG("Can we fix this without walking through every form?")
                     embed->form = node_form;
                     is_changed = true;
                 }

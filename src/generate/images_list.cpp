@@ -501,6 +501,17 @@ bool ImagesGenerator::ModifyProperty(NodeProperty* prop, tt_string_view value)
 
 //////////////////////////////////////////  Image List Functions  //////////////////////////////////////////
 
+// clang-format off
+inline const auto lstBitmapoProps = {
+    prop_bitmap,
+    prop_current,
+    prop_disabled_bmp,
+    prop_focus_bmp,
+    prop_inactive_bitmap,
+    prop_pressed_bmp,
+};
+// clang-format on
+
 void img_list::GatherImages(Node* parent, std::set<std::string>& images, std::vector<std::string>& new_images)
 {
     if (parent->isGen(gen_Images))
@@ -510,30 +521,34 @@ void img_list::GatherImages(Node* parent, std::set<std::string>& images, std::ve
 
     for (const auto& child: parent->GetChildNodePtrs())
     {
-        if (child->HasValue(prop_bitmap))
+        for (auto& iter: lstBitmapoProps)
         {
-            if (images.contains(child->value(prop_bitmap)))
+            auto prop_ptr = child->get_prop_ptr(iter);
+            if (prop_ptr && prop_ptr->HasValue())
             {
-                continue;
-            }
-            auto& description = child->value(prop_bitmap);
-            // We need the size for bundle processing, but we don't need every possible size added
-            // to gen_Images, so we simply force it to be 16x16 to avoid duplication.
-            if (description.starts_with("SVG;"))
-            {
-                tt_string new_description(description);
-                new_description.erase(new_description.find_last_of(';'));
-                new_description << ";[16,16]";
-                if (!images.contains(new_description))
+                if (images.contains(prop_ptr->value()))
                 {
-                    images.insert(new_description);
-                    new_images.push_back(new_description);
+                    continue;
                 }
-            }
-            else if (description.starts_with("Embed"))
-            {
-                images.insert(description);
-                new_images.push_back(description);
+                auto& description = prop_ptr->value();
+                // We need the size for bundle processing, but we don't need every possible size added
+                // to gen_Images, so we simply force it to be 16x16 to avoid duplication.
+                if (description.starts_with("SVG;"))
+                {
+                    tt_string new_description(description);
+                    new_description.erase(new_description.find_last_of(';'));
+                    new_description << ";[16,16]";
+                    if (!images.contains(new_description))
+                    {
+                        images.insert(new_description);
+                        new_images.push_back(new_description);
+                    }
+                }
+                else if (description.starts_with("Embed"))
+                {
+                    images.insert(description);
+                    new_images.push_back(description);
+                }
             }
         }
         if (child->GetChildCount())

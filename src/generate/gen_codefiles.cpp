@@ -171,7 +171,7 @@ void GenThreadCpp(GenData& gen_data, Node* form)
         gen_data.UpdateFileCount();
     }
 
-    if (!form->as_bool(prop_generate_translation_unit))
+    if (!form->as_bool(prop_generate_translation_unit) && !form->isGen(gen_Images))
     {
         gen_data.UpdateFileCount();
         return;
@@ -188,7 +188,15 @@ void GenThreadCpp(GenData& gen_data, Node* form)
         }
         else
         {
-            gen_data.AddClassName(form->prop_as_string(prop_class_name));
+            if (form->isGen(gen_Images))
+            {
+                // While technically this is a "form" it doesn't have the usual properties set
+                gen_data.AddClassName("Images List");
+            }
+            else
+            {
+                gen_data.AddClassName(form->prop_as_string(prop_class_name));
+            }
             return;
         }
     }

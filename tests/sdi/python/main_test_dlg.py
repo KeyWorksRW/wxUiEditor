@@ -15,36 +15,6 @@ import wx.stc
 import images
 from wx.lib.embeddedimage import PyEmbeddedImage
 
-normal_png = PyEmbeddedImage(
-    b"iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAACXBIWXMAAAsTAAALEwEAmpwYAAABrklE"
-    b"QVQ4y6WTsW7aYBSFP9eGgXiwVFpFgqGoRE4kpsoDAwvPwFIpvAWPwRNk95BOYWJHLAz/AyCHAQ/YITWJ"
-    b"41hCBcHfIdgktdMOPdP/X91z7tXRPQoJrq4kmganp2mJ52d4eiKDXg/iWAHQ0qKmwc0NnJ8fG+/v4e4O"
-    b"pHz5K8rxndCSx/XJSVleXgaKoqBpGvv9nt1ulzO8h3eY/kagXq8DoOs6pmkSBAGu62YECoVC/gYJHMdh"
-    b"OBzSaDQQQgBQLpeZTqe0Wq2MYLqKEEKxLEs2m81Zu93+ulgs0HUdgCiKqFQqjEaj2WQyOTvw5BuB1+h2"
-    b"u1LX9dQDVVWJ4xjbtmvAPHeDPJFisQjAZrPBtu3PwM8/+7Q8shDik2EYhGHIYDBgPp+/Nwc1h/zFMIzF"
-    b"drulVCpRq9WQUrJcLs983//xVxOBb4ZhCIBqtcpqtcL3fQA8z6Pf78/G43G+iUKIj0DwrzvodDq4rpvy"
-    b"PvCfSE2crddIoAT8Wq0Iowhvvc4Qtu9l4bvjBKgqmCbc3r4UHx/h4EEKy4KHB5mk8XgHFxfZOMcxhGE2"
-    b"iY4Du50C8BtZArk344GL9AAAAABJRU5ErkJggg==")
-
-focus_png = PyEmbeddedImage(
-    b"iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAACXBIWXMAAAsTAAALEwEAmpwYAAABt0lE"
-    b"QVQ4y82TsYriUBSGv0RjIRkT8I6MsQgLCtYSEAux2t4pF/IavoQg1tOnHNhHEMQihWzljAZZVkUG2bUI"
-    b"Q3ZTJMPdYpVxVqfe/ct7zvk53zn3wL+Xrkt0Xf71qlzIVM7qMhmpcHcnub/HenhA0zQA1uv1JQNs25YA"
-    b"iZQ8OQ7M52T/eCsMBgNqtRqbzYZ+v7/0ff8jsDoWt9vt5XA4BGAZx3x6fIT5HBUA+UowmUzodDpV13W/"
-    b"AdfAdaPR+Nzr9arnUMqhgxPV63XG4zG6ruO67neAZrOJZVnnTFK+Ihy13+8pFAokSUIul8OyLFqt1rs7"
-    b"UDEMuLl5N6Hb7WIYBuVy+W2gXAbTJMvVFZRKZDIZbNvGcRwWiwX5fJ44jjFNkyRJKBaL5HI5AH4+P0M2"
-    b"C7p+GCKgqipCCGazGZVKhSiK8DxPCcOwpGka2+0WIQRCCEzDOEE4KE1TgiCgWq0yGo2+ep6nADiO8yMM"
-    b"ww8AQRAQBAGr1erEYLeDxQIpJVEUYVkWvu+/WZnjOKswDJ0oioiiiF9xDEEAux0qaQq3tyiKIgABiOl0"
-    b"euknfjnGFRC8vECa/ge3+Bu3SZx0Dp9YSwAAAABJRU5ErkJggg==")
-
-no_hour_png = PyEmbeddedImage(
-    b"iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAACXBIWXMAAAsTAAALEwEAmpwYAAABDUlE"
-    b"QVQ4y52TMWrDMBSGP4U0NyhZAx08ZoghFxH0CCFracB3SC+QG3QIGT2YXCDwvHgvZE26BLqlw+tQW0iq"
-    b"mpr+YGRL/j6eLT2joABms4HxmCCnE8ksFt8QYDoBgFmvwxcPhySv2627NwC+5CWWRHlerXzYGGf1JJ/X"
-    b"K03T/IBneR7AAINuohZxi3ejEWVZArgxBQcRkaW1VhXcZa3VoiiCOWBJStBmmmXZhw9E8JSeqRJw/4jI"
-    b"/b8FIjK58Qk3QSMijz4gIioiKYn7iQPP8TTL89fu4f18JrXFrUSJTUGJqtR13f8gxfBvSVTCMOiD/Z6H"
-    b"4xGAt8slKcm9+hXUBO08n//djVUFux3aVvoF3WivIiuis94AAAAASUVORK5CYII=")
-
 clr_hourglass_gif = PyEmbeddedImage(
     b"R0lGODlhIAAgAPIAAP///8zMzAD//wCZmQAAAAAAAAAAAAAAACH/C05FVFNDQVBFMi4wAwEAAAAh+QQJ"
     b"CgAFACwAAAAAIAAgAAADZli63P4wykmrvTjnwbvnhFZwQil8QygSbOuqYiDPNKzJAEDLdobrux6GByAE"
@@ -80,28 +50,6 @@ clr_hourglass_gif = PyEmbeddedImage(
     b"vTjrQsiWxOB9TyiSjjkEI8oNcCC3Xyis8kzaeM7Wg5uP9dvAVgAAgdhxzZRMV+FJgPpomI4WMCyiAtwh"
     b"VgPuspqbshg2toDDsyNJlozDnG+VdMoKDvYKPIAKfoOEf4aJiouMJAkAIf4yUmVkdWNlZCA1NiUgQCB3"
     b"d3cucmFzcGJlcnJ5aGlsbC5jb20vZ2lmd2l6YXJkLmh0bWwAOw==")
-
-disabled_png = PyEmbeddedImage(
-    b"iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAACXBIWXMAAAsTAAALEwEAmpwYAAABZ0lE"
-    b"QVQ4y5VTMW7CQBCctY1EmnBKRBEocMEPgtLxATr3lFS01BQUKWnyBOSCgjovoIpOPCBSRBMZKSBkU2An"
-    b"2N4UwScbbCKmujvNzO3O3RKOeOr1mDQNN0IkRzj4Pg6+j1MsbBthEBAAGMkhaRo+pcRtraaIgech8Dww"
-    b"8x+HSK2VLllMp9N7Zt4QEQzDQBzHiKLo7PbBYADHcZROVdBsNgEA7+MxflCMUqmU2Wu4Eu12u9Bg22q1"
-    b"6GW5/CgSv+o6bNumdOuUR+x2u9w56T8lzg/xkkmROBNiGlLKqhACb8Phv5loOWJTCPGVFneiCEa5zBcN"
-    b"pJQkpXwUQizziBPLSptQXgV3AGQYhoWlTywLjUaDAXBhC4vR6Kp/oUJ0tlswM6r9PkzThOu6cBznTBDN"
-    b"5/kGz7PZhjQtM0zfux18182++8MDjPWak2lUYVTqdSZdR7lSUeQwCHDY749KAo6TuFutwHFMAPALdYaS"
-    b"dnNwM6gAAAAASUVORK5CYII=")
-
-left_png = PyEmbeddedImage(
-    b"iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAACXBIWXMAAAsTAAALEwEAmpwYAAAAUElE"
-    b"QVRIx+3QwQ2AMAwEwU1ESanJRaUm93Q8EDSAEwl099qXJQ/8Z5EiUqUN9G0PCCRQ9d2+lNpEJjKRiUxU"
-    b"tOOOFnnFHDwvztFe9Vaiz+4EfTJgngsn2HoAAAAASUVORK5CYII=")
-
-toggle_button_png = PyEmbeddedImage(
-    b"iVBORw0KGgoAAAANSUhEUgAAABYAAAAWCAYAAADEtGw7AAAACXBIWXMAAAsTAAALEwEAmpwYAAAAx0lE"
-    b"QVQ4y2NgGAWjAB0wnr/55r9h1FqqGnp+WTADI4PxzP+nd6RR1WBTj1kMTAwMDAx//mPHpqKMDKaijCh8"
-    b"dHl0PaxMEMNZGBgYGDiZMW01EGZkuPD2PwbbUgzBxqYXxsdpMLo4jH3zw38GdQFGhpsf/mM1mIsFyWAY"
-    b"Bx0gi8PYuGgYIBgUuFzMyczA8Ob7fwYRTkasLmZBNpgDi4u//P7PwMPKCGfDAEwtTJ4Dh29ZGBgYGNiY"
-    b"sEv++vufJD5dMsgoGAWYAAC/kFXGLn0vtgAAAABJRU5ErkJggg==")
 
 import popupwin
 
@@ -175,10 +123,10 @@ class MainTestDialog(wx.Dialog):
         grid_bag_sizer.Add(self.m_btn_2, wx.GBPosition(0, 1), wx.GBSpan(1, 1), wx.ALL, 5)
 
         self.m_btn_bitmaps = wx.Button(page_4, wx.ID_ANY, "Bitmaps")
-        self.m_btn_bitmaps.SetBitmap(wx.BitmapBundle.FromBitmap(normal_png.Bitmap))
+        self.m_btn_bitmaps.SetBitmap(wx.BitmapBundle.FromBitmap(images.normal_png.Bitmap))
         self.m_btn_bitmaps.SetBitmapDisabled(wx.BitmapBundle.FromBitmap(
-            no_hour_png.Bitmap))
-        self.m_btn_bitmaps.SetBitmapCurrent(wx.BitmapBundle.FromBitmap(focus_png.Bitmap))
+            images.no_hour_png.Bitmap))
+        self.m_btn_bitmaps.SetBitmapCurrent(wx.BitmapBundle.FromBitmap(images.focus_png.Bitmap))
         self.m_btn_bitmaps.SetToolTip(
         "Bitmap should change when mouse is over button, or button is disabled.")
         grid_bag_sizer.Add(self.m_btn_bitmaps, wx.GBPosition(0, 2), wx.GBSpan(1, 1), wx.ALL,
@@ -186,7 +134,7 @@ class MainTestDialog(wx.Dialog):
 
         self.m_btn_4 = wx.Button(page_4, wx.ID_ANY, "Right")
         self.m_btn_4.SetBitmapPosition(wx.RIGHT)
-        self.m_btn_4.SetBitmap(wx.BitmapBundle.FromBitmap(normal_png.Bitmap))
+        self.m_btn_4.SetBitmap(wx.BitmapBundle.FromBitmap(images.normal_png.Bitmap))
         self.m_btn_4.SetToolTip(
         "Bitmap should be on the right side (fails in wxPython 4.2).")
         grid_bag_sizer.Add(self.m_btn_4, wx.GBPosition(0, 3), wx.GBSpan(1, 1), wx.ALL, 5)
@@ -258,7 +206,7 @@ class MainTestDialog(wx.Dialog):
             wx.adv.Animation("../../art/clr_hourglass.gif"), wx.DefaultPosition,
             wx.DefaultSize, wx.adv.AC_DEFAULT_STYLE)
         self.m_animation_ctrl.SetInactiveBitmap(wx.BitmapBundle.FromBitmap(
-            disabled_png.Bitmap))
+            images.disabled_png.Bitmap))
         static_box_3.Add(self.m_animation_ctrl, wx.SizerFlags().Border(wx.ALL))
 
         box_sizer_19.Add(static_box_3, wx.SizerFlags().Border(wx.ALL))
@@ -595,7 +543,7 @@ class MainTestDialog(wx.Dialog):
         rbnBtnBar = wx.ribbon.RibbonButtonBar(ribbonPanel2, wx.ID_ANY)
         rbnBtnBar.AddButton(wx.ID_ANY, "Forward", wx.ArtProvider.GetBitmap(
             wx.ART_GO_FORWARD, wx.ART_OTHER), "", wx.ribbon.RIBBON_BUTTON_NORMAL)
-        rbnBtnBar.AddButton(wx.ID_ANY, "Backward", left_png.Bitmap, "",
+        rbnBtnBar.AddButton(wx.ID_ANY, "Backward", images.left_png.Bitmap, "",
             wx.ribbon.RIBBON_BUTTON_NORMAL)
         rbnBtnBar.Realize()
 
@@ -615,7 +563,7 @@ class MainTestDialog(wx.Dialog):
         rbnPanel_3 = wx.ribbon.RibbonPanel(ribbonPage_3, wx.ID_ANY, "Gallery Panel")
 
         rbnGallery = wx.ribbon.RibbonGallery(rbnPanel_3, wx.ID_ANY)
-        rbnGallery.Append(toggle_button_png.Bitmap, wx.ID_ANY)
+        rbnGallery.Append(images.toggle_button_png.Bitmap, wx.ID_ANY)
         rbnGallery.Realize()
         page.SetSizerAndFit(page_sizer_3)
 

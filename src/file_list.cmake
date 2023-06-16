@@ -85,7 +85,7 @@ set (file_list
     # be used in a Dialog or Frame, then the generator must also be able to create
     # a preview of the object for the Preview display.
 
-    generate/images_form.cpp       # Embedded images generator
+    generate/images_list.cpp       # Images List Embedded images generator
     generate/project.cpp           # Project generator
 
     generate/dataview_widgets.cpp  # wxDataView generation classes

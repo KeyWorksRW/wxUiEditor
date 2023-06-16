@@ -1072,9 +1072,9 @@ void BaseCodeGenerator::GenerateClassHeader(Node* form_node, EventVector& events
 {
     ASSERT(m_language == GEN_LANG_CPLUSPLUS);
 
-    if (form_node->isType(type_images))
+    if (form_node->isGen(gen_Images))
     {
-        // The Images form is not a class
+        // There is a header for this, but it's not a class header
         return;
     }
 
@@ -1820,9 +1820,11 @@ void BaseCodeGenerator::ParseImageProperties(Node* node)
                 if (parts.size() < IndexImage + 1)
                     continue;
 
-                // If the is a Images form, then we need to see if the image property refers to an image within the Images
-                // form. If so, a function call will be made to the Image Form's source code to load the image and therefore
-                // we don't need to generate and special header files or generate the general purpose image loading function.
+                // If this is an Images List, then we need to see if the image property refers
+                // to an image within the Images List. If so, a function call will be made to
+                // the Image List's source code to load the image and therefore we don't need
+                // to generate any special header files or generate the general purpose image
+                // loading function.
 
                 if (m_ImagesForm && m_form_node != m_ImagesForm)
                 {

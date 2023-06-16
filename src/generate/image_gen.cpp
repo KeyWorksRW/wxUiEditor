@@ -100,8 +100,8 @@ void BaseCodeGenerator::WriteImageConstruction(Code& code)
                 {
                     inlined_warning = true;
                     code.Str("// WARNING: This will only work if compiled with C++17 or later.");
-                    code.Eol().Str("// Add an Images form and add your image to that to prevent it from being");
-                    code.Eol().Str("// added to this header file.").Eol();
+                    code.Eol().Str("// Create an Images List and check auto_update to prevent the image");
+                    code.Eol().Str("// from being added to this header file.").Eol();
                 }
                 // The header file can be included multiple times, so we need to set this to
                 // inline to avoid multiple definitions. Note that this requires C++17 --

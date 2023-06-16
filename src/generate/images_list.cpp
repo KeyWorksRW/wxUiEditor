@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
-// Purpose:   Embedded images generator
+// Purpose:   Images List Embedded images generator
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2021-2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2021-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -10,7 +10,7 @@
 #include <wx/statbmp.h>   // wxStaticBitmap class interface
 #include <wx/stattext.h>  // wxStaticText base header
 
-#include "images_form.h"
+#include "images_list.h"
 
 #include "bitmaps.h"          // Contains various images handling functions
 #include "gen_base.h"         // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
@@ -18,6 +18,8 @@
 #include "mainframe.h"        // MainFrame -- Main window frame
 #include "node.h"             // Node class
 #include "project_handler.h"  // ProjectHandler class
+#include "undo_cmds.h"        // InsertNodeAction -- Undoable command classes derived from UndoAction
+#include "utils.h"            // Utility functions that work with properties
 #include "write_code.h"       // Write code to Scintilla or file
 
 #include "ui_images.h"
@@ -154,6 +156,9 @@ void BaseCodeGenerator::GenerateImagesForm()
 
     if (m_panel_type != HDR_PANEL)
     {
+        tt_string hdr_file(m_form_node->value(prop_base_file));
+        hdr_file.replace_extension(m_header_ext);
+        m_source->writeLine(tt_string("#include ") << '"' << hdr_file << '"');
         m_source->writeLine("\n#include <wx/mstream.h>  // memory stream classes", indent::none);
 
         if (m_NeedSVGFunction)
@@ -227,7 +232,7 @@ void BaseCodeGenerator::GenerateImagesForm()
                 m_source->Indent();
                 code = "return wxueBundleSVG(wxue_img::";
                 code << embed->array_name << ", " << (embed->array_size & 0xFFFFFFFF) << ", ";
-                code << (embed->array_size >> 32) << ", wxSize(width, height));";
+                code << (embed->array_size >> (to_size_t) 32) << ", wxSize(width, height));";
                 m_source->writeLine(code);
                 m_source->Unindent();
                 m_source->writeLine("}");
@@ -469,4 +474,200 @@ void BaseCodeGenerator::GenerateImagesForm()
 
     m_header->Unindent();
     m_header->writeLine("}\n");
+}
+
+int ImagesGenerator::GetRequiredVersion(Node* node)
+{
+    if (node->HasValue(prop_auto_update))
+    {
+        return minRequiredVer + 2;  // 1.1.1 release
+    }
+
+    return minRequiredVer;
+}
+
+// Called by MainFrame when the user modifies a property. Return true if the generator handles
+// pushing to the undo stack.
+bool ImagesGenerator::ModifyProperty(NodeProperty* prop, tt_string_view value)
+{
+    if (prop->isProp(prop_auto_update) && value != "0")
+    {
+        auto undo_update_images = std::make_shared<AutoImagesAction>(prop->GetNode());
+        wxGetFrame().PushUndoAction(undo_update_images);
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+//////////////////////////////////////////  Image List Functions  //////////////////////////////////////////
+
+// clang-format off
+inline const auto lstBitmapoProps = {
+    prop_bitmap,
+    prop_current,
+    prop_disabled_bmp,
+    prop_focus_bmp,
+    prop_inactive_bitmap,
+    prop_pressed_bmp,
+};
+// clang-format on
+
+void img_list::GatherImages(Node* parent, std::set<std::string>& images, std::vector<std::string>& new_images)
+{
+    if (parent->isGen(gen_Images))
+    {
+        return;
+    }
+
+    for (const auto& child: parent->GetChildNodePtrs())
+    {
+        for (auto& iter: lstBitmapoProps)
+        {
+            auto prop_ptr = child->get_prop_ptr(iter);
+            if (prop_ptr && prop_ptr->HasValue())
+            {
+                if (images.contains(prop_ptr->value()))
+                {
+                    continue;
+                }
+                auto& description = prop_ptr->value();
+                // We need the size for bundle processing, but we don't need every possible size added
+                // to gen_Images, so we simply force it to be 16x16 to avoid duplication.
+                if (description.starts_with("SVG;"))
+                {
+                    tt_string new_description(description);
+                    new_description.erase(new_description.find_last_of(';'));
+                    new_description << ";[16,16]";
+                    if (!images.contains(new_description))
+                    {
+                        images.insert(new_description);
+                        new_images.push_back(new_description);
+                    }
+                }
+                else if (description.starts_with("Embed"))
+                {
+                    images.insert(description);
+                    new_images.push_back(description);
+                }
+            }
+        }
+        if (child->GetChildCount())
+        {
+            GatherImages(child.get(), images, new_images);
+        }
+    }
+}
+
+void img_list::FixPropBitmap(Node* parent)
+{
+    tt_cwd cwd(tt_cwd::restore);
+    Project.ChangeDir();
+
+    tt_string art_directory = Project.value(prop_art_directory);
+
+    for (const auto& child: parent->GetChildNodePtrs())
+    {
+        for (auto& iter: lstBitmapoProps)
+        {
+            auto prop_ptr = child->get_prop_ptr(iter);
+            if (prop_ptr && prop_ptr->HasValue())
+            {
+                auto& description = prop_ptr->value();
+                if (description.starts_with("Embed") || description.starts_with("SVG") || description.starts_with("XPM"))
+                {
+                    tt_view_vector parts(description, BMP_PROP_SEPARATOR, tt::TRIM::both);
+                    if (parts.size() > IndexImage && parts[IndexImage].size())
+                    {
+                        tt_string check_path(art_directory);
+                        tt_string file_part = parts[IndexImage].filename();
+                        check_path.append_filename(file_part);
+                        if (check_path.file_exists() && file_part != parts[IndexImage])
+                        {
+                            tt_string new_description;
+                            new_description << parts[IndexType] << BMP_PROP_SEPARATOR << file_part;
+                            for (size_t idx = IndexImage + 1; idx < parts.size(); idx++)
+                            {
+                                new_description << BMP_PROP_SEPARATOR << parts[idx];
+                            }
+
+                            prop_ptr->set_value(new_description);
+                        }
+                    }
+                }
+            }
+        }
+        if (child->GetChildCount())
+        {
+            FixPropBitmap(child.get());
+        }
+    }
+}
+
+bool img_list::CompareImageNames(NodeSharedPtr a, NodeSharedPtr b)
+{
+    auto& description_a = a->value(prop_bitmap);
+    tt_view_vector parts_a(description_a, BMP_PROP_SEPARATOR, tt::TRIM::both);
+    if (parts_a.size() <= IndexImage || parts_a[IndexImage].empty())
+        return true;
+
+    auto& description_b = b->value(prop_bitmap);
+    tt_view_vector parts_b(description_b, BMP_PROP_SEPARATOR, tt::TRIM::both);
+    if (parts_b.size() <= IndexImage || parts_b[IndexImage].empty())
+        return false;
+
+    return (parts_a[IndexImage].filename().compare(parts_b[IndexImage].filename()) < 0);
+}
+
+Node* img_list::FindImageList()
+{
+    Node* image_node = nullptr;
+    if (Project.ChildCount() > 0)
+    {
+        if (Project.GetChild(0)->isGen(gen_Images))
+        {
+            image_node = Project.GetChild(0);
+        }
+        else
+        {
+            for (const auto& iter: Project.ChildNodePtrs())
+            {
+                if (iter->isGen(gen_Images))
+                {
+                    image_node = iter.get();
+                    break;
+                }
+            }
+        }
+    }
+    return image_node;
+}
+
+void img_list::UpdateImagesList(int ProjectVersion)
+{
+    if (ProjectVersion < curSupportedVer)
+    {
+        if (Project.value(prop_art_directory).empty())
+        {
+            Project.ProjectNode()->set_value(prop_art_directory, "./");
+        }
+
+        FixPropBitmap(Project.ProjectNode());
+    }
+
+    Node* image_node = FindImageList();
+    if (!image_node)
+    {
+        return;
+    }
+
+    if (Project.ProjectNode()->GetChildCount() != 0)
+    {
+        Project.ProjectNode()->ChangeChildPosition(image_node->GetSharedPtr(), 0);
+    }
+
+    auto& children = image_node->GetChildNodePtrs();
+    std::sort(children.begin(), children.end(), img_list::CompareImageNames);
 }

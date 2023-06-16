@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Undoable command classes derived from UndoAction
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2021-2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2021-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -16,12 +16,19 @@ class InsertNodeAction : public UndoAction
 {
 public:
     InsertNodeAction(Node* node, Node* parent, const tt_string& undo_str, int pos = -1);
+    InsertNodeAction(const NodeSharedPtr node, const NodeSharedPtr parent, tt_string_view undo_str, int pos = -1);
 
     // Called when pushed to the Undo stack and when Redo is called
     void Change() override;
 
     // Called when Undo is requested
     void Revert() override;
+
+    // Set this to true if you created the node without firing a created event.
+    void SetFireCreatedEvent(bool fire) { m_fire_created_event = fire; }
+
+protected:
+    void Init(const NodeSharedPtr node, const NodeSharedPtr parent, tt_string_view undo_str, int pos = -1);
 
 private:
     NodeSharedPtr m_parent;
@@ -29,6 +36,7 @@ private:
     NodeSharedPtr m_old_selected;
     int m_pos;
     bool m_fix_duplicate_names { true };
+    bool m_fire_created_event { false };
 };
 
 // Specify node, undo string, and whether or not to add to the clipboard.
@@ -36,12 +44,16 @@ class RemoveNodeAction : public UndoAction
 {
 public:
     RemoveNodeAction(Node* node, const tt_string& undo_str, bool AddToClipboard = false);
+    RemoveNodeAction(const NodeSharedPtr node, const tt_string& undo_str, bool AddToClipboard = false);
 
     // Called when pushed to the Undo stack and when Redo is called
     void Change() override;
 
     // Called when Undo is requested
     void Revert() override;
+
+protected:
+    void Init(const NodeSharedPtr node, tt_string_view undo_str, bool AddToClipboard = false);
 
 private:
     NodeSharedPtr m_parent;
@@ -113,11 +125,16 @@ class ChangePositionAction : public UndoAction
 {
 public:
     ChangePositionAction(Node* node, size_t position);
+    ChangePositionAction(const NodeSharedPtr node, size_t position);
+
     void Change() override;
     void Revert() override;
 
     Node* GetParent() { return m_parent.get(); }
     Node* GetNode() { return m_node.get(); }
+
+protected:
+    void Init(const NodeSharedPtr node, size_t position);
 
 private:
     NodeSharedPtr m_parent;
@@ -131,12 +148,17 @@ class ChangeParentAction : public UndoAction
 {
 public:
     ChangeParentAction(Node* node, Node* parent);
+    ChangeParentAction(const NodeSharedPtr node, const NodeSharedPtr parent);
+
     void Change() override;
     void Revert() override;
 
     Node* GetOldParent() { return m_revert_parent.get(); }
     Node* GetNewParent() { return m_change_parent.get(); }
     Node* GetNode() { return m_node.get(); }
+
+protected:
+    void Init(const NodeSharedPtr node, const NodeSharedPtr parent);
 
 private:
     NodeSharedPtr m_node;
@@ -240,4 +262,21 @@ protected:
 
 private:
     NodeSharedPtr m_old_project;
+};
+
+// This is used to check whether Update Images is at the top of the undo stack
+extern const char* txt_update_images_undo_string;
+
+// This is used when an Images List has the auto_update property changed
+class AutoImagesAction : public UndoAction
+{
+public:
+    AutoImagesAction(Node* node);
+    void Change() override;
+    void Revert() override;
+
+private:
+    std::vector<UndoActionPtr> m_actions;
+
+    NodeSharedPtr m_node;
 };

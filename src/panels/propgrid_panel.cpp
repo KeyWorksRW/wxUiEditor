@@ -28,6 +28,7 @@
 #include "font_prop.h"        // FontProperty -- FontProperty class
 #include "mainframe.h"        // MainFrame -- Main window frame
 #include "node.h"             // Node class
+#include "node_creator.h"     // NodeCreator -- Class used to create nodes
 #include "node_decl.h"        // NodeDeclaration class
 #include "node_prop.h"        // NodeProperty -- NodeProperty class
 #include "paths.h"            // Handles *_directory properties
@@ -1051,24 +1052,7 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
 
         case type_animation:
         case type_image:
-            {
-                tt_string value;
-                // Do NOT call GetValueAsString() -- we need to return the value the way the custom property formatted it
-                value << m_prop_grid->GetPropertyValue(property).GetString().wx_str();
-                tt_string_vector parts(value, BMP_PROP_SEPARATOR, tt::TRIM::both);
-                // If the image field is empty, then the entire property needs to be cleared
-                if (parts.size() > IndexImage && parts[IndexImage].empty())
-                {
-                    value.clear();
-                }
-                else
-                {
-                    // This ensures that all images from a bitmap bundle get added
-                    ProjectImages.UpdateBundle(parts, prop->GetNode());
-                }
-
-                modifyProperty(prop, value);
-            }
+            ModifyEmbeddedProperty(prop, property);
             break;
 
         case type_file:
@@ -1452,6 +1436,143 @@ void PropGridPanel::ModifyFileProperty(NodeProperty* node_prop, wxPGProperty* gr
         }
     }
     ModifyProperty(node_prop, newValue);
+}
+
+void PropGridPanel::ModifyEmbeddedProperty(NodeProperty* node_prop, wxPGProperty* grid_prop)
+{
+    // Do NOT call GetPropertyValueAsString() -- we need to return the value the way the custom property formatted it
+    tt_string value = m_prop_grid->GetPropertyValue(grid_prop).GetString().utf8_string();
+    tt_string_vector parts(value, BMP_PROP_SEPARATOR, tt::TRIM::both);
+    // If the image field is empty, then the entire property needs to be cleared
+    if (parts.size() <= IndexImage || parts[IndexImage].empty())
+    {
+        value.clear();
+    }
+    else
+    {
+        tt_string image_path(parts[IndexImage]);
+        image_path.make_absolute();
+        image_path.make_relative(Project.value(prop_art_directory));
+        if (image_path != parts[IndexImage])
+        {
+            parts[IndexImage] = image_path;
+            value.clear();
+            value << parts[IndexType] << BMP_PROP_SEPARATOR << image_path;
+            for (size_t idx = IndexImage + 1; idx < parts.size(); idx++)
+            {
+                value << BMP_PROP_SEPARATOR << parts[idx];
+            }
+        }
+        // This ensures that all images from a bitmap bundle get added
+
+        ProjectImages.UpdateBundle(parts, node_prop->GetNode());
+    }
+
+    if (value.empty() || node_prop->type() == type_animation || value.starts_with("Art") || value.starts_with("XPM"))
+    {
+        modifyProperty(node_prop, value);
+        return;  // Don't do anything else for animations, art providers or XPMs
+    }
+    if (value == "Embed;" || value == "SVG;")
+    {
+        // Don't do anything else for empty embedded images
+        modifyProperty(node_prop, value);
+        return;
+    }
+
+    // We do *not* call modifyProperty() until we are certain that we aren't going to add an
+    // image to a gen_Images node. That's because if we do add it, the GroupUndoActions will
+    // handle the modification of the property via an ModifyPropertyAction class.
+
+    auto* node = node_prop->GetNode();
+    auto* parent = node->GetParent();
+
+    if (parent->isGen(gen_Images))
+    {
+        // We need the size for bundle processing, but we don't need every possible size added
+        // to gen_Images, so we simply force it to be 16x16 to avoid duplication.
+        if (value.starts_with("SVG;"))
+        {
+            value.erase(value.find_last_of(';'));
+            value << ";[16,16]";
+        }
+
+        auto filename = parts[IndexImage].filename();
+        size_t pos = 0;
+        for (const auto& embedded_image: parent->GetChildNodePtrs())
+        {
+            auto& description_a = embedded_image->value(prop_bitmap);
+            tt_view_vector parts_a(description_a, BMP_PROP_SEPARATOR, tt::TRIM::both);
+            if (parts_a.size() <= IndexImage || parts_a[IndexImage].empty())
+                break;
+            if (filename.compare(parts_a[IndexImage].filename()) < 0)
+                // We found the position where the new image should be inserted
+                break;
+            ++pos;
+        }
+        if (pos < parent->GetChildCount())
+        {
+            auto group = std::make_shared<GroupUndoActions>("Update bitmap property", node);
+
+            auto prop_bitmap_action = std::make_shared<ModifyPropertyAction>(node_prop, value);
+            prop_bitmap_action->AllowSelectEvent(false);
+            group->Add(prop_bitmap_action);
+
+            auto change_pos_action = std::make_shared<ChangePositionAction>(node, pos);
+            group->Add(change_pos_action);
+            wxGetFrame().PushUndoAction(group);
+            return;  // The group Undo will handle modifying the bitmap property, so simply return
+        }
+    }
+    else
+    {
+        Node* image_node = nullptr;
+        for (const auto& iter: Project.ChildNodePtrs())
+        {
+            if (iter->isGen(gen_Images))
+            {
+                image_node = iter.get();
+                break;
+            }
+        }
+        if (image_node && image_node->as_bool(prop_auto_update))
+        {
+            bool done = false;
+            for (auto& iter: image_node->GetChildNodePtrs())
+            {
+                if (iter->value(prop_bitmap) == value)
+                {
+                    done = true;
+                    break;  // It's already been added, so we're done
+                }
+            }
+
+            if (!done)
+            {
+                // It wasn't found, so add it
+                auto group = std::make_shared<GroupUndoActions>("Update bitmap property", node);
+
+                // auto* new_embedded = child->CreateChildNode(gen_embedded_image);
+                auto new_embedded = NodeCreation.CreateNode(gen_embedded_image, image_node);
+                new_embedded->set_value(prop_bitmap, value);
+                auto insert_action = std::make_shared<InsertNodeAction>(new_embedded.get(), image_node, tt_empty_cstr);
+                insert_action->AllowSelectEvent(false);
+                insert_action->SetFireCreatedEvent(true);
+                group->Add(insert_action);
+
+                auto prop_bitmap_action = std::make_shared<ModifyPropertyAction>(node_prop, value);
+                prop_bitmap_action->AllowSelectEvent(false);
+                group->Add(prop_bitmap_action);
+
+                wxGetFrame().PushUndoAction(group);
+                return;  // The group Undo will handle modifying the bitmap property, so simply return
+            }
+        }
+    }
+
+    // If we get here, then we didn't find an Images node at all, or it didn't need updating,
+    // so just modify the property.
+    modifyProperty(node_prop, value);
 }
 
 void PropGridPanel::ModifyOptionsProperty(NodeProperty* node_prop, wxPGProperty* grid_prop)

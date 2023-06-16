@@ -14,7 +14,7 @@
 #include <wx/mstream.h>  // Memory stream classes
 
 #include "wxui/ribbonpanel_base.h"  // Most of the embedded generator images will be declared here
-#include "wxui/ui_images.h"         // This is generated from the Images form
+#include "wxui/ui_images.h"         // This is generated from the Images List
 
 #include "bitmaps.h"
 

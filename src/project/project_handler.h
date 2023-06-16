@@ -58,6 +58,7 @@ public:
 
     Node* ProjectNode() const { return m_project_node.get(); }
     auto& ChildNodePtrs() { return m_project_node->GetChildNodePtrs(); }
+    Node* GetChild(size_t index) { return m_project_node->GetChild(index); }
 
     void CollectForms(std::vector<Node*>& forms, Node* node_start = nullptr);
 

@@ -9,11 +9,13 @@
 
 #include "../panels/nav_panel.h"     // NavigationPanel -- Navigation Panel
 #include "../panels/ribbon_tools.h"  // RibbonPanel -- Displays component tools in a wxRibbonBar
+#include "images_list.h"             // ImagesGenerator -- Images List Embedded images generator
 #include "mainframe.h"               // MainFrame -- Main window frame
 #include "node_creator.h"            // NodeCreator class
 #include "node_decl.h"               // NodeDeclaration class
 #include "node_prop.h"               // NodeProperty -- NodeProperty class
 #include "preferences.h"             // Preferences -- Stores user preferences
+#include "project_handler.h"         // ProjectHandler class
 #include "undo_cmds.h"               // InsertNodeAction -- Undoable command classes derived from UndoAction
 
 using namespace GenEnum;
@@ -106,6 +108,41 @@ bool Node::CreateToolNode(GenName name)
             wxGetFrame().Thaw();
             return true;
         }
+    }
+
+    if (name == gen_Images)
+    {
+        for (const auto& iter: Project.ChildNodePtrs())
+        {
+            if (iter->isGen(gen_Images))
+            {
+                wxMessageBox("Only one Images List is allowed per project.", "Cannot create Images List",
+                             wxOK | wxICON_ERROR);
+                return true;  // indicate that we have fully processed creation even though it's just an error message
+            }
+        }
+
+        auto new_node = NodeCreation.CreateNode(name, Project.ProjectNode());
+        if (!new_node)
+            return false;
+        auto insert_node =
+            std::make_shared<InsertNodeAction>(new_node.get(), Project.ProjectNode(), "insert Images list", 0);
+        insert_node->SetFireCreatedEvent(true);
+        wxGetFrame().PushUndoAction(insert_node);
+        wxGetFrame().SelectNode(new_node, evt_flags::fire_event | evt_flags::force_selection);
+        return true;
+    }
+    else if (name == gen_embedded_image)
+    {
+        auto* image_node = img_list::FindImageList();
+        if (!image_node)
+        {
+            wxMessageBox("An Images List must be created before you can add an embedded image.",
+                         "Cannot create embedded image", wxOK | wxICON_ERROR);
+            return true;  // indicate that we have fully processed creation even though it's just an error message
+        }
+        image_node->CreateChildNode(name);
+        return true;
     }
 
     auto new_node = CreateChildNode(name);

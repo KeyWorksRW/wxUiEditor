@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Navigation Panel
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2021 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -27,11 +27,16 @@ class NavigationPanel : public wxPanel
 {
 public:
     NavigationPanel(wxWindow* parent, MainFrame* frame);
+
     void ChangeExpansion(Node* node, bool include_children, bool expand);
 
     void EraseAllMaps(Node* node);
     void AddAllChildren(Node* node_parent);
     void ExpandAllNodes(Node* node);
+
+    // Call this to refresh all the children of the specified parent, e.g. after all the
+    // children have been sorted.
+    void RefreshParent(Node* parent);
 
     // This will expand the specified node and collapse all other siblings
     void ExpandCollapse(Node* node);

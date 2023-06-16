@@ -9,13 +9,10 @@
 
 #pragma once
 
-#include <wx/bitmap.h>
 #include <wx/event.h>
 #include <wx/frame.h>
 #include <wx/gdicmn.h>
 #include <wx/grid.h>
-#include <wx/icon.h>
-#include <wx/image.h>
 #include <wx/menu.h>
 #include <wx/propgrid/manager.h>
 #include <wx/propgrid/propgrid.h>
@@ -70,20 +67,6 @@ protected:
     wxStatusBar* m_statusBar;
     wxToolBar* m_toolBar;
 };
-
-namespace wxue_img
-{
-    // Images declared in this class module:
-
-    // Ainsi ça se passe.png
-    extern const unsigned char Ainsi_c3_a_se_passe_png[148];
-    extern const unsigned char debug_32_png[1701];
-    extern const unsigned char wxDialog_png[636];
-    extern const unsigned char wxNotebook_png[177];
-    extern const unsigned char wxPython_1_5x_png[765];
-    extern const unsigned char wxPython_2x_png[251];
-    extern const unsigned char wxPython_png[399];
-}
 
 // ************* End of generated code ***********
 // DO NOT EDIT THIS COMMENT BLOCK!

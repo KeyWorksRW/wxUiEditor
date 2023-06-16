@@ -17,7 +17,7 @@ class DlgIssue_960 : public wxDialog
 {
 public:
     const int form_id = wxID_ANY;
-    const int form_style = 0;
+    const int form_style = wxDEFAULT_DIALOG_STYLE;
     const wxPoint form_pos = wxDefaultPosition;
     const wxSize form_size = wxDefaultSize;
     static const wxString form_title() { return wxEmptyString; }
@@ -40,16 +40,6 @@ protected:
 
     wxStaticText* staticText;
 };
-
-namespace wxue_img
-{
-    // Images declared in this class module:
-
-    // bottom(1).png
-    extern const unsigned char bottom_1__png[148];
-    // 1_bottom.png
-    extern const unsigned char img_1_bottom_png[148];
-}
 
 // ************* End of generated code ***********
 // DO NOT EDIT THIS COMMENT BLOCK!

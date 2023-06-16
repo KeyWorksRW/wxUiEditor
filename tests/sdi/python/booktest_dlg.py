@@ -9,23 +9,6 @@ import wx
 import wx.aui
 
 import images
-from wx.lib.embeddedimage import PyEmbeddedImage
-
-re_png = PyEmbeddedImage(
-    b"iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAACXBIWXMAAAsTAAALEwEAmpwYAAAA40lE"
-    b"QVQ4y93SIUvDURQF8N90qCDIwnCs65IGwbgsWExmk80iqzaLH0GwGAU/giAabGMMLCumzaCiTRBE+Fuu"
-    b"8PjvbX2ect87777z3j0cZh7zGW4DNXwk3Cq2sIK3nFAdBS6jFnGhinP8JHwfa5MEntDENio4wzt2Y9/C"
-    b"AwYhPiZwknCL+MRR6bFW9O4oq2CUrNexjEPsZ8bexE11isFLUXsYls7u0M39IMVL1FtcTWqamyLwjEcc"
-    b"hx9/2Atj2zkTD0oi7TBygFNc4CtGqKRBKvCNe7wmAkNcoxG5WIhcdCIb/wG/cJ0usvGcmUcAAAAASUVO"
-    b"RK5CYII=")
-
-er_png = PyEmbeddedImage(
-    b"iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAACXBIWXMAAAsTAAALEwEAmpwYAAAA4ElE"
-    b"QVQ4y93SsUqDQRAE4C8aRCFFiiDYC6b4UYSUaXwRS3tLCYj4AilSWCjY2wiWaYw2sfARLAQLUbSxiyCx"
-    b"WeE47gdbXTiWm7kbdmeXPx+LBWwdFb7wUfOvQhvvKbiKG8yTc4GV4DuBnSf8diowxX2oN7CDZ5xlAg9Y"
-    b"Qy/egX6QVVbqHmZoJQKD9EEz8lbkUSbQxhK6eAzsqSSwHKZdFwy7xGvdFH4EXmIip9F3KTolcCHyGJ84"
-    b"yPhhmNb6zU7sh0ljHOIq7sfZFHbrFukOt9jAJt5whJPg51HlJFr+L/EN6OcwHH42qK0AAAAASUVORK5C"
-    b"YII=")
 
 class BookTestDlg(wx.Dialog):
     def __init__(self, parent, id=wx.ID_ANY, title="Book tests", pos=

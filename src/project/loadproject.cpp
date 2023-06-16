@@ -24,8 +24,9 @@ using namespace GenEnum;
 #include "../import/import_wxglade.h"       // WxGlade -- Import a wxGlade file
 #include "../import/import_wxsmith.h"       // WxSmith -- Import a wxSmith file
 #include "../winres/import_winres.h"        // WinResource -- Parse a Windows resource file
-#include "import_dlg.h"                     // ImportDlg -- Dialog to create a new project
-#include "node_gridbag.h"                   // GridBag -- Create and modify a node containing a wxGridBagSizer
+#include "images_list.h"
+#include "import_dlg.h"    // ImportDlg -- Dialog to create a new project
+#include "node_gridbag.h"  // GridBag -- Create and modify a node containing a wxGridBagSizer
 
 #include "../wxui/code_preference_dlg.h"  // CodePreferenceDlg -- Dialog to set code generation preference
 
@@ -149,6 +150,10 @@ bool ProjectHandler::LoadProject(const tt_wxString& file, bool allow_ui)
     {
         m_ProjectVersion = minRequiredVer;
     }
+
+    // We need to ensure any Images List is sorted (in case it's an old project or the user
+    // hand-edited the project file)
+    img_list::UpdateImagesList(m_ProjectVersion);
 
     if (allow_ui)
     {

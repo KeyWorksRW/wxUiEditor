@@ -9,7 +9,7 @@
 #include "node_creator.h"  // NodeCreator
 
 #include "dataview_widgets.h"  // DataViewCtrl -- wxDataView component classes
-#include "images_form.h"       // ImagesGenerator -- Embedded images generator
+#include "images_list.h"       // ImagesGenerator -- Embedded images generator
 #include "menu_widgets.h"      // Menu component classes
 #include "project.h"           // Project generator
 #include "styled_text.h"       // StyledTextGenerator -- wxStyledText (scintilla) generate

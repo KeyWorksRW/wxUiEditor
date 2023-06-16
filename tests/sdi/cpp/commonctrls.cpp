@@ -31,15 +31,6 @@
 
 #include <wx/mstream.h>  // memory stream classes
 
-// Convert a data array into a wxImage
-inline wxImage wxueImage(const unsigned char* data, size_t size_data)
-{
-    wxMemoryInputStream strm(data, size_data);
-    wxImage image;
-    image.LoadFile(strm);
-    return image;
-};
-
 // Convert a data array into a wxAnimation
 inline wxAnimation wxueAnimation(const unsigned char* data, size_t size_data)
 {

@@ -18,28 +18,77 @@
     xrc_directory="sdi/xrc">
     <node
       class="Images"
+      auto_update="1"
       base_file="images">
       <node
         class="embedded_image"
-        bitmap="Embed;../art/wiztest.png" />
+        bitmap="Embed;1_bottom.png" />
       <node
         class="embedded_image"
-        bitmap="Embed;../art/wiztest2.png" />
+        bitmap="Embed;Ainsi ça se passe.png" />
       <node
         class="embedded_image"
-        bitmap="Embed;art/english.png" />
+        bitmap="Embed;bottom(1).png" />
       <node
         class="embedded_image"
-        bitmap="Embed;art/french.png" />
+        bitmap="Embed;../src/art_src/debug_32.png" />
       <node
         class="embedded_image"
-        bitmap="Embed;art/japanese.png" />
+        bitmap="Embed;disabled.png" />
       <node
         class="embedded_image"
-        bitmap="SVG;art/face-smile.svg;[16,16]" />
+        bitmap="Embed;english.png" />
       <node
         class="embedded_image"
-        bitmap="Embed;art/fontPicker.png" />
+        bitmap="Embed;er.png" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;face-smile.svg;[16,16]" />
+      <node
+        class="embedded_image"
+        bitmap="Embed;focus.png" />
+      <node
+        class="embedded_image"
+        bitmap="Embed;fontPicker.png" />
+      <node
+        class="embedded_image"
+        bitmap="Embed;french.png" />
+      <node
+        class="embedded_image"
+        bitmap="Embed;japanese.png" />
+      <node
+        class="embedded_image"
+        bitmap="Embed;left.png" />
+      <node
+        class="embedded_image"
+        bitmap="Embed;no_hour.png" />
+      <node
+        class="embedded_image"
+        bitmap="Embed;normal.png" />
+      <node
+        class="embedded_image"
+        bitmap="Embed;re.png" />
+      <node
+        class="embedded_image"
+        bitmap="Embed;toggle_button.png" />
+      <node
+        class="embedded_image"
+        bitmap="Embed;wiztest.png" />
+      <node
+        class="embedded_image"
+        bitmap="Embed;wiztest2.png" />
+      <node
+        class="embedded_image"
+        bitmap="Embed;../src/art_src/wxDialog.png" />
+      <node
+        class="embedded_image"
+        bitmap="Embed;../src/art_src/wxNotebook.png" />
+      <node
+        class="embedded_image"
+        bitmap="Embed;wxPython.png" />
+      <node
+        class="embedded_image"
+        bitmap="Embed;wxPython_1_5x.png" />
     </node>
     <node
       class="wxFrame"
@@ -68,7 +117,7 @@
           var_name="propertyGridManager">
           <node
             class="propGridPage"
-            bitmap="Embed;art/wxPython_1_5x.png"
+            bitmap="Embed;wxPython_1_5x.png"
             label="Animal Page"
             var_name="propertyGridPage">
             <node
@@ -98,7 +147,7 @@
           </node>
           <node
             class="propGridPage"
-            bitmap="Embed;art/english.png"
+            bitmap="Embed;english.png"
             label="Number Page"
             var_name="propertyGridPage_2">
             <node
@@ -161,7 +210,7 @@
             wxEVT_MENU="OnBookTestDlg" />
           <node
             class="wxMenuItem"
-            bitmap="Embed;../art/wxPython.png"
+            bitmap="Embed;wxPython.png"
             label="PythonDlg"
             var_name="menu_item_2"
             wxEVT_MENU="OnPythonDlg" />
@@ -192,7 +241,7 @@
               wxEVT_MENU="OnDlgIssue_956" />
             <node
               class="wxMenuItem"
-              bitmap="Embed;art/Ainsi ça se passe.png"
+              bitmap="Embed;Ainsi ça se passe.png"
               label="DlgIssue_960"
               var_name="menu_item_6"
               wxEVT_MENU="OnDlgIssue_960" />
@@ -215,7 +264,7 @@
           wxEVT_TOOL="OnBookTestDlg" />
         <node
           class="tool"
-          bitmap="Embed;../art/wxPython_1_5x.png"
+          bitmap="Embed;wxPython_1_5x.png"
           label="PythonDlg"
           var_name="tool_3"
           wxEVT_TOOL="OnPythonDlg" />
@@ -316,9 +365,9 @@
                   class="wxButton"
                   label="Bitmaps"
                   var_name="m_btn_bitmaps"
-                  bitmap="Embed;../art/normal.png"
-                  current="Embed;../art/focus.png"
-                  disabled_bmp="Embed;../art/no_hour.png"
+                  bitmap="Embed;normal.png"
+                  current="Embed;focus.png"
+                  disabled_bmp="Embed;no_hour.png"
                   tooltip="Bitmap should change when mouse is over button, or button is disabled."
                   column="2"
                   wxEVT_BUTTON="[this](wxCommandEvent&amp;)@@{@@OnEventName(&quot;Button: wxEVT_BUTTON&quot;);@@}[python:lambda]self.m_events_list.Select(self.m_events_list.Append(&quot;Button: wx.EVT_BUTTON&quot;))" />
@@ -326,7 +375,7 @@
                   class="wxButton"
                   label="Right"
                   var_name="m_btn_4"
-                  bitmap="Embed;../art/normal.png"
+                  bitmap="Embed;normal.png"
                   position="wxRIGHT"
                   tooltip="Bitmap should be on the right side (fails in wxPython 4.2)."
                   column="3"
@@ -425,7 +474,7 @@
                   <node
                     class="wxAnimationCtrl"
                     animation="Embed;art/clr_hourglass.gif"
-                    inactive_bitmap="Embed;art/disabled.png" />
+                    inactive_bitmap="Embed;disabled.png" />
                 </node>
               </node>
             </node>
@@ -739,7 +788,7 @@
                   select="1">
                   <node
                     class="wxRibbonPanel"
-                    bitmap="Embed;art/english.png"
+                    bitmap="Embed;english.png"
                     label="English">
                     <node
                       class="wxBoxSizer"
@@ -767,7 +816,7 @@
                   </node>
                   <node
                     class="wxRibbonPanel"
-                    bitmap="Embed;../art/french.png"
+                    bitmap="Embed;french.png"
                     label="French"
                     var_name="rbnPanel_2"
                     background_colour="wxSYS_COLOUR_MENU">
@@ -814,7 +863,7 @@
                         label="Forward" />
                       <node
                         class="ribbonButton"
-                        bitmap="Embed;../art/left.png"
+                        bitmap="Embed;left.png"
                         label="Backward" />
                     </node>
                   </node>
@@ -852,7 +901,7 @@
                       class="wxRibbonGallery">
                       <node
                         class="ribbonGalleryItem"
-                        bitmap="Embed;../art/toggle_button.png" />
+                        bitmap="Embed;toggle_button.png" />
                     </node>
                   </node>
                 </node>
@@ -896,7 +945,7 @@
                 var_name="box_sizer_18">
                 <node
                   class="wxBannerWindow"
-                  bitmap="Embed;../art/wiztest.png"
+                  bitmap="Embed;wiztest.png"
                   direction="wxLEFT"
                   title="This is a long title" />
               </node>
@@ -973,7 +1022,7 @@
                   wxEVT_BUTTON="[this](wxCommandEvent&amp;)@@{@@m_choicebook->SetSelection(2);@@}[python:lambda]self.m_choicebook.SetSelection(2)" />
                 <node
                   class="BookPage"
-                  bitmap="Embed;art/english.png"
+                  bitmap="Embed;english.png"
                   label="English"
                   var_name="page_20"
                   background_colour="wxSYS_COLOUR_BTNFACE"
@@ -1001,7 +1050,7 @@
                 </node>
                 <node
                   class="BookPage"
-                  bitmap="Embed;art/french.png"
+                  bitmap="Embed;french.png"
                   label="Français"
                   var_name="page_21"
                   background_colour="wxSYS_COLOUR_BTNFACE"
@@ -1029,7 +1078,7 @@
                 </node>
                 <node
                   class="BookPage"
-                  bitmap="Embed;art/japanese.png"
+                  bitmap="Embed;japanese.png"
                   label="日本語"
                   var_name="page_22"
                   background_colour="wxSYS_COLOUR_BTNFACE"
@@ -1074,7 +1123,7 @@
                 minimum_size="400,400">
                 <node
                   class="BookPage"
-                  bitmap="Embed;art/english.png"
+                  bitmap="Embed;english.png"
                   label="English"
                   var_name="page_6"
                   background_colour="wxSYS_COLOUR_BTNFACE"
@@ -1091,7 +1140,7 @@
                 </node>
                 <node
                   class="BookPage"
-                  bitmap="Embed;art/french.png"
+                  bitmap="Embed;french.png"
                   label="Français"
                   var_name="page_7"
                   background_colour="wxSYS_COLOUR_BTNFACE"
@@ -1108,7 +1157,7 @@
                 </node>
                 <node
                   class="BookPage"
-                  bitmap="Embed;art/japanese.png"
+                  bitmap="Embed;japanese.png"
                   label="日本語"
                   var_name="page_8"
                   background_colour="wxSYS_COLOUR_BTNFACE"
@@ -1143,7 +1192,7 @@
                 flags="wxEXPAND">
                 <node
                   class="BookPage"
-                  bitmap="Embed;art/english.png"
+                  bitmap="Embed;english.png"
                   label="English"
                   var_name="page_9"
                   background_colour="wxSYS_COLOUR_BTNFACE"
@@ -1160,7 +1209,7 @@
                 </node>
                 <node
                   class="BookPage"
-                  bitmap="Embed;art/french.png"
+                  bitmap="Embed;french.png"
                   label="Français"
                   var_name="page_10"
                   background_colour="wxSYS_COLOUR_BTNFACE"
@@ -1177,7 +1226,7 @@
                 </node>
                 <node
                   class="BookPage"
-                  bitmap="Embed;art/japanese.png"
+                  bitmap="Embed;japanese.png"
                   label="日本語"
                   var_name="page_11"
                   background_colour="wxSYS_COLOUR_BTNFACE"
@@ -1209,7 +1258,7 @@
                 minimum_size="400,400">
                 <node
                   class="BookPage"
-                  bitmap="Embed;art/english.png"
+                  bitmap="Embed;english.png"
                   label="English"
                   var_name="page_12"
                   background_colour="wxSYS_COLOUR_BTNFACE"
@@ -1226,7 +1275,7 @@
                 </node>
                 <node
                   class="BookPage"
-                  bitmap="Embed;art/french.png"
+                  bitmap="Embed;french.png"
                   label="Français"
                   var_name="page_13"
                   background_colour="wxSYS_COLOUR_BTNFACE"
@@ -1243,7 +1292,7 @@
                 </node>
                 <node
                   class="BookPage"
-                  bitmap="Embed;art/japanese.png"
+                  bitmap="Embed;japanese.png"
                   label="日本語"
                   var_name="page_14"
                   background_colour="wxSYS_COLOUR_BTNFACE"
@@ -1275,7 +1324,7 @@
                 minimum_size="400,400">
                 <node
                   class="BookPage"
-                  bitmap="Embed;art/english.png"
+                  bitmap="Embed;english.png"
                   label="English"
                   var_name="page_15"
                   background_colour="wxSYS_COLOUR_BTNFACE"
@@ -1291,7 +1340,7 @@
                   </node>
                   <node
                     class="BookPage"
-                    bitmap="Embed;../art/re.png"
+                    bitmap="Embed;re.png"
                     label="British"
                     var_name="page_16"
                     background_colour="wxSYS_COLOUR_BTNFACE"
@@ -1308,7 +1357,7 @@
                   </node>
                   <node
                     class="BookPage"
-                    bitmap="Embed;../art/er.png"
+                    bitmap="Embed;er.png"
                     label="United States"
                     var_name="page_17"
                     background_colour="wxSYS_COLOUR_BTNFACE"
@@ -1326,7 +1375,7 @@
                 </node>
                 <node
                   class="BookPage"
-                  bitmap="Embed;art/french.png"
+                  bitmap="Embed;french.png"
                   label="Français"
                   var_name="page_18"
                   background_colour="wxSYS_COLOUR_BTNFACE"
@@ -1343,7 +1392,7 @@
                 </node>
                 <node
                   class="BookPage"
-                  bitmap="Embed;art/japanese.png"
+                  bitmap="Embed;japanese.png"
                   label="日本語"
                   var_name="page_19"
                   background_colour="wxSYS_COLOUR_BTNFACE"
@@ -1368,7 +1417,7 @@
     </node>
     <node
       class="wxWizard"
-      bitmap="Embed;../art/wiztest.png"
+      bitmap="Embed;wiztest.png"
       bmp_background_colour="wxSYS_COLOUR_WINDOWTEXT"
       bmp_min_width="150"
       border="15"
@@ -1460,7 +1509,7 @@
       </node>
       <node
         class="wxWizardPageSimple"
-        bitmap="Embed;../art/wiztest2.png"
+        bitmap="Embed;wiztest2.png"
         var_name="m_wizPage3">
         <node
           class="wxBoxSizer"
@@ -1517,7 +1566,7 @@
               label="Label" />
             <node
               class="auitool"
-              bitmap="Embed;art/fontPicker.png"
+              bitmap="Embed;fontPicker.png"
               initial_state="wxAUI_BUTTON_STATE_NORMAL|wxAUI_BUTTON_STATE_DISABLED"
               label="Search"
               statusbar="This tool should be initially disabled."
@@ -1541,7 +1590,7 @@
             alignment="wxALIGN_CENTER_VERTICAL|wxALIGN_CENTER_HORIZONTAL" />
           <node
             class="wxStaticBitmap"
-            bitmap="SVG;art/face-smile.svg;[32,32]" />
+            bitmap="SVG;face-smile.svg;[32,32]" />
           <node
             class="StaticCheckboxBoxSizer"
             checkbox_var_name="m_checkPlayAnimation"
@@ -1557,7 +1606,7 @@
             <node
               class="wxAnimationCtrl"
               animation="Embed;art/clr_hourglass.gif"
-              inactive_bitmap="Embed;art/disabled.png" />
+              inactive_bitmap="Embed;disabled.png" />
           </node>
         </node>
         <node
@@ -1646,20 +1695,20 @@
         size="-1,-1">
         <node
           class="tool"
-          bitmap="Embed;../art/english.png"
+          bitmap="Embed;english.png"
           kind="wxITEM_RADIO"
           label=""
           var_name="english" />
         <node
           class="tool"
-          bitmap="Embed;art/french.png"
+          bitmap="Embed;french.png"
           kind="wxITEM_RADIO"
           label=""
           var_comment="Uses header file"
           var_name="french" />
         <node
           class="tool"
-          bitmap="Embed;../art/japanese.png"
+          bitmap="Embed;japanese.png"
           kind="wxITEM_RADIO"
           label=""
           var_name="Japanese" />
@@ -1906,7 +1955,7 @@
               var_name="box_sizer_2">
               <node
                 class="wxStaticBitmap"
-                bitmap="SVG;../art/face-smile.svg;[64,64]" />
+                bitmap="SVG;face-smile.svg;[64,64]" />
               <node
                 class="wxStaticText"
                 label="SVG image"
@@ -1930,7 +1979,7 @@
               <node
                 class="wxAnimationCtrl"
                 animation="Embed;art/clr_hourglass.gif"
-                inactive_bitmap="Embed;art/disabled.png" />
+                inactive_bitmap="Embed;disabled.png" />
             </node>
             <node
               class="CustomControl"
@@ -2115,15 +2164,15 @@
             class="wxBoxSizer">
             <node
               class="wxStaticBitmap"
-              bitmap="Embed;art/1_bottom.png" />
+              bitmap="Embed;1_bottom.png" />
             <node
               class="wxStaticBitmap"
-              bitmap="Embed;art/bottom(1).png"
+              bitmap="Embed;bottom(1).png"
               var_name="bmp_2" />
           </node>
           <node
             class="wxStaticBitmap"
-            bitmap="Embed;art/Ainsi ça se passe.png"
+            bitmap="Embed;Ainsi ça se passe.png"
             var_name="bmp_3" />
           <node
             class="wxStdDialogButtonSizer"

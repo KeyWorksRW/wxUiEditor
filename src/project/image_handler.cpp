@@ -85,10 +85,6 @@ bool ImageHandler::UpdateEmbedNodes()
     return is_changed;
 }
 
-// REVIEW: [KeyWorks - 04-07-2022] We should eliminate this call if possible -- ImageHandler::CollectBundles() processed
-// all nodes initially, and the only reason this would be needed is if adding or changing a bitmap property did not get set
-// up correctly (highly unlikely).
-
 bool ImageHandler::CheckNode(Node* node)
 {
     if (node->IsFormParent())
@@ -125,7 +121,6 @@ bool ImageHandler::CheckNode(Node* node)
             {
                 if (embed->form != node_form)
                 {
-                    FAIL_MSG("Can we fix this without walking through every form?")
                     embed->form = node_form;
                     is_changed = true;
                 }

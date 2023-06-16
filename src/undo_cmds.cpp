@@ -1,29 +1,46 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Undoable command classes derived from UndoAction
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2021-2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2021-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+
+#include <set>
 
 #include <wx/wupdlock.h>  // wxWindowUpdateLocker prevents window redrawing
 
 #include "undo_cmds.h"
 
 #include "../panels/nav_panel.h"  // NavigationPanel -- Navigation Panel
+#include "image_handler.h"        // ImageHandler class, ProjectImages global
 #include "mainframe.h"            // MainFrame -- Main window frame
 #include "node.h"                 // Node class
 #include "node_creator.h"         // NodeCreator -- Class used to create nodes
 #include "node_gridbag.h"         // GridBag -- Create and modify a node containing a wxGridBagSizer
 #include "project_handler.h"      // ProjectHandler class
+#include "utils.h"                // Utility functions that work with properties
+
+#include "generate/images_list.h"  // Needed for GatherImages() declaration
 
 ///////////////////////////////// InsertNodeAction ////////////////////////////////////
 
-InsertNodeAction::InsertNodeAction(Node* node, Node* parent, const tt_string& undo_str, int pos) :
-    UndoAction(undo_str.c_str()), m_pos(pos)
+InsertNodeAction::InsertNodeAction(Node* node, Node* parent, const tt_string& undo_str, int pos)
+{
+    Init(node->GetSharedPtr(), parent->GetSharedPtr(), undo_str, pos);
+}
+
+InsertNodeAction::InsertNodeAction(const NodeSharedPtr node, const NodeSharedPtr parent, tt_string_view undo_str, int pos)
+{
+    Init(node, parent, undo_str, pos);
+}
+
+void InsertNodeAction::Init(const NodeSharedPtr node, const NodeSharedPtr parent, tt_string_view undo_str, int pos)
 {
     m_old_selected = wxGetFrame().GetSelectedNodePtr();
-    m_node = node->GetSharedPtr();
-    m_parent = parent->GetSharedPtr();
+    m_node = node;
+    m_parent = parent;
+    SetUndoString(undo_str);
+    m_pos = pos;
 
     if (m_node->isGen(gen_folder) || m_node->isGen(gen_sub_folder))
     {
@@ -44,6 +61,19 @@ void InsertNodeAction::Change()
         // Add the child BEFORE any wxStdDialogButtonSizer
         m_parent->ChangeChildPosition(m_node, m_parent->GetChildCount() - 2);
     }
+    else if (m_parent->isGen(gen_Images) && m_parent->as_bool(prop_auto_update))
+    {
+        m_pos = 0;
+        for (const auto& embedded_image: m_parent->GetChildNodePtrs())
+        {
+            if (img_list::CompareImageNames(m_node, embedded_image))
+                break;
+            ++m_pos;
+        }
+        m_parent->AddChild(m_node);
+        if (m_pos < (to_int) m_parent->GetChildCount())
+            m_parent->ChangeChildPosition(m_node, m_pos);
+    }
     else
     {
         m_parent->AddChild(m_node);
@@ -60,6 +90,11 @@ void InsertNodeAction::Change()
         m_fix_duplicate_names = false;
     }
 
+    if (m_fire_created_event)
+    {
+        wxGetFrame().FireCreatedEvent(m_node.get());
+    }
+
     // Probably not necessary, but with both parameters set to false, this simply ensures the mainframe has it's selection
     // node set correctly.
     if (isAllowedSelectEvent())
@@ -70,19 +105,34 @@ void InsertNodeAction::Revert()
 {
     m_parent->RemoveChild(m_node);
     m_node->SetParent(NodeSharedPtr());  // Remove the parent pointer
+    if (m_fire_created_event)
+    {
+        wxGetFrame().FireDeletedEvent(m_node.get());
+    }
     if (isAllowedSelectEvent())
         wxGetFrame().SelectNode(m_old_selected.get());
 }
 
 ///////////////////////////////// RemoveNodeAction ////////////////////////////////////
 
-RemoveNodeAction::RemoveNodeAction(Node* node, const tt_string& undo_str, bool AddToClipboard) : UndoAction(undo_str.c_str())
+RemoveNodeAction::RemoveNodeAction(Node* node, const tt_string& undo_str, bool AddToClipboard)
+{
+    Init(node->GetSharedPtr(), undo_str, AddToClipboard);
+}
+
+RemoveNodeAction::RemoveNodeAction(const NodeSharedPtr node, const tt_string& undo_str, bool AddToClipboard)
+{
+    Init(node, undo_str, AddToClipboard);
+}
+
+void RemoveNodeAction::Init(const NodeSharedPtr node, tt_string_view undo_str, bool AddToClipboard)
 {
     m_AddToClipboard = AddToClipboard;
-    m_node = node->GetSharedPtr();
+    m_node = node;
     m_parent = node->GetParentPtr();
     m_old_pos = m_parent->GetChildPosition(node);
     m_old_selected = wxGetFrame().GetSelectedNodePtr();
+    SetUndoString(undo_str);
 
     m_RedoEventGenerated = true;
     m_RedoSelectEventGenerated = true;
@@ -230,13 +280,23 @@ void ModifyEventAction::Revert()
 
 ChangePositionAction::ChangePositionAction(Node* node, size_t position)
 {
-    m_undo_string << "change " << node->DeclName() << " position";
+    Init(node->GetSharedPtr(), position);
+}
 
-    m_node = node->GetSharedPtr();
+ChangePositionAction::ChangePositionAction(const NodeSharedPtr node, size_t position)
+{
+    Init(node, position);
+}
+
+void ChangePositionAction::Init(const NodeSharedPtr node, size_t position)
+{
+    m_node = node;
     m_parent = node->GetParentPtr();
 
     m_change_pos = position;
     m_revert_pos = m_parent->GetChildPosition(node);
+
+    SetUndoString(tt_string() << "change " << node->DeclName() << " position");
 
     m_UndoEventGenerated = true;
     m_RedoEventGenerated = true;
@@ -441,15 +501,25 @@ void ChangeNodeType::Revert()
 
 ChangeParentAction::ChangeParentAction(Node* node, Node* parent)
 {
-    m_undo_string << "change " << node->DeclName() << " parent";
+    Init(node->GetSharedPtr(), parent->GetSharedPtr());
+}
 
-    m_node = node->GetSharedPtr();
-    m_change_parent = parent->GetSharedPtr();
+ChangeParentAction::ChangeParentAction(const NodeSharedPtr node, const NodeSharedPtr parent)
+{
+    Init(node, parent);
+}
+
+void ChangeParentAction::Init(const NodeSharedPtr node, const NodeSharedPtr parent)
+{
+    m_node = node;
+    m_change_parent = parent;
     m_revert_parent = node->GetParentPtr();
 
-    m_revert_position = m_revert_parent->GetChildPosition(node);
+    m_revert_position = m_revert_parent->GetChildPosition(node.get());
     m_revert_row = node->prop_as_int(prop_row);
     m_revert_col = node->prop_as_int(prop_column);
+
+    SetUndoString(tt_string() << "change " << node->DeclName() << " parent");
 
     m_UndoEventGenerated = true;
     m_RedoEventGenerated = true;
@@ -727,4 +797,74 @@ void SortProjectAction::Revert()
     wxGetFrame().FireProjectUpdatedEvent();
     if (isAllowedSelectEvent())
         wxGetFrame().SelectNode(Project.ProjectNode());
+}
+
+///////////////////////////////// AutoImagesAction ////////////////////////////////////
+
+const char* txt_update_images_undo_string = "Update Images";
+
+AutoImagesAction::AutoImagesAction(Node* node)
+{
+    m_node = node->GetSharedPtr();
+
+    m_RedoEventGenerated = true;
+    m_UndoEventGenerated = true;
+
+    m_undo_string = txt_update_images_undo_string;
+
+    std::set<std::string> image_names;
+    for (auto& iter: m_node->GetChildNodePtrs())
+    {
+        image_names.insert(iter->value(prop_bitmap));
+    }
+
+    std::vector<std::string> new_images;
+    for (auto& child: Project.ChildNodePtrs())
+    {
+        // Note that GatherImages will update both image_names and new_images
+        img_list::GatherImages(child.get(), image_names, new_images);
+    }
+
+    auto prop_action = std::make_shared<ModifyPropertyAction>(m_node->get_prop_ptr(prop_auto_update), true);
+    prop_action->AllowSelectEvent(false);
+    m_actions.push_back(prop_action);
+
+    if (new_images.size())
+    {
+        for (auto& iter: new_images)
+        {
+            auto new_node = NodeCreation.CreateNode(gen_embedded_image, m_node.get());
+            new_node->set_value(prop_bitmap, iter);
+            auto insert_action = std::make_shared<InsertNodeAction>(new_node.get(), m_node.get(), tt_empty_cstr);
+            insert_action->AllowSelectEvent(false);
+            insert_action->SetFireCreatedEvent(true);
+            m_actions.push_back(insert_action);
+        }
+    }
+}
+
+void AutoImagesAction::Change()
+{
+    for (auto& iter: m_actions)
+    {
+        iter->Change();
+    }
+    wxGetFrame().SelectNode(m_node);
+    ProjectImages.UpdateEmbedNodes();
+}
+
+void AutoImagesAction::Revert()
+{
+    auto nav_panel = wxGetFrame().GetNavigationPanel();
+    wxWindowUpdateLocker freeze(nav_panel);
+
+    for (auto& iter: m_actions)
+    {
+        iter->Revert();
+    }
+
+    // nav_panel->AddAllChildren(m_node.get());
+
+    wxGetFrame().SelectNode(m_node);
+    ProjectImages.UpdateEmbedNodes();
 }

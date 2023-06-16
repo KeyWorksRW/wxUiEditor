@@ -50,7 +50,7 @@
 #include "panels/propgrid_panel.h"  // PropGridPanel -- Node inspector class
 #include "panels/ribbon_tools.h"    // RibbonPanel -- Displays component tools in a wxRibbonBar
 
-#include "wxui/ui_images.h"  // This is generated from the Images form
+#include "wxui/ui_images.h"  // This is generated from the Images List
 
 #include "internal/code_compare.h"  // CodeCompare
 #include "internal/node_info.h"     // NodeInfo
@@ -1690,6 +1690,15 @@ bool MainFrame::MoveNode(Node* node, MoveDirection where, bool check_only)
     ASSERT(parent || node->isGen(gen_Project));
     if (!parent)
         return false;
+
+    if (node->isGen(gen_Images) || parent->isGen(gen_Images))
+    {
+        if (!check_only)
+        {
+            wxMessageBox("You can't move images within Images List", "Error", wxICON_ERROR);
+        }
+        return false;
+    }
 
     if (parent->isGen(gen_wxGridBagSizer))
         return GridBag::MoveNode(node, where, check_only);

@@ -50,16 +50,6 @@ clr_hourglass_gif = PyEmbeddedImage(
     b"VgPuspqbshg2toDDsyNJlozDnG+VdMoKDvYKPIAKfoOEf4aJiouMJAkAIf4yUmVkdWNlZCA1NiUgQCB3"
     b"d3cucmFzcGJlcnJ5aGlsbC5jb20vZ2lmd2l6YXJkLmh0bWwAOw==")
 
-disabled_png = PyEmbeddedImage(
-    b"iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAACXBIWXMAAAsTAAALEwEAmpwYAAABZ0lE"
-    b"QVQ4y5VTMW7CQBCctY1EmnBKRBEocMEPgtLxATr3lFS01BQUKWnyBOSCgjovoIpOPCBSRBMZKSBkU2An"
-    b"2N4UwScbbCKmujvNzO3O3RKOeOr1mDQNN0IkRzj4Pg6+j1MsbBthEBAAGMkhaRo+pcRtraaIgech8Dww"
-    b"8x+HSK2VLllMp9N7Zt4QEQzDQBzHiKLo7PbBYADHcZROVdBsNgEA7+MxflCMUqmU2Wu4Eu12u9Bg22q1"
-    b"6GW5/CgSv+o6bNumdOuUR+x2u9w56T8lzg/xkkmROBNiGlLKqhACb8Phv5loOWJTCPGVFneiCEa5zBcN"
-    b"pJQkpXwUQizziBPLSptQXgV3AGQYhoWlTywLjUaDAXBhC4vR6Kp/oUJ0tlswM6r9PkzThOu6cBznTBDN"
-    b"5/kGz7PZhjQtM0zfux18182++8MDjPWak2lUYVTqdSZdR7lSUeQwCHDY749KAo6TuFutwHFMAPALdYaS"
-    b"dnNwM6gAAAAASUVORK5CYII=")
-
 class PythonDlg(wx.Dialog):
     def __init__(self, parent, id=wx.ID_ANY, title="Hello Python Dialog!",
                 pos=wx.DefaultPosition, size=wx.DefaultSize,
@@ -113,7 +103,7 @@ class PythonDlg(wx.Dialog):
             wx.adv.Animation("../../art/clr_hourglass.gif"), wx.DefaultPosition,
             wx.DefaultSize, wx.adv.AC_DEFAULT_STYLE)
         self.m_animation_ctrl.SetInactiveBitmap(wx.BitmapBundle.FromBitmap(
-            disabled_png.Bitmap))
+            images.disabled_png.Bitmap))
         static_box_2.Add(self.m_animation_ctrl, wx.SizerFlags().Border(wx.ALL))
 
         box_sizer.Add(static_box_2, wx.SizerFlags().Border(wx.ALL))

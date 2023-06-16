@@ -7,30 +7,12 @@
 
 import wx
 
-from wx.lib.embeddedimage import PyEmbeddedImage
-
-# 1_bottom.png
-img_1_bottom_png = PyEmbeddedImage(
-    b"iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAACXBIWXMAAAsTAAALEwEAmpwYAAAARklE"
-    b"QVRIx2NgGD4g7cx/hrQz/6nKZmBgYBqmQURFc0aDaDSIRoNoNIhGg4gagBHFawwMDP9nmVBmYNoZCGOW"
-    b"CeNwS0U0AgDjl1CSPHv2FQAAAABJRU5ErkJggg==")
-
-# bottom(1).png
-bottom_1__png = PyEmbeddedImage(
-    b"iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAACXBIWXMAAAsTAAALEwEAmpwYAAAARklE"
-    b"QVRIx2NgGD4g7cx/hrQz/6nKZmBgYBqmQURFc0aDaDSIRoNoNIhGg4gagBHFawwMDP9nmVBmYNoZCGOW"
-    b"CeNwS0U0AgDjl1CSPHv2FQAAAABJRU5ErkJggg==")
-
-# Ainsi ça se passe.png
-Ainsi_c3_a_se_passe_png = PyEmbeddedImage(
-    b"iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAACXBIWXMAAAsTAAALEwEAmpwYAAAARklE"
-    b"QVRIx2NgGD4g7cx/hrQz/6nKZmBgYBqmQURFc0aDaDSIRoNoNIhGg4gagBHFawwMDP9nmVBmYNoZCGOW"
-    b"CeNwS0U0AgDjl1CSPHv2FQAAAABJRU5ErkJggg==")
+import images
 
 class DlgIssue_960(wx.Dialog):
     def __init__(self, parent, id=wx.ID_ANY, title="", pos=
-                wx.DefaultPosition, size=wx.DefaultSize, style=0,
-                name=wx.DialogNameStr):
+                wx.DefaultPosition, size=wx.DefaultSize,
+                style=wx.DEFAULT_DIALOG_STYLE, name=wx.DialogNameStr):
         wx.Dialog.__init__(self)
 
         if not self.Create(parent, id, title, pos, size, style, name):
@@ -46,17 +28,17 @@ class DlgIssue_960(wx.Dialog):
         box_sizer = wx.BoxSizer(wx.HORIZONTAL)
 
         bmp = wx.StaticBitmap(self, wx.ID_ANY, wx.BitmapBundle.FromBitmap(
-            img_1_bottom_png.Bitmap))
+            images.img_1_bottom_png.Bitmap))
         box_sizer.Add(bmp, wx.SizerFlags().Border(wx.ALL))
 
         bmp_2 = wx.StaticBitmap(self, wx.ID_ANY, wx.BitmapBundle.FromBitmap(
-            bottom_1__png.Bitmap))
+            images.bottom_1__png.Bitmap))
         box_sizer.Add(bmp_2, wx.SizerFlags().Border(wx.ALL))
 
         dlg_sizer.Add(box_sizer, wx.SizerFlags().Border(wx.ALL))
 
         bmp_3 = wx.StaticBitmap(self, wx.ID_ANY, wx.BitmapBundle.FromBitmap(
-            Ainsi_c3_a_se_passe_png.Bitmap))
+            images.Ainsi_c3_a_se_passe_png.Bitmap))
         dlg_sizer.Add(bmp_3, wx.SizerFlags().Border(wx.ALL))
 
         if "wxMac" not in wx.PlatformInfo:

@@ -371,7 +371,7 @@ void BaseCodeGenerator::GeneratePythonClass(Node* form_node, PANEL_PAGE panel_ty
     {
         m_source->writeLine();
 
-        // First see if we need to import the gen_Images form
+        // First see if we need to import the gen_Images List
         bool images_file_imported = false;
         bool svg_import_libs = false;
         for (auto& iter: m_embedded_images)
@@ -406,10 +406,10 @@ void BaseCodeGenerator::GeneratePythonClass(Node* form_node, PANEL_PAGE panel_ty
             }
         }
 
-        // Now write any embedded images that aren't declared in the gen_Images form
+        // Now write any embedded images that aren't declared in the gen_Images List
         for (auto& iter: m_embedded_images)
         {
-            // Only write the images that aren't declared in any gen_Images form. Note that
+            // Only write the images that aren't declared in any gen_Images List. Note that
             // this *WILL* result in duplicate images being written to different forms.
             if (iter->form != m_ImagesForm)
             {

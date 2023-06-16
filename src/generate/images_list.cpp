@@ -156,6 +156,9 @@ void BaseCodeGenerator::GenerateImagesForm()
 
     if (m_panel_type != HDR_PANEL)
     {
+        tt_string hdr_file(m_form_node->value(prop_base_file));
+        hdr_file.replace_extension(m_header_ext);
+        m_source->writeLine(tt_string("#include ")  << '"' << hdr_file << '"');
         m_source->writeLine("\n#include <wx/mstream.h>  // memory stream classes", indent::none);
 
         if (m_NeedSVGFunction)
@@ -567,27 +570,31 @@ void img_list::FixPropBitmap(Node* parent)
 
     for (const auto& child: parent->GetChildNodePtrs())
     {
-        if (child->HasValue(prop_bitmap))
+        for (auto& iter: lstBitmapoProps)
         {
-            auto& description = child->value(prop_bitmap);
-            if (description.starts_with("Embed") || description.starts_with("SVG") || description.starts_with("XPM"))
+            auto prop_ptr = child->get_prop_ptr(iter);
+            if (prop_ptr && prop_ptr->HasValue())
             {
-                tt_view_vector parts(description, BMP_PROP_SEPARATOR, tt::TRIM::both);
-                if (parts.size() > IndexImage && parts[IndexImage].size())
+                auto& description = prop_ptr->value();
+                if (description.starts_with("Embed") || description.starts_with("SVG") || description.starts_with("XPM"))
                 {
-                    tt_string check_path(art_directory);
-                    tt_string file_part = parts[IndexImage].filename();
-                    check_path.append_filename(file_part);
-                    if (check_path.file_exists() && file_part != parts[IndexImage])
+                    tt_view_vector parts(description, BMP_PROP_SEPARATOR, tt::TRIM::both);
+                    if (parts.size() > IndexImage && parts[IndexImage].size())
                     {
-                        tt_string new_description;
-                        new_description << parts[IndexType] << BMP_PROP_SEPARATOR << file_part;
-                        for (size_t idx = IndexImage + 1; idx < parts.size(); idx++)
+                        tt_string check_path(art_directory);
+                        tt_string file_part = parts[IndexImage].filename();
+                        check_path.append_filename(file_part);
+                        if (check_path.file_exists() && file_part != parts[IndexImage])
                         {
-                            new_description << BMP_PROP_SEPARATOR << parts[idx];
-                        }
+                            tt_string new_description;
+                            new_description << parts[IndexType] << BMP_PROP_SEPARATOR << file_part;
+                            for (size_t idx = IndexImage + 1; idx < parts.size(); idx++)
+                            {
+                                new_description << BMP_PROP_SEPARATOR << parts[idx];
+                            }
 
-                        child->set_value(prop_bitmap, new_description);
+                            prop_ptr->set_value(new_description);
+                        }
                     }
                 }
             }

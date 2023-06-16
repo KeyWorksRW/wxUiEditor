@@ -12,6 +12,7 @@
 #include "undo_cmds.h"
 
 #include "../panels/nav_panel.h"  // NavigationPanel -- Navigation Panel
+#include "image_handler.h"        // ImageHandler class, ProjectImages global
 #include "mainframe.h"            // MainFrame -- Main window frame
 #include "node.h"                 // Node class
 #include "node_creator.h"         // NodeCreator -- Class used to create nodes
@@ -70,7 +71,7 @@ void InsertNodeAction::Change()
             ++m_pos;
         }
         m_parent->AddChild(m_node);
-        if (m_pos <  (to_int) m_parent->GetChildCount())
+        if (m_pos < (to_int) m_parent->GetChildCount())
             m_parent->ChangeChildPosition(m_node, m_pos);
     }
     else
@@ -135,7 +136,6 @@ void RemoveNodeAction::Init(const NodeSharedPtr node, tt_string_view undo_str, b
 
     m_RedoEventGenerated = true;
     m_RedoSelectEventGenerated = true;
-
 }
 
 void RemoveNodeAction::Change()
@@ -519,7 +519,7 @@ void ChangeParentAction::Init(const NodeSharedPtr node, const NodeSharedPtr pare
     m_revert_row = node->prop_as_int(prop_row);
     m_revert_col = node->prop_as_int(prop_column);
 
-    SetUndoString(tt_string()  << "change " << node->DeclName() << " parent");
+    SetUndoString(tt_string() << "change " << node->DeclName() << " parent");
 
     m_UndoEventGenerated = true;
     m_RedoEventGenerated = true;
@@ -803,7 +803,6 @@ void SortProjectAction::Revert()
 
 const char* txt_update_images_undo_string = "Update Images";
 
-
 AutoImagesAction::AutoImagesAction(Node* node)
 {
     m_node = node->GetSharedPtr();
@@ -851,6 +850,7 @@ void AutoImagesAction::Change()
         iter->Change();
     }
     wxGetFrame().SelectNode(m_node);
+    ProjectImages.UpdateEmbedNodes();
 }
 
 void AutoImagesAction::Revert()
@@ -866,4 +866,5 @@ void AutoImagesAction::Revert()
     // nav_panel->AddAllChildren(m_node.get());
 
     wxGetFrame().SelectNode(m_node);
+    ProjectImages.UpdateEmbedNodes();
 }

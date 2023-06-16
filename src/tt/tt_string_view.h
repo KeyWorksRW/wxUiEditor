@@ -25,6 +25,10 @@ public:
     tt_string_view(const char* str) : bsv(str) {}
     tt_string_view(std::string_view view) : bsv(view) {}
 
+    // FromUTF8() is very efficient if wxUSE_UNICODE_UTF8 is defined as no UTF conversion is
+    // done.
+    wxString make_wxString() const { return wxString::FromUTF8(data(), size()); }
+
 #if defined(_WIN32) && !(wxUSE_UNICODE_UTF8)
     /// Returns a copy of the string converted to UTF16 on Windows, or a normal copy on other platforms
     std::wstring wx_str() const { return to_utf16(); };

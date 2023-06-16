@@ -58,6 +58,10 @@ public:
         return *this;
     }
 
+    // FromUTF8() is very efficient if wxUSE_UNICODE_UTF8 is defined as no UTF conversion is
+    // done.
+    wxString make_wxString() const { return wxString::FromUTF8(data()); }
+
 // If on Windows, and not a wxUSE_UNICODE_UTF8 build, return value converts to UTF16
 #if defined(_WIN32) && !(wxUSE_UNICODE_UTF8)
     std::wstring wx_str() const { return to_utf16(); };

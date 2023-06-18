@@ -24,8 +24,8 @@ public:
     void AddWarningMsg(tt_string_view msg);
     void Add_wxWarningMsg(tt_string_view msg);
 
-    void AddInfoMsg(tt_string_view msg) { m_textCtrl->AppendText(msg.wx_str()); };
-    void AddEventMsg(tt_string_view msg) { m_textCtrl->AppendText(msg.wx_str()); };
+    void AddInfoMsg(tt_string_view msg) { m_textCtrl->AppendText(msg.make_wxString()); };
+    void AddEventMsg(tt_string_view msg) { m_textCtrl->AppendText(msg.make_wxString()); };
 
     void Add_wxInfoMsg(tt_string_view msg);
 

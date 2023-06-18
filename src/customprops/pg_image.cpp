@@ -145,8 +145,8 @@ void PropertyGrid_Image::RefreshChildren()
         SetAutoComplete();
     }
 
-    Item(IndexType)->SetValue(m_img_props.type.wx_str());
-    Item(IndexImage)->SetValue(m_img_props.image.wx_str());
+    Item(IndexType)->SetValue(m_img_props.type.make_wxString());
+    Item(IndexImage)->SetValue(m_img_props.image.make_wxString());
     Item(IndexSize)->SetValue(m_img_props.CombineDefaultSize());
 }
 
@@ -264,6 +264,6 @@ wxVariant PropertyGrid_Image::ChildChanged(wxVariant& thisValue, int childIndex,
             break;
     }
 
-    value = img_props.CombineValues().wx_str();
+    value = img_props.CombineValues().make_wxString();
     return value;
 }

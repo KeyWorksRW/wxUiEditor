@@ -32,7 +32,7 @@ ArtBrowserDialog::ArtBrowserDialog(wxWindow* parent, const ImageProperties& img_
 
     if (auto pos = img_props.image.find('|'); tt::is_found(pos))
     {
-        m_client = img_props.image.subview(pos + 1).wx_str();
+        m_client = img_props.image.subview(pos + 1).make_wxString();
     }
     else
     {

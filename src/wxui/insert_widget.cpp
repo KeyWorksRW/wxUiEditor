@@ -157,7 +157,7 @@ void InsertWidget::OnNameText(wxCommandEvent& WXUNUSED(event))
 
         if (name.empty() || iter->DeclName().contains(name, tt::CASE::either))
         {
-            m_listbox->AppendString(iter->DeclName().wx_str());
+            m_listbox->AppendString(iter->DeclName().make_wxString());
         }
     }
 
@@ -180,7 +180,7 @@ void InsertWidget::OnListBoxDblClick(wxCommandEvent& WXUNUSED(event))
 
 void InsertWidget::OnOK(wxCommandEvent& event)
 {
-    m_widget << m_listbox->GetStringSelection().wx_str();
+    m_widget << m_listbox->GetStringSelection().utf8_string();
     event.Skip();
 }
 

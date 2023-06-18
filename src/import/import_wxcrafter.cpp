@@ -68,7 +68,7 @@ WxCrafter::WxCrafter() {}
 
 bool WxCrafter::Import(const tt_wxString& filename, bool write_doc)
 {
-    std::ifstream input(filename.wx_str(), std::ifstream::binary);
+    std::ifstream input(filename.utf8_string(), std::ifstream::binary);
     if (!input.is_open())
     {
         wxMessageBox(wxString() << "Cannot open " << filename, "Import wxCrafter project");
@@ -147,7 +147,7 @@ bool WxCrafter::Import(const tt_wxString& filename, bool write_doc)
     if (m_errors.size())
     {
         tt_string errMsg("Not everything in the wxCrafter project could be converted:\n\n");
-        MSG_ERROR(tt_string() << "------  " << m_importProjectFile.filename().wx_str() << "------");
+        MSG_ERROR(tt_string() << "------  " << m_importProjectFile.filename().utf8_string() << "------");
         for (auto& iter: m_errors)
         {
             MSG_ERROR(iter);
@@ -1350,7 +1350,7 @@ bool WxCrafter::ProcessFont(Node* node, const Value& object)
                 if (mstr.size() > 4 && mstr[4] == "1")
                     font_info.Underlined();
                 if (mstr.size() > 5)
-                    font_info.FaceName(mstr[5].wx_str());
+                    font_info.FaceName(mstr[5].make_wxString());
             }
         }
 
@@ -1575,7 +1575,7 @@ tt_string rapidjson::ConvertColour(const rapidjson::Value& colour)
             }
             else if (colour.GetString()[0] == '#')
             {
-                wxColour clr(clr_string.wx_str());
+                wxColour clr(clr_string.make_wxString());
                 return ConvertColourToString(clr);
             }
             else if (clr_string.starts_with("wx"))

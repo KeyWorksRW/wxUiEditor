@@ -60,11 +60,11 @@ wxObject* ImagesGenerator::CreateMockup(Node* /* node */, wxObject* wxobject)
                     }
                     list << iter;
                 }
-                m_image_name->SetLabel(list.wx_str());
+                m_image_name->SetLabel(list.make_wxString());
             }
             else
             {
-                m_image_name->SetLabel(mstr[1].wx_str());
+                m_image_name->SetLabel(mstr[1].make_wxString());
             }
         }
         else

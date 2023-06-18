@@ -61,7 +61,7 @@ bool WxSmith::Import(const tt_wxString& filename, bool write_doc)
     if (m_errors.size())
     {
         tt_string errMsg("Not everything in the project could be converted:\n\n");
-        MSG_ERROR(tt_string() << "------  " << m_importProjectFile.filename().wx_str() << "------");
+        MSG_ERROR(tt_string() << "------  " << m_importProjectFile.filename().utf8_string() << "------");
         for (auto& iter: m_errors)
         {
             MSG_ERROR(iter);

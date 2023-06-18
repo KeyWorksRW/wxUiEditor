@@ -23,7 +23,7 @@ wxObject* ListViewGenerator::CreateMockup(Node* node, wxObject* parent)
     {
         auto headers = ConvertToArrayString(node->prop_as_string(prop_column_labels));
         for (auto& label: headers)
-            widget->AppendColumn(label.wx_str());
+            widget->AppendColumn(label.make_wxString());
 
         if (node->HasValue(prop_contents))
         {
@@ -39,7 +39,7 @@ wxObject* ListViewGenerator::CreateMockup(Node* node, wxObject* parent)
                 tt_string_vector columns(row, ';', tt::TRIM::both);
                 for (size_t column = 0; column < columns.size() && column < headers.size(); ++column)
                 {
-                    widget->SetItem(index, (to_int) column, columns[column].wx_str());
+                    widget->SetItem(index, (to_int) column, columns[column].make_wxString());
                 }
             }
         }

@@ -265,84 +265,83 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
 {
     auto type = prop->type();
 
-    // Note that prop->as_string() does NOT do a UTF16 conversion on Windows unless you call wx_str().
-    // prop->as_wxString() automatically calls wx_str().
-
     switch (type)
     {
         case type_id:
-            return new ID_Property(prop->DeclName().wx_str(), prop);
+            return new ID_Property(prop->DeclName().make_wxString(), prop);
 
         case type_int:
-            return new wxIntProperty(prop->DeclName().wx_str(), wxPG_LABEL, prop->as_int());
+            return new wxIntProperty(prop->DeclName().make_wxString(), wxPG_LABEL, prop->as_int());
 
         case type_uint:
-            return new wxUIntProperty(prop->DeclName().wx_str(), wxPG_LABEL, prop->as_int());
+            return new wxUIntProperty(prop->DeclName().make_wxString(), wxPG_LABEL, prop->as_int());
 
         case type_statbar_fields:
             // This includes a button that triggers a dialog to edit the fields.
-            return new SBarFieldsProperty(prop->DeclName().wx_str(), prop);
+            return new SBarFieldsProperty(prop->DeclName().make_wxString(), prop);
 
         case type_checklist_item:
             // This includes a button that triggers a dialog to edit the fields.
-            return new RearrangeProperty(prop->DeclName().wx_str(), prop);
+            return new RearrangeProperty(prop->DeclName().make_wxString(), prop);
 
         case type_string_code_single:
             // This includes a button that triggers a small single-line custom text editor dialog
-            return new EditParamProperty(prop->DeclName().wx_str(), prop);
+            return new EditParamProperty(prop->DeclName().make_wxString(), prop);
 
         case type_string_escapes:
             // This first doubles the backslash in escaped characters: \n, \t, \r, and \.
-            return new wxStringProperty(prop->DeclName().wx_str(), wxPG_LABEL, prop->as_escape_text().wx_str());
+            return new wxStringProperty(prop->DeclName().make_wxString(), wxPG_LABEL,
+                                        prop->as_escape_text().make_wxString());
 
         case type_string:
-            return new wxStringProperty(prop->DeclName().wx_str(), wxPG_LABEL, prop->as_wxString());
+            return new wxStringProperty(prop->DeclName().make_wxString(), wxPG_LABEL, prop->as_wxString());
 
         case type_string_edit_escapes:
             // This includes a button that triggers a small text editor dialog
             // This doubles the backslash in escaped characters: \n, \t, \r, and \.
-            return new wxLongStringProperty(prop->DeclName().wx_str(), wxPG_LABEL, prop->as_escape_text().wx_str());
+            return new wxLongStringProperty(prop->DeclName().make_wxString(), wxPG_LABEL,
+                                            prop->as_escape_text().make_wxString());
 
         case type_string_edit:
             // This includes a button that triggers a small text editor dialog
-            return new wxLongStringProperty(prop->DeclName().wx_str(), wxPG_LABEL, prop->as_wxString());
+            return new wxLongStringProperty(prop->DeclName().make_wxString(), wxPG_LABEL, prop->as_wxString());
 
         case type_string_edit_single:
             // This includes a button that triggers a small single-line custom text editor dialog
-            return new EditStringProperty(prop->DeclName().wx_str(), prop);
+            return new EditStringProperty(prop->DeclName().make_wxString(), prop);
 
         case type_code_edit:
             // This includes a button that triggers a small single-line custom text editor dialog
-            return new EditCodeProperty(prop->DeclName().wx_str(), prop);
+            return new EditCodeProperty(prop->DeclName().make_wxString(), prop);
 
         case type_html_edit:
             // This includes a button that triggers a small single-line custom text editor dialog
-            return new EditHtmlProperty(prop->DeclName().wx_str(), prop);
+            return new EditHtmlProperty(prop->DeclName().make_wxString(), prop);
 
         case type_bool:
-            return new wxBoolProperty(prop->DeclName().wx_str(), wxPG_LABEL, prop->as_string() == "1");
+            return new wxBoolProperty(prop->DeclName().make_wxString(), wxPG_LABEL, prop->as_string() == "1");
 
         case type_wxPoint:
-            return new CustomPointProperty(prop->DeclName().wx_str(), prop, CustomPointProperty::type_point);
+            return new CustomPointProperty(prop->DeclName().make_wxString(), prop, CustomPointProperty::type_point);
 
         case type_wxSize:
-            return new CustomPointProperty(prop->DeclName().wx_str(), prop, CustomPointProperty::type_size);
+            return new CustomPointProperty(prop->DeclName().make_wxString(), prop, CustomPointProperty::type_size);
 
         case type_wxFont:
             // This includes a button that triggers a custom font selector dialog
-            return new FontStringProperty(prop->DeclName().wx_str(), prop);
+            return new FontStringProperty(prop->DeclName().make_wxString(), prop);
 
         case type_path:
-            return new DirectoryProperty(prop->DeclName().wx_str(), prop);
+            return new DirectoryProperty(prop->DeclName().make_wxString(), prop);
 
         case type_animation:
-            return new PropertyGrid_Animation(prop->DeclName().wx_str(), prop);
+            return new PropertyGrid_Animation(prop->DeclName().make_wxString(), prop);
 
         case type_image:
-            return new PropertyGrid_Image(prop->DeclName().wx_str(), prop);
+            return new PropertyGrid_Image(prop->DeclName().make_wxString(), prop);
 
         case type_float:
-            return new wxFloatProperty(prop->DeclName().wx_str(), wxPG_LABEL, prop->as_float());
+            return new wxFloatProperty(prop->DeclName().make_wxString(), wxPG_LABEL, prop->as_float());
 
         default:
             break;
@@ -362,7 +361,7 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
         }
 
         int val = GetBitlistValue(prop->as_string(), bit_flags);
-        new_pg_property = new wxFlagsProperty(prop->DeclName().wx_str(), wxPG_LABEL, bit_flags, val);
+        new_pg_property = new wxFlagsProperty(prop->DeclName().make_wxString(), wxPG_LABEL, bit_flags, val);
 
         wxFlagsProperty* flagsProp = dynamic_cast<wxFlagsProperty*>(new_pg_property);
         if (flagsProp)
@@ -407,11 +406,11 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
 
         if (type == type_editoption)
         {
-            new_pg_property = new wxEditEnumProperty(prop->DeclName().wx_str(), wxPG_LABEL, constants);
+            new_pg_property = new wxEditEnumProperty(prop->DeclName().make_wxString(), wxPG_LABEL, constants);
         }
         else
         {
-            new_pg_property = new wxEnumProperty(prop->DeclName().wx_str(), wxPG_LABEL, constants);
+            new_pg_property = new wxEnumProperty(prop->DeclName().make_wxString(), wxPG_LABEL, constants);
         }
 
         new_pg_property->SetValueFromString(value, 0);
@@ -437,11 +436,11 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
     else if (type == type_wxColour)
     {
         auto value = prop->as_string();
-        new_pg_property = new EditColourProperty(prop->DeclName().wx_str(), prop);
+        new_pg_property = new EditColourProperty(prop->DeclName().make_wxString(), prop);
     }
     else if (type == type_file)
     {
-        new_pg_property = new wxFileProperty(prop->DeclName().wx_str(), wxPG_LABEL, prop->as_string());
+        new_pg_property = new wxFileProperty(prop->DeclName().make_wxString(), wxPG_LABEL, prop->as_string());
 
         // In order for the wxFileProperty file dialog to have the correct initial directory, you must
         // specify a *FULL* path for wxPG_FILE_INITIAL_PATH.
@@ -552,23 +551,23 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
     }
     else if (type == type_stringlist)
     {
-        new_pg_property = new wxArrayStringProperty(prop->DeclName().wx_str(), wxPG_LABEL, prop->as_wxArrayString());
+        new_pg_property = new wxArrayStringProperty(prop->DeclName().make_wxString(), wxPG_LABEL, prop->as_wxArrayString());
         wxVariant var_quote("\"");
         new_pg_property->DoSetAttribute(wxPG_ARRAY_DELIMITER, var_quote);
     }
     else if (type == type_stringlist_escapes)
     {
-        new_pg_property = new wxArrayStringProperty(prop->DeclName().wx_str(), wxPG_LABEL, prop->as_wxArrayString());
+        new_pg_property = new wxArrayStringProperty(prop->DeclName().make_wxString(), wxPG_LABEL, prop->as_wxArrayString());
         wxVariant var_quote("\"");
         new_pg_property->DoSetAttribute(wxPG_ARRAY_DELIMITER, var_quote);
     }
     else if (type == type_uintpairlist)
     {
-        new_pg_property = new wxStringProperty(prop->DeclName().wx_str(), wxPG_LABEL, prop->as_string());
+        new_pg_property = new wxStringProperty(prop->DeclName().make_wxString(), wxPG_LABEL, prop->as_string());
     }
     else  // Unknown property
     {
-        new_pg_property = new wxStringProperty(prop->DeclName().wx_str(), wxPG_LABEL, prop->as_string());
+        new_pg_property = new wxStringProperty(prop->DeclName().make_wxString(), wxPG_LABEL, prop->as_string());
         new_pg_property->SetAttribute(wxPG_BOOL_USE_DOUBLE_CLICK_CYCLING, wxVariant(true, "true"));
 
 #if defined(INTERNAL_TESTING)
@@ -615,7 +614,7 @@ void PropGridPanel::AddProperties(tt_string_view name, Node* node, NodeCategory&
                 {
                     if (auto result = gen->GetHint(prop); result)
                     {
-                        m_prop_grid->SetPropertyAttribute(pg, wxPG_ATTR_HINT, result->wx_str());
+                        m_prop_grid->SetPropertyAttribute(pg, wxPG_ATTR_HINT, result->make_wxString());
                     }
                 }
                 m_prop_grid->SetPropertyHelpString(pg, GetPropHelp(prop));
@@ -1029,7 +1028,7 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
         case type_string_escapes:
         case type_string_edit_escapes:
             {
-                auto value = ConvertEscapeSlashes(tt_string() << m_prop_grid->GetPropertyValueAsString(property).wx_str());
+                auto value = ConvertEscapeSlashes(m_prop_grid->GetPropertyValueAsString(property).utf8_string());
                 modifyProperty(prop, value);
             }
             break;
@@ -1178,7 +1177,7 @@ void PropGridPanel::OnEventGridChanged(wxPropertyGridEvent& event)
     {
         NodeEvent* evt = it->second;
         wxString handler = event.GetPropertyValue();
-        auto value = ConvertEscapeSlashes(tt_string() << handler.wx_str());
+        auto value = ConvertEscapeSlashes(handler.utf8_string());
         value.trim(tt::TRIM::both);
         wxGetFrame().ChangeEventHandler(evt, value);
     }
@@ -1235,7 +1234,7 @@ void PropGridPanel::OnNodePropChange(CustomEvent& event)
     }
 
     auto prop = event.GetNodeProperty();
-    auto grid_property = m_prop_grid->GetPropertyByLabel(prop->DeclName().wx_str());
+    auto grid_property = m_prop_grid->GetPropertyByLabel(prop->DeclName().make_wxString());
     if (!grid_property)
         return;
 
@@ -1258,7 +1257,7 @@ void PropGridPanel::OnNodePropChange(CustomEvent& event)
         case type_string_edit_escapes:
         case type_string_escapes:
         case type_stringlist_escapes:
-            grid_property->SetValueFromString(prop->as_escape_text().wx_str(), 0);
+            grid_property->SetValueFromString(prop->as_escape_text().make_wxString(), 0);
             break;
 
         case type_id:
@@ -1341,7 +1340,7 @@ void PropGridPanel::OnNodePropChange(CustomEvent& event)
 void PropGridPanel::ModifyProperty(NodeProperty* prop, const wxString& str)
 {
     m_isPropChangeSuspended = true;
-    wxGetFrame().ModifyProperty(prop, tt_string() << str.wx_str());
+    wxGetFrame().ModifyProperty(prop, str.utf8_string());
     m_isPropChangeSuspended = false;
 }
 
@@ -2051,7 +2050,7 @@ wxString PropGridPanel::GetPropHelp(NodeProperty* prop)
         // First let the generator specify the description
         if (auto result = gen->GetPropertyDescription(prop); result)
         {
-            description = result->wx_str();
+            description = result->make_wxString();
         }
     }
     if (description.empty())
@@ -2064,7 +2063,7 @@ wxString PropGridPanel::GetPropHelp(NodeProperty* prop)
         else
         {
             // If we still don't have a description, get whatever was in the XML interface
-            description = prop->GetPropDeclaration()->GetDescription().wx_str();
+            description = prop->GetPropDeclaration()->GetDescription().make_wxString();
         }
     }
     description.Replace("\\n", "\n", true);

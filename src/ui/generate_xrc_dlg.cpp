@@ -23,7 +23,7 @@ void GenerateXrcDlg::OnInit(wxInitDialogEvent& event)
 {
     if (Project.HasValue(prop_combined_xrc_file))
     {
-        m_filename = Project.value(prop_combined_xrc_file).wx_str();
+        m_filename = Project.value(prop_combined_xrc_file).make_wxString();
         m_filePicker->SetPath(m_filename);
     }
     std::vector<Node*> forms;

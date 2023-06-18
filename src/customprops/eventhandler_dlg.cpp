@@ -31,7 +31,7 @@ constexpr size_t EVENT_PAGE_PYTHON = 1;
 EventHandlerDlg::EventHandlerDlg(wxWindow* parent, NodeEvent* event) : EventHandlerDlgBase(parent), m_event(event)
 {
     m_is_python_code = (Project.value(prop_code_preference) == "Python");
-    m_value = event->get_value().wx_str();
+    m_value = event->get_value().make_wxString();
 
     m_cpp_stc_lambda->SetLexer(wxSTC_LEX_CPP);
 
@@ -126,7 +126,7 @@ void EventHandlerDlg::OnInit(wxInitDialogEvent& WXUNUSED(event))
 
                 m_cpp_function_box->GetStaticBox()->Enable(true);
                 m_cpp_radio_use_function->SetValue(true);
-                m_cpp_text_function->SetValue(value.wx_str());
+                m_cpp_text_function->SetValue(value.make_wxString());
             }
         }
 
@@ -150,7 +150,7 @@ void EventHandlerDlg::OnInit(wxInitDialogEvent& WXUNUSED(event))
                 // remove leading and trailing brackets
                 value.erase(pos_lambda, sizeof("[python:lambda]") - 1);
 
-                m_py_text_lambda->SetValue(value.wx_str());
+                m_py_text_lambda->SetValue(value.make_wxString());
                 m_is_python_lambda = true;
             }
             else
@@ -166,7 +166,7 @@ void EventHandlerDlg::OnInit(wxInitDialogEvent& WXUNUSED(event))
                     }
                 }
 
-                m_py_text_function->SetValue(value.wx_str());
+                m_py_text_function->SetValue(value.make_wxString());
                 m_py_radio_use_function->SetValue(true);
                 m_py_radio_use_lambda->SetValue(false);
             }
@@ -370,7 +370,7 @@ void EventHandlerDlg::FormatBindText()
         code.Add(m_event->GetNode()->get_node_name()).Function("Bind(").Add(handler).EndFunction();
     }
 
-    m_static_bind_text->SetLabel(code.wx_str());
+    m_static_bind_text->SetLabel(code.make_wxString());
 }
 
 void EventHandlerDlg::CollectMemberVariables(Node* node, std::set<std::string>& variables)
@@ -459,13 +459,13 @@ void EventHandlerDlg::Update_m_value()
 
     if (py_value.empty())
     {
-        m_value = cpp_value.wx_str();
+        m_value = cpp_value.make_wxString();
         return;
     }
 
     if (cpp_value.empty())
     {
-        m_value = py_value.wx_str();
+        m_value = py_value.make_wxString();
         return;
     }
 
@@ -473,7 +473,7 @@ void EventHandlerDlg::Update_m_value()
 
     if (cpp_value == py_value && !m_cpp_radio_use_function->GetValue())
     {
-        m_value = cpp_value.wx_str();
+        m_value = cpp_value.make_wxString();
         return;
     }
 
@@ -481,7 +481,7 @@ void EventHandlerDlg::Update_m_value()
     // one of them is using a lambda.
 
     tt_string combined_value = cpp_value + py_value;
-    m_value = combined_value.wx_str();
+    m_value = combined_value.make_wxString();
     return;
 }
 

@@ -151,7 +151,7 @@ void MsgLogging::DoLogRecord(wxLogLevel level, const wxString& msg, const wxLogR
         case wxLOG_Error:
             {
                 auto& str = m_Msgs.emplace_back("wxError: ");
-                str << msg.wx_str() << '\n';
+                str << msg.utf8_string() << '\n';
 
                 if ((Preferences().GetDebugFlags() & PREFS::PREFS_MSG_WINDOW) && !m_isFirstShown)
                 {
@@ -179,7 +179,7 @@ void MsgLogging::DoLogRecord(wxLogLevel level, const wxString& msg, const wxLogR
             if (Preferences().GetDebugFlags() & PREFS::PREFS_MSG_WARNING)
             {
                 auto& str = m_Msgs.emplace_back("wxWarning: ");
-                str << msg.wx_str() << '\n';
+                str << msg.utf8_string() << '\n';
 
                 if ((Preferences().GetDebugFlags() & PREFS::PREFS_MSG_WINDOW) && !m_isFirstShown)
                 {
@@ -208,7 +208,7 @@ void MsgLogging::DoLogRecord(wxLogLevel level, const wxString& msg, const wxLogR
             if (Preferences().GetDebugFlags() & PREFS::PREFS_MSG_INFO)
             {
                 auto& str = m_Msgs.emplace_back("wxInfo: ");
-                str << msg.wx_str() << '\n';
+                str << msg.utf8_string() << '\n';
 
                 if ((Preferences().GetDebugFlags() & PREFS::PREFS_MSG_WINDOW) && !m_isFirstShown)
                 {
@@ -234,7 +234,7 @@ void MsgLogging::DoLogRecord(wxLogLevel level, const wxString& msg, const wxLogR
             {
                 auto frame = wxGetApp().GetMainFrame();
                 if (frame && frame->IsShown())
-                    frame->SetRightStatusField(tt_string() << msg.wx_str());
+                    frame->SetRightStatusField(tt_string() << msg.utf8_string());
             }
             break;
 

@@ -202,7 +202,8 @@ wxImage ImageHandler::GetPropertyBitmap(const tt_string_vector& parts, bool chec
         }
         else
         {
-            image = (wxArtProvider::GetBitmapBundle(parts[IndexArtID].wx_str(), wxART_MAKE_CLIENT_ID_FROM_STR("wxART_OTHER"))
+            image = (wxArtProvider::GetBitmapBundle(parts[IndexArtID].make_wxString(),
+                                                    wxART_MAKE_CLIENT_ID_FROM_STR("wxART_OTHER"))
                          .GetBitmapFor(wxGetFrame().GetWindow()))
                         .ConvertToImage();
         }
@@ -370,7 +371,7 @@ bool ImageHandler::AddEmbeddedImage(tt_string path, Node* form, bool is_animatio
 
 bool ImageHandler::AddNewEmbeddedImage(tt_string path, Node* form, std::unique_lock<std::mutex>& add_lock)
 {
-    wxFFileInputStream stream(path.wx_str());
+    wxFFileInputStream stream(path.make_wxString());
     if (!stream.IsOk())
     {
         add_lock.unlock();
@@ -731,7 +732,7 @@ bool ImageHandler::AddNewEmbeddedBundle(const tt_string_vector& parts, tt_string
 
 bool ImageHandler::AddEmbeddedBundleImage(tt_string path, Node* form)
 {
-    wxFFileInputStream stream(path.wx_str());
+    wxFFileInputStream stream(path.make_wxString());
     if (!stream.IsOk())
     {
         return false;
@@ -830,8 +831,8 @@ ImageBundle* ImageHandler::ProcessBundleProperty(const tt_string_vector& parts, 
         }
         else
         {
-            img_bundle.bundle =
-                wxArtProvider::GetBitmapBundle(parts[IndexArtID].wx_str(), wxART_MAKE_CLIENT_ID_FROM_STR("wxART_OTHER"));
+            img_bundle.bundle = wxArtProvider::GetBitmapBundle(parts[IndexArtID].make_wxString(),
+                                                               wxART_MAKE_CLIENT_ID_FROM_STR("wxART_OTHER"));
         }
 
         m_bundles[lookup_str] = std::move(img_bundle);
@@ -1186,7 +1187,7 @@ bool ImageHandler::AddSvgBundleImage(tt_string path, Node* form)
     memcpy(embed->array_data.get(), read_stream->GetBufferStart(), compressed_size);
 
 #if defined(_DEBUG) || defined(INTERNAL_TESTING)
-    wxFile file_original(path.wx_str(), wxFile::read);
+    wxFile file_original(path.make_wxString(), wxFile::read);
     if (file_original.IsOpened())
     {
         auto file_size = file_original.Length();

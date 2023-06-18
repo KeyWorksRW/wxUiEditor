@@ -137,7 +137,7 @@ void CodeCompare::OnInit(wxInitDialogEvent& /* event */)
     {
         for (auto& iter: m_class_list)
         {
-            m_list_changes->AppendString(iter.wx_str());
+            m_list_changes->AppendString(iter.make_wxString());
         }
         m_btn->Enable();
     }
@@ -154,7 +154,7 @@ void CodeCompare::OnCPlusPlus(wxCommandEvent& /* event */)
     {
         for (auto& iter: m_class_list)
         {
-            m_list_changes->AppendString(iter.wx_str());
+            m_list_changes->AppendString(iter.make_wxString());
         }
         m_btn->Enable();
     }
@@ -171,7 +171,7 @@ void CodeCompare::OnPython(wxCommandEvent& /* event */)
     {
         for (auto& iter: m_class_list)
         {
-            m_list_changes->AppendString(iter.wx_str());
+            m_list_changes->AppendString(iter.make_wxString());
         }
         m_btn->Enable();
     }

@@ -43,6 +43,7 @@ const char* python_end_cmt_line = "# ************* End of generated code";
 
 int FileCodeWriter::WriteFile(int language, int flags)
 {
+    ASSERT_MSG(m_filename.size(), "Filename must be set before calling WriteFile()");
     bool file_exists = m_filename.file_exists();
     if (!file_exists && (flags & flag_test_only))
         return write_needed;

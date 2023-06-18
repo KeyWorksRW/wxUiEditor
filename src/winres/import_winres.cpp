@@ -17,7 +17,7 @@ WinResource::WinResource() {}
 bool WinResource::Import(const tt_wxString& filename, bool write_doc)
 {
     std::vector<tt_string> forms;
-    if (ImportRc(tt_string() << filename.wx_str(), forms))
+    if (ImportRc(filename.utf8_string(), forms))
     {
         if (write_doc)
             m_project->CreateDoc(m_docOut);
@@ -310,7 +310,7 @@ bool WinResource::ImportRc(const tt_string& rc_file, std::vector<tt_string>& for
         wxMessageBox((tt_string() << "Problem parsing " << m_RcFilename << " at around line " << tt::itoa(m_curline << 1)
                                   << "\n\n"
                                   << e.what())
-                         .wx_str(),
+                         .make_wxString(),
                      "RC Parser");
         return false;
     }
@@ -354,7 +354,7 @@ void WinResource::ParseDialog(tt_string_vector& file)
         MSG_ERROR(e.what());
         wxMessageBox((tt_string() << "Problem parsing " << m_RcFilename << " at around line " << m_curline + 1 << "\n\n"
                                   << e.what())
-                         .wx_str(),
+                         .make_wxString(),
                      "RC Parser");
     }
 }
@@ -381,7 +381,7 @@ void WinResource::ParseMenu(tt_string_vector& file)
         MSG_ERROR(e.what());
         wxMessageBox((tt_string() << "Problem parsing " << m_RcFilename << " at around line " << m_curline + 1 << "\n\n"
                                   << e.what())
-                         .wx_str(),
+                         .make_wxString(),
                      "RC Parser");
     }
 }

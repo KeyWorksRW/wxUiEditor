@@ -229,7 +229,7 @@ bool tt_string_vector::ReadFile(std::string_view filename)
     m_filename.assign(filename);
     clear();
 #if defined(_WIN32)
-    auto path = std::filesystem::path(m_filename.wx_str());
+    auto path = std::filesystem::path(m_filename.c_str());
     std::ifstream file(path, std::ios::binary);
 #else
     std::ifstream file(m_filename, std::ios::binary);

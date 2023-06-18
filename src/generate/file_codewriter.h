@@ -40,6 +40,18 @@ public:
         m_buffer.clear();
         m_buffer.reserve(reserved_amount);
     }
+    FileCodeWriter(const tt_string& file, size_t reserved_amount = 8 * 1024)
+    {
+        // REVIEW: [Randalphwa - 06-18-2023] Both of these *should* work! However, we end up
+        // with m_filename being empty.
+
+        // m_filename.FromUTF8(file);
+        // m_filename.FromUTF8(file.data(), file.size());
+
+        m_filename = file.make_wxString();
+        m_buffer.clear();
+        m_buffer.reserve(reserved_amount);
+    }
 
     void Clear() override { m_buffer.clear(); };
     tt_string& GetString() { return m_buffer; };

@@ -52,7 +52,7 @@ public:
         wxStatusBar::DoUpdateStatusText(number);
     }
 
-    void setText(const tt_string& txt, int pane = 1) { SetStatusText(txt.wx_str(), pane); }
+    void setText(const tt_string& txt, int pane = 1) { SetStatusText(txt.make_wxString(), pane); }
 };
 
 wxStatusBar* MainFrame::OnCreateStatusBar(int number, long style, wxWindowID id, const wxString& name)

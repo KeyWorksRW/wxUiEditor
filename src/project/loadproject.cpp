@@ -39,10 +39,10 @@ using namespace GenEnum;
 bool ProjectHandler::LoadProject(const tt_wxString& file, bool allow_ui)
 {
     pugi::xml_document doc;
-    auto result = doc.load_file(file.wx_str());
+    auto result = doc.load_file(file.utf8_string().c_str());
     if (!result)
     {
-        ASSERT_MSG(result, tt_string() << "pugi failed trying to load " << file.wx_str());
+        ASSERT_MSG(result, tt_string() << "pugi failed trying to load " << file.utf8_string());
         if (allow_ui)
         {
             wxMessageBox(wxString("Cannot open ") << file << "\n\n" << result.description(), "Load Project");
@@ -131,7 +131,7 @@ bool ProjectHandler::LoadProject(const tt_wxString& file, bool allow_ui)
 
     if (!project)
     {
-        ASSERT_MSG(project, tt_string() << "Failed trying to load " << file.wx_str());
+        ASSERT_MSG(project, tt_string() << "Failed trying to load " << file.utf8_string());
 
         if (allow_ui)
         {
@@ -624,7 +624,7 @@ bool ProjectHandler::Import(ImportXML& import, tt_wxString& file, bool append, b
         auto project = root.child("node");
         if (!project || project.attribute("class").as_string() != "Project")
         {
-            ASSERT_MSG(project, tt_string() << "Failed trying to load converted xml document: " << file.wx_str());
+            ASSERT_MSG(project, tt_string() << "Failed trying to load converted xml document: " << file.utf8_string());
 
             // TODO: [KeyWorks - 10-23-2020] Need to let the user know
             return false;
@@ -726,10 +726,10 @@ bool ProjectHandler::Import(ImportXML& import, tt_wxString& file, bool append, b
         if (m_project_node->GetChildCount() && file.file_exists())
         {
             doc.reset();
-            auto result = doc.load_file(file.wx_str());
+            auto result = doc.load_file(file.utf8_string().c_str());
             if (!result)
             {
-                ASSERT_MSG(result, tt_string() << "pugi failed trying to load " << file.wx_str());
+                ASSERT_MSG(result, tt_string() << "pugi failed trying to load " << file.utf8_string());
                 if (allow_ui)
                 {
                     wxMessageBox(wxString("Cannot open ") << file << "\n\n" << result.description(), "Load Project");
@@ -884,7 +884,7 @@ bool ProjectHandler::NewProject(bool create_empty, bool allow_ui)
 
                 if (imported_from.size())
                     imported_from << "@@";
-                imported_from << "// Imported from " << iter.wx_str();
+                imported_from << "// Imported from " << iter.utf8_string();
             }
             catch (const std::exception& /* e */)
             {

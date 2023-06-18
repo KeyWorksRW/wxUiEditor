@@ -72,7 +72,7 @@ FontProperty::FontProperty(const wxFont& font)
 
 FontProperty::FontProperty(wxVariant font)
 {
-    Convert(tt_string() << font.GetString().wx_str());
+    Convert(font.GetString().utf8_string());
 }
 
 FontProperty::FontProperty(tt_string_view font)
@@ -177,7 +177,7 @@ void FontProperty::Convert(tt_string_view font)
     }
 
     m_isDefGuiFont = false;
-    FaceName(mstr[0].wx_str());
+    FaceName(mstr[0].make_wxString());
 
     // We have a facename, so now we need to determine if this is the new style that uses friendly names, or the old
     // wxFB-like style which used numbers. The second value for the wxFB-style is the font style which will be 90 or higher
@@ -369,7 +369,7 @@ wxString FontProperty::as_wxString() const
 
 tt_string FontProperty::as_string() const
 {
-    tt_string str(as_wxString().wx_str());
+    tt_string str(as_wxString().utf8_string());
     return str;
 }
 

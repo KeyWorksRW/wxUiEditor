@@ -49,7 +49,7 @@ wxString UndoStack::GetUndoString()
     wxString str;
     if (m_undo.size())
     {
-        str = m_undo.back()->GetUndoString().wx_str();
+        str = m_undo.back()->GetUndoString().make_wxString();
     }
     return str;
 }
@@ -59,7 +59,7 @@ wxString UndoStack::GetRedoString()
     wxString str;
     if (m_redo.size())
     {
-        str = m_redo.back()->GetUndoString().wx_str();
+        str = m_redo.back()->GetUndoString().make_wxString();
     }
     return str;
 }

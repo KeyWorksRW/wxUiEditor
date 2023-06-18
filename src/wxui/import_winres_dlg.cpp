@@ -114,14 +114,14 @@ void ImportWinRes::OnInit(wxInitDialogEvent& WXUNUSED(event))
     }
     else
     {
-        m_fileResource->SetPath(m_rcFilename.wx_str());
+        m_fileResource->SetPath(m_rcFilename.make_wxString());
         ReadRcFile();
     }
 }
 
 void ImportWinRes::ReadRcFile()
 {
-    m_rcFilename.utf(m_fileResource->GetPath().wx_str());
+    m_rcFilename = m_fileResource->GetPath().utf8_string();
     tt_string_vector rc_file;
     if (!rc_file.ReadFile(m_rcFilename))
     {
@@ -184,10 +184,10 @@ void ImportWinRes::OnOk(wxCommandEvent& event)
         if (m_checkListResUI->IsChecked(pos))
         {
             auto& name = m_dialogs.emplace_back();
-            name << m_checkListResUI->GetString(pos).wx_str();
+            name << m_checkListResUI->GetString(pos).utf8_string();
         }
     }
 
-    m_rcFilename.utf(m_fileResource->GetTextCtrlValue().wx_str());
+    m_rcFilename = m_fileResource->GetTextCtrlValue().utf8_string();
     event.Skip();
 }

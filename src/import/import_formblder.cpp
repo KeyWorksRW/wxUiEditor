@@ -160,7 +160,7 @@ bool FormBuilder::Import(const tt_wxString& filename, bool write_doc)
     if (m_errors.size())
     {
         tt_string errMsg("Not everything in the wxFormBuilder project could be converted:\n\n");
-        MSG_ERROR(tt_string() << "------  " << m_importProjectFile.filename().wx_str() << "------");
+        MSG_ERROR(tt_string() << "------  " << m_importProjectFile.filename().utf8_string() << "------");
         for (auto& iter: m_errors)
         {
             MSG_ERROR(iter);
@@ -960,10 +960,10 @@ void FormBuilder::BitmapProperty(pugi::xml_node& xml_prop, NodeProperty* prop)
         else
         {
             tt_string bitmap("Embed;");
-            tt_wxString relative(filename.wx_str());
+            tt_wxString relative(filename.make_wxString());
             relative.make_relative_wx(wxGetCwd());
             relative.backslashestoforward();
-            bitmap << relative.wx_str();
+            bitmap << relative.utf8_string();
             bitmap << ";[-1,-1]";
             prop->set_value(bitmap);
         }

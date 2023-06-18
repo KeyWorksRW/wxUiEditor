@@ -23,7 +23,7 @@
 
 wxObject* WebViewGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = wxWebView::New(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_string(prop_url).wx_str(),
+    auto widget = wxWebView::New(wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxString(prop_url),
                                  DlgPoint(parent, node, prop_pos), DlgSize(parent, node, prop_size), wxWebViewBackendDefault,
                                  GetStyleInt(node));
 

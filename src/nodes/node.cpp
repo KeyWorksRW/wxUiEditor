@@ -483,6 +483,14 @@ const ImageBundle* Node::prop_as_image_bundle(PropName name) const
         return nullptr;
 }
 
+std::vector<tt_string> Node::as_ArrayString(PropName name) const
+{
+    if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
+        return m_properties[result->second].as_ArrayString();
+    else
+        return std::vector<tt_string>();
+}
+
 wxArrayString Node::prop_as_wxArrayString(PropName name) const
 {
     if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())

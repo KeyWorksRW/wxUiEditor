@@ -14,11 +14,6 @@
 #include <filesystem>
 #include <string_view>
 
-#ifndef assertm
-// assert with a message
-    #define assertm(exp, msg) assert(((void) msg, exp))
-#endif
-
 class tt_string;
 
 namespace tt

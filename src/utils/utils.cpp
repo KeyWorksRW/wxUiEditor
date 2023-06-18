@@ -427,13 +427,13 @@ wxArrayString ConvertToWxArrayString(tt_string_view value)
         return array;
     tt_string parse;
     auto pos = parse.ExtractSubString(value);
-    array.push_back(parse.wx_str());
+    array.push_back(parse.make_wxString());
 
     for (auto tmp_value = tt::stepover(value.data() + pos); tmp_value.size();
          tmp_value = tt::stepover(tmp_value.data() + pos))
     {
         pos = parse.ExtractSubString(tmp_value);
-        array.push_back(parse.wx_str());
+        array.push_back(parse.make_wxString());
     }
 
     return array;

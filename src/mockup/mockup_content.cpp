@@ -396,7 +396,7 @@ void MockupContent::SetWindowProperties(Node* node, wxWindow* window, wxWindow* 
 
     if (auto& tooltip = node->value(prop_tooltip); tooltip.size())
     {
-        window->SetToolTip(tooltip.wx_str());
+        window->SetToolTip(tooltip.make_wxString());
     }
 }
 

@@ -128,11 +128,11 @@ bool GeneratePythonFiles(GenResults& results, std::vector<tt_string>* pClassList
         {
             BaseCodeGenerator codegen(GEN_LANG_PYTHON);
 
-            auto h_cw = std::make_unique<FileCodeWriter>(path.wx_str());
+            auto h_cw = std::make_unique<FileCodeWriter>(path);
             codegen.SetHdrWriteCode(h_cw.get());
 
             path.replace_extension(".py");
-            auto cpp_cw = std::make_unique<FileCodeWriter>(path.wx_str());
+            auto cpp_cw = std::make_unique<FileCodeWriter>(path);
             codegen.SetSrcWriteCode(cpp_cw.get());
 
             codegen.GeneratePythonClass(form);

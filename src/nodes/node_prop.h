@@ -107,8 +107,11 @@ public:
     wxSize as_size() const;
     wxArrayString as_wxArrayString() const;
 
+    // Assumes all values are within quotes
+    std::vector<tt_string> as_ArrayString() const;
+
     // On Windows this will first convert to UTF-16 unless wxUSE_UNICODE_UTF8 is set.
-    wxString as_wxString() const { return m_value.wx_str(); }
+    wxString as_wxString() const { return m_value.make_wxString(); }
 
     wxBitmapBundle as_bitmap_bundle() const;
     const ImageBundle* as_image_bundle() const;

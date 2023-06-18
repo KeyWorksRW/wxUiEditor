@@ -273,6 +273,9 @@ public:
     wxArrayString as_wxArrayString(PropName name) const { return prop_as_wxArrayString(name); }
     wxBitmapBundle as_wxBitmapBundle(PropName name) const { return prop_as_wxBitmapBundle(name); }
 
+    // Assumes all values are within quotes
+    std::vector<tt_string> as_ArrayString(PropName name) const;
+
     // On Windows this will first convert to UTF-16 unless wxUSE_UNICODE_UTF8 is set.
     //
     // The string will be empty if the property doesn't exist.

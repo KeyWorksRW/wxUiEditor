@@ -534,7 +534,7 @@ void ConvertImageDlg::ImageInXpmOut()
 
         if (m_xpmImage.SaveFile(out_name, wxBITMAP_TYPE_XPM))
         {
-            size_t output_size = std::filesystem::file_size(std::filesystem::path(out_name.wx_str()));
+            size_t output_size = std::filesystem::file_size(std::filesystem::path(out_name.utf8_string()));
             m_staticSave->SetLabelText(wxString() << out_name << " saved.");
             m_staticSave->Show();
             m_staticSize->SetLabelText(

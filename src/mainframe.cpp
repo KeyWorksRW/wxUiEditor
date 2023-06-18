@@ -959,7 +959,7 @@ void MainFrame::OnBrowseDocs(wxCommandEvent& WXUNUSED(event))
             {
                 // wxString url("https://docs.wxwidgets.org/trunk/class");
                 wxString url("https://docs.wxwidgets.org/3.2.0/class");
-                url << file.wx_str();
+                url << file.make_wxString();
                 wxLaunchDefaultBrowser(url);
                 return;
             }
@@ -981,7 +981,7 @@ void MainFrame::OnUpdateBrowseDocs(wxUpdateUIEvent& event)
                 label << "wxWidgets";
             }
             label << " Documentation";
-            event.SetText(label.wx_str());
+            event.SetText(label.make_wxString());
             return;
         }
     }
@@ -999,7 +999,7 @@ void MainFrame::OnBrowsePython(wxCommandEvent& WXUNUSED(event))
             if (file.size())
             {
                 wxString url("https://docs.wxpython.org/");
-                url << file.wx_str();
+                url << file.make_wxString();
                 wxLaunchDefaultBrowser(url);
                 return;
             }
@@ -1020,7 +1020,7 @@ void MainFrame::OnUpdateBrowsePython(wxUpdateUIEvent& event)
                 label << "wxPython";
             }
             label << " Documentation";
-            event.SetText(label.wx_str());
+            event.SetText(label.make_wxString());
             return;
         }
     }

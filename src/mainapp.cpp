@@ -529,7 +529,7 @@ protected:
         if (frame.HasSourceLocation())
         {
             tt_string source;
-            source << frame.GetFileName().wx_str() << ':' << (to_int) frame.GetLine();
+            source << frame.GetFileName().utf8_string() << ':' << (to_int) frame.GetLine();
 
             wxString params;
             if (auto paramCount = frame.GetParamCount(); paramCount > 0)
@@ -551,12 +551,12 @@ protected:
             if (params.size() > 100)
                 params = "(...)";
 
-            m_calls.emplace_back() << (to_int) frame.GetLevel() << ' ' << frame.GetName().wx_str() << params.wx_str() << ' '
-                                   << source;
+            m_calls.emplace_back() << (to_int) frame.GetLevel() << ' ' << frame.GetName().utf8_string()
+                                   << params.utf8_string() << ' ' << source;
         }
         else
         {
-            m_calls.emplace_back() << (to_int) frame.GetLevel() << ' ' << frame.GetName().wx_str();
+            m_calls.emplace_back() << (to_int) frame.GetLevel() << ' ' << frame.GetName().utf8_string();
         }
     }
 

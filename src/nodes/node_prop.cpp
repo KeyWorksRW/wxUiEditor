@@ -378,6 +378,33 @@ std::vector<tt_string> NodeProperty::as_vector() const
     return array;
 }
 
+std::vector<tt_string> NodeProperty::as_ArrayString() const
+{
+    std::vector<tt_string> array;
+    if (m_value.empty())
+        return array;
+    tt_string parse;
+    auto pos = parse.ExtractSubString(m_value);
+    if (!tt::is_found(pos))
+    {
+        // This usually means a property that was hand-edited incorrectly, or a newer version of the project
+        // file where the property is encoded differently.
+        return array;
+    }
+    array.emplace_back(parse);
+
+    for (auto tmp_m_value = tt::stepover(m_value.data() + pos); tmp_m_value.size();
+         tmp_m_value = tt::stepover(tmp_m_value.data() + pos))
+    {
+        pos = parse.ExtractSubString(tmp_m_value);
+        if (!tt::is_found(pos))
+            break;
+        array.emplace_back(parse);
+    }
+
+    return array;
+}
+
 wxArrayString NodeProperty::as_wxArrayString() const
 {
     wxArrayString result;
@@ -385,8 +412,8 @@ wxArrayString NodeProperty::as_wxArrayString() const
     if (m_value.empty())
         return result;
 
-    wxString str = wxString::FromUTF8(m_value);
-    WX_PG_TOKENIZER2_BEGIN(str, '"')
+    wxString str = m_value.make_wxString();
+    WX_PG_TOKENIZER2_BEGIN(m_value.make_wxString(), '"')
 
     result.Add(token);
 
@@ -434,7 +461,7 @@ void NodeProperty::set_value(const wxSize& value)
 void NodeProperty::set_value(const wxString& value)
 {
     m_value.clear();
-    m_value << value.wx_str();
+    m_value << value.utf8_string();
 }
 
 // All but one of the std::vector properties contain text which could have commas in it, so we need to use a '|' character as

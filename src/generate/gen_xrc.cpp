@@ -372,7 +372,7 @@ bool GenerateXrcFiles(GenResults& results, tt_string out_file, std::vector<tt_st
 
         if (path.file_exists())
         {
-            wxFile file_original(path.wx_str(), wxFile::read);
+            wxFile file_original(path.make_wxString(), wxFile::read);
             if (file_original.IsOpened())
             {
                 std::ostringstream xml_stream;

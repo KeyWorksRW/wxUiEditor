@@ -270,7 +270,7 @@ wxImage GetHeaderImage(tt_string_view filename, size_t* p_original_size, tt_wxSt
                 if (!*buf_ptr)
                 {
                     FAIL_MSG(tt_string() << filename << " doesn't contain a closing brace");
-                    wxMessageBox((tt_string() << filename << " doesn't contain a closing brace").wx_str());
+                    wxMessageBox((tt_string() << filename << " doesn't contain a closing brace").make_wxString());
                     return image;
                 }
             }
@@ -475,7 +475,7 @@ bool GetAnimationImage(wxAnimation& animation, tt_string_view filename)
                 if (!*buf_ptr)
                 {
                     FAIL_MSG(tt_string() << filename << " doesn't contain a closing brace");
-                    wxMessageBox((tt_string() << filename << " doesn't contain a closing brace").wx_str());
+                    wxMessageBox((tt_string() << filename << " doesn't contain a closing brace").make_wxString());
                     return animation.IsOk();
                 }
             }

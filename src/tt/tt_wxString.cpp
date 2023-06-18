@@ -33,7 +33,7 @@ tt_wxString& tt_wxString::append_view(std::string_view str, size_t posStart, siz
 {
     if (posStart >= str.size())
     {
-        assertm(posStart < str.size(), "invalid starting position for append_view");
+        ASSERT_MSG(posStart < str.size(), "invalid starting position for append_view");
         return *this;
     }
     if (len == tt::npos)
@@ -51,7 +51,7 @@ tt_wxString& tt_wxString::assign_view(std::string_view str, size_t posStart, siz
     }
     if (posStart >= str.size())
     {
-        assertm(posStart < str.size(), "invalid starting position for append_view");
+        ASSERT_MSG(posStart < str.size(), "invalid starting position for append_view");
         return *this;
     }
     if (len == tt::npos)
@@ -703,7 +703,7 @@ bool tt_wxString::ChangeDir(bool is_dir) const
     {
         if (is_dir)
         {
-            auto dir = std::filesystem::directory_entry(std::filesystem::path(wx_str()));
+            auto dir = std::filesystem::directory_entry(std::filesystem::path(utf8_string()));
             if (dir.exists())
             {
                 std::filesystem::current_path(dir);
@@ -716,7 +716,7 @@ bool tt_wxString::ChangeDir(bool is_dir) const
             tmp.remove_filename();
             if (tmp.empty())
                 return false;
-            auto dir = std::filesystem::directory_entry(std::filesystem::path(tmp.wx_str()));
+            auto dir = std::filesystem::directory_entry(std::filesystem::path(tmp.utf8_string()));
             if (dir.exists())
             {
                 std::filesystem::current_path(dir);
@@ -732,12 +732,12 @@ bool tt_wxString::ChangeDir(bool is_dir) const
 
 tt_wxString tt_wxString::find_file(const tt_wxString& dir, const tt_wxString& filename)
 {
-    auto dir_iterator = std::filesystem::recursive_directory_iterator(dir.wx_str());
+    auto dir_iterator = std::filesystem::recursive_directory_iterator(dir.utf8_string());
     for (auto& entry: dir_iterator)
     {
         if (entry.is_regular_file())
         {
-            if (entry.path().filename() == filename.wx_str())
+            if (entry.path().filename() == filename.utf8_string())
             {
                 return entry.path().string();
             }

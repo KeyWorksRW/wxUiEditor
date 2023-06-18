@@ -30,7 +30,7 @@ bool AssertionDlg(const std::source_location& location, const char* cond, std::s
     str << "Function: " << location.function_name() << "\n";
     str << "Line: " << (size_t) location.line() << "\n";
 
-    wxMessageDialog dlg(nullptr, str.wx_str(), "Assertion!", wxCENTRE | wxYES_NO | wxCANCEL);
+    wxMessageDialog dlg(nullptr, str.make_wxString(), "Assertion!", wxCENTRE | wxYES_NO | wxCANCEL);
     dlg.SetYesNoCancelLabels("wxTrap", "Continue", "Exit program");
 
     auto answer = dlg.ShowModal();
@@ -66,7 +66,7 @@ bool AssertionDlg(const char* filename, const char* function, int line, const ch
     str << "Line: " << line << "\n\n";
     str << "Press Yes to call wxTrap, No to continue, Cancel to exit program.";
 
-    wxMessageDialog dlg(nullptr, str.wx_str(), "Assertion!", wxCENTRE | wxYES_NO | wxCANCEL);
+    wxMessageDialog dlg(nullptr, str.make_wxString(), "Assertion!", wxCENTRE | wxYES_NO | wxCANCEL);
     dlg.SetYesNoCancelLabels("wxTrap", "Continue", "Exit program");
 
     auto answer = dlg.ShowModal();

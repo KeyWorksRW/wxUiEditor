@@ -426,8 +426,8 @@ void NavigationPanel::InsertNode(Node* node)
     ASSERT(node_parent);
     auto tree_parent = m_node_tree_map[node_parent];
     ASSERT(tree_parent);
-    auto new_item = m_tree_ctrl->InsertItem(tree_parent, node_parent->GetChildPosition(node), GetDisplayName(node).wx_str(),
-                                            GetImageIndex(node), -1);
+    auto new_item = m_tree_ctrl->InsertItem(tree_parent, node_parent->GetChildPosition(node),
+                                            GetDisplayName(node).make_wxString(), GetImageIndex(node), -1);
     m_node_tree_map[node] = new_item;
     m_tree_node_map[new_item] = node;
 
@@ -451,7 +451,7 @@ void NavigationPanel::AddAllChildren(Node* node_parent)
     for (const auto& iter_child: node_parent->GetChildNodePtrs())
     {
         auto node = iter_child.get();
-        auto new_item = m_tree_ctrl->AppendItem(tree_parent, GetDisplayName(node).wx_str(), GetImageIndex(node), -1);
+        auto new_item = m_tree_ctrl->AppendItem(tree_parent, GetDisplayName(node).make_wxString(), GetImageIndex(node), -1);
 
         m_node_tree_map[node] = new_item;
         m_tree_node_map[new_item] = node;
@@ -480,7 +480,7 @@ int NavigationPanel::GetImageIndex(Node* node)
 
 void NavigationPanel::UpdateDisplayName(wxTreeItemId id, Node* node)
 {
-    m_tree_ctrl->SetItemText(id, GetDisplayName(node).wx_str());
+    m_tree_ctrl->SetItemText(id, GetDisplayName(node).make_wxString());
 }
 
 tt_string NavigationPanel::GetDisplayName(Node* node) const
@@ -629,7 +629,7 @@ void NavigationPanel::OnNodeSelected(CustomEvent& event)
     else
     {
         FAIL_MSG(tt_string("There is no tree item associated with this object.\n\tClass: ")
-                 << node->DeclName() << "\n\tName: " << node->prop_as_string(prop_var_name).wx_str());
+                 << node->DeclName() << "\n\tName: " << node->value(prop_var_name));
     }
 }
 

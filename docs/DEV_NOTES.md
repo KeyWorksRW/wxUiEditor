@@ -10,11 +10,8 @@ When you create a debug build, there will be an additional **Internal** menu to 
 
 ## Strings
 
-The only time **wxString** should be used in **wxUiEditor** is when a string will be used for UI or for filenames. The **ttLib** class `ttString` derives from `wxString` and is often used instead of `wxString` since it has more automatic conversion of the UTF8 strings that are used throughout the code.
+Internally strings are normally placed into `tt_string`, `tt_stringview` and `tt_wxString` classes. These classes inherit from `std::string`, `std::string_view` and `wxString` respectively, and provide additional functionality common across all three of these classes. When you need to convert a tt_string or tt_stringview to a wxString to pass to wxWidgets, use the method `make_wxString()`. If you need to pass a wxString to tt_string, use `utf8_string()`. These two methods ensure that UTF8/16 conversion is correctly handled on Windows. It also ensure a seamless transition between wxWidgets 3.2 and 3.3 where the underlying wxString is changed from UTF16 to UTF8.
 
-Both `ttString` and `ttlib::cstr` have a `wx_str()` method that will perform UTF8<->UTF16 conversion when compiled for Windows, and no conversion when compiled for other platforms. `ttlib::cstr` is essentially `std::string` with additional methods including `wx_str()`. Note that when constructing a `wxString` from a `std::string` or `std::string_view` on Windows, you will get an ANSI to UTF16 conversion. If you construct a `ttString` from `std::string` or `std::string_view` on Windows, it will perform a UTF8 to UTF16 conversion (no conversion at all if not on Windows). Since wxUiEditor works exclusively with UTF8 strings, `ttString` is preferable to `wxString` in most cases.
-
-You will generally see `ttlib::sview` used instead of `std::string_view`. Like `ttlib::cstr`, this class provides dozens of additional methods beside the standard base class.
 
 ## size_t and int_t
 
@@ -22,7 +19,7 @@ These two types are used to ensure optimal bit-width for the current platform (c
 
 ### Debugging macros
 
-The `ASSERT...` and `FAIL...` macros are the preferred macros for debug checks. On Windows, they provide the option to break into a debugger if running a Debug build.
+The `ASSERT`, `ASSERT_MSG` and `FAIL_MSG` macros are the preferred macros for debug checks. On Windows, they provide the option to break into a debugger if running a Debug build.
 
 The `MSG_...` macros allow for display information in the custom logging window. The custom logging window has filters so that you can limit which messages are displayed. Unlike the `wxLog...` macros, none of these messages will ever be displayed to the user -- they are for your debugging use only.
 

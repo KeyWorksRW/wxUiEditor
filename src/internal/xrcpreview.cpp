@@ -295,7 +295,7 @@ void XrcPreview::OnExport(wxCommandEvent& WXUNUSED(event))
         pugi::xml_document doc;
         doc.load_string(buf.c_str());
 
-        if (!doc.save_file(filename.wx_str(), "\t"))
+        if (!doc.save_file(filename.utf8_string().c_str(), "\t"))
         {
             wxMessageBox(wxString("An unexpected error occurred exportin ") << filename, "Export XRC");
         }

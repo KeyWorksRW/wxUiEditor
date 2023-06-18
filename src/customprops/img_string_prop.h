@@ -27,7 +27,7 @@ class ImageStringProperty : public wxStringProperty
 {
 public:
     ImageStringProperty(const wxString& label, ImageProperties& img_props) :
-        wxStringProperty(label, wxPG_LABEL, img_props.image.wx_str()), m_img_props(img_props)
+        wxStringProperty(label, wxPG_LABEL, img_props.image.make_wxString()), m_img_props(img_props)
     {
     }
 

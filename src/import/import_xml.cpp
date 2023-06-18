@@ -130,7 +130,7 @@ std::optional<pugi::xml_document> ImportXML::LoadDocFile(const tt_wxString& file
 {
     pugi::xml_document doc;
 
-    if (auto result = doc.load_file(file.wx_str()); !result)
+    if (auto result = doc.load_file(file.utf8_string().c_str()); !result)
     {
         wxMessageBox(wxString("Cannot open ") << file << "\n\n" << result.description(), "Import wxFormBuilder project");
         return {};
@@ -1069,10 +1069,10 @@ void ImportXML::ProcessBitmap(const pugi::xml_node& xml_obj, Node* node, GenEnum
             // path to be incorrect
             file.Replace(":\\\\", ":\\");
 
-            tt_wxString relative(file.wx_str());
+            tt_wxString relative(file.make_wxString());
             relative.make_relative_wx(wxGetCwd());
             relative.backslashestoforward();
-            bitmap << relative.wx_str();
+            bitmap << relative.utf8_string();
             bitmap << ";[-1,-1]";
 
             if (auto prop = node->get_prop_ptr(prop_bitmap); prop)

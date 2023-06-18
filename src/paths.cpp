@@ -33,7 +33,7 @@ void AllowDirectoryChange(wxPropertyGridEvent& event, NodeProperty* /* prop */, 
         // processing. Preserve the focus to avoid validating twice.
         auto focus = wxWindow::FindFocus();
 
-        auto result = wxMessageBox(tt_string() << "The directory \"" << newValue.wx_str()
+        auto result = wxMessageBox(tt_string() << "The directory \"" << newValue.utf8_string()
                                                << "\" does not exist. Do you want to use this name anyway?",
                                    "Directory doesn't exist", wxYES_NO | wxICON_WARNING, GetMainFrame());
         if (focus)
@@ -187,7 +187,7 @@ void OnPathChanged(wxPropertyGridEvent& event, NodeProperty* prop, Node* /* node
     // display isn't correct, it will be stored in the project file correctly.
 
     event.GetProperty()->SetValueFromString(newValue, 0);
-    tt_string value(newValue.wx_str());
+    tt_string value(newValue.utf8_string());
     if (value != prop->as_string())
     {
         if (prop->isProp(prop_derived_directory))

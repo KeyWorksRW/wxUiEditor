@@ -59,39 +59,39 @@ MsgFrame::MsgFrame(std::vector<tt_string>* pMsgs, bool* pDestroyed, wxWindow* pa
             m_textCtrl->SetDefaultStyle(wxTextAttr(*wxRED));
             m_textCtrl->AppendText("Error: ");
             m_textCtrl->SetDefaultStyle(wxTextAttr(*wxBLACK));
-            m_textCtrl->AppendText(iter.view_stepover().wx_str());
+            m_textCtrl->AppendText(iter.view_stepover().make_wxString());
         }
         if (iter.starts_with("wxError:"))
         {
             m_textCtrl->SetDefaultStyle(wxTextAttr(*wxRED));
             m_textCtrl->AppendText("wxError: ");
             m_textCtrl->SetDefaultStyle(wxTextAttr(*wxBLACK));
-            m_textCtrl->AppendText(iter.view_stepover().wx_str());
+            m_textCtrl->AppendText(iter.view_stepover().make_wxString());
         }
         else if (iter.starts_with("Warning:"))
         {
             m_textCtrl->SetDefaultStyle(wxTextAttr(*wxBLUE));
             m_textCtrl->AppendText("Warning: ");
             m_textCtrl->SetDefaultStyle(wxTextAttr(*wxBLACK));
-            m_textCtrl->AppendText(iter.view_stepover().wx_str());
+            m_textCtrl->AppendText(iter.view_stepover().make_wxString());
         }
         else if (iter.starts_with("wxWarning:"))
         {
             m_textCtrl->SetDefaultStyle(wxTextAttr(*wxBLUE));
             m_textCtrl->AppendText("wxWarning: ");
             m_textCtrl->SetDefaultStyle(wxTextAttr(*wxBLACK));
-            m_textCtrl->AppendText(iter.view_stepover().wx_str());
+            m_textCtrl->AppendText(iter.view_stepover().make_wxString());
         }
         else if (iter.starts_with("wxInfo:"))
         {
             m_textCtrl->SetDefaultStyle(wxTextAttr(*wxCYAN));
             m_textCtrl->AppendText("wxInfo: ");
             m_textCtrl->SetDefaultStyle(wxTextAttr(*wxBLACK));
-            m_textCtrl->AppendText(iter.view_stepover().wx_str());
+            m_textCtrl->AppendText(iter.view_stepover().make_wxString());
         }
         else
         {
-            m_textCtrl->AppendText(iter.wx_str());
+            m_textCtrl->AppendText(iter.make_wxString());
         }
     }
 
@@ -126,7 +126,7 @@ void MsgFrame::AddWarningMsg(tt_string_view msg)
         m_textCtrl->SetDefaultStyle(wxTextAttr(*wxBLUE));
         m_textCtrl->AppendText("Warning: ");
         m_textCtrl->SetDefaultStyle(wxTextAttr(*wxBLACK));
-        m_textCtrl->AppendText(msg.wx_str());
+        m_textCtrl->AppendText(msg.make_wxString());
     }
 }
 
@@ -137,7 +137,7 @@ void MsgFrame::Add_wxWarningMsg(tt_string_view msg)
         m_textCtrl->SetDefaultStyle(wxTextAttr(*wxBLUE));
         m_textCtrl->AppendText("wxWarning: ");
         m_textCtrl->SetDefaultStyle(wxTextAttr(*wxBLACK));
-        m_textCtrl->AppendText(msg.wx_str());
+        m_textCtrl->AppendText(msg.make_wxString());
     }
 }
 
@@ -148,7 +148,7 @@ void MsgFrame::Add_wxInfoMsg(tt_string_view msg)
         m_textCtrl->SetDefaultStyle(wxTextAttr(*wxCYAN));
         m_textCtrl->AppendText("wxInfo: ");
         m_textCtrl->SetDefaultStyle(wxTextAttr(*wxBLACK));
-        m_textCtrl->AppendText(msg.wx_str());
+        m_textCtrl->AppendText(msg.make_wxString());
     }
 }
 
@@ -159,7 +159,7 @@ void MsgFrame::AddErrorMsg(tt_string_view msg)
     m_textCtrl->SetDefaultStyle(wxTextAttr(*wxRED));
     m_textCtrl->AppendText("Error: ");
     m_textCtrl->SetDefaultStyle(wxTextAttr(*wxBLACK));
-    m_textCtrl->AppendText(msg.wx_str());
+    m_textCtrl->AppendText(msg.make_wxString());
 }
 
 void MsgFrame::Add_wxErrorMsg(tt_string_view msg)
@@ -169,7 +169,7 @@ void MsgFrame::Add_wxErrorMsg(tt_string_view msg)
     m_textCtrl->SetDefaultStyle(wxTextAttr(*wxRED));
     m_textCtrl->AppendText("wxError: ");
     m_textCtrl->SetDefaultStyle(wxTextAttr(*wxBLACK));
-    m_textCtrl->AppendText(msg.wx_str());
+    m_textCtrl->AppendText(msg.make_wxString());
 }
 
 void MsgFrame::OnClose(wxCloseEvent& event)
@@ -190,10 +190,10 @@ void MsgFrame::OnSaveAs(wxCommandEvent& WXUNUSED(event))
     auto totalLines = m_textCtrl->GetNumberOfLines();
     for (int curLine = 0; curLine < totalLines; ++curLine)
     {
-        file.addEmptyLine().utf(m_textCtrl->GetLineText(curLine).wx_str());
+        file.addEmptyLine() << m_textCtrl->GetLineText(curLine).utf8_string();
     }
 
-    if (auto result = file.WriteFile(tt_string().utf(filename.wx_str())); !result)
+    if (auto result = file.WriteFile(filename.utf8_string()); !result)
     {
         wxMessageBox(wxString("Cannot create or write to the file ") << filename, "Save messages");
     }
@@ -327,12 +327,12 @@ void MsgFrame::UpdateNodeInfo()
             {
                 gen_label << "wxWidgets";
             }
-            m_hyperlink->SetLabel(gen_label.wx_str());
+            m_hyperlink->SetLabel(gen_label.make_wxString());
             wxString url("https://docs.wxwidgets.org/trunk/");
             auto file = generator->GetHelpURL(cur_sel);
             if (file.size())
             {
-                url << "class" << file.wx_str();
+                url << "class" << file.make_wxString();
             }
             m_hyperlink->SetURL(url);
         }

@@ -29,14 +29,14 @@ wxObject* CheckListBoxGenerator::CreateMockup(Node* node, wxObject* parent)
     {
         for (auto& iter: items)
         {
-            auto pos = widget->Append(iter.label.wx_str());
-            if (iter.checked.wx_str() == "1")
+            auto pos = widget->Append(iter.label.make_wxString());
+            if (iter.checked == "1")
                 widget->Check(pos);
         }
 
         if (node->prop_as_string(prop_selection_string).size())
         {
-            widget->SetStringSelection(wxString::FromUTF8(node->prop_as_string(prop_selection_string)));
+            widget->SetStringSelection(node->as_wxString(prop_selection_string));
         }
         else
         {

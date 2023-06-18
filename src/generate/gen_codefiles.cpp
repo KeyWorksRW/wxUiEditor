@@ -126,11 +126,11 @@ void GenThreadCpp(GenData& gen_data, Node* form)
     BaseCodeGenerator codegen(GEN_LANG_CPLUSPLUS);
 
     path.replace_extension(header_ext);
-    auto h_cw = std::make_unique<FileCodeWriter>(path.wx_str());
+    auto h_cw = std::make_unique<FileCodeWriter>(path);
     codegen.SetHdrWriteCode(h_cw.get());
 
     path.replace_extension(source_ext);
-    auto cpp_cw = std::make_unique<FileCodeWriter>(path.wx_str());
+    auto cpp_cw = std::make_unique<FileCodeWriter>(path);
     codegen.SetSrcWriteCode(cpp_cw.get());
 
     codegen.GenerateCppClass(form);
@@ -390,11 +390,11 @@ void GenInhertedClass(GenResults& results)
         BaseCodeGenerator codegen(GEN_LANG_CPLUSPLUS);
 
         path.replace_extension(header_ext);
-        auto h_cw = std::make_unique<FileCodeWriter>(path.wx_str());
+        auto h_cw = std::make_unique<FileCodeWriter>(path);
         codegen.SetHdrWriteCode(h_cw.get());
 
         path.replace_extension(source_ext);
-        auto cpp_cw = std::make_unique<FileCodeWriter>(path.wx_str());
+        auto cpp_cw = std::make_unique<FileCodeWriter>(path);
         codegen.SetSrcWriteCode(cpp_cw.get());
 
         auto retval = codegen.GenerateDerivedClass(Project.ProjectNode(), form);
@@ -583,11 +583,11 @@ void GenerateTmpFiles(const std::vector<tt_string>& ClassList, pugi::xml_node ro
                 BaseCodeGenerator codegen(language);
 
                 path.replace_extension(header_ext);
-                auto h_cw = std::make_unique<FileCodeWriter>(path.wx_str());
+                auto h_cw = std::make_unique<FileCodeWriter>(path);
                 codegen.SetHdrWriteCode(h_cw.get());
 
                 path.replace_extension(source_ext);
-                auto cpp_cw = std::make_unique<FileCodeWriter>(path.wx_str());
+                auto cpp_cw = std::make_unique<FileCodeWriter>(path);
                 codegen.SetSrcWriteCode(cpp_cw.get());
 
                 if (language == GEN_LANG_CPLUSPLUS)
@@ -622,11 +622,11 @@ void GenerateTmpFiles(const std::vector<tt_string>& ClassList, pugi::xml_node ro
                     }
 
                     tmp_path.replace_extension(header_ext);
-                    h_cw = std::make_unique<FileCodeWriter>(tmp_path.wx_str());
+                    h_cw = std::make_unique<FileCodeWriter>(tmp_path);
                     codegen.SetHdrWriteCode(h_cw.get());
 
                     tmp_path.replace_extension(source_ext);
-                    cpp_cw = std::make_unique<FileCodeWriter>(tmp_path.wx_str());
+                    cpp_cw = std::make_unique<FileCodeWriter>(tmp_path);
                     codegen.SetSrcWriteCode(cpp_cw.get());
 
                     if (language == GEN_LANG_CPLUSPLUS)

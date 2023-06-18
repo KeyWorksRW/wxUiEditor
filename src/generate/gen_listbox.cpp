@@ -26,11 +26,11 @@ wxObject* ListBoxGenerator::CreateMockup(Node* node, wxObject* parent)
     {
         auto array = ConvertToArrayString(items);
         for (auto& iter: array)
-            widget->Append(wxString::FromUTF8(iter));
+            widget->Append(iter.make_wxString());
 
         if (node->prop_as_string(prop_selection_string).size())
         {
-            widget->SetStringSelection(wxString::FromUTF8(node->prop_as_string(prop_selection_string)));
+            widget->SetStringSelection(node->as_wxString(prop_selection_string));
         }
         else
         {

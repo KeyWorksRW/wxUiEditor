@@ -20,7 +20,7 @@ public:
     NodeCategory(std::string_view name) { m_name.assign(name.data(), name.size()); }
 
     const wxString& GetName() { return m_name; }
-    tt_string getName() { return tt_string(m_name.wx_str()); }
+    tt_string getName() { return tt_string(m_name.utf8_string()); }
 
     void AddProperty(PropName name) { m_prop_names.emplace_back(name); }
 

@@ -25,7 +25,7 @@ wxObject* ChoiceGenerator::CreateMockup(Node* node, wxObject* parent)
     {
         auto array = ConvertToArrayString(node->prop_as_string(prop_contents));
         for (auto& iter: array)
-            widget->Append(iter.wx_str());
+            widget->Append(iter.make_wxString());
 
         if (node->HasValue(prop_selection_string))
         {

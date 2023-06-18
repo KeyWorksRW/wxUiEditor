@@ -1434,7 +1434,7 @@ void Code::GenFontColourSettings()
 
             Eol(eol_if_needed).Str("font_info.");
             if (fontprop.GetFaceName().size() && fontprop.GetFaceName() != "default")
-                Str("FaceName(").QuotedString(tt_string() << fontprop.GetFaceName().wx_str()) += ").";
+                Str("FaceName(").QuotedString(tt_string() << fontprop.GetFaceName().utf8_string()) += ").";
             if (fontprop.GetFamily() != wxFONTFAMILY_DEFAULT)
                 Str("Family(").Str(font_family_pairs.GetValue(fontprop.GetFamily())) += ").";
             if (fontprop.GetStyle() != wxFONTSTYLE_NORMAL)

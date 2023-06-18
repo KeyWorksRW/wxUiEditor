@@ -51,7 +51,7 @@ public:
             static_text << m_node->prop_as_string(prop_var_name) << " = new " << m_node->prop_as_string(prop_class_name);
             static_text << m_textCtrl->GetValue().utf8_string() << ';';
         }
-        m_static_hdr_text->SetLabel(static_text.wx_str());
+        m_static_hdr_text->SetLabel(static_text.make_wxString());
     }
 
 private:

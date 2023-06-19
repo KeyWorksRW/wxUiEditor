@@ -37,6 +37,7 @@ set (file_list
     customprops/evt_string_prop.cpp     # Derived wxStringProperty class for event function
     customprops/font_string_prop.cpp    # Derived wxStringProperty class for font property
     customprops/html_string_prop.cpp    # Derived wxStringProperty class for HTML
+    customprops/include_files_prop.cpp  # Derived wxStringProperty class for Include Files
     customprops/img_string_prop.cpp     # Derived wxStringProperty class for handling wxImage files or art
     customprops/rearrange_prop.cpp      # wxRearangeList contents editor
     customprops/sb_fields_prop.cpp      # Property editor for status bar fields

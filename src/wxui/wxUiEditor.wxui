@@ -2755,7 +2755,10 @@
         class="wxDialog"
         class_name="IncludeFilesDialog"
         title="Include Files"
-        base_file="include_files_dlg"
+        base_file="..\customprops\include_files_dlg.cpp"
+        base_hdr_includes="class NodeProperty;"
+        class_members="&quot;wxString m_value;&quot; &quot;NodeProperty* m_prop;&quot;"
+        class_methods="&quot;void Initialize(NodeProperty* prop);&quot; &quot;const wxString&amp; GetResults() { return m_value; }&quot;"
         private_members="1"
         use_derived_class="0"
         wxEVT_INIT_DIALOG="OnInit">

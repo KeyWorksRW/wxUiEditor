@@ -27,6 +27,7 @@ std::unordered_map<std::string_view, PropType, str_view_hash, std::equal_to<>> G
     { "html_edit", type_html_edit },
     { "id", type_id },
     { "image", type_image },
+    { "include_files", type_include_files },
     { "int", type_int },
     { "option", type_option },
     { "path", type_path },

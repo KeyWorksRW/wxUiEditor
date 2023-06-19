@@ -1193,8 +1193,8 @@ bool ImageHandler::AddSvgBundleImage(tt_string path, Node* form)
         auto file_size = file_original.Length();
         tt_string size_comparison;
         int percent = static_cast<int>(100 - (100 / (file_size / compressed_size)));
-        size_comparison.Format("%v -- Original: %ku, compressed: %ku, %u percent", path.filename(), file_size,
-                               compressed_size, percent);
+        size_comparison.Format("%s -- Original: %ku, compressed: %ku, %u percent", path.filename().as_str().c_str(),
+                               file_size, compressed_size, percent);
         // Enable line below to show results for every file
         // MSG_INFO(size_comparison)
     }

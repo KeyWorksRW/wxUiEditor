@@ -743,7 +743,12 @@ Node* Node::CreateChildNode(GenName name)
             if (auto prop = new_node->get_prop_ptr(prop_background_colour); prop)
             {
                 prop->set_value("wxSYS_COLOUR_BTNFACE");
-                frame.FirePropChangeEvent(prop);
+
+                // REVIEW: [Randalphwa - 06-18-2023] The node has not been inserted yet, so
+                // firing a prop change event can result in a hang, particularly when
+                // CreateChildNode() was called while creating a new Book container.
+
+                // frame.FirePropChangeEvent(prop);
             }
         }
 #endif  // _WIN32

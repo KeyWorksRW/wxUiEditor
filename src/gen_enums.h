@@ -29,6 +29,7 @@ namespace GenEnum
         type_float,
         type_html_edit,  // includes a button that triggers a dialog with a scintilla editor
         type_id,
+        type_include_files,  // Uses custom dialog for editing a list of local or system include files
         type_image,
         type_int,
         type_option,
@@ -227,6 +228,7 @@ namespace GenEnum
         prop_handler_name,
         prop_header,
         prop_header_ext,
+        prop_header_preamble,
         prop_height,
         prop_help,
         prop_help_provider,
@@ -270,7 +272,7 @@ namespace GenEnum
         prop_line_margin,
         prop_line_numbers,
         prop_line_size,
-        prop_local_includes,
+        prop_local_hdr_includes,
         prop_local_pch_file,
         prop_main_label,
         prop_majorDimension,
@@ -390,7 +392,7 @@ namespace GenEnum
         prop_symbol_margin,
         prop_symbol_mouse_sensitive,
         prop_sync_hover_colour,
-        prop_system_includes,
+        prop_system_hdr_includes,
         prop_tab_behaviour,
         prop_tab_height,
         prop_tab_indents,

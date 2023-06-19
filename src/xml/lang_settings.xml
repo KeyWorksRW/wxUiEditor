@@ -9,8 +9,12 @@ inline const char* language_xml = R"===(<?xml version="1.0"?>
 			1</property>
 		<property name="base_src_includes" type="code_edit"
 			help="This preamble is added in addition to any src_preamble specified for the entire project. It will be placed unchanged at the top of the generated base src file after any (optional) precompiled header file. It is typically used to add header files needed for lambdas used as event handlers." />
-		<property name="base_hdr_includes" type="code_edit"
-			help="This preamble is placed unchanged in the generated base file after all wx/ include files. It is normally used to include additional header files." />
+		<property name="header_preamble" type="code_edit"
+			help="This preamble is placed unchanged in the generated header file after all wx/ include files. It is commonly used to add forward class names needed by methods and members you add to the Derived Class Settings." />
+		<property name="local_hdr_includes" type="type_include_files"
+			help="Lists one or more local header files to include in the generated header file." />
+		<property name="system_hdr_includes" type="type_include_files"
+			help="Lists one or more system header files to include in the generated header file." />
 		<property name="generate_ids" type="bool"
 			help="If checked, any non-wxWidgets ids will be created as an enumerated list unless you specically assign the value of the id (e.g., myid=100).">
 			1</property>

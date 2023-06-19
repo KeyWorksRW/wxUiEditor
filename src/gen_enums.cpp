@@ -264,6 +264,7 @@ std::map<GenEnum::PropName, const char*> GenEnum::map_PropNames = {
     { prop_line_margin, "line_margin" },
     { prop_line_numbers, "line_numbers" },  // previously used in wxStyledTextCtrl, but now uses margins
     { prop_line_size, "line_size" },
+    { prop_local_includes, "local_includes" },
     { prop_local_pch_file, "local_pch_file" },
     { prop_main_label, "main_label" },
     { prop_majorDimension, "majorDimension" },
@@ -383,6 +384,7 @@ std::map<GenEnum::PropName, const char*> GenEnum::map_PropNames = {
     { prop_symbol_margin, "symbol_margin" },
     { prop_symbol_mouse_sensitive, "symbol_mouse_sensitive" },
     { prop_sync_hover_colour, "sync_hover_colour" },
+    { prop_system_includes, "system_includes" },
     { prop_tab_behaviour, "tab_behaviour" },
     { prop_tab_height, "tab_height" },
     { prop_tab_indents, "tab_indents" },

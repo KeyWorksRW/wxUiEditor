@@ -28,6 +28,7 @@ set (wxue_generated_code
     ${CMAKE_CURRENT_LIST_DIR}/id_editor_dlg.cpp
     ${CMAKE_CURRENT_LIST_DIR}/import_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/import_winres_dlg.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/include_files_dlg.cpp
     ${CMAKE_CURRENT_LIST_DIR}/insert_widget.cpp
     ${CMAKE_CURRENT_LIST_DIR}/mainframe_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/menu_auibar_base.cpp

@@ -413,7 +413,7 @@ wxArrayString NodeProperty::as_wxArrayString() const
         return result;
 
     wxString str = m_value.make_wxString();
-    WX_PG_TOKENIZER2_BEGIN(m_value.make_wxString(), '"')
+    WX_PG_TOKENIZER2_BEGIN(str, '"')
 
     result.Add(token);
 

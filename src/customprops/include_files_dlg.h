@@ -19,6 +19,8 @@
 #include <wx/listbox.h>
 #include <wx/stattext.h>
 
+class NodeProperty;
+
 class IncludeFilesDialog : public wxDialog
 {
 public:
@@ -33,6 +35,9 @@ public:
     bool Create(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "Include Files",
         const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_DIALOG_STYLE, const wxString &name = wxDialogNameStr);
+
+    void Initialize(NodeProperty* prop);
+    const wxString& GetResults() { return m_value; }
 
 protected:
 
@@ -56,6 +61,9 @@ private:
     wxButton* m_btn_sort;
     wxListBox* m_listbox;
     wxStaticText* m_staticText;
+
+    wxString m_value;
+    NodeProperty* m_prop;
 };
 
 // ************* End of generated code ***********

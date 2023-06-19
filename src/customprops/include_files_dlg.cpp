@@ -85,30 +85,28 @@ bool IncludeFilesDialog::Create(wxWindow* parent, wxWindowID id, const wxString&
 // clang-format on
 // ***********************************************
 
-void IncludeFilesDialog::OnInit(wxInitDialogEvent& WXUNUSED(event))
+/////////////////////////////////////////////////////////////////////////////
+// Purpose:   Dialog for editing local and system include files
+// Author:    Ralph Walden
+// Copyright: Copyright (c) 2021-2023 KeyWorks Software (Ralph Walden)
+// License:   Apache License -- see ../../LICENSE
+/////////////////////////////////////////////////////////////////////////////
+
+void IncludeFilesDialog::Initialize(NodeProperty* prop)
 {
+    m_prop = prop;
 }
 
-void IncludeFilesDialog::OnAdd(wxCommandEvent& WXUNUSED(event))
-{
-}
+void IncludeFilesDialog::OnInit(wxInitDialogEvent& WXUNUSED(event)) {}
 
-void IncludeFilesDialog::OnItemSelected(wxCommandEvent& WXUNUSED(event))
-{
-}
+void IncludeFilesDialog::OnAdd(wxCommandEvent& WXUNUSED(event)) {}
 
-void IncludeFilesDialog::OnMoveUp(wxCommandEvent& WXUNUSED(event))
-{
-}
+void IncludeFilesDialog::OnItemSelected(wxCommandEvent& WXUNUSED(event)) {}
 
-void IncludeFilesDialog::OnMoveDown(wxCommandEvent& WXUNUSED(event))
-{
-}
+void IncludeFilesDialog::OnMoveUp(wxCommandEvent& WXUNUSED(event)) {}
 
-void IncludeFilesDialog::OnRemove(wxCommandEvent& WXUNUSED(event))
-{
-}
+void IncludeFilesDialog::OnMoveDown(wxCommandEvent& WXUNUSED(event)) {}
 
-void IncludeFilesDialog::OnSort(wxCommandEvent& WXUNUSED(event))
-{
-}
+void IncludeFilesDialog::OnRemove(wxCommandEvent& WXUNUSED(event)) {}
+
+void IncludeFilesDialog::OnSort(wxCommandEvent& WXUNUSED(event)) {}

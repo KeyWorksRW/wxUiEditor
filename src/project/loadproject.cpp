@@ -363,6 +363,16 @@ NodeSharedPtr NodeCreator::CreateNode(pugi::xml_node& xml_obj, Node* parent, boo
                     prop->set_value(iter.value());
                 }
             }
+            else // property was not found
+            {
+                if (find_prop->second == prop_base_hdr_includes)
+                {
+                    new_node->set_value(prop_header_preamble, iter.value());
+                    Project.SetProjectUpdated();
+                    Project.ForceProjectVersion(curSupportedVer);
+                }
+            }
+
         }
         else
         {

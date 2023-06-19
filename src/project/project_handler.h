@@ -69,6 +69,8 @@ public:
     void FixupDuplicatedNode(Node* new_node);
 
     auto GetProjectVersion() { return m_ProjectVersion; }
+    void ForceProjectVersion(int version) { m_ProjectVersion = version; }
+    void SetProjectUpdated() { m_isProject_updated = true; }
 
     bool is_UiAllowed() const { return m_allow_ui; }
 

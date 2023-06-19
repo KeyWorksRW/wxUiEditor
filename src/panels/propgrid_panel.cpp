@@ -1447,7 +1447,7 @@ void PropGridPanel::ModifyEmbeddedProperty(NodeProperty* node_prop, wxPGProperty
     {
         value.clear();
     }
-    else
+    else if (!value.starts_with("Art"))
     {
         tt_string image_path(parts[IndexImage]);
         image_path.make_absolute();

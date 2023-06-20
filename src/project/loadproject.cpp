@@ -371,6 +371,12 @@ NodeSharedPtr NodeCreator::CreateNode(pugi::xml_node& xml_obj, Node* parent, boo
                     Project.SetProjectUpdated();
                     Project.ForceProjectVersion(curSupportedVer);
                 }
+                if (find_prop->second == prop_base_src_includes)
+                {
+                    new_node->set_value(prop_source_preamble, iter.value());
+                    Project.SetProjectUpdated();
+                    Project.ForceProjectVersion(curSupportedVer);
+                }
             }
         }
         else

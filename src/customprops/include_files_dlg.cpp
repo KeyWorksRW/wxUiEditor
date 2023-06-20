@@ -118,7 +118,7 @@ void IncludeFilesDialog::SetButtonsEnableState()
 void IncludeFilesDialog::OnInit(wxInitDialogEvent& WXUNUSED(event))
 {
     ASSERT_MSG(m_prop, "m_prop is nullptr -- call Initialize()!");
-    if (m_prop->get_name() == prop_system_hdr_includes)
+    if (m_prop->get_name() == prop_system_hdr_includes || m_prop->get_name() == prop_system_src_includes)
     {
         SetTitle("System Header Files");
     }
@@ -143,7 +143,7 @@ void IncludeFilesDialog::OnInit(wxInitDialogEvent& WXUNUSED(event))
 void IncludeFilesDialog::OnAdd(wxCommandEvent& WXUNUSED(event))
 {
     tt_wxString path;
-    if (m_prop->get_name() == prop_local_hdr_includes)
+    if (m_prop->get_name() == prop_local_hdr_includes || m_prop->get_name() == prop_local_src_includes)
     {
         auto* form = m_prop->GetNode();
         auto* parent_node = form->GetParent();

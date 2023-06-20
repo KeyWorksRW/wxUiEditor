@@ -22,7 +22,7 @@ public:
     bool DoShowDialog(wxPropertyGrid* WXUNUSED(propGrid), wxPGProperty* WXUNUSED(property)) override;
 
 private:
-    NodeProperty* m_prop;
+    NodeProperty* m_prop = nullptr;
 };
 
 class IncludeFilesProperty : public wxStringProperty
@@ -37,5 +37,5 @@ public:
     wxPGEditorDialogAdapter* GetEditorDialog() const override { return new IncludeFilesDialogAdapter(m_prop); }
 
 private:
-    NodeProperty* m_prop;
+    NodeProperty* m_prop = nullptr;
 };

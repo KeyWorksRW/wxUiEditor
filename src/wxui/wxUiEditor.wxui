@@ -2580,7 +2580,7 @@
         class_name="IDEditorDlg"
         title="ID Editor"
         base_file="id_editor_dlg"
-        base_hdr_includes="class Node;"
+        header_preamble="class Node;"
         class_members="&quot;Node* m_node;&quot; &quot;wxString m_result;&quot; &quot;bool m_prefix_selected { false };&quot; &quot;bool m_suffix_selected { false };&quot; &quot;&quot; &quot;&quot;"
         class_methods="&quot;wxString GetResults() { return m_result; }&quot; &quot;void SetNode(Node* node) { m_node = node; }&quot; &quot;bool SelectPrefixSuffix(Node* node);&quot;"
         private_members="1"
@@ -2756,9 +2756,9 @@
         class_name="IncludeFilesDialog"
         title="Include Files"
         base_file="..\customprops\include_files_dlg.cpp"
-        base_hdr_includes="class NodeProperty;"
+        header_preamble="class NodeProperty;"
         class_members="&quot;wxString m_value;&quot; &quot;NodeProperty* m_prop;&quot;"
-        class_methods="&quot;void Initialize(NodeProperty* prop);&quot; &quot;const wxString&amp; GetResults() { return m_value; }&quot;"
+        class_methods="&quot;void Initialize(NodeProperty* prop);&quot; &quot;const wxString&amp; GetResults() { return m_value; }&quot; &quot;void SetButtonsEnableState();&quot;"
         private_members="1"
         use_derived_class="0"
         wxEVT_INIT_DIALOG="OnInit">
@@ -2768,7 +2768,7 @@
           var_name="dlg_sizer">
           <node
             class="wxStaticText"
-            label="These header files will be added to the top of the generated header file."
+            label="These header files will be added as #includes to the the generated header file."
             wrap="350" />
           <node
             class="wxBoxSizer"
@@ -2822,7 +2822,8 @@
           </node>
           <node
             class="wxStdDialogButtonSizer"
-            flags="wxEXPAND" />
+            flags="wxEXPAND"
+            OKButtonClicked="OnOK" />
         </node>
       </node>
     </node>
@@ -5205,7 +5206,7 @@
         class_name="NodeInfo"
         title="Node Information"
         base_file="..\internal\node_info"
-        base_hdr_includes="#include &quot;node_classes.h&quot;"
+        header_preamble="#include &quot;node_classes.h&quot;"
         derived_class_name="NodeInfo"
         derived_file="node_info"
         inserted_hdr_code="void SetNode(Node* node) { m_node = node; }@@@@private:@@Node* m_node { nullptr };"

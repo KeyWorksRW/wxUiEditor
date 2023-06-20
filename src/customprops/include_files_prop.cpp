@@ -14,7 +14,7 @@
 #include "../nodes/node_prop.h"  // NodeProperty class
 
 IncludeFilesProperty::IncludeFilesProperty(const wxString& label, NodeProperty* prop) :
-    wxStringProperty(label, wxPG_LABEL, prop->as_wxString())
+    wxStringProperty(label, wxPG_LABEL, prop->as_wxString()), m_prop(prop)
 {
 }
 

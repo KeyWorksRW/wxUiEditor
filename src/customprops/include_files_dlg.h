@@ -38,6 +38,7 @@ public:
 
     void Initialize(NodeProperty* prop);
     const wxString& GetResults() { return m_value; }
+    void SetButtonsEnableState();
 
 protected:
 
@@ -48,6 +49,7 @@ protected:
     void OnItemSelected(wxCommandEvent& event);
     void OnMoveDown(wxCommandEvent& event);
     void OnMoveUp(wxCommandEvent& event);
+    void OnOK(wxCommandEvent& event);
     void OnRemove(wxCommandEvent& event);
     void OnSort(wxCommandEvent& event);
 

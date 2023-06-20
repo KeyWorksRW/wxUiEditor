@@ -12,6 +12,8 @@
 
 #include "include_files_dlg.h"
 
+#include "project_handler.h"  // ProjectHandler class
+
 bool IncludeFilesDialog::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     const wxPoint& pos, const wxSize& size, long style, const wxString &name)
 {
@@ -21,7 +23,7 @@ bool IncludeFilesDialog::Create(wxWindow* parent, wxWindowID id, const wxString&
     auto* dlg_sizer = new wxBoxSizer(wxVERTICAL);
 
     m_staticText = new wxStaticText(this, wxID_ANY,
-        "These header files will be added to the top of the generated header file.");
+        "These header files will be added as #includes to the the generated header file.");
     m_staticText->Wrap(350);
     dlg_sizer->Add(m_staticText, wxSizerFlags().Border(wxALL));
 
@@ -65,6 +67,7 @@ bool IncludeFilesDialog::Create(wxWindow* parent, wxWindowID id, const wxString&
     Centre(wxBOTH);
 
     // Event handlers
+    Bind(wxEVT_BUTTON, &IncludeFilesDialog::OnOK, this, wxID_OK);
     btn_add->Bind(wxEVT_BUTTON, &IncludeFilesDialog::OnAdd, this);
     m_btn_remove->Bind(wxEVT_BUTTON, &IncludeFilesDialog::OnRemove, this);
     m_btn_move_up->Bind(wxEVT_BUTTON, &IncludeFilesDialog::OnMoveUp, this);
@@ -88,25 +91,213 @@ bool IncludeFilesDialog::Create(wxWindow* parent, wxWindowID id, const wxString&
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Dialog for editing local and system include files
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2021-2023 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+
+#include <wx/filedlg.h>
+#include <wx/tokenzr.h>
+
+#include "node_prop.h"  // NodeProperty -- NodeProperty class
 
 void IncludeFilesDialog::Initialize(NodeProperty* prop)
 {
     m_prop = prop;
 }
 
-void IncludeFilesDialog::OnInit(wxInitDialogEvent& WXUNUSED(event)) {}
+void IncludeFilesDialog::SetButtonsEnableState()
+{
+    int sel = m_listbox->GetSelection();
+    m_btn_remove->Enable(sel != wxNOT_FOUND);
+    m_btn_move_up->Enable(sel > 0);
+    m_btn_move_down->Enable(sel != wxNOT_FOUND && static_cast<unsigned int>(sel) < m_listbox->GetCount() - 1);
+    m_btn_sort->Enable(m_listbox->GetCount() > 1);
+    FindWindow(GetAffirmativeId())->Enable(m_listbox->GetCount() > 0);
+}
 
-void IncludeFilesDialog::OnAdd(wxCommandEvent& WXUNUSED(event)) {}
+void IncludeFilesDialog::OnInit(wxInitDialogEvent& WXUNUSED(event))
+{
+    ASSERT_MSG(m_prop, "m_prop is nullptr -- call Initialize()!");
+    if (m_prop->get_name() == prop_system_hdr_includes)
+    {
+        SetTitle("System Header Files");
+    }
 
-void IncludeFilesDialog::OnItemSelected(wxCommandEvent& WXUNUSED(event)) {}
+    if (m_prop->HasValue())
+    {
+        tt_view_vector list;
+        list.SetString(m_prop->value());
+        for (auto& iter: list)
+        {
+            m_listbox->Append(iter.make_wxString());
+        }
+        if (m_listbox->GetCount())
+        {
+            m_listbox->SetSelection(0);
+        }
+    }
 
-void IncludeFilesDialog::OnMoveUp(wxCommandEvent& WXUNUSED(event)) {}
+    SetButtonsEnableState();
+}
 
-void IncludeFilesDialog::OnMoveDown(wxCommandEvent& WXUNUSED(event)) {}
+void IncludeFilesDialog::OnAdd(wxCommandEvent& WXUNUSED(event))
+{
+    tt_wxString path;
+    if (m_prop->get_name() == prop_local_hdr_includes)
+    {
+        auto* form = m_prop->GetNode();
+        auto* parent_node = form->GetParent();
+        if (parent_node->isGen(gen_folder) && parent_node->HasValue(prop_folder_base_directory))
+        {
+            path = parent_node->value(prop_folder_base_directory);
+        }
+        else if (Project.HasValue(prop_base_directory))
+        {
+            path = Project.value(prop_base_directory);
+        }
 
-void IncludeFilesDialog::OnRemove(wxCommandEvent& WXUNUSED(event)) {}
+        if (path.size())
+        {
+            path.append_filename(form->value(prop_base_file).filename());
+        }
+        else
+        {
+            path = form->value(prop_base_file);
+        }
 
-void IncludeFilesDialog::OnSort(wxCommandEvent& WXUNUSED(event)) {}
+        if (path.size())
+        {
+            path.make_absolute();
+            path.remove_filename();
+        }
+
+        if (path.empty())
+        {
+            path = Project.ProjectPath();
+        }
+    }
+    else  // if (m_prop->get_name() == prop_system_hdr_includes)
+    {
+        // Get the path to the WXWIN (wxWidgets) include directory
+        if (!wxGetEnv("WXWIN", &path))
+        {
+            // Get the INCLUDE environment variable, and parse out the first path that has wxWidgets in it.
+            wxString include_paths;
+            if (wxGetEnv("INCLUDE", &include_paths))
+            {
+                wxStringTokenizer tokenizer(include_paths, ";");
+                while (tokenizer.HasMoreTokens())
+                {
+                    wxString include_path = tokenizer.GetNextToken();
+                    if (include_path.Contains("wxWidgets"))
+                    {
+                        path = include_path;
+                        break;
+                    }
+                }
+            }
+        }
+        else
+        {
+            if (!path.Contains("include"))
+            {
+                path += "/include";
+            }
+        }
+    }
+
+    wxFileDialog dialog(this, "Include Header File", path, wxEmptyString, "Header Files|*.h;*.hh;*.hpp;*.hxx",
+                        wxFD_OPEN | wxFD_FILE_MUST_EXIST);
+    if (dialog.ShowModal() == wxID_OK)
+    {
+        tt_wxString filename = dialog.GetPath();
+        filename.make_relative_wx(path);
+        filename.backslashestoforward();
+        m_listbox->Append(filename);
+        SetButtonsEnableState();
+    }
+}
+
+void IncludeFilesDialog::OnItemSelected(wxCommandEvent& WXUNUSED(event))
+{
+    SetButtonsEnableState();
+}
+
+void IncludeFilesDialog::OnMoveUp(wxCommandEvent& WXUNUSED(event))
+{
+    // Move the currently selected item up one position in the listbox
+    int sel = m_listbox->GetSelection();
+    if (sel == wxNOT_FOUND || sel == 0)
+        return;
+    const wxString stringTmp = m_listbox->GetString(sel - 1);
+    m_listbox->SetString(sel - 1, m_listbox->GetString(sel));
+    m_listbox->SetString(sel, stringTmp);
+    m_listbox->SetSelection(sel - 1);
+    SetButtonsEnableState();
+}
+
+void IncludeFilesDialog::OnMoveDown(wxCommandEvent& WXUNUSED(event))
+{
+    // Move the currently selected item down one position in the listbox
+    int sel = m_listbox->GetSelection();
+    if (sel == wxNOT_FOUND || static_cast<unsigned int>(sel) == m_listbox->GetCount() - 1)
+        return;
+    const wxString stringTmp = m_listbox->GetString(sel + 1);
+    m_listbox->SetString(sel + 1, m_listbox->GetString(sel));
+    m_listbox->SetString(sel, stringTmp);
+    m_listbox->SetSelection(sel + 1);
+    SetButtonsEnableState();
+}
+
+void IncludeFilesDialog::OnRemove(wxCommandEvent& WXUNUSED(event))
+{
+    if (int sel = m_listbox->GetSelection(); sel != wxNOT_FOUND)
+    {
+        m_listbox->Delete(sel);
+        if (static_cast<unsigned int>(sel) < m_listbox->GetCount())
+        {
+            m_listbox->SetSelection(sel);
+        }
+        SetButtonsEnableState();
+    }
+}
+
+void IncludeFilesDialog::OnSort(wxCommandEvent& WXUNUSED(event))
+{
+    if (m_listbox->GetCount() < 2)
+        return;
+
+    std::vector<tt_wxString> items;
+    for (unsigned int i = 0; i < m_listbox->GetCount(); i++)
+    {
+        items.push_back(m_listbox->GetString(i));
+    }
+    std::sort(items.begin(), items.end(),
+              [](const tt_wxString& first, const tt_wxString& second)
+              {
+                  return first.CmpNoCase(second) < 0;
+              });
+    m_listbox->Clear();
+    for (auto& item: items)
+    {
+        m_listbox->Append(item);
+    }
+    m_listbox->SetSelection(0);
+    SetButtonsEnableState();
+}
+
+void IncludeFilesDialog::OnOK(wxCommandEvent& event)
+{
+    if (m_listbox->GetCount() > 0)
+    {
+        m_value.clear();
+        for (unsigned int i = 0; i < m_listbox->GetCount(); i++)
+        {
+            if (m_value.size())
+                m_value += ";";
+            m_value += m_listbox->GetString(i);
+        }
+    }
+
+    event.Skip();
+}

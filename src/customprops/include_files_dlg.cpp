@@ -205,8 +205,7 @@ void IncludeFilesDialog::OnAdd(wxCommandEvent& WXUNUSED(event))
         }
     }
 
-    wxFileDialog dialog(this, "Include Header File", path, wxEmptyString, "Header Files|*.;*.h;*.hh;*.hpp;*.hxx",
-                        wxFD_OPEN);
+    wxFileDialog dialog(this, "Include Header File", path, wxEmptyString, "Header Files|*.;*.h;*.hh;*.hpp;*.hxx", wxFD_OPEN);
     if (dialog.ShowModal() == wxID_OK)
     {
         tt_wxString filename = dialog.GetPath();

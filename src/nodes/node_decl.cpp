@@ -139,7 +139,7 @@ bool NodeDeclaration::isSubclassOf(GenName gen_name) const
     return false;
 }
 
-int_t NodeDeclaration::GetAllowableChildren(GenType child_gen_type) const
+ptrdiff_t NodeDeclaration::GetAllowableChildren(GenType child_gen_type) const
 {
     if (m_gen_name == gen_wxFrame)
     {

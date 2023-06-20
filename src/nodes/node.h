@@ -343,8 +343,8 @@ public:
     // If prop_name is != prop_var_name, only that property is collected.
     void CollectUniqueNames(std::unordered_set<std::string>& name_set, Node* cur_node, PropName prop_name = prop_var_name);
 
-    int_t FindInsertionPos(Node* child) const;
-    int_t FindInsertionPos(const NodeSharedPtr& child) const { return FindInsertionPos(child.get()); }
+    ptrdiff_t FindInsertionPos(Node* child) const;
+    ptrdiff_t FindInsertionPos(const NodeSharedPtr& child) const { return FindInsertionPos(child.get()); }
 
     // Currently only called in debug builds, but available for release builds should we need it
     size_t GetNodeSize() const;
@@ -354,7 +354,10 @@ public:
 
     void CalcNodeHash(size_t& hash) const;
 
-    int_t GetAllowableChildren(GenType child_gen_type) const { return m_declaration->GetAllowableChildren(child_gen_type); }
+    ptrdiff_t GetAllowableChildren(GenType child_gen_type) const
+    {
+        return m_declaration->GetAllowableChildren(child_gen_type);
+    }
 
     // Collect a vector of pointers to all children having the specified property with a
     // non-empty value.

@@ -10,9 +10,14 @@
 #include <wx/artprov.h>
 #include <wx/sizer.h>
 
+#include <wx/filedlg.h>
+#include <wx/tokenzr.h>
+
 #include "include_files_dlg.h"
 
-#include "project_handler.h"  // ProjectHandler class
+#include "node.h"
+#include "node_prop.h"
+#include "project_handler.h"
 
 bool IncludeFilesDialog::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     const wxPoint& pos, const wxSize& size, long style, const wxString &name)
@@ -89,16 +94,10 @@ bool IncludeFilesDialog::Create(wxWindow* parent, wxWindowID id, const wxString&
 // ***********************************************
 
 /////////////////////////////////////////////////////////////////////////////
-// Purpose:   Dialog for editing local and system include files
 // Author:    Ralph Walden
 // Copyright: Copyright (c) 2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
-
-#include <wx/filedlg.h>
-#include <wx/tokenzr.h>
-
-#include "node_prop.h"  // NodeProperty -- NodeProperty class
 
 void IncludeFilesDialog::Initialize(NodeProperty* prop)
 {

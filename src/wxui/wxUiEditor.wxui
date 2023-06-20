@@ -186,7 +186,7 @@
         class="wxFrame"
         class_name="MainFrameBase"
         base_file="mainframe_base"
-        base_src_includes="#include &quot;mainframe.h&quot;@@#include &quot;project_handler.h&quot;"
+        source_preamble="#include &quot;mainframe.h&quot;@@#include &quot;project_handler.h&quot;"
         derived_class_name="MainFrame"
         minimum_size="800,800"
         size="1000,1000"
@@ -890,8 +890,8 @@
         mockup_size="700,100"
         size="-1,-1"
         base_file="ribbonpanel_base"
-        base_src_includes="#include &quot;ribbon_ids.h&quot;@@#include &quot;gen_enums.h&quot;     // Enumerations for generators@@@@using namespace GenEnum;"
         generate_ids="0"
+        source_preamble="#include &quot;ribbon_ids.h&quot;@@#include &quot;gen_enums.h&quot;     // Enumerations for generators@@@@using namespace GenEnum;"
         derived_class_name="RibbonPanel">
         <node
           class="wxBoxSizer"
@@ -2757,6 +2757,8 @@
         title="Include Files"
         base_file="..\customprops\include_files_dlg.cpp"
         header_preamble="class NodeProperty;"
+        local_src_includes="node.h;node_prop.h;project_handler.h"
+        system_src_includes="wx/filedlg.h;wx/tokenzr.h"
         class_members="&quot;wxString m_value;&quot; &quot;NodeProperty* m_prop;&quot;"
         class_methods="&quot;void Initialize(NodeProperty* prop);&quot; &quot;const wxString&amp; GetResults() { return m_value; }&quot; &quot;void SetButtonsEnableState();&quot;"
         private_members="1"
@@ -3076,7 +3078,7 @@
       class_name="GridPropertyDlg"
       title="Property Editor"
       base_file="grid_property_dlg"
-      base_src_includes="// This is the base class for editing multiple-field properties"
+      source_preamble="// This is the base class for editing multiple-field properties"
       wxEVT_INIT_DIALOG="OnInit"
       wxEVT_UPDATE_UI="OnUpdateUI">
       <node
@@ -3431,8 +3433,8 @@
         class="PopupMenu"
         class_name="MenuAuiBar"
         base_file="menu_auibar_base"
-        base_src_includes="#include &quot;ribbon_ids.h&quot;@@#include &quot;gen_enums.h&quot;     // Enumerations for generators@@@@using namespace GenEnum;"
         generate_ids="0"
+        source_preamble="#include &quot;ribbon_ids.h&quot;@@#include &quot;gen_enums.h&quot;     // Enumerations for generators@@@@using namespace GenEnum;"
         use_derived_class="0">
         <node
           class="wxMenuItem"
@@ -3497,8 +3499,8 @@
         class="PopupMenu"
         class_name="MenuButton"
         base_file="menubutton_base"
-        base_src_includes="#include &quot;ribbon_ids.h&quot;@@#include &quot;gen_enums.h&quot;     // Enumerations for generators@@@@using namespace GenEnum;"
         generate_ids="0"
+        source_preamble="#include &quot;ribbon_ids.h&quot;@@#include &quot;gen_enums.h&quot;     // Enumerations for generators@@@@using namespace GenEnum;"
         derived_class_name="MenuButton">
         <node
           class="wxMenuItem"
@@ -3534,8 +3536,8 @@
         class="PopupMenu"
         class_name="MenuBarTools"
         base_file="menu_bartools_base"
-        base_src_includes="#include &quot;ribbon_ids.h&quot;@@#include &quot;gen_enums.h&quot;     // Enumerations for generators@@@@using namespace GenEnum;"
         generate_ids="0"
+        source_preamble="#include &quot;ribbon_ids.h&quot;@@#include &quot;gen_enums.h&quot;     // Enumerations for generators@@@@using namespace GenEnum;"
         use_derived_class="0">
         <node
           class="wxMenuItem"
@@ -3592,8 +3594,8 @@
         class="PopupMenu"
         class_name="MenuCheckbox"
         base_file="menucheckbox_base"
-        base_src_includes="#include &quot;ribbon_ids.h&quot;@@#include &quot;gen_enums.h&quot;     // Enumerations for generators@@@@using namespace GenEnum;"
         generate_ids="0"
+        source_preamble="#include &quot;ribbon_ids.h&quot;@@#include &quot;gen_enums.h&quot;     // Enumerations for generators@@@@using namespace GenEnum;"
         derived_class_name="MenuCheckbox">
         <node
           class="wxMenuItem"
@@ -3613,8 +3615,8 @@
         class="PopupMenu"
         class_name="MenuCombobox"
         base_file="menucombobox_base"
-        base_src_includes="#include &quot;ribbon_ids.h&quot;@@#include &quot;gen_enums.h&quot;     // Enumerations for generators@@@@using namespace GenEnum;"
         generate_ids="0"
+        source_preamble="#include &quot;ribbon_ids.h&quot;@@#include &quot;gen_enums.h&quot;     // Enumerations for generators@@@@using namespace GenEnum;"
         derived_class_name="MenuCombobox">
         <node
           class="wxMenuItem"
@@ -3638,8 +3640,8 @@
         class="PopupMenu"
         class_name="MenuDataCtrl"
         base_file="menudatactrl_base"
-        base_src_includes="#include &quot;ribbon_ids.h&quot;@@#include &quot;gen_enums.h&quot;     // Enumerations for generators@@@@using namespace GenEnum;"
         generate_ids="0"
+        source_preamble="#include &quot;ribbon_ids.h&quot;@@#include &quot;gen_enums.h&quot;     // Enumerations for generators@@@@using namespace GenEnum;"
         derived_class_name="MenuDataCtrl">
         <node
           class="wxMenuItem"
@@ -3663,8 +3665,8 @@
         class="PopupMenu"
         class_name="MenuListbox"
         base_file="menulistbox_base"
-        base_src_includes="#include &quot;ribbon_ids.h&quot;@@#include &quot;gen_enums.h&quot;     // Enumerations for generators@@@@using namespace GenEnum;"
         generate_ids="0"
+        source_preamble="#include &quot;ribbon_ids.h&quot;@@#include &quot;gen_enums.h&quot;     // Enumerations for generators@@@@using namespace GenEnum;"
         derived_class_name="MenuListbox">
         <node
           class="wxMenuItem"
@@ -3706,8 +3708,8 @@
         class="PopupMenu"
         class_name="MenuRibbonType"
         base_file="menuribbontype_base"
-        base_src_includes="#include &quot;ribbon_ids.h&quot;@@#include &quot;gen_enums.h&quot;     // Enumerations for generators@@@@using namespace GenEnum;"
         generate_ids="0"
+        source_preamble="#include &quot;ribbon_ids.h&quot;@@#include &quot;gen_enums.h&quot;     // Enumerations for generators@@@@using namespace GenEnum;"
         derived_class_name="MenuRibbonType">
         <node
           class="wxMenuItem"
@@ -3731,8 +3733,8 @@
         class="PopupMenu"
         class_name="MenuSpin"
         base_file="menuspin_base"
-        base_src_includes="#include &quot;ribbon_ids.h&quot;@@#include &quot;gen_enums.h&quot;     // Enumerations for generators@@@@using namespace GenEnum;"
         generate_ids="0"
+        source_preamble="#include &quot;ribbon_ids.h&quot;@@#include &quot;gen_enums.h&quot;     // Enumerations for generators@@@@using namespace GenEnum;"
         derived_class_name="MenuSpin">
         <node
           class="wxMenuItem"
@@ -3756,8 +3758,8 @@
         class="PopupMenu"
         class_name="MenuStaticSizer"
         base_file="menustaticsizer_base"
-        base_src_includes="#include &quot;ribbon_ids.h&quot;@@#include &quot;gen_enums.h&quot;     // Enumerations for generators@@@@using namespace GenEnum;"
         generate_ids="0"
+        source_preamble="#include &quot;ribbon_ids.h&quot;@@#include &quot;gen_enums.h&quot;     // Enumerations for generators@@@@using namespace GenEnum;"
         derived_class_name="MenuStaticSizer">
         <node
           class="wxMenuItem"

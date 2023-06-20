@@ -278,9 +278,9 @@ void BaseCodeGenerator::GenerateCppClass(Node* form_node, PANEL_PAGE panel_type)
 
         m_header->writeLine();
 
-        if (form_node->HasValue(prop_base_hdr_includes))
+        if (form_node->HasValue(prop_header_preamble))
         {
-            WritePropHdrCode(form_node, prop_base_hdr_includes);
+            WritePropHdrCode(form_node, prop_header_preamble);
         }
     }
 

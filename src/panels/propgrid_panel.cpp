@@ -1017,6 +1017,7 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
         case type_string_edit:
         case type_id:
         case type_int:
+        case type_include_files:
         case type_uint:
         case type_statbar_fields:
         case type_checklist_item:

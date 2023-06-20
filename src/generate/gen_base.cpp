@@ -406,17 +406,6 @@ void BaseCodeGenerator::GenerateCppClass(Node* form_node, PANEL_PAGE panel_type)
             }
         }
 
-        if (form_node->HasValue(prop_local_src_includes))
-        {
-            m_source->writeLine();
-            tt_view_vector list;
-            list.SetString(form_node->value(prop_local_src_includes));
-            for (auto& iter: list)
-            {
-                m_source->writeLine(tt_string("#include \"") << iter << '"');
-            }
-        }
-
         if (file.empty())
         {
             m_source->writeLine();
@@ -428,6 +417,17 @@ void BaseCodeGenerator::GenerateCppClass(Node* form_node, PANEL_PAGE panel_type)
             file.replace_extension(m_header_ext);
             m_source->writeLine();
             m_source->writeLine(tt_string() << "#include \"" << file.filename() << "\"");
+        }
+
+        if (form_node->HasValue(prop_local_src_includes))
+        {
+            m_source->writeLine();
+            tt_view_vector list;
+            list.SetString(form_node->value(prop_local_src_includes));
+            for (auto& iter: list)
+            {
+                m_source->writeLine(tt_string("#include \"") << iter << '"');
+            }
         }
 
         m_source->writeLine();

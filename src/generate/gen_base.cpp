@@ -282,6 +282,28 @@ void BaseCodeGenerator::GenerateCppClass(Node* form_node, PANEL_PAGE panel_type)
         {
             WritePropHdrCode(form_node, prop_header_preamble);
         }
+
+        if (form_node->HasValue(prop_system_hdr_includes))
+        {
+            m_header->writeLine();
+            tt_view_vector list;
+            list.SetString(form_node->value(prop_system_hdr_includes));
+            for (auto& iter: list)
+            {
+                m_header->writeLine(tt_string("#include <") << iter << '>');
+            }
+        }
+
+        if (form_node->HasValue(prop_local_hdr_includes))
+        {
+            m_header->writeLine();
+            tt_view_vector list;
+            list.SetString(form_node->value(prop_local_hdr_includes));
+            for (auto& iter: list)
+            {
+                m_header->writeLine(tt_string("#include \"") << iter << '"');
+            }
+        }
     }
 
     if (form_node->HasValue(prop_cpp_conditional) && m_TranslationUnit)

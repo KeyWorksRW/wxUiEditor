@@ -354,7 +354,10 @@ public:
 
     void CalcNodeHash(size_t& hash) const;
 
-    ptrdiff_t GetAllowableChildren(GenType child_gen_type) const { return m_declaration->GetAllowableChildren(child_gen_type); }
+    ptrdiff_t GetAllowableChildren(GenType child_gen_type) const
+    {
+        return m_declaration->GetAllowableChildren(child_gen_type);
+    }
 
     // Collect a vector of pointers to all children having the specified property with a
     // non-empty value.

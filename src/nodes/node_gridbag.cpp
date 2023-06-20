@@ -64,7 +64,7 @@ bool GridBag::InsertNode(Node* gbsizer, Node* new_node)
 
     if (dlg.GetAction() == GridBagItem::action_append)  // append the column
     {
-        int_t pos_append = 0;
+        ptrdiff_t pos_append = 0;
         int last_column = -1;
 
         // Both rows and columns can be in any random child position, so each node must be examined to find the last
@@ -77,7 +77,7 @@ bool GridBag::InsertNode(Node* gbsizer, Node* new_node)
                 {
                     if (gbsizer->GetChild(pos)->prop_as_int(prop_column) > last_column)
                     {
-                        pos_append = static_cast<int_t>(pos);
+                        pos_append = static_cast<ptrdiff_t>(pos);
                         last_column = gbsizer->GetChild(pos)->prop_as_int(prop_column);
                     }
                 }
@@ -86,7 +86,7 @@ bool GridBag::InsertNode(Node* gbsizer, Node* new_node)
 
         // We need to add this after the last column found.
         ++pos_append;
-        if (pos_append >= static_cast<int_t>(gbsizer->GetChildCount()))
+        if (pos_append >= static_cast<ptrdiff_t>(gbsizer->GetChildCount()))
             pos_append = -1;  // Append the child at the very end
 
         wxGetFrame().PushUndoAction(std::make_shared<AppendGridBagAction>(new_node, gbsizer, pos_append));

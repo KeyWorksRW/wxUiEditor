@@ -89,13 +89,6 @@
 #include "tt/tt_view_vector.h"    // tt_view_vector -- Class for reading and writing line-oriented strings/files
 #include "tt/tt_wxString.h"       // tt_wxString -- wxString with additional methods similar to tt_string
 
-#if !defined(int_t)
-
-// signed integer type, width determined by platform
-typedef ptrdiff_t int_t;
-
-#endif  // not !defined(int_t)
-
 enum class MoveDirection
 {
     Up = 1,

@@ -141,7 +141,7 @@ struct ParentChild
     GenType parent;
     GenType child;
 
-    int_t max_children;
+    ptrdiff_t max_children;
 };
 
 // A child node can only be created if it is listed below as valid for the current parent.

@@ -260,7 +260,7 @@ bool Node::IsChildAllowed(NodeDeclaration* child)
     // Because m_children contains shared_ptrs, we don't want to use an iteration loop which will get/release the shared
     // ptr. Using an index into the vector lets us access the raw pointer.
 
-    int_t children = 0;
+    ptrdiff_t children = 0;
     for (size_t i = 0; i < m_children.size() && children <= max_children; ++i)
     {
         if (GetChild(i)->gen_type() == child->gen_type())
@@ -1180,7 +1180,7 @@ void Node::CollectUniqueNames(std::unordered_set<std::string>& name_set, Node* c
     }
 }
 
-int_t Node::FindInsertionPos(Node* child) const
+ptrdiff_t Node::FindInsertionPos(Node* child) const
 {
     if (child)
     {

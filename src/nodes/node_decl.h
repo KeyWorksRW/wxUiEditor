@@ -84,7 +84,7 @@ public:
     const tt_string& GetGeneratorFlags() { return m_internal_flags; }
     void SetGeneratorFlags(std::string_view flags) { m_internal_flags = flags; }
 
-    int_t GetAllowableChildren(GenType child_gen_type) const;
+    ptrdiff_t GetAllowableChildren(GenType child_gen_type) const;
 
     void SetOverRideDefValue(GenEnum::PropName prop_name, std::string_view new_value)
     {

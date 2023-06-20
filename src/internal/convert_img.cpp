@@ -455,7 +455,7 @@ void ConvertImageDlg::ImgageInHeaderOut()
 
     tt_string_vector file;
 
-    file.addEmptyLine().Format("static const unsigned char %v[%zu] = {", string_name.filename(),
+    file.addEmptyLine().Format("static const unsigned char %s[%zu] = {", string_name.filename().as_str().c_str(),
                                read_stream->GetBufferSize());
 
     read_stream->Seek(0, wxFromStart);

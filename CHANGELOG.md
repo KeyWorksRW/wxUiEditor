@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
 ### Added
 
 - The C++ Settings in forms now have a `initial_enum_string` property that allows you to set the initial enumeration value to something other than the default "wxID_HIGHEST + 1".
+- The C++ Settings in forms now have properties for local and system header files to include in either the generated source or header files.
 - wxMenu and wxMenu items now have a stock_id property allowing you to choose from wxWidgets stock items.
 - You can now import DialogBlocks projects directly (instead of exporting an XRC) as long as the project was saved in XML format rather than binary format.
 - Added support for wxAUI_BUTTON_STATE flags when creating a wxAuiToolBar tool.
@@ -17,6 +18,7 @@ All notable changes to this project will be documented in this file.
 - wxFrame and the form version of wxPanel now also support 2-step construction.
 - Embedded image filenames can now contain characters that are invalid as part of a variable name.
 - Allow custom ids to have an assignment to a value as part of the id. In C++, the id will then be generated as a `static const int` instead of an enumerated value. In Python, this will be added verbatim after any auto-generated ids.
+- If you previously used either base_hdr_includes or base_src_includes properties, then when the project is loaded they will be automatically converted to header_preamble and source_preamble properties to better reflect what it's for, and to avoid confusion with the new local and system includes properties.
 
 ### Fixed
 

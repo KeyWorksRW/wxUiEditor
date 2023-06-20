@@ -278,9 +278,31 @@ void BaseCodeGenerator::GenerateCppClass(Node* form_node, PANEL_PAGE panel_type)
 
         m_header->writeLine();
 
-        if (form_node->HasValue(prop_base_hdr_includes))
+        if (form_node->HasValue(prop_header_preamble))
         {
-            WritePropHdrCode(form_node, prop_base_hdr_includes);
+            WritePropHdrCode(form_node, prop_header_preamble);
+        }
+
+        if (form_node->HasValue(prop_system_hdr_includes))
+        {
+            m_header->writeLine();
+            tt_view_vector list;
+            list.SetString(form_node->value(prop_system_hdr_includes));
+            for (auto& iter: list)
+            {
+                m_header->writeLine(tt_string("#include <") << iter << '>');
+            }
+        }
+
+        if (form_node->HasValue(prop_local_hdr_includes))
+        {
+            m_header->writeLine();
+            tt_view_vector list;
+            list.SetString(form_node->value(prop_local_hdr_includes));
+            for (auto& iter: list)
+            {
+                m_header->writeLine(tt_string("#include \"") << iter << '"');
+            }
         }
     }
 
@@ -368,9 +390,20 @@ void BaseCodeGenerator::GenerateCppClass(Node* form_node, PANEL_PAGE panel_type)
             WritePropSourceCode(Project.ProjectNode(), prop_src_preamble);
         }
 
-        if (form_node->HasValue(prop_base_src_includes))
+        if (form_node->HasValue(prop_source_preamble))
         {
-            WritePropSourceCode(form_node, prop_base_src_includes);
+            WritePropSourceCode(form_node, prop_source_preamble);
+        }
+
+        if (form_node->HasValue(prop_system_src_includes))
+        {
+            m_source->writeLine();
+            tt_view_vector list;
+            list.SetString(form_node->value(prop_system_src_includes));
+            for (auto& iter: list)
+            {
+                m_source->writeLine(tt_string("#include <") << iter << '>');
+            }
         }
 
         if (file.empty())
@@ -384,6 +417,17 @@ void BaseCodeGenerator::GenerateCppClass(Node* form_node, PANEL_PAGE panel_type)
             file.replace_extension(m_header_ext);
             m_source->writeLine();
             m_source->writeLine(tt_string() << "#include \"" << file.filename() << "\"");
+        }
+
+        if (form_node->HasValue(prop_local_src_includes))
+        {
+            m_source->writeLine();
+            tt_view_vector list;
+            list.SetString(form_node->value(prop_local_src_includes));
+            for (auto& iter: list)
+            {
+                m_source->writeLine(tt_string("#include \"") << iter << '"');
+            }
         }
 
         m_source->writeLine();

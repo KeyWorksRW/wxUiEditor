@@ -363,6 +363,21 @@ NodeSharedPtr NodeCreator::CreateNode(pugi::xml_node& xml_obj, Node* parent, boo
                     prop->set_value(iter.value());
                 }
             }
+            else  // property was not found
+            {
+                if (find_prop->second == prop_base_hdr_includes)
+                {
+                    new_node->set_value(prop_header_preamble, iter.value());
+                    Project.SetProjectUpdated();
+                    Project.ForceProjectVersion(curSupportedVer);
+                }
+                if (find_prop->second == prop_base_src_includes)
+                {
+                    new_node->set_value(prop_source_preamble, iter.value());
+                    Project.SetProjectUpdated();
+                    Project.ForceProjectVersion(curSupportedVer);
+                }
+            }
         }
         else
         {
@@ -423,13 +438,15 @@ NodeSharedPtr NodeCreator::CreateNode(pugi::xml_node& xml_obj, Node* parent, boo
                 {
                     MSG_WARNING(tt_string("Unrecognized property: ") << iter.name() << " in class: " << class_name);
 
+                    tt_string prop_name = iter.name();
+                    tt_string prop_value = iter.value();
                     wxMessageBox(tt_string().Format(
-                        "The property named \"%v\" of class \"%s\" is not supported by this version of wxUiEditor.\n\n"
+                        "The property named \"%s\" of class \"%s\" is not supported by this version of wxUiEditor.\n\n"
                         "If your project file was just converted from an older version, then the conversion was not "
                         "complete. Otherwise, this project is from a newer version of wxUiEditor.\n\n"
-                        "The property's value is: %v\n\n"
+                        "The property's value is: %s\n\n"
                         "If you save this project, YOU WILL LOSE DATA",
-                        iter.name(), class_name.c_str(), value));
+                        prop_name.c_str(), class_name.c_str(), prop_value.c_str()));
                 }
             }
         }

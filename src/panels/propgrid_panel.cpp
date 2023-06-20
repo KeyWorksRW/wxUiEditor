@@ -45,15 +45,16 @@
 #include "../customprops/custom_param_prop.h"   // EditParamProperty -- dialog for editing CustomControl parameter
 #include "../customprops/directory_prop.h"      // DirectoryDialogAdapter
 #include "../customprops/evt_string_prop.h"     // EventStringProperty -- dialog for editing event handlers
-#include "../customprops/font_string_prop.h"  // FontStringDialogAdapter -- Derived wxStringProperty class for font property
-#include "../customprops/html_string_prop.h"  // EditHtmlDialogAdapter -- Derived wxStringProperty class for HTML
-#include "../customprops/id_prop.h"           // ID_Property -- Uses IDEditorDlg to edit a custom ID
-#include "../customprops/pg_animation.h"      // PropertyGrid_Animation -- Custom property grid class for animations
-#include "../customprops/pg_image.h"          // PropertyGrid_Image -- Custom property grid class for images
-#include "../customprops/pg_point.h"          // CustomPointProperty -- custom wxPGProperty for handling wxPoint
-#include "../customprops/rearrange_prop.h"    // RearrangeProperty -- Property editor for rearranging items
-#include "../customprops/sb_fields_prop.h"    // SBarFieldsProperty -- Property editor for status bar fields
-#include "../customprops/txt_string_prop.h"   // EditStringProperty -- dialog for editing single-line strings
+#include "../customprops/font_string_prop.h"    // FontStringProperty
+#include "../customprops/html_string_prop.h"    // EditHtmlProperty
+#include "../customprops/id_prop.h"             // ID_Property
+#include "../customprops/include_files_prop.h"  // IncludeFilesProperty
+#include "../customprops/pg_animation.h"        // PropertyGrid_Animation -- Custom property grid class for animations
+#include "../customprops/pg_image.h"            // PropertyGrid_Image -- Custom property grid class for images
+#include "../customprops/pg_point.h"            // CustomPointProperty -- custom wxPGProperty for handling wxPoint
+#include "../customprops/rearrange_prop.h"      // RearrangeProperty -- Property editor for rearranging items
+#include "../customprops/sb_fields_prop.h"      // SBarFieldsProperty -- Property editor for status bar fields
+#include "../customprops/txt_string_prop.h"     // EditStringProperty -- dialog for editing single-line strings
 
 #include "id_lists.h"  // wxID_ strings
 
@@ -317,6 +318,10 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
         case type_html_edit:
             // This includes a button that triggers a small single-line custom text editor dialog
             return new EditHtmlProperty(prop->DeclName().make_wxString(), prop);
+
+        case type_include_files:
+            // This includes a button that triggers a custom dialog
+            return new IncludeFilesProperty(prop->DeclName().make_wxString(), prop);
 
         case type_bool:
             return new wxBoolProperty(prop->DeclName().make_wxString(), wxPG_LABEL, prop->as_string() == "1");
@@ -1012,6 +1017,7 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
         case type_string_edit:
         case type_id:
         case type_int:
+        case type_include_files:
         case type_uint:
         case type_statbar_fields:
         case type_checklist_item:

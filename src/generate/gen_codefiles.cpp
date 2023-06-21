@@ -525,7 +525,7 @@ void GenerateTmpFiles(const std::vector<tt_string>& ClassList, pugi::xml_node ro
             {
                 if (language != GEN_LANG_CPLUSPLUS)
                     continue;
-                class_name = "Images";
+                class_name = "Images List";
             }
 
             if (class_name.is_sameas(iter_class))
@@ -648,23 +648,32 @@ void GenerateTmpFiles(const std::vector<tt_string>& ClassList, pugi::xml_node ro
                         tmp_path.replace_extension(header_ext);
                         h_cw->WriteFile(language, flag_no_ui);
                         path.replace_extension(header_ext);
+
+                        // Use absolute path and leave the backslashes alone because WinMerge
+                        // doesn't understand forward slashes (even though Windows does).
+                        path.make_absolute();
                         paths.append_child("left").text().set(path.c_str());
                         paths.append_child("left-readonly").text().set("0");
 
+                        tmp_path.make_absolute();
                         paths.append_child("right").text().set(tmp_path.c_str());
                         paths.append_child("right-readonly").text().set("1");
                     }
-                    if (new_src && form->as_bool(prop_generate_translation_unit))
+                    if (new_src && (form->as_bool(prop_generate_translation_unit) || form->isGen(gen_Images)))
                     {
                         auto paths = root.append_child("paths");
                         tmp_path.replace_extension(source_ext);
                         cpp_cw->WriteFile(language, flag_no_ui);
                         path.replace_extension(source_ext);
-                        path.make_relative(Project.ProjectPath().utf8_string());
+
+                        // Use absolute path and leave the backslashes alone because WinMerge
+                        // doesn't understand forward slashes (even though Windows does).
+                        path.make_absolute();
                         paths.append_child("left").text().set(path.c_str());
                         paths.append_child("left-readonly").text().set("0");
 
                         tmp_path.make_relative(Project.ProjectPath().utf8_string());
+                        tmp_path.make_absolute();
                         paths.append_child("right").text().set(tmp_path.c_str());
                         paths.append_child("right-readonly").text().set("1");
                     }

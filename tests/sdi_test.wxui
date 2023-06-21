@@ -1727,7 +1727,7 @@
         style="wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER"
         title="Common controls"
         base_file="commonctrls"
-        base_hdr_includes="#include &quot;popupwin.h&quot;  // PopupWin -- Popup Window"
+        local_hdr_includes="popupwin.h"
         derived_class_name="CommonCtrls"
         derived_file="../ui/commonctrls"
         inserted_hdr_code="public:@@    ~CommonCtrls();@@@@private:@@    PopupWin* m_popup_win { nullptr };"

@@ -36,7 +36,7 @@ namespace wxue_ctrl
 class SplitButton;
 }
 
-#include "popupwin.h"  // PopupWin -- Popup Window
+#include "popupwin.h"
 
 class CommonCtrls : public wxDialog
 {

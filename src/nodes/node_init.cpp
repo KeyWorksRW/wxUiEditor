@@ -741,11 +741,11 @@ void NodeCreator::ParseProperties(pugi::xml_node& elem_obj, NodeDeclaration* obj
 
             opts.emplace_back();
             opts[opts.size() - 1].name = "none";
-            opts[opts.size() - 1].help = "Inherited classes do not have access to this item.";
+            opts[opts.size() - 1].help = "Derived classes do not have access to this item.";
 
             opts.emplace_back();
             opts[opts.size() - 1].name = "protected:";
-            opts[opts.size() - 1].help = "Inherited classes can access this item. In Python, item will have a self. prefix.";
+            opts[opts.size() - 1].help = "Derived classes can access this item. In Python, item will have a self. prefix.";
 
             opts.emplace_back();
             opts[opts.size() - 1].name = "public:";

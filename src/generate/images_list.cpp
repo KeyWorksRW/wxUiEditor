@@ -156,9 +156,6 @@ void BaseCodeGenerator::GenerateImagesForm()
 
     if (m_panel_type != HDR_PANEL)
     {
-        tt_string hdr_file(m_form_node->value(prop_base_file));
-        hdr_file.replace_extension(m_header_ext);
-        m_source->writeLine(tt_string("#include ") << '"' << hdr_file << '"');
         m_source->writeLine("\n#include <wx/mstream.h>  // memory stream classes", indent::none);
 
         if (m_NeedSVGFunction)

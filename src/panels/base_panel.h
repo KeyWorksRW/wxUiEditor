@@ -35,8 +35,8 @@ protected:
 private:
     CodeDisplay* m_cppPanel;
     CodeDisplay* m_hPanel;
-    CodeDisplay* m_inherit_src_panel { nullptr };
-    CodeDisplay* m_inherit_hdr_panel { nullptr };
+    CodeDisplay* m_derived_src_panel { nullptr };
+    CodeDisplay* m_derived_hdr_panel { nullptr };
     wxAuiNotebook* m_notebook;
     Node* m_cur_form { nullptr };
 

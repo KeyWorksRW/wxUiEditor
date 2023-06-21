@@ -53,11 +53,11 @@ BasePanel::BasePanel(wxWindow* parent, MainFrame* frame, int panel_type) : wxPan
         m_hPanel = new CodeDisplay(m_notebook, panel_type);
         m_notebook->AddPage(m_hPanel, "header", false, wxWithImages::NO_IMAGE);
 
-        m_inherit_src_panel = new CodeDisplay(m_notebook, panel_type);
-        m_notebook->AddPage(m_inherit_src_panel, "inherit_src", false, wxWithImages::NO_IMAGE);
+        m_derived_src_panel = new CodeDisplay(m_notebook, panel_type);
+        m_notebook->AddPage(m_derived_src_panel, "derived_src", false, wxWithImages::NO_IMAGE);
 
-        m_inherit_hdr_panel = new CodeDisplay(m_notebook, panel_type);
-        m_notebook->AddPage(m_inherit_hdr_panel, "inherit_hdr", false, wxWithImages::NO_IMAGE);
+        m_derived_hdr_panel = new CodeDisplay(m_notebook, panel_type);
+        m_notebook->AddPage(m_derived_hdr_panel, "derived_hdr", false, wxWithImages::NO_IMAGE);
     }
     else if (m_panel_type == GEN_LANG_PYTHON)
     {
@@ -164,17 +164,17 @@ void BasePanel::OnFind(wxFindDialogEvent& event)
     {
         m_cppPanel->GetEventHandler()->ProcessEvent(event);
     }
-    else if (text == "inherit_src")
+    else if (text == "derived_src")
     {
-        m_inherit_src_panel->GetEventHandler()->ProcessEvent(event);
+        m_derived_src_panel->GetEventHandler()->ProcessEvent(event);
     }
     else if (text == "header" || text == "inherit" || text == "info")
     {
         m_hPanel->GetEventHandler()->ProcessEvent(event);
     }
-    else if (text == "inherit_hdr")
+    else if (text == "derived_hdr")
     {
-        m_inherit_hdr_panel->GetEventHandler()->ProcessEvent(event);
+        m_derived_hdr_panel->GetEventHandler()->ProcessEvent(event);
     }
 }
 
@@ -200,10 +200,10 @@ void BasePanel::GenerateBaseClass()
         {
             m_cppPanel->Clear();
             m_hPanel->Clear();
-            if (m_inherit_src_panel)
-                m_inherit_src_panel->Clear();
-            if (m_inherit_hdr_panel)
-                m_inherit_hdr_panel->Clear();
+            if (m_derived_src_panel)
+                m_derived_src_panel->Clear();
+            if (m_derived_hdr_panel)
+                m_derived_hdr_panel->Clear();
             return;
         }
     }
@@ -213,7 +213,7 @@ void BasePanel::GenerateBaseClass()
     PANEL_PAGE panel_page = CPP_PANEL;
     if (auto page = m_notebook->GetCurrentPage(); page)
     {
-        if (page == m_hPanel || page == m_inherit_hdr_panel)
+        if (page == m_hPanel || page == m_derived_hdr_panel)
         {
             panel_page = HDR_PANEL;
         }
@@ -232,10 +232,10 @@ void BasePanel::GenerateBaseClass()
         case GEN_LANG_CPLUSPLUS:
             codegen.GenerateCppClass(m_cur_form, panel_page);
 
-            m_inherit_src_panel->Clear();
-            codegen.SetSrcWriteCode(m_inherit_src_panel);
-            m_inherit_hdr_panel->Clear();
-            codegen.SetHdrWriteCode(m_inherit_hdr_panel);
+            m_derived_src_panel->Clear();
+            codegen.SetSrcWriteCode(m_derived_src_panel);
+            m_derived_hdr_panel->Clear();
+            codegen.SetHdrWriteCode(m_derived_hdr_panel);
 
             codegen.GenerateDerivedClass(Project.ProjectNode(), m_cur_form, panel_page);
             break;
@@ -259,8 +259,8 @@ void BasePanel::GenerateBaseClass()
         m_cppPanel->OnNodeSelected(wxGetFrame().GetSelectedNode());
         if (m_panel_type == GEN_LANG_CPLUSPLUS)
         {
-            m_inherit_src_panel->CodeGenerationComplete();
-            m_inherit_src_panel->OnNodeSelected(wxGetFrame().GetSelectedNode());
+            m_derived_src_panel->CodeGenerationComplete();
+            m_derived_src_panel->OnNodeSelected(wxGetFrame().GetSelectedNode());
         }
     }
     else
@@ -268,7 +268,7 @@ void BasePanel::GenerateBaseClass()
         m_hPanel->CodeGenerationComplete();
         if (m_panel_type == GEN_LANG_CPLUSPLUS)
         {
-            m_inherit_hdr_panel->CodeGenerationComplete();
+            m_derived_hdr_panel->CodeGenerationComplete();
         }
     }
 }

@@ -127,7 +127,7 @@ void BaseCodeGenerator::GenerateCppClass(Node* form_node, PANEL_PAGE panel_type)
 
     m_form_node = form_node;
     m_ImagesForm = nullptr;
-    m_TranslationUnit = form_node->as_bool(prop_generate_translation_unit);
+    m_TranslationUnit = (form_node->as_bool(prop_generate_translation_unit) || form_node->isGen(gen_Images));
 
     for (const auto& form: Project.ChildNodePtrs())
     {

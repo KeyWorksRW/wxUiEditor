@@ -9,8 +9,6 @@
 
 #include "ui_images.h"
 
-#include "ui_images.h"
-
 #include <wx/mstream.h>  // memory stream classes
 #include <wx/zstream.h>  // zlib stream classes
 

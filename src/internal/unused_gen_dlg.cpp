@@ -168,8 +168,4 @@ void UnusedGenerators::OnSave(wxCommandEvent& WXUNUSED(event))
     {
         wxMessageBox(wxString("Cannot create or write to the file ") << filename, "Save unused");
     }
-    else
-    {
-        wxLogStatus(this, "Contents saved to: %s", filename.c_str());
-    }
 }

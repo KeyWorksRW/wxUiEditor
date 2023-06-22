@@ -9,10 +9,15 @@
 
 #include <wx/button.h>
 #include <wx/sizer.h>
-#include <wx/statbox.h>
+#include <wx/stattext.h>
 #include <wx/valgen.h>
 
 #include "node_search_dlg.h"
+
+#include "node.h"
+#include "mainframe.h"
+#include "../panels/nav_panel.h"
+#include "project_handler.h"
 
 bool NodeSearchDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     const wxPoint& pos, const wxSize& size, long style, const wxString &name)
@@ -22,66 +27,51 @@ bool NodeSearchDlg::Create(wxWindow* parent, wxWindowID id, const wxString& titl
 
     auto* dlg_sizer = new wxBoxSizer(wxVERTICAL);
 
-    auto* box_sizer_2 = new wxBoxSizer(wxHORIZONTAL);
-    box_sizer_2->SetMinSize(250, 400);
+    auto* box_sizer_3 = new wxBoxSizer(wxHORIZONTAL);
+    box_sizer_3->SetMinSize(250, -1);
 
-    auto* box_sizer = new wxBoxSizer(wxVERTICAL);
+    m_radioBtn = new wxRadioButton(this, wxID_ANY, "&Generators", wxDefaultPosition, wxDefaultSize, wxRB_GROUP);
+    m_radioBtn->SetValue(true);
+    m_radioBtn->SetValidator(wxGenericValidator(&m_search_generators));
+    box_sizer_3->Add(m_radioBtn, wxSizerFlags().Border(wxALL));
 
-    m_radio_generators = new wxRadioButton(this, wxID_ANY, "Search generators");
-    m_radio_generators->SetValidator(wxGenericValidator(&m_search_generators));
-    auto* static_box = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, m_radio_generators), wxVERTICAL);
+    m_radio_variables = new wxRadioButton(this, wxID_ANY, "&Variables");
+    m_radio_variables->SetValidator(wxGenericValidator(&m_search_varnames));
+    box_sizer_3->Add(m_radio_variables, wxSizerFlags().Border(wxALL));
 
-    m_combo_generators = new wxComboBox(static_box->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition,
-        wxDefaultSize, 0, nullptr, wxCB_SORT);
-    m_combo_generators->SetFocus();
-    m_combo_generators->SetValidator(wxGenericValidator(&m_gen_name));
-    m_combo_generators->SetMinSize(ConvertDialogToPixels(wxSize(100, -1)));
-    static_box->Add(m_combo_generators, wxSizerFlags().Border(wxALL));
+    m_radioBtn_3 = new wxRadioButton(this, wxID_ANY, "&Labels");
+    m_radioBtn_3->SetValidator(wxGenericValidator(&m_search_labels));
+    box_sizer_3->Add(m_radioBtn_3, wxSizerFlags().Border(wxALL));
 
-    box_sizer->Add(static_box, wxSizerFlags().Expand().Border(wxALL));
+    dlg_sizer->Add(box_sizer_3, wxSizerFlags().Expand().Border(wxALL));
 
-    m_radio_var_names = new wxRadioButton(this, wxID_ANY, "Search var_names");
-    m_radio_var_names->SetValidator(wxGenericValidator(&m_search_varnames));
-    auto* static_box_2 = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, m_radio_var_names), wxVERTICAL);
+    auto* box_sizer_4 = new wxBoxSizer(wxHORIZONTAL);
+    box_sizer_4->SetMinSize(250, -1);
 
-    m_combo_variables = new wxComboBox(static_box_2->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition,
-        wxDefaultSize, 0, nullptr, wxCB_SORT);
-    m_combo_variables->SetValidator(wxGenericValidator(&m_var_name));
-    m_combo_variables->SetMinSize(ConvertDialogToPixels(wxSize(100, -1)));
-    static_box_2->Add(m_combo_variables, wxSizerFlags().Border(wxALL));
+    auto* box_sizer_5 = new wxBoxSizer(wxVERTICAL);
 
-    box_sizer->Add(static_box_2, wxSizerFlags().Expand().Border(wxALL));
+    auto* staticText = new wxStaticText(this, wxID_ANY, "&Located:");
+    box_sizer_5->Add(staticText, wxSizerFlags().Border(wxLEFT|wxRIGHT|wxTOP, wxSizerFlags::GetDefaultBorder()));
 
-    m_radio_labels = new wxRadioButton(this, wxID_ANY, "Search labels");
-    m_radio_labels->SetValidator(wxGenericValidator(&m_search_labels));
-    auto* static_box_3 = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, m_radio_labels), wxVERTICAL);
+    m_listbox = new wxListBox(this, wxID_ANY);
+    m_listbox->SetMinSize(ConvertDialogToPixels(wxSize(100, 100)));
+    box_sizer_5->Add(m_listbox, wxSizerFlags().Expand().Border(wxALL));
 
-    m_combo_labels = new wxComboBox(static_box_3->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition,
-        wxDefaultSize, 0, nullptr, wxCB_SORT);
-    m_combo_labels->SetValidator(wxGenericValidator(&m_label_name));
-    m_combo_labels->SetMinSize(ConvertDialogToPixels(wxSize(100, -1)));
-    m_combo_labels->SetMaxSize(ConvertDialogToPixels(wxSize(100, -1)));
-    static_box_3->Add(m_combo_labels, wxSizerFlags().Border(wxALL));
+    box_sizer_4->Add(box_sizer_5, wxSizerFlags(1).Expand().Border(wxALL));
 
-    box_sizer->Add(static_box_3, wxSizerFlags().Expand().Border(wxALL));
+    auto* box_sizer_6 = new wxBoxSizer(wxVERTICAL);
 
-    box_sizer_2->Add(box_sizer, wxSizerFlags().Expand().Border(wxALL));
+    auto* staticText_2 = new wxStaticText(this, wxID_ANY, "&Forms:");
+    box_sizer_6->Add(staticText_2, wxSizerFlags().Border(wxLEFT|wxRIGHT|wxTOP, wxSizerFlags::GetDefaultBorder()));
 
-    m_scintilla = new wxStyledTextCtrl(this);
-    {
-        m_scintilla->SetLexer(wxSTC_LEX_CPP);
-        m_scintilla->SetEOLMode(wxSTC_EOL_LF);
-        // Sets text margin scaled appropriately for the current DPI on Windows,
-        // 5 on wxGTK or wxOSX
-        m_scintilla->SetMarginLeft(wxSizerFlags::GetDefaultBorder());
-        m_scintilla->SetMarginRight(wxSizerFlags::GetDefaultBorder());
-        m_scintilla->SetMarginWidth(1, 0); // Remove default margin
-        m_scintilla->SetBackSpaceUnIndents(true);
-    }
-    m_scintilla->SetMinSize(ConvertDialogToPixels(wxSize(120, -1)));
-    box_sizer_2->Add(m_scintilla, wxSizerFlags(1).Expand().Border(wxALL));
+    m_listbox_forms = new wxListBox(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, nullptr, wxLB_SINGLE|wxLB_SORT);
+    m_listbox_forms->SetMinSize(ConvertDialogToPixels(wxSize(-1, 100)));
+    box_sizer_6->Add(m_listbox_forms, wxSizerFlags().Expand().Border(wxALL));
 
-    dlg_sizer->Add(box_sizer_2, wxSizerFlags(1).Expand().Border(wxALL));
+    box_sizer_4->Add(box_sizer_6, wxSizerFlags(1).Expand().Border(wxALL));
+
+    dlg_sizer->Add(box_sizer_4,
+    wxSizerFlags().Expand().Border(wxLEFT|wxRIGHT|wxBOTTOM, wxSizerFlags::GetDefaultBorder()));
 
     auto* stdBtn = CreateStdDialogButtonSizer(wxOK|wxCANCEL);
     dlg_sizer->Add(CreateSeparatedSizer(stdBtn), wxSizerFlags().Expand().Border(wxALL));
@@ -90,10 +80,12 @@ bool NodeSearchDlg::Create(wxWindow* parent, wxWindowID id, const wxString& titl
     Centre(wxBOTH);
 
     // Event handlers
+    Bind(wxEVT_BUTTON, &NodeSearchDlg::OnOK, this, wxID_OK);
     Bind(wxEVT_INIT_DIALOG, &NodeSearchDlg::OnInit, this);
-    m_radio_generators->Bind(wxEVT_RADIOBUTTON, &NodeSearchDlg::OnRadioSearchGenerators, this);
-    m_radio_var_names->Bind(wxEVT_RADIOBUTTON, &NodeSearchDlg::OnRadioSearchVarNames, this);
-    m_radio_labels->Bind(wxEVT_RADIOBUTTON, &NodeSearchDlg::OnRadioSearchLabels, this);
+    m_listbox->Bind(wxEVT_LISTBOX, &NodeSearchDlg::OnSelectLocated, this);
+    m_radioBtn->Bind(wxEVT_RADIOBUTTON, &NodeSearchDlg::OnGenerators, this);
+    m_radio_variables->Bind(wxEVT_RADIOBUTTON, &NodeSearchDlg::OnVariables, this);
+    m_radioBtn_3->Bind(wxEVT_RADIOBUTTON, &NodeSearchDlg::OnLabels, this);
 
     return true;
 }
@@ -108,19 +100,32 @@ bool NodeSearchDlg::Create(wxWindow* parent, wxWindowID id, const wxString& titl
 // ***********************************************
 
 /////////////////// Non-generated Copyright/License Info ////////////////////
-// Purpose:   Dialog to search for a node
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2022-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#if defined(INTERNAL_TESTING)
+Node* FindNodeByClassName(Node* node_start, const std::string& classname)
+{
+    for (const auto& child_form: node_start->GetChildNodePtrs())
+    {
+        if (child_form->isGen(gen_Images))
+            continue;
 
-    #include <set>  // std::set
+        if (child_form->HasValue(prop_class_name) && child_form->as_string(prop_class_name) == classname)
+            return child_form.get();
 
-    #include "mainframe.h"         // MainFrame -- Main window frame
-    #include "node.h"              // Node class
-    #include "panels/nav_panel.h"  // NavigationPanel -- Node tree class
+        if (child_form->isGen(gen_folder) || child_form->isGen(gen_sub_folder))
+        {
+            if (auto result = FindNodeByClassName(child_form.get(), classname); result)
+            {
+                return result;
+            }
+        }
+    }
+
+    return nullptr;
+}
 
 Node* FindNodeByGenerator(Node* node, GenEnum::GenName gen_name)
 {
@@ -172,11 +177,9 @@ void MainFrame::OnFindWidget(wxCommandEvent& WXUNUSED(event))
     NodeSearchDlg dlg(this);
     if (dlg.ShowModal() == wxID_OK)
     {
-        auto start_node = GetSelectedNode();
-        if (dlg.isSearchGenerators() && start_node)
+        if (dlg.isSearchGenerators())
         {
-            auto gen = rmap_GenNames[dlg.get_GenName().ToStdString()];
-            auto node = FindNodeByGenerator(start_node, gen);
+            auto* node = FindNodeByGenerator(dlg.GetForm(), rmap_GenNames[dlg.GetName()]);
             if (node)
             {
                 SelectNode(node);
@@ -184,13 +187,12 @@ void MainFrame::OnFindWidget(wxCommandEvent& WXUNUSED(event))
             }
             else
             {
-                wxMessageBox(wxString() << "Unable to find " << dlg.get_GenName());
+                wxMessageBox(wxString() << "Unable to find " << dlg.GetName());
             }
         }
-        else if (dlg.isSearchVarnames() && start_node)
+        else if (dlg.isSearchVarnames())
         {
-            auto var_name = dlg.get_VarName().ToStdString();
-            auto node = FindNodeByVarName(start_node, var_name);
+            auto* node = FindNodeByVarName(dlg.GetForm(), dlg.GetName());
             if (node)
             {
                 SelectNode(node);
@@ -198,13 +200,12 @@ void MainFrame::OnFindWidget(wxCommandEvent& WXUNUSED(event))
             }
             else
             {
-                wxMessageBox(wxString() << "Unable to find " << dlg.get_VarName());
+                wxMessageBox(wxString() << "Unable to find " << dlg.GetName());
             }
         }
-        else if (dlg.isSearchLabels() && start_node)
+        else if (dlg.isSearchLabels())
         {
-            auto label_name = dlg.get_Label().ToStdString();
-            auto node = FindNodeByLabel(start_node, label_name);
+            auto node = FindNodeByLabel(dlg.GetForm(), dlg.GetName());
             if (node)
             {
                 SelectNode(node);
@@ -212,7 +213,7 @@ void MainFrame::OnFindWidget(wxCommandEvent& WXUNUSED(event))
             }
             else
             {
-                wxMessageBox(wxString() << "Unable to find " << dlg.get_Label());
+                wxMessageBox(wxString() << "Unable to find " << dlg.GetName());
             }
         }
         else
@@ -222,92 +223,269 @@ void MainFrame::OnFindWidget(wxCommandEvent& WXUNUSED(event))
     }
 }
 
-void PopulateGenerators(Node* node, std::set<std::string>& set_generators)
+void NodeSearchDlg::FindGenerators(Node* node)
 {
+    if (node->isGen(gen_Images))
+        return;
+
+    if (!node->isGen(gen_folder) && !node->isGen(gen_sub_folder) && !node->isGen(gen_Images))
+    {
+        if (!m_map_found.contains(map_GenNames[node->gen_name()]))
+        {
+            std::set<Node*> list;
+            if (!node->IsForm())
+            {
+                list.emplace(node->get_form());
+            }
+            else
+            {
+                auto* parent = node->GetParent();
+                if (parent->isGen(gen_folder) || parent->isGen(gen_sub_folder))
+                {
+                    list.emplace(node->get_form());
+                }
+                else
+                {
+                    list.emplace(Project.ProjectNode());
+                }
+            }
+            m_map_found[map_GenNames[node->gen_name()]] = list;
+        }
+        else if (!node->IsForm())
+        {
+            auto& list = m_map_found.at(map_GenNames[node->gen_name()]);
+            list.emplace(node->IsForm() ? node->GetParent() : node->get_form());
+        }
+    }
+
     if (node->GetChildCount())
     {
         for (auto& child: node->GetChildNodePtrs())
         {
-            PopulateGenerators(child.get(), set_generators);
+            FindGenerators(child.get());
         }
     }
-    set_generators.insert(map_GenNames[node->gen_name()]);
 }
 
-void PopulateVarNames(Node* node, wxComboBox* combo)
+void NodeSearchDlg::FindVariables(Node* node)
 {
+    if (node->isGen(gen_Images))
+        return;
+
+    if (node->HasProp(prop_var_name) && node->HasValue(prop_var_name) && !node->isGen(gen_folder) &&
+        !node->isGen(gen_sub_folder) && !node->isGen(gen_Images))
+    {
+        if (!m_map_found.contains(node->value(prop_var_name)))
+        {
+            std::set<Node*> form_list;
+            if (!node->IsForm())
+            {
+                form_list.emplace(node->get_form());
+            }
+            else
+            {
+                auto* parent = node->GetParent();
+                if (parent->isGen(gen_folder) || parent->isGen(gen_sub_folder))
+                {
+                    form_list.emplace(node->get_form());
+                }
+                else
+                {
+                    form_list.emplace(Project.ProjectNode());
+                }
+            }
+            m_map_found[node->value(prop_var_name)] = form_list;
+        }
+        else if (!node->IsForm())
+        {
+            auto& form_list = m_map_found.at(node->value(prop_var_name));
+            form_list.emplace(node->IsForm() ? node->GetParent() : node->get_form());
+        }
+    }
+
     if (node->GetChildCount())
     {
         for (auto& child: node->GetChildNodePtrs())
         {
-            PopulateVarNames(child.get(), combo);
-        }
-    }
-    else
-    {
-        if (node->HasValue(prop_var_name))
-        {
-            combo->Append(node->prop_as_wxString(prop_var_name));
+            FindVariables(child.get());
         }
     }
 }
 
-void PopulateLabels(Node* node, wxComboBox* combo)
+void NodeSearchDlg::FindLabels(Node* node)
 {
+    if (node->isGen(gen_Images))
+        return;
+
+    if (node->HasProp(prop_label) && node->HasValue(prop_label) && !node->isGen(gen_folder) &&
+        !node->isGen(gen_sub_folder) && !node->isGen(gen_Images))
+    {
+        if (!m_map_found.contains(node->value(prop_label)))
+        {
+            std::set<Node*> form_list;
+            if (!node->IsForm())
+            {
+                form_list.emplace(node->get_form());
+            }
+            else
+            {
+                auto* parent = node->GetParent();
+                if (parent->isGen(gen_folder) || parent->isGen(gen_sub_folder))
+                {
+                    form_list.emplace(node->get_form());
+                }
+                else
+                {
+                    form_list.emplace(Project.ProjectNode());
+                }
+            }
+            m_map_found[node->value(prop_label)] = form_list;
+        }
+        else if (!node->IsForm())
+        {
+            auto& form_list = m_map_found.at(node->value(prop_label));
+            form_list.emplace(node->IsForm() ? node->GetParent() : node->get_form());
+        }
+    }
+
     if (node->GetChildCount())
     {
         for (auto& child: node->GetChildNodePtrs())
         {
-            PopulateLabels(child.get(), combo);
+            FindLabels(child.get());
         }
     }
-    else
+}
+
+void NodeSearchDlg::OnGenerators(wxCommandEvent& WXUNUSED(event))
+{
+    m_map_found.clear();
+    m_listbox->Clear();
+    m_listbox_forms->Clear();
+
+    if (auto cur_sel = wxGetFrame().GetSelectedNode(); cur_sel)
     {
-        if (node->HasValue(prop_label))
+        if (cur_sel->isGen(gen_Project) || cur_sel->isGen(gen_folder) || cur_sel->isGen(gen_sub_folder))
         {
-            combo->Append(node->prop_as_wxString(prop_label));
+            for (auto& child: cur_sel->GetChildNodePtrs())
+            {
+                FindGenerators(child.get());
+            }
+        }
+        else
+        {
+            FindGenerators(wxGetFrame().GetSelectedNode());
+        }
+        for (auto& iter: m_map_found)
+        {
+            m_listbox->Append(iter.first);
+        }
+    }
+}
+
+void NodeSearchDlg::OnVariables(wxCommandEvent& WXUNUSED(event))
+{
+    m_map_found.clear();
+    m_listbox->Clear();
+    m_listbox_forms->Clear();
+
+    if (auto cur_sel = wxGetFrame().GetSelectedNode(); cur_sel)
+    {
+        if (cur_sel->isGen(gen_Project) || cur_sel->isGen(gen_folder) || cur_sel->isGen(gen_sub_folder))
+        {
+            for (auto& child: cur_sel->GetChildNodePtrs())
+            {
+                FindVariables(child.get());
+            }
+        }
+        else
+        {
+            FindVariables(wxGetFrame().GetSelectedNode());
+        }
+        for (auto& iter: m_map_found)
+        {
+            m_listbox->Append(iter.first);
+        }
+    }
+}
+
+void NodeSearchDlg::OnLabels(wxCommandEvent& WXUNUSED(event))
+{
+    m_map_found.clear();
+    m_listbox->Clear();
+    m_listbox_forms->Clear();
+
+    if (auto cur_sel = wxGetFrame().GetSelectedNode(); cur_sel)
+    {
+        if (cur_sel->isGen(gen_Project) || cur_sel->isGen(gen_folder) || cur_sel->isGen(gen_sub_folder))
+        {
+            for (auto& child: cur_sel->GetChildNodePtrs())
+            {
+                FindLabels(child.get());
+            }
+        }
+        else
+        {
+            FindLabels(wxGetFrame().GetSelectedNode());
+        }
+        for (auto& iter: m_map_found)
+        {
+            m_listbox->Append(iter.first);
         }
     }
 }
 
 void NodeSearchDlg::OnInit(wxInitDialogEvent& event)
 {
-    if (auto cur_sel = wxGetFrame().GetSelectedNode(); cur_sel)
+    wxCommandEvent dummy;
+    OnGenerators(dummy);
+
+    event.Skip();
+}
+
+void NodeSearchDlg::OnOK(wxCommandEvent& event)
+{
+    if (m_listbox->GetCount() > 0)
     {
-        std::set<std::string> set_generators;
-        PopulateGenerators(cur_sel, set_generators);
-        for (auto& iter: set_generators)
+        m_name = m_listbox->GetStringSelection().ToStdString();
+        if (m_listbox_forms->GetCount() > 0)
         {
-            m_combo_generators->Append(iter);
-            m_scintilla->AddTextRaw(iter.c_str());
-            m_scintilla->AddTextRaw("\n");
+            if (auto class_name = m_listbox_forms->GetStringSelection().ToStdString(); class_name.size())
+            {
+                m_form = FindNodeByClassName(Project.ProjectNode(), class_name);
+            }
+            else
+            {
+                m_form = wxGetFrame().GetSelectedNode();
+            }
         }
-        PopulateVarNames(cur_sel, m_combo_variables);
-        PopulateLabels(cur_sel, m_combo_labels);
+        else if (wxGetFrame().GetSelectedNode()->IsForm())
+        {
+            m_form = wxGetFrame().GetSelectedNode();
+        }
+        else
+        {
+            m_form = wxGetFrame().GetSelectedNode()->get_form();
+        }
     }
 
     event.Skip();
 }
 
-void NodeSearchDlg::OnRadioSearchGenerators(wxCommandEvent& WXUNUSED(event))
+void NodeSearchDlg::OnSelectLocated(wxCommandEvent& WXUNUSED(event))
 {
-    m_radio_generators->SetValue(true);
-    m_radio_labels->SetValue(false);
-    m_radio_var_names->SetValue(false);
+    auto name = m_listbox->GetStringSelection().utf8_string();
+    if (m_map_found.contains(name))
+    {
+        auto& list = m_map_found.at(name);
+        m_listbox_forms->Clear();
+        for (auto& iter: list)
+        {
+            m_listbox_forms->Append(iter->value(prop_class_name).make_wxString());
+        }
+        if (m_listbox_forms->GetCount() > 0)
+        {
+            m_listbox_forms->SetSelection(0);
+        }
+    }
 }
-
-void NodeSearchDlg::OnRadioSearchVarNames(wxCommandEvent& WXUNUSED(event))
-{
-    m_radio_generators->SetValue(false);
-    m_radio_labels->SetValue(false);
-    m_radio_var_names->SetValue(true);
-}
-
-void NodeSearchDlg::OnRadioSearchLabels(wxCommandEvent& WXUNUSED(event))
-{
-    m_radio_generators->SetValue(false);
-    m_radio_labels->SetValue(true);
-    m_radio_var_names->SetValue(false);
-}
-
-#endif  // defined(INTERNAL_TESTING)

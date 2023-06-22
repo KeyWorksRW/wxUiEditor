@@ -32,3 +32,11 @@ jobs:
 
     - name: Build Setup
       run: cpack -G NSIS
+
+    - name: Create wxUiEditor Artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: Executables
+        path: |
+          build/stage/bin/Release/wxUiEditor.exe,
+          build/wxUiEditor-*-win64.exe

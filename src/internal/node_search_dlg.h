@@ -9,12 +9,18 @@
 
 #pragma once
 
-#include <wx/combobox.h>
 #include <wx/dialog.h>
 #include <wx/event.h>
 #include <wx/gdicmn.h>
+#include <wx/listbox.h>
 #include <wx/radiobut.h>
-#include <wx/stc/stc.h>
+
+class Node;
+
+#include <map>
+#include <set>
+
+#include "gen_enums.h"
 
 class NodeSearchDlg : public wxDialog
 {
@@ -32,20 +38,31 @@ public:
         long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER, const wxString &name = wxDialogNameStr);
 
     bool isSearchGenerators() const { return m_search_generators; }
-    const wxString& get_GenName() const { return m_gen_name; }
     bool isSearchVarnames() const { return m_search_varnames; }
-    const wxString& get_VarName() const { return m_var_name; }
     bool isSearchLabels() const { return m_search_labels; }
-    const wxString& get_Label() const { return m_label_name; }
+
+    std::string& GetName() { return m_name; }
+    Node* GetForm() { return m_form; }
+    void FindGenerators(Node* node);
+    void FindVariables(Node* node);
+    void FindLabels(Node* node);
+
+    struct FoundInfo
+    {
+        const char* name;
+        std::vector<Node*> forms;
+    };
 
 protected:
 
     // Event handlers
 
+    void OnGenerators(wxCommandEvent& event);
     void OnInit(wxInitDialogEvent& event);
-    void OnRadioSearchGenerators(wxCommandEvent& event);
-    void OnRadioSearchLabels(wxCommandEvent& event);
-    void OnRadioSearchVarNames(wxCommandEvent& event);
+    void OnLabels(wxCommandEvent& event);
+    void OnOK(wxCommandEvent& event);
+    void OnSelectLocated(wxCommandEvent& event);
+    void OnVariables(wxCommandEvent& event);
 
 private:
 
@@ -54,19 +71,18 @@ private:
     bool m_search_generators { true };
     bool m_search_labels { false };
     bool m_search_varnames { false };
-    wxString m_gen_name;
-    wxString m_label_name;
-    wxString m_var_name;
 
     // Class member variables
 
-    wxComboBox* m_combo_generators;
-    wxComboBox* m_combo_labels;
-    wxComboBox* m_combo_variables;
-    wxRadioButton* m_radio_generators;
-    wxRadioButton* m_radio_labels;
-    wxRadioButton* m_radio_var_names;
-    wxStyledTextCtrl* m_scintilla;
+    wxListBox* m_listbox;
+    wxListBox* m_listbox_forms;
+    wxRadioButton* m_radioBtn;
+    wxRadioButton* m_radioBtn_3;
+    wxRadioButton* m_radio_variables;
+
+    std::string m_name;  // could be gen_name, var_name or label
+    Node* m_form;
+    std::map<std::string, std::set<Node*>> m_map_found;
 };
 
 // ************* End of generated code ***********

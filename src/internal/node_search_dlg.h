@@ -62,6 +62,7 @@ protected:
     void OnLabels(wxCommandEvent& event);
     void OnOK(wxCommandEvent& event);
     void OnSelectLocated(wxCommandEvent& event);
+    void OnUnused(wxCommandEvent& event);
     void OnVariables(wxCommandEvent& event);
 
 private:
@@ -81,7 +82,7 @@ private:
     wxRadioButton* m_radio_variables;
 
     std::string m_name;  // could be gen_name, var_name or label
-    Node* m_form;
+    Node* m_form = nullptr;
     std::map<std::string, std::set<Node*>> m_map_found;
 };
 

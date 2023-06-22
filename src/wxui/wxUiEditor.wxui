@@ -5351,9 +5351,9 @@
         base_file="..\internal\node_search_dlg"
         header_preamble="class Node;"
         local_hdr_includes="gen_enums.h"
-        local_src_includes="node.h;mainframe.h;../panels/nav_panel.h;project_handler.h"
+        local_src_includes="../panels/nav_panel.h;mainframe.h;node.h;project_handler.h;unused_gen_dlg.h"
         system_hdr_includes="map;set"
-        class_members="&quot;std::string m_name;  // could be gen_name, var_name or label&quot; &quot;Node* m_form;&quot; &quot;std::map&lt;std::string, std::set&lt;Node*>> m_map_found;&quot;"
+        class_members="&quot;std::string m_name;  // could be gen_name, var_name or label&quot; &quot;Node* m_form = nullptr;&quot; &quot;std::map&lt;std::string, std::set&lt;Node*>> m_map_found;&quot;"
         class_methods="&quot;std::string&amp; GetName() { return m_name; }&quot; &quot;Node* GetForm() { return m_form; }&quot; &quot;void FindGenerators(Node* node);&quot; &quot;void FindVariables(Node* node);&quot; &quot;void FindLabels(Node* node);&quot;"
         derived_class_name="NodeSearchDlg"
         inserted_hdr_code="struct FoundInfo@@{@@    const char* name;@@    std::vector&lt;Node*> forms;@@};"
@@ -5393,6 +5393,13 @@
               get_function="isSearchLabels"
               validator_variable="m_search_labels"
               wxEVT_RADIOBUTTON="OnLabels" />
+            <node
+              class="wxButton"
+              class_access="none"
+              label="Unused..."
+              var_name="btn"
+              borders="wxBOTTOM|wxRIGHT|wxLEFT"
+              wxEVT_BUTTON="OnUnused" />
           </node>
           <node
             class="wxBoxSizer"
@@ -5414,7 +5421,7 @@
                 borders="wxTOP|wxRIGHT|wxLEFT" />
               <node
                 class="wxListBox"
-                minimum_size="100,100d"
+                minimum_size="120,100d"
                 flags="wxEXPAND"
                 wxEVT_LISTBOX="OnSelectLocated" />
             </node>
@@ -5641,6 +5648,43 @@
               </node>
             </node>
           </node>
+        </node>
+      </node>
+      <node
+        class="wxDialog"
+        class_name="UnusedGenerators"
+        title="Unused Generators"
+        base_file="..\internal\unused_gen_dlg"
+        local_src_includes="gen_enums.h;node.h;project_handler.h"
+        system_src_includes="unordered_set"
+        derived_class_name="UnusedGeneratorsDerived"
+        derived_file="unusedgenerators_derived"
+        use_derived_class="0"
+        wxEVT_INIT_DIALOG="OnInit">
+        <node
+          class="wxBoxSizer"
+          orientation="wxVERTICAL"
+          var_name="dlg_sizer">
+          <node
+            class="wxStaticText"
+            class_access="none"
+            label="Unused generators in the entire project"
+            var_name="staticText"
+            wrap="200" />
+          <node
+            class="wxListBox"
+            minimum_size="120,100d"
+            flags="wxEXPAND" />
+          <node
+            class="wxButton"
+            class_access="none"
+            label="&amp;Save..."
+            var_name="btn"
+            wxEVT_BUTTON="OnSave" />
+          <node
+            class="wxStdDialogButtonSizer"
+            Cancel="0"
+            flags="wxEXPAND" />
         </node>
       </node>
     </node>

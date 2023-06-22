@@ -14,10 +14,11 @@
 
 #include "node_search_dlg.h"
 
-#include "node.h"
-#include "mainframe.h"
 #include "../panels/nav_panel.h"
+#include "mainframe.h"
+#include "node.h"
 #include "project_handler.h"
+#include "unused_gen_dlg.h"
 
 bool NodeSearchDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     const wxPoint& pos, const wxSize& size, long style, const wxString &name)
@@ -43,6 +44,9 @@ bool NodeSearchDlg::Create(wxWindow* parent, wxWindowID id, const wxString& titl
     m_radioBtn_3->SetValidator(wxGenericValidator(&m_search_labels));
     box_sizer_3->Add(m_radioBtn_3, wxSizerFlags().Border(wxALL));
 
+    auto* btn = new wxButton(this, wxID_ANY, "Unused...");
+    box_sizer_3->Add(btn, wxSizerFlags().Border(wxLEFT|wxRIGHT|wxBOTTOM, wxSizerFlags::GetDefaultBorder()));
+
     dlg_sizer->Add(box_sizer_3, wxSizerFlags().Expand().Border(wxALL));
 
     auto* box_sizer_4 = new wxBoxSizer(wxHORIZONTAL);
@@ -54,7 +58,7 @@ bool NodeSearchDlg::Create(wxWindow* parent, wxWindowID id, const wxString& titl
     box_sizer_5->Add(staticText, wxSizerFlags().Border(wxLEFT|wxRIGHT|wxTOP, wxSizerFlags::GetDefaultBorder()));
 
     m_listbox = new wxListBox(this, wxID_ANY);
-    m_listbox->SetMinSize(ConvertDialogToPixels(wxSize(100, 100)));
+    m_listbox->SetMinSize(ConvertDialogToPixels(wxSize(120, 100)));
     box_sizer_5->Add(m_listbox, wxSizerFlags().Expand().Border(wxALL));
 
     box_sizer_4->Add(box_sizer_5, wxSizerFlags(1).Expand().Border(wxALL));
@@ -81,6 +85,7 @@ bool NodeSearchDlg::Create(wxWindow* parent, wxWindowID id, const wxString& titl
 
     // Event handlers
     Bind(wxEVT_BUTTON, &NodeSearchDlg::OnOK, this, wxID_OK);
+    btn->Bind(wxEVT_BUTTON, &NodeSearchDlg::OnUnused, this);
     Bind(wxEVT_INIT_DIALOG, &NodeSearchDlg::OnInit, this);
     m_listbox->Bind(wxEVT_LISTBOX, &NodeSearchDlg::OnSelectLocated, this);
     m_radioBtn->Bind(wxEVT_RADIOBUTTON, &NodeSearchDlg::OnGenerators, this);
@@ -175,7 +180,7 @@ Node* FindNodeByLabel(Node* node, const std::string& label_name)
 void MainFrame::OnFindWidget(wxCommandEvent& WXUNUSED(event))
 {
     NodeSearchDlg dlg(this);
-    if (dlg.ShowModal() == wxID_OK)
+    if (dlg.ShowModal() == wxID_OK && dlg.GetForm())
     {
         if (dlg.isSearchGenerators())
         {
@@ -488,4 +493,10 @@ void NodeSearchDlg::OnSelectLocated(wxCommandEvent& WXUNUSED(event))
             m_listbox_forms->SetSelection(0);
         }
     }
+}
+
+void NodeSearchDlg::OnUnused(wxCommandEvent& WXUNUSED(event))
+{
+    UnusedGenerators dlg(this);
+    dlg.ShowModal();
 }

@@ -16,8 +16,8 @@ jobs:
     - run: mkdir ${{github.workspace}}/build
 
     - name: Cache CMakeFiles
-        uses: actions/cache@v3
-        with:
+      uses: actions/cache@v3
+      with:
           path: |
             build/CMakeFiles
           key: ${{ runner.os }}-cmake-files-${{ hashFiles('**/CMakeLists.txt') }}

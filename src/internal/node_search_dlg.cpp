@@ -184,7 +184,7 @@ void MainFrame::OnFindWidget(wxCommandEvent& WXUNUSED(event))
     {
         if (dlg.isSearchGenerators())
         {
-            auto* node = FindNodeByGenerator(dlg.GetForm(), rmap_GenNames[dlg.GetName()]);
+            auto* node = FindNodeByGenerator(dlg.GetForm(), rmap_GenNames[dlg.GetNameChoice()]);
             if (node)
             {
                 SelectNode(node);
@@ -197,7 +197,7 @@ void MainFrame::OnFindWidget(wxCommandEvent& WXUNUSED(event))
         }
         else if (dlg.isSearchVarnames())
         {
-            auto* node = FindNodeByVarName(dlg.GetForm(), dlg.GetName());
+            auto* node = FindNodeByVarName(dlg.GetForm(), dlg.GetNameChoice());
             if (node)
             {
                 SelectNode(node);
@@ -210,7 +210,7 @@ void MainFrame::OnFindWidget(wxCommandEvent& WXUNUSED(event))
         }
         else if (dlg.isSearchLabels())
         {
-            auto node = FindNodeByLabel(dlg.GetForm(), dlg.GetName());
+            auto node = FindNodeByLabel(dlg.GetForm(), dlg.GetNameChoice());
             if (node)
             {
                 SelectNode(node);
@@ -218,7 +218,7 @@ void MainFrame::OnFindWidget(wxCommandEvent& WXUNUSED(event))
             }
             else
             {
-                wxMessageBox(wxString() << "Unable to find " << dlg.GetName());
+                wxMessageBox(wxString() << "Unable to find " << dlg.GetNameChoice());
             }
         }
         else

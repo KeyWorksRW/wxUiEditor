@@ -41,17 +41,17 @@ public:
     bool isSearchVarnames() const { return m_search_varnames; }
     bool isSearchLabels() const { return m_search_labels; }
 
-    std::string& GetName() { return m_name; }
-    Node* GetForm() { return m_form; }
-    void FindGenerators(Node* node);
-    void FindVariables(Node* node);
-    void FindLabels(Node* node);
-
     struct FoundInfo
     {
         const char* name;
         std::vector<Node*> forms;
     };
+
+    std::string& GetNameChoice() { return m_name; }
+    Node* GetForm() { return m_form; }
+    void FindGenerators(Node* node);
+    void FindVariables(Node* node);
+    void FindLabels(Node* node);
 
 protected:
 

@@ -5691,6 +5691,67 @@
             flags="wxEXPAND" />
         </node>
       </node>
+      <node
+        class="wxDialog"
+        class_name="UndoInfo"
+        title="Undo/Redo stack information"
+        base_file="..\internal\undo_info"
+        private_members="1"
+        use_derived_class="0"
+        wxEVT_INIT_DIALOG="OnInit">
+        <node
+          class="wxBoxSizer"
+          orientation="wxVERTICAL"
+          var_name="dlg_sizer"
+          flags="wxEXPAND">
+          <node
+            class="wxFlexGridSizer">
+            <node
+              class="wxStaticText"
+              class_access="none"
+              label="Number of Undo items:"
+              var_name="staticText_5" />
+            <node
+              class="wxStaticText"
+              label="..."
+              var_name="m_txt_undo_items" />
+            <node
+              class="wxStaticText"
+              class_access="none"
+              label="Number of Redo items:"
+              var_name="staticText_6" />
+            <node
+              class="wxStaticText"
+              label="..."
+              var_name="m_txt_redo_items" />
+            <node
+              class="wxStaticText"
+              class_access="none"
+              label="Undo Memory:"
+              var_name="staticText_7" />
+            <node
+              class="wxStaticText"
+              label="..."
+              var_name="m_txt_undo_memory" />
+            <node
+              class="wxStaticText"
+              class_access="none"
+              label="Redo Memory:"
+              var_name="staticText_8" />
+            <node
+              class="wxStaticText"
+              label="..."
+              var_name="m_txt_redo_memory" />
+          </node>
+          <node
+            class="wxStdDialogButtonSizer"
+            Cancel="0"
+            Close="1"
+            OK="0"
+            default_button="none"
+            flags="wxEXPAND" />
+        </node>
+      </node>
     </node>
   </node>
 </wxUiEditorData>

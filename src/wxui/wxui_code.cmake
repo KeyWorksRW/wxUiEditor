@@ -11,6 +11,7 @@ set (wxue_generated_code
     ${CMAKE_CURRENT_LIST_DIR}/../internal/msgframe_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../internal/node_info.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../internal/node_search_dlg.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/../internal/undo_info.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../internal/unused_gen_dlg.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../internal/xrcpreview.cpp
     ${CMAKE_CURRENT_LIST_DIR}/artpropdlg_base.cpp

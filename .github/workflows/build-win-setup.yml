@@ -31,7 +31,9 @@ jobs:
     - run: choco install nsis
 
     - name: Build Setup
-      run: cpack -G NSIS
+      run: |
+        cd build
+        cpack -G NSIS
 
     - name: Create wxUiEditor Artifact
       uses: actions/upload-artifact@v2

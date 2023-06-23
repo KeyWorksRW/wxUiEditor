@@ -6,13 +6,13 @@ on:
       - main
     paths-ignore:
       - src/art_src
-      - src/internal
       - src/tests
       - src/xml
-      - src/winres
+      - tests
       - docs
       - import_tests
       - wxWidgets
+      - .github
 
 env:
   BUILD_TYPE: Debug

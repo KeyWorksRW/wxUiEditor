@@ -20,6 +20,7 @@ jobs:
       with:
           path: |
             build/CMakeFiles
+            build\wxWidgets\wx_3_2\CMakeFiles
           key: ${{ runner.os }}-cmake-files-${{ hashFiles('**/CMakeLists.txt') }}
 
     - name: Configure CMake

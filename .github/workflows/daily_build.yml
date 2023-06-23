@@ -2,7 +2,7 @@ name: "Daily Build"
 
 on:
   schedule:
-    - cron: '0 0 * * *'
+    - cron: '33 2 * * *'
 
 env:
   BUILD_TYPE: Release

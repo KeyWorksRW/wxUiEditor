@@ -30,9 +30,6 @@ public:
         const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER, const wxString &name = wxDialogNameStr);
 
-private:
-    long m_orgFlags;
-
 protected:
 
     // Event handlers
@@ -40,6 +37,8 @@ protected:
     void OnInit(wxInitDialogEvent& event);
     void OnOK(wxCommandEvent& event);
     void OnShowNow(wxCommandEvent& event);
+
+private:
 
     // Validator variables
 
@@ -53,6 +52,8 @@ protected:
 
     wxButton* m_btn;
     wxStdDialogButtonSizer* std_button_sizer;
+
+    long m_orgFlags;
 };
 
 // ************* End of generated code ***********

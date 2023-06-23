@@ -4762,9 +4762,10 @@
         style="wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER"
         title="Test Settings"
         base_file="..\internal\debugsettings"
+        class_members="&quot;long m_orgFlags;&quot;"
         derived_class_name="DebugSettings"
         derived_file="debugsettings"
-        inserted_hdr_code="private:@@    long m_orgFlags;@@"
+        private_members="1"
         use_derived_class="0"
         wxEVT_INIT_DIALOG="OnInit">
         <node
@@ -4850,8 +4851,9 @@
         class_name="CodeCompare"
         title="Compare Code Generation"
         base_file="..\internal\code_compare"
+        class_members="&quot;&quot; &quot;std::vector&lt;tt_string> m_class_list;&quot;"
+        class_methods="&quot;~CodeCompare();&quot;"
         derived_class_name="CodeCompare"
-        inserted_hdr_code="~CodeCompare();@@@@private:@@    std::vector&lt;tt_string> m_class_list;"
         private_members="1"
         use_derived_class="0"
         wxEVT_INIT_DIALOG="OnInit">

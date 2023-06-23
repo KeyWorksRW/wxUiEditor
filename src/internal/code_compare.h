@@ -36,9 +36,6 @@ public:
 
     ~CodeCompare();
 
-private:
-    std::vector<tt_string> m_class_list;
-
 protected:
 
     // Event handlers
@@ -56,6 +53,8 @@ private:
     wxListBox* m_list_changes;
     wxRadioButton* m_radio_cplusplus;
     wxRadioButton* m_radio_python;
+
+    std::vector<tt_string> m_class_list;
 };
 
 // ************* End of generated code ***********

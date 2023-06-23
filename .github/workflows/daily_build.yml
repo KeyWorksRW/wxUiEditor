@@ -1,0 +1,37 @@
+name: "Daily Build"
+
+on:
+  schedule:
+    - cron: '0 0 * * *'
+
+env:
+  BUILD_TYPE: Release
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - run: mkdir ${{github.workspace}}/build
+
+    - name: Cache CMakeFiles
+      uses: actions/cache@v3
+      with:
+          path: |
+            build/CMakeFiles
+          key: ${{ runner.os }}-cmake-files-${{ hashFiles('**/CMakeLists.txt') }}
+
+    - name: Configure CMake
+      run: cmake -G "Visual Studio 17 2022" -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+
+    - name: Build wxUiEditor
+      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --target wxUiEditor
+
+    - name: Create wxUiEditor Artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: Executables
+        path: |
+          build/stage/bin/Release/wxUiEditor.exe

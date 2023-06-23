@@ -11,7 +11,6 @@ class Node;
 class NodeProperty;
 using NodeSharedPtr = std::shared_ptr<Node>;
 
-
 class UndoAction
 {
 public:
@@ -50,7 +49,6 @@ public:
 
     // This will only be valid if the action actually stored a node.
     NodeSharedPtr GetNode() { return m_node; }
-
 
     // This will only be valid if the action actually stored a property.
     virtual NodeProperty* GetProperty() { return nullptr; }

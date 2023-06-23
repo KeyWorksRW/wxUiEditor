@@ -100,3 +100,13 @@ void GroupUndoActions::Revert()
         wxGetFrame().SelectNode(m_old_selected);
     }
 }
+
+size_t GroupUndoActions::GetMemorySize()
+{
+    size_t total = sizeof(*this);
+    for (auto& iter: m_actions)
+    {
+        total += iter->GetMemorySize();
+    }
+    return total;
+}

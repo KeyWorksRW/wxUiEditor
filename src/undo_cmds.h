@@ -27,12 +27,13 @@ public:
     // Set this to true if you created the node without firing a created event.
     void SetFireCreatedEvent(bool fire) { m_fire_created_event = fire; }
 
+    size_t GetMemorySize() override { return sizeof(*this); }
+
 protected:
     void Init(const NodeSharedPtr node, const NodeSharedPtr parent, tt_string_view undo_str, int pos = -1);
 
 private:
     NodeSharedPtr m_parent;
-    NodeSharedPtr m_node;
     NodeSharedPtr m_old_selected;
     int m_pos;
     bool m_fix_duplicate_names { true };
@@ -52,12 +53,13 @@ public:
     // Called when Undo is requested
     void Revert() override;
 
+    size_t GetMemorySize() override { return sizeof(*this); }
+
 protected:
     void Init(const NodeSharedPtr node, tt_string_view undo_str, bool AddToClipboard = false);
 
 private:
     NodeSharedPtr m_parent;
-    NodeSharedPtr m_node;
     NodeSharedPtr m_old_selected;
     size_t m_old_pos;
     bool m_AddToClipboard;
@@ -71,6 +73,11 @@ public:
     ModifyPropertyAction(NodeProperty* prop, int value);
     void Change() override;
     void Revert() override;
+
+    NodeProperty* GetProperty() override { return m_property; }
+
+    // The +2 is to account for the trailing zero in each std::string value.
+    size_t GetMemorySize() override { return sizeof(*this) + m_revert_value.size() + m_change_value.size() + 2; }
 
 private:
     NodeProperty* m_property;
@@ -101,6 +108,8 @@ public:
     };
     auto& GetVector() { return m_properties; }
 
+    size_t GetMemorySize() override;
+
 private:
     std::vector<MULTI_PROP> m_properties;
     bool m_fire_events { true };
@@ -113,6 +122,8 @@ public:
     ModifyEventAction(NodeEvent* event, tt_string_view value);
     void Change() override;
     void Revert() override;
+
+    size_t GetMemorySize() override { return sizeof(*this) + m_revert_value.size() + m_change_value.size(); }
 
 private:
     NodeEvent* m_event;
@@ -133,12 +144,13 @@ public:
     Node* GetParent() { return m_parent.get(); }
     Node* GetNode() { return m_node.get(); }
 
+    size_t GetMemorySize() override { return sizeof(*this); }
+
 protected:
     void Init(const NodeSharedPtr node, size_t position);
 
 private:
     NodeSharedPtr m_parent;
-    NodeSharedPtr m_node;
     size_t m_change_pos;
     size_t m_revert_pos;
 };
@@ -157,11 +169,12 @@ public:
     Node* GetNewParent() { return m_change_parent.get(); }
     Node* GetNode() { return m_node.get(); }
 
+    size_t GetMemorySize() override { return sizeof(*this); }
+
 protected:
     void Init(const NodeSharedPtr node, const NodeSharedPtr parent);
 
 private:
-    NodeSharedPtr m_node;
     NodeSharedPtr m_change_parent;
     NodeSharedPtr m_revert_parent;
 
@@ -181,8 +194,9 @@ public:
     Node* GetOldNode() { return m_old_node.get(); }
     Node* GetNode() { return m_node.get(); }
 
+    size_t GetMemorySize() override { return sizeof(*this); }
+
 private:
-    NodeSharedPtr m_node;
     NodeSharedPtr m_old_node;
     NodeSharedPtr m_parent;
     GenEnum::GenName m_new_gen_sizer;
@@ -199,8 +213,9 @@ public:
     Node* GetOldNode() { return m_old_node.get(); }
     Node* GetNode() { return m_node.get(); }
 
+    size_t GetMemorySize() override { return sizeof(*this); }
+
 private:
-    NodeSharedPtr m_node;
     NodeSharedPtr m_old_node;
     NodeSharedPtr m_parent;
     GenEnum::GenName m_new_gen_node;
@@ -214,9 +229,10 @@ public:
     void Change() override;
     void Revert() override;
 
+    size_t GetMemorySize() override { return sizeof(*this); }
+
 private:
     NodeSharedPtr m_parent;
-    NodeSharedPtr m_node;
     NodeSharedPtr m_old_selected;
 
     // REVIEW: [Randalphwa - 06-13-2022] m_old_pos can be -1, so it really should either be an int or an int64_t.
@@ -242,6 +258,8 @@ public:
     Node* GetOldSizerNode() const { return m_old_gbsizer.get(); }
     Node* GetCurSizerNode() const { return m_cur_gbsizer.get(); }
 
+    size_t GetMemorySize() override { return sizeof(*this); }
+
 private:
     NodeSharedPtr m_cur_gbsizer;
     NodeSharedPtr m_old_gbsizer;
@@ -256,6 +274,8 @@ public:
     SortProjectAction();
     void Change() override;
     void Revert() override;
+
+    size_t GetMemorySize() override { return sizeof(*this); }
 
 protected:
     void SortFolder(Node* folder);
@@ -275,8 +295,8 @@ public:
     void Change() override;
     void Revert() override;
 
+    size_t GetMemorySize() override { return sizeof(*this); }
+
 private:
     std::vector<UndoActionPtr> m_actions;
-
-    NodeSharedPtr m_node;
 };

@@ -88,16 +88,14 @@ bool CodeCompare::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#if defined(INTERNAL_TESTING)
+#include <wx/dir.h>  // wxDir is a class for enumerating the files in a directory
 
-    #include <wx/dir.h>  // wxDir is a class for enumerating the files in a directory
+#include "gen_base.h"         // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
+#include "gen_results.h"      // Code generation file writing functions
+#include "node.h"             // Node class
+#include "project_handler.h"  // ProjectHandler class
 
-    #include "gen_base.h"         // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
-    #include "gen_results.h"      // Code generation file writing functions
-    #include "node.h"             // Node class
-    #include "project_handler.h"  // ProjectHandler class
-
-    #include "pugixml.hpp"
+#include "pugixml.hpp"
 
 // clang-format on
 
@@ -224,6 +222,4 @@ void CodeCompare::OnWinMerge(wxCommandEvent& /* event */)
     winShellRun("WinMergeU.exe", "/e /u ~wxue_.WinMerge", cwd.sub_cstr().c_str());
 }
 
-    #endif  // _WIN32
-
-#endif  // defined(INTERNAL_TESTING)
+#endif  // _WIN32

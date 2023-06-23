@@ -54,6 +54,7 @@
 
 #include "internal/code_compare.h"  // CodeCompare
 #include "internal/node_info.h"     // NodeInfo
+#include "internal/undo_info.h"     // UndoInfo
 
 #if defined(INTERNAL_TESTING)
     #include "internal/import_panel.h"  // ImportPanel -- Panel to display original imported file
@@ -75,19 +76,21 @@ enum
 {
     IDM_IMPORT_WINRES = wxID_HIGHEST + 500,
 
-    id_DebugCurrentTest,
-    id_DebugXrcImport,
-    id_DebugXrcDuplicate,
-    id_DebugPreferences,
-    id_ConvertImage,
-    id_ShowLogger,
-    id_NodeMemory,
     id_CodeDiffDlg,
-    id_XrcPreviewDlg,
     id_CompareXrcDlg,
-    id_MockupPreview,
+    id_ConvertImage,
+    id_DebugCurrentTest,
+    id_DebugPreferences,
+    id_DebugXrcDuplicate,
+    id_DebugXrcImport,
     id_FindWidget,
     id_GeneratePython,
+    id_MockupPreview,
+    id_NodeMemory,
+    id_ShowLogger,
+    id_XrcPreviewDlg,
+    id_UndoInfo,
+
 };
 
 const char* txtEmptyProject = "Empty Project";
@@ -163,6 +166,7 @@ MainFrame::MainFrame() :
                             "Dialog showing what class have changed, and optional viewing in WinMerge");
         menuTesting->Append(id_FindWidget, "&Find Widget...", "Search for a widget starting with the current selected node");
         menuTesting->Append(id_NodeMemory, "Node &Information...", "Show node memory usage");
+        menuTesting->Append(id_UndoInfo, "Undo &Stack Information...", "Show undo/redo stack memory usage");
         m_menubar->Append(menuTesting, "Testing");
     }
 
@@ -327,6 +331,15 @@ MainFrame::MainFrame() :
                 dlg.ShowModal();
             },
             id_NodeMemory);
+
+        Bind(
+            wxEVT_MENU,
+            [this](wxCommandEvent&)
+            {
+                UndoInfo dlg(this);
+                dlg.ShowModal();
+            },
+            id_UndoInfo);
         Bind(wxEVT_MENU, &MainFrame::OnFindWidget, this, id_FindWidget);
     }
 

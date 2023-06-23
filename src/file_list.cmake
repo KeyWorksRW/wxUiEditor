@@ -321,17 +321,23 @@ set (debug_files
     internal/code_compare.cpp
     internal/convert_img.cpp
     internal/import_panel.cpp
+
+    customprops/include_files_dlg.cpp
+
+    internal/code_compare.cpp
+    internal/convert_img_base.cpp
+    internal/debugsettings.cpp
+    internal/msgframe_base.cpp
     internal/node_info.cpp
     internal/node_search_dlg.cpp
+    internal/undo_info.cpp
+    internal/unused_gen_dlg.cpp
     internal/xrcpreview.cpp
 
-    internal/debugsettings.cpp
-    internal/msg_logging.cpp
-    internal/msgframe.cpp
-    internal/import_panel.cpp>    # Panel to display original imported file
-
-    internal/convert_img_base.cpp
-    internal/msgframe_base.cpp
+    wxui/optionsdlg.cpp
+    wxui/code_preference_dlg.cpp
+    wxui/preview_settings.cpp
+    wxui/dlg_gen_results.cpp
 
     tests/test_xrc_import.cpp
 

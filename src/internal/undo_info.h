@@ -14,31 +14,20 @@
 #include <wx/gdicmn.h>
 #include <wx/stattext.h>
 
-#include "node_classes.h"
-
-class NodeInfo : public wxDialog
+class UndoInfo : public wxDialog
 {
 public:
-    NodeInfo() {}
-    NodeInfo(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "Node Information",
+    UndoInfo() {}
+    UndoInfo(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "Undo/Redo stack information",
         const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_DIALOG_STYLE, const wxString &name = wxDialogNameStr)
     {
         Create(parent, id, title, pos, size, style, name);
     }
 
-    bool Create(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "Node Information",
+    bool Create(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "Undo/Redo stack information",
         const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_DIALOG_STYLE, const wxString &name = wxDialogNameStr);
-
-    struct NodeMemory
-    {
-        size_t size { 0 };
-        size_t children { 0 };
-    };
-
-    void SetNode(Node* node) { m_node = node; }
-    static void CalcNodeMemory(Node* node, NodeMemory& node_memory);
 
 protected:
 
@@ -50,13 +39,10 @@ private:
 
     // Class member variables
 
-    wxStaticText* m_txt_clipboard;
-    wxStaticText* m_txt_generator;
-    wxStaticText* m_txt_memory;
-    wxStaticText* m_txt_project;
-    wxStaticText* m_txt_type;
-
-    Node* m_node { nullptr };
+    wxStaticText* m_txt_redo_items;
+    wxStaticText* m_txt_redo_memory;
+    wxStaticText* m_txt_undo_items;
+    wxStaticText* m_txt_undo_memory;
 };
 
 // ************* End of generated code ***********

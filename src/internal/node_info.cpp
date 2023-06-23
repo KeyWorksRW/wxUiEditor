@@ -73,25 +73,15 @@ bool NodeInfo::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 /////////////////// Non-generated Copyright/License Info ////////////////////
 // Purpose:   Node memory usage dialog
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#if defined(INTERNAL_TESTING)
+#include "mainframe.h"        // Main window frame
+#include "node.h"             // Node class
+#include "project_handler.h"  // ProjectHandler class
 
-    #include "mainapp.h"          // App -- Main application class
-    #include "mainframe.h"        // Main window frame
-    #include "node.h"             // Node class
-    #include "project_handler.h"  // ProjectHandler class
-    #include "undo_stack.h"       // UndoAction -- Maintain a undo and redo stack
-
-struct NodeMemory
-{
-    size_t size { 0 };
-    size_t children { 0 };
-};
-
-static void CalcNodeMemory(Node* node, NodeMemory& node_memory)
+void NodeInfo::CalcNodeMemory(Node* node, NodeMemory& node_memory)
 {
     node_memory.size += node->GetNodeSize();
     ++node_memory.children;
@@ -144,5 +134,3 @@ void NodeInfo::OnInit(wxInitDialogEvent& /* event */)
 
     Fit();
 }
-
-#endif  // defined(INTERNAL_TESTING)

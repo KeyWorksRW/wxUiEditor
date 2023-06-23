@@ -31,10 +31,14 @@ public:
         const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_DIALOG_STYLE, const wxString &name = wxDialogNameStr);
 
-    void SetNode(Node* node) { m_node = node; }
+    struct NodeMemory
+    {
+        size_t size { 0 };
+        size_t children { 0 };
+    };
 
-private:
-    Node* m_node { nullptr };
+    void SetNode(Node* node) { m_node = node; }
+    static void CalcNodeMemory(Node* node, NodeMemory& node_memory);
 
 protected:
 
@@ -51,6 +55,8 @@ private:
     wxStaticText* m_txt_memory;
     wxStaticText* m_txt_project;
     wxStaticText* m_txt_type;
+
+    Node* m_node { nullptr };
 };
 
 // ************* End of generated code ***********

@@ -307,10 +307,6 @@ set (file_list
     ui/preview_settings_events.cpp  # Event handlers for PreviewSettings dialog
 
     # Debug-only files from wxui_internal.cmake
-    $<$<CONFIG:Debug>:internal/msgframe_base.cpp>       # wxUiEditor generated file
-    $<$<CONFIG:Debug>:internal/node_info.cpp>       # Node memory usage dialog
-    $<$<CONFIG:Debug>:internal/node_search_dlg.cpp> # Dialog to search for a node
-    $<$<CONFIG:Debug>:internal/xrcpreview.cpp>      # Test XRC
 
     $<$<CONFIG:Debug>:internal/convert_img.cpp>     # Convert image
 
@@ -333,7 +329,6 @@ set (debug_files
     internal/msg_logging.cpp
     internal/msgframe.cpp
     internal/import_panel.cpp>    # Panel to display original imported file
-    internal/convert_img_base.cpp
 
     internal/convert_img_base.cpp
     internal/msgframe_base.cpp

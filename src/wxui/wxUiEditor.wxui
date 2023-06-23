@@ -5723,7 +5723,19 @@
             <node
               class="wxStaticText"
               label="..."
-              var_name="m_txt_redo_items" />
+              var_name="m_txt_undo_memory" />
+          </node>
+          <node
+            class="wxStaticText"
+            class_access="none"
+            label="The amount of memory used is determined by the reference count of the nodes. If the node is not orphaned, then it consumes no additional memory other than the shared_ptr itself."
+            var_name="staticText"
+            wrap="300"
+            window_style="wxBORDER_RAISED"
+            border_size="10" />
+          <node
+            class="wxFlexGridSizer"
+            var_name="flex_grid_sizer_2">
             <node
               class="wxStaticText"
               class_access="none"
@@ -5732,7 +5744,7 @@
             <node
               class="wxStaticText"
               label="..."
-              var_name="m_txt_undo_memory" />
+              var_name="m_txt_redo_items" />
             <node
               class="wxStaticText"
               class_access="none"

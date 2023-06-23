@@ -65,6 +65,4 @@ bool GeneratePythonFiles(GenResults& results, std::vector<tt_string>* pClassList
 // ../generate/gen_xrc.cpp
 bool GenerateXrcFiles(GenResults& results, tt_string out_file = {}, std::vector<tt_string>* pClassList = nullptr);
 
-#if defined(INTERNAL_TESTING)
 void GenerateTmpFiles(const std::vector<tt_string>& ClassList, pugi::xml_node root, int language = GEN_LANG_CPLUSPLUS);
-#endif

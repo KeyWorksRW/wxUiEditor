@@ -470,9 +470,7 @@ void GenInhertedClass(GenResults& results)
     }
 }
 
-#if defined(INTERNAL_TESTING)
-
-    #include "pugixml.hpp"
+#include "pugixml.hpp"
 
 void GenerateTmpFiles(const std::vector<tt_string>& ClassList, pugi::xml_node root, int language)
 {
@@ -682,5 +680,3 @@ void GenerateTmpFiles(const std::vector<tt_string>& ClassList, pugi::xml_node ro
         }
     }
 }
-
-#endif  // defined(INTERNAL_TESTING)

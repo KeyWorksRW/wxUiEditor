@@ -257,7 +257,8 @@ size_t ModifyProperties::GetMemorySize()
     size_t total = sizeof(*this) + m_properties.size();
     for (auto& iter: m_properties)
     {
-        total += (iter.change_value.size() + iter.revert_value.size());
+        // The +2 is to account for the trailing zero in each std::string value.
+        total += (iter.change_value.size() + iter.revert_value.size() + 2);
     }
     return total;
 }

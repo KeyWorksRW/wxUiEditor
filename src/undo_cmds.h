@@ -76,7 +76,8 @@ public:
 
     NodeProperty* GetProperty() override { return m_property; }
 
-    size_t GetMemorySize() override { return sizeof(*this) + m_revert_value.size() + m_change_value.size(); }
+    // The +2 is to account for the trailing zero in each std::string value.
+    size_t GetMemorySize() override { return sizeof(*this) + m_revert_value.size() + m_change_value.size() + 2; }
 
 private:
     NodeProperty* m_property;

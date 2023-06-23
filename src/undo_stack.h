@@ -107,6 +107,9 @@ public:
 
     size_t size() { return m_undo.size(); }
 
+    const std::vector<UndoActionPtr>& GetUndoVector() const { return m_undo; }
+    const std::vector<UndoActionPtr>& GetRedoVector() const { return m_redo; }
+
     void clear()
     {
         m_redo.clear();

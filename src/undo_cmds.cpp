@@ -252,6 +252,16 @@ void ModifyProperties::Revert()
         wxGetFrame().FireMultiPropEvent(this);
 }
 
+size_t ModifyProperties::GetMemorySize()
+{
+    size_t total = sizeof(*this) + m_properties.size();
+    for (auto& iter: m_properties)
+    {
+        total += (iter.change_value.size() + iter.revert_value.size());
+    }
+    return total;
+}
+
 ///////////////////////////////// ModifyEventAction ////////////////////////////////////
 
 ModifyEventAction::ModifyEventAction(NodeEvent* event, tt_string_view value) : m_event(event), m_change_value(value)

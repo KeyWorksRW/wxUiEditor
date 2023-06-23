@@ -7,6 +7,11 @@
 
 #pragma once
 
+class Node;
+class NodeProperty;
+using NodeSharedPtr = std::shared_ptr<Node>;
+
+
 class UndoAction
 {
 public:
@@ -26,6 +31,9 @@ public:
     // Called when Undo is requested
     virtual void Revert() = 0;
 
+    // Size of the UndoAction object itself, plus any additional memory it allocates.
+    virtual size_t GetMemorySize() = 0;
+
     tt_string GetUndoString() { return m_undo_string; }
     void SetUndoString(tt_string_view str) { m_undo_string = str; }
 
@@ -40,7 +48,16 @@ public:
     void AllowSelectEvent(bool allow) { m_AllowSelectEvent = allow; }
     bool isAllowedSelectEvent() { return m_AllowSelectEvent; }
 
+    // This will only be valid if the action actually stored a node.
+    NodeSharedPtr GetNode() { return m_node; }
+
+
+    // This will only be valid if the action actually stored a property.
+    virtual NodeProperty* GetProperty() { return nullptr; }
+
 protected:
+    NodeSharedPtr m_node;
+
     tt_string m_undo_string;
 
     bool m_UndoEventGenerated { false };
@@ -71,6 +88,8 @@ public:
     void Revert() override;
 
     void Add(UndoActionPtr ptr) { m_actions.push_back(ptr); }
+
+    size_t GetMemorySize() override;
 
 private:
     std::vector<UndoActionPtr> m_actions;

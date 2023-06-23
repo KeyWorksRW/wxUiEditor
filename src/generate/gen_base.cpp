@@ -1343,6 +1343,13 @@ void BaseCodeGenerator::GenerateClassHeader(Node* form_node, EventVector& events
     GenValidatorFunctions(form_node);
     m_header->writeLine();
 
+    GenEnumIds(form_node);
+
+    if (m_form_node->HasValue(prop_inserted_hdr_code))
+    {
+        WritePropHdrCode(m_form_node, prop_inserted_hdr_code);
+    }
+
     if (m_form_node->HasValue(prop_class_methods))
     {
         m_header->writeLine();
@@ -1352,13 +1359,6 @@ void BaseCodeGenerator::GenerateClassHeader(Node* form_node, EventVector& events
             m_header->writeLine(iter);
         }
         m_header->writeLine();
-    }
-
-    GenEnumIds(form_node);
-
-    if (m_form_node->HasValue(prop_inserted_hdr_code))
-    {
-        WritePropHdrCode(m_form_node, prop_inserted_hdr_code);
     }
 
     m_header->Unindent();
@@ -2038,6 +2038,5 @@ void BaseCodeGenerator::WritePropHdrCode(Node* node, GenEnum::PropName prop)
             m_header->Indent();
         }
     }
-    m_header->Unindent();
     m_header->writeLine();
 }

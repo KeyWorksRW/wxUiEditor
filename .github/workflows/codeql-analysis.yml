@@ -37,13 +37,6 @@ jobs:
 
     - run: mkdir ${{github.workspace}}/build
 
-    - name: Cache CMakeFiles
-      uses: actions/cache@v3
-      with:
-          path: |
-            build/CMakeFiles
-          key: ${{ runner.os }}-codeql-${{ hashFiles('**/CMakeLists.txt') }}
-
     - name: Configure CMake
       run: cmake -G "Visual Studio 17 2022" -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
 

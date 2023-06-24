@@ -24,7 +24,7 @@ jobs:
           key: ${{ runner.os }}-cmake-files-${{ hashFiles('**/CMakeLists.txt') }}
 
     - name: Configure CMake
-      run: cmake -G "Ninja Multi-Config" -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_C_COMPILER=cl.exe -DCMAKE_CXX_COMPILER=cl.exe -T "v143,host=x64"
+      run: cmake -G "Visual Studio 17 2022" -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
 
     - name: Build wxUiEditor
       run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --target wxUiEditor

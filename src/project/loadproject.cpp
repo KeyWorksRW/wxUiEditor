@@ -63,6 +63,7 @@ bool ProjectHandler::LoadProject(const tt_wxString& file, bool allow_ui)
     NodeSharedPtr project;
 
     m_ProjectVersion = root.attribute("data_version").as_int(curSupportedVer);
+    m_OriginalProjectVersion = m_ProjectVersion;
 
     if (m_ProjectVersion > curSupportedVer)
     {

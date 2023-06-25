@@ -125,7 +125,7 @@ namespace xrc
     };
 }  // namespace xrc
 
-constexpr const char* txtVersion = "wxUiEditor 1.1.1";
+constexpr const char* txtVersion = "wxUiEditor 1.1.2";
 constexpr const char* txtCopyRight = "Copyright (c) 2019-2023 KeyWorks Software";
 constexpr const char* txtAppname = "wxUiEditor";
 

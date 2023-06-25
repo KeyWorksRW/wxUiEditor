@@ -125,6 +125,9 @@ namespace xrc
     };
 }  // namespace xrc
 
+// When chaniging txtVersion, you also need to change the version in wxUiEditor.rc and
+// wxUiEditor.exe.manifest and ../CMakeLists.txt
+
 constexpr const char* txtVersion = "wxUiEditor 1.1.2";
 constexpr const char* txtCopyRight = "Copyright (c) 2019-2023 KeyWorks Software";
 constexpr const char* txtAppname = "wxUiEditor";

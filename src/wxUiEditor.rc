@@ -89,14 +89,14 @@ BEGIN
             VALUE "Comments", "https://github.com/KeyWorksRW/wxUiEditor\0"
             VALUE "CompanyName", "KeyWorks Software\0"
             VALUE "FileDescription", "wxWidgets GUI designer for C++/wxPython/XRC applications\0"
-            VALUE "FileVersion", "1,1,1,0\0"
+            VALUE "FileVersion", "1,1,2,0\0"
             VALUE "InternalName", "wxUiEditor\0"
             VALUE "LegalCopyright", "Copyright (c) 2019-2023 KeyWorks Software\0"
             VALUE "LegalTrademarks", "\0"
             VALUE "OriginalFilename", "wxUiEditor.exe\0"
             VALUE "PrivateBuild", "\0"
             VALUE "ProductName", "wxUiEditor\0"
-            VALUE "ProductVersion", "1,1,1,0\0"
+            VALUE "ProductVersion", "1,1,2,0\0"
             VALUE "SpecialBuild", "\0"
         END
     END

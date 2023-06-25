@@ -5,7 +5,7 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include "../wxui/preview_settings.h"
+#include "../tools/preview_settings.h"
 
 #include "mainframe.h"  // MainFrame -- Main application window
 #include "node.h"       // Node class

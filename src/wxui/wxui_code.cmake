@@ -14,6 +14,9 @@ set (wxue_generated_code
     ${CMAKE_CURRENT_LIST_DIR}/../internal/undo_info.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../internal/unused_gen_dlg.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../internal/xrcpreview.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/../tools/generate_dlg.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/../tools/global_cstm_ids_dlg_base.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/../tools/preview_settings.cpp
     ${CMAKE_CURRENT_LIST_DIR}/artpropdlg_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/code_preference_dlg.cpp
     ${CMAKE_CURRENT_LIST_DIR}/codedisplay_base.cpp
@@ -24,7 +27,6 @@ set (wxue_generated_code
     ${CMAKE_CURRENT_LIST_DIR}/editstringdialog_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/eventhandler_dlg_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/fontpropdlg_base.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/generate_dlg.cpp
     ${CMAKE_CURRENT_LIST_DIR}/generate_xrc_dlg_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/grid_property_dlg.cpp
     ${CMAKE_CURRENT_LIST_DIR}/gridbag_item_base.cpp
@@ -51,7 +53,6 @@ set (wxue_generated_code
     ${CMAKE_CURRENT_LIST_DIR}/newribbon_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/newwizard_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/optionsdlg.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/preview_settings.cpp
     ${CMAKE_CURRENT_LIST_DIR}/ribbonpanel_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/startupdlg_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/ui_images.cpp

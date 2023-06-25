@@ -1788,12 +1788,14 @@
     </node>
     <node
       class="folder"
-      label="Tool Dialogs">
+      label="Tool Dialogs"
+      folder_base_directory="../tools"
+      folder_derived_directory="../tools">
       <node
         class="wxDialog"
         class_name="GenerateDlg"
         title="Generate Code"
-        base_file="generate_dlg"
+        base_file="..\tools\generate_dlg"
         derived_class_name="GenerateDlg"
         derived_file="generatedlg"
         use_derived_class="0"
@@ -1845,7 +1847,7 @@
         class="wxDialog"
         class_name="PreviewSettings"
         title="Preview"
-        base_file="preview_settings"
+        base_file="..\tools\preview_settings"
         use_derived_class="0"
         wxEVT_INIT_DIALOG="OnInit">
         <node
@@ -1882,6 +1884,28 @@
               set_function="set_type_cpp"
               validator_variable="type_cpp" />
           </node>
+          <node
+            class="wxStdDialogButtonSizer"
+            flags="wxEXPAND" />
+        </node>
+      </node>
+      <node
+        class="wxDialog"
+        class_name="GlobalCustomIDSBase"
+        persist="1"
+        style="wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER"
+        title="Edit Custom IDs"
+        base_file="..\tools\global_cstm_ids_dlg_base"
+        derived_class_name="GlobalCustomIDSBase"
+        derived_file="../tools/global_cstm_ids_dlg_base">
+        <node
+          class="wxBoxSizer"
+          orientation="wxVERTICAL"
+          var_name="dlg_sizer"
+          flags="wxEXPAND">
+          <node
+            class="wxFlexGridSizer"
+            cols="3" />
           <node
             class="wxStdDialogButtonSizer"
             flags="wxEXPAND" />

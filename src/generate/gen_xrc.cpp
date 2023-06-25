@@ -27,20 +27,20 @@
 
 #include "gen_base.h"  // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
 
-#include "../panels/propgrid_panel.h"  // PropGridPanel -- Node inspector class
-#include "../ui/xrccompare.h"          // auto-generated: xrccompare_base.h and xrccompare_base.cpp
-#include "cstm_event.h"                // CustomEvent -- Custom Event class
-#include "gen_common.h"                // GeneratorLibrary -- Generator classes
-#include "gen_results.h"               // Code generation file writing functions
-#include "gen_xrc_utils.h"             // Common XRC generating functions
-#include "generate_xrc_dlg.h"          // GenerateXrcDlg -- Dialog for generating XRC file(s)
-#include "mainframe.h"                 // MainFrame -- Main window frame
-#include "node.h"                      // Node class
-#include "node_creator.h"              // NodeCreator -- Class used to create nodes
-#include "preview_settings.h"          // PreviewSettings
-#include "project_handler.h"           // ProjectHandler class
-#include "utils.h"                     // Utility functions that work with properties
-#include "write_code.h"                // Write code to Scintilla or file
+#include "../panels/propgrid_panel.h"   // PropGridPanel -- Node inspector class
+#include "../tools/preview_settings.h"  // PreviewSettings
+#include "../ui/xrccompare.h"           // auto-generated: xrccompare_base.h and xrccompare_base.cpp
+#include "cstm_event.h"                 // CustomEvent -- Custom Event class
+#include "gen_common.h"                 // GeneratorLibrary -- Generator classes
+#include "gen_results.h"                // Code generation file writing functions
+#include "gen_xrc_utils.h"              // Common XRC generating functions
+#include "generate_xrc_dlg.h"           // GenerateXrcDlg -- Dialog for generating XRC file(s)
+#include "mainframe.h"                  // MainFrame -- Main window frame
+#include "node.h"                       // Node class
+#include "node_creator.h"               // NodeCreator -- Class used to create nodes
+#include "project_handler.h"            // ProjectHandler class
+#include "utils.h"                      // Utility functions that work with properties
+#include "write_code.h"                 // Write code to Scintilla or file
 
 #include "pugixml.hpp"
 

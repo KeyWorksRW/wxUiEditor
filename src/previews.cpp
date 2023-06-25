@@ -18,16 +18,16 @@
 #include <wx/xrc/xh_richtext.h>        // XML resource handler for wxRichTextCtrl
 #include <wx/xrc/xh_styledtextctrl.h>  // XML resource handler for wxStyledTextCtrl
 
-#include "../ui/xrccompare.h"  // auto-generated: xrccompare_base.h and xrccompare_base.cpp
-#include "gen_common.h"        // GeneratorLibrary -- Generator classes
-#include "generate/gen_xrc.h"  // Generate XRC file
-#include "mainapp.h"           // App -- Main application class
-#include "mainframe.h"         // MainFrame -- Main window frame
-#include "node.h"              // Node class
-#include "preferences.h"       // Preferences -- Stores user preferences
-#include "preview_settings.h"  // PreviewSettings
-#include "project_handler.h"   // ProjectHandler class
-#include "utils.h"             // Utility functions that work with properties
+#include "../tools/preview_settings.h"  // PreviewSettings
+#include "../ui/xrccompare.h"           // auto-generated: xrccompare_base.h and xrccompare_base.cpp
+#include "gen_common.h"                 // GeneratorLibrary -- Generator classes
+#include "generate/gen_xrc.h"           // Generate XRC file
+#include "mainapp.h"                    // App -- Main application class
+#include "mainframe.h"                  // MainFrame -- Main window frame
+#include "node.h"                       // Node class
+#include "preferences.h"                // Preferences -- Stores user preferences
+#include "project_handler.h"            // ProjectHandler class
+#include "utils.h"                      // Utility functions that work with properties
 
 #include "pugixml.hpp"
 

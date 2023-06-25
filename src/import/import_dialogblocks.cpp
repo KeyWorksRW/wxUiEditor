@@ -106,7 +106,8 @@ bool DialogBlocks::Import(const tt_wxString& filename, bool write_doc)
                             continue;
                         else if (CreateFolderNode(form, parent))
                             continue;
-#if defined(_DEBUG)
+// clang_analyzer will complain about assigning variables that aren't used
+#if defined(_DEBUG) && !defined(__clang_analyzer__)
                         if (auto first_child = form.first_child(); first_child)
                         {
                             auto first_attr = first_child.first_attribute();

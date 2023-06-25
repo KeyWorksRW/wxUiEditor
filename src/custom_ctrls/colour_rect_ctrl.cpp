@@ -5,8 +5,6 @@
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include "pch.h"
-
 #include <wx/dcclient.h>  // wxClientDC base header
 
 #include "colour_rect_ctrl.h"  // ColourRectCtrl

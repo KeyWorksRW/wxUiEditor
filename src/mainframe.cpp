@@ -658,8 +658,17 @@ void MainFrame::OnAbout(wxCommandEvent&)
     aboutInfo.SetName(txtVersion);
 
     // Use trailing spaces to make the dialog width a bit wider
-    aboutInfo.SetDescription(tt_string() << "wxWidgets GUI designer for C++/XRC applications  \n\n\tBuilt using "
-                                         << wxVERSION_STRING << '\n');
+    tt_string description;
+    description << "wxUiEditor is a GUI designer for C++/XRC applications.  \n\n\tBuilt using " << wxVERSION_STRING << "\n";
+
+    if (wxGetApp().isTestingMenuEnabled())
+    {
+        description << "\n" << Project.ProjectFile().ToStdString() << "  \n";
+        description << "Original Project version: " << Project.GetOriginalProjectVersion() << "\n";
+        description << "wxUE Project version: " << curSupportedVer << "\n";
+    }
+
+    aboutInfo.SetDescription(description);
     aboutInfo.SetCopyright(txtCopyRight);
     aboutInfo.SetWebSite("https://github.com/KeyWorksRW/wxUiEditor");
 

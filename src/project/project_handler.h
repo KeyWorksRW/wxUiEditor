@@ -69,6 +69,7 @@ public:
     void FixupDuplicatedNode(Node* new_node);
 
     auto GetProjectVersion() { return m_ProjectVersion; }
+    auto GetOriginalProjectVersion() { return m_OriginalProjectVersion; }
     void ForceProjectVersion(int version) { m_ProjectVersion = version; }
     void SetProjectUpdated() { m_isProject_updated = true; }
 
@@ -114,6 +115,7 @@ private:
     tt_wxString m_projectPath;
 
     int m_ProjectVersion;
+    int m_OriginalProjectVersion;
 
     bool m_allow_ui { true };
     bool m_isProject_updated { false };

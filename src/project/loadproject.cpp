@@ -63,6 +63,7 @@ bool ProjectHandler::LoadProject(const tt_wxString& file, bool allow_ui)
     NodeSharedPtr project;
 
     m_ProjectVersion = root.attribute("data_version").as_int(curSupportedVer);
+    m_OriginalProjectVersion = m_ProjectVersion;
 
     if (m_ProjectVersion > curSupportedVer)
     {
@@ -265,6 +266,30 @@ NodeSharedPtr NodeCreator::CreateNode(pugi::xml_node& xml_obj, Node* parent, boo
                 if (prop->type() == type_bool)
                 {
                     prop->set_value(iter.as_bool());
+                }
+                else if (prop->get_name() == prop_contents && Project.GetOriginalProjectVersion() < 18)
+                {
+                    if (new_node->isGen(gen_wxCheckListBox) && iter.as_sview().size() && iter.as_sview()[0] == '"')
+                    {
+                        auto items = ConvertToArrayString(iter.as_sview());
+                        tt_string value;
+                        for (auto& item: items)
+                        {
+                            if (value.size())
+                                value << ';';
+                            value << item;
+                        }
+                        prop->set_value(value);
+                        if (Project.GetProjectVersion() < minRequiredVer + 1)
+                        {
+                            Project.ForceProjectVersion(minRequiredVer + 1);
+                            Project.SetProjectUpdated();
+                        }
+                    }
+                    else
+                    {
+                        prop->set_value(iter.as_sview());
+                    }
                 }
 
                 // Imported projects will be set as version ImportProjectVersion to get the fixups of constant to

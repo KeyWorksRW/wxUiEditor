@@ -1787,6 +1787,108 @@
       </node>
     </node>
     <node
+      class="folder"
+      label="Tool Dialogs">
+      <node
+        class="wxDialog"
+        class_name="GenerateDlg"
+        title="Generate Code"
+        base_file="generate_dlg"
+        derived_class_name="GenerateDlg"
+        derived_file="generatedlg"
+        use_derived_class="0"
+        wxEVT_INIT_DIALOG="OnInit">
+        <node
+          class="wxBoxSizer"
+          orientation="wxVERTICAL"
+          var_name="dlg_sizer">
+          <node
+            class="wxStaticText"
+            label="Choose the code you want to generate:" />
+          <node
+            class="wxBoxSizer"
+            orientation="wxVERTICAL">
+            <node
+              class="wxCheckBox"
+              class_access="none"
+              label="C++ &amp;Base"
+              var_name="checkBox"
+              get_function="is_gen_base"
+              validator_variable="m_gen_base_code" />
+            <node
+              class="wxCheckBox"
+              label="C++ &amp;Inherited"
+              var_name="checkBox_6"
+              get_function="is_gen_inherited"
+              validator_variable="m_gen_inherited_code" />
+            <node
+              class="wxCheckBox"
+              class_access="none"
+              label="&amp;Python"
+              var_name="checkBox_5"
+              get_function="is_gen_python"
+              validator_variable="m_gen_python_code" />
+            <node
+              class="wxCheckBox"
+              class_access="none"
+              label="&amp;XRC"
+              var_name="checkBox_2"
+              get_function="is_gen_xrc"
+              validator_variable="m_gen_xrc_code" />
+          </node>
+          <node
+            class="wxStdDialogButtonSizer"
+            flags="wxEXPAND" />
+        </node>
+      </node>
+      <node
+        class="wxDialog"
+        class_name="PreviewSettings"
+        title="Preview"
+        base_file="preview_settings"
+        use_derived_class="0"
+        wxEVT_INIT_DIALOG="OnInit">
+        <node
+          class="wxBoxSizer"
+          orientation="wxVERTICAL"
+          var_name="dlg_sizer">
+          <node
+            class="wxStaticText"
+            label="Choose what you want to use to display the form." />
+          <node
+            class="wxBoxSizer">
+            <node
+              class="wxRadioButton"
+              class_access="none"
+              label="XRC"
+              style="wxRB_GROUP"
+              var_name="radio_XRC"
+              get_function="is_type_xrc"
+              set_function="set_type_xrc"
+              validator_variable="type_xrc" />
+            <node
+              class="wxRadioButton"
+              label="XRC and C++"
+              var_name="m_radio_XRC_CPP"
+              get_function="is_type_both"
+              set_function="set_type_both"
+              validator_variable="type_xrc_cpp" />
+            <node
+              class="wxRadioButton"
+              class_access="none"
+              label="C++"
+              var_name="radio_CPP"
+              get_function="is_type_cpp"
+              set_function="set_type_cpp"
+              validator_variable="type_cpp" />
+          </node>
+          <node
+            class="wxStdDialogButtonSizer"
+            flags="wxEXPAND" />
+        </node>
+      </node>
+    </node>
+    <node
       class="PanelForm"
       class_name="CodeDisplayBase"
       base_file="codedisplay_base"
@@ -2827,58 +2929,6 @@
             flags="wxEXPAND"
             OKButtonClicked="OnOK" />
         </node>
-      </node>
-    </node>
-    <node
-      class="wxDialog"
-      class_name="GenerateDlg"
-      title="Generate Code"
-      base_file="generate_dlg"
-      derived_class_name="GenerateDlg"
-      derived_file="generatedlg"
-      use_derived_class="0"
-      wxEVT_INIT_DIALOG="OnInit">
-      <node
-        class="wxBoxSizer"
-        orientation="wxVERTICAL"
-        var_name="dlg_sizer">
-        <node
-          class="wxStaticText"
-          label="Choose the code you want to generate:" />
-        <node
-          class="wxBoxSizer"
-          orientation="wxVERTICAL">
-          <node
-            class="wxCheckBox"
-            class_access="none"
-            label="C++ &amp;Base"
-            var_name="checkBox"
-            get_function="is_gen_base"
-            validator_variable="m_gen_base_code" />
-          <node
-            class="wxCheckBox"
-            label="C++ &amp;Inherited"
-            var_name="checkBox_6"
-            get_function="is_gen_inherited"
-            validator_variable="m_gen_inherited_code" />
-          <node
-            class="wxCheckBox"
-            class_access="none"
-            label="&amp;Python"
-            var_name="checkBox_5"
-            get_function="is_gen_python"
-            validator_variable="m_gen_python_code" />
-          <node
-            class="wxCheckBox"
-            class_access="none"
-            label="&amp;XRC"
-            var_name="checkBox_2"
-            get_function="is_gen_xrc"
-            validator_variable="m_gen_xrc_code" />
-        </node>
-        <node
-          class="wxStdDialogButtonSizer"
-          flags="wxEXPAND" />
       </node>
     </node>
     <node
@@ -4653,52 +4703,6 @@
             alignment="wxALIGN_CENTER"
             proportion="1" />
         </node>
-      </node>
-    </node>
-    <node
-      class="wxDialog"
-      class_name="PreviewSettings"
-      title="Preview"
-      base_file="preview_settings"
-      use_derived_class="0"
-      wxEVT_INIT_DIALOG="OnInit">
-      <node
-        class="wxBoxSizer"
-        orientation="wxVERTICAL"
-        var_name="dlg_sizer">
-        <node
-          class="wxStaticText"
-          label="Choose what you want to use to display the form." />
-        <node
-          class="wxBoxSizer">
-          <node
-            class="wxRadioButton"
-            class_access="none"
-            label="XRC"
-            style="wxRB_GROUP"
-            var_name="radio_XRC"
-            get_function="is_type_xrc"
-            set_function="set_type_xrc"
-            validator_variable="type_xrc" />
-          <node
-            class="wxRadioButton"
-            label="XRC and C++"
-            var_name="m_radio_XRC_CPP"
-            get_function="is_type_both"
-            set_function="set_type_both"
-            validator_variable="type_xrc_cpp" />
-          <node
-            class="wxRadioButton"
-            class_access="none"
-            label="C++"
-            var_name="radio_CPP"
-            get_function="is_type_cpp"
-            set_function="set_type_cpp"
-            validator_variable="type_cpp" />
-        </node>
-        <node
-          class="wxStdDialogButtonSizer"
-          flags="wxEXPAND" />
       </node>
     </node>
     <node

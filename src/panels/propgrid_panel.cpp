@@ -558,13 +558,13 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
     {
         new_pg_property = new wxArrayStringProperty(prop->DeclName().make_wxString(), wxPG_LABEL, prop->as_wxArrayString());
         wxVariant var_quote("\"");
-        new_pg_property->DoSetAttribute(wxPG_ARRAY_DELIMITER, var_quote);
+        new_pg_property->SetAttribute(wxPG_ARRAY_DELIMITER, var_quote);
     }
     else if (type == type_stringlist_escapes)
     {
         new_pg_property = new wxArrayStringProperty(prop->DeclName().make_wxString(), wxPG_LABEL, prop->as_wxArrayString());
         wxVariant var_quote("\"");
-        new_pg_property->DoSetAttribute(wxPG_ARRAY_DELIMITER, var_quote);
+        new_pg_property->SetAttribute(wxPG_ARRAY_DELIMITER, var_quote);
     }
     else if (type == type_uintpairlist)
     {

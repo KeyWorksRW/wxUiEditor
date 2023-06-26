@@ -1,8 +1,7 @@
 name: "Check Build"
 
 on:
-  push:
-    workflow_dispatch:
+  workflow_dispatch:
 
 env:
   BUILD_TYPE: Debug

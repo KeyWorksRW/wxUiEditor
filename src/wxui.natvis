@@ -42,10 +42,10 @@
     <!-- tt visualizers -->
 
     <Type Name="tt_string">
-        <DisplayString Condition="_Myres &lt; _BUF_SIZE">{_Bx._Buf,,s8}</DisplayString>
-        <DisplayString Condition="_Myres &gt;= _BUF_SIZE">{_Bx._Ptr,,s8}</DisplayString>
-        <StringView Condition="_Myres &lt; _BUF_SIZE">_Bx._Buf,,s8</StringView>
-        <StringView Condition="_Myres &gt;= _BUF_SIZE">_Bx._Ptr,,s8</StringView>
+        <DisplayString Condition="_Myres &lt; _BUF_SIZE">{_Bx._Buf,s8}</DisplayString>
+        <DisplayString Condition="_Myres &gt;= _BUF_SIZE">{_Bx._Ptr,s8}</DisplayString>
+        <StringView Condition="_Myres &lt; _BUF_SIZE">_Bx._Buf,s8</StringView>
+        <StringView Condition="_Myres &gt;= _BUF_SIZE">_Bx._Ptr,s8</StringView>
         <Expand>
             <Item Name="[size]" ExcludeView="simple">_Mysize</Item>
             <Item Name="[capacity]" ExcludeView="simple">_Myres</Item>

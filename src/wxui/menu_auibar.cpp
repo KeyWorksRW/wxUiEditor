@@ -14,41 +14,43 @@
 
 using namespace GenEnum;
 
-#include "menu_bartools_base.h"
+#include "menu_auibar.h"
 
 namespace wxue_img
 {
     extern const unsigned char slider_png[248];
     extern const unsigned char spin_ctrl_png[300];
     extern const unsigned char toolStretchable_png[578];
-    extern const unsigned char tool_dropdown_png[447];
     extern const unsigned char tool_png[629];
+    extern const unsigned char toolseparator_png[581];
     extern const unsigned char toolspacer_png[459];
     extern const unsigned char wxComboBox_png[233];
+    extern const unsigned char wxStaticText_png[290];
 }
 
-MenuBarTools::MenuBarTools() : wxMenu()
+MenuAuiBar::MenuAuiBar() : wxMenu()
 {
     if (!wxImage::FindHandler(wxBITMAP_TYPE_PNG))
         wxImage::AddHandler(new wxPNGHandler);
 
-    auto* menu_item = Append(gen_tool, "Add Tool", "Insert a normal button tool", wxITEM_NORMAL);
-    menu_item->SetBitmap(wxue_img::bundle_tool_png());
-    auto* menu_item_2 = Append(gen_tool_dropdown, "Add Dropdown", "Add Dropdown tool that you can add menu items to.",
-        wxITEM_NORMAL);
-    menu_item_2->SetBitmap(wxue_img::bundle_tool_dropdown_png());
-    auto* menu_item_4 = Append(gen_toolSeparator, "Add Space", "Add space to separate tools", wxITEM_NORMAL);
+    auto* menu_item_6 = Append(gen_auitool, "Add Tool", "Insert a normal button tool", wxITEM_NORMAL);
+    menu_item_6->SetBitmap(wxue_img::bundle_tool_png());
+    auto* menu_item_2 = Append(gen_auitool_label, "Add Label", "Insert a Label", wxITEM_NORMAL);
+    menu_item_2->SetBitmap(wxue_img::bundle_wxStaticText_png());
+    auto* menu_item_9 = Append(gen_toolSeparator, "Add Separator", "Add space to separate tools", wxITEM_NORMAL);
+    menu_item_9->SetBitmap(wxue_img::bundle_toolseparator_png());
+    auto* menu_item_4 = Append(gen_auitool_spacer, "Add Spacer", "Add space to separate tools", wxITEM_NORMAL);
     menu_item_4->SetBitmap(wxue_img::bundle_toolspacer_png());
-    auto* menu_item_5 = Append(gen_toolStretchable, "Add Stretchable Space", "Add space to separate tools",
+    auto* menu_item_5 = Append(gen_auitool_stretchable, "Add Stretchable Space", "Add space to separate tools",
         wxITEM_NORMAL);
     menu_item_5->SetBitmap(wxue_img::bundle_toolStretchable_png());
     AppendSeparator();
     auto* menu_item_3 = Append(gen_wxComboBox, "Add Combobox", "Add a wxComboBox control", wxITEM_NORMAL);
     menu_item_3->SetBitmap(wxue_img::bundle_wxComboBox_png());
-    auto* menu_item_6 = Append(gen_wxSlider, "Add Slider", "Add a wxSlider control", wxITEM_NORMAL);
-    menu_item_6->SetBitmap(wxue_img::bundle_slider_png());
-    auto* menu_item_7 = Append(gen_wxSpinCtrl, "Add Spin Control", "Add a wxSpinCtrl control", wxITEM_NORMAL);
-    menu_item_7->SetBitmap(wxue_img::bundle_spin_ctrl_png());
+    auto* menu_item_7 = Append(gen_wxSlider, "Add Slider", "Add a wxSlider control", wxITEM_NORMAL);
+    menu_item_7->SetBitmap(wxue_img::bundle_slider_png());
+    auto* menu_item_8 = Append(gen_wxSpinCtrl, "Add Spin Control", "Add a wxSpinCtrl control", wxITEM_NORMAL);
+    menu_item_8->SetBitmap(wxue_img::bundle_spin_ctrl_png());
 }
 
 // ************* End of generated code ***********

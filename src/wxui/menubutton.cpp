@@ -14,7 +14,7 @@
 
 using namespace GenEnum;
 
-#include "menubutton_base.h"
+#include "menubutton.h"
 
 namespace wxue_img
 {

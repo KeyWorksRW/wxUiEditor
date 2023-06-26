@@ -4,13 +4,13 @@ on:
   pull_request:
     paths-ignore:
       - src/art_src
+      - src/tests
       - src/xml
       - src/import/rapidjson
-      - pugixml
       - tests
+      - docs
       - import_tests
-      - python_tests/python
-      - python_tests/art
+      - .github
 
 jobs:
   build:

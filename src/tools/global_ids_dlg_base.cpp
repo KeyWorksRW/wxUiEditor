@@ -35,11 +35,11 @@ bool GlobalCustomIDSBase::Create(wxWindow* parent, wxWindowID id, const wxString
     m_lb_folders->SetFocus();
     m_lb_folders->Append("Project");
     m_lb_folders->SetSelection(0);
-    m_lb_folders->SetMinSize(ConvertDialogToPixels(wxSize(120, 80)));
+    m_lb_folders->SetMinSize(ConvertDialogToPixels(wxSize(130, 80)));
     flex_grid_sizer->Add(m_lb_folders, wxSizerFlags().Border(wxALL));
 
     m_lb_forms = new wxListBox(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, nullptr, wxLB_MULTIPLE|wxLB_SORT);
-    m_lb_forms->SetMinSize(ConvertDialogToPixels(wxSize(120, 80)));
+    m_lb_forms->SetMinSize(ConvertDialogToPixels(wxSize(130, 80)));
     flex_grid_sizer->Add(m_lb_forms, wxSizerFlags().Border(wxALL));
 
     auto* box_sizer_9 = new wxBoxSizer(wxHORIZONTAL);

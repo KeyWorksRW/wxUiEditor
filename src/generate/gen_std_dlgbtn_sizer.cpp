@@ -9,10 +9,11 @@
 #include <wx/sizer.h>
 #include <wx/statline.h>
 
-#include "code.h"        // Code -- Helper class for generating code
-#include "gen_common.h"  // GeneratorLibrary -- Generator classes
-#include "lambdas.h"     // Functions for formatting and storage of lamda events
-#include "node.h"        // Node class
+#include "../customprops/eventhandler_dlg.h"  // EventHandlerDlg static functions
+#include "code.h"                             // Code -- Helper class for generating code
+#include "gen_common.h"                       // GeneratorLibrary -- Generator classes
+#include "lambdas.h"                          // Functions for formatting and storage of lamda events
+#include "node.h"                             // Node class
 
 #include "pugixml.hpp"  // xml read/write/create/process
 
@@ -502,11 +503,20 @@ void StdDialogButtonSizerGenerator::RequiredHandlers(Node* /* node */, std::set<
 void StdDialogButtonSizerGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& class_name)
 {
     Code handler(event->GetNode(), code.m_language);
+    tt_string event_code;
+    if (code.m_language == GEN_LANG_CPLUSPLUS)
+    {
+        event_code = EventHandlerDlg::GetCppValue(event->get_value());
+    }
+    else
+    {
+        event_code = EventHandlerDlg::GetPythonValue(event->get_value());
+    }
 
     // This is what we normally use if an ID is needed. However, a lambda needs to put the ID on it's own line, so we
     // use a string for this to allow the lambda processing code to replace it.
     std::string comma(", ");
-    if (event->get_value().contains("["))
+    if (event_code.contains("["))
     {
         if (!code.is_cpp())
             return;
@@ -516,7 +526,7 @@ void StdDialogButtonSizerGenerator::GenEvent(Code& code, NodeEvent* event, const
         comma = ",\n\t";
         ExpandLambda(handler.GetCode());
     }
-    else if (event->get_value().contains("::"))
+    else if (event_code.contains("::"))
     {
         handler.Add(event->get_name()) << ", ";
         if (event->get_value()[0] != '&' && handler.is_cpp())
@@ -526,9 +536,9 @@ void StdDialogButtonSizerGenerator::GenEvent(Code& code, NodeEvent* event, const
     else
     {
         if (code.is_cpp())
-            handler << "&" << class_name << "::" << event->get_value() << ", this";
+            handler << "&" << class_name << "::" << event_code << ", this";
         else
-            handler.Add("self.") << event->get_value();
+            handler.Add("self.") << event_code;
     }
 
     tt_string evt_str = (event->GetEventInfo()->get_event_class() == "wxCommandEvent" ? "wxEVT_BUTTON" : "wxEVT_UPDATE_UI");

@@ -42,6 +42,7 @@ protected:
     virtual void OnAddPrefix(wxCommandEvent& event) { event.Skip(); }
     virtual void OnAddSuffix(wxCommandEvent& event) { event.Skip(); }
     virtual void OnCommit(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnInit(wxInitDialogEvent& event) { event.Skip(); }
     virtual void OnRemovePrefix(wxCommandEvent& event) { event.Skip(); }
     virtual void OnRemoveSuffix(wxCommandEvent& event) { event.Skip(); }
     virtual void OnSelectAllFolders(wxCommandEvent& event) { event.Skip(); }

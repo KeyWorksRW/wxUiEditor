@@ -257,8 +257,9 @@ void BaseCodeGenerator::GenHdrEvents(const EventVector& events)
 
         for (auto& event: events)
         {
+            auto event_code = EventHandlerDlg::GetCppValue(event->get_value());
             // Ignore lambda's and functions in another class
-            if (event->get_value().contains("[") || event->get_value().contains("::"))
+            if (event_code.contains("[") || event_code.contains("::"))
                 continue;
 
             tt_string code;
@@ -281,7 +282,7 @@ void BaseCodeGenerator::GenHdrEvents(const EventVector& events)
 
                 if (has_handler)
                 {
-                    code << "void " << event->get_value() << "(" << event->GetEventInfo()->get_event_class() << "& event);";
+                    code << "void " << event_code << "(" << event->GetEventInfo()->get_event_class() << "& event);";
                     code_lines.insert(code);
                     continue;
                 }
@@ -298,7 +299,7 @@ void BaseCodeGenerator::GenHdrEvents(const EventVector& events)
                 }
                 else
                 {
-                    code << "void " << event->get_value() << "(" << event->GetEventInfo()->get_event_class() << "& event);";
+                    code << "void " << event_code << "(" << event->GetEventInfo()->get_event_class() << "& event);";
                 }
                 code << "\n#endif";
             }
@@ -306,12 +307,12 @@ void BaseCodeGenerator::GenHdrEvents(const EventVector& events)
             {
                 if (m_form_node->prop_as_bool(prop_use_derived_class))
                 {
-                    code << "virtual void " << event->get_value() << "(" << event->GetEventInfo()->get_event_class()
+                    code << "virtual void " << event_code << "(" << event->GetEventInfo()->get_event_class()
                          << "& event) { event.Skip(); }";
                 }
                 else
                 {
-                    code << "void " << event->get_value() << "(" << event->GetEventInfo()->get_event_class() << "& event);";
+                    code << "void " << event_code << "(" << event->GetEventInfo()->get_event_class() << "& event);";
                 }
             }
             code_lines.insert(code);
@@ -322,20 +323,21 @@ void BaseCodeGenerator::GenHdrEvents(const EventVector& events)
 
         for (const auto& event: m_CtxMenuEvents)
         {
+            auto event_code = EventHandlerDlg::GetCppValue(event->get_value());
             // Ignore lambda's and functions in another class
-            if (event->get_value().contains("[") || event->get_value().contains("::"))
+            if (event_code.contains("[") || event_code.contains("::"))
                 continue;
 
             tt_string code;
 
             if (m_form_node->prop_as_bool(prop_use_derived_class))
             {
-                code << "virtual void " << event->get_value() << "(" << event->GetEventInfo()->get_event_class()
+                code << "virtual void " << event_code << "(" << event->GetEventInfo()->get_event_class()
                      << "& event) { event.Skip(); }";
             }
             else
             {
-                code << "void " << event->get_value() << "(" << event->GetEventInfo()->get_event_class() << "& event);";
+                code << "void " << event_code << "(" << event->GetEventInfo()->get_event_class() << "& event);";
             }
 
             code_lines.insert(code);

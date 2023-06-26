@@ -24,9 +24,10 @@
 
 #include "gen_base.h"
 
-#include "node.h"             // Node class
-#include "node_creator.h"     // NodeCreator class
-#include "project_handler.h"  // ProjectHandler class
+#include "../customprops/eventhandler_dlg.h"  // EventHandlerDlg static functions
+#include "node.h"                             // Node class
+#include "node_creator.h"                     // NodeCreator class
+#include "project_handler.h"                  // ProjectHandler class
 
 #include "write_code.h"  // Write code to Scintilla or file
 
@@ -368,11 +369,12 @@ int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_PAG
         std::set<std::string> generatedHandlers;
         for (auto event: events)
         {
+            auto event_code = EventHandlerDlg::GetCppValue(event->get_value());
             // Ignore lambda's and functions in another class
-            if (event->get_value().contains("[") || event->get_value().contains("::"))
+            if (event_code.contains("[") || event_code.contains("::"))
                 continue;
 
-            if (generatedHandlers.find(event->get_value()) == generatedHandlers.end())
+            if (generatedHandlers.find(event_code) == generatedHandlers.end())
             {
                 bool close_type_button { false };
                 for (auto& iter: lst_close_type_button)
@@ -392,12 +394,11 @@ int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_PAG
                     (close_type_button && m_form_node->prop_as_bool(prop_persist)))
                 {
                     // OnInitDialog needs to call event.Skip() in order to initialize validators and update the UI
-                    prototype.Format("%s(%s& event)", event->get_value().c_str(),
-                                     event->GetEventInfo()->get_event_class().c_str());
+                    prototype.Format("%s(%s& event)", event_code.c_str(), event->GetEventInfo()->get_event_class().c_str());
                 }
                 else
                 {
-                    prototype.Format("%s(%s& WXUNUSED(event))", event->get_value().c_str(),
+                    prototype.Format("%s(%s& WXUNUSED(event))", event_code.c_str(),
                                      event->GetEventInfo()->get_event_class().c_str());
                 }
                 m_header->writeLine(tt_string().Format("void %s override;", prototype.c_str()));
@@ -460,7 +461,7 @@ int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_PAG
                     }
                     else
                     {
-                        m_source->writeLine(tt_string().Format("    // TODO: Implement %s", event->get_value().c_str()),
+                        m_source->writeLine(tt_string().Format("    // TODO: Implement %s", event_code.c_str()),
                                             indent::auto_no_whitespace);
                     }
                     m_source->Unindent();
@@ -468,7 +469,7 @@ int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_PAG
                     m_source->writeLine("}");
                 }
 
-                generatedHandlers.insert(event->get_value());
+                generatedHandlers.insert(event_code);
             }
         }
     }

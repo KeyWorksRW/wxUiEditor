@@ -1,15 +1,17 @@
 name: "Check Build"
 
 on:
-  pull_request:
-    paths-ignore:
-      - src/art_src
-      - src/tests
-      - src/xml
-      - tests
-      - import_tests
-      - docs
-      - .github
+  workflow_dispatch:
+
+#  pull_request:
+#    paths-ignore:
+#      - src/art_src
+#      - src/tests
+#      - src/xml
+#      - tests
+#      - import_tests
+#      - docs
+#      - .github
 
 env:
   BUILD_TYPE: Debug

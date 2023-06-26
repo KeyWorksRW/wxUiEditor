@@ -14,26 +14,26 @@
 
 using namespace GenEnum;
 
-#include "menudatactrl_base.h"
+#include "menuspin.h"
 
 namespace wxue_img
 {
-    extern const unsigned char dataview_ctrl_png[231];
-    extern const unsigned char dataviewlist_ctrl_png[685];
-    extern const unsigned char dataviewtree_ctrl_png[238];
+    extern const unsigned char spin_ctrl_double_png[219];
+    extern const unsigned char spin_ctrl_png[300];
+    extern const unsigned char spinbtn_png[192];
 }
 
-MenuDataCtrl::MenuDataCtrl() : wxMenu()
+MenuSpin::MenuSpin() : wxMenu()
 {
     if (!wxImage::FindHandler(wxBITMAP_TYPE_PNG))
         wxImage::AddHandler(new wxPNGHandler);
 
-    auto* menu_item = Append(gen_wxDataViewCtrl, "Insert wxDataViewCtrl");
-    menu_item->SetBitmap(wxue_img::bundle_dataview_ctrl_png());
-    auto* menu_item_2 = Append(gen_wxDataViewTreeCtrl, "Insert wxDataViewTreeCtrl");
-    menu_item_2->SetBitmap(wxue_img::bundle_dataviewtree_ctrl_png());
-    auto* menu_item_3 = Append(gen_wxDataViewListCtrl, "Insert wxDataViewListCtrl");
-    menu_item_3->SetBitmap(wxue_img::bundle_dataviewlist_ctrl_png());
+    auto* menu_item = Append(gen_wxSpinCtrl, "Insert wxSpinCtrl");
+    menu_item->SetBitmap(wxue_img::bundle_spin_ctrl_png());
+    auto* menu_item_2 = Append(gen_wxSpinCtrlDouble, "Insert wxSpinCtrlDouble");
+    menu_item_2->SetBitmap(wxue_img::bundle_spin_ctrl_double_png());
+    auto* menu_item_3 = Append(gen_wxSpinButton, "Insert wxSpinButton");
+    menu_item_3->SetBitmap(wxue_img::bundle_spinbtn_png());
 }
 
 // ************* End of generated code ***********

@@ -14,23 +14,26 @@
 
 using namespace GenEnum;
 
-#include "menucheckbox_base.h"
+#include "menustaticsizer.h"
 
 namespace wxue_img
 {
-    extern const unsigned char check3state_png[194];
-    extern const unsigned char wxCheckBox_png[202];
+    extern const unsigned char wxStaticBoxSizer_png[199];
+    extern const unsigned char wxStaticCheckBoxSizer_png[341];
+    extern const unsigned char wxStaticRadioBtnSizer_png[367];
 }
 
-MenuCheckbox::MenuCheckbox() : wxMenu()
+MenuStaticSizer::MenuStaticSizer() : wxMenu()
 {
     if (!wxImage::FindHandler(wxBITMAP_TYPE_PNG))
         wxImage::AddHandler(new wxPNGHandler);
 
-    auto* menu_item = Append(gen_wxCheckBox, "Insert wxCheckBox", "Insert a normal two-state checkbox", wxITEM_NORMAL);
-    menu_item->SetBitmap(wxue_img::bundle_wxCheckBox_png());
-    auto* menu_item_2 = Append(gen_Check3State, "Insert 3-state wxCheckBox", "Insert a 3-state checkbox", wxITEM_NORMAL);
-    menu_item_2->SetBitmap(wxue_img::bundle_check3state_png());
+    auto* menu_item = Append(gen_wxStaticBoxSizer, "Insert wxStaticBoxSizer");
+    menu_item->SetBitmap(wxue_img::bundle_wxStaticBoxSizer_png());
+    auto* menu_item_2 = Append(gen_StaticCheckboxBoxSizer, "Insert CheckBox wxStaticBoxSizer");
+    menu_item_2->SetBitmap(wxue_img::bundle_wxStaticCheckBoxSizer_png());
+    auto* menu_item_3 = Append(gen_StaticRadioBtnBoxSizer, "Insert RadioButton wxStaticBoxSizer");
+    menu_item_3->SetBitmap(wxue_img::bundle_wxStaticRadioBtnSizer_png());
 }
 
 // ************* End of generated code ***********

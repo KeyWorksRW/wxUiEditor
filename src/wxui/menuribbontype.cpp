@@ -14,26 +14,26 @@
 
 using namespace GenEnum;
 
-#include "menustaticsizer_base.h"
+#include "menuribbontype.h"
 
 namespace wxue_img
 {
-    extern const unsigned char wxStaticBoxSizer_png[199];
-    extern const unsigned char wxStaticCheckBoxSizer_png[341];
-    extern const unsigned char wxStaticRadioBtnSizer_png[367];
+    extern const unsigned char ribbon_bar_png[844];
+    extern const unsigned char ribbon_buttonbar_png[300];
+    extern const unsigned char ribbon_gallery_png[215];
 }
 
-MenuStaticSizer::MenuStaticSizer() : wxMenu()
+MenuRibbonType::MenuRibbonType() : wxMenu()
 {
     if (!wxImage::FindHandler(wxBITMAP_TYPE_PNG))
         wxImage::AddHandler(new wxPNGHandler);
 
-    auto* menu_item = Append(gen_wxStaticBoxSizer, "Insert wxStaticBoxSizer");
-    menu_item->SetBitmap(wxue_img::bundle_wxStaticBoxSizer_png());
-    auto* menu_item_2 = Append(gen_StaticCheckboxBoxSizer, "Insert CheckBox wxStaticBoxSizer");
-    menu_item_2->SetBitmap(wxue_img::bundle_wxStaticCheckBoxSizer_png());
-    auto* menu_item_3 = Append(gen_StaticRadioBtnBoxSizer, "Insert RadioButton wxStaticBoxSizer");
-    menu_item_3->SetBitmap(wxue_img::bundle_wxStaticRadioBtnSizer_png());
+    auto* menu_item = Append(gen_wxRibbonButtonBar, "Insert wxRibbonButtonBar");
+    menu_item->SetBitmap(wxue_img::bundle_ribbon_buttonbar_png());
+    auto* menu_item_2 = Append(gen_wxRibbonToolBar, "Insert wxRibbonToolBar");
+    menu_item_2->SetBitmap(wxue_img::bundle_ribbon_bar_png());
+    auto* menu_item_3 = Append(gen_wxRibbonGallery, "Insert wxRibbonGallery");
+    menu_item_3->SetBitmap(wxue_img::bundle_ribbon_gallery_png());
 }
 
 // ************* End of generated code ***********

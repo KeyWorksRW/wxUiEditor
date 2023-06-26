@@ -13,25 +13,29 @@
 
 int WriteCMakeFile(Node* parent_node, std::vector<tt_string>& updated_files, std::vector<tt_string>& results)
 {
-    if (!Project.as_bool(prop_generate_cmake) || (parent_node->isGen(gen_Project) && !Project.HasValue(prop_cmake_file)))
-    {
-        return result::exists;
-    }
     if (parent_node->isGen(gen_folder) && !parent_node->HasValue(prop_folder_cmake_file))
     {
-        return result::exists;
+        if (!Project.as_bool(prop_generate_cmake) || (parent_node->isGen(gen_Project) && !Project.HasValue(prop_cmake_file)))
+        {
+            return result::exists;
+        }
     }
 
     tt_cwd cwd(true);
 
-    // The generated files make be in a different directory then the project file, and if so, we
+    // The generated files may be in a different directory then the project file, and if so, we
     // need to tread that directory as the root of the file.
 
-    tt_string cmake_file = Project.value(prop_cmake_file);
+    tt_string cmake_file;
     if (parent_node->isGen(gen_folder) && parent_node->HasValue(prop_folder_cmake_file))
     {
         cmake_file = parent_node->value(prop_folder_cmake_file);
     }
+    else
+    {
+        cmake_file = Project.value(prop_cmake_file);
+    }
+
     if (cmake_file.starts_with(".."))
     {
         tt_string new_dir(cmake_file);
@@ -71,63 +75,127 @@ int WriteCMakeFile(Node* parent_node, std::vector<tt_string>& updated_files, std
     out.at(out.size() - 1) << "set (" << var_name;
     out.emplace_back();
 
-    std::set<tt_string> base_files;
-    std::vector<Node*> forms;
-    Project.CollectForms(forms, parent_node);
-
-    for (const auto& form: forms)
+    // Recrusive lambda to collect forms in derived and non-derived vectors
+    auto CollectForms = [](std::vector<Node*>& forms, std::vector<Node*>& derived_forms, Node* node_start,
+                           auto&& CollectForms) -> void
     {
-        if (!form->HasValue(prop_base_file) ||
-            (form->HasProp(prop_generate_translation_unit) && !form->as_bool(prop_generate_translation_unit)))
+        if (!node_start)
         {
-            continue;
+            node_start = Project.ProjectNode();
         }
-
-        if (parent_node == Project.ProjectNode())
+        for (const auto& child: node_start->GetChildNodePtrs())
         {
-            if (auto* node_folder = form->get_folder(); node_folder && node_folder->HasValue(prop_folder_cmake_file))
+            if (node_start == Project.ProjectNode())
             {
-                // This file already got added to a different .cmake file
-                continue;
+                if (auto* node_folder = child->get_folder(); node_folder && node_folder->HasValue(prop_folder_cmake_file))
+                {
+                    // This file already got added to a different .cmake file
+                    continue;
+                }
+            }
+
+            if (child->IsForm())
+            {
+                if (child->as_bool(prop_use_derived_class))
+                {
+                    derived_forms.push_back(child.get());
+                }
+                else
+                {
+                    forms.push_back(child.get());
+                }
+            }
+            else
+            {
+                if (child->isGen(gen_folder) || child->isGen(gen_sub_folder))
+                {
+                    CollectForms(forms, derived_forms, child.get(), CollectForms);
+                }
             }
         }
+    };
 
-        // tt_string path = form->prop_as_string(prop_base_file);
-        tt_string path = Project.value(prop_base_directory);
-        if (parent_node->isGen(gen_folder) && parent_node->HasValue(prop_folder_base_directory))
-        {
-            path = parent_node->value(prop_folder_base_directory);
-        }
-        if (path.size())
-        {
-            path.append_filename(form->value(prop_base_file).filename());
-        }
-        else
-        {
-            path = form->value(prop_base_file);
-        }
+    std::vector<Node*> forms;
+    std::vector<Node*> derived_forms;
+    CollectForms(forms, derived_forms, parent_node, CollectForms);
 
-        if (cmake_file_dir.size())
-            path.make_relative(cmake_file_dir);
-        path.backslashestoforward();
-        base_files.emplace(path);
-    }
-
-    for (auto base_file: base_files)
+    auto OutputFilenames = [&](std::vector<Node*>& form_list)
     {
-        base_file.make_relative(cur_dir.utf8_string());
-        base_file.backslashestoforward();
-        base_file.remove_extension();
+        std::set<tt_string> base_files;
 
-        tt_string source_ext(".cpp");
-        if (auto& extProp = Project.value(prop_source_ext); extProp.size())
+        for (const auto& form: form_list)
         {
-            source_ext = extProp;
-        }
-        base_file.replace_extension(source_ext);
+            if (!form->HasValue(prop_base_file) ||
+                (form->HasProp(prop_generate_translation_unit) && !form->as_bool(prop_generate_translation_unit)))
+            {
+                continue;
+            }
 
-        out.emplace_back();
-        out.at(out.size() - 1) << "    ${CMAKE_CURRENT_LIST_DIR}/" << base_file;
+            if (parent_node == Project.ProjectNode())
+            {
+                if (auto* node_folder = form->get_folder(); node_folder && node_folder->HasValue(prop_folder_cmake_file))
+                {
+                    // This file already got added to a different .cmake file
+                    continue;
+                }
+            }
+
+            // tt_string path = form->prop_as_string(prop_base_file);
+            tt_string path = Project.value(prop_base_directory);
+            if (parent_node->isGen(gen_folder) && parent_node->HasValue(prop_folder_base_directory))
+            {
+                path = parent_node->value(prop_folder_base_directory);
+            }
+            if (path.size())
+            {
+                path.append_filename(form->value(prop_base_file).filename());
+            }
+            else
+            {
+                path = form->value(prop_base_file);
+            }
+
+            if (cmake_file_dir.size())
+                path.make_relative(cmake_file_dir);
+            path.backslashestoforward();
+            base_files.emplace(path);
+        }
+
+        for (auto base_file: base_files)
+        {
+            base_file.make_relative(cur_dir.utf8_string());
+            base_file.backslashestoforward();
+            base_file.remove_extension();
+
+            tt_string source_ext(".cpp");
+            if (auto& extProp = Project.value(prop_source_ext); extProp.size())
+            {
+                source_ext = extProp;
+            }
+            base_file.replace_extension(source_ext);
+
+            out.emplace_back();
+            out.at(out.size() - 1) << "    ${CMAKE_CURRENT_LIST_DIR}/" << base_file;
+        }
+    };
+
+    if (forms.size())
+    {
+        if (derived_forms.size())
+        {
+            out.emplace_back("    # Non-base classes");
+        }
+        OutputFilenames(forms);
+        if (derived_forms.size())
+        {
+            out.emplace_back();
+            out.emplace_back("    # Base classes");
+            OutputFilenames(derived_forms);
+        }
+    }
+    else
+    {
+        OutputFilenames(derived_forms);
     }
 
     out.emplace_back();

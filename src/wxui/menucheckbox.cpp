@@ -14,26 +14,23 @@
 
 using namespace GenEnum;
 
-#include "menucombobox_base.h"
+#include "menucheckbox.h"
 
 namespace wxue_img
 {
-    extern const unsigned char bmp_combo_box_png[492];
-    extern const unsigned char wxChoice_png[330];
-    extern const unsigned char wxComboBox_png[233];
+    extern const unsigned char check3state_png[194];
+    extern const unsigned char wxCheckBox_png[202];
 }
 
-MenuCombobox::MenuCombobox() : wxMenu()
+MenuCheckbox::MenuCheckbox() : wxMenu()
 {
     if (!wxImage::FindHandler(wxBITMAP_TYPE_PNG))
         wxImage::AddHandler(new wxPNGHandler);
 
-    auto* menu_item = Append(gen_wxComboBox, "Insert wxComboBox");
-    menu_item->SetBitmap(wxue_img::bundle_wxComboBox_png());
-    auto* menu_item_2 = Append(gen_wxChoice, "Insert wxChoice");
-    menu_item_2->SetBitmap(wxue_img::bundle_wxChoice_png());
-    auto* menu_item_3 = Append(gen_wxBitmapComboBox, "Insert wxBitmapComboBox");
-    menu_item_3->SetBitmap(wxue_img::bundle_bmp_combo_box_png());
+    auto* menu_item = Append(gen_wxCheckBox, "Insert wxCheckBox", "Insert a normal two-state checkbox", wxITEM_NORMAL);
+    menu_item->SetBitmap(wxue_img::bundle_wxCheckBox_png());
+    auto* menu_item_2 = Append(gen_Check3State, "Insert 3-state wxCheckBox", "Insert a 3-state checkbox", wxITEM_NORMAL);
+    menu_item_2->SetBitmap(wxue_img::bundle_check3state_png());
 }
 
 // ************* End of generated code ***********

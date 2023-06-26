@@ -14,26 +14,26 @@
 
 using namespace GenEnum;
 
-#include "menuribbontype_base.h"
+#include "menudatactrl.h"
 
 namespace wxue_img
 {
-    extern const unsigned char ribbon_bar_png[844];
-    extern const unsigned char ribbon_buttonbar_png[300];
-    extern const unsigned char ribbon_gallery_png[215];
+    extern const unsigned char dataview_ctrl_png[231];
+    extern const unsigned char dataviewlist_ctrl_png[685];
+    extern const unsigned char dataviewtree_ctrl_png[238];
 }
 
-MenuRibbonType::MenuRibbonType() : wxMenu()
+MenuDataCtrl::MenuDataCtrl() : wxMenu()
 {
     if (!wxImage::FindHandler(wxBITMAP_TYPE_PNG))
         wxImage::AddHandler(new wxPNGHandler);
 
-    auto* menu_item = Append(gen_wxRibbonButtonBar, "Insert wxRibbonButtonBar");
-    menu_item->SetBitmap(wxue_img::bundle_ribbon_buttonbar_png());
-    auto* menu_item_2 = Append(gen_wxRibbonToolBar, "Insert wxRibbonToolBar");
-    menu_item_2->SetBitmap(wxue_img::bundle_ribbon_bar_png());
-    auto* menu_item_3 = Append(gen_wxRibbonGallery, "Insert wxRibbonGallery");
-    menu_item_3->SetBitmap(wxue_img::bundle_ribbon_gallery_png());
+    auto* menu_item = Append(gen_wxDataViewCtrl, "Insert wxDataViewCtrl");
+    menu_item->SetBitmap(wxue_img::bundle_dataview_ctrl_png());
+    auto* menu_item_2 = Append(gen_wxDataViewTreeCtrl, "Insert wxDataViewTreeCtrl");
+    menu_item_2->SetBitmap(wxue_img::bundle_dataviewtree_ctrl_png());
+    auto* menu_item_3 = Append(gen_wxDataViewListCtrl, "Insert wxDataViewListCtrl");
+    menu_item_3->SetBitmap(wxue_img::bundle_dataviewlist_ctrl_png());
 }
 
 // ************* End of generated code ***********

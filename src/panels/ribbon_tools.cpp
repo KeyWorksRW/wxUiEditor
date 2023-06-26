@@ -26,16 +26,16 @@
 
 #include "ribbon_ids.h"
 
-#include "menu_auibar_base.h"
-#include "menu_bartools_base.h"
-#include "menubutton_base.h"
-#include "menucheckbox_base.h"
-#include "menucombobox_base.h"
-#include "menudatactrl_base.h"
-#include "menulistbox_base.h"
-#include "menuribbontype_base.h"
-#include "menuspin_base.h"
-#include "menustaticsizer_base.h"
+#include "menu_auibar.h"
+#include "menu_bartools.h"
+#include "menubutton.h"
+#include "menucheckbox.h"
+#include "menucombobox.h"
+#include "menudatactrl.h"
+#include "menulistbox.h"
+#include "menuribbontype.h"
+#include "menuspin.h"
+#include "menustaticsizer.h"
 
 // The base class specifies a larger size for the panel to make it easier to work with in the Mockup window. We switch that
 // to a default size here.

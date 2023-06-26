@@ -155,7 +155,7 @@ public:
     ///
     /// Unless chBegin is a whitespace character, all whitespace characters starting with
     /// offset will be ignored.
-    tt_string_view view_substr(size_t offset, char chBegin = '"', char chEnd = '"');
+    tt_string_view view_substr(size_t offset, char chBegin = '"', char chEnd = '"') const;
 
     // All of the following view_() functions will return an empty tt_string_view if the specified character cannot be
     // found, or the start position is out of range (including start == npos).

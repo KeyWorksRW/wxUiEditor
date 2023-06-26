@@ -128,7 +128,7 @@ tt_string& tt_string::trim(tt::TRIM where)
  * @param chBegin -- character that prefixes the string
  * @param chEnd -- character that terminates the string.
  */
-tt_string_view tt_string::view_substr(size_t offset, char chBegin, char chEnd)
+tt_string_view tt_string::view_substr(size_t offset, char chBegin, char chEnd) const
 {
     if (empty() || offset >= size())
     {

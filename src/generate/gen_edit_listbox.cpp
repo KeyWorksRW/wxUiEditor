@@ -23,7 +23,7 @@ wxObject* EditListBoxGenerator::CreateMockup(Node* node, wxObject* parent)
 
     if (node->HasValue(prop_contents))
     {
-        auto array = ConvertToWxArrayString(node->prop_as_string(prop_contents));
+        auto array = node->as_wxArrayString(prop_auto_complete);
         widget->SetStrings(array);
     }
 

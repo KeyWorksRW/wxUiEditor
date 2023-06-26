@@ -30,7 +30,7 @@ wxObject* TextCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
 
     if (node->HasValue(prop_auto_complete))
     {
-        auto array = ConvertToWxArrayString(node->prop_as_string(prop_auto_complete));
+        auto array = node->as_wxArrayString(prop_auto_complete);
         widget->AutoComplete(array);
     }
 

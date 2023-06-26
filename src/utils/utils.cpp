@@ -420,25 +420,6 @@ std::vector<tt_string> ConvertToArrayString(tt_string_view value)
     return array;
 }
 
-wxArrayString ConvertToWxArrayString(tt_string_view value)
-{
-    wxArrayString array;
-    if (value.empty())
-        return array;
-    tt_string parse;
-    auto pos = parse.ExtractSubString(value);
-    array.push_back(parse.make_wxString());
-
-    for (auto tmp_value = tt::stepover(value.data() + pos); tmp_value.size();
-         tmp_value = tt::stepover(tmp_value.data() + pos))
-    {
-        pos = parse.ExtractSubString(tmp_value);
-        array.push_back(parse.make_wxString());
-    }
-
-    return array;
-}
-
 wxPoint DlgPoint(wxObject* parent, Node* node, GenEnum::PropName prop)
 {
     if (node->prop_as_string(prop).contains("d", tt::CASE::either))

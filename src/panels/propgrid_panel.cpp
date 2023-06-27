@@ -557,8 +557,16 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
     else if (type == type_stringlist)
     {
         new_pg_property = new wxArrayStringProperty(prop->DeclName().make_wxString(), wxPG_LABEL, prop->as_wxArrayString());
-        wxVariant var_quote("\"");
-        new_pg_property->SetAttribute(wxPG_ARRAY_DELIMITER, var_quote);
+        if (prop->value().size() > 0 && prop->value()[0] != '"')
+        {
+            wxVariant delimiter(";");
+            new_pg_property->SetAttribute(wxPG_ARRAY_DELIMITER, delimiter);
+        }
+        else
+        {
+            wxVariant delimiter("\"");
+            new_pg_property->SetAttribute(wxPG_ARRAY_DELIMITER, delimiter);
+        }
     }
     else if (type == type_stringlist_escapes)
     {

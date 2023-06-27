@@ -409,15 +409,45 @@ wxArrayString NodeProperty::as_wxArrayString() const
 {
     wxArrayString result;
 
-    if (m_value.empty())
-        return result;
-
-    wxString str = m_value.make_wxString();
-    WX_PG_TOKENIZER2_BEGIN(str, '"')
-
-    result.Add(token);
-
-    WX_PG_TOKENIZER2_END()
+    if (m_value.size())
+    {
+#if 0
+        // REVIEW: [Randalphwa - 06-26-2023] This works, however in wxWidgets 3.2, it converts
+        // the entire string to unicode and does a unicode parsing of the string. Since the
+        // original string is utf8, that's not efficient.
+        if (m_value[0] == '"')
+            delimiter = '"';
+        else
+            delimiter = ';';
+        wxString str = m_value.make_wxString();
+        wxPGStringTokenizer tokenizer(str, delimiter);
+        while (tokenizer.HasMoreTokens())
+        {
+            result.Add(tokenizer.GetNextToken());
+        }
+#else
+        if (m_value[0] == '"')
+        {
+            // REVIEW: [Randalphwa - 06-26-2023] This uses tt_string_view to parse the string.
+            auto view = m_value.view_substr(0, '"', '"');
+            while (view.size() > 0)
+            {
+                result.Add(view.make_wxString());
+                view = tt::stepover(view.data() + view.size());
+                view = view.view_substr(0, '"', '"');
+            }
+        }
+        else
+        {
+            tt_view_vector array;
+            array.SetString(m_value, ";", tt::TRIM::both);
+            for (auto& str: array)
+            {
+                result.Add(str.make_wxString());
+            }
+        }
+#endif
+    }
 
     return result;
 }

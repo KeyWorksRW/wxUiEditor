@@ -152,10 +152,10 @@ bool TextCtrlGenerator::SettingsCode(Code& code)
         {
             code.EnableAutoLineBreak(false);
             code.Add("{").Eol().Tab().Add("wxArrayString tmp_array;").Eol();
-            auto array = ConvertToArrayString(code.node()->prop_as_string(prop_auto_complete));
+            auto array = code.node()->as_ArrayString(prop_auto_complete);
             for (auto& iter: array)
             {
-                code.Tab().Add("tmp_array.push_back(wxString::FromUTF8(\"") << iter << "\"));";
+                code.Tab().Add("tmp_array.Add(").QuotedString(iter) << ");";
                 code.Eol();
             }
             code.Tab() << code.node()->get_node_name() << "->AutoComplete(tmp_array);";

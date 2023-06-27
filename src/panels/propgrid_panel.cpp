@@ -1039,6 +1039,48 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
             }
             break;
 
+        case type_stringlist:
+#if defined(_WIN32)
+            if (prop->isProp(prop_contents))
+            {
+                // REVIEW: [Randalphwa - 06-26-2023] This will only work if we use quotes to
+                // separate items.
+                tt_string newValue = property->GetValueAsString().utf8_string();
+                // Under Windows 10 using wxWidgets 3.1.3, the last character of the string is partially clipped.
+                // Adding a trailing space prevents this clipping.
+
+                if (m_currentSel->isGen(gen_wxRadioBox) && newValue.size())
+                {
+                    size_t result;
+                    for (size_t pos = 0; pos < newValue.size();)
+                    {
+                        result = newValue.find("\" \"", pos);
+                        if (tt::is_found(result))
+                        {
+                            if (newValue.at(result - 1) != ' ')
+                                newValue.insert(result, 1, ' ');
+                            pos = result + 3;
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+
+                    result = newValue.find_last_of('"');
+                    if (tt::is_found(result))
+                    {
+                        if (newValue.at(result - 1) != ' ')
+                            newValue.insert(result, 1, ' ');
+                    }
+                    modifyProperty(prop, newValue);
+                    break;
+                }
+            }
+#endif  // _WIN32
+            modifyProperty(prop, property->GetValueAsString().utf8_string());
+            break;
+
         case type_bool:
             ModifyBoolProperty(prop, property);
             break;
@@ -1074,7 +1116,7 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
 
         default:
             {
-                tt_wxString newValue = property->GetValueAsString();
+                tt_string newValue = property->GetValueAsString().utf8_string();
 
                 if (prop->isProp(prop_var_name))
                 {
@@ -1086,44 +1128,11 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                         newValue = final_name.size() ? final_name : new_name;
 
                         auto grid_property = m_prop_grid->GetPropertyByLabel("var_name");
-                        grid_property->SetValueFromString(newValue, 0);
+                        grid_property->SetValueFromString(newValue.make_wxString(), 0);
                     }
                 }
-                else if (prop->isProp(prop_contents))
-                {
-#if defined(_WIN32)
-                    // Under Windows 10 using wxWidgets 3.1.3, the last character of the string is partially clipped.
-                    // Adding a trailing space prevents this clipping.
 
-                    if (m_currentSel->isGen(gen_wxRadioBox) && newValue.size())
-                    {
-                        size_t result;
-                        for (size_t pos = 0; pos < newValue.size();)
-                        {
-                            result = newValue.find("\" \"", pos);
-                            if (tt::is_found(result))
-                            {
-                                if (newValue.at(result - 1) != ' ')
-                                    newValue.insert(result, ' ');
-                                pos = result + 3;
-                            }
-                            else
-                            {
-                                break;
-                            }
-                        }
-
-                        result = newValue.find_last_of('"');
-                        if (tt::is_found(result))
-                        {
-                            if (newValue.at(result - 1) != ' ')
-                                newValue.insert(result, ' ');
-                        }
-                    }
-#endif  // _WIN32
-                }
-
-                ModifyProperty(prop, newValue);
+                modifyProperty(prop, newValue);
 
                 if (prop->isProp(prop_class_name))
                 {
@@ -1144,7 +1153,7 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                         if (!selected_node->HasValue(prop_derived_class_name))
                         {
                             ReplaceDerivedName(newValue, selected_node->get_prop_ptr(prop_derived_class_name));
-                            ReplaceDerivedFile(selected_node->prop_as_wxString(prop_derived_class_name),
+                            ReplaceDerivedFile(selected_node->value(prop_derived_class_name),
                                                selected_node->get_prop_ptr(prop_derived_file));
                         }
                     }
@@ -1946,9 +1955,9 @@ void PropGridPanel::CreateEventCategory(tt_string_view name, Node* node, NodeDec
     }
 }
 
-void PropGridPanel::ReplaceDerivedName(const wxString& newValue, NodeProperty* propType)
+void PropGridPanel::ReplaceDerivedName(const tt_string& newValue, NodeProperty* propType)
 {
-    auto drvName = newValue.utf8_string();
+    auto drvName = newValue;
     if (drvName.ends_with("Base"))
     {
         drvName.erase(drvName.size() - (sizeof("Base") - 1));
@@ -1959,32 +1968,32 @@ void PropGridPanel::ReplaceDerivedName(const wxString& newValue, NodeProperty* p
     }
 
     auto grid_property = m_prop_grid->GetPropertyByLabel("derived_class_name");
-    grid_property->SetValueFromString(drvName, 0);
-    ModifyProperty(propType, drvName);
+    grid_property->SetValueFromString(drvName.make_wxString(), 0);
+    modifyProperty(propType, drvName);
 }
 
-void PropGridPanel::ReplaceBaseFile(const wxString& newValue, NodeProperty* propType)
+void PropGridPanel::ReplaceBaseFile(const tt_string& newValue, NodeProperty* propType)
 {
     auto form_node = propType->GetNode()->get_form();
-    auto base_filename = CreateBaseFilename(form_node, newValue.utf8_string());
+    auto base_filename = CreateBaseFilename(form_node, newValue);
     auto grid_property = m_prop_grid->GetPropertyByLabel("base_file");
-    grid_property->SetValueFromString(base_filename, 0);
-    ModifyProperty(propType, base_filename);
+    grid_property->SetValueFromString(base_filename.make_wxString(), 0);
+    modifyProperty(propType, base_filename);
 
     if (Project.value(prop_code_preference) == "Python" && !form_node->HasValue(prop_python_file))
     {
         grid_property = m_prop_grid->GetPropertyByLabel("python_file");
-        grid_property->SetValueFromString(base_filename, 0);
-        ModifyProperty(form_node->get_prop_ptr(prop_python_file), base_filename);
+        grid_property->SetValueFromString(base_filename.make_wxString(), 0);
+        modifyProperty(form_node->get_prop_ptr(prop_python_file), base_filename);
     }
 }
 
-void PropGridPanel::ReplaceDerivedFile(const wxString& newValue, NodeProperty* propType)
+void PropGridPanel::ReplaceDerivedFile(const tt_string& newValue, NodeProperty* propType)
 {
-    auto derived_filename = CreateDerivedFilename(propType->GetNode()->get_form(), newValue.utf8_string());
+    auto derived_filename = CreateDerivedFilename(propType->GetNode()->get_form(), newValue);
     auto grid_property = m_prop_grid->GetPropertyByLabel("derived_file");
-    grid_property->SetValueFromString(derived_filename, 0);
-    ModifyProperty(propType, derived_filename);
+    grid_property->SetValueFromString(derived_filename.make_wxString(), 0);
+    modifyProperty(propType, derived_filename);
 }
 
 bool PropGridPanel::IsPropAllowed(Node* /* node */, NodeProperty* /* prop */)

@@ -62,7 +62,7 @@ void RadioBoxGenerator::OnRadioBox(wxCommandEvent& event)
 
 bool RadioBoxGenerator::ConstructionCode(Code& code)
 {
-    auto array = ConvertToArrayString(code.node()->as_string(prop_contents));
+    auto array = code.node()->as_ArrayString(prop_contents);
     tt_string choice_name;
     if (code.is_cpp() && array.size())
     {
@@ -150,7 +150,7 @@ int RadioBoxGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t x
     if (node->HasValue(prop_contents))
     {
         auto content = item.append_child("content");
-        auto array = ConvertToArrayString(node->prop_as_string(prop_contents));
+        auto array = node->as_ArrayString(prop_contents);
         for (auto& iter: array)
         {
             content.append_child("item").text().set(iter);

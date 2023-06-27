@@ -616,7 +616,7 @@ std::vector<NODEPROP_CHECKLIST_ITEM> NodeProperty::as_checklist_items() const
 
     if (m_value.size() && m_value[0] == '"' && wxGetApp().GetProjectVersion() <= minRequiredVer)
     {
-        auto array = ConvertToArrayString(m_value);
+        auto array = as_ArrayString();
         for (auto& iter: array)
         {
             NODEPROP_CHECKLIST_ITEM item;

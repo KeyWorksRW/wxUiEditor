@@ -21,7 +21,7 @@ wxObject* ListViewGenerator::CreateMockup(Node* node, wxObject* parent)
 
     if (node->prop_as_string(prop_mode) == "wxLC_REPORT" && node->HasValue(prop_column_labels))
     {
-        auto headers = ConvertToArrayString(node->prop_as_string(prop_column_labels));
+        auto headers = node->as_ArrayString(prop_column_labels);
         for (auto& label: headers)
             widget->AppendColumn(label.make_wxString());
 
@@ -30,7 +30,7 @@ wxObject* ListViewGenerator::CreateMockup(Node* node, wxObject* parent)
             wxListItem info;
             info.Clear();
 
-            auto strings = ConvertToArrayString(node->prop_as_string(prop_contents));
+            auto strings = node->as_ArrayString(prop_contents);
             long row_id = -1;
             for (auto& row: strings)
             {
@@ -71,7 +71,7 @@ bool ListViewGenerator::SettingsCode(Code& code)
             code.OpenBrace();
         }
 
-        auto headers = ConvertToArrayString(code.view(prop_column_labels));
+        auto headers = code.node()->as_ArrayString(prop_column_labels);
         for (auto& iter: headers)
         {
             code.Eol(eol_if_needed).NodeName().Function("AppendColumn(").QuotedString(iter).EndFunction();
@@ -84,7 +84,7 @@ bool ListViewGenerator::SettingsCode(Code& code)
                 code.Str("auto ");
             code.Str("info = ").Add("wxListItem(").EndFunction();
             code.Eol().Str("info.Clear(").EndFunction();
-            auto strings = ConvertToArrayString(code.view(prop_contents));
+            auto strings = code.node()->as_ArrayString(prop_contents);
             int row_id = -1;
             for (auto& row: strings)
             {
@@ -126,7 +126,7 @@ int ListViewGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t x
     GenXrcStylePosSize(node, item, prop_mode);
     GenXrcWindowSettings(node, item);
 
-    auto headers = ConvertToArrayString(node->value(prop_column_labels));
+    auto headers = node->as_ArrayString(prop_column_labels);
     for (auto& iter: headers)
     {
         auto child = item.append_child("object");

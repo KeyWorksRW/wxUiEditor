@@ -23,7 +23,7 @@ wxObject* ChoiceGenerator::CreateMockup(Node* node, wxObject* parent)
 
     if (node->HasValue(prop_contents))
     {
-        auto array = ConvertToArrayString(node->prop_as_string(prop_contents));
+        auto array = node->as_ArrayString(prop_contents);
         for (auto& iter: array)
             widget->Append(iter.make_wxString());
 
@@ -101,7 +101,7 @@ bool ChoiceGenerator::SettingsCode(Code& code)
 
     if (code.HasValue(prop_contents))
     {
-        auto array = ConvertToArrayString(code.node()->as_string(prop_contents));
+        auto array = code.node()->as_ArrayString(prop_contents);
         for (auto& iter: array)
         {
             code.Eol(eol_if_empty).NodeName().Function("Append(").QuotedString(iter).EndFunction();
@@ -154,7 +154,7 @@ int ChoiceGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc
     if (node->HasValue(prop_contents))
     {
         auto content = item.append_child("content");
-        auto array = ConvertToArrayString(node->prop_as_string(prop_contents));
+        auto array = node->as_ArrayString(prop_contents);
         for (auto& iter: array)
         {
             content.append_child("item").text().set(iter);

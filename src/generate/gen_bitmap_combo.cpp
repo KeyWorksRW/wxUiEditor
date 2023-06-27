@@ -26,7 +26,7 @@ wxObject* BitmapComboBoxGenerator::CreateMockup(Node* node, wxObject* parent)
 
     if (node->HasValue(prop_contents))
     {
-        auto array = ConvertToArrayString(node->prop_as_string(prop_contents));
+        auto array = node->as_ArrayString(prop_contents);
         for (auto& iter: array)
             widget->Append(iter.make_wxString());
 
@@ -119,7 +119,7 @@ bool BitmapComboBoxGenerator::SettingsCode(Code& code)
 
     if (code.HasValue(prop_contents))
     {
-        auto array = ConvertToArrayString(code.node()->as_string(prop_contents));
+        auto array = code.node()->as_ArrayString(prop_contents);
         for (auto& iter: array)
         {
             code.Eol(eol_if_empty).NodeName().Function("Append(").QuotedString(iter).EndFunction();

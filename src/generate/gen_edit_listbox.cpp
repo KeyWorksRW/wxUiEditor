@@ -23,7 +23,7 @@ wxObject* EditListBoxGenerator::CreateMockup(Node* node, wxObject* parent)
 
     if (node->HasValue(prop_contents))
     {
-        auto array = ConvertToWxArrayString(node->prop_as_string(prop_contents));
+        auto array = node->as_wxArrayString(prop_auto_complete);
         widget->SetStrings(array);
     }
 
@@ -47,7 +47,7 @@ bool EditListBoxGenerator::SettingsCode(Code& code)
 {
     if (code.HasValue(prop_contents))
     {
-        auto array = ConvertToArrayString(code.node()->as_string(prop_contents));
+        auto array = code.node()->as_ArrayString(prop_contents);
         if (code.is_cpp())
         {
             code.OpenBrace().Str("wxArrayString tmp_array;");
@@ -95,7 +95,7 @@ int EditListBoxGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_
     if (node->HasValue(prop_contents))
     {
         auto content = item.append_child("content");
-        auto array = ConvertToArrayString(node->prop_as_string(prop_contents));
+        auto array = node->as_ArrayString(prop_contents);
         for (auto& iter: array)
         {
             content.append_child("item").text().set(iter);

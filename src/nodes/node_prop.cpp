@@ -380,44 +380,94 @@ std::vector<tt_string> NodeProperty::as_vector() const
 
 std::vector<tt_string> NodeProperty::as_ArrayString() const
 {
-    std::vector<tt_string> array;
-    if (m_value.empty())
-        return array;
-    tt_string parse;
-    auto pos = parse.ExtractSubString(m_value);
-    if (!tt::is_found(pos))
+    std::vector<tt_string> result;
+    if (m_value.size())
     {
-        // This usually means a property that was hand-edited incorrectly, or a newer version of the project
-        // file where the property is encoded differently.
-        return array;
-    }
-    array.emplace_back(parse);
-
-    for (auto tmp_m_value = tt::stepover(m_value.data() + pos); tmp_m_value.size();
-         tmp_m_value = tt::stepover(tmp_m_value.data() + pos))
-    {
-        pos = parse.ExtractSubString(tmp_m_value);
+#if 0
+        tt_string parse;
+        auto pos = parse.ExtractSubString(m_value);
         if (!tt::is_found(pos))
-            break;
-        array.emplace_back(parse);
-    }
+        {
+            // This usually means a property that was hand-edited incorrectly, or a newer version of the project
+            // file where the property is encoded differently.
+            return array;
+        }
+        result.emplace_back(parse);
 
-    return array;
+        for (auto tmp_m_value = tt::stepover(m_value.data() + pos); tmp_m_value.size();
+             tmp_m_value = tt::stepover(tmp_m_value.data() + pos))
+        {
+            pos = parse.ExtractSubString(tmp_m_value);
+            if (!tt::is_found(pos))
+                break;
+            result.emplace_back(parse);
+        }
+#else
+        if (m_value[0] == '"')
+        {
+            // REVIEW: [Randalphwa - 06-26-2023] This uses tt_string_view to parse the string.
+            auto view = m_value.view_substr(0, '"', '"');
+            while (view.size() > 0)
+            {
+                result.emplace_back(view);
+                view = tt::stepover(view.data() + view.size());
+                view = view.view_substr(0, '"', '"');
+            }
+        }
+        else
+        {
+            tt_string_vector array;
+            array.SetString(m_value, ";", tt::TRIM::both);
+            result = array;
+        }
+#endif
+    }
+    return result;
 }
 
 wxArrayString NodeProperty::as_wxArrayString() const
 {
     wxArrayString result;
 
-    if (m_value.empty())
-        return result;
-
-    wxString str = m_value.make_wxString();
-    WX_PG_TOKENIZER2_BEGIN(str, '"')
-
-    result.Add(token);
-
-    WX_PG_TOKENIZER2_END()
+    if (m_value.size())
+    {
+#if 0
+        // REVIEW: [Randalphwa - 06-26-2023] This works, however in wxWidgets 3.2, it converts
+        // the entire string to unicode and does a unicode parsing of the string. Since the
+        // original string is utf8, that's not efficient.
+        if (m_value[0] == '"')
+            delimiter = '"';
+        else
+            delimiter = ';';
+        wxString str = m_value.make_wxString();
+        wxPGStringTokenizer tokenizer(str, delimiter);
+        while (tokenizer.HasMoreTokens())
+        {
+            result.Add(tokenizer.GetNextToken());
+        }
+#else
+        if (m_value[0] == '"')
+        {
+            // REVIEW: [Randalphwa - 06-26-2023] This uses tt_string_view to parse the string.
+            auto view = m_value.view_substr(0, '"', '"');
+            while (view.size() > 0)
+            {
+                result.Add(view.make_wxString());
+                view = tt::stepover(view.data() + view.size());
+                view = view.view_substr(0, '"', '"');
+            }
+        }
+        else
+        {
+            tt_view_vector array;
+            array.SetString(m_value, ";", tt::TRIM::both);
+            for (auto& str: array)
+            {
+                result.Add(str.make_wxString());
+            }
+        }
+#endif
+    }
 
     return result;
 }
@@ -566,7 +616,7 @@ std::vector<NODEPROP_CHECKLIST_ITEM> NodeProperty::as_checklist_items() const
 
     if (m_value.size() && m_value[0] == '"' && wxGetApp().GetProjectVersion() <= minRequiredVer)
     {
-        auto array = ConvertToArrayString(m_value);
+        auto array = as_ArrayString();
         for (auto& iter: array)
         {
             NODEPROP_CHECKLIST_ITEM item;

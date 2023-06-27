@@ -64,9 +64,9 @@ protected:
     void AddProperties(tt_string_view name, Node* node, NodeCategory& category, PropNameSet& prop_set,
                        bool is_child_cat = false);
 
-    void ReplaceDerivedName(const wxString& formName, NodeProperty* propType);
-    void ReplaceBaseFile(const wxString& formName, NodeProperty* propType);
-    void ReplaceDerivedFile(const wxString& formName, NodeProperty* propType);
+    void ReplaceDerivedName(const tt_string& formName, NodeProperty* propType);
+    void ReplaceBaseFile(const tt_string& formName, NodeProperty* propType);
+    void ReplaceDerivedFile(const tt_string& formName, NodeProperty* propType);
 
     wxPGProperty* CreatePGProperty(NodeProperty* prop);
 

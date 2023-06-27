@@ -53,9 +53,6 @@ tt_string ConvertEscapeSlashes(tt_string_view str);
 
 std::vector<tt_string> ConvertToArrayString(tt_string_view value);
 
-// Use ConvertToArrayString() to get a vector, this function to get a wxArrayString
-wxArrayString ConvertToWxArrayString(tt_string_view value);
-
 // Converts an unsigned char array into an image. This is typically used for loading internal
 // #included images
 wxImage LoadHeaderImage(const unsigned char* data, size_t size_data);

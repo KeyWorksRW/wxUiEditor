@@ -191,7 +191,7 @@ public:
     //
     // Unless chBegin is a whitespace character, all whitespace characters starting with
     // offset will be ignored.
-    tt_string_view view_substr(size_t offset, char chBegin = '"', char chEnd = '"');
+    tt_string_view view_substr(size_t offset, char chBegin = '"', char chEnd = '"') const;
 
     // Assigns the string between chBegin and chEnd. This is typically used to copy the
     // contents of a quoted string. Returns the position of the ending character in src.

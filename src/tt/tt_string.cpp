@@ -678,6 +678,50 @@ bool tt_string::dir_exists() const
     return (file.exists() && file.is_directory());
 }
 
+bool tt_string::ChangeDir(bool is_dir) const
+{
+    if (empty())
+        return false;
+    try
+    {
+        if (is_dir)
+        {
+#if defined(_WIN32)
+
+            auto dir = std::filesystem::directory_entry(std::filesystem::path(to_utf16()));
+#else
+            auto dir = std::filesystem::directory_entry(std::filesystem::path(c_str()));
+#endif  // _WIN32
+            if (dir.exists())
+            {
+                std::filesystem::current_path(dir);
+                return true;
+            }
+        }
+        else
+        {
+            tt_string tmp(*this);
+            tmp.remove_filename();
+            if (tmp.empty())
+                return false;
+#if defined(_WIN32)
+            auto dir = std::filesystem::directory_entry(std::filesystem::path(tmp.to_utf16()));
+#else
+            auto dir = std::filesystem::directory_entry(std::filesystem::path(tmp.c_str()));
+#endif  // _WIN32
+            if (dir.exists())
+            {
+                std::filesystem::current_path(dir);
+                return true;
+            }
+        }
+    }
+    catch (const std::exception& /* e */)
+    {
+    }
+    return false;
+}
+
 size_t tt_string::find_oneof(const char* pszSet) const
 {
     if (!pszSet || !*pszSet)

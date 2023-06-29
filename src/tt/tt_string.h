@@ -328,6 +328,12 @@ public:
     // Returns true if the current string refers to an existing directory.
     bool dir_exists() const;
 
+    // Confirms current string is an existing directory and then changes to that directory.
+    //
+    // If is_dir is false, current sting is assumed to contain a filename in the path to
+    // change to.
+    bool ChangeDir(bool is_dir = true) const;
+
     tt_string& operator<<(std::string_view str)
     {
         *this += str;

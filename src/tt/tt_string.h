@@ -373,4 +373,13 @@ public:
     // Forward slashes are fine. Recurisve will create all parent directories as needed.
     static bool MkDir(const tt_string& path, bool recursive = false);
 
+    static tt_string GetCwd()
+    {
+#ifdef _WIN32
+        return tt::utf16to8(std::filesystem::current_path().c_str());
+#else
+        return std::filesystem::current_path().string();
+#endif
+    }
+
 };  // end tt_string class

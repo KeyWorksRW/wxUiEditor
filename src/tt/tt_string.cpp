@@ -1094,3 +1094,24 @@ tt_string_view tt_string::view_stepover(size_t start) const
 {
     return subview(stepover(start));
 }
+
+// This is a static function, so no access to the class buffer.
+bool tt_string::MkDir(const tt_string& path, bool recursive)
+{
+    if (path.empty())
+        return false;
+
+#ifdef _WIN32
+    auto dir_path = std::filesystem::path(path.to_utf16());
+    if (recursive)
+        return std::filesystem::create_directories(dir_path);
+    else
+        return std::filesystem::create_directory(dir_path);
+#else
+    auto dir_path = std::filesystem::path(path);
+    if (recursive)
+        return std::filesystem::create_directories(dir_path);
+    else
+        return std::filesystem::create_directory(dir_path);
+#endif
+}

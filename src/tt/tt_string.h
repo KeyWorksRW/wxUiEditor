@@ -363,10 +363,14 @@ public:
         *this = str.utf8_string();
         return *this;
     }
+
     tt_string& append_wx(const wxString& str)
     {
         *this += str.utf8_string();
         return *this;
     }
+
+    // Forward slashes are fine. Recurisve will create all parent directories as needed.
+    static bool MkDir(const tt_string& path, bool recursive = false);
 
 };  // end tt_string class

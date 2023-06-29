@@ -191,18 +191,23 @@ int FileCodeWriter::WriteFile(int language, int flags)
     // line endings are forced to '\n'.
 
     // Make certain the folder we are supposed to write to exists
-    tt_wxString copy(m_filename);
+    tt_string copy(m_filename);
     copy.remove_filename();
     if (copy.size() && !copy.dir_exists() && !wxGetApp().AskedAboutMissingDir(copy))
     {
         if (flags & flag_no_ui)
             return write_no_folder;
 
-        if (wxMessageBox(wxString() << "The directory " << copy << " doesn't exist.\n\nWould you like it to be created?",
+        if (wxMessageBox(wxString() << "The directory " << copy.make_wxString()
+                                    << " doesn't exist.\n\nWould you like it to be created?",
                          "Generate Files", wxICON_WARNING | wxYES_NO) == wxYES)
         {
-            wxFileName fn(copy);
-            fn.Mkdir();
+            if (!tt_string::MkDir(copy))
+            {
+                wxMessageBox(wxString() << "The directory " << copy.make_wxString() << "could not be created.",
+                             "Generate Files", wxICON_ERROR | wxOK);
+                return write_cant_create;
+            }
         }
         else
         {

@@ -31,24 +31,24 @@ bool UndoInfo::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     auto* staticText_6 = new wxStaticText(this, wxID_ANY, "Number of Redo items:");
     flex_grid_sizer->Add(staticText_6, wxSizerFlags().Border(wxALL));
 
-    m_txt_undo_memory = new wxStaticText(this, wxID_ANY, "...");
-    flex_grid_sizer->Add(m_txt_undo_memory, wxSizerFlags().Border(wxALL));
+    m_txt_redo_items = new wxStaticText(this, wxID_ANY, "...");
+    flex_grid_sizer->Add(m_txt_redo_items, wxSizerFlags().Border(wxALL));
 
     dlg_sizer->Add(flex_grid_sizer, wxSizerFlags().Border(wxALL));
 
     auto* staticText = new wxStaticText(this, wxID_ANY,
         "The amount of memory used is determined by the reference count of the nodes. If the node is not orphaned, then it consumes no additional memory other than the shared_ptr itself.",
-        wxDefaultPosition, wxDefaultSize, wxBORDER_RAISED);
+        wxDefaultPosition, wxDefaultSize, wxBORDER_SIMPLE);
     staticText->Wrap(300);
-    dlg_sizer->Add(staticText, wxSizerFlags().DoubleBorder(wxALL));
+    dlg_sizer->Add(staticText, wxSizerFlags().Border(wxALL));
 
     auto* flex_grid_sizer_2 = new wxFlexGridSizer(2, 0, 0);
 
     auto* staticText_7 = new wxStaticText(this, wxID_ANY, "Undo Memory:");
     flex_grid_sizer_2->Add(staticText_7, wxSizerFlags().Border(wxALL));
 
-    m_txt_redo_items = new wxStaticText(this, wxID_ANY, "...");
-    flex_grid_sizer_2->Add(m_txt_redo_items, wxSizerFlags().Border(wxALL));
+    m_txt_undo_memory = new wxStaticText(this, wxID_ANY, "...");
+    flex_grid_sizer_2->Add(m_txt_undo_memory, wxSizerFlags().Border(wxALL));
 
     auto* staticText_8 = new wxStaticText(this, wxID_ANY, "Redo Memory:");
     flex_grid_sizer_2->Add(staticText_8, wxSizerFlags().Border(wxALL));
@@ -93,30 +93,18 @@ bool UndoInfo::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 
 void UndoInfo::OnInit(wxInitDialogEvent& event)
 {
-    const auto& undo_stack = wxGetApp().GetMainFrame()->GetUndoStack();
-    const auto& undo_vector = undo_stack.GetUndoVector();
-    const auto& redo_vector = undo_stack.GetRedoVector();
-    tt_string label;
-
-    label.Format("%kzu", undo_vector.size());
-    m_txt_undo_items->SetLabel(label);
-    label.clear();
-    label.Format("%kzu", redo_vector.size());
-    m_txt_redo_items->SetLabel(label);
-    label.clear();
-
     NodeInfo::NodeMemory node_memory;
 
     // This will only add the memory of non-orphaned nodes.
     //
     // The auto&& CalcMemory and forced return type is so that we can recursively call this
     // lambda function.
-    auto CalcMemory = [&](const NodeSharedPtr node, auto&& CalcMemory) -> void
+    auto CalcMemory = [&node_memory](const NodeSharedPtr node, auto&& CalcMemory) -> void
     {
         ++node_memory.children;
 
         // An orphaned node will have an additional 2 reference counts at this point. 1 for
-        // iter->GetNode() in the function that called us, and one for passing the paremter to
+        // iter->GetNode() in the function that called us, and one for passing the parameter to
         // this function.
         if (node.use_count() <= 3)
         {
@@ -131,7 +119,7 @@ void UndoInfo::OnInit(wxInitDialogEvent& event)
 
     // This will iterate through the vector of actions, adding up the memory size (and possible
     // number of node children) for each action in the vector.
-    auto ParseActions = [&](const std::vector<UndoActionPtr>& actions, wxStaticText* p_static_txt)
+    auto ParseActions = [&](const std::vector<UndoActionPtr>& actions, wxStaticText* ptxt_items, wxStaticText* ptxt_memory)
     {
         node_memory.size = 0;
         node_memory.children = 0;
@@ -149,16 +137,29 @@ void UndoInfo::OnInit(wxInitDialogEvent& event)
             }
         }
 
+        tt_string txt_items;
+        txt_items.Format("%kzu", actions.size());
+        ptxt_items->SetLabel(txt_items);
+
         if (node_memory.size > 0)
         {
-            label.clear();
-            label.Format("%kzu (%kzu node%s)", node_memory.size, node_memory.children, node_memory.children == 1 ? "" : "s");
-            p_static_txt->SetLabel(label);
+            tt_string txt_totals;
+            txt_totals.Format("%kzu (%kzu node%s)", node_memory.size, node_memory.children,
+                              node_memory.children == 1 ? "" : "s");
+            ptxt_memory->SetLabel(txt_totals);
+        }
+        else
+        {
+            ptxt_memory->SetLabel("0");
         }
     };
 
-    ParseActions(undo_vector, m_txt_undo_memory);
-    ParseActions(redo_vector, m_txt_redo_memory);
+    const auto& undo_stack = wxGetApp().GetMainFrame()->GetUndoStack();
+    const auto& undo_vector = undo_stack.GetUndoVector();
+    const auto& redo_vector = undo_stack.GetRedoVector();
+
+    ParseActions(undo_vector, m_txt_undo_items, m_txt_undo_memory);
+    ParseActions(redo_vector, m_txt_redo_items, m_txt_redo_memory);
 
     Fit();
 

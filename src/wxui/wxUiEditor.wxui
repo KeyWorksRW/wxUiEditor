@@ -279,13 +279,6 @@
                 wxEVT_MENU="OnAppendSmith" />
               <node
                 class="wxMenuItem"
-                help="Append DialogBlocks project into current project"
-                id="id_AppendDialogBlocks"
-                label="DialogBlocks Project..."
-                var_name="menu_item_8"
-                wxEVT_MENU="OnAppendDialogBlocks" />
-              <node
-                class="wxMenuItem"
                 help="Append Windows Resource into current project"
                 id="id_AppendWinRes"
                 label="Windows Resource..."
@@ -1025,67 +1018,6 @@
                     bitmap="Embed;folder.png"
                     help="Create a folder that can be used to organize forms."
                     id="gen_folder" />
-                </node>
-              </node>
-            </node>
-            <node
-              class="wxRibbonPage"
-              label="MDI">
-              <node
-                class="wxRibbonPanel"
-                label="MDI"
-                var_name="panel_mmdi">
-                <node
-                  class="wxRibbonToolBar"
-                  var_name="forms_bar_mdi"
-                  wxEVT_RIBBONTOOLBAR_CLICKED="OnToolClick">
-                  <node
-                    class="ribbonTool"
-                    bitmap="Embed;wxFrame.png"
-                    help="Creates MDI Frame and wxDocTemplate"
-                    id="CreateMdiFrame" />
-                  <node
-                    class="ribbonTool"
-                    bitmap="Embed;wxPopupTransientWindow.png"
-                    help="Creates a wxDocChildFrame view"
-                    id="CreateView"
-                    kind="wxRIBBON_BUTTON_DROPDOWN" />
-                </node>
-              </node>
-              <node
-                class="wxRibbonPanel"
-                label="Menu"
-                var_name="panel_bars_menu_2">
-                <node
-                  class="wxRibbonToolBar"
-                  var_name="bars_bar_menu_2"
-                  wxEVT_RIBBONTOOLBAR_CLICKED="OnToolClick">
-                  <node
-                    class="ribbonTool"
-                    bitmap="Embed;wxmenuBar.png"
-                    help="Creates a frame or child window menu bar"
-                    id="MdiMenuBar"
-                    kind="wxRIBBON_BUTTON_DROPDOWN" />
-                  <node
-                    class="ribbonTool"
-                    bitmap="Embed;menu.png"
-                    help="wxMenu"
-                    id="gen_wxMenu" />
-                  <node
-                    class="ribbonTool"
-                    bitmap="Embed;menuitem.png"
-                    help="wxMenuItem"
-                    id="gen_wxMenuItem" />
-                  <node
-                    class="ribbonTool"
-                    bitmap="Embed;submenu.png"
-                    help="submenu"
-                    id="gen_submenu" />
-                  <node
-                    class="ribbonTool"
-                    bitmap="Embed;separator.png"
-                    help="separator"
-                    id="gen_separator" />
                 </node>
               </node>
             </node>
@@ -3453,6 +3385,7 @@
               class="wxRadioButton"
               label="&amp;DialogBlocks File(s)"
               var_name="m_radio_DialogBlocks"
+              hidden="1"
               column="1"
               row="1"
               wxEVT_RADIOBUTTON="OnDialogBlocks" />

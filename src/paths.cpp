@@ -16,12 +16,12 @@
 
 void AllowDirectoryChange(wxPropertyGridEvent& event, NodeProperty* /* prop */, Node* /* node */)
 {
-    tt_wxString newValue = event.GetPropertyValue().GetString();
+    tt_string newValue = event.GetPropertyValue().GetString().utf8_string();
     if (newValue.empty())
         return;
 
     newValue.make_absolute();
-    newValue.make_relative_wx(Project.ProjectPath());
+    newValue.make_relative(Project.ProjectPath());
     newValue.backslashestoforward();
 
     tt_cwd cwd(true);
@@ -33,7 +33,7 @@ void AllowDirectoryChange(wxPropertyGridEvent& event, NodeProperty* /* prop */, 
         // processing. Preserve the focus to avoid validating twice.
         auto focus = wxWindow::FindFocus();
 
-        auto result = wxMessageBox(tt_string() << "The directory \"" << newValue.utf8_string()
+        auto result = wxMessageBox(tt_string() << "The directory \"" << newValue
                                                << "\" does not exist. Do you want to use this name anyway?",
                                    "Directory doesn't exist", wxYES_NO | wxICON_WARNING, GetMainFrame());
         if (focus)
@@ -68,15 +68,15 @@ void AllowFileChange(wxPropertyGridEvent& event, NodeProperty* prop, Node* node)
 {
     if (prop->isProp(prop_base_file) || prop->isProp(prop_python_file) || prop->isProp(prop_xrc_file))
     {
-        tt_wxString newValue = event.GetPropertyValue().GetString();
+        tt_string newValue = event.GetPropertyValue().GetString().utf8_string();
         if (newValue.empty())
             return;
 
         newValue.make_absolute();
-        newValue.make_relative_wx(Project.ProjectPath());
+        newValue.make_relative(Project.ProjectPath());
         newValue.backslashestoforward();
 
-        auto filename = newValue.sub_cstr();
+        auto filename = newValue;
 
         std::vector<Node*> forms;
         Project.CollectForms(forms);
@@ -90,8 +90,8 @@ void AllowFileChange(wxPropertyGridEvent& event, NodeProperty* prop, Node* node)
                 {
                     auto focus = wxWindow::FindFocus();
 
-                    wxMessageBox(wxString() << "The base filename \"" << filename << "\" is already in use by "
-                                            << child->prop_as_string(prop_class_name)
+                    wxMessageBox(wxString() << "The base filename \"" << filename.make_wxString()
+                                            << "\" is already in use by " << child->prop_as_string(prop_class_name)
                                             << "\n\nEither change the name, or press ESC to restore the original name.",
                                  "Duplicate base filename", wxICON_STOP);
                     if (focus)
@@ -115,8 +115,8 @@ void AllowFileChange(wxPropertyGridEvent& event, NodeProperty* prop, Node* node)
                 {
                     auto focus = wxWindow::FindFocus();
 
-                    wxMessageBox(wxString() << "The python filename \"" << filename << "\" is already in use by "
-                                            << child->prop_as_string(prop_class_name)
+                    wxMessageBox(wxString() << "The python filename \"" << filename.make_wxString()
+                                            << "\" is already in use by " << child->prop_as_string(prop_class_name)
                                             << "\n\nEither change the name, or press ESC to restore the original name.",
                                  "Duplicate python filename", wxICON_STOP);
                     if (focus)
@@ -143,8 +143,8 @@ void AllowFileChange(wxPropertyGridEvent& event, NodeProperty* prop, Node* node)
                 {
                     auto focus = wxWindow::FindFocus();
 
-                    wxMessageBox(wxString() << "The xrc filename \"" << filename << "\" is already in use by "
-                                            << child->prop_as_string(prop_class_name)
+                    wxMessageBox(wxString() << "The xrc filename \"" << filename.make_wxString()
+                                            << "\" is already in use by " << child->prop_as_string(prop_class_name)
                                             << "\n\nEither change the name, or press ESC to restore the original name.",
                                  "Duplicate xrc filename", wxICON_STOP);
 
@@ -177,9 +177,9 @@ void OnPathChanged(wxPropertyGridEvent& event, NodeProperty* prop, Node* /* node
     // If the user clicked the path button, the current directory may have changed.
     Project.ChangeDir();
 
-    tt_wxString newValue = event.GetPropertyValue().GetString();
+    tt_string newValue = event.GetPropertyValue().GetString().utf8_string();
     newValue.make_absolute();
-    newValue.make_relative_wx(Project.ProjectPath());
+    newValue.make_relative(Project.ProjectPath());
     newValue.backslashestoforward();
 
     // Note that on Windows, even though we changed the property to a forward slash, it will still be displayed
@@ -187,7 +187,7 @@ void OnPathChanged(wxPropertyGridEvent& event, NodeProperty* prop, Node* /* node
     // display isn't correct, it will be stored in the project file correctly.
 
     event.GetProperty()->SetValueFromString(newValue, 0);
-    tt_string value(newValue.utf8_string());
+    tt_string value(newValue);
     if (value != prop->as_string())
     {
         if (prop->isProp(prop_derived_directory))

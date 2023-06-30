@@ -389,7 +389,7 @@ void MainFrame::OnSaveProject(wxCommandEvent& event)
     {
         pugi::xml_document doc;
         Project.ProjectNode()->CreateDoc(doc);
-        if (doc.save_file(Project.ProjectFile().utf8_string().c_str(), "  ", pugi::format_indent_attributes))
+        if (doc.save_file(Project.ProjectFile().c_str(), "  ", pugi::format_indent_attributes))
         {
             m_isProject_modified = false;
             ProjectSaved();
@@ -403,19 +403,19 @@ void MainFrame::OnSaveProject(wxCommandEvent& event)
 
 void MainFrame::OnSaveAsProject(wxCommandEvent&)
 {
-    auto filename = Project.ProjectFile().filename();
+    tt_string filename = Project.ProjectFile().filename();
     if (filename.is_sameas(txtEmptyProject))
     {
         filename = "MyProject";
     }
 
     // The ".wxue" extension is only used for testing -- all normal projects should have a .wxui extension
-    wxFileDialog dialog(this, "Save Project As", Project.ProjectPath(), filename,
+    wxFileDialog dialog(this, "Save Project As", Project.ProjectPath(), filename.make_wxString(),
                         "wxUiEditor Project File (*.wxui)|*.wxui;*.wxue", wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
 
     if (dialog.ShowModal() == wxID_OK)
     {
-        filename = dialog.GetPath();
+        filename = dialog.GetPath().utf8_string();
         if (filename.extension().empty())
         {
             filename.replace_extension(".wxui");
@@ -458,7 +458,7 @@ void MainFrame::OnSaveAsProject(wxCommandEvent&)
 
         pugi::xml_document doc;
         Project.ProjectNode()->CreateDoc(doc);
-        if (doc.save_file(filename.sub_cstr().c_str(), "  ", pugi::format_indent_attributes))
+        if (doc.save_file(filename.c_str(), "  ", pugi::format_indent_attributes))
         {
             m_isProject_modified = false;
             m_isImported = false;
@@ -493,7 +493,7 @@ void MainFrame::OnOpenProject(wxCommandEvent&)
 
     if (dialog.ShowModal() == wxID_OK)
     {
-        tt_wxString filename = dialog.GetPath();
+        tt_string filename = dialog.GetPath().utf8_string();
         // The ".wxue" extension is only used for testing -- all normal projects should have a .wxui extension
         if (filename.extension().is_sameas(".wxui", tt::CASE::either) ||
             filename.extension().is_sameas(".wxue", tt::CASE::either))
@@ -590,7 +590,7 @@ void MainFrame::OnOpenRecentProject(wxCommandEvent& event)
     if (!SaveWarning())
         return;
 
-    tt_wxString file = m_FileHistory.GetHistoryFile(event.GetId() - wxID_FILE1);
+    tt_string file = m_FileHistory.GetHistoryFile(event.GetId() - wxID_FILE1).utf8_string();
 
     if (file.file_exists())
     {
@@ -609,9 +609,9 @@ void MainFrame::OnOpenRecentProject(wxCommandEvent& event)
 #if defined(_DEBUG) || defined(INTERNAL_TESTING)
 void MainFrame::OnImportRecent(wxCommandEvent& event)
 {
-    tt_wxString file = m_ImportHistory.GetHistoryFile(event.GetId() - (wxID_FILE1 + 1000));
+    tt_string file = m_ImportHistory.GetHistoryFile(event.GetId() - (wxID_FILE1 + 1000)).utf8_string();
     wxArrayString files;
-    files.Add(file);
+    files.Add(file.make_wxString());
     auto extension = file.extension();
     if (extension == ".wxcp")
         Project.AppendCrafter(files);
@@ -663,7 +663,7 @@ void MainFrame::OnAbout(wxCommandEvent&)
 
     if (wxGetApp().isTestingMenuEnabled())
     {
-        description << "\n" << Project.ProjectFile().ToStdString() << "  \n";
+        description << "\n" << Project.ProjectFile() << "  \n";
         description << "Original Project version: " << Project.GetOriginalProjectVersion() << "\n";
         description << "wxUE Project version: " << curSupportedVer << "\n";
     }
@@ -760,7 +760,7 @@ void MainFrame::ProjectLoaded()
 
 void MainFrame::ProjectSaved()
 {
-    setStatusText(tt_string(Project.ProjectFile().filename().utf8_string()) << " saved");
+    setStatusText(tt_string(Project.ProjectFile().filename()) << " saved");
     UpdateFrame();
 }
 
@@ -866,7 +866,7 @@ void MainFrame::UpdateLayoutTools()
 
 void MainFrame::UpdateFrame()
 {
-    tt_wxString filename = Project.ProjectFile().filename();
+    tt_string filename = Project.ProjectFile().filename();
 
     if (filename.empty())
     {
@@ -878,7 +878,7 @@ void MainFrame::UpdateFrame()
     {
         filename.insert(0, "*");
     }
-    SetTitle(filename);
+    SetTitle(filename.make_wxString());
 
     wxString menu_text = "Undo";
     if (m_undo_stack.IsUndoAvailable())
@@ -1914,14 +1914,14 @@ void MainFrame::UpdateWakaTime(bool FileSavedEvent)
     }
 }
 
-void MainFrame::RemoveFileFromHistory(tt_wxString file)
+void MainFrame::RemoveFileFromHistory(tt_string file)
 {
     if (file.empty())
         return;
 
     for (size_t idx = 0; idx < m_FileHistory.GetCount(); ++idx)
     {
-        if (file == m_FileHistory.GetHistoryFile(idx))
+        if (file == m_FileHistory.GetHistoryFile(idx).utf8_string())
         {
             m_FileHistory.RemoveFileFromHistory(idx);
             break;

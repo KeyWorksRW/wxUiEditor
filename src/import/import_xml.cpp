@@ -126,13 +126,15 @@ std::map<std::string_view, std::string_view, std::less<>> s_map_old_events = {
 
 using namespace xrc_import;
 
-std::optional<pugi::xml_document> ImportXML::LoadDocFile(const tt_wxString& file)
+std::optional<pugi::xml_document> ImportXML::LoadDocFile(const tt_string& file)
 {
     pugi::xml_document doc;
 
-    if (auto result = doc.load_file(file.utf8_string().c_str()); !result)
+    if (auto result = doc.load_file(file.c_str()); !result)
     {
-        wxMessageBox(wxString("Cannot open ") << file << "\n\n" << result.description(), "Import wxFormBuilder project");
+        wxMessageBox(wxString("Cannot open ") << file.make_wxString() << "\n\n"
+                                              << result.description(),
+                     "Import wxFormBuilder project");
         return {};
     }
 
@@ -1069,10 +1071,10 @@ void ImportXML::ProcessBitmap(const pugi::xml_node& xml_obj, Node* node, GenEnum
             // path to be incorrect
             file.Replace(":\\\\", ":\\");
 
-            tt_wxString relative(file.make_wxString());
-            relative.make_relative_wx(wxGetCwd());
+            tt_string relative(file.make_wxString());
+            relative.make_relative(tt_string::GetCwd());
             relative.backslashestoforward();
-            bitmap << relative.utf8_string();
+            bitmap << relative;
             bitmap << ";[-1,-1]";
 
             if (auto prop = node->get_prop_ptr(prop_bitmap); prop)

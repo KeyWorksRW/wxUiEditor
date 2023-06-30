@@ -35,7 +35,7 @@ wxObject* HtmlWindowGenerator::CreateMockup(Node* node, wxObject* parent)
     {
         wxBusyInfo wait(wxBusyInfoFlags()
                             .Parent(wxStaticCast(parent, wxWindow))
-                            .Title(tt_wxString("Parsing ") << node->prop_as_wxString(prop_html_url))
+                            .Title(wxString("Parsing ") << node->prop_as_wxString(prop_html_url))
                             .Text("This could take awhile..."));
         widget->LoadPage(node->prop_as_wxString(prop_html_url));
     }

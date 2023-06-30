@@ -285,7 +285,7 @@ void XrcPreview::OnExport(wxCommandEvent& WXUNUSED(event))
 
     if (dialog.ShowModal() == wxID_OK)
     {
-        tt_wxString filename = dialog.GetPath();
+        tt_string filename = dialog.GetPath().utf8_string();
 
         std::string buf;
         buf.reserve(m_scintilla->GetTextLength() + 1);
@@ -295,9 +295,9 @@ void XrcPreview::OnExport(wxCommandEvent& WXUNUSED(event))
         pugi::xml_document doc;
         doc.load_string(buf.c_str());
 
-        if (!doc.save_file(filename.utf8_string().c_str(), "\t"))
+        if (!doc.save_file(filename.c_str(), "\t"))
         {
-            wxMessageBox(wxString("An unexpected error occurred exportin ") << filename, "Export XRC");
+            wxMessageBox(wxString("An unexpected error occurred exportin ") << filename.make_wxString(), "Export XRC");
         }
     }
 }

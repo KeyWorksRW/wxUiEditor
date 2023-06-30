@@ -54,8 +54,8 @@ public:
     // These get used to setup wxPGProperty, so both key and value need to be a wxString
     struct Options
     {
-        tt_wxString name;
-        tt_wxString help;
+        tt_string name;
+        tt_string help;
     };
 
     std::vector<Options>& GetOptions() { return m_options; }

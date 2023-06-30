@@ -123,7 +123,7 @@ void MainFrame::OnGenerateCode(wxCommandEvent&)
             results_dlg.Create(this);
             for (auto& iter: results.updated_files)
             {
-                iter.make_relative(Project.ProjectPath().utf8_string());
+                iter.make_relative(Project.ProjectPath());
                 results_dlg.m_lb_files->Append(iter);
             }
 

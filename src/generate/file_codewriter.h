@@ -35,7 +35,7 @@ namespace code
 class FileCodeWriter : public WriteCode
 {
 public:
-    FileCodeWriter(const wxString& file, size_t reserved_amount = 8 * 1024) : m_filename(file)
+    FileCodeWriter(const wxString& file, size_t reserved_amount = 8 * 1024) : m_filename(file.utf8_string())
     {
         m_buffer.clear();
         m_buffer.reserve(reserved_amount);
@@ -48,7 +48,7 @@ public:
         // m_filename.FromUTF8(file);
         // m_filename.FromUTF8(file.data(), file.size());
 
-        m_filename = file.make_wxString();
+        m_filename = file;
         m_buffer.clear();
         m_buffer.reserve(reserved_amount);
     }
@@ -65,7 +65,7 @@ protected:
     tt_string m_buffer;
 
 private:
-    tt_wxString m_filename;
+    tt_string m_filename;
 
 #if defined(_DEBUG)
     bool hasWriteFileBeenCalled { false };

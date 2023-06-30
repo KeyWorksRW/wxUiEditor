@@ -488,7 +488,7 @@ inline constexpr const char* lst_no_png_conversion[] = {
 };
 // clang-format on
 
-bool isConvertibleMime(const tt_wxString& suffix)
+bool isConvertibleMime(const tt_string& suffix)
 {
     for (auto& iter: lst_no_png_conversion)
     {

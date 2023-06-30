@@ -417,7 +417,7 @@ void BaseCodeGenerator::GenPythonEventHandlers(EventVector& events)
                 }
                 else if (Project.HasValue(prop_python_output_folder) && !path.contains("/"))
                 {
-                    path = Project.BaseDirectory(GEN_LANG_PYTHON).utf8_string();
+                    path = Project.BaseDirectory(GEN_LANG_PYTHON);
                     path.append_filename(base_file);
                     path += ".py";
                 }

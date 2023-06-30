@@ -221,13 +221,13 @@ int App::OnRun()
 
     if (parser.GetParamCount() || parser.GetArguments().size())
     {
-        tt_wxString filename;
+        wxString filename;
         if (parser.GetParamCount())
         {
             filename = parser.GetParam(0);
         }
 
-        tt_wxString log_file;
+        tt_string log_file;
         auto generate_type = GEN_LANG_NONE;
         bool test_only = false;
         if (parser.Found("gen_python", &filename))
@@ -286,11 +286,13 @@ int App::OnRun()
 #endif  // _DEBUG
         }
 
-        filename.make_absolute();
+        tt_string tt_filename = filename;
+
+        tt_filename.make_absolute();
         log_file = filename;
         log_file.replace_extension(".log");
         GenResults results;
-        if (filename.file_exists())
+        if (tt_filename.file_exists())
         {
             if (generate_type != GEN_LANG_NONE)
             {
@@ -298,14 +300,14 @@ int App::OnRun()
                 results.StartClock();
 #endif
             }
-            if (!filename.extension().is_sameas(".wxui", tt::CASE::either) &&
-                !filename.extension().is_sameas(".wxue", tt::CASE::either))
+            if (!tt_filename.extension().is_sameas(".wxui", tt::CASE::either) &&
+                !tt_filename.extension().is_sameas(".wxue", tt::CASE::either))
             {
-                is_project_loaded = Project.ImportProject(filename, generate_type == GEN_LANG_NONE);
+                is_project_loaded = Project.ImportProject(tt_filename, generate_type == GEN_LANG_NONE);
             }
             else
             {
-                is_project_loaded = Project.LoadProject(filename, generate_type == GEN_LANG_NONE);
+                is_project_loaded = Project.LoadProject(tt_filename, generate_type == GEN_LANG_NONE);
             }
         }
         else
@@ -314,7 +316,7 @@ int App::OnRun()
             {
                 tt_string_vector log;
                 log.emplace_back(tt_string("Unable to find project file: ") << filename.utf8_string());
-                log.WriteFile(log_file.utf8_string());
+                log.WriteFile(log_file);
                 return 1;
             }
         }
@@ -325,7 +327,7 @@ int App::OnRun()
             {
                 tt_string_vector log;
                 log.emplace_back(tt_string("Unable to load project file: ") << filename.utf8_string());
-                log.WriteFile(log_file.utf8_string());
+                log.WriteFile(log_file);
                 return 1;
             }
 
@@ -390,7 +392,7 @@ int App::OnRun()
                 auto& log_msg = log.emplace_back();
                 log_msg << iter;
             }
-            log.WriteFile(log_file.utf8_string());
+            log.WriteFile(log_file);
 
             return 0;
         }
@@ -456,7 +458,7 @@ int App::OnRun()
 
                         if (dialog.ShowModal() == wxID_OK)
                         {
-                            tt_wxString filename = dialog.GetPath();
+                            tt_string filename = dialog.GetPath().utf8_string();
                             if (!filename.extension().is_sameas(".wxui", tt::CASE::either) &&
                                 !filename.extension().is_sameas(".wxue", tt::CASE::either))
                             {

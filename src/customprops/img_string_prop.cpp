@@ -54,10 +54,10 @@ bool ImageDialogAdapter::DoShowDialog(wxPropertyGrid* propGrid, wxPGProperty* WX
                          wxFD_OPEN | wxFD_FILE_MUST_EXIST);
         if (dlg.ShowModal() == wxID_OK)
         {
-            tt_wxString name(dlg.GetPath());
-            name.make_relative_wx(Project.ProjectPath());
+            tt_string name = dlg.GetPath().utf8_string();
+            name.make_relative(Project.get_ProjectPath());
             name.backslashestoforward();
-            SetValue(name);
+            SetValue(name.make_wxString());
             return true;
         }
         return false;
@@ -84,10 +84,10 @@ bool ImageDialogAdapter::DoShowDialog(wxPropertyGrid* propGrid, wxPGProperty* WX
                          wxFD_OPEN | wxFD_FILE_MUST_EXIST);
         if (dlg.ShowModal() == wxID_OK)
         {
-            tt_wxString name(dlg.GetPath());
-            name.make_relative_wx(Project.ProjectPath());
+            tt_string name = dlg.GetPath().utf8_string();
+            name.make_relative(Project.get_ProjectPath());
             name.backslashestoforward();
-            SetValue(name);
+            SetValue(name.make_wxString());
             return true;
         }
         return false;

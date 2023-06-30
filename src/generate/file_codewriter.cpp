@@ -71,14 +71,14 @@ int FileCodeWriter::WriteFile(int language, int flags)
         tt_view_vector org_file;
         if (is_comparing)
         {
-            tt_string org_filename(m_filename.utf8_string());
+            tt_string org_filename(m_filename);
             org_filename.Replace("~wxue_", "");
             if (!org_file.ReadFile(org_filename))
             {
                 return write_cant_read;
             }
         }
-        else if (!org_file.ReadFile(m_filename.utf8_string()))
+        else if (!org_file.ReadFile(m_filename))
         {
             return write_cant_read;
         }
@@ -216,7 +216,7 @@ int FileCodeWriter::WriteFile(int language, int flags)
     }
 
     wxFile fileOut;
-    if (!fileOut.Create(m_filename, true))
+    if (!fileOut.Create(m_filename.make_wxString(), true))
     {
         return write_cant_create;
     }

@@ -36,16 +36,16 @@ using namespace GenEnum;
 
 using namespace GenEnum;
 
-bool ProjectHandler::LoadProject(const tt_wxString& file, bool allow_ui)
+bool ProjectHandler::LoadProject(const tt_string& file, bool allow_ui)
 {
     pugi::xml_document doc;
-    auto result = doc.load_file(file.utf8_string().c_str());
+    auto result = doc.load_file(file.c_str());
     if (!result)
     {
-        ASSERT_MSG(result, tt_string() << "pugi failed trying to load " << file.utf8_string());
+        ASSERT_MSG(result, tt_string() << "pugi failed trying to load " << file);
         if (allow_ui)
         {
-            wxMessageBox(wxString("Cannot open ") << file << "\n\n" << result.description(), "Load Project");
+            wxMessageBox(wxString("Cannot open ") << file.make_wxString() << "\n\n" << result.description(), "Load Project");
         }
         return false;
     }
@@ -132,7 +132,7 @@ bool ProjectHandler::LoadProject(const tt_wxString& file, bool allow_ui)
 
     if (!project)
     {
-        ASSERT_MSG(project, tt_string() << "Failed trying to load " << file.utf8_string());
+        ASSERT_MSG(project, tt_string() << "Failed trying to load " << file);
 
         if (allow_ui)
         {
@@ -576,7 +576,7 @@ NodeSharedPtr NodeCreator::CreateProjectNode(pugi::xml_node* xml_obj, bool allow
     return new_node;
 }
 
-bool ProjectHandler::ImportProject(tt_wxString& file,
+bool ProjectHandler::ImportProject(tt_string& file,
 #if defined(INTERNAL_TESTING)
                                    bool allow_ui
 #else
@@ -586,7 +586,7 @@ bool ProjectHandler::ImportProject(tt_wxString& file,
 {
 #if defined(INTERNAL_TESTING)
     // Importers will change the file extension, so make a copy here
-    auto import_file = file.sub_cstr();
+    tt_string import_file = file;
 #endif
     bool result = false;
     if (file.has_extension(".wxcp"))
@@ -643,7 +643,7 @@ bool ProjectHandler::ImportProject(tt_wxString& file,
     return result;
 }
 
-bool ProjectHandler::Import(ImportXML& import, tt_wxString& file, bool append, bool allow_ui)
+bool ProjectHandler::Import(ImportXML& import, tt_string& file, bool append, bool allow_ui)
 {
     m_ProjectVersion = ImportProjectVersion;
     if (import.Import(file))
@@ -651,9 +651,9 @@ bool ProjectHandler::Import(ImportXML& import, tt_wxString& file, bool append, b
 #if defined(_DEBUG) || defined(INTERNAL_TESTING)
         if (allow_ui)
         {
-            tt_wxString full_path(file);
+            tt_string full_path(file);
             full_path.make_absolute();
-            wxGetFrame().GetAppendImportHistory()->AddFileToHistory(full_path);
+            wxGetFrame().GetAppendImportHistory()->AddFileToHistory(full_path.make_wxString());
         }
 #endif  // _DEBUG
 
@@ -666,7 +666,7 @@ bool ProjectHandler::Import(ImportXML& import, tt_wxString& file, bool append, b
         auto project = root.child("node");
         if (!project || project.attribute("class").as_string() != "Project")
         {
-            ASSERT_MSG(project, tt_string() << "Failed trying to load converted xml document: " << file.utf8_string());
+            ASSERT_MSG(project, tt_string() << "Failed trying to load converted xml document: " << file);
 
             // TODO: [KeyWorks - 10-23-2020] Need to let the user know
             return false;
@@ -768,10 +768,10 @@ bool ProjectHandler::Import(ImportXML& import, tt_wxString& file, bool append, b
         if (m_project_node->GetChildCount() && file.file_exists())
         {
             doc.reset();
-            auto result = doc.load_file(file.utf8_string().c_str());
+            auto result = doc.load_file(file.c_str());
             if (!result)
             {
-                ASSERT_MSG(result, tt_string() << "pugi failed trying to load " << file.utf8_string());
+                ASSERT_MSG(result, tt_string() << "pugi failed trying to load " << file);
                 if (allow_ui)
                 {
                     wxMessageBox(wxString("Cannot open ") << file << "\n\n" << result.description(), "Load Project");
@@ -811,7 +811,7 @@ bool ProjectHandler::NewProject(bool create_empty, bool allow_ui)
     {
         auto project = NodeCreation.CreateProjectNode(nullptr);
 
-        tt_wxString file;
+        tt_string file;
         file.assignCwd();
         file.append_filename(txtEmptyProject);
 
@@ -855,7 +855,7 @@ bool ProjectHandler::NewProject(bool create_empty, bool allow_ui)
 
     auto project = NodeCreation.CreateProjectNode(nullptr);
 
-    tt_wxString file;
+    tt_string file;
     tt_cwd starting_cwd;
     file.assignCwd();
     file.append_filename("MyImportedProject");
@@ -875,7 +875,7 @@ bool ProjectHandler::NewProject(bool create_empty, bool allow_ui)
             {
 #if defined(INTERNAL_TESTING)
                 // Importers will change the file extension, so make a copy here
-                auto import_file = iter.sub_cstr();
+                tt_string import_file = iter;
 #endif
 
                 if (iter.has_extension(".wxcp"))
@@ -926,7 +926,7 @@ bool ProjectHandler::NewProject(bool create_empty, bool allow_ui)
 
                 if (imported_from.size())
                     imported_from << "@@";
-                imported_from << "// Imported from " << iter.utf8_string();
+                imported_from << "// Imported from " << iter;
             }
             catch (const std::exception& /* e */)
             {
@@ -944,10 +944,10 @@ bool ProjectHandler::NewProject(bool create_empty, bool allow_ui)
         }
 
         // Set the current working directory to the first file imported.
-        tt_wxString path(file_list[0]);
+        tt_string path(file_list[0]);
         if (path.size())
         {
-            path.replace_extension_wx(".wxui");
+            path.replace_extension(".wxui");
             path.make_absolute();
             path.backslashestoforward();
             m_projectFile = path;

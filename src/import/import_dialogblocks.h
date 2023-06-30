@@ -18,7 +18,7 @@ public:
     DialogBlocks();
     ~DialogBlocks() {};
 
-    bool Import(const tt_wxString& filename, bool write_doc = true) override;
+    bool Import(const tt_string& filename, bool write_doc = true) override;
 
     int GetLanguage() const override { return GEN_LANG_CPLUSPLUS; }
 

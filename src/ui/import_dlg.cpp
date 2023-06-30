@@ -38,9 +38,9 @@ void ImportDlg::OnInitDialog(wxInitDialogEvent& WXUNUSED(event))
     m_stdBtn->GetAffirmativeButton()->Disable();
     m_radio_wxFormBuilder->SetFocus();
 
-    tt_wxString cwd;
+    tt_string cwd;
     cwd.assignCwd();
-    m_static_cwd->SetLabel(cwd);
+    m_static_cwd->SetLabel(cwd.make_wxString());
 
     auto config = wxConfig::Get();
     config->SetPath("/preferences");
@@ -148,9 +148,8 @@ void ImportDlg::OnOK(wxCommandEvent& event)
     {
         if (m_checkListProjects->IsChecked(pos))
         {
-            tt_wxString path = m_checkListProjects->GetString(pos);
+            tt_string path = m_checkListProjects->GetString(pos).utf8_string();
             path.make_absolute();
-            // m_lstProjects.emplace_back(m_checkListProjects->GetString(pos));
             m_lstProjects.emplace_back(path);
         }
     }
@@ -194,9 +193,9 @@ void ImportDlg::OnDirectory(wxCommandEvent& WXUNUSED(event))
 
     tt::ChangeDir(dlg.GetPath().utf8_string());
 
-    tt_wxString cwd;
+    tt_string cwd;
     cwd.assignCwd();
-    m_static_cwd->SetLabel(cwd);
+    m_static_cwd->SetLabel(cwd.make_wxString());
 
     wxDir dir;
     wxArrayString files;
@@ -235,9 +234,9 @@ void ImportDlg::OnRecentDir(wxCommandEvent& WXUNUSED(event))
     m_FileHistory.AddFileToHistory(result);
     tt::ChangeDir(result.utf8_string());
 
-    tt_wxString cwd;
+    tt_string cwd;
     cwd.assignCwd();
-    m_static_cwd->SetLabel(cwd);
+    m_static_cwd->SetLabel(cwd.make_wxString());
 
     wxDir dir;
     wxArrayString files;

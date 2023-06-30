@@ -238,15 +238,15 @@ wxVariant PropertyGrid_Image::ChildChanged(wxVariant& thisValue, int childIndex,
                 }
                 else
                 {
-                    tt_wxString name(childValue.GetString());
+                    tt_string name(childValue.GetString().utf8_string());
                     if (name.size())
                     {
                         if (!name.file_exists())
                         {
                             name = Project.ArtDirectory();
-                            name.append_filename_wx(childValue.GetString());
+                            name.append_filename(childValue.GetString().utf8_string());
                         }
-                        name.make_relative_wx(Project.ProjectPath());
+                        name.make_relative(Project.get_ProjectPath());
                         name.backslashestoforward();
                     }
                     img_props.image.assign_wx(name);

@@ -16,7 +16,7 @@ class WxGlade : public ImportXML
 public:
     WxGlade();
 
-    bool Import(const tt_wxString& filename, bool write_doc = true) override;
+    bool Import(const tt_string& filename, bool write_doc = true) override;
 
     bool HandleUnknownProperty(const pugi::xml_node& /* xml_obj */, Node* /* node */, Node* /* parent */) override;
 

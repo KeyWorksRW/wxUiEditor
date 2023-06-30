@@ -111,7 +111,7 @@ void GenThreadCpp(GenData& gen_data, Node* form)
         }
         else if (Project.HasValue(prop_base_directory) && !path.contains("/"))
         {
-            path = Project.BaseDirectory().utf8_string();
+            path = Project.BaseDirectory();
             path.append_filename(base_file);
         }
         path.make_absolute();
@@ -546,7 +546,7 @@ void GenerateTmpFiles(const std::vector<tt_string>& ClassList, pugi::xml_node ro
                         }
                         else if (Project.HasValue(prop_base_directory) && !path.contains("/"))
                         {
-                            path = Project.BaseDirectory().utf8_string();
+                            path = Project.BaseDirectory();
                             path.append_filename(base_file);
                         }
                         path.backslashestoforward();
@@ -568,7 +568,7 @@ void GenerateTmpFiles(const std::vector<tt_string>& ClassList, pugi::xml_node ro
                         }
                         else if (Project.HasValue(prop_python_output_folder) && !path.contains("/"))
                         {
-                            path = Project.BaseDirectory(GEN_LANG_PYTHON).utf8_string();
+                            path = Project.BaseDirectory(GEN_LANG_PYTHON);
                             path.append_filename(base_file);
                         }
                         path.backslashestoforward();
@@ -670,7 +670,7 @@ void GenerateTmpFiles(const std::vector<tt_string>& ClassList, pugi::xml_node ro
                         paths.append_child("left").text().set(path.c_str());
                         paths.append_child("left-readonly").text().set("0");
 
-                        tmp_path.make_relative(Project.ProjectPath().utf8_string());
+                        tmp_path.make_relative(Project.ProjectPath());
                         tmp_path.make_absolute();
                         paths.append_child("right").text().set(tmp_path.c_str());
                         paths.append_child("right-readonly").text().set("1");

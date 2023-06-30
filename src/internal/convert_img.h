@@ -54,14 +54,14 @@ protected:
     wxColor GetXpmTransparencyColor();
 
 private:
-    tt_wxString m_cwd;
-    tt_wxString m_lastInputFile;
-    tt_wxString m_lastOutputFile;
+    tt_string m_cwd;
+    tt_string m_lastInputFile;
+    tt_string m_lastOutputFile;
     wxImage m_xpmImage;
     wxImage m_hdrImage;
     wxImage m_orgImage;
 
     size_t m_orginal_size;
 
-    tt_wxString m_mime_type;  // mime string specifying the original image type
+    tt_string m_mime_type;  // mime string specifying the original image type
 };

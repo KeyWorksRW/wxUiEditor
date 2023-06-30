@@ -87,7 +87,6 @@
 #include "tt/tt_string_vector.h"  // tt_string_vector -- Class for reading and writing line-oriented strings/files
 #include "tt/tt_string_view.h"    // tt_string_view -- std::string_view with additional methods
 #include "tt/tt_view_vector.h"    // tt_view_vector -- Class for reading and writing line-oriented strings/files
-#include "tt/tt_wxString.h"       // tt_wxString -- wxString with additional methods similar to tt_string
 
 enum class MoveDirection
 {

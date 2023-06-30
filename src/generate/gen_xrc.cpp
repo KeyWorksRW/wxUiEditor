@@ -339,7 +339,7 @@ bool GenerateXrcFiles(GenResults& results, tt_string out_file, std::vector<tt_st
             }
             else if (Project.HasValue(prop_xrc_directory) && !path.contains("/"))
             {
-                path = Project.BaseDirectory(GEN_LANG_XRC).utf8_string();
+                path = Project.BaseDirectory(GEN_LANG_XRC);
                 path.append_filename(base_file);
             }
             path.backslashestoforward();

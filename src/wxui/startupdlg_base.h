@@ -45,13 +45,13 @@ public:
     };
 
     auto GetCommandType() const { return m_cmdType; }
-    tt_wxString& GetProjectFile() { return m_value; }
+    tt_string& GetProjectFile() { return m_value; }
 
 protected:
     void OnHyperlink(wxHyperlinkEvent& event);
 
 private:
-    tt_wxString m_value;
+    tt_string m_value;
     size_t m_cmdType { START_EMPTY };
 
 protected:

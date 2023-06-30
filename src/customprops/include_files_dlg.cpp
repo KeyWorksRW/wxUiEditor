@@ -141,7 +141,7 @@ void IncludeFilesDialog::OnInit(wxInitDialogEvent& WXUNUSED(event))
 
 void IncludeFilesDialog::OnAdd(wxCommandEvent& WXUNUSED(event))
 {
-    tt_wxString path;
+    tt_string path;
     if (m_prop->get_name() == prop_local_hdr_includes || m_prop->get_name() == prop_local_src_includes)
     {
         auto* form = m_prop->GetNode();
@@ -172,13 +172,14 @@ void IncludeFilesDialog::OnAdd(wxCommandEvent& WXUNUSED(event))
 
         if (path.empty())
         {
-            path = Project.ProjectPath();
+            path = Project.get_ProjectPath();
         }
     }
     else  // if (m_prop->get_name() == prop_system_hdr_includes)
     {
         // Get the path to the WXWIN (wxWidgets) include directory
-        if (!wxGetEnv("WXWIN", &path))
+        wxString wxwin_path;
+        if (!wxGetEnv("WXWIN", &wxwin_path))
         {
             // Get the INCLUDE environment variable, and parse out the first path that has wxWidgets in it.
             wxString include_paths;
@@ -198,20 +199,22 @@ void IncludeFilesDialog::OnAdd(wxCommandEvent& WXUNUSED(event))
         }
         else
         {
-            if (!path.Contains("include"))
+            path = wxwin_path.utf8_string();
+            if (!path.contains("include"))
             {
                 path += "/include";
             }
         }
     }
 
-    wxFileDialog dialog(this, "Include Header File", path, wxEmptyString, "Header Files|*.;*.h;*.hh;*.hpp;*.hxx", wxFD_OPEN);
+    wxFileDialog dialog(this, "Include Header File", path.make_wxString(), wxEmptyString,
+                        "Header Files|*.;*.h;*.hh;*.hpp;*.hxx", wxFD_OPEN);
     if (dialog.ShowModal() == wxID_OK)
     {
-        tt_wxString filename = dialog.GetPath();
-        filename.make_relative_wx(path);
+        tt_string filename = dialog.GetPath().utf8_string();
+        filename.make_relative(path);
         filename.backslashestoforward();
-        m_listbox->Append(filename);
+        m_listbox->Append(filename.make_wxString());
         SetButtonsEnableState();
     }
 }
@@ -265,20 +268,20 @@ void IncludeFilesDialog::OnSort(wxCommandEvent& WXUNUSED(event))
     if (m_listbox->GetCount() < 2)
         return;
 
-    std::vector<tt_wxString> items;
+    std::vector<std::string> items;
     for (unsigned int i = 0; i < m_listbox->GetCount(); i++)
     {
-        items.push_back(m_listbox->GetString(i));
+        items.push_back(m_listbox->GetString(i).utf8_string());
     }
     std::sort(items.begin(), items.end(),
-              [](const tt_wxString& first, const tt_wxString& second)
+              [](const std::string& a, const std::string& b)
               {
-                  return first.CmpNoCase(second) < 0;
+                  return (a.compare(b) < 0);
               });
     m_listbox->Clear();
     for (auto& item: items)
     {
-        m_listbox->Append(item);
+        m_listbox->Append(wxString::FromUTF8(item));
     }
     m_listbox->SetSelection(0);
     SetButtonsEnableState();

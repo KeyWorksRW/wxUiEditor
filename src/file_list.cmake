@@ -22,7 +22,6 @@ set (file_list
     wakatime.cpp          # Updates WakaTime metrics
 
     tt/tt.cpp               # tt namespace functions
-    tt/tt_wxString.cpp      # Enhanced version of wxString
     tt/tt_string.cpp        # std::string with additional methods
     tt/tt_string_view.cpp   # std::string_view with additional methods
     tt/tt_string_vector.cpp # Class for reading and writing line-oriented strings/files

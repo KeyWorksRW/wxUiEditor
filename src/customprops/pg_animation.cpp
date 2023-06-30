@@ -110,15 +110,15 @@ wxVariant PropertyGrid_Animation::ChildChanged(wxVariant& thisValue, int childIn
 
         case IndexImage:
             {
-                tt_wxString name(childValue.GetString());
+                tt_string name(childValue.GetString().utf8_string());
                 if (!name.file_exists())
                 {
                     name = Project.ArtDirectory();
-                    name.append_filename_wx(childValue.GetString());
+                    name.append_filename(childValue.GetString().utf8_string());
                 }
-                name.make_relative_wx(Project.ProjectPath());
+                name.make_relative(Project.get_ProjectPath());
                 name.backslashestoforward();
-                img_props.image.assign_wx(name);
+                img_props.image.assign(name);
             }
             break;
     }

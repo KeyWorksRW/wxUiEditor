@@ -137,10 +137,9 @@ void WakaTime::SendHeartbeat(bool FileSavedEvent)
         if (FileSavedEvent || (result > m_last_heartbeat && (result - m_last_heartbeat >= waka_interval)))
         {
             m_last_heartbeat = static_cast<intmax_t>(result);
-            tt_wxString cmd;
-            cmd << m_waka_cli.make_wxString()
-                << " --plugin \"wxUiEditor/0.5.0 wxUiEditor-wakatime/0.5.0\" --category designing --project ";
-            tt_wxString name = Project.ProjectFile().filename();
+            tt_string cmd;
+            cmd << m_waka_cli << " --plugin \"wxUiEditor/0.5.0 wxUiEditor-wakatime/0.5.0\" --category designing --project ";
+            tt_string name = Project.ProjectFile().filename();
             name.remove_extension();
             cmd << name;
             cmd << " --entity \"" << Project.ProjectFile() << "\"";
@@ -149,7 +148,7 @@ void WakaTime::SendHeartbeat(bool FileSavedEvent)
                 cmd << " --write";
             }
 
-            wxExecute(cmd, wxEXEC_HIDE_CONSOLE);
+            wxExecute(cmd.make_wxString(), wxEXEC_HIDE_CONSOLE);
         }
     }
 }

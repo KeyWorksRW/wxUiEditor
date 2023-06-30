@@ -20,7 +20,7 @@ class WinResource : public ImportXML
 public:
     WinResource();
 
-    bool Import(const tt_wxString& filename, bool write_doc) override;
+    bool Import(const tt_string& filename, bool write_doc) override;
 
     // If forms is empty, then all forms will be parsed
     bool ImportRc(const tt_string& rc_file, std::vector<tt_string>& forms, bool isNested = false);

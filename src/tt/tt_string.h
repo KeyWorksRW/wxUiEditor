@@ -389,3 +389,32 @@ public:
     }
 
 };  // end tt_string class
+
+// Retrieves the current working directory. Construct with (true) to restore the
+// directory in the dtor.
+class tt_cwd : public tt_string
+{
+public:
+    enum : bool
+    {
+        no_restore = false,
+        restore = true
+    };
+
+    // Specify true to restore the directory in the destructor
+    tt_cwd(bool restore = no_restore)
+    {
+        assignCwd();
+        if (restore)
+            m_restore.assign(*this);
+    }
+
+    ~tt_cwd()
+    {
+        if (m_restore.size())
+            m_restore.ChangeDir();
+    }
+
+private:
+    tt_string m_restore;
+};

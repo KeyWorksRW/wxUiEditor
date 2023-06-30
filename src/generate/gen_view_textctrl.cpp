@@ -29,7 +29,7 @@ bool %class%::OnCreate(wxDocument* doc, long flags)
 
     m_frame = wxGetApp().CreateChildFrame(this);
     m_text = new wxTextCtrl(m_frame, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE);
-    m_frame->SetTitle(tt_wxString(doc->GetFilename()).filename());
+    m_frame->SetTitle(wxFileName(doc->GetFilename()).Filename());
     m_frame->Show();
 
     return true;

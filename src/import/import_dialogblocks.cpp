@@ -32,7 +32,7 @@
 
 DialogBlocks::DialogBlocks() {}
 
-bool DialogBlocks::Import(const tt_wxString& filename, bool write_doc)
+bool DialogBlocks::Import(const tt_string& filename, bool write_doc)
 {
     auto result = LoadDocFile(filename);
     if (!result)
@@ -133,7 +133,8 @@ bool DialogBlocks::Import(const tt_wxString& filename, bool write_doc)
     catch (const std::exception& TESTING_PARAM(e))
     {
         MSG_ERROR(e.what());
-        wxMessageBox(wxString("This DialogBlocks project file is invalid and cannot be loaded: ") << filename,
+        wxMessageBox(wxString("This DialogBlocks project file is invalid and cannot be loaded: ")
+                         << filename.make_wxString(),
                      "Import DialogBlocks project");
         return false;
     }
@@ -141,7 +142,7 @@ bool DialogBlocks::Import(const tt_wxString& filename, bool write_doc)
     if (m_errors.size())
     {
         tt_string errMsg("Not everything in the DialogBlocks project could be converted:\n\n");
-        MSG_ERROR(tt_string() << "------  " << m_importProjectFile.filename().utf8_string() << "------");
+        MSG_ERROR(tt_string() << "------  " << m_importProjectFile.filename() << "------");
         for (auto& iter: m_errors)
         {
             MSG_ERROR(iter);

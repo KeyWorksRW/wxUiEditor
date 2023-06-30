@@ -14,7 +14,7 @@
 
 WxGlade::WxGlade() {}
 
-bool WxGlade::Import(const tt_wxString& filename, bool write_doc)
+bool WxGlade::Import(const tt_string& filename, bool write_doc)
 {
     auto result = LoadDocFile(filename);
     if (!result)
@@ -25,7 +25,7 @@ bool WxGlade::Import(const tt_wxString& filename, bool write_doc)
 
     if (!tt::is_sameas(root.name(), "application", tt::CASE::either))
     {
-        wxMessageBox(wxString() << filename << " is not a wxGlade file", "Import");
+        wxMessageBox(filename.make_wxString() << " is not a wxGlade file", "Import");
         return false;
     }
 
@@ -105,7 +105,7 @@ bool WxGlade::Import(const tt_wxString& filename, bool write_doc)
                         m_project->prop_set_value(prop_python_combine_forms, true);
                         tt_string combined_filename = root.attribute("path").as_string();
                         tt_cwd cwd;
-                        combined_filename.make_relative(cwd.utf8_string());
+                        combined_filename.make_relative(cwd);
                         m_project->prop_set_value(prop_python_combined_file, combined_filename);
                     }
                 }
@@ -114,7 +114,7 @@ bool WxGlade::Import(const tt_wxString& filename, bool write_doc)
 
         if (!m_project->GetChildCount())
         {
-            wxMessageBox(wxString() << filename << " does not contain any top level forms.", "Import");
+            wxMessageBox(filename.make_wxString() << " does not contain any top level forms.", "Import");
             return false;
         }
 
@@ -122,7 +122,7 @@ bool WxGlade::Import(const tt_wxString& filename, bool write_doc)
         {
             tt_string combined_filename = root.attribute("path").as_string();
             tt_cwd cwd;
-            combined_filename.make_relative(cwd.utf8_string());
+            combined_filename.make_relative(cwd);
 
             if (m_project->GetChildCount() > 1)
             {
@@ -157,7 +157,8 @@ bool WxGlade::Import(const tt_wxString& filename, bool write_doc)
     catch (const std::exception& TESTING_PARAM(e))
     {
         MSG_ERROR(e.what());
-        wxMessageBox(wxString("This project file is invalid and cannot be loaded: ") << filename, "Import Project");
+        wxMessageBox(wxString("This project file is invalid and cannot be loaded: ") << filename.make_wxString(),
+                     "Import Project");
         return false;
     }
 

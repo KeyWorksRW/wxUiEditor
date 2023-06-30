@@ -180,7 +180,7 @@ public:
 
     // This does an exact comparison, so file needs to be identical to what was added to the
     // history.
-    void RemoveFileFromHistory(tt_wxString file);
+    void RemoveFileFromHistory(tt_string file);
 
     // Display the text in a specific field of the status bar -- the default is the field
     // that aligns with the PropertyGrid panel.

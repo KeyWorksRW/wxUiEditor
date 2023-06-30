@@ -698,8 +698,8 @@ void NodeCreator::ParseProperties(pugi::xml_node& elem_obj, NodeDeclaration* obj
             while (elem_opt)
             {
                 auto& opt = opts.emplace_back();
-                opt.name.assign_view(elem_opt.attribute("name").as_string());
-                opt.help.assign_view(elem_opt.attribute("help").as_string());
+                opt.name = elem_opt.attribute("name").as_string();
+                opt.help = elem_opt.attribute("help").as_string();
 
                 elem_opt = elem_opt.next_sibling("option");
             }

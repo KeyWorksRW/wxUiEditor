@@ -38,9 +38,17 @@ void ProjectHandler::Initialize(NodeSharedPtr project, bool allow_ui)
     ProjectImages.Initialize(m_project_node, allow_ui);
 }
 
-void ProjectHandler::SetProjectFile(const tt_wxString& file)
+void ProjectHandler::SetProjectFile(const tt_string& file)
 {
     m_projectFile = file;
+    m_projectPath = m_projectFile;
+    m_projectPath.make_absolute();
+    m_projectPath.remove_filename();
+}
+
+void ProjectHandler::set_ProjectFile(const tt_string& file)
+{
+    m_projectFile = file.make_wxString();
     m_projectPath = m_projectFile;
     m_projectPath.make_absolute();
     m_projectPath.remove_filename();
@@ -141,12 +149,12 @@ void ProjectHandler::FixupDuplicatedNode(Node* new_node)
     lambda(python_filenames, prop_xrc_file);
 }
 
-tt_wxString ProjectHandler::ArtDirectory() const
+tt_string ProjectHandler::ArtDirectory() const
 {
-    tt_wxString result;
+    tt_string result;
 
     if (m_project_node->HasValue(prop_art_directory))
-        result = m_project_node->as_wxString(prop_art_directory);
+        result = m_project_node->as_string(prop_art_directory);
     if (result.empty())
         result = m_projectPath;
 
@@ -155,15 +163,15 @@ tt_wxString ProjectHandler::ArtDirectory() const
     return result;
 }
 
-tt_wxString ProjectHandler::BaseDirectory(int language) const
+tt_string ProjectHandler::BaseDirectory(int language) const
 {
-    tt_wxString result;
+    tt_string result;
     if (language == GEN_LANG_CPLUSPLUS && m_project_node->HasValue(prop_base_directory))
-        result = m_project_node->as_wxString(prop_base_directory);
+        result = m_project_node->as_string(prop_base_directory);
     else if (language == GEN_LANG_PYTHON && m_project_node->HasValue(prop_python_output_folder))
-        result = m_project_node->as_wxString(prop_python_output_folder);
+        result = m_project_node->as_string(prop_python_output_folder);
     else if (language == GEN_LANG_XRC && m_project_node->HasValue(prop_xrc_directory))
-        result = m_project_node->as_wxString(prop_xrc_directory);
+        result = m_project_node->as_string(prop_xrc_directory);
 
     if (result.empty())
         result = m_projectPath;
@@ -173,12 +181,12 @@ tt_wxString ProjectHandler::BaseDirectory(int language) const
     return result;
 }
 
-tt_wxString ProjectHandler::DerivedDirectory() const
+tt_string ProjectHandler::DerivedDirectory() const
 {
-    tt_wxString result;
+    tt_string result;
 
     if (m_project_node->HasValue(prop_derived_directory))
-        result = m_project_node->as_wxString(prop_derived_directory);
+        result = m_project_node->as_string(prop_derived_directory);
 
     if (result.empty())
         result = m_projectPath;

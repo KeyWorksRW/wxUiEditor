@@ -46,8 +46,8 @@ bool BaseGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty
     {
         auto property = wxStaticCast(event->GetProperty(), wxFlagsProperty);
         auto variant = event->GetPropertyValue();
-        tt_wxString newValue = property->ValueToString(variant);
-        if (newValue.IsEmpty())
+        tt_string newValue = property->ValueToString(variant).utf8_string();
+        if (newValue.empty())
             return true;
 
         auto parent = node->GetParent();
@@ -88,14 +88,14 @@ bool BaseGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty
     {
         auto property = wxStaticCast(event->GetProperty(), wxFlagsProperty);
         auto variant = event->GetPropertyValue();
-        tt_wxString newValue = property->ValueToString(variant);
-        if (newValue.IsEmpty())
+        tt_string newValue = property->ValueToString(variant).utf8_string();
+        if (newValue.empty())
             return true;
 
         // Remove the original flags so that all we are checking is the changed flag.
         if (node->HasValue(prop_flags))
         {
-            auto original = node->prop_as_wxString(prop_flags);
+            auto original = node->as_string(prop_flags);
             original.Replace("|", ", ");
             newValue.Replace(original, "");
         }
@@ -105,7 +105,7 @@ bool BaseGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty
         {
             if (node->HasValue(prop_alignment))
             {
-                auto& alignment = node->prop_as_string(prop_alignment);
+                auto& alignment = node->as_string(prop_alignment);
                 if (alignment.contains("wxALIGN_LEFT") || alignment.contains("wxALIGN_RIGHT") ||
                     alignment.contains("wxALIGN_CENTER_HORIZONTAL") || alignment.contains("wxALIGN_TOP") ||
                     alignment.contains("wxALIGN_BOTTOM") || alignment.contains("wxALIGN_CENTER_VERTICAL"))
@@ -229,7 +229,7 @@ bool BaseGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty
     {
         auto property = wxStaticCast(event->GetProperty(), wxStringProperty);
         auto variant = event->GetPropertyValue();
-        tt_wxString newValue = property->ValueToString(variant);
+        tt_string newValue = property->ValueToString(variant).utf8_string();
         tt_string final_name(newValue);
         auto result = node->GetUniqueName(final_name, prop_label);
         if (!newValue.is_sameas(result))

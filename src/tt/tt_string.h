@@ -328,6 +328,12 @@ public:
     // Returns true if the current string refers to an existing directory.
     bool dir_exists() const;
 
+    // Confirms current string is an existing directory and then changes to that directory.
+    //
+    // If is_dir is false, current sting is assumed to contain a filename in the path to
+    // change to.
+    bool ChangeDir(bool is_dir = true) const;
+
     tt_string& operator<<(std::string_view str)
     {
         *this += str;
@@ -363,10 +369,52 @@ public:
         *this = str.utf8_string();
         return *this;
     }
+
     tt_string& append_wx(const wxString& str)
     {
         *this += str.utf8_string();
         return *this;
     }
 
+    // Forward slashes are fine. Recurisve will create all parent directories as needed.
+    static bool MkDir(const tt_string& path, bool recursive = false);
+
+    static tt_string GetCwd()
+    {
+#ifdef _WIN32
+        return tt::utf16to8(std::filesystem::current_path().c_str());
+#else
+        return std::filesystem::current_path().string();
+#endif
+    }
+
 };  // end tt_string class
+
+// Retrieves the current working directory. Construct with (true) to restore the
+// directory in the dtor.
+class tt_cwd : public tt_string
+{
+public:
+    enum : bool
+    {
+        no_restore = false,
+        restore = true
+    };
+
+    // Specify true to restore the directory in the destructor
+    tt_cwd(bool restore = no_restore)
+    {
+        assignCwd();
+        if (restore)
+            m_restore.assign(*this);
+    }
+
+    ~tt_cwd()
+    {
+        if (m_restore.size())
+            m_restore.ChangeDir();
+    }
+
+private:
+    tt_string m_restore;
+};

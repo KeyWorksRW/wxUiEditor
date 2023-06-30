@@ -189,7 +189,7 @@ void BaseCodeGenerator::GenerateCppClass(Node* form_node, PANEL_PAGE panel_type)
         tt_cwd cwd(true);
         Project.ChangeDir();
         file = base_file;
-        file.make_relative(Project.ProjectPath().utf8_string());
+        file.make_relative(Project.ProjectPath());
         file.backslashestoforward();
         file.remove_extension();
 
@@ -906,11 +906,11 @@ void BaseCodeGenerator::GatherGeneratorIncludes(Node* node, std::set<std::string
                         {
                             if (form->isGen(gen_Images))
                             {
-                                auto image_file = Project.ProjectPath();
-                                image_file.append_filename_wx(form->as_wxString(prop_base_file));
+                                tt_string image_file = Project.ProjectPath();
+                                image_file.append_filename(form->as_string(prop_base_file));
                                 image_file.replace_extension(m_header_ext);
                                 image_file.make_relative(m_baseFullPath);
-                                set_src.insert(tt_string() << "#include \"" << image_file.utf8_string() << '\"');
+                                set_src.insert(tt_string() << "#include \"" << image_file << '\"');
                                 break;
                             }
                         }

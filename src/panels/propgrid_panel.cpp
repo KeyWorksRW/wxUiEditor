@@ -362,7 +362,7 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
         int index = 0;
         for (auto& iter: propInfo->GetOptions())
         {
-            bit_flags.Add(iter.name, 1 << index++);
+            bit_flags.Add(iter.name.make_wxString(), 1 << index++);
         }
 
         int val = GetBitlistValue(prop->as_string(), bit_flags);
@@ -377,7 +377,7 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
                 auto& label = id->GetLabel();
                 for (auto& iter: propInfo->GetOptions())
                 {
-                    if (iter.name == label)
+                    if (iter.name == label.ToStdString())
                     {
                         if (iter.help.size())
                         {
@@ -395,8 +395,8 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
     {
         auto propInfo = prop->GetPropDeclaration();
 
-        auto value = prop->as_wxString();
-        const wxString* pHelp = nullptr;
+        auto value = prop->as_string();
+        const tt_string* pHelp = nullptr;
 
         wxPGChoices constants;
         int i = 0;
@@ -420,7 +420,7 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
 
         new_pg_property->SetValueFromString(value, 0);
 
-        auto description = GetPropHelp(prop);
+        tt_string description = GetPropHelp(prop);
         if (description.empty())
         {
             description << value;
@@ -436,7 +436,7 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
             description << *pHelp;
         }
 
-        new_pg_property->SetHelpString(description);
+        new_pg_property->SetHelpString(description.make_wxString());
     }
     else if (type == type_wxColour)
     {
@@ -522,7 +522,7 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
             // directory. If we can find a standard precompiled header filename in the parent directory, then use that
             // as the starting directory.
 
-            tt_wxString pch(Project.ProjectPath());
+            tt_string pch(Project.ProjectPath());
             pch.append_filename("../");
             pch.append_filename("pch.h");
             if (pch.file_exists())
@@ -551,7 +551,7 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
                 return new_pg_property;
             }
 
-            new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH, Project.ProjectPath());
+            new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH, Project.get_ProjectPath().make_wxString());
         }
     }
     else if (type == type_stringlist)
@@ -1381,7 +1381,7 @@ void PropGridPanel::ModifyBitlistProperty(NodeProperty* node_prop, wxPGProperty*
 {
     auto node = node_prop->GetNode();
 
-    tt_wxString value = m_prop_grid->GetPropertyValueAsString(grid_prop);
+    tt_string value = m_prop_grid->GetPropertyValueAsString(grid_prop);
     value.Replace(" ", "");
     value.Replace(",", "|");
     if (node_prop->isProp(prop_style))
@@ -1399,7 +1399,7 @@ void PropGridPanel::ModifyBitlistProperty(NodeProperty* node_prop, wxPGProperty*
 
                 // Change the format to what the grid_prop grid wants
                 value.Replace("|", ",");
-                m_prop_grid->SetPropertyValue("style", value);
+                m_prop_grid->SetPropertyValue("style", value.make_wxString());
 
                 // Now put it back into the format we use internally
                 value.Replace(",", "|");
@@ -1412,7 +1412,7 @@ void PropGridPanel::ModifyBitlistProperty(NodeProperty* node_prop, wxPGProperty*
 
                 // Change the format to what the grid_prop grid wants
                 value.Replace("|", ",");
-                m_prop_grid->SetPropertyValue("style", value);
+                m_prop_grid->SetPropertyValue("style", value.make_wxString());
 
                 // Now put it back into the format we use internally
                 value.Replace(",", "|");
@@ -1420,7 +1420,7 @@ void PropGridPanel::ModifyBitlistProperty(NodeProperty* node_prop, wxPGProperty*
         }
     }
 
-    modifyProperty(node_prop, value.utf8_string());
+    modifyProperty(node_prop, value);
 }
 
 void PropGridPanel::ModifyBoolProperty(NodeProperty* node_prop, wxPGProperty* grid_prop)
@@ -1443,7 +1443,7 @@ void PropGridPanel::ModifyBoolProperty(NodeProperty* node_prop, wxPGProperty* gr
 
 void PropGridPanel::ModifyFileProperty(NodeProperty* node_prop, wxPGProperty* grid_prop)
 {
-    tt_wxString newValue = grid_prop->GetValueAsString();
+    tt_string newValue = grid_prop->GetValueAsString().utf8_string();
 
     // The base_file grid_prop was already processed in OnPropertyGridChanging so only modify the value if
     // it's a different grid_prop
@@ -1452,12 +1452,12 @@ void PropGridPanel::ModifyFileProperty(NodeProperty* node_prop, wxPGProperty* gr
         if (newValue.size())
         {
             newValue.make_absolute();
-            newValue.make_relative_wx(Project.ProjectPath());
+            newValue.make_relative(Project.get_ProjectPath());
             newValue.backslashestoforward();
             grid_prop->SetValueFromString(newValue, 0);
         }
     }
-    ModifyProperty(node_prop, newValue);
+    modifyProperty(node_prop, newValue);
 }
 
 void PropGridPanel::ModifyEmbeddedProperty(NodeProperty* node_prop, wxPGProperty* grid_prop)
@@ -1601,13 +1601,13 @@ void PropGridPanel::ModifyOptionsProperty(NodeProperty* node_prop, wxPGProperty*
 {
     auto node = node_prop->GetNode();
 
-    tt_wxString value = m_prop_grid->GetPropertyValueAsString(grid_prop);
-    modifyProperty(node_prop, value.utf8_string());
+    tt_string value = m_prop_grid->GetPropertyValueAsString(grid_prop).utf8_string();
+    modifyProperty(node_prop, value);
 
     // Update displayed description for the new selection
     auto propInfo = node_prop->GetPropDeclaration();
 
-    auto description = GetPropHelp(node_prop);
+    tt_string description = GetPropHelp(node_prop);
 
     for (auto& iter: propInfo->GetOptions())
     {
@@ -2065,15 +2065,15 @@ void PropGridPanel::OnAuiNotebookPageChanged(wxAuiNotebookEvent& /* event */)
     wxGetFrame().GetGeneratedPanel()->OnNodeSelected(custom_event);
 }
 
-wxString PropGridPanel::GetPropHelp(NodeProperty* prop)
+tt_string PropGridPanel::GetPropHelp(NodeProperty* prop) const
 {
-    wxString description;
+    tt_string description;
     if (auto gen = prop->GetNode()->GetGenerator(); gen)
     {
         // First let the generator specify the description
         if (auto result = gen->GetPropertyDescription(prop); result)
         {
-            description = result->make_wxString();
+            description = result.value();
         }
     }
     if (description.empty())
@@ -2086,7 +2086,7 @@ wxString PropGridPanel::GetPropHelp(NodeProperty* prop)
         else
         {
             // If we still don't have a description, get whatever was in the XML interface
-            description = prop->GetPropDeclaration()->GetDescription().make_wxString();
+            description = prop->GetPropDeclaration()->GetDescription();
         }
     }
     description.Replace("\\n", "\n", true);

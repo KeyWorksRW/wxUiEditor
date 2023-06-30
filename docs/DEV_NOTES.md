@@ -10,7 +10,7 @@ When you create a Debug build, there will be an additional `Testing` and `Intern
 
 ## Strings
 
-Internally strings are normally placed into `tt_string`, `tt_stringview` and `tt_wxString` classes. These classes inherit from `std::string`, `std::string_view` and `wxString` respectively, and provide additional functionality common across all three of these classes. When you need to convert a tt_string or tt_stringview to a wxString to pass to wxWidgets, use the method `make_wxString()`. If you need to pass a wxString to tt_string, use `utf8_string()`. These two methods ensure that UTF8/16 conversion is correctly handled on Windows. It also ensure a seamless transition between wxWidgets 3.2 and 3.3 where the underlying wxString is changed from UTF16 to UTF8.
+Internally strings are normally placed into `tt_string` or `tt_stringview` classes. These classes inherit from `std::string` and `std::string_view` respectively, and provide additional functionality common across both of these classes. When you need to convert a tt_string or tt_stringview to a wxString to pass to wxWidgets, use the method `make_wxString()`. If you need to pass a wxString to tt_string, use `utf8_string()`. These two methods ensure that UTF8/16 conversion is correctly handled on Windows. It also ensure a seamless transition between wxWidgets 3.2 and 3.3 where the underlying wxString is changed from UTF16 to UTF8.
 
 ### Debugging macros
 

@@ -14,10 +14,10 @@
 
 WinResource::WinResource() {}
 
-bool WinResource::Import(const tt_wxString& filename, bool write_doc)
+bool WinResource::Import(const tt_string& filename, bool write_doc)
 {
     std::vector<tt_string> forms;
-    if (ImportRc(filename.utf8_string(), forms))
+    if (ImportRc(filename, forms))
     {
         if (write_doc)
             m_project->CreateDoc(m_docOut);

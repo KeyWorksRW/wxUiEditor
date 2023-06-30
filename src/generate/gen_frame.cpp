@@ -341,13 +341,13 @@ bool FrameFormGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodePro
     {
         auto property = wxStaticCast(event->GetProperty(), wxFlagsProperty);
         auto variant = event->GetPropertyValue();
-        tt_wxString newValue = property->ValueToString(variant);
-        if (newValue.IsEmpty())
+        tt_string newValue = property->ValueToString(variant).utf8_string();
+        if (newValue.empty())
             return true;
 
         if (newValue.contains("wxFRAME_EX_CONTEXTHELP"))
         {
-            auto& style = node->prop_as_string(prop_style);
+            auto& style = node->as_string(prop_style);
             if (style.contains("wxDEFAULT_FRAME_STYLE") || style.contains("wxMINIMIZE_BOX") ||
                 style.contains("wxMINIMIZE_BOX"))
             {

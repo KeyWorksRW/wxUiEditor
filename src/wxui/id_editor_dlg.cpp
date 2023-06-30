@@ -239,10 +239,8 @@ void IDEditorDlg::OnInit(wxInitDialogEvent& event)
     {
         if (auto pos = cur_id.find_first_of('='); pos != tt::npos)
         {
-            // Until wxWidgets supports C++17, wxString doesn't support std::string_view, so we
-            // use tt_wxString which does.
-            tt_wxString value = tt::find_nonspace(cur_id.substr(pos + 1));
-            m_textValue->SetValue(value);
+            tt_string_view value = tt::find_nonspace(cur_id.substr(pos + 1));
+            m_textValue->SetValue(value.make_wxString());
             cur_id.erase(pos);
             cur_id.trim();
         }

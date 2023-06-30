@@ -199,7 +199,7 @@ wxIcon GetIconImage(tt_string_view name)
 // [KeyWorks - 05-04-2021] Note that we don't display warnings or errors to the user since this will be called during project
 // loading, and there could be dozens of calls to the same problem file(s).
 
-wxImage GetHeaderImage(tt_string_view filename, size_t* p_original_size, tt_wxString* p_mime_type)
+wxImage GetHeaderImage(tt_string_view filename, size_t* p_original_size, tt_string* p_mime_type)
 {
     wxImage image;
 
@@ -377,7 +377,7 @@ wxImage GetHeaderImage(tt_string_view filename, size_t* p_original_size, tt_wxSt
                 if (p_original_size)
                     *p_original_size = actual_size;
                 if (p_mime_type)
-                    *p_mime_type = handler->GetMimeType();
+                    *p_mime_type = handler->GetMimeType().utf8_string();
 
                 return image;
             }

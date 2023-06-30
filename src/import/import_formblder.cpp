@@ -105,7 +105,7 @@ FormBuilder::FormBuilder()
     }
 }
 
-bool FormBuilder::Import(const tt_wxString& filename, bool write_doc)
+bool FormBuilder::Import(const tt_string& filename, bool write_doc)
 {
     auto result = LoadDocFile(filename);
     if (!result)
@@ -116,7 +116,8 @@ bool FormBuilder::Import(const tt_wxString& filename, bool write_doc)
 
     if (!tt::is_sameas(root.name(), "wxFormBuilder_Project", tt::CASE::either))
     {
-        wxMessageBox(wxString() << filename << " is not a wxFormBuilder file", "Import wxFormBuilder project");
+        wxMessageBox(wxString() << filename.make_wxString() << " is not a wxFormBuilder file",
+                     "Import wxFormBuilder project");
         return false;
     }
 
@@ -152,7 +153,8 @@ bool FormBuilder::Import(const tt_wxString& filename, bool write_doc)
     catch (const std::exception& TESTING_PARAM(e))
     {
         MSG_ERROR(e.what());
-        wxMessageBox(wxString("This wxFormBuilder project file is invalid and cannot be loaded: ") << filename,
+        wxMessageBox(wxString("This wxFormBuilder project file is invalid and cannot be loaded: ")
+                         << filename.make_wxString(),
                      "Import wxFormBuilder project");
         return false;
     }
@@ -160,7 +162,7 @@ bool FormBuilder::Import(const tt_wxString& filename, bool write_doc)
     if (m_errors.size())
     {
         tt_string errMsg("Not everything in the wxFormBuilder project could be converted:\n\n");
-        MSG_ERROR(tt_string() << "------  " << m_importProjectFile.filename().utf8_string() << "------");
+        MSG_ERROR(tt_string() << "------  " << m_importProjectFile.filename() << "------");
         for (auto& iter: m_errors)
         {
             MSG_ERROR(iter);
@@ -201,18 +203,18 @@ void FormBuilder::CreateProjectNode(pugi::xml_node& xml_obj, Node* new_node)
                 else if (prop_name.as_string() == "embedded_files_path")
                 {
                     // Unlike wxString, this ctor will call FromUTF8() on Windows
-                    tt_wxString path(xml_prop.text().as_string());
-                    tt_wxString root(m_importProjectFile);
+                    tt_string path(xml_prop.text().as_string());
+                    tt_string root(m_importProjectFile);
                     root.remove_filename();
-                    path.make_relative_wx(root);
+                    path.make_relative(root);
                     m_project->prop_set_value(prop_art_directory, path);
                 }
                 else if (prop_name.as_string() == "path")
                 {
-                    tt_wxString path(xml_prop.text().as_string());
-                    tt_wxString root(m_importProjectFile);
+                    tt_string path(xml_prop.text().as_sview());
+                    tt_string root(m_importProjectFile);
                     root.remove_filename();
-                    path.make_relative_wx(root);
+                    path.make_relative(root);
                     m_project->prop_set_value(prop_base_directory, path);
                 }
                 else if (prop_name.as_string() == "file")
@@ -960,10 +962,10 @@ void FormBuilder::BitmapProperty(pugi::xml_node& xml_prop, NodeProperty* prop)
         else
         {
             tt_string bitmap("Embed;");
-            tt_wxString relative(filename.make_wxString());
-            relative.make_relative_wx(wxGetCwd());
+            tt_string relative(filename);
+            relative.make_relative(tt_string::GetCwd());
             relative.backslashestoforward();
-            bitmap << relative.utf8_string();
+            bitmap << relative;
             bitmap << ";[-1,-1]";
             prop->set_value(bitmap);
         }

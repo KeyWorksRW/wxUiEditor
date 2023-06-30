@@ -541,7 +541,7 @@ tt_string NavigationPanel::GetDisplayName(Node* node) const
     else
     {
         if (node->isGen(gen_Project))
-            display_name << "Project: " << Project.ProjectFile().filename().utf8_string();
+            display_name << "Project: " << Project.ProjectFile().filename();
         else if (node->isGen(gen_wxContextMenuEvent))
         {
             display_name = node->prop_as_string(prop_handler_name);

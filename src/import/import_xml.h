@@ -19,7 +19,7 @@
 class ImportXML
 {
 public:
-    virtual bool Import(const tt_wxString& filename, bool write_doc = true) = 0;
+    virtual bool Import(const tt_string& filename, bool write_doc = true) = 0;
 
     // Valid return ONLY if Import specified with write_doc == true, and parsing worked.
     pugi::xml_document& GetDocument() { return m_docOut; }
@@ -57,7 +57,7 @@ public:
 
 protected:
     void ProcessUnknownProperty(const pugi::xml_node& xml_obj, Node* node, Node* parent);
-    std::optional<pugi::xml_document> LoadDocFile(const tt_wxString& file);
+    std::optional<pugi::xml_document> LoadDocFile(const tt_string& file);
     GenEnum::GenName ConvertToGenName(const tt_string& object_name, Node* parent);
 
     void ProcessStyle(pugi::xml_node& xml_prop, Node* node, NodeProperty* prop);
@@ -75,7 +75,7 @@ protected:
     GenEnum::GenName MapClassName(std::string_view name) const;
 
     pugi::xml_document m_docOut;
-    tt_wxString m_importProjectFile;
+    tt_string m_importProjectFile;
     NodeSharedPtr m_project;
     std::map<std::string, std::string, std::less<>> m_notebook_tabs;
 

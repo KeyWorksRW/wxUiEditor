@@ -54,7 +54,7 @@ int WriteCMakeFile(Node* parent_node, std::vector<tt_string>& updated_files, std
     tt_cwd cur_dir;
     cur_dir.make_absolute();
 
-    cmake_file.make_relative(cur_dir.utf8_string());
+    cmake_file.make_relative(cur_dir);
     tt_string cmake_file_dir(cmake_file);
     cmake_file_dir.remove_filename();
     if (cmake_file.size())
@@ -163,7 +163,7 @@ int WriteCMakeFile(Node* parent_node, std::vector<tt_string>& updated_files, std
 
         for (auto base_file: base_files)
         {
-            base_file.make_relative(cur_dir.utf8_string());
+            base_file.make_relative(cur_dir);
             base_file.backslashestoforward();
             base_file.remove_extension();
 

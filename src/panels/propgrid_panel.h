@@ -46,7 +46,7 @@ public:
     void Create();
 
 protected:
-    wxString GetPropHelp(NodeProperty* prop);
+    tt_string GetPropHelp(NodeProperty* prop) const;
     wxString GetCategoryDisplayName(const wxString& original);
 
     // Called to determine if a property should be displayed or not

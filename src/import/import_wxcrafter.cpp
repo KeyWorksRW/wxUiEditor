@@ -66,12 +66,12 @@ extern std::map<std::string, GenEnum::PropName> g_map_crafter_props;
 
 WxCrafter::WxCrafter() {}
 
-bool WxCrafter::Import(const tt_wxString& filename, bool write_doc)
+bool WxCrafter::Import(const tt_string& filename, bool write_doc)
 {
-    std::ifstream input(filename.utf8_string(), std::ifstream::binary);
+    std::ifstream input(filename, std::ifstream::binary);
     if (!input.is_open())
     {
-        wxMessageBox(wxString() << "Cannot open " << filename, "Import wxCrafter project");
+        wxMessageBox(wxString() << "Cannot open " << filename.make_wxString(), "Import wxCrafter project");
         return false;
     }
     std::string buffer(std::istreambuf_iterator<char>(input), {});
@@ -80,12 +80,12 @@ bool WxCrafter::Import(const tt_wxString& filename, bool write_doc)
     Document document;
     if (document.Parse(buffer).HasParseError())
     {
-        wxMessageBox(wxString() << filename << " is not a valid wxCrafter file", "Import wxCrafter project");
+        wxMessageBox(filename.make_wxString() << " is not a valid wxCrafter file", "Import wxCrafter project");
         return false;
     }
     if (!document.IsObject())
     {
-        wxMessageBox(wxString() << filename << " is not a valid wxCrafter file", "Import wxCrafter project");
+        wxMessageBox(filename.make_wxString() << " is not a valid wxCrafter file", "Import wxCrafter project");
         return false;
     }
 
@@ -139,7 +139,7 @@ bool WxCrafter::Import(const tt_wxString& filename, bool write_doc)
         FAIL_MSG(e.what())
         MSG_ERROR(e.what());
         wxMessageBox(tt_string("Internal error: ") << e.what(), "Import wxCrafter project");
-        wxMessageBox(wxString("This wxCrafter project file is invalid and cannot be loaded: ") << filename,
+        wxMessageBox(wxString("This wxCrafter project file is invalid and cannot be loaded: ") << filename.make_wxString(),
                      "Import wxCrafter project");
         return false;
     }
@@ -147,7 +147,7 @@ bool WxCrafter::Import(const tt_wxString& filename, bool write_doc)
     if (m_errors.size())
     {
         tt_string errMsg("Not everything in the wxCrafter project could be converted:\n\n");
-        MSG_ERROR(tt_string() << "------  " << m_importProjectFile.filename().utf8_string() << "------");
+        MSG_ERROR(tt_string() << "------  " << m_importProjectFile.filename() << "------");
         for (auto& iter: m_errors)
         {
             MSG_ERROR(iter);

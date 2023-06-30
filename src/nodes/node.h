@@ -262,7 +262,14 @@ public:
 
     double as_double(PropName name) const { return prop_as_double(name); }
 
-    const tt_string& as_string(PropName name) const { return prop_as_string(name); }
+    const tt_string& as_string(PropName name) const
+    {
+        if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
+            return m_properties[result->second].as_string();
+        else
+            return tt_empty_cstr;
+    }
+
     const tt_string& as_constant(PropName name, std::string_view prefix) { return prop_as_constant(name, prefix); }
 
     wxColour as_wxColour(PropName name) const { return prop_as_wxColour(name); }

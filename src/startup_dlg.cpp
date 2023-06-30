@@ -19,10 +19,10 @@ void StartupDlg::OnInit(wxInitDialogEvent& event)
     bool file_added = false;
     for (size_t idx = 0; idx < history.GetCount(); ++idx)
     {
-        tt_wxString project_file = history.GetHistoryFile(idx);
+        tt_string project_file = history.GetHistoryFile(idx).utf8_string();
         if (project_file.file_exists())
         {
-            auto shortname = project_file.filename();
+            tt_string shortname = project_file.filename();
             shortname.remove_extension();
             project_file.remove_filename();
 
@@ -56,14 +56,14 @@ void StartupDlg::OnInit(wxInitDialogEvent& event)
     auto append_history_ptr = wxGetFrame().GetAppendImportHistory();
     for (size_t idx = 0; idx < append_history_ptr->GetCount(); ++idx)
     {
-        tt_wxString project_file = append_history_ptr->GetHistoryFile(idx);
+        tt_string project_file = append_history_ptr->GetHistoryFile(idx).utf8_string();
         if (project_file.file_exists())
         {
-            auto shortname = project_file.filename();
+            tt_string shortname = project_file.filename();
             project_file.remove_filename();
 
-            auto hyperlink = new wxGenericHyperlinkCtrl(this, wxID_ANY, shortname, wxEmptyString, wxDefaultPosition,
-                                                        wxDefaultSize, wxHL_DEFAULT_STYLE);
+            auto hyperlink = new wxGenericHyperlinkCtrl(this, wxID_ANY, shortname.make_wxString(), wxEmptyString,
+                                                        wxDefaultPosition, wxDefaultSize, wxHL_DEFAULT_STYLE);
 
             wxFont font(wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT));
             font.SetSymbolicSize(wxFONTSIZE_LARGE);

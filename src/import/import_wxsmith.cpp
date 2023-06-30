@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Import a wxSmith or XRC file
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2021 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -14,7 +14,7 @@
 
 WxSmith::WxSmith() {}
 
-bool WxSmith::Import(const tt_wxString& filename, bool write_doc)
+bool WxSmith::Import(const tt_string& filename, bool write_doc)
 {
     auto result = LoadDocFile(filename);
     if (!result)
@@ -26,7 +26,7 @@ bool WxSmith::Import(const tt_wxString& filename, bool write_doc)
     if (!tt::is_sameas(root.name(), "wxsmith", tt::CASE::either) &&
         !tt::is_sameas(root.name(), "resource", tt::CASE::either))
     {
-        wxMessageBox(wxString() << filename << " is not a wxSmith or XRC file", "Import");
+        wxMessageBox(wxString() << filename.make_wxString() << " is not a wxSmith or XRC file", "Import");
         return false;
     }
 
@@ -43,7 +43,7 @@ bool WxSmith::Import(const tt_wxString& filename, bool write_doc)
 
         if (!m_project->GetChildCount())
         {
-            wxMessageBox(wxString() << filename << " does not contain any top level forms.", "Import");
+            wxMessageBox(wxString() << filename.make_wxString() << " does not contain any top level forms.", "Import");
             return false;
         }
 
@@ -61,7 +61,7 @@ bool WxSmith::Import(const tt_wxString& filename, bool write_doc)
     if (m_errors.size())
     {
         tt_string errMsg("Not everything in the project could be converted:\n\n");
-        MSG_ERROR(tt_string() << "------  " << m_importProjectFile.filename().utf8_string() << "------");
+        MSG_ERROR(tt_string() << "------  " << m_importProjectFile.filename() << "------");
         for (auto& iter: m_errors)
         {
             MSG_ERROR(iter);

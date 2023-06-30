@@ -113,7 +113,7 @@ CodeCompare::~CodeCompare()
 
     if (Project.HasValue(prop_base_directory))
     {
-        dir.GetAllFiles(Project.as_ttString(prop_base_directory), &files, "~wxue_**.*");
+        dir.GetAllFiles(Project.as_string(prop_base_directory).make_wxString(), &files, "~wxue_**.*");
 
         for (auto& iter: files)
         {
@@ -219,7 +219,7 @@ void CodeCompare::OnWinMerge(wxCommandEvent& /* event */)
 
     // /e -- terminate with escape
     // /u -- don't add files to MRU
-    winShellRun("WinMergeU.exe", "/e /u ~wxue_.WinMerge", cwd.sub_cstr().c_str());
+    winShellRun("WinMergeU.exe", "/e /u ~wxue_.WinMerge", cwd.c_str());
 }
 
 #endif  // _WIN32

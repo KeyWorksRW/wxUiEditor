@@ -107,7 +107,7 @@ bool GeneratePythonFiles(GenResults& results, std::vector<tt_string>* pClassList
             }
             else if (Project.HasValue(prop_python_output_folder) && !path.contains("/"))
             {
-                path = Project.BaseDirectory(GEN_LANG_PYTHON).utf8_string();
+                path = Project.BaseDirectory(GEN_LANG_PYTHON);
                 path.append_filename(base_file);
             }
             path.backslashestoforward();
@@ -178,7 +178,7 @@ bool GeneratePythonFiles(GenResults& results, std::vector<tt_string>* pClassList
                 auto form_object = root.append_child("object");
                 GenXrcObject(form, form_object, false);
 
-                auto xrc_base_file = form->prop_as_string(prop_python_xrc_file);
+                auto xrc_base_file = form->as_string(prop_python_xrc_file);
                 path = xrc_base_file;
                 if (auto* node_folder = form->get_folder();
                     node_folder && node_folder->HasValue(prop_folder_python_output_folder))
@@ -188,7 +188,7 @@ bool GeneratePythonFiles(GenResults& results, std::vector<tt_string>* pClassList
                 }
                 else if (Project.HasValue(prop_python_output_folder) && !path.contains("/"))
                 {
-                    path = Project.BaseDirectory(GEN_LANG_PYTHON).utf8_string();
+                    path = Project.BaseDirectory(GEN_LANG_PYTHON);
                     path.append_filename(xrc_base_file);
                 }
                 path.backslashestoforward();
@@ -815,7 +815,7 @@ tt_string MakePythonPath(Node* node)
     tt_string path;
     Node* form = node->get_form();
 
-    if (auto& base_file = form->prop_as_string(prop_python_file); base_file.size())
+    if (auto& base_file = form->as_string(prop_python_file); base_file.size())
     {
         path = base_file;
 
@@ -826,7 +826,7 @@ tt_string MakePythonPath(Node* node)
         }
         else if (Project.HasValue(prop_python_output_folder) && !path.contains("/"))
         {
-            path = Project.BaseDirectory(GEN_LANG_PYTHON).utf8_string();
+            path = Project.BaseDirectory(GEN_LANG_PYTHON);
             path.append_filename(base_file);
         }
     }

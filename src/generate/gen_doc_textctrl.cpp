@@ -40,7 +40,7 @@ bool %class%::DoSaveDocument(const wxString& filename)
     auto result = GetTextCtrl()->SaveFile(filename);
     if (auto view = GetFirstView(); view)
     {
-        wxStaticCast(view, TextEditView)->GetFrame()->SetTitle(tt_wxString(filename).filename());
+        wxStaticCast(view, TextEditView)->GetFrame()->SetTitle(wxFileName(filename).Filename());
     }
     return result;
 }

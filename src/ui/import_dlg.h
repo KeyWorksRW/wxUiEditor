@@ -24,7 +24,7 @@ public:
     bool isImportWinRes() { return m_radio_WindowsResource->GetValue(); }
     bool isImportDialogBlocks() { return m_radio_DialogBlocks->GetValue(); }
 
-    std::vector<tt_wxString>& GetFileList() { return m_lstProjects; };
+    std::vector<tt_string>& GetFileList() { return m_lstProjects; };
 
 protected:
     void CheckResourceFiles(wxArrayString& files);
@@ -51,7 +51,7 @@ protected:
 #endif
 
 private:
-    std::vector<tt_wxString> m_lstProjects;
+    std::vector<tt_string> m_lstProjects;
 #if defined(_DEBUG) || defined(INTERNAL_TESTING)
     wxFileHistory m_FileHistory;
 #endif

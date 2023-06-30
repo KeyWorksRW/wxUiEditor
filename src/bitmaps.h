@@ -26,7 +26,7 @@ wxIcon GetIconImage(tt_string_view name);
 // Converts the ASCII header file into binary data and loads it as an image. It's designed to
 // read header files created by wxUiEditor or wxFormBuilder -- any other generated header
 // file might or might not work.
-wxImage GetHeaderImage(tt_string_view filename, size_t* p_original_size = nullptr, tt_wxString* p_mime_type = nullptr);
+wxImage GetHeaderImage(tt_string_view filename, size_t* p_original_size = nullptr, tt_string* p_mime_type = nullptr);
 
 // Converts the ASCII header file into binary data and loads it as an animation. It's designed to
 // read header files created by wxUiEditor or wxFormBuilder -- any other generated header

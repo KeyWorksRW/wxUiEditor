@@ -1210,7 +1210,7 @@ wxBitmapBundle LoadSVG(EmbeddedImage* embed, tt_string_view size_description)
     wxMemoryInputStream stream_in(embed->array_data.get(), embed->array_size & 0xFFFFFFFF);
     wxZlibInputStream zlib_strm(stream_in);
     zlib_strm.Read(str.get(), org_size);
-    return wxBitmapBundle::FromSVG(str.get(), get_image_prop_size(size_description));
+    return wxBitmapBundle::FromSVG(str.get(), GetSizeInfo(size_description));
 }
 
 tt_string ImageHandler::GetBundleFuncName(const tt_string& description)
@@ -1248,7 +1248,7 @@ tt_string ImageHandler::GetBundleFuncName(const tt_string& description)
                             wxSize svg_size { -1, -1 };
                             if (parts[IndexSize].size())
                             {
-                                GetSizeInfo(svg_size, parts[IndexSize]);
+                                svg_size = GetSizeInfo(parts[IndexSize]);
                             }
                             name << svg_size.x << ", " << svg_size.y << ")";
                         }

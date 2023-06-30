@@ -357,7 +357,7 @@ void GenXrcBitmap(Node* node, pugi::xml_node& object, size_t xrc_flags, std::str
                 {
                     svg_object.text().set(parts[IndexImage]);
                 }
-                auto size = get_image_prop_size(parts[IndexSize]);
+                auto size = GetSizeInfo(parts[IndexSize]);
                 svg_object.append_attribute("default_size").set_value(tt_string() << size.x << ',' << size.y);
             }
             else

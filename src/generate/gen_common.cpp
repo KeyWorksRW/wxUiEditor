@@ -596,7 +596,7 @@ bool GenerateBundleCode(const tt_string& description, tt_string& code)
         wxSize svg_size { -1, -1 };
         if (parts[IndexSize].size())
         {
-            GetSizeInfo(svg_size, parts[IndexSize]);
+            svg_size = GetSizeInfo(parts[IndexSize]);
         }
 
         tt_string name = "wxue_img::" + embed->array_name;
@@ -980,7 +980,7 @@ tt_string GenerateIconCode(const tt_string& description)
             return code;
         }
 
-        auto svg_size = get_image_prop_size(parts[IndexSize]);
+        auto svg_size = GetSizeInfo(parts[IndexSize]);
 
         tt_string name = "wxue_img::" + embed->array_name;
         code << "SetIcon(wxueBundleSVG(" << name << ", " << (embed->array_size & 0xFFFFFFFF) << ", ";

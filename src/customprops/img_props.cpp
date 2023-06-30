@@ -28,7 +28,7 @@ void ImageProperties::InitValues(tt_string_view value)
 
         if (type == "SVG" && mstr.size() > IndexImage + 1)
         {
-            GetSizeInfo(m_size, mstr[IndexSize]);
+            m_size = GetSizeInfo(mstr[IndexSize]);
         }
         else
         {

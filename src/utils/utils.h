@@ -36,22 +36,14 @@ tt_string DoubleToStr(double val);
 bool isPropFlagSet(tt_string_view flag, tt_string_view currentValue);
 
 wxSystemColour ConvertToSystemColour(tt_string_view value);
-int ConvertBitlistToInt(tt_string_view list);
 
-tt_string ConvertColourToString(const wxColour& colour);
-tt_string ConvertSystemColourToString(long colour);
 const char* ConvertFontFamilyToString(wxFontFamily family);
-
-// Used to add escapes to a string that will be handed off to a wxWidgets property editor
-tt_string CreateEscapedText(tt_string_view str);
 
 // if value begins with 'wx' then it is assumed to be a wxSystemColour
 wxColour ConvertToColour(tt_string_view value);
 
 // Replace escape slashes with the actual character. Affects \\, \\n, \\r, and \\t
 tt_string ConvertEscapeSlashes(tt_string_view str);
-
-std::vector<tt_string> ConvertToArrayString(tt_string_view value);
 
 // Converts an unsigned char array into an image. This is typically used for loading internal
 // #included images
@@ -64,10 +56,7 @@ wxPoint DlgPoint(wxObject* parent, Node* node, GenEnum::PropName prop);
 wxSize DlgSize(wxObject* parent, Node* node, GenEnum::PropName prop);
 
 // Convert the parts[IndexSize] or equivalent string into wxSize dimensions
-void GetSizeInfo(wxSize& size, tt_string_view size_description);
-
-// Convert the parts[IndexSize] or equivalent string into wxSize dimensions
-wxSize get_image_prop_size(tt_string_view size_description);
+wxSize GetSizeInfo(tt_string_view size_description);
 
 // Friendly name/wxSYS_COLOUR_ pairs (e.g. "tooltip"/wxSYS_COLOUR_INFOBK)
 extern std::map<std::string, const char*> g_sys_colour_pair;

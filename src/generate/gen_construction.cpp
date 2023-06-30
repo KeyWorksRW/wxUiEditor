@@ -460,7 +460,7 @@ void BaseCodeGenerator::GenParentSizer(Node* node, bool need_closing_brace)
     {
         if (node->isGen(gen_wxStdDialogButtonSizer))
         {
-            if (node->get_form()->isGen(gen_wxDialog) && node->prop_as_bool(prop_static_line))
+            if (node->get_form()->isGen(gen_wxDialog) && node->as_bool(prop_static_line))
             {
                 if (is_cpp())
                     code.ParentName().Function("Add(CreateSeparatedSizer(").NodeName() << "), ";

@@ -225,7 +225,7 @@ void BaseCodeGenerator::GenerateCppClass(Node* form_node, PANEL_PAGE panel_type)
         hdr_includes.insert("#include <wx/event.h>");
     }
 
-    if (form_node->prop_as_bool(prop_persist))
+    if (form_node->as_bool(prop_persist))
     {
         src_includes.insert("#include <wx/persist.h>");
         src_includes.insert("#include <wx/persist/toplevel.h>");
@@ -993,23 +993,23 @@ tt_string BaseCodeGenerator::GetDeclaration(Node* node)
         {
             if (!node->get_form()->isGen(gen_wxDialog) || node->as_bool(prop_Save) || node->as_bool(prop_ContextHelp))
             {
-                if (node->prop_as_bool(prop_OK))
+                if (node->as_bool(prop_OK))
                     code << "\n\twxButton* " << node->get_node_name() << "OK;";
-                if (node->prop_as_bool(prop_Yes))
+                if (node->as_bool(prop_Yes))
                     code << "\n\twxButton* " << node->get_node_name() << "Yes;";
-                if (node->prop_as_bool(prop_Save))
+                if (node->as_bool(prop_Save))
                     code << "\n\twxButton* " << node->get_node_name() << "Save;";
-                if (node->prop_as_bool(prop_Apply))
+                if (node->as_bool(prop_Apply))
                     code << "\n\twxButton* " << node->get_node_name() << "Apply;";
-                if (node->prop_as_bool(prop_No))
+                if (node->as_bool(prop_No))
                     code << "\n\twxButton* " << node->get_node_name() << "No;";
-                if (node->prop_as_bool(prop_Cancel))
+                if (node->as_bool(prop_Cancel))
                     code << "\n\twxButton* " << node->get_node_name() << "Cancel;";
-                if (node->prop_as_bool(prop_Close))
+                if (node->as_bool(prop_Close))
                     code << "\n\twxButton* " << node->get_node_name() << "Close;";
-                if (node->prop_as_bool(prop_Help))
+                if (node->as_bool(prop_Help))
                     code << "\n\twxButton* " << node->get_node_name() << "Help;";
-                if (node->prop_as_bool(prop_ContextHelp))
+                if (node->as_bool(prop_ContextHelp))
                     code << "\n\twxButton* " << node->get_node_name() << "ContextHelp;";
             }
         }
@@ -1367,7 +1367,7 @@ void BaseCodeGenerator::GenerateClassHeader(Node* form_node, EventVector& events
 
     GenHdrEvents(events);
 
-    if (!m_form_node->prop_as_bool(prop_use_derived_class) && form_node->prop_as_bool(prop_private_members))
+    if (!m_form_node->as_bool(prop_use_derived_class) && form_node->as_bool(prop_private_members))
     {
         m_header->Unindent();
         m_header->writeLine();
@@ -1430,7 +1430,7 @@ void BaseCodeGenerator::GenEnumIds(Node* class_node)
 {
     ASSERT(m_language == GEN_LANG_CPLUSPLUS);
 
-    if (!class_node->prop_as_bool(prop_generate_ids))
+    if (!class_node->as_bool(prop_generate_ids))
         return;
 
     std::set<std::string> set_enum_ids;
@@ -1588,7 +1588,7 @@ void BaseCodeGenerator::GenerateClassConstructor(Node* form_node, EventVector& e
             }
         }
 
-        if (form_node->prop_as_bool(prop_persist))
+        if (form_node->as_bool(prop_persist))
         {
             m_source->writeLine();
             tt_string tmp("wxPersistentRegisterAndRestore(this, \"");

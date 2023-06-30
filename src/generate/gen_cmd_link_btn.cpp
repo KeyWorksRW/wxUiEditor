@@ -22,10 +22,10 @@ wxObject* CommandLinkBtnGenerator::CreateMockup(Node* node, wxObject* parent)
                                           node->prop_as_wxString(prop_note), DlgPoint(parent, node, prop_pos),
                                           DlgSize(parent, node, prop_size), GetStyleInt(node));
 
-    if (node->prop_as_bool(prop_default))
+    if (node->as_bool(prop_default))
         widget->SetDefault();
 
-    if (node->prop_as_bool(prop_auth_needed))
+    if (node->as_bool(prop_auth_needed))
         widget->SetAuthNeeded();
 
     if (node->HasValue(prop_bitmap))

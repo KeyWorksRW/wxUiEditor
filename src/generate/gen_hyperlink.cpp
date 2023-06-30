@@ -18,7 +18,7 @@
 wxObject* HyperlinkGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     wxHyperlinkCtrlBase* widget;
-    if (node->prop_as_bool(prop_underlined))
+    if (node->as_bool(prop_underlined))
     {
         widget = new wxHyperlinkCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString(prop_label),
                                      node->prop_as_wxString(prop_url), DlgPoint(parent, node, prop_pos),
@@ -40,7 +40,7 @@ wxObject* HyperlinkGenerator::CreateMockup(Node* node, wxObject* parent)
     {
         widget->SetHoverColour(node->prop_as_wxColour(prop_hover_color));
     }
-    else if (node->prop_as_bool(prop_sync_hover_colour))
+    else if (node->as_bool(prop_sync_hover_colour))
     {
         widget->SetHoverColour(widget->GetNormalColour());
     }
@@ -114,7 +114,7 @@ int HyperlinkGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t 
     GenXrcObjectAttributes(node, item, "wxHyperlinkCtrl");
 
 #if defined(WIDGETS_FORK)
-    if (!node->prop_as_bool(prop_underlined))
+    if (!node->as_bool(prop_underlined))
     {
         item.append_child("use_generic").text().set(1);
         if (!node->HasValue(prop_font))
@@ -164,11 +164,11 @@ int HyperlinkGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t 
             item.append_child(pugi::node_comment).set_value(" visited color cannot be be set in the XRC file. ");
         }
 #endif
-        if (!node->prop_as_bool(prop_underlined))
+        if (!node->as_bool(prop_underlined))
         {
             item.append_child(pugi::node_comment).set_value(" removing underline cannot be be set in the XRC file. ");
         }
-        if (node->prop_as_bool(prop_sync_hover_colour))
+        if (node->as_bool(prop_sync_hover_colour))
         {
             item.append_child(pugi::node_comment).set_value(" sync hover color cannot be be set in the XRC file. ");
         }
@@ -185,7 +185,7 @@ void HyperlinkGenerator::RequiredHandlers(Node* /* node */, std::set<std::string
 
 bool HyperlinkGenerator::IsGeneric(Node* node)
 {
-    return (!node->prop_as_bool(prop_underlined));
+    return (!node->as_bool(prop_underlined));
 }
 
 bool HyperlinkGenerator::GetIncludes(Node* node, std::set<std::string>& /* set_src */, std::set<std::string>& set_hdr)

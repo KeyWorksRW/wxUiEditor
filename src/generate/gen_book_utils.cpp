@@ -17,11 +17,11 @@
 bool isBookDisplayImages(Node* node)
 {
     if (!node->isGen(gen_BookPage))
-        return node->prop_as_bool(prop_display_images);
+        return node->as_bool(prop_display_images);
     for (auto node_parent = node->GetParent(); node_parent; node_parent = node_parent->GetParent())
     {
         if (!node_parent->isGen(gen_BookPage))
-            return node_parent->prop_as_bool(prop_display_images);
+            return node_parent->as_bool(prop_display_images);
     }
     return false;
 }

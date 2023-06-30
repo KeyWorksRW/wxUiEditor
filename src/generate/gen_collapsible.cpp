@@ -27,7 +27,7 @@ wxObject* CollapsiblePaneGenerator::CreateMockup(Node* node, wxObject* parent)
     if (GetMockup()->IsShowingHidden())
         widget->Collapse(false);
     else
-        widget->Collapse(node->prop_as_bool(prop_collapsed));
+        widget->Collapse(node->as_bool(prop_collapsed));
 
     widget->Bind(wxEVT_COLLAPSIBLEPANE_CHANGED, &CollapsiblePaneGenerator::OnCollapse, this);
 

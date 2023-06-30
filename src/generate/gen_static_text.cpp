@@ -22,7 +22,7 @@
 wxObject* StaticTextGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     wxStaticTextBase* widget;
-    if (node->prop_as_bool(prop_markup) && node->prop_as_int(prop_wrap) <= 0)
+    if (node->as_bool(prop_markup) && node->prop_as_int(prop_wrap) <= 0)
     {
         widget =
             new wxGenericStaticText(wxStaticCast(parent, wxWindow), wxID_ANY, wxEmptyString,
@@ -34,7 +34,7 @@ wxObject* StaticTextGenerator::CreateMockup(Node* node, wxObject* parent)
                                   DlgSize(parent, node, prop_size), GetStyleInt(node));
     }
 
-    if (node->prop_as_bool(prop_markup) && node->prop_as_int(prop_wrap) <= 0)
+    if (node->as_bool(prop_markup) && node->prop_as_int(prop_wrap) <= 0)
         widget->SetLabelMarkup(node->prop_as_wxString(prop_label));
     else
         widget->SetLabel(node->prop_as_wxString(prop_label));
@@ -57,7 +57,7 @@ bool StaticTextGenerator::OnPropertyChange(wxObject* widget, Node* node, NodePro
         // it to it's original state before wrapping again.
 
         auto ctrl = wxStaticCast(widget, wxStaticTextBase);
-        if (node->prop_as_bool(prop_markup))
+        if (node->as_bool(prop_markup))
             ctrl->SetLabelMarkup(node->prop_as_wxString(prop_label));
         else
             ctrl->SetLabel(node->prop_as_wxString(prop_label));
@@ -75,9 +75,9 @@ bool StaticTextGenerator::ConstructionCode(Code& code)
 {
     if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
-    code.NodeName().CreateClass((code.m_node->prop_as_bool(prop_markup) && code.m_node->prop_as_int(prop_wrap) <= 0));
+    code.NodeName().CreateClass((code.m_node->as_bool(prop_markup) && code.m_node->prop_as_int(prop_wrap) <= 0));
     code.ValidParentName().Comma().as_string(prop_id).Comma();
-    if (code.m_node->prop_as_bool(prop_markup))
+    if (code.m_node->as_bool(prop_markup))
     {
         code.EmptyString();
     }
@@ -102,7 +102,7 @@ bool StaticTextGenerator::ConstructionCode(Code& code)
 
 bool StaticTextGenerator::SettingsCode(Code& code)
 {
-    if (code.m_node->prop_as_bool(prop_markup) && code.m_node->prop_as_int(prop_wrap) <= 0)
+    if (code.m_node->as_bool(prop_markup) && code.m_node->prop_as_int(prop_wrap) <= 0)
     {
         code.NodeName().Function("SetLabelMarkup(");
         code.QuotedString(prop_label);
@@ -129,7 +129,7 @@ int StaticTextGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t
     // REVIEW: [KeyWorks - 05-28-2022] Once markup and generic version is supported in XRC, this can be enabled
     // with a version check.
 
-    if (node->prop_as_bool(prop_markup) && node->prop_as_int(prop_wrap) <= 0)
+    if (node->as_bool(prop_markup) && node->prop_as_int(prop_wrap) <= 0)
     {
         item.append_child("use_generic platform=\"msw\"").text().set("1");
     }
@@ -144,7 +144,7 @@ int StaticTextGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t
 
     if (xrc_flags & xrc::add_comments)
     {
-        if (node->prop_as_bool(prop_markup))
+        if (node->as_bool(prop_markup))
         {
             item.append_child(pugi::node_comment).set_value(" markup cannot be be set in the XRC file. ");
         }

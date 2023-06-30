@@ -28,7 +28,7 @@ bool SpacerGenerator::ConstructionCode(Code& code)
         code.Comma().Add("wxGBPosition(").Str(prop_row).Comma().Str(prop_column) += ")";
         code.Comma().Add("wxGBSpan(").Str(prop_rowspan).Comma().Str(prop_colspan) += ")";
         code.Comma().itoa(flags.GetFlags()).Comma().Str(prop_border_size);
-        if (node->prop_as_bool(prop_add_default_border))
+        if (node->as_bool(prop_add_default_border))
         {
             code.Str(" + ").Add("wxSizerFlags").ClassMethod("GetDefaultBorder()");
         }
@@ -69,7 +69,7 @@ bool SpacerGenerator::ConstructionCode(Code& code)
                 code.Comma().Str(prop_height);
             }
 
-            if (node->prop_as_bool(prop_add_default_border))
+            if (node->as_bool(prop_add_default_border))
             {
                 code.Str(" + ").Add("wxSizerFlags").ClassMethod("GetDefaultBorder()");
             }

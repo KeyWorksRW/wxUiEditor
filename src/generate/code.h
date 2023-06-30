@@ -99,7 +99,7 @@ public:
     // Returns m_node->as_bool(prop_name);
     bool IsTrue(GenEnum::PropName prop_name) const { return m_node->as_bool(prop_name); }
 
-    // Equivalent to calling m_node->prop_as_bool(prop_name)
+    // Equivalent to calling m_node->as_bool(prop_name)
     bool IsFalse(GenEnum::PropName prop_name) const { return !m_node->as_bool(prop_name); }
 
     // Equivalent to calling (node->as_string(prop_name) == text)

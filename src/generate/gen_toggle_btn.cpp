@@ -21,12 +21,12 @@ wxObject* ToggleButtonGenerator::CreateMockup(Node* node, wxObject* parent)
     auto widget = new wxToggleButton(wxStaticCast(parent, wxWindow), wxID_ANY, wxEmptyString,
                                      DlgPoint(parent, node, prop_pos), DlgSize(parent, node, prop_size), GetStyleInt(node));
 
-    if (node->prop_as_bool(prop_markup))
+    if (node->as_bool(prop_markup))
         widget->SetLabelMarkup(node->prop_as_wxString(prop_label));
     else
         widget->SetLabel(node->prop_as_wxString(prop_label));
 
-    widget->SetValue((node->prop_as_bool(prop_pressed)));
+    widget->SetValue((node->as_bool(prop_pressed)));
 
     if (node->HasValue(prop_bitmap))
         widget->SetBitmap(node->prop_as_wxBitmapBundle(prop_bitmap));
@@ -63,7 +63,7 @@ bool ToggleButtonGenerator::OnPropertyChange(wxObject* widget, Node* node, NodeP
     if (prop->isProp(prop_label))
     {
         auto ctrl = wxStaticCast(widget, wxToggleButton);
-        if (node->prop_as_bool(prop_markup))
+        if (node->as_bool(prop_markup))
             ctrl->SetLabelMarkup(node->prop_as_wxString(prop_label));
         else
             ctrl->SetLabel(node->prop_as_wxString(prop_label));
@@ -75,7 +75,7 @@ bool ToggleButtonGenerator::OnPropertyChange(wxObject* widget, Node* node, NodeP
         // Turning markup on switches to generic rending of the button. However, you have to recreate it to switch it
         // off and go back to native rendering.
 
-        if (node->prop_as_bool(prop_markup))
+        if (node->as_bool(prop_markup))
         {
             wxStaticCast(widget, wxToggleButton)->SetLabelMarkup(node->prop_as_wxString(prop_label));
             return true;

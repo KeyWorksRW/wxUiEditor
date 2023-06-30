@@ -169,12 +169,12 @@ wxMenu* MenuBarBase::MakeSubMenu(Node* menu_node)
 
             sub_menu->Append(item);
 
-            if (item->GetKind() == wxITEM_CHECK && menu_item->prop_as_bool(prop_checked))
+            if (item->GetKind() == wxITEM_CHECK && menu_item->as_bool(prop_checked))
             {
                 item->Check(true);
             }
 
-            if (menu_item->prop_as_bool(prop_disabled))
+            if (menu_item->as_bool(prop_disabled))
             {
                 item->Enable(false);
             }

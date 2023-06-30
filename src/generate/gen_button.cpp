@@ -21,13 +21,13 @@ wxObject* ButtonGenerator::CreateMockup(Node* node, wxObject* parent)
 
     if (node->HasValue(prop_label))
     {
-        if (node->prop_as_bool(prop_markup))
+        if (node->as_bool(prop_markup))
             widget->SetLabelMarkup(node->prop_as_wxString(prop_label));
         else
             widget->SetLabel(node->prop_as_wxString(prop_label));
     }
 
-    if (node->prop_as_bool(prop_default))
+    if (node->as_bool(prop_default))
     {
         widget->SetDefault();
         if (auto dlg = wxDynamicCast(parent, wxDialog); dlg && node->prop_as_id(prop_id) != wxID_ANY)
@@ -57,7 +57,7 @@ wxObject* ButtonGenerator::CreateMockup(Node* node, wxObject* parent)
         }
     }
 
-    if (node->prop_as_bool(prop_auth_needed))
+    if (node->as_bool(prop_auth_needed))
         widget->SetAuthNeeded();
 
     if (node->HasValue(prop_bitmap))
@@ -111,7 +111,7 @@ bool ButtonGenerator::OnPropertyChange(wxObject* widget, Node* node, NodePropert
     if (prop->isProp(prop_label) && prop->HasValue())
     {
         auto ctrl = wxStaticCast(widget, wxButton);
-        if (node->prop_as_bool(prop_markup))
+        if (node->as_bool(prop_markup))
             ctrl->SetLabelMarkup(node->prop_as_wxString(prop_label));
         else
             ctrl->SetLabel(node->prop_as_wxString(prop_label));
@@ -123,7 +123,7 @@ bool ButtonGenerator::OnPropertyChange(wxObject* widget, Node* node, NodePropert
         // Turning markup on switches to generic rending of the button. However, you have to recreate it to switch it
         // off and go back to native rendering.
 
-        if (node->prop_as_bool(prop_markup))
+        if (node->as_bool(prop_markup))
         {
             wxStaticCast(widget, wxButton)->SetLabelMarkup(node->prop_as_wxString(prop_label));
             return true;
@@ -212,7 +212,7 @@ bool ButtonGenerator::SettingsCode(Code& code)
 int ButtonGenerator::GetRequiredVersion(Node* node)
 {
     // Code generation was invalid in minRequiredVer when there no label was set
-    if (!node->HasValue(prop_label) && !node->prop_as_bool(prop_markup))
+    if (!node->HasValue(prop_label) && !node->as_bool(prop_markup))
     {
         return std::max(minRequiredVer + 1, BaseGenerator::GetRequiredVersion(node));
     }
@@ -238,11 +238,11 @@ int ButtonGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc
 
     if (xrc_flags & xrc::add_comments)
     {
-        if (node->prop_as_bool(prop_markup))
+        if (node->as_bool(prop_markup))
         {
             ADD_ITEM_COMMENT(" markup cannot be be set in the XRC file. ")
         }
-        if (node->prop_as_bool(prop_auth_needed))
+        if (node->as_bool(prop_auth_needed))
         {
             ADD_ITEM_COMMENT(" authentication cannot be be set in the XRC file. ")
         }

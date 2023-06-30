@@ -255,7 +255,7 @@ void GenXrcFont(pugi::xml_node& item, std::string_view param_name, Node* node, P
 
 void GenXrcWindowSettings(Node* node, pugi::xml_node& object)
 {
-    if (node->prop_as_bool(prop_hidden))
+    if (node->as_bool(prop_hidden))
     {
         // Hidden is set in the XRC_MAKE_INSTANCE macro
         object.append_child("hidden").text().set("1");
@@ -283,11 +283,11 @@ void GenXrcWindowSettings(Node* node, pugi::xml_node& object)
         object.append_child("fg").text().set(
             node->prop_as_wxColour(prop_foreground_colour).GetAsString(wxC2S_HTML_SYNTAX).ToUTF8().data());
     }
-    if (node->prop_as_bool(prop_disabled))
+    if (node->as_bool(prop_disabled))
     {
         object.append_child("enabled").text().set("0");
     }
-    if (node->prop_as_bool(prop_focus))
+    if (node->as_bool(prop_focus))
     {
         object.append_child("focused").text().set("1");
     }

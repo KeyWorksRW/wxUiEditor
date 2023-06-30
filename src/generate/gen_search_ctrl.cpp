@@ -25,12 +25,12 @@ wxObject* SearchCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
 
     if (node->HasValue(prop_search_button))
     {
-        widget->ShowSearchButton(node->prop_as_bool(prop_search_button));
+        widget->ShowSearchButton(node->as_bool(prop_search_button));
     }
 
     if (node->HasValue(prop_cancel_button))
     {
-        widget->ShowCancelButton(node->prop_as_bool(prop_cancel_button));
+        widget->ShowCancelButton(node->as_bool(prop_cancel_button));
     }
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
@@ -101,9 +101,9 @@ int SearchCtrlGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t
 
     if (xrc_flags & xrc::add_comments)
     {
-        if (node->prop_as_bool(prop_search_button))
+        if (node->as_bool(prop_search_button))
             ADD_ITEM_COMMENT("XRC does not support ShowSearchButton()")
-        if (node->prop_as_bool(prop_cancel_button))
+        if (node->as_bool(prop_cancel_button))
             ADD_ITEM_COMMENT("XRC does not support ShowCancelButton()")
         GenXrcComments(node, item);
     }

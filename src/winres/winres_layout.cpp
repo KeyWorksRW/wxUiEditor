@@ -767,7 +767,7 @@ void resForm::CheckForStdButtons()
                 {
                     CreateStdButton();
                     m_stdButtonSizer->prop_set_value(prop_Yes, "1");
-                    if (btn_node->prop_as_bool(prop_default))
+                    if (btn_node->as_bool(prop_default))
                         m_stdButtonSizer->prop_set_value(prop_default_button, "Yes");
                     m_ctrls.erase(m_ctrls.begin() + idx_child);
                     continue;
@@ -777,7 +777,7 @@ void resForm::CheckForStdButtons()
                 {
                     CreateStdButton();
                     m_stdButtonSizer->prop_set_value(prop_Save, "1");
-                    if (btn_node->prop_as_bool(prop_default))
+                    if (btn_node->as_bool(prop_default))
                         m_stdButtonSizer->prop_set_value(prop_default_button, "Save");
                     m_ctrls.erase(m_ctrls.begin() + idx_child);
                     continue;
@@ -798,7 +798,7 @@ void resForm::CheckForStdButtons()
                 {
                     CreateStdButton();
                     m_stdButtonSizer->prop_set_value(prop_Yes, "1");
-                    if (btn_node->prop_as_bool(prop_default))
+                    if (btn_node->as_bool(prop_default))
                         m_stdButtonSizer->prop_set_value(prop_default_button, "Yes");
                     m_ctrls.erase(m_ctrls.begin() + idx_child);
                     continue;
@@ -822,7 +822,7 @@ void resForm::CheckForStdButtons()
                 {
                     CreateStdButton();
                     m_stdButtonSizer->prop_set_value(prop_Close, "1");
-                    if (btn_node->prop_as_bool(prop_default))
+                    if (btn_node->as_bool(prop_default))
                         m_stdButtonSizer->prop_set_value(prop_default_button, "Close");
                     m_ctrls.erase(m_ctrls.begin() + idx_child);
                     continue;
@@ -832,7 +832,7 @@ void resForm::CheckForStdButtons()
                 {
                     CreateStdButton();
                     m_stdButtonSizer->prop_set_value(prop_Cancel, "1");
-                    if (btn_node->prop_as_bool(prop_default))
+                    if (btn_node->as_bool(prop_default))
                         m_stdButtonSizer->prop_set_value(prop_default_button, "Cancel");
                     m_ctrls.erase(m_ctrls.begin() + idx_child);
                     continue;

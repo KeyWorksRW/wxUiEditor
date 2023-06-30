@@ -29,7 +29,7 @@ wxObject* StaticCheckboxBoxSizerGenerator::CreateMockup(Node* node, wxObject* pa
 
         m_checkbox = new wxCheckBox(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString(prop_label),
                                     wxDefaultPosition, wxDefaultSize, style_value);
-        if (node->prop_as_bool(prop_checked))
+        if (node->as_bool(prop_checked))
             m_checkbox->SetValue(true);
 
         if (node->HasValue(prop_tooltip))
@@ -248,7 +248,7 @@ int StaticCheckboxBoxSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& ob
     auto child = checkbox.append_child("object");
     child.append_attribute("class").set_value("wxCheckBox");
     child.append_child("label").text().set(node->as_string(prop_label));
-    if (node->prop_as_bool(prop_checked))
+    if (node->as_bool(prop_checked))
         child.append_child("checked").text().set("1");
 
     return result;

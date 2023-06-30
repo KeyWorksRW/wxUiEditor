@@ -437,15 +437,15 @@ std::optional<tt_string> BaseGenerator::GetHint(NodeProperty* prop)
     if (prop->isProp(prop_derived_class_name) && !prop->HasValue())
     {
         // Note that once set, this won't change until the property grid gets recreated.
-        return tt_string(!prop->GetNode()->prop_as_bool(prop_use_derived_class) ? "requires use_derived_class" : "");
+        return tt_string(!prop->GetNode()->as_bool(prop_use_derived_class) ? "requires use_derived_class" : "");
     }
     else if (prop->isProp(prop_derived_file) && !prop->HasValue())
     {
-        return tt_string(!prop->GetNode()->prop_as_bool(prop_use_derived_class) ? "requires use_derived_class" : "");
+        return tt_string(!prop->GetNode()->as_bool(prop_use_derived_class) ? "requires use_derived_class" : "");
     }
     else if (prop->isProp(prop_python_xrc_file) && !prop->HasValue())
     {
-        return tt_string(!prop->GetNode()->prop_as_bool(prop_use_derived_class) ? "requires python_use_xrc" : "");
+        return tt_string(!prop->GetNode()->as_bool(prop_use_derived_class) ? "requires python_use_xrc" : "");
     }
     else if (prop->isProp(prop_base_file) && !prop->HasValue())
     {

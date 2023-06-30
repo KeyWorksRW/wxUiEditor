@@ -465,7 +465,7 @@ ChangeNodeType::ChangeNodeType(Node* node, GenEnum::GenName new_node)
         CopyCommonProperties(m_old_node.get(), m_node.get());
         if (m_new_gen_node == gen_wxCheckBox || m_new_gen_node == gen_wxRadioBox)
         {
-            m_node->prop_set_value(prop_checked, m_old_node->prop_as_bool(prop_checked));
+            m_node->prop_set_value(prop_checked, m_old_node->as_bool(prop_checked));
         }
 
         for (const auto& iter: m_old_node->GetChildNodePtrs())

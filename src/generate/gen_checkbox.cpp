@@ -24,7 +24,7 @@ wxObject* CheckBoxGenerator::CreateMockup(Node* node, wxObject* parent)
         new wxCheckBox(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString(prop_label),
                        DlgPoint(parent, node, prop_pos), DlgSize(parent, node, prop_size), style_value | GetStyleInt(node));
 
-    if (node->prop_as_bool(prop_checked))
+    if (node->as_bool(prop_checked))
         widget->SetValue(true);
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);

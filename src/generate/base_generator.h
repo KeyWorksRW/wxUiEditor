@@ -39,7 +39,7 @@ using OptionalIncludes = std::optional<std::vector<std::string>>;
     }
 
 #define ADD_ITEM_BOOL(name_prop, name_child)           \
-    if (node->prop_as_bool(name_prop))                 \
+    if (node->as_bool(name_prop))                      \
     {                                                  \
         item.append_child(name_child).text().set("1"); \
     }

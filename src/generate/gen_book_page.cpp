@@ -88,8 +88,7 @@ wxObject* BookPageGenerator::CreateMockup(Node* node, wxObject* parent)
     }
     else if (auto book = wxDynamicCast(parent, wxBookCtrlBase); book)
     {
-        if (node->HasValue(prop_bitmap) &&
-            (node_parent->prop_as_bool(prop_display_images) || node_parent->isGen(gen_wxToolbook)))
+        if (node->HasValue(prop_bitmap) && (node_parent->as_bool(prop_display_images) || node_parent->isGen(gen_wxToolbook)))
         {
             int idx_image = -1;
             bool is_image_found { false };
@@ -136,7 +135,7 @@ wxObject* BookPageGenerator::CreateMockup(Node* node, wxObject* parent)
         }
 
         auto cur_selection = book->GetSelection();
-        if (node->prop_as_bool(prop_select))
+        if (node->as_bool(prop_select))
         {
             book->SetSelection(book->GetPageCount() - 1);
         }
@@ -150,7 +149,7 @@ wxObject* BookPageGenerator::CreateMockup(Node* node, wxObject* parent)
         auto aui_book = wxDynamicCast(parent, wxAuiNotebook);
         if (aui_book)
         {
-            if (node->HasValue(prop_bitmap) && node_parent->prop_as_bool(prop_display_images))
+            if (node->HasValue(prop_bitmap) && node_parent->as_bool(prop_display_images))
             {
                 int idx_image = -1;
                 for (const auto& child: node_parent->GetChildNodePtrs())
@@ -177,7 +176,7 @@ wxObject* BookPageGenerator::CreateMockup(Node* node, wxObject* parent)
             }
 
             auto cur_selection = aui_book->GetSelection();
-            if (node->prop_as_bool(prop_select))
+            if (node->as_bool(prop_select))
             {
                 aui_book->SetSelection(aui_book->GetPageCount() - 1);
             }
@@ -225,7 +224,7 @@ bool BookPageGenerator::ConstructionCode(Code& code)
         if (node->HasValue(prop_bitmap) && is_display_images)
         {
             int idx_image = GetTreebookImageIndex(node);
-            if (!node->prop_as_bool(prop_select))
+            if (!node->as_bool(prop_select))
             {
                 code.Comma().AddFalse();
             }
@@ -271,7 +270,7 @@ bool BookPageGenerator::ConstructionCode(Code& code)
                     }
                 }
             }
-            if (!node->prop_as_bool(prop_select))
+            if (!node->as_bool(prop_select))
                 code.Comma().AddFalse();
             code.Comma() << idx_image;
         }

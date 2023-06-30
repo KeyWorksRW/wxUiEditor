@@ -81,7 +81,7 @@ int TreebookGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t x
 
     if (xrc_flags & xrc::add_comments)
     {
-        if (node->prop_as_bool(prop_persist))
+        if (node->as_bool(prop_persist))
             item.append_child(pugi::node_comment).set_value(" persist is not supported in XRC. ");
 
         GenXrcComments(node, item);

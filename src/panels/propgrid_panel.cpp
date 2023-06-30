@@ -1147,7 +1147,7 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                             ReplaceBaseFile(newValue, selected_node->get_prop_ptr(prop_base_file));
                         }
 
-                        if (!selected_node->prop_as_bool(prop_use_derived_class))
+                        if (!selected_node->as_bool(prop_use_derived_class))
                             return;
 
                         if (!selected_node->HasValue(prop_derived_class_name))

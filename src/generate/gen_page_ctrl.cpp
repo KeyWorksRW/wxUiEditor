@@ -49,7 +49,7 @@ wxObject* PageCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
             }
             book->AddPage(wxStaticCast(widget, wxWindow), node->prop_as_wxString(prop_label), false, idx_image);
         }
-        else if (node->HasValue(prop_bitmap) && node_parent->prop_as_bool(prop_display_images))
+        else if (node->HasValue(prop_bitmap) && node_parent->as_bool(prop_display_images))
         {
             int idx_image = -1;
             for (size_t idx_child = 0; idx_child < node_parent->GetChildCount(); ++idx_child)
@@ -77,7 +77,7 @@ wxObject* PageCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
         }
 
         auto cur_selection = book->GetSelection();
-        if (node->prop_as_bool(prop_select))
+        if (node->as_bool(prop_select))
         {
             book->SetSelection(book->GetPageCount() - 1);
         }
@@ -91,7 +91,7 @@ wxObject* PageCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
         auto aui_book = wxDynamicCast(parent, wxAuiNotebook);
         if (aui_book)
         {
-            if (node->HasValue(prop_bitmap) && node_parent->prop_as_bool(prop_display_images))
+            if (node->HasValue(prop_bitmap) && node_parent->as_bool(prop_display_images))
             {
                 int idx_image = 0;
                 for (size_t idx_child = 0; idx_child < node_parent->GetChildCount(); ++idx_child)
@@ -119,7 +119,7 @@ wxObject* PageCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
             }
 
             auto cur_selection = aui_book->GetSelection();
-            if (node->prop_as_bool(prop_select))
+            if (node->as_bool(prop_select))
             {
                 aui_book->SetSelection(aui_book->GetPageCount() - 1);
             }
@@ -178,7 +178,7 @@ bool PageCtrlGenerator::ConstructionCode(Code& code)
                     }
 
                     // If it is true, then the parameter has already been added
-                    if (!node->prop_as_bool(prop_select))
+                    if (!node->as_bool(prop_select))
                         code.Comma().AddFalse();
                     code.Comma().itoa(idx_image);
                 }

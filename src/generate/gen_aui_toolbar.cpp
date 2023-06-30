@@ -96,7 +96,7 @@ void AuiToolBarGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent
             }
         }
 
-        if (added_tool && childObj->prop_as_bool(prop_disabled))
+        if (added_tool && childObj->as_bool(prop_disabled))
         {
             toolbar->EnableTool(added_tool->GetId(), false);
         }

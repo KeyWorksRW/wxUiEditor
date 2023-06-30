@@ -50,7 +50,7 @@ int StaticBoxGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t 
 
     if (xrc_flags & xrc::add_comments)
     {
-        if (node->prop_as_bool(prop_markup))
+        if (node->as_bool(prop_markup))
         {
             item.append_child(pugi::node_comment).set_value(" markup cannot be be set in the XRC file. ");
         }

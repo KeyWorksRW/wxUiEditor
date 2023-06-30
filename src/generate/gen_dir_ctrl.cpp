@@ -23,7 +23,7 @@ wxObject* GenericDirCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
                                        DlgPoint(parent, node, prop_pos), DlgSize(parent, node, prop_size), GetStyleInt(node),
                                        node->prop_as_wxString(prop_filter), node->prop_as_int(prop_defaultfilter));
 
-    widget->ShowHidden(node->prop_as_bool(prop_show_hidden));
+    widget->ShowHidden(node->as_bool(prop_show_hidden));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 

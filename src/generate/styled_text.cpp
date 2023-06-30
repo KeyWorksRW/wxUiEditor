@@ -206,7 +206,7 @@ wxObject* StyledTextGenerator::CreateMockup(Node* node, wxObject* parent)
 
     //////////// Margin category settings ////////////
 
-    if (!node->prop_as_bool(prop_stc_select_wrapped_line))
+    if (!node->as_bool(prop_stc_select_wrapped_line))
     {
         scintilla->SetMarginOptions(wxSTC_MARGINOPTION_SUBLINESELECT);
     }
@@ -337,7 +337,7 @@ wxObject* StyledTextGenerator::CreateMockup(Node* node, wxObject* parent)
         scintilla->SetMarginWidth(margin, 16);
         scintilla->SetMarginType(margin, wxSTC_MARGIN_SYMBOL);
         scintilla->SetMarginMask(margin, ~wxSTC_MASK_FOLDERS);
-        scintilla->SetMarginSensitive(margin, node->prop_as_bool(prop_symbol_mouse_sensitive));
+        scintilla->SetMarginSensitive(margin, node->as_bool(prop_symbol_mouse_sensitive));
     }
     if (node->as_string(prop_separator_margin) != "none")
     {
@@ -361,20 +361,20 @@ wxObject* StyledTextGenerator::CreateMockup(Node* node, wxObject* parent)
 
         if (node->as_string(prop_custom_type) == "symbol" || node->as_string(prop_custom_type) == "number")
         {
-            scintilla->SetMarginMask(margin, node->prop_as_bool(prop_custom_mask_folders) ? wxSTC_MASK_FOLDERS :
-                                                                                            ~wxSTC_MASK_FOLDERS);
+            scintilla->SetMarginMask(margin,
+                                     node->as_bool(prop_custom_mask_folders) ? wxSTC_MASK_FOLDERS : ~wxSTC_MASK_FOLDERS);
         }
-        scintilla->SetMarginSensitive(margin, node->prop_as_bool(prop_custom_mouse_sensitive));
+        scintilla->SetMarginSensitive(margin, node->as_bool(prop_custom_mouse_sensitive));
     }
 
     //////////// Selection category settings ////////////
 
-    scintilla->SetMouseSelectionRectangularSwitch(node->prop_as_bool(prop_allow_mouse_rectangle));
-    scintilla->SetMultipleSelection(node->prop_as_bool(prop_multiple_selections));
-    scintilla->SetMultiPaste(node->prop_as_bool(prop_paste_multiple) ? wxSTC_MULTIPASTE_EACH : wxSTC_MULTIPASTE_ONCE);
-    scintilla->SetAdditionalCaretsVisible(node->prop_as_bool(prop_additional_carets_visible));
-    scintilla->SetAdditionalCaretsBlink(node->prop_as_bool(prop_additional_carets_blink));
-    scintilla->SetAdditionalSelectionTyping(node->prop_as_bool(prop_multiple_selection_typing));
+    scintilla->SetMouseSelectionRectangularSwitch(node->as_bool(prop_allow_mouse_rectangle));
+    scintilla->SetMultipleSelection(node->as_bool(prop_multiple_selections));
+    scintilla->SetMultiPaste(node->as_bool(prop_paste_multiple) ? wxSTC_MULTIPASTE_EACH : wxSTC_MULTIPASTE_ONCE);
+    scintilla->SetAdditionalCaretsVisible(node->as_bool(prop_additional_carets_visible));
+    scintilla->SetAdditionalCaretsBlink(node->as_bool(prop_additional_carets_blink));
+    scintilla->SetAdditionalSelectionTyping(node->as_bool(prop_multiple_selection_typing));
 
     //////////// Tabs and Indentation settings ////////////
 
@@ -414,12 +414,12 @@ wxObject* StyledTextGenerator::CreateMockup(Node* node, wxObject* parent)
         scintilla->SetEOLMode(node->prop_as_mockup(prop_eol_mode, "stc_"));
     }
 
-    scintilla->SetViewEOL(node->prop_as_bool(prop_view_eol));
+    scintilla->SetViewEOL(node->as_bool(prop_view_eol));
     if (!node->isPropValue(prop_view_whitespace, "invisible"))
     {
         scintilla->SetViewWhiteSpace(node->prop_as_mockup(prop_view_whitespace, "stc_"));
     }
-    if (node->prop_as_bool(prop_view_tab_strikeout))
+    if (node->as_bool(prop_view_tab_strikeout))
     {
         scintilla->SetTabDrawMode(wxSTC_TD_STRIKEOUT);
     }
@@ -1007,7 +1007,7 @@ void StyledTextGenerator::ChangeEnableState(wxPropertyGridManager* prop_grid, No
     }
     else if (changed_prop->isProp(prop_additional_carets_visible))
     {
-        bool is_multiple = changed_node->prop_as_bool(prop_multiple_selections);
+        bool is_multiple = changed_node->as_bool(prop_multiple_selections);
         if (is_multiple)
         {
             if (auto pg_property = prop_grid->GetProperty("additional_carets_blink"); pg_property)

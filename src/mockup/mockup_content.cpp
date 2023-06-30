@@ -174,7 +174,7 @@ void MockupContent::CreateChildren(Node* node, wxWindow* parent, wxObject* paren
                 {
                     auto width = node->prop_as_int(prop_width);
                     auto height = node->prop_as_int(prop_height);
-                    if (node->prop_as_bool(prop_add_default_border))
+                    if (node->as_bool(prop_add_default_border))
                     {
                         width += wxSizerFlags::GetDefaultBorder();
                         height += wxSizerFlags::GetDefaultBorder();

@@ -57,7 +57,7 @@ static constexpr const char* lst_close_type_button[] = {
 int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_PAGE panel_type)
 {
     m_form_node = form;
-    m_is_derived_class = m_form_node->prop_as_bool(prop_use_derived_class);
+    m_is_derived_class = m_form_node->as_bool(prop_use_derived_class);
 
     tt_string source_ext(".cpp");
     tt_string header_ext(".h");
@@ -382,7 +382,7 @@ int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_PAG
                 // If this is a button that closes a dialog, and the dialog is marked as persist, then event.Skip() must be
                 // called.
                 if (event->GetEventInfo()->get_name().is_sameas("wxEVT_INIT_DIALOG") ||
-                    (close_type_button && m_form_node->prop_as_bool(prop_persist)))
+                    (close_type_button && m_form_node->as_bool(prop_persist)))
                 {
                     // OnInitDialog needs to call event.Skip() in order to initialize validators and update the UI
                     prototype.Format("%s(%s& event)", event_code.c_str(), event->GetEventInfo()->get_event_class().c_str());
@@ -444,7 +444,7 @@ int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_PAG
 
                         m_source->writeLine("}");
 
-                        if (m_form_node->prop_as_bool(prop_persist))
+                        if (m_form_node->as_bool(prop_persist))
                         {
                             m_source->writeLine();
                             m_source->writeLine("event.Skip();  // This must be called for wxPersistenceManager to work");

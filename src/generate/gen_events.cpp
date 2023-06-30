@@ -292,7 +292,7 @@ void BaseCodeGenerator::GenHdrEvents(const EventVector& events)
                 Project.value(prop_wxWidgets_version) == "3.1")
             {
                 code << "\n#if wxCHECK_VERSION(3, 1, 5)\n";
-                if (m_form_node->prop_as_bool(prop_use_derived_class))
+                if (m_form_node->as_bool(prop_use_derived_class))
                 {
                     code << "virtual void " << event->get_value() << "(" << event->GetEventInfo()->get_event_class()
                          << "& event) { event.Skip(); }";
@@ -305,7 +305,7 @@ void BaseCodeGenerator::GenHdrEvents(const EventVector& events)
             }
             else
             {
-                if (m_form_node->prop_as_bool(prop_use_derived_class))
+                if (m_form_node->as_bool(prop_use_derived_class))
                 {
                     code << "virtual void " << event_code << "(" << event->GetEventInfo()->get_event_class()
                          << "& event) { event.Skip(); }";
@@ -330,7 +330,7 @@ void BaseCodeGenerator::GenHdrEvents(const EventVector& events)
 
             tt_string code;
 
-            if (m_form_node->prop_as_bool(prop_use_derived_class))
+            if (m_form_node->as_bool(prop_use_derived_class))
             {
                 code << "virtual void " << event_code << "(" << event->GetEventInfo()->get_event_class()
                      << "& event) { event.Skip(); }";
@@ -346,7 +346,7 @@ void BaseCodeGenerator::GenHdrEvents(const EventVector& events)
         if (code_lines.size())
         {
             m_header->writeLine();
-            if (m_form_node->prop_as_bool(prop_use_derived_class))
+            if (m_form_node->as_bool(prop_use_derived_class))
             {
                 m_header->writeLine("// Virtual event handlers -- override them in your derived class");
                 m_header->writeLine();

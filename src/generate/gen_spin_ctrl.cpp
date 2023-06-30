@@ -24,7 +24,7 @@ wxObject* SpinCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
                                  DlgSize(parent, node, prop_size), GetStyleInt(node), node->prop_as_int(prop_min),
                                  node->prop_as_int(prop_max), node->prop_as_int(prop_initial));
 
-    if (node->prop_as_bool(prop_hexadecimal))
+    if (node->as_bool(prop_hexadecimal))
         widget->SetBase(16);
 
     if (node->prop_as_int(prop_inc) > 1)
@@ -102,7 +102,7 @@ int SpinCtrlGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t x
     if (node->prop_as_int(prop_inc) > 1)
         ADD_ITEM_PROP(prop_inc, "inc")
 
-    if (node->prop_as_bool(prop_hexadecimal))
+    if (node->as_bool(prop_hexadecimal))
         item.append_child("base").text().set("16");
 
     if (node->HasValue(prop_style))

@@ -22,7 +22,7 @@ wxObject* ActivityIndicatorGenerator::CreateMockup(Node* node, wxObject* parent)
                                           DlgSize(parent, node, prop_size), GetStyleInt(node));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
-    if (node->prop_as_bool(prop_auto_start))
+    if (node->as_bool(prop_auto_start))
     {
         widget->Start();
     }

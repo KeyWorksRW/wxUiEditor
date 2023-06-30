@@ -222,7 +222,7 @@ void ChangeDerivedDirectory(tt_string& path)
 
     for (auto& form: forms)
     {
-        if (form->prop_as_bool(prop_use_derived_class) && form->HasValue(prop_derived_file))
+        if (form->as_bool(prop_use_derived_class) && form->HasValue(prop_derived_file))
         {
             tt_string cur_path = form->as_string(prop_derived_file);
             cur_path.backslashestoforward();

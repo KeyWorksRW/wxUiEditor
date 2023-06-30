@@ -24,7 +24,7 @@ wxObject* StaticRadioBtnBoxSizerGenerator::CreateMockup(Node* node, wxObject* pa
     if (Project.value(prop_code_preference) != "Python")
     {
         m_radiobtn = new wxRadioButton(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString(prop_label));
-        if (node->prop_as_bool(prop_checked))
+        if (node->as_bool(prop_checked))
             m_radiobtn->SetValue(true);
         if (node->HasValue(prop_tooltip))
             m_radiobtn->SetToolTip(node->prop_as_wxString(prop_tooltip));
@@ -239,7 +239,7 @@ int StaticRadioBtnBoxSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& ob
     auto child = checkbox.append_child("object");
     child.append_attribute("class").set_value("wxRadioButton");
     child.append_child("label").text().set(node->as_string(prop_label));
-    if (node->prop_as_bool(prop_checked))
+    if (node->as_bool(prop_checked))
         child.append_child("checked").text().set("1");
 
     return result;

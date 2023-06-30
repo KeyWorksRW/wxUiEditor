@@ -309,7 +309,7 @@ int FrameFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t 
                 .set_value("The wxWANTS_CHARS style will be ignored when the XRC is loaded.");
         }
 
-        if (node->prop_as_bool(prop_persist))
+        if (node->as_bool(prop_persist))
         {
             object.append_child(pugi::node_comment).set_value(" persist is not supported in the XRC file. ");
         }

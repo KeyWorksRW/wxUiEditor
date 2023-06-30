@@ -31,12 +31,12 @@ wxObject* GridGenerator::CreateMockup(Node* node, wxObject* parent)
     grid->CreateGrid(node->prop_as_int(prop_rows), node->prop_as_int(prop_cols));
 
     // Grid category
-    grid->EnableGridLines(node->prop_as_bool(prop_grid_lines));
+    grid->EnableGridLines(node->as_bool(prop_grid_lines));
     if (node->HasValue(prop_grid_line_color))
     {
         grid->SetGridLineColour(node->prop_as_wxColour(prop_grid_line_color));
     }
-    grid->EnableDragGridSize(node->prop_as_bool(prop_drag_grid_size));
+    grid->EnableDragGridSize(node->as_bool(prop_drag_grid_size));
     grid->SetMargins(node->prop_as_int(prop_margin_width), node->prop_as_int(prop_margin_height));
     if (node->as_string(prop_cell_fit) != "overflow")
     {
@@ -50,9 +50,9 @@ wxObject* GridGenerator::CreateMockup(Node* node, wxObject* parent)
         grid->SetSelectionMode(static_cast<wxGrid::wxGridSelectionModes>(node->prop_as_int(prop_selection_mode)));
 
     // Label category
-    if (node->prop_as_bool(prop_native_col_header))
+    if (node->as_bool(prop_native_col_header))
         grid->UseNativeColHeader();
-    else if (node->prop_as_bool(prop_native_col_labels))
+    else if (node->as_bool(prop_native_col_labels))
         grid->SetUseNativeColLabels();
 
     grid->SetColLabelAlignment(node->prop_as_int(prop_col_label_horiz_alignment),
@@ -73,8 +73,8 @@ wxObject* GridGenerator::CreateMockup(Node* node, wxObject* parent)
     }
     // Columns category
 
-    grid->EnableDragColMove(node->prop_as_bool(prop_drag_col_move));
-    grid->EnableDragColSize(node->prop_as_bool(prop_drag_col_size));
+    grid->EnableDragColMove(node->as_bool(prop_drag_col_move));
+    grid->EnableDragColSize(node->as_bool(prop_drag_col_size));
 
     wxArrayString columnLabels = node->prop_as_wxArrayString(prop_col_label_values);
     for (int i = 0; i < (int) columnLabels.size() && i < grid->GetNumberCols(); ++i)
@@ -91,7 +91,7 @@ wxObject* GridGenerator::CreateMockup(Node* node, wxObject* parent)
                                node->prop_as_int(prop_row_label_vert_alignment));
     grid->SetRowLabelSize(node->prop_as_int(prop_row_label_size));
 
-    grid->EnableDragRowSize(node->prop_as_bool(prop_drag_row_size));
+    grid->EnableDragRowSize(node->as_bool(prop_drag_row_size));
 
     wxArrayString labels = node->prop_as_wxArrayString(prop_row_label_values);
     for (int i = 0; i < (int) labels.size() && i < grid->GetNumberRows(); ++i)
@@ -117,7 +117,7 @@ wxObject* GridGenerator::CreateMockup(Node* node, wxObject* parent)
 
     if (node->prop_as_int(prop_default_row_size) > 0)
         grid->SetDefaultRowSize(node->prop_as_int(prop_default_row_size));
-    else if (node->prop_as_bool(prop_autosize_rows))
+    else if (node->as_bool(prop_autosize_rows))
     {
         grid->AutoSizeRows();
     }

@@ -30,7 +30,7 @@ wxObject* FileCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
                                  DlgPoint(parent, node, prop_pos), DlgSize(parent, node, prop_size));
 
     if (!(node->prop_as_int(prop_style) & wxFC_NOSHOWHIDDEN))
-        widget->ShowHidden(node->prop_as_bool(prop_show_hidden));
+        widget->ShowHidden(node->as_bool(prop_show_hidden));
 
     if (node->prop_as_int(prop_filter_index) > 0)
         widget->SetFilterIndex(node->prop_as_int(prop_filter_index));
@@ -119,7 +119,7 @@ int FileCtrlGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t x
     {
         if (node->prop_as_int(prop_filter_index) > 0)
             ADD_ITEM_COMMENT("XRC does not support calling SetFilterIndex()")
-        if (node->prop_as_bool(prop_show_hidden))
+        if (node->as_bool(prop_show_hidden))
             ADD_ITEM_COMMENT("XRC does not support calling ShowHidden()")
         GenXrcComments(node, item);
     }

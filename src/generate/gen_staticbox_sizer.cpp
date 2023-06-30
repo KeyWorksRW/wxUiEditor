@@ -29,7 +29,7 @@ wxObject* StaticBoxSizerGenerator::CreateMockup(Node* node, wxObject* parent)
     if (min_size.x != -1 || min_size.y != -1)
         sizer->SetMinSize(min_size);
 
-    if (node->prop_as_bool(prop_hidden) && !GetMockup()->IsShowingHidden())
+    if (node->as_bool(prop_hidden) && !GetMockup()->IsShowingHidden())
         sizer->GetStaticBox()->Hide();
 
     return sizer;

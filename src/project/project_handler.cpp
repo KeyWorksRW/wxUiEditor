@@ -163,24 +163,6 @@ tt_string ProjectHandler::ArtDirectory() const
     return result;
 }
 
-tt_string ProjectHandler::BaseDirectory(int language) const
-{
-    tt_string result;
-    if (language == GEN_LANG_CPLUSPLUS && m_project_node->HasValue(prop_base_directory))
-        result = m_project_node->as_string(prop_base_directory);
-    else if (language == GEN_LANG_PYTHON && m_project_node->HasValue(prop_python_output_folder))
-        result = m_project_node->as_string(prop_python_output_folder);
-    else if (language == GEN_LANG_XRC && m_project_node->HasValue(prop_xrc_directory))
-        result = m_project_node->as_string(prop_xrc_directory);
-
-    if (result.empty())
-        result = m_projectPath;
-
-    result.make_absolute();
-
-    return result;
-}
-
 tt_string ProjectHandler::BaseDirectory(Node* node, int language) const
 {
     tt_string result;
@@ -244,21 +226,6 @@ tt_string ProjectHandler::DerivedDirectory(Node* node, int language) const
         else if (language == GEN_LANG_XRC && m_project_node->HasValue(prop_xrc_directory))
             result = m_project_node->as_string(prop_xrc_directory);
     }
-
-    if (result.empty())
-        result = m_projectPath;
-
-    result.make_absolute();
-
-    return result;
-}
-
-tt_string ProjectHandler::DerivedDirectory() const
-{
-    tt_string result;
-
-    if (m_project_node->HasValue(prop_derived_directory))
-        result = m_project_node->as_string(prop_derived_directory);
 
     if (result.empty())
         result = m_projectPath;

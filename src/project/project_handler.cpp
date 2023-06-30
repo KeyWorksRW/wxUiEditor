@@ -181,6 +181,41 @@ tt_string ProjectHandler::BaseDirectory(int language) const
     return result;
 }
 
+tt_string ProjectHandler::BaseDirectory(Node* node, int language) const
+{
+    tt_string result;
+
+    Node* folder = node->get_folder();
+    if (folder)
+    {
+        if (language == GEN_LANG_CPLUSPLUS && folder->HasValue(prop_folder_base_directory))
+            result = folder->as_string(prop_folder_base_directory);
+        else if (language == GEN_LANG_PYTHON && folder->HasValue(prop_folder_python_output_folder))
+            result = folder->as_string(prop_folder_python_output_folder);
+        else if (language == GEN_LANG_XRC && folder->HasValue(prop_folder_xrc_directory))
+            result = folder->as_string(prop_folder_xrc_directory);
+    }
+
+    // Even if the node has a folder parent, there may not be a directory set for it, so check
+    // result and if it's empty use the project directory properties.
+    if (result.empty() || !folder)
+    {
+        if (language == GEN_LANG_CPLUSPLUS && m_project_node->HasValue(prop_base_directory))
+            result = m_project_node->as_string(prop_base_directory);
+        else if (language == GEN_LANG_PYTHON && m_project_node->HasValue(prop_python_output_folder))
+            result = m_project_node->as_string(prop_python_output_folder);
+        else if (language == GEN_LANG_XRC && m_project_node->HasValue(prop_xrc_directory))
+            result = m_project_node->as_string(prop_xrc_directory);
+    }
+
+    if (result.empty())
+        result = m_projectPath;
+
+    result.make_absolute();
+
+    return result;
+}
+
 tt_string ProjectHandler::DerivedDirectory() const
 {
     tt_string result;

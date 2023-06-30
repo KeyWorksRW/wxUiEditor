@@ -26,7 +26,7 @@ wxObject* PropertyGridManagerGenerator::CreateMockup(Node* node, wxObject* paren
 
     if (node->HasValue(prop_extra_style))
     {
-        widget->SetExtraStyle(node->prop_as_int(prop_extra_style));
+        widget->SetExtraStyle(node->as_int(prop_extra_style));
     }
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
@@ -66,7 +66,7 @@ void PropertyGridManagerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /
     {
         if (child->isGen(gen_propGridPage))
         {
-            auto* page = pgm->AddPage(child->prop_as_wxString(prop_label), child->prop_as_wxBitmapBundle(prop_bitmap));
+            auto* page = pgm->AddPage(child->as_wxString(prop_label), child->as_wxBitmapBundle(prop_bitmap));
 
             AfterCreationAddItems(page, child.get());
         }

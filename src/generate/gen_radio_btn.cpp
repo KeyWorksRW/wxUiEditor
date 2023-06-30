@@ -19,10 +19,10 @@
 
 wxObject* RadioButtonGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxRadioButton(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString(prop_label),
+    auto widget = new wxRadioButton(wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxString(prop_label),
                                     DlgPoint(parent, node, prop_pos), DlgSize(parent, node, prop_size), GetStyleInt(node));
 
-    if (node->prop_as_bool(prop_checked))
+    if (node->as_bool(prop_checked))
         widget->SetValue(true);
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
@@ -34,7 +34,7 @@ bool RadioButtonGenerator::OnPropertyChange(wxObject* widget, Node* node, NodePr
 {
     if (prop->isProp(prop_label))
     {
-        wxStaticCast(widget, wxRadioButton)->SetLabel(node->prop_as_wxString(prop_label));
+        wxStaticCast(widget, wxRadioButton)->SetLabel(node->as_wxString(prop_label));
         return true;
     }
     else if (prop->isProp(prop_checked))
@@ -95,7 +95,7 @@ void RadioButtonGenerator::RequiredHandlers(Node* /* node */, std::set<std::stri
 bool RadioButtonGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
     InsertGeneratorInclude(node, "#include <wx/radiobut.h>", set_src, set_hdr);
-    if (node->prop_as_string(prop_validator_variable).size())
+    if (node->as_string(prop_validator_variable).size())
         InsertGeneratorInclude(node, "#include <wx/valgen.h>", set_src, set_hdr);
 
     return true;
@@ -120,14 +120,14 @@ bool RadioButtonGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeP
             auto parent = node->GetParent();
             auto pos = parent->GetChildPosition(node);
             if (pos > 0 && parent->GetChild(pos - 1)->isGen(gen_wxRadioButton) &&
-                parent->GetChild(pos - 1)->prop_as_string(prop_style).contains("wxRB_GROUP"))
+                parent->GetChild(pos - 1)->as_string(prop_style).contains("wxRB_GROUP"))
             {
                 auto info = wxGetFrame().GetPropInfoBar();
                 info->ShowMessage("The previous radio button is also set as the start of a group!", wxICON_INFORMATION);
                 m_info_warning = true;
             }
             else if (pos + 1 < parent->GetChildCount() && parent->GetChild(pos + 1)->isGen(gen_wxRadioButton) &&
-                     parent->GetChild(pos + 1)->prop_as_string(prop_style).contains("wxRB_GROUP"))
+                     parent->GetChild(pos + 1)->as_string(prop_style).contains("wxRB_GROUP"))
             {
                 auto info = wxGetFrame().GetPropInfoBar();
                 info->ShowMessage("The next radio button is also set as the start of a group!", wxICON_INFORMATION);

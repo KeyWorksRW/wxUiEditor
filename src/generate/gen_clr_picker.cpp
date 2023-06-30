@@ -18,7 +18,7 @@
 wxObject* ColourPickerGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget =
-        new wxColourPickerCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxColour(prop_colour),
+        new wxColourPickerCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxColour(prop_colour),
                                DlgPoint(parent, node, prop_pos), DlgSize(parent, node, prop_size), GetStyleInt(node));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
@@ -32,7 +32,7 @@ bool ColourPickerGenerator::ConstructionCode(Code& code)
         code << "auto* ";
     code.NodeName().CreateClass();
     code.ValidParentName().Comma().as_string(prop_id).Comma();
-    if (code.node()->prop_as_string(prop_colour).size())
+    if (code.node()->as_string(prop_colour).size())
         ColourCode(code, prop_colour);
     else
     {
@@ -59,8 +59,7 @@ int ColourPickerGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size
 
     GenXrcObjectAttributes(node, item, "wxColourPickerCtrl");
 
-    item.append_child("value").text().set(
-        node->prop_as_wxColour(prop_colour).GetAsString(wxC2S_HTML_SYNTAX).ToUTF8().data());
+    item.append_child("value").text().set(node->as_wxColour(prop_colour).GetAsString(wxC2S_HTML_SYNTAX).ToUTF8().data());
 
     GenXrcStylePosSize(node, item);
     GenXrcWindowSettings(node, item);

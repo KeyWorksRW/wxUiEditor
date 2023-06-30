@@ -22,7 +22,7 @@
 MockupWizard::MockupWizard(wxWindow* parent, Node* node) : wxPanel(parent)
 {
     m_wizard_node = node;
-    m_border = node->prop_as_int(prop_border);
+    m_border = node->as_int(prop_border);
 
     m_window_sizer = new wxBoxSizer(wxVERTICAL);
     m_column_sizer = new wxBoxSizer(wxVERTICAL);
@@ -46,15 +46,15 @@ void MockupWizard::CreateBmpPageRow()
 
     if (m_wizard_node->HasValue(prop_bitmap))
     {
-        auto bundle = m_wizard_node->prop_as_wxBitmapBundle(prop_bitmap);
+        auto bundle = m_wizard_node->as_wxBitmapBundle(prop_bitmap);
         m_bitmap = bundle.GetBitmap(bundle.GetPreferredBitmapSizeFor(this));
         if (m_bitmap.IsOk())
         {
             wxSize bmp_size(wxDefaultSize);
-            if (m_wizard_node->prop_as_int(prop_bmp_placement) > 0 && m_wizard_node->prop_as_int(prop_bmp_min_width) > 0)
+            if (m_wizard_node->as_int(prop_bmp_placement) > 0 && m_wizard_node->as_int(prop_bmp_min_width) > 0)
             {
                 ResizeBitmap(m_bitmap);
-                bmp_size.x = m_wizard_node->prop_as_int(prop_bmp_min_width);
+                bmp_size.x = m_wizard_node->as_int(prop_bmp_min_width);
             }
             m_static_bitmap = new wxStaticBitmap(this, wxID_ANY, m_bitmap, wxDefaultPosition, bmp_size);
             m_bmp_page_sizer->Add(m_static_bitmap, wxSizerFlags());
@@ -84,7 +84,7 @@ void MockupWizard::CreateButtonRow()
     wxBoxSizer* backNextPair = new wxBoxSizer(wxHORIZONTAL);
     buttonRow->Add(backNextPair, wxSizerFlags().Border());
 
-    if (m_wizard_node->prop_as_string(prop_extra_style).contains("wxWIZARD_EX_HELPBUTTON"))
+    if (m_wizard_node->as_string(prop_extra_style).contains("wxWIZARD_EX_HELPBUTTON"))
     {
         backNextPair->Add(new wxButton(this, wxID_HELP, "&Help"));
 #ifdef __WXMAC__
@@ -212,10 +212,9 @@ void MockupWizard::AddPage(MockupWizardPage* page)
         if (bmp->IsOk())
         {
             auto bmp_size = bmp->GetScaledSize();
-            if (m_wizard_node->prop_as_int(prop_bmp_min_width) > 0 &&
-                bmp_size.x < m_wizard_node->prop_as_int(prop_bmp_min_width))
+            if (m_wizard_node->as_int(prop_bmp_min_width) > 0 && bmp_size.x < m_wizard_node->as_int(prop_bmp_min_width))
             {
-                bmp_size.x = m_wizard_node->prop_as_int(prop_bmp_min_width);
+                bmp_size.x = m_wizard_node->as_int(prop_bmp_min_width);
             }
             min_size.IncBy(bmp_size.x, 0);
         }
@@ -237,7 +236,7 @@ void MockupWizard::AllChildrenAdded()
 {
     if (m_bitmap.IsOk())
     {
-        if (m_wizard_node->prop_as_int(prop_bmp_placement))
+        if (m_wizard_node->as_int(prop_bmp_placement))
         {
             if (ResizeBitmap(m_bitmap) && m_static_bitmap)
             {
@@ -249,21 +248,21 @@ void MockupWizard::AllChildrenAdded()
 
 bool MockupWizard::ResizeBitmap(wxBitmap& bmp)
 {
-    m_bmp_placement = m_wizard_node->prop_as_int(prop_bmp_placement);
+    m_bmp_placement = m_wizard_node->as_int(prop_bmp_placement);
     if (!m_bmp_placement || !bmp.IsOk())
         return false;
 
     // GetScaledWidth() and GetScaledHeight() are new to wxWidgets 3.1.5 and are not currently documented, though they use
     // GetScaleFactor() which is documented. E.g., GetScaledWidth() { return GetWidth() / GetScaleFactor(); }
 
-    auto bmp_width = wxMax(bmp.GetScaledWidth(), m_wizard_node->prop_as_int(prop_bmp_min_width));
+    auto bmp_width = wxMax(bmp.GetScaledWidth(), m_wizard_node->as_int(prop_bmp_min_width));
     auto bmp_height = wxMax(m_largest_nonbmp_page.y, bmp.GetScaledHeight());
 
     wxBitmap bitmap(static_cast<int>(bmp_width), static_cast<int>(bmp_height));
     wxMemoryDC dc;
     dc.SelectObject(bitmap);
     if (m_wizard_node->HasValue(prop_bmp_background_colour))
-        dc.SetBackground(wxBrush(m_wizard_node->prop_as_wxColour(prop_bmp_background_colour)));
+        dc.SetBackground(wxBrush(m_wizard_node->as_wxColour(prop_bmp_background_colour)));
     else
         dc.SetBackground(wxBrush(*wxWHITE));
     dc.Clear();
@@ -304,7 +303,7 @@ MockupWizardPage::MockupWizardPage(Node* node, wxObject* parent) : wxPanel(wxSta
 {
     if (node->HasValue(prop_bitmap))
     {
-        auto bundle = node->prop_as_wxBitmapBundle(prop_bitmap);
+        auto bundle = node->as_wxBitmapBundle(prop_bitmap);
         m_bitmap = bundle.GetBitmap(bundle.GetPreferredBitmapSizeFor(this));
     }
 }

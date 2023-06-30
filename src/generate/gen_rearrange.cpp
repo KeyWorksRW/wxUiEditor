@@ -20,7 +20,7 @@ wxObject* RearrangeCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxRearrangeCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(parent, node, prop_pos),
                                       DlgSize(parent, node, prop_size), wxArrayInt(), wxArrayString(),
-                                      node->prop_as_int(prop_type) | GetStyleInt(node));
+                                      node->as_int(prop_type) | GetStyleInt(node));
 
     auto items = node->as_checklist_items(prop_contents);
     if (items.size())
@@ -32,13 +32,13 @@ wxObject* RearrangeCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
                 widget->GetList()->Check(pos);
         }
 
-        if (node->prop_as_string(prop_selection_string).size())
+        if (node->as_string(prop_selection_string).size())
         {
             widget->GetList()->SetStringSelection(node->as_wxString(prop_selection_string));
         }
         else
         {
-            int sel = node->prop_as_int(prop_selection_int);
+            int sel = node->as_int(prop_selection_int);
             if (sel > -1 && sel < (to_int) widget->GetList()->GetCount())
                 widget->GetList()->SetSelection(sel);
         }
@@ -63,9 +63,9 @@ bool RearrangeCtrlGenerator::ConstructionCode(Code& code)
         code += "[], []";
 
     Node* node = code.node();
-    auto& type = node->prop_as_string(prop_type);
-    auto& style = node->prop_as_string(prop_style);
-    auto& win_style = node->prop_as_string(prop_window_style);
+    auto& type = node->as_string(prop_type);
+    auto& style = node->as_string(prop_style);
+    auto& win_style = node->as_string(prop_window_style);
 
     if (type == "wxLB_SINGLE" && style.empty() && win_style.empty())
     {
@@ -144,7 +144,7 @@ bool RearrangeCtrlGenerator::SettingsCode(Code& code)
         }
         else
         {
-            int sel = node->prop_as_int(prop_selection_int);
+            int sel = node->as_int(prop_selection_int);
             if (sel > -1 && sel < (to_int) contents.size())
             {
                 code.Eol(eol_if_empty)

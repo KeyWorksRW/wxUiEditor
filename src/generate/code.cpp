@@ -434,7 +434,7 @@ Code& Code::CreateClass(bool use_generic, tt_string_view override_name)
         *this += "new ";
         if (m_node->HasValue(prop_derived_class))
         {
-            *this += m_node->prop_as_string(prop_derived_class);
+            *this += m_node->as_string(prop_derived_class);
             *this += '(';
             if (m_node->HasValue(prop_derived_params))
             {
@@ -795,7 +795,7 @@ Code& Code::QuotedString(tt_string_view text)
 
 Code& Code::WxSize(GenEnum::PropName prop_name, bool enable_dlg_units)
 {
-    if (m_node->prop_as_wxSize(prop_name) == wxDefaultSize)
+    if (m_node->as_wxSize(prop_name) == wxDefaultSize)
     {
         CheckLineLength(sizeof("wxDefaultSize"));
         *this += is_cpp() ? "wxDefaultSize" : "wx.DefaultSize";
@@ -811,7 +811,7 @@ Code& Code::WxSize(GenEnum::PropName prop_name, bool enable_dlg_units)
         FormFunction("ConvertDialogToPixels(");
     }
 
-    auto size = m_node->prop_as_wxSize(prop_name);
+    auto size = m_node->as_wxSize(prop_name);
     Class("wxSize(").itoa(size.x).Comma().itoa(size.y) << ')';
 
     if (dialog_units && enable_dlg_units)
@@ -827,7 +827,7 @@ Code& Code::WxSize(GenEnum::PropName prop_name, bool enable_dlg_units)
 
 Code& Code::Pos(GenEnum::PropName prop_name, bool enable_dlg_units)
 {
-    if (m_node->prop_as_wxPoint(prop_name) == wxDefaultPosition)
+    if (m_node->as_wxPoint(prop_name) == wxDefaultPosition)
     {
         CheckLineLength(sizeof("wxDefaultPosition"));
         *this += is_cpp() ? "wxDefaultPosition" : "wx.DefaultPosition";
@@ -843,7 +843,7 @@ Code& Code::Pos(GenEnum::PropName prop_name, bool enable_dlg_units)
         FormFunction("ConvertDialogToPixels(");
     }
 
-    auto size = m_node->prop_as_wxSize(prop_name);
+    auto size = m_node->as_wxSize(prop_name);
     Class("wxPoint(").itoa(size.x).Comma().itoa(size.y) << ')';
 
     if (dialog_units && enable_dlg_units)
@@ -866,14 +866,14 @@ Code& Code::Style(const char* prefix, tt_string_view force_style)
         style_set = true;
     }
 
-    if (m_node->HasValue(prop_tab_position) && !m_node->prop_as_string(prop_tab_position).is_sameas("wxBK_DEFAULT"))
+    if (m_node->HasValue(prop_tab_position) && !m_node->as_string(prop_tab_position).is_sameas("wxBK_DEFAULT"))
     {
         if (style_set)
             *this += '|';
         style_set = true;
         as_string(prop_tab_position);
     }
-    if (m_node->HasValue(prop_orientation) && !m_node->prop_as_string(prop_orientation).is_sameas("wxGA_HORIZONTAL"))
+    if (m_node->HasValue(prop_orientation) && !m_node->as_string(prop_orientation).is_sameas("wxGA_HORIZONTAL"))
     {
         if (style_set)
             *this += '|';
@@ -900,11 +900,11 @@ Code& Code::Style(const char* prefix, tt_string_view force_style)
         {
             if (is_cpp())
             {
-                *this += m_node->prop_as_constant(prop_style, prefix);
+                *this += m_node->as_constant(prop_style, prefix);
             }
             else
             {
-                tt_view_vector multistr(m_node->prop_as_constant(prop_style, prefix), "|", tt::TRIM::both);
+                tt_view_vector multistr(m_node->as_constant(prop_style, prefix), "|", tt::TRIM::both);
                 std::string_view wx_prefix = "wx.";
                 auto lambda = [&](tt_string_view candidate)
                 {
@@ -1020,12 +1020,12 @@ Code& Code::PosSizeFlags(bool uses_def_validator, tt_string_view def_style)
                 pop_back();
         }
     }
-    else if (m_node->prop_as_wxSize(prop_size) != wxDefaultSize)
+    else if (m_node->as_wxSize(prop_size) != wxDefaultSize)
     {
         Comma();
         Pos().Comma().WxSize();
     }
-    else if (m_node->prop_as_wxPoint(prop_pos) != wxDefaultPosition)
+    else if (m_node->as_wxPoint(prop_pos) != wxDefaultPosition)
     {
         Comma();
         Pos();
@@ -1054,9 +1054,9 @@ int Code::WhatParamsNeeded(tt_string_view default_style) const
     else if (m_node->isGen(gen_wxRichTextCtrl) || m_node->isGen(gen_wxListView))
         return (pos_needed | size_needed | style_needed);
 
-    if (m_node->prop_as_wxSize(prop_size) != wxDefaultSize)
+    if (m_node->as_wxSize(prop_size) != wxDefaultSize)
         return (pos_needed | size_needed);
-    else if (m_node->prop_as_wxPoint(prop_pos) != wxDefaultPosition)
+    else if (m_node->as_wxPoint(prop_pos) != wxDefaultPosition)
         return pos_needed;
 
     return nothing_needed;
@@ -1097,7 +1097,7 @@ Code& Code::GenSizerFlags()
 
     Add("wxSizerFlags");
 
-    if (auto& prop = m_node->prop_as_string(prop_proportion); prop != "0")
+    if (auto& prop = m_node->as_string(prop_proportion); prop != "0")
     {
         *this << '(' << prop << ')';
     }
@@ -1106,7 +1106,7 @@ Code& Code::GenSizerFlags()
         *this << "()";
     }
 
-    if (auto& prop = m_node->prop_as_string(prop_alignment); prop.size())
+    if (auto& prop = m_node->as_string(prop_alignment); prop.size())
     {
         if (prop.contains("wxALIGN_CENTER"))
         {
@@ -1135,7 +1135,7 @@ Code& Code::GenSizerFlags()
         }
     }
 
-    if (auto& prop = m_node->prop_as_string(prop_flags); prop.size())
+    if (auto& prop = m_node->as_string(prop_flags); prop.size())
     {
         if (prop.contains("wxEXPAND"))
         {
@@ -1155,9 +1155,9 @@ Code& Code::GenSizerFlags()
         }
     }
 
-    if (auto& prop = m_node->prop_as_string(prop_borders); prop.size())
+    if (auto& prop = m_node->as_string(prop_borders); prop.size())
     {
-        auto border_size = m_node->prop_as_string(prop_border_size);
+        auto border_size = m_node->as_string(prop_border_size);
         if (prop.contains("wxALL"))
         {
             if (border_size == "5")
@@ -1466,7 +1466,7 @@ void Code::GenFontColourSettings()
         }
     }  // End of font handling code
 
-    if (auto& fg_clr = node->prop_as_string(prop_foreground_colour); fg_clr.size())
+    if (auto& fg_clr = node->as_string(prop_foreground_colour); fg_clr.size())
     {
         Eol(eol_if_needed);
         if (node->IsForm())
@@ -1489,7 +1489,7 @@ void Code::GenFontColourSettings()
         EndFunction();
     }
 
-    if (auto& bg_clr = node->prop_as_string(prop_background_colour); bg_clr.size())
+    if (auto& bg_clr = node->as_string(prop_background_colour); bg_clr.size())
     {
         Eol(eol_if_needed);
         if (node->IsForm())

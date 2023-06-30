@@ -16,39 +16,39 @@
 
 wxObject* ButtonGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxButton(wxStaticCast(parent, wxWindow), node->prop_as_id(prop_id), wxEmptyString,
+    auto widget = new wxButton(wxStaticCast(parent, wxWindow), node->as_id(prop_id), wxEmptyString,
                                DlgPoint(parent, node, prop_pos), DlgSize(parent, node, prop_size), GetStyleInt(node));
 
     if (node->HasValue(prop_label))
     {
-        if (node->prop_as_bool(prop_markup))
-            widget->SetLabelMarkup(node->prop_as_wxString(prop_label));
+        if (node->as_bool(prop_markup))
+            widget->SetLabelMarkup(node->as_wxString(prop_label));
         else
-            widget->SetLabel(node->prop_as_wxString(prop_label));
+            widget->SetLabel(node->as_wxString(prop_label));
     }
 
-    if (node->prop_as_bool(prop_default))
+    if (node->as_bool(prop_default))
     {
         widget->SetDefault();
-        if (auto dlg = wxDynamicCast(parent, wxDialog); dlg && node->prop_as_id(prop_id) != wxID_ANY)
-            dlg->SetAffirmativeId(node->prop_as_id(prop_id));
+        if (auto dlg = wxDynamicCast(parent, wxDialog); dlg && node->as_id(prop_id) != wxID_ANY)
+            dlg->SetAffirmativeId(node->as_id(prop_id));
     }
     else
     {
-        if (auto dlg = wxDynamicCast(parent, wxDialog); dlg && node->prop_as_id(prop_id) != wxID_ANY)
+        if (auto dlg = wxDynamicCast(parent, wxDialog); dlg && node->as_id(prop_id) != wxID_ANY)
         {
-            switch (node->prop_as_id(prop_id))
+            switch (node->as_id(prop_id))
             {
                 case wxID_OK:
                 case wxID_YES:
                 case wxID_SAVE:
-                    dlg->SetAffirmativeId(node->prop_as_id(prop_id));
+                    dlg->SetAffirmativeId(node->as_id(prop_id));
                     break;
 
                 case wxID_CANCEL:
                 case wxID_CLOSE:
                 case wxID_NO:
-                    dlg->SetEscapeId(node->prop_as_id(prop_id));
+                    dlg->SetEscapeId(node->as_id(prop_id));
                     break;
 
                 default:
@@ -57,30 +57,30 @@ wxObject* ButtonGenerator::CreateMockup(Node* node, wxObject* parent)
         }
     }
 
-    if (node->prop_as_bool(prop_auth_needed))
+    if (node->as_bool(prop_auth_needed))
         widget->SetAuthNeeded();
 
     if (node->HasValue(prop_bitmap))
     {
-        widget->SetBitmap(node->prop_as_wxBitmapBundle(prop_bitmap));
+        widget->SetBitmap(node->as_wxBitmapBundle(prop_bitmap));
 
         if (node->HasValue(prop_disabled_bmp))
-            widget->SetBitmapDisabled(node->prop_as_wxBitmapBundle(prop_disabled_bmp));
+            widget->SetBitmapDisabled(node->as_wxBitmapBundle(prop_disabled_bmp));
 
         if (node->HasValue(prop_pressed_bmp))
-            widget->SetBitmapPressed(node->prop_as_wxBitmapBundle(prop_pressed_bmp));
+            widget->SetBitmapPressed(node->as_wxBitmapBundle(prop_pressed_bmp));
 
         if (node->HasValue(prop_focus_bmp))
-            widget->SetBitmapFocus(node->prop_as_wxBitmapBundle(prop_focus_bmp));
+            widget->SetBitmapFocus(node->as_wxBitmapBundle(prop_focus_bmp));
 
         if (node->HasValue(prop_current))
-            widget->SetBitmapCurrent(node->prop_as_wxBitmapBundle(prop_current));
+            widget->SetBitmapCurrent(node->as_wxBitmapBundle(prop_current));
 
         if (node->HasValue(prop_position))
-            widget->SetBitmapPosition(static_cast<wxDirection>(node->prop_as_int(prop_position)));
+            widget->SetBitmapPosition(static_cast<wxDirection>(node->as_int(prop_position)));
 
         if (node->HasValue(prop_margins))
-            widget->SetBitmapMargins(node->prop_as_wxSize(prop_margins));
+            widget->SetBitmapMargins(node->as_wxSize(prop_margins));
     }
 
     if (!node->isPropValue(prop_variant, "normal"))
@@ -111,10 +111,10 @@ bool ButtonGenerator::OnPropertyChange(wxObject* widget, Node* node, NodePropert
     if (prop->isProp(prop_label) && prop->HasValue())
     {
         auto ctrl = wxStaticCast(widget, wxButton);
-        if (node->prop_as_bool(prop_markup))
-            ctrl->SetLabelMarkup(node->prop_as_wxString(prop_label));
+        if (node->as_bool(prop_markup))
+            ctrl->SetLabelMarkup(node->as_wxString(prop_label));
         else
-            ctrl->SetLabel(node->prop_as_wxString(prop_label));
+            ctrl->SetLabel(node->as_wxString(prop_label));
 
         return true;
     }
@@ -123,9 +123,9 @@ bool ButtonGenerator::OnPropertyChange(wxObject* widget, Node* node, NodePropert
         // Turning markup on switches to generic rending of the button. However, you have to recreate it to switch it
         // off and go back to native rendering.
 
-        if (node->prop_as_bool(prop_markup))
+        if (node->as_bool(prop_markup))
         {
-            wxStaticCast(widget, wxButton)->SetLabelMarkup(node->prop_as_wxString(prop_label));
+            wxStaticCast(widget, wxButton)->SetLabelMarkup(node->as_wxString(prop_label));
             return true;
         }
     }
@@ -212,7 +212,7 @@ bool ButtonGenerator::SettingsCode(Code& code)
 int ButtonGenerator::GetRequiredVersion(Node* node)
 {
     // Code generation was invalid in minRequiredVer when there no label was set
-    if (!node->HasValue(prop_label) && !node->prop_as_bool(prop_markup))
+    if (!node->HasValue(prop_label) && !node->as_bool(prop_markup))
     {
         return std::max(minRequiredVer + 1, BaseGenerator::GetRequiredVersion(node));
     }
@@ -238,11 +238,11 @@ int ButtonGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc
 
     if (xrc_flags & xrc::add_comments)
     {
-        if (node->prop_as_bool(prop_markup))
+        if (node->as_bool(prop_markup))
         {
             ADD_ITEM_COMMENT(" markup cannot be be set in the XRC file. ")
         }
-        if (node->prop_as_bool(prop_auth_needed))
+        if (node->as_bool(prop_auth_needed))
         {
             ADD_ITEM_COMMENT(" authentication cannot be be set in the XRC file. ")
         }

@@ -25,7 +25,7 @@ wxObject* SimplebookGenerator::CreateMockup(Node* node, wxObject* parent)
                        (wxShowEffect) node->prop_as_mockup(prop_hide_effect, "info_"));
     if (node->HasValue(prop_duration))
     {
-        widget->SetEffectTimeout(node->prop_as_int(prop_duration));
+        widget->SetEffectTimeout(node->as_int(prop_duration));
     }
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);

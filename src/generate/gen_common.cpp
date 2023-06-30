@@ -45,7 +45,7 @@ void ColourCode(Code& code, GenEnum::PropName prop_name)
         }
         else
         {
-            auto colour = code.node()->prop_as_wxColour(prop_name);
+            auto colour = code.node()->as_wxColour(prop_name);
             code.Add(tt_string().Format("wxColour(%i, %i, %i)", colour.Red(), colour.Green(), colour.Blue()));
         }
     }
@@ -97,7 +97,7 @@ tt_string GenerateQuotedString(Node* node, GenEnum::PropName prop_name)
 {
     if (node->HasValue(prop_name))
     {
-        return GenerateQuotedString(node->prop_as_string(prop_name));
+        return GenerateQuotedString(node->as_string(prop_name));
     }
     else
     {
@@ -163,10 +163,10 @@ tt_string GetParentName(Node* node)
 
 void GenPos(Node* node, tt_string& code)
 {
-    auto point = node->prop_as_wxPoint(prop_pos);
+    auto point = node->as_wxPoint(prop_pos);
     if (point.x != -1 || point.y != -1)
     {
-        if (node->prop_as_string(prop_pos).contains("d", tt::CASE::either))
+        if (node->as_string(prop_pos).contains("d", tt::CASE::either))
         {
             code << "ConvertDialogToPixels(wxPoint(" << point.x << ", " << point.y << "))";
         }
@@ -191,18 +191,18 @@ void GenStyle(Node* node, tt_string& code, const char* prefix)
 {
     tt_string all_styles;
 
-    if (node->HasValue(prop_tab_position) && !node->prop_as_string(prop_tab_position).is_sameas("wxBK_DEFAULT"))
+    if (node->HasValue(prop_tab_position) && !node->as_string(prop_tab_position).is_sameas("wxBK_DEFAULT"))
     {
         if (all_styles.size())
             all_styles << '|';
-        all_styles << node->prop_as_string(prop_tab_position);
+        all_styles << node->as_string(prop_tab_position);
     }
 
-    if (node->HasValue(prop_orientation) && !node->prop_as_string(prop_orientation).is_sameas("wxGA_HORIZONTAL"))
+    if (node->HasValue(prop_orientation) && !node->as_string(prop_orientation).is_sameas("wxGA_HORIZONTAL"))
     {
         if (all_styles.size())
             all_styles << '|';
-        all_styles << node->prop_as_string(prop_orientation);
+        all_styles << node->as_string(prop_orientation);
     }
 
     if (node->isGen(gen_wxRichTextCtrl))
@@ -220,11 +220,11 @@ void GenStyle(Node* node, tt_string& code, const char* prefix)
         }
         if (prefix)
         {
-            all_styles << node->prop_as_constant(prop_style, prefix);
+            all_styles << node->as_constant(prop_style, prefix);
         }
         else
         {
-            all_styles << node->prop_as_string(prop_style);
+            all_styles << node->as_string(prop_style);
         }
     }
 
@@ -232,14 +232,14 @@ void GenStyle(Node* node, tt_string& code, const char* prefix)
     {
         if (all_styles.size())
             all_styles << '|';
-        all_styles << node->prop_as_string(prop_window_style);
+        all_styles << node->as_string(prop_window_style);
     }
 
     if (node->isGen(gen_wxListView))
     {
         if (all_styles.size())
             all_styles << '|';
-        all_styles << node->prop_as_string(prop_mode);
+        all_styles << node->as_string(prop_mode);
     }
 
     if (all_styles.empty())
@@ -327,7 +327,7 @@ bool GenBtnBimapCode(Node* node, tt_string& code, bool is_single)
         if (node->HasValue(iter.prop_name))
         {
             bundle_code.clear();
-            bool is_code_block = GenerateBundleCode(node->prop_as_string(iter.prop_name), bundle_code);
+            bool is_code_block = GenerateBundleCode(node->as_string(iter.prop_name), bundle_code);
             if (is_code_block)
             {
                 if (is_vector_generated)
@@ -377,29 +377,29 @@ bool GenBtnBimapCode(Node* node, tt_string& code, bool is_single)
     if (is_old_widgets)
     {
         code << "\n#else\n";
-        code << node->get_node_name() << "->SetBitmap(" << GenerateBitmapCode(node->prop_as_string(prop_bitmap)) << ");";
+        code << node->get_node_name() << "->SetBitmap(" << GenerateBitmapCode(node->as_string(prop_bitmap)) << ");";
 
         if (node->HasValue(prop_disabled_bmp))
         {
             if (code.size())
                 code << '\n';
-            code << node->get_node_name() << "->SetBitmapDisabled("
-                 << GenerateBitmapCode(node->prop_as_string(prop_disabled_bmp)) << ");";
+            code << node->get_node_name() << "->SetBitmapDisabled(" << GenerateBitmapCode(node->as_string(prop_disabled_bmp))
+                 << ");";
         }
 
         if (node->HasValue(prop_pressed_bmp))
         {
             if (code.size())
                 code << '\n';
-            code << node->get_node_name() << "->SetBitmapPressed("
-                 << GenerateBitmapCode(node->prop_as_string(prop_pressed_bmp)) << ");";
+            code << node->get_node_name() << "->SetBitmapPressed(" << GenerateBitmapCode(node->as_string(prop_pressed_bmp))
+                 << ");";
         }
 
         if (node->HasValue(prop_focus_bmp))
         {
             if (code.size())
                 code << '\n';
-            code << node->get_node_name() << "->SetBitmapFocus(" << GenerateBitmapCode(node->prop_as_string(prop_focus_bmp))
+            code << node->get_node_name() << "->SetBitmapFocus(" << GenerateBitmapCode(node->as_string(prop_focus_bmp))
                  << ");";
         }
 
@@ -407,7 +407,7 @@ bool GenBtnBimapCode(Node* node, tt_string& code, bool is_single)
         {
             if (code.size())
                 code << '\n';
-            code << node->get_node_name() << "->SetBitmapCurrent(" << GenerateBitmapCode(node->prop_as_string(prop_current))
+            code << node->get_node_name() << "->SetBitmapCurrent(" << GenerateBitmapCode(node->as_string(prop_current))
                  << ");";
         }
 
@@ -596,7 +596,7 @@ bool GenerateBundleCode(const tt_string& description, tt_string& code)
         wxSize svg_size { -1, -1 };
         if (parts[IndexSize].size())
         {
-            GetSizeInfo(svg_size, parts[IndexSize]);
+            svg_size = GetSizeInfo(parts[IndexSize]);
         }
 
         tt_string name = "wxue_img::" + embed->array_name;
@@ -767,8 +767,8 @@ void GenFormSettings(Code& code)
     const auto* node = code.node();
     if (!node->isGen(gen_PanelForm) && !node->isGen(gen_wxToolBar))
     {
-        const auto max_size = node->prop_as_wxSize(prop_maximum_size);
-        const auto min_size = node->prop_as_wxSize(prop_minimum_size);
+        const auto max_size = node->as_wxSize(prop_maximum_size);
+        const auto min_size = node->as_wxSize(prop_minimum_size);
         if (min_size != wxDefaultSize || max_size != wxDefaultSize)
         {
             code.Eol(eol_if_needed).FormFunction("SetSizeHints(");
@@ -844,14 +844,14 @@ tt_string ConvertToCodeString(const tt_string& text)
 
 std::optional<tt_string> GenGetSetCode(Node* node)
 {
-    auto& get_name = node->prop_as_string(prop_get_function);
-    auto& set_name = node->prop_as_string(prop_set_function);
+    auto& get_name = node->as_string(prop_get_function);
+    auto& set_name = node->as_string(prop_set_function);
     if (get_name.empty() && set_name.empty())
         return {};
 
-    if (auto& var_name = node->prop_as_string(prop_validator_variable); var_name.size())
+    if (auto& var_name = node->as_string(prop_validator_variable); var_name.size())
     {
-        auto& val_data_type = node->prop_as_string(prop_validator_data_type);
+        auto& val_data_type = node->as_string(prop_validator_data_type);
         if (val_data_type.empty())
             return {};
         tt_string code;
@@ -890,25 +890,25 @@ std::optional<tt_string> GenGetSetCode(Node* node)
 
 std::optional<tt_string> GenValidatorSettings(Node* node)
 {
-    if (auto& var_name = node->prop_as_string(prop_validator_variable); var_name.size())
+    if (auto& var_name = node->as_string(prop_validator_variable); var_name.size())
     {
-        auto& val_data_type = node->prop_as_string(prop_validator_data_type);
+        auto& val_data_type = node->as_string(prop_validator_data_type);
         if (val_data_type.empty())
             return {};
 
         tt_string code;
-        auto& validator_type = node->prop_as_string(prop_validator_type);
+        auto& validator_type = node->as_string(prop_validator_type);
         if (validator_type.is_sameas("wxTextValidator"))
         {
-            code << node->get_node_name() << "->SetValidator(wxTextValidator(" << node->prop_as_string(prop_validator_style)
+            code << node->get_node_name() << "->SetValidator(wxTextValidator(" << node->as_string(prop_validator_style)
                  << ", &" << var_name << "));";
         }
         else
         {
             if (node->isGen(gen_StaticCheckboxBoxSizer))
-                code << node->prop_as_string(prop_checkbox_var_name);
+                code << node->as_string(prop_checkbox_var_name);
             else if (node->isGen(gen_StaticRadioBtnBoxSizer))
-                code << node->prop_as_string(prop_radiobtn_var_name);
+                code << node->as_string(prop_radiobtn_var_name);
             else
                 code << node->get_node_name();
 
@@ -980,7 +980,7 @@ tt_string GenerateIconCode(const tt_string& description)
             return code;
         }
 
-        auto svg_size = get_image_prop_size(parts[IndexSize]);
+        auto svg_size = GetSizeInfo(parts[IndexSize]);
 
         tt_string name = "wxue_img::" + embed->array_name;
         code << "SetIcon(wxueBundleSVG(" << name << ", " << (embed->array_size & 0xFFFFFFFF) << ", ";
@@ -1065,7 +1065,7 @@ tt_string GenerateIconCode(const tt_string& description)
 tt_string GenerateWxSize(Node* node, PropName prop)
 {
     tt_string code;
-    auto size = node->prop_as_wxSize(prop);
+    auto size = node->as_wxSize(prop);
     if (node->value(prop).contains("d", tt::CASE::either))
     {
         code << "ConvertDialogToPixels(wxSize(" << size.x << ", " << size.y << "))";
@@ -1082,7 +1082,7 @@ void GenToolCode(Code& code, const bool is_bitmaps_list)
 {
     const auto* node = code.node();
     code.Eol(eol_if_needed);
-    if (node->prop_as_bool(prop_disabled) || (node->prop_as_string(prop_id) == "wxID_ANY" && node->GetInUseEventCount()))
+    if (node->as_bool(prop_disabled) || (node->as_string(prop_id) == "wxID_ANY" && node->GetInUseEventCount()))
     {
         if (node->IsLocal() && code.is_cpp())
             code << "auto* ";
@@ -1132,7 +1132,7 @@ void GenToolCode(Code& code, const bool is_bitmaps_list)
             }
 
             tt_string bundle_code;
-            GenerateBundleCode(node->prop_as_string(prop_bitmap), bundle_code);
+            GenerateBundleCode(node->as_string(prop_bitmap), bundle_code);
             code.CheckLineLength(bundle_code.size());
             code += bundle_code;
 
@@ -1160,7 +1160,7 @@ void GenToolCode(Code& code, const bool is_bitmaps_list)
         {
             code.Comma().Add("wxEmptyString").Comma().Add("wxITEM_DROPDOWN");
         }
-        else if (node->prop_as_string(prop_kind) != "wxITEM_NORMAL")
+        else if (node->as_string(prop_kind) != "wxITEM_NORMAL")
         {
             code.Comma().Add("wxEmptyString").Comma().as_string(prop_kind);
         }
@@ -1173,7 +1173,7 @@ void GenToolCode(Code& code, const bool is_bitmaps_list)
         {
             code.Comma().Add("wxITEM_DROPDOWN");
         }
-        else if (node->prop_as_string(prop_kind) != "wxITEM_NORMAL")
+        else if (node->as_string(prop_kind) != "wxITEM_NORMAL")
         {
             code.Comma().as_string(prop_kind);
         }

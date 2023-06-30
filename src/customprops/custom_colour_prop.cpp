@@ -114,9 +114,9 @@ EditColourDialog::EditColourDialog(wxWindow* parent, NodeProperty* prop) : Colou
     m_prop_name = prop->get_name();
 
     if (m_node->HasValue(prop_foreground_colour))
-        m_foreground = m_node->prop_as_wxColour(prop_foreground_colour);
+        m_foreground = m_node->as_wxColour(prop_foreground_colour);
     if (m_node->HasValue(prop_background_colour))
-        m_background = m_node->prop_as_wxColour(prop_background_colour);
+        m_background = m_node->as_wxColour(prop_background_colour);
 
     wxArrayString tmp_array;
 
@@ -255,7 +255,7 @@ wxString EditColourDialog::GetResults()
     else if (m_radio_custom->GetValue())
     {
         m_value = m_colourPicker->GetColour();
-        result = ConvertColourToString(m_value).c_str();
+        result << m_value.Red() << ',' << m_value.Green() << ',' << m_value.Blue();
     }
     else
     {

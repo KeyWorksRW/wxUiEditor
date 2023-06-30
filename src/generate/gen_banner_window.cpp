@@ -20,21 +20,21 @@
 wxObject* BannerWindowGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxBannerWindow(wxStaticCast(parent, wxWindow),
-                                     (wxDirection) NodeCreation.GetConstantAsInt(node->prop_as_string(prop_direction)));
+                                     (wxDirection) NodeCreation.GetConstantAsInt(node->as_string(prop_direction)));
 
     if (node->HasValue(prop_bitmap))
     {
-        widget->SetBitmap(node->prop_as_wxBitmapBundle(prop_bitmap));
+        widget->SetBitmap(node->as_wxBitmapBundle(prop_bitmap));
     }
 
     else if (node->HasValue(prop_start_colour) && node->HasValue(prop_end_colour))
     {
-        widget->SetGradient(node->prop_as_wxColour(prop_start_colour), node->prop_as_wxColour(prop_end_colour));
+        widget->SetGradient(node->as_wxColour(prop_start_colour), node->as_wxColour(prop_end_colour));
     }
 
     if (node->HasValue(prop_title) || node->HasValue(prop_message))
     {
-        widget->SetText(node->prop_as_wxString(prop_title), node->prop_as_wxString(prop_message));
+        widget->SetText(node->as_wxString(prop_title), node->as_wxString(prop_message));
     }
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
@@ -148,13 +148,13 @@ int BannerWindowGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size
     {
         item.append_child("gradient-start")
             .text()
-            .set(node->prop_as_wxColour(prop_start_colour).GetAsString(wxC2S_HTML_SYNTAX).ToUTF8().data());
+            .set(node->as_wxColour(prop_start_colour).GetAsString(wxC2S_HTML_SYNTAX).ToUTF8().data());
     }
     if (node->HasValue(prop_end_colour) && !node->HasValue(prop_bitmap))
     {
         item.append_child("gradient-end")
             .text()
-            .set(node->prop_as_wxColour(prop_end_colour).GetAsString(wxC2S_HTML_SYNTAX).ToUTF8().data());
+            .set(node->as_wxColour(prop_end_colour).GetAsString(wxC2S_HTML_SYNTAX).ToUTF8().data());
     }
 
     GenXrcStylePosSize(node, item);

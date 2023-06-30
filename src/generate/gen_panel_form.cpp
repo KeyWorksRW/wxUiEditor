@@ -113,9 +113,9 @@ bool PanelFormGenerator::AfterChildrenCode(Code& code)
         panel = node->get_form();
     }
 
-    const auto min_size = panel->prop_as_wxSize(prop_minimum_size);
-    const auto max_size = panel->prop_as_wxSize(prop_maximum_size);
-    const auto size = panel->prop_as_wxSize(prop_size);
+    const auto min_size = panel->as_wxSize(prop_minimum_size);
+    const auto max_size = panel->as_wxSize(prop_maximum_size);
+    const auto size = panel->as_wxSize(prop_size);
 
     if (min_size == wxDefaultSize && max_size == wxDefaultSize)
     {
@@ -151,14 +151,14 @@ bool PanelFormGenerator::HeaderCode(Code& code)
 
     code.Comma().Str("const wxSize& size = ");
 
-    auto size = node->prop_as_wxSize(prop_size);
+    auto size = node->as_wxSize(prop_size);
     if (size == wxDefaultSize)
         code.Str("wxDefaultSize");
     else
         code.WxSize(prop_size, no_dlg_units);
 
-    auto& style = node->prop_as_string(prop_style);
-    auto& win_style = node->prop_as_string(prop_window_style);
+    auto& style = node->as_string(prop_style);
+    auto& win_style = node->as_string(prop_window_style);
     if (style.empty() && win_style.empty())
         code.Comma().Str("long style = 0");
     else
@@ -181,7 +181,7 @@ bool PanelFormGenerator::HeaderCode(Code& code)
         }
     }
 
-    if (node->prop_as_string(prop_window_name).size())
+    if (node->as_string(prop_window_name).size())
     {
         code.Comma().Str("const wxString &name = ").QuotedString(prop_window_name);
     }
@@ -264,7 +264,7 @@ int PanelFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t 
     auto item = InitializeXrcObject(node, object);
 
     item.append_attribute("class").set_value("wxPanel");
-    object.append_attribute("name").set_value(node->prop_as_string(prop_class_name));
+    object.append_attribute("name").set_value(node->as_string(prop_class_name));
 
     GenXrcStylePosSize(node, item);
     GenXrcWindowSettings(node, item);

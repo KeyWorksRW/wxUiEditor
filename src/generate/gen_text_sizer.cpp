@@ -19,7 +19,7 @@
 wxObject* TextSizerGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     wxTextSizerWrapper wrapper(wxStaticCast(parent, wxWindow));
-    return wrapper.CreateSizer(node->prop_as_wxString(prop_text), node->prop_as_int(prop_wrap));
+    return wrapper.CreateSizer(node->as_wxString(prop_text), node->as_int(prop_wrap));
 }
 
 bool TextSizerGenerator::ConstructionCode(Code& code)

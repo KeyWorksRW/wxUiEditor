@@ -17,12 +17,12 @@
 
 wxObject* RichTextCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxRichTextCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString(prop_value),
+    auto widget = new wxRichTextCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxString(prop_value),
                                      DlgPoint(parent, node, prop_pos), DlgSize(parent, node, prop_size),
                                      GetStyleInt(node) | wxRE_MULTILINE);
 
     if (node->HasValue(prop_hint))
-        widget->SetHint(node->prop_as_wxString(prop_hint));
+        widget->SetHint(node->as_wxString(prop_hint));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 

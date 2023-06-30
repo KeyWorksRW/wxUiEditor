@@ -63,7 +63,7 @@ int CloseButtonGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_
     }
 
     item.append_attribute("class").set_value("wxBitmapButton");
-    item.append_attribute("name").set_value(node->prop_as_string(prop_var_name));
+    item.append_attribute("name").set_value(node->as_string(prop_var_name));
 
     item.append_child("close").text().set("1");
 

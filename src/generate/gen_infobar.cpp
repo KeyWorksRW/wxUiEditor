@@ -27,7 +27,7 @@ wxObject* InfoBarGenerator::CreateMockup(Node* node, wxObject* parent)
 
     m_infobar->SetShowHideEffects((wxShowEffect) node->prop_as_mockup(prop_show_effect, "info_"),
                                   (wxShowEffect) node->prop_as_mockup(prop_hide_effect, "info_"));
-    m_infobar->SetEffectDuration(node->prop_as_int(prop_duration));
+    m_infobar->SetEffectDuration(node->as_int(prop_duration));
 
     m_infobar->Bind(wxEVT_BUTTON, &InfoBarGenerator::OnButton, this);
     m_infobar->Bind(wxEVT_TIMER, &InfoBarGenerator::OnTimer, this);
@@ -52,8 +52,8 @@ bool InfoBarGenerator::ConstructionCode(Code& code)
 bool InfoBarGenerator::SettingsCode(Code& code)
 {
     code.NodeName().Function("SetShowHideEffects(");
-    code.Add(code.node()->prop_as_constant(prop_show_effect, "info_"));
-    code.Comma().Add(code.node()->prop_as_constant(prop_hide_effect, "info_"));
+    code.Add(code.node()->as_constant(prop_show_effect, "info_"));
+    code.Comma().Add(code.node()->as_constant(prop_hide_effect, "info_"));
     code.EndFunction();
 
     code.Eol().NodeName().Function("SetEffectDuration(").as_string(prop_duration).EndFunction();
@@ -92,11 +92,11 @@ int InfoBarGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xr
 
     if (node->HasValue(prop_show_effect))
     {
-        item.append_child("showeffect").text().set(node->prop_as_constant(prop_show_effect, "info_"));
+        item.append_child("showeffect").text().set(node->as_constant(prop_show_effect, "info_"));
     }
     if (node->HasValue(prop_hide_effect))
     {
-        item.append_child("hideeffect").text().set(node->prop_as_constant(prop_hide_effect, "info_"));
+        item.append_child("hideeffect").text().set(node->as_constant(prop_hide_effect, "info_"));
     }
 
     ADD_ITEM_PROP(prop_duration, "effectduration")

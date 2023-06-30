@@ -55,19 +55,19 @@ bool WxGlade::Import(const tt_string& filename, bool write_doc)
         {
             if (src_ext == ".cpp" || src_ext == ".cc" || src_ext == ".cxx")
             {
-                m_project->prop_set_value(prop_source_ext, src_ext);
+                m_project->set_value(prop_source_ext, src_ext);
             }
         }
         if (auto hdr_ext = root.attribute("header_extension").as_string(); hdr_ext.size())
         {
             if (hdr_ext == ".h" || hdr_ext == ".hh" || hdr_ext == ".hpp" || hdr_ext == ".hxx")
             {
-                m_project->prop_set_value(prop_header_ext, hdr_ext);
+                m_project->set_value(prop_header_ext, hdr_ext);
             }
         }
         if (root.attribute("use_gettext").as_bool())
         {
-            m_project->prop_set_value(prop_internationalize, true);
+            m_project->set_value(prop_internationalize, true);
         }
 
         for (auto& iter: root.children())
@@ -85,15 +85,15 @@ bool WxGlade::Import(const tt_string& filename, bool write_doc)
                         switch (m_language)
                         {
                             case GEN_LANG_CPLUSPLUS:
-                                new_node->prop_set_value(prop_base_file, new_node->value(prop_class_name));
+                                new_node->set_value(prop_base_file, new_node->value(prop_class_name));
                                 break;
 
                             case GEN_LANG_PYTHON:
-                                new_node->prop_set_value(prop_python_file, new_node->value(prop_class_name));
+                                new_node->set_value(prop_python_file, new_node->value(prop_class_name));
                                 break;
 
                             case GEN_LANG_XRC:
-                                new_node->prop_set_value(prop_xrc_file, new_node->value(prop_class_name));
+                                new_node->set_value(prop_xrc_file, new_node->value(prop_class_name));
                                 break;
                         }
                     }
@@ -102,11 +102,11 @@ bool WxGlade::Import(const tt_string& filename, bool write_doc)
                 {
                     if (m_language == GEN_LANG_PYTHON)
                     {
-                        m_project->prop_set_value(prop_python_combine_forms, true);
+                        m_project->set_value(prop_python_combine_forms, true);
                         tt_string combined_filename = root.attribute("path").as_string();
                         tt_cwd cwd;
                         combined_filename.make_relative(cwd);
-                        m_project->prop_set_value(prop_python_combined_file, combined_filename);
+                        m_project->set_value(prop_python_combined_file, combined_filename);
                     }
                 }
             }
@@ -128,13 +128,13 @@ bool WxGlade::Import(const tt_string& filename, bool write_doc)
             {
                 if (m_language == GEN_LANG_PYTHON)
                 {
-                    m_project->prop_set_value(prop_python_combine_forms, true);
-                    m_project->prop_set_value(prop_python_combined_file, combined_filename);
+                    m_project->set_value(prop_python_combine_forms, true);
+                    m_project->set_value(prop_python_combined_file, combined_filename);
                 }
                 else if (m_language == GEN_LANG_XRC)
                 {
-                    m_project->prop_set_value(prop_combine_all_forms, true);
-                    m_project->prop_set_value(prop_combined_xrc_file, combined_filename);
+                    m_project->set_value(prop_combine_all_forms, true);
+                    m_project->set_value(prop_combined_xrc_file, combined_filename);
                 }
             }
             else
@@ -223,7 +223,7 @@ NodeSharedPtr WxGlade::CreateGladeNode(pugi::xml_node& xml_obj, Node* parent, No
         {
             if (auto tab = m_notebook_tabs.find(xml_obj.attribute("name").as_string()); tab != m_notebook_tabs.end())
             {
-                new_node->prop_set_value(prop_label, tab->second);
+                new_node->set_value(prop_label, tab->second);
             }
         }
     }
@@ -242,7 +242,7 @@ NodeSharedPtr WxGlade::CreateGladeNode(pugi::xml_node& xml_obj, Node* parent, No
                         if (auto tab = m_notebook_tabs.find(xml_obj.attribute("name").as_string());
                             tab != m_notebook_tabs.end())
                         {
-                            new_node->prop_set_value(prop_label, tab->second);
+                            new_node->set_value(prop_label, tab->second);
                         }
                     }
                     continue;
@@ -258,7 +258,7 @@ NodeSharedPtr WxGlade::CreateGladeNode(pugi::xml_node& xml_obj, Node* parent, No
                         if (auto tab = m_notebook_tabs.find(xml_obj.attribute("name").as_string());
                             tab != m_notebook_tabs.end())
                         {
-                            page->prop_set_value(prop_label, tab->second);
+                            page->set_value(prop_label, tab->second);
                         }
                     }
 
@@ -274,7 +274,7 @@ NodeSharedPtr WxGlade::CreateGladeNode(pugi::xml_node& xml_obj, Node* parent, No
 
     if (isBitmapButton)
     {
-        new_node->prop_set_value(prop_label, "");
+        new_node->set_value(prop_label, "");
     }
 
     if (auto prop = new_node->get_prop_ptr(prop_var_name); prop)
@@ -413,8 +413,8 @@ NodeSharedPtr WxGlade::CreateGladeNode(pugi::xml_node& xml_obj, Node* parent, No
 
     if (new_node->isGen(gen_wxGridSizer))
     {
-        if (new_node->prop_as_int(prop_rows) > 0 && new_node->prop_as_int(prop_cols) > 0)
-            new_node->prop_set_value(prop_rows, 0);
+        if (new_node->as_int(prop_rows) > 0 && new_node->as_int(prop_cols) > 0)
+            new_node->set_value(prop_rows, 0);
     }
 
     while (child)
@@ -495,7 +495,7 @@ bool WxGlade::HandleNormalProperty(const pugi::xml_node& xml_obj, Node* node, No
         if (wxue_prop == prop_border)
         {
             // wxGlade uses border for border_size in a sizer
-            node->prop_set_value(prop_border_size, xml_obj.text().as_string());
+            node->set_value(prop_border_size, xml_obj.text().as_string());
             return true;
         }
         else if (wxue_prop == prop_flag)
@@ -509,7 +509,7 @@ bool WxGlade::HandleNormalProperty(const pugi::xml_node& xml_obj, Node* node, No
         tt_string id = xml_obj.text().as_string();
         id.erase_from('=');
         id.trim();
-        node->prop_set_value(prop_id, id);
+        node->set_value(prop_id, id);
         return true;
     }
 

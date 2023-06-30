@@ -16,8 +16,8 @@
 
 wxObject* BoxSizerGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto sizer = new wxBoxSizer(node->prop_as_int(prop_orientation));
-    sizer->SetMinSize(node->prop_as_wxSize(prop_minimum_size));
+    auto sizer = new wxBoxSizer(node->as_int(prop_orientation));
+    sizer->SetMinSize(node->as_wxSize(prop_minimum_size));
     if (auto dlg = wxDynamicCast(parent, wxDialog); dlg)
     {
         if (!dlg->GetSizer())
@@ -39,7 +39,7 @@ bool BoxSizerGenerator::ConstructionCode(Code& code)
 {
     code.AddAuto().NodeName().CreateClass().Add(prop_orientation).EndFunction();
 
-    auto min_size = code.m_node->prop_as_wxSize(prop_minimum_size);
+    auto min_size = code.m_node->as_wxSize(prop_minimum_size);
     if (min_size.GetX() != -1 || min_size.GetY() != -1)
     {
         code.Eol().NodeName().Function("SetMinSize(") << min_size.GetX() << ", " << min_size.GetY();
@@ -111,14 +111,14 @@ int BoxSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t /
     }
 
     item.append_attribute("class").set_value("wxBoxSizer");
-    item.append_attribute("name").set_value(node->prop_as_string(prop_var_name));
-    item.append_child("orient").text().set(node->prop_as_string(prop_orientation));
+    item.append_attribute("name").set_value(node->as_string(prop_var_name));
+    item.append_child("orient").text().set(node->as_string(prop_orientation));
 
     ADD_ITEM_BOOL(prop_hide_children, "hideitems");
 
     if (node->HasValue(prop_minimum_size))
     {
-        item.append_child("minsize").text().set(node->prop_as_string(prop_minimum_size));
+        item.append_child("minsize").text().set(node->as_string(prop_minimum_size));
     }
     else if (node->GetParent()->IsForm() && node->GetParent()->HasValue(prop_minimum_size))
     {
@@ -126,7 +126,7 @@ int BoxSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t /
         // often can specify their own minimum size. The workaround is to set the minimum size of the parent sizer that we
         // create for most forms.
 
-        item.append_child("minsize").text().set(node->GetParent()->prop_as_string(prop_minimum_size));
+        item.append_child("minsize").text().set(node->GetParent()->as_string(prop_minimum_size));
     }
     return result;
 }

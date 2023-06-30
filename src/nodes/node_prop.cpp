@@ -381,31 +381,11 @@ std::vector<tt_string> NodeProperty::as_vector() const
 std::vector<tt_string> NodeProperty::as_ArrayString() const
 {
     std::vector<tt_string> result;
+
     if (m_value.size())
     {
-#if 0
-        tt_string parse;
-        auto pos = parse.ExtractSubString(m_value);
-        if (!tt::is_found(pos))
-        {
-            // This usually means a property that was hand-edited incorrectly, or a newer version of the project
-            // file where the property is encoded differently.
-            return array;
-        }
-        result.emplace_back(parse);
-
-        for (auto tmp_m_value = tt::stepover(m_value.data() + pos); tmp_m_value.size();
-             tmp_m_value = tt::stepover(tmp_m_value.data() + pos))
-        {
-            pos = parse.ExtractSubString(tmp_m_value);
-            if (!tt::is_found(pos))
-                break;
-            result.emplace_back(parse);
-        }
-#else
         if (m_value[0] == '"')
         {
-            // REVIEW: [Randalphwa - 06-26-2023] This uses tt_string_view to parse the string.
             auto view = m_value.view_substr(0, '"', '"');
             while (view.size() > 0)
             {
@@ -420,8 +400,8 @@ std::vector<tt_string> NodeProperty::as_ArrayString() const
             array.SetString(m_value, ";", tt::TRIM::both);
             result = array;
         }
-#endif
     }
+
     return result;
 }
 

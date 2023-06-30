@@ -38,7 +38,7 @@ bool PropertyGridItemGenerator::ConstructionCode(Code& code)
 
 tt_string PropertyGridItemGenerator::GetHelpURL(Node* node)
 {
-    tt_string type = node->prop_as_string(prop_type);
+    tt_string type = node->as_string(prop_type);
     type.MakeLower();
     tt_string url = "wx_";
 
@@ -71,9 +71,9 @@ tt_string PropertyGridItemGenerator::GetHelpURL(Node* node)
 tt_string PropertyGridItemGenerator::GetHelpText(Node* node)
 {
     tt_string help_text("wx");
-    if (node->prop_as_string(prop_type) == "Category")
+    if (node->as_string(prop_type) == "Category")
         help_text << "PropertyCategory";
     else
-        help_text << node->prop_as_string(prop_type) << "Property";
+        help_text << node->as_string(prop_type) << "Property";
     return help_text;
 }

@@ -23,10 +23,10 @@
 
 wxObject* TextCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxTextCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString(prop_value),
+    auto widget = new wxTextCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxString(prop_value),
                                  DlgPoint(parent, node, prop_pos), DlgSize(parent, node, prop_size), GetStyleInt(node));
 
-    widget->SetMaxLength(node->prop_as_int(prop_maxlength));
+    widget->SetMaxLength(node->as_int(prop_maxlength));
 
     if (node->HasValue(prop_auto_complete))
     {
@@ -35,11 +35,11 @@ wxObject* TextCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
     }
 
     if (node->HasValue(prop_hint))
-        widget->SetHint(node->prop_as_wxString(prop_hint));
+        widget->SetHint(node->as_wxString(prop_hint));
 
-    if (node->prop_as_string(prop_spellcheck).contains("enabled"))
+    if (node->as_string(prop_spellcheck).contains("enabled"))
     {
-        if (node->prop_as_string(prop_spellcheck).contains("grammar"))
+        if (node->as_string(prop_spellcheck).contains("grammar"))
             widget->EnableProofCheck(wxTextProofOptions::Default().GrammarCheck());
         else
             widget->EnableProofCheck(wxTextProofOptions::Default());
@@ -60,7 +60,7 @@ bool TextCtrlGenerator::OnPropertyChange(wxObject* widget, Node* node, NodePrope
 #if defined(_WIN32)
     else if (prop->isProp(prop_spellcheck))
     {
-        if (prop->HasValue() && !node->prop_as_string(prop_style).contains("wxTE_RICH2"))
+        if (prop->HasValue() && !node->as_string(prop_style).contains("wxTE_RICH2"))
         {
             if (auto infobar = wxGetFrame().GetPropInfoBar(); infobar)
             {
@@ -78,7 +78,7 @@ bool TextCtrlGenerator::OnPropertyChange(wxObject* widget, Node* node, NodePrope
     }
     else if (prop->isProp(prop_style))
     {
-        if (node->HasValue(prop_spellcheck) && !node->prop_as_string(prop_style).contains("wxTE_RICH2"))
+        if (node->HasValue(prop_spellcheck) && !node->as_string(prop_style).contains("wxTE_RICH2"))
         {
             if (auto infobar = wxGetFrame().GetPropInfoBar(); infobar)
             {
@@ -224,9 +224,9 @@ void TextCtrlGenerator::ChangeEnableState(wxPropertyGridManager* prop_grid, Node
 bool TextCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
     InsertGeneratorInclude(node, "#include <wx/textctrl.h>", set_src, set_hdr);
-    if (node->prop_as_string(prop_validator_variable).size())
+    if (node->as_string(prop_validator_variable).size())
     {
-        if (node->prop_as_string(prop_validator_type) == "wxGenericValidator")
+        if (node->as_string(prop_validator_type) == "wxGenericValidator")
             InsertGeneratorInclude(node, "#include <wx/valgen.h>", set_src, set_hdr);
         else
             InsertGeneratorInclude(node, "#include <wx/valtext.h>", set_src, set_hdr);
@@ -249,11 +249,11 @@ int TextCtrlGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t x
 
     if (node->HasValue(prop_value))
     {
-        item.append_child("value").text().set(node->prop_as_string(prop_value));
+        item.append_child("value").text().set(node->as_string(prop_value));
     }
     if (node->HasValue(prop_hint))
     {
-        item.append_child("hint").text().set(node->prop_as_string(prop_hint));
+        item.append_child("hint").text().set(node->as_string(prop_hint));
     }
 
     GenXrcWindowSettings(node, item);

@@ -24,25 +24,25 @@ wxObject* StaticCheckboxBoxSizerGenerator::CreateMockup(Node* node, wxObject* pa
     if (Project.value(prop_code_preference) != "Python")
     {
         long style_value = 0;
-        if (node->prop_as_string(prop_style).contains("wxALIGN_RIGHT"))
+        if (node->as_string(prop_style).contains("wxALIGN_RIGHT"))
             style_value |= wxALIGN_RIGHT;
 
-        m_checkbox = new wxCheckBox(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString(prop_label),
+        m_checkbox = new wxCheckBox(wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxString(prop_label),
                                     wxDefaultPosition, wxDefaultSize, style_value);
-        if (node->prop_as_bool(prop_checked))
+        if (node->as_bool(prop_checked))
             m_checkbox->SetValue(true);
 
         if (node->HasValue(prop_tooltip))
-            m_checkbox->SetToolTip(node->prop_as_wxString(prop_tooltip));
+            m_checkbox->SetToolTip(node->as_wxString(prop_tooltip));
 
         auto staticbox = new wxStaticBox(wxStaticCast(parent, wxWindow), wxID_ANY, m_checkbox);
 
-        sizer = new wxStaticBoxSizer(staticbox, node->prop_as_int(prop_orientation));
+        sizer = new wxStaticBoxSizer(staticbox, node->as_int(prop_orientation));
     }
     else
     {
-        sizer = new wxStaticBoxSizer(node->prop_as_int(prop_orientation), wxStaticCast(parent, wxWindow),
-                                     node->prop_as_wxString(prop_label));
+        sizer = new wxStaticBoxSizer(node->as_int(prop_orientation), wxStaticCast(parent, wxWindow),
+                                     node->as_wxString(prop_label));
     }
 
     if (auto dlg = wxDynamicCast(parent, wxDialog); dlg)
@@ -71,7 +71,7 @@ bool StaticCheckboxBoxSizerGenerator::OnPropertyChange(wxObject* /* widget */, N
 {
     if (prop->isProp(prop_tooltip))
     {
-        m_checkbox->SetToolTip(node->prop_as_wxString(prop_tooltip));
+        m_checkbox->SetToolTip(node->as_wxString(prop_tooltip));
     }
 
     return false;
@@ -236,19 +236,19 @@ int StaticCheckboxBoxSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& ob
     }
 
     item.append_attribute("class").set_value("wxStaticBoxSizer");
-    item.append_attribute("name").set_value(node->prop_as_string(prop_var_name));
-    item.append_child("orient").text().set(node->prop_as_string(prop_orientation));
+    item.append_attribute("name").set_value(node->as_string(prop_var_name));
+    item.append_child("orient").text().set(node->as_string(prop_orientation));
     if (node->HasValue(prop_minimum_size))
     {
-        item.append_child("minsize").text().set(node->prop_as_string(prop_minimum_size));
+        item.append_child("minsize").text().set(node->as_string(prop_minimum_size));
     }
     ADD_ITEM_BOOL(prop_hidden, "hideitems");
 
     auto checkbox = item.append_child("windowlabel");
     auto child = checkbox.append_child("object");
     child.append_attribute("class").set_value("wxCheckBox");
-    child.append_child("label").text().set(node->prop_as_string(prop_label));
-    if (node->prop_as_bool(prop_checked))
+    child.append_child("label").text().set(node->as_string(prop_label));
+    if (node->as_bool(prop_checked))
         child.append_child("checked").text().set("1");
 
     return result;

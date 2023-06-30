@@ -17,12 +17,12 @@
 
 wxObject* BitmapComboBoxGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxBitmapComboBox(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString(prop_value),
+    auto widget = new wxBitmapComboBox(wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxString(prop_value),
                                        DlgPoint(parent, node, prop_pos), DlgSize(parent, node, prop_size), 0, nullptr,
                                        GetStyleInt(node));
 
     if (node->HasValue(prop_hint))
-        widget->SetHint(node->prop_as_wxString(prop_hint));
+        widget->SetHint(node->as_wxString(prop_hint));
 
     if (node->HasValue(prop_contents))
     {
@@ -32,11 +32,11 @@ wxObject* BitmapComboBoxGenerator::CreateMockup(Node* node, wxObject* parent)
 
         if (node->HasValue(prop_selection_string))
         {
-            widget->SetStringSelection(node->prop_as_wxString(prop_selection_string));
+            widget->SetStringSelection(node->as_wxString(prop_selection_string));
         }
         else
         {
-            int sel = node->prop_as_int(prop_selection_int);
+            int sel = node->as_int(prop_selection_int);
             if (sel > -1 && sel < (to_int) array.size())
                 widget->SetSelection(sel);
         }
@@ -159,7 +159,7 @@ bool BitmapComboBoxGenerator::SettingsCode(Code& code)
 bool BitmapComboBoxGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
     InsertGeneratorInclude(node, "#include <wx/bmpcbox.h>", set_src, set_hdr);
-    if (node->prop_as_string(prop_validator_variable).size())
+    if (node->as_string(prop_validator_variable).size())
         InsertGeneratorInclude(node, "#include <wx/valgen.h>", set_src, set_hdr);
     return true;
 }
@@ -175,12 +175,12 @@ int BitmapComboBoxGenerator::GenXrcObject(Node* node, pugi::xml_node& object, si
     GenXrcObjectAttributes(node, item, "wxBitmapComboBox");
 
     if (node->HasValue(prop_selection_string))
-        item.append_child("value").text().set(node->prop_as_string(prop_selection_string));
-    else if (node->prop_as_int(prop_selection_int) >= 0)
-        item.append_child("selection").text().set(node->prop_as_string(prop_selection_int));
+        item.append_child("value").text().set(node->as_string(prop_selection_string));
+    else if (node->as_int(prop_selection_int) >= 0)
+        item.append_child("selection").text().set(node->as_string(prop_selection_int));
 
-    if (node->HasValue(prop_hint) && !node->prop_as_string(prop_style).contains("wxCB_READONLY"))
-        item.append_child("hint").text().set(node->prop_as_string(prop_hint));
+    if (node->HasValue(prop_hint) && !node->as_string(prop_style).contains("wxCB_READONLY"))
+        item.append_child("hint").text().set(node->as_string(prop_hint));
 
     GenXrcStylePosSize(node, item);
     GenXrcWindowSettings(node, item);

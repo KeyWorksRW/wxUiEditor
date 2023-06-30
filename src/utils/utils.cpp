@@ -124,80 +124,6 @@ bool isPropFlagSet(tt_string_view flag, tt_string_view currentValue)
     return false;
 }
 
-int ConvertBitlistToInt(tt_string_view list)
-{
-    int result = 0;
-    if (list.size())
-    {
-        tt_string_vector mstr(list, '|');
-        for (auto& iter: mstr)
-        {
-            result |= NodeCreation.GetConstantAsInt(iter);
-        }
-    }
-    return result;
-}
-
-tt_string ConvertColourToString(const wxColour& colour)
-{
-    tt_string str;
-    str << colour.Red() << ',' << colour.Green() << ',' << colour.Blue();
-    return str;
-}
-
-tt_string ConvertSystemColourToString(long colour)
-{
-    tt_string str;
-
-#define SystemColourConvertCase(name) \
-    case name:                        \
-        str = (#name);                \
-        break;
-
-    // clang-format off
-    switch (colour)
-    {
-        SystemColourConvertCase(wxSYS_COLOUR_SCROLLBAR)
-        SystemColourConvertCase(wxSYS_COLOUR_BACKGROUND)
-        SystemColourConvertCase(wxSYS_COLOUR_ACTIVECAPTION)
-        SystemColourConvertCase(wxSYS_COLOUR_INACTIVECAPTION)
-        SystemColourConvertCase(wxSYS_COLOUR_MENU)
-        SystemColourConvertCase(wxSYS_COLOUR_WINDOW)
-        SystemColourConvertCase(wxSYS_COLOUR_WINDOWFRAME)
-        SystemColourConvertCase(wxSYS_COLOUR_MENUTEXT)
-        SystemColourConvertCase(wxSYS_COLOUR_WINDOWTEXT)
-        SystemColourConvertCase(wxSYS_COLOUR_CAPTIONTEXT)
-        SystemColourConvertCase(wxSYS_COLOUR_ACTIVEBORDER)
-        SystemColourConvertCase(wxSYS_COLOUR_INACTIVEBORDER)
-        SystemColourConvertCase(wxSYS_COLOUR_APPWORKSPACE)
-        SystemColourConvertCase(wxSYS_COLOUR_HIGHLIGHT)
-        SystemColourConvertCase(wxSYS_COLOUR_HIGHLIGHTTEXT)
-        SystemColourConvertCase(wxSYS_COLOUR_BTNFACE)
-        SystemColourConvertCase(wxSYS_COLOUR_BTNSHADOW)
-        SystemColourConvertCase(wxSYS_COLOUR_GRAYTEXT)
-        SystemColourConvertCase(wxSYS_COLOUR_BTNTEXT)
-        SystemColourConvertCase(wxSYS_COLOUR_INACTIVECAPTIONTEXT)
-        SystemColourConvertCase(wxSYS_COLOUR_BTNHIGHLIGHT)
-        SystemColourConvertCase(wxSYS_COLOUR_3DDKSHADOW)
-        SystemColourConvertCase(wxSYS_COLOUR_3DLIGHT)
-        SystemColourConvertCase(wxSYS_COLOUR_INFOTEXT)
-        SystemColourConvertCase(wxSYS_COLOUR_INFOBK)
-
-        SystemColourConvertCase(wxSYS_COLOUR_LISTBOX)
-        SystemColourConvertCase(wxSYS_COLOUR_HOTLIGHT)
-        SystemColourConvertCase(wxSYS_COLOUR_GRADIENTACTIVECAPTION)
-        SystemColourConvertCase(wxSYS_COLOUR_GRADIENTINACTIVECAPTION)
-        SystemColourConvertCase(wxSYS_COLOUR_MENUHILIGHT)
-        SystemColourConvertCase(wxSYS_COLOUR_MENUBAR)
-        SystemColourConvertCase(wxSYS_COLOUR_LISTBOXTEXT)
-        SystemColourConvertCase(wxSYS_COLOUR_LISTBOXHIGHLIGHTTEXT)
-
-    }
-    // clang-format on
-
-    return str;
-}
-
 wxSystemColour ConvertToSystemColour(tt_string_view value)
 {
     // clang-format off
@@ -360,92 +286,34 @@ tt_string ConvertEscapeSlashes(tt_string_view str)
     return result;
 }
 
-tt_string CreateEscapedText(tt_string_view str)
-{
-    tt_string result;
-
-    for (auto ch: str)
-    {
-        switch (ch)
-        {
-            case '\n':
-                result += "\\n";
-                break;
-
-            case '\t':
-                result += "\\t";
-                break;
-
-            case '\r':
-                result += "\\r";
-                break;
-
-            case '\\':
-                result += "\\\\";
-                break;
-
-            default:
-                result += ch;
-                break;
-        }
-    }
-
-    return result;
-}
-
-std::vector<tt_string> ConvertToArrayString(tt_string_view value)
-{
-    std::vector<tt_string> array;
-    if (value.empty())
-        return array;
-    tt_string parse;
-    auto pos = parse.ExtractSubString(value);
-    if (!tt::is_found(pos))
-    {
-        // This usually means a property that was hand-edited incorrectly, or a newer version of the project
-        // file where the property is encoded differently.
-        return array;
-    }
-    array.emplace_back(parse);
-
-    for (auto tmp_value = tt::stepover(value.data() + pos); tmp_value.size();
-         tmp_value = tt::stepover(tmp_value.data() + pos))
-    {
-        pos = parse.ExtractSubString(tmp_value);
-        if (!tt::is_found(pos))
-            break;
-        array.emplace_back(parse);
-    }
-
-    return array;
-}
-
 wxPoint DlgPoint(wxObject* parent, Node* node, GenEnum::PropName prop)
 {
-    if (node->prop_as_string(prop).contains("d", tt::CASE::either))
+    if (node->as_string(prop).contains("d", tt::CASE::either))
     {
-        return wxStaticCast(parent, wxWindow)->ConvertDialogToPixels(node->prop_as_wxPoint(prop));
+        return wxStaticCast(parent, wxWindow)->ConvertDialogToPixels(node->as_wxPoint(prop));
     }
     else
     {
-        return node->prop_as_wxPoint(prop);
+        return node->as_wxPoint(prop);
     }
 }
 
 wxSize DlgSize(wxObject* parent, Node* node, GenEnum::PropName prop)
 {
-    if (node->prop_as_string(prop).contains("d", tt::CASE::either))
+    if (node->as_string(prop).contains("d", tt::CASE::either))
     {
-        return wxStaticCast(parent, wxWindow)->ConvertDialogToPixels(node->prop_as_wxSize(prop));
+        return wxStaticCast(parent, wxWindow)->ConvertDialogToPixels(node->as_wxSize(prop));
     }
     else
     {
-        return node->prop_as_wxSize(prop);
+        return node->as_wxSize(prop);
     }
 }
 
-void GetSizeInfo(wxSize& size, tt_string_view description)
+wxSize GetSizeInfo(tt_string_view description)
 {
+    wxSize size;
+
     tt_view_vector size_description;
     if (description.contains(";"))
         size_description.SetString(description, ';', tt::TRIM::left);
@@ -455,22 +323,21 @@ void GetSizeInfo(wxSize& size, tt_string_view description)
     ASSERT(size_description.size())
     ASSERT(size_description[0].size())
 
-    if (size_description.empty())
+    if (size_description.size())
+    {
+        size_t start = size_description[0].front() == '[' ? 1 : 0;
+        size.x = size_description[0].atoi(start);
+        if (size_description.size() > 1)
+            size.y = size_description[1].atoi();
+        else
+            size.y = 0;
+    }
+    else
     {
         size.x = 16;
         size.y = 16;
-        return;
     }
-    size_t start = size_description[0].front() == '[' ? 1 : 0;
-    size.x = size_description[0].atoi(start);
-    if (size_description.size() > 1)
-        size.y = size_description[1].atoi();
-}
 
-wxSize get_image_prop_size(tt_string_view size_description)
-{
-    wxSize size;
-    GetSizeInfo(size, size_description);
     return size;
 }
 

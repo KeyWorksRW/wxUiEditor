@@ -30,11 +30,11 @@ wxObject* HtmlListBoxGenerator::CreateMockup(Node* node, wxObject* parent)
 
         if (node->HasValue(prop_selection_string))
         {
-            widget->SetStringSelection(node->prop_as_wxString(prop_selection_string));
+            widget->SetStringSelection(node->as_wxString(prop_selection_string));
         }
         else
         {
-            int sel = node->prop_as_int(prop_selection_int);
+            int sel = node->as_int(prop_selection_int);
             if (sel > -1 && sel < (to_int) array.size())
                 widget->SetSelection(sel);
         }

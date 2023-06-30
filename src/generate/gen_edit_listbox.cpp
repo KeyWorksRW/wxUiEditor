@@ -18,7 +18,7 @@
 wxObject* EditListBoxGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget =
-        new wxEditableListBox(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString(prop_label),
+        new wxEditableListBox(wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxString(prop_label),
                               DlgPoint(parent, node, prop_pos), DlgSize(parent, node, prop_size), GetStyleInt(node));
 
     if (node->HasValue(prop_contents))

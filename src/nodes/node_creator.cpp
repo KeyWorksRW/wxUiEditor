@@ -162,7 +162,7 @@ NodeSharedPtr NodeCreator::CreateNode(GenName name, Node* parent)
         node = NewNode(node_decl);
         if (name == gen_VerticalBoxSizer)
         {
-            node->prop_set_value(prop_orientation, "wxVERTICAL");
+            node->set_value(prop_orientation, "wxVERTICAL");
         }
     }
     else if (max_children != child_count::none)
@@ -175,7 +175,7 @@ NodeSharedPtr NodeCreator::CreateNode(GenName name, Node* parent)
                 node = NewNode(node_decl);
                 if (name == gen_VerticalBoxSizer)
                 {
-                    node->prop_set_value(prop_orientation, "wxVERTICAL");
+                    node->set_value(prop_orientation, "wxVERTICAL");
                 }
             }
         }

@@ -32,7 +32,7 @@ wxObject* MenuBarBase::CreateMockup(Node* node, wxObject* parent)
 
     if (node->isGen(gen_PopupMenu))
     {
-        auto label = new wxStaticText(panel, wxID_ANY, node->prop_as_wxString(prop_class_name));
+        auto label = new wxStaticText(panel, wxID_ANY, node->as_wxString(prop_class_name));
         sizer->Add(label, wxSizerFlags().Border(wxALL));
         label->Bind(wxEVT_LEFT_DOWN, &MenuBarBase::OnLeftMenuClick, this);
     }
@@ -114,9 +114,9 @@ wxMenu* MenuBarBase::MakeSubMenu(Node* menu_node)
         if (menu_item->isType(type_submenu))
         {
             auto result = MakeSubMenu(menu_item.get());
-            auto item = sub_menu->AppendSubMenu(result, menu_item->prop_as_wxString(prop_label));
+            auto item = sub_menu->AppendSubMenu(result, menu_item->as_wxString(prop_label));
             if (menu_item->HasValue(prop_bitmap))
-                item->SetBitmap(menu_item->prop_as_wxBitmapBundle(prop_bitmap));
+                item->SetBitmap(menu_item->as_wxBitmapBundle(prop_bitmap));
         }
         else if (menu_item->isGen(gen_separator))
         {
@@ -138,43 +138,43 @@ wxMenu* MenuBarBase::MakeSubMenu(Node* menu_node)
             if (menu_item->value(prop_id) != "wxID_ANY" && menu_item->value(prop_id).starts_with("wxID_"))
                 id = NodeCreation.GetConstantAsInt(menu_item->value(prop_id), wxID_ANY);
 
-            auto item = new wxMenuItem(sub_menu, id, menu_label, menu_item->prop_as_wxString(prop_help),
-                                       (wxItemKind) menu_item->prop_as_int(prop_kind));
+            auto item = new wxMenuItem(sub_menu, id, menu_label, menu_item->as_wxString(prop_help),
+                                       (wxItemKind) menu_item->as_int(prop_kind));
 
             if (menu_item->HasValue(prop_bitmap))
 #if !defined(__WXMSW__)
             {
-                item->SetBitmap(menu_item->prop_as_wxBitmapBundle(prop_bitmap));
+                item->SetBitmap(menu_item->as_wxBitmapBundle(prop_bitmap));
             }
 #else  // defined(__WXMSW__)
             {
                 if (menu_item->HasValue(prop_unchecked_bitmap))
                 {
-                    auto unchecked = menu_item->prop_as_wxBitmapBundle(prop_unchecked_bitmap);
-                    item->SetBitmaps(menu_item->prop_as_wxBitmapBundle(prop_bitmap), unchecked);
+                    auto unchecked = menu_item->as_wxBitmapBundle(prop_unchecked_bitmap);
+                    item->SetBitmaps(menu_item->as_wxBitmapBundle(prop_bitmap), unchecked);
                 }
                 else
                 {
-                    item->SetBitmap(menu_item->prop_as_wxBitmapBundle(prop_bitmap));
+                    item->SetBitmap(menu_item->as_wxBitmapBundle(prop_bitmap));
                 }
             }
             else
             {
                 if (menu_item->HasValue(prop_unchecked_bitmap))
                 {
-                    item->SetBitmaps(wxNullBitmap, menu_item->prop_as_wxBitmapBundle(prop_unchecked_bitmap));
+                    item->SetBitmaps(wxNullBitmap, menu_item->as_wxBitmapBundle(prop_unchecked_bitmap));
                 }
             }
 #endif
 
             sub_menu->Append(item);
 
-            if (item->GetKind() == wxITEM_CHECK && menu_item->prop_as_bool(prop_checked))
+            if (item->GetKind() == wxITEM_CHECK && menu_item->as_bool(prop_checked))
             {
                 item->Check(true);
             }
 
-            if (menu_item->prop_as_bool(prop_disabled))
+            if (menu_item->as_bool(prop_disabled))
             {
                 item->Enable(false);
             }

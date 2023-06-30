@@ -19,11 +19,11 @@ wxObject* RibbonBarFormGenerator::CreateMockup(Node* node, wxObject* parent)
     auto widget = new wxRibbonBar(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(parent, node, prop_pos),
                                   DlgSize(parent, node, prop_size), GetStyleInt(node));
 
-    if (node->prop_as_string(prop_theme) == "Default")
+    if (node->as_string(prop_theme) == "Default")
         widget->SetArtProvider(new wxRibbonDefaultArtProvider);
-    else if (node->prop_as_string(prop_theme) == "Generic")
+    else if (node->as_string(prop_theme) == "Generic")
         widget->SetArtProvider(new wxRibbonAUIArtProvider);
-    else if (node->prop_as_string(prop_theme) == "MSW")
+    else if (node->as_string(prop_theme) == "MSW")
         widget->SetArtProvider(new wxRibbonMSWArtProvider);
 
     widget->Bind(wxEVT_RIBBONBAR_PAGE_CHANGED, &RibbonBarFormGenerator::OnPageChanged, this);
@@ -101,14 +101,14 @@ bool RibbonBarFormGenerator::HeaderCode(Code& code)
 
     code.Comma().Str("const wxSize& size = ");
 
-    auto size = node->prop_as_wxSize(prop_size);
+    auto size = node->as_wxSize(prop_size);
     if (size == wxDefaultSize)
         code.Str("wxDefaultSize");
     else
         code.WxSize(prop_size, no_dlg_units);
 
-    auto& style = node->prop_as_string(prop_style);
-    auto& win_style = node->prop_as_string(prop_window_style);
+    auto& style = node->as_string(prop_style);
+    auto& win_style = node->as_string(prop_window_style);
     if (style.empty() && win_style.empty())
         code.Comma().Str("long style = 0");
     else
@@ -198,11 +198,11 @@ wxObject* RibbonBarGenerator::CreateMockup(Node* node, wxObject* parent)
     auto widget = new wxRibbonBar(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(parent, node, prop_pos),
                                   DlgSize(parent, node, prop_size), GetStyleInt(node));
 
-    if (node->prop_as_string(prop_theme) == "Default")
+    if (node->as_string(prop_theme) == "Default")
         widget->SetArtProvider(new wxRibbonDefaultArtProvider);
-    else if (node->prop_as_string(prop_theme) == "Generic")
+    else if (node->as_string(prop_theme) == "Generic")
         widget->SetArtProvider(new wxRibbonAUIArtProvider);
-    else if (node->prop_as_string(prop_theme) == "MSW")
+    else if (node->as_string(prop_theme) == "MSW")
         widget->SetArtProvider(new wxRibbonMSWArtProvider);
 
     widget->Bind(wxEVT_RIBBONBAR_PAGE_CHANGED, &RibbonBarGenerator::OnPageChanged, this);

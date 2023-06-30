@@ -29,11 +29,11 @@ wxObject* ChoiceGenerator::CreateMockup(Node* node, wxObject* parent)
 
         if (node->HasValue(prop_selection_string))
         {
-            widget->SetStringSelection(node->prop_as_wxString(prop_selection_string));
+            widget->SetStringSelection(node->as_wxString(prop_selection_string));
         }
         else
         {
-            int sel = node->prop_as_int(prop_selection_int);
+            int sel = node->as_int(prop_selection_int);
             if (sel > -1 && sel < (to_int) array.size())
                 widget->SetSelection(sel);
         }
@@ -162,12 +162,12 @@ int ChoiceGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc
     }
 
     if (node->HasValue(prop_selection_string))
-        item.append_child("value").text().set(node->prop_as_string(prop_selection_string));
+        item.append_child("value").text().set(node->as_string(prop_selection_string));
 
     // Older versions of wxWidgets didn't support setting the selection via the value property,
     // so we add the property here even if the above is set.
-    if (node->prop_as_int(prop_selection_int) >= 0)
-        item.append_child("selection").text().set(node->prop_as_string(prop_selection_int));
+    if (node->as_int(prop_selection_int) >= 0)
+        item.append_child("selection").text().set(node->as_string(prop_selection_int));
 
     GenXrcStylePosSize(node, item);
     GenXrcWindowSettings(node, item);

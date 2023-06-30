@@ -35,7 +35,7 @@ void RibbonGalleryGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxpar
     {
         if (child->isGen(gen_ribbonGalleryItem))
         {
-            auto bmp = child->prop_as_wxBitmap(prop_bitmap);
+            auto bmp = child->as_wxBitmap(prop_bitmap);
             if (!bmp.IsOk())
                 bmp = GetInternalImage("default");
 

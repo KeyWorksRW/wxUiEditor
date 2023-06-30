@@ -64,16 +64,16 @@ void resForm::ParseMenu(WinResource* pWinResource, tt_string_vector& txtfile, si
     m_form_node = NodeCreation.NewNode(m_is_popup_menu ? gen_PopupMenu : gen_MenuBar);
 
 #if defined(_DEBUG) || defined(INTERNAL_TESTING)
-    m_form_node->prop_set_value(prop_base_src_includes, tt_string() << "// " << txtfile.filename());
+    m_form_node->set_value(prop_base_src_includes, tt_string() << "// " << txtfile.filename());
 #endif  // _DEBUG
 
     tt_string value;  // General purpose string we can use throughout this function
 
     value = line.substr(0, end);
-    m_form_node->prop_set_value(prop_class_name, ConvertFormID(value));
+    m_form_node->set_value(prop_class_name, ConvertFormID(value));
 
 #if defined(_DEBUG) || defined(INTERNAL_TESTING)
-    m_form_id = m_form_node->prop_as_string(prop_class_name);
+    m_form_id = m_form_node->as_string(prop_class_name);
 #endif  // _DEBUG
 
     for (++curTxtLine; curTxtLine < txtfile.size(); ++curTxtLine)
@@ -120,7 +120,7 @@ void resForm::ParseMenus(tt_string_vector& txtfile, size_t& curTxtLine)
             parent = control.SetNodePtr(NodeCreation.NewNode(gen_wxMenu));
             m_form_node->Adopt(parent);
             line.moveto_nextword();
-            parent->prop_set_value(prop_label, m_pWinResource->ConvertCodePageString(line.view_substr(0)));
+            parent->set_value(prop_label, m_pWinResource->ConvertCodePageString(line.view_substr(0)));
         }
     }
 }
@@ -156,7 +156,7 @@ void resForm::ParseMenuItem(Node* parent, tt_string_vector& txtfile, size_t& cur
             sub_parent = control.SetNodePtr(NodeCreation.NewNode(gen_submenu));
             parent->Adopt(sub_parent);
             line.moveto_nextword();
-            sub_parent->prop_set_value(prop_label, m_pWinResource->ConvertCodePageString(line.view_substr(0)));
+            sub_parent->set_value(prop_label, m_pWinResource->ConvertCodePageString(line.view_substr(0)));
         }
         else if (line.starts_with("MENUITEM"))
         {
@@ -176,13 +176,13 @@ void resForm::ParseMenuItem(Node* parent, tt_string_vector& txtfile, size_t& cur
                 auto end = label.find("\\t");
                 if (tt::is_found(end))
                 {
-                    item->prop_set_value(prop_label, m_pWinResource->ConvertCodePageString(label.substr(0, end)));
+                    item->set_value(prop_label, m_pWinResource->ConvertCodePageString(label.substr(0, end)));
                     label.remove_prefix(end < label.size() ? end + 2 : end);
-                    item->prop_set_value(prop_shortcut, label);
+                    item->set_value(prop_shortcut, label);
                 }
                 else
                 {
-                    item->prop_set_value(prop_label, m_pWinResource->ConvertCodePageString(label));
+                    item->set_value(prop_label, m_pWinResource->ConvertCodePageString(label));
                 }
 
                 auto pos = line.find("\",");
@@ -194,32 +194,32 @@ void resForm::ParseMenuItem(Node* parent, tt_string_vector& txtfile, size_t& cur
                     if (!tt::is_found(end))
                     {
                         id.trim(tt::TRIM::right);
-                        item->prop_set_value(prop_id, id);
+                        item->set_value(prop_id, id);
                         auto help = m_pWinResource->FindStringID(tt_string() << id);
                         if (help)
                         {
-                            item->prop_set_value(prop_help, help.value());
+                            item->set_value(prop_help, help.value());
                         }
                     }
                     else
                     {
                         tt_string_view item_id = id.substr(0, end);
                         item_id.trim(tt::TRIM::right);
-                        item->prop_set_value(prop_id, item_id);
+                        item->set_value(prop_id, item_id);
                         id.remove_prefix(end < id.size() ? end + 1 : end);
                         id.moveto_nonspace();
                         if (id.contains("CHECKED"))
                         {
-                            item->prop_set_value(prop_checked, true);
+                            item->set_value(prop_checked, true);
                         }
                         if (id.contains("INACTIVE"))
                         {
-                            item->prop_set_value(prop_disabled, true);
+                            item->set_value(prop_disabled, true);
                         }
                         auto help = m_pWinResource->FindStringID(tt_string() << item_id);
                         if (help)
                         {
-                            item->prop_set_value(prop_help, help.value());
+                            item->set_value(prop_help, help.value());
                         }
                     }
                 }

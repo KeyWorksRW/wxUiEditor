@@ -24,49 +24,49 @@ wxObject* StdDialogButtonSizerGenerator::CreateMockup(Node* node, wxObject* pare
     auto dlg = wxDynamicCast(parent, wxDialog);
     auto sizer = new wxStdDialogButtonSizer();
 
-    sizer->SetMinSize(node->prop_as_wxSize(prop_minimum_size));
+    sizer->SetMinSize(node->as_wxSize(prop_minimum_size));
 
-    if (node->prop_as_bool(prop_OK))
+    if (node->as_bool(prop_OK))
         sizer->AddButton(new wxButton(wxStaticCast(parent, wxWindow), wxID_OK));
-    else if (node->prop_as_bool(prop_Yes))
+    else if (node->as_bool(prop_Yes))
     {
         sizer->AddButton(new wxButton(wxStaticCast(parent, wxWindow), wxID_YES));
         if (dlg)
             dlg->SetAffirmativeId(wxID_YES);
     }
-    else if (node->prop_as_bool(prop_Save))
+    else if (node->as_bool(prop_Save))
     {
         sizer->AddButton(new wxButton(wxStaticCast(parent, wxWindow), wxID_SAVE));
         if (dlg)
             dlg->SetAffirmativeId(wxID_SAVE);
     }
-    if (node->prop_as_bool(prop_No))
+    if (node->as_bool(prop_No))
     {
         sizer->AddButton(new wxButton(wxStaticCast(parent, wxWindow), wxID_NO));
         if (dlg)
             dlg->SetEscapeId(wxID_NO);
     }
 
-    if (node->prop_as_bool(prop_Cancel))
+    if (node->as_bool(prop_Cancel))
         sizer->AddButton(new wxButton(wxStaticCast(parent, wxWindow), wxID_CANCEL));
-    else if (node->prop_as_bool(prop_Close))
+    else if (node->as_bool(prop_Close))
     {
         sizer->AddButton(new wxButton(wxStaticCast(parent, wxWindow), wxID_CLOSE));
         if (dlg)
             dlg->SetEscapeId(wxID_CLOSE);
     }
 
-    if (node->prop_as_bool(prop_Apply))
+    if (node->as_bool(prop_Apply))
         sizer->AddButton(new wxButton(wxStaticCast(parent, wxWindow), wxID_APPLY));
 
-    if (node->prop_as_bool(prop_Help))
+    if (node->as_bool(prop_Help))
         sizer->AddButton(new wxButton(wxStaticCast(parent, wxWindow), wxID_HELP));
-    else if (node->prop_as_bool(prop_ContextHelp))
+    else if (node->as_bool(prop_ContextHelp))
         sizer->AddButton(new wxButton(wxStaticCast(parent, wxWindow), wxID_CONTEXT_HELP));
 
     sizer->Realize();
 
-    if (node->prop_as_bool(prop_static_line))
+    if (node->as_bool(prop_static_line))
     {
         auto topsizer = new wxBoxSizer(wxVERTICAL);
         topsizer->Add(new wxStaticLine(wxDynamicCast(parent, wxWindow)), wxSizerFlags().Expand().DoubleBorder(wxBOTTOM));
@@ -100,7 +100,7 @@ bool StdDialogButtonSizerGenerator::ConstructionCode(Code& code)
     // without hitting assertion errors in debug builds, and in release builds, the Save button is positioned
     // incorrectly. Unfortunately that means we have to add the buttons one at a time if a Save button is specified.
 
-    auto& def_btn_name = node->prop_as_string(prop_default_button);
+    auto& def_btn_name = node->as_string(prop_default_button);
 
     if (node->get_form()->isGen(gen_wxDialog) && (!node->as_bool(prop_Save) && !node->as_bool(prop_ContextHelp)))
     {
@@ -116,23 +116,23 @@ bool StdDialogButtonSizerGenerator::ConstructionCode(Code& code)
             flags << flag;
         };
 
-        if (node->prop_as_bool(prop_OK))
+        if (node->as_bool(prop_OK))
             AddBitFlag("wxOK");
-        else if (node->prop_as_bool(prop_Yes))
+        else if (node->as_bool(prop_Yes))
             AddBitFlag("wxYES");
 
-        if (node->prop_as_bool(prop_No))
+        if (node->as_bool(prop_No))
             AddBitFlag("wxNO");
 
-        if (node->prop_as_bool(prop_Cancel))
+        if (node->as_bool(prop_Cancel))
             AddBitFlag("wxCANCEL");
-        else if (node->prop_as_bool(prop_Close))
+        else if (node->as_bool(prop_Close))
             AddBitFlag("wxCLOSE");
 
-        if (node->prop_as_bool(prop_Apply))
+        if (node->as_bool(prop_Apply))
             AddBitFlag("wxAPPLY");
 
-        if (node->prop_as_bool(prop_Help))
+        if (node->as_bool(prop_Help))
             AddBitFlag("wxHELP");
 
         if (def_btn_name != "OK" && def_btn_name != "Yes")
@@ -149,7 +149,7 @@ bool StdDialogButtonSizerGenerator::ConstructionCode(Code& code)
 
     code.NodeName().CreateClass(false, "wxStdDialogButtonSizer").EndFunction();
 
-    auto min_size = node->prop_as_wxSize(prop_minimum_size);
+    auto min_size = node->as_wxSize(prop_minimum_size);
     if (min_size.GetX() != -1 || min_size.GetY() != -1)
     {
         code.Eol().NodeName().Function("SetMinSize(") << min_size.GetX() << ", " << min_size.GetY();
@@ -157,53 +157,53 @@ bool StdDialogButtonSizerGenerator::ConstructionCode(Code& code)
     }
 
     // You can only have one of: Ok, Yes, Save
-    if (node->prop_as_bool(prop_OK))
+    if (node->as_bool(prop_OK))
     {
         code.Eol().NodeName().Function("AddButton(");
         code += "new wxButton(this, wxID_OK));";
     }
-    else if (node->prop_as_bool(prop_Yes))
+    else if (node->as_bool(prop_Yes))
     {
         code.Eol().NodeName().Function("AddButton(");
         code += "new wxButton(this, wxID_YES));";
     }
-    else if (node->prop_as_bool(prop_Save))
+    else if (node->as_bool(prop_Save))
     {
         code.Eol().NodeName().Function("AddButton(");
         code += "new wxButton(this, wxID_SAVE));";
     }
 
-    if (node->prop_as_bool(prop_No))
+    if (node->as_bool(prop_No))
     {
         code.Eol().NodeName().Function("AddButton(");
         code += "new wxButton(this, wxID_NO));";
     }
 
     // You can only have one of: Cancel, Close
-    if (node->prop_as_bool(prop_Cancel))
+    if (node->as_bool(prop_Cancel))
     {
         code.Eol().NodeName().Function("AddButton(");
         code += "new wxButton(this, wxID_CANCEL));";
     }
-    else if (node->prop_as_bool(prop_Close))
+    else if (node->as_bool(prop_Close))
     {
         code.Eol().NodeName().Function("AddButton(");
         code += "new wxButton(this, wxID_CLOSE));";
     }
 
-    if (node->prop_as_bool(prop_Apply))
+    if (node->as_bool(prop_Apply))
     {
         code.Eol().NodeName().Function("AddButton(");
         code += "new wxButton(this, wxID_APPLY));";
     }
 
     // You can only have one of: Help, ContextHelp
-    if (node->prop_as_bool(prop_Help))
+    if (node->as_bool(prop_Help))
     {
         code.Eol().NodeName().Function("AddButton(");
         code += "new wxButton(this, wxID_HELP));";
     }
-    else if (node->prop_as_bool(prop_ContextHelp))
+    else if (node->as_bool(prop_ContextHelp))
     {
         code.Eol().NodeName().Function("AddButton(");
         code += "new wxButton(this, wxID_CONTEXT_HELP));";
@@ -225,24 +225,24 @@ bool StdDialogButtonSizerGenerator::ConstructionCode(Code& code)
     if (!node->IsLocal())
     {
         code.Eol(eol_if_needed);
-        if (node->prop_as_bool(prop_OK))
+        if (node->as_bool(prop_OK))
             code.NodeName() << "OK = wxStaticCast(FindWindowById(wxID_OK), wxButton);\n";
-        if (node->prop_as_bool(prop_Yes))
+        if (node->as_bool(prop_Yes))
             code.NodeName() << "Yes = wxStaticCast(FindWindowById(wxID_YES), wxButton);\n";
-        if (node->prop_as_bool(prop_Save))
+        if (node->as_bool(prop_Save))
             code.NodeName() << "Save = wxStaticCast(FindWindowById(wxID_SAVE), wxButton);\n";
-        if (node->prop_as_bool(prop_Apply))
+        if (node->as_bool(prop_Apply))
             code.NodeName() << "Apply = wxStaticCast(FindWindowById(wxID_APPLY), wxButton);\n";
 
-        if (node->prop_as_bool(prop_No))
+        if (node->as_bool(prop_No))
             code.NodeName() << "No = wxStaticCast(FindWindowById(wxID_NO), wxButton);\n";
-        if (node->prop_as_bool(prop_Cancel))
+        if (node->as_bool(prop_Cancel))
             code.NodeName() << "Cancel = wxStaticCast(FindWindowById(wxID_CANCEL), wxButton);\n";
-        if (node->prop_as_bool(prop_Close))
+        if (node->as_bool(prop_Close))
             code.NodeName() << "Close = wxStaticCast(FindWindowById(wxID_CLOSE), wxButton);\n";
-        if (node->prop_as_bool(prop_Help))
+        if (node->as_bool(prop_Help))
             code.NodeName() << "Help = wxStaticCast(FindWindowById(wxID_HELP), wxButton);\n";
-        if (node->prop_as_bool(prop_ContextHelp))
+        if (node->as_bool(prop_ContextHelp))
             code.NodeName() << "ContextHelp = wxStaticCast(FindWindowById(wxID_CONTEXT_HELP), wxButton);\n";
     }
 
@@ -263,7 +263,7 @@ void StdDialogButtonSizerGenerator::GenPythonConstruction(Code& code)
 
     code.Eol().Eol().NodeName().Add(" = wx.StdDialogButtonSizer()");
 
-    auto min_size = node->prop_as_wxSize(prop_minimum_size);
+    auto min_size = node->as_wxSize(prop_minimum_size);
     if (min_size.GetX() != -1 || min_size.GetY() != -1)
     {
         code.Eol().NodeName().Function("SetMinSize(") << min_size.GetX() << ", " << min_size.GetY();
@@ -271,52 +271,52 @@ void StdDialogButtonSizerGenerator::GenPythonConstruction(Code& code)
     }
 
     // You can only have one of: Ok, Yes, Save
-    if (node->prop_as_bool(prop_OK))
+    if (node->as_bool(prop_OK))
     {
         code.Eol().NodeName().Add("_OK = wx.Button(self, wx.ID_OK)");
         code.Eol().NodeName().Function("SetAffirmativeButton(").NodeName().Add("_OK").EndFunction();
     }
-    else if (node->prop_as_bool(prop_Yes))
+    else if (node->as_bool(prop_Yes))
     {
         code.Eol().NodeName().Add("_Yes = wx.Button(self, wx.ID_YES)");
         code.Eol().NodeName().Function("SetAffirmativeButton(").NodeName().Add("_Yes").EndFunction();
     }
-    else if (node->prop_as_bool(prop_Save))
+    else if (node->as_bool(prop_Save))
     {
         code.Eol().NodeName().Add("_Save = wx.Button(self, wx.ID_SAVE)");
         code.Eol().NodeName().Function("SetAffirmativeButton(").NodeName().Add("_Save").EndFunction();
     }
 
-    if (node->prop_as_bool(prop_No))
+    if (node->as_bool(prop_No))
     {
         code.Eol().NodeName().Add("_No = wx.Button(self, wx.ID_NO)");
         code.Eol().NodeName().Function("SetNegativeButton(").NodeName().Add("_No").EndFunction();
     }
 
     // You can only have one of: Cancel, Close
-    if (node->prop_as_bool(prop_Cancel))
+    if (node->as_bool(prop_Cancel))
     {
         code.Eol().NodeName().Add("_Cancel = wx.Button(self, wx.ID_CANCEL)");
         code.Eol().NodeName().Function("SetCancelButton(").NodeName().Add("_Cancel").EndFunction();
     }
-    else if (node->prop_as_bool(prop_Close))
+    else if (node->as_bool(prop_Close))
     {
         code.Eol().NodeName().Add("_Close = wx.Button(self, wx.ID_CLOSE)");
         code.Eol().NodeName().Function("SetCancelButton(").NodeName().Add("_Close").EndFunction();
     }
 
-    if (node->prop_as_bool(prop_Help))
+    if (node->as_bool(prop_Help))
     {
         code.Eol().NodeName().Add("_Help = wx.Button(self, wx.ID_HELP)");
         code.Eol().NodeName().Function("AddButton(").NodeName().Add("_Help").EndFunction();
     }
-    else if (node->prop_as_bool(prop_ContextHelp))
+    else if (node->as_bool(prop_ContextHelp))
     {
         code.Eol().NodeName().Add("_ContextHelp = wx.Button(self, wx.ID_CONTEXT_HELP)");
         code.Eol().NodeName().Function("AddButton(").NodeName().Add("_ContextHelp").EndFunction();
     }
 
-    auto& def_btn_name = node->prop_as_string(prop_default_button);
+    auto& def_btn_name = node->as_string(prop_default_button);
 
     if (def_btn_name == "OK")
         code.Eol().NodeName().Add("_OK").Function("SetDefault()");
@@ -348,7 +348,7 @@ int StdDialogButtonSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& obje
         // In C++, we would call CreateSeparatedSizer to get the line on Windows and Unix, but not on Mac. XRC doesn't
         // support this, so we emulate it by adding the line. That's not correct on a Mac, though...
 
-        if (node->prop_as_bool(prop_static_line))
+        if (node->as_bool(prop_static_line))
         {
             object.append_attribute("class").set_value("sizeritem");
             object.append_child("flag").text().set("wxLEFT|wxRIGHT|wxTOP|wxEXPAND");
@@ -384,9 +384,9 @@ int StdDialogButtonSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& obje
     }
 
     item.append_attribute("class").set_value("wxStdDialogButtonSizer");
-    item.append_attribute("name").set_value(node->prop_as_string(prop_var_name));
+    item.append_attribute("name").set_value(node->as_string(prop_var_name));
     // You can only have one of: Ok, Yes, Save
-    if (node->prop_as_bool(prop_OK) || node->prop_as_bool(prop_Yes) || node->prop_as_bool(prop_Save))
+    if (node->as_bool(prop_OK) || node->as_bool(prop_Yes) || node->as_bool(prop_Save))
     {
         auto button_parent = item.append_child("object");
         button_parent.append_attribute("class").set_value("button");
@@ -394,7 +394,7 @@ int StdDialogButtonSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& obje
         auto button = button_parent.append_child("object");
         button.append_attribute("class").set_value("wxButton");
 
-        if (node->prop_as_bool(prop_OK))
+        if (node->as_bool(prop_OK))
         {
             button.append_attribute("name").set_value("wxID_OK");
             if (node->isPropValue(prop_default_button, "OK"))
@@ -402,7 +402,7 @@ int StdDialogButtonSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& obje
                 button.append_child("default").text().set(1);
             }
         }
-        else if (node->prop_as_bool(prop_Yes))
+        else if (node->as_bool(prop_Yes))
         {
             button.append_attribute("name").set_value("wxID_YES");
             if (node->isPropValue(prop_default_button, "Yes"))
@@ -410,7 +410,7 @@ int StdDialogButtonSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& obje
                 button.append_child("default").text().set(1);
             }
         }
-        else if (node->prop_as_bool(prop_Save))
+        else if (node->as_bool(prop_Save))
         {
             button.append_attribute("name").set_value("wxID_SAVE");
             if (node->isPropValue(prop_default_button, "Save"))
@@ -420,7 +420,7 @@ int StdDialogButtonSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& obje
         }
     }
 
-    if (node->prop_as_bool(prop_No))
+    if (node->as_bool(prop_No))
     {
         auto button_parent = item.append_child("object");
         button_parent.append_attribute("class").set_value("button");
@@ -436,7 +436,7 @@ int StdDialogButtonSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& obje
     }
 
     // You can only have one of: Cancel, Close
-    if (node->prop_as_bool(prop_Cancel) || node->prop_as_bool(prop_Close))
+    if (node->as_bool(prop_Cancel) || node->as_bool(prop_Close))
     {
         auto button_parent = item.append_child("object");
         button_parent.append_attribute("class").set_value("button");
@@ -444,7 +444,7 @@ int StdDialogButtonSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& obje
         auto button = button_parent.append_child("object");
         button.append_attribute("class").set_value("wxButton");
 
-        if (node->prop_as_bool(prop_Cancel))
+        if (node->as_bool(prop_Cancel))
         {
             button.append_attribute("name").set_value("wxID_CANCEL");
             if (node->isPropValue(prop_default_button, "Cancel"))
@@ -452,7 +452,7 @@ int StdDialogButtonSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& obje
                 button.append_child("default").text().set(1);
             }
         }
-        else if (node->prop_as_bool(prop_Close))
+        else if (node->as_bool(prop_Close))
         {
             button.append_attribute("name").set_value("wxID_CLOSE");
             if (node->isPropValue(prop_default_button, "Close"))
@@ -462,7 +462,7 @@ int StdDialogButtonSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& obje
         }
     }
 
-    if (node->prop_as_bool(prop_Apply))
+    if (node->as_bool(prop_Apply))
     {
         auto button_parent = item.append_child("object");
         button_parent.append_attribute("class").set_value("button");
@@ -474,7 +474,7 @@ int StdDialogButtonSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& obje
     }
 
     // You can only have one of: Help, ContextHelp
-    if (node->prop_as_bool(prop_Help) || node->prop_as_bool(prop_ContextHelp))
+    if (node->as_bool(prop_Help) || node->as_bool(prop_ContextHelp))
     {
         auto button_parent = item.append_child("object");
         button_parent.append_attribute("class").set_value("button");
@@ -482,11 +482,11 @@ int StdDialogButtonSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& obje
         auto button = button_parent.append_child("object");
         button.append_attribute("class").set_value("wxButton");
 
-        if (node->prop_as_bool(prop_Help))
+        if (node->as_bool(prop_Help))
         {
             button.append_attribute("name").set_value("wxID_HELP");
         }
-        else if (node->prop_as_bool(prop_ContextHelp))
+        else if (node->as_bool(prop_ContextHelp))
         {
             button.append_attribute("name").set_value("wxID_CONTEXT_HELP");
         }

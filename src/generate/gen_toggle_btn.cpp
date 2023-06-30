@@ -21,33 +21,33 @@ wxObject* ToggleButtonGenerator::CreateMockup(Node* node, wxObject* parent)
     auto widget = new wxToggleButton(wxStaticCast(parent, wxWindow), wxID_ANY, wxEmptyString,
                                      DlgPoint(parent, node, prop_pos), DlgSize(parent, node, prop_size), GetStyleInt(node));
 
-    if (node->prop_as_bool(prop_markup))
-        widget->SetLabelMarkup(node->prop_as_wxString(prop_label));
+    if (node->as_bool(prop_markup))
+        widget->SetLabelMarkup(node->as_wxString(prop_label));
     else
-        widget->SetLabel(node->prop_as_wxString(prop_label));
+        widget->SetLabel(node->as_wxString(prop_label));
 
-    widget->SetValue((node->prop_as_bool(prop_pressed)));
+    widget->SetValue((node->as_bool(prop_pressed)));
 
     if (node->HasValue(prop_bitmap))
-        widget->SetBitmap(node->prop_as_wxBitmapBundle(prop_bitmap));
+        widget->SetBitmap(node->as_wxBitmapBundle(prop_bitmap));
 
     if (node->HasValue(prop_disabled_bmp))
-        widget->SetBitmapDisabled(node->prop_as_wxBitmapBundle(prop_disabled_bmp));
+        widget->SetBitmapDisabled(node->as_wxBitmapBundle(prop_disabled_bmp));
 
     if (node->HasValue(prop_pressed_bmp))
-        widget->SetBitmapPressed(node->prop_as_wxBitmapBundle(prop_pressed_bmp));
+        widget->SetBitmapPressed(node->as_wxBitmapBundle(prop_pressed_bmp));
 
     if (node->HasValue(prop_focus_bmp))
-        widget->SetBitmapFocus(node->prop_as_wxBitmapBundle(prop_focus_bmp));
+        widget->SetBitmapFocus(node->as_wxBitmapBundle(prop_focus_bmp));
 
     if (node->HasValue(prop_current))
-        widget->SetBitmapCurrent(node->prop_as_wxBitmapBundle(prop_current));
+        widget->SetBitmapCurrent(node->as_wxBitmapBundle(prop_current));
 
     if (node->HasValue(prop_position))
-        widget->SetBitmapPosition(static_cast<wxDirection>(node->prop_as_int(prop_position)));
+        widget->SetBitmapPosition(static_cast<wxDirection>(node->as_int(prop_position)));
 
     if (node->HasValue(prop_margins))
-        widget->SetBitmapMargins(node->prop_as_wxSize(prop_margins));
+        widget->SetBitmapMargins(node->as_wxSize(prop_margins));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
@@ -63,10 +63,10 @@ bool ToggleButtonGenerator::OnPropertyChange(wxObject* widget, Node* node, NodeP
     if (prop->isProp(prop_label))
     {
         auto ctrl = wxStaticCast(widget, wxToggleButton);
-        if (node->prop_as_bool(prop_markup))
-            ctrl->SetLabelMarkup(node->prop_as_wxString(prop_label));
+        if (node->as_bool(prop_markup))
+            ctrl->SetLabelMarkup(node->as_wxString(prop_label));
         else
-            ctrl->SetLabel(node->prop_as_wxString(prop_label));
+            ctrl->SetLabel(node->as_wxString(prop_label));
 
         return true;
     }
@@ -75,9 +75,9 @@ bool ToggleButtonGenerator::OnPropertyChange(wxObject* widget, Node* node, NodeP
         // Turning markup on switches to generic rending of the button. However, you have to recreate it to switch it
         // off and go back to native rendering.
 
-        if (node->prop_as_bool(prop_markup))
+        if (node->as_bool(prop_markup))
         {
-            wxStaticCast(widget, wxToggleButton)->SetLabelMarkup(node->prop_as_wxString(prop_label));
+            wxStaticCast(widget, wxToggleButton)->SetLabelMarkup(node->as_wxString(prop_label));
             return true;
         }
     }

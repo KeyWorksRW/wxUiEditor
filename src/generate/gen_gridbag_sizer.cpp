@@ -16,20 +16,20 @@
 
 wxObject* GridBagSizerGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto sizer = new wxGridBagSizer(node->prop_as_int(prop_vgap), node->prop_as_int(prop_hgap));
+    auto sizer = new wxGridBagSizer(node->as_int(prop_vgap), node->as_int(prop_hgap));
     if (auto dlg = wxDynamicCast(parent, wxDialog); dlg)
     {
         if (!dlg->GetSizer())
             dlg->SetSizer(sizer);
     }
 
-    sizer->SetMinSize(node->prop_as_wxSize(prop_minimum_size));
-    sizer->SetFlexibleDirection(node->prop_as_int(prop_flexible_direction));
-    sizer->SetNonFlexibleGrowMode((wxFlexSizerGrowMode) node->prop_as_int(prop_non_flexible_grow_mode));
+    sizer->SetMinSize(node->as_wxSize(prop_minimum_size));
+    sizer->SetFlexibleDirection(node->as_int(prop_flexible_direction));
+    sizer->SetNonFlexibleGrowMode((wxFlexSizerGrowMode) node->as_int(prop_non_flexible_grow_mode));
 
     if (node->HasValue(prop_empty_cell_size))
     {
-        sizer->SetEmptyCellSize(node->prop_as_wxSize(prop_empty_cell_size));
+        sizer->SetEmptyCellSize(node->as_wxSize(prop_empty_cell_size));
     }
 
     return sizer;
@@ -67,9 +67,9 @@ void GridBagSizerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxpare
             continue;  // spacer's don't have objects
 
         // Get the location of the item
-        wxGBSpan span(node->prop_as_int(prop_rowspan), node->prop_as_int(prop_colspan));
+        wxGBSpan span(node->as_int(prop_rowspan), node->as_int(prop_colspan));
 
-        int column = node->prop_as_int(prop_column);
+        int column = node->as_int(prop_column);
         if (column < 0)
         {
             // Needs to be auto positioned after the other children are added
@@ -81,7 +81,7 @@ void GridBagSizerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxpare
             continue;
         }
 
-        wxGBPosition position(node->prop_as_int(prop_row), column);
+        wxGBPosition position(node->as_int(prop_row), column);
 
         if (sizer->CheckForIntersection(position, span))
         {
@@ -114,7 +114,7 @@ void GridBagSizerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxpare
 
     auto lambda = [&](GenEnum::PropName prop_name)
     {
-        if (auto& growable = node->prop_as_string(prop_name); growable.size())
+        if (auto& growable = node->as_string(prop_name); growable.size())
         {
             tt_view_vector values(growable, ',');
             for (auto& iter: values)
@@ -179,7 +179,7 @@ bool GridBagSizerGenerator::AfterChildrenCode(Code& code)
 
     auto lambda = [&](GenEnum::PropName prop_name)
     {
-        if (auto& growable = node->prop_as_string(prop_name); growable.size())
+        if (auto& growable = node->as_string(prop_name); growable.size())
         {
             tt_view_vector values(growable, ',');
             for (auto& iter: values)
@@ -260,7 +260,7 @@ wxGBSizerItem* GridBagSizerGenerator::GetGBSizerItem(Node* sizeritem, const wxGB
 
     if (sizeritem->isGen(gen_spacer))
     {
-        return new wxGBSizerItem(sizeritem->prop_as_int(prop_width), sizeritem->prop_as_int(prop_height), position, span,
+        return new wxGBSizerItem(sizeritem->as_int(prop_width), sizeritem->as_int(prop_height), position, span,
                                  sizer_flags.GetFlags(), sizer_flags.GetBorderInPixels());
     }
 
@@ -305,7 +305,7 @@ int GridBagSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size
     }
 
     item.append_attribute("class").set_value("wxGridBagSizer");
-    item.append_attribute("name").set_value(node->prop_as_string(prop_var_name));
+    item.append_attribute("name").set_value(node->as_string(prop_var_name));
 
     ADD_ITEM_PROP(prop_vgap, "vgap")
     ADD_ITEM_PROP(prop_hgap, "hgap")
@@ -317,7 +317,7 @@ int GridBagSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size
 
     if (node->HasValue(prop_minimum_size))
     {
-        item.append_child("minsize").text().set(node->prop_as_string(prop_minimum_size));
+        item.append_child("minsize").text().set(node->as_string(prop_minimum_size));
     }
     else if (node->GetParent()->IsForm() && node->GetParent()->HasValue(prop_minimum_size))
     {
@@ -325,7 +325,7 @@ int GridBagSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size
         // often can specify their own minimum size. The workaround is to set the minimum size of the parent sizer that we
         // create for most forms.
 
-        item.append_child("minsize").text().set(node->GetParent()->prop_as_string(prop_minimum_size));
+        item.append_child("minsize").text().set(node->GetParent()->as_string(prop_minimum_size));
     }
 
     if (node->HasValue(prop_empty_cell_size))

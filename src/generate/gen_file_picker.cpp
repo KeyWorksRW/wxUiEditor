@@ -20,7 +20,7 @@ wxObject* FilePickerGenerator::CreateMockup(Node* node, wxObject* parent)
     wxString msg;
     if (node->HasValue(prop_message))
     {
-        msg = node->prop_as_wxString(prop_message);
+        msg = node->as_wxString(prop_message);
     }
     else
     {
@@ -29,16 +29,16 @@ wxObject* FilePickerGenerator::CreateMockup(Node* node, wxObject* parent)
     wxString wildcard;
     if (node->HasValue(prop_wildcard))
     {
-        wildcard = node->prop_as_wxString(prop_wildcard);
+        wildcard = node->as_wxString(prop_wildcard);
     }
     else
     {
         wildcard = wxFileSelectorDefaultWildcardStr;
     }
 
-    auto widget = new wxFilePickerCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString(prop_initial_path),
-                                       msg, wildcard, DlgPoint(parent, node, prop_pos), DlgSize(parent, node, prop_size),
-                                       GetStyleInt(node));
+    auto widget =
+        new wxFilePickerCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxString(prop_initial_path), msg, wildcard,
+                             DlgPoint(parent, node, prop_pos), DlgSize(parent, node, prop_size), GetStyleInt(node));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
@@ -52,7 +52,7 @@ bool FilePickerGenerator::ConstructionCode(Code& code)
     code.NodeName().CreateClass();
     code.ValidParentName().Comma().as_string(prop_id).Comma();
 
-    if (auto& path = code.node()->prop_as_string(prop_initial_path); path.size())
+    if (auto& path = code.node()->as_string(prop_initial_path); path.size())
     {
         code.QuotedString(path);
     }
@@ -62,7 +62,7 @@ bool FilePickerGenerator::ConstructionCode(Code& code)
     }
 
     code.Comma();
-    if (auto& msg = code.node()->prop_as_string(prop_message); msg.size())
+    if (auto& msg = code.node()->as_string(prop_message); msg.size())
     {
         code.QuotedString(msg);
     }
@@ -72,7 +72,7 @@ bool FilePickerGenerator::ConstructionCode(Code& code)
     }
 
     code.Comma();
-    if (auto& msg = code.node()->prop_as_string(prop_wildcard); msg.size())
+    if (auto& msg = code.node()->as_string(prop_wildcard); msg.size())
     {
         code.QuotedString(msg);
     }

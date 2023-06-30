@@ -22,7 +22,7 @@ wxObject* CheckListBoxGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget =
         new wxCheckListBox(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(parent, node, prop_pos),
-                           DlgSize(parent, node, prop_size), 0, nullptr, node->prop_as_int(prop_type) | GetStyleInt(node));
+                           DlgSize(parent, node, prop_size), 0, nullptr, node->as_int(prop_type) | GetStyleInt(node));
 
     auto items = node->as_checklist_items(prop_contents);
     if (items.size())
@@ -34,13 +34,13 @@ wxObject* CheckListBoxGenerator::CreateMockup(Node* node, wxObject* parent)
                 widget->Check(pos);
         }
 
-        if (node->prop_as_string(prop_selection_string).size())
+        if (node->as_string(prop_selection_string).size())
         {
             widget->SetStringSelection(node->as_wxString(prop_selection_string));
         }
         else
         {
-            int sel = node->prop_as_int(prop_selection_int);
+            int sel = node->as_int(prop_selection_int);
             if (sel > -1 && sel < (to_int) widget->GetCount())
                 widget->SetSelection(sel);
         }
@@ -129,7 +129,7 @@ bool CheckListBoxGenerator::SettingsCode(Code& code)
         }
         else
         {
-            int sel = node->prop_as_int(prop_selection_int);
+            int sel = node->as_int(prop_selection_int);
             if (sel > -1 && sel < (to_int) contents.size())
             {
                 code.Eol(eol_if_empty).NodeName().Function("SetSelection(").Str(prop_selection_int).EndFunction();
@@ -182,12 +182,12 @@ int CheckListBoxGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size
 
     // TODO: [KeyWorks - 06-04-2022] This needs to be supported in XRC
     if (node->HasValue(prop_selection_string))
-        item.append_child("value").text().set(node->prop_as_string(prop_selection_string));
+        item.append_child("value").text().set(node->as_string(prop_selection_string));
 
     // Older versions of wxWidgets didn't support setting the selection via the value property,
     // so we add the property here even if the above is set.
-    if (node->prop_as_int(prop_selection_int) >= 0)
-        item.append_child("selection").text().set(node->prop_as_string(prop_selection_int));
+    if (node->as_int(prop_selection_int) >= 0)
+        item.append_child("selection").text().set(node->as_string(prop_selection_int));
 
     GenXrcStylePosSize(node, item, prop_type);
     GenXrcWindowSettings(node, item);

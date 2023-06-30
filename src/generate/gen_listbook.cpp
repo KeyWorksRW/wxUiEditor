@@ -71,12 +71,12 @@ int ListbookGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t x
 
     GenXrcObjectAttributes(node, item, "wxListbook");
 
-    tt_string styles(node->prop_as_string(prop_style));
-    if (node->prop_as_string(prop_tab_position) != "wxBK_DEFAULT")
+    tt_string styles(node->as_string(prop_style));
+    if (node->as_string(prop_tab_position) != "wxBK_DEFAULT")
     {
         if (styles.size())
             styles << '|';
-        styles << node->prop_as_string(prop_tab_position);
+        styles << node->as_string(prop_tab_position);
     }
 
     GenXrcPreStylePosSize(node, item, styles);
@@ -84,7 +84,7 @@ int ListbookGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t x
 
     if (xrc_flags & xrc::add_comments)
     {
-        if (node->prop_as_bool(prop_persist))
+        if (node->as_bool(prop_persist))
             item.append_child(pugi::node_comment).set_value(" persist is not supported in XRC. ");
 
         GenXrcComments(node, item);

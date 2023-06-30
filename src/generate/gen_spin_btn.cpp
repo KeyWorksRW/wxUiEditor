@@ -22,11 +22,11 @@ wxObject* SpinButtonGenerator::CreateMockup(Node* node, wxObject* parent)
     auto widget = new wxSpinButton(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(parent, node, prop_pos),
                                    DlgSize(parent, node, prop_size), GetStyleInt(node));
 
-    widget->SetRange(node->prop_as_int(prop_min), node->prop_as_int(prop_max));
-    widget->SetValue(node->prop_as_int(prop_initial));
+    widget->SetRange(node->as_int(prop_min), node->as_int(prop_max));
+    widget->SetValue(node->as_int(prop_initial));
 
-    if (node->prop_as_int(prop_inc) > 1)
-        widget->SetIncrement(node->prop_as_int(prop_inc));
+    if (node->as_int(prop_inc) > 1)
+        widget->SetIncrement(node->as_int(prop_inc));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
@@ -81,7 +81,7 @@ int SpinButtonGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t
     ADD_ITEM_PROP(prop_max, "max")
     ADD_ITEM_PROP(prop_initial, "value")
 
-    if (node->prop_as_int(prop_inc) > 1)
+    if (node->as_int(prop_inc) > 1)
         ADD_ITEM_PROP(prop_inc, "inc")
 
     if (node->HasValue(prop_style))

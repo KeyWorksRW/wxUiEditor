@@ -34,8 +34,8 @@ void GridBagItem::OnInit(wxInitDialogEvent& WXUNUSED(event))
             m_max_column = gb.GetMaxColumn();
             m_max_row = gb.GetMaxRow();
 
-            m_spin_row->SetValue(cur_node->prop_as_int(prop_row));
-            m_spin_column->SetValue(GetNewColumn(cur_node->prop_as_int(prop_row)));
+            m_spin_row->SetValue(cur_node->as_int(prop_row));
+            m_spin_column->SetValue(GetNewColumn(cur_node->as_int(prop_row)));
         }
     }
 
@@ -70,12 +70,12 @@ void GridBagItem::OnColumn(wxSpinEvent& WXUNUSED(event))
             bool is_inuse { false };
             for (size_t child_idx = 0; child_idx < m_gbsizer->GetChildCount(); ++child_idx)
             {
-                if (m_gbsizer->GetChild(child_idx)->prop_as_int(prop_row) == row)
+                if (m_gbsizer->GetChild(child_idx)->as_int(prop_row) == row)
                 {
-                    if (column < m_gbsizer->GetChild(child_idx)->prop_as_int(prop_column))
+                    if (column < m_gbsizer->GetChild(child_idx)->as_int(prop_column))
                         continue;
-                    else if (column > m_gbsizer->GetChild(child_idx)->prop_as_int(prop_column) +
-                                          m_gbsizer->GetChild(child_idx)->prop_as_int(prop_colspan))
+                    else if (column > m_gbsizer->GetChild(child_idx)->as_int(prop_column) +
+                                          m_gbsizer->GetChild(child_idx)->as_int(prop_colspan))
                         continue;
                     is_inuse = true;
                     break;
@@ -138,10 +138,10 @@ int GridBagItem::GetNewColumn(int row)
     int new_column = 0;
     for (size_t child_idx = 0; child_idx < m_gbsizer->GetChildCount(); ++child_idx)
     {
-        if (m_gbsizer->GetChild(child_idx)->prop_as_int(prop_row) == row)
+        if (m_gbsizer->GetChild(child_idx)->as_int(prop_row) == row)
         {
-            auto column = m_gbsizer->GetChild(child_idx)->prop_as_int(prop_column) +
-                          m_gbsizer->GetChild(child_idx)->prop_as_int(prop_colspan);
+            auto column =
+                m_gbsizer->GetChild(child_idx)->as_int(prop_column) + m_gbsizer->GetChild(child_idx)->as_int(prop_colspan);
             if (column > new_column)
                 new_column = column;
         }

@@ -21,13 +21,13 @@
 wxObject* CollapsiblePaneGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget =
-        new wxCollapsiblePane(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString(prop_label),
+        new wxCollapsiblePane(wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxString(prop_label),
                               DlgPoint(parent, node, prop_pos), DlgSize(parent, node, prop_size), GetStyleInt(node));
 
     if (GetMockup()->IsShowingHidden())
         widget->Collapse(false);
     else
-        widget->Collapse(node->prop_as_bool(prop_collapsed));
+        widget->Collapse(node->as_bool(prop_collapsed));
 
     widget->Bind(wxEVT_COLLAPSIBLEPANE_CHANGED, &CollapsiblePaneGenerator::OnCollapse, this);
 

@@ -20,16 +20,15 @@ wxObject* DirPickerGenerator::CreateMockup(Node* node, wxObject* parent)
     wxString prompt;
     if (node->HasValue(prop_message))
     {
-        prompt = node->prop_as_wxString(prop_message);
+        prompt = node->as_wxString(prop_message);
     }
     else
     {
         prompt = wxDirSelectorPromptStr;
     }
 
-    auto widget =
-        new wxDirPickerCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString(prop_initial_path), prompt,
-                            DlgPoint(parent, node, prop_pos), DlgSize(parent, node, prop_size), GetStyleInt(node));
+    auto widget = new wxDirPickerCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxString(prop_initial_path), prompt,
+                                      DlgPoint(parent, node, prop_pos), DlgSize(parent, node, prop_size), GetStyleInt(node));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
@@ -43,7 +42,7 @@ bool DirPickerGenerator::ConstructionCode(Code& code)
     code.NodeName().CreateClass();
     code.ValidParentName().Comma().as_string(prop_id).Comma();
 
-    if (auto& path = code.node()->prop_as_string(prop_initial_path); path.size())
+    if (auto& path = code.node()->as_string(prop_initial_path); path.size())
     {
         code.QuotedString(path);
     }
@@ -53,7 +52,7 @@ bool DirPickerGenerator::ConstructionCode(Code& code)
     }
 
     code.Comma();
-    if (auto& msg = code.node()->prop_as_string(prop_message); msg.size())
+    if (auto& msg = code.node()->as_string(prop_message); msg.size())
     {
         code.QuotedString(msg);
     }

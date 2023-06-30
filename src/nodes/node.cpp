@@ -386,30 +386,6 @@ bool Node::is_value(PropName name, int value) const noexcept
     return false;
 }
 
-bool Node::prop_as_bool(PropName name) const
-{
-    if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
-        return m_properties[result->second].as_bool();
-    else
-        return false;
-}
-
-int Node::prop_as_int(PropName name) const
-{
-    if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
-        return m_properties[result->second].as_int();
-    else
-        return 0;
-}
-
-int Node::prop_as_id(PropName name) const
-{
-    if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
-        return m_properties[result->second].as_id();
-    else
-        return wxID_ANY;
-}
-
 int Node::prop_as_mockup(PropName name, std::string_view prefix) const
 {
     if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
@@ -418,125 +394,12 @@ int Node::prop_as_mockup(PropName name, std::string_view prefix) const
         return 0;
 }
 
-wxColour Node::prop_as_wxColour(PropName name) const
-{
-    if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
-        return m_properties[result->second].as_color();
-    else
-        return wxColour();
-}
-
-wxFont Node::prop_as_font(PropName name) const
-{
-    if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
-        return m_properties[result->second].as_font();
-    else
-        return *wxNORMAL_FONT;
-}
-
-wxPoint Node::prop_as_wxPoint(PropName name) const
-{
-    if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
-        return m_properties[result->second].as_point();
-    else
-        return wxDefaultPosition;
-}
-
-wxSize Node::prop_as_wxSize(PropName name) const
-{
-    if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
-        return m_properties[result->second].as_size();
-    else
-        return wxDefaultSize;
-}
-
-wxAnimation Node::prop_as_wxAnimation(PropName name) const
-{
-    if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
-        return m_properties[result->second].as_animation();
-    else
-        return wxNullAnimation;
-}
-
-// This is still required, even for 3.1.6 since wxRibbon pages still use bitmaps instead of bundles
-wxBitmap Node::prop_as_wxBitmap(PropName name) const
-{
-    if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
-        return m_properties[result->second].as_bitmap();
-    else
-        return wxNullBitmap;
-}
-
-wxBitmapBundle Node::prop_as_wxBitmapBundle(PropName name) const
-{
-    if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
-        return m_properties[result->second].as_bitmap_bundle();
-    else
-        return wxNullBitmap;
-}
-
-const ImageBundle* Node::prop_as_image_bundle(PropName name) const
-{
-    if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
-        return m_properties[result->second].as_image_bundle();
-    else
-        return nullptr;
-}
-
 std::vector<tt_string> Node::as_ArrayString(PropName name) const
 {
     if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
         return m_properties[result->second].as_ArrayString();
     else
         return std::vector<tt_string>();
-}
-
-wxArrayString Node::prop_as_wxArrayString(PropName name) const
-{
-    if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
-        return m_properties[result->second].as_wxArrayString();
-    else
-        return wxArrayString();
-}
-
-FontProperty Node::prop_as_font_prop(PropName name) const
-{
-    if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
-        return m_properties[result->second].as_font_prop();
-    else
-        return FontProperty(wxNORMAL_FONT);
-}
-
-double Node::prop_as_double(PropName name) const
-{
-    if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
-        return m_properties[result->second].as_float();
-    else
-        return 0;
-}
-
-wxString Node::prop_as_wxString(PropName name) const
-{
-    if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
-        return m_properties[result->second].as_wxString();
-    else
-        return wxString();
-}
-
-const tt_string& Node::prop_as_string(PropName name) const
-{
-    if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
-        return m_properties[result->second].as_string();
-    else
-        return tt_empty_cstr;
-}
-
-const tt_string& Node::prop_as_constant(PropName name, std::string_view prefix)
-{
-    if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
-        return m_properties[result->second].as_constant(prefix);
-    else
-        return tt_empty_cstr;
 }
 
 tt_string* Node::prop_as_raw_ptr(PropName name)
@@ -621,10 +484,10 @@ const tt_string& Node::get_form_name()
 wxSizerFlags Node::GetSizerFlags() const
 {
     wxSizerFlags flags;
-    flags.Proportion(prop_as_int(prop_proportion));
-    auto border_size = prop_as_int(prop_border_size);
+    flags.Proportion(as_int(prop_proportion));
+    auto border_size = as_int(prop_border_size);
     int direction = 0;
-    auto& border_settings = prop_as_string(prop_borders);
+    auto& border_settings = as_string(prop_borders);
     if (border_settings.contains("wxALL"))
     {
         direction = wxALL;
@@ -642,7 +505,7 @@ wxSizerFlags Node::GetSizerFlags() const
     }
     flags.Border(direction, border_size);
 
-    if (auto& alignment = prop_as_string(prop_alignment); alignment.size())
+    if (auto& alignment = as_string(prop_alignment); alignment.size())
     {
         if (alignment.contains("wxALIGN_CENTER"))
         {
@@ -668,7 +531,7 @@ wxSizerFlags Node::GetSizerFlags() const
         }
     }
 
-    if (auto& prop = prop_as_string(prop_flags); prop.size())
+    if (auto& prop = as_string(prop_flags); prop.size())
     {
         if (prop.contains("wxEXPAND"))
             flags.Expand();
@@ -845,7 +708,7 @@ Node* Node::CreateChildNode(GenName name)
                     // prefix is unlikely.
                     member_name.erase(member_name.size() - 2);
                 }
-                new_node->prop_set_value(prop_var_name, member_name);
+                new_node->set_value(prop_var_name, member_name);
                 new_node->FixDuplicateName();
             }
         }
@@ -1013,7 +876,7 @@ bool Node::FixDuplicateName()
     bool replaced = false;
     for (auto& iter: s_var_names)
     {
-        if (auto& name = prop_as_string(iter); name.size())
+        if (auto& name = as_string(iter); name.size())
         {
             if (auto it = name_set.find(name); it != name_set.end())
             {
@@ -1097,7 +960,7 @@ void Node::FixDuplicateNodeNames(Node* form)
 
     for (auto& iter: s_var_names)
     {
-        if (auto& name = prop_as_string(iter); name.size())
+        if (auto& name = as_string(iter); name.size())
         {
             if (auto it = name_set.find(name); it != name_set.end())
             {
@@ -1159,7 +1022,7 @@ void Node::CollectUniqueNames(std::unordered_set<std::string>& name_set, Node* c
         {
             for (auto& iter: s_var_names)
             {
-                if (auto& name = prop_as_string(iter); name.size())
+                if (auto& name = as_string(iter); name.size())
                 {
                     name_set.emplace(name);
                 }
@@ -1167,7 +1030,7 @@ void Node::CollectUniqueNames(std::unordered_set<std::string>& name_set, Node* c
         }
         else
         {
-            if (auto& name = prop_as_string(prop_name); name.size())
+            if (auto& name = as_string(prop_name); name.size())
             {
                 name_set.emplace(name);
             }

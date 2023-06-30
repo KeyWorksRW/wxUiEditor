@@ -24,13 +24,13 @@ wxObject* ToolBarFormGenerator::CreateMockup(Node* node, wxObject* parent)
 
     if (node->HasValue(prop_margins))
     {
-        wxSize margins(node->prop_as_wxSize(prop_margins));
+        wxSize margins(node->as_wxSize(prop_margins));
         widget->SetMargins(margins.GetWidth(), margins.GetHeight());
     }
     if (node->HasValue(prop_packing))
-        widget->SetToolPacking(node->prop_as_int(prop_packing));
+        widget->SetToolPacking(node->as_int(prop_packing));
     if (node->HasValue(prop_separation))
-        widget->SetToolSeparation(node->prop_as_int(prop_separation));
+        widget->SetToolSeparation(node->as_int(prop_separation));
 
     widget->Bind(wxEVT_TOOL, &ToolBarFormGenerator::OnTool, this);
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
@@ -54,22 +54,22 @@ void ToolBarFormGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparen
         wxToolBarToolBase* added_tool = nullptr;
         if (childObj->isGen(gen_tool))
         {
-            auto bmp = childObj->prop_as_wxBitmapBundle(prop_bitmap);
+            auto bmp = childObj->as_wxBitmapBundle(prop_bitmap);
             if (!bmp.IsOk())
                 bmp = GetInternalImage("default");
 
-            added_tool = toolbar->AddTool(wxID_ANY, childObj->prop_as_wxString(prop_label), bmp, wxNullBitmap,
-                                          (wxItemKind) childObj->prop_as_int(prop_kind),
-                                          childObj->prop_as_wxString(prop_help), wxEmptyString, nullptr);
+            added_tool = toolbar->AddTool(wxID_ANY, childObj->as_wxString(prop_label), bmp, wxNullBitmap,
+                                          (wxItemKind) childObj->as_int(prop_kind), childObj->as_wxString(prop_help),
+                                          wxEmptyString, nullptr);
         }
         else if (childObj->isGen(gen_tool_dropdown))
         {
-            auto bmp = childObj->prop_as_wxBitmapBundle(prop_bitmap);
+            auto bmp = childObj->as_wxBitmapBundle(prop_bitmap);
             if (!bmp.IsOk())
                 bmp = GetInternalImage("default");
 
-            added_tool = toolbar->AddTool(wxID_ANY, childObj->prop_as_wxString(prop_label), bmp, wxNullBitmap,
-                                          wxITEM_DROPDOWN, childObj->prop_as_wxString(prop_help), wxEmptyString, nullptr);
+            added_tool = toolbar->AddTool(wxID_ANY, childObj->as_wxString(prop_label), bmp, wxNullBitmap, wxITEM_DROPDOWN,
+                                          childObj->as_wxString(prop_help), wxEmptyString, nullptr);
         }
         else if (childObj->isGen(gen_toolSeparator))
         {
@@ -93,7 +93,7 @@ void ToolBarFormGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparen
             }
         }
 
-        if (added_tool && childObj->prop_as_bool(prop_disabled))
+        if (added_tool && childObj->as_bool(prop_disabled))
         {
             toolbar->EnableTool(added_tool->GetId(), false);
         }
@@ -190,14 +190,14 @@ bool ToolBarFormGenerator::HeaderCode(Code& code)
 
     code.Comma().Str("const wxSize& size = ");
 
-    auto size = node->prop_as_wxSize(prop_size);
+    auto size = node->as_wxSize(prop_size);
     if (size == wxDefaultSize)
         code.Str("wxDefaultSize");
     else
         code.WxSize(prop_size, no_dlg_units);
 
-    auto& style = node->prop_as_string(prop_style);
-    auto& win_style = node->prop_as_string(prop_window_style);
+    auto& style = node->as_string(prop_style);
+    auto& win_style = node->as_string(prop_window_style);
     if (style.empty() && win_style.empty())
         code.Comma().Str("long style = 0");
     else
@@ -220,7 +220,7 @@ bool ToolBarFormGenerator::HeaderCode(Code& code)
         }
     }
 
-    if (node->prop_as_string(prop_window_name).size())
+    if (node->as_string(prop_window_name).size())
     {
         code.Comma().Str("const wxString &name = ").QuotedString(prop_window_name);
     }
@@ -315,13 +315,13 @@ wxObject* ToolBarGenerator::CreateMockup(Node* node, wxObject* parent)
 
     if (node->HasValue(prop_margins))
     {
-        wxSize margins(node->prop_as_wxSize(prop_margins));
+        wxSize margins(node->as_wxSize(prop_margins));
         widget->SetMargins(margins.GetWidth(), margins.GetHeight());
     }
     if (node->HasValue(prop_packing))
-        widget->SetToolPacking(node->prop_as_int(prop_packing));
+        widget->SetToolPacking(node->as_int(prop_packing));
     if (node->HasValue(prop_separation))
-        widget->SetToolSeparation(node->prop_as_int(prop_separation));
+        widget->SetToolSeparation(node->as_int(prop_separation));
 
     widget->Bind(wxEVT_TOOL, &ToolBarGenerator::OnTool, this);
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
@@ -344,22 +344,22 @@ void ToolBarGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/,
         auto childObj = node->GetChild(i);
         if (childObj->isGen(gen_tool))
         {
-            auto bmp = childObj->prop_as_wxBitmapBundle(prop_bitmap);
+            auto bmp = childObj->as_wxBitmapBundle(prop_bitmap);
             if (!bmp.IsOk())
                 bmp = GetInternalImage("default");
 
-            toolbar->AddTool(wxID_ANY, childObj->prop_as_wxString(prop_label), bmp, wxNullBitmap,
-                             (wxItemKind) childObj->prop_as_int(prop_kind), childObj->prop_as_wxString(prop_help),
-                             wxEmptyString, nullptr);
+            toolbar->AddTool(wxID_ANY, childObj->as_wxString(prop_label), bmp, wxNullBitmap,
+                             (wxItemKind) childObj->as_int(prop_kind), childObj->as_wxString(prop_help), wxEmptyString,
+                             nullptr);
         }
         else if (childObj->isGen(gen_tool_dropdown))
         {
-            auto bmp = childObj->prop_as_wxBitmapBundle(prop_bitmap);
+            auto bmp = childObj->as_wxBitmapBundle(prop_bitmap);
             if (!bmp.IsOk())
                 bmp = GetInternalImage("default");
 
-            toolbar->AddTool(wxID_ANY, childObj->prop_as_wxString(prop_label), bmp, wxNullBitmap, wxITEM_DROPDOWN,
-                             childObj->prop_as_wxString(prop_help), wxEmptyString, nullptr);
+            toolbar->AddTool(wxID_ANY, childObj->as_wxString(prop_label), bmp, wxNullBitmap, wxITEM_DROPDOWN,
+                             childObj->as_wxString(prop_help), wxEmptyString, nullptr);
         }
         else if (childObj->isGen(gen_toolSeparator))
         {
@@ -606,7 +606,7 @@ bool ToolDropDownGenerator::SettingsCode(Code& code)
     code.AddIfCpp("auto* ").Str(menu_name).Assign("wxMenu");
     auto menu_node_ptr = NodeCreation.NewNode(gen_wxMenu);
     menu_node_ptr->SetParent(code.node());  // Python code generation needs this set
-    menu_node_ptr->prop_set_value(prop_var_name, menu_name);
+    menu_node_ptr->set_value(prop_var_name, menu_name);
 
     for (const auto& child: code.node()->GetChildNodePtrs())
     {

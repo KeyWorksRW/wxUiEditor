@@ -94,7 +94,7 @@ void resCtrl::ParseIconControl(tt_string_view line)
         tt_string prop;
         prop << "Art; " << stock_image->second << "|wxART_TOOLBAR; [-1; -1]";
         m_node = NodeCreation.NewNode(gen_wxStaticBitmap);
-        m_node->prop_set_value(prop_bitmap, prop);
+        m_node->set_value(prop_bitmap, prop);
     }
     else
     {
@@ -117,7 +117,7 @@ void resCtrl::ParseIconControl(tt_string_view line)
 
             // Note that this sets up the filename to convert, but doesn't actually do the conversion -- that will require
             // the code to be generated.
-            m_node->prop_set_value(prop_bitmap, prop);
+            m_node->set_value(prop_bitmap, prop);
         }
     }
     line = GetID(line);
@@ -165,7 +165,7 @@ void resCtrl::ParseImageControl(tt_string_view line)
     {
         tt_string prop;
         prop << "Art; " << stock_image->second << "; wxART_TOOLBAR; [-1; -1]";
-        m_node->prop_set_value(prop_bitmap, prop);
+        m_node->set_value(prop_bitmap, prop);
     }
     else
     {
@@ -215,7 +215,7 @@ void resCtrl::ParseImageControl(tt_string_view line)
 
             // Note that this sets up the filename to convert, but doesn't actually do the conversion -- that will require
             // the code to be generated.
-            m_node->prop_set_value(prop_bitmap, prop);
+            m_node->set_value(prop_bitmap, prop);
         }
     }
 

@@ -166,7 +166,7 @@ bool WizardFormGenerator::AfterChildrenCode(Code& code)
     {
         if (panes.size() > 1)
         {
-            code.Eol(eol_if_needed).Str(panes[0]->prop_as_string(prop_var_name)).Function("Chain(");
+            code.Eol(eol_if_needed).Str(panes[0]->as_string(prop_var_name)).Function("Chain(");
             code.Str(panes[1]->as_string(prop_var_name)) += ")";
             for (size_t pos = 1; pos + 1 < panes.size(); ++pos)
             {
@@ -205,7 +205,7 @@ bool WizardFormGenerator::HeaderCode(Code& code)
 
     code.Str(prop_class_name).Str("(wxWindow* parent, wxWindowID id = ").Str(prop_id);
     code.Comma().Str("const wxString& title = ");
-    auto& title = node->prop_as_string(prop_title);
+    auto& title = node->as_string(prop_title);
     if (code.HasValue(prop_title))
     {
         code.QuotedString(title);
@@ -223,8 +223,8 @@ bool WizardFormGenerator::HeaderCode(Code& code)
     else
         code.Pos(prop_pos, no_dlg_units);
 
-    auto& style = node->prop_as_string(prop_style);
-    auto& win_style = node->prop_as_string(prop_window_style);
+    auto& style = node->as_string(prop_style);
+    auto& win_style = node->as_string(prop_window_style);
     if (style.empty() && win_style.empty())
         code.Comma().Str("long style = 0");
     else
@@ -319,63 +319,62 @@ int WizardFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t
 
     if (node->HasValue(prop_center))
     {
-        if (node->prop_as_string(prop_center).is_sameas("wxVERTICAL") ||
-            node->prop_as_string(prop_center).is_sameas("wxHORIZONTAL"))
+        if (node->as_string(prop_center).is_sameas("wxVERTICAL") || node->as_string(prop_center).is_sameas("wxHORIZONTAL"))
         {
             if (xrc_flags & xrc::add_comments)
             {
                 item.append_child(pugi::node_comment)
-                    .set_value((tt_string(node->prop_as_string(prop_center)) << " cannot be be set in the XRC file."));
+                    .set_value((tt_string(node->as_string(prop_center)) << " cannot be be set in the XRC file."));
             }
             item.append_child("centered").text().set(1);
         }
         else
         {
-            item.append_child("centered").text().set(node->prop_as_string(prop_center).is_sameas("no") ? 0 : 1);
+            item.append_child("centered").text().set(node->as_string(prop_center).is_sameas("no") ? 0 : 1);
         }
     }
 
     if (node->HasValue(prop_style))
     {
-        if ((xrc_flags & xrc::add_comments) && node->prop_as_string(prop_style).contains("wxWANTS_CHARS"))
+        if ((xrc_flags & xrc::add_comments) && node->as_string(prop_style).contains("wxWANTS_CHARS"))
         {
             item.append_child(pugi::node_comment)
                 .set_value("The wxWANTS_CHARS style will be ignored when the XRC is loaded.");
         }
         if (!node->HasValue(prop_extra_style))
         {
-            item.append_child("style").text().set(node->prop_as_string(prop_style));
+            item.append_child("style").text().set(node->as_string(prop_style));
         }
         else
         {
-            tt_string all_styles = node->prop_as_string(prop_style);
-            all_styles << '|' << node->prop_as_string(prop_extra_style);
+            tt_string all_styles = node->as_string(prop_style);
+            all_styles << '|' << node->as_string(prop_extra_style);
             item.append_child("style").text().set(all_styles);
         }
     }
 
     if (node->HasValue(prop_pos))
-        item.append_child("pos").text().set(node->prop_as_string(prop_pos));
+        item.append_child("pos").text().set(node->as_string(prop_pos));
     if (node->HasValue(prop_size))
-        item.append_child("size").text().set(node->prop_as_string(prop_size));
+        item.append_child("size").text().set(node->as_string(prop_size));
 
     if (node->HasValue(prop_border) && node->as_int(prop_border) > 0)
-        item.append_child("border").text().set(node->prop_as_string(prop_border));
+        item.append_child("border").text().set(node->as_string(prop_border));
 
     if (node->HasValue(prop_bmp_placement))
     {
-        item.append_child("bitmap-placement").text().set(node->prop_as_string(prop_bmp_placement));
+        item.append_child("bitmap-placement").text().set(node->as_string(prop_bmp_placement));
         if (node->as_int(prop_bmp_min_width) > 0)
-            item.append_child("bitmap-minwidth").text().set(node->prop_as_string(prop_bmp_min_width));
+            item.append_child("bitmap-minwidth").text().set(node->as_string(prop_bmp_min_width));
         if (node->HasValue(prop_bmp_background_colour))
             item.append_child("bitmap-bg")
                 .text()
-                .set(node->prop_as_wxColour(prop_bmp_background_colour).GetAsString(wxC2S_HTML_SYNTAX).ToUTF8().data());
+                .set(node->as_wxColour(prop_bmp_background_colour).GetAsString(wxC2S_HTML_SYNTAX).ToUTF8().data());
     }
 
     if (xrc_flags & xrc::add_comments)
     {
-        if (node->prop_as_bool(prop_persist))
+        if (node->as_bool(prop_persist))
             item.append_child(pugi::node_comment).set_value(" persist is not supported in the XRC file. ");
 
         GenXrcComments(node, item);

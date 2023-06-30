@@ -21,19 +21,19 @@ wxObject* FileCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     wxString wild;
     if (node->HasValue(prop_wildcard))
-        wild = node->prop_as_wxString(prop_wildcard);
+        wild = node->as_wxString(prop_wildcard);
     else
         wild = wxFileSelectorDefaultWildcardStr;
 
-    auto widget = new wxFileCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString(prop_initial_folder),
-                                 node->prop_as_wxString(prop_initial_filename), wild, GetStyleInt(node),
+    auto widget = new wxFileCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxString(prop_initial_folder),
+                                 node->as_wxString(prop_initial_filename), wild, GetStyleInt(node),
                                  DlgPoint(parent, node, prop_pos), DlgSize(parent, node, prop_size));
 
-    if (!(node->prop_as_int(prop_style) & wxFC_NOSHOWHIDDEN))
-        widget->ShowHidden(node->prop_as_bool(prop_show_hidden));
+    if (!(node->as_int(prop_style) & wxFC_NOSHOWHIDDEN))
+        widget->ShowHidden(node->as_bool(prop_show_hidden));
 
-    if (node->prop_as_int(prop_filter_index) > 0)
-        widget->SetFilterIndex(node->prop_as_int(prop_filter_index));
+    if (node->as_int(prop_filter_index) > 0)
+        widget->SetFilterIndex(node->as_int(prop_filter_index));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
@@ -117,9 +117,9 @@ int FileCtrlGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t x
 
     if (xrc_flags & xrc::add_comments)
     {
-        if (node->prop_as_int(prop_filter_index) > 0)
+        if (node->as_int(prop_filter_index) > 0)
             ADD_ITEM_COMMENT("XRC does not support calling SetFilterIndex()")
-        if (node->prop_as_bool(prop_show_hidden))
+        if (node->as_bool(prop_show_hidden))
             ADD_ITEM_COMMENT("XRC does not support calling ShowHidden()")
         GenXrcComments(node, item);
     }

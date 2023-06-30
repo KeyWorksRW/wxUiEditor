@@ -18,40 +18,40 @@
 
 wxObject* CommandLinkBtnGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxCommandLinkButton(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString(prop_main_label),
-                                          node->prop_as_wxString(prop_note), DlgPoint(parent, node, prop_pos),
+    auto widget = new wxCommandLinkButton(wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxString(prop_main_label),
+                                          node->as_wxString(prop_note), DlgPoint(parent, node, prop_pos),
                                           DlgSize(parent, node, prop_size), GetStyleInt(node));
 
-    if (node->prop_as_bool(prop_default))
+    if (node->as_bool(prop_default))
         widget->SetDefault();
 
-    if (node->prop_as_bool(prop_auth_needed))
+    if (node->as_bool(prop_auth_needed))
         widget->SetAuthNeeded();
 
     if (node->HasValue(prop_bitmap))
     {
-        widget->SetBitmap(node->prop_as_wxBitmapBundle(prop_bitmap));
+        widget->SetBitmap(node->as_wxBitmapBundle(prop_bitmap));
 
         if (node->HasValue(prop_disabled_bmp))
-            widget->SetBitmapDisabled(node->prop_as_wxBitmapBundle(prop_disabled_bmp));
+            widget->SetBitmapDisabled(node->as_wxBitmapBundle(prop_disabled_bmp));
 
         if (node->HasValue(prop_pressed_bmp))
-            widget->SetBitmapPressed(node->prop_as_wxBitmapBundle(prop_pressed_bmp));
+            widget->SetBitmapPressed(node->as_wxBitmapBundle(prop_pressed_bmp));
 
         if (node->HasValue(prop_focus_bmp))
-            widget->SetBitmapFocus(node->prop_as_wxBitmapBundle(prop_focus_bmp));
+            widget->SetBitmapFocus(node->as_wxBitmapBundle(prop_focus_bmp));
 
         if (node->HasValue(prop_current))
-            widget->SetBitmapCurrent(node->prop_as_wxBitmapBundle(prop_current));
+            widget->SetBitmapCurrent(node->as_wxBitmapBundle(prop_current));
 
 #if 0
         // REVIEW: [KeyWorks - 05-30-2022] As of 3.1.7, these don't work property on Windows 10.
 
         if (node->HasValue(prop_position))
-            widget->SetBitmapPosition(static_cast<wxDirection>(node->prop_as_int(prop_position)));
+            widget->SetBitmapPosition(static_cast<wxDirection>(node->as_int(prop_position)));
 
         if (node->HasValue(prop_margins))
-            widget->SetBitmapMargins(node->prop_as_wxSize(prop_margins));
+            widget->SetBitmapMargins(node->as_wxSize(prop_margins));
 #endif
     }
 

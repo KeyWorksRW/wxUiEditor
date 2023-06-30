@@ -20,7 +20,7 @@
 
 wxObject* StaticBoxGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxStaticBox(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString(prop_label),
+    auto widget = new wxStaticBox(wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxString(prop_label),
                                   DlgPoint(parent, node, prop_pos), DlgSize(parent, node, prop_size), GetStyleInt(node));
 
     return widget;
@@ -50,7 +50,7 @@ int StaticBoxGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t 
 
     if (xrc_flags & xrc::add_comments)
     {
-        if (node->prop_as_bool(prop_markup))
+        if (node->as_bool(prop_markup))
         {
             item.append_child(pugi::node_comment).set_value(" markup cannot be be set in the XRC file. ");
         }

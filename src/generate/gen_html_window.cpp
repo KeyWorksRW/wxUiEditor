@@ -20,12 +20,12 @@ wxObject* HtmlWindowGenerator::CreateMockup(Node* node, wxObject* parent)
     auto widget = new wxHtmlWindow(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(parent, node, prop_pos),
                                    DlgSize(parent, node, prop_size), GetStyleInt(node));
 
-    if (node->prop_as_int(prop_html_borders) >= 0)
-        widget->SetBorders(wxStaticCast(parent, wxWindow)->FromDIP(node->prop_as_int(prop_html_borders)));
+    if (node->as_int(prop_html_borders) >= 0)
+        widget->SetBorders(wxStaticCast(parent, wxWindow)->FromDIP(node->as_int(prop_html_borders)));
 
     if (node->HasValue(prop_html_content))
     {
-        widget->SetPage(node->prop_as_wxString(prop_html_content));
+        widget->SetPage(node->as_wxString(prop_html_content));
     }
 
 #if 0
@@ -35,15 +35,14 @@ wxObject* HtmlWindowGenerator::CreateMockup(Node* node, wxObject* parent)
     {
         wxBusyInfo wait(wxBusyInfoFlags()
                             .Parent(wxStaticCast(parent, wxWindow))
-                            .Title(wxString("Parsing ") << node->prop_as_wxString(prop_html_url))
+                            .Title(wxString("Parsing ") << node->as_wxString(prop_html_url))
                             .Text("This could take awhile..."));
-        widget->LoadPage(node->prop_as_wxString(prop_html_url));
+        widget->LoadPage(node->as_wxString(prop_html_url));
     }
 #else
     else if (node->HasValue(prop_html_url))
     {
-        widget->SetPage(tt_string("Contents of<br>    ")
-                        << node->prop_as_string(prop_html_url) << "<br>will be displayed here.");
+        widget->SetPage(tt_string("Contents of<br>    ") << node->as_string(prop_html_url) << "<br>will be displayed here.");
     }
 #endif
     else
@@ -98,7 +97,7 @@ int HtmlWindowGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t
 
     GenXrcObjectAttributes(node, item, "wxHtmlWindow");
 
-    if (node->prop_as_int(prop_html_borders) >= 0)
+    if (node->as_int(prop_html_borders) >= 0)
         ADD_ITEM_PROP(prop_html_borders, "borders")
     ADD_ITEM_PROP(prop_html_url, "url")
     ADD_ITEM_PROP(prop_html_content, "htmlcode")

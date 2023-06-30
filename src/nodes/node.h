@@ -50,7 +50,6 @@ public:
     void SetParent(Node* parent) { m_parent = parent->GetSharedPtr(); }
 
     NodeProperty* get_prop_ptr(PropName name);
-
     NodeProperty* prop(PropName name) { return get_prop_ptr(name); }
 
     NodeEvent* GetEvent(tt_string_view name);
@@ -147,6 +146,14 @@ public:
     // node. Use this to find a parent for a new form.
     Node* get_ValidFormParent() noexcept;
 
+    NodeProperty* get_property(PropName name)
+    {
+        if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
+            return &m_properties[result->second];
+        else
+            return nullptr;
+    }
+
     NodeDeclaration* GetNodeDeclaration() { return m_declaration; }
 
     // Returns true if the property exists, has a value (!= wxDefaultSize, !=
@@ -170,50 +177,7 @@ public:
     bool is_value(PropName name, const char* value) const noexcept { return isPropValue(name, value); }
     bool is_value(PropName name, bool value) const noexcept { return isPropValue(name, value); }
     bool is_value(PropName name, int value) const noexcept;
-
-    // Sets value only if the property exists, returns false if it doesn't exist.
-    template <typename T>
-    bool prop_set_value(PropName name, T value)
-    {
-        if (auto prop = get_prop_ptr(name); prop)
-        {
-            prop->set_value(value);
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
-
-    bool prop_as_bool(PropName name) const;
-
-    // If type is option, id, or bitlist, this will convert that constant name to it's value
-    // (see NodeCreation.GetConstantAsInt()). Otherwise, it calls atoi().
-    int prop_as_int(PropName name) const;
     int prop_as_mockup(PropName name, std::string_view prefix) const;
-
-    // Looks up wx constant, returns it's numerical value.
-    //
-    // Returns wxID_ANY if constant is not found
-    int prop_as_id(PropName name) const;
-
-    wxColour prop_as_wxColour(PropName name) const;
-    wxFont prop_as_font(PropName name) const;
-    wxPoint prop_as_wxPoint(PropName name) const;
-    wxSize prop_as_wxSize(PropName name) const;
-    wxAnimation prop_as_wxAnimation(PropName name) const;
-    wxBitmap prop_as_wxBitmap(PropName name) const;
-    wxArrayString prop_as_wxArrayString(PropName name) const;
-
-    wxBitmapBundle prop_as_wxBitmapBundle(PropName name) const;
-    const ImageBundle* prop_as_image_bundle(PropName name) const;
-
-    FontProperty prop_as_font_prop(PropName name) const;
-    double prop_as_double(PropName name) const;
-
-    const tt_string& prop_as_string(PropName name) const;
-    const tt_string& prop_as_constant(PropName name, std::string_view prefix);
 
     // Use with caution! This allows you to modify the property string directly.
     //
@@ -221,14 +185,6 @@ public:
     tt_string* prop_as_raw_ptr(PropName name);
 
     const tt_string& prop_default_value(PropName name);
-
-    // On Windows this will first convert to UTF-16 unless wxUSE_UNICODE_UTF8 is set.
-    //
-    // The string will be empty if the property doesn't exist.
-    wxString prop_as_wxString(PropName name) const;
-
-    // The following are shorter versions of the above functions. These are only here to save typing, and enhance code
-    // readability (since they all require a prop_ parameter, it should be easy to know what they work on)
 
     // Sets value only if the property exists, returns false if it doesn't exist.
     template <typename T>
@@ -245,22 +201,54 @@ public:
         }
     }
 
-    const tt_string& value(PropName name) const { return prop_as_string(name); }
+    const tt_string& value(PropName name) const { return as_string(name); }
 
-    const tt_string_view view(PropName name) const { return prop_as_string(name); }
+    const tt_string_view view(PropName name) const { return as_string(name); }
 
-    bool as_bool(PropName name) const { return prop_as_bool(name); }
+    bool as_bool(PropName name) const
+    {
+        if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
+            return (m_properties[result->second].as_string().atoi() != 0);
+        else
+            return false;
+    }
 
     // If type is option, id, or bitlist, this will convert that constant name to it's value
     // (see NodeCreation.GetConstantAsInt()). Otherwise, it calls atoi().
-    int as_int(PropName name) const { return prop_as_int(name); }
+    int as_int(PropName name) const
+    {
+        if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
+            return m_properties[result->second].as_int();
+        else
+            return 0;
+    }
+
+    const tt_string& as_constant(PropName name, std::string_view prefix)
+    {
+        if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
+            return m_properties[result->second].as_constant(prefix);
+        else
+            return tt_empty_cstr;
+    }
 
     // Looks up wx constant, returns it's numerical value.
     //
     // Returns wxID_ANY if constant is not found
-    int as_id(PropName name) const { return prop_as_id(name); }
+    int as_id(PropName name) const
+    {
+        if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
+            return m_properties[result->second].as_id();
+        else
+            return wxID_ANY;
+    }
 
-    double as_double(PropName name) const { return prop_as_double(name); }
+    double as_double(PropName name) const
+    {
+        if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
+            return m_properties[result->second].as_float();
+        else
+            return 0;
+    }
 
     const tt_string& as_string(PropName name) const
     {
@@ -270,23 +258,91 @@ public:
             return tt_empty_cstr;
     }
 
-    const tt_string& as_constant(PropName name, std::string_view prefix) { return prop_as_constant(name, prefix); }
-
-    wxColour as_wxColour(PropName name) const { return prop_as_wxColour(name); }
-    wxFont as_wxFont(PropName name) const { return prop_as_font(name); }
-    wxPoint as_wxPoint(PropName name) const { return prop_as_wxPoint(name); }
-    wxSize as_wxSize(PropName name) const { return prop_as_wxSize(name); }
-    wxBitmap as_wxBitmap(PropName name) const { return prop_as_wxBitmap(name); }
-    wxArrayString as_wxArrayString(PropName name) const { return prop_as_wxArrayString(name); }
-    wxBitmapBundle as_wxBitmapBundle(PropName name) const { return prop_as_wxBitmapBundle(name); }
-
-    // Assumes all values are within quotes
-    std::vector<tt_string> as_ArrayString(PropName name) const;
-
     // On Windows this will first convert to UTF-16 unless wxUSE_UNICODE_UTF8 is set.
     //
     // The string will be empty if the property doesn't exist.
-    wxString as_wxString(PropName name) const { return prop_as_wxString(name); }
+    wxString as_wxString(PropName name) const
+    {
+        if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
+            return m_properties[result->second].as_wxString();
+        else
+            return {};
+    }
+
+    wxBitmapBundle as_wxBitmapBundle(PropName name) const
+    {
+        if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
+            return m_properties[result->second].as_bitmap_bundle();
+        else
+            return wxNullBitmap;
+    }
+
+    const ImageBundle* as_image_bundle(PropName name) const
+    {
+        if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
+            return m_properties[result->second].as_image_bundle();
+        else
+            return nullptr;
+    }
+
+    wxBitmap as_wxBitmap(PropName name) const
+    {
+        if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
+            return m_properties[result->second].as_bitmap();
+        else
+            return wxNullBitmap;
+    }
+
+    wxColour as_wxColour(PropName name) const
+    {
+        if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
+            return m_properties[result->second].as_color();
+        else
+            return {};
+    }
+
+    wxFont as_wxFont(PropName name) const
+    {
+        if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
+            return m_properties[result->second].as_font();
+        else
+            return *wxNORMAL_FONT;
+    }
+
+    FontProperty as_font_prop(PropName name) const
+    {
+        if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
+            return m_properties[result->second].as_font_prop();
+        else
+            return FontProperty(wxNORMAL_FONT);
+    }
+
+    wxPoint as_wxPoint(PropName name) const
+    {
+        if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
+            return m_properties[result->second].as_point();
+        else
+            return wxDefaultPosition;
+    }
+
+    wxSize as_wxSize(PropName name) const
+    {
+        if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
+            return m_properties[result->second].as_size();
+        else
+            return wxDefaultSize;
+    }
+
+    wxArrayString as_wxArrayString(PropName name) const
+    {
+        if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
+            return m_properties[result->second].as_wxArrayString();
+        else
+            return {};
+    }
+
+    // Assumes all values are within quotes
+    std::vector<tt_string> as_ArrayString(PropName name) const;
 
     // If the following vector properties don't exist, they will return an empty vector
 
@@ -294,9 +350,6 @@ public:
     std::vector<NODEPROP_CHECKLIST_ITEM> as_checklist_items(PropName name);
     std::vector<NODEPROP_RADIOBOX_ITEM> as_radiobox_items(PropName name);
     std::vector<NODEPROP_BMP_COMBO_ITEM> as_bmp_combo_items(PropName name);
-
-    const ImageBundle* as_image_bundle(PropName name) const { return prop_as_image_bundle(name); }
-    FontProperty as_font_prop(PropName name) const { return prop_as_font_prop(name); }
 
     wxSizerFlags GetSizerFlags() const;
 

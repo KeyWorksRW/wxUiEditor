@@ -107,7 +107,7 @@ public:
     wxSize as_size() const;
     wxArrayString as_wxArrayString() const;
 
-    // Assumes all values are within quotes
+    // Assumes all values are within quotes, or separated by semi-colons
     std::vector<tt_string> as_ArrayString() const;
 
     // On Windows this will first convert to UTF-16 unless wxUSE_UNICODE_UTF8 is set.

@@ -17,19 +17,19 @@
 
 wxObject* StaticBoxSizerGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto sizer = new wxStaticBoxSizer(node->prop_as_int(prop_orientation), wxStaticCast(parent, wxWindow),
-                                      node->prop_as_wxString(prop_label));
+    auto sizer =
+        new wxStaticBoxSizer(node->as_int(prop_orientation), wxStaticCast(parent, wxWindow), node->as_wxString(prop_label));
     if (auto dlg = wxDynamicCast(parent, wxDialog); dlg)
     {
         if (!dlg->GetSizer())
             dlg->SetSizer(sizer);
     }
 
-    auto min_size = node->prop_as_wxSize(prop_minimum_size);
+    auto min_size = node->as_wxSize(prop_minimum_size);
     if (min_size.x != -1 || min_size.y != -1)
         sizer->SetMinSize(min_size);
 
-    if (node->prop_as_bool(prop_hidden) && !GetMockup()->IsShowingHidden())
+    if (node->as_bool(prop_hidden) && !GetMockup()->IsShowingHidden())
         sizer->GetStaticBox()->Hide();
 
     return sizer;
@@ -74,7 +74,7 @@ bool StaticBoxSizerGenerator::ConstructionCode(Code& code)
     }
     code.AddAuto().NodeName().CreateClass().Str(prop_orientation).Comma().Str(parent_name);
 
-    if (auto& label = node->prop_as_string(prop_label); label.size())
+    if (auto& label = node->as_string(prop_label); label.size())
     {
         code.Comma().QuotedString(label);
     }
@@ -157,11 +157,11 @@ int StaticBoxSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& object, si
     }
 
     item.append_attribute("class").set_value("wxStaticBoxSizer");
-    item.append_attribute("name").set_value(node->prop_as_string(prop_var_name));
-    // item.append_child("orient").text().set(node->prop_as_string(prop_orientation));
+    item.append_attribute("name").set_value(node->as_string(prop_var_name));
+    // item.append_child("orient").text().set(node->as_string(prop_orientation));
     // if (node->HasValue(prop_minimum_size))
     // {
-    // item.append_child("minsize").text().set(node->prop_as_string(prop_minimum_size));
+    // item.append_child("minsize").text().set(node->as_string(prop_minimum_size));
     // }
 
     ADD_ITEM_PROP(prop_orientation, "orient")

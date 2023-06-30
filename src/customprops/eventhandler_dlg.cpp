@@ -356,7 +356,7 @@ void EventHandlerDlg::FormatBindText()
     }
     else if (m_event->GetNode()->isGen(gen_ribbonTool))
     {
-        if (m_event->GetNode()->prop_as_string(prop_id).empty())
+        if (m_event->GetNode()->as_string(prop_id).empty())
         {
             code.Add("Bind(").Add(handler).Comma().Add("wxID_ANY").EndFunction();
         }

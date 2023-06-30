@@ -79,17 +79,16 @@ wxObject* BookPageGenerator::CreateMockup(Node* node, wxObject* parent)
                 if (is_image_found)
                     break;
             }
-            tree->AddSubPage(widget, node->prop_as_wxString(prop_label), false, idx_image);
+            tree->AddSubPage(widget, node->as_wxString(prop_label), false, idx_image);
         }
         else
         {
-            tree->AddSubPage(widget, node->prop_as_wxString(prop_label), false, -1);
+            tree->AddSubPage(widget, node->as_wxString(prop_label), false, -1);
         }
     }
     else if (auto book = wxDynamicCast(parent, wxBookCtrlBase); book)
     {
-        if (node->HasValue(prop_bitmap) &&
-            (node_parent->prop_as_bool(prop_display_images) || node_parent->isGen(gen_wxToolbook)))
+        if (node->HasValue(prop_bitmap) && (node_parent->as_bool(prop_display_images) || node_parent->isGen(gen_wxToolbook)))
         {
             int idx_image = -1;
             bool is_image_found { false };
@@ -128,15 +127,15 @@ wxObject* BookPageGenerator::CreateMockup(Node* node, wxObject* parent)
                 }
             }
 
-            book->AddPage(widget, node->prop_as_wxString(prop_label), false, idx_image);
+            book->AddPage(widget, node->as_wxString(prop_label), false, idx_image);
         }
         else
         {
-            book->AddPage(widget, node->prop_as_wxString(prop_label));
+            book->AddPage(widget, node->as_wxString(prop_label));
         }
 
         auto cur_selection = book->GetSelection();
-        if (node->prop_as_bool(prop_select))
+        if (node->as_bool(prop_select))
         {
             book->SetSelection(book->GetPageCount() - 1);
         }
@@ -150,7 +149,7 @@ wxObject* BookPageGenerator::CreateMockup(Node* node, wxObject* parent)
         auto aui_book = wxDynamicCast(parent, wxAuiNotebook);
         if (aui_book)
         {
-            if (node->HasValue(prop_bitmap) && node_parent->prop_as_bool(prop_display_images))
+            if (node->HasValue(prop_bitmap) && node_parent->as_bool(prop_display_images))
             {
                 int idx_image = -1;
                 for (const auto& child: node_parent->GetChildNodePtrs())
@@ -169,15 +168,15 @@ wxObject* BookPageGenerator::CreateMockup(Node* node, wxObject* parent)
                     }
                 }
 
-                aui_book->AddPage(widget, node->prop_as_wxString(prop_label), false, idx_image);
+                aui_book->AddPage(widget, node->as_wxString(prop_label), false, idx_image);
             }
             else
             {
-                aui_book->AddPage(widget, node->prop_as_wxString(prop_label));
+                aui_book->AddPage(widget, node->as_wxString(prop_label));
             }
 
             auto cur_selection = aui_book->GetSelection();
-            if (node->prop_as_bool(prop_select))
+            if (node->as_bool(prop_select))
             {
                 aui_book->SetSelection(aui_book->GetPageCount() - 1);
             }
@@ -225,7 +224,7 @@ bool BookPageGenerator::ConstructionCode(Code& code)
         if (node->HasValue(prop_bitmap) && is_display_images)
         {
             int idx_image = GetTreebookImageIndex(node);
-            if (!node->prop_as_bool(prop_select))
+            if (!node->as_bool(prop_select))
             {
                 code.Comma().AddFalse();
             }
@@ -271,7 +270,7 @@ bool BookPageGenerator::ConstructionCode(Code& code)
                     }
                 }
             }
-            if (!node->prop_as_bool(prop_select))
+            if (!node->as_bool(prop_select))
                 code.Comma().AddFalse();
             code.Comma() << idx_image;
         }
@@ -363,7 +362,7 @@ int BookPageGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t x
 
     auto panel = item.append_child("object");
     panel.append_attribute("class").set_value("wxPanel");
-    panel.append_attribute("name").set_value(node->prop_as_string(prop_var_name));
+    panel.append_attribute("name").set_value(node->as_string(prop_var_name));
     panel.append_child("style").text().set("wxTAB_TRAVERSAL");
 
     return BaseGenerator::xrc_sizer_item_created;

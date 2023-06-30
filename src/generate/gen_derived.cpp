@@ -57,17 +57,17 @@ static constexpr const char* lst_close_type_button[] = {
 int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_PAGE panel_type)
 {
     m_form_node = form;
-    m_is_derived_class = m_form_node->prop_as_bool(prop_use_derived_class);
+    m_is_derived_class = m_form_node->as_bool(prop_use_derived_class);
 
     tt_string source_ext(".cpp");
     tt_string header_ext(".h");
 
-    if (auto& extProp = project->prop_as_string(prop_source_ext); extProp.size())
+    if (auto& extProp = project->as_string(prop_source_ext); extProp.size())
     {
         source_ext = extProp;
     }
 
-    if (auto& extProp = project->prop_as_string(prop_header_ext); extProp.size())
+    if (auto& extProp = project->as_string(prop_header_ext); extProp.size())
     {
         header_ext = extProp;
     }
@@ -114,7 +114,7 @@ int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_PAG
     std::thread thrd_get_events(&BaseCodeGenerator::CollectEventHandlers, this, m_form_node, std::ref(events));
 
     tt_string baseFile;
-    if (auto& file = m_form_node->prop_as_string(prop_base_file); file.size())
+    if (auto& file = m_form_node->as_string(prop_base_file); file.size())
     {
         baseFile = Project.BaseDirectory(form, GEN_LANG_CPLUSPLUS);
         if (baseFile.size())
@@ -160,15 +160,15 @@ int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_PAG
         }
     }
 
-    tt_string derived_name = m_form_node->prop_as_string(prop_derived_class_name);
+    tt_string derived_name = m_form_node->as_string(prop_derived_class_name);
     if (!m_is_derived_class)
     {
         // If this is not a derived class, then use the base class name
-        derived_name = m_form_node->prop_as_string(prop_class_name);
+        derived_name = m_form_node->as_string(prop_class_name);
     }
     else if (derived_name.empty())
     {
-        tt_string base_name(m_form_node->prop_as_string(prop_class_name));
+        tt_string base_name(m_form_node->as_string(prop_class_name));
         base_name.Replace("My", "");
         base_name.Replace("Base", "");
         derived_name << "MyDerived" << base_name;
@@ -231,7 +231,7 @@ int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_PAG
 
     if (panel_type != HDR_PANEL)
     {
-        if (auto prop = project->prop_as_string(prop_local_pch_file); prop.size())
+        if (auto prop = project->as_string(prop_local_pch_file); prop.size())
         {
             tt_string pch("#include ");
             pch << "\"" << prop << "\"";
@@ -243,7 +243,7 @@ int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_PAG
 
         if (project->HasValue(prop_src_preamble))
         {
-            tt_string convert(project->prop_as_string(prop_src_preamble));
+            tt_string convert(project->as_string(prop_src_preamble));
             convert.Replace("@@", "\n", tt::REPLACE::all);
             tt_string_vector lines(convert, '\n');
             bool initial_bracket = false;
@@ -382,7 +382,7 @@ int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_PAG
                 // If this is a button that closes a dialog, and the dialog is marked as persist, then event.Skip() must be
                 // called.
                 if (event->GetEventInfo()->get_name().is_sameas("wxEVT_INIT_DIALOG") ||
-                    (close_type_button && m_form_node->prop_as_bool(prop_persist)))
+                    (close_type_button && m_form_node->as_bool(prop_persist)))
                 {
                     // OnInitDialog needs to call event.Skip() in order to initialize validators and update the UI
                     prototype.Format("%s(%s& event)", event_code.c_str(), event->GetEventInfo()->get_event_class().c_str());
@@ -444,7 +444,7 @@ int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_PAG
 
                         m_source->writeLine("}");
 
-                        if (m_form_node->prop_as_bool(prop_persist))
+                        if (m_form_node->as_bool(prop_persist))
                         {
                             m_source->writeLine();
                             m_source->writeLine("event.Skip();  // This must be called for wxPersistenceManager to work");

@@ -187,7 +187,7 @@ void BaseCodeGenerator::GenConstruction(Node* node)
         else if (node->GetChildCount() > 1)
         {
             gen_code.NodeName();
-            if (node->prop_as_string(prop_splitmode) == "wxSPLIT_VERTICAL")
+            if (node->as_string(prop_splitmode) == "wxSPLIT_VERTICAL")
                 gen_code.Function("SplitVertically(");
             else
                 gen_code.Function("SplitHorizontally(");
@@ -403,7 +403,7 @@ bool BaseCodeGenerator::GenAfterChildren(Node* node, bool need_closing_brace)
 
                 if (node->HasValue(prop_borders))
                     gen_code.as_string(prop_borders);
-                if (node->prop_as_string(prop_flags).size())
+                if (node->as_string(prop_flags).size())
                 {
                     if (node->HasValue(prop_borders))
                         gen_code.GetCode() += '|';
@@ -460,7 +460,7 @@ void BaseCodeGenerator::GenParentSizer(Node* node, bool need_closing_brace)
     {
         if (node->isGen(gen_wxStdDialogButtonSizer))
         {
-            if (node->get_form()->isGen(gen_wxDialog) && node->prop_as_bool(prop_static_line))
+            if (node->get_form()->isGen(gen_wxDialog) && node->as_bool(prop_static_line))
             {
                 if (is_cpp())
                     code.ParentName().Function("Add(CreateSeparatedSizer(").NodeName() << "), ";
@@ -483,12 +483,12 @@ void BaseCodeGenerator::GenParentSizer(Node* node, bool need_closing_brace)
         {
             code.Add("wxGBPosition(").as_string(prop_row).Comma().as_string(prop_column) << "), ";
             code.Add("wxGBSpan(").as_string(prop_rowspan).Comma().as_string(prop_colspan) << "), ";
-            tt_string flags(node->prop_as_string(prop_borders));
-            if (node->prop_as_string(prop_flags).size())
+            tt_string flags(node->as_string(prop_borders));
+            if (node->as_string(prop_flags).size())
             {
                 if (flags.size())
                     flags << '|';
-                flags << node->prop_as_string(prop_flags);
+                flags << node->as_string(prop_flags);
             }
 
             if (flags.empty())

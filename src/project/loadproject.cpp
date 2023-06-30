@@ -271,7 +271,16 @@ NodeSharedPtr NodeCreator::CreateNode(pugi::xml_node& xml_obj, Node* parent, boo
                 {
                     if (new_node->isGen(gen_wxCheckListBox) && iter.as_sview().size() && iter.as_sview()[0] == '"')
                     {
-                        auto items = ConvertToArrayString(iter.as_sview());
+                        // Convert old style wxCheckListBox contents in quotes to new style separated by semicolons
+                        std::vector<tt_string> items;
+                        auto view = iter.as_sview();
+                        while (view.size() > 0)
+                        {
+                            items.emplace_back(view);
+                            view = tt::stepover(view.data() + view.size());
+                            view = view.view_substr(0, '"', '"');
+                        }
+
                         tt_string value;
                         for (auto& item: items)
                         {
@@ -279,6 +288,7 @@ NodeSharedPtr NodeCreator::CreateNode(pugi::xml_node& xml_obj, Node* parent, boo
                                 value << ';';
                             value << item;
                         }
+
                         prop->set_value(value);
                         if (Project.GetProjectVersion() < minRequiredVer + 1)
                         {
@@ -437,17 +447,17 @@ NodeSharedPtr NodeCreator::CreateNode(pugi::xml_node& xml_obj, Node* parent, boo
                     }
                     else if (tt::is_sameas(iter.name(), "original_art"))
                     {
-                        new_node->prop_set_value(prop_art_directory, value);
+                        new_node->set_value(prop_art_directory, value);
                         continue;
                     }
                     else if (tt::is_sameas(iter.name(), "virtual_events"))
                     {
-                        new_node->prop_set_value(prop_use_derived_class, value);
+                        new_node->set_value(prop_use_derived_class, value);
                         continue;
                     }
                     else if (tt::is_sameas(iter.name(), "choices") || tt::is_sameas(iter.name(), "strings"))
                     {
-                        new_node->prop_set_value(prop_contents, value);
+                        new_node->set_value(prop_contents, value);
                         continue;
                     }
                 }
@@ -696,14 +706,14 @@ bool ProjectHandler::Import(ImportXML& import, tt_string& file, bool append, boo
                 {
                     if (project_node->value(prop_code_preference) == "Python" && !iter->HasValue(prop_python_file))
                     {
-                        iter->prop_set_value(prop_python_file, iter->value(prop_base_file));
+                        iter->set_value(prop_python_file, iter->value(prop_base_file));
                     }
                     else if (project_node->value(prop_code_preference) == "XRC" && !iter->HasValue(prop_xrc_file))
                     {
-                        iter->prop_set_value(prop_xrc_file, iter->value(prop_base_file));
+                        iter->set_value(prop_xrc_file, iter->value(prop_base_file));
                         // XRC files can be combined into a single file
                         if (!project_node->HasValue(prop_combined_xrc_file))
-                            project_node->prop_set_value(prop_combined_xrc_file, iter->value(prop_base_file));
+                            project_node->set_value(prop_combined_xrc_file, iter->value(prop_base_file));
                     }
                 }
             }
@@ -722,13 +732,13 @@ bool ProjectHandler::Import(ImportXML& import, tt_string& file, bool append, boo
             switch (language)
             {
                 case GEN_LANG_CPLUSPLUS:
-                    project_node->prop_set_value(prop_code_preference, "C++");
+                    project_node->set_value(prop_code_preference, "C++");
                     break;
                 case GEN_LANG_PYTHON:
-                    project_node->prop_set_value(prop_code_preference, "Python");
+                    project_node->set_value(prop_code_preference, "Python");
                     break;
                 case GEN_LANG_XRC:
-                    project_node->prop_set_value(prop_code_preference, "XRC");
+                    project_node->set_value(prop_code_preference, "XRC");
                     break;
             }
             SetLangFilenames();
@@ -741,15 +751,15 @@ bool ProjectHandler::Import(ImportXML& import, tt_string& file, bool append, boo
             {
                 if (dlg.is_gen_python())
                 {
-                    project_node->prop_set_value(prop_code_preference, "Python");
+                    project_node->set_value(prop_code_preference, "Python");
                 }
                 else if (dlg.is_gen_xrc())
                 {
-                    project_node->prop_set_value(prop_code_preference, "XRC");
+                    project_node->set_value(prop_code_preference, "XRC");
                 }
                 else  // default to C++
                 {
-                    project_node->prop_set_value(prop_code_preference, "C++");
+                    project_node->set_value(prop_code_preference, "C++");
                 }
                 SetLangFilenames();
             }
@@ -783,8 +793,8 @@ bool ProjectHandler::Import(ImportXML& import, tt_string& file, bool append, boo
                 {
                     auto old_form = old_project->GetChild(0);
                     auto new_form = m_project_node->GetChild(0);
-                    new_form->prop_set_value(prop_class_name, old_form->value(prop_class_name));
-                    new_form->prop_set_value(prop_base_file, old_form->value(prop_base_file));
+                    new_form->set_value(prop_class_name, old_form->value(prop_class_name));
+                    new_form->set_value(prop_base_file, old_form->value(prop_base_file));
                 }
             }
         }
@@ -822,15 +832,15 @@ bool ProjectHandler::NewProject(bool create_empty, bool allow_ui)
             {
                 if (dlg.is_gen_python())
                 {
-                    project->prop_set_value(prop_code_preference, "Python");
+                    project->set_value(prop_code_preference, "Python");
                 }
                 else if (dlg.is_gen_xrc())
                 {
-                    project->prop_set_value(prop_code_preference, "XRC");
+                    project->set_value(prop_code_preference, "XRC");
                 }
                 else  // default to C++
                 {
-                    project->prop_set_value(prop_code_preference, "C++");
+                    project->set_value(prop_code_preference, "C++");
                 }
             }
         }
@@ -940,7 +950,7 @@ bool ProjectHandler::NewProject(bool create_empty, bool allow_ui)
             if (preamble.size())
                 preamble << "@@@@";
             preamble << imported_from;
-            m_project_node->prop_set_value(prop_src_preamble, preamble);
+            m_project_node->set_value(prop_src_preamble, preamble);
         }
 
         // Set the current working directory to the first file imported.

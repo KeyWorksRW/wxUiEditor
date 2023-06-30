@@ -54,22 +54,22 @@ void CreateMockupChildren(Node* node, wxWindow* parent, wxObject* parent_object,
             {
                 auto flags = node->GetSizerFlags();
                 wxStaticCast(parent_object, wxGridBagSizer)
-                    ->Add(node->prop_as_int(prop_width), node->prop_as_int(prop_height),
-                          wxGBPosition(node->prop_as_int(prop_row), node->prop_as_int(prop_column)),
-                          wxGBSpan(node->prop_as_int(prop_rowspan), node->prop_as_int(prop_colspan)), flags.GetFlags(),
-                          node->prop_as_int(prop_border_size));
+                    ->Add(node->as_int(prop_width), node->as_int(prop_height),
+                          wxGBPosition(node->as_int(prop_row), node->as_int(prop_column)),
+                          wxGBSpan(node->as_int(prop_rowspan), node->as_int(prop_colspan)), flags.GetFlags(),
+                          node->as_int(prop_border_size));
             }
             else
             {
-                if (node->prop_as_int(prop_proportion) != 0)
+                if (node->as_int(prop_proportion) != 0)
                 {
-                    wxStaticCast(parent_object, wxSizer)->AddStretchSpacer(node->prop_as_int(prop_proportion));
+                    wxStaticCast(parent_object, wxSizer)->AddStretchSpacer(node->as_int(prop_proportion));
                 }
                 else
                 {
-                    auto width = node->prop_as_int(prop_width);
-                    auto height = node->prop_as_int(prop_height);
-                    if (node->prop_as_bool(prop_add_default_border))
+                    auto width = node->as_int(prop_width);
+                    auto height = node->as_int(prop_height);
+                    if (node->as_bool(prop_add_default_border))
                     {
                         width += wxSizerFlags::GetDefaultBorder();
                         height += wxSizerFlags::GetDefaultBorder();
@@ -113,7 +113,7 @@ void CreateMockupChildren(Node* node, wxWindow* parent, wxObject* parent_object,
             created_sizer = wxStaticCast(created_object, wxSizer);
         }
 
-        if (auto minsize = node->prop_as_wxSize(prop_minimum_size); minsize != wxDefaultSize)
+        if (auto minsize = node->as_wxSize(prop_minimum_size); minsize != wxDefaultSize)
         {
             created_sizer->SetMinSize(minsize);
             created_sizer->Layout();
@@ -171,8 +171,8 @@ void CreateMockupChildren(Node* node, wxWindow* parent, wxObject* parent_object,
                 if (node_parent->isGen(gen_wxGridBagSizer))
                 {
                     auto sizer = wxStaticCast(parent_object, wxGridBagSizer);
-                    wxGBPosition position(node->prop_as_int(prop_row), node->prop_as_int(prop_column));
-                    wxGBSpan span(node->prop_as_int(prop_rowspan), node->prop_as_int(prop_colspan));
+                    wxGBPosition position(node->as_int(prop_row), node->as_int(prop_column));
+                    wxGBSpan span(node->as_int(prop_rowspan), node->as_int(prop_colspan));
 
                     if (created_window)
                         sizer->Add(created_window, position, span, sizer_flags.GetFlags(), sizer_flags.GetBorderInPixels());

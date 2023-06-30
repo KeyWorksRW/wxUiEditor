@@ -52,70 +52,70 @@ void DataViewCtrl::AfterCreation(wxObject* wxobject, wxWindow* /* wxparent */, N
         auto childObj = node->GetChild(i);
         if (childObj->isGen(gen_dataViewColumn))
         {
-            if (childObj->prop_as_string(prop_type) == "Text")
+            if (childObj->as_string(prop_type) == "Text")
             {
                 auto* col = list->AppendTextColumn(
-                    childObj->prop_as_wxString(prop_label), childObj->prop_as_int(prop_model_column),
-                    static_cast<wxDataViewCellMode>(childObj->prop_as_int(prop_mode)), childObj->prop_as_int(prop_width),
-                    static_cast<wxAlignment>(childObj->prop_as_int(prop_align)), childObj->prop_as_int(prop_flags));
+                    childObj->as_wxString(prop_label), childObj->as_int(prop_model_column),
+                    static_cast<wxDataViewCellMode>(childObj->as_int(prop_mode)), childObj->as_int(prop_width),
+                    static_cast<wxAlignment>(childObj->as_int(prop_align)), childObj->as_int(prop_flags));
                 if (childObj->HasValue(prop_ellipsize))
                 {
-                    col->GetRenderer()->EnableEllipsize(static_cast<wxEllipsizeMode>(childObj->prop_as_int(prop_ellipsize)));
+                    col->GetRenderer()->EnableEllipsize(static_cast<wxEllipsizeMode>(childObj->as_int(prop_ellipsize)));
                 }
             }
-            else if (childObj->prop_as_string(prop_type) == "Toggle")
+            else if (childObj->as_string(prop_type) == "Toggle")
             {
                 auto* col = list->AppendToggleColumn(
-                    childObj->prop_as_wxString(prop_label), childObj->prop_as_int(prop_model_column),
-                    static_cast<wxDataViewCellMode>(childObj->prop_as_int(prop_mode)), childObj->prop_as_int(prop_width),
-                    static_cast<wxAlignment>(childObj->prop_as_int(prop_align)), childObj->prop_as_int(prop_flags));
+                    childObj->as_wxString(prop_label), childObj->as_int(prop_model_column),
+                    static_cast<wxDataViewCellMode>(childObj->as_int(prop_mode)), childObj->as_int(prop_width),
+                    static_cast<wxAlignment>(childObj->as_int(prop_align)), childObj->as_int(prop_flags));
                 if (childObj->HasValue(prop_ellipsize))
                 {
-                    col->GetRenderer()->EnableEllipsize(static_cast<wxEllipsizeMode>(childObj->prop_as_int(prop_ellipsize)));
+                    col->GetRenderer()->EnableEllipsize(static_cast<wxEllipsizeMode>(childObj->as_int(prop_ellipsize)));
                 }
             }
-            else if (childObj->prop_as_string(prop_type) == "Progress")
+            else if (childObj->as_string(prop_type) == "Progress")
             {
                 auto* col = list->AppendProgressColumn(
-                    childObj->prop_as_wxString(prop_label), childObj->prop_as_int(prop_model_column),
-                    static_cast<wxDataViewCellMode>(childObj->prop_as_int(prop_mode)), childObj->prop_as_int(prop_width),
-                    static_cast<wxAlignment>(childObj->prop_as_int(prop_align)), childObj->prop_as_int(prop_flags));
+                    childObj->as_wxString(prop_label), childObj->as_int(prop_model_column),
+                    static_cast<wxDataViewCellMode>(childObj->as_int(prop_mode)), childObj->as_int(prop_width),
+                    static_cast<wxAlignment>(childObj->as_int(prop_align)), childObj->as_int(prop_flags));
                 if (childObj->HasValue(prop_ellipsize))
                 {
-                    col->GetRenderer()->EnableEllipsize(static_cast<wxEllipsizeMode>(childObj->prop_as_int(prop_ellipsize)));
+                    col->GetRenderer()->EnableEllipsize(static_cast<wxEllipsizeMode>(childObj->as_int(prop_ellipsize)));
                 }
             }
-            else if (childObj->prop_as_string(prop_type) == "IconText")
+            else if (childObj->as_string(prop_type) == "IconText")
             {
                 auto* col = list->AppendIconTextColumn(
-                    childObj->prop_as_wxString(prop_label), childObj->prop_as_int(prop_model_column),
-                    static_cast<wxDataViewCellMode>(childObj->prop_as_int(prop_mode)), childObj->prop_as_int(prop_width),
-                    static_cast<wxAlignment>(childObj->prop_as_int(prop_align)), childObj->prop_as_int(prop_flags));
+                    childObj->as_wxString(prop_label), childObj->as_int(prop_model_column),
+                    static_cast<wxDataViewCellMode>(childObj->as_int(prop_mode)), childObj->as_int(prop_width),
+                    static_cast<wxAlignment>(childObj->as_int(prop_align)), childObj->as_int(prop_flags));
                 if (childObj->HasValue(prop_ellipsize))
                 {
-                    col->GetRenderer()->EnableEllipsize(static_cast<wxEllipsizeMode>(childObj->prop_as_int(prop_ellipsize)));
+                    col->GetRenderer()->EnableEllipsize(static_cast<wxEllipsizeMode>(childObj->as_int(prop_ellipsize)));
                 }
             }
-            else if (childObj->prop_as_string(prop_type) == "Date")
+            else if (childObj->as_string(prop_type) == "Date")
             {
                 auto* col = list->AppendDateColumn(
-                    childObj->prop_as_wxString(prop_label), childObj->prop_as_int(prop_model_column),
-                    static_cast<wxDataViewCellMode>(childObj->prop_as_int(prop_mode)), childObj->prop_as_int(prop_width),
-                    static_cast<wxAlignment>(childObj->prop_as_int(prop_align)), childObj->prop_as_int(prop_flags));
+                    childObj->as_wxString(prop_label), childObj->as_int(prop_model_column),
+                    static_cast<wxDataViewCellMode>(childObj->as_int(prop_mode)), childObj->as_int(prop_width),
+                    static_cast<wxAlignment>(childObj->as_int(prop_align)), childObj->as_int(prop_flags));
                 if (childObj->HasValue(prop_ellipsize))
                 {
-                    col->GetRenderer()->EnableEllipsize(static_cast<wxEllipsizeMode>(childObj->prop_as_int(prop_ellipsize)));
+                    col->GetRenderer()->EnableEllipsize(static_cast<wxEllipsizeMode>(childObj->as_int(prop_ellipsize)));
                 }
             }
-            else if (childObj->prop_as_string(prop_type) == "Bitmap")
+            else if (childObj->as_string(prop_type) == "Bitmap")
             {
                 auto* col = list->AppendBitmapColumn(
-                    childObj->prop_as_wxString(prop_label), childObj->prop_as_int(prop_model_column),
-                    static_cast<wxDataViewCellMode>(childObj->prop_as_int(prop_mode)), childObj->prop_as_int(prop_width),
-                    static_cast<wxAlignment>(childObj->prop_as_int(prop_align)), childObj->prop_as_int(prop_flags));
+                    childObj->as_wxString(prop_label), childObj->as_int(prop_model_column),
+                    static_cast<wxDataViewCellMode>(childObj->as_int(prop_mode)), childObj->as_int(prop_width),
+                    static_cast<wxAlignment>(childObj->as_int(prop_align)), childObj->as_int(prop_flags));
                 if (childObj->HasValue(prop_ellipsize))
                 {
-                    col->GetRenderer()->EnableEllipsize(static_cast<wxEllipsizeMode>(childObj->prop_as_int(prop_ellipsize)));
+                    col->GetRenderer()->EnableEllipsize(static_cast<wxEllipsizeMode>(childObj->as_int(prop_ellipsize)));
                 }
             }
         }
@@ -185,48 +185,48 @@ void DataViewListCtrl::AfterCreation(wxObject* wxobject, wxWindow* /* wxparent *
         auto childObj = node->GetChild(i);
         if (childObj->isGen(gen_dataViewListColumn))
         {
-            if (childObj->prop_as_string(prop_type) == "Text")
+            if (childObj->as_string(prop_type) == "Text")
             {
                 auto col = list->AppendTextColumn(
-                    childObj->prop_as_wxString(prop_label),
-                    static_cast<wxDataViewCellMode>(childObj->prop_as_int(prop_mode)), childObj->prop_as_int(prop_width),
-                    static_cast<wxAlignment>(childObj->prop_as_int(prop_align)), childObj->prop_as_int(prop_flags));
+                    childObj->as_wxString(prop_label), static_cast<wxDataViewCellMode>(childObj->as_int(prop_mode)),
+                    childObj->as_int(prop_width), static_cast<wxAlignment>(childObj->as_int(prop_align)),
+                    childObj->as_int(prop_flags));
                 if (childObj->HasValue(prop_ellipsize))
                 {
-                    col->GetRenderer()->EnableEllipsize(static_cast<wxEllipsizeMode>(childObj->prop_as_int(prop_ellipsize)));
+                    col->GetRenderer()->EnableEllipsize(static_cast<wxEllipsizeMode>(childObj->as_int(prop_ellipsize)));
                 }
             }
-            else if (childObj->prop_as_string(prop_type) == "Toggle")
+            else if (childObj->as_string(prop_type) == "Toggle")
             {
                 auto col = list->AppendToggleColumn(
-                    childObj->prop_as_wxString(prop_label),
-                    static_cast<wxDataViewCellMode>(childObj->prop_as_int(prop_mode)), childObj->prop_as_int(prop_width),
-                    static_cast<wxAlignment>(childObj->prop_as_int(prop_align)), childObj->prop_as_int(prop_flags));
+                    childObj->as_wxString(prop_label), static_cast<wxDataViewCellMode>(childObj->as_int(prop_mode)),
+                    childObj->as_int(prop_width), static_cast<wxAlignment>(childObj->as_int(prop_align)),
+                    childObj->as_int(prop_flags));
                 if (childObj->HasValue(prop_ellipsize))
                 {
-                    col->GetRenderer()->EnableEllipsize(static_cast<wxEllipsizeMode>(childObj->prop_as_int(prop_ellipsize)));
+                    col->GetRenderer()->EnableEllipsize(static_cast<wxEllipsizeMode>(childObj->as_int(prop_ellipsize)));
                 }
             }
-            else if (childObj->prop_as_string(prop_type) == "Progress")
+            else if (childObj->as_string(prop_type) == "Progress")
             {
                 auto col = list->AppendProgressColumn(
-                    childObj->prop_as_wxString(prop_label),
-                    static_cast<wxDataViewCellMode>(childObj->prop_as_int(prop_mode)), childObj->prop_as_int(prop_width),
-                    static_cast<wxAlignment>(childObj->prop_as_int(prop_align)), childObj->prop_as_int(prop_flags));
+                    childObj->as_wxString(prop_label), static_cast<wxDataViewCellMode>(childObj->as_int(prop_mode)),
+                    childObj->as_int(prop_width), static_cast<wxAlignment>(childObj->as_int(prop_align)),
+                    childObj->as_int(prop_flags));
                 if (childObj->HasValue(prop_ellipsize))
                 {
-                    col->GetRenderer()->EnableEllipsize(static_cast<wxEllipsizeMode>(childObj->prop_as_int(prop_ellipsize)));
+                    col->GetRenderer()->EnableEllipsize(static_cast<wxEllipsizeMode>(childObj->as_int(prop_ellipsize)));
                 }
             }
-            else if (childObj->prop_as_string(prop_type) == "IconText")
+            else if (childObj->as_string(prop_type) == "IconText")
             {
                 auto col = list->AppendIconTextColumn(
-                    childObj->prop_as_wxString(prop_label),
-                    static_cast<wxDataViewCellMode>(childObj->prop_as_int(prop_mode)), childObj->prop_as_int(prop_width),
-                    static_cast<wxAlignment>(childObj->prop_as_int(prop_align)), childObj->prop_as_int(prop_flags));
+                    childObj->as_wxString(prop_label), static_cast<wxDataViewCellMode>(childObj->as_int(prop_mode)),
+                    childObj->as_int(prop_width), static_cast<wxAlignment>(childObj->as_int(prop_align)),
+                    childObj->as_int(prop_flags));
                 if (childObj->HasValue(prop_ellipsize))
                 {
-                    col->GetRenderer()->EnableEllipsize(static_cast<wxEllipsizeMode>(childObj->prop_as_int(prop_ellipsize)));
+                    col->GetRenderer()->EnableEllipsize(static_cast<wxEllipsizeMode>(childObj->as_int(prop_ellipsize)));
                 }
             }
         }

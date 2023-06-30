@@ -21,10 +21,10 @@ wxObject* RibbonToolBarGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxRibbonToolBar((wxRibbonPanel*) parent, wxID_ANY, DlgPoint(parent, node, prop_pos),
                                       DlgSize(parent, node, prop_size));
-    if (node->prop_as_int(prop_min_rows) != 1 || node->prop_as_string(prop_max_rows) != "-1")
+    if (node->as_int(prop_min_rows) != 1 || node->as_string(prop_max_rows) != "-1")
     {
-        auto min_rows = node->prop_as_int(prop_min_rows);
-        auto max_rows = node->prop_as_int(prop_max_rows);
+        auto min_rows = node->as_int(prop_min_rows);
+        auto max_rows = node->as_int(prop_max_rows);
         if (max_rows < min_rows)
             max_rows = min_rows;
         widget->SetRows(min_rows, max_rows);
@@ -45,12 +45,11 @@ void RibbonToolBarGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxpar
         }
         else
         {
-            auto bmp = child->prop_as_wxBitmap(prop_bitmap);
+            auto bmp = child->as_wxBitmap(prop_bitmap);
             if (!bmp.IsOk())
                 bmp = GetInternalImage("default");
             // REVIEW: This is still a bitmap rather then a bundle as of the 3.1.6 release
-            btn_bar->AddTool(wxID_ANY, bmp, child->prop_as_wxString(prop_help),
-                             (wxRibbonButtonKind) child->prop_as_int(prop_kind));
+            btn_bar->AddTool(wxID_ANY, bmp, child->as_wxString(prop_help), (wxRibbonButtonKind) child->as_int(prop_kind));
         }
     }
     btn_bar->Realize();
@@ -66,8 +65,8 @@ bool RibbonToolBarGenerator::ConstructionCode(Code& code)
 
 bool RibbonToolBarGenerator::SettingsCode(Code& code)
 {
-    auto min_rows = code.node()->prop_as_int(prop_min_rows);
-    auto max_rows = code.node()->prop_as_int(prop_max_rows);
+    auto min_rows = code.node()->as_int(prop_min_rows);
+    auto max_rows = code.node()->as_int(prop_max_rows);
     if (min_rows != 1 || max_rows != -1)
     {
         if (max_rows < min_rows)

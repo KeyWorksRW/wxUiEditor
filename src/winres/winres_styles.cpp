@@ -106,7 +106,7 @@ void resCtrl::ParseButtonStyles(tt_string_view line)
     {
         if (line.contains("BS_RIGHT"))
             // Note that for this to work, the parent sizer must be vertically aligned with the wxEXPAND flag set.
-            m_node->prop_set_value(prop_alignment, "wxALIGN_RIGHT");
+            m_node->set_value(prop_alignment, "wxALIGN_RIGHT");
 
         // Bottom and top won't have any effect, and left is the default, so ignore the other styles.
     }
@@ -117,18 +117,18 @@ void resCtrl::ParseButtonStyles(tt_string_view line)
 
 void resCtrl::ParseListViewStyles(tt_string_view line)
 {
-    m_node->prop_set_value(prop_style, "");
+    m_node->set_value(prop_style, "");
 
     if (line.contains("LVS_ICON"))
-        m_node->prop_set_value(prop_mode, "wxLC_ICON");
+        m_node->set_value(prop_mode, "wxLC_ICON");
     else if (line.contains("LVS_SMALLICON"))
-        m_node->prop_set_value(prop_mode, "wxLC_SMALL_ICON");
+        m_node->set_value(prop_mode, "wxLC_SMALL_ICON");
     else if (line.contains("LVS_LIST"))
-        m_node->prop_set_value(prop_mode, "wxLC_LIST");
+        m_node->set_value(prop_mode, "wxLC_LIST");
     else if (line.contains("LVS_REPORT"))
-        m_node->prop_set_value(prop_mode, "wxLC_REPORT");
+        m_node->set_value(prop_mode, "wxLC_REPORT");
     else
-        m_node->prop_set_value(prop_mode, "wxLC_REPORT");
+        m_node->set_value(prop_mode, "wxLC_REPORT");
 
     if (line.contains("LVS_ALIGNLEFT"))
         AppendStyle(prop_style, "wxLC_ALIGN_LEFT");
@@ -253,11 +253,11 @@ void resCtrl::AddSpecialStyles(tt_string_view line)
 
     if (line.contains("LBS_EXTENDEDSEL"))
     {
-        m_node->prop_set_value(prop_type, "wxLB_MULTIPLE");
+        m_node->set_value(prop_type, "wxLB_MULTIPLE");
     }
     else if (line.contains("LBS_MULTIPLESEL"))
     {
-        m_node->prop_set_value(prop_type, "wxLB_EXTENDED");
+        m_node->set_value(prop_type, "wxLB_EXTENDED");
     }
     if (line.contains("LBS_SORT") || line.contains("LBS_STANDARD"))
     {
@@ -275,5 +275,5 @@ void resCtrl::AddSpecialStyles(tt_string_view line)
     //////////// Scrollbar styles ////////////
 
     if (line.contains("SBS_VERT"))
-        m_node->prop_set_value(prop_style, "wxSB_VERTICAL");
+        m_node->set_value(prop_style, "wxSB_VERTICAL");
 }

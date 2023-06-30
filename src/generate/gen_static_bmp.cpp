@@ -21,10 +21,10 @@
 wxObject* StaticBitmapGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget =
-        new wxGenericStaticBitmap(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxBitmapBundle(prop_bitmap),
+        new wxGenericStaticBitmap(wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxBitmapBundle(prop_bitmap),
                                   DlgPoint(parent, node, prop_pos), DlgSize(parent, node, prop_size), GetStyleInt(node));
 #if defined(_DEBUG)
-    // auto default_size = node->prop_as_wxBitmapBundle(prop_bitmap).GetDefaultSize();
+    // auto default_size = node->as_wxBitmapBundle(prop_bitmap).GetDefaultSize();
 #endif  // _DEBUG
 
     if (auto value = node->as_string(prop_scale_mode); value != "None")
@@ -271,7 +271,7 @@ static void GeneratePosSizeFlags(Node* node, tt_string& code, bool uses_def_vali
         GenStyle(node, code);
         if (uses_def_validator)
             code << ", wxDefaultValidator";
-        code << ", " << node->prop_as_string(prop_window_name) << ");";
+        code << ", " << node->as_string(prop_window_name) << ");";
         return;
     }
 
@@ -281,10 +281,10 @@ static void GeneratePosSizeFlags(Node* node, tt_string& code, bool uses_def_vali
         all_styles.clear();
 
     bool isPosSet { false };
-    auto pos = node->prop_as_wxPoint(prop_pos);
+    auto pos = node->as_wxPoint(prop_pos);
     if (pos.x != -1 || pos.y != -1)
     {
-        if (node->prop_as_string(prop_pos).contains("d", tt::CASE::either))
+        if (node->as_string(prop_pos).contains("d", tt::CASE::either))
         {
             code << ", ConvertDialogToPixels(wxPoint(" << pos.x << ", " << pos.y << "))";
         }
@@ -309,7 +309,7 @@ static void GeneratePosSizeFlags(Node* node, tt_string& code, bool uses_def_vali
         isSizeSet = true;
     }
 
-    if (node->HasValue(prop_window_style) && !node->prop_as_string(prop_window_style).is_sameas("wxTAB_TRAVERSAL"))
+    if (node->HasValue(prop_window_style) && !node->as_string(prop_window_style).is_sameas("wxTAB_TRAVERSAL"))
     {
         if (!isPosSet)
             code << ", wxDefaultPosition";

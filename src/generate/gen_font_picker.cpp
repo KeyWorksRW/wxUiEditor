@@ -18,12 +18,12 @@
 wxObject* FontPickerGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget =
-        new wxFontPickerCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_font(prop_initial_font),
+        new wxFontPickerCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxFont(prop_initial_font),
                              DlgPoint(parent, node, prop_pos), DlgSize(parent, node, prop_size), GetStyleInt(node));
 
     if (node->HasValue(prop_max_point_size))
     {
-        widget->SetMaxPointSize(node->prop_as_int(prop_max_point_size));
+        widget->SetMaxPointSize(node->as_int(prop_max_point_size));
     }
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
@@ -37,7 +37,7 @@ bool FontPickerGenerator::ConstructionCode(Code& code)
     code.ValidParentName().Comma().as_string(prop_id).Comma();
     if (code.HasValue(prop_initial_font))
     {
-        auto fontprop = code.node()->prop_as_font_prop(prop_initial_font);
+        auto fontprop = code.node()->as_font_prop(prop_initial_font);
         wxFont font = fontprop.GetFont();
 
         code.Add("wxFont(");
@@ -77,12 +77,12 @@ bool FontPickerGenerator::ConstructionCode(Code& code)
 bool FontPickerGenerator::SettingsCode(Code& code)
 {
     Node* node = code.node();
-    if (node->prop_as_string(prop_min_point_size) != "0")
+    if (node->as_string(prop_min_point_size) != "0")
     {
         code.NodeName().Function("SetMinPointSize(").as_string(prop_min_point_size).EndFunction();
     }
 
-    if (node->prop_as_string(prop_max_point_size) != "100")
+    if (node->as_string(prop_max_point_size) != "100")
     {
         code.Eol(eol_if_empty).NodeName().Function("SetMaxPointSize(").as_string(prop_max_point_size).EndFunction();
     }
@@ -114,9 +114,9 @@ int FontPickerGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t
 
     if (xrc_flags & xrc::add_comments)
     {
-        if (node->prop_as_int(prop_min_point_size) != 0)
+        if (node->as_int(prop_min_point_size) != 0)
             ADD_ITEM_COMMENT("XRC does not support calling SetMinPointSize().")
-        if (node->prop_as_int(prop_max_point_size) != 100)
+        if (node->as_int(prop_max_point_size) != 100)
             ADD_ITEM_COMMENT("XRC does not support calling SetMaxPointSize().")
 
         GenXrcComments(node, item);

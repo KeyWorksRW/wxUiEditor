@@ -39,7 +39,7 @@ public:
     void CreateDialogLayout();
     size_t GetFormType() const { return m_form_type; }
     Node* GetFormNode() const { return m_form_node.get(); }
-    auto GetFormName() const { return m_form_node->prop_as_string(prop_class_name); }
+    auto GetFormName() const { return m_form_node->as_string(prop_class_name); }
     int GetWidth() const { return m_pixel_rect.GetWidth(); }
 
     // left position in dialog units

@@ -59,8 +59,8 @@ void NewFrame::CreateNode()
         }
     }
 
-    form_node->prop_set_value(prop_class_name, m_base_class.utf8_string());
-    if (form_node->prop_as_string(prop_class_name) != form_node->prop_default_value(prop_class_name))
+    form_node->set_value(prop_class_name, m_base_class.utf8_string());
+    if (form_node->as_string(prop_class_name) != form_node->prop_default_value(prop_class_name))
     {
         UpdateFormClass(form_node.get());
     }

@@ -29,6 +29,7 @@
 #include "mockup_parent.h"
 
 #include "base_generator.h"  // BaseGenerator -- Base Generator class
+#include "bitmaps.h"         // Contains various images handling functions
 #include "cstm_event.h"      // CustomEvent -- Custom Event class
 #include "mainframe.h"       // MainFrame -- Main window frame
 #include "mockup_content.h"  // Contains all the forms objects
@@ -157,7 +158,7 @@ void MockupParent::CreateContent()
 
     if (m_form->HasValue(prop_background_colour))
     {
-        m_panelContent->SetBackgroundColour(m_form->prop_as_wxColour(prop_background_colour));
+        m_panelContent->SetBackgroundColour(m_form->as_wxColour(prop_background_colour));
     }
     else if (m_form->isGen(gen_wxFrame))
     {
@@ -179,7 +180,7 @@ void MockupParent::CreateContent()
 
     if (m_form->isGen(gen_wxFrame) || m_form->isGen(gen_wxDialog) || m_form->isGen(gen_wxWizard))
     {
-        m_text_title->SetLabel(m_form->prop_as_wxString(prop_title));
+        m_text_title->SetLabel(m_form->as_wxString(prop_title));
         m_panelTitleBar->Show();
     }
     else
@@ -187,22 +188,22 @@ void MockupParent::CreateContent()
         m_panelTitleBar->Hide();
     }
 
-    auto maxSize = m_form->prop_as_wxSize(prop_maximum_size);
+    auto maxSize = m_form->as_wxSize(prop_maximum_size);
     m_MockupWindow->SetMaxSize(maxSize);
 
     m_panelContent->CreateAllGenerators();
     m_AreNodesCreated = true;
 
-    auto min_size = m_form->prop_as_wxSize(prop_minimum_size);
+    auto min_size = m_form->as_wxSize(prop_minimum_size);
     min_size.IncTo(m_panelContent->GetSize());
 
     if (m_form->HasValue(prop_size))
     {
-        min_size.IncTo(m_form->prop_as_wxSize(prop_size));
+        min_size.IncTo(m_form->as_wxSize(prop_size));
     }
     if (m_form->HasValue(prop_mockup_size))
     {
-        min_size.IncTo(m_form->prop_as_wxSize(prop_mockup_size));
+        min_size.IncTo(m_form->as_wxSize(prop_mockup_size));
     }
 
     if (m_panelTitleBar->IsShown())
@@ -457,10 +458,10 @@ void MockupParent::OnNodePropModified(CustomEvent& event)
             }
 
             // Need to be at least as large as any dimensions the user set.
-            new_size.IncTo(m_form->prop_as_wxSize(prop_size));
-            new_size.IncTo(m_form->prop_as_wxSize(prop_minimum_size));
+            new_size.IncTo(m_form->as_wxSize(prop_size));
+            new_size.IncTo(m_form->as_wxSize(prop_minimum_size));
 
-            new_size.DecToIfSpecified(m_form->prop_as_wxSize(prop_maximum_size));
+            new_size.DecToIfSpecified(m_form->as_wxSize(prop_maximum_size));
 
             m_MockupWindow->SetSize(new_size);
             m_MockupWindow->Refresh();

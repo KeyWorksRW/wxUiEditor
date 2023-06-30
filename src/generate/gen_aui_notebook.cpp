@@ -22,13 +22,13 @@ wxObject* AuiNotebookGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxAuiNotebook(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(parent, node, prop_pos),
                                     DlgSize(parent, node, prop_size), GetStyleInt(node));
-    if (node->prop_as_string(prop_art_provider).is_sameas("wxAuiGenericTabArt"))
+    if (node->as_string(prop_art_provider).is_sameas("wxAuiGenericTabArt"))
         widget->SetArtProvider(new wxAuiGenericTabArt());
-    else if (node->prop_as_string(prop_art_provider).is_sameas("wxAuiSimpleTabArt"))
+    else if (node->as_string(prop_art_provider).is_sameas("wxAuiSimpleTabArt"))
         widget->SetArtProvider(new wxAuiSimpleTabArt());
 
-    if (node->prop_as_int(prop_tab_height) > 0)
-        widget->SetTabCtrlHeight(node->prop_as_int(prop_tab_height));
+    if (node->as_int(prop_tab_height) > 0)
+        widget->SetTabCtrlHeight(node->as_int(prop_tab_height));
 
     AddBookImageList(node, widget);
 

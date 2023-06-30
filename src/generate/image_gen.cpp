@@ -220,7 +220,7 @@ void GenerateSingleBitmapCode(Code& code, const tt_string& description)
         wxSize svg_size { -1, -1 };
         if (parts[IndexSize].size())
         {
-            GetSizeInfo(svg_size, parts[IndexSize]);
+            svg_size = GetSizeInfo(parts[IndexSize]);
         }
         code.Comma().Add("wxSize(").itoa(svg_size.x).Comma().itoa(svg_size.y) += "))";
         code.Str("GetBitmap(").Add("wxSize(").itoa(svg_size.x).Comma().itoa(svg_size.y).EndFunction();

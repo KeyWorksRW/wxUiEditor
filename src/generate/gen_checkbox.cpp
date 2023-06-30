@@ -17,14 +17,14 @@
 wxObject* CheckBoxGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     long style_value = 0;
-    if (node->prop_as_string(prop_style).contains("wxALIGN_RIGHT"))
+    if (node->as_string(prop_style).contains("wxALIGN_RIGHT"))
         style_value |= wxALIGN_RIGHT;
 
     auto widget =
-        new wxCheckBox(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString(prop_label),
+        new wxCheckBox(wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxString(prop_label),
                        DlgPoint(parent, node, prop_pos), DlgSize(parent, node, prop_size), style_value | GetStyleInt(node));
 
-    if (node->prop_as_bool(prop_checked))
+    if (node->as_bool(prop_checked))
         widget->SetValue(true);
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
@@ -36,7 +36,7 @@ bool CheckBoxGenerator::OnPropertyChange(wxObject* widget, Node* node, NodePrope
 {
     if (prop->isProp(prop_label))
     {
-        wxStaticCast(widget, wxCheckBox)->SetLabel(node->prop_as_wxString(prop_label));
+        wxStaticCast(widget, wxCheckBox)->SetLabel(node->as_wxString(prop_label));
         return true;
     }
     else if (prop->isProp(prop_checked))
@@ -71,7 +71,7 @@ bool CheckBoxGenerator::SettingsCode(Code& code)
 bool CheckBoxGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
     InsertGeneratorInclude(node, "#include <wx/checkbox.h>", set_src, set_hdr);
-    if (node->prop_as_string(prop_validator_variable).size())
+    if (node->as_string(prop_validator_variable).size())
         InsertGeneratorInclude(node, "#include <wx/valgen.h>", set_src, set_hdr);
     return true;
 }
@@ -108,10 +108,10 @@ wxObject* Check3StateGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     long style_value = wxCHK_3STATE | GetStyleInt(node);
 
-    auto widget = new wxCheckBox(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString(prop_label),
+    auto widget = new wxCheckBox(wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxString(prop_label),
                                  DlgPoint(parent, node, prop_pos), DlgSize(parent, node, prop_size), style_value);
 
-    auto& state = node->prop_as_string(prop_initial_state);
+    auto& state = node->as_string(prop_initial_state);
     if (state == "wxCHK_UNCHECKED")
         widget->Set3StateValue(wxCHK_UNCHECKED);
     else if (state == "wxCHK_CHECKED")
@@ -128,7 +128,7 @@ bool Check3StateGenerator::OnPropertyChange(wxObject* widget, Node* node, NodePr
 {
     if (prop->isProp(prop_label))
     {
-        wxStaticCast(widget, wxCheckBox)->SetLabel(node->prop_as_wxString(prop_label));
+        wxStaticCast(widget, wxCheckBox)->SetLabel(node->as_wxString(prop_label));
         return true;
     }
     else if (prop->isProp(prop_initial_state))
@@ -187,16 +187,16 @@ int Check3StateGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_
 
     ADD_ITEM_PROP(prop_label, "label")
 
-    if (node->prop_as_string(prop_initial_state) == "wxCHK_CHECKED")
+    if (node->as_string(prop_initial_state) == "wxCHK_CHECKED")
     {
         item.append_child("checked").text().set("1");
     }
-    else if (node->prop_as_string(prop_initial_state) == "wxCHK_UNDETERMINED")
+    else if (node->as_string(prop_initial_state) == "wxCHK_UNDETERMINED")
     {
         item.append_child("checked").text().set("2");
     }
 
-    tt_string styles(node->prop_as_string(prop_style));
+    tt_string styles(node->as_string(prop_style));
     if (styles.size())
     {
         styles << '|';

@@ -29,6 +29,7 @@
 #include "mockup_parent.h"
 
 #include "base_generator.h"  // BaseGenerator -- Base Generator class
+#include "bitmaps.h"         // Contains various images handling functions
 #include "cstm_event.h"      // CustomEvent -- Custom Event class
 #include "mainframe.h"       // MainFrame -- Main window frame
 #include "mockup_content.h"  // Contains all the forms objects

@@ -45,10 +45,6 @@ wxColour ConvertToColour(tt_string_view value);
 // Replace escape slashes with the actual character. Affects \\, \\n, \\r, and \\t
 tt_string ConvertEscapeSlashes(tt_string_view str);
 
-// Converts an unsigned char array into an image. This is typically used for loading internal
-// #included images
-wxImage LoadHeaderImage(const unsigned char* data, size_t size_data);
-
 // If the property specifies dialog units, then parent will be used to do the conversion
 wxPoint DlgPoint(wxObject* parent, Node* node, GenEnum::PropName prop);
 

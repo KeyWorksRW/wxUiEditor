@@ -20,8 +20,7 @@ void AfterCreationAddItems(wxPropertyGridInterface* pgi, Node* node)
         {
             if (child->as_string(prop_type) == "Category")
             {
-                pgi->Append(
-                    new wxPropertyCategory(child->prop_as_wxString(prop_label), child->prop_as_wxString(prop_label)));
+                pgi->Append(new wxPropertyCategory(child->as_wxString(prop_label), child->as_wxString(prop_label)));
             }
             else
             {
@@ -42,7 +41,7 @@ void AfterCreationAddItems(wxPropertyGridInterface* pgi, Node* node)
         }
         else if (child->isGen(gen_propGridCategory))
         {
-            pgi->Append(new wxPropertyCategory(child->prop_as_wxString(prop_label), child->prop_as_wxString(prop_label)));
+            pgi->Append(new wxPropertyCategory(child->as_wxString(prop_label), child->as_wxString(prop_label)));
             AfterCreationAddItems(pgi, child.get());
         }
     }

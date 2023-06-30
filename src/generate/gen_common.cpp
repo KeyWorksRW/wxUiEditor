@@ -45,7 +45,7 @@ void ColourCode(Code& code, GenEnum::PropName prop_name)
         }
         else
         {
-            auto colour = code.node()->prop_as_wxColour(prop_name);
+            auto colour = code.node()->as_wxColour(prop_name);
             code.Add(tt_string().Format("wxColour(%i, %i, %i)", colour.Red(), colour.Green(), colour.Blue()));
         }
     }
@@ -163,7 +163,7 @@ tt_string GetParentName(Node* node)
 
 void GenPos(Node* node, tt_string& code)
 {
-    auto point = node->prop_as_wxPoint(prop_pos);
+    auto point = node->as_wxPoint(prop_pos);
     if (point.x != -1 || point.y != -1)
     {
         if (node->as_string(prop_pos).contains("d", tt::CASE::either))
@@ -220,7 +220,7 @@ void GenStyle(Node* node, tt_string& code, const char* prefix)
         }
         if (prefix)
         {
-            all_styles << node->prop_as_constant(prop_style, prefix);
+            all_styles << node->as_constant(prop_style, prefix);
         }
         else
         {
@@ -767,8 +767,8 @@ void GenFormSettings(Code& code)
     const auto* node = code.node();
     if (!node->isGen(gen_PanelForm) && !node->isGen(gen_wxToolBar))
     {
-        const auto max_size = node->prop_as_wxSize(prop_maximum_size);
-        const auto min_size = node->prop_as_wxSize(prop_minimum_size);
+        const auto max_size = node->as_wxSize(prop_maximum_size);
+        const auto min_size = node->as_wxSize(prop_minimum_size);
         if (min_size != wxDefaultSize || max_size != wxDefaultSize)
         {
             code.Eol(eol_if_needed).FormFunction("SetSizeHints(");
@@ -1065,7 +1065,7 @@ tt_string GenerateIconCode(const tt_string& description)
 tt_string GenerateWxSize(Node* node, PropName prop)
 {
     tt_string code;
-    auto size = node->prop_as_wxSize(prop);
+    auto size = node->as_wxSize(prop);
     if (node->value(prop).contains("d", tt::CASE::either))
     {
         code << "ConvertDialogToPixels(wxSize(" << size.x << ", " << size.y << "))";

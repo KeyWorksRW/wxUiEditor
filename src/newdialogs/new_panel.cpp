@@ -77,12 +77,12 @@ void NewPanel::CreateNode()
 
     if (!m_tab_traversal)
     {
-        new_node->prop_set_value(prop_window_style, "");
+        new_node->set_value(prop_window_style, "");
     }
 
     if (!m_is_form)
     {
-        sizer->prop_set_value(prop_var_name, "panel_sizer");
+        sizer->set_value(prop_var_name, "panel_sizer");
         sizer->FixDuplicateName();
 
         auto parent = wxGetFrame().GetSelectedNode();
@@ -92,7 +92,7 @@ void NewPanel::CreateNode()
     }
     else
     {
-        new_node->prop_set_value(prop_class_name, m_base_class.utf8_string());
+        new_node->set_value(prop_class_name, m_base_class.utf8_string());
         if (new_node->as_string(prop_class_name) != new_node->prop_default_value(prop_class_name))
         {
             UpdateFormClass(new_node.get());

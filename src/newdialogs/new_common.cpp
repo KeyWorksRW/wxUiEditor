@@ -15,11 +15,11 @@ void UpdateFormClass(Node* form_node)
 {
     bool is_base_class = form_node->value(prop_class_name).ends_with("Base");
     auto filename = CreateBaseFilename(form_node, form_node->value(prop_class_name));
-    form_node->prop_set_value(prop_base_file, filename);
+    form_node->set_value(prop_base_file, filename);
 
     if (Project.value(prop_code_preference) == "Python")
     {
-        form_node->prop_set_value(prop_python_file, filename);
+        form_node->set_value(prop_python_file, filename);
     }
 
     if (is_base_class)
@@ -33,10 +33,10 @@ void UpdateFormClass(Node* form_node)
         {
             class_name += "Derived";
         }
-        form_node->prop_set_value(prop_derived_class_name, class_name);
+        form_node->set_value(prop_derived_class_name, class_name);
 
         filename = CreateDerivedFilename(form_node, class_name);
-        form_node->prop_set_value(prop_derived_file, filename);
+        form_node->set_value(prop_derived_file, filename);
     }
 }
 

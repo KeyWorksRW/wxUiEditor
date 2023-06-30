@@ -26,7 +26,7 @@ wxObject* ToolbookGenerator::CreateMockup(Node* node, wxObject* parent)
     {
         if (node->GetChild(idx_child)->HasValue(prop_bitmap))
         {
-            bundle_list.push_back(node->GetChild(idx_child)->prop_as_wxBitmapBundle(prop_bitmap));
+            bundle_list.push_back(node->GetChild(idx_child)->as_wxBitmapBundle(prop_bitmap));
         }
     }
     auto book = wxStaticCast(widget, wxBookCtrlBase);

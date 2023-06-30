@@ -174,7 +174,7 @@ bool DialogFormGenerator::HeaderCode(Code& code)
 
     code.Comma().Str("const wxSize& size = ");
 
-    auto size = node->prop_as_wxSize(prop_size);
+    auto size = node->as_wxSize(prop_size);
     if (size == wxDefaultSize)
         code.Str("wxDefaultSize");
     else

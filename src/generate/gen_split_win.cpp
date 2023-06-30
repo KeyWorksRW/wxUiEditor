@@ -44,14 +44,14 @@ wxObject* SplitterWindowGenerator::CreateMockup(Node* node, wxObject* parent)
 
     if (node->HasValue(prop_sashgravity))
     {
-        auto gravity = node->prop_as_double(prop_sashgravity);
+        auto gravity = node->as_double(prop_sashgravity);
         gravity = (gravity < 0.0 ? 0.0 : gravity);
         gravity = (gravity > 1.0 ? 1.0 : gravity);
         splitter->SetSashGravity(gravity);
     }
     if (node->HasValue(prop_min_pane_size))
     {
-        int minPaneSize = node->prop_as_int(prop_min_pane_size);
+        int minPaneSize = node->as_int(prop_min_pane_size);
         splitter->SetCustomMinPaneSize(minPaneSize);
         minPaneSize = (minPaneSize < 1 ? 1 : minPaneSize);
         splitter->SetMinimumPaneSize(minPaneSize);
@@ -133,8 +133,8 @@ void SplitterWindowGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxpa
                     return;
                 }
 
-                int sashPos = node->prop_as_int(prop_sashpos);
-                int splitmode = node->prop_as_int(prop_splitmode);
+                int sashPos = node->as_int(prop_sashpos);
+                int splitmode = node->as_int(prop_splitmode);
 
                 if (firstChild)
                 {
@@ -214,9 +214,9 @@ int SplitterWindowGenerator::GenXrcObject(Node* node, pugi::xml_node& object, si
 
     GenXrcObjectAttributes(node, item, "wxSplitterWindow");
 
-    if (node->prop_as_int(prop_sashpos) >= 0)
+    if (node->as_int(prop_sashpos) >= 0)
         item.append_child("sashpos").text().set(node->as_string(prop_sashpos));
-    if (node->prop_as_int(prop_min_pane_size) >= 0)
+    if (node->as_int(prop_min_pane_size) >= 0)
         item.append_child("minsize").text().set(node->as_string(prop_min_pane_size));
     ADD_ITEM_PROP(prop_sashgravity, "gravity")
     item.append_child("orientation")
@@ -228,7 +228,7 @@ int SplitterWindowGenerator::GenXrcObject(Node* node, pugi::xml_node& object, si
 
     if (xrc_flags & xrc::add_comments)
     {
-        if (node->prop_as_int(prop_sashsize) >= 0)
+        if (node->as_int(prop_sashsize) >= 0)
             ADD_ITEM_COMMENT(" XRC does not support calling SetSashSize() ")
 
         GenXrcComments(node, item);

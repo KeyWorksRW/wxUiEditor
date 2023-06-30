@@ -17,11 +17,11 @@
 
 wxObject* SearchCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxSearchCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString(prop_value),
+    auto widget = new wxSearchCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxString(prop_value),
                                    DlgPoint(parent, node, prop_pos), DlgSize(parent, node, prop_size), GetStyleInt(node));
 
     if (node->HasValue(prop_hint))
-        widget->SetHint(node->prop_as_wxString(prop_hint));
+        widget->SetHint(node->as_wxString(prop_hint));
 
     if (node->HasValue(prop_search_button))
     {

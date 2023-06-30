@@ -23,10 +23,10 @@
 
 wxObject* TextCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxTextCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString(prop_value),
+    auto widget = new wxTextCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxString(prop_value),
                                  DlgPoint(parent, node, prop_pos), DlgSize(parent, node, prop_size), GetStyleInt(node));
 
-    widget->SetMaxLength(node->prop_as_int(prop_maxlength));
+    widget->SetMaxLength(node->as_int(prop_maxlength));
 
     if (node->HasValue(prop_auto_complete))
     {
@@ -35,7 +35,7 @@ wxObject* TextCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
     }
 
     if (node->HasValue(prop_hint))
-        widget->SetHint(node->prop_as_wxString(prop_hint));
+        widget->SetHint(node->as_wxString(prop_hint));
 
     if (node->as_string(prop_spellcheck).contains("enabled"))
     {

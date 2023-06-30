@@ -53,12 +53,12 @@ void NewRibbon::CreateNode()
         bar_node->Adopt(ribbon_page);
         tt_string label("Page ");
         label << count + 1;
-        ribbon_page->prop_set_value(prop_label, label);
+        ribbon_page->set_value(prop_label, label);
 
         auto ribbon_panel = NodeCreation.CreateNode(gen_wxRibbonPanel, ribbon_page.get());
         ribbon_page->Adopt(ribbon_panel);
         label << ", panel 1";
-        ribbon_panel->prop_set_value(prop_label, label);
+        ribbon_panel->set_value(prop_label, label);
 
         if (m_panel_type == "Tool")
         {
@@ -92,7 +92,7 @@ void NewRibbon::CreateNode()
     }
     else
     {
-        bar_node->prop_set_value(prop_class_name, m_base_class.utf8_string());
+        bar_node->set_value(prop_class_name, m_base_class.utf8_string());
         if (bar_node->as_string(prop_class_name) != bar_node->prop_default_value(prop_class_name))
         {
             UpdateFormClass(bar_node.get());

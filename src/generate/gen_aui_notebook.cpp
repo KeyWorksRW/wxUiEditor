@@ -27,8 +27,8 @@ wxObject* AuiNotebookGenerator::CreateMockup(Node* node, wxObject* parent)
     else if (node->as_string(prop_art_provider).is_sameas("wxAuiSimpleTabArt"))
         widget->SetArtProvider(new wxAuiSimpleTabArt());
 
-    if (node->prop_as_int(prop_tab_height) > 0)
-        widget->SetTabCtrlHeight(node->prop_as_int(prop_tab_height));
+    if (node->as_int(prop_tab_height) > 0)
+        widget->SetTabCtrlHeight(node->as_int(prop_tab_height));
 
     AddBookImageList(node, widget);
 

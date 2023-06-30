@@ -17,8 +17,8 @@
 
 wxObject* WrapSizerGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto sizer = new wxWrapSizer(node->prop_as_int(prop_orientation), node->prop_as_int(prop_flags));
-    sizer->SetMinSize(node->prop_as_wxSize(prop_minimum_size));
+    auto sizer = new wxWrapSizer(node->as_int(prop_orientation), node->as_int(prop_flags));
+    sizer->SetMinSize(node->as_wxSize(prop_minimum_size));
     if (auto dlg = wxDynamicCast(parent, wxDialog); dlg)
     {
         if (!dlg->GetSizer())

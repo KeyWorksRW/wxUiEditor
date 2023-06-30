@@ -16,8 +16,8 @@
 
 wxObject* BoxSizerGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto sizer = new wxBoxSizer(node->prop_as_int(prop_orientation));
-    sizer->SetMinSize(node->prop_as_wxSize(prop_minimum_size));
+    auto sizer = new wxBoxSizer(node->as_int(prop_orientation));
+    sizer->SetMinSize(node->as_wxSize(prop_minimum_size));
     if (auto dlg = wxDynamicCast(parent, wxDialog); dlg)
     {
         if (!dlg->GetSizer())
@@ -39,7 +39,7 @@ bool BoxSizerGenerator::ConstructionCode(Code& code)
 {
     code.AddAuto().NodeName().CreateClass().Add(prop_orientation).EndFunction();
 
-    auto min_size = code.m_node->prop_as_wxSize(prop_minimum_size);
+    auto min_size = code.m_node->as_wxSize(prop_minimum_size);
     if (min_size.GetX() != -1 || min_size.GetY() != -1)
     {
         code.Eol().NodeName().Function("SetMinSize(") << min_size.GetX() << ", " << min_size.GetY();

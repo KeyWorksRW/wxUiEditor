@@ -28,15 +28,15 @@ void GridBag::Initialize()
         m_max_row = 0;
         for (const auto& child: m_gridbag->GetChildNodePtrs())
         {
-            auto col = child->prop_as_int(prop_column);
-            auto col_span = child->prop_as_int(prop_colspan);
+            auto col = child->as_int(prop_column);
+            auto col_span = child->as_int(prop_colspan);
             if (col_span > 1)
                 col += (col_span - 1);
             if (col > m_max_column)
                 m_max_column = col;
 
-            auto row = child->prop_as_int(prop_row);
-            auto row_span = child->prop_as_int(prop_rowspan);
+            auto row = child->as_int(prop_row);
+            auto row_span = child->as_int(prop_rowspan);
             if (row_span > 1)
                 row += (row_span - 1);
             if (row > m_max_row)
@@ -51,10 +51,10 @@ bool GridBag::InsertNode(Node* gbsizer, Node* new_node)
     if (dlg.ShowModal() != wxID_OK)
         return false;
 
-    new_node->prop_set_value(prop_column, dlg.GetColumn());
-    new_node->prop_set_value(prop_colspan, dlg.GetColumnSpan());
-    new_node->prop_set_value(prop_row, dlg.GetRow());
-    new_node->prop_set_value(prop_rowspan, dlg.GetRowSpan());
+    new_node->set_value(prop_column, dlg.GetColumn());
+    new_node->set_value(prop_colspan, dlg.GetColumnSpan());
+    new_node->set_value(prop_row, dlg.GetRow());
+    new_node->set_value(prop_rowspan, dlg.GetRowSpan());
 
     if (dlg.GetRow() > m_max_row)
     {
@@ -71,14 +71,14 @@ bool GridBag::InsertNode(Node* gbsizer, Node* new_node)
         // column of the row we want to append to.
         for (size_t pos = 0; pos < gbsizer->GetChildCount(); ++pos)
         {
-            if (gbsizer->GetChild(pos)->prop_as_int(prop_row) == dlg.GetRow())
+            if (gbsizer->GetChild(pos)->as_int(prop_row) == dlg.GetRow())
             {
-                if (gbsizer->GetChild(pos)->prop_as_int(prop_column) < dlg.GetColumn())
+                if (gbsizer->GetChild(pos)->as_int(prop_column) < dlg.GetColumn())
                 {
-                    if (gbsizer->GetChild(pos)->prop_as_int(prop_column) > last_column)
+                    if (gbsizer->GetChild(pos)->as_int(prop_column) > last_column)
                     {
                         pos_append = static_cast<ptrdiff_t>(pos);
-                        last_column = gbsizer->GetChild(pos)->prop_as_int(prop_column);
+                        last_column = gbsizer->GetChild(pos)->as_int(prop_column);
                     }
                 }
             }
@@ -132,12 +132,12 @@ size_t GridBag::IncrementRows(int row, Node* gbsizer)
     size_t insert_position = tt::npos;
     for (size_t idx = 0; const auto& child: gbsizer->GetChildNodePtrs())
     {
-        if (child->prop_as_int(prop_row) == row)
+        if (child->as_int(prop_row) == row)
         {
             insert_position = idx;
             while (idx < gbsizer->GetChildCount())
             {
-                gbsizer->GetChild(idx)->prop_set_value(prop_row, gbsizer->GetChild(idx)->prop_as_int(prop_row) + 1);
+                gbsizer->GetChild(idx)->set_value(prop_row, gbsizer->GetChild(idx)->as_int(prop_row) + 1);
                 ++idx;
             }
             break;
@@ -153,14 +153,14 @@ size_t GridBag::IncrementColumns(int row, int column, Node* gbsizer)
     size_t insert_position = tt::npos;
     for (size_t idx = 0; const auto& child: gbsizer->GetChildNodePtrs())
     {
-        if (child->prop_as_int(prop_row) == row && child->prop_as_int(prop_column) == column)
+        if (child->as_int(prop_row) == row && child->as_int(prop_column) == column)
         {
             insert_position = idx;
             while (idx < gbsizer->GetChildCount())
             {
-                if (gbsizer->GetChild(idx)->prop_as_int(prop_row) != row)
+                if (gbsizer->GetChild(idx)->as_int(prop_row) != row)
                     break;
-                gbsizer->GetChild(idx)->prop_set_value(prop_column, gbsizer->GetChild(idx)->prop_as_int(prop_column) + 1);
+                gbsizer->GetChild(idx)->set_value(prop_column, gbsizer->GetChild(idx)->as_int(prop_column) + 1);
                 ++idx;
             }
             break;
@@ -173,12 +173,12 @@ size_t GridBag::IncrementColumns(int row, int column, Node* gbsizer)
 
 static bool CompareRowNodes(NodeSharedPtr a, NodeSharedPtr b)
 {
-    return (a->prop_as_int(prop_row) < b->prop_as_int(prop_row));
+    return (a->as_int(prop_row) < b->as_int(prop_row));
 }
 
 static bool CompareColumnNodes(NodeSharedPtr a, NodeSharedPtr b)
 {
-    return (a->prop_as_int(prop_column) < b->prop_as_int(prop_column));
+    return (a->as_int(prop_column) < b->as_int(prop_column));
 }
 
 void GridBag::GridBagSort(Node* gridbag)
@@ -194,9 +194,9 @@ void GridBag::GridBagSort(Node* gridbag)
     // Now sort the columns within each row
     for (size_t idx = 0; idx < grid_vector.size() - 1;)
     {
-        auto row = grid_vector[idx]->prop_as_int(prop_row);
+        auto row = grid_vector[idx]->as_int(prop_row);
         auto end = idx + 1;
-        while (grid_vector[end]->prop_as_int(prop_row) == row)
+        while (grid_vector[end]->as_int(prop_row) == row)
         {
             ++end;
             if (end >= grid_vector.size())
@@ -226,9 +226,9 @@ bool GridBag::MoveNode(Node* node, MoveDirection where, bool check_only)
 
     if (where == MoveDirection::Left)
     {
-        if (check_only || node->prop_as_int(prop_column) == 0)
+        if (check_only || node->as_int(prop_column) == 0)
         {
-            return (node->prop_as_int(prop_column) > 0);
+            return (node->as_int(prop_column) > 0);
         }
 
         MoveLeft(node);
@@ -243,9 +243,9 @@ bool GridBag::MoveNode(Node* node, MoveDirection where, bool check_only)
     }
     else if (where == MoveDirection::Up)
     {
-        if (check_only || node->prop_as_int(prop_row) == 0)
+        if (check_only || node->as_int(prop_row) == 0)
         {
-            return (node->prop_as_int(prop_row) > 0);
+            return (node->as_int(prop_row) > 0);
         }
 
         MoveUp(node);
@@ -275,30 +275,30 @@ void GridBag::MoveLeft(Node* node)
     GridBagSort(gbsizer);
 
     auto cur_position = gbsizer->GetChildPosition(node);
-    auto cur_row = node->prop_as_int(prop_row);
-    auto cur_column = node->prop_as_int(prop_column);
+    auto cur_row = node->as_int(prop_row);
+    auto cur_column = node->as_int(prop_column);
 
     auto previous_node = gbsizer->GetChild(cur_position - 1);
     bool isColumnChangeOnly { false };
-    if (previous_node->prop_as_int(prop_row) != cur_row)
+    if (previous_node->as_int(prop_row) != cur_row)
     {
         isColumnChangeOnly = true;
     }
     else
     {
-        auto previous_column = previous_node->prop_as_int(prop_column) + (previous_node->prop_as_int(prop_colspan) - 1);
+        auto previous_column = previous_node->as_int(prop_column) + (previous_node->as_int(prop_colspan) - 1);
         if (cur_column - 1 > previous_column)
             isColumnChangeOnly = true;
     }
 
     if (isColumnChangeOnly)
     {
-        node->prop_set_value(prop_column, cur_column - 1);
+        node->set_value(prop_column, cur_column - 1);
     }
     else
     {
-        node->prop_set_value(prop_column, previous_node->prop_as_int(prop_column));
-        previous_node->prop_set_value(prop_column, cur_column);
+        node->set_value(prop_column, previous_node->as_int(prop_column));
+        previous_node->set_value(prop_column, cur_column);
 
         SwapNodes(gbsizer, cur_position - 1, cur_position);
     }
@@ -322,30 +322,30 @@ void GridBag::MoveRight(Node* node)
     GridBagSort(gbsizer);
 
     auto cur_position = gbsizer->GetChildPosition(node);
-    auto cur_row = node->prop_as_int(prop_row);
-    auto cur_column = node->prop_as_int(prop_column);
+    auto cur_row = node->as_int(prop_row);
+    auto cur_column = node->as_int(prop_column);
 
     auto next_node = (cur_position + 1 < gbsizer->GetChildCount()) ? gbsizer->GetChild(cur_position + 1) : nullptr;
 
     bool isColumnChangeOnly { false };
-    if (!next_node || next_node->prop_as_int(prop_row) != cur_row)
+    if (!next_node || next_node->as_int(prop_row) != cur_row)
     {
         isColumnChangeOnly = true;
     }
-    else if (cur_column + node->prop_as_int(prop_colspan) < next_node->prop_as_int(prop_column))
+    else if (cur_column + node->as_int(prop_colspan) < next_node->as_int(prop_column))
     {
         isColumnChangeOnly = true;
     }
 
     if (isColumnChangeOnly)
     {
-        node->prop_set_value(prop_column, cur_column + 1);
+        node->set_value(prop_column, cur_column + 1);
     }
     else
     {
         // prop_colspan is always at least 1
-        node->prop_set_value(prop_column, cur_column + next_node->prop_as_int(prop_colspan));
-        next_node->prop_set_value(prop_column, cur_column);
+        node->set_value(prop_column, cur_column + next_node->as_int(prop_colspan));
+        next_node->set_value(prop_column, cur_column);
 
         SwapNodes(gbsizer, cur_position + 1, cur_position);
     }
@@ -368,11 +368,11 @@ void GridBag::MoveUp(Node* node)
 
     GridBagSort(gbsizer);
 
-    auto cur_row = node->prop_as_int(prop_row);
+    auto cur_row = node->as_int(prop_row);
     auto begin_position = gbsizer->GetChildPosition(node);
     while (begin_position > 0)
     {
-        if (gbsizer->GetChild(begin_position - 1)->prop_as_int(prop_row) == cur_row)
+        if (gbsizer->GetChild(begin_position - 1)->as_int(prop_row) == cur_row)
             --begin_position;
         else
             break;
@@ -381,7 +381,7 @@ void GridBag::MoveUp(Node* node)
     auto end_position = begin_position + 1;
     while (end_position < gbsizer->GetChildCount())
     {
-        if (gbsizer->GetChild(end_position)->prop_as_int(prop_row) == cur_row)
+        if (gbsizer->GetChild(end_position)->as_int(prop_row) == cur_row)
             ++end_position;
         else
             break;
@@ -392,7 +392,7 @@ void GridBag::MoveUp(Node* node)
         auto new_row = cur_row - 1;
         while (begin_position < end_position)
         {
-            gbsizer->GetChild(begin_position)->prop_set_value(prop_row, new_row);
+            gbsizer->GetChild(begin_position)->set_value(prop_row, new_row);
             ++begin_position;
         }
         undo_cmd->Update();
@@ -401,22 +401,22 @@ void GridBag::MoveUp(Node* node)
     }
 
     auto end_swap = begin_position - 1;
-    auto new_row = gbsizer->GetChild(end_swap)->prop_as_int(prop_row);
+    auto new_row = gbsizer->GetChild(end_swap)->as_int(prop_row);
     while (begin_position < end_position)
     {
-        gbsizer->GetChild(begin_position)->prop_set_value(prop_row, new_row);
+        gbsizer->GetChild(begin_position)->set_value(prop_row, new_row);
         ++begin_position;
     }
 
     for (;;)
     {
-        gbsizer->GetChild(end_swap)->prop_set_value(prop_row, cur_row);
+        gbsizer->GetChild(end_swap)->set_value(prop_row, cur_row);
         --end_swap;
-        if (gbsizer->GetChild(end_swap)->prop_as_int(prop_row) != new_row)
+        if (gbsizer->GetChild(end_swap)->as_int(prop_row) != new_row)
             break;
         else if (end_swap == 0)
         {
-            gbsizer->GetChild(end_swap)->prop_set_value(prop_row, cur_row);
+            gbsizer->GetChild(end_swap)->set_value(prop_row, cur_row);
             break;
         }
     }
@@ -442,11 +442,11 @@ void GridBag::MoveDown(Node* node)
 
     GridBagSort(gbsizer);
 
-    auto cur_row = node->prop_as_int(prop_row);
+    auto cur_row = node->as_int(prop_row);
     auto begin_position = gbsizer->GetChildPosition(node);
     while (begin_position > 0)
     {
-        if (gbsizer->GetChild(begin_position - 1)->prop_as_int(prop_row) == cur_row)
+        if (gbsizer->GetChild(begin_position - 1)->as_int(prop_row) == cur_row)
             --begin_position;
         else
             break;
@@ -455,7 +455,7 @@ void GridBag::MoveDown(Node* node)
     auto end_position = begin_position + 1;
     while (end_position < gbsizer->GetChildCount())
     {
-        if (gbsizer->GetChild(end_position)->prop_as_int(prop_row) == cur_row)
+        if (gbsizer->GetChild(end_position)->as_int(prop_row) == cur_row)
             ++end_position;
         else
             break;
@@ -466,7 +466,7 @@ void GridBag::MoveDown(Node* node)
         auto new_row = cur_row + 1;
         while (begin_position < end_position)
         {
-            gbsizer->GetChild(begin_position)->prop_set_value(prop_row, new_row);
+            gbsizer->GetChild(begin_position)->set_value(prop_row, new_row);
             ++begin_position;
         }
         undo_cmd->Update();
@@ -475,18 +475,18 @@ void GridBag::MoveDown(Node* node)
     }
 
     auto end_swap = end_position;
-    auto new_row = gbsizer->GetChild(end_swap)->prop_as_int(prop_row);
+    auto new_row = gbsizer->GetChild(end_swap)->as_int(prop_row);
     while (begin_position < end_position)
     {
-        gbsizer->GetChild(begin_position)->prop_set_value(prop_row, new_row);
+        gbsizer->GetChild(begin_position)->set_value(prop_row, new_row);
         ++begin_position;
     }
 
     for (;;)
     {
-        gbsizer->GetChild(end_swap)->prop_set_value(prop_row, cur_row);
+        gbsizer->GetChild(end_swap)->set_value(prop_row, cur_row);
         ++end_swap;
-        if (end_swap == gbsizer->GetChildCount() || gbsizer->GetChild(end_swap)->prop_as_int(prop_row) != new_row)
+        if (end_swap == gbsizer->GetChildCount() || gbsizer->GetChild(end_swap)->as_int(prop_row) != new_row)
             break;
     }
 

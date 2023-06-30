@@ -795,7 +795,7 @@ Code& Code::QuotedString(tt_string_view text)
 
 Code& Code::WxSize(GenEnum::PropName prop_name, bool enable_dlg_units)
 {
-    if (m_node->prop_as_wxSize(prop_name) == wxDefaultSize)
+    if (m_node->as_wxSize(prop_name) == wxDefaultSize)
     {
         CheckLineLength(sizeof("wxDefaultSize"));
         *this += is_cpp() ? "wxDefaultSize" : "wx.DefaultSize";
@@ -811,7 +811,7 @@ Code& Code::WxSize(GenEnum::PropName prop_name, bool enable_dlg_units)
         FormFunction("ConvertDialogToPixels(");
     }
 
-    auto size = m_node->prop_as_wxSize(prop_name);
+    auto size = m_node->as_wxSize(prop_name);
     Class("wxSize(").itoa(size.x).Comma().itoa(size.y) << ')';
 
     if (dialog_units && enable_dlg_units)
@@ -827,7 +827,7 @@ Code& Code::WxSize(GenEnum::PropName prop_name, bool enable_dlg_units)
 
 Code& Code::Pos(GenEnum::PropName prop_name, bool enable_dlg_units)
 {
-    if (m_node->prop_as_wxPoint(prop_name) == wxDefaultPosition)
+    if (m_node->as_wxPoint(prop_name) == wxDefaultPosition)
     {
         CheckLineLength(sizeof("wxDefaultPosition"));
         *this += is_cpp() ? "wxDefaultPosition" : "wx.DefaultPosition";
@@ -843,7 +843,7 @@ Code& Code::Pos(GenEnum::PropName prop_name, bool enable_dlg_units)
         FormFunction("ConvertDialogToPixels(");
     }
 
-    auto size = m_node->prop_as_wxSize(prop_name);
+    auto size = m_node->as_wxSize(prop_name);
     Class("wxPoint(").itoa(size.x).Comma().itoa(size.y) << ')';
 
     if (dialog_units && enable_dlg_units)
@@ -900,11 +900,11 @@ Code& Code::Style(const char* prefix, tt_string_view force_style)
         {
             if (is_cpp())
             {
-                *this += m_node->prop_as_constant(prop_style, prefix);
+                *this += m_node->as_constant(prop_style, prefix);
             }
             else
             {
-                tt_view_vector multistr(m_node->prop_as_constant(prop_style, prefix), "|", tt::TRIM::both);
+                tt_view_vector multistr(m_node->as_constant(prop_style, prefix), "|", tt::TRIM::both);
                 std::string_view wx_prefix = "wx.";
                 auto lambda = [&](tt_string_view candidate)
                 {
@@ -1020,12 +1020,12 @@ Code& Code::PosSizeFlags(bool uses_def_validator, tt_string_view def_style)
                 pop_back();
         }
     }
-    else if (m_node->prop_as_wxSize(prop_size) != wxDefaultSize)
+    else if (m_node->as_wxSize(prop_size) != wxDefaultSize)
     {
         Comma();
         Pos().Comma().WxSize();
     }
-    else if (m_node->prop_as_wxPoint(prop_pos) != wxDefaultPosition)
+    else if (m_node->as_wxPoint(prop_pos) != wxDefaultPosition)
     {
         Comma();
         Pos();
@@ -1054,9 +1054,9 @@ int Code::WhatParamsNeeded(tt_string_view default_style) const
     else if (m_node->isGen(gen_wxRichTextCtrl) || m_node->isGen(gen_wxListView))
         return (pos_needed | size_needed | style_needed);
 
-    if (m_node->prop_as_wxSize(prop_size) != wxDefaultSize)
+    if (m_node->as_wxSize(prop_size) != wxDefaultSize)
         return (pos_needed | size_needed);
-    else if (m_node->prop_as_wxPoint(prop_pos) != wxDefaultPosition)
+    else if (m_node->as_wxPoint(prop_pos) != wxDefaultPosition)
         return pos_needed;
 
     return nothing_needed;

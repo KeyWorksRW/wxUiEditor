@@ -24,13 +24,13 @@ wxObject* AuiToolBarGenerator::CreateMockup(Node* node, wxObject* parent)
 
     if (node->HasValue(prop_margins))
     {
-        wxSize margins(node->prop_as_wxSize(prop_margins));
+        wxSize margins(node->as_wxSize(prop_margins));
         widget->SetMargins(margins.GetWidth(), margins.GetHeight());
     }
     if (node->HasValue(prop_packing))
-        widget->SetToolPacking(node->prop_as_int(prop_packing));
+        widget->SetToolPacking(node->as_int(prop_packing));
     if (node->HasValue(prop_separation))
-        widget->SetToolSeparation(node->prop_as_int(prop_separation));
+        widget->SetToolSeparation(node->as_int(prop_separation));
 
     widget->Bind(wxEVT_TOOL, &AuiToolBarGenerator::OnTool, this);
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
@@ -53,13 +53,13 @@ void AuiToolBarGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent
         wxAuiToolBarItem* added_tool = nullptr;
         if (childObj->isGen(gen_auitool))
         {
-            auto bmp = childObj->prop_as_wxBitmapBundle(prop_bitmap);
+            auto bmp = childObj->as_wxBitmapBundle(prop_bitmap);
             if (!bmp.IsOk())
                 bmp = GetInternalImage("default");
 
-            added_tool = toolbar->AddTool(wxID_ANY, childObj->prop_as_wxString(prop_label), bmp, wxNullBitmap,
-                                          (wxItemKind) childObj->prop_as_int(prop_kind),
-                                          childObj->prop_as_wxString(prop_help), wxEmptyString, nullptr);
+            added_tool = toolbar->AddTool(wxID_ANY, childObj->as_wxString(prop_label), bmp, wxNullBitmap,
+                                          (wxItemKind) childObj->as_int(prop_kind), childObj->as_wxString(prop_help),
+                                          wxEmptyString, nullptr);
             if (childObj->value(prop_initial_state) != "wxAUI_BUTTON_STATE_NORMAL")
             {
                 auto cur_state = GetBitlistInt(childObj.get(), prop_initial_state);

@@ -42,7 +42,7 @@ bool SpacerGenerator::ConstructionCode(Code& code)
         }
         else
         {
-            if (node->prop_as_int(prop_width) == node->prop_as_int(prop_height))
+            if (node->as_int(prop_width) == node->as_int(prop_height))
             {
                 code.Function("AddSpacer(").Str(prop_width);
             }

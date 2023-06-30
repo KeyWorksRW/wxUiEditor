@@ -16,8 +16,8 @@
 
 wxObject* FlexGridSizerGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    wxFlexGridSizer* sizer = new wxFlexGridSizer(node->prop_as_int(prop_rows), node->prop_as_int(prop_cols),
-                                                 node->prop_as_int(prop_vgap), node->prop_as_int(prop_hgap));
+    wxFlexGridSizer* sizer = new wxFlexGridSizer(node->as_int(prop_rows), node->as_int(prop_cols), node->as_int(prop_vgap),
+                                                 node->as_int(prop_hgap));
     if (auto dlg = wxDynamicCast(parent, wxDialog); dlg)
     {
         if (!dlg->GetSizer())
@@ -29,8 +29,8 @@ wxObject* FlexGridSizerGenerator::CreateMockup(Node* node, wxObject* parent)
         if (auto& growable = node->as_string(prop_name); growable.size())
         {
             tt_view_vector values(growable, ',');
-            auto rows = node->prop_as_int(prop_rows);
-            auto cols = node->prop_as_int(prop_cols);
+            auto rows = node->as_int(prop_rows);
+            auto cols = node->as_int(prop_cols);
             int row_or_col = (prop_name == prop_growablerows) ? rows : cols;
             for (auto& iter: values)
             {
@@ -53,9 +53,9 @@ wxObject* FlexGridSizerGenerator::CreateMockup(Node* node, wxObject* parent)
     lambda(prop_growablecols);
     lambda(prop_growablerows);
 
-    sizer->SetMinSize(node->prop_as_wxSize(prop_minimum_size));
-    sizer->SetFlexibleDirection(node->prop_as_int(prop_flexible_direction));
-    sizer->SetNonFlexibleGrowMode((wxFlexSizerGrowMode) node->prop_as_int(prop_non_flexible_grow_mode));
+    sizer->SetMinSize(node->as_wxSize(prop_minimum_size));
+    sizer->SetFlexibleDirection(node->as_int(prop_flexible_direction));
+    sizer->SetNonFlexibleGrowMode((wxFlexSizerGrowMode) node->as_int(prop_non_flexible_grow_mode));
 
     return sizer;
 }
@@ -70,7 +70,7 @@ bool FlexGridSizerGenerator::ConstructionCode(Code& code)
 
     // If rows is empty, only columns are supplied and wxFlexGridSizer will deduece the
     // number of rows to use
-    if (node->prop_as_int(prop_rows) != 0)
+    if (node->as_int(prop_rows) != 0)
     {
         code.as_string(prop_rows).Comma();
     }
@@ -85,8 +85,8 @@ bool FlexGridSizerGenerator::ConstructionCode(Code& code)
         if (auto& growable = node->as_string(prop_name); growable.size())
         {
             tt_view_vector values(growable, ',');
-            auto rows = node->prop_as_int(prop_rows);
-            auto cols = node->prop_as_int(prop_cols);
+            auto rows = node->as_int(prop_rows);
+            auto cols = node->as_int(prop_cols);
             int row_or_col = (prop_name == prop_growablerows) ? rows : cols;
             for (auto& iter: values)
             {

@@ -141,7 +141,7 @@ void resCtrl::ParseDirective(WinResource* pWinResource, tt_string_view line)
                 m_node = NodeCreation.NewNode(iter.gen_name);
                 if (tt::is_sameprefix(iter.class_name, "\"Rich", tt::CASE::either))
                 {
-                    m_node->prop_set_value(prop_style, "wxTE_RICH2");
+                    m_node->set_value(prop_style, "wxTE_RICH2");
                 }
 
                 break;
@@ -170,7 +170,7 @@ void resCtrl::ParseDirective(WinResource* pWinResource, tt_string_view line)
             else if (line.contains("BS_DEFPUSHBUTTON"))
             {
                 m_node = NodeCreation.NewNode(gen_wxButton);
-                m_node->prop_set_value(prop_default, true);
+                m_node->set_value(prop_default, true);
             }
             else if (line.contains("BS_COMMANDLINK") || line.contains("BS_DEFCOMMANDLINK"))
                 m_node = NodeCreation.NewNode(gen_wxCommandLinkButton);
@@ -265,22 +265,22 @@ void resCtrl::ParseDirective(WinResource* pWinResource, tt_string_view line)
             m_node = NodeCreation.NewNode(gen_wxStaticText);
             // We don't know if this will be in a horizontal or vertical sizer, so we just use wxALIGN_CENTER which works for
             // either.
-            m_node->prop_set_value(prop_style, "wxALIGN_CENTER_HORIZONTAL");
+            m_node->set_value(prop_style, "wxALIGN_CENTER_HORIZONTAL");
         }
         else if (line.starts_with("DEFPUSHBUTTON"))
         {
             m_node = NodeCreation.NewNode(gen_wxButton);
-            m_node->prop_set_value(prop_default, true);
+            m_node->set_value(prop_default, true);
         }
         else if (line.starts_with("LTEXT"))
         {
             m_node = NodeCreation.NewNode(gen_wxStaticText);
-            // m_node->prop_set_value(prop_style, "wxALIGN_LEFT");
+            // m_node->set_value(prop_style, "wxALIGN_LEFT");
         }
         else if (line.starts_with("RTEXT"))
         {
             m_node = NodeCreation.NewNode(gen_wxStaticText);
-            m_node->prop_set_value(prop_style, "wxALIGN_RIGHT");
+            m_node->set_value(prop_style, "wxALIGN_RIGHT");
         }
         else if (line.starts_with("RADIOBUTTON "))
         {
@@ -293,7 +293,7 @@ void resCtrl::ParseDirective(WinResource* pWinResource, tt_string_view line)
             m_node = NodeCreation.NewNode(gen_wxScrollBar);
             label_required = false;
             if (line.contains("SBS_VERT"))
-                m_node->prop_set_value(prop_style, "wxSB_VERTICAL");
+                m_node->set_value(prop_style, "wxSB_VERTICAL");
         }
         else if (line.starts_with("ICON"))
         {
@@ -416,7 +416,7 @@ void resCtrl::ParseDirective(WinResource* pWinResource, tt_string_view line)
             if (line.contains("PBS_SMOOTH"))
                 AppendStyle(prop_style, "wxGA_SMOOTH");
             if (line.contains("PBS_VERTICAL"))
-                m_node->prop_set_value(prop_orientation, "wxCAL_SHOW_WEEK_NUMBERS");
+                m_node->set_value(prop_orientation, "wxCAL_SHOW_WEEK_NUMBERS");
             is_style_processed = true;
             break;
 
@@ -473,12 +473,12 @@ void resCtrl::ParseDirective(WinResource* pWinResource, tt_string_view line)
 
         if (m_add_wrap_property || (m_node->isGen(gen_wxStaticText) && du_height() > 14))
         {
-            m_node->prop_set_value(prop_wrap, m_pixel_rect.GetWidth());
+            m_node->set_value(prop_wrap, m_pixel_rect.GetWidth());
         }
 
         if (m_add_min_width_property || m_node->isGen(gen_wxTextCtrl) || m_node->isGen(gen_wxComboBox))
         {
-            m_node->prop_set_value(prop_minimum_size, tt_string() << m_du_rect.GetWidth() << ",-1d");
+            m_node->set_value(prop_minimum_size, tt_string() << m_du_rect.GetWidth() << ",-1d");
         }
     }
     else

@@ -24,7 +24,7 @@ wxObject* StdDialogButtonSizerGenerator::CreateMockup(Node* node, wxObject* pare
     auto dlg = wxDynamicCast(parent, wxDialog);
     auto sizer = new wxStdDialogButtonSizer();
 
-    sizer->SetMinSize(node->prop_as_wxSize(prop_minimum_size));
+    sizer->SetMinSize(node->as_wxSize(prop_minimum_size));
 
     if (node->as_bool(prop_OK))
         sizer->AddButton(new wxButton(wxStaticCast(parent, wxWindow), wxID_OK));
@@ -149,7 +149,7 @@ bool StdDialogButtonSizerGenerator::ConstructionCode(Code& code)
 
     code.NodeName().CreateClass(false, "wxStdDialogButtonSizer").EndFunction();
 
-    auto min_size = node->prop_as_wxSize(prop_minimum_size);
+    auto min_size = node->as_wxSize(prop_minimum_size);
     if (min_size.GetX() != -1 || min_size.GetY() != -1)
     {
         code.Eol().NodeName().Function("SetMinSize(") << min_size.GetX() << ", " << min_size.GetY();
@@ -263,7 +263,7 @@ void StdDialogButtonSizerGenerator::GenPythonConstruction(Code& code)
 
     code.Eol().Eol().NodeName().Add(" = wx.StdDialogButtonSizer()");
 
-    auto min_size = node->prop_as_wxSize(prop_minimum_size);
+    auto min_size = node->as_wxSize(prop_minimum_size);
     if (min_size.GetX() != -1 || min_size.GetY() != -1)
     {
         code.Eol().NodeName().Function("SetMinSize(") << min_size.GetX() << ", " << min_size.GetY();

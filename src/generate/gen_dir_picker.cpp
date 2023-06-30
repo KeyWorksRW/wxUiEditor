@@ -20,16 +20,15 @@ wxObject* DirPickerGenerator::CreateMockup(Node* node, wxObject* parent)
     wxString prompt;
     if (node->HasValue(prop_message))
     {
-        prompt = node->prop_as_wxString(prop_message);
+        prompt = node->as_wxString(prop_message);
     }
     else
     {
         prompt = wxDirSelectorPromptStr;
     }
 
-    auto widget =
-        new wxDirPickerCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString(prop_initial_path), prompt,
-                            DlgPoint(parent, node, prop_pos), DlgSize(parent, node, prop_size), GetStyleInt(node));
+    auto widget = new wxDirPickerCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxString(prop_initial_path), prompt,
+                                      DlgPoint(parent, node, prop_pos), DlgSize(parent, node, prop_size), GetStyleInt(node));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 

@@ -23,21 +23,21 @@ wxObject* GridGenerator::CreateMockup(Node* node, wxObject* parent)
 
     wxGridUpdateLocker prevent_updates(grid);
 
-    if (node->prop_as_int(prop_default_row_size) > 0)
-        grid->SetDefaultRowSize(node->prop_as_int(prop_default_row_size));
-    if (node->prop_as_int(prop_default_col_size) > 0)
-        grid->SetDefaultColSize(node->prop_as_int(prop_default_col_size));
+    if (node->as_int(prop_default_row_size) > 0)
+        grid->SetDefaultRowSize(node->as_int(prop_default_row_size));
+    if (node->as_int(prop_default_col_size) > 0)
+        grid->SetDefaultColSize(node->as_int(prop_default_col_size));
 
-    grid->CreateGrid(node->prop_as_int(prop_rows), node->prop_as_int(prop_cols));
+    grid->CreateGrid(node->as_int(prop_rows), node->as_int(prop_cols));
 
     // Grid category
     grid->EnableGridLines(node->as_bool(prop_grid_lines));
     if (node->HasValue(prop_grid_line_color))
     {
-        grid->SetGridLineColour(node->prop_as_wxColour(prop_grid_line_color));
+        grid->SetGridLineColour(node->as_wxColour(prop_grid_line_color));
     }
     grid->EnableDragGridSize(node->as_bool(prop_drag_grid_size));
-    grid->SetMargins(node->prop_as_int(prop_margin_width), node->prop_as_int(prop_margin_height));
+    grid->SetMargins(node->as_int(prop_margin_width), node->as_int(prop_margin_height));
     if (node->as_string(prop_cell_fit) != "overflow")
     {
         if (node->as_string(prop_cell_fit) == "clip")
@@ -46,8 +46,8 @@ wxObject* GridGenerator::CreateMockup(Node* node, wxObject* parent)
             grid->SetDefaultCellFitMode(wxGridFitMode::Ellipsize());
     }
 
-    if (node->prop_as_int(prop_selection_mode) != 0)
-        grid->SetSelectionMode(static_cast<wxGrid::wxGridSelectionModes>(node->prop_as_int(prop_selection_mode)));
+    if (node->as_int(prop_selection_mode) != 0)
+        grid->SetSelectionMode(static_cast<wxGrid::wxGridSelectionModes>(node->as_int(prop_selection_mode)));
 
     // Label category
     if (node->as_bool(prop_native_col_header))
@@ -55,28 +55,27 @@ wxObject* GridGenerator::CreateMockup(Node* node, wxObject* parent)
     else if (node->as_bool(prop_native_col_labels))
         grid->SetUseNativeColLabels();
 
-    grid->SetColLabelAlignment(node->prop_as_int(prop_col_label_horiz_alignment),
-                               node->prop_as_int(prop_col_label_vert_alignment));
-    grid->SetColLabelSize(node->prop_as_int(prop_col_label_size));
+    grid->SetColLabelAlignment(node->as_int(prop_col_label_horiz_alignment), node->as_int(prop_col_label_vert_alignment));
+    grid->SetColLabelSize(node->as_int(prop_col_label_size));
 
     if (node->HasValue(prop_label_bg))
     {
-        grid->SetLabelBackgroundColour(node->prop_as_wxColour(prop_label_bg));
+        grid->SetLabelBackgroundColour(node->as_wxColour(prop_label_bg));
     }
     if (node->HasValue(prop_label_text))
     {
-        grid->SetLabelTextColour(node->prop_as_wxColour(prop_label_text));
+        grid->SetLabelTextColour(node->as_wxColour(prop_label_text));
     }
     if (node->HasValue(prop_label_font))
     {
-        grid->SetLabelFont(node->prop_as_font(prop_label_font));
+        grid->SetLabelFont(node->as_wxFont(prop_label_font));
     }
     // Columns category
 
     grid->EnableDragColMove(node->as_bool(prop_drag_col_move));
     grid->EnableDragColSize(node->as_bool(prop_drag_col_size));
 
-    wxArrayString columnLabels = node->prop_as_wxArrayString(prop_col_label_values);
+    wxArrayString columnLabels = node->as_wxArrayString(prop_col_label_values);
     for (int i = 0; i < (int) columnLabels.size() && i < grid->GetNumberCols(); ++i)
     {
         grid->SetColLabelValue(i, columnLabels[i]);
@@ -85,46 +84,45 @@ wxObject* GridGenerator::CreateMockup(Node* node, wxObject* parent)
     // Rows category
 
     if (!node->as_string(prop_tab_behaviour).is_sameas("Tab_Stop"))
-        grid->SetTabBehaviour(static_cast<wxGrid::TabBehaviour>(node->prop_as_int(prop_tab_behaviour)));
+        grid->SetTabBehaviour(static_cast<wxGrid::TabBehaviour>(node->as_int(prop_tab_behaviour)));
 
-    grid->SetRowLabelAlignment(node->prop_as_int(prop_row_label_horiz_alignment),
-                               node->prop_as_int(prop_row_label_vert_alignment));
-    grid->SetRowLabelSize(node->prop_as_int(prop_row_label_size));
+    grid->SetRowLabelAlignment(node->as_int(prop_row_label_horiz_alignment), node->as_int(prop_row_label_vert_alignment));
+    grid->SetRowLabelSize(node->as_int(prop_row_label_size));
 
     grid->EnableDragRowSize(node->as_bool(prop_drag_row_size));
 
-    wxArrayString labels = node->prop_as_wxArrayString(prop_row_label_values);
+    wxArrayString labels = node->as_wxArrayString(prop_row_label_values);
     for (int i = 0; i < (int) labels.size() && i < grid->GetNumberRows(); ++i)
     {
         grid->SetRowLabelValue(i, labels[i]);
     }
 
     // Cell Properties
-    grid->SetDefaultCellAlignment(node->prop_as_int(prop_cell_horiz_alignment), node->prop_as_int(prop_cell_vert_alignment));
+    grid->SetDefaultCellAlignment(node->as_int(prop_cell_horiz_alignment), node->as_int(prop_cell_vert_alignment));
 
     if (node->HasValue(prop_cell_bg))
     {
-        grid->SetDefaultCellBackgroundColour(node->prop_as_wxColour(prop_cell_bg));
+        grid->SetDefaultCellBackgroundColour(node->as_wxColour(prop_cell_bg));
     }
     if (node->HasValue(prop_cell_text))
     {
-        grid->SetDefaultCellTextColour(node->prop_as_wxColour(prop_cell_text));
+        grid->SetDefaultCellTextColour(node->as_wxColour(prop_cell_text));
     }
     if (node->HasValue(prop_cell_font))
     {
-        grid->SetDefaultCellFont(node->prop_as_font(prop_cell_font));
+        grid->SetDefaultCellFont(node->as_wxFont(prop_cell_font));
     }
 
-    if (node->prop_as_int(prop_default_row_size) > 0)
-        grid->SetDefaultRowSize(node->prop_as_int(prop_default_row_size));
+    if (node->as_int(prop_default_row_size) > 0)
+        grid->SetDefaultRowSize(node->as_int(prop_default_row_size));
     else if (node->as_bool(prop_autosize_rows))
     {
         grid->AutoSizeRows();
     }
 
-    if (node->prop_as_int(prop_default_col_size) > 0)
-        grid->SetDefaultColSize(node->prop_as_int(prop_default_col_size));
-    else if (node->prop_as_int(prop_autosize_cols))
+    if (node->as_int(prop_default_col_size) > 0)
+        grid->SetDefaultColSize(node->as_int(prop_default_col_size));
+    else if (node->as_int(prop_autosize_cols))
     {
         grid->AutoSizeColumns();
     }
@@ -344,12 +342,12 @@ bool GridGenerator::SettingsCode(Code& code)
 int GridGenerator::GetRequiredVersion(Node* node)
 {
     // Code generation was invalid in minRequiredVer, so a newer version is required if this property is set.
-    if (node->prop_as_int(prop_selection_mode) != 0)
+    if (node->as_int(prop_selection_mode) != 0)
     {
         return std::max(minRequiredVer + 1, BaseGenerator::GetRequiredVersion(node));
     }
     // There was no code generation for a non-default setting in minRequiredVer
-    if (node->prop_as_int(prop_row_label_size) != -1)
+    if (node->as_int(prop_row_label_size) != -1)
     {
         return std::max(minRequiredVer + 1, BaseGenerator::GetRequiredVersion(node));
     }

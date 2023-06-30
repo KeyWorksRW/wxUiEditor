@@ -13,9 +13,9 @@
 void resCtrl::ParseCommonStyles(tt_string_view line)
 {
     if (line.contains("WS_DISABLED"))
-        m_node->prop_set_value(prop_disabled, true);
+        m_node->set_value(prop_disabled, true);
     if (line.contains("NOT WS_VISIBLE"))
-        m_node->prop_set_value(prop_hidden, true);
+        m_node->set_value(prop_hidden, true);
 
     if (line.contains("WS_HSCROLL"))
         AppendStyle(prop_window_style, "wxHSCROLL");
@@ -79,7 +79,7 @@ bool resCtrl::ParseDimensions(tt_string_view line, wxRect& duRect, wxRect& pixel
 
     if (m_node->isGen(gen_wxListBox))
     {
-        m_node->prop_set_value(prop_minimum_size, tt_string() << duRect.GetWidth() << ',' << duRect.GetHeight() << 'd');
+        m_node->set_value(prop_minimum_size, tt_string() << duRect.GetWidth() << ',' << duRect.GetHeight() << 'd');
     }
 
     /*
@@ -141,27 +141,27 @@ tt_string_view resCtrl::GetID(tt_string_view line)
     }
 
     if (id == "IDOK" || id == "1" || id == "IDC_OK")
-        m_node->prop_set_value(prop_id, "wxID_OK");
+        m_node->set_value(prop_id, "wxID_OK");
     else if (id == "IDCANCEL" || id == "2" || id == "IDC_CANCEL")
-        m_node->prop_set_value(prop_id, "wxID_CANCEL");
+        m_node->set_value(prop_id, "wxID_CANCEL");
     else if (id == "IDYES" || id == "6" || id == "IDC_YES")
-        m_node->prop_set_value(prop_id, "wxID_YES");
+        m_node->set_value(prop_id, "wxID_YES");
     else if (id == "IDNO" || id == "7" || id == "IDC_NO")
-        m_node->prop_set_value(prop_id, "wxID_NO");
+        m_node->set_value(prop_id, "wxID_NO");
     else if (id == "IDABORT" || id == "3")
-        m_node->prop_set_value(prop_id, "wxID_ABORT ");
+        m_node->set_value(prop_id, "wxID_ABORT ");
     else if (id == "IDCLOSE" || id == "8" || id == "IDC_CLOSE")
-        m_node->prop_set_value(prop_id, "wxID_CLOSE");
+        m_node->set_value(prop_id, "wxID_CLOSE");
     else if (id == "IDHELP" || id == "9" || id == "IDD_HELP" || id == "IDC_HELP" || id == "ID_HELP")
-        m_node->prop_set_value(prop_id, "wxID_HELP");
+        m_node->set_value(prop_id, "wxID_HELP");
     else if (id == "IDC_APPLY")
-        m_node->prop_set_value(prop_id, "wxID_APPLY");
+        m_node->set_value(prop_id, "wxID_APPLY");
     else
-        m_node->prop_set_value(prop_id, "wxID_ANY");
+        m_node->set_value(prop_id, "wxID_ANY");
 
     if (m_node->as_string(prop_id) != "wxID_ANY" || !id.starts_with("IDC_STATIC"))
     {
-        m_node->prop_set_value(prop_var_comment, id);
+        m_node->set_value(prop_var_comment, id);
     }
 
     line.moveto_nonspace();
@@ -204,7 +204,7 @@ tt_string_view resCtrl::GetLabel(tt_string_view line)
         if (!tt::is_found(begin_anchor))
         {
             // Without an anchor, there is no URL
-            m_node->prop_set_value(prop_label, ConvertEscapeSlashes(label));
+            m_node->set_value(prop_label, ConvertEscapeSlashes(label));
         }
         else
         {
@@ -213,40 +213,40 @@ tt_string_view resCtrl::GetLabel(tt_string_view line)
             {
                 view_url.remove_prefix(3);
                 view_url.erase_from("</a", tt::CASE::either);
-                m_node->prop_set_value(prop_url, view_url);
-                m_node->prop_set_value(prop_label, label.substr(0, begin_anchor));
+                m_node->set_value(prop_url, view_url);
+                m_node->set_value(prop_label, label.substr(0, begin_anchor));
             }
             else if (view_url.is_sameprefix("<a href=\"", tt::CASE::either))
             {
                 view_url.remove_prefix(9);
                 view_url.erase_from("\">", tt::CASE::either);
-                m_node->prop_set_value(prop_url, view_url);
+                m_node->set_value(prop_url, view_url);
                 tt_string actual_label;
                 view_url = label.view_nonspace(label.find("\">"));
                 view_url.remove_prefix(2);
                 view_url.erase_from("</a", tt::CASE::either);
                 actual_label << label.substr(0, begin_anchor) << view_url;
-                m_node->prop_set_value(prop_label, actual_label);
+                m_node->set_value(prop_label, actual_label);
             }
             // Also valid just as the above <a href= -- only difference is how many prefix chars to remove
             else if (view_url.is_sameprefix("<a ref=\"", tt::CASE::either))
             {
                 view_url.remove_prefix(8);
                 view_url.erase_from("\">", tt::CASE::either);
-                m_node->prop_set_value(prop_url, view_url);
+                m_node->set_value(prop_url, view_url);
                 tt_string actual_label;
                 view_url = label.view_nonspace(label.find("\">"));
                 view_url.remove_prefix(2);
                 view_url.erase_from("</a", tt::CASE::either);
                 actual_label << label.substr(0, begin_anchor) << view_url;
-                m_node->prop_set_value(prop_label, actual_label);
+                m_node->set_value(prop_label, actual_label);
             }
         }
     }
 
     else
     {
-        m_node->prop_set_value(prop_label, ConvertEscapeSlashes(label));
+        m_node->set_value(prop_label, ConvertEscapeSlashes(label));
     }
 
     line.moveto_nonspace();
@@ -307,5 +307,5 @@ void resCtrl::AppendStyle(GenEnum::PropName prop_name, tt_string_view style)
     if (updated_style.size())
         updated_style << '|';
     updated_style << style;
-    m_node->prop_set_value(prop_name, updated_style);
+    m_node->set_value(prop_name, updated_style);
 }

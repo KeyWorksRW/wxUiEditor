@@ -170,7 +170,7 @@ wxObject* StyledTextGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto scintilla =
         new wxStyledTextCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(parent, node, prop_pos),
-                             DlgSize(parent, node, prop_size), GetStyleInt(node), node->prop_as_wxString(prop_var_name));
+                             DlgSize(parent, node, prop_size), GetStyleInt(node), node->as_wxString(prop_var_name));
 
     // By default, scintilla sets this margin width to 16. We want to shut off all margins unless the user specifically
     // requests one.
@@ -201,7 +201,7 @@ wxObject* StyledTextGenerator::CreateMockup(Node* node, wxObject* parent)
     }
     if (node->HasValue(prop_stc_wrap_start_indent))
     {
-        scintilla->SetWrapStartIndent(node->prop_as_int(prop_stc_wrap_start_indent));
+        scintilla->SetWrapStartIndent(node->as_int(prop_stc_wrap_start_indent));
     }
 
     //////////// Margin category settings ////////////
@@ -228,7 +228,7 @@ wxObject* StyledTextGenerator::CreateMockup(Node* node, wxObject* parent)
         scintilla->SetMarginWidth(margin, width);
     }
 
-    if (node->as_string(prop_fold_margin) != "none" && node->prop_as_int(prop_fold_width))
+    if (node->as_string(prop_fold_margin) != "none" && node->as_int(prop_fold_width))
     {
         auto margin = node->as_string(prop_fold_margin).atoi();
 
@@ -261,10 +261,10 @@ wxObject* StyledTextGenerator::CreateMockup(Node* node, wxObject* parent)
 
             if (node->HasValue(prop_fold_marker_colour))
             {
-                scintilla->MarkerSetBackground(wxSTC_MARKNUM_FOLDER, node->prop_as_wxColour(prop_fold_marker_colour));
-                scintilla->MarkerSetBackground(wxSTC_MARKNUM_FOLDEROPEN, node->prop_as_wxColour(prop_fold_marker_colour));
-                scintilla->MarkerSetBackground(wxSTC_MARKNUM_FOLDEROPENMID, node->prop_as_wxColour(prop_fold_marker_colour));
-                scintilla->MarkerSetBackground(wxSTC_MARKNUM_FOLDEREND, node->prop_as_wxColour(prop_fold_marker_colour));
+                scintilla->MarkerSetBackground(wxSTC_MARKNUM_FOLDER, node->as_wxColour(prop_fold_marker_colour));
+                scintilla->MarkerSetBackground(wxSTC_MARKNUM_FOLDEROPEN, node->as_wxColour(prop_fold_marker_colour));
+                scintilla->MarkerSetBackground(wxSTC_MARKNUM_FOLDEROPENMID, node->as_wxColour(prop_fold_marker_colour));
+                scintilla->MarkerSetBackground(wxSTC_MARKNUM_FOLDEREND, node->as_wxColour(prop_fold_marker_colour));
             }
         }
         else if (node->as_string(prop_fold_marker_style) == "circle tree" ||
@@ -285,7 +285,7 @@ wxObject* StyledTextGenerator::CreateMockup(Node* node, wxObject* parent)
             scintilla->MarkerSetBackground(wxSTC_MARKNUM_FOLDERTAIL, clr_foreground);
 
             auto clr_background = node->HasValue(prop_fold_marker_colour) ?
-                                      node->prop_as_wxColour(prop_fold_marker_colour) :
+                                      node->as_wxColour(prop_fold_marker_colour) :
                                       scintilla->StyleGetBackground(wxSTC_STYLE_DEFAULT);
             scintilla->MarkerSetForeground(wxSTC_MARKNUM_FOLDER, clr_background);
             scintilla->MarkerSetForeground(wxSTC_MARKNUM_FOLDEROPEN, clr_background);
@@ -316,7 +316,7 @@ wxObject* StyledTextGenerator::CreateMockup(Node* node, wxObject* parent)
             }
         }
 
-        scintilla->SetMarginWidth(margin, node->prop_as_int(prop_fold_width));
+        scintilla->SetMarginWidth(margin, node->as_int(prop_fold_width));
         scintilla->SetMarginType(margin, wxSTC_MARGIN_SYMBOL);
         scintilla->SetMarginMask(margin, wxSTC_MASK_FOLDERS);
         scintilla->SetMarginSensitive(margin, true);
@@ -350,13 +350,13 @@ wxObject* StyledTextGenerator::CreateMockup(Node* node, wxObject* parent)
     if (node->as_string(prop_custom_margin) != "none")
     {
         auto margin = node->as_string(prop_custom_margin).atoi();
-        scintilla->SetMarginWidth(margin, node->prop_as_int(prop_custom_width));
+        scintilla->SetMarginWidth(margin, node->as_int(prop_custom_width));
 
         scintilla->SetMarginType(margin, node->prop_as_mockup(prop_custom_type, "stc_"));
 
         if (node->as_string(prop_custom_type) == "colour" && node->HasValue(prop_custom_colour))
         {
-            scintilla->SetMarginBackground(margin, node->prop_as_wxColour(prop_custom_colour));
+            scintilla->SetMarginBackground(margin, node->as_wxColour(prop_custom_colour));
         }
 
         if (node->as_string(prop_custom_type) == "symbol" || node->as_string(prop_custom_type) == "number")
@@ -382,31 +382,31 @@ wxObject* StyledTextGenerator::CreateMockup(Node* node, wxObject* parent)
     {
         scintilla->SetIndentationGuides(node->prop_as_mockup(prop_indentation_guides, "stc_"));
     }
-    scintilla->SetIndent(node->prop_as_int(prop_stc_indentation_size));
-    scintilla->SetUseTabs((node->prop_as_int(prop_use_tabs)));
-    scintilla->SetTabWidth(node->prop_as_int(prop_tab_width));
-    scintilla->SetTabIndents((node->prop_as_int(prop_tab_indents)));
-    scintilla->SetBackSpaceUnIndents((node->prop_as_int(prop_backspace_unindents)));
-    scintilla->SetIndent(node->prop_as_int(prop_tab_width));
+    scintilla->SetIndent(node->as_int(prop_stc_indentation_size));
+    scintilla->SetUseTabs((node->as_int(prop_use_tabs)));
+    scintilla->SetTabWidth(node->as_int(prop_tab_width));
+    scintilla->SetTabIndents((node->as_int(prop_tab_indents)));
+    scintilla->SetBackSpaceUnIndents((node->as_int(prop_backspace_unindents)));
+    scintilla->SetIndent(node->as_int(prop_tab_width));
 
     //////////// General settings ////////////
 
-    if (node->prop_as_int(prop_stc_left_margin_width) == 5)
+    if (node->as_int(prop_stc_left_margin_width) == 5)
     {
         scintilla->SetMarginLeft(wxSizerFlags::GetDefaultBorder());
     }
     else
     {
-        scintilla->SetMarginLeft(node->prop_as_int(prop_stc_left_margin_width));
+        scintilla->SetMarginLeft(node->as_int(prop_stc_left_margin_width));
     }
 
-    if (node->prop_as_int(prop_stc_right_margin_width) == 5)
+    if (node->as_int(prop_stc_right_margin_width) == 5)
     {
         scintilla->SetMarginRight(wxSizerFlags::GetDefaultBorder());
     }
     else
     {
-        scintilla->SetMarginRight(node->prop_as_int(prop_stc_right_margin_width));
+        scintilla->SetMarginRight(node->as_int(prop_stc_right_margin_width));
     }
 
     if (node->HasValue(prop_eol_mode))
@@ -426,7 +426,7 @@ wxObject* StyledTextGenerator::CreateMockup(Node* node, wxObject* parent)
 
     if (node->HasValue(prop_font))
     {
-        scintilla->StyleSetFont(wxSTC_STYLE_DEFAULT, node->prop_as_font(prop_font));
+        scintilla->StyleSetFont(wxSTC_STYLE_DEFAULT, node->as_wxFont(prop_font));
     }
 
     // Now that all settings have been called, add some sample text.
@@ -541,7 +541,7 @@ bool StyledTextGenerator::SettingsCode(Code& code)
 
     if (code.HasValue(prop_stc_wrap_visual_flag))
     {
-        if (auto result = code.node()->prop_as_constant(prop_stc_wrap_visual_flag, "stc_"); result.size())
+        if (auto result = code.node()->as_constant(prop_stc_wrap_visual_flag, "stc_"); result.size())
         {
             code.Eol(eol_if_needed).NodeName().Function("SetWrapVisualFlags(").Add(result).EndFunction();
         }
@@ -549,7 +549,7 @@ bool StyledTextGenerator::SettingsCode(Code& code)
 
     if (code.HasValue(prop_stc_wrap_visual_location))
     {
-        if (auto result = code.node()->prop_as_constant(prop_stc_wrap_visual_location, "stc_"); result.size())
+        if (auto result = code.node()->as_constant(prop_stc_wrap_visual_location, "stc_"); result.size())
         {
             code.Eol(eol_if_needed).NodeName().Function("SetWrapVisualFlagsLocation(").Add(result).EndFunction();
         }
@@ -842,7 +842,7 @@ bool StyledTextGenerator::SettingsCode(Code& code)
         code.Eol().NodeName().Function("SetMarginType(").Str(margin).Comma().Add("wxSTC_MARGIN_FORE").EndFunction();
     }
 
-    if (node->as_string(prop_custom_margin) != "none" && node->prop_as_int(prop_custom_width))
+    if (node->as_string(prop_custom_margin) != "none" && node->as_int(prop_custom_width))
     {
         margin = node->as_string(prop_custom_margin);
         if (margin.is_sameas("none"))
@@ -1110,7 +1110,7 @@ int StyledTextGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t
 
     if (node->as_string(prop_stc_wrap_mode) != "no wrapping")
     {
-        item.append_child("wrapmode").text().set(node->prop_as_constant(prop_stc_wrap_mode, "stc_"));
+        item.append_child("wrapmode").text().set(node->as_constant(prop_stc_wrap_mode, "stc_"));
     }
 
     GenXrcStylePosSize(node, item);

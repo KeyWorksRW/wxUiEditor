@@ -20,14 +20,14 @@ wxObject* HyperlinkGenerator::CreateMockup(Node* node, wxObject* parent)
     wxHyperlinkCtrlBase* widget;
     if (node->as_bool(prop_underlined))
     {
-        widget = new wxHyperlinkCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString(prop_label),
-                                     node->prop_as_wxString(prop_url), DlgPoint(parent, node, prop_pos),
+        widget = new wxHyperlinkCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxString(prop_label),
+                                     node->as_wxString(prop_url), DlgPoint(parent, node, prop_pos),
                                      DlgSize(parent, node, prop_size), GetStyleInt(node));
     }
     else
     {
-        widget = new wxGenericHyperlinkCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString(prop_label),
-                                            node->prop_as_wxString(prop_url), DlgPoint(parent, node, prop_pos),
+        widget = new wxGenericHyperlinkCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxString(prop_label),
+                                            node->as_wxString(prop_url), DlgPoint(parent, node, prop_pos),
                                             DlgSize(parent, node, prop_size), GetStyleInt(node));
 
         if (!node->HasValue(prop_font))
@@ -38,7 +38,7 @@ wxObject* HyperlinkGenerator::CreateMockup(Node* node, wxObject* parent)
 
     if (node->HasValue(prop_hover_color))
     {
-        widget->SetHoverColour(node->prop_as_wxColour(prop_hover_color));
+        widget->SetHoverColour(node->as_wxColour(prop_hover_color));
     }
     else if (node->as_bool(prop_sync_hover_colour))
     {
@@ -47,11 +47,11 @@ wxObject* HyperlinkGenerator::CreateMockup(Node* node, wxObject* parent)
 
     if (node->HasValue(prop_normal_color))
     {
-        widget->SetNormalColour(node->prop_as_wxColour(prop_normal_color));
+        widget->SetNormalColour(node->as_wxColour(prop_normal_color));
     }
     if (node->HasValue(prop_visited_color))
     {
-        widget->SetVisitedColour(node->prop_as_wxColour(prop_visited_color));
+        widget->SetVisitedColour(node->as_wxColour(prop_visited_color));
     }
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
@@ -128,17 +128,17 @@ int HyperlinkGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t 
     if (node->HasValue(prop_normal_color))
     {
         item.append_child("normal").text().set(
-            node->prop_as_wxColour(prop_normal_color).GetAsString(wxC2S_HTML_SYNTAX).ToUTF8().data());
+            node->as_wxColour(prop_normal_color).GetAsString(wxC2S_HTML_SYNTAX).ToUTF8().data());
     }
     if (node->HasValue(prop_hover_color))
     {
         item.append_child("hover").text().set(
-            node->prop_as_wxColour(prop_hover_color).GetAsString(wxC2S_HTML_SYNTAX).ToUTF8().data());
+            node->as_wxColour(prop_hover_color).GetAsString(wxC2S_HTML_SYNTAX).ToUTF8().data());
     }
     if (node->HasValue(prop_visited_color))
     {
         item.append_child("visited").text().set(
-            node->prop_as_wxColour(prop_visited_color).GetAsString(wxC2S_HTML_SYNTAX).ToUTF8().data());
+            node->as_wxColour(prop_visited_color).GetAsString(wxC2S_HTML_SYNTAX).ToUTF8().data());
     }
 #endif
 

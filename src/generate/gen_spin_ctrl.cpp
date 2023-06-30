@@ -21,14 +21,14 @@ using namespace code;
 wxObject* SpinCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxSpinCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, wxEmptyString, DlgPoint(parent, node, prop_pos),
-                                 DlgSize(parent, node, prop_size), GetStyleInt(node), node->prop_as_int(prop_min),
-                                 node->prop_as_int(prop_max), node->prop_as_int(prop_initial));
+                                 DlgSize(parent, node, prop_size), GetStyleInt(node), node->as_int(prop_min),
+                                 node->as_int(prop_max), node->as_int(prop_initial));
 
     if (node->as_bool(prop_hexadecimal))
         widget->SetBase(16);
 
-    if (node->prop_as_int(prop_inc) > 1)
-        widget->SetIncrement(node->prop_as_int(prop_inc));
+    if (node->as_int(prop_inc) > 1)
+        widget->SetIncrement(node->as_int(prop_inc));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
@@ -39,12 +39,12 @@ bool SpinCtrlGenerator::OnPropertyChange(wxObject* widget, Node* node, NodePrope
 {
     if (prop->isProp(prop_initial))
     {
-        wxStaticCast(widget, wxSpinCtrl)->SetValue(node->prop_as_int(prop_initial));
+        wxStaticCast(widget, wxSpinCtrl)->SetValue(node->as_int(prop_initial));
         return true;
     }
     else if (prop->isProp(prop_min) || prop->isProp(prop_max))
     {
-        wxStaticCast(widget, wxSpinCtrl)->SetRange(node->prop_as_int(prop_min), node->prop_as_int(prop_max));
+        wxStaticCast(widget, wxSpinCtrl)->SetRange(node->as_int(prop_min), node->as_int(prop_max));
         return true;
     }
 
@@ -99,7 +99,7 @@ int SpinCtrlGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t x
     ADD_ITEM_PROP(prop_max, "max")
     ADD_ITEM_PROP(prop_initial, "value")
 
-    if (node->prop_as_int(prop_inc) > 1)
+    if (node->as_int(prop_inc) > 1)
         ADD_ITEM_PROP(prop_inc, "inc")
 
     if (node->as_bool(prop_hexadecimal))
@@ -141,14 +141,14 @@ bool SpinCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, 
 
 wxObject* SpinCtrlDoubleGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxSpinCtrlDouble(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString(prop_value),
+    auto widget = new wxSpinCtrlDouble(wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxString(prop_value),
                                        DlgPoint(parent, node, prop_pos), DlgSize(parent, node, prop_size), GetStyleInt(node),
-                                       node->prop_as_double(prop_min), node->prop_as_double(prop_max),
-                                       node->prop_as_double(prop_initial), node->prop_as_double(prop_inc));
+                                       node->as_double(prop_min), node->as_double(prop_max), node->as_double(prop_initial),
+                                       node->as_double(prop_inc));
 
-    if (node->prop_as_int(prop_digits) > 0)
+    if (node->as_int(prop_digits) > 0)
     {
-        widget->SetDigits(node->prop_as_int(prop_digits));
+        widget->SetDigits(node->as_int(prop_digits));
     }
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
@@ -200,7 +200,7 @@ int SpinCtrlDoubleGenerator::GenXrcObject(Node* node, pugi::xml_node& object, si
     ADD_ITEM_PROP(prop_initial, "value")
     ADD_ITEM_PROP(prop_digits, "digits")
 
-    if (node->prop_as_double(prop_inc) != 1)
+    if (node->as_double(prop_inc) != 1)
         ADD_ITEM_PROP(prop_inc, "inc")
 
     if (node->HasValue(prop_style))

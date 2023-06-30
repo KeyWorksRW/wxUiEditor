@@ -79,11 +79,11 @@ wxObject* BookPageGenerator::CreateMockup(Node* node, wxObject* parent)
                 if (is_image_found)
                     break;
             }
-            tree->AddSubPage(widget, node->prop_as_wxString(prop_label), false, idx_image);
+            tree->AddSubPage(widget, node->as_wxString(prop_label), false, idx_image);
         }
         else
         {
-            tree->AddSubPage(widget, node->prop_as_wxString(prop_label), false, -1);
+            tree->AddSubPage(widget, node->as_wxString(prop_label), false, -1);
         }
     }
     else if (auto book = wxDynamicCast(parent, wxBookCtrlBase); book)
@@ -127,11 +127,11 @@ wxObject* BookPageGenerator::CreateMockup(Node* node, wxObject* parent)
                 }
             }
 
-            book->AddPage(widget, node->prop_as_wxString(prop_label), false, idx_image);
+            book->AddPage(widget, node->as_wxString(prop_label), false, idx_image);
         }
         else
         {
-            book->AddPage(widget, node->prop_as_wxString(prop_label));
+            book->AddPage(widget, node->as_wxString(prop_label));
         }
 
         auto cur_selection = book->GetSelection();
@@ -168,11 +168,11 @@ wxObject* BookPageGenerator::CreateMockup(Node* node, wxObject* parent)
                     }
                 }
 
-                aui_book->AddPage(widget, node->prop_as_wxString(prop_label), false, idx_image);
+                aui_book->AddPage(widget, node->as_wxString(prop_label), false, idx_image);
             }
             else
             {
-                aui_book->AddPage(widget, node->prop_as_wxString(prop_label));
+                aui_book->AddPage(widget, node->as_wxString(prop_label));
             }
 
             auto cur_selection = aui_book->GetSelection();

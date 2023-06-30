@@ -29,8 +29,8 @@ void TreeListCtrlGenerator::AfterCreation(wxObject* wxobject, wxWindow* /* wxpar
 
     for (const auto& iter: node->GetChildNodePtrs())
     {
-        widget->AppendColumn(iter->prop_as_wxString(prop_label), iter->prop_as_int(prop_width),
-                             static_cast<wxAlignment>(iter->prop_as_int(prop_alignment)), iter->prop_as_int(prop_flags));
+        widget->AppendColumn(iter->as_wxString(prop_label), iter->as_int(prop_width),
+                             static_cast<wxAlignment>(iter->as_int(prop_alignment)), iter->as_int(prop_flags));
     }
 }
 

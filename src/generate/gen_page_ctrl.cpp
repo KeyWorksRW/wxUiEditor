@@ -47,7 +47,7 @@ wxObject* PageCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
                     ++idx_image;
                 }
             }
-            book->AddPage(wxStaticCast(widget, wxWindow), node->prop_as_wxString(prop_label), false, idx_image);
+            book->AddPage(wxStaticCast(widget, wxWindow), node->as_wxString(prop_label), false, idx_image);
         }
         else if (node->HasValue(prop_bitmap) && node_parent->as_bool(prop_display_images))
         {
@@ -69,11 +69,11 @@ wxObject* PageCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
                 }
             }
 
-            book->AddPage(wxStaticCast(widget, wxWindow), node->prop_as_wxString(prop_label), false, idx_image);
+            book->AddPage(wxStaticCast(widget, wxWindow), node->as_wxString(prop_label), false, idx_image);
         }
         else
         {
-            book->AddPage(wxStaticCast(widget, wxWindow), node->prop_as_wxString(prop_label));
+            book->AddPage(wxStaticCast(widget, wxWindow), node->as_wxString(prop_label));
         }
 
         auto cur_selection = book->GetSelection();
@@ -111,11 +111,11 @@ wxObject* PageCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
                     }
                 }
 
-                aui_book->AddPage(wxStaticCast(widget, wxWindow), node->prop_as_wxString(prop_label), false, idx_image);
+                aui_book->AddPage(wxStaticCast(widget, wxWindow), node->as_wxString(prop_label), false, idx_image);
             }
             else
             {
-                aui_book->AddPage(wxStaticCast(widget, wxWindow), node->prop_as_wxString(prop_label));
+                aui_book->AddPage(wxStaticCast(widget, wxWindow), node->as_wxString(prop_label));
             }
 
             auto cur_selection = aui_book->GetSelection();

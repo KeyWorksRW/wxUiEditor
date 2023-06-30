@@ -22,7 +22,7 @@ wxObject* DatePickerCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
                              DlgSize(parent, node, prop_size), GetStyleInt(node));
 
     if (node->as_string(prop_style).contains("wxDP_ALLOWNONE"))
-        widget->SetNullText(node->prop_as_wxString(prop_null_text));
+        widget->SetNullText(node->as_wxString(prop_null_text));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 

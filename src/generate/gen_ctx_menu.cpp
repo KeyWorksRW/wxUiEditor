@@ -81,7 +81,7 @@ bool CtxMenuGenerator::AfterChildrenCode(Code& code)
 
     // All of the constructors are expecting a wxMenu parent -- so we need to temporarily create one
     auto node_menu = NodeCreation.NewNode(NodeCreation.GetNodeDeclaration("wxMenu"));
-    node_menu->prop_set_value(prop_var_name, code.is_cpp() ? "p_ctx_menu" : "ctx_menu");
+    node_menu->set_value(prop_var_name, code.is_cpp() ? "p_ctx_menu" : "ctx_menu");
 
     for (const auto& child: code.node()->GetChildNodePtrs())
     {

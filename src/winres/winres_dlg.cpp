@@ -45,12 +45,12 @@ void resForm::ParseDialog(WinResource* pWinResource, tt_string_vector& txtfile, 
     // VSCode File Open dialog can't handle forward slashes on Windows
     fullpath.forwardslashestoback();
     #endif  // _WIN32
-    m_form_node->prop_set_value(prop_base_src_includes, tt_string() << "// " << fullpath);
+    m_form_node->set_value(prop_base_src_includes, tt_string() << "// " << fullpath);
 #endif
 
     tt_string value;  // General purpose string we can use throughout this function
     value = line.substr(0, end);
-    m_form_node->prop_set_value(prop_class_name, ConvertFormID(value));
+    m_form_node->set_value(prop_class_name, ConvertFormID(value));
 
 #if defined(_DEBUG) || defined(INTERNAL_TESTING)
     m_form_id = m_form_node->as_string(prop_class_name);
@@ -72,7 +72,7 @@ void resForm::ParseDialog(WinResource* pWinResource, tt_string_vector& txtfile, 
         {
             line.moveto_nextword();
             value.ExtractSubString(line);
-            m_form_node->prop_set_value(prop_title, m_pWinResource->ConvertCodePageString(value));
+            m_form_node->set_value(prop_title, m_pWinResource->ConvertCodePageString(value));
         }
         else if (line.starts_with("FONT"))
         {
@@ -110,15 +110,15 @@ void resForm::AddStyle(tt_string_vector& txtfile, size_t& curTxtLine)
     }
 
     if (style.contains("DS_CENTER"))
-        m_form_node->prop_set_value(prop_center, "wxBOTH");
+        m_form_node->set_value(prop_center, "wxBOTH");
     if (style.contains("WS_EX_CONTEXTHELP"))
-        m_form_node->prop_set_value(prop_extra_style, "wxDIALOG_EX_CONTEXTHELP");
+        m_form_node->set_value(prop_extra_style, "wxDIALOG_EX_CONTEXTHELP");
 
     tt_string original_styles(tt::stepover(style));
 
     if (original_styles.contains("DS_MODALFRAME"))
     {
-        m_form_node->prop_set_value(prop_style, "wxDEFAULT_DIALOG_STYLE");
+        m_form_node->set_value(prop_style, "wxDEFAULT_DIALOG_STYLE");
         // It's common for dialogs to duplicate the styles that DS_MODALFRAME add, so we remove them here to
         // avoid adding them later.
         original_styles.Replace("WS_CAPTION", "");
@@ -206,7 +206,7 @@ void resForm::ParseControls(tt_string_vector& txtfile, size_t& curTxtLine)
             auto cur_pos = m_ctrls.size() - 1;
             if (cur_pos > 0 && m_ctrls[cur_pos - 1].GetNode()->isGen(gen_wxTextCtrl))
             {
-                control.GetNode()->prop_set_value(prop_id, m_ctrls[cur_pos - 1].GetNode()->as_string(prop_id));
+                control.GetNode()->set_value(prop_id, m_ctrls[cur_pos - 1].GetNode()->as_string(prop_id));
                 m_ctrls.erase(m_ctrls.begin() + (cur_pos - 1));
             }
         }
@@ -219,7 +219,7 @@ void resForm::AppendStyle(GenEnum::PropName prop_name, tt_string_view style)
     if (updated_style.size())
         updated_style << '|';
     updated_style << style;
-    m_form_node->prop_set_value(prop_name, updated_style);
+    m_form_node->set_value(prop_name, updated_style);
 }
 
 tt_string resForm::ConvertFormID(tt_string_view id)

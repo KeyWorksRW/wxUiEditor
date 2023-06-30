@@ -369,7 +369,7 @@ int WizardFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t
         if (node->HasValue(prop_bmp_background_colour))
             item.append_child("bitmap-bg")
                 .text()
-                .set(node->prop_as_wxColour(prop_bmp_background_colour).GetAsString(wxC2S_HTML_SYNTAX).ToUTF8().data());
+                .set(node->as_wxColour(prop_bmp_background_colour).GetAsString(wxC2S_HTML_SYNTAX).ToUTF8().data());
     }
 
     if (xrc_flags & xrc::add_comments)

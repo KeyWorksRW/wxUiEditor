@@ -20,9 +20,9 @@
 
 wxObject* RibbonPageGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto bmp = node->HasValue(prop_bitmap) ? node->prop_as_wxBitmap(prop_bitmap) : wxNullBitmap;
+    auto bmp = node->HasValue(prop_bitmap) ? node->as_wxBitmap(prop_bitmap) : wxNullBitmap;
     // REVIEW: This is still a bitmap rather then a bundle as of the 3.1.6 release
-    auto widget = new wxRibbonPage((wxRibbonBar*) parent, wxID_ANY, node->prop_as_wxString(prop_label), bmp, 0);
+    auto widget = new wxRibbonPage((wxRibbonBar*) parent, wxID_ANY, node->as_wxString(prop_label), bmp, 0);
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
@@ -90,9 +90,9 @@ int RibbonPageGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t
 
 wxObject* RibbonPanelGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxRibbonPanel((wxRibbonPage*) parent, wxID_ANY, node->prop_as_wxString(prop_label),
-                                    node->prop_as_wxBitmap(prop_bitmap), DlgPoint(parent, node, prop_pos),
-                                    DlgSize(parent, node, prop_size), GetStyleInt(node));
+    auto widget =
+        new wxRibbonPanel((wxRibbonPage*) parent, wxID_ANY, node->as_wxString(prop_label), node->as_wxBitmap(prop_bitmap),
+                          DlgPoint(parent, node, prop_pos), DlgSize(parent, node, prop_size), GetStyleInt(node));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 

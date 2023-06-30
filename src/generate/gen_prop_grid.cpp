@@ -23,7 +23,7 @@ wxObject* PropertyGridGenerator::CreateMockup(Node* node, wxObject* parent)
 
     if (node->HasValue(prop_extra_style))
     {
-        widget->SetExtraStyle(node->prop_as_int(prop_extra_style));
+        widget->SetExtraStyle(node->as_int(prop_extra_style));
     }
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);

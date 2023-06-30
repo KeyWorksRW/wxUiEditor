@@ -14,12 +14,12 @@ void resForm::CreateDialogLayout()
     if (!m_ctrls.size())
     {
         m_dlg_sizer = NodeCreation.CreateNode(gen_VerticalBoxSizer, m_form_node.get());
-        m_dlg_sizer->prop_set_value(prop_var_name, "dlg_sizer");
+        m_dlg_sizer->set_value(prop_var_name, "dlg_sizer");
         m_form_node->Adopt(m_dlg_sizer);
 
         // TODO This is a hack to get our Mockup window to display something -- but the dimensions should actually come from
         // the dialog itself.
-        m_form_node->prop_set_value(prop_size, "200; 200; using dialog units");
+        m_form_node->set_value(prop_size, "200; 200; using dialog units");
 
         return;  // empty dialog -- rare, but it does happen
     }
@@ -30,7 +30,7 @@ void resForm::CreateDialogLayout()
 
     m_dlg_sizer = NodeCreation.CreateNode(gen_VerticalBoxSizer, m_form_node.get());
     ASSERT(m_dlg_sizer);
-    m_dlg_sizer->prop_set_value(prop_var_name, "dlg_sizer");
+    m_dlg_sizer->set_value(prop_var_name, "dlg_sizer");
     m_form_node->Adopt(m_dlg_sizer);
     CheckForStdButtons();
 
@@ -52,9 +52,9 @@ void resForm::CreateDialogLayout()
                 if (m_ctrls[idx_child].du_left() > dlg_margin)
                 {
                     if (m_ctrls[idx_child].du_left() + m_ctrls[idx_child].du_width() < (du_width() - dlg_margin))
-                        m_ctrls[idx_child].prop_set_value(prop_alignment, "wxALIGN_CENTER_HORIZONTAL");
+                        m_ctrls[idx_child].set_value(prop_alignment, "wxALIGN_CENTER_HORIZONTAL");
                     else
-                        m_ctrls[idx_child].prop_set_value(prop_alignment, "wxALIGN_RIGHT");
+                        m_ctrls[idx_child].set_value(prop_alignment, "wxALIGN_RIGHT");
                 }
             }
 
@@ -65,7 +65,7 @@ void resForm::CreateDialogLayout()
                     m_ctrls[idx_child].GetNode()->as_string(prop_alignment).contains("wxALIGN_CENTER_HORIZONTAL"))
                 {
                     auto vertical_sizer = NodeCreation.CreateNode(gen_VerticalBoxSizer, m_dlg_sizer.get());
-                    vertical_sizer->prop_set_value(prop_flags, "wxEXPAND");
+                    vertical_sizer->set_value(prop_flags, "wxEXPAND");
                     m_dlg_sizer->Adopt(vertical_sizer);
                     Adopt(vertical_sizer, m_ctrls[idx_child]);
                 }
@@ -207,7 +207,7 @@ void resForm::CreateDialogLayout()
             if ((m_ctrls[first_child].du_left() > 15) &&
                 (m_ctrls[idx_child].du_left() + m_ctrls[idx_child].du_width() > du_width() - 15))
             {
-                sizer->prop_set_value(prop_alignment, "wxALIGN_RIGHT");
+                sizer->set_value(prop_alignment, "wxALIGN_RIGHT");
             }
         }
 
@@ -305,8 +305,8 @@ void resForm::CreateDialogLayout()
                 if ((m_ctrls[first_child].du_left() > 15) &&
                     (m_ctrls[first_child].du_left() + m_ctrls[first_child].du_width() > du_width() - 15))
                 {
-                    sizer->prop_set_value(prop_orientation, "wxHORIZONTAL");
-                    sizer->prop_set_value(prop_alignment, "wxALIGN_RIGHT");
+                    sizer->set_value(prop_orientation, "wxHORIZONTAL");
+                    sizer->set_value(prop_alignment, "wxALIGN_RIGHT");
                 }
             }
         }
@@ -341,7 +341,7 @@ void resForm::AddSiblings(Node* parent_sizer, std::vector<std::reference_wrapper
             auto vert_sizer = NodeCreation.CreateNode(gen_VerticalBoxSizer, parent_sizer);
             parent_sizer->Adopt(vert_sizer);
             auto spacer = NodeCreation.CreateNode(gen_spacer, vert_sizer.get());
-            spacer->prop_set_value(prop_height, actrls[0].get().du_top() - pSibling->du_top());
+            spacer->set_value(prop_height, actrls[0].get().du_top() - pSibling->du_top());
             vert_sizer->Adopt(spacer);
             Adopt(vert_sizer.get(), &actrls[0].get());
         }
@@ -365,7 +365,7 @@ void resForm::AddSiblings(Node* parent_sizer, std::vector<std::reference_wrapper
                 // and add all children with the same top position.
                 auto horz_sizer = NodeCreation.CreateNode(gen_wxBoxSizer, vert_sizer.get());
                 vert_sizer->Adopt(horz_sizer);
-                horz_sizer->prop_set_value(prop_orientation, "wxHORIZONTAL");
+                horz_sizer->set_value(prop_orientation, "wxHORIZONTAL");
 
                 while (idx_child < actrls.size() && is_same_top(actrls, first_child, idx_child))
                 {
@@ -456,7 +456,7 @@ void resForm::AddStaticBoxChildren(const resCtrl& box, size_t idx_group_box)
 {
     if (box.du_width() > du_width() - 30)
     {
-        box.GetNode()->prop_set_value(prop_flags, "wxEXPAND");
+        box.GetNode()->set_value(prop_flags, "wxEXPAND");
     }
 
     std::vector<std::reference_wrapper<resCtrl>> group_ctrls;
@@ -474,14 +474,14 @@ void resForm::AddStaticBoxChildren(const resCtrl& box, size_t idx_group_box)
             // REVIEW: [KeyWorks - 06-16-2021] Does this actually happen in a group box?
             int dlg_margin = (box.du_width() / 2) - group_ctrls[idx_group_child].get().du_width();
             if (group_ctrls[idx_group_child].get().du_left() + du_width() < (box.du_width() - dlg_margin))
-                group_ctrls[idx_group_child].get().prop_set_value(prop_alignment, "wxALIGN_CENTER_HORIZONTAL");
+                group_ctrls[idx_group_child].get().set_value(prop_alignment, "wxALIGN_CENTER_HORIZONTAL");
             continue;
         }
         else if (result == 0)
         {
             // Single row with all control tops the same, so use a horizontal box sizer
             auto sizer = NodeCreation.CreateNode(gen_wxBoxSizer, box.GetNode());
-            sizer->prop_set_value(prop_orientation, "wxHORIZONTAL");
+            sizer->set_value(prop_orientation, "wxHORIZONTAL");
             static_box.GetNode()->Adopt(sizer);
 
             while (idx_group_child < group_ctrls.size() &&
@@ -501,7 +501,7 @@ void resForm::AddStaticBoxChildren(const resCtrl& box, size_t idx_group_box)
 
             auto total_columns = result;  // This is just for readability
             auto grid_sizer = NodeCreation.CreateNode(gen_wxFlexGridSizer, box.GetNode());
-            grid_sizer->prop_set_value(prop_cols, tt::itoa(total_columns));
+            grid_sizer->set_value(prop_cols, tt::itoa(total_columns));
             static_box.GetNode()->Adopt(grid_sizer);
 
             // TODO: [KeyWorks - 11-08-2021] The following code will handle cases where there are missing right columns in a
@@ -766,9 +766,9 @@ void resForm::CheckForStdButtons()
                     btn_node->as_string(prop_label).is_sameas("&Yes", tt::CASE::either))
                 {
                     CreateStdButton();
-                    m_stdButtonSizer->prop_set_value(prop_Yes, "1");
+                    m_stdButtonSizer->set_value(prop_Yes, "1");
                     if (btn_node->as_bool(prop_default))
-                        m_stdButtonSizer->prop_set_value(prop_default_button, "Yes");
+                        m_stdButtonSizer->set_value(prop_default_button, "Yes");
                     m_ctrls.erase(m_ctrls.begin() + idx_child);
                     continue;
                 }
@@ -776,9 +776,9 @@ void resForm::CheckForStdButtons()
                          btn_node->as_string(prop_label).is_sameas("&Save", tt::CASE::either))
                 {
                     CreateStdButton();
-                    m_stdButtonSizer->prop_set_value(prop_Save, "1");
+                    m_stdButtonSizer->set_value(prop_Save, "1");
                     if (btn_node->as_bool(prop_default))
-                        m_stdButtonSizer->prop_set_value(prop_default_button, "Save");
+                        m_stdButtonSizer->set_value(prop_default_button, "Save");
                     m_ctrls.erase(m_ctrls.begin() + idx_child);
                     continue;
                 }
@@ -786,7 +786,7 @@ void resForm::CheckForStdButtons()
                          btn_node->as_string(prop_label).is_sameas("&OK", tt::CASE::either))
                 {
                     CreateStdButton();
-                    m_stdButtonSizer->prop_set_value(prop_OK, "1");
+                    m_stdButtonSizer->set_value(prop_OK, "1");
                     m_ctrls.erase(m_ctrls.begin() + idx_child);
                     continue;
                 }
@@ -797,9 +797,9 @@ void resForm::CheckForStdButtons()
                     btn_node->as_string(prop_label).is_sameas("&Yes", tt::CASE::either))
                 {
                     CreateStdButton();
-                    m_stdButtonSizer->prop_set_value(prop_Yes, "1");
+                    m_stdButtonSizer->set_value(prop_Yes, "1");
                     if (btn_node->as_bool(prop_default))
-                        m_stdButtonSizer->prop_set_value(prop_default_button, "Yes");
+                        m_stdButtonSizer->set_value(prop_default_button, "Yes");
                     m_ctrls.erase(m_ctrls.begin() + idx_child);
                     continue;
                 }
@@ -810,7 +810,7 @@ void resForm::CheckForStdButtons()
                     btn_node->as_string(prop_label).is_sameas("&No", tt::CASE::either))
                 {
                     CreateStdButton();
-                    m_stdButtonSizer->prop_set_value(prop_No, "1");
+                    m_stdButtonSizer->set_value(prop_No, "1");
                     m_ctrls.erase(m_ctrls.begin() + idx_child);
                     continue;
                 }
@@ -821,9 +821,9 @@ void resForm::CheckForStdButtons()
                     btn_node->as_string(prop_label).is_sameas("&Close", tt::CASE::either))
                 {
                     CreateStdButton();
-                    m_stdButtonSizer->prop_set_value(prop_Close, "1");
+                    m_stdButtonSizer->set_value(prop_Close, "1");
                     if (btn_node->as_bool(prop_default))
-                        m_stdButtonSizer->prop_set_value(prop_default_button, "Close");
+                        m_stdButtonSizer->set_value(prop_default_button, "Close");
                     m_ctrls.erase(m_ctrls.begin() + idx_child);
                     continue;
                 }
@@ -831,9 +831,9 @@ void resForm::CheckForStdButtons()
                          btn_node->as_string(prop_label).is_sameas("&Cancel", tt::CASE::either))
                 {
                     CreateStdButton();
-                    m_stdButtonSizer->prop_set_value(prop_Cancel, "1");
+                    m_stdButtonSizer->set_value(prop_Cancel, "1");
                     if (btn_node->as_bool(prop_default))
-                        m_stdButtonSizer->prop_set_value(prop_default_button, "Cancel");
+                        m_stdButtonSizer->set_value(prop_default_button, "Cancel");
                     m_ctrls.erase(m_ctrls.begin() + idx_child);
                     continue;
                 }
@@ -844,7 +844,7 @@ void resForm::CheckForStdButtons()
                     btn_node->as_string(prop_label).is_sameas("&Apply", tt::CASE::either))
                 {
                     CreateStdButton();
-                    m_stdButtonSizer->prop_set_value(prop_Apply, "1");
+                    m_stdButtonSizer->set_value(prop_Apply, "1");
                     m_ctrls.erase(m_ctrls.begin() + idx_child);
                     continue;
                 }
@@ -855,7 +855,7 @@ void resForm::CheckForStdButtons()
                     btn_node->as_string(prop_label).is_sameas("&Help", tt::CASE::either))
                 {
                     CreateStdButton();
-                    m_stdButtonSizer->prop_set_value(prop_Help, "1");
+                    m_stdButtonSizer->set_value(prop_Help, "1");
                     m_ctrls.erase(m_ctrls.begin() + idx_child);
                     continue;
                 }
@@ -870,22 +870,22 @@ void resForm::CreateStdButton()
     if (!m_stdButtonSizer)
     {
         m_stdButtonSizer = NodeCreation.CreateNode(gen_wxStdDialogButtonSizer, m_dlg_sizer.get());
-        m_stdButtonSizer->prop_set_value(prop_OK, "0");
-        m_stdButtonSizer->prop_set_value(prop_Cancel, "0");
-        m_stdButtonSizer->prop_set_value(prop_flags, "wxEXPAND");
+        m_stdButtonSizer->set_value(prop_OK, "0");
+        m_stdButtonSizer->set_value(prop_Cancel, "0");
+        m_stdButtonSizer->set_value(prop_flags, "wxEXPAND");
     }
 }
 
 size_t resForm::AddTwoColumnPairs(size_t idx_start)
 {
     auto grid_sizer = NodeCreation.CreateNode(gen_wxFlexGridSizer, m_dlg_sizer.get());
-    grid_sizer->prop_set_value(prop_cols, 2);
+    grid_sizer->set_value(prop_cols, 2);
     m_dlg_sizer->Adopt(grid_sizer);
 
     // In a grid sizer, the control must be aligned to center rather then having the style be centered
 
     if (m_ctrls[idx_start].GetNode()->as_string(prop_style).contains("wxALIGN_CENTER_HORIZONTAL"))
-        m_ctrls[idx_start].GetNode()->prop_set_value(prop_alignment, "wxALIGN_CENTER_HORIZONTAL");
+        m_ctrls[idx_start].GetNode()->set_value(prop_alignment, "wxALIGN_CENTER_HORIZONTAL");
 
     Adopt(grid_sizer, m_ctrls[idx_start]);
     Adopt(grid_sizer, m_ctrls[idx_start + 1]);
@@ -906,7 +906,7 @@ size_t resForm::AddTwoColumnPairs(size_t idx_start)
         if (is_same_left(m_ctrls, idx_start, idx_start + 1) && is_same_right(m_ctrls, idx_start + 1, idx_start + 1))
         {
             if (m_ctrls[idx_child].GetNode()->as_string(prop_style).contains("wxALIGN_CENTER_HORIZONTAL"))
-                m_ctrls[idx_child].GetNode()->prop_set_value(prop_alignment, "wxALIGN_CENTER_HORIZONTAL");
+                m_ctrls[idx_child].GetNode()->set_value(prop_alignment, "wxALIGN_CENTER_HORIZONTAL");
             Adopt(grid_sizer, m_ctrls[idx_child]);
             Adopt(grid_sizer, m_ctrls[idx_child + 1]);
         }
@@ -921,10 +921,10 @@ size_t resForm::AddTwoColumnPairs(size_t idx_start)
 size_t resForm::AddTwoColumnStaticText(size_t idx_start)
 {
     auto grid_sizer = NodeCreation.CreateNode(gen_wxFlexGridSizer, m_dlg_sizer.get());
-    grid_sizer->prop_set_value(prop_cols, 2);
+    grid_sizer->set_value(prop_cols, 2);
     m_dlg_sizer->Adopt(grid_sizer);
 
-    m_ctrls[idx_start].GetNode()->prop_set_value(prop_alignment, "wxALIGN_RIGHT");
+    m_ctrls[idx_start].GetNode()->set_value(prop_alignment, "wxALIGN_RIGHT");
 
     Adopt(grid_sizer, m_ctrls[idx_start]);
     Adopt(grid_sizer, m_ctrls[idx_start + 1]);
@@ -944,7 +944,7 @@ size_t resForm::AddTwoColumnStaticText(size_t idx_start)
 
         if (m_ctrls[idx_child].isGen(gen_wxStaticText) && m_ctrls[idx_child + 1].isGen(gen_wxTextCtrl))
         {
-            m_ctrls[idx_child].GetNode()->prop_set_value(prop_alignment, "wxALIGN_RIGHT");
+            m_ctrls[idx_child].GetNode()->set_value(prop_alignment, "wxALIGN_RIGHT");
             Adopt(grid_sizer, m_ctrls[idx_child]);
             Adopt(grid_sizer, m_ctrls[idx_child + 1]);
         }
@@ -964,8 +964,8 @@ void resForm::CheckForCenteredText(Node* node_parent)
         if (child->isGen(gen_wxBoxSizer) && child->GetChildCount() == 1 && child->GetChild(0)->isGen(gen_wxStaticText) &&
             child->GetChild(0)->as_string(prop_style).contains("wxALIGN_CENTER_HORIZONTAL"))
         {
-            child->prop_set_value(prop_flags, "wxEXPAND");
-            child->GetChild(0)->prop_set_value(prop_proportion, "1");
+            child->set_value(prop_flags, "wxEXPAND");
+            child->GetChild(0)->set_value(prop_proportion, "1");
             continue;
         }
         if (child->IsSizer())
@@ -1006,7 +1006,7 @@ void resForm::CheckForFlexGrid(Node* parent)
 
             // If we get here, then the two box sizers can be converted into a single flex grid sizer
             auto grid_sizer = NodeCreation.CreateNode(gen_wxFlexGridSizer, m_dlg_sizer.get());
-            grid_sizer->prop_set_value(prop_cols, tt_string() << first_sizer->GetChildCount());
+            grid_sizer->set_value(prop_cols, tt_string() << first_sizer->GetChildCount());
             for (box_child = 0; box_child < first_sizer->GetChildCount(); ++box_child)
             {
                 grid_sizer->Adopt(first_sizer->GetChildPtr(box_child));
@@ -1018,8 +1018,8 @@ void resForm::CheckForFlexGrid(Node* parent)
 
             if (first_sizer->GetChild(0)->isGen(gen_wxStaticText))
             {
-                first_sizer->GetChild(0)->prop_set_value(prop_alignment, "wxALIGN_RIGHT");
-                second_sizer->GetChild(0)->prop_set_value(prop_alignment, "wxALIGN_RIGHT");
+                first_sizer->GetChild(0)->set_value(prop_alignment, "wxALIGN_RIGHT");
+                second_sizer->GetChild(0)->set_value(prop_alignment, "wxALIGN_RIGHT");
             }
 
             parent->RemoveChild(idx_child + 1);
@@ -1049,7 +1049,7 @@ void resForm::CheckForFlexGrid(Node* parent)
                 }
                 if (second_sizer->GetChild(0)->isGen(gen_wxStaticText))
                 {
-                    second_sizer->GetChild(0)->prop_set_value(prop_alignment, "wxALIGN_RIGHT");
+                    second_sizer->GetChild(0)->set_value(prop_alignment, "wxALIGN_RIGHT");
                 }
                 parent->RemoveChild(idx_child);
             }

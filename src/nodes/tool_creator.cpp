@@ -28,7 +28,7 @@ static void PostProcessBook(Node* book_node)
 
     if (auto sizer = page_node->CreateChildNode(gen_VerticalBoxSizer); sizer)
     {
-        sizer->prop_set_value(prop_var_name, "page_sizer");
+        sizer->set_value(prop_var_name, "page_sizer");
         sizer->FixDuplicateName();
         wxGetFrame().FirePropChangeEvent(sizer->get_prop_ptr(prop_var_name));
     }
@@ -41,7 +41,7 @@ static void PostProcessPage(Node* page_node)
 
     if (auto sizer = page_node->CreateChildNode(gen_VerticalBoxSizer); sizer)
     {
-        sizer->prop_set_value(prop_var_name, "page_sizer");
+        sizer->set_value(prop_var_name, "page_sizer");
         sizer->FixDuplicateName();
         wxGetFrame().FirePropChangeEvent(sizer->get_prop_ptr(prop_var_name));
     }
@@ -54,7 +54,7 @@ static void PostProcessPanel(Node* panel_node)
 
     if (auto sizer = panel_node->CreateChildNode(gen_VerticalBoxSizer); sizer)
     {
-        sizer->prop_set_value(prop_var_name, "panel_sizer");
+        sizer->set_value(prop_var_name, "panel_sizer");
         sizer->FixDuplicateName();
         wxGetFrame().FirePropChangeEvent(sizer->get_prop_ptr(prop_var_name));
     }
@@ -153,7 +153,7 @@ bool Node::CreateToolNode(GenName name)
     {
         if (auto sizer = new_node->CreateChildNode(gen_VerticalBoxSizer); sizer)
         {
-            sizer->prop_set_value(prop_var_name, "parent_sizer");
+            sizer->set_value(prop_var_name, "parent_sizer");
             sizer->FixDuplicateName();
             wxGetFrame().FirePropChangeEvent(sizer->get_prop_ptr(prop_var_name));
         }
@@ -224,7 +224,7 @@ bool Node::CreateToolNode(GenName name)
         if (auto sizer = new_node->GetParent(); sizer->IsSizer())
         {
             // Set a default width that is large enough to see
-            new_node->prop_set_value(prop_size, "20,-1d");
+            new_node->set_value(prop_size, "20,-1d");
             wxGetFrame().FirePropChangeEvent(new_node->get_prop_ptr(prop_size));
         }
     }
@@ -250,8 +250,8 @@ bool Node::CreateToolNode(GenName name)
     else if (name == gen_wxHtmlWindow || name == gen_wxStyledTextCtrl || name == gen_wxRichTextCtrl ||
              name == gen_wxGenericDirCtrl)
     {
-        new_node->prop_set_value(prop_flags, "wxEXPAND");
-        new_node->prop_set_value(prop_proportion, 1);
+        new_node->set_value(prop_flags, "wxEXPAND");
+        new_node->set_value(prop_proportion, 1);
     }
 
     return true;

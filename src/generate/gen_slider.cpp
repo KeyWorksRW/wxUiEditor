@@ -19,23 +19,23 @@
 
 wxObject* SliderGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxSlider(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_int(prop_value),
-                               node->prop_as_int(prop_minValue), node->prop_as_int(prop_maxValue),
-                               DlgPoint(parent, node, prop_pos), DlgSize(parent, node, prop_size), GetStyleInt(node));
+    auto widget = new wxSlider(wxStaticCast(parent, wxWindow), wxID_ANY, node->as_int(prop_value),
+                               node->as_int(prop_minValue), node->as_int(prop_maxValue), DlgPoint(parent, node, prop_pos),
+                               DlgSize(parent, node, prop_size), GetStyleInt(node));
 
-    widget->SetValue(node->prop_as_int(prop_position));
-    if (node->prop_as_int(prop_line_size) > 0)
-        widget->SetLineSize(node->prop_as_int(prop_line_size));
-    if (node->prop_as_int(prop_page_size) > 0)
-        widget->SetPageSize(node->prop_as_int(prop_page_size));
+    widget->SetValue(node->as_int(prop_position));
+    if (node->as_int(prop_line_size) > 0)
+        widget->SetLineSize(node->as_int(prop_line_size));
+    if (node->as_int(prop_page_size) > 0)
+        widget->SetPageSize(node->as_int(prop_page_size));
 #if defined(_WIN32)
-    if (node->prop_as_int(prop_tick_frequency) > 0)
-        widget->SetTickFreq(node->prop_as_int(prop_tick_frequency));
-    if (node->prop_as_int(prop_thumb_length) > 0)
-        widget->SetThumbLength(node->prop_as_int(prop_thumb_length));
-    if (node->prop_as_int(prop_sel_start) >= 0 && node->prop_as_int(prop_sel_end) >= 0)
+    if (node->as_int(prop_tick_frequency) > 0)
+        widget->SetTickFreq(node->as_int(prop_tick_frequency));
+    if (node->as_int(prop_thumb_length) > 0)
+        widget->SetThumbLength(node->as_int(prop_thumb_length));
+    if (node->as_int(prop_sel_start) >= 0 && node->as_int(prop_sel_end) >= 0)
     {
-        widget->SetSelection(node->prop_as_int(prop_sel_start), node->prop_as_int(prop_sel_end));
+        widget->SetSelection(node->as_int(prop_sel_start), node->as_int(prop_sel_end));
     }
 #endif  // _WIN32
 
@@ -72,7 +72,7 @@ bool SliderGenerator::SettingsCode(Code& code)
     code.NodeName().Function("SetValue(").as_string(prop_position).EndFunction();
 
     Node* node = code.node();
-    if (node->prop_as_int(prop_sel_start) >= 0 && node->prop_as_int(prop_sel_end) >= 0)
+    if (node->as_int(prop_sel_start) >= 0 && node->as_int(prop_sel_end) >= 0)
     {
         code.Eol(eol_if_empty)
             .NodeName()
@@ -82,19 +82,19 @@ bool SliderGenerator::SettingsCode(Code& code)
             .as_string(prop_sel_end)
             .EndFunction();
     }
-    if (node->prop_as_int(prop_line_size) > 0)
+    if (node->as_int(prop_line_size) > 0)
     {
         code.Eol(eol_if_empty).NodeName().Function("SetLineSize(").as_string(prop_line_size).EndFunction();
     }
-    if (node->prop_as_int(prop_page_size) > 0)
+    if (node->as_int(prop_page_size) > 0)
     {
         code.Eol(eol_if_empty).NodeName().Function("SetPageSize(").as_string(prop_page_size).EndFunction();
     }
-    if (node->prop_as_int(prop_tick_frequency) > 0)
+    if (node->as_int(prop_tick_frequency) > 0)
     {
         code.Eol(eol_if_empty).NodeName().Function("SetTickFreq(").as_string(prop_tick_frequency).EndFunction();
     }
-    if (node->prop_as_int(prop_thumb_length) > 0)
+    if (node->as_int(prop_thumb_length) > 0)
     {
         code.Eol(eol_if_empty).NodeName().Function("SetThumbLength(").as_string(prop_thumb_length).EndFunction();
     }
@@ -107,7 +107,7 @@ bool SliderGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProper
     if (prop->isProp(prop_minValue))
     {
         auto newValue = event->GetValue();
-        if (newValue.GetInteger() > node->prop_as_int(prop_maxValue))
+        if (newValue.GetInteger() > node->as_int(prop_maxValue))
         {
             event->SetValidationFailureMessage("Slider minimum must be less than the maximum.");
             event->Veto();
@@ -118,7 +118,7 @@ bool SliderGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProper
     else if (prop->isProp(prop_maxValue))
     {
         auto newValue = event->GetValue();
-        if (newValue.GetInteger() < node->prop_as_int(prop_minValue))
+        if (newValue.GetInteger() < node->as_int(prop_minValue))
         {
             event->SetValidationFailureMessage("Slider maximum must be greater than the minimum.");
             event->Veto();
@@ -155,7 +155,7 @@ int SliderGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc
     ADD_ITEM_PROP(prop_line_size, "linesize")
     ADD_ITEM_PROP(prop_thumb_length, "thumb")
 
-    if (node->prop_as_int(prop_sel_start) >= 0 && node->prop_as_int(prop_sel_end) >= 0)
+    if (node->as_int(prop_sel_start) >= 0 && node->as_int(prop_sel_end) >= 0)
     {
         ADD_ITEM_PROP(prop_sel_start, "selmin")
         ADD_ITEM_PROP(prop_sel_end, "selmax")

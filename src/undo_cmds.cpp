@@ -350,12 +350,12 @@ ChangeSizerType::ChangeSizerType(Node* node, GenEnum::GenName new_gen_sizer)
         {
             if (m_old_node->as_string(prop_orientation) == "wxHORIZONTAL")
             {
-                m_node->prop_set_value(prop_cols, (to_int) m_old_node->GetChildCount());
+                m_node->set_value(prop_cols, (to_int) m_old_node->GetChildCount());
             }
             else
             {
-                m_node->prop_set_value(prop_cols, 0);
-                m_node->prop_set_value(prop_rows, (to_int) m_old_node->GetChildCount());
+                m_node->set_value(prop_cols, 0);
+                m_node->set_value(prop_rows, (to_int) m_old_node->GetChildCount());
             }
         }
 
@@ -445,7 +445,7 @@ static void CopyCommonProperties(Node* old_node, Node* new_node)
     {
         if (new_node->HasProp(prop) && old_node->HasProp(prop))
         {
-            new_node->prop_set_value(prop, old_node->as_string(prop));
+            new_node->set_value(prop, old_node->as_string(prop));
         }
     }
 }
@@ -465,7 +465,7 @@ ChangeNodeType::ChangeNodeType(Node* node, GenEnum::GenName new_node)
         CopyCommonProperties(m_old_node.get(), m_node.get());
         if (m_new_gen_node == gen_wxCheckBox || m_new_gen_node == gen_wxRadioBox)
         {
-            m_node->prop_set_value(prop_checked, m_old_node->as_bool(prop_checked));
+            m_node->set_value(prop_checked, m_old_node->as_bool(prop_checked));
         }
 
         for (const auto& iter: m_old_node->GetChildNodePtrs())
@@ -527,8 +527,8 @@ void ChangeParentAction::Init(const NodeSharedPtr node, const NodeSharedPtr pare
     m_revert_parent = node->GetParentPtr();
 
     m_revert_position = m_revert_parent->GetChildPosition(node.get());
-    m_revert_row = node->prop_as_int(prop_row);
-    m_revert_col = node->prop_as_int(prop_column);
+    m_revert_row = node->as_int(prop_row);
+    m_revert_col = node->as_int(prop_column);
 
     SetUndoString(tt_string() << "change " << node->DeclName() << " parent");
 

@@ -205,7 +205,7 @@ public:
         return *this;
     }
 
-    // Equibalent to Add(node->prop_as_constant(prop_name, "...")
+    // Equibalent to Add(node->as_constant(prop_name, "...")
     Code& AddConstant(GenEnum::PropName prop_name, tt_string_view short_name);
 
     // Adds "true" for C++ or "True" for Python

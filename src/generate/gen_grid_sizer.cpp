@@ -16,8 +16,8 @@
 
 wxObject* GridSizerGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto sizer = new wxGridSizer(node->prop_as_int(prop_rows), node->prop_as_int(prop_cols), node->prop_as_int(prop_vgap),
-                                 node->prop_as_int(prop_hgap));
+    auto sizer =
+        new wxGridSizer(node->as_int(prop_rows), node->as_int(prop_cols), node->as_int(prop_vgap), node->as_int(prop_hgap));
 
     if (auto dlg = wxDynamicCast(parent, wxDialog); dlg)
     {
@@ -25,7 +25,7 @@ wxObject* GridSizerGenerator::CreateMockup(Node* node, wxObject* parent)
             dlg->SetSizer(sizer);
     }
 
-    sizer->SetMinSize(node->prop_as_wxSize(prop_minimum_size));
+    sizer->SetMinSize(node->as_wxSize(prop_minimum_size));
 
     return sizer;
 }
@@ -42,7 +42,7 @@ void GridSizerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*
 bool GridSizerGenerator::ConstructionCode(Code& code)
 {
     code.AddAuto().NodeName().CreateClass();
-    if (code.node()->prop_as_int(prop_rows) != 0)
+    if (code.node()->as_int(prop_rows) != 0)
     {
         code.Str(prop_rows).Comma();
     }

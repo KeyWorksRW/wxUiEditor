@@ -21,7 +21,16 @@
 
 wxObject* AnimationGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto animation = node->prop_as_wxAnimation(prop_animation);
+    auto get_animation = [](Node* node)
+    {
+        if (auto prop = node->get_property(prop_animation); prop)
+            return prop->as_animation();
+        else
+            return wxAnimation();
+    };
+
+    auto animation = get_animation(node);
+
     if (!node->as_bool(prop_use_generic))
     {
         auto widget =

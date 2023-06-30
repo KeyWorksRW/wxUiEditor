@@ -30,12 +30,12 @@ void NewDialog::CreateNode()
 
     if (m_title.size())
     {
-        form_node->prop_set_value(prop_title, m_title.utf8_string());
+        form_node->set_value(prop_title, m_title.utf8_string());
     }
 
     auto parent_sizer = NodeCreation.CreateNode(gen_VerticalBoxSizer, form_node.get());
     ASSERT(parent_sizer);
-    parent_sizer->prop_set_value(prop_var_name, "dlg_sizer");
+    parent_sizer->set_value(prop_var_name, "dlg_sizer");
     form_node->Adopt(parent_sizer);
 
     if (m_has_tabs)
@@ -51,14 +51,14 @@ void NewDialog::CreateNode()
 
             tt_string label("Tab ");
             label << count + 1;
-            book_page->prop_set_value(prop_label, label);
+            book_page->set_value(prop_label, label);
             auto page_sizer = NodeCreation.CreateNode(gen_VerticalBoxSizer, book_page.get());
-            page_sizer->prop_set_value(prop_var_name, tt_string() << "page_sizer_" << count + 1);
+            page_sizer->set_value(prop_var_name, tt_string() << "page_sizer_" << count + 1);
             book_page->Adopt(page_sizer);
             auto static_text = NodeCreation.CreateNode(gen_wxStaticText, page_sizer.get());
             page_sizer->Adopt(static_text);
-            static_text->prop_set_value(prop_label, "TODO: replace this control with something more useful...");
-            static_text->prop_set_value(prop_wrap, "200");
+            static_text->set_value(prop_label, "TODO: replace this control with something more useful...");
+            static_text->set_value(prop_wrap, "200");
         }
     }
 
@@ -67,14 +67,14 @@ void NewDialog::CreateNode()
         auto std_btn = NodeCreation.CreateNode(gen_wxStdDialogButtonSizer, parent_sizer.get());
         parent_sizer->Adopt(std_btn);
 
-        std_btn->prop_set_value(prop_OK, "1");
-        std_btn->prop_set_value(prop_Cancel, "1");
-        std_btn->prop_set_value(prop_static_line, "1");
-        std_btn->prop_set_value(prop_default_button, "OK");
-        std_btn->prop_set_value(prop_flags, "wxEXPAND");
+        std_btn->set_value(prop_OK, "1");
+        std_btn->set_value(prop_Cancel, "1");
+        std_btn->set_value(prop_static_line, "1");
+        std_btn->set_value(prop_default_button, "OK");
+        std_btn->set_value(prop_flags, "wxEXPAND");
     }
 
-    form_node->prop_set_value(prop_class_name, m_base_class.utf8_string());
+    form_node->set_value(prop_class_name, m_base_class.utf8_string());
     if (form_node->as_string(prop_class_name) != form_node->prop_default_value(prop_class_name))
     {
         UpdateFormClass(form_node.get());

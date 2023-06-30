@@ -159,21 +159,21 @@ void MockupContent::CreateChildren(Node* node, wxWindow* parent, wxObject* paren
             {
                 auto flags = node->GetSizerFlags();
                 wxStaticCast(parent_object, wxGridBagSizer)
-                    ->Add(node->prop_as_int(prop_width), node->prop_as_int(prop_height),
-                          wxGBPosition(node->prop_as_int(prop_row), node->prop_as_int(prop_column)),
-                          wxGBSpan(node->prop_as_int(prop_rowspan), node->prop_as_int(prop_colspan)), flags.GetFlags(),
-                          node->prop_as_int(prop_border_size));
+                    ->Add(node->as_int(prop_width), node->as_int(prop_height),
+                          wxGBPosition(node->as_int(prop_row), node->as_int(prop_column)),
+                          wxGBSpan(node->as_int(prop_rowspan), node->as_int(prop_colspan)), flags.GetFlags(),
+                          node->as_int(prop_border_size));
             }
             else
             {
-                if (node->prop_as_int(prop_proportion) != 0)
+                if (node->as_int(prop_proportion) != 0)
                 {
-                    wxStaticCast(parent_object, wxSizer)->AddStretchSpacer(node->prop_as_int(prop_proportion));
+                    wxStaticCast(parent_object, wxSizer)->AddStretchSpacer(node->as_int(prop_proportion));
                 }
                 else
                 {
-                    auto width = node->prop_as_int(prop_width);
-                    auto height = node->prop_as_int(prop_height);
+                    auto width = node->as_int(prop_width);
+                    auto height = node->as_int(prop_height);
                     if (node->as_bool(prop_add_default_border))
                     {
                         width += wxSizerFlags::GetDefaultBorder();
@@ -217,7 +217,7 @@ void MockupContent::CreateChildren(Node* node, wxWindow* parent, wxObject* paren
             created_sizer = wxStaticCast(created_object, wxSizer);
         }
 
-        if (auto minsize = node->prop_as_wxSize(prop_minimum_size); minsize != wxDefaultSize)
+        if (auto minsize = node->as_wxSize(prop_minimum_size); minsize != wxDefaultSize)
         {
             created_sizer->SetMinSize(minsize);
             created_sizer->Layout();
@@ -294,8 +294,8 @@ void MockupContent::CreateChildren(Node* node, wxWindow* parent, wxObject* paren
             if (obj_parent->isGen(gen_wxGridBagSizer))
             {
                 auto sizer = wxStaticCast(parent_object, wxGridBagSizer);
-                wxGBPosition position(child_obj->prop_as_int(prop_row), child_obj->prop_as_int(prop_column));
-                wxGBSpan span(child_obj->prop_as_int(prop_rowspan), child_obj->prop_as_int(prop_colspan));
+                wxGBPosition position(child_obj->as_int(prop_row), child_obj->as_int(prop_column));
+                wxGBSpan span(child_obj->as_int(prop_rowspan), child_obj->as_int(prop_colspan));
 
                 if (created_window)
                     sizer->Add(created_window, position, span, sizer_flags.GetFlags(), sizer_flags.GetBorderInPixels());
@@ -338,7 +338,7 @@ void MockupContent::CreateChildren(Node* node, wxWindow* parent, wxObject* paren
 // Note that this is a static function also called by CreateMockupChildren in mockup_preview.cpp
 void MockupContent::SetWindowProperties(Node* node, wxWindow* window, wxWindow* convert_win)
 {
-    if (auto minsize = node->prop_as_wxSize(prop_minimum_size); minsize != wxDefaultSize)
+    if (auto minsize = node->as_wxSize(prop_minimum_size); minsize != wxDefaultSize)
     {
         if (node->as_string(prop_minimum_size).contains("d", tt::CASE::either))
             window->SetMinSize(convert_win->ConvertDialogToPixels(minsize));
@@ -346,7 +346,7 @@ void MockupContent::SetWindowProperties(Node* node, wxWindow* window, wxWindow* 
             window->SetMinSize(minsize);
     }
 
-    if (auto maxsize = node->prop_as_wxSize(prop_maximum_size); maxsize != wxDefaultSize)
+    if (auto maxsize = node->as_wxSize(prop_maximum_size); maxsize != wxDefaultSize)
     {
         if (node->as_string(prop_maximum_size).contains("d", tt::CASE::either))
             window->SetMaxSize(convert_win->ConvertDialogToPixels(maxsize));
@@ -366,7 +366,7 @@ void MockupContent::SetWindowProperties(Node* node, wxWindow* window, wxWindow* 
 
     if (node->HasValue(prop_font))
     {
-        window->SetFont(node->prop_as_font(prop_font));
+        window->SetFont(node->as_wxFont(prop_font));
     }
 
     if (auto& fg_colour = node->value(prop_foreground_colour); fg_colour.size())

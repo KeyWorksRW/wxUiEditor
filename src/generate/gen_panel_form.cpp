@@ -113,9 +113,9 @@ bool PanelFormGenerator::AfterChildrenCode(Code& code)
         panel = node->get_form();
     }
 
-    const auto min_size = panel->prop_as_wxSize(prop_minimum_size);
-    const auto max_size = panel->prop_as_wxSize(prop_maximum_size);
-    const auto size = panel->prop_as_wxSize(prop_size);
+    const auto min_size = panel->as_wxSize(prop_minimum_size);
+    const auto max_size = panel->as_wxSize(prop_maximum_size);
+    const auto size = panel->as_wxSize(prop_size);
 
     if (min_size == wxDefaultSize && max_size == wxDefaultSize)
     {
@@ -151,7 +151,7 @@ bool PanelFormGenerator::HeaderCode(Code& code)
 
     code.Comma().Str("const wxSize& size = ");
 
-    auto size = node->prop_as_wxSize(prop_size);
+    auto size = node->as_wxSize(prop_size);
     if (size == wxDefaultSize)
         code.Str("wxDefaultSize");
     else

@@ -84,7 +84,7 @@ bool StatusBarGenerator::ConstructionCode(Code& code)
     if (GetRequiredVersion(node) > minRequiredVer)
         num_fields = to_int(fields.size());
     else
-        num_fields = node->prop_as_int(prop_fields);
+        num_fields = node->as_int(prop_fields);
 
     if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
@@ -95,7 +95,7 @@ bool StatusBarGenerator::ConstructionCode(Code& code)
         code.itoa(num_fields).Comma().as_string(prop_id).Comma().Style();
         code.Comma().QuotedString(prop_window_name);
     }
-    else if (node->prop_as_int(prop_style) != wxSTB_DEFAULT_STYLE || node->prop_as_int(prop_window_style) > 0)
+    else if (node->as_int(prop_style) != wxSTB_DEFAULT_STYLE || node->as_int(prop_window_style) > 0)
     {
         code.itoa(num_fields).Comma().as_string(prop_id).Comma().Style();
     }

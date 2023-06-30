@@ -72,7 +72,7 @@ wxObject* ImagesGenerator::CreateMockup(Node* /* node */, wxObject* wxobject)
             m_image_name->SetLabel(wxEmptyString);
         }
 
-        auto bmp = node->prop_as_wxBitmapBundle(prop_bitmap);
+        auto bmp = node->as_wxBitmapBundle(prop_bitmap);
         ASSERT(bmp.IsOk());
         if (!bmp.IsOk())
         {

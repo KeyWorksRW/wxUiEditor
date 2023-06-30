@@ -607,8 +607,8 @@ void NavigationPanel::OnNodeSelected(CustomEvent& event)
     auto node = event.GetNode();
     if (node->GetParent() && node->GetParent()->isGen(gen_wxGridBagSizer))
     {
-        wxGetFrame().setStatusText(tt_string() << "Row: " << node->prop_as_int(prop_row)
-                                               << ", Column: " << node->prop_as_int(prop_column));
+        wxGetFrame().setStatusText(tt_string()
+                                   << "Row: " << node->as_int(prop_row) << ", Column: " << node->as_int(prop_column));
     }
     else
     {

@@ -18,7 +18,7 @@
 wxObject* ColourPickerGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget =
-        new wxColourPickerCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxColour(prop_colour),
+        new wxColourPickerCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxColour(prop_colour),
                                DlgPoint(parent, node, prop_pos), DlgSize(parent, node, prop_size), GetStyleInt(node));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
@@ -59,8 +59,7 @@ int ColourPickerGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size
 
     GenXrcObjectAttributes(node, item, "wxColourPickerCtrl");
 
-    item.append_child("value").text().set(
-        node->prop_as_wxColour(prop_colour).GetAsString(wxC2S_HTML_SYNTAX).ToUTF8().data());
+    item.append_child("value").text().set(node->as_wxColour(prop_colour).GetAsString(wxC2S_HTML_SYNTAX).ToUTF8().data());
 
     GenXrcStylePosSize(node, item);
     GenXrcWindowSettings(node, item);

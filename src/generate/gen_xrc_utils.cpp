@@ -234,7 +234,7 @@ void GenXrcFont(pugi::xml_node& object, FontProperty& font_prop)
 void GenXrcFont(pugi::xml_node& item, std::string_view param_name, Node* node, PropName prop)
 {
     auto font_object = item.append_child(param_name);
-    auto font_prop = node->prop_as_font_prop(prop);
+    auto font_prop = node->as_font_prop(prop);
 
     font_object.append_child("size").text().set(font_prop.GetFractionalPointSize());
     if (font_prop.GetStyle() == wxFONTSTYLE_ITALIC)
@@ -270,18 +270,18 @@ void GenXrcWindowSettings(Node* node, pugi::xml_node& object)
     }
     if (node->HasValue(prop_font))
     {
-        auto font_prop = node->prop_as_font_prop(prop_font);
+        auto font_prop = node->as_font_prop(prop_font);
         GenXrcFont(object, font_prop);
     }
     if (node->HasValue(prop_background_colour))
     {
         object.append_child("bg").text().set(
-            node->prop_as_wxColour(prop_background_colour).GetAsString(wxC2S_HTML_SYNTAX).ToUTF8().data());
+            node->as_wxColour(prop_background_colour).GetAsString(wxC2S_HTML_SYNTAX).ToUTF8().data());
     }
     if (node->HasValue(prop_foreground_colour))
     {
         object.append_child("fg").text().set(
-            node->prop_as_wxColour(prop_foreground_colour).GetAsString(wxC2S_HTML_SYNTAX).ToUTF8().data());
+            node->as_wxColour(prop_foreground_colour).GetAsString(wxC2S_HTML_SYNTAX).ToUTF8().data());
     }
     if (node->as_bool(prop_disabled))
     {

@@ -198,7 +198,7 @@ void PreviewXrc(Node* form_node)
         tt_string modified_style("wxCLOSE_BOX|wxCAPTION");
         if (style.size())
             modified_style << '|' << style;
-        form_node->prop_set_value(prop_style, modified_style);
+        form_node->set_value(prop_style, modified_style);
         wxMessageBox("Caption and Close box temporarily added so that you can close the preview dialog.", "XRC Preview",
                      wxICON_INFORMATION);
     }
@@ -232,8 +232,8 @@ void PreviewXrc(Node* form_node)
             case gen_RibbonBar:
             case gen_ToolBar:
                 {
-                    wxString dlg_name = form_node->isGen(gen_wxDialog) ? form_node->prop_as_wxString(prop_class_name) :
-                                                                         wxString(txt_dlg_name);
+                    wxString dlg_name =
+                        form_node->isGen(gen_wxDialog) ? form_node->as_wxString(prop_class_name) : wxString(txt_dlg_name);
                     if (auto* dlg = xrc_resource->LoadDialog(GetMainFrame()->GetWindow(), dlg_name); dlg)
                     {
                         GetMainFrame()->SetPreviewDlgPtr(dlg);  // so event handlers can access it
@@ -253,7 +253,7 @@ void PreviewXrc(Node* form_node)
 
             case gen_wxFrame:
                 if (auto* frame =
-                        xrc_resource->LoadFrame(GetMainFrame()->GetWindow(), form_node->prop_as_wxString(prop_class_name));
+                        xrc_resource->LoadFrame(GetMainFrame()->GetWindow(), form_node->as_wxString(prop_class_name));
                     frame)
                 {
                     GetMainFrame()->SetPreviewWinPtr(frame);
@@ -276,7 +276,7 @@ void PreviewXrc(Node* form_node)
                     auto* wizard = wxStaticCast(object, wxWizard);
                     if (form_node->GetChildCount())
                     {
-                        auto first_page = wizard->FindWindow(form_node->GetChild(0)->prop_as_wxString(prop_var_name));
+                        auto first_page = wizard->FindWindow(form_node->GetChild(0)->as_wxString(prop_var_name));
                         wizard->RunWizard(wxStaticCast(first_page, wxWizardPageSimple));
                         wizard->Destroy();
                     }
@@ -305,7 +305,7 @@ void PreviewXrc(Node* form_node)
 
     // Restore the original style if it was temporarily changed.
     if (form_node->as_string(prop_style) != style)
-        form_node->prop_set_value(prop_style, style);
+        form_node->set_value(prop_style, style);
 
     xrc_resource->Unload(res_name);
 }
@@ -328,7 +328,7 @@ void MainFrame::PreviewCpp(Node* form_node)
         tt_string modified_style("wxCLOSE_BOX|wxCAPTION");
         if (style.size())
             modified_style << '|' << style;
-        form_node->prop_set_value(prop_style, modified_style);
+        form_node->set_value(prop_style, modified_style);
         wxMessageBox("Caption and Close box temporarily added so that you can close the preview dialog.", "C++ Preview",
                      wxICON_INFORMATION);
     }
@@ -529,5 +529,5 @@ void MainFrame::PreviewCpp(Node* form_node)
 
     // Restore the original style if it was temporarily changed.
     if (form_node->as_string(prop_style) != style)
-        form_node->prop_set_value(prop_style, style);
+        form_node->set_value(prop_style, style);
 }

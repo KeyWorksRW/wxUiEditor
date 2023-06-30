@@ -21,7 +21,7 @@ wxObject* CheckBoxGenerator::CreateMockup(Node* node, wxObject* parent)
         style_value |= wxALIGN_RIGHT;
 
     auto widget =
-        new wxCheckBox(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString(prop_label),
+        new wxCheckBox(wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxString(prop_label),
                        DlgPoint(parent, node, prop_pos), DlgSize(parent, node, prop_size), style_value | GetStyleInt(node));
 
     if (node->as_bool(prop_checked))
@@ -36,7 +36,7 @@ bool CheckBoxGenerator::OnPropertyChange(wxObject* widget, Node* node, NodePrope
 {
     if (prop->isProp(prop_label))
     {
-        wxStaticCast(widget, wxCheckBox)->SetLabel(node->prop_as_wxString(prop_label));
+        wxStaticCast(widget, wxCheckBox)->SetLabel(node->as_wxString(prop_label));
         return true;
     }
     else if (prop->isProp(prop_checked))
@@ -108,7 +108,7 @@ wxObject* Check3StateGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     long style_value = wxCHK_3STATE | GetStyleInt(node);
 
-    auto widget = new wxCheckBox(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString(prop_label),
+    auto widget = new wxCheckBox(wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxString(prop_label),
                                  DlgPoint(parent, node, prop_pos), DlgSize(parent, node, prop_size), style_value);
 
     auto& state = node->as_string(prop_initial_state);
@@ -128,7 +128,7 @@ bool Check3StateGenerator::OnPropertyChange(wxObject* widget, Node* node, NodePr
 {
     if (prop->isProp(prop_label))
     {
-        wxStaticCast(widget, wxCheckBox)->SetLabel(node->prop_as_wxString(prop_label));
+        wxStaticCast(widget, wxCheckBox)->SetLabel(node->as_wxString(prop_label));
         return true;
     }
     else if (prop->isProp(prop_initial_state))

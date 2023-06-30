@@ -32,13 +32,13 @@ void RibbonButtonBarGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxp
 
     for (const auto& child: node->GetChildNodePtrs())
     {
-        auto bmp = child->prop_as_wxBitmap(prop_bitmap);
+        auto bmp = child->as_wxBitmap(prop_bitmap);
         if (!bmp.IsOk())
             bmp = GetInternalImage("default");
 
         // REVIEW: This is still a bitmap rather then a bundle as of the 3.1.6 release
-        btn_bar->AddButton(wxID_ANY, child->prop_as_wxString(prop_label), bmp, child->prop_as_wxString(prop_help),
-                           (wxRibbonButtonKind) child->prop_as_int(prop_kind));
+        btn_bar->AddButton(wxID_ANY, child->as_wxString(prop_label), bmp, child->as_wxString(prop_help),
+                           (wxRibbonButtonKind) child->as_int(prop_kind));
     }
 }
 

@@ -207,7 +207,7 @@ void FormBuilder::CreateProjectNode(pugi::xml_node& xml_obj, Node* new_node)
                     tt_string root(m_importProjectFile);
                     root.remove_filename();
                     path.make_relative(root);
-                    m_project->prop_set_value(prop_art_directory, path);
+                    m_project->set_value(prop_art_directory, path);
                 }
                 else if (prop_name.as_string() == "path")
                 {
@@ -215,7 +215,7 @@ void FormBuilder::CreateProjectNode(pugi::xml_node& xml_obj, Node* new_node)
                     tt_string root(m_importProjectFile);
                     root.remove_filename();
                     path.make_relative(root);
-                    m_project->prop_set_value(prop_base_directory, path);
+                    m_project->set_value(prop_base_directory, path);
                 }
                 else if (prop_name.as_string() == "file")
                 {
@@ -349,7 +349,7 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
         return {};
     }
     if (m_class_decoration.size() && newobject->IsForm())
-        newobject->prop_set_value(prop_class_decoration, m_class_decoration);
+        newobject->set_value(prop_class_decoration, m_class_decoration);
 
     if (gen_name == gen_ribbonButton || gen_name == gen_ribbonTool)
     {
@@ -358,15 +358,15 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
 
         if (class_name.contains("Dropdown"))
         {
-            newobject->prop_set_value(prop_kind, "wxRIBBON_BUTTON_DROPDOWN");
+            newobject->set_value(prop_kind, "wxRIBBON_BUTTON_DROPDOWN");
         }
         else if (class_name.contains("Hybrid"))
         {
-            newobject->prop_set_value(prop_kind, "wxRIBBON_BUTTON_HYBRID");
+            newobject->set_value(prop_kind, "wxRIBBON_BUTTON_HYBRID");
         }
         else if (class_name.contains("Toggle"))
         {
-            newobject->prop_set_value(prop_kind, "wxRIBBON_BUTTON_TOGGLE");
+            newobject->set_value(prop_kind, "wxRIBBON_BUTTON_TOGGLE");
         }
     }
 
@@ -509,12 +509,12 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
                     copy.erase_from(';');
                 }
 
-                newobject->prop_set_value(prop_parameters, copy);
+                newobject->set_value(prop_parameters, copy);
                 continue;
             }
             else if (prop_name == "settings")
             {
-                newobject->prop_set_value(prop_settings_code, xml_prop.text().as_string());
+                newobject->set_value(prop_settings_code, xml_prop.text().as_string());
             }
             else if (prop_name == "include")
             {
@@ -522,7 +522,7 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
                 header.ExtractSubString(xml_prop.text().as_sview().view_stepover());
                 if (header.size())
                 {
-                    newobject->prop_set_value(prop_header, header);
+                    newobject->set_value(prop_header, header);
                 }
                 continue;
             }
@@ -540,8 +540,8 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
 
     if (newobject->isGen(gen_wxGridSizer) || newobject->isGen(gen_wxFlexGridSizer))
     {
-        if (newobject->prop_as_int(prop_rows) > 0 && newobject->prop_as_int(prop_cols) > 0)
-            newobject->prop_set_value(prop_rows, 0);
+        if (newobject->as_int(prop_rows) > 0 && newobject->as_int(prop_cols) > 0)
+            newobject->set_value(prop_rows, 0);
     }
 
     // wxFormBuilder allows the users to create settings that will generate an assert if compiled on a debug version of
@@ -552,7 +552,7 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
         if (newobject->HasValue(prop_alignment))
         {
             // wxWidgets will ignore all alignment flags if wxEXPAND is set.
-            newobject->prop_set_value(prop_alignment, "");
+            newobject->set_value(prop_alignment, "");
         }
     }
 
@@ -565,7 +565,7 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
                                         currentValue.contains("wxALIGN_CENTER_HORIZONTAL")))
             {
                 auto fixed = ClearMultiplePropFlags("wxALIGN_LEFT|wxALIGN_RIGHT|wxALIGN_CENTER_HORIZONTAL", currentValue);
-                newobject->prop_set_value(prop_alignment, fixed);
+                newobject->set_value(prop_alignment, fixed);
             }
         }
         else if (parent->as_string(prop_orientation).contains("wxVERTICAL"))
@@ -575,7 +575,7 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
                                         currentValue.contains("wxALIGN_CENTER_VERTICAL")))
             {
                 auto fixed = ClearMultiplePropFlags("wxALIGN_TOP|wxALIGN_BOTTOM|wxALIGN_CENTER_VERTICAL", currentValue);
-                newobject->prop_set_value(prop_alignment, fixed);
+                newobject->set_value(prop_alignment, fixed);
             }
         }
     }
@@ -741,22 +741,22 @@ void FormBuilder::ProcessPropValue(pugi::xml_node& xml_prop, tt_string_view prop
         if (class_name == "Project")
             return;  // we don't use this (and neither does wxFormBuilder for that matter)
         else if (class_name == "wxDialog")
-            newobject->prop_set_value(prop_class_name, xml_prop.text().as_string());
+            newobject->set_value(prop_class_name, xml_prop.text().as_string());
     }
     else if (prop_name == "permission")
     {
         auto value = xml_prop.text().as_string();
         if (value == "protected" || value == "private")
-            newobject->prop_set_value(prop_class_access, "protected:");
+            newobject->set_value(prop_class_access, "protected:");
         else if (value == "public")
-            newobject->prop_set_value(prop_class_access, "public:");
+            newobject->set_value(prop_class_access, "public:");
         else
-            newobject->prop_set_value(prop_class_access, "none");
+            newobject->set_value(prop_class_access, "none");
     }
 
     else if (prop_name == "border")
     {
-        newobject->prop_set_value(prop_border_size, xml_prop.text().as_string());
+        newobject->set_value(prop_border_size, xml_prop.text().as_string());
     }
 
     else if (prop_name == "enabled")
@@ -899,15 +899,15 @@ void FormBuilder::ProcessPropValue(pugi::xml_node& xml_prop, tt_string_view prop
     {
         if (xml_prop.text().as_bool())
         {
-            newobject->prop_set_value(prop_fold_margin, "1");
-            newobject->prop_set_value(prop_fold_width, "16");
+            newobject->set_value(prop_fold_margin, "1");
+            newobject->set_value(prop_fold_width, "16");
         }
     }
     else if (prop_name == "line_numbers")
     {
         if (xml_prop.text().as_bool())
         {
-            newobject->prop_set_value(prop_line_margin, "1");
+            newobject->set_value(prop_line_margin, "1");
         }
     }
 

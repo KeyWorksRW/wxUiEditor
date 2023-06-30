@@ -20,8 +20,8 @@ wxObject* ScrollBarGenerator::CreateMockup(Node* node, wxObject* parent)
     auto widget = new wxScrollBar(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(parent, node, prop_pos),
                                   DlgSize(parent, node, prop_size), GetStyleInt(node));
 
-    widget->SetScrollbar(node->prop_as_int(prop_position), node->prop_as_int(prop_thumbsize), node->prop_as_int(prop_range),
-                         node->prop_as_int(prop_pagesize));
+    widget->SetScrollbar(node->as_int(prop_position), node->as_int(prop_thumbsize), node->as_int(prop_range),
+                         node->as_int(prop_pagesize));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 

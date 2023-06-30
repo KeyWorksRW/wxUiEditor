@@ -27,22 +27,22 @@ wxObject* StaticCheckboxBoxSizerGenerator::CreateMockup(Node* node, wxObject* pa
         if (node->as_string(prop_style).contains("wxALIGN_RIGHT"))
             style_value |= wxALIGN_RIGHT;
 
-        m_checkbox = new wxCheckBox(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString(prop_label),
+        m_checkbox = new wxCheckBox(wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxString(prop_label),
                                     wxDefaultPosition, wxDefaultSize, style_value);
         if (node->as_bool(prop_checked))
             m_checkbox->SetValue(true);
 
         if (node->HasValue(prop_tooltip))
-            m_checkbox->SetToolTip(node->prop_as_wxString(prop_tooltip));
+            m_checkbox->SetToolTip(node->as_wxString(prop_tooltip));
 
         auto staticbox = new wxStaticBox(wxStaticCast(parent, wxWindow), wxID_ANY, m_checkbox);
 
-        sizer = new wxStaticBoxSizer(staticbox, node->prop_as_int(prop_orientation));
+        sizer = new wxStaticBoxSizer(staticbox, node->as_int(prop_orientation));
     }
     else
     {
-        sizer = new wxStaticBoxSizer(node->prop_as_int(prop_orientation), wxStaticCast(parent, wxWindow),
-                                     node->prop_as_wxString(prop_label));
+        sizer = new wxStaticBoxSizer(node->as_int(prop_orientation), wxStaticCast(parent, wxWindow),
+                                     node->as_wxString(prop_label));
     }
 
     if (auto dlg = wxDynamicCast(parent, wxDialog); dlg)
@@ -71,7 +71,7 @@ bool StaticCheckboxBoxSizerGenerator::OnPropertyChange(wxObject* /* widget */, N
 {
     if (prop->isProp(prop_tooltip))
     {
-        m_checkbox->SetToolTip(node->prop_as_wxString(prop_tooltip));
+        m_checkbox->SetToolTip(node->as_wxString(prop_tooltip));
     }
 
     return false;

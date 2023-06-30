@@ -63,7 +63,7 @@ void AddBookImageList(Node* node_book, wxObject* widget)
         {
             if (child_node->HasValue(prop_bitmap))
             {
-                bundle_list.push_back(child_node->prop_as_wxBitmapBundle(prop_bitmap));
+                bundle_list.push_back(child_node->as_wxBitmapBundle(prop_bitmap));
             }
 
             if (node_book->isGen(gen_wxTreebook))
@@ -225,7 +225,7 @@ void AddTreebookSubImages(Node* node, wxBookCtrlBase::Images& bundle_list)
         {
             if (child_node->HasValue(prop_bitmap))
             {
-                bundle_list.push_back(child_node->prop_as_wxBitmapBundle(prop_bitmap));
+                bundle_list.push_back(child_node->as_wxBitmapBundle(prop_bitmap));
             }
             AddTreebookSubImages(child_node.get(), bundle_list);
         }

@@ -34,6 +34,8 @@ class NodeDeclaration
 {
 public:
     NodeDeclaration(tt_string_view class_name, NodeType* type);
+
+    // This will delete m_generator which was created by NodeCreator::InitGenerators()
     ~NodeDeclaration();
 
     NodeCategory& GetCategory() { return m_category; }
@@ -112,9 +114,10 @@ private:
 
     std::vector<NodeDeclaration*> m_base;  // base classes
 
+    // Created by NodeCreator::InitGenerators(), destroyed by ~NodeDeclaration()
     BaseGenerator* m_generator { nullptr };
 
     GenName m_gen_name;
     GenType m_gen_type;
-    const char* m_name;  // this points into map_GenNames
+    const char* m_name;  // this points into GenEnum::map_GenNames
 };

@@ -76,8 +76,8 @@ bool CommonCtrls::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     m_textCtrl = new wxTextCtrl(this, wxID_ANY, "Text \"ctrl\"", wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER);
     {
         wxArrayString tmp_array;
-        tmp_array.push_back(wxString::FromUTF8("foo"));
-        tmp_array.push_back(wxString::FromUTF8("bar"));
+        tmp_array.Add("foo");
+        tmp_array.Add("bar");
         m_textCtrl->AutoComplete(tmp_array);
     }
     m_textCtrl->SetValidator(wxTextValidator(wxFILTER_NONE, &m_textCtrlValidate));

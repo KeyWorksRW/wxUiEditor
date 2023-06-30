@@ -279,13 +279,6 @@
                 wxEVT_MENU="OnAppendSmith" />
               <node
                 class="wxMenuItem"
-                help="Append DialogBlocks project into current project"
-                id="id_AppendDialogBlocks"
-                label="DialogBlocks Project..."
-                var_name="menu_item_8"
-                wxEVT_MENU="OnAppendDialogBlocks" />
-              <node
-                class="wxMenuItem"
                 help="Append Windows Resource into current project"
                 id="id_AppendWinRes"
                 label="Windows Resource..."
@@ -3453,6 +3446,7 @@
               class="wxRadioButton"
               label="&amp;DialogBlocks File(s)"
               var_name="m_radio_DialogBlocks"
+              hidden="1"
               column="1"
               row="1"
               wxEVT_RADIOBUTTON="OnDialogBlocks" />

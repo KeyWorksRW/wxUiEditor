@@ -50,7 +50,6 @@ public:
     void SetParent(Node* parent) { m_parent = parent->GetSharedPtr(); }
 
     NodeProperty* get_prop_ptr(PropName name);
-
     NodeProperty* prop(PropName name) { return get_prop_ptr(name); }
 
     NodeEvent* GetEvent(tt_string_view name);
@@ -206,6 +205,14 @@ public:
 
     const tt_string_view view(PropName name) const { return as_string(name); }
 
+    bool as_bool(PropName name) const
+    {
+        if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
+            return (m_properties[result->second].as_string().atoi() != 0);
+        else
+            return false;
+    }
+
     // If type is option, id, or bitlist, this will convert that constant name to it's value
     // (see NodeCreation.GetConstantAsInt()). Otherwise, it calls atoi().
     int as_int(PropName name) const
@@ -214,6 +221,14 @@ public:
             return m_properties[result->second].as_int();
         else
             return 0;
+    }
+
+    const tt_string& as_constant(PropName name, std::string_view prefix)
+    {
+        if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
+            return m_properties[result->second].as_constant(prefix);
+        else
+            return tt_empty_cstr;
     }
 
     // Looks up wx constant, returns it's numerical value.
@@ -233,14 +248,6 @@ public:
             return m_properties[result->second].as_float();
         else
             return 0;
-    }
-
-    bool as_bool(PropName name) const
-    {
-        if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
-            return (m_properties[result->second].as_string().atoi() != 0);
-        else
-            return false;
     }
 
     const tt_string& as_string(PropName name) const
@@ -270,12 +277,20 @@ public:
             return wxNullBitmap;
     }
 
-    const tt_string& as_constant(PropName name, std::string_view prefix)
+    const ImageBundle* as_image_bundle(PropName name) const
     {
         if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
-            return m_properties[result->second].as_constant(prefix);
+            return m_properties[result->second].as_image_bundle();
         else
-            return tt_empty_cstr;
+            return nullptr;
+    }
+
+    wxBitmap as_wxBitmap(PropName name) const
+    {
+        if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
+            return m_properties[result->second].as_bitmap();
+        else
+            return wxNullBitmap;
     }
 
     wxColour as_wxColour(PropName name) const
@@ -294,6 +309,14 @@ public:
             return *wxNORMAL_FONT;
     }
 
+    FontProperty as_font_prop(PropName name) const
+    {
+        if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
+            return m_properties[result->second].as_font_prop();
+        else
+            return FontProperty(wxNORMAL_FONT);
+    }
+
     wxPoint as_wxPoint(PropName name) const
     {
         if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
@@ -308,14 +331,6 @@ public:
             return m_properties[result->second].as_size();
         else
             return wxDefaultSize;
-    }
-
-    wxBitmap as_wxBitmap(PropName name) const
-    {
-        if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
-            return m_properties[result->second].as_bitmap();
-        else
-            return wxNullBitmap;
     }
 
     wxArrayString as_wxArrayString(PropName name) const
@@ -335,22 +350,6 @@ public:
     std::vector<NODEPROP_CHECKLIST_ITEM> as_checklist_items(PropName name);
     std::vector<NODEPROP_RADIOBOX_ITEM> as_radiobox_items(PropName name);
     std::vector<NODEPROP_BMP_COMBO_ITEM> as_bmp_combo_items(PropName name);
-
-    const ImageBundle* as_image_bundle(PropName name) const
-    {
-        if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
-            return m_properties[result->second].as_image_bundle();
-        else
-            return nullptr;
-    }
-
-    FontProperty as_font_prop(PropName name) const
-    {
-        if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
-            return m_properties[result->second].as_font_prop();
-        else
-            return FontProperty(wxNORMAL_FONT);
-    }
 
     wxSizerFlags GetSizerFlags() const;
 

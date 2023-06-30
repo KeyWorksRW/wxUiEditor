@@ -63,14 +63,6 @@ inline const char* language_xml = R"===(<?xml version="1.0"?>
 		default values.">1</property> -->
 		<property name="python_inherit_name" type="string"
 			help="The name to use for an inherited class. If specified, the Inherit tab in the Python panel will include a sample for creating an inherited class." />
-		<!-- <property name="python_use_xrc" type="bool"
-			help="If checked, the form will load the
-		file specified in python_xrc_file and use that for the UI instead of using Python to create
-		the wxWidgets controls.">0</property>
-		<property name="python_xrc_file" type="file"
-		help="If specified and python_use_xrc is checked, then this XRC file will be generated when
-		Python code is generated, and the form will be initialized to use the generated XRC file."
-		/> -->
 	</gen>
 
 	<gen class="wxPython Frame Settings" type="interface">

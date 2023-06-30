@@ -95,21 +95,17 @@ bool GeneratePythonFiles(GenResults& results, std::vector<tt_string>* pClassList
     {
         if (auto& base_file = form->prop_as_string(prop_python_file); base_file.size())
         {
-            path = base_file;
-            if (path.empty())
-                continue;
-
-            if (auto* node_folder = form->get_folder();
-                node_folder && node_folder->HasValue(prop_folder_python_output_folder))
+            path = Project.BaseDirectory(form, GEN_LANG_PYTHON);
+            if (path.size())
             {
-                path = node_folder->as_string(prop_folder_python_output_folder);
-                path.append_filename(base_file.filename());
-            }
-            else if (Project.HasValue(prop_python_output_folder) && !path.contains("/"))
-            {
-                path = Project.BaseDirectory(GEN_LANG_PYTHON);
                 path.append_filename(base_file);
             }
+            else
+            {
+                path = base_file;
+            }
+
+            path.make_absolute();
             path.backslashestoforward();
         }
         else
@@ -772,19 +768,20 @@ tt_string MakePythonPath(Node* node)
 
     if (auto& base_file = form->as_string(prop_python_file); base_file.size())
     {
-        path = base_file;
-
-        if (auto* node_folder = form->get_folder(); node_folder && node_folder->HasValue(prop_folder_python_output_folder))
+        path = Project.BaseDirectory(form, GEN_LANG_PYTHON);
+        if (path.size())
         {
-            path = node_folder->as_string(prop_folder_python_output_folder);
-            path.append_filename(base_file.filename());
-        }
-        else if (Project.HasValue(prop_python_output_folder) && !path.contains("/"))
-        {
-            path = Project.BaseDirectory(GEN_LANG_PYTHON);
             path.append_filename(base_file);
         }
+        else
+        {
+            path = base_file;
+        }
+
+        path.make_absolute();
+        path.backslashestoforward();
     }
+
     if (path.empty())
         path = "./";
     path.make_absolute();

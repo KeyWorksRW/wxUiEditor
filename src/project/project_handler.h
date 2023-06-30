@@ -69,6 +69,10 @@ public:
     // directory is returned. Otherwise the project base directory is returned.
     tt_string BaseDirectory(Node* node, int language = GEN_LANG_CPLUSPLUS) const;
 
+    // If the node is within a folder, and the folder specifies a directory, then that
+    // directory is returned. Otherwise the project derived directory is returned.
+    tt_string DerivedDirectory(Node* node, int language = GEN_LANG_CPLUSPLUS) const;
+
     Node* ProjectNode() const { return m_project_node.get(); }
     auto& ChildNodePtrs() { return m_project_node->GetChildNodePtrs(); }
     Node* GetChild(size_t index) { return m_project_node->GetChild(index); }

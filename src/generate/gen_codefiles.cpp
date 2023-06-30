@@ -99,21 +99,21 @@ void GenThreadCpp(GenData& gen_data, Node* form)
 
     if (auto& base_file = form->prop_as_string(prop_base_file); base_file.size())
     {
-        path = base_file;
         // "filename_base" is the default filename given to all form files. Unless it's changed, no code will be
         // generated.
-        if (path == "filename_base")
+        if (base_file == "filename_base")
             return;
-        if (auto* node_folder = form->get_folder(); node_folder && node_folder->HasValue(prop_folder_base_directory))
+
+        path = Project.BaseDirectory(form, GEN_LANG_CPLUSPLUS);
+        if (path.size())
         {
-            path = node_folder->as_string(prop_folder_base_directory);
-            path.append_filename(base_file.filename());
-        }
-        else if (Project.HasValue(prop_base_directory) && !path.contains("/"))
-        {
-            path = Project.BaseDirectory();
             path.append_filename(base_file);
         }
+        else
+        {
+            path = base_file;
+        }
+
         path.make_absolute();
         path.backslashestoforward();
     }

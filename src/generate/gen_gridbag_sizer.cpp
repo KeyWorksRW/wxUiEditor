@@ -114,7 +114,7 @@ void GridBagSizerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxpare
 
     auto lambda = [&](GenEnum::PropName prop_name)
     {
-        if (auto& growable = node->prop_as_string(prop_name); growable.size())
+        if (auto& growable = node->as_string(prop_name); growable.size())
         {
             tt_view_vector values(growable, ',');
             for (auto& iter: values)
@@ -179,7 +179,7 @@ bool GridBagSizerGenerator::AfterChildrenCode(Code& code)
 
     auto lambda = [&](GenEnum::PropName prop_name)
     {
-        if (auto& growable = node->prop_as_string(prop_name); growable.size())
+        if (auto& growable = node->as_string(prop_name); growable.size())
         {
             tt_view_vector values(growable, ',');
             for (auto& iter: values)
@@ -305,7 +305,7 @@ int GridBagSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size
     }
 
     item.append_attribute("class").set_value("wxGridBagSizer");
-    item.append_attribute("name").set_value(node->prop_as_string(prop_var_name));
+    item.append_attribute("name").set_value(node->as_string(prop_var_name));
 
     ADD_ITEM_PROP(prop_vgap, "vgap")
     ADD_ITEM_PROP(prop_hgap, "hgap")
@@ -317,7 +317,7 @@ int GridBagSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size
 
     if (node->HasValue(prop_minimum_size))
     {
-        item.append_child("minsize").text().set(node->prop_as_string(prop_minimum_size));
+        item.append_child("minsize").text().set(node->as_string(prop_minimum_size));
     }
     else if (node->GetParent()->IsForm() && node->GetParent()->HasValue(prop_minimum_size))
     {
@@ -325,7 +325,7 @@ int GridBagSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size
         // often can specify their own minimum size. The workaround is to set the minimum size of the parent sizer that we
         // create for most forms.
 
-        item.append_child("minsize").text().set(node->GetParent()->prop_as_string(prop_minimum_size));
+        item.append_child("minsize").text().set(node->GetParent()->as_string(prop_minimum_size));
     }
 
     if (node->HasValue(prop_empty_cell_size))

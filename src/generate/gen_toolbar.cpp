@@ -196,8 +196,8 @@ bool ToolBarFormGenerator::HeaderCode(Code& code)
     else
         code.WxSize(prop_size, no_dlg_units);
 
-    auto& style = node->prop_as_string(prop_style);
-    auto& win_style = node->prop_as_string(prop_window_style);
+    auto& style = node->as_string(prop_style);
+    auto& win_style = node->as_string(prop_window_style);
     if (style.empty() && win_style.empty())
         code.Comma().Str("long style = 0");
     else
@@ -220,7 +220,7 @@ bool ToolBarFormGenerator::HeaderCode(Code& code)
         }
     }
 
-    if (node->prop_as_string(prop_window_name).size())
+    if (node->as_string(prop_window_name).size())
     {
         code.Comma().Str("const wxString &name = ").QuotedString(prop_window_name);
     }

@@ -184,7 +184,7 @@ void BaseCodeGenerator::GenerateCppClass(Node* form_node, PANEL_PAGE panel_type)
     }
 
     tt_string file;
-    if (auto& base_file = form_node->prop_as_string(prop_base_file); base_file.size())
+    if (auto& base_file = form_node->as_string(prop_base_file); base_file.size())
     {
         tt_cwd cwd(true);
         Project.ChangeDir();
@@ -692,10 +692,10 @@ void BaseCodeGenerator::GenValVarsBase(const NodeDeclaration* declaration, Node*
 {
     ASSERT(m_language == GEN_LANG_CPLUSPLUS);
 
-    if (auto& var_name = node->prop_as_string(prop_validator_variable); var_name.size())
+    if (auto& var_name = node->as_string(prop_validator_variable); var_name.size())
     {
         // All validators must have a validator_data_type property, so we don't check if it exists.
-        if (auto& val_data_type = node->prop_as_string(prop_validator_data_type); val_data_type.size())
+        if (auto& val_data_type = node->as_string(prop_validator_data_type); val_data_type.size())
         {
             tt_string code;
 
@@ -756,7 +756,7 @@ void BaseCodeGenerator::GenValVarsBase(const NodeDeclaration* declaration, Node*
             }
             else if (val_data_type == "wxString" || val_data_type == "wxFileName")
             {
-                auto& value = node->prop_as_string(prop_value);
+                auto& value = node->as_string(prop_value);
                 if (value.size())
                 {
                     code << " { " << GenerateQuotedString(value) << " };";
@@ -839,7 +839,7 @@ void BaseCodeGenerator::GatherGeneratorIncludes(Node* node, std::set<std::string
     generator->GetIncludes(node, set_src, set_hdr);
     if (node->HasValue(prop_validator_variable))
     {
-        auto& var_name = node->prop_as_string(prop_validator_variable);
+        auto& var_name = node->as_string(prop_validator_variable);
         if (var_name.size())
         {
             set_hdr.insert("#include <wx/valgen.h>");
@@ -853,13 +853,13 @@ void BaseCodeGenerator::GatherGeneratorIncludes(Node* node, std::set<std::string
     if (node->HasValue(prop_derived_header))
     {
         tt_string header("#include \"");
-        header << node->prop_as_string(prop_derived_header) << '"';
+        header << node->as_string(prop_derived_header) << '"';
         set_src.insert(header);
     }
 
     if (node->HasValue(prop_derived_class) && !node->isPropValue(prop_class_access, "none"))
     {
-        set_hdr.insert(tt_string() << "class " << node->prop_as_string(prop_derived_class) << ';');
+        set_hdr.insert(tt_string() << "class " << node->as_string(prop_derived_class) << ';');
     }
 
     // A lot of widgets have wxWindow and/or wxAnyButton as derived classes, and those classes contain properties for
@@ -977,7 +977,7 @@ tt_string BaseCodeGenerator::GetDeclaration(Node* node)
     {
         if (node->HasValue(prop_derived_class))
         {
-            code << node->prop_as_string(prop_derived_class) << "* " << node->get_node_name() << ';';
+            code << node->as_string(prop_derived_class) << "* " << node->get_node_name() << ';';
         }
         else
         {
@@ -1016,7 +1016,7 @@ tt_string BaseCodeGenerator::GetDeclaration(Node* node)
         else if (class_name == "wxStaticBitmap")
         {
             // If scaling was specified, then we need to switch to wxGenericStaticBitmap in order to support it.
-            if (node->prop_as_string(prop_scale_mode) != "None")
+            if (node->as_string(prop_scale_mode) != "None")
                 code.Replace("wxStaticBitmap", "wxGenericStaticBitmap");
         }
     }
@@ -1024,7 +1024,7 @@ tt_string BaseCodeGenerator::GetDeclaration(Node* node)
     else if (class_name == "StaticCheckboxBoxSizer")
     {
         if (node->HasValue(prop_checkbox_var_name))
-            code << "wxCheckBox* " << node->prop_as_string(prop_checkbox_var_name) << ';';
+            code << "wxCheckBox* " << node->as_string(prop_checkbox_var_name) << ';';
 
         if (!node->IsLocal())
         {
@@ -1036,7 +1036,7 @@ tt_string BaseCodeGenerator::GetDeclaration(Node* node)
     else if (class_name == "StaticRadioBtnBoxSizer")
     {
         if (node->HasValue(prop_radiobtn_var_name))
-            code << "wxRadioButton* " << node->prop_as_string(prop_radiobtn_var_name) << ';';
+            code << "wxRadioButton* " << node->as_string(prop_radiobtn_var_name) << ';';
 
         if (!node->IsLocal())
         {
@@ -1094,14 +1094,14 @@ tt_string BaseCodeGenerator::GetDeclaration(Node* node)
         }
         else if (node->HasValue(prop_namespace))
         {
-            code << node->prop_as_string(prop_namespace) << "::";
+            code << node->as_string(prop_namespace) << "::";
         }
-        code << node->prop_as_string(prop_class_name) << "* " << node->get_node_name() << ';';
+        code << node->as_string(prop_class_name) << "* " << node->get_node_name() << ';';
     }
 
     if (node->HasValue(prop_var_comment))
     {
-        code << "  // " << node->prop_as_string(prop_var_comment);
+        code << "  // " << node->as_string(prop_var_comment);
     }
 
     if (node->HasValue(prop_platforms) && node->value(prop_platforms) != "Windows|Unix|Mac")
@@ -1235,7 +1235,7 @@ void BaseCodeGenerator::GenerateClassHeader(Node* form_node, EventVector& events
             FAIL_MSG("All form generators need to support BaseClassNameCode() to provide the class name to derive from.");
         }
         // The only way this would be valid is if the base class didn't derive from anything.
-        m_header->writeLine(tt_string() << "class " << form_node->prop_as_string(prop_class_name));
+        m_header->writeLine(tt_string() << "class " << form_node->as_string(prop_class_name));
     }
 
     m_header->writeLine("{");
@@ -1832,7 +1832,7 @@ void BaseCodeGenerator::ParseImageProperties(Node* node)
     ASSERT(node);
     if (node->IsForm() && node->HasValue(prop_icon))
     {
-        tt_view_vector parts(node->prop_as_string(prop_icon), BMP_PROP_SEPARATOR, tt::TRIM::both);
+        tt_view_vector parts(node->as_string(prop_icon), BMP_PROP_SEPARATOR, tt::TRIM::both);
         if (parts.size() >= IndexImage + 1)
         {
             if (parts[IndexType] == "Header")
@@ -1920,7 +1920,7 @@ void BaseCodeGenerator::AddPersistCode(Node* node)
     if (node->HasValue(prop_persist_name))
     {
         tt_string code("wxPersistentRegisterAndRestore(");
-        code << node->get_node_name() << ", \"" << node->prop_as_string(prop_persist_name) << "\");";
+        code << node->get_node_name() << ", \"" << node->as_string(prop_persist_name) << "\");";
         m_source->writeLine(code);
     }
 
@@ -1977,7 +1977,7 @@ void BaseCodeGenerator::GenerateHandlers()
 
 void BaseCodeGenerator::WritePropSourceCode(Node* node, GenEnum::PropName prop)
 {
-    tt_string convert(node->prop_as_string(prop));
+    tt_string convert(node->as_string(prop));
     convert.Replace("@@", "\n", tt::REPLACE::all);
     tt_string_vector lines(convert, '\n');
     bool initial_bracket = false;
@@ -2006,7 +2006,7 @@ void BaseCodeGenerator::WritePropSourceCode(Node* node, GenEnum::PropName prop)
 
 void BaseCodeGenerator::WritePropHdrCode(Node* node, GenEnum::PropName prop)
 {
-    tt_string convert(node->prop_as_string(prop));
+    tt_string convert(node->as_string(prop));
     convert.Replace("@@", "\n", tt::REPLACE::all);
     tt_string_vector lines(convert, '\n', tt::TRIM::right);
     bool initial_bracket = false;

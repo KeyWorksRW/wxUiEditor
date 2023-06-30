@@ -32,7 +32,7 @@ wxObject* RearrangeCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
                 widget->GetList()->Check(pos);
         }
 
-        if (node->prop_as_string(prop_selection_string).size())
+        if (node->as_string(prop_selection_string).size())
         {
             widget->GetList()->SetStringSelection(node->as_wxString(prop_selection_string));
         }
@@ -63,9 +63,9 @@ bool RearrangeCtrlGenerator::ConstructionCode(Code& code)
         code += "[], []";
 
     Node* node = code.node();
-    auto& type = node->prop_as_string(prop_type);
-    auto& style = node->prop_as_string(prop_style);
-    auto& win_style = node->prop_as_string(prop_window_style);
+    auto& type = node->as_string(prop_type);
+    auto& style = node->as_string(prop_style);
+    auto& win_style = node->as_string(prop_window_style);
 
     if (type == "wxLB_SINGLE" && style.empty() && win_style.empty())
     {

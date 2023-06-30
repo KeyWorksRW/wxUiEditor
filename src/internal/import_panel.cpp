@@ -202,21 +202,21 @@ void ImportPanel::OnNodeSelected(Node* node)
 {
     // Find where the node is created.
     tt_string name(" ");
-    name << node->prop_as_string(prop_var_name);
+    name << node->as_string(prop_var_name);
     int line = 0;
 
     tt_string search(m_lexer != wxSTC_LEX_JSON ? "name=\"" : "\"");
-    if (node->HasProp(prop_id) && node->prop_as_string(prop_id) != "wxID_ANY")
+    if (node->HasProp(prop_id) && node->as_string(prop_id) != "wxID_ANY")
     {
-        search << node->prop_as_string(prop_id);
+        search << node->as_string(prop_id);
     }
     else if (node->HasValue(prop_var_name))
     {
-        search << node->prop_as_string(prop_var_name);
+        search << node->as_string(prop_var_name);
     }
     else
     {
-        search << node->prop_as_string(prop_class_name);
+        search << node->as_string(prop_class_name);
     }
     line = (to_int) m_view.FindLineContaining(search);
 

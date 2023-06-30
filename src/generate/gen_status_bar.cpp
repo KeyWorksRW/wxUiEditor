@@ -99,7 +99,7 @@ bool StatusBarGenerator::ConstructionCode(Code& code)
     {
         code.itoa(num_fields).Comma().as_string(prop_id).Comma().Style();
     }
-    else if (node->prop_as_string(prop_id) != "wxID_ANY")
+    else if (node->as_string(prop_id) != "wxID_ANY")
     {
         code.itoa(num_fields).Comma().as_string(prop_id);
     }

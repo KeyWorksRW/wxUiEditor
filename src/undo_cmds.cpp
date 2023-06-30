@@ -348,7 +348,7 @@ ChangeSizerType::ChangeSizerType(Node* node, GenEnum::GenName new_gen_sizer)
         if (m_new_gen_sizer == gen_wxFlexGridSizer &&
             (m_old_node->isGen(gen_wxBoxSizer) || m_old_node->isGen(gen_VerticalBoxSizer)))
         {
-            if (m_old_node->prop_as_string(prop_orientation) == "wxHORIZONTAL")
+            if (m_old_node->as_string(prop_orientation) == "wxHORIZONTAL")
             {
                 m_node->prop_set_value(prop_cols, (to_int) m_old_node->GetChildCount());
             }
@@ -445,7 +445,7 @@ static void CopyCommonProperties(Node* old_node, Node* new_node)
     {
         if (new_node->HasProp(prop) && old_node->HasProp(prop))
         {
-            new_node->prop_set_value(prop, old_node->prop_as_string(prop));
+            new_node->prop_set_value(prop, old_node->as_string(prop));
         }
     }
 }
@@ -743,12 +743,12 @@ static bool CompareClassNames(NodeSharedPtr a, NodeSharedPtr b)
     if (a->isGen(gen_folder) && !b->isGen(gen_folder))
         return true;
     else if (a->isGen(gen_folder) && b->isGen(gen_folder))
-        return (a->prop_as_string(prop_label).compare(b->prop_as_string(prop_label)) < 0);
+        return (a->as_string(prop_label).compare(b->as_string(prop_label)) < 0);
     else if (a->isGen(gen_sub_folder) && !b->isGen(gen_sub_folder))
         return true;
     else if (a->isGen(gen_sub_folder) && b->isGen(gen_sub_folder))
-        return (a->prop_as_string(prop_label).compare(b->prop_as_string(prop_label)) < 0);
-    return (a->prop_as_string(prop_class_name).compare(b->prop_as_string(prop_class_name)) < 0);
+        return (a->as_string(prop_label).compare(b->as_string(prop_label)) < 0);
+    return (a->as_string(prop_class_name).compare(b->as_string(prop_class_name)) < 0);
 }
 
 SortProjectAction::SortProjectAction()

@@ -100,7 +100,7 @@ bool StdDialogButtonSizerGenerator::ConstructionCode(Code& code)
     // without hitting assertion errors in debug builds, and in release builds, the Save button is positioned
     // incorrectly. Unfortunately that means we have to add the buttons one at a time if a Save button is specified.
 
-    auto& def_btn_name = node->prop_as_string(prop_default_button);
+    auto& def_btn_name = node->as_string(prop_default_button);
 
     if (node->get_form()->isGen(gen_wxDialog) && (!node->as_bool(prop_Save) && !node->as_bool(prop_ContextHelp)))
     {
@@ -316,7 +316,7 @@ void StdDialogButtonSizerGenerator::GenPythonConstruction(Code& code)
         code.Eol().NodeName().Function("AddButton(").NodeName().Add("_ContextHelp").EndFunction();
     }
 
-    auto& def_btn_name = node->prop_as_string(prop_default_button);
+    auto& def_btn_name = node->as_string(prop_default_button);
 
     if (def_btn_name == "OK")
         code.Eol().NodeName().Add("_OK").Function("SetDefault()");
@@ -384,7 +384,7 @@ int StdDialogButtonSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& obje
     }
 
     item.append_attribute("class").set_value("wxStdDialogButtonSizer");
-    item.append_attribute("name").set_value(node->prop_as_string(prop_var_name));
+    item.append_attribute("name").set_value(node->as_string(prop_var_name));
     // You can only have one of: Ok, Yes, Save
     if (node->prop_as_bool(prop_OK) || node->prop_as_bool(prop_Yes) || node->prop_as_bool(prop_Save))
     {

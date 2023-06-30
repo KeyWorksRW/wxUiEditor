@@ -21,7 +21,7 @@ wxObject* DatePickerCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
         new wxDatePickerCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, wxDefaultDateTime, DlgPoint(parent, node, prop_pos),
                              DlgSize(parent, node, prop_size), GetStyleInt(node));
 
-    if (node->prop_as_string(prop_style).contains("wxDP_ALLOWNONE"))
+    if (node->as_string(prop_style).contains("wxDP_ALLOWNONE"))
         widget->SetNullText(node->prop_as_wxString(prop_null_text));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
@@ -65,8 +65,8 @@ int DatePickerCtrlGenerator::GenXrcObject(Node* node, pugi::xml_node& object, si
 
     GenXrcObjectAttributes(node, item, "wxDatePickerCtrl");
 
-    if (node->prop_as_string(prop_style).contains("wxDP_ALLOWNONE"))
-        item.append_child("null-text").text().set(node->prop_as_string(prop_null_text));
+    if (node->as_string(prop_style).contains("wxDP_ALLOWNONE"))
+        item.append_child("null-text").text().set(node->as_string(prop_null_text));
 
     GenXrcStylePosSize(node, item);
     GenXrcWindowSettings(node, item);

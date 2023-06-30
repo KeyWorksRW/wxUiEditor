@@ -186,9 +186,9 @@ void ImportXML::HandleSizerItemProperty(const pugi::xml_node& xml_prop, Node* no
 
     if (parent && parent->IsSizer())
     {
-        if (parent->prop_as_string(prop_orientation).contains("wxVERTICAL"))
+        if (parent->as_string(prop_orientation).contains("wxVERTICAL"))
             is_VerticalSizer = true;
-        if (parent->prop_as_string(prop_orientation).contains("wxHORIZONTAL"))
+        if (parent->as_string(prop_orientation).contains("wxHORIZONTAL"))
             is_HorizontalSizer = true;
     }
 
@@ -1174,7 +1174,7 @@ NodeSharedPtr ImportXML::CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, No
             {
                 if (sizeritem->HasValue(prop_label))
                 {
-                    page->prop_set_value(prop_label, sizeritem->prop_as_string(prop_label));
+                    page->prop_set_value(prop_label, sizeritem->as_string(prop_label));
                 }
                 parent->Adopt(page);
                 return CreateXrcNode(xml_obj, page.get(), sizeritem);
@@ -1320,7 +1320,7 @@ NodeSharedPtr ImportXML::CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, No
     // Various designers allow the users to create settings that will generate an assert if compiled on a debug version of
     // wxWidgets. We fix some of the more common invalid settings here.
 
-    if (new_node->HasValue(prop_flags) && new_node->prop_as_string(prop_flags).contains("wxEXPAND"))
+    if (new_node->HasValue(prop_flags) && new_node->as_string(prop_flags).contains("wxEXPAND"))
     {
         if (new_node->HasValue(prop_alignment))
         {
@@ -1331,9 +1331,9 @@ NodeSharedPtr ImportXML::CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, No
 
     if (parent && parent->IsSizer())
     {
-        if (parent->prop_as_string(prop_orientation).contains("wxHORIZONTAL"))
+        if (parent->as_string(prop_orientation).contains("wxHORIZONTAL"))
         {
-            auto currentValue = new_node->prop_as_string(prop_alignment);
+            auto currentValue = new_node->as_string(prop_alignment);
             if (currentValue.size() && (currentValue.contains("wxALIGN_LEFT") || currentValue.contains("wxALIGN_RIGHT") ||
                                         currentValue.contains("wxALIGN_CENTER_HORIZONTAL")))
             {
@@ -1341,9 +1341,9 @@ NodeSharedPtr ImportXML::CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, No
                 new_node->prop_set_value(prop_alignment, fixed);
             }
         }
-        else if (parent->prop_as_string(prop_orientation).contains("wxVERTICAL"))
+        else if (parent->as_string(prop_orientation).contains("wxVERTICAL"))
         {
-            auto currentValue = new_node->prop_as_string(prop_alignment);
+            auto currentValue = new_node->as_string(prop_alignment);
             if (currentValue.size() && (currentValue.contains("wxALIGN_TOP") || currentValue.contains("wxALIGN_BOTTOM") ||
                                         currentValue.contains("wxALIGN_CENTER_VERTICAL")))
             {

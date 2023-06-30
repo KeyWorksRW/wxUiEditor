@@ -26,7 +26,7 @@ wxObject* FlexGridSizerGenerator::CreateMockup(Node* node, wxObject* parent)
 
     auto lambda = [&](GenEnum::PropName prop_name)
     {
-        if (auto& growable = node->prop_as_string(prop_name); growable.size())
+        if (auto& growable = node->as_string(prop_name); growable.size())
         {
             tt_view_vector values(growable, ',');
             auto rows = node->prop_as_int(prop_rows);
@@ -82,7 +82,7 @@ bool FlexGridSizerGenerator::ConstructionCode(Code& code)
 
     auto lambda = [&](GenEnum::PropName prop_name)
     {
-        if (auto& growable = node->prop_as_string(prop_name); growable.size())
+        if (auto& growable = node->as_string(prop_name); growable.size())
         {
             tt_view_vector values(growable, ',');
             auto rows = node->prop_as_int(prop_rows);
@@ -122,7 +122,7 @@ bool FlexGridSizerGenerator::ConstructionCode(Code& code)
     lambda(prop_growablecols);
     lambda(prop_growablerows);
 
-    auto& direction = node->prop_as_string(prop_flexible_direction);
+    auto& direction = node->as_string(prop_flexible_direction);
     if (direction.empty() || direction.is_sameas("wxBOTH"))
     {
         if (is_within_braces)
@@ -132,7 +132,7 @@ bool FlexGridSizerGenerator::ConstructionCode(Code& code)
 
     code.Eol(eol_if_empty).NodeName().Function("SetFlexibleDirection(").Add(direction).EndFunction();
 
-    auto& non_flex_growth = node->prop_as_string(prop_non_flexible_grow_mode);
+    auto& non_flex_growth = node->as_string(prop_non_flexible_grow_mode);
     if (non_flex_growth.empty() || non_flex_growth.is_sameas("wxFLEX_GROWMODE_SPECIFIED"))
     {
         if (is_within_braces)
@@ -213,7 +213,7 @@ int FlexGridSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& object, siz
     }
 
     item.append_attribute("class").set_value("wxFlexGridSizer");
-    item.append_attribute("name").set_value(node->prop_as_string(prop_var_name));
+    item.append_attribute("name").set_value(node->as_string(prop_var_name));
 
     ADD_ITEM_PROP(prop_rows, "rows")
     ADD_ITEM_PROP(prop_cols, "cols")
@@ -228,7 +228,7 @@ int FlexGridSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& object, siz
 
     if (node->HasValue(prop_minimum_size))
     {
-        item.append_child("minsize").text().set(node->prop_as_string(prop_minimum_size));
+        item.append_child("minsize").text().set(node->as_string(prop_minimum_size));
     }
     else if (node->GetParent()->IsForm() && node->GetParent()->HasValue(prop_minimum_size))
     {
@@ -236,7 +236,7 @@ int FlexGridSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& object, siz
         // which often can specify their own minimum size. The workaround is to set the minimum size of the parent sizer
         // that we create for most forms.
 
-        item.append_child("minsize").text().set(node->GetParent()->prop_as_string(prop_minimum_size));
+        item.append_child("minsize").text().set(node->GetParent()->as_string(prop_minimum_size));
     }
     return result;
 }

@@ -434,7 +434,7 @@ Code& Code::CreateClass(bool use_generic, tt_string_view override_name)
         *this += "new ";
         if (m_node->HasValue(prop_derived_class))
         {
-            *this += m_node->prop_as_string(prop_derived_class);
+            *this += m_node->as_string(prop_derived_class);
             *this += '(';
             if (m_node->HasValue(prop_derived_params))
             {
@@ -866,14 +866,14 @@ Code& Code::Style(const char* prefix, tt_string_view force_style)
         style_set = true;
     }
 
-    if (m_node->HasValue(prop_tab_position) && !m_node->prop_as_string(prop_tab_position).is_sameas("wxBK_DEFAULT"))
+    if (m_node->HasValue(prop_tab_position) && !m_node->as_string(prop_tab_position).is_sameas("wxBK_DEFAULT"))
     {
         if (style_set)
             *this += '|';
         style_set = true;
         as_string(prop_tab_position);
     }
-    if (m_node->HasValue(prop_orientation) && !m_node->prop_as_string(prop_orientation).is_sameas("wxGA_HORIZONTAL"))
+    if (m_node->HasValue(prop_orientation) && !m_node->as_string(prop_orientation).is_sameas("wxGA_HORIZONTAL"))
     {
         if (style_set)
             *this += '|';
@@ -1097,7 +1097,7 @@ Code& Code::GenSizerFlags()
 
     Add("wxSizerFlags");
 
-    if (auto& prop = m_node->prop_as_string(prop_proportion); prop != "0")
+    if (auto& prop = m_node->as_string(prop_proportion); prop != "0")
     {
         *this << '(' << prop << ')';
     }
@@ -1106,7 +1106,7 @@ Code& Code::GenSizerFlags()
         *this << "()";
     }
 
-    if (auto& prop = m_node->prop_as_string(prop_alignment); prop.size())
+    if (auto& prop = m_node->as_string(prop_alignment); prop.size())
     {
         if (prop.contains("wxALIGN_CENTER"))
         {
@@ -1135,7 +1135,7 @@ Code& Code::GenSizerFlags()
         }
     }
 
-    if (auto& prop = m_node->prop_as_string(prop_flags); prop.size())
+    if (auto& prop = m_node->as_string(prop_flags); prop.size())
     {
         if (prop.contains("wxEXPAND"))
         {
@@ -1155,9 +1155,9 @@ Code& Code::GenSizerFlags()
         }
     }
 
-    if (auto& prop = m_node->prop_as_string(prop_borders); prop.size())
+    if (auto& prop = m_node->as_string(prop_borders); prop.size())
     {
-        auto border_size = m_node->prop_as_string(prop_border_size);
+        auto border_size = m_node->as_string(prop_border_size);
         if (prop.contains("wxALL"))
         {
             if (border_size == "5")
@@ -1466,7 +1466,7 @@ void Code::GenFontColourSettings()
         }
     }  // End of font handling code
 
-    if (auto& fg_clr = node->prop_as_string(prop_foreground_colour); fg_clr.size())
+    if (auto& fg_clr = node->as_string(prop_foreground_colour); fg_clr.size())
     {
         Eol(eol_if_needed);
         if (node->IsForm())
@@ -1489,7 +1489,7 @@ void Code::GenFontColourSettings()
         EndFunction();
     }
 
-    if (auto& bg_clr = node->prop_as_string(prop_background_colour); bg_clr.size())
+    if (auto& bg_clr = node->as_string(prop_background_colour); bg_clr.size())
     {
         Eol(eol_if_needed);
         if (node->IsForm())

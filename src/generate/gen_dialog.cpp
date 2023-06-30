@@ -148,7 +148,7 @@ bool DialogFormGenerator::AfterChildrenCode(Code& code)
         code.Eol().FormFunction("Fit(").EndFunction();
     }
 
-    auto& center = dlg->prop_as_string(prop_center);
+    auto& center = dlg->as_string(prop_center);
     if (center.size() && !center.is_sameas("no"))
     {
         code.Eol().FormFunction("Centre(").Add(center).EndFunction();
@@ -260,49 +260,48 @@ int DialogFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t
 
     if (node->HasValue(prop_style))
     {
-        if ((xrc_flags & xrc::add_comments) && node->prop_as_string(prop_style).contains("wxWANTS_CHARS"))
+        if ((xrc_flags & xrc::add_comments) && node->as_string(prop_style).contains("wxWANTS_CHARS"))
         {
             item.append_child(pugi::node_comment)
                 .set_value("The wxWANTS_CHARS style will be ignored when the XRC is loaded.");
         }
         if (!node->HasValue(prop_extra_style))
         {
-            item.append_child("style").text().set(node->prop_as_string(prop_style));
+            item.append_child("style").text().set(node->as_string(prop_style));
         }
         else
         {
-            tt_string all_styles = node->prop_as_string(prop_style);
-            all_styles << '|' << node->prop_as_string(prop_extra_style);
+            tt_string all_styles = node->as_string(prop_style);
+            all_styles << '|' << node->as_string(prop_extra_style);
             item.append_child("style").text().set(all_styles);
         }
     }
 
     if (node->HasValue(prop_pos))
-        item.append_child("pos").text().set(node->prop_as_string(prop_pos));
+        item.append_child("pos").text().set(node->as_string(prop_pos));
     if (node->HasValue(prop_size))
-        item.append_child("size").text().set(node->prop_as_string(prop_size));
+        item.append_child("size").text().set(node->as_string(prop_size));
 
     if (node->HasValue(prop_center))
     {
-        if (node->prop_as_string(prop_center).is_sameas("wxVERTICAL") ||
-            node->prop_as_string(prop_center).is_sameas("wxHORIZONTAL"))
+        if (node->as_string(prop_center).is_sameas("wxVERTICAL") || node->as_string(prop_center).is_sameas("wxHORIZONTAL"))
         {
             if (xrc_flags & xrc::add_comments)
             {
                 item.append_child(pugi::node_comment)
-                    .set_value((tt_string(node->prop_as_string(prop_center)) << " cannot be be set in the XRC file."));
+                    .set_value((tt_string(node->as_string(prop_center)) << " cannot be be set in the XRC file."));
             }
             item.append_child("centered").text().set(1);
         }
         else
         {
-            item.append_child("centered").text().set(node->prop_as_string(prop_center).is_sameas("no") ? 0 : 1);
+            item.append_child("centered").text().set(node->as_string(prop_center).is_sameas("no") ? 0 : 1);
         }
     }
 
     if (node->HasValue(prop_icon))
     {
-        tt_string_vector parts(node->prop_as_string(prop_icon), ';', tt::TRIM::both);
+        tt_string_vector parts(node->as_string(prop_icon), ';', tt::TRIM::both);
         ASSERT(parts.size() > 1)
         if (parts[IndexType].is_sameas("Art"))
         {

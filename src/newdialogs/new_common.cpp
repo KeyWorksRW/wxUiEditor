@@ -49,7 +49,7 @@ bool IsClassNameUnique(wxString classname)
 
     for (const auto& iter: forms)
     {
-        if (iter->prop_as_string(prop_class_name).is_sameas(new_classname))
+        if (iter->as_string(prop_class_name).is_sameas(new_classname))
         {
             return false;
         }

@@ -288,7 +288,7 @@ tt_string ConvertEscapeSlashes(tt_string_view str)
 
 wxPoint DlgPoint(wxObject* parent, Node* node, GenEnum::PropName prop)
 {
-    if (node->prop_as_string(prop).contains("d", tt::CASE::either))
+    if (node->as_string(prop).contains("d", tt::CASE::either))
     {
         return wxStaticCast(parent, wxWindow)->ConvertDialogToPixels(node->prop_as_wxPoint(prop));
     }
@@ -300,7 +300,7 @@ wxPoint DlgPoint(wxObject* parent, Node* node, GenEnum::PropName prop)
 
 wxSize DlgSize(wxObject* parent, Node* node, GenEnum::PropName prop)
 {
-    if (node->prop_as_string(prop).contains("d", tt::CASE::either))
+    if (node->as_string(prop).contains("d", tt::CASE::either))
     {
         return wxStaticCast(parent, wxWindow)->ConvertDialogToPixels(node->prop_as_wxSize(prop));
     }

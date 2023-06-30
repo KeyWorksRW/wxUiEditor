@@ -294,7 +294,7 @@ bool ImageHandler::AddEmbeddedImage(tt_string path, Node* form, bool is_animatio
     {
         if (m_project_node->HasValue(prop_art_directory))
         {
-            tt_string art_path = m_project_node->prop_as_string(prop_art_directory);
+            tt_string art_path = m_project_node->as_string(prop_art_directory);
             art_path.append_filename(path);
             if (!art_path.file_exists())
                 return false;
@@ -536,9 +536,9 @@ void ImageHandler::CollectBundles()
 
         if (form->HasProp(prop_icon) && form->HasValue(prop_icon))
         {
-            if (!m_bundles.contains(ConvertToLookup(form->prop_as_string(prop_icon))))
+            if (!m_bundles.contains(ConvertToLookup(form->as_string(prop_icon))))
             {
-                ProcessBundleProperty(form->prop_as_string(prop_icon), form);
+                ProcessBundleProperty(form->as_string(prop_icon), form);
             }
         }
     }
@@ -594,7 +594,7 @@ bool ImageHandler::AddNewEmbeddedBundle(const tt_string_vector& parts, tt_string
     {
         if (m_project_node->HasValue(prop_art_directory))
         {
-            tt_string art_path = m_project_node->prop_as_string(prop_art_directory);
+            tt_string art_path = m_project_node->as_string(prop_art_directory);
             art_path.append_filename(path);
             if (!art_path.file_exists())
             {
@@ -879,7 +879,7 @@ ImageBundle* ImageHandler::ProcessBundleProperty(const tt_string_vector& parts, 
             {
                 if (m_project_node->HasValue(prop_art_directory))
                 {
-                    path = m_project_node->prop_as_string(prop_art_directory);
+                    path = m_project_node->as_string(prop_art_directory);
                     path.append_filename(parts[IndexImage]);
                     path.Replace("_16x16.", "_24x24.");
                     if (path.file_exists())
@@ -908,7 +908,7 @@ ImageBundle* ImageHandler::ProcessBundleProperty(const tt_string_vector& parts, 
             {
                 if (m_project_node->HasValue(prop_art_directory))
                 {
-                    path = m_project_node->prop_as_string(prop_art_directory);
+                    path = m_project_node->as_string(prop_art_directory);
                     path.append_filename(parts[IndexImage]);
                     path.Replace("_24x24.", "_36x36.");
                     if (path.file_exists())
@@ -940,7 +940,7 @@ ImageBundle* ImageHandler::ProcessBundleProperty(const tt_string_vector& parts, 
                 {
                     if (m_project_node->HasValue(prop_art_directory))
                     {
-                        tt_string tmp_path = m_project_node->prop_as_string(prop_art_directory);
+                        tt_string tmp_path = m_project_node->as_string(prop_art_directory);
                         tmp_path.append_filename(path);
                         if (tmp_path.file_exists())
                         {
@@ -1230,7 +1230,7 @@ tt_string ImageHandler::GetBundleFuncName(const tt_string& description)
 
             for (const auto& child: form->GetChildNodePtrs())
             {
-                tt_view_vector form_image_parts(child->prop_as_string(prop_bitmap), BMP_PROP_SEPARATOR, tt::TRIM::both);
+                tt_view_vector form_image_parts(child->as_string(prop_bitmap), BMP_PROP_SEPARATOR, tt::TRIM::both);
                 if (form_image_parts.size() < 2)
                 {
                     continue;

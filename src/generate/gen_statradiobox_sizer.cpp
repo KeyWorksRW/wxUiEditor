@@ -227,18 +227,18 @@ int StaticRadioBtnBoxSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& ob
     }
 
     item.append_attribute("class").set_value("wxStaticBoxSizer");
-    item.append_attribute("name").set_value(node->prop_as_string(prop_var_name));
-    item.append_child("orient").text().set(node->prop_as_string(prop_orientation));
+    item.append_attribute("name").set_value(node->as_string(prop_var_name));
+    item.append_child("orient").text().set(node->as_string(prop_orientation));
     if (node->HasValue(prop_minimum_size))
     {
-        item.append_child("minsize").text().set(node->prop_as_string(prop_minimum_size));
+        item.append_child("minsize").text().set(node->as_string(prop_minimum_size));
     }
     ADD_ITEM_BOOL(prop_hidden, "hideitems");
 
     auto checkbox = item.append_child("windowlabel");
     auto child = checkbox.append_child("object");
     child.append_attribute("class").set_value("wxRadioButton");
-    child.append_child("label").text().set(node->prop_as_string(prop_label));
+    child.append_child("label").text().set(node->as_string(prop_label));
     if (node->prop_as_bool(prop_checked))
         child.append_child("checked").text().set("1");
 

@@ -86,12 +86,12 @@ void AllowFileChange(wxPropertyGridEvent& event, NodeProperty* prop, Node* node)
                 continue;
             if (prop->isProp(prop_base_file))
             {
-                if (child->prop_as_string(prop_base_file).filename() == filename)
+                if (child->as_string(prop_base_file).filename() == filename)
                 {
                     auto focus = wxWindow::FindFocus();
 
                     wxMessageBox(wxString() << "The base filename \"" << filename.make_wxString()
-                                            << "\" is already in use by " << child->prop_as_string(prop_class_name)
+                                            << "\" is already in use by " << child->as_string(prop_class_name)
                                             << "\n\nEither change the name, or press ESC to restore the original name.",
                                  "Duplicate base filename", wxICON_STOP);
                     if (focus)
@@ -116,7 +116,7 @@ void AllowFileChange(wxPropertyGridEvent& event, NodeProperty* prop, Node* node)
                     auto focus = wxWindow::FindFocus();
 
                     wxMessageBox(wxString() << "The python filename \"" << filename.make_wxString()
-                                            << "\" is already in use by " << child->prop_as_string(prop_class_name)
+                                            << "\" is already in use by " << child->as_string(prop_class_name)
                                             << "\n\nEither change the name, or press ESC to restore the original name.",
                                  "Duplicate python filename", wxICON_STOP);
                     if (focus)
@@ -139,12 +139,12 @@ void AllowFileChange(wxPropertyGridEvent& event, NodeProperty* prop, Node* node)
                 // Currently, XRC files don't have a directory property, so the full path
                 // relative to the project file is what we check. It *is* valid to have the
                 // same filename provided it is in a different directory.
-                if (child->prop_as_string(prop_xrc_file) == filename)
+                if (child->as_string(prop_xrc_file) == filename)
                 {
                     auto focus = wxWindow::FindFocus();
 
                     wxMessageBox(wxString() << "The xrc filename \"" << filename.make_wxString()
-                                            << "\" is already in use by " << child->prop_as_string(prop_class_name)
+                                            << "\" is already in use by " << child->as_string(prop_class_name)
                                             << "\n\nEither change the name, or press ESC to restore the original name.",
                                  "Duplicate xrc filename", wxICON_STOP);
 
@@ -224,7 +224,7 @@ void ChangeDerivedDirectory(tt_string& path)
     {
         if (form->prop_as_bool(prop_use_derived_class) && form->HasValue(prop_derived_file))
         {
-            tt_string cur_path = form->prop_as_string(prop_derived_file);
+            tt_string cur_path = form->as_string(prop_derived_file);
             cur_path.backslashestoforward();
             cur_path.remove_filename();
             if (cur_path.size() && cur_path.back() == '/')
@@ -237,7 +237,7 @@ void ChangeDerivedDirectory(tt_string& path)
             }
 
             cur_path = path;
-            cur_path.append_filename(form->prop_as_string(prop_derived_file).filename());
+            cur_path.append_filename(form->as_string(prop_derived_file).filename());
             undo_derived->AddProperty(form->get_prop_ptr(prop_derived_file), cur_path);
         }
     }
@@ -264,7 +264,7 @@ void ChangeBaseDirectory(tt_string& path)
     {
         if (form->HasValue(prop_base_file))
         {
-            tt_string cur_path = form->prop_as_string(prop_base_directory);
+            tt_string cur_path = form->as_string(prop_base_directory);
             cur_path.backslashestoforward();
             cur_path.remove_filename();
             if (cur_path.size() && cur_path.back() == '/')
@@ -277,7 +277,7 @@ void ChangeBaseDirectory(tt_string& path)
             }
 
             cur_path = path;
-            cur_path.append_filename(form->prop_as_string(prop_base_file).filename());
+            cur_path.append_filename(form->as_string(prop_base_file).filename());
             undo_derived->AddProperty(form->get_prop_ptr(prop_base_file), cur_path);
         }
     }

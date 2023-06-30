@@ -69,7 +69,7 @@ bool resCtrl::ParseDimensions(tt_string_view line, wxRect& duRect, wxRect& pixel
         return false;
     duRect.SetHeight(tt::atoi(line));
 
-    if (m_node->isGen(gen_wxComboBox) && !m_node->prop_as_string(prop_style).contains("wxCB_SIMPLE"))
+    if (m_node->isGen(gen_wxComboBox) && !m_node->as_string(prop_style).contains("wxCB_SIMPLE"))
     {
         // For a drop-down style, the resource file sets the height of the drop-down portion, but for figuring out layout of
         // the control, we need the non-drop height. We can't actually get that, so we take a reasonable guess.
@@ -159,7 +159,7 @@ tt_string_view resCtrl::GetID(tt_string_view line)
     else
         m_node->prop_set_value(prop_id, "wxID_ANY");
 
-    if (m_node->prop_as_string(prop_id) != "wxID_ANY" || !id.starts_with("IDC_STATIC"))
+    if (m_node->as_string(prop_id) != "wxID_ANY" || !id.starts_with("IDC_STATIC"))
     {
         m_node->prop_set_value(prop_var_comment, id);
     }
@@ -303,7 +303,7 @@ tt_string_view resCtrl::StepOverComma(tt_string_view line, tt_string& str)
 
 void resCtrl::AppendStyle(GenEnum::PropName prop_name, tt_string_view style)
 {
-    tt_string updated_style = m_node->prop_as_string(prop_name);
+    tt_string updated_style = m_node->as_string(prop_name);
     if (updated_style.size())
         updated_style << '|';
     updated_style << style;

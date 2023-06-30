@@ -52,7 +52,7 @@ void DataViewCtrl::AfterCreation(wxObject* wxobject, wxWindow* /* wxparent */, N
         auto childObj = node->GetChild(i);
         if (childObj->isGen(gen_dataViewColumn))
         {
-            if (childObj->prop_as_string(prop_type) == "Text")
+            if (childObj->as_string(prop_type) == "Text")
             {
                 auto* col = list->AppendTextColumn(
                     childObj->prop_as_wxString(prop_label), childObj->prop_as_int(prop_model_column),
@@ -63,7 +63,7 @@ void DataViewCtrl::AfterCreation(wxObject* wxobject, wxWindow* /* wxparent */, N
                     col->GetRenderer()->EnableEllipsize(static_cast<wxEllipsizeMode>(childObj->prop_as_int(prop_ellipsize)));
                 }
             }
-            else if (childObj->prop_as_string(prop_type) == "Toggle")
+            else if (childObj->as_string(prop_type) == "Toggle")
             {
                 auto* col = list->AppendToggleColumn(
                     childObj->prop_as_wxString(prop_label), childObj->prop_as_int(prop_model_column),
@@ -74,7 +74,7 @@ void DataViewCtrl::AfterCreation(wxObject* wxobject, wxWindow* /* wxparent */, N
                     col->GetRenderer()->EnableEllipsize(static_cast<wxEllipsizeMode>(childObj->prop_as_int(prop_ellipsize)));
                 }
             }
-            else if (childObj->prop_as_string(prop_type) == "Progress")
+            else if (childObj->as_string(prop_type) == "Progress")
             {
                 auto* col = list->AppendProgressColumn(
                     childObj->prop_as_wxString(prop_label), childObj->prop_as_int(prop_model_column),
@@ -85,7 +85,7 @@ void DataViewCtrl::AfterCreation(wxObject* wxobject, wxWindow* /* wxparent */, N
                     col->GetRenderer()->EnableEllipsize(static_cast<wxEllipsizeMode>(childObj->prop_as_int(prop_ellipsize)));
                 }
             }
-            else if (childObj->prop_as_string(prop_type) == "IconText")
+            else if (childObj->as_string(prop_type) == "IconText")
             {
                 auto* col = list->AppendIconTextColumn(
                     childObj->prop_as_wxString(prop_label), childObj->prop_as_int(prop_model_column),
@@ -96,7 +96,7 @@ void DataViewCtrl::AfterCreation(wxObject* wxobject, wxWindow* /* wxparent */, N
                     col->GetRenderer()->EnableEllipsize(static_cast<wxEllipsizeMode>(childObj->prop_as_int(prop_ellipsize)));
                 }
             }
-            else if (childObj->prop_as_string(prop_type) == "Date")
+            else if (childObj->as_string(prop_type) == "Date")
             {
                 auto* col = list->AppendDateColumn(
                     childObj->prop_as_wxString(prop_label), childObj->prop_as_int(prop_model_column),
@@ -107,7 +107,7 @@ void DataViewCtrl::AfterCreation(wxObject* wxobject, wxWindow* /* wxparent */, N
                     col->GetRenderer()->EnableEllipsize(static_cast<wxEllipsizeMode>(childObj->prop_as_int(prop_ellipsize)));
                 }
             }
-            else if (childObj->prop_as_string(prop_type) == "Bitmap")
+            else if (childObj->as_string(prop_type) == "Bitmap")
             {
                 auto* col = list->AppendBitmapColumn(
                     childObj->prop_as_wxString(prop_label), childObj->prop_as_int(prop_model_column),
@@ -185,7 +185,7 @@ void DataViewListCtrl::AfterCreation(wxObject* wxobject, wxWindow* /* wxparent *
         auto childObj = node->GetChild(i);
         if (childObj->isGen(gen_dataViewListColumn))
         {
-            if (childObj->prop_as_string(prop_type) == "Text")
+            if (childObj->as_string(prop_type) == "Text")
             {
                 auto col = list->AppendTextColumn(
                     childObj->prop_as_wxString(prop_label),
@@ -196,7 +196,7 @@ void DataViewListCtrl::AfterCreation(wxObject* wxobject, wxWindow* /* wxparent *
                     col->GetRenderer()->EnableEllipsize(static_cast<wxEllipsizeMode>(childObj->prop_as_int(prop_ellipsize)));
                 }
             }
-            else if (childObj->prop_as_string(prop_type) == "Toggle")
+            else if (childObj->as_string(prop_type) == "Toggle")
             {
                 auto col = list->AppendToggleColumn(
                     childObj->prop_as_wxString(prop_label),
@@ -207,7 +207,7 @@ void DataViewListCtrl::AfterCreation(wxObject* wxobject, wxWindow* /* wxparent *
                     col->GetRenderer()->EnableEllipsize(static_cast<wxEllipsizeMode>(childObj->prop_as_int(prop_ellipsize)));
                 }
             }
-            else if (childObj->prop_as_string(prop_type) == "Progress")
+            else if (childObj->as_string(prop_type) == "Progress")
             {
                 auto col = list->AppendProgressColumn(
                     childObj->prop_as_wxString(prop_label),
@@ -218,7 +218,7 @@ void DataViewListCtrl::AfterCreation(wxObject* wxobject, wxWindow* /* wxparent *
                     col->GetRenderer()->EnableEllipsize(static_cast<wxEllipsizeMode>(childObj->prop_as_int(prop_ellipsize)));
                 }
             }
-            else if (childObj->prop_as_string(prop_type) == "IconText")
+            else if (childObj->as_string(prop_type) == "IconText")
             {
                 auto col = list->AppendIconTextColumn(
                     childObj->prop_as_wxString(prop_label),

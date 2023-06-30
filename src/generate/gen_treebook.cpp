@@ -71,9 +71,9 @@ int TreebookGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t x
 
     tt_string styles;  // Ignore wxNB_NOPAGETHEM which is not supported by XRC
 
-    if (node->prop_as_string(prop_tab_position) != "wxBK_DEFAULT")
+    if (node->as_string(prop_tab_position) != "wxBK_DEFAULT")
     {
-        styles << node->prop_as_string(prop_tab_position);
+        styles << node->as_string(prop_tab_position);
     }
 
     GenXrcPreStylePosSize(node, item, styles);

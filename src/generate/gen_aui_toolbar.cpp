@@ -321,7 +321,7 @@ int AuiToolSpacerGenerator::GenXrcObject(Node* node, pugi::xml_node& object, siz
 {
     auto item = InitializeXrcObject(node, object);
     GenXrcObjectAttributes(node, item, "space");
-    item.append_child("width").text().set(node->prop_as_string(prop_width));
+    item.append_child("width").text().set(node->as_string(prop_width));
 
     return BaseGenerator::xrc_updated;
 }
@@ -352,7 +352,7 @@ int AuiToolStretchSpacerGenerator::GenXrcObject(Node* node, pugi::xml_node& obje
 {
     auto item = InitializeXrcObject(node, object);
     GenXrcObjectAttributes(node, item, "space");
-    item.append_child("proportion").text().set(node->prop_as_string(prop_proportion));
+    item.append_child("proportion").text().set(node->as_string(prop_proportion));
 
     return BaseGenerator::xrc_updated;
 }

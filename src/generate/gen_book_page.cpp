@@ -363,7 +363,7 @@ int BookPageGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t x
 
     auto panel = item.append_child("object");
     panel.append_attribute("class").set_value("wxPanel");
-    panel.append_attribute("name").set_value(node->prop_as_string(prop_var_name));
+    panel.append_attribute("name").set_value(node->as_string(prop_var_name));
     panel.append_child("style").text().set("wxTAB_TRAVERSAL");
 
     return BaseGenerator::xrc_sizer_item_created;

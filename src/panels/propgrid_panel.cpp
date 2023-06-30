@@ -1167,7 +1167,7 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
         auto event_prop = node->GetParent()->GetEvent("wxEVT_CONTEXT_MENU");
         if (event_prop)
         {
-            event_prop->set_value(node->prop_as_string(prop_handler_name));
+            event_prop->set_value(node->as_string(prop_handler_name));
         }
     }
 
@@ -1649,7 +1649,7 @@ void PropGridPanel::ModifyOptionsProperty(NodeProperty* node_prop, wxPGProperty*
         }
         else if (node_prop->isProp(prop_class_access) && wxGetApp().IsPjtMemberPrefix())
         {
-            tt_string name = node->prop_as_string(prop_var_name);
+            tt_string name = node->as_string(prop_var_name);
             if (Project.get_PreferredLanguage() == GEN_LANG_PYTHON)
             {
                 // The convention in python is to use a leading underscore for

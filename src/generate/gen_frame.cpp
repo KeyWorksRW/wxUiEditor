@@ -127,7 +127,7 @@ bool FrameFormGenerator::HeaderCode(Code& code)
     code.NodeName() += "() {}";
     code.Eol().NodeName().Str("(wxWindow* parent, wxWindowID id = ").Str(prop_id);
     code.Comma().Str("const wxString& title = ");
-    auto& title = node->prop_as_string(prop_title);
+    auto& title = node->as_string(prop_title);
     if (code.HasValue(prop_title))
     {
         code.QuotedString(title);
@@ -152,8 +152,8 @@ bool FrameFormGenerator::HeaderCode(Code& code)
     else
         code.WxSize(prop_size, no_dlg_units);
 
-    auto& style = node->prop_as_string(prop_style);
-    auto& win_style = node->prop_as_string(prop_window_style);
+    auto& style = node->as_string(prop_style);
+    auto& win_style = node->as_string(prop_window_style);
     if (style.empty() && win_style.empty())
         code.Comma().Str("long style = 0");
     else
@@ -176,7 +176,7 @@ bool FrameFormGenerator::HeaderCode(Code& code)
         }
     }
 
-    if (node->prop_as_string(prop_window_name).size())
+    if (node->as_string(prop_window_name).size())
     {
         code.Comma().Str("const wxString &name = ").QuotedString(prop_window_name);
     }
@@ -255,16 +255,16 @@ bool FrameFormGenerator::BaseClassNameCode(Code& code)
 int FrameFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
     object.append_attribute("class").set_value("wxFrame");
-    object.append_attribute("name").set_value(node->prop_as_string(prop_class_name));
+    object.append_attribute("name").set_value(node->as_string(prop_class_name));
 
     if (node->HasValue(prop_title))
     {
-        object.append_child("title").text().set(node->prop_as_string(prop_title));
+        object.append_child("title").text().set(node->as_string(prop_title));
     }
     if (node->HasValue(prop_center))
     {
-        if (node->prop_as_string(prop_center) == "wxVERTICAL" || node->prop_as_string(prop_center) == "wxHORIZONTAL" ||
-            node->prop_as_string(prop_center) == "wxBOTH")
+        if (node->as_string(prop_center) == "wxVERTICAL" || node->as_string(prop_center) == "wxHORIZONTAL" ||
+            node->as_string(prop_center) == "wxBOTH")
         {
             object.append_child("centered").text().set(1);
         }
@@ -275,7 +275,7 @@ int FrameFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t 
     }
     if (node->HasValue(prop_icon))
     {
-        tt_string_vector parts(node->prop_as_string(prop_icon), ';', tt::TRIM::both);
+        tt_string_vector parts(node->as_string(prop_icon), ';', tt::TRIM::both);
         ASSERT(parts.size() > 1)
         if (parts[IndexType].is_sameas("Art"))
         {
@@ -297,13 +297,13 @@ int FrameFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t 
     {
         GenXrcComments(node, object);
 
-        if (node->prop_as_string(prop_center) == "wxVERTICAL")
+        if (node->as_string(prop_center) == "wxVERTICAL")
         {
             object.append_child(pugi::node_comment)
                 .set_value((" For centering, you cannot set only one direction in the XRC file (set wxBOTH instead)."));
         }
 
-        if (node->prop_as_string(prop_style).contains("wxWANTS_CHARS"))
+        if (node->as_string(prop_style).contains("wxWANTS_CHARS"))
         {
             object.append_child(pugi::node_comment)
                 .set_value("The wxWANTS_CHARS style will be ignored when the XRC is loaded.");

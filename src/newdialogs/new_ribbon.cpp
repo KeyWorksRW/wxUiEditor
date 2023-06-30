@@ -93,7 +93,7 @@ void NewRibbon::CreateNode()
     else
     {
         bar_node->prop_set_value(prop_class_name, m_base_class.utf8_string());
-        if (bar_node->prop_as_string(prop_class_name) != bar_node->prop_default_value(prop_class_name))
+        if (bar_node->as_string(prop_class_name) != bar_node->prop_default_value(prop_class_name))
         {
             UpdateFormClass(bar_node.get());
         }

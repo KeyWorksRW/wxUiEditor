@@ -18,15 +18,15 @@ void AfterCreationAddItems(wxPropertyGridInterface* pgi, Node* node)
     {
         if (child->isGen(gen_propGridItem))
         {
-            if (child->prop_as_string(prop_type) == "Category")
+            if (child->as_string(prop_type) == "Category")
             {
                 pgi->Append(
                     new wxPropertyCategory(child->prop_as_wxString(prop_label), child->prop_as_wxString(prop_label)));
             }
             else
             {
-                wxPGProperty* prop = wxDynamicCast(
-                    wxCreateDynamicObject("wx" + (child->prop_as_string(prop_type)) + "Property"), wxPGProperty);
+                wxPGProperty* prop =
+                    wxDynamicCast(wxCreateDynamicObject("wx" + (child->as_string(prop_type)) + "Property"), wxPGProperty);
                 if (prop)
                 {
                     prop->SetLabel(child->as_wxString(prop_label));

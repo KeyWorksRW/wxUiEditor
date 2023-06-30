@@ -234,7 +234,7 @@ void CodeDisplay::OnNodeSelected(Node* node)
     tt_string name(" ");
     if (m_panel_type == GEN_LANG_PYTHON && !node->IsLocal())
         name << "self.";
-    name << node->prop_as_string(prop_var_name);
+    name << node->as_string(prop_var_name);
     int line = 0;
     if (is_event)
     {
@@ -249,17 +249,17 @@ void CodeDisplay::OnNodeSelected(Node* node)
     else if (m_panel_type == GEN_LANG_XRC)
     {
         tt_string search("name=\"");
-        if (node->HasProp(prop_id) && node->prop_as_string(prop_id) != "wxID_ANY")
+        if (node->HasProp(prop_id) && node->as_string(prop_id) != "wxID_ANY")
         {
-            search << node->prop_as_string(prop_id);
+            search << node->as_string(prop_id);
         }
         else if (node->HasValue(prop_var_name))
         {
-            search << node->prop_as_string(prop_var_name);
+            search << node->as_string(prop_var_name);
         }
         else
         {
-            search << node->prop_as_string(prop_class_name);
+            search << node->as_string(prop_class_name);
         }
         line = (to_int) m_view.FindLineContaining(search);
     }

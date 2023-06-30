@@ -59,7 +59,7 @@ bool GaugeGenerator::SettingsCode(Code& code)
 bool GaugeGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
     InsertGeneratorInclude(node, "#include <wx/gauge.h>", set_src, set_hdr);
-    if (node->prop_as_string(prop_validator_variable).size())
+    if (node->as_string(prop_validator_variable).size())
         InsertGeneratorInclude(node, "#include <wx/valgen.h>", set_src, set_hdr);
     return true;
 }

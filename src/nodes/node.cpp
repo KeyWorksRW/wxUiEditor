@@ -523,14 +523,6 @@ wxString Node::prop_as_wxString(PropName name) const
         return wxString();
 }
 
-const tt_string& Node::prop_as_string(PropName name) const
-{
-    if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
-        return m_properties[result->second].as_string();
-    else
-        return tt_empty_cstr;
-}
-
 const tt_string& Node::prop_as_constant(PropName name, std::string_view prefix)
 {
     if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
@@ -624,7 +616,7 @@ wxSizerFlags Node::GetSizerFlags() const
     flags.Proportion(prop_as_int(prop_proportion));
     auto border_size = prop_as_int(prop_border_size);
     int direction = 0;
-    auto& border_settings = prop_as_string(prop_borders);
+    auto& border_settings = as_string(prop_borders);
     if (border_settings.contains("wxALL"))
     {
         direction = wxALL;
@@ -642,7 +634,7 @@ wxSizerFlags Node::GetSizerFlags() const
     }
     flags.Border(direction, border_size);
 
-    if (auto& alignment = prop_as_string(prop_alignment); alignment.size())
+    if (auto& alignment = as_string(prop_alignment); alignment.size())
     {
         if (alignment.contains("wxALIGN_CENTER"))
         {
@@ -668,7 +660,7 @@ wxSizerFlags Node::GetSizerFlags() const
         }
     }
 
-    if (auto& prop = prop_as_string(prop_flags); prop.size())
+    if (auto& prop = as_string(prop_flags); prop.size())
     {
         if (prop.contains("wxEXPAND"))
             flags.Expand();
@@ -1013,7 +1005,7 @@ bool Node::FixDuplicateName()
     bool replaced = false;
     for (auto& iter: s_var_names)
     {
-        if (auto& name = prop_as_string(iter); name.size())
+        if (auto& name = as_string(iter); name.size())
         {
             if (auto it = name_set.find(name); it != name_set.end())
             {
@@ -1097,7 +1089,7 @@ void Node::FixDuplicateNodeNames(Node* form)
 
     for (auto& iter: s_var_names)
     {
-        if (auto& name = prop_as_string(iter); name.size())
+        if (auto& name = as_string(iter); name.size())
         {
             if (auto it = name_set.find(name); it != name_set.end())
             {
@@ -1159,7 +1151,7 @@ void Node::CollectUniqueNames(std::unordered_set<std::string>& name_set, Node* c
         {
             for (auto& iter: s_var_names)
             {
-                if (auto& name = prop_as_string(iter); name.size())
+                if (auto& name = as_string(iter); name.size())
                 {
                     name_set.emplace(name);
                 }
@@ -1167,7 +1159,7 @@ void Node::CollectUniqueNames(std::unordered_set<std::string>& name_set, Node* c
         }
         else
         {
-            if (auto& name = prop_as_string(prop_name); name.size())
+            if (auto& name = as_string(prop_name); name.size())
             {
                 name_set.emplace(name);
             }

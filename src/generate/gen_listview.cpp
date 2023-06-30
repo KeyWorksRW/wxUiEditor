@@ -19,7 +19,7 @@ wxObject* ListViewGenerator::CreateMockup(Node* node, wxObject* parent)
     auto widget = new wxListView(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(parent, node, prop_pos),
                                  DlgSize(parent, node, prop_size), GetStyleInt(node));
 
-    if (node->prop_as_string(prop_mode) == "wxLC_REPORT" && node->HasValue(prop_column_labels))
+    if (node->as_string(prop_mode) == "wxLC_REPORT" && node->HasValue(prop_column_labels))
     {
         auto headers = node->as_ArrayString(prop_column_labels);
         for (auto& label: headers)

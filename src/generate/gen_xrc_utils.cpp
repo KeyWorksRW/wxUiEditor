@@ -74,22 +74,22 @@ void GenXrcSizerItem(Node* node, pugi::xml_node& object)
     if (node->GetParent()->isGen(gen_wxGridBagSizer))
     {
         tt_string size;
-        size << node->prop_as_string(prop_row) << ',' << node->prop_as_string(prop_column);
+        size << node->as_string(prop_row) << ',' << node->as_string(prop_column);
         object.append_child("cellpos").text().set(size);
         size.clear();
-        size << node->prop_as_string(prop_rowspan) << ',' << node->prop_as_string(prop_colspan);
+        size << node->as_string(prop_rowspan) << ',' << node->as_string(prop_colspan);
         object.append_child("cellspan").text().set(size);
     }
 
     tt_string flags;
-    flags << node->prop_as_string(prop_borders);
+    flags << node->as_string(prop_borders);
     if (node->HasValue(prop_flags))
     {
         if (flags.size())
         {
             flags << '|';
         }
-        flags << node->prop_as_string(prop_flags);
+        flags << node->as_string(prop_flags);
     }
     if (node->HasValue(prop_alignment))
     {
@@ -97,20 +97,20 @@ void GenXrcSizerItem(Node* node, pugi::xml_node& object)
         {
             flags << '|';
         }
-        flags << node->prop_as_string(prop_alignment);
+        flags << node->as_string(prop_alignment);
     }
     object.append_child("flag").text().set(flags.c_str());
     if (node->HasValue(prop_border_size))
     {
-        object.append_child("border").text().set(node->prop_as_string(prop_border_size));
+        object.append_child("border").text().set(node->as_string(prop_border_size));
     }
-    if (node->prop_as_string(prop_proportion) != "0")
+    if (node->as_string(prop_proportion) != "0")
     {
-        object.append_child("option").text().set(node->prop_as_string(prop_proportion));
+        object.append_child("option").text().set(node->as_string(prop_proportion));
     }
     if (node->HasValue(prop_minimum_size))
     {
-        object.append_child("minsize").text().set(node->prop_as_string(prop_minimum_size));
+        object.append_child("minsize").text().set(node->as_string(prop_minimum_size));
     }
 }
 
@@ -124,14 +124,14 @@ void GenXrcComments(Node* node, pugi::xml_node& object, size_t supported_flags)
 
 void GenXrcStylePosSize(Node* node, pugi::xml_node& object, PropName other_style)
 {
-    tt_string combined_style(node->prop_as_string(prop_style));
+    tt_string combined_style(node->as_string(prop_style));
     if (other_style != prop_unknown && node->HasValue(other_style))
     {
         if (combined_style.size())
         {
             combined_style << '|';
         }
-        combined_style << node->prop_as_string(other_style);
+        combined_style << node->as_string(other_style);
     }
 
     if (node->HasValue(prop_window_style))
@@ -140,7 +140,7 @@ void GenXrcStylePosSize(Node* node, pugi::xml_node& object, PropName other_style
         {
             combined_style << '|';
         }
-        combined_style << node->prop_as_string(prop_window_style);
+        combined_style << node->as_string(prop_window_style);
     }
 
     if (combined_style.size())
@@ -150,11 +150,11 @@ void GenXrcStylePosSize(Node* node, pugi::xml_node& object, PropName other_style
 
     if (node->HasValue(prop_pos))
     {
-        object.append_child("pos").text().set(node->prop_as_string(prop_pos));
+        object.append_child("pos").text().set(node->as_string(prop_pos));
     }
     if (node->HasValue(prop_size))
     {
-        object.append_child("size").text().set(node->prop_as_string(prop_size));
+        object.append_child("size").text().set(node->as_string(prop_size));
     }
 }
 
@@ -168,7 +168,7 @@ void GenXrcPreStylePosSize(Node* node, pugi::xml_node& object, std::string_view 
         {
             combined_style << '|';
         }
-        combined_style << node->prop_as_string(prop_window_style);
+        combined_style << node->as_string(prop_window_style);
     }
 
     if (combined_style.size())
@@ -178,11 +178,11 @@ void GenXrcPreStylePosSize(Node* node, pugi::xml_node& object, std::string_view 
 
     if (node->HasValue(prop_pos))
     {
-        object.append_child("pos").text().set(node->prop_as_string(prop_pos));
+        object.append_child("pos").text().set(node->as_string(prop_pos));
     }
     if (node->HasValue(prop_size))
     {
-        object.append_child("size").text().set(node->prop_as_string(prop_size));
+        object.append_child("size").text().set(node->as_string(prop_size));
     }
 }
 
@@ -260,13 +260,13 @@ void GenXrcWindowSettings(Node* node, pugi::xml_node& object)
         // Hidden is set in the XRC_MAKE_INSTANCE macro
         object.append_child("hidden").text().set("1");
     }
-    if (node->HasValue(prop_variant) && node->prop_as_string(prop_variant) != "normal")
+    if (node->HasValue(prop_variant) && node->as_string(prop_variant) != "normal")
     {
-        object.append_child("variant").text().set(node->prop_as_string(prop_variant));
+        object.append_child("variant").text().set(node->as_string(prop_variant));
     }
     if (node->HasValue(prop_tooltip))
     {
-        object.append_child("tooltip").text().set(node->prop_as_string(prop_tooltip));
+        object.append_child("tooltip").text().set(node->as_string(prop_tooltip));
     }
     if (node->HasValue(prop_font))
     {
@@ -293,11 +293,11 @@ void GenXrcWindowSettings(Node* node, pugi::xml_node& object)
     }
     if (node->HasValue(prop_extra_style))
     {
-        object.append_child("exstyle").text().set(node->prop_as_string(prop_extra_style));
+        object.append_child("exstyle").text().set(node->as_string(prop_extra_style));
     }
     if (node->HasValue(prop_context_help))
     {
-        object.append_child("help").text().set(node->prop_as_string(prop_context_help));
+        object.append_child("help").text().set(node->as_string(prop_context_help));
     }
 }
 
@@ -333,7 +333,7 @@ void GenXrcBitmap(Node* node, pugi::xml_node& object, size_t xrc_flags, std::str
                 if (xrc_dir.size())
                     xrc_dir.addtrailingslash();
             }
-            tt_string_vector parts(node->prop_as_string(prop_pair.prop), ';', tt::TRIM::both);
+            tt_string_vector parts(node->as_string(prop_pair.prop), ';', tt::TRIM::both);
             ASSERT(parts.size() > 1)
             if (parts[IndexType].is_sameas("Art"))
             {
@@ -392,12 +392,12 @@ void GenXrcBitmap(Node* node, pugi::xml_node& object, size_t xrc_flags, std::str
 
     if (node->HasValue(prop_position))
     {
-        object.append_child("bitmapposition").text().set(node->prop_as_string(prop_position));
+        object.append_child("bitmapposition").text().set(node->as_string(prop_position));
     }
 
     if (node->HasValue(prop_margins))
     {
-        object.append_child("margins").text().set(node->prop_as_string(prop_margins));
+        object.append_child("margins").text().set(node->as_string(prop_margins));
     }
 }
 
@@ -408,12 +408,12 @@ void GenXrcObjectAttributes(Node* node, pugi::xml_node& object, std::string_view
     // A non default ID takes precedence, followed by a variable name and finally a classname.
     // Note that forms can use either an ID or a class name.
 
-    if (node->HasProp(prop_id) && node->prop_as_string(prop_id) != "wxID_ANY")
-        object.append_attribute("name").set_value(node->prop_as_string(prop_id));
+    if (node->HasProp(prop_id) && node->as_string(prop_id) != "wxID_ANY")
+        object.append_attribute("name").set_value(node->as_string(prop_id));
     else if (node->HasProp(prop_var_name))
-        object.append_attribute("name").set_value(node->prop_as_string(prop_var_name));
+        object.append_attribute("name").set_value(node->as_string(prop_var_name));
     else
-        object.append_attribute("name").set_value(node->prop_as_string(prop_class_name));
+        object.append_attribute("name").set_value(node->as_string(prop_class_name));
 }
 
 pugi::xml_node InitializeXrcObject(Node* node, pugi::xml_node& object)

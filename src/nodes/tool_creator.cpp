@@ -241,7 +241,7 @@ bool Node::CreateToolNode(GenName name)
         auto event = new_node->GetParent()->GetEvent("wxEVT_CONTEXT_MENU");
         if (event)
         {
-            event->set_value(new_node->prop_as_string(prop_handler_name));
+            event->set_value(new_node->as_string(prop_handler_name));
         }
 
         // Create an initial menu item

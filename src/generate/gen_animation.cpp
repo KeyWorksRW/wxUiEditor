@@ -136,13 +136,13 @@ int AnimationGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t 
 
     if (node->HasValue(prop_animation))
     {
-        tt_string_vector parts(node->prop_as_string(prop_animation), ';', tt::TRIM::both);
+        tt_string_vector parts(node->as_string(prop_animation), ';', tt::TRIM::both);
         ASSERT(parts.size() > 1)
         item.append_child("animation").text().set(parts[IndexImage]);
     }
     if (node->HasValue(prop_inactive_bitmap))
     {
-        tt_string_vector parts(node->prop_as_string(prop_inactive_bitmap), ';', tt::TRIM::both);
+        tt_string_vector parts(node->as_string(prop_inactive_bitmap), ';', tt::TRIM::both);
         ASSERT(parts.size() > 1)
         if (parts[IndexType].is_sameas("Art"))
         {

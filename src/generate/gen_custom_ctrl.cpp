@@ -127,18 +127,18 @@ bool CustomControl::GetIncludes(Node* node, std::set<std::string>& set_src, std:
 {
     if (node->HasValue(prop_header))
     {
-        set_src.insert(tt_string() << "#include \"" << node->prop_as_string(prop_header) << '"');
+        set_src.insert(tt_string() << "#include \"" << node->as_string(prop_header) << '"');
     }
 
-    if (node->prop_as_string(prop_class_access) != "none" && node->HasValue(prop_class_name))
+    if (node->as_string(prop_class_access) != "none" && node->HasValue(prop_class_name))
     {
         if (node->HasValue(prop_namespace))
         {
-            set_hdr.insert(tt_string("namespace ") << node->prop_as_string(prop_namespace) << "\n{\n\t"
-                                                   << "class " << node->prop_as_string(prop_class_name) << ";\n}");
+            set_hdr.insert(tt_string("namespace ") << node->as_string(prop_namespace) << "\n{\n\t"
+                                                   << "class " << node->as_string(prop_class_name) << ";\n}");
         }
         else
-            set_hdr.insert(tt_string() << "class " << node->prop_as_string(prop_class_name) << ';');
+            set_hdr.insert(tt_string() << "class " << node->as_string(prop_class_name) << ';');
     }
     return true;
 }

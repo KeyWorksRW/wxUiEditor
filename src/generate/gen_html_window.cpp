@@ -42,8 +42,7 @@ wxObject* HtmlWindowGenerator::CreateMockup(Node* node, wxObject* parent)
 #else
     else if (node->HasValue(prop_html_url))
     {
-        widget->SetPage(tt_string("Contents of<br>    ")
-                        << node->prop_as_string(prop_html_url) << "<br>will be displayed here.");
+        widget->SetPage(tt_string("Contents of<br>    ") << node->as_string(prop_html_url) << "<br>will be displayed here.");
     }
 #endif
     else

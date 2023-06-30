@@ -56,7 +56,7 @@ void NewWizard::CreateNode()
     new_node->FixDuplicateNodeNames();
 
     new_node->prop_set_value(prop_class_name, m_base_class.utf8_string());
-    if (new_node->prop_as_string(prop_class_name) != new_node->prop_default_value(prop_class_name))
+    if (new_node->as_string(prop_class_name) != new_node->prop_default_value(prop_class_name))
     {
         UpdateFormClass(new_node.get());
     }

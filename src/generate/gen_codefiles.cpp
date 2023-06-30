@@ -97,7 +97,7 @@ void GenThreadCpp(GenData& gen_data, Node* form)
 
     tt_string path;
 
-    if (auto& base_file = form->prop_as_string(prop_base_file); base_file.size())
+    if (auto& base_file = form->as_string(prop_base_file); base_file.size())
     {
         path = Project.BaseDirectory(form, GEN_LANG_CPLUSPLUS);
         if (path.size())
@@ -114,7 +114,7 @@ void GenThreadCpp(GenData& gen_data, Node* form)
     }
     else
     {
-        gen_data.AddResultMsg(tt_string() << "No filename specified for " << form->prop_as_string(prop_class_name) << '\n');
+        gen_data.AddResultMsg(tt_string() << "No filename specified for " << form->as_string(prop_class_name) << '\n');
         return;
     }
 
@@ -152,7 +152,7 @@ void GenThreadCpp(GenData& gen_data, Node* form)
             }
             else
             {
-                gen_data.AddClassName(form->prop_as_string(prop_class_name));
+                gen_data.AddClassName(form->as_string(prop_class_name));
             }
             return;
         }
@@ -190,7 +190,7 @@ void GenThreadCpp(GenData& gen_data, Node* form)
             }
             else
             {
-                gen_data.AddClassName(form->prop_as_string(prop_class_name));
+                gen_data.AddClassName(form->as_string(prop_class_name));
             }
             return;
         }
@@ -347,7 +347,7 @@ void GenInhertedClass(GenResults& results)
 
     for (const auto& form: forms)
     {
-        if (auto& file = form->prop_as_string(prop_derived_file); file.size())
+        if (auto& file = form->as_string(prop_derived_file); file.size())
         {
             path = file;
             if (path.empty())
@@ -513,7 +513,7 @@ void GenerateTmpFiles(const std::vector<tt_string>& ClassList, pugi::xml_node ro
             // form where the user set the class name to "Images". If this wasn't an Internal function, then we would need to
             // store nodes rather than class names.
 
-            tt_string class_name(form->prop_as_string(prop_class_name));
+            tt_string class_name(form->as_string(prop_class_name));
             if (form->isGen(gen_Images))
             {
                 if (language != GEN_LANG_CPLUSPLUS)

@@ -145,7 +145,7 @@ void IncludeFilesDialog::OnAdd(wxCommandEvent& WXUNUSED(event))
     if (m_prop->get_name() == prop_local_hdr_includes || m_prop->get_name() == prop_local_src_includes)
     {
         auto* form = m_prop->GetNode();
-        if (auto& base_file = form->prop_as_string(prop_base_file); base_file.size())
+        if (auto& base_file = form->as_string(prop_base_file); base_file.size())
         {
             path = Project.BaseDirectory(form, GEN_LANG_CPLUSPLUS);
             if (path.size())

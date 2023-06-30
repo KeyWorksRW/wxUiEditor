@@ -21,7 +21,7 @@ wxObject* RibbonToolBarGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxRibbonToolBar((wxRibbonPanel*) parent, wxID_ANY, DlgPoint(parent, node, prop_pos),
                                       DlgSize(parent, node, prop_size));
-    if (node->prop_as_int(prop_min_rows) != 1 || node->prop_as_string(prop_max_rows) != "-1")
+    if (node->prop_as_int(prop_min_rows) != 1 || node->as_string(prop_max_rows) != "-1")
     {
         auto min_rows = node->prop_as_int(prop_min_rows);
         auto max_rows = node->prop_as_int(prop_max_rows);

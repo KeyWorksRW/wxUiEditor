@@ -141,7 +141,7 @@ int WriteCMakeFile(Node* parent_node, std::vector<tt_string>& updated_files, std
             }
 
             tt_string path;
-            if (auto& base_file = form->prop_as_string(prop_base_file); base_file.size())
+            if (auto& base_file = form->as_string(prop_base_file); base_file.size())
             {
                 path = Project.BaseDirectory(form, GEN_LANG_CPLUSPLUS);
                 if (path.size())

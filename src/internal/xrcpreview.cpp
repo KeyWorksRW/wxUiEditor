@@ -177,17 +177,17 @@ void XrcPreview::OnXrcCopy(wxCommandEvent& WXUNUSED(event))
     tt_string search("name=\"");
     evt_flags = wxGetFrame().GetSelectedNode();
 
-    if (evt_flags->HasProp(prop_id) && evt_flags->prop_as_string(prop_id) != "wxID_ANY")
+    if (evt_flags->HasProp(prop_id) && evt_flags->as_string(prop_id) != "wxID_ANY")
     {
-        search << evt_flags->prop_as_string(prop_id);
+        search << evt_flags->as_string(prop_id);
     }
     else if (evt_flags->HasValue(prop_var_name))
     {
-        search << evt_flags->prop_as_string(prop_var_name);
+        search << evt_flags->as_string(prop_var_name);
     }
     else
     {
-        search << evt_flags->prop_as_string(prop_class_name);
+        search << evt_flags->as_string(prop_class_name);
     }
 
     int line = (to_int) m_view.FindLineContaining(search);

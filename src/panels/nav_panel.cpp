@@ -487,18 +487,18 @@ tt_string NavigationPanel::GetDisplayName(Node* node) const
 {
     tt_string display_name;
     if (node->HasValue(prop_label))
-        display_name = node->prop_as_string(prop_label);
+        display_name = node->as_string(prop_label);
     else if (node->HasValue(prop_main_label))  // used by wxCommandLinkButton
-        display_name = node->prop_as_string(prop_main_label);
+        display_name = node->as_string(prop_main_label);
     else if (node->HasValue(prop_var_name) && !node->isGen(gen_wxStaticBitmap))
-        display_name = node->prop_as_string(prop_var_name);
+        display_name = node->as_string(prop_var_name);
     else if (node->HasValue(prop_class_name))
-        display_name = node->prop_as_string(prop_class_name);
+        display_name = node->as_string(prop_class_name);
     else if (node->isGen(gen_ribbonTool))
-        display_name = node->prop_as_string(prop_id);
+        display_name = node->as_string(prop_id);
     else if (node->isGen(gen_embedded_image))
     {
-        tt_view_vector mstr(node->prop_as_string(prop_bitmap), ';');
+        tt_view_vector mstr(node->as_string(prop_bitmap), ';');
 
         if (mstr.size() > IndexImage)
         {
@@ -510,11 +510,11 @@ tt_string NavigationPanel::GetDisplayName(Node* node) const
         if (!node->HasValue(prop_bitmap))
         {
             if (node->HasValue(prop_var_name))
-                display_name = node->prop_as_string(prop_var_name);
+                display_name = node->as_string(prop_var_name);
         }
         else
         {
-            tt_view_vector mstr(node->prop_as_string(prop_bitmap), ';');
+            tt_view_vector mstr(node->as_string(prop_bitmap), ';');
             if (mstr.size() > IndexImage)
             {
                 display_name = mstr[IndexImage].filename();
@@ -544,7 +544,7 @@ tt_string NavigationPanel::GetDisplayName(Node* node) const
             display_name << "Project: " << Project.ProjectFile().filename();
         else if (node->isGen(gen_wxContextMenuEvent))
         {
-            display_name = node->prop_as_string(prop_handler_name);
+            display_name = node->as_string(prop_handler_name);
             if (display_name.size() > MaxLabelLength)
             {
                 display_name.erase(MaxLabelLength);
@@ -612,8 +612,8 @@ void NavigationPanel::OnNodeSelected(CustomEvent& event)
     }
     else
     {
-        if (node->HasValue(prop_var_name) && !node->prop_as_string(prop_class_access).starts_with("none"))
-            wxGetFrame().setStatusText(node->prop_as_string(prop_var_name));
+        if (node->HasValue(prop_var_name) && !node->as_string(prop_class_access).starts_with("none"))
+            wxGetFrame().setStatusText(node->as_string(prop_var_name));
         else
             wxGetFrame().setStatusText(tt_empty_cstr);
     }

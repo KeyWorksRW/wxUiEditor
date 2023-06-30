@@ -43,9 +43,9 @@ wxObject* ImagesGenerator::CreateMockup(Node* /* node */, wxObject* wxobject)
     auto node = wxGetFrame().GetSelectedNode();
     if (node->isGen(gen_embedded_image))
     {
-        auto bundle = ProjectImages.GetPropertyImageBundle(node->prop_as_string(prop_bitmap));
+        auto bundle = ProjectImages.GetPropertyImageBundle(node->as_string(prop_bitmap));
 
-        tt_view_vector mstr(node->prop_as_string(prop_bitmap), ';');
+        tt_view_vector mstr(node->as_string(prop_bitmap), ';');
 
         if (mstr.size() > 1)
         {
@@ -249,7 +249,7 @@ void BaseCodeGenerator::GenerateImagesForm()
 
             for (const auto& child: m_form_node->GetChildNodePtrs())
             {
-                if (auto bundle = ProjectImages.GetPropertyImageBundle(child->prop_as_string(prop_bitmap));
+                if (auto bundle = ProjectImages.GetPropertyImageBundle(child->as_string(prop_bitmap));
                     bundle && bundle->lst_filenames.size())
                 {
                     auto embed = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[0]);
@@ -418,7 +418,7 @@ void BaseCodeGenerator::GenerateImagesForm()
 
         for (const auto& child: m_form_node->GetChildNodePtrs())
         {
-            if (auto bundle = ProjectImages.GetPropertyImageBundle(child->prop_as_string(prop_bitmap));
+            if (auto bundle = ProjectImages.GetPropertyImageBundle(child->as_string(prop_bitmap));
                 bundle && bundle->lst_filenames.size())
             {
                 auto embed = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[0]);

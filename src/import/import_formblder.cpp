@@ -547,7 +547,7 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
     // wxFormBuilder allows the users to create settings that will generate an assert if compiled on a debug version of
     // wxWidgets. We fix some of the more common invalid settings here.
 
-    if (newobject->HasValue(prop_flags) && newobject->prop_as_string(prop_flags).contains("wxEXPAND"))
+    if (newobject->HasValue(prop_flags) && newobject->as_string(prop_flags).contains("wxEXPAND"))
     {
         if (newobject->HasValue(prop_alignment))
         {
@@ -558,9 +558,9 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
 
     if (parent && parent->IsSizer())
     {
-        if (parent->prop_as_string(prop_orientation).contains("wxHORIZONTAL"))
+        if (parent->as_string(prop_orientation).contains("wxHORIZONTAL"))
         {
-            auto currentValue = newobject->prop_as_string(prop_alignment);
+            auto currentValue = newobject->as_string(prop_alignment);
             if (currentValue.size() && (currentValue.contains("wxALIGN_LEFT") || currentValue.contains("wxALIGN_RIGHT") ||
                                         currentValue.contains("wxALIGN_CENTER_HORIZONTAL")))
             {
@@ -568,9 +568,9 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
                 newobject->prop_set_value(prop_alignment, fixed);
             }
         }
-        else if (parent->prop_as_string(prop_orientation).contains("wxVERTICAL"))
+        else if (parent->as_string(prop_orientation).contains("wxVERTICAL"))
         {
-            auto currentValue = newobject->prop_as_string(prop_alignment);
+            auto currentValue = newobject->as_string(prop_alignment);
             if (currentValue.size() && (currentValue.contains("wxALIGN_TOP") || currentValue.contains("wxALIGN_BOTTOM") ||
                                         currentValue.contains("wxALIGN_CENTER_VERTICAL")))
             {

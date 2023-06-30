@@ -212,7 +212,6 @@ public:
     FontProperty prop_as_font_prop(PropName name) const;
     double prop_as_double(PropName name) const;
 
-    const tt_string& prop_as_string(PropName name) const;
     const tt_string& prop_as_constant(PropName name, std::string_view prefix);
 
     // Use with caution! This allows you to modify the property string directly.
@@ -245,9 +244,9 @@ public:
         }
     }
 
-    const tt_string& value(PropName name) const { return prop_as_string(name); }
+    const tt_string& value(PropName name) const { return as_string(name); }
 
-    const tt_string_view view(PropName name) const { return prop_as_string(name); }
+    const tt_string_view view(PropName name) const { return as_string(name); }
 
     bool as_bool(PropName name) const { return prop_as_bool(name); }
 

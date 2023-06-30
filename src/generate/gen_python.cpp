@@ -93,7 +93,7 @@ bool GeneratePythonFiles(GenResults& results, std::vector<tt_string>* pClassList
 
     for (const auto& form: forms)
     {
-        if (auto& base_file = form->prop_as_string(prop_python_file); base_file.size())
+        if (auto& base_file = form->as_string(prop_python_file); base_file.size())
         {
             path = Project.BaseDirectory(form, GEN_LANG_PYTHON);
             if (path.size())
@@ -114,8 +114,7 @@ bool GeneratePythonFiles(GenResults& results, std::vector<tt_string>* pClassList
             // For a lot of wxPython testing of projects with multiple dialogs, there may
             // only be a few forms where wxPython generation is being tested, so don't nag in
             // Debug builds. :-)
-            results.msgs.emplace_back() << "No Python filename specified for " << form->prop_as_string(prop_class_name)
-                                        << '\n';
+            results.msgs.emplace_back() << "No Python filename specified for " << form->as_string(prop_class_name) << '\n';
 #endif  // _DEBUG
             continue;
         }
@@ -145,7 +144,7 @@ bool GeneratePythonFiles(GenResults& results, std::vector<tt_string>* pClassList
                 }
                 else
                 {
-                    pClassList->emplace_back(form->prop_as_string(prop_class_name));
+                    pClassList->emplace_back(form->as_string(prop_class_name));
                     continue;
                 }
             }
@@ -163,7 +162,7 @@ bool GeneratePythonFiles(GenResults& results, std::vector<tt_string>* pClassList
         {
             MSG_ERROR(e.what());
             wxMessageBox(tt_string("An internal error occurred generating code files for ")
-                             << form->prop_as_string(prop_python_file),
+                             << form->as_string(prop_python_file),
                          "Code generation");
             continue;
         }

@@ -95,9 +95,9 @@ public:
     // Returns a GEN_LANG_... enum value
     int get_PreferredLanguage();
 
-    const tt_string& value(GenEnum::PropName name) const { return m_project_node->prop_as_string(name); }
-    const tt_string_view view(PropName name) const { return m_project_node->prop_as_string(name); }
-    const tt_string& as_string(PropName name) const { return m_project_node->prop_as_string(name); }
+    const tt_string& value(GenEnum::PropName name) const { return m_project_node->as_string(name); }
+    const tt_string_view view(PropName name) const { return m_project_node->as_string(name); }
+    const tt_string& as_string(PropName name) const { return m_project_node->as_string(name); }
 
     bool as_bool(PropName name) const { return m_project_node->prop_as_bool(name); }
     size_t as_size_t(PropName name) const { return (to_size_t) m_project_node->prop_as_int(name); }

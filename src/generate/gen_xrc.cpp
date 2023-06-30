@@ -196,7 +196,7 @@ std::string GenerateXrcStr(Node* node_start, size_t xrc_flags)
         object.append_attribute("name").set_value(txt_dlg_name);
         object.append_child("style").text().set("wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER");
         object.append_child("centered").text().set("1");
-        object.append_child("title").text().set(node_start->prop_as_string(prop_class_name));
+        object.append_child("title").text().set(node_start->as_string(prop_class_name));
         auto item = object.append_child("object");
         item.append_attribute("class").set_value("wxBoxSizer");
         item.append_attribute("name").set_value("_wxue_temp_sizer");
@@ -260,7 +260,7 @@ void BaseCodeGenerator::GenerateXrcClass(Node* form_node, PANEL_PAGE panel_type)
     {
         if (form_node != Project.ProjectNode())
         {
-            m_header->writeLine(tt_string("Resource name is ") << m_form_node->prop_as_string(prop_class_name));
+            m_header->writeLine(tt_string("Resource name is ") << m_form_node->as_string(prop_class_name));
             m_header->writeLine();
         }
         m_header->writeLine("Required handlers:");
@@ -326,7 +326,7 @@ bool GenerateXrcFiles(GenResults& results, tt_string out_file, std::vector<tt_st
 
     for (auto& form: forms)
     {
-        if (auto& base_file = form->prop_as_string(prop_xrc_file); base_file.size())
+        if (auto& base_file = form->as_string(prop_xrc_file); base_file.size())
         {
             path = Project.BaseDirectory(form, GEN_LANG_XRC);
             if (path.size())
@@ -345,8 +345,7 @@ bool GenerateXrcFiles(GenResults& results, tt_string out_file, std::vector<tt_st
         {
             // If the form type is supported, warn the user about not having an XRC file for it.
             if (!form->isGen(gen_Images) && !form->isGen(gen_wxPopupTransientWindow))
-                results.msgs.emplace_back()
-                    << "No XRC filename specified for " << form->prop_as_string(prop_class_name) << '\n';
+                results.msgs.emplace_back() << "No XRC filename specified for " << form->as_string(prop_class_name) << '\n';
             continue;
         }
         if (path.extension().empty())

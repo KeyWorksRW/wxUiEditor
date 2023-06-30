@@ -52,7 +52,7 @@ bool FilePickerGenerator::ConstructionCode(Code& code)
     code.NodeName().CreateClass();
     code.ValidParentName().Comma().as_string(prop_id).Comma();
 
-    if (auto& path = code.node()->prop_as_string(prop_initial_path); path.size())
+    if (auto& path = code.node()->as_string(prop_initial_path); path.size())
     {
         code.QuotedString(path);
     }
@@ -62,7 +62,7 @@ bool FilePickerGenerator::ConstructionCode(Code& code)
     }
 
     code.Comma();
-    if (auto& msg = code.node()->prop_as_string(prop_message); msg.size())
+    if (auto& msg = code.node()->as_string(prop_message); msg.size())
     {
         code.QuotedString(msg);
     }
@@ -72,7 +72,7 @@ bool FilePickerGenerator::ConstructionCode(Code& code)
     }
 
     code.Comma();
-    if (auto& msg = code.node()->prop_as_string(prop_wildcard); msg.size())
+    if (auto& msg = code.node()->as_string(prop_wildcard); msg.size())
     {
         code.QuotedString(msg);
     }

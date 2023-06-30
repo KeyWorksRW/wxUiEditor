@@ -84,7 +84,7 @@ void MockupWizard::CreateButtonRow()
     wxBoxSizer* backNextPair = new wxBoxSizer(wxHORIZONTAL);
     buttonRow->Add(backNextPair, wxSizerFlags().Border());
 
-    if (m_wizard_node->prop_as_string(prop_extra_style).contains("wxWIZARD_EX_HELPBUTTON"))
+    if (m_wizard_node->as_string(prop_extra_style).contains("wxWIZARD_EX_HELPBUTTON"))
     {
         backNextPair->Add(new wxButton(this, wxID_HELP, "&Help"));
 #ifdef __WXMAC__

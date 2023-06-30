@@ -114,7 +114,7 @@ int GridSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t 
     }
 
     item.append_attribute("class").set_value("wxGridSizer");
-    item.append_attribute("name").set_value(node->prop_as_string(prop_var_name));
+    item.append_attribute("name").set_value(node->as_string(prop_var_name));
 
     ADD_ITEM_PROP(prop_rows, "rows")
     ADD_ITEM_PROP(prop_cols, "cols")
@@ -123,7 +123,7 @@ int GridSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t 
 
     if (node->HasValue(prop_minimum_size))
     {
-        item.append_child("minsize").text().set(node->prop_as_string(prop_minimum_size));
+        item.append_child("minsize").text().set(node->as_string(prop_minimum_size));
     }
     else if (node->GetParent()->IsForm() && node->GetParent()->HasValue(prop_minimum_size))
     {
@@ -131,7 +131,7 @@ int GridSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t 
         // often can specify their own minimum size. The workaround is to set the minimum size of the parent sizer that we
         // create for most forms.
 
-        item.append_child("minsize").text().set(node->GetParent()->prop_as_string(prop_minimum_size));
+        item.append_child("minsize").text().set(node->GetParent()->as_string(prop_minimum_size));
     }
     return result;
 }

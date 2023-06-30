@@ -38,11 +38,11 @@ wxObject* GridGenerator::CreateMockup(Node* node, wxObject* parent)
     }
     grid->EnableDragGridSize(node->prop_as_bool(prop_drag_grid_size));
     grid->SetMargins(node->prop_as_int(prop_margin_width), node->prop_as_int(prop_margin_height));
-    if (node->prop_as_string(prop_cell_fit) != "overflow")
+    if (node->as_string(prop_cell_fit) != "overflow")
     {
-        if (node->prop_as_string(prop_cell_fit) == "clip")
+        if (node->as_string(prop_cell_fit) == "clip")
             grid->SetDefaultCellFitMode(wxGridFitMode::Clip());
-        else if (node->prop_as_string(prop_cell_fit) == "ellipsize")
+        else if (node->as_string(prop_cell_fit) == "ellipsize")
             grid->SetDefaultCellFitMode(wxGridFitMode::Ellipsize());
     }
 
@@ -84,7 +84,7 @@ wxObject* GridGenerator::CreateMockup(Node* node, wxObject* parent)
 
     // Rows category
 
-    if (!node->prop_as_string(prop_tab_behaviour).is_sameas("Tab_Stop"))
+    if (!node->as_string(prop_tab_behaviour).is_sameas("Tab_Stop"))
         grid->SetTabBehaviour(static_cast<wxGrid::TabBehaviour>(node->prop_as_int(prop_tab_behaviour)));
 
     grid->SetRowLabelAlignment(node->prop_as_int(prop_row_label_horiz_alignment),

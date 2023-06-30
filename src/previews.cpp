@@ -191,7 +191,7 @@ void PreviewXrc(Node* form_node)
     tt_cwd save_cwd(true);
     Project.ChangeDir();
 
-    tt_string style = form_node->prop_as_string(prop_style);
+    tt_string style = form_node->as_string(prop_style);
     if (form_node->isGen(gen_wxDialog) &&
         (style.empty() || (!style.contains("wxDEFAULT_DIALOG_STYLE") && !style.contains("wxCLOSE_BOX"))))
     {
@@ -245,8 +245,7 @@ void PreviewXrc(Node* form_node)
                     }
                     else
                     {
-                        wxMessageBox(tt_string("Could not load ")
-                                         << form_node->prop_as_string(prop_class_name) << " resource.",
+                        wxMessageBox(tt_string("Could not load ") << form_node->as_string(prop_class_name) << " resource.",
                                      "XRC Preview");
                     }
                 }
@@ -266,14 +265,13 @@ void PreviewXrc(Node* form_node)
                 }
                 else
                 {
-                    wxMessageBox(tt_string("Could not load ") << form_node->prop_as_string(prop_class_name) << " resource.",
+                    wxMessageBox(tt_string("Could not load ") << form_node->as_string(prop_class_name) << " resource.",
                                  "XRC Preview");
                 }
                 break;
 
             case gen_wxWizard:
-                if (auto* object = xrc_resource->LoadObject(NULL, form_node->prop_as_string(prop_class_name), "wxWizard");
-                    object)
+                if (auto* object = xrc_resource->LoadObject(NULL, form_node->as_string(prop_class_name), "wxWizard"); object)
                 {
                     auto* wizard = wxStaticCast(object, wxWizard);
                     if (form_node->GetChildCount())
@@ -289,7 +287,7 @@ void PreviewXrc(Node* form_node)
                 }
                 else
                 {
-                    wxMessageBox(tt_string("Could not load ") << form_node->prop_as_string(prop_class_name) << " resource.",
+                    wxMessageBox(tt_string("Could not load ") << form_node->as_string(prop_class_name) << " resource.",
                                  "XRC Preview");
                 }
                 break;
@@ -306,7 +304,7 @@ void PreviewXrc(Node* form_node)
     }
 
     // Restore the original style if it was temporarily changed.
-    if (form_node->prop_as_string(prop_style) != style)
+    if (form_node->as_string(prop_style) != style)
         form_node->prop_set_value(prop_style, style);
 
     xrc_resource->Unload(res_name);
@@ -323,7 +321,7 @@ void MainFrame::PreviewCpp(Node* form_node)
         }
     }
 
-    tt_string style = form_node->prop_as_string(prop_style);
+    tt_string style = form_node->as_string(prop_style);
     if (form_node->isGen(gen_wxDialog) &&
         (style.empty() || (!style.contains("wxDEFAULT_DIALOG_STYLE") && !style.contains("wxCLOSE_BOX"))))
     {
@@ -530,6 +528,6 @@ void MainFrame::PreviewCpp(Node* form_node)
     }
 
     // Restore the original style if it was temporarily changed.
-    if (form_node->prop_as_string(prop_style) != style)
+    if (form_node->as_string(prop_style) != style)
         form_node->prop_set_value(prop_style, style);
 }

@@ -77,12 +77,12 @@ bool FontPickerGenerator::ConstructionCode(Code& code)
 bool FontPickerGenerator::SettingsCode(Code& code)
 {
     Node* node = code.node();
-    if (node->prop_as_string(prop_min_point_size) != "0")
+    if (node->as_string(prop_min_point_size) != "0")
     {
         code.NodeName().Function("SetMinPointSize(").as_string(prop_min_point_size).EndFunction();
     }
 
-    if (node->prop_as_string(prop_max_point_size) != "100")
+    if (node->as_string(prop_max_point_size) != "100")
     {
         code.Eol(eol_if_empty).NodeName().Function("SetMaxPointSize(").as_string(prop_max_point_size).EndFunction();
     }

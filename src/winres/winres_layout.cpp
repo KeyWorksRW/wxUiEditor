@@ -61,8 +61,8 @@ void resForm::CreateDialogLayout()
             if (!m_ctrls[idx_child].isGen(gen_wxStaticBoxSizer))
             {
                 // orphaned child, add to form's top level sizer
-                if (m_ctrls[idx_child].GetNode()->prop_as_string(prop_alignment).contains("wxALIGN_RIGHT") ||
-                    m_ctrls[idx_child].GetNode()->prop_as_string(prop_alignment).contains("wxALIGN_CENTER_HORIZONTAL"))
+                if (m_ctrls[idx_child].GetNode()->as_string(prop_alignment).contains("wxALIGN_RIGHT") ||
+                    m_ctrls[idx_child].GetNode()->as_string(prop_alignment).contains("wxALIGN_CENTER_HORIZONTAL"))
                 {
                     auto vertical_sizer = NodeCreation.CreateNode(gen_VerticalBoxSizer, m_dlg_sizer.get());
                     vertical_sizer->prop_set_value(prop_flags, "wxEXPAND");
@@ -760,10 +760,10 @@ void resForm::CheckForStdButtons()
 
             // Both the id and the label need to match, since we can't auto-generate replacing the label.
 
-            if (btn_node->prop_as_string(prop_id) == "wxID_OK")
+            if (btn_node->as_string(prop_id) == "wxID_OK")
             {
-                if (btn_node->prop_as_string(prop_label).is_sameas("Yes", tt::CASE::either) ||
-                    btn_node->prop_as_string(prop_label).is_sameas("&Yes", tt::CASE::either))
+                if (btn_node->as_string(prop_label).is_sameas("Yes", tt::CASE::either) ||
+                    btn_node->as_string(prop_label).is_sameas("&Yes", tt::CASE::either))
                 {
                     CreateStdButton();
                     m_stdButtonSizer->prop_set_value(prop_Yes, "1");
@@ -772,8 +772,8 @@ void resForm::CheckForStdButtons()
                     m_ctrls.erase(m_ctrls.begin() + idx_child);
                     continue;
                 }
-                else if (btn_node->prop_as_string(prop_label).is_sameas("Save", tt::CASE::either) ||
-                         btn_node->prop_as_string(prop_label).is_sameas("&Save", tt::CASE::either))
+                else if (btn_node->as_string(prop_label).is_sameas("Save", tt::CASE::either) ||
+                         btn_node->as_string(prop_label).is_sameas("&Save", tt::CASE::either))
                 {
                     CreateStdButton();
                     m_stdButtonSizer->prop_set_value(prop_Save, "1");
@@ -782,8 +782,8 @@ void resForm::CheckForStdButtons()
                     m_ctrls.erase(m_ctrls.begin() + idx_child);
                     continue;
                 }
-                else if (btn_node->prop_as_string(prop_label).is_sameas("OK", tt::CASE::either) ||
-                         btn_node->prop_as_string(prop_label).is_sameas("&OK", tt::CASE::either))
+                else if (btn_node->as_string(prop_label).is_sameas("OK", tt::CASE::either) ||
+                         btn_node->as_string(prop_label).is_sameas("&OK", tt::CASE::either))
                 {
                     CreateStdButton();
                     m_stdButtonSizer->prop_set_value(prop_OK, "1");
@@ -791,10 +791,10 @@ void resForm::CheckForStdButtons()
                     continue;
                 }
             }
-            else if (btn_node->prop_as_string(prop_id) == "wxID_YES")
+            else if (btn_node->as_string(prop_id) == "wxID_YES")
             {
-                if (btn_node->prop_as_string(prop_label).is_sameas("Yes", tt::CASE::either) ||
-                    btn_node->prop_as_string(prop_label).is_sameas("&Yes", tt::CASE::either))
+                if (btn_node->as_string(prop_label).is_sameas("Yes", tt::CASE::either) ||
+                    btn_node->as_string(prop_label).is_sameas("&Yes", tt::CASE::either))
                 {
                     CreateStdButton();
                     m_stdButtonSizer->prop_set_value(prop_Yes, "1");
@@ -804,10 +804,10 @@ void resForm::CheckForStdButtons()
                     continue;
                 }
             }
-            else if (btn_node->prop_as_string(prop_id) == "wxID_NO")
+            else if (btn_node->as_string(prop_id) == "wxID_NO")
             {
-                if (btn_node->prop_as_string(prop_label).is_sameas("No", tt::CASE::either) ||
-                    btn_node->prop_as_string(prop_label).is_sameas("&No", tt::CASE::either))
+                if (btn_node->as_string(prop_label).is_sameas("No", tt::CASE::either) ||
+                    btn_node->as_string(prop_label).is_sameas("&No", tt::CASE::either))
                 {
                     CreateStdButton();
                     m_stdButtonSizer->prop_set_value(prop_No, "1");
@@ -815,10 +815,10 @@ void resForm::CheckForStdButtons()
                     continue;
                 }
             }
-            else if (btn_node->prop_as_string(prop_id) == "wxID_CANCEL")
+            else if (btn_node->as_string(prop_id) == "wxID_CANCEL")
             {
-                if (btn_node->prop_as_string(prop_label).is_sameas("Close", tt::CASE::either) ||
-                    btn_node->prop_as_string(prop_label).is_sameas("&Close", tt::CASE::either))
+                if (btn_node->as_string(prop_label).is_sameas("Close", tt::CASE::either) ||
+                    btn_node->as_string(prop_label).is_sameas("&Close", tt::CASE::either))
                 {
                     CreateStdButton();
                     m_stdButtonSizer->prop_set_value(prop_Close, "1");
@@ -827,8 +827,8 @@ void resForm::CheckForStdButtons()
                     m_ctrls.erase(m_ctrls.begin() + idx_child);
                     continue;
                 }
-                else if (btn_node->prop_as_string(prop_label).is_sameas("Cancel", tt::CASE::either) ||
-                         btn_node->prop_as_string(prop_label).is_sameas("&Cancel", tt::CASE::either))
+                else if (btn_node->as_string(prop_label).is_sameas("Cancel", tt::CASE::either) ||
+                         btn_node->as_string(prop_label).is_sameas("&Cancel", tt::CASE::either))
                 {
                     CreateStdButton();
                     m_stdButtonSizer->prop_set_value(prop_Cancel, "1");
@@ -838,10 +838,10 @@ void resForm::CheckForStdButtons()
                     continue;
                 }
             }
-            else if (btn_node->prop_as_string(prop_id) == "wxID_APPLY")
+            else if (btn_node->as_string(prop_id) == "wxID_APPLY")
             {
-                if (btn_node->prop_as_string(prop_label).is_sameas("Apply", tt::CASE::either) ||
-                    btn_node->prop_as_string(prop_label).is_sameas("&Apply", tt::CASE::either))
+                if (btn_node->as_string(prop_label).is_sameas("Apply", tt::CASE::either) ||
+                    btn_node->as_string(prop_label).is_sameas("&Apply", tt::CASE::either))
                 {
                     CreateStdButton();
                     m_stdButtonSizer->prop_set_value(prop_Apply, "1");
@@ -849,10 +849,10 @@ void resForm::CheckForStdButtons()
                     continue;
                 }
             }
-            else if (btn_node->prop_as_string(prop_id) == "wxID_HELP")
+            else if (btn_node->as_string(prop_id) == "wxID_HELP")
             {
-                if (btn_node->prop_as_string(prop_label).is_sameas("Help", tt::CASE::either) ||
-                    btn_node->prop_as_string(prop_label).is_sameas("&Help", tt::CASE::either))
+                if (btn_node->as_string(prop_label).is_sameas("Help", tt::CASE::either) ||
+                    btn_node->as_string(prop_label).is_sameas("&Help", tt::CASE::either))
                 {
                     CreateStdButton();
                     m_stdButtonSizer->prop_set_value(prop_Help, "1");
@@ -884,7 +884,7 @@ size_t resForm::AddTwoColumnPairs(size_t idx_start)
 
     // In a grid sizer, the control must be aligned to center rather then having the style be centered
 
-    if (m_ctrls[idx_start].GetNode()->prop_as_string(prop_style).contains("wxALIGN_CENTER_HORIZONTAL"))
+    if (m_ctrls[idx_start].GetNode()->as_string(prop_style).contains("wxALIGN_CENTER_HORIZONTAL"))
         m_ctrls[idx_start].GetNode()->prop_set_value(prop_alignment, "wxALIGN_CENTER_HORIZONTAL");
 
     Adopt(grid_sizer, m_ctrls[idx_start]);
@@ -905,7 +905,7 @@ size_t resForm::AddTwoColumnPairs(size_t idx_start)
 
         if (is_same_left(m_ctrls, idx_start, idx_start + 1) && is_same_right(m_ctrls, idx_start + 1, idx_start + 1))
         {
-            if (m_ctrls[idx_child].GetNode()->prop_as_string(prop_style).contains("wxALIGN_CENTER_HORIZONTAL"))
+            if (m_ctrls[idx_child].GetNode()->as_string(prop_style).contains("wxALIGN_CENTER_HORIZONTAL"))
                 m_ctrls[idx_child].GetNode()->prop_set_value(prop_alignment, "wxALIGN_CENTER_HORIZONTAL");
             Adopt(grid_sizer, m_ctrls[idx_child]);
             Adopt(grid_sizer, m_ctrls[idx_child + 1]);
@@ -962,7 +962,7 @@ void resForm::CheckForCenteredText(Node* node_parent)
     {
         auto child = node_parent->GetChild(idx);
         if (child->isGen(gen_wxBoxSizer) && child->GetChildCount() == 1 && child->GetChild(0)->isGen(gen_wxStaticText) &&
-            child->GetChild(0)->prop_as_string(prop_style).contains("wxALIGN_CENTER_HORIZONTAL"))
+            child->GetChild(0)->as_string(prop_style).contains("wxALIGN_CENTER_HORIZONTAL"))
         {
             child->prop_set_value(prop_flags, "wxEXPAND");
             child->GetChild(0)->prop_set_value(prop_proportion, "1");

@@ -32,7 +32,7 @@ bool ColourPickerGenerator::ConstructionCode(Code& code)
         code << "auto* ";
     code.NodeName().CreateClass();
     code.ValidParentName().Comma().as_string(prop_id).Comma();
-    if (code.node()->prop_as_string(prop_colour).size())
+    if (code.node()->as_string(prop_colour).size())
         ColourCode(code, prop_colour);
     else
     {

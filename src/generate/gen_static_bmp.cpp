@@ -271,7 +271,7 @@ static void GeneratePosSizeFlags(Node* node, tt_string& code, bool uses_def_vali
         GenStyle(node, code);
         if (uses_def_validator)
             code << ", wxDefaultValidator";
-        code << ", " << node->prop_as_string(prop_window_name) << ");";
+        code << ", " << node->as_string(prop_window_name) << ");";
         return;
     }
 
@@ -284,7 +284,7 @@ static void GeneratePosSizeFlags(Node* node, tt_string& code, bool uses_def_vali
     auto pos = node->prop_as_wxPoint(prop_pos);
     if (pos.x != -1 || pos.y != -1)
     {
-        if (node->prop_as_string(prop_pos).contains("d", tt::CASE::either))
+        if (node->as_string(prop_pos).contains("d", tt::CASE::either))
         {
             code << ", ConvertDialogToPixels(wxPoint(" << pos.x << ", " << pos.y << "))";
         }
@@ -309,7 +309,7 @@ static void GeneratePosSizeFlags(Node* node, tt_string& code, bool uses_def_vali
         isSizeSet = true;
     }
 
-    if (node->HasValue(prop_window_style) && !node->prop_as_string(prop_window_style).is_sameas("wxTAB_TRAVERSAL"))
+    if (node->HasValue(prop_window_style) && !node->as_string(prop_window_style).is_sameas("wxTAB_TRAVERSAL"))
     {
         if (!isPosSet)
             code << ", wxDefaultPosition";

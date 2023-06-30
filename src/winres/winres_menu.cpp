@@ -73,7 +73,7 @@ void resForm::ParseMenu(WinResource* pWinResource, tt_string_vector& txtfile, si
     m_form_node->prop_set_value(prop_class_name, ConvertFormID(value));
 
 #if defined(_DEBUG) || defined(INTERNAL_TESTING)
-    m_form_id = m_form_node->prop_as_string(prop_class_name);
+    m_form_id = m_form_node->as_string(prop_class_name);
 #endif  // _DEBUG
 
     for (++curTxtLine; curTxtLine < txtfile.size(); ++curTxtLine)

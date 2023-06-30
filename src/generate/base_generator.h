@@ -32,10 +32,10 @@ namespace pugi
 
 using OptionalIncludes = std::optional<std::vector<std::string>>;
 
-#define ADD_ITEM_PROP(name_prop, name_child)                                       \
-    if (node->HasValue(name_prop))                                                 \
-    {                                                                              \
-        item.append_child(name_child).text().set(node->prop_as_string(name_prop)); \
+#define ADD_ITEM_PROP(name_prop, name_child)                                  \
+    if (node->HasValue(name_prop))                                            \
+    {                                                                         \
+        item.append_child(name_child).text().set(node->as_string(name_prop)); \
     }
 
 #define ADD_ITEM_BOOL(name_prop, name_child)           \

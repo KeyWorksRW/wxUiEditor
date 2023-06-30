@@ -53,7 +53,7 @@ void resForm::ParseDialog(WinResource* pWinResource, tt_string_vector& txtfile, 
     m_form_node->prop_set_value(prop_class_name, ConvertFormID(value));
 
 #if defined(_DEBUG) || defined(INTERNAL_TESTING)
-    m_form_id = m_form_node->prop_as_string(prop_class_name);
+    m_form_id = m_form_node->as_string(prop_class_name);
 #endif
 
     line.remove_prefix(end);
@@ -206,7 +206,7 @@ void resForm::ParseControls(tt_string_vector& txtfile, size_t& curTxtLine)
             auto cur_pos = m_ctrls.size() - 1;
             if (cur_pos > 0 && m_ctrls[cur_pos - 1].GetNode()->isGen(gen_wxTextCtrl))
             {
-                control.GetNode()->prop_set_value(prop_id, m_ctrls[cur_pos - 1].GetNode()->prop_as_string(prop_id));
+                control.GetNode()->prop_set_value(prop_id, m_ctrls[cur_pos - 1].GetNode()->as_string(prop_id));
                 m_ctrls.erase(m_ctrls.begin() + (cur_pos - 1));
             }
         }
@@ -215,7 +215,7 @@ void resForm::ParseControls(tt_string_vector& txtfile, size_t& curTxtLine)
 
 void resForm::AppendStyle(GenEnum::PropName prop_name, tt_string_view style)
 {
-    tt_string updated_style = m_form_node->prop_as_string(prop_name);
+    tt_string updated_style = m_form_node->as_string(prop_name);
     if (updated_style.size())
         updated_style << '|';
     updated_style << style;

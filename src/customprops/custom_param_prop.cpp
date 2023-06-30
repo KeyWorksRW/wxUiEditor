@@ -48,7 +48,7 @@ public:
         {
             if (m_node->isPropValue(prop_class_access, "none"))
                 static_text << "auto ";
-            static_text << m_node->prop_as_string(prop_var_name) << " = new " << m_node->prop_as_string(prop_class_name);
+            static_text << m_node->as_string(prop_var_name) << " = new " << m_node->as_string(prop_class_name);
             static_text << m_textCtrl->GetValue().utf8_string() << ';';
         }
         m_static_hdr_text->SetLabel(static_text.make_wxString());

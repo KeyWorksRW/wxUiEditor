@@ -74,7 +74,7 @@ bool StaticBoxSizerGenerator::ConstructionCode(Code& code)
     }
     code.AddAuto().NodeName().CreateClass().Str(prop_orientation).Comma().Str(parent_name);
 
-    if (auto& label = node->prop_as_string(prop_label); label.size())
+    if (auto& label = node->as_string(prop_label); label.size())
     {
         code.Comma().QuotedString(label);
     }
@@ -157,11 +157,11 @@ int StaticBoxSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& object, si
     }
 
     item.append_attribute("class").set_value("wxStaticBoxSizer");
-    item.append_attribute("name").set_value(node->prop_as_string(prop_var_name));
-    // item.append_child("orient").text().set(node->prop_as_string(prop_orientation));
+    item.append_attribute("name").set_value(node->as_string(prop_var_name));
+    // item.append_child("orient").text().set(node->as_string(prop_orientation));
     // if (node->HasValue(prop_minimum_size))
     // {
-    // item.append_child("minsize").text().set(node->prop_as_string(prop_minimum_size));
+    // item.append_child("minsize").text().set(node->as_string(prop_minimum_size));
     // }
 
     ADD_ITEM_PROP(prop_orientation, "orient")

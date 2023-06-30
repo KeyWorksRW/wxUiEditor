@@ -21,7 +21,7 @@ wxObject* ComboBoxGenerator::CreateMockup(Node* node, wxObject* parent)
     auto widget = new wxComboBox(wxStaticCast(parent, wxWindow), wxID_ANY, wxEmptyString, DlgPoint(parent, node, prop_pos),
                                  DlgSize(parent, node, prop_size), 0, nullptr, GetStyleInt(node));
 
-    if (node->HasValue(prop_hint) && !node->prop_as_string(prop_style).contains("wxCB_READONLY"))
+    if (node->HasValue(prop_hint) && !node->as_string(prop_style).contains("wxCB_READONLY"))
         widget->SetHint(node->prop_as_wxString(prop_hint));
 
     if (node->HasValue(prop_contents))
@@ -165,12 +165,12 @@ int ComboBoxGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t x
     }
 
     if (node->HasValue(prop_selection_string))
-        item.append_child("value").text().set(node->prop_as_string(prop_selection_string));
+        item.append_child("value").text().set(node->as_string(prop_selection_string));
     else if (node->prop_as_int(prop_selection_int) >= 0)
-        item.append_child("selection").text().set(node->prop_as_string(prop_selection_int));
+        item.append_child("selection").text().set(node->as_string(prop_selection_int));
 
-    if (node->HasValue(prop_hint) && !node->prop_as_string(prop_style).contains("wxCB_READONLY"))
-        item.append_child("hint").text().set(node->prop_as_string(prop_hint));
+    if (node->HasValue(prop_hint) && !node->as_string(prop_style).contains("wxCB_READONLY"))
+        item.append_child("hint").text().set(node->as_string(prop_hint));
 
     GenXrcStylePosSize(node, item);
     GenXrcWindowSettings(node, item);

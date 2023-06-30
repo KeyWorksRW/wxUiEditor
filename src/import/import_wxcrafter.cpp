@@ -242,7 +242,7 @@ void WxCrafter::ProcessChild(Node* parent, const Value& object)
             // This is a column header for a wxListCtrl
             if (parent->isGen(gen_wxListView))
             {
-                tt_string cur_headers = parent->prop_as_string(prop_column_labels);
+                tt_string cur_headers = parent->as_string(prop_column_labels);
                 if (auto& properties = object["m_properties"]; properties.IsArray())
                 {
                     for (auto& iter: properties.GetArray())
@@ -281,7 +281,7 @@ void WxCrafter::ProcessChild(Node* parent, const Value& object)
                 if (gen_name == gen_wxStdDialogButtonSizer)
                 {
                     ProcessStdBtnChildren(parent, children);
-                    if (parent->prop_as_string(prop_alignment).size())
+                    if (parent->as_string(prop_alignment).size())
                     {
                         parent->prop_set_value(prop_static_line, false);
                     }
@@ -394,7 +394,7 @@ void WxCrafter::ProcessChild(Node* parent, const Value& object)
         if (gen_name == gen_wxStdDialogButtonSizer)
         {
             ProcessStdBtnChildren(new_node.get(), children);
-            if (new_node->prop_as_string(prop_alignment).size())
+            if (new_node->as_string(prop_alignment).size())
             {
                 new_node->prop_set_value(prop_static_line, false);
             }

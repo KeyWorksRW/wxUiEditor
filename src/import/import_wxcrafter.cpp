@@ -1576,17 +1576,18 @@ tt_string rapidjson::ConvertColour(const rapidjson::Value& colour)
             else if (colour.GetString()[0] == '#')
             {
                 wxColour clr(clr_string.make_wxString());
-                return ConvertColourToString(clr);
+                result << clr.Red() << ',' << clr.Green() << ',' << clr.Blue();
             }
             else if (clr_string.starts_with("wx"))
             {
                 result = clr_string;
-                return result;
             }
             else
             {
                 if (auto colour_pair = s_sys_colour_pair.find(clr_string); colour_pair != s_sys_colour_pair.end())
+                {
                     result = colour_pair->second;
+                }
             }
         }
     }

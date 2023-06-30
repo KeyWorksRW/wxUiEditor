@@ -255,7 +255,7 @@ wxString EditColourDialog::GetResults()
     else if (m_radio_custom->GetValue())
     {
         m_value = m_colourPicker->GetColour();
-        result = ConvertColourToString(m_value).c_str();
+        result << m_value.Red() << ',' << m_value.Green() << ',' << m_value.Blue();
     }
     else
     {

@@ -186,8 +186,6 @@ public:
         }
     }
 
-    bool prop_as_bool(PropName name) const;
-
     // If type is option, id, or bitlist, this will convert that constant name to it's value
     // (see NodeCreation.GetConstantAsInt()). Otherwise, it calls atoi().
     int prop_as_int(PropName name) const;
@@ -248,8 +246,6 @@ public:
 
     const tt_string_view view(PropName name) const { return as_string(name); }
 
-    bool as_bool(PropName name) const { return prop_as_bool(name); }
-
     // If type is option, id, or bitlist, this will convert that constant name to it's value
     // (see NodeCreation.GetConstantAsInt()). Otherwise, it calls atoi().
     int as_int(PropName name) const { return prop_as_int(name); }
@@ -260,6 +256,14 @@ public:
     int as_id(PropName name) const { return prop_as_id(name); }
 
     double as_double(PropName name) const { return prop_as_double(name); }
+
+    bool as_bool(PropName name) const
+    {
+        if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
+            return (m_properties[result->second].as_string().atoi() != 0);
+        else
+            return false;
+    }
 
     const tt_string& as_string(PropName name) const
     {

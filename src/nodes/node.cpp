@@ -386,14 +386,6 @@ bool Node::is_value(PropName name, int value) const noexcept
     return false;
 }
 
-bool Node::prop_as_bool(PropName name) const
-{
-    if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
-        return m_properties[result->second].as_bool();
-    else
-        return false;
-}
-
 int Node::prop_as_int(PropName name) const
 {
     if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())

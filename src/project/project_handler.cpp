@@ -207,7 +207,7 @@ tt_string ProjectHandler::DerivedDirectory(Node* node, int language) const
     Node* folder = node->get_folder();
     if (folder)
     {
-        if (language == GEN_LANG_CPLUSPLUS && folder->HasValue(prop_folder_base_directory))
+        if (language == GEN_LANG_CPLUSPLUS && folder->HasValue(prop_folder_derived_directory))
             result = folder->as_string(prop_folder_base_directory);
         else if (language == GEN_LANG_PYTHON && folder->HasValue(prop_folder_python_output_folder))
             result = folder->as_string(prop_folder_python_output_folder);

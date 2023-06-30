@@ -271,7 +271,16 @@ NodeSharedPtr NodeCreator::CreateNode(pugi::xml_node& xml_obj, Node* parent, boo
                 {
                     if (new_node->isGen(gen_wxCheckListBox) && iter.as_sview().size() && iter.as_sview()[0] == '"')
                     {
-                        auto items = ConvertToArrayString(iter.as_sview());
+                        // Convert old style wxCheckListBox contents in quotes to new style separated by semicolons
+                        std::vector<tt_string> items;
+                        auto view = iter.as_sview();
+                        while (view.size() > 0)
+                        {
+                            items.emplace_back(view);
+                            view = tt::stepover(view.data() + view.size());
+                            view = view.view_substr(0, '"', '"');
+                        }
+
                         tt_string value;
                         for (auto& item: items)
                         {
@@ -279,6 +288,7 @@ NodeSharedPtr NodeCreator::CreateNode(pugi::xml_node& xml_obj, Node* parent, boo
                                 value << ';';
                             value << item;
                         }
+
                         prop->set_value(value);
                         if (Project.GetProjectVersion() < minRequiredVer + 1)
                         {

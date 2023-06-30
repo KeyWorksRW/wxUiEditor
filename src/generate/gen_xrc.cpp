@@ -328,20 +328,17 @@ bool GenerateXrcFiles(GenResults& results, tt_string out_file, std::vector<tt_st
     {
         if (auto& base_file = form->prop_as_string(prop_xrc_file); base_file.size())
         {
-            path = base_file;
-            if (path.empty())
-                continue;
-
-            if (auto* node_folder = form->get_folder(); node_folder && node_folder->HasValue(prop_xrc_directory))
+            path = Project.BaseDirectory(form, GEN_LANG_XRC);
+            if (path.size())
             {
-                path = node_folder->as_string(prop_xrc_directory);
-                path.append_filename(base_file.filename());
-            }
-            else if (Project.HasValue(prop_xrc_directory) && !path.contains("/"))
-            {
-                path = Project.BaseDirectory(GEN_LANG_XRC);
                 path.append_filename(base_file);
             }
+            else
+            {
+                path = base_file;
+            }
+
+            path.make_absolute();
             path.backslashestoforward();
         }
         else

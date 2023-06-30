@@ -99,21 +99,16 @@ void GenThreadCpp(GenData& gen_data, Node* form)
 
     if (auto& base_file = form->prop_as_string(prop_base_file); base_file.size())
     {
-        path = base_file;
-        // "filename_base" is the default filename given to all form files. Unless it's changed, no code will be
-        // generated.
-        if (path == "filename_base")
-            return;
-        if (auto* node_folder = form->get_folder(); node_folder && node_folder->HasValue(prop_folder_base_directory))
+        path = Project.BaseDirectory(form, GEN_LANG_CPLUSPLUS);
+        if (path.size())
         {
-            path = node_folder->as_string(prop_folder_base_directory);
-            path.append_filename(base_file.filename());
-        }
-        else if (Project.HasValue(prop_base_directory) && !path.contains("/"))
-        {
-            path = Project.BaseDirectory();
             path.append_filename(base_file);
         }
+        else
+        {
+            path = base_file;
+        }
+
         path.make_absolute();
         path.backslashestoforward();
     }
@@ -529,49 +524,37 @@ void GenerateTmpFiles(const std::vector<tt_string>& ClassList, pugi::xml_node ro
             if (class_name.is_sameas(iter_class))
             {
                 path.clear();
-                if (language == GEN_LANG_CPLUSPLUS)
+
+                // Get the folder or project output directory, and if specified, set the path
+                // relative to that directory.
+                auto SetPath = [&](const tt_string& base_file)
                 {
-                    if (auto& base_file = form->prop_as_string(prop_base_file); base_file.size())
+                    path = Project.BaseDirectory(form, language);
+                    if (path.size())
+                    {
+                        path.append_filename(base_file);
+                    }
+                    else
                     {
                         path = base_file;
-                        // "filename_base" is the default filename given to all form files. Unless it's changed, no code will
-                        // be generated.
-                        if (path == "filename_base")
-                            continue;
-                        if (auto* node_folder = form->get_folder();
-                            node_folder && node_folder->HasValue(prop_folder_base_directory))
-                        {
-                            path = node_folder->as_string(prop_folder_base_directory);
-                            path.append_filename(base_file.filename());
-                        }
-                        else if (Project.HasValue(prop_base_directory) && !path.contains("/"))
-                        {
-                            path = Project.BaseDirectory();
-                            path.append_filename(base_file);
-                        }
-                        path.backslashestoforward();
+                    }
+
+                    path.make_absolute();
+                    path.backslashestoforward();
+                };
+
+                if (language == GEN_LANG_CPLUSPLUS)
+                {
+                    if (auto& base_file = form->as_string(prop_base_file); base_file.size())
+                    {
+                        SetPath(base_file);
                     }
                 }
                 else if (language == GEN_LANG_PYTHON)
                 {
-                    if (auto& base_file = form->prop_as_string(prop_python_file); base_file.size())
+                    if (auto& base_file = form->as_string(prop_python_file); base_file.size())
                     {
-                        path = base_file;
-                        if (path.empty())
-                            continue;
-
-                        if (auto* node_folder = form->get_folder();
-                            node_folder && node_folder->HasValue(prop_folder_python_output_folder))
-                        {
-                            path = node_folder->as_string(prop_folder_python_output_folder);
-                            path.append_filename(base_file.filename());
-                        }
-                        else if (Project.HasValue(prop_python_output_folder) && !path.contains("/"))
-                        {
-                            path = Project.BaseDirectory(GEN_LANG_PYTHON);
-                            path.append_filename(base_file);
-                        }
-                        path.backslashestoforward();
+                        SetPath(base_file);
                     }
                 }
 

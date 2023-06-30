@@ -75,18 +75,16 @@ int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_PAG
     tt_string derived_file;
     if (m_is_derived_class && m_form_node->HasValue(prop_derived_file))
     {
-        derived_file = m_form_node->prop_as_string(prop_derived_file);
-        derived_file.backslashestoforward();
-        if (auto* node_folder = form->get_folder(); node_folder && node_folder->HasValue(prop_folder_derived_directory))
+        derived_file = Project.BaseDirectory(form, GEN_LANG_CPLUSPLUS);
+        if (derived_file.size())
         {
-            derived_file = node_folder->as_string(prop_folder_derived_directory);
-            derived_file.append_filename(m_form_node->prop_as_string(prop_derived_file).filename());
+            derived_file.append_filename(m_form_node->as_string(prop_derived_file));
         }
-        else if (Project.HasValue(prop_derived_directory) && !derived_file.contains("/"))
+        else
         {
-            derived_file = Project.as_string(prop_derived_directory);
-            derived_file.append_filename(m_form_node->prop_as_string(prop_derived_file));
+            derived_file = m_form_node->as_string(prop_derived_file);
         }
+
         derived_file.make_absolute();
         derived_file.backslashestoforward();
     }
@@ -118,24 +116,17 @@ int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_PAG
     tt_string baseFile;
     if (auto& file = m_form_node->prop_as_string(prop_base_file); file.size())
     {
-        baseFile = file;
-        baseFile.backslashestoforward();
-        if (auto* node_folder = form->get_folder(); node_folder && node_folder->HasValue(prop_folder_base_directory))
+        baseFile = Project.BaseDirectory(form, GEN_LANG_CPLUSPLUS);
+        if (baseFile.size())
         {
-            baseFile = node_folder->value(prop_folder_base_directory);
-            baseFile.append_filename(file.filename());
-        }
-        else if (Project.HasValue(prop_base_directory) && !baseFile.contains("/"))
-        {
-            baseFile = Project.BaseDirectory();
             baseFile.append_filename(file);
         }
+        else
+        {
+            baseFile = file;
+        }
 
-        baseFile.replace_extension(header_ext);
-        tt_string root(derived_file);
-        root.remove_filename();
-        if (root.size())
-            baseFile.make_relative(root);
+        baseFile.make_absolute();
         baseFile.backslashestoforward();
         baseFile.remove_extension();
     }

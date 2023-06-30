@@ -406,23 +406,22 @@ void BaseCodeGenerator::GenPythonEventHandlers(EventVector& events)
         // Set path to the output file
         if (auto& base_file = m_form_node->prop_as_string(prop_python_file); base_file.size())
         {
-            path = base_file;
+            path = Project.BaseDirectory(m_form_node, GEN_LANG_PYTHON);
             if (path.size())
             {
-                if (auto* node_folder = m_form_node->get_folder();
-                    node_folder && node_folder->HasValue(prop_folder_python_output_folder))
-                {
-                    path = node_folder->as_string(prop_folder_python_output_folder);
-                    path.append_filename(base_file.filename());
-                }
-                else if (Project.HasValue(prop_python_output_folder) && !path.contains("/"))
-                {
-                    path = Project.BaseDirectory(GEN_LANG_PYTHON);
-                    path.append_filename(base_file);
-                    path += ".py";
-                }
-                path.backslashestoforward();
+                path.append_filename(base_file);
             }
+            else
+            {
+                path = base_file;
+            }
+
+            if (path.extension().empty())
+            {
+                path += ".py";
+            }
+            path.make_absolute();
+            path.backslashestoforward();
         }
 
         // If the user has defined any event handlers, add them to the code_lines set so we

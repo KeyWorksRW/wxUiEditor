@@ -453,7 +453,7 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
         if (prop->isProp(prop_base_file))
         {
             new_pg_property->SetAttribute(wxPG_DIALOG_TITLE, "Base class filename");
-            new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH, Project.BaseDirectory());
+            new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH, Project.BaseDirectory(prop->GetNode()));
             new_pg_property->SetAttribute(wxPG_FILE_SHOW_RELATIVE_PATH, Project.ProjectPath());
             new_pg_property->SetAttribute(wxPG_FILE_DIALOG_STYLE, wxFD_SAVE);
             new_pg_property->SetAttribute(wxPG_FILE_WILDCARD, "C++ Files|*.cpp;*.cc;*.cxx");
@@ -461,7 +461,7 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
         else if (prop->isProp(prop_derived_file))
         {
             new_pg_property->SetAttribute(wxPG_DIALOG_TITLE, "Derived class filename");
-            new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH, Project.DerivedDirectory());
+            new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH, Project.DerivedDirectory(prop->GetNode()));
             new_pg_property->SetAttribute(wxPG_FILE_SHOW_RELATIVE_PATH, Project.ProjectPath());
             new_pg_property->SetAttribute(wxPG_FILE_DIALOG_STYLE, wxFD_SAVE);
             new_pg_property->SetAttribute(wxPG_FILE_WILDCARD, "C++ Files|*.cpp;*.cc;*.cxx");
@@ -469,7 +469,7 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
         else if (prop->isProp(prop_xrc_file) || prop->isProp(prop_combined_xrc_file))
         {
             new_pg_property->SetAttribute(wxPG_DIALOG_TITLE, "XRC filename");
-            new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH, Project.BaseDirectory(GEN_LANG_XRC));
+            new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH, Project.BaseDirectory(prop->GetNode(), GEN_LANG_XRC));
             new_pg_property->SetAttribute(wxPG_FILE_SHOW_RELATIVE_PATH, Project.ProjectPath());
             new_pg_property->SetAttribute(wxPG_FILE_DIALOG_STYLE, wxFD_SAVE);
             new_pg_property->SetAttribute(wxPG_FILE_WILDCARD, "XRC Files|*.xrc");
@@ -477,24 +477,16 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
         else if (prop->isProp(prop_python_file) || prop->isProp(prop_python_combined_file))
         {
             new_pg_property->SetAttribute(wxPG_DIALOG_TITLE, "Python filename");
-            new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH, Project.BaseDirectory(GEN_LANG_PYTHON));
+            new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH, Project.BaseDirectory(prop->GetNode(), GEN_LANG_PYTHON));
             new_pg_property->SetAttribute(wxPG_FILE_SHOW_RELATIVE_PATH, Project.ProjectPath());
             new_pg_property->SetAttribute(wxPG_FILE_DIALOG_STYLE, wxFD_SAVE);
             new_pg_property->SetAttribute(wxPG_FILE_WILDCARD, "Python Files|*.py");
         }
-        else if (prop->isProp(prop_python_xrc_file))
-        {
-            // Python XRC files default to being created in the same directory as python files
-            new_pg_property->SetAttribute(wxPG_DIALOG_TITLE, "Python XRC filename");
-            new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH, Project.BaseDirectory(GEN_LANG_PYTHON));
-            new_pg_property->SetAttribute(wxPG_FILE_SHOW_RELATIVE_PATH, Project.ProjectPath());
-            new_pg_property->SetAttribute(wxPG_FILE_DIALOG_STYLE, wxFD_SAVE);
-            new_pg_property->SetAttribute(wxPG_FILE_WILDCARD, "XRC Files|*.xrc");
-        }
         else if (prop->isProp(prop_cmake_file))
         {
             new_pg_property->SetAttribute(wxPG_DIALOG_TITLE, "CMake filename");
-            new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH, Project.BaseDirectory(GEN_LANG_CPLUSPLUS));
+            new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH,
+                                          Project.BaseDirectory(prop->GetNode(), GEN_LANG_CPLUSPLUS));
             new_pg_property->SetAttribute(wxPG_FILE_SHOW_RELATIVE_PATH, Project.ProjectPath());
             new_pg_property->SetAttribute(wxPG_FILE_DIALOG_STYLE, wxFD_SAVE);
             new_pg_property->SetAttribute(wxPG_FILE_WILDCARD, "CMake Files|*.cmake");

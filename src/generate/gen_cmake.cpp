@@ -140,19 +140,20 @@ int WriteCMakeFile(Node* parent_node, std::vector<tt_string>& updated_files, std
                 }
             }
 
-            // tt_string path = form->prop_as_string(prop_base_file);
-            tt_string path = Project.value(prop_base_directory);
-            if (parent_node->isGen(gen_folder) && parent_node->HasValue(prop_folder_base_directory))
+            tt_string path;
+            if (auto& base_file = form->prop_as_string(prop_base_file); base_file.size())
             {
-                path = parent_node->value(prop_folder_base_directory);
-            }
-            if (path.size())
-            {
-                path.append_filename(form->value(prop_base_file).filename());
-            }
-            else
-            {
-                path = form->value(prop_base_file);
+                path = Project.BaseDirectory(form, GEN_LANG_CPLUSPLUS);
+                if (path.size())
+                {
+                    path.append_filename(base_file);
+                }
+                else
+                {
+                    path = base_file;
+                }
+
+                path.make_absolute();
             }
 
             if (cmake_file_dir.size())

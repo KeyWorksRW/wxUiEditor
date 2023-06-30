@@ -145,34 +145,25 @@ void IncludeFilesDialog::OnAdd(wxCommandEvent& WXUNUSED(event))
     if (m_prop->get_name() == prop_local_hdr_includes || m_prop->get_name() == prop_local_src_includes)
     {
         auto* form = m_prop->GetNode();
-        auto* parent_node = form->GetParent();
-        if (parent_node->isGen(gen_folder) && parent_node->HasValue(prop_folder_base_directory))
+        if (auto& base_file = form->prop_as_string(prop_base_file); base_file.size())
         {
-            path = parent_node->value(prop_folder_base_directory);
-        }
-        else if (Project.HasValue(prop_base_directory))
-        {
-            path = Project.value(prop_base_directory);
-        }
+            path = Project.BaseDirectory(form, GEN_LANG_CPLUSPLUS);
+            if (path.size())
+            {
+                path.append_filename(base_file);
+            }
+            else
+            {
+                path = base_file;
+            }
 
-        if (path.size())
-        {
-            path.append_filename(form->value(prop_base_file).filename());
-        }
-        else
-        {
-            path = form->value(prop_base_file);
-        }
-
-        if (path.size())
-        {
             path.make_absolute();
-            path.remove_filename();
+            path.backslashestoforward();
         }
 
         if (path.empty())
         {
-            path = Project.get_ProjectPath();
+            path = Project.ProjectPath();
         }
     }
     else  // if (m_prop->get_name() == prop_system_hdr_includes)

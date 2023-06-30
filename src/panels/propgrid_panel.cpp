@@ -485,7 +485,8 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
         else if (prop->isProp(prop_cmake_file))
         {
             new_pg_property->SetAttribute(wxPG_DIALOG_TITLE, "CMake filename");
-            new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH, Project.BaseDirectory(prop->GetNode(), GEN_LANG_CPLUSPLUS));
+            new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH,
+                                          Project.BaseDirectory(prop->GetNode(), GEN_LANG_CPLUSPLUS));
             new_pg_property->SetAttribute(wxPG_FILE_SHOW_RELATIVE_PATH, Project.ProjectPath());
             new_pg_property->SetAttribute(wxPG_FILE_DIALOG_STYLE, wxFD_SAVE);
             new_pg_property->SetAttribute(wxPG_FILE_WILDCARD, "CMake Files|*.cmake");

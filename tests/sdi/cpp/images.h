@@ -36,10 +36,10 @@ namespace wxue_img
     wxBitmapBundle bundle_no_hour_png();
     wxBitmapBundle bundle_normal_png();
     wxBitmapBundle bundle_re_png();
+    wxBitmapBundle bundle_ribbon_button_hybrid_png();
     wxBitmapBundle bundle_toggle_button_png();
     wxBitmapBundle bundle_wiztest_png();
     wxBitmapBundle bundle_wiztest2_png();
-    wxBitmapBundle bundle_wxDialog_png();
     wxBitmapBundle bundle_wxNotebook_png();
     wxBitmapBundle bundle_wxPython_png();
     wxBitmapBundle bundle_wxPython_1_5x_png();
@@ -64,10 +64,10 @@ namespace wxue_img
     extern const unsigned char no_hour_png[347];
     extern const unsigned char normal_png[508];
     extern const unsigned char re_png[305];
+    extern const unsigned char ribbon_button_hybrid_png[192];
     extern const unsigned char toggle_button_png[277];
     extern const unsigned char wiztest2_png[6797];
     extern const unsigned char wiztest_png[1239];
-    extern const unsigned char wxDialog_png[636];
     extern const unsigned char wxNotebook_png[177];
     extern const unsigned char wxPython_1_5x_png[765];
     extern const unsigned char wxPython_2x_png[251];

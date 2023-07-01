@@ -44,7 +44,7 @@ bool ActivityIndicatorGenerator::ConstructionCode(Code& code)
 bool ActivityIndicatorGenerator::SettingsCode(Code& code)
 {
     if (code.IsTrue(prop_auto_start))
-        code.NodeName().Function("Start()").EndFunction();
+        code.NodeName().Function("Start(").EndFunction();
     return true;
 }
 

@@ -604,9 +604,11 @@ bool ToolDropDownGenerator::SettingsCode(Code& code)
     tt_string menu_name = code.node()->value(prop_var_name);
     menu_name += "_menu";
     code.AddIfCpp("auto* ").Str(menu_name).Assign("wxMenu");
+    code.AddIfPython("()");
     auto menu_node_ptr = NodeCreation.NewNode(gen_wxMenu);
     menu_node_ptr->SetParent(code.node());  // Python code generation needs this set
     menu_node_ptr->set_value(prop_var_name, menu_name);
+    menu_node_ptr->set_value(prop_class_access, "none");
 
     for (const auto& child: code.node()->GetChildNodePtrs())
     {

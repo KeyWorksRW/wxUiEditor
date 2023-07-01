@@ -172,6 +172,10 @@ class MainTestDialog(wx.Dialog):
 
         box_sizer_3.Add(box_sizer_7, wx.SizerFlags().Border(wx.ALL))
 
+        static_line = wx.StaticLine(page_4, wx.ID_ANY, wx.DefaultPosition,
+            self.ConvertDialogToPixels(wx.Size(20, -1)), wx.LI_HORIZONTAL)
+        box_sizer_3.Add(static_line, wx.SizerFlags().Expand().Border(wx.ALL))
+
         box_sizer_19 = wx.BoxSizer(wx.HORIZONTAL)
 
         wrap_sizer = wx.WrapSizer(wx.HORIZONTAL, wx.EXTEND_LAST_ON_EACH_LINE|
@@ -190,8 +194,10 @@ class MainTestDialog(wx.Dialog):
         self.m_radioBtn2 = wx.RadioButton(page_4, wx.ID_ANY, "Second radio")
         wrap_sizer.Add(self.m_radioBtn2, wx.SizerFlags().Center().Border(wx.ALL))
 
-        self.m_checkBox2 = wx.CheckBox(page_4, wx.ID_ANY, "Checkbox")
-        wrap_sizer.Add(self.m_checkBox2, wx.SizerFlags().Center().Border(wx.ALL))
+        self.m_checkBox = wx.CheckBox(page_4, wx.ID_ANY, "Checkbox", wx.DefaultPosition,
+            wx.DefaultSize, wx.CHK_3STATE)
+        self.m_checkBox.Set3StateValue(wx.CHK_UNDETERMINED)
+        wrap_sizer.Add(self.m_checkBox, wx.SizerFlags().Center().Border(wx.ALL))
 
         box_sizer_19.Add(wrap_sizer, wx.SizerFlags().Expand().Border(wx.ALL))
 
@@ -210,6 +216,10 @@ class MainTestDialog(wx.Dialog):
         static_box_3.Add(self.m_animation_ctrl, wx.SizerFlags().Border(wx.ALL))
 
         box_sizer_19.Add(static_box_3, wx.SizerFlags().Border(wx.ALL))
+
+        self.indicator = wx.ActivityIndicator(page_4, wx.ID_ANY)
+        self.indicator.Start()
+        box_sizer_19.Add(self.indicator, wx.SizerFlags().Border(wx.ALL))
 
         box_sizer_3.Add(box_sizer_19, wx.SizerFlags().Expand().Border(wx.ALL))
         page_4.SetSizerAndFit(box_sizer_3)
@@ -410,6 +420,8 @@ class MainTestDialog(wx.Dialog):
 
         static_box_2 = wx.StaticBoxSizer(wx.VERTICAL, page_6, "Pickers")
 
+        grid_sizer = wx.GridSizer(2, 0, 0)
+
         box_sizer = wx.BoxSizer(wx.HORIZONTAL)
 
         staticText__2 = wx.StaticText(static_box_2.GetStaticBox(), wx.ID_ANY, "File:")
@@ -420,7 +432,7 @@ class MainTestDialog(wx.Dialog):
             wx.DefaultSize, wx.FLP_USE_TEXTCTRL|wx.FLP_OPEN|wx.FLP_FILE_MUST_EXIST)
         box_sizer.Add(self.m_filePicker, wx.SizerFlags().Border(wx.ALL))
 
-        static_box_2.Add(box_sizer, wx.SizerFlags().Border(wx.ALL))
+        grid_sizer.Add(box_sizer, wx.SizerFlags().Border(wx.ALL))
 
         box_sizer_2 = wx.BoxSizer(wx.HORIZONTAL)
 
@@ -432,7 +444,7 @@ class MainTestDialog(wx.Dialog):
             wx.DIRP_SMALL)
         box_sizer_2.Add(self.m_dirPicker, wx.SizerFlags().Border(wx.ALL))
 
-        static_box_2.Add(box_sizer_2, wx.SizerFlags().Border(wx.ALL))
+        grid_sizer.Add(box_sizer_2, wx.SizerFlags().Border(wx.ALL))
 
         box_sizer_4 = wx.BoxSizer(wx.HORIZONTAL)
 
@@ -443,29 +455,7 @@ class MainTestDialog(wx.Dialog):
             wx.BLACK)
         box_sizer_4.Add(self.m_colourPicker, wx.SizerFlags().Border(wx.ALL))
 
-        static_box_2.Add(box_sizer_4, wx.SizerFlags().Border(wx.ALL))
-
-        box_sizer_6 = wx.BoxSizer(wx.HORIZONTAL)
-
-        staticText__5 = wx.StaticText(static_box_2.GetStaticBox(), wx.ID_ANY, "Date:")
-        box_sizer_6.Add(staticText__5, wx.SizerFlags().Center().Border(wx.ALL))
-
-        self.m_datePicker = wx.adv.DatePickerCtrl(static_box_2.GetStaticBox(), wx.ID_ANY,
-            wx.DefaultDateTime)
-        box_sizer_6.Add(self.m_datePicker, wx.SizerFlags().Border(wx.ALL))
-
-        static_box_2.Add(box_sizer_6, wx.SizerFlags().Border(wx.ALL))
-
-        box_sizer_8 = wx.BoxSizer(wx.HORIZONTAL)
-
-        staticText__6 = wx.StaticText(static_box_2.GetStaticBox(), wx.ID_ANY, "Time:")
-        box_sizer_8.Add(staticText__6, wx.SizerFlags().Center().Border(wx.ALL))
-
-        self.m_timePicker = wx.adv.TimePickerCtrl(static_box_2.GetStaticBox(), wx.ID_ANY,
-            wx.DefaultDateTime)
-        box_sizer_8.Add(self.m_timePicker, wx.SizerFlags().Border(wx.ALL))
-
-        static_box_2.Add(box_sizer_8, wx.SizerFlags().Border(wx.ALL))
+        grid_sizer.Add(box_sizer_4, wx.SizerFlags().Border(wx.ALL))
 
         box_sizer_9 = wx.BoxSizer(wx.HORIZONTAL)
 
@@ -478,9 +468,37 @@ class MainTestDialog(wx.Dialog):
             wx.FNTP_DEFAULT_STYLE|wx.FNTP_USE_TEXTCTRL)
         box_sizer_9.Add(self.m_fontPicker, wx.SizerFlags().Border(wx.ALL))
 
-        static_box_2.Add(box_sizer_9, wx.SizerFlags().Border(wx.ALL))
+        grid_sizer.Add(box_sizer_9, wx.SizerFlags().Border(wx.ALL))
+
+        box_sizer_6 = wx.BoxSizer(wx.HORIZONTAL)
+
+        staticText__5 = wx.StaticText(static_box_2.GetStaticBox(), wx.ID_ANY, "Date:")
+        box_sizer_6.Add(staticText__5, wx.SizerFlags().Center().Border(wx.ALL))
+
+        self.m_datePicker = wx.adv.DatePickerCtrl(static_box_2.GetStaticBox(), wx.ID_ANY,
+            wx.DefaultDateTime)
+        box_sizer_6.Add(self.m_datePicker, wx.SizerFlags().Border(wx.ALL))
+
+        grid_sizer.Add(box_sizer_6, wx.SizerFlags().Border(wx.ALL))
+
+        box_sizer_8 = wx.BoxSizer(wx.HORIZONTAL)
+
+        staticText__6 = wx.StaticText(static_box_2.GetStaticBox(), wx.ID_ANY, "Time:")
+        box_sizer_8.Add(staticText__6, wx.SizerFlags().Center().Border(wx.ALL))
+
+        self.m_timePicker = wx.adv.TimePickerCtrl(static_box_2.GetStaticBox(), wx.ID_ANY,
+            wx.DefaultDateTime)
+        box_sizer_8.Add(self.m_timePicker, wx.SizerFlags().Border(wx.ALL))
+
+        grid_sizer.Add(box_sizer_8, wx.SizerFlags().Border(wx.ALL))
+
+        static_box_2.Add(grid_sizer, wx.SizerFlags().Border(wx.ALL))
 
         parent_sizer2.Add(static_box_2, wx.SizerFlags().Expand().Border(wx.ALL))
+
+        self.fileCtrl = wx.FileCtrl(page_6, wx.ID_ANY, "", "",
+            wx.FileSelectorDefaultWildcardStr, wx.FC_OPEN, wx.DefaultPosition, wx.DefaultSize)
+        parent_sizer2.Add(self.fileCtrl, wx.SizerFlags().Border(wx.ALL))
         page_6.SetSizerAndFit(parent_sizer2)
 
         page = wx.Panel(self.m_notebook, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize,
@@ -554,6 +572,7 @@ class MainTestDialog(wx.Dialog):
         rbnToolBar = wx.ribbon.RibbonToolBar(ribbonPanel_2, wx.ID_ANY)
         rbnToolBar.AddTool(wx.ID_FILE1, wx.ArtProvider.GetBitmap(wx.ART_GOTO_FIRST,
             wx.ART_TOOLBAR), "", wx.ribbon.RIBBON_BUTTON_NORMAL)
+        rbnToolBar.AddSeparator()
         rbnToolBar.AddTool(wx.ID_FILE9, wx.ArtProvider.GetBitmap(wx.ART_GOTO_LAST,
             wx.ART_TOOLBAR), "", wx.ribbon.RIBBON_BUTTON_NORMAL)
         rbnToolBar.Realize()
@@ -635,11 +654,6 @@ class MainTestDialog(wx.Dialog):
 
         # Bind Event handlers
         btn.Bind(wx.EVT_BUTTON, self.OnClearList)
-        self.m_btn_7.Bind(wx.EVT_BUTTON, lambda event:self.OnEventName("Ceci est une phrase en français."))
-        self.m_btn_5.Bind(wx.EVT_BUTTON, lambda event:
-            self.m_events_list.Select(self.m_events_list.Append("CmdLinkBtn: wx.EVT_BUTTON")))
-        self.m_btn_6.Bind(wx.EVT_BUTTON, lambda event:self.OnEventName("This is a sentence in English."))
-        self.m_btn_3.Bind(wx.EVT_BUTTON, lambda event:self.OnEventName("Button: wx.EVT_BUTTON"))
         self.m_btn.Bind(wx.EVT_BUTTON, lambda event:
             self.m_events_list.Select(self.m_events_list.Append("Button: wx.EVT_BUTTON")))
         self.m_btn_2.Bind(wx.EVT_BUTTON, lambda event:
@@ -648,19 +662,23 @@ class MainTestDialog(wx.Dialog):
             self.m_events_list.Select(self.m_events_list.Append("Button: wx.EVT_BUTTON")))
         self.m_btn_4.Bind(wx.EVT_BUTTON, lambda event:
             self.m_events_list.Select(self.m_events_list.Append("Button: wx.EVT_BUTTON")))
+        self.m_btn_5.Bind(wx.EVT_BUTTON, lambda event:
+            self.m_events_list.Select(self.m_events_list.Append("CmdLinkBtn: wx.EVT_BUTTON")))
+        self.m_btn_3.Bind(wx.EVT_BUTTON, lambda event:self.OnEventName("Button: wx.EVT_BUTTON"))
         btn2.Bind(wx.EVT_BUTTON, self.OnPopupBtn)
-        self.m_checkBox2.Bind(wx.EVT_CHECKBOX, lambda event:self.OnEventName("CheckBox: wx.EVT_CHECKBOX"))
+        self.m_btn_6.Bind(wx.EVT_BUTTON, lambda event:self.OnEventName("This is a sentence in English."))
+        self.m_btn_7.Bind(wx.EVT_BUTTON, lambda event:self.OnEventName("Ceci est une phrase en français."))
         disable_bitmaps.Bind(wx.EVT_CHECKBOX, self.OnDisableBitmapsBtn)
-        self.m_checkList_2.Bind(wx.EVT_CHECKLISTBOX, lambda event:
-            self.OnEventName("CheckListBox1: wx.EVT_CHECKLISTBOX"))
         self.m_checkList2.Bind(wx.EVT_CHECKLISTBOX, lambda event:
             self.OnEventName("CheckListBox2: wx.EVT_CHECKLISTBOX"))
-        self.m_choice.Bind(wx.EVT_CHOICE, lambda event:self.OnEventName("Choice: wx.EVT_CHOICE"))
+        self.m_checkList_2.Bind(wx.EVT_CHECKLISTBOX, lambda event:
+            self.OnEventName("CheckListBox1: wx.EVT_CHECKLISTBOX"))
         self.m_choice2.Bind(wx.EVT_CHOICE, lambda event:self.OnEventName("OnChoice: wx.EVT_CHOICE"))
+        self.m_choice.Bind(wx.EVT_CHOICE, lambda event:self.OnEventName("Choice: wx.EVT_CHOICE"))
         self.m_colourPicker.Bind(wx.EVT_COLOURPICKER_CHANGED, lambda event:
             self.OnEventName("ColourPicker: wx.EVT_COLOURPICKER_CHANGED"))
-        self.m_comboBox.Bind(wx.EVT_COMBOBOX, lambda event:self.OnEventName("Combobox: wx.EVT_COMBOBOX"))
         self.m_comboBox2.Bind(wx.EVT_COMBOBOX, lambda event:self.OnEventName("OnCombobox: wx.EVT_COMBOBOX"))
+        self.m_comboBox.Bind(wx.EVT_COMBOBOX, lambda event:self.OnEventName("Combobox: wx.EVT_COMBOBOX"))
         self.m_datePicker.Bind(wx.adv.EVT_DATE_CHANGED, lambda event:
             self.OnEventName("DatePicker: wx.EVT_DATE_CHANGED"))
         self.m_dirPicker.Bind(wx.EVT_DIRPICKER_CHANGED, lambda event:
@@ -670,8 +688,8 @@ class MainTestDialog(wx.Dialog):
         self.m_fontPicker.Bind(wx.EVT_FONTPICKER_CHANGED, lambda event:
             self.OnEventName("FontPicker: wx.OnFontChanged"))
         self.Bind(wx.EVT_INIT_DIALOG, self.OnInit)
-        self.m_listbox.Bind(wx.EVT_LISTBOX, lambda event:self.OnEventName("ListBox1: wx.EVT_LISTBOX"))
         self.m_listBox2.Bind(wx.EVT_LISTBOX, lambda event:self.OnEventName("ListBox2: wx.EVT_LISTBOX"))
+        self.m_listbox.Bind(wx.EVT_LISTBOX, lambda event:self.OnEventName("ListBox1: wx.EVT_LISTBOX"))
         self.m_notebook.Bind(wx.EVT_NOTEBOOK_PAGE_CHANGED, self.OnPageChanged)
         radioBox.Bind(wx.EVT_RADIOBOX, lambda event:self.OnEventName("RadioBox: wx.EVT_RADIOBOX"))
         self.m_radioBtn2.Bind(wx.EVT_RADIOBUTTON, lambda event:
@@ -680,8 +698,8 @@ class MainTestDialog(wx.Dialog):
             self.OnEventName("RadioButton: wx.EVT_RADIOBUTTON"))
         self.m_scintilla.Bind(wx.stc.EVT_STC_CHANGE, lambda event:
             self.OnEventName("wx.StyledTextCtrl: wx.EVT_STC_CHANGE"))
-        self.m_text_ctrl.Bind(wx.EVT_TEXT, lambda event:self.OnEventName("wx.TextCtrl: wx.EVT_TEXT"))
         self.m_richText.Bind(wx.EVT_TEXT, lambda event:self.OnEventName("wx.RichTextCtrl: wx.EVT_TEXT"))
+        self.m_text_ctrl.Bind(wx.EVT_TEXT, lambda event:self.OnEventName("wx.TextCtrl: wx.EVT_TEXT"))
         self.m_timePicker.Bind(wx.adv.EVT_TIME_CHANGED, lambda event:
             self.OnEventName("TimePicker: wx.EVT_TIME_CHANGED"))
         self.m_toggleBtn.Bind(wx.EVT_TOGGLEBUTTON, lambda event:self.OnEventName("OnToggle: wx.EVT_BUTTON"))

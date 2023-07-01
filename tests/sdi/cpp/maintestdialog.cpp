@@ -17,6 +17,7 @@
 #include <wx/ribbon/panel.h>
 #include <wx/sizer.h>
 #include <wx/statbox.h>
+#include <wx/statline.h>
 #include <wx/valgen.h>
 #include <wx/wrapsizer.h>
 
@@ -176,6 +177,10 @@ bool MainTestDialog::Create(wxWindow* parent, wxWindowID id, const wxString& tit
 
     box_sizer_3->Add(box_sizer_7, wxSizerFlags().Border(wxALL));
 
+    auto* static_line = new wxStaticLine(page_4, wxID_ANY, wxDefaultPosition,
+        ConvertDialogToPixels(wxSize(20, -1)), wxLI_HORIZONTAL);
+    box_sizer_3->Add(static_line, wxSizerFlags().Expand().Border(wxALL));
+
     auto* box_sizer_19 = new wxBoxSizer(wxHORIZONTAL);
 
     auto* wrap_sizer = new wxWrapSizer(wxHORIZONTAL, wxEXTEND_LAST_ON_EACH_LINE|wxREMOVE_LEADING_SPACES);
@@ -192,8 +197,9 @@ bool MainTestDialog::Create(wxWindow* parent, wxWindowID id, const wxString& tit
     m_radioBtn2 = new wxRadioButton(page_4, wxID_ANY, "Second radio");
     wrap_sizer->Add(m_radioBtn2, wxSizerFlags().Center().Border(wxALL));
 
-    m_checkBox2 = new wxCheckBox(page_4, wxID_ANY, "Checkbox");
-    wrap_sizer->Add(m_checkBox2, wxSizerFlags().Center().Border(wxALL));
+    m_checkBox = new wxCheckBox(page_4, wxID_ANY, "Checkbox", wxDefaultPosition, wxDefaultSize, wxCHK_3STATE);
+    m_checkBox->Set3StateValue(wxCHK_UNDETERMINED);
+    wrap_sizer->Add(m_checkBox, wxSizerFlags().Center().Border(wxALL));
 
     box_sizer_19->Add(wrap_sizer, wxSizerFlags().Expand().Border(wxALL));
 
@@ -216,6 +222,10 @@ bool MainTestDialog::Create(wxWindow* parent, wxWindowID id, const wxString& tit
     static_box_3->Add(m_animation_ctrl, wxSizerFlags().Border(wxALL));
 
     box_sizer_19->Add(static_box_3, wxSizerFlags().Border(wxALL));
+
+    indicator = new wxActivityIndicator(page_4, wxID_ANY);
+    indicator->Start();
+    box_sizer_19->Add(indicator, wxSizerFlags().Border(wxALL));
 
     box_sizer_3->Add(box_sizer_19, wxSizerFlags().Expand().Border(wxALL));
     page_4->SetSizerAndFit(box_sizer_3);
@@ -400,6 +410,8 @@ bool MainTestDialog::Create(wxWindow* parent, wxWindowID id, const wxString& tit
 
     auto* static_box_2 = new wxStaticBoxSizer(wxVERTICAL, page_6, "Pickers");
 
+    auto* grid_sizer = new wxGridSizer(2, 0, 0);
+
     auto* box_sizer = new wxBoxSizer(wxHORIZONTAL);
 
     auto* staticText__2 = new wxStaticText(static_box_2->GetStaticBox(), wxID_ANY, "File:");
@@ -409,7 +421,7 @@ bool MainTestDialog::Create(wxWindow* parent, wxWindowID id, const wxString& tit
         "BMP files|*.bmp", wxDefaultPosition, wxDefaultSize, wxFLP_USE_TEXTCTRL|wxFLP_OPEN|wxFLP_FILE_MUST_EXIST);
     box_sizer->Add(m_filePicker, wxSizerFlags().Border(wxALL));
 
-    static_box_2->Add(box_sizer, wxSizerFlags().Border(wxALL));
+    grid_sizer->Add(box_sizer, wxSizerFlags().Border(wxALL));
 
     auto* box_sizer_2 = new wxBoxSizer(wxHORIZONTAL);
 
@@ -420,7 +432,7 @@ bool MainTestDialog::Create(wxWindow* parent, wxWindowID id, const wxString& tit
         wxDefaultPosition, wxDefaultSize, wxDIRP_DEFAULT_STYLE|wxDIRP_SMALL);
     box_sizer_2->Add(m_dirPicker, wxSizerFlags().Border(wxALL));
 
-    static_box_2->Add(box_sizer_2, wxSizerFlags().Border(wxALL));
+    grid_sizer->Add(box_sizer_2, wxSizerFlags().Border(wxALL));
 
     auto* box_sizer_4 = new wxBoxSizer(wxHORIZONTAL);
 
@@ -430,27 +442,7 @@ bool MainTestDialog::Create(wxWindow* parent, wxWindowID id, const wxString& tit
     m_colourPicker = new wxColourPickerCtrl(static_box_2->GetStaticBox(), wxID_ANY, *wxBLACK);
     box_sizer_4->Add(m_colourPicker, wxSizerFlags().Border(wxALL));
 
-    static_box_2->Add(box_sizer_4, wxSizerFlags().Border(wxALL));
-
-    auto* box_sizer_6 = new wxBoxSizer(wxHORIZONTAL);
-
-    auto* staticText__5 = new wxStaticText(static_box_2->GetStaticBox(), wxID_ANY, "Date:");
-    box_sizer_6->Add(staticText__5, wxSizerFlags().Center().Border(wxALL));
-
-    m_datePicker = new wxDatePickerCtrl(static_box_2->GetStaticBox(), wxID_ANY, wxDefaultDateTime);
-    box_sizer_6->Add(m_datePicker, wxSizerFlags().Border(wxALL));
-
-    static_box_2->Add(box_sizer_6, wxSizerFlags().Border(wxALL));
-
-    auto* box_sizer_8 = new wxBoxSizer(wxHORIZONTAL);
-
-    auto* staticText__6 = new wxStaticText(static_box_2->GetStaticBox(), wxID_ANY, "Time:");
-    box_sizer_8->Add(staticText__6, wxSizerFlags().Center().Border(wxALL));
-
-    m_timePicker = new wxTimePickerCtrl(static_box_2->GetStaticBox(), wxID_ANY, wxDefaultDateTime);
-    box_sizer_8->Add(m_timePicker, wxSizerFlags().Border(wxALL));
-
-    static_box_2->Add(box_sizer_8, wxSizerFlags().Border(wxALL));
+    grid_sizer->Add(box_sizer_4, wxSizerFlags().Border(wxALL));
 
     auto* box_sizer_9 = new wxBoxSizer(wxHORIZONTAL);
 
@@ -462,9 +454,35 @@ bool MainTestDialog::Create(wxWindow* parent, wxWindowID id, const wxString& tit
         wxDefaultSize, wxFNTP_DEFAULT_STYLE|wxFNTP_USE_TEXTCTRL);
     box_sizer_9->Add(m_fontPicker, wxSizerFlags().Border(wxALL));
 
-    static_box_2->Add(box_sizer_9, wxSizerFlags().Border(wxALL));
+    grid_sizer->Add(box_sizer_9, wxSizerFlags().Border(wxALL));
+
+    auto* box_sizer_6 = new wxBoxSizer(wxHORIZONTAL);
+
+    auto* staticText__5 = new wxStaticText(static_box_2->GetStaticBox(), wxID_ANY, "Date:");
+    box_sizer_6->Add(staticText__5, wxSizerFlags().Center().Border(wxALL));
+
+    m_datePicker = new wxDatePickerCtrl(static_box_2->GetStaticBox(), wxID_ANY, wxDefaultDateTime);
+    box_sizer_6->Add(m_datePicker, wxSizerFlags().Border(wxALL));
+
+    grid_sizer->Add(box_sizer_6, wxSizerFlags().Border(wxALL));
+
+    auto* box_sizer_8 = new wxBoxSizer(wxHORIZONTAL);
+
+    auto* staticText__6 = new wxStaticText(static_box_2->GetStaticBox(), wxID_ANY, "Time:");
+    box_sizer_8->Add(staticText__6, wxSizerFlags().Center().Border(wxALL));
+
+    m_timePicker = new wxTimePickerCtrl(static_box_2->GetStaticBox(), wxID_ANY, wxDefaultDateTime);
+    box_sizer_8->Add(m_timePicker, wxSizerFlags().Border(wxALL));
+
+    grid_sizer->Add(box_sizer_8, wxSizerFlags().Border(wxALL));
+
+    static_box_2->Add(grid_sizer, wxSizerFlags().Border(wxALL));
 
     parent_sizer2->Add(static_box_2, wxSizerFlags().Expand().Border(wxALL));
+
+    fileCtrl = new wxFileCtrl(page_6, wxID_ANY, wxEmptyString, wxEmptyString, wxFileSelectorDefaultWildcardStr,
+        wxFC_OPEN, wxDefaultPosition, wxDefaultSize);
+    parent_sizer2->Add(fileCtrl, wxSizerFlags().Border(wxALL));
     page_6->SetSizerAndFit(parent_sizer2);
 
     auto* page = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
@@ -537,6 +555,7 @@ bool MainTestDialog::Create(wxWindow* parent, wxWindowID id, const wxString& tit
     {
         rbnToolBar->AddTool(wxID_FILE1, wxArtProvider::GetBitmap(wxART_GOTO_FIRST, wxART_TOOLBAR), wxEmptyString,
             wxRIBBON_BUTTON_NORMAL);
+        rbnToolBar->AddSeparator();
         rbnToolBar->AddTool(wxID_FILE9, wxArtProvider::GetBitmap(wxART_GOTO_LAST, wxART_TOOLBAR), wxEmptyString,
             wxRIBBON_BUTTON_NORMAL);
     }
@@ -613,26 +632,6 @@ bool MainTestDialog::Create(wxWindow* parent, wxWindowID id, const wxString& tit
 
     // Event handlers
     btn->Bind(wxEVT_BUTTON, &MainTestDialog::OnClearList, this);
-    m_btn_7->Bind(wxEVT_BUTTON,
-        [this](wxCommandEvent&)
-        {
-            OnEventName("Ceci est une phrase en français.");
-        });
-    m_btn_5->Bind(wxEVT_BUTTON,
-        [this](wxCommandEvent&)
-        {
-            OnEventName("CmdLinkBtn: wxEVT_BUTTON");
-        });
-    m_btn_6->Bind(wxEVT_BUTTON,
-        [this](wxCommandEvent&)
-        {
-            OnEventName("This is a sentence in English.");
-        });
-    m_btn_3->Bind(wxEVT_BUTTON,
-        [this](wxCommandEvent&)
-        {
-            OnEventName("Button: wxEVT_BUTTON");
-        });
     m_btn->Bind(wxEVT_BUTTON,
         [this](wxCommandEvent&)
         {
@@ -653,7 +652,28 @@ bool MainTestDialog::Create(wxWindow* parent, wxWindowID id, const wxString& tit
         {
             OnEventName("Button: wxEVT_BUTTON");
         });
+    m_btn_5->Bind(wxEVT_BUTTON,
+        [this](wxCommandEvent&)
+        {
+            OnEventName("CmdLinkBtn: wxEVT_BUTTON");
+        });
+    m_btn_3->Bind(wxEVT_BUTTON,
+        [this](wxCommandEvent&)
+        {
+            OnEventName("Button: wxEVT_BUTTON");
+        });
     btn2->Bind(wxEVT_BUTTON, &MainTestDialog::OnPopupBtn, this);
+    m_btn_6->Bind(wxEVT_BUTTON,
+        [this](wxCommandEvent&)
+        {
+            OnEventName("This is a sentence in English.");
+        });
+    m_btn_7->Bind(wxEVT_BUTTON,
+        [this](wxCommandEvent&)
+        {
+            OnEventName("Ceci est une phrase en français.");
+        });
+    disable_bitmaps->Bind(wxEVT_CHECKBOX, &MainTestDialog::OnDisableBitmapsBtn, this);
     m_checkPlayAnimation->Bind(wxEVT_CHECKBOX,
         [this](wxCommandEvent&)
         {
@@ -666,28 +686,22 @@ bool MainTestDialog::Create(wxWindow* parent, wxWindowID id, const wxString& tit
                 m_animation_ctrl->Stop();
             }
         });
-    m_checkBox2->Bind(wxEVT_CHECKBOX,
-        [this](wxCommandEvent&)
-        {
-            OnEventName("CheckBox: wxEVT_CHECKBOX");
-        });
-    disable_bitmaps->Bind(wxEVT_CHECKBOX, &MainTestDialog::OnDisableBitmapsBtn, this);
-    m_checkList_2->Bind(wxEVT_CHECKLISTBOX,
-        [this](wxCommandEvent&)
-        {
-            OnEventName("CheckListBox1: wx.EVT_CHECKLISTBOX");
-        });
     m_checkList2->Bind(wxEVT_CHECKLISTBOX,
         [this](wxCommandEvent&)
         {
             OnEventName("CheckListBox2: wx.EVT_CHECKLISTBOX");
         });
-    m_choice->Bind(wxEVT_CHOICE,
+    m_checkList_2->Bind(wxEVT_CHECKLISTBOX,
+        [this](wxCommandEvent&)
+        {
+            OnEventName("CheckListBox1: wx.EVT_CHECKLISTBOX");
+        });
+    m_choice2->Bind(wxEVT_CHOICE,
         [this](wxCommandEvent&)
         {
             OnEventName("Choice: wx.EVT_CHOICE");
         });
-    m_choice2->Bind(wxEVT_CHOICE,
+    m_choice->Bind(wxEVT_CHOICE,
         [this](wxCommandEvent&)
         {
             OnEventName("Choice: wx.EVT_CHOICE");
@@ -697,12 +711,12 @@ bool MainTestDialog::Create(wxWindow* parent, wxWindowID id, const wxString& tit
         {
             OnEventName("ColourPicker: wxEVT_COLOURPICKER_CHANGED");
         });
-    m_comboBox->Bind(wxEVT_COMBOBOX,
+    m_comboBox2->Bind(wxEVT_COMBOBOX,
         [this](wxCommandEvent&)
         {
             OnEventName("Combobox: wxEVT_COMBOBOX");
         });
-    m_comboBox2->Bind(wxEVT_COMBOBOX,
+    m_comboBox->Bind(wxEVT_COMBOBOX,
         [this](wxCommandEvent&)
         {
             OnEventName("Combobox: wxEVT_COMBOBOX");
@@ -728,15 +742,15 @@ bool MainTestDialog::Create(wxWindow* parent, wxWindowID id, const wxString& tit
             OnEventName("FontPicker: wx.OnFontChanged");
         });
     Bind(wxEVT_INIT_DIALOG, &MainTestDialog::OnInit, this);
-    m_listbox->Bind(wxEVT_LISTBOX,
-        [this](wxCommandEvent&)
-        {
-            OnEventName("ListBox1: wxEVT_LISTBOX");
-        });
     m_listBox2->Bind(wxEVT_LISTBOX,
         [this](wxCommandEvent&)
         {
             OnEventName("ListBox2: wxEVT_LISTBOX");
+        });
+    m_listbox->Bind(wxEVT_LISTBOX,
+        [this](wxCommandEvent&)
+        {
+            OnEventName("ListBox1: wxEVT_LISTBOX");
         });
     m_notebook->Bind(wxEVT_NOTEBOOK_PAGE_CHANGED, &MainTestDialog::OnPageChanged, this);
     radioBox->Bind(wxEVT_RADIOBOX,
@@ -759,15 +773,15 @@ bool MainTestDialog::Create(wxWindow* parent, wxWindowID id, const wxString& tit
         {
             OnEventName("wxStyledTextCtrl: wxEVT_STC_CHANGE");
         });
-    m_text_ctrl->Bind(wxEVT_TEXT,
-        [this](wxCommandEvent&)
-        {
-            OnEventName("wxTextCtrl: wxEVT_TEXT");
-        });
     m_richText->Bind(wxEVT_TEXT,
         [this](wxCommandEvent&)
         {
             OnEventName("wxRichTextCtrl: wxEVT_TEXT");
+        });
+    m_text_ctrl->Bind(wxEVT_TEXT,
+        [this](wxCommandEvent&)
+        {
+            OnEventName("wxTextCtrl: wxEVT_TEXT");
         });
     m_timePicker->Bind(wxEVT_TIME_CHANGED,
         [this](wxDateEvent&)

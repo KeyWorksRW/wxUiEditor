@@ -16,6 +16,20 @@ import dlgissue_956
 import dlgissue_960
 
 import images
+from wx.lib.embeddedimage import PyEmbeddedImage
+
+wxDialog_png = PyEmbeddedImage(
+    b"iVBORw0KGgoAAAANSUhEUgAAABYAAAAWCAYAAADEtGw7AAAACXBIWXMAAAsTAAALEwEAmpwYAAACLklE"
+    b"QVQ4y7WVQWsTURDHf7vZLompaVPQg+jFa8DiqQe/gMceetNCEQX9Bl5ERBD8AF4qKt562EPqKQfpPSJK"
+    b"MBEEb8FcckmTGmmzb8bDvt1skm6bUjqwzHs7782b+c9/3oMLEicevNrtqACoggIqqOrEB6Bi/2PXiCKq"
+    b"LLiKKyOeb95yAFyAFzu/tLAA4fdtir5D2HhLMZ/D/HiPND9wuejDz4+UFn2WSnmWSwXKpQLlpSIr5UX8"
+    b"zcc4955QLJV4+u6bAngA6nrsf9kGiHRlK5lT2aJvx/2/o4x8I+n/M4yMMzY92/mt11f8TLCcaQ/HinJ0"
+    b"FNLu7PP60W3HA8jn4M7VzrkL1nVvcjg4IIEijieo1thYv5voWCqra6c6bTXqXPIdvBxjx9iKp50G1Vry"
+    b"709nvmxEBSNCwgpLnnNLDhAj44jVnhJHmNYAvW57LsehCJKOWFTPhGfWmtBIEqSbxjjeEOugWku+aafT"
+    b"ayKQSTo0giJqZlqNOpXVNVqN+gwc6epnrRHb7mMoUhjHG06jVgYvEE0VzxgzYV6+cmNmS1zAk2wgmNCk"
+    b"WTFLt8+NyXuhuRewdX/jRJsYQW2Q7jTd5pG8by8ah6TToszHHeEdt7HXbdPcC8iyfa0FWfdQIl5WVHHa"
+    b"Z7VNOO4PhrSH11CViNIa9b2TopHYOkTJxq+MnauScx2GhwN6B2byqn7w8pOKRE+NiiBqtTFIfKDlvIok"
+    b"zRDRS6MXTZTdNw8dLlL+A4iuUQ4KRZVvAAAAAElFTkSuQmCC")
 
 class MainFrame(wx.Frame):
 
@@ -122,20 +136,32 @@ class MainFrame(wx.Frame):
         menu_item_6.SetBitmap(wx.BitmapBundle.FromBitmap(images.Ainsi_c3_a_se_passe_png.Bitmap))
         submenu.Append(menu_item_6)
         submenu_item = menuDialogs.AppendSubMenu(submenu, "Issue Dialogs")
-        submenu_item.SetBitmap(wx.BitmapBundle.FromBitmap(images.wxDialog_png.Bitmap))
+        submenu_item.SetBitmap(wx.BitmapBundle.FromBitmap(wxDialog_png.Bitmap))
         menubar.Append(menuDialogs, "&Dialogs")
 
         self.SetMenuBar(menubar)
 
         self.m_toolBar = self.CreateToolBar()
+
+        tool_dropdown = self.m_toolBar.AddTool(wx.ID_ANY, "",
+            wx.ArtProvider.GetBitmapBundle(wx.ART_EXECUTABLE_FILE, wx.ART_MENU),
+            wx.EmptyString, wx.ITEM_DROPDOWN)
+        tool_dropdown_menu = wx.Menu()
+        menu_item = wx.MenuItem(tool_dropdown_menu, wx.ID_ANY, "Wizard...")
+        menu_item.SetBitmap(wx.ArtProvider.GetBitmapBundle(wx.ART_FIND, wx.ART_MENU))
+        tool_dropdown_menu.Append(menu_item)
+        tool_dropdown.SetDropdownMenu(tool_dropdown_menu)
         tool_4 = self.m_toolBar.AddTool(wx.ID_ANY, "MainTestDlg", wx.BitmapBundle.FromBitmap(
             images.debug_32_png.Bitmap))
 
         tool_5 = self.m_toolBar.AddTool(wx.ID_ANY, "BookTestDlg", wx.BitmapBundle.FromBitmap(
             images.wxNotebook_png.Bitmap))
 
+        self.m_toolBar.AddSeparator()
         tool_3 = self.m_toolBar.AddTool(wx.ID_ANY, "PythonDlg", wx.BitmapBundle.FromBitmap(
             images.wxPython_1_5x_png.Bitmap))
+
+        self.m_toolBar.AddStretchableSpace()
 
         tool_2 = self.m_toolBar.AddTool(wx.ID_ANY, "Common Controls...",
             wx.ArtProvider.GetBitmapBundle(wx.ART_TIP, wx.ART_TOOLBAR))
@@ -158,6 +184,7 @@ class MainFrame(wx.Frame):
         self.Bind(wx.EVT_MENU, self.OnWizard, id=menuItem3.GetId())
         self.Bind(wx.EVT_MENU, self.OnDlgIssue_956, id=menu_item_5.GetId())
         self.Bind(wx.EVT_MENU, self.OnDlgIssue_960, id=menu_item_6.GetId())
+        self.Bind(wx.EVT_MENU, self.OnWizard, id=menu_item.GetId())
         self.Bind(wx.EVT_TOOL, self.OnMainTestDlg, id=tool_4.GetId())
         self.Bind(wx.EVT_TOOL, self.OnBookTestDlg, id=tool_5.GetId())
         self.Bind(wx.EVT_TOOL, self.OnPythonDlg, id=tool_3.GetId())

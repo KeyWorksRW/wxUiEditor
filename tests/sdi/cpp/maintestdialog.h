@@ -9,6 +9,7 @@
 
 #pragma once
 
+#include <wx/activityindicator.h>
 #include <wx/animate.h>
 #include <wx/bannerwindow.h>
 #include <wx/bitmap.h>
@@ -25,6 +26,7 @@
 #include <wx/dialog.h>
 #include <wx/editlbox.h>
 #include <wx/event.h>
+#include <wx/filectrl.h>
 #include <wx/filepicker.h>
 #include <wx/font.h>
 #include <wx/fontpicker.h>
@@ -88,6 +90,7 @@ protected:
 
     // Class member variables
 
+    wxActivityIndicator* indicator;
     wxAnimationCtrl* m_animation_ctrl;
     wxBannerWindow* m_banner;
     wxBannerWindow* m_banner_left;
@@ -100,7 +103,7 @@ protected:
     wxButton* m_btn_6;
     wxButton* m_btn_7;
     wxButton* m_btn_bitmaps;
-    wxCheckBox* m_checkBox2;
+    wxCheckBox* m_checkBox;
     wxCheckBox* m_checkPlayAnimation;
     wxCheckListBox* m_checkList2;
     wxCheckListBox* m_checkList;
@@ -114,6 +117,7 @@ protected:
     wxDatePickerCtrl* m_datePicker;
     wxDirPickerCtrl* m_dirPicker;
     wxEditableListBox* m_edit_listbox;
+    wxFileCtrl* fileCtrl;
     wxFilePickerCtrl* m_filePicker;
     wxFontPickerCtrl* m_fontPicker;
     wxListBox* m_events_list;

@@ -70,6 +70,9 @@
         bitmap="Embed;re.png" />
       <node
         class="embedded_image"
+        bitmap="Embed;ribbon_button_hybrid.png" />
+      <node
+        class="embedded_image"
         bitmap="Embed;toggle_button.png" />
       <node
         class="embedded_image"
@@ -77,9 +80,6 @@
       <node
         class="embedded_image"
         bitmap="Embed;wiztest2.png" />
-      <node
-        class="embedded_image"
-        bitmap="Embed;../src/art_src/wxDialog.png" />
       <node
         class="embedded_image"
         bitmap="Embed;../src/art_src/wxNotebook.png" />
@@ -251,6 +251,16 @@
       <node
         class="wxToolBar">
         <node
+          class="tool_dropdown"
+          bitmap="Art;wxART_EXECUTABLE_FILE|wxART_MENU"
+          label="">
+          <node
+            class="wxMenuItem"
+            bitmap="Art;wxART_FIND|wxART_MENU"
+            label="Wizard..."
+            wxEVT_MENU="OnWizard" />
+        </node>
+        <node
           class="tool"
           bitmap="Embed;../src/art_src/debug_32.png"
           label="MainTestDlg"
@@ -263,11 +273,15 @@
           var_name="tool_5"
           wxEVT_TOOL="OnBookTestDlg" />
         <node
+          class="toolSeparator" />
+        <node
           class="tool"
           bitmap="Embed;wxPython_1_5x.png"
           label="PythonDlg"
           var_name="tool_3"
           wxEVT_TOOL="OnPythonDlg" />
+        <node
+          class="toolStretchable" />
         <node
           class="tool"
           bitmap="Art;wxART_TIP|wxART_TOOLBAR"
@@ -421,6 +435,10 @@
                   wxEVT_RADIOBOX="[this](wxCommandEvent&amp;)@@{@@OnEventName(&quot;RadioBox: wxEVT_RADIOBOX&quot;);@@}[python:lambda]self.OnEventName(&quot;RadioBox: wx.EVT_RADIOBOX&quot;)" />
               </node>
               <node
+                class="wxStaticLine"
+                size="20,-1d"
+                flags="wxEXPAND" />
+              <node
                 class="wxBoxSizer"
                 var_name="box_sizer_19"
                 flags="wxEXPAND">
@@ -452,11 +470,10 @@
                     alignment="wxALIGN_CENTER"
                     wxEVT_RADIOBUTTON="[this](wxCommandEvent&amp;)@@{@@OnEventName(&quot;RadioButton: wxEVT_RADIOBUTTON&quot;);@@}[python:lambda]self.OnEventName(&quot;RadioButton: wx.EVT_RADIOBUTTON&quot;)" />
                   <node
-                    class="wxCheckBox"
+                    class="Check3State"
+                    initial_state="wxCHK_UNDETERMINED"
                     label="Checkbox"
-                    var_name="m_checkBox2"
-                    alignment="wxALIGN_CENTER"
-                    wxEVT_CHECKBOX="[this](wxCommandEvent&amp;)@@{@@OnEventName(&quot;CheckBox: wxEVT_CHECKBOX&quot;);@@}[python:lambda]self.OnEventName(&quot;CheckBox: wx.EVT_CHECKBOX&quot;)" />
+                    alignment="wxALIGN_CENTER" />
                 </node>
                 <node
                   class="StaticCheckboxBoxSizer"
@@ -476,6 +493,10 @@
                     animation="Embed;art/clr_hourglass.gif"
                     inactive_bitmap="Embed;disabled.png" />
                 </node>
+                <node
+                  class="wxActivityIndicator"
+                  auto_start="1"
+                  var_name="indicator" />
               </node>
             </node>
           </node>
@@ -685,88 +706,94 @@
                 var_name="static_box_2"
                 flags="wxEXPAND">
                 <node
-                  class="wxBoxSizer">
+                  class="wxGridSizer">
                   <node
-                    class="wxStaticText"
-                    class_access="none"
-                    label="File:"
-                    var_name="staticText__2"
-                    alignment="wxALIGN_CENTER_VERTICAL" />
+                    class="wxBoxSizer">
+                    <node
+                      class="wxStaticText"
+                      class_access="none"
+                      label="File:"
+                      var_name="staticText__2"
+                      alignment="wxALIGN_CENTER_VERTICAL" />
+                    <node
+                      class="wxFilePickerCtrl"
+                      wildcard="BMP files|*.bmp"
+                      wxEVT_FILEPICKER_CHANGED="[this](wxFileDirPickerEvent&amp;)@@{@@OnEventName(&quot;FilePicker: wxEVT_FILEPICKER_CHANGED&quot;);@@}[python:lambda]self.OnEventName(&quot;FilePicker: wx.EVT_FILEPICKER_CHANGED&quot;)" />
+                  </node>
                   <node
-                    class="wxFilePickerCtrl"
-                    wildcard="BMP files|*.bmp"
-                    wxEVT_FILEPICKER_CHANGED="[this](wxFileDirPickerEvent&amp;)@@{@@OnEventName(&quot;FilePicker: wxEVT_FILEPICKER_CHANGED&quot;);@@}[python:lambda]self.OnEventName(&quot;FilePicker: wx.EVT_FILEPICKER_CHANGED&quot;)" />
-                </node>
-                <node
-                  class="wxBoxSizer"
-                  var_name="box_sizer_2">
+                    class="wxBoxSizer"
+                    var_name="box_sizer_2">
+                    <node
+                      class="wxStaticText"
+                      class_access="none"
+                      label="Directory:"
+                      var_name="staticText__3"
+                      alignment="wxALIGN_CENTER_VERTICAL" />
+                    <node
+                      class="wxDirPickerCtrl"
+                      initial_path="."
+                      style="wxDIRP_DEFAULT_STYLE|wxDIRP_SMALL"
+                      wxEVT_DIRPICKER_CHANGED="[this](wxFileDirPickerEvent&amp;)@@{@@OnEventName(&quot;DirPicker: wxEVT_DIRPICKER_CHANGED&quot;);@@}[python:lambda]self.OnEventName(&quot;DirPicker: wx.EVT_DIRPICKER_CHANGED&quot;)" />
+                  </node>
                   <node
-                    class="wxStaticText"
-                    class_access="none"
-                    label="Directory:"
-                    var_name="staticText__3"
-                    alignment="wxALIGN_CENTER_VERTICAL" />
+                    class="wxBoxSizer"
+                    var_name="box_sizer_4">
+                    <node
+                      class="wxStaticText"
+                      class_access="none"
+                      label="Colour:"
+                      var_name="staticText__4"
+                      alignment="wxALIGN_CENTER_VERTICAL" />
+                    <node
+                      class="wxColourPickerCtrl"
+                      wxEVT_COLOURPICKER_CHANGED="[this](wxColourPickerEvent&amp;)@@{@@OnEventName(&quot;ColourPicker: wxEVT_COLOURPICKER_CHANGED&quot;);@@}[python:lambda]self.OnEventName(&quot;ColourPicker: wx.EVT_COLOURPICKER_CHANGED&quot;)" />
+                  </node>
                   <node
-                    class="wxDirPickerCtrl"
-                    initial_path="."
-                    style="wxDIRP_DEFAULT_STYLE|wxDIRP_SMALL"
-                    wxEVT_DIRPICKER_CHANGED="[this](wxFileDirPickerEvent&amp;)@@{@@OnEventName(&quot;DirPicker: wxEVT_DIRPICKER_CHANGED&quot;);@@}[python:lambda]self.OnEventName(&quot;DirPicker: wx.EVT_DIRPICKER_CHANGED&quot;)" />
-                </node>
-                <node
-                  class="wxBoxSizer"
-                  var_name="box_sizer_4">
+                    class="wxBoxSizer"
+                    var_name="box_sizer_9">
+                    <node
+                      class="wxStaticText"
+                      class_access="none"
+                      label="Font:"
+                      var_name="staticText__7"
+                      alignment="wxALIGN_CENTER_VERTICAL" />
+                    <node
+                      class="wxFontPickerCtrl"
+                      initial_font="Comic Sans MS,90,400,-1,70,0"
+                      style="wxFNTP_DEFAULT_STYLE|wxFNTP_USE_TEXTCTRL"
+                      wxEVT_FONTPICKER_CHANGED="[this](wxFontPickerEvent&amp;)@@{@@OnEventName(&quot;FontPicker: wx.OnFontChanged&quot;);@@}[python:lambda]self.OnEventName(&quot;FontPicker: wx.OnFontChanged&quot;)" />
+                  </node>
                   <node
-                    class="wxStaticText"
-                    class_access="none"
-                    label="Colour:"
-                    var_name="staticText__4"
-                    alignment="wxALIGN_CENTER_VERTICAL" />
+                    class="wxBoxSizer"
+                    var_name="box_sizer_6">
+                    <node
+                      class="wxStaticText"
+                      class_access="none"
+                      label="Date:"
+                      var_name="staticText__5"
+                      alignment="wxALIGN_CENTER_VERTICAL" />
+                    <node
+                      class="wxDatePickerCtrl"
+                      wxEVT_DATE_CHANGED="[this](wxDateEvent&amp;)@@{@@OnEventName(&quot;DatePicker: wx.EVT_DATE_CHANGED&quot;);@@}[python:lambda]self.OnEventName(&quot;DatePicker: wx.EVT_DATE_CHANGED&quot;)" />
+                  </node>
                   <node
-                    class="wxColourPickerCtrl"
-                    wxEVT_COLOURPICKER_CHANGED="[this](wxColourPickerEvent&amp;)@@{@@OnEventName(&quot;ColourPicker: wxEVT_COLOURPICKER_CHANGED&quot;);@@}[python:lambda]self.OnEventName(&quot;ColourPicker: wx.EVT_COLOURPICKER_CHANGED&quot;)" />
-                </node>
-                <node
-                  class="wxBoxSizer"
-                  var_name="box_sizer_6">
-                  <node
-                    class="wxStaticText"
-                    class_access="none"
-                    label="Date:"
-                    var_name="staticText__5"
-                    alignment="wxALIGN_CENTER_VERTICAL" />
-                  <node
-                    class="wxDatePickerCtrl"
-                    wxEVT_DATE_CHANGED="[this](wxDateEvent&amp;)@@{@@OnEventName(&quot;DatePicker: wx.EVT_DATE_CHANGED&quot;);@@}[python:lambda]self.OnEventName(&quot;DatePicker: wx.EVT_DATE_CHANGED&quot;)" />
-                </node>
-                <node
-                  class="wxBoxSizer"
-                  var_name="box_sizer_8">
-                  <node
-                    class="wxStaticText"
-                    class_access="none"
-                    label="Time:"
-                    var_name="staticText__6"
-                    alignment="wxALIGN_CENTER_VERTICAL" />
-                  <node
-                    class="wxTimePickerCtrl"
-                    wxEVT_TIME_CHANGED="[this](wxDateEvent&amp;)@@{@@OnEventName(&quot;TimePicker: wxEVT_TIME_CHANGED&quot;);@@}[python:lambda]self.OnEventName(&quot;TimePicker: wx.EVT_TIME_CHANGED&quot;)" />
-                </node>
-                <node
-                  class="wxBoxSizer"
-                  var_name="box_sizer_9">
-                  <node
-                    class="wxStaticText"
-                    class_access="none"
-                    label="Font:"
-                    var_name="staticText__7"
-                    alignment="wxALIGN_CENTER_VERTICAL" />
-                  <node
-                    class="wxFontPickerCtrl"
-                    initial_font="Comic Sans MS,90,400,-1,70,0"
-                    style="wxFNTP_DEFAULT_STYLE|wxFNTP_USE_TEXTCTRL"
-                    wxEVT_FONTPICKER_CHANGED="[this](wxFontPickerEvent&amp;)@@{@@OnEventName(&quot;FontPicker: wx.OnFontChanged&quot;);@@}[python:lambda]self.OnEventName(&quot;FontPicker: wx.OnFontChanged&quot;)" />
+                    class="wxBoxSizer"
+                    var_name="box_sizer_8">
+                    <node
+                      class="wxStaticText"
+                      class_access="none"
+                      label="Time:"
+                      var_name="staticText__6"
+                      alignment="wxALIGN_CENTER_VERTICAL" />
+                    <node
+                      class="wxTimePickerCtrl"
+                      wxEVT_TIME_CHANGED="[this](wxDateEvent&amp;)@@{@@OnEventName(&quot;TimePicker: wxEVT_TIME_CHANGED&quot;);@@}[python:lambda]self.OnEventName(&quot;TimePicker: wx.EVT_TIME_CHANGED&quot;)" />
+                  </node>
                 </node>
               </node>
+              <node
+                class="wxFileCtrl"
+                var_name="fileCtrl" />
             </node>
           </node>
           <node
@@ -882,6 +909,8 @@
                         class="ribbonTool"
                         bitmap="Art;wxART_GOTO_FIRST|wxART_TOOLBAR"
                         id="wxID_FILE1" />
+                      <node
+                        class="ribbonSeparator" />
                       <node
                         class="ribbonTool"
                         bitmap="Art;wxART_GOTO_LAST|wxART_TOOLBAR"

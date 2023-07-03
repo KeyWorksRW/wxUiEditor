@@ -64,6 +64,24 @@ int NodeProperty::as_id() const
     return NodeCreation.GetConstantAsInt(m_value, wxID_ANY);
 }
 
+tt_string NodeProperty::get_prop_id() const
+{
+    tt_string id;
+    if (auto pos = m_value.find('='); pos != tt::npos)
+    {
+        while (pos > 0 && tt::is_whitespace(m_value[pos - 1]))
+        {
+            --pos;
+        }
+        id = m_value.substr(0, pos);
+    }
+    else
+    {
+        id = m_value;
+    }
+    return id;
+}
+
 int NodeProperty::as_mockup(std::string_view prefix) const
 {
     switch (type())

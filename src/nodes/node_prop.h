@@ -82,6 +82,9 @@ public:
     // NodeProperty.
     tt_string& get_value() { return m_value; }
 
+    // Returns string containing the property ID without any assignment if it is a custom id.
+    tt_string get_prop_id() const;
+
     const tt_string& value() const { return m_value; }
 
     int as_int() const;

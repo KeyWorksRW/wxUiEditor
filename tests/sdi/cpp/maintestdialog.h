@@ -58,16 +58,19 @@ public:
     wxHtmlWindow* m_htmlWin;
 
     MainTestDialog() {}
-    MainTestDialog(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = wxEmptyString,
+    MainTestDialog(wxWindow *parent, wxWindowID id = DLG_MAINTEST, const wxString& title = wxEmptyString,
         const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_DIALOG_STYLE, const wxString &name = wxDialogNameStr)
     {
         Create(parent, id, title, pos, size, style, name);
     }
 
-    bool Create(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = wxEmptyString, const wxPoint& pos =
-        wxDefaultPosition, const wxSize& size = wxDefaultSize,
+    bool Create(wxWindow *parent, wxWindowID id = DLG_MAINTEST, const wxString& title = wxEmptyString,
+        const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_DIALOG_STYLE, const wxString &name = wxDialogNameStr);
+
+    static const int DLG_MAINTEST = wxID_HIGHEST + 100;
+    static const int ID_RICHTEXT = 100;
 
     void OnEventName(const std::string& event_name)
     {

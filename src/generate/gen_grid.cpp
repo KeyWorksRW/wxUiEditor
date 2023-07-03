@@ -134,7 +134,7 @@ wxObject* GridGenerator::CreateMockup(Node* node, wxObject* parent)
 
 bool GridGenerator::ConstructionCode(Code& code)
 {
-    code.AddAuto().NodeName().CreateClass().ValidParentName().Comma().Add(prop_id);
+    code.AddAuto().NodeName().CreateClass().ValidParentName().Comma().as_string(prop_id);
     code.PosSizeFlags(false, "wxWANTS_CHARS");
 
     return true;

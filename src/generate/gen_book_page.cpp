@@ -208,7 +208,7 @@ bool BookPageGenerator::ConstructionCode(Code& code)
             treebook = treebook->GetParent();
         }
 
-        code.NodeName(treebook).Comma().Add(prop_id);
+        code.NodeName(treebook).Comma().as_string(prop_id);
         code.PosSizeFlags();
 
         // If the last parameter is wxID_ANY, then remove it. This is the default value, so it's

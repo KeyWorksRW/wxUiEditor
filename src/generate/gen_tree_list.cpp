@@ -36,7 +36,7 @@ void TreeListCtrlGenerator::AfterCreation(wxObject* wxobject, wxWindow* /* wxpar
 
 bool TreeListCtrlGenerator::ConstructionCode(Code& code)
 {
-    code.AddAuto().NodeName().CreateClass().ValidParentName().Comma().Add(prop_id);
+    code.AddAuto().NodeName().CreateClass().ValidParentName().Comma().as_string(prop_id);
     code.PosSizeFlags(true, "wxTL_DEFAULT_STYLE");
 
     return true;

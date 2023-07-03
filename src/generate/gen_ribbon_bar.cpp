@@ -63,7 +63,7 @@ bool RibbonBarFormGenerator::ConstructionCode(Code& code)
     else
     {
         code.Add("class ").NodeName().Add("(wx.RibbonBar):\n");
-        code.Eol().Tab().Add("def __init__(self, parent, id=").Add(prop_id);
+        code.Eol().Tab().Add("def __init__(self, parent, id=").as_string(prop_id);
         code.Indent(3);
         code.Comma().Add("pos=").Pos(prop_pos);
         code.Comma().Add("size=").WxSize(prop_size);
@@ -90,7 +90,7 @@ bool RibbonBarFormGenerator::HeaderCode(Code& code)
 {
     auto* node = code.node();
 
-    code.NodeName().Str("(wxWindow* parent, wxWindowID id = ").Str(prop_id);
+    code.NodeName().Str("(wxWindow* parent, wxWindowID id = ").as_string(prop_id);
     code.Comma().Str("const wxPoint& pos = ");
 
     auto position = node->as_wxPoint(prop_pos);
@@ -230,7 +230,7 @@ void RibbonBarGenerator::OnPageChanged(wxRibbonBarEvent& event)
 bool RibbonBarGenerator::ConstructionCode(Code& code)
 {
     code.AddAuto().NodeName();
-    code.CreateClass().ValidParentName().Comma().Add(prop_id);
+    code.CreateClass().ValidParentName().Comma().as_string(prop_id);
     code.PosSizeFlags(false, "wxRIBBON_BAR_DEFAULT_STYLE");
 
     return true;

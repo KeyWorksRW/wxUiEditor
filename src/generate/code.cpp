@@ -503,6 +503,18 @@ Code& Code::EndFunction()
 
 Code& Code::as_string(PropName prop_name)
 {
+    if (prop_name == prop_id)
+    {
+        auto result = m_node->get_prop_id();
+        CheckLineLength(result.size());
+
+        if (is_python() && result._Starts_with("wx"))
+        {
+            result.insert(2, ".");
+        }
+        *this += result;
+        return *this;
+    }
     auto& str = m_node->as_string(prop_name);
     if (is_cpp())
     {

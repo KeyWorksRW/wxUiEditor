@@ -67,7 +67,7 @@ bool DialogFormGenerator::ConstructionCode(Code& code)
         // SettingsCode(). From the user's perspective, it looks like one-step creation, but
         // it's actually two steps.
         code.Add("class ").NodeName().Str("(wx.Dialog):");
-        code.Eol().Tab().Add("def __init__(self, parent, id=").Add(prop_id);
+        code.Eol().Tab().Add("def __init__(self, parent, id=").as_string(prop_id);
         code.Indent(3);
         code.Comma().Str("title=").QuotedString(prop_title).Comma().Add("pos=").Pos(prop_pos);
         code.Comma().Str("size=").WxSize(prop_size).Comma();
@@ -162,7 +162,7 @@ bool DialogFormGenerator::HeaderCode(Code& code)
     auto* node = code.node();
     code.NodeName() += "() {}";
     code.Eol().NodeName() += "(wxWindow *parent";
-    code.Comma().Str("wxWindowID id = ").Str(prop_id);
+    code.Comma().Str("wxWindowID id = ").as_string(prop_id);
     code.Comma().Str("const wxString& title = ").QuotedString(prop_title);
     code.Comma().Str("const wxPoint& pos = ");
 
@@ -195,7 +195,7 @@ bool DialogFormGenerator::HeaderCode(Code& code)
     code.Str(")").Eol().OpenBrace().Str("Create(parent, id, title, pos, size, style, name);").CloseBrace();
 
     code.Eol().Str("bool Create(wxWindow *parent");
-    code.Comma().Str("wxWindowID id = ").Str(prop_id);
+    code.Comma().Str("wxWindowID id = ").as_string(prop_id);
     code.Comma().Str("const wxString& title = ").QuotedString(prop_title);
     code.Comma().Str("const wxPoint& pos = ");
 

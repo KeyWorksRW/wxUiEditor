@@ -74,7 +74,7 @@ bool MainTestDialog::Create(wxWindow* parent, wxWindowID id, const wxString& tit
     m_text_ctrl->SetHint("wxTextCtrl");
     page_sizer_1->Add(m_text_ctrl, wxSizerFlags().Expand().Border(wxALL));
 
-    m_richText = new wxRichTextCtrl(page_2, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxRE_MULTILINE|
+    m_richText = new wxRichTextCtrl(page_2, ID_RICHTEXT, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxRE_MULTILINE|
         wxVSCROLL | wxHSCROLL | wxNO_BORDER | wxWANTS_CHARS);
     m_richText->SetHint("wxRichTextCtrl");
     m_richText->SetMinSize(ConvertDialogToPixels(wxSize(150, 30)));

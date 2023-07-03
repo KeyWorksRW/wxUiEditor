@@ -201,6 +201,9 @@ public:
         }
     }
 
+    // Returns string containing the property ID without any assignment if it is a custom id.
+    tt_string get_prop_id() const;
+
     const tt_string& value(PropName name) const { return as_string(name); }
 
     const tt_string_view view(PropName name) const { return as_string(name); }

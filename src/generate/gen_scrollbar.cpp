@@ -30,7 +30,7 @@ wxObject* ScrollBarGenerator::CreateMockup(Node* node, wxObject* parent)
 
 bool ScrollBarGenerator::ConstructionCode(Code& code)
 {
-    code.AddAuto().NodeName().CreateClass().ValidParentName().Comma().Add(prop_id);
+    code.AddAuto().NodeName().CreateClass().ValidParentName().Comma().as_string(prop_id);
     code.PosSizeFlags();
 
     return true;

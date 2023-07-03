@@ -11,6 +11,8 @@ import wx.html
 import wx.ribbon
 import wx.richtext
 import wx.stc
+DLG_MAINTEST = wx.ID_HIGHEST + 100
+ID_RICHTEXT = 100
 
 import images
 from wx.lib.embeddedimage import PyEmbeddedImage
@@ -54,7 +56,7 @@ clr_hourglass_gif = PyEmbeddedImage(
 import popupwin
 
 class MainTestDialog(wx.Dialog):
-    def __init__(self, parent, id=wx.ID_ANY, title="", pos=
+    def __init__(self, parent, id=DLG_MAINTEST, title="", pos=
                 wx.DefaultPosition, size=wx.DefaultSize,
                 style=wx.DEFAULT_DIALOG_STYLE, name=wx.DialogNameStr):
         wx.Dialog.__init__(self)
@@ -79,7 +81,7 @@ class MainTestDialog(wx.Dialog):
         self.m_text_ctrl.SetHint("wxTextCtrl")
         page_sizer_1.Add(self.m_text_ctrl, wx.SizerFlags().Expand().Border(wx.ALL))
 
-        self.m_richText = wx.richtext.RichTextCtrl(page_2, wx.ID_ANY, "",
+        self.m_richText = wx.richtext.RichTextCtrl(page_2, ID_RICHTEXT, "",
             wx.DefaultPosition, wx.DefaultSize, wx.richtext.RE_MULTILINE|wx.VSCROLL|wx.HSCROLL|
             wx.NO_BORDER|wx.WANTS_CHARS)
         self.m_richText.SetHint("wxRichTextCtrl")

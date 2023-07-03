@@ -58,7 +58,7 @@ void RibbonToolBarGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxpar
 bool RibbonToolBarGenerator::ConstructionCode(Code& code)
 {
     code.AddAuto().NodeName();
-    code.CreateClass().ParentName().Comma().Add(prop_id).PosSizeFlags();
+    code.CreateClass().ParentName().Comma().as_string(prop_id).PosSizeFlags();
 
     return true;
 }
@@ -98,7 +98,7 @@ int RibbonToolBarGenerator::GenXrcObject(Node* /* node */, pugi::xml_node& /* ob
 
 bool RibbonToolGenerator::ConstructionCode(Code& code)
 {
-    code.ParentName().Function("AddTool(").Add(prop_id);
+    code.ParentName().Function("AddTool(").as_string(prop_id);
     code.Comma();
     GenerateSingleBitmapCode(code, code.node()->as_string(prop_bitmap));
     code.Comma().QuotedString(prop_help).Comma().Add(prop_kind).EndFunction();

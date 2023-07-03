@@ -47,7 +47,7 @@ wxObject* HtmlListBoxGenerator::CreateMockup(Node* node, wxObject* parent)
 
 bool HtmlListBoxGenerator::ConstructionCode(Code& code)
 {
-    code.AddAuto().NodeName().CreateClass().ValidParentName().Comma().Add(prop_id);
+    code.AddAuto().NodeName().CreateClass().ValidParentName().Comma().as_string(prop_id);
     if (auto params_needed = code.WhatParamsNeeded("wxHLB_DEFAULT_STYLE"); params_needed != nothing_needed)
     {
         code.Comma().Pos().Comma().WxSize();

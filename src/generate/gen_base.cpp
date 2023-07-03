@@ -1260,7 +1260,7 @@ void BaseCodeGenerator::GenerateClassHeader(Node* form_node, EventVector& events
         {
             code.Eol(eol_if_needed).Str("const int form_id = ");
             if (form_node->value(prop_id).size())
-                code.Str(prop_id) += ";";
+                code.as_string(prop_id) += ";";
             else
                 code.Str("wxID_ANY;");
         }

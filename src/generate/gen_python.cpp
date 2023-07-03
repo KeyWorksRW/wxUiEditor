@@ -305,14 +305,23 @@ void BaseCodeGenerator::GeneratePythonClass(Node* form_node, PANEL_PAGE panel_ty
     {
         if (!iter.starts_with("self."))
         {
-            m_source->writeLine(tt_string() << iter << " = wxID_HIGHEST + " << id_value++);
+            m_source->writeLine(tt_string() << iter << " = wx.ID_HIGHEST + " << id_value++);
         }
     }
     for (auto& iter: m_set_const_ids)
     {
         if (!iter.starts_with("self."))
         {
-            m_source->writeLine(iter);
+            if (tt::contains(iter, " wx"))
+            {
+                tt_string id = iter;
+                id.Replace(" wx", " wx.", true, tt::CASE::exact);
+                m_source->writeLine(id);
+            }
+            else
+            {
+                m_source->writeLine(iter);
+            }
         }
     }
 

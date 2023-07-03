@@ -479,7 +479,7 @@ bool StyledTextGenerator::ConstructionCode(Code& code)
     if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
     code.NodeName().CreateClass();
-    code.ValidParentName().Comma().Add(prop_id);
+    code.ValidParentName().Comma().as_string(prop_id);
     code.PosSizeFlags(true);
 
     // If the last parameter is wxID_ANY, then remove it. This is the default value, so it's

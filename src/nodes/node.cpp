@@ -410,6 +410,14 @@ tt_string* Node::prop_as_raw_ptr(PropName name)
         return nullptr;
 }
 
+tt_string Node::get_prop_id() const
+{
+    tt_string id;
+    if (auto result = m_prop_indices.find(prop_id); result != m_prop_indices.end())
+        id = m_properties[result->second].get_prop_id();
+    return id;
+}
+
 std::vector<NODEPROP_STATUSBAR_FIELD> Node::as_statusbar_fields(PropName name)
 {
     if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())

@@ -296,6 +296,7 @@
     <node
       class="wxDialog"
       class_name="MainTestDialog"
+      id="DLG_MAINTEST = wxID_HIGHEST + 100"
       base_file="maintestdialog"
       inserted_hdr_code="void OnEventName(const std::string&amp; event_name)@@{@@    m_events_list->Select(m_events_list->Append(wxString().FromUTF8(event_name)));@@}"
       insert_python_code="import popupwin"
@@ -332,6 +333,7 @@
               <node
                 class="wxRichTextCtrl"
                 hint="wxRichTextCtrl"
+                id="ID_RICHTEXT = 100"
                 minimum_size="150,30d"
                 window_style="wxVSCROLL | wxHSCROLL | wxNO_BORDER | wxWANTS_CHARS"
                 flags="wxEXPAND"

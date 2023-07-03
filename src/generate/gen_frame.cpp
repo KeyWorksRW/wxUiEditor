@@ -37,7 +37,7 @@ bool FrameFormGenerator::ConstructionCode(Code& code)
     else
     {
         code.Add("class ").NodeName().Add("(wx.Frame):\n");
-        code.Eol().Tab().Add("def __init__(self, parent, id=").Add(prop_id);
+        code.Eol().Tab().Add("def __init__(self, parent, id=").as_string(prop_id);
         code.Indent(3);
         code.Comma().Str("title=").QuotedString(prop_title).Comma().Add("pos=").Pos(prop_pos);
         code.Comma().Add("size=").WxSize(prop_size);
@@ -125,7 +125,7 @@ bool FrameFormGenerator::HeaderCode(Code& code)
 {
     auto* node = code.node();
     code.NodeName() += "() {}";
-    code.Eol().NodeName().Str("(wxWindow* parent, wxWindowID id = ").Str(prop_id);
+    code.Eol().NodeName().Str("(wxWindow* parent, wxWindowID id = ").as_string(prop_id);
     code.Comma().Str("const wxString& title = ");
     auto& title = node->as_string(prop_title);
     if (code.HasValue(prop_title))

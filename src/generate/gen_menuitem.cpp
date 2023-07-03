@@ -61,7 +61,7 @@ bool MenuItemGenerator::ConstructionCode(Code& code)
         code.NodeName();
         code.AddIfCpp(" = Append(");
         code.AddIfPython(" = self.Append(");
-        code.Add(prop_id).Comma();
+        code.as_string(prop_id).Comma();
     }
     else
     {
@@ -71,7 +71,7 @@ bool MenuItemGenerator::ConstructionCode(Code& code)
             code.Add(prop_stock_id).EndFunction();
             return true;
         }
-        code.Add(prop_id).Comma();
+        code.as_string(prop_id).Comma();
     }
 
     auto& label = node->value(prop_label);

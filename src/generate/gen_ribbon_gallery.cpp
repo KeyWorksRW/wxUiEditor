@@ -48,7 +48,7 @@ void RibbonGalleryGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxpar
 bool RibbonGalleryGenerator::ConstructionCode(Code& code)
 {
     code.AddAuto().NodeName();
-    code.CreateClass().ParentName().Comma().Add(prop_id).PosSizeFlags();
+    code.CreateClass().ParentName().Comma().as_string(prop_id).PosSizeFlags();
 
     return true;
 }

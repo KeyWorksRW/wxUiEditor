@@ -31,7 +31,7 @@ bool StaticBoxGenerator::ConstructionCode(Code& code)
     if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
     code.NodeName().CreateClass();
-    code.ValidParentName().Comma().Add(prop_id).Comma().QuotedString(prop_label);
+    code.ValidParentName().Comma().as_string(prop_id).Comma().QuotedString(prop_label);
     code.PosSizeFlags(true);
 
     return true;

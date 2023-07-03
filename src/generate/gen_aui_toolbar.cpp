@@ -111,7 +111,7 @@ bool AuiToolBarGenerator::ConstructionCode(Code& code)
     if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
     code.NodeName().CreateClass();
-    code.ValidParentName().Comma().Add(prop_id);
+    code.ValidParentName().Comma().as_string(prop_id);
     code.PosSizeFlags(false, "wxAUI_TB_DEFAULT_STYLE");
 
     return true;
@@ -283,7 +283,7 @@ bool AuiToolLabelGenerator::ConstructionCode(Code& code)
     {
         code.FormFunction("AddLabel(");
     }
-    code.Add(prop_id).Comma().QuotedString(prop_label);
+    code.as_string(prop_id).Comma().QuotedString(prop_label);
     if (code.IntValue(prop_width) >= 0)
         code.Comma().Str(prop_width);
     code.EndFunction();

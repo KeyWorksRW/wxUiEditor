@@ -350,7 +350,7 @@ void EventHandlerDlg::FormatBindText()
     {
         code << "Bind(" << handler << ", ";
         if (m_event->GetNode()->value(prop_id) != "wxID_ANY")
-            code.Add(prop_id).EndFunction();
+            code.as_string(prop_id).EndFunction();
         else
             code.Add(m_event->GetNode()->get_node_name()).Function("GetId()").EndFunction();
     }
@@ -362,7 +362,7 @@ void EventHandlerDlg::FormatBindText()
         }
         else
         {
-            code.Add("Bind(").Add(handler).Comma().Add(prop_id).EndFunction();
+            code.Add("Bind(").Add(handler).Comma().as_string(prop_id).EndFunction();
         }
     }
     else

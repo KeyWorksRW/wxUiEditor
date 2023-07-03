@@ -32,7 +32,7 @@ wxObject* RibbonPageGenerator::CreateMockup(Node* node, wxObject* parent)
 bool RibbonPageGenerator::ConstructionCode(Code& code)
 {
     code.AddAuto().NodeName();
-    code.CreateClass().ParentName().Comma().Add(prop_id);
+    code.CreateClass().ParentName().Comma().as_string(prop_id);
     code.Comma().QuotedString(prop_label);
     if (code.HasValue(prop_bitmap))
     {
@@ -101,7 +101,7 @@ wxObject* RibbonPanelGenerator::CreateMockup(Node* node, wxObject* parent)
 
 bool RibbonPanelGenerator::ConstructionCode(Code& code)
 {
-    code.AddAuto().NodeName().CreateClass().ParentName().Comma().Add(prop_id).Comma().QuotedString(prop_label);
+    code.AddAuto().NodeName().CreateClass().ParentName().Comma().as_string(prop_id).Comma().QuotedString(prop_label);
     if (code.HasValue(prop_bitmap))
     {
         code.Comma();

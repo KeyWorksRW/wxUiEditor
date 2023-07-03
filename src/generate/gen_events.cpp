@@ -123,7 +123,8 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
         code << "Bind(" << handler.GetCode() << comma;
         if (event->GetNode()->value(prop_id) != "wxID_ANY")
         {
-            code.AddIfPython("id=").Add(event->GetNode()->value(prop_id)).EndFunction();
+            auto id = event->GetNode()->get_prop_id();
+            code.AddIfPython("id=").Add(id).EndFunction();
         }
         else
         {

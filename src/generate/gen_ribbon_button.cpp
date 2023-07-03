@@ -45,7 +45,7 @@ void RibbonButtonBarGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxp
 bool RibbonButtonBarGenerator::ConstructionCode(Code& code)
 {
     code.AddAuto().NodeName();
-    code.CreateClass().ParentName().Comma().Add(prop_id).PosSizeFlags();
+    code.CreateClass().ParentName().Comma().as_string(prop_id).PosSizeFlags();
 
     return true;
 }
@@ -69,7 +69,7 @@ int RibbonButtonBarGenerator::GenXrcObject(Node* node, pugi::xml_node& object, s
 
 bool RibbonButtonGenerator::ConstructionCode(Code& code)
 {
-    code.ParentName().Function("AddButton(").Add(prop_id).Comma().QuotedString(prop_label);
+    code.ParentName().Function("AddButton(").as_string(prop_id).Comma().QuotedString(prop_label);
     code.Comma();
     GenerateSingleBitmapCode(code, code.node()->as_string(prop_bitmap));
     code.Comma().QuotedString(prop_help).Comma().Add(prop_kind).EndFunction();

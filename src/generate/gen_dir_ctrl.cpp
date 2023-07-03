@@ -32,7 +32,7 @@ wxObject* GenericDirCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
 
 bool GenericDirCtrlGenerator::ConstructionCode(Code& code)
 {
-    code.AddAuto().NodeName().CreateClass().ValidParentName().Comma().Add(prop_id).Comma();
+    code.AddAuto().NodeName().CreateClass().ValidParentName().Comma().as_string(prop_id).Comma();
     if (code.HasValue(prop_defaultfolder))
         code.QuotedString(prop_defaultfolder);
     else

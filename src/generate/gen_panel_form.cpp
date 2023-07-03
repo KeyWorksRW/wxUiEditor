@@ -53,7 +53,7 @@ bool PanelFormGenerator::ConstructionCode(Code& code)
     else
     {
         code.Add("class ").NodeName().Add("(wx.Panel):\n");
-        code.Eol().Tab().Add("def __init__(self, parent, id=").Add(prop_id);
+        code.Eol().Tab().Add("def __init__(self, parent, id=").as_string(prop_id);
         code.Indent(3);
         code.Comma().Add("pos=").Pos(prop_pos);
         code.Comma().Add("size=").WxSize(prop_size);
@@ -140,7 +140,7 @@ bool PanelFormGenerator::HeaderCode(Code& code)
     auto* node = code.node();
 
     code.NodeName() += "() {}";
-    code.Eol().NodeName().Str("(wxWindow* parent, wxWindowID id = ").Str(prop_id);
+    code.Eol().NodeName().Str("(wxWindow* parent, wxWindowID id = ").as_string(prop_id);
     code.Comma().Str("const wxPoint& pos = ");
 
     auto position = node->as_wxPoint(prop_pos);
@@ -193,7 +193,7 @@ bool PanelFormGenerator::HeaderCode(Code& code)
     code.Str(")").Eol().OpenBrace().Str("Create(parent, id, pos, size, style, name);").CloseBrace();
 
     code.Eol().Str("bool Create(wxWindow *parent");
-    code.Comma().Str("wxWindowID id = ").Str(prop_id);
+    code.Comma().Str("wxWindowID id = ").as_string(prop_id);
     code.Comma().Str("const wxPoint& pos = ");
 
     if (position == wxDefaultPosition)

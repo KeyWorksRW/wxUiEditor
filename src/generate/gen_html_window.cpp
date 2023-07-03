@@ -59,7 +59,7 @@ bool HtmlWindowGenerator::ConstructionCode(Code& code)
 {
     if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
-    code.NodeName().CreateClass().ValidParentName().Comma().Add(prop_id);
+    code.NodeName().CreateClass().ValidParentName().Comma().as_string(prop_id);
     code.PosSizeFlags(true, "wxHW_SCROLLBAR_AUTO");
 
     // If the last parameter is wxID_ANY, then remove it. This is the default value, so it's

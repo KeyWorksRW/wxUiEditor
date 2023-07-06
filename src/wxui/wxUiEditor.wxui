@@ -580,6 +580,11 @@
               shortcut="F5"
               var_name="m_mi_preview"
               wxEVT_MENU="OnPreviewXrc" />
+            <node
+              class="wxMenuItem"
+              label="&amp;Global Edit Custom IDs..."
+              var_name="menu_item_8"
+              wxEVT_MENU="OnEditCustomIds" />
           </node>
           <node
             class="wxMenu"
@@ -1823,13 +1828,14 @@
       </node>
       <node
         class="wxDialog"
-        class_name="GlobalCustomIDSBase"
+        class_name="GlobalCustomIDS"
         persist="1"
         style="wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER"
         title="Globally Add Prefix/Suffix to Custom IDs"
         base_file="..\tools\global_ids_dlg_base"
-        derived_class_name="GlobalCustomIDSBase"
+        derived_class_name="GlobalCustomIDS"
         derived_file="../tools/global_ids_dlg"
+        use_derived_class="0"
         wxEVT_INIT_DIALOG="OnInit[python:OnInit]">
         <node
           class="wxBoxSizer"

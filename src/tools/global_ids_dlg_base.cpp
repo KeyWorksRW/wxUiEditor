@@ -15,7 +15,7 @@
 
 #include "global_ids_dlg_base.h"
 
-bool GlobalCustomIDSBase::Create(wxWindow* parent, wxWindowID id, const wxString& title,
+bool GlobalCustomIDS::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     const wxPoint& pos, const wxSize& size, long style, const wxString &name)
 {
     if (!wxDialog::Create(parent, id, title, pos, size, style, name))
@@ -172,21 +172,21 @@ bool GlobalCustomIDSBase::Create(wxWindow* parent, wxWindowID id, const wxString
     SetSizerAndFit(dlg_sizer);
     Centre(wxBOTH);
 
-    wxPersistentRegisterAndRestore(this, "GlobalCustomIDSBase");
+    wxPersistentRegisterAndRestore(this, "GlobalCustomIDS");
 
     // Event handlers
-    btn->Bind(wxEVT_BUTTON, &GlobalCustomIDSBase::OnSelectAllFolders, this);
-    btn_2->Bind(wxEVT_BUTTON, &GlobalCustomIDSBase::OnSelectNoFolders, this);
-    btn_3->Bind(wxEVT_BUTTON, &GlobalCustomIDSBase::OnSelectAllForms, this);
-    btn_4->Bind(wxEVT_BUTTON, &GlobalCustomIDSBase::OnSelectNoForms, this);
-    m_btn_remove_prefix->Bind(wxEVT_BUTTON, &GlobalCustomIDSBase::OnRemovePrefix, this);
-    m_btn_remove_old_suffix->Bind(wxEVT_BUTTON, &GlobalCustomIDSBase::OnRemoveSuffix, this);
-    m_btn_Add_new_prefix->Bind(wxEVT_BUTTON, &GlobalCustomIDSBase::OnAddPrefix, this);
-    m_btn_add_new_suffix_2->Bind(wxEVT_BUTTON, &GlobalCustomIDSBase::OnAddSuffix, this);
-    m_btn_commit->Bind(wxEVT_BUTTON, &GlobalCustomIDSBase::OnCommit, this);
-    Bind(wxEVT_INIT_DIALOG, &GlobalCustomIDSBase::OnInit, this);
-    m_lb_folders->Bind(wxEVT_LISTBOX, &GlobalCustomIDSBase::OnSelectFolders, this);
-    m_lb_forms->Bind(wxEVT_LISTBOX, &GlobalCustomIDSBase::OnSelectForms, this);
+    btn->Bind(wxEVT_BUTTON, &GlobalCustomIDS::OnSelectAllFolders, this);
+    btn_2->Bind(wxEVT_BUTTON, &GlobalCustomIDS::OnSelectNoFolders, this);
+    btn_3->Bind(wxEVT_BUTTON, &GlobalCustomIDS::OnSelectAllForms, this);
+    btn_4->Bind(wxEVT_BUTTON, &GlobalCustomIDS::OnSelectNoForms, this);
+    m_btn_remove_prefix->Bind(wxEVT_BUTTON, &GlobalCustomIDS::OnRemovePrefix, this);
+    m_btn_remove_old_suffix->Bind(wxEVT_BUTTON, &GlobalCustomIDS::OnRemoveSuffix, this);
+    m_btn_Add_new_prefix->Bind(wxEVT_BUTTON, &GlobalCustomIDS::OnAddPrefix, this);
+    m_btn_add_new_suffix_2->Bind(wxEVT_BUTTON, &GlobalCustomIDS::OnAddSuffix, this);
+    m_btn_commit->Bind(wxEVT_BUTTON, &GlobalCustomIDS::OnCommit, this);
+    Bind(wxEVT_INIT_DIALOG, &GlobalCustomIDS::OnInit, this);
+    m_lb_folders->Bind(wxEVT_LISTBOX, &GlobalCustomIDS::OnSelectFolders, this);
+    m_lb_forms->Bind(wxEVT_LISTBOX, &GlobalCustomIDS::OnSelectForms, this);
 
     return true;
 }

@@ -274,6 +274,7 @@ protected:
     void OnCut(wxCommandEvent& event) override;
     void OnDelete(wxCommandEvent& event) override;
     void OnDuplicate(wxCommandEvent& event) override;
+    void OnEditCustomIds(wxCommandEvent& event) override;
     void OnFindDialog(wxCommandEvent& event) override;
     void OnGenerateCode(wxCommandEvent& event) override;
     void OnImportProject(wxCommandEvent& event);

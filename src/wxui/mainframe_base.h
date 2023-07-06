@@ -86,6 +86,7 @@ protected:
     virtual void OnCut(wxCommandEvent& event) { event.Skip(); }
     virtual void OnDelete(wxCommandEvent& event) { event.Skip(); }
     virtual void OnDuplicate(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnEditCustomIds(wxCommandEvent& event) { event.Skip(); }
     virtual void OnFindDialog(wxCommandEvent& event) { event.Skip(); }
     virtual void OnGenerateCode(wxCommandEvent& event) { event.Skip(); }
     virtual void OnImportWindowsResource(wxCommandEvent& event) { event.Skip(); }

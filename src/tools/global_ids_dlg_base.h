@@ -18,11 +18,11 @@
 #include <wx/listbox.h>
 #include <wx/textctrl.h>
 
-class GlobalCustomIDSBase : public wxDialog
+class GlobalCustomIDS : public wxDialog
 {
 public:
-    GlobalCustomIDSBase() {}
-    GlobalCustomIDSBase(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title =
+    GlobalCustomIDS() {}
+    GlobalCustomIDS(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title =
         "Globally Add Prefix/Suffix to Custom IDs", const wxPoint& pos = wxDefaultPosition, const wxSize& size =
         wxDefaultSize,
         long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER, const wxString &name = wxDialogNameStr)
@@ -37,20 +37,20 @@ public:
 
 protected:
 
-    // Virtual event handlers -- override them in your derived class
+    // Event handlers
 
-    virtual void OnAddPrefix(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnAddSuffix(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnCommit(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnInit(wxInitDialogEvent& event) { event.Skip(); }
-    virtual void OnRemovePrefix(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnRemoveSuffix(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnSelectAllFolders(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnSelectAllForms(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnSelectFolders(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnSelectForms(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnSelectNoFolders(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnSelectNoForms(wxCommandEvent& event) { event.Skip(); }
+    void OnAddPrefix(wxCommandEvent& event);
+    void OnAddSuffix(wxCommandEvent& event);
+    void OnCommit(wxCommandEvent& event);
+    void OnInit(wxInitDialogEvent& event);
+    void OnRemovePrefix(wxCommandEvent& event);
+    void OnRemoveSuffix(wxCommandEvent& event);
+    void OnSelectAllFolders(wxCommandEvent& event);
+    void OnSelectAllForms(wxCommandEvent& event);
+    void OnSelectFolders(wxCommandEvent& event);
+    void OnSelectForms(wxCommandEvent& event);
+    void OnSelectNoFolders(wxCommandEvent& event);
+    void OnSelectNoForms(wxCommandEvent& event);
 
     // Class member variables
 

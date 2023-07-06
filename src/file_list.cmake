@@ -284,6 +284,14 @@ set (file_list
     utils/font_prop.cpp         # FontProperty class
     utils/utils.cpp             # Utility functions that work with properties
 
+    # Tools
+
+    # tools/global_ids_dlg_base.cpp # Base class for Global IDs dialog (generated)
+    # tools/generate_dlg.cpp        # Dialog for choosing and generating specific language file(s)
+    # tools/preview_settings.cpp    # Dialog for setting preview options
+
+    tools/global_ids_dlg.cpp  # Dialog to Globally edit Custom IDs
+
     # Windows resource importer
 
     winres/ctrl_utils.cpp       # resCtrl class utility functions
@@ -333,9 +341,11 @@ set (debug_files
     internal/unused_gen_dlg.cpp
     internal/xrcpreview.cpp
 
+    tools/generate_dlg.cpp
+    tools/preview_settings.cpp
+
     wxui/optionsdlg.cpp
     wxui/code_preference_dlg.cpp
-    wxui/preview_settings.cpp
     wxui/dlg_gen_results.cpp
 
     tests/test_xrc_import.cpp

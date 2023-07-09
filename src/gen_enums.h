@@ -37,13 +37,26 @@ namespace GenEnum
         type_radiobox_item,
         type_statbar_fields,
         type_string,
+
+        // "_escapes" makes it possible for the user to include \n, \t, \r, and "\" in the string
+
         type_string_code_single,   // includes single-line custom editor, does not process escapes
         type_string_edit,          // includes a button that triggers a small text editor dialog
         type_string_edit_escapes,  // includes editor dialog and also escapes characters
         type_string_edit_single,   // includes single-line text editor, does not process escapes
         type_string_escapes,       // doubles the backslash in escaped characters: \n, \t, \r, and "\""
-        type_stringlist,           // includes button to edit/move multiple choices
-        type_stringlist_escapes,   // includes button to edit/move multiple choices, and supports escapes characters
+
+        // All the stringlist variants use wxArrayStringProperty, but with different separators.
+        // All of them include a button to edit/move multiple choices.
+        //
+        // stringlist uses either quoted strings or strings separated by a semi-colon.
+        // stringlist_semi uses ';' as the separator.
+        // stringlist_escapes uses uses quoted strings.
+
+        type_stringlist,          // includes button to edit/move multiple choices
+        type_stringlist_semi,     // includes button to edit/move multiple choices
+        type_stringlist_escapes,  // includes button to edit/move multiple choices
+
         type_uint,
         type_uintpairlist,
         type_wxColour,

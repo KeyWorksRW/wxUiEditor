@@ -40,6 +40,7 @@ std::unordered_map<std::string_view, PropType, str_view_hash, std::equal_to<>> G
     { "string_edit_single", type_string_edit_single },
     { "string_escapes", type_string_escapes },
     { "stringlist", type_stringlist },
+    { "stringlist_semi", type_stringlist_semi },
     { "stringlist_escapes", type_stringlist_escapes },
     { "uint", type_uint },
     { "uintpairlist", type_uintpairlist },

@@ -563,8 +563,8 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
     else if (type == type_stringlist_semi)
     {
         new_pg_property = new wxArrayStringProperty(prop->DeclName().make_wxString(), wxPG_LABEL, prop->as_wxArrayString());
-            wxVariant delimiter(";");
-            new_pg_property->SetAttribute(wxPG_ARRAY_DELIMITER, delimiter);
+        wxVariant delimiter(";");
+        new_pg_property->SetAttribute(wxPG_ARRAY_DELIMITER, delimiter);
     }
     else if (type == type_stringlist_escapes)
     {

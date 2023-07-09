@@ -284,9 +284,11 @@ NodeSharedPtr NodeCreator::CreateNode(pugi::xml_node& xml_obj, Node* parent, boo
                     }
 
                     prop->set_value(value);
-                    if (Project.GetProjectVersion() < minRequiredVer + 1)
+                    // Conversion from quoted items to semicolon separated items was introduced
+                    // in 1.1.1 (project version 18)
+                    if (Project.GetProjectVersion() < 18)
                     {
-                        Project.ForceProjectVersion(minRequiredVer + 1);
+                        Project.ForceProjectVersion(18);
                         Project.SetProjectUpdated();
                     }
                 };

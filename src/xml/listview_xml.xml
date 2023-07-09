@@ -6,7 +6,7 @@ inline const char* listview_xml = R"===(<?xml version="1.0"?>
 		<inherits class="Window Events" />
 		<inherits class="sizer_child" />
 		<property name="var_name" type="string">m_listview</property>
-		<property name="column_labels" type="stringlist"
+		<property name="column_labels" type="stringlist_semi"
 			help="Labels to use as column headers. Only used if the mode is set to wxLC_REPORT." />
 		<property name="contents" type="stringlist"
 			help="Array of strings used to initialize the list view. Each string is a row, with text for individual columns separated by a ';' character. Only valid if column_labels has been initialized and the mode is set to wxLC_REPORT." />

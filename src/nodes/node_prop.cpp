@@ -398,11 +398,15 @@ std::vector<tt_string> NodeProperty::as_vector() const
 
 std::vector<tt_string> NodeProperty::as_ArrayString() const
 {
-    std::vector<tt_string> result;
+    tt_string_vector result;
 
     if (m_value.size())
     {
-        if (m_value[0] == '"')
+        if (type() == type_stringlist_semi)
+        {
+            result.SetString(m_value, ";", tt::TRIM::both);
+        }
+        else if (type() == type_stringlist_escapes || m_value[0] == '"')
         {
             auto view = m_value.view_substr(0, '"', '"');
             while (view.size() > 0)
@@ -411,12 +415,6 @@ std::vector<tt_string> NodeProperty::as_ArrayString() const
                 view = tt::stepover(view.data() + view.size());
                 view = view.view_substr(0, '"', '"');
             }
-        }
-        else
-        {
-            tt_string_vector array;
-            array.SetString(m_value, ";", tt::TRIM::both);
-            result = array;
         }
     }
 

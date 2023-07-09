@@ -12,12 +12,13 @@
 #include <wx/animate.h>                // wxAnimation and wxAnimationCtrl
 #include <wx/propgrid/propgriddefs.h>  // wxPropertyGrid miscellaneous definitions
 
-#include "font_prop.h"      // FontProperty -- FontProperty class
-#include "image_handler.h"  // ImageHandler class
-#include "mainapp.h"        // App -- Main application class
-#include "node.h"           // Node -- Node class
-#include "node_creator.h"   // NodeCreator class
-#include "utils.h"          // Utility functions that work with properties
+#include "font_prop.h"        // FontProperty -- FontProperty class
+#include "image_handler.h"    // ImageHandler class
+#include "mainapp.h"          // App -- Main application class
+#include "node.h"             // Node -- Node class
+#include "node_creator.h"     // NodeCreator class
+#include "project_handler.h"  // ProjectHandler singleton class
+#include "utils.h"            // Utility functions that work with properties
 
 #include "node_prop.h"
 
@@ -398,11 +399,15 @@ std::vector<tt_string> NodeProperty::as_vector() const
 
 std::vector<tt_string> NodeProperty::as_ArrayString() const
 {
-    std::vector<tt_string> result;
+    tt_string_vector result;
 
     if (m_value.size())
     {
-        if (m_value[0] == '"')
+        if (type() == type_stringlist_semi)
+        {
+            result.SetString(m_value, ";", tt::TRIM::both);
+        }
+        else if (type() == type_stringlist_escapes || m_value[0] == '"')
         {
             auto view = m_value.view_substr(0, '"', '"');
             while (view.size() > 0)
@@ -411,12 +416,6 @@ std::vector<tt_string> NodeProperty::as_ArrayString() const
                 view = tt::stepover(view.data() + view.size());
                 view = view.view_substr(0, '"', '"');
             }
-        }
-        else
-        {
-            tt_string_vector array;
-            array.SetString(m_value, ";", tt::TRIM::both);
-            result = array;
         }
     }
 
@@ -429,24 +428,8 @@ wxArrayString NodeProperty::as_wxArrayString() const
 
     if (m_value.size())
     {
-#if 0
-        // REVIEW: [Randalphwa - 06-26-2023] This works, however in wxWidgets 3.2, it converts
-        // the entire string to unicode and does a unicode parsing of the string. Since the
-        // original string is utf8, that's not efficient.
-        if (m_value[0] == '"')
-            delimiter = '"';
-        else
-            delimiter = ';';
-        wxString str = m_value.make_wxString();
-        wxPGStringTokenizer tokenizer(str, delimiter);
-        while (tokenizer.HasMoreTokens())
+        if (m_value[0] == '"' && !(type() == type_stringlist_semi && Project.GetOriginalProjectVersion() >= 18))
         {
-            result.Add(tokenizer.GetNextToken());
-        }
-#else
-        if (m_value[0] == '"')
-        {
-            // REVIEW: [Randalphwa - 06-26-2023] This uses tt_string_view to parse the string.
             auto view = m_value.view_substr(0, '"', '"');
             while (view.size() > 0)
             {
@@ -464,7 +447,6 @@ wxArrayString NodeProperty::as_wxArrayString() const
                 result.Add(str.make_wxString());
             }
         }
-#endif
     }
 
     return result;

@@ -560,6 +560,12 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
             new_pg_property->SetAttribute(wxPG_ARRAY_DELIMITER, delimiter);
         }
     }
+    else if (type == type_stringlist_semi)
+    {
+        new_pg_property = new wxArrayStringProperty(prop->DeclName().make_wxString(), wxPG_LABEL, prop->as_wxArrayString());
+        wxVariant delimiter(";");
+        new_pg_property->SetAttribute(wxPG_ARRAY_DELIMITER, delimiter);
+    }
     else if (type == type_stringlist_escapes)
     {
         new_pg_property = new wxArrayStringProperty(prop->DeclName().make_wxString(), wxPG_LABEL, prop->as_wxArrayString());
@@ -1078,6 +1084,10 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                 }
             }
 #endif  // _WIN32
+            modifyProperty(prop, property->GetValueAsString().utf8_string());
+            break;
+
+        case type_stringlist_semi:
             modifyProperty(prop, property->GetValueAsString().utf8_string());
             break;
 

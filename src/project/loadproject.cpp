@@ -263,6 +263,36 @@ NodeSharedPtr NodeCreator::CreateNode(pugi::xml_node& xml_obj, Node* parent, boo
 
             if (prop)
             {
+                auto convert_quoted_array = [&]()
+                {
+                    // Convert old style wxCheckListBox contents in quotes to new style separated by semicolons
+                    std::vector<tt_string> items;
+                    auto view = iter.as_sview().view_substr(0, '"', '"');
+                    while (view.size() > 0)
+                    {
+                        items.emplace_back(view);
+                        view = tt::stepover(view.data() + view.size());
+                        view = view.view_substr(0, '"', '"');
+                    }
+
+                    tt_string value;
+                    for (auto& item: items)
+                    {
+                        if (value.size())
+                            value << ';';
+                        value << item;
+                    }
+
+                    prop->set_value(value);
+                    // Conversion from quoted items to semicolon separated items was introduced
+                    // in 1.1.1 (project version 18)
+                    if (Project.GetProjectVersion() < 18)
+                    {
+                        Project.ForceProjectVersion(18);
+                        Project.SetProjectUpdated();
+                    }
+                };
+
                 if (prop->type() == type_bool)
                 {
                     prop->set_value(iter.as_bool());
@@ -271,37 +301,24 @@ NodeSharedPtr NodeCreator::CreateNode(pugi::xml_node& xml_obj, Node* parent, boo
                 {
                     if (new_node->isGen(gen_wxCheckListBox) && iter.as_sview().size() && iter.as_sview()[0] == '"')
                     {
-                        // Convert old style wxCheckListBox contents in quotes to new style separated by semicolons
-                        std::vector<tt_string> items;
-                        auto view = iter.as_sview();
-                        while (view.size() > 0)
-                        {
-                            items.emplace_back(view);
-                            view = tt::stepover(view.data() + view.size());
-                            view = view.view_substr(0, '"', '"');
-                        }
-
-                        tt_string value;
-                        for (auto& item: items)
-                        {
-                            if (value.size())
-                                value << ';';
-                            value << item;
-                        }
-
-                        prop->set_value(value);
-                        if (Project.GetProjectVersion() < minRequiredVer + 1)
-                        {
-                            Project.ForceProjectVersion(minRequiredVer + 1);
-                            Project.SetProjectUpdated();
-                        }
+                        convert_quoted_array();
                     }
                     else
                     {
                         prop->set_value(iter.as_sview());
                     }
                 }
-
+                else if (prop->type() == type_stringlist_semi && Project.GetOriginalProjectVersion() < 18)
+                {
+                    if (iter.as_sview().size() && iter.as_sview()[0] == '"')
+                    {
+                        convert_quoted_array();
+                    }
+                    else
+                    {
+                        prop->set_value(iter.as_sview());
+                    }
+                }
                 // Imported projects will be set as version ImportProjectVersion to get the fixups of constant to
                 // friendly name, and bit flag conflict resolution.
 
@@ -564,6 +581,34 @@ NodeSharedPtr NodeCreator::CreateProjectNode(pugi::xml_node* xml_obj, bool allow
                 if (prop->type() == type_bool)
                 {
                     prop->set_value(iter.as_bool());
+                }
+                else if (prop->type() == type_stringlist_semi && Project.GetOriginalProjectVersion() < 18)
+                {
+                    auto view = iter.as_sview();
+                    if (view.size() > 0 && view[0] == '"')
+                    {
+                        std::vector<tt_string> items;
+                        view = view.view_substr(0, '"', '"');
+                        while (view.size() > 0)
+                        {
+                            items.emplace_back(view);
+                            view = tt::stepover(view.data() + view.size());
+                            view = view.view_substr(0, '"', '"');
+                        }
+
+                        tt_string value;
+                        for (auto& item: items)
+                        {
+                            if (value.size())
+                                value << ';';
+                            value << item;
+                        }
+                        prop->set_value(value);
+                    }
+                    else
+                    {
+                        prop->set_value(iter.value());
+                    }
                 }
                 else
                 {

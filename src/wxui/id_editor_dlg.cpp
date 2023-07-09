@@ -196,11 +196,8 @@ void IDEditorDlg::OnInit(wxInitDialogEvent& event)
 
     ASSERT_MSG(m_node, "You must call SetNode() before calling OnInit()")
 
-    tt_string_vector prefixes;
-    prefixes.SetString(Project.ProjectNode()->value(prop_id_prefixes), '"', tt::TRIM::both);
-
-    tt_string_vector suffixes;
-    suffixes.SetString(Project.ProjectNode()->value(prop_id_suffixes), '"', tt::TRIM::both);
+    auto prefixes = Project.ProjectNode()->as_ArrayString(prop_id_prefixes);
+    auto suffixes = Project.ProjectNode()->as_ArrayString(prop_id_suffixes);
 
     if (prefixes.size())
     {

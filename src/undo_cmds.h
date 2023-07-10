@@ -191,7 +191,7 @@ public:
     void Change() override;
     void Revert() override;
 
-    Node* GetOldNode() { return m_old_node.get(); }
+    NodeSharedPtr GetOldNode() override { return m_old_node; }
     Node* GetNode() { return m_node.get(); }
 
     size_t GetMemorySize() override { return sizeof(*this); }
@@ -210,7 +210,7 @@ public:
     void Change() override;
     void Revert() override;
 
-    Node* GetOldNode() { return m_old_node.get(); }
+    NodeSharedPtr GetOldNode() override { return m_old_node; }
     Node* GetNode() { return m_node.get(); }
 
     size_t GetMemorySize() override { return sizeof(*this); }
@@ -276,11 +276,13 @@ public:
     void Revert() override;
 
     size_t GetMemorySize() override { return sizeof(*this); }
+    NodeSharedPtr GetOldNode() override { return m_old_project; }
 
 protected:
     void SortFolder(Node* folder);
 
 private:
+    std::vector<NodeSharedPtr> m_children;
     NodeSharedPtr m_old_project;
 };
 

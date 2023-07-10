@@ -8,6 +8,7 @@
 // clang-format off
 
 #include <wx/button.h>
+#include <wx/radiobut.h>
 #include <wx/sizer.h>
 #include <wx/stattext.h>
 #include <wx/valgen.h>
@@ -31,18 +32,23 @@ bool NodeSearchDlg::Create(wxWindow* parent, wxWindowID id, const wxString& titl
     auto* box_sizer_3 = new wxBoxSizer(wxHORIZONTAL);
     box_sizer_3->SetMinSize(250, -1);
 
-    m_radioBtn = new wxRadioButton(this, wxID_ANY, "&Generators", wxDefaultPosition, wxDefaultSize, wxRB_GROUP);
-    m_radioBtn->SetValue(true);
-    m_radioBtn->SetValidator(wxGenericValidator(&m_search_generators));
-    box_sizer_3->Add(m_radioBtn, wxSizerFlags().Border(wxALL));
+    auto* radioBtn_Generators = new wxRadioButton(this, wxID_ANY, "&Generators", wxDefaultPosition, wxDefaultSize,
+        wxRB_GROUP);
+    radioBtn_Generators->SetValue(true);
+    radioBtn_Generators->SetValidator(wxGenericValidator(&m_search_generators));
+    box_sizer_3->Add(radioBtn_Generators, wxSizerFlags().Border(wxALL));
 
-    m_radio_variables = new wxRadioButton(this, wxID_ANY, "&Variables");
-    m_radio_variables->SetValidator(wxGenericValidator(&m_search_varnames));
-    box_sizer_3->Add(m_radio_variables, wxSizerFlags().Border(wxALL));
+    auto* radio_variables = new wxRadioButton(this, wxID_ANY, "&Variables");
+    radio_variables->SetValidator(wxGenericValidator(&m_search_varnames));
+    box_sizer_3->Add(radio_variables, wxSizerFlags().Border(wxALL));
 
-    m_radioBtn_3 = new wxRadioButton(this, wxID_ANY, "&Labels");
-    m_radioBtn_3->SetValidator(wxGenericValidator(&m_search_labels));
-    box_sizer_3->Add(m_radioBtn_3, wxSizerFlags().Border(wxALL));
+    auto* radioBtn_Labels = new wxRadioButton(this, wxID_ANY, "&Labels");
+    radioBtn_Labels->SetValidator(wxGenericValidator(&m_search_labels));
+    box_sizer_3->Add(radioBtn_Labels, wxSizerFlags().Border(wxALL));
+
+    auto* radioBtn_IDs = new wxRadioButton(this, wxID_ANY, "&IDs");
+    radioBtn_IDs->SetValidator(wxGenericValidator(&m_search_ids));
+    box_sizer_3->Add(radioBtn_IDs, wxSizerFlags().Border(wxALL));
 
     auto* btn = new wxButton(this, wxID_ANY, "Unused...");
     box_sizer_3->Add(btn, wxSizerFlags().Border(wxLEFT|wxRIGHT|wxBOTTOM, wxSizerFlags::GetDefaultBorder()));
@@ -88,9 +94,10 @@ bool NodeSearchDlg::Create(wxWindow* parent, wxWindowID id, const wxString& titl
     btn->Bind(wxEVT_BUTTON, &NodeSearchDlg::OnUnused, this);
     Bind(wxEVT_INIT_DIALOG, &NodeSearchDlg::OnInit, this);
     m_listbox->Bind(wxEVT_LISTBOX, &NodeSearchDlg::OnSelectLocated, this);
-    m_radioBtn->Bind(wxEVT_RADIOBUTTON, &NodeSearchDlg::OnGenerators, this);
-    m_radio_variables->Bind(wxEVT_RADIOBUTTON, &NodeSearchDlg::OnVariables, this);
-    m_radioBtn_3->Bind(wxEVT_RADIOBUTTON, &NodeSearchDlg::OnLabels, this);
+    radioBtn_Generators->Bind(wxEVT_RADIOBUTTON, &NodeSearchDlg::OnGenerators, this);
+    radio_variables->Bind(wxEVT_RADIOBUTTON, &NodeSearchDlg::OnVariables, this);
+    radioBtn_Labels->Bind(wxEVT_RADIOBUTTON, &NodeSearchDlg::OnLabels, this);
+    radioBtn_IDs->Bind(wxEVT_RADIOBUTTON, &NodeSearchDlg::OnIDs, this);
 
     return true;
 }
@@ -147,41 +154,28 @@ Node* FindNodeByGenerator(Node* node, GenEnum::GenName gen_name)
     return nullptr;
 }
 
-Node* FindNodeByVarName(Node* node, const std::string& var_name)
-{
-    if (node->HasValue(prop_var_name) && node->as_string(prop_var_name) == var_name)
-        return node;
-
-    for (auto& child: node->GetChildNodePtrs())
-    {
-        auto result = FindNodeByVarName(child.get(), var_name);
-        if (result)
-            return result;
-    }
-
-    return nullptr;
-}
-
-Node* FindNodeByLabel(Node* node, const std::string& label_name)
-{
-    if (node->HasValue(prop_label) && node->as_string(prop_label) == label_name)
-        return node;
-
-    for (auto& child: node->GetChildNodePtrs())
-    {
-        auto result = FindNodeByLabel(child.get(), label_name);
-        if (result)
-            return result;
-    }
-
-    return nullptr;
-}
-
 void MainFrame::OnFindWidget(wxCommandEvent& WXUNUSED(event))
 {
     NodeSearchDlg dlg(this);
     if (dlg.ShowModal() == wxID_OK && dlg.GetForm())
     {
+        // Recursively search for the first Node* containing a property with a specific value.
+        auto FindNodeByProp = [&](Node* node, GenEnum::PropName prop, const std::string& label_name,
+                                  auto&& FindNodeByProp) -> Node*
+        {
+            if (node->HasValue(prop) && node->as_string(prop) == label_name)
+                return node;
+
+            for (auto& child: node->GetChildNodePtrs())
+            {
+                auto result = FindNodeByProp(child.get(), prop, label_name, FindNodeByProp);
+                if (result)
+                    return result;
+            }
+
+            return nullptr;
+        };
+
         if (dlg.isSearchGenerators())
         {
             auto* node = FindNodeByGenerator(dlg.GetForm(), rmap_GenNames[dlg.GetNameChoice()]);
@@ -197,7 +191,7 @@ void MainFrame::OnFindWidget(wxCommandEvent& WXUNUSED(event))
         }
         else if (dlg.isSearchVarnames())
         {
-            auto* node = FindNodeByVarName(dlg.GetForm(), dlg.GetNameChoice());
+            auto node = FindNodeByProp(dlg.GetForm(), prop_var_name, dlg.GetNameChoice(), FindNodeByProp);
             if (node)
             {
                 SelectNode(node);
@@ -205,12 +199,25 @@ void MainFrame::OnFindWidget(wxCommandEvent& WXUNUSED(event))
             }
             else
             {
-                wxMessageBox(wxString() << "Unable to find " << dlg.GetName());
+                wxMessageBox(wxString() << "Unable to find " << dlg.GetNameChoice());
             }
         }
         else if (dlg.isSearchLabels())
         {
-            auto node = FindNodeByLabel(dlg.GetForm(), dlg.GetNameChoice());
+            auto node = FindNodeByProp(dlg.GetForm(), prop_label, dlg.GetNameChoice(), FindNodeByProp);
+            if (node)
+            {
+                SelectNode(node);
+                m_nav_panel->SetFocus();
+            }
+            else
+            {
+                wxMessageBox(wxString() << "Unable to find " << dlg.GetNameChoice());
+            }
+        }
+        else if (dlg.isSearchIDs())
+        {
+            auto node = FindNodeByProp(dlg.GetForm(), prop_id, dlg.GetNameChoice(), FindNodeByProp);
             if (node)
             {
                 SelectNode(node);
@@ -432,6 +439,77 @@ void NodeSearchDlg::OnLabels(wxCommandEvent& WXUNUSED(event))
         else
         {
             FindLabels(wxGetFrame().GetSelectedNode());
+        }
+        for (auto& iter: m_map_found)
+        {
+            m_listbox->Append(iter.first);
+        }
+    }
+}
+
+void NodeSearchDlg::OnIDs(wxCommandEvent& WXUNUSED(event))
+{
+    m_map_found.clear();
+    m_listbox->Clear();
+    m_listbox_forms->Clear();
+
+    auto FindIDs = [&](Node* node, auto&& FindIDs) -> void
+    {
+        if (node->isGen(gen_Images))
+            return;
+
+        if (!node->IsNonWidget() && node->HasProp(prop_id) && node->HasValue(prop_id) &&
+            !node->as_string(prop_id).starts_with("wxID_ANY"))
+        {
+            if (!m_map_found.contains(node->as_string(prop_id)))
+            {
+                std::set<Node*> form_list;
+                if (!node->IsForm())
+                {
+                    form_list.emplace(node->get_form());
+                }
+                else
+                {
+                    auto* parent = node->GetParent();
+                    if (parent->isGen(gen_folder) || parent->isGen(gen_sub_folder))
+                    {
+                        form_list.emplace(node->get_form());
+                    }
+                    else
+                    {
+                        form_list.emplace(Project.ProjectNode());
+                    }
+                }
+                m_map_found[node->as_string(prop_id)] = form_list;
+            }
+            else if (!node->IsForm())
+            {
+                auto& form_list = m_map_found.at(node->value(prop_id));
+                form_list.emplace(node->IsForm() ? node->GetParent() : node->get_form());
+            }
+        }
+
+        if (node->GetChildCount())
+        {
+            for (auto& child: node->GetChildNodePtrs())
+            {
+                FindIDs(child.get(), FindIDs);
+            }
+        }
+    };
+
+    if (auto cur_sel = wxGetFrame().GetSelectedNode(); cur_sel)
+    {
+        if (cur_sel->isGen(gen_Project) || cur_sel->isGen(gen_folder) || cur_sel->isGen(gen_sub_folder))
+        {
+            for (auto& child: cur_sel->GetChildNodePtrs())
+            {
+                FindIDs(child.get(), FindIDs);
+            }
+        }
+        else
+        {
+            FindIDs(wxGetFrame().GetSelectedNode(), FindIDs);
         }
         for (auto& iter: m_map_found)
         {

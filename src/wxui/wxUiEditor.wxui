@@ -5528,25 +5528,37 @@
             <node
               class="wxRadioButton"
               checked="1"
+              class_access="none"
               label="&amp;Generators"
               style="wxRB_GROUP"
+              var_name="radioBtn_Generators"
               get_function="isSearchGenerators"
               validator_variable="m_search_generators"
               wxEVT_RADIOBUTTON="OnGenerators" />
             <node
               class="wxRadioButton"
+              class_access="none"
               label="&amp;Variables"
-              var_name="m_radio_variables"
+              var_name="radio_variables"
               get_function="isSearchVarnames"
               validator_variable="m_search_varnames"
               wxEVT_RADIOBUTTON="OnVariables" />
             <node
               class="wxRadioButton"
+              class_access="none"
               label="&amp;Labels"
-              var_name="m_radioBtn_3"
+              var_name="radioBtn_Labels"
               get_function="isSearchLabels"
               validator_variable="m_search_labels"
               wxEVT_RADIOBUTTON="OnLabels" />
+            <node
+              class="wxRadioButton"
+              class_access="none"
+              label="&amp;IDs"
+              var_name="radioBtn_IDs"
+              get_function="isSearchIDs"
+              validator_variable="m_search_ids"
+              wxEVT_RADIOBUTTON="OnIDs" />
             <node
               class="wxButton"
               class_access="none"

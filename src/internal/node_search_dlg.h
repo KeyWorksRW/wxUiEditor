@@ -13,7 +13,6 @@
 #include <wx/event.h>
 #include <wx/gdicmn.h>
 #include <wx/listbox.h>
-#include <wx/radiobut.h>
 
 class Node;
 
@@ -40,6 +39,7 @@ public:
     bool isSearchGenerators() const { return m_search_generators; }
     bool isSearchVarnames() const { return m_search_varnames; }
     bool isSearchLabels() const { return m_search_labels; }
+    bool isSearchIDs() const { return m_search_ids; }
 
     struct FoundInfo
     {
@@ -58,6 +58,7 @@ protected:
     // Event handlers
 
     void OnGenerators(wxCommandEvent& event);
+    void OnIDs(wxCommandEvent& event);
     void OnInit(wxInitDialogEvent& event);
     void OnLabels(wxCommandEvent& event);
     void OnOK(wxCommandEvent& event);
@@ -70,6 +71,7 @@ private:
     // Validator variables
 
     bool m_search_generators { true };
+    bool m_search_ids { false };
     bool m_search_labels { false };
     bool m_search_varnames { false };
 
@@ -77,11 +79,8 @@ private:
 
     wxListBox* m_listbox;
     wxListBox* m_listbox_forms;
-    wxRadioButton* m_radioBtn;
-    wxRadioButton* m_radioBtn_3;
-    wxRadioButton* m_radio_variables;
 
-    std::string m_name;  // could be gen_name, var_name or label
+    std::string m_name;  // could be gen_name, var_name, label or ID
     Node* m_form = nullptr;
     std::map<std::string, std::set<Node*>> m_map_found;
 };

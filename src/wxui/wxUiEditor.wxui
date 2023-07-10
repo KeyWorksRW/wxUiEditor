@@ -2009,7 +2009,7 @@
             <node
               class="wxGrid"
               cell_fit="ellipsize"
-              col_label_values="&quot;Original&quot; &quot;Modified&quot;"
+              col_label_values="Original;Modified"
               cols="2"
               default_col_size="250"
               editing="0"
@@ -3316,7 +3316,7 @@
         <node
           class="wxGrid"
           cell_vert_alignment="wxALIGN_CENTER"
-          col_label_values="&quot;name&quot; &quot;value&quot;"
+          col_label_values="name;value"
           cols="2"
           drag_row_size="0"
           rows="1"

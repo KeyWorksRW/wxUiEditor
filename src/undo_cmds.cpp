@@ -770,7 +770,7 @@ void SortProjectAction::Change()
 
     for (auto& iter: Project.ChildNodePtrs())
     {
-        if (iter->isGen(gen_folder))
+        if (iter->isGen(gen_folder) || iter->isGen(gen_sub_folder))
         {
             SortFolder(iter.get());
         }

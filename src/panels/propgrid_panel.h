@@ -45,6 +45,8 @@ public:
     // Creates properties for currently selected node.
     void Create();
 
+    void OnNodePropChange(CustomEvent& event);
+
 protected:
     tt_string GetPropHelp(NodeProperty* prop) const;
     wxString GetCategoryDisplayName(const wxString& original);
@@ -88,6 +90,8 @@ protected:
 
     int GetBitlistValue(const wxString& strVal, wxPGChoices& bit_flags);
 
+    void AllowIdChange(wxPropertyGridEvent& event, NodeProperty* prop, Node* node);
+
     // Event handlers
 
     void OnEventGridChanged(wxPropertyGridEvent& event);
@@ -98,9 +102,6 @@ protected:
     void OnPropertyGridItemSelected(wxPropertyGridEvent& event);
     void OnReCreateGrid(wxCommandEvent& event);
     void OnAuiNotebookPageChanged(wxAuiNotebookEvent& event);
-
-public:
-    void OnNodePropChange(CustomEvent& event);
 
 private:
     std::map<wxPGProperty*, NodeProperty*> m_property_map;

@@ -151,7 +151,7 @@ bool TextCtrlGenerator::SettingsCode(Code& code)
         if (code.is_cpp())
         {
             code.EnableAutoLineBreak(false);
-            code.Add("{").Eol().Tab().Add("wxArrayString tmp_array;").Eol();
+            code.Eol(eol_if_needed).Add("{").Eol().Tab().Add("wxArrayString tmp_array;").Eol();
             auto array = code.node()->as_ArrayString(prop_auto_complete);
             for (auto& iter: array)
             {

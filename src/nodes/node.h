@@ -99,6 +99,9 @@ public:
         return (GetParent() ? name == GetParent()->m_declaration->gen_name() : false);
     }
 
+    // Returns true if this node is a folder, subfolder, or Images List
+    bool IsNonWidget() const noexcept { return (isGen(gen_folder) || isGen(gen_sub_folder) || isGen(gen_Images)); }
+
     bool IsWidget() const noexcept { return isType(type_widget); }
     bool IsWizard() const noexcept { return isType(type_wizard); }
     bool IsMenuBar() const noexcept { return (isType(type_menubar_form) || isType(type_menubar)); }

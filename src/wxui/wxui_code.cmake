@@ -14,6 +14,7 @@ set (wxue_generated_code
     ${CMAKE_CURRENT_LIST_DIR}/../internal/unused_gen_dlg.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../internal/xrcpreview.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../tools/generate_dlg.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/../tools/global_ids_dlg_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../tools/preview_settings.cpp
     ${CMAKE_CURRENT_LIST_DIR}/code_preference_dlg.cpp
     ${CMAKE_CURRENT_LIST_DIR}/dlg_gen_results.cpp
@@ -43,7 +44,6 @@ set (wxue_generated_code
     # Base classes
     ${CMAKE_CURRENT_LIST_DIR}/../internal/convert_img_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../internal/msgframe_base.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/../tools/global_ids_dlg_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/artpropdlg_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/codedisplay_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/colourprop_base.cpp

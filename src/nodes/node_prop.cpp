@@ -65,22 +65,28 @@ int NodeProperty::as_id() const
     return NodeCreation.GetConstantAsInt(m_value, wxID_ANY);
 }
 
-tt_string NodeProperty::get_prop_id() const
+// Static class function
+tt_string NodeProperty::get_prop_id(const tt_string& complete_id)
 {
     tt_string id;
-    if (auto pos = m_value.find('='); pos != tt::npos)
+    if (auto pos = complete_id.find('='); pos != tt::npos)
     {
-        while (pos > 0 && tt::is_whitespace(m_value[pos - 1]))
+        while (pos > 0 && tt::is_whitespace(complete_id[pos - 1]))
         {
             --pos;
         }
-        id = m_value.substr(0, pos);
+        id = complete_id.substr(0, pos);
     }
     else
     {
-        id = m_value;
+        id = complete_id;
     }
     return id;
+}
+
+tt_string NodeProperty::get_prop_id() const
+{
+    return get_prop_id(m_value);
 }
 
 int NodeProperty::as_mockup(std::string_view prefix) const

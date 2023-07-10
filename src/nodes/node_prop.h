@@ -85,6 +85,9 @@ public:
     // Returns string containing the property ID without any assignment if it is a custom id.
     tt_string get_prop_id() const;
 
+    // Returns a string containing the ID without any assignment if it is a custom id.
+    static tt_string get_prop_id(const tt_string& complete_id);
+
     const tt_string& value() const { return m_value; }
 
     int as_int() const;

@@ -5,6 +5,8 @@
     class="Project"
     art_directory="art"
     code_preference="Python"
+    id_prefixes="ISSUE_"
+    id_suffixes="_TEST; _PYTHON"
     base_directory="sdi/cpp"
     cmake_file="sdi/cpp/wxui_code.cmake"
     cmake_varname="sdi_generated_code"
@@ -328,6 +330,7 @@
                 hint="wxTextCtrl"
                 style="wxTE_RICH2"
                 var_name="m_text_ctrl"
+                id="TXT_CTRL"
                 flags="wxEXPAND"
                 wxEVT_TEXT="[this](wxCommandEvent&amp;)@@{@@OnEventName(&quot;wxTextCtrl: wxEVT_TEXT&quot;);@@}[python:lambda]self.OnEventName(&quot;wx.TextCtrl: wx.EVT_TEXT&quot;)" />
               <node
@@ -549,7 +552,7 @@
                     var_name="m_staticText_4" />
                   <node
                     class="wxListView"
-                    column_labels="&quot;name&quot; &quot;value&quot;"
+                    column_labels="name;value"
                     contents="&quot;meaning ; 42 &quot;"
                     style="wxLC_SINGLE_SEL"
                     tooltip="Separate content columns with a semi-colon (;)" />
@@ -674,7 +677,7 @@
                       var_name="m_staticText9" />
                     <node
                       class="wxCheckListBox"
-                      contents="&quot;item #1&quot; &quot;item #2&quot; &quot;item #0&quot;"
+                      contents="item #1;item #2;item #0"
                       var_name="m_checkList_2"
                       wxEVT_CHECKLISTBOX="[this](wxCommandEvent&amp;)@@{@@OnEventName(&quot;CheckListBox1: wx.EVT_CHECKLISTBOX&quot;);@@}[python:lambda]self.OnEventName(&quot;CheckListBox1: wx.EVT_CHECKLISTBOX&quot;)" />
                     <node
@@ -683,7 +686,7 @@
                       var_name="m_staticText10" />
                     <node
                       class="wxCheckListBox"
-                      contents="&quot;item #1&quot; &quot;item #2&quot; &quot;item #0&quot;"
+                      contents="item #1;item #2;item #0"
                       style="wxLB_SORT"
                       var_name="m_checkList2"
                       wxEVT_CHECKLISTBOX="[this](wxCommandEvent&amp;)@@{@@OnEventName(&quot;CheckListBox2: wx.EVT_CHECKLISTBOX&quot;);@@}[python:lambda]self.OnEventName(&quot;CheckListBox2: wx.EVT_CHECKLISTBOX&quot;)" />
@@ -1790,10 +1793,11 @@
               borders="wxLEFT|wxTOP|wxBOTTOM" />
             <node
               class="wxTextCtrl"
-              auto_complete="&quot;foo&quot; &quot;bar&quot;"
+              auto_complete="foo;bar"
               style="wxTE_PROCESS_ENTER"
               value="Text &quot;ctrl&quot;"
               validator_variable="m_textCtrlValidate"
+              id="TXT_CTRL"
               tooltip="Auto-complete contains &quot;foo&quot; and &quot;bar&quot;"
               wxEVT_TEXT_ENTER="[this](wxCommandEvent&amp;)@@{@@m_infoBar->ShowMessage(&quot;wxEVT_TEXT_ENTER event&quot;);@@Fit();@@}" />
             <node
@@ -1949,7 +1953,7 @@
                   var_name="m_staticText9" />
                 <node
                   class="wxCheckListBox"
-                  contents="&quot;item #1&quot; &quot;item #2&quot; &quot;item #0&quot;"
+                  contents="item #1;item #2;item #0"
                   wxEVT_CHECKLISTBOX="OnListChecked" />
                 <node
                   class="wxStaticText"
@@ -1957,7 +1961,7 @@
                   var_name="m_staticText10" />
                 <node
                   class="wxCheckListBox"
-                  contents="&quot;item #1&quot; &quot;item #2&quot; &quot;item #0&quot;"
+                  contents="item #1;item #2;item #0"
                   style="wxLB_SORT"
                   var_name="m_checkList2" />
               </node>

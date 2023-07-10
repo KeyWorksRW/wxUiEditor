@@ -1829,10 +1829,9 @@
       <node
         class="wxDialog"
         class_name="GlobalCustomIDS"
-        persist="1"
-        style="wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER"
         title="Globally Add Prefix/Suffix to Custom IDs"
         base_file="..\tools\global_ids_dlg_base"
+        system_hdr_includes="map"
         derived_class_name="GlobalCustomIDS"
         derived_file="../tools/global_ids_dlg"
         use_derived_class="0"
@@ -1858,9 +1857,7 @@
               var_name="staticText_2" />
             <node
               class="wxListBox"
-              contents="&quot;Project&quot;"
               focus="1"
-              selection_int="0"
               type="wxLB_MULTIPLE"
               var_name="m_lb_folders"
               maximum_size="-1,-1d"
@@ -1912,98 +1909,97 @@
             flags="wxEXPAND">
             <node
               class="wxStaticBoxSizer"
-              label="Remove"
+              label="Modifications"
+              orientation="wxHORIZONTAL"
               flags="wxEXPAND">
               <node
                 class="wxBoxSizer"
-                var_name="box_sizer_3"
-                flags="wxEXPAND">
-                <node
-                  class="wxBoxSizer"
-                  orientation="wxVERTICAL"
-                  var_name="box_sizer_4">
-                  <node
-                    class="wxStaticText"
-                    class_access="none"
-                    label="Old Prefix"
-                    var_name="staticText_4" />
-                  <node
-                    class="wxTextCtrl"
-                    hint="old prefix"
-                    var_name="m_text_old_prefix" />
-                  <node
-                    class="wxButton"
-                    label="Remove"
-                    var_name="m_btn_remove_prefix"
-                    wxEVT_BUTTON="OnRemovePrefix" />
-                </node>
-                <node
-                  class="wxBoxSizer"
-                  orientation="wxVERTICAL"
-                  var_name="box_sizer_5">
-                  <node
-                    class="wxStaticText"
-                    class_access="none"
-                    label="Old Suffix"
-                    var_name="staticText_5" />
-                  <node
-                    class="wxTextCtrl"
-                    hint="old suffix"
-                    var_name="m_text_old_suffix" />
-                  <node
-                    class="wxButton"
-                    label="Remove"
-                    var_name="m_btn_remove_old_suffix"
-                    wxEVT_BUTTON="OnRemoveSuffix" />
-                </node>
-              </node>
-            </node>
-            <node
-              class="wxStaticBoxSizer"
-              label="Add"
-              var_name="static_box_2"
-              flags="wxEXPAND">
-              <node
-                class="wxBoxSizer"
+                orientation="wxVERTICAL"
                 var_name="box_sizer_6"
                 flags="wxEXPAND">
                 <node
                   class="wxBoxSizer"
-                  orientation="wxVERTICAL"
-                  var_name="box_sizer_7">
+                  var_name="box_sizer_3"
+                  flags="wxEXPAND">
                   <node
-                    class="wxStaticText"
-                    class_access="none"
-                    label="New Prefix:"
-                    var_name="staticText_6" />
+                    class="wxBoxSizer"
+                    orientation="wxVERTICAL"
+                    var_name="box_sizer_4">
+                    <node
+                      class="wxStaticText"
+                      class_access="none"
+                      label="Remove Old Prefix"
+                      var_name="staticText_4"
+                      alignment="wxALIGN_CENTER_HORIZONTAL" />
+                    <node
+                      class="wxTextCtrl"
+                      style="wxTE_PROCESS_ENTER"
+                      var_name="m_text_old_prefix"
+                      wxEVT_TEXT_ENTER="OnUpdate" />
+                  </node>
                   <node
-                    class="wxComboBox"
-                    style="wxCB_DROPDOWN|wxCB_SORT"
-                    var_name="m_combo_prefixes" />
+                    class="wxBoxSizer"
+                    orientation="wxVERTICAL"
+                    var_name="box_sizer_5">
+                    <node
+                      class="wxStaticText"
+                      class_access="none"
+                      label="Remove Old Suffix"
+                      var_name="staticText_5"
+                      alignment="wxALIGN_CENTER_HORIZONTAL" />
+                    <node
+                      class="wxTextCtrl"
+                      style="wxTE_PROCESS_ENTER"
+                      var_name="m_text_old_suffix"
+                      wxEVT_TEXT_ENTER="OnUpdate" />
+                  </node>
                   <node
-                    class="wxButton"
-                    label="Add"
-                    var_name="m_btn_Add_new_prefix"
-                    wxEVT_BUTTON="OnAddPrefix" />
+                    class="wxBoxSizer"
+                    orientation="wxVERTICAL"
+                    var_name="box_sizer_7">
+                    <node
+                      class="wxStaticText"
+                      class_access="none"
+                      label="Add New Prefix"
+                      var_name="staticText_6"
+                      alignment="wxALIGN_CENTER_HORIZONTAL" />
+                    <node
+                      class="wxComboBox"
+                      style="wxCB_DROPDOWN|wxCB_SORT|wxTE_PROCESS_ENTER"
+                      var_name="m_combo_prefixes"
+                      minimum_size="70,-1d"
+                      wxEVT_COMBOBOX_CLOSEUP="OnUpdate"
+                      wxEVT_TEXT_ENTER="OnUpdate" />
+                  </node>
+                  <node
+                    class="wxBoxSizer"
+                    orientation="wxVERTICAL"
+                    var_name="box_sizer_8">
+                    <node
+                      class="wxStaticText"
+                      class_access="none"
+                      label="Add New Suffix"
+                      var_name="staticText_7"
+                      alignment="wxALIGN_CENTER_HORIZONTAL" />
+                    <node
+                      class="wxComboBox"
+                      style="wxCB_DROPDOWN|wxCB_SORT|wxTE_PROCESS_ENTER"
+                      var_name="m_combo_suffixes"
+                      minimum_size="70,-1d"
+                      wxEVT_COMBOBOX_CLOSEUP="OnUpdate"
+                      wxEVT_TEXT_ENTER="OnUpdate" />
+                  </node>
                 </node>
                 <node
                   class="wxBoxSizer"
-                  orientation="wxVERTICAL"
-                  var_name="box_sizer_8">
-                  <node
-                    class="wxStaticText"
-                    class_access="none"
-                    label="New Suffix:"
-                    var_name="staticText_7" />
-                  <node
-                    class="wxComboBox"
-                    style="wxCB_DROPDOWN|wxCB_SORT"
-                    var_name="m_combo_suffixes" />
+                  var_name="box_sizer_11"
+                  alignment="wxALIGN_CENTER_HORIZONTAL">
                   <node
                     class="wxButton"
-                    label="Add"
-                    var_name="m_btn_add_new_suffix_2"
-                    wxEVT_BUTTON="OnAddSuffix" />
+                    class_access="none"
+                    label="Preview Changes"
+                    var_name="btn_5"
+                    wxEVT_BUTTON="OnUpdate" />
                 </node>
               </node>
             </node>
@@ -2012,12 +2008,16 @@
             class="wxBoxSizer">
             <node
               class="wxGrid"
-              autosize_cols="1"
+              cell_fit="ellipsize"
               col_label_values="&quot;Original&quot; &quot;Modified&quot;"
               cols="2"
-              default_col_size="200"
+              default_col_size="250"
+              editing="0"
               row_label_size="0"
-              selection_mode="wxGridSelectNone" />
+              rows="10"
+              selection_mode="wxGridSelectNone"
+              flags="wxEXPAND"
+              proportion="1" />
             <node
               class="wxButton"
               label="Commit change"
@@ -5513,7 +5513,7 @@
         local_hdr_includes="gen_enums.h"
         local_src_includes="../panels/nav_panel.h;mainframe.h;node.h;project_handler.h;unused_gen_dlg.h"
         system_hdr_includes="map;set"
-        class_members="&quot;std::string m_name;  // could be gen_name, var_name or label&quot; &quot;Node* m_form = nullptr;&quot; &quot;std::map&lt;std::string, std::set&lt;Node*>> m_map_found;&quot;"
+        class_members="&quot;std::string m_name;  // could be gen_name, var_name, label or ID&quot; &quot;Node* m_form = nullptr;&quot; &quot;std::map&lt;std::string, std::set&lt;Node*>> m_map_found;&quot;"
         class_methods="&quot;std::string&amp; GetNameChoice() { return m_name; }&quot; &quot;Node* GetForm() { return m_form; }&quot; &quot;void FindGenerators(Node* node);&quot; &quot;void FindVariables(Node* node);&quot; &quot;void FindLabels(Node* node);&quot;"
         derived_class_name="NodeSearchDlg"
         inserted_hdr_code="struct FoundInfo@@{@@    const char* name;@@    std::vector&lt;Node*> forms;@@};"

@@ -18,6 +18,8 @@
 #include <wx/listbox.h>
 #include <wx/textctrl.h>
 
+#include <map>
+
 class GlobalCustomIDS : public wxDialog
 {
 public:
@@ -25,7 +27,7 @@ public:
     GlobalCustomIDS(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title =
         "Globally Add Prefix/Suffix to Custom IDs", const wxPoint& pos = wxDefaultPosition, const wxSize& size =
         wxDefaultSize,
-        long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER, const wxString &name = wxDialogNameStr)
+        long style = wxDEFAULT_DIALOG_STYLE, const wxString &name = wxDialogNameStr)
     {
         Create(parent, id, title, pos, size, style, name);
     }
@@ -33,32 +35,25 @@ public:
     bool Create(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title =
         "Globally Add Prefix/Suffix to Custom IDs", const wxPoint& pos = wxDefaultPosition, const wxSize& size =
         wxDefaultSize,
-        long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER, const wxString &name = wxDialogNameStr);
+        long style = wxDEFAULT_DIALOG_STYLE, const wxString &name = wxDialogNameStr);
 
 protected:
 
     // Event handlers
 
-    void OnAddPrefix(wxCommandEvent& event);
-    void OnAddSuffix(wxCommandEvent& event);
     void OnCommit(wxCommandEvent& event);
     void OnInit(wxInitDialogEvent& event);
-    void OnRemovePrefix(wxCommandEvent& event);
-    void OnRemoveSuffix(wxCommandEvent& event);
     void OnSelectAllFolders(wxCommandEvent& event);
     void OnSelectAllForms(wxCommandEvent& event);
     void OnSelectFolders(wxCommandEvent& event);
     void OnSelectForms(wxCommandEvent& event);
     void OnSelectNoFolders(wxCommandEvent& event);
     void OnSelectNoForms(wxCommandEvent& event);
+    void OnUpdate(wxCommandEvent& event);
 
     // Class member variables
 
-    wxButton* m_btn_Add_new_prefix;
-    wxButton* m_btn_add_new_suffix_2;
     wxButton* m_btn_commit;
-    wxButton* m_btn_remove_old_suffix;
-    wxButton* m_btn_remove_prefix;
     wxComboBox* m_combo_prefixes;
     wxComboBox* m_combo_suffixes;
     wxGrid* m_grid;

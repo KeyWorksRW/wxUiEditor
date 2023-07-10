@@ -282,7 +282,6 @@ protected:
     void SortFolder(Node* folder);
 
 private:
-    std::vector<NodeSharedPtr> m_children;
     NodeSharedPtr m_old_project;
 };
 

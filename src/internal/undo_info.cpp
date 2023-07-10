@@ -95,25 +95,29 @@ void UndoInfo::OnInit(wxInitDialogEvent& event)
 {
     NodeInfo::NodeMemory node_memory;
 
-    // This will only add the memory of non-orphaned nodes.
-    //
+    // The problem with getting the memory size is that it's a bit tricky to know what the
+    // reference count needs to be under to indicate that a Node is only being held by the
+    // UndoStack.
+
     // The auto&& CalcMemory and forced return type is so that we can recursively call this
     // lambda function.
-    auto CalcMemory = [&node_memory](const NodeSharedPtr node, auto&& CalcMemory) -> void
+    auto CalcMemory = [&node_memory](const NodeSharedPtr node, long ref_count, auto&& CalcMemory) -> void
     {
         ++node_memory.children;
-
-        // An orphaned node will have an additional 2 reference counts at this point. 1 for
-        // iter->GetNode() in the function that called us, and one for passing the parameter to
-        // this function.
-        if (node.use_count() <= 3)
+        if (node.use_count() <= ref_count)
         {
             node_memory.size += node->GetNodeSize();
         }
 
         for (const auto& iter: node->GetChildNodePtrs())
         {
-            CalcMemory(iter, CalcMemory);
+            // Assume that each child will have a shared ptr to the parent which will increase
+            // it's reference count by 1.
+            long add_ref_count = static_cast<long>(iter->GetChildCount());
+
+            // An orphaned node will have a ref count of 1 -- add one to pass this to the
+            // CalcMemory function.
+            CalcMemory(iter, add_ref_count + 2, CalcMemory);
         }
     };
 
@@ -126,9 +130,29 @@ void UndoInfo::OnInit(wxInitDialogEvent& event)
 
         for (const auto& iter: actions)
         {
-            if (const auto& node = iter->GetNode(); node)
+            if (const auto& old_node = iter->GetOldNode(); old_node)
             {
-                CalcMemory(node, CalcMemory);
+                if (old_node->isGen(gen_Project))
+                {
+                    // Every form in the project will increase the project's ref count
+                    CalcMemory(old_node, 9999, CalcMemory);
+                }
+                else
+                {
+                    // Assume that each child will have a shared ptr to the parent which will increase
+                    // it's reference count by 1.
+                    long add_ref_count = static_cast<long>(old_node->GetChildCount());
+
+                    CalcMemory(old_node, add_ref_count + 3, CalcMemory);
+                }
+                node_memory.size += iter->GetMemorySize();
+            }
+            else if (const auto& node = iter->GetNode(); node)
+            {
+                // An orphaned node will have an additional 2 reference counts at this point. 1 for
+                // iter->GetNode() in the function that called us, and one for passing the parameter to
+                // this function. An additional ref count is added by calling CalcMemory.
+                CalcMemory(node, 3, CalcMemory);
                 node_memory.size += iter->GetMemorySize();
             }
             else if (const auto* prop = iter->GetProperty(); prop)

@@ -32,6 +32,7 @@ public:
 
     // Size of the UndoAction object itself, plus any additional memory it allocates.
     virtual size_t GetMemorySize() = 0;
+    virtual NodeSharedPtr GetOldNode() { return nullptr; }
 
     tt_string GetUndoString() { return m_undo_string; }
     void SetUndoString(tt_string_view str) { m_undo_string = str; }

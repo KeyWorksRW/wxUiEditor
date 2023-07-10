@@ -765,14 +765,12 @@ SortProjectAction::SortProjectAction()
 
 void SortProjectAction::Change()
 {
-    m_old_project = NodeCreation.MakeCopy(Project.ProjectNode());
-
     auto& children = Project.ChildNodePtrs();
     std::sort(children.begin(), children.end(), CompareClassNames);
 
     for (auto& iter: Project.ChildNodePtrs())
     {
-        if (iter->isGen(gen_folder))
+        if (iter->isGen(gen_folder) || iter->isGen(gen_sub_folder))
         {
             SortFolder(iter.get());
         }

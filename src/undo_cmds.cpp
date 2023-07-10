@@ -765,8 +765,6 @@ SortProjectAction::SortProjectAction()
 
 void SortProjectAction::Change()
 {
-    m_old_project = NodeCreation.MakeCopy(Project.ProjectNode());
-
     auto& children = Project.ChildNodePtrs();
     std::sort(children.begin(), children.end(), CompareClassNames);
 

@@ -17,15 +17,6 @@ class wxPoint;
 class wxSize;
 class Node;
 
-// Used to index fields in a bitmap property
-enum PropIndex
-{
-    IndexType = 0,
-    IndexImage,
-    IndexArtID = IndexImage,
-    IndexSize
-};
-
 tt_string ClearPropFlag(tt_string_view flag, tt_string_view currentValue);
 tt_string ClearMultiplePropFlags(tt_string_view flags, tt_string_view currentValue);
 tt_string SetPropFlag(tt_string_view flag, tt_string_view currentValue);

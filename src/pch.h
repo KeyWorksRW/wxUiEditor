@@ -105,6 +105,16 @@ enum
     GEN_LANG_XRC,
 };
 
+// Used to index fields in a bitmap property
+enum PropIndex
+{
+    IndexType = 0,
+    IndexImage,
+    IndexArtID = IndexImage,
+    IndexSize,
+    IndexAltName
+};
+
 namespace xrc
 {
     enum : size_t

@@ -26,7 +26,6 @@ using namespace wxue_img;
 #include "node.h"             // Node -- Node class
 #include "pg_point.h"         // CustomPointProperty -- Custom property grid class for wxPoint
 #include "project_handler.h"  // ProjectHandler class
-#include "utils.h"            // Utility functions that work with properties
 
 #include "art_ids.cpp"  // wxART_ strings
 
@@ -274,7 +273,7 @@ wxVariant PropertyGrid_Image::ChildChanged(wxVariant& thisValue, int childIndex,
                         name.make_relative(Project.get_ProjectPath());
                         name.backslashestoforward();
                     }
-                    img_props.image.assign_wx(name);
+                    img_props.image = name;
                 }
             }
             break;
@@ -285,6 +284,12 @@ wxVariant PropertyGrid_Image::ChildChanged(wxVariant& thisValue, int childIndex,
                 tt_view_vector mstr(u8_value, ',');
                 img_props.SetWidth(mstr[0].atoi());
                 img_props.SetHeight(mstr[1].atoi());
+            }
+            break;
+
+        case IndexAltName:
+            {
+                img_props.alt_name = childValue.GetString().utf8_string();
             }
             break;
     }

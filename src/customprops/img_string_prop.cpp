@@ -6,6 +6,7 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include <wx/filedlg.h>            // wxFileDialog base header
+#include <wx/filename.h>           // wxFileName - encapsulates a file path
 #include <wx/propgrid/propgrid.h>  // wxPropertyGrid
 
 #include "img_string_prop.h"
@@ -32,10 +33,9 @@ bool ImageDialogAdapter::DoShowDialog(wxPropertyGrid* propGrid, wxPGProperty* WX
         tt_cwd cwd(true);
         if (Project.HasValue(prop_art_directory))
         {
-            auto dir = Project.ArtDirectory();
-            if (dir.dir_exists())
+            if (auto dir = Project.ArtDirectory(); dir.dir_exists())
             {
-                wxFileName::SetCwd(dir);
+                wxFileName::SetCwd(dir.make_wxString());
             }
         }
 
@@ -54,10 +54,11 @@ bool ImageDialogAdapter::DoShowDialog(wxPropertyGrid* propGrid, wxPGProperty* WX
                          wxFD_OPEN | wxFD_FILE_MUST_EXIST);
         if (dlg.ShowModal() == wxID_OK)
         {
-            tt_string name = dlg.GetPath().utf8_string();
-            name.make_relative(Project.get_ProjectPath());
-            name.backslashestoforward();
-            SetValue(name.make_wxString());
+            wxFileName file(dlg.GetPath());
+            file.MakeRelativeTo(Project.get_ProjectPath().make_wxString());
+            auto name = file.GetFullPath();
+            tt::backslashestoforward(name);
+            SetValue(name);
             return true;
         }
         return false;

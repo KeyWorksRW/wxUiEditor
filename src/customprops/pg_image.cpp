@@ -59,7 +59,7 @@ PropertyGrid_Image::PropertyGrid_Image(const wxString& label, NodeProperty* prop
     AddPrivateChild(new wxEnumProperty("type", wxPG_LABEL, types, 0));
     AddPrivateChild(new ImageStringProperty("image", m_img_props));
 
-    AddPrivateChild(new CustomPointProperty("Size", prop, CustomPointProperty::type_SVG));
+    AddPrivateChild(new CustomPointProperty("Original Size (ignored)", prop, CustomPointProperty::type_SVG));
     Item(IndexSize)->SetHelpString("Default size -- ignored unless it's a SVG file.");
 }
 
@@ -74,10 +74,17 @@ void PropertyGrid_Image::RefreshChildren()
         {
             Item(IndexImage)->SetLabel("id");
             Item(IndexImage)->SetHelpString("Specifies the art ID and optional Client (separated by a | character).");
+            Item(IndexSize)->SetLabel("Original Size (ignored)");
+        }
+        else if (m_img_props.type == "SVG")
+        {
+            Item(IndexImage)->SetLabel("image");
+            Item(IndexSize)->SetLabel("Size");
         }
         else
         {
             Item(IndexImage)->SetLabel("image");
+            Item(IndexSize)->SetLabel("Original Size (ignored)");
         }
 
         if (m_img_props.type == "Embed" || m_img_props.type == "SVG")

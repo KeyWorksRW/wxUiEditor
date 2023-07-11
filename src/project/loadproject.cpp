@@ -208,6 +208,7 @@ static const auto lstStdButtonEvents = {
     "ApplyButtonClicked",
     "NoButtonClicked",
     "CancelButtonClicked",
+    "CloseButtonClicked",
     "HelpButtonClicked",
     "ContextHelpButtonClicked",
 
@@ -217,6 +218,7 @@ static const auto lstStdButtonEvents = {
     "ApplyButton",
     "NoButton",
     "CancelButton",
+    "CloseButton",
     "HelpButton",
     "ContextHelpButton",
 

@@ -842,6 +842,7 @@ const std::unordered_map<std::string_view, const char*> s_EventNames = {
 
     { "ApplyButtonClicked", "OnApply" },
     { "CancelButtonClicked", "OnCancel" },
+    { "CloseButtonClicked", "OnClose" },
     { "ContextHelpButtonClicked", "OnContextHelp" },
     { "HelpButtonClicked", "OnHelp" },
     { "NoButtonClicked", "OnNo" },

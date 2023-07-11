@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Handles property grid image properties
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2021 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2021-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -20,6 +20,7 @@ struct ImageProperties
 public:
     tt_string type { s_type_names[1] };
     tt_string image;
+    tt_string alt_name;
 
     NodeProperty* node_property;
 

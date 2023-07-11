@@ -178,6 +178,22 @@ void BasePanel::OnFind(wxFindDialogEvent& event)
     }
 }
 
+PANEL_PAGE BasePanel::GetPanelPage() const
+{
+    if (auto page = m_notebook->GetCurrentPage(); page)
+    {
+        if (page == m_cppPanel)
+            return CPP_PANEL;
+        else if (page == m_hPanel)
+            return HDR_PANEL;
+        else if (page == m_derived_src_panel)
+            return DERIVED_SRC_PANEL;
+        else if (page == m_derived_hdr_panel)
+            return DERIVED_HDR_PANEL;
+    }
+    return CPP_PANEL;
+}
+
 void BasePanel::GenerateBaseClass()
 {
     if (!IsShown())

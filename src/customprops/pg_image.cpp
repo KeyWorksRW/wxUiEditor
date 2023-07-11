@@ -57,6 +57,8 @@ PropertyGrid_Image::PropertyGrid_Image(const wxString& label, NodeProperty* prop
     }
 
     AddPrivateChild(new wxEnumProperty("type", wxPG_LABEL, types, 0));
+    Item(IndexType)->SetHelpString("The type of image to use.");
+
     AddPrivateChild(new ImageStringProperty("image", m_img_props));
 
     AddPrivateChild(new CustomPointProperty("Original Size (ignored)", prop, CustomPointProperty::type_SVG));

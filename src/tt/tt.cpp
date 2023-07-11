@@ -384,6 +384,14 @@ void tt::backslashestoforward(std::string& str)
     }
 }
 
+void tt::backslashestoforward(wxString& str)
+{
+    for (auto pos = str.find('\\'); pos != std::string::npos; pos = str.find('\\'))
+    {
+        str.replace(pos, 1, "/");
+    }
+}
+
 bool tt::has_extension(std::filesystem::directory_entry name, std::string_view extension, CASE checkcase)
 {
     if (!name.is_directory())

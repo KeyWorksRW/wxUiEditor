@@ -156,6 +156,7 @@ namespace tt
     // Note: Windows handles paths that use forward slashes, so backslashes are normally
     // unnecessary.
     void backslashestoforward(std::string& str);
+    void backslashestoforward(wxString& str);
 
     // Performs a check to see if a directory entry is a filename and contains the
     // specified extension.

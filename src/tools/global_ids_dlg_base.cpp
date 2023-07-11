@@ -21,22 +21,17 @@ bool GlobalCustomIDS::Create(wxWindow* parent, wxWindowID id, const wxString& ti
 
     auto* dlg_sizer = new wxBoxSizer(wxVERTICAL);
 
-    auto* flex_grid_sizer = new wxFlexGridSizer(2, 0, 10);
+    auto* box_sizer_12 = new wxBoxSizer(wxHORIZONTAL);
 
-    auto* staticText = new wxStaticText(this, wxID_ANY, "Project and Folders");
-    flex_grid_sizer->Add(staticText, wxSizerFlags().Border(wxALL));
+    auto* box_sizer_13 = new wxBoxSizer(wxVERTICAL);
 
-    auto* staticText_2 = new wxStaticText(this, wxID_ANY, "Forms");
-    flex_grid_sizer->Add(staticText_2, wxSizerFlags().Border(wxALL));
+    auto* staticText = new wxStaticText(this, wxID_ANY, "&Project and Folder Selections");
+    box_sizer_13->Add(staticText, wxSizerFlags().Border(wxALL));
 
     m_lb_folders = new wxListBox(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, nullptr, wxLB_MULTIPLE);
     m_lb_folders->SetFocus();
-    m_lb_folders->SetMinSize(ConvertDialogToPixels(wxSize(130, 80)));
-    flex_grid_sizer->Add(m_lb_folders, wxSizerFlags().Border(wxALL));
-
-    m_lb_forms = new wxListBox(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, nullptr, wxLB_MULTIPLE|wxLB_SORT);
-    m_lb_forms->SetMinSize(ConvertDialogToPixels(wxSize(130, 80)));
-    flex_grid_sizer->Add(m_lb_forms, wxSizerFlags().Border(wxALL));
+    m_lb_folders->SetMinSize(ConvertDialogToPixels(wxSize(-1, 80)));
+    box_sizer_13->Add(m_lb_folders, wxSizerFlags().Expand().Border(wxALL));
 
     auto* box_sizer_9 = new wxBoxSizer(wxHORIZONTAL);
 
@@ -46,7 +41,19 @@ bool GlobalCustomIDS::Create(wxWindow* parent, wxWindowID id, const wxString& ti
     auto* btn_2 = new wxButton(this, wxID_ANY, "None");
     box_sizer_9->Add(btn_2, wxSizerFlags().Border(wxALL));
 
-    flex_grid_sizer->Add(box_sizer_9, wxSizerFlags().Border(wxALL));
+    box_sizer_13->Add(box_sizer_9,
+    wxSizerFlags().Center().Border(wxLEFT|wxRIGHT|wxBOTTOM, wxSizerFlags::GetDefaultBorder()));
+
+    box_sizer_12->Add(box_sizer_13, wxSizerFlags(1).Expand().Border(wxALL));
+
+    auto* box_sizer_14 = new wxBoxSizer(wxVERTICAL);
+
+    auto* staticText_2 = new wxStaticText(this, wxID_ANY, "&Form Selections");
+    box_sizer_14->Add(staticText_2, wxSizerFlags().Border(wxALL));
+
+    m_lb_forms = new wxListBox(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, nullptr, wxLB_MULTIPLE|wxLB_SORT);
+    m_lb_forms->SetMinSize(ConvertDialogToPixels(wxSize(-1, 80)));
+    box_sizer_14->Add(m_lb_forms, wxSizerFlags().Expand().Border(wxALL));
 
     auto* box_sizer_10 = new wxBoxSizer(wxHORIZONTAL);
 
@@ -56,82 +63,85 @@ bool GlobalCustomIDS::Create(wxWindow* parent, wxWindowID id, const wxString& ti
     auto* btn_4 = new wxButton(this, wxID_ANY, "None");
     box_sizer_10->Add(btn_4, wxSizerFlags().Border(wxALL));
 
-    flex_grid_sizer->Add(box_sizer_10, wxSizerFlags().Border(wxALL));
+    box_sizer_14->Add(box_sizer_10,
+    wxSizerFlags().Center().Border(wxLEFT|wxRIGHT|wxBOTTOM, wxSizerFlags::GetDefaultBorder()));
 
-    dlg_sizer->Add(flex_grid_sizer, wxSizerFlags().Expand().Border(wxALL));
+    box_sizer_12->Add(box_sizer_14, wxSizerFlags(1).Expand().Border(wxALL));
+
+    dlg_sizer->Add(box_sizer_12, wxSizerFlags().Expand().Border(wxALL));
 
     auto* box_sizer_2 = new wxBoxSizer(wxHORIZONTAL);
 
-    auto* static_box = new wxStaticBoxSizer(wxHORIZONTAL, this, "Modifications");
+    auto* static_box_2 = new wxStaticBoxSizer(wxVERTICAL, this, "Custom ID Modifications");
 
-    auto* box_sizer_6 = new wxBoxSizer(wxVERTICAL);
-
-    auto* box_sizer_3 = new wxBoxSizer(wxHORIZONTAL);
+    auto* box_sizer_6 = new wxBoxSizer(wxHORIZONTAL);
 
     auto* box_sizer_4 = new wxBoxSizer(wxVERTICAL);
 
-    auto* staticText_4 = new wxStaticText(static_box->GetStaticBox(), wxID_ANY, "Remove Old Prefix");
-    box_sizer_4->Add(staticText_4, wxSizerFlags().Center().Border(wxALL));
+    auto* staticText_4 = new wxStaticText(static_box_2->GetStaticBox(), wxID_ANY, "&Remove Old Prefix");
+    box_sizer_4->Add(staticText_4, wxSizerFlags().Border(wxLEFT|wxRIGHT|wxTOP, wxSizerFlags::GetDefaultBorder()));
 
-    m_text_old_prefix = new wxTextCtrl(static_box->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition,
+    m_text_old_prefix = new wxTextCtrl(static_box_2->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition,
         wxDefaultSize, wxTE_PROCESS_ENTER);
-    box_sizer_4->Add(m_text_old_prefix, wxSizerFlags().Border(wxALL));
+    box_sizer_4->Add(m_text_old_prefix, wxSizerFlags().Expand().Border(wxALL));
 
-    box_sizer_3->Add(box_sizer_4, wxSizerFlags().Border(wxALL));
+    auto* staticText_6 = new wxStaticText(static_box_2->GetStaticBox(), wxID_ANY, "&Add New Prefix");
+    box_sizer_4->Add(staticText_6, wxSizerFlags().Border(wxLEFT|wxRIGHT|wxTOP, wxSizerFlags::GetDefaultBorder()));
+
+    m_combo_prefixes = new wxComboBox(static_box_2->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition,
+        wxDefaultSize, 0, nullptr, wxCB_DROPDOWN|wxCB_SORT|wxTE_PROCESS_ENTER);
+    box_sizer_4->Add(m_combo_prefixes, wxSizerFlags().Expand().Border(wxALL));
+
+    box_sizer_6->Add(box_sizer_4, wxSizerFlags(1).Expand().Border(wxALL));
 
     auto* box_sizer_5 = new wxBoxSizer(wxVERTICAL);
 
-    auto* staticText_5 = new wxStaticText(static_box->GetStaticBox(), wxID_ANY, "Remove Old Suffix");
-    box_sizer_5->Add(staticText_5, wxSizerFlags().Center().Border(wxALL));
+    auto* staticText_5 = new wxStaticText(static_box_2->GetStaticBox(), wxID_ANY, "Remove &Old Suffix");
+    box_sizer_5->Add(staticText_5, wxSizerFlags().Border(wxLEFT|wxRIGHT|wxTOP, wxSizerFlags::GetDefaultBorder()));
 
-    m_text_old_suffix = new wxTextCtrl(static_box->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition,
+    m_text_old_suffix = new wxTextCtrl(static_box_2->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition,
         wxDefaultSize, wxTE_PROCESS_ENTER);
-    box_sizer_5->Add(m_text_old_suffix, wxSizerFlags().Border(wxALL));
+    box_sizer_5->Add(m_text_old_suffix, wxSizerFlags().Expand().Border(wxALL));
 
-    box_sizer_3->Add(box_sizer_5, wxSizerFlags().Border(wxALL));
+    auto* staticText_7 = new wxStaticText(static_box_2->GetStaticBox(), wxID_ANY, "Add &New Suffix");
+    box_sizer_5->Add(staticText_7, wxSizerFlags().Border(wxLEFT|wxRIGHT|wxTOP, wxSizerFlags::GetDefaultBorder()));
 
-    auto* box_sizer_7 = new wxBoxSizer(wxVERTICAL);
-
-    auto* staticText_6 = new wxStaticText(static_box->GetStaticBox(), wxID_ANY, "Add New Prefix");
-    box_sizer_7->Add(staticText_6, wxSizerFlags().Center().Border(wxALL));
-
-    m_combo_prefixes = new wxComboBox(static_box->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition,
+    m_combo_suffixes = new wxComboBox(static_box_2->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition,
         wxDefaultSize, 0, nullptr, wxCB_DROPDOWN|wxCB_SORT|wxTE_PROCESS_ENTER);
-    m_combo_prefixes->SetMinSize(ConvertDialogToPixels(wxSize(70, -1)));
-    box_sizer_7->Add(m_combo_prefixes, wxSizerFlags().Border(wxALL));
+    box_sizer_5->Add(m_combo_suffixes, wxSizerFlags().Expand().Border(wxALL));
 
-    box_sizer_3->Add(box_sizer_7, wxSizerFlags().Border(wxALL));
+    box_sizer_6->Add(box_sizer_5, wxSizerFlags(1).Border(wxALL));
 
-    auto* box_sizer_8 = new wxBoxSizer(wxVERTICAL);
+    static_box_2->Add(box_sizer_6, wxSizerFlags().Expand().Border(wxALL));
 
-    auto* staticText_7 = new wxStaticText(static_box->GetStaticBox(), wxID_ANY, "Add New Suffix");
-    box_sizer_8->Add(staticText_7, wxSizerFlags().Center().Border(wxALL));
+    auto* box_sizer_3 = new wxBoxSizer(wxHORIZONTAL);
 
-    m_combo_suffixes = new wxComboBox(static_box->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition,
-        wxDefaultSize, 0, nullptr, wxCB_DROPDOWN|wxCB_SORT|wxTE_PROCESS_ENTER);
-    m_combo_suffixes->SetMinSize(ConvertDialogToPixels(wxSize(70, -1)));
-    box_sizer_8->Add(m_combo_suffixes, wxSizerFlags().Border(wxALL));
+    auto* box_sizer_11 = new wxBoxSizer(wxVERTICAL);
 
-    box_sizer_3->Add(box_sizer_8, wxSizerFlags().Border(wxALL));
+    auto* btn_5 = new wxButton(static_box_2->GetStaticBox(), wxID_ANY, "&Update Preview");
+    box_sizer_11->Add(btn_5, wxSizerFlags().Center().Border(wxALL));
 
-    box_sizer_6->Add(box_sizer_3, wxSizerFlags().Expand().Border(wxALL));
+    box_sizer_3->Add(box_sizer_11,
+    wxSizerFlags().Expand().Border(wxLEFT|wxRIGHT|wxBOTTOM, wxSizerFlags::GetDefaultBorder()));
 
-    auto* box_sizer_11 = new wxBoxSizer(wxHORIZONTAL);
+    auto* box_sizer = new wxBoxSizer(wxVERTICAL);
 
-    auto* btn_5 = new wxButton(static_box->GetStaticBox(), wxID_ANY, "Preview Changes");
-    box_sizer_11->Add(btn_5, wxSizerFlags().Border(wxALL));
+    m_btn_commit = new wxButton(static_box_2->GetStaticBox(), wxID_ANY, "&Commit Change");
+    box_sizer->Add(m_btn_commit, wxSizerFlags().Border(wxALL));
 
-    box_sizer_6->Add(box_sizer_11, wxSizerFlags().Center().Border(wxALL));
+    box_sizer_3->Add(box_sizer,
+    wxSizerFlags().Expand().Border(wxLEFT|wxRIGHT|wxBOTTOM, wxSizerFlags::GetDefaultBorder()));
 
-    static_box->Add(box_sizer_6, wxSizerFlags().Expand().Border(wxALL));
+    static_box_2->Add(box_sizer_3, wxSizerFlags().Center().Border(wxALL));
 
-    box_sizer_2->Add(static_box, wxSizerFlags().Expand().Border(wxALL));
+    box_sizer_2->Add(static_box_2, wxSizerFlags(1).Expand().Border(wxALL));
 
-    dlg_sizer->Add(box_sizer_2, wxSizerFlags().Expand().Border(wxALL));
+    dlg_sizer->Add(box_sizer_2,
+    wxSizerFlags().Expand().Border(wxLEFT|wxRIGHT|wxBOTTOM, wxSizerFlags::GetDefaultBorder()));
 
-    auto* box_sizer = new wxBoxSizer(wxHORIZONTAL);
+    auto* static_box = new wxStaticBoxSizer(wxVERTICAL, this, "Preview the Changes to Make");
 
-    m_grid = new wxGrid(this, wxID_ANY);
+    m_grid = new wxGrid(static_box->GetStaticBox(), wxID_ANY);
     {
         m_grid->CreateGrid(10, 2);
         m_grid->EnableEditing(false);
@@ -150,20 +160,19 @@ bool GlobalCustomIDS::Create(wxWindow* parent, wxWindowID id, const wxString& ti
         m_grid->SetColLabelValue(0, "Original");
         m_grid->SetColLabelValue(1, "Modified");
     }
-    box_sizer->Add(m_grid, wxSizerFlags(1).Expand().Border(wxALL));
+    static_box->Add(m_grid, wxSizerFlags(1).Expand().Border(wxALL));
 
-    m_btn_commit = new wxButton(this, wxID_ANY, "Commit change");
-    box_sizer->Add(m_btn_commit, wxSizerFlags().Center().Border(wxALL));
+    dlg_sizer->Add(static_box, wxSizerFlags().Border(wxLEFT|wxRIGHT|wxBOTTOM, wxSizerFlags::GetDefaultBorder()));
 
-    dlg_sizer->Add(box_sizer, wxSizerFlags().Border(wxALL));
-
-    auto* stdBtn = CreateStdDialogButtonSizer(wxOK|wxCANCEL);
+    auto* stdBtn = CreateStdDialogButtonSizer(wxCLOSE|wxNO_DEFAULT);
+    stdBtn->GetCancelButton()->SetDefault();
     dlg_sizer->Add(CreateSeparatedSizer(stdBtn), wxSizerFlags().Expand().Border(wxALL));
 
     SetSizerAndFit(dlg_sizer);
     Centre(wxBOTH);
 
     // Event handlers
+    Bind(wxEVT_BUTTON, &GlobalCustomIDS::OnClose, this, wxID_CLOSE);
     btn->Bind(wxEVT_BUTTON, &GlobalCustomIDS::OnSelectAllFolders, this);
     btn_2->Bind(wxEVT_BUTTON, &GlobalCustomIDS::OnSelectNoFolders, this);
     btn_3->Bind(wxEVT_BUTTON, &GlobalCustomIDS::OnSelectAllForms, this);
@@ -176,8 +185,8 @@ bool GlobalCustomIDS::Create(wxWindow* parent, wxWindowID id, const wxString& ti
     m_lb_folders->Bind(wxEVT_LISTBOX, &GlobalCustomIDS::OnSelectFolders, this);
     m_lb_forms->Bind(wxEVT_LISTBOX, &GlobalCustomIDS::OnSelectForms, this);
     m_text_old_prefix->Bind(wxEVT_TEXT_ENTER, &GlobalCustomIDS::OnUpdate, this);
-    m_text_old_suffix->Bind(wxEVT_TEXT_ENTER, &GlobalCustomIDS::OnUpdate, this);
     m_combo_prefixes->Bind(wxEVT_TEXT_ENTER, &GlobalCustomIDS::OnUpdate, this);
+    m_text_old_suffix->Bind(wxEVT_TEXT_ENTER, &GlobalCustomIDS::OnUpdate, this);
     m_combo_suffixes->Bind(wxEVT_TEXT_ENTER, &GlobalCustomIDS::OnUpdate, this);
 
     return true;

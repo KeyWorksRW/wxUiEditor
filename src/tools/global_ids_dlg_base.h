@@ -41,6 +41,7 @@ protected:
 
     // Event handlers
 
+    void OnClose(wxCommandEvent& event);
     void OnCommit(wxCommandEvent& event);
     void OnInit(wxInitDialogEvent& event);
     void OnSelectAllFolders(wxCommandEvent& event);
@@ -61,6 +62,8 @@ protected:
     wxListBox* m_lb_forms;
     wxTextCtrl* m_text_old_prefix;
     wxTextCtrl* m_text_old_suffix;
+
+    bool m_committed { true };
 };
 
 // ************* End of generated code ***********

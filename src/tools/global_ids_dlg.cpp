@@ -166,6 +166,7 @@ void GlobalCustomIDS::OnSelectForms(wxCommandEvent& WXUNUSED(event))
             if (modified_id != iter.id_portion)
             {
                 m_grid->SetCellValue(pos, 1, modified_id);
+                m_committed = false;
             }
 
             m_grid->SetCellValue(pos++, 0, iter.id_portion);
@@ -286,6 +287,20 @@ void GlobalCustomIDS::OnCommit(wxCommandEvent& WXUNUSED(event))
     m_combo_prefixes->SetValue("");
     m_combo_suffixes->SetValue("");
 
+    m_committed = true;
+
     wxCommandEvent dummy;
     OnUpdate(dummy);
+}
+
+void GlobalCustomIDS::OnClose(wxCommandEvent& event)
+{
+    if (!m_committed)
+    {
+        if (wxMessageBox("Commit changes?", "Update IDs", wxYES_NO | wxICON_QUESTION) == wxYES)
+        {
+            OnCommit(event);
+        }
+    }
+    event.Skip();
 }

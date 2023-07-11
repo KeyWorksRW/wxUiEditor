@@ -1832,6 +1832,7 @@
         title="Globally Add Prefix/Suffix to Custom IDs"
         base_file="..\tools\global_ids_dlg_base"
         system_hdr_includes="map"
+        class_members="&quot;bool m_committed { true };&quot;"
         derived_class_name="GlobalCustomIDS"
         derived_file="../tools/global_ids_dlg"
         use_derived_class="0"
@@ -1842,170 +1843,204 @@
           var_name="dlg_sizer"
           flags="wxEXPAND">
           <node
-            class="wxFlexGridSizer"
-            hgap="10"
+            class="wxBoxSizer"
+            var_name="box_sizer_12"
             flags="wxEXPAND">
             <node
-              class="wxStaticText"
-              class_access="none"
-              label="Project and Folders"
-              var_name="staticText" />
-            <node
-              class="wxStaticText"
-              class_access="none"
-              label="Forms"
-              var_name="staticText_2" />
-            <node
-              class="wxListBox"
-              focus="1"
-              type="wxLB_MULTIPLE"
-              var_name="m_lb_folders"
-              maximum_size="-1,-1d"
-              minimum_size="130,80d"
-              wxEVT_LISTBOX="OnSelectFolders" />
-            <node
-              class="wxListBox"
-              style="wxLB_SORT"
-              type="wxLB_MULTIPLE"
-              var_name="m_lb_forms"
-              minimum_size="130,80d"
-              wxEVT_LISTBOX="OnSelectForms" />
-            <node
               class="wxBoxSizer"
-              var_name="box_sizer_9">
+              orientation="wxVERTICAL"
+              var_name="box_sizer_13"
+              flags="wxEXPAND"
+              proportion="1">
               <node
-                class="wxButton"
+                class="wxStaticText"
                 class_access="none"
-                label="All"
-                var_name="btn"
-                wxEVT_BUTTON="OnSelectAllFolders" />
+                label="&amp;Project and Folder Selections"
+                var_name="staticText" />
               <node
-                class="wxButton"
-                class_access="none"
-                label="None"
-                var_name="btn_2"
-                wxEVT_BUTTON="OnSelectNoFolders" />
+                class="wxListBox"
+                focus="1"
+                type="wxLB_MULTIPLE"
+                var_name="m_lb_folders"
+                maximum_size="-1,-1d"
+                minimum_size="-1,80d"
+                flags="wxEXPAND"
+                wxEVT_LISTBOX="OnSelectFolders" />
+              <node
+                class="wxBoxSizer"
+                var_name="box_sizer_9"
+                alignment="wxALIGN_CENTER_HORIZONTAL"
+                borders="wxBOTTOM|wxRIGHT|wxLEFT">
+                <node
+                  class="wxButton"
+                  class_access="none"
+                  label="All"
+                  var_name="btn"
+                  wxEVT_BUTTON="OnSelectAllFolders" />
+                <node
+                  class="wxButton"
+                  class_access="none"
+                  label="None"
+                  var_name="btn_2"
+                  wxEVT_BUTTON="OnSelectNoFolders" />
+              </node>
             </node>
             <node
               class="wxBoxSizer"
-              var_name="box_sizer_10">
+              orientation="wxVERTICAL"
+              var_name="box_sizer_14"
+              flags="wxEXPAND"
+              proportion="1">
               <node
-                class="wxButton"
+                class="wxStaticText"
                 class_access="none"
-                label="All"
-                var_name="btn_3"
-                wxEVT_BUTTON="OnSelectAllForms" />
+                label="&amp;Form Selections"
+                var_name="staticText_2" />
               <node
-                class="wxButton"
-                class_access="none"
-                label="None"
-                var_name="btn_4"
-                wxEVT_BUTTON="OnSelectNoForms" />
+                class="wxListBox"
+                style="wxLB_SORT"
+                type="wxLB_MULTIPLE"
+                var_name="m_lb_forms"
+                minimum_size="-1,80d"
+                flags="wxEXPAND"
+                wxEVT_LISTBOX="OnSelectForms" />
+              <node
+                class="wxBoxSizer"
+                var_name="box_sizer_10"
+                alignment="wxALIGN_CENTER_HORIZONTAL"
+                borders="wxBOTTOM|wxRIGHT|wxLEFT">
+                <node
+                  class="wxButton"
+                  class_access="none"
+                  label="All"
+                  var_name="btn_3"
+                  wxEVT_BUTTON="OnSelectAllForms" />
+                <node
+                  class="wxButton"
+                  class_access="none"
+                  label="None"
+                  var_name="btn_4"
+                  wxEVT_BUTTON="OnSelectNoForms" />
+              </node>
             </node>
           </node>
           <node
             class="wxBoxSizer"
             var_name="box_sizer_2"
+            borders="wxBOTTOM|wxRIGHT|wxLEFT"
             flags="wxEXPAND">
             <node
               class="wxStaticBoxSizer"
-              label="Modifications"
-              orientation="wxHORIZONTAL"
-              flags="wxEXPAND">
+              label="Custom ID Modifications"
+              var_name="static_box_2"
+              flags="wxEXPAND"
+              proportion="1">
               <node
                 class="wxBoxSizer"
-                orientation="wxVERTICAL"
                 var_name="box_sizer_6"
                 flags="wxEXPAND">
                 <node
                   class="wxBoxSizer"
-                  var_name="box_sizer_3"
-                  flags="wxEXPAND">
+                  orientation="wxVERTICAL"
+                  var_name="box_sizer_4"
+                  flags="wxEXPAND"
+                  proportion="1">
                   <node
-                    class="wxBoxSizer"
-                    orientation="wxVERTICAL"
-                    var_name="box_sizer_4">
-                    <node
-                      class="wxStaticText"
-                      class_access="none"
-                      label="Remove Old Prefix"
-                      var_name="staticText_4"
-                      alignment="wxALIGN_CENTER_HORIZONTAL" />
-                    <node
-                      class="wxTextCtrl"
-                      style="wxTE_PROCESS_ENTER"
-                      var_name="m_text_old_prefix"
-                      wxEVT_TEXT_ENTER="OnUpdate" />
-                  </node>
+                    class="wxStaticText"
+                    class_access="none"
+                    label="&amp;Remove Old Prefix"
+                    var_name="staticText_4"
+                    borders="wxTOP|wxRIGHT|wxLEFT" />
                   <node
-                    class="wxBoxSizer"
-                    orientation="wxVERTICAL"
-                    var_name="box_sizer_5">
-                    <node
-                      class="wxStaticText"
-                      class_access="none"
-                      label="Remove Old Suffix"
-                      var_name="staticText_5"
-                      alignment="wxALIGN_CENTER_HORIZONTAL" />
-                    <node
-                      class="wxTextCtrl"
-                      style="wxTE_PROCESS_ENTER"
-                      var_name="m_text_old_suffix"
-                      wxEVT_TEXT_ENTER="OnUpdate" />
-                  </node>
+                    class="wxTextCtrl"
+                    style="wxTE_PROCESS_ENTER"
+                    var_name="m_text_old_prefix"
+                    flags="wxEXPAND"
+                    wxEVT_TEXT_ENTER="OnUpdate" />
                   <node
-                    class="wxBoxSizer"
-                    orientation="wxVERTICAL"
-                    var_name="box_sizer_7">
-                    <node
-                      class="wxStaticText"
-                      class_access="none"
-                      label="Add New Prefix"
-                      var_name="staticText_6"
-                      alignment="wxALIGN_CENTER_HORIZONTAL" />
-                    <node
-                      class="wxComboBox"
-                      style="wxCB_DROPDOWN|wxCB_SORT|wxTE_PROCESS_ENTER"
-                      var_name="m_combo_prefixes"
-                      minimum_size="70,-1d"
-                      wxEVT_COMBOBOX_CLOSEUP="OnUpdate"
-                      wxEVT_TEXT_ENTER="OnUpdate" />
-                  </node>
+                    class="wxStaticText"
+                    class_access="none"
+                    label="&amp;Add New Prefix"
+                    var_name="staticText_6"
+                    borders="wxTOP|wxRIGHT|wxLEFT" />
                   <node
-                    class="wxBoxSizer"
-                    orientation="wxVERTICAL"
-                    var_name="box_sizer_8">
-                    <node
-                      class="wxStaticText"
-                      class_access="none"
-                      label="Add New Suffix"
-                      var_name="staticText_7"
-                      alignment="wxALIGN_CENTER_HORIZONTAL" />
-                    <node
-                      class="wxComboBox"
-                      style="wxCB_DROPDOWN|wxCB_SORT|wxTE_PROCESS_ENTER"
-                      var_name="m_combo_suffixes"
-                      minimum_size="70,-1d"
-                      wxEVT_COMBOBOX_CLOSEUP="OnUpdate"
-                      wxEVT_TEXT_ENTER="OnUpdate" />
-                  </node>
+                    class="wxComboBox"
+                    style="wxCB_DROPDOWN|wxCB_SORT|wxTE_PROCESS_ENTER"
+                    var_name="m_combo_prefixes"
+                    minimum_size="-1,-1d"
+                    flags="wxEXPAND"
+                    wxEVT_COMBOBOX_CLOSEUP="OnUpdate"
+                    wxEVT_TEXT_ENTER="OnUpdate" />
                 </node>
                 <node
                   class="wxBoxSizer"
+                  orientation="wxVERTICAL"
+                  var_name="box_sizer_5"
+                  proportion="1">
+                  <node
+                    class="wxStaticText"
+                    class_access="none"
+                    label="Remove &amp;Old Suffix"
+                    var_name="staticText_5"
+                    borders="wxTOP|wxRIGHT|wxLEFT" />
+                  <node
+                    class="wxTextCtrl"
+                    style="wxTE_PROCESS_ENTER"
+                    var_name="m_text_old_suffix"
+                    flags="wxEXPAND"
+                    wxEVT_TEXT_ENTER="OnUpdate" />
+                  <node
+                    class="wxStaticText"
+                    class_access="none"
+                    label="Add &amp;New Suffix"
+                    var_name="staticText_7"
+                    borders="wxTOP|wxRIGHT|wxLEFT" />
+                  <node
+                    class="wxComboBox"
+                    style="wxCB_DROPDOWN|wxCB_SORT|wxTE_PROCESS_ENTER"
+                    var_name="m_combo_suffixes"
+                    minimum_size="-1,-1d"
+                    flags="wxEXPAND"
+                    wxEVT_COMBOBOX_CLOSEUP="OnUpdate"
+                    wxEVT_TEXT_ENTER="OnUpdate" />
+                </node>
+              </node>
+              <node
+                class="wxBoxSizer"
+                var_name="box_sizer_3"
+                alignment="wxALIGN_CENTER_HORIZONTAL">
+                <node
+                  class="wxBoxSizer"
+                  orientation="wxVERTICAL"
                   var_name="box_sizer_11"
-                  alignment="wxALIGN_CENTER_HORIZONTAL">
+                  borders="wxBOTTOM|wxRIGHT|wxLEFT"
+                  flags="wxEXPAND">
                   <node
                     class="wxButton"
                     class_access="none"
-                    label="Preview Changes"
+                    label="&amp;Update Preview"
                     var_name="btn_5"
+                    alignment="wxALIGN_CENTER_HORIZONTAL"
                     wxEVT_BUTTON="OnUpdate" />
+                </node>
+                <node
+                  class="wxBoxSizer"
+                  orientation="wxVERTICAL"
+                  borders="wxBOTTOM|wxRIGHT|wxLEFT"
+                  flags="wxEXPAND">
+                  <node
+                    class="wxButton"
+                    label="&amp;Commit Change"
+                    var_name="m_btn_commit"
+                    wxEVT_BUTTON="OnCommit" />
                 </node>
               </node>
             </node>
           </node>
           <node
-            class="wxBoxSizer">
+            class="wxStaticBoxSizer"
+            label="Preview the Changes to Make"
+            borders="wxBOTTOM|wxRIGHT|wxLEFT">
             <node
               class="wxGrid"
               cell_fit="ellipsize"
@@ -2018,16 +2053,15 @@
               selection_mode="wxGridSelectNone"
               flags="wxEXPAND"
               proportion="1" />
-            <node
-              class="wxButton"
-              label="Commit change"
-              var_name="m_btn_commit"
-              alignment="wxALIGN_CENTER_VERTICAL"
-              wxEVT_BUTTON="OnCommit" />
           </node>
           <node
             class="wxStdDialogButtonSizer"
-            flags="wxEXPAND" />
+            Cancel="0"
+            Close="1"
+            OK="0"
+            default_button="Close"
+            flags="wxEXPAND"
+            CloseButtonClicked="OnClose" />
         </node>
       </node>
     </node>

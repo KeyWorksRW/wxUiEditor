@@ -5,7 +5,8 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include <wx/string.h>  // wxString class
+#include <wx/filename.h>  // wxFileName - encapsulates a file path
+#include <wx/string.h>    // wxString class
 
 #include <cstdarg>  // for va_list
 #include <sstream>  // for std::stringstream
@@ -620,21 +621,14 @@ tt_string& tt_string::assignCwd()
     return *this;
 }
 
-tt_string& tt_string::make_relative(std::string_view relative_to)
+tt_string& tt_string::make_relative(tt_string_view relative_to)
 {
     if (empty())
         return *this;
 
-#ifdef _WIN32
-    auto current = std::filesystem::absolute(std::filesystem::path(to_utf16()));
-    auto rel_to = std::filesystem::absolute(std::filesystem::path(tt::utf8to16(relative_to)));
-    clear();
-    tt::utf16to8(current.lexically_relative(rel_to).wstring(), *this);
-#else
-    auto current = std::filesystem::absolute(std::filesystem::path(c_str()));
-    auto rel_to = std::filesystem::absolute(std::filesystem::path(std::string(relative_to)));
-    assign(current.lexically_relative(rel_to).string());
-#endif
+    wxFileName file(make_wxString());
+    file.MakeRelativeTo(relative_to.make_wxString());
+    assign(file.GetFullPath().utf8_string());
     return *this;
 }
 

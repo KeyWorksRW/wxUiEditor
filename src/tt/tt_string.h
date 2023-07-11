@@ -309,12 +309,9 @@ public:
     tt_string& append_filename(std::string_view filename);
     tt_string& append_filename(std::wstring_view filename) { return append_filename(tt::utf16to8(filename)); }
 
-    // Makes the current path relative to the supplied path. Use "." to be relative to the current
-    // directory. Supplied path should not contain a filename.
-    //
-    // Unlike fs::relative(), this will not resolve symbolic links, allowing it to work
-    // even when you are using a directory with a symbolic link to a different drive.
-    tt_string& make_relative(std::string_view relative_to);
+    // Makes the current path relative to the supplied path. Use an empty string to be
+    // relative to the current directory. Supplied path should not contain a filename.
+    tt_string& make_relative(tt_string_view relative_to);
 
     // Changes any current path to an absolute path.
     tt_string& make_absolute();

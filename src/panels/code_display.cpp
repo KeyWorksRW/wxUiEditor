@@ -5,15 +5,17 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include <wx/fdrepdlg.h>  // wxFindReplaceDialog class
-#include <wx/msgdlg.h>    // common header and base class for wxMessageDialog
+#include <wx/aui/auibook.h>  // wxaui: wx advanced user interface - notebook
+#include <wx/fdrepdlg.h>     // wxFindReplaceDialog class
+#include <wx/msgdlg.h>       // common header and base class for wxMessageDialog
 
 #include "code_display.h"  // auto-generated: wxui/codedisplay_base.h and wxui/codedisplay_base.cpp
 
-#include "base_panel.h"      // BasePanel -- Base class for all panels
+#include "base_panel.h"      // BasePanel -- Code generation panel
 #include "mainframe.h"       // MainFrame -- Main window frame
 #include "node.h"            // Node class
 #include "node_creator.h"    // NodeCreator -- Class used to create nodes
+#include "node_event.h"      // NodeEvent and NodeEventInfo classes
 #include "propgrid_panel.h"  // PropGridPanel -- PropertyGrid class for node properties and events
 
 #ifndef SCI_SETKEYWORDS
@@ -228,22 +230,47 @@ void CodeDisplay::OnNodeSelected(Node* node)
     }
 
     auto is_event = wxGetFrame().GetPropPanel()->IsEventPageShowing();
+    PANEL_PAGE page = wxGetFrame().GetGeneratedPanel()->GetPanelPage();
 
-    // Find where the node is created.
+    if (m_panel_type != GEN_LANG_CPLUSPLUS && page != CPP_PANEL)
+        return;  // Nothing to search for in secondary pages of non-C++ languages
+
+    int line = -1;
 
     tt_string name(" ");
-    if (m_panel_type == GEN_LANG_PYTHON && !node->IsLocal())
-        name << "self.";
-    name << node->as_string(prop_var_name);
-    int line = 0;
+
+    if (page == CPP_PANEL)
+    {
+        if (m_panel_type == GEN_LANG_PYTHON && !node->IsLocal())
+            name << "self.";
+        name << node->as_string(prop_var_name);
+    }
+
     if (is_event)
     {
-        name << "->Bind";
-        line = (to_int) m_view.FindLineContaining(name);
-        if (!tt::is_found(line))
+        if (page == CPP_PANEL)
         {
-            name.Replace("->Bind", " = ");
+            name << "->Bind";
             line = (to_int) m_view.FindLineContaining(name);
+            if (!tt::is_found(line))
+            {
+                name.Replace("->Bind", " = ");
+                line = (to_int) m_view.FindLineContaining(name);
+            }
+        }
+        else
+        {
+            auto map_events = node->GetMapEvents();
+            for (auto& iter: map_events)
+            {
+                auto value = iter.second.get_value();
+                if (value.empty())
+                    continue;
+
+                line = (to_int) m_view.FindLineContaining(value);
+                if (tt::is_found(line))
+                    break;
+            }
         }
     }
     else if (m_panel_type == GEN_LANG_XRC)
@@ -251,7 +278,7 @@ void CodeDisplay::OnNodeSelected(Node* node)
         tt_string search("name=\"");
         if (node->HasProp(prop_id) && node->as_string(prop_id) != "wxID_ANY")
         {
-            search << node->as_string(prop_id);
+            search << node->get_prop_id();
         }
         else if (node->HasValue(prop_var_name))
         {
@@ -265,8 +292,24 @@ void CodeDisplay::OnNodeSelected(Node* node)
     }
     else
     {
-        name << " = ";
-        line = (to_int) m_view.FindLineContaining(name);
+        if (page == CPP_PANEL)
+        {
+            name << " = ";
+            line = (to_int) m_view.FindLineContaining(name);
+        }
+        else
+        {
+            if (node->get_form()->as_bool(prop_generate_translation_unit))
+            {
+                name << node->as_string(prop_var_name) << ";";
+                line = (to_int) m_view.FindLineContaining(name);
+            }
+            else
+            {
+                name << node->as_string(prop_var_name) << " = ";
+                line = (to_int) m_view.FindLineContaining(name);
+            }
+        }
     }
 
     if (!tt::is_found(line))

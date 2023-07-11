@@ -28,13 +28,6 @@ namespace pugi
 
 using EventVector = std::vector<NodeEvent*>;
 
-enum PANEL_PAGE : size_t
-{
-    NOT_PANEL,
-    CPP_PANEL,
-    HDR_PANEL,
-};
-
 namespace result
 {
     // These enums are returned to indicate the result of generating a file

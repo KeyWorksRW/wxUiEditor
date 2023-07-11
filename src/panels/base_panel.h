@@ -19,6 +19,15 @@ class wxAuiNotebook;
 class wxFindDialogEvent;
 class wxStyledTextCtrl;
 
+enum PANEL_PAGE : size_t
+{
+    NOT_PANEL,
+    CPP_PANEL,
+    HDR_PANEL,
+    DERIVED_SRC_PANEL,
+    DERIVED_HDR_PANEL,
+};
+
 class BasePanel : public wxPanel
 {
 public:
@@ -26,6 +35,8 @@ public:
     ~BasePanel() override;
 
     void GenerateBaseClass();
+
+    PANEL_PAGE GetPanelPage() const;
 
     void OnFind(wxFindDialogEvent& event);
 

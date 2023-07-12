@@ -8,6 +8,7 @@
 import wx
 import wx.adv
 import wx.html
+import wx.propgrid
 import wx.ribbon
 import wx.richtext
 import wx.stc
@@ -676,6 +677,26 @@ class MainTestDialog(wx.Dialog):
         page_sizer.Add(box_sizer_18, wx.SizerFlags().Border(wx.ALL))
         page_7.SetSizerAndFit(page_sizer)
 
+        page_8 = wx.Panel(self.m_notebook, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize,
+            wx.TAB_TRAVERSAL)
+        self.m_notebook.AddPage(page_8, "Data")
+        page_8.SetBackgroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_BTNFACE))
+
+        page_sizer_4 = wx.BoxSizer(wx.VERTICAL)
+
+        self.propertyGrid = wx.propgrid.PropertyGrid(page_8, wx.ID_ANY)
+        page_sizer_4.Add(self.propertyGrid, wx.SizerFlags().Expand().Border(wx.ALL))
+
+        self.propertyGridItem = self.propertyGrid.Append(wx.propgrid.PropertyCategory(
+        "CategoryName", "CategoryName"))
+
+        self.propertyGridItem_2 = self.propertyGrid.Append(wx.propgrid.StringProperty(
+        "String", ""))
+
+        self.propertyGridItem_3 = self.propertyGrid.Append(wx.propgrid.IntProperty(
+        "Integer", ""))
+        page_8.SetSizerAndFit(page_sizer_4)
+
         box_sizer_14 = wx.BoxSizer(wx.HORIZONTAL)
 
         staticText_4 = wx.StaticText(self, wx.ID_ANY, "Events:")
@@ -707,32 +728,32 @@ class MainTestDialog(wx.Dialog):
         self.Centre(wx.BOTH)
 
         # Bind Event handlers
-        btn.Bind(wx.EVT_BUTTON, self.OnClearList)
         self.m_btn.Bind(wx.EVT_BUTTON, lambda event:
             self.m_events_list.Select(self.m_events_list.Append("Button: wx.EVT_BUTTON")))
+        self.m_btn_3.Bind(wx.EVT_BUTTON, lambda event:self.OnEventName("Button: wx.EVT_BUTTON"))
+        btn2.Bind(wx.EVT_BUTTON, self.OnPopupBtn)
+        self.m_btn_7.Bind(wx.EVT_BUTTON, lambda event:self.OnEventName("Ceci est une phrase en français."))
         self.m_btn_2.Bind(wx.EVT_BUTTON, lambda event:
             self.m_events_list.Select(self.m_events_list.Append("Button: wx.EVT_BUTTON")))
         self.m_btn_bitmaps.Bind(wx.EVT_BUTTON, lambda event:
             self.m_events_list.Select(self.m_events_list.Append("Button: wx.EVT_BUTTON")))
         self.m_btn_4.Bind(wx.EVT_BUTTON, lambda event:
             self.m_events_list.Select(self.m_events_list.Append("Button: wx.EVT_BUTTON")))
+        self.m_btn_6.Bind(wx.EVT_BUTTON, lambda event:self.OnEventName("This is a sentence in English."))
+        btn.Bind(wx.EVT_BUTTON, self.OnClearList)
         self.m_btn_5.Bind(wx.EVT_BUTTON, lambda event:
             self.m_events_list.Select(self.m_events_list.Append("CmdLinkBtn: wx.EVT_BUTTON")))
-        self.m_btn_3.Bind(wx.EVT_BUTTON, lambda event:self.OnEventName("Button: wx.EVT_BUTTON"))
-        btn2.Bind(wx.EVT_BUTTON, self.OnPopupBtn)
-        self.m_btn_6.Bind(wx.EVT_BUTTON, lambda event:self.OnEventName("This is a sentence in English."))
-        self.m_btn_7.Bind(wx.EVT_BUTTON, lambda event:self.OnEventName("Ceci est une phrase en français."))
         disable_bitmaps.Bind(wx.EVT_CHECKBOX, self.OnDisableBitmapsBtn)
         self.m_checkList2.Bind(wx.EVT_CHECKLISTBOX, lambda event:
             self.OnEventName("CheckListBox2: wx.EVT_CHECKLISTBOX"))
         self.m_checkList_2.Bind(wx.EVT_CHECKLISTBOX, lambda event:
             self.OnEventName("CheckListBox1: wx.EVT_CHECKLISTBOX"))
-        self.m_choice2.Bind(wx.EVT_CHOICE, lambda event:self.OnEventName("OnChoice: wx.EVT_CHOICE"))
         self.m_choice.Bind(wx.EVT_CHOICE, lambda event:self.OnEventName("Choice: wx.EVT_CHOICE"))
+        self.m_choice2.Bind(wx.EVT_CHOICE, lambda event:self.OnEventName("OnChoice: wx.EVT_CHOICE"))
         self.m_colourPicker.Bind(wx.EVT_COLOURPICKER_CHANGED, lambda event:
             self.OnEventName("ColourPicker: wx.EVT_COLOURPICKER_CHANGED"))
-        self.m_comboBox2.Bind(wx.EVT_COMBOBOX, lambda event:self.OnEventName("OnCombobox: wx.EVT_COMBOBOX"))
         self.m_comboBox.Bind(wx.EVT_COMBOBOX, lambda event:self.OnEventName("Combobox: wx.EVT_COMBOBOX"))
+        self.m_comboBox2.Bind(wx.EVT_COMBOBOX, lambda event:self.OnEventName("OnCombobox: wx.EVT_COMBOBOX"))
         self.m_datePicker.Bind(wx.adv.EVT_DATE_CHANGED, lambda event:
             self.OnEventName("DatePicker: wx.EVT_DATE_CHANGED"))
         self.m_dirPicker.Bind(wx.EVT_DIRPICKER_CHANGED, lambda event:
@@ -742,18 +763,30 @@ class MainTestDialog(wx.Dialog):
         self.m_fontPicker.Bind(wx.EVT_FONTPICKER_CHANGED, lambda event:
             self.OnEventName("FontPicker: wx.OnFontChanged"))
         self.Bind(wx.EVT_INIT_DIALOG, self.OnInit)
-        self.m_listBox2.Bind(wx.EVT_LISTBOX, lambda event:self.OnEventName("ListBox2: wx.EVT_LISTBOX"))
         self.m_listbox.Bind(wx.EVT_LISTBOX, lambda event:self.OnEventName("ListBox1: wx.EVT_LISTBOX"))
+        self.m_listBox2.Bind(wx.EVT_LISTBOX, lambda event:self.OnEventName("ListBox2: wx.EVT_LISTBOX"))
         self.m_notebook.Bind(wx.EVT_NOTEBOOK_PAGE_CHANGED, self.OnPageChanged)
         radioBox.Bind(wx.EVT_RADIOBOX, lambda event:self.OnEventName("RadioBox: wx.EVT_RADIOBOX"))
-        self.m_radioBtn2.Bind(wx.EVT_RADIOBUTTON, lambda event:
-            self.OnEventName("RadioButton: wx.EVT_RADIOBUTTON"))
+        self.m_radioBtn_4.Bind(wx.EVT_RADIOBUTTON, lambda event:
+            self.OnEventName("wx.RadioButton: wx.EVT_RADIOBUTTON"))
+        self.m_radioBtn_2.Bind(wx.EVT_RADIOBUTTON, lambda event:
+            self.OnEventName("wx.RadioButton: wx.EVT_RADIOBUTTON"))
+        self.m_radioBtn_7.Bind(wx.EVT_RADIOBUTTON, lambda event:
+            self.OnEventName("wx.RadioButton: wx.EVT_RADIOBUTTON"))
         self.m_radioBtn.Bind(wx.EVT_RADIOBUTTON, lambda event:
             self.OnEventName("RadioButton: wx.EVT_RADIOBUTTON"))
+        self.m_radioBtn_6.Bind(wx.EVT_RADIOBUTTON, lambda event:
+            self.OnEventName("wx.RadioButton: wx.EVT_RADIOBUTTON"))
+        self.m_radioBtn2.Bind(wx.EVT_RADIOBUTTON, lambda event:
+            self.OnEventName("RadioButton: wx.EVT_RADIOBUTTON"))
+        self.m_radioBtn_5.Bind(wx.EVT_RADIOBUTTON, lambda event:
+            self.OnEventName("wx.RadioButton: wx.EVT_RADIOBUTTON"))
+        self.m_radioBtn_3.Bind(wx.EVT_RADIOBUTTON, lambda event:
+            self.OnEventName("wx.RadioButton: wx.EVT_RADIOBUTTON"))
         self.m_scintilla.Bind(wx.stc.EVT_STC_CHANGE, lambda event:
             self.OnEventName("wx.StyledTextCtrl: wx.EVT_STC_CHANGE"))
-        self.m_richText.Bind(wx.EVT_TEXT, lambda event:self.OnEventName("wx.RichTextCtrl: wx.EVT_TEXT"))
         self.m_text_ctrl.Bind(wx.EVT_TEXT, lambda event:self.OnEventName("wx.TextCtrl: wx.EVT_TEXT"))
+        self.m_richText.Bind(wx.EVT_TEXT, lambda event:self.OnEventName("wx.RichTextCtrl: wx.EVT_TEXT"))
         self.m_timePicker.Bind(wx.adv.EVT_TIME_CHANGED, lambda event:
             self.OnEventName("TimePicker: wx.EVT_TIME_CHANGED"))
         self.m_toggleBtn.Bind(wx.EVT_TOGGLEBUTTON, lambda event:self.OnEventName("OnToggle: wx.EVT_BUTTON"))

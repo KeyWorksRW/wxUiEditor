@@ -445,16 +445,19 @@
                   <node
                     class="wxRadioButton"
                     label="First button"
-                    var_name="m_radioBtn_4" />
+                    var_name="m_radioBtn_4"
+                    wxEVT_RADIOBUTTON="[this](wxCommandEvent&amp;)@@{@@OnEventName(&quot;wxRadioButton: wxEVT_RADIOBUTTON&quot;);@@}[python:lambda]self.OnEventName(&quot;wx.RadioButton: wx.EVT_RADIOBUTTON&quot;)" />
                   <node
                     class="wxRadioButton"
                     checked="1"
                     label="Second button"
-                    var_name="m_radioBtn_2" />
+                    var_name="m_radioBtn_2"
+                    wxEVT_RADIOBUTTON="[this](wxCommandEvent&amp;)@@{@@OnEventName(&quot;wxRadioButton: wxEVT_RADIOBUTTON&quot;);@@}[python:lambda]self.OnEventName(&quot;wx.RadioButton: wx.EVT_RADIOBUTTON&quot;)" />
                   <node
                     class="wxRadioButton"
                     label="Third button"
-                    var_name="m_radioBtn_3" />
+                    var_name="m_radioBtn_3"
+                    wxEVT_RADIOBUTTON="[this](wxCommandEvent&amp;)@@{@@OnEventName(&quot;wxRadioButton: wxEVT_RADIOBUTTON&quot;);@@}[python:lambda]self.OnEventName(&quot;wx.RadioButton: wx.EVT_RADIOBUTTON&quot;)" />
                 </node>
                 <node
                   class="StaticRadioBtnBoxSizer"
@@ -464,16 +467,19 @@
                   <node
                     class="wxRadioButton"
                     label="First button"
-                    var_name="m_radioBtn_5" />
+                    var_name="m_radioBtn_5"
+                    wxEVT_RADIOBUTTON="[this](wxCommandEvent&amp;)@@{@@OnEventName(&quot;wxRadioButton: wxEVT_RADIOBUTTON&quot;);@@}[python:lambda]self.OnEventName(&quot;wx.RadioButton: wx.EVT_RADIOBUTTON&quot;)" />
                   <node
                     class="wxRadioButton"
                     checked="1"
                     label="Second button"
-                    var_name="m_radioBtn_6" />
+                    var_name="m_radioBtn_6"
+                    wxEVT_RADIOBUTTON="[this](wxCommandEvent&amp;)@@{@@OnEventName(&quot;wxRadioButton: wxEVT_RADIOBUTTON&quot;);@@}[python:lambda]self.OnEventName(&quot;wx.RadioButton: wx.EVT_RADIOBUTTON&quot;)" />
                   <node
                     class="wxRadioButton"
                     label="Third button"
-                    var_name="m_radioBtn_7" />
+                    var_name="m_radioBtn_7"
+                    wxEVT_RADIOBUTTON="[this](wxCommandEvent&amp;)@@{@@OnEventName(&quot;wxRadioButton: wxEVT_RADIOBUTTON&quot;);@@}[python:lambda]self.OnEventName(&quot;wx.RadioButton: wx.EVT_RADIOBUTTON&quot;)" />
                 </node>
               </node>
               <node
@@ -1039,6 +1045,36 @@
                   bitmap="Embed;wiztest.png"
                   direction="wxLEFT"
                   title="This is a long title" />
+              </node>
+            </node>
+          </node>
+          <node
+            class="BookPage"
+            label="Data"
+            var_name="page_8"
+            background_colour="wxSYS_COLOUR_BTNFACE"
+            window_style="wxTAB_TRAVERSAL">
+            <node
+              class="wxBoxSizer"
+              orientation="wxVERTICAL"
+              var_name="page_sizer_4">
+              <node
+                class="wxPropertyGrid"
+                var_name="propertyGrid"
+                flags="wxEXPAND">
+                <node
+                  class="propGridCategory"
+                  var_name="propertyGridItem">
+                  <node
+                    class="propGridItem"
+                    label="String"
+                    var_name="propertyGridItem_2" />
+                  <node
+                    class="propGridItem"
+                    label="Integer"
+                    type="Int"
+                    var_name="propertyGridItem_3" />
+                </node>
               </node>
             </node>
           </node>

@@ -39,6 +39,7 @@
 #include <wx/listbox.h>
 #include <wx/listctrl.h>
 #include <wx/notebook.h>
+#include <wx/propgrid/propgrid.h>
 #include <wx/radiobut.h>
 #include <wx/rearrangectrl.h>
 #include <wx/ribbon/art.h>
@@ -136,6 +137,10 @@ protected:
     wxListBox* m_listbox;
     wxListView* m_listview;
     wxNotebook* m_notebook;
+    wxPGProperty* propertyGridItem;
+    wxPGProperty* propertyGridItem_2;
+    wxPGProperty* propertyGridItem_3;
+    wxPropertyGrid* propertyGrid;
     wxRadioButton* m_radioBtn2;
     wxRadioButton* m_radioBtn;
     wxRadioButton* m_radioBtn_2;

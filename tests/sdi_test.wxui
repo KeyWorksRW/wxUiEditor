@@ -20,7 +20,6 @@
     xrc_directory="sdi/xrc">
     <node
       class="Images"
-      auto_update="1"
       base_file="images">
       <node
         class="embedded_image"
@@ -438,6 +437,50 @@
                   var_name="radioBox"
                   validator_variable="m_valRadio"
                   wxEVT_RADIOBOX="[this](wxCommandEvent&amp;)@@{@@OnEventName(&quot;RadioBox: wxEVT_RADIOBOX&quot;);@@}[python:lambda]self.OnEventName(&quot;RadioBox: wx.EVT_RADIOBOX&quot;)" />
+                <node
+                  class="StaticCheckboxBoxSizer"
+                  checkbox_var_name="m_checkBox_sizer"
+                  label="Checkbox"
+                  var_name="static_box_4">
+                  <node
+                    class="wxRadioButton"
+                    label="First button"
+                    var_name="m_radioBtn_4"
+                    wxEVT_RADIOBUTTON="[this](wxCommandEvent&amp;)@@{@@OnEventName(&quot;wxRadioButton: wxEVT_RADIOBUTTON&quot;);@@}[python:lambda]self.OnEventName(&quot;wx.RadioButton: wx.EVT_RADIOBUTTON&quot;)" />
+                  <node
+                    class="wxRadioButton"
+                    checked="1"
+                    label="Second button"
+                    var_name="m_radioBtn_2"
+                    wxEVT_RADIOBUTTON="[this](wxCommandEvent&amp;)@@{@@OnEventName(&quot;wxRadioButton: wxEVT_RADIOBUTTON&quot;);@@}[python:lambda]self.OnEventName(&quot;wx.RadioButton: wx.EVT_RADIOBUTTON&quot;)" />
+                  <node
+                    class="wxRadioButton"
+                    label="Third button"
+                    var_name="m_radioBtn_3"
+                    wxEVT_RADIOBUTTON="[this](wxCommandEvent&amp;)@@{@@OnEventName(&quot;wxRadioButton: wxEVT_RADIOBUTTON&quot;);@@}[python:lambda]self.OnEventName(&quot;wx.RadioButton: wx.EVT_RADIOBUTTON&quot;)" />
+                </node>
+                <node
+                  class="StaticRadioBtnBoxSizer"
+                  label="Radio"
+                  radiobtn_var_name="m_radioBtn__sizer"
+                  var_name="static_box_5">
+                  <node
+                    class="wxRadioButton"
+                    label="First button"
+                    var_name="m_radioBtn_5"
+                    wxEVT_RADIOBUTTON="[this](wxCommandEvent&amp;)@@{@@OnEventName(&quot;wxRadioButton: wxEVT_RADIOBUTTON&quot;);@@}[python:lambda]self.OnEventName(&quot;wx.RadioButton: wx.EVT_RADIOBUTTON&quot;)" />
+                  <node
+                    class="wxRadioButton"
+                    checked="1"
+                    label="Second button"
+                    var_name="m_radioBtn_6"
+                    wxEVT_RADIOBUTTON="[this](wxCommandEvent&amp;)@@{@@OnEventName(&quot;wxRadioButton: wxEVT_RADIOBUTTON&quot;);@@}[python:lambda]self.OnEventName(&quot;wx.RadioButton: wx.EVT_RADIOBUTTON&quot;)" />
+                  <node
+                    class="wxRadioButton"
+                    label="Third button"
+                    var_name="m_radioBtn_7"
+                    wxEVT_RADIOBUTTON="[this](wxCommandEvent&amp;)@@{@@OnEventName(&quot;wxRadioButton: wxEVT_RADIOBUTTON&quot;);@@}[python:lambda]self.OnEventName(&quot;wx.RadioButton: wx.EVT_RADIOBUTTON&quot;)" />
+                </node>
               </node>
               <node
                 class="wxStaticLine"
@@ -574,7 +617,8 @@
             <node
               class="wxBoxSizer"
               orientation="wxVERTICAL"
-              var_name="page_sizer_2">
+              var_name="page_sizer_2"
+              flags="wxEXPAND">
               <node
                 class="wxStaticBoxSizer"
                 label="Combos and Choices"
@@ -690,6 +734,25 @@
                       style="wxLB_SORT"
                       var_name="m_checkList2"
                       wxEVT_CHECKLISTBOX="[this](wxCommandEvent&amp;)@@{@@OnEventName(&quot;CheckListBox2: wx.EVT_CHECKLISTBOX&quot;);@@}[python:lambda]self.OnEventName(&quot;CheckListBox2: wx.EVT_CHECKLISTBOX&quot;)" />
+                  </node>
+                </node>
+              </node>
+              <node
+                class="wxBoxSizer"
+                orientation="wxVERTICAL"
+                var_name="box_sizer_20">
+                <node
+                  class="wxCollapsiblePane"
+                  label="Collapsible Pane"
+                  var_name="collapsible_pane"
+                  flags="wxEXPAND">
+                  <node
+                    class="wxBoxSizer"
+                    var_name="box_sizer_21">
+                    <node
+                      class="wxStaticText"
+                      label="This text will be hidden if the Pane is collapsed."
+                      var_name="staticText_5" />
                   </node>
                 </node>
               </node>
@@ -982,6 +1045,36 @@
                   bitmap="Embed;wiztest.png"
                   direction="wxLEFT"
                   title="This is a long title" />
+              </node>
+            </node>
+          </node>
+          <node
+            class="BookPage"
+            label="Data"
+            var_name="page_8"
+            background_colour="wxSYS_COLOUR_BTNFACE"
+            window_style="wxTAB_TRAVERSAL">
+            <node
+              class="wxBoxSizer"
+              orientation="wxVERTICAL"
+              var_name="page_sizer_4">
+              <node
+                class="wxPropertyGrid"
+                var_name="propertyGrid"
+                flags="wxEXPAND">
+                <node
+                  class="propGridCategory"
+                  var_name="propertyGridItem">
+                  <node
+                    class="propGridItem"
+                    label="String"
+                    var_name="propertyGridItem_2" />
+                  <node
+                    class="propGridItem"
+                    label="Integer"
+                    type="Int"
+                    var_name="propertyGridItem_3" />
+                </node>
               </node>
             </node>
           </node>

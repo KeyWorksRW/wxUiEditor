@@ -15,7 +15,14 @@
 
 bool PropertyGridItemGenerator::ConstructionCode(Code& code)
 {
-    code.AddAuto().NodeName().Str(" = ").ValidParentName();
+    auto parent = code.node()->get_parent();
+    if (parent->isGen(gen_propGridCategory))
+    {
+        parent = parent->get_parent();
+    }
+
+    code.AddAuto().NodeName().Str(" = ");
+    code.NodeName(parent);
     // .Function("Append(new wx").PropAs(prop_type).Str("Property(");
 
     if (code.view(prop_type) == "Category")

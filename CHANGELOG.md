@@ -1,15 +1,15 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
-## [Unreleased (1.1.1) currently in beta]
+## [Unreleased (1.1.2)]
 
 ### Added
 
 - The C++ Settings in forms now have a `initial_enum_string` property that allows you to set the initial enumeration value to something other than the default "wxID_HIGHEST + 1".
+- There is a new 'Global Edit Custom IDs` under the Tools menu for setting prefixes and suffixes for your custom IDs.
 - The C++ Settings in forms now have properties for local and system header files to include in either the generated source or header files.
 - wxMenu and wxMenu items now have a stock_id property allowing you to choose from wxWidgets stock items.
 - Added support for wxAUI_BUTTON_STATE flags when creating a wxAuiToolBar tool.
-- Images List now has an auto_update property that will automatically add any embedded or SVG image used throughout your project. This allows you to generate all your embedded and SVG images in a single file.
 
 ### Changed
 
@@ -25,7 +25,9 @@ All notable changes to this project will be documented in this file.
 - Code generation for wxToolBar drop-down tools with menu items fixed.
 - Code generation for wxGridBagSizer when growablecols or growablerows specified
 - Code generation for Wizard using wxWidgets 3.1 corrected
+- Code generation for adding an item to a wxPropertyGrid has corrected
 - Code is now generated for a sub-menu that has a bitmap property set
+- Code generation for event handler of a wxStdDialogButtonSizer Close button corrected
 - Header file code generation could create uninitialized wxStdDialogButtonSizer buttons under special circumstances -- this has been fixed.
 
 ## [Released (1.1.0)]

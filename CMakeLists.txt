@@ -19,6 +19,14 @@ endif()
 
 option(INTERNAL_BLD_TESTING "Build with internal testing functionality")
 
+# Setting these will add a matching compiler definition. What that will enable in the code is
+# not set -- it's used for a long-running feature that will only be enabled in regular builds
+# when the feature is ready for release or testing.
+
+option(INTERNAL_FEATURE1 "Build with Feature #1 enabled")
+option(INTERNAL_FEATURE2 "Build with Feature #2 enabled")
+option(INTERNAL_FEATURE3 "Build with Feature #3 enabled")
+
 # This option is designed to make it possible to check changes to a wxWidgets fork, and/or to
 # build with the current wxWidgets sources (assuming the wxWidgets fork is in sync).
 # Realistically, this is only going to be usable by the maintainers of this project.
@@ -40,18 +48,18 @@ option(BUILD_FORK "Builds wxWidgets using wxWidgets/wx_3_3")
 # wxWidgets. Currently, this is being used internally to verfiy backports from 3.3 to 3.2, and
 # to verify the wxUSE_UNICODE_UTF8 build option for MSW.
 
-option(BUILD_VADZ "Builds wxWidgets using wxWidgets/wx_vadx")
+option(BUILD_CUSTOM "Builds with custom version of wxWidgets")
 
-if (BUILD_VADZ AND BUILD_FORK)
-    message(FATAL_ERROR "BUILD_FORK and BUILD_VADZ cannot be combined")
+if (BUILD_CUSTOM AND BUILD_FORK)
+    message(FATAL_ERROR "BUILD_FORK and BUILD_CUSTOM cannot be combined")
 endif()
 
 if (BUILD_FORK)
     set(BUILD_ROOT ${BUILD_FORK_DIR} CACHE PATH "${CMAKE_CURRENT_LIST_DIR}/../wxWidgets" FORCE)
     message(NOTICE "Building with forked/cloned version of wxWidgets")
-elseif (BUILD_VADZ)
-    set(BUILD_ROOT ${BUILD_VADZ_DIR} CACHE PATH "${CMAKE_CURRENT_LIST_DIR}/../vadz" FORCE)
-    message(NOTICE "Building with vadz build of wxWidgets")
+elseif (BUILD_CUSTOM)
+    set(BUILD_ROOT ${BUILD_CUSTOM_DIR} CACHE PATH "${CMAKE_CURRENT_LIST_DIR}/../" FORCE)
+    message(NOTICE "Building with custom build of wxWidgets")
 else()
     set(BUILD_ROOT wxWidgets CACHE PATH "wxWidgets" FORCE)
 endif()
@@ -115,6 +123,15 @@ if (INTERNAL_BLD_TESTING)
         src/internal/import_panel.cpp
         src/internal/convert_img.cpp
     )
+elseif (INTERNAL_FEATURE1)
+    message(NOTICE "Building with Feature #1 enabled")
+    add_compile_definitions(INTERNAL_FEATURE1)
+elseif (INTERNAL_FEATURE2)
+    message(NOTICE "Building with Feature #2 enabled")
+    add_compile_definitions(INTERNAL_FEATURE2)
+elseif (INTERNAL_FEATURE3)
+    message(NOTICE "Building with Feature #3 enabled")
+    add_compile_definitions(INTERNAL_FEATURE3)
 else()
     set (wxui_internal_files
         $<$<CONFIG:Debug>:src/internal/msg_logging.cpp>
@@ -147,7 +164,7 @@ endif()
 if (BUILD_FORK)
     set (widget_dir ${CMAKE_CURRENT_LIST_DIR}/wxWidgets/wx_3_3)
     add_subdirectory(${widget_dir})
-elseif(BUILD_VADZ)
+elseif(BUILD_CUSTOM)
     set (widget_dir ${CMAKE_CURRENT_LIST_DIR}/wxWidgets/wx_custom)
     add_subdirectory(${widget_dir})
 else()
@@ -160,7 +177,7 @@ message(STATUS "widget_dir: ${widget_dir}")
 if (WIN32)
     if (BUILD_FORK)
         set(setup_dir ${CMAKE_CURRENT_LIST_DIR}/wxWidgets/wx_3_3/setup/win)
-    elseif(BUILD_VADZ)
+    elseif(BUILD_CUSTOM)
         set(setup_dir ${CMAKE_CURRENT_LIST_DIR}/wxWidgets/wx_custom/setup/win)
     else()
         set(setup_dir ${CMAKE_CURRENT_LIST_DIR}/wxWidgets/wx_3_2/setup/win)
@@ -211,8 +228,8 @@ else()
 endif()
 
 if (INTERNAL_DARK_MODE)
-    if (NOT BUILD_FORK AND NOT BUILD_VADZ)
-        message(FATAL_ERROR "DARK mode is only supported for the fork and vadz builds")
+    if (NOT BUILD_FORK AND NOT BUILD_CUSTOM)
+        message(FATAL_ERROR "DARK mode is only supported for the fork and custom builds")
     endif()
 
     if (WIN32)
@@ -226,7 +243,7 @@ if (INTERNAL_DARK_MODE)
     endif()
 endif()
 
-if (NOT BUILD_FORK AND NOT BUILD_VADZ)
+if (NOT BUILD_FORK AND NOT BUILD_CUSTOM)
     if (WIN32)
         target_link_libraries(wxUiEditor PRIVATE wxWidgets ${CLib} comctl32 Imm32 Shlwapi Version UxTheme)
     endif()

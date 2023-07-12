@@ -661,7 +661,7 @@ void MainFrame::OnAbout(wxCommandEvent&)
 
     // Use trailing spaces to make the dialog width a bit wider
     tt_string description;
-    description << "wxUiEditor is a GUI designer for C++/XRC applications.  \n\n\tBuilt using " << wxVERSION_STRING << "\n";
+    description << "wxUiEditor is a GUI designer for\nC++, Python and XRC.\n";
 
     if (wxGetApp().isTestingMenuEnabled())
     {

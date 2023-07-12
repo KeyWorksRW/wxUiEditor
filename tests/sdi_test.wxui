@@ -20,7 +20,6 @@
     xrc_directory="sdi/xrc">
     <node
       class="Images"
-      auto_update="1"
       base_file="images">
       <node
         class="embedded_image"
@@ -438,6 +437,44 @@
                   var_name="radioBox"
                   validator_variable="m_valRadio"
                   wxEVT_RADIOBOX="[this](wxCommandEvent&amp;)@@{@@OnEventName(&quot;RadioBox: wxEVT_RADIOBOX&quot;);@@}[python:lambda]self.OnEventName(&quot;RadioBox: wx.EVT_RADIOBOX&quot;)" />
+                <node
+                  class="StaticCheckboxBoxSizer"
+                  checkbox_var_name="m_checkBox_sizer"
+                  label="Checkbox"
+                  var_name="static_box_4">
+                  <node
+                    class="wxRadioButton"
+                    label="First button"
+                    var_name="m_radioBtn_4" />
+                  <node
+                    class="wxRadioButton"
+                    checked="1"
+                    label="Second button"
+                    var_name="m_radioBtn_2" />
+                  <node
+                    class="wxRadioButton"
+                    label="Third button"
+                    var_name="m_radioBtn_3" />
+                </node>
+                <node
+                  class="StaticRadioBtnBoxSizer"
+                  label="Radio"
+                  radiobtn_var_name="m_radioBtn__sizer"
+                  var_name="static_box_5">
+                  <node
+                    class="wxRadioButton"
+                    label="First button"
+                    var_name="m_radioBtn_5" />
+                  <node
+                    class="wxRadioButton"
+                    checked="1"
+                    label="Second button"
+                    var_name="m_radioBtn_6" />
+                  <node
+                    class="wxRadioButton"
+                    label="Third button"
+                    var_name="m_radioBtn_7" />
+                </node>
               </node>
               <node
                 class="wxStaticLine"

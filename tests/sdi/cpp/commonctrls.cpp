@@ -73,7 +73,7 @@ bool CommonCtrls::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     m_staticText = new wxStaticText(this, wxID_ANY, "Text:");
     box_sizer->Add(m_staticText, wxSizerFlags().Center().Border(wxLEFT|wxTOP|wxBOTTOM, wxSizerFlags::GetDefaultBorder()));
 
-    m_textCtrl = new wxTextCtrl(this, wxID_ANY, "Text \"ctrl\"", wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER);
+    m_textCtrl = new wxTextCtrl(this, TXT_CTRL, "Text \"ctrl\"", wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER);
     {
         wxArrayString tmp_array;
         tmp_array.Add("foo");

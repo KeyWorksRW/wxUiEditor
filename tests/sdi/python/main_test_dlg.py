@@ -11,6 +11,7 @@ import wx.html
 import wx.ribbon
 import wx.richtext
 import wx.stc
+TXT_CTRL = wx.ID_HIGHEST + 1
 DLG_MAINTEST = wx.ID_HIGHEST + 100
 ID_RICHTEXT = 100
 
@@ -76,7 +77,7 @@ class MainTestDialog(wx.Dialog):
 
         page_sizer_1 = wx.BoxSizer(wx.VERTICAL)
 
-        self.m_text_ctrl = wx.TextCtrl(page_2, wx.ID_ANY, "", wx.DefaultPosition,
+        self.m_text_ctrl = wx.TextCtrl(page_2, TXT_CTRL, "", wx.DefaultPosition,
             wx.DefaultSize, wx.TE_RICH2)
         self.m_text_ctrl.SetHint("wxTextCtrl")
         page_sizer_1.Add(self.m_text_ctrl, wx.SizerFlags().Expand().Border(wx.ALL))
@@ -171,6 +172,42 @@ class MainTestDialog(wx.Dialog):
             wx.RA_SPECIFY_ROWS)
         radioBox.SetSelection(1)
         box_sizer_7.Add(radioBox, wx.SizerFlags().Border(wx.ALL))
+
+        # wxPython currently does not support a checkbox as a static box label
+        static_box_4 = wx.StaticBoxSizer(wx.VERTICAL, page_4, "Checkbox")
+
+        self.m_radioBtn_4 = wx.RadioButton(static_box_4.GetStaticBox(), wx.ID_ANY,
+            "First button")
+        static_box_4.Add(self.m_radioBtn_4, wx.SizerFlags().Border(wx.ALL))
+
+        self.m_radioBtn_2 = wx.RadioButton(static_box_4.GetStaticBox(), wx.ID_ANY,
+            "Second button")
+        self.m_radioBtn_2.SetValue(True)
+        static_box_4.Add(self.m_radioBtn_2, wx.SizerFlags().Border(wx.ALL))
+
+        self.m_radioBtn_3 = wx.RadioButton(static_box_4.GetStaticBox(), wx.ID_ANY,
+            "Third button")
+        static_box_4.Add(self.m_radioBtn_3, wx.SizerFlags().Border(wx.ALL))
+
+        box_sizer_7.Add(static_box_4, wx.SizerFlags().Border(wx.ALL))
+
+        # wxPython currently does not support a radio button as a static box label
+        static_box_5 = wx.StaticBoxSizer(wx.VERTICAL, page_4, "Radio")
+
+        self.m_radioBtn_5 = wx.RadioButton(static_box_5.GetStaticBox(), wx.ID_ANY,
+            "First button")
+        static_box_5.Add(self.m_radioBtn_5, wx.SizerFlags().Border(wx.ALL))
+
+        self.m_radioBtn_6 = wx.RadioButton(static_box_5.GetStaticBox(), wx.ID_ANY,
+            "Second button")
+        self.m_radioBtn_6.SetValue(True)
+        static_box_5.Add(self.m_radioBtn_6, wx.SizerFlags().Border(wx.ALL))
+
+        self.m_radioBtn_7 = wx.RadioButton(static_box_5.GetStaticBox(), wx.ID_ANY,
+            "Third button")
+        static_box_5.Add(self.m_radioBtn_7, wx.SizerFlags().Border(wx.ALL))
+
+        box_sizer_7.Add(static_box_5, wx.SizerFlags().Border(wx.ALL))
 
         box_sizer_3.Add(box_sizer_7, wx.SizerFlags().Border(wx.ALL))
 

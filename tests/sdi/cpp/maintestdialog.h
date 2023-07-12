@@ -72,6 +72,11 @@ public:
     static const int DLG_MAINTEST = wxID_HIGHEST + 100;
     static const int ID_RICHTEXT = 100;
 
+    enum
+    {
+        TXT_CTRL = wxID_HIGHEST + 1
+    };
+
     void OnEventName(const std::string& event_name)
     {
         m_events_list->Select(m_events_list->Append(wxString().FromUTF8(event_name)));
@@ -107,6 +112,7 @@ protected:
     wxButton* m_btn_7;
     wxButton* m_btn_bitmaps;
     wxCheckBox* m_checkBox;
+    wxCheckBox* m_checkBox_sizer;
     wxCheckBox* m_checkPlayAnimation;
     wxCheckListBox* m_checkList2;
     wxCheckListBox* m_checkList;
@@ -130,6 +136,13 @@ protected:
     wxNotebook* m_notebook;
     wxRadioButton* m_radioBtn2;
     wxRadioButton* m_radioBtn;
+    wxRadioButton* m_radioBtn_2;
+    wxRadioButton* m_radioBtn_3;
+    wxRadioButton* m_radioBtn_4;
+    wxRadioButton* m_radioBtn_5;
+    wxRadioButton* m_radioBtn_6;
+    wxRadioButton* m_radioBtn_7;
+    wxRadioButton* m_radioBtn__sizer;
     wxRearrangeCtrl* m_rearrange;
     wxRibbonBar* m_rbnBar;
     wxRichTextCtrl* m_richText;

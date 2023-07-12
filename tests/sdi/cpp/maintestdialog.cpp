@@ -70,7 +70,7 @@ bool MainTestDialog::Create(wxWindow* parent, wxWindowID id, const wxString& tit
 
     auto* page_sizer_1 = new wxBoxSizer(wxVERTICAL);
 
-    m_text_ctrl = new wxTextCtrl(page_2, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_RICH2);
+    m_text_ctrl = new wxTextCtrl(page_2, TXT_CTRL, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_RICH2);
     m_text_ctrl->SetHint("wxTextCtrl");
     page_sizer_1->Add(m_text_ctrl, wxSizerFlags().Expand().Border(wxALL));
 
@@ -174,6 +174,48 @@ bool MainTestDialog::Create(wxWindow* parent, wxWindowID id, const wxString& tit
     radioBox->SetSelection(1);
     radioBox->SetValidator(wxGenericValidator(&m_valRadio));
     box_sizer_7->Add(radioBox, wxSizerFlags().Border(wxALL));
+
+    m_checkBox_sizer = new wxCheckBox(page_4, wxID_ANY, "Checkbox");
+    auto* static_box_4 = new wxStaticBoxSizer(new wxStaticBox(page_4, wxID_ANY,
+#if wxCHECK_VERSION(3, 1, 1)
+        m_checkBox_sizer),
+#else
+        wxEmptyString),
+#endif
+    wxVERTICAL);
+
+    m_radioBtn_4 = new wxRadioButton(static_box_4->GetStaticBox(), wxID_ANY, "First button");
+    static_box_4->Add(m_radioBtn_4, wxSizerFlags().Border(wxALL));
+
+    m_radioBtn_2 = new wxRadioButton(static_box_4->GetStaticBox(), wxID_ANY, "Second button");
+    m_radioBtn_2->SetValue(true);
+    static_box_4->Add(m_radioBtn_2, wxSizerFlags().Border(wxALL));
+
+    m_radioBtn_3 = new wxRadioButton(static_box_4->GetStaticBox(), wxID_ANY, "Third button");
+    static_box_4->Add(m_radioBtn_3, wxSizerFlags().Border(wxALL));
+
+    box_sizer_7->Add(static_box_4, wxSizerFlags().Border(wxALL));
+
+    m_radioBtn__sizer = new wxRadioButton(page_4, wxID_ANY, "Radio");
+    auto* static_box_5 = new wxStaticBoxSizer(new wxStaticBox(page_4, wxID_ANY,
+#if wxCHECK_VERSION(3, 1, 1)
+        m_radioBtn__sizer),
+#else
+        wxEmptyString),
+#endif
+    wxVERTICAL);
+
+    m_radioBtn_5 = new wxRadioButton(static_box_5->GetStaticBox(), wxID_ANY, "First button");
+    static_box_5->Add(m_radioBtn_5, wxSizerFlags().Border(wxALL));
+
+    m_radioBtn_6 = new wxRadioButton(static_box_5->GetStaticBox(), wxID_ANY, "Second button");
+    m_radioBtn_6->SetValue(true);
+    static_box_5->Add(m_radioBtn_6, wxSizerFlags().Border(wxALL));
+
+    m_radioBtn_7 = new wxRadioButton(static_box_5->GetStaticBox(), wxID_ANY, "Third button");
+    static_box_5->Add(m_radioBtn_7, wxSizerFlags().Border(wxALL));
+
+    box_sizer_7->Add(static_box_5, wxSizerFlags().Border(wxALL));
 
     box_sizer_3->Add(box_sizer_7, wxSizerFlags().Border(wxALL));
 

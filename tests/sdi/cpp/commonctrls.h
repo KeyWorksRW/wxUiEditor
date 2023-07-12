@@ -53,6 +53,11 @@ public:
         const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER, const wxString &name = wxDialogNameStr);
 
+    enum
+    {
+        TXT_CTRL = wxID_HIGHEST + 1
+    };
+
 public:
     ~CommonCtrls();
 

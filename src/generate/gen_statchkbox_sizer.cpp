@@ -21,7 +21,13 @@ wxObject* StaticCheckboxBoxSizerGenerator::CreateMockup(Node* node, wxObject* pa
 {
     wxStaticBoxSizer* sizer;
 
+    // When testing, always display the checkbox, otherwise if Python is preferred, then don't
+    // display the checkbox since Python doesn't support it.
+#if defined(INTERNAL_TESTING)
+    if (Project.HasValue(prop_code_preference))
+#else
     if (Project.value(prop_code_preference) != "Python")
+#endif
     {
         long style_value = 0;
         if (node->as_string(prop_style).contains("wxALIGN_RIGHT"))

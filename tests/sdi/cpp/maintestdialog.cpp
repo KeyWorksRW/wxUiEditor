@@ -443,6 +443,21 @@ bool MainTestDialog::Create(wxWindow* parent, wxWindowID id, const wxString& tit
     static_box->Add(box_sizer3, wxSizerFlags().Expand().Border(wxALL));
 
     page_sizer_2->Add(static_box, wxSizerFlags().Expand().Border(wxALL));
+
+    auto* box_sizer_20 = new wxBoxSizer(wxVERTICAL);
+
+    collapsible_pane = new wxCollapsiblePane(page_3, wxID_ANY, "Collapsible Pane");
+    collapsible_pane->Expand();
+    box_sizer_20->Add(collapsible_pane, wxSizerFlags().Expand().Border(wxALL));
+
+    auto* box_sizer_21 = new wxBoxSizer(wxHORIZONTAL);
+
+    staticText_5 = new wxStaticText(collapsible_pane->GetPane(), wxID_ANY,
+        "This text will be hidden if the Pane is collapsed.");
+    box_sizer_21->Add(staticText_5, wxSizerFlags().Border(wxALL));
+    collapsible_pane->GetPane()->SetSizerAndFit(box_sizer_21);
+
+    page_sizer_2->Add(box_sizer_20, wxSizerFlags().Border(wxALL));
     page_3->SetSizerAndFit(page_sizer_2);
 
     auto* page_6 = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxBORDER_THEME|wxTAB_TRAVERSAL);

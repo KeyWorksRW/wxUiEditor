@@ -611,7 +611,8 @@
             <node
               class="wxBoxSizer"
               orientation="wxVERTICAL"
-              var_name="page_sizer_2">
+              var_name="page_sizer_2"
+              flags="wxEXPAND">
               <node
                 class="wxStaticBoxSizer"
                 label="Combos and Choices"
@@ -727,6 +728,25 @@
                       style="wxLB_SORT"
                       var_name="m_checkList2"
                       wxEVT_CHECKLISTBOX="[this](wxCommandEvent&amp;)@@{@@OnEventName(&quot;CheckListBox2: wx.EVT_CHECKLISTBOX&quot;);@@}[python:lambda]self.OnEventName(&quot;CheckListBox2: wx.EVT_CHECKLISTBOX&quot;)" />
+                  </node>
+                </node>
+              </node>
+              <node
+                class="wxBoxSizer"
+                orientation="wxVERTICAL"
+                var_name="box_sizer_20">
+                <node
+                  class="wxCollapsiblePane"
+                  label="Collapsible Pane"
+                  var_name="collapsible_pane"
+                  flags="wxEXPAND">
+                  <node
+                    class="wxBoxSizer"
+                    var_name="box_sizer_21">
+                    <node
+                      class="wxStaticText"
+                      label="This text will be hidden if the Pane is collapsed."
+                      var_name="staticText_5" />
                   </node>
                 </node>
               </node>

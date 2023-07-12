@@ -449,6 +449,21 @@ class MainTestDialog(wx.Dialog):
         static_box.Add(box_sizer3, wx.SizerFlags().Expand().Border(wx.ALL))
 
         page_sizer_2.Add(static_box, wx.SizerFlags().Expand().Border(wx.ALL))
+
+        box_sizer_20 = wx.BoxSizer(wx.VERTICAL)
+
+        self.collapsible_pane = wx.CollapsiblePane(page_3, wx.ID_ANY, "Collapsible Pane")
+        self.collapsible_pane.Expand()
+        box_sizer_20.Add(self.collapsible_pane, wx.SizerFlags().Expand().Border(wx.ALL))
+
+        box_sizer_21 = wx.BoxSizer(wx.HORIZONTAL)
+
+        self.staticText_5 = wx.StaticText(self.collapsible_pane.GetPane(), wx.ID_ANY,
+            "This text will be hidden if the Pane is collapsed.")
+        box_sizer_21.Add(self.staticText_5, wx.SizerFlags().Border(wx.ALL))
+        self.collapsible_pane.GetPane().SetSizerAndFit(box_sizer_21)
+
+        page_sizer_2.Add(box_sizer_20, wx.SizerFlags().Border(wx.ALL))
         page_3.SetSizerAndFit(page_sizer_2)
 
         page_6 = wx.Panel(self.m_notebook, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize,

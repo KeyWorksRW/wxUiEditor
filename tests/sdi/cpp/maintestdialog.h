@@ -18,6 +18,7 @@
 #include <wx/checklst.h>
 #include <wx/choice.h>
 #include <wx/clrpicker.h>
+#include <wx/collpane.h>
 #include <wx/colour.h>
 #include <wx/combobox.h>
 #include <wx/commandlinkbutton.h>
@@ -119,6 +120,7 @@ protected:
     wxCheckListBox* m_checkList_2;
     wxChoice* m_choice2;
     wxChoice* m_choice;
+    wxCollapsiblePane* collapsible_pane;
     wxColourPickerCtrl* m_colourPicker;
     wxComboBox* m_comboBox2;
     wxComboBox* m_comboBox;
@@ -158,6 +160,7 @@ protected:
     wxStaticText* m_staticText_2;
     wxStaticText* m_staticText_3;
     wxStaticText* m_staticText_4;
+    wxStaticText* staticText_5;
     wxStyledTextCtrl* m_scintilla;
     wxTextCtrl* m_text_ctrl;
     wxTimePickerCtrl* m_timePicker;

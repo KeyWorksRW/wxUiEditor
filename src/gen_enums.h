@@ -613,6 +613,7 @@ namespace GenEnum
         gen_wxMdiWindow,
         gen_wxPython,
         gen_wxTopLevelWindow,
+        gen_wxTreeCtrlBase,
         gen_wxWindow,
 
         // These are special purpose generators. gen_Images is used for code, but gen_folder is
@@ -760,7 +761,6 @@ namespace GenEnum
         gen_wxToolBar,
         gen_wxToolbook,
         gen_wxTreeCtrl,
-        gen_wxTreeCtrlBase,
         gen_wxTreeListCtrl,
         gen_wxTreebook,
         gen_wxWebView,

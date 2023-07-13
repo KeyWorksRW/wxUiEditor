@@ -12,7 +12,7 @@
 
 using namespace GenEnum;
 
-std::unordered_map<std::string_view, PropType, str_view_hash, std::equal_to<>> GenEnum::umap_PropTypes = {
+std::map<std::string_view, PropType, std::less<>> GenEnum::umap_PropTypes = {
 
     { "animation", type_animation },
     { "bitlist", type_bitlist },
@@ -728,7 +728,7 @@ std::map<GenEnum::GenName, const char*> GenEnum::map_GenNames = {
     { gen_wxWrapSizer, "wxWrapSizer" },
 
 };
-std::unordered_map<tt_string_view, GenEnum::GenName, str_view_hash, std::equal_to<>> rmap_GenNames;
+std::map<std::string_view, GenEnum::GenName, std::less<>> rmap_GenNames;
 
 std::map<GenEnum::PropName, const char*> map_PropMacros = {
 

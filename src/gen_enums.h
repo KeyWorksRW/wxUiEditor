@@ -67,7 +67,7 @@ namespace GenEnum
         type_unknown,
 
     };
-    extern std::unordered_map<std::string_view, PropType, str_view_hash, std::equal_to<>> umap_PropTypes;
+    extern std::map<std::string_view, PropType, std::less<>> umap_PropTypes;
 
     enum PropName : size_t
     {
@@ -779,4 +779,4 @@ namespace GenEnum
 
 extern std::map<GenEnum::PropName, const char*> map_PropMacros;
 extern std::map<std::string_view, GenEnum::PropName, std::less<>> map_MacroProps;
-extern std::unordered_map<tt_string_view, GenEnum::GenName, str_view_hash, std::equal_to<>> rmap_GenNames;
+extern std::map<std::string_view, GenEnum::GenName, std::less<>> rmap_GenNames;

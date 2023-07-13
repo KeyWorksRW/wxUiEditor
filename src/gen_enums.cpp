@@ -543,7 +543,11 @@ std::map<GenEnum::GenName, const char*> GenEnum::map_GenNames = {
 
     { gen_AUI, "AUI" },  // This is always the first one, set to a value of 0
 
-    // The following are categories (type="interface")
+    // If you add a category to the following list, be sure to also add it to
+    // unused_gen_dlg.cpp
+
+    // The following are categories (type="interface") -- these don't have an actual generator
+    // that implements them, but they do have a NodeDeclaration with the category name.
 
     { gen_Bitmaps, "Bitmaps" },
     { gen_Boolean_Validator, "Boolean Validator" },
@@ -572,6 +576,7 @@ std::map<GenEnum::GenName, const char*> GenEnum::map_GenNames = {
     { gen_wxMdiWindow, "wxMdiWindow" },
     { gen_wxPython, "wxPython" },
     { gen_wxTopLevelWindow, "wxTopLevelWindow" },
+    { gen_wxTreeCtrlBase, "wxTreeCtrlBase" },
     { gen_wxWindow, "wxWindow" },
 
     // These are special purpose generators. gen_Images is used for code, but gen_folder is
@@ -719,7 +724,6 @@ std::map<GenEnum::GenName, const char*> GenEnum::map_GenNames = {
     { gen_wxToolBar, "wxToolBar" },
     { gen_wxToolbook, "wxToolbook" },
     { gen_wxTreeCtrl, "wxTreeCtrl" },
-    { gen_wxTreeCtrlBase, "wxTreeCtrlBase" },
     { gen_wxTreeListCtrl, "wxTreeListCtrl" },
     { gen_wxTreebook, "wxTreebook" },
     { gen_wxWebView, "wxWebView" },

@@ -66,7 +66,7 @@ bool UnusedGenerators::Create(wxWindow* parent, wxWindowID id, const wxString& t
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-void FindGenerators(Node* node, std::unordered_set<std::string>& used)
+void FindGenerators(Node* node, std::unordered_set<std::string, str_view_hash, std::equal_to<>>& used)
 {
     if (node->isGen(gen_Images))
         return;
@@ -97,6 +97,40 @@ const auto gen_ignore_list = {
     gen_sizer_dimension,
     gen_sizeritem,
     gen_splitteritem,
+
+    // These are categories, not actual generators -- this should be kept in sync with the
+    // categories in gen_enums.cpp
+
+    gen_Bitmaps,
+    gen_Boolean_Validator,
+    gen_CPlusSettings,
+    gen_Choice_Validator,
+    gen_Code,
+    gen_Code_Generation,
+    gen_Command_Bitmaps,
+    gen_DerivedCPlusSettings,
+    gen_DlgWindowSettings,
+    gen_Integer_Validator,
+    gen_List_Validator,
+    gen_PythonFrameSettings,
+    gen_PythonSettings,
+    gen_String_Validator,
+    gen_Text_Validator,
+    gen_Window_Events,
+    gen_XRC,
+    gen_XrcSettings,
+    gen_flexgridsizerbase,
+    gen_folder_Code,
+    gen_folder_XRC,
+    gen_folder_wxPython,
+    gen_sizer_child,
+    gen_sizeritem_settings,
+    gen_wxMdiWindow,
+    gen_wxPython,
+    gen_wxTopLevelWindow,
+    gen_wxTreeCtrlBase,
+    gen_wxWindow,
+
     gen_unknown,
 
 };
@@ -105,7 +139,7 @@ const auto gen_ignore_list = {
 
 void UnusedGenerators::OnInit(wxInitDialogEvent& event)
 {
-    std::unordered_set<std::string> used;
+    std::unordered_set<std::string, str_view_hash, std::equal_to<>> used;
 
     for (const auto& child: Project.ProjectNode()->GetChildNodePtrs())
     {
@@ -141,9 +175,9 @@ void UnusedGenerators::OnInit(wxInitDialogEvent& event)
             }
         }
 
-        if (!used.contains(iter.first.as_str()))
+        if (!used.contains(iter.first))
         {
-            m_listbox->Append(iter.first.make_wxString());
+            m_listbox->Append(wxString::FromUTF8Unchecked(iter.first.data(), iter.first.size()));
         }
     }
 

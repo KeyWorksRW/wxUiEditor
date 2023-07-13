@@ -27,7 +27,7 @@
 inline const char* lst_xml_interfaces[] = {
 
     // Note that interface_xml must *not* be added to this list! It is loaded as the root document.
-    language_xml,
+    lang_settings_xml,
     sizer_child_xml,
     validators_xml,
     window_interfaces_xml,
@@ -457,13 +457,15 @@ void NodeCreator::Initialize()
     }
 }
 
-// The xml_data parameter is the char* pointer to the XML data. It will be empty when processing the interface document.
+// The xml_data parameter is the char* pointer to the XML data. It will be empty when
+// processing an interface document.
 void NodeCreator::ParseGeneratorFile(const char* xml_data)
 {
-    // All but one of the possible files will use the doc file, so we create it even if it gets ignored because this is an
-    // interface file
+    // All but one of the possible files will use the doc file, so we create it even if it gets
+    // ignored because this is an interface file
     pugi::xml_document doc;
     pugi::xml_node root;
+    bool is_interface = (xml_data == nullptr || !*xml_data);
 
     if (!xml_data || !*xml_data)
     {
@@ -491,33 +493,56 @@ void NodeCreator::ParseGeneratorFile(const char* xml_data)
     {
         auto class_name = generator.attribute("class").as_std_str();
 #if defined(_DEBUG) || defined(INTERNAL_TESTING)
-        if (!rmap_GenNames.contains(class_name))
+        if (is_interface)
         {
-            MSG_WARNING(tt_string("Unrecognized class name -- ") << class_name);
-        }
-#endif  // _DEBUG
-
-        auto type_name = generator.attribute("type").as_string();
-        GenType type { gen_type_unknown };
-        for (auto& iter: map_GenTypes)
-        {
-            if (type_name == iter.second)
+            if (!rmap_GenNames.contains(class_name))
             {
-                type = iter.first;
-                break;
+                MSG_WARNING(tt_string("Unrecognized interface name -- ") << class_name);
             }
         }
-
-#if defined(_DEBUG) || defined(INTERNAL_TESTING)
-        ASSERT_MSG(type != gen_type_unknown, tt_string("Unrecognized class type -- ") << type_name);
-        if (type == gen_type_unknown)
+        else
         {
-            generator = generator.next_sibling("gen");
-            continue;
+            if (!rmap_GenNames.contains(class_name))
+            {
+                MSG_WARNING(tt_string("Unrecognized class name -- ") << class_name);
+            }
         }
 #endif  // _DEBUG
 
-        if (!xml_data || !*xml_data)
+        GenType type { gen_type_unknown };
+        if (is_interface)
+        {
+            type = type_interface;
+        }
+        else
+        {
+            auto type_name = generator.attribute("type").as_string();
+#if defined(_DEBUG)
+            if (is_interface && type_name != "interface")
+            {
+                ASSERT_MSG(type_name == "interface", "Don't put a non-interface generation in an interace xml file!");
+            }
+#endif  // _DEBUG
+            for (auto& iter: map_GenTypes)
+            {
+                if (type_name == iter.second)
+                {
+                    type = iter.first;
+                    break;
+                }
+            }
+
+#if defined(_DEBUG)
+            ASSERT_MSG(type != gen_type_unknown, tt_string("Unrecognized class type -- ") << type_name);
+            if (type == gen_type_unknown)
+            {
+                generator = generator.next_sibling("gen");
+                continue;
+            }
+#endif  // _DEBUG
+        }
+
+        if (is_interface)
         {
             m_interfaces[class_name] = generator;
         }

@@ -18,10 +18,10 @@ If you use cgui to manage CMake options, then in the `BUILD` category, uncheck `
 
 ## CPack
 
-To build the installe program, change to the build/ directory and run:
+To build the install program, change to the build/ directory and run:
 
 ```
     cpack -G NSIS
 ```
 
-This will create the installer executable in the build directory. The filename will be created using `wxUiEditor-` + version + `-win64.exe` (e.g. wxUiEditor-1.1.0-win64.exe).
+This will create the installer executable in the build directory. The filename will be created using `wxUiEditor-` + version + `-win64.exe` (e.g. wxUiEditor-1.1.3-win64.exe).

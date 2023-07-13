@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Custom property grid class for images
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2021 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2021-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -17,14 +17,15 @@ using namespace wxue_img;
 
 #include "pg_image.h"
 
+#include "img_string_prop.h"  // wxSingleChoiceDialogAdapter
+#include "txt_string_prop.h"  // EditStringDialogAdapter -- Derived wxStringProperty class for single-line text
+
 #include "bitmaps.h"          // Contains various images handling functions
 #include "image_handler.h"    // ImageHandler class
-#include "img_string_prop.h"  // wxSingleChoiceDialogAdapter
 #include "mainframe.h"        // MainFrame -- Main window frame
 #include "node.h"             // Node -- Node class
 #include "pg_point.h"         // CustomPointProperty -- Custom property grid class for wxPoint
 #include "project_handler.h"  // ProjectHandler class
-#include "utils.h"            // Utility functions that work with properties
 
 #include "art_ids.cpp"  // wxART_ strings
 
@@ -57,10 +58,17 @@ PropertyGrid_Image::PropertyGrid_Image(const wxString& label, NodeProperty* prop
     }
 
     AddPrivateChild(new wxEnumProperty("type", wxPG_LABEL, types, 0));
+    Item(IndexType)->SetHelpString("The type of image to use.");
+
     AddPrivateChild(new ImageStringProperty("image", m_img_props));
 
-    AddPrivateChild(new CustomPointProperty("Size", prop, CustomPointProperty::type_SVG));
+    AddPrivateChild(new CustomPointProperty("Original Size (ignored)", prop, CustomPointProperty::type_SVG));
     Item(IndexSize)->SetHelpString("Default size -- ignored unless it's a SVG file.");
+
+    AddPrivateChild(new EditStringProperty("Alternate name", prop));
+    Item(IndexAltName)
+        ->SetHelpString("Variable name to use for the image. If not specified, the filename portion of the image file is "
+                        "used as the variable name.");
 }
 
 void PropertyGrid_Image::RefreshChildren()
@@ -70,25 +78,40 @@ void PropertyGrid_Image::RefreshChildren()
     {
         m_img_props.InitValues(value.utf8_string());
 
-        if (m_img_props.type == "Art")
+        if (m_img_props.type == "SVG")
         {
-            Item(IndexImage)->SetLabel("id");
-            Item(IndexImage)->SetHelpString("Specifies the art ID and optional Client (separated by a | character).");
+            Item(IndexSize)->SetLabel("Size");
         }
         else
         {
-            Item(IndexImage)->SetLabel("image");
+            Item(IndexSize)->SetLabel("Original Size (ignored)");
         }
 
-        if (m_img_props.type == "Embed" || m_img_props.type == "SVG")
+        if (m_img_props.type == "Art")
         {
+            Item(IndexImage)->SetLabel("id");
+            Item(IndexAltName)->SetLabel("Alternate name (ignored)");
+            Item(IndexImage)->SetHelpString("Specifies the art ID and optional Client (separated by a | character).");
+            Item(IndexAltName)->SetHelpString("Ignored when using Art images.");
+        }
+        else if (m_img_props.type == "Embed" || m_img_props.type == "SVG")
+        {
+            Item(IndexImage)->SetLabel("image");
+            Item(IndexAltName)->SetLabel("Alternate name");
             Item(IndexImage)
                 ->SetHelpString("Specifies the original image which will be embedded into a generated class source file as "
                                 "an unsigned char array.");
+            Item(IndexAltName)
+                ->SetHelpString(
+                    "Variable name to use for the image. If not specified, the filename portion of the image file is "
+                    "used as the variable name.");
         }
         else if (m_img_props.type == "XPM")
         {
+            Item(IndexImage)->SetLabel("image");
+            Item(IndexAltName)->SetLabel("Alternate name (ignored)");
             Item(IndexImage)->SetHelpString("Specifies the XPM file to include.");
+            Item(IndexAltName)->SetHelpString("Ignored when including XPM files.");
         }
 
         if (m_old_image != m_img_props.image || m_old_type != m_img_props.type)
@@ -148,6 +171,7 @@ void PropertyGrid_Image::RefreshChildren()
     Item(IndexType)->SetValue(m_img_props.type.make_wxString());
     Item(IndexImage)->SetValue(m_img_props.image.make_wxString());
     Item(IndexSize)->SetValue(m_img_props.CombineDefaultSize());
+    Item(IndexAltName)->SetValue(m_img_props.alt_name.make_wxString());
 }
 
 void PropertyGrid_Image::SetAutoComplete()
@@ -249,7 +273,7 @@ wxVariant PropertyGrid_Image::ChildChanged(wxVariant& thisValue, int childIndex,
                         name.make_relative(Project.get_ProjectPath());
                         name.backslashestoforward();
                     }
-                    img_props.image.assign_wx(name);
+                    img_props.image = name;
                 }
             }
             break;
@@ -260,6 +284,12 @@ wxVariant PropertyGrid_Image::ChildChanged(wxVariant& thisValue, int childIndex,
                 tt_view_vector mstr(u8_value, ',');
                 img_props.SetWidth(mstr[0].atoi());
                 img_props.SetHeight(mstr[1].atoi());
+            }
+            break;
+
+        case IndexAltName:
+            {
+                img_props.alt_name = childValue.GetString().utf8_string();
             }
             break;
     }

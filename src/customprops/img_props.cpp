@@ -44,6 +44,12 @@ void ImageProperties::InitValues(tt_string_view value)
             }
         }
     }
+#if defined(INTERNAL_FEATURE1)
+    if (mstr.size() > IndexAltName)
+    {
+        alt_name = mstr[IndexAltName];
+    }
+#endif
 }
 
 tt_string ImageProperties::CombineValues()
@@ -52,7 +58,20 @@ tt_string ImageProperties::CombineValues()
     image.backslashestoforward();
     value << type << ';' << image;
     if (type == "SVG")
+    {
         value << ";[" << m_size.x << ',' << m_size.y << "]";
+        if (alt_name.size())
+        {
+            value << ';' << alt_name;
+        }
+    }
+#if defined(INTERNAL_FEATURE1)
+    else if (alt_name.size())
+    {
+        value << ";;" << alt_name;
+    }
+#endif
+
     return value;
 }
 

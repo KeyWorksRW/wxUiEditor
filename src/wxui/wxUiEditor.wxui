@@ -2575,6 +2575,7 @@
             flags="wxEXPAND" />
           <node
             class="wxTextCtrl"
+            focus="1"
             get_function="GetResults"
             validator_variable="m_value"
             minimum_size="500,-1"

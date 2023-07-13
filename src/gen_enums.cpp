@@ -12,7 +12,7 @@
 
 using namespace GenEnum;
 
-std::unordered_map<std::string_view, PropType, str_view_hash, std::equal_to<>> GenEnum::umap_PropTypes = {
+std::map<std::string_view, PropType, std::less<>> GenEnum::umap_PropTypes = {
 
     { "animation", type_animation },
     { "bitlist", type_bitlist },
@@ -543,7 +543,11 @@ std::map<GenEnum::GenName, const char*> GenEnum::map_GenNames = {
 
     { gen_AUI, "AUI" },  // This is always the first one, set to a value of 0
 
-    // The following are categories (type="interface")
+    // If you add a category to the following list, be sure to also add it to
+    // unused_gen_dlg.cpp
+
+    // The following are categories (type="interface") -- these don't have an actual generator
+    // that implements them, but they do have a NodeDeclaration with the category name.
 
     { gen_Bitmaps, "Bitmaps" },
     { gen_Boolean_Validator, "Boolean Validator" },
@@ -572,6 +576,7 @@ std::map<GenEnum::GenName, const char*> GenEnum::map_GenNames = {
     { gen_wxMdiWindow, "wxMdiWindow" },
     { gen_wxPython, "wxPython" },
     { gen_wxTopLevelWindow, "wxTopLevelWindow" },
+    { gen_wxTreeCtrlBase, "wxTreeCtrlBase" },
     { gen_wxWindow, "wxWindow" },
 
     // These are special purpose generators. gen_Images is used for code, but gen_folder is
@@ -719,7 +724,6 @@ std::map<GenEnum::GenName, const char*> GenEnum::map_GenNames = {
     { gen_wxToolBar, "wxToolBar" },
     { gen_wxToolbook, "wxToolbook" },
     { gen_wxTreeCtrl, "wxTreeCtrl" },
-    { gen_wxTreeCtrlBase, "wxTreeCtrlBase" },
     { gen_wxTreeListCtrl, "wxTreeListCtrl" },
     { gen_wxTreebook, "wxTreebook" },
     { gen_wxWebView, "wxWebView" },
@@ -728,7 +732,7 @@ std::map<GenEnum::GenName, const char*> GenEnum::map_GenNames = {
     { gen_wxWrapSizer, "wxWrapSizer" },
 
 };
-std::unordered_map<tt_string_view, GenEnum::GenName, str_view_hash, std::equal_to<>> rmap_GenNames;
+std::map<std::string_view, GenEnum::GenName, std::less<>> rmap_GenNames;
 
 std::map<GenEnum::PropName, const char*> map_PropMacros = {
 

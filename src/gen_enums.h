@@ -67,7 +67,7 @@ namespace GenEnum
         type_unknown,
 
     };
-    extern std::unordered_map<std::string_view, PropType, str_view_hash, std::equal_to<>> umap_PropTypes;
+    extern std::map<std::string_view, PropType, std::less<>> umap_PropTypes;
 
     enum PropName : size_t
     {
@@ -613,6 +613,7 @@ namespace GenEnum
         gen_wxMdiWindow,
         gen_wxPython,
         gen_wxTopLevelWindow,
+        gen_wxTreeCtrlBase,
         gen_wxWindow,
 
         // These are special purpose generators. gen_Images is used for code, but gen_folder is
@@ -760,7 +761,6 @@ namespace GenEnum
         gen_wxToolBar,
         gen_wxToolbook,
         gen_wxTreeCtrl,
-        gen_wxTreeCtrlBase,
         gen_wxTreeListCtrl,
         gen_wxTreebook,
         gen_wxWebView,
@@ -779,4 +779,4 @@ namespace GenEnum
 
 extern std::map<GenEnum::PropName, const char*> map_PropMacros;
 extern std::map<std::string_view, GenEnum::PropName, std::less<>> map_MacroProps;
-extern std::unordered_map<tt_string_view, GenEnum::GenName, str_view_hash, std::equal_to<>> rmap_GenNames;
+extern std::map<std::string_view, GenEnum::GenName, std::less<>> rmap_GenNames;

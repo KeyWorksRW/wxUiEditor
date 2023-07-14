@@ -24,4 +24,9 @@ public:
 
     bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr) override;
     void RequiredHandlers(Node*, std::set<std::string>& /* handlers */) override;
+
+    tt_string GetPythonHelpText(Node*) override;
+    tt_string GetRubyHelpText(Node*) override;
+    tt_string GetPythonURL(Node*) override;
+    tt_string GetRubyURL(Node*) override;
 };

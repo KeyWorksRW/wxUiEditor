@@ -295,6 +295,17 @@ tt_string BaseGenerator::GetPythonHelpText(Node* node)
     return help_text;
 }
 
+tt_string BaseGenerator::GetPythonURL(Node* node)
+{
+    tt_string url = GetRubyHelpText(node);
+    if (url.empty())
+    {
+        return url;
+    }
+    url << ".html";
+    return url;
+}
+
 tt_string BaseGenerator::GetRubyHelpText(Node* node)
 {
     auto class_name = node->DeclName();

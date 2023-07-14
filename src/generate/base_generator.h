@@ -151,7 +151,7 @@ public:
     virtual tt_string GetRubyHelpText(Node*);
 
     // Get the HTML filename to browse to. E.g., "wx.Button.html"
-    virtual tt_string GetPythonURL(Node* node) { return GetPythonHelpText(node) + ".html"; }
+    virtual tt_string GetPythonURL(Node* node);
 
     // Get the HTML filename to browse to. E.g., "wx.Button.html"
     virtual tt_string GetRubyURL(Node* node);

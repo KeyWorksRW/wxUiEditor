@@ -116,6 +116,10 @@ void MainFrame::OnGenerateCode(wxCommandEvent&)
         {
             GeneratePythonFiles(results);
         }
+        if (dlg.is_gen_ruby())
+        {
+            GenerateRubyFiles(results);
+        }
         if (dlg.is_gen_xrc())
         {
             GenerateXrcFiles(results);
@@ -170,7 +174,7 @@ void GenerateDlg::OnInit(wxInitDialogEvent& event)
         m_gen_base_code = false;
         m_gen_xrc_code = false;
     }
-    else if (Project.value(prop_code_preference) == "Python")
+    else if (Project.value(prop_code_preference) == "Ruby")
     {
         m_gen_python_code = false;
         m_gen_ruby_code = true;

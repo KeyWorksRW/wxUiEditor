@@ -5,6 +5,7 @@ inline const char* menus_xml = R"===(<?xml version="1.0"?>
 		<inherits class="C++ Settings" />
 		<inherits class="C++ Derived Class Settings" />
 		<inherits class="wxPython Settings" />
+		<inherits class="wxRuby Settings" />
 		<inherits class="XRC Settings" />
 		<inherits class="wxWindow">
 			<hide name="platforms" />
@@ -24,6 +25,7 @@ inline const char* menus_xml = R"===(<?xml version="1.0"?>
 		<inherits class="C++ Settings" />
 		<inherits class="C++ Derived Class Settings" />
 		<inherits class="wxPython Settings" />
+		<inherits class="wxRuby Settings" />
 		<inherits class="XRC Settings" />
 		<property name="class_name" type="string"
 			help="The name of the base class.">MyPopupMenuBase</property>

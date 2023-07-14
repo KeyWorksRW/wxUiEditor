@@ -482,6 +482,14 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
             new_pg_property->SetAttribute(wxPG_FILE_DIALOG_STYLE, wxFD_SAVE);
             new_pg_property->SetAttribute(wxPG_FILE_WILDCARD, "Python Files|*.py");
         }
+        else if (prop->isProp(prop_ruby_file) || prop->isProp(prop_ruby_combined_file))
+        {
+            new_pg_property->SetAttribute(wxPG_DIALOG_TITLE, "Ruby filename");
+            new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH, Project.BaseDirectory(prop->GetNode(), GEN_LANG_RUBY));
+            new_pg_property->SetAttribute(wxPG_FILE_SHOW_RELATIVE_PATH, Project.ProjectPath());
+            new_pg_property->SetAttribute(wxPG_FILE_DIALOG_STYLE, wxFD_SAVE);
+            new_pg_property->SetAttribute(wxPG_FILE_WILDCARD, "Ruby Files|*.rb");
+        }
         else if (prop->isProp(prop_cmake_file))
         {
             new_pg_property->SetAttribute(wxPG_DIALOG_TITLE, "CMake filename");
@@ -985,6 +993,17 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                     m_prop_grid->Expand(grid_property);
                 }
             }
+            else if (grid_property->GetLabel().Contains("Ruby"))
+            {
+                if (prop->as_string() != "any" && prop->as_string() != "Ruby")
+                {
+                    m_prop_grid->Collapse(grid_property);
+                }
+                else
+                {
+                    m_prop_grid->Expand(grid_property);
+                }
+            }
             else if (grid_property->GetLabel().Contains("XRC"))
             {
                 if (prop->as_string() != "any" && prop->as_string() != "XRC")
@@ -1453,7 +1472,8 @@ void PropGridPanel::ModifyFileProperty(NodeProperty* node_prop, wxPGProperty* gr
 
     // The base_file grid_prop was already processed in OnPropertyGridChanging so only modify the value if
     // it's a different grid_prop
-    if (!node_prop->isProp(prop_base_file) && !node_prop->isProp(prop_python_file) && !node_prop->isProp(prop_xrc_file))
+    if (!node_prop->isProp(prop_base_file) && !node_prop->isProp(prop_python_file) && !node_prop->isProp(prop_ruby_file) &&
+        !node_prop->isProp(prop_xrc_file))
     {
         if (newValue.size())
         {
@@ -1825,8 +1845,16 @@ void PropGridPanel::CreatePropCategory(tt_string_view name, Node* node, NodeDecl
     }
     else if (name.contains("wxPython"))
     {
-        m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#fff1d2"));
+        m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#ccffcc"));
         if (Project.value(prop_code_preference) != "any" && Project.value(prop_code_preference) != "Python")
+        {
+            m_prop_grid->Collapse(id);
+        }
+    }
+    else if (name.contains("wxRuby"))
+    {
+        m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#f8a9c7"));
+        if (Project.value(prop_code_preference) != "any" && Project.value(prop_code_preference) != "Ruby")
         {
             m_prop_grid->Collapse(id);
         }
@@ -1841,7 +1869,7 @@ void PropGridPanel::CreatePropCategory(tt_string_view name, Node* node, NodeDecl
     }
     else if (name.contains("XRC"))
     {
-        m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#ccffcc"));
+        m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#fff1d2"));
         if (Project.value(prop_code_preference) != "any" && Project.value(prop_code_preference) != "XRC")
         {
             m_prop_grid->Collapse(id);
@@ -1999,6 +2027,12 @@ void PropGridPanel::ReplaceBaseFile(const tt_string& newValue, NodeProperty* pro
         grid_property = m_prop_grid->GetPropertyByLabel("python_file");
         grid_property->SetValueFromString(base_filename.make_wxString(), 0);
         modifyProperty(form_node->get_prop_ptr(prop_python_file), base_filename);
+    }
+    else if (Project.value(prop_code_preference) == "Ruby" && !form_node->HasValue(prop_ruby_file))
+    {
+        grid_property = m_prop_grid->GetPropertyByLabel("ruby_file");
+        grid_property->SetValueFromString(base_filename.make_wxString(), 0);
+        modifyProperty(form_node->get_prop_ptr(prop_ruby_file), base_filename);
     }
 }
 

@@ -59,7 +59,7 @@ inline const char* project_xml = R"===(<?xml version="1.0"?>
 			4.2.0
 		</property>
 		<property name="python_output_folder" type="path"
-			help="If a folder name is specified, it will be used for all python code. It will also be used for generated xrc and art files if the matching options below are checked." />
+			help="If a folder name is specified, it will be used for all python code." />
 <!-- <property name="python_combine_forms" type="bool"
 			help="If checked, all code will be generated to a single file.\n\nThe code preview will only display code for the currently selected form, even if this is checked.">0</property>
 		<property name="python_combined_file" type="file"
@@ -69,14 +69,28 @@ inline const char* project_xml = R"===(<?xml version="1.0"?>
 			help="Specifies a guideline for generated code line length. Most lines will be wrapped so that they do not exceed this length.">90</property>
 	</gen>
 
+	<gen class="wxRuby" type="interface">
+		<property name="wxRuby" type="option"
+			help="Specifies the minimum version of wxRuby needed to run the generated code.">
+			<option name="1.0.0" />
+			1.0.0
+		</property>
+		<property name="ruby_output_folder" type="path"
+			help="If a folder name is specified, it will be used for all ruby code." />
+		<property name="ruby_line_length" type="uint"
+			help="Specifies a guideline for generated code line length. Most lines will be wrapped so that they do not exceed this length.">90</property>
+	</gen>
+
 	<gen class="Project" type="project" image="project">
 		<inherits class="C++" />
 		<inherits class="wxPython" />
+		<inherits class="wxRuby" />
 		<inherits class="XRC" />
 		<property name="code_preference" type="option"
 			help="Specify the code you prefer to generate. This can affect the UI display in the Mockup panel, and affects the initial expansion/contraction of language properties in wxUiEditor.">
 			<option name="C++" />
 			<option name="Python" />
+			<option name="Ruby" />
 			<option name="XRC" />
 			C++
 		</property>

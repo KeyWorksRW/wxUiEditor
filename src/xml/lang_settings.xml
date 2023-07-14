@@ -65,6 +65,15 @@ inline const char* lang_settings_xml = R"===(<?xml version="1.0"?>
 			help="The name to use for an inherited class. If specified, the Inherit tab in the Python panel will include a sample for creating an inherited class." />
 	</gen>
 
+	<gen class="wxRuby Settings" type="interface">
+		<property name="ruby_file" type="file"
+			help="The filename to use if generating code for wxRuby." />
+		<property name="insert_ruby_code" type="code_edit"
+			help="Specify the code to insert into the ruby file after the generated import statements. This is usually used to import addtional modules, but can be any valid ruby code for use before the class definition." />
+		<property name="ruby_inherit_name" type="string"
+			help="The name to use for an inherited class. If specified, the Inherit tab in the Ruby panel will include a sample for creating an inherited class." />
+	</gen>
+
 	<gen class="wxPython Frame Settings" type="interface">
 		<property name="python_file" type="file"
 			help="The filename to use if generating code for wxPython." />
@@ -75,6 +84,18 @@ inline const char* lang_settings_xml = R"===(<?xml version="1.0"?>
 			help="Specify the code to insert into the python file after the generated import statements. This is usually used to import addtional modules, but can be any valid python code for use before the class definition." />
 		<property name="python_inherit_name" type="string"
 			help="The name to use for an inherited class. If specified, the Inherit tab in the Python panel will include a sample for creating an inherited class." />
+	</gen>
+
+	<gen class="wxRuby Frame Settings" type="interface">
+		<property name="ruby_file" type="file"
+			help="The filename to use if generating code for wxRuby." />
+		<property name="import_all_dialogs" type="bool"
+			help="If checked, every wxDialog or wxWizard in this project that has a ruby_file specified for it will be imported into this module.">
+			0</property>
+		<property name="insert_ruby_code" type="code_edit"
+			help="Specify the code to insert into the ruby file after the generated import statements. This is usually used to import addtional modules, but can be any valid ruby code for use before the class definition." />
+		<property name="ruby_inherit_name" type="string"
+			help="The name to use for an inherited class. If specified, the Inherit tab in the Ruby panel will include a sample for creating an inherited class." />
 	</gen>
 
 	<gen class="XRC Settings" type="interface">

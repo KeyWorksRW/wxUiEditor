@@ -328,7 +328,6 @@ std::map<GenEnum::PropName, const char*> GenEnum::map_PropNames = {
     { prop_pressed_bmp, "pressed_bmp" },
     { prop_private_members, "private_members" },
     { prop_proportion, "proportion" },
-    { prop_python_conditional, "python_conditional" },
     { prop_radiobtn_var_name, "radiobtn_var_name" },
     { prop_range, "range" },
     { prop_read_only, "read_only" },
@@ -448,6 +447,7 @@ std::map<GenEnum::PropName, const char*> GenEnum::map_PropNames = {
     { prop_folder_xrc_directory, "folder_xrc_directory" },
     { prop_folder_combined_xrc_file, "folder_combined_xrc_file" },
 
+    { prop_python_conditional, "python_conditional" },
     { prop_folder_python_combined_file, "folder_python_combined_file" },
     { prop_folder_python_output_folder, "folder_python_output_folder" },
     { prop_python_combine_forms, "python_combine_forms" },
@@ -461,6 +461,15 @@ std::map<GenEnum::PropName, const char*> GenEnum::map_PropNames = {
     { prop_python_variable_args, "python_variable_args" },
     { prop_python_xrc_file, "python_xrc_file" },
 
+    { prop_folder_ruby_combined_file, "folder_ruby_combined_file" },
+    { prop_folder_ruby_output_folder, "folder_ruby_output_folder" },
+    { prop_ruby_combine_forms, "ruby_combine_forms" },
+    { prop_ruby_combined_file, "ruby_combined_file" },
+    { prop_ruby_file, "ruby_file" },
+    { prop_ruby_inherit_name, "ruby_inherit_name" },
+    { prop_ruby_insert, "insert_ruby_code" },
+    { prop_ruby_line_length, "ruby_line_length" },
+    { prop_ruby_output_folder, "ruby_output_folder" },
 };
 std::map<std::string_view, GenEnum::PropName, std::less<>> GenEnum::rmap_PropNames;
 
@@ -562,6 +571,8 @@ std::map<GenEnum::GenName, const char*> GenEnum::map_GenNames = {
     { gen_List_Validator, "List Validator" },
     { gen_PythonFrameSettings, "wxPython Frame Settings" },
     { gen_PythonSettings, "wxPython Settings" },
+    { gen_RubyFrameSettings, "wxRuby Frame Settings" },
+    { gen_RubySettings, "wxRuby Settings" },
     { gen_String_Validator, "String Validator" },
     { gen_Text_Validator, "Text Validator" },
     { gen_Window_Events, "Window Events" },
@@ -575,6 +586,7 @@ std::map<GenEnum::GenName, const char*> GenEnum::map_GenNames = {
     { gen_sizeritem_settings, "sizeritem_settings" },
     { gen_wxMdiWindow, "wxMdiWindow" },
     { gen_wxPython, "wxPython" },
+    { gen_wxRuby, "wxRuby" },
     { gen_wxTopLevelWindow, "wxTopLevelWindow" },
     { gen_wxTreeCtrlBase, "wxTreeCtrlBase" },
     { gen_wxWindow, "wxWindow" },

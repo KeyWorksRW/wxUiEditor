@@ -18,7 +18,7 @@ using namespace code;
 
 // clang-format off
 
-static const std::map<tt_string_view, std::string_view, std::less<>> s_short_map
+static const std::map<tt_string_view, std::string_view, std::less<>> s_short_python_map
 {
     { "wxAUI_", "wx.aui."},
     { "wxCAL_", "wx.adv."},
@@ -40,7 +40,7 @@ static const std::map<tt_string_view, std::string_view, std::less<>> s_short_map
 
 };
 
-static const std::map<std::string_view, std::string_view, std::less<>> s_map_wx_prefix
+static const std::map<std::string_view, std::string_view, std::less<>> map_python_wx_prefix
 {
     { "wxAC_DEFAULT_STYLE", "wx.adv."},
     { "wxAC_NO_AUTORESIZE", "wx.adv."},
@@ -141,15 +141,31 @@ void Code::Init(Node* node, int language)
     m_language = language;
     if (language == GEN_LANG_CPLUSPLUS)
     {
+        m_lang_wxPrefix = "wx";
         m_break_length = Project.as_size_t(prop_cpp_line_length);
         // Always assume C++ code has one tab at the beginning of the line
         m_break_length -= m_indent_size;
     }
     else if (language == GEN_LANG_PYTHON)
     {
+        m_lang_wxPrefix = "wx.";
         m_break_length = Project.as_size_t(prop_python_line_length);
         // Always assume Python code has two tabs at the beginning of the line
         m_break_length -= (m_indent_size * 2);
+    }
+    else if (language == GEN_LANG_RUBY)
+    {
+        m_lang_wxPrefix = "Wx::";
+        m_break_length = Project.as_size_t(prop_ruby_line_length);
+        // Always assume Ruby code has two tabs at the beginning of the line
+        m_break_length -= (m_indent_size * 2);
+    }
+    else
+    {
+        m_lang_wxPrefix = "wx";
+        m_break_length = 90;
+        // Always assume code has one tab at the beginning of the line
+        m_break_length -= m_indent_size;
     }
     m_break_at = m_break_length;
 
@@ -292,25 +308,26 @@ Code& Code::Add(tt_string_view text)
     }
     else
     {
-        auto lambda = [&](tt_string_view candidate)
+        std::string_view wx_prefix = m_lang_wxPrefix;
+        // Python has different prefixes based on the library being used. E.g., wxBoolProperty
+        // has a prefix of wx.propgrid. rather than wx.
+        auto GetPythonPrefix = [&](tt_string_view candidate)
         {
             // Note that you can *NOT* allocate anything on the stack and return a
             // std::string_view to it!
-            std::string_view wx_prefix = "wx.";
-            for (auto& iter_prefix: s_short_map)
+
+            for (auto& iter_prefix: s_short_python_map)
             {
                 if (candidate.starts_with(iter_prefix.first))
                 {
                     wx_prefix = iter_prefix.second;
-                    return wx_prefix;
+                    return;
                 }
             }
-            if (auto wx_iter = s_map_wx_prefix.find(candidate); wx_iter != s_map_wx_prefix.end())
+            if (auto wx_iter = map_python_wx_prefix.find(candidate); wx_iter != map_python_wx_prefix.end())
             {
                 wx_prefix = wx_iter->second;
-                return wx_prefix;
             }
-            return wx_prefix;
         };
 
         if (text.find('|') != tt::npos)
@@ -325,7 +342,10 @@ Code& Code::Add(tt_string_view text)
                     *this += '|';
                 if (iter.is_sameprefix("wx"))
                 {
-                    auto wx_prefix = lambda(iter);
+                    if (is_python())
+                    {
+                        GetPythonPrefix(iter);
+                    }
                     *this << wx_prefix << iter.substr(2);
                 }
                 else
@@ -336,7 +356,10 @@ Code& Code::Add(tt_string_view text)
         // text.size() has already been checked to be certain it is at least 3 characters
         else if (text.is_sameprefix("wx") && text[2] != '.')
         {
-            auto wx_prefix = lambda(text);
+            if (is_python())
+            {
+                GetPythonPrefix(text);
+            }
             *this << wx_prefix << text.substr(2);
         }
         else
@@ -366,17 +389,21 @@ Code& Code::Function(tt_string_view text)
     {
         *this << "->" << text;
     }
-    else
+    else if (is_python() || is_ruby())
     {
         *this << '.';
         if (text.is_sameprefix("wx"))
         {
-            *this << "wx." << text.substr(2);
+            *this << m_lang_wxPrefix << text.substr(sizeof("wx") - 1);
         }
         else
         {
             *this += text;
         }
+    }
+    else
+    {
+        *this << "->" << text;
     }
     return *this;
 }
@@ -412,11 +439,22 @@ Code& Code::Class(tt_string_view text)
     {
         *this += text;
     }
-    else
+    else if (is_python())
     {
         if (text.is_sameprefix("wx"))
         {
             *this << "wx." << text.substr(2);
+        }
+        else
+        {
+            *this += text;
+        }
+    }
+    else if (is_ruby())
+    {
+        if (text.is_sameprefix("wx"))
+        {
+            *this << "Wx::" << text.substr(2);
         }
         else
         {
@@ -523,9 +561,9 @@ Code& Code::as_string(PropName prop_name)
         return *this;
     }
     std::string_view wx_prefix = "wx.";
-    auto lambda = [&](tt_string_view candidate)
+    auto GetPythonPrefix = [&](tt_string_view candidate)
     {
-        for (auto& iter_prefix: s_short_map)
+        for (auto& iter_prefix: s_short_python_map)
         {
             if (candidate.starts_with(iter_prefix.first))
             {
@@ -533,7 +571,7 @@ Code& Code::as_string(PropName prop_name)
                 return;
             }
         }
-        if (auto wx_iter = s_map_wx_prefix.find(candidate); wx_iter != s_map_wx_prefix.end())
+        if (auto wx_iter = map_python_wx_prefix.find(candidate); wx_iter != map_python_wx_prefix.end())
         {
             wx_prefix = wx_iter->second;
             return;
@@ -548,14 +586,20 @@ Code& Code::as_string(PropName prop_name)
         }
         else
         {
-            CheckLineLength(str.size());
             if (str.is_sameprefix("wx"))
             {
-                lambda(str);
-                *this << wx_prefix << str.substr(2);
+                if (is_python())
+                {
+                    GetPythonPrefix(str);
+                }
+                CheckLineLength(str.size() + wx_prefix.size());
+                *this << wx_prefix << str.substr(sizeof("wx") - 1);
             }
             else
+            {
+                CheckLineLength(str.size());
                 *this += str;
+            }
             return *this;
         }
     }
@@ -577,9 +621,12 @@ Code& Code::as_string(PropName prop_name)
             *this += "\"\"";
         else if (iter.is_sameprefix("wx"))
         {
-            lambda(iter);
-            CheckLineLength(iter.size());
-            *this << wx_prefix << iter.substr(2);
+            if (is_python())
+            {
+                GetPythonPrefix(iter);
+            }
+            CheckLineLength(iter.size() + wx_prefix.size());
+            *this << wx_prefix << iter.substr(sizeof("wx") - 1);
         }
         else
             *this += iter;
@@ -917,10 +964,10 @@ Code& Code::Style(const char* prefix, tt_string_view force_style)
             else
             {
                 tt_view_vector multistr(m_node->as_constant(prop_style, prefix), "|", tt::TRIM::both);
-                std::string_view wx_prefix = "wx.";
-                auto lambda = [&](tt_string_view candidate)
+                std::string_view wx_prefix = m_lang_wxPrefix;
+                auto map_python_wxWidget = [&](tt_string_view candidate)
                 {
-                    for (auto& iter_prefix: s_short_map)
+                    for (auto& iter_prefix: s_short_python_map)
                     {
                         if (candidate.starts_with(iter_prefix.first))
                         {
@@ -928,10 +975,13 @@ Code& Code::Style(const char* prefix, tt_string_view force_style)
                             return;
                         }
                     }
-                    if (auto wx_iter = s_map_wx_prefix.find(candidate); wx_iter != s_map_wx_prefix.end())
+                    if (is_python())
                     {
-                        wx_prefix = wx_iter->second;
-                        return;
+                        if (auto wx_iter = map_python_wx_prefix.find(candidate); wx_iter != map_python_wx_prefix.end())
+                        {
+                            wx_prefix = wx_iter->second;
+                            return;
+                        }
                     }
                 };
 
@@ -943,7 +993,10 @@ Code& Code::Style(const char* prefix, tt_string_view force_style)
                         *this += '|';
                     if (iter.is_sameprefix("wx"))
                     {
-                        lambda(iter);
+                        if (is_python())
+                        {
+                            map_python_wxWidget(iter);
+                        }
                         *this << wx_prefix << iter.substr(2);
                     }
                     else
@@ -1192,25 +1245,25 @@ Code& Code::GenSizerFlags()
             {
                 if (border_flags.size())
                     border_flags << '|';
-                border_flags += is_cpp() ? "wxLEFT" : "wx.LEFT";
+                border_flags << m_lang_wxPrefix << "LEFT";
             }
             if (prop.contains("wxRIGHT"))
             {
                 if (border_flags.size())
                     border_flags << '|';
-                border_flags += is_cpp() ? "wxRIGHT" : "wx.RIGHT";
+                border_flags << m_lang_wxPrefix << "RIGHT";
             }
             if (prop.contains("wxTOP"))
             {
                 if (border_flags.size())
                     border_flags << '|';
-                border_flags += is_cpp() ? "wxTOP" : "wx.TOP";
+                border_flags << m_lang_wxPrefix << "TOP";
             }
             if (prop.contains("wxBOTTOM"))
             {
                 if (border_flags.size())
                     border_flags << '|';
-                border_flags += is_cpp() ? "wxBOTTOM" : "wx.BOTTOM";
+                border_flags << m_lang_wxPrefix << "BOTTOM";
             }
             if (border_flags.empty())
                 border_flags = "0";
@@ -1218,7 +1271,10 @@ Code& Code::GenSizerFlags()
             *this << border_flags << ", ";
             if (border_size == "5")
             {
-                *this += is_cpp() ? "wxSizerFlags::GetDefaultBorder())" : "wx.SizerFlags.GetDefaultBorder())";
+                if (is_cpp())
+                    *this += "wxSizerFlags::GetDefaultBorder())";
+                else
+                    *this << m_lang_wxPrefix << "SizerFlags.GetDefaultBorder())";
             }
             else
             {

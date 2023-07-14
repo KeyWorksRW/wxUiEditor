@@ -376,6 +376,9 @@ protected:
     void InsertLineBreak(size_t cur_pos);
 
 private:
+    // wx for C++, wx. for Python, Wx:: for Ruby
+    tt_string m_lang_wxPrefix { "wx" };
+
     size_t m_break_length { 80 };
     size_t m_break_at { 80 };       // this should be the same as m_break_length
     size_t m_minium_length { 10 };  // if the line is shorter than this, don't break it

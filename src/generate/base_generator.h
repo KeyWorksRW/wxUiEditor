@@ -63,13 +63,13 @@ public:
 
     MockupParent* GetMockup();
 
-    // Generate the code used to construct the object using either C++ or Python
+    // Generate the code used to construct the object using either C++, Python or Ruby
     virtual bool ConstructionCode(Code&) { return false; }
 
     // Generate code after the class has been constructed in the source file
     virtual bool AfterConstructionCode(Code&) { return false; }
 
-    // Generate any settings the object needs using either C++ or Python
+    // Generate any settings the object needs using either C++, Python or Ruby
     virtual bool SettingsCode(Code&) { return false; }
 
     // Generate code after any children have been constructed
@@ -126,6 +126,9 @@ public:
     // Add any required Python libraries that need to be imported
     virtual bool GetPythonImports(Node*, std::set<std::string>& /* set_imports */);
 
+    // Add any required Python libraries that need to be imported
+    virtual bool GetRubyImports(Node*, std::set<std::string>& /* set_imports */) { return false; }
+
     // Return false if the entire Mockup contents should be recreated due to the property change
     virtual bool OnPropertyChange(wxObject*, Node*, NodeProperty*) { return false; }
 
@@ -144,8 +147,14 @@ public:
     // Get the wxPython Help menu item text
     virtual tt_string GetPythonHelpText(Node*);
 
+    // Get the wxPython Help menu item text
+    virtual tt_string GetRubyHelpText(Node*) { return tt::emptystring; }
+
     // Get the HTML filename to browse to. E.g., "wx.Button.html"
     virtual tt_string GetPythonURL(Node* node) { return GetPythonHelpText(node) + ".html"; }
+
+    // Get the HTML filename to browse to. E.g., "wx.Button.html"
+    virtual tt_string GetRubyURL(Node* node) { return GetRubyHelpText(node) + ".html"; }
 
     // Change the enable/disable states in the Property Grid Panel based on the current
     // property.

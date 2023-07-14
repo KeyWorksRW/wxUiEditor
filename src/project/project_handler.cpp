@@ -261,6 +261,8 @@ int ProjectHandler::get_PreferredLanguage()
         return GEN_LANG_CPLUSPLUS;
     else if (value == "Python")
         return GEN_LANG_PYTHON;
+    else if (value == "Ruby")
+        return GEN_LANG_RUBY;
     else if (value == "XRC")
         return GEN_LANG_XRC;
     else

@@ -54,6 +54,7 @@ public:
 
     void GenerateCppClass(Node* form_node, PANEL_PAGE panel_type = NOT_PANEL);
     void GeneratePythonClass(Node* form_node, PANEL_PAGE panel_type = NOT_PANEL);
+    void GenerateRubyClass(Node* form_node, PANEL_PAGE panel_type = NOT_PANEL);
 
     // GenerateDerivedClass() is in gen_derived.cpp
 

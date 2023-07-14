@@ -7,7 +7,8 @@
 
 /*
 
-    This class is used to generate code for any language that wxUiEditor supports (currently C++ and Python).
+    This class is used to generate code for any language that wxUiEditor supports
+    (currently C++, Python and Ruby).
 
 */
 
@@ -74,6 +75,7 @@ public:
 
     bool is_cpp() const { return m_language == GEN_LANG_CPLUSPLUS; }
     bool is_python() const { return m_language == GEN_LANG_PYTHON; }
+    bool is_ruby() const { return m_language == GEN_LANG_RUBY; }
     bool is_local_var() const;
 
     // Equivalent to calling m_node->as_int(prop_name)
@@ -149,7 +151,7 @@ public:
 
     // In C++, this adds "{\n" and indents all lines until CloseBrace() is called.
     //
-    // Ignored by Python.
+    // Ignored by Python and Ruby.
     Code& OpenBrace();
 
     Code& CloseBrace();
@@ -205,6 +207,13 @@ public:
         return *this;
     }
 
+    Code& AddIfRuby(tt_string_view text)
+    {
+        if (is_ruby())
+            Add(text);
+        return *this;
+    }
+
     // Equibalent to Add(node->as_constant(prop_name, "...")
     Code& AddConstant(GenEnum::PropName prop_name, tt_string_view short_name);
 
@@ -224,7 +233,7 @@ public:
     Code& False() { return AddFalse(); }
 
     // Use Str() instead of Add() if you are *absolutely* certain you will never need
-    // wxPython processing.
+    // wxPython or wxRuby (or any other language) processing.
     //
     // This will call CheckLineLength(str.size()) first.
     Code& Str(std::string_view str)

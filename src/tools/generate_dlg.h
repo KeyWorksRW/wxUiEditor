@@ -33,6 +33,7 @@ public:
     bool is_gen_base() const { return m_gen_base_code; }
     bool is_gen_inherited() const { return m_gen_inherited_code; }
     bool is_gen_python() const { return m_gen_python_code; }
+    bool is_gen_ruby() const { return m_gen_ruby_code; }
     bool is_gen_xrc() const { return m_gen_xrc_code; }
 
 protected:
@@ -46,6 +47,7 @@ protected:
     bool m_gen_base_code { false };
     bool m_gen_inherited_code { false };
     bool m_gen_python_code { false };
+    bool m_gen_ruby_code { false };
     bool m_gen_xrc_code { false };
 
     // Class member variables

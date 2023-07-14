@@ -1202,6 +1202,9 @@ wxWindow* MainFrame::CreateNoteBook(wxWindow* parent)
     m_pythonPanel = new BasePanel(m_notebook, this, GEN_LANG_PYTHON);
     m_notebook->AddPage(m_pythonPanel, "Python", false, wxWithImages::NO_IMAGE);
 
+    m_rubyPanel = new BasePanel(m_notebook, this, GEN_LANG_RUBY);
+    m_notebook->AddPage(m_rubyPanel, "Ruby", false, wxWithImages::NO_IMAGE);
+
     m_xrcPanel = new BasePanel(m_notebook, this, GEN_LANG_XRC);
     m_notebook->AddPage(m_xrcPanel, "XRC", false, wxWithImages::NO_IMAGE);
 

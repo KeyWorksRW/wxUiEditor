@@ -70,6 +70,17 @@ BasePanel::BasePanel(wxWindow* parent, MainFrame* frame, int panel_type) : wxPan
         m_hPanel = new CodeDisplay(m_notebook, panel_type);
         m_notebook->AddPage(m_hPanel, "inherit", false, wxWithImages::NO_IMAGE);
     }
+    else if (m_panel_type == GEN_LANG_RUBY)
+    {
+        m_cppPanel = new CodeDisplay(m_notebook, panel_type);
+        m_notebook->AddPage(m_cppPanel, "source", false, wxWithImages::NO_IMAGE);
+
+        // A lot of code expects m_hPanel to exist. This will give us something to add additional information to, such as
+        // which properties are not supported.
+
+        m_hPanel = new CodeDisplay(m_notebook, panel_type);
+        m_notebook->AddPage(m_hPanel, "inherit", false, wxWithImages::NO_IMAGE);
+    }
     else if (m_panel_type == GEN_LANG_XRC)
     {
         m_cppPanel = new CodeDisplay(m_notebook, panel_type);
@@ -258,6 +269,10 @@ void BasePanel::GenerateBaseClass()
 
         case GEN_LANG_PYTHON:
             codegen.GeneratePythonClass(m_cur_form, panel_page);
+            break;
+
+        case GEN_LANG_RUBY:
+            codegen.GenerateRubyClass(m_cur_form, panel_page);
             break;
 
         case GEN_LANG_XRC:

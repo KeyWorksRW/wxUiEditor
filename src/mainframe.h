@@ -339,6 +339,7 @@ private:
 
     // Language panels
     BasePanel* m_pythonPanel { nullptr };
+    BasePanel* m_rubyPanel { nullptr };
     BasePanel* m_xrcPanel { nullptr };
 
 #if defined(INTERNAL_TESTING)

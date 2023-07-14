@@ -61,7 +61,7 @@ bool DialogFormGenerator::ConstructionCode(Code& code)
         code.Eol(eol_if_needed) += "if (!wxDialog::Create(parent, id, title, pos, size, style, name))";
         code.Eol().Tab() += "return false;\n";
     }
-    else
+    else if (code.is_python())
     {
         // The Python version creates an empty wx.Dialog and generates the Create() method in
         // SettingsCode(). From the user's perspective, it looks like one-step creation, but
@@ -85,7 +85,10 @@ bool DialogFormGenerator::ConstructionCode(Code& code)
         code.Unindent();
         code.Eol() += "wx.Dialog.__init__(self)";
     }
-
+    else
+    {
+        code.AddComment("Unknown language");
+    }
     code.ResetIndent();
     code.ResetBraces();  // In C++, caller must close the final brace after all construction
 

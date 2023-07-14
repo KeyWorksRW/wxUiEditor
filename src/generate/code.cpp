@@ -398,12 +398,40 @@ Code& Code::Function(tt_string_view text)
         }
         else
         {
-            *this += text;
+            if (is_ruby())
+            {
+                std::string func(text);
+                // Ruby uses snake_case, so convert from camelCase
+                for (size_t pos = 0; pos < func.size(); ++pos)
+                {
+                    if (func[pos] >= 'A' && func[pos] <= 'Z')
+                    {
+                        func[pos] = func[pos] - 'A' + 'a';
+                        if (pos > 0)
+                        {
+                            func.insert(pos, "_");
+                            ++pos;
+                        }
+                    }
+                }
+                *this += func;
+            }
+            else
+            {
+                *this += text;
+            }
         }
     }
     else
     {
-        *this << "->" << text;
+        if (is_ruby())
+        {
+            *this << "Wx::";
+        }
+        else
+        {
+            *this << "->" << text;
+        }
     }
     return *this;
 }
@@ -418,8 +446,29 @@ Code& Code::ClassMethod(tt_string_view function_name)
     {
         *this += '.';
     }
+    if (is_ruby())
+    {
+        std::string func(function_name);
+        // Ruby uses snake_case, so convert from camelCase
+        for (size_t pos = 0; pos < func.size(); ++pos)
+        {
+            if (func[pos] >= 'A' && func[pos] <= 'Z')
+            {
+                func[pos] = func[pos] - 'A' + 'a';
+                if (pos > 0)
+                {
+                    func.insert(pos, "_");
+                    ++pos;
+                }
+            }
+        }
+        *this += func;
+    }
+    else
+    {
+        *this += function_name;
+    }
 
-    *this += function_name;
     return *this;
 }
 
@@ -429,6 +478,26 @@ Code& Code::FormFunction(tt_string_view text)
     {
         *this += "self.";
     }
+    else if (is_ruby())
+    {
+        std::string func(text);
+        // Ruby uses snake_case, so convert from camelCase
+        for (size_t pos = 0; pos < func.size(); ++pos)
+        {
+            if (func[pos] >= 'A' && func[pos] <= 'Z')
+            {
+                func[pos] = func[pos] - 'A' + 'a';
+                if (pos > 0)
+                {
+                    func.insert(pos, "_");
+                    ++pos;
+                }
+            }
+        }
+        *this += func;
+        return *this;
+    }
+
     *this += text;
     return *this;
 }
@@ -550,6 +619,10 @@ Code& Code::as_string(PropName prop_name)
         {
             result.insert(2, ".");
         }
+        else if (is_ruby() && result._Starts_with("wx"))
+        {
+            result.Replace("wx", "Wx::");
+        }
         *this += result;
         return *this;
     }
@@ -560,7 +633,7 @@ Code& Code::as_string(PropName prop_name)
         *this += str;
         return *this;
     }
-    std::string_view wx_prefix = "wx.";
+    std::string_view wx_prefix = m_lang_wxPrefix;
     auto GetPythonPrefix = [&](tt_string_view candidate)
     {
         for (auto& iter_prefix: s_short_python_map)
@@ -856,8 +929,8 @@ Code& Code::WxSize(GenEnum::PropName prop_name, bool enable_dlg_units)
 {
     if (m_node->as_wxSize(prop_name) == wxDefaultSize)
     {
-        CheckLineLength(sizeof("wxDefaultSize"));
-        *this += is_cpp() ? "wxDefaultSize" : "wx.DefaultSize";
+        CheckLineLength((sizeof("DefaultSize") - 1) + m_lang_wxPrefix.size());
+        *this << m_lang_wxPrefix << "DefaultSize";
         return *this;
     }
 
@@ -866,8 +939,21 @@ Code& Code::WxSize(GenEnum::PropName prop_name, bool enable_dlg_units)
     bool dialog_units = m_node->value(prop_name).contains("d", tt::CASE::either);
     if (dialog_units && enable_dlg_units)
     {
-        CheckLineLength(sizeof("self.ConvertDialogToPixels(wxSize(999, 999))"));
-        FormFunction("ConvertDialogToPixels(");
+        if (is_cpp())
+        {
+            CheckLineLength(sizeof("ConvertDialogToPixels(wxSize(999, 999))"));
+            FormFunction("ConvertDialogToPixels(");
+        }
+        else if (is_python())
+        {
+            CheckLineLength(sizeof("self.ConvertDialogToPixels(wxSize(999, 999))"));
+            FormFunction("ConvertDialogToPixels(");
+        }
+        else if (is_ruby())
+        {
+            CheckLineLength(sizeof("convert_pixels_to_dialog(Wx::Size(999, 999))"));
+            FormFunction("convert_pixels_to_dialog(");
+        }
     }
 
     auto size = m_node->as_wxSize(prop_name);
@@ -888,8 +974,8 @@ Code& Code::Pos(GenEnum::PropName prop_name, bool enable_dlg_units)
 {
     if (m_node->as_wxPoint(prop_name) == wxDefaultPosition)
     {
-        CheckLineLength(sizeof("wxDefaultPosition"));
-        *this += is_cpp() ? "wxDefaultPosition" : "wx.DefaultPosition";
+        CheckLineLength((sizeof("DefaultPosition") - 1) + m_lang_wxPrefix.size());
+        *this << m_lang_wxPrefix << "DefaultPosition";
         return *this;
     }
 
@@ -1596,7 +1682,9 @@ Code& Code::AddComment(tt_string_view text)
     {
         *this << "# " << text;
     }
+    else
     {
+        // Default for any new languages
         *this << "# " << text;
     }
     return *this;

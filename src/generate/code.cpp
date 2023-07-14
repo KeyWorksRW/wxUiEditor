@@ -1536,7 +1536,10 @@ Code& Code::AddComment(tt_string_view text)
     {
         *this << "// " << text;
     }
-    else
+    else if (is_python() || is_ruby())
+    {
+        *this << "# " << text;
+    }
     {
         *this << "# " << text;
     }

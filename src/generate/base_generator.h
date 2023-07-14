@@ -126,7 +126,7 @@ public:
     // Add any required Python libraries that need to be imported
     virtual bool GetPythonImports(Node*, std::set<std::string>& /* set_imports */);
 
-    // Add any required Python libraries that need to be imported
+    // Add any required Ruby libraries that need to be imported
     virtual bool GetRubyImports(Node*, std::set<std::string>& /* set_imports */) { return false; }
 
     // Return false if the entire Mockup contents should be recreated due to the property change

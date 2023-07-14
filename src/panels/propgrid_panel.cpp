@@ -488,7 +488,7 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
             new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH, Project.BaseDirectory(prop->GetNode(), GEN_LANG_RUBY));
             new_pg_property->SetAttribute(wxPG_FILE_SHOW_RELATIVE_PATH, Project.ProjectPath());
             new_pg_property->SetAttribute(wxPG_FILE_DIALOG_STYLE, wxFD_SAVE);
-            new_pg_property->SetAttribute(wxPG_FILE_WILDCARD, "Ruby Files|*.rb");
+            new_pg_property->SetAttribute(wxPG_FILE_WILDCARD, "Ruby Files|*.rb;*.rbw");
         }
         else if (prop->isProp(prop_cmake_file))
         {

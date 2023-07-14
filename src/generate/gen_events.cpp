@@ -497,3 +497,17 @@ void BaseCodeGenerator::GenPythonEventHandlers(EventVector& events)
     code.Eol(eol_if_needed).Str(python_triple_quote).Eol().Eol();
     m_source->writeLine(code);
 }
+
+
+// This function simply generates unhandled event handlers in a multi-string comment.
+
+void BaseCodeGenerator::GenRubyEventHandlers(EventVector& events)
+{
+    ASSERT_MSG(events.size(), "GenRubyEventHandlers() shouldn't be called if there are no events");
+    if (events.empty())
+    {
+        return;
+    }
+
+    // TODO: [Randalphwa - 07-13-2023] Need to implement this
+}

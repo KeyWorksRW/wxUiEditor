@@ -390,6 +390,7 @@ void BaseCodeGenerator::GenerateRubyClass(Node* form_node, PANEL_PAGE panel_type
             m_source->writeLine();
             m_source->writeLine(code);
         }
+        m_source->writeLine("\tend", indent::none);
     }
 
     // TODO: [Randalphwa - 07-13-2023] Need to figure out if wxRuby supports persistence

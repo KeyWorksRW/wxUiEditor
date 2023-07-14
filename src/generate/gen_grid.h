@@ -23,4 +23,6 @@ public:
 
     int GenXrcObject(Node*, pugi::xml_node& /* object */, size_t /* xrc_flags */) override;
     void RequiredHandlers(Node*, std::set<std::string>& /* handlers */) override;
+
+    bool GetRubyImports(Node*, std::set<std::string>& /* set_imports */) override;
 };

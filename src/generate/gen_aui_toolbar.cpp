@@ -200,6 +200,12 @@ void AuiToolBarGenerator::RequiredHandlers(Node* /* node */, std::set<std::strin
     handlers.emplace("wxAuiToolBarXmlHandler");
 }
 
+bool AuiToolBarGenerator::GetRubyImports(Node*, std::set<std::string>& set_imports)
+{
+    set_imports.insert("require 'wx/aui'");
+    return true;
+}
+
 //////////////////////////////////////////  AuiToolGenerator  //////////////////////////////////////////
 
 bool AuiToolGenerator::ConstructionCode(Code& code)

@@ -127,3 +127,9 @@ bool HtmlWindowGenerator::GetIncludes(Node* node, std::set<std::string>& set_src
     }
     return true;
 }
+
+bool HtmlWindowGenerator::GetRubyImports(Node*, std::set<std::string>& set_imports)
+{
+    set_imports.insert("require 'wx/html'");
+    return true;
+}

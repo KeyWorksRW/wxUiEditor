@@ -209,10 +209,6 @@ void BaseCodeGenerator::GenerateRubyClass(Node* form_node, PANEL_PAGE panel_type
     if (m_panel_type == NOT_PANEL)
     {
         m_source->writeLine(txt_PythonCmtBlock);
-        if (!form_node->isGen(gen_Images))
-        {
-            m_source->writeLine("require 'wx'\ninclude Wx\n");
-        }
     }
 
     if (form_node->isGen(gen_Images))
@@ -223,9 +219,11 @@ void BaseCodeGenerator::GenerateRubyClass(Node* form_node, PANEL_PAGE panel_type
         return;
     }
 
+
     m_header->writeLine(tt_string("# Sample inherited class from ") << form_node->as_string(prop_class_name));
     m_header->writeLine();
-    m_header->writeLine("require 'wx'\ninclude Wx\n");
+    m_source->writeLine("WX_GLOBAL_CONSTANTS=true unless defined? WX_GLOBAL_CONSTANTS\n\nrequire 'wx/core'");
+    m_header->writeLine("WX_GLOBAL_CONSTANTS=true unless defined? WX_GLOBAL_CONSTANTS\n\nrequire 'wx/core'");
 
     std::set<std::string> imports;
 
@@ -247,6 +245,8 @@ void BaseCodeGenerator::GenerateRubyClass(Node* form_node, PANEL_PAGE panel_type
         m_source->writeLine(import);
         m_header->writeLine(import);
     }
+    m_source->writeLine();
+    m_header->writeLine();
 
     if (form_node->isGen(gen_wxFrame) && form_node->as_bool(prop_import_all_dialogs))
     {
@@ -256,7 +256,7 @@ void BaseCodeGenerator::GenerateRubyClass(Node* form_node, PANEL_PAGE panel_type
             {
                 tt_string import_name(form->as_string(prop_ruby_file).filename());
                 import_name.remove_extension();
-                m_source->writeLine(tt_string("import ") << import_name);
+                m_source->writeLine(tt_string("require '") << import_name << "'");
             }
         }
     }

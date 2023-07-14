@@ -85,3 +85,9 @@ bool RichTextCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_s
     InsertGeneratorInclude(node, "#include <wx/richtext/richtextctrl.h>", set_src, set_hdr);
     return true;
 }
+
+bool RichTextCtrlGenerator::GetRubyImports(Node*, std::set<std::string>& set_imports)
+{
+    set_imports.insert("require 'wx/rtc'");
+    return true;
+}

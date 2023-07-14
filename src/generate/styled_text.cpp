@@ -1129,3 +1129,9 @@ void StyledTextGenerator::RequiredHandlers(Node* /* node */, std::set<std::strin
 {
     handlers.emplace("wxStyledTextCtrlXmlHandler");
 }
+
+bool StyledTextGenerator::GetRubyImports(Node*, std::set<std::string>& set_imports)
+{
+    set_imports.insert("require 'wx/stc'");
+    return true;
+}

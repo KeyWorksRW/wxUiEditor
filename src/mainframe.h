@@ -267,6 +267,7 @@ protected:
     void OnAppendXRC(wxCommandEvent& event) override;
     void OnBrowseDocs(wxCommandEvent& event) override;
     void OnBrowsePython(wxCommandEvent& event) override;
+    void OnBrowseRuby(wxCommandEvent& event) override;
     void OnChangeAlignment(wxCommandEvent& event) override;
     void OnChangeBorder(wxCommandEvent& event) override;
     void OnClose(wxCloseEvent& event) override;
@@ -292,6 +293,7 @@ protected:
     void OnToggleExpandLayout(wxCommandEvent&) override;
     void OnUpdateBrowseDocs(wxUpdateUIEvent& event) override;
     void OnUpdateBrowsePython(wxUpdateUIEvent& event) override;
+    void OnUpdateBrowseRuby(wxUpdateUIEvent& event) override;
 
     void OnFind(wxFindDialogEvent& event);
     void OnFindClose(wxFindDialogEvent& event);

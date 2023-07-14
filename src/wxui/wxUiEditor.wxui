@@ -613,6 +613,14 @@
               var_name="menu_item_9"
               wxEVT_MENU="OnBrowsePython"
               wxEVT_UPDATE_UI="OnUpdateBrowsePython" />
+            <node
+              class="wxMenuItem"
+              bitmap="SVG;ruby_logo.svg;[16,16]"
+              help="Open wxRuby documentation in your default browser."
+              label="wxRuby Documentation"
+              var_name="menu_item_10"
+              wxEVT_MENU="OnBrowseRuby"
+              wxEVT_UPDATE_UI="OnUpdateBrowseRuby" />
           </node>
         </node>
         <node

@@ -295,6 +295,33 @@ tt_string BaseGenerator::GetPythonHelpText(Node* node)
     return help_text;
 }
 
+tt_string BaseGenerator::GetRubyHelpText(Node* node)
+{
+    auto class_name = node->DeclName();
+    if (!class_name.starts_with("wx"))
+    {
+        return {};
+    }
+
+    std::string_view prefix = "Wx::";
+    tt_string help_text;
+    help_text << prefix << class_name.subview(2);
+
+    return help_text;
+}
+
+tt_string BaseGenerator::GetRubyURL(Node* node)
+{
+    tt_string url = GetRubyHelpText(node);
+    if (url.empty())
+    {
+        return url;
+    }
+    url.Replace("::", "/");
+    url << ".html";
+    return url;
+}
+
 bool BaseGenerator::GetPythonImports(Node* node, std::set<std::string>& set_imports)
 {
     auto class_name = node->DeclName();

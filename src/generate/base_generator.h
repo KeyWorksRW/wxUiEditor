@@ -148,13 +148,13 @@ public:
     virtual tt_string GetPythonHelpText(Node*);
 
     // Get the wxPython Help menu item text
-    virtual tt_string GetRubyHelpText(Node*) { return tt::emptystring; }
+    virtual tt_string GetRubyHelpText(Node*);
 
     // Get the HTML filename to browse to. E.g., "wx.Button.html"
     virtual tt_string GetPythonURL(Node* node) { return GetPythonHelpText(node) + ".html"; }
 
     // Get the HTML filename to browse to. E.g., "wx.Button.html"
-    virtual tt_string GetRubyURL(Node* node) { return GetRubyHelpText(node) + ".html"; }
+    virtual tt_string GetRubyURL(Node* node);
 
     // Change the enable/disable states in the Property Grid Panel based on the current
     // property.

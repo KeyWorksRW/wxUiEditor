@@ -21,7 +21,7 @@ wxObject* PanelFormGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxPanel(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(parent, node, prop_pos),
                               DlgSize(parent, node, prop_size), GetStyleInt(node));
-    if (node->HasValue(prop_extra_style))
+    if (!node->HasValue(prop_extra_style))
     {
         int ex_style = 0;
         // Can't use multiview because GetConstantAsInt() searches an unordered_map which
@@ -50,7 +50,7 @@ bool PanelFormGenerator::ConstructionCode(Code& code)
         code.Comma().Str("long style").Comma().Str("const wxString& name)");
         code.OpenBrace();
     }
-    else
+    else if (code.is_python())
     {
         code.Add("class ").NodeName().Add("(wx.Panel):\n");
         code.Eol().Tab().Add("def __init__(self, parent, id=").as_string(prop_id);
@@ -71,6 +71,24 @@ bool PanelFormGenerator::ConstructionCode(Code& code)
         code.Unindent();
         code.Eol() += "wx.Panel.__init__(self)";
     }
+    else if (code.is_ruby())
+    {
+        code.Add("class ").NodeName().Add(" < Wx::Panel");
+        code.Eol().Tab().Add("def initialize(parent, ");
+        // Indent any wrapped lines
+        code.Indent();
+        if (code.HasValue(prop_id))
+            code.Add(prop_id);
+        else
+            code.Add("Wx::ID_ANY");
+        code.PosSizeFlags();
+        code.EndFunction();
+        code.Unindent();
+    }
+    else
+    {
+        code.AddComment("Unknown language");
+    }
 
     code.ResetIndent();
     code.ResetBraces();  // In C++, caller must close the final brace after all construction
@@ -85,10 +103,19 @@ bool PanelFormGenerator::SettingsCode(Code& code)
         code.Eol(eol_if_needed).FormFunction("if (!wxPanel::Create(").Str("parent, id, pos, size, style, name))");
         code.Eol().Tab().Str("return false;\n");
     }
-    else
+    else if (code.is_python())
     {
         code.Eol(eol_if_needed).Str("if not self.Create(parent, id, pos, size, style, name):");
         code.Eol().Tab().Str("return");
+    }
+    else if (code.is_ruby())
+    {
+        code.Eol(eol_if_needed).Str("if !create(parent, id, pos, size, style, name)");
+        code.Eol().Tab().Str("return false");
+    }
+    else
+    {
+        return false;
     }
 
     return true;
@@ -119,12 +146,23 @@ bool PanelFormGenerator::AfterChildrenCode(Code& code)
 
     if (min_size == wxDefaultSize && max_size == wxDefaultSize)
     {
-        code.FormFunction("SetSizerAndFit(").NodeName(node).EndFunction();
+        if (code.is_ruby())
+            code.FormFunction("set_sizer_and_fit(").NodeName(node).EndFunction();
+        else
+            code.FormFunction("SetSizerAndFit(").NodeName(node).EndFunction();
     }
     else
     {
-        code.FormFunction("SetSizer(").NodeName(node).EndFunction();
-        code.Eol().FormFunction("Fit(").EndFunction();
+        if (code.is_ruby())
+        {
+            code.FormFunction("set_sizer(").NodeName(node).EndFunction();
+            code.Eol().FormFunction("fit(").EndFunction();
+        }
+        else
+        {
+            code.FormFunction("SetSizer(").NodeName(node).EndFunction();
+            code.Eol().FormFunction("Fit(").EndFunction();
+        }
     }
 
     if (size != wxDefaultSize)
@@ -287,4 +325,28 @@ bool PanelFormGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
     InsertGeneratorInclude(node, "#include <wx/panel.h>", set_src, set_hdr);
 
     return true;
+}
+
+tt_string PanelFormGenerator::GetPythonHelpText(Node* /* node */)
+{
+    tt_string help_text("wx.Panel");
+    return help_text;
+}
+
+tt_string PanelFormGenerator::GetRubyHelpText(Node* /* node */)
+{
+    tt_string help_text("Wx::Panel");
+    return help_text;
+}
+
+tt_string PanelFormGenerator::GetPythonURL(Node* /* node */)
+{
+    tt_string help_text("wx.Panel.html");
+    return help_text;
+}
+
+tt_string PanelFormGenerator::GetRubyURL(Node* /* node */)
+{
+    tt_string help_text("Wx/Panel.html");
+    return help_text;
 }

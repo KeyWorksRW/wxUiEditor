@@ -573,10 +573,13 @@ Code& Code::CreateClass(bool use_generic, tt_string_view override_name)
         *this += class_name;
     else
     {
-        std::string_view prefix = "wx.";
-        if (auto wx_iter = g_map_class_prefix.find(class_name); wx_iter != g_map_class_prefix.end())
+        std::string_view prefix = m_lang_wxPrefix;
+        if (is_python())
         {
-            prefix = wx_iter->second;
+            if (auto wx_iter = g_map_class_prefix.find(class_name); wx_iter != g_map_class_prefix.end())
+            {
+                prefix = wx_iter->second;
+            }
         }
         *this << prefix << class_name.substr(2);
     }

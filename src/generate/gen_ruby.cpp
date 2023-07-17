@@ -421,6 +421,7 @@ void BaseCodeGenerator::GenerateRubyClass(Node* form_node, PANEL_PAGE panel_type
 
     // Make certain indentation is reset after all construction code is written
     m_source->ResetIndent();
+    m_source->writeLine("end\n\n", indent::none);
     m_header->ResetIndent();
 
     // TODO: [Randalphwa - 07-13-2023] If we use embedded images, we need to write them out here.

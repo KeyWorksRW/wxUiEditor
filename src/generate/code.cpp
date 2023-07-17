@@ -155,6 +155,7 @@ void Code::Init(Node* node, int language)
     }
     else if (language == GEN_LANG_RUBY)
     {
+        m_indent_size = 2;
         m_lang_wxPrefix = "Wx::";
         m_break_length = Project.as_size_t(prop_ruby_line_length);
         // Always assume Ruby code has two tabs at the beginning of the line
@@ -930,6 +931,45 @@ Code& Code::QuotedString(tt_string_view text)
 
 Code& Code::WxSize(GenEnum::PropName prop_name, bool enable_dlg_units)
 {
+    if (is_ruby())
+    {
+        if (m_node->as_wxSize(prop_name) == wxDefaultSize)
+        {
+            CheckLineLength((sizeof("size=Wx::DEFAULT_SIZE") - 1));
+            *this += "size=Wx::DEFAULT_SIZE";
+            return *this;
+        }
+
+        auto cur_pos = size();
+        bool dialog_units = m_node->value(prop_name).contains("d", tt::CASE::either);
+        if (dialog_units && enable_dlg_units)
+        {
+            CheckLineLength(sizeof(", size=convert_dialog_to_pixels(Wx::Size.new(999, 999))"));
+            *this += "size=";
+            FormFunction("ConvertDialogToPixels(");
+        }
+        else
+        {
+            CheckLineLength((sizeof(" size=Wx::Size.new") - 1));
+            *this += "size=";
+        }
+
+        auto size = m_node->as_wxSize(prop_name);
+        Class("Wx::Size.new(").itoa(size.x).Comma().itoa(size.y) << ')';
+
+        if (dialog_units && enable_dlg_units)
+            *this += ')';
+
+        if (m_auto_break && this->size() > m_break_at)
+        {
+            InsertLineBreak(cur_pos);
+        }
+
+        return *this;
+    }
+
+    // The following code is for non-Ruby languages
+
     if (m_node->as_wxSize(prop_name) == wxDefaultSize)
     {
         CheckLineLength((sizeof("DefaultSize") - 1) + m_lang_wxPrefix.size());
@@ -975,6 +1015,45 @@ Code& Code::WxSize(GenEnum::PropName prop_name, bool enable_dlg_units)
 
 Code& Code::Pos(GenEnum::PropName prop_name, bool enable_dlg_units)
 {
+    if (is_ruby())
+    {
+        if (m_node->as_wxPoint(prop_name) == wxDefaultPosition)
+        {
+            CheckLineLength((sizeof("pos=Wx::DEFAULT_POSITION") - 1));
+            *this += "pos=Wx::DEFAULT_POSITION";
+            return *this;
+        }
+
+        auto cur_pos = size();
+        bool dialog_units = m_node->value(prop_name).contains("d", tt::CASE::either);
+        if (dialog_units && enable_dlg_units)
+        {
+            CheckLineLength(sizeof(", pos=convert_dialog_to_pixels(Wx::Point.new(999, 999))"));
+            *this += "pos=";
+            FormFunction("ConvertDialogToPixels(");
+        }
+        else
+        {
+            CheckLineLength((sizeof(" pos=Wx::Point.new") - 1));
+            *this += "pos=";
+        }
+
+        auto size = m_node->as_wxSize(prop_name);
+        Class("Wx::Point.new(").itoa(size.x).Comma().itoa(size.y) << ')';
+
+        if (dialog_units && enable_dlg_units)
+            *this += ')';
+
+        if (m_auto_break && this->size() > m_break_at)
+        {
+            InsertLineBreak(cur_pos);
+        }
+
+        return *this;
+    }
+
+    // The following code is for non-Ruby languages
+
     if (m_node->as_wxPoint(prop_name) == wxDefaultPosition)
     {
         CheckLineLength((sizeof("DefaultPosition") - 1) + m_lang_wxPrefix.size());
@@ -1007,6 +1086,7 @@ Code& Code::Pos(GenEnum::PropName prop_name, bool enable_dlg_units)
 
 Code& Code::Style(const char* prefix, tt_string_view force_style)
 {
+    auto ruby_pos = size();  // Used in case we need to insert ", style="
     bool style_set = false;
     if (force_style.size())
     {
@@ -1125,6 +1205,11 @@ Code& Code::Style(const char* prefix, tt_string_view force_style)
         *this += "0";
     }
 
+    if (is_ruby() && size() > ruby_pos)
+    {
+        insert(ruby_pos, "style=");
+    }
+
     if (m_auto_break && size() > m_break_at)
     {
         InsertLineBreak(cur_pos);
@@ -1144,6 +1229,10 @@ Code& Code::PosSizeFlags(bool uses_def_validator, tt_string_view def_style)
         if (uses_def_validator)
             Comma().Add("wxDefaultValidator");
         Comma();
+        if (is_ruby())
+        {
+            *this += "name=";
+        }
         QuotedString(prop_window_name).EndFunction();
         return *this;
     }

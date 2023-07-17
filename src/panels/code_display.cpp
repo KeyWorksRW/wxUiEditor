@@ -37,6 +37,10 @@ const char* g_python_keywords =
 
 // clang-format on
 
+const char* g_ruby_keywords =
+    "ENCODING LINE FILE BEGIN END alias and begin break case class def defined do else elsif end ensure false for if in "
+    "module next nil not or redo require rescue retry return self super then true undef unless until when while yield";
+
 CodeDisplay::CodeDisplay(wxWindow* parent, int panel_type) : CodeDisplayBase(parent), m_panel_type(panel_type)
 {
     if (panel_type == GEN_LANG_XRC)
@@ -60,17 +64,7 @@ CodeDisplay::CodeDisplay(wxWindow* parent, int panel_type) : CodeDisplayBase(par
         // On Windows, this saves converting the UTF8 to UTF16 and then back to ANSI.
         m_scintilla->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_python_keywords);
 
-        tt_string wxPython_keywords("\
-        ToolBar \
-        MenuBar \
-        BitmapBundle \
-        Bitmap \
-        MemoryInputStream \
-        Window"
-
-        );
-
-        // clang-format on
+        tt_string wxPython_keywords("ToolBar MenuBar BitmapBundle Bitmap MemoryInputStream Window");
 
         for (auto iter: NodeCreation.GetNodeDeclarationArray())
         {
@@ -96,28 +90,49 @@ CodeDisplay::CodeDisplay(wxWindow* parent, int panel_type) : CodeDisplayBase(par
         m_scintilla->StyleSetForeground(wxSTC_P_COMMENTLINE, wxColour(0, 128, 0));
         m_scintilla->StyleSetForeground(wxSTC_P_NUMBER, *wxRED);
     }
+    else if (panel_type == GEN_LANG_RUBY)
+    {
+        m_scintilla->SetLexer(wxSTC_LEX_RUBY);
+
+        tt_string wxRuby_keywords("ToolBar MenuBar BitmapBundle Bitmap Window Wx");
+
+        // clang-format on
+
+        for (auto iter: NodeCreation.GetNodeDeclarationArray())
+        {
+            if (!iter)
+            {
+                // This will happen if there is an enumerated value but no generator for it
+                continue;
+            }
+
+            if (!iter->DeclName().starts_with("wx"))
+                continue;
+            else if (iter->DeclName().is_sameas("wxContextMenuEvent") || iter->DeclName() == "wxTreeCtrlBase" ||
+                     iter->DeclName().starts_with("wxRuby") || iter->DeclName().starts_with("wxPython"))
+                continue;
+            wxRuby_keywords << ' ' << iter->DeclName().subview(2);
+        }
+
+        // Unfortunately, RUBY_LEXER only supports one set of keywords so we have to combine the regular keywords with
+        // the wxWidgets keywords.
+
+        m_scintilla->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) wxRuby_keywords.c_str());
+
+        m_scintilla->StyleSetForeground(wxSTC_RB_WORD, "#FF00FF");
+        m_scintilla->StyleSetForeground(wxSTC_RB_STRING, wxColour(0, 128, 0));
+        m_scintilla->StyleSetForeground(wxSTC_RB_COMMENTLINE, wxColour(0, 128, 0));
+        m_scintilla->StyleSetForeground(wxSTC_RB_NUMBER, *wxRED);
+    }
     else  // C++
     {
         // On Windows, this saves converting the UTF16 characters to ANSI.
         m_scintilla->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_u8_cpp_keywords);
 
-        // clang-format off
+        // Add regular classes that have different generator class names
 
-    // Add regular classes that have different generator class names
-
-    tt_string widget_keywords("\
-        wxToolBar \
-        wxMenuBar \
-        wxBitmapBundle \
-        wxBitmap \
-        wxImage \
-        wxMemoryInputStream \
-        wxVector \
-        wxWindow"
-
-        );
-
-        // clang-format on
+        tt_string widget_keywords(
+            "wxToolBar wxMenuBar wxBitmapBundle wxBitmap wxImage wxMemoryInputStream wxVector wxWindow");
 
         for (auto iter: NodeCreation.GetNodeDeclarationArray())
         {

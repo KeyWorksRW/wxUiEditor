@@ -74,15 +74,19 @@ bool PanelFormGenerator::ConstructionCode(Code& code)
     else if (code.is_ruby())
     {
         code.Add("class ").NodeName().Add(" < Wx::Panel");
-        code.Eol().Tab().Add("def initialize(parent, ");
+        code.Eol().Tab().Add("def initialize(parent");
         // Indent any wrapped lines
-        code.Indent();
+        code.Indent(3);
+        code.Str(", id=");
         if (code.HasValue(prop_id))
+        {
             code.Add(prop_id);
+        }
         else
+        {
             code.Add("Wx::ID_ANY");
+        }
         code.PosSizeFlags();
-        code.EndFunction();
         code.Unindent();
     }
     else
@@ -110,8 +114,9 @@ bool PanelFormGenerator::SettingsCode(Code& code)
     }
     else if (code.is_ruby())
     {
-        code.Eol(eol_if_needed).Str("if !create(parent, id, pos, size, style, name)");
-        code.Eol().Tab().Str("return false");
+        code.Eol(eol_if_needed).Str("super(parent, id, pos, size, style, name)");
+        // REVIEW: [Randalphwa - 07-17-2023] The following doesn't work with an error that Wx::Panel.create doesn't exist.
+        // code.Eol(eol_if_needed).Str("return false unless Wx::Panel.create(parent, id, pos, size, style, name)");
     }
     else
     {

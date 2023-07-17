@@ -77,12 +77,14 @@ bool GenerateRubyFiles(GenResults& results, std::vector<tt_string>* pClassList)
             BaseCodeGenerator codegen(GEN_LANG_RUBY);
 
             auto h_cw = std::make_unique<FileCodeWriter>(path);
+            h_cw->SetTabToSpaces(2);
             codegen.SetHdrWriteCode(h_cw.get());
 
             // REVIEW: [Randalphwa - 07-13-2023] The .rb extension should work, however on
             // Windows, a .rbw extension can be used as well to launch in a new console window.
             path.replace_extension(".rb");
             auto cpp_cw = std::make_unique<FileCodeWriter>(path);
+            cpp_cw->SetTabToSpaces(2);
             codegen.SetSrcWriteCode(cpp_cw.get());
 
             codegen.GenerateRubyClass(form);

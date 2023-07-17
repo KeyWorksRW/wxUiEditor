@@ -25,6 +25,8 @@ public:
     WriteCode() {};
     virtual ~WriteCode() {};
 
+    void SetTabToSpaces(int tab_to_spaces = 4);
+
     void Indent() { ++m_indent; }
     void Unindent()
     {
@@ -68,6 +70,8 @@ protected:
     void WriteCodeLine(tt_string_view code, size_t indentation);
 
 private:
+    std::string m_TabSpaces { "    " };
+    int m_tab_to_spaces { 4 };
     int m_indent { 0 };
     bool m_isLineWriting { false };
     bool m_IsLastLineBlank { false };

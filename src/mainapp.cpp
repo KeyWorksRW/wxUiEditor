@@ -194,8 +194,9 @@ int App::OnRun()
     // std::cerr will not work. Instead, messages are written to a log file. The log file is
     // the project filename with the extension changed to ".log".
 
-    parser.AddLongOption("gen_python", "generate python files and exit");
     parser.AddLongOption("gen_cpp", "generate C++ files and exit");
+    parser.AddLongOption("gen_python", "generate python files and exit");
+    parser.AddLongOption("gen_ruby", "generate ruby files and exit");
 
     // [Randalphwa - 02-08-2023] This probably works, but will remain hidden until it is
     // tested. That said, I'm doubtful that it has any actual value other than for testing -- I
@@ -206,8 +207,9 @@ int App::OnRun()
     // The "test" options will not write any files, it simply runs the code generation skipping
     // the part where files get written, and generates the log file.
 
-    parser.AddLongSwitch("test_python", "generate python files and exit", wxCMD_LINE_HIDDEN);
     parser.AddLongSwitch("test_cpp", "generate C++ files and exit", wxCMD_LINE_HIDDEN);
+    parser.AddLongSwitch("test_python", "generate python files and exit", wxCMD_LINE_HIDDEN);
+    parser.AddLongSwitch("test_ruby", "generate python files and exit", wxCMD_LINE_HIDDEN);
     parser.AddLongSwitch("test_xrc", "generate XRC files and exit", wxCMD_LINE_HIDDEN);
 
     parser.AddLongSwitch("test_menu", "create test menu to the right of the Help menu",
@@ -230,26 +232,36 @@ int App::OnRun()
         tt_string log_file;
         auto generate_type = GEN_LANG_NONE;
         bool test_only = false;
-        if (parser.Found("gen_python", &filename))
+        if (parser.Found("gen_cpp", &filename))
+        {
+            generate_type = GEN_LANG_CPLUSPLUS;
+        }
+        else if (parser.Found("gen_python", &filename))
         {
             generate_type = GEN_LANG_PYTHON;
         }
-        else if (parser.Found("gen_cpp", &filename))
+        else if (parser.Found("gen_ruby", &filename))
         {
-            generate_type = GEN_LANG_CPLUSPLUS;
+            generate_type = GEN_LANG_RUBY;
         }
         else if (parser.Found("gen_xrc", &filename))
         {
             generate_type = GEN_LANG_XRC;
+        }
+
+        else if (parser.Found("test_cpp", &filename))
+        {
+            generate_type = GEN_LANG_CPLUSPLUS;
+            test_only = true;
         }
         else if (parser.Found("test_python", &filename))
         {
             generate_type = GEN_LANG_PYTHON;
             test_only = true;
         }
-        else if (parser.Found("test_cpp", &filename))
+        else if (parser.Found("test_ruby", &filename))
         {
-            generate_type = GEN_LANG_CPLUSPLUS;
+            generate_type = GEN_LANG_PYTHON;
             test_only = true;
         }
         else if (parser.Found("test_xrc", &filename))
@@ -344,12 +356,16 @@ int App::OnRun()
 
             switch (generate_type)
             {
+                case GEN_LANG_CPLUSPLUS:
+                    GenerateCodeFiles(results, test_only ? &class_list : nullptr);
+                    break;
+
                 case GEN_LANG_PYTHON:
                     GeneratePythonFiles(results, test_only ? &class_list : nullptr);
                     break;
 
-                case GEN_LANG_CPLUSPLUS:
-                    GenerateCodeFiles(results, test_only ? &class_list : nullptr);
+                case GEN_LANG_RUBY:
+                    GenerateRubyFiles(results, test_only ? &class_list : nullptr);
                     break;
 
                 case GEN_LANG_XRC:

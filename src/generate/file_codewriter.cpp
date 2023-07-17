@@ -113,8 +113,14 @@ int FileCodeWriter::WriteFile(int language, int flags)
                     files_are_different = true;
                     break;
                 }
+#if defined(_DEBUG)
+                // In DEBUG builds, we also want to check leading indentation
+                auto org_start = org_file[line_index];
+                auto new_start = new_file[line_index];
+#else
                 auto org_start = org_file[line_index].view_nonspace();
                 auto new_start = new_file[line_index].view_nonspace();
+#endif  // _DEBUG
                 if (org_start != new_start)
                 {
                     files_are_different = true;

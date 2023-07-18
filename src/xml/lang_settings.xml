@@ -89,7 +89,7 @@ inline const char* lang_settings_xml = R"===(<?xml version="1.0"?>
 	<gen class="wxRuby Frame Settings" type="interface">
 		<property name="ruby_file" type="file"
 			help="The filename to use if generating code for wxRuby." />
-		<property name="import_all_dialogs" type="bool"
+		<property name="ruby_import_all_dialogs" type="bool"
 			help="If checked, every wxDialog or wxWizard in this project that has a ruby_file specified for it will be imported into this module.">
 			0</property>
 		<property name="insert_ruby_code" type="code_edit"

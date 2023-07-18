@@ -50,6 +50,11 @@ While testing, you can use any existing image, and insert the control using the 
 - Change the name of the bitmap in the XML declaration to match the shortname you specified in xpm.cpp.
 - If the control isn't part of a drop-down, add it to `RibbonPanelBase` in `wxUiEditor.wxue`. If it's part of a dropdown list of controls, add it to the matching drop-down menu in `wxUiEditor.wxue`.
 
+## Adding a new form
+
+- Add the type (if new) to lst_form_types in Node.cpp
+- Add type and possible children to node_init.cpp
+
 ## Adding a new category
 
 Adding a new category is similar to creating a generator. You need to add the class name to the generator lists in gen_enum.h and gen_enums.cpp (there is a category section at the top of each generator list). The type must be set to `interface`. If it's going to be used by multiple generators, then it make sense to place it in one of the interface xml files. However, this is not a requirement -- for example, `project_xml.xml` has a category definition that only Projects use.

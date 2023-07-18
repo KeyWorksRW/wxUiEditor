@@ -223,6 +223,9 @@ static const ParentChild lstParentChild[] = {
     { type_toolbar_form, type_tool, infinite },
     { type_toolbar_form, type_tool_separator, infinite },
     { type_toolbar_form, type_widget, infinite },
+    { type_aui_toolbar_form, type_aui_tool, infinite },
+    { type_aui_toolbar_form, type_tool_separator, infinite },
+    { type_aui_toolbar_form, type_widget, infinite },
 
     { type_images, type_embed_image, infinite },
     { type_wizard, type_wizardpagesimple, infinite },
@@ -235,6 +238,7 @@ static const ParentChild lstParentChild[] = {
     { type_project, type_popup_menu, infinite },
     { type_project, type_ribbonbar_form, infinite },
     { type_project, type_toolbar_form, infinite },
+    { type_project, type_aui_toolbar_form, infinite },
     { type_project, type_wizard, infinite },
 
     // type_images is not allowed because there can only be one for the entire project.
@@ -251,6 +255,7 @@ static const ParentChild lstParentChild[] = {
     { type_folder, type_popup_menu, infinite },
     { type_folder, type_ribbonbar_form, infinite },
     { type_folder, type_toolbar_form, infinite },
+    { type_folder, type_aui_toolbar_form, infinite },
     { type_folder, type_wizard, infinite },
     { type_folder, type_DocViewApp, one },
     { type_folder, type_wx_document, infinite },
@@ -263,6 +268,7 @@ static const ParentChild lstParentChild[] = {
     { type_sub_folder, type_popup_menu, infinite },
     { type_sub_folder, type_ribbonbar_form, infinite },
     { type_sub_folder, type_toolbar_form, infinite },
+    { type_sub_folder, type_aui_toolbar_form, infinite },
     { type_sub_folder, type_wizard, infinite },
 
     // Containers

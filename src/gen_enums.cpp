@@ -478,6 +478,7 @@ std::map<GenType, std::string_view> GenEnum::map_GenTypes = {
 
     { type_aui_tool, "aui_tool" },
     { type_aui_toolbar, "aui_toolbar" },
+    { type_aui_toolbar_form, "aui_toolbar_form" },
     { type_auinotebook, "auinotebook" },
     { type_bookpage, "bookpage" },
     { type_choicebook, "choicebook" },
@@ -609,6 +610,7 @@ std::map<GenEnum::GenName, const char*> GenEnum::map_GenNames = {
 
     // The following are the regular generators
 
+    { gen_AuiToolBar, "AuiToolBar" },
     { gen_BookPage, "BookPage" },
     { gen_Check3State, "Check3State" },
     { gen_CloseButton, "CloseButton" },

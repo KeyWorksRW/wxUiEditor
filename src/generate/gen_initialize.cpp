@@ -220,6 +220,7 @@ void NodeCreator::InitGenerators()
 
     SET_GENERATOR(gen_spacer, SpacerGenerator)
 
+    SET_GENERATOR(gen_AuiToolBar, AuiToolBarFormGenerator)
     SET_GENERATOR(gen_wxAuiToolBar, AuiToolBarGenerator)
     SET_GENERATOR(gen_auitool, AuiToolGenerator)
     SET_GENERATOR(gen_auitool_label, AuiToolLabelGenerator)

@@ -978,6 +978,11 @@
                     id="gen_ToolBar" />
                   <node
                     class="ribbonTool"
+                    bitmap="Embed;auitoolbar.png"
+                    help="wxAuiToolBar"
+                    id="gen_AuiToolBar" />
+                  <node
+                    class="ribbonTool"
                     bitmap="Embed;ribbon_bar.png"
                     help="wxRibbonBar"
                     id="CreateNewFormRibbon" />

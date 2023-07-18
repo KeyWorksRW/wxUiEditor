@@ -50,6 +50,57 @@ inline const char* aui_xml = R"===(<?xml version="1.0"?>
 		<event name="wxEVT_AUINOTEBOOK_BG_DCLICK" class="wxAuiNotebookEvent" help="Double clicked on the tabs background area." />
 	</gen>
 
+	<gen class="AuiToolBar" image="auitoolbar" type="aui_toolbar_form">
+		<inherits class="C++ Settings" />
+		<inherits class="C++ Derived Class Settings" />
+		<inherits class="wxPython Settings" />
+		<inherits class="wxRuby Settings" />
+		<inherits class="XRC Settings" />
+		<inherits class="wxWindow">
+			<hide name="foreground_colour" />
+			<hide name="background_colour" />
+			<hide name="window_style" />
+			<hide name="window_extra_style" />
+			<hide name="platforms" />
+		</inherits>
+		<inherits class="Window Events" />
+		<property name="class_name" type="string"
+			help="The name of the base class.">MyAuiToolBarBase</property>
+		<property name="margins" type="wxSize"
+			help="Values to be used as margins for the toolbar." />
+		<property name="packing" type="uint"
+			help="Value used for spacing tools. The packing is used for spacing in the vertical direction if the toolbar is horizontal, and for spacing in the horizontal direction if the toolbar is vertical.">1</property>
+		<property name="separation" type="uint"
+			help="The default separator size. This is the size between each toolbar tool set.">5</property>
+		<property name="style" type="bitlist">
+			<option name="wxAUI_TB_TEXT"
+				help="Shows the text in the toolbar buttons; by default only icons are shown. " />
+			<option name="wxAUI_TB_NO_TOOLTIPS"
+				help="Don't show tooltips on wxAuiToolBar items." />
+			<option name="wxAUI_TB_NO_AUTORESIZE"
+				help="Do not auto-resize the wxAuiToolBar." />
+			<option name="wxAUI_TB_GRIPPER"
+				help="Shows a gripper on the wxAuiToolBar." />
+			<option name="wxAUI_TB_OVERFLOW"
+				help="The wxAuiToolBar can contain overflow items." />
+			<option name="wxAUI_TB_VERTICAL"
+				help="Using this style forces the toolbar to be vertical and be only dockable to the left or right sides of the window whereas by default it can be horizontal or vertical and be docked anywhere." />
+			<option name="wxAUI_TB_HORZ_LAYOUT"
+				help="Shows the text and the icons alongside, not vertically stacked. This style must be used with wxAUI_TB_TEXT" />
+			<option name="wxAUI_TB_HORIZONTAL"
+				help="Analogous to wxAUI_TB_VERTICAL, but forces the toolbar to be horizontal, docking to the top or bottom of the window." />
+			<option name="wxAUI_TB_PLAIN_BACKGROUND"
+				help="Draw a plain background (based on parent) instead of the default gradient background." />
+			<option name="wxAUI_TB_HORZ_TEXT"
+				help="Shows the text alongside the icons, not vertically stacked." />
+			<option name="wxAUI_ORIENTATION_MASK "
+				help="Shows the text in the toolbar buttons. By default only icons are shown." />
+			<option name="wxAUI_TB_DEFAULT_STYLE"
+				help="By default only icons are shown." />
+			wxAUI_TB_DEFAULT_STYLE|wxAUI_TB_PLAIN_BACKGROUND
+		</property>
+	</gen>
+
 	<gen class="wxAuiToolBar" image="auitoolbar" type="aui_toolbar">
 		<inherits class="wxWindow">
 			<hide name="foreground_colour" />

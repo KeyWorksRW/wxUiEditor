@@ -366,7 +366,6 @@ bool MainFrameBase::Create(wxWindow* parent, wxWindowID id, const wxString& titl
 
     m_toolbar->Realize();
 
-
     Centre(wxBOTH);
 
     // Event handlers

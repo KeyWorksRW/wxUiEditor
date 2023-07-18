@@ -23,9 +23,9 @@ class BookTestDlg(wx.Dialog):
         dlg_sizer.SetMinSize(400, 400)
 
         self.m_notebook = wx.aui.AuiNotebook(self, wx.ID_ANY, wx.DefaultPosition,
-            wx.DefaultSize, wx.aui.AUI_NB_TOP|wx.aui.AUI_NB_TAB_SPLIT|wx.aui.AUI_NB_TAB_MOVE|
-            wx.aui.AUI_NB_SCROLL_BUTTONS|wx.aui.AUI_NB_CLOSE_ON_ACTIVE_TAB|
-            wx.aui.AUI_NB_MIDDLE_CLICK_CLOSE)
+            wx.DefaultSize, wx.aui.AUI_NB_TOP|wx.aui.AUI_NB_TAB_SPLIT|
+            wx.aui.AUI_NB_TAB_MOVE|wx.aui.AUI_NB_SCROLL_BUTTONS|
+            wx.aui.AUI_NB_CLOSE_ON_ACTIVE_TAB|wx.aui.AUI_NB_MIDDLE_CLICK_CLOSE)
         dlg_sizer.Add(self.m_notebook, wx.SizerFlags(1).Expand().Border(wx.ALL))
 
         page_2 = wx.Panel(self.m_notebook, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize,

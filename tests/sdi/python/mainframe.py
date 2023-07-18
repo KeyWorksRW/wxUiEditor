@@ -49,8 +49,9 @@ class MainFrame(wx.Frame):
         self.splitter.SetMinSize(self.ConvertDialogToPixels(wx.Size(200, 200)))
 
         self.propertyGridManager = wx.propgrid.PropertyGridManager(self.splitter, wx.ID_ANY,
-            wx.DefaultPosition, wx.DefaultSize, wx.propgrid.PG_AUTO_SORT|wx.propgrid.PG_BOLD_MODIFIED|
-            wx.propgrid.PG_SPLITTER_AUTO_CENTER|wx.propgrid.PG_DESCRIPTION|wx.propgrid.PG_TOOLBAR|
+            wx.DefaultPosition, wx.DefaultSize, wx.propgrid.PG_AUTO_SORT|
+            wx.propgrid.PG_BOLD_MODIFIED|wx.propgrid.PG_SPLITTER_AUTO_CENTER|
+            wx.propgrid.PG_DESCRIPTION|wx.propgrid.PG_TOOLBAR|
             wx.propgrid.PG_NO_INTERNAL_BORDER)
         self.propertyGridManager.SetExtraStyle(wx.propgrid.PG_EX_MODE_BUTTONS)
 

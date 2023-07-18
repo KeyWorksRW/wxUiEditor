@@ -1753,6 +1753,21 @@ void BaseCodeGenerator::CollectImageHeaders(Node* node, std::set<std::string>& e
                     for (auto& idx_image: bundle->lst_filenames)
                     {
                         tt_string path(idx_image);
+                        auto art_dir = Project.ArtDirectory();
+                        if (art_dir.size())
+                        {
+                            auto output_dir = Project.BaseDirectory(node, m_language);
+                            output_dir.append_filename(path);
+                            if (!output_dir.file_exists())
+                            {
+                                art_dir.append_filename(path);
+                                if (art_dir.file_exists())
+                                {
+                                    path = art_dir;
+                                    path.make_relative(Project.BaseDirectory(node, m_language));
+                                }
+                            }
+                        }
                         path.backslashestoforward();
                         embedset.insert(tt_string() << "#include \"" << path << "\"");
                     }
@@ -1808,11 +1823,23 @@ void BaseCodeGenerator::CollectImageHeaders(Node* node, std::set<std::string>& e
                     parts[IndexImage].remove_prefix(1);
                 }
                 tt_string path = parts[IndexImage];
-                path.make_relative(m_baseFullPath);
+                auto art_dir = Project.ArtDirectory();
+                if (art_dir.size())
+                {
+                    auto output_dir = Project.BaseDirectory(node, m_language);
+                    output_dir.append_filename(path);
+                    if (!output_dir.file_exists())
+                    {
+                        art_dir.append_filename(path);
+                        if (art_dir.file_exists())
+                        {
+                            path = art_dir;
+                            path.make_relative(Project.BaseDirectory(node, m_language));
+                        }
+                    }
+                }
                 path.backslashestoforward();
-                tt_string inc;
-                inc << "#include \"" << path << "\"";
-                embedset.insert(inc);
+                embedset.insert(tt_string() << "#include \"" << path << "\"");
             }
         }
     }

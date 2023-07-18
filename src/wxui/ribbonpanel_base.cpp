@@ -99,6 +99,8 @@ bool RibbonPanelBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos
     {
         forms_bar_bars->AddTool(gen_ToolBar, wxueImage(wxue_img::wxToolBar_png, sizeof(wxue_img::wxToolBar_png)),
             "wxToolBar", wxRIBBON_BUTTON_NORMAL);
+        forms_bar_bars->AddTool(gen_AuiToolBar, wxueImage(wxue_img::auitoolbar_png, sizeof(wxue_img::auitoolbar_png)),
+            "wxAuiToolBar", wxRIBBON_BUTTON_NORMAL);
         forms_bar_bars->AddTool(CreateNewFormRibbon, wxueImage(wxue_img::ribbon_bar_png, sizeof(wxue_img::ribbon_bar_png)),
             "wxRibbonBar", wxRIBBON_BUTTON_NORMAL);
     }

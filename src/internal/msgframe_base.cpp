@@ -165,7 +165,6 @@ bool MsgFrameBase::Create(wxWindow* parent, wxWindowID id, const wxString& title
 
     SetSizerAndFit(parent_sizer);
 
-
     Centre(wxBOTH);
 
     // Event handlers

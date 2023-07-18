@@ -258,6 +258,8 @@ tt_string BaseGenerator::GetHelpText(Node* node)
             class_name = "wxMenu";
         else if (class_name == "ToolBar")
             class_name = "wxToolBar";
+        else if (class_name == "AuiToolBar")
+            class_name = "wxAuiToolBar";
         else if (class_name == "StaticCheckboxBoxSizer" || class_name == "StaticRadioBtnBoxSizer")
             class_name = "wxStaticBoxSizer";
         else
@@ -610,7 +612,7 @@ tt_string BaseGenerator::GetHelpURL(Node* node)
     {
         return tt_string("wx_tool_bar.html");
     }
-    else if (class_name == "AuiToolBar")  // in case we add a form version
+    else if (class_name == "AuiToolBar")
     {
         return tt_string("wx_aui_tool_bar.html");
     }

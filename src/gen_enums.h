@@ -512,6 +512,7 @@ namespace GenEnum
 
         type_aui_tool,
         type_aui_toolbar,
+        type_aui_toolbar_form,
         type_auinotebook,
         type_bookpage,
         type_choicebook,
@@ -648,6 +649,7 @@ namespace GenEnum
 
         // The following are the rergular generators
 
+        gen_AuiToolBar,
         gen_BookPage,
         gen_Check3State,
         gen_CloseButton,

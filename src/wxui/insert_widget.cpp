@@ -21,7 +21,7 @@ bool InsertWidget::Create(wxWindow* parent, wxWindowID id, const wxString& title
     SetIcon(wxArtProvider::GetBitmapBundle(wxART_EDIT, wxART_MENU).GetIconFor(this));
 
     auto* box_sizer = new wxBoxSizer(wxVERTICAL);
-        box_sizer->SetMinSize(300, 400);
+    box_sizer->SetMinSize(300, 400);
 
     auto* box_sizer_2 = new wxBoxSizer(wxHORIZONTAL);
 

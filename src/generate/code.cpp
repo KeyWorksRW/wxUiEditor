@@ -583,6 +583,10 @@ Code& Code::CreateClass(bool use_generic, tt_string_view override_name)
             }
         }
         *this << prefix << class_name.substr(2);
+        if (is_ruby())
+        {
+            *this += ".new";
+        }
     }
     *this += '(';
     return *this;
@@ -1328,6 +1332,35 @@ Code& Code::PosSizeForceStyle(tt_string_view force_style, bool uses_def_validato
     return *this;
 }
 
+Code& Code::SizerFlagsFunction(tt_string_view function_name)
+{
+    *this += '.';
+    if (is_ruby())
+    {
+        std::string func(function_name);
+        // Ruby uses snake_case, so convert from camelCase
+        for (size_t pos = 0; pos < func.size(); ++pos)
+        {
+            if (func[pos] >= 'A' && func[pos] <= 'Z')
+            {
+                func[pos] = func[pos] - 'A' + 'a';
+                if (pos > 0)
+                {
+                    func.insert(pos, "_");
+                    ++pos;
+                }
+            }
+        }
+        *this += func;
+    }
+    else
+    {
+        *this += function_name;
+    }
+    *this += '(';
+    return *this;
+}
+
 Code& Code::GenSizerFlags()
 {
     // wxSizerFlags functions are chained together, so we don't want to break them. Instead,
@@ -1339,6 +1372,10 @@ Code& Code::GenSizerFlags()
     auto cur_pos = size();
 
     Add("wxSizerFlags");
+    if (is_ruby())
+    {
+        Add(".new");
+    }
 
     if (auto& prop = m_node->as_string(prop_proportion); prop != "0")
     {
@@ -1356,25 +1393,25 @@ Code& Code::GenSizerFlags()
             // Note that CenterHorizontal() and CenterVertical() require wxWidgets 3.1 or higher. Their advantage is
             // generating an assert if you try to use one that is invalid if the sizer parent's orientation doesn't
             // support it. Center() just works without the assertion check.
-            *this << ".Center()";
+            SizerFlagsFunction("Center") += ')';
         }
 
         if (prop.contains("wxALIGN_LEFT"))
         {
-            *this += ".Left()";
+            SizerFlagsFunction("Left") += ')';
         }
         else if (prop.contains("wxALIGN_RIGHT"))
         {
-            *this += ".Right()";
+            SizerFlagsFunction("Right") += ')';
         }
 
         if (prop.contains("wxALIGN_TOP"))
         {
-            *this += ".Top()";
+            SizerFlagsFunction("Top") += ')';
         }
         else if (prop.contains("wxALIGN_BOTTOM"))
         {
-            *this += ".Bottom()";
+            SizerFlagsFunction("Bottom") += ')';
         }
     }
 
@@ -1382,19 +1419,19 @@ Code& Code::GenSizerFlags()
     {
         if (prop.contains("wxEXPAND"))
         {
-            *this += ".Expand()";
+            SizerFlagsFunction("Expand") += ')';
         }
         if (prop.contains("wxSHAPED"))
         {
-            *this += ".Shaped()";
+            SizerFlagsFunction("Shaped") += ')';
         }
         if (prop.contains("wxFIXED_MINSIZE"))
         {
-            *this += ".FixedMinSize()";
+            SizerFlagsFunction("FixedMinSize") += ')';
         }
         if (prop.contains("wxRESERVE_SPACE_EVEN_IF_HIDDEN"))
         {
-            *this += ".ReserveSpaceEvenIfHidden()";
+            SizerFlagsFunction("ReserveSpaceEvenIfHidden") += ')';
         }
     }
 
@@ -1404,19 +1441,19 @@ Code& Code::GenSizerFlags()
         if (prop.contains("wxALL"))
         {
             if (border_size == "5")
-                Add(".Border(").Add("wxALL)");
+                SizerFlagsFunction("Border").Add("wxALL)");
             else if (border_size == "10")
-                Add(".DoubleBorder(").Add("wxALL)");
+                SizerFlagsFunction("DoubleBorder").Add("wxALL)");
             else if (border_size == "15")
-                Add(".TripleBorder(").Add("wxALL)");
+                SizerFlagsFunction("TripleBorder").Add("wxALL)");
             else
             {
-                Add(".Border(").Add("wxALL, ") << border_size << ')';
+                SizerFlagsFunction("Border").Add("wxALL, ") << border_size << ')';
             }
         }
         else
         {
-            *this << ".Border(";
+            SizerFlagsFunction("Border");
             tt_string border_flags;
 
             if (prop.contains("wxLEFT"))
@@ -1451,6 +1488,8 @@ Code& Code::GenSizerFlags()
             {
                 if (is_cpp())
                     *this += "wxSizerFlags::GetDefaultBorder())";
+                else if (is_ruby())
+                    *this += "Wx::SizerFlags.get_default_border())";
                 else
                     *this << m_lang_wxPrefix << "SizerFlags.GetDefaultBorder())";
             }

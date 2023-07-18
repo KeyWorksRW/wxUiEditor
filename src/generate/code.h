@@ -374,6 +374,8 @@ public:
 
 protected:
     void InsertLineBreak(size_t cur_pos);
+    // Prefix with a period, lowercase for wxRuby, and add open parenthesis
+    Code& SizerFlagsFunction(tt_string_view function_name);
 
 private:
     // wx for C++, wx. for Python, Wx:: for Ruby

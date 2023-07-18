@@ -498,7 +498,6 @@ void BaseCodeGenerator::GenPythonEventHandlers(EventVector& events)
     m_source->writeLine(code);
 }
 
-
 // This function simply generates unhandled event handlers in a multi-string comment.
 
 void BaseCodeGenerator::GenRubyEventHandlers(EventVector& events)

@@ -72,6 +72,8 @@
 using namespace wxue_img;
 using namespace GenEnum;
 
+// #define NEW_LAYOUT 1
+
 enum
 {
     IDM_IMPORT_WINRES = wxID_HIGHEST + 500,
@@ -225,7 +227,18 @@ MainFrame::MainFrame() :
 
     CreateStatusBar(StatusPanels);
     SetStatusBarPane(1);  // specifies where menu and toolbar help content is displayed
+#if defined(NEW_LAYOUT)
+    auto* box_sizer = new wxBoxSizer(wxVERTICAL);
+    m_ribbon_panel = new RibbonPanel(this);
+    box_sizer->Add(m_ribbon_panel, wxSizerFlags(0).Expand());
+
     CreateSplitters();
+
+    box_sizer->Add(m_MainSplitter, wxSizerFlags(1).Expand());
+    SetSizer(box_sizer);
+#else
+    CreateSplitters();
+#endif
 
     m_SecondarySplitter->Bind(wxEVT_COMMAND_SPLITTER_SASH_POS_CHANGED,
                               [this](wxSplitterEvent&)
@@ -1268,8 +1281,11 @@ void MainFrame::CreateSplitters()
     panel_right->SetWindowStyle(wxBORDER_RAISED);
 
     auto parent_sizer = new wxBoxSizer(wxVERTICAL);
+
+#if !defined(NEW_LAYOUT)
     m_ribbon_panel = new RibbonPanel(panel_right);
     parent_sizer->Add(m_ribbon_panel, wxSizerFlags(0).Expand());
+#endif
 
     m_SecondarySplitter = new wxSplitterWindow(panel_right, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_LIVE_UPDATE);
     parent_sizer->Add(m_SecondarySplitter, wxSizerFlags(1).Expand());

@@ -25,7 +25,7 @@ XRC is listed, but there is currently no testing code for it. "---" in the XRC c
 | Class | C++ | Python | Ruby | XRC | file |
 -----------|-----|--------|------|------|------|
 | wxDialog | yes | yes | --- | yes | ../src/generate/gen_dialog.cpp |
-| wxFrame | yes | yes | --- | yes | ../src/generate/gen_frame.cpp |
+| wxFrame | yes | yes | yes | yes | ../src/generate/gen_frame.cpp |
 | wxMenu | yes | yes | --- | --- | ../src/generate/menu_widgets.cpp |
 | wxMenuBar | yes | yes | --- | --- | ../src/generate/menu_widgets.cpp |
 | wxPanel | yes | yes | yes | --- | ../src/generate/gen_panel_form.cpp |

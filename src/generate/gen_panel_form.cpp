@@ -151,23 +151,12 @@ bool PanelFormGenerator::AfterChildrenCode(Code& code)
 
     if (min_size == wxDefaultSize && max_size == wxDefaultSize)
     {
-        if (code.is_ruby())
-            code.FormFunction("set_sizer_and_fit(").NodeName(node).EndFunction();
-        else
-            code.FormFunction("SetSizerAndFit(").NodeName(node).EndFunction();
+        code.FormFunction("SetSizerAndFit(").NodeName(node).EndFunction();
     }
     else
     {
-        if (code.is_ruby())
-        {
-            code.FormFunction("set_sizer(").NodeName(node).EndFunction();
-            code.Eol().FormFunction("fit(").EndFunction();
-        }
-        else
-        {
-            code.FormFunction("SetSizer(").NodeName(node).EndFunction();
-            code.Eol().FormFunction("Fit(").EndFunction();
-        }
+        code.FormFunction("SetSizer(").NodeName(node).EndFunction();
+        code.Eol().FormFunction("Fit(").EndFunction();
     }
 
     if (size != wxDefaultSize)

@@ -79,6 +79,7 @@ protected:
     virtual void OnAppendXRC(wxCommandEvent& event) { event.Skip(); }
     virtual void OnBrowseDocs(wxCommandEvent& event) { event.Skip(); }
     virtual void OnBrowsePython(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnBrowseRuby(wxCommandEvent& event) { event.Skip(); }
     virtual void OnChangeAlignment(wxCommandEvent& event) { event.Skip(); }
     virtual void OnChangeBorder(wxCommandEvent& event) { event.Skip(); }
     virtual void OnClose(wxCloseEvent& event) { event.Skip(); }
@@ -100,6 +101,7 @@ protected:
     virtual void OnToggleExpandLayout(wxCommandEvent& event) { event.Skip(); }
     virtual void OnUpdateBrowseDocs(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnUpdateBrowsePython(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnUpdateBrowseRuby(wxUpdateUIEvent& event) { event.Skip(); }
 
     // Class member variables
 
@@ -132,6 +134,7 @@ namespace wxue_img
     // new-project.svg
     extern const unsigned char new_project_svg[921];
     extern const unsigned char right_svg[599];
+    extern const unsigned char ruby_logo_svg[1853];
     extern const unsigned char save_svg[717];
     extern const unsigned char top_svg[586];
     extern const unsigned char xrc_preview_svg[469];

@@ -191,6 +191,12 @@ bool RibbonBarFormGenerator::GetIncludes(Node* node, std::set<std::string>& set_
     return true;
 }
 
+bool RibbonBarFormGenerator::GetRubyImports(Node*, std::set<std::string>& set_imports)
+{
+    set_imports.insert("require 'wx/rbn'");
+    return true;
+}
+
 //////////////////////////////////////////  RibbonBarGenerator  //////////////////////////////////////////
 
 wxObject* RibbonBarGenerator::CreateMockup(Node* node, wxObject* parent)
@@ -303,4 +309,10 @@ int RibbonBarGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t 
 void RibbonBarGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>& handlers)
 {
     handlers.emplace("wxRibbonXmlHandler");
+}
+
+bool RibbonBarGenerator::GetRubyImports(Node*, std::set<std::string>& set_imports)
+{
+    set_imports.insert("require 'wx/rbn'");
+    return true;
 }

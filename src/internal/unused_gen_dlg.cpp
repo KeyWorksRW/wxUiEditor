@@ -114,6 +114,8 @@ const auto gen_ignore_list = {
     gen_List_Validator,
     gen_PythonFrameSettings,
     gen_PythonSettings,
+    gen_RubyFrameSettings,
+    gen_RubySettings,
     gen_String_Validator,
     gen_Text_Validator,
     gen_Window_Events,

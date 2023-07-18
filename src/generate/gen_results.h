@@ -54,6 +54,9 @@ void GenInhertedClass(GenResults& results);
 // ../generate/gen_python.cpp
 bool GeneratePythonFiles(GenResults& results, std::vector<tt_string>* pClassList = nullptr);
 
+// ../generate/gen_ruby.cpp
+bool GenerateRubyFiles(GenResults& results, std::vector<tt_string>* pClassList = nullptr);
+
 // If out_file contains a file, it will override project xrc_file and combine_xrc settings.
 //
 // If NeedsGenerateCheck is true, this will not write any files, but will return true if at

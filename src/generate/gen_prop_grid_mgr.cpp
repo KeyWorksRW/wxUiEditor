@@ -120,6 +120,12 @@ bool PropertyGridManagerGenerator::AfterChildrenCode(Code& code)
     }
 }
 
+bool PropertyGridManagerGenerator::GetRubyImports(Node*, std::set<std::string>& set_imports)
+{
+    set_imports.insert("require 'wx/pg'");
+    return true;
+}
+
 //////////////////////////////////////////  PropertyGridPageGenerator  //////////////////////////////////////////
 
 bool PropertyGridPageGenerator::ConstructionCode(Code& code)

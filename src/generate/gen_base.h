@@ -54,6 +54,7 @@ public:
 
     void GenerateCppClass(Node* form_node, PANEL_PAGE panel_type = NOT_PANEL);
     void GeneratePythonClass(Node* form_node, PANEL_PAGE panel_type = NOT_PANEL);
+    void GenerateRubyClass(Node* form_node, PANEL_PAGE panel_type = NOT_PANEL);
 
     // GenerateDerivedClass() is in gen_derived.cpp
 
@@ -109,6 +110,9 @@ protected:
     // This method is in image_gen.cpp, and handles Python code generation
     void GeneratePythonImagesForm();
 
+    // This method is in image_gen.cpp, and handles Ruby code generation
+    void GenerateRubyImagesForm();
+
     tt_string GetDeclaration(Node* node);
 
     void CollectEventHandlers(Node* node, EventVector& events);
@@ -123,6 +127,7 @@ protected:
     void GenSrcEventBinding(Node* class_node, EventVector& events);
     void GenHdrEvents(const EventVector& events);
     void GenPythonEventHandlers(EventVector& events);
+    void GenRubyEventHandlers(EventVector& events);
 
     // Generates all the code lines for validator_variables initialized in the header file
     void GenValVarsBase(const NodeDeclaration* info, Node* node, std::set<std::string>& code_lines);

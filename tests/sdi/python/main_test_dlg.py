@@ -84,8 +84,8 @@ class MainTestDialog(wx.Dialog):
         page_sizer_1.Add(self.m_text_ctrl, wx.SizerFlags().Expand().Border(wx.ALL))
 
         self.m_richText = wx.richtext.RichTextCtrl(page_2, ID_RICHTEXT, "",
-            wx.DefaultPosition, wx.DefaultSize, wx.richtext.RE_MULTILINE|wx.VSCROLL|wx.HSCROLL|
-            wx.NO_BORDER|wx.WANTS_CHARS)
+            wx.DefaultPosition, wx.DefaultSize, wx.richtext.RE_MULTILINE|wx.VSCROLL|
+            wx.HSCROLL|wx.NO_BORDER|wx.WANTS_CHARS)
         self.m_richText.SetHint("wxRichTextCtrl")
         self.m_richText.SetMinSize(self.ConvertDialogToPixels(wx.Size(150, 30)))
         page_sizer_1.Add(self.m_richText, wx.SizerFlags().Expand().Border(wx.ALL))
@@ -495,8 +495,8 @@ class MainTestDialog(wx.Dialog):
         box_sizer_2.Add(staticText__3, wx.SizerFlags().Center().Border(wx.ALL))
 
         self.m_dirPicker = wx.DirPickerCtrl(static_box_2.GetStaticBox(), wx.ID_ANY, ".",
-            wx.DirSelectorPromptStr, wx.DefaultPosition, wx.DefaultSize, wx.DIRP_DEFAULT_STYLE|
-            wx.DIRP_SMALL)
+            wx.DirSelectorPromptStr, wx.DefaultPosition, wx.DefaultSize,
+            wx.DIRP_DEFAULT_STYLE|wx.DIRP_SMALL)
         box_sizer_2.Add(self.m_dirPicker, wx.SizerFlags().Border(wx.ALL))
 
         grid_sizer.Add(box_sizer_2, wx.SizerFlags().Border(wx.ALL))

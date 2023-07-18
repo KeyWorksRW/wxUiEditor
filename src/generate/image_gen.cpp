@@ -505,6 +505,16 @@ void BaseCodeGenerator::GeneratePythonImagesForm()
     m_source->writeLine();
 }
 
+void BaseCodeGenerator::GenerateRubyImagesForm()
+{
+    if (m_embedded_images.empty() || !m_form_node->GetChildCount())
+    {
+        return;
+    }
+
+    m_source->writeLine();
+}
+
 void AddPythonImageName(Code& code, const EmbeddedImage* embed)
 {
     if (embed->form->isGen(gen_Images))

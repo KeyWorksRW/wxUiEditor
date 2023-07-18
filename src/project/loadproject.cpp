@@ -755,6 +755,10 @@ bool ProjectHandler::Import(ImportXML& import, tt_string& file, bool append, boo
                     {
                         iter->set_value(prop_python_file, iter->value(prop_base_file));
                     }
+                    else if (project_node->value(prop_code_preference) == "Ruby" && !iter->HasValue(prop_ruby_file))
+                    {
+                        iter->set_value(prop_ruby_file, iter->value(prop_base_file));
+                    }
                     else if (project_node->value(prop_code_preference) == "XRC" && !iter->HasValue(prop_xrc_file))
                     {
                         iter->set_value(prop_xrc_file, iter->value(prop_base_file));
@@ -799,6 +803,10 @@ bool ProjectHandler::Import(ImportXML& import, tt_string& file, bool append, boo
                 if (dlg.is_gen_python())
                 {
                     project_node->set_value(prop_code_preference, "Python");
+                }
+                else if (dlg.is_gen_python())
+                {
+                    project_node->set_value(prop_code_preference, "Ruby");
                 }
                 else if (dlg.is_gen_xrc())
                 {
@@ -880,6 +888,10 @@ bool ProjectHandler::NewProject(bool create_empty, bool allow_ui)
                 if (dlg.is_gen_python())
                 {
                     project->set_value(prop_code_preference, "Python");
+                }
+                else if (dlg.is_gen_ruby())
+                {
+                    project->set_value(prop_code_preference, "Ruby");
                 }
                 else if (dlg.is_gen_xrc())
                 {

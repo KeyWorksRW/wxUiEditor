@@ -18,4 +18,6 @@ public:
     bool ConstructionCode(Code&) override;
 
     bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr) override;
+
+    bool GetRubyImports(Node*, std::set<std::string>& /* set_imports */) override;
 };

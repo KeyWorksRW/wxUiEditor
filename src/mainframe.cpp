@@ -1032,6 +1032,25 @@ void MainFrame::OnBrowsePython(wxCommandEvent& WXUNUSED(event))
     wxLaunchDefaultBrowser("https://docs.wxpython.org/index.html");
 }
 
+void MainFrame::OnBrowseRuby(wxCommandEvent& WXUNUSED(event))
+{
+    if (m_selected_node)
+    {
+        if (auto generator = m_selected_node->GetGenerator(); generator)
+        {
+            auto file = generator->GetRubyURL(m_selected_node.get());
+            if (file.size())
+            {
+                wxString url("https://mcorino.github.io/wxRuby3/");
+                url << file.make_wxString();
+                wxLaunchDefaultBrowser(url);
+                return;
+            }
+        }
+    }
+    wxLaunchDefaultBrowser("https://mcorino.github.io/wxRuby3/");
+}
+
 void MainFrame::OnUpdateBrowsePython(wxUpdateUIEvent& event)
 {
     if (m_selected_node)
@@ -1050,6 +1069,26 @@ void MainFrame::OnUpdateBrowsePython(wxUpdateUIEvent& event)
     }
 
     event.SetText("wxPython Documentation");
+}
+
+void MainFrame::OnUpdateBrowseRuby(wxUpdateUIEvent& event)
+{
+    if (m_selected_node)
+    {
+        if (auto generator = m_selected_node->GetGenerator(); generator)
+        {
+            auto label = generator->GetRubyHelpText(m_selected_node.get());
+            if (label.empty())
+            {
+                label << "wxRuby";
+            }
+            label << " Documentation";
+            event.SetText(label.make_wxString());
+            return;
+        }
+    }
+
+    event.SetText("wxRuby Documentation");
 }
 
 void MainFrame::OnChangeAlignment(wxCommandEvent& event)
@@ -1201,6 +1240,9 @@ wxWindow* MainFrame::CreateNoteBook(wxWindow* parent)
     // Placing the Python panel first as it's the most commonly used language after C++
     m_pythonPanel = new BasePanel(m_notebook, this, GEN_LANG_PYTHON);
     m_notebook->AddPage(m_pythonPanel, "Python", false, wxWithImages::NO_IMAGE);
+
+    m_rubyPanel = new BasePanel(m_notebook, this, GEN_LANG_RUBY);
+    m_notebook->AddPage(m_rubyPanel, "Ruby", false, wxWithImages::NO_IMAGE);
 
     m_xrcPanel = new BasePanel(m_notebook, this, GEN_LANG_XRC);
     m_notebook->AddPage(m_xrcPanel, "XRC", false, wxWithImages::NO_IMAGE);

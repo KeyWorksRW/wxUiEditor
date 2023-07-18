@@ -40,6 +40,10 @@ inline const std::vector<GenEnum::GenName> unsupported_gen_python = {
 
 };
 
+inline const std::vector<GenEnum::GenName> unsupported_gen_ruby = {
+
+};
+
 inline const std::vector<GenEnum::GenName> unsupported_gen_XRC = {
 
     gen_TreeListCtrlColumn,
@@ -258,6 +262,16 @@ void NavigationPanel::OnSelChanged(wxTreeEvent& event)
                 auto info = wxGetFrame().GetPropInfoBar();
                 info->Dismiss();
                 info->ShowMessage("This control is not supported by wxPython.", wxICON_INFORMATION);
+            }
+        }
+        if (Project.value(prop_code_preference) == "Ruby")
+        {
+            if (std::find(unsupported_gen_ruby.begin(), unsupported_gen_ruby.end(), iter->second->gen_name()) !=
+                unsupported_gen_ruby.end())
+            {
+                auto info = wxGetFrame().GetPropInfoBar();
+                info->Dismiss();
+                info->ShowMessage("This control is not supported by wxRuby.", wxICON_INFORMATION);
             }
         }
         else if (Project.value(prop_code_preference) == "XRC")

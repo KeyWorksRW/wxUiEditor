@@ -432,7 +432,7 @@ void BaseCodeGenerator::GeneratePythonClass(Node* form_node, PANEL_PAGE panel_ty
         {
             if (iter.starts_with("self."))
             {
-                m_source->writeLine(tt_string() << iter << " = wxID_HIGHEST + " << id_value++);
+                m_source->writeLine(tt_string() << iter << " = wx.ID_HIGHEST + " << id_value++);
             }
         }
         if (id_value > 1)

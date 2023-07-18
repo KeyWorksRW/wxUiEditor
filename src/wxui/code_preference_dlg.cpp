@@ -39,6 +39,10 @@ bool CodePreferenceDlg::Create(wxWindow* parent, wxWindowID id, const wxString& 
     m_radioBtn_3->SetValidator(wxGenericValidator(&m_gen_python_code));
     box_sizer->Add(m_radioBtn_3, wxSizerFlags().Border(wxALL));
 
+    auto* m_radioBtn_4 = new wxRadioButton(this, wxID_ANY, "&Ruby");
+    m_radioBtn_4->SetValidator(wxGenericValidator(&m_gen_ruby_code));
+    box_sizer->Add(m_radioBtn_4, wxSizerFlags().Border(wxALL));
+
     auto* m_radioBtn = new wxRadioButton(this, wxID_ANY, "&XRC");
     m_radioBtn->SetValidator(wxGenericValidator(&m_gen_xrc_code));
     box_sizer->Add(m_radioBtn, wxSizerFlags().Border(wxALL));

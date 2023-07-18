@@ -14,7 +14,7 @@
 #include "generate_dlg.h"
 
 bool GenerateDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,
-        const wxPoint& pos, const wxSize& size, long style, const wxString &name)
+    const wxPoint& pos, const wxSize& size, long style, const wxString &name)
 {
     if (!wxDialog::Create(parent, id, title, pos, size, style, name))
         return false;
@@ -37,6 +37,10 @@ bool GenerateDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     auto* checkBox_5 = new wxCheckBox(this, wxID_ANY, "&Python");
     checkBox_5->SetValidator(wxGenericValidator(&m_gen_python_code));
     box_sizer->Add(checkBox_5, wxSizerFlags().Border(wxALL));
+
+    auto* checkBox_3 = new wxCheckBox(this, wxID_ANY, "&Ruby");
+    checkBox_3->SetValidator(wxGenericValidator(&m_gen_ruby_code));
+    box_sizer->Add(checkBox_3, wxSizerFlags().Border(wxALL));
 
     auto* checkBox_2 = new wxCheckBox(this, wxID_ANY, "&XRC");
     checkBox_2->SetValidator(wxGenericValidator(&m_gen_xrc_code));
@@ -112,6 +116,10 @@ void MainFrame::OnGenerateCode(wxCommandEvent&)
         {
             GeneratePythonFiles(results);
         }
+        if (dlg.is_gen_ruby())
+        {
+            GenerateRubyFiles(results);
+        }
         if (dlg.is_gen_xrc())
         {
             GenerateXrcFiles(results);
@@ -155,24 +163,35 @@ void GenerateDlg::OnInit(wxInitDialogEvent& event)
     if (Project.value(prop_code_preference) == "C++")
     {
         m_gen_python_code = false;
+        m_gen_ruby_code = false;
         m_gen_base_code = true;
         m_gen_xrc_code = false;
     }
     else if (Project.value(prop_code_preference) == "Python")
     {
         m_gen_python_code = true;
+        m_gen_ruby_code = false;
+        m_gen_base_code = false;
+        m_gen_xrc_code = false;
+    }
+    else if (Project.value(prop_code_preference) == "Ruby")
+    {
+        m_gen_python_code = false;
+        m_gen_ruby_code = true;
         m_gen_base_code = false;
         m_gen_xrc_code = false;
     }
     else if (Project.value(prop_code_preference) == "XRC")
     {
         m_gen_python_code = false;
+        m_gen_ruby_code = false;
         m_gen_base_code = false;
         m_gen_xrc_code = true;
     }
     else
     {
         m_gen_python_code = false;
+        m_gen_ruby_code = false;
         m_gen_base_code = true;
         m_gen_xrc_code = false;
     }

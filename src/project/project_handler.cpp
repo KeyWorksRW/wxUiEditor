@@ -85,6 +85,7 @@ void ProjectHandler::FixupDuplicatedNode(Node* new_node)
     std::set<std::string_view> derived_filenames;
     std::set<std::string_view> xrc_filenames;
     std::set<std::string_view> python_filenames;
+    std::set<std::string_view> ruby_filenames;
 
     // Collect all of the class and filenames in use by each form so we can make sure the new
     // form doesn't use any of them.
@@ -104,6 +105,8 @@ void ProjectHandler::FixupDuplicatedNode(Node* new_node)
             xrc_filenames.insert(iter->value(prop_xrc_file));
         if (iter->HasValue(prop_python_file))
             python_filenames.insert(iter->value(prop_python_file));
+        if (iter->HasValue(prop_ruby_file))
+            ruby_filenames.insert(iter->value(prop_ruby_file));
     }
 
     auto lambda = [&](std::set<std::string_view>& set_names, PropName prop)
@@ -146,7 +149,8 @@ void ProjectHandler::FixupDuplicatedNode(Node* new_node)
     lambda(base_filenames, prop_base_file);
     lambda(derived_filenames, prop_derived_file);
     lambda(xrc_filenames, prop_xrc_file);
-    lambda(python_filenames, prop_xrc_file);
+    lambda(python_filenames, prop_python_file);
+    lambda(ruby_filenames, prop_ruby_file);
 }
 
 tt_string ProjectHandler::ArtDirectory() const
@@ -174,6 +178,8 @@ tt_string ProjectHandler::BaseDirectory(Node* node, int language) const
             result = folder->as_string(prop_folder_base_directory);
         else if (language == GEN_LANG_PYTHON && folder->HasValue(prop_folder_python_output_folder))
             result = folder->as_string(prop_folder_python_output_folder);
+        else if (language == GEN_LANG_RUBY && folder->HasValue(prop_folder_ruby_output_folder))
+            result = folder->as_string(prop_folder_python_output_folder);
         else if (language == GEN_LANG_XRC && folder->HasValue(prop_folder_xrc_directory))
             result = folder->as_string(prop_folder_xrc_directory);
     }
@@ -186,6 +192,8 @@ tt_string ProjectHandler::BaseDirectory(Node* node, int language) const
             result = m_project_node->as_string(prop_base_directory);
         else if (language == GEN_LANG_PYTHON && m_project_node->HasValue(prop_python_output_folder))
             result = m_project_node->as_string(prop_python_output_folder);
+        else if (language == GEN_LANG_RUBY && m_project_node->HasValue(prop_ruby_output_folder))
+            result = m_project_node->as_string(prop_ruby_output_folder);
         else if (language == GEN_LANG_XRC && m_project_node->HasValue(prop_xrc_directory))
             result = m_project_node->as_string(prop_xrc_directory);
     }
@@ -211,6 +219,8 @@ tt_string ProjectHandler::DerivedDirectory(Node* node, int language) const
             result = folder->as_string(prop_folder_base_directory);
         else if (language == GEN_LANG_PYTHON && folder->HasValue(prop_folder_python_output_folder))
             result = folder->as_string(prop_folder_python_output_folder);
+        else if (language == GEN_LANG_RUBY && folder->HasValue(prop_folder_ruby_output_folder))
+            result = folder->as_string(prop_folder_python_output_folder);
         else if (language == GEN_LANG_XRC && folder->HasValue(prop_folder_xrc_directory))
             result = folder->as_string(prop_folder_xrc_directory);
     }
@@ -223,6 +233,8 @@ tt_string ProjectHandler::DerivedDirectory(Node* node, int language) const
             result = m_project_node->as_string(prop_base_directory);
         else if (language == GEN_LANG_PYTHON && m_project_node->HasValue(prop_python_output_folder))
             result = m_project_node->as_string(prop_python_output_folder);
+        else if (language == GEN_LANG_RUBY && m_project_node->HasValue(prop_ruby_output_folder))
+            result = m_project_node->as_string(prop_ruby_output_folder);
         else if (language == GEN_LANG_XRC && m_project_node->HasValue(prop_xrc_directory))
             result = m_project_node->as_string(prop_xrc_directory);
     }
@@ -261,6 +273,8 @@ int ProjectHandler::get_PreferredLanguage()
         return GEN_LANG_CPLUSPLUS;
     else if (value == "Python")
         return GEN_LANG_PYTHON;
+    else if (value == "Ruby")
+        return GEN_LANG_RUBY;
     else if (value == "XRC")
         return GEN_LANG_XRC;
     else

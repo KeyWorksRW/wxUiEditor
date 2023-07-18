@@ -387,3 +387,9 @@ void GridGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>& ha
 {
     handlers.emplace("wxGridXmlHandler");
 }
+
+bool GridGenerator::GetRubyImports(Node*, std::set<std::string>& set_imports)
+{
+    set_imports.insert("require 'wx/grid'");
+    return true;
+}

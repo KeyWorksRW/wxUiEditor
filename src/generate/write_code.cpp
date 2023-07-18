@@ -11,9 +11,6 @@
 
 #include "code.h"  // Code -- Helper class for generating code
 
-// String to write whenever a tab is encountered at the beginning of a line
-constexpr const char* TabSpaces = "    ";
-
 void WriteCode::writeLine(const Code& code)
 {
     if (!code.size())
@@ -42,7 +39,7 @@ void WriteCode::writeLine(const Code& code)
             {
                 for (int i = 0; i < m_indent; ++i)
                 {
-                    doWrite(TabSpaces);
+                    doWrite(m_TabSpaces);
                 }
             }
 
@@ -50,7 +47,7 @@ void WriteCode::writeLine(const Code& code)
             {
                 do
                 {
-                    doWrite(TabSpaces);
+                    doWrite(m_TabSpaces);
                     line.remove_prefix(1);
                     ASSERT_MSG(line.size(), "Line ended with nothing but tabs.");
                 } while (line.size() && line[0] == '\t');
@@ -82,7 +79,7 @@ void WriteCode::writeLine(std::vector<std::string>& lines)
             {
                 for (int i = 0; i < m_indent; ++i)
                 {
-                    doWrite(TabSpaces);
+                    doWrite(m_TabSpaces);
                 }
             }
 
@@ -93,7 +90,7 @@ void WriteCode::writeLine(std::vector<std::string>& lines)
                 {
                     if (line[idx] == '\t')
                     {
-                        doWrite(TabSpaces);
+                        doWrite(m_TabSpaces);
                     }
                     else
                     {
@@ -136,7 +133,7 @@ void WriteCode::WriteCodeLine(tt_string_view code, size_t indentation)
             {
                 for (int i = 0; i < m_indent; ++i)
                 {
-                    doWrite(TabSpaces);
+                    doWrite(m_TabSpaces);
                 }
             }
         }
@@ -151,7 +148,7 @@ void WriteCode::WriteCodeLine(tt_string_view code, size_t indentation)
         {
             if (ch == '\t')
             {
-                tab_code += TabSpaces;
+                tab_code += m_TabSpaces;
             }
             else
             {
@@ -236,7 +233,7 @@ void WriteCode::write(tt_string_view code, bool auto_indent)
         {
             for (int i = 0; i < m_indent; ++i)
             {
-                doWrite(TabSpaces);
+                doWrite(m_TabSpaces);
             }
         }
         m_isLineWriting = true;
@@ -250,7 +247,7 @@ void WriteCode::write(tt_string_view code, bool auto_indent)
         {
             if (ch == '\t')
             {
-                tab_code += TabSpaces;
+                tab_code += m_TabSpaces;
             }
             else
             {
@@ -262,5 +259,15 @@ void WriteCode::write(tt_string_view code, bool auto_indent)
     else
     {
         doWrite(code);
+    }
+}
+
+void WriteCode::SetTabToSpaces(int tab_to_spaces)
+{
+    m_TabSpaces.clear();
+    m_tab_to_spaces = tab_to_spaces;
+    for (int i = 0; i < tab_to_spaces; ++i)
+    {
+        m_TabSpaces.push_back(' ');
     }
 }

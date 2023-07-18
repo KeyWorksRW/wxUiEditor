@@ -613,6 +613,14 @@
               var_name="menu_item_9"
               wxEVT_MENU="OnBrowsePython"
               wxEVT_UPDATE_UI="OnUpdateBrowsePython" />
+            <node
+              class="wxMenuItem"
+              bitmap="SVG;ruby_logo.svg;[16,16]"
+              help="Open wxRuby documentation in your default browser."
+              label="wxRuby Documentation"
+              var_name="menu_item_10"
+              wxEVT_MENU="OnBrowseRuby"
+              wxEVT_UPDATE_UI="OnUpdateBrowseRuby" />
           </node>
         </node>
         <node
@@ -1770,6 +1778,13 @@
             <node
               class="wxCheckBox"
               class_access="none"
+              label="&amp;Ruby"
+              var_name="checkBox_3"
+              get_function="is_gen_ruby"
+              validator_variable="m_gen_ruby_code" />
+            <node
+              class="wxCheckBox"
+              class_access="none"
               label="&amp;XRC"
               var_name="checkBox_2"
               get_function="is_gen_xrc"
@@ -2123,6 +2138,13 @@
             var_name="m_radioBtn_3"
             get_function="is_gen_python"
             validator_variable="m_gen_python_code" />
+          <node
+            class="wxRadioButton"
+            class_access="none"
+            label="&amp;Ruby"
+            var_name="m_radioBtn_4"
+            get_function="is_gen_ruby"
+            validator_variable="m_gen_ruby_code" />
           <node
             class="wxRadioButton"
             class_access="none"

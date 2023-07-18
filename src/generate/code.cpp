@@ -18,7 +18,7 @@ using namespace code;
 
 // clang-format off
 
-static const std::map<tt_string_view, std::string_view, std::less<>> s_short_map
+static const std::map<tt_string_view, std::string_view, std::less<>> s_short_python_map
 {
     { "wxAUI_", "wx.aui."},
     { "wxCAL_", "wx.adv."},
@@ -40,7 +40,7 @@ static const std::map<tt_string_view, std::string_view, std::less<>> s_short_map
 
 };
 
-static const std::map<std::string_view, std::string_view, std::less<>> s_map_wx_prefix
+static const std::map<std::string_view, std::string_view, std::less<>> map_python_wx_prefix
 {
     { "wxAC_DEFAULT_STYLE", "wx.adv."},
     { "wxAC_NO_AUTORESIZE", "wx.adv."},
@@ -141,15 +141,32 @@ void Code::Init(Node* node, int language)
     m_language = language;
     if (language == GEN_LANG_CPLUSPLUS)
     {
+        m_lang_wxPrefix = "wx";
         m_break_length = Project.as_size_t(prop_cpp_line_length);
         // Always assume C++ code has one tab at the beginning of the line
         m_break_length -= m_indent_size;
     }
     else if (language == GEN_LANG_PYTHON)
     {
+        m_lang_wxPrefix = "wx.";
         m_break_length = Project.as_size_t(prop_python_line_length);
         // Always assume Python code has two tabs at the beginning of the line
         m_break_length -= (m_indent_size * 2);
+    }
+    else if (language == GEN_LANG_RUBY)
+    {
+        m_indent_size = 2;
+        m_lang_wxPrefix = "Wx::";
+        m_break_length = Project.as_size_t(prop_ruby_line_length);
+        // Always assume Ruby code has two tabs at the beginning of the line
+        m_break_length -= (m_indent_size * 2);
+    }
+    else
+    {
+        m_lang_wxPrefix = "wx";
+        m_break_length = 90;
+        // Always assume code has one tab at the beginning of the line
+        m_break_length -= m_indent_size;
     }
     m_break_at = m_break_length;
 
@@ -292,25 +309,26 @@ Code& Code::Add(tt_string_view text)
     }
     else
     {
-        auto lambda = [&](tt_string_view candidate)
+        std::string_view wx_prefix = m_lang_wxPrefix;
+        // Python has different prefixes based on the library being used. E.g., wxBoolProperty
+        // has a prefix of wx.propgrid. rather than wx.
+        auto GetPythonPrefix = [&](tt_string_view candidate)
         {
             // Note that you can *NOT* allocate anything on the stack and return a
             // std::string_view to it!
-            std::string_view wx_prefix = "wx.";
-            for (auto& iter_prefix: s_short_map)
+
+            for (auto& iter_prefix: s_short_python_map)
             {
                 if (candidate.starts_with(iter_prefix.first))
                 {
                     wx_prefix = iter_prefix.second;
-                    return wx_prefix;
+                    return;
                 }
             }
-            if (auto wx_iter = s_map_wx_prefix.find(candidate); wx_iter != s_map_wx_prefix.end())
+            if (auto wx_iter = map_python_wx_prefix.find(candidate); wx_iter != map_python_wx_prefix.end())
             {
                 wx_prefix = wx_iter->second;
-                return wx_prefix;
             }
-            return wx_prefix;
         };
 
         if (text.find('|') != tt::npos)
@@ -325,7 +343,10 @@ Code& Code::Add(tt_string_view text)
                     *this += '|';
                 if (iter.is_sameprefix("wx"))
                 {
-                    auto wx_prefix = lambda(iter);
+                    if (is_python())
+                    {
+                        GetPythonPrefix(iter);
+                    }
                     *this << wx_prefix << iter.substr(2);
                 }
                 else
@@ -336,7 +357,10 @@ Code& Code::Add(tt_string_view text)
         // text.size() has already been checked to be certain it is at least 3 characters
         else if (text.is_sameprefix("wx") && text[2] != '.')
         {
-            auto wx_prefix = lambda(text);
+            if (is_python())
+            {
+                GetPythonPrefix(text);
+            }
             *this << wx_prefix << text.substr(2);
         }
         else
@@ -366,16 +390,48 @@ Code& Code::Function(tt_string_view text)
     {
         *this << "->" << text;
     }
-    else
+    else if (is_python() || is_ruby())
     {
         *this << '.';
         if (text.is_sameprefix("wx"))
         {
-            *this << "wx." << text.substr(2);
+            *this << m_lang_wxPrefix << text.substr(sizeof("wx") - 1);
         }
         else
         {
-            *this += text;
+            if (is_ruby())
+            {
+                std::string func(text);
+                // Ruby uses snake_case, so convert from camelCase
+                for (size_t pos = 0; pos < func.size(); ++pos)
+                {
+                    if (func[pos] >= 'A' && func[pos] <= 'Z')
+                    {
+                        func[pos] = func[pos] - 'A' + 'a';
+                        if (pos > 0)
+                        {
+                            func.insert(pos, "_");
+                            ++pos;
+                        }
+                    }
+                }
+                *this += func;
+            }
+            else
+            {
+                *this += text;
+            }
+        }
+    }
+    else
+    {
+        if (is_ruby())
+        {
+            *this << "Wx::";
+        }
+        else
+        {
+            *this << "->" << text;
         }
     }
     return *this;
@@ -391,8 +447,29 @@ Code& Code::ClassMethod(tt_string_view function_name)
     {
         *this += '.';
     }
+    if (is_ruby())
+    {
+        std::string func(function_name);
+        // Ruby uses snake_case, so convert from camelCase
+        for (size_t pos = 0; pos < func.size(); ++pos)
+        {
+            if (func[pos] >= 'A' && func[pos] <= 'Z')
+            {
+                func[pos] = func[pos] - 'A' + 'a';
+                if (pos > 0)
+                {
+                    func.insert(pos, "_");
+                    ++pos;
+                }
+            }
+        }
+        *this += func;
+    }
+    else
+    {
+        *this += function_name;
+    }
 
-    *this += function_name;
     return *this;
 }
 
@@ -402,6 +479,26 @@ Code& Code::FormFunction(tt_string_view text)
     {
         *this += "self.";
     }
+    else if (is_ruby())
+    {
+        std::string func(text);
+        // Ruby uses snake_case, so convert from camelCase
+        for (size_t pos = 0; pos < func.size(); ++pos)
+        {
+            if (func[pos] >= 'A' && func[pos] <= 'Z')
+            {
+                func[pos] = func[pos] - 'A' + 'a';
+                if (pos > 0)
+                {
+                    func.insert(pos, "_");
+                    ++pos;
+                }
+            }
+        }
+        *this += func;
+        return *this;
+    }
+
     *this += text;
     return *this;
 }
@@ -412,11 +509,22 @@ Code& Code::Class(tt_string_view text)
     {
         *this += text;
     }
-    else
+    else if (is_python())
     {
         if (text.is_sameprefix("wx"))
         {
             *this << "wx." << text.substr(2);
+        }
+        else
+        {
+            *this += text;
+        }
+    }
+    else if (is_ruby())
+    {
+        if (text.is_sameprefix("wx"))
+        {
+            *this << "Wx::" << text.substr(2);
         }
         else
         {
@@ -466,12 +574,19 @@ Code& Code::CreateClass(bool use_generic, tt_string_view override_name)
         *this += class_name;
     else
     {
-        std::string_view prefix = "wx.";
-        if (auto wx_iter = g_map_class_prefix.find(class_name); wx_iter != g_map_class_prefix.end())
+        std::string_view prefix = m_lang_wxPrefix;
+        if (is_python())
         {
-            prefix = wx_iter->second;
+            if (auto wx_iter = g_map_class_prefix.find(class_name); wx_iter != g_map_class_prefix.end())
+            {
+                prefix = wx_iter->second;
+            }
         }
         *this << prefix << class_name.substr(2);
+        if (is_ruby())
+        {
+            *this += ".new";
+        }
     }
     *this += '(';
     return *this;
@@ -512,6 +627,10 @@ Code& Code::as_string(PropName prop_name)
         {
             result.insert(2, ".");
         }
+        else if (is_ruby() && result._Starts_with("wx"))
+        {
+            result.Replace("wx", "Wx::");
+        }
         *this += result;
         return *this;
     }
@@ -522,10 +641,10 @@ Code& Code::as_string(PropName prop_name)
         *this += str;
         return *this;
     }
-    std::string_view wx_prefix = "wx.";
-    auto lambda = [&](tt_string_view candidate)
+    std::string_view wx_prefix = m_lang_wxPrefix;
+    auto GetPythonPrefix = [&](tt_string_view candidate)
     {
-        for (auto& iter_prefix: s_short_map)
+        for (auto& iter_prefix: s_short_python_map)
         {
             if (candidate.starts_with(iter_prefix.first))
             {
@@ -533,7 +652,7 @@ Code& Code::as_string(PropName prop_name)
                 return;
             }
         }
-        if (auto wx_iter = s_map_wx_prefix.find(candidate); wx_iter != s_map_wx_prefix.end())
+        if (auto wx_iter = map_python_wx_prefix.find(candidate); wx_iter != map_python_wx_prefix.end())
         {
             wx_prefix = wx_iter->second;
             return;
@@ -548,14 +667,20 @@ Code& Code::as_string(PropName prop_name)
         }
         else
         {
-            CheckLineLength(str.size());
             if (str.is_sameprefix("wx"))
             {
-                lambda(str);
-                *this << wx_prefix << str.substr(2);
+                if (is_python())
+                {
+                    GetPythonPrefix(str);
+                }
+                CheckLineLength(str.size() + wx_prefix.size());
+                *this << wx_prefix << str.substr(sizeof("wx") - 1);
             }
             else
+            {
+                CheckLineLength(str.size());
                 *this += str;
+            }
             return *this;
         }
     }
@@ -577,9 +702,12 @@ Code& Code::as_string(PropName prop_name)
             *this += "\"\"";
         else if (iter.is_sameprefix("wx"))
         {
-            lambda(iter);
-            CheckLineLength(iter.size());
-            *this << wx_prefix << iter.substr(2);
+            if (is_python())
+            {
+                GetPythonPrefix(iter);
+            }
+            CheckLineLength(iter.size() + wx_prefix.size());
+            *this << wx_prefix << iter.substr(sizeof("wx") - 1);
         }
         else
             *this += iter;
@@ -807,10 +935,49 @@ Code& Code::QuotedString(tt_string_view text)
 
 Code& Code::WxSize(GenEnum::PropName prop_name, bool enable_dlg_units)
 {
+    if (is_ruby())
+    {
+        if (m_node->as_wxSize(prop_name) == wxDefaultSize)
+        {
+            CheckLineLength((sizeof("size=Wx::DEFAULT_SIZE") - 1));
+            *this += "size=Wx::DEFAULT_SIZE";
+            return *this;
+        }
+
+        auto cur_pos = size();
+        bool dialog_units = m_node->value(prop_name).contains("d", tt::CASE::either);
+        if (dialog_units && enable_dlg_units)
+        {
+            CheckLineLength(sizeof(", size=convert_dialog_to_pixels(Wx::Size.new(999, 999))"));
+            *this += "size=";
+            FormFunction("ConvertDialogToPixels(");
+        }
+        else
+        {
+            CheckLineLength((sizeof(" size=Wx::Size.new") - 1));
+            *this += "size=";
+        }
+
+        auto size = m_node->as_wxSize(prop_name);
+        Class("Wx::Size.new(").itoa(size.x).Comma().itoa(size.y) << ')';
+
+        if (dialog_units && enable_dlg_units)
+            *this += ')';
+
+        if (m_auto_break && this->size() > m_break_at)
+        {
+            InsertLineBreak(cur_pos);
+        }
+
+        return *this;
+    }
+
+    // The following code is for non-Ruby languages
+
     if (m_node->as_wxSize(prop_name) == wxDefaultSize)
     {
-        CheckLineLength(sizeof("wxDefaultSize"));
-        *this += is_cpp() ? "wxDefaultSize" : "wx.DefaultSize";
+        CheckLineLength((sizeof("DefaultSize") - 1) + m_lang_wxPrefix.size());
+        *this << m_lang_wxPrefix << "DefaultSize";
         return *this;
     }
 
@@ -819,8 +986,21 @@ Code& Code::WxSize(GenEnum::PropName prop_name, bool enable_dlg_units)
     bool dialog_units = m_node->value(prop_name).contains("d", tt::CASE::either);
     if (dialog_units && enable_dlg_units)
     {
-        CheckLineLength(sizeof("self.ConvertDialogToPixels(wxSize(999, 999))"));
-        FormFunction("ConvertDialogToPixels(");
+        if (is_cpp())
+        {
+            CheckLineLength(sizeof("ConvertDialogToPixels(wxSize(999, 999))"));
+            FormFunction("ConvertDialogToPixels(");
+        }
+        else if (is_python())
+        {
+            CheckLineLength(sizeof("self.ConvertDialogToPixels(wxSize(999, 999))"));
+            FormFunction("ConvertDialogToPixels(");
+        }
+        else if (is_ruby())
+        {
+            CheckLineLength(sizeof("convert_pixels_to_dialog(Wx::Size(999, 999))"));
+            FormFunction("convert_pixels_to_dialog(");
+        }
     }
 
     auto size = m_node->as_wxSize(prop_name);
@@ -839,10 +1019,49 @@ Code& Code::WxSize(GenEnum::PropName prop_name, bool enable_dlg_units)
 
 Code& Code::Pos(GenEnum::PropName prop_name, bool enable_dlg_units)
 {
+    if (is_ruby())
+    {
+        if (m_node->as_wxPoint(prop_name) == wxDefaultPosition)
+        {
+            CheckLineLength((sizeof("pos=Wx::DEFAULT_POSITION") - 1));
+            *this += "pos=Wx::DEFAULT_POSITION";
+            return *this;
+        }
+
+        auto cur_pos = size();
+        bool dialog_units = m_node->value(prop_name).contains("d", tt::CASE::either);
+        if (dialog_units && enable_dlg_units)
+        {
+            CheckLineLength(sizeof(", pos=convert_dialog_to_pixels(Wx::Point.new(999, 999))"));
+            *this += "pos=";
+            FormFunction("ConvertDialogToPixels(");
+        }
+        else
+        {
+            CheckLineLength((sizeof(" pos=Wx::Point.new") - 1));
+            *this += "pos=";
+        }
+
+        auto size = m_node->as_wxSize(prop_name);
+        Class("Wx::Point.new(").itoa(size.x).Comma().itoa(size.y) << ')';
+
+        if (dialog_units && enable_dlg_units)
+            *this += ')';
+
+        if (m_auto_break && this->size() > m_break_at)
+        {
+            InsertLineBreak(cur_pos);
+        }
+
+        return *this;
+    }
+
+    // The following code is for non-Ruby languages
+
     if (m_node->as_wxPoint(prop_name) == wxDefaultPosition)
     {
-        CheckLineLength(sizeof("wxDefaultPosition"));
-        *this += is_cpp() ? "wxDefaultPosition" : "wx.DefaultPosition";
+        CheckLineLength((sizeof("DefaultPosition") - 1) + m_lang_wxPrefix.size());
+        *this << m_lang_wxPrefix << "DefaultPosition";
         return *this;
     }
 
@@ -871,6 +1090,7 @@ Code& Code::Pos(GenEnum::PropName prop_name, bool enable_dlg_units)
 
 Code& Code::Style(const char* prefix, tt_string_view force_style)
 {
+    auto ruby_pos = size();  // Used in case we need to insert ", style="
     bool style_set = false;
     if (force_style.size())
     {
@@ -917,10 +1137,10 @@ Code& Code::Style(const char* prefix, tt_string_view force_style)
             else
             {
                 tt_view_vector multistr(m_node->as_constant(prop_style, prefix), "|", tt::TRIM::both);
-                std::string_view wx_prefix = "wx.";
-                auto lambda = [&](tt_string_view candidate)
+                std::string_view wx_prefix = m_lang_wxPrefix;
+                auto map_python_wxWidget = [&](tt_string_view candidate)
                 {
-                    for (auto& iter_prefix: s_short_map)
+                    for (auto& iter_prefix: s_short_python_map)
                     {
                         if (candidate.starts_with(iter_prefix.first))
                         {
@@ -928,10 +1148,13 @@ Code& Code::Style(const char* prefix, tt_string_view force_style)
                             return;
                         }
                     }
-                    if (auto wx_iter = s_map_wx_prefix.find(candidate); wx_iter != s_map_wx_prefix.end())
+                    if (is_python())
                     {
-                        wx_prefix = wx_iter->second;
-                        return;
+                        if (auto wx_iter = map_python_wx_prefix.find(candidate); wx_iter != map_python_wx_prefix.end())
+                        {
+                            wx_prefix = wx_iter->second;
+                            return;
+                        }
                     }
                 };
 
@@ -943,7 +1166,10 @@ Code& Code::Style(const char* prefix, tt_string_view force_style)
                         *this += '|';
                     if (iter.is_sameprefix("wx"))
                     {
-                        lambda(iter);
+                        if (is_python())
+                        {
+                            map_python_wxWidget(iter);
+                        }
                         *this << wx_prefix << iter.substr(2);
                     }
                     else
@@ -983,6 +1209,11 @@ Code& Code::Style(const char* prefix, tt_string_view force_style)
         *this += "0";
     }
 
+    if (is_ruby() && size() > ruby_pos)
+    {
+        insert(ruby_pos, "style=");
+    }
+
     if (m_auto_break && size() > m_break_at)
     {
         InsertLineBreak(cur_pos);
@@ -1002,6 +1233,10 @@ Code& Code::PosSizeFlags(bool uses_def_validator, tt_string_view def_style)
         if (uses_def_validator)
             Comma().Add("wxDefaultValidator");
         Comma();
+        if (is_ruby())
+        {
+            *this += "name=";
+        }
         QuotedString(prop_window_name).EndFunction();
         return *this;
     }
@@ -1097,6 +1332,35 @@ Code& Code::PosSizeForceStyle(tt_string_view force_style, bool uses_def_validato
     return *this;
 }
 
+Code& Code::SizerFlagsFunction(tt_string_view function_name)
+{
+    *this += '.';
+    if (is_ruby())
+    {
+        std::string func(function_name);
+        // Ruby uses snake_case, so convert from camelCase
+        for (size_t pos = 0; pos < func.size(); ++pos)
+        {
+            if (func[pos] >= 'A' && func[pos] <= 'Z')
+            {
+                func[pos] = func[pos] - 'A' + 'a';
+                if (pos > 0)
+                {
+                    func.insert(pos, "_");
+                    ++pos;
+                }
+            }
+        }
+        *this += func;
+    }
+    else
+    {
+        *this += function_name;
+    }
+    *this += '(';
+    return *this;
+}
+
 Code& Code::GenSizerFlags()
 {
     // wxSizerFlags functions are chained together, so we don't want to break them. Instead,
@@ -1108,6 +1372,10 @@ Code& Code::GenSizerFlags()
     auto cur_pos = size();
 
     Add("wxSizerFlags");
+    if (is_ruby())
+    {
+        Add(".new");
+    }
 
     if (auto& prop = m_node->as_string(prop_proportion); prop != "0")
     {
@@ -1125,25 +1393,25 @@ Code& Code::GenSizerFlags()
             // Note that CenterHorizontal() and CenterVertical() require wxWidgets 3.1 or higher. Their advantage is
             // generating an assert if you try to use one that is invalid if the sizer parent's orientation doesn't
             // support it. Center() just works without the assertion check.
-            *this << ".Center()";
+            SizerFlagsFunction("Center") += ')';
         }
 
         if (prop.contains("wxALIGN_LEFT"))
         {
-            *this += ".Left()";
+            SizerFlagsFunction("Left") += ')';
         }
         else if (prop.contains("wxALIGN_RIGHT"))
         {
-            *this += ".Right()";
+            SizerFlagsFunction("Right") += ')';
         }
 
         if (prop.contains("wxALIGN_TOP"))
         {
-            *this += ".Top()";
+            SizerFlagsFunction("Top") += ')';
         }
         else if (prop.contains("wxALIGN_BOTTOM"))
         {
-            *this += ".Bottom()";
+            SizerFlagsFunction("Bottom") += ')';
         }
     }
 
@@ -1151,19 +1419,19 @@ Code& Code::GenSizerFlags()
     {
         if (prop.contains("wxEXPAND"))
         {
-            *this += ".Expand()";
+            SizerFlagsFunction("Expand") += ')';
         }
         if (prop.contains("wxSHAPED"))
         {
-            *this += ".Shaped()";
+            SizerFlagsFunction("Shaped") += ')';
         }
         if (prop.contains("wxFIXED_MINSIZE"))
         {
-            *this += ".FixedMinSize()";
+            SizerFlagsFunction("FixedMinSize") += ')';
         }
         if (prop.contains("wxRESERVE_SPACE_EVEN_IF_HIDDEN"))
         {
-            *this += ".ReserveSpaceEvenIfHidden()";
+            SizerFlagsFunction("ReserveSpaceEvenIfHidden") += ')';
         }
     }
 
@@ -1173,44 +1441,44 @@ Code& Code::GenSizerFlags()
         if (prop.contains("wxALL"))
         {
             if (border_size == "5")
-                Add(".Border(").Add("wxALL)");
+                SizerFlagsFunction("Border").Add("wxALL)");
             else if (border_size == "10")
-                Add(".DoubleBorder(").Add("wxALL)");
+                SizerFlagsFunction("DoubleBorder").Add("wxALL)");
             else if (border_size == "15")
-                Add(".TripleBorder(").Add("wxALL)");
+                SizerFlagsFunction("TripleBorder").Add("wxALL)");
             else
             {
-                Add(".Border(").Add("wxALL, ") << border_size << ')';
+                SizerFlagsFunction("Border").Add("wxALL, ") << border_size << ')';
             }
         }
         else
         {
-            *this << ".Border(";
+            SizerFlagsFunction("Border");
             tt_string border_flags;
 
             if (prop.contains("wxLEFT"))
             {
                 if (border_flags.size())
                     border_flags << '|';
-                border_flags += is_cpp() ? "wxLEFT" : "wx.LEFT";
+                border_flags << m_lang_wxPrefix << "LEFT";
             }
             if (prop.contains("wxRIGHT"))
             {
                 if (border_flags.size())
                     border_flags << '|';
-                border_flags += is_cpp() ? "wxRIGHT" : "wx.RIGHT";
+                border_flags << m_lang_wxPrefix << "RIGHT";
             }
             if (prop.contains("wxTOP"))
             {
                 if (border_flags.size())
                     border_flags << '|';
-                border_flags += is_cpp() ? "wxTOP" : "wx.TOP";
+                border_flags << m_lang_wxPrefix << "TOP";
             }
             if (prop.contains("wxBOTTOM"))
             {
                 if (border_flags.size())
                     border_flags << '|';
-                border_flags += is_cpp() ? "wxBOTTOM" : "wx.BOTTOM";
+                border_flags << m_lang_wxPrefix << "BOTTOM";
             }
             if (border_flags.empty())
                 border_flags = "0";
@@ -1218,7 +1486,12 @@ Code& Code::GenSizerFlags()
             *this << border_flags << ", ";
             if (border_size == "5")
             {
-                *this += is_cpp() ? "wxSizerFlags::GetDefaultBorder())" : "wx.SizerFlags.GetDefaultBorder())";
+                if (is_cpp())
+                    *this += "wxSizerFlags::GetDefaultBorder())";
+                else if (is_ruby())
+                    *this += "Wx::SizerFlags.get_default_border())";
+                else
+                    *this << m_lang_wxPrefix << "SizerFlags.GetDefaultBorder())";
             }
             else
             {
@@ -1536,8 +1809,13 @@ Code& Code::AddComment(tt_string_view text)
     {
         *this << "// " << text;
     }
+    else if (is_python() || is_ruby())
+    {
+        *this << "# " << text;
+    }
     else
     {
+        // Default for any new languages
         *this << "# " << text;
     }
     return *this;

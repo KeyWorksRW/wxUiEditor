@@ -34,7 +34,7 @@ bool FrameFormGenerator::ConstructionCode(Code& code)
             code.EndFunction();
         }
     }
-    else
+    else if (code.is_python())
     {
         code.Add("class ").NodeName().Add("(wx.Frame):\n");
         code.Eol().Tab().Add("def __init__(self, parent, id=").as_string(prop_id);
@@ -54,6 +54,29 @@ bool FrameFormGenerator::ConstructionCode(Code& code)
         code.Str("):");
         code.Unindent();
         code.Eol() += "wx.Frame.__init__(self)";
+    }
+    else if (code.is_ruby())
+    {
+        code.Add("class ").NodeName().Add(" < Wx::Frame");
+        code.Eol().Tab().Add("def initialize(parent");
+        // Indent any wrapped lines
+        code.Indent(3);
+        code.Str(", id=");
+        if (code.HasValue(prop_id))
+        {
+            code.Add(prop_id);
+        }
+        else
+        {
+            code.Add("Wx::ID_ANY");
+        }
+        code.Comma().Str("title=").QuotedString(prop_title);
+        code.PosSizeFlags();
+        code.Unindent();
+    }
+    else
+    {
+        code.AddComment("Unknown language");
     }
 
     code.ResetIndent();
@@ -82,10 +105,20 @@ bool FrameFormGenerator::SettingsCode(Code& code)
         code.Eol(eol_if_needed).FormFunction("if (!wxFrame::Create(").Str("parent, id, title, pos, size, style, name))");
         code.Eol().Tab().Str("return false;");
     }
-    else
+    else if (code.is_python())
     {
         code.Eol(eol_if_needed).Str("if not self.Create(parent, id, title, pos, size, style, name):");
         code.Eol().Tab().Str("return");
+    }
+    else if (code.is_ruby())
+    {
+        code.Eol(eol_if_needed).Str("super(parent, id, title, pos, size, style)\n");
+        // REVIEW: [Randalphwa - 07-17-2023] The following doesn't work with an error that Wx::Panel.create doesn't exist.
+        // code.Eol(eol_if_needed).Str("return false unless Wx::Panel.create(parent, id, pos, size, style, name)");
+    }
+    else
+    {
+        return false;
     }
 
     Node* frame = code.node();
@@ -115,7 +148,7 @@ bool FrameFormGenerator::AfterChildrenCode(Code& code)
     auto& center = code.node()->as_string(prop_center);
     if (center.size() && !center.is_sameas("no"))
     {
-        code.Eol().FormFunction("Centre(").Add(center).EndFunction();
+        code.Eol(eol_if_needed).FormFunction("Centre(").Add(center).EndFunction();
     }
 
     return true;

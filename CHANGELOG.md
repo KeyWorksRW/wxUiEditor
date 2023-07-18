@@ -1,7 +1,13 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
-## [Unreleased (1.1.2)]
+## [Uneleased (1.1.3)]
+
+### Added
+
+- wxAuiToolBar can now be created as a form (it creates a class instead of a child widget)
+
+## [Released (1.1.2)]
 
 ### Added
 

@@ -1407,8 +1407,8 @@ void PropGridPanel::ModifyBitlistProperty(NodeProperty* node_prop, wxPGProperty*
     auto node = node_prop->GetNode();
 
     tt_string value = m_prop_grid->GetPropertyValueAsString(grid_prop);
-    value.Replace(" ", "");
-    value.Replace(",", "|");
+    value.Replace(" ", "", true);
+    value.Replace(",", "|", true);
     if (node_prop->isProp(prop_style))
     {
         // Don't allow the user to combine incompatible styles

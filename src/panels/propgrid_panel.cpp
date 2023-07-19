@@ -1444,7 +1444,10 @@ void PropGridPanel::ModifyBitlistProperty(NodeProperty* node_prop, wxPGProperty*
             }
         }
     }
-
+    else if (node_prop->isProp(prop_window_style) && value.empty())
+    {
+        value = "0";
+    }
     modifyProperty(node_prop, value);
 }
 

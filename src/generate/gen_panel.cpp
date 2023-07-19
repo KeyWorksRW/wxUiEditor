@@ -27,10 +27,16 @@ wxObject* PanelGenerator::CreateMockup(Node* node, wxObject* parent)
 
 bool PanelGenerator::ConstructionCode(Code& code)
 {
-    code.AddAuto().NodeName().CreateClass();
-    code.ValidParentName().Comma().as_string(prop_id);
-    code.PosSizeFlags(true);
-
+    code.AddAuto().NodeName().CreateClass().ValidParentName();
+    if (code.IsDefaultPosSizeFlags() && code.IsEqualTo(prop_id, "wxID_ANY"))
+    {
+        code.EndFunction();
+    }
+    else
+    {
+        code.Comma().as_string(prop_id);
+        code.PosSizeFlags(true);
+    }
     return true;
 }
 

@@ -257,6 +257,12 @@ public:
     void SetPreviewDlgPtr(wxDialog* dlg) { m_pxrc_dlg = dlg; }
     void SetPreviewWinPtr(wxFrame* frame) { m_pxrc_win = frame; }
 
+    void OnPreviewXrc(wxCommandEvent& event) override;
+
+    void OnOpenProject(wxCommandEvent& event) override;
+    void OnSaveProject(wxCommandEvent& event) override;
+    void OnGenerateCode(wxCommandEvent& event) override;
+
 protected:
     void OnAbout(wxCommandEvent& event) override;
     void OnAppendCrafter(wxCommandEvent& event) override;
@@ -277,19 +283,15 @@ protected:
     void OnDuplicate(wxCommandEvent& event) override;
     void OnEditCustomIds(wxCommandEvent& event) override;
     void OnFindDialog(wxCommandEvent& event) override;
-    void OnGenerateCode(wxCommandEvent& event) override;
     void OnImportProject(wxCommandEvent& event);
     void OnImportRecent(wxCommandEvent& event);
     void OnImportWindowsResource(wxCommandEvent& event) override;
     void OnInsertWidget(wxCommandEvent&) override;
     void OnNewProject(wxCommandEvent& event);
-    void OnOpenProject(wxCommandEvent& event) override;
     void OnOpenRecentProject(wxCommandEvent& event);
     void OnOptionsDlg(wxCommandEvent& event) override;
     void OnPaste(wxCommandEvent& event) override;
-    void OnPreviewXrc(wxCommandEvent& event) override;
     void OnSaveAsProject(wxCommandEvent& event) override;
-    void OnSaveProject(wxCommandEvent& event) override;
     void OnToggleExpandLayout(wxCommandEvent&) override;
     void OnUpdateBrowseDocs(wxUpdateUIEvent& event) override;
     void OnUpdateBrowsePython(wxUpdateUIEvent& event) override;
@@ -325,12 +327,10 @@ protected:
     void UpdateWakaTime(bool FileSavedEvent = false);
 
 private:
-    wxSplitterWindow* m_MainSplitter { nullptr };
     wxSplitterWindow* m_SecondarySplitter { nullptr };
 
     wxAuiNotebook* m_notebook;
     PropGridPanel* m_property_panel;
-    NavigationPanel* m_nav_panel;
     RibbonPanel* m_ribbon_panel;
     std::unique_ptr<WakaTime> m_wakatime { nullptr };
 

@@ -22,11 +22,14 @@ using namespace GenEnum;
 
 class CustomEvent;
 class MainFrame;
+class NavToolbar;
 
 class NavigationPanel : public wxPanel
 {
 public:
-    NavigationPanel(wxWindow* parent, MainFrame* frame);
+    NavigationPanel(wxWindow* parent);
+
+    void SetMainFrame(MainFrame* frame);
 
     void ChangeExpansion(Node* node, bool include_children, bool expand);
 
@@ -43,6 +46,8 @@ public:
 
     void InsertNode(Node* node);
     void DeleteNode(Node* item);
+
+    NavToolbar* GetToolbar() { return m_toolbar; }
 
 protected:
     Node* GetNode(wxTreeItemId item);
@@ -93,6 +98,7 @@ private:
     wxTreeCtrl* m_tree_ctrl;
 
     wxTreeItemId m_drag_node;
+    NavToolbar* m_toolbar;
 
     bool m_isSelChangeSuspended { false };
 };

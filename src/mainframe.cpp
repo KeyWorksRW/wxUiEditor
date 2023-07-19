@@ -72,7 +72,8 @@
 using namespace wxue_img;
 using namespace GenEnum;
 
-// #define NEW_LAYOUT 1
+// Comment out the following line to change the UI back to the way it was in 1.1.2 and all earlier versions.
+#define NEW_LAYOUT 1
 
 enum
 {
@@ -228,17 +229,19 @@ MainFrame::MainFrame() :
     CreateStatusBar(StatusPanels);
     SetStatusBarPane(1);  // specifies where menu and toolbar help content is displayed
 #if defined(NEW_LAYOUT)
-    auto* box_sizer = new wxBoxSizer(wxVERTICAL);
+    // auto* box_sizer = new wxBoxSizer(wxVERTICAL);
     m_ribbon_panel = new RibbonPanel(this);
-    box_sizer->Add(m_ribbon_panel, wxSizerFlags(0).Expand());
+    m_mainframe_sizer->Insert(0, m_ribbon_panel, wxSizerFlags(0).Expand());
 
     CreateSplitters();
 
-    box_sizer->Add(m_MainSplitter, wxSizerFlags(1).Expand());
-    SetSizer(box_sizer);
+    // box_sizer->Add(m_MainSplitter, wxSizerFlags(1).Expand());
+    // SetSizer(box_sizer);
 #else
     CreateSplitters();
 #endif
+
+    m_nav_panel->SetMainFrame(this);
 
     m_SecondarySplitter->Bind(wxEVT_COMMAND_SPLITTER_SASH_POS_CHANGED,
                               [this](wxSplitterEvent&)
@@ -1274,33 +1277,32 @@ void MainFrame::CreateSplitters()
     // containing the Ribbon toolbar at the top, and a splitter window containing the property grid and notebook with
     // mockup and code windows below it.
 
-    m_MainSplitter = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_LIVE_UPDATE);
+    m_panel_right->SetWindowStyle(wxBORDER_RAISED);
 
-    m_nav_panel = new NavigationPanel(m_MainSplitter, this);
-    auto panel_right = new wxPanel(m_MainSplitter);
-    panel_right->SetWindowStyle(wxBORDER_RAISED);
-
-    auto parent_sizer = new wxBoxSizer(wxVERTICAL);
+    // auto parent_sizer = new wxBoxSizer(wxVERTICAL);
 
 #if !defined(NEW_LAYOUT)
-    m_ribbon_panel = new RibbonPanel(panel_right);
-    parent_sizer->Add(m_ribbon_panel, wxSizerFlags(0).Expand());
+    m_ribbon_panel = new RibbonPanel(m_panel_right);
+    m_right_panel_sizer->Add(m_ribbon_panel, wxSizerFlags(0).Expand());
+#else
+    // auto main_toolbar = new MainToolBar(m_panel_right);
+    // m_right_panel_sizer->Add(main_toolbar, wxSizerFlags(0).Expand());
 #endif
 
-    m_SecondarySplitter = new wxSplitterWindow(panel_right, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_LIVE_UPDATE);
-    parent_sizer->Add(m_SecondarySplitter, wxSizerFlags(1).Expand());
+    m_SecondarySplitter = new wxSplitterWindow(m_panel_right, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_LIVE_UPDATE);
+    m_right_panel_sizer->Add(m_SecondarySplitter, wxSizerFlags(1).Expand());
 
-    m_info_bar = new wxInfoBar(panel_right);
-    parent_sizer->Add(m_info_bar, wxSizerFlags().Expand());
+    m_info_bar = new wxInfoBar(m_panel_right);
+    m_right_panel_sizer->Add(m_info_bar, wxSizerFlags().Expand());
 
-    panel_right->SetSizer(parent_sizer);
+    // m_panel_right->SetSizer(parent_sizer);
 
     m_property_panel = new PropGridPanel(m_SecondarySplitter, this);
     auto notebook = CreateNoteBook(m_SecondarySplitter);
 
     m_SecondarySplitter->SplitVertically(m_property_panel, notebook, m_SecondarySashPosition);
 
-    m_MainSplitter->SplitVertically(m_nav_panel, panel_right);
+    m_MainSplitter->SplitVertically(m_nav_panel, m_panel_right);
     m_MainSplitter->SetName("Navigation");
     wxPersistenceManager::Get().RegisterAndRestore(m_MainSplitter);
 

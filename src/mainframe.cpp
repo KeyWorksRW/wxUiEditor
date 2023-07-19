@@ -1511,6 +1511,46 @@ void MainFrame::PasteNode(Node* parent)
     }
 
     auto new_node = NodeCreation.MakeCopy(m_clipboard.get(), parent);
+
+    // This makes it possible to switch from a normal child toolbar to a form toolbar and vice versa.
+    // Both wxToolBar and wxAuiToolbar are supported
+    if ((parent->isGen(gen_ToolBar) && new_node->isGen(gen_wxToolBar)) ||
+        (parent->isGen(gen_AuiToolBar) && new_node->isGen(gen_wxAuiToolBar)) ||
+        (parent->isGen(gen_wxToolBar) && new_node->isGen(gen_ToolBar)) ||
+        (parent->isGen(gen_wxAuiToolBar) && new_node->isGen(gen_AuiToolBar)))
+    {
+        auto group = std::make_shared<GroupUndoActions>("Paste children", parent);
+
+        for (auto& child_node: new_node->GetChildNodePtrs())
+        {
+            auto insert_action = std::make_shared<InsertNodeAction>(child_node.get(), parent, "paste");
+            insert_action->SetFireCreatedEvent(true);
+            group->Add(insert_action);
+        }
+        wxGetFrame().PushUndoAction(group);
+        return;
+    }
+    // This makes it possible to paste between a wxToolBar and a wxAuiToolBar and vice versa.
+    // Both a normal child and a form toolbar are supported.
+    else if ((parent->isGen(gen_AuiToolBar) && new_node->isGen(gen_wxToolBar)) ||
+             (parent->isGen(gen_wxAuiToolBar) && new_node->isGen(gen_wxToolBar)) ||
+             (parent->isGen(gen_ToolBar) && new_node->isGen(gen_wxAuiToolBar)) ||
+             (parent->isGen(gen_wxToolBar) && new_node->isGen(gen_wxAuiToolBar)))
+    {
+        auto group = std::make_shared<GroupUndoActions>("Paste children", parent);
+
+        for (auto& child_node: new_node->GetChildNodePtrs())
+        {
+            // We are changing from a wxToolBar to a wxAuiToolBar, so we need to change the node type
+            auto new_child = NodeCreation.MakeCopy(child_node.get(), parent);
+            auto insert_action = std::make_shared<InsertNodeAction>(new_child, parent->GetSharedPtr(), "paste");
+            insert_action->SetFireCreatedEvent(true);
+            group->Add(insert_action);
+        }
+        wxGetFrame().PushUndoAction(group);
+        return;
+    }
+
     if (new_node->IsForm())
         Project.FixupDuplicatedNode(new_node.get());
 

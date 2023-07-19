@@ -226,19 +226,30 @@ NodeSharedPtr NodeCreator::CreateNode(tt_string_view name, Node* parent)
 NodeSharedPtr NodeCreator::MakeCopy(Node* node, Node* parent)
 {
     ASSERT(node);
+    NodeSharedPtr copyObj;
 
-    auto objInfo = node->GetNodeDeclaration();
+    // Sometimes we need to copy a similar node to a new node using the parent as the guide.
+    if (parent)
+    {
+        if (node->isGen(gen_tool) && (parent->isGen(gen_wxAuiToolBar) || parent->isGen(gen_AuiToolBar)))
+            copyObj = NewNode(gen_auitool);
+        else if (node->isGen(gen_auitool) && (parent->isGen(gen_wxToolBar) || parent->isGen(gen_ToolBar)))
+            copyObj = NewNode(gen_tool);
+    }
 
-    auto copyObj = NewNode(objInfo);
+    if (!copyObj)
+    {
+        copyObj = NewNode(node->GetNodeDeclaration());
+    }
+
     ASSERT(copyObj);
 
     for (auto& iter: node->get_props_vector())
     {
-        auto copyProp = copyObj->get_prop_ptr(iter.get_name());
-        ASSERT(copyProp);
-
-        if (copyProp)
+        if (auto copyProp = copyObj->get_prop_ptr(iter.get_name()); copyProp)
+        {
             copyProp->set_value(iter.as_string());
+        }
     }
 
     copyObj->CopyEventsFrom(node);

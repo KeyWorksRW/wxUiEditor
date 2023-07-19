@@ -33,7 +33,7 @@ NavPopupMenu::NavPopupMenu(Node* node) : m_node(node)
         return;  // theoretically impossible, but don't crash if it happens
     }
 
-    if (node->GetParent() && (node->GetParent()->isGen(gen_wxToolBar) || node->GetParent()->isGen(gen_wxAuiToolBar)))
+    if (node->GetParent() && node->GetParent()->IsToolBar())
     {
         m_is_parent_toolbar = true;
     }
@@ -459,7 +459,7 @@ void NavPopupMenu::MenuAddCommands(Node* node)
 {
     if (node->IsForm() || node->isGen(gen_Images) || node->isGen(gen_embedded_image))
     {
-        if (!node->isGen(gen_wxWizard))
+        if (!node->isGen(gen_wxWizard) && !node->IsToolBar())
         {
             return;
         }
@@ -562,6 +562,7 @@ void NavPopupMenu::MenuAddCommands(Node* node)
             }
             break;
 
+        case gen_AuiToolBar:
         case gen_wxAuiToolBar:
         case gen_auitool:
             add_sizer = false;
@@ -1018,7 +1019,9 @@ void NavPopupMenu::AddToolbarCommands(Node* node)
     wxMenuItem* menu_item;
     AppendSubMenu(sub_menu, "Tools");
 
-    bool is_aui_toolbar = (node->gen_name() == gen_wxAuiToolBar || node->GetParent()->gen_name() == gen_wxAuiToolBar);
+    bool is_aui_toolbar =
+        (node->gen_name() == gen_wxAuiToolBar || node->gen_name() == gen_AuiToolBar ||
+         node->GetParent()->gen_name() == gen_wxAuiToolBar || node->GetParent()->gen_name() == gen_AuiToolBar);
 
     menu_item = sub_menu->Append(MenuADD_TOOL, "Tool (normal, check, radio)");
     menu_item->SetBitmap(GetInternalImage("tool"));

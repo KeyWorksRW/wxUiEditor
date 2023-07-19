@@ -107,7 +107,8 @@ public:
     bool IsMenuBar() const noexcept { return (isType(type_menubar_form) || isType(type_menubar)); }
     bool IsToolBar() const noexcept
     {
-        return (isType(type_toolbar) || isType(type_toolbar_form) || isType(type_toolbar_form) || isType(type_aui_toolbar));
+        return (isType(type_toolbar) || isType(type_toolbar_form) || isType(type_aui_toolbar_form) ||
+                isType(type_aui_toolbar));
     }
     bool IsStatusBar() const noexcept { return isType(type_statusbar); }
     bool IsRibbonBar() const noexcept { return isType(type_ribbonbar); }

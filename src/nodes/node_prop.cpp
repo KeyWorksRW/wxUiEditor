@@ -47,7 +47,7 @@ int NodeProperty::as_int() const
         case type_bitlist:
             {
                 int result = 0;
-                tt_string_vector mstr(m_value, '|');
+                tt_string_vector mstr(m_value, '|', tt::TRIM::both);
                 for (auto& iter: mstr)
                 {
                     result |= NodeCreation.GetConstantAsInt(iter);
@@ -705,6 +705,13 @@ bool NodeProperty::HasValue() const
                 return (semicolonIndex != 0 && semicolonIndex + 2 < m_value.size());
             }
             return m_value.size();
+
+        case type_bitlist:
+            if (isProp(prop_window_style))
+            {
+                return (as_int() != 0);
+            }
+            return true;
 
         case type_statbar_fields:
             return (m_value == "1" || m_value == "wxSB_NORMAL|-1") ? false : true;

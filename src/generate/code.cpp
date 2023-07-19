@@ -1281,6 +1281,31 @@ Code& Code::PosSizeFlags(bool uses_def_validator, tt_string_view def_style)
     return *this;
 }
 
+bool Code::IsDefaultPosSizeFlags(tt_string_view def_style) const
+{
+    if (m_node->HasValue(prop_window_name))
+        return false;
+
+    if ((m_node->HasValue(prop_style) && m_node->as_string(prop_style) != def_style))
+        return false;
+    if (m_node->HasValue(prop_window_style))
+        return false;
+    if (m_node->HasValue(prop_orientation) && !m_node->as_string(prop_orientation).is_sameas("wxGA_HORIZONTAL") &&
+        !m_node->as_string(prop_orientation).is_sameas("wxSL_HORIZONTAL"))
+        return false;
+    if (m_node->HasValue(prop_tab_position) && !m_node->as_string(prop_tab_position).is_sameas("wxBK_DEFAULT"))
+        return false;
+    if (m_node->isGen(gen_wxRichTextCtrl) || m_node->isGen(gen_wxListView))
+        return false;
+
+    if (m_node->as_wxPoint(prop_pos) != wxDefaultPosition)
+        return false;
+    if (m_node->as_wxSize(prop_size) != wxDefaultSize)
+        return false;  // These always need non-default values
+
+    return true;
+}
+
 int Code::WhatParamsNeeded(tt_string_view default_style) const
 {
     if (m_node->HasValue(prop_window_name))

@@ -121,6 +121,9 @@ public:
 
     bool IsGen(GenEnum::GenName gen_name) const { return m_node->isGen(gen_name); }
 
+    // Checks for prop_pos, prop_size, prop_style, prop_window_style, and prop_window_name
+    bool IsDefaultPosSizeFlags(tt_string_view def_style = tt_empty_cstr) const;
+
     // Equivalent to calling node->as_string(prop_name).contains(text)
     bool PropContains(GenEnum::PropName prop_name, tt_string_view text) const;
 

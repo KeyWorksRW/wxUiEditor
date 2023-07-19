@@ -14,6 +14,9 @@
 
 #include "navtoolbar_base.h"
 
+#include "mainframe.h"
+#include "project_handler.h"
+
 #include <wx/mstream.h>  // memory stream classes
 #include <wx/zstream.h>  // zlib stream classes
 
@@ -33,6 +36,8 @@ inline wxBitmapBundle wxueBundleSVG(const unsigned char* data,
 NavToolbar::NavToolbar(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style,
     const wxString& name) : wxToolBar(parent, id, pos, size, style, name)
 {
+
+    AddStretchableSpace();
 
     AddTool(id_NavCollExpand, wxEmptyString, wxueBundleSVG(wxue_img::nav_coll_expand_svg, 249, 482, wxSize(16, 16)),
         wxNullBitmap, wxITEM_NORMAL, "Collapse siblings, expand children",
@@ -56,6 +61,8 @@ NavToolbar::NavToolbar(wxWindow* parent, wxWindowID id, const wxPoint& pos, cons
 
     AddTool(id_NavMoveRight, wxEmptyString, wxArtProvider::GetBitmapBundle(wxART_GO_FORWARD, wxART_OTHER), wxNullBitmap,
         wxITEM_NORMAL, "Move Right", "Move the selected item right");
+
+    AddStretchableSpace();
 
     Realize();
 }

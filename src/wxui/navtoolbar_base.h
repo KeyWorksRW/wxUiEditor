@@ -16,7 +16,7 @@ class NavToolbar : public wxToolBar
 {
 public:
     NavToolbar(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size =
-        wxDefaultSize, long style = wxTB_NODIVIDER, const wxString &name = wxPanelNameStr);
+        wxDefaultSize, long style = wxTB_FLAT|wxTB_HORIZONTAL, const wxString &name = wxPanelNameStr);
 
     enum
     {

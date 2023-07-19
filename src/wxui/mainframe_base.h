@@ -16,7 +16,12 @@
 #include <wx/icon.h>
 #include <wx/image.h>
 #include <wx/menu.h>
+#include <wx/panel.h>
+#include <wx/sizer.h>
+#include <wx/splitter.h>
 #include <wx/toolbar.h>
+
+class NavigationPanel;
 
 class MainFrameBase : public wxFrame
 {
@@ -105,6 +110,9 @@ protected:
 
     // Class member variables
 
+    NavigationPanel* m_nav_panel;
+    wxBoxSizer* m_mainframe_sizer;
+    wxBoxSizer* m_right_panel_sizer;
     wxMenu* m_menuEdit;
     wxMenu* m_menuFile;
     wxMenu* m_menuHelp;
@@ -112,6 +120,8 @@ protected:
     wxMenu* m_submenu_recent;
     wxMenuBar* m_menubar;
     wxMenuItem* m_mi_preview;
+    wxPanel* m_panel_right;
+    wxSplitterWindow* m_MainSplitter;
     wxToolBar* m_toolbar;
 };
 

@@ -61,17 +61,15 @@ inline const std::vector<GenEnum::GenName> unsupported_gen_XRC = {
 };
 // clang-format on
 
-NavigationPanel::NavigationPanel(wxWindow* parent, MainFrame* frame) : wxPanel(parent)
+NavigationPanel::NavigationPanel(wxWindow* parent) : wxPanel(parent)
 {
-    m_pMainFrame = frame;
-
     SetWindowStyle(wxBORDER_RAISED);
 
     m_tree_ctrl = new wxTreeCtrl(this, wxID_ANY, wxDefaultPosition, wxDefaultSize,
                                  wxTR_HAS_BUTTONS | wxTR_LINES_AT_ROOT | wxTR_DEFAULT_STYLE | wxBORDER_SUNKEN);
+
     int index = 0;
     m_iconList = new wxImageList(GenImageSize, GenImageSize);
-
     for (auto iter: NodeCreation.GetNodeDeclarationArray())
     {
         if (!iter)
@@ -82,16 +80,13 @@ NavigationPanel::NavigationPanel(wxWindow* parent, MainFrame* frame) : wxPanel(p
         m_iconList->Add(iter->GetImage());
         m_iconIdx[iter->gen_name()] = index++;
     }
-
     m_tree_ctrl->AssignImageList(m_iconList);
 
-    auto toolbar = new NavToolbar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_NODIVIDER);
+    m_toolbar = new NavToolbar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_NODIVIDER);
+    m_toolbar->Realize();
 
-    toolbar->Realize();
-
-    auto toolbar_sizer = new wxBoxSizer(wxHORIZONTAL);
-    toolbar_sizer->AddSpacer(50);
-    toolbar_sizer->Add(toolbar, wxSizerFlags().Expand().Border(wxBOTTOM | wxTOP));
+    auto toolbar_sizer = new wxBoxSizer(wxVERTICAL);
+    toolbar_sizer->Add(m_toolbar, wxSizerFlags().Expand());
 
     auto parent_sizer = new wxBoxSizer(wxVERTICAL);
     parent_sizer->Add(toolbar_sizer, wxSizerFlags().Expand());
@@ -128,6 +123,13 @@ NavigationPanel::NavigationPanel(wxWindow* parent, MainFrame* frame) : wxPanel(p
     Bind(wxEVT_MENU, &NavigationPanel::OnCollapse, this, NavToolbar::id_NavCollapse);
     Bind(wxEVT_MENU, &NavigationPanel::OnCollExpand, this, NavToolbar::id_NavCollExpand);
 
+    Bind(wxEVT_UPDATE_UI, &NavigationPanel::OnUpdateEvent, this);
+}
+
+void NavigationPanel::SetMainFrame(MainFrame* frame)
+{
+    m_pMainFrame = frame;
+
     Bind(
         wxEVT_MENU,
         [this](wxCommandEvent&)
@@ -159,8 +161,6 @@ NavigationPanel::NavigationPanel(wxWindow* parent, MainFrame* frame) : wxPanel(p
             m_pMainFrame->MoveNode(MoveDirection::Up);
         },
         NavToolbar::id_NavMoveUp);
-
-    Bind(wxEVT_UPDATE_UI, &NavigationPanel::OnUpdateEvent, this);
 
     m_pMainFrame->AddCustomEventHandler(GetEventHandler());
 }

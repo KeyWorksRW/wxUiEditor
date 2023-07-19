@@ -9,12 +9,13 @@
 
 #include <wx/artprov.h>
 
+#include "../panels/nav_panel.h"
 #include "ui_images.h"
+
+#include "mainframe_base.h"
 
 #include "mainframe.h"
 #include "project_handler.h"
-
-#include "mainframe_base.h"
 
 #include <wx/mstream.h>  // memory stream classes
 #include <wx/zstream.h>  // zlib stream classes
@@ -53,6 +54,103 @@ bool MainFrameBase::Create(wxWindow* parent, wxWindowID id, const wxString& titl
     if (!wxFrame::Create(parent, id, title, pos, size, style, name))
         return false;
     SetMinSize(wxSize(800, 800));
+
+    m_mainframe_sizer = new wxBoxSizer(wxVERTICAL);
+
+    m_toolbar = new wxToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT|wxTB_HORIZONTAL|wxTB_NODIVIDER);
+
+    m_toolbar->AddSeparator();
+    m_toolbar->AddTool(id_NewProject, "New", wxueBundleSVG(wxue_img::new_project_svg, 921, 2208, wxSize(24, 24)),
+        "New Project (Ctrl+N)");
+
+    m_toolbar->AddTool(id_OpenProject, "Open", wxArtProvider::GetBitmapBundle(wxART_FILE_OPEN, wxART_TOOLBAR),
+        "Open Project (Ctrl+O)");
+
+    m_toolbar->AddTool(wxID_SAVE, "Save", wxueBundleSVG(wxue_img::save_svg, 717, 2603, wxSize(24, 24)),
+        "Save current project");
+
+    m_toolbar->AddTool(id_GenerateCode, wxEmptyString, wxueBundleSVG(wxue_img::generate_svg, 780, 2716, wxSize(24, 24)),
+        "Generate code");
+
+    m_toolbar->AddSeparator();
+    m_toolbar->AddTool(wxID_UNDO, wxEmptyString, wxue_img::bundle_undo_svg(16, 16), "Undo");
+
+    m_toolbar->AddTool(wxID_REDO, wxEmptyString, wxue_img::bundle_redo_svg(16, 16), "Redo");
+
+    m_toolbar->AddSeparator();
+    m_toolbar->AddTool(wxID_CUT, wxEmptyString, wxArtProvider::GetBitmapBundle(wxART_CUT, wxART_TOOLBAR), "Cut");
+
+    m_toolbar->AddTool(wxID_COPY, wxEmptyString, wxArtProvider::GetBitmapBundle(wxART_COPY, wxART_TOOLBAR), "Copy");
+
+    m_toolbar->AddTool(wxID_PASTE, wxEmptyString, wxArtProvider::GetBitmapBundle(wxART_PASTE, wxART_TOOLBAR), "Paste");
+
+    m_toolbar->AddTool(wxID_DELETE, wxEmptyString, wxArtProvider::GetBitmapBundle(wxART_DELETE, wxART_TOOLBAR),
+        "Delete selected object without using clipboard.");
+
+    m_toolbar->AddSeparator();
+    m_toolbar->AddTool(id_AlignLeft, wxEmptyString, wxueBundleSVG(wxue_img::alignleft_svg, 688, 1442, wxSize(24, 24)),
+        "Align left", wxITEM_CHECK);
+
+    m_toolbar->AddTool(id_AlignCenterHorizontal, wxEmptyString,
+        wxueBundleSVG(wxue_img::aligncenter_svg, 898, 1976, wxSize(24, 24)), "Center horizontally", wxITEM_CHECK);
+
+    m_toolbar->AddTool(id_AlignRight, wxEmptyString, wxueBundleSVG(wxue_img::alignright_svg, 690, 1441, wxSize(24, 24)),
+        "Align right", wxITEM_CHECK);
+
+    m_toolbar->AddSeparator();
+    m_toolbar->AddTool(id_AlignTop, wxEmptyString, wxueBundleSVG(wxue_img::aligntop_svg, 688, 1440, wxSize(24, 24)),
+        "Align top", wxITEM_CHECK);
+
+    m_toolbar->AddTool(id_AlignCenterVertical, wxEmptyString,
+        wxueBundleSVG(wxue_img::alignvertcenter_svg, 911, 2016, wxSize(24, 24)), "Center vertically", wxITEM_CHECK);
+
+    m_toolbar->AddTool(id_AlignBottom, wxEmptyString,
+        wxueBundleSVG(wxue_img::alignbottom_svg, 658, 1392, wxSize(24, 24)), "Align bottom", wxITEM_CHECK);
+
+    m_toolbar->AddSeparator();
+    m_toolbar->AddTool(id_BorderLeft, wxEmptyString, wxueBundleSVG(wxue_img::left_svg, 585, 1857, wxSize(24, 24)),
+        "Left border", wxITEM_CHECK);
+
+    m_toolbar->AddTool(id_BorderRight, wxEmptyString, wxueBundleSVG(wxue_img::right_svg, 599, 1878, wxSize(24, 24)),
+        "Right border", wxITEM_CHECK);
+
+    m_toolbar->AddTool(id_BorderTop, wxEmptyString, wxueBundleSVG(wxue_img::top_svg, 586, 1859, wxSize(24, 24)),
+        "Top border", wxITEM_CHECK);
+
+    m_toolbar->AddTool(id_BorderBottom, wxEmptyString, wxueBundleSVG(wxue_img::bottom_svg, 585, 1859, wxSize(24, 24)),
+        "Bottom border", wxITEM_CHECK);
+
+    m_toolbar->AddSeparator();
+    m_toolbar->AddTool(id_Expand, wxEmptyString, wxueBundleSVG(wxue_img::expand_svg, 819, 1685, wxSize(24, 24)),
+        "Expand to fill the space", wxITEM_CHECK);
+
+    m_toolbar->AddSeparator();
+    m_toolbar->AddTool(id_ShowHidden, wxEmptyString, wxueBundleSVG(wxue_img::hidden_svg, 2111, 5129, wxSize(24, 24)),
+        "Show hidden controls in Mockup panel", wxITEM_CHECK);
+
+    m_toolbar->AddTool(id_Magnify, wxEmptyString, wxueBundleSVG(wxue_img::magnify_svg, 3953, 8849, wxSize(24, 24)),
+        "Magnify the size of the Mockup window", wxITEM_CHECK);
+
+    m_toolbar->AddTool(id_PreviewForm, "Preview Form...",
+        wxueBundleSVG(wxue_img::xrc_preview_svg, 469, 1326, wxSize(24, 24)), "Preview form using XRC and/or C++",
+        wxITEM_CHECK);
+
+    m_toolbar->Realize();
+    m_mainframe_sizer->Add(m_toolbar, wxSizerFlags().Expand());
+
+    m_MainSplitter = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_LIVE_UPDATE);
+    m_MainSplitter->SetSashGravity(0.0);
+    m_MainSplitter->SetMinimumPaneSize(2);
+    m_mainframe_sizer->Add(m_MainSplitter, wxSizerFlags(1).Expand());
+
+    m_nav_panel = new NavigationPanel(m_MainSplitter);
+
+    m_panel_right = new wxPanel(m_MainSplitter);
+
+    m_right_panel_sizer = new wxBoxSizer(wxVERTICAL);
+    m_panel_right->SetSizerAndFit(m_right_panel_sizer);
+    m_MainSplitter->SplitVertically(m_nav_panel, m_panel_right);
+    SetSizerAndFit(m_mainframe_sizer);
 
     m_menubar = new wxMenuBar();
 
@@ -288,88 +386,12 @@ bool MainFrameBase::Create(wxWindow* parent, wxWindowID id, const wxString& titl
 
     SetMenuBar(m_menubar);
 
-    m_toolbar = CreateToolBar(wxTB_FLAT|wxTB_HORIZONTAL);
-    m_toolbar->AddTool(id_NewProject, "New", wxueBundleSVG(wxue_img::new_project_svg, 921, 2208, wxSize(24, 24)),
-        "New Project (Ctrl+N)");
-
-    m_toolbar->AddTool(id_OpenProject, "Open", wxArtProvider::GetBitmapBundle(wxART_FILE_OPEN, wxART_TOOLBAR),
-        "Open Project (Ctrl+O)");
-
-    m_toolbar->AddTool(wxID_SAVE, "Save", wxueBundleSVG(wxue_img::save_svg, 717, 2603, wxSize(24, 24)),
-        "Save current project");
-
-    m_toolbar->AddTool(id_GenerateCode, wxEmptyString, wxueBundleSVG(wxue_img::generate_svg, 780, 2716, wxSize(24, 24)),
-        "Generate code");
-
-    m_toolbar->AddSeparator();
-    m_toolbar->AddTool(wxID_UNDO, wxEmptyString, wxue_img::bundle_undo_svg(16, 16), "Undo");
-
-    m_toolbar->AddTool(wxID_REDO, wxEmptyString, wxue_img::bundle_redo_svg(16, 16), "Redo");
-
-    m_toolbar->AddSeparator();
-    m_toolbar->AddTool(wxID_CUT, wxEmptyString, wxArtProvider::GetBitmapBundle(wxART_CUT, wxART_TOOLBAR), "Cut");
-
-    m_toolbar->AddTool(wxID_COPY, wxEmptyString, wxArtProvider::GetBitmapBundle(wxART_COPY, wxART_TOOLBAR), "Copy");
-
-    m_toolbar->AddTool(wxID_PASTE, wxEmptyString, wxArtProvider::GetBitmapBundle(wxART_PASTE, wxART_TOOLBAR), "Paste");
-
-    m_toolbar->AddTool(wxID_DELETE, wxEmptyString, wxArtProvider::GetBitmapBundle(wxART_DELETE, wxART_TOOLBAR),
-        "Delete selected object without using clipboard.");
-
-    m_toolbar->AddSeparator();
-    m_toolbar->AddTool(id_AlignLeft, wxEmptyString, wxueBundleSVG(wxue_img::alignleft_svg, 688, 1442, wxSize(24, 24)),
-        "Align left", wxITEM_CHECK);
-
-    m_toolbar->AddTool(id_AlignCenterHorizontal, wxEmptyString,
-        wxueBundleSVG(wxue_img::aligncenter_svg, 898, 1976, wxSize(24, 24)), "Center horizontally", wxITEM_CHECK);
-
-    m_toolbar->AddTool(id_AlignRight, wxEmptyString, wxueBundleSVG(wxue_img::alignright_svg, 690, 1441, wxSize(24, 24)),
-        "Align right", wxITEM_CHECK);
-
-    m_toolbar->AddSeparator();
-    m_toolbar->AddTool(id_AlignTop, wxEmptyString, wxueBundleSVG(wxue_img::aligntop_svg, 688, 1440, wxSize(24, 24)),
-        "Align top", wxITEM_CHECK);
-
-    m_toolbar->AddTool(id_AlignCenterVertical, wxEmptyString,
-        wxueBundleSVG(wxue_img::alignvertcenter_svg, 911, 2016, wxSize(24, 24)), "Center vertically", wxITEM_CHECK);
-
-    m_toolbar->AddTool(id_AlignBottom, wxEmptyString,
-        wxueBundleSVG(wxue_img::alignbottom_svg, 658, 1392, wxSize(24, 24)), "Align bottom", wxITEM_CHECK);
-
-    m_toolbar->AddSeparator();
-    m_toolbar->AddTool(id_BorderLeft, wxEmptyString, wxueBundleSVG(wxue_img::left_svg, 585, 1857, wxSize(24, 24)),
-        "Left border", wxITEM_CHECK);
-
-    m_toolbar->AddTool(id_BorderRight, wxEmptyString, wxueBundleSVG(wxue_img::right_svg, 599, 1878, wxSize(24, 24)),
-        "Right border", wxITEM_CHECK);
-
-    m_toolbar->AddTool(id_BorderTop, wxEmptyString, wxueBundleSVG(wxue_img::top_svg, 586, 1859, wxSize(24, 24)),
-        "Top border", wxITEM_CHECK);
-
-    m_toolbar->AddTool(id_BorderBottom, wxEmptyString, wxueBundleSVG(wxue_img::bottom_svg, 585, 1859, wxSize(24, 24)),
-        "Bottom border", wxITEM_CHECK);
-
-    m_toolbar->AddSeparator();
-    m_toolbar->AddTool(id_Expand, wxEmptyString, wxueBundleSVG(wxue_img::expand_svg, 819, 1685, wxSize(24, 24)),
-        "Expand to fill the space", wxITEM_CHECK);
-
-    m_toolbar->AddSeparator();
-    m_toolbar->AddTool(id_ShowHidden, wxEmptyString, wxueBundleSVG(wxue_img::hidden_svg, 2111, 5129, wxSize(24, 24)),
-        "Show hidden controls in Mockup panel", wxITEM_CHECK);
-
-    m_toolbar->AddTool(id_Magnify, wxEmptyString, wxueBundleSVG(wxue_img::magnify_svg, 3953, 8849, wxSize(24, 24)),
-        "Magnify the size of the Mockup window", wxITEM_CHECK);
-
-    m_toolbar->AddTool(id_PreviewForm, "Preview Form...",
-        wxueBundleSVG(wxue_img::xrc_preview_svg, 469, 1326, wxSize(24, 24)), "Preview form using XRC and/or C++",
-        wxITEM_CHECK);
-
-    m_toolbar->Realize();
-
     Centre(wxBOTH);
 
     // Event handlers
     Bind(wxEVT_CLOSE_WINDOW, &MainFrameBase::OnClose, this);
+    Bind(wxEVT_MENU, &MainFrameBase::OnToggleExpandLayout, this, id_Expand);
+    Bind(wxEVT_MENU, &MainFrameBase::OnGenerateCode, this, id_GenerateCode);
     Bind(wxEVT_MENU,
         [](wxCommandEvent&)
         {
@@ -385,14 +407,14 @@ bool MainFrameBase::Create(wxWindow* parent, wxWindowID id, const wxString& titl
         },
         menu_import->GetId());
     Bind(wxEVT_MENU, &MainFrameBase::OnSaveProject, this, wxID_SAVE);
-    Bind(wxEVT_MENU, &MainFrameBase::OnGenerateCode, this, id_GenerateCode);
+    Bind(wxEVT_MENU, &MainFrameBase::OnAppendXRC, this, id_AppendXRC);
     Bind(wxEVT_MENU, &MainFrameBase::OnSaveAsProject, this, id_SaveProjectAs);
     Bind(wxEVT_MENU, &MainFrameBase::OnAppendCrafter, this, id_AppendCrafter);
     Bind(wxEVT_MENU, &MainFrameBase::OnAppendFormBuilder, this, id_AppendFormBuilder);
     Bind(wxEVT_MENU, &MainFrameBase::OnAppendGlade, this, id_AppendGlade);
     Bind(wxEVT_MENU, &MainFrameBase::OnAppendSmith, this, id_AppendSmith);
     Bind(wxEVT_MENU, &MainFrameBase::OnImportWindowsResource, this, id_AppendWinRes);
-    Bind(wxEVT_MENU, &MainFrameBase::OnAppendXRC, this, id_AppendXRC);
+    Bind(wxEVT_MENU, &MainFrameBase::OnPreviewXrc, this, id_PreviewForm);
     Bind(wxEVT_MENU, &MainFrameBase::OnOptionsDlg, this, id_OptionsDlg);
     Bind(wxEVT_MENU,
         [](wxCommandEvent&)
@@ -400,23 +422,23 @@ bool MainFrameBase::Create(wxWindow* parent, wxWindowID id, const wxString& titl
             wxGetFrame().Undo();
         },
         wxID_UNDO);
-    Bind(wxEVT_MENU, &MainFrameBase::OnPreviewXrc, this, id_PreviewForm);
+    Bind(wxEVT_MENU, &MainFrameBase::OnAbout, this, wxID_ABOUT);
     Bind(wxEVT_MENU,
         [](wxCommandEvent&)
         {
             wxGetFrame().Redo();
         },
         wxID_REDO);
-    Bind(wxEVT_MENU, &MainFrameBase::OnEditCustomIds, this, menu_item_8->GetId());
+    Bind(wxEVT_MENU, &MainFrameBase::OnBrowseDocs, this, menu_item_6->GetId());
     Bind(wxEVT_MENU, &MainFrameBase::OnCut, this, wxID_CUT);
-    Bind(wxEVT_MENU, &MainFrameBase::OnAbout, this, wxID_ABOUT);
+    Bind(wxEVT_MENU, &MainFrameBase::OnChangeAlignment, this, id_AlignLeft);
     Bind(wxEVT_MENU, &MainFrameBase::OnCopy, this, wxID_COPY);
     Bind(wxEVT_MENU, &MainFrameBase::OnPaste, this, wxID_PASTE);
-    Bind(wxEVT_MENU, &MainFrameBase::OnBrowseDocs, this, menu_item_6->GetId());
-    Bind(wxEVT_MENU, &MainFrameBase::OnDelete, this, wxID_DELETE);
     Bind(wxEVT_MENU, &MainFrameBase::OnBrowsePython, this, menu_item_9->GetId());
-    Bind(wxEVT_MENU, &MainFrameBase::OnDuplicate, this, menu_duplicate->GetId());
+    Bind(wxEVT_MENU, &MainFrameBase::OnDelete, this, wxID_DELETE);
     Bind(wxEVT_MENU, &MainFrameBase::OnBrowseRuby, this, menu_item_10->GetId());
+    Bind(wxEVT_MENU, &MainFrameBase::OnDuplicate, this, menu_duplicate->GetId());
+    Bind(wxEVT_MENU, &MainFrameBase::OnEditCustomIds, this, menu_item_8->GetId());
     Bind(wxEVT_MENU, &MainFrameBase::OnFindDialog, this, wxID_FIND);
     Bind(wxEVT_MENU, &MainFrameBase::OnInsertWidget, this, id_insert_widget);
     Bind(wxEVT_MENU,
@@ -443,7 +465,6 @@ bool MainFrameBase::Create(wxWindow* parent, wxWindowID id, const wxString& titl
             wxGetFrame().MoveNode(MoveDirection::Right);
         },
         id_MoveRight);
-    Bind(wxEVT_MENU, &MainFrameBase::OnChangeAlignment, this, id_AlignLeft);
     Bind(wxEVT_MENU, &MainFrameBase::OnChangeAlignment, this, id_AlignCenterHorizontal);
     Bind(wxEVT_MENU, &MainFrameBase::OnChangeAlignment, this, id_AlignRight);
     Bind(wxEVT_MENU, &MainFrameBase::OnChangeAlignment, this, id_AlignTop);
@@ -453,7 +474,6 @@ bool MainFrameBase::Create(wxWindow* parent, wxWindowID id, const wxString& titl
     Bind(wxEVT_MENU, &MainFrameBase::OnChangeBorder, this, id_BorderRight);
     Bind(wxEVT_MENU, &MainFrameBase::OnChangeBorder, this, id_BorderTop);
     Bind(wxEVT_MENU, &MainFrameBase::OnChangeBorder, this, id_BorderBottom);
-    Bind(wxEVT_MENU, &MainFrameBase::OnToggleExpandLayout, this, id_Expand);
     Bind(wxEVT_TOOL, &MainFrameBase::OnGenerateCode, this, id_GenerateCode);
     Bind(wxEVT_TOOL, &MainFrameBase::OnPreviewXrc, this, id_PreviewForm);
     Bind(wxEVT_UPDATE_UI,
@@ -477,12 +497,6 @@ bool MainFrameBase::Create(wxWindow* parent, wxWindowID id, const wxString& titl
     Bind(wxEVT_UPDATE_UI,
         [](wxUpdateUIEvent& event)
         {
-            event.Enable(wxGetFrame().CanCopyNode());
-        },
-        wxID_CUT);
-    Bind(wxEVT_UPDATE_UI,
-        [](wxUpdateUIEvent& event)
-        {
             event.Enable(wxGetFrame().CanPasteNode());
         },
         wxID_PASTE);
@@ -492,6 +506,7 @@ bool MainFrameBase::Create(wxWindow* parent, wxWindowID id, const wxString& titl
             event.Enable(wxGetFrame().CanCopyNode());
         },
         wxID_DELETE);
+    Bind(wxEVT_UPDATE_UI, &MainFrameBase::OnUpdateBrowseDocs, this, menu_item_6->GetId());
     Bind(wxEVT_UPDATE_UI,
         [](wxUpdateUIEvent& event)
         {
@@ -499,7 +514,12 @@ bool MainFrameBase::Create(wxWindow* parent, wxWindowID id, const wxString& titl
         },
         menu_duplicate->GetId());
     Bind(wxEVT_UPDATE_UI, &MainFrameBase::OnUpdateBrowsePython, this, menu_item_9->GetId());
-    Bind(wxEVT_UPDATE_UI, &MainFrameBase::OnUpdateBrowseDocs, this, menu_item_6->GetId());
+    Bind(wxEVT_UPDATE_UI,
+        [](wxUpdateUIEvent& event)
+        {
+            event.Enable(wxGetFrame().CanCopyNode());
+        },
+        wxID_CUT);
     Bind(wxEVT_UPDATE_UI, &MainFrameBase::OnUpdateBrowseRuby, this, menu_item_10->GetId());
 
     return true;

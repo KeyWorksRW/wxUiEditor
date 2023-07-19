@@ -48,7 +48,8 @@ EventHandlerDlg::EventHandlerDlg(wxWindow* parent, NodeEvent* event) : EventHand
         {
             keywords << iter << ' ';
         }
-        if (keywords.back() == ' ')
+        // Remove any trailing space, if there are any keywords
+        if (keywords.size() && keywords.back() == ' ')
             keywords.pop_back();
         m_cpp_stc_lambda->SetKeyWords(1, keywords);
         m_cpp_stc_lambda->StyleSetForeground(wxSTC_C_WORD2, wxColour("#E91AFF"));

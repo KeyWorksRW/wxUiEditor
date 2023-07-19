@@ -7,6 +7,14 @@ All notable changes to this project will be documented in this file.
 
 - wxAuiToolBar can now be created as a form (it creates a class instead of a child widget)
 
+### Changed
+
+- controls that have one or more default window styles set (e.g., wxPanel has wxTAB_TRAVERSAL set) can now have that style unchecked and that state will be stored with the project file.
+
+### Fixed
+
+- You can now change the Window styles in a wxRichTextCtrl without generating an invalid constructor.
+
 ## [Released (1.1.2)]
 
 ### Added

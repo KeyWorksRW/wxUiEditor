@@ -355,7 +355,7 @@ inline const char* widgets_xml = R"===(<?xml version="1.0"?>
 			<option name="wxHL_CONTEXTMENU"
 				help="Pop up a context menu when the hyperlink is right-clicked. The context menu contains a &quot;Copy URL&quot; menu item which is automatically handled by the hyperlink and which just copies in the clipboard the URL (not the label) of the control." />
 			<option name="wxHL_DEFAULT_STYLE"
-				help="The default style for wxHyperlinkCtrl: wxNO_BORDER | wxHL_CONTEXTMENU | wxHL_ALIGN_CENTRE." />
+				help="The default style for wxHyperlinkCtrl: wxBORDER_NONE | wxHL_CONTEXTMENU | wxHL_ALIGN_CENTRE." />
 			wxHL_DEFAULT_STYLE
 		</property>
 		<event name="wxEVT_HYPERLINK" class="wxHyperlinkEvent"

@@ -65,7 +65,7 @@ inline const char* window_interfaces_xml = R"===(<?xml version="1.0"?>
 			<option name="wxBORDER_THEME"
 				help="Displays a native border suitable for a control, on the current platform. On Windows XP or Vista, this will be a themed border; on most other platforms a sunken border will be used. For more information for themed borders on Windows, please see Themed borders on Windows." />
 			<option name="wxBORDER_NONE"
-				help="Displays no border, overriding the default border style for the window. wxNO_BORDER is the old name for this style." />
+				help="Displays no border, overriding the default border style for the window." />
 			<option name="wxTRANSPARENT_WINDOW"
 				help="The window is transparent, that is, it will not receive paint events. Windows only." />
 			<option name="wxTAB_TRAVERSAL"

@@ -114,8 +114,8 @@ bool AuiToolBarFormGenerator::ConstructionCode(Code& code)
         code.Str((prop_class_name)).Str("::").Str(prop_class_name);
         code += "(wxWindow* parent, wxWindowID id";
         code.Comma().Str("const wxPoint& pos").Comma().Str("const wxSize& size");
-        code.Comma().Str("long style").Comma().Str("const wxString& name)");
-        code.Str(" : wxToolBar(parent, id, pos, size, style, name)").Eol() += "{";
+        code.Comma().Str("long style)");
+        code.Str(" : wxAuiToolBar(parent, id, pos, size, style)").Eol() += "{";
     }
     else if (code.is_python())
     {
@@ -125,18 +125,10 @@ bool AuiToolBarFormGenerator::ConstructionCode(Code& code)
         code.Comma().Add("pos=").Pos(prop_pos);
         code.Comma().Add("size=").WxSize(prop_size);
         code.Comma().CheckLineLength(sizeof("style=") + code.node()->as_string(prop_style).size() + 4);
-        code.Add("style=").Style().Comma();
-        size_t name_len =
-            code.HasValue(prop_window_name) ? code.node()->as_string(prop_window_name).size() : sizeof("wx.ToolBarNameStr");
-        code.CheckLineLength(sizeof("name=") + name_len + 4);
-        code.Str("name=");
-        if (code.HasValue(prop_window_name))
-            code.QuotedString(prop_window_name);
-        else
-            code.Str("wx.ToolBarNameStr");
+        code.Add("style=").Style();
         code.Str("):");
         code.Unindent();
-        code.Eol() += "wx.ToolBar.__init__(self, parent, id, pos, size, style, name)";
+        code.Eol() += "wx.AuiToolBar.__init__(self, parent, id, pos, size, style)";
     }
     else
     {
@@ -151,7 +143,7 @@ bool AuiToolBarFormGenerator::ConstructionCode(Code& code)
 
 bool AuiToolBarFormGenerator::AfterChildrenCode(Code& code)
 {
-    code.NodeName().Function("Realize(").EndFunction();
+    code.Add("Realize(").EndFunction();
 
     return true;
 }
@@ -199,15 +191,6 @@ bool AuiToolBarFormGenerator::HeaderCode(Code& code)
         {
             code.Str(win_style);
         }
-    }
-
-    if (node->as_string(prop_window_name).size())
-    {
-        code.Comma().Str("const wxString &name = ").QuotedString(prop_window_name);
-    }
-    else
-    {
-        code.Comma().Str("const wxString &name = wxPanelNameStr");
     }
 
     // Extra eols at end to force space before "Protected:" section

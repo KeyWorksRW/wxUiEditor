@@ -55,13 +55,13 @@ bool DocViewBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos, co
     m_toolBar->AddTool(wxID_FORWARD, "Forward", wxArtProvider::GetBitmapBundle(wxART_GO_FORWARD, wxART_TOOLBAR));
 
     m_toolBar->AddSeparator();
-    auto* tool = m_toolBar->AddTool(wxID_ANY, "C++", wxue_img::bundle_cpp_logo_svg(16, 16), wxEmptyString, wxITEM_RADIO);
+    m_toolBar->AddTool(ID_CPLUS, "C++", wxue_img::bundle_cpp_logo_svg(16, 16), wxEmptyString, wxITEM_RADIO);
 
-    auto* tool_2 = m_toolBar->AddTool(wxID_ANY, "Python",
-        wxueBundleSVG(wxue_img::python_logo_only_svg, 1648, 6310, wxSize(16, 16)), wxEmptyString, wxITEM_RADIO);
+    m_toolBar->AddTool(ID_PYTHON, "Python", wxueBundleSVG(wxue_img::python_logo_only_svg, 1648, 6310, wxSize(16, 16)),
+        wxEmptyString, wxITEM_RADIO);
 
-    auto* tool_5 = m_toolBar->AddTool(wxID_ANY, "Ruby",
-        wxueBundleSVG(wxue_img::ruby_logo_svg, 1853, 10034, wxSize(16, 16)), wxEmptyString, wxITEM_RADIO);
+    m_toolBar->AddTool(ID_RUBY, "Ruby", wxueBundleSVG(wxue_img::ruby_logo_svg, 1853, 10034, wxSize(16, 16)),
+        wxEmptyString, wxITEM_RADIO);
 
     m_toolBar->Realize();
     m_parent_sizer->Add(m_toolBar, wxSizerFlags().Expand().Border(wxALL));
@@ -72,9 +72,9 @@ bool DocViewBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos, co
     Bind(wxEVT_TOOL, &DocViewBase::OnHome, this, wxID_HOME);
     Bind(wxEVT_TOOL, &DocViewBase::OnBack, this, wxID_BACKWARD);
     Bind(wxEVT_TOOL, &DocViewBase::OnForward, this, wxID_FORWARD);
-    Bind(wxEVT_TOOL, &DocViewBase::OnCPlus, this, tool->GetId());
-    Bind(wxEVT_TOOL, &DocViewBase::OnPython, this, tool_2->GetId());
-    Bind(wxEVT_TOOL, &DocViewBase::OnRuby, this, tool_5->GetId());
+    Bind(wxEVT_TOOL, &DocViewBase::OnCPlus, this, ID_CPLUS);
+    Bind(wxEVT_TOOL, &DocViewBase::OnPython, this, ID_PYTHON);
+    Bind(wxEVT_TOOL, &DocViewBase::OnRuby, this, ID_RUBY);
     Bind(wxEVT_UPDATE_UI, &DocViewBase::OnUpdateBack, this, wxID_BACKWARD);
     Bind(wxEVT_UPDATE_UI, &DocViewBase::OnUpdateForward, this, wxID_FORWARD);
 

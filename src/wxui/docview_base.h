@@ -28,6 +28,13 @@ public:
     bool Create(wxWindow *parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
         const wxSize& size = wxDefaultSize, long style = wxTAB_TRAVERSAL, const wxString &name = wxPanelNameStr);
 
+    enum
+    {
+        ID_CPLUS = wxID_HIGHEST + 1,
+        ID_PYTHON,
+        ID_RUBY
+    };
+
 protected:
 
     // Virtual event handlers -- override them in your derived class

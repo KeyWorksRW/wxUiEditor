@@ -1822,12 +1822,14 @@
             <node
               class="tool"
               bitmap="SVG;cpp_logo.svg;[16,16]"
+              id="ID_CPLUS"
               kind="wxITEM_RADIO"
               label="C++"
               wxEVT_TOOL="OnCPlus" />
             <node
               class="tool"
               bitmap="SVG;python-logo-only.svg;[16,16]"
+              id="ID_PYTHON"
               kind="wxITEM_RADIO"
               label="Python"
               var_name="tool_2"
@@ -1835,6 +1837,7 @@
             <node
               class="tool"
               bitmap="SVG;ruby_logo.svg;[16,16]"
+              id="ID_RUBY"
               kind="wxITEM_RADIO"
               label="Ruby"
               var_name="tool_5"

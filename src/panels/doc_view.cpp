@@ -13,10 +13,11 @@
 
 #include "doc_view.h"
 
-#include "base_generator.h"  // BaseGenerator -- Base widget generator class
-#include "cstm_event.h"      // CustomEvent -- Custom Event class
-#include "mainframe.h"       // MainFrame -- Main window frame
-#include "node.h"            // Node class
+#include "base_generator.h"   // BaseGenerator -- Base widget generator class
+#include "cstm_event.h"       // CustomEvent -- Custom Event class
+#include "mainframe.h"        // MainFrame -- Main window frame
+#include "node.h"             // Node class
+#include "project_handler.h"  // ProjectHandler -- Project file handler
 
 DocViewPanel::DocViewPanel(wxWindow* parent, MainFrame* frame) : DocViewBase(parent)
 {
@@ -34,6 +35,12 @@ void DocViewPanel::ActivatePage()
     if (!m_webview)
     {
         wxBusyCursor wait;
+
+        m_language = Project.get_PreferredLanguage();
+        m_toolBar->ToggleTool(ID_CPLUS, m_language == GEN_LANG_CPLUSPLUS);
+        m_toolBar->ToggleTool(ID_PYTHON, m_language == GEN_LANG_PYTHON);
+        m_toolBar->ToggleTool(ID_RUBY, m_language == GEN_LANG_RUBY);
+
         m_webview = wxWebView::New(this, wxID_ANY, "about:blank");
         m_parent_sizer->Add(m_webview, wxSizerFlags(1).Expand().Border(wxALL));
         m_parent_sizer->Layout();

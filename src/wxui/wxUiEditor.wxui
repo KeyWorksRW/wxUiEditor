@@ -1779,6 +1779,69 @@
           </node>
         </node>
       </node>
+      <node
+        class="PanelForm"
+        class_name="DocViewBase"
+        base_file="docview_base"
+        derived_class_name="DocView"
+        derived_file="docview">
+        <node
+          class="wxBoxSizer"
+          class_access="protected:"
+          orientation="wxVERTICAL"
+          var_name="m_parent_sizer">
+          <node
+            class="wxToolBar"
+            style="wxTB_HORIZONTAL|wxTB_TEXT"
+            flags="wxEXPAND">
+            <node
+              class="tool"
+              bitmap="Art;wxART_GO_HOME|wxART_TOOLBAR"
+              id="wxID_HOME"
+              label="Home"
+              var_name="tool_6"
+              wxEVT_TOOL="OnHome" />
+            <node
+              class="tool"
+              bitmap="Art;wxART_GO_BACK|wxART_TOOLBAR"
+              id="wxID_BACKWARD"
+              label="Back"
+              var_name="tool_3"
+              wxEVT_TOOL="OnBack"
+              wxEVT_UPDATE_UI="OnUpdateBack" />
+            <node
+              class="tool"
+              bitmap="Art;wxART_GO_FORWARD|wxART_TOOLBAR"
+              id="wxID_FORWARD"
+              label="Forward"
+              var_name="tool_4"
+              wxEVT_TOOL="OnForward"
+              wxEVT_UPDATE_UI="OnUpdateForward" />
+            <node
+              class="toolSeparator" />
+            <node
+              class="tool"
+              bitmap="SVG;cpp_logo.svg;[16,16]"
+              kind="wxITEM_RADIO"
+              label="C++"
+              wxEVT_TOOL="OnCPlus" />
+            <node
+              class="tool"
+              bitmap="SVG;python-logo-only.svg;[16,16]"
+              kind="wxITEM_RADIO"
+              label="Python"
+              var_name="tool_2"
+              wxEVT_TOOL="OnPython" />
+            <node
+              class="tool"
+              bitmap="SVG;ruby_logo.svg;[16,16]"
+              kind="wxITEM_RADIO"
+              label="Ruby"
+              var_name="tool_5"
+              wxEVT_TOOL="OnRuby" />
+          </node>
+        </node>
+      </node>
     </node>
     <node
       class="folder"

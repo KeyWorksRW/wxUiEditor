@@ -46,6 +46,7 @@
 #include "write_code.h"       // Write code to Scintilla or file
 
 #include "panels/base_panel.h"      // BasePanel -- C++ panel
+#include "panels/doc_view.h"        // Panel for displaying docs in wxWebView
 #include "panels/nav_panel.h"       // NavigationPanel -- Node tree class
 #include "panels/propgrid_panel.h"  // PropGridPanel -- Node inspector class
 #include "panels/ribbon_tools.h"    // RibbonPanel -- Displays component tools in a wxRibbonBar
@@ -1202,6 +1203,10 @@ void MainFrame::OnAuiNotebookPageChanged(wxAuiNotebookEvent&)
         {
             m_mockupPanel->CreateContent();
         }
+        else if (page == m_docviewPanel)
+        {
+            m_docviewPanel->ActivatePage();
+        }
 #if defined(INTERNAL_TESTING)
         else if (page != m_imnportPanel)
         {
@@ -1267,6 +1272,9 @@ wxWindow* MainFrame::CreateNoteBook(wxWindow* parent)
     m_imnportPanel = new ImportPanel(m_notebook);
     m_notebook->AddPage(m_imnportPanel, "Import", false, wxWithImages::NO_IMAGE);
 #endif
+
+    m_docviewPanel = new DocViewPanel(m_notebook, this);
+    m_notebook->AddPage(m_docviewPanel, "Docs", false, wxWithImages::NO_IMAGE);
 
     return m_notebook;
 }

@@ -19,6 +19,7 @@
 using namespace GenEnum;
 
 class BasePanel;
+class DocViewPanel;
 class CustomEvent;
 class FocusKillerEvtHandler;
 class GridBagAction;
@@ -91,6 +92,7 @@ public:
     NavigationPanel* GetNavigationPanel() { return m_nav_panel; }
     RibbonPanel* GetRibbonPanel() { return m_ribbon_panel; }
     BasePanel* GetGeneratedPanel() { return m_generatedPanel; }
+    DocViewPanel* GetDocViewPanel() { return m_docviewPanel; }
 
 #if defined(INTERNAL_TESTING)
     ImportPanel* GetImportPanel() { return m_imnportPanel; }
@@ -335,6 +337,7 @@ private:
     std::unique_ptr<WakaTime> m_wakatime { nullptr };
 
     MockupParent* m_mockupPanel;
+    DocViewPanel* m_docviewPanel;
 
     BasePanel* m_generatedPanel { nullptr };
     BasePanel* m_derivedPanel { nullptr };

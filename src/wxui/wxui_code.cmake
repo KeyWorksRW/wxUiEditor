@@ -15,7 +15,7 @@ set (wxue_generated_code
     ${CMAKE_CURRENT_LIST_DIR}/../internal/xrcpreview.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../panels/doc_view.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../tools/generate_dlg.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/../tools/global_ids_dlg_base.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/../tools/global_ids_dlg.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../tools/preview_settings.cpp
     ${CMAKE_CURRENT_LIST_DIR}/code_preference_dlg.cpp
     ${CMAKE_CURRENT_LIST_DIR}/dlg_gen_results.cpp

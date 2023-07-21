@@ -1968,7 +1968,7 @@
         class="wxDialog"
         class_name="GlobalCustomIDS"
         title="Globally Add Prefix/Suffix to Custom IDs"
-        base_file="..\tools\global_ids_dlg_base"
+        base_file="..\tools\global_ids_dlg"
         system_hdr_includes="map"
         class_members="&quot;bool m_committed { true };&quot;"
         derived_class_name="GlobalCustomIDS"

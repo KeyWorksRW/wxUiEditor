@@ -283,7 +283,22 @@ tt_string BaseGenerator::GetPythonHelpText(Node* node)
     auto class_name = node->DeclName();
     if (!class_name.starts_with("wx"))
     {
-        return {};
+        if (class_name == "BookPage")
+            class_name = "wxBookCtrl";
+        else if (class_name == "PanelForm")
+            class_name = "wxPanel";
+        else if (class_name == "RibbonBar")
+            class_name = "wxRibbonBar";
+        else if (class_name == "PopupMenu")
+            class_name = "wxMenu";
+        else if (class_name == "ToolBar")
+            class_name = "wxToolBar";
+        else if (class_name == "AuiToolBar")
+            class_name = "wxAuiToolBar";
+        else if (class_name == "StaticCheckboxBoxSizer" || class_name == "StaticRadioBtnBoxSizer")
+            class_name = "wxStaticBoxSizer";
+        else
+            return {};
     }
 
     std::string_view prefix = "wx.";
@@ -299,7 +314,7 @@ tt_string BaseGenerator::GetPythonHelpText(Node* node)
 
 tt_string BaseGenerator::GetPythonURL(Node* node)
 {
-    tt_string url = GetRubyHelpText(node);
+    tt_string url = GetPythonHelpText(node);
     if (url.empty())
     {
         return url;
@@ -313,7 +328,22 @@ tt_string BaseGenerator::GetRubyHelpText(Node* node)
     auto class_name = node->DeclName();
     if (!class_name.starts_with("wx"))
     {
-        return {};
+        if (class_name == "BookPage")
+            class_name = "wxBookCtrl";
+        else if (class_name == "PanelForm")
+            class_name = "wxPanel";
+        else if (class_name == "RibbonBar")
+            class_name = "wxRibbonBar";
+        else if (class_name == "PopupMenu")
+            class_name = "wxMenu";
+        else if (class_name == "ToolBar")
+            class_name = "wxToolBar";
+        else if (class_name == "AuiToolBar")
+            class_name = "wxAuiToolBar";
+        else if (class_name == "StaticCheckboxBoxSizer" || class_name == "StaticRadioBtnBoxSizer")
+            class_name = "wxStaticBoxSizer";
+        else
+            return {};
     }
 
     std::string_view prefix = "Wx::";

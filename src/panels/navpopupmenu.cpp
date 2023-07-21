@@ -21,9 +21,9 @@
 #include "undo_cmds.h"       // InsertNodeAction -- Undoable command classes derived from UndoAction
 #include "utils.h"           // Utility functions that work with properties
 
-#include "newdialog_base.h"  // NewDialog -- Dialog for creating a new project dialog
-#include "newframe_base.h"   // NewFrame -- Dialog for creating a new project wxFrame
-#include "newwizard_base.h"  // NewWizard -- Dialog for creating a new wizard
+#include "../newdialogs/new_dialog.h"  // NewDialog -- Dialog for creating a new project dialog
+#include "newframe_base.h"             // NewFrame -- Dialog for creating a new project wxFrame
+#include "newwizard_base.h"            // NewWizard -- Dialog for creating a new wizard
 
 NavPopupMenu::NavPopupMenu(Node* node) : m_node(node)
 {

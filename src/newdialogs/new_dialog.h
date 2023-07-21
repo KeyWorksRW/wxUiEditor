@@ -35,9 +35,6 @@ public:
     void CreateNode();
     void VerifyClassName();
 
-private:
-    bool m_is_info_shown { false };
-
 protected:
 
     // Event handlers
@@ -61,6 +58,8 @@ private:
     wxSpinCtrl* m_spinCtrlTabs;
     wxTextCtrl* m_classname;
     wxTextCtrl* m_textCtrl_title;
+
+    bool m_is_info_shown { false };
 };
 
 // ************* End of generated code ***********

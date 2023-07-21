@@ -14,9 +14,9 @@
 #include "project_handler.h"  // ProjectHandler class
 #include "undo_cmds.h"        // InsertNodeAction -- Undoable command classes derived from UndoAction
 
-#include "wxui/newdialog_base.h"  // NewDialog -- Dialog for creating a new project dialog
-#include "wxui/newframe_base.h"   // NewFrame -- Dialog for creating a new project wxFrame
-#include "wxui/newwizard_base.h"  // NewWizard -- Dialog for creating a new wizard
+#include "newdialogs/new_dialog.h"  // NewDialog -- Dialog for creating a new project dialog
+#include "wxui/newframe_base.h"     // NewFrame -- Dialog for creating a new project wxFrame
+#include "wxui/newwizard_base.h"    // NewWizard -- Dialog for creating a new wizard
 
 #include "../panels/navpopupmenu.h"  // NavPopupMenu -- Context-menu for Navigation Panel
 

@@ -4169,8 +4169,9 @@
         class="wxDialog"
         class_name="NewDialog"
         title="Create New Dialog"
-        base_file="newdialog_base"
-        inserted_hdr_code="void CreateNode();@@void VerifyClassName();@@@@private:@@bool m_is_info_shown { false };"
+        base_file="..\newdialogs\new_dialog.cpp"
+        inserted_hdr_code="void CreateNode();@@void VerifyClassName();"
+        class_members="&quot;bool m_is_info_shown { false };&quot;"
         private_members="1"
         use_derived_class="0"
         wxEVT_INIT_DIALOG="OnInit">

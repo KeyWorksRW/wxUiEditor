@@ -1,4 +1,4 @@
-# https://releases.llvm.org/11.0.0/tools/clang/docs/ClangFormatStyleOptions.html
+# https://releases.llvm.org/15.0.0/tools/clang/docs/ClangFormatStyleOptions.html
 
 AlignConsecutiveMacros: true
 AllowAllArgumentsOnNextLine: true

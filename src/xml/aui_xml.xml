@@ -52,6 +52,7 @@ inline const char* aui_xml = R"===(<?xml version="1.0"?>
 
 	<gen class="AuiToolBar" image="auitoolbar" type="aui_toolbar_form">
 		<inherits class="C++ Settings" />
+		<inherits class="C++ Header Settings" />
 		<inherits class="C++ Derived Class Settings" />
 		<inherits class="wxPython Settings" />
 		<inherits class="wxRuby Settings" />

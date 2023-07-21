@@ -1407,7 +1407,10 @@ void BaseCodeGenerator::GenerateClassHeader(Node* form_node, EventVector& events
     }
 
     m_header->Unindent();
-    m_header->writeLine("};");
+    if (not m_form_node->as_bool(prop_no_closing_brace))
+    {
+        m_header->writeLine("};");
+    }
 
     if (m_embedded_images.size() && !m_TranslationUnit)
     {

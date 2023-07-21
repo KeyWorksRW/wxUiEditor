@@ -303,6 +303,7 @@ std::map<GenEnum::PropName, const char*> GenEnum::map_PropNames = {
     { prop_namespace, "namespace" },
     { prop_native_col_header, "native_col_header" },
     { prop_native_col_labels, "native_col_labels" },
+    { prop_no_closing_brace, "no_closing_brace" },
     { prop_non_flexible_grow_mode, "non_flexible_grow_mode" },
     { prop_normal_color, "normal_color" },
     { prop_note, "note" },
@@ -562,6 +563,7 @@ std::map<GenEnum::GenName, const char*> GenEnum::map_GenNames = {
 
     { gen_Bitmaps, "Bitmaps" },
     { gen_Boolean_Validator, "Boolean Validator" },
+    { gen_CPlusHeaderSettings, "C++ Header Settings" },
     { gen_CPlusSettings, "C++ Settings" },
     { gen_Choice_Validator, "Choice Validator" },
     { gen_Code, "C++" },

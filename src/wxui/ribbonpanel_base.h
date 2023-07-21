@@ -22,33 +22,6 @@
 #include <wx/ribbon/toolbar.h>
 #include <wx/sizer.h>
 
-class RibbonPanelBase : public wxPanel
-{
-public:
-    RibbonPanelBase() {}
-    RibbonPanelBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
-        const wxSize& size = wxDefaultSize, long style = wxTAB_TRAVERSAL, const wxString &name = wxPanelNameStr)
-    {
-        Create(parent, id, pos, size, style, name);
-    }
-
-    bool Create(wxWindow *parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
-        const wxSize& size = wxDefaultSize, long style = wxTAB_TRAVERSAL, const wxString &name = wxPanelNameStr);
-
-protected:
-
-    // Virtual event handlers -- override them in your derived class
-
-    virtual void OnDropDown(wxRibbonToolBarEvent& event) { event.Skip(); }
-    virtual void OnToolClick(wxRibbonToolBarEvent& event) { event.Skip(); }
-
-    // Class member variables
-
-    wxBoxSizer* parent_sizer;
-    wxRibbonBar* m_rbnBar;
-    wxRibbonPage* m_page_bars;
-};
-
 namespace wxue_img
 {
     // Images declared in this class module:
@@ -131,6 +104,33 @@ namespace wxue_img
     extern const unsigned char wxtextCtrl_png[283];
     extern const unsigned char wxtoolBar_png[554];
 }
+
+class RibbonPanelBase : public wxPanel
+{
+public:
+    RibbonPanelBase() {}
+    RibbonPanelBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
+        const wxSize& size = wxDefaultSize, long style = wxTAB_TRAVERSAL, const wxString &name = wxPanelNameStr)
+    {
+        Create(parent, id, pos, size, style, name);
+    }
+
+    bool Create(wxWindow *parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
+        const wxSize& size = wxDefaultSize, long style = wxTAB_TRAVERSAL, const wxString &name = wxPanelNameStr);
+
+protected:
+
+    // Virtual event handlers -- override them in your derived class
+
+    virtual void OnDropDown(wxRibbonToolBarEvent& event) { event.Skip(); }
+    virtual void OnToolClick(wxRibbonToolBarEvent& event) { event.Skip(); }
+
+    // Class member variables
+
+    wxBoxSizer* parent_sizer;
+    wxRibbonBar* m_rbnBar;
+    wxRibbonPage* m_page_bars;
+};
 
 // ************* End of generated code ***********
 // DO NOT EDIT THIS COMMENT BLOCK!

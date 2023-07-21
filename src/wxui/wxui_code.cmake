@@ -13,6 +13,7 @@ set (wxue_generated_code
     ${CMAKE_CURRENT_LIST_DIR}/../internal/undo_info.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../internal/unused_gen_dlg.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../internal/xrcpreview.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/../panels/doc_view.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../tools/generate_dlg.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../tools/global_ids_dlg_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../tools/preview_settings.cpp
@@ -47,7 +48,6 @@ set (wxue_generated_code
     ${CMAKE_CURRENT_LIST_DIR}/artpropdlg_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/codedisplay_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/colourprop_base.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/docview_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/edit_html_dialog_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/editcodedialog_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/editstringdialog_base.cpp

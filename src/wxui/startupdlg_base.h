@@ -21,6 +21,13 @@
 #include <wx/sizer.h>
 #include <wx/stattext.h>
 
+namespace wxue_img
+{
+    // Images declared in this class module:
+
+    extern const unsigned char logo_svg[1943];
+}
+
 class StartupDlg : public wxDialog
 {
 public:
@@ -71,13 +78,6 @@ private:
     wxStaticText* m_name_version;
     wxStaticText* m_staticTextRecentProjects;  // // This should be hidden if there actually are any recent projects
 };
-
-namespace wxue_img
-{
-    // Images declared in this class module:
-
-    extern const unsigned char logo_svg[1943];
-}
 
 // ************* End of generated code ***********
 // DO NOT EDIT THIS COMMENT BLOCK!

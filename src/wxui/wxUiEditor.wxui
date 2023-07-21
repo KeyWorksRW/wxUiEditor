@@ -69,6 +69,9 @@
         bitmap="Embed;project.png" />
       <node
         class="embedded_image"
+        bitmap="SVG;python-logo-only.svg;[16,16]" />
+      <node
+        class="embedded_image"
         bitmap="SVG;redo.svg;[16,16]" />
       <node
         class="embedded_image"
@@ -1781,10 +1784,15 @@
       </node>
       <node
         class="PanelForm"
-        class_name="DocViewBase"
-        base_file="docview_base"
+        class_name="DocViewPanel"
+        window_style="0"
+        base_file="..\panels\doc_view.cpp"
+        header_preamble="class CustomEvent;@@class wxWebView;@@class MainFrame;"
+        no_closing_brace="1"
         derived_class_name="DocView"
-        derived_file="docview">
+        derived_file="docview"
+        private_members="1"
+        use_derived_class="0">
         <node
           class="wxBoxSizer"
           class_access="protected:"
@@ -3173,9 +3181,9 @@
         class_name="IncludeFilesDialog"
         title="Include Files"
         base_file="..\customprops\include_files_dlg.cpp"
-        header_preamble="class NodeProperty;"
         local_src_includes="node.h;node_prop.h;project_handler.h"
         system_src_includes="wx/filedlg.h;wx/tokenzr.h"
+        header_preamble="class NodeProperty;"
         class_members="&quot;wxString m_value;&quot; &quot;NodeProperty* m_prop;&quot;"
         class_methods="&quot;void Initialize(NodeProperty* prop);&quot; &quot;const wxString&amp; GetResults() { return m_value; }&quot; &quot;void SetButtonsEnableState();&quot;"
         private_members="1"
@@ -3659,8 +3667,8 @@
       class_name="ImportWinRes"
       title="Import Windows Resource Dialogs"
       base_file="import_winres_dlg"
-      derived_class_name="ImportWinRes"
       inserted_hdr_code="const tt_string&amp; GetRcFilename() { return m_rcFilename; }@@std::vector&lt;tt_string>&amp; GetDlgNames() { return m_dialogs; }@@@@protected:@@void ReadRcFile();@@@@private:@@tt_string m_rcFilename;@@std::vector&lt;tt_string> m_dialogs;"
+      derived_class_name="ImportWinRes"
       private_members="1"
       use_derived_class="0"
       wxEVT_INIT_DIALOG="OnInit">
@@ -3731,8 +3739,8 @@
       title="Insert Widget"
       minimum_size="-1,-1"
       base_file="insert_widget"
-      derived_class_name="InsertWidget"
       inserted_hdr_code="tt_string GetWidget() { return m_widget; }@@@@private:@@tt_string m_widget;"
+      derived_class_name="InsertWidget"
       private_members="1"
       use_derived_class="0"
       wxEVT_INIT_DIALOG="OnInit">
@@ -4574,8 +4582,8 @@
         class_name="NewPanel"
         title="Create New Panel"
         base_file="newpanel_base"
-        derived_class_name="NewPanel"
         inserted_hdr_code="void WantFormVersion() { m_is_form = true; }@@void CreateNode();@@void VerifyClassName();@@@@private:@@bool m_is_form { false };@@bool m_is_info_shown { false };"
+        derived_class_name="NewPanel"
         use_derived_class="0"
         wxEVT_INIT_DIALOG="OnInit">
         <node
@@ -5538,12 +5546,12 @@
         class_name="NodeInfo"
         title="Node Information"
         base_file="..\internal\node_info"
+        inserted_hdr_code="struct NodeMemory@@{@@    size_t size { 0 };@@    size_t children { 0 };@@};"
         local_hdr_includes="node_classes.h"
         class_members="&quot;Node* m_node { nullptr };&quot;"
         class_methods="&quot;void SetNode(Node* node) { m_node = node; }&quot; &quot;static void CalcNodeMemory(Node* node, NodeMemory&amp; node_memory);&quot; &quot;&quot;"
         derived_class_name="NodeInfo"
         derived_file="node_info"
-        inserted_hdr_code="struct NodeMemory@@{@@    size_t size { 0 };@@    size_t children { 0 };@@};"
         private_members="1"
         use_derived_class="0"
         wxEVT_INIT_DIALOG="OnInit">
@@ -5681,14 +5689,14 @@
         title="Node Search"
         minimum_size="-1,-1d"
         base_file="..\internal\node_search_dlg"
-        header_preamble="class Node;"
-        local_hdr_includes="gen_enums.h"
         local_src_includes="../panels/nav_panel.h;mainframe.h;node.h;project_handler.h;unused_gen_dlg.h"
+        header_preamble="class Node;"
+        inserted_hdr_code="struct FoundInfo@@{@@    const char* name;@@    std::vector&lt;Node*> forms;@@};"
+        local_hdr_includes="gen_enums.h"
         system_hdr_includes="map;set"
         class_members="&quot;std::string m_name;  // could be gen_name, var_name, label or ID&quot; &quot;Node* m_form = nullptr;&quot; &quot;std::map&lt;std::string, std::set&lt;Node*>> m_map_found;&quot;"
         class_methods="&quot;std::string&amp; GetNameChoice() { return m_name; }&quot; &quot;Node* GetForm() { return m_form; }&quot; &quot;void FindGenerators(Node* node);&quot; &quot;void FindVariables(Node* node);&quot; &quot;void FindLabels(Node* node);&quot;"
         derived_class_name="NodeSearchDlg"
-        inserted_hdr_code="struct FoundInfo@@{@@    const char* name;@@    std::vector&lt;Node*> forms;@@};"
         private_members="1"
         use_derived_class="0"
         wxEVT_INIT_DIALOG="OnInit">

@@ -19,6 +19,7 @@ namespace wxue_img
 {
     wxBitmapBundle bundle_cpp_logo_svg(int width, int height);
     wxBitmapBundle bundle_import_svg(int width, int height);
+    wxBitmapBundle bundle_python_logo_only_svg(int width, int height);
     wxBitmapBundle bundle_redo_svg(int width, int height);
     wxBitmapBundle bundle_undo_svg(int width, int height);
     wxBitmapBundle bundle_wxlogo_svg(int width, int height);
@@ -94,6 +95,8 @@ namespace wxue_img
     extern const unsigned char logo32_png[1470];
     extern const unsigned char logo64_png[1718];
     extern const unsigned char project_png[899];
+    // python-logo-only.svg
+    extern const unsigned char python_logo_only_svg[1648];
     extern const unsigned char redo_svg[919];
     extern const unsigned char ribbon_bar_png[844];
     extern const unsigned char ribbon_buttonbar_png[300];

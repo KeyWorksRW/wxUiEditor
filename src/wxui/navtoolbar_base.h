@@ -12,6 +12,15 @@
 #include <wx/gdicmn.h>
 #include <wx/toolbar.h>
 
+namespace wxue_img
+{
+    // Images declared in this class module:
+
+    extern const unsigned char nav_coll_expand_svg[249];
+    extern const unsigned char nav_collapse_svg[244];
+    extern const unsigned char nav_expand_svg[248];
+}
+
 class NavToolbar : public wxToolBar
 {
 public:
@@ -31,15 +40,6 @@ public:
 
 protected:
 };
-
-namespace wxue_img
-{
-    // Images declared in this class module:
-
-    extern const unsigned char nav_coll_expand_svg[249];
-    extern const unsigned char nav_collapse_svg[244];
-    extern const unsigned char nav_expand_svg[248];
-}
 
 // ************* End of generated code ***********
 // DO NOT EDIT THIS COMMENT BLOCK!

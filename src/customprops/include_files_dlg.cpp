@@ -93,7 +93,7 @@ bool IncludeFilesDialog::Create(wxWindow* parent, wxWindowID id, const wxString&
 // clang-format on
 // ***********************************************
 
-/////////////////////////////////////////////////////////////////////////////
+/////////////////// Non-generated Copyright/License Info ////////////////////
 // Author:    Ralph Walden
 // Copyright: Copyright (c) 2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE

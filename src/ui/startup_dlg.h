@@ -21,13 +21,6 @@
 #include <wx/sizer.h>
 #include <wx/stattext.h>
 
-namespace wxue_img
-{
-    // Images declared in this class module:
-
-    extern const unsigned char logo_svg[1943];
-}
-
 class StartupDlg : public wxDialog
 {
 public:
@@ -42,24 +35,6 @@ public:
     bool Create(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "Open, Import, or Create Project",
         const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_DIALOG_STYLE, const wxString &name = wxDialogNameStr);
-
-    enum : size_t
-    {
-        START_MRU,
-        START_CONVERT,
-        START_OPEN,
-        START_EMPTY,
-    };
-
-    auto GetCommandType() const { return m_cmdType; }
-    tt_string& GetProjectFile() { return m_value; }
-
-protected:
-    void OnHyperlink(wxHyperlinkEvent& event);
-
-private:
-    tt_string m_value;
-    size_t m_cmdType { START_EMPTY };
 
 protected:
 
@@ -77,7 +52,6 @@ private:
     wxFlexGridSizer* m_recent_flex_grid;
     wxStaticText* m_name_version;
     wxStaticText* m_staticTextRecentProjects;  // // This should be hidden if there actually are any recent projects
-};
 
 // ************* End of generated code ***********
 // DO NOT EDIT THIS COMMENT BLOCK!
@@ -87,3 +61,23 @@ private:
 //
 // clang-format on
 // ***********************************************
+
+public:
+    enum : size_t
+    {
+        START_MRU,
+        START_CONVERT,
+        START_OPEN,
+        START_EMPTY,
+    };
+
+    auto GetCommandType() const { return m_cmdType; }
+    tt_string& GetProjectFile() { return m_value; }
+
+protected:
+    void OnHyperlink(wxHyperlinkEvent& event);
+
+private:
+    tt_string m_value;
+    size_t m_cmdType { START_EMPTY };
+};

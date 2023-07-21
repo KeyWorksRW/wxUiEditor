@@ -18,7 +18,7 @@
 #include "node_creator.h"  // NodeCreator class
 
 #include "../newdialogs/new_dialog.h"  // NewDialog -- Dialog for creating a new project dialog
-#include "newframe_base.h"            // NewFrame -- Dialog for creating a new project wxFrame
+#include "../newdialogs/new_frame.h"            // NewFrame -- Dialog for creating a new project wxFrame
 #include "newmdi_base.h"              // NewMdiForm -- Dialog for creating a new MDI application
 #include "newpanel_base.h"            // NewPanel -- Dialog for creating a new form panel
 #include "newribbon_base.h"           // NewRibbon -- Dialog for creating a new wxRibbonBar

@@ -40,7 +40,7 @@
 #include "project_handler.h"  // ProjectHandler class
 #include "utils.h"            // Utility functions that work with properties
 
-#include "wxui/startupdlg_base.h"  // CStartup -- Dialog to display is wxUE is launched with no arguments
+#include "ui/startup_dlg.h"  // StartupDlg -- Dialog to display if wxUE is launched with no arguments
 
 #include "pugixml.hpp"
 

@@ -5,6 +5,7 @@
 set (wxue_generated_code
 
     # Non-base classes
+    ${CMAKE_CURRENT_LIST_DIR}/../customprops/id_editor_dlg.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../customprops/include_files_dlg.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../internal/code_compare.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../internal/debugsettings.cpp
@@ -14,13 +15,14 @@ set (wxue_generated_code
     ${CMAKE_CURRENT_LIST_DIR}/../internal/unused_gen_dlg.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../internal/xrcpreview.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../newdialogs/new_dialog.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/../newdialogs/new_frame.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../panels/doc_view.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../tools/generate_dlg.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../tools/global_ids_dlg.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../tools/preview_settings.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/code_preference_dlg.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/../ui/code_preference_dlg.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/../ui/startup_dlg.cpp
     ${CMAKE_CURRENT_LIST_DIR}/dlg_gen_results.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/id_editor_dlg.cpp
     ${CMAKE_CURRENT_LIST_DIR}/import_winres_dlg.cpp
     ${CMAKE_CURRENT_LIST_DIR}/insert_widget.cpp
     ${CMAKE_CURRENT_LIST_DIR}/menu_auibar.cpp
@@ -33,13 +35,11 @@ set (wxue_generated_code
     ${CMAKE_CURRENT_LIST_DIR}/menuribbontype.cpp
     ${CMAKE_CURRENT_LIST_DIR}/menuspin.cpp
     ${CMAKE_CURRENT_LIST_DIR}/menustaticsizer.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/newframe_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/newmdi_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/newpanel_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/newribbon_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/newwizard_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/optionsdlg.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/startupdlg_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/ui_images.cpp
 
     # Base classes

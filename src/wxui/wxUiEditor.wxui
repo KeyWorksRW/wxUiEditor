@@ -57,6 +57,9 @@
         bitmap="SVG;import.svg;[16,16]" />
       <node
         class="embedded_image"
+        bitmap="SVG;logo.svg;[16,16]" />
+      <node
+        class="embedded_image"
         bitmap="Embed;logo16.png" />
       <node
         class="embedded_image"
@@ -2230,7 +2233,7 @@
       class="wxDialog"
       class_name="CodePreferenceDlg"
       title="Choose Code Preference"
-      base_file="code_preference_dlg"
+      base_file="..\ui\code_preference_dlg"
       use_derived_class="0">
       <node
         class="wxBoxSizer"
@@ -3004,7 +3007,7 @@
         class="wxDialog"
         class_name="IDEditorDlg"
         title="ID Editor"
-        base_file="id_editor_dlg"
+        base_file="..\customprops\id_editor_dlg"
         header_preamble="class Node;"
         class_members="&quot;Node* m_node;&quot; &quot;wxString m_result;&quot; &quot;bool m_prefix_selected { false };&quot; &quot;bool m_suffix_selected { false };&quot; &quot;&quot; &quot;&quot;"
         class_methods="&quot;wxString GetResults() { return m_result; }&quot; &quot;void SetNode(Node* node) { m_node = node; }&quot; &quot;bool SelectPrefixSuffix(Node* node);&quot;"
@@ -4280,8 +4283,9 @@
         class="wxDialog"
         class_name="NewFrame"
         title="New wxFrame window"
-        base_file="newframe_base"
-        inserted_hdr_code="void CreateNode();@@void VerifyClassName();@@@@private:@@bool m_is_info_shown { false };"
+        base_file="..\newdialogs\new_frame"
+        inserted_hdr_code="void CreateNode();@@void VerifyClassName();"
+        class_members="&quot;bool m_is_info_shown { false };&quot;"
         private_members="1"
         use_derived_class="0"
         wxEVT_INIT_DIALOG="[this](wxInitDialogEvent&amp; event)@@{@@m_classname->SetFocus();@@event.Skip();@@}">
@@ -4894,8 +4898,8 @@
       class_name="StartupDlg"
       icon="SVG;../art_src/logo.svg;[16,16]"
       title="Open, Import, or Create Project"
-      base_file="startupdlg_base"
-      inserted_hdr_code="enum : size_t@@{@@    START_MRU,@@    START_CONVERT,@@    START_OPEN,@@    START_EMPTY,@@};@@@@auto GetCommandType() const { return m_cmdType; }@@tt_string&amp; GetProjectFile() { return m_value; }@@@@protected:@@void OnHyperlink(wxHyperlinkEvent&amp; event);@@@@private:@@tt_string m_value;@@size_t m_cmdType { START_EMPTY };"
+      base_file="..\ui\startup_dlg"
+      no_closing_brace="1"
       private_members="1"
       use_derived_class="0"
       wxEVT_INIT_DIALOG="OnInit">

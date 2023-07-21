@@ -602,11 +602,6 @@ void BaseCodeGenerator::GenerateCppClass(Node* form_node, PANEL_PAGE panel_type)
         m_header->writeLine();
     }
 
-    if (m_panel_type != CPP_PANEL && m_embedded_images.size() && m_TranslationUnit)
-    {
-        WriteImagePostHeader();
-    }
-
     if (form_node->HasValue(prop_cpp_conditional) && m_TranslationUnit)
     {
         code.Eol().Str("#endif  // ").Str(form_node->value(prop_cpp_conditional));
@@ -1212,6 +1207,12 @@ void BaseCodeGenerator::GenerateClassHeader(Node* form_node, EventVector& events
         code.clear();
     }
 
+    if (m_embedded_images.size() && m_TranslationUnit)
+    {
+        WriteImagePostHeader();
+        m_header->writeLine();
+    }
+
     code.Str("class ");
     if (form_node->HasValue(prop_class_decoration))
         code.Str(prop_class_decoration) += " ";
@@ -1406,7 +1407,10 @@ void BaseCodeGenerator::GenerateClassHeader(Node* form_node, EventVector& events
     }
 
     m_header->Unindent();
-    m_header->writeLine("};");
+    if (not m_form_node->as_bool(prop_no_closing_brace))
+    {
+        m_header->writeLine("};");
+    }
 
     if (m_embedded_images.size() && !m_TranslationUnit)
     {

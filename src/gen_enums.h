@@ -321,6 +321,7 @@ namespace GenEnum
         prop_namespace,
         prop_native_col_header,
         prop_native_col_labels,
+        prop_no_closing_brace,
         prop_non_flexible_grow_mode,
         prop_normal_color,
         prop_note,
@@ -600,6 +601,7 @@ namespace GenEnum
 
         gen_Bitmaps,
         gen_Boolean_Validator,
+        gen_CPlusHeaderSettings,
         gen_CPlusSettings,
         gen_Choice_Validator,
         gen_Code,

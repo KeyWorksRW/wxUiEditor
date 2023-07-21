@@ -3,6 +3,7 @@ inline const char* wizard_xml = R"===(<?xml version="1.0"?>
 <GeneratorDefinitions>
 	<gen class="wxWizard" image="wxWizard" type="wizard">
 		<inherits class="C++ Settings" />
+		<inherits class="C++ Header Settings" />
 		<inherits class="C++ Derived Class Settings" />
 		<inherits class="wxPython Settings" />
 		<inherits class="wxRuby Settings" />

@@ -83,17 +83,17 @@ protected:
     // gen_Images node.
     //
     // This will call code.clear() before writing any code.
-    void WriteImagePreConstruction(Code& code);
+    void WriteImagePreConstruction(Code& code);  // declared in image_gen.cpp
 
-    // Generate code after the construcor for embedded images not defined in the gen_Images
+    // Generate code for embedded images not defined in the gen_Images
     // node.
     //
     // This will call code.clear() before writing any code.
-    void WriteImageConstruction(Code& code);
+    void WriteImageConstruction(Code& code);  // declared in image_gen.cpp
 
     // Generate extern statements after the header definition for embedded images not defined
     // in the gen_Images node.
-    void WriteImagePostHeader();
+    void WriteImagePostHeader();  // declared in image_gen.cpp
 
     void WritePropSourceCode(Node* node, GenEnum::PropName prop);
     void WritePropHdrCode(Node* node, GenEnum::PropName prop);
@@ -108,10 +108,10 @@ protected:
     void GenerateImagesForm();
 
     // This method is in image_gen.cpp, and handles Python code generation
-    void GeneratePythonImagesForm();
+    void GeneratePythonImagesForm();  // declared in image_gen.cpp
 
     // This method is in image_gen.cpp, and handles Ruby code generation
-    void GenerateRubyImagesForm();
+    void GenerateRubyImagesForm();  // declared in image_gen.cpp
 
     tt_string GetDeclaration(Node* node);
 

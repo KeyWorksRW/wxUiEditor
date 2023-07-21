@@ -51,9 +51,8 @@ void BaseCodeGenerator::WriteImagePreConstruction(Code& code)
 
     if (code.is_cpp() && is_namespace_written)
     {
-        code.CloseBrace();
+        code.CloseBrace().Eol();
     }
-    // m_source->writeLine(code);
 }
 
 // Generate code after the construcor for embedded images not defined in the gen_Images node.

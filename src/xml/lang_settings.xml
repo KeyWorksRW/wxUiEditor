@@ -13,23 +13,31 @@ inline const char* lang_settings_xml = R"===(<?xml version="1.0"?>
 			help="Lists one or more local header files to include in the generated header file." />
 		<property name="system_src_includes" type="include_files"
 			help="Lists one or more system header files to include in the generated header file." />
-		<property name="header_preamble" type="code_edit"
-			help="This preamble is placed unchanged in the generated header file after all wx/ include files. It is commonly used to add forward class names needed by methods and members you add to the Derived Class Settings." />
-		<property name="local_hdr_includes" type="include_files"
-			help="Lists one or more local header files to include in the generated header file." />
-		<property name="system_hdr_includes" type="include_files"
-			help="Lists one or more system header files to include in the generated header file." />
 		<property name="generate_ids" type="bool"
 			help="If checked, any non-wxWidgets ids will be created as an enumerated list unless you specically assign the value of the id (e.g., myid=100).">
 			1</property>
 		<property name="initial_enum_string" type="string"
 			help="The first id in a generated enum will be set to this value.">
 			wxID_HIGHEST + 1</property>
+		<property name="class_decoration" type="string"
+			help="This specifies the keyword or macro to add to the class declaration (such as __declspec(dllexport) )." />
+	</gen>
+
+	<gen class="C++ Header Settings" type="interface">
+		<property name="header_preamble" type="code_edit"
+			help="This preamble is placed unchanged in the generated header file after all wx/ include files. It is commonly used to add forward class names needed by methods and members you add to the Derived Class Settings." />
+		<property name="local_hdr_includes" type="include_files"
+			help="Lists one or more local header files to include in the generated header file." />
+		<property name="system_hdr_includes" type="include_files"
+			help="Lists one or more system header files to include in the generated header file." />
+		<property name="inserted_hdr_code" type="code_edit"
+			help="Specify code to insert into the header file at the end of the public: section. You may add protected: and private: sections as needed for additional methods and member variables." />
 		<property name="generate_const_values" type="bool"
 			help="If checked, each form's header file will have const values declared for some of the possible parameters. E.g., const int form_id = your_id. You can use this when creating multiple instances of a form with different construction parameters.">
 			0</property>
-		<property name="class_decoration" type="string"
-			help="This specifies the keyword or macro to add to the class declaration (such as __declspec(dllexport) )." />
+		<property name="no_closing_brace" type="bool"
+			help="If checked no closing brace (};) will be generated at the end of the header file. This allows you to extend the class definition after the generated code block.">
+			0</property>
 	</gen>
 
 	<gen class="C++ Derived Class Settings" type="interface">
@@ -46,8 +54,6 @@ inline const char* lang_settings_xml = R"===(<?xml version="1.0"?>
 			help="Additional class methods to add (useful if you are *not* using a derived class." />
 		<property name="class_members" type="stringlist_escapes"
 			help="Additional class variable members to add (useful if you are *not* using a derived class." />
-		<property name="inserted_hdr_code" type="code_edit"
-			help="Specify code to insert into the header file at the end of the public: section. You may add protected: and private: sections as needed for additional methods and member variables." />
 		<property name="private_members" type="bool"
 			help="Check this to make all protected: members private:. This can only be done if you are NOT creating a derived class (use_derived_class is unchecked)." />
 	</gen>

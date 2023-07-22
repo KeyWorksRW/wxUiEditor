@@ -16,7 +16,7 @@
 
 #include "newdialogs/new_dialog.h"  // NewDialog -- Dialog for creating a new project dialog
 #include "newdialogs/new_frame.h"   // NewFrame -- Dialog for creating a new project wxFrame
-#include "wxui/newwizard_base.h"    // NewWizard -- Dialog for creating a new wizard
+#include "newdialogs/new_wizard.h"  // NewWizard -- Dialog for creating a new wizard
 
 #include "../panels/navpopupmenu.h"  // NavPopupMenu -- Context-menu for Navigation Panel
 

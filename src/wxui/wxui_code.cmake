@@ -17,6 +17,10 @@ set (wxue_generated_code
     ${CMAKE_CURRENT_LIST_DIR}/../internal/xrcpreview.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../newdialogs/new_dialog.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../newdialogs/new_frame.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/../newdialogs/new_mdi.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/../newdialogs/new_panel.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/../newdialogs/new_ribbon.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/../newdialogs/new_wizard.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../panels/doc_view.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../tools/generate_dlg.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../tools/global_ids_dlg.cpp
@@ -36,10 +40,6 @@ set (wxue_generated_code
     ${CMAKE_CURRENT_LIST_DIR}/menuribbontype.cpp
     ${CMAKE_CURRENT_LIST_DIR}/menuspin.cpp
     ${CMAKE_CURRENT_LIST_DIR}/menustaticsizer.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/newmdi_base.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/newpanel_base.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/newribbon_base.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/newwizard_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/optionsdlg.cpp
     ${CMAKE_CURRENT_LIST_DIR}/ui_images.cpp
 

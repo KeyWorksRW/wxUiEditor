@@ -29,7 +29,7 @@ EditCodeProperty::EditCodeProperty(const wxString& label, NodeProperty* prop) :
 
 EditCodeDialog::EditCodeDialog(wxWindow* parent, NodeProperty* prop) : EditCodeDialogBase(parent)
 {
-    SetTitle(tt_string() << prop->DeclName() << " property editor");
+    SetTitle(tt_string() << prop->declName() << " property editor");
     m_value = prop->as_wxString();
 
     m_stc->SetLexer(wxSTC_LEX_CPP);

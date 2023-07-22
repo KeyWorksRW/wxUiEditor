@@ -40,135 +40,134 @@ public:
     Node(NodeDeclaration* declaration);
 
     // Use get_name() if you want the enum value.
-    auto DeclName() const noexcept { return m_declaration->DeclName(); }
+    auto declName() const noexcept { return m_declaration->declName(); }
 
-    NodeSharedPtr GetParentPtr() const noexcept { return m_parent; }
-    Node* GetParent() const noexcept { return m_parent.get(); }
-    Node* get_parent() const noexcept { return m_parent.get(); }
+    // Given a Node*, you can call this to get the std::shared_ptr<Node> for it.
+    NodeSharedPtr getSharedPtr() { return shared_from_this(); }
 
-    void SetParent(NodeSharedPtr parent) { m_parent = parent; }
-    void SetParent(Node* parent) { m_parent = parent->GetSharedPtr(); }
+    NodeSharedPtr getParentPtr() const noexcept { return m_parent; }
+    Node* getParent() const noexcept { return m_parent.get(); }
 
-    NodeProperty* get_prop_ptr(PropName name);
-    NodeProperty* prop(PropName name) { return get_prop_ptr(name); }
+    NodeSharedPtr getChildPtr(size_t index) { return m_children.at(index); }
+    Node* getChild(size_t index) const noexcept { return m_children.at(index).get(); }
+    auto& getChildNodePtrs() { return m_children; }
 
-    NodeEvent* GetEvent(tt_string_view name);
-    NodeMapEvents& GetMapEvents() { return m_map_events; }
+    void setParent(NodeSharedPtr parent) { m_parent = parent; }
+    void setParent(Node* parent) { m_parent = parent->getSharedPtr(); }
 
-    auto GetPropertyCount() const { return m_properties.size(); }
-    size_t GetInUseEventCount() const;
+    NodeProperty* getPropPtr(PropName name);
 
-    // Equivalent to AddChild(child); child->SetParent(this);
+    NodeEvent* getEvent(tt_string_view name);
+    NodeMapEvents& getMapEvents() { return m_map_events; }
+
+    auto getPropertyCount() const { return m_properties.size(); }
+    size_t getInUseEventCount() const;
+
+    // Equivalent to addChild(child); child->setParent(this);
     // Returns false if child is not allowed for this node.
-    bool Adopt(NodeSharedPtr child);
+    bool adoptChild(NodeSharedPtr child);
 
-    bool AddChild(NodeSharedPtr node);
-    bool AddChild(Node* node);
-    bool AddChild(size_t index, NodeSharedPtr node);
-    bool AddChild(size_t index, Node* node);
+    bool addChild(NodeSharedPtr node);
+    bool addChild(Node* node);
+    bool addChild(size_t index, NodeSharedPtr node);
+    bool addChild(size_t index, Node* node);
 
-    // Returns the child's position or GetChildCount() in case of not finding it
-    size_t GetChildPosition(Node* node);
-    size_t GetChildPosition(const NodeSharedPtr& node) { return GetChildPosition(node.get()); }
-    bool ChangeChildPosition(NodeSharedPtr node, size_t pos);
+    // Returns the child's position or getChildCount() in case of not finding it
+    size_t getChildPosition(Node* node);
+    size_t getChildPosition(const NodeSharedPtr& node) { return getChildPosition(node.get()); }
+    bool changeChildPosition(NodeSharedPtr node, size_t pos);
 
-    void RemoveChild(Node* node);
-    void RemoveChild(const NodeSharedPtr& node) { RemoveChild(node.get()); }
-    void RemoveChild(size_t index);
-    void RemoveAllChildren() { m_children.clear(); }
+    void removeChild(Node* node);
+    void removeChild(const NodeSharedPtr& node) { removeChild(node.get()); }
+    void removeChild(size_t index);
+    void removeAllChildren() { m_children.clear(); }
 
-    NodeSharedPtr GetChildPtr(size_t index) { return m_children.at(index); }
-    Node* GetChild(size_t index) const noexcept { return m_children.at(index).get(); }
-    auto& GetChildNodePtrs() { return m_children; }
+    auto getChildCount() const { return m_children.size(); }
 
-    auto GetChildCount() const { return m_children.size(); }
+    bool isChildAllowed(Node* child);
+    bool isChildAllowed(NodeDeclaration* child);
+    bool isChildAllowed(const NodeSharedPtr& child) { return isChildAllowed(child->getNodeDeclaration()); }
 
-    bool IsChildAllowed(Node* child);
-    bool IsChildAllowed(NodeDeclaration* child);
-    bool IsChildAllowed(const NodeSharedPtr& child) { return IsChildAllowed(child->GetNodeDeclaration()); }
+    auto getGenType() const { return m_declaration->getGenType(); }
 
-    auto gen_type() const { return m_declaration->gen_type(); }
+    // Returns the enum value for the name. Use declName() to get a char pointer.
+    GenName getGenName() const { return m_declaration->getGenName(); }
 
-    // Returns the enum value for the name. Use DeclName() to get a char pointer.
-    GenName gen_name() const { return m_declaration->gen_name(); }
-
-    bool isType(GenType type) const noexcept { return (type == m_declaration->gen_type()); }
-    bool isGen(GenName name) const noexcept { return (name == m_declaration->gen_name()); }
+    bool isType(GenType type) const noexcept { return (type == m_declaration->getGenType()); }
+    bool isGen(GenName name) const noexcept { return (name == m_declaration->getGenName()); }
     bool isParent(GenName name) const noexcept
     {
-        return (GetParent() ? name == GetParent()->m_declaration->gen_name() : false);
+        return (getParent() ? name == getParent()->m_declaration->getGenName() : false);
     }
 
     // Returns true if this node is a folder, subfolder, or Images List
-    bool IsNonWidget() const noexcept { return (isGen(gen_folder) || isGen(gen_sub_folder) || isGen(gen_Images)); }
+    bool isNonWidget() const noexcept { return (isGen(gen_folder) || isGen(gen_sub_folder) || isGen(gen_Images)); }
 
     // Returns true if the node is either a folder or subfolder
-    bool IsFolder() const noexcept { return (isGen(gen_folder) || isGen(gen_sub_folder)); }
+    bool isFolder() const noexcept { return (isGen(gen_folder) || isGen(gen_sub_folder)); }
 
-    bool IsWidget() const noexcept { return isType(type_widget); }
-    bool IsWizard() const noexcept { return isType(type_wizard); }
-    bool IsMenuBar() const noexcept { return (isType(type_menubar_form) || isType(type_menubar)); }
-    bool IsToolBar() const noexcept
+    bool isWidget() const noexcept { return isType(type_widget); }
+    bool isWizard() const noexcept { return isType(type_wizard); }
+    bool isMenuBar() const noexcept { return (isType(type_menubar_form) || isType(type_menubar)); }
+    bool isToolBar() const noexcept
     {
         return (isType(type_toolbar) || isType(type_toolbar_form) || isType(type_aui_toolbar_form) ||
                 isType(type_aui_toolbar));
     }
-    bool IsStatusBar() const noexcept { return isType(type_statusbar); }
-    bool IsRibbonBar() const noexcept { return isType(type_ribbonbar); }
+    bool isStatusBar() const noexcept { return isType(type_statusbar); }
+    bool isRibbonBar() const noexcept { return isType(type_ribbonbar); }
 
-    bool IsForm() const noexcept;
-    bool IsFormParent() const noexcept { return (isGen(gen_Project) || isGen(gen_folder) || isGen(gen_sub_folder)); };
+    bool isForm() const noexcept;
+    bool isFormParent() const noexcept { return (isGen(gen_Project) || isGen(gen_folder) || isGen(gen_sub_folder)); };
 
-    bool IsStaticBoxSizer() const noexcept
+    bool isStaticBoxSizer() const noexcept
     {
         return (isGen(gen_wxStaticBoxSizer) || isGen(gen_StaticCheckboxBoxSizer) || isGen(gen_StaticRadioBtnBoxSizer));
     }
-    bool IsSpacer() const noexcept { return isGen(gen_spacer); }
+    bool isSpacer() const noexcept { return isGen(gen_spacer); }
 
-    bool IsSizer() const noexcept { return (isType(type_sizer) || isType(type_gbsizer)); }
-    bool IsContainer() const noexcept { return (isType(type_container) || tt::contains(map_GenTypes[gen_type()], "book")); }
+    bool isSizer() const noexcept { return (isType(type_sizer) || isType(type_gbsizer)); }
+    bool isContainer() const noexcept
+    {
+        return (isType(type_container) || tt::contains(map_GenTypes[getGenType()], "book"));
+    }
 
     // Returns true if access property == none or there is no access property
-    bool IsLocal() const noexcept;
+    bool isLocal() const noexcept;
 
-    auto GetNodeType() { return m_declaration->GetNodeType(); }
-    auto GetGenerator() const { return m_declaration->GetGenerator(); }
+    auto getNodeType() { return m_declaration->getNodeType(); }
+    auto getGenerator() const { return m_declaration->getGenerator(); }
 
     // Returns the value of the property "var_name" or "class_name"
-    const tt_string& get_node_name() const;
+    const tt_string& getNodeName() const;
 
     // Returns the value of the parent property "var_name" or "class_name"
-    const tt_string& get_parent_name() const;
+    const tt_string& getParentName() const;
 
     // Returns this if the node is a form, else walks up node tree to find the parent form.
-    Node* get_form() noexcept;
+    Node* getForm() noexcept;
 
     // Finds the parent form and returns the value of the it's property "class_name"
-    const tt_string& get_form_name();
+    const tt_string& getFormName();
 
     // Returns the folder node if there is one, nullptr otherwise.
-    Node* get_folder() noexcept;
+    Node* getFolder() noexcept;
 
     // This will walk up the parent tree until it finds a sub-folder, folder, or project
     // node. Use this to find a parent for a new form.
-    Node* get_ValidFormParent() noexcept;
+    Node* getValidFormParent() noexcept;
 
-    NodeProperty* get_property(PropName name)
-    {
-        if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
-            return &m_properties[result->second];
-        else
-            return nullptr;
-    }
-
-    NodeDeclaration* GetNodeDeclaration() { return m_declaration; }
+    NodeDeclaration* getNodeDeclaration() { return m_declaration; }
 
     // Returns true if the property exists, has a value (!= wxDefaultSize, !=
     // wxDefaultPosition, or non-sepcified bitmap)
-    bool HasValue(PropName name) const;
+    bool hasValue(PropName name) const;
 
     // Returns true if the property exists
-    bool HasProp(PropName name) const { return (m_prop_indices.find(name) != m_prop_indices.end()); }
+    bool hasProp(PropName name) const { return (m_prop_indices.find(name) != m_prop_indices.end()); }
+
+    // Avoid the temptation to use tt_string_view instead of const char* -- the MSVC compiler
+    // will assume value is a bool if you call  isPropValue(propm, "string")
 
     // Returns true only if the property exists and it's value is equal to the parameter
     // value.
@@ -178,26 +177,24 @@ public:
     // value.
     bool isPropValue(PropName name, bool value) const noexcept;
 
-    // Avoid the temptation to use tt_string_view instead of const char* -- the MSVC compiler will assume value is a bool if
-    // you call  is_value(propm, "string")
+    bool isPropValue(PropName name, int value) const noexcept;
 
-    bool is_value(PropName name, const char* value) const noexcept { return isPropValue(name, value); }
-    bool is_value(PropName name, bool value) const noexcept { return isPropValue(name, value); }
-    bool is_value(PropName name, int value) const noexcept;
-    int prop_as_mockup(PropName name, std::string_view prefix) const;
+    // Converts friendly name to wxWidgets constant, and then returns the integer value of
+    // that constant.
+    int as_mockup(PropName name, std::string_view prefix) const;
 
     // Use with caution! This allows you to modify the property string directly.
     //
     // Returns nullptr if the property doesn't exist.
-    tt_string* prop_as_raw_ptr(PropName name);
+    tt_string* getPropValuePtr(PropName name);
 
-    const tt_string& prop_default_value(PropName name);
+    const tt_string& getPropDefaultValue(PropName name);
 
     // Sets value only if the property exists, returns false if it doesn't exist.
     template <typename T>
     bool set_value(PropName name, T value)
     {
-        if (auto prop = get_prop_ptr(name); prop)
+        if (auto prop = getPropPtr(name); prop)
         {
             prop->set_value(value);
             return true;
@@ -209,9 +206,7 @@ public:
     }
 
     // Returns string containing the property ID without any assignment if it is a custom id.
-    tt_string get_prop_id() const;
-
-    const tt_string& value(PropName name) const { return as_string(name); }
+    tt_string getPropId() const;
 
     const tt_string_view view(PropName name) const { return as_string(name); }
 
@@ -361,86 +356,84 @@ public:
     std::vector<NODEPROP_RADIOBOX_ITEM> as_radiobox_items(PropName name);
     std::vector<NODEPROP_BMP_COMBO_ITEM> as_bmp_combo_items(PropName name);
 
-    wxSizerFlags GetSizerFlags() const;
+    wxSizerFlags getSizerFlags() const;
 
-    NodeSharedPtr GetSharedPtr() { return shared_from_this(); }
+    std::vector<NodeProperty>& getPropsVector() { return m_properties; }
 
-    std::vector<NodeProperty>& get_props_vector() { return m_properties; }
-
-    NodeProperty* AddNodeProperty(PropDeclaration* info);
-    void AddNodeEvent(const NodeEventInfo* info);
-    void CreateDoc(pugi::xml_document& doc);
+    NodeProperty* addNodeProperty(PropDeclaration* info);
+    void addNodeEvent(const NodeEventInfo* info);
+    void createDoc(pugi::xml_document& doc);
 
     // This creates an orphaned node -- it is the caller's responsibility to hook it up with
     // a parent.
-    Node* CreateChildNode(GenName name);
+    Node* createChildNode(GenName name);
 
-    // Gets the current selected node and uses that to call CreateChildNode().
-    Node* CreateNode(GenName name);
+    // Gets the current selected node and uses that to call createChildNode().
+    Node* createNode(GenName name);
 
     // This is the preferred way to create a new node when requested by the user (tool, menu,
     // or dialog). Besides creating the node, some nodes will get special processing to
     // automatically create additional child nodes.
-    bool CreateToolNode(GenName name);
+    bool createToolNode(GenName name);
 
     // This will modify the property and fire a EVT_NodePropChange event if the property
     // actually changed
-    void ModifyProperty(PropName name, tt_string_view value);
+    void modifyProperty(PropName name, tt_string_view value);
 
     // This will modify the property and fire a EVT_NodePropChange event
-    void ModifyProperty(tt_string_view name, tt_string_view value);
+    void modifyProperty(tt_string_view name, tt_string_view value);
 
     // This will modify the property and fire a EVT_NodePropChange event
-    void ModifyProperty(tt_string_view name, int value);
+    void modifyProperty(tt_string_view name, int value);
 
     // This will modify the property and fire a EVT_NodePropChange event
-    void ModifyProperty(NodeProperty* prop, tt_string_view value);
+    void modifyProperty(NodeProperty* prop, tt_string_view value);
 
     // This will modify the property and fire a EVT_NodePropChange event
-    void ModifyProperty(NodeProperty* prop, int value);
+    void modifyProperty(NodeProperty* prop, int value);
 
     // Both var_name and validator_variable properties are checked
-    tt_string GetUniqueName(const tt_string& proposed_name, PropName prop_name = prop_var_name);
+    tt_string getUniqueName(const tt_string& proposed_name, PropName prop_name = prop_var_name);
 
     // Fix duplicate names in the current node and all of it's children
-    void FixDuplicateNodeNames(Node* form = nullptr);
+    void fixDuplicateNodeNames(Node* form = nullptr);
 
-    bool FixDuplicateName();
+    bool fixDuplicateName();
 
     // Collects all unique var_name, checkbox_var_name, radiobtn_var_name and
     // validator_variable properties in the current form
     //
     // If prop_name is != prop_var_name, only that property is collected.
-    void CollectUniqueNames(std::unordered_set<std::string>& name_set, Node* cur_node, PropName prop_name = prop_var_name);
+    void collectUniqueNames(std::unordered_set<std::string>& name_set, Node* cur_node, PropName prop_name = prop_var_name);
 
-    ptrdiff_t FindInsertionPos(Node* child) const;
-    ptrdiff_t FindInsertionPos(const NodeSharedPtr& child) const { return FindInsertionPos(child.get()); }
+    ptrdiff_t findInsertionPos(Node* child) const;
+    ptrdiff_t findInsertionPos(const NodeSharedPtr& child) const { return findInsertionPos(child.get()); }
 
     // Currently only called in debug builds, but available for release builds should we need it
-    size_t GetNodeSize() const;
+    size_t getNodeSize() const;
 
     // This writes XML files in the 1.1 layout using attributes for properties
-    void AddNodeToDoc(pugi::xml_node& object, int& project_version);
+    void addNodeToDoc(pugi::xml_node& object, int& project_version);
 
-    void CalcNodeHash(size_t& hash) const;
+    void calcNodeHash(size_t& hash) const;
 
-    ptrdiff_t GetAllowableChildren(GenType child_gen_type) const
+    ptrdiff_t getAllowableChildren(GenType child_gen_type) const
     {
-        return m_declaration->GetAllowableChildren(child_gen_type);
+        return m_declaration->getAllowableChildren(child_gen_type);
     }
 
     // Collect a vector of pointers to all children having the specified property with a
     // non-empty value.
-    std::vector<NodeProperty*> FindAllChildProperties(PropName name);
+    std::vector<NodeProperty*> findAllChildProperties(PropName name);
 
-    void CopyEventsFrom(Node*);
-    void CopyEventsFrom(const NodeSharedPtr& node) { return CopyEventsFrom(node.get()); }
+    void copyEventsFrom(Node*);
+    void copyEventsFrom(const NodeSharedPtr& node) { return copyEventsFrom(node.get()); }
 
-    void SetMockupObject(wxObject* object) { m_mockup_object = object; }
-    const wxObject* GetMockupObject() const { return m_mockup_object; }
+    void setMockupObject(wxObject* object) { m_mockup_object = object; }
+    const wxObject* getMockupObject() const { return m_mockup_object; }
 
 protected:
-    void FindAllChildProperties(std::vector<NodeProperty*>& list, PropName name);
+    void findAllChildProperties(std::vector<NodeProperty*>& list, PropName name);
 
 private:
     NodeSharedPtr m_parent;

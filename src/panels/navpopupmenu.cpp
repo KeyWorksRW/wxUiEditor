@@ -33,12 +33,12 @@ NavPopupMenu::NavPopupMenu(Node* node) : m_node(node)
         return;  // theoretically impossible, but don't crash if it happens
     }
 
-    if (node->GetParent() && node->GetParent()->IsToolBar())
+    if (node->getParent() && node->getParent()->isToolBar())
     {
         m_is_parent_toolbar = true;
     }
 
-    if (node->IsSizer())
+    if (node->isSizer())
     {
         CreateSizerMenu(node);
     }
@@ -57,16 +57,16 @@ void NavPopupMenu::OnMenuEvent(wxCommandEvent& event)
             {
                 if (m_node->isType(type_bookpage) || m_node->isType(type_wizardpagesimple))
                 {
-                    if (m_child && m_child->IsSizer())
+                    if (m_child && m_child->isSizer())
                     {
-                        m_child = m_child->GetParent();
+                        m_child = m_child->getParent();
                     }
                 }
 
                 if (m_child)
-                    m_child->CreateToolNode(m_tool_name);
+                    m_child->createToolNode(m_tool_name);
                 else
-                    wxGetFrame().CreateToolNode(m_tool_name);
+                    wxGetFrame().createToolNode(m_tool_name);
             }
             break;
 
@@ -74,93 +74,93 @@ void NavPopupMenu::OnMenuEvent(wxCommandEvent& event)
             if (m_tool_name == gen_wxTreeListCtrl)
             {
                 if (m_child)
-                    m_child->CreateToolNode(gen_TreeListCtrlColumn);
+                    m_child->createToolNode(gen_TreeListCtrlColumn);
                 else
-                    wxGetFrame().CreateToolNode(gen_TreeListCtrlColumn);
+                    wxGetFrame().createToolNode(gen_TreeListCtrlColumn);
             }
             break;
 
         case MenuNEW_SIBLING_BOX_SIZER:
-            m_node->GetParent()->CreateToolNode(gen_wxBoxSizer);
+            m_node->getParent()->createToolNode(gen_wxBoxSizer);
             break;
 
         case MenuNEW_SIBLING_STATIC_SIZER:
-            m_node->GetParent()->CreateToolNode(gen_wxStaticBoxSizer);
+            m_node->getParent()->createToolNode(gen_wxStaticBoxSizer);
             break;
 
         case MenuNEW_SIBLING_WRAP_SIZER:
-            m_node->GetParent()->CreateToolNode(gen_wxWrapSizer);
+            m_node->getParent()->createToolNode(gen_wxWrapSizer);
             break;
 
         case MenuNEW_SIBLING_GRID_SIZER:
-            m_node->GetParent()->CreateToolNode(gen_wxGridSizer);
+            m_node->getParent()->createToolNode(gen_wxGridSizer);
             break;
 
         case MenuNEW_SIBLING_FLEX_GRID_SIZER:
-            m_node->GetParent()->CreateToolNode(gen_wxFlexGridSizer);
+            m_node->getParent()->createToolNode(gen_wxFlexGridSizer);
             break;
 
         case MenuNEW_SIBLING_GRIDBAG_SIZER:
-            m_node->GetParent()->CreateToolNode(gen_wxGridBagSizer);
+            m_node->getParent()->createToolNode(gen_wxGridBagSizer);
             break;
 
         case MenuNEW_SIBLING_STD_DIALG_BTNS:
-            m_node->GetParent()->CreateToolNode(gen_wxStdDialogButtonSizer);
+            m_node->getParent()->createToolNode(gen_wxStdDialogButtonSizer);
             break;
 
         case MenuNEW_SIBLING_SPACER:
-            m_node->GetParent()->CreateToolNode(gen_spacer);
+            m_node->getParent()->createToolNode(gen_spacer);
             break;
 
         case MenuNEW_CHILD_BOX_SIZER:
-            m_sizer_node->CreateToolNode(gen_wxBoxSizer);
+            m_sizer_node->createToolNode(gen_wxBoxSizer);
             break;
 
         case MenuNEW_CHILD_STATIC_SIZER:
-            m_sizer_node->CreateToolNode(gen_wxStaticBoxSizer);
+            m_sizer_node->createToolNode(gen_wxStaticBoxSizer);
             break;
 
         case MenuNEW_CHILD_WRAP_SIZER:
-            m_sizer_node->CreateToolNode(gen_wxWrapSizer);
+            m_sizer_node->createToolNode(gen_wxWrapSizer);
             break;
 
         case MenuNEW_CHILD_GRID_SIZER:
-            m_sizer_node->CreateToolNode(gen_wxGridSizer);
+            m_sizer_node->createToolNode(gen_wxGridSizer);
             break;
 
         case MenuNEW_CHILD_FLEX_GRID_SIZER:
-            m_sizer_node->CreateToolNode(gen_wxFlexGridSizer);
+            m_sizer_node->createToolNode(gen_wxFlexGridSizer);
             break;
 
         case MenuNEW_CHILD_GRIDBAG_SIZER:
-            m_sizer_node->CreateToolNode(gen_wxGridBagSizer);
+            m_sizer_node->createToolNode(gen_wxGridBagSizer);
             break;
 
         case MenuNEW_CHILD_STD_DIALG_BTNS:
-            wxGetFrame().CreateToolNode(gen_wxStdDialogButtonSizer);
+            wxGetFrame().createToolNode(gen_wxStdDialogButtonSizer);
             break;
 
         case MenuNEW_CHILD_SPACER:
-            wxGetFrame().CreateToolNode(gen_spacer);
+            wxGetFrame().createToolNode(gen_spacer);
             break;
 
         case MenuNEW_TOOLBAR:
-            wxGetFrame().CreateToolNode(gen_wxToolBar);
+            wxGetFrame().createToolNode(gen_wxToolBar);
             break;
 
         case MenuNEW_INFOBAR:
-            wxGetFrame().CreateToolNode(gen_wxInfoBar);
+            wxGetFrame().createToolNode(gen_wxInfoBar);
             break;
 
         case MenuADD_MENU:
-            wxGetFrame().CreateToolNode(gen_wxMenu);
+            wxGetFrame().createToolNode(gen_wxMenu);
             break;
 
         case MenuADD_TOOL_SEPARATOR:
             if (m_child)
-                m_child->CreateToolNode(gen_toolSeparator);
+                m_child->createToolNode(gen_toolSeparator);
             else
-                wxGetFrame().CreateToolNode(gen_toolSeparator);
+                wxGetFrame().createToolNode(gen_toolSeparator);
             break;
 
         case MenuEXPAND_ALL:
@@ -295,15 +295,15 @@ void NavPopupMenu::OnMenuEvent(wxCommandEvent& event)
         case MenuADD_PAGE:
             if (m_node->isGen(gen_BookPage))
             {
-                m_node->GetParent()->CreateToolNode(gen_BookPage);
+                m_node->getParent()->createToolNode(gen_BookPage);
             }
             else if (m_node->isGen(gen_wxWizardPageSimple))
             {
-                m_node->GetParent()->CreateToolNode(gen_wxWizardPageSimple);
+                m_node->getParent()->createToolNode(gen_wxWizardPageSimple);
             }
             else
             {
-                wxGetFrame().CreateToolNode(gen_wxPanel);
+                wxGetFrame().createToolNode(gen_wxPanel);
             }
             break;
 
@@ -350,7 +350,7 @@ void NavPopupMenu::CreateSizerMenu(Node* node)
 
     m_sizer_node = node;
 
-    bool isTopSizer = (node->GetParent()->IsForm() || node->GetParent()->IsContainer());
+    bool isTopSizer = (node->getParent()->isForm() || node->getParent()->isContainer());
     wxMenuItem* menu_item;
     wxMenu* sub_menu;
 
@@ -457,9 +457,9 @@ void NavPopupMenu::CreateCommonMenu(Node* node)
 
 void NavPopupMenu::MenuAddCommands(Node* node)
 {
-    if (node->IsForm() || node->isGen(gen_Images) || node->isGen(gen_embedded_image))
+    if (node->isForm() || node->isGen(gen_Images) || node->isGen(gen_embedded_image))
     {
-        if (!node->isGen(gen_wxWizard) && !node->IsToolBar())
+        if (!node->isGen(gen_wxWizard) && !node->isToolBar())
         {
             return;
         }
@@ -470,7 +470,7 @@ void NavPopupMenu::MenuAddCommands(Node* node)
         return;
     }
 
-    if (auto gen = node->GetGenerator(); gen)
+    if (auto gen = node->getGenerator(); gen)
     {
         if (gen->PopupMenuAddCommands(this, node))
         {
@@ -481,7 +481,7 @@ void NavPopupMenu::MenuAddCommands(Node* node)
 
     bool add_sizer = true;
 
-    switch (node->gen_name())
+    switch (node->getGenName())
     {
         case gen_wxAuiNotebook:
         case gen_wxChoicebook:
@@ -496,7 +496,7 @@ void NavPopupMenu::MenuAddCommands(Node* node)
                 wxEVT_MENU,
                 [](wxCommandEvent&)
                 {
-                    wxGetFrame().CreateToolNode(gen_BookPage);
+                    wxGetFrame().createToolNode(gen_BookPage);
                 },
                 MenuADD_PAGE);
             break;
@@ -509,7 +509,7 @@ void NavPopupMenu::MenuAddCommands(Node* node)
                 wxEVT_MENU,
                 [](wxCommandEvent&)
                 {
-                    wxGetFrame().CreateToolNode(gen_wxRibbonPage);
+                    wxGetFrame().createToolNode(gen_wxRibbonPage);
                 },
                 MenuADD_RIBBON_PAGE);
             break;
@@ -521,13 +521,13 @@ void NavPopupMenu::MenuAddCommands(Node* node)
                 wxEVT_MENU,
                 [](wxCommandEvent&)
                 {
-                    wxGetFrame().CreateToolNode(gen_wxRibbonPanel);
+                    wxGetFrame().createToolNode(gen_wxRibbonPanel);
                 },
                 MenuADD_RIBBON_PANEL);
             break;
 
         case gen_wxRibbonPanel:
-            if (node->GetChildCount())
+            if (node->getChildCount())
             {
                 return;
             }
@@ -538,7 +538,7 @@ void NavPopupMenu::MenuAddCommands(Node* node)
                     wxEVT_MENU,
                     [](wxCommandEvent&)
                     {
-                        wxGetFrame().CreateToolNode(gen_wxRibbonButtonBar);
+                        wxGetFrame().createToolNode(gen_wxRibbonButtonBar);
                     },
                     MenuADD_RIBBON_BUTTONBAR);
 
@@ -547,7 +547,7 @@ void NavPopupMenu::MenuAddCommands(Node* node)
                     wxEVT_MENU,
                     [](wxCommandEvent&)
                     {
-                        wxGetFrame().CreateToolNode(gen_wxRibbonToolBar);
+                        wxGetFrame().createToolNode(gen_wxRibbonToolBar);
                     },
                     MenuADD_RIBBON_TOOLBAR);
 
@@ -556,7 +556,7 @@ void NavPopupMenu::MenuAddCommands(Node* node)
                     wxEVT_MENU,
                     [](wxCommandEvent&)
                     {
-                        wxGetFrame().CreateToolNode(gen_wxRibbonGallery);
+                        wxGetFrame().createToolNode(gen_wxRibbonGallery);
                     },
                     MenuADD_RIBBON_GALLERY);
             }
@@ -586,7 +586,7 @@ void NavPopupMenu::MenuAddCommands(Node* node)
                 wxEVT_MENU,
                 [](wxCommandEvent&)
                 {
-                    wxGetFrame().CreateToolNode(gen_wxMenu);
+                    wxGetFrame().createToolNode(gen_wxMenu);
                 },
                 MenuADD_MENU);
             break;
@@ -602,7 +602,7 @@ void NavPopupMenu::MenuAddCommands(Node* node)
                 wxEVT_MENU,
                 [](wxCommandEvent&)
                 {
-                    wxGetFrame().CreateToolNode(gen_wxMenuItem);
+                    wxGetFrame().createToolNode(gen_wxMenuItem);
                 },
                 MenuADD_MENUITEM);
 
@@ -611,7 +611,7 @@ void NavPopupMenu::MenuAddCommands(Node* node)
                 wxEVT_MENU,
                 [](wxCommandEvent&)
                 {
-                    wxGetFrame().CreateToolNode(gen_submenu);
+                    wxGetFrame().createToolNode(gen_submenu);
                 },
                 MenuADD_SUBMENU);
 
@@ -620,7 +620,7 @@ void NavPopupMenu::MenuAddCommands(Node* node)
                 wxEVT_MENU,
                 [](wxCommandEvent&)
                 {
-                    wxGetFrame().CreateToolNode(gen_separator);
+                    wxGetFrame().createToolNode(gen_separator);
                 },
                 MenuADD_MENU_SEPARATOR);
 
@@ -633,7 +633,7 @@ void NavPopupMenu::MenuAddCommands(Node* node)
                 wxEVT_MENU,
                 [](wxCommandEvent&)
                 {
-                    wxGetFrame().CreateToolNode(gen_propGridPage);
+                    wxGetFrame().createToolNode(gen_propGridPage);
                 },
                 MenuADD_PROPGRID_PAGE);
             break;
@@ -650,7 +650,7 @@ void NavPopupMenu::MenuAddCommands(Node* node)
                     wxEVT_MENU,
                     [](wxCommandEvent&)
                     {
-                        wxGetFrame().CreateToolNode(gen_propGridCategory);
+                        wxGetFrame().createToolNode(gen_propGridCategory);
                     },
                     MenuADD_PROPGRID_CATEGORY);
             }
@@ -659,7 +659,7 @@ void NavPopupMenu::MenuAddCommands(Node* node)
                 wxEVT_MENU,
                 [](wxCommandEvent&)
                 {
-                    wxGetFrame().CreateToolNode(gen_propGridItem);
+                    wxGetFrame().createToolNode(gen_propGridItem);
                 },
                 MenuADD_PROPGRID_ITEM);
             break;
@@ -731,7 +731,7 @@ void NavPopupMenu::MenuAddMoveCommands(Node* node)
     menu_item = sub_menu->Append(MenuMOVE_DOWN, "Down\tAlt+Down", "Moves selected item down");
     menu_item->SetBitmap(wxArtProvider::GetBitmapBundle(wxART_GO_DOWN, wxART_MENU));
 
-    auto gen = node->GetGenerator();
+    auto gen = node->getGenerator();
     if (!m_is_parent_toolbar && gen && gen->CanChangeParent(node))
     {
         menu_item = sub_menu->Append(MenuMOVE_LEFT, "Left\tAlt+Left", "Moves selected item left");
@@ -759,7 +759,7 @@ void NavPopupMenu::MenuAddMoveCommands(Node* node)
 
         AppendSubMenu(sub_menu, "&Move into new sizer");
     }
-    else if (node->IsForm())
+    else if (node->isForm())
     {
         menu_item = sub_menu->Append(MenuNEW_PARENT_FOLDER, "Move into new folder");
         menu_item->SetBitmap(GetInternalImage("folder"));
@@ -911,7 +911,7 @@ void NavPopupMenu::MenuAddStandardCommands(Node* node)
         {
             auto paste_menu_item = Append(wxID_PASTE);
             paste_menu_item->SetBitmap(wxArtProvider::GetBitmapBundle(wxART_PASTE, wxART_MENU));
-            if (!clip_node || !clip_node->IsForm())
+            if (!clip_node || !clip_node->isForm())
             {
                 paste_menu_item->Enable(false);
                 m_isPasteAllowed = false;
@@ -947,7 +947,7 @@ void NavPopupMenu::MenuAddStandardCommands(Node* node)
 
 void NavPopupMenu::CreateSizerParent(Node* node, tt_string_view widget)
 {
-    auto parent = node->GetParent();
+    auto parent = node->getParent();
     if (!parent)
     {
         // If this actually happens, then we silently do nothing leaving the user no idea of why it didn't work
@@ -955,13 +955,13 @@ void NavPopupMenu::CreateSizerParent(Node* node, tt_string_view widget)
         return;
     }
 
-    auto childPos = parent->GetChildPosition(node);
+    auto childPos = parent->getChildPosition(node);
 
-    if (!parent->IsFormParent())
+    if (!parent->isFormParent())
     {
-        while (parent && !parent->IsSizer())
+        while (parent && !parent->isSizer())
         {
-            parent = parent->GetParent();
+            parent = parent->getParent();
         }
     }
 
@@ -978,7 +978,7 @@ void NavPopupMenu::CreateSizerParent(Node* node, tt_string_view widget)
     // Avoid the temptation to set new_parent to the raw pointer so that .get() doesn't have to be called below. Doing so
     // will result in the reference count being decremented before we are done hooking it up, and you end up crashing.
 
-    auto new_parent = NodeCreation.CreateNode(widget, parent);
+    auto new_parent = NodeCreation.createNode(widget, parent);
     if (new_parent)
     {
         wxGetFrame().Freeze();
@@ -1020,8 +1020,8 @@ void NavPopupMenu::AddToolbarCommands(Node* node)
     AppendSubMenu(sub_menu, "Tools");
 
     bool is_aui_toolbar =
-        (node->gen_name() == gen_wxAuiToolBar || node->gen_name() == gen_AuiToolBar ||
-         node->GetParent()->gen_name() == gen_wxAuiToolBar || node->GetParent()->gen_name() == gen_AuiToolBar);
+        (node->getGenName() == gen_wxAuiToolBar || node->getGenName() == gen_AuiToolBar ||
+         node->getParent()->getGenName() == gen_wxAuiToolBar || node->getParent()->getGenName() == gen_AuiToolBar);
 
     menu_item = sub_menu->Append(MenuADD_TOOL, "Tool (normal, check, radio)");
     menu_item->SetBitmap(GetInternalImage("tool"));
@@ -1065,28 +1065,28 @@ void NavPopupMenu::AddToolbarCommands(Node* node)
         wxEVT_MENU,
         [](wxCommandEvent&)
         {
-            wxGetFrame().CreateToolNode(gen_wxComboBox);
+            wxGetFrame().createToolNode(gen_wxComboBox);
         },
         MenuADD_TOOL_COMBOBOX);
     Bind(
         wxEVT_MENU,
         [](wxCommandEvent&)
         {
-            wxGetFrame().CreateToolNode(gen_wxSlider);
+            wxGetFrame().createToolNode(gen_wxSlider);
         },
         MenuADD_TOOL_SLIDER);
     Bind(
         wxEVT_MENU,
         [](wxCommandEvent&)
         {
-            wxGetFrame().CreateToolNode(gen_wxSpinCtrl);
+            wxGetFrame().createToolNode(gen_wxSpinCtrl);
         },
         MenuADD_TOOL_SPINCTRL);
     Bind(
         wxEVT_MENU,
         [](wxCommandEvent&)
         {
-            wxGetFrame().CreateToolNode(gen_toolSeparator);
+            wxGetFrame().createToolNode(gen_toolSeparator);
         },
         MenuADD_TOOL_SEPARATOR);
 
@@ -1096,21 +1096,21 @@ void NavPopupMenu::AddToolbarCommands(Node* node)
             wxEVT_MENU,
             [](wxCommandEvent&)
             {
-                wxGetFrame().CreateToolNode(gen_tool);
+                wxGetFrame().createToolNode(gen_tool);
             },
             MenuADD_TOOL);
         Bind(
             wxEVT_MENU,
             [](wxCommandEvent&)
             {
-                wxGetFrame().CreateToolNode(gen_tool_dropdown);
+                wxGetFrame().createToolNode(gen_tool_dropdown);
             },
             MenuADD_TOOL_DROPDOWN);
         Bind(
             wxEVT_MENU,
             [](wxCommandEvent&)
             {
-                wxGetFrame().CreateToolNode(gen_toolStretchable);
+                wxGetFrame().createToolNode(gen_toolStretchable);
             },
             MenuADD_TOOL_STRETCHABLE_SPACE);
     }
@@ -1120,28 +1120,28 @@ void NavPopupMenu::AddToolbarCommands(Node* node)
             wxEVT_MENU,
             [](wxCommandEvent&)
             {
-                wxGetFrame().CreateToolNode(gen_auitool);
+                wxGetFrame().createToolNode(gen_auitool);
             },
             MenuADD_TOOL);
         Bind(
             wxEVT_MENU,
             [](wxCommandEvent&)
             {
-                wxGetFrame().CreateToolNode(gen_auitool_label);
+                wxGetFrame().createToolNode(gen_auitool_label);
             },
             MenuADD_TOOL_LABEL);
         Bind(
             wxEVT_MENU,
             [](wxCommandEvent&)
             {
-                wxGetFrame().CreateToolNode(gen_auitool_spacer);
+                wxGetFrame().createToolNode(gen_auitool_spacer);
             },
             MenuADD_TOOL_SPACER);
         Bind(
             wxEVT_MENU,
             [](wxCommandEvent&)
             {
-                wxGetFrame().CreateToolNode(gen_auitool_stretchable);
+                wxGetFrame().createToolNode(gen_auitool_stretchable);
             },
             MenuADD_TOOL_STRETCHABLE_SPACER);
     }

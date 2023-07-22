@@ -118,7 +118,7 @@ bool DocViewAppGenerator::ConstructionCode(Code& code)
     {
         tt_string_vector lines;
         lines.ReadString(txt_DocViewAppCppSrc);
-        tt_string class_name = code.node()->value(prop_class_name);
+        tt_string class_name = code.node()->as_string(prop_class_name);
         for (auto& line: lines)
         {
             line.Replace("%class%", class_name, true);
@@ -135,7 +135,7 @@ bool DocViewAppGenerator::AfterConstructionCode(Code& code)
     {
         tt_string_vector lines;
         lines.ReadString(txt_DocViewAppAfterCtor);
-        tt_string class_name = code.node()->value(prop_class_name);
+        tt_string class_name = code.node()->as_string(prop_class_name);
         for (auto& line: lines)
         {
             line.Replace("%class%", class_name, true);
@@ -150,7 +150,7 @@ bool DocViewAppGenerator::HeaderCode(Code& code)
 {
     tt_string_vector lines;
     lines.ReadString(txt_DocViewAppHeader);
-    tt_string class_name = code.node()->value(prop_class_name);
+    tt_string class_name = code.node()->as_string(prop_class_name);
     for (auto& line: lines)
     {
         line.Replace("%class%", class_name, true);
@@ -164,7 +164,7 @@ bool DocViewAppGenerator::PreClassHeaderCode(Code& code)
 {
     tt_string_vector lines;
     lines.ReadString(txt_DocViewPreHeader);
-    tt_string class_name = code.node()->value(prop_class_name);
+    tt_string class_name = code.node()->as_string(prop_class_name);
     for (auto& line: lines)
     {
         line.Replace("%class%", class_name, true);

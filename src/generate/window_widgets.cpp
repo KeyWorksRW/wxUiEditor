@@ -46,7 +46,7 @@ bool ScrolledCanvasGenerator::ConstructionCode(Code& code)
 
 bool ScrolledCanvasGenerator::SettingsCode(Code& code)
 {
-    if (code.HasValue(prop_scroll_rate_x) || code.HasValue(prop_scroll_rate_y))
+    if (code.hasValue(prop_scroll_rate_x) || code.hasValue(prop_scroll_rate_y))
     {
         code.Eol(eol_if_needed).NodeName().Function("SetScrollRate(");
         code.Str(prop_scroll_rate_x).Comma().Str(prop_scroll_rate_y).EndFunction();
@@ -95,7 +95,7 @@ bool ScrolledWindowGenerator::ConstructionCode(Code& code)
 
 bool ScrolledWindowGenerator::SettingsCode(Code& code)
 {
-    if (code.HasValue(prop_scroll_rate_x) || code.HasValue(prop_scroll_rate_y))
+    if (code.hasValue(prop_scroll_rate_x) || code.hasValue(prop_scroll_rate_y))
     {
         code.Eol(eol_if_needed).NodeName().Function("SetScrollRate(");
         code.Str(prop_scroll_rate_x).Comma().Str(prop_scroll_rate_y).EndFunction();
@@ -116,7 +116,7 @@ bool ScrolledWindowGenerator::GetIncludes(Node* node, std::set<std::string>& set
 
 int ScrolledWindowGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxScrolledWindow");

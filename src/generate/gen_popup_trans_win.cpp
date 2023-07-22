@@ -28,7 +28,7 @@ bool PopupWinGenerator::ConstructionCode(Code& code)
         code.Tab().Add("def __init__(self, parent):").Eol().Tab(2);
         code << "wx.PopupTransientWindow.__init__(self, parent, flags=";
         code.Add(prop_border);
-        if (code.HasValue(prop_style))
+        if (code.hasValue(prop_style))
         {
             code.Str(" | ").Add(prop_style);
         }
@@ -47,7 +47,7 @@ bool PopupWinGenerator::SettingsCode(Code& code)
 bool PopupWinGenerator::HeaderCode(Code& code)
 {
     code.NodeName().Str("(wxWindow* parent, int style = ").Str(prop_border);
-    if (code.HasValue(prop_style))
+    if (code.hasValue(prop_style))
     {
         code.Str(" | ").Add(prop_style);
     }
@@ -58,13 +58,13 @@ bool PopupWinGenerator::HeaderCode(Code& code)
 
 bool PopupWinGenerator::BaseClassNameCode(Code& code)
 {
-    if (code.HasValue(prop_derived_class))
+    if (code.hasValue(prop_derived_class))
     {
         code.Str((prop_derived_class));
     }
     else
     {
-        code += code.node()->DeclName();
+        code += code.node()->declName();
     }
 
     return true;

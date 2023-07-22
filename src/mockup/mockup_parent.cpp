@@ -156,7 +156,7 @@ void MockupParent::CreateContent()
     // Note that we show the form even if it's property has it set to hidden
     m_MockupWindow->Show();
 
-    if (m_form->HasValue(prop_background_colour))
+    if (m_form->hasValue(prop_background_colour))
     {
         m_panelContent->SetBackgroundColour(m_form->as_wxColour(prop_background_colour));
     }
@@ -197,11 +197,11 @@ void MockupParent::CreateContent()
     auto min_size = m_form->as_wxSize(prop_minimum_size);
     min_size.IncTo(m_panelContent->GetSize());
 
-    if (m_form->HasValue(prop_size))
+    if (m_form->hasValue(prop_size))
     {
         min_size.IncTo(m_form->as_wxSize(prop_size));
     }
-    if (m_form->HasValue(prop_mockup_size))
+    if (m_form->hasValue(prop_mockup_size))
     {
         min_size.IncTo(m_form->as_wxSize(prop_mockup_size));
     }
@@ -289,15 +289,15 @@ wxObject* MockupParent::Get_wxObject(Node* node)
     return m_panelContent->Get_wxObject(node);
 }
 
-wxObject* MockupParent::GetChild(wxObject* wxobject, size_t childIndex)
+wxObject* MockupParent::getChild(wxObject* wxobject, size_t childIndex)
 {
     if (auto node = GetNode(wxobject); node)
     {
-        if (childIndex >= node->GetChildCount())
+        if (childIndex >= node->getChildCount())
         {
             return nullptr;
         }
-        return Get_wxObject(node->GetChild(childIndex));
+        return Get_wxObject(node->getChild(childIndex));
     }
 
     FAIL_MSG("wxobject not found!");
@@ -310,7 +310,7 @@ wxObject* MockupParent::GetParentNode(wxObject* wxobject)
     ASSERT(wxobject);
 
     if (auto node = GetNode(wxobject); node)
-        return Get_wxObject(node->GetParent());
+        return Get_wxObject(node->getParent());
 
     FAIL_MSG("wxobject not found!");
 
@@ -377,9 +377,9 @@ void MockupParent::OnNodePropModified(CustomEvent& event)
     {
         if (auto node = wxGetFrame().GetSelectedNode(); node)
         {
-            if (node->IsStaticBoxSizer())
+            if (node->isStaticBoxSizer())
             {
-                node->GetGenerator()->OnPropertyChange(Get_wxObject(node), node, prop);
+                node->getGenerator()->OnPropertyChange(Get_wxObject(node), node, prop);
             }
             else if (auto window = wxDynamicCast(Get_wxObject(node), wxWindow); window)
             {
@@ -393,7 +393,7 @@ void MockupParent::OnNodePropModified(CustomEvent& event)
     {
         if (auto node = wxGetFrame().GetSelectedNode(); node)
         {
-            node->GetGenerator()->OnPropertyChange(Get_wxObject(node), node, prop);
+            node->getGenerator()->OnPropertyChange(Get_wxObject(node), node, prop);
         }
         return;
     }
@@ -429,14 +429,14 @@ void MockupParent::OnNodePropModified(CustomEvent& event)
                 CreateContent();
                 return;
             }
-            else if (node->IsStaticBoxSizer())
+            else if (node->isStaticBoxSizer())
                 wxStaticCast(window, wxStaticBoxSizer)->GetStaticBox()->Enable(!prop->as_bool());
             else
                 wxStaticCast(window, wxWindow)->Enable(!prop->as_bool());
             return;
         }
 
-        auto generator = node->GetGenerator();
+        auto generator = node->getGenerator();
         if (generator && generator->OnPropertyChange(Get_wxObject(node), node, prop))
         {
             wxWindowUpdateLocker freeze(this);

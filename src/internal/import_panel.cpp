@@ -206,11 +206,11 @@ void ImportPanel::OnNodeSelected(Node* node)
     int line = 0;
 
     tt_string search(m_lexer != wxSTC_LEX_JSON ? "name=\"" : "\"");
-    if (node->HasProp(prop_id) && node->as_string(prop_id) != "wxID_ANY")
+    if (node->hasProp(prop_id) && node->as_string(prop_id) != "wxID_ANY")
     {
         search << node->as_string(prop_id);
     }
-    else if (node->HasValue(prop_var_name))
+    else if (node->hasValue(prop_var_name))
     {
         search << node->as_string(prop_var_name);
     }

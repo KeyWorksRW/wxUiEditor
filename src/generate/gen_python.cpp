@@ -62,11 +62,11 @@ void MainFrame::OnGeneratePython(wxCommandEvent& WXUNUSED(event))
 
 static void GatherImportModules(std::set<std::string>& imports, Node* node)
 {
-    if (auto* gen = node->GetGenerator(); gen)
+    if (auto* gen = node->getGenerator(); gen)
     {
         gen->GetPythonImports(node, imports);
     }
-    for (auto& child: node->GetChildNodePtrs())
+    for (auto& child: node->getChildNodePtrs())
     {
         GatherImportModules(imports, child.get());
     }
@@ -208,7 +208,7 @@ void BaseCodeGenerator::GeneratePythonClass(Node* form_node, PANEL_PAGE panel_ty
     {
         if (form->isGen(gen_folder))
         {
-            for (const auto& child_form: form->GetChildNodePtrs())
+            for (const auto& child_form: form->getChildNodePtrs())
             {
                 if (child_form->isGen(gen_Images))
                 {
@@ -287,9 +287,9 @@ void BaseCodeGenerator::GeneratePythonClass(Node* form_node, PANEL_PAGE panel_ty
     {
         for (auto& form: forms)
         {
-            if ((form->isGen(gen_wxDialog) || form->isGen(gen_wxWizard)) && form->HasValue(prop_python_file))
+            if ((form->isGen(gen_wxDialog) || form->isGen(gen_wxWizard)) && form->hasValue(prop_python_file))
             {
-                tt_string import_name(form->value(prop_python_file).filename());
+                tt_string import_name(form->as_string(prop_python_file).filename());
                 import_name.remove_extension();
                 m_source->writeLine(tt_string("import ") << import_name);
             }
@@ -384,7 +384,7 @@ void BaseCodeGenerator::GeneratePythonClass(Node* form_node, PANEL_PAGE panel_ty
     m_header->writeLine(tt_string("import ") << form_node->as_string(prop_python_file) << "\n");
     m_header->writeLine();
 
-    if (m_form_node->HasValue(prop_python_insert))
+    if (m_form_node->hasValue(prop_python_insert))
     {
         tt_string convert(m_form_node->as_string(prop_python_insert));
         convert.Replace("@@", "\n", tt::REPLACE::all);
@@ -397,10 +397,10 @@ void BaseCodeGenerator::GeneratePythonClass(Node* form_node, PANEL_PAGE panel_ty
         m_source->doWrite("\n");
     }
 
-    tt_string inherit_name = form_node->value(prop_python_inherit_name);
+    tt_string inherit_name = form_node->as_string(prop_python_inherit_name);
     if (inherit_name.empty())
     {
-        inherit_name += "inherit_" + form_node->value(prop_class_name);
+        inherit_name += "inherit_" + form_node->as_string(prop_class_name);
     }
     if (inherit_name.size())
     {
@@ -418,7 +418,7 @@ void BaseCodeGenerator::GeneratePythonClass(Node* form_node, PANEL_PAGE panel_ty
 
     thrd_get_events.join();
 
-    auto generator = form_node->GetNodeDeclaration()->GetGenerator();
+    auto generator = form_node->getNodeDeclaration()->getGenerator();
     code.clear();
     if (generator->ConstructionCode(code))
     {
@@ -452,7 +452,7 @@ void BaseCodeGenerator::GeneratePythonClass(Node* form_node, PANEL_PAGE panel_ty
         }
     }
 
-    if (form_node->get_prop_ptr(prop_window_extra_style))
+    if (form_node->getPropPtr(prop_window_extra_style))
     {
         code.clear();
         code.GenWindowSettings();
@@ -463,7 +463,7 @@ void BaseCodeGenerator::GeneratePythonClass(Node* form_node, PANEL_PAGE panel_ty
     }
 
     m_source->SetLastLineBlank();
-    for (const auto& child: form_node->GetChildNodePtrs())
+    for (const auto& child: form_node->getChildNodePtrs())
     {
         if (child->isGen(gen_wxContextMenuEvent))
             continue;
@@ -630,7 +630,7 @@ bool PythonBundleCode(Code& code, GenEnum::PropName prop)
             auto embed = ProjectImages.GetEmbeddedImage(parts[IndexImage]);
             ASSERT(embed);
             tt_string svg_name;
-            if (embed->form != code.node()->get_form())
+            if (embed->form != code.node()->getForm())
             {
                 svg_name = embed->form->as_string(prop_python_file).filename();
                 svg_name.remove_extension();
@@ -746,7 +746,7 @@ void PythonBtnBimapCode(Code& code, bool is_single)
     for (auto& iter: btn_bmp_types)
     {
         code.Eol(eol_if_needed);
-        if (code.HasValue(iter.prop_name))
+        if (code.hasValue(iter.prop_name))
         {
             code.Eol(eol_if_needed);
             if (PythonBitmapList(code, iter.prop_name))
@@ -772,7 +772,7 @@ void PythonBtnBimapCode(Code& code, bool is_single)
 tt_string MakePythonPath(Node* node)
 {
     tt_string path;
-    Node* form = node->get_form();
+    Node* form = node->getForm();
 
     if (auto& base_file = form->as_string(prop_python_file); base_file.size())
     {

@@ -45,7 +45,7 @@ public:
     }
 
     // Returns a char pointer to the name. Use get_name() if you want the enum value.
-    tt_string_view DeclName() const noexcept { return m_name_str; }
+    tt_string_view declName() const noexcept { return m_name_str; }
 
     const tt_string& GetDefaultValue() const noexcept { return m_def_value; }
     const tt_string& GetDescription() const noexcept { return m_help; }

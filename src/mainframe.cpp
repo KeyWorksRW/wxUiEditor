@@ -405,7 +405,7 @@ void MainFrame::OnSaveProject(wxCommandEvent& event)
     else
     {
         pugi::xml_document doc;
-        Project.ProjectNode()->CreateDoc(doc);
+        Project.ProjectNode()->createDoc(doc);
         if (doc.save_file(Project.ProjectFile().c_str(), "  ", pugi::format_indent_attributes))
         {
             m_isProject_modified = false;
@@ -474,7 +474,7 @@ void MainFrame::OnSaveAsProject(wxCommandEvent&)
         }
 
         pugi::xml_document doc;
-        Project.ProjectNode()->CreateDoc(doc);
+        Project.ProjectNode()->createDoc(doc);
         if (doc.save_file(filename.c_str(), "  ", pugi::format_indent_attributes))
         {
             m_isProject_modified = false;
@@ -774,7 +774,7 @@ void MainFrame::ProjectLoaded()
              });
     }
 
-    m_selected_node = Project.ProjectNode()->GetSharedPtr();
+    m_selected_node = Project.ProjectNode()->getSharedPtr();
 }
 
 void MainFrame::ProjectSaved()
@@ -793,9 +793,9 @@ void MainFrame::OnNodeSelected(CustomEvent& event)
 
     if (evt_flags->isGen(gen_wxToolBar))
     {
-        if (evt_flags->GetParent()->IsSizer())
+        if (evt_flags->getParent()->isSizer())
         {
-            auto grandparent = evt_flags->GetParent()->GetParent();
+            auto grandparent = evt_flags->getParent()->getParent();
             if (grandparent->isGen(gen_wxFrame) || grandparent->isGen(gen_wxAuiMDIChildFrame))
             {
                 // Caution! In wxWidgets 3.1.3 The info bar will wrap the first word if it starts with "If".
@@ -926,7 +926,7 @@ void MainFrame::UpdateFrame()
 #if defined(_DEBUG)
     m_menuEdit->Enable(id_insert_widget, true);
 #else
-    m_menuEdit->Enable(id_insert_widget, m_selected_node && !m_selected_node->IsFormParent());
+    m_menuEdit->Enable(id_insert_widget, m_selected_node && !m_selected_node->isFormParent());
 #endif  // _DEBUG
 
     UpdateMoveMenu();
@@ -993,7 +993,7 @@ void MainFrame::OnBrowseDocs(wxCommandEvent& WXUNUSED(event))
 {
     if (m_selected_node)
     {
-        if (auto generator = m_selected_node->GetGenerator(); generator)
+        if (auto generator = m_selected_node->getGenerator(); generator)
         {
             auto file = generator->GetHelpURL(m_selected_node.get());
             if (file.size())
@@ -1014,7 +1014,7 @@ void MainFrame::OnUpdateBrowseDocs(wxUpdateUIEvent& event)
 {
     if (m_selected_node)
     {
-        if (auto generator = m_selected_node->GetGenerator(); generator)
+        if (auto generator = m_selected_node->getGenerator(); generator)
         {
             auto label = generator->GetHelpText(m_selected_node.get());
             if (label.empty())
@@ -1034,7 +1034,7 @@ void MainFrame::OnBrowsePython(wxCommandEvent& WXUNUSED(event))
 {
     if (m_selected_node)
     {
-        if (auto generator = m_selected_node->GetGenerator(); generator)
+        if (auto generator = m_selected_node->getGenerator(); generator)
         {
             auto file = generator->GetPythonURL(m_selected_node.get());
             if (file.size())
@@ -1053,7 +1053,7 @@ void MainFrame::OnBrowseRuby(wxCommandEvent& WXUNUSED(event))
 {
     if (m_selected_node)
     {
-        if (auto generator = m_selected_node->GetGenerator(); generator)
+        if (auto generator = m_selected_node->getGenerator(); generator)
         {
             auto file = generator->GetRubyURL(m_selected_node.get());
             if (file.size())
@@ -1072,7 +1072,7 @@ void MainFrame::OnUpdateBrowsePython(wxUpdateUIEvent& event)
 {
     if (m_selected_node)
     {
-        if (auto generator = m_selected_node->GetGenerator(); generator)
+        if (auto generator = m_selected_node->getGenerator(); generator)
         {
             auto label = generator->GetPythonHelpText(m_selected_node.get());
             if (label.empty())
@@ -1092,7 +1092,7 @@ void MainFrame::OnUpdateBrowseRuby(wxUpdateUIEvent& event)
 {
     if (m_selected_node)
     {
-        if (auto generator = m_selected_node->GetGenerator(); generator)
+        if (auto generator = m_selected_node->getGenerator(); generator)
         {
             auto label = generator->GetRubyHelpText(m_selected_node.get());
             if (label.empty())
@@ -1364,7 +1364,7 @@ void MainFrame::UpdateMoveMenu()
     auto node = m_selected_node.get();
     Node* parent = nullptr;
     if (node)
-        parent = node->GetParent();
+        parent = node->getParent();
     if (!node || !parent)
     {
         m_menuEdit->Enable(id_MoveUp, false);
@@ -1385,7 +1385,7 @@ Node* MainFrame::GetSelectedForm()
     if (!m_selected_node || m_selected_node->isGen(gen_Project))
         return nullptr;
 
-    return m_selected_node->get_form();
+    return m_selected_node->getForm();
 }
 
 bool MainFrame::SelectNode(Node* node, size_t flags)
@@ -1401,7 +1401,7 @@ bool MainFrame::SelectNode(Node* node, size_t flags)
         return false;  // already selected
     }
 
-    m_selected_node = node->GetSharedPtr();
+    m_selected_node = node->getSharedPtr();
 
     if (flags & evt_flags::queue_event)
     {
@@ -1419,7 +1419,7 @@ bool MainFrame::SelectNode(Node* node, size_t flags)
     return true;
 }
 
-void MainFrame::CreateToolNode(GenName name)
+void MainFrame::createToolNode(GenName name)
 {
     if (!m_selected_node)
     {
@@ -1432,7 +1432,7 @@ void MainFrame::CreateToolNode(GenName name)
         name = gen_auitool;
     }
 
-    if (!m_selected_node->CreateToolNode(name))
+    if (!m_selected_node->createToolNode(name))
     {
         if (m_selected_node->isGen(gen_wxSplitterWindow))
         {
@@ -1440,7 +1440,7 @@ void MainFrame::CreateToolNode(GenName name)
         }
 
         wxMessageBox(tt_string() << "Unable to create " << map_GenNames[name] << " as a child of "
-                                 << m_selected_node->DeclName());
+                                 << m_selected_node->declName());
     }
 }
 
@@ -1456,7 +1456,7 @@ void MainFrame::CopyNode(Node* node)
             pugi::xml_document doc;
             auto clip_node = doc.append_child("node");
             int project_version = minRequiredVer;
-            m_clipboard->AddNodeToDoc(clip_node, project_version);
+            m_clipboard->addNodeToDoc(clip_node, project_version);
             // REVIEW: [Randalphwa - 08-24-2022] project_version is ignored, assuming that the same version of
             // wxClipboard will be used to paste the clipboard node.
             auto* u8_data = new wxUtf8DataObject();
@@ -1471,7 +1471,7 @@ void MainFrame::CopyNode(Node* node)
                 auto hash_data = new wxUEDataObject();
 
                 m_clip_hash = 0;
-                m_clipboard->CalcNodeHash(m_clip_hash);
+                m_clipboard->calcNodeHash(m_clip_hash);
                 hash_data->GetHash() = m_clip_hash;
 
                 wxDataObjectComposite* data = new wxDataObjectComposite();
@@ -1514,7 +1514,7 @@ void MainFrame::PasteNode(Node* parent)
         parent = m_selected_node.get();
     }
 
-    if (parent->isGen(gen_wxSplitterWindow) && parent->GetChildCount() > 1)
+    if (parent->isGen(gen_wxSplitterWindow) && parent->getChildCount() > 1)
     {
         wxMessageBox("A wxSplitterWindow can't have more than two windows.");
         return;
@@ -1531,7 +1531,7 @@ void MainFrame::PasteNode(Node* parent)
     {
         auto group = std::make_shared<GroupUndoActions>("Paste children", parent);
 
-        for (auto& child_node: new_node->GetChildNodePtrs())
+        for (auto& child_node: new_node->getChildNodePtrs())
         {
             auto insert_action = std::make_shared<InsertNodeAction>(child_node.get(), parent, "paste");
             insert_action->SetFireCreatedEvent(true);
@@ -1549,11 +1549,11 @@ void MainFrame::PasteNode(Node* parent)
     {
         auto group = std::make_shared<GroupUndoActions>("Paste children", parent);
 
-        for (auto& child_node: new_node->GetChildNodePtrs())
+        for (auto& child_node: new_node->getChildNodePtrs())
         {
             // We are changing from a wxToolBar to a wxAuiToolBar, so we need to change the node type
             auto new_child = NodeCreation.MakeCopy(child_node.get(), parent);
-            auto insert_action = std::make_shared<InsertNodeAction>(new_child, parent->GetSharedPtr(), "paste");
+            auto insert_action = std::make_shared<InsertNodeAction>(new_child, parent->getSharedPtr(), "paste");
             insert_action->SetFireCreatedEvent(true);
             group->Add(insert_action);
         }
@@ -1561,15 +1561,15 @@ void MainFrame::PasteNode(Node* parent)
         return;
     }
 
-    if (new_node->IsForm())
+    if (new_node->isForm())
         Project.FixupDuplicatedNode(new_node.get());
 
-    if (!parent->IsChildAllowed(new_node))
+    if (!parent->isChildAllowed(new_node))
     {
-        auto grandparent = parent->GetParent();
-        if (!grandparent || !grandparent->IsChildAllowed(new_node))
+        auto grandparent = parent->getParent();
+        if (!grandparent || !grandparent->isChildAllowed(new_node))
         {
-            wxMessageBox(tt_string() << "You cannot paste " << new_node->DeclName() << " into " << parent->DeclName());
+            wxMessageBox(tt_string() << "You cannot paste " << new_node->declName() << " into " << parent->declName());
             return;
         }
         parent = grandparent;
@@ -1583,9 +1583,9 @@ void MainFrame::PasteNode(Node* parent)
     }
 
     tt_string undo_str("paste ");
-    undo_str << m_clipboard->DeclName();
+    undo_str << m_clipboard->declName();
 
-    auto pos = parent->FindInsertionPos(m_selected_node);
+    auto pos = parent->findInsertionPos(m_selected_node);
     PushUndoAction(std::make_shared<InsertNodeAction>(new_node.get(), parent, undo_str, pos));
     FireCreatedEvent(new_node);
     SelectNode(new_node, evt_flags::fire_event | evt_flags::force_selection);
@@ -1594,12 +1594,12 @@ void MainFrame::PasteNode(Node* parent)
 void MainFrame::DuplicateNode(Node* node)
 {
     ASSERT(node);
-    ASSERT(node->GetParent());
+    ASSERT(node->getParent());
 
     auto new_node = NodeCreation.MakeCopy(node);
-    if (new_node->IsForm())
+    if (new_node->isForm())
         Project.FixupDuplicatedNode(new_node.get());
-    auto* parent = node->GetParent();
+    auto* parent = node->getParent();
     if (parent->isGen(gen_wxGridBagSizer))
     {
         GridBag grid_bag(parent);
@@ -1609,8 +1609,8 @@ void MainFrame::DuplicateNode(Node* node)
     else
     {
         tt_string undo_str("duplicate ");
-        undo_str << node->DeclName();
-        auto pos = parent->FindInsertionPos(m_selected_node);
+        undo_str << node->declName();
+        auto pos = parent->findInsertionPos(m_selected_node);
         PushUndoAction(std::make_shared<InsertNodeAction>(new_node.get(), parent, undo_str, pos));
         m_selected_node = new_node;
         FireCreatedEvent(new_node);
@@ -1654,12 +1654,12 @@ void MainFrame::Redo()
 
 void MainFrame::OnToggleExpandLayout(wxCommandEvent&)
 {
-    if (!m_selected_node || !m_selected_node->GetParent() || !m_selected_node->GetParent()->IsSizer())
+    if (!m_selected_node || !m_selected_node->getParent() || !m_selected_node->getParent()->isSizer())
     {
         return;
     }
 
-    auto propFlag = m_selected_node->get_prop_ptr(prop_flags);
+    auto propFlag = m_selected_node->getPropPtr(prop_flags);
 
     if (!propFlag)
     {
@@ -1672,15 +1672,15 @@ void MainFrame::OnToggleExpandLayout(wxCommandEvent&)
 
     if (!wasExpanded)
     {
-        auto alignment = m_selected_node->get_prop_ptr(prop_alignment);
+        auto alignment = m_selected_node->getPropPtr(prop_alignment);
         if (alignment && alignment->as_string().size())
         {
             // All alignment flags are invalid if wxEXPAND is set
-            ModifyProperty(alignment, "");
+            modifyProperty(alignment, "");
         }
     }
 
-    ModifyProperty(propFlag, value);
+    modifyProperty(propFlag, value);
 }
 
 void MainFrame::ToggleBorderFlag(Node* node, int border)
@@ -1688,7 +1688,7 @@ void MainFrame::ToggleBorderFlag(Node* node, int border)
     if (!node)
         return;
 
-    auto propFlag = node->get_prop_ptr(prop_borders);
+    auto propFlag = node->getPropPtr(prop_borders);
 
     if (!propFlag)
         return;
@@ -1718,14 +1718,14 @@ void MainFrame::ToggleBorderFlag(Node* node, int border)
     if (value[0] == '|')
         value.erase(0, 1);
 
-    ModifyProperty(propFlag, value);
+    modifyProperty(propFlag, value);
 }
 
-void MainFrame::ModifyProperty(NodeProperty* prop, tt_string_view value)
+void MainFrame::modifyProperty(NodeProperty* prop, tt_string_view value)
 {
     if (prop && value != prop->as_string())
     {
-        if (auto* gen = prop->GetNode()->GetGenerator(); !gen || !gen->ModifyProperty(prop, value))
+        if (auto* gen = prop->GetNode()->getGenerator(); !gen || !gen->modifyProperty(prop, value))
         {
             PushUndoAction(std::make_shared<ModifyPropertyAction>(prop, value));
         }
@@ -1737,7 +1737,7 @@ void MainFrame::ChangeAlignment(Node* node, int align, bool vertical)
     if (!node)
         return;
 
-    auto propFlag = node->get_prop_ptr(prop_alignment);
+    auto propFlag = node->getPropPtr(prop_alignment);
 
     if (!propFlag)
         return;
@@ -1779,19 +1779,19 @@ void MainFrame::ChangeAlignment(Node* node, int align, bool vertical)
             break;
     }
 
-    ModifyProperty(propFlag, SetPropFlag(alignStr, value));
+    modifyProperty(propFlag, SetPropFlag(alignStr, value));
 }
 
 bool MainFrame::GetLayoutSettings(int* flag, int* option, int* border, int* orient)
 {
-    if (!m_selected_node || !m_selected_node->GetParent() || !m_selected_node->GetParent()->IsSizer())
+    if (!m_selected_node || !m_selected_node->getParent() || !m_selected_node->getParent()->isSizer())
     {
         return false;
     }
 
-    auto prop_flags = m_selected_node->GetSizerFlags();
+    auto prop_flags = m_selected_node->getSizerFlags();
 
-    auto propOption = m_selected_node->get_prop_ptr(prop_proportion);
+    auto propOption = m_selected_node->getPropPtr(prop_proportion);
     if (propOption)
     {
         *option = prop_flags.GetProportion();
@@ -1800,12 +1800,12 @@ bool MainFrame::GetLayoutSettings(int* flag, int* option, int* border, int* orie
     *flag = prop_flags.GetFlags();
     *border = prop_flags.GetBorderInPixels();
 
-    auto sizer = m_selected_node->GetParent();
+    auto sizer = m_selected_node->getParent();
     if (sizer)
     {
-        if (sizer->isGen(gen_wxBoxSizer) || m_selected_node->IsStaticBoxSizer())
+        if (sizer->isGen(gen_wxBoxSizer) || m_selected_node->isStaticBoxSizer())
         {
-            auto propOrient = sizer->get_prop_ptr(prop_orientation);
+            auto propOrient = sizer->getPropPtr(prop_orientation);
             if (propOrient)
             {
                 *orient = propOrient->as_int();
@@ -1817,7 +1817,7 @@ bool MainFrame::GetLayoutSettings(int* flag, int* option, int* border, int* orie
 
 bool MainFrame::MoveNode(Node* node, MoveDirection where, bool check_only)
 {
-    auto parent = node->GetParent();
+    auto parent = node->getParent();
 
     ASSERT(parent || node->isGen(gen_Project));
     if (!parent)
@@ -1847,15 +1847,15 @@ bool MainFrame::MoveNode(Node* node, MoveDirection where, bool check_only)
             if (!check_only)
             {
                 wxWindowUpdateLocker freeze(this);
-                PushUndoAction(std::make_shared<ChangeParentAction>(node, parent->GetParent()));
+                PushUndoAction(std::make_shared<ChangeParentAction>(node, parent->getParent()));
             }
             return true;
         }
 
-        auto grandparent = parent->GetParent();
-        while (grandparent && !grandparent->IsSizer())
+        auto grandparent = parent->getParent();
+        while (grandparent && !grandparent->isSizer())
         {
-            grandparent = grandparent->GetParent();
+            grandparent = grandparent->getParent();
         }
 
         if (check_only)
@@ -1874,13 +1874,13 @@ bool MainFrame::MoveNode(Node* node, MoveDirection where, bool check_only)
         if (node->isGen(gen_folder))
             return false;
 
-        auto pos = parent->GetChildPosition(node) - 1;
-        if (pos < parent->GetChildCount())
+        auto pos = parent->getChildPosition(node) - 1;
+        if (pos < parent->getChildCount())
         {
-            if (node->IsForm() && pos >= 0)
+            if (node->isForm() && pos >= 0)
             {
-                auto* new_parent = parent->GetChild(pos);
-                if (new_parent->IsForm())
+                auto* new_parent = parent->getChild(pos);
+                if (new_parent->isForm())
                 {
                     if (!check_only)
                         wxMessageBox("You cannot move a form to the right of another form.", "Move item");
@@ -1898,8 +1898,8 @@ bool MainFrame::MoveNode(Node* node, MoveDirection where, bool check_only)
             }
             else if (node->isGen(gen_sub_folder) && pos >= 0)
             {
-                auto* new_parent = parent->GetChild(pos);
-                while (new_parent->IsForm())
+                auto* new_parent = parent->getChild(pos);
+                while (new_parent->isForm())
                 {
                     if (pos == 0)
                     {
@@ -1918,7 +1918,7 @@ bool MainFrame::MoveNode(Node* node, MoveDirection where, bool check_only)
                     return true;
                 }
             }
-            parent = FindChildSizerItem(parent->GetChild(pos), true);
+            parent = FindChildSizerItem(parent->getChild(pos), true);
 
             if (check_only)
                 return (parent ? true : false);
@@ -1935,7 +1935,7 @@ bool MainFrame::MoveNode(Node* node, MoveDirection where, bool check_only)
     }
     else if (where == MoveDirection::Up)
     {
-        auto pos = parent->GetChildPosition(node);
+        auto pos = parent->getChildPosition(node);
         if (check_only)
             return (pos > 0);
         if (pos > 0)
@@ -1948,16 +1948,16 @@ bool MainFrame::MoveNode(Node* node, MoveDirection where, bool check_only)
     }
     else if (where == MoveDirection::Down)
     {
-        auto pos = parent->GetChildPosition(node) + 1;
+        auto pos = parent->getChildPosition(node) + 1;
         if (check_only)
-            return (pos < parent->GetChildCount());
-        if (pos < parent->GetChildCount())
+            return (pos < parent->getChildCount());
+        if (pos < parent->getChildCount())
         {
             wxWindowUpdateLocker freeze(this);
             PushUndoAction(std::make_shared<ChangePositionAction>(node, pos));
             return true;
         }
-        wxMessageBox(tt_string() << node->DeclName() << " cannot be moved down any lower.", "Move item");
+        wxMessageBox(tt_string() << node->declName() << " cannot be moved down any lower.", "Move item");
     }
 
     return false;
@@ -1966,22 +1966,22 @@ bool MainFrame::MoveNode(Node* node, MoveDirection where, bool check_only)
 void MainFrame::RemoveNode(Node* node, bool isCutMode)
 {
     ASSERT_MSG(!node->isType(type_project), "Don't call RemoveNode to remove the entire project.");
-    ASSERT_MSG(node->GetParent(), "The node being removed has no parent -- that should be impossible.");
+    ASSERT_MSG(node->getParent(), "The node being removed has no parent -- that should be impossible.");
 
-    auto parent = node->GetParent();
+    auto parent = node->getParent();
     if (!parent)
         return;
 
     if (isCutMode)
     {
         tt_string undo_str;
-        undo_str << "cut " << node->DeclName();
+        undo_str << "cut " << node->declName();
         PushUndoAction(std::make_shared<RemoveNodeAction>(node, undo_str, true));
     }
     else
     {
         tt_string undo_str;
-        undo_str << "delete " << node->DeclName();
+        undo_str << "delete " << node->declName();
         PushUndoAction(std::make_shared<RemoveNodeAction>(node, undo_str, false));
     }
     UpdateWakaTime();
@@ -1998,13 +1998,13 @@ void MainFrame::ChangeEventHandler(NodeEvent* event, const tt_string& value)
 
 Node* MainFrame::FindChildSizerItem(Node* node, bool include_splitter)
 {
-    if (include_splitter && node->isGen(gen_wxSplitterWindow) && node->GetChildCount() < 2)
+    if (include_splitter && node->isGen(gen_wxSplitterWindow) && node->getChildCount() < 2)
         return node;
-    else if (node->GetNodeDeclaration()->isSubclassOf(gen_sizer_dimension))
+    else if (node->getNodeDeclaration()->isSubclassOf(gen_sizer_dimension))
         return node;
     else
     {
-        for (const auto& child: node->GetChildNodePtrs())
+        for (const auto& child: node->getChildNodePtrs())
         {
             if (auto result = FindChildSizerItem(child, include_splitter); result)
             {

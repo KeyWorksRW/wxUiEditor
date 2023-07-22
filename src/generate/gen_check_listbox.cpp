@@ -84,7 +84,7 @@ bool CheckListBoxGenerator::SettingsCode(Code& code)
     {
         code.Eol(eol_if_empty).NodeName().Function("SetFocus(").EndFunction();
     }
-    if (code.HasValue(prop_contents))
+    if (code.hasValue(prop_contents))
     {
         Node* node = code.node();
         auto contents = node->as_checklist_items(prop_contents);
@@ -122,7 +122,7 @@ bool CheckListBoxGenerator::SettingsCode(Code& code)
             code.CloseBrace();
         }
 
-        if (code.HasValue(prop_selection_string))
+        if (code.hasValue(prop_selection_string))
         {
             code.Eol(eol_if_empty).NodeName().Function("SetStringSelection(");
             code.QuotedString(prop_selection_string).EndFunction();
@@ -141,7 +141,7 @@ bool CheckListBoxGenerator::SettingsCode(Code& code)
 
 int CheckListBoxGenerator::GetRequiredVersion(Node* node)
 {
-    if (node->HasValue(prop_contents))
+    if (node->hasValue(prop_contents))
     {
         return std::max(minRequiredVer + 1, BaseGenerator::GetRequiredVersion(node));
     }
@@ -160,12 +160,12 @@ bool CheckListBoxGenerator::GetIncludes(Node* node, std::set<std::string>& set_s
 
 int CheckListBoxGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxCheckListBox");
 
-    if (node->HasValue(prop_contents))
+    if (node->hasValue(prop_contents))
     {
         auto content = item.append_child("content");
         auto array = node->as_checklist_items(prop_contents);
@@ -181,7 +181,7 @@ int CheckListBoxGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size
     }
 
     // TODO: [KeyWorks - 06-04-2022] This needs to be supported in XRC
-    if (node->HasValue(prop_selection_string))
+    if (node->hasValue(prop_selection_string))
         item.append_child("value").text().set(node->as_string(prop_selection_string));
 
     // Older versions of wxWidgets didn't support setting the selection via the value property,

@@ -13,9 +13,9 @@
 
 int WriteCMakeFile(Node* parent_node, std::vector<tt_string>& updated_files, std::vector<tt_string>& results)
 {
-    if (parent_node->isGen(gen_folder) && !parent_node->HasValue(prop_folder_cmake_file))
+    if (parent_node->isGen(gen_folder) && !parent_node->hasValue(prop_folder_cmake_file))
     {
-        if (!Project.as_bool(prop_generate_cmake) || (parent_node->isGen(gen_Project) && !Project.HasValue(prop_cmake_file)))
+        if (!Project.as_bool(prop_generate_cmake) || (parent_node->isGen(gen_Project) && !Project.hasValue(prop_cmake_file)))
         {
             return result::exists;
         }
@@ -27,13 +27,13 @@ int WriteCMakeFile(Node* parent_node, std::vector<tt_string>& updated_files, std
     // need to tread that directory as the root of the file.
 
     tt_string cmake_file;
-    if (parent_node->isGen(gen_folder) && parent_node->HasValue(prop_folder_cmake_file))
+    if (parent_node->isGen(gen_folder) && parent_node->hasValue(prop_folder_cmake_file))
     {
-        cmake_file = parent_node->value(prop_folder_cmake_file);
+        cmake_file = parent_node->as_string(prop_folder_cmake_file);
     }
     else
     {
-        cmake_file = Project.value(prop_cmake_file);
+        cmake_file = Project.as_string(prop_cmake_file);
     }
 
     if (cmake_file.starts_with(".."))
@@ -67,10 +67,10 @@ int WriteCMakeFile(Node* parent_node, std::vector<tt_string>& updated_files, std
     out.emplace_back();
 
     out.emplace_back();
-    tt_string var_name(Project.value(prop_cmake_varname));
-    if (parent_node->isGen(gen_folder) && parent_node->HasValue(prop_folder_cmake_varname))
+    tt_string var_name(Project.as_string(prop_cmake_varname));
+    if (parent_node->isGen(gen_folder) && parent_node->hasValue(prop_folder_cmake_varname))
     {
-        var_name = parent_node->value(prop_folder_cmake_varname);
+        var_name = parent_node->as_string(prop_folder_cmake_varname);
     }
     out.at(out.size() - 1) << "set (" << var_name;
     out.emplace_back();
@@ -83,18 +83,18 @@ int WriteCMakeFile(Node* parent_node, std::vector<tt_string>& updated_files, std
         {
             node_start = Project.ProjectNode();
         }
-        for (const auto& child: node_start->GetChildNodePtrs())
+        for (const auto& child: node_start->getChildNodePtrs())
         {
             if (node_start == Project.ProjectNode())
             {
-                if (auto* node_folder = child->get_folder(); node_folder && node_folder->HasValue(prop_folder_cmake_file))
+                if (auto* node_folder = child->getFolder(); node_folder && node_folder->hasValue(prop_folder_cmake_file))
                 {
                     // This file already got added to a different .cmake file
                     continue;
                 }
             }
 
-            if (child->IsForm())
+            if (child->isForm())
             {
                 if (child->as_bool(prop_use_derived_class))
                 {
@@ -125,15 +125,15 @@ int WriteCMakeFile(Node* parent_node, std::vector<tt_string>& updated_files, std
 
         for (const auto& form: form_list)
         {
-            if (!form->HasValue(prop_base_file) ||
-                (form->HasProp(prop_generate_translation_unit) && !form->as_bool(prop_generate_translation_unit)))
+            if (!form->hasValue(prop_base_file) ||
+                (form->hasProp(prop_generate_translation_unit) && !form->as_bool(prop_generate_translation_unit)))
             {
                 continue;
             }
 
             if (parent_node == Project.ProjectNode())
             {
-                if (auto* node_folder = form->get_folder(); node_folder && node_folder->HasValue(prop_folder_cmake_file))
+                if (auto* node_folder = form->getFolder(); node_folder && node_folder->hasValue(prop_folder_cmake_file))
                 {
                     // This file already got added to a different .cmake file
                     continue;
@@ -169,7 +169,7 @@ int WriteCMakeFile(Node* parent_node, std::vector<tt_string>& updated_files, std
             base_file.remove_extension();
 
             tt_string source_ext(".cpp");
-            if (auto& extProp = Project.value(prop_source_ext); extProp.size())
+            if (auto& extProp = Project.as_string(prop_source_ext); extProp.size())
             {
                 source_ext = extProp;
             }

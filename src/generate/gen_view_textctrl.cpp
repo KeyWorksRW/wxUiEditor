@@ -63,7 +63,7 @@ bool TextViewGenerator::ConstructionCode(Code& code)
     {
         tt_string_vector lines;
         lines.ReadString(txt_TextCtrlViewBlock);
-        tt_string class_name = code.node()->value(prop_class_name);
+        tt_string class_name = code.node()->as_string(prop_class_name);
         for (auto& line: lines)
         {
             line.Replace("%class%", class_name, true);
@@ -80,17 +80,17 @@ bool TextViewGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, 
     set_src.insert("#include <wx/docview.h");
     set_src.insert("#include <wx/textctrl.h");
 
-    auto parent = node->GetParent();
-    for (auto& iter: parent->GetChildNodePtrs())
+    auto parent = node->getParent();
+    for (auto& iter: parent->getChildNodePtrs())
     {
         if (iter.get() == node)
             continue;
-        if (iter->value(prop_class_name) == node->value(prop_mdi_doc_name))
+        if (iter->as_string(prop_class_name) == node->as_string(prop_mdi_doc_name))
         {
-            tt_string hdr_file = iter->value(prop_base_file);
+            tt_string hdr_file = iter->as_string(prop_base_file);
             if (hdr_file.size())
             {
-                hdr_file += Project.value(prop_header_ext);
+                hdr_file += Project.as_string(prop_header_ext);
                 set_src.insert(tt_string().Format("#include %ks", hdr_file.c_str()));
             }
             else

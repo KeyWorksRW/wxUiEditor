@@ -50,10 +50,10 @@ bool BaseGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty
         if (newValue.empty())
             return true;
 
-        auto parent = node->GetParent();
+        auto parent = node->getParent();
         if (newValue == "wxALIGN_TOP" || newValue == "wxALIGN_BOTTOM" || newValue == "wxALIGN_CENTER_VERTICAL")
         {
-            if (parent && parent->IsSizer() && parent->as_string(prop_orientation).contains("wxVERTICAL"))
+            if (parent && parent->isSizer() && parent->as_string(prop_orientation).contains("wxVERTICAL"))
             {
                 event->SetValidationFailureMessage(
                     "You can't set vertical alignment when the parent sizer is oriented vertically.");
@@ -69,7 +69,7 @@ bool BaseGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty
         }
         else if (newValue == "wxALIGN_LEFT" || newValue == "wxALIGN_RIGHT" || newValue == "wxALIGN_CENTER_HORIZONTAL")
         {
-            if (parent && parent->IsSizer() && parent->as_string(prop_orientation).contains("wxHORIZONTAL"))
+            if (parent && parent->isSizer() && parent->as_string(prop_orientation).contains("wxHORIZONTAL"))
             {
                 event->SetValidationFailureMessage(
                     "You can't set horizontal alignment when the parent sizer is oriented horizontally.");
@@ -93,7 +93,7 @@ bool BaseGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty
             return true;
 
         // Remove the original flags so that all we are checking is the changed flag.
-        if (node->HasValue(prop_flags))
+        if (node->hasValue(prop_flags))
         {
             auto original = node->as_string(prop_flags);
             original.Replace("|", ", ");
@@ -103,7 +103,7 @@ bool BaseGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty
         // The newValue may have a flag removed, so this might not be the flag that got unchecked.
         if (newValue.contains("wxEXPAND"))
         {
-            if (node->HasValue(prop_alignment))
+            if (node->hasValue(prop_alignment))
             {
                 auto& alignment = node->as_string(prop_alignment);
                 if (alignment.contains("wxALIGN_LEFT") || alignment.contains("wxALIGN_RIGHT") ||
@@ -133,52 +133,52 @@ bool BaseGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty
             event->Veto();
             return false;
         }
-        auto unique_name = node->GetUniqueName(newValue);
-        // GetUniqueName() won't check the current node so if the name is unique, we still need to check within the same node
+        auto unique_name = node->getUniqueName(newValue);
+        // getUniqueName() won't check the current node so if the name is unique, we still need to check within the same node
         bool is_duplicate = !newValue.is_sameas(unique_name);
         if (!is_duplicate)
         {
             if (prop->isProp(prop_var_name))
             {
-                if (node->HasValue(prop_validator_variable) && newValue.is_sameas(node->as_string(prop_validator_variable)))
+                if (node->hasValue(prop_validator_variable) && newValue.is_sameas(node->as_string(prop_validator_variable)))
                     is_duplicate = true;
-                else if (node->HasValue(prop_checkbox_var_name) &&
+                else if (node->hasValue(prop_checkbox_var_name) &&
                          newValue.is_sameas(node->as_string(prop_checkbox_var_name)))
                     is_duplicate = true;
-                else if (node->HasValue(prop_radiobtn_var_name) &&
+                else if (node->hasValue(prop_radiobtn_var_name) &&
                          newValue.is_sameas(node->as_string(prop_radiobtn_var_name)))
                     is_duplicate = true;
             }
             else if (prop->isProp(prop_validator_variable))
             {
-                if (node->HasValue(prop_var_name) && newValue.is_sameas(node->as_string(prop_var_name)))
+                if (node->hasValue(prop_var_name) && newValue.is_sameas(node->as_string(prop_var_name)))
                     is_duplicate = true;
-                else if (node->HasValue(prop_checkbox_var_name) &&
+                else if (node->hasValue(prop_checkbox_var_name) &&
                          newValue.is_sameas(node->as_string(prop_checkbox_var_name)))
                     is_duplicate = true;
-                else if (node->HasValue(prop_radiobtn_var_name) &&
+                else if (node->hasValue(prop_radiobtn_var_name) &&
                          newValue.is_sameas(node->as_string(prop_radiobtn_var_name)))
                     is_duplicate = true;
             }
             else if (prop->isProp(prop_checkbox_var_name))
             {
-                if (node->HasValue(prop_var_name) && newValue.is_sameas(node->as_string(prop_var_name)))
+                if (node->hasValue(prop_var_name) && newValue.is_sameas(node->as_string(prop_var_name)))
                     is_duplicate = true;
-                else if (node->HasValue(prop_validator_variable) &&
+                else if (node->hasValue(prop_validator_variable) &&
                          newValue.is_sameas(node->as_string(prop_validator_variable)))
                     is_duplicate = true;
-                else if (node->HasValue(prop_radiobtn_var_name) &&
+                else if (node->hasValue(prop_radiobtn_var_name) &&
                          newValue.is_sameas(node->as_string(prop_radiobtn_var_name)))
                     is_duplicate = true;
             }
             else if (prop->isProp(prop_radiobtn_var_name))
             {
-                if (node->HasValue(prop_var_name) && newValue.is_sameas(node->as_string(prop_var_name)))
+                if (node->hasValue(prop_var_name) && newValue.is_sameas(node->as_string(prop_var_name)))
                     is_duplicate = true;
-                else if (node->HasValue(prop_validator_variable) &&
+                else if (node->hasValue(prop_validator_variable) &&
                          newValue.is_sameas(node->as_string(prop_validator_variable)))
                     is_duplicate = true;
-                else if (node->HasValue(prop_checkbox_var_name) &&
+                else if (node->hasValue(prop_checkbox_var_name) &&
                          newValue.is_sameas(node->as_string(prop_checkbox_var_name)))
                     is_duplicate = true;
             }
@@ -197,7 +197,7 @@ bool BaseGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty
 
         event->GetProperty()->SetValueFromString(newValue, 0);
     }
-    else if (prop->isProp(prop_class_name) && prop->GetNode()->IsForm())
+    else if (prop->isProp(prop_class_name) && prop->GetNode()->isForm())
     {
         auto property = wxStaticCast(event->GetProperty(), wxStringProperty);
         auto variant = event->GetPropertyValue();
@@ -230,7 +230,7 @@ bool BaseGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty
         auto variant = event->GetPropertyValue();
         tt_string newValue = property->ValueToString(variant).utf8_string();
         tt_string final_name(newValue);
-        auto result = node->GetUniqueName(final_name, prop_label);
+        auto result = node->getUniqueName(final_name, prop_label);
         if (!newValue.is_sameas(result))
         {
             event->SetValidationFailureMessage("This label is already in use by another PropertyGrid item.");
@@ -245,7 +245,7 @@ bool BaseGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty
 
 tt_string BaseGenerator::GetHelpText(Node* node)
 {
-    tt_string class_name(map_GenNames[node->gen_name()]);
+    tt_string class_name(map_GenNames[node->getGenName()]);
     if (!class_name.starts_with("wx"))
     {
         if (class_name == "BookPage")
@@ -280,7 +280,7 @@ extern std::map<std::string_view, std::string_view, std::less<>> g_map_class_pre
 
 tt_string BaseGenerator::GetPythonHelpText(Node* node)
 {
-    auto class_name = node->DeclName();
+    auto class_name = node->declName();
     if (!class_name.starts_with("wx"))
     {
         if (class_name == "BookPage")
@@ -325,7 +325,7 @@ tt_string BaseGenerator::GetPythonURL(Node* node)
 
 tt_string BaseGenerator::GetRubyHelpText(Node* node)
 {
-    auto class_name = node->DeclName();
+    auto class_name = node->declName();
     if (!class_name.starts_with("wx"))
     {
         if (class_name == "BookPage")
@@ -367,7 +367,7 @@ tt_string BaseGenerator::GetRubyURL(Node* node)
 
 bool BaseGenerator::GetPythonImports(Node* node, std::set<std::string>& set_imports)
 {
-    auto class_name = node->DeclName();
+    auto class_name = node->declName();
     if (!class_name.starts_with("wx"))
     {
         return false;
@@ -504,20 +504,20 @@ bool BaseGenerator::VerifyProperty(NodeProperty* prop)
 
 std::optional<tt_string> BaseGenerator::GetHint(NodeProperty* prop)
 {
-    if (prop->isProp(prop_derived_class_name) && !prop->HasValue())
+    if (prop->isProp(prop_derived_class_name) && !prop->hasValue())
     {
         // Note that once set, this won't change until the property grid gets recreated.
         return tt_string(!prop->GetNode()->as_bool(prop_use_derived_class) ? "requires use_derived_class" : "");
     }
-    else if (prop->isProp(prop_derived_file) && !prop->HasValue())
+    else if (prop->isProp(prop_derived_file) && !prop->hasValue())
     {
         return tt_string(!prop->GetNode()->as_bool(prop_use_derived_class) ? "requires use_derived_class" : "");
     }
-    else if (prop->isProp(prop_python_xrc_file) && !prop->HasValue())
+    else if (prop->isProp(prop_python_xrc_file) && !prop->hasValue())
     {
         return tt_string(!prop->GetNode()->as_bool(prop_use_derived_class) ? "requires python_use_xrc" : "");
     }
-    else if (prop->isProp(prop_base_file) && !prop->HasValue())
+    else if (prop->isProp(prop_base_file) && !prop->hasValue())
     {
         return tt_string("change class_name to auto-fill");
     }
@@ -571,7 +571,7 @@ static std::vector<std::pair<const char*, const char*>> prefix_pair = {
 
 tt_string BaseGenerator::GetHelpURL(Node* node)
 {
-    tt_string class_name(map_GenNames[node->gen_name()]);
+    tt_string class_name(map_GenNames[node->getGenName()]);
     if (class_name.starts_with("wx"))
     {
         class_name.erase(0, 2);
@@ -689,7 +689,7 @@ static const auto parentless_types = {
 
 bool BaseGenerator::CanChangeParent(Node* node)
 {
-    if (node->IsForm())
+    if (node->isForm())
     {
         return false;
     }
@@ -707,11 +707,11 @@ bool BaseGenerator::CanChangeParent(Node* node)
 
 int BaseGenerator::GetRequiredVersion(Node* node)
 {
-    if (node->HasValue(prop_platforms) && node->value(prop_platforms) != "Windows|Unix|Mac")
+    if (node->hasValue(prop_platforms) && node->as_string(prop_platforms) != "Windows|Unix|Mac")
     {
         return minRequiredVer + 1;
     }
-    if (node->HasValue(prop_cpp_conditional) || node->HasValue(prop_python_conditional))
+    if (node->hasValue(prop_cpp_conditional) || node->hasValue(prop_python_conditional))
     {
         return minRequiredVer + 2;  // 1.1.1 release
     }

@@ -28,7 +28,7 @@ bool FrameFormGenerator::ConstructionCode(Code& code)
             "long style, const wxString &name)";
         code.OpenBrace();
 
-        if (code.HasValue(prop_extra_style))
+        if (code.hasValue(prop_extra_style))
         {
             code.Eol(eol_if_needed).FormFunction("SetExtraStyle(GetExtraStyle() | ").Add(prop_extra_style);
             code.EndFunction();
@@ -44,10 +44,10 @@ bool FrameFormGenerator::ConstructionCode(Code& code)
         code.Comma().CheckLineLength(sizeof("style=") + code.node()->as_string(prop_style).size() + 4);
         code.Add("style=").Style().Comma();
         size_t name_len =
-            code.HasValue(prop_window_name) ? code.node()->as_string(prop_window_name).size() : sizeof("wx.DialogNameStr");
+            code.hasValue(prop_window_name) ? code.node()->as_string(prop_window_name).size() : sizeof("wx.DialogNameStr");
         code.CheckLineLength(sizeof("name=") + name_len + 4);
         code.Str("name=");
-        if (code.HasValue(prop_window_name))
+        if (code.hasValue(prop_window_name))
             code.QuotedString(prop_window_name);
         else
             code.Str("wx.FrameNameStr");
@@ -62,7 +62,7 @@ bool FrameFormGenerator::ConstructionCode(Code& code)
         // Indent any wrapped lines
         code.Indent(3);
         code.Str(", id=");
-        if (code.HasValue(prop_id))
+        if (code.hasValue(prop_id))
         {
             code.Add(prop_id);
         }
@@ -132,7 +132,7 @@ bool FrameFormGenerator::SettingsCode(Code& code)
     {
         code.Eol().FormFunction("SetMaxSize(").WxSize(prop_maximum_size).EndFunction();
     }
-    if (code.HasValue(prop_window_extra_style))
+    if (code.hasValue(prop_window_extra_style))
     {
         code.Eol(eol_if_needed).FormFunction("SetExtraStyle(").FormFunction("GetExtraStyle() | ");
         code.Add(prop_window_extra_style).EndFunction();
@@ -161,7 +161,7 @@ bool FrameFormGenerator::HeaderCode(Code& code)
     code.Eol().NodeName().Str("(wxWindow* parent, wxWindowID id = ").as_string(prop_id);
     code.Comma().Str("const wxString& title = ");
     auto& title = node->as_string(prop_title);
-    if (code.HasValue(prop_title))
+    if (code.hasValue(prop_title))
     {
         code.QuotedString(title);
     }
@@ -260,7 +260,7 @@ bool FrameFormGenerator::HeaderCode(Code& code)
     }
 
     code.Comma().Str("const wxString &name = ");
-    if (node->HasValue(prop_window_name))
+    if (node->hasValue(prop_window_name))
         code.QuotedString(prop_window_name);
     else
         code.Str("wxFrameNameStr");
@@ -273,13 +273,13 @@ bool FrameFormGenerator::HeaderCode(Code& code)
 
 bool FrameFormGenerator::BaseClassNameCode(Code& code)
 {
-    if (code.HasValue(prop_derived_class))
+    if (code.hasValue(prop_derived_class))
     {
         code.Str((prop_derived_class));
     }
     else
     {
-        code += code.node()->DeclName();
+        code += code.node()->declName();
     }
 
     return true;
@@ -290,11 +290,11 @@ int FrameFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t 
     object.append_attribute("class").set_value("wxFrame");
     object.append_attribute("name").set_value(node->as_string(prop_class_name));
 
-    if (node->HasValue(prop_title))
+    if (node->hasValue(prop_title))
     {
         object.append_child("title").text().set(node->as_string(prop_title));
     }
-    if (node->HasValue(prop_center))
+    if (node->hasValue(prop_center))
     {
         if (node->as_string(prop_center) == "wxVERTICAL" || node->as_string(prop_center) == "wxHORIZONTAL" ||
             node->as_string(prop_center) == "wxBOTH")
@@ -306,7 +306,7 @@ int FrameFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t 
             object.append_child("centered").text().set(0);
         }
     }
-    if (node->HasValue(prop_icon))
+    if (node->hasValue(prop_icon))
     {
         tt_string_vector parts(node->as_string(prop_icon), ';', tt::TRIM::both);
         ASSERT(parts.size() > 1)
@@ -354,7 +354,7 @@ int FrameFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t 
 void FrameFormGenerator::RequiredHandlers(Node* node, std::set<std::string>& handlers)
 {
     handlers.emplace("wxFrameXmlHandler");
-    if (node->HasValue(prop_icon))
+    if (node->hasValue(prop_icon))
     {
         handlers.emplace("wxIconXmlHandler");
         handlers.emplace("wxBitmapXmlHandler");

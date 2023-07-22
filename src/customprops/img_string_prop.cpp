@@ -31,7 +31,7 @@ bool ImageDialogAdapter::DoShowDialog(wxPropertyGrid* propGrid, wxPGProperty* WX
     else if (m_img_props.type.contains("Embed"))
     {
         tt_cwd cwd(true);
-        if (Project.HasValue(prop_art_directory))
+        if (Project.hasValue(prop_art_directory))
         {
             if (auto dir = Project.ArtDirectory(); dir.dir_exists())
             {
@@ -66,7 +66,7 @@ bool ImageDialogAdapter::DoShowDialog(wxPropertyGrid* propGrid, wxPGProperty* WX
     else if (m_img_props.type.contains("XPM") || m_img_props.type.contains("SVG"))
     {
         tt_cwd cwd(true);
-        if (Project.HasValue(prop_art_directory) && Project.ArtDirectory().dir_exists())
+        if (Project.hasValue(prop_art_directory) && Project.ArtDirectory().dir_exists())
         {
             wxFileName::SetCwd(Project.ArtDirectory());
         }

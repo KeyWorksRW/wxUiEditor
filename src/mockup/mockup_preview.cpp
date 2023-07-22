@@ -30,29 +30,29 @@ void CreateMockupChildren(Node* node, wxWindow* parent, wxObject* parent_object,
                           wxWindow* form_window)
 {
 #if defined(__WINDOWS__)
-    if (node->HasValue(prop_platforms) && !node->value(prop_platforms).contains("Windows"))
+    if (node->hasValue(prop_platforms) && !node->as_string(prop_platforms).contains("Windows"))
         return;
 #elif defined(__UNIX__)
-    if (node->HasValue(prop_platforms) && !node->value(prop_platforms).contains("Unix"))
+    if (node->hasValue(prop_platforms) && !node->as_string(prop_platforms).contains("Unix"))
         return;
 #elif defined(__WXOSX__)
-    if (node->HasValue(prop_platforms) && !node->value(prop_platforms).contains("Mac"))
+    if (node->hasValue(prop_platforms) && !node->as_string(prop_platforms).contains("Mac"))
         return;
 #endif
 
-    auto generator = node->GetGenerator();
-    ASSERT_MSG(generator, tt_string() << "Missing component for " << node->DeclName());
+    auto generator = node->getGenerator();
+    ASSERT_MSG(generator, tt_string() << "Missing component for " << node->declName());
     if (!generator)
         return;
 
     auto created_object = generator->CreateMockup(node, parent);
     if (!created_object)
     {
-        if (node->IsSpacer() && parent_object)
+        if (node->isSpacer() && parent_object)
         {
-            if (node->GetParent()->isGen(gen_wxGridBagSizer))
+            if (node->getParent()->isGen(gen_wxGridBagSizer))
             {
-                auto flags = node->GetSizerFlags();
+                auto flags = node->getSizerFlags();
                 wxStaticCast(parent_object, wxGridBagSizer)
                     ->Add(node->as_int(prop_width), node->as_int(prop_height),
                           wxGBPosition(node->as_int(prop_row), node->as_int(prop_column)),
@@ -81,7 +81,7 @@ void CreateMockupChildren(Node* node, wxWindow* parent, wxObject* parent_object,
 
         return;  // means the component doesn't create any UI element, and cannot have children
     }
-    node->SetMockupObject(created_object);
+    node->setMockupObject(created_object);
 
     wxWindow* created_window { nullptr };
     wxSizer* created_sizer { nullptr };
@@ -100,9 +100,9 @@ void CreateMockupChildren(Node* node, wxWindow* parent, wxObject* parent_object,
         // BUGBUG: [Randalphwa - 09-09-2022] Er, why are we returning?
         return;
     }
-    else if (node->IsSizer() || node->isGen(gen_wxStdDialogButtonSizer) || node->isGen(gen_TextSizer))
+    else if (node->isSizer() || node->isGen(gen_wxStdDialogButtonSizer) || node->isGen(gen_TextSizer))
     {
-        if (node->IsStaticBoxSizer())
+        if (node->isStaticBoxSizer())
         {
             auto staticBoxSizer = wxStaticCast(created_object, wxStaticBoxSizer);
             created_window = staticBoxSizer->GetStaticBox();
@@ -136,12 +136,12 @@ void CreateMockupChildren(Node* node, wxWindow* parent, wxObject* parent_object,
         new_wxparent = collpane->GetPane();
     }
 
-    if (node->isGen(gen_PageCtrl) && node->GetChildCount())
+    if (node->isGen(gen_PageCtrl) && node->getChildCount())
     {
-        auto page_child = node->GetChild(0);
+        auto page_child = node->getChild(0);
         if (page_child)
         {
-            for (const auto& child: page_child->GetChildNodePtrs())
+            for (const auto& child: page_child->getChildNodePtrs())
             {
                 CreateMockupChildren(child.get(), parent, parent_object, nullptr, form_window);
             }
@@ -149,7 +149,7 @@ void CreateMockupChildren(Node* node, wxWindow* parent, wxObject* parent_object,
     }
     else
     {
-        for (const auto& child: node->GetChildNodePtrs())
+        for (const auto& child: node->getChildNodePtrs())
         {
             CreateMockupChildren(child.get(), new_wxparent, created_object, nullptr, form_window);
         }
@@ -157,7 +157,7 @@ void CreateMockupChildren(Node* node, wxWindow* parent, wxObject* parent_object,
 
     if (parent && (created_window || created_sizer))
     {
-        if (auto node_parent = node->GetParent(); node_parent)
+        if (auto node_parent = node->getParent(); node_parent)
         {
             if (node_parent->isGen(gen_wxChoicebook) && node->isType(type_widget))
             {
@@ -165,9 +165,9 @@ void CreateMockupChildren(Node* node, wxWindow* parent, wxObject* parent_object,
                     ->GetControlSizer()
                     ->Add(created_window, wxSizerFlags().Expand().Border(wxALL));
             }
-            else if (node_parent->IsSizer())
+            else if (node_parent->isSizer())
             {
-                auto sizer_flags = node->GetSizerFlags();
+                auto sizer_flags = node->getSizerFlags();
                 if (node_parent->isGen(gen_wxGridBagSizer))
                 {
                     auto sizer = wxStaticCast(parent_object, wxGridBagSizer);
@@ -182,7 +182,7 @@ void CreateMockupChildren(Node* node, wxWindow* parent, wxObject* parent_object,
                 else
                 {
                     auto sizer = wxStaticCast(parent_object, wxSizer);
-                    if (created_window && !node->IsStaticBoxSizer())
+                    if (created_window && !node->isStaticBoxSizer())
                     {
                         sizer->Add(created_window, sizer_flags.GetProportion(), sizer_flags.GetFlags(),
                                    sizer_flags.GetBorderInPixels());
@@ -203,14 +203,14 @@ void CreateMockupChildren(Node* node, wxWindow* parent, wxObject* parent_object,
         if (parent_sizer->IsKindOf(wxCLASSINFO(wxGridBagSizer)))
         {
             auto* gb_sizer = wxStaticCast(parent_sizer, wxGridBagSizer);
-            if (created_window && !node->IsStaticBoxSizer())
+            if (created_window && !node->isStaticBoxSizer())
                 gb_sizer->Add(created_window, wxGBPosition(1, 0), wxGBSpan(1, 1), wxALL, 5);
             else if (created_sizer)
                 gb_sizer->Add(created_sizer, wxGBPosition(1, 0), wxGBSpan(1, 1), wxALL, 5);
         }
         else
         {
-            if (created_window && !node->IsStaticBoxSizer())
+            if (created_window && !node->isStaticBoxSizer())
                 parent_sizer->Add(created_window, wxSizerFlags().Expand());
             else if (created_sizer)
                 parent_sizer->Add(created_sizer, wxSizerFlags(1).Expand());

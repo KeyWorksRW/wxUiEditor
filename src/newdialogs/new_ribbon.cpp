@@ -130,17 +130,17 @@ void NewRibbon::OnInit(wxInitDialogEvent& event)
     event.Skip();  // transfer all validator data to their windows and update UI
 }
 
-void NewRibbon::CreateNode()
+void NewRibbon::createNode()
 {
     NodeSharedPtr bar_node;
     if (m_is_form)
     {
-        bar_node = NodeCreation.CreateNode(gen_RibbonBar, Project.ProjectNode());
+        bar_node = NodeCreation.createNode(gen_RibbonBar, Project.ProjectNode());
         ASSERT(bar_node);
     }
     else
     {
-        bar_node = NodeCreation.CreateNode(gen_wxRibbonBar, wxGetFrame().GetSelectedNode());
+        bar_node = NodeCreation.createNode(gen_wxRibbonBar, wxGetFrame().GetSelectedNode());
         if (!bar_node)
         {
             wxMessageBox("You need to have a sizer selected before you can create a wxRibbonBar.", "Create wxRibbonBar");
@@ -150,51 +150,51 @@ void NewRibbon::CreateNode()
 
     for (int count = 0; count < m_num_pages; ++count)
     {
-        auto ribbon_page = NodeCreation.CreateNode(gen_wxRibbonPage, bar_node.get());
-        bar_node->Adopt(ribbon_page);
+        auto ribbon_page = NodeCreation.createNode(gen_wxRibbonPage, bar_node.get());
+        bar_node->adoptChild(ribbon_page);
         tt_string label("Page ");
         label << count + 1;
         ribbon_page->set_value(prop_label, label);
 
-        auto ribbon_panel = NodeCreation.CreateNode(gen_wxRibbonPanel, ribbon_page.get());
-        ribbon_page->Adopt(ribbon_panel);
+        auto ribbon_panel = NodeCreation.createNode(gen_wxRibbonPanel, ribbon_page.get());
+        ribbon_page->adoptChild(ribbon_panel);
         label << ", panel 1";
         ribbon_panel->set_value(prop_label, label);
 
         if (m_panel_type == "Tool")
         {
-            auto tool_bar = NodeCreation.CreateNode(gen_wxRibbonToolBar, ribbon_panel.get());
-            ribbon_panel->Adopt(tool_bar);
-            auto tool = NodeCreation.CreateNode(gen_ribbonTool, tool_bar.get());
-            tool_bar->Adopt(tool);
+            auto tool_bar = NodeCreation.createNode(gen_wxRibbonToolBar, ribbon_panel.get());
+            ribbon_panel->adoptChild(tool_bar);
+            auto tool = NodeCreation.createNode(gen_ribbonTool, tool_bar.get());
+            tool_bar->adoptChild(tool);
         }
         else if (m_panel_type == "Button")
         {
-            auto button_bar = NodeCreation.CreateNode(gen_wxRibbonButtonBar, ribbon_panel.get());
-            ribbon_panel->Adopt(button_bar);
-            auto button = NodeCreation.CreateNode(gen_ribbonButton, button_bar.get());
-            button_bar->Adopt(button);
+            auto button_bar = NodeCreation.createNode(gen_wxRibbonButtonBar, ribbon_panel.get());
+            ribbon_panel->adoptChild(button_bar);
+            auto button = NodeCreation.createNode(gen_ribbonButton, button_bar.get());
+            button_bar->adoptChild(button);
         }
         else if (m_panel_type == "Gallery")
         {
-            auto gallery_bar = NodeCreation.CreateNode(gen_wxRibbonGallery, ribbon_panel.get());
-            ribbon_panel->Adopt(gallery_bar);
-            auto item = NodeCreation.CreateNode(gen_ribbonGalleryItem, gallery_bar.get());
-            gallery_bar->Adopt(item);
+            auto gallery_bar = NodeCreation.createNode(gen_wxRibbonGallery, ribbon_panel.get());
+            ribbon_panel->adoptChild(gallery_bar);
+            auto item = NodeCreation.createNode(gen_ribbonGalleryItem, gallery_bar.get());
+            gallery_bar->adoptChild(item);
         }
     }
 
     if (!m_is_form)
     {
         auto parent = wxGetFrame().GetSelectedNode();
-        auto pos = parent->FindInsertionPos(parent);
+        auto pos = parent->findInsertionPos(parent);
         tt_string undo_str("New wxRibbonBar");
         wxGetFrame().PushUndoAction(std::make_shared<InsertNodeAction>(bar_node.get(), parent, undo_str, pos));
     }
     else
     {
         bar_node->set_value(prop_class_name, m_base_class.utf8_string());
-        if (bar_node->as_string(prop_class_name) != bar_node->prop_default_value(prop_class_name))
+        if (bar_node->as_string(prop_class_name) != bar_node->getPropDefaultValue(prop_class_name))
         {
             UpdateFormClass(bar_node.get());
         }
@@ -206,7 +206,7 @@ void NewRibbon::CreateNode()
         }
         else
         {
-            parent_node = parent_node->get_ValidFormParent();
+            parent_node = parent_node->getValidFormParent();
         }
 
         wxGetFrame().SelectNode(parent_node);
@@ -226,7 +226,7 @@ void NewRibbon::CreateNode()
 bool NewRibbon::IsCreatable(bool notify_user)
 {
     auto parent = wxGetFrame().GetSelectedNode();
-    if (parent->IsSizer())
+    if (parent->isSizer())
         return true;
 
     if (notify_user)

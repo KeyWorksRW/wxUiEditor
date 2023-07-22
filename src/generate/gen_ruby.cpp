@@ -163,7 +163,7 @@ void BaseCodeGenerator::GenerateRubyClass(Node* form_node, PANEL_PAGE panel_type
     {
         if (form->isGen(gen_folder))
         {
-            for (const auto& child_form: form->GetChildNodePtrs())
+            for (const auto& child_form: form->getChildNodePtrs())
             {
                 if (child_form->isGen(gen_Images))
                 {
@@ -230,11 +230,11 @@ void BaseCodeGenerator::GenerateRubyClass(Node* form_node, PANEL_PAGE panel_type
 
     auto GatherImportModules = [&](Node* node, auto&& GatherImportModules) -> void
     {
-        if (auto* gen = node->GetGenerator(); gen)
+        if (auto* gen = node->getGenerator(); gen)
         {
             gen->GetRubyImports(node, imports);
         }
-        for (auto& child: node->GetChildNodePtrs())
+        for (auto& child: node->getChildNodePtrs())
         {
             GatherImportModules(child.get(), GatherImportModules);
         }
@@ -253,7 +253,7 @@ void BaseCodeGenerator::GenerateRubyClass(Node* form_node, PANEL_PAGE panel_type
     {
         for (auto& form: forms)
         {
-            if ((form->isGen(gen_wxDialog) || form->isGen(gen_wxWizard)) && form->HasValue(prop_ruby_file))
+            if ((form->isGen(gen_wxDialog) || form->isGen(gen_wxWizard)) && form->hasValue(prop_ruby_file))
             {
                 tt_string import_name(form->as_string(prop_ruby_file).filename());
                 import_name.remove_extension();
@@ -299,7 +299,7 @@ void BaseCodeGenerator::GenerateRubyClass(Node* form_node, PANEL_PAGE panel_type
     m_header->writeLine(tt_string("requires '") << form_node->as_string(prop_python_file) << "'\n");
     m_header->writeLine();
 
-    if (m_form_node->HasValue(prop_ruby_insert))
+    if (m_form_node->hasValue(prop_ruby_insert))
     {
         tt_string convert(m_form_node->as_string(prop_ruby_insert));
         convert.Replace("@@", "\n", tt::REPLACE::all);
@@ -312,10 +312,10 @@ void BaseCodeGenerator::GenerateRubyClass(Node* form_node, PANEL_PAGE panel_type
         m_source->doWrite("\n");
     }
 
-    tt_string inherit_name = form_node->value(prop_ruby_inherit_name);
+    tt_string inherit_name = form_node->as_string(prop_ruby_inherit_name);
     if (inherit_name.empty())
     {
-        inherit_name += " < " + form_node->value(prop_class_name);
+        inherit_name += " < " + form_node->as_string(prop_class_name);
     }
     if (inherit_name.size())
     {
@@ -333,7 +333,7 @@ void BaseCodeGenerator::GenerateRubyClass(Node* form_node, PANEL_PAGE panel_type
 
     thrd_get_events.join();
 
-    auto generator = form_node->GetNodeDeclaration()->GetGenerator();
+    auto generator = form_node->getNodeDeclaration()->getGenerator();
     code.clear();
     if (generator->ConstructionCode(code))
     {
@@ -365,7 +365,7 @@ void BaseCodeGenerator::GenerateRubyClass(Node* form_node, PANEL_PAGE panel_type
         }
     }
 
-    if (form_node->get_prop_ptr(prop_window_extra_style))
+    if (form_node->getPropPtr(prop_window_extra_style))
     {
         code.clear();
         code.GenWindowSettings();
@@ -376,7 +376,7 @@ void BaseCodeGenerator::GenerateRubyClass(Node* form_node, PANEL_PAGE panel_type
     }
 
     m_source->SetLastLineBlank();
-    for (const auto& child: form_node->GetChildNodePtrs())
+    for (const auto& child: form_node->getChildNodePtrs())
     {
         if (child->isGen(gen_wxContextMenuEvent))
             continue;
@@ -436,7 +436,7 @@ void BaseCodeGenerator::GenerateRubyClass(Node* form_node, PANEL_PAGE panel_type
 tt_string MakeRubyPath(Node* node)
 {
     tt_string path;
-    Node* form = node->get_form();
+    Node* form = node->getForm();
 
     if (auto& base_file = form->as_string(prop_ruby_file); base_file.size())
     {

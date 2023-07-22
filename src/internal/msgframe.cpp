@@ -33,10 +33,10 @@ struct NodeMemory
 
 static void CalcNodeMemory(Node* node, NodeMemory& node_memory)
 {
-    node_memory.size += node->GetNodeSize();
+    node_memory.size += node->getNodeSize();
     ++node_memory.children;
 
-    for (auto& iter: node->GetChildNodePtrs())
+    for (auto& iter: node->getChildNodePtrs())
     {
         CalcNodeMemory(iter.get(), node_memory);
     }
@@ -306,10 +306,10 @@ void MsgFrame::UpdateNodeInfo()
         }
 
         label.clear();
-        label << "Generator: gen_" << cur_sel->DeclName();
+        label << "Generator: gen_" << cur_sel->declName();
         m_txt_generator->SetLabel(label);
         label.clear();
-        label << "Type: " << GenEnum::map_GenTypes.at(cur_sel->gen_type());
+        label << "Type: " << GenEnum::map_GenTypes.at(cur_sel->getGenType());
         m_txt_type->SetLabel(label);
 
         node_memory.size = 0;
@@ -320,7 +320,7 @@ void MsgFrame::UpdateNodeInfo()
                      node_memory.children == 1 ? "" : "s");
         m_txt_memory->SetLabel(label);
 
-        if (auto generator = cur_sel->GetGenerator(); generator)
+        if (auto generator = cur_sel->getGenerator(); generator)
         {
             auto gen_label = generator->GetHelpText(cur_sel);
             if (gen_label.empty())
@@ -360,7 +360,7 @@ void MsgFrame::OnParent(wxCommandEvent& WXUNUSED(event))
     auto cur_sel = wxGetFrame().GetSelectedNode();
     if (cur_sel)
     {
-        auto parent = cur_sel->GetParent();
+        auto parent = cur_sel->getParent();
         if (!parent)
         {
             wxMessageBox("Current node doesn't have a parent!");

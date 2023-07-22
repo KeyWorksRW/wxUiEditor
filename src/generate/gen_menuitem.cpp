@@ -56,7 +56,7 @@ bool MenuItemGenerator::ConstructionCode(Code& code)
     Node* node = code.node();  // This is just for code readability -- could just use code.node() everywhere
     code.AddAuto();
 
-    if (node->GetParent()->isGen(gen_PopupMenu))
+    if (node->getParent()->isGen(gen_PopupMenu))
     {
         code.NodeName();
         code.AddIfCpp(" = Append(");
@@ -66,7 +66,7 @@ bool MenuItemGenerator::ConstructionCode(Code& code)
     else
     {
         code.NodeName().CreateClass().ParentName().Comma();
-        if (node->value(prop_stock_id) != "none")
+        if (node->as_string(prop_stock_id) != "none")
         {
             code.Add(prop_stock_id).EndFunction();
             return true;
@@ -74,12 +74,12 @@ bool MenuItemGenerator::ConstructionCode(Code& code)
         code.as_string(prop_id).Comma();
     }
 
-    auto& label = node->value(prop_label);
+    auto& label = node->as_string(prop_label);
     if (label.size())
     {
-        if (node->HasValue(prop_shortcut))
+        if (node->hasValue(prop_shortcut))
         {
-            code.QuotedString(tt_string() << label << '\t' << node->value(prop_shortcut));
+            code.QuotedString(tt_string() << label << '\t' << node->as_string(prop_shortcut));
         }
         else
         {
@@ -91,7 +91,7 @@ bool MenuItemGenerator::ConstructionCode(Code& code)
         code.Add("wxEmptyString");
     }
 
-    if (code.HasValue(prop_help) || node->value(prop_kind) != "wxITEM_NORMAL")
+    if (code.hasValue(prop_help) || node->as_string(prop_kind) != "wxITEM_NORMAL")
     {
         code.Comma().CheckLineLength().QuotedString(prop_help).Comma().Add(prop_kind);
     }
@@ -103,17 +103,17 @@ bool MenuItemGenerator::ConstructionCode(Code& code)
 bool MenuItemGenerator::SettingsCode(Code& code)
 {
     Node* node = code.node();
-    if (code.HasValue(prop_extra_accels))
+    if (code.hasValue(prop_extra_accels))
     {
         tt_string_vector accel_list;
-        accel_list.SetString(node->value(prop_extra_accels), '"', tt::TRIM::both);
+        accel_list.SetString(node->as_string(prop_extra_accels), '"', tt::TRIM::both);
 
         if (code.is_cpp())
         {
             // auto_indent = indent::auto_keep_whitespace;
             code.OpenBrace().Add("wxAcceleratorEntry entry;").Eol();
 
-            bool is_old_widgets = (Project.value(prop_wxWidgets_version) == "3.1");
+            bool is_old_widgets = (Project.as_string(prop_wxWidgets_version) == "3.1");
             if (is_old_widgets)
             {
                 code += "#if wxCHECK_VERSION(3, 1, 6)\n";
@@ -146,19 +146,19 @@ bool MenuItemGenerator::SettingsCode(Code& code)
         }
     }
 
-    if (code.HasValue(prop_bitmap))
+    if (code.hasValue(prop_bitmap))
     {
         code.Eol(eol_if_empty);
         if (code.is_cpp())
         {
-            auto& description = node->value(prop_bitmap);
+            auto& description = node->as_string(prop_bitmap);
             bool is_vector_code = GenerateVectorCode(description, code.GetCode());
             code.UpdateBreakAt();
 
             if (!is_vector_code)
             {
                 code.NodeName().Function("SetBitmap(");
-                if (Project.value(prop_wxWidgets_version) != "3.1")
+                if (Project.as_string(prop_wxWidgets_version) != "3.1")
                 {
                     GenerateBundleCode(description, code.GetCode());
                     code.EndFunction();
@@ -177,7 +177,7 @@ bool MenuItemGenerator::SettingsCode(Code& code)
             else
             {
                 code.Tab().NodeName().Function("SetBitmap(");
-                if (Project.value(prop_wxWidgets_version) != "3.1")
+                if (Project.as_string(prop_wxWidgets_version) != "3.1")
                 {
                     code += "wxBitmapBundle::FromBitmaps(bitmaps)";
                     code.UpdateBreakAt();
@@ -212,20 +212,20 @@ bool MenuItemGenerator::SettingsCode(Code& code)
             code.EndFunction();
         }
     }
-    if (code.HasValue(prop_unchecked_bitmap))
+    if (code.hasValue(prop_unchecked_bitmap))
     {
         code.Eol();
         code.AddComment("Set the unchecked bitmap").Eol();
         if (code.is_cpp())
         {
-            auto& description = node->value(prop_unchecked_bitmap);
+            auto& description = node->as_string(prop_unchecked_bitmap);
             bool is_vector_code = GenerateVectorCode(description, code.GetCode());
             code.UpdateBreakAt();
 
             if (!is_vector_code)
             {
                 code.NodeName().Function("SetBitmap(");
-                if (Project.value(prop_wxWidgets_version) != "3.1")
+                if (Project.as_string(prop_wxWidgets_version) != "3.1")
                 {
                     GenerateBundleCode(description, code.GetCode());
                     code.UpdateBreakAt();
@@ -245,7 +245,7 @@ bool MenuItemGenerator::SettingsCode(Code& code)
             else
             {
                 code.Tab().NodeName().Function("SetBitmap(");
-                if (Project.value(prop_wxWidgets_version) != "3.1")
+                if (Project.as_string(prop_wxWidgets_version) != "3.1")
                 {
                     code += "wxBitmapBundle::FromBitmaps(bitmaps)";
                     code.UpdateBreakAt();
@@ -285,12 +285,12 @@ bool MenuItemGenerator::SettingsCode(Code& code)
         }
     }
 
-    if (!node->GetParent()->isGen(gen_PopupMenu))
+    if (!node->getParent()->isGen(gen_PopupMenu))
     {
         code.Eol(eol_if_empty).ParentName().Function("Append(").NodeName().EndFunction();
     }
 
-    if ((node->value(prop_kind) == "wxITEM_CHECK" || node->value(prop_kind) == "wxITEM_RADIO") && code.IsTrue(prop_checked))
+    if ((node->as_string(prop_kind) == "wxITEM_CHECK" || node->as_string(prop_kind) == "wxITEM_RADIO") && code.IsTrue(prop_checked))
     {
         code.Eol(eol_if_empty).NodeName().Function("Check(").EndFunction();
     }
@@ -301,7 +301,7 @@ bool MenuItemGenerator::SettingsCode(Code& code)
 bool MenuItemGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
     InsertGeneratorInclude(node, "#include <wx/menu.h>", set_src, set_hdr);
-    if (node->HasValue(prop_extra_accels))
+    if (node->hasValue(prop_extra_accels))
     {
         InsertGeneratorInclude(node, "#include <wx/accel.h>", set_src, set_hdr);
     }
@@ -311,12 +311,12 @@ bool MenuItemGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, 
 
 int MenuItemGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxMenuItem");
 
-    if (node->value(prop_stock_id) != "none")
+    if (node->as_string(prop_stock_id) != "none")
     {
         GenXrcBitmap(node, item, xrc_flags);
 
@@ -330,11 +330,11 @@ int MenuItemGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t x
 
     ADD_ITEM_PROP(prop_label, "label")
     ADD_ITEM_PROP(prop_shortcut, "accel")
-    if (node->HasValue(prop_extra_accels))
+    if (node->hasValue(prop_extra_accels))
     {
         auto child = item.append_child("extra-accels");
         tt_string_vector accel_list;
-        accel_list.SetString(node->value(prop_extra_accels), '"', tt::TRIM::both);
+        accel_list.SetString(node->as_string(prop_extra_accels), '"', tt::TRIM::both);
         for (auto& accel: accel_list)
         {
             if (accel.size())
@@ -348,9 +348,9 @@ int MenuItemGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t x
     if (node->as_bool(prop_disabled))
         item.append_child("enabled").text().set("0");
 
-    if (node->value(prop_kind) == "wxITEM_RADIO")
+    if (node->as_string(prop_kind) == "wxITEM_RADIO")
         item.append_child("radio").text().set("1");
-    else if (node->value(prop_kind) == "wxITEM_CHECK")
+    else if (node->as_string(prop_kind) == "wxITEM_CHECK")
         item.append_child("checkable").text().set("1");
 
     GenXrcBitmap(node, item, xrc_flags);
@@ -382,7 +382,7 @@ void MenuItemGenerator::ChangeEnableState(wxPropertyGridManager* prop_grid, Node
     }
 }
 
-bool MenuItemGenerator::ModifyProperty(NodeProperty* prop, tt_string_view value)
+bool MenuItemGenerator::modifyProperty(NodeProperty* prop, tt_string_view value)
 {
     if (prop->isProp(prop_stock_id))
     {
@@ -390,15 +390,15 @@ bool MenuItemGenerator::ModifyProperty(NodeProperty* prop, tt_string_view value)
         {
             auto undo_stock_id = std::make_shared<ModifyProperties>("Stock ID");
             undo_stock_id->AddProperty(prop, value);
-            undo_stock_id->AddProperty(prop->GetNode()->get_prop_ptr(prop_label),
+            undo_stock_id->AddProperty(prop->GetNode()->getPropPtr(prop_label),
                                        wxGetStockLabel(NodeCreation.GetConstantAsInt(value.as_str())).utf8_string());
-            undo_stock_id->AddProperty(prop->GetNode()->get_prop_ptr(prop_help),
+            undo_stock_id->AddProperty(prop->GetNode()->getPropPtr(prop_help),
                                        wxGetStockHelpString(NodeCreation.GetConstantAsInt(value.as_str())).utf8_string());
-            undo_stock_id->AddProperty(prop->GetNode()->get_prop_ptr(prop_id), value);
+            undo_stock_id->AddProperty(prop->GetNode()->getPropPtr(prop_id), value);
 
             if (auto result = map_id_artid.find(value.as_str()); result != map_id_artid.end())
             {
-                undo_stock_id->AddProperty(prop->GetNode()->get_prop_ptr(prop_bitmap),
+                undo_stock_id->AddProperty(prop->GetNode()->getPropPtr(prop_bitmap),
                                            tt_string("Art;") << result->second << "|wxART_MENU");
             }
             wxGetFrame().PushUndoAction(undo_stock_id);

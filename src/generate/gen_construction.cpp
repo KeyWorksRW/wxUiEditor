@@ -31,13 +31,13 @@ GenType aftercode_types[] = {
 
 void BaseCodeGenerator::GenConstruction(Node* node)
 {
-    auto type = node->gen_type();
-    auto declaration = node->GetNodeDeclaration();
-    auto generator = declaration->GetGenerator();
+    auto type = node->getGenType();
+    auto declaration = node->getNodeDeclaration();
+    auto generator = declaration->getGenerator();
     if (!generator)
         return;
 
-    if (node->HasValue(prop_platforms) && node->value(prop_platforms) != "Windows|Unix|Mac")
+    if (node->hasValue(prop_platforms) && node->as_string(prop_platforms) != "Windows|Unix|Mac")
     {
         BeginPlatformCode(node);
     }
@@ -67,10 +67,10 @@ void BaseCodeGenerator::GenConstruction(Node* node)
     {
         BeginBrace();
         // A wxRibbonToolBar can only have abstract children that consist of the tools.
-        for (const auto& child: node->GetChildNodePtrs())
+        for (const auto& child: node->getChildNodePtrs())
         {
             Code child_code(child.get(), m_language);
-            if (child->GetGenerator()->ConstructionCode(child_code))
+            if (child->getGenerator()->ConstructionCode(child_code))
             {
                 m_source->writeLine(child_code);
             }
@@ -86,18 +86,18 @@ void BaseCodeGenerator::GenConstruction(Node* node)
         return;
     }
 
-    auto parent = node->GetParent();
+    auto parent = node->getParent();
 
     if (GenAfterChildren(node, need_closing_brace))
     {
         return;
     }
 
-    if (parent->IsSizer())
+    if (parent->isSizer())
     {
         GenParentSizer(node, need_closing_brace);
     }
-    else if (parent->IsToolBar() && !node->isType(type_tool) && !node->isType(type_aui_tool) &&
+    else if (parent->isToolBar() && !node->isType(type_tool) && !node->isType(type_aui_tool) &&
              !node->isType(type_tool_separator) && !node->isType(type_tool_dropdown))
     {
         tt_string code;
@@ -108,7 +108,7 @@ void BaseCodeGenerator::GenConstruction(Node* node)
             gen_code.ParentName().Function("AddControl(").NodeName().EndFunction();
         m_source->writeLine(gen_code);
     }
-    else if (node->gen_type() == type_widget && parent->isGen(gen_wxChoicebook))
+    else if (node->getGenType() == type_widget && parent->isGen(gen_wxChoicebook))
     {
         gen_code.clear();
         if (gen_code.is_python())
@@ -124,17 +124,17 @@ void BaseCodeGenerator::GenConstruction(Node* node)
         m_source->writeLine(gen_code);
     }
 
-    if (node->isGen(gen_PageCtrl) && node->GetChildCount())
+    if (node->isGen(gen_PageCtrl) && node->getChildCount())
     {
         // type_page will have already constructed the code for the child. However, we still need to generate
         // settings and process any grandchildren.
 
-        auto page_child = node->GetChild(0);
+        auto page_child = node->getChild(0);
         if (page_child)
         {
             GenSettings(page_child);
 
-            for (const auto& child: page_child->GetChildNodePtrs())
+            for (const auto& child: page_child->getChildNodePtrs())
             {
                 GenConstruction(child.get());
             }
@@ -142,15 +142,15 @@ void BaseCodeGenerator::GenConstruction(Node* node)
     }
     else
     {
-        for (const auto& child: node->GetChildNodePtrs())
+        for (const auto& child: node->getChildNodePtrs())
         {
             GenConstruction(child.get());
         }
     }
 
-    if (node->IsSizer())
+    if (node->isSizer())
     {
-        if (!parent->IsSizer() && !parent->isGen(gen_wxDialog) && !parent->isGen(gen_PanelForm))
+        if (!parent->isSizer() && !parent->isGen(gen_wxDialog) && !parent->isGen(gen_PanelForm))
         {
             // The parent node is not a sizer -- which is expected if this is the parent sizer underneath a form or
             // wxPanel.
@@ -179,12 +179,12 @@ void BaseCodeGenerator::GenConstruction(Node* node)
     {
         gen_code.clear();
 
-        if (node->GetChildCount() == 1)
+        if (node->getChildCount() == 1)
         {
             gen_code.NodeName();
-            gen_code.Function("Initialize(").NodeName(node->GetChild(0)).EndFunction();
+            gen_code.Function("Initialize(").NodeName(node->getChild(0)).EndFunction();
         }
-        else if (node->GetChildCount() > 1)
+        else if (node->getChildCount() > 1)
         {
             gen_code.NodeName();
             if (node->as_string(prop_splitmode) == "wxSPLIT_VERTICAL")
@@ -192,9 +192,9 @@ void BaseCodeGenerator::GenConstruction(Node* node)
             else
                 gen_code.Function("SplitHorizontally(");
 
-            gen_code.NodeName(node->GetChild(0)).Comma().NodeName(node->GetChild(1)).EndFunction();
+            gen_code.NodeName(node->getChild(0)).Comma().NodeName(node->getChild(1)).EndFunction();
 
-            if (auto sash_pos = node->get_prop_ptr(prop_sashpos)->as_int(); sash_pos != 0 && sash_pos != -1)
+            if (auto sash_pos = node->getPropPtr(prop_sashpos)->as_int(); sash_pos != 0 && sash_pos != -1)
             {
                 gen_code.Eol().NodeName().Function("SetSashPosition(").Add(prop_sashpos).EndFunction();
             }
@@ -222,7 +222,7 @@ void BaseCodeGenerator::GenConstruction(Node* node)
         }
     }
 
-    if (node->HasValue(prop_platforms) && node->value(prop_platforms) != "Windows|Unix|Mac")
+    if (node->hasValue(prop_platforms) && node->as_string(prop_platforms) != "Windows|Unix|Mac")
     {
         EndPlatformCode();
     }
@@ -247,7 +247,7 @@ const char* BaseCodeGenerator::LangPtr() const
 void BaseCodeGenerator::BeginPlatformCode(Node* node)
 {
     tt_string code;
-    if (node->value(prop_platforms).contains("Windows"))
+    if (node->as_string(prop_platforms).contains("Windows"))
     {
         switch (m_language)
         {
@@ -260,7 +260,7 @@ void BaseCodeGenerator::BeginPlatformCode(Node* node)
                 break;
         }
     }
-    if (node->value(prop_platforms).contains("Unix"))
+    if (node->as_string(prop_platforms).contains("Unix"))
     {
         switch (m_language)
         {
@@ -281,7 +281,7 @@ void BaseCodeGenerator::BeginPlatformCode(Node* node)
                 break;
         }
     }
-    if (node->value(prop_platforms).contains("Mac"))
+    if (node->as_string(prop_platforms).contains("Mac"))
     {
         switch (m_language)
         {
@@ -343,7 +343,7 @@ void BaseCodeGenerator::EndBrace()
 
 void BaseCodeGenerator::GenSettings(Node* node)
 {
-    auto generator = node->GetGenerator();
+    auto generator = node->getGenerator();
 
     Code code(node, m_language);
     if (generator->SettingsCode(code))
@@ -354,7 +354,7 @@ void BaseCodeGenerator::GenSettings(Node* node)
         }
     }
 
-    if (node->get_prop_ptr(prop_window_extra_style))
+    if (node->getPropPtr(prop_window_extra_style))
     {
         if (m_language == GEN_LANG_CPLUSPLUS)
         {
@@ -372,23 +372,23 @@ void BaseCodeGenerator::GenSettings(Node* node)
 
 bool BaseCodeGenerator::GenAfterChildren(Node* node, bool need_closing_brace)
 {
-    auto generator = node->GetGenerator();
+    auto generator = node->getGenerator();
     Code gen_code(node, m_language);
     if (generator->AfterChildrenCode(gen_code))
     {
         // If the node needs to write code after all children are constructed, then create the children first, then write
         // the post-child code.
 
-        for (const auto& child: node->GetChildNodePtrs())
+        for (const auto& child: node->getChildNodePtrs())
         {
             GenConstruction(child.get());
         }
 
         m_source->writeLine(gen_code);
-        auto parent = node->GetParent();
+        auto parent = node->getParent();
 
         // Code for spacer's is handled by the component's GenConstruction() call
-        if (parent->IsSizer() && !node->isGen(gen_spacer))
+        if (parent->isSizer() && !node->isGen(gen_spacer))
         {
             gen_code.clear();
 
@@ -401,16 +401,16 @@ bool BaseCodeGenerator::GenAfterChildren(Node* node, bool need_closing_brace)
                 gen_code.Add("wxGBPosition(").as_string(prop_row).Comma().as_string(prop_column) << "), ";
                 gen_code.Add("wxGBSpan(").as_string(prop_rowspan).Comma().as_string(prop_colspan) << "), ";
 
-                if (node->HasValue(prop_borders))
+                if (node->hasValue(prop_borders))
                     gen_code.as_string(prop_borders);
                 if (node->as_string(prop_flags).size())
                 {
-                    if (node->HasValue(prop_borders))
+                    if (node->hasValue(prop_borders))
                         gen_code.GetCode() += '|';
                     gen_code.as_string(prop_flags);
                 }
 
-                if (!node->HasValue(prop_borders) && !node->HasValue(prop_flags))
+                if (!node->hasValue(prop_borders) && !node->hasValue(prop_flags))
                     gen_code.GetCode() += '0';
 
                 gen_code.Comma().as_string(prop_border_size).EndFunction();
@@ -445,8 +445,8 @@ bool BaseCodeGenerator::GenAfterChildren(Node* node, bool need_closing_brace)
 
 void BaseCodeGenerator::GenParentSizer(Node* node, bool need_closing_brace)
 {
-    auto declaration = node->GetNodeDeclaration();
-    auto generator = declaration->GetGenerator();
+    auto declaration = node->getNodeDeclaration();
+    auto generator = declaration->getGenerator();
 
     Code code(node, m_language);
     if (generator->AfterChildrenCode(code))
@@ -460,7 +460,7 @@ void BaseCodeGenerator::GenParentSizer(Node* node, bool need_closing_brace)
     {
         if (node->isGen(gen_wxStdDialogButtonSizer))
         {
-            if (node->get_form()->isGen(gen_wxDialog) && node->as_bool(prop_static_line))
+            if (node->getForm()->isGen(gen_wxDialog) && node->as_bool(prop_static_line))
             {
                 if (is_cpp())
                     code.ParentName().Function("Add(CreateSeparatedSizer(").NodeName() << "), ";
@@ -479,7 +479,7 @@ void BaseCodeGenerator::GenParentSizer(Node* node, bool need_closing_brace)
             code.ParentName().Function("Add(").NodeName() << ", ";
         }
 
-        if (node->GetParent()->isGen(gen_wxGridBagSizer))
+        if (node->getParent()->isGen(gen_wxGridBagSizer))
         {
             code.Add("wxGBPosition(").as_string(prop_row).Comma().as_string(prop_column) << "), ";
             code.Add("wxGBSpan(").as_string(prop_rowspan).Comma().as_string(prop_colspan) << "), ";

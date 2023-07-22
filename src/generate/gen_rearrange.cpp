@@ -69,7 +69,7 @@ bool RearrangeCtrlGenerator::ConstructionCode(Code& code)
 
     if (type == "wxLB_SINGLE" && style.empty() && win_style.empty())
     {
-        if (node->HasValue(prop_window_name))
+        if (node->hasValue(prop_window_name))
         {
             code += ", 0";
         }
@@ -79,7 +79,7 @@ bool RearrangeCtrlGenerator::ConstructionCode(Code& code)
         code.Comma().Add(type).Comma().Style();
     }
 
-    if (node->HasValue(prop_window_name))
+    if (node->hasValue(prop_window_name))
     {
         code.Comma().Add("wxDefaultValidator").Comma().QuotedString(prop_window_name);
     }
@@ -94,7 +94,7 @@ bool RearrangeCtrlGenerator::SettingsCode(Code& code)
     {
         code.Eol(eol_if_empty).NodeName().Function("SetFocus(").EndFunction();
     }
-    if (code.HasValue(prop_contents))
+    if (code.hasValue(prop_contents))
     {
         Node* node = code.node();
         auto contents = node->as_checklist_items(prop_contents);
@@ -137,7 +137,7 @@ bool RearrangeCtrlGenerator::SettingsCode(Code& code)
             code.CloseBrace();
         }
 
-        if (code.HasValue(prop_selection_string))
+        if (code.hasValue(prop_selection_string))
         {
             code.Eol(eol_if_empty).NodeName().Function("GetList()").Function("SetStringSelection(");
             code.QuotedString(prop_selection_string).EndFunction();
@@ -161,7 +161,7 @@ bool RearrangeCtrlGenerator::SettingsCode(Code& code)
 
 int RearrangeCtrlGenerator::GetRequiredVersion(Node* node)
 {
-    if (node->HasValue(prop_contents))
+    if (node->hasValue(prop_contents))
     {
         return std::max(minRequiredVer + 1, BaseGenerator::GetRequiredVersion(node));
     }

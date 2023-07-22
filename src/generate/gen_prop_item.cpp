@@ -15,10 +15,10 @@
 
 bool PropertyGridItemGenerator::ConstructionCode(Code& code)
 {
-    auto parent = code.node()->get_parent();
+    auto parent = code.node()->getParent();
     if (parent->isGen(gen_propGridCategory))
     {
-        parent = parent->get_parent();
+        parent = parent->getParent();
     }
 
     code.AddAuto().NodeName().Str(" = ");
@@ -35,7 +35,7 @@ bool PropertyGridItemGenerator::ConstructionCode(Code& code)
     else
     {
         tt_string name("wx");
-        name << code.node()->value(prop_type) << "Property";
+        name << code.node()->as_string(prop_type) << "Property";
         code.Function("Append(").AddIfCpp("new ").Add(name).Str("(");
         code.QuotedString(prop_label).Comma().QuotedString(prop_help).Str(")").EndFunction();
     }

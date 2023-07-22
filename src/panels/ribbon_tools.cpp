@@ -52,7 +52,7 @@ void RibbonPanel::OnToolClick(wxRibbonToolBarEvent& event)
 
     if (id < gen_name_array_size)
     {
-        wxGetFrame().CreateToolNode(static_cast<GenName>(event.GetId()));
+        wxGetFrame().createToolNode(static_cast<GenName>(event.GetId()));
     }
     else
     {
@@ -63,7 +63,7 @@ void RibbonPanel::OnToolClick(wxRibbonToolBarEvent& event)
                     NewDialog dlg(wxGetFrame().GetWindow());
                     if (dlg.ShowModal() == wxID_OK)
                     {
-                        dlg.CreateNode();
+                        dlg.createNode();
                     }
                     return;
                 }
@@ -74,7 +74,7 @@ void RibbonPanel::OnToolClick(wxRibbonToolBarEvent& event)
                     NewFrame dlg(wxGetFrame().GetWindow());
                     if (dlg.ShowModal() == wxID_OK)
                     {
-                        dlg.CreateNode();
+                        dlg.createNode();
                     }
                     return;
                 }
@@ -85,7 +85,7 @@ void RibbonPanel::OnToolClick(wxRibbonToolBarEvent& event)
                     NewMdiForm dlg(wxGetFrame().GetWindow());
                     if (dlg.ShowModal() == wxID_OK)
                     {
-                        dlg.CreateNode();
+                        dlg.createNode();
                     }
                     return;
                 }
@@ -97,7 +97,7 @@ void RibbonPanel::OnToolClick(wxRibbonToolBarEvent& event)
                     dlg.WantFormVersion();
                     if (dlg.ShowModal() == wxID_OK)
                     {
-                        dlg.CreateNode();
+                        dlg.createNode();
                     }
                     return;
                 }
@@ -110,7 +110,7 @@ void RibbonPanel::OnToolClick(wxRibbonToolBarEvent& event)
                     {
                         if (dlg.ShowModal() == wxID_OK)
                         {
-                            dlg.CreateNode();
+                            dlg.createNode();
                         }
                     }
                     return;
@@ -123,7 +123,7 @@ void RibbonPanel::OnToolClick(wxRibbonToolBarEvent& event)
                     dlg.WantFormVersion();
                     if (dlg.ShowModal() == wxID_OK)
                     {
-                        dlg.CreateNode();
+                        dlg.createNode();
                     }
                     return;
                 }
@@ -134,7 +134,7 @@ void RibbonPanel::OnToolClick(wxRibbonToolBarEvent& event)
                     NewWizard dlg(wxGetFrame().GetWindow());
                     if (dlg.ShowModal() == wxID_OK)
                     {
-                        dlg.CreateNode();
+                        dlg.createNode();
                     }
                     return;
                 }
@@ -147,7 +147,7 @@ void RibbonPanel::OnToolClick(wxRibbonToolBarEvent& event)
         auto name = event.GetBar()->GetToolHelpString(event.GetId());
         if (auto result = rmap_GenNames.find(name.utf8_string()); result != rmap_GenNames.end())
         {
-            wxGetFrame().CreateToolNode(result->second);
+            wxGetFrame().createToolNode(result->second);
         }
     }
 }
@@ -167,7 +167,7 @@ void RibbonPanel::OnDropDown(wxRibbonToolBarEvent& event)
         case BarTools:
             {
                 const auto* cur_sel = wxGetFrame().GetSelectedNode();
-                if (cur_sel && (cur_sel->isGen(gen_wxAuiToolBar) || cur_sel->GetParent()->isGen(gen_wxAuiToolBar)))
+                if (cur_sel && (cur_sel->isGen(gen_wxAuiToolBar) || cur_sel->getParent()->isGen(gen_wxAuiToolBar)))
                 {
                     MenuAuiBar popup_menu;
                     popup_menu.Bind(wxEVT_MENU, &RibbonPanel::OnMenuEvent, this, wxID_ANY);
@@ -186,7 +186,7 @@ void RibbonPanel::OnDropDown(wxRibbonToolBarEvent& event)
             {
                 const auto* cur_sel = wxGetFrame().GetSelectedNode();
                 if (cur_sel && (cur_sel->isGen(gen_wxToolBar) || cur_sel->isGen(gen_ToolBar) ||
-                                cur_sel->GetParent()->isGen(gen_wxToolBar) || cur_sel->GetParent()->isGen(gen_ToolBar)))
+                                cur_sel->getParent()->isGen(gen_wxToolBar) || cur_sel->getParent()->isGen(gen_ToolBar)))
                 {
                     MenuBarTools popup_menu;
                     popup_menu.Bind(wxEVT_MENU, &RibbonPanel::OnMenuEvent, this, wxID_ANY);
@@ -277,5 +277,5 @@ void RibbonPanel::OnMenuEvent(wxCommandEvent& event)
 {
     ASSERT_MSG(static_cast<GenName>(event.GetId()) < gen_name_array_size, "Invalid gen_ id!")
 
-    wxGetFrame().CreateToolNode(static_cast<GenName>(event.GetId()));
+    wxGetFrame().createToolNode(static_cast<GenName>(event.GetId()));
 }

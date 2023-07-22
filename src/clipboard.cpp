@@ -71,7 +71,7 @@ NodeSharedPtr GetClipboardNode(bool warn_if_problems)
 
         if (wxTheClipboard->IsSupported(wxDataFormat(txt_OurClipboardFormat)))
         {
-            return NodeCreation.CreateNode(root);
+            return NodeCreation.createNode(root);
         }
         else if (wxTheClipboard->IsSupported(wxDataFormat("wxFormBuilderDataFormat")))
         {

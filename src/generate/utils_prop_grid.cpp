@@ -14,7 +14,7 @@
 
 void AfterCreationAddItems(wxPropertyGridInterface* pgi, Node* node)
 {
-    for (const auto& child: node->GetChildNodePtrs())
+    for (const auto& child: node->getChildNodePtrs())
     {
         if (child->isGen(gen_propGridItem))
         {
@@ -32,7 +32,7 @@ void AfterCreationAddItems(wxPropertyGridInterface* pgi, Node* node)
                     prop->SetName(child->as_wxString(prop_label));
                     pgi->Append(prop);
 
-                    if (child->HasValue(prop_help))
+                    if (child->hasValue(prop_help))
                     {
                         pgi->SetPropertyHelpString(prop, child->as_wxString(prop_help));
                     }
@@ -63,11 +63,11 @@ static const auto advanced_items = {
 
 bool CheckAdvancePropertyInclude(Node* node)
 {
-    for (const auto& child: node->GetChildNodePtrs())
+    for (const auto& child: node->getChildNodePtrs())
     {
         if (child->isGen(gen_propGridItem))
         {
-            auto& value = child->value(prop_type);
+            auto& value = child->as_string(prop_type);
             for (auto& iter: advanced_items)
             {
                 if (value == iter)

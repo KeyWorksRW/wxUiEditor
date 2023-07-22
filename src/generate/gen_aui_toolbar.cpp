@@ -22,14 +22,14 @@ wxObject* AuiToolBarFormGenerator::CreateMockup(Node* node, wxObject* parent)
     auto widget = new wxAuiToolBar(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(parent, node, prop_pos),
                                    DlgSize(parent, node, prop_size), GetStyleInt(node) | wxTB_NODIVIDER);
 
-    if (node->HasValue(prop_margins))
+    if (node->hasValue(prop_margins))
     {
         wxSize margins(node->as_wxSize(prop_margins));
         widget->SetMargins(margins.GetWidth(), margins.GetHeight());
     }
-    if (node->HasValue(prop_packing))
+    if (node->hasValue(prop_packing))
         widget->SetToolPacking(node->as_int(prop_packing));
-    if (node->HasValue(prop_separation))
+    if (node->hasValue(prop_separation))
         widget->SetToolSeparation(node->as_int(prop_separation));
 
     widget->Bind(wxEVT_TOOL, &AuiToolBarFormGenerator::OnTool, this);
@@ -48,7 +48,7 @@ void AuiToolBarFormGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxpa
     }
 
     size_t idx_child = 0;
-    for (auto& childObj: node->GetChildNodePtrs())
+    for (auto& childObj: node->getChildNodePtrs())
     {
         wxAuiToolBarItem* added_tool = nullptr;
         if (childObj->isGen(gen_auitool))
@@ -60,7 +60,7 @@ void AuiToolBarFormGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxpa
             added_tool = toolbar->AddTool(wxID_ANY, childObj->as_wxString(prop_label), bmp, wxNullBitmap,
                                           (wxItemKind) childObj->as_int(prop_kind), childObj->as_wxString(prop_help),
                                           wxEmptyString, nullptr);
-            if (childObj->value(prop_initial_state) != "wxAUI_BUTTON_STATE_NORMAL")
+            if (childObj->as_string(prop_initial_state) != "wxAUI_BUTTON_STATE_NORMAL")
             {
                 auto cur_state = GetBitlistInt(childObj.get(), prop_initial_state);
                 added_tool->SetState(cur_state);
@@ -86,9 +86,9 @@ void AuiToolBarFormGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxpa
         {
             const wxObject* child;
             if (!is_preview)
-                child = GetMockup()->GetChild(wxobject, idx_child);
+                child = GetMockup()->getChild(wxobject, idx_child);
             else
-                child = node->GetChild(idx_child)->GetMockupObject();
+                child = node->getChild(idx_child)->getMockupObject();
 
             if (auto* control = wxDynamicCast(child, wxControl); control)
             {
@@ -201,7 +201,7 @@ bool AuiToolBarFormGenerator::HeaderCode(Code& code)
 
 bool AuiToolBarFormGenerator::BaseClassNameCode(Code& code)
 {
-    if (code.HasValue(prop_derived_class))
+    if (code.hasValue(prop_derived_class))
     {
         code.Str((prop_derived_class));
     }
@@ -225,17 +225,17 @@ bool AuiToolBarFormGenerator::SettingsCode(Code& code)
 {
     GenFormSettings(code);
 
-    if (!code.is_value(prop_separation, 5))
+    if (!code.isPropValue(prop_separation, 5))
     {
         code.Eol(eol_if_needed).NodeName().Function("SetToolSeparation(").Str(prop_separation).EndFunction();
     }
 
-    if (code.HasValue(prop_margins))
+    if (code.hasValue(prop_margins))
     {
         code.Eol(eol_if_needed).NodeName().Function("SetMargins(").Str(prop_margins).EndFunction();
     }
 
-    if (!code.is_value(prop_packing, 1))
+    if (!code.isPropValue(prop_packing, 1))
     {
         code.Eol(eol_if_needed).NodeName().Function("SetToolPacking(").Str(prop_packing).EndFunction();
     }
@@ -270,7 +270,7 @@ void AuiToolBarFormGenerator::OnTool(wxCommandEvent& WXUNUSED(event))
 
 int AuiToolBarFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxAuiToolBar");
@@ -310,14 +310,14 @@ wxObject* AuiToolBarGenerator::CreateMockup(Node* node, wxObject* parent)
     auto widget = new wxAuiToolBar(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(parent, node, prop_pos),
                                    DlgSize(parent, node, prop_size), GetStyleInt(node) | wxTB_NODIVIDER);
 
-    if (node->HasValue(prop_margins))
+    if (node->hasValue(prop_margins))
     {
         wxSize margins(node->as_wxSize(prop_margins));
         widget->SetMargins(margins.GetWidth(), margins.GetHeight());
     }
-    if (node->HasValue(prop_packing))
+    if (node->hasValue(prop_packing))
         widget->SetToolPacking(node->as_int(prop_packing));
-    if (node->HasValue(prop_separation))
+    if (node->hasValue(prop_separation))
         widget->SetToolSeparation(node->as_int(prop_separation));
 
     widget->Bind(wxEVT_TOOL, &AuiToolBarGenerator::OnTool, this);
@@ -336,7 +336,7 @@ void AuiToolBarGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent
     }
 
     size_t idx_child = 0;
-    for (auto& childObj: node->GetChildNodePtrs())
+    for (auto& childObj: node->getChildNodePtrs())
     {
         wxAuiToolBarItem* added_tool = nullptr;
         if (childObj->isGen(gen_auitool))
@@ -348,7 +348,7 @@ void AuiToolBarGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent
             added_tool = toolbar->AddTool(wxID_ANY, childObj->as_wxString(prop_label), bmp, wxNullBitmap,
                                           (wxItemKind) childObj->as_int(prop_kind), childObj->as_wxString(prop_help),
                                           wxEmptyString, nullptr);
-            if (childObj->value(prop_initial_state) != "wxAUI_BUTTON_STATE_NORMAL")
+            if (childObj->as_string(prop_initial_state) != "wxAUI_BUTTON_STATE_NORMAL")
             {
                 auto cur_state = GetBitlistInt(childObj.get(), prop_initial_state);
                 added_tool->SetState(cur_state);
@@ -374,9 +374,9 @@ void AuiToolBarGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent
         {
             const wxObject* child;
             if (!is_preview)
-                child = GetMockup()->GetChild(wxobject, idx_child);
+                child = GetMockup()->getChild(wxobject, idx_child);
             else
-                child = node->GetChild(idx_child)->GetMockupObject();
+                child = node->getChild(idx_child)->getMockupObject();
 
             if (auto* control = wxDynamicCast(child, wxControl); control)
             {
@@ -416,17 +416,17 @@ bool AuiToolBarGenerator::SettingsCode(Code& code)
 {
     GenFormSettings(code);
 
-    if (!code.is_value(prop_separation, 5))
+    if (!code.isPropValue(prop_separation, 5))
     {
         code.Eol(eol_if_needed).NodeName().Function("SetToolSeparation(").Str(prop_separation).EndFunction();
     }
 
-    if (code.HasValue(prop_margins))
+    if (code.hasValue(prop_margins))
     {
         code.Eol(eol_if_needed).NodeName().Function("SetMargins(").Str(prop_margins).EndFunction();
     }
 
-    if (!code.is_value(prop_packing, 1))
+    if (!code.isPropValue(prop_packing, 1))
     {
         code.Eol(eol_if_needed).NodeName().Function("SetToolPacking(").Str(prop_packing).EndFunction();
     }
@@ -461,7 +461,7 @@ void AuiToolBarGenerator::OnTool(wxCommandEvent& WXUNUSED(event))
 
 int AuiToolBarGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxAuiToolBar");
@@ -498,13 +498,13 @@ bool AuiToolBarGenerator::GetRubyImports(Node*, std::set<std::string>& set_impor
 
 bool AuiToolGenerator::ConstructionCode(Code& code)
 {
-    if (code.HasValue(prop_bitmap))
+    if (code.hasValue(prop_bitmap))
     {
         auto is_bitmaps_list = BitmapList(code, prop_bitmap);
         GenToolCode(code, is_bitmaps_list);
         if (is_bitmaps_list && code.is_cpp())
         {
-            if (Project.value(prop_wxWidgets_version) == "3.1")
+            if (Project.as_string(prop_wxWidgets_version) == "3.1")
             {
                 code.CloseBrace();
                 code.Add("#else").Eol();
@@ -522,7 +522,7 @@ bool AuiToolGenerator::ConstructionCode(Code& code)
         GenToolCode(code, false);
     }
 
-    if (code.node()->value(prop_initial_state) != "wxAUI_BUTTON_STATE_NORMAL")
+    if (code.node()->as_string(prop_initial_state) != "wxAUI_BUTTON_STATE_NORMAL")
     {
         code.Eol().NodeName().Function("SetState(").Str(prop_initial_state).EndFunction();
     }
@@ -532,7 +532,7 @@ bool AuiToolGenerator::ConstructionCode(Code& code)
 
 int AuiToolGenerator::GetRequiredVersion(Node* node)
 {
-    if (node->HasProp(prop_initial_state) && node->value(prop_initial_state) != "wxAUI_BUTTON_STATE_NORMAL")
+    if (node->hasProp(prop_initial_state) && node->as_string(prop_initial_state) != "wxAUI_BUTTON_STATE_NORMAL")
     {
         return std::max(minRequiredVer + 2, BaseGenerator::GetRequiredVersion(node));
     }
@@ -554,7 +554,7 @@ int AuiToolGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xr
 
 bool AuiToolGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& /* set_hdr */)
 {
-    if (node->value(prop_initial_state) != "wxAUI_BUTTON_STATE_NORMAL")
+    if (node->as_string(prop_initial_state) != "wxAUI_BUTTON_STATE_NORMAL")
     {
         set_src.insert("#include <wx/aui/framemanager.h>");
         return true;

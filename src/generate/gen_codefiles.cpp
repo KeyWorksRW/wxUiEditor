@@ -220,7 +220,7 @@ bool GenerateCodeFiles(GenResults& results, std::vector<tt_string>* pClassList)
     {
         for (auto& iter: Project.ChildNodePtrs())
         {
-            if (iter->isGen(gen_folder) && iter->HasValue(prop_folder_cmake_file))
+            if (iter->isGen(gen_folder) && iter->hasValue(prop_folder_cmake_file))
             {
                 if (WriteCMakeFile(iter.get(), results.updated_files, results.msgs) == result::created)
                 {
@@ -228,7 +228,7 @@ bool GenerateCodeFiles(GenResults& results, std::vector<tt_string>* pClassList)
                 }
             }
         }
-        if (Project.HasValue(prop_cmake_file))
+        if (Project.hasValue(prop_cmake_file))
         {
             if (WriteCMakeFile(Project.ProjectNode(), results.updated_files, results.msgs) == result::created)
             {
@@ -242,12 +242,12 @@ bool GenerateCodeFiles(GenResults& results, std::vector<tt_string>* pClassList)
     tt_string source_ext(".cpp");
     tt_string header_ext(".h");
 
-    if (auto& extProp = Project.value(prop_source_ext); extProp.size())
+    if (auto& extProp = Project.as_string(prop_source_ext); extProp.size())
     {
         source_ext = extProp;
     }
 
-    if (auto& extProp = Project.value(prop_header_ext); extProp.size())
+    if (auto& extProp = Project.as_string(prop_header_ext); extProp.size())
     {
         header_ext = extProp;
     }
@@ -332,12 +332,12 @@ void GenInhertedClass(GenResults& results)
     tt_string source_ext(".cpp");
     tt_string header_ext(".h");
 
-    if (auto& extProp = Project.value(prop_source_ext); extProp.size())
+    if (auto& extProp = Project.as_string(prop_source_ext); extProp.size())
     {
         source_ext = extProp;
     }
 
-    if (auto extProp = Project.value(prop_header_ext); extProp.size())
+    if (auto extProp = Project.as_string(prop_header_ext); extProp.size())
     {
         header_ext = extProp;
     }
@@ -469,7 +469,7 @@ void GenerateTmpFiles(const std::vector<tt_string>& ClassList, pugi::xml_node ro
 
     if (language == GEN_LANG_CPLUSPLUS)
     {
-        if (auto& extProp = Project.value(prop_source_ext); extProp.size())
+        if (auto& extProp = Project.as_string(prop_source_ext); extProp.size())
         {
             source_ext = extProp;
         }
@@ -477,7 +477,7 @@ void GenerateTmpFiles(const std::vector<tt_string>& ClassList, pugi::xml_node ro
         {
             source_ext = ".cpp";
         }
-        if (auto& extProp = Project.value(prop_header_ext); extProp.size())
+        if (auto& extProp = Project.as_string(prop_header_ext); extProp.size())
         {
             header_ext = extProp;
         }

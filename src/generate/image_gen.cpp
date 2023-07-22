@@ -196,7 +196,7 @@ void GenerateSingleBitmapCode(Code& code, const tt_string& description)
     {
         if (code.is_cpp())
         {
-            if (Project.value(prop_wxWidgets_version) == "3.1")
+            if (Project.as_string(prop_wxWidgets_version) == "3.1")
             {
                 code += "wxNullBitmap /* SVG images require wxWidgets 3.1.6 */";
                 return;
@@ -462,7 +462,7 @@ std::vector<std::string> base64_encode(unsigned char const* data, size_t data_si
 
 void BaseCodeGenerator::GeneratePythonImagesForm()
 {
-    if (m_embedded_images.empty() || !m_form_node->GetChildCount())
+    if (m_embedded_images.empty() || !m_form_node->getChildCount())
     {
         return;
     }
@@ -506,7 +506,7 @@ void BaseCodeGenerator::GeneratePythonImagesForm()
 
 void BaseCodeGenerator::GenerateRubyImagesForm()
 {
-    if (m_embedded_images.empty() || !m_form_node->GetChildCount())
+    if (m_embedded_images.empty() || !m_form_node->getChildCount())
     {
         return;
     }

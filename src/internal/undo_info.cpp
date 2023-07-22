@@ -106,14 +106,14 @@ void UndoInfo::OnInit(wxInitDialogEvent& event)
         ++node_memory.children;
         if (node.use_count() <= ref_count)
         {
-            node_memory.size += node->GetNodeSize();
+            node_memory.size += node->getNodeSize();
         }
 
-        for (const auto& iter: node->GetChildNodePtrs())
+        for (const auto& iter: node->getChildNodePtrs())
         {
             // Assume that each child will have a shared ptr to the parent which will increase
             // it's reference count by 1.
-            long add_ref_count = static_cast<long>(iter->GetChildCount());
+            long add_ref_count = static_cast<long>(iter->getChildCount());
 
             // An orphaned node will have a ref count of 1 -- add one to pass this to the
             // CalcMemory function.
@@ -141,7 +141,7 @@ void UndoInfo::OnInit(wxInitDialogEvent& event)
                 {
                     // Assume that each child will have a shared ptr to the parent which will increase
                     // it's reference count by 1.
-                    long add_ref_count = static_cast<long>(old_node->GetChildCount());
+                    long add_ref_count = static_cast<long>(old_node->getChildCount());
 
                     CalcMemory(old_node, add_ref_count + 3, CalcMemory);
                 }

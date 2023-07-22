@@ -21,7 +21,7 @@ wxObject* FontPickerGenerator::CreateMockup(Node* node, wxObject* parent)
         new wxFontPickerCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxFont(prop_initial_font),
                              DlgPoint(parent, node, prop_pos), DlgSize(parent, node, prop_size), GetStyleInt(node));
 
-    if (node->HasValue(prop_max_point_size))
+    if (node->hasValue(prop_max_point_size))
     {
         widget->SetMaxPointSize(node->as_int(prop_max_point_size));
     }
@@ -35,7 +35,7 @@ bool FontPickerGenerator::ConstructionCode(Code& code)
 {
     code.AddAuto().NodeName().CreateClass();
     code.ValidParentName().Comma().as_string(prop_id).Comma();
-    if (code.HasValue(prop_initial_font))
+    if (code.hasValue(prop_initial_font))
     {
         auto fontprop = code.node()->as_font_prop(prop_initial_font);
         wxFont font = fontprop.GetFont();
@@ -102,7 +102,7 @@ bool FontPickerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src
 
 int FontPickerGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxFontPickerCtrl");

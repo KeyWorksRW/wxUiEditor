@@ -66,7 +66,7 @@ int NodeProperty::as_id() const
 }
 
 // Static class function
-tt_string NodeProperty::get_prop_id(const tt_string& complete_id)
+tt_string NodeProperty::getPropId(const tt_string& complete_id)
 {
     tt_string id;
     if (auto pos = complete_id.find('='); pos != tt::npos)
@@ -84,9 +84,9 @@ tt_string NodeProperty::get_prop_id(const tt_string& complete_id)
     return id;
 }
 
-tt_string NodeProperty::get_prop_id() const
+tt_string NodeProperty::getPropId() const
 {
-    return get_prop_id(m_value);
+    return getPropId(m_value);
 }
 
 int NodeProperty::as_mockup(std::string_view prefix) const
@@ -679,7 +679,7 @@ std::vector<NODEPROP_RADIOBOX_ITEM> NodeProperty::as_radiobox_items() const
     return result;
 }
 
-bool NodeProperty::HasValue() const
+bool NodeProperty::hasValue() const
 {
     if (m_value.empty())
         return false;

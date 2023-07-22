@@ -62,7 +62,7 @@ void MockupContent::CreateAllGenerators()
     if (form->isGen(gen_wxWizard))
     {
         m_wizard = new MockupWizard(this, form);
-        for (const auto& child: form->GetChildNodePtrs())
+        for (const auto& child: form->getChildNodePtrs())
         {
             CreateChildren(child.get(), m_wizard, m_wizard);
         }
@@ -74,8 +74,8 @@ void MockupContent::CreateAllGenerators()
     }
     else if (form->isGen(gen_Images))
     {
-        ASSERT_MSG(form->GetGenerator(), tt_string() << "Missing component for " << form->DeclName());
-        auto generator = form->GetGenerator();
+        ASSERT_MSG(form->getGenerator(), tt_string() << "Missing component for " << form->declName());
+        auto generator = form->getGenerator();
         if (!generator)
             return;
 
@@ -99,36 +99,36 @@ void MockupContent::CreateAllGenerators()
             size_t pos_menu { tt::npos };
             size_t pos_toolbar { tt::npos };
             size_t pos_statusbar { tt::npos };
-            for (size_t i = 0; i < form->GetChildCount(); i++)
+            for (size_t i = 0; i < form->getChildCount(); i++)
             {
-                if (form->GetChild(i)->isGen(gen_wxMenuBar))
+                if (form->getChild(i)->isGen(gen_wxMenuBar))
                     pos_menu = i;
-                else if (form->GetChild(i)->isGen(gen_wxToolBar))
+                else if (form->getChild(i)->isGen(gen_wxToolBar))
                     pos_toolbar = i;
-                else if (form->GetChild(i)->isGen(gen_wxStatusBar))
+                else if (form->getChild(i)->isGen(gen_wxStatusBar))
                     pos_statusbar = i;
             }
 
             // First create the menu and toolbar if they exist
 
             if (tt::is_found(pos_menu))
-                CreateChildren(form->GetChild(pos_menu), this, this, m_parent_sizer);
+                CreateChildren(form->getChild(pos_menu), this, this, m_parent_sizer);
             if (tt::is_found(pos_toolbar))
-                CreateChildren(form->GetChild(pos_toolbar), this, this, m_parent_sizer);
+                CreateChildren(form->getChild(pos_toolbar), this, this, m_parent_sizer);
 
-            for (size_t i = 0; i < form->GetChildCount(); i++)
+            for (size_t i = 0; i < form->getChildCount(); i++)
             {
                 if (i != pos_menu && i != pos_toolbar && i != pos_statusbar)
-                    CreateChildren(form->GetChild(i), this, this, m_parent_sizer);
+                    CreateChildren(form->getChild(i), this, this, m_parent_sizer);
             }
 
             if (tt::is_found(pos_statusbar))
-                CreateChildren(form->GetChild(pos_statusbar), this, this, m_parent_sizer);
+                CreateChildren(form->getChild(pos_statusbar), this, this, m_parent_sizer);
         }
 
         else
         {
-            for (const auto& child: form->GetChildNodePtrs())
+            for (const auto& child: form->getChildNodePtrs())
             {
                 CreateChildren(child.get(), this, this, m_parent_sizer);
             }
@@ -145,19 +145,19 @@ void MockupContent::CreateAllGenerators()
 
 void MockupContent::CreateChildren(Node* node, wxWindow* parent, wxObject* parent_object, wxBoxSizer* parent_sizer)
 {
-    ASSERT_MSG(node->GetGenerator(), tt_string() << "Missing component for " << node->DeclName());
-    auto generator = node->GetGenerator();
+    ASSERT_MSG(node->getGenerator(), tt_string() << "Missing component for " << node->declName());
+    auto generator = node->getGenerator();
     if (!generator)
         return;
 
     auto created_object = generator->CreateMockup(node, parent);
     if (!created_object)
     {
-        if (node->IsSpacer() && parent_object)
+        if (node->isSpacer() && parent_object)
         {
-            if (node->GetParent()->isGen(gen_wxGridBagSizer))
+            if (node->getParent()->isGen(gen_wxGridBagSizer))
             {
-                auto flags = node->GetSizerFlags();
+                auto flags = node->getSizerFlags();
                 wxStaticCast(parent_object, wxGridBagSizer)
                     ->Add(node->as_int(prop_width), node->as_int(prop_height),
                           wxGBPosition(node->as_int(prop_row), node->as_int(prop_column)),
@@ -204,9 +204,9 @@ void MockupContent::CreateChildren(Node* node, wxWindow* parent, wxObject* paren
         // We don't create any children because the only thing visible is the mock menu
         return;
     }
-    else if (node->IsSizer() || node->isGen(gen_wxStdDialogButtonSizer) || node->isGen(gen_TextSizer))
+    else if (node->isSizer() || node->isGen(gen_wxStdDialogButtonSizer) || node->isGen(gen_TextSizer))
     {
-        if (node->IsStaticBoxSizer())
+        if (node->isStaticBoxSizer())
         {
             auto staticBoxSizer = wxStaticCast(created_object, wxStaticBoxSizer);
             created_window = staticBoxSizer->GetStaticBox();
@@ -253,12 +253,12 @@ void MockupContent::CreateChildren(Node* node, wxWindow* parent, wxObject* paren
         new_wxparent = collpane->GetPane();
     }
 
-    if (node->isGen(gen_PageCtrl) && node->GetChildCount())
+    if (node->isGen(gen_PageCtrl) && node->getChildCount())
     {
-        auto page_child = node->GetChild(0);
+        auto page_child = node->getChild(0);
         if (page_child)
         {
-            for (const auto& child: page_child->GetChildNodePtrs())
+            for (const auto& child: page_child->getChildNodePtrs())
             {
                 CreateChildren(child.get(), parent, parent_object);
             }
@@ -266,13 +266,13 @@ void MockupContent::CreateChildren(Node* node, wxWindow* parent, wxObject* paren
     }
     else
     {
-        for (const auto& child: node->GetChildNodePtrs())
+        for (const auto& child: node->getChildNodePtrs())
         {
             CreateChildren(child.get(), new_wxparent, created_object);
         }
     }
 
-    if (node->GetParent()->isType(type_wizard))
+    if (node->getParent()->isType(type_wizard))
     {
         m_wizard->AddPage(wxStaticCast(created_window, MockupWizardPage));
         return;
@@ -287,10 +287,10 @@ void MockupContent::CreateChildren(Node* node, wxWindow* parent, wxObject* paren
                 ->GetControlSizer()
                 ->Add(created_window, wxSizerFlags().Expand().Border(wxALL));
         }
-        else if (obj_parent && obj_parent->IsSizer())
+        else if (obj_parent && obj_parent->isSizer())
         {
             auto child_obj = GetNode(created_object);
-            auto sizer_flags = child_obj->GetSizerFlags();
+            auto sizer_flags = child_obj->getSizerFlags();
             if (obj_parent->isGen(gen_wxGridBagSizer))
             {
                 auto sizer = wxStaticCast(parent_object, wxGridBagSizer);
@@ -305,7 +305,7 @@ void MockupContent::CreateChildren(Node* node, wxWindow* parent, wxObject* paren
             else
             {
                 auto sizer = wxStaticCast(parent_object, wxSizer);
-                if (created_window && !child_obj->IsStaticBoxSizer())
+                if (created_window && !child_obj->isStaticBoxSizer())
                 {
                     sizer->Add(created_window, sizer_flags.GetProportion(), sizer_flags.GetFlags(),
                                sizer_flags.GetBorderInPixels());
@@ -322,7 +322,7 @@ void MockupContent::CreateChildren(Node* node, wxWindow* parent, wxObject* paren
 
     if (parent_sizer)
     {
-        if (created_window && !node->IsStaticBoxSizer())
+        if (created_window && !node->isStaticBoxSizer())
             parent_sizer->Add(created_window, wxSizerFlags().Expand());
         else if (created_sizer)
             parent_sizer->Add(created_sizer, wxSizerFlags(1).Expand());
@@ -354,7 +354,7 @@ void MockupContent::SetWindowProperties(Node* node, wxWindow* window, wxWindow* 
             window->SetMaxSize(maxsize);
     }
 
-    if (auto& variant = node->value(prop_variant); variant.size() && variant != "normal")
+    if (auto& variant = node->as_string(prop_variant); variant.size() && variant != "normal")
     {
         if (variant == "small")
             window->SetWindowVariant(wxWINDOW_VARIANT_SMALL);
@@ -364,17 +364,17 @@ void MockupContent::SetWindowProperties(Node* node, wxWindow* window, wxWindow* 
             window->SetWindowVariant(wxWINDOW_VARIANT_LARGE);
     }
 
-    if (node->HasValue(prop_font))
+    if (node->hasValue(prop_font))
     {
         window->SetFont(node->as_wxFont(prop_font));
     }
 
-    if (auto& fg_colour = node->value(prop_foreground_colour); fg_colour.size())
+    if (auto& fg_colour = node->as_string(prop_foreground_colour); fg_colour.size())
     {
         window->SetForegroundColour(ConvertToColour(fg_colour));
     }
 
-    if (auto& bg_colour = node->value(prop_background_colour); bg_colour.size())
+    if (auto& bg_colour = node->as_string(prop_background_colour); bg_colour.size())
     {
         window->SetBackgroundColour(ConvertToColour(bg_colour));
     }
@@ -394,7 +394,7 @@ void MockupContent::SetWindowProperties(Node* node, wxWindow* window, wxWindow* 
         window->Show(false);
     }
 
-    if (auto& tooltip = node->value(prop_tooltip); tooltip.size())
+    if (auto& tooltip = node->as_string(prop_tooltip); tooltip.size())
     {
         window->SetToolTip(tooltip.make_wxString());
     }
@@ -439,7 +439,7 @@ static const GenEnum::GenName lst_select_nodes[] = {
 
 void MockupContent::OnNodeSelected(Node* node)
 {
-    if (node->IsForm())
+    if (node->isForm())
         return;
 
     if (node->isType(type_embed_image))
@@ -463,26 +463,26 @@ void MockupContent::OnNodeSelected(Node* node)
         if (HavePageNode)
             break;
 
-        node = node->GetParent();
-        if (!node || node->IsForm())
+        node = node->getParent();
+        if (!node || node->isForm())
             return;
     }
 
     if (m_wizard && node->isGen(gen_wxWizardPageSimple))
     {
-        ASSERT(node->GetParent());
-        if (auto parent = node->GetParent(); parent)
+        ASSERT(node->getParent());
+        if (auto parent = node->getParent(); parent)
         {
             ASSERT(parent->isGen(gen_wxWizard));
-            m_wizard->SetSelection(parent->GetChildPosition(node));
+            m_wizard->SetSelection(parent->getChildPosition(node));
         }
         return;
     }
 
     else if (node->isGen(gen_BookPage) || node->isGen(gen_PageCtrl))
     {
-        ASSERT(node->GetParent());
-        auto parent = node->GetParent();
+        ASSERT(node->getParent());
+        auto parent = node->getParent();
         if (!parent)
             return;
 
@@ -490,7 +490,7 @@ void MockupContent::OnNodeSelected(Node* node)
 
         if (parent->isGen(gen_BookPage))
         {
-            parent = parent->GetParent();
+            parent = parent->getParent();
             if (parent->isGen(gen_wxTreebook))
             {
                 auto tree_book = wxDynamicCast(Get_wxObject(parent), wxBookCtrlBase);
@@ -510,12 +510,12 @@ void MockupContent::OnNodeSelected(Node* node)
             }
         }
 
-        for (size_t idx_child = 0; idx_child < parent->GetChildCount(); ++idx_child)
+        for (size_t idx_child = 0; idx_child < parent->getChildCount(); ++idx_child)
         {
-            auto child = parent->GetChildNodePtrs()[idx_child].get();
+            auto child = parent->getChildNodePtrs()[idx_child].get();
             if (child == node)
             {
-                if (child->gen_type() == type_page && !child->GetChildCount())
+                if (child->getGenType() == type_page && !child->getChildCount())
                 {
                     // When a PageCtrl is first created, it won't have any children and cannot be selected
                     m_mockupParent->ClearIgnoreSelection();
@@ -528,7 +528,7 @@ void MockupContent::OnNodeSelected(Node* node)
                 if (child->isGen(gen_BookPage))
                 {
                     bool is_node_found { false };
-                    for (const auto& grand_child: child->GetChildNodePtrs())
+                    for (const auto& grand_child: child->getChildNodePtrs())
                     {
                         if (grand_child.get() == node)
                         {
@@ -543,14 +543,14 @@ void MockupContent::OnNodeSelected(Node* node)
                 }
             }
 
-            else if (child->gen_type() == type_widget)
+            else if (child->getGenType() == type_widget)
                 continue;
-            else if (child->gen_type() == type_page && !child->GetChildCount())
+            else if (child->getGenType() == type_page && !child->getChildCount())
             {
                 // PageCtrl is an abstract class -- until it has a child, the parent book cannot select it as a
                 // page. If this is the last page, then we must back up the selection index and break out of the
                 // loop.
-                if (idx_child + 1 >= parent->GetChildCount())
+                if (idx_child + 1 >= parent->getChildCount())
                 {
                     if (sel_pos > 0)
                         --sel_pos;
@@ -577,15 +577,15 @@ void MockupContent::OnNodeSelected(Node* node)
     }
     else if (node->isGen(gen_propGridPage))
     {
-        auto parent = node->GetParent();
+        auto parent = node->getParent();
         if (!parent)
             return;
 
         if (parent->isGen(gen_wxPropertyGridManager))
         {
-            for (size_t idx_child = 0; idx_child < parent->GetChildCount(); ++idx_child)
+            for (size_t idx_child = 0; idx_child < parent->getChildCount(); ++idx_child)
             {
-                auto* child = parent->GetChildNodePtrs()[idx_child].get();
+                auto* child = parent->getChildNodePtrs()[idx_child].get();
                 if (child == node)
                 {
                     if (auto pgm = wxStaticCast(Get_wxObject(parent), wxPropertyGridManager); pgm)
@@ -598,8 +598,8 @@ void MockupContent::OnNodeSelected(Node* node)
     }
     else if (node->isGen(gen_wxRibbonPage))
     {
-        ASSERT(node->GetParent());
-        if (auto parent = node->GetParent(); parent)
+        ASSERT(node->getParent());
+        if (auto parent = node->getParent(); parent)
         {
             ASSERT(parent->isGen(gen_wxRibbonBar) || parent->isGen(gen_RibbonBar));
 
@@ -611,12 +611,12 @@ void MockupContent::OnNodeSelected(Node* node)
     }
     else if (node->isGen(gen_wxRibbonPanel))
     {
-        ASSERT(node->GetParent());
-        if (auto parent = node->GetParent(); parent)
+        ASSERT(node->getParent());
+        if (auto parent = node->getParent(); parent)
         {
             ASSERT(parent->isGen(gen_wxRibbonPage));
 
-            auto bar = wxStaticCast(Get_wxObject(parent->GetParent()), wxRibbonBar);
+            auto bar = wxStaticCast(Get_wxObject(parent->getParent()), wxRibbonBar);
             auto page = wxStaticCast(Get_wxObject(parent), wxRibbonPage);
             bar->SetActivePage(page);
         }
@@ -624,12 +624,12 @@ void MockupContent::OnNodeSelected(Node* node)
     }
     else if (node->isGen(gen_wxRibbonButtonBar) || node->isGen(gen_wxRibbonToolBar))
     {
-        ASSERT(node->GetParent());
-        ASSERT(node->GetParent()->GetParent());
-        if (auto parent = node->GetParent()->GetParent(); parent)
+        ASSERT(node->getParent());
+        ASSERT(node->getParent()->getParent());
+        if (auto parent = node->getParent()->getParent(); parent)
         {
             ASSERT(parent->isGen(gen_wxRibbonPage));
-            auto bar = wxStaticCast(Get_wxObject(parent->GetParent()), wxRibbonBar);
+            auto bar = wxStaticCast(Get_wxObject(parent->getParent()), wxRibbonBar);
             auto page = wxStaticCast(Get_wxObject(parent), wxRibbonPage);
             bar->SetActivePage(page);
         }
@@ -637,14 +637,14 @@ void MockupContent::OnNodeSelected(Node* node)
     }
     else if (node->isGen(gen_ribbonButton) || node->isGen(gen_ribbonTool))
     {
-        ASSERT(node->GetParent());
-        ASSERT(node->GetParent()->GetParent());
-        ASSERT(node->GetParent()->GetParent()->GetParent());
-        if (auto parent = node->GetParent()->GetParent()->GetParent(); parent)
+        ASSERT(node->getParent());
+        ASSERT(node->getParent()->getParent());
+        ASSERT(node->getParent()->getParent()->getParent());
+        if (auto parent = node->getParent()->getParent()->getParent(); parent)
         {
             ASSERT(parent->isGen(gen_wxRibbonPage));
 
-            auto bar = wxStaticCast(Get_wxObject(parent->GetParent()), wxRibbonBar);
+            auto bar = wxStaticCast(Get_wxObject(parent->getParent()), wxRibbonBar);
             auto page = wxStaticCast(Get_wxObject(parent), wxRibbonPage);
             bar->SetActivePage(page);
         }

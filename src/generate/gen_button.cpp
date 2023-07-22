@@ -19,7 +19,7 @@ wxObject* ButtonGenerator::CreateMockup(Node* node, wxObject* parent)
     auto widget = new wxButton(wxStaticCast(parent, wxWindow), node->as_id(prop_id), wxEmptyString,
                                DlgPoint(parent, node, prop_pos), DlgSize(parent, node, prop_size), GetStyleInt(node));
 
-    if (node->HasValue(prop_label))
+    if (node->hasValue(prop_label))
     {
         if (node->as_bool(prop_markup))
             widget->SetLabelMarkup(node->as_wxString(prop_label));
@@ -60,26 +60,26 @@ wxObject* ButtonGenerator::CreateMockup(Node* node, wxObject* parent)
     if (node->as_bool(prop_auth_needed))
         widget->SetAuthNeeded();
 
-    if (node->HasValue(prop_bitmap))
+    if (node->hasValue(prop_bitmap))
     {
         widget->SetBitmap(node->as_wxBitmapBundle(prop_bitmap));
 
-        if (node->HasValue(prop_disabled_bmp))
+        if (node->hasValue(prop_disabled_bmp))
             widget->SetBitmapDisabled(node->as_wxBitmapBundle(prop_disabled_bmp));
 
-        if (node->HasValue(prop_pressed_bmp))
+        if (node->hasValue(prop_pressed_bmp))
             widget->SetBitmapPressed(node->as_wxBitmapBundle(prop_pressed_bmp));
 
-        if (node->HasValue(prop_focus_bmp))
+        if (node->hasValue(prop_focus_bmp))
             widget->SetBitmapFocus(node->as_wxBitmapBundle(prop_focus_bmp));
 
-        if (node->HasValue(prop_current))
+        if (node->hasValue(prop_current))
             widget->SetBitmapCurrent(node->as_wxBitmapBundle(prop_current));
 
-        if (node->HasValue(prop_position))
+        if (node->hasValue(prop_position))
             widget->SetBitmapPosition(static_cast<wxDirection>(node->as_int(prop_position)));
 
-        if (node->HasValue(prop_margins))
+        if (node->hasValue(prop_margins))
             widget->SetBitmapMargins(node->as_wxSize(prop_margins));
     }
 
@@ -108,7 +108,7 @@ bool ButtonGenerator::OnPropertyChange(wxObject* widget, Node* node, NodePropert
     // it does not revert when markup is cleared (at least on Windows where markup controls whether a generic or native
     // version of the button is displayed).
 
-    if (prop->isProp(prop_label) && prop->HasValue())
+    if (prop->isProp(prop_label) && prop->hasValue())
     {
         auto ctrl = wxStaticCast(widget, wxButton);
         if (node->as_bool(prop_markup))
@@ -150,7 +150,7 @@ bool ButtonGenerator::ConstructionCode(Code& code)
     code.ValidParentName().Comma().as_string(prop_id).Comma();
 
     // If prop_markup is set, then the label will be set in SettingsCode()
-    if (code.HasValue(prop_label) && !code.IsTrue(prop_markup))
+    if (code.hasValue(prop_label) && !code.IsTrue(prop_markup))
     {
         code.QuotedString(prop_label);
     }
@@ -166,7 +166,7 @@ bool ButtonGenerator::ConstructionCode(Code& code)
 
 bool ButtonGenerator::SettingsCode(Code& code)
 {
-    if (code.IsTrue(prop_markup) && code.HasValue(prop_label))
+    if (code.IsTrue(prop_markup) && code.hasValue(prop_label))
     {
         code.Eol(eol_if_needed).NodeName().Function("SetLabelMarkup(").QuotedString(prop_label).EndFunction();
     }
@@ -181,14 +181,14 @@ bool ButtonGenerator::SettingsCode(Code& code)
         code.Eol(eol_if_needed).NodeName().Function("SetAuthNeeded(").EndFunction();
     }
 
-    if (code.HasValue(prop_bitmap))
+    if (code.hasValue(prop_bitmap))
     {
-        if (code.HasValue(prop_position))
+        if (code.hasValue(prop_position))
         {
             code.Eol(eol_if_needed).NodeName().Function("SetBitmapPosition(").Str(prop_position).EndFunction();
         }
 
-        if (code.HasValue(prop_margins))
+        if (code.hasValue(prop_margins))
         {
             auto size = code.node()->as_wxSize(prop_margins);
             code.Eol(eol_if_needed)
@@ -212,7 +212,7 @@ bool ButtonGenerator::SettingsCode(Code& code)
 int ButtonGenerator::GetRequiredVersion(Node* node)
 {
     // Code generation was invalid in minRequiredVer when there no label was set
-    if (!node->HasValue(prop_label) && !node->as_bool(prop_markup))
+    if (!node->hasValue(prop_label) && !node->as_bool(prop_markup))
     {
         return std::max(minRequiredVer + 1, BaseGenerator::GetRequiredVersion(node));
     }
@@ -222,7 +222,7 @@ int ButtonGenerator::GetRequiredVersion(Node* node)
 
 int ButtonGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxButton");
@@ -254,8 +254,8 @@ int ButtonGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc
 
 void ButtonGenerator::RequiredHandlers(Node* node, std::set<std::string>& handlers)
 {
-    bool old_button = (node->HasValue(prop_disabled_bmp) || node->HasValue(prop_pressed_bmp) ||
-                       node->HasValue(prop_focus_bmp) || node->HasValue(prop_current));
+    bool old_button = (node->hasValue(prop_disabled_bmp) || node->hasValue(prop_pressed_bmp) ||
+                       node->hasValue(prop_focus_bmp) || node->hasValue(prop_current));
 
     handlers.emplace(old_button ? "wxBitmapButtonXmlHandler" : "wxButtonXmlHandler");
 }

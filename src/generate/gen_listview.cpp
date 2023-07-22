@@ -19,13 +19,13 @@ wxObject* ListViewGenerator::CreateMockup(Node* node, wxObject* parent)
     auto widget = new wxListView(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(parent, node, prop_pos),
                                  DlgSize(parent, node, prop_size), GetStyleInt(node));
 
-    if (node->as_string(prop_mode) == "wxLC_REPORT" && node->HasValue(prop_column_labels))
+    if (node->as_string(prop_mode) == "wxLC_REPORT" && node->hasValue(prop_column_labels))
     {
         auto headers = node->as_ArrayString(prop_column_labels);
         for (auto& label: headers)
             widget->AppendColumn(label.make_wxString());
 
-        if (node->HasValue(prop_contents))
+        if (node->hasValue(prop_contents))
         {
             wxListItem info;
             info.Clear();
@@ -64,9 +64,9 @@ bool ListViewGenerator::ConstructionCode(Code& code)
 
 bool ListViewGenerator::SettingsCode(Code& code)
 {
-    if (code.is_value(prop_mode, "wxLC_REPORT") && code.HasValue(prop_column_labels))
+    if (code.isPropValue(prop_mode, "wxLC_REPORT") && code.hasValue(prop_column_labels))
     {
-        if (code.HasValue(prop_contents))
+        if (code.hasValue(prop_contents))
         {
             code.OpenBrace();
         }
@@ -77,7 +77,7 @@ bool ListViewGenerator::SettingsCode(Code& code)
             code.Eol(eol_if_needed).NodeName().Function("AppendColumn(").QuotedString(iter).EndFunction();
         }
 
-        if (code.HasValue(prop_contents))
+        if (code.hasValue(prop_contents))
         {
             code.Eol(eol_if_needed);
             if (code.is_cpp())
@@ -117,7 +117,7 @@ bool ListViewGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, 
 
 int ListViewGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     // XRC doesn't support wxListView

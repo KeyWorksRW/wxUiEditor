@@ -33,7 +33,7 @@ void InsertGeneratorInclude(Node* node, const std::string& include, std::set<std
 
 void ColourCode(Code& code, GenEnum::PropName prop_name)
 {
-    if (!code.HasValue(prop_name))
+    if (!code.hasValue(prop_name))
     {
         code.Add("wxNullColour");
     }
@@ -95,7 +95,7 @@ tt_string GenerateQuotedString(const tt_string& str)
 
 tt_string GenerateQuotedString(Node* node, GenEnum::PropName prop_name)
 {
-    if (node->HasValue(prop_name))
+    if (node->hasValue(prop_name))
     {
         return GenerateQuotedString(node->as_string(prop_name));
     }
@@ -127,17 +127,17 @@ static constexpr GenType s_GenParentTypes[] = {
 
 tt_string GetParentName(Node* node)
 {
-    auto parent = node->GetParent();
+    auto parent = node->getParent();
     while (parent)
     {
-        if (parent->IsSizer())
+        if (parent->isSizer())
         {
-            if (parent->IsStaticBoxSizer())
+            if (parent->isStaticBoxSizer())
             {
-                return (tt_string() << parent->get_node_name() << "->GetStaticBox()");
+                return (tt_string() << parent->getNodeName() << "->GetStaticBox()");
             }
         }
-        if (parent->IsForm())
+        if (parent->isForm())
         {
             return tt_string("this");
         }
@@ -146,7 +146,7 @@ tt_string GetParentName(Node* node)
         {
             if (parent->isType(iter))
             {
-                tt_string name = parent->get_node_name();
+                tt_string name = parent->getNodeName();
                 if (parent->isGen(gen_wxCollapsiblePane))
                 {
                     name << "->GetPane()";
@@ -154,10 +154,10 @@ tt_string GetParentName(Node* node)
                 return name;
             }
         }
-        parent = parent->GetParent();
+        parent = parent->getParent();
     }
 
-    ASSERT_MSG(parent, tt_string() << node->get_node_name() << " has no parent!");
+    ASSERT_MSG(parent, tt_string() << node->getNodeName() << " has no parent!");
     return tt_string("internal error");
 }
 
@@ -191,14 +191,14 @@ void GenStyle(Node* node, tt_string& code, const char* prefix)
 {
     tt_string all_styles;
 
-    if (node->HasValue(prop_tab_position) && !node->as_string(prop_tab_position).is_sameas("wxBK_DEFAULT"))
+    if (node->hasValue(prop_tab_position) && !node->as_string(prop_tab_position).is_sameas("wxBK_DEFAULT"))
     {
         if (all_styles.size())
             all_styles << '|';
         all_styles << node->as_string(prop_tab_position);
     }
 
-    if (node->HasValue(prop_orientation) && !node->as_string(prop_orientation).is_sameas("wxGA_HORIZONTAL"))
+    if (node->hasValue(prop_orientation) && !node->as_string(prop_orientation).is_sameas("wxGA_HORIZONTAL"))
     {
         if (all_styles.size())
             all_styles << '|';
@@ -212,7 +212,7 @@ void GenStyle(Node* node, tt_string& code, const char* prefix)
         all_styles << "wxRE_MULTILINE";
     }
 
-    if (node->HasValue(prop_style))
+    if (node->hasValue(prop_style))
     {
         if (all_styles.size())
         {
@@ -228,7 +228,7 @@ void GenStyle(Node* node, tt_string& code, const char* prefix)
         }
     }
 
-    if (node->HasValue(prop_window_style))
+    if (node->hasValue(prop_window_style))
     {
         if (all_styles.size())
             all_styles << '|';
@@ -274,7 +274,7 @@ int GetBitlistInt(Node* node, GenEnum::PropName prop_name)
 {
     int result = 0;
     // Can't use multiview because GetConstantAsInt() searches an unordered_map which requires a std::string to pass to it
-    tt_string_vector mstr(node->value(prop_name), '|');
+    tt_string_vector mstr(node->as_string(prop_name), '|');
     for (auto& iter: mstr)
     {
         // Friendly names will have already been converted, so normal lookup works fine.
@@ -299,12 +299,12 @@ inline const BTN_BMP_TYPES btn_bmp_types[] = {
 
 bool GenBtnBimapCode(Node* node, tt_string& code, bool is_single)
 {
-    bool has_additional_bitmaps = (node->HasValue(prop_disabled_bmp) || node->HasValue(prop_pressed_bmp) ||
-                                   node->HasValue(prop_focus_bmp) || node->HasValue(prop_current));
+    bool has_additional_bitmaps = (node->hasValue(prop_disabled_bmp) || node->hasValue(prop_pressed_bmp) ||
+                                   node->hasValue(prop_focus_bmp) || node->hasValue(prop_current));
     if (code.size())
         code << '\n';
 
-    bool is_old_widgets = (Project.value(prop_wxWidgets_version) == "3.1");
+    bool is_old_widgets = (Project.as_string(prop_wxWidgets_version) == "3.1");
     if (is_old_widgets)
     {
         if (code.size() && !(code.back() == '\n'))
@@ -324,7 +324,7 @@ bool GenBtnBimapCode(Node* node, tt_string& code, bool is_single)
 
     for (auto& iter: btn_bmp_types)
     {
-        if (node->HasValue(iter.prop_name))
+        if (node->hasValue(iter.prop_name))
         {
             bundle_code.clear();
             bool is_code_block = GenerateBundleCode(node->as_string(iter.prop_name), bundle_code);
@@ -345,7 +345,7 @@ bool GenBtnBimapCode(Node* node, tt_string& code, bool is_single)
                 bundle_code.Replace("\t\t\t", "\t", true);
                 // if has_additional_bitmaps is true, we already have an opening brace
                 code << bundle_code.c_str() + (has_additional_bitmaps ? 1 : 0);
-                code << "\t" << node->get_node_name() << "->" << iter.function_name;
+                code << "\t" << node->getNodeName() << "->" << iter.function_name;
                 code << "(wxBitmapBundle::FromBitmaps(bitmaps));";
 
                 if (!has_additional_bitmaps)
@@ -357,7 +357,7 @@ bool GenBtnBimapCode(Node* node, tt_string& code, bool is_single)
             {
                 if (code.size() && !(code.back() == '\n'))
                     code << '\n';
-                code << "\t" << node->get_node_name() << "->" << iter.function_name << "(" << bundle_code << ");";
+                code << "\t" << node->getNodeName() << "->" << iter.function_name << "(" << bundle_code << ");";
             }
         }
         if (is_single)
@@ -377,37 +377,37 @@ bool GenBtnBimapCode(Node* node, tt_string& code, bool is_single)
     if (is_old_widgets)
     {
         code << "\n#else\n";
-        code << node->get_node_name() << "->SetBitmap(" << GenerateBitmapCode(node->as_string(prop_bitmap)) << ");";
+        code << node->getNodeName() << "->SetBitmap(" << GenerateBitmapCode(node->as_string(prop_bitmap)) << ");";
 
-        if (node->HasValue(prop_disabled_bmp))
+        if (node->hasValue(prop_disabled_bmp))
         {
             if (code.size())
                 code << '\n';
-            code << node->get_node_name() << "->SetBitmapDisabled(" << GenerateBitmapCode(node->as_string(prop_disabled_bmp))
+            code << node->getNodeName() << "->SetBitmapDisabled(" << GenerateBitmapCode(node->as_string(prop_disabled_bmp))
                  << ");";
         }
 
-        if (node->HasValue(prop_pressed_bmp))
+        if (node->hasValue(prop_pressed_bmp))
         {
             if (code.size())
                 code << '\n';
-            code << node->get_node_name() << "->SetBitmapPressed(" << GenerateBitmapCode(node->as_string(prop_pressed_bmp))
+            code << node->getNodeName() << "->SetBitmapPressed(" << GenerateBitmapCode(node->as_string(prop_pressed_bmp))
                  << ");";
         }
 
-        if (node->HasValue(prop_focus_bmp))
+        if (node->hasValue(prop_focus_bmp))
         {
             if (code.size())
                 code << '\n';
-            code << node->get_node_name() << "->SetBitmapFocus(" << GenerateBitmapCode(node->as_string(prop_focus_bmp))
+            code << node->getNodeName() << "->SetBitmapFocus(" << GenerateBitmapCode(node->as_string(prop_focus_bmp))
                  << ");";
         }
 
-        if (node->HasValue(prop_current))
+        if (node->hasValue(prop_current))
         {
             if (code.size())
                 code << '\n';
-            code << node->get_node_name() << "->SetBitmapCurrent(" << GenerateBitmapCode(node->as_string(prop_current))
+            code << node->getNodeName() << "->SetBitmapCurrent(" << GenerateBitmapCode(node->as_string(prop_current))
                  << ");";
         }
 
@@ -722,7 +722,7 @@ bool GenerateVectorCode(const tt_string& description, tt_string& code)
     // If we get here, then we need to first put the bitmaps into a wxVector in order for wxBitmapBundle to load them.
 
     code << "{\n";
-    if (Project.value(prop_wxWidgets_version) == "3.1")
+    if (Project.as_string(prop_wxWidgets_version) == "3.1")
     {
         code << "#if wxCHECK_VERSION(3, 1, 6)\n";
     }
@@ -752,7 +752,7 @@ bool GenerateVectorCode(const tt_string& description, tt_string& code)
             code << "\tbitmaps.push_back(wxueImage(" << name << ", sizeof(" << name << ")));\n";
         }
     }
-    if (Project.value(prop_wxWidgets_version) == "3.1")
+    if (Project.as_string(prop_wxWidgets_version) == "3.1")
     {
         code << "#endif\n";
     }
@@ -790,7 +790,7 @@ void GenFormSettings(Code& code)
         }
     }
 
-    if (code.HasValue(prop_window_extra_style))
+    if (code.hasValue(prop_window_extra_style))
     {
         code.Eol(eol_if_needed).FormFunction("SetExtraStyle(").FormFunction("GetExtraStyle() | ");
         code.Add(prop_window_extra_style).EndFunction();
@@ -900,7 +900,7 @@ std::optional<tt_string> GenValidatorSettings(Node* node)
         auto& validator_type = node->as_string(prop_validator_type);
         if (validator_type.is_sameas("wxTextValidator"))
         {
-            code << node->get_node_name() << "->SetValidator(wxTextValidator(" << node->as_string(prop_validator_style)
+            code << node->getNodeName() << "->SetValidator(wxTextValidator(" << node->as_string(prop_validator_style)
                  << ", &" << var_name << "));";
         }
         else
@@ -910,7 +910,7 @@ std::optional<tt_string> GenValidatorSettings(Node* node)
             else if (node->isGen(gen_StaticRadioBtnBoxSizer))
                 code << node->as_string(prop_radiobtn_var_name);
             else
-                code << node->get_node_name();
+                code << node->getNodeName();
 
             if (node->isGen(gen_wxRearrangeCtrl))
                 code << "->GetList()";
@@ -950,7 +950,7 @@ tt_string GenerateIconCode(const tt_string& description)
         return code;
     }
 
-    if (Project.value(prop_wxWidgets_version) == "3.1" && !parts[IndexType].is_sameas("SVG"))
+    if (Project.as_string(prop_wxWidgets_version) == "3.1" && !parts[IndexType].is_sameas("SVG"))
     {
         code << "#if wxCHECK_VERSION(3, 1, 6)\n";
     }
@@ -1040,7 +1040,7 @@ tt_string GenerateIconCode(const tt_string& description)
         }
     }
 
-    if (Project.value(prop_wxWidgets_version) == "3.1")
+    if (Project.as_string(prop_wxWidgets_version) == "3.1")
     {
         code << "#else\n";
         auto image_code = GenerateBitmapCode(description);
@@ -1066,7 +1066,7 @@ tt_string GenerateWxSize(Node* node, PropName prop)
 {
     tt_string code;
     auto size = node->as_wxSize(prop);
-    if (node->value(prop).contains("d", tt::CASE::either))
+    if (node->as_string(prop).contains("d", tt::CASE::either))
     {
         code << "ConvertDialogToPixels(wxSize(" << size.x << ", " << size.y << "))";
     }
@@ -1082,20 +1082,20 @@ void GenToolCode(Code& code, const bool is_bitmaps_list)
 {
     const auto* node = code.node();
     code.Eol(eol_if_needed);
-    if (node->as_bool(prop_disabled) || (node->as_string(prop_id) == "wxID_ANY" && node->GetInUseEventCount()))
+    if (node->as_bool(prop_disabled) || (node->as_string(prop_id) == "wxID_ANY" && node->getInUseEventCount()))
     {
-        if (node->IsLocal() && code.is_cpp())
+        if (node->isLocal() && code.is_cpp())
             code << "auto* ";
         code.NodeName() << " = ";
     }
 
-    if ((node->IsLocal() && node->isGen(gen_tool_dropdown)) ||
-        (node->isGen(gen_auitool) && node->value(prop_initial_state) != "wxAUI_BUTTON_STATE_NORMAL"))
+    if ((node->isLocal() && node->isGen(gen_tool_dropdown)) ||
+        (node->isGen(gen_auitool) && node->as_string(prop_initial_state) != "wxAUI_BUTTON_STATE_NORMAL"))
     {
         code.AddIfCpp("auto* ").NodeName().Add(" = ");
     }
     // If the user doesn't want access, then we have no use for the return value.
-    else if (!node->IsLocal())
+    else if (!node->isLocal())
     {
         code.NodeName().Add(" = ");
     }
@@ -1120,13 +1120,13 @@ void GenToolCode(Code& code, const bool is_bitmaps_list)
     else
     {
         code.Comma();
-        if (!code.HasValue(prop_bitmap))
+        if (!code.hasValue(prop_bitmap))
         {
             code.Add("wxNullBitmap");
         }
         else if (code.is_cpp())
         {
-            if (Project.value(prop_wxWidgets_version) == "3.1")
+            if (Project.as_string(prop_wxWidgets_version) == "3.1")
             {
                 code.Eol() += "#if wxCHECK_VERSION(3, 1, 6)\n\t";
             }
@@ -1136,7 +1136,7 @@ void GenToolCode(Code& code, const bool is_bitmaps_list)
             code.CheckLineLength(bundle_code.size());
             code += bundle_code;
 
-            if (Project.value(prop_wxWidgets_version) == "3.1")
+            if (Project.as_string(prop_wxWidgets_version) == "3.1")
             {
                 code.Eol() += "#else\n\t";
                 code << "wxBitmap(" << GenerateBitmapCode(node->as_string(prop_bitmap)) << ")";
@@ -1154,7 +1154,7 @@ void GenToolCode(Code& code, const bool is_bitmaps_list)
         }
     }
 
-    if (!node->HasValue(prop_tooltip) && !node->HasValue(prop_statusbar))
+    if (!node->hasValue(prop_tooltip) && !node->hasValue(prop_statusbar))
     {
         if (node->isGen(gen_tool_dropdown))
         {
@@ -1166,7 +1166,7 @@ void GenToolCode(Code& code, const bool is_bitmaps_list)
         }
     }
 
-    else if (node->HasValue(prop_tooltip) && !node->HasValue(prop_statusbar))
+    else if (node->hasValue(prop_tooltip) && !node->hasValue(prop_statusbar))
     {
         code.Comma().QuotedString(prop_tooltip);
         if (node->isGen(gen_tool_dropdown))
@@ -1179,7 +1179,7 @@ void GenToolCode(Code& code, const bool is_bitmaps_list)
         }
     }
 
-    else if (node->HasValue(prop_statusbar))
+    else if (node->hasValue(prop_statusbar))
     {
         code.Comma().Add("wxNullBitmap").Comma().as_string(prop_kind).Comma();
 
@@ -1196,7 +1196,7 @@ void GenToolCode(Code& code, const bool is_bitmaps_list)
 
 bool BitmapList(Code& code, const GenEnum::PropName prop)
 {
-    if (!code.node()->HasValue(prop))
+    if (!code.node()->hasValue(prop))
     {
         return false;
     }
@@ -1251,7 +1251,7 @@ bool BitmapList(Code& code, const GenEnum::PropName prop)
     }
 
     //////////////// C++ code starts here ////////////////
-    if (Project.value(prop_wxWidgets_version) == "3.1")
+    if (Project.as_string(prop_wxWidgets_version) == "3.1")
     {
         code.Add("#if wxCHECK_VERSION(3, 1, 6)");
     }

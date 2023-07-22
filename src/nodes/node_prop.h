@@ -83,10 +83,10 @@ public:
     tt_string& get_value() { return m_value; }
 
     // Returns string containing the property ID without any assignment if it is a custom id.
-    tt_string get_prop_id() const;
+    tt_string getPropId() const;
 
     // Returns a string containing the ID without any assignment if it is a custom id.
-    static tt_string get_prop_id(const tt_string& complete_id);
+    static tt_string getPropId(const tt_string& complete_id);
 
     const tt_string& value() const { return m_value; }
 
@@ -151,14 +151,14 @@ public:
 
     // Returns false if the property is empty. For size, point, and Bitmap properties,
     // returns false if the default value is used.
-    bool HasValue() const;
+    bool hasValue() const;
 
     const PropDeclaration* GetPropDeclaration() const { return m_declaration; }
 
     Node* GetNode() { return m_node; }
 
     // Returns a char pointer to the name. Use get_name() if you want the enum value.
-    tt_string_view DeclName() const noexcept { return m_declaration->DeclName(); }
+    tt_string_view declName() const noexcept { return m_declaration->declName(); }
 
     bool isProp(PropName name) const noexcept { return m_declaration->isProp(name); }
     bool isType(PropType type) const noexcept { return m_declaration->isType(type); }

@@ -409,9 +409,9 @@ void NodeCreator::Initialize()
 
     for (auto& iter: lstParentChild)
     {
-        GetNodeType(iter.parent)->AddChild(iter.child, iter.max_children);
+        getNodeType(iter.parent)->addChild(iter.child, iter.max_children);
         if (iter.parent == type_sizer)
-            GetNodeType(type_gbsizer)->AddChild(iter.child, iter.max_children);
+            getNodeType(type_gbsizer)->addChild(iter.child, iter.max_children);
     }
 
     {
@@ -553,8 +553,8 @@ void NodeCreator::ParseGeneratorFile(const char* xml_data)
             m_interfaces[class_name] = generator;
         }
 
-        auto declaration = new NodeDeclaration(class_name, GetNodeType(type));
-        m_a_declarations[declaration->gen_name()] = declaration;
+        auto declaration = new NodeDeclaration(class_name, getNodeType(type));
+        m_a_declarations[declaration->getGenName()] = declaration;
 
         if (auto flags = generator.attribute("flags").as_string(); flags.size())
         {
@@ -595,7 +595,7 @@ void NodeCreator::ParseGeneratorFile(const char* xml_data)
         while (elem_obj)
         {
             auto class_name = elem_obj.attribute("class").as_string();
-            auto class_info = GetNodeDeclaration(class_name);
+            auto class_info = getNodeDeclaration(class_name);
 
             // This can happen if the project file is corrupted, or it it a newer version of the project file
             // that the current version doesn't support.
@@ -608,7 +608,7 @@ void NodeCreator::ParseGeneratorFile(const char* xml_data)
                 auto base_name = elem_base.attribute("class").as_string();
 
                 // Add a reference to its base class
-                auto base_info = GetNodeDeclaration(base_name);
+                auto base_info = getNodeDeclaration(base_name);
                 if (class_info && base_info)
                 {
                     class_info->AddBaseClass(base_info);

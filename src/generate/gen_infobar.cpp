@@ -25,8 +25,8 @@ wxObject* InfoBarGenerator::CreateMockup(Node* node, wxObject* parent)
 
     m_infobar->ShowMessage("Message ...", wxICON_INFORMATION);
 
-    m_infobar->SetShowHideEffects((wxShowEffect) node->prop_as_mockup(prop_show_effect, "info_"),
-                                  (wxShowEffect) node->prop_as_mockup(prop_hide_effect, "info_"));
+    m_infobar->SetShowHideEffects((wxShowEffect) node->as_mockup(prop_show_effect, "info_"),
+                                  (wxShowEffect) node->as_mockup(prop_hide_effect, "info_"));
     m_infobar->SetEffectDuration(node->as_int(prop_duration));
 
     m_infobar->Bind(wxEVT_BUTTON, &InfoBarGenerator::OnButton, this);
@@ -85,16 +85,16 @@ bool InfoBarGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, s
 
 int InfoBarGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxInfoBar");
 
-    if (node->HasValue(prop_show_effect))
+    if (node->hasValue(prop_show_effect))
     {
         item.append_child("showeffect").text().set(node->as_constant(prop_show_effect, "info_"));
     }
-    if (node->HasValue(prop_hide_effect))
+    if (node->hasValue(prop_hide_effect))
     {
         item.append_child("hideeffect").text().set(node->as_constant(prop_hide_effect, "info_"));
     }

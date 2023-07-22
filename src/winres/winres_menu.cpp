@@ -118,7 +118,7 @@ void resForm::ParseMenus(tt_string_vector& txtfile, size_t& curTxtLine)
         {
             auto& control = m_ctrls.emplace_back();
             parent = control.SetNodePtr(NodeCreation.NewNode(gen_wxMenu));
-            m_form_node->Adopt(parent);
+            m_form_node->adoptChild(parent);
             line.moveto_nextword();
             parent->set_value(prop_label, m_pWinResource->ConvertCodePageString(line.view_substr(0)));
         }
@@ -154,7 +154,7 @@ void resForm::ParseMenuItem(Node* parent, tt_string_vector& txtfile, size_t& cur
         {
             auto& control = m_ctrls.emplace_back();
             sub_parent = control.SetNodePtr(NodeCreation.NewNode(gen_submenu));
-            parent->Adopt(sub_parent);
+            parent->adoptChild(sub_parent);
             line.moveto_nextword();
             sub_parent->set_value(prop_label, m_pWinResource->ConvertCodePageString(line.view_substr(0)));
         }
@@ -165,13 +165,13 @@ void resForm::ParseMenuItem(Node* parent, tt_string_vector& txtfile, size_t& cur
             {
                 auto& control = m_ctrls.emplace_back();
                 auto separator = control.SetNodePtr(NodeCreation.NewNode(gen_separator));
-                parent->Adopt(separator);
+                parent->adoptChild(separator);
             }
             else
             {
                 auto& control = m_ctrls.emplace_back();
                 auto item = control.SetNodePtr(NodeCreation.NewNode(gen_wxMenuItem));
-                parent->Adopt(item);
+                parent->adoptChild(item);
                 tt_string_view label = line.view_substr(0);
                 auto end = label.find("\\t");
                 if (tt::is_found(end))

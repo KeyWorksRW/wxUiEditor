@@ -49,27 +49,27 @@ public:
     void Initialize();
 
     // Only creates the node if the parent allows it as a child
-    NodeSharedPtr CreateNode(GenName name, Node* parent);
+    NodeSharedPtr createNode(GenName name, Node* parent);
 
     // Only creates the node if the parent allows it as a child
-    NodeSharedPtr CreateNode(tt_string_view name, Node* parent);
+    NodeSharedPtr createNode(tt_string_view name, Node* parent);
 
     // Creates an orphaned node.
-    NodeSharedPtr NewNode(GenEnum::GenName gen_name) { return NewNode(m_a_declarations[gen_name]); }
+    NodeSharedPtr NewNode(GenEnum::GenName getGenName) { return NewNode(m_a_declarations[getGenName]); }
 
     // Creates an orphaned node.
     NodeSharedPtr NewNode(NodeDeclaration* node_info);
 
     // If you have the class enum value, this is the preferred way to get the Declaration
     // pointer.
-    NodeDeclaration* get_declaration(GenEnum::GenName gen_name) { return m_a_declarations[gen_name]; }
+    NodeDeclaration* get_declaration(GenEnum::GenName getGenName) { return m_a_declarations[getGenName]; }
 
-    NodeDeclaration* GetNodeDeclaration(tt_string_view class_name);
+    NodeDeclaration* getNodeDeclaration(tt_string_view class_name);
 
     // This returns the integer value of most wx constants used in various components
     int GetConstantAsInt(const std::string& name, int defValue = 0) const;
 
-    NodeSharedPtr CreateNode(pugi::xml_node& node, Node* parent = nullptr, bool check_for_duplicates = false,
+    NodeSharedPtr createNode(pugi::xml_node& node, Node* parent = nullptr, bool check_for_duplicates = false,
                              bool allow_ui = true);
 
     // Only use this with .wxui projects -- it will fail on a .fbp project
@@ -92,7 +92,7 @@ protected:
     void ParseGeneratorFile(const char* file);
     void ParseProperties(pugi::xml_node& elem_obj, NodeDeclaration* obj_info, NodeCategory& category);
 
-    NodeType* GetNodeType(GenEnum::GenType type_name) { return &m_a_node_types[static_cast<size_t>(type_name)]; }
+    NodeType* getNodeType(GenEnum::GenType type_name) { return &m_a_node_types[static_cast<size_t>(type_name)]; }
 
     void AddAllConstants();
 

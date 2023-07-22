@@ -24,7 +24,7 @@ bool CtxMenuGenerator::GetIncludes(Node* /* node */, std::set<std::string>& set_
 
 static void GenCtxConstruction(Code& code)
 {
-    if (auto generator = code.node()->GetNodeDeclaration()->GetGenerator(); generator)
+    if (auto generator = code.node()->getNodeDeclaration()->getGenerator(); generator)
     {
         code.Eol(eol_if_needed);
         generator->ConstructionCode(code);
@@ -40,7 +40,7 @@ static void GenCtxConstruction(Code& code)
 void CtxMenuGenerator::CollectEventHandlers(Node* node, std::vector<NodeEvent*>& events)
 {
     ASSERT(node);
-    for (auto& iter: node->GetMapEvents())
+    for (auto& iter: node->getMapEvents())
     {
         if (iter.second.get_value().size())
         {
@@ -48,11 +48,11 @@ void CtxMenuGenerator::CollectEventHandlers(Node* node, std::vector<NodeEvent*>&
         }
     }
 
-    for (const auto& child: node->GetChildNodePtrs())
+    for (const auto& child: node->getChildNodePtrs())
     {
         if (child->isGen(gen_wxContextMenuEvent))
         {
-            for (const auto& ctx_child: child->GetChildNodePtrs())
+            for (const auto& ctx_child: child->getChildNodePtrs())
             {
                 CollectEventHandlers(ctx_child.get(), m_CtxMenuEvents);
             }
@@ -64,7 +64,7 @@ bool CtxMenuGenerator::AfterChildrenCode(Code& code)
 {
     if (code.is_cpp())
     {
-        code.Str("void ").Str(code.node()->get_form_name()).Str("::").Str(prop_handler_name);
+        code.Str("void ").Str(code.node()->getFormName()).Str("::").Str(prop_handler_name);
         code.Str("(wxContextMenuEvent& event)").OpenBrace();
     }
 
@@ -80,13 +80,13 @@ bool CtxMenuGenerator::AfterChildrenCode(Code& code)
     code.Eol();
 
     // All of the constructors are expecting a wxMenu parent -- so we need to temporarily create one
-    auto node_menu = NodeCreation.NewNode(NodeCreation.GetNodeDeclaration("wxMenu"));
+    auto node_menu = NodeCreation.NewNode(NodeCreation.getNodeDeclaration("wxMenu"));
     node_menu->set_value(prop_var_name, code.is_cpp() ? "p_ctx_menu" : "ctx_menu");
 
-    for (const auto& child: code.node()->GetChildNodePtrs())
+    for (const auto& child: code.node()->getChildNodePtrs())
     {
         auto child_node = NodeCreation.MakeCopy(child);
-        node_menu->Adopt(child_node);
+        node_menu->adoptChild(child_node);
         auto* save_node = code.node();
         code.m_node = child_node.get();
         code.Eol(eol_if_needed);
@@ -96,11 +96,11 @@ bool CtxMenuGenerator::AfterChildrenCode(Code& code)
     code.Eol().Eol();
     m_CtxMenuEvents.clear();
 
-    for (const auto& child: code.node()->GetParent()->GetChildNodePtrs())
+    for (const auto& child: code.node()->getParent()->getChildNodePtrs())
     {
         if (child->isGen(gen_wxContextMenuEvent))
         {
-            for (const auto& ctx_child: child->GetChildNodePtrs())
+            for (const auto& ctx_child: child->getChildNodePtrs())
             {
                 CollectEventHandlers(ctx_child.get(), m_CtxMenuEvents);
             }
@@ -109,10 +109,10 @@ bool CtxMenuGenerator::AfterChildrenCode(Code& code)
 
     for (auto& iter: m_CtxMenuEvents)
     {
-        if (auto generator = iter->GetNode()->GetNodeDeclaration()->GetGenerator(); generator)
+        if (auto generator = iter->GetNode()->getNodeDeclaration()->getGenerator(); generator)
         {
             Code event_code(iter->GetNode(), code.m_language);
-            if (generator->GenEvent(event_code, iter, code.node()->get_parent_name()); event_code.size())
+            if (generator->GenEvent(event_code, iter, code.node()->getParentName()); event_code.size())
             {
                 event_code.GetCode().Replace("\t", "\t\t", true);
                 code.Eol(eol_if_needed).Str("ctx_menu.") += event_code.GetCode();

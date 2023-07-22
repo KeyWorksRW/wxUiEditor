@@ -122,7 +122,7 @@ void IncludeFilesDialog::OnInit(wxInitDialogEvent& WXUNUSED(event))
         SetTitle("System Header Files");
     }
 
-    if (m_prop->HasValue())
+    if (m_prop->hasValue())
     {
         tt_view_vector list;
         list.SetString(m_prop->value());

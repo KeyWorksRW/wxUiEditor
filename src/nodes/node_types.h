@@ -26,12 +26,12 @@ class NodeType
 public:
     NodeType() {}
 
-    void Create(GenType gen_type) { m_gen_type = gen_type; }
+    void Create(GenType getGenType) { m_gen_type = getGenType; }
 
-    GenType gen_type() const noexcept { return m_gen_type; }
+    GenType getGenType() const noexcept { return m_gen_type; }
     bool isType(GenType type) const noexcept { return (type == m_gen_type); }
 
-    ptrdiff_t GetAllowableChildren(GenType child_gen_type) const
+    ptrdiff_t getAllowableChildren(GenType child_gen_type) const
     {
         if (auto result = m_map_children.find(child_gen_type); result != m_map_children.end())
             return result->second;
@@ -39,7 +39,7 @@ public:
             return 0;
     }
 
-    void AddChild(GenType gen_type, ptrdiff_t max_children) { m_map_children[gen_type] = max_children; }
+    void addChild(GenType getGenType, ptrdiff_t max_children) { m_map_children[getGenType] = max_children; }
 
 private:
     GenType m_gen_type;

@@ -72,7 +72,7 @@ bool SpinButtonGenerator::GetIncludes(Node* node, std::set<std::string>& set_src
 
 int SpinButtonGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxSpinButton");
@@ -84,7 +84,7 @@ int SpinButtonGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t
     if (node->as_int(prop_inc) > 1)
         ADD_ITEM_PROP(prop_inc, "inc")
 
-    if (node->HasValue(prop_style))
+    if (node->hasValue(prop_style))
     {
         GenXrcStylePosSize(node, item);
     }

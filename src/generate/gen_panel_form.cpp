@@ -21,12 +21,12 @@ wxObject* PanelFormGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxPanel(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(parent, node, prop_pos),
                               DlgSize(parent, node, prop_size), GetStyleInt(node));
-    if (!node->HasValue(prop_extra_style))
+    if (!node->hasValue(prop_extra_style))
     {
         int ex_style = 0;
         // Can't use multiview because GetConstantAsInt() searches an unordered_map which
         // requires a std::string to pass to it
-        tt_string_vector mstr(node->value(prop_extra_style), '|');
+        tt_string_vector mstr(node->as_string(prop_extra_style), '|');
         for (auto& iter: mstr)
         {
             // Friendly names will have already been converted, so normal lookup works fine.
@@ -60,10 +60,10 @@ bool PanelFormGenerator::ConstructionCode(Code& code)
         code.Comma().CheckLineLength(sizeof("style=") + code.node()->as_string(prop_style).size() + 4);
         code.Add("style=").Style().Comma();
         size_t name_len =
-            code.HasValue(prop_window_name) ? code.node()->as_string(prop_window_name).size() : sizeof("wx.DialogNameStr");
+            code.hasValue(prop_window_name) ? code.node()->as_string(prop_window_name).size() : sizeof("wx.DialogNameStr");
         code.CheckLineLength(sizeof("name=") + name_len + 4);
         code.Str("name=");
-        if (code.HasValue(prop_window_name))
+        if (code.hasValue(prop_window_name))
             code.QuotedString(prop_window_name);
         else
             code.Str("wx.PanelNameStr");
@@ -78,7 +78,7 @@ bool PanelFormGenerator::ConstructionCode(Code& code)
         // Indent any wrapped lines
         code.Indent(3);
         code.Str(", id=");
-        if (code.HasValue(prop_id))
+        if (code.hasValue(prop_id))
         {
             code.Add(prop_id);
         }
@@ -130,19 +130,19 @@ bool PanelFormGenerator::AfterChildrenCode(Code& code)
 {
     Node* panel;
     auto* node = code.node();
-    if (node->IsForm())
+    if (node->isForm())
     {
         panel = node;
-        ASSERT_MSG(panel->GetChildCount(), "Trying to generate code for a wxPanel with no children.")
-        if (!panel->GetChildCount())
+        ASSERT_MSG(panel->getChildCount(), "Trying to generate code for a wxPanel with no children.")
+        if (!panel->getChildCount())
             return true;  // empty dialog, so nothing to do
-        ASSERT_MSG(panel->GetChild(0)->IsSizer(), "Expected first child of a wxPanel to be a sizer.");
-        if (panel->GetChild(0)->IsSizer())
-            node = panel->GetChild(0);
+        ASSERT_MSG(panel->getChild(0)->isSizer(), "Expected first child of a wxPanel to be a sizer.");
+        if (panel->getChild(0)->isSizer())
+            node = panel->getChild(0);
     }
     else
     {
-        panel = node->get_form();
+        panel = node->getForm();
     }
 
     const auto min_size = panel->as_wxSize(prop_minimum_size);
@@ -263,7 +263,7 @@ bool PanelFormGenerator::HeaderCode(Code& code)
     }
 
     code.Comma().Str("const wxString &name = ");
-    if (node->HasValue(prop_window_name))
+    if (node->hasValue(prop_window_name))
         code.QuotedString(prop_window_name);
     else
         code.Str("wxPanelNameStr");
@@ -276,7 +276,7 @@ bool PanelFormGenerator::HeaderCode(Code& code)
 
 bool PanelFormGenerator::BaseClassNameCode(Code& code)
 {
-    if (code.HasValue(prop_derived_class))
+    if (code.hasValue(prop_derived_class))
     {
         code.Str((prop_derived_class));
     }
@@ -291,7 +291,7 @@ bool PanelFormGenerator::BaseClassNameCode(Code& code)
 int PanelFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
     auto result = BaseGenerator::xrc_updated;
-    if (node->GetParent() && node->GetParent()->IsSizer())
+    if (node->getParent() && node->getParent()->isSizer())
         result = BaseGenerator::xrc_sizer_item_created;
     auto item = InitializeXrcObject(node, object);
 

@@ -133,7 +133,7 @@ void BaseCodeGenerator::GenerateCppClass(Node* form_node, PANEL_PAGE panel_type)
     {
         if (form->isGen(gen_folder))
         {
-            for (const auto& child_form: form->GetChildNodePtrs())
+            for (const auto& child_form: form->getChildNodePtrs())
             {
                 if (child_form->isGen(gen_Images))
                 {
@@ -208,7 +208,7 @@ void BaseCodeGenerator::GenerateCppClass(Node* form_node, PANEL_PAGE panel_type)
 
     std::set<std::string> src_includes;
     std::set<std::string> hdr_includes;
-    if (Project.value(prop_help_provider) != "none")
+    if (Project.as_string(prop_help_provider) != "none")
         src_includes.insert("#include <wx/cshelp.h>");
     if (Project.as_bool(prop_internationalize))
         hdr_includes.insert("#include <wx/intl.h>");
@@ -231,7 +231,7 @@ void BaseCodeGenerator::GenerateCppClass(Node* form_node, PANEL_PAGE panel_type)
         src_includes.insert("#include <wx/persist/toplevel.h>");
     }
 
-    if (form_node->HasValue(prop_icon))
+    if (form_node->hasValue(prop_icon))
     {
         src_includes.insert("#include <wx/icon.h>");
     }
@@ -278,27 +278,27 @@ void BaseCodeGenerator::GenerateCppClass(Node* form_node, PANEL_PAGE panel_type)
 
         m_header->writeLine();
 
-        if (form_node->HasValue(prop_header_preamble))
+        if (form_node->hasValue(prop_header_preamble))
         {
             WritePropHdrCode(form_node, prop_header_preamble);
         }
 
-        if (form_node->HasValue(prop_system_hdr_includes))
+        if (form_node->hasValue(prop_system_hdr_includes))
         {
             m_header->writeLine();
             tt_view_vector list;
-            list.SetString(form_node->value(prop_system_hdr_includes));
+            list.SetString(form_node->as_string(prop_system_hdr_includes));
             for (auto& iter: list)
             {
                 m_header->writeLine(tt_string("#include <") << iter << '>');
             }
         }
 
-        if (form_node->HasValue(prop_local_hdr_includes))
+        if (form_node->hasValue(prop_local_hdr_includes))
         {
             m_header->writeLine();
             tt_view_vector list;
-            list.SetString(form_node->value(prop_local_hdr_includes));
+            list.SetString(form_node->as_string(prop_local_hdr_includes));
             for (auto& iter: list)
             {
                 m_header->writeLine(tt_string("#include \"") << iter << '"');
@@ -306,19 +306,19 @@ void BaseCodeGenerator::GenerateCppClass(Node* form_node, PANEL_PAGE panel_type)
         }
     }
 
-    if (form_node->HasValue(prop_cpp_conditional) && m_TranslationUnit)
+    if (form_node->hasValue(prop_cpp_conditional) && m_TranslationUnit)
     {
-        if (!form_node->value(prop_cpp_conditional).starts_with("#"))
+        if (!form_node->as_string(prop_cpp_conditional).starts_with("#"))
             code.Str("#if ");
-        code.Str(form_node->value(prop_cpp_conditional));
+        code.Str(form_node->as_string(prop_cpp_conditional));
         m_source->writeLine(code);
         m_source->writeLine();
         code.clear();
     }
 
-    if (Project.HasValue(prop_local_pch_file) && m_TranslationUnit)
+    if (Project.hasValue(prop_local_pch_file) && m_TranslationUnit)
     {
-        m_source->writeLine(tt_string() << "#include \"" << Project.value(prop_local_pch_file) << '"');
+        m_source->writeLine(tt_string() << "#include \"" << Project.as_string(prop_local_pch_file) << '"');
         m_source->writeLine();
     }
 
@@ -330,7 +330,7 @@ void BaseCodeGenerator::GenerateCppClass(Node* form_node, PANEL_PAGE panel_type)
     // wxBitmap if older. We need to conditionalize the header output by removing the "#include <wx/bmpbndl.h>" entry and
     // creating our own conditionalized header.
 
-    if (Project.value(prop_wxWidgets_version) == "3.1")
+    if (Project.as_string(prop_wxWidgets_version) == "3.1")
     {
         if (auto bmpbndl_hdr = src_includes.find("#include <wx/bmpbndl.h>"); bmpbndl_hdr != src_includes.end())
         {
@@ -360,7 +360,7 @@ void BaseCodeGenerator::GenerateCppClass(Node* form_node, PANEL_PAGE panel_type)
         }
     }
 
-    if (auto& hdr_extension = Project.value(prop_header_ext); hdr_extension.size())
+    if (auto& hdr_extension = Project.as_string(prop_header_ext); hdr_extension.size())
     {
         m_header_ext = hdr_extension;
     }
@@ -385,21 +385,21 @@ void BaseCodeGenerator::GenerateCppClass(Node* form_node, PANEL_PAGE panel_type)
 
         m_source->writeLine();
 
-        if (Project.HasValue(prop_src_preamble))
+        if (Project.hasValue(prop_src_preamble))
         {
             WritePropSourceCode(Project.ProjectNode(), prop_src_preamble);
         }
 
-        if (form_node->HasValue(prop_source_preamble))
+        if (form_node->hasValue(prop_source_preamble))
         {
             WritePropSourceCode(form_node, prop_source_preamble);
         }
 
-        if (form_node->HasValue(prop_system_src_includes))
+        if (form_node->hasValue(prop_system_src_includes))
         {
             m_source->writeLine();
             tt_view_vector list;
-            list.SetString(form_node->value(prop_system_src_includes));
+            list.SetString(form_node->as_string(prop_system_src_includes));
             for (auto& iter: list)
             {
                 m_source->writeLine(tt_string("#include <") << iter << '>');
@@ -419,11 +419,11 @@ void BaseCodeGenerator::GenerateCppClass(Node* form_node, PANEL_PAGE panel_type)
             m_source->writeLine(tt_string() << "#include \"" << file.filename() << "\"");
         }
 
-        if (form_node->HasValue(prop_local_src_includes))
+        if (form_node->hasValue(prop_local_src_includes))
         {
             m_source->writeLine();
             tt_view_vector list;
-            list.SetString(form_node->value(prop_local_src_includes));
+            list.SetString(form_node->as_string(prop_local_src_includes));
             for (auto& iter: list)
             {
                 m_source->writeLine(tt_string("#include \"") << iter << '"');
@@ -454,8 +454,8 @@ void BaseCodeGenerator::GenerateCppClass(Node* form_node, PANEL_PAGE panel_type)
     }
 
     // Make a copy of the string so that we can tweak it
-    tt_string namespace_prop = Project.value(prop_name_space);
-    if (auto* node_namespace = form_node->get_folder(); node_namespace && node_namespace->HasValue(prop_folder_namespace))
+    tt_string namespace_prop = Project.as_string(prop_name_space);
+    if (auto* node_namespace = form_node->getFolder(); node_namespace && node_namespace->hasValue(prop_folder_namespace))
     {
         namespace_prop = node_namespace->as_string(prop_folder_namespace);
     }
@@ -545,7 +545,7 @@ void BaseCodeGenerator::GenerateCppClass(Node* form_node, PANEL_PAGE panel_type)
 
         if (m_NeedSVGFunction)
         {
-            if (Project.value(prop_wxWidgets_version) == "3.1")
+            if (Project.as_string(prop_wxWidgets_version) == "3.1")
             {
                 m_source->writeLine();
                 m_source->writeLine("#if !wxCHECK_VERSION(3, 1, 6)", indent::none);
@@ -602,9 +602,9 @@ void BaseCodeGenerator::GenerateCppClass(Node* form_node, PANEL_PAGE panel_type)
         m_header->writeLine();
     }
 
-    if (form_node->HasValue(prop_cpp_conditional) && m_TranslationUnit)
+    if (form_node->hasValue(prop_cpp_conditional) && m_TranslationUnit)
     {
-        code.Eol().Str("#endif  // ").Str(form_node->value(prop_cpp_conditional));
+        code.Eol().Str("#endif  // ").Str(form_node->as_string(prop_cpp_conditional));
         m_source->writeLine(code);
     }
 
@@ -616,7 +616,7 @@ void BaseCodeGenerator::GenerateCppClass(Node* form_node, PANEL_PAGE panel_type)
 
 void BaseCodeGenerator::CollectMemberVariables(Node* node, Permission perm, std::set<std::string>& code_lines)
 {
-    if (auto prop = node->get_prop_ptr(prop_class_access); prop)
+    if (auto prop = node->getPropPtr(prop_class_access); prop)
     {
         if (prop->as_string() != "none")
         {
@@ -632,7 +632,7 @@ void BaseCodeGenerator::CollectMemberVariables(Node* node, Permission perm, std:
         if (perm == Permission::Protected)
         {
             // StaticCheckboxBoxSizer and StaticRadioBtnBoxSizer have internal variables
-            if (node->HasValue(prop_checkbox_var_name) || node->HasValue(prop_radiobtn_var_name))
+            if (node->hasValue(prop_checkbox_var_name) || node->hasValue(prop_radiobtn_var_name))
             {
                 auto code = GetDeclaration(node);
                 if (code.size())
@@ -640,7 +640,7 @@ void BaseCodeGenerator::CollectMemberVariables(Node* node, Permission perm, std:
             }
         }
 
-        for (const auto& child: node->GetChildNodePtrs())
+        for (const auto& child: node->getChildNodePtrs())
         {
             CollectMemberVariables(child.get(), perm, code_lines);
         }
@@ -648,7 +648,7 @@ void BaseCodeGenerator::CollectMemberVariables(Node* node, Permission perm, std:
         return;
     }
 
-    for (const auto& child: node->GetChildNodePtrs())
+    for (const auto& child: node->getChildNodePtrs())
     {
         CollectMemberVariables(child.get(), perm, code_lines);
     }
@@ -656,9 +656,9 @@ void BaseCodeGenerator::CollectMemberVariables(Node* node, Permission perm, std:
 
 void BaseCodeGenerator::CollectValidatorVariables(Node* node, std::set<std::string>& code_lines)
 {
-    GenValVarsBase(node->GetNodeDeclaration(), node, code_lines);
+    GenValVarsBase(node->getNodeDeclaration(), node, code_lines);
 
-    for (const auto& child: node->GetChildNodePtrs())
+    for (const auto& child: node->getChildNodePtrs())
     {
         CollectValidatorVariables(child.get(), code_lines);
     }
@@ -668,7 +668,7 @@ void BaseCodeGenerator::GenValidatorFunctions(Node* node)
 {
     ASSERT(m_language == GEN_LANG_CPLUSPLUS);
 
-    if (node->HasValue(prop_validator_variable))
+    if (node->hasValue(prop_validator_variable))
     {
         auto result = GenGetSetCode(node);
         if (result)
@@ -677,7 +677,7 @@ void BaseCodeGenerator::GenValidatorFunctions(Node* node)
         }
     }
 
-    for (const auto& child: node->GetChildNodePtrs())
+    for (const auto& child: node->getChildNodePtrs())
     {
         GenValidatorFunctions(child.get());
     }
@@ -694,11 +694,11 @@ void BaseCodeGenerator::GenValVarsBase(const NodeDeclaration* declaration, Node*
         {
             tt_string code;
 
-            if (node->HasValue(prop_platforms) && node->value(prop_platforms) != "Windows|Unix|Mac")
+            if (node->hasValue(prop_platforms) && node->as_string(prop_platforms) != "Windows|Unix|Mac")
             {
-                if (node->value(prop_platforms).contains("Windows"))
+                if (node->as_string(prop_platforms).contains("Windows"))
                     code << "\n#if defined(__WINDOWS__)";
-                if (node->value(prop_platforms).contains("Unix"))
+                if (node->as_string(prop_platforms).contains("Unix"))
                 {
                     if (code.size())
                         code << " || ";
@@ -706,7 +706,7 @@ void BaseCodeGenerator::GenValVarsBase(const NodeDeclaration* declaration, Node*
                         code << "\n#if ";
                     code << "defined(__UNIX__)";
                 }
-                if (node->value(prop_platforms).contains("Mac"))
+                if (node->as_string(prop_platforms).contains("Mac"))
                 {
                     if (code.size())
                         code << " || ";
@@ -721,11 +721,11 @@ void BaseCodeGenerator::GenValVarsBase(const NodeDeclaration* declaration, Node*
 
             if (val_data_type == "bool")
             {
-                auto prop = node->get_prop_ptr(prop_checked);
+                auto prop = node->getPropPtr(prop_checked);
                 bool bState = (prop && prop->as_bool());
                 if (!prop)
                 {
-                    prop = node->get_prop_ptr(prop_initial_state);
+                    prop = node->getPropPtr(prop_initial_state);
                     if (prop && prop->as_string() == "wxCHK_CHECKED")
                         bState = true;
                 }
@@ -733,13 +733,13 @@ void BaseCodeGenerator::GenValVarsBase(const NodeDeclaration* declaration, Node*
             }
             else if (val_data_type == "int")
             {
-                auto prop = node->get_prop_ptr(prop_value);
+                auto prop = node->getPropPtr(prop_value);
                 if (!prop)
-                    prop = node->get_prop_ptr(prop_initial);
+                    prop = node->getPropPtr(prop_initial);
                 if (!prop)
-                    prop = node->get_prop_ptr(prop_selection);
+                    prop = node->getPropPtr(prop_selection);
                 if (!prop)
-                    prop = node->get_prop_ptr(prop_position);
+                    prop = node->getPropPtr(prop_position);
                 if (prop && prop->as_string().size())
                 {
                     code << " { " << prop->as_string() << " };";
@@ -766,7 +766,7 @@ void BaseCodeGenerator::GenValVarsBase(const NodeDeclaration* declaration, Node*
                 code << ';';
             }
 
-            if (node->HasValue(prop_platforms) && node->value(prop_platforms) != "Windows|Unix|Mac")
+            if (node->hasValue(prop_platforms) && node->as_string(prop_platforms) != "Windows|Unix|Mac")
             {
                 code << "\n#endif  // limited to specific platforms";
             }
@@ -826,13 +826,13 @@ void BaseCodeGenerator::GatherGeneratorIncludes(Node* node, std::set<std::string
     if (node->isPropValue(prop_class_access, "none"))
         isAddToSrc = true;
 
-    auto generator = node->GetNodeDeclaration()->GetGenerator();
+    auto generator = node->getNodeDeclaration()->getGenerator();
     ASSERT(generator);
     if (!generator)
         return;
 
     generator->GetIncludes(node, set_src, set_hdr);
-    if (node->HasValue(prop_validator_variable))
+    if (node->hasValue(prop_validator_variable))
     {
         auto& var_name = node->as_string(prop_validator_variable);
         if (var_name.size())
@@ -845,14 +845,14 @@ void BaseCodeGenerator::GatherGeneratorIncludes(Node* node, std::set<std::string
         }
     }
 
-    if (node->HasValue(prop_derived_header))
+    if (node->hasValue(prop_derived_header))
     {
         tt_string header("#include \"");
         header << node->as_string(prop_derived_header) << '"';
         set_src.insert(header);
     }
 
-    if (node->HasValue(prop_derived_class) && !node->isPropValue(prop_class_access, "none"))
+    if (node->hasValue(prop_derived_class) && !node->isPropValue(prop_class_access, "none"))
     {
         set_hdr.insert(tt_string() << "class " << node->as_string(prop_derived_class) << ';');
     }
@@ -860,9 +860,9 @@ void BaseCodeGenerator::GatherGeneratorIncludes(Node* node, std::set<std::string
     // A lot of widgets have wxWindow and/or wxAnyButton as derived classes, and those classes contain properties for
     // font, color, and bitmaps. If the property is used, then we add a matching header file.
 
-    for (auto& iter: node->get_props_vector())
+    for (auto& iter: node->getPropsVector())
     {
-        if (iter.HasValue())
+        if (iter.hasValue())
         {
             if (iter.type() == type_wxFont)
             {
@@ -934,7 +934,7 @@ void BaseCodeGenerator::GatherGeneratorIncludes(Node* node, std::set<std::string
     }
 
     // Now parse all the children
-    for (const auto& child: node->GetChildNodePtrs())
+    for (const auto& child: node->getChildNodePtrs())
     {
         GatherGeneratorIncludes(child.get(), set_src, set_hdr);
     }
@@ -943,11 +943,11 @@ void BaseCodeGenerator::GatherGeneratorIncludes(Node* node, std::set<std::string
 tt_string BaseCodeGenerator::GetDeclaration(Node* node)
 {
     tt_string code;
-    if (node->HasValue(prop_platforms) && node->value(prop_platforms) != "Windows|Unix|Mac")
+    if (node->hasValue(prop_platforms) && node->as_string(prop_platforms) != "Windows|Unix|Mac")
     {
-        if (node->value(prop_platforms).contains("Windows"))
+        if (node->as_string(prop_platforms).contains("Windows"))
             code << "\n#if defined(__WINDOWS__)";
-        if (node->value(prop_platforms).contains("Unix"))
+        if (node->as_string(prop_platforms).contains("Unix"))
         {
             if (code.size())
                 code << " || ";
@@ -955,7 +955,7 @@ tt_string BaseCodeGenerator::GetDeclaration(Node* node)
                 code << "\n#if ";
             code << "defined(__UNIX__)";
         }
-        if (node->value(prop_platforms).contains("Mac"))
+        if (node->as_string(prop_platforms).contains("Mac"))
         {
             if (code.size())
                 code << " || ";
@@ -966,46 +966,46 @@ tt_string BaseCodeGenerator::GetDeclaration(Node* node)
         code << "\n";
     }
 
-    tt_string class_name(node->DeclName());
+    tt_string class_name(node->declName());
 
     if (class_name.starts_with("wx"))
     {
-        if (node->HasValue(prop_derived_class))
+        if (node->hasValue(prop_derived_class))
         {
-            code << node->as_string(prop_derived_class) << "* " << node->get_node_name() << ';';
+            code << node->as_string(prop_derived_class) << "* " << node->getNodeName() << ';';
         }
         else
         {
-            if (node->GetGenerator()->IsGeneric(node))
+            if (node->getGenerator()->IsGeneric(node))
             {
-                class_name = node->DeclName();
+                class_name = node->declName();
                 class_name.Replace("wx", "wxGeneric");
             }
-            code << class_name << "* " << node->get_node_name() << ';';
+            code << class_name << "* " << node->getNodeName() << ';';
         }
 
         if (class_name == "wxStdDialogButtonSizer")
         {
-            if (!node->get_form()->isGen(gen_wxDialog) || node->as_bool(prop_Save) || node->as_bool(prop_ContextHelp))
+            if (!node->getForm()->isGen(gen_wxDialog) || node->as_bool(prop_Save) || node->as_bool(prop_ContextHelp))
             {
                 if (node->as_bool(prop_OK))
-                    code << "\n\twxButton* " << node->get_node_name() << "OK;";
+                    code << "\n\twxButton* " << node->getNodeName() << "OK;";
                 if (node->as_bool(prop_Yes))
-                    code << "\n\twxButton* " << node->get_node_name() << "Yes;";
+                    code << "\n\twxButton* " << node->getNodeName() << "Yes;";
                 if (node->as_bool(prop_Save))
-                    code << "\n\twxButton* " << node->get_node_name() << "Save;";
+                    code << "\n\twxButton* " << node->getNodeName() << "Save;";
                 if (node->as_bool(prop_Apply))
-                    code << "\n\twxButton* " << node->get_node_name() << "Apply;";
+                    code << "\n\twxButton* " << node->getNodeName() << "Apply;";
                 if (node->as_bool(prop_No))
-                    code << "\n\twxButton* " << node->get_node_name() << "No;";
+                    code << "\n\twxButton* " << node->getNodeName() << "No;";
                 if (node->as_bool(prop_Cancel))
-                    code << "\n\twxButton* " << node->get_node_name() << "Cancel;";
+                    code << "\n\twxButton* " << node->getNodeName() << "Cancel;";
                 if (node->as_bool(prop_Close))
-                    code << "\n\twxButton* " << node->get_node_name() << "Close;";
+                    code << "\n\twxButton* " << node->getNodeName() << "Close;";
                 if (node->as_bool(prop_Help))
-                    code << "\n\twxButton* " << node->get_node_name() << "Help;";
+                    code << "\n\twxButton* " << node->getNodeName() << "Help;";
                 if (node->as_bool(prop_ContextHelp))
-                    code << "\n\twxButton* " << node->get_node_name() << "ContextHelp;";
+                    code << "\n\twxButton* " << node->getNodeName() << "ContextHelp;";
             }
         }
         else if (class_name == "wxStaticBitmap")
@@ -1018,63 +1018,63 @@ tt_string BaseCodeGenerator::GetDeclaration(Node* node)
 
     else if (class_name == "StaticCheckboxBoxSizer")
     {
-        if (node->HasValue(prop_checkbox_var_name))
+        if (node->hasValue(prop_checkbox_var_name))
             code << "wxCheckBox* " << node->as_string(prop_checkbox_var_name) << ';';
 
-        if (!node->IsLocal())
+        if (!node->isLocal())
         {
             if (code.size())
                 code << "\n";
-            code << "wxStaticBoxSizer* " << node->get_node_name() << ';';
+            code << "wxStaticBoxSizer* " << node->getNodeName() << ';';
         }
     }
     else if (class_name == "StaticRadioBtnBoxSizer")
     {
-        if (node->HasValue(prop_radiobtn_var_name))
+        if (node->hasValue(prop_radiobtn_var_name))
             code << "wxRadioButton* " << node->as_string(prop_radiobtn_var_name) << ';';
 
-        if (!node->IsLocal())
+        if (!node->isLocal())
         {
             if (code.size())
                 code << "\n";
-            code << "wxStaticBoxSizer* " << node->get_node_name() << ';';
+            code << "wxStaticBoxSizer* " << node->getNodeName() << ';';
         }
     }
 
     else if (class_name == "propGridItem" || class_name == "propGridCategory")
     {
-        code << "wxPGProperty* " << node->get_node_name() << ';';
+        code << "wxPGProperty* " << node->getNodeName() << ';';
     }
     else if (class_name == "BookPage")
     {
-        code << "wxPanel* " << node->get_node_name() << ';';
+        code << "wxPanel* " << node->getNodeName() << ';';
     }
     else if (class_name == "propGridPage")
     {
-        code << "wxPropertyGridPage* " << node->get_node_name() << ';';
+        code << "wxPropertyGridPage* " << node->getNodeName() << ';';
     }
     else if (class_name == "submenu")
     {
-        code << "wxMenu* " << node->get_node_name() << ';';
+        code << "wxMenu* " << node->getNodeName() << ';';
     }
     else if (class_name == "Check3State")
     {
-        code << "wxCheckBox* " << node->get_node_name() << ';';
+        code << "wxCheckBox* " << node->getNodeName() << ';';
     }
     else if (class_name == "tool")
     {
-        class_name = node->GetParent()->DeclName();
+        class_name = node->getParent()->declName();
         if (class_name == "wxAuiToolBar")
         {
-            code << "wxAuiToolBarItem* " << node->get_node_name() << ';';
+            code << "wxAuiToolBarItem* " << node->getNodeName() << ';';
         }
         else if (class_name == "wxToolBar")
         {
-            code << "wxToolBarToolBase* " << node->get_node_name() << ';';
+            code << "wxToolBarToolBase* " << node->getNodeName() << ';';
         }
         else if (class_name == "ToolBar")
         {
-            code << "wxToolBarToolBase* " << node->get_node_name() << ';';
+            code << "wxToolBarToolBase* " << node->getNodeName() << ';';
         }
         else
         {
@@ -1083,23 +1083,23 @@ tt_string BaseCodeGenerator::GetDeclaration(Node* node)
     }
     else if (class_name.is_sameas("CustomControl"))
     {
-        if (auto* node_namespace = node->get_folder(); node_namespace && node_namespace->HasValue(prop_folder_namespace))
+        if (auto* node_namespace = node->getFolder(); node_namespace && node_namespace->hasValue(prop_folder_namespace))
         {
             code << node_namespace->as_string(prop_folder_namespace) << "::";
         }
-        else if (node->HasValue(prop_namespace))
+        else if (node->hasValue(prop_namespace))
         {
             code << node->as_string(prop_namespace) << "::";
         }
-        code << node->as_string(prop_class_name) << "* " << node->get_node_name() << ';';
+        code << node->as_string(prop_class_name) << "* " << node->getNodeName() << ';';
     }
 
-    if (node->HasValue(prop_var_comment))
+    if (node->hasValue(prop_var_comment))
     {
         code << "  // " << node->as_string(prop_var_comment);
     }
 
-    if (node->HasValue(prop_platforms) && node->value(prop_platforms) != "Windows|Unix|Mac")
+    if (node->hasValue(prop_platforms) && node->as_string(prop_platforms) != "Windows|Unix|Mac")
     {
         code << "\n#endif  // limited to specific platforms";
     }
@@ -1117,13 +1117,13 @@ void BaseCodeGenerator::GenerateClassHeader(Node* form_node, EventVector& events
         return;
     }
 
-    if (!form_node->HasValue(prop_class_name))
+    if (!form_node->hasValue(prop_class_name))
     {
-        FAIL_MSG(tt_string("Missing \"name\" property in ") << form_node->DeclName());
+        FAIL_MSG(tt_string("Missing \"name\" property in ") << form_node->declName());
         return;
     }
 
-    auto generator = form_node->GetNodeDeclaration()->GetGenerator();
+    auto generator = form_node->getNodeDeclaration()->getGenerator();
     Code code(form_node, GEN_LANG_CPLUSPLUS);
 
     // This may result in two blank lines, but without it there may be a case where there is no blank line at all.
@@ -1167,7 +1167,7 @@ void BaseCodeGenerator::GenerateClassHeader(Node* form_node, EventVector& events
 
         if (m_NeedSVGFunction)
         {
-            if (Project.value(prop_wxWidgets_version) == "3.1")
+            if (Project.as_string(prop_wxWidgets_version) == "3.1")
             {
                 m_header->writeLine();
                 m_header->writeLine("#if !wxCHECK_VERSION(3, 1, 6)", indent::none);
@@ -1214,12 +1214,12 @@ void BaseCodeGenerator::GenerateClassHeader(Node* form_node, EventVector& events
     }
 
     code.Str("class ");
-    if (form_node->HasValue(prop_class_decoration))
+    if (form_node->hasValue(prop_class_decoration))
         code.Str(prop_class_decoration) += " ";
     code.Str(prop_class_name) += " : public ";
     if (generator->BaseClassNameCode(code))
     {
-        if (m_form_node->HasValue(prop_additional_inheritance))
+        if (m_form_node->hasValue(prop_additional_inheritance))
         {
             tt_string_vector class_list(m_form_node->as_string(prop_additional_inheritance), '"', tt::TRIM::both);
             for (auto& iter: class_list)
@@ -1257,38 +1257,38 @@ void BaseCodeGenerator::GenerateClassHeader(Node* form_node, EventVector& events
     if (form_node->as_bool(prop_const_values))
     {
         code.clear();
-        if (form_node->HasProp(prop_id))
+        if (form_node->hasProp(prop_id))
         {
             code.Eol(eol_if_needed).Str("const int form_id = ");
-            if (form_node->value(prop_id).size())
+            if (form_node->as_string(prop_id).size())
                 code.as_string(prop_id) += ";";
             else
                 code.Str("wxID_ANY;");
         }
-        if (form_node->HasProp(prop_style))
+        if (form_node->hasProp(prop_style))
         {
             code.Eol(eol_if_needed).Str("const int form_style = ");
-            if (form_node->value(prop_style).size())
+            if (form_node->as_string(prop_style).size())
                 code.Str(prop_style) += ";";
             else
                 code.Str("0;");
         }
-        else if (form_node->HasProp(prop_window_style))
+        else if (form_node->hasProp(prop_window_style))
         {
             code.Eol(eol_if_needed).Str("const int form_style = ");
-            if (form_node->value(prop_window_style).size())
+            if (form_node->as_string(prop_window_style).size())
                 code.Str(prop_window_style) += ";";
             else
                 code.Str("0;");
         }
-        if (form_node->HasProp(prop_pos))
+        if (form_node->hasProp(prop_pos))
             code.Eol(eol_if_needed).Str("const wxPoint form_pos = ").Pos(prop_pos, no_dlg_units) += ";";
-        if (form_node->HasProp(prop_size))
+        if (form_node->hasProp(prop_size))
             code.Eol(eol_if_needed).Str("const wxSize form_size = ").WxSize(prop_size, no_dlg_units) += ";";
-        if (form_node->HasProp(prop_title))
+        if (form_node->hasProp(prop_title))
         {
             code.Eol(eol_if_needed).Str("static const wxString form_title() { return ");
-            if (form_node->HasValue(prop_title))
+            if (form_node->hasValue(prop_title))
                 code.Str("wxString::FromUTF8(\"").Str(prop_title) += "\"); }";
             else
                 code.Str("wxEmptyString; }");
@@ -1346,12 +1346,12 @@ void BaseCodeGenerator::GenerateClassHeader(Node* form_node, EventVector& events
 
     GenEnumIds(form_node);
 
-    if (m_form_node->HasValue(prop_inserted_hdr_code))
+    if (m_form_node->hasValue(prop_inserted_hdr_code))
     {
         WritePropHdrCode(m_form_node, prop_inserted_hdr_code);
     }
 
-    if (m_form_node->HasValue(prop_class_methods))
+    if (m_form_node->hasValue(prop_class_methods))
     {
         m_header->writeLine();
         tt_string_vector class_list(m_form_node->as_string(prop_class_methods), '"', tt::TRIM::both);
@@ -1396,7 +1396,7 @@ void BaseCodeGenerator::GenerateClassHeader(Node* form_node, EventVector& events
         WriteSetLines(m_header, code_lines);
     }
 
-    if (m_form_node->HasValue(prop_class_members))
+    if (m_form_node->hasValue(prop_class_members))
     {
         tt_string_vector class_list(m_form_node->as_string(prop_class_members), '"', tt::TRIM::both);
         m_header->writeLine();
@@ -1470,8 +1470,8 @@ void BaseCodeGenerator::GenEnumIds(Node* class_node)
                 m_header->write(iter);
             if (item == 0)
             {
-                if (class_node->HasValue(prop_initial_enum_string))
-                    m_header->write(" = " + class_node->value(prop_initial_enum_string));
+                if (class_node->hasValue(prop_initial_enum_string))
+                    m_header->write(" = " + class_node->as_string(prop_initial_enum_string));
                 else
                     m_header->write(" = wxID_HIGHEST + 1", true);
             }
@@ -1509,7 +1509,7 @@ void BaseCodeGenerator::GenerateClassConstructor(Node* form_node, EventVector& e
         m_source->writeLine();
     }
 
-    auto* generator = form_node->GetGenerator();
+    auto* generator = form_node->getGenerator();
     Code code(form_node, GEN_LANG_CPLUSPLUS);
     if (generator->ConstructionCode(code))
     {
@@ -1518,7 +1518,7 @@ void BaseCodeGenerator::GenerateClassConstructor(Node* form_node, EventVector& e
             // Don't use the source code version of the Create() functions parameters. This is
             // set in the header file already with default parameters.
             tt_string find_str;
-            find_str << "bool " << form_node->value(prop_class_name) << "::Create";
+            find_str << "bool " << form_node->as_string(prop_class_name) << "::Create";
             if (auto start = code.find(find_str); tt::is_found(start))
             {
                 if (auto end = code.find('{', start); tt::is_found(end))
@@ -1535,7 +1535,7 @@ void BaseCodeGenerator::GenerateClassConstructor(Node* form_node, EventVector& e
         {
             // Write code to m_source that will load any image handlers needed by the form's class
             GenerateHandlers();
-            if (form_node->HasValue(prop_icon))
+            if (form_node->hasValue(prop_icon))
             {
                 auto icon_code = GenerateIconCode(form_node->as_string(prop_icon));
                 m_source->writeLine(icon_code, indent::auto_keep_whitespace);
@@ -1561,7 +1561,7 @@ void BaseCodeGenerator::GenerateClassConstructor(Node* form_node, EventVector& e
         GenerateHandlers();
     }
 
-    if (form_node->get_prop_ptr(prop_window_extra_style))
+    if (form_node->getPropPtr(prop_window_extra_style))
     {
         code.clear();
         code.GenWindowSettings();
@@ -1575,7 +1575,7 @@ void BaseCodeGenerator::GenerateClassConstructor(Node* form_node, EventVector& e
     m_source->SetLastLineBlank();
     if (!form_node->isGen(gen_DocViewApp))
     {
-        for (const auto& child: form_node->GetChildNodePtrs())
+        for (const auto& child: form_node->getChildNodePtrs())
         {
             if (child->isGen(gen_wxContextMenuEvent))
                 continue;
@@ -1596,7 +1596,7 @@ void BaseCodeGenerator::GenerateClassConstructor(Node* form_node, EventVector& e
         {
             m_source->writeLine();
             tt_string tmp("wxPersistentRegisterAndRestore(this, \"");
-            tmp << form_node->get_node_name() << "\");";
+            tmp << form_node->getNodeName() << "\");";
             m_source->writeLine(tmp);
         }
 
@@ -1620,7 +1620,7 @@ void BaseCodeGenerator::GenerateClassConstructor(Node* form_node, EventVector& e
 
     if (form_node->isGen(gen_DocViewApp))
     {
-        for (const auto& child: form_node->GetChildNodePtrs())
+        for (const auto& child: form_node->getChildNodePtrs())
         {
             if (child->isGen(gen_wxContextMenuEvent))
                 continue;
@@ -1646,7 +1646,7 @@ void BaseCodeGenerator::GenerateClassConstructor(Node* form_node, EventVector& e
     }
 
     Node* node_ctx_menu = nullptr;
-    for (const auto& child: form_node->GetChildNodePtrs())
+    for (const auto& child: form_node->getChildNodePtrs())
     {
         if (child->isGen(gen_wxContextMenuEvent))
         {
@@ -1671,7 +1671,7 @@ void BaseCodeGenerator::GenerateClassConstructor(Node* form_node, EventVector& e
 // This is a static function
 void BaseCodeGenerator::CollectIDs(Node* node, std::set<std::string>& set_enum_ids, std::set<std::string>& set_const_ids)
 {
-    for (auto& iter: node->get_props_vector())
+    for (auto& iter: node->getPropsVector())
     {
         if (iter.type() == type_id)
         {
@@ -1686,7 +1686,7 @@ void BaseCodeGenerator::CollectIDs(Node* node, std::set<std::string>& set_enum_i
         }
     }
 
-    for (const auto& iter: node->GetChildNodePtrs())
+    for (const auto& iter: node->getChildNodePtrs())
     {
         CollectIDs(iter.get(), set_enum_ids, set_const_ids);
     }
@@ -1695,7 +1695,7 @@ void BaseCodeGenerator::CollectIDs(Node* node, std::set<std::string>& set_enum_i
 void BaseCodeGenerator::CollectEventHandlers(Node* node, EventVector& events)
 {
     ASSERT(node);
-    for (auto& iter: node->GetMapEvents())
+    for (auto& iter: node->getMapEvents())
     {
         if (iter.second.get_value().size())
         {
@@ -1703,11 +1703,11 @@ void BaseCodeGenerator::CollectEventHandlers(Node* node, EventVector& events)
         }
     }
 
-    for (const auto& child: node->GetChildNodePtrs())
+    for (const auto& child: node->getChildNodePtrs())
     {
         if (child->isGen(gen_wxContextMenuEvent))
         {
-            for (const auto& ctx_child: child->GetChildNodePtrs())
+            for (const auto& ctx_child: child->getChildNodePtrs())
             {
                 CollectEventHandlers(ctx_child.get(), m_CtxMenuEvents);
             }
@@ -1720,9 +1720,9 @@ void BaseCodeGenerator::CollectEventHandlers(Node* node, EventVector& events)
 // This function is called by the thread thrd_collect_img_headers
 void BaseCodeGenerator::CollectImageHeaders(Node* node, std::set<std::string>& embedset)
 {
-    for (auto& iter: node->get_props_vector())
+    for (auto& iter: node->getPropsVector())
     {
-        if (!iter.HasValue())
+        if (!iter.hasValue())
             continue;
 
         auto& value = iter.as_string();
@@ -1848,7 +1848,7 @@ void BaseCodeGenerator::CollectImageHeaders(Node* node, std::set<std::string>& e
         }
     }
 
-    for (auto& child: node->GetChildNodePtrs())
+    for (auto& child: node->getChildNodePtrs())
     {
         CollectImageHeaders(child.get(), embedset);
     }
@@ -1861,7 +1861,7 @@ void BaseCodeGenerator::CollectImageHeaders(Node* node, std::set<std::string>& e
 void BaseCodeGenerator::ParseImageProperties(Node* node)
 {
     ASSERT(node);
-    if (node->IsForm() && node->HasValue(prop_icon))
+    if (node->isForm() && node->hasValue(prop_icon))
     {
         tt_view_vector parts(node->as_string(prop_icon), BMP_PROP_SEPARATOR, tt::TRIM::both);
         if (parts.size() >= IndexImage + 1)
@@ -1885,11 +1885,11 @@ void BaseCodeGenerator::ParseImageProperties(Node* node)
         }
     }
 
-    for (const auto& child: node->GetChildNodePtrs())
+    for (const auto& child: node->getChildNodePtrs())
     {
-        for (auto& iter: child->get_props_vector())
+        for (auto& iter: child->getPropsVector())
         {
-            if ((iter.type() == type_image || iter.type() == type_animation) && iter.HasValue())
+            if ((iter.type() == type_image || iter.type() == type_animation) && iter.hasValue())
             {
                 tt_string_vector parts(iter.as_string(), BMP_PROP_SEPARATOR, tt::TRIM::both);
                 if (parts.size() < IndexImage + 1)
@@ -1939,7 +1939,7 @@ void BaseCodeGenerator::ParseImageProperties(Node* node)
                 }
             }
         }
-        if (child->GetChildCount())
+        if (child->getChildCount())
         {
             ParseImageProperties(child.get());
         }
@@ -1948,14 +1948,14 @@ void BaseCodeGenerator::ParseImageProperties(Node* node)
 
 void BaseCodeGenerator::AddPersistCode(Node* node)
 {
-    if (node->HasValue(prop_persist_name))
+    if (node->hasValue(prop_persist_name))
     {
         tt_string code("wxPersistentRegisterAndRestore(");
-        code << node->get_node_name() << ", \"" << node->as_string(prop_persist_name) << "\");";
+        code << node->getNodeName() << ", \"" << node->as_string(prop_persist_name) << "\");";
         m_source->writeLine(code);
     }
 
-    for (const auto& child: node->GetChildNodePtrs())
+    for (const auto& child: node->getChildNodePtrs())
     {
         AddPersistCode(child.get());
     }
@@ -1973,7 +1973,7 @@ void BaseCodeGenerator::WriteSetLines(WriteCode* out, std::set<std::string>& cod
 
 void BaseCodeGenerator::GenContextMenuHandler(Node* node_ctx_menu)
 {
-    if (auto generator = node_ctx_menu->GetGenerator(); generator)
+    if (auto generator = node_ctx_menu->getGenerator(); generator)
     {
         Code code(node_ctx_menu, m_language);
         if (generator->AfterChildrenCode(code))

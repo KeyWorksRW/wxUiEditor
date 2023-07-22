@@ -38,12 +38,12 @@ wxObject* MenuBarBase::CreateMockup(Node* node, wxObject* parent)
     }
     else
     {
-        for (const auto& child: node->GetChildNodePtrs())
+        for (const auto& child: node->getChildNodePtrs())
         {
             wxString label;
-            if (child->value(prop_stock_id) != "none")
+            if (child->as_string(prop_stock_id) != "none")
             {
-                label = wxGetStockLabel(NodeCreation.GetConstantAsInt(child->value(prop_stock_id)));
+                label = wxGetStockLabel(NodeCreation.GetConstantAsInt(child->as_string(prop_stock_id)));
             }
             else
             {
@@ -77,12 +77,12 @@ void MenuBarBase::OnLeftMenuClick(wxMouseEvent& event)
     }
     else
     {
-        for (const auto& child: m_node_menubar->GetChildNodePtrs())
+        for (const auto& child: m_node_menubar->getChildNodePtrs())
         {
             wxString label;
-            if (child->value(prop_stock_id) != "none")
+            if (child->as_string(prop_stock_id) != "none")
             {
-                label = wxGetStockLabel(NodeCreation.GetConstantAsInt(child->value(prop_stock_id)));
+                label = wxGetStockLabel(NodeCreation.GetConstantAsInt(child->as_string(prop_stock_id)));
             }
             else
             {
@@ -109,13 +109,13 @@ wxMenu* MenuBarBase::MakeSubMenu(Node* menu_node)
 {
     auto sub_menu = new wxMenu;
 
-    for (const auto& menu_item: menu_node->GetChildNodePtrs())
+    for (const auto& menu_item: menu_node->getChildNodePtrs())
     {
         if (menu_item->isType(type_submenu))
         {
             auto result = MakeSubMenu(menu_item.get());
             auto item = sub_menu->AppendSubMenu(result, menu_item->as_wxString(prop_label));
-            if (menu_item->HasValue(prop_bitmap))
+            if (menu_item->hasValue(prop_bitmap))
                 item->SetBitmap(menu_item->as_wxBitmapBundle(prop_bitmap));
         }
         else if (menu_item->isGen(gen_separator))
@@ -124,8 +124,8 @@ wxMenu* MenuBarBase::MakeSubMenu(Node* menu_node)
         }
         else
         {
-            auto menu_label = menu_item->value(prop_label);
-            auto shortcut = menu_item->value(prop_shortcut);
+            auto menu_label = menu_item->as_string(prop_label);
+            auto shortcut = menu_item->as_string(prop_shortcut);
             if (shortcut.size())
             {
                 menu_label << "\t" << shortcut;
@@ -135,20 +135,20 @@ wxMenu* MenuBarBase::MakeSubMenu(Node* menu_node)
             // label and bitmap.
 
             int id = wxID_ANY;
-            if (menu_item->value(prop_id) != "wxID_ANY" && menu_item->value(prop_id).starts_with("wxID_"))
-                id = NodeCreation.GetConstantAsInt(menu_item->value(prop_id), wxID_ANY);
+            if (menu_item->as_string(prop_id) != "wxID_ANY" && menu_item->as_string(prop_id).starts_with("wxID_"))
+                id = NodeCreation.GetConstantAsInt(menu_item->as_string(prop_id), wxID_ANY);
 
             auto item = new wxMenuItem(sub_menu, id, menu_label, menu_item->as_wxString(prop_help),
                                        (wxItemKind) menu_item->as_int(prop_kind));
 
-            if (menu_item->HasValue(prop_bitmap))
+            if (menu_item->hasValue(prop_bitmap))
 #if !defined(__WXMSW__)
             {
                 item->SetBitmap(menu_item->as_wxBitmapBundle(prop_bitmap));
             }
 #else  // defined(__WXMSW__)
             {
-                if (menu_item->HasValue(prop_unchecked_bitmap))
+                if (menu_item->hasValue(prop_unchecked_bitmap))
                 {
                     auto unchecked = menu_item->as_wxBitmapBundle(prop_unchecked_bitmap);
                     item->SetBitmaps(menu_item->as_wxBitmapBundle(prop_bitmap), unchecked);
@@ -160,7 +160,7 @@ wxMenu* MenuBarBase::MakeSubMenu(Node* menu_node)
             }
             else
             {
-                if (menu_item->HasValue(prop_unchecked_bitmap))
+                if (menu_item->hasValue(prop_unchecked_bitmap))
                 {
                     item->SetBitmaps(wxNullBitmap, menu_item->as_wxBitmapBundle(prop_unchecked_bitmap));
                 }
@@ -191,7 +191,7 @@ bool MenuBarGenerator::ConstructionCode(Code& code)
     if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
     code.NodeName().CreateClass();
-    if (code.HasValue(prop_style))
+    if (code.hasValue(prop_style))
     {
         code.Add(code.node()->as_string(prop_style));
     }
@@ -223,7 +223,7 @@ bool MenuBarGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, s
 
 int MenuBarGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxMenuBar");
@@ -275,7 +275,7 @@ bool MenuBarFormGenerator::HeaderCode(Code& code)
 
 bool MenuBarFormGenerator::BaseClassNameCode(Code& code)
 {
-    if (code.HasValue(prop_derived_class))
+    if (code.hasValue(prop_derived_class))
     {
         code.Str((prop_derived_class));
     }
@@ -299,7 +299,7 @@ bool MenuBarFormGenerator::GetIncludes(Node* node, std::set<std::string>& set_sr
 
 int MenuBarFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxMenuBar");
@@ -351,7 +351,7 @@ bool PopupMenuGenerator::HeaderCode(Code& code)
 
 bool PopupMenuGenerator::BaseClassNameCode(Code& code)
 {
-    if (code.HasValue(prop_derived_class))
+    if (code.hasValue(prop_derived_class))
     {
         code.Str((prop_derived_class));
     }
@@ -374,7 +374,7 @@ bool PopupMenuGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
 
 bool SeparatorGenerator::ConstructionCode(Code& code)
 {
-    if (code.node()->GetParent()->isGen(gen_PopupMenu))
+    if (code.node()->getParent()->isGen(gen_PopupMenu))
     {
         code.FormFunction("AppendSeparator(").EndFunction();
     }

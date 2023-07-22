@@ -28,13 +28,13 @@ wxObject* TextCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
 
     widget->SetMaxLength(node->as_int(prop_maxlength));
 
-    if (node->HasValue(prop_auto_complete))
+    if (node->hasValue(prop_auto_complete))
     {
         auto array = node->as_wxArrayString(prop_auto_complete);
         widget->AutoComplete(array);
     }
 
-    if (node->HasValue(prop_hint))
+    if (node->hasValue(prop_hint))
         widget->SetHint(node->as_wxString(prop_hint));
 
     if (node->as_string(prop_spellcheck).contains("enabled"))
@@ -60,7 +60,7 @@ bool TextCtrlGenerator::OnPropertyChange(wxObject* widget, Node* node, NodePrope
 #if defined(_WIN32)
     else if (prop->isProp(prop_spellcheck))
     {
-        if (prop->HasValue() && !node->as_string(prop_style).contains("wxTE_RICH2"))
+        if (prop->hasValue() && !node->as_string(prop_style).contains("wxTE_RICH2"))
         {
             if (auto infobar = wxGetFrame().GetPropInfoBar(); infobar)
             {
@@ -78,7 +78,7 @@ bool TextCtrlGenerator::OnPropertyChange(wxObject* widget, Node* node, NodePrope
     }
     else if (prop->isProp(prop_style))
     {
-        if (node->HasValue(prop_spellcheck) && !node->as_string(prop_style).contains("wxTE_RICH2"))
+        if (node->hasValue(prop_spellcheck) && !node->as_string(prop_style).contains("wxTE_RICH2"))
         {
             if (auto infobar = wxGetFrame().GetPropInfoBar(); infobar)
             {
@@ -113,7 +113,7 @@ bool TextCtrlGenerator::ConstructionCode(Code& code)
 
 bool TextCtrlGenerator::SettingsCode(Code& code)
 {
-    if (code.HasValue(prop_hint))
+    if (code.hasValue(prop_hint))
     {
         code.Eol(eol_if_needed).NodeName().Function("SetHint(").QuotedString(prop_hint).EndFunction();
     }
@@ -146,7 +146,7 @@ bool TextCtrlGenerator::SettingsCode(Code& code)
         }
     }
 
-    if (code.HasValue(prop_auto_complete))
+    if (code.hasValue(prop_auto_complete))
     {
         if (code.is_cpp())
         {
@@ -158,7 +158,7 @@ bool TextCtrlGenerator::SettingsCode(Code& code)
                 code.Tab().Add("tmp_array.Add(").QuotedString(iter) << ");";
                 code.Eol();
             }
-            code.Tab() << code.node()->get_node_name() << "->AutoComplete(tmp_array);";
+            code.Tab() << code.node()->getNodeName() << "->AutoComplete(tmp_array);";
             code.Eol() << "}";
             code.EnableAutoLineBreak(true);
         }
@@ -170,7 +170,7 @@ bool TextCtrlGenerator::SettingsCode(Code& code)
     {
         if (code.is_cpp())
         {
-            if (Project.value(prop_wxWidgets_version) == "3.1")
+            if (Project.as_string(prop_wxWidgets_version) == "3.1")
             {
                 code.Eol() << "#if wxCHECK_VERSION(3, 1, 6)";
                 code.Eol().Tab().NodeName() << "->EnableProofCheck(wxTextProofOptions::Default()";
@@ -237,7 +237,7 @@ bool TextCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, 
 
 int TextCtrlGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxTextCtrl");
@@ -247,11 +247,11 @@ int TextCtrlGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t x
 
     GenXrcStylePosSize(node, item);
 
-    if (node->HasValue(prop_value))
+    if (node->hasValue(prop_value))
     {
         item.append_child("value").text().set(node->as_string(prop_value));
     }
-    if (node->HasValue(prop_hint))
+    if (node->hasValue(prop_hint))
     {
         item.append_child("hint").text().set(node->as_string(prop_hint));
     }
@@ -260,11 +260,11 @@ int TextCtrlGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t x
 
     if (xrc_flags & xrc::add_comments)
     {
-        if (node->HasValue(prop_auto_complete))
+        if (node->hasValue(prop_auto_complete))
         {
             item.append_child(pugi::node_comment).set_value(" auto complete cannot be be set in the XRC file. ");
         }
-        if (node->HasValue(prop_spellcheck))
+        if (node->hasValue(prop_spellcheck))
         {
             item.append_child(pugi::node_comment).set_value(" spell check cannot be be set in the XRC file. ");
         }

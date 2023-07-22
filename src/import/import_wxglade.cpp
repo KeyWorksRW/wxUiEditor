@@ -50,7 +50,7 @@ bool WxGlade::Import(const tt_string& filename, bool write_doc)
 
     try
     {
-        m_project = NodeCreation.CreateNode(gen_Project, nullptr);
+        m_project = NodeCreation.createNode(gen_Project, nullptr);
         if (auto src_ext = root.attribute("source_extension").as_string(); src_ext.size())
         {
             if (src_ext == ".cpp" || src_ext == ".cc" || src_ext == ".cxx")
@@ -80,20 +80,20 @@ bool WxGlade::Import(const tt_string& filename, bool write_doc)
                 if (single_files)
                 {
                     // wxGlade uses the class name as the filename if each class has it's own file.
-                    if (new_node->HasValue(prop_class_name))
+                    if (new_node->hasValue(prop_class_name))
                     {
                         switch (m_language)
                         {
                             case GEN_LANG_CPLUSPLUS:
-                                new_node->set_value(prop_base_file, new_node->value(prop_class_name));
+                                new_node->set_value(prop_base_file, new_node->as_string(prop_class_name));
                                 break;
 
                             case GEN_LANG_PYTHON:
-                                new_node->set_value(prop_python_file, new_node->value(prop_class_name));
+                                new_node->set_value(prop_python_file, new_node->as_string(prop_class_name));
                                 break;
 
                             case GEN_LANG_XRC:
-                                new_node->set_value(prop_xrc_file, new_node->value(prop_class_name));
+                                new_node->set_value(prop_xrc_file, new_node->as_string(prop_class_name));
                                 break;
                         }
                     }
@@ -112,7 +112,7 @@ bool WxGlade::Import(const tt_string& filename, bool write_doc)
             }
         }
 
-        if (!m_project->GetChildCount())
+        if (!m_project->getChildCount())
         {
             wxMessageBox(filename.make_wxString() << " does not contain any top level forms.", "Import");
             return false;
@@ -124,7 +124,7 @@ bool WxGlade::Import(const tt_string& filename, bool write_doc)
             tt_cwd cwd;
             combined_filename.make_relative(cwd);
 
-            if (m_project->GetChildCount() > 1)
+            if (m_project->getChildCount() > 1)
             {
                 if (m_language == GEN_LANG_PYTHON)
                 {
@@ -141,17 +141,17 @@ bool WxGlade::Import(const tt_string& filename, bool write_doc)
             {
                 if (m_language == GEN_LANG_PYTHON)
                 {
-                    m_project->GetChild(0)->set_value(prop_python_file, combined_filename);
+                    m_project->getChild(0)->set_value(prop_python_file, combined_filename);
                 }
                 else if (m_language == GEN_LANG_XRC)
                 {
-                    m_project->GetChild(0)->set_value(prop_xrc_file, combined_filename);
+                    m_project->getChild(0)->set_value(prop_xrc_file, combined_filename);
                 }
             }
         }
 
         if (write_doc)
-            m_project->CreateDoc(m_docOut);
+            m_project->createDoc(m_docOut);
     }
 
     catch (const std::exception& TESTING_PARAM(e))
@@ -172,25 +172,25 @@ NodeSharedPtr WxGlade::CreateGladeNode(pugi::xml_node& xml_obj, Node* parent, No
         return NodeSharedPtr();
 
     bool isBitmapButton = (object_name == "wxBitmapButton");
-    auto gen_name = ConvertToGenName(object_name, parent);
-    if (gen_name == gen_unknown)
+    auto getGenName = ConvertToGenName(object_name, parent);
+    if (getGenName == gen_unknown)
     {
         // If we don't recognize the class, then try the base= attribute
         auto base = xml_obj.attribute("base").as_string();
         if (base == "EditFrame")
         {
-            gen_name = ConvertToGenName("wxFrame", parent);
+            getGenName = ConvertToGenName("wxFrame", parent);
         }
         else if (base == "EditDialog")
         {
-            gen_name = ConvertToGenName("wxDialog", parent);
+            getGenName = ConvertToGenName("wxDialog", parent);
         }
         else if (base == "EditTopLevelPanel")
         {
-            gen_name = ConvertToGenName("Panel", parent);
+            getGenName = ConvertToGenName("Panel", parent);
         }
 
-        if (gen_name == gen_unknown)
+        if (getGenName == gen_unknown)
         {
             // TODO: [KeyWorks - 08-10-2021] wxGlade supports wxMDIChildFrame using a base name of "EditMDIChildFrame"
 
@@ -203,21 +203,21 @@ NodeSharedPtr WxGlade::CreateGladeNode(pugi::xml_node& xml_obj, Node* parent, No
         }
     }
 
-    if (gen_name == gen_wxCheckBox)
+    if (getGenName == gen_wxCheckBox)
     {
         for (auto& iter: xml_obj.children())
         {
             if (iter.value() == "style")
             {
                 if (iter.text().as_sview().contains("wxCHK_3STATE"))
-                    gen_name = gen_Check3State;
+                    getGenName = gen_Check3State;
                 break;
             }
         }
     }
 
-    auto new_node = NodeCreation.CreateNode(gen_name, parent);
-    if (gen_name == gen_BookPage && new_node)
+    auto new_node = NodeCreation.createNode(getGenName, parent);
+    if (getGenName == gen_BookPage && new_node)
     {
         if (!xml_obj.attribute("name").empty())
         {
@@ -232,9 +232,9 @@ NodeSharedPtr WxGlade::CreateGladeNode(pugi::xml_node& xml_obj, Node* parent, No
     {
         if (parent->isGen(gen_wxNotebook))
         {
-            if (gen_name == gen_wxPanel)
+            if (getGenName == gen_wxPanel)
             {
-                new_node = NodeCreation.CreateNode(gen_BookPage, parent);
+                new_node = NodeCreation.createNode(gen_BookPage, parent);
                 if (new_node)
                 {
                     if (!xml_obj.attribute("name").empty())
@@ -250,9 +250,9 @@ NodeSharedPtr WxGlade::CreateGladeNode(pugi::xml_node& xml_obj, Node* parent, No
             }
             else
             {
-                if (auto page = NodeCreation.CreateNode(gen_PageCtrl, parent); page)
+                if (auto page = NodeCreation.createNode(gen_PageCtrl, parent); page)
                 {
-                    parent->Adopt(page);
+                    parent->adoptChild(page);
                     if (!xml_obj.attribute("name").empty())
                     {
                         if (auto tab = m_notebook_tabs.find(xml_obj.attribute("name").as_string());
@@ -262,13 +262,13 @@ NodeSharedPtr WxGlade::CreateGladeNode(pugi::xml_node& xml_obj, Node* parent, No
                         }
                     }
 
-                    new_node = NodeCreation.CreateNode(gen_name, page.get());
+                    new_node = NodeCreation.createNode(getGenName, page.get());
                     if (new_node)
                         continue;
                 }
             }
         }
-        MSG_INFO(tt_string() << "Unable to create " << map_GenNames[gen_name] << " as a child of " << parent->DeclName());
+        MSG_INFO(tt_string() << "Unable to create " << map_GenNames[getGenName] << " as a child of " << parent->declName());
         return NodeSharedPtr();
     }
 
@@ -277,17 +277,17 @@ NodeSharedPtr WxGlade::CreateGladeNode(pugi::xml_node& xml_obj, Node* parent, No
         new_node->set_value(prop_label, "");
     }
 
-    if (auto prop = new_node->get_prop_ptr(prop_var_name); prop)
+    if (auto prop = new_node->getPropPtr(prop_var_name); prop)
     {
         auto original = prop->as_string();
-        auto new_name = parent->GetUniqueName(prop->as_string());
+        auto new_name = parent->getUniqueName(prop->as_string());
         if (new_name.size() && new_name != prop->as_string())
             prop->set_value(new_name);
     }
 
     if (new_node->isGen(gen_wxStdDialogButtonSizer))
     {
-        parent->Adopt(new_node);
+        parent->adoptChild(new_node);
         ProcessAttributes(xml_obj, new_node.get());
         ProcessProperties(xml_obj, new_node.get());
 
@@ -308,10 +308,10 @@ NodeSharedPtr WxGlade::CreateGladeNode(pugi::xml_node& xml_obj, Node* parent, No
                 {
                     auto SetBtnAndHandler = [&](PropName prop_name, tt_string_view event_name)
                     {
-                        new_node->get_prop_ptr(prop_name)->set_value("1");
+                        new_node->getPropPtr(prop_name)->set_value("1");
                         if (last_handler.size())
                         {
-                            if (auto* event = new_node->GetEvent(event_name); event)
+                            if (auto* event = new_node->getEvent(event_name); event)
                             {
                                 event->set_value(last_handler);
                             }
@@ -375,12 +375,12 @@ NodeSharedPtr WxGlade::CreateGladeNode(pugi::xml_node& xml_obj, Node* parent, No
             }
         }
 
-        new_node->get_prop_ptr(prop_alignment)->set_value("wxALIGN_RIGHT");
+        new_node->getPropPtr(prop_alignment)->set_value("wxALIGN_RIGHT");
         return new_node;
     }
 
     auto child = xml_obj.child("object");
-    if (NodeCreation.IsOldHostType(new_node->DeclName()))
+    if (NodeCreation.IsOldHostType(new_node->declName()))
     {
         ProcessAttributes(xml_obj, new_node.get());
         ProcessProperties(xml_obj, new_node.get(), parent);
@@ -389,23 +389,23 @@ NodeSharedPtr WxGlade::CreateGladeNode(pugi::xml_node& xml_obj, Node* parent, No
         if (!new_node)
             return NodeSharedPtr();
         if (new_node->isGen(gen_wxStdDialogButtonSizer))
-            new_node->get_prop_ptr(prop_static_line)->set_value(false);
+            new_node->getPropPtr(prop_static_line)->set_value(false);
         child = child.next_sibling("object");
     }
     else if (sizeritem)
     {
-        for (auto& iter: sizeritem->get_props_vector())
+        for (auto& iter: sizeritem->getPropsVector())
         {
-            auto prop = new_node->AddNodeProperty(iter.GetPropDeclaration());
+            auto prop = new_node->addNodeProperty(iter.GetPropDeclaration());
             prop->set_value(iter.as_string());
         }
-        parent->Adopt(new_node);
+        parent->adoptChild(new_node);
         ProcessAttributes(xml_obj, new_node.get());
         ProcessProperties(xml_obj, new_node.get());
     }
     else if (parent)
     {
-        parent->Adopt(new_node);
+        parent->adoptChild(new_node);
 
         ProcessAttributes(xml_obj, new_node.get());
         ProcessProperties(xml_obj, new_node.get());
@@ -444,7 +444,7 @@ bool WxGlade::HandleUnknownProperty(const pugi::xml_node& xml_obj, Node* node, N
         {
             tt_string event_name("wx");
             event_name += handler.attribute("event").as_string();
-            if (auto* event = node->GetEvent(event_name); event)
+            if (auto* event = node->getEvent(event_name); event)
             {
                 event->set_value(handler.text().as_string());
             }

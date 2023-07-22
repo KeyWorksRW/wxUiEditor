@@ -68,7 +68,7 @@ bool RadioButtonGenerator::SettingsCode(Code& code)
 
 int RadioButtonGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxRadioButton");
@@ -117,17 +117,17 @@ bool RadioButtonGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeP
 
         if (newValue.contains("wxRB_GROUP"))
         {
-            auto parent = node->GetParent();
-            auto pos = parent->GetChildPosition(node);
-            if (pos > 0 && parent->GetChild(pos - 1)->isGen(gen_wxRadioButton) &&
-                parent->GetChild(pos - 1)->as_string(prop_style).contains("wxRB_GROUP"))
+            auto parent = node->getParent();
+            auto pos = parent->getChildPosition(node);
+            if (pos > 0 && parent->getChild(pos - 1)->isGen(gen_wxRadioButton) &&
+                parent->getChild(pos - 1)->as_string(prop_style).contains("wxRB_GROUP"))
             {
                 auto info = wxGetFrame().GetPropInfoBar();
                 info->ShowMessage("The previous radio button is also set as the start of a group!", wxICON_INFORMATION);
                 m_info_warning = true;
             }
-            else if (pos + 1 < parent->GetChildCount() && parent->GetChild(pos + 1)->isGen(gen_wxRadioButton) &&
-                     parent->GetChild(pos + 1)->as_string(prop_style).contains("wxRB_GROUP"))
+            else if (pos + 1 < parent->getChildCount() && parent->getChild(pos + 1)->isGen(gen_wxRadioButton) &&
+                     parent->getChild(pos + 1)->as_string(prop_style).contains("wxRB_GROUP"))
             {
                 auto info = wxGetFrame().GetPropInfoBar();
                 info->ShowMessage("The next radio button is also set as the start of a group!", wxICON_INFORMATION);

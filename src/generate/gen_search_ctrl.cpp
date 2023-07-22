@@ -20,15 +20,15 @@ wxObject* SearchCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
     auto widget = new wxSearchCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxString(prop_value),
                                    DlgPoint(parent, node, prop_pos), DlgSize(parent, node, prop_size), GetStyleInt(node));
 
-    if (node->HasValue(prop_hint))
+    if (node->hasValue(prop_hint))
         widget->SetHint(node->as_wxString(prop_hint));
 
-    if (node->HasValue(prop_search_button))
+    if (node->hasValue(prop_search_button))
     {
         widget->ShowSearchButton(node->as_bool(prop_search_button));
     }
 
-    if (node->HasValue(prop_cancel_button))
+    if (node->hasValue(prop_cancel_button))
     {
         widget->ShowCancelButton(node->as_bool(prop_cancel_button));
     }
@@ -51,7 +51,7 @@ bool SearchCtrlGenerator::ConstructionCode(Code& code)
 
 bool SearchCtrlGenerator::SettingsCode(Code& code)
 {
-    if (code.HasValue(prop_hint))
+    if (code.hasValue(prop_hint))
     {
         code.Eol(eol_if_empty).NodeName().Function("SetHint(").QuotedString(prop_hint).EndFunction();
     }
@@ -85,7 +85,7 @@ bool SearchCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_src
 
 int SearchCtrlGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxSearchCtrl");

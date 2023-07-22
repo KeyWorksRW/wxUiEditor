@@ -30,13 +30,13 @@ wxObject* HyperlinkGenerator::CreateMockup(Node* node, wxObject* parent)
                                             node->as_wxString(prop_url), DlgPoint(parent, node, prop_pos),
                                             DlgSize(parent, node, prop_size), GetStyleInt(node));
 
-        if (!node->HasValue(prop_font))
+        if (!node->hasValue(prop_font))
         {
             widget->SetFont(wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT));
         }
     }
 
-    if (node->HasValue(prop_hover_color))
+    if (node->hasValue(prop_hover_color))
     {
         widget->SetHoverColour(node->as_wxColour(prop_hover_color));
     }
@@ -45,11 +45,11 @@ wxObject* HyperlinkGenerator::CreateMockup(Node* node, wxObject* parent)
         widget->SetHoverColour(widget->GetNormalColour());
     }
 
-    if (node->HasValue(prop_normal_color))
+    if (node->hasValue(prop_normal_color))
     {
         widget->SetNormalColour(node->as_wxColour(prop_normal_color));
     }
-    if (node->HasValue(prop_visited_color))
+    if (node->hasValue(prop_visited_color))
     {
         widget->SetVisitedColour(node->as_wxColour(prop_visited_color));
     }
@@ -76,27 +76,27 @@ bool HyperlinkGenerator::ConstructionCode(Code& code)
 
 bool HyperlinkGenerator::SettingsCode(Code& code)
 {
-    if (!code.IsTrue(prop_underlined) && !code.HasValue(prop_font))
+    if (!code.IsTrue(prop_underlined) && !code.hasValue(prop_font))
     {
         code.Eol(eol_if_empty).NodeName().Function("SetFont(").Add("wxSystemSettings").ClassMethod("GetFont(");
         code.Add("wxSYS_DEFAULT_GUI_FONT)").EndFunction();
     }
 
-    if (code.HasValue(prop_hover_color))
+    if (code.hasValue(prop_hover_color))
     {
         code.Eol(eol_if_empty).NodeName().Function("SetHoverColour(");
         ColourCode(code, prop_hover_color);
         code.EndFunction();
     }
 
-    if (code.HasValue(prop_normal_color))
+    if (code.hasValue(prop_normal_color))
     {
         code.Eol(eol_if_empty).NodeName().Function("SetNormalColour(");
         ColourCode(code, prop_normal_color);
         code.EndFunction();
     }
 
-    if (code.HasValue(prop_visited_color))
+    if (code.hasValue(prop_visited_color))
     {
         code.Eol(eol_if_empty).NodeName().Function("SetVisitedColour(");
         ColourCode(code, prop_visited_color);
@@ -108,7 +108,7 @@ bool HyperlinkGenerator::SettingsCode(Code& code)
 
 int HyperlinkGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxHyperlinkCtrl");
@@ -117,7 +117,7 @@ int HyperlinkGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t 
     if (!node->as_bool(prop_underlined))
     {
         item.append_child("use_generic").text().set(1);
-        if (!node->HasValue(prop_font))
+        if (!node->hasValue(prop_font))
         {
             auto font_object = item.append_child("font");
             font_object.append_child("sysfont").text().set("wxSYS_DEFAULT_GUI_FONT");
@@ -125,17 +125,17 @@ int HyperlinkGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t 
             font_object.append_child("underlined").text().set("0");
         }
     }
-    if (node->HasValue(prop_normal_color))
+    if (node->hasValue(prop_normal_color))
     {
         item.append_child("normal").text().set(
             node->as_wxColour(prop_normal_color).GetAsString(wxC2S_HTML_SYNTAX).ToUTF8().data());
     }
-    if (node->HasValue(prop_hover_color))
+    if (node->hasValue(prop_hover_color))
     {
         item.append_child("hover").text().set(
             node->as_wxColour(prop_hover_color).GetAsString(wxC2S_HTML_SYNTAX).ToUTF8().data());
     }
-    if (node->HasValue(prop_visited_color))
+    if (node->hasValue(prop_visited_color))
     {
         item.append_child("visited").text().set(
             node->as_wxColour(prop_visited_color).GetAsString(wxC2S_HTML_SYNTAX).ToUTF8().data());
@@ -151,15 +151,15 @@ int HyperlinkGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t 
     if (xrc_flags & xrc::add_comments)
     {
 #if !defined(WIDGETS_FORK)
-        if (node->HasValue(prop_hover_color))
+        if (node->hasValue(prop_hover_color))
         {
             item.append_child(pugi::node_comment).set_value(" hover color cannot be be set in the XRC file. ");
         }
-        if (node->HasValue(prop_normal_color))
+        if (node->hasValue(prop_normal_color))
         {
             item.append_child(pugi::node_comment).set_value(" normal color cannot be be set in the XRC file. ");
         }
-        if (node->HasValue(prop_visited_color))
+        if (node->hasValue(prop_visited_color))
         {
             item.append_child(pugi::node_comment).set_value(" visited color cannot be be set in the XRC file. ");
         }

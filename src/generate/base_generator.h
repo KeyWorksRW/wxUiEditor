@@ -33,7 +33,7 @@ namespace pugi
 using OptionalIncludes = std::optional<std::vector<std::string>>;
 
 #define ADD_ITEM_PROP(name_prop, name_child)                                  \
-    if (node->HasValue(name_prop))                                            \
+    if (node->hasValue(name_prop))                                            \
     {                                                                         \
         item.append_child(name_child).text().set(node->as_string(name_prop)); \
     }
@@ -166,7 +166,7 @@ public:
     // Called by MainFrame when the user modifies a property. Return false to let MainFrame
     // call PushUndoAction() to push a single prop change to the undo stack. Return true if
     // the generator handles pushing to the undo stack.
-    virtual bool ModifyProperty(NodeProperty* /* prop */, tt_string_view /* value */) { return false; }
+    virtual bool modifyProperty(NodeProperty* /* prop */, tt_string_view /* value */) { return false; }
 
     // Call this to use different help text then GetPropDeclaration()->GetDescription()
     virtual std::optional<tt_string> GetPropertyDescription(NodeProperty*) { return {}; }

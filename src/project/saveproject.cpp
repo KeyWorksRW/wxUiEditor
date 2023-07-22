@@ -14,29 +14,29 @@
 
 using namespace GenEnum;
 
-void Node::CreateDoc(pugi::xml_document& doc)
+void Node::createDoc(pugi::xml_document& doc)
 {
     auto root = doc.append_child("wxUiEditorData");
     auto node = root.append_child("node");
 
     int project_version = minRequiredVer;
-    AddNodeToDoc(node, project_version);
+    addNodeToDoc(node, project_version);
     root.append_attribute("data_version") = project_version;
 }
 
-void Node::AddNodeToDoc(pugi::xml_node& node, int& project_version)
+void Node::addNodeToDoc(pugi::xml_node& node, int& project_version)
 {
     if (project_version < curSupportedVer)
     {
         // Don't check if the version is already as high as we support -- this speeds up the process
-        if (auto gen = GetGenerator(); gen)
+        if (auto gen = getGenerator(); gen)
         {
             if (gen->GetRequiredVersion(this) > project_version)
                 project_version = gen->GetRequiredVersion(this);
         }
     }
 
-    node.append_attribute("class") = DeclName();
+    node.append_attribute("class") = declName();
 
     for (auto& iter: m_properties)
     {
@@ -49,7 +49,7 @@ void Node::AddNodeToDoc(pugi::xml_node& node, int& project_version)
             if (info->GetDefaultValue() == value)
                 continue;
 
-            auto attr = node.append_attribute(iter.DeclName());
+            auto attr = node.append_attribute(iter.declName());
             if (iter.type() == type_bool)
                 attr.set_value(iter.as_bool());
             else
@@ -84,7 +84,7 @@ void Node::AddNodeToDoc(pugi::xml_node& node, int& project_version)
 
             if (iter.isProp(prop_label) || iter.isProp(prop_borders))
             {
-                node.append_attribute(iter.DeclName());
+                node.append_attribute(iter.declName());
             }
         }
     }
@@ -101,6 +101,6 @@ void Node::AddNodeToDoc(pugi::xml_node& node, int& project_version)
     for (const auto& child: m_children)
     {
         auto child_element = node.append_child("node");
-        child->AddNodeToDoc(child_element, project_version);
+        child->addNodeToDoc(child_element, project_version);
     }
 }

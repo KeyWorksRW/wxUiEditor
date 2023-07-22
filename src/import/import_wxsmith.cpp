@@ -35,20 +35,20 @@ bool WxSmith::Import(const tt_string& filename, bool write_doc)
 
     try
     {
-        m_project = NodeCreation.CreateNode(gen_Project, nullptr);
+        m_project = NodeCreation.createNode(gen_Project, nullptr);
         for (auto& iter: root.children())
         {
             CreateXrcNode(iter, m_project.get());
         }
 
-        if (!m_project->GetChildCount())
+        if (!m_project->getChildCount())
         {
             wxMessageBox(wxString() << filename.make_wxString() << " does not contain any top level forms.", "Import");
             return false;
         }
 
         if (write_doc)
-            m_project->CreateDoc(m_docOut);
+            m_project->createDoc(m_docOut);
     }
 
     catch (const std::exception& TESTING_PARAM(e))

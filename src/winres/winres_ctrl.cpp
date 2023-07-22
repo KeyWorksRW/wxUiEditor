@@ -16,7 +16,7 @@ resCtrl::resCtrl() {}
 struct ClassGenPair
 {
     const char* class_name;
-    GenEnum::GenName gen_name;
+    GenEnum::GenName getGenName;
 };
 
 // clang-format off
@@ -138,7 +138,7 @@ void resCtrl::ParseDirective(WinResource* pWinResource, tt_string_view line)
         {
             if (line.contains(iter.class_name, tt::CASE::either))
             {
-                m_node = NodeCreation.NewNode(iter.gen_name);
+                m_node = NodeCreation.NewNode(iter.getGenName);
                 if (tt::is_sameprefix(iter.class_name, "\"Rich", tt::CASE::either))
                 {
                     m_node->set_value(prop_style, "wxTE_RICH2");
@@ -241,7 +241,7 @@ void resCtrl::ParseDirective(WinResource* pWinResource, tt_string_view line)
         {
             if (line.is_sameprefix(iter.class_name, tt::CASE::either))
             {
-                m_node = NodeCreation.NewNode(iter.gen_name);
+                m_node = NodeCreation.NewNode(iter.getGenName);
                 break;
             }
         }
@@ -364,7 +364,7 @@ void resCtrl::ParseDirective(WinResource* pWinResource, tt_string_view line)
 
     bool is_style_processed = false;  // true means any non-common styles have been processed
 
-    switch (m_node->gen_name())
+    switch (m_node->getGenName())
     {
         case gen_wxSlider:
             ParseStyles(line);

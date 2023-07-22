@@ -30,7 +30,7 @@ void RibbonButtonBarGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxp
 {
     auto btn_bar = wxStaticCast(wxobject, wxRibbonButtonBar);
 
-    for (const auto& child: node->GetChildNodePtrs())
+    for (const auto& child: node->getChildNodePtrs())
     {
         auto bmp = child->as_wxBitmap(prop_bitmap);
         if (!bmp.IsOk())
@@ -82,7 +82,7 @@ int RibbonButtonGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size
     auto item = InitializeXrcObject(node, object);
     GenXrcObjectAttributes(node, item, "button");
 
-    if (!node->HasValue(prop_bitmap))
+    if (!node->hasValue(prop_bitmap))
     {
         auto bmp = item.append_child("bitmap");
         bmp.append_attribute("stock_id").set_value("wxART_QUESTION");

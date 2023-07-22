@@ -168,7 +168,7 @@ public:
     void RemoveNode(Node* node, bool isCutMode);
 
     // Call this MainFrame version if you don't have access to a node.
-    void ModifyProperty(NodeProperty* prop, tt_string_view value);
+    void modifyProperty(NodeProperty* prop, tt_string_view value);
 
     void ChangeAlignment(Node* node, int align, bool vertical);
 
@@ -176,7 +176,7 @@ public:
 
     // If there is a selection, this will create a new child node with special handling for
     // specific components.
-    void CreateToolNode(GenEnum::GenName name);
+    void createToolNode(GenEnum::GenName name);
 
     wxFileHistory& GetFileHistory() { return m_FileHistory; }
 

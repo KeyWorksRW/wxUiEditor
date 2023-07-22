@@ -90,9 +90,9 @@ bool GenerateXrcDlg::Create(wxWindow* parent, wxWindowID id, const wxString& tit
 
 void GenerateXrcDlg::OnInit(wxInitDialogEvent& event)
 {
-    if (Project.HasValue(prop_combined_xrc_file))
+    if (Project.hasValue(prop_combined_xrc_file))
     {
-        m_filename = Project.value(prop_combined_xrc_file).make_wxString();
+        m_filename = Project.as_string(prop_combined_xrc_file).make_wxString();
         m_filePicker->SetPath(m_filename);
     }
     std::vector<Node*> forms;
@@ -100,9 +100,9 @@ void GenerateXrcDlg::OnInit(wxInitDialogEvent& event)
 
     for (auto& form: forms)
     {
-        if (form->HasValue(prop_xrc_file))
+        if (form->hasValue(prop_xrc_file))
         {
-            m_listbox->AppendString(tt_string(form->value(prop_xrc_file)) << '(' << form->value(prop_class_name) << ')');
+            m_listbox->AppendString(tt_string(form->as_string(prop_xrc_file)) << '(' << form->as_string(prop_class_name) << ')');
         }
     }
 

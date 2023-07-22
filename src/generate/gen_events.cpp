@@ -97,16 +97,16 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
 
     // Do *NOT* assume that code.m_node is the same as event->GetNode()!
 
-    if (event->GetNode()->IsStaticBoxSizer())
+    if (event->GetNode()->isStaticBoxSizer())
     {
         code.AddIfPython("self.");
         if (event->get_name() == "wxEVT_CHECKBOX")
         {
-            code.Add(event->GetNode()->value(prop_checkbox_var_name));
+            code.Add(event->GetNode()->as_string(prop_checkbox_var_name));
         }
         else if (event->get_name() == "wxEVT_RADIOBUTTON")
         {
-            code.Add(event->GetNode()->value(prop_radiobtn_var_name));
+            code.Add(event->GetNode()->as_string(prop_radiobtn_var_name));
         }
         else
         {
@@ -121,21 +121,21 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
     {
         code.AddIfPython("self.");
         code << "Bind(" << handler.GetCode() << comma;
-        if (event->GetNode()->value(prop_id) != "wxID_ANY")
+        if (event->GetNode()->as_string(prop_id) != "wxID_ANY")
         {
-            auto id = event->GetNode()->get_prop_id();
+            auto id = event->GetNode()->getPropId();
             code.AddIfPython("id=").Add(id).EndFunction();
         }
         else
         {
-            code.AddIfPython("id=").Add(event->GetNode()->get_node_name()).Function("GetId()").EndFunction();
+            code.AddIfPython("id=").Add(event->GetNode()->getNodeName()).Function("GetId()").EndFunction();
         }
     }
     else if (event->GetNode()->isGen(gen_ribbonTool))
     {
         if (code.is_python())
             code.Add("self.");
-        if (!event->GetNode()->HasValue(prop_id))
+        if (!event->GetNode()->hasValue(prop_id))
         {
             code.AddIfCpp("// ").AddIfPython("# ");
             code << "**WARNING** -- tool id not specified, event handler may never be called\n";
@@ -148,7 +148,7 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
             code.Add(event->GetNode()->as_string(prop_id)).EndFunction();
         }
     }
-    else if (event->GetNode()->IsForm())
+    else if (event->GetNode()->isForm())
     {
         code.AddIfPython("self.");
         code << "Bind(" << handler.GetCode();
@@ -156,9 +156,9 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
     }
     else
     {
-        if (code.is_python() && !event->GetNode()->IsLocal())
+        if (code.is_python() && !event->GetNode()->isLocal())
             code.Add("self.");
-        code.Add(event->GetNode()->get_node_name()).Function("Bind(") << handler.GetCode();
+        code.Add(event->GetNode()->getNodeName()).Function("Bind(") << handler.GetCode();
         code.EndFunction();
     }
 
@@ -175,10 +175,10 @@ void BaseCodeGenerator::GenSrcEventBinding(Node* node, EventVector& events)
         return;
     }
 
-    auto propName = node->get_prop_ptr(prop_class_name);
+    auto propName = node->getPropPtr(prop_class_name);
     if (!propName)
     {
-        FAIL_MSG(tt_string("Missing \"name\" property in ") << node->DeclName() << " class.");
+        FAIL_MSG(tt_string("Missing \"name\" property in ") << node->declName() << " class.");
         return;
     }
 
@@ -199,7 +199,7 @@ void BaseCodeGenerator::GenSrcEventBinding(Node* node, EventVector& events)
         // Sort events by event name
         std::sort(events.begin(), events.end(), lambda);
 
-        if (auto generator = iter->GetNode()->GetGenerator(); generator)
+        if (auto generator = iter->GetNode()->getGenerator(); generator)
         {
             Code code(node, m_language);
             if (generator->GenEvent(code, iter, class_name); code.size())
@@ -268,11 +268,11 @@ void BaseCodeGenerator::GenHdrEvents(const EventVector& events)
             // If the form has a wxContextMenuEvent node, then the handler for the form's wxEVT_CONTEXT_MENU is a method of
             // the base class and is not virtual.
 
-            if (event->GetNode()->IsForm() && event->get_name() == "wxEVT_CONTEXT_MENU")
+            if (event->GetNode()->isForm() && event->get_name() == "wxEVT_CONTEXT_MENU")
             {
                 bool has_handler = false;
 
-                for (const auto& child: event->GetNode()->GetChildNodePtrs())
+                for (const auto& child: event->GetNode()->getChildNodePtrs())
                 {
                     if (child->isGen(gen_wxContextMenuEvent))
                     {
@@ -290,7 +290,7 @@ void BaseCodeGenerator::GenHdrEvents(const EventVector& events)
             }
             if ((event->get_name() == "wxEVT_WEBVIEW_FULL_SCREEN_CHANGED" ||
                  event->get_name() == "wxEVT_WEBVIEW_SCRIPT_MESSAGE_RECEIVED") &&
-                Project.value(prop_wxWidgets_version) == "3.1")
+                Project.as_string(prop_wxWidgets_version) == "3.1")
             {
                 code << "\n#if wxCHECK_VERSION(3, 1, 5)\n";
                 if (m_form_node->as_bool(prop_use_derived_class))
@@ -387,7 +387,7 @@ void BaseCodeGenerator::GenPythonEventHandlers(EventVector& events)
     // Sort events by function name
     std::sort(events.begin(), events.end(), sort_event_handlers);
 
-    bool inherited_class = m_form_node->HasValue(prop_python_inherit_name);
+    bool inherited_class = m_form_node->hasValue(prop_python_inherit_name);
     if (!inherited_class)
     {
         m_header->Indent();

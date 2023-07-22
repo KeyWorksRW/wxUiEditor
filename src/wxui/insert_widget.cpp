@@ -99,7 +99,7 @@ void MainFrame::OnInsertWidget(wxCommandEvent&)
     {
         if (auto result = rmap_GenNames.find(dlg.GetWidget()); result != rmap_GenNames.end())
         {
-            return CreateToolNode(result->second);
+            return createToolNode(result->second);
         }
         FAIL_MSG(tt_string() << "No property enum type exists for dlg.GetWidget()! This should be impossible...")
     }
@@ -109,13 +109,13 @@ void MainFrame::OnInsertWidget(wxCommandEvent&)
 
 Node* FindChildNode(Node* node, GenEnum::GenName name)
 {
-    for (const auto& child: node->GetChildNodePtrs())
+    for (const auto& child: node->getChildNodePtrs())
     {
         if (child->isGen(name))
         {
             return child.get();
         }
-        else if (child->GetChildCount() > 0)
+        else if (child->getChildCount() > 0)
         {
             if (auto child_node = FindChildNode(child.get(), name); child_node)
             {
@@ -150,14 +150,14 @@ void InsertWidget::OnNameText(wxCommandEvent& WXUNUSED(event))
             continue;
         }
 
-        if (!node || !node->IsChildAllowed(iter))
+        if (!node || !node->isChildAllowed(iter))
         {
             continue;
         }
 
-        if (name.empty() || iter->DeclName().contains(name, tt::CASE::either))
+        if (name.empty() || iter->declName().contains(name, tt::CASE::either))
         {
-            m_listbox->AppendString(iter->DeclName().make_wxString());
+            m_listbox->AppendString(iter->declName().make_wxString());
         }
     }
 

@@ -142,7 +142,7 @@ bool XrcCompare::DoCreate(wxWindow* parent, Node* form_node)
     xrc_resource->AddHandler(new wxStyledTextCtrlXmlHandler);
     m_res_name = "wxuiCompare";
 
-    switch (form_node->gen_name())
+    switch (form_node->getGenName())
     {
         case gen_PanelForm:
             {
@@ -151,7 +151,7 @@ bool XrcCompare::DoCreate(wxWindow* parent, Node* form_node)
                 if (!InitXrc(form_node))
                     return false;
 
-                if (auto object = xrc_resource->LoadObject(this, form_node->value(prop_class_name), "wxPanel"); object)
+                if (auto object = xrc_resource->LoadObject(this, form_node->as_string(prop_class_name), "wxPanel"); object)
                 {
                     m_grid_bag_sizer->Add(wxStaticCast(object, wxPanel), wxGBPosition(1, 2), wxGBSpan(1, 1), wxALL, 5);
                 }
@@ -165,7 +165,7 @@ bool XrcCompare::DoCreate(wxWindow* parent, Node* form_node)
 
         case gen_wxDialog:
             {
-                if (form_node->GetChildCount() < 1)
+                if (form_node->getChildCount() < 1)
                 {
                     wxMessageBox("Only a dialog's children can be shown -- this dialog has none.", "Compare");
                     return false;

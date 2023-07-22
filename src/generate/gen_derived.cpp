@@ -73,7 +73,7 @@ int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_PAG
     }
 
     tt_string derived_file;
-    if (m_is_derived_class && m_form_node->HasValue(prop_derived_file))
+    if (m_is_derived_class && m_form_node->hasValue(prop_derived_file))
     {
         derived_file = Project.BaseDirectory(form, GEN_LANG_CPLUSPLUS);
         if (derived_file.size())
@@ -134,8 +134,8 @@ int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_PAG
     tt_string namespace_using_name;
 
     // Make a copy of the string so that we can tweak it
-    tt_string namespace_prop = Project.value(prop_name_space);
-    if (auto* node_namespace = form->get_folder(); node_namespace && node_namespace->HasValue(prop_folder_namespace))
+    tt_string namespace_prop = Project.as_string(prop_name_space);
+    if (auto* node_namespace = form->getFolder(); node_namespace && node_namespace->hasValue(prop_folder_namespace))
     {
         namespace_prop = node_namespace->as_string(prop_folder_namespace);
     }
@@ -214,7 +214,7 @@ int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_PAG
             line << namespace_using_name << "::";
         }
 
-        line << m_form_node->get_node_name();
+        line << m_form_node->getNodeName();
 
         m_header->writeLine(line);
         m_header->writeLine("{");
@@ -241,7 +241,7 @@ int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_PAG
             m_source->writeLine();
         }
 
-        if (project->HasValue(prop_src_preamble))
+        if (project->hasValue(prop_src_preamble))
         {
             tt_string convert(project->as_string(prop_src_preamble));
             convert.Replace("@@", "\n", tt::REPLACE::all);
@@ -340,7 +340,7 @@ int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_PAG
             else
             {
                 code << derived_name << "::" << derived_name << "(wxWindow* parent) : ";
-                code << m_form_node->get_node_name() << "(parent) {}";
+                code << m_form_node->getNodeName() << "(parent) {}";
             }
 
             m_source->writeLine(code);
@@ -355,7 +355,7 @@ int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_PAG
         m_header->writeLine("protected:");
         m_header->Indent();
         m_header->SetLastLineBlank();
-        m_header->writeLine(tt_string() << "// Handlers for " << m_form_node->get_node_name() << " events");
+        m_header->writeLine(tt_string() << "// Handlers for " << m_form_node->getNodeName() << " events");
 
         std::set<std::string> generatedHandlers;
         for (auto event: events)
@@ -396,10 +396,10 @@ int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_PAG
 
                 if (panel_type != HDR_PANEL)
                 {
-                    if (event->GetNode()->IsForm() && event->get_name() == "wxEVT_CONTEXT_MENU")
+                    if (event->GetNode()->isForm() && event->get_name() == "wxEVT_CONTEXT_MENU")
                     {
                         bool is_handled = false;
-                        for (const auto& iter: event->GetNode()->GetChildNodePtrs())
+                        for (const auto& iter: event->GetNode()->getChildNodePtrs())
                         {
                             if (iter->isGen(gen_wxContextMenuEvent))
                             {

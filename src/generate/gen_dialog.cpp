@@ -24,12 +24,12 @@ wxObject* DialogFormGenerator::CreateMockup(Node* node, wxObject* parent)
     auto widget = new wxPanel(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(parent, node, prop_pos),
                               DlgSize(parent, node, prop_size), GetStyleInt(node));
 
-    if (node->HasValue(prop_extra_style))
+    if (node->hasValue(prop_extra_style))
     {
         int ex_style = 0;
         // Can't use multiview because GetConstantAsInt() searches an unordered_map which requires a std::string to pass to
         // it
-        tt_string_vector mstr(node->value(prop_extra_style), '|');
+        tt_string_vector mstr(node->as_string(prop_extra_style), '|');
         for (auto& iter: mstr)
         {
             // Friendly names will have already been converted, so normal lookup works fine.
@@ -52,7 +52,7 @@ bool DialogFormGenerator::ConstructionCode(Code& code)
             "long style, const wxString &name)";
         code.OpenBrace();
 
-        if (code.HasValue(prop_extra_style))
+        if (code.hasValue(prop_extra_style))
         {
             code.Eol(eol_if_needed).FormFunction("SetExtraStyle(GetExtraStyle() | ").Add(prop_extra_style);
             code.EndFunction();
@@ -74,10 +74,10 @@ bool DialogFormGenerator::ConstructionCode(Code& code)
         code.CheckLineLength(sizeof("style=") + code.node()->as_string(prop_style).size() + 4);
         code.Add("style=").Style().Comma();
         size_t name_len =
-            code.HasValue(prop_window_name) ? code.node()->as_string(prop_window_name).size() : sizeof("wx.DialogNameStr");
+            code.hasValue(prop_window_name) ? code.node()->as_string(prop_window_name).size() : sizeof("wx.DialogNameStr");
         code.CheckLineLength(sizeof("name=") + name_len + 4);
         code.Str("name=");
-        if (code.HasValue(prop_window_name))
+        if (code.hasValue(prop_window_name))
             code.QuotedString(prop_window_name);
         else
             code.Str("wx.DialogNameStr");
@@ -99,7 +99,7 @@ bool DialogFormGenerator::SettingsCode(Code& code)
 {
     if (code.is_python())
     {
-        if (code.HasValue(prop_extra_style))
+        if (code.hasValue(prop_extra_style))
         {
             code.Eol(eol_if_needed).FormFunction("SetExtraStyle(GetExtraStyle() | ").Add(prop_extra_style);
             code.EndFunction();
@@ -118,16 +118,16 @@ bool DialogFormGenerator::AfterChildrenCode(Code& code)
 {
     Node* dlg = code.node();
     Node* child_node = dlg;
-    ASSERT_MSG(dlg->GetChildCount(), "Trying to generate code for a dialog with no children.")
-    if (!dlg->GetChildCount())
+    ASSERT_MSG(dlg->getChildCount(), "Trying to generate code for a dialog with no children.")
+    if (!dlg->getChildCount())
         return {};  // empty dialog, so nothing to do
-    ASSERT_MSG(dlg->GetChild(0)->IsSizer(), "Expected first child of a dialog to be a sizer.");
-    if (dlg->GetChild(0)->IsSizer())
+    ASSERT_MSG(dlg->getChild(0)->isSizer(), "Expected first child of a dialog to be a sizer.");
+    if (dlg->getChild(0)->isSizer())
     {
         // If the first child is not a sizer, then child_node will still point to the dialog
         // node, which means the SetSizer...(child_node) calls below will generate invalid
         // code.
-        child_node = dlg->GetChild(0);
+        child_node = dlg->getChild(0);
     }
 
     const auto min_size = dlg->as_wxSize(prop_minimum_size);
@@ -184,13 +184,13 @@ bool DialogFormGenerator::HeaderCode(Code& code)
         code.WxSize(prop_size, no_dlg_units);
 
     code.Comma().Eol().Tab().Str("long style = ");
-    if (node->HasValue(prop_style))
+    if (node->hasValue(prop_style))
         code.Str(prop_style);
     else
         code.Str("wxDEFAULT_DIALOG_STYLE");
 
     code.Comma().Str("const wxString &name = ");
-    if (node->HasValue(prop_window_name))
+    if (node->hasValue(prop_window_name))
         code.QuotedString(prop_window_name);
     else
         code.Str("wxDialogNameStr");
@@ -215,13 +215,13 @@ bool DialogFormGenerator::HeaderCode(Code& code)
         code.WxSize(prop_size, no_dlg_units);
 
     code.Comma().Eol().Tab().Str("long style = ");
-    if (node->HasValue(prop_style))
+    if (node->hasValue(prop_style))
         code.Style();
     else
         code.Str("wxDEFAULT_DIALOG_STYLE");
 
     code.Comma().Str("const wxString &name = ");
-    if (node->HasValue(prop_window_name))
+    if (node->hasValue(prop_window_name))
         code.QuotedString(prop_window_name);
     else
         code.Str("wxDialogNameStr");
@@ -234,7 +234,7 @@ bool DialogFormGenerator::HeaderCode(Code& code)
 
 bool DialogFormGenerator::BaseClassNameCode(Code& code)
 {
-    if (code.HasValue(prop_derived_class))
+    if (code.hasValue(prop_derived_class))
     {
         code.Str((prop_derived_class));
     }
@@ -261,14 +261,14 @@ int DialogFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t
 
     ADD_ITEM_PROP(prop_title, "title")
 
-    if (node->HasValue(prop_style))
+    if (node->hasValue(prop_style))
     {
         if ((xrc_flags & xrc::add_comments) && node->as_string(prop_style).contains("wxWANTS_CHARS"))
         {
             item.append_child(pugi::node_comment)
                 .set_value("The wxWANTS_CHARS style will be ignored when the XRC is loaded.");
         }
-        if (!node->HasValue(prop_extra_style))
+        if (!node->hasValue(prop_extra_style))
         {
             item.append_child("style").text().set(node->as_string(prop_style));
         }
@@ -280,12 +280,12 @@ int DialogFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t
         }
     }
 
-    if (node->HasValue(prop_pos))
+    if (node->hasValue(prop_pos))
         item.append_child("pos").text().set(node->as_string(prop_pos));
-    if (node->HasValue(prop_size))
+    if (node->hasValue(prop_size))
         item.append_child("size").text().set(node->as_string(prop_size));
 
-    if (node->HasValue(prop_center))
+    if (node->hasValue(prop_center))
     {
         if (node->as_string(prop_center).is_sameas("wxVERTICAL") || node->as_string(prop_center).is_sameas("wxHORIZONTAL"))
         {
@@ -302,7 +302,7 @@ int DialogFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t
         }
     }
 
-    if (node->HasValue(prop_icon))
+    if (node->hasValue(prop_icon))
     {
         tt_string_vector parts(node->as_string(prop_icon), ';', tt::TRIM::both);
         ASSERT(parts.size() > 1)
@@ -334,7 +334,7 @@ int DialogFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t
 void DialogFormGenerator::RequiredHandlers(Node* node, std::set<std::string>& handlers)
 {
     handlers.emplace("wxDialogXmlHandler");
-    if (node->HasValue(prop_icon))
+    if (node->hasValue(prop_icon))
     {
         handlers.emplace("wxIconXmlHandler");
         handlers.emplace("wxBitmapXmlHandler");

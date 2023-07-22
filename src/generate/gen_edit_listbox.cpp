@@ -21,7 +21,7 @@ wxObject* EditListBoxGenerator::CreateMockup(Node* node, wxObject* parent)
         new wxEditableListBox(wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxString(prop_label),
                               DlgPoint(parent, node, prop_pos), DlgSize(parent, node, prop_size), GetStyleInt(node));
 
-    if (node->HasValue(prop_contents))
+    if (node->hasValue(prop_contents))
     {
         auto array = node->as_wxArrayString(prop_auto_complete);
         widget->SetStrings(array);
@@ -45,7 +45,7 @@ bool EditListBoxGenerator::ConstructionCode(Code& code)
 
 bool EditListBoxGenerator::SettingsCode(Code& code)
 {
-    if (code.HasValue(prop_contents))
+    if (code.hasValue(prop_contents))
     {
         auto array = code.node()->as_ArrayString(prop_contents);
         if (code.is_cpp())
@@ -85,14 +85,14 @@ bool EditListBoxGenerator::GetIncludes(Node* node, std::set<std::string>& set_sr
 
 int EditListBoxGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxEditableListBox");
 
     ADD_ITEM_PROP(prop_label, "label")
 
-    if (node->HasValue(prop_contents))
+    if (node->hasValue(prop_contents))
     {
         auto content = item.append_child("content");
         auto array = node->as_ArrayString(prop_contents);

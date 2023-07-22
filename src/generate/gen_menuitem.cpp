@@ -290,7 +290,8 @@ bool MenuItemGenerator::SettingsCode(Code& code)
         code.Eol(eol_if_empty).ParentName().Function("Append(").NodeName().EndFunction();
     }
 
-    if ((node->as_string(prop_kind) == "wxITEM_CHECK" || node->as_string(prop_kind) == "wxITEM_RADIO") && code.IsTrue(prop_checked))
+    if ((node->as_string(prop_kind) == "wxITEM_CHECK" || node->as_string(prop_kind) == "wxITEM_RADIO") &&
+        code.IsTrue(prop_checked))
     {
         code.Eol(eol_if_empty).NodeName().Function("Check(").EndFunction();
     }
@@ -398,8 +399,8 @@ bool MenuItemGenerator::modifyProperty(NodeProperty* prop, tt_string_view value)
 
             if (auto result = map_id_artid.find(value.as_str()); result != map_id_artid.end())
             {
-                undo_stock_id->addProperty(prop->getNode()->getPropPtr(prop_bitmap),
-                                           tt_string("Art;") << result->second << "|wxART_MENU");
+                undo_stock_id->addProperty(prop->getNode()->getPropPtr(prop_bitmap), tt_string("Art;")
+                                                                                         << result->second << "|wxART_MENU");
             }
             wxGetFrame().PushUndoAction(undo_stock_id);
             return true;

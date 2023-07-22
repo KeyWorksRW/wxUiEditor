@@ -349,18 +349,9 @@ void GenInhertedClass(GenResults& results)
     {
         if (auto& file = form->as_string(prop_derived_file); file.size())
         {
-            path = file;
+            path = Project.GetDerivedFilename(form);
             if (path.empty())
                 continue;
-            path.backslashestoforward();
-            if (Project.HasValue(prop_derived_directory) && !path.contains("/"))
-            {
-                path = Project.value(prop_derived_directory);
-                path.append_filename(file);
-            }
-            path.make_absolute();
-            path.backslashestoforward();
-            path.replace_extension(source_ext);
             if (path.file_exists())
             {
                 // Count both source and header file
@@ -375,7 +366,6 @@ void GenInhertedClass(GenResults& results)
                     ++results.file_count;
                 }
             }
-            path.remove_extension();
         }
         else
         {

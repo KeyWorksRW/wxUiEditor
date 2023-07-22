@@ -280,3 +280,24 @@ int ProjectHandler::get_PreferredLanguage()
     else
         return GEN_LANG_CPLUSPLUS;
 }
+tt_string ProjectHandler::GetDerivedFilename(Node* form)
+{
+    tt_string path;
+
+    ASSERT(form->IsForm());
+
+    if (not form->IsForm() || !form->HasValue(prop_derived_file))
+        return path;
+
+    path = DerivedDirectory(form, GEN_LANG_CPLUSPLUS);
+    path.append_filename(form->as_string(prop_derived_file));
+    path.make_absolute();
+
+    tt_string source_ext(".cpp");
+    if (auto& extProp = as_string(prop_source_ext); extProp.size())
+    {
+        source_ext = extProp;
+    }
+    path.replace_extension(source_ext);
+    return path;
+}

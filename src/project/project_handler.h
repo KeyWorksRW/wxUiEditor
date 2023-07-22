@@ -71,6 +71,10 @@ public:
     // directory is returned. Otherwise the project derived directory is returned.
     tt_string DerivedDirectory(Node* node, int language = GEN_LANG_CPLUSPLUS) const;
 
+    // Returns the full path to the derived filename or an empty string if no derived file
+    // was specified.
+    tt_string GetDerivedFilename(Node*);
+
     Node* ProjectNode() const { return m_project_node.get(); }
     auto& ChildNodePtrs() { return m_project_node->GetChildNodePtrs(); }
     Node* GetChild(size_t index) { return m_project_node->GetChild(index); }

@@ -335,6 +335,7 @@ bool DataViewColumn::ConstructionCode(Code& code)
 {
     code.AddAuto().NodeName().Str(" = ").ParentName().Function("Append").Str(prop_type).Str("Column(");
     code.QuotedString(prop_label).Comma().Str(prop_model_column).Comma().Str(prop_mode).Comma().Str(prop_width);
+    code.Comma();
     if (code.is_cpp())
         code.Str("static_cast<wxAlignment>(");
     code.Add(prop_align);
@@ -356,6 +357,7 @@ bool DataViewListColumn::ConstructionCode(Code& code)
 {
     code.AddAuto().NodeName().Str(" = ").ParentName().Function("Append").Str(prop_type).Str("Column(");
     code.QuotedString(prop_label).Comma().Str(prop_mode).Comma().Str(prop_width);
+    code.Comma();
     if (code.is_cpp())
         code.Str("static_cast<wxAlignment>(");
     code.Add(prop_align);

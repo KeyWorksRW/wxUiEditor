@@ -1093,6 +1093,10 @@ tt_string BaseCodeGenerator::GetDeclaration(Node* node)
         }
         code << node->as_string(prop_class_name) << "* " << node->get_node_name() << ';';
     }
+    else if (class_name.is_sameas("dataViewColumn"))
+    {
+        code << "wxDataViewColumn* " << node->get_node_name() << ';';
+    }
 
     if (node->HasValue(prop_var_comment))
     {

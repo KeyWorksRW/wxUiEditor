@@ -91,7 +91,7 @@ bool DocViewPanel::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos, c
 // clang-format on
 // ***********************************************
 
-/////////////////////////////////////////////////////////////////////////////
+/////////////////// Non-generated Copyright/License Info ////////////////////
 // Purpose:   Panel for displaying docs in wxWebView
 // Author:    Ralph Walden
 // Copyright: Copyright (c) 2023 KeyWorks Software (Ralph Walden)

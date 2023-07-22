@@ -32,16 +32,6 @@ public:
         const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_DIALOG_STYLE, const wxString &name = wxDialogNameStr);
 
-    const tt_string& GetRcFilename() { return m_rcFilename; }
-    std::vector<tt_string>& GetDlgNames() { return m_dialogs; }
-
-protected:
-    void ReadRcFile();
-
-private:
-    tt_string m_rcFilename;
-    std::vector<tt_string> m_dialogs;
-
 protected:
 
     // Event handlers
@@ -62,7 +52,6 @@ private:
     wxFilePickerCtrl* m_fileResource;
     wxStaticText* m_staticResFile;
     wxStaticText* m_staticText;
-};
 
 // ************* End of generated code ***********
 // DO NOT EDIT THIS COMMENT BLOCK!
@@ -70,5 +59,17 @@ private:
 // Code below this comment block will be preserved
 // if the code for this class is re-generated.
 //
-// clang-format on
-// ***********************************************
+    // clang-format on
+    // ***********************************************
+
+public:
+    const tt_string& GetRcFilename() { return m_rcFilename; }
+    std::vector<tt_string>& GetDlgNames() { return m_dialogs; }
+
+protected:
+    void ReadRcFile();
+
+private:
+    tt_string m_rcFilename;
+    std::vector<tt_string> m_dialogs;
+};

@@ -19,7 +19,7 @@
 #include "mainframe.h"        // MainFrame -- Main window frame
 #include "mainframe_base.h"   // contains all the wxue_img namespace embedded images
 #include "navpopupmenu.h"     // NavPopupMenu -- Context-menu for an item
-#include "navtoolbar_base.h"  // generated NavToolbar class
+#include "nav_toolbar.h"      // generated NavToolbar class
 #include "node.h"             // Node class
 #include "node_creator.h"     // NodeCreator class
 #include "node_decl.h"        // NodeDeclaration class

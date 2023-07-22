@@ -19,7 +19,7 @@
 #include <wx/xrc/xh_styledtextctrl.h>  // XML resource handler for wxStyledTextCtrl
 
 #include "../tools/preview_settings.h"  // PreviewSettings
-#include "../ui/xrccompare.h"           // auto-generated: xrccompare_base.h and xrccompare_base.cpp
+#include "../ui/xrccompare.h"           // C++/XRC UI Comparison dialog
 #include "gen_common.h"                 // GeneratorLibrary -- Generator classes
 #include "generate/gen_xrc.h"           // Generate XRC file
 #include "mainapp.h"                    // App -- Main application class

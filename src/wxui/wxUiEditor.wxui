@@ -875,8 +875,10 @@
         class="ToolBar"
         class_name="NavToolbar"
         style="wxTB_FLAT|wxTB_HORIZONTAL"
-        base_file="navtoolbar_base"
-        local_src_includes="mainframe.h;project_handler.h">
+        base_file="..\panels\nav_toolbar"
+        local_src_includes="mainframe.h;project_handler.h"
+        private_members="0"
+        use_derived_class="0">
         <node
           class="toolStretchable" />
         <node
@@ -3305,13 +3307,16 @@
     </node>
     <node
       class="wxDialog"
-      class_name="GenerateXrcDlgBase"
+      class_name="GenerateXrcDlg"
       persist="1"
       style="wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER"
       title="Generate XRC File(s)"
-      base_file="generate_xrc_dlg_base"
+      base_file="..\ui\generate_xrc_dlg"
+      no_closing_brace="1"
       derived_class_name="GenerateXrcDlg"
       derived_file="../ui/generate_xrc_dlg"
+      private_members="1"
+      use_derived_class="0"
       wxEVT_INIT_DIALOG="OnInit">
       <node
         class="wxBoxSizer"
@@ -3673,8 +3678,8 @@
       class="wxDialog"
       class_name="ImportWinRes"
       title="Import Windows Resource Dialogs"
-      base_file="import_winres_dlg"
-      inserted_hdr_code="const tt_string&amp; GetRcFilename() { return m_rcFilename; }@@std::vector&lt;tt_string>&amp; GetDlgNames() { return m_dialogs; }@@@@protected:@@void ReadRcFile();@@@@private:@@tt_string m_rcFilename;@@std::vector&lt;tt_string> m_dialogs;"
+      base_file="..\import\import_winres_dlg"
+      no_closing_brace="1"
       derived_class_name="ImportWinRes"
       private_members="1"
       use_derived_class="0"
@@ -3746,7 +3751,8 @@
       title="Insert Widget"
       minimum_size="-1,-1"
       base_file="insert_widget"
-      inserted_hdr_code="tt_string GetWidget() { return m_widget; }@@@@private:@@tt_string m_widget;"
+      inserted_hdr_code="tt_string GetWidget() { return m_widget; }"
+      class_members="&quot;tt_string m_widget;&quot;"
       derived_class_name="InsertWidget"
       private_members="1"
       use_derived_class="0"
@@ -5049,11 +5055,15 @@
     </node>
     <node
       class="wxDialog"
-      class_name="XrcCompareBase"
+      class_name="XrcCompare"
       style="wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER"
       title="Compare C++/XRC Generated UI"
-      base_file="xrccompare_base"
-      derived_class_name="XrcCompare">
+      base_file="..\ui\xrccompare.cpp"
+      header_preamble="class Node;"
+      no_closing_brace="1"
+      derived_class_name="XrcCompare"
+      private_members="1"
+      use_derived_class="0">
       <node
         class="wxGridBagSizer"
         class_access="protected:"

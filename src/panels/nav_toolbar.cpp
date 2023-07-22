@@ -12,7 +12,7 @@
 #include <wx/icon.h>
 #include <wx/image.h>
 
-#include "navtoolbar_base.h"
+#include "nav_toolbar.h"
 
 #include "mainframe.h"
 #include "project_handler.h"

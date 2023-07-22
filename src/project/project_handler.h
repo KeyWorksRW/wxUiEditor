@@ -21,6 +21,16 @@ namespace pugi
 
 class ImportXML;
 
+enum : size_t
+{
+    OUTPUT_NONE = 0,
+    OUTPUT_CPLUS = 1 << 0,
+    OUTPUT_DERIVED = 1 << 1,
+    OUTPUT_C_DERIVED = OUTPUT_CPLUS | OUTPUT_DERIVED,
+    OUTPUT_PYTHON = 1 << 2,
+    OUTPUT_RUBY = 1 << 3,
+};
+
 class ProjectHandler
 {
 private:
@@ -57,6 +67,9 @@ public:
 
     // Returns the full path to the directory the project file is in
     tt_string ProjectFile() const { return m_projectFile; }
+
+    // Get a bit flag indicating which output types are enabled
+    size_t GetOutputType();
 
     // Change to the project's directory
     bool ChangeDir() const { return m_projectPath.ChangeDir(); }

@@ -280,6 +280,53 @@ int ProjectHandler::get_PreferredLanguage()
     else
         return GEN_LANG_CPLUSPLUS;
 }
+
+size_t ProjectHandler::GetOutputType()
+{
+    size_t result = OUTPUT_NONE;
+
+    auto rlambda = [&](Node* form, auto&& rlambda) -> void
+    {
+        for (const auto& child: form->GetChildNodePtrs())
+        {
+            if (child->IsFormParent())
+            {
+                rlambda(child.get(), rlambda);
+            }
+            else if (child->IsForm())
+            {
+                if (child->HasValue(prop_base_file))
+                {
+                    result |= OUTPUT_CPLUS;
+                }
+                if (child->HasValue(prop_derived_file) && child->as_bool(prop_use_derived_class))
+                {
+                    if (auto path = GetDerivedFilename(child.get()); path.size())
+                    {
+                        // Derived file is only output if it doesn't already exist
+                        if (not path.file_exists())
+                        {
+                            result |= OUTPUT_DERIVED;
+                        }
+                    }
+                }
+                if (child->HasValue(prop_python_file))
+                {
+                    result |= OUTPUT_PYTHON;
+                }
+                if (child->HasValue(prop_ruby_file))
+                {
+                    result |= OUTPUT_RUBY;
+                }
+            }
+        }
+    };
+
+    rlambda(m_project_node.get(), rlambda);
+
+    return result;
+}
+
 tt_string ProjectHandler::GetDerivedFilename(Node* form)
 {
     tt_string path;

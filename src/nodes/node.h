@@ -102,6 +102,9 @@ public:
     // Returns true if this node is a folder, subfolder, or Images List
     bool IsNonWidget() const noexcept { return (isGen(gen_folder) || isGen(gen_sub_folder) || isGen(gen_Images)); }
 
+    // Returns true if the node is either a folder or subfolder
+    bool IsFolder() const noexcept { return (isGen(gen_folder) || isGen(gen_sub_folder)); }
+
     bool IsWidget() const noexcept { return isType(type_widget); }
     bool IsWizard() const noexcept { return isType(type_wizard); }
     bool IsMenuBar() const noexcept { return (isType(type_menubar_form) || isType(type_menubar)); }

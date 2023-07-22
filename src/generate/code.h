@@ -271,7 +271,7 @@ public:
     // Adds " = new wxClass(" or " = wx.Class('.
     // Adds wxGeneric prefix if use_generic is true.
     // Creates wxPanel if node is a book page.
-    // Specify override_name to override node->DeclName()
+    // Specify override_name to override node->declName()
     Code& CreateClass(bool use_generic = false, tt_string_view override_name = tt_empty_cstr);
 
     // For Python code, a non-local, non-form name will be prefixed with "self."
@@ -281,7 +281,7 @@ public:
 
     // For Python code, a non-local, non-form name will be prefixed with "self."
     //
-    // *this += m_node->GetParent()->get_node_name();
+    // *this += m_node->getParent()->get_node_name();
     Code& ParentName();
 
     // Find a valid parent for the current node and add it's name. This is *not* the same as

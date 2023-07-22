@@ -34,9 +34,6 @@ public:
     void CreateNode();
     void VerifyClassName();
 
-private:
-    bool m_is_info_shown { false };
-
 protected:
 
     // Event handlers
@@ -61,6 +58,8 @@ private:
     wxCheckBox* m_checkBox_toolbar;
     wxInfoBar* m_infoBar;
     wxTextCtrl* m_classname;
+
+    bool m_is_info_shown { false };
 };
 
 // ************* End of generated code ***********

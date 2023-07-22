@@ -9,59 +9,49 @@
 
 #pragma once
 
-#include <wx/checkbox.h>
+#include <wx/button.h>
+#include <wx/checklst.h>
 #include <wx/dialog.h>
 #include <wx/event.h>
+#include <wx/filepicker.h>
 #include <wx/gdicmn.h>
-#include <wx/infobar.h>
-#include <wx/spinctrl.h>
-#include <wx/textctrl.h>
+#include <wx/stattext.h>
 
-class NewDialog : public wxDialog
+class ImportWinRes : public wxDialog
 {
 public:
-    NewDialog() {}
-    NewDialog(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "Create New Dialog",
+    ImportWinRes() {}
+    ImportWinRes(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "Import Windows Resource Dialogs",
         const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_DIALOG_STYLE, const wxString &name = wxDialogNameStr)
     {
         Create(parent, id, title, pos, size, style, name);
     }
 
-    bool Create(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "Create New Dialog",
+    bool Create(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "Import Windows Resource Dialogs",
         const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_DIALOG_STYLE, const wxString &name = wxDialogNameStr);
-
-    void CreateNode();
-    void VerifyClassName();
-
-private:
-    bool m_is_info_shown { false };
 
 protected:
 
     // Event handlers
 
+    void OnClearAll(wxCommandEvent& event);
     void OnInit(wxInitDialogEvent& event);
+    void OnOk(wxCommandEvent& event);
+    void OnResourceFile(wxFileDirPickerEvent& event);
+    void OnSelectAll(wxCommandEvent& event);
 
 private:
 
-    // Validator variables
-
-    bool m_has_std_btns { true };
-    bool m_has_tabs { false };
-    int m_num_tabs { 3 };
-    wxString m_base_class { "MyDialogBase" };
-    wxString m_title;
-
     // Class member variables
 
-    wxCheckBox* m_check_tabs;
-    wxInfoBar* m_infoBar;
-    wxSpinCtrl* m_spinCtrlTabs;
-    wxTextCtrl* m_classname;
-    wxTextCtrl* m_textCtrl_title;
-};
+    wxButton* m_btnClearAll;
+    wxButton* m_btnSelectAll;
+    wxCheckListBox* m_checkListResUI;
+    wxFilePickerCtrl* m_fileResource;
+    wxStaticText* m_staticResFile;
+    wxStaticText* m_staticText;
 
 // ************* End of generated code ***********
 // DO NOT EDIT THIS COMMENT BLOCK!
@@ -69,5 +59,17 @@ private:
 // Code below this comment block will be preserved
 // if the code for this class is re-generated.
 //
-// clang-format on
-// ***********************************************
+    // clang-format on
+    // ***********************************************
+
+public:
+    const tt_string& GetRcFilename() { return m_rcFilename; }
+    std::vector<tt_string>& GetDlgNames() { return m_dialogs; }
+
+protected:
+    void ReadRcFile();
+
+private:
+    tt_string m_rcFilename;
+    std::vector<tt_string> m_dialogs;
+};

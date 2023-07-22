@@ -29,7 +29,7 @@
 
 #include "../panels/propgrid_panel.h"   // PropGridPanel -- Node inspector class
 #include "../tools/preview_settings.h"  // PreviewSettings
-#include "../ui/xrccompare.h"           // auto-generated: xrccompare_base.h and xrccompare_base.cpp
+#include "../ui/xrccompare.h"           // C++/XRC UI Comparison dialog
 #include "cstm_event.h"                 // CustomEvent -- Custom Event class
 #include "gen_common.h"                 // GeneratorLibrary -- Generator classes
 #include "gen_results.h"                // Code generation file writing functions

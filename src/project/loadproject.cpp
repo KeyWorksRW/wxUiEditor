@@ -28,7 +28,7 @@ using namespace GenEnum;
 #include "import_dlg.h"    // ImportDlg -- Dialog to create a new project
 #include "node_gridbag.h"  // GridBag -- Create and modify a node containing a wxGridBagSizer
 
-#include "../wxui/code_preference_dlg.h"  // CodePreferenceDlg -- Dialog to set code generation preference
+#include "../ui/code_preference_dlg.h"  // CodePreferenceDlg -- Dialog to set code generation preference
 
 #if defined(INTERNAL_TESTING)
     #include "../internal/import_panel.h"  // ImportPanel -- Panel to display original imported file

@@ -9,74 +9,57 @@
 
 #pragma once
 
-#include <wx/bitmap.h>
+#include <wx/checkbox.h>
 #include <wx/dialog.h>
 #include <wx/event.h>
-#include <wx/font.h>
 #include <wx/gdicmn.h>
-#include <wx/hyperlink.h>
-#include <wx/generic/hyperlink.h>
-#include <wx/icon.h>
-#include <wx/image.h>
-#include <wx/sizer.h>
-#include <wx/stattext.h>
+#include <wx/infobar.h>
+#include <wx/spinctrl.h>
+#include <wx/textctrl.h>
 
-namespace wxue_img
-{
-    // Images declared in this class module:
-
-    extern const unsigned char logo_svg[1943];
-}
-
-class StartupDlg : public wxDialog
+class NewDialog : public wxDialog
 {
 public:
-    StartupDlg() {}
-    StartupDlg(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "Open, Import, or Create Project",
+    NewDialog() {}
+    NewDialog(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "Create New Dialog",
         const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_DIALOG_STYLE, const wxString &name = wxDialogNameStr)
     {
         Create(parent, id, title, pos, size, style, name);
     }
 
-    bool Create(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "Open, Import, or Create Project",
+    bool Create(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "Create New Dialog",
         const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_DIALOG_STYLE, const wxString &name = wxDialogNameStr);
 
-    enum : size_t
-    {
-        START_MRU,
-        START_CONVERT,
-        START_OPEN,
-        START_EMPTY,
-    };
-
-    auto GetCommandType() const { return m_cmdType; }
-    tt_string& GetProjectFile() { return m_value; }
-
-protected:
-    void OnHyperlink(wxHyperlinkEvent& event);
-
-private:
-    tt_string m_value;
-    size_t m_cmdType { START_EMPTY };
+    void CreateNode();
+    void VerifyClassName();
 
 protected:
 
     // Event handlers
 
-    void OnImport(wxHyperlinkEvent& event);
     void OnInit(wxInitDialogEvent& event);
-    void OnNew(wxHyperlinkEvent& event);
-    void OnOpen(wxHyperlinkEvent& event);
 
 private:
 
+    // Validator variables
+
+    bool m_has_std_btns { true };
+    bool m_has_tabs { false };
+    int m_num_tabs { 3 };
+    wxString m_base_class { "MyDialogBase" };
+    wxString m_title;
+
     // Class member variables
 
-    wxFlexGridSizer* m_recent_flex_grid;
-    wxStaticText* m_name_version;
-    wxStaticText* m_staticTextRecentProjects;  // // This should be hidden if there actually are any recent projects
+    wxCheckBox* m_check_tabs;
+    wxInfoBar* m_infoBar;
+    wxSpinCtrl* m_spinCtrlTabs;
+    wxTextCtrl* m_classname;
+    wxTextCtrl* m_textCtrl_title;
+
+    bool m_is_info_shown { false };
 };
 
 // ************* End of generated code ***********

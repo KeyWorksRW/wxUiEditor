@@ -17,12 +17,12 @@
 #include "node.h"          // Node class
 #include "node_creator.h"  // NodeCreator class
 
-#include "newdialog_base.h"  // NewDialog -- Dialog for creating a new project dialog
-#include "newframe_base.h"   // NewFrame -- Dialog for creating a new project wxFrame
-#include "newmdi_base.h"     // NewMdiForm -- Dialog for creating a new MDI application
-#include "newpanel_base.h"   // NewPanel -- Dialog for creating a new form panel
-#include "newribbon_base.h"  // NewRibbon -- Dialog for creating a new wxRibbonBar
-#include "newwizard_base.h"  // NewWizard -- Dialog for creating a new wizard
+#include "../newdialogs/new_dialog.h"  // NewDialog -- Dialog for creating a new project dialog
+#include "../newdialogs/new_frame.h"   // NewFrame -- Dialog for creating a new project wxFrame
+#include "../newdialogs/new_mdi.h"     // NewMdiForm -- Dialog for creating a new MDI application
+#include "../newdialogs/new_panel.h"   // NewPanel -- Dialog for creating a new form panel
+#include "../newdialogs/new_ribbon.h"  // NewRibbon -- Dialog for creating a new wxRibbonBar
+#include "../newdialogs/new_wizard.h"  // NewWizard -- Dialog for creating a new wizard
 
 #include "ribbon_ids.h"
 

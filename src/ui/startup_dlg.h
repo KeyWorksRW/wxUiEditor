@@ -9,65 +9,49 @@
 
 #pragma once
 
-#include <wx/combobox.h>
+#include <wx/bitmap.h>
 #include <wx/dialog.h>
 #include <wx/event.h>
+#include <wx/font.h>
 #include <wx/gdicmn.h>
-#include <wx/infobar.h>
+#include <wx/hyperlink.h>
+#include <wx/generic/hyperlink.h>
+#include <wx/icon.h>
+#include <wx/image.h>
 #include <wx/sizer.h>
-#include <wx/spinctrl.h>
 #include <wx/stattext.h>
-#include <wx/textctrl.h>
 
-class NewRibbon : public wxDialog
+class StartupDlg : public wxDialog
 {
 public:
-    NewRibbon() {}
-    NewRibbon(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "New Ribbon Bar",
+    StartupDlg() {}
+    StartupDlg(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "Open, Import, or Create Project",
         const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_DIALOG_STYLE, const wxString &name = wxDialogNameStr)
     {
         Create(parent, id, title, pos, size, style, name);
     }
 
-    bool Create(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "New Ribbon Bar",
+    bool Create(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "Open, Import, or Create Project",
         const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_DIALOG_STYLE, const wxString &name = wxDialogNameStr);
-
-    // Checks current selected node to see if it accepts a wxRibbonBar as a child
-    bool IsCreatable(bool notify_user = true);
-
-    void WantFormVersion() { m_is_form = true; }
-    void CreateNode();
-    void VerifyClassName();
-
-private:
-    bool m_is_form { false };
-    bool m_is_info_shown { false };
 
 protected:
 
     // Event handlers
 
+    void OnImport(wxHyperlinkEvent& event);
     void OnInit(wxInitDialogEvent& event);
+    void OnNew(wxHyperlinkEvent& event);
+    void OnOpen(wxHyperlinkEvent& event);
 
 private:
 
-    // Validator variables
-
-    int m_num_pages { 3 };
-    wxString m_base_class { "MyRibbonBarBase" };
-    wxString m_panel_type;
-
     // Class member variables
 
-    wxBoxSizer* m_class_sizer;
-    wxComboBox* m_comboBox;
-    wxInfoBar* m_infoBar;
-    wxSpinCtrl* m_spinCtrlPages;
-    wxStaticText* m_staticText;
-    wxTextCtrl* m_classname;
-};
+    wxFlexGridSizer* m_recent_flex_grid;
+    wxStaticText* m_name_version;
+    wxStaticText* m_staticTextRecentProjects;  // // This should be hidden if there actually are any recent projects
 
 // ************* End of generated code ***********
 // DO NOT EDIT THIS COMMENT BLOCK!
@@ -75,5 +59,25 @@ private:
 // Code below this comment block will be preserved
 // if the code for this class is re-generated.
 //
-// clang-format on
-// ***********************************************
+    // clang-format on
+    // ***********************************************
+
+public:
+    enum : size_t
+    {
+        START_MRU,
+        START_CONVERT,
+        START_OPEN,
+        START_EMPTY,
+    };
+
+    auto GetCommandType() const { return m_cmdType; }
+    tt_string& GetProjectFile() { return m_value; }
+
+protected:
+    void OnHyperlink(wxHyperlinkEvent& event);
+
+private:
+    tt_string m_value;
+    size_t m_cmdType { START_EMPTY };
+};

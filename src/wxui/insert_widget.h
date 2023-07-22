@@ -37,9 +37,6 @@ public:
 
     tt_string GetWidget() { return m_widget; }
 
-private:
-    tt_string m_widget;
-
 protected:
 
     // Event handlers
@@ -57,6 +54,8 @@ private:
     wxListBox* m_listbox;
     wxStdDialogButtonSizer* m_stdBtn;
     wxTextCtrl* m_text_name;
+
+    tt_string m_widget;
 };
 
 // ************* End of generated code ***********

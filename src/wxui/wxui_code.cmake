@@ -5,6 +5,7 @@
 set (wxue_generated_code
 
     # Non-base classes
+    ${CMAKE_CURRENT_LIST_DIR}/../customprops/art_prop_dlg.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../customprops/id_editor_dlg.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../customprops/include_files_dlg.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../internal/code_compare.cpp
@@ -45,7 +46,6 @@ set (wxue_generated_code
     # Base classes
     ${CMAKE_CURRENT_LIST_DIR}/../internal/convert_img_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../internal/msgframe_base.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/artpropdlg_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/codedisplay_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/colourprop_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/edit_html_dialog_base.cpp

@@ -120,7 +120,7 @@ bool NewDialog::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 // clang-format on
 // ***********************************************
 
-/////////////////////////////////////////////////////////////////////////////
+/////////////////// Non-generated Copyright/License Info ////////////////////
 // Purpose:   Dialog for creating a new project dialog
 // Author:    Ralph Walden
 // Copyright: Copyright (c) 2021-2023 KeyWorks Software (Ralph Walden)

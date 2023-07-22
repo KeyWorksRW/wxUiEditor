@@ -2288,10 +2288,14 @@
       label="Custom Property Editors">
       <node
         class="wxDialog"
-        class_name="ArtPropertyDlgBase"
+        class_name="ArtBrowserDialog"
         title="Art Provider Image"
-        base_file="artpropdlg_base"
-        derived_class_name="ArtPropertyDlg">
+        base_file="..\customprops\art_prop_dlg"
+        local_hdr_includes="img_props.h"
+        no_closing_brace="1"
+        derived_class_name="ArtPropertyDlg"
+        private_members="1"
+        use_derived_class="0">
         <node
           class="wxBoxSizer"
           orientation="wxVERTICAL"

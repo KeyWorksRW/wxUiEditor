@@ -20,7 +20,7 @@
 
 wxObject* RibbonPageGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto bmp = node->HasValue(prop_bitmap) ? node->as_wxBitmap(prop_bitmap) : wxNullBitmap;
+    auto bmp = node->hasValue(prop_bitmap) ? node->as_wxBitmap(prop_bitmap) : wxNullBitmap;
     // REVIEW: This is still a bitmap rather then a bundle as of the 3.1.6 release
     auto widget = new wxRibbonPage((wxRibbonBar*) parent, wxID_ANY, node->as_wxString(prop_label), bmp, 0);
 
@@ -34,7 +34,7 @@ bool RibbonPageGenerator::ConstructionCode(Code& code)
     code.AddAuto().NodeName();
     code.CreateClass().ParentName().Comma().as_string(prop_id);
     code.Comma().QuotedString(prop_label);
-    if (code.HasValue(prop_bitmap))
+    if (code.hasValue(prop_bitmap))
     {
         code.Comma();
         GenerateSingleBitmapCode(code, code.node()->as_string(prop_bitmap));
@@ -67,7 +67,7 @@ bool RibbonPageGenerator::GetIncludes(Node* node, std::set<std::string>& set_src
 
 int RibbonPageGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxRibbonPage");
@@ -102,7 +102,7 @@ wxObject* RibbonPanelGenerator::CreateMockup(Node* node, wxObject* parent)
 bool RibbonPanelGenerator::ConstructionCode(Code& code)
 {
     code.AddAuto().NodeName().CreateClass().ParentName().Comma().as_string(prop_id).Comma().QuotedString(prop_label);
-    if (code.HasValue(prop_bitmap))
+    if (code.hasValue(prop_bitmap))
     {
         code.Comma();
         GenerateSingleBitmapCode(code, code.node()->as_string(prop_bitmap));
@@ -125,7 +125,7 @@ bool RibbonPanelGenerator::GetIncludes(Node* node, std::set<std::string>& set_sr
 
 int RibbonPanelGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxRibbonPanel");

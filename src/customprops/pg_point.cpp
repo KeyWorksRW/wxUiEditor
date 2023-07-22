@@ -19,7 +19,7 @@ CustomPointProperty::CustomPointProperty(const wxString& label, NodeProperty* pr
 {
     m_prop_type = type;
 
-    if (type == CustomPointProperty::type_SVG && prop->HasValue() && prop->as_string().contains("["))
+    if (type == CustomPointProperty::type_SVG && prop->hasValue() && prop->as_string().contains("["))
     {
         tt_string value(prop->as_string().substr(prop->as_string().find('[') + 1));
         if (value.back() == ']')

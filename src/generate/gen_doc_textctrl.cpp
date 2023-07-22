@@ -82,7 +82,7 @@ bool TextDocumentGenerator::ConstructionCode(Code& code)
     {
         tt_string_vector lines;
         lines.ReadString(txt_TextCtrlViewBlock);
-        tt_string class_name = code.node()->GetParent()->value(prop_class_name);
+        tt_string class_name = code.node()->getParent()->as_string(prop_class_name);
         for (auto& line: lines)
         {
             line.Replace("%class%", class_name, true);

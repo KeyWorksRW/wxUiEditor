@@ -87,18 +87,18 @@ bool ImageHandler::UpdateEmbedNodes()
 
 bool ImageHandler::CheckNode(Node* node)
 {
-    if (node->IsFormParent())
+    if (node->isFormParent())
         return false;
 
     bool is_changed = false;
 
-    Node* node_form = node->get_form();
+    Node* node_form = node->getForm();
 
-    auto node_position = m_project_node->GetChildPosition(node_form);
+    auto node_position = m_project_node->getChildPosition(node_form);
 
-    for (auto& iter: node->get_props_vector())
+    for (auto& iter: node->getPropsVector())
     {
-        if ((iter.type() == type_image || iter.type() == type_animation) && iter.HasValue())
+        if ((iter.type() == type_image || iter.type() == type_animation) && iter.hasValue())
         {
             tt_view_vector parts(iter.as_string(), BMP_PROP_SEPARATOR, tt::TRIM::both);
             if (parts[IndexType] != "Embed" || parts.size() <= IndexImage)
@@ -127,7 +127,7 @@ bool ImageHandler::CheckNode(Node* node)
             }
             else
             {
-                auto child_pos = m_project_node->GetChildPosition(embed->form);
+                auto child_pos = m_project_node->getChildPosition(embed->form);
                 if (child_pos > node_position)
                 {
                     // The original embed->form is setup by parsing all of the nodes. However,
@@ -143,7 +143,7 @@ bool ImageHandler::CheckNode(Node* node)
         }
     }
 
-    for (const auto& child: node->GetChildNodePtrs())
+    for (const auto& child: node->getChildNodePtrs())
     {
         if (CheckNode(child.get()))
             is_changed = true;
@@ -292,7 +292,7 @@ bool ImageHandler::AddEmbeddedImage(tt_string path, Node* form, bool is_animatio
 
     if (!path.file_exists())
     {
-        if (m_project_node->HasValue(prop_art_directory))
+        if (m_project_node->hasValue(prop_art_directory))
         {
             tt_string art_path = m_project_node->as_string(prop_art_directory);
             art_path.append_filename(path);
@@ -534,7 +534,7 @@ void ImageHandler::CollectBundles()
     {
         CollectNodeBundles(form, form);
 
-        if (form->HasProp(prop_icon) && form->HasValue(prop_icon))
+        if (form->hasProp(prop_icon) && form->hasValue(prop_icon))
         {
             if (!m_bundles.contains(ConvertToLookup(form->as_string(prop_icon))))
             {
@@ -546,9 +546,9 @@ void ImageHandler::CollectBundles()
 
 void ImageHandler::CollectNodeBundles(Node* node, Node* form)
 {
-    for (auto& iter: node->get_props_vector())
+    for (auto& iter: node->getPropsVector())
     {
-        if (!iter.HasValue())
+        if (!iter.hasValue())
             continue;
 
         if (iter.type() == type_image)
@@ -575,7 +575,7 @@ void ImageHandler::CollectNodeBundles(Node* node, Node* form)
         }
     }
 
-    for (const auto& child: node->GetChildNodePtrs())
+    for (const auto& child: node->getChildNodePtrs())
     {
         CollectNodeBundles(child.get(), form);
     }
@@ -592,7 +592,7 @@ bool ImageHandler::AddNewEmbeddedBundle(const tt_string_vector& parts, tt_string
 
     if (!path.file_exists())
     {
-        if (m_project_node->HasValue(prop_art_directory))
+        if (m_project_node->hasValue(prop_art_directory))
         {
             tt_string art_path = m_project_node->as_string(prop_art_directory);
             art_path.append_filename(path);
@@ -840,7 +840,7 @@ ImageBundle* ImageHandler::ProcessBundleProperty(const tt_string_vector& parts, 
     }
     else if (parts[IndexType].contains("Embed"))
     {
-        if (AddNewEmbeddedBundle(parts, parts[IndexImage], node->get_form()))
+        if (AddNewEmbeddedBundle(parts, parts[IndexImage], node->getForm()))
         {
             return &m_bundles[lookup_str];
         }
@@ -851,7 +851,7 @@ ImageBundle* ImageHandler::ProcessBundleProperty(const tt_string_vector& parts, 
     }
     else if (parts[IndexType].contains("SVG"))
     {
-        if (AddNewEmbeddedBundle(parts, parts[IndexImage], node->get_form()))
+        if (AddNewEmbeddedBundle(parts, parts[IndexImage], node->getForm()))
         {
             return &m_bundles[lookup_str];
         }
@@ -877,7 +877,7 @@ ImageBundle* ImageHandler::ProcessBundleProperty(const tt_string_vector& parts, 
             path.Replace("_16x16.", "_24x24.");
             if (!path.file_exists())
             {
-                if (m_project_node->HasValue(prop_art_directory))
+                if (m_project_node->hasValue(prop_art_directory))
                 {
                     path = m_project_node->as_string(prop_art_directory);
                     path.append_filename(parts[IndexImage]);
@@ -906,7 +906,7 @@ ImageBundle* ImageHandler::ProcessBundleProperty(const tt_string_vector& parts, 
             path.Replace("_24x24.", "_36x36.");
             if (!path.file_exists())
             {
-                if (m_project_node->HasValue(prop_art_directory))
+                if (m_project_node->hasValue(prop_art_directory))
                 {
                     path = m_project_node->as_string(prop_art_directory);
                     path.append_filename(parts[IndexImage]);
@@ -938,7 +938,7 @@ ImageBundle* ImageHandler::ProcessBundleProperty(const tt_string_vector& parts, 
                 path.insert(pos, iter);
                 if (!path.file_exists())
                 {
-                    if (m_project_node->HasValue(prop_art_directory))
+                    if (m_project_node->hasValue(prop_art_directory))
                     {
                         tt_string tmp_path = m_project_node->as_string(prop_art_directory);
                         tmp_path.append_filename(path);
@@ -996,7 +996,7 @@ ImageBundle* ImageHandler::ProcessBundleProperty(const tt_string_vector& parts, 
 
 void ImageHandler::UpdateBundle(const tt_string_vector& parts, Node* node)
 {
-    if (parts.size() < 2 || node->IsFormParent())
+    if (parts.size() < 2 || node->isFormParent())
         return;
 
     tt_string lookup_str;
@@ -1011,7 +1011,7 @@ void ImageHandler::UpdateBundle(const tt_string_vector& parts, Node* node)
 
     if (result != m_bundles.end() && result->second.lst_filenames.size())
     {
-        auto form = node->get_form();
+        auto form = node->getForm();
         for (auto& iter: result->second.lst_filenames)
         {
             if (auto embed = GetEmbeddedImage(iter); embed)
@@ -1103,7 +1103,7 @@ wxAnimation ImageHandler::GetPropertyAnimation(const tt_string& description)
     tt_string path = parts[IndexImage];
     if (!path.file_exists())
     {
-        path = Project.value(prop_art_directory);
+        path = Project.as_string(prop_art_directory);
         path.append_filename(parts[IndexImage]);
     }
 
@@ -1228,7 +1228,7 @@ tt_string ImageHandler::GetBundleFuncName(const tt_string& description)
                 return name;
             }
 
-            for (const auto& child: form->GetChildNodePtrs())
+            for (const auto& child: form->getChildNodePtrs())
             {
                 tt_view_vector form_image_parts(child->as_string(prop_bitmap), BMP_PROP_SEPARATOR, tt::TRIM::both);
                 if (form_image_parts.size() < 2)

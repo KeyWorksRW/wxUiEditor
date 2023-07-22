@@ -79,7 +79,6 @@ protected:
 
     void ReselectItem();
 
-    void ModifyProperty(NodeProperty* prop, const wxString& str);
     void modifyProperty(NodeProperty* prop, tt_string_view str);
 
     void ModifyBitlistProperty(NodeProperty* node_prop, wxPGProperty* grid_prop);

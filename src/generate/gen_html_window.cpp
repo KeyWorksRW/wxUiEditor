@@ -23,7 +23,7 @@ wxObject* HtmlWindowGenerator::CreateMockup(Node* node, wxObject* parent)
     if (node->as_int(prop_html_borders) >= 0)
         widget->SetBorders(wxStaticCast(parent, wxWindow)->FromDIP(node->as_int(prop_html_borders)));
 
-    if (node->HasValue(prop_html_content))
+    if (node->hasValue(prop_html_content))
     {
         widget->SetPage(node->as_wxString(prop_html_content));
     }
@@ -31,7 +31,7 @@ wxObject* HtmlWindowGenerator::CreateMockup(Node* node, wxObject* parent)
 #if 0
     // These work, but can take a LONG time to actually load and display if the html file is large.
     // Note that the XRC preview does display the URL so the user can still preview it.
-    else if (node->HasValue(prop_html_url))
+    else if (node->hasValue(prop_html_url))
     {
         wxBusyInfo wait(wxBusyInfoFlags()
                             .Parent(wxStaticCast(parent, wxWindow))
@@ -40,7 +40,7 @@ wxObject* HtmlWindowGenerator::CreateMockup(Node* node, wxObject* parent)
         widget->LoadPage(node->as_wxString(prop_html_url));
     }
 #else
-    else if (node->HasValue(prop_html_url))
+    else if (node->hasValue(prop_html_url))
     {
         widget->SetPage(tt_string("Contents of<br>    ") << node->as_string(prop_html_url) << "<br>will be displayed here.");
     }
@@ -78,11 +78,11 @@ bool HtmlWindowGenerator::SettingsCode(Code& code)
         code.Str(prop_html_borders).Str(")").EndFunction();
     }
 
-    if (code.HasValue(prop_html_content))
+    if (code.hasValue(prop_html_content))
     {
         code.Eol(eol_if_needed).NodeName().Function("SetPage(").QuotedString(prop_html_content).EndFunction();
     }
-    else if (code.HasValue(prop_html_url))
+    else if (code.hasValue(prop_html_url))
     {
         code.Eol(eol_if_needed).NodeName().Function("SetPage(").QuotedString(prop_html_url).EndFunction();
     }
@@ -92,7 +92,7 @@ bool HtmlWindowGenerator::SettingsCode(Code& code)
 
 int HtmlWindowGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxHtmlWindow");
@@ -121,7 +121,7 @@ void HtmlWindowGenerator::RequiredHandlers(Node* /* node */, std::set<std::strin
 bool HtmlWindowGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
     InsertGeneratorInclude(node, "#include <wx/html/htmlwin.h>", set_src, set_hdr);
-    if (node->HasValue(prop_html_url))
+    if (node->hasValue(prop_html_url))
     {
         InsertGeneratorInclude(node, "#include <wx/filesys.h>", set_src, set_hdr);
     }

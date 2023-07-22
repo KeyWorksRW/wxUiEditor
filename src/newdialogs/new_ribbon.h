@@ -71,7 +71,7 @@ public:
     bool IsCreatable(bool notify_user = true);
 
     void WantFormVersion() { m_is_form = true; }
-    void CreateNode();
+    void createNode();
     void VerifyClassName();
 
 private:

@@ -251,25 +251,25 @@ void NewMdiForm::OnOK(wxCommandEvent& WXUNUSED(event))
     EndModal(wxID_OK);
 }
 
-void NewMdiForm::CreateNode()
+void NewMdiForm::createNode()
 {
-    auto folder = NodeCreation.CreateNode(gen_folder, nullptr);
+    auto folder = NodeCreation.createNode(gen_folder, nullptr);
     folder->set_value(prop_label, get_folder_name());
-    auto form_node = NodeCreation.CreateNode(gen_DocViewApp, folder.get());
+    auto form_node = NodeCreation.createNode(gen_DocViewApp, folder.get());
     ASSERT(form_node);
-    folder->Adopt(form_node);
+    folder->adoptChild(form_node);
 
     form_node->set_value(prop_class_name, get_app_class().utf8_string());
-    if (form_node->as_string(prop_class_name) != form_node->prop_default_value(prop_class_name))
+    if (form_node->as_string(prop_class_name) != form_node->getPropDefaultValue(prop_class_name))
     {
         UpdateFormClass(form_node.get());
     }
     if (m_view_type == "Text Control")
     {
-        auto doc_node = NodeCreation.CreateNode(gen_DocumentTextCtrl, folder.get());
+        auto doc_node = NodeCreation.createNode(gen_DocumentTextCtrl, folder.get());
         ASSERT(doc_node);
-        folder->Adopt(doc_node);
-        doc_node->set_value(prop_mdi_class_name, form_node->value(prop_class_name));
+        folder->adoptChild(doc_node);
+        doc_node->set_value(prop_mdi_class_name, form_node->as_string(prop_class_name));
         if (m_description.size())
         {
             doc_node->set_value(prop_template_description, m_description);
@@ -291,187 +291,187 @@ void NewMdiForm::CreateNode()
             doc_node->set_value(prop_template_doc_name, get_doc_class());
         }
 
-        auto frame_menu = NodeCreation.CreateNode(gen_MdiFrameMenuBar, doc_node.get());
+        auto frame_menu = NodeCreation.createNode(gen_MdiFrameMenuBar, doc_node.get());
         ASSERT(frame_menu);
 
-        auto file_menu = NodeCreation.CreateNode(gen_wxMenu, frame_menu.get());
+        auto file_menu = NodeCreation.createNode(gen_wxMenu, frame_menu.get());
         ASSERT(file_menu);
         file_menu->set_value(prop_stock_id, "wxID_FILE");
-        file_menu->set_value(prop_label, wxGetStockLabel(NodeCreation.GetConstantAsInt("wxID_FILE")));
+        file_menu->set_value(prop_label, wxGetStockLabel(NodeCreation.getConstantAsInt("wxID_FILE")));
 
-        auto menu_item = NodeCreation.CreateNode(gen_wxMenuItem, file_menu.get());
+        auto menu_item = NodeCreation.createNode(gen_wxMenuItem, file_menu.get());
         menu_item->set_value(prop_stock_id, "wxID_NEW");
         menu_item->set_value(prop_id, "wxID_NEW");
-        menu_item->set_value(prop_label, wxGetStockLabel(NodeCreation.GetConstantAsInt("wxID_NEW")));
-        menu_item->set_value(prop_help, wxGetStockHelpString(NodeCreation.GetConstantAsInt("wxID_NEW")));
+        menu_item->set_value(prop_label, wxGetStockLabel(NodeCreation.getConstantAsInt("wxID_NEW")));
+        menu_item->set_value(prop_help, wxGetStockHelpString(NodeCreation.getConstantAsInt("wxID_NEW")));
         menu_item->set_value(prop_bitmap, "Art;wxART_NEW|wxART_MENU");
-        file_menu->Adopt(menu_item);
+        file_menu->adoptChild(menu_item);
 
-        menu_item = NodeCreation.CreateNode(gen_wxMenuItem, file_menu.get());
+        menu_item = NodeCreation.createNode(gen_wxMenuItem, file_menu.get());
         menu_item->set_value(prop_stock_id, "wxID_OPEN");
         menu_item->set_value(prop_id, "wxID_OPEN");
-        menu_item->set_value(prop_label, wxGetStockLabel(NodeCreation.GetConstantAsInt("wxID_OPEN")));
-        menu_item->set_value(prop_help, wxGetStockHelpString(NodeCreation.GetConstantAsInt("wxID_OPEN")));
+        menu_item->set_value(prop_label, wxGetStockLabel(NodeCreation.getConstantAsInt("wxID_OPEN")));
+        menu_item->set_value(prop_help, wxGetStockHelpString(NodeCreation.getConstantAsInt("wxID_OPEN")));
         menu_item->set_value(prop_bitmap, "Art;wxART_FILE_OPEN|wxART_MENU");
-        file_menu->Adopt(menu_item);
+        file_menu->adoptChild(menu_item);
 
-        menu_item = NodeCreation.CreateNode(gen_separator, file_menu.get());
-        file_menu->Adopt(menu_item);
+        menu_item = NodeCreation.createNode(gen_separator, file_menu.get());
+        file_menu->adoptChild(menu_item);
 
-        menu_item = NodeCreation.CreateNode(gen_wxMenuItem, file_menu.get());
+        menu_item = NodeCreation.createNode(gen_wxMenuItem, file_menu.get());
         menu_item->set_value(prop_stock_id, "wxID_EXIT");
         menu_item->set_value(prop_id, "wxID_EXIT");
-        menu_item->set_value(prop_label, wxGetStockLabel(NodeCreation.GetConstantAsInt("wxID_EXIT")));
-        menu_item->set_value(prop_help, wxGetStockHelpString(NodeCreation.GetConstantAsInt("wxID_EXIT")));
+        menu_item->set_value(prop_label, wxGetStockLabel(NodeCreation.getConstantAsInt("wxID_EXIT")));
+        menu_item->set_value(prop_help, wxGetStockHelpString(NodeCreation.getConstantAsInt("wxID_EXIT")));
         menu_item->set_value(prop_bitmap, "Art;wxART_QUIT|wxART_MENU");
-        file_menu->Adopt(menu_item);
+        file_menu->adoptChild(menu_item);
 
-        auto help_menu = NodeCreation.CreateNode(gen_wxMenu, frame_menu.get());
+        auto help_menu = NodeCreation.createNode(gen_wxMenu, frame_menu.get());
         ASSERT(help_menu);
         help_menu->set_value(prop_stock_id, "wxID_HELP");
-        help_menu->set_value(prop_label, wxGetStockLabel(NodeCreation.GetConstantAsInt("wxID_HELP")));
+        help_menu->set_value(prop_label, wxGetStockLabel(NodeCreation.getConstantAsInt("wxID_HELP")));
 
-        menu_item = NodeCreation.CreateNode(gen_wxMenuItem, file_menu.get());
+        menu_item = NodeCreation.createNode(gen_wxMenuItem, file_menu.get());
         menu_item->set_value(prop_stock_id, "wxID_ABOUT");
         menu_item->set_value(prop_id, "wxID_ABOUT");
-        menu_item->set_value(prop_label, wxGetStockLabel(NodeCreation.GetConstantAsInt("wxID_ABOUT")));
-        menu_item->set_value(prop_help, wxGetStockHelpString(NodeCreation.GetConstantAsInt("wxID_ABOUT")));
-        help_menu->Adopt(menu_item);
+        menu_item->set_value(prop_label, wxGetStockLabel(NodeCreation.getConstantAsInt("wxID_ABOUT")));
+        menu_item->set_value(prop_help, wxGetStockHelpString(NodeCreation.getConstantAsInt("wxID_ABOUT")));
+        help_menu->adoptChild(menu_item);
 
-        frame_menu->Adopt(file_menu);
-        frame_menu->Adopt(help_menu);
+        frame_menu->adoptChild(file_menu);
+        frame_menu->adoptChild(help_menu);
 
-        doc_node->Adopt(frame_menu);
-        auto doc_menu = NodeCreation.CreateNode(gen_MdiDocMenuBar, doc_node.get());
+        doc_node->adoptChild(frame_menu);
+        auto doc_menu = NodeCreation.createNode(gen_MdiDocMenuBar, doc_node.get());
         ASSERT(doc_menu);
-        file_menu = NodeCreation.CreateNode(gen_wxMenu, doc_menu.get());
+        file_menu = NodeCreation.createNode(gen_wxMenu, doc_menu.get());
         ASSERT(file_menu);
         file_menu->set_value(prop_stock_id, "wxID_FILE");
-        file_menu->set_value(prop_label, wxGetStockLabel(NodeCreation.GetConstantAsInt("wxID_FILE")));
+        file_menu->set_value(prop_label, wxGetStockLabel(NodeCreation.getConstantAsInt("wxID_FILE")));
 
-        menu_item = NodeCreation.CreateNode(gen_wxMenuItem, file_menu.get());
+        menu_item = NodeCreation.createNode(gen_wxMenuItem, file_menu.get());
         menu_item->set_value(prop_stock_id, "wxID_NEW");
         menu_item->set_value(prop_id, "wxID_NEW");
-        menu_item->set_value(prop_label, wxGetStockLabel(NodeCreation.GetConstantAsInt("wxID_NEW")));
-        menu_item->set_value(prop_help, wxGetStockHelpString(NodeCreation.GetConstantAsInt("wxID_NEW")));
+        menu_item->set_value(prop_label, wxGetStockLabel(NodeCreation.getConstantAsInt("wxID_NEW")));
+        menu_item->set_value(prop_help, wxGetStockHelpString(NodeCreation.getConstantAsInt("wxID_NEW")));
         menu_item->set_value(prop_bitmap, "Art;wxART_NEW|wxART_MENU");
-        file_menu->Adopt(menu_item);
+        file_menu->adoptChild(menu_item);
 
-        menu_item = NodeCreation.CreateNode(gen_wxMenuItem, file_menu.get());
+        menu_item = NodeCreation.createNode(gen_wxMenuItem, file_menu.get());
         menu_item->set_value(prop_stock_id, "wxID_OPEN");
         menu_item->set_value(prop_id, "wxID_OPEN");
-        menu_item->set_value(prop_label, wxGetStockLabel(NodeCreation.GetConstantAsInt("wxID_OPEN")));
-        menu_item->set_value(prop_help, wxGetStockHelpString(NodeCreation.GetConstantAsInt("wxID_OPEN")));
+        menu_item->set_value(prop_label, wxGetStockLabel(NodeCreation.getConstantAsInt("wxID_OPEN")));
+        menu_item->set_value(prop_help, wxGetStockHelpString(NodeCreation.getConstantAsInt("wxID_OPEN")));
         menu_item->set_value(prop_bitmap, "Art;wxART_FILE_OPEN|wxART_MENU");
-        file_menu->Adopt(menu_item);
+        file_menu->adoptChild(menu_item);
 
-        menu_item = NodeCreation.CreateNode(gen_wxMenuItem, file_menu.get());
+        menu_item = NodeCreation.createNode(gen_wxMenuItem, file_menu.get());
         menu_item->set_value(prop_stock_id, "wxID_SAVE");
         menu_item->set_value(prop_id, "wxID_SAVE");
-        menu_item->set_value(prop_label, wxGetStockLabel(NodeCreation.GetConstantAsInt("wxID_SAVE")));
-        menu_item->set_value(prop_help, wxGetStockHelpString(NodeCreation.GetConstantAsInt("wxID_SAVE")));
+        menu_item->set_value(prop_label, wxGetStockLabel(NodeCreation.getConstantAsInt("wxID_SAVE")));
+        menu_item->set_value(prop_help, wxGetStockHelpString(NodeCreation.getConstantAsInt("wxID_SAVE")));
         menu_item->set_value(prop_bitmap, "Art;wxART_FILE_SAVE|wxART_MENU");
-        file_menu->Adopt(menu_item);
+        file_menu->adoptChild(menu_item);
 
-        menu_item = NodeCreation.CreateNode(gen_wxMenuItem, file_menu.get());
+        menu_item = NodeCreation.createNode(gen_wxMenuItem, file_menu.get());
         menu_item->set_value(prop_stock_id, "wxID_SAVEAS");
         menu_item->set_value(prop_id, "wxID_SAVEAS");
-        menu_item->set_value(prop_label, wxGetStockLabel(NodeCreation.GetConstantAsInt("wxID_SAVEAS")));
-        menu_item->set_value(prop_help, wxGetStockHelpString(NodeCreation.GetConstantAsInt("wxID_SAVEAS")));
+        menu_item->set_value(prop_label, wxGetStockLabel(NodeCreation.getConstantAsInt("wxID_SAVEAS")));
+        menu_item->set_value(prop_help, wxGetStockHelpString(NodeCreation.getConstantAsInt("wxID_SAVEAS")));
         menu_item->set_value(prop_bitmap, "Art;wxART_FILE_SAVE_AS|wxART_MENU");
-        file_menu->Adopt(menu_item);
+        file_menu->adoptChild(menu_item);
 
-        menu_item = NodeCreation.CreateNode(gen_separator, file_menu.get());
-        file_menu->Adopt(menu_item);
+        menu_item = NodeCreation.createNode(gen_separator, file_menu.get());
+        file_menu->adoptChild(menu_item);
 
-        menu_item = NodeCreation.CreateNode(gen_wxMenuItem, file_menu.get());
+        menu_item = NodeCreation.createNode(gen_wxMenuItem, file_menu.get());
         menu_item->set_value(prop_stock_id, "wxID_PRINT");
         menu_item->set_value(prop_id, "wxID_PRINT");
-        menu_item->set_value(prop_label, wxGetStockLabel(NodeCreation.GetConstantAsInt("wxID_PRINT")));
-        menu_item->set_value(prop_help, wxGetStockHelpString(NodeCreation.GetConstantAsInt("wxID_PRINT")));
+        menu_item->set_value(prop_label, wxGetStockLabel(NodeCreation.getConstantAsInt("wxID_PRINT")));
+        menu_item->set_value(prop_help, wxGetStockHelpString(NodeCreation.getConstantAsInt("wxID_PRINT")));
         menu_item->set_value(prop_bitmap, "Art;wxART_PRINT|wxART_MENU");
-        file_menu->Adopt(menu_item);
+        file_menu->adoptChild(menu_item);
 
-        menu_item = NodeCreation.CreateNode(gen_separator, file_menu.get());
-        file_menu->Adopt(menu_item);
+        menu_item = NodeCreation.createNode(gen_separator, file_menu.get());
+        file_menu->adoptChild(menu_item);
 
-        menu_item = NodeCreation.CreateNode(gen_wxMenuItem, file_menu.get());
+        menu_item = NodeCreation.createNode(gen_wxMenuItem, file_menu.get());
         menu_item->set_value(prop_stock_id, "wxID_CLOSE");
         menu_item->set_value(prop_id, "wxID_CLOSE");
-        menu_item->set_value(prop_label, wxGetStockLabel(NodeCreation.GetConstantAsInt("wxID_CLOSE")));
-        menu_item->set_value(prop_help, wxGetStockHelpString(NodeCreation.GetConstantAsInt("wxID_CLOSE")));
+        menu_item->set_value(prop_label, wxGetStockLabel(NodeCreation.getConstantAsInt("wxID_CLOSE")));
+        menu_item->set_value(prop_help, wxGetStockHelpString(NodeCreation.getConstantAsInt("wxID_CLOSE")));
         menu_item->set_value(prop_bitmap, "Art;wxART_CLOSE|wxART_MENU");
-        file_menu->Adopt(menu_item);
+        file_menu->adoptChild(menu_item);
 
-        menu_item = NodeCreation.CreateNode(gen_wxMenuItem, file_menu.get());
+        menu_item = NodeCreation.createNode(gen_wxMenuItem, file_menu.get());
         menu_item->set_value(prop_stock_id, "wxID_EXIT");
         menu_item->set_value(prop_id, "wxID_EXIT");
-        menu_item->set_value(prop_label, wxGetStockLabel(NodeCreation.GetConstantAsInt("wxID_EXIT")));
-        menu_item->set_value(prop_help, wxGetStockHelpString(NodeCreation.GetConstantAsInt("wxID_EXIT")));
+        menu_item->set_value(prop_label, wxGetStockLabel(NodeCreation.getConstantAsInt("wxID_EXIT")));
+        menu_item->set_value(prop_help, wxGetStockHelpString(NodeCreation.getConstantAsInt("wxID_EXIT")));
         menu_item->set_value(prop_bitmap, "Art;wxART_QUIT|wxART_MENU");
-        file_menu->Adopt(menu_item);
+        file_menu->adoptChild(menu_item);
 
-        auto edit_menu = NodeCreation.CreateNode(gen_wxMenu, doc_menu.get());
+        auto edit_menu = NodeCreation.createNode(gen_wxMenu, doc_menu.get());
         ASSERT(edit_menu);
         edit_menu->set_value(prop_stock_id, "wxID_EDIT");
-        edit_menu->set_value(prop_label, wxGetStockLabel(NodeCreation.GetConstantAsInt("wxID_EDIT")));
+        edit_menu->set_value(prop_label, wxGetStockLabel(NodeCreation.getConstantAsInt("wxID_EDIT")));
 
-        menu_item = NodeCreation.CreateNode(gen_wxMenuItem, file_menu.get());
+        menu_item = NodeCreation.createNode(gen_wxMenuItem, file_menu.get());
         menu_item->set_value(prop_stock_id, "wxID_CUT");
         menu_item->set_value(prop_id, "wxID_CUT");
-        menu_item->set_value(prop_label, wxGetStockLabel(NodeCreation.GetConstantAsInt("wxID_CUT")));
-        menu_item->set_value(prop_help, wxGetStockHelpString(NodeCreation.GetConstantAsInt("wxID_CUT")));
+        menu_item->set_value(prop_label, wxGetStockLabel(NodeCreation.getConstantAsInt("wxID_CUT")));
+        menu_item->set_value(prop_help, wxGetStockHelpString(NodeCreation.getConstantAsInt("wxID_CUT")));
         menu_item->set_value(prop_bitmap, "Art;wxART_CUT|wxART_MENU");
-        edit_menu->Adopt(menu_item);
+        edit_menu->adoptChild(menu_item);
 
-        menu_item = NodeCreation.CreateNode(gen_wxMenuItem, file_menu.get());
+        menu_item = NodeCreation.createNode(gen_wxMenuItem, file_menu.get());
         menu_item->set_value(prop_stock_id, "wxID_COPY");
         menu_item->set_value(prop_id, "wxID_COPY");
-        menu_item->set_value(prop_label, wxGetStockLabel(NodeCreation.GetConstantAsInt("wxID_COPY")));
-        menu_item->set_value(prop_help, wxGetStockHelpString(NodeCreation.GetConstantAsInt("wxID_COPY")));
+        menu_item->set_value(prop_label, wxGetStockLabel(NodeCreation.getConstantAsInt("wxID_COPY")));
+        menu_item->set_value(prop_help, wxGetStockHelpString(NodeCreation.getConstantAsInt("wxID_COPY")));
         menu_item->set_value(prop_bitmap, "Art;wxART_COPY|wxART_MENU");
-        edit_menu->Adopt(menu_item);
+        edit_menu->adoptChild(menu_item);
 
-        menu_item = NodeCreation.CreateNode(gen_wxMenuItem, file_menu.get());
+        menu_item = NodeCreation.createNode(gen_wxMenuItem, file_menu.get());
         menu_item->set_value(prop_stock_id, "wxID_PASTE");
         menu_item->set_value(prop_id, "wxID_PASTE");
-        menu_item->set_value(prop_label, wxGetStockLabel(NodeCreation.GetConstantAsInt("wxID_PASTE")));
-        menu_item->set_value(prop_help, wxGetStockHelpString(NodeCreation.GetConstantAsInt("wxID_PASTE")));
+        menu_item->set_value(prop_label, wxGetStockLabel(NodeCreation.getConstantAsInt("wxID_PASTE")));
+        menu_item->set_value(prop_help, wxGetStockHelpString(NodeCreation.getConstantAsInt("wxID_PASTE")));
         menu_item->set_value(prop_bitmap, "Art;wxID_PASTE|wxART_MENU");
-        edit_menu->Adopt(menu_item);
+        edit_menu->adoptChild(menu_item);
 
-        menu_item = NodeCreation.CreateNode(gen_separator, file_menu.get());
-        edit_menu->Adopt(menu_item);
+        menu_item = NodeCreation.createNode(gen_separator, file_menu.get());
+        edit_menu->adoptChild(menu_item);
 
-        menu_item = NodeCreation.CreateNode(gen_wxMenuItem, file_menu.get());
+        menu_item = NodeCreation.createNode(gen_wxMenuItem, file_menu.get());
         menu_item->set_value(prop_stock_id, "wxID_SELECTALL");
         menu_item->set_value(prop_id, "wxID_SELECTALL");
-        menu_item->set_value(prop_label, wxGetStockLabel(NodeCreation.GetConstantAsInt("wxID_SELECTALL")));
-        menu_item->set_value(prop_help, wxGetStockHelpString(NodeCreation.GetConstantAsInt("wxID_SELECTALL")));
+        menu_item->set_value(prop_label, wxGetStockLabel(NodeCreation.getConstantAsInt("wxID_SELECTALL")));
+        menu_item->set_value(prop_help, wxGetStockHelpString(NodeCreation.getConstantAsInt("wxID_SELECTALL")));
         menu_item->set_value(prop_bitmap, "Art;wxART_PASTE|wxART_MENU");
-        edit_menu->Adopt(menu_item);
+        edit_menu->adoptChild(menu_item);
 
-        help_menu = NodeCreation.CreateNode(gen_wxMenu, doc_menu.get());
+        help_menu = NodeCreation.createNode(gen_wxMenu, doc_menu.get());
         ASSERT(help_menu);
         help_menu->set_value(prop_label, "wxID_HELP");
         help_menu->set_value(prop_stock_id, "wxID_HELP");
 
-        menu_item = NodeCreation.CreateNode(gen_wxMenuItem, file_menu.get());
+        menu_item = NodeCreation.createNode(gen_wxMenuItem, file_menu.get());
         menu_item->set_value(prop_stock_id, "wxID_ABOUT");
         menu_item->set_value(prop_id, "wxID_ABOUT");
-        menu_item->set_value(prop_label, wxGetStockLabel(NodeCreation.GetConstantAsInt("wxID_ABOUT")));
-        menu_item->set_value(prop_help, wxGetStockHelpString(NodeCreation.GetConstantAsInt("wxID_ABOUT")));
-        help_menu->Adopt(menu_item);
+        menu_item->set_value(prop_label, wxGetStockLabel(NodeCreation.getConstantAsInt("wxID_ABOUT")));
+        menu_item->set_value(prop_help, wxGetStockHelpString(NodeCreation.getConstantAsInt("wxID_ABOUT")));
+        help_menu->adoptChild(menu_item);
 
-        doc_menu->Adopt(file_menu);
-        doc_menu->Adopt(edit_menu);
-        doc_menu->Adopt(help_menu);
+        doc_menu->adoptChild(file_menu);
+        doc_menu->adoptChild(edit_menu);
+        doc_menu->adoptChild(help_menu);
 
-        doc_node->Adopt(doc_menu);
-        auto view = NodeCreation.CreateNode(gen_ViewTextCtrl, folder.get());
+        doc_node->adoptChild(doc_menu);
+        auto view = NodeCreation.createNode(gen_ViewTextCtrl, folder.get());
         ASSERT(view);
-        view->set_value(prop_mdi_doc_name, doc_node->value(prop_class_name));
-        folder->Adopt(view);
+        view->set_value(prop_mdi_doc_name, doc_node->as_string(prop_class_name));
+        folder->adoptChild(view);
     }
 
     auto parent_node = wxGetFrame().GetSelectedNode();
@@ -481,7 +481,7 @@ void NewMdiForm::CreateNode()
     }
     else
     {
-        parent_node = parent_node->get_ValidFormParent();
+        parent_node = parent_node->getValidFormParent();
     }
 
     wxGetFrame().SelectNode(parent_node);

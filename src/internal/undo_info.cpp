@@ -106,14 +106,14 @@ void UndoInfo::OnInit(wxInitDialogEvent& event)
         ++node_memory.children;
         if (node.use_count() <= ref_count)
         {
-            node_memory.size += node->GetNodeSize();
+            node_memory.size += node->getNodeSize();
         }
 
-        for (const auto& iter: node->GetChildNodePtrs())
+        for (const auto& iter: node->getChildNodePtrs())
         {
             // Assume that each child will have a shared ptr to the parent which will increase
             // it's reference count by 1.
-            long add_ref_count = static_cast<long>(iter->GetChildCount());
+            long add_ref_count = static_cast<long>(iter->getChildCount());
 
             // An orphaned node will have a ref count of 1 -- add one to pass this to the
             // CalcMemory function.
@@ -141,16 +141,16 @@ void UndoInfo::OnInit(wxInitDialogEvent& event)
                 {
                     // Assume that each child will have a shared ptr to the parent which will increase
                     // it's reference count by 1.
-                    long add_ref_count = static_cast<long>(old_node->GetChildCount());
+                    long add_ref_count = static_cast<long>(old_node->getChildCount());
 
                     CalcMemory(old_node, add_ref_count + 3, CalcMemory);
                 }
                 node_memory.size += iter->GetMemorySize();
             }
-            else if (const auto& node = iter->GetNode(); node)
+            else if (const auto& node = iter->getNode(); node)
             {
                 // An orphaned node will have an additional 2 reference counts at this point. 1 for
-                // iter->GetNode() in the function that called us, and one for passing the parameter to
+                // iter->getNode() in the function that called us, and one for passing the parameter to
                 // this function. An additional ref count is added by calling CalcMemory.
                 CalcMemory(node, 3, CalcMemory);
                 node_memory.size += iter->GetMemorySize();

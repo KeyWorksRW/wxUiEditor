@@ -35,14 +35,14 @@ PropertyGrid_Image::PropertyGrid_Image(const wxString& label, NodeProperty* prop
 {
     m_img_props.node_property = prop;
     m_value = prop->as_wxString();
-    if (prop->HasValue())
+    if (prop->hasValue())
     {
         m_img_props.InitValues(prop->as_string());
     }
 
     wxPGChoices types;
 
-    if (prop->GetNode()->isGen(gen_embedded_image))
+    if (prop->getNode()->isGen(gen_embedded_image))
     {
         types.Add(s_type_names[1]);  // Embed
         types.Add(s_type_names[2]);  // SVG
@@ -186,7 +186,7 @@ void PropertyGrid_Image::SetAutoComplete()
     }
     else
     {
-        auto art_dir = Project.value(prop_art_directory);
+        auto art_dir = Project.as_string(prop_art_directory);
         if (art_dir.empty())
             art_dir = "./";
         wxDir dir;

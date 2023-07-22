@@ -50,7 +50,7 @@ bool StaticBitmapGenerator::ConstructionCode(Code& code)
     }
     else
     {
-        if (code.HasValue(prop_bitmap))
+        if (code.hasValue(prop_bitmap))
         {
             bool is_list_created = PythonBitmapList(code, prop_bitmap);
             code.NodeName().CreateClass().ValidParentName().Comma().as_string(prop_id).Comma();
@@ -87,7 +87,7 @@ void StaticBitmapGenerator::GenCppConstruction(Code& gen_code)
 {
     Node* node = gen_code.node();
     tt_string& code = gen_code.GetCode();
-    if (node->HasValue(prop_bitmap))
+    if (node->hasValue(prop_bitmap))
     {
         auto& description = node->as_string(prop_bitmap);
         bool is_vector_code = GenerateVectorCode(description, code);
@@ -98,7 +98,7 @@ void StaticBitmapGenerator::GenCppConstruction(Code& gen_code)
             gen_code.Tab();
         }
 
-        if (node->IsLocal())
+        if (node->isLocal())
             code << "auto* ";
 
         bool use_generic_version = (node->as_string(prop_scale_mode) != "None");
@@ -112,14 +112,14 @@ void StaticBitmapGenerator::GenCppConstruction(Code& gen_code)
         if (!is_vector_code)
         {
             tt_string bundle_code;
-            if (Project.value(prop_wxWidgets_version) != "3.1")
+            if (Project.as_string(prop_wxWidgets_version) != "3.1")
             {
                 GenerateBundleCode(description, bundle_code);
                 code << bundle_code;
             }
             else
             {
-                if (Project.value(prop_wxWidgets_version) == "3.1")
+                if (Project.as_string(prop_wxWidgets_version) == "3.1")
                 {
                     code.insert(0, "\t");
                     code += "\n#if wxCHECK_VERSION(3, 1, 6)\n\t\t";
@@ -146,7 +146,7 @@ void StaticBitmapGenerator::GenCppConstruction(Code& gen_code)
         }
         else
         {
-            if (Project.value(prop_wxWidgets_version) != "3.1")
+            if (Project.as_string(prop_wxWidgets_version) != "3.1")
             {
                 code += "wxBitmapBundle::FromBitmaps(bitmaps)";
             }
@@ -176,7 +176,7 @@ void StaticBitmapGenerator::GenCppConstruction(Code& gen_code)
     }
     else
     {
-        if (node->IsLocal())
+        if (node->isLocal())
             code << "auto* ";
 
         bool use_generic_version = (node->as_string(prop_scale_mode) != "None");
@@ -226,7 +226,7 @@ bool StaticBitmapGenerator::GetIncludes(Node* node, std::set<std::string>& set_s
 
 int StaticBitmapGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxStaticBitmap");
@@ -237,7 +237,7 @@ int StaticBitmapGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size
 
     if (xrc_flags & xrc::add_comments)
     {
-        if (node->HasValue(prop_scale_mode) && node->as_string(prop_scale_mode) != "None")
+        if (node->hasValue(prop_scale_mode) && node->as_string(prop_scale_mode) != "None")
         {
             item.append_child(pugi::node_comment).set_value(" scale mode cannot be be set in the XRC file. ");
         }
@@ -256,7 +256,7 @@ void StaticBitmapGenerator::RequiredHandlers(Node* /* node */, std::set<std::str
 
 static void GeneratePosSizeFlags(Node* node, tt_string& code, bool uses_def_validator, tt_string_view def_style)
 {
-    if (node->HasValue(prop_window_name))
+    if (node->hasValue(prop_window_name))
     {
         // Window name is always the last parameter, so if it is specified, everything has to be generated.
         if (code.size() < 80)
@@ -309,7 +309,7 @@ static void GeneratePosSizeFlags(Node* node, tt_string& code, bool uses_def_vali
         isSizeSet = true;
     }
 
-    if (node->HasValue(prop_window_style) && !node->as_string(prop_window_style).is_sameas("wxTAB_TRAVERSAL"))
+    if (node->hasValue(prop_window_style) && !node->as_string(prop_window_style).is_sameas("wxTAB_TRAVERSAL"))
     {
         if (!isPosSet)
             code << ", wxDefaultPosition";

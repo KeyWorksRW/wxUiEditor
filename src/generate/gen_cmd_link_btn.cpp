@@ -28,29 +28,29 @@ wxObject* CommandLinkBtnGenerator::CreateMockup(Node* node, wxObject* parent)
     if (node->as_bool(prop_auth_needed))
         widget->SetAuthNeeded();
 
-    if (node->HasValue(prop_bitmap))
+    if (node->hasValue(prop_bitmap))
     {
         widget->SetBitmap(node->as_wxBitmapBundle(prop_bitmap));
 
-        if (node->HasValue(prop_disabled_bmp))
+        if (node->hasValue(prop_disabled_bmp))
             widget->SetBitmapDisabled(node->as_wxBitmapBundle(prop_disabled_bmp));
 
-        if (node->HasValue(prop_pressed_bmp))
+        if (node->hasValue(prop_pressed_bmp))
             widget->SetBitmapPressed(node->as_wxBitmapBundle(prop_pressed_bmp));
 
-        if (node->HasValue(prop_focus_bmp))
+        if (node->hasValue(prop_focus_bmp))
             widget->SetBitmapFocus(node->as_wxBitmapBundle(prop_focus_bmp));
 
-        if (node->HasValue(prop_current))
+        if (node->hasValue(prop_current))
             widget->SetBitmapCurrent(node->as_wxBitmapBundle(prop_current));
 
 #if 0
         // REVIEW: [KeyWorks - 05-30-2022] As of 3.1.7, these don't work property on Windows 10.
 
-        if (node->HasValue(prop_position))
+        if (node->hasValue(prop_position))
             widget->SetBitmapPosition(static_cast<wxDirection>(node->as_int(prop_position)));
 
-        if (node->HasValue(prop_margins))
+        if (node->hasValue(prop_margins))
             widget->SetBitmapMargins(node->as_wxSize(prop_margins));
 #endif
     }
@@ -83,7 +83,7 @@ bool CommandLinkBtnGenerator::SettingsCode(Code& code)
         code.Eol(eol_if_needed).NodeName().Function("SetAuthNeeded(").EndFunction();
     }
 
-    if (code.HasValue(prop_bitmap))
+    if (code.hasValue(prop_bitmap))
     {
         if (code.is_cpp())
             GenBtnBimapCode(code.node(), code);
@@ -101,7 +101,7 @@ bool CommandLinkBtnGenerator::GetIncludes(Node* node, std::set<std::string>& set
 
 int CommandLinkBtnGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxCommandLinkButton");

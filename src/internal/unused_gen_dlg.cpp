@@ -72,14 +72,14 @@ void FindGenerators(Node* node, std::unordered_set<std::string, str_view_hash, s
         return;
     if (!node->isGen(gen_folder) && !node->isGen(gen_sub_folder) && !node->isGen(gen_Images))
     {
-        if (!used.contains(map_GenNames[node->gen_name()]))
+        if (!used.contains(map_GenNames[node->getGenName()]))
         {
-            used.emplace(map_GenNames[node->gen_name()]);
+            used.emplace(map_GenNames[node->getGenName()]);
         }
     }
-    if (node->GetChildCount())
+    if (node->getChildCount())
     {
-        for (auto& child: node->GetChildNodePtrs())
+        for (auto& child: node->getChildNodePtrs())
         {
             FindGenerators(child.get(), used);
         }
@@ -143,7 +143,7 @@ void UnusedGenerators::OnInit(wxInitDialogEvent& event)
 {
     std::unordered_set<std::string, str_view_hash, std::equal_to<>> used;
 
-    for (const auto& child: Project.ProjectNode()->GetChildNodePtrs())
+    for (const auto& child: Project.ProjectNode()->getChildNodePtrs())
     {
         FindGenerators(child.get(), used);
     }

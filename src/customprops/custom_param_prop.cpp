@@ -24,10 +24,10 @@ class EditParamDialog : public EditStringDialogBase
 public:
     EditParamDialog(wxWindow* parent, NodeProperty* prop) : EditStringDialogBase(parent)
     {
-        SetTitle(tt_string() << prop->DeclName() << " property editor");
+        SetTitle(tt_string() << prop->declName() << " property editor");
         m_value = prop->as_wxString();
         m_static_hdr_text->Show();
-        m_node = prop->GetNode();
+        m_node = prop->getNode();
         m_prop = prop;
 
         m_textCtrl->Bind(wxEVT_TEXT, &EditParamDialog::UpdateStaticText, this);

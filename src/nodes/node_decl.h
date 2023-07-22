@@ -35,30 +35,30 @@ class NodeDeclaration
 public:
     NodeDeclaration(tt_string_view class_name, NodeType* type);
 
-    // This will delete m_generator which was created by NodeCreator::InitGenerators()
+    // This will delete m_generator which was created by NodeCreator::initGenerators()
     ~NodeDeclaration();
 
     NodeCategory& GetCategory() { return m_category; }
 
-    size_t GetPropertyCount() const { return m_properties.size(); }
-    size_t GetEventCount() const { return m_events.size(); }
+    size_t getPropertyCount() const { return m_properties.size(); }
+    size_t getEventCount() const { return m_events.size(); }
 
-    PropDeclaration* GetPropDeclaration(size_t idx) const;
+    PropDeclaration* getPropDeclaration(size_t idx) const;
 
-    NodeEventInfo* GetEventInfo(tt_string_view name);
-    const NodeEventInfo* GetEventInfo(size_t idx) const;
+    NodeEventInfo* getEventInfo(tt_string_view name);
+    const NodeEventInfo* getEventInfo(size_t idx) const;
 
     PropDeclarationMap& GetPropInfoMap() { return m_properties; }
 
-    NodeType* GetNodeType() const { return m_type; }
+    NodeType* getNodeType() const { return m_type; }
 
-    GenType gen_type() const noexcept { return m_gen_type; }
-    GenName gen_name() const noexcept { return m_gen_name; }
+    GenType getGenType() const noexcept { return m_gen_type; }
+    GenName getGenName() const noexcept { return m_gen_name; }
 
     bool isType(GenType type) const noexcept { return (type == m_gen_type); }
     bool isGen(GenName name) const noexcept { return (name == m_gen_name); }
 
-    tt_string_view DeclName() const noexcept { return tt_string_view(m_name); }
+    tt_string_view declName() const noexcept { return tt_string_view(m_name); }
 
     size_t AddBaseClass(NodeDeclaration* base)
     {
@@ -79,14 +79,14 @@ public:
     wxImage GetImage() const { return m_image; }
 
     void SetGenerator(BaseGenerator* generator) { m_generator = generator; }
-    BaseGenerator* GetGenerator() const { return m_generator; }
+    BaseGenerator* getGenerator() const { return m_generator; }
 
     void ParseEvents(pugi::xml_node& elem_obj, NodeCategory& category);
 
     const tt_string& GetGeneratorFlags() { return m_internal_flags; }
     void SetGeneratorFlags(std::string_view flags) { m_internal_flags = flags; }
 
-    ptrdiff_t GetAllowableChildren(GenType child_gen_type) const;
+    ptrdiff_t getAllowableChildren(GenType child_gen_type) const;
 
     void SetOverRideDefValue(GenEnum::PropName prop_name, std::string_view new_value)
     {
@@ -114,7 +114,7 @@ private:
 
     std::vector<NodeDeclaration*> m_base;  // base classes
 
-    // Created by NodeCreator::InitGenerators(), destroyed by ~NodeDeclaration()
+    // Created by NodeCreator::initGenerators(), destroyed by ~NodeDeclaration()
     BaseGenerator* m_generator { nullptr };
 
     GenName m_gen_name;

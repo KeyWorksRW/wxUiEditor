@@ -33,11 +33,11 @@ bool CustomControl::ConstructionCode(Code& code)
 {
     code.AddAuto().NodeName();
     code.Str(" = ").AddIfCpp("new ");
-    if (code.HasValue(prop_namespace) && code.is_cpp())
+    if (code.hasValue(prop_namespace) && code.is_cpp())
         code.Str(prop_namespace) += "::";
 
     tt_string parameters(code.view(prop_parameters));
-    parameters.Replace("${parent}", code.node()->get_parent_name(), tt::REPLACE::all);
+    parameters.Replace("${parent}", code.node()->getParentName(), tt::REPLACE::all);
     if (code.is_cpp())
     {
         parameters.Replace("self", "this", tt::REPLACE::all);
@@ -87,7 +87,7 @@ bool CustomControl::ConstructionCode(Code& code)
 
 bool CustomControl::SettingsCode(Code& code)
 {
-    if (code.HasValue(prop_settings_code))
+    if (code.hasValue(prop_settings_code))
     {
         // Unless the code is fairly simple, it's not really practical to have one settings
         // section that works for both C++ and Python. We do, however, make some basic
@@ -113,7 +113,7 @@ bool CustomControl::SettingsCode(Code& code)
 
 int CustomControl::GenXrcObject(Node* node, pugi::xml_node& object, size_t /* xrc_flags */)
 {
-    auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "unknown");
@@ -125,14 +125,14 @@ int CustomControl::GenXrcObject(Node* node, pugi::xml_node& object, size_t /* xr
 
 bool CustomControl::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
-    if (node->HasValue(prop_header))
+    if (node->hasValue(prop_header))
     {
         set_src.insert(tt_string() << "#include \"" << node->as_string(prop_header) << '"');
     }
 
-    if (node->as_string(prop_class_access) != "none" && node->HasValue(prop_class_name))
+    if (node->as_string(prop_class_access) != "none" && node->hasValue(prop_class_name))
     {
-        if (node->HasValue(prop_namespace))
+        if (node->hasValue(prop_namespace))
         {
             set_hdr.insert(tt_string("namespace ") << node->as_string(prop_namespace) << "\n{\n\t"
                                                    << "class " << node->as_string(prop_class_name) << ";\n}");

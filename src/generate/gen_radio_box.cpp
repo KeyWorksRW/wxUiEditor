@@ -66,7 +66,7 @@ bool RadioBoxGenerator::ConstructionCode(Code& code)
     tt_string choice_name;
     if (code.is_cpp() && array.size())
     {
-        choice_name = (code.node()->get_node_name());
+        choice_name = (code.node()->getNodeName());
         if (choice_name.starts_with("m_"))
             choice_name.erase(0, 2);
         choice_name << "_choices";
@@ -105,7 +105,7 @@ bool RadioBoxGenerator::ConstructionCode(Code& code)
     }
     code.Comma().CheckLineLength(3).Str(prop_majorDimension);
     code.Comma().Style("rb_");
-    if (code.HasValue(prop_window_name))
+    if (code.hasValue(prop_window_name))
     {
         code.Comma().Str("wxDefaultValidator").Comma().QuotedString(prop_window_name);
     }
@@ -138,7 +138,7 @@ bool RadioBoxGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, 
 
 int RadioBoxGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxRadioBox");
@@ -147,7 +147,7 @@ int RadioBoxGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t x
     ADD_ITEM_PROP(prop_majorDimension, "dimension")
     ADD_ITEM_PROP(prop_selection, "selection")
 
-    if (node->HasValue(prop_contents))
+    if (node->hasValue(prop_contents))
     {
         auto content = item.append_child("content");
         auto array = node->as_ArrayString(prop_contents);
@@ -157,7 +157,7 @@ int RadioBoxGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t x
         }
     }
 
-    GenXrcPreStylePosSize(node, item, (node->value(prop_style) == "columns") ? "wxRA_HORIZONTAL" : "wxRA_VERTICAL");
+    GenXrcPreStylePosSize(node, item, (node->as_string(prop_style) == "columns") ? "wxRA_HORIZONTAL" : "wxRA_VERTICAL");
     GenXrcWindowSettings(node, item);
 
     if (xrc_flags & xrc::add_comments)

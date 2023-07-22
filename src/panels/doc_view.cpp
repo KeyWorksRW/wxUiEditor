@@ -170,7 +170,7 @@ void DocViewPanel::OnCPlus(wxCommandEvent& /* event */)
     m_language = GEN_LANG_CPLUSPLUS;
     if (auto* cur_sel = m_mainframe->GetSelectedNode(); cur_sel)
     {
-        if (auto* gen = cur_sel->GetGenerator(); gen)
+        if (auto* gen = cur_sel->getGenerator(); gen)
         {
             if (auto file = gen->GetHelpURL(cur_sel); file.size())
             {
@@ -193,7 +193,7 @@ void DocViewPanel::OnPython(wxCommandEvent& /* event */)
     m_language = GEN_LANG_PYTHON;
     if (auto* cur_sel = m_mainframe->GetSelectedNode(); cur_sel)
     {
-        if (auto* gen = cur_sel->GetGenerator(); gen)
+        if (auto* gen = cur_sel->getGenerator(); gen)
         {
             if (auto file = gen->GetPythonURL(cur_sel); file.size())
             {
@@ -216,7 +216,7 @@ void DocViewPanel::OnRuby(wxCommandEvent& /* event */)
     m_language = GEN_LANG_RUBY;
     if (auto* cur_sel = m_mainframe->GetSelectedNode(); cur_sel)
     {
-        if (auto* gen = cur_sel->GetGenerator(); gen)
+        if (auto* gen = cur_sel->getGenerator(); gen)
         {
             if (auto file = gen->GetRubyURL(cur_sel); file.size())
             {

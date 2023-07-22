@@ -44,7 +44,7 @@ protected:
 
     bool CreateFormNode(pugi::xml_node& form_xml, const NodeSharedPtr& parent);
     bool CreateFolderNode(pugi::xml_node& form_xml, const NodeSharedPtr& parent);
-    void CreateChildNode(pugi::xml_node& child_node, Node* parent);
+    void createChildNode(pugi::xml_node& child_node, Node* parent);
 
     // Process all the style-like attributes for the current node
     void ProcessStyles(pugi::xml_node& node_xml, const NodeSharedPtr& new_node);

@@ -19,22 +19,22 @@
 
 wxObject* PageCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    if (!node->GetChildCount())
+    if (!node->getChildCount())
         return nullptr;
 
-    auto child_generator = node->GetChild(0)->GetGenerator();
+    auto child_generator = node->getChild(0)->getGenerator();
     ASSERT(child_generator);
-    auto widget = child_generator->CreateMockup(node->GetChild(0), parent);
+    auto widget = child_generator->CreateMockup(node->getChild(0), parent);
     ASSERT(widget);
 
-    auto node_parent = node->GetParent();
+    auto node_parent = node->getParent();
 
     if (auto book = wxDynamicCast(parent, wxBookCtrlBase); book)
     {
         if (node_parent->isGen(gen_wxToolbook))
         {
             int idx_image = -1;
-            for (const auto& child: node_parent->GetChildNodePtrs())
+            for (const auto& child: node_parent->getChildNodePtrs())
             {
                 if (child.get() == node)
                 {
@@ -49,18 +49,18 @@ wxObject* PageCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
             }
             book->AddPage(wxStaticCast(widget, wxWindow), node->as_wxString(prop_label), false, idx_image);
         }
-        else if (node->HasValue(prop_bitmap) && node_parent->as_bool(prop_display_images))
+        else if (node->hasValue(prop_bitmap) && node_parent->as_bool(prop_display_images))
         {
             int idx_image = -1;
-            for (size_t idx_child = 0; idx_child < node_parent->GetChildCount(); ++idx_child)
+            for (size_t idx_child = 0; idx_child < node_parent->getChildCount(); ++idx_child)
             {
-                if (node_parent->GetChild(idx_child) == node)
+                if (node_parent->getChild(idx_child) == node)
                 {
                     if (idx_image < 0)
                         idx_image = 0;
                     break;
                 }
-                if (node_parent->GetChild(idx_child)->HasValue(prop_bitmap) || node_parent->isGen(gen_wxToolbook))
+                if (node_parent->getChild(idx_child)->hasValue(prop_bitmap) || node_parent->isGen(gen_wxToolbook))
                 {
                     if (idx_image < 0)
                         idx_image = 0;
@@ -91,19 +91,19 @@ wxObject* PageCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
         auto aui_book = wxDynamicCast(parent, wxAuiNotebook);
         if (aui_book)
         {
-            if (node->HasValue(prop_bitmap) && node_parent->as_bool(prop_display_images))
+            if (node->hasValue(prop_bitmap) && node_parent->as_bool(prop_display_images))
             {
                 int idx_image = 0;
-                for (size_t idx_child = 0; idx_child < node_parent->GetChildCount(); ++idx_child)
+                for (size_t idx_child = 0; idx_child < node_parent->getChildCount(); ++idx_child)
                 {
-                    if (node_parent->GetChild(idx_child) == node)
+                    if (node_parent->getChild(idx_child) == node)
                     {
                         if (idx_image < 0)
                             idx_image = 0;
 
                         break;
                     }
-                    if (node_parent->GetChild(idx_child)->HasValue(prop_bitmap))
+                    if (node_parent->getChild(idx_child)->hasValue(prop_bitmap))
                     {
                         if (idx_image < 0)
                             idx_image = 0;
@@ -136,39 +136,39 @@ wxObject* PageCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
 bool PageCtrlGenerator::ConstructionCode(Code& code)
 {
     Node* node = code.node();
-    if (!node->GetChildCount())
+    if (!node->getChildCount())
         return false;
 
-    if (auto child_node = code.node()->GetChild(0); child_node)
+    if (auto child_node = code.node()->getChild(0); child_node)
     {
-        if (auto child_generator = child_node->GetGenerator(); child_generator)
+        if (auto child_generator = child_node->getGenerator(); child_generator)
         {
             Code gen_code(child_node, code.m_language);
             if (child_generator->ConstructionCode(gen_code))
             {
                 code += gen_code.GetCode();
                 code.Eol(eol_if_needed).ValidParentName().Function("AddPage(");
-                code.Str(child_node->get_node_name()).Comma().QuotedString(prop_label);
+                code.Str(child_node->getNodeName()).Comma().QuotedString(prop_label);
 
                 // Default is false, so only add parameter if it is true.
                 if (code.IsTrue(prop_select))
                     code.Comma().AddTrue();
 
-                if (node->HasValue(prop_bitmap) &&
-                    (node->GetParent()->as_bool(prop_display_images) || node->isParent(gen_wxToolbook)))
+                if (node->hasValue(prop_bitmap) &&
+                    (node->getParent()->as_bool(prop_display_images) || node->isParent(gen_wxToolbook)))
                 {
-                    auto node_parent = node->GetParent();
+                    auto node_parent = node->getParent();
                     int idx_image = -1;
-                    for (size_t idx_child = 0; idx_child < node_parent->GetChildCount(); ++idx_child)
+                    for (size_t idx_child = 0; idx_child < node_parent->getChildCount(); ++idx_child)
                     {
-                        if (node_parent->GetChild(idx_child) == node)
+                        if (node_parent->getChild(idx_child) == node)
                         {
                             if (idx_image < 0)
                                 idx_image = 0;
 
                             break;
                         }
-                        if (node_parent->GetChild(idx_child)->HasValue(prop_bitmap))
+                        if (node_parent->getChild(idx_child)->hasValue(prop_bitmap))
                         {
                             if (idx_image < 0)
                                 idx_image = 0;

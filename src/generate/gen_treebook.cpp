@@ -51,7 +51,7 @@ bool TreebookGenerator::ConstructionCode(Code& code)
 bool TreebookGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
     InsertGeneratorInclude(node, "#include <wx/treebook.h>", set_src, set_hdr);
-    if (node->HasValue(prop_persist_name))
+    if (node->hasValue(prop_persist_name))
     {
         set_src.insert("#include <wx/persist/treebook.h>");
     }
@@ -64,7 +64,7 @@ bool TreebookGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, 
 
 int TreebookGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxTreebook");

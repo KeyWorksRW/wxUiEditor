@@ -15,7 +15,7 @@ struct PropChildDeclaration
     tt_string m_def_value;
     tt_string m_help;
 
-    // BUGBUG: [KeyWorks - 04-09-2021] NodeCreator::ParseProperties does not initialize the following for parent properties
+    // BUGBUG: [KeyWorks - 04-09-2021] NodeCreator::parseProperties does not initialize the following for parent properties
 
     const char* name_str() const noexcept { return m_name_str; }
     PropName get_name() const noexcept { return m_name_enum; }
@@ -45,11 +45,11 @@ public:
     }
 
     // Returns a char pointer to the name. Use get_name() if you want the enum value.
-    tt_string_view DeclName() const noexcept { return m_name_str; }
+    tt_string_view declName() const noexcept { return m_name_str; }
 
-    const tt_string& GetDefaultValue() const noexcept { return m_def_value; }
-    const tt_string& GetDescription() const noexcept { return m_help; }
-    const tt_string& GetCustomEditor() const noexcept { return m_customEditor; }
+    const tt_string& getDefaultValue() const noexcept { return m_def_value; }
+    const tt_string& getDescription() const noexcept { return m_help; }
+    const tt_string& getCustomEditor() const noexcept { return m_customEditor; }
 
     // These get used to setup wxPGProperty, so both key and value need to be a wxString
     struct Options
@@ -58,7 +58,7 @@ public:
         tt_string help;
     };
 
-    std::vector<Options>& GetOptions() { return m_options; }
+    std::vector<Options>& getOptions() { return m_options; }
 
 private:
     tt_string m_customEditor;  // an optional custom editor for the property grid

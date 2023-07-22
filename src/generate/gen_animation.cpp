@@ -23,7 +23,7 @@ wxObject* AnimationGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto get_animation = [](Node* node)
     {
-        if (auto prop = node->get_property(prop_animation); prop)
+        if (auto prop = node->getPropPtr(prop_animation); prop)
             return prop->as_animation();
         else
             return wxAnimation();
@@ -64,7 +64,7 @@ bool AnimationGenerator::ConstructionCode(Code& code)
     code.NodeName().CreateClass();
     code.ValidParentName().Comma().as_string(prop_id).Comma().CheckLineLength();
     // TODO: [Randalphwa - 12-08-2022] Enable Python support once image handling is worked out
-    if (code.HasValue(prop_animation))
+    if (code.hasValue(prop_animation))
     {
         if (code.is_cpp())
         {
@@ -100,7 +100,7 @@ bool AnimationGenerator::ConstructionCode(Code& code)
         code.Add("wxNullAnimation");
     }
     code.PosSizeFlags(false);
-    if (code.HasValue(prop_inactive_bitmap))
+    if (code.hasValue(prop_inactive_bitmap))
     {
         code.Eol(eol_if_needed).NodeName().Function("SetInactiveBitmap(");
         if (code.is_cpp())
@@ -134,7 +134,7 @@ bool AnimationGenerator::SettingsCode(Code& code)
 
 int AnimationGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     if (!node->as_bool(prop_use_generic))
@@ -143,13 +143,13 @@ int AnimationGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t 
         GenXrcObjectAttributes(node, item, "wxGenericAnimationCtrl");
     GenXrcStylePosSize(node, item);
 
-    if (node->HasValue(prop_animation))
+    if (node->hasValue(prop_animation))
     {
         tt_string_vector parts(node->as_string(prop_animation), ';', tt::TRIM::both);
         ASSERT(parts.size() > 1)
         item.append_child("animation").text().set(parts[IndexImage]);
     }
-    if (node->HasValue(prop_inactive_bitmap))
+    if (node->hasValue(prop_inactive_bitmap))
     {
         tt_string_vector parts(node->as_string(prop_inactive_bitmap), ';', tt::TRIM::both);
         ASSERT(parts.size() > 1)
@@ -179,7 +179,7 @@ int AnimationGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t 
 void AnimationGenerator::RequiredHandlers(Node* node, std::set<std::string>& handlers)
 {
     handlers.emplace("wxAnimationCtrlXmlHandler");
-    if (node->HasValue(prop_inactive_bitmap))
+    if (node->hasValue(prop_inactive_bitmap))
     {
         handlers.emplace("wxBitmapXmlHandler");
     }

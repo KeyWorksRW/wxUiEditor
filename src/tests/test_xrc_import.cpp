@@ -21,7 +21,7 @@
 static void CountNodes(Node* node, size_t& nodes)
 {
     ++nodes;
-    for (auto& iter: node->GetChildNodePtrs())
+    for (auto& iter: node->getChildNodePtrs())
     {
         CountNodes(iter.get(), nodes);
     }
@@ -36,11 +36,11 @@ void MainFrame::OnTestXrcImport(wxCommandEvent& /* event */)
     }
 
     auto form_node = m_selected_node.get();
-    if (!form_node->IsForm())
+    if (!form_node->isForm())
     {
         if (!form_node->isGen(gen_Project))
         {
-            form_node = form_node->get_form();
+            form_node = form_node->getForm();
         }
     }
 
@@ -109,9 +109,9 @@ void MainFrame::OnTestXrcDuplicate(wxCommandEvent& /* event */)
     }
 
     auto form_node = m_selected_node.get();
-    if (!form_node->IsForm())
+    if (!form_node->isForm())
     {
-        form_node = form_node->get_form();
+        form_node = form_node->getForm();
     }
 
     pugi::xml_document doc;
@@ -142,8 +142,8 @@ void MainFrame::OnTestXrcDuplicate(wxCommandEvent& /* event */)
     {
         Project.FixupDuplicatedNode(new_node.get());
         tt_string undo_str("duplicate ");
-        undo_str << new_node->DeclName();
-        auto pos = Project.ProjectNode()->FindInsertionPos(form_node);
+        undo_str << new_node->declName();
+        auto pos = Project.ProjectNode()->findInsertionPos(form_node);
         PushUndoAction(std::make_shared<InsertNodeAction>(new_node.get(), Project.ProjectNode(), undo_str, pos));
         FireCreatedEvent(new_node);
         SelectNode(new_node, evt_flags::fire_event | evt_flags::force_selection);

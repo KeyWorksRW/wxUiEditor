@@ -160,28 +160,28 @@ void MainFrame::OnGenerateCode(wxCommandEvent&)
 
 void GenerateDlg::OnInit(wxInitDialogEvent& event)
 {
-    if (Project.value(prop_code_preference) == "C++")
+    if (Project.as_string(prop_code_preference) == "C++")
     {
         m_gen_python_code = false;
         m_gen_ruby_code = false;
         m_gen_base_code = true;
         m_gen_xrc_code = false;
     }
-    else if (Project.value(prop_code_preference) == "Python")
+    else if (Project.as_string(prop_code_preference) == "Python")
     {
         m_gen_python_code = true;
         m_gen_ruby_code = false;
         m_gen_base_code = false;
         m_gen_xrc_code = false;
     }
-    else if (Project.value(prop_code_preference) == "Ruby")
+    else if (Project.as_string(prop_code_preference) == "Ruby")
     {
         m_gen_python_code = false;
         m_gen_ruby_code = true;
         m_gen_base_code = false;
         m_gen_xrc_code = false;
     }
-    else if (Project.value(prop_code_preference) == "XRC")
+    else if (Project.as_string(prop_code_preference) == "XRC")
     {
         m_gen_python_code = false;
         m_gen_ruby_code = false;

@@ -31,7 +31,7 @@ void RibbonGalleryGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxpar
 {
     auto gallery = wxStaticCast(wxobject, wxRibbonGallery);
 
-    for (const auto& child: node->GetChildNodePtrs())
+    for (const auto& child: node->getChildNodePtrs())
     {
         if (child->isGen(gen_ribbonGalleryItem))
         {
@@ -84,7 +84,7 @@ int RibbonGalleryItemGenerator::GenXrcObject(Node* node, pugi::xml_node& object,
     auto item = InitializeXrcObject(node, object);
     GenXrcObjectAttributes(node, item, "item");
 
-    if (!node->HasValue(prop_bitmap))
+    if (!node->hasValue(prop_bitmap))
     {
         auto bmp = item.append_child("bitmap");
         bmp.append_attribute("stock_id").set_value("wxART_QUESTION");

@@ -61,9 +61,9 @@ void ProjectHandler::CollectForms(std::vector<Node*>& forms, Node* node_start)
         node_start = m_project_node.get();
     }
 
-    for (const auto& child: node_start->GetChildNodePtrs())
+    for (const auto& child: node_start->getChildNodePtrs())
     {
-        if (child->IsForm())
+        if (child->isForm())
         {
             forms.push_back(child.get());
         }
@@ -93,29 +93,29 @@ void ProjectHandler::FixupDuplicatedNode(Node* new_node)
     CollectForms(forms);
     for (auto& iter: forms)
     {
-        if (iter->HasValue(prop_class_name))
-            base_classnames.insert(iter->value(prop_class_name));
-        if (iter->HasValue(prop_derived_class_name))
-            derived_classnames.insert(iter->value(prop_derived_class_name));
-        if (iter->HasValue(prop_base_file))
-            base_filenames.insert(iter->value(prop_base_file));
-        if (iter->HasValue(prop_derived_file))
-            derived_filenames.insert(iter->value(prop_derived_file));
-        if (iter->HasValue(prop_xrc_file))
-            xrc_filenames.insert(iter->value(prop_xrc_file));
-        if (iter->HasValue(prop_python_file))
-            python_filenames.insert(iter->value(prop_python_file));
-        if (iter->HasValue(prop_ruby_file))
-            ruby_filenames.insert(iter->value(prop_ruby_file));
+        if (iter->hasValue(prop_class_name))
+            base_classnames.insert(iter->as_string(prop_class_name));
+        if (iter->hasValue(prop_derived_class_name))
+            derived_classnames.insert(iter->as_string(prop_derived_class_name));
+        if (iter->hasValue(prop_base_file))
+            base_filenames.insert(iter->as_string(prop_base_file));
+        if (iter->hasValue(prop_derived_file))
+            derived_filenames.insert(iter->as_string(prop_derived_file));
+        if (iter->hasValue(prop_xrc_file))
+            xrc_filenames.insert(iter->as_string(prop_xrc_file));
+        if (iter->hasValue(prop_python_file))
+            python_filenames.insert(iter->as_string(prop_python_file));
+        if (iter->hasValue(prop_ruby_file))
+            ruby_filenames.insert(iter->as_string(prop_ruby_file));
     }
 
     auto lambda = [&](std::set<std::string_view>& set_names, PropName prop)
     {
-        if (new_node->HasValue(prop))
+        if (new_node->hasValue(prop))
         {
-            if (set_names.contains(new_node->value(prop)))
+            if (set_names.contains(new_node->as_string(prop)))
             {
-                tt_string new_name = new_node->value(prop);
+                tt_string new_name = new_node->as_string(prop);
                 if (!new_name.contains("_copy"))
                     new_name += "_copy";
                 if (set_names.contains(new_name))
@@ -157,7 +157,7 @@ tt_string ProjectHandler::ArtDirectory() const
 {
     tt_string result;
 
-    if (m_project_node->HasValue(prop_art_directory))
+    if (m_project_node->hasValue(prop_art_directory))
         result = m_project_node->as_string(prop_art_directory);
     if (result.empty())
         result = m_projectPath;
@@ -171,16 +171,16 @@ tt_string ProjectHandler::BaseDirectory(Node* node, int language) const
 {
     tt_string result;
 
-    Node* folder = node->get_folder();
+    Node* folder = node->getFolder();
     if (folder)
     {
-        if (language == GEN_LANG_CPLUSPLUS && folder->HasValue(prop_folder_base_directory))
+        if (language == GEN_LANG_CPLUSPLUS && folder->hasValue(prop_folder_base_directory))
             result = folder->as_string(prop_folder_base_directory);
-        else if (language == GEN_LANG_PYTHON && folder->HasValue(prop_folder_python_output_folder))
+        else if (language == GEN_LANG_PYTHON && folder->hasValue(prop_folder_python_output_folder))
             result = folder->as_string(prop_folder_python_output_folder);
-        else if (language == GEN_LANG_RUBY && folder->HasValue(prop_folder_ruby_output_folder))
+        else if (language == GEN_LANG_RUBY && folder->hasValue(prop_folder_ruby_output_folder))
             result = folder->as_string(prop_folder_python_output_folder);
-        else if (language == GEN_LANG_XRC && folder->HasValue(prop_folder_xrc_directory))
+        else if (language == GEN_LANG_XRC && folder->hasValue(prop_folder_xrc_directory))
             result = folder->as_string(prop_folder_xrc_directory);
     }
 
@@ -188,13 +188,13 @@ tt_string ProjectHandler::BaseDirectory(Node* node, int language) const
     // result and if it's empty use the project directory properties.
     if (result.empty() || !folder)
     {
-        if (language == GEN_LANG_CPLUSPLUS && m_project_node->HasValue(prop_base_directory))
+        if (language == GEN_LANG_CPLUSPLUS && m_project_node->hasValue(prop_base_directory))
             result = m_project_node->as_string(prop_base_directory);
-        else if (language == GEN_LANG_PYTHON && m_project_node->HasValue(prop_python_output_folder))
+        else if (language == GEN_LANG_PYTHON && m_project_node->hasValue(prop_python_output_folder))
             result = m_project_node->as_string(prop_python_output_folder);
-        else if (language == GEN_LANG_RUBY && m_project_node->HasValue(prop_ruby_output_folder))
+        else if (language == GEN_LANG_RUBY && m_project_node->hasValue(prop_ruby_output_folder))
             result = m_project_node->as_string(prop_ruby_output_folder);
-        else if (language == GEN_LANG_XRC && m_project_node->HasValue(prop_xrc_directory))
+        else if (language == GEN_LANG_XRC && m_project_node->hasValue(prop_xrc_directory))
             result = m_project_node->as_string(prop_xrc_directory);
     }
 
@@ -212,16 +212,16 @@ tt_string ProjectHandler::DerivedDirectory(Node* node, int language) const
 {
     tt_string result;
 
-    Node* folder = node->get_folder();
+    Node* folder = node->getFolder();
     if (folder)
     {
-        if (language == GEN_LANG_CPLUSPLUS && folder->HasValue(prop_folder_derived_directory))
+        if (language == GEN_LANG_CPLUSPLUS && folder->hasValue(prop_folder_derived_directory))
             result = folder->as_string(prop_folder_base_directory);
-        else if (language == GEN_LANG_PYTHON && folder->HasValue(prop_folder_python_output_folder))
+        else if (language == GEN_LANG_PYTHON && folder->hasValue(prop_folder_python_output_folder))
             result = folder->as_string(prop_folder_python_output_folder);
-        else if (language == GEN_LANG_RUBY && folder->HasValue(prop_folder_ruby_output_folder))
+        else if (language == GEN_LANG_RUBY && folder->hasValue(prop_folder_ruby_output_folder))
             result = folder->as_string(prop_folder_python_output_folder);
-        else if (language == GEN_LANG_XRC && folder->HasValue(prop_folder_xrc_directory))
+        else if (language == GEN_LANG_XRC && folder->hasValue(prop_folder_xrc_directory))
             result = folder->as_string(prop_folder_xrc_directory);
     }
 
@@ -229,13 +229,13 @@ tt_string ProjectHandler::DerivedDirectory(Node* node, int language) const
     // result and if it's empty use the project directory properties.
     if (result.empty() || !folder)
     {
-        if (language == GEN_LANG_CPLUSPLUS && m_project_node->HasValue(prop_derived_directory))
+        if (language == GEN_LANG_CPLUSPLUS && m_project_node->hasValue(prop_derived_directory))
             result = m_project_node->as_string(prop_base_directory);
-        else if (language == GEN_LANG_PYTHON && m_project_node->HasValue(prop_python_output_folder))
+        else if (language == GEN_LANG_PYTHON && m_project_node->hasValue(prop_python_output_folder))
             result = m_project_node->as_string(prop_python_output_folder);
-        else if (language == GEN_LANG_RUBY && m_project_node->HasValue(prop_ruby_output_folder))
+        else if (language == GEN_LANG_RUBY && m_project_node->hasValue(prop_ruby_output_folder))
             result = m_project_node->as_string(prop_ruby_output_folder);
-        else if (language == GEN_LANG_XRC && m_project_node->HasValue(prop_xrc_directory))
+        else if (language == GEN_LANG_XRC && m_project_node->hasValue(prop_xrc_directory))
             result = m_project_node->as_string(prop_xrc_directory);
     }
 
@@ -251,9 +251,9 @@ Node* ProjectHandler::GetFirstFormChild(Node* node) const
 {
     if (!node)
         node = m_project_node.get();
-    for (const auto& child: node->GetChildNodePtrs())
+    for (const auto& child: node->getChildNodePtrs())
     {
-        if (child->IsForm())
+        if (child->isForm())
         {
             return child.get();
         }
@@ -268,7 +268,7 @@ Node* ProjectHandler::GetFirstFormChild(Node* node) const
 
 int ProjectHandler::get_PreferredLanguage()
 {
-    auto& value = Project.value(prop_code_preference);
+    auto& value = Project.as_string(prop_code_preference);
     if (value == "C++")
         return GEN_LANG_CPLUSPLUS;
     else if (value == "Python")
@@ -287,19 +287,19 @@ size_t ProjectHandler::GetOutputType()
 
     auto rlambda = [&](Node* form, auto&& rlambda) -> void
     {
-        for (const auto& child: form->GetChildNodePtrs())
+        for (const auto& child: form->getChildNodePtrs())
         {
-            if (child->IsFormParent())
+            if (child->isFormParent())
             {
                 rlambda(child.get(), rlambda);
             }
-            else if (child->IsForm())
+            else if (child->isForm())
             {
-                if (child->HasValue(prop_base_file))
+                if (child->hasValue(prop_base_file))
                 {
                     result |= OUTPUT_CPLUS;
                 }
-                if (child->HasValue(prop_derived_file) && child->as_bool(prop_use_derived_class))
+                if (child->hasValue(prop_derived_file) && child->as_bool(prop_use_derived_class))
                 {
                     if (auto path = GetDerivedFilename(child.get()); path.size())
                     {
@@ -310,11 +310,11 @@ size_t ProjectHandler::GetOutputType()
                         }
                     }
                 }
-                if (child->HasValue(prop_python_file))
+                if (child->hasValue(prop_python_file))
                 {
                     result |= OUTPUT_PYTHON;
                 }
-                if (child->HasValue(prop_ruby_file))
+                if (child->hasValue(prop_ruby_file))
                 {
                     result |= OUTPUT_RUBY;
                 }
@@ -331,9 +331,9 @@ tt_string ProjectHandler::GetDerivedFilename(Node* form)
 {
     tt_string path;
 
-    ASSERT(form->IsForm());
+    ASSERT(form->isForm());
 
-    if (not form->IsForm() || !form->HasValue(prop_derived_file))
+    if (not form->isForm() || !form->hasValue(prop_derived_file))
         return path;
 
     path = DerivedDirectory(form, GEN_LANG_CPLUSPLUS);

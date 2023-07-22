@@ -63,7 +63,7 @@ void WebViewGenerator::GenEvent(Code& code, NodeEvent* event, const std::string&
     }
     if ((event->get_name() == "wxEVT_WEBVIEW_FULL_SCREEN_CHANGED" ||
          event->get_name() == "wxEVT_WEBVIEW_SCRIPT_MESSAGE_RECEIVED") &&
-        Project.value(prop_wxWidgets_version) == "3.1")
+        Project.as_string(prop_wxWidgets_version) == "3.1")
     {
         code.Add("\n#if wxCHECK_VERSION(3, 1, 5)\n");
         BaseGenerator::GenEvent(code, event, class_name);

@@ -66,7 +66,7 @@ CodeDisplay::CodeDisplay(wxWindow* parent, int panel_type) : CodeDisplayBase(par
 
         tt_string wxPython_keywords("ToolBar MenuBar BitmapBundle Bitmap MemoryInputStream Window");
 
-        for (auto iter: NodeCreation.GetNodeDeclarationArray())
+        for (auto iter: NodeCreation.getNodeDeclarationArray())
         {
             if (!iter)
             {
@@ -74,10 +74,10 @@ CodeDisplay::CodeDisplay(wxWindow* parent, int panel_type) : CodeDisplayBase(par
                 continue;
             }
 
-            if (!iter->DeclName().starts_with("wx") || iter->DeclName().is_sameas("wxContextMenuEvent"))
+            if (!iter->declName().starts_with("wx") || iter->declName().is_sameas("wxContextMenuEvent"))
                 continue;
-            // wxPython_keywords << " wx." << iter->DeclName().subview(2);
-            wxPython_keywords << ' ' << iter->DeclName().subview(2);
+            // wxPython_keywords << " wx." << iter->declName().subview(2);
+            wxPython_keywords << ' ' << iter->declName().subview(2);
         }
 
         // On Windows, this saves converting the UTF8 to UTF16 and then back to ANSI.
@@ -98,7 +98,7 @@ CodeDisplay::CodeDisplay(wxWindow* parent, int panel_type) : CodeDisplayBase(par
 
         // clang-format on
 
-        for (auto iter: NodeCreation.GetNodeDeclarationArray())
+        for (auto iter: NodeCreation.getNodeDeclarationArray())
         {
             if (!iter)
             {
@@ -106,12 +106,12 @@ CodeDisplay::CodeDisplay(wxWindow* parent, int panel_type) : CodeDisplayBase(par
                 continue;
             }
 
-            if (!iter->DeclName().starts_with("wx"))
+            if (!iter->declName().starts_with("wx"))
                 continue;
-            else if (iter->DeclName().is_sameas("wxContextMenuEvent") || iter->DeclName() == "wxTreeCtrlBase" ||
-                     iter->DeclName().starts_with("wxRuby") || iter->DeclName().starts_with("wxPython"))
+            else if (iter->declName().is_sameas("wxContextMenuEvent") || iter->declName() == "wxTreeCtrlBase" ||
+                     iter->declName().starts_with("wxRuby") || iter->declName().starts_with("wxPython"))
                 continue;
-            wxRuby_keywords << ' ' << iter->DeclName().subview(2);
+            wxRuby_keywords << ' ' << iter->declName().subview(2);
         }
 
         // Unfortunately, RUBY_LEXER only supports one set of keywords so we have to combine the regular keywords with
@@ -134,7 +134,7 @@ CodeDisplay::CodeDisplay(wxWindow* parent, int panel_type) : CodeDisplayBase(par
         tt_string widget_keywords(
             "wxToolBar wxMenuBar wxBitmapBundle wxBitmap wxImage wxMemoryInputStream wxVector wxWindow");
 
-        for (auto iter: NodeCreation.GetNodeDeclarationArray())
+        for (auto iter: NodeCreation.getNodeDeclarationArray())
         {
             if (!iter)
             {
@@ -142,9 +142,9 @@ CodeDisplay::CodeDisplay(wxWindow* parent, int panel_type) : CodeDisplayBase(par
                 continue;
             }
 
-            if (!iter->DeclName().starts_with("wx") || iter->DeclName().is_sameas("wxContextMenuEvent"))
+            if (!iter->declName().starts_with("wx") || iter->declName().is_sameas("wxContextMenuEvent"))
                 continue;
-            widget_keywords << ' ' << iter->DeclName();
+            widget_keywords << ' ' << iter->declName();
         }
 
         // On Windows, this saves converting the UTF8 to UTF16 and then back to ANSI.
@@ -239,7 +239,7 @@ void CodeDisplay::CodeGenerationComplete()
 
 void CodeDisplay::OnNodeSelected(Node* node)
 {
-    if (!node->HasProp(prop_var_name) && m_panel_type != GEN_LANG_XRC)
+    if (!node->hasProp(prop_var_name) && m_panel_type != GEN_LANG_XRC)
     {
         return;  // probably a form, spacer, or image
     }
@@ -256,7 +256,7 @@ void CodeDisplay::OnNodeSelected(Node* node)
 
     if (page == CPP_PANEL)
     {
-        if (m_panel_type == GEN_LANG_PYTHON && !node->IsLocal())
+        if (m_panel_type == GEN_LANG_PYTHON && !node->isLocal())
             name << "self.";
         name << node->as_string(prop_var_name);
     }
@@ -275,7 +275,7 @@ void CodeDisplay::OnNodeSelected(Node* node)
         }
         else
         {
-            auto map_events = node->GetMapEvents();
+            auto map_events = node->getMapEvents();
             for (auto& iter: map_events)
             {
                 auto value = iter.second.get_value();
@@ -291,11 +291,11 @@ void CodeDisplay::OnNodeSelected(Node* node)
     else if (m_panel_type == GEN_LANG_XRC)
     {
         tt_string search("name=\"");
-        if (node->HasProp(prop_id) && node->as_string(prop_id) != "wxID_ANY")
+        if (node->hasProp(prop_id) && node->as_string(prop_id) != "wxID_ANY")
         {
-            search << node->get_prop_id();
+            search << node->getPropId();
         }
-        else if (node->HasValue(prop_var_name))
+        else if (node->hasValue(prop_var_name))
         {
             search << node->as_string(prop_var_name);
         }
@@ -314,7 +314,7 @@ void CodeDisplay::OnNodeSelected(Node* node)
         }
         else
         {
-            if (node->get_form()->as_bool(prop_generate_translation_unit))
+            if (node->getForm()->as_bool(prop_generate_translation_unit))
             {
                 name << node->as_string(prop_var_name) << ";";
                 line = (to_int) m_view.FindLineContaining(name);

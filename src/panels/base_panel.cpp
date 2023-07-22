@@ -215,9 +215,9 @@ void BasePanel::GenerateBaseClass()
     if (!m_cur_form)
     {
         auto* cur_selection = wxGetFrame().GetSelectedNode();
-        if ((cur_selection->isGen(gen_folder) || cur_selection->isGen(gen_sub_folder)) && cur_selection->GetChildCount() > 0)
+        if ((cur_selection->isGen(gen_folder) || cur_selection->isGen(gen_sub_folder)) && cur_selection->getChildCount() > 0)
         {
-            m_cur_form = cur_selection->GetChild(0);
+            m_cur_form = cur_selection->getChild(0);
         }
         else if (Project.ChildCount() > 0)
         {
@@ -309,7 +309,7 @@ void BasePanel::OnNodeSelected(CustomEvent& event)
     if (!IsShown())
         return;
 
-    auto form = event.GetNode()->get_form();
+    auto form = event.getNode()->getForm();
 
     if (form != m_cur_form)
     {
@@ -321,11 +321,11 @@ void BasePanel::OnNodeSelected(CustomEvent& event)
     {
         if (page == m_hPanel)
         {
-            m_hPanel->OnNodeSelected(event.GetNode());
+            m_hPanel->OnNodeSelected(event.getNode());
         }
         else
         {
-            m_cppPanel->OnNodeSelected(event.GetNode());
+            m_cppPanel->OnNodeSelected(event.getNode());
         }
     }
 }

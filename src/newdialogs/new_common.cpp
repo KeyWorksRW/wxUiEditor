@@ -13,18 +13,18 @@
 
 void UpdateFormClass(Node* form_node)
 {
-    bool is_base_class = form_node->value(prop_class_name).ends_with("Base");
-    auto filename = CreateBaseFilename(form_node, form_node->value(prop_class_name));
+    bool is_base_class = form_node->as_string(prop_class_name).ends_with("Base");
+    auto filename = CreateBaseFilename(form_node, form_node->as_string(prop_class_name));
     form_node->set_value(prop_base_file, filename);
 
-    if (Project.value(prop_code_preference) == "Python")
+    if (Project.as_string(prop_code_preference) == "Python")
     {
         form_node->set_value(prop_python_file, filename);
     }
 
     if (is_base_class)
     {
-        auto class_name = form_node->value(prop_class_name);
+        auto class_name = form_node->as_string(prop_class_name);
         if (class_name.ends_with("Base"))
         {
             class_name.erase(class_name.size() - (sizeof("Base") - 1));

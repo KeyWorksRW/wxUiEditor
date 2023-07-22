@@ -27,11 +27,11 @@ bool MenuGenerator::ConstructionCode(Code& code)
 bool MenuGenerator::AfterChildrenCode(Code& code)
 {
     auto* node = code.node();  // This is just for code readability -- could just use code.node() everywhere
-    auto parent_type = node->GetParent()->gen_type();
+    auto parent_type = node->getParent()->getGenType();
     if (parent_type == type_menubar)
     {
         code.ParentName().Function("Append(").NodeName().Comma();
-        if (node->value(prop_stock_id) != "none")
+        if (node->as_string(prop_stock_id) != "none")
         {
             code.Add("wxGetStockLabel(").Add(prop_stock_id).Str(")");
         }
@@ -49,20 +49,20 @@ bool MenuGenerator::AfterChildrenCode(Code& code)
     else if (code.is_cpp())
     {
         // The parent can disable generation of Bind by shutting off the context menu
-        if (!node->GetParent()->as_bool(prop_context_menu))
+        if (!node->getParent()->as_bool(prop_context_menu))
         {
             return true;
         }
 
         if (parent_type == type_form || parent_type == type_frame_form || parent_type == type_wizard)
         {
-            code << "Bind(wxEVT_RIGHT_DOWN, &" << node->get_parent_name() << "::" << node->get_parent_name()
+            code << "Bind(wxEVT_RIGHT_DOWN, &" << node->getParentName() << "::" << node->getParentName()
                  << "OnContextMenu, this);";
         }
         else
         {
             code.ValidParentName().Function("Bind(wxEVT_RIGHT_DOWN, &")
-                << node->get_form_name() << "::" << node->get_parent_name() << "OnContextMenu, this);";
+                << node->getFormName() << "::" << node->getParentName() << "OnContextMenu, this);";
         }
     }
     code.Eol(eol_if_needed);
@@ -108,16 +108,16 @@ void MenuGenerator::ChangeEnableState(wxPropertyGridManager* prop_grid, NodeProp
     }
 }
 
-bool MenuGenerator::ModifyProperty(NodeProperty* prop, tt_string_view value)
+bool MenuGenerator::modifyProperty(NodeProperty* prop, tt_string_view value)
 {
     if (prop->isProp(prop_stock_id))
     {
         if (value != "none")
         {
             auto undo_stock_id = std::make_shared<ModifyProperties>("Stock ID");
-            undo_stock_id->AddProperty(prop, value);
-            undo_stock_id->AddProperty(prop->GetNode()->get_prop_ptr(prop_label),
-                                       wxGetStockLabel(NodeCreation.GetConstantAsInt(value.as_str())).utf8_string());
+            undo_stock_id->addProperty(prop, value);
+            undo_stock_id->addProperty(prop->getNode()->getPropPtr(prop_label),
+                                       wxGetStockLabel(NodeCreation.getConstantAsInt(value.as_str())).utf8_string());
             wxGetFrame().PushUndoAction(undo_stock_id);
             return true;
         }

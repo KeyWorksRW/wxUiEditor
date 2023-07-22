@@ -18,7 +18,7 @@ public:
     bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr) override;
 
     void ChangeEnableState(wxPropertyGridManager*, NodeProperty*) override;
-    bool ModifyProperty(NodeProperty* prop, tt_string_view value) override;
+    bool modifyProperty(NodeProperty* prop, tt_string_view value) override;
 
     int GenXrcObject(Node*, pugi::xml_node& /* object */, size_t /* xrc_flags */) override;
     void RequiredHandlers(Node*, std::set<std::string>& /* handlers */) override;

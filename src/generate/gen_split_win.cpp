@@ -42,14 +42,14 @@ wxObject* SplitterWindowGenerator::CreateMockup(Node* node, wxObject* parent)
     auto splitter = new wxCustomSplitterWindow(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(parent, node, prop_pos),
                                                DlgSize(parent, node, prop_size), (GetStyleInt(node)) & ~wxSP_PERMIT_UNSPLIT);
 
-    if (node->HasValue(prop_sashgravity))
+    if (node->hasValue(prop_sashgravity))
     {
         auto gravity = node->as_double(prop_sashgravity);
         gravity = (gravity < 0.0 ? 0.0 : gravity);
         gravity = (gravity > 1.0 ? 1.0 : gravity);
         splitter->SetSashGravity(gravity);
     }
-    if (node->HasValue(prop_min_pane_size))
+    if (node->hasValue(prop_min_pane_size))
     {
         int minPaneSize = node->as_int(prop_min_pane_size);
         splitter->SetCustomMinPaneSize(minPaneSize);
@@ -75,7 +75,7 @@ void SplitterWindowGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxpa
     // Remove default panel
     auto firstChild = splitter->GetWindow1();
 
-    size_t childCount = node->GetChildCount();
+    size_t childCount = node->getChildCount();
     switch (childCount)
     {
         case 1:
@@ -83,9 +83,9 @@ void SplitterWindowGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxpa
                 // BUGBUG: [Randalphwa - 06-12-2022] Don't use GetMockup() if is_preview is true!
                 wxWindow* subwindow;
                 if (!is_preview)
-                    subwindow = wxDynamicCast(GetMockup()->GetChild(wxobject, 0), wxWindow);
+                    subwindow = wxDynamicCast(GetMockup()->getChild(wxobject, 0), wxWindow);
                 else
-                    subwindow = wxDynamicCast(node->GetChild(0)->GetMockupObject(), wxWindow);
+                    subwindow = wxDynamicCast(node->getChild(0)->getMockupObject(), wxWindow);
                 if (!subwindow)
                 {
                     FAIL_MSG("Child of splitter is not derived from wxWindow class.");
@@ -110,13 +110,13 @@ void SplitterWindowGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxpa
 
                 if (!is_preview)
                 {
-                    subwindow0 = wxDynamicCast(GetMockup()->GetChild(wxobject, 0), wxWindow);
-                    subwindow1 = wxDynamicCast(GetMockup()->GetChild(wxobject, 1), wxWindow);
+                    subwindow0 = wxDynamicCast(GetMockup()->getChild(wxobject, 0), wxWindow);
+                    subwindow1 = wxDynamicCast(GetMockup()->getChild(wxobject, 1), wxWindow);
                 }
                 else
                 {
-                    subwindow0 = wxDynamicCast(node->GetChild(0)->GetMockupObject(), wxWindow);
-                    subwindow1 = wxDynamicCast(node->GetChild(1)->GetMockupObject(), wxWindow);
+                    subwindow0 = wxDynamicCast(node->getChild(0)->getMockupObject(), wxWindow);
+                    subwindow1 = wxDynamicCast(node->getChild(1)->getMockupObject(), wxWindow);
                 }
 
                 if (!subwindow0 || !subwindow1)
@@ -126,7 +126,7 @@ void SplitterWindowGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxpa
                 }
 
                 // Get the split mode and sash position
-                node = GetMockup()->GetNode(wxobject);
+                node = GetMockup()->getNode(wxobject);
                 if (!node)
                 {
                     // REVIEW: [KeyWorks - 12-06-2020] If this is actually possible, we should let the user know
@@ -175,17 +175,17 @@ bool SplitterWindowGenerator::SettingsCode(Code& code)
 {
     Node* node = code.node();
 
-    if (node->HasValue(prop_sashgravity) && node->as_string(prop_sashgravity) != "0")
+    if (node->hasValue(prop_sashgravity) && node->as_string(prop_sashgravity) != "0")
     {
         code.Eol(eol_if_empty).NodeName().Function("SetSashGravity(").Add(prop_sashgravity).EndFunction();
     }
 
-    if (node->HasValue(prop_sashsize) && node->as_string(prop_sashsize) != "-1")
+    if (node->hasValue(prop_sashsize) && node->as_string(prop_sashsize) != "-1")
     {
         code.Eol(eol_if_empty).NodeName().Function("SetSashSize(").Add(prop_sashsize).EndFunction();
     }
 
-    if (node->HasValue(prop_min_pane_size) && node->as_string(prop_min_pane_size) != "0")
+    if (node->hasValue(prop_min_pane_size) && node->as_string(prop_min_pane_size) != "0")
     {
         code.Eol(eol_if_empty).NodeName().Function("SetMinimumPaneSize(").Add(prop_min_pane_size).EndFunction();
     }
@@ -196,7 +196,7 @@ bool SplitterWindowGenerator::SettingsCode(Code& code)
 bool SplitterWindowGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
     InsertGeneratorInclude(node, "#include <wx/splitter.h>", set_src, set_hdr);
-    if (node->HasValue(prop_persist_name))
+    if (node->hasValue(prop_persist_name))
     {
         set_src.insert("#include <wx/persist/splitter.h>");
     }
@@ -209,7 +209,7 @@ bool SplitterWindowGenerator::GetIncludes(Node* node, std::set<std::string>& set
 
 int SplitterWindowGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxSplitterWindow");

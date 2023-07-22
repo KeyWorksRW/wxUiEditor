@@ -31,7 +31,7 @@ public:
         const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_DIALOG_STYLE, const wxString &name = wxDialogNameStr);
 
-    void CreateNode();
+    void createNode();
     void VerifyClassName();
 
 private:

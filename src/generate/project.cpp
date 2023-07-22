@@ -54,7 +54,7 @@ bool ProjectGenerator::PopupMenuAddCommands(NavPopupMenu* menu, Node* /* node */
             NewDialog dlg(wxGetFrame().GetWindow());
             if (dlg.ShowModal() == wxID_OK)
             {
-                dlg.CreateNode();
+                dlg.createNode();
             }
         },
         NavPopupMenu::MenuPROJECT_ADD_DIALOG);
@@ -63,7 +63,7 @@ bool ProjectGenerator::PopupMenuAddCommands(NavPopupMenu* menu, Node* /* node */
         wxEVT_MENU,
         [](wxCommandEvent&)
         {
-            wxGetFrame().CreateToolNode(gen_folder);
+            wxGetFrame().createToolNode(gen_folder);
         },
         NavPopupMenu::MenuPROJECT_ADD_FOLDER);
 
@@ -74,7 +74,7 @@ bool ProjectGenerator::PopupMenuAddCommands(NavPopupMenu* menu, Node* /* node */
             NewFrame dlg(wxGetFrame().GetWindow());
             if (dlg.ShowModal() == wxID_OK)
             {
-                dlg.CreateNode();
+                dlg.createNode();
             }
         },
         NavPopupMenu::MenuPROJECT_ADD_WINDOW);
@@ -86,7 +86,7 @@ bool ProjectGenerator::PopupMenuAddCommands(NavPopupMenu* menu, Node* /* node */
             NewWizard dlg(wxGetFrame().GetWindow());
             if (dlg.ShowModal() == wxID_OK)
             {
-                dlg.CreateNode();
+                dlg.createNode();
             }
         },
         NavPopupMenu::MenuPROJECT_ADD_WIZARD);
@@ -132,7 +132,7 @@ bool FolderGenerator::PopupMenuAddCommands(NavPopupMenu* menu, Node* /* node */)
             NewDialog dlg(wxGetFrame().GetWindow());
             if (dlg.ShowModal() == wxID_OK)
             {
-                dlg.CreateNode();
+                dlg.createNode();
             }
         },
         NavPopupMenu::MenuPROJECT_ADD_DIALOG);
@@ -141,7 +141,7 @@ bool FolderGenerator::PopupMenuAddCommands(NavPopupMenu* menu, Node* /* node */)
         wxEVT_MENU,
         [](wxCommandEvent&)
         {
-            wxGetFrame().CreateToolNode(gen_sub_folder);
+            wxGetFrame().createToolNode(gen_sub_folder);
         },
         NavPopupMenu::MenuPROJECT_ADD_FOLDER);
 
@@ -152,7 +152,7 @@ bool FolderGenerator::PopupMenuAddCommands(NavPopupMenu* menu, Node* /* node */)
             NewFrame dlg(wxGetFrame().GetWindow());
             if (dlg.ShowModal() == wxID_OK)
             {
-                dlg.CreateNode();
+                dlg.createNode();
             }
         },
         NavPopupMenu::MenuPROJECT_ADD_WINDOW);
@@ -164,7 +164,7 @@ bool FolderGenerator::PopupMenuAddCommands(NavPopupMenu* menu, Node* /* node */)
             NewWizard dlg(wxGetFrame().GetWindow());
             if (dlg.ShowModal() == wxID_OK)
             {
-                dlg.CreateNode();
+                dlg.createNode();
             }
         },
         NavPopupMenu::MenuPROJECT_ADD_WIZARD);
@@ -194,7 +194,7 @@ bool SubFolderGenerator::PopupMenuAddCommands(NavPopupMenu* menu, Node* /* node 
             NewDialog dlg(wxGetFrame().GetWindow());
             if (dlg.ShowModal() == wxID_OK)
             {
-                dlg.CreateNode();
+                dlg.createNode();
             }
         },
         NavPopupMenu::MenuPROJECT_ADD_DIALOG);
@@ -203,7 +203,7 @@ bool SubFolderGenerator::PopupMenuAddCommands(NavPopupMenu* menu, Node* /* node 
         wxEVT_MENU,
         [](wxCommandEvent&)
         {
-            wxGetFrame().CreateToolNode(gen_sub_folder);
+            wxGetFrame().createToolNode(gen_sub_folder);
         },
         NavPopupMenu::MenuPROJECT_ADD_FOLDER);
 
@@ -214,7 +214,7 @@ bool SubFolderGenerator::PopupMenuAddCommands(NavPopupMenu* menu, Node* /* node 
             NewFrame dlg(wxGetFrame().GetWindow());
             if (dlg.ShowModal() == wxID_OK)
             {
-                dlg.CreateNode();
+                dlg.createNode();
             }
         },
         NavPopupMenu::MenuPROJECT_ADD_WINDOW);
@@ -226,7 +226,7 @@ bool SubFolderGenerator::PopupMenuAddCommands(NavPopupMenu* menu, Node* /* node 
             NewWizard dlg(wxGetFrame().GetWindow());
             if (dlg.ShowModal() == wxID_OK)
             {
-                dlg.CreateNode();
+                dlg.createNode();
             }
         },
         NavPopupMenu::MenuPROJECT_ADD_WIZARD);

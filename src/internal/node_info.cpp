@@ -83,10 +83,10 @@ bool NodeInfo::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 
 void NodeInfo::CalcNodeMemory(Node* node, NodeMemory& node_memory)
 {
-    node_memory.size += node->GetNodeSize();
+    node_memory.size += node->getNodeSize();
     ++node_memory.children;
 
-    for (auto& iter: node->GetChildNodePtrs())
+    for (auto& iter: node->getChildNodePtrs())
     {
         CalcNodeMemory(iter.get(), node_memory);
     }
@@ -101,10 +101,10 @@ void NodeInfo::OnInit(wxInitDialogEvent& /* event */)
     if (cur_sel)
     {
         label.clear();
-        label << "Generator: gen_" << cur_sel->DeclName();
+        label << "Generator: gen_" << cur_sel->declName();
         m_txt_generator->SetLabel(label);
         label.clear();
-        label << "Type: type_" << GenEnum::map_GenTypes.at(cur_sel->gen_type());
+        label << "Type: type_" << GenEnum::map_GenTypes.at(cur_sel->getGenType());
         m_txt_type->SetLabel(label);
 
         node_memory.size = 0;

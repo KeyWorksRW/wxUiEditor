@@ -160,9 +160,9 @@ void XrcPreview::OnXrcCopy(wxCommandEvent& WXUNUSED(event))
         return;
     }
 
-    if (!evt_flags->IsForm())
+    if (!evt_flags->isForm())
     {
-        evt_flags = evt_flags->get_form();
+        evt_flags = evt_flags->getForm();
     }
 
     auto doc_str = GenerateXrcStr(evt_flags, evt_flags->isGen(gen_PanelForm) ? xrc::previewing : 0);
@@ -177,11 +177,11 @@ void XrcPreview::OnXrcCopy(wxCommandEvent& WXUNUSED(event))
     tt_string search("name=\"");
     evt_flags = wxGetFrame().GetSelectedNode();
 
-    if (evt_flags->HasProp(prop_id) && evt_flags->as_string(prop_id) != "wxID_ANY")
+    if (evt_flags->hasProp(prop_id) && evt_flags->as_string(prop_id) != "wxID_ANY")
     {
         search << evt_flags->as_string(prop_id);
     }
-    else if (evt_flags->HasValue(prop_var_name))
+    else if (evt_flags->hasValue(prop_var_name))
     {
         search << evt_flags->as_string(prop_var_name);
     }

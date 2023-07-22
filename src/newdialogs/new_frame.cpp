@@ -137,35 +137,35 @@ void NewFrame::OnCheckMainFrame(wxCommandEvent& WXUNUSED(event))
     }
 }
 
-void NewFrame::CreateNode()
+void NewFrame::createNode()
 {
-    auto form_node = NodeCreation.CreateNode(gen_wxFrame, nullptr);
+    auto form_node = NodeCreation.createNode(gen_wxFrame, nullptr);
     ASSERT(form_node);
 
     if (m_has_mainframe)
     {
         if (m_has_toolbar)
         {
-            auto bar = NodeCreation.CreateNode(gen_wxToolBar, form_node.get());
+            auto bar = NodeCreation.createNode(gen_wxToolBar, form_node.get());
             ASSERT(bar);
-            form_node->Adopt(bar);
+            form_node->adoptChild(bar);
         }
         if (m_has_menu)
         {
-            auto bar = NodeCreation.CreateNode(gen_wxMenuBar, form_node.get());
+            auto bar = NodeCreation.createNode(gen_wxMenuBar, form_node.get());
             ASSERT(bar);
-            form_node->Adopt(bar);
+            form_node->adoptChild(bar);
         }
         if (m_has_statusbar)
         {
-            auto bar = NodeCreation.CreateNode(gen_wxStatusBar, form_node.get());
+            auto bar = NodeCreation.createNode(gen_wxStatusBar, form_node.get());
             ASSERT(bar);
-            form_node->Adopt(bar);
+            form_node->adoptChild(bar);
         }
     }
 
     form_node->set_value(prop_class_name, m_base_class.utf8_string());
-    if (form_node->as_string(prop_class_name) != form_node->prop_default_value(prop_class_name))
+    if (form_node->as_string(prop_class_name) != form_node->getPropDefaultValue(prop_class_name))
     {
         UpdateFormClass(form_node.get());
     }
@@ -177,7 +177,7 @@ void NewFrame::CreateNode()
     }
     else
     {
-        parent_node = parent_node->get_ValidFormParent();
+        parent_node = parent_node->getValidFormParent();
     }
 
     wxGetFrame().SelectNode(parent_node);

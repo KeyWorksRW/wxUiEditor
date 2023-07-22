@@ -49,27 +49,27 @@ bool StaticBoxSizerGenerator::ConstructionCode(Code& code)
     Node* node = code.node();
 
     tt_string parent_name(code.is_cpp() ? "this" : "self");
-    if (!node->GetParent()->IsForm())
+    if (!node->getParent()->isForm())
     {
-        auto parent = node->GetParent();
+        auto parent = node->getParent();
         while (parent)
         {
-            if (parent->IsContainer())
+            if (parent->isContainer())
             {
-                parent_name = parent->get_node_name();
+                parent_name = parent->getNodeName();
                 break;
             }
             else if (parent->isGen(gen_wxStaticBoxSizer) || parent->isGen(gen_StaticCheckboxBoxSizer) ||
                      parent->isGen(gen_StaticRadioBtnBoxSizer))
             {
-                parent_name = parent->get_node_name();
+                parent_name = parent->getNodeName();
                 if (code.is_cpp())
                     parent_name << "->GetStaticBox()";
                 else
                     parent_name << ".GetStaticBox()";
                 break;
             }
-            parent = parent->GetParent();
+            parent = parent->getParent();
         }
     }
     code.AddAuto().NodeName().CreateClass().Str(prop_orientation).Comma().Str(parent_name);
@@ -80,7 +80,7 @@ bool StaticBoxSizerGenerator::ConstructionCode(Code& code)
     }
     code.EndFunction();
 
-    if (code.HasValue(prop_minimum_size))
+    if (code.hasValue(prop_minimum_size))
     {
         code.Eol().NodeName().Function("SetMinSize(").WxSize(prop_minimum_size).EndFunction();
     }
@@ -105,8 +105,8 @@ bool StaticBoxSizerGenerator::AfterChildrenCode(Code& code)
         code.NodeName().Function("ShowItems(").AddFalse().EndFunction();
     }
 
-    auto parent = code.node()->GetParent();
-    if (!parent->IsSizer() && !parent->isGen(gen_wxDialog) && !parent->isGen(gen_PanelForm))
+    auto parent = code.node()->getParent();
+    if (!parent->isSizer() && !parent->isGen(gen_wxDialog) && !parent->isGen(gen_PanelForm))
     {
         code.NewLine(true);
         if (parent->isGen(gen_wxRibbonPanel))
@@ -145,7 +145,7 @@ int StaticBoxSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& object, si
     pugi::xml_node item;
     auto result = BaseGenerator::xrc_sizer_item_created;
 
-    if (node->GetParent()->IsSizer())
+    if (node->getParent()->isSizer())
     {
         GenXrcSizerItem(node, object);
         item = object.append_child("object");
@@ -159,7 +159,7 @@ int StaticBoxSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& object, si
     item.append_attribute("class").set_value("wxStaticBoxSizer");
     item.append_attribute("name").set_value(node->as_string(prop_var_name));
     // item.append_child("orient").text().set(node->as_string(prop_orientation));
-    // if (node->HasValue(prop_minimum_size))
+    // if (node->hasValue(prop_minimum_size))
     // {
     // item.append_child("minsize").text().set(node->as_string(prop_minimum_size));
     // }

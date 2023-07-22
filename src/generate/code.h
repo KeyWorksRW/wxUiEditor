@@ -84,17 +84,14 @@ public:
     Node* node() const { return m_node; }
     int get_language() const { return m_language; }
 
-    bool HasValue(GenEnum::PropName prop_name) const;
+    bool hasValue(GenEnum::PropName prop_name) const;
 
     // Avoid the temptation to use tt_string_view instead of const char* -- the MSVC compiler will assume value is a bool if
-    // you call  is_value(propm, "string")
+    // you call  isPropValue(propm, "string")
 
-    bool is_value(PropName name, const char* value) const noexcept { return m_node->is_value(name, value); }
-    bool is_value(PropName name, bool value) const noexcept { return m_node->is_value(name, value); }
-    bool is_value(PropName name, int value) const noexcept { return m_node->is_value(name, value); }
-
-    // Can return nullptr
-    NodeProperty* prop(PropName name) const { return m_node->prop(name); }
+    bool isPropValue(PropName name, const char* value) const noexcept { return m_node->isPropValue(name, value); }
+    bool isPropValue(PropName name, bool value) const noexcept { return m_node->isPropValue(name, value); }
+    bool isPropValue(PropName name, int value) const noexcept { return m_node->isPropValue(name, value); }
 
     tt_string_view view(PropName name) const { return m_node->view(name); }
 
@@ -119,7 +116,7 @@ public:
     // Equivalent to calling (node->as_int(prop_name) != val)
     bool IsNotEqualTo(GenEnum::PropName prop_name, int val) const { return (m_node->as_int(prop_name) != val); }
 
-    bool IsGen(GenEnum::GenName gen_name) const { return m_node->isGen(gen_name); }
+    bool IsGen(GenEnum::GenName getGenName) const { return m_node->isGen(getGenName); }
 
     // Checks for prop_pos, prop_size, prop_style, prop_window_style, and prop_window_name
     bool IsDefaultPosSizeFlags(tt_string_view def_style = tt_empty_cstr) const;
@@ -271,17 +268,17 @@ public:
     // Adds " = new wxClass(" or " = wx.Class('.
     // Adds wxGeneric prefix if use_generic is true.
     // Creates wxPanel if node is a book page.
-    // Specify override_name to override node->DeclName()
+    // Specify override_name to override node->declName()
     Code& CreateClass(bool use_generic = false, tt_string_view override_name = tt_empty_cstr);
 
     // For Python code, a non-local, non-form name will be prefixed with "self."
     //
-    // *this += node->get_node_name();
+    // *this += node->getNodeName();
     Code& NodeName(Node* node = nullptr);
 
     // For Python code, a non-local, non-form name will be prefixed with "self."
     //
-    // *this += m_node->GetParent()->get_node_name();
+    // *this += m_node->getParent()->getNodeName();
     Code& ParentName();
 
     // Find a valid parent for the current node and add it's name. This is *not* the same as

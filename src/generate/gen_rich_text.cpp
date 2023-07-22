@@ -21,7 +21,7 @@ wxObject* RichTextCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
                                      DlgPoint(parent, node, prop_pos), DlgSize(parent, node, prop_size),
                                      GetStyleInt(node) | wxRE_MULTILINE);
 
-    if (node->HasValue(prop_hint))
+    if (node->hasValue(prop_hint))
         widget->SetHint(node->as_wxString(prop_hint));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
@@ -42,7 +42,7 @@ bool RichTextCtrlGenerator::ConstructionCode(Code& code)
 
 bool RichTextCtrlGenerator::SettingsCode(Code& code)
 {
-    if (code.HasValue(prop_hint))
+    if (code.hasValue(prop_hint))
     {
         code.Eol(eol_if_needed).NodeName().Function("SetHint(").QuotedString(prop_hint).EndFunction();
     }
@@ -57,7 +57,7 @@ bool RichTextCtrlGenerator::SettingsCode(Code& code)
 
 int RichTextCtrlGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxRichTextCtrl");

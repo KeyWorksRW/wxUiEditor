@@ -89,8 +89,8 @@ public:
     tt_string GetDerivedFilename(Node*);
 
     Node* ProjectNode() const { return m_project_node.get(); }
-    auto& ChildNodePtrs() { return m_project_node->GetChildNodePtrs(); }
-    Node* GetChild(size_t index) { return m_project_node->GetChild(index); }
+    auto& ChildNodePtrs() { return m_project_node->getChildNodePtrs(); }
+    Node* getChild(size_t index) { return m_project_node->getChild(index); }
 
     void CollectForms(std::vector<Node*>& forms, Node* node_start = nullptr);
 
@@ -107,12 +107,12 @@ public:
 
     bool is_UiAllowed() const { return m_allow_ui; }
 
-    size_t ChildCount() const { return m_project_node->GetChildCount(); }
+    size_t ChildCount() const { return m_project_node->getChildCount(); }
 
     // Returns a GEN_LANG_... enum value
     int get_PreferredLanguage();
 
-    const tt_string& value(GenEnum::PropName name) const { return m_project_node->as_string(name); }
+    // const tt_string& value(GenEnum::PropName name) const { return m_project_node->as_string(name); }
     const tt_string_view view(PropName name) const { return m_project_node->as_string(name); }
     const tt_string& as_string(PropName name) const { return m_project_node->as_string(name); }
 
@@ -121,7 +121,7 @@ public:
 
     // Returns true if the property exists, has a value (!= wxDefaultSize, !=
     // wxDefaultPosition, or non-sepcified bitmap)
-    bool HasValue(PropName name) const { return m_project_node->HasValue(name); }
+    bool hasValue(PropName name) const { return m_project_node->hasValue(name); }
 
     bool LoadProject(const tt_string& file, bool allow_ui = true);
     NodeSharedPtr LoadProject(pugi::xml_document& doc, bool allow_ui = true);

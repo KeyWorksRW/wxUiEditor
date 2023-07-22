@@ -22,14 +22,14 @@ wxObject* ToolBarFormGenerator::CreateMockup(Node* node, wxObject* parent)
     auto widget = new wxToolBar(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(parent, node, prop_pos),
                                 DlgSize(parent, node, prop_size), GetStyleInt(node) | wxTB_NOALIGN | wxTB_NODIVIDER);
 
-    if (node->HasValue(prop_margins))
+    if (node->hasValue(prop_margins))
     {
         wxSize margins(node->as_wxSize(prop_margins));
         widget->SetMargins(margins.GetWidth(), margins.GetHeight());
     }
-    if (node->HasValue(prop_packing))
+    if (node->hasValue(prop_packing))
         widget->SetToolPacking(node->as_int(prop_packing));
-    if (node->HasValue(prop_separation))
+    if (node->hasValue(prop_separation))
         widget->SetToolSeparation(node->as_int(prop_separation));
 
     widget->Bind(wxEVT_TOOL, &ToolBarFormGenerator::OnTool, this);
@@ -47,10 +47,10 @@ void ToolBarFormGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparen
         return;
     }
 
-    auto count = node->GetChildCount();
+    auto count = node->getChildCount();
     for (size_t i = 0; i < count; ++i)
     {
-        auto childObj = node->GetChild(i);
+        auto childObj = node->getChild(i);
         wxToolBarToolBase* added_tool = nullptr;
         if (childObj->isGen(gen_tool))
         {
@@ -83,9 +83,9 @@ void ToolBarFormGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparen
         {
             const wxObject* child;
             if (!is_preview)
-                child = GetMockup()->GetChild(wxobject, i);
+                child = GetMockup()->getChild(wxobject, i);
             else
-                child = node->GetChild(i)->GetMockupObject();
+                child = node->getChild(i)->getMockupObject();
 
             if (auto control = wxDynamicCast(child, wxControl); control)
             {
@@ -122,10 +122,10 @@ bool ToolBarFormGenerator::ConstructionCode(Code& code)
         code.Comma().CheckLineLength(sizeof("style=") + code.node()->as_string(prop_style).size() + 4);
         code.Add("style=").Style().Comma();
         size_t name_len =
-            code.HasValue(prop_window_name) ? code.node()->as_string(prop_window_name).size() : sizeof("wx.ToolBarNameStr");
+            code.hasValue(prop_window_name) ? code.node()->as_string(prop_window_name).size() : sizeof("wx.ToolBarNameStr");
         code.CheckLineLength(sizeof("name=") + name_len + 4);
         code.Str("name=");
-        if (code.HasValue(prop_window_name))
+        if (code.hasValue(prop_window_name))
             code.QuotedString(prop_window_name);
         else
             code.Str("wx.ToolBarNameStr");
@@ -150,17 +150,17 @@ bool ToolBarFormGenerator::SettingsCode(Code& code)
     if (code.IsTrue(prop_hidden))
         code.Eol(eol_if_needed).FormFunction("Hide(").EndFunction();
 
-    if (!code.is_value(prop_separation, 5))
+    if (!code.isPropValue(prop_separation, 5))
     {
         code.Eol(eol_if_needed).FormFunction("SetToolSeparation(").Add(prop_separation).EndFunction();
     }
 
-    if (code.HasValue(prop_margins))
+    if (code.hasValue(prop_margins))
     {
         code.FormFunction("SetMargins(").Add(prop_margins).EndFunction();
     }
 
-    if (!code.is_value(prop_packing, 1))
+    if (!code.isPropValue(prop_packing, 1))
     {
         code.FormFunction("SetToolPacking(").Add(prop_packing).EndFunction();
     }
@@ -237,7 +237,7 @@ bool ToolBarFormGenerator::HeaderCode(Code& code)
 
 bool ToolBarFormGenerator::BaseClassNameCode(Code& code)
 {
-    if (code.HasValue(prop_derived_class))
+    if (code.hasValue(prop_derived_class))
     {
         code.Str((prop_derived_class));
     }
@@ -254,7 +254,7 @@ void ToolBarFormGenerator::GenEvent(Code& code, NodeEvent* event, const std::str
     BaseGenerator::GenEvent(code, event, class_name);
 
     // Since this is the base class, we don't want to use the pointer that GenEventCode() would normally create
-    code.Replace(tt_string() << event->GetNode()->as_string(prop_var_name) << "->", "");
+    code.Replace(tt_string() << event->getNode()->as_string(prop_var_name) << "->", "");
 }
 
 bool ToolBarFormGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
@@ -279,7 +279,7 @@ void ToolBarFormGenerator::OnTool(wxCommandEvent& event)
 
 int ToolBarFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxToolBar");
@@ -313,14 +313,14 @@ wxObject* ToolBarGenerator::CreateMockup(Node* node, wxObject* parent)
     auto widget = new wxToolBar(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(parent, node, prop_pos),
                                 DlgSize(parent, node, prop_size), GetStyleInt(node) | wxTB_NODIVIDER | wxNO_BORDER);
 
-    if (node->HasValue(prop_margins))
+    if (node->hasValue(prop_margins))
     {
         wxSize margins(node->as_wxSize(prop_margins));
         widget->SetMargins(margins.GetWidth(), margins.GetHeight());
     }
-    if (node->HasValue(prop_packing))
+    if (node->hasValue(prop_packing))
         widget->SetToolPacking(node->as_int(prop_packing));
-    if (node->HasValue(prop_separation))
+    if (node->hasValue(prop_separation))
         widget->SetToolSeparation(node->as_int(prop_separation));
 
     widget->Bind(wxEVT_TOOL, &ToolBarGenerator::OnTool, this);
@@ -338,10 +338,10 @@ void ToolBarGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/,
         return;
     }
 
-    auto count = node->GetChildCount();
+    auto count = node->getChildCount();
     for (size_t i = 0; i < count; ++i)
     {
-        auto childObj = node->GetChild(i);
+        auto childObj = node->getChild(i);
         if (childObj->isGen(gen_tool))
         {
             auto bmp = childObj->as_wxBitmapBundle(prop_bitmap);
@@ -373,9 +373,9 @@ void ToolBarGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/,
         {
             const wxObject* child;
             if (!is_preview)
-                child = GetMockup()->GetChild(wxobject, i);
+                child = GetMockup()->getChild(wxobject, i);
             else
-                child = node->GetChild(i)->GetMockupObject();
+                child = node->getChild(i)->getMockupObject();
 
             if (auto control = wxDynamicCast(child, wxControl); control)
             {
@@ -431,7 +431,7 @@ bool ToolBarGenerator::SettingsCode(Code& code)
         code.Eol().NodeName().Function("SetToolSeparation(").Str(prop_separation).EndFunction();
     }
 
-    if (code.HasValue(prop_margins))
+    if (code.hasValue(prop_margins))
     {
         code.Eol().NodeName().Function("SetMargins(").Str(prop_margins).EndFunction();
     }
@@ -473,7 +473,7 @@ void ToolBarGenerator::OnTool(wxCommandEvent& event)
 
 int ToolBarGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxToolBar");
@@ -508,7 +508,7 @@ bool ToolGenerator::ConstructionCode(Code& code)
     GenToolCode(code, is_bitmaps_list);
     if (is_bitmaps_list && code.is_cpp())
     {
-        if (Project.value(prop_wxWidgets_version) == "3.1")
+        if (Project.as_string(prop_wxWidgets_version) == "3.1")
         {
             code.CloseBrace();
             code.Add("#else").Eol();
@@ -572,13 +572,13 @@ tt_string ToolGenerator::GetPythonHelpText(Node*)
 
 bool ToolDropDownGenerator::ConstructionCode(Code& code)
 {
-    if (code.HasValue(prop_bitmap))
+    if (code.hasValue(prop_bitmap))
     {
         auto is_bitmaps_list = BitmapList(code, prop_bitmap);
         GenToolCode(code, is_bitmaps_list);
         if (is_bitmaps_list && code.is_cpp())
         {
-            if (Project.value(prop_wxWidgets_version) == "3.1")
+            if (Project.as_string(prop_wxWidgets_version) == "3.1")
             {
                 code.CloseBrace();
                 code.Add("#else").Eol();
@@ -601,20 +601,20 @@ bool ToolDropDownGenerator::ConstructionCode(Code& code)
 
 bool ToolDropDownGenerator::SettingsCode(Code& code)
 {
-    tt_string menu_name = code.node()->value(prop_var_name);
+    tt_string menu_name = code.node()->as_string(prop_var_name);
     menu_name += "_menu";
     code.AddIfCpp("auto* ").Str(menu_name).Assign("wxMenu");
     code.AddIfPython("()");
-    auto menu_node_ptr = NodeCreation.NewNode(gen_wxMenu);
-    menu_node_ptr->SetParent(code.node());  // Python code generation needs this set
+    auto menu_node_ptr = NodeCreation.newNode(gen_wxMenu);
+    menu_node_ptr->setParent(code.node());  // Python code generation needs this set
     menu_node_ptr->set_value(prop_var_name, menu_name);
     menu_node_ptr->set_value(prop_class_access, "none");
 
-    for (const auto& child: code.node()->GetChildNodePtrs())
+    for (const auto& child: code.node()->getChildNodePtrs())
     {
-        auto old_parent = child->GetParent();
-        child->SetParent(menu_node_ptr.get());
-        if (auto gen = child->GetNodeDeclaration()->GetGenerator(); gen)
+        auto old_parent = child->getParent();
+        child->setParent(menu_node_ptr.get());
+        if (auto gen = child->getNodeDeclaration()->getGenerator(); gen)
         {
             Code child_code(child.get(), code.m_language);
             if (gen->ConstructionCode(child_code))
@@ -629,11 +629,11 @@ bool ToolDropDownGenerator::SettingsCode(Code& code)
         }
 
         // A submenu can have children
-        if (child->GetChildCount())
+        if (child->getChildCount())
         {
-            for (const auto& grandchild: child->GetChildNodePtrs())
+            for (const auto& grandchild: child->getChildNodePtrs())
             {
-                if (auto gen = grandchild->GetNodeDeclaration()->GetGenerator(); gen)
+                if (auto gen = grandchild->getNodeDeclaration()->getGenerator(); gen)
                 {
                     Code child_code(grandchild.get(), code.m_language);
                     if (gen->ConstructionCode(child_code))
@@ -647,11 +647,11 @@ bool ToolDropDownGenerator::SettingsCode(Code& code)
                     }
                 }
                 // A submenu menu item can also be a submenu with great grandchildren.
-                if (grandchild->GetChildCount())
+                if (grandchild->getChildCount())
                 {
-                    for (const auto& great_grandchild: grandchild->GetChildNodePtrs())
+                    for (const auto& great_grandchild: grandchild->getChildNodePtrs())
                     {
-                        if (auto gen = great_grandchild->GetNodeDeclaration()->GetGenerator(); gen)
+                        if (auto gen = great_grandchild->getNodeDeclaration()->getGenerator(); gen)
                         {
                             Code child_code(great_grandchild.get(), code.m_language);
                             if (gen->ConstructionCode(child_code))
@@ -669,7 +669,7 @@ bool ToolDropDownGenerator::SettingsCode(Code& code)
                 }
             }
         }
-        child->SetParent(old_parent);
+        child->setParent(old_parent);
     }
     code.Eol().NodeName().Function("SetDropdownMenu(").Str(menu_name).EndFunction();
 
@@ -682,40 +682,40 @@ int ToolDropDownGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size
     GenXrcObjectAttributes(node, item, "tool");
     GenXrcToolProps(node, item, xrc_flags);
 
-    if (node->GetChildCount())
+    if (node->getChildCount())
     {
         object = object.append_child("dropdown");
         object = object.append_child("object");
         object.append_attribute("class").set_value("wxMenu");
 
-        for (const auto& child: node->GetChildNodePtrs())
+        for (const auto& child: node->getChildNodePtrs())
         {
             auto child_object = object.append_child("object");
-            auto child_generator = child->GetNodeDeclaration()->GetGenerator();
+            auto child_generator = child->getNodeDeclaration()->getGenerator();
             if (child_generator->GenXrcObject(child.get(), child_object, xrc_flags) == BaseGenerator::xrc_not_supported)
             {
                 object.remove_child(child_object);
             }
 
             // A submenu can have children
-            if (child->GetChildCount())
+            if (child->getChildCount())
             {
-                for (const auto& grandchild: child->GetChildNodePtrs())
+                for (const auto& grandchild: child->getChildNodePtrs())
                 {
                     auto grandchild_object = child_object.append_child("object");
-                    auto grandchild_generator = grandchild->GetNodeDeclaration()->GetGenerator();
+                    auto grandchild_generator = grandchild->getNodeDeclaration()->getGenerator();
                     if (grandchild_generator->GenXrcObject(grandchild.get(), grandchild_object, xrc_flags) ==
                         BaseGenerator::xrc_not_supported)
                     {
                         child_object.remove_child(grandchild_object);
                     }
                     // A submenu menu item can also be a submenu with great grandchildren.
-                    if (grandchild->GetChildCount())
+                    if (grandchild->getChildCount())
                     {
-                        for (const auto& great_grandchild: grandchild->GetChildNodePtrs())
+                        for (const auto& great_grandchild: grandchild->getChildNodePtrs())
                         {
                             auto great_grandchild_object = grandchild_object.append_child("object");
-                            auto great_grandchild_generator = grandchild->GetNodeDeclaration()->GetGenerator();
+                            auto great_grandchild_generator = grandchild->getNodeDeclaration()->getGenerator();
                             if (great_grandchild_generator->GenXrcObject(great_grandchild.get(), great_grandchild_object,
                                                                          xrc_flags) == BaseGenerator::xrc_not_supported)
                             {

@@ -23,7 +23,7 @@ extern const char* python_triple_quote;  // "\"\"\"";
 
 void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& class_name)
 {
-    Code handler(event->GetNode(), code.m_language);
+    Code handler(event->getNode(), code.m_language);
     tt_string event_code;
     if (code.m_language == GEN_LANG_CPLUSPLUS)
     {
@@ -95,18 +95,18 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
     // With lambdas, line break have already been added
     code.EnableAutoLineBreak(is_lambda ? false : true);
 
-    // Do *NOT* assume that code.m_node is the same as event->GetNode()!
+    // Do *NOT* assume that code.m_node is the same as event->getNode()!
 
-    if (event->GetNode()->IsStaticBoxSizer())
+    if (event->getNode()->isStaticBoxSizer())
     {
         code.AddIfPython("self.");
         if (event->get_name() == "wxEVT_CHECKBOX")
         {
-            code.Add(event->GetNode()->value(prop_checkbox_var_name));
+            code.Add(event->getNode()->as_string(prop_checkbox_var_name));
         }
         else if (event->get_name() == "wxEVT_RADIOBUTTON")
         {
-            code.Add(event->GetNode()->value(prop_radiobtn_var_name));
+            code.Add(event->getNode()->as_string(prop_radiobtn_var_name));
         }
         else
         {
@@ -116,26 +116,26 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
 
         code.EndFunction();
     }
-    else if (event->GetNode()->isGen(gen_wxMenuItem) || event->GetNode()->isGen(gen_tool) ||
-             event->GetNode()->isGen(gen_auitool))
+    else if (event->getNode()->isGen(gen_wxMenuItem) || event->getNode()->isGen(gen_tool) ||
+             event->getNode()->isGen(gen_auitool))
     {
         code.AddIfPython("self.");
         code << "Bind(" << handler.GetCode() << comma;
-        if (event->GetNode()->value(prop_id) != "wxID_ANY")
+        if (event->getNode()->as_string(prop_id) != "wxID_ANY")
         {
-            auto id = event->GetNode()->get_prop_id();
+            auto id = event->getNode()->getPropId();
             code.AddIfPython("id=").Add(id).EndFunction();
         }
         else
         {
-            code.AddIfPython("id=").Add(event->GetNode()->get_node_name()).Function("GetId()").EndFunction();
+            code.AddIfPython("id=").Add(event->getNode()->getNodeName()).Function("GetId()").EndFunction();
         }
     }
-    else if (event->GetNode()->isGen(gen_ribbonTool))
+    else if (event->getNode()->isGen(gen_ribbonTool))
     {
         if (code.is_python())
             code.Add("self.");
-        if (!event->GetNode()->HasValue(prop_id))
+        if (!event->getNode()->hasValue(prop_id))
         {
             code.AddIfCpp("// ").AddIfPython("# ");
             code << "**WARNING** -- tool id not specified, event handler may never be called\n";
@@ -145,10 +145,10 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
         else
         {
             code << "Bind(" << handler.GetCode() << comma;
-            code.Add(event->GetNode()->as_string(prop_id)).EndFunction();
+            code.Add(event->getNode()->as_string(prop_id)).EndFunction();
         }
     }
-    else if (event->GetNode()->IsForm())
+    else if (event->getNode()->isForm())
     {
         code.AddIfPython("self.");
         code << "Bind(" << handler.GetCode();
@@ -156,9 +156,9 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
     }
     else
     {
-        if (code.is_python() && !event->GetNode()->IsLocal())
+        if (code.is_python() && !event->getNode()->isLocal())
             code.Add("self.");
-        code.Add(event->GetNode()->get_node_name()).Function("Bind(") << handler.GetCode();
+        code.Add(event->getNode()->getNodeName()).Function("Bind(") << handler.GetCode();
         code.EndFunction();
     }
 
@@ -175,10 +175,10 @@ void BaseCodeGenerator::GenSrcEventBinding(Node* node, EventVector& events)
         return;
     }
 
-    auto propName = node->get_prop_ptr(prop_class_name);
+    auto propName = node->getPropPtr(prop_class_name);
     if (!propName)
     {
-        FAIL_MSG(tt_string("Missing \"name\" property in ") << node->DeclName() << " class.");
+        FAIL_MSG(tt_string("Missing \"name\" property in ") << node->declName() << " class.");
         return;
     }
 
@@ -199,7 +199,7 @@ void BaseCodeGenerator::GenSrcEventBinding(Node* node, EventVector& events)
         // Sort events by event name
         std::sort(events.begin(), events.end(), lambda);
 
-        if (auto generator = iter->GetNode()->GetGenerator(); generator)
+        if (auto generator = iter->getNode()->getGenerator(); generator)
         {
             Code code(node, m_language);
             if (generator->GenEvent(code, iter, class_name); code.size())
@@ -268,11 +268,11 @@ void BaseCodeGenerator::GenHdrEvents(const EventVector& events)
             // If the form has a wxContextMenuEvent node, then the handler for the form's wxEVT_CONTEXT_MENU is a method of
             // the base class and is not virtual.
 
-            if (event->GetNode()->IsForm() && event->get_name() == "wxEVT_CONTEXT_MENU")
+            if (event->getNode()->isForm() && event->get_name() == "wxEVT_CONTEXT_MENU")
             {
                 bool has_handler = false;
 
-                for (const auto& child: event->GetNode()->GetChildNodePtrs())
+                for (const auto& child: event->getNode()->getChildNodePtrs())
                 {
                     if (child->isGen(gen_wxContextMenuEvent))
                     {
@@ -283,24 +283,24 @@ void BaseCodeGenerator::GenHdrEvents(const EventVector& events)
 
                 if (has_handler)
                 {
-                    code << "void " << event_code << "(" << event->GetEventInfo()->get_event_class() << "& event);";
+                    code << "void " << event_code << "(" << event->getEventInfo()->get_event_class() << "& event);";
                     code_lines.insert(code);
                     continue;
                 }
             }
             if ((event->get_name() == "wxEVT_WEBVIEW_FULL_SCREEN_CHANGED" ||
                  event->get_name() == "wxEVT_WEBVIEW_SCRIPT_MESSAGE_RECEIVED") &&
-                Project.value(prop_wxWidgets_version) == "3.1")
+                Project.as_string(prop_wxWidgets_version) == "3.1")
             {
                 code << "\n#if wxCHECK_VERSION(3, 1, 5)\n";
                 if (m_form_node->as_bool(prop_use_derived_class))
                 {
-                    code << "virtual void " << event->get_value() << "(" << event->GetEventInfo()->get_event_class()
+                    code << "virtual void " << event->get_value() << "(" << event->getEventInfo()->get_event_class()
                          << "& event) { event.Skip(); }";
                 }
                 else
                 {
-                    code << "void " << event_code << "(" << event->GetEventInfo()->get_event_class() << "& event);";
+                    code << "void " << event_code << "(" << event->getEventInfo()->get_event_class() << "& event);";
                 }
                 code << "\n#endif";
             }
@@ -308,12 +308,12 @@ void BaseCodeGenerator::GenHdrEvents(const EventVector& events)
             {
                 if (m_form_node->as_bool(prop_use_derived_class))
                 {
-                    code << "virtual void " << event_code << "(" << event->GetEventInfo()->get_event_class()
+                    code << "virtual void " << event_code << "(" << event->getEventInfo()->get_event_class()
                          << "& event) { event.Skip(); }";
                 }
                 else
                 {
-                    code << "void " << event_code << "(" << event->GetEventInfo()->get_event_class() << "& event);";
+                    code << "void " << event_code << "(" << event->getEventInfo()->get_event_class() << "& event);";
                 }
             }
             code_lines.insert(code);
@@ -333,12 +333,12 @@ void BaseCodeGenerator::GenHdrEvents(const EventVector& events)
 
             if (m_form_node->as_bool(prop_use_derived_class))
             {
-                code << "virtual void " << event_code << "(" << event->GetEventInfo()->get_event_class()
+                code << "virtual void " << event_code << "(" << event->getEventInfo()->get_event_class()
                      << "& event) { event.Skip(); }";
             }
             else
             {
-                code << "void " << event_code << "(" << event->GetEventInfo()->get_event_class() << "& event);";
+                code << "void " << event_code << "(" << event->getEventInfo()->get_event_class() << "& event);";
             }
 
             code_lines.insert(code);
@@ -387,7 +387,7 @@ void BaseCodeGenerator::GenPythonEventHandlers(EventVector& events)
     // Sort events by function name
     std::sort(events.begin(), events.end(), sort_event_handlers);
 
-    bool inherited_class = m_form_node->HasValue(prop_python_inherit_name);
+    bool inherited_class = m_form_node->hasValue(prop_python_inherit_name);
     if (!inherited_class)
     {
         m_header->Indent();

@@ -26,7 +26,7 @@ EditColourProperty::EditColourProperty(const wxString& label, NodeProperty* prop
 
 void EditColourProperty::OnCustomPaint(wxDC& dc, const wxRect& rect, wxPGPaintData& /* paintdata */)
 {
-    if (m_prop->HasValue())
+    if (m_prop->hasValue())
     {
         if (auto clr = m_prop->as_color(); clr.IsOk())
         {
@@ -108,14 +108,14 @@ std::map<std::string, const char*> g_sys_colour_pair = {
 
 EditColourDialog::EditColourDialog(wxWindow* parent, NodeProperty* prop) : ColourPropBase(parent)
 {
-    SetTitle(tt_string() << prop->DeclName() << " property editor");
+    SetTitle(tt_string() << prop->declName() << " property editor");
     m_value = prop->as_color();
-    m_node = prop->GetNode();
+    m_node = prop->getNode();
     m_prop_name = prop->get_name();
 
-    if (m_node->HasValue(prop_foreground_colour))
+    if (m_node->hasValue(prop_foreground_colour))
         m_foreground = m_node->as_wxColour(prop_foreground_colour);
-    if (m_node->HasValue(prop_background_colour))
+    if (m_node->hasValue(prop_background_colour))
         m_background = m_node->as_wxColour(prop_background_colour);
 
     wxArrayString tmp_array;
@@ -203,7 +203,7 @@ EditColourDialog::EditColourDialog(wxWindow* parent, NodeProperty* prop) : Colou
     if (m_background.IsOk())
         m_static_sample_text->SetBackgroundColour(m_background);
 
-    if (!prop->HasValue())
+    if (!prop->hasValue())
     {
         m_colour_rect->SetColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
         m_combo_system->Select(m_combo_system->FindString("WindowText", true));

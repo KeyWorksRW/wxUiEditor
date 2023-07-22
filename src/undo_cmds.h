@@ -93,8 +93,8 @@ class ModifyProperties : public UndoAction
 public:
     ModifyProperties(tt_string_view undo_string, bool fire_events = true);
 
-    void AddProperty(NodeProperty* prop, tt_string_view value);
-    void AddProperty(NodeProperty* prop, int value);
+    void addProperty(NodeProperty* prop, tt_string_view value);
+    void addProperty(NodeProperty* prop, int value);
 
     void Change() override;
     void Revert() override;
@@ -141,8 +141,8 @@ public:
     void Change() override;
     void Revert() override;
 
-    Node* GetParent() { return m_parent.get(); }
-    Node* GetNode() { return m_node.get(); }
+    Node* getParent() { return m_parent.get(); }
+    Node* getNode() { return m_node.get(); }
 
     size_t GetMemorySize() override { return sizeof(*this); }
 
@@ -167,7 +167,7 @@ public:
 
     Node* GetOldParent() { return m_revert_parent.get(); }
     Node* GetNewParent() { return m_change_parent.get(); }
-    Node* GetNode() { return m_node.get(); }
+    Node* getNode() { return m_node.get(); }
 
     size_t GetMemorySize() override { return sizeof(*this); }
 
@@ -192,7 +192,7 @@ public:
     void Revert() override;
 
     NodeSharedPtr GetOldNode() override { return m_old_node; }
-    Node* GetNode() { return m_node.get(); }
+    Node* getNode() { return m_node.get(); }
 
     size_t GetMemorySize() override { return sizeof(*this); }
 
@@ -211,7 +211,7 @@ public:
     void Revert() override;
 
     NodeSharedPtr GetOldNode() override { return m_old_node; }
-    Node* GetNode() { return m_node.get(); }
+    Node* getNode() { return m_node.get(); }
 
     size_t GetMemorySize() override { return sizeof(*this); }
 

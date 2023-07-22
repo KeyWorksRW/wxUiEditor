@@ -139,7 +139,7 @@ bool RibbonBarFormGenerator::HeaderCode(Code& code)
 
 bool RibbonBarFormGenerator::BaseClassNameCode(Code& code)
 {
-    if (code.HasValue(prop_derived_class))
+    if (code.hasValue(prop_derived_class))
     {
         code.Str((prop_derived_class));
     }
@@ -179,7 +179,7 @@ void RibbonBarFormGenerator::GenEvent(Code& code, NodeEvent* event, const std::s
     BaseGenerator::GenEvent(code, event, class_name);
 
     // Since this is the base class, we don't want to use the pointer that GenEventCode() would normally create
-    code.Replace(tt_string() << event->GetNode()->as_string(prop_var_name) << "->", "");
+    code.Replace(tt_string() << event->getNode()->as_string(prop_var_name) << "->", "");
 }
 
 bool RibbonBarFormGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
@@ -280,12 +280,12 @@ bool RibbonBarGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
 
 int RibbonBarGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxRibbonBar");
 
-    tt_string art(node->value(prop_theme));
+    tt_string art(node->as_string(prop_theme));
     if (art == "Generic")
         art = "aui";
     else if (art == "MSW")

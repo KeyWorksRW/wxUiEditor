@@ -18,7 +18,7 @@
 wxObject* FilePickerGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     wxString msg;
-    if (node->HasValue(prop_message))
+    if (node->hasValue(prop_message))
     {
         msg = node->as_wxString(prop_message);
     }
@@ -27,7 +27,7 @@ wxObject* FilePickerGenerator::CreateMockup(Node* node, wxObject* parent)
         msg = wxFileSelectorPromptStr;
     }
     wxString wildcard;
-    if (node->HasValue(prop_wildcard))
+    if (node->hasValue(prop_wildcard))
     {
         wildcard = node->as_wxString(prop_wildcard);
     }
@@ -120,7 +120,7 @@ std::optional<tt_string> FilePickerGenerator::GetPropertyDescription(NodePropert
 
 int FilePickerGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxFilePickerCtrl");

@@ -111,7 +111,7 @@ CodeCompare::~CodeCompare()
         wxRemoveFile(iter);
     }
 
-    if (Project.HasValue(prop_base_directory))
+    if (Project.hasValue(prop_base_directory))
     {
         dir.GetAllFiles(Project.as_string(prop_base_directory).make_wxString(), &files, "~wxue_**.*");
 

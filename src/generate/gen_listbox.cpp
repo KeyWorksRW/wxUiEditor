@@ -20,7 +20,7 @@ wxObject* ListBoxGenerator::CreateMockup(Node* node, wxObject* parent)
     auto widget = new wxListBox(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(parent, node, prop_pos),
                                 DlgSize(parent, node, prop_size), 0, nullptr, node->as_int(prop_type) | GetStyleInt(node));
 
-    if (node->HasValue(prop_contents))
+    if (node->hasValue(prop_contents))
     {
         auto array = node->as_ArrayString(prop_contents);
         for (auto& iter: array)
@@ -77,7 +77,7 @@ bool ListBoxGenerator::SettingsCode(Code& code)
         code.Eol(eol_if_empty).NodeName().Function("SetFocus(").EndFunction();
     }
 
-    if (code.HasValue(prop_contents))
+    if (code.hasValue(prop_contents))
     {
         auto array = code.node()->as_ArrayString(prop_contents);
         for (auto& iter: array)
@@ -85,7 +85,7 @@ bool ListBoxGenerator::SettingsCode(Code& code)
             code.Eol(eol_if_empty).NodeName().Function("Append(").QuotedString(iter).EndFunction();
         }
 
-        if (code.HasValue(prop_selection_string))
+        if (code.hasValue(prop_selection_string))
         {
             code.Eol(eol_if_empty).NodeName().Function("SetStringSelection(");
             code.QuotedString(prop_selection_string).EndFunction();
@@ -113,12 +113,12 @@ bool ListBoxGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, s
 
 int ListBoxGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxListBox");
 
-    if (node->HasValue(prop_contents))
+    if (node->hasValue(prop_contents))
     {
         auto content = item.append_child("content");
         auto array = node->as_ArrayString(prop_contents);
@@ -129,7 +129,7 @@ int ListBoxGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xr
     }
 
     // TODO: [KeyWorks - 06-04-2022] This needs to be supported in XRC
-    if (node->HasValue(prop_selection_string))
+    if (node->hasValue(prop_selection_string))
         item.append_child("value").text().set(node->as_string(prop_selection_string));
 
     // Older versions of wxWidgets didn't support setting the selection via the value property,

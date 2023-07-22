@@ -32,8 +32,8 @@ bool StaticLineGenerator::ConstructionCode(Code& code)
         code << "auto* ";
     code.NodeName().CreateClass();
     code.ValidParentName();
-    if (!code.IsEqualTo(prop_id, "wxID_ANY") || code.HasValue(prop_pos) || code.HasValue(prop_size) ||
-        code.HasValue(prop_window_name) || code.PropContains(prop_style, "wxLI_VERTICAL"))
+    if (!code.IsEqualTo(prop_id, "wxID_ANY") || code.hasValue(prop_pos) || code.hasValue(prop_size) ||
+        code.hasValue(prop_window_name) || code.PropContains(prop_style, "wxLI_VERTICAL"))
     {
         code.Comma().as_string(prop_id).PosSizeFlags();
     }
@@ -53,7 +53,7 @@ bool StaticLineGenerator::GetIncludes(Node* node, std::set<std::string>& set_src
 
 int StaticLineGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxStaticLine");

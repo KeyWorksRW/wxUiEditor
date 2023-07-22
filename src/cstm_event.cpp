@@ -146,7 +146,7 @@ void MainFrame::FireGridBagActionEvent(GridBagAction* undo_cmd)
     }
 }
 
-Node* CustomEvent::GetNode()
+Node* CustomEvent::getNode()
 {
     if (m_node)
     {
@@ -154,11 +154,11 @@ Node* CustomEvent::GetNode()
     }
     else if (m_property)
     {
-        return m_property->GetNode();
+        return m_property->getNode();
     }
     else if (m_event)
     {
-        return m_event->GetNode();
+        return m_event->getNode();
     }
     else
     {

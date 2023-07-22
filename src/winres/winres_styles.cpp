@@ -70,7 +70,7 @@ void resCtrl::ParseButtonStyles(tt_string_view line)
 {
     if (line.contains("BS_RIGHTBUTTON"))
     {
-        switch (m_node->gen_name())
+        switch (m_node->getGenName())
         {
             case gen_wxCheckBox:
             case gen_Check3State:

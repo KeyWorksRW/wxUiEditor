@@ -35,7 +35,7 @@ void resForm::ParseDialog(WinResource* pWinResource, tt_string_vector& txtfile, 
     }
 
     m_form_type = isDialog ? form_dialog : form_panel;
-    m_form_node = NodeCreation.NewNode(isDialog ? gen_wxDialog : gen_PanelForm);
+    m_form_node = NodeCreation.newNode(isDialog ? gen_wxDialog : gen_PanelForm);
 
 #if defined(_DEBUG) || defined(INTERNAL_TESTING)
     tt_string fullpath;
@@ -194,19 +194,19 @@ void resForm::ParseControls(tt_string_vector& txtfile, size_t& curTxtLine)
         auto& control = m_ctrls.emplace_back();
         control.ParseDirective(m_pWinResource, line);
         // If the control could not be converted into a node, then remove it from our list
-        if (!control.GetNode())
+        if (!control.getNode())
         {
             m_ctrls.pop_back();
         }
-        else if (control.GetNode()->isGen(gen_wxSpinCtrl) && control.GetPostProcessStyle().contains("UDS_AUTOBUDDY"))
+        else if (control.getNode()->isGen(gen_wxSpinCtrl) && control.GetPostProcessStyle().contains("UDS_AUTOBUDDY"))
         {
             // A spin control can specifify that the previous control should be considered a "buddy" that responds to changes
             // in the spin control. In wxWidgets, a spin control already includes an edit control, so we delete the previous
             // edit control and use it's id for the spin control.
             auto cur_pos = m_ctrls.size() - 1;
-            if (cur_pos > 0 && m_ctrls[cur_pos - 1].GetNode()->isGen(gen_wxTextCtrl))
+            if (cur_pos > 0 && m_ctrls[cur_pos - 1].getNode()->isGen(gen_wxTextCtrl))
             {
-                control.GetNode()->set_value(prop_id, m_ctrls[cur_pos - 1].GetNode()->as_string(prop_id));
+                control.getNode()->set_value(prop_id, m_ctrls[cur_pos - 1].getNode()->as_string(prop_id));
                 m_ctrls.erase(m_ctrls.begin() + (cur_pos - 1));
             }
         }

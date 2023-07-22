@@ -102,7 +102,7 @@ bool StdDialogButtonSizerGenerator::ConstructionCode(Code& code)
 
     auto& def_btn_name = node->as_string(prop_default_button);
 
-    if (node->get_form()->isGen(gen_wxDialog) && (!node->as_bool(prop_Save) && !node->as_bool(prop_ContextHelp)))
+    if (node->getForm()->isGen(gen_wxDialog) && (!node->as_bool(prop_Save) && !node->as_bool(prop_ContextHelp)))
     {
         code.NodeName();
         code += " = CreateStdDialogButtonSizer(";
@@ -222,7 +222,7 @@ bool StdDialogButtonSizerGenerator::ConstructionCode(Code& code)
 
     code.Eol().NodeName().Function("Realize(").EndFunction();
 
-    if (!node->IsLocal())
+    if (!node->isLocal())
     {
         code.Eol(eol_if_needed);
         if (node->as_bool(prop_OK))
@@ -343,7 +343,7 @@ int StdDialogButtonSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& obje
     pugi::xml_node item;
     auto result = BaseGenerator::xrc_sizer_item_created;
 
-    if (node->GetParent()->IsSizer())
+    if (node->getParent()->isSizer())
     {
         // In C++, we would call CreateSeparatedSizer to get the line on Windows and Unix, but not on Mac. XRC doesn't
         // support this, so we emulate it by adding the line. That's not correct on a Mac, though...
@@ -502,7 +502,7 @@ void StdDialogButtonSizerGenerator::RequiredHandlers(Node* /* node */, std::set<
 
 void StdDialogButtonSizerGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& class_name)
 {
-    Code handler(event->GetNode(), code.m_language);
+    Code handler(event->getNode(), code.m_language);
     tt_string event_code;
     if (code.m_language == GEN_LANG_CPLUSPLUS)
     {
@@ -541,7 +541,7 @@ void StdDialogButtonSizerGenerator::GenEvent(Code& code, NodeEvent* event, const
             handler.Add("self.") << event_code;
     }
 
-    tt_string evt_str = (event->GetEventInfo()->get_event_class() == "wxCommandEvent" ? "wxEVT_BUTTON" : "wxEVT_UPDATE_UI");
+    tt_string evt_str = (event->getEventInfo()->get_event_class() == "wxCommandEvent" ? "wxEVT_BUTTON" : "wxEVT_UPDATE_UI");
     if (code.is_python())
         code.Add("self.");
     code.Add("Bind(").Add(evt_str) << comma << handler.GetCode() << comma;

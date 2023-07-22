@@ -21,16 +21,16 @@ wxObject* BitmapComboBoxGenerator::CreateMockup(Node* node, wxObject* parent)
                                        DlgPoint(parent, node, prop_pos), DlgSize(parent, node, prop_size), 0, nullptr,
                                        GetStyleInt(node));
 
-    if (node->HasValue(prop_hint))
+    if (node->hasValue(prop_hint))
         widget->SetHint(node->as_wxString(prop_hint));
 
-    if (node->HasValue(prop_contents))
+    if (node->hasValue(prop_contents))
     {
         auto array = node->as_ArrayString(prop_contents);
         for (auto& iter: array)
             widget->Append(iter.make_wxString());
 
-        if (node->HasValue(prop_selection_string))
+        if (node->hasValue(prop_selection_string))
         {
             widget->SetStringSelection(node->as_wxString(prop_selection_string));
         }
@@ -49,7 +49,7 @@ wxObject* BitmapComboBoxGenerator::CreateMockup(Node* node, wxObject* parent)
 
 bool BitmapComboBoxGenerator::OnPropertyChange(wxObject* widget, Node* node, NodeProperty* prop)
 {
-    if (!node->HasValue(prop_contents))
+    if (!node->hasValue(prop_contents))
         return false;
 
     if (prop->isProp(prop_selection_string))
@@ -71,7 +71,7 @@ bool BitmapComboBoxGenerator::ConstructionCode(Code& code)
         code << "auto* ";
     code.AddAuto().NodeName().CreateClass();
     code.ValidParentName().Comma().as_string(prop_id);
-    if (code.HasValue(prop_style))
+    if (code.hasValue(prop_style))
     {
         code.Comma().Add("wxEmptyString");
         code.Comma().Pos().Comma().CheckLineLength().WxSize();
@@ -105,7 +105,7 @@ bool BitmapComboBoxGenerator::ConstructionCode(Code& code)
 
 bool BitmapComboBoxGenerator::SettingsCode(Code& code)
 {
-    if (code.HasValue(prop_hint) && !code.PropContains(prop_style, "wxCB_READONLY"))
+    if (code.hasValue(prop_hint) && !code.PropContains(prop_style, "wxCB_READONLY"))
     {
         code.Eol(eol_if_empty);
         code.NodeName().Function("SetHint(").QuotedString(prop_hint).EndFunction();
@@ -117,7 +117,7 @@ bool BitmapComboBoxGenerator::SettingsCode(Code& code)
         code.NodeName().Function("SetFocus(").EndFunction();
     }
 
-    if (code.HasValue(prop_contents))
+    if (code.hasValue(prop_contents))
     {
         auto array = code.node()->as_ArrayString(prop_contents);
         for (auto& iter: array)
@@ -125,10 +125,10 @@ bool BitmapComboBoxGenerator::SettingsCode(Code& code)
             code.Eol(eol_if_empty).NodeName().Function("Append(").QuotedString(iter).EndFunction();
         }
 
-        if (code.HasValue(prop_selection_string))
+        if (code.hasValue(prop_selection_string))
         {
             code.Eol(eol_if_empty);
-            if (code.HasValue(prop_validator_variable))
+            if (code.hasValue(prop_validator_variable))
             {
                 code.as_string(prop_validator_variable) << " = ";
                 code.QuotedString(prop_selection_string);
@@ -169,17 +169,17 @@ bool BitmapComboBoxGenerator::GetIncludes(Node* node, std::set<std::string>& set
 
 int BitmapComboBoxGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxBitmapComboBox");
 
-    if (node->HasValue(prop_selection_string))
+    if (node->hasValue(prop_selection_string))
         item.append_child("value").text().set(node->as_string(prop_selection_string));
     else if (node->as_int(prop_selection_int) >= 0)
         item.append_child("selection").text().set(node->as_string(prop_selection_int));
 
-    if (node->HasValue(prop_hint) && !node->as_string(prop_style).contains("wxCB_READONLY"))
+    if (node->hasValue(prop_hint) && !node->as_string(prop_style).contains("wxCB_READONLY"))
         item.append_child("hint").text().set(node->as_string(prop_hint));
 
     GenXrcStylePosSize(node, item);

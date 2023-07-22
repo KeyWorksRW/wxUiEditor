@@ -48,7 +48,7 @@ const char* txt_dlg_name = "_wxue_temp_dlg";
 
 int GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto generator = node->GetNodeDeclaration()->GetGenerator();
+    auto generator = node->getNodeDeclaration()->getGenerator();
     auto result = generator->GenXrcObject(node, object, xrc_flags);
     if (result == BaseGenerator::xrc_not_supported && node->isGen(gen_Project))
     {
@@ -67,14 +67,14 @@ int GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
             actual_object.append_attribute("class").set_value("panewindow");
         }
 
-        for (const auto& child: node->GetChildNodePtrs())
+        for (const auto& child: node->getChildNodePtrs())
         {
             // Normally, the XRC heirarchy matches our node heirarchy with the exception of XRC needing
             // a sizeritem as the immediate parent of a widget node. The exception is wxTreebook -- while
             // our nodes have BookPages as children of BookPages, XRC expects all BookPages to be children
             // of the wxTreebook with a depth parameter indicating if it is a sub-page or not.
 
-            if (child->isGen(gen_BookPage) && child->GetParent()->isGen(gen_BookPage))
+            if (child->isGen(gen_BookPage) && child->getParent()->isGen(gen_BookPage))
             {
                 int depth = 0;
                 actual_object = object;
@@ -115,7 +115,7 @@ int GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
             return result;  // The dropdown tool will already have handled it's children.
         }
 
-        for (const auto& child: node->GetChildNodePtrs())
+        for (const auto& child: node->getChildNodePtrs())
         {
             auto child_object = object.append_child("object");
             auto child_result = GenXrcObject(child.get(), child_object, xrc_flags);
@@ -147,13 +147,13 @@ int GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 
 void CollectHandlers(Node* node, std::set<std::string>& handlers)
 {
-    auto generator = node->GetNodeDeclaration()->GetGenerator();
+    auto generator = node->getNodeDeclaration()->getGenerator();
     generator->RequiredHandlers(node, handlers);
-    for (const auto& child: node->GetChildNodePtrs())
+    for (const auto& child: node->getChildNodePtrs())
     {
-        generator = child->GetNodeDeclaration()->GetGenerator();
+        generator = child->getNodeDeclaration()->getGenerator();
         generator->RequiredHandlers(child.get(), handlers);
-        if (child->GetChildCount())
+        if (child->getChildCount())
         {
             CollectHandlers(child.get(), handlers);
         }
@@ -170,13 +170,13 @@ std::string GenerateXrcStr(Node* node_start, size_t xrc_flags)
     NodeSharedPtr temp_form = nullptr;
     if (node_start->isGen(gen_MenuBar) || node_start->isGen(gen_RibbonBar) || node_start->isGen(gen_ToolBar))
     {
-        temp_form = NodeCreation.CreateNode(gen_PanelForm, nullptr);
+        temp_form = NodeCreation.createNode(gen_PanelForm, nullptr);
         if (temp_form)
         {
-            auto sizer = NodeCreation.CreateNode(gen_VerticalBoxSizer, temp_form.get());
-            temp_form->Adopt(sizer);
-            auto node_copy = NodeCreation.MakeCopy(node_start, sizer.get());
-            sizer->Adopt(node_copy);
+            auto sizer = NodeCreation.createNode(gen_VerticalBoxSizer, temp_form.get());
+            temp_form->adoptChild(sizer);
+            auto node_copy = NodeCreation.makeCopy(node_start, sizer.get());
+            sizer->adoptChild(node_copy);
             node_start = temp_form.get();
         }
     }
@@ -214,7 +214,7 @@ std::string GenerateXrcStr(Node* node_start, size_t xrc_flags)
         object.append_attribute("class").set_value("wxPanel");
         object.append_attribute("name").set_value(txt_dlg_name);
         object = object.append_child("object");
-        GenXrcObject(node_start->GetChild(0), object, xrc_flags);
+        GenXrcObject(node_start->getChild(0), object, xrc_flags);
     }
 #endif
     else

@@ -30,7 +30,7 @@ public:
 
     void RemoveNodes();
 
-    Node* GetNode(wxObject* wxobject);
+    Node* getNode(wxObject* wxobject);
     wxObject* Get_wxObject(Node* node);
 
     void SelectNode(wxObject* wxobject);

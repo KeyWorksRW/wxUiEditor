@@ -90,7 +90,7 @@ bool SpinCtrlGenerator::SettingsCode(Code& code)
 
 int SpinCtrlGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxSpinCtrl");
@@ -105,7 +105,7 @@ int SpinCtrlGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t x
     if (node->as_bool(prop_hexadecimal))
         item.append_child("base").text().set("16");
 
-    if (node->HasValue(prop_style))
+    if (node->hasValue(prop_style))
     {
         GenXrcStylePosSize(node, item);
     }
@@ -190,7 +190,7 @@ bool SpinCtrlDoubleGenerator::SettingsCode(Code& code)
 
 int SpinCtrlDoubleGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxSpinCtrlDouble");
@@ -203,7 +203,7 @@ int SpinCtrlDoubleGenerator::GenXrcObject(Node* node, pugi::xml_node& object, si
     if (node->as_double(prop_inc) != 1)
         ADD_ITEM_PROP(prop_inc, "inc")
 
-    if (node->HasValue(prop_style))
+    if (node->hasValue(prop_style))
     {
         GenXrcStylePosSize(node, item);
     }

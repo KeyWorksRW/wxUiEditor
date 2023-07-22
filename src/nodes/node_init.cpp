@@ -409,9 +409,9 @@ void NodeCreator::Initialize()
 
     for (auto& iter: lstParentChild)
     {
-        GetNodeType(iter.parent)->AddChild(iter.child, iter.max_children);
+        getNodeType(iter.parent)->addChild(iter.child, iter.max_children);
         if (iter.parent == type_sizer)
-            GetNodeType(type_gbsizer)->AddChild(iter.child, iter.max_children);
+            getNodeType(type_gbsizer)->addChild(iter.child, iter.max_children);
     }
 
     {
@@ -444,18 +444,18 @@ void NodeCreator::Initialize()
         }
 
         // Now parse the completed m_pdoc_interface document
-        ParseGeneratorFile("");
+        parseGeneratorFile("");
 
         for (auto& iter: lst_xml_generators)
         {
-            ParseGeneratorFile(iter);
+            parseGeneratorFile(iter);
         }
 
         m_interfaces.clear();
         m_pdoc_interface = nullptr;
     }
 
-    InitGenerators();
+    initGenerators();
 
     for (auto& iter: fb_ImportTypes)
     {
@@ -465,7 +465,7 @@ void NodeCreator::Initialize()
 
 // The xml_data parameter is the char* pointer to the XML data. It will be empty when
 // processing an interface document.
-void NodeCreator::ParseGeneratorFile(const char* xml_data)
+void NodeCreator::parseGeneratorFile(const char* xml_data)
 {
     // All but one of the possible files will use the doc file, so we create it even if it gets
     // ignored because this is an interface file
@@ -553,8 +553,8 @@ void NodeCreator::ParseGeneratorFile(const char* xml_data)
             m_interfaces[class_name] = generator;
         }
 
-        auto declaration = new NodeDeclaration(class_name, GetNodeType(type));
-        m_a_declarations[declaration->gen_name()] = declaration;
+        auto declaration = new NodeDeclaration(class_name, getNodeType(type));
+        m_a_declarations[declaration->getGenName()] = declaration;
 
         if (auto flags = generator.attribute("flags").as_string(); flags.size())
         {
@@ -580,8 +580,8 @@ void NodeCreator::ParseGeneratorFile(const char* xml_data)
             declaration->SetImage(GetInternalImage("unknown").Scale(GenImageSize, GenImageSize));
         }
 
-        // ParseProperties(generator, declaration.get(), declaration->GetCategory());
-        ParseProperties(generator, declaration, declaration->GetCategory());
+        // parseProperties(generator, declaration.get(), declaration->GetCategory());
+        parseProperties(generator, declaration, declaration->GetCategory());
 
         declaration->ParseEvents(generator, declaration->GetCategory());
 
@@ -595,7 +595,7 @@ void NodeCreator::ParseGeneratorFile(const char* xml_data)
         while (elem_obj)
         {
             auto class_name = elem_obj.attribute("class").as_string();
-            auto class_info = GetNodeDeclaration(class_name);
+            auto class_info = getNodeDeclaration(class_name);
 
             // This can happen if the project file is corrupted, or it it a newer version of the project file
             // that the current version doesn't support.
@@ -608,7 +608,7 @@ void NodeCreator::ParseGeneratorFile(const char* xml_data)
                 auto base_name = elem_base.attribute("class").as_string();
 
                 // Add a reference to its base class
-                auto base_info = GetNodeDeclaration(base_name);
+                auto base_info = getNodeDeclaration(base_name);
                 if (class_info && base_info)
                 {
                     class_info->AddBaseClass(base_info);
@@ -651,24 +651,24 @@ void NodeCreator::ParseGeneratorFile(const char* xml_data)
     }
 }
 
-void NodeCreator::ParseProperties(pugi::xml_node& elem_obj, NodeDeclaration* obj_info, NodeCategory& category)
+void NodeCreator::parseProperties(pugi::xml_node& elem_obj, NodeDeclaration* obj_info, NodeCategory& category)
 {
     auto elem_category = elem_obj.child("category");
     while (elem_category)
     {
         auto name = elem_category.attribute("name").as_string();
-        auto& new_cat = category.AddCategory(name);
+        auto& new_cat = category.addCategory(name);
 
         if (auto base_name = elem_category.attribute("base_name").value(); base_name.size())
         {
             if (auto node = m_interfaces.find(base_name); node != m_interfaces.end())
             {
-                ParseProperties(node->second, obj_info, new_cat);
+                parseProperties(node->second, obj_info, new_cat);
             }
         }
         else
         {
-            ParseProperties(elem_category, obj_info, new_cat);
+            parseProperties(elem_category, obj_info, new_cat);
         }
 
         elem_category = elem_category.next_sibling("category");
@@ -688,7 +688,7 @@ void NodeCreator::ParseProperties(pugi::xml_node& elem_obj, NodeDeclaration* obj
         }
         prop_name = lookup_name->second;
 
-        category.AddProperty(prop_name);
+        category.addProperty(prop_name);
 
         auto description = elem_prop.attribute("help").as_string();
         auto customEditor = elem_prop.attribute("editor").as_string();
@@ -724,7 +724,7 @@ void NodeCreator::ParseProperties(pugi::xml_node& elem_obj, NodeDeclaration* obj
 
         if (property_type == type_bitlist || property_type == type_option || property_type == type_editoption)
         {
-            auto& opts = prop_info->GetOptions();
+            auto& opts = prop_info->getOptions();
             auto elem_opt = elem_prop.child("option");
             while (elem_opt)
             {
@@ -741,14 +741,14 @@ void NodeCreator::ParseProperties(pugi::xml_node& elem_obj, NodeDeclaration* obj
 
         if (tt::is_sameas(name, map_PropNames[prop_var_name]))
         {
-            category.AddProperty(prop_var_comment);
+            category.addProperty(prop_var_comment);
             prop_info = std::make_shared<PropDeclaration>(prop_var_comment, type_string_edit_single, tt_empty_cstr,
                                                           "Comment to add to the variable name in the generated header file "
                                                           "if the class access is set to protected or public",
                                                           "");
             obj_info->GetPropInfoMap()[map_PropNames[prop_var_comment]] = prop_info;
 
-            category.AddProperty(prop_class_access);
+            category.addProperty(prop_class_access);
             tt_string access("protected:");
 
             // Most widgets will default to protected: as their class access. Those in the lst_no_class_access array should
@@ -768,7 +768,7 @@ void NodeCreator::ParseProperties(pugi::xml_node& elem_obj, NodeDeclaration* obj
                 "Determines the type of access your inherited class has to this item.", "");
             obj_info->GetPropInfoMap()[map_PropNames[prop_class_access]] = prop_info;
 
-            auto& opts = prop_info->GetOptions();
+            auto& opts = prop_info->getOptions();
 
             opts.emplace_back();
             opts[opts.size() - 1].name = "none";
@@ -797,7 +797,7 @@ void NodeDeclaration::ParseEvents(pugi::xml_node& elem_obj, NodeCategory& catego
         if (elem_category.child("event"))
         {
             auto name = elem_category.attribute("name").as_string();
-            auto& new_cat = category.AddCategory(name);
+            auto& new_cat = category.addCategory(name);
 
             ParseEvents(elem_category, new_cat);
         }
@@ -808,7 +808,7 @@ void NodeDeclaration::ParseEvents(pugi::xml_node& elem_obj, NodeCategory& catego
     while (nodeEvent)
     {
         auto evt_name = nodeEvent.attribute("name").as_std_str();
-        category.AddEvent(evt_name);
+        category.addEvent(evt_name);
 
         auto evt_class = nodeEvent.attribute("class").as_std_str("wxEvent");
         auto description = nodeEvent.attribute("help").as_std_str();

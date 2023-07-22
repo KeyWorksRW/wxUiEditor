@@ -37,7 +37,7 @@ void RibbonToolBarGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxpar
 {
     auto btn_bar = wxDynamicCast(wxobject, wxRibbonToolBar);
 
-    for (const auto& child: node->GetChildNodePtrs())
+    for (const auto& child: node->getChildNodePtrs())
     {
         if (child->isGen(gen_ribbonSeparator))
         {

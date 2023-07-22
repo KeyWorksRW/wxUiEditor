@@ -33,12 +33,12 @@ wxObject* GenericDirCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
 bool GenericDirCtrlGenerator::ConstructionCode(Code& code)
 {
     code.AddAuto().NodeName().CreateClass().ValidParentName().Comma().as_string(prop_id).Comma();
-    if (code.HasValue(prop_defaultfolder))
+    if (code.hasValue(prop_defaultfolder))
         code.QuotedString(prop_defaultfolder);
     else
         code.Add("wxDirDialogDefaultFolderStr");
 
-    if (!code.HasValue(prop_filter) && code.IntValue(prop_defaultfilter) == 0 && !code.HasValue(prop_window_name))
+    if (!code.hasValue(prop_filter) && code.IntValue(prop_defaultfilter) == 0 && !code.hasValue(prop_window_name))
     {
         code.PosSizeFlags(false, "wxDIRCTRL_DEFAULT_STYLE");
     }
@@ -46,7 +46,7 @@ bool GenericDirCtrlGenerator::ConstructionCode(Code& code)
     {
         code.Comma().Pos().Comma().WxSize().Comma().Style();
         code.Comma().QuotedString(prop_filter).Comma().Add(prop_defaultfilter);
-        if (code.HasValue(prop_window_name))
+        if (code.hasValue(prop_window_name))
         {
             code.Comma().QuotedString(prop_window_name);
         }
@@ -82,7 +82,7 @@ bool GenericDirCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set
 
 int GenericDirCtrlGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxGenericDirCtrl");

@@ -16,7 +16,7 @@ class resCtrl
 public:
     resCtrl();
 
-    auto GetNode() const { return m_node.get(); }
+    auto getNode() const { return m_node.get(); }
     auto GetNodePtr() const { return m_node; }
 
     void ParseDirective(WinResource* pWinResource, tt_string_view line);
@@ -54,13 +54,13 @@ public:
     bool isAdded() const { return m_added; }
     void setAdded() { m_added = true; }
 
-    bool isGen(GenName name) const noexcept { return GetNode()->isGen(name); }
+    bool isGen(GenName name) const noexcept { return getNode()->isGen(name); }
 
     // Sets value only if the property exists.
     template <typename T>
     void set_value(PropName name, T value)
     {
-        GetNode()->set_value(name, value);
+        getNode()->set_value(name, value);
     }
 
     bool ParseDimensions(tt_string_view line, wxRect& duRect, wxRect& pixelRect);

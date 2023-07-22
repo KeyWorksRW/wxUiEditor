@@ -21,9 +21,9 @@ wxObject* SimplebookGenerator::CreateMockup(Node* node, wxObject* parent)
     auto widget = new wxSimplebook(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(parent, node, prop_pos),
                                    DlgSize(parent, node, prop_size), GetStyleInt(node));
 
-    widget->SetEffects((wxShowEffect) node->prop_as_mockup(prop_show_effect, "info_"),
-                       (wxShowEffect) node->prop_as_mockup(prop_hide_effect, "info_"));
-    if (node->HasValue(prop_duration))
+    widget->SetEffects((wxShowEffect) node->as_mockup(prop_show_effect, "info_"),
+                       (wxShowEffect) node->as_mockup(prop_hide_effect, "info_"));
+    if (node->hasValue(prop_duration))
     {
         widget->SetEffectTimeout(node->as_int(prop_duration));
     }
@@ -80,7 +80,7 @@ bool SimplebookGenerator::GetIncludes(Node* node, std::set<std::string>& set_src
 
 int SimplebookGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxSimplebook");

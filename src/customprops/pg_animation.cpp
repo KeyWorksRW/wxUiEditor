@@ -24,7 +24,7 @@ PropertyGrid_Animation::PropertyGrid_Animation(const wxString& label, NodeProper
     m_img_props.node_property = prop;
     m_img_props.SetAnimationType();
     m_value = prop->as_wxString();
-    if (prop->HasValue())
+    if (prop->hasValue())
     {
         m_img_props.InitValues(prop->as_string());
     }

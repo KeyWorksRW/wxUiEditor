@@ -143,9 +143,9 @@ void NewDialog::OnInit(wxInitDialogEvent& event)
     event.Skip();  // transfer all validator data to their windows and update UI
 }
 
-void NewDialog::CreateNode()
+void NewDialog::createNode()
 {
-    auto form_node = NodeCreation.CreateNode(gen_wxDialog, nullptr);
+    auto form_node = NodeCreation.createNode(gen_wxDialog, nullptr);
     ASSERT(form_node);
 
     if (m_title.size())
@@ -153,30 +153,30 @@ void NewDialog::CreateNode()
         form_node->set_value(prop_title, m_title.utf8_string());
     }
 
-    auto parent_sizer = NodeCreation.CreateNode(gen_VerticalBoxSizer, form_node.get());
+    auto parent_sizer = NodeCreation.createNode(gen_VerticalBoxSizer, form_node.get());
     ASSERT(parent_sizer);
     parent_sizer->set_value(prop_var_name, "dlg_sizer");
-    form_node->Adopt(parent_sizer);
+    form_node->adoptChild(parent_sizer);
 
     if (m_has_tabs)
     {
-        auto notebook = NodeCreation.CreateNode(gen_wxNotebook, parent_sizer.get());
+        auto notebook = NodeCreation.createNode(gen_wxNotebook, parent_sizer.get());
         ASSERT(notebook);
-        parent_sizer->Adopt(notebook);
+        parent_sizer->adoptChild(notebook);
 
         for (int count = 0; count < m_num_tabs; ++count)
         {
-            auto book_page = NodeCreation.CreateNode(gen_BookPage, notebook.get());
-            notebook->Adopt(book_page);
+            auto book_page = NodeCreation.createNode(gen_BookPage, notebook.get());
+            notebook->adoptChild(book_page);
 
             tt_string label("Tab ");
             label << count + 1;
             book_page->set_value(prop_label, label);
-            auto page_sizer = NodeCreation.CreateNode(gen_VerticalBoxSizer, book_page.get());
+            auto page_sizer = NodeCreation.createNode(gen_VerticalBoxSizer, book_page.get());
             page_sizer->set_value(prop_var_name, tt_string() << "page_sizer_" << count + 1);
-            book_page->Adopt(page_sizer);
-            auto static_text = NodeCreation.CreateNode(gen_wxStaticText, page_sizer.get());
-            page_sizer->Adopt(static_text);
+            book_page->adoptChild(page_sizer);
+            auto static_text = NodeCreation.createNode(gen_wxStaticText, page_sizer.get());
+            page_sizer->adoptChild(static_text);
             static_text->set_value(prop_label, "TODO: replace this control with something more useful...");
             static_text->set_value(prop_wrap, "200");
         }
@@ -184,8 +184,8 @@ void NewDialog::CreateNode()
 
     if (m_has_std_btns)
     {
-        auto std_btn = NodeCreation.CreateNode(gen_wxStdDialogButtonSizer, parent_sizer.get());
-        parent_sizer->Adopt(std_btn);
+        auto std_btn = NodeCreation.createNode(gen_wxStdDialogButtonSizer, parent_sizer.get());
+        parent_sizer->adoptChild(std_btn);
 
         std_btn->set_value(prop_OK, "1");
         std_btn->set_value(prop_Cancel, "1");
@@ -195,7 +195,7 @@ void NewDialog::CreateNode()
     }
 
     form_node->set_value(prop_class_name, m_base_class.utf8_string());
-    if (form_node->as_string(prop_class_name) != form_node->prop_default_value(prop_class_name))
+    if (form_node->as_string(prop_class_name) != form_node->getPropDefaultValue(prop_class_name))
     {
         UpdateFormClass(form_node.get());
     }
@@ -207,7 +207,7 @@ void NewDialog::CreateNode()
     }
     else
     {
-        parent_node = parent_node->get_ValidFormParent();
+        parent_node = parent_node->getValidFormParent();
     }
 
     wxGetFrame().SelectNode(parent_node);

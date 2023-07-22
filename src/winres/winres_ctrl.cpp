@@ -16,7 +16,7 @@ resCtrl::resCtrl() {}
 struct ClassGenPair
 {
     const char* class_name;
-    GenEnum::GenName gen_name;
+    GenEnum::GenName getGenName;
 };
 
 // clang-format off
@@ -138,7 +138,7 @@ void resCtrl::ParseDirective(WinResource* pWinResource, tt_string_view line)
         {
             if (line.contains(iter.class_name, tt::CASE::either))
             {
-                m_node = NodeCreation.NewNode(iter.gen_name);
+                m_node = NodeCreation.newNode(iter.getGenName);
                 if (tt::is_sameprefix(iter.class_name, "\"Rich", tt::CASE::either))
                 {
                     m_node->set_value(prop_style, "wxTE_RICH2");
@@ -158,38 +158,38 @@ void resCtrl::ParseDirective(WinResource* pWinResource, tt_string_view line)
         else if (line.contains("\"Button\"", tt::CASE::either))
         {
             if (line.contains("BS_3STATE") || line.contains("BS_AUTO3STATE"))
-                m_node = NodeCreation.NewNode(gen_Check3State);
+                m_node = NodeCreation.newNode(gen_Check3State);
             else if (line.contains("BS_CHECKBOX") || line.contains("BS_AUTOCHECKBOX"))
-                m_node = NodeCreation.NewNode(gen_wxCheckBox);
+                m_node = NodeCreation.newNode(gen_wxCheckBox);
             else if (line.contains("BS_RADIOBUTTON") || line.contains("BS_AUTORADIOBUTTON"))
             {
-                m_node = NodeCreation.NewNode(gen_wxRadioButton);
+                m_node = NodeCreation.newNode(gen_wxRadioButton);
                 if (line.contains("WX_GROUP"))
                     AppendStyle(prop_style, "wxRB_GROUP");
             }
             else if (line.contains("BS_DEFPUSHBUTTON"))
             {
-                m_node = NodeCreation.NewNode(gen_wxButton);
+                m_node = NodeCreation.newNode(gen_wxButton);
                 m_node->set_value(prop_default, true);
             }
             else if (line.contains("BS_COMMANDLINK") || line.contains("BS_DEFCOMMANDLINK"))
-                m_node = NodeCreation.NewNode(gen_wxCommandLinkButton);
+                m_node = NodeCreation.newNode(gen_wxCommandLinkButton);
             else if (line.contains("BS_PUSHLIKE"))
-                m_node = NodeCreation.NewNode(gen_wxToggleButton);
+                m_node = NodeCreation.newNode(gen_wxToggleButton);
             else if (line.contains("BS_GROUPBOX"))
-                m_node = NodeCreation.NewNode(gen_wxStaticBoxSizer);
+                m_node = NodeCreation.newNode(gen_wxStaticBoxSizer);
             else
             {
                 // This covers BS_PUSHBUTTON and BS_OWNERDRAW or any unsupported style
-                m_node = NodeCreation.NewNode(gen_wxButton);
+                m_node = NodeCreation.newNode(gen_wxButton);
             }
         }
         else if (line.contains("\"Static\"", tt::CASE::either))
         {
             if (line.contains("SS_BITMAP") || line.contains("SS_ICON"))
-                m_node = NodeCreation.NewNode(gen_wxStaticBitmap);
+                m_node = NodeCreation.newNode(gen_wxStaticBitmap);
             else
-                m_node = NodeCreation.NewNode(gen_wxStaticText);
+                m_node = NodeCreation.newNode(gen_wxStaticText);
         }
         else if (line.contains("\"SysDateTimePick32\"", tt::CASE::either))
         {
@@ -197,26 +197,26 @@ void resCtrl::ParseDirective(WinResource* pWinResource, tt_string_view line)
             if (line.contains("DTS_UPDOWN") && !line.contains("DTS_SHORTDATECENTURYFORMAT") &&
                 !line.contains("DTS_LONGDATEFORMAT"))
             {
-                m_node = NodeCreation.NewNode(gen_wxTimePickerCtrl);
+                m_node = NodeCreation.newNode(gen_wxTimePickerCtrl);
             }
             else if (line.contains("DTS_TIMEFORMAT"))
             {
-                m_node = NodeCreation.NewNode(gen_wxTimePickerCtrl);
+                m_node = NodeCreation.newNode(gen_wxTimePickerCtrl);
             }
 
             else
-                m_node = NodeCreation.NewNode(gen_wxDatePickerCtrl);
+                m_node = NodeCreation.newNode(gen_wxDatePickerCtrl);
         }
         else if (line.contains("\"MfcButton\"", tt::CASE::either))
         {
-            m_node = NodeCreation.NewNode(gen_wxButton);
+            m_node = NodeCreation.newNode(gen_wxButton);
         }
         else if (line.contains("\"SysTabControl32\"", tt::CASE::either))
         {
             if (line.contains("TCS_BUTTONS"))
-                m_node = NodeCreation.NewNode(gen_wxToolbook);
+                m_node = NodeCreation.newNode(gen_wxToolbook);
             else
-                m_node = NodeCreation.NewNode(gen_wxNotebook);
+                m_node = NodeCreation.newNode(gen_wxNotebook);
         }
 
         else
@@ -241,7 +241,7 @@ void resCtrl::ParseDirective(WinResource* pWinResource, tt_string_view line)
         {
             if (line.is_sameprefix(iter.class_name, tt::CASE::either))
             {
-                m_node = NodeCreation.NewNode(iter.gen_name);
+                m_node = NodeCreation.newNode(iter.getGenName);
                 break;
             }
         }
@@ -256,41 +256,41 @@ void resCtrl::ParseDirective(WinResource* pWinResource, tt_string_view line)
 
         else if (line.starts_with("AUTORADIOBUTTON"))
         {
-            m_node = NodeCreation.NewNode(gen_wxRadioButton);
+            m_node = NodeCreation.newNode(gen_wxRadioButton);
             if (line.contains("WX_GROUP"))
                 AppendStyle(prop_style, "wxRB_GROUP");
         }
         else if (line.starts_with("CTEXT"))
         {
-            m_node = NodeCreation.NewNode(gen_wxStaticText);
+            m_node = NodeCreation.newNode(gen_wxStaticText);
             // We don't know if this will be in a horizontal or vertical sizer, so we just use wxALIGN_CENTER which works for
             // either.
             m_node->set_value(prop_style, "wxALIGN_CENTER_HORIZONTAL");
         }
         else if (line.starts_with("DEFPUSHBUTTON"))
         {
-            m_node = NodeCreation.NewNode(gen_wxButton);
+            m_node = NodeCreation.newNode(gen_wxButton);
             m_node->set_value(prop_default, true);
         }
         else if (line.starts_with("LTEXT"))
         {
-            m_node = NodeCreation.NewNode(gen_wxStaticText);
+            m_node = NodeCreation.newNode(gen_wxStaticText);
             // m_node->set_value(prop_style, "wxALIGN_LEFT");
         }
         else if (line.starts_with("RTEXT"))
         {
-            m_node = NodeCreation.NewNode(gen_wxStaticText);
+            m_node = NodeCreation.newNode(gen_wxStaticText);
             m_node->set_value(prop_style, "wxALIGN_RIGHT");
         }
         else if (line.starts_with("RADIOBUTTON "))
         {
-            m_node = NodeCreation.NewNode(gen_wxRadioButton);
+            m_node = NodeCreation.newNode(gen_wxRadioButton);
             if (line.contains("WX_GROUP"))
                 AppendStyle(prop_style, "wxRB_GROUP");
         }
         else if (line.starts_with("SCROLLBAR"))
         {
-            m_node = NodeCreation.NewNode(gen_wxScrollBar);
+            m_node = NodeCreation.newNode(gen_wxScrollBar);
             label_required = false;
             if (line.contains("SBS_VERT"))
                 m_node->set_value(prop_style, "wxSB_VERTICAL");
@@ -364,7 +364,7 @@ void resCtrl::ParseDirective(WinResource* pWinResource, tt_string_view line)
 
     bool is_style_processed = false;  // true means any non-common styles have been processed
 
-    switch (m_node->gen_name())
+    switch (m_node->getGenName())
     {
         case gen_wxSlider:
             ParseStyles(line);

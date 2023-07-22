@@ -39,13 +39,13 @@ void WrapSizerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*
 bool WrapSizerGenerator::ConstructionCode(Code& code)
 {
     code.AddAuto().NodeName().CreateClass().as_string(prop_orientation).Comma();
-    if (code.HasValue(prop_wrap_flags))
+    if (code.hasValue(prop_wrap_flags))
         code.Str(prop_wrap_flags);
     else
         code += "0";
     code.EndFunction();
 
-    if (code.HasValue(prop_minimum_size))
+    if (code.hasValue(prop_minimum_size))
     {
         code.Eol().NodeName().Function("SetMinSize(").WxSize(prop_minimum_size).EndFunction();
     }
@@ -60,8 +60,8 @@ bool WrapSizerGenerator::AfterChildrenCode(Code& code)
         code.NodeName().Function("ShowItems(").AddFalse().EndFunction();
     }
 
-    auto parent = code.node()->GetParent();
-    if (!parent->IsSizer() && !parent->isGen(gen_wxDialog) && !parent->isGen(gen_PanelForm))
+    auto parent = code.node()->getParent();
+    if (!parent->isSizer() && !parent->isGen(gen_wxDialog) && !parent->isGen(gen_PanelForm))
     {
         code.NewLine(true);
         if (parent->isGen(gen_wxRibbonPanel))
@@ -99,7 +99,7 @@ int WrapSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t 
     pugi::xml_node item;
     auto result = BaseGenerator::xrc_sizer_item_created;
 
-    if (node->GetParent()->IsSizer())
+    if (node->getParent()->isSizer())
     {
         GenXrcSizerItem(node, object);
         item = object.append_child("object");
@@ -116,17 +116,17 @@ int WrapSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t 
 
     ADD_ITEM_PROP(prop_wrap_flags, "flag")
 
-    if (node->HasValue(prop_minimum_size))
+    if (node->hasValue(prop_minimum_size))
     {
         item.append_child("minsize").text().set(node->as_string(prop_minimum_size));
     }
-    else if (node->GetParent()->IsForm() && node->GetParent()->HasValue(prop_minimum_size))
+    else if (node->getParent()->isForm() && node->getParent()->hasValue(prop_minimum_size))
     {
         // As of wxWidgets 3.1.7, minsize can only be used for sizers, and wxSplitterWindow. That's a problem for forms which
         // often can specify their own minimum size. The workaround is to set the minimum size of the parent sizer that we
         // create for most forms.
 
-        item.append_child("minsize").text().set(node->GetParent()->as_string(prop_minimum_size));
+        item.append_child("minsize").text().set(node->getParent()->as_string(prop_minimum_size));
     }
     return result;
 }

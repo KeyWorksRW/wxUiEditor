@@ -25,17 +25,17 @@ bool SubMenuGenerator::AfterChildrenCode(Code& code)
     auto* node = code.node();  // This is just for code readability -- could just use code.node() everywhere
     tt_string submenu_item_name;
 
-    if (node->HasValue(prop_bitmap))
+    if (node->hasValue(prop_bitmap))
     {
         if (code.is_cpp())
         {
             code += "auto* ";
         }
         code.NodeName().Str("_item = ");
-        submenu_item_name = node->get_node_name() + "_item";
+        submenu_item_name = node->getNodeName() + "_item";
     }
 
-    if (node->GetParent()->isGen(gen_PopupMenu))
+    if (node->getParent()->isGen(gen_PopupMenu))
     {
         code.FormFunction("AppendSubMenu(").NodeName().Comma().QuotedString(prop_label).EndFunction();
     }
@@ -44,19 +44,19 @@ bool SubMenuGenerator::AfterChildrenCode(Code& code)
         code.ParentName().Function("AppendSubMenu(").NodeName().Comma().QuotedString(prop_label).EndFunction();
     }
 
-    if (node->HasValue(prop_bitmap))
+    if (node->hasValue(prop_bitmap))
     {
         code.Eol();
         if (code.is_cpp())
         {
-            auto& description = node->value(prop_bitmap);
+            auto& description = node->as_string(prop_bitmap);
             bool is_vector_code = GenerateVectorCode(description, code.GetCode());
             code.UpdateBreakAt();
 
             if (!is_vector_code)
             {
                 code.Str(submenu_item_name).Function("SetBitmap(");
-                if (Project.value(prop_wxWidgets_version) != "3.1")
+                if (Project.as_string(prop_wxWidgets_version) != "3.1")
                 {
                     GenerateBundleCode(description, code.GetCode());
                     code.EndFunction();
@@ -75,7 +75,7 @@ bool SubMenuGenerator::AfterChildrenCode(Code& code)
             else
             {
                 code.Tab().Str(submenu_item_name).Function("SetBitmap(");
-                if (Project.value(prop_wxWidgets_version) != "3.1")
+                if (Project.as_string(prop_wxWidgets_version) != "3.1")
                 {
                     code += "wxBitmapBundle::FromBitmaps(bitmaps)";
                     code.UpdateBreakAt();

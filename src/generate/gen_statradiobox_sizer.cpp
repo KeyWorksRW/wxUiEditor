@@ -24,15 +24,15 @@ wxObject* StaticRadioBtnBoxSizerGenerator::CreateMockup(Node* node, wxObject* pa
     // When testing, always display the checkbox, otherwise if Python is preferred, then don't
     // display the checkbox since Python doesn't support it.
 #if defined(INTERNAL_TESTING)
-    if (Project.HasValue(prop_code_preference))
+    if (Project.hasValue(prop_code_preference))
 #else
-    if (Project.value(prop_code_preference) != "Python")
+    if (Project.as_string(prop_code_preference) != "Python")
 #endif
     {
         m_radiobtn = new wxRadioButton(wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxString(prop_label));
         if (node->as_bool(prop_checked))
             m_radiobtn->SetValue(true);
-        if (node->HasValue(prop_tooltip))
+        if (node->hasValue(prop_tooltip))
             m_radiobtn->SetToolTip(node->as_wxString(prop_tooltip));
 
         auto staticbox = new wxStaticBox(wxStaticCast(parent, wxWindow), wxID_ANY, m_radiobtn);
@@ -51,7 +51,7 @@ wxObject* StaticRadioBtnBoxSizerGenerator::CreateMockup(Node* node, wxObject* pa
             dlg->SetSizer(sizer);
     }
 
-    if (node->HasValue(prop_minimum_size))
+    if (node->hasValue(prop_minimum_size))
         sizer->SetMinSize(node->as_wxSize(prop_minimum_size));
 
     return sizer;
@@ -97,34 +97,34 @@ bool StaticRadioBtnBoxSizerGenerator::ConstructionCode(Code& code)
     }
 
     tt_string parent_name(code.is_cpp() ? "this" : "self");
-    if (!node->GetParent()->IsForm())
+    if (!node->getParent()->isForm())
     {
-        auto parent = node->GetParent();
+        auto parent = node->getParent();
         while (parent)
         {
-            if (parent->IsContainer())
+            if (parent->isContainer())
             {
-                parent_name = parent->get_node_name();
+                parent_name = parent->getNodeName();
                 break;
             }
             else if (parent->isGen(gen_wxStaticBoxSizer) || parent->isGen(gen_StaticCheckboxBoxSizer) ||
                      parent->isGen(gen_StaticRadioBtnBoxSizer))
             {
-                parent_name = parent->get_node_name();
+                parent_name = parent->getNodeName();
                 if (code.is_cpp())
                     parent_name << "->GetStaticBox()";
                 else
                     parent_name << ".GetStaticBox()";
                 break;
             }
-            parent = parent->GetParent();
+            parent = parent->getParent();
         }
     }
     if (code.is_cpp())
     {
         code.AddAuto().NodeName() << " = new wxStaticBoxSizer(new wxStaticBox(" << parent_name << ", wxID_ANY";
         code.Comma();
-        if (Project.value(prop_wxWidgets_version) == "3.1")
+        if (Project.as_string(prop_wxWidgets_version) == "3.1")
         {
             code.Eol().Str("#if wxCHECK_VERSION(3, 1, 1)").Eol().Tab();
             code.as_string(prop_radiobtn_var_name) << "),";
@@ -140,14 +140,14 @@ bool StaticRadioBtnBoxSizerGenerator::ConstructionCode(Code& code)
     else
     {
         code.NodeName().CreateClass(false, "wxStaticBoxSizer").Str(prop_orientation).Comma().Str(parent_name);
-        if (code.HasValue(prop_label))
+        if (code.hasValue(prop_label))
         {
             code.Comma().QuotedString(prop_label);
         }
         code.EndFunction();
     }
 
-    if (code.HasValue(prop_minimum_size))
+    if (code.hasValue(prop_minimum_size))
     {
         code.Eol().NodeName().Function("SetMinSize(").WxSize(prop_minimum_size).EndFunction();
     }
@@ -162,7 +162,7 @@ bool StaticRadioBtnBoxSizerGenerator::SettingsCode(Code& code)
         code.NodeName().Function("GetStaticBox()->Enable(").AddFalse().EndFunction();
     }
 
-    if (code.HasValue(prop_tooltip) && code.is_cpp())
+    if (code.hasValue(prop_tooltip) && code.is_cpp())
     {
         code.Eol(eol_if_needed).as_string(prop_radiobtn_var_name).Function("SetToolTip(");
         code.QuotedString(prop_tooltip).EndFunction();
@@ -178,8 +178,8 @@ bool StaticRadioBtnBoxSizerGenerator::AfterChildrenCode(Code& code)
         code.NodeName().Function("ShowItems(").AddFalse().EndFunction();
     }
 
-    auto parent = code.node()->GetParent();
-    if (!parent->IsSizer() && !parent->isGen(gen_wxDialog) && !parent->isGen(gen_PanelForm))
+    auto parent = code.node()->getParent();
+    if (!parent->isSizer() && !parent->isGen(gen_wxDialog) && !parent->isGen(gen_PanelForm))
     {
         code.NewLine(true);
         if (parent->isGen(gen_wxRibbonPanel))
@@ -221,7 +221,7 @@ int StaticRadioBtnBoxSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& ob
     pugi::xml_node item;
     auto result = BaseGenerator::xrc_sizer_item_created;
 
-    if (node->GetParent()->IsSizer())
+    if (node->getParent()->isSizer())
     {
         GenXrcSizerItem(node, object);
         item = object.append_child("object");
@@ -235,7 +235,7 @@ int StaticRadioBtnBoxSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& ob
     item.append_attribute("class").set_value("wxStaticBoxSizer");
     item.append_attribute("name").set_value(node->as_string(prop_var_name));
     item.append_child("orient").text().set(node->as_string(prop_orientation));
-    if (node->HasValue(prop_minimum_size))
+    if (node->hasValue(prop_minimum_size))
     {
         item.append_child("minsize").text().set(node->as_string(prop_minimum_size));
     }

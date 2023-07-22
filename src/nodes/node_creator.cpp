@@ -15,7 +15,7 @@ NodeCreator& NodeCreation = NodeCreator::getInstance();
 
 using namespace GenEnum;
 
-NodeDeclaration* NodeCreator::GetNodeDeclaration(tt_string_view className)
+NodeDeclaration* NodeCreator::getNodeDeclaration(tt_string_view className)
 {
     if (auto result = rmap_GenNames.find(className); result != rmap_GenNames.end())
     {
@@ -29,7 +29,7 @@ NodeDeclaration* NodeCreator::GetNodeDeclaration(tt_string_view className)
     return nullptr;
 }
 
-NodeSharedPtr NodeCreator::NewNode(NodeDeclaration* node_decl)
+NodeSharedPtr NodeCreator::newNode(NodeDeclaration* node_decl)
 {
     auto node = std::make_shared<Node>(node_decl);
 
@@ -39,12 +39,12 @@ NodeSharedPtr NodeCreator::NewNode(NodeDeclaration* node_decl)
     size_t base = 0;
     for (auto class_info = node_decl; class_info; class_info = node_decl->GetBaseClass(base++))
     {
-        for (size_t index = 0; index < class_info->GetPropertyCount(); ++index)
+        for (size_t index = 0; index < class_info->getPropertyCount(); ++index)
         {
-            auto prop_declaration = class_info->GetPropDeclaration(index);
+            auto prop_declaration = class_info->getPropDeclaration(index);
 
             // Set the default value, either from the property info, or an override from this class
-            auto defaultValue = prop_declaration->GetDefaultValue();
+            auto defaultValue = prop_declaration->getDefaultValue();
             if (base > 0)
             {
                 auto result = node_decl->GetOverRideDefValue(prop_declaration->get_name());
@@ -52,13 +52,13 @@ NodeSharedPtr NodeCreator::NewNode(NodeDeclaration* node_decl)
                     defaultValue = result.value();
             }
 
-            auto prop = node->AddNodeProperty(prop_declaration);
+            auto prop = node->addNodeProperty(prop_declaration);
             prop->set_value(defaultValue);
         }
 
-        for (size_t index = 0; index < class_info->GetEventCount(); ++index)
+        for (size_t index = 0; index < class_info->getEventCount(); ++index)
         {
-            node->AddNodeEvent(class_info->GetEventInfo(index));
+            node->addNodeEvent(class_info->getEventInfo(index));
         }
 
         if (base >= node_info_base_count)
@@ -68,20 +68,20 @@ NodeSharedPtr NodeCreator::NewNode(NodeDeclaration* node_decl)
     return node;
 }
 
-size_t NodeCreator::CountChildrenWithSameType(Node* parent, GenType type)
+size_t NodeCreator::countChildrenWithSameType(Node* parent, GenType type)
 {
     size_t count = 0;
-    for (const auto& child: parent->GetChildNodePtrs())
+    for (const auto& child: parent->getChildNodePtrs())
     {
-        if (type == child->gen_type())
+        if (type == child->getGenType())
             ++count;
 
         // treat type-sizer and type_gbsizer as the same since forms and contains can only have one of them as the top level
         // sizer.
 
-        else if (type == type_sizer && child->gen_type() == type_gbsizer)
+        else if (type == type_sizer && child->getGenType() == type_gbsizer)
             ++count;
-        else if (type == type_gbsizer && child->gen_type() == type_sizer)
+        else if (type == type_gbsizer && child->getGenType() == type_sizer)
             ++count;
     }
 
@@ -98,7 +98,7 @@ size_t NodeCreator::CountChildrenWithSameType(Node* parent, GenType type)
 
 // The parent parameter is used to determine if the parent allows this type of child, and if so how many of those
 // children are allowed.
-NodeSharedPtr NodeCreator::CreateNode(GenName name, Node* parent)
+NodeSharedPtr NodeCreator::createNode(GenName name, Node* parent)
 {
     NodeSharedPtr node;
     NodeDeclaration* node_decl;
@@ -126,11 +126,11 @@ NodeSharedPtr NodeCreator::CreateNode(GenName name, Node* parent)
     }
 
     if (!parent)
-        return NewNode(node_decl);
+        return newNode(node_decl);
 
     // This happens when importing wxFormBuilder projects
-    if (IsOldHostType(node_decl->DeclName()))
-        return NewNode(node_decl);
+    if (isOldHostType(node_decl->declName()))
+        return newNode(node_decl);
 
     // Check for widgets which can ONLY have a frame for a parent.
     if (node_decl->isType(type_statusbar) || node_decl->isType(type_menubar) || node_decl->isType(type_toolbar))
@@ -142,24 +142,24 @@ NodeSharedPtr NodeCreator::CreateNode(GenName name, Node* parent)
     }
     else if (parent->isType(type_tool))
     {
-        auto grand_parent = parent->GetParent();
+        auto grand_parent = parent->getParent();
         if (grand_parent->isGen(gen_wxToolBar) && node_decl->isType(type_menu))
             return NodeSharedPtr();
     }
     else if (name == gen_BookPage && parent->isType(type_bookpage))
     {
-        auto grand_parent = parent->GetParent();
+        auto grand_parent = parent->getParent();
         if (!grand_parent || !grand_parent->isGen(gen_wxTreebook))
         {
             return NodeSharedPtr();
         }
     }
 
-    auto max_children = parent->GetAllowableChildren(node_decl->gen_type());
+    auto max_children = parent->getAllowableChildren(node_decl->getGenType());
 
     if (max_children == child_count::infinite)
     {
-        node = NewNode(node_decl);
+        node = newNode(node_decl);
         if (name == gen_VerticalBoxSizer)
         {
             node->set_value(prop_orientation, "wxVERTICAL");
@@ -169,10 +169,10 @@ NodeSharedPtr NodeCreator::CreateNode(GenName name, Node* parent)
     {
         if (node_decl->isType(type_sizer))
         {
-            auto count = CountChildrenWithSameType(parent, node_decl->gen_type());
+            auto count = countChildrenWithSameType(parent, node_decl->getGenType());
             if (count < (to_size_t) max_children)
             {
-                node = NewNode(node_decl);
+                node = newNode(node_decl);
                 if (name == gen_VerticalBoxSizer)
                 {
                     node->set_value(prop_orientation, "wxVERTICAL");
@@ -181,24 +181,24 @@ NodeSharedPtr NodeCreator::CreateNode(GenName name, Node* parent)
         }
         else if (node_decl->isType(type_gbsizer))
         {
-            auto count = CountChildrenWithSameType(parent, node_decl->gen_type());
+            auto count = countChildrenWithSameType(parent, node_decl->getGenType());
             if (count < (to_size_t) max_children)
             {
-                node = NewNode(node_decl);
+                node = newNode(node_decl);
             }
         }
         else if (parent->isGen(gen_wxSplitterWindow))
         {
             // for splitters, we only care if the type is allowed, and if the splitter only has one child so far.
-            if (parent->GetChildCount() < 2)
-                node = NewNode(node_decl);
+            if (parent->getChildCount() < 2)
+                node = newNode(node_decl);
         }
         else
         {
-            auto count = CountChildrenWithSameType(parent, node_decl->gen_type());
+            auto count = countChildrenWithSameType(parent, node_decl->getGenType());
             if (count < (to_size_t) max_children)
             {
-                node = NewNode(node_decl);
+                node = newNode(node_decl);
             }
         }
     }
@@ -212,18 +212,18 @@ NodeSharedPtr NodeCreator::CreateNode(GenName name, Node* parent)
 }
 
 // Called when the GenName isn't availalble
-NodeSharedPtr NodeCreator::CreateNode(tt_string_view name, Node* parent)
+NodeSharedPtr NodeCreator::createNode(tt_string_view name, Node* parent)
 {
     if (auto result = rmap_GenNames.find(name); result != rmap_GenNames.end())
     {
-        return CreateNode(result->second, parent);
+        return createNode(result->second, parent);
     }
 
     FAIL_MSG(tt_string() << "No component definition for " << name);
     return {};
 }
 
-NodeSharedPtr NodeCreator::MakeCopy(Node* node, Node* parent)
+NodeSharedPtr NodeCreator::makeCopy(Node* node, Node* parent)
 {
     ASSERT(node);
     NodeSharedPtr copyObj;
@@ -232,98 +232,98 @@ NodeSharedPtr NodeCreator::MakeCopy(Node* node, Node* parent)
     if (parent)
     {
         if (node->isGen(gen_tool) && (parent->isGen(gen_wxAuiToolBar) || parent->isGen(gen_AuiToolBar)))
-            copyObj = NewNode(gen_auitool);
+            copyObj = newNode(gen_auitool);
         else if (node->isGen(gen_auitool) && (parent->isGen(gen_wxToolBar) || parent->isGen(gen_ToolBar)))
-            copyObj = NewNode(gen_tool);
+            copyObj = newNode(gen_tool);
     }
 
     if (!copyObj)
     {
-        copyObj = NewNode(node->GetNodeDeclaration());
+        copyObj = newNode(node->getNodeDeclaration());
     }
 
     ASSERT(copyObj);
 
-    for (auto& iter: node->get_props_vector())
+    for (auto& iter: node->getPropsVector())
     {
-        if (auto copyProp = copyObj->get_prop_ptr(iter.get_name()); copyProp)
+        if (auto copyProp = copyObj->getPropPtr(iter.get_name()); copyProp)
         {
             copyProp->set_value(iter.as_string());
         }
     }
 
-    copyObj->CopyEventsFrom(node);
+    copyObj->copyEventsFrom(node);
 
     // It will be rare, but sometimes a user may want to copy a form such as FormPanel and paste it into a sizer or a book.
     // In that case, we need to create the non-form version of the control.
-    if (parent && !parent->isGen(gen_Project) && node->IsForm())
+    if (parent && !parent->isGen(gen_Project) && node->isForm())
     {
         NodeSharedPtr child_object;
         if (node->isGen(gen_ToolBar))
         {
-            child_object = CreateNode(gen_wxToolBar, parent);
+            child_object = createNode(gen_wxToolBar, parent);
             // REVIEW: [Randalphwa - 10-06-2022] This will fail if the parent is a wxFrame and it already has a toolbar.
             // Should we let the user know?
         }
         else if (node->isGen(gen_MenuBar))
         {
-            child_object = CreateNode(gen_wxMenuBar, parent);
+            child_object = createNode(gen_wxMenuBar, parent);
         }
         else if (node->isGen(gen_RibbonBar))
         {
-            child_object = CreateNode(gen_wxRibbonBar, parent);
+            child_object = createNode(gen_wxRibbonBar, parent);
         }
         else if (node->isGen(gen_PanelForm))
         {
             if (parent->isType(type_choicebook) || parent->isType(type_listbook) || parent->isType(type_notebook) ||
                 parent->isType(type_simplebook))
             {
-                child_object = CreateNode(gen_BookPage, parent);
+                child_object = createNode(gen_BookPage, parent);
             }
             else
             {
-                child_object = CreateNode(gen_wxPanel, parent);
+                child_object = createNode(gen_wxPanel, parent);
             }
         }
 
         if (child_object)
         {
-            for (auto& iter: node->get_props_vector())
+            for (auto& iter: node->getPropsVector())
             {
-                auto copyProp = child_object->get_prop_ptr(iter.get_name());
+                auto copyProp = child_object->getPropPtr(iter.get_name());
                 // Note that due to the conversion, not all properties will actually exist
                 if (copyProp)
                     copyProp->set_value(iter.as_string());
             }
-            child_object->CopyEventsFrom(node);
+            child_object->copyEventsFrom(node);
             copyObj = child_object;
         }
     }
 
 #if 0
-    auto count = node->GetEventCount();
+    auto count = node->getEventCount();
     for (size_t i = 0; i < count; i++)
     {
-        auto event = node->GetEvent(i);
-        auto copyEvent = copyObj->GetEvent(event->get_name());
+        auto event = node->getEvent(i);
+        auto copyEvent = copyObj->getEvent(event->get_name());
         ASSERT(copyEvent);
         if (copyEvent)
             copyEvent->set_value(event->get_value());
     }
 #endif
 
-    for (auto& child: node->GetChildNodePtrs())
+    for (auto& child: node->getChildNodePtrs())
     {
-        if (auto childCopy = MakeCopy(child.get()); childCopy)
+        if (auto childCopy = makeCopy(child.get()); childCopy)
         {
-            copyObj->Adopt(childCopy);
+            copyObj->adoptChild(childCopy);
         }
     }
 
     return copyObj;
 }
 
-int NodeCreator::GetConstantAsInt(const std::string& name, int defValue) const
+int NodeCreator::getConstantAsInt(const std::string& name, int defValue) const
 {
     if (auto iter = m_map_constants.find(name); iter != m_map_constants.end())
         return iter->second;

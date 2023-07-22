@@ -540,13 +540,13 @@ Code& Code::CreateClass(bool use_generic, tt_string_view override_name)
     if (is_cpp())
     {
         *this += "new ";
-        if (m_node->HasValue(prop_derived_class))
+        if (m_node->hasValue(prop_derived_class))
         {
             *this += m_node->as_string(prop_derived_class);
             *this += '(';
-            if (m_node->HasValue(prop_derived_params))
+            if (m_node->hasValue(prop_derived_params))
             {
-                *this += m_node->value(prop_derived_params);
+                *this += m_node->as_string(prop_derived_params);
                 if (back() != ',')
                     *this += ", ";
                 if (back() != ' ')
@@ -558,7 +558,7 @@ Code& Code::CreateClass(bool use_generic, tt_string_view override_name)
 
     tt_string class_name;
     if (override_name.empty())
-        class_name = m_node->DeclName();
+        class_name = m_node->declName();
     else
         class_name = override_name;
     if (use_generic)
@@ -620,7 +620,7 @@ Code& Code::as_string(PropName prop_name)
 {
     if (prop_name == prop_id)
     {
-        auto result = m_node->get_prop_id();
+        auto result = m_node->getPropId();
         CheckLineLength(result.size());
 
         if (is_python() && result._Starts_with("wx"))
@@ -725,28 +725,28 @@ Code& Code::NodeName(Node* node)
 {
     if (!node)
         node = m_node;
-    if (is_python() && !node->IsLocal() && !node->IsForm())
+    if (is_python() && !node->isLocal() && !node->isForm())
         *this += "self.";
-    *this += node->get_node_name();
+    *this += node->getNodeName();
     return *this;
 }
 
 Code& Code::ParentName()
 {
-    if (is_python() && !m_node->GetParent()->IsLocal() && !m_node->GetParent()->IsForm())
+    if (is_python() && !m_node->getParent()->isLocal() && !m_node->getParent()->isForm())
         *this += "self.";
-    *this << m_node->GetParent()->get_node_name();
+    *this << m_node->getParent()->getNodeName();
     return *this;
 }
 
 bool Code::is_local_var() const
 {
-    return m_node->IsLocal();
+    return m_node->isLocal();
 }
 
-bool Code::HasValue(GenEnum::PropName prop_name) const
+bool Code::hasValue(GenEnum::PropName prop_name) const
 {
-    return m_node->HasValue(prop_name);
+    return m_node->hasValue(prop_name);
 }
 
 int Code::IntValue(GenEnum::PropName prop_name) const
@@ -789,21 +789,21 @@ static constexpr GenType s_GenParentTypes[] = {
 
 Code& Code::ValidParentName()
 {
-    auto parent = m_node->GetParent();
+    auto parent = m_node->getParent();
     while (parent)
     {
-        if (parent->IsSizer())
+        if (parent->isSizer())
         {
-            if (parent->IsStaticBoxSizer())
+            if (parent->isStaticBoxSizer())
             {
-                if (is_python() && !parent->IsLocal() && !parent->IsForm())
+                if (is_python() && !parent->isLocal() && !parent->isForm())
                     *this += "self.";
-                *this += parent->get_node_name();
+                *this += parent->getNodeName();
                 Function("GetStaticBox()");
                 return *this;
             }
         }
-        else if (parent->IsForm())
+        else if (parent->isForm())
         {
             *this += (is_cpp()) ? "this" : "self";
             return *this;
@@ -813,9 +813,9 @@ Code& Code::ValidParentName()
         {
             if (parent->isType(iter))
             {
-                if (is_python() && !parent->IsLocal() && !parent->IsForm())
+                if (is_python() && !parent->isLocal() && !parent->isForm())
                     *this += "self.";
-                *this += parent->get_node_name();
+                *this += parent->getNodeName();
                 if (parent->isGen(gen_wxCollapsiblePane))
                 {
                     Function("GetPane()");
@@ -823,16 +823,16 @@ Code& Code::ValidParentName()
                 return *this;
             }
         }
-        parent = parent->GetParent();
+        parent = parent->getParent();
     }
 
-    ASSERT_MSG(parent, tt_string() << m_node->get_node_name() << " has no parent!");
+    ASSERT_MSG(parent, tt_string() << m_node->getNodeName() << " has no parent!");
     return *this;
 }
 
 Code& Code::QuotedString(GenEnum::PropName prop_name)
 {
-    if (!m_node->HasValue(prop_name))
+    if (!m_node->hasValue(prop_name))
     {
         if (is_cpp())
         {
@@ -945,7 +945,7 @@ Code& Code::WxSize(GenEnum::PropName prop_name, bool enable_dlg_units)
         }
 
         auto cur_pos = size();
-        bool dialog_units = m_node->value(prop_name).contains("d", tt::CASE::either);
+        bool dialog_units = m_node->as_string(prop_name).contains("d", tt::CASE::either);
         if (dialog_units && enable_dlg_units)
         {
             CheckLineLength(sizeof(", size=convert_dialog_to_pixels(Wx::Size.new(999, 999))"));
@@ -983,7 +983,7 @@ Code& Code::WxSize(GenEnum::PropName prop_name, bool enable_dlg_units)
 
     auto cur_pos = size();
 
-    bool dialog_units = m_node->value(prop_name).contains("d", tt::CASE::either);
+    bool dialog_units = m_node->as_string(prop_name).contains("d", tt::CASE::either);
     if (dialog_units && enable_dlg_units)
     {
         if (is_cpp())
@@ -1029,7 +1029,7 @@ Code& Code::Pos(GenEnum::PropName prop_name, bool enable_dlg_units)
         }
 
         auto cur_pos = size();
-        bool dialog_units = m_node->value(prop_name).contains("d", tt::CASE::either);
+        bool dialog_units = m_node->as_string(prop_name).contains("d", tt::CASE::either);
         if (dialog_units && enable_dlg_units)
         {
             CheckLineLength(sizeof(", pos=convert_dialog_to_pixels(Wx::Point.new(999, 999))"));
@@ -1067,7 +1067,7 @@ Code& Code::Pos(GenEnum::PropName prop_name, bool enable_dlg_units)
 
     auto cur_pos = size();
 
-    bool dialog_units = m_node->value(prop_name).contains("d", tt::CASE::either);
+    bool dialog_units = m_node->as_string(prop_name).contains("d", tt::CASE::either);
     if (dialog_units && enable_dlg_units)
     {
         CheckLineLength(sizeof("self.ConvertDialogToPixels(wxPoint(999, 999))"));
@@ -1098,14 +1098,14 @@ Code& Code::Style(const char* prefix, tt_string_view force_style)
         style_set = true;
     }
 
-    if (m_node->HasValue(prop_tab_position) && !m_node->as_string(prop_tab_position).is_sameas("wxBK_DEFAULT"))
+    if (m_node->hasValue(prop_tab_position) && !m_node->as_string(prop_tab_position).is_sameas("wxBK_DEFAULT"))
     {
         if (style_set)
             *this += '|';
         style_set = true;
         as_string(prop_tab_position);
     }
-    if (m_node->HasValue(prop_orientation) && !m_node->as_string(prop_orientation).is_sameas("wxGA_HORIZONTAL"))
+    if (m_node->hasValue(prop_orientation) && !m_node->as_string(prop_orientation).is_sameas("wxGA_HORIZONTAL"))
     {
         if (style_set)
             *this += '|';
@@ -1124,7 +1124,7 @@ Code& Code::Style(const char* prefix, tt_string_view force_style)
         Add("wxRE_MULTILINE");
     }
 
-    if (m_node->HasValue(prop_style))
+    if (m_node->hasValue(prop_style))
     {
         if (style_set)
             *this += '|';
@@ -1186,7 +1186,7 @@ Code& Code::Style(const char* prefix, tt_string_view force_style)
         style_set = true;
     }
 
-    if (m_node->HasValue(prop_window_style))
+    if (m_node->hasValue(prop_window_style))
     {
         if (style_set)
             *this += '|';
@@ -1224,7 +1224,7 @@ Code& Code::Style(const char* prefix, tt_string_view force_style)
 
 Code& Code::PosSizeFlags(bool uses_def_validator, tt_string_view def_style)
 {
-    if (m_node->HasValue(prop_window_name))
+    if (m_node->hasValue(prop_window_name))
     {
         // Window name is always the last parameter, so if it is specified, everything has to be generated.
         Comma();
@@ -1243,14 +1243,14 @@ Code& Code::PosSizeFlags(bool uses_def_validator, tt_string_view def_style)
 
     // This could be done as a single if statement, but it is easier to read this way.
     bool style_needed = false;
-    if ((m_node->HasValue(prop_style) && m_node->as_string(prop_style) != def_style))
+    if ((m_node->hasValue(prop_style) && m_node->as_string(prop_style) != def_style))
         style_needed = true;
-    else if (m_node->HasValue(prop_window_style))
+    else if (m_node->hasValue(prop_window_style))
         style_needed = true;
-    else if (m_node->HasValue(prop_orientation) && !m_node->as_string(prop_orientation).is_sameas("wxGA_HORIZONTAL") &&
+    else if (m_node->hasValue(prop_orientation) && !m_node->as_string(prop_orientation).is_sameas("wxGA_HORIZONTAL") &&
              !m_node->as_string(prop_orientation).is_sameas("wxSL_HORIZONTAL"))
         style_needed = true;
-    else if (m_node->HasValue(prop_tab_position) && !m_node->as_string(prop_tab_position).is_sameas("wxBK_DEFAULT"))
+    else if (m_node->hasValue(prop_tab_position) && !m_node->as_string(prop_tab_position).is_sameas("wxBK_DEFAULT"))
         style_needed = true;
     else if (m_node->isGen(gen_wxRichTextCtrl) || m_node->isGen(gen_wxListView))
         style_needed = true;
@@ -1283,17 +1283,17 @@ Code& Code::PosSizeFlags(bool uses_def_validator, tt_string_view def_style)
 
 bool Code::IsDefaultPosSizeFlags(tt_string_view def_style) const
 {
-    if (m_node->HasValue(prop_window_name))
+    if (m_node->hasValue(prop_window_name))
         return false;
 
-    if ((m_node->HasValue(prop_style) && m_node->as_string(prop_style) != def_style))
+    if ((m_node->hasValue(prop_style) && m_node->as_string(prop_style) != def_style))
         return false;
-    if (m_node->HasValue(prop_window_style))
+    if (m_node->hasValue(prop_window_style))
         return false;
-    if (m_node->HasValue(prop_orientation) && !m_node->as_string(prop_orientation).is_sameas("wxGA_HORIZONTAL") &&
+    if (m_node->hasValue(prop_orientation) && !m_node->as_string(prop_orientation).is_sameas("wxGA_HORIZONTAL") &&
         !m_node->as_string(prop_orientation).is_sameas("wxSL_HORIZONTAL"))
         return false;
-    if (m_node->HasValue(prop_tab_position) && !m_node->as_string(prop_tab_position).is_sameas("wxBK_DEFAULT"))
+    if (m_node->hasValue(prop_tab_position) && !m_node->as_string(prop_tab_position).is_sameas("wxBK_DEFAULT"))
         return false;
     if (m_node->isGen(gen_wxRichTextCtrl) || m_node->isGen(gen_wxListView))
         return false;
@@ -1308,20 +1308,20 @@ bool Code::IsDefaultPosSizeFlags(tt_string_view def_style) const
 
 int Code::WhatParamsNeeded(tt_string_view default_style) const
 {
-    if (m_node->HasValue(prop_window_name))
+    if (m_node->hasValue(prop_window_name))
     {
         return (pos_needed | size_needed | style_needed | window_name_needed);
     }
 
     // This could be done as a single if statement, but it is easier to read this way.
-    if ((m_node->HasValue(prop_style) && m_node->as_string(prop_style) != default_style))
+    if ((m_node->hasValue(prop_style) && m_node->as_string(prop_style) != default_style))
         return (pos_needed | size_needed | style_needed);
-    else if (m_node->HasValue(prop_window_style))
+    else if (m_node->hasValue(prop_window_style))
         return (pos_needed | size_needed | style_needed);
-    else if (m_node->HasValue(prop_orientation) && !m_node->as_string(prop_orientation).is_sameas("wxGA_HORIZONTAL") &&
+    else if (m_node->hasValue(prop_orientation) && !m_node->as_string(prop_orientation).is_sameas("wxGA_HORIZONTAL") &&
              !m_node->as_string(prop_orientation).is_sameas("wxSL_HORIZONTAL"))
         return (pos_needed | size_needed | style_needed);
-    else if (m_node->HasValue(prop_tab_position) && !m_node->as_string(prop_tab_position).is_sameas("wxBK_DEFAULT"))
+    else if (m_node->hasValue(prop_tab_position) && !m_node->as_string(prop_tab_position).is_sameas("wxBK_DEFAULT"))
         return (pos_needed | size_needed | style_needed);
     else if (m_node->isGen(gen_wxRichTextCtrl) || m_node->isGen(gen_wxListView))
         return (pos_needed | size_needed | style_needed);
@@ -1336,7 +1336,7 @@ int Code::WhatParamsNeeded(tt_string_view default_style) const
 
 Code& Code::PosSizeForceStyle(tt_string_view force_style, bool uses_def_validator)
 {
-    if (m_node->HasValue(prop_window_name))
+    if (m_node->hasValue(prop_window_name))
     {
         // Window name is always the last parameter, so if it is specified, everything has to be generated.
         Comma();
@@ -1537,9 +1537,9 @@ Code& Code::GenSizerFlags()
 
 void Code::GenWindowSettings()
 {
-    if (HasValue(prop_window_extra_style))
+    if (hasValue(prop_window_extra_style))
     {
-        if (m_node->IsForm())
+        if (m_node->isForm())
         {
             FormFunction("SetExtraStyle(");
         }
@@ -1554,7 +1554,7 @@ void Code::GenWindowSettings()
     if (IsTrue(prop_disabled))
     {
         Eol(eol_if_empty);
-        if (!m_node->IsForm())
+        if (!m_node->isForm())
         {
             NodeName().Function("Enable(").AddFalse().EndFunction();
         }
@@ -1567,7 +1567,7 @@ void Code::GenWindowSettings()
     if (IsTrue(prop_hidden))
     {
         Eol(eol_if_empty);
-        if (!m_node->IsForm())
+        if (!m_node->isForm())
         {
             NodeName().Function("Hide(").EndFunction();
         }
@@ -1578,13 +1578,13 @@ void Code::GenWindowSettings()
     }
 
     bool allow_minmax { true };
-    if (m_node->IsForm() && !m_node->isGen(gen_PanelForm) && !m_node->isGen(gen_wxToolBar))
+    if (m_node->isForm() && !m_node->isGen(gen_PanelForm) && !m_node->isGen(gen_wxToolBar))
         allow_minmax = false;
 
     if (allow_minmax && m_node->as_wxSize(prop_minimum_size) != wxDefaultSize)
     {
         Eol(eol_if_empty);
-        if (!m_node->IsForm())
+        if (!m_node->isForm())
         {
             NodeName().Function("SetMinSize(");
         }
@@ -1598,7 +1598,7 @@ void Code::GenWindowSettings()
     if (allow_minmax && m_node->as_wxSize(prop_maximum_size) != wxDefaultSize)
     {
         Eol(eol_if_empty);
-        if (!m_node->IsForm())
+        if (!m_node->isForm())
         {
             NodeName().Function("SetMaxSize(");
         }
@@ -1609,7 +1609,7 @@ void Code::GenWindowSettings()
         WxSize(prop_maximum_size).EndFunction();
     }
 
-    if (!m_node->IsForm() && !m_node->isPropValue(prop_variant, "normal"))
+    if (!m_node->isForm() && !m_node->isPropValue(prop_variant, "normal"))
     {
         Eol(eol_if_empty).NodeName().Function("SetWindowVariant(");
         if (m_node->isPropValue(prop_variant, "small"))
@@ -1622,20 +1622,20 @@ void Code::GenWindowSettings()
         EndFunction();
     }
 
-    if (HasValue(prop_tooltip))
+    if (hasValue(prop_tooltip))
     {
         Eol(eol_if_empty);
-        if (!m_node->IsForm())
+        if (!m_node->isForm())
             NodeName().Function("SetToolTip(");
         else
             FormFunction("SetToolTip(");
         QuotedString(prop_tooltip).EndFunction();
     }
 
-    if (HasValue(prop_context_help))
+    if (hasValue(prop_context_help))
     {
         Eol(eol_if_empty);
-        if (!m_node->IsForm())
+        if (!m_node->isForm())
             NodeName().Function("SetHelpText(");
         else
             FormFunction("SetHelpText(");
@@ -1648,9 +1648,9 @@ void Code::GenWindowSettings()
 void Code::GenFontColourSettings()
 {
     auto* node = m_node;
-    if (HasValue(prop_font))
+    if (hasValue(prop_font))
     {
-        FontProperty fontprop(node->get_prop_ptr(prop_font));
+        FontProperty fontprop(node->getPropPtr(prop_font));
         if (fontprop.isDefGuiFont())
         {
             OpenBrace();
@@ -1669,7 +1669,7 @@ void Code::GenFontColourSettings()
                 Eol().Str("font.SetStrikethrough(").AddTrue().EndFunction();
             Eol();
 
-            if (node->IsForm())
+            if (node->isForm())
             {
                 FormFunction("SetFont(font").EndFunction();
                 CloseBrace();
@@ -1693,7 +1693,7 @@ void Code::GenFontColourSettings()
             Add("wxFontInfo font_info(");
             if (point_size != static_cast<int>(point_size))  // is there a fractional value?
             {
-                if (is_cpp() && Project.value(prop_wxWidgets_version) == "3.1")
+                if (is_cpp() && Project.as_string(prop_wxWidgets_version) == "3.1")
                 {
                     Eol().Str("#if !wxCHECK_VERSION(3, 1, 2)").Eol().Tab();
 
@@ -1709,7 +1709,7 @@ void Code::GenFontColourSettings()
                 }
                 else
                 {
-                    if (is_cpp() && Project.value(prop_wxWidgets_version) == "3.1")
+                    if (is_cpp() && Project.as_string(prop_wxWidgets_version) == "3.1")
                     {
                         Eol().Str("#else // fractional point sizes are new to wxWidgets 3.1.2").Eol().Tab();
                     }
@@ -1723,7 +1723,7 @@ void Code::GenFontColourSettings()
 
                     // REVIEW: [Randalphwa - 12-30-2022] We don't output anything if std::to_chars() results in an error
 
-                    if (is_cpp() && Project.value(prop_wxWidgets_version) == "3.1")
+                    if (is_cpp() && Project.as_string(prop_wxWidgets_version) == "3.1")
                     {
                         Eol().Str("#endif");
                     }
@@ -1764,7 +1764,7 @@ void Code::GenFontColourSettings()
                 *this += ';';
             Eol();
 
-            if (node->IsForm())
+            if (node->isForm())
             {
                 FormFunction("SetFont(").Add("wxFont(font_info)").EndFunction();
             }
@@ -1779,7 +1779,7 @@ void Code::GenFontColourSettings()
     if (auto& fg_clr = node->as_string(prop_foreground_colour); fg_clr.size())
     {
         Eol(eol_if_needed);
-        if (node->IsForm())
+        if (node->isForm())
         {
             FormFunction("SetForegroundColour(");
         }
@@ -1802,7 +1802,7 @@ void Code::GenFontColourSettings()
     if (auto& bg_clr = node->as_string(prop_background_colour); bg_clr.size())
     {
         Eol(eol_if_needed);
-        if (node->IsForm())
+        if (node->isForm())
         {
             FormFunction("SetBackgroundColour(");
         }
@@ -1848,7 +1848,7 @@ Code& Code::AddComment(tt_string_view text)
 
 Code& Code::ColourCode(GenEnum::PropName prop_name)
 {
-    if (!HasValue(prop_name))
+    if (!hasValue(prop_name))
     {
         Add("wxNullColour");
     }

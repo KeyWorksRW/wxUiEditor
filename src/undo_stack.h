@@ -49,7 +49,7 @@ public:
     bool isAllowedSelectEvent() { return m_AllowSelectEvent; }
 
     // This will only be valid if the action actually stored a node.
-    NodeSharedPtr GetNode() { return m_node; }
+    NodeSharedPtr getNode() { return m_node; }
 
     // This will only be valid if the action actually stored a property.
     virtual NodeProperty* GetProperty() { return nullptr; }

@@ -64,11 +64,10 @@ private:
 // Code below this comment block will be preserved
 // if the code for this class is re-generated.
 //
-// clang-format on
-// ***********************************************
+    // clang-format on
+    // ***********************************************
 
 public:
-
     tt_string GetCombinedFilename() { return m_filename.utf8_string(); }
     bool CombineFiles() { return m_create_combined; }
 

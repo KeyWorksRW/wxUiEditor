@@ -57,11 +57,10 @@ private:
 // Code below this comment block will be preserved
 // if the code for this class is re-generated.
 //
-// clang-format on
-// ***********************************************
+    // clang-format on
+    // ***********************************************
 
 public:
-
     void WantFormVersion() { m_is_form = true; }
     void CreateNode();
     void VerifyClassName();

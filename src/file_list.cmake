@@ -16,7 +16,6 @@ set (file_list
     paths.cpp             # Handles *_directory properties
     preferences.cpp       # Set/Get wxUiEditor preferences
     previews.cpp          # Top level Preview functions
-    startup_dlg.cpp       # Startup dialog
     undo_cmds.cpp         # Undoable command classes derived from UndoStackCmd
     undo_stack.cpp        # Maintain an undo and redo stack
     wakatime.cpp          # Updates WakaTime metrics
@@ -43,7 +42,6 @@ set (file_list
     customprops/txt_string_prop.cpp     # Derived wxStringProperty class for single-line text
     customprops/id_prop.cpp             # Uses IDEditorDlg to edit a custom ID
 
-    customprops/art_prop_dlg.cpp        # Art Property Dialog for image property
     customprops/eventhandler_dlg.cpp    # Dialog for editing event handlers
     customprops/font_prop_dlg.cpp       # Dialog for editing Font Property
     customprops/img_props.cpp           # Handles property grid image properties
@@ -51,6 +49,9 @@ set (file_list
     customprops/pg_image.cpp            # Custom property grid class for images
     customprops/pg_animation.cpp        # Custom property grid class for animations
     customprops/pg_point.cpp            # Custom wxPGProperty for wxPoint
+    # (generated) customprops/art_prop_dlg.cpp        # Art Property Dialog for image property
+    # (generated) customprops/include_files_dlg.cpp
+    # (generated) customprops/id_editor_dlg.cpp
 
     custom_ctrls/colour_rect_ctrl.cpp   # Control that displays a solid color
 
@@ -237,6 +238,8 @@ set (file_list
     import/import_wxsmith.cpp       # Process XRC files
     import/import_xml.cpp           # Base class for XML importing
 
+    # (generated) import/import_winres_dlg.cpp
+
     # Mockup panel
 
     mockup/mockup_content.cpp   # Mockup of a form's contents
@@ -247,12 +250,13 @@ set (file_list
     # Dialogs for creating new forms
 
     newdialogs/new_common.cpp   # Contains code common between all new_ dialogs
-    newdialogs/new_dialog.cpp   # Dialog for creating a new project dialog
-    newdialogs/new_frame.cpp    # Dialog for creating a new project wxFrame
-    newdialogs/new_mdi.cpp      # Dialog for creating a new MDI application
-    newdialogs/new_panel.cpp    # Dialog for creating a new form panel
-    newdialogs/new_ribbon.cpp   # Dialog for creating a new wxRibbonBar
-    newdialogs/new_wizard.cpp   # Dialog for creating a new wxWizard
+    # (generated) newdialogs/new_dialog.cpp   # Dialog for creating a new project dialog
+    # (generated) newdialogs/new_frame.cpp    # Dialog for creating a new project wxFrame
+    # (generated) newdialogs/new_mdi.cpp      # Dialog for creating a new MDI application
+    # (generated) newdialogs/new_panel.cpp    # Dialog for creating a new form panel
+    # (generated) newdialogs/new_ribbon.cpp   # Dialog for creating a new wxRibbonBar
+    # (generated) newdialogs/new_wizard.cpp   # Dialog for creating a new wxWizard
+    # (generated) newdialogs/new_dialog.cpp  # Dialog for creating a new project dialog
 
     # Nodes
 
@@ -270,11 +274,12 @@ set (file_list
     panels/cstm_propgrid.cpp    # Derived wxPropertyGrid class
     panels/code_display.cpp     # Display code in scintilla control
     panels/base_panel.cpp       # Code generation panel
-    panels/doc_view.cpp         # Panel for displaying docs in wxWebView
     panels/nav_panel.cpp        # Navigation panel
     panels/navpopupmenu.cpp     # Context-menu for Navigation panel
     panels/propgrid_panel.cpp   # Property panel
     panels/ribbon_tools.cpp     # Displays node creation tools in a wxRibbonBar
+    # (generated) panels/doc_view.cpp         # Panel for displaying docs in wxWebView
+    # (generated) panels/nav_toolbar.cpp
 
     # Project classes
 
@@ -288,11 +293,15 @@ set (file_list
 
     # Tools
 
-    # tools/global_ids_dlg_base.cpp # Base class for Global IDs dialog (generated)
     # tools/generate_dlg.cpp        # Dialog for choosing and generating specific language file(s)
     # tools/preview_settings.cpp    # Dialog for setting preview options
+    # (generated) tools/global_ids_dlg.cpp  # Dialog to Globally edit Custom IDs
 
-    tools/global_ids_dlg.cpp  # Dialog to Globally edit Custom IDs
+    # UI
+
+    # (generated) ui/code_preference_dlg.cpp
+    # (generated) ui/startup_dlg.cpp
+    # (generated) ui/generate_xrc_dlg.cpp  # Dialog for generating XRC file(s)
 
     # Windows resource importer
 
@@ -313,7 +322,21 @@ set (file_list
     ui/import_dlg.cpp           # Dialog to import one or more projects
     ui/xrccompare.cpp           # C++/XRC UI Comparison dialog
 
-    ui/preview_settings_events.cpp  # Event handlers for PreviewSettings dialog
+    # wxui
+
+    # (generated) wxui/insert_widget.cpp
+
+    # Internal files
+
+    # (generated) internal/code_compare.cpp
+    # (generated) internal/debugsettings.cpp
+    # (generated) internal/node_info.cpp
+    # (generated) internal/node_search_dlg.cpp
+    # (generated) internal/undo_info.cpp
+    # (generated) internal/unused_gen_dlg.cpp
+    # (generated) internal/xrcpreview.cpp
+    # (generated) internal/convert_img_base.cpp
+    # (generated) internal/msgframe_base.cpp
 
     # Debug-only files from wxui_internal.cmake
 
@@ -331,7 +354,6 @@ set (debug_files
     internal/convert_img.cpp
     internal/import_panel.cpp
 
-    customprops/include_files_dlg.cpp
 
     internal/code_compare.cpp
     internal/convert_img_base.cpp

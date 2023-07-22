@@ -596,7 +596,7 @@ void WxCrafter::ProcessStyles(Node* node, const Value& array)
         if (style)
         {
             bool bit_found { false };
-            for (auto& option: style->GetPropDeclaration()->GetOptions())
+            for (auto& option: style->getPropDeclaration()->getOptions())
             {
                 if (option.name == style_bit)
                 {
@@ -621,7 +621,7 @@ void WxCrafter::ProcessStyles(Node* node, const Value& array)
 
         if (win_style)
         {
-            for (auto& option: win_style->GetPropDeclaration()->GetOptions())
+            for (auto& option: win_style->getPropDeclaration()->getOptions())
             {
                 if (option.name == style_bit)
                 {

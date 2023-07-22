@@ -214,7 +214,7 @@ ModifyProperties::ModifyProperties(tt_string_view undo_string, bool fire_events)
     m_UndoEventGenerated = true;
 }
 
-void ModifyProperties::AddProperty(NodeProperty* prop, tt_string_view value)
+void ModifyProperties::addProperty(NodeProperty* prop, tt_string_view value)
 {
     auto& entry = m_properties.emplace_back();
     entry.property = prop;
@@ -222,7 +222,7 @@ void ModifyProperties::AddProperty(NodeProperty* prop, tt_string_view value)
     entry.revert_value = prop->as_string();
 }
 
-void ModifyProperties::AddProperty(NodeProperty* prop, int value)
+void ModifyProperties::addProperty(NodeProperty* prop, int value)
 {
     auto& entry = m_properties.emplace_back();
     entry.property = prop;
@@ -341,7 +341,7 @@ ChangeSizerType::ChangeSizerType(Node* node, GenEnum::GenName new_gen_sizer)
     m_parent = node->getParentPtr();
     m_new_gen_sizer = new_gen_sizer;
 
-    m_node = NodeCreation.NewNode(m_new_gen_sizer);
+    m_node = NodeCreation.newNode(m_new_gen_sizer);
     ASSERT(m_node);
     if (m_node)
     {
@@ -361,7 +361,7 @@ ChangeSizerType::ChangeSizerType(Node* node, GenEnum::GenName new_gen_sizer)
 
         for (const auto& iter: m_old_node->getChildNodePtrs())
         {
-            m_node->adoptChild(NodeCreation.MakeCopy(iter.get()));
+            m_node->adoptChild(NodeCreation.makeCopy(iter.get()));
         }
     }
 }
@@ -458,7 +458,7 @@ ChangeNodeType::ChangeNodeType(Node* node, GenEnum::GenName new_node)
     m_parent = node->getParentPtr();
     m_new_gen_node = new_node;
 
-    m_node = NodeCreation.NewNode(m_new_gen_node);
+    m_node = NodeCreation.newNode(m_new_gen_node);
     ASSERT(m_node);
     if (m_node)
     {
@@ -470,7 +470,7 @@ ChangeNodeType::ChangeNodeType(Node* node, GenEnum::GenName new_node)
 
         for (const auto& iter: m_old_node->getChildNodePtrs())
         {
-            m_node->adoptChild(NodeCreation.MakeCopy(iter.get()));
+            m_node->adoptChild(NodeCreation.makeCopy(iter.get()));
         }
     }
 }
@@ -650,7 +650,7 @@ GridBagAction::GridBagAction(Node* cur_gbsizer, const tt_string& undo_str) : Und
     m_UndoSelectEventGenerated = true;
 
     m_cur_gbsizer = cur_gbsizer->getSharedPtr();
-    m_old_gbsizer = NodeCreation.MakeCopy(cur_gbsizer);
+    m_old_gbsizer = NodeCreation.makeCopy(cur_gbsizer);
 
     auto nav_panel = wxGetFrame().GetNavigationPanel();
 
@@ -675,12 +675,12 @@ void GridBagAction::Change()
             nav_panel->EraseAllMaps(child.get());
         }
 
-        auto save = NodeCreation.MakeCopy(m_cur_gbsizer);
+        auto save = NodeCreation.makeCopy(m_cur_gbsizer);
         m_cur_gbsizer->removeAllChildren();
 
         for (const auto& child: m_old_gbsizer->getChildNodePtrs())
         {
-            m_cur_gbsizer->adoptChild(NodeCreation.MakeCopy(child.get()));
+            m_cur_gbsizer->adoptChild(NodeCreation.makeCopy(child.get()));
         }
         m_old_gbsizer = std::move(save);
         m_isReverted = false;
@@ -704,11 +704,11 @@ void GridBagAction::Revert()
         nav_panel->EraseAllMaps(child.get());
     }
 
-    auto save = NodeCreation.MakeCopy(m_cur_gbsizer);
+    auto save = NodeCreation.makeCopy(m_cur_gbsizer);
     m_cur_gbsizer->removeAllChildren();
     for (const auto& child: m_old_gbsizer->getChildNodePtrs())
     {
-        m_cur_gbsizer->adoptChild(NodeCreation.MakeCopy(child.get()));
+        m_cur_gbsizer->adoptChild(NodeCreation.makeCopy(child.get()));
     }
     m_old_gbsizer = std::move(save);
     m_isReverted = true;
@@ -760,7 +760,7 @@ SortProjectAction::SortProjectAction()
 
     m_undo_string = "Sort Project";
 
-    m_old_project = NodeCreation.MakeCopy(Project.ProjectNode());
+    m_old_project = NodeCreation.makeCopy(Project.ProjectNode());
 }
 
 void SortProjectAction::Change()
@@ -800,7 +800,7 @@ void SortProjectAction::Revert()
     Project.ProjectNode()->removeAllChildren();
     for (const auto& child: m_old_project->getChildNodePtrs())
     {
-        Project.ProjectNode()->adoptChild(NodeCreation.MakeCopy(child.get()));
+        Project.ProjectNode()->adoptChild(NodeCreation.makeCopy(child.get()));
     }
 
     wxGetFrame().FireProjectUpdatedEvent();

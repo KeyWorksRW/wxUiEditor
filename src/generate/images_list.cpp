@@ -489,7 +489,7 @@ bool ImagesGenerator::modifyProperty(NodeProperty* prop, tt_string_view value)
 {
     if (prop->isProp(prop_auto_update) && value != "0")
     {
-        auto undo_update_images = std::make_shared<AutoImagesAction>(prop->GetNode());
+        auto undo_update_images = std::make_shared<AutoImagesAction>(prop->getNode());
         wxGetFrame().PushUndoAction(undo_update_images);
         return true;
     }

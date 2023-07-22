@@ -66,7 +66,7 @@ CodeDisplay::CodeDisplay(wxWindow* parent, int panel_type) : CodeDisplayBase(par
 
         tt_string wxPython_keywords("ToolBar MenuBar BitmapBundle Bitmap MemoryInputStream Window");
 
-        for (auto iter: NodeCreation.GetNodeDeclarationArray())
+        for (auto iter: NodeCreation.getNodeDeclarationArray())
         {
             if (!iter)
             {
@@ -98,7 +98,7 @@ CodeDisplay::CodeDisplay(wxWindow* parent, int panel_type) : CodeDisplayBase(par
 
         // clang-format on
 
-        for (auto iter: NodeCreation.GetNodeDeclarationArray())
+        for (auto iter: NodeCreation.getNodeDeclarationArray())
         {
             if (!iter)
             {
@@ -134,7 +134,7 @@ CodeDisplay::CodeDisplay(wxWindow* parent, int panel_type) : CodeDisplayBase(par
         tt_string widget_keywords(
             "wxToolBar wxMenuBar wxBitmapBundle wxBitmap wxImage wxMemoryInputStream wxVector wxWindow");
 
-        for (auto iter: NodeCreation.GetNodeDeclarationArray())
+        for (auto iter: NodeCreation.getNodeDeclarationArray())
         {
             if (!iter)
             {

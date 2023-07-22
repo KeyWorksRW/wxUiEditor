@@ -280,7 +280,7 @@ void MockupContent::CreateChildren(Node* node, wxWindow* parent, wxObject* paren
 
     if (parent && (created_window || created_sizer))
     {
-        auto obj_parent = GetNode(parent_object);
+        auto obj_parent = getNode(parent_object);
         if (obj_parent && obj_parent->isGen(gen_wxChoicebook) && node->isType(type_widget))
         {
             wxStaticCast(parent_object, wxChoicebook)
@@ -289,7 +289,7 @@ void MockupContent::CreateChildren(Node* node, wxWindow* parent, wxObject* paren
         }
         else if (obj_parent && obj_parent->isSizer())
         {
-            auto child_obj = GetNode(created_object);
+            auto child_obj = getNode(created_object);
             auto sizer_flags = child_obj->getSizerFlags();
             if (obj_parent->isGen(gen_wxGridBagSizer))
             {
@@ -400,7 +400,7 @@ void MockupContent::SetWindowProperties(Node* node, wxWindow* window, wxWindow* 
     }
 }
 
-Node* MockupContent::GetNode(wxObject* wxobject)
+Node* MockupContent::getNode(wxObject* wxobject)
 {
     if (auto node = m_obj_node_pair.find(wxobject); node != m_obj_node_pair.end())
         return node->second;

@@ -309,7 +309,7 @@ void BasePanel::OnNodeSelected(CustomEvent& event)
     if (!IsShown())
         return;
 
-    auto form = event.GetNode()->getForm();
+    auto form = event.getNode()->getForm();
 
     if (form != m_cur_form)
     {
@@ -321,11 +321,11 @@ void BasePanel::OnNodeSelected(CustomEvent& event)
     {
         if (page == m_hPanel)
         {
-            m_hPanel->OnNodeSelected(event.GetNode());
+            m_hPanel->OnNodeSelected(event.getNode());
         }
         else
         {
-            m_cppPanel->OnNodeSelected(event.GetNode());
+            m_cppPanel->OnNodeSelected(event.getNode());
         }
     }
 }

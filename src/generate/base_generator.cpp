@@ -31,7 +31,7 @@ MockupParent* BaseGenerator::GetMockup()
 void BaseGenerator::OnLeftClick(wxMouseEvent& event)
 {
     auto wxobject = event.GetEventObject();
-    auto node = wxGetFrame().GetMockup()->GetNode(wxobject);
+    auto node = wxGetFrame().GetMockup()->getNode(wxobject);
 
     if (wxGetFrame().GetSelectedNode() != node)
     {
@@ -197,7 +197,7 @@ bool BaseGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty
 
         event->GetProperty()->SetValueFromString(newValue, 0);
     }
-    else if (prop->isProp(prop_class_name) && prop->GetNode()->isForm())
+    else if (prop->isProp(prop_class_name) && prop->getNode()->isForm())
     {
         auto property = wxStaticCast(event->GetProperty(), wxStringProperty);
         auto variant = event->GetPropertyValue();
@@ -210,7 +210,7 @@ bool BaseGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty
 
         for (const auto& iter: forms)
         {
-            if (iter == prop->GetNode())
+            if (iter == prop->getNode())
             {
                 continue;
             }
@@ -224,7 +224,7 @@ bool BaseGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty
         }
     }
     else if (prop->isProp(prop_label) &&
-             (prop->GetNode()->isGen(gen_propGridItem) || prop->GetNode()->isGen(gen_propGridCategory)))
+             (prop->getNode()->isGen(gen_propGridItem) || prop->getNode()->isGen(gen_propGridCategory)))
     {
         auto property = wxStaticCast(event->GetProperty(), wxStringProperty);
         auto variant = event->GetPropertyValue();
@@ -388,7 +388,7 @@ bool BaseGenerator::GetPythonImports(Node* node, std::set<std::string>& set_impo
 
 void BaseGenerator::ChangeEnableState(wxPropertyGridManager* prop_grid, NodeProperty* changed_prop)
 {
-    // auto changed_node = changed_prop->GetNode();
+    // auto changed_node = changed_prop->getNode();
     if (changed_prop->isProp(prop_alignment))
     {
         if (auto pg_parent = prop_grid->GetProperty("alignment"); pg_parent)
@@ -507,15 +507,15 @@ std::optional<tt_string> BaseGenerator::GetHint(NodeProperty* prop)
     if (prop->isProp(prop_derived_class_name) && !prop->hasValue())
     {
         // Note that once set, this won't change until the property grid gets recreated.
-        return tt_string(!prop->GetNode()->as_bool(prop_use_derived_class) ? "requires use_derived_class" : "");
+        return tt_string(!prop->getNode()->as_bool(prop_use_derived_class) ? "requires use_derived_class" : "");
     }
     else if (prop->isProp(prop_derived_file) && !prop->hasValue())
     {
-        return tt_string(!prop->GetNode()->as_bool(prop_use_derived_class) ? "requires use_derived_class" : "");
+        return tt_string(!prop->getNode()->as_bool(prop_use_derived_class) ? "requires use_derived_class" : "");
     }
     else if (prop->isProp(prop_python_xrc_file) && !prop->hasValue())
     {
-        return tt_string(!prop->GetNode()->as_bool(prop_use_derived_class) ? "requires python_use_xrc" : "");
+        return tt_string(!prop->getNode()->as_bool(prop_use_derived_class) ? "requires python_use_xrc" : "");
     }
     else if (prop->isProp(prop_base_file) && !prop->hasValue())
     {

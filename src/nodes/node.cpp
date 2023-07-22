@@ -458,7 +458,7 @@ const tt_string& Node::getPropDefaultValue(PropName name)
     ASSERT_MSG(prop, tt_string(getNodeName()) << " doesn't have the property " << map_PropNames[name]);
 
     if (prop)
-        return prop->GetDefaultValue();
+        return prop->getDefaultValue();
     else
         return tt_empty_cstr;
 }
@@ -658,7 +658,7 @@ Node* Node::createChildNode(GenName name)
         {
             auto decl = NodeCreation.get_declaration(name);
             auto max_children = getNodeDeclaration()->getAllowableChildren(decl->getGenType());
-            auto cur_children = NodeCreation.CountChildrenWithSameType(this, decl->getGenType());
+            auto cur_children = NodeCreation.countChildrenWithSameType(this, decl->getGenType());
             if (max_children > 0 && cur_children >= static_cast<size_t>(max_children))
             {
                 if (isGen(gen_wxSplitterWindow))
@@ -1074,12 +1074,12 @@ size_t Node::getNodeSize() const
 
     for (auto& iter: m_properties)
     {
-        size += iter.GetPropSize();
+        size += iter.getPropSize();
     }
 
     for (auto& iter: m_map_events)
     {
-        size += iter.second.GetEventSize();
+        size += iter.second.getEventSize();
     }
 
     size += (m_prop_indices.size() * (sizeof(size_t) * 2));

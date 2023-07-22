@@ -185,7 +185,7 @@ NodeSharedPtr ProjectHandler::LoadProject(pugi::xml_document& doc, bool allow_ui
             FAIL_MSG("Project does not have a \"node\" node.");
             throw std::runtime_error("Invalid project file");
         }
-        project = NodeCreation.CreateProjectNode(&node);
+        project = NodeCreation.createProjectNode(&node);
     }
     catch (const std::exception& TESTING_PARAM(e))
     {
@@ -528,7 +528,7 @@ NodeSharedPtr NodeCreator::createNode(pugi::xml_node& xml_obj, Node* parent, boo
     return new_node;
 }
 
-NodeSharedPtr NodeCreator::CreateProjectNode(pugi::xml_node* xml_obj, bool allow_ui)
+NodeSharedPtr NodeCreator::createProjectNode(pugi::xml_node* xml_obj, bool allow_ui)
 {
     auto node_decl = m_a_declarations[gen_Project];
     auto new_node = std::make_shared<Node>(node_decl);
@@ -541,10 +541,10 @@ NodeSharedPtr NodeCreator::CreateProjectNode(pugi::xml_node* xml_obj, bool allow
     {
         for (size_t index = 0; index < class_info->getPropertyCount(); ++index)
         {
-            auto prop_declaration = class_info->GetPropDeclaration(index);
+            auto prop_declaration = class_info->getPropDeclaration(index);
 
             // Set the default value, either from the property info, or an override from this class
-            auto defaultValue = prop_declaration->GetDefaultValue();
+            auto defaultValue = prop_declaration->getDefaultValue();
             if (base > 0)
             {
                 auto result = node_decl->GetOverRideDefValue(prop_declaration->get_name());
@@ -556,9 +556,9 @@ NodeSharedPtr NodeCreator::CreateProjectNode(pugi::xml_node* xml_obj, bool allow
             prop->set_value(defaultValue);
         }
 
-        for (size_t index = 0; index < class_info->GetEventCount(); ++index)
+        for (size_t index = 0; index < class_info->getEventCount(); ++index)
         {
-            new_node->addNodeEvent(class_info->GetEventInfo(index));
+            new_node->addNodeEvent(class_info->getEventInfo(index));
         }
 
         if (base >= node_info_base_count)
@@ -741,7 +741,7 @@ bool ProjectHandler::Import(ImportXML& import, tt_string& file, bool append, boo
             return true;
         }
 
-        auto project_node = NodeCreation.CreateProjectNode(&project);
+        auto project_node = NodeCreation.createProjectNode(&project);
 
         auto SetLangFilenames = [&]()
         {
@@ -874,7 +874,7 @@ bool ProjectHandler::NewProject(bool create_empty, bool allow_ui)
 
     if (create_empty)
     {
-        auto project = NodeCreation.CreateProjectNode(nullptr);
+        auto project = NodeCreation.createProjectNode(nullptr);
 
         tt_string file;
         file.assignCwd();
@@ -922,7 +922,7 @@ bool ProjectHandler::NewProject(bool create_empty, bool allow_ui)
     if (dlg.ShowModal() != wxID_OK)
         return false;
 
-    auto project = NodeCreation.CreateProjectNode(nullptr);
+    auto project = NodeCreation.createProjectNode(nullptr);
 
     tt_string file;
     tt_cwd starting_cwd;
@@ -1042,7 +1042,7 @@ void ProjectHandler::AppendWinRes(const tt_string& rc_file, std::vector<tt_strin
         const auto& project = winres.GetProjectPtr();
         for (const auto& child: project->getChildNodePtrs())
         {
-            auto new_node = NodeCreation.MakeCopy(child);
+            auto new_node = NodeCreation.makeCopy(child);
             Project.FixupDuplicatedNode(new_node.get());
             m_project_node->adoptChild(new_node);
         }

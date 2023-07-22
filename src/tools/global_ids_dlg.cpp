@@ -477,7 +477,7 @@ void GlobalCustomIDS::OnCommit(wxCommandEvent& WXUNUSED(event))
         {
             tt_string new_id = iter.node->as_string(prop_id);
             new_id.Replace(iter.id_portion, modified_id);
-            undo_ids->AddProperty(iter.node->getPropPtr(prop_id), new_id);
+            undo_ids->addProperty(iter.node->getPropPtr(prop_id), new_id);
         }
     }
 

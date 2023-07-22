@@ -175,7 +175,7 @@ std::string GenerateXrcStr(Node* node_start, size_t xrc_flags)
         {
             auto sizer = NodeCreation.createNode(gen_VerticalBoxSizer, temp_form.get());
             temp_form->adoptChild(sizer);
-            auto node_copy = NodeCreation.MakeCopy(node_start, sizer.get());
+            auto node_copy = NodeCreation.makeCopy(node_start, sizer.get());
             sizer->adoptChild(node_copy);
             node_start = temp_form.get();
         }

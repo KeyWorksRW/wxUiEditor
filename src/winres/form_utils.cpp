@@ -24,7 +24,7 @@ bool resForm::is_same_top(const resCtrl* left, const resCtrl* right, bool loose_
             return false;
     }
 
-    if (left->GetNode()->isGen(gen_wxStaticText))
+    if (left->getNode()->isGen(gen_wxStaticText))
     {
         if (left->du_top() - 1 == right->du_top() || left->du_top() - 2 == right->du_top())
             return true;
@@ -57,7 +57,7 @@ bool resForm::is_same_top(const std::vector<resCtrl>& ctrls, size_t child_a, siz
             return false;
     }
 
-    if (ctrls[child_a].GetNode()->isGen(gen_wxStaticText))
+    if (ctrls[child_a].getNode()->isGen(gen_wxStaticText))
     {
         if (ctrls[child_a].du_top() - 1 == ctrls[child_b].du_top() || ctrls[child_a].du_top() - 2 == ctrls[child_b].du_top())
             return true;
@@ -83,7 +83,7 @@ bool resForm::is_same_top(const std::vector<std::reference_wrapper<resCtrl>>& ct
             return false;
     }
 
-    if (ctrls[child_a].get().GetNode()->isGen(gen_wxStaticText))
+    if (ctrls[child_a].get().getNode()->isGen(gen_wxStaticText))
     {
         if (ctrls[child_a].get().du_top() - 1 == ctrls[child_b].get().du_top() ||
             ctrls[child_a].get().du_top() - 2 == ctrls[child_b].get().du_top())
@@ -248,7 +248,7 @@ size_t resForm::FindChildPosition(const Node* node)
 {
     for (size_t idx_child = 0; idx_child < m_ctrls.size(); ++idx_child)
     {
-        if (m_ctrls[idx_child].GetNode() == node)
+        if (m_ctrls[idx_child].getNode() == node)
             return idx_child;
     }
 

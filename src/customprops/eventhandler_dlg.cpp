@@ -38,7 +38,7 @@ EventHandlerDlg::EventHandlerDlg(wxWindow* parent, NodeEvent* event) : EventHand
     // On Windows, this saves converting the UTF16 characters to ANSI.
     m_cpp_stc_lambda->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_u8_cpp_keywords);
 
-    auto form = event->GetNode()->getForm();
+    auto form = event->getNode()->getForm();
     if (form)
     {
         std::set<std::string> variables;
@@ -297,14 +297,14 @@ void EventHandlerDlg::OnChange(wxCommandEvent& WXUNUSED(event))
 void EventHandlerDlg::FormatBindText()
 {
     auto page = m_notebook->GetSelection();
-    Code handler(m_event->GetNode(), (page == EVENT_PAGE_CPP) ? GEN_LANG_CPLUSPLUS : GEN_LANG_PYTHON);
+    Code handler(m_event->getNode(), (page == EVENT_PAGE_CPP) ? GEN_LANG_CPLUSPLUS : GEN_LANG_PYTHON);
 
     if (m_notebook->GetSelection() == EVENT_PAGE_CPP)
     {
         if (m_cpp_radio_use_function->GetValue())
         {
             auto value = m_cpp_text_function->GetValue().utf8_string();
-            handler << m_event->get_name() << ", &" << m_event->GetNode()->getFormName() << "::" << value += ", this";
+            handler << m_event->get_name() << ", &" << m_event->getNode()->getFormName() << "::" << value += ", this";
         }
         else
         {
@@ -316,7 +316,7 @@ void EventHandlerDlg::FormatBindText()
 
             // Note that we have to double the '&' character since it is being sent to a static
             // text control that will think it is an accelerator.
-            handler << m_event->GetEventInfo()->get_event_class() << "&&";
+            handler << m_event->getEventInfo()->get_event_class() << "&&";
             if (m_check_include_event->GetValue())
                 handler += " event";
 
@@ -341,23 +341,23 @@ void EventHandlerDlg::FormatBindText()
         }
     }
 
-    Code code(m_event->GetNode(), (page == EVENT_PAGE_CPP) ? GEN_LANG_CPLUSPLUS : GEN_LANG_PYTHON);
+    Code code(m_event->getNode(), (page == EVENT_PAGE_CPP) ? GEN_LANG_CPLUSPLUS : GEN_LANG_PYTHON);
 
-    if (m_event->GetNode()->isForm())
+    if (m_event->getNode()->isForm())
     {
         code.Add("Bind(").Add(handler).EndFunction();
     }
-    else if (m_event->GetNode()->isGen(gen_wxMenuItem) || m_event->GetNode()->isGen(gen_tool))
+    else if (m_event->getNode()->isGen(gen_wxMenuItem) || m_event->getNode()->isGen(gen_tool))
     {
         code << "Bind(" << handler << ", ";
-        if (m_event->GetNode()->as_string(prop_id) != "wxID_ANY")
+        if (m_event->getNode()->as_string(prop_id) != "wxID_ANY")
             code.as_string(prop_id).EndFunction();
         else
-            code.Add(m_event->GetNode()->getNodeName()).Function("GetId()").EndFunction();
+            code.Add(m_event->getNode()->getNodeName()).Function("GetId()").EndFunction();
     }
-    else if (m_event->GetNode()->isGen(gen_ribbonTool))
+    else if (m_event->getNode()->isGen(gen_ribbonTool))
     {
-        if (m_event->GetNode()->as_string(prop_id).empty())
+        if (m_event->getNode()->as_string(prop_id).empty())
         {
             code.Add("Bind(").Add(handler).Comma().Add("wxID_ANY").EndFunction();
         }
@@ -368,7 +368,7 @@ void EventHandlerDlg::FormatBindText()
     }
     else
     {
-        code.Add(m_event->GetNode()->getNodeName()).Function("Bind(").Add(handler).EndFunction();
+        code.Add(m_event->getNode()->getNodeName()).Function("Bind(").Add(handler).EndFunction();
     }
 
     m_static_bind_text->SetLabel(code.make_wxString());
@@ -427,7 +427,7 @@ void EventHandlerDlg::Update_m_value()
             handler << "[this](";
         else
             handler << "[](";
-        handler << m_event->GetEventInfo()->get_event_class() << "&";
+        handler << m_event->getEventInfo()->get_event_class() << "&";
         if (m_check_include_event->GetValue())
             handler << " event";
 

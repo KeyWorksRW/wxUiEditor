@@ -35,18 +35,18 @@ class NodeDeclaration
 public:
     NodeDeclaration(tt_string_view class_name, NodeType* type);
 
-    // This will delete m_generator which was created by NodeCreator::InitGenerators()
+    // This will delete m_generator which was created by NodeCreator::initGenerators()
     ~NodeDeclaration();
 
     NodeCategory& GetCategory() { return m_category; }
 
     size_t getPropertyCount() const { return m_properties.size(); }
-    size_t GetEventCount() const { return m_events.size(); }
+    size_t getEventCount() const { return m_events.size(); }
 
-    PropDeclaration* GetPropDeclaration(size_t idx) const;
+    PropDeclaration* getPropDeclaration(size_t idx) const;
 
-    NodeEventInfo* GetEventInfo(tt_string_view name);
-    const NodeEventInfo* GetEventInfo(size_t idx) const;
+    NodeEventInfo* getEventInfo(tt_string_view name);
+    const NodeEventInfo* getEventInfo(size_t idx) const;
 
     PropDeclarationMap& GetPropInfoMap() { return m_properties; }
 
@@ -114,7 +114,7 @@ private:
 
     std::vector<NodeDeclaration*> m_base;  // base classes
 
-    // Created by NodeCreator::InitGenerators(), destroyed by ~NodeDeclaration()
+    // Created by NodeCreator::initGenerators(), destroyed by ~NodeDeclaration()
     BaseGenerator* m_generator { nullptr };
 
     GenName m_gen_name;

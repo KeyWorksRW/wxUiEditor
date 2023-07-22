@@ -457,14 +457,14 @@ void WinResource::FormToNode(resForm& form)
         case resForm::form_dialog:
         case resForm::form_panel:
             {
-                auto node = NodeCreation.MakeCopy(form.GetFormNode());
+                auto node = NodeCreation.makeCopy(form.GetFormNode());
                 m_project->adoptChild(node);
             }
             return;
 
         case resForm::form_menu:
             {
-                auto node = NodeCreation.MakeCopy(form.GetFormNode());
+                auto node = NodeCreation.makeCopy(form.GetFormNode());
                 m_project->adoptChild(node);
             }
             return;

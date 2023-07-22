@@ -38,7 +38,7 @@ void CollapsiblePaneGenerator::OnCollapse(wxCollapsiblePaneEvent& event)
 {
     if (auto wxobject = event.GetEventObject(); wxobject)
     {
-        auto node = wxGetFrame().GetMockup()->GetNode(wxobject);
+        auto node = wxGetFrame().GetMockup()->getNode(wxobject);
 
         if (wxGetFrame().GetSelectedNode() != node)
         {

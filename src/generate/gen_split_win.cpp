@@ -126,7 +126,7 @@ void SplitterWindowGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxpa
                 }
 
                 // Get the split mode and sash position
-                node = GetMockup()->GetNode(wxobject);
+                node = GetMockup()->getNode(wxobject);
                 if (!node)
                 {
                     // REVIEW: [KeyWorks - 12-06-2020] If this is actually possible, we should let the user know

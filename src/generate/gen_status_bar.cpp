@@ -54,7 +54,7 @@ wxObject* StatusBarGenerator::CreateMockup(Node* node, wxObject* parent)
             std::vector<int> styles;
             for (auto& iter: fields)
             {
-                styles.push_back(NodeCreation.GetConstantAsInt(iter.style));
+                styles.push_back(NodeCreation.getConstantAsInt(iter.style));
             }
             widget->SetStatusStyles(to_int(styles.size()), styles.data());
         }

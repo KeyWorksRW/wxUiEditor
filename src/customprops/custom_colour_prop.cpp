@@ -110,7 +110,7 @@ EditColourDialog::EditColourDialog(wxWindow* parent, NodeProperty* prop) : Colou
 {
     SetTitle(tt_string() << prop->declName() << " property editor");
     m_value = prop->as_color();
-    m_node = prop->GetNode();
+    m_node = prop->getNode();
     m_prop_name = prop->get_name();
 
     if (m_node->hasValue(prop_foreground_colour))

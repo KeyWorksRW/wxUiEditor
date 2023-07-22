@@ -168,7 +168,7 @@ public:
     // the generator handles pushing to the undo stack.
     virtual bool modifyProperty(NodeProperty* /* prop */, tt_string_view /* value */) { return false; }
 
-    // Call this to use different help text then GetPropDeclaration()->GetDescription()
+    // Call this to use different help text then getPropDeclaration()->getDescription()
     virtual std::optional<tt_string> GetPropertyDescription(NodeProperty*) { return {}; }
 
     // Call this to convert wxWidgets constants to friendly names, and to fix conflicting bit

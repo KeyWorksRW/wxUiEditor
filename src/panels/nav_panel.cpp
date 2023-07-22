@@ -70,7 +70,7 @@ NavigationPanel::NavigationPanel(wxWindow* parent) : wxPanel(parent)
 
     int index = 0;
     m_iconList = new wxImageList(GenImageSize, GenImageSize);
-    for (auto iter: NodeCreation.GetNodeDeclarationArray())
+    for (auto iter: NodeCreation.getNodeDeclarationArray())
     {
         if (!iter)
         {
@@ -116,7 +116,7 @@ NavigationPanel::NavigationPanel(wxWindow* parent) : wxPanel(parent)
     Bind(EVT_NodeDeleted,
          [this](CustomEvent& event)
          {
-             DeleteNode(event.GetNode());
+             DeleteNode(event.getNode());
          });
 
     Bind(wxEVT_MENU, &NavigationPanel::OnExpand, this, NavToolbar::id_NavExpand);
@@ -165,7 +165,7 @@ void NavigationPanel::SetMainFrame(MainFrame* frame)
     m_pMainFrame->AddCustomEventHandler(GetEventHandler());
 }
 
-Node* NavigationPanel::GetNode(wxTreeItemId item)
+Node* NavigationPanel::getNode(wxTreeItemId item)
 {
     if (item.IsOk())
     {
@@ -309,7 +309,7 @@ void NavigationPanel::OnBeginDrag(wxTreeEvent& event)
     }
 
     m_drag_node = event.GetItem();
-    auto* node = GetNode(m_drag_node);
+    auto* node = getNode(m_drag_node);
     if (node)
     {
         auto* parent = node->getParent();
@@ -337,7 +337,7 @@ void NavigationPanel::OnEndDrag(wxTreeEvent& event)
         {
             if (wxMessageBox("Do you want to duplicate this item?", "Drop item onto itself", wxYES_NO) == wxYES)
             {
-                wxGetFrame().DuplicateNode(GetNode(itemSrc));
+                wxGetFrame().DuplicateNode(getNode(itemSrc));
                 ExpandAllNodes(wxGetFrame().GetSelectedNode());
             }
             return;
@@ -345,14 +345,14 @@ void NavigationPanel::OnEndDrag(wxTreeEvent& event)
         item = m_tree_ctrl->GetItemParent(item);
     }
 
-    auto node_src = GetNode(itemSrc);
+    auto node_src = getNode(itemSrc);
     ASSERT(node_src);
     if (!node_src)
     {
         return;
     }
 
-    auto node_dst = GetNode(itemDst);
+    auto node_dst = getNode(itemDst);
     ASSERT(node_dst);
     if (!node_dst)
     {
@@ -420,7 +420,7 @@ void NavigationPanel::OnEndDrag(wxTreeEvent& event)
 void NavigationPanel::OnNodeCreated(CustomEvent& event)
 {
     wxWindowUpdateLocker freeze(this);
-    InsertNode(event.GetNode());
+    InsertNode(event.getNode());
 }
 
 void NavigationPanel::RefreshParent(Node* parent)
@@ -618,7 +618,7 @@ void NavigationPanel::EraseAllMaps(Node* node)
 
 void NavigationPanel::OnNodeSelected(CustomEvent& event)
 {
-    auto node = event.GetNode();
+    auto node = event.getNode();
     if (node->getParent() && node->getParent()->isGen(gen_wxGridBagSizer))
     {
         wxGetFrame().setStatusText(tt_string()
@@ -664,22 +664,22 @@ void NavigationPanel::OnNodePropChange(CustomEvent& event)
     if (prop->isProp(prop_var_name) || prop->isProp(prop_label) || prop->isProp(prop_class_name) ||
         prop->isProp(prop_bitmap))
     {
-        auto class_name = prop->GetNode()->declName();
+        auto class_name = prop->getNode()->declName();
         if (class_name.contains("bookpage"))
         {
-            if (auto it = m_node_tree_map.find(prop->GetNode()->getChild(0)); it != m_node_tree_map.end())
+            if (auto it = m_node_tree_map.find(prop->getNode()->getChild(0)); it != m_node_tree_map.end())
             {
                 UpdateDisplayName(it->second, it->first);
             }
         }
-        else if (auto it = m_node_tree_map.find(prop->GetNode()); it != m_node_tree_map.end())
+        else if (auto it = m_node_tree_map.find(prop->getNode()); it != m_node_tree_map.end())
         {
             UpdateDisplayName(it->second, it->first);
         }
     }
-    else if (prop->isProp(prop_id) && prop->GetNode()->isGen(gen_ribbonTool))
+    else if (prop->isProp(prop_id) && prop->getNode()->isGen(gen_ribbonTool))
     {
-        if (auto it = m_node_tree_map.find(prop->GetNode()); it != m_node_tree_map.end())
+        if (auto it = m_node_tree_map.find(prop->getNode()); it != m_node_tree_map.end())
         {
             UpdateDisplayName(it->second, it->first);
         }
@@ -687,7 +687,7 @@ void NavigationPanel::OnNodePropChange(CustomEvent& event)
 
     else if (prop->isProp(prop_orientation))
     {
-        if (auto it = m_node_tree_map.find(prop->GetNode()); it != m_node_tree_map.end())
+        if (auto it = m_node_tree_map.find(prop->getNode()); it != m_node_tree_map.end())
         {
             if (it->first->isGen(gen_VerticalBoxSizer) || it->first->isGen(gen_wxBoxSizer))
             {
@@ -698,14 +698,14 @@ void NavigationPanel::OnNodePropChange(CustomEvent& event)
     }
     else if (prop->isProp(prop_handler_name))
     {
-        if (auto it = m_node_tree_map.find(prop->GetNode()); it != m_node_tree_map.end())
+        if (auto it = m_node_tree_map.find(prop->getNode()); it != m_node_tree_map.end())
         {
             UpdateDisplayName(it->second, it->first);
         }
     }
-    else if (prop->isProp(prop_bitmap) && prop->GetNode()->isGen(gen_embedded_image))
+    else if (prop->isProp(prop_bitmap) && prop->getNode()->isGen(gen_embedded_image))
     {
-        if (auto it = m_node_tree_map.find(prop->GetNode()); it != m_node_tree_map.end())
+        if (auto it = m_node_tree_map.find(prop->getNode()); it != m_node_tree_map.end())
         {
             UpdateDisplayName(it->second, it->first);
         }
@@ -761,8 +761,8 @@ void NavigationPanel::OnParentChange(CustomEvent& event)
 
     m_isSelChangeSuspended = true;
     m_tree_ctrl->Unselect();
-    EraseAllMaps(undo_cmd->GetNode());
-    InsertNode(undo_cmd->GetNode());
+    EraseAllMaps(undo_cmd->getNode());
+    InsertNode(undo_cmd->getNode());
     m_isSelChangeSuspended = false;
 
     if (auto iter = m_node_tree_map.find(m_pMainFrame->GetSelectedNode()); iter != m_node_tree_map.end())
@@ -780,8 +780,8 @@ void NavigationPanel::OnPositionChange(CustomEvent& event)
 
     m_isSelChangeSuspended = true;
     m_tree_ctrl->Unselect();
-    EraseAllMaps(undo_cmd->GetNode());
-    InsertNode(undo_cmd->GetNode());
+    EraseAllMaps(undo_cmd->getNode());
+    InsertNode(undo_cmd->getNode());
     m_isSelChangeSuspended = false;
 
     if (auto iter = m_node_tree_map.find(m_pMainFrame->GetSelectedNode()); iter != m_node_tree_map.end())

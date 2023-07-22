@@ -260,12 +260,12 @@ int GetStyleInt(Node* node, const char* prefix)
     GenStyle(node, styles, prefix);
 
     int result = 0;
-    // Can't use multiview because GetConstantAsInt() searches an unordered_map which requires a std::string to pass to it
+    // Can't use multiview because getConstantAsInt() searches an unordered_map which requires a std::string to pass to it
     tt_string_vector mstr(styles, '|');
     for (auto& iter: mstr)
     {
         // Friendly names will have already been converted, so normal lookup works fine.
-        result |= NodeCreation.GetConstantAsInt(iter);
+        result |= NodeCreation.getConstantAsInt(iter);
     }
     return result;
 }
@@ -273,12 +273,12 @@ int GetStyleInt(Node* node, const char* prefix)
 int GetBitlistInt(Node* node, GenEnum::PropName prop_name)
 {
     int result = 0;
-    // Can't use multiview because GetConstantAsInt() searches an unordered_map which requires a std::string to pass to it
+    // Can't use multiview because getConstantAsInt() searches an unordered_map which requires a std::string to pass to it
     tt_string_vector mstr(node->as_string(prop_name), '|');
     for (auto& iter: mstr)
     {
         // Friendly names will have already been converted, so normal lookup works fine.
-        result |= NodeCreation.GetConstantAsInt(iter);
+        result |= NodeCreation.getConstantAsInt(iter);
     }
     return result;
 }

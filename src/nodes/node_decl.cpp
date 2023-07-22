@@ -23,7 +23,7 @@ NodeDeclaration::~NodeDeclaration()
     delete m_generator;
 }
 
-PropDeclaration* NodeDeclaration::GetPropDeclaration(size_t idx) const
+PropDeclaration* NodeDeclaration::getPropDeclaration(size_t idx) const
 {
     ASSERT(idx < m_properties.size());
 
@@ -41,7 +41,7 @@ PropDeclaration* NodeDeclaration::GetPropDeclaration(size_t idx) const
     return nullptr;
 }
 
-NodeEventInfo* NodeDeclaration::GetEventInfo(tt_string_view name)
+NodeEventInfo* NodeDeclaration::getEventInfo(tt_string_view name)
 {
     if (auto it = m_events.find(name); it != m_events.end())
         return it->second.get();
@@ -49,7 +49,7 @@ NodeEventInfo* NodeDeclaration::GetEventInfo(tt_string_view name)
     return nullptr;
 }
 
-const NodeEventInfo* NodeDeclaration::GetEventInfo(size_t idx) const
+const NodeEventInfo* NodeDeclaration::getEventInfo(size_t idx) const
 {
     ASSERT(idx < m_events.size());
 

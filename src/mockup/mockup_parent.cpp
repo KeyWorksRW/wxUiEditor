@@ -248,7 +248,7 @@ void MockupParent::OnNodeSelected(CustomEvent& event)
         CreateContent();
     }
 
-    m_panelContent->OnNodeSelected(event.GetNode());
+    m_panelContent->OnNodeSelected(event.getNode());
 }
 
 void MockupParent::ShowHiddenControls(bool show)
@@ -279,9 +279,9 @@ void MockupParent::SelectNode(wxObject* wxobject)
 
 // These are functions the component windows need access to
 
-Node* MockupParent::GetNode(wxObject* wxobject)
+Node* MockupParent::getNode(wxObject* wxobject)
 {
-    return m_panelContent->GetNode(wxobject);
+    return m_panelContent->getNode(wxobject);
 }
 
 wxObject* MockupParent::Get_wxObject(Node* node)
@@ -291,7 +291,7 @@ wxObject* MockupParent::Get_wxObject(Node* node)
 
 wxObject* MockupParent::getChild(wxObject* wxobject, size_t childIndex)
 {
-    if (auto node = GetNode(wxobject); node)
+    if (auto node = getNode(wxobject); node)
     {
         if (childIndex >= node->getChildCount())
         {
@@ -309,7 +309,7 @@ wxObject* MockupParent::GetParentNode(wxObject* wxobject)
 {
     ASSERT(wxobject);
 
-    if (auto node = GetNode(wxobject); node)
+    if (auto node = getNode(wxobject); node)
         return Get_wxObject(node->getParent());
 
     FAIL_MSG("wxobject not found!");
@@ -402,9 +402,9 @@ void MockupParent::OnNodePropModified(CustomEvent& event)
     {
         if (prop->isProp(iter))
         {
-            if (prop->isProp(prop_message) && prop->GetNode()->isGen(gen_wxBannerWindow))
+            if (prop->isProp(prop_message) && prop->getNode()->isGen(gen_wxBannerWindow))
                 break;  // In this case, Mockup does need to be redrawn
-            else if (prop->isProp(prop_id) && prop->GetNode()->isGen(gen_wxButton))
+            else if (prop->isProp(prop_id) && prop->getNode()->isGen(gen_wxButton))
                 break;  // In this case, Mockup does need to be redrawn since label could have changed
             else
                 return;

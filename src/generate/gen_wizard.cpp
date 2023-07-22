@@ -280,7 +280,7 @@ std::vector<Node*> WizardFormGenerator::GetChildPanes(Node* parent)
 
 std::optional<tt_string> WizardFormGenerator::GetHint(NodeProperty* prop)
 {
-    if (prop->isProp(prop_title) && !prop->GetNode()->hasValue(prop_title))
+    if (prop->isProp(prop_title) && !prop->getNode()->hasValue(prop_title))
     {
         return (tt_string() << "Title bar text");
     }

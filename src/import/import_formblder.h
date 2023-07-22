@@ -33,7 +33,7 @@ protected:
     void ProcessPropValue(pugi::xml_node& xml_prop, tt_string_view prop_name, tt_string_view class_name, Node* newobject);
 
     void BitmapProperty(pugi::xml_node& xml_obj, NodeProperty* prop);
-    void CreateProjectNode(pugi::xml_node& xml_obj, Node* new_node);
+    void createProjectNode(pugi::xml_node& xml_obj, Node* new_node);
 
 private:
     ImportNameMap m_mapEventNames;

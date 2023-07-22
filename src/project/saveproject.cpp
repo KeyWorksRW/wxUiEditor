@@ -43,10 +43,10 @@ void Node::addNodeToDoc(pugi::xml_node& node, int& project_version)
         auto& value = iter.as_string();
         if (value.size())
         {
-            auto info = iter.GetPropDeclaration();
+            auto info = iter.getPropDeclaration();
 
             // If the value hasn't changed from the default, don't save it
-            if (info->GetDefaultValue() == value)
+            if (info->getDefaultValue() == value)
                 continue;
 
             auto attr = node.append_attribute(iter.declName());

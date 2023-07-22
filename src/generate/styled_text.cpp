@@ -20,7 +20,7 @@
 #include "node_creator.h"  // NodeCreator -- Class used to create nodes
 #include "utils.h"         // Utility functions that work with properties
 
-// Call g_NodeCreator->GetConstantAsInt("wx_define") to get the #defined integer value -- see node_creator.h
+// Call g_NodeCreator->getConstantAsInt("wx_define") to get the #defined integer value -- see node_creator.h
 
 // To get the constant, prefix the name with "wxSTC_LEX_"
 std::map<std::string, int> g_stc_lexers = {
@@ -940,7 +940,7 @@ static const char* lst_margins[] = {
 void StyledTextGenerator::ChangeEnableState(wxPropertyGridManager* prop_grid, NodeProperty* changed_prop)
 {
     BaseGenerator::ChangeEnableState(prop_grid, changed_prop);
-    auto changed_node = changed_prop->GetNode();
+    auto changed_node = changed_prop->getNode();
 
     if (changed_prop->isProp(prop_stc_wrap_mode))
     {

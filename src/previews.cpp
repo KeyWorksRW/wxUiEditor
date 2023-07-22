@@ -372,13 +372,13 @@ void MainFrame::PreviewCpp(Node* form_node)
                     if (form_node->hasValue(prop_extra_style))
                     {
                         int ex_style = 0;
-                        // Can't use multiview because GetConstantAsInt() searches an unordered_map which requires a
+                        // Can't use multiview because getConstantAsInt() searches an unordered_map which requires a
                         // std::string to pass to it
                         tt_string_vector mstr(form_node->as_string(prop_extra_style), '|');
                         for (auto& iter: mstr)
                         {
                             // Friendly names will have already been converted, so normal lookup works fine.
-                            ex_style |= NodeCreation.GetConstantAsInt(iter);
+                            ex_style |= NodeCreation.getConstantAsInt(iter);
                         }
 
                         dlg.SetExtraStyle(dlg.GetExtraStyle() | ex_style);
@@ -454,13 +454,13 @@ void MainFrame::PreviewCpp(Node* form_node)
                     if (form_node->hasValue(prop_extra_style))
                     {
                         int ex_style = 0;
-                        // Can't use multiview because GetConstantAsInt() searches an unordered_map which requires a
+                        // Can't use multiview because getConstantAsInt() searches an unordered_map which requires a
                         // std::string to pass to it
                         tt_string_vector mstr(form_node->as_string(prop_extra_style), '|');
                         for (auto& iter: mstr)
                         {
                             // Friendly names will have already been converted, so normal lookup works fine.
-                            ex_style |= NodeCreation.GetConstantAsInt(iter);
+                            ex_style |= NodeCreation.getConstantAsInt(iter);
                         }
                         wizard.SetExtraStyle(ex_style);
                     }
@@ -470,13 +470,13 @@ void MainFrame::PreviewCpp(Node* form_node)
                     if (form_node->hasValue(prop_bmp_placement))
                     {
                         int placement = 0;
-                        // Can't use multiview because GetConstantAsInt() searches an unordered_map which requires a
+                        // Can't use multiview because getConstantAsInt() searches an unordered_map which requires a
                         // std::string to pass to it
                         tt_string_vector mstr(form_node->as_string(prop_bmp_placement), '|');
                         for (auto& iter: mstr)
                         {
                             // Friendly names will have already been converted, so normal lookup works fine.
-                            placement |= NodeCreation.GetConstantAsInt(iter);
+                            placement |= NodeCreation.getConstantAsInt(iter);
                         }
                         wizard.SetBitmapPlacement(placement);
 

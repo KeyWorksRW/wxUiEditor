@@ -389,16 +389,16 @@ bool MenuItemGenerator::modifyProperty(NodeProperty* prop, tt_string_view value)
         if (value != "none")
         {
             auto undo_stock_id = std::make_shared<ModifyProperties>("Stock ID");
-            undo_stock_id->AddProperty(prop, value);
-            undo_stock_id->AddProperty(prop->GetNode()->getPropPtr(prop_label),
-                                       wxGetStockLabel(NodeCreation.GetConstantAsInt(value.as_str())).utf8_string());
-            undo_stock_id->AddProperty(prop->GetNode()->getPropPtr(prop_help),
-                                       wxGetStockHelpString(NodeCreation.GetConstantAsInt(value.as_str())).utf8_string());
-            undo_stock_id->AddProperty(prop->GetNode()->getPropPtr(prop_id), value);
+            undo_stock_id->addProperty(prop, value);
+            undo_stock_id->addProperty(prop->getNode()->getPropPtr(prop_label),
+                                       wxGetStockLabel(NodeCreation.getConstantAsInt(value.as_str())).utf8_string());
+            undo_stock_id->addProperty(prop->getNode()->getPropPtr(prop_help),
+                                       wxGetStockHelpString(NodeCreation.getConstantAsInt(value.as_str())).utf8_string());
+            undo_stock_id->addProperty(prop->getNode()->getPropPtr(prop_id), value);
 
             if (auto result = map_id_artid.find(value.as_str()); result != map_id_artid.end())
             {
-                undo_stock_id->AddProperty(prop->GetNode()->getPropPtr(prop_bitmap),
+                undo_stock_id->addProperty(prop->getNode()->getPropPtr(prop_bitmap),
                                            tt_string("Art;") << result->second << "|wxART_MENU");
             }
             wxGetFrame().PushUndoAction(undo_stock_id);

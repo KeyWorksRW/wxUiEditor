@@ -24,13 +24,13 @@ wxObject* PanelFormGenerator::CreateMockup(Node* node, wxObject* parent)
     if (!node->hasValue(prop_extra_style))
     {
         int ex_style = 0;
-        // Can't use multiview because GetConstantAsInt() searches an unordered_map which
+        // Can't use multiview because getConstantAsInt() searches an unordered_map which
         // requires a std::string to pass to it
         tt_string_vector mstr(node->as_string(prop_extra_style), '|');
         for (auto& iter: mstr)
         {
             // Friendly names will have already been converted, so normal lookup works fine.
-            ex_style |= NodeCreation.GetConstantAsInt(iter);
+            ex_style |= NodeCreation.getConstantAsInt(iter);
         }
 
         widget->SetExtraStyle(widget->GetExtraStyle() | ex_style);

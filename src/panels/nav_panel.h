@@ -50,7 +50,7 @@ public:
     NavToolbar* GetToolbar() { return m_toolbar; }
 
 protected:
-    Node* GetNode(wxTreeItemId item);
+    Node* getNode(wxTreeItemId item);
 
     int GetImageIndex(Node* node);
     tt_string GetDisplayName(Node* node) const;

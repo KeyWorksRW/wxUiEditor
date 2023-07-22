@@ -215,7 +215,7 @@ void ChangeDerivedDirectory(tt_string& path)
         path.pop_back();
 
     auto undo_derived = std::make_shared<ModifyProperties>("Derived directory");
-    undo_derived->AddProperty(Project.ProjectNode()->getPropPtr(prop_derived_directory), path);
+    undo_derived->addProperty(Project.ProjectNode()->getPropPtr(prop_derived_directory), path);
 
     std::vector<Node*> forms;
     Project.CollectForms(forms);
@@ -238,7 +238,7 @@ void ChangeDerivedDirectory(tt_string& path)
 
             cur_path = path;
             cur_path.append_filename(form->as_string(prop_derived_file).filename());
-            undo_derived->AddProperty(form->getPropPtr(prop_derived_file), cur_path);
+            undo_derived->addProperty(form->getPropPtr(prop_derived_file), cur_path);
         }
     }
 
@@ -255,7 +255,7 @@ void ChangeBaseDirectory(tt_string& path)
         path.pop_back();
 
     auto undo_derived = std::make_shared<ModifyProperties>("Base directory");
-    undo_derived->AddProperty(Project.ProjectNode()->getPropPtr(prop_base_directory), path);
+    undo_derived->addProperty(Project.ProjectNode()->getPropPtr(prop_base_directory), path);
 
     std::vector<Node*> forms;
     Project.CollectForms(forms);
@@ -278,7 +278,7 @@ void ChangeBaseDirectory(tt_string& path)
 
             cur_path = path;
             cur_path.append_filename(form->as_string(prop_base_file).filename());
-            undo_derived->AddProperty(form->getPropPtr(prop_base_file), cur_path);
+            undo_derived->addProperty(form->getPropPtr(prop_base_file), cur_path);
         }
     }
 

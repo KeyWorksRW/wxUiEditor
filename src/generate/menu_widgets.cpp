@@ -43,7 +43,7 @@ wxObject* MenuBarBase::CreateMockup(Node* node, wxObject* parent)
             wxString label;
             if (child->as_string(prop_stock_id) != "none")
             {
-                label = wxGetStockLabel(NodeCreation.GetConstantAsInt(child->as_string(prop_stock_id)));
+                label = wxGetStockLabel(NodeCreation.getConstantAsInt(child->as_string(prop_stock_id)));
             }
             else
             {
@@ -82,7 +82,7 @@ void MenuBarBase::OnLeftMenuClick(wxMouseEvent& event)
             wxString label;
             if (child->as_string(prop_stock_id) != "none")
             {
-                label = wxGetStockLabel(NodeCreation.GetConstantAsInt(child->as_string(prop_stock_id)));
+                label = wxGetStockLabel(NodeCreation.getConstantAsInt(child->as_string(prop_stock_id)));
             }
             else
             {
@@ -136,7 +136,7 @@ wxMenu* MenuBarBase::MakeSubMenu(Node* menu_node)
 
             int id = wxID_ANY;
             if (menu_item->as_string(prop_id) != "wxID_ANY" && menu_item->as_string(prop_id).starts_with("wxID_"))
-                id = NodeCreation.GetConstantAsInt(menu_item->as_string(prop_id), wxID_ANY);
+                id = NodeCreation.getConstantAsInt(menu_item->as_string(prop_id), wxID_ANY);
 
             auto item = new wxMenuItem(sub_menu, id, menu_label, menu_item->as_wxString(prop_help),
                                        (wxItemKind) menu_item->as_int(prop_kind));

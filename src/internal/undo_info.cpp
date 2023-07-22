@@ -147,10 +147,10 @@ void UndoInfo::OnInit(wxInitDialogEvent& event)
                 }
                 node_memory.size += iter->GetMemorySize();
             }
-            else if (const auto& node = iter->GetNode(); node)
+            else if (const auto& node = iter->getNode(); node)
             {
                 // An orphaned node will have an additional 2 reference counts at this point. 1 for
-                // iter->GetNode() in the function that called us, and one for passing the parameter to
+                // iter->getNode() in the function that called us, and one for passing the parameter to
                 // this function. An additional ref count is added by calling CalcMemory.
                 CalcMemory(node, 3, CalcMemory);
                 node_memory.size += iter->GetMemorySize();

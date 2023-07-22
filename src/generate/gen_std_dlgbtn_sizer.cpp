@@ -502,7 +502,7 @@ void StdDialogButtonSizerGenerator::RequiredHandlers(Node* /* node */, std::set<
 
 void StdDialogButtonSizerGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& class_name)
 {
-    Code handler(event->GetNode(), code.m_language);
+    Code handler(event->getNode(), code.m_language);
     tt_string event_code;
     if (code.m_language == GEN_LANG_CPLUSPLUS)
     {
@@ -541,7 +541,7 @@ void StdDialogButtonSizerGenerator::GenEvent(Code& code, NodeEvent* event, const
             handler.Add("self.") << event_code;
     }
 
-    tt_string evt_str = (event->GetEventInfo()->get_event_class() == "wxCommandEvent" ? "wxEVT_BUTTON" : "wxEVT_UPDATE_UI");
+    tt_string evt_str = (event->getEventInfo()->get_event_class() == "wxCommandEvent" ? "wxEVT_BUTTON" : "wxEVT_UPDATE_UI");
     if (code.is_python())
         code.Add("self.");
     code.Add("Bind(").Add(evt_str) << comma << handler.GetCode() << comma;

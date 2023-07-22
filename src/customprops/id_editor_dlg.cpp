@@ -280,7 +280,7 @@ void IDEditorDlg::OnStdChange(wxCommandEvent& WXUNUSED(event))
     {
         if (iter == m_result)
         {
-            if (auto stock_id = NodeCreation.GetConstantAsInt(m_result.utf8_string()); stock_id > 0)
+            if (auto stock_id = NodeCreation.getConstantAsInt(m_result.utf8_string()); stock_id > 0)
             {
                 m_flex_grid_sizer->ShowItems(true);
                 m_stock_label->SetLabel(wxGetStockLabel(stock_id));

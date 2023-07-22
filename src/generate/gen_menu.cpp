@@ -115,9 +115,9 @@ bool MenuGenerator::modifyProperty(NodeProperty* prop, tt_string_view value)
         if (value != "none")
         {
             auto undo_stock_id = std::make_shared<ModifyProperties>("Stock ID");
-            undo_stock_id->AddProperty(prop, value);
-            undo_stock_id->AddProperty(prop->GetNode()->getPropPtr(prop_label),
-                                       wxGetStockLabel(NodeCreation.GetConstantAsInt(value.as_str())).utf8_string());
+            undo_stock_id->addProperty(prop, value);
+            undo_stock_id->addProperty(prop->getNode()->getPropPtr(prop_label),
+                                       wxGetStockLabel(NodeCreation.getConstantAsInt(value.as_str())).utf8_string());
             wxGetFrame().PushUndoAction(undo_stock_id);
             return true;
         }

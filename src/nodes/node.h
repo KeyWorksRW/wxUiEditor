@@ -219,7 +219,7 @@ public:
     }
 
     // If type is option, id, or bitlist, this will convert that constant name to it's value
-    // (see NodeCreation.GetConstantAsInt()). Otherwise, it calls atoi().
+    // (see NodeCreation.getConstantAsInt()). Otherwise, it calls atoi().
     int as_int(PropName name) const
     {
         if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())

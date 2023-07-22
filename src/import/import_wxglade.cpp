@@ -380,7 +380,7 @@ NodeSharedPtr WxGlade::CreateGladeNode(pugi::xml_node& xml_obj, Node* parent, No
     }
 
     auto child = xml_obj.child("object");
-    if (NodeCreation.IsOldHostType(new_node->declName()))
+    if (NodeCreation.isOldHostType(new_node->declName()))
     {
         ProcessAttributes(xml_obj, new_node.get());
         ProcessProperties(xml_obj, new_node.get(), parent);
@@ -396,7 +396,7 @@ NodeSharedPtr WxGlade::CreateGladeNode(pugi::xml_node& xml_obj, Node* parent, No
     {
         for (auto& iter: sizeritem->getPropsVector())
         {
-            auto prop = new_node->addNodeProperty(iter.GetPropDeclaration());
+            auto prop = new_node->addNodeProperty(iter.getPropDeclaration());
             prop->set_value(iter.as_string());
         }
         parent->adoptChild(new_node);

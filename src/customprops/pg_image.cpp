@@ -42,7 +42,7 @@ PropertyGrid_Image::PropertyGrid_Image(const wxString& label, NodeProperty* prop
 
     wxPGChoices types;
 
-    if (prop->GetNode()->isGen(gen_embedded_image))
+    if (prop->getNode()->isGen(gen_embedded_image))
     {
         types.Add(s_type_names[1]);  // Embed
         types.Add(s_type_names[2]);  // SVG

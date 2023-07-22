@@ -36,11 +36,11 @@ public:
     const tt_string& get_value() const noexcept { return m_value; }
     const tt_string& get_name() const noexcept { return m_info->get_name(); }
 
-    Node* GetNode() const noexcept { return m_node; }
-    const NodeEventInfo* GetEventInfo() const noexcept { return m_info; }
+    Node* getNode() const noexcept { return m_node; }
+    const NodeEventInfo* getEventInfo() const noexcept { return m_info; }
 
     // Currently only called in debug builds, but available for release builds should we need it
-    size_t GetEventSize() const noexcept { return sizeof(*this) + (m_value.size() + 1); }
+    size_t getEventSize() const noexcept { return sizeof(*this) + (m_value.size() + 1); }
 
 private:
     const NodeEventInfo* m_info;

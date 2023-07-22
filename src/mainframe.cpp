@@ -789,7 +789,7 @@ void MainFrame::OnNodeSelected(CustomEvent& event)
     // check to see if the current selection has any kind of issue that we should warn the user about.
     m_info_bar->Dismiss();
 
-    auto evt_flags = event.GetNode();
+    auto evt_flags = event.getNode();
 
     if (evt_flags->isGen(gen_wxToolBar))
     {
@@ -1447,7 +1447,7 @@ void MainFrame::createToolNode(GenName name)
 void MainFrame::CopyNode(Node* node)
 {
     ASSERT(node);
-    m_clipboard = NodeCreation.MakeCopy(node);
+    m_clipboard = NodeCreation.makeCopy(node);
     if (m_clipboard)
     {
         SmartClipboard clip;
@@ -1520,7 +1520,7 @@ void MainFrame::PasteNode(Node* parent)
         return;
     }
 
-    auto new_node = NodeCreation.MakeCopy(m_clipboard.get(), parent);
+    auto new_node = NodeCreation.makeCopy(m_clipboard.get(), parent);
 
     // This makes it possible to switch from a normal child toolbar to a form toolbar and vice versa.
     // Both wxToolBar and wxAuiToolbar are supported
@@ -1552,7 +1552,7 @@ void MainFrame::PasteNode(Node* parent)
         for (auto& child_node: new_node->getChildNodePtrs())
         {
             // We are changing from a wxToolBar to a wxAuiToolBar, so we need to change the node type
-            auto new_child = NodeCreation.MakeCopy(child_node.get(), parent);
+            auto new_child = NodeCreation.makeCopy(child_node.get(), parent);
             auto insert_action = std::make_shared<InsertNodeAction>(new_child, parent->getSharedPtr(), "paste");
             insert_action->SetFireCreatedEvent(true);
             group->Add(insert_action);
@@ -1596,7 +1596,7 @@ void MainFrame::DuplicateNode(Node* node)
     ASSERT(node);
     ASSERT(node->getParent());
 
-    auto new_node = NodeCreation.MakeCopy(node);
+    auto new_node = NodeCreation.makeCopy(node);
     if (new_node->isForm())
         Project.FixupDuplicatedNode(new_node.get());
     auto* parent = node->getParent();
@@ -1725,7 +1725,7 @@ void MainFrame::modifyProperty(NodeProperty* prop, tt_string_view value)
 {
     if (prop && value != prop->as_string())
     {
-        if (auto* gen = prop->GetNode()->getGenerator(); !gen || !gen->modifyProperty(prop, value))
+        if (auto* gen = prop->getNode()->getGenerator(); !gen || !gen->modifyProperty(prop, value))
         {
             PushUndoAction(std::make_shared<ModifyPropertyAction>(prop, value));
         }

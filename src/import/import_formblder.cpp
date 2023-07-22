@@ -144,7 +144,7 @@ bool FormBuilder::Import(const tt_string& filename, bool write_doc)
 
         m_project = NodeCreation.createNode(gen_Project, nullptr);
 
-        CreateProjectNode(object, m_project.get());
+        createProjectNode(object, m_project.get());
 
         if (write_doc)
             m_project->createDoc(m_docOut);
@@ -175,7 +175,7 @@ bool FormBuilder::Import(const tt_string& filename, bool write_doc)
     return true;
 }
 
-void FormBuilder::CreateProjectNode(pugi::xml_node& xml_obj, Node* new_node)
+void FormBuilder::createProjectNode(pugi::xml_node& xml_obj, Node* new_node)
 {
     for (auto& xml_prop: xml_obj.children("property"))
     {
@@ -625,7 +625,7 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
     }
 
     auto child = xml_obj.child("object");
-    if (NodeCreation.IsOldHostType(newobject->declName()))
+    if (NodeCreation.isOldHostType(newobject->declName()))
     {
         newobject = CreateFbpNode(child, parent, newobject.get());
         if (!newobject)
@@ -660,7 +660,7 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
     {
         for (auto& iter: sizeritem->getPropsVector())
         {
-            auto prop = newobject->addNodeProperty(iter.GetPropDeclaration());
+            auto prop = newobject->addNodeProperty(iter.getPropDeclaration());
             prop->set_value(iter.as_string());
         }
         if (parent)

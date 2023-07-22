@@ -80,12 +80,12 @@ bool CtxMenuGenerator::AfterChildrenCode(Code& code)
     code.Eol();
 
     // All of the constructors are expecting a wxMenu parent -- so we need to temporarily create one
-    auto node_menu = NodeCreation.NewNode(NodeCreation.getNodeDeclaration("wxMenu"));
+    auto node_menu = NodeCreation.newNode(NodeCreation.getNodeDeclaration("wxMenu"));
     node_menu->set_value(prop_var_name, code.is_cpp() ? "p_ctx_menu" : "ctx_menu");
 
     for (const auto& child: code.node()->getChildNodePtrs())
     {
-        auto child_node = NodeCreation.MakeCopy(child);
+        auto child_node = NodeCreation.makeCopy(child);
         node_menu->adoptChild(child_node);
         auto* save_node = code.node();
         code.m_node = child_node.get();
@@ -109,9 +109,9 @@ bool CtxMenuGenerator::AfterChildrenCode(Code& code)
 
     for (auto& iter: m_CtxMenuEvents)
     {
-        if (auto generator = iter->GetNode()->getNodeDeclaration()->getGenerator(); generator)
+        if (auto generator = iter->getNode()->getNodeDeclaration()->getGenerator(); generator)
         {
-            Code event_code(iter->GetNode(), code.m_language);
+            Code event_code(iter->getNode(), code.m_language);
             if (generator->GenEvent(event_code, iter, code.node()->getParentName()); event_code.size())
             {
                 event_code.GetCode().Replace("\t", "\t\t", true);

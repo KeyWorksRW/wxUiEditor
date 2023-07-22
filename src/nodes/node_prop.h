@@ -146,16 +146,16 @@ public:
     operator wxPoint() const { return as_point(); }
     operator wxSize() const { return as_size(); }
 
-    bool IsDefaultValue() const;
-    const tt_string& GetDefaultValue() const noexcept { return m_declaration->GetDefaultValue(); }
+    bool isDefaultValue() const;
+    const tt_string& getDefaultValue() const noexcept { return m_declaration->getDefaultValue(); }
 
     // Returns false if the property is empty. For size, point, and Bitmap properties,
     // returns false if the default value is used.
     bool hasValue() const;
 
-    const PropDeclaration* GetPropDeclaration() const { return m_declaration; }
+    const PropDeclaration* getPropDeclaration() const { return m_declaration; }
 
-    Node* GetNode() { return m_node; }
+    Node* getNode() { return m_node; }
 
     // Returns a char pointer to the name. Use get_name() if you want the enum value.
     tt_string_view declName() const noexcept { return m_declaration->declName(); }
@@ -167,10 +167,10 @@ public:
     const char* name_str() const noexcept { return m_declaration->name_str(); }
     PropName get_name() const noexcept { return m_declaration->get_name(); }
 
-    PropDeclaration* GetPropDeclaration() { return m_declaration; }
+    PropDeclaration* getPropDeclaration() { return m_declaration; }
 
     // Currently only called in debug builds, but available for release builds should we need it
-    size_t GetPropSize() const { return sizeof(*this) + (m_value.size() + 1); }
+    size_t getPropSize() const { return sizeof(*this) + (m_value.size() + 1); }
 
 private:
     PropDeclaration* m_declaration;

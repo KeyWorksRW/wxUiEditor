@@ -254,7 +254,7 @@ void ToolBarFormGenerator::GenEvent(Code& code, NodeEvent* event, const std::str
     BaseGenerator::GenEvent(code, event, class_name);
 
     // Since this is the base class, we don't want to use the pointer that GenEventCode() would normally create
-    code.Replace(tt_string() << event->GetNode()->as_string(prop_var_name) << "->", "");
+    code.Replace(tt_string() << event->getNode()->as_string(prop_var_name) << "->", "");
 }
 
 bool ToolBarFormGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
@@ -605,7 +605,7 @@ bool ToolDropDownGenerator::SettingsCode(Code& code)
     menu_name += "_menu";
     code.AddIfCpp("auto* ").Str(menu_name).Assign("wxMenu");
     code.AddIfPython("()");
-    auto menu_node_ptr = NodeCreation.NewNode(gen_wxMenu);
+    auto menu_node_ptr = NodeCreation.newNode(gen_wxMenu);
     menu_node_ptr->setParent(code.node());  // Python code generation needs this set
     menu_node_ptr->set_value(prop_var_name, menu_name);
     menu_node_ptr->set_value(prop_class_access, "none");

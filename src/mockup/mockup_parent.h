@@ -33,7 +33,7 @@ public:
     void SelectNode(wxObject* wxobject);
     void ClearIgnoreSelection() { m_isIgnoreSelection = false; }
 
-    Node* GetNode(wxObject* wxobject);
+    Node* getNode(wxObject* wxobject);
     wxObject* Get_wxObject(Node* node);
 
     MockupContent* GetMockupContent() { return m_panelContent; }

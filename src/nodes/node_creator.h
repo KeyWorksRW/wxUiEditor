@@ -55,10 +55,10 @@ public:
     NodeSharedPtr createNode(tt_string_view name, Node* parent);
 
     // Creates an orphaned node.
-    NodeSharedPtr NewNode(GenEnum::GenName getGenName) { return NewNode(m_a_declarations[getGenName]); }
+    NodeSharedPtr newNode(GenEnum::GenName getGenName) { return newNode(m_a_declarations[getGenName]); }
 
     // Creates an orphaned node.
-    NodeSharedPtr NewNode(NodeDeclaration* node_info);
+    NodeSharedPtr newNode(NodeDeclaration* node_info);
 
     // If you have the class enum value, this is the preferred way to get the Declaration
     // pointer.
@@ -67,34 +67,34 @@ public:
     NodeDeclaration* getNodeDeclaration(tt_string_view class_name);
 
     // This returns the integer value of most wx constants used in various components
-    int GetConstantAsInt(const std::string& name, int defValue = 0) const;
+    int getConstantAsInt(const std::string& name, int defValue = 0) const;
 
     NodeSharedPtr createNode(pugi::xml_node& node, Node* parent = nullptr, bool check_for_duplicates = false,
                              bool allow_ui = true);
 
     // Only use this with .wxui projects -- it will fail on a .fbp project
-    NodeSharedPtr CreateProjectNode(pugi::xml_node* xml_obj, bool allow_ui = true);
+    NodeSharedPtr createProjectNode(pugi::xml_node* xml_obj, bool allow_ui = true);
 
     // Makes a copy, including the entire child heirarchy. The copy does not have a parent.
-    NodeSharedPtr MakeCopy(Node* node, Node* parent = nullptr);
-    NodeSharedPtr MakeCopy(NodeSharedPtr node) { return MakeCopy(node.get()); };
+    NodeSharedPtr makeCopy(Node* node, Node* parent = nullptr);
+    NodeSharedPtr makeCopy(NodeSharedPtr node) { return makeCopy(node.get()); };
 
-    void InitGenerators();
+    void initGenerators();
 
-    bool IsOldHostType(tt_string_view old_type) const { return m_setOldHostTypes.contains(old_type); }
+    bool isOldHostType(tt_string_view old_type) const { return m_setOldHostTypes.contains(old_type); }
 
-    const NodeDeclarationArray& GetNodeDeclarationArray() const { return m_a_declarations; }
+    const NodeDeclarationArray& getNodeDeclarationArray() const { return m_a_declarations; }
 
-    size_t CountChildrenWithSameType(Node* parent, GenType type);
+    size_t countChildrenWithSameType(Node* parent, GenType type);
 
 protected:
     // This must
-    void ParseGeneratorFile(const char* file);
-    void ParseProperties(pugi::xml_node& elem_obj, NodeDeclaration* obj_info, NodeCategory& category);
+    void parseGeneratorFile(const char* file);
+    void parseProperties(pugi::xml_node& elem_obj, NodeDeclaration* obj_info, NodeCategory& category);
 
     NodeType* getNodeType(GenEnum::GenType type_name) { return &m_a_node_types[static_cast<size_t>(type_name)]; }
 
-    void AddAllConstants();
+    void addAllConstants();
 
 private:
     std::array<NodeDeclaration*, gen_name_array_size> m_a_declarations;

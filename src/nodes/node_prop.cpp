@@ -30,9 +30,9 @@ NodeProperty::NodeProperty(PropDeclaration* info, Node* node) : m_declaration(in
 // dependency for other modeuls that need NodeProperty, and it allows for changes to PropDeclaration that don't require
 // recompiling every module that included prop_decl.h.
 
-bool NodeProperty::IsDefaultValue() const
+bool NodeProperty::isDefaultValue() const
 {
-    return m_value.is_sameas(m_declaration->GetDefaultValue());
+    return m_value.is_sameas(m_declaration->getDefaultValue());
 }
 
 int NodeProperty::as_int() const
@@ -42,7 +42,7 @@ int NodeProperty::as_int() const
         case type_editoption:
         case type_option:
         case type_id:
-            return NodeCreation.GetConstantAsInt(m_value, 0);
+            return NodeCreation.getConstantAsInt(m_value, 0);
 
         case type_bitlist:
             {
@@ -50,7 +50,7 @@ int NodeProperty::as_int() const
                 tt_string_vector mstr(m_value, '|', tt::TRIM::both);
                 for (auto& iter: mstr)
                 {
-                    result |= NodeCreation.GetConstantAsInt(iter);
+                    result |= NodeCreation.getConstantAsInt(iter);
                 }
                 return result;
             }
@@ -62,7 +62,7 @@ int NodeProperty::as_int() const
 
 int NodeProperty::as_id() const
 {
-    return NodeCreation.GetConstantAsInt(m_value, wxID_ANY);
+    return NodeCreation.getConstantAsInt(m_value, wxID_ANY);
 }
 
 // Static class function
@@ -98,7 +98,7 @@ int NodeProperty::as_mockup(std::string_view prefix) const
         case type_id:
             if (m_value.starts_with("wx"))
             {
-                return NodeCreation.GetConstantAsInt(m_value, 0);
+                return NodeCreation.getConstantAsInt(m_value, 0);
             }
             else
             {
@@ -108,14 +108,14 @@ int NodeProperty::as_mockup(std::string_view prefix) const
                     name << prefix << m_value;
                     if (auto result = g_friend_constant.find(name); result != g_friend_constant.end())
                     {
-                        return NodeCreation.GetConstantAsInt(result->second, 0);
+                        return NodeCreation.getConstantAsInt(result->second, 0);
                     }
                 }
                 else
                 {
                     if (auto result = g_friend_constant.find(m_value); result != g_friend_constant.end())
                     {
-                        return NodeCreation.GetConstantAsInt(result->second, 0);
+                        return NodeCreation.getConstantAsInt(result->second, 0);
                     }
                 }
             }
@@ -129,7 +129,7 @@ int NodeProperty::as_mockup(std::string_view prefix) const
                 {
                     if (iter.starts_with("wx"))
                     {
-                        value |= NodeCreation.GetConstantAsInt(iter);
+                        value |= NodeCreation.getConstantAsInt(iter);
                     }
                     else
                     {
@@ -139,7 +139,7 @@ int NodeProperty::as_mockup(std::string_view prefix) const
                         }
                         if (auto result = g_friend_constant.find(iter); result != g_friend_constant.end())
                         {
-                            value |= NodeCreation.GetConstantAsInt(result->second);
+                            value |= NodeCreation.getConstantAsInt(result->second);
                         }
                     }
                 }

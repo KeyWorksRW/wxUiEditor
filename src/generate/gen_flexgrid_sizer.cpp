@@ -165,7 +165,7 @@ bool FlexGridSizerGenerator::AfterChildrenCode(Code& code)
         {
             if (GetParentName(code.node()) != "this")
             {
-                code.ParentName().FormFunction("SetSizerAndFit(").NodeName().EndFunction();
+                code.ParentName().Function("SetSizerAndFit(").NodeName().EndFunction();
             }
             else
             {

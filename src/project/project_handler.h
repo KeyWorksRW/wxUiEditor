@@ -94,8 +94,8 @@ public:
     // Make class and filenames unique to the project
     void FixupDuplicatedNode(Node* new_node);
 
-    auto getProjectVersion() { return m_ProjectVersion; }
-    auto getOriginalProjectVersion() { return m_OriginalProjectVersion; }
+    auto getProjectVersion() const { return m_ProjectVersion; }
+    auto getOriginalProjectVersion() const { return m_OriginalProjectVersion; }
     void ForceProjectVersion(int version) { m_ProjectVersion = version; }
     void setProjectUpdated() { m_isProject_updated = true; }
 
@@ -104,7 +104,7 @@ public:
     size_t getChildCount() const { return m_project_node->getChildCount(); }
 
     // Returns a GEN_LANG_... enum value
-    int getCodePreference();
+    int getCodePreference() const;
 
     // const tt_string& value(GenEnum::PropName name) const { return m_project_node->as_string(name); }
     const tt_string_view view(PropName name) const { return m_project_node->as_string(name); }

@@ -38,17 +38,9 @@ void ProjectHandler::Initialize(NodeSharedPtr project, bool allow_ui)
     ProjectImages.Initialize(m_project_node, allow_ui);
 }
 
-void ProjectHandler::SetProjectFile(const tt_string& file)
+void ProjectHandler::setProjectFile(const tt_string& file)
 {
     m_projectFile = file;
-    m_projectPath = m_projectFile;
-    m_projectPath.make_absolute();
-    m_projectPath.remove_filename();
-}
-
-void ProjectHandler::set_ProjectFile(const tt_string& file)
-{
-    m_projectFile = file.make_wxString();
     m_projectPath = m_projectFile;
     m_projectPath.make_absolute();
     m_projectPath.remove_filename();
@@ -167,7 +159,7 @@ tt_string ProjectHandler::ArtDirectory() const
     return result;
 }
 
-tt_string ProjectHandler::BaseDirectory(Node* node, int language) const
+tt_string ProjectHandler::getBaseDirectory(Node* node, int language) const
 {
     tt_string result;
 
@@ -208,7 +200,7 @@ tt_string ProjectHandler::BaseDirectory(Node* node, int language) const
 
 // Note that this will return a directory for GEN_LANG_PYTHON and GEN_LANG_XRC even though we currently
 // don't generate derived files for those languages.
-tt_string ProjectHandler::DerivedDirectory(Node* node, int language) const
+tt_string ProjectHandler::getDerivedDirectory(Node* node, int language) const
 {
     tt_string result;
 
@@ -247,7 +239,7 @@ tt_string ProjectHandler::DerivedDirectory(Node* node, int language) const
     return result;
 }
 
-Node* ProjectHandler::GetFirstFormChild(Node* node) const
+Node* ProjectHandler::getFirstFormChild(Node* node) const
 {
     if (!node)
         node = m_project_node.get();
@@ -259,14 +251,14 @@ Node* ProjectHandler::GetFirstFormChild(Node* node) const
         }
         else if (child->isGen(gen_folder) || child->isGen(gen_sub_folder))
         {
-            return GetFirstFormChild(child.get());
+            return getFirstFormChild(child.get());
         }
     }
 
     return nullptr;
 }
 
-int ProjectHandler::get_PreferredLanguage()
+int ProjectHandler::getPreferredLanguage()
 {
     auto& value = Project.as_string(prop_code_preference);
     if (value == "C++")
@@ -281,7 +273,7 @@ int ProjectHandler::get_PreferredLanguage()
         return GEN_LANG_CPLUSPLUS;
 }
 
-size_t ProjectHandler::GetOutputType() const
+size_t ProjectHandler::getOutputType() const
 {
     size_t result = OUTPUT_NONE;
 
@@ -301,7 +293,7 @@ size_t ProjectHandler::GetOutputType() const
                 }
                 if (child->hasValue(prop_derived_file) && child->as_bool(prop_use_derived_class))
                 {
-                    if (auto path = GetDerivedFilename(child.get()); path.size())
+                    if (auto path = getDerivedFilename(child.get()); path.size())
                     {
                         // Derived file is only output if it doesn't already exist
                         if (not path.file_exists())
@@ -331,7 +323,7 @@ size_t ProjectHandler::GetOutputType() const
     return result;
 }
 
-tt_string ProjectHandler::GetDerivedFilename(Node* form) const
+tt_string ProjectHandler::getDerivedFilename(Node* form) const
 {
     tt_string path;
 
@@ -340,7 +332,7 @@ tt_string ProjectHandler::GetDerivedFilename(Node* form) const
     if (not form->isForm() || !form->hasValue(prop_derived_file))
         return path;
 
-    path = DerivedDirectory(form, GEN_LANG_CPLUSPLUS);
+    path = getDerivedDirectory(form, GEN_LANG_CPLUSPLUS);
     path.append_filename(form->as_string(prop_derived_file));
     path.make_absolute();
 

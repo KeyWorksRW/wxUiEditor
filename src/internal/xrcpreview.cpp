@@ -280,8 +280,8 @@ void XrcPreview::OnInit(wxInitDialogEvent& event)
 
 void XrcPreview::OnExport(wxCommandEvent& WXUNUSED(event))
 {
-    wxFileDialog dialog(this, "Export Project As XRC", Project.ProjectPath(), "preview_test.xrc", "XRC File (*.xrc)|*.xrc",
-                        wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
+    wxFileDialog dialog(this, "Export Project As XRC", Project.getProjectPath(), "preview_test.xrc",
+                        "XRC File (*.xrc)|*.xrc", wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
 
     if (dialog.ShowModal() == wxID_OK)
     {

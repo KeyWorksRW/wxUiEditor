@@ -168,7 +168,7 @@ void NewWizard::createNode()
     auto parent_node = wxGetFrame().GetSelectedNode();
     if (!parent_node)
     {
-        parent_node = Project.ProjectNode();
+        parent_node = Project.getProjectNode();
     }
     else
     {

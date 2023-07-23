@@ -75,7 +75,7 @@ int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_PAG
     tt_string derived_file;
     if (m_is_derived_class && m_form_node->hasValue(prop_derived_file))
     {
-        derived_file = Project.BaseDirectory(form, GEN_LANG_CPLUSPLUS);
+        derived_file = Project.getBaseDirectory(form, GEN_LANG_CPLUSPLUS);
         if (derived_file.size())
         {
             derived_file.append_filename(m_form_node->as_string(prop_derived_file));
@@ -116,7 +116,7 @@ int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_PAG
     tt_string baseFile;
     if (auto& file = m_form_node->as_string(prop_base_file); file.size())
     {
-        baseFile = Project.BaseDirectory(form, GEN_LANG_CPLUSPLUS);
+        baseFile = Project.getBaseDirectory(form, GEN_LANG_CPLUSPLUS);
         if (baseFile.size())
         {
             baseFile.append_filename(file);

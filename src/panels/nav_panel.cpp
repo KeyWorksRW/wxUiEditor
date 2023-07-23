@@ -192,14 +192,14 @@ void NavigationPanel::OnProjectUpdated()
     m_tree_node_map.clear();
     m_node_tree_map.clear();
 
-    auto root = m_tree_ctrl->AddRoot(GetDisplayName(Project.ProjectNode()), GetImageIndex(Project.ProjectNode()), -1);
-    m_node_tree_map[Project.ProjectNode()] = root;
-    m_tree_node_map[root] = Project.ProjectNode();
+    auto root = m_tree_ctrl->AddRoot(GetDisplayName(Project.getProjectNode()), GetImageIndex(Project.getProjectNode()), -1);
+    m_node_tree_map[Project.getProjectNode()] = root;
+    m_tree_node_map[root] = Project.getProjectNode();
 
-    AddAllChildren(Project.ProjectNode());
+    AddAllChildren(Project.getProjectNode());
 
     // First we expand everything, then we collapse all forms and folders
-    ExpandAllNodes(Project.ProjectNode());
+    ExpandAllNodes(Project.getProjectNode());
 
     std::vector<Node*> forms;
     Project.CollectForms(forms);
@@ -212,7 +212,7 @@ void NavigationPanel::OnProjectUpdated()
         }
     }
 
-    for (const auto& folder: Project.ChildNodePtrs())
+    for (const auto& folder: Project.getChildNodePtrs())
     {
         if (folder->isGen(gen_folder))
         {
@@ -555,7 +555,7 @@ tt_string NavigationPanel::GetDisplayName(Node* node) const
     else
     {
         if (node->isGen(gen_Project))
-            display_name << "Project: " << Project.ProjectFile().filename();
+            display_name << "Project: " << Project.getProjectFile().filename();
         else if (node->isGen(gen_wxContextMenuEvent))
         {
             display_name = node->as_string(prop_handler_name);

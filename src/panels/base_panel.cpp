@@ -219,9 +219,9 @@ void BasePanel::GenerateBaseClass()
         {
             m_cur_form = cur_selection->getChild(0);
         }
-        else if (Project.ChildCount() > 0)
+        else if (Project.getChildCount() > 0)
         {
-            m_cur_form = Project.GetFirstFormChild();
+            m_cur_form = Project.getFirstFormChild();
         }
         else
         {
@@ -264,7 +264,7 @@ void BasePanel::GenerateBaseClass()
             m_derived_hdr_panel->Clear();
             codegen.SetHdrWriteCode(m_derived_hdr_panel);
 
-            codegen.GenerateDerivedClass(Project.ProjectNode(), m_cur_form, panel_page);
+            codegen.GenerateDerivedClass(Project.getProjectNode(), m_cur_form, panel_page);
             break;
 
         case GEN_LANG_PYTHON:

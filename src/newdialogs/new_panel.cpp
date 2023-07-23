@@ -138,7 +138,7 @@ void NewPanel::createNode()
     NodeSharedPtr new_node;
     if (m_is_form)
     {
-        new_node = NodeCreation.createNode(gen_PanelForm, Project.ProjectNode());
+        new_node = NodeCreation.createNode(gen_PanelForm, Project.getProjectNode());
         ASSERT(new_node);
     }
     else
@@ -206,7 +206,7 @@ void NewPanel::createNode()
         auto parent_node = wxGetFrame().GetSelectedNode();
         if (!parent_node)
         {
-            parent_node = Project.ProjectNode();
+            parent_node = Project.getProjectNode();
         }
         else
         {

@@ -99,7 +99,7 @@ void GenThreadCpp(GenData& gen_data, Node* form)
 
     if (auto& base_file = form->as_string(prop_base_file); base_file.size())
     {
-        path = Project.BaseDirectory(form, GEN_LANG_CPLUSPLUS);
+        path = Project.getBaseDirectory(form, GEN_LANG_CPLUSPLUS);
         if (path.size())
         {
             path.append_filename(base_file);
@@ -208,7 +208,7 @@ void GenThreadCpp(GenData& gen_data, Node* form)
 
 bool GenerateCodeFiles(GenResults& results, std::vector<tt_string>* pClassList)
 {
-    if (Project.ChildCount() == 0)
+    if (Project.getChildCount() == 0)
     {
         wxMessageBox("You cannot generate any code until you have added a top level form.", "Code Generation");
         return false;
@@ -218,7 +218,7 @@ bool GenerateCodeFiles(GenResults& results, std::vector<tt_string>* pClassList)
 
     if (Project.as_bool(prop_generate_cmake) && !pClassList)
     {
-        for (auto& iter: Project.ChildNodePtrs())
+        for (auto& iter: Project.getChildNodePtrs())
         {
             if (iter->isGen(gen_folder) && iter->hasValue(prop_folder_cmake_file))
             {
@@ -230,7 +230,7 @@ bool GenerateCodeFiles(GenResults& results, std::vector<tt_string>* pClassList)
         }
         if (Project.hasValue(prop_cmake_file))
         {
-            if (WriteCMakeFile(Project.ProjectNode(), results.updated_files, results.msgs) == result::created)
+            if (WriteCMakeFile(Project.getProjectNode(), results.updated_files, results.msgs) == result::created)
             {
                 ++results.file_count;
             }
@@ -349,7 +349,7 @@ void GenInhertedClass(GenResults& results)
     {
         if (auto& file = form->as_string(prop_derived_file); file.size())
         {
-            path = Project.GetDerivedFilename(form);
+            path = Project.getDerivedFilename(form);
             if (path.empty())
                 continue;
             if (path.file_exists())
@@ -382,7 +382,7 @@ void GenInhertedClass(GenResults& results)
         auto cpp_cw = std::make_unique<FileCodeWriter>(path);
         codegen.SetSrcWriteCode(cpp_cw.get());
 
-        auto retval = codegen.GenerateDerivedClass(Project.ProjectNode(), form);
+        auto retval = codegen.GenerateDerivedClass(Project.getProjectNode(), form);
         if (retval == result::fail)
         {
             results.msgs.emplace_back() << "Cannot create or write to the file " << path << '\n';
@@ -519,7 +519,7 @@ void GenerateTmpFiles(const std::vector<tt_string>& ClassList, pugi::xml_node ro
                 // relative to that directory.
                 auto SetPath = [&](const tt_string& base_file)
                 {
-                    path = Project.BaseDirectory(form, language);
+                    path = Project.getBaseDirectory(form, language);
                     if (path.size())
                     {
                         path.append_filename(base_file);
@@ -643,7 +643,7 @@ void GenerateTmpFiles(const std::vector<tt_string>& ClassList, pugi::xml_node ro
                         paths.append_child("left").text().set(path.c_str());
                         paths.append_child("left-readonly").text().set("0");
 
-                        tmp_path.make_relative(Project.ProjectPath());
+                        tmp_path.make_relative(Project.getProjectPath());
                         tmp_path.make_absolute();
                         paths.append_child("right").text().set(tmp_path.c_str());
                         paths.append_child("right-readonly").text().set("1");

@@ -525,7 +525,7 @@ void ImageHandler::CollectBundles()
         wxBusyCursor wait;
 
     tt_cwd save_cwd(true);
-    Project.ProjectPath().ChangeDir();
+    Project.getProjectPath().ChangeDir();
 
     std::vector<Node*> forms;
     Project.CollectForms(forms);
@@ -1217,7 +1217,7 @@ tt_string ImageHandler::GetBundleFuncName(const tt_string& description)
 {
     tt_string name;
 
-    for (const auto& form: Project.ChildNodePtrs())
+    for (const auto& form: Project.getChildNodePtrs())
     {
         if (form->isGen(gen_Images))
         {

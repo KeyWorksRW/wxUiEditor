@@ -116,7 +116,7 @@ void NodeInfo::OnInit(wxInitDialogEvent& /* event */)
         m_txt_memory->SetLabel(label);
     }
 
-    CalcNodeMemory(Project.ProjectNode(), node_memory);
+    CalcNodeMemory(Project.getProjectNode(), node_memory);
 
     label.Format("Project: %kzu (%kzu nodes)", node_memory.size, node_memory.children);
     m_txt_project->SetLabel(label);

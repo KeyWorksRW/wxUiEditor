@@ -112,7 +112,7 @@ bool Node::createToolNode(GenName name)
 
     if (name == gen_Images)
     {
-        for (const auto& iter: Project.ChildNodePtrs())
+        for (const auto& iter: Project.getChildNodePtrs())
         {
             if (iter->isGen(gen_Images))
             {
@@ -122,11 +122,11 @@ bool Node::createToolNode(GenName name)
             }
         }
 
-        auto new_node = NodeCreation.createNode(name, Project.ProjectNode());
+        auto new_node = NodeCreation.createNode(name, Project.getProjectNode());
         if (!new_node)
             return false;
         auto insert_node =
-            std::make_shared<InsertNodeAction>(new_node.get(), Project.ProjectNode(), "insert Images list", 0);
+            std::make_shared<InsertNodeAction>(new_node.get(), Project.getProjectNode(), "insert Images list", 0);
         insert_node->SetFireCreatedEvent(true);
         wxGetFrame().PushUndoAction(insert_node);
         wxGetFrame().SelectNode(new_node, evt_flags::fire_event | evt_flags::force_selection);

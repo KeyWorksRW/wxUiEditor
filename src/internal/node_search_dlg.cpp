@@ -258,7 +258,7 @@ void NodeSearchDlg::FindGenerators(Node* node)
                 }
                 else
                 {
-                    list.emplace(Project.ProjectNode());
+                    list.emplace(Project.getProjectNode());
                 }
             }
             m_map_found[map_GenNames[node->getGenName()]] = list;
@@ -303,7 +303,7 @@ void NodeSearchDlg::FindVariables(Node* node)
                 }
                 else
                 {
-                    form_list.emplace(Project.ProjectNode());
+                    form_list.emplace(Project.getProjectNode());
                 }
             }
             m_map_found[node->as_string(prop_var_name)] = form_list;
@@ -348,7 +348,7 @@ void NodeSearchDlg::FindLabels(Node* node)
                 }
                 else
                 {
-                    form_list.emplace(Project.ProjectNode());
+                    form_list.emplace(Project.getProjectNode());
                 }
             }
             m_map_found[node->as_string(prop_label)] = form_list;
@@ -477,7 +477,7 @@ void NodeSearchDlg::OnIDs(wxCommandEvent& WXUNUSED(event))
                     }
                     else
                     {
-                        form_list.emplace(Project.ProjectNode());
+                        form_list.emplace(Project.getProjectNode());
                     }
                 }
                 m_map_found[node->as_string(prop_id)] = form_list;
@@ -535,7 +535,7 @@ void NodeSearchDlg::OnOK(wxCommandEvent& event)
         {
             if (auto class_name = m_listbox_forms->GetStringSelection().ToStdString(); class_name.size())
             {
-                m_form = FindNodeByClassName(Project.ProjectNode(), class_name);
+                m_form = FindNodeByClassName(Project.getProjectNode(), class_name);
             }
             else
             {

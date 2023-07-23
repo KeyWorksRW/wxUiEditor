@@ -760,15 +760,15 @@ SortProjectAction::SortProjectAction()
 
     m_undo_string = "Sort Project";
 
-    m_old_project = NodeCreation.makeCopy(Project.ProjectNode());
+    m_old_project = NodeCreation.makeCopy(Project.getProjectNode());
 }
 
 void SortProjectAction::Change()
 {
-    auto& children = Project.ChildNodePtrs();
+    auto& children = Project.getChildNodePtrs();
     std::sort(children.begin(), children.end(), CompareClassNames);
 
-    for (auto& iter: Project.ChildNodePtrs())
+    for (auto& iter: Project.getChildNodePtrs())
     {
         if (iter->isGen(gen_folder) || iter->isGen(gen_sub_folder))
         {
@@ -778,7 +778,7 @@ void SortProjectAction::Change()
 
     wxGetFrame().FireProjectUpdatedEvent();
     if (isAllowedSelectEvent())
-        wxGetFrame().SelectNode(Project.ProjectNode());
+        wxGetFrame().SelectNode(Project.getProjectNode());
 }
 
 void SortProjectAction::SortFolder(Node* folder)
@@ -797,15 +797,15 @@ void SortProjectAction::SortFolder(Node* folder)
 
 void SortProjectAction::Revert()
 {
-    Project.ProjectNode()->removeAllChildren();
+    Project.getProjectNode()->removeAllChildren();
     for (const auto& child: m_old_project->getChildNodePtrs())
     {
-        Project.ProjectNode()->adoptChild(NodeCreation.makeCopy(child.get()));
+        Project.getProjectNode()->adoptChild(NodeCreation.makeCopy(child.get()));
     }
 
     wxGetFrame().FireProjectUpdatedEvent();
     if (isAllowedSelectEvent())
-        wxGetFrame().SelectNode(Project.ProjectNode());
+        wxGetFrame().SelectNode(Project.getProjectNode());
 }
 
 ///////////////////////////////// AutoImagesAction ////////////////////////////////////
@@ -828,7 +828,7 @@ AutoImagesAction::AutoImagesAction(Node* node)
     }
 
     std::vector<std::string> new_images;
-    for (auto& child: Project.ChildNodePtrs())
+    for (auto& child: Project.getChildNodePtrs())
     {
         // Note that GatherImages will update both image_names and new_images
         img_list::GatherImages(child.get(), image_names, new_images);

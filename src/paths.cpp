@@ -21,7 +21,7 @@ void AllowDirectoryChange(wxPropertyGridEvent& event, NodeProperty* /* prop */, 
         return;
 
     newValue.make_absolute();
-    newValue.make_relative(Project.ProjectPath());
+    newValue.make_relative(Project.getProjectPath());
     newValue.backslashestoforward();
 
     tt_cwd cwd(true);
@@ -73,7 +73,7 @@ void AllowFileChange(wxPropertyGridEvent& event, NodeProperty* prop, Node* node)
             return;
 
         newValue.make_absolute();
-        newValue.make_relative(Project.ProjectPath());
+        newValue.make_relative(Project.getProjectPath());
         newValue.backslashestoforward();
 
         auto filename = newValue;
@@ -179,7 +179,7 @@ void OnPathChanged(wxPropertyGridEvent& event, NodeProperty* prop, Node* /* node
 
     tt_string newValue = event.GetPropertyValue().GetString().utf8_string();
     newValue.make_absolute();
-    newValue.make_relative(Project.ProjectPath());
+    newValue.make_relative(Project.getProjectPath());
     newValue.backslashestoforward();
 
     // Note that on Windows, even though we changed the property to a forward slash, it will still be displayed
@@ -215,7 +215,7 @@ void ChangeDerivedDirectory(tt_string& path)
         path.pop_back();
 
     auto undo_derived = std::make_shared<ModifyProperties>("Derived directory");
-    undo_derived->addProperty(Project.ProjectNode()->getPropPtr(prop_derived_directory), path);
+    undo_derived->addProperty(Project.getProjectNode()->getPropPtr(prop_derived_directory), path);
 
     std::vector<Node*> forms;
     Project.CollectForms(forms);
@@ -255,7 +255,7 @@ void ChangeBaseDirectory(tt_string& path)
         path.pop_back();
 
     auto undo_derived = std::make_shared<ModifyProperties>("Base directory");
-    undo_derived->addProperty(Project.ProjectNode()->getPropPtr(prop_base_directory), path);
+    undo_derived->addProperty(Project.getProjectNode()->getPropPtr(prop_base_directory), path);
 
     std::vector<Node*> forms;
     Project.CollectForms(forms);

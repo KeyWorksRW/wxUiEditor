@@ -55,7 +55,7 @@ bool ImageDialogAdapter::DoShowDialog(wxPropertyGrid* propGrid, wxPGProperty* WX
         if (dlg.ShowModal() == wxID_OK)
         {
             wxFileName file(dlg.GetPath());
-            file.MakeRelativeTo(Project.get_ProjectPath().make_wxString());
+            file.MakeRelativeTo(Project.getProjectPath().make_wxString());
             auto name = file.GetFullPath();
             tt::backslashestoforward(name);
             SetValue(name);
@@ -86,7 +86,7 @@ bool ImageDialogAdapter::DoShowDialog(wxPropertyGrid* propGrid, wxPGProperty* WX
         if (dlg.ShowModal() == wxID_OK)
         {
             tt_string name = dlg.GetPath().utf8_string();
-            name.make_relative(Project.get_ProjectPath());
+            name.make_relative(Project.getProjectPath());
             name.backslashestoforward();
             SetValue(name.make_wxString());
             return true;

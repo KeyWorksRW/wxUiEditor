@@ -116,7 +116,7 @@ wxVariant PropertyGrid_Animation::ChildChanged(wxVariant& thisValue, int childIn
                     name = Project.ArtDirectory();
                     name.append_filename(childValue.GetString().utf8_string());
                 }
-                name.make_relative(Project.get_ProjectPath());
+                name.make_relative(Project.getProjectPath());
                 name.backslashestoforward();
                 img_props.image.assign(name);
             }

@@ -621,7 +621,7 @@ bool img_list::CompareImageNames(NodeSharedPtr a, NodeSharedPtr b)
 Node* img_list::FindImageList()
 {
     Node* image_node = nullptr;
-    if (Project.ChildCount() > 0)
+    if (Project.getChildCount() > 0)
     {
         if (Project.getChild(0)->isGen(gen_Images))
         {
@@ -629,7 +629,7 @@ Node* img_list::FindImageList()
         }
         else
         {
-            for (const auto& iter: Project.ChildNodePtrs())
+            for (const auto& iter: Project.getChildNodePtrs())
             {
                 if (iter->isGen(gen_Images))
                 {
@@ -648,10 +648,10 @@ void img_list::UpdateImagesList(int ProjectVersion)
     {
         if (Project.as_string(prop_art_directory).empty())
         {
-            Project.ProjectNode()->set_value(prop_art_directory, "./");
+            Project.getProjectNode()->set_value(prop_art_directory, "./");
         }
 
-        FixPropBitmap(Project.ProjectNode());
+        FixPropBitmap(Project.getProjectNode());
     }
 
     Node* image_node = FindImageList();
@@ -660,9 +660,9 @@ void img_list::UpdateImagesList(int ProjectVersion)
         return;
     }
 
-    if (Project.ProjectNode()->getChildCount() != 0)
+    if (Project.getProjectNode()->getChildCount() != 0)
     {
-        Project.ProjectNode()->changeChildPosition(image_node->getSharedPtr(), 0);
+        Project.getProjectNode()->changeChildPosition(image_node->getSharedPtr(), 0);
     }
 
     auto& children = image_node->getChildNodePtrs();

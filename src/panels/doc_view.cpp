@@ -131,7 +131,7 @@ void DocViewPanel::ActivatePage()
     {
         wxBusyCursor wait;
 
-        m_language = Project.get_PreferredLanguage();
+        m_language = Project.getPreferredLanguage();
         m_toolBar->ToggleTool(ID_CPLUS, m_language == GEN_LANG_CPLUSPLUS);
         m_toolBar->ToggleTool(ID_PYTHON, m_language == GEN_LANG_PYTHON);
         m_toolBar->ToggleTool(ID_RUBY, m_language == GEN_LANG_RUBY);

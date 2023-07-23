@@ -102,7 +102,7 @@ void MainFrame::OnTestXrcDuplicate(wxCommandEvent& /* event */)
         return;
     }
 
-    if (m_selected_node.get() == Project.ProjectNode())
+    if (m_selected_node.get() == Project.getProjectNode())
     {
         wxMessageBox("You cannot duplicate the entire project, only forms.", "Test XRC Duplicate");
         return;
@@ -143,8 +143,8 @@ void MainFrame::OnTestXrcDuplicate(wxCommandEvent& /* event */)
         Project.FixupDuplicatedNode(new_node.get());
         tt_string undo_str("duplicate ");
         undo_str << new_node->declName();
-        auto pos = Project.ProjectNode()->findInsertionPos(form_node);
-        PushUndoAction(std::make_shared<InsertNodeAction>(new_node.get(), Project.ProjectNode(), undo_str, pos));
+        auto pos = Project.getProjectNode()->findInsertionPos(form_node);
+        PushUndoAction(std::make_shared<InsertNodeAction>(new_node.get(), Project.getProjectNode(), undo_str, pos));
         FireCreatedEvent(new_node);
         SelectNode(new_node, evt_flags::fire_event | evt_flags::force_selection);
     }

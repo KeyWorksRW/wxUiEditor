@@ -434,7 +434,7 @@ wxArrayString NodeProperty::as_wxArrayString() const
 
     if (m_value.size())
     {
-        if (m_value[0] == '"' && !(type() == type_stringlist_semi && Project.GetOriginalProjectVersion() >= 18))
+        if (m_value[0] == '"' && !(type() == type_stringlist_semi && Project.getOriginalProjectVersion() >= 18))
         {
             auto view = m_value.view_substr(0, '"', '"');
             while (view.size() > 0)
@@ -600,7 +600,7 @@ std::vector<NODEPROP_CHECKLIST_ITEM> NodeProperty::as_checklist_items() const
 {
     std::vector<NODEPROP_CHECKLIST_ITEM> result;
 
-    if (m_value.size() && m_value[0] == '"' && wxGetApp().GetProjectVersion() <= minRequiredVer)
+    if (m_value.size() && m_value[0] == '"' && wxGetApp().getProjectVersion() <= minRequiredVer)
     {
         auto array = as_ArrayString();
         for (auto& iter: array)

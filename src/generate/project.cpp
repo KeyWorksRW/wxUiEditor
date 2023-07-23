@@ -35,7 +35,7 @@ bool ProjectGenerator::PopupMenuAddCommands(NavPopupMenu* menu, Node* /* node */
         wxEVT_MENU,
         [](wxCommandEvent&)
         {
-            wxGetFrame().PasteNode(Project.ProjectNode());
+            wxGetFrame().PasteNode(Project.getProjectNode());
         },
         wxID_PASTE);
 
@@ -121,7 +121,7 @@ bool FolderGenerator::PopupMenuAddCommands(NavPopupMenu* menu, Node* /* node */)
         wxEVT_MENU,
         [](wxCommandEvent&)
         {
-            wxGetFrame().PasteNode(Project.ProjectNode());
+            wxGetFrame().PasteNode(Project.getProjectNode());
         },
         wxID_PASTE);
 
@@ -183,7 +183,7 @@ bool SubFolderGenerator::PopupMenuAddCommands(NavPopupMenu* menu, Node* /* node 
         wxEVT_MENU,
         [](wxCommandEvent&)
         {
-            wxGetFrame().PasteNode(Project.ProjectNode());
+            wxGetFrame().PasteNode(Project.getProjectNode());
         },
         wxID_PASTE);
 

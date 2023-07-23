@@ -135,7 +135,7 @@ void NewRibbon::createNode()
     NodeSharedPtr bar_node;
     if (m_is_form)
     {
-        bar_node = NodeCreation.createNode(gen_RibbonBar, Project.ProjectNode());
+        bar_node = NodeCreation.createNode(gen_RibbonBar, Project.getProjectNode());
         ASSERT(bar_node);
     }
     else
@@ -202,7 +202,7 @@ void NewRibbon::createNode()
         auto parent_node = wxGetFrame().GetSelectedNode();
         if (!parent_node)
         {
-            parent_node = Project.ProjectNode();
+            parent_node = Project.getProjectNode();
         }
         else
         {

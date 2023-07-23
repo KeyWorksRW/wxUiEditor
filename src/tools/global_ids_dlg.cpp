@@ -220,8 +220,8 @@ void MainFrame::OnEditCustomIds(wxCommandEvent& WXUNUSED(event))
 
 void GlobalCustomIDS::OnInit(wxInitDialogEvent& event)
 {
-    m_lb_folders->Append("Project", Project.ProjectNode());
-    for (const auto& iter: Project.ProjectNode()->getChildNodePtrs())
+    m_lb_folders->Append("Project", Project.getProjectNode());
+    for (const auto& iter: Project.getProjectNode()->getChildNodePtrs())
     {
         if (iter->isGen(gen_folder))
         {
@@ -233,17 +233,17 @@ void GlobalCustomIDS::OnInit(wxInitDialogEvent& event)
         }
     }
 
-    if (Project.ProjectNode()->hasValue(prop_id_prefixes))
+    if (Project.getProjectNode()->hasValue(prop_id_prefixes))
     {
-        for (auto& iter: Project.ProjectNode()->as_ArrayString(prop_id_prefixes))
+        for (auto& iter: Project.getProjectNode()->as_ArrayString(prop_id_prefixes))
         {
             m_combo_prefixes->Append(iter.make_wxString());
         }
     }
 
-    if (Project.ProjectNode()->hasValue(prop_id_suffixes))
+    if (Project.getProjectNode()->hasValue(prop_id_suffixes))
     {
-        for (auto& iter: Project.ProjectNode()->as_ArrayString(prop_id_suffixes))
+        for (auto& iter: Project.getProjectNode()->as_ArrayString(prop_id_suffixes))
         {
             m_combo_suffixes->Append(iter.make_wxString());
         }
@@ -269,7 +269,7 @@ void GlobalCustomIDS::OnSelectFolders(wxCommandEvent& WXUNUSED(event))
                     {
                         m_lb_forms->Append(form->as_string(prop_class_name), form.get());
                     }
-                    else if (form.get() == Project.ProjectNode())
+                    else if (form.get() == Project.getProjectNode())
                     {
                         m_lb_forms->Append("Project", form.get());
                     }

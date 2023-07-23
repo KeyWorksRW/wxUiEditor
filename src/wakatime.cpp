@@ -139,10 +139,10 @@ void WakaTime::SendHeartbeat(bool FileSavedEvent)
             m_last_heartbeat = static_cast<intmax_t>(result);
             tt_string cmd;
             cmd << m_waka_cli << " --plugin \"wxUiEditor/0.5.0 wxUiEditor-wakatime/0.5.0\" --category designing --project ";
-            tt_string name = Project.ProjectFile().filename();
+            tt_string name = Project.getProjectFile().filename();
             name.remove_extension();
             cmd << name;
-            cmd << " --entity \"" << Project.ProjectFile() << "\"";
+            cmd << " --entity \"" << Project.getProjectFile() << "\"";
             if (FileSavedEvent)
             {
                 cmd << " --write";

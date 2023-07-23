@@ -143,7 +143,7 @@ bool ProjectHandler::LoadProject(const tt_string& file, bool allow_ui)
 
     // Calling this will also initialize the ImageHandler class
     Project.Initialize(project);
-    Project.SetProjectFile(file);
+    Project.setProjectFile(file);
     ProjectImages.CollectBundles();
 
     // Imported projects start with an older version so that they pass through the old project fixups.
@@ -288,10 +288,10 @@ NodeSharedPtr NodeCreator::createNode(pugi::xml_node& xml_obj, Node* parent, boo
                     prop->set_value(value);
                     // Conversion from quoted items to semicolon separated items was introduced
                     // in 1.1.1 (project version 18)
-                    if (Project.GetProjectVersion() < 18)
+                    if (Project.getProjectVersion() < 18)
                     {
                         Project.ForceProjectVersion(18);
-                        Project.SetProjectUpdated();
+                        Project.setProjectUpdated();
                     }
                 };
 
@@ -299,7 +299,7 @@ NodeSharedPtr NodeCreator::createNode(pugi::xml_node& xml_obj, Node* parent, boo
                 {
                     prop->set_value(iter.as_bool());
                 }
-                else if (prop->get_name() == prop_contents && Project.GetOriginalProjectVersion() < 18)
+                else if (prop->get_name() == prop_contents && Project.getOriginalProjectVersion() < 18)
                 {
                     if (new_node->isGen(gen_wxCheckListBox) && iter.as_sview().size() && iter.as_sview()[0] == '"')
                     {
@@ -310,7 +310,7 @@ NodeSharedPtr NodeCreator::createNode(pugi::xml_node& xml_obj, Node* parent, boo
                         prop->set_value(iter.as_sview());
                     }
                 }
-                else if (prop->type() == type_stringlist_semi && Project.GetOriginalProjectVersion() < 18)
+                else if (prop->type() == type_stringlist_semi && Project.getOriginalProjectVersion() < 18)
                 {
                     if (iter.as_sview().size() && iter.as_sview()[0] == '"')
                     {
@@ -324,7 +324,7 @@ NodeSharedPtr NodeCreator::createNode(pugi::xml_node& xml_obj, Node* parent, boo
                 // Imported projects will be set as version ImportProjectVersion to get the fixups of constant to
                 // friendly name, and bit flag conflict resolution.
 
-                else if (Project.GetProjectVersion() <= ImportProjectVersion)
+                else if (Project.getProjectVersion() <= ImportProjectVersion)
                 {
                     switch (prop->type())
                     {
@@ -422,13 +422,13 @@ NodeSharedPtr NodeCreator::createNode(pugi::xml_node& xml_obj, Node* parent, boo
                 if (find_prop->second == prop_base_hdr_includes)
                 {
                     new_node->set_value(prop_header_preamble, iter.value());
-                    Project.SetProjectUpdated();
+                    Project.setProjectUpdated();
                     Project.ForceProjectVersion(curSupportedVer);
                 }
                 if (find_prop->second == prop_base_src_includes)
                 {
                     new_node->set_value(prop_source_preamble, iter.value());
-                    Project.SetProjectUpdated();
+                    Project.setProjectUpdated();
                     Project.ForceProjectVersion(curSupportedVer);
                 }
             }
@@ -510,7 +510,7 @@ NodeSharedPtr NodeCreator::createNode(pugi::xml_node& xml_obj, Node* parent, boo
     {
         // Order is important -- don't call GetProject() if check_for_duplicates is false
         // because there may not be a project yet.
-        if (check_for_duplicates && parent == Project.ProjectNode())
+        if (check_for_duplicates && parent == Project.getProjectNode())
             Project.FixupDuplicatedNode(new_node.get());
         parent->adoptChild(new_node);
     }
@@ -584,7 +584,7 @@ NodeSharedPtr NodeCreator::createProjectNode(pugi::xml_node* xml_obj, bool allow
                 {
                     prop->set_value(iter.as_bool());
                 }
-                else if (prop->type() == type_stringlist_semi && Project.GetOriginalProjectVersion() < 18)
+                else if (prop->type() == type_stringlist_semi && Project.getOriginalProjectVersion() < 18)
                 {
                     auto view = iter.as_sview();
                     if (view.size() > 0 && view[0] == '"')
@@ -822,7 +822,7 @@ bool ProjectHandler::Import(ImportXML& import, tt_string& file, bool append, boo
 
         // Calling this will also initialize the ProjectImage class
         Project.Initialize(project_node, allow_ui);
-        Project.SetProjectFile(file);
+        Project.setProjectFile(file);
         ProjectImages.CollectBundles();
 
 #if defined(_DEBUG)
@@ -906,7 +906,7 @@ bool ProjectHandler::NewProject(bool create_empty, bool allow_ui)
 
         // Calling this will also initialize the ProjectImage class
         Project.Initialize(project);
-        Project.SetProjectFile(file);
+        Project.setProjectFile(file);
 
         if (allow_ui)
         {
@@ -931,7 +931,7 @@ bool ProjectHandler::NewProject(bool create_empty, bool allow_ui)
 
     // Calling this will also initialize the ProjectImage class
     Project.Initialize(project);
-    Project.SetProjectFile(file);
+    Project.setProjectFile(file);
 
     tt_string imported_from;
 
@@ -1034,7 +1034,7 @@ bool ProjectHandler::NewProject(bool create_empty, bool allow_ui)
     return true;
 }
 
-void ProjectHandler::AppendWinRes(const tt_string& rc_file, std::vector<tt_string>& dialogs)
+void ProjectHandler::appendWinRes(const tt_string& rc_file, std::vector<tt_string>& dialogs)
 {
     WinResource winres;
     if (winres.ImportRc(rc_file, dialogs))
@@ -1054,7 +1054,7 @@ void ProjectHandler::AppendWinRes(const tt_string& rc_file, std::vector<tt_strin
     }
 }
 
-void ProjectHandler::AppendCrafter(wxArrayString& files)
+void ProjectHandler::appendCrafter(wxArrayString& files)
 {
     for (const auto& file: files)
     {
@@ -1090,7 +1090,7 @@ void ProjectHandler::AppendCrafter(wxArrayString& files)
     }
 }
 
-void ProjectHandler::AppendFormBuilder(wxArrayString& files)
+void ProjectHandler::appendFormBuilder(wxArrayString& files)
 {
     for (auto& file: files)
     {
@@ -1126,7 +1126,7 @@ void ProjectHandler::AppendFormBuilder(wxArrayString& files)
     }
 }
 
-void ProjectHandler::AppendDialogBlocks(wxArrayString& files)
+void ProjectHandler::appendDialogBlocks(wxArrayString& files)
 {
     for (auto& file: files)
     {
@@ -1162,7 +1162,7 @@ void ProjectHandler::AppendDialogBlocks(wxArrayString& files)
     }
 }
 
-void ProjectHandler::AppendGlade(wxArrayString& files)
+void ProjectHandler::appendGlade(wxArrayString& files)
 {
     for (auto& file: files)
     {
@@ -1198,7 +1198,7 @@ void ProjectHandler::AppendGlade(wxArrayString& files)
     }
 }
 
-void ProjectHandler::AppendSmith(wxArrayString& files)
+void ProjectHandler::appendSmith(wxArrayString& files)
 {
     for (auto& file: files)
     {
@@ -1234,7 +1234,7 @@ void ProjectHandler::AppendSmith(wxArrayString& files)
     }
 }
 
-void ProjectHandler::AppendXRC(wxArrayString& files)
+void ProjectHandler::appendXRC(wxArrayString& files)
 {
     for (auto& file: files)
     {

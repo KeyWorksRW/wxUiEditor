@@ -258,7 +258,7 @@ Node* ProjectHandler::getFirstFormChild(Node* node) const
     return nullptr;
 }
 
-int ProjectHandler::getPreferredLanguage()
+int ProjectHandler::getCodePreference()
 {
     auto& value = Project.as_string(prop_code_preference);
     if (value == "C++")

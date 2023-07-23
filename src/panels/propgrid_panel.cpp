@@ -1681,7 +1681,7 @@ void PropGridPanel::ModifyOptionsProperty(NodeProperty* node_prop, wxPGProperty*
         else if (node_prop->isProp(prop_class_access) && wxGetApp().isPjtMemberPrefix())
         {
             tt_string name = node->as_string(prop_var_name);
-            if (Project.getPreferredLanguage() == GEN_LANG_PYTHON)
+            if (Project.getCodePreference() == GEN_LANG_PYTHON)
             {
                 // The convention in python is to use a leading underscore for
                 // local members.
@@ -1733,7 +1733,7 @@ void PropGridPanel::ModifyOptionsProperty(NodeProperty* node_prop, wxPGProperty*
                 grid_property->SetValueFromString(name, 0);
                 modifyProperty(propChange, name);
             }
-            else if (value != "none" && !name.starts_with("m_") && Project.getPreferredLanguage() == GEN_LANG_CPLUSPLUS)
+            else if (value != "none" && !name.starts_with("m_") && Project.getCodePreference() == GEN_LANG_CPLUSPLUS)
             {
                 name.insert(0, "m_");
                 auto final_name = node->getUniqueName(name);

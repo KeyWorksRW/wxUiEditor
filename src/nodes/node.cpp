@@ -703,7 +703,7 @@ Node* Node::createChildNode(GenName name)
 
     if (new_node)
     {
-        if (Project.getPreferredLanguage() != GEN_LANG_CPLUSPLUS)
+        if (Project.getCodePreference() != GEN_LANG_CPLUSPLUS)
         {
             tt_string member_name = new_node->as_string(prop_var_name);
             if (member_name.starts_with("m_"))

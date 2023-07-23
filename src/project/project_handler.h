@@ -104,7 +104,7 @@ public:
     size_t getChildCount() const { return m_project_node->getChildCount(); }
 
     // Returns a GEN_LANG_... enum value
-    int getPreferredLanguage();
+    int getCodePreference();
 
     // const tt_string& value(GenEnum::PropName name) const { return m_project_node->as_string(name); }
     const tt_string_view view(PropName name) const { return m_project_node->as_string(name); }

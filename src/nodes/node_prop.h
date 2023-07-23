@@ -149,8 +149,9 @@ public:
     bool isDefaultValue() const;
     const tt_string& getDefaultValue() const noexcept { return m_declaration->getDefaultValue(); }
 
-    // Returns false if the property is empty. For size, point, and Bitmap properties,
-    // returns false if the default value is used.
+    // Returns false if the property is empty. For size and point properties, returns false
+    // if the default value is used. For image properties, returns true if a filename is
+    // specified. For window style, returns true if at least one option is specified.
     bool hasValue() const;
 
     const PropDeclaration* getPropDeclaration() const { return m_declaration; }

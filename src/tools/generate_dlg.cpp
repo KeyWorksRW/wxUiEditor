@@ -123,7 +123,6 @@ void MainFrame::OnGenerateCode(wxCommandEvent&)
         code_generated = true;
     }
 
-
     if (!code_generated)
     {
         GenerateDlg dlg(this);
@@ -203,15 +202,15 @@ void GenerateDlg::OnInit(wxInitDialogEvent& event)
         m_gen_base_code = true;
         m_gen_xrc_code = false;
 
-        if (not (output_type & OUTPUT_XRC))
+        if (not(output_type & OUTPUT_XRC))
         {
             m_checkXRC->Hide();
         }
-        if (not (output_type & OUTPUT_PYTHON))
+        if (not(output_type & OUTPUT_PYTHON))
         {
             m_checkPython->Hide();
         }
-        if (not (output_type & OUTPUT_RUBY))
+        if (not(output_type & OUTPUT_RUBY))
         {
             m_checkRuby->Hide();
         }
@@ -223,19 +222,19 @@ void GenerateDlg::OnInit(wxInitDialogEvent& event)
         m_gen_base_code = false;
         m_gen_xrc_code = false;
 
-        if (not (output_type & OUTPUT_XRC))
+        if (not(output_type & OUTPUT_XRC))
         {
             m_checkXRC->Hide();
         }
-        if (not (output_type & OUTPUT_CPLUS))
+        if (not(output_type & OUTPUT_CPLUS))
         {
             m_checkBaseCode->Hide();
         }
-        if (not (output_type & OUTPUT_DERIVED))
+        if (not(output_type & OUTPUT_DERIVED))
         {
             m_checkDerived->Hide();
         }
-        if (not (output_type & OUTPUT_RUBY))
+        if (not(output_type & OUTPUT_RUBY))
         {
             m_checkRuby->Hide();
         }
@@ -247,19 +246,19 @@ void GenerateDlg::OnInit(wxInitDialogEvent& event)
         m_gen_base_code = false;
         m_gen_xrc_code = false;
 
-        if (not (output_type & OUTPUT_XRC))
+        if (not(output_type & OUTPUT_XRC))
         {
             m_checkXRC->Hide();
         }
-        if (not (output_type & OUTPUT_CPLUS))
+        if (not(output_type & OUTPUT_CPLUS))
         {
             m_checkBaseCode->Hide();
         }
-        if (not (output_type & OUTPUT_DERIVED))
+        if (not(output_type & OUTPUT_DERIVED))
         {
             m_checkDerived->Hide();
         }
-        if (not (output_type & OUTPUT_PYTHON))
+        if (not(output_type & OUTPUT_PYTHON))
         {
             m_checkPython->Hide();
         }

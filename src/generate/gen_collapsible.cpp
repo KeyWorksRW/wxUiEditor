@@ -24,7 +24,7 @@ wxObject* CollapsiblePaneGenerator::CreateMockup(Node* node, wxObject* parent)
         new wxCollapsiblePane(wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxString(prop_label),
                               DlgPoint(parent, node, prop_pos), DlgSize(parent, node, prop_size), GetStyleInt(node));
 
-    if (GetMockup()->IsShowingHidden())
+    if (getMockup()->IsShowingHidden())
         widget->Collapse(false);
     else
         widget->Collapse(node->as_bool(prop_collapsed));
@@ -38,17 +38,17 @@ void CollapsiblePaneGenerator::OnCollapse(wxCollapsiblePaneEvent& event)
 {
     if (auto wxobject = event.GetEventObject(); wxobject)
     {
-        auto node = wxGetFrame().GetMockup()->getNode(wxobject);
+        auto node = wxGetFrame().getMockup()->getNode(wxobject);
 
-        if (wxGetFrame().GetSelectedNode() != node)
+        if (wxGetFrame().getSelectedNode() != node)
         {
-            wxGetFrame().GetMockup()->SelectNode(wxobject);
+            wxGetFrame().getMockup()->SelectNode(wxobject);
         }
     }
 
-    auto min_size = wxGetFrame().GetMockup()->GetMockupContent()->GetSizer()->GetMinSize();
-    wxGetFrame().GetMockup()->GetMockupContent()->SetMinClientSize(min_size);
-    wxGetFrame().GetMockup()->Layout();
+    auto min_size = wxGetFrame().getMockup()->GetMockupContent()->GetSizer()->GetMinSize();
+    wxGetFrame().getMockup()->GetMockupContent()->SetMinClientSize(min_size);
+    wxGetFrame().getMockup()->Layout();
 }
 
 bool CollapsiblePaneGenerator::ConstructionCode(Code& code)

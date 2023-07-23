@@ -192,14 +192,14 @@ void NavigationPanel::OnProjectUpdated()
     m_tree_node_map.clear();
     m_node_tree_map.clear();
 
-    auto root = m_tree_ctrl->AddRoot(GetDisplayName(Project.ProjectNode()), GetImageIndex(Project.ProjectNode()), -1);
-    m_node_tree_map[Project.ProjectNode()] = root;
-    m_tree_node_map[root] = Project.ProjectNode();
+    auto root = m_tree_ctrl->AddRoot(GetDisplayName(Project.getProjectNode()), GetImageIndex(Project.getProjectNode()), -1);
+    m_node_tree_map[Project.getProjectNode()] = root;
+    m_tree_node_map[root] = Project.getProjectNode();
 
-    AddAllChildren(Project.ProjectNode());
+    AddAllChildren(Project.getProjectNode());
 
     // First we expand everything, then we collapse all forms and folders
-    ExpandAllNodes(Project.ProjectNode());
+    ExpandAllNodes(Project.getProjectNode());
 
     std::vector<Node*> forms;
     Project.CollectForms(forms);
@@ -212,7 +212,7 @@ void NavigationPanel::OnProjectUpdated()
         }
     }
 
-    for (const auto& folder: Project.ChildNodePtrs())
+    for (const auto& folder: Project.getChildNodePtrs())
     {
         if (folder->isGen(gen_folder))
         {
@@ -242,17 +242,17 @@ void NavigationPanel::OnSelChanged(wxTreeEvent& event)
         // update itself until we're done, so we lock it before the initial selection event.
 
         m_isSelChangeSuspended = true;
-        m_pMainFrame->GetPropPanel()->Lock();
+        m_pMainFrame->getPropPanel()->Lock();
         m_pMainFrame->SelectNode(iter->second);
-        m_pMainFrame->GetPropPanel()->UnLock();
+        m_pMainFrame->getPropPanel()->UnLock();
 
         // It's possible for Mockup to select a page, so we need to be certain everything is
         // synced after the initial selection.
 
-        if (iter->second != m_pMainFrame->GetSelectedNode())
+        if (iter->second != m_pMainFrame->getSelectedNode())
             m_pMainFrame->SelectNode(iter->second);
         else
-            m_pMainFrame->GetPropPanel()->Create();
+            m_pMainFrame->getPropPanel()->Create();
 
         if (Project.as_string(prop_code_preference) == "Python")
         {
@@ -338,7 +338,7 @@ void NavigationPanel::OnEndDrag(wxTreeEvent& event)
             if (wxMessageBox("Do you want to duplicate this item?", "Drop item onto itself", wxYES_NO) == wxYES)
             {
                 wxGetFrame().DuplicateNode(getNode(itemSrc));
-                ExpandAllNodes(wxGetFrame().GetSelectedNode());
+                ExpandAllNodes(wxGetFrame().getSelectedNode());
             }
             return;
         }
@@ -555,7 +555,7 @@ tt_string NavigationPanel::GetDisplayName(Node* node) const
     else
     {
         if (node->isGen(gen_Project))
-            display_name << "Project: " << Project.ProjectFile().filename();
+            display_name << "Project: " << Project.getProjectFile().filename();
         else if (node->isGen(gen_wxContextMenuEvent))
         {
             display_name = node->as_string(prop_handler_name);
@@ -714,7 +714,7 @@ void NavigationPanel::OnNodePropChange(CustomEvent& event)
 
 void NavigationPanel::OnUpdateEvent(wxUpdateUIEvent& event)
 {
-    auto node = m_pMainFrame->GetSelectedNode();
+    auto node = m_pMainFrame->getSelectedNode();
     if (!node)
     {
         event.Enable(false);
@@ -765,7 +765,7 @@ void NavigationPanel::OnParentChange(CustomEvent& event)
     InsertNode(undo_cmd->getNode());
     m_isSelChangeSuspended = false;
 
-    if (auto iter = m_node_tree_map.find(m_pMainFrame->GetSelectedNode()); iter != m_node_tree_map.end())
+    if (auto iter = m_node_tree_map.find(m_pMainFrame->getSelectedNode()); iter != m_node_tree_map.end())
     {
         m_tree_ctrl->EnsureVisible(iter->second);
         m_tree_ctrl->SelectItem(iter->second);
@@ -784,7 +784,7 @@ void NavigationPanel::OnPositionChange(CustomEvent& event)
     InsertNode(undo_cmd->getNode());
     m_isSelChangeSuspended = false;
 
-    if (auto iter = m_node_tree_map.find(m_pMainFrame->GetSelectedNode()); iter != m_node_tree_map.end())
+    if (auto iter = m_node_tree_map.find(m_pMainFrame->getSelectedNode()); iter != m_node_tree_map.end())
     {
         m_tree_ctrl->EnsureVisible(iter->second);
         m_tree_ctrl->SelectItem(iter->second);
@@ -824,8 +824,8 @@ void NavigationPanel::ChangeExpansion(Node* node, bool include_children, bool ex
 
 void NavigationPanel::OnExpand(wxCommandEvent&)
 {
-    ASSERT(m_pMainFrame->GetSelectedNode());
-    auto node = m_pMainFrame->GetSelectedNode();
+    ASSERT(m_pMainFrame->getSelectedNode());
+    auto node = m_pMainFrame->getSelectedNode();
     if (!node)
         return;  // This is theoretically impossible
 
@@ -836,8 +836,8 @@ void NavigationPanel::OnExpand(wxCommandEvent&)
 
 void NavigationPanel::OnCollapse(wxCommandEvent&)
 {
-    ASSERT(m_pMainFrame->GetSelectedNode());
-    auto node = m_pMainFrame->GetSelectedNode();
+    ASSERT(m_pMainFrame->getSelectedNode());
+    auto node = m_pMainFrame->getSelectedNode();
     if (!node)
         return;  // This is theoretically impossible
 
@@ -859,8 +859,8 @@ void NavigationPanel::OnCollapse(wxCommandEvent&)
 
 void NavigationPanel::OnCollExpand(wxCommandEvent&)
 {
-    ASSERT(m_pMainFrame->GetSelectedNode());
-    auto node = m_pMainFrame->GetSelectedNode();
+    ASSERT(m_pMainFrame->getSelectedNode());
+    auto node = m_pMainFrame->getSelectedNode();
     if (!node)
         return;  // This is theoretically impossible
 

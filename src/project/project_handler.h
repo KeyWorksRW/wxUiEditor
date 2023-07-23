@@ -52,27 +52,18 @@ public:
     void Initialize(NodeSharedPtr project, bool allow_ui = true);
 
     // This will convert the project path into a full path
-    void SetProjectFile(const tt_string& file);
+    void setProjectFile(const tt_string& file);
 
     // Returns the full path to the directory the project file is in
-    tt_string get_ProjectPath() const { return m_projectPath; }
+    tt_string getProjectPath() const { return m_projectPath; }
 
     // Returns the full path to the project filename
-    tt_string get_ProjectFile() const { return m_projectFile; }
-
-    // This will convert the project path into a full path
-    void set_ProjectFile(const tt_string& file);
-
-    // Returns the full path to the directory the project file is in
-    tt_string ProjectPath() const { return m_projectPath; }
-
-    // Returns the full path to the directory the project file is in
-    tt_string ProjectFile() const { return m_projectFile; }
+    tt_string getProjectFile() const { return m_projectFile; }
 
     // Get a bit flag indicating which output types are enabled.
     //
     // OUTPUT_DERIVED is only set if the file is specified and does *not* exist.
-    size_t GetOutputType() const;
+    size_t getOutputType() const;
 
     // Change to the project's directory
     bool ChangeDir() const { return m_projectPath.ChangeDir(); }
@@ -81,39 +72,39 @@ public:
 
     // If the node is within a folder, and the folder specifies a directory, then that
     // directory is returned. Otherwise the project base directory is returned.
-    tt_string BaseDirectory(Node* node, int language = GEN_LANG_CPLUSPLUS) const;
+    tt_string getBaseDirectory(Node* node, int language = GEN_LANG_CPLUSPLUS) const;
 
     // If the node is within a folder, and the folder specifies a directory, then that
     // directory is returned. Otherwise the project derived directory is returned.
-    tt_string DerivedDirectory(Node* node, int language = GEN_LANG_CPLUSPLUS) const;
+    tt_string getDerivedDirectory(Node* node, int language = GEN_LANG_CPLUSPLUS) const;
 
     // Returns the full path to the derived filename or an empty string if no derived file
     // was specified.
-    tt_string GetDerivedFilename(Node*) const;
+    tt_string getDerivedFilename(Node*) const;
 
-    Node* ProjectNode() const { return m_project_node.get(); }
-    auto& ChildNodePtrs() { return m_project_node->getChildNodePtrs(); }
+    Node* getProjectNode() const { return m_project_node.get(); }
+    auto& getChildNodePtrs() { return m_project_node->getChildNodePtrs(); }
     Node* getChild(size_t index) { return m_project_node->getChild(index); }
 
     void CollectForms(std::vector<Node*>& forms, Node* node_start = nullptr);
 
     // Returns the first project child that is a form, or nullptr if no form children found.
-    Node* GetFirstFormChild(Node* node = nullptr) const;
+    Node* getFirstFormChild(Node* node = nullptr) const;
 
     // Make class and filenames unique to the project
     void FixupDuplicatedNode(Node* new_node);
 
-    auto GetProjectVersion() { return m_ProjectVersion; }
-    auto GetOriginalProjectVersion() { return m_OriginalProjectVersion; }
+    auto getProjectVersion() { return m_ProjectVersion; }
+    auto getOriginalProjectVersion() { return m_OriginalProjectVersion; }
     void ForceProjectVersion(int version) { m_ProjectVersion = version; }
-    void SetProjectUpdated() { m_isProject_updated = true; }
+    void setProjectUpdated() { m_isProject_updated = true; }
 
-    bool is_UiAllowed() const { return m_allow_ui; }
+    bool isUiAllowed() const { return m_allow_ui; }
 
-    size_t ChildCount() const { return m_project_node->getChildCount(); }
+    size_t getChildCount() const { return m_project_node->getChildCount(); }
 
     // Returns a GEN_LANG_... enum value
-    int get_PreferredLanguage();
+    int getPreferredLanguage();
 
     // const tt_string& value(GenEnum::PropName name) const { return m_project_node->as_string(name); }
     const tt_string_view view(PropName name) const { return m_project_node->as_string(name); }
@@ -132,13 +123,13 @@ public:
     bool Import(ImportXML& import, tt_string& file, bool append = false, bool allow_ui = true);
     bool ImportProject(tt_string& file, bool allow_ui = true);
 
-    void AppendCrafter(wxArrayString& files);
-    void AppendDialogBlocks(wxArrayString& files);
-    void AppendFormBuilder(wxArrayString& files);
-    void AppendGlade(wxArrayString& files);
-    void AppendSmith(wxArrayString& files);
-    void AppendXRC(wxArrayString& files);
-    void AppendWinRes(const tt_string& rc_file, std::vector<tt_string>& dialogs);
+    void appendCrafter(wxArrayString& files);
+    void appendDialogBlocks(wxArrayString& files);
+    void appendFormBuilder(wxArrayString& files);
+    void appendGlade(wxArrayString& files);
+    void appendSmith(wxArrayString& files);
+    void appendXRC(wxArrayString& files);
+    void appendWinRes(const tt_string& rc_file, std::vector<tt_string>& dialogs);
 
     bool NewProject(bool create_empty = false, bool allow_ui = true);
 

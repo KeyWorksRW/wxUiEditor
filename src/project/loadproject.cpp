@@ -143,7 +143,7 @@ bool ProjectHandler::LoadProject(const tt_string& file, bool allow_ui)
 
     // Calling this will also initialize the ImageHandler class
     Project.Initialize(project);
-    Project.SetProjectFile(file);
+    Project.setProjectFile(file);
     ProjectImages.CollectBundles();
 
     // Imported projects start with an older version so that they pass through the old project fixups.
@@ -158,11 +158,11 @@ bool ProjectHandler::LoadProject(const tt_string& file, bool allow_ui)
 
     if (allow_ui)
     {
-        wxGetFrame().SetImportedFlag(false);
+        wxGetFrame().setImportedFlag(false);
         wxGetFrame().FireProjectLoadedEvent();
 
         if (m_isProject_updated || m_ProjectVersion < minRequiredVer)
-            wxGetFrame().SetModified();
+            wxGetFrame().setModified();
     }
     return true;
 }
@@ -288,10 +288,10 @@ NodeSharedPtr NodeCreator::createNode(pugi::xml_node& xml_obj, Node* parent, boo
                     prop->set_value(value);
                     // Conversion from quoted items to semicolon separated items was introduced
                     // in 1.1.1 (project version 18)
-                    if (Project.GetProjectVersion() < 18)
+                    if (Project.getProjectVersion() < 18)
                     {
                         Project.ForceProjectVersion(18);
-                        Project.SetProjectUpdated();
+                        Project.setProjectUpdated();
                     }
                 };
 
@@ -299,7 +299,7 @@ NodeSharedPtr NodeCreator::createNode(pugi::xml_node& xml_obj, Node* parent, boo
                 {
                     prop->set_value(iter.as_bool());
                 }
-                else if (prop->get_name() == prop_contents && Project.GetOriginalProjectVersion() < 18)
+                else if (prop->get_name() == prop_contents && Project.getOriginalProjectVersion() < 18)
                 {
                     if (new_node->isGen(gen_wxCheckListBox) && iter.as_sview().size() && iter.as_sview()[0] == '"')
                     {
@@ -310,7 +310,7 @@ NodeSharedPtr NodeCreator::createNode(pugi::xml_node& xml_obj, Node* parent, boo
                         prop->set_value(iter.as_sview());
                     }
                 }
-                else if (prop->type() == type_stringlist_semi && Project.GetOriginalProjectVersion() < 18)
+                else if (prop->type() == type_stringlist_semi && Project.getOriginalProjectVersion() < 18)
                 {
                     if (iter.as_sview().size() && iter.as_sview()[0] == '"')
                     {
@@ -324,7 +324,7 @@ NodeSharedPtr NodeCreator::createNode(pugi::xml_node& xml_obj, Node* parent, boo
                 // Imported projects will be set as version ImportProjectVersion to get the fixups of constant to
                 // friendly name, and bit flag conflict resolution.
 
-                else if (Project.GetProjectVersion() <= ImportProjectVersion)
+                else if (Project.getProjectVersion() <= ImportProjectVersion)
                 {
                     switch (prop->type())
                     {
@@ -422,13 +422,13 @@ NodeSharedPtr NodeCreator::createNode(pugi::xml_node& xml_obj, Node* parent, boo
                 if (find_prop->second == prop_base_hdr_includes)
                 {
                     new_node->set_value(prop_header_preamble, iter.value());
-                    Project.SetProjectUpdated();
+                    Project.setProjectUpdated();
                     Project.ForceProjectVersion(curSupportedVer);
                 }
                 if (find_prop->second == prop_base_src_includes)
                 {
                     new_node->set_value(prop_source_preamble, iter.value());
-                    Project.SetProjectUpdated();
+                    Project.setProjectUpdated();
                     Project.ForceProjectVersion(curSupportedVer);
                 }
             }
@@ -510,7 +510,7 @@ NodeSharedPtr NodeCreator::createNode(pugi::xml_node& xml_obj, Node* parent, boo
     {
         // Order is important -- don't call GetProject() if check_for_duplicates is false
         // because there may not be a project yet.
-        if (check_for_duplicates && parent == Project.ProjectNode())
+        if (check_for_duplicates && parent == Project.getProjectNode())
             Project.FixupDuplicatedNode(new_node.get());
         parent->adoptChild(new_node);
     }
@@ -584,7 +584,7 @@ NodeSharedPtr NodeCreator::createProjectNode(pugi::xml_node* xml_obj, bool allow
                 {
                     prop->set_value(iter.as_bool());
                 }
-                else if (prop->type() == type_stringlist_semi && Project.GetOriginalProjectVersion() < 18)
+                else if (prop->type() == type_stringlist_semi && Project.getOriginalProjectVersion() < 18)
                 {
                     auto view = iter.as_sview();
                     if (view.size() > 0 && view[0] == '"')
@@ -652,7 +652,7 @@ bool ProjectHandler::ImportProject(tt_string& file,
         result = Import(crafter, file);
 #if defined(INTERNAL_TESTING)
         if (result && allow_ui)
-            wxGetFrame().GetImportPanel()->SetImportFile(import_file, wxSTC_LEX_JSON);
+            wxGetFrame().getImportPanel()->SetImportFile(import_file, wxSTC_LEX_JSON);
 #endif
     }
     else if (file.has_extension(".fbp"))
@@ -661,7 +661,7 @@ bool ProjectHandler::ImportProject(tt_string& file,
         result = Import(fb, file);
 #if defined(INTERNAL_TESTING)
         if (result && allow_ui)
-            wxGetFrame().GetImportPanel()->SetImportFile(import_file, wxSTC_LEX_XML);
+            wxGetFrame().getImportPanel()->SetImportFile(import_file, wxSTC_LEX_XML);
 #endif
     }
     else if (file.has_extension(".rc") || file.has_extension(".dlg"))
@@ -670,7 +670,7 @@ bool ProjectHandler::ImportProject(tt_string& file,
         result = Import(winres, file);
 #if defined(INTERNAL_TESTING)
         if (result && allow_ui)
-            wxGetFrame().GetImportPanel()->SetImportFile(import_file, wxSTC_LEX_CPP);
+            wxGetFrame().getImportPanel()->SetImportFile(import_file, wxSTC_LEX_CPP);
 #endif
     }
     else if (file.has_extension(".wxs") || file.has_extension(".xrc"))
@@ -679,7 +679,7 @@ bool ProjectHandler::ImportProject(tt_string& file,
         result = Import(smith, file);
 #if defined(INTERNAL_TESTING)
         if (result && allow_ui)
-            wxGetFrame().GetImportPanel()->SetImportFile(import_file, wxSTC_LEX_XML);
+            wxGetFrame().getImportPanel()->SetImportFile(import_file, wxSTC_LEX_XML);
 #endif
     }
     else if (file.has_extension(".wxg"))
@@ -688,7 +688,7 @@ bool ProjectHandler::ImportProject(tt_string& file,
         result = Import(glade, file);
 #if defined(INTERNAL_TESTING)
         if (result && allow_ui)
-            wxGetFrame().GetImportPanel()->SetImportFile(import_file, wxSTC_LEX_XML);
+            wxGetFrame().getImportPanel()->SetImportFile(import_file, wxSTC_LEX_XML);
 #endif
     }
     else if (file.has_extension(".pjd"))
@@ -797,7 +797,7 @@ bool ProjectHandler::Import(ImportXML& import, tt_string& file, bool append, boo
 
         if (allow_ui && import.GetLanguage() == GEN_LANG_NONE)
         {
-            CodePreferenceDlg dlg(GetMainFrame());
+            CodePreferenceDlg dlg(wxGetMainFrame());
             if (dlg.ShowModal() == wxID_OK)
             {
                 if (dlg.is_gen_python())
@@ -822,7 +822,7 @@ bool ProjectHandler::Import(ImportXML& import, tt_string& file, bool append, boo
 
         // Calling this will also initialize the ProjectImage class
         Project.Initialize(project_node, allow_ui);
-        Project.SetProjectFile(file);
+        Project.setProjectFile(file);
         ProjectImages.CollectBundles();
 
 #if defined(_DEBUG)
@@ -856,9 +856,9 @@ bool ProjectHandler::Import(ImportXML& import, tt_string& file, bool append, boo
 #endif  // _DEBUG
         if (allow_ui)
         {
-            wxGetFrame().SetImportedFlag(true);
+            wxGetFrame().setImportedFlag(true);
             wxGetFrame().FireProjectLoadedEvent();
-            wxGetFrame().SetModified();
+            wxGetFrame().setModified();
         }
 
         return true;
@@ -869,7 +869,7 @@ bool ProjectHandler::Import(ImportXML& import, tt_string& file, bool append, boo
 
 bool ProjectHandler::NewProject(bool create_empty, bool allow_ui)
 {
-    if (allow_ui && wxGetFrame().IsModified() && GetMainFrame() && !wxGetFrame().SaveWarning())
+    if (allow_ui && wxGetFrame().isModified() && wxGetMainFrame() && !wxGetFrame().SaveWarning())
         return false;
 
     if (create_empty)
@@ -882,7 +882,7 @@ bool ProjectHandler::NewProject(bool create_empty, bool allow_ui)
 
         if (allow_ui)
         {
-            CodePreferenceDlg dlg(GetMainFrame());
+            CodePreferenceDlg dlg(wxGetMainFrame());
             if (dlg.ShowModal() == wxID_OK)
             {
                 if (dlg.is_gen_python())
@@ -906,7 +906,7 @@ bool ProjectHandler::NewProject(bool create_empty, bool allow_ui)
 
         // Calling this will also initialize the ProjectImage class
         Project.Initialize(project);
-        Project.SetProjectFile(file);
+        Project.setProjectFile(file);
 
         if (allow_ui)
         {
@@ -918,7 +918,7 @@ bool ProjectHandler::NewProject(bool create_empty, bool allow_ui)
     if (!allow_ui)
         return false;
 
-    ImportDlg dlg(GetMainFrame());
+    ImportDlg dlg(wxGetMainFrame());
     if (dlg.ShowModal() != wxID_OK)
         return false;
 
@@ -931,7 +931,7 @@ bool ProjectHandler::NewProject(bool create_empty, bool allow_ui)
 
     // Calling this will also initialize the ProjectImage class
     Project.Initialize(project);
-    Project.SetProjectFile(file);
+    Project.setProjectFile(file);
 
     tt_string imported_from;
 
@@ -952,7 +952,7 @@ bool ProjectHandler::NewProject(bool create_empty, bool allow_ui)
                     WxCrafter crafter;
                     Import(crafter, iter, true);
 #if defined(INTERNAL_TESTING)
-                    wxGetFrame().GetImportPanel()->SetImportFile(import_file, wxSTC_LEX_JSON);
+                    wxGetFrame().getImportPanel()->SetImportFile(import_file, wxSTC_LEX_JSON);
 #endif
                 }
                 else if (iter.has_extension(".fbp"))
@@ -960,7 +960,7 @@ bool ProjectHandler::NewProject(bool create_empty, bool allow_ui)
                     FormBuilder fb;
                     Import(fb, iter, true);
 #if defined(INTERNAL_TESTING)
-                    wxGetFrame().GetImportPanel()->SetImportFile(import_file, wxSTC_LEX_XML);
+                    wxGetFrame().getImportPanel()->SetImportFile(import_file, wxSTC_LEX_XML);
 #endif
                 }
                 else if (iter.has_extension(".wxs") || iter.has_extension(".xrc"))
@@ -968,7 +968,7 @@ bool ProjectHandler::NewProject(bool create_empty, bool allow_ui)
                     WxSmith smith;
                     Import(smith, iter, true);
 #if defined(INTERNAL_TESTING)
-                    wxGetFrame().GetImportPanel()->SetImportFile(import_file, wxSTC_LEX_XML);
+                    wxGetFrame().getImportPanel()->SetImportFile(import_file, wxSTC_LEX_XML);
 #endif
                 }
                 else if (iter.has_extension(".wxg"))
@@ -976,7 +976,7 @@ bool ProjectHandler::NewProject(bool create_empty, bool allow_ui)
                     WxGlade glade;
                     Import(glade, iter, true);
 #if defined(INTERNAL_TESTING)
-                    wxGetFrame().GetImportPanel()->SetImportFile(import_file, wxSTC_LEX_XML);
+                    wxGetFrame().getImportPanel()->SetImportFile(import_file, wxSTC_LEX_XML);
 #endif
                 }
                 else if (iter.has_extension(".rc") || iter.has_extension(".dlg"))
@@ -984,7 +984,7 @@ bool ProjectHandler::NewProject(bool create_empty, bool allow_ui)
                     WinResource winres;
                     Import(winres, iter, true);
 #if defined(INTERNAL_TESTING)
-                    wxGetFrame().GetImportPanel()->SetImportFile(import_file, wxSTC_LEX_CPP);
+                    wxGetFrame().getImportPanel()->SetImportFile(import_file, wxSTC_LEX_CPP);
 #endif
                 }
                 else if (iter.has_extension(".pjd"))
@@ -1024,17 +1024,17 @@ bool ProjectHandler::NewProject(bool create_empty, bool allow_ui)
             m_projectPath.make_absolute();
             m_projectPath.remove_filename();
         }
-        wxGetFrame().SetImportedFlag();
+        wxGetFrame().setImportedFlag();
     }
     ProjectImages.CollectBundles();
 
     wxGetFrame().FireProjectLoadedEvent();
     if (m_project_node->getChildCount())
-        wxGetFrame().SetModified();
+        wxGetFrame().setModified();
     return true;
 }
 
-void ProjectHandler::AppendWinRes(const tt_string& rc_file, std::vector<tt_string>& dialogs)
+void ProjectHandler::appendWinRes(const tt_string& rc_file, std::vector<tt_string>& dialogs)
 {
     WinResource winres;
     if (winres.ImportRc(rc_file, dialogs))
@@ -1049,12 +1049,12 @@ void ProjectHandler::AppendWinRes(const tt_string& rc_file, std::vector<tt_strin
         if (m_allow_ui)
         {
             wxGetFrame().FireProjectUpdatedEvent();
-            wxGetFrame().SetModified();
+            wxGetFrame().setModified();
         }
     }
 }
 
-void ProjectHandler::AppendCrafter(wxArrayString& files)
+void ProjectHandler::appendCrafter(wxArrayString& files)
 {
     for (const auto& file: files)
     {
@@ -1086,11 +1086,11 @@ void ProjectHandler::AppendCrafter(wxArrayString& files)
     if (m_allow_ui)
     {
         wxGetFrame().FireProjectUpdatedEvent();
-        wxGetFrame().SetModified();
+        wxGetFrame().setModified();
     }
 }
 
-void ProjectHandler::AppendFormBuilder(wxArrayString& files)
+void ProjectHandler::appendFormBuilder(wxArrayString& files)
 {
     for (auto& file: files)
     {
@@ -1122,11 +1122,11 @@ void ProjectHandler::AppendFormBuilder(wxArrayString& files)
     if (m_allow_ui)
     {
         wxGetFrame().FireProjectUpdatedEvent();
-        wxGetFrame().SetModified();
+        wxGetFrame().setModified();
     }
 }
 
-void ProjectHandler::AppendDialogBlocks(wxArrayString& files)
+void ProjectHandler::appendDialogBlocks(wxArrayString& files)
 {
     for (auto& file: files)
     {
@@ -1158,11 +1158,11 @@ void ProjectHandler::AppendDialogBlocks(wxArrayString& files)
     if (m_allow_ui)
     {
         wxGetFrame().FireProjectUpdatedEvent();
-        wxGetFrame().SetModified();
+        wxGetFrame().setModified();
     }
 }
 
-void ProjectHandler::AppendGlade(wxArrayString& files)
+void ProjectHandler::appendGlade(wxArrayString& files)
 {
     for (auto& file: files)
     {
@@ -1194,11 +1194,11 @@ void ProjectHandler::AppendGlade(wxArrayString& files)
     if (m_allow_ui)
     {
         wxGetFrame().FireProjectUpdatedEvent();
-        wxGetFrame().SetModified();
+        wxGetFrame().setModified();
     }
 }
 
-void ProjectHandler::AppendSmith(wxArrayString& files)
+void ProjectHandler::appendSmith(wxArrayString& files)
 {
     for (auto& file: files)
     {
@@ -1230,11 +1230,11 @@ void ProjectHandler::AppendSmith(wxArrayString& files)
     if (m_allow_ui)
     {
         wxGetFrame().FireProjectUpdatedEvent();
-        wxGetFrame().SetModified();
+        wxGetFrame().setModified();
     }
 }
 
-void ProjectHandler::AppendXRC(wxArrayString& files)
+void ProjectHandler::appendXRC(wxArrayString& files)
 {
     for (auto& file: files)
     {
@@ -1267,6 +1267,6 @@ void ProjectHandler::AppendXRC(wxArrayString& files)
     if (m_allow_ui)
     {
         wxGetFrame().FireProjectUpdatedEvent();
-        wxGetFrame().SetModified();
+        wxGetFrame().setModified();
     }
 }

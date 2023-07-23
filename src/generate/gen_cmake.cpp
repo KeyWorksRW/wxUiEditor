@@ -44,7 +44,7 @@ int WriteCMakeFile(Node* parent_node, std::vector<tt_string>& updated_files, std
     }
     else
     {
-        Project.ProjectPath().ChangeDir();
+        Project.getProjectPath().ChangeDir();
     }
     if (cmake_file.find('.') == tt::npos)
     {
@@ -81,11 +81,11 @@ int WriteCMakeFile(Node* parent_node, std::vector<tt_string>& updated_files, std
     {
         if (!node_start)
         {
-            node_start = Project.ProjectNode();
+            node_start = Project.getProjectNode();
         }
         for (const auto& child: node_start->getChildNodePtrs())
         {
-            if (node_start == Project.ProjectNode())
+            if (node_start == Project.getProjectNode())
             {
                 if (auto* node_folder = child->getFolder(); node_folder && node_folder->hasValue(prop_folder_cmake_file))
                 {
@@ -131,7 +131,7 @@ int WriteCMakeFile(Node* parent_node, std::vector<tt_string>& updated_files, std
                 continue;
             }
 
-            if (parent_node == Project.ProjectNode())
+            if (parent_node == Project.getProjectNode())
             {
                 if (auto* node_folder = form->getFolder(); node_folder && node_folder->hasValue(prop_folder_cmake_file))
                 {
@@ -143,7 +143,7 @@ int WriteCMakeFile(Node* parent_node, std::vector<tt_string>& updated_files, std
             tt_string path;
             if (auto& base_file = form->as_string(prop_base_file); base_file.size())
             {
-                path = Project.BaseDirectory(form, GEN_LANG_CPLUSPLUS);
+                path = Project.getBaseDirectory(form, GEN_LANG_CPLUSPLUS);
                 if (path.size())
                 {
                     path.append_filename(base_file);

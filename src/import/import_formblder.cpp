@@ -292,7 +292,7 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
         if (!parent)
         {
             // This gets called when pasting a formbuilder node from the clipboard
-            auto owner = wxGetFrame().GetSelectedNode();
+            auto owner = wxGetFrame().getSelectedNode();
             while (owner->getGenType() == type_sizer)
                 owner = owner->getParent();
             if (owner->declName().contains("book"))

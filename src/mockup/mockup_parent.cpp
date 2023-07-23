@@ -137,7 +137,7 @@ void MockupParent::CreateContent()
     if (!IsShown())
         return;
 
-    m_form = wxGetFrame().GetSelectedForm();
+    m_form = wxGetFrame().getSelectedForm();
     if (!m_form)
     {
         m_MockupWindow->Hide();
@@ -234,7 +234,7 @@ void MockupParent::OnNodeSelected(CustomEvent& event)
     if (!IsShown())
         return;
 
-    if (wxGetFrame().GetSelectedForm() != m_form)
+    if (wxGetFrame().getSelectedForm() != m_form)
         m_isIgnoreSelection = false;
 
     if (m_isIgnoreSelection)
@@ -243,7 +243,7 @@ void MockupParent::OnNodeSelected(CustomEvent& event)
         return;
     }
 
-    if (wxGetFrame().GetSelectedForm() != m_form)
+    if (wxGetFrame().getSelectedForm() != m_form)
     {
         CreateContent();
     }
@@ -375,7 +375,7 @@ void MockupParent::OnNodePropModified(CustomEvent& event)
     auto prop = event.GetNodeProperty();
     if (prop->isProp(prop_tooltip))
     {
-        if (auto node = wxGetFrame().GetSelectedNode(); node)
+        if (auto node = wxGetFrame().getSelectedNode(); node)
         {
             if (node->isStaticBoxSizer())
             {
@@ -391,7 +391,7 @@ void MockupParent::OnNodePropModified(CustomEvent& event)
 
     if (prop->isProp(prop_initial) || prop->isProp(prop_min) || prop->isProp(prop_max))
     {
-        if (auto node = wxGetFrame().GetSelectedNode(); node)
+        if (auto node = wxGetFrame().getSelectedNode(); node)
         {
             node->getGenerator()->OnPropertyChange(Get_wxObject(node), node, prop);
         }
@@ -418,7 +418,7 @@ void MockupParent::OnNodePropModified(CustomEvent& event)
 
     bool is_updated = false;
 
-    if (auto node = wxGetFrame().GetSelectedNode(); node)
+    if (auto node = wxGetFrame().getSelectedNode(); node)
     {
         if (prop->isProp(prop_disabled))
         {
@@ -474,7 +474,7 @@ void MockupParent::OnNodePropModified(CustomEvent& event)
         // We set m_isPropertyChanging so that we ignore generators calling our SelectNode() because a page changed
         m_isPropertyChanging = true;
         CreateContent();
-        m_panelContent->OnNodeSelected(wxGetFrame().GetSelectedNode());
+        m_panelContent->OnNodeSelected(wxGetFrame().getSelectedNode());
         m_isPropertyChanging = false;
     }
 }

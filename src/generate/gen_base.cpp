@@ -129,7 +129,7 @@ void BaseCodeGenerator::GenerateCppClass(Node* form_node, PANEL_PAGE panel_type)
     m_ImagesForm = nullptr;
     m_TranslationUnit = (form_node->as_bool(prop_generate_translation_unit) || form_node->isGen(gen_Images));
 
-    for (const auto& form: Project.ChildNodePtrs())
+    for (const auto& form: Project.getChildNodePtrs())
     {
         if (form->isGen(gen_folder))
         {
@@ -189,7 +189,7 @@ void BaseCodeGenerator::GenerateCppClass(Node* form_node, PANEL_PAGE panel_type)
         tt_cwd cwd(true);
         Project.ChangeDir();
         file = base_file;
-        file.make_relative(Project.ProjectPath());
+        file.make_relative(Project.getProjectPath());
         file.backslashestoforward();
         file.remove_extension();
 
@@ -387,7 +387,7 @@ void BaseCodeGenerator::GenerateCppClass(Node* form_node, PANEL_PAGE panel_type)
 
         if (Project.hasValue(prop_src_preamble))
         {
-            WritePropSourceCode(Project.ProjectNode(), prop_src_preamble);
+            WritePropSourceCode(Project.getProjectNode(), prop_src_preamble);
         }
 
         if (form_node->hasValue(prop_source_preamble))
@@ -901,7 +901,7 @@ void BaseCodeGenerator::GatherGeneratorIncludes(Node* node, std::set<std::string
                         {
                             if (form->isGen(gen_Images))
                             {
-                                tt_string image_file = Project.ProjectPath();
+                                tt_string image_file = Project.getProjectPath();
                                 image_file.append_filename(form->as_string(prop_base_file));
                                 image_file.replace_extension(m_header_ext);
                                 image_file.make_relative(m_baseFullPath);
@@ -1764,7 +1764,7 @@ void BaseCodeGenerator::CollectImageHeaders(Node* node, std::set<std::string>& e
                         auto art_dir = Project.ArtDirectory();
                         if (art_dir.size())
                         {
-                            auto output_dir = Project.BaseDirectory(node, m_language);
+                            auto output_dir = Project.getBaseDirectory(node, m_language);
                             output_dir.append_filename(path);
                             if (!output_dir.file_exists())
                             {
@@ -1772,7 +1772,7 @@ void BaseCodeGenerator::CollectImageHeaders(Node* node, std::set<std::string>& e
                                 if (art_dir.file_exists())
                                 {
                                     path = art_dir;
-                                    path.make_relative(Project.BaseDirectory(node, m_language));
+                                    path.make_relative(Project.getBaseDirectory(node, m_language));
                                 }
                             }
                         }
@@ -1834,7 +1834,7 @@ void BaseCodeGenerator::CollectImageHeaders(Node* node, std::set<std::string>& e
                 auto art_dir = Project.ArtDirectory();
                 if (art_dir.size())
                 {
-                    auto output_dir = Project.BaseDirectory(node, m_language);
+                    auto output_dir = Project.getBaseDirectory(node, m_language);
                     output_dir.append_filename(path);
                     if (!output_dir.file_exists())
                     {
@@ -1842,7 +1842,7 @@ void BaseCodeGenerator::CollectImageHeaders(Node* node, std::set<std::string>& e
                         if (art_dir.file_exists())
                         {
                             path = art_dir;
-                            path.make_relative(Project.BaseDirectory(node, m_language));
+                            path.make_relative(Project.getBaseDirectory(node, m_language));
                         }
                     }
                 }

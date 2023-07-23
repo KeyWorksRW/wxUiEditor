@@ -703,7 +703,7 @@ Node* Node::createChildNode(GenName name)
 
     if (new_node)
     {
-        if (Project.get_PreferredLanguage() != GEN_LANG_CPLUSPLUS)
+        if (Project.getPreferredLanguage() != GEN_LANG_CPLUSPLUS)
         {
             tt_string member_name = new_node->as_string(prop_var_name);
             if (member_name.starts_with("m_"))
@@ -731,7 +731,7 @@ Node* Node::createChildNode(GenName name)
 Node* Node::createNode(GenName name)
 {
     auto& frame = wxGetFrame();
-    auto cur_selection = frame.GetSelectedNode();
+    auto cur_selection = frame.getSelectedNode();
     if (!cur_selection)
     {
         wxMessageBox("You need to select something first in order to properly place this widget.");

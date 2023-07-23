@@ -136,7 +136,7 @@ void PropertyGrid_Image::RefreshChildren()
                 else
                 {
                     if (auto img = ProjectImages.GetPropertyImageBundle(m_img_props.CombineValues(),
-                                                                        wxGetFrame().GetSelectedNode());
+                                                                        wxGetFrame().getSelectedNode());
                         img)
                     {
                         if (img->bundle.IsOk())
@@ -270,7 +270,7 @@ wxVariant PropertyGrid_Image::ChildChanged(wxVariant& thisValue, int childIndex,
                             name = Project.ArtDirectory();
                             name.append_filename(childValue.GetString().utf8_string());
                         }
-                        name.make_relative(Project.get_ProjectPath());
+                        name.make_relative(Project.getProjectPath());
                         name.backslashestoforward();
                     }
                     img_props.image = name;

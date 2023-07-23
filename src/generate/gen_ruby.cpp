@@ -27,7 +27,7 @@
 
 bool GenerateRubyFiles(GenResults& results, std::vector<tt_string>* pClassList)
 {
-    if (Project.ChildCount() == 0)
+    if (Project.getChildCount() == 0)
     {
         wxMessageBox("You cannot generate any code until you have added a top level form.", "Code Generation");
         return false;
@@ -48,7 +48,7 @@ bool GenerateRubyFiles(GenResults& results, std::vector<tt_string>* pClassList)
     {
         if (auto& base_file = form->as_string(prop_ruby_file); base_file.size())
         {
-            path = Project.BaseDirectory(form, GEN_LANG_RUBY);
+            path = Project.getBaseDirectory(form, GEN_LANG_RUBY);
             if (path.size())
             {
                 path.append_filename(base_file);
@@ -159,7 +159,7 @@ void BaseCodeGenerator::GenerateRubyClass(Node* form_node, PANEL_PAGE panel_type
     m_form_node = form_node;
     m_ImagesForm = nullptr;
 
-    for (const auto& form: Project.ChildNodePtrs())
+    for (const auto& form: Project.getChildNodePtrs())
     {
         if (form->isGen(gen_folder))
         {
@@ -440,7 +440,7 @@ tt_string MakeRubyPath(Node* node)
 
     if (auto& base_file = form->as_string(prop_ruby_file); base_file.size())
     {
-        path = Project.BaseDirectory(form, GEN_LANG_RUBY);
+        path = Project.getBaseDirectory(form, GEN_LANG_RUBY);
         if (path.size())
         {
             path.append_filename(base_file);

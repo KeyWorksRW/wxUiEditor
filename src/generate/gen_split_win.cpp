@@ -80,10 +80,10 @@ void SplitterWindowGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxpa
     {
         case 1:
             {
-                // BUGBUG: [Randalphwa - 06-12-2022] Don't use GetMockup() if is_preview is true!
+                // BUGBUG: [Randalphwa - 06-12-2022] Don't use getMockup() if is_preview is true!
                 wxWindow* subwindow;
                 if (!is_preview)
-                    subwindow = wxDynamicCast(GetMockup()->getChild(wxobject, 0), wxWindow);
+                    subwindow = wxDynamicCast(getMockup()->getChild(wxobject, 0), wxWindow);
                 else
                     subwindow = wxDynamicCast(node->getChild(0)->getMockupObject(), wxWindow);
                 if (!subwindow)
@@ -110,8 +110,8 @@ void SplitterWindowGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxpa
 
                 if (!is_preview)
                 {
-                    subwindow0 = wxDynamicCast(GetMockup()->getChild(wxobject, 0), wxWindow);
-                    subwindow1 = wxDynamicCast(GetMockup()->getChild(wxobject, 1), wxWindow);
+                    subwindow0 = wxDynamicCast(getMockup()->getChild(wxobject, 0), wxWindow);
+                    subwindow1 = wxDynamicCast(getMockup()->getChild(wxobject, 1), wxWindow);
                 }
                 else
                 {
@@ -126,7 +126,7 @@ void SplitterWindowGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxpa
                 }
 
                 // Get the split mode and sash position
-                node = GetMockup()->getNode(wxobject);
+                node = getMockup()->getNode(wxobject);
                 if (!node)
                 {
                     // REVIEW: [KeyWorks - 12-06-2020] If this is actually possible, we should let the user know

@@ -44,8 +44,8 @@ void RibbonBarFormGenerator::OnPageChanged(wxRibbonBarEvent& event)
 {
     auto bar = wxDynamicCast(event.GetEventObject(), wxRibbonBar);
     if (bar)
-        // BUGBUG: [Randalphwa - 06-12-2022] Don't use GetMockup() if is_preview is true!
-        GetMockup()->SelectNode(event.GetPage());
+        // BUGBUG: [Randalphwa - 06-12-2022] Don't use getMockup() if is_preview is true!
+        getMockup()->SelectNode(event.GetPage());
     event.Skip();
 }
 
@@ -228,8 +228,8 @@ void RibbonBarGenerator::OnPageChanged(wxRibbonBarEvent& event)
 {
     auto bar = wxDynamicCast(event.GetEventObject(), wxRibbonBar);
     if (bar)
-        // BUGBUG: [Randalphwa - 06-12-2022] Don't use GetMockup() if is_preview is true!
-        GetMockup()->SelectNode(event.GetPage());
+        // BUGBUG: [Randalphwa - 06-12-2022] Don't use getMockup() if is_preview is true!
+        getMockup()->SelectNode(event.GetPage());
     event.Skip();
 }
 

@@ -291,7 +291,7 @@ void MsgFrame::UpdateNodeInfo()
     tt_string label;
     NodeMemory node_memory;
 
-    auto cur_sel = wxGetFrame().GetSelectedNode();
+    auto cur_sel = wxGetFrame().getSelectedNode();
     if (cur_sel)
     {
         if (m_isXrcPage)
@@ -337,12 +337,12 @@ void MsgFrame::UpdateNodeInfo()
             m_hyperlink->SetURL(url);
         }
 
-        CalcNodeMemory(Project.ProjectNode(), node_memory);
+        CalcNodeMemory(Project.getProjectNode(), node_memory);
 
         label.Format("Project: %kzu (%kzu nodes)", node_memory.size, node_memory.children);
         m_txt_project->SetLabel(label);
 
-        auto clipboard = wxGetFrame().GetClipboard();
+        auto clipboard = wxGetFrame().getClipboard();
         if (clipboard)
         {
             node_memory.size = 0;
@@ -357,7 +357,7 @@ void MsgFrame::UpdateNodeInfo()
 
 void MsgFrame::OnParent(wxCommandEvent& WXUNUSED(event))
 {
-    auto cur_sel = wxGetFrame().GetSelectedNode();
+    auto cur_sel = wxGetFrame().getSelectedNode();
     if (cur_sel)
     {
         auto parent = cur_sel->getParent();

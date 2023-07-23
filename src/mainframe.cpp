@@ -400,34 +400,34 @@ MainFrame::~MainFrame()
 
 void MainFrame::OnSaveProject(wxCommandEvent& event)
 {
-    if (m_isImported || Project.ProjectFile().empty() || Project.ProjectFile().filename().is_sameas(txtEmptyProject))
+    if (m_isImported || Project.getProjectFile().empty() || Project.getProjectFile().filename().is_sameas(txtEmptyProject))
         OnSaveAsProject(event);
     else
     {
         pugi::xml_document doc;
-        Project.ProjectNode()->createDoc(doc);
-        if (doc.save_file(Project.ProjectFile().c_str(), "  ", pugi::format_indent_attributes))
+        Project.getProjectNode()->createDoc(doc);
+        if (doc.save_file(Project.getProjectFile().c_str(), "  ", pugi::format_indent_attributes))
         {
             m_isProject_modified = false;
             ProjectSaved();
         }
         else
         {
-            wxMessageBox(wxString("Unable to save the project: ") << Project.ProjectFile(), "Save Project");
+            wxMessageBox(wxString("Unable to save the project: ") << Project.getProjectFile(), "Save Project");
         }
     }
 }
 
 void MainFrame::OnSaveAsProject(wxCommandEvent&)
 {
-    tt_string filename = Project.ProjectFile().filename();
+    tt_string filename = Project.getProjectFile().filename();
     if (filename.is_sameas(txtEmptyProject))
     {
         filename = "MyProject";
     }
 
     // The ".wxue" extension is only used for testing -- all normal projects should have a .wxui extension
-    wxFileDialog dialog(this, "Save Project As", Project.ProjectPath(), filename.make_wxString(),
+    wxFileDialog dialog(this, "Save Project As", Project.getProjectPath(), filename.make_wxString(),
                         "wxUiEditor Project File (*.wxui)|*.wxui;*.wxue", wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
 
     if (dialog.ShowModal() == wxID_OK)
@@ -474,13 +474,13 @@ void MainFrame::OnSaveAsProject(wxCommandEvent&)
         }
 
         pugi::xml_document doc;
-        Project.ProjectNode()->createDoc(doc);
+        Project.getProjectNode()->createDoc(doc);
         if (doc.save_file(filename.c_str(), "  ", pugi::format_indent_attributes))
         {
             m_isProject_modified = false;
             m_isImported = false;
             m_FileHistory.AddFileToHistory(filename);
-            Project.SetProjectFile(filename);
+            Project.setProjectFile(filename);
             ProjectSaved();
             FireProjectLoadedEvent();
         }
@@ -533,7 +533,7 @@ void MainFrame::OnAppendCrafter(wxCommandEvent&)
     {
         wxArrayString files;
         dlg.GetPaths(files);
-        Project.AppendCrafter(files);
+        Project.appendCrafter(files);
     }
 }
 
@@ -547,7 +547,7 @@ void MainFrame::OnAppendDialogBlocks(wxCommandEvent&)
     {
         wxArrayString files;
         dlg.GetPaths(files);
-        Project.AppendDialogBlocks(files);
+        Project.appendDialogBlocks(files);
     }
 }
 #endif
@@ -561,7 +561,7 @@ void MainFrame::OnAppendFormBuilder(wxCommandEvent&)
     {
         wxArrayString files;
         dlg.GetPaths(files);
-        Project.AppendFormBuilder(files);
+        Project.appendFormBuilder(files);
     }
 }
 
@@ -574,7 +574,7 @@ void MainFrame::OnAppendGlade(wxCommandEvent&)
     {
         wxArrayString files;
         dlg.GetPaths(files);
-        Project.AppendGlade(files);
+        Project.appendGlade(files);
     }
 }
 
@@ -587,7 +587,7 @@ void MainFrame::OnAppendSmith(wxCommandEvent&)
     {
         wxArrayString files;
         dlg.GetPaths(files);
-        Project.AppendSmith(files);
+        Project.appendSmith(files);
     }
 }
 
@@ -600,7 +600,7 @@ void MainFrame::OnAppendXRC(wxCommandEvent&)
     {
         wxArrayString files;
         dlg.GetPaths(files);
-        Project.AppendXRC(files);
+        Project.appendXRC(files);
     }
 }
 
@@ -633,17 +633,17 @@ void MainFrame::OnImportRecent(wxCommandEvent& event)
     files.Add(file.make_wxString());
     auto extension = file.extension();
     if (extension == ".wxcp")
-        Project.AppendCrafter(files);
+        Project.appendCrafter(files);
     else if (extension == ".fbp")
-        Project.AppendFormBuilder(files);
+        Project.appendFormBuilder(files);
     else if (extension == ".wxg")
-        Project.AppendGlade(files);
+        Project.appendGlade(files);
     else if (extension == ".wxs")
-        Project.AppendSmith(files);
+        Project.appendSmith(files);
     else if (extension == ".xrc")
-        Project.AppendXRC(files);
+        Project.appendXRC(files);
     else if (extension == ".fjd")
-        Project.AppendDialogBlocks(files);
+        Project.appendDialogBlocks(files);
 }
 #endif  // defined(_DEBUG) || defined(INTERNAL_TESTING)
 
@@ -682,8 +682,8 @@ void MainFrame::OnAbout(wxCommandEvent&)
 
     if (wxGetApp().isTestingMenuEnabled())
     {
-        description << "\n" << Project.ProjectFile() << "  \n";
-        description << "Original Project version: " << Project.GetOriginalProjectVersion() << "\n";
+        description << "\n" << Project.getProjectFile() << "  \n";
+        description << "Original Project version: " << Project.getOriginalProjectVersion() << "\n";
         description << "wxUE Project version: " << curSupportedVer << "\n";
     }
 
@@ -703,7 +703,7 @@ void MainFrame::OnClose(wxCloseEvent& event)
     if (!SaveWarning())
         return;
 
-    wxGetApp().SetMainFrameClosing();
+    wxGetApp().setMainFrameClosing();
 
     auto config = wxConfig::Get();
 #if defined(_DEBUG)
@@ -753,9 +753,9 @@ void MainFrame::ProjectLoaded()
     setStatusText("Project loaded");
     if (!m_isImported)
     {
-        if (!Project.ProjectFile().filename().is_sameas(txtEmptyProject))
+        if (!Project.getProjectFile().filename().is_sameas(txtEmptyProject))
         {
-            m_FileHistory.AddFileToHistory(Project.ProjectFile());
+            m_FileHistory.AddFileToHistory(Project.getProjectFile());
         }
         m_isProject_modified = false;
     }
@@ -774,12 +774,12 @@ void MainFrame::ProjectLoaded()
              });
     }
 
-    m_selected_node = Project.ProjectNode()->getSharedPtr();
+    m_selected_node = Project.getProjectNode()->getSharedPtr();
 }
 
 void MainFrame::ProjectSaved()
 {
-    setStatusText(tt_string(Project.ProjectFile().filename()) << " saved");
+    setStatusText(tt_string(Project.getProjectFile().filename()) << " saved");
     UpdateFrame();
 }
 
@@ -885,7 +885,7 @@ void MainFrame::UpdateLayoutTools()
 
 void MainFrame::UpdateFrame()
 {
-    tt_string filename = Project.ProjectFile().filename();
+    tt_string filename = Project.getProjectFile().filename();
 
     if (filename.empty())
     {
@@ -1337,7 +1337,7 @@ void MainFrame::CreateSplitters()
     // SetMinSize(wxSize(700, 380));
 }
 
-void MainFrame::SetStatusField(const tt_string text, int position)
+void MainFrame::setStatusField(const tt_string text, int position)
 {
     if (position == -1)
         position = m_posPropGridStatusField;
@@ -1380,7 +1380,7 @@ void MainFrame::UpdateMoveMenu()
     m_menuEdit->Enable(id_MoveRight, MoveNode(node, MoveDirection::Right, true));
 }
 
-Node* MainFrame::GetSelectedForm()
+Node* MainFrame::getSelectedForm()
 {
     if (!m_selected_node || m_selected_node->isGen(gen_Project))
         return nullptr;
@@ -1649,7 +1649,7 @@ void MainFrame::Redo()
     if (!m_undo_stack.wasRedoEventGenerated())
         FireProjectUpdatedEvent();
     if (!m_undo_stack.wasRedoSelectEventGenerated())
-        FireSelectedEvent(GetSelectedNode());
+        FireSelectedEvent(getSelectedNode());
 }
 
 void MainFrame::OnToggleExpandLayout(wxCommandEvent&)

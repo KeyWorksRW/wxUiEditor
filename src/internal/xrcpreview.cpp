@@ -152,7 +152,7 @@ void XrcPreview::OnCreate(wxCommandEvent& WXUNUSED(event))
 
 void XrcPreview::OnXrcCopy(wxCommandEvent& WXUNUSED(event))
 {
-    auto evt_flags = wxGetFrame().GetSelectedNode();
+    auto evt_flags = wxGetFrame().getSelectedNode();
 
     if (!evt_flags)
     {
@@ -175,7 +175,7 @@ void XrcPreview::OnXrcCopy(wxCommandEvent& WXUNUSED(event))
     m_view.ReadString(doc_str);
 
     tt_string search("name=\"");
-    evt_flags = wxGetFrame().GetSelectedNode();
+    evt_flags = wxGetFrame().getSelectedNode();
 
     if (evt_flags->hasProp(prop_id) && evt_flags->as_string(prop_id) != "wxID_ANY")
     {
@@ -280,8 +280,8 @@ void XrcPreview::OnInit(wxInitDialogEvent& event)
 
 void XrcPreview::OnExport(wxCommandEvent& WXUNUSED(event))
 {
-    wxFileDialog dialog(this, "Export Project As XRC", Project.ProjectPath(), "preview_test.xrc", "XRC File (*.xrc)|*.xrc",
-                        wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
+    wxFileDialog dialog(this, "Export Project As XRC", Project.getProjectPath(), "preview_test.xrc",
+                        "XRC File (*.xrc)|*.xrc", wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
 
     if (dialog.ShowModal() == wxID_OK)
     {

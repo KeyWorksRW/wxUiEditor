@@ -165,10 +165,10 @@ void NewWizard::createNode()
         UpdateFormClass(new_node.get());
     }
 
-    auto parent_node = wxGetFrame().GetSelectedNode();
+    auto parent_node = wxGetFrame().getSelectedNode();
     if (!parent_node)
     {
-        parent_node = Project.ProjectNode();
+        parent_node = Project.getProjectNode();
     }
     else
     {
@@ -181,7 +181,7 @@ void NewWizard::createNode()
     wxGetFrame().PushUndoAction(std::make_shared<InsertNodeAction>(new_node.get(), parent_node, undo_str, -1));
     wxGetFrame().FireCreatedEvent(new_node);
     wxGetFrame().SelectNode(new_node, evt_flags::fire_event | evt_flags::force_selection);
-    wxGetFrame().GetNavigationPanel()->ChangeExpansion(new_node.get(), true, true);
+    wxGetFrame().getNavigationPanel()->ChangeExpansion(new_node.get(), true, true);
 }
 
 // Called whenever m_classname changes

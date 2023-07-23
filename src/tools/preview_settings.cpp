@@ -72,7 +72,7 @@ bool PreviewSettings::Create(wxWindow* parent, wxWindowID id, const wxString& ti
 
 void PreviewSettings::OnInit(wxInitDialogEvent& event)
 {
-    auto* form_node = GetMainFrame()->GetSelectedNode();
+    auto* form_node = wxGetMainFrame()->getSelectedNode();
     if (!form_node->isForm())
     {
         if (form_node->isGen(gen_Project) && form_node->getChildCount())

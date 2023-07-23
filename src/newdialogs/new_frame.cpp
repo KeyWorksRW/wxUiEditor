@@ -170,10 +170,10 @@ void NewFrame::createNode()
         UpdateFormClass(form_node.get());
     }
 
-    auto parent_node = wxGetFrame().GetSelectedNode();
+    auto parent_node = wxGetFrame().getSelectedNode();
     if (!parent_node)
     {
-        parent_node = Project.ProjectNode();
+        parent_node = Project.getProjectNode();
     }
     else
     {
@@ -186,12 +186,12 @@ void NewFrame::createNode()
     wxGetFrame().PushUndoAction(std::make_shared<InsertNodeAction>(form_node.get(), parent_node, undo_str, -1));
     wxGetFrame().FireCreatedEvent(form_node);
     wxGetFrame().SelectNode(form_node, evt_flags::fire_event | evt_flags::force_selection);
-    wxGetFrame().GetNavigationPanel()->ChangeExpansion(form_node.get(), true, true);
+    wxGetFrame().getNavigationPanel()->ChangeExpansion(form_node.get(), true, true);
 
     // If it's a mainframe then bars were probably added, so it makes sense to switch to the Bars ribbon bar page since
     // that's likely what the user will be doing next (adding tools or menus).
     if (m_has_mainframe)
-        wxGetFrame().GetRibbonPanel()->ActivateBarPage();
+        wxGetFrame().getRibbonPanel()->ActivateBarPage();
 }
 
 // Called whenever m_classname changes

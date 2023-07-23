@@ -407,7 +407,7 @@ void BaseCodeGenerator::GenPythonEventHandlers(EventVector& events)
         // Set path to the output file
         if (auto& base_file = m_form_node->as_string(prop_python_file); base_file.size())
         {
-            path = Project.BaseDirectory(m_form_node, GEN_LANG_PYTHON);
+            path = Project.getBaseDirectory(m_form_node, GEN_LANG_PYTHON);
             if (path.size())
             {
                 path.append_filename(base_file);

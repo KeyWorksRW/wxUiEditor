@@ -512,7 +512,7 @@ GenEnum::GenName ImportXML::ConvertToGenName(const tt_string& object_name, Node*
     {
         if (!parent)
         {
-            auto owner = wxGetFrame().GetSelectedNode();
+            auto owner = wxGetFrame().getSelectedNode();
             while (owner->getGenType() == type_sizer)
                 owner = owner->getParent();
             if (owner->declName().contains("book"))

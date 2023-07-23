@@ -122,7 +122,7 @@ void MainFrame::OnPreviewWinActivate(wxActivateEvent& event)
 
 void Preview(Node* form_node)
 {
-    PreviewSettings dlg_preview_settings(GetMainFrame());
+    PreviewSettings dlg_preview_settings(wxGetMainFrame());
     auto& prefs = Preferences();
     if (prefs.GetPreviewType() == PREFS::PREVIEW_TYPE_XRC)
         dlg_preview_settings.set_type_xrc(true);
@@ -150,7 +150,7 @@ void Preview(Node* form_node)
         }
 
         XrcCompare dlg_compare;
-        if (!dlg_compare.DoCreate(wxGetApp().GetMainFrame(), form_node))
+        if (!dlg_compare.DoCreate(wxGetMainFrame(), form_node))
         {
             wxMessageBox("Unable to create the XrcCompare dialog box!", "Compare");
             return;
@@ -161,7 +161,7 @@ void Preview(Node* form_node)
     }
     else if (prefs.GetPreviewType() == PREFS::PREVIEW_TYPE_CPP)
     {
-        GetMainFrame()->PreviewCpp(form_node);
+        wxGetMainFrame()->PreviewCpp(form_node);
         return;
     }
     else if (prefs.GetPreviewType() == PREFS::PREVIEW_TYPE_XRC)
@@ -234,14 +234,14 @@ void PreviewXrc(Node* form_node)
                 {
                     wxString dlg_name =
                         form_node->isGen(gen_wxDialog) ? form_node->as_wxString(prop_class_name) : wxString(txt_dlg_name);
-                    if (auto* dlg = xrc_resource->LoadDialog(GetMainFrame()->GetWindow(), dlg_name); dlg)
+                    if (auto* dlg = xrc_resource->LoadDialog(wxGetMainFrame(), dlg_name); dlg)
                     {
-                        GetMainFrame()->SetPreviewDlgPtr(dlg);  // so event handlers can access it
-                        dlg->Bind(wxEVT_KEY_UP, &MainFrame::OnXrcKeyUp, GetMainFrame());
+                        wxGetMainFrame()->setPreviewDlgPtr(dlg);  // so event handlers can access it
+                        dlg->Bind(wxEVT_KEY_UP, &MainFrame::OnXrcKeyUp, wxGetMainFrame());
                         dlg->Centre(wxBOTH);
                         dlg->ShowModal();
                         delete dlg;
-                        GetMainFrame()->SetPreviewDlgPtr(nullptr);
+                        wxGetMainFrame()->setPreviewDlgPtr(nullptr);
                     }
                     else
                     {
@@ -252,13 +252,11 @@ void PreviewXrc(Node* form_node)
                 break;
 
             case gen_wxFrame:
-                if (auto* frame =
-                        xrc_resource->LoadFrame(GetMainFrame()->GetWindow(), form_node->as_wxString(prop_class_name));
-                    frame)
+                if (auto* frame = xrc_resource->LoadFrame(wxGetMainFrame(), form_node->as_wxString(prop_class_name)); frame)
                 {
-                    GetMainFrame()->SetPreviewWinPtr(frame);
-                    frame->Bind(wxEVT_CLOSE_WINDOW, &MainFrame::OnPreviewWinClose, GetMainFrame());
-                    frame->Bind(wxEVT_ACTIVATE, &MainFrame::OnPreviewWinActivate, GetMainFrame());
+                    wxGetMainFrame()->setPreviewWinPtr(frame);
+                    frame->Bind(wxEVT_CLOSE_WINDOW, &MainFrame::OnPreviewWinClose, wxGetMainFrame());
+                    frame->Bind(wxEVT_ACTIVATE, &MainFrame::OnPreviewWinActivate, wxGetMainFrame());
                     frame->Centre(wxBOTH);
                     frame->Show();
                     // The wxFrame will be deleted when the window is deactivated or closed
@@ -340,7 +338,7 @@ void MainFrame::PreviewCpp(Node* form_node)
             case gen_PanelForm:
                 {
                     wxDialog dlg;
-                    if (!dlg.Create(GetWindow(), wxID_ANY, "C++ Preview", wxDefaultPosition, wxDefaultSize,
+                    if (!dlg.Create(wxGetMainFrame(), wxID_ANY, "C++ Preview", wxDefaultPosition, wxDefaultSize,
                                     wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER))
                     {
                         wxMessageBox("Unable to create preview dialog", "C++ Preview");
@@ -363,7 +361,7 @@ void MainFrame::PreviewCpp(Node* form_node)
             case gen_wxDialog:
                 {
                     wxDialog dlg;
-                    if (!dlg.Create(GetWindow(), wxID_ANY, form_node->as_string(prop_title),
+                    if (!dlg.Create(wxGetMainFrame(), wxID_ANY, form_node->as_string(prop_title),
                                     DlgPoint(this, form_node, prop_pos), DlgSize(this, form_node, prop_size),
                                     GetStyleInt(form_node)))
                     {
@@ -423,9 +421,9 @@ void MainFrame::PreviewCpp(Node* form_node)
                     }
                     // CreateMockupChildren(form_node->getChild(0), frame, frame, nullptr, frame);
 
-                    GetMainFrame()->SetPreviewWinPtr(frame);
-                    frame->Bind(wxEVT_CLOSE_WINDOW, &MainFrame::OnPreviewWinClose, GetMainFrame());
-                    frame->Bind(wxEVT_ACTIVATE, &MainFrame::OnPreviewWinActivate, GetMainFrame());
+                    wxGetMainFrame()->setPreviewWinPtr(frame);
+                    frame->Bind(wxEVT_CLOSE_WINDOW, &MainFrame::OnPreviewWinClose, wxGetMainFrame());
+                    frame->Bind(wxEVT_ACTIVATE, &MainFrame::OnPreviewWinActivate, wxGetMainFrame());
                     frame->Centre(wxBOTH);
                     frame->Show();
                     // The wxFrame will be deleted when the window is deactivated or closed
@@ -438,14 +436,14 @@ void MainFrame::PreviewCpp(Node* form_node)
                     if (form_node->hasValue(prop_bitmap))
                     {
                         auto bundle = form_node->as_image_bundle(prop_bitmap);
-                        if (!wizard.Create(GetWindow(), wxID_ANY, form_node->as_string(prop_title), bundle->bundle,
+                        if (!wizard.Create(wxGetMainFrame(), wxID_ANY, form_node->as_string(prop_title), bundle->bundle,
                                            DlgPoint(this, form_node, prop_pos), GetStyleInt(form_node)))
                         {
                             wxMessageBox("Unable to create wizard", "C++ Preview");
                             return;
                         }
                     }
-                    else if (!wizard.Create(GetWindow(), wxID_ANY, form_node->as_string(prop_title), wxNullBitmap,
+                    else if (!wizard.Create(wxGetMainFrame(), wxID_ANY, form_node->as_string(prop_title), wxNullBitmap,
                                             DlgPoint(this, form_node, prop_pos), GetStyleInt(form_node)))
                     {
                         wxMessageBox("Unable to create wizard", "C++ Preview");

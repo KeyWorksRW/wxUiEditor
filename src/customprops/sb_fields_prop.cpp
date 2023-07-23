@@ -164,7 +164,7 @@ void SBarFieldsDialog::OnUndoDelete(wxCommandEvent& WXUNUSED(event))
 
 bool SBarFieldsDialogAdapter::DoShowDialog(wxPropertyGrid* WXUNUSED(propGrid), wxPGProperty* WXUNUSED(property))
 {
-    SBarFieldsDialog dlg(wxGetFrame().GetWindow(), m_prop);
+    SBarFieldsDialog dlg(wxGetFrame().getWindow(), m_prop);
     if (dlg.ShowModal() == wxID_OK)
     {
         SetValue(dlg.GetResults());

@@ -34,7 +34,7 @@ bool DirectoryDialogAdapter::DoShowDialog(wxPropertyGrid* propGrid, wxPGProperty
         dlg_pos = propGrid->GetGoodEditorDialogPosition(property, dlg_sz);
     }
 
-    tt_string path = Project.get_ProjectPath();
+    tt_string path = Project.getProjectPath();
     path.append_filename(m_prop->as_string());
     path.make_absolute();
 
@@ -43,7 +43,7 @@ bool DirectoryDialogAdapter::DoShowDialog(wxPropertyGrid* propGrid, wxPGProperty
     // file is.
     if (!path.dir_exists())
     {
-        path = Project.get_ProjectPath();
+        path = Project.getProjectPath();
     }
 
     wxDirDialog dlg(propGrid, "Choose a directory:", path.make_wxString(),

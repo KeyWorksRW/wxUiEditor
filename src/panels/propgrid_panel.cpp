@@ -153,7 +153,7 @@ void PropGridPanel::Create()
     if (m_locked)
         return;
 
-    if (auto node = wxGetFrame().GetSelectedNode(); node)
+    if (auto node = wxGetFrame().getSelectedNode(); node)
     {
         wxWindowUpdateLocker freeze(this);
 
@@ -164,7 +164,7 @@ void PropGridPanel::Create()
         }
 #endif  // _DEBUG
 
-        wxGetApp().GetMainFrame()->SetStatusText(wxEmptyString, 2);
+        wxGetMainFrame()->SetStatusText(wxEmptyString, 2);
 
         m_currentSel = node;
 
@@ -453,40 +453,41 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
         if (prop->isProp(prop_base_file))
         {
             new_pg_property->SetAttribute(wxPG_DIALOG_TITLE, "Base class filename");
-            new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH, Project.BaseDirectory(prop->getNode()));
-            new_pg_property->SetAttribute(wxPG_FILE_SHOW_RELATIVE_PATH, Project.ProjectPath());
+            new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH, Project.getBaseDirectory(prop->getNode()));
+            new_pg_property->SetAttribute(wxPG_FILE_SHOW_RELATIVE_PATH, Project.getProjectPath());
             new_pg_property->SetAttribute(wxPG_FILE_DIALOG_STYLE, wxFD_SAVE);
             new_pg_property->SetAttribute(wxPG_FILE_WILDCARD, "C++ Files|*.cpp;*.cc;*.cxx");
         }
         else if (prop->isProp(prop_derived_file))
         {
             new_pg_property->SetAttribute(wxPG_DIALOG_TITLE, "Derived class filename");
-            new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH, Project.DerivedDirectory(prop->getNode()));
-            new_pg_property->SetAttribute(wxPG_FILE_SHOW_RELATIVE_PATH, Project.ProjectPath());
+            new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH, Project.getDerivedDirectory(prop->getNode()));
+            new_pg_property->SetAttribute(wxPG_FILE_SHOW_RELATIVE_PATH, Project.getProjectPath());
             new_pg_property->SetAttribute(wxPG_FILE_DIALOG_STYLE, wxFD_SAVE);
             new_pg_property->SetAttribute(wxPG_FILE_WILDCARD, "C++ Files|*.cpp;*.cc;*.cxx");
         }
         else if (prop->isProp(prop_xrc_file) || prop->isProp(prop_combined_xrc_file))
         {
             new_pg_property->SetAttribute(wxPG_DIALOG_TITLE, "XRC filename");
-            new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH, Project.BaseDirectory(prop->getNode(), GEN_LANG_XRC));
-            new_pg_property->SetAttribute(wxPG_FILE_SHOW_RELATIVE_PATH, Project.ProjectPath());
+            new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH, Project.getBaseDirectory(prop->getNode(), GEN_LANG_XRC));
+            new_pg_property->SetAttribute(wxPG_FILE_SHOW_RELATIVE_PATH, Project.getProjectPath());
             new_pg_property->SetAttribute(wxPG_FILE_DIALOG_STYLE, wxFD_SAVE);
             new_pg_property->SetAttribute(wxPG_FILE_WILDCARD, "XRC Files|*.xrc");
         }
         else if (prop->isProp(prop_python_file) || prop->isProp(prop_python_combined_file))
         {
             new_pg_property->SetAttribute(wxPG_DIALOG_TITLE, "Python filename");
-            new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH, Project.BaseDirectory(prop->getNode(), GEN_LANG_PYTHON));
-            new_pg_property->SetAttribute(wxPG_FILE_SHOW_RELATIVE_PATH, Project.ProjectPath());
+            new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH,
+                                          Project.getBaseDirectory(prop->getNode(), GEN_LANG_PYTHON));
+            new_pg_property->SetAttribute(wxPG_FILE_SHOW_RELATIVE_PATH, Project.getProjectPath());
             new_pg_property->SetAttribute(wxPG_FILE_DIALOG_STYLE, wxFD_SAVE);
             new_pg_property->SetAttribute(wxPG_FILE_WILDCARD, "Python Files|*.py");
         }
         else if (prop->isProp(prop_ruby_file) || prop->isProp(prop_ruby_combined_file))
         {
             new_pg_property->SetAttribute(wxPG_DIALOG_TITLE, "Ruby filename");
-            new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH, Project.BaseDirectory(prop->getNode(), GEN_LANG_RUBY));
-            new_pg_property->SetAttribute(wxPG_FILE_SHOW_RELATIVE_PATH, Project.ProjectPath());
+            new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH, Project.getBaseDirectory(prop->getNode(), GEN_LANG_RUBY));
+            new_pg_property->SetAttribute(wxPG_FILE_SHOW_RELATIVE_PATH, Project.getProjectPath());
             new_pg_property->SetAttribute(wxPG_FILE_DIALOG_STYLE, wxFD_SAVE);
             new_pg_property->SetAttribute(wxPG_FILE_WILDCARD, "Ruby Files|*.rb;*.rbw");
         }
@@ -494,8 +495,8 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
         {
             new_pg_property->SetAttribute(wxPG_DIALOG_TITLE, "CMake filename");
             new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH,
-                                          Project.BaseDirectory(prop->getNode(), GEN_LANG_CPLUSPLUS));
-            new_pg_property->SetAttribute(wxPG_FILE_SHOW_RELATIVE_PATH, Project.ProjectPath());
+                                          Project.getBaseDirectory(prop->getNode(), GEN_LANG_CPLUSPLUS));
+            new_pg_property->SetAttribute(wxPG_FILE_SHOW_RELATIVE_PATH, Project.getProjectPath());
             new_pg_property->SetAttribute(wxPG_FILE_DIALOG_STYLE, wxFD_SAVE);
             new_pg_property->SetAttribute(wxPG_FILE_WILDCARD, "CMake Files|*.cmake");
         }
@@ -503,15 +504,15 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
         {
             new_pg_property->SetAttribute(wxPG_DIALOG_TITLE, "Custom Control Header");
             new_pg_property->SetAttribute(wxPG_FILE_WILDCARD, "Header Files|*.h;*.hh;*.hpp;*.hxx");
-            new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH, Project.ProjectPath());
-            new_pg_property->SetAttribute(wxPG_FILE_SHOW_RELATIVE_PATH, Project.ProjectPath());
+            new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH, Project.getProjectPath());
+            new_pg_property->SetAttribute(wxPG_FILE_SHOW_RELATIVE_PATH, Project.getProjectPath());
         }
         else if (prop->isProp(prop_derived_header))
         {
             new_pg_property->SetAttribute(wxPG_DIALOG_TITLE, "Derived Header");
             new_pg_property->SetAttribute(wxPG_FILE_WILDCARD, "Header Files|*.h;*.hh;*.hpp;*.hxx");
-            new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH, Project.ProjectPath());
-            new_pg_property->SetAttribute(wxPG_FILE_SHOW_RELATIVE_PATH, Project.ProjectPath());
+            new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH, Project.getProjectPath());
+            new_pg_property->SetAttribute(wxPG_FILE_SHOW_RELATIVE_PATH, Project.getProjectPath());
         }
         else if (prop->isProp(prop_local_pch_file))
         {
@@ -522,7 +523,7 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
             // directory. If we can find a standard precompiled header filename in the parent directory, then use that
             // as the starting directory.
 
-            tt_string pch(Project.ProjectPath());
+            tt_string pch(Project.getProjectPath());
             pch.append_filename("../");
             pch.append_filename("pch.h");
             if (pch.file_exists())
@@ -551,7 +552,7 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
                 return new_pg_property;
             }
 
-            new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH, Project.get_ProjectPath().make_wxString());
+            new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH, Project.getProjectPath().make_wxString());
         }
     }
     else if (type == type_stringlist)
@@ -1169,7 +1170,7 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
 
                 if (prop->isProp(prop_class_name))
                 {
-                    auto selected_node = wxGetFrame().GetSelectedNode();
+                    auto selected_node = wxGetFrame().getSelectedNode();
                     if (!selected_node)
                         return;
 
@@ -1474,7 +1475,7 @@ void PropGridPanel::ModifyFileProperty(NodeProperty* node_prop, wxPGProperty* gr
         if (newValue.size())
         {
             newValue.make_absolute();
-            newValue.make_relative(Project.get_ProjectPath());
+            newValue.make_relative(Project.getProjectPath());
             newValue.backslashestoforward();
             grid_prop->SetValueFromString(newValue, 0);
         }
@@ -1571,7 +1572,7 @@ void PropGridPanel::ModifyEmbeddedProperty(NodeProperty* node_prop, wxPGProperty
     else
     {
         Node* image_node = nullptr;
-        for (const auto& iter: Project.ChildNodePtrs())
+        for (const auto& iter: Project.getChildNodePtrs())
         {
             if (iter->isGen(gen_Images))
             {
@@ -1647,7 +1648,7 @@ void PropGridPanel::ModifyOptionsProperty(NodeProperty* node_prop, wxPGProperty*
     m_prop_grid->SetPropertyHelpString(grid_prop, description);
     m_prop_grid->SetDescription(grid_prop->GetLabel(), description);
 
-    if (auto selected_node = wxGetFrame().GetSelectedNode(); selected_node)
+    if (auto selected_node = wxGetFrame().getSelectedNode(); selected_node)
     {
         if (node_prop->isProp(prop_validator_data_type) && selected_node->isGen(gen_wxTextCtrl))
         {
@@ -1677,10 +1678,10 @@ void PropGridPanel::ModifyOptionsProperty(NodeProperty* node_prop, wxPGProperty*
                 }
             }
         }
-        else if (node_prop->isProp(prop_class_access) && wxGetApp().IsPjtMemberPrefix())
+        else if (node_prop->isProp(prop_class_access) && wxGetApp().isPjtMemberPrefix())
         {
             tt_string name = node->as_string(prop_var_name);
-            if (Project.get_PreferredLanguage() == GEN_LANG_PYTHON)
+            if (Project.getPreferredLanguage() == GEN_LANG_PYTHON)
             {
                 // The convention in python is to use a leading underscore for
                 // local members.
@@ -1732,7 +1733,7 @@ void PropGridPanel::ModifyOptionsProperty(NodeProperty* node_prop, wxPGProperty*
                 grid_property->SetValueFromString(name, 0);
                 modifyProperty(propChange, name);
             }
-            else if (value != "none" && !name.starts_with("m_") && Project.get_PreferredLanguage() == GEN_LANG_CPLUSPLUS)
+            else if (value != "none" && !name.starts_with("m_") && Project.getPreferredLanguage() == GEN_LANG_CPLUSPLUS)
             {
                 name.insert(0, "m_");
                 auto final_name = node->getUniqueName(name);
@@ -2096,9 +2097,9 @@ bool PropGridPanel::IsEventPageShowing()
 
 void PropGridPanel::OnAuiNotebookPageChanged(wxAuiNotebookEvent& /* event */)
 {
-    CustomEvent custom_event(EVT_NodeSelected, wxGetFrame().GetSelectedNode());
+    CustomEvent custom_event(EVT_NodeSelected, wxGetFrame().getSelectedNode());
 
-    wxGetFrame().GetGeneratedPanel()->OnNodeSelected(custom_event);
+    wxGetFrame().getGeneratedPanel()->OnNodeSelected(custom_event);
 }
 
 tt_string PropGridPanel::GetPropHelp(NodeProperty* prop) const

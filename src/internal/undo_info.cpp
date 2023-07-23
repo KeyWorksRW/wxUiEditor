@@ -178,7 +178,7 @@ void UndoInfo::OnInit(wxInitDialogEvent& event)
         }
     };
 
-    const auto& undo_stack = wxGetApp().GetMainFrame()->GetUndoStack();
+    const auto& undo_stack = wxGetMainFrame()->getUndoStack();
     const auto& undo_vector = undo_stack.GetUndoVector();
     const auto& redo_vector = undo_stack.GetRedoVector();
 

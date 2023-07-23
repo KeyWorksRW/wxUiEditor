@@ -32,7 +32,7 @@ wxObject* BookPageGenerator::CreateMockup(Node* node, wxObject* parent)
         ASSERT(grandparent);
         ASSERT(grandparent && grandparent->isGen(gen_wxTreebook));
 
-        auto grand_window = GetMockup()->GetMockupContent()->Get_wxObject(grandparent);
+        auto grand_window = getMockup()->GetMockupContent()->Get_wxObject(grandparent);
         widget = new wxPanel(wxStaticCast(grand_window, wxWindow), wxID_ANY, DlgPoint(parent, node, prop_pos),
                              DlgSize(parent, node, prop_size), GetStyleInt(node));
     }
@@ -48,7 +48,7 @@ wxObject* BookPageGenerator::CreateMockup(Node* node, wxObject* parent)
         ASSERT(grandparent);
         ASSERT(grandparent->isGen(gen_wxTreebook));
 
-        parent = GetMockup()->GetMockupContent()->Get_wxObject(grandparent);
+        parent = getMockup()->GetMockupContent()->Get_wxObject(grandparent);
         ASSERT(parent);
         auto tree = wxDynamicCast(parent, wxTreebook);
         ASSERT(tree);

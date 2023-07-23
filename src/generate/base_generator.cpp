@@ -23,19 +23,19 @@
 
 #include "../mockup/mockup_parent.h"  // Top-level MockUp Parent window
 
-MockupParent* BaseGenerator::GetMockup()
+MockupParent* BaseGenerator::getMockup()
 {
-    return wxGetFrame().GetMockup();
+    return wxGetFrame().getMockup();
 }
 
 void BaseGenerator::OnLeftClick(wxMouseEvent& event)
 {
     auto wxobject = event.GetEventObject();
-    auto node = wxGetFrame().GetMockup()->getNode(wxobject);
+    auto node = wxGetFrame().getMockup()->getNode(wxobject);
 
-    if (wxGetFrame().GetSelectedNode() != node)
+    if (wxGetFrame().getSelectedNode() != node)
     {
-        wxGetFrame().GetMockup()->SelectNode(wxobject);
+        wxGetFrame().getMockup()->SelectNode(wxobject);
     }
     event.Skip();
 }
@@ -188,7 +188,7 @@ bool BaseGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty
         {
             event->SetValidationFailureMessage("The name you have chosen is already in use by another variable.");
             event->Veto();
-            wxGetFrame().SetStatusField("Either change the name, or press ESC to restore the original value.");
+            wxGetFrame().setStatusField("Either change the name, or press ESC to restore the original value.");
             return false;
         }
 
@@ -218,7 +218,7 @@ bool BaseGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty
             {
                 event->SetValidationFailureMessage("The name you have chosen is already in use by another class.");
                 event->Veto();
-                wxGetFrame().SetStatusField("Either change the name, or press ESC to restore the original value.");
+                wxGetFrame().setStatusField("Either change the name, or press ESC to restore the original value.");
                 return false;
             }
         }
@@ -235,7 +235,7 @@ bool BaseGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty
         {
             event->SetValidationFailureMessage("This label is already in use by another PropertyGrid item.");
             event->Veto();
-            wxGetFrame().SetStatusField("Either change the name, or press ESC to restore the original value.");
+            wxGetFrame().setStatusField("Either change the name, or press ESC to restore the original value.");
             return false;
         }
     }

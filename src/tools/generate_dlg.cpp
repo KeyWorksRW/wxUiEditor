@@ -92,7 +92,7 @@ void MainFrame::OnGenerateCode(wxCommandEvent&)
     ProjectImages.UpdateEmbedNodes();
     bool code_generated = false;
     GenResults results;
-    auto output_type = Project.GetOutputType();
+    auto output_type = Project.getOutputType();
 
     // First check to see if there is only one code output type. If so, then we can skip the
     // dialog.
@@ -164,7 +164,7 @@ void MainFrame::OnGenerateCode(wxCommandEvent&)
             results_dlg.Create(this);
             for (auto& iter: results.updated_files)
             {
-                iter.make_relative(Project.ProjectPath());
+                iter.make_relative(Project.getProjectPath());
                 results_dlg.m_lb_files->Append(iter);
             }
 
@@ -193,7 +193,7 @@ void MainFrame::OnGenerateCode(wxCommandEvent&)
 
 void GenerateDlg::OnInit(wxInitDialogEvent& event)
 {
-    auto output_type = Project.GetOutputType();
+    auto output_type = Project.getOutputType();
 
     if (Project.as_string(prop_code_preference) == "C++")
     {

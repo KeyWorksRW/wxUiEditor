@@ -196,8 +196,8 @@ void IDEditorDlg::OnInit(wxInitDialogEvent& event)
 
     ASSERT_MSG(m_node, "You must call SetNode() before calling OnInit()")
 
-    auto prefixes = Project.ProjectNode()->as_ArrayString(prop_id_prefixes);
-    auto suffixes = Project.ProjectNode()->as_ArrayString(prop_id_suffixes);
+    auto prefixes = Project.getProjectNode()->as_ArrayString(prop_id_prefixes);
+    auto suffixes = Project.getProjectNode()->as_ArrayString(prop_id_suffixes);
 
     if (prefixes.size())
     {
@@ -389,7 +389,7 @@ bool IDEditorDlg::SelectPrefixSuffix(Node* node)
             if (!m_prefix_selected)
             {
                 tt_string_vector prefixes;
-                prefixes.SetString(Project.ProjectNode()->as_string(prop_id_prefixes), '"', tt::TRIM::both);
+                prefixes.SetString(Project.getProjectNode()->as_string(prop_id_prefixes), '"', tt::TRIM::both);
                 for (auto& iter: prefixes)
                 {
                     if (id.starts_with(iter))
@@ -403,7 +403,7 @@ bool IDEditorDlg::SelectPrefixSuffix(Node* node)
             if (!m_suffix_selected)
             {
                 tt_string_vector suffixes;
-                suffixes.SetString(Project.ProjectNode()->as_string(prop_id_prefixes), '"', tt::TRIM::both);
+                suffixes.SetString(Project.getProjectNode()->as_string(prop_id_prefixes), '"', tt::TRIM::both);
                 for (auto& iter: suffixes)
                 {
                     if (id.ends_with(iter))

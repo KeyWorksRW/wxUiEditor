@@ -244,8 +244,8 @@ void CodeDisplay::OnNodeSelected(Node* node)
         return;  // probably a form, spacer, or image
     }
 
-    auto is_event = wxGetFrame().GetPropPanel()->IsEventPageShowing();
-    PANEL_PAGE page = wxGetFrame().GetGeneratedPanel()->GetPanelPage();
+    auto is_event = wxGetFrame().getPropPanel()->IsEventPageShowing();
+    PANEL_PAGE page = wxGetFrame().getGeneratedPanel()->GetPanelPage();
 
     if (m_panel_type != GEN_LANG_CPLUSPLUS && page != CPP_PANEL)
         return;  // Nothing to search for in secondary pages of non-C++ languages

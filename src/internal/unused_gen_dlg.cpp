@@ -143,7 +143,7 @@ void UnusedGenerators::OnInit(wxInitDialogEvent& event)
 {
     std::unordered_set<std::string, str_view_hash, std::equal_to<>> used;
 
-    for (const auto& child: Project.ProjectNode()->getChildNodePtrs())
+    for (const auto& child: Project.getProjectNode()->getChildNodePtrs())
     {
         FindGenerators(child.get(), used);
     }

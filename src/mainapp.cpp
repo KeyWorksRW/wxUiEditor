@@ -520,7 +520,7 @@ bool App::isFireCreationMsgs() const
     return (Preferences().GetDebugFlags() & PREFS::PREFS_CREATION_MSG);
 }
 
-bool App::IsPjtMemberPrefix() const
+bool App::isPjtMemberPrefix() const
 {
     return (Preferences().GetProjectFlags() & PREFS::PREFS_PJT_MEMBER_PREFIX);
 }

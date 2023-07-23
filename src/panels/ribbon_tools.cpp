@@ -45,7 +45,7 @@ void RibbonPanel::OnToolClick(wxRibbonToolBarEvent& event)
 {
     size_t id = event.GetId();
 
-    if (id == CreateNewRibbon && (!wxGetFrame().GetSelectedNode() || wxGetFrame().GetSelectedNode()->isGen(gen_Project)))
+    if (id == CreateNewRibbon && (!wxGetFrame().getSelectedNode() || wxGetFrame().getSelectedNode()->isGen(gen_Project)))
     {
         id = CreateNewFormRibbon;
     }
@@ -60,7 +60,7 @@ void RibbonPanel::OnToolClick(wxRibbonToolBarEvent& event)
         {
             case CreateNewDialog:
                 {
-                    NewDialog dlg(wxGetFrame().GetWindow());
+                    NewDialog dlg(wxGetFrame().getWindow());
                     if (dlg.ShowModal() == wxID_OK)
                     {
                         dlg.createNode();
@@ -71,7 +71,7 @@ void RibbonPanel::OnToolClick(wxRibbonToolBarEvent& event)
 
             case CreateNewFrame:
                 {
-                    NewFrame dlg(wxGetFrame().GetWindow());
+                    NewFrame dlg(wxGetFrame().getWindow());
                     if (dlg.ShowModal() == wxID_OK)
                     {
                         dlg.createNode();
@@ -82,7 +82,7 @@ void RibbonPanel::OnToolClick(wxRibbonToolBarEvent& event)
 
             case CreateMdiFrame:
                 {
-                    NewMdiForm dlg(wxGetFrame().GetWindow());
+                    NewMdiForm dlg(wxGetFrame().getWindow());
                     if (dlg.ShowModal() == wxID_OK)
                     {
                         dlg.createNode();
@@ -93,7 +93,7 @@ void RibbonPanel::OnToolClick(wxRibbonToolBarEvent& event)
 
             case CreateNewPanel:
                 {
-                    NewPanel dlg(wxGetFrame().GetWindow());
+                    NewPanel dlg(wxGetFrame().getWindow());
                     dlg.WantFormVersion();
                     if (dlg.ShowModal() == wxID_OK)
                     {
@@ -105,7 +105,7 @@ void RibbonPanel::OnToolClick(wxRibbonToolBarEvent& event)
 
             case CreateNewRibbon:
                 {
-                    NewRibbon dlg(wxGetFrame().GetWindow());
+                    NewRibbon dlg(wxGetFrame().getWindow());
                     if (dlg.IsCreatable())
                     {
                         if (dlg.ShowModal() == wxID_OK)
@@ -119,7 +119,7 @@ void RibbonPanel::OnToolClick(wxRibbonToolBarEvent& event)
 
             case CreateNewFormRibbon:
                 {
-                    NewRibbon dlg(wxGetFrame().GetWindow());
+                    NewRibbon dlg(wxGetFrame().getWindow());
                     dlg.WantFormVersion();
                     if (dlg.ShowModal() == wxID_OK)
                     {
@@ -131,7 +131,7 @@ void RibbonPanel::OnToolClick(wxRibbonToolBarEvent& event)
 
             case CreateNewWizard:
                 {
-                    NewWizard dlg(wxGetFrame().GetWindow());
+                    NewWizard dlg(wxGetFrame().getWindow());
                     if (dlg.ShowModal() == wxID_OK)
                     {
                         dlg.createNode();
@@ -166,7 +166,7 @@ void RibbonPanel::OnDropDown(wxRibbonToolBarEvent& event)
 
         case BarTools:
             {
-                const auto* cur_sel = wxGetFrame().GetSelectedNode();
+                const auto* cur_sel = wxGetFrame().getSelectedNode();
                 if (cur_sel && (cur_sel->isGen(gen_wxAuiToolBar) || cur_sel->getParent()->isGen(gen_wxAuiToolBar)))
                 {
                     MenuAuiBar popup_menu;
@@ -184,7 +184,7 @@ void RibbonPanel::OnDropDown(wxRibbonToolBarEvent& event)
 
         case AuiBarTools:
             {
-                const auto* cur_sel = wxGetFrame().GetSelectedNode();
+                const auto* cur_sel = wxGetFrame().getSelectedNode();
                 if (cur_sel && (cur_sel->isGen(gen_wxToolBar) || cur_sel->isGen(gen_ToolBar) ||
                                 cur_sel->getParent()->isGen(gen_wxToolBar) || cur_sel->getParent()->isGen(gen_ToolBar)))
                 {

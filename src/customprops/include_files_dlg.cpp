@@ -147,7 +147,7 @@ void IncludeFilesDialog::OnAdd(wxCommandEvent& WXUNUSED(event))
         auto* form = m_prop->getNode();
         if (auto& base_file = form->as_string(prop_base_file); base_file.size())
         {
-            path = Project.BaseDirectory(form, GEN_LANG_CPLUSPLUS);
+            path = Project.getBaseDirectory(form, GEN_LANG_CPLUSPLUS);
             if (path.size())
             {
                 path.append_filename(base_file);
@@ -163,7 +163,7 @@ void IncludeFilesDialog::OnAdd(wxCommandEvent& WXUNUSED(event))
 
         if (path.empty())
         {
-            path = Project.ProjectPath();
+            path = Project.getProjectPath();
         }
     }
     else  // if (m_prop->get_name() == prop_system_hdr_includes)

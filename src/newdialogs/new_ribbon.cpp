@@ -135,12 +135,12 @@ void NewRibbon::createNode()
     NodeSharedPtr bar_node;
     if (m_is_form)
     {
-        bar_node = NodeCreation.createNode(gen_RibbonBar, Project.ProjectNode());
+        bar_node = NodeCreation.createNode(gen_RibbonBar, Project.getProjectNode());
         ASSERT(bar_node);
     }
     else
     {
-        bar_node = NodeCreation.createNode(gen_wxRibbonBar, wxGetFrame().GetSelectedNode());
+        bar_node = NodeCreation.createNode(gen_wxRibbonBar, wxGetFrame().getSelectedNode());
         if (!bar_node)
         {
             wxMessageBox("You need to have a sizer selected before you can create a wxRibbonBar.", "Create wxRibbonBar");
@@ -186,7 +186,7 @@ void NewRibbon::createNode()
 
     if (!m_is_form)
     {
-        auto parent = wxGetFrame().GetSelectedNode();
+        auto parent = wxGetFrame().getSelectedNode();
         auto pos = parent->findInsertionPos(parent);
         tt_string undo_str("New wxRibbonBar");
         wxGetFrame().PushUndoAction(std::make_shared<InsertNodeAction>(bar_node.get(), parent, undo_str, pos));
@@ -199,10 +199,10 @@ void NewRibbon::createNode()
             UpdateFormClass(bar_node.get());
         }
 
-        auto parent_node = wxGetFrame().GetSelectedNode();
+        auto parent_node = wxGetFrame().getSelectedNode();
         if (!parent_node)
         {
-            parent_node = Project.ProjectNode();
+            parent_node = Project.getProjectNode();
         }
         else
         {
@@ -217,15 +217,15 @@ void NewRibbon::createNode()
 
     wxGetFrame().FireCreatedEvent(bar_node);
     wxGetFrame().SelectNode(bar_node, evt_flags::fire_event | evt_flags::force_selection);
-    wxGetFrame().GetNavigationPanel()->ChangeExpansion(bar_node.get(), true, true);
+    wxGetFrame().getNavigationPanel()->ChangeExpansion(bar_node.get(), true, true);
 
     // This probably already is activated, but let's be sure
-    wxGetFrame().GetRibbonPanel()->ActivateBarPage();
+    wxGetFrame().getRibbonPanel()->ActivateBarPage();
 }
 
 bool NewRibbon::IsCreatable(bool notify_user)
 {
-    auto parent = wxGetFrame().GetSelectedNode();
+    auto parent = wxGetFrame().getSelectedNode();
     if (parent->isSizer())
         return true;
 

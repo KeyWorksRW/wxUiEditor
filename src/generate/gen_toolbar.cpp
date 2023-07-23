@@ -83,7 +83,7 @@ void ToolBarFormGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparen
         {
             const wxObject* child;
             if (!is_preview)
-                child = GetMockup()->getChild(wxobject, i);
+                child = getMockup()->getChild(wxobject, i);
             else
                 child = node->getChild(i)->getMockupObject();
 
@@ -270,7 +270,7 @@ void ToolBarFormGenerator::OnTool(wxCommandEvent& event)
     auto wxobject = toolbar->GetToolClientData(event.GetId());
     if (wxobject)
     {
-        wxGetFrame().GetMockup()->SelectNode(wxobject);
+        wxGetFrame().getMockup()->SelectNode(wxobject);
     }
 }
 
@@ -373,7 +373,7 @@ void ToolBarGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/,
         {
             const wxObject* child;
             if (!is_preview)
-                child = GetMockup()->getChild(wxobject, i);
+                child = getMockup()->getChild(wxobject, i);
             else
                 child = node->getChild(i)->getMockupObject();
 
@@ -464,7 +464,7 @@ void ToolBarGenerator::OnTool(wxCommandEvent& event)
     auto wxobject = toolbar->GetToolClientData(event.GetId());
     if (wxobject)
     {
-        wxGetFrame().GetMockup()->SelectNode(wxobject);
+        wxGetFrame().getMockup()->SelectNode(wxobject);
     }
 }
 

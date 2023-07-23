@@ -164,7 +164,7 @@ void NavPopupMenu::OnMenuEvent(wxCommandEvent& event)
             break;
 
         case MenuEXPAND_ALL:
-            wxGetFrame().GetNavigationPanel()->ExpandCollapse(m_node);
+            wxGetFrame().getNavigationPanel()->ExpandCollapse(m_node);
             wxGetFrame().SelectNode(m_node);
             break;
 
@@ -904,7 +904,7 @@ void NavPopupMenu::MenuAddStandardCommands(Node* node)
         auto clip_node = GetClipboardNode(false);
         if (!clip_node)
         {
-            clip_node = wxGetFrame().GetClipboardPtr();
+            clip_node = wxGetFrame().getClipboardPtr();
         }
 
         if (node->isGen(gen_Project))
@@ -993,7 +993,7 @@ void NavPopupMenu::CreateSizerParent(Node* node, tt_string_view widget)
         // want to fire an event because we don't want the Mockup or Code panels to update until we have changed the parent.
         // However we *do* need to let the navigation panel know that a new node has been added.
 
-        wxGetFrame().GetNavigationPanel()->InsertNode(new_parent.get());
+        wxGetFrame().getNavigationPanel()->InsertNode(new_parent.get());
 
         wxGetFrame().PushUndoAction(std::make_shared<ChangeParentAction>(node, new_parent.get()));
         wxGetFrame().SelectNode(node, evt_flags::fire_event | evt_flags::force_selection);
@@ -1003,13 +1003,13 @@ void NavPopupMenu::CreateSizerParent(Node* node, tt_string_view widget)
 
 void NavPopupMenu::ChangeSizer(GenEnum::GenName new_sizer_gen)
 {
-    wxWindowUpdateLocker freeze(wxGetFrame().GetWindow());
+    wxWindowUpdateLocker freeze(wxGetFrame().getWindow());
     wxGetFrame().PushUndoAction(std::make_shared<ChangeSizerType>(m_node, new_sizer_gen));
 }
 
 void NavPopupMenu::ChangeNode(GenEnum::GenName new_node_gen)
 {
-    wxWindowUpdateLocker freeze(wxGetFrame().GetWindow());
+    wxWindowUpdateLocker freeze(wxGetFrame().getWindow());
     wxGetFrame().PushUndoAction(std::make_shared<ChangeNodeType>(m_node, new_node_gen));
 }
 

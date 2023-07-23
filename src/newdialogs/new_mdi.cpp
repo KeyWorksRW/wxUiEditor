@@ -474,10 +474,10 @@ void NewMdiForm::createNode()
         folder->adoptChild(view);
     }
 
-    auto parent_node = wxGetFrame().GetSelectedNode();
+    auto parent_node = wxGetFrame().getSelectedNode();
     if (!parent_node)
     {
-        parent_node = Project.ProjectNode();
+        parent_node = Project.getProjectNode();
     }
     else
     {
@@ -491,7 +491,7 @@ void NewMdiForm::createNode()
     wxGetFrame().PushUndoAction(std::make_shared<InsertNodeAction>(folder.get(), parent_node, undo_str, -1));
     wxGetFrame().FireCreatedEvent(folder);
     wxGetFrame().SelectNode(folder, evt_flags::fire_event | evt_flags::force_selection);
-    wxGetFrame().GetNavigationPanel()->ChangeExpansion(folder.get(), true, true);
+    wxGetFrame().getNavigationPanel()->ChangeExpansion(folder.get(), true, true);
 }
 
 // Called whenever m_classname changes

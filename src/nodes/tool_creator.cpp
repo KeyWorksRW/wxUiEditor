@@ -98,7 +98,7 @@ bool Node::createToolNode(GenName name)
             // we have changed the parent. However we *do* need to let the navigation panel know that a new node has
             // been added.
 
-            wxGetFrame().GetNavigationPanel()->InsertNode(new_node.get());
+            wxGetFrame().getNavigationPanel()->InsertNode(new_node.get());
 
             if (isForm())
             {
@@ -112,7 +112,7 @@ bool Node::createToolNode(GenName name)
 
     if (name == gen_Images)
     {
-        for (const auto& iter: Project.ChildNodePtrs())
+        for (const auto& iter: Project.getChildNodePtrs())
         {
             if (iter->isGen(gen_Images))
             {
@@ -122,11 +122,11 @@ bool Node::createToolNode(GenName name)
             }
         }
 
-        auto new_node = NodeCreation.createNode(name, Project.ProjectNode());
+        auto new_node = NodeCreation.createNode(name, Project.getProjectNode());
         if (!new_node)
             return false;
         auto insert_node =
-            std::make_shared<InsertNodeAction>(new_node.get(), Project.ProjectNode(), "insert Images list", 0);
+            std::make_shared<InsertNodeAction>(new_node.get(), Project.getProjectNode(), "insert Images list", 0);
         insert_node->SetFireCreatedEvent(true);
         wxGetFrame().PushUndoAction(insert_node);
         wxGetFrame().SelectNode(new_node, evt_flags::fire_event | evt_flags::force_selection);
@@ -188,13 +188,13 @@ bool Node::createToolNode(GenName name)
         }
         if (name == gen_MenuBar)
         {
-            wxGetFrame().GetRibbonPanel()->ActivateBarPage();
+            wxGetFrame().getRibbonPanel()->ActivateBarPage();
         }
     }
     else if (name == gen_PopupMenu)
     {
         new_node->createChildNode(gen_wxMenuItem);
-        wxGetFrame().GetRibbonPanel()->ActivateBarPage();
+        wxGetFrame().getRibbonPanel()->ActivateBarPage();
     }
     else if (name == gen_wxToolBar || name == gen_ToolBar)
     {

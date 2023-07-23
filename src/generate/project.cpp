@@ -35,7 +35,7 @@ bool ProjectGenerator::PopupMenuAddCommands(NavPopupMenu* menu, Node* /* node */
         wxEVT_MENU,
         [](wxCommandEvent&)
         {
-            wxGetFrame().PasteNode(Project.ProjectNode());
+            wxGetFrame().PasteNode(Project.getProjectNode());
         },
         wxID_PASTE);
 
@@ -51,7 +51,7 @@ bool ProjectGenerator::PopupMenuAddCommands(NavPopupMenu* menu, Node* /* node */
         wxEVT_MENU,
         [](wxCommandEvent&)
         {
-            NewDialog dlg(wxGetFrame().GetWindow());
+            NewDialog dlg(wxGetFrame().getWindow());
             if (dlg.ShowModal() == wxID_OK)
             {
                 dlg.createNode();
@@ -71,7 +71,7 @@ bool ProjectGenerator::PopupMenuAddCommands(NavPopupMenu* menu, Node* /* node */
         wxEVT_MENU,
         [](wxCommandEvent&)
         {
-            NewFrame dlg(wxGetFrame().GetWindow());
+            NewFrame dlg(wxGetFrame().getWindow());
             if (dlg.ShowModal() == wxID_OK)
             {
                 dlg.createNode();
@@ -83,7 +83,7 @@ bool ProjectGenerator::PopupMenuAddCommands(NavPopupMenu* menu, Node* /* node */
         wxEVT_MENU,
         [](wxCommandEvent&)
         {
-            NewWizard dlg(wxGetFrame().GetWindow());
+            NewWizard dlg(wxGetFrame().getWindow());
             if (dlg.ShowModal() == wxID_OK)
             {
                 dlg.createNode();
@@ -121,7 +121,7 @@ bool FolderGenerator::PopupMenuAddCommands(NavPopupMenu* menu, Node* /* node */)
         wxEVT_MENU,
         [](wxCommandEvent&)
         {
-            wxGetFrame().PasteNode(Project.ProjectNode());
+            wxGetFrame().PasteNode(Project.getProjectNode());
         },
         wxID_PASTE);
 
@@ -129,7 +129,7 @@ bool FolderGenerator::PopupMenuAddCommands(NavPopupMenu* menu, Node* /* node */)
         wxEVT_MENU,
         [](wxCommandEvent&)
         {
-            NewDialog dlg(wxGetFrame().GetWindow());
+            NewDialog dlg(wxGetFrame().getWindow());
             if (dlg.ShowModal() == wxID_OK)
             {
                 dlg.createNode();
@@ -149,7 +149,7 @@ bool FolderGenerator::PopupMenuAddCommands(NavPopupMenu* menu, Node* /* node */)
         wxEVT_MENU,
         [](wxCommandEvent&)
         {
-            NewFrame dlg(wxGetFrame().GetWindow());
+            NewFrame dlg(wxGetFrame().getWindow());
             if (dlg.ShowModal() == wxID_OK)
             {
                 dlg.createNode();
@@ -161,7 +161,7 @@ bool FolderGenerator::PopupMenuAddCommands(NavPopupMenu* menu, Node* /* node */)
         wxEVT_MENU,
         [](wxCommandEvent&)
         {
-            NewWizard dlg(wxGetFrame().GetWindow());
+            NewWizard dlg(wxGetFrame().getWindow());
             if (dlg.ShowModal() == wxID_OK)
             {
                 dlg.createNode();
@@ -183,7 +183,7 @@ bool SubFolderGenerator::PopupMenuAddCommands(NavPopupMenu* menu, Node* /* node 
         wxEVT_MENU,
         [](wxCommandEvent&)
         {
-            wxGetFrame().PasteNode(Project.ProjectNode());
+            wxGetFrame().PasteNode(Project.getProjectNode());
         },
         wxID_PASTE);
 
@@ -191,7 +191,7 @@ bool SubFolderGenerator::PopupMenuAddCommands(NavPopupMenu* menu, Node* /* node 
         wxEVT_MENU,
         [](wxCommandEvent&)
         {
-            NewDialog dlg(wxGetFrame().GetWindow());
+            NewDialog dlg(wxGetFrame().getWindow());
             if (dlg.ShowModal() == wxID_OK)
             {
                 dlg.createNode();
@@ -211,7 +211,7 @@ bool SubFolderGenerator::PopupMenuAddCommands(NavPopupMenu* menu, Node* /* node 
         wxEVT_MENU,
         [](wxCommandEvent&)
         {
-            NewFrame dlg(wxGetFrame().GetWindow());
+            NewFrame dlg(wxGetFrame().getWindow());
             if (dlg.ShowModal() == wxID_OK)
             {
                 dlg.createNode();
@@ -223,7 +223,7 @@ bool SubFolderGenerator::PopupMenuAddCommands(NavPopupMenu* menu, Node* /* node 
         wxEVT_MENU,
         [](wxCommandEvent&)
         {
-            NewWizard dlg(wxGetFrame().GetWindow());
+            NewWizard dlg(wxGetFrame().getWindow());
             if (dlg.ShowModal() == wxID_OK)
             {
                 dlg.createNode();

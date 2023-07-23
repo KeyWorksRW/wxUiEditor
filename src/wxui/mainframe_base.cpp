@@ -479,7 +479,7 @@ bool MainFrameBase::Create(wxWindow* parent, wxWindowID id, const wxString& titl
     Bind(wxEVT_UPDATE_UI,
         [](wxUpdateUIEvent& event)
         {
-            event.Enable(wxGetFrame().IsModified());
+            event.Enable(wxGetFrame().isModified());
         },
         wxID_SAVE);
     Bind(wxEVT_UPDATE_UI,

@@ -211,17 +211,17 @@ void BasePanel::GenerateBaseClass()
         return;
 
     // If no form is selected, display the first child form of the project
-    m_cur_form = wxGetFrame().GetSelectedForm();
+    m_cur_form = wxGetFrame().getSelectedForm();
     if (!m_cur_form)
     {
-        auto* cur_selection = wxGetFrame().GetSelectedNode();
+        auto* cur_selection = wxGetFrame().getSelectedNode();
         if ((cur_selection->isGen(gen_folder) || cur_selection->isGen(gen_sub_folder)) && cur_selection->getChildCount() > 0)
         {
             m_cur_form = cur_selection->getChild(0);
         }
-        else if (Project.ChildCount() > 0)
+        else if (Project.getChildCount() > 0)
         {
-            m_cur_form = Project.GetFirstFormChild();
+            m_cur_form = Project.getFirstFormChild();
         }
         else
         {
@@ -264,7 +264,7 @@ void BasePanel::GenerateBaseClass()
             m_derived_hdr_panel->Clear();
             codegen.SetHdrWriteCode(m_derived_hdr_panel);
 
-            codegen.GenerateDerivedClass(Project.ProjectNode(), m_cur_form, panel_page);
+            codegen.GenerateDerivedClass(Project.getProjectNode(), m_cur_form, panel_page);
             break;
 
         case GEN_LANG_PYTHON:
@@ -287,11 +287,11 @@ void BasePanel::GenerateBaseClass()
     if (panel_page == CPP_PANEL)
     {
         m_cppPanel->CodeGenerationComplete();
-        m_cppPanel->OnNodeSelected(wxGetFrame().GetSelectedNode());
+        m_cppPanel->OnNodeSelected(wxGetFrame().getSelectedNode());
         if (m_panel_type == GEN_LANG_CPLUSPLUS)
         {
             m_derived_src_panel->CodeGenerationComplete();
-            m_derived_src_panel->OnNodeSelected(wxGetFrame().GetSelectedNode());
+            m_derived_src_panel->OnNodeSelected(wxGetFrame().getSelectedNode());
         }
     }
     else

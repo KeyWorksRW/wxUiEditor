@@ -29,6 +29,7 @@ enum : size_t
     OUTPUT_C_DERIVED = OUTPUT_CPLUS | OUTPUT_DERIVED,
     OUTPUT_PYTHON = 1 << 2,
     OUTPUT_RUBY = 1 << 3,
+    OUTPUT_XRC = 1 << 4,
 };
 
 class ProjectHandler
@@ -68,8 +69,10 @@ public:
     // Returns the full path to the directory the project file is in
     tt_string ProjectFile() const { return m_projectFile; }
 
-    // Get a bit flag indicating which output types are enabled
-    size_t GetOutputType();
+    // Get a bit flag indicating which output types are enabled.
+    //
+    // OUTPUT_DERIVED is only set if the file is specified and does *not* exist.
+    size_t GetOutputType() const;
 
     // Change to the project's directory
     bool ChangeDir() const { return m_projectPath.ChangeDir(); }
@@ -86,7 +89,7 @@ public:
 
     // Returns the full path to the derived filename or an empty string if no derived file
     // was specified.
-    tt_string GetDerivedFilename(Node*);
+    tt_string GetDerivedFilename(Node*) const;
 
     Node* ProjectNode() const { return m_project_node.get(); }
     auto& ChildNodePtrs() { return m_project_node->getChildNodePtrs(); }

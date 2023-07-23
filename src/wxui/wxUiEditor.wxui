@@ -481,7 +481,7 @@
               id="wxID_SAVE"
               label="&amp;Save&#09;Ctrl+S"
               wxEVT_MENU="OnSaveProject"
-              wxEVT_UPDATE_UI="[](wxUpdateUIEvent&amp; event)@@{@@event.Enable(wxGetFrame().IsModified());@@}" />
+              wxEVT_UPDATE_UI="[this](wxUpdateUIEvent&amp; event)@@{@@event.Enable(wxGetFrame().isModified());@@}[python:OnUpdateUI]" />
             <node
               class="wxMenuItem"
               bitmap="Art;wxART_FILE_SAVE_AS|wxART_MENU"

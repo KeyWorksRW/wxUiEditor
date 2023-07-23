@@ -57,7 +57,7 @@ bool RadioBoxGenerator::OnPropertyChange(wxObject* widget, Node* node, NodePrope
 void RadioBoxGenerator::OnRadioBox(wxCommandEvent& event)
 {
     if (auto window = wxStaticCast(event.GetEventObject(), wxRadioBox); window)
-        GetMockup()->SelectNode(window);
+        getMockup()->SelectNode(window);
 }
 
 bool RadioBoxGenerator::ConstructionCode(Code& code)

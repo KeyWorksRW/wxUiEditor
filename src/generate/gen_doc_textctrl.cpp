@@ -45,10 +45,10 @@ bool %class%::DoSaveDocument(const wxString& filename)
     return result;
 }
 
-bool %class%::IsModified() const
+bool %class%::isModified() const
 {
     auto text_ctrl = GetTextCtrl();
-    return wxDocument::IsModified() || (text_ctrl && text_ctrl->IsModified());
+    return wxDocument::isModified() || (text_ctrl && text_ctrl->isModified());
 }
 
 void %class%::Modify(bool modified)

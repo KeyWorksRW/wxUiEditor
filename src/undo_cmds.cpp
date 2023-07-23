@@ -36,7 +36,7 @@ InsertNodeAction::InsertNodeAction(const NodeSharedPtr node, const NodeSharedPtr
 
 void InsertNodeAction::Init(const NodeSharedPtr node, const NodeSharedPtr parent, tt_string_view undo_str, int pos)
 {
-    m_old_selected = wxGetFrame().GetSelectedNodePtr();
+    m_old_selected = wxGetFrame().getSelectedNodePtr();
     m_node = node;
     m_parent = parent;
     SetUndoString(undo_str);
@@ -131,7 +131,7 @@ void RemoveNodeAction::Init(const NodeSharedPtr node, tt_string_view undo_str, b
     m_node = node;
     m_parent = node->getParentPtr();
     m_old_pos = m_parent->getChildPosition(node);
-    m_old_selected = wxGetFrame().GetSelectedNodePtr();
+    m_old_selected = wxGetFrame().getSelectedNodePtr();
     SetUndoString(undo_str);
 
     m_RedoEventGenerated = true;
@@ -382,7 +382,7 @@ void ChangeSizerType::Change()
     wxGetFrame().FireCreatedEvent(m_node);
     if (isAllowedSelectEvent())
         wxGetFrame().SelectNode(m_node.get());
-    wxGetFrame().GetNavigationPanel()->ChangeExpansion(m_node.get(), true, true);
+    wxGetFrame().getNavigationPanel()->ChangeExpansion(m_node.get(), true, true);
 }
 
 void ChangeSizerType::Revert()
@@ -491,7 +491,7 @@ void ChangeNodeType::Change()
     wxGetFrame().FireCreatedEvent(m_node);
     if (isAllowedSelectEvent())
         wxGetFrame().SelectNode(m_node.get());
-    wxGetFrame().GetNavigationPanel()->ChangeExpansion(m_node.get(), true, true);
+    wxGetFrame().getNavigationPanel()->ChangeExpansion(m_node.get(), true, true);
 }
 
 void ChangeNodeType::Revert()
@@ -541,7 +541,7 @@ void ChangeParentAction::Init(const NodeSharedPtr node, const NodeSharedPtr pare
 void ChangeParentAction::Change()
 {
     m_revert_parent->removeChild(m_node);
-    wxGetFrame().GetNavigationPanel()->DeleteNode(m_node.get());
+    wxGetFrame().getNavigationPanel()->DeleteNode(m_node.get());
     if (m_change_parent->isGen(gen_wxGridBagSizer))
     {
         GridBag grid_bag(m_change_parent.get());
@@ -587,7 +587,7 @@ void ChangeParentAction::Revert()
 
 AppendGridBagAction::AppendGridBagAction(Node* node, Node* parent, int pos) : m_pos(pos)
 {
-    m_old_selected = wxGetFrame().GetSelectedNodePtr();
+    m_old_selected = wxGetFrame().getSelectedNodePtr();
     m_node = node->getSharedPtr();
     m_parent = parent->getSharedPtr();
     m_old_pos = m_parent->getChildPosition(node);
@@ -652,7 +652,7 @@ GridBagAction::GridBagAction(Node* cur_gbsizer, const tt_string& undo_str) : Und
     m_cur_gbsizer = cur_gbsizer->getSharedPtr();
     m_old_gbsizer = NodeCreation.makeCopy(cur_gbsizer);
 
-    auto nav_panel = wxGetFrame().GetNavigationPanel();
+    auto nav_panel = wxGetFrame().getNavigationPanel();
 
     // Thaw() is called when GridBagAction::Update() is called
     nav_panel->Freeze();
@@ -667,7 +667,7 @@ void GridBagAction::Change()
 {
     if (m_isReverted)
     {
-        auto nav_panel = wxGetFrame().GetNavigationPanel();
+        auto nav_panel = wxGetFrame().getNavigationPanel();
         wxWindowUpdateLocker freeze(nav_panel);
 
         for (const auto& child: m_cur_gbsizer->getChildNodePtrs())
@@ -696,7 +696,7 @@ void GridBagAction::Change()
 
 void GridBagAction::Revert()
 {
-    auto nav_panel = wxGetFrame().GetNavigationPanel();
+    auto nav_panel = wxGetFrame().getNavigationPanel();
     wxWindowUpdateLocker freeze(nav_panel);
 
     for (const auto& child: m_cur_gbsizer->getChildNodePtrs())
@@ -723,7 +723,7 @@ void GridBagAction::Revert()
 
 void GridBagAction::Update()
 {
-    auto nav_panel = wxGetFrame().GetNavigationPanel();
+    auto nav_panel = wxGetFrame().getNavigationPanel();
 
     for (const auto& child: m_cur_gbsizer->getChildNodePtrs())
     {
@@ -864,7 +864,7 @@ void AutoImagesAction::Change()
 
 void AutoImagesAction::Revert()
 {
-    auto nav_panel = wxGetFrame().GetNavigationPanel();
+    auto nav_panel = wxGetFrame().getNavigationPanel();
     wxWindowUpdateLocker freeze(nav_panel);
 
     for (auto& iter: m_actions)

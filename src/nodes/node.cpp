@@ -731,7 +731,7 @@ Node* Node::createChildNode(GenName name)
 Node* Node::createNode(GenName name)
 {
     auto& frame = wxGetFrame();
-    auto cur_selection = frame.GetSelectedNode();
+    auto cur_selection = frame.getSelectedNode();
     if (!cur_selection)
     {
         wxMessageBox("You need to select something first in order to properly place this widget.");

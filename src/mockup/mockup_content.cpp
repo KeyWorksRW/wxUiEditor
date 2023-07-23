@@ -56,8 +56,8 @@ void MockupContent::CreateAllGenerators()
 
     m_parent_sizer = new wxBoxSizer(wxVERTICAL);
 
-    ASSERT(m_mockupParent->GetSelectedForm());
-    auto form = m_mockupParent->GetSelectedForm();
+    ASSERT(m_mockupParent->getSelectedForm());
+    auto form = m_mockupParent->getSelectedForm();
 
     if (form->isGen(gen_wxWizard))
     {
@@ -389,7 +389,7 @@ void MockupContent::SetWindowProperties(Node* node, wxWindow* window, wxWindow* 
         window->Disable();
     }
 
-    if (node->isPropValue(prop_hidden, true) && !wxGetFrame().GetMockup()->IsShowingHidden())
+    if (node->isPropValue(prop_hidden, true) && !wxGetFrame().getMockup()->IsShowingHidden())
     {
         window->Show(false);
     }

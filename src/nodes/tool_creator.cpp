@@ -98,7 +98,7 @@ bool Node::createToolNode(GenName name)
             // we have changed the parent. However we *do* need to let the navigation panel know that a new node has
             // been added.
 
-            wxGetFrame().GetNavigationPanel()->InsertNode(new_node.get());
+            wxGetFrame().getNavigationPanel()->InsertNode(new_node.get());
 
             if (isForm())
             {
@@ -188,13 +188,13 @@ bool Node::createToolNode(GenName name)
         }
         if (name == gen_MenuBar)
         {
-            wxGetFrame().GetRibbonPanel()->ActivateBarPage();
+            wxGetFrame().getRibbonPanel()->ActivateBarPage();
         }
     }
     else if (name == gen_PopupMenu)
     {
         new_node->createChildNode(gen_wxMenuItem);
-        wxGetFrame().GetRibbonPanel()->ActivateBarPage();
+        wxGetFrame().getRibbonPanel()->ActivateBarPage();
     }
     else if (name == gen_wxToolBar || name == gen_ToolBar)
     {

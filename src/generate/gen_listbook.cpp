@@ -35,7 +35,7 @@ void ListbookGenerator::OnPageChanged(wxListbookEvent& event)
 {
     auto book = wxDynamicCast(event.GetEventObject(), wxListbook);
     if (book && event.GetSelection() != wxNOT_FOUND)
-        GetMockup()->SelectNode(book->GetPage(event.GetSelection()));
+        getMockup()->SelectNode(book->GetPage(event.GetSelection()));
     event.Skip();
 }
 

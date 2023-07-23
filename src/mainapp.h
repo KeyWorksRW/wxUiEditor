@@ -32,11 +32,11 @@ class App : public wxApp
 public:
     App();
 
-    MainFrame* GetMainFrame() { return m_frame; }
+    MainFrame* getMainFrame() { return m_frame; }
 
     bool isFireCreationMsgs() const;
 
-    bool IsPjtMemberPrefix() const;
+    bool isPjtMemberPrefix() const;
 
 #if defined(_DEBUG) || defined(INTERNAL_TESTING)
 
@@ -46,10 +46,8 @@ public:
     void DbgCurrentTest(wxCommandEvent& event);
 #endif
 
-    void SetMainFrameClosing() { m_isMainFrameClosing = true; }
+    void setMainFrameClosing() { m_isMainFrameClosing = true; }
     bool isMainFrameClosing() { return m_isMainFrameClosing; }
-
-    void ShowPreferences(wxWindow* parent);
 
     auto getProjectVersion() { return m_ProjectVersion; }
 

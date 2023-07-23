@@ -40,7 +40,7 @@ wxObject* ImagesGenerator::CreateMockup(Node* /* node */, wxObject* wxobject)
     m_bitmap = new wxStaticBitmap(wxStaticCast(parent, wxWindow), wxID_ANY,
                                   wxBitmap(LoadHeaderImage(empty_png, sizeof(empty_png))));
 
-    auto node = wxGetFrame().GetSelectedNode();
+    auto node = wxGetFrame().getSelectedNode();
     if (node->isGen(gen_embedded_image))
     {
         auto bundle = ProjectImages.GetPropertyImageBundle(node->as_string(prop_bitmap));

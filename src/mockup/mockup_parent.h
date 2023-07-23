@@ -22,7 +22,7 @@ class MockupParent : public wxScrolled<wxPanel>
 public:
     MockupParent(wxWindow* parent, MainFrame* frame);
 
-    Node* GetSelectedForm() { return m_form; }
+    Node* getSelectedForm() { return m_form; }
     bool IsShowingHidden() { return m_ShowHiddenControls; }
     bool IsMagnified() { return m_IsMagnifyWindow; }
     void ShowHiddenControls(bool show);

@@ -97,7 +97,7 @@ void NodeInfo::OnInit(wxInitDialogEvent& /* event */)
     tt_string label;
     NodeMemory node_memory;
 
-    auto* cur_sel = m_node ? m_node : wxGetFrame().GetSelectedNode();
+    auto* cur_sel = m_node ? m_node : wxGetFrame().getSelectedNode();
     if (cur_sel)
     {
         label.clear();
@@ -121,7 +121,7 @@ void NodeInfo::OnInit(wxInitDialogEvent& /* event */)
     label.Format("Project: %kzu (%kzu nodes)", node_memory.size, node_memory.children);
     m_txt_project->SetLabel(label);
 
-    auto clipboard = wxGetFrame().GetClipboard();
+    auto clipboard = wxGetFrame().getClipboard();
     if (clipboard)
     {
         node_memory.size = 0;

@@ -152,7 +152,7 @@ void XrcPreview::OnCreate(wxCommandEvent& WXUNUSED(event))
 
 void XrcPreview::OnXrcCopy(wxCommandEvent& WXUNUSED(event))
 {
-    auto evt_flags = wxGetFrame().GetSelectedNode();
+    auto evt_flags = wxGetFrame().getSelectedNode();
 
     if (!evt_flags)
     {
@@ -175,7 +175,7 @@ void XrcPreview::OnXrcCopy(wxCommandEvent& WXUNUSED(event))
     m_view.ReadString(doc_str);
 
     tt_string search("name=\"");
-    evt_flags = wxGetFrame().GetSelectedNode();
+    evt_flags = wxGetFrame().getSelectedNode();
 
     if (evt_flags->hasProp(prop_id) && evt_flags->as_string(prop_id) != "wxID_ANY")
     {

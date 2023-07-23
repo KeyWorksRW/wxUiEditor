@@ -703,7 +703,7 @@ void MainFrame::OnClose(wxCloseEvent& event)
     if (!SaveWarning())
         return;
 
-    wxGetApp().SetMainFrameClosing();
+    wxGetApp().setMainFrameClosing();
 
     auto config = wxConfig::Get();
 #if defined(_DEBUG)
@@ -1337,7 +1337,7 @@ void MainFrame::CreateSplitters()
     // SetMinSize(wxSize(700, 380));
 }
 
-void MainFrame::SetStatusField(const tt_string text, int position)
+void MainFrame::setStatusField(const tt_string text, int position)
 {
     if (position == -1)
         position = m_posPropGridStatusField;
@@ -1380,7 +1380,7 @@ void MainFrame::UpdateMoveMenu()
     m_menuEdit->Enable(id_MoveRight, MoveNode(node, MoveDirection::Right, true));
 }
 
-Node* MainFrame::GetSelectedForm()
+Node* MainFrame::getSelectedForm()
 {
     if (!m_selected_node || m_selected_node->isGen(gen_Project))
         return nullptr;
@@ -1649,7 +1649,7 @@ void MainFrame::Redo()
     if (!m_undo_stack.wasRedoEventGenerated())
         FireProjectUpdatedEvent();
     if (!m_undo_stack.wasRedoSelectEventGenerated())
-        FireSelectedEvent(GetSelectedNode());
+        FireSelectedEvent(getSelectedNode());
 }
 
 void MainFrame::OnToggleExpandLayout(wxCommandEvent&)

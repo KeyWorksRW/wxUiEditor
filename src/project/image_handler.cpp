@@ -197,14 +197,14 @@ wxImage ImageHandler::GetPropertyBitmap(const tt_string_vector& parts, bool chec
             tt_string_vector id_client(parts[IndexArtID], '|');
             ASSERT_MSG(m_allow_ui, "We should never get here if m_allow_ui is false");
             image = (wxArtProvider::GetBitmapBundle(id_client[0], wxART_MAKE_CLIENT_ID_FROM_STR(id_client[1]))
-                         .GetBitmapFor(wxGetFrame().GetWindow()))
+                         .GetBitmapFor(wxGetFrame().getWindow()))
                         .ConvertToImage();
         }
         else
         {
             image = (wxArtProvider::GetBitmapBundle(parts[IndexArtID].make_wxString(),
                                                     wxART_MAKE_CLIENT_ID_FROM_STR("wxART_OTHER"))
-                         .GetBitmapFor(wxGetFrame().GetWindow()))
+                         .GetBitmapFor(wxGetFrame().getWindow()))
                         .ConvertToImage();
         }
     }
@@ -218,7 +218,7 @@ wxImage ImageHandler::GetPropertyBitmap(const tt_string_vector& parts, bool chec
         auto embed = GetEmbeddedImage(path);
         if (!embed)
         {
-            bool added = AddEmbeddedImage(path, wxGetFrame().GetSelectedForm());
+            bool added = AddEmbeddedImage(path, wxGetFrame().getSelectedForm());
             if (added)
             {
                 embed = GetEmbeddedImage(path);
@@ -1112,7 +1112,7 @@ wxAnimation ImageHandler::GetPropertyAnimation(const tt_string& description)
         auto embed = GetEmbeddedImage(path);
         if (!embed)
         {
-            bool added = AddEmbeddedImage(path, wxGetFrame().GetSelectedForm());
+            bool added = AddEmbeddedImage(path, wxGetFrame().getSelectedForm());
             if (added)
             {
                 embed = GetEmbeddedImage(path);

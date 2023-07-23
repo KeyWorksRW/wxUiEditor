@@ -47,7 +47,7 @@ void GridBag::Initialize()
 
 bool GridBag::InsertNode(Node* gbsizer, Node* new_node)
 {
-    GridBagItem dlg(wxGetApp().GetMainFrame());
+    GridBagItem dlg(wxGetMainFrame());
     if (dlg.ShowModal() != wxID_OK)
         return false;
 

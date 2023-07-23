@@ -138,7 +138,7 @@ void RearrangeDialog::OnUndoDelete(wxCommandEvent& WXUNUSED(event))
 
 bool RearrangeDialogAdapter::DoShowDialog(wxPropertyGrid* WXUNUSED(propGrid), wxPGProperty* WXUNUSED(property))
 {
-    RearrangeDialog dlg(wxGetFrame().GetWindow(), m_prop);
+    RearrangeDialog dlg(wxGetFrame().getWindow(), m_prop);
     if (dlg.ShowModal() == wxID_OK)
     {
         SetValue(dlg.GetResults());

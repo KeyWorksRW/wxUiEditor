@@ -86,7 +86,7 @@ void AuiToolBarFormGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxpa
         {
             const wxObject* child;
             if (!is_preview)
-                child = GetMockup()->getChild(wxobject, idx_child);
+                child = getMockup()->getChild(wxobject, idx_child);
             else
                 child = node->getChild(idx_child)->getMockupObject();
 
@@ -260,7 +260,7 @@ void AuiToolBarFormGenerator::OnTool(wxCommandEvent& WXUNUSED(event))
     auto wxobject = toolbar->GetToolClientData(event.GetToolId());
     if (wxobject)
     {
-        wxGetFrame().GetMockup()->SelectNode(wxobject);
+        wxGetFrame().getMockup()->SelectNode(wxobject);
     }
 #endif
 }
@@ -374,7 +374,7 @@ void AuiToolBarGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent
         {
             const wxObject* child;
             if (!is_preview)
-                child = GetMockup()->getChild(wxobject, idx_child);
+                child = getMockup()->getChild(wxobject, idx_child);
             else
                 child = node->getChild(idx_child)->getMockupObject();
 
@@ -451,7 +451,7 @@ void AuiToolBarGenerator::OnTool(wxCommandEvent& WXUNUSED(event))
     auto wxobject = toolbar->GetToolClientData(event.GetToolId());
     if (wxobject)
     {
-        wxGetFrame().GetMockup()->SelectNode(wxobject);
+        wxGetFrame().getMockup()->SelectNode(wxobject);
     }
 #endif
 }

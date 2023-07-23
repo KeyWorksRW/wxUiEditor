@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Main window frame
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2021 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -54,20 +54,6 @@ constexpr const size_t StatusPanels = 3;
 
 inline constexpr auto txt_main_window_config = "/main_window";
 
-/*
-
-    It's fine to call UpdateWakaTime() frequently since it keeps a timer so that wakatime logging is only updated once every
-   two minutes. The exception is when a file is saved -- this will always notify wakatime. The following functions call
-   UpdateWakaTime() automatically:
-
-        UpdateFrame()
-        ProjectSaved()
-        OnGenerateCode()
-        RemoveNode()
-        ChangeEventHandler()
-
-*/
-
 namespace evt_flags
 {
     enum size_t
@@ -85,17 +71,17 @@ public:
     MainFrame();
     ~MainFrame() override;
 
-    wxWindow* GetWindow() { return wxDynamicCast(this, wxWindow); }
+    wxWindow* getWindow() { return wxDynamicCast(this, wxWindow); }
 
-    MockupParent* GetMockup() { return m_mockupPanel; }
-    PropGridPanel* GetPropPanel() { return m_property_panel; }
-    NavigationPanel* GetNavigationPanel() { return m_nav_panel; }
-    RibbonPanel* GetRibbonPanel() { return m_ribbon_panel; }
-    BasePanel* GetGeneratedPanel() { return m_generatedPanel; }
-    DocViewPanel* GetDocViewPanel() { return m_docviewPanel; }
+    MockupParent* getMockup() { return m_mockupPanel; }
+    PropGridPanel* getPropPanel() { return m_property_panel; }
+    NavigationPanel* getNavigationPanel() { return m_nav_panel; }
+    RibbonPanel* getRibbonPanel() { return m_ribbon_panel; }
+    BasePanel* getGeneratedPanel() { return m_generatedPanel; }
+    DocViewPanel* getDocViewPanel() { return m_docviewPanel; }
 
 #if defined(INTERNAL_TESTING)
-    ImportPanel* GetImportPanel() { return m_imnportPanel; }
+    ImportPanel* getImportPanel() { return m_imnportPanel; }
 #endif
 
     void AddCustomEventHandler(wxEvtHandler* handler) { m_custom_event_handlers.push_back(handler); }
@@ -133,15 +119,15 @@ public:
     bool CanUndo() { return m_undo_stack.IsUndoAvailable(); }
     bool CanRedo() { return m_undo_stack.IsRedoAvailable(); }
 
-    UndoStack& GetUndoStack() { return m_undo_stack; }
+    UndoStack& getUndoStack() { return m_undo_stack; }
 
-    const NodeSharedPtr& GetSelectedNodePtr() { return m_selected_node; };
-    Node* GetSelectedNode() { return (m_selected_node ? m_selected_node.get() : nullptr); };
-    Node* GetSelectedForm();
+    const NodeSharedPtr& getSelectedNodePtr() { return m_selected_node; };
+    Node* getSelectedNode() { return (m_selected_node ? m_selected_node.get() : nullptr); };
+    Node* getSelectedForm();
 
-    NodeSharedPtr GetClipboardPtr() { return (m_clipboard ? m_clipboard : nullptr); }
-    Node* GetClipboard() { return (m_clipboard ? m_clipboard.get() : nullptr); }
-    size_t GetClipHash() { return (m_clipboard ? m_clip_hash : 0); }
+    NodeSharedPtr getClipboardPtr() { return (m_clipboard ? m_clipboard : nullptr); }
+    Node* getClipboard() { return (m_clipboard ? m_clipboard.get() : nullptr); }
+    size_t getClipHash() { return (m_clipboard ? m_clip_hash : 0); }
 
     // No event will be fired if the node is already selected, unless evt_flags::force_selection
     // is set.
@@ -178,7 +164,7 @@ public:
     // specific components.
     void createToolNode(GenEnum::GenName name);
 
-    wxFileHistory& GetFileHistory() { return m_FileHistory; }
+    wxFileHistory& getFileHistory() { return m_FileHistory; }
 
     // This does an exact comparison, so file needs to be identical to what was added to the
     // history.
@@ -186,7 +172,7 @@ public:
 
     // Display the text in a specific field of the status bar -- the default is the field
     // that aligns with the PropertyGrid panel.
-    void SetStatusField(const tt_string text, int position = -1);
+    void setStatusField(const tt_string text, int position = -1);
 
     // Search for a sizer to move the node into.
     // Set include_splitter to treat a splitter window like a sizer.
@@ -197,9 +183,9 @@ public:
     }
 
     // This is the only variable length field, and therefore can hold the most text
-    void SetRightStatusField(const tt_string text) { SetStatusField(text, m_posRightStatusField); }
+    void setRightStatusField(const tt_string text) { setStatusField(text, m_posRightStatusField); }
 
-    int GetDebugStatusField() { return m_posRightStatusField; }
+    int getDebugStatusField() { return m_posRightStatusField; }
     void UpdateStatusWidths();
 
     void CopyNode(Node* node);
@@ -223,16 +209,16 @@ public:
     bool SaveWarning();
     void UpdateFrame();
 
-    bool IsModified() { return m_isProject_modified; }
+    bool isModified() { return m_isProject_modified; }
 
     // Used by LoadProject when an old version was converted
-    void SetModified()
+    void setModified()
     {
         m_isProject_modified = true;
         UpdateFrame();
     }
 
-    void SetImportedFlag(bool imported = true) { m_isImported = imported; }
+    void setImportedFlag(bool imported = true) { m_isImported = imported; }
 
     wxInfoBar* GetPropInfoBar() { return m_info_bar; }
 
@@ -256,8 +242,8 @@ public:
     // destroy the preview window.
     void OnPreviewWinActivate(wxActivateEvent& event);
 
-    void SetPreviewDlgPtr(wxDialog* dlg) { m_pxrc_dlg = dlg; }
-    void SetPreviewWinPtr(wxFrame* frame) { m_pxrc_win = frame; }
+    void setPreviewDlgPtr(wxDialog* dlg) { m_pxrc_dlg = dlg; }
+    void setPreviewWinPtr(wxFrame* frame) { m_pxrc_win = frame; }
 
     void OnPreviewXrc(wxCommandEvent& event) override;
 
@@ -326,6 +312,22 @@ protected:
 
     void UpdateLayoutTools();
     void UpdateMoveMenu();
+
+    /*
+
+        It's fine to call UpdateWakaTime() frequently since it keeps a timer so that wakatime logging is only
+        updated once every two minutes. The exception is when a file is saved -- this will always notify wakatime.
+
+        The following functions call UpdateWakaTime() automatically:
+
+            UpdateFrame()
+            ProjectSaved()
+            OnGenerateCode()
+            RemoveNode()
+            ChangeEventHandler()
+
+    */
+
     void UpdateWakaTime(bool FileSavedEvent = false);
 
 private:
@@ -402,17 +404,18 @@ private:
     bool m_has_clipboard_data { false };
 };
 
-// Same as wxGetApp() only this returns a reference to the frame window
+// Returns a reference to the mainframe window
 inline MainFrame& wxGetFrame()
 {
-    ASSERT_MSG(wxGetApp().GetMainFrame(), "MainFrame hasn't been created yet.");
-    return *wxGetApp().GetMainFrame();
+    ASSERT_MSG(wxGetApp().getMainFrame(), "MainFrame hasn't been created yet.");
+    return *wxGetApp().getMainFrame();
 }
 
-inline MainFrame* GetMainFrame()
+// Returns a pointer to the mainframe window
+inline MainFrame* wxGetMainFrame()
 {
-    ASSERT_MSG(wxGetApp().GetMainFrame(), "MainFrame hasn't been created yet.");
-    return wxGetApp().GetMainFrame();
+    ASSERT_MSG(wxGetApp().getMainFrame(), "MainFrame hasn't been created yet.");
+    return wxGetApp().getMainFrame();
 }
 
 extern const char* txtEmptyProject;  // "Empty Project"

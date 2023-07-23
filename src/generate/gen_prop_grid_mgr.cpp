@@ -42,7 +42,7 @@ void PropertyGridManagerGenerator::OnPageChanged(wxPropertyGridEvent& event)
         if (auto cur_page = pgm->GetCurrentPage(); cur_page)
         {
             auto page_index = cur_page->GetIndex();
-            if (auto parent = GetMockup()->getNode(event.GetEventObject()); parent)
+            if (auto parent = getMockup()->getNode(event.GetEventObject()); parent)
             {
                 for (size_t idx_page = 0; idx_page < parent->getChildCount(); ++idx_page)
                 {

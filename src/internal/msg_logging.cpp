@@ -51,9 +51,9 @@ void MsgLogging::AddInfoMsg(tt_string_view msg)
             m_msgFrame->AddInfoMsg(str);
     }
 
-    auto frame = wxGetApp().GetMainFrame();
+    auto frame = wxGetMainFrame();
     if (frame && frame->IsShown())
-        frame->SetRightStatusField(msg);
+        frame->setRightStatusField(msg);
 }
 
 void MsgLogging::AddEventMsg(tt_string_view msg)
@@ -76,9 +76,9 @@ void MsgLogging::AddEventMsg(tt_string_view msg)
             m_msgFrame->AddEventMsg(str);
     }
 
-    auto frame = wxGetApp().GetMainFrame();
+    auto frame = wxGetMainFrame();
     if (frame && frame->IsShown())
-        frame->SetRightStatusField(tt_string("Event: ") << msg);
+        frame->setRightStatusField(tt_string("Event: ") << msg);
 }
 
 void MsgLogging::AddWarningMsg(tt_string_view msg)
@@ -105,9 +105,9 @@ void MsgLogging::AddWarningMsg(tt_string_view msg)
         }
     }
 
-    auto frame = wxGetApp().GetMainFrame();
+    auto frame = wxGetMainFrame();
     if (frame && frame->IsShown())
-        frame->SetRightStatusField(tt_string("Warning: ") << msg);
+        frame->setRightStatusField(tt_string("Warning: ") << msg);
 }
 
 void MsgLogging::AddErrorMsg(tt_string_view msg)
@@ -127,9 +127,9 @@ void MsgLogging::AddErrorMsg(tt_string_view msg)
     else if (!m_bDestroyed)
         m_msgFrame->AddErrorMsg(str.view_stepover());
 
-    auto frame = wxGetApp().GetMainFrame();
+    auto frame = wxGetMainFrame();
     if (frame && frame->IsShown())
-        frame->SetRightStatusField(str);
+        frame->setRightStatusField(str);
 }
 
 void MsgLogging::OnNodeSelected()
@@ -162,9 +162,9 @@ void MsgLogging::DoLogRecord(wxLogLevel level, const wxString& msg, const wxLogR
                 else if (!m_bDestroyed)
                     m_msgFrame->Add_wxErrorMsg(str.view_stepover());
 
-                auto frame = wxGetApp().GetMainFrame();
+                auto frame = wxGetMainFrame();
                 if (frame && frame->IsShown())
-                    frame->SetRightStatusField(str);
+                    frame->setRightStatusField(str);
             }
 
             // Following is for wxLogGui
@@ -190,9 +190,9 @@ void MsgLogging::DoLogRecord(wxLogLevel level, const wxString& msg, const wxLogR
                 else if (!m_bDestroyed)
                     m_msgFrame->Add_wxWarningMsg(str.view_stepover());
 
-                auto frame = wxGetApp().GetMainFrame();
+                auto frame = wxGetMainFrame();
                 if (frame && frame->IsShown())
-                    frame->SetRightStatusField(str);
+                    frame->setRightStatusField(str);
             }
 
             // Following is for wxLogGui
@@ -219,9 +219,9 @@ void MsgLogging::DoLogRecord(wxLogLevel level, const wxString& msg, const wxLogR
                 else if (!m_bDestroyed)
                     m_msgFrame->Add_wxInfoMsg(str.view_stepover());
 
-                auto frame = wxGetApp().GetMainFrame();
+                auto frame = wxGetMainFrame();
                 if (frame && frame->IsShown())
-                    frame->SetRightStatusField(str);
+                    frame->setRightStatusField(str);
             }
 
             // Following is for wxLogGui
@@ -232,9 +232,9 @@ void MsgLogging::DoLogRecord(wxLogLevel level, const wxString& msg, const wxLogR
 
         case wxLOG_Status:
             {
-                auto frame = wxGetApp().GetMainFrame();
+                auto frame = wxGetMainFrame();
                 if (frame && frame->IsShown())
-                    frame->SetRightStatusField(tt_string() << msg.utf8_string());
+                    frame->setRightStatusField(tt_string() << msg.utf8_string());
             }
             break;
 

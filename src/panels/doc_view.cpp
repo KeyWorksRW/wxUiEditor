@@ -168,7 +168,7 @@ void DocViewPanel::OnCPlus(wxCommandEvent& /* event */)
 {
     wxBusyCursor wait;
     m_language = GEN_LANG_CPLUSPLUS;
-    if (auto* cur_sel = m_mainframe->GetSelectedNode(); cur_sel)
+    if (auto* cur_sel = m_mainframe->getSelectedNode(); cur_sel)
     {
         if (auto* gen = cur_sel->getGenerator(); gen)
         {
@@ -191,7 +191,7 @@ void DocViewPanel::OnPython(wxCommandEvent& /* event */)
 {
     wxBusyCursor wait;
     m_language = GEN_LANG_PYTHON;
-    if (auto* cur_sel = m_mainframe->GetSelectedNode(); cur_sel)
+    if (auto* cur_sel = m_mainframe->getSelectedNode(); cur_sel)
     {
         if (auto* gen = cur_sel->getGenerator(); gen)
         {
@@ -214,7 +214,7 @@ void DocViewPanel::OnRuby(wxCommandEvent& /* event */)
 {
     wxBusyCursor wait;
     m_language = GEN_LANG_RUBY;
-    if (auto* cur_sel = m_mainframe->GetSelectedNode(); cur_sel)
+    if (auto* cur_sel = m_mainframe->getSelectedNode(); cur_sel)
     {
         if (auto* gen = cur_sel->getGenerator(); gen)
         {

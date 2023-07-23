@@ -153,7 +153,7 @@ void PropGridPanel::Create()
     if (m_locked)
         return;
 
-    if (auto node = wxGetFrame().GetSelectedNode(); node)
+    if (auto node = wxGetFrame().getSelectedNode(); node)
     {
         wxWindowUpdateLocker freeze(this);
 
@@ -164,7 +164,7 @@ void PropGridPanel::Create()
         }
 #endif  // _DEBUG
 
-        wxGetApp().GetMainFrame()->SetStatusText(wxEmptyString, 2);
+        wxGetMainFrame()->SetStatusText(wxEmptyString, 2);
 
         m_currentSel = node;
 
@@ -1170,7 +1170,7 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
 
                 if (prop->isProp(prop_class_name))
                 {
-                    auto selected_node = wxGetFrame().GetSelectedNode();
+                    auto selected_node = wxGetFrame().getSelectedNode();
                     if (!selected_node)
                         return;
 
@@ -1648,7 +1648,7 @@ void PropGridPanel::ModifyOptionsProperty(NodeProperty* node_prop, wxPGProperty*
     m_prop_grid->SetPropertyHelpString(grid_prop, description);
     m_prop_grid->SetDescription(grid_prop->GetLabel(), description);
 
-    if (auto selected_node = wxGetFrame().GetSelectedNode(); selected_node)
+    if (auto selected_node = wxGetFrame().getSelectedNode(); selected_node)
     {
         if (node_prop->isProp(prop_validator_data_type) && selected_node->isGen(gen_wxTextCtrl))
         {
@@ -1678,7 +1678,7 @@ void PropGridPanel::ModifyOptionsProperty(NodeProperty* node_prop, wxPGProperty*
                 }
             }
         }
-        else if (node_prop->isProp(prop_class_access) && wxGetApp().IsPjtMemberPrefix())
+        else if (node_prop->isProp(prop_class_access) && wxGetApp().isPjtMemberPrefix())
         {
             tt_string name = node->as_string(prop_var_name);
             if (Project.getPreferredLanguage() == GEN_LANG_PYTHON)
@@ -2097,9 +2097,9 @@ bool PropGridPanel::IsEventPageShowing()
 
 void PropGridPanel::OnAuiNotebookPageChanged(wxAuiNotebookEvent& /* event */)
 {
-    CustomEvent custom_event(EVT_NodeSelected, wxGetFrame().GetSelectedNode());
+    CustomEvent custom_event(EVT_NodeSelected, wxGetFrame().getSelectedNode());
 
-    wxGetFrame().GetGeneratedPanel()->OnNodeSelected(custom_event);
+    wxGetFrame().getGeneratedPanel()->OnNodeSelected(custom_event);
 }
 
 tt_string PropGridPanel::GetPropHelp(NodeProperty* prop) const

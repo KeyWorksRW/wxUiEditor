@@ -101,7 +101,7 @@ void MenuBarBase::OnLeftMenuClick(wxMouseEvent& event)
         return;
 
     auto* popup_menu = MakeSubMenu(menu_node);
-    GetMockup()->PopupMenu(popup_menu);
+    getMockup()->PopupMenu(popup_menu);
     delete popup_menu;
 }
 

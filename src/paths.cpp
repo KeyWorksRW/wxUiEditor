@@ -35,7 +35,7 @@ void AllowDirectoryChange(wxPropertyGridEvent& event, NodeProperty* /* prop */, 
 
         auto result = wxMessageBox(tt_string() << "The directory \"" << newValue
                                                << "\" does not exist. Do you want to use this name anyway?",
-                                   "Directory doesn't exist", wxYES_NO | wxICON_WARNING, GetMainFrame());
+                                   "Directory doesn't exist", wxYES_NO | wxICON_WARNING, wxGetMainFrame());
         if (focus)
         {
             focus->SetFocus();
@@ -49,7 +49,7 @@ void AllowDirectoryChange(wxPropertyGridEvent& event, NodeProperty* /* prop */, 
 #else
             event.SetValidationFailureBehavior(wxPG_VFB_MARK_CELL | wxPG_VFB_STAY_IN_PROPERTY);
 #endif
-            wxGetFrame().SetStatusField("Either change the directory, or press ESC to restore the original value.");
+            wxGetFrame().setStatusField("Either change the directory, or press ESC to restore the original value.");
             return;
         }
     }
@@ -105,7 +105,7 @@ void AllowFileChange(wxPropertyGridEvent& event, NodeProperty* prop, Node* node)
 #else
                     event.SetValidationFailureBehavior(wxPG_VFB_MARK_CELL | wxPG_VFB_STAY_IN_PROPERTY);
 #endif
-                    wxGetFrame().SetStatusField("Either change the name, or press ESC to restore the original value.");
+                    wxGetFrame().setStatusField("Either change the name, or press ESC to restore the original value.");
                     return;
                 }
             }
@@ -130,7 +130,7 @@ void AllowFileChange(wxPropertyGridEvent& event, NodeProperty* prop, Node* node)
 #else
                     event.SetValidationFailureBehavior(wxPG_VFB_MARK_CELL | wxPG_VFB_STAY_IN_PROPERTY);
 #endif
-                    wxGetFrame().SetStatusField("Either change the name, or press ESC to restore the original value.");
+                    wxGetFrame().setStatusField("Either change the name, or press ESC to restore the original value.");
                     return;
                 }
             }
@@ -159,7 +159,7 @@ void AllowFileChange(wxPropertyGridEvent& event, NodeProperty* prop, Node* node)
 #else
                     event.SetValidationFailureBehavior(wxPG_VFB_MARK_CELL | wxPG_VFB_STAY_IN_PROPERTY);
 #endif
-                    wxGetFrame().SetStatusField("Either change the name, or press ESC to restore the original value.");
+                    wxGetFrame().setStatusField("Either change the name, or press ESC to restore the original value.");
                     return;
                 }
             }

@@ -61,7 +61,7 @@ public:
     BaseGenerator() {}
     virtual ~BaseGenerator() {}
 
-    MockupParent* GetMockup();
+    MockupParent* getMockup();
 
     // Generate the code used to construct the object using either C++, Python or Ruby
     virtual bool ConstructionCode(Code&) { return false; }

@@ -43,7 +43,7 @@ NodeSharedPtr GetClipboardNode(bool warn_if_problems)
 
             wxUEDataObject data;
             wxTheClipboard->GetData(data);
-            if (wxGetFrame().GetClipHash() == data.GetHash())
+            if (wxGetFrame().getClipHash() == data.GetHash())
                 return {};
         }
 

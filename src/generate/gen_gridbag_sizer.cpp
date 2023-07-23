@@ -59,7 +59,7 @@ void GridBagSizerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxpare
     {
         const wxObject* child;
         if (!is_preview)
-            child = GetMockup()->getChild(wxobject, i);
+            child = getMockup()->getChild(wxobject, i);
         else
             child = node->getChild(i)->getMockupObject();
 

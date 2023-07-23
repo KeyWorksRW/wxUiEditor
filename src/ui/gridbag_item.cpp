@@ -17,7 +17,7 @@ GridBagItem::GridBagItem(wxWindow* parent) : GridBagItemBase(parent) {}
 
 void GridBagItem::OnInit(wxInitDialogEvent& WXUNUSED(event))
 {
-    if (auto cur_node = wxGetFrame().GetSelectedNode(); cur_node && !cur_node->isGen(gen_Project))
+    if (auto cur_node = wxGetFrame().getSelectedNode(); cur_node && !cur_node->isGen(gen_Project))
     {
         if (cur_node->isGen(gen_wxGridBagSizer))
         {

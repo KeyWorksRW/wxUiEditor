@@ -117,7 +117,7 @@ ArtBrowserDialog::ArtBrowserDialog(wxWindow* parent, const ImageProperties& img_
     }
     else
     {
-        if (auto node = wxGetFrame().GetSelectedNode(); node)
+        if (auto node = wxGetFrame().getSelectedNode(); node)
         {
             if (node->isType(type_tool) || node->isType(type_ribbontool) || node->isType(type_aui_tool))
             {

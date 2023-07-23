@@ -158,11 +158,11 @@ bool ProjectHandler::LoadProject(const tt_string& file, bool allow_ui)
 
     if (allow_ui)
     {
-        wxGetFrame().SetImportedFlag(false);
+        wxGetFrame().setImportedFlag(false);
         wxGetFrame().FireProjectLoadedEvent();
 
         if (m_isProject_updated || m_ProjectVersion < minRequiredVer)
-            wxGetFrame().SetModified();
+            wxGetFrame().setModified();
     }
     return true;
 }
@@ -652,7 +652,7 @@ bool ProjectHandler::ImportProject(tt_string& file,
         result = Import(crafter, file);
 #if defined(INTERNAL_TESTING)
         if (result && allow_ui)
-            wxGetFrame().GetImportPanel()->SetImportFile(import_file, wxSTC_LEX_JSON);
+            wxGetFrame().getImportPanel()->SetImportFile(import_file, wxSTC_LEX_JSON);
 #endif
     }
     else if (file.has_extension(".fbp"))
@@ -661,7 +661,7 @@ bool ProjectHandler::ImportProject(tt_string& file,
         result = Import(fb, file);
 #if defined(INTERNAL_TESTING)
         if (result && allow_ui)
-            wxGetFrame().GetImportPanel()->SetImportFile(import_file, wxSTC_LEX_XML);
+            wxGetFrame().getImportPanel()->SetImportFile(import_file, wxSTC_LEX_XML);
 #endif
     }
     else if (file.has_extension(".rc") || file.has_extension(".dlg"))
@@ -670,7 +670,7 @@ bool ProjectHandler::ImportProject(tt_string& file,
         result = Import(winres, file);
 #if defined(INTERNAL_TESTING)
         if (result && allow_ui)
-            wxGetFrame().GetImportPanel()->SetImportFile(import_file, wxSTC_LEX_CPP);
+            wxGetFrame().getImportPanel()->SetImportFile(import_file, wxSTC_LEX_CPP);
 #endif
     }
     else if (file.has_extension(".wxs") || file.has_extension(".xrc"))
@@ -679,7 +679,7 @@ bool ProjectHandler::ImportProject(tt_string& file,
         result = Import(smith, file);
 #if defined(INTERNAL_TESTING)
         if (result && allow_ui)
-            wxGetFrame().GetImportPanel()->SetImportFile(import_file, wxSTC_LEX_XML);
+            wxGetFrame().getImportPanel()->SetImportFile(import_file, wxSTC_LEX_XML);
 #endif
     }
     else if (file.has_extension(".wxg"))
@@ -688,7 +688,7 @@ bool ProjectHandler::ImportProject(tt_string& file,
         result = Import(glade, file);
 #if defined(INTERNAL_TESTING)
         if (result && allow_ui)
-            wxGetFrame().GetImportPanel()->SetImportFile(import_file, wxSTC_LEX_XML);
+            wxGetFrame().getImportPanel()->SetImportFile(import_file, wxSTC_LEX_XML);
 #endif
     }
     else if (file.has_extension(".pjd"))
@@ -797,7 +797,7 @@ bool ProjectHandler::Import(ImportXML& import, tt_string& file, bool append, boo
 
         if (allow_ui && import.GetLanguage() == GEN_LANG_NONE)
         {
-            CodePreferenceDlg dlg(GetMainFrame());
+            CodePreferenceDlg dlg(wxGetMainFrame());
             if (dlg.ShowModal() == wxID_OK)
             {
                 if (dlg.is_gen_python())
@@ -856,9 +856,9 @@ bool ProjectHandler::Import(ImportXML& import, tt_string& file, bool append, boo
 #endif  // _DEBUG
         if (allow_ui)
         {
-            wxGetFrame().SetImportedFlag(true);
+            wxGetFrame().setImportedFlag(true);
             wxGetFrame().FireProjectLoadedEvent();
-            wxGetFrame().SetModified();
+            wxGetFrame().setModified();
         }
 
         return true;
@@ -869,7 +869,7 @@ bool ProjectHandler::Import(ImportXML& import, tt_string& file, bool append, boo
 
 bool ProjectHandler::NewProject(bool create_empty, bool allow_ui)
 {
-    if (allow_ui && wxGetFrame().IsModified() && GetMainFrame() && !wxGetFrame().SaveWarning())
+    if (allow_ui && wxGetFrame().isModified() && wxGetMainFrame() && !wxGetFrame().SaveWarning())
         return false;
 
     if (create_empty)
@@ -882,7 +882,7 @@ bool ProjectHandler::NewProject(bool create_empty, bool allow_ui)
 
         if (allow_ui)
         {
-            CodePreferenceDlg dlg(GetMainFrame());
+            CodePreferenceDlg dlg(wxGetMainFrame());
             if (dlg.ShowModal() == wxID_OK)
             {
                 if (dlg.is_gen_python())
@@ -918,7 +918,7 @@ bool ProjectHandler::NewProject(bool create_empty, bool allow_ui)
     if (!allow_ui)
         return false;
 
-    ImportDlg dlg(GetMainFrame());
+    ImportDlg dlg(wxGetMainFrame());
     if (dlg.ShowModal() != wxID_OK)
         return false;
 
@@ -952,7 +952,7 @@ bool ProjectHandler::NewProject(bool create_empty, bool allow_ui)
                     WxCrafter crafter;
                     Import(crafter, iter, true);
 #if defined(INTERNAL_TESTING)
-                    wxGetFrame().GetImportPanel()->SetImportFile(import_file, wxSTC_LEX_JSON);
+                    wxGetFrame().getImportPanel()->SetImportFile(import_file, wxSTC_LEX_JSON);
 #endif
                 }
                 else if (iter.has_extension(".fbp"))
@@ -960,7 +960,7 @@ bool ProjectHandler::NewProject(bool create_empty, bool allow_ui)
                     FormBuilder fb;
                     Import(fb, iter, true);
 #if defined(INTERNAL_TESTING)
-                    wxGetFrame().GetImportPanel()->SetImportFile(import_file, wxSTC_LEX_XML);
+                    wxGetFrame().getImportPanel()->SetImportFile(import_file, wxSTC_LEX_XML);
 #endif
                 }
                 else if (iter.has_extension(".wxs") || iter.has_extension(".xrc"))
@@ -968,7 +968,7 @@ bool ProjectHandler::NewProject(bool create_empty, bool allow_ui)
                     WxSmith smith;
                     Import(smith, iter, true);
 #if defined(INTERNAL_TESTING)
-                    wxGetFrame().GetImportPanel()->SetImportFile(import_file, wxSTC_LEX_XML);
+                    wxGetFrame().getImportPanel()->SetImportFile(import_file, wxSTC_LEX_XML);
 #endif
                 }
                 else if (iter.has_extension(".wxg"))
@@ -976,7 +976,7 @@ bool ProjectHandler::NewProject(bool create_empty, bool allow_ui)
                     WxGlade glade;
                     Import(glade, iter, true);
 #if defined(INTERNAL_TESTING)
-                    wxGetFrame().GetImportPanel()->SetImportFile(import_file, wxSTC_LEX_XML);
+                    wxGetFrame().getImportPanel()->SetImportFile(import_file, wxSTC_LEX_XML);
 #endif
                 }
                 else if (iter.has_extension(".rc") || iter.has_extension(".dlg"))
@@ -984,7 +984,7 @@ bool ProjectHandler::NewProject(bool create_empty, bool allow_ui)
                     WinResource winres;
                     Import(winres, iter, true);
 #if defined(INTERNAL_TESTING)
-                    wxGetFrame().GetImportPanel()->SetImportFile(import_file, wxSTC_LEX_CPP);
+                    wxGetFrame().getImportPanel()->SetImportFile(import_file, wxSTC_LEX_CPP);
 #endif
                 }
                 else if (iter.has_extension(".pjd"))
@@ -1024,13 +1024,13 @@ bool ProjectHandler::NewProject(bool create_empty, bool allow_ui)
             m_projectPath.make_absolute();
             m_projectPath.remove_filename();
         }
-        wxGetFrame().SetImportedFlag();
+        wxGetFrame().setImportedFlag();
     }
     ProjectImages.CollectBundles();
 
     wxGetFrame().FireProjectLoadedEvent();
     if (m_project_node->getChildCount())
-        wxGetFrame().SetModified();
+        wxGetFrame().setModified();
     return true;
 }
 
@@ -1049,7 +1049,7 @@ void ProjectHandler::appendWinRes(const tt_string& rc_file, std::vector<tt_strin
         if (m_allow_ui)
         {
             wxGetFrame().FireProjectUpdatedEvent();
-            wxGetFrame().SetModified();
+            wxGetFrame().setModified();
         }
     }
 }
@@ -1086,7 +1086,7 @@ void ProjectHandler::appendCrafter(wxArrayString& files)
     if (m_allow_ui)
     {
         wxGetFrame().FireProjectUpdatedEvent();
-        wxGetFrame().SetModified();
+        wxGetFrame().setModified();
     }
 }
 
@@ -1122,7 +1122,7 @@ void ProjectHandler::appendFormBuilder(wxArrayString& files)
     if (m_allow_ui)
     {
         wxGetFrame().FireProjectUpdatedEvent();
-        wxGetFrame().SetModified();
+        wxGetFrame().setModified();
     }
 }
 
@@ -1158,7 +1158,7 @@ void ProjectHandler::appendDialogBlocks(wxArrayString& files)
     if (m_allow_ui)
     {
         wxGetFrame().FireProjectUpdatedEvent();
-        wxGetFrame().SetModified();
+        wxGetFrame().setModified();
     }
 }
 
@@ -1194,7 +1194,7 @@ void ProjectHandler::appendGlade(wxArrayString& files)
     if (m_allow_ui)
     {
         wxGetFrame().FireProjectUpdatedEvent();
-        wxGetFrame().SetModified();
+        wxGetFrame().setModified();
     }
 }
 
@@ -1230,7 +1230,7 @@ void ProjectHandler::appendSmith(wxArrayString& files)
     if (m_allow_ui)
     {
         wxGetFrame().FireProjectUpdatedEvent();
-        wxGetFrame().SetModified();
+        wxGetFrame().setModified();
     }
 }
 
@@ -1267,6 +1267,6 @@ void ProjectHandler::appendXRC(wxArrayString& files)
     if (m_allow_ui)
     {
         wxGetFrame().FireProjectUpdatedEvent();
-        wxGetFrame().SetModified();
+        wxGetFrame().setModified();
     }
 }

@@ -34,7 +34,7 @@ void NotebookGenerator::OnPageChanged(wxNotebookEvent& event)
 {
     auto book = wxDynamicCast(event.GetEventObject(), wxNotebook);
     if (book && event.GetSelection() != wxNOT_FOUND)
-        GetMockup()->SelectNode(book->GetPage(event.GetSelection()));
+        getMockup()->SelectNode(book->GetPage(event.GetSelection()));
     event.Skip();
 }
 

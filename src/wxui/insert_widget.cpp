@@ -140,7 +140,7 @@ void InsertWidget::OnNameText(wxCommandEvent& WXUNUSED(event))
 {
     tt_string name = m_text_name->GetValue().utf8_string();
     m_listbox->Clear();
-    auto node = wxGetFrame().GetSelectedNode();
+    auto node = wxGetFrame().getSelectedNode();
 
     for (auto iter: NodeCreation.getNodeDeclarationArray())
     {

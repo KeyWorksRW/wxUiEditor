@@ -375,7 +375,7 @@ void NodeSearchDlg::OnGenerators(wxCommandEvent& WXUNUSED(event))
     m_listbox->Clear();
     m_listbox_forms->Clear();
 
-    if (auto cur_sel = wxGetFrame().GetSelectedNode(); cur_sel)
+    if (auto cur_sel = wxGetFrame().getSelectedNode(); cur_sel)
     {
         if (cur_sel->isGen(gen_Project) || cur_sel->isGen(gen_folder) || cur_sel->isGen(gen_sub_folder))
         {
@@ -386,7 +386,7 @@ void NodeSearchDlg::OnGenerators(wxCommandEvent& WXUNUSED(event))
         }
         else
         {
-            FindGenerators(wxGetFrame().GetSelectedNode());
+            FindGenerators(wxGetFrame().getSelectedNode());
         }
         for (auto& iter: m_map_found)
         {
@@ -401,7 +401,7 @@ void NodeSearchDlg::OnVariables(wxCommandEvent& WXUNUSED(event))
     m_listbox->Clear();
     m_listbox_forms->Clear();
 
-    if (auto cur_sel = wxGetFrame().GetSelectedNode(); cur_sel)
+    if (auto cur_sel = wxGetFrame().getSelectedNode(); cur_sel)
     {
         if (cur_sel->isGen(gen_Project) || cur_sel->isGen(gen_folder) || cur_sel->isGen(gen_sub_folder))
         {
@@ -412,7 +412,7 @@ void NodeSearchDlg::OnVariables(wxCommandEvent& WXUNUSED(event))
         }
         else
         {
-            FindVariables(wxGetFrame().GetSelectedNode());
+            FindVariables(wxGetFrame().getSelectedNode());
         }
         for (auto& iter: m_map_found)
         {
@@ -427,7 +427,7 @@ void NodeSearchDlg::OnLabels(wxCommandEvent& WXUNUSED(event))
     m_listbox->Clear();
     m_listbox_forms->Clear();
 
-    if (auto cur_sel = wxGetFrame().GetSelectedNode(); cur_sel)
+    if (auto cur_sel = wxGetFrame().getSelectedNode(); cur_sel)
     {
         if (cur_sel->isGen(gen_Project) || cur_sel->isGen(gen_folder) || cur_sel->isGen(gen_sub_folder))
         {
@@ -438,7 +438,7 @@ void NodeSearchDlg::OnLabels(wxCommandEvent& WXUNUSED(event))
         }
         else
         {
-            FindLabels(wxGetFrame().GetSelectedNode());
+            FindLabels(wxGetFrame().getSelectedNode());
         }
         for (auto& iter: m_map_found)
         {
@@ -498,7 +498,7 @@ void NodeSearchDlg::OnIDs(wxCommandEvent& WXUNUSED(event))
         }
     };
 
-    if (auto cur_sel = wxGetFrame().GetSelectedNode(); cur_sel)
+    if (auto cur_sel = wxGetFrame().getSelectedNode(); cur_sel)
     {
         if (cur_sel->isGen(gen_Project) || cur_sel->isGen(gen_folder) || cur_sel->isGen(gen_sub_folder))
         {
@@ -509,7 +509,7 @@ void NodeSearchDlg::OnIDs(wxCommandEvent& WXUNUSED(event))
         }
         else
         {
-            FindIDs(wxGetFrame().GetSelectedNode(), FindIDs);
+            FindIDs(wxGetFrame().getSelectedNode(), FindIDs);
         }
         for (auto& iter: m_map_found)
         {
@@ -539,16 +539,16 @@ void NodeSearchDlg::OnOK(wxCommandEvent& event)
             }
             else
             {
-                m_form = wxGetFrame().GetSelectedNode();
+                m_form = wxGetFrame().getSelectedNode();
             }
         }
-        else if (wxGetFrame().GetSelectedNode()->isForm())
+        else if (wxGetFrame().getSelectedNode()->isForm())
         {
-            m_form = wxGetFrame().GetSelectedNode();
+            m_form = wxGetFrame().getSelectedNode();
         }
         else
         {
-            m_form = wxGetFrame().GetSelectedNode()->getForm();
+            m_form = wxGetFrame().getSelectedNode()->getForm();
         }
     }
 

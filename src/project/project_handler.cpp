@@ -289,6 +289,11 @@ size_t ProjectHandler::getOutputType() const
             {
                 if (child->hasValue(prop_base_file))
                 {
+                    if (child->as_string(prop_base_file) == child->getPropDefaultValue(prop_ruby_file) &&
+                        getCodePreference() != GEN_LANG_CPLUSPLUS)
+                    {
+                        continue;
+                    }
                     result |= OUTPUT_CPLUS;
                 }
                 if (child->hasValue(prop_derived_file) && child->as_bool(prop_use_derived_class))
@@ -302,12 +307,26 @@ size_t ProjectHandler::getOutputType() const
                         }
                     }
                 }
+
                 if (child->hasValue(prop_python_file))
                 {
+                    if (child->isGen(gen_Images))
+                    {
+                        if (child->as_string(prop_python_file) == child->getPropDefaultValue(prop_python_file) &&
+                            getCodePreference() != GEN_LANG_PYTHON)
+                        {
+                            continue;
+                        }
+                    }
                     result |= OUTPUT_PYTHON;
                 }
-                if (child->hasValue(prop_ruby_file))
+                if (child->hasValue(prop_ruby_file) && not(child->isGen(gen_Images)))
                 {
+                    if (child->as_string(prop_ruby_file) == child->getPropDefaultValue(prop_ruby_file) &&
+                        getCodePreference() != GEN_LANG_RUBY)
+                    {
+                        continue;
+                    }
                     result |= OUTPUT_RUBY;
                 }
                 if (child->hasValue(prop_xrc_file))

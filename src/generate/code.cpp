@@ -93,7 +93,7 @@ static const std::map<std::string_view, std::string_view, std::less<>> map_pytho
     { "wxWebViewBackendDefault", "wx.html2."},
 };
 
-std::map<std::string_view, std::string_view, std::less<>> g_map_class_prefix
+std::map<std::string_view, std::string_view, std::less<>> g_map_python_prefix
 {
     { "wxAnimationCtrl", "wx.adv."},
     { "wxAuiNotebook", "wx.aui."},
@@ -128,6 +128,13 @@ std::map<std::string_view, std::string_view, std::less<>> g_map_class_prefix
     { "wxPropertyGrid", "wx.propgrid."},
 
 };
+
+std::map<std::string_view, std::string_view, std::less<>> g_map_ruby_prefix
+{
+    { "wxAuiNotebook", "Wx::AUI::" },
+    { "wxAuiToolBar", "Wx::AUI::" },
+};
+
 // clang-format on
 
 Code::Code(Node* node, int language)
@@ -577,7 +584,14 @@ Code& Code::CreateClass(bool use_generic, tt_string_view override_name)
         std::string_view prefix = m_lang_wxPrefix;
         if (is_python())
         {
-            if (auto wx_iter = g_map_class_prefix.find(class_name); wx_iter != g_map_class_prefix.end())
+            if (auto wx_iter = g_map_python_prefix.find(class_name); wx_iter != g_map_python_prefix.end())
+            {
+                prefix = wx_iter->second;
+            }
+        }
+        else if (is_ruby())
+        {
+            if (auto wx_iter = g_map_ruby_prefix.find(class_name); wx_iter != g_map_ruby_prefix.end())
             {
                 prefix = wx_iter->second;
             }

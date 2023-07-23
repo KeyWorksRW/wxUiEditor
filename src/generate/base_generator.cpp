@@ -249,7 +249,9 @@ tt_string getClassHelpName(Node* node)
     if (!class_name.starts_with("wx"))
     {
         if (class_name == "BookPage")
-            class_name = "wxBookCtrl";
+        {
+            class_name = map_GenNames[node->getParent()->getGenName()];
+        }
         else if (class_name == "PanelForm")
             class_name = "wxPanel";
         else if (class_name == "RibbonBar")
@@ -283,7 +285,8 @@ tt_string BaseGenerator::GetHelpText(Node* node)
     return class_name;
 }
 
-extern std::map<std::string_view, std::string_view, std::less<>> g_map_class_prefix;
+extern std::map<std::string_view, std::string_view, std::less<>> g_map_python_prefix;
+extern std::map<std::string_view, std::string_view, std::less<>> g_map_ruby_prefix;
 
 tt_string BaseGenerator::GetPythonHelpText(Node* node)
 {
@@ -294,7 +297,7 @@ tt_string BaseGenerator::GetPythonHelpText(Node* node)
     }
 
     std::string_view prefix = "wx.";
-    if (auto wx_iter = g_map_class_prefix.find(class_name); wx_iter != g_map_class_prefix.end())
+    if (auto wx_iter = g_map_python_prefix.find(class_name); wx_iter != g_map_python_prefix.end())
     {
         prefix = wx_iter->second;
     }
@@ -324,6 +327,10 @@ tt_string BaseGenerator::GetRubyHelpText(Node* node)
     }
 
     std::string_view prefix = "Wx::";
+    if (auto wx_iter = g_map_ruby_prefix.find(class_name); wx_iter != g_map_ruby_prefix.end())
+    {
+        prefix = wx_iter->second;
+    }
     tt_string help_text;
     help_text << prefix << class_name.subview(2);
 
@@ -337,7 +344,7 @@ tt_string BaseGenerator::GetRubyURL(Node* node)
     {
         return url;
     }
-    url.Replace("::", "/");
+    url.Replace("::", "/", true);
     url << ".html";
     return url;
 }
@@ -351,7 +358,7 @@ bool BaseGenerator::GetPythonImports(Node* node, std::set<std::string>& set_impo
     }
 
     std::string_view prefix = "wx.";
-    if (auto wx_iter = g_map_class_prefix.find(class_name); wx_iter != g_map_class_prefix.end())
+    if (auto wx_iter = g_map_python_prefix.find(class_name); wx_iter != g_map_python_prefix.end())
     {
         prefix = wx_iter->second;
         tt_string import_lib("import ");
@@ -548,7 +555,8 @@ static std::vector<std::pair<const char*, const char*>> prefix_pair = {
 
 tt_string BaseGenerator::GetHelpURL(Node* node)
 {
-    tt_string class_name(map_GenNames[node->getGenName()]);
+    tt_string class_name = getClassHelpName(node);
+
     if (class_name.starts_with("wx"))
     {
         class_name.erase(0, 2);
@@ -579,6 +587,10 @@ tt_string BaseGenerator::GetHelpURL(Node* node)
         url << class_name << ".html";
         return url;
     }
+
+    // REVIEW: [Randalphwa - 07-23-2023] some of these are now being handled by getClassHelpName()
+    // and will therefore never make it this far.
+
     else if (class_name == "BookPage")
     {
         return tt_string("wx_book_ctrl_base.html");

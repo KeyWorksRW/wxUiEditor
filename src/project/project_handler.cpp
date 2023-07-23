@@ -281,7 +281,7 @@ int ProjectHandler::get_PreferredLanguage()
         return GEN_LANG_CPLUSPLUS;
 }
 
-size_t ProjectHandler::GetOutputType()
+size_t ProjectHandler::GetOutputType() const
 {
     size_t result = OUTPUT_NONE;
 
@@ -318,6 +318,10 @@ size_t ProjectHandler::GetOutputType()
                 {
                     result |= OUTPUT_RUBY;
                 }
+                if (child->hasValue(prop_xrc_file))
+                {
+                    result |= OUTPUT_XRC;
+                }
             }
         }
     };
@@ -327,7 +331,7 @@ size_t ProjectHandler::GetOutputType()
     return result;
 }
 
-tt_string ProjectHandler::GetDerivedFilename(Node* form)
+tt_string ProjectHandler::GetDerivedFilename(Node* form) const
 {
     tt_string path;
 

@@ -26,25 +26,26 @@ bool GenerateDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 
     auto* box_sizer = new wxBoxSizer(wxVERTICAL);
 
-    auto* checkBox = new wxCheckBox(this, wxID_ANY, "C++ &Base");
-    checkBox->SetValidator(wxGenericValidator(&m_gen_base_code));
-    box_sizer->Add(checkBox, wxSizerFlags().Border(wxALL));
+    m_checkBaseCode = new wxCheckBox(this, wxID_ANY, "C++ &Base");
+    m_checkBaseCode->SetValidator(wxGenericValidator(&m_gen_base_code));
+    box_sizer->Add(m_checkBaseCode, wxSizerFlags().Border(wxALL));
 
-    checkBox_6 = new wxCheckBox(this, wxID_ANY, "C++ &Inherited");
-    checkBox_6->SetValidator(wxGenericValidator(&m_gen_inherited_code));
-    box_sizer->Add(checkBox_6, wxSizerFlags().Border(wxALL));
+    m_checkDerived = new wxCheckBox(this, wxID_ANY, "C++ &Derived");
+    m_checkDerived->SetValidator(wxGenericValidator(&m_gen_inherited_code));
+    m_checkDerived->SetToolTip("Generate any derived files that don\'t currently exist");
+    box_sizer->Add(m_checkDerived, wxSizerFlags().Border(wxALL));
 
-    auto* checkBox_5 = new wxCheckBox(this, wxID_ANY, "&Python");
-    checkBox_5->SetValidator(wxGenericValidator(&m_gen_python_code));
-    box_sizer->Add(checkBox_5, wxSizerFlags().Border(wxALL));
+    m_checkPython = new wxCheckBox(this, wxID_ANY, "&Python");
+    m_checkPython->SetValidator(wxGenericValidator(&m_gen_python_code));
+    box_sizer->Add(m_checkPython, wxSizerFlags().Border(wxALL));
 
-    auto* checkBox_3 = new wxCheckBox(this, wxID_ANY, "&Ruby");
-    checkBox_3->SetValidator(wxGenericValidator(&m_gen_ruby_code));
-    box_sizer->Add(checkBox_3, wxSizerFlags().Border(wxALL));
+    m_checkRuby = new wxCheckBox(this, wxID_ANY, "&Ruby");
+    m_checkRuby->SetValidator(wxGenericValidator(&m_gen_ruby_code));
+    box_sizer->Add(m_checkRuby, wxSizerFlags().Border(wxALL));
 
-    auto* checkBox_2 = new wxCheckBox(this, wxID_ANY, "&XRC");
-    checkBox_2->SetValidator(wxGenericValidator(&m_gen_xrc_code));
-    box_sizer->Add(checkBox_2, wxSizerFlags().Border(wxALL));
+    m_checkXRC = new wxCheckBox(this, wxID_ANY, "&XRC");
+    m_checkXRC->SetValidator(wxGenericValidator(&m_gen_xrc_code));
+    box_sizer->Add(m_checkXRC, wxSizerFlags().Border(wxALL));
 
     dlg_sizer->Add(box_sizer, wxSizerFlags().Border(wxALL));
 
@@ -84,47 +85,79 @@ bool GenerateDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 
 #include "../wxui/dlg_gen_results.h"
 
-enum
-{
-    GEN_BASE_CODE = 1 << 0,
-    GEN_INHERITED_CODE = 1 << 1,
-    GEN_PYTHON_CODE = 1 << 2,
-    GEN_XRC_CODE = 1 << 3
-};
-
 // This generates the base class files. For the derived class files, see OnGenInhertedClass()
 // in generate/gen_codefiles.cpp
 void MainFrame::OnGenerateCode(wxCommandEvent&)
 {
     ProjectImages.UpdateEmbedNodes();
-    ProjectImages.UpdateEmbedNodes();
+    bool code_generated = false;
+    GenResults results;
+    auto output_type = Project.GetOutputType();
 
-    GenerateDlg dlg(this);
-    if (dlg.ShowModal() == wxID_OK)
+    // First check to see if there is only one code output type. If so, then we can skip the
+    // dialog.
+
+    if (output_type == OUTPUT_CPLUS)
     {
-        GenResults results;
+        GenerateCodeFiles(results);
+        code_generated = true;
+    }
+    else if (output_type == OUTPUT_DERIVED)
+    {
+        GenInhertedClass(results);
+        code_generated = true;
+    }
+    else if (output_type == OUTPUT_PYTHON)
+    {
+        GeneratePythonFiles(results);
+        code_generated = true;
+    }
+    else if (output_type == OUTPUT_RUBY)
+    {
+        GenerateRubyFiles(results);
+        code_generated = true;
+    }
+    else if (output_type == OUTPUT_XRC)
+    {
+        GenerateXrcFiles(results);
+        code_generated = true;
+    }
 
-        if (dlg.is_gen_base())
+    if (!code_generated)
+    {
+        GenerateDlg dlg(this);
+        if (dlg.ShowModal() == wxID_OK)
         {
-            GenerateCodeFiles(results);
+            if (dlg.is_gen_base())
+            {
+                GenerateCodeFiles(results);
+                code_generated = true;
+            }
+            if (dlg.is_gen_inherited())
+            {
+                GenInhertedClass(results);
+                code_generated = true;
+            }
+            if (dlg.is_gen_python())
+            {
+                GeneratePythonFiles(results);
+                code_generated = true;
+            }
+            if (dlg.is_gen_ruby())
+            {
+                GenerateRubyFiles(results);
+                code_generated = true;
+            }
+            if (dlg.is_gen_xrc())
+            {
+                GenerateXrcFiles(results);
+                code_generated = true;
+            }
         }
-        if (dlg.is_gen_inherited())
-        {
-            GenInhertedClass(results);
-        }
-        if (dlg.is_gen_python())
-        {
-            GeneratePythonFiles(results);
-        }
-        if (dlg.is_gen_ruby())
-        {
-            GenerateRubyFiles(results);
-        }
-        if (dlg.is_gen_xrc())
-        {
-            GenerateXrcFiles(results);
-        }
+    }
 
+    if (code_generated)
+    {
         if ((results.updated_files.size() || results.msgs.size()))
         {
             GeneratedResultsDlg results_dlg;
@@ -153,19 +186,34 @@ void MainFrame::OnGenerateCode(wxCommandEvent&)
             msg << '\n' << "All " << results.file_count << " generated files are current";
             wxMessageBox(msg, "Code Generation", wxOK, this);
         }
-
-        UpdateWakaTime();
     }
+
+    UpdateWakaTime();
 }
 
 void GenerateDlg::OnInit(wxInitDialogEvent& event)
 {
+    auto output_type = Project.GetOutputType();
+
     if (Project.as_string(prop_code_preference) == "C++")
     {
         m_gen_python_code = false;
         m_gen_ruby_code = false;
         m_gen_base_code = true;
         m_gen_xrc_code = false;
+
+        if (not(output_type & OUTPUT_XRC))
+        {
+            m_checkXRC->Hide();
+        }
+        if (not(output_type & OUTPUT_PYTHON))
+        {
+            m_checkPython->Hide();
+        }
+        if (not(output_type & OUTPUT_RUBY))
+        {
+            m_checkRuby->Hide();
+        }
     }
     else if (Project.as_string(prop_code_preference) == "Python")
     {
@@ -173,6 +221,23 @@ void GenerateDlg::OnInit(wxInitDialogEvent& event)
         m_gen_ruby_code = false;
         m_gen_base_code = false;
         m_gen_xrc_code = false;
+
+        if (not(output_type & OUTPUT_XRC))
+        {
+            m_checkXRC->Hide();
+        }
+        if (not(output_type & OUTPUT_CPLUS))
+        {
+            m_checkBaseCode->Hide();
+        }
+        if (not(output_type & OUTPUT_DERIVED))
+        {
+            m_checkDerived->Hide();
+        }
+        if (not(output_type & OUTPUT_RUBY))
+        {
+            m_checkRuby->Hide();
+        }
     }
     else if (Project.as_string(prop_code_preference) == "Ruby")
     {
@@ -180,6 +245,23 @@ void GenerateDlg::OnInit(wxInitDialogEvent& event)
         m_gen_ruby_code = true;
         m_gen_base_code = false;
         m_gen_xrc_code = false;
+
+        if (not(output_type & OUTPUT_XRC))
+        {
+            m_checkXRC->Hide();
+        }
+        if (not(output_type & OUTPUT_CPLUS))
+        {
+            m_checkBaseCode->Hide();
+        }
+        if (not(output_type & OUTPUT_DERIVED))
+        {
+            m_checkDerived->Hide();
+        }
+        if (not(output_type & OUTPUT_PYTHON))
+        {
+            m_checkPython->Hide();
+        }
     }
     else if (Project.as_string(prop_code_preference) == "XRC")
     {
@@ -187,13 +269,26 @@ void GenerateDlg::OnInit(wxInitDialogEvent& event)
         m_gen_ruby_code = false;
         m_gen_base_code = false;
         m_gen_xrc_code = true;
+
+        // For XRC preferred files, we still display all the other languages in case the user
+        // is combining XRC with one of those languages.
     }
     else
     {
         m_gen_python_code = false;
         m_gen_ruby_code = false;
-        m_gen_base_code = true;
+        m_gen_base_code = false;
         m_gen_xrc_code = false;
+
+        // We get here if a new language preference has been added but we haven't updated this
+        // dialog to support it yet.
     }
+
+    // Some checkboxes may be hidden at this point, so we need to resize the dialog to fit.
+
+    // You have to reset minimum size to allow the window to shrink
+    SetMinSize(wxSize(-1, -1));
+    Fit();
+
     event.Skip();
 }

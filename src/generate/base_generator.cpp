@@ -243,7 +243,7 @@ bool BaseGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty
     return true;
 }
 
-tt_string BaseGenerator::GetHelpText(Node* node)
+tt_string getClassHelpName(Node* node)
 {
     tt_string class_name(map_GenNames[node->getGenName()]);
     if (!class_name.starts_with("wx"))
@@ -266,6 +266,13 @@ tt_string BaseGenerator::GetHelpText(Node* node)
             class_name.clear();  // Don't return a non-wxWidgets class name
     }
 
+    return class_name;
+}
+
+tt_string BaseGenerator::GetHelpText(Node* node)
+{
+    tt_string class_name = getClassHelpName(node);
+
 #if defined(_DEBUG)
     if (class_name.size())
     {
@@ -280,25 +287,10 @@ extern std::map<std::string_view, std::string_view, std::less<>> g_map_class_pre
 
 tt_string BaseGenerator::GetPythonHelpText(Node* node)
 {
-    auto class_name = node->declName();
-    if (!class_name.starts_with("wx"))
+    tt_string class_name = getClassHelpName(node);
+    if (class_name.empty())
     {
-        if (class_name == "BookPage")
-            class_name = "wxBookCtrl";
-        else if (class_name == "PanelForm")
-            class_name = "wxPanel";
-        else if (class_name == "RibbonBar")
-            class_name = "wxRibbonBar";
-        else if (class_name == "PopupMenu")
-            class_name = "wxMenu";
-        else if (class_name == "ToolBar")
-            class_name = "wxToolBar";
-        else if (class_name == "AuiToolBar")
-            class_name = "wxAuiToolBar";
-        else if (class_name == "StaticCheckboxBoxSizer" || class_name == "StaticRadioBtnBoxSizer")
-            class_name = "wxStaticBoxSizer";
-        else
-            return {};
+        return class_name;
     }
 
     std::string_view prefix = "wx.";
@@ -325,25 +317,10 @@ tt_string BaseGenerator::GetPythonURL(Node* node)
 
 tt_string BaseGenerator::GetRubyHelpText(Node* node)
 {
-    auto class_name = node->declName();
-    if (!class_name.starts_with("wx"))
+    tt_string class_name = getClassHelpName(node);
+    if (class_name.empty())
     {
-        if (class_name == "BookPage")
-            class_name = "wxBookCtrl";
-        else if (class_name == "PanelForm")
-            class_name = "wxPanel";
-        else if (class_name == "RibbonBar")
-            class_name = "wxRibbonBar";
-        else if (class_name == "PopupMenu")
-            class_name = "wxMenu";
-        else if (class_name == "ToolBar")
-            class_name = "wxToolBar";
-        else if (class_name == "AuiToolBar")
-            class_name = "wxAuiToolBar";
-        else if (class_name == "StaticCheckboxBoxSizer" || class_name == "StaticRadioBtnBoxSizer")
-            class_name = "wxStaticBoxSizer";
-        else
-            return {};
+        return class_name;
     }
 
     std::string_view prefix = "Wx::";

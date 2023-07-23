@@ -52,7 +52,11 @@ protected:
 
     // Class member variables
 
-    wxCheckBox* checkBox_6;
+    wxCheckBox* m_checkBaseCode;
+    wxCheckBox* m_checkDerived;
+    wxCheckBox* m_checkPython;
+    wxCheckBox* m_checkRuby;
+    wxCheckBox* m_checkXRC;
     wxStaticText* m_staticText;
 };
 

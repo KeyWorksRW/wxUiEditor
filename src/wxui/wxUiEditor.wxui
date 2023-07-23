@@ -1885,36 +1885,33 @@
             orientation="wxVERTICAL">
             <node
               class="wxCheckBox"
-              class_access="none"
               label="C++ &amp;Base"
-              var_name="checkBox"
+              var_name="m_checkBaseCode"
               get_function="is_gen_base"
               validator_variable="m_gen_base_code" />
             <node
               class="wxCheckBox"
-              label="C++ &amp;Inherited"
-              var_name="checkBox_6"
+              label="C++ &amp;Derived"
+              var_name="m_checkDerived"
               get_function="is_gen_inherited"
-              validator_variable="m_gen_inherited_code" />
+              validator_variable="m_gen_inherited_code"
+              tooltip="Generate any derived files that don't currently exist" />
             <node
               class="wxCheckBox"
-              class_access="none"
               label="&amp;Python"
-              var_name="checkBox_5"
+              var_name="m_checkPython"
               get_function="is_gen_python"
               validator_variable="m_gen_python_code" />
             <node
               class="wxCheckBox"
-              class_access="none"
               label="&amp;Ruby"
-              var_name="checkBox_3"
+              var_name="m_checkRuby"
               get_function="is_gen_ruby"
               validator_variable="m_gen_ruby_code" />
             <node
               class="wxCheckBox"
-              class_access="none"
               label="&amp;XRC"
-              var_name="checkBox_2"
+              var_name="m_checkXRC"
               get_function="is_gen_xrc"
               validator_variable="m_gen_xrc_code" />
           </node>

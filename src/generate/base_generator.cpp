@@ -262,8 +262,22 @@ tt_string getClassHelpName(Node* node)
             class_name = "wxToolBar";
         else if (class_name == "AuiToolBar")
             class_name = "wxAuiToolBar";
+        else if (class_name == "auitool")
+            class_name = "wxAuiToolBarItem";
         else if (class_name == "StaticCheckboxBoxSizer" || class_name == "StaticRadioBtnBoxSizer")
             class_name = "wxStaticBoxSizer";
+        else if (class_name == "Check3State")
+            class_name = "wxCheckBox";
+        else if (class_name == "MenuBar")
+            class_name = "wxMenuBar";
+        else if (class_name == "propGridCategory")
+            class_name = "wxPropertyCategory";
+        else if (class_name == "propGridItem")
+            class_name = "wxPGProperty";
+        else if (class_name == "propGridPage")
+            class_name = "wxPropertyGridPage";
+        else if (class_name == "submenu")
+            class_name = "wxMenu";
         else
             class_name.clear();  // Don't return a non-wxWidgets class name
     }
@@ -312,6 +326,15 @@ tt_string BaseGenerator::GetPythonURL(Node* node)
     tt_string url = GetPythonHelpText(node);
     if (url.empty())
     {
+        auto class_name = map_GenNames[node->getGenName()];
+        if (tt::is_sameas(class_name, "auitool_spacer"))
+        {
+            url = "wx.aui.AuiToolBar.html?highlight=addspacer#wx.aui.AuiToolBar.AddSpacer";
+        }
+        else if (tt::is_sameas(class_name, "auitool_label"))
+        {
+            url = "wx.aui.AuiToolBar.html?highlight=addlabel#wx.aui.AuiToolBar.AddLabel";
+        }
         return url;
     }
     url << ".html";
@@ -342,6 +365,15 @@ tt_string BaseGenerator::GetRubyURL(Node* node)
     tt_string url = GetRubyHelpText(node);
     if (url.empty())
     {
+        auto class_name = map_GenNames[node->getGenName()];
+        if (tt::is_sameas(class_name, "auitool_spacer"))
+        {
+            url = "Wx/AUI/AuiToolBar.html#add_spacer-instance_method";
+        }
+        else if (tt::is_sameas(class_name, "auitool_spacer"))
+        {
+            url = "Wx/AUI/AuiToolBar.html#add_label-instance_method";
+        }
         return url;
     }
     url.Replace("::", "/", true);

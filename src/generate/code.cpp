@@ -98,6 +98,7 @@ std::map<std::string_view, std::string_view, std::less<>> g_map_python_prefix
     { "wxAnimationCtrl", "wx.adv."},
     { "wxAuiNotebook", "wx.aui."},
     { "wxAuiToolBar", "wx.aui."},
+    { "wxAuiToolBarItem", "wx.aui."},
     { "wxBannerWindow", "wx.adv."},
     { "wxCalendarCtrl", "wx.adv."},
     { "wxCommandLinkButton", "wx.adv."},
@@ -133,6 +134,7 @@ std::map<std::string_view, std::string_view, std::less<>> g_map_ruby_prefix
 {
     { "wxAuiNotebook", "Wx::AUI::" },
     { "wxAuiToolBar", "Wx::AUI::" },
+    { "wxAuiToolBarItem", "Wx::AUI::" },
 };
 
 // clang-format on

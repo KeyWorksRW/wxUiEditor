@@ -2571,6 +2571,71 @@
                   </node>
                 </node>
               </node>
+              <node
+                class="BookPage"
+                bitmap="SVG;ruby_logo.svg;[16,16]"
+                label="Ruby"
+                var_name="ruby_page"
+                background_colour="wxSYS_COLOUR_BTNFACE"
+                window_style="wxTAB_TRAVERSAL">
+                <node
+                  class="wxBoxSizer"
+                  orientation="wxVERTICAL"
+                  var_name="page_sizer_3">
+                  <node
+                    class="StaticRadioBtnBoxSizer"
+                    checked="0"
+                    class_access="protected:"
+                    label="Use function"
+                    radiobtn_var_name="m_ruby_radio_use_function"
+                    var_name="m_ruby_function_box"
+                    flags="wxEXPAND"
+                    wxEVT_RADIOBUTTON="OnUsePythonFunction">
+                    <node
+                      class="wxTextCtrl"
+                      var_name="m_ruby_text_function"
+                      flags="wxEXPAND"
+                      wxEVT_TEXT="OnChange" />
+                    <node
+                      class="StaticRadioBtnBoxSizer"
+                      checked="0"
+                      class_access="protected:"
+                      label="Use lambda"
+                      radiobtn_var_name="m_ruby_radio_use_lambda"
+                      var_name="m_ruby_lambda_box"
+                      flags="wxEXPAND"
+                      proportion="1"
+                      wxEVT_RADIOBUTTON="OnUseLambda">
+                      <node
+                        class="wxBoxSizer"
+                        var_name="box_sizer_3" />
+                      <node
+                        class="wxStaticText"
+                        class_access="none"
+                        label="Lambda body:"
+                        var_name="staticText_3" />
+                      <node
+                        class="wxStyledTextCtrl"
+                        additional_carets_blink="1"
+                        indentation_guides="forward"
+                        lexer="RUBY"
+                        multiple_selection_typing="1"
+                        multiple_selections="1"
+                        paste_multiple="1"
+                        symbol_margin="0"
+                        use_tabs="0"
+                        var_name="m_ruby_stc_lambda"
+                        wrap_indent_mode="indent"
+                        wrap_mode="word"
+                        wrap_visual_flag="end"
+                        minimum_size="200,-1d"
+                        border_size="10"
+                        flags="wxEXPAND"
+                        proportion="1" />
+                    </node>
+                  </node>
+                </node>
+              </node>
             </node>
           </node>
           <node

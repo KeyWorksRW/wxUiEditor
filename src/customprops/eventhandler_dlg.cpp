@@ -12,6 +12,7 @@
 #include "code.h"             // Code -- Helper class for generating code
 #include "lambdas.h"          // Functions for formatting and storage of lamda events
 #include "node.h"             // Node class
+#include "node_creator.h"     // NodeCreator -- Class used to create nodes
 #include "node_event.h"       // NodeEventInfo -- NodeEvent and NodeEventInfo classes
 #include "project_handler.h"  // ProjectHandler class
 
@@ -20,6 +21,7 @@ extern const std::unordered_map<std::string_view, const char*> s_EventNames;
 
 // Defined in base_panel.cpp
 extern const char* g_u8_cpp_keywords;
+extern const char* g_ruby_keywords;
 
 #ifndef SCI_SETKEYWORDS
     #define SCI_SETKEYWORDS 4005
@@ -27,10 +29,12 @@ extern const char* g_u8_cpp_keywords;
 
 constexpr size_t EVENT_PAGE_CPP = 0;
 constexpr size_t EVENT_PAGE_PYTHON = 1;
+constexpr size_t EVENT_PAGE_RUBY = 2;
 
 EventHandlerDlg::EventHandlerDlg(wxWindow* parent, NodeEvent* event) : EventHandlerDlgBase(parent), m_event(event)
 {
-    m_is_python_code = (Project.as_string(prop_code_preference) == "Python");
+    m_is_python_code = (Project.getCodePreference() == GEN_LANG_PYTHON);
+    m_is_ruby_code = (Project.getCodePreference() == GEN_LANG_RUBY);
     m_value = event->get_value().make_wxString();
 
     m_cpp_stc_lambda->SetLexer(wxSTC_LEX_CPP);
@@ -53,6 +57,29 @@ EventHandlerDlg::EventHandlerDlg(wxWindow* parent, NodeEvent* event) : EventHand
             keywords.pop_back();
         m_cpp_stc_lambda->SetKeyWords(1, keywords);
         m_cpp_stc_lambda->StyleSetForeground(wxSTC_C_WORD2, wxColour("#E91AFF"));
+
+        // Unfortunately, RUBY_LEXER only supports one set of keywords so we either combine the regular keywords with
+        // the wxWidgets keywords, or we only use the wxWidgets keywords.
+
+        tt_string wxRuby_keywords(g_ruby_keywords);
+        wxRuby_keywords << (" ToolBar MenuBar BitmapBundle Bitmap Window Wx");
+
+        for (auto iter: NodeCreation.getNodeDeclarationArray())
+        {
+            if (!iter)
+            {
+                // This will happen if there is an enumerated value but no generator for it
+                continue;
+            }
+
+            if (!iter->declName().starts_with("wx"))
+                continue;
+            else if (iter->declName().is_sameas("wxContextMenuEvent") || iter->declName() == "wxTreeCtrlBase" ||
+                     iter->declName().starts_with("wxRuby") || iter->declName().starts_with("wxPython"))
+                continue;
+            wxRuby_keywords << ' ' << iter->declName().subview(2);
+        }
+        m_ruby_stc_lambda->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) wxRuby_keywords.c_str());
     }
 
     m_cpp_stc_lambda->StyleSetBold(wxSTC_C_WORD, true);
@@ -65,6 +92,16 @@ EventHandlerDlg::EventHandlerDlg(wxWindow* parent, NodeEvent* event) : EventHand
     m_cpp_stc_lambda->StyleSetForeground(wxSTC_C_COMMENTDOC, wxColour(0, 128, 0));
     m_cpp_stc_lambda->StyleSetForeground(wxSTC_C_COMMENTLINEDOC, wxColour(0, 128, 0));
     m_cpp_stc_lambda->StyleSetForeground(wxSTC_C_NUMBER, *wxRED);
+
+    m_ruby_stc_lambda->StyleSetForeground(wxSTC_RB_WORD, "#FF00FF");
+    m_ruby_stc_lambda->StyleSetForeground(wxSTC_RB_STRING, wxColour(0, 128, 0));
+    m_ruby_stc_lambda->StyleSetForeground(wxSTC_RB_COMMENTLINE, wxColour(0, 128, 0));
+    m_ruby_stc_lambda->StyleSetForeground(wxSTC_RB_NUMBER, *wxRED);
+
+    if (m_is_python_code)
+        m_notebook->SetSelection(EVENT_PAGE_PYTHON);
+    else if (m_is_ruby_code)
+        m_notebook->SetSelection(EVENT_PAGE_RUBY);
 }
 
 void EventHandlerDlg::OnInit(wxInitDialogEvent& WXUNUSED(event))
@@ -83,12 +120,15 @@ void EventHandlerDlg::OnInit(wxInitDialogEvent& WXUNUSED(event))
         }
         m_cpp_text_function->SetValue(m_value);
         m_py_text_function->SetValue(m_value);
+        m_ruby_text_function->SetValue(m_value);
 
         m_cpp_radio_use_function->SetValue(true);
         m_py_radio_use_function->SetValue(true);
+        m_ruby_radio_use_function->SetValue(true);
 
         m_cpp_lambda_box->GetStaticBox()->Enable(false);
         m_py_lambda_box->GetStaticBox()->Enable(false);
+        m_ruby_lambda_box->GetStaticBox()->Enable(false);
     }
     else
     {
@@ -137,6 +177,10 @@ void EventHandlerDlg::OnInit(wxInitDialogEvent& WXUNUSED(event))
         {
             m_notebook->SetSelection(EVENT_PAGE_PYTHON);
         }
+        else if (m_is_ruby_code)
+        {
+            m_notebook->SetSelection(EVENT_PAGE_RUBY);
+        }
 
         value = GetPythonValue(m_value.utf8_string());
         if (value.size())
@@ -170,6 +214,30 @@ void EventHandlerDlg::OnInit(wxInitDialogEvent& WXUNUSED(event))
                 m_py_text_function->SetValue(value.make_wxString());
                 m_py_radio_use_function->SetValue(true);
                 m_py_radio_use_lambda->SetValue(false);
+            }
+        }
+
+        value = GetRubyValue(m_value.utf8_string());
+        if (value.size())
+        {
+            if (auto pos_lambda = value.find('['); pos_lambda != tt::npos)
+            {
+                m_ruby_radio_use_function->SetValue(false);
+                m_ruby_radio_use_lambda->SetValue(true);
+                m_ruby_function_box->GetStaticBox()->Enable(false);
+                m_ruby_lambda_box->GetStaticBox()->Enable(true);
+
+                // remove leading and trailing brackets
+                value.erase(pos_lambda, sizeof("[python:lambda]") - 1);
+
+                // m_ruby_text_lambda->SetValue(value.make_wxString());
+                m_is_ruby_lambda = true;
+            }
+            else
+            {
+                m_ruby_text_function->SetValue(value.make_wxString());
+                m_ruby_radio_use_function->SetValue(true);
+                m_ruby_radio_use_lambda->SetValue(false);
             }
         }
     }
@@ -271,6 +339,7 @@ void EventHandlerDlg::OnPageChanged(wxBookCtrlEvent& event)
             m_is_python_lambda = false;
         }
         m_is_cpp_lambda = m_cpp_radio_use_lambda->GetValue();
+        m_is_ruby_lambda = m_ruby_radio_use_lambda->GetValue();
     }
     else if (event.GetSelection() == EVENT_PAGE_CPP)
     {
@@ -283,6 +352,21 @@ void EventHandlerDlg::OnPageChanged(wxBookCtrlEvent& event)
 
             m_is_cpp_lambda = false;
         }
+        m_is_python_lambda = m_py_radio_use_lambda->GetValue();
+        m_is_ruby_lambda = m_ruby_radio_use_lambda->GetValue();
+    }
+    else if (event.GetSelection() == EVENT_PAGE_RUBY)
+    {
+        if (m_is_ruby_lambda)
+        {
+            m_ruby_radio_use_lambda->SetValue(true);
+            m_ruby_radio_use_function->SetValue(false);
+            m_ruby_function_box->GetStaticBox()->Enable(false);
+            m_ruby_lambda_box->GetStaticBox()->Enable(true);
+
+            m_is_ruby_lambda = false;
+        }
+        m_is_cpp_lambda = m_cpp_radio_use_lambda->GetValue();
         m_is_python_lambda = m_py_radio_use_lambda->GetValue();
     }
 
@@ -410,10 +494,16 @@ void EventHandlerDlg::OnOK(wxCommandEvent& event)
     event.Skip();
 }
 
+// We could just call m_cpp_stc_lambda->GetTextRaw() however this method minimizes both the amount of memory copying
+// done as well as the amount of memory moving.
+
+const int SCI_GETTEXT_MSG = 2182;
+
 void EventHandlerDlg::Update_m_value()
 {
     tt_string cpp_value;
     tt_string py_value;
+    tt_string ruby_value;
 
     if (m_cpp_radio_use_function->GetValue())
     {
@@ -431,11 +521,6 @@ void EventHandlerDlg::Update_m_value()
         if (m_check_include_event->GetValue())
             handler << " event";
 
-        // We could just call m_cpp_stc_lambda->GetTextRaw() however this method minimizes both the amount of memory copying
-        // done as well as the amount of memory moving.
-
-        const int SCI_GETTEXT_MSG = 2182;
-
         // We use \r\n because it allows us to convert them in place to @@
         m_cpp_stc_lambda->ConvertEOLs(wxSTC_EOL_CRLF);
 
@@ -448,6 +533,8 @@ void EventHandlerDlg::Update_m_value()
         handler << "@@}";
         cpp_value = handler;
     }
+
+    // Get the Python value
 
     if (m_py_radio_use_function->GetValue())
     {
@@ -463,6 +550,37 @@ void EventHandlerDlg::Update_m_value()
         m_value = cpp_value.make_wxString();
         return;
     }
+
+    // Get the Ruby value
+
+    if (m_ruby_radio_use_function->GetValue())
+    {
+        ruby_value << "[ruby:" << m_ruby_text_function->GetValue().utf8_string() << "]";
+    }
+    else
+    {
+        tt_string handler;
+
+        // We use \r\n because it allows us to convert them in place to @@
+        m_ruby_stc_lambda->ConvertEOLs(wxSTC_EOL_CRLF);
+
+        auto len = m_ruby_stc_lambda->GetTextLength() + 1;
+        auto buf = std::make_unique<char[]>(len);
+        m_ruby_stc_lambda->SendMsg(SCI_GETTEXT_MSG, len, (wxIntPtr) buf.get());
+        handler << ")@@{@@" << std::string_view(buf.get(), len - 1);
+        handler.Replace("\r\n", "@@", tt::REPLACE::all);
+        handler.RightTrim();
+        handler << "@@}";
+        ruby_value = handler;
+    }
+
+    if (ruby_value.empty())
+    {
+        m_value = cpp_value.make_wxString();
+        return;
+    }
+
+    // Get the C++ value
 
     if (cpp_value.empty())
     {
@@ -492,6 +610,10 @@ tt_string EventHandlerDlg::GetCppValue(tt_string_view value)
     if (auto pos_python = value.find("[python:"); pos_python != tt::npos)
     {
         value.remove_suffix(value.size() - pos_python);
+    }
+    if (auto pos_ruby = value.find("[ruby:"); pos_ruby != tt::npos)
+    {
+        value.remove_suffix(value.size() - pos_ruby);
     }
 
     tt_string result(value);
@@ -525,6 +647,43 @@ tt_string EventHandlerDlg::GetPythonValue(tt_string_view value)
     {
         // This is just a function name, so remove the "[python:" and the trailing ']'
         value.remove_prefix(sizeof("[python:") - 1);
+        if (auto end = value.find(']'); end != tt::npos)
+        {
+            value.remove_suffix(value.size() - end);
+        }
+    }
+
+    result << value;
+    return result;
+}
+
+// This is a static function
+tt_string EventHandlerDlg::GetRubyValue(tt_string_view value)
+{
+    tt_string result;
+    auto pos_python = value.find("[ruby:");
+    if (pos_python == tt::npos)
+    {
+        if (value.front() == '[')
+        {
+            // Unfortunately, this is a static function, so we have no access to m_event.
+            result = "OnEvent";
+        }
+        else
+        {
+            result = value;
+        }
+        return result;
+    }
+    else
+    {
+        value.remove_prefix(pos_python);
+    }
+
+    if (!value.starts_with("[ruby:lambda]"))
+    {
+        // This is just a function name, so remove the "[python:" and the trailing ']'
+        value.remove_prefix(sizeof("[ruby:") - 1);
         if (auto end = value.find(']'); end != tt::npos)
         {
             value.remove_suffix(value.size() - end);

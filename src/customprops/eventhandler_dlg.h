@@ -58,6 +58,8 @@ public:
     // only value specified.
     static tt_string GetPythonValue(tt_string_view value);
 
+    static tt_string GetRubyValue(tt_string_view value);
+
 protected:
     // This is used to colorize member variables in the C++ lambda
     void CollectMemberVariables(Node* node, std::set<std::string>& variables);
@@ -83,7 +85,9 @@ protected:
 private:
     NodeEvent* m_event;
     bool m_is_python_code { false };
+    bool m_is_ruby_code { false };
 
     bool m_is_cpp_lambda { false };
     bool m_is_python_lambda { false };
+    bool m_is_ruby_lambda { false };
 };

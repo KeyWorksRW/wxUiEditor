@@ -62,11 +62,17 @@ protected:
     wxStaticBoxSizer* m_py_function_box;
     wxRadioButton* m_py_radio_use_lambda;
     wxStaticBoxSizer* m_py_lambda_box;
+    wxRadioButton* m_ruby_radio_use_function;
+    wxStaticBoxSizer* m_ruby_function_box;
+    wxRadioButton* m_ruby_radio_use_lambda;
+    wxStaticBoxSizer* m_ruby_lambda_box;
     wxStaticText* m_static_bind_text;
     wxStyledTextCtrl* m_cpp_stc_lambda;
+    wxStyledTextCtrl* m_ruby_stc_lambda;
     wxTextCtrl* m_cpp_text_function;
     wxTextCtrl* m_py_text_function;
     wxTextCtrl* m_py_text_lambda;
+    wxTextCtrl* m_ruby_text_function;
 };
 
 // ************* End of generated code ***********

@@ -2206,83 +2206,6 @@
       </node>
     </node>
     <node
-      class="PanelForm"
-      class_name="CodeDisplayBase"
-      base_file="codedisplay_base"
-      derived_class_name="CodeDisplay">
-      <node
-        class="wxBoxSizer"
-        orientation="wxVERTICAL"
-        var_name="parent_sizer">
-        <node
-          class="wxStyledTextCtrl"
-          indentation_guides="real"
-          read_only="1"
-          symbol_margin="0"
-          use_tabs="0"
-          wrap_indent_mode="indent"
-          wrap_mode="whitespace"
-          wrap_visual_flag="end"
-          wrap_visual_location="end_text"
-          flags="wxEXPAND"
-          proportion="1" />
-      </node>
-    </node>
-    <node
-      class="wxDialog"
-      class_name="CodePreferenceDlg"
-      title="Choose Code Preference"
-      base_file="..\ui\code_preference_dlg"
-      use_derived_class="0">
-      <node
-        class="wxBoxSizer"
-        orientation="wxVERTICAL"
-        var_name="dlg_sizer">
-        <node
-          class="wxStaticText"
-          class_access="none"
-          label="Choose the code you prefer to generate. This will set the project's initial code preference property (which you can change at any time)."
-          var_name="staticText"
-          wrap="350" />
-        <node
-          class="wxBoxSizer"
-          alignment="wxALIGN_CENTER_HORIZONTAL">
-          <node
-            class="wxRadioButton"
-            checked="1"
-            class_access="none"
-            label="&amp;C++"
-            style="wxRB_GROUP"
-            var_name="m_radioBtn_2"
-            get_function="is_gen_cpp"
-            validator_variable="m_gen_cpp_code" />
-          <node
-            class="wxRadioButton"
-            class_access="none"
-            label="&amp;Python"
-            var_name="m_radioBtn_3"
-            get_function="is_gen_python"
-            validator_variable="m_gen_python_code" />
-          <node
-            class="wxRadioButton"
-            class_access="none"
-            label="&amp;Ruby"
-            var_name="m_radioBtn_4"
-            get_function="is_gen_ruby"
-            validator_variable="m_gen_ruby_code" />
-          <node
-            class="wxRadioButton"
-            class_access="none"
-            label="&amp;XRC"
-            get_function="is_gen_xrc"
-            validator_variable="m_gen_xrc_code" />
-        </node>
-        <node
-          class="wxStdDialogButtonSizer"
-          flags="wxEXPAND" />
-      </node>
-    </node>
-    <node
       class="folder"
       label="Custom Property Editors">
       <node
@@ -3261,918 +3184,6 @@
       </node>
     </node>
     <node
-      class="wxDialog"
-      class_name="GeneratedResultsDlg"
-      persist="1"
-      style="wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER"
-      title="Generated Code Results"
-      base_file="dlg_gen_results"
-      use_derived_class="0">
-      <node
-        class="wxBoxSizer"
-        orientation="wxVERTICAL"
-        var_name="dlg_sizer">
-        <node
-          class="wxStaticText"
-          class_access="none"
-          label="Updated files:"
-          var_name="staticText" />
-        <node
-          class="wxListBox"
-          class_access="public:"
-          var_name="m_lb_files"
-          minimum_size="150,100d"
-          flags="wxEXPAND"
-          proportion="1" />
-        <node
-          class="wxStaticText"
-          class_access="none"
-          label="Additional information:"
-          var_name="staticText_2" />
-        <node
-          class="wxListBox"
-          class_access="public:"
-          var_name="m_lb_info"
-          minimum_size="100,40d"
-          flags="wxEXPAND" />
-        <node
-          class="wxStdDialogButtonSizer"
-          Cancel="0"
-          default_button="none"
-          flags="wxEXPAND" />
-      </node>
-    </node>
-    <node
-      class="wxDialog"
-      class_name="GenerateXrcDlg"
-      persist="1"
-      style="wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER"
-      title="Generate XRC File(s)"
-      base_file="..\ui\generate_xrc_dlg"
-      no_closing_brace="1"
-      derived_class_name="GenerateXrcDlg"
-      derived_file="../ui/generate_xrc_dlg"
-      private_members="1"
-      use_derived_class="0"
-      wxEVT_INIT_DIALOG="OnInit">
-      <node
-        class="wxBoxSizer"
-        orientation="wxVERTICAL"
-        var_name="dlg_sizer"
-        flags="wxEXPAND">
-        <node
-          class="StaticRadioBtnBoxSizer"
-          class_access="protected:"
-          label="Combined File"
-          radiobtn_var_name="m_radio_combined"
-          var_name="m_combined_box"
-          flags="wxEXPAND"
-          validator_variable="m_create_combined"
-          wxEVT_RADIOBUTTON="OnCombinedFile">
-          <node
-            class="wxFilePickerCtrl"
-            message="Combined XRC File"
-            style="wxFLP_USE_TEXTCTRL|wxFLP_SAVE"
-            wildcard="*.xrc"
-            minimum_size="120,-1d"
-            flags="wxEXPAND"
-            proportion="1"
-            wxEVT_FILEPICKER_CHANGED="OnCombinedFilenameChanged" />
-        </node>
-        <node
-          class="StaticRadioBtnBoxSizer"
-          checked="0"
-          class_access="protected:"
-          label="Separate Files"
-          radiobtn_var_name="m_radio_separate"
-          var_name="m_separate_box"
-          flags="wxEXPAND"
-          wxEVT_RADIOBUTTON="OnSeparateFiles">
-          <node
-            class="wxStaticText"
-            class_access="none"
-            label="Forms not listed do not have xrc_file set."
-            var_name="staticText" />
-          <node
-            class="wxListBox"
-            minimum_size="-1,50d"
-            flags="wxEXPAND"
-            proportion="1" />
-        </node>
-        <node
-          class="wxStdDialogButtonSizer"
-          OK="0"
-          Save="1"
-          default_button="none"
-          flags="wxEXPAND"
-          SaveButtonClicked="OnSave" />
-      </node>
-    </node>
-    <node
-      class="wxDialog"
-      class_name="GridBagItemBase"
-      title="Append or Insert into wxGridBagSizer"
-      base_file="gridbag_item_base"
-      derived_class_name="GridBagItem"
-      wxEVT_INIT_DIALOG="OnInit">
-      <node
-        class="wxBoxSizer"
-        orientation="wxVERTICAL"
-        var_name="dlg_sizer"
-        flags="wxEXPAND">
-        <node
-          class="wxFlexGridSizer"
-          cols="4"
-          hgap="5">
-          <node
-            class="wxStaticText"
-            class_access="none"
-            label="&amp;Column:"
-            var_name="staticText"
-            alignment="wxALIGN_CENTER_VERTICAL" />
-          <node
-            class="wxSpinCtrl"
-            var_name="m_spin_column"
-            borders="wxTOP|wxBOTTOM|wxRIGHT"
-            wxEVT_SPINCTRL="OnColumn" />
-          <node
-            class="wxStaticText"
-            class_access="none"
-            label="Span c&amp;olumns:"
-            var_name="staticText_2"
-            alignment="wxALIGN_CENTER_VERTICAL" />
-          <node
-            class="wxSpinCtrl"
-            initial="1"
-            min="1"
-            var_name="m_spin_span_column"
-            borders="wxTOP|wxBOTTOM|wxRIGHT" />
-          <node
-            class="wxStaticText"
-            class_access="none"
-            label="&amp;Row:"
-            var_name="staticText_3"
-            alignment="wxALIGN_CENTER_VERTICAL" />
-          <node
-            class="wxSpinCtrl"
-            var_name="m_spin_row"
-            borders="wxTOP|wxBOTTOM|wxRIGHT"
-            wxEVT_SPINCTRL="OnRow" />
-          <node
-            class="wxStaticText"
-            class_access="none"
-            label="Span ro&amp;ws:"
-            var_name="staticText_4"
-            alignment="wxALIGN_CENTER_VERTICAL" />
-          <node
-            class="wxSpinCtrl"
-            initial="1"
-            min="1"
-            var_name="m_spin_span_row"
-            borders="wxTOP|wxBOTTOM|wxRIGHT" />
-        </node>
-        <node
-          class="wxInfoBar"
-          flags="wxEXPAND"
-          proportion="1" />
-        <node
-          class="wxBoxSizer">
-          <node
-            class="wxRadioButton"
-            label="Insert &amp;column"
-            style="wxRB_GROUP"
-            var_name="m_radio_column"
-            hidden="1" />
-          <node
-            class="wxRadioButton"
-            label="Insert &amp;row"
-            var_name="m_radio_row"
-            hidden="1" />
-        </node>
-        <node
-          class="wxStdDialogButtonSizer"
-          flags="wxEXPAND"
-          OKButtonClicked="OnOK" />
-      </node>
-    </node>
-    <node
-      class="wxDialog"
-      class_name="GridPropertyDlg"
-      title="Property Editor"
-      base_file="grid_property_dlg"
-      source_preamble="// This is the base class for editing multiple-field properties"
-      wxEVT_INIT_DIALOG="OnInit"
-      wxEVT_UPDATE_UI="OnUpdateUI">
-      <node
-        class="wxBoxSizer"
-        orientation="wxVERTICAL"
-        var_name="dlg_sizer"
-        flags="wxEXPAND">
-        <node
-          class="wxBoxSizer">
-          <node
-            class="wxStaticText"
-            label="property label"
-            var_comment="Shown to the left of the toolbar"
-            var_name="m_prop_label"
-            alignment="wxALIGN_CENTER" />
-          <node
-            class="wxToolBar"
-            style="wxTB_HORIZONTAL|wxTB_NODIVIDER">
-            <node
-              class="tool"
-              bitmap="Art;wxART_NEW|wxART_TOOLBAR"
-              id="id_NewRow"
-              label=""
-              var_name="tool_new"
-              wxEVT_TOOL="OnNewRow" />
-            <node
-              class="tool"
-              bitmap="Art;wxART_DELETE|wxART_TOOLBAR"
-              id="id_DeleteRow"
-              label=""
-              var_name="tool_delete"
-              wxEVT_TOOL="OnDeleteRow" />
-            <node
-              class="tool"
-              bitmap="Art;wxART_UNDO|wxART_TOOLBAR"
-              id="id_UndoDeleteRow"
-              label=""
-              var_name="tool_undo_delete"
-              wxEVT_TOOL="OnUndoDelete" />
-          </node>
-        </node>
-        <node
-          class="wxGrid"
-          cell_vert_alignment="wxALIGN_CENTER"
-          col_label_values="name;value"
-          cols="2"
-          drag_row_size="0"
-          rows="1"
-          selection_mode="wxGridSelectRows"
-          flags="wxEXPAND"
-          proportion="1" />
-        <node
-          class="wxStaticText"
-          label="Help text"
-          var_comment="Shown below the grid (initially hidden)"
-          var_name="m_help_text"
-          wrap="300"
-          hidden="1" />
-        <node
-          class="wxStdDialogButtonSizer"
-          flags="wxEXPAND"
-          CancelButtonClicked="OnCancel"
-          OKButtonClicked="OnOK" />
-      </node>
-    </node>
-    <node
-      class="wxDialog"
-      class_name="ImportBase"
-      icon="SVG;../art_src/import.svg;[16,16]"
-      title="New Imported Project"
-      base_file="import_base"
-      derived_class_name="ImportDlg"
-      wxEVT_INIT_DIALOG="OnInitDialog">
-      <node
-        class="wxBoxSizer"
-        orientation="wxVERTICAL"
-        var_name="parent_sizer"
-        flags="wxEXPAND">
-        <node
-          class="wxStaticBoxSizer"
-          class_access="protected:"
-          label="Import Type"
-          var_name="m_import_staticbox"
-          flags="wxEXPAND">
-          <node
-            class="wxFlexGridSizer">
-            <node
-              class="wxRadioButton"
-              label="wx&amp;Crafter Project(s)"
-              style="wxRB_GROUP"
-              var_name="m_radio_wxCrafter"
-              wxEVT_RADIOBUTTON="OnCrafter" />
-            <node
-              class="wxRadioButton"
-              label="wx&amp;FormBuilder Project(s)"
-              var_name="m_radio_wxFormBuilder"
-              wxEVT_RADIOBUTTON="OnFormBuilder" />
-            <node
-              class="wxRadioButton"
-              label="wx&amp;Glade Project(s)"
-              var_name="m_radio_wxGlade"
-              column="1"
-              wxEVT_RADIOBUTTON="OnWxGlade" />
-            <node
-              class="wxRadioButton"
-              label="wx&amp;Smith Project(s)"
-              var_name="m_radio_wxSmith"
-              column="1"
-              wxEVT_RADIOBUTTON="OnWxSmith" />
-            <node
-              class="wxRadioButton"
-              label="&amp;Windows Resource"
-              var_name="m_radio_WindowsResource"
-              row="1"
-              wxEVT_RADIOBUTTON="OnWindowsResource" />
-            <node
-              class="wxRadioButton"
-              label="&amp;DialogBlocks File(s)"
-              var_name="m_radio_DialogBlocks"
-              hidden="1"
-              column="1"
-              row="1"
-              wxEVT_RADIOBUTTON="OnDialogBlocks" />
-            <node
-              class="wxRadioButton"
-              label="&amp;XRC File(s)"
-              var_name="m_radio_XRC"
-              column="1"
-              row="1"
-              wxEVT_RADIOBUTTON="OnXRC" />
-          </node>
-          <node
-            class="wxBoxSizer">
-            <node
-              class="wxComboBox"
-              var_name="m_combo_recent_dirs"
-              hidden="1"
-              minimum_size="-1,-1"
-              wxEVT_COMBOBOX="OnRecentDir" />
-            <node
-              class="wxButton"
-              label="Remove"
-              var_comment="Remove file from history"
-              var_name="m_btnRemove"
-              hidden="1"
-              wxEVT_BUTTON="OnRemove" />
-          </node>
-          <node
-            class="wxBoxSizer"
-            var_name="box_sizer6"
-            flags="wxEXPAND">
-            <node
-              class="wxButton"
-              label="&amp;Directory..."
-              var_name="m_btnAddFile"
-              tooltip="You can add multiple formbuilder projects to a single wxUiEdtior project."
-              alignment="wxALIGN_CENTER_VERTICAL"
-              borders="wxTOP|wxRIGHT|wxLEFT"
-              wxEVT_BUTTON="OnDirectory" />
-            <node
-              class="wxStaticText"
-              label="..."
-              style="wxST_ELLIPSIZE_MIDDLE"
-              var_name="m_static_cwd"
-              alignment="wxALIGN_CENTER_VERTICAL"
-              proportion="1" />
-          </node>
-          <node
-            class="wxBoxSizer"
-            orientation="wxVERTICAL"
-            var_name="box_sizer7"
-            flags="wxEXPAND"
-            proportion="1">
-            <node
-              class="wxStaticText"
-              label="&amp;Files:"
-              var_name="m_staticImportList"
-              borders="wxLEFT|wxRIGHT|wxTOP" />
-            <node
-              class="wxCheckListBox"
-              var_name="m_checkListProjects"
-              minimum_size="-1,240"
-              flags="wxEXPAND"
-              wxEVT_CHECKLISTBOX="OnCheckFiles" />
-            <node
-              class="wxBoxSizer"
-              var_name="box_sizer_2">
-              <node
-                class="wxButton"
-                class_access="none"
-                label="Select &amp;All"
-                var_name="btn_2"
-                wxEVT_BUTTON="OnSelectAll" />
-              <node
-                class="wxButton"
-                class_access="none"
-                label="Select &amp;None"
-                var_name="btn__2"
-                wxEVT_BUTTON="OnSelectNone" />
-            </node>
-          </node>
-        </node>
-        <node
-          class="wxStdDialogButtonSizer"
-          class_access="protected:"
-          var_name="m_stdBtn"
-          flags="wxEXPAND"
-          OKButtonClicked="OnOK" />
-      </node>
-    </node>
-    <node
-      class="wxDialog"
-      class_name="ImportWinRes"
-      title="Import Windows Resource Dialogs"
-      base_file="..\import\import_winres_dlg"
-      no_closing_brace="1"
-      derived_class_name="ImportWinRes"
-      private_members="1"
-      use_derived_class="0"
-      wxEVT_INIT_DIALOG="OnInit">
-      <node
-        class="wxBoxSizer"
-        orientation="wxVERTICAL"
-        var_name="parent_sizer">
-        <node
-          class="wxBoxSizer"
-          orientation="wxVERTICAL"
-          var_name="box_sizer4"
-          flags="wxEXPAND"
-          proportion="1">
-          <node
-            class="wxStaticText"
-            label="&amp;Resource File:"
-            var_name="m_staticResFile"
-            borders="wxLEFT|wxRIGHT|wxTOP" />
-          <node
-            class="wxFilePickerCtrl"
-            style="wxFLP_FILE_MUST_EXIST|wxFLP_OPEN|wxFLP_USE_TEXTCTRL"
-            var_name="m_fileResource"
-            wildcard="Resource Files|*.rc;*.dlg||"
-            minimum_size="240,-1"
-            flags="wxEXPAND"
-            wxEVT_FILEPICKER_CHANGED="OnResourceFile" />
-        </node>
-        <node
-          class="wxBoxSizer"
-          orientation="wxVERTICAL"
-          var_name="box_sizer5"
-          flags="wxEXPAND">
-          <node
-            class="wxStaticText"
-            label="&amp;Dialogs to Import"
-            borders="wxLEFT|wxRIGHT|wxTOP" />
-          <node
-            class="wxCheckListBox"
-            var_name="m_checkListResUI"
-            minimum_size="-1,160"
-            tooltip="Uncheck any resources you don't want converted."
-            flags="wxEXPAND" />
-          <node
-            class="wxBoxSizer"
-            flags="wxEXPAND">
-            <node
-              class="wxButton"
-              label="Select &amp;All"
-              var_name="m_btnSelectAll"
-              wxEVT_BUTTON="OnSelectAll" />
-            <node
-              class="wxButton"
-              label="&amp;Clear All"
-              var_name="m_btnClearAll"
-              wxEVT_BUTTON="OnClearAll" />
-          </node>
-        </node>
-        <node
-          class="wxStdDialogButtonSizer"
-          flags="wxEXPAND"
-          OKButtonClicked="OnOk" />
-      </node>
-    </node>
-    <node
-      class="wxDialog"
-      class_name="InsertWidget"
-      icon="Art;wxART_EDIT|wxART_MENU"
-      title="Insert Widget"
-      minimum_size="-1,-1"
-      base_file="insert_widget"
-      inserted_hdr_code="tt_string GetWidget() { return m_widget; }"
-      class_members="&quot;tt_string m_widget;&quot;"
-      derived_class_name="InsertWidget"
-      private_members="1"
-      use_derived_class="0"
-      wxEVT_INIT_DIALOG="OnInit">
-      <node
-        class="wxBoxSizer"
-        orientation="wxVERTICAL"
-        minimum_size="300,400"
-        flags="wxEXPAND">
-        <node
-          class="wxBoxSizer"
-          var_name="box_sizer_2"
-          flags="wxEXPAND">
-          <node
-            class="wxStaticText"
-            class_access="none"
-            label="&amp;Name:"
-            var_name="staticText"
-            alignment="wxALIGN_CENTER_VERTICAL" />
-          <node
-            class="wxTextCtrl"
-            hint="type a portion of the name to filter the list"
-            var_name="m_text_name"
-            tooltip="Use Up/Down arrows to change list selection"
-            proportion="1"
-            wxEVT_TEXT="OnNameText"
-            wxEVT_KEY_DOWN="OnKeyDown" />
-        </node>
-        <node
-          class="wxBoxSizer"
-          var_name="box_sizer_4">
-          <node
-            class="wxStaticText"
-            class_access="none"
-            label="Only widgets that can be a child of the currently selected widget are shown. If the list is empty, no children can be added."
-            var_name="staticText_2"
-            wrap="300" />
-        </node>
-        <node
-          class="wxBoxSizer"
-          var_name="box_sizer_3"
-          flags="wxEXPAND"
-          proportion="1">
-          <node
-            class="wxListBox"
-            style="wxLB_SORT"
-            size="-1,300"
-            flags="wxEXPAND"
-            proportion="1"
-            wxEVT_LISTBOX="[this](wxCommandEvent&amp;)@@{@@m_stdBtn->GetAffirmativeButton()->Enable();@@}"
-            wxEVT_LISTBOX_DCLICK="OnListBoxDblClick" />
-        </node>
-        <node
-          class="wxStdDialogButtonSizer"
-          class_access="protected:"
-          var_name="m_stdBtn"
-          flags="wxEXPAND"
-          OKButtonClicked="OnOK" />
-      </node>
-    </node>
-    <node
-      class="folder"
-      label="Menus">
-      <node
-        class="PopupMenu"
-        class_name="MenuAuiBar"
-        base_file="menu_auibar"
-        generate_ids="0"
-        source_preamble="#include &quot;ribbon_ids.h&quot;@@#include &quot;gen_enums.h&quot;     // Enumerations for generators@@@@using namespace GenEnum;"
-        use_derived_class="0">
-        <node
-          class="wxMenuItem"
-          bitmap="Embed;tool.png"
-          help="Insert a normal button tool"
-          id="gen_auitool"
-          label="Add Tool"
-          var_name="menu_item_6" />
-        <node
-          class="wxMenuItem"
-          bitmap="Embed;wxStaticText.png"
-          help="Insert a Label"
-          id="gen_auitool_label"
-          label="Add Label"
-          var_name="menu_item_2" />
-        <node
-          class="wxMenuItem"
-          bitmap="Embed;toolseparator.png"
-          help="Add space to separate tools"
-          id="gen_toolSeparator"
-          label="Add Separator"
-          var_name="menu_item_9" />
-        <node
-          class="wxMenuItem"
-          bitmap="Embed;toolspacer.png"
-          help="Add space to separate tools"
-          id="gen_auitool_spacer"
-          label="Add Spacer"
-          var_name="menu_item_4" />
-        <node
-          class="wxMenuItem"
-          bitmap="Embed;toolStretchable.png"
-          help="Add space to separate tools"
-          id="gen_auitool_stretchable"
-          label="Add Stretchable Space"
-          var_name="menu_item_5" />
-        <node
-          class="separator" />
-        <node
-          class="wxMenuItem"
-          bitmap="Embed;wxComboBox.png"
-          help="Add a wxComboBox control"
-          id="gen_wxComboBox"
-          label="Add Combobox"
-          var_name="menu_item_3" />
-        <node
-          class="wxMenuItem"
-          bitmap="Embed;slider.png"
-          help="Add a wxSlider control"
-          id="gen_wxSlider"
-          label="Add Slider"
-          var_name="menu_item_7" />
-        <node
-          class="wxMenuItem"
-          bitmap="Embed;spin_ctrl.png"
-          help="Add a wxSpinCtrl control"
-          id="gen_wxSpinCtrl"
-          label="Add Spin Control"
-          var_name="menu_item_8" />
-      </node>
-      <node
-        class="PopupMenu"
-        class_name="MenuButton"
-        base_file="menubutton"
-        generate_ids="0"
-        source_preamble="#include &quot;ribbon_ids.h&quot;@@#include &quot;gen_enums.h&quot;     // Enumerations for generators@@@@using namespace GenEnum;"
-        derived_class_name="MenuButton"
-        use_derived_class="0">
-        <node
-          class="wxMenuItem"
-          bitmap="Embed;wxButton.png"
-          id="gen_wxButton"
-          label="Insert wxButton" />
-        <node
-          class="wxMenuItem"
-          bitmap="Embed;toggle_button.png"
-          id="gen_wxToggleButton"
-          label="Insert wxToggleButton"
-          var_name="menu_item_2" />
-        <node
-          class="wxMenuItem"
-          bitmap="Embed;stddialogbuttonsizer.png"
-          id="gen_wxStdDialogButtonSizer"
-          label="Insert wxStdDialogButtonSizer"
-          var_name="menu_item_3" />
-        <node
-          class="wxMenuItem"
-          bitmap="Embed;wxCommandLinkButton.png"
-          id="gen_wxCommandLinkButton"
-          label="Insert wxCommandLinkButton"
-          var_name="menu_item_4" />
-        <node
-          class="wxMenuItem"
-          bitmap="Embed;close_btn.png"
-          id="gen_CloseButton"
-          label="Insert Close Button"
-          var_name="menu_item_5" />
-      </node>
-      <node
-        class="PopupMenu"
-        class_name="MenuBarTools"
-        base_file="menu_bartools"
-        generate_ids="0"
-        source_preamble="#include &quot;ribbon_ids.h&quot;@@#include &quot;gen_enums.h&quot;     // Enumerations for generators@@@@using namespace GenEnum;"
-        use_derived_class="0">
-        <node
-          class="wxMenuItem"
-          bitmap="Embed;tool.png"
-          help="Insert a normal button tool"
-          id="gen_tool"
-          label="Add Tool" />
-        <node
-          class="wxMenuItem"
-          bitmap="Embed;tool_dropdown.png"
-          help="Add Dropdown tool that you can add menu items to."
-          id="gen_tool_dropdown"
-          label="Add Dropdown"
-          var_name="menu_item_2" />
-        <node
-          class="wxMenuItem"
-          bitmap="Embed;toolspacer.png"
-          help="Add space to separate tools"
-          id="gen_toolSeparator"
-          label="Add Space"
-          var_name="menu_item_4" />
-        <node
-          class="wxMenuItem"
-          bitmap="Embed;toolStretchable.png"
-          help="Add space to separate tools"
-          id="gen_toolStretchable"
-          label="Add Stretchable Space"
-          var_name="menu_item_5" />
-        <node
-          class="separator" />
-        <node
-          class="wxMenuItem"
-          bitmap="Embed;wxComboBox.png"
-          help="Add a wxComboBox control"
-          id="gen_wxComboBox"
-          label="Add Combobox"
-          var_name="menu_item_3" />
-        <node
-          class="wxMenuItem"
-          bitmap="Embed;slider.png"
-          help="Add a wxSlider control"
-          id="gen_wxSlider"
-          label="Add Slider"
-          var_name="menu_item_6" />
-        <node
-          class="wxMenuItem"
-          bitmap="Embed;spin_ctrl.png"
-          help="Add a wxSpinCtrl control"
-          id="gen_wxSpinCtrl"
-          label="Add Spin Control"
-          var_name="menu_item_7" />
-      </node>
-      <node
-        class="PopupMenu"
-        class_name="MenuCheckbox"
-        base_file="menucheckbox"
-        generate_ids="0"
-        source_preamble="#include &quot;ribbon_ids.h&quot;@@#include &quot;gen_enums.h&quot;     // Enumerations for generators@@@@using namespace GenEnum;"
-        derived_class_name="MenuCheckbox"
-        use_derived_class="0">
-        <node
-          class="wxMenuItem"
-          bitmap="Embed;wxCheckBox.png"
-          help="Insert a normal two-state checkbox"
-          id="gen_wxCheckBox"
-          label="Insert wxCheckBox" />
-        <node
-          class="wxMenuItem"
-          bitmap="Embed;check3state.png"
-          help="Insert a 3-state checkbox"
-          id="gen_Check3State"
-          label="Insert 3-state wxCheckBox"
-          var_name="menu_item_2" />
-      </node>
-      <node
-        class="PopupMenu"
-        class_name="MenuCombobox"
-        base_file="menucombobox"
-        generate_ids="0"
-        source_preamble="#include &quot;ribbon_ids.h&quot;@@#include &quot;gen_enums.h&quot;     // Enumerations for generators@@@@using namespace GenEnum;"
-        derived_class_name="MenuCombobox"
-        use_derived_class="0">
-        <node
-          class="wxMenuItem"
-          bitmap="Embed;wxComboBox.png"
-          id="gen_wxComboBox"
-          label="Insert wxComboBox" />
-        <node
-          class="wxMenuItem"
-          bitmap="Embed;wxChoice.png"
-          id="gen_wxChoice"
-          label="Insert wxChoice"
-          var_name="menu_item_2" />
-        <node
-          class="wxMenuItem"
-          bitmap="Embed;bmp_combo_box.png"
-          id="gen_wxBitmapComboBox"
-          label="Insert wxBitmapComboBox"
-          var_name="menu_item_3" />
-      </node>
-      <node
-        class="PopupMenu"
-        class_name="MenuDataCtrl"
-        base_file="menudatactrl"
-        generate_ids="0"
-        source_preamble="#include &quot;ribbon_ids.h&quot;@@#include &quot;gen_enums.h&quot;     // Enumerations for generators@@@@using namespace GenEnum;"
-        derived_class_name="MenuDataCtrl"
-        use_derived_class="0">
-        <node
-          class="wxMenuItem"
-          bitmap="Embed;dataview_ctrl.png"
-          id="gen_wxDataViewCtrl"
-          label="Insert wxDataViewCtrl" />
-        <node
-          class="wxMenuItem"
-          bitmap="Embed;dataviewtree_ctrl.png"
-          id="gen_wxDataViewTreeCtrl"
-          label="Insert wxDataViewTreeCtrl"
-          var_name="menu_item_2" />
-        <node
-          class="wxMenuItem"
-          bitmap="Embed;dataviewlist_ctrl.png"
-          id="gen_wxDataViewListCtrl"
-          label="Insert wxDataViewListCtrl"
-          var_name="menu_item_3" />
-      </node>
-      <node
-        class="PopupMenu"
-        class_name="MenuListbox"
-        base_file="menulistbox"
-        generate_ids="0"
-        source_preamble="#include &quot;ribbon_ids.h&quot;@@#include &quot;gen_enums.h&quot;     // Enumerations for generators@@@@using namespace GenEnum;"
-        derived_class_name="MenuListbox"
-        use_derived_class="0">
-        <node
-          class="wxMenuItem"
-          bitmap="Embed;wxListBox.png"
-          id="gen_wxListBox"
-          label="Insert wxListBox" />
-        <node
-          class="wxMenuItem"
-          bitmap="Embed;wxCheckListBox.png"
-          id="gen_wxCheckListBox"
-          label="Insert wxCheckListBox"
-          var_name="menu_item_2" />
-        <node
-          class="wxMenuItem"
-          bitmap="Embed;wxEditListBox.png"
-          id="gen_wxEditableListBox"
-          label="Insert wxEditableListBox"
-          var_name="menu_item_6" />
-        <node
-          class="wxMenuItem"
-          bitmap="Embed;wxListView.png"
-          id="gen_wxListView"
-          label="Insert wxListView"
-          var_name="menu_item_3" />
-        <node
-          class="wxMenuItem"
-          bitmap="Embed;wxRearrangeCtrl.png"
-          id="gen_wxRearrangeCtrl"
-          label="Insert wxRearrangeCtrl"
-          var_name="menu_item_4" />
-        <node
-          class="wxMenuItem"
-          bitmap="Embed;wxSimpleHtmlListBox.png"
-          id="gen_wxSimpleHtmlListBox"
-          label="Insert wxSimpleHtmlListBox"
-          var_name="menu_item_5" />
-      </node>
-      <node
-        class="PopupMenu"
-        class_name="MenuRibbonType"
-        base_file="menuribbontype"
-        generate_ids="0"
-        source_preamble="#include &quot;ribbon_ids.h&quot;@@#include &quot;gen_enums.h&quot;     // Enumerations for generators@@@@using namespace GenEnum;"
-        derived_class_name="MenuRibbonType"
-        use_derived_class="0">
-        <node
-          class="wxMenuItem"
-          bitmap="Embed;ribbon_buttonbar.png"
-          id="gen_wxRibbonButtonBar"
-          label="Insert wxRibbonButtonBar" />
-        <node
-          class="wxMenuItem"
-          bitmap="Embed;ribbon_bar.png"
-          id="gen_wxRibbonToolBar"
-          label="Insert wxRibbonToolBar"
-          var_name="menu_item_2" />
-        <node
-          class="wxMenuItem"
-          bitmap="Embed;ribbon_gallery.png"
-          id="gen_wxRibbonGallery"
-          label="Insert wxRibbonGallery"
-          var_name="menu_item_3" />
-      </node>
-      <node
-        class="PopupMenu"
-        class_name="MenuSpin"
-        base_file="menuspin"
-        generate_ids="0"
-        source_preamble="#include &quot;ribbon_ids.h&quot;@@#include &quot;gen_enums.h&quot;     // Enumerations for generators@@@@using namespace GenEnum;"
-        derived_class_name="MenuSpin"
-        use_derived_class="0">
-        <node
-          class="wxMenuItem"
-          bitmap="Embed;spin_ctrl.png"
-          id="gen_wxSpinCtrl"
-          label="Insert wxSpinCtrl" />
-        <node
-          class="wxMenuItem"
-          bitmap="Embed;spin_ctrl_double.png"
-          id="gen_wxSpinCtrlDouble"
-          label="Insert wxSpinCtrlDouble"
-          var_name="menu_item_2" />
-        <node
-          class="wxMenuItem"
-          bitmap="Embed;spinbtn.png"
-          id="gen_wxSpinButton"
-          label="Insert wxSpinButton"
-          var_name="menu_item_3" />
-      </node>
-      <node
-        class="PopupMenu"
-        class_name="MenuStaticSizer"
-        base_file="menustaticsizer"
-        generate_ids="0"
-        source_preamble="#include &quot;ribbon_ids.h&quot;@@#include &quot;gen_enums.h&quot;     // Enumerations for generators@@@@using namespace GenEnum;"
-        derived_class_name="MenuStaticSizer"
-        use_derived_class="0">
-        <node
-          class="wxMenuItem"
-          bitmap="Embed;wxStaticBoxSizer.png"
-          id="gen_wxStaticBoxSizer"
-          label="Insert wxStaticBoxSizer" />
-        <node
-          class="wxMenuItem"
-          bitmap="Embed;wxStaticCheckBoxSizer.png"
-          id="gen_StaticCheckboxBoxSizer"
-          label="Insert CheckBox wxStaticBoxSizer"
-          var_name="menu_item_2" />
-        <node
-          class="wxMenuItem"
-          bitmap="Embed;wxStaticRadioBtnSizer.png"
-          id="gen_StaticRadioBtnBoxSizer"
-          label="Insert RadioButton wxStaticBoxSizer"
-          var_name="menu_item_3" />
-      </node>
-    </node>
-    <node
       class="folder"
       label="Dialogs for New Forms">
       <node
@@ -4849,6 +3860,995 @@
             class="wxStdDialogButtonSizer"
             flags="wxEXPAND" />
         </node>
+      </node>
+    </node>
+    <node
+      class="folder"
+      label="Menus">
+      <node
+        class="PopupMenu"
+        class_name="MenuAuiBar"
+        base_file="menu_auibar"
+        generate_ids="0"
+        source_preamble="#include &quot;ribbon_ids.h&quot;@@#include &quot;gen_enums.h&quot;     // Enumerations for generators@@@@using namespace GenEnum;"
+        use_derived_class="0">
+        <node
+          class="wxMenuItem"
+          bitmap="Embed;tool.png"
+          help="Insert a normal button tool"
+          id="gen_auitool"
+          label="Add Tool"
+          var_name="menu_item_6" />
+        <node
+          class="wxMenuItem"
+          bitmap="Embed;wxStaticText.png"
+          help="Insert a Label"
+          id="gen_auitool_label"
+          label="Add Label"
+          var_name="menu_item_2" />
+        <node
+          class="wxMenuItem"
+          bitmap="Embed;toolseparator.png"
+          help="Add space to separate tools"
+          id="gen_toolSeparator"
+          label="Add Separator"
+          var_name="menu_item_9" />
+        <node
+          class="wxMenuItem"
+          bitmap="Embed;toolspacer.png"
+          help="Add space to separate tools"
+          id="gen_auitool_spacer"
+          label="Add Spacer"
+          var_name="menu_item_4" />
+        <node
+          class="wxMenuItem"
+          bitmap="Embed;toolStretchable.png"
+          help="Add space to separate tools"
+          id="gen_auitool_stretchable"
+          label="Add Stretchable Space"
+          var_name="menu_item_5" />
+        <node
+          class="separator" />
+        <node
+          class="wxMenuItem"
+          bitmap="Embed;wxComboBox.png"
+          help="Add a wxComboBox control"
+          id="gen_wxComboBox"
+          label="Add Combobox"
+          var_name="menu_item_3" />
+        <node
+          class="wxMenuItem"
+          bitmap="Embed;slider.png"
+          help="Add a wxSlider control"
+          id="gen_wxSlider"
+          label="Add Slider"
+          var_name="menu_item_7" />
+        <node
+          class="wxMenuItem"
+          bitmap="Embed;spin_ctrl.png"
+          help="Add a wxSpinCtrl control"
+          id="gen_wxSpinCtrl"
+          label="Add Spin Control"
+          var_name="menu_item_8" />
+      </node>
+      <node
+        class="PopupMenu"
+        class_name="MenuButton"
+        base_file="menubutton"
+        generate_ids="0"
+        source_preamble="#include &quot;ribbon_ids.h&quot;@@#include &quot;gen_enums.h&quot;     // Enumerations for generators@@@@using namespace GenEnum;"
+        derived_class_name="MenuButton"
+        use_derived_class="0">
+        <node
+          class="wxMenuItem"
+          bitmap="Embed;wxButton.png"
+          id="gen_wxButton"
+          label="Insert wxButton" />
+        <node
+          class="wxMenuItem"
+          bitmap="Embed;toggle_button.png"
+          id="gen_wxToggleButton"
+          label="Insert wxToggleButton"
+          var_name="menu_item_2" />
+        <node
+          class="wxMenuItem"
+          bitmap="Embed;stddialogbuttonsizer.png"
+          id="gen_wxStdDialogButtonSizer"
+          label="Insert wxStdDialogButtonSizer"
+          var_name="menu_item_3" />
+        <node
+          class="wxMenuItem"
+          bitmap="Embed;wxCommandLinkButton.png"
+          id="gen_wxCommandLinkButton"
+          label="Insert wxCommandLinkButton"
+          var_name="menu_item_4" />
+        <node
+          class="wxMenuItem"
+          bitmap="Embed;close_btn.png"
+          id="gen_CloseButton"
+          label="Insert Close Button"
+          var_name="menu_item_5" />
+      </node>
+      <node
+        class="PopupMenu"
+        class_name="MenuBarTools"
+        base_file="menu_bartools"
+        generate_ids="0"
+        source_preamble="#include &quot;ribbon_ids.h&quot;@@#include &quot;gen_enums.h&quot;     // Enumerations for generators@@@@using namespace GenEnum;"
+        use_derived_class="0">
+        <node
+          class="wxMenuItem"
+          bitmap="Embed;tool.png"
+          help="Insert a normal button tool"
+          id="gen_tool"
+          label="Add Tool" />
+        <node
+          class="wxMenuItem"
+          bitmap="Embed;tool_dropdown.png"
+          help="Add Dropdown tool that you can add menu items to."
+          id="gen_tool_dropdown"
+          label="Add Dropdown"
+          var_name="menu_item_2" />
+        <node
+          class="wxMenuItem"
+          bitmap="Embed;toolspacer.png"
+          help="Add space to separate tools"
+          id="gen_toolSeparator"
+          label="Add Space"
+          var_name="menu_item_4" />
+        <node
+          class="wxMenuItem"
+          bitmap="Embed;toolStretchable.png"
+          help="Add space to separate tools"
+          id="gen_toolStretchable"
+          label="Add Stretchable Space"
+          var_name="menu_item_5" />
+        <node
+          class="separator" />
+        <node
+          class="wxMenuItem"
+          bitmap="Embed;wxComboBox.png"
+          help="Add a wxComboBox control"
+          id="gen_wxComboBox"
+          label="Add Combobox"
+          var_name="menu_item_3" />
+        <node
+          class="wxMenuItem"
+          bitmap="Embed;slider.png"
+          help="Add a wxSlider control"
+          id="gen_wxSlider"
+          label="Add Slider"
+          var_name="menu_item_6" />
+        <node
+          class="wxMenuItem"
+          bitmap="Embed;spin_ctrl.png"
+          help="Add a wxSpinCtrl control"
+          id="gen_wxSpinCtrl"
+          label="Add Spin Control"
+          var_name="menu_item_7" />
+      </node>
+      <node
+        class="PopupMenu"
+        class_name="MenuCheckbox"
+        base_file="menucheckbox"
+        generate_ids="0"
+        source_preamble="#include &quot;ribbon_ids.h&quot;@@#include &quot;gen_enums.h&quot;     // Enumerations for generators@@@@using namespace GenEnum;"
+        derived_class_name="MenuCheckbox"
+        use_derived_class="0">
+        <node
+          class="wxMenuItem"
+          bitmap="Embed;wxCheckBox.png"
+          help="Insert a normal two-state checkbox"
+          id="gen_wxCheckBox"
+          label="Insert wxCheckBox" />
+        <node
+          class="wxMenuItem"
+          bitmap="Embed;check3state.png"
+          help="Insert a 3-state checkbox"
+          id="gen_Check3State"
+          label="Insert 3-state wxCheckBox"
+          var_name="menu_item_2" />
+      </node>
+      <node
+        class="PopupMenu"
+        class_name="MenuCombobox"
+        base_file="menucombobox"
+        generate_ids="0"
+        source_preamble="#include &quot;ribbon_ids.h&quot;@@#include &quot;gen_enums.h&quot;     // Enumerations for generators@@@@using namespace GenEnum;"
+        derived_class_name="MenuCombobox"
+        use_derived_class="0">
+        <node
+          class="wxMenuItem"
+          bitmap="Embed;wxComboBox.png"
+          id="gen_wxComboBox"
+          label="Insert wxComboBox" />
+        <node
+          class="wxMenuItem"
+          bitmap="Embed;wxChoice.png"
+          id="gen_wxChoice"
+          label="Insert wxChoice"
+          var_name="menu_item_2" />
+        <node
+          class="wxMenuItem"
+          bitmap="Embed;bmp_combo_box.png"
+          id="gen_wxBitmapComboBox"
+          label="Insert wxBitmapComboBox"
+          var_name="menu_item_3" />
+      </node>
+      <node
+        class="PopupMenu"
+        class_name="MenuDataCtrl"
+        base_file="menudatactrl"
+        generate_ids="0"
+        source_preamble="#include &quot;ribbon_ids.h&quot;@@#include &quot;gen_enums.h&quot;     // Enumerations for generators@@@@using namespace GenEnum;"
+        derived_class_name="MenuDataCtrl"
+        use_derived_class="0">
+        <node
+          class="wxMenuItem"
+          bitmap="Embed;dataview_ctrl.png"
+          id="gen_wxDataViewCtrl"
+          label="Insert wxDataViewCtrl" />
+        <node
+          class="wxMenuItem"
+          bitmap="Embed;dataviewtree_ctrl.png"
+          id="gen_wxDataViewTreeCtrl"
+          label="Insert wxDataViewTreeCtrl"
+          var_name="menu_item_2" />
+        <node
+          class="wxMenuItem"
+          bitmap="Embed;dataviewlist_ctrl.png"
+          id="gen_wxDataViewListCtrl"
+          label="Insert wxDataViewListCtrl"
+          var_name="menu_item_3" />
+      </node>
+      <node
+        class="PopupMenu"
+        class_name="MenuListbox"
+        base_file="menulistbox"
+        generate_ids="0"
+        source_preamble="#include &quot;ribbon_ids.h&quot;@@#include &quot;gen_enums.h&quot;     // Enumerations for generators@@@@using namespace GenEnum;"
+        derived_class_name="MenuListbox"
+        use_derived_class="0">
+        <node
+          class="wxMenuItem"
+          bitmap="Embed;wxListBox.png"
+          id="gen_wxListBox"
+          label="Insert wxListBox" />
+        <node
+          class="wxMenuItem"
+          bitmap="Embed;wxCheckListBox.png"
+          id="gen_wxCheckListBox"
+          label="Insert wxCheckListBox"
+          var_name="menu_item_2" />
+        <node
+          class="wxMenuItem"
+          bitmap="Embed;wxEditListBox.png"
+          id="gen_wxEditableListBox"
+          label="Insert wxEditableListBox"
+          var_name="menu_item_6" />
+        <node
+          class="wxMenuItem"
+          bitmap="Embed;wxListView.png"
+          id="gen_wxListView"
+          label="Insert wxListView"
+          var_name="menu_item_3" />
+        <node
+          class="wxMenuItem"
+          bitmap="Embed;wxRearrangeCtrl.png"
+          id="gen_wxRearrangeCtrl"
+          label="Insert wxRearrangeCtrl"
+          var_name="menu_item_4" />
+        <node
+          class="wxMenuItem"
+          bitmap="Embed;wxSimpleHtmlListBox.png"
+          id="gen_wxSimpleHtmlListBox"
+          label="Insert wxSimpleHtmlListBox"
+          var_name="menu_item_5" />
+      </node>
+      <node
+        class="PopupMenu"
+        class_name="MenuRibbonType"
+        base_file="menuribbontype"
+        generate_ids="0"
+        source_preamble="#include &quot;ribbon_ids.h&quot;@@#include &quot;gen_enums.h&quot;     // Enumerations for generators@@@@using namespace GenEnum;"
+        derived_class_name="MenuRibbonType"
+        use_derived_class="0">
+        <node
+          class="wxMenuItem"
+          bitmap="Embed;ribbon_buttonbar.png"
+          id="gen_wxRibbonButtonBar"
+          label="Insert wxRibbonButtonBar" />
+        <node
+          class="wxMenuItem"
+          bitmap="Embed;ribbon_bar.png"
+          id="gen_wxRibbonToolBar"
+          label="Insert wxRibbonToolBar"
+          var_name="menu_item_2" />
+        <node
+          class="wxMenuItem"
+          bitmap="Embed;ribbon_gallery.png"
+          id="gen_wxRibbonGallery"
+          label="Insert wxRibbonGallery"
+          var_name="menu_item_3" />
+      </node>
+      <node
+        class="PopupMenu"
+        class_name="MenuSpin"
+        base_file="menuspin"
+        generate_ids="0"
+        source_preamble="#include &quot;ribbon_ids.h&quot;@@#include &quot;gen_enums.h&quot;     // Enumerations for generators@@@@using namespace GenEnum;"
+        derived_class_name="MenuSpin"
+        use_derived_class="0">
+        <node
+          class="wxMenuItem"
+          bitmap="Embed;spin_ctrl.png"
+          id="gen_wxSpinCtrl"
+          label="Insert wxSpinCtrl" />
+        <node
+          class="wxMenuItem"
+          bitmap="Embed;spin_ctrl_double.png"
+          id="gen_wxSpinCtrlDouble"
+          label="Insert wxSpinCtrlDouble"
+          var_name="menu_item_2" />
+        <node
+          class="wxMenuItem"
+          bitmap="Embed;spinbtn.png"
+          id="gen_wxSpinButton"
+          label="Insert wxSpinButton"
+          var_name="menu_item_3" />
+      </node>
+      <node
+        class="PopupMenu"
+        class_name="MenuStaticSizer"
+        base_file="menustaticsizer"
+        generate_ids="0"
+        source_preamble="#include &quot;ribbon_ids.h&quot;@@#include &quot;gen_enums.h&quot;     // Enumerations for generators@@@@using namespace GenEnum;"
+        derived_class_name="MenuStaticSizer"
+        use_derived_class="0">
+        <node
+          class="wxMenuItem"
+          bitmap="Embed;wxStaticBoxSizer.png"
+          id="gen_wxStaticBoxSizer"
+          label="Insert wxStaticBoxSizer" />
+        <node
+          class="wxMenuItem"
+          bitmap="Embed;wxStaticCheckBoxSizer.png"
+          id="gen_StaticCheckboxBoxSizer"
+          label="Insert CheckBox wxStaticBoxSizer"
+          var_name="menu_item_2" />
+        <node
+          class="wxMenuItem"
+          bitmap="Embed;wxStaticRadioBtnSizer.png"
+          id="gen_StaticRadioBtnBoxSizer"
+          label="Insert RadioButton wxStaticBoxSizer"
+          var_name="menu_item_3" />
+      </node>
+    </node>
+    <node
+      class="PanelForm"
+      class_name="CodeDisplayBase"
+      base_file="codedisplay_base"
+      derived_class_name="CodeDisplay">
+      <node
+        class="wxBoxSizer"
+        orientation="wxVERTICAL"
+        var_name="parent_sizer">
+        <node
+          class="wxStyledTextCtrl"
+          indentation_guides="real"
+          read_only="1"
+          symbol_margin="0"
+          use_tabs="0"
+          wrap_indent_mode="indent"
+          wrap_mode="whitespace"
+          wrap_visual_flag="end"
+          wrap_visual_location="end_text"
+          flags="wxEXPAND"
+          proportion="1" />
+      </node>
+    </node>
+    <node
+      class="wxDialog"
+      class_name="CodePreferenceDlg"
+      title="Choose Code Preference"
+      base_file="..\ui\code_preference_dlg"
+      use_derived_class="0">
+      <node
+        class="wxBoxSizer"
+        orientation="wxVERTICAL"
+        var_name="dlg_sizer">
+        <node
+          class="wxStaticText"
+          class_access="none"
+          label="Choose the code you prefer to generate. This will set the project's initial code preference property (which you can change at any time)."
+          var_name="staticText"
+          wrap="350" />
+        <node
+          class="wxBoxSizer"
+          alignment="wxALIGN_CENTER_HORIZONTAL">
+          <node
+            class="wxRadioButton"
+            checked="1"
+            class_access="none"
+            label="&amp;C++"
+            style="wxRB_GROUP"
+            var_name="m_radioBtn_2"
+            get_function="is_gen_cpp"
+            validator_variable="m_gen_cpp_code" />
+          <node
+            class="wxRadioButton"
+            class_access="none"
+            label="&amp;Python"
+            var_name="m_radioBtn_3"
+            get_function="is_gen_python"
+            validator_variable="m_gen_python_code" />
+          <node
+            class="wxRadioButton"
+            class_access="none"
+            label="&amp;Ruby"
+            var_name="m_radioBtn_4"
+            get_function="is_gen_ruby"
+            validator_variable="m_gen_ruby_code" />
+          <node
+            class="wxRadioButton"
+            class_access="none"
+            label="&amp;XRC"
+            get_function="is_gen_xrc"
+            validator_variable="m_gen_xrc_code" />
+        </node>
+        <node
+          class="wxStdDialogButtonSizer"
+          flags="wxEXPAND" />
+      </node>
+    </node>
+    <node
+      class="wxDialog"
+      class_name="GeneratedResultsDlg"
+      persist="1"
+      style="wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER"
+      title="Generated Code Results"
+      base_file="dlg_gen_results"
+      use_derived_class="0">
+      <node
+        class="wxBoxSizer"
+        orientation="wxVERTICAL"
+        var_name="dlg_sizer">
+        <node
+          class="wxStaticText"
+          class_access="none"
+          label="Updated files:"
+          var_name="staticText" />
+        <node
+          class="wxListBox"
+          class_access="public:"
+          var_name="m_lb_files"
+          minimum_size="150,100d"
+          flags="wxEXPAND"
+          proportion="1" />
+        <node
+          class="wxStaticText"
+          class_access="none"
+          label="Additional information:"
+          var_name="staticText_2" />
+        <node
+          class="wxListBox"
+          class_access="public:"
+          var_name="m_lb_info"
+          minimum_size="100,40d"
+          flags="wxEXPAND" />
+        <node
+          class="wxStdDialogButtonSizer"
+          Cancel="0"
+          default_button="none"
+          flags="wxEXPAND" />
+      </node>
+    </node>
+    <node
+      class="wxDialog"
+      class_name="GenerateXrcDlg"
+      persist="1"
+      style="wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER"
+      title="Generate XRC File(s)"
+      base_file="..\ui\generate_xrc_dlg"
+      no_closing_brace="1"
+      derived_class_name="GenerateXrcDlg"
+      derived_file="../ui/generate_xrc_dlg"
+      private_members="1"
+      use_derived_class="0"
+      wxEVT_INIT_DIALOG="OnInit">
+      <node
+        class="wxBoxSizer"
+        orientation="wxVERTICAL"
+        var_name="dlg_sizer"
+        flags="wxEXPAND">
+        <node
+          class="StaticRadioBtnBoxSizer"
+          class_access="protected:"
+          label="Combined File"
+          radiobtn_var_name="m_radio_combined"
+          var_name="m_combined_box"
+          flags="wxEXPAND"
+          validator_variable="m_create_combined"
+          wxEVT_RADIOBUTTON="OnCombinedFile">
+          <node
+            class="wxFilePickerCtrl"
+            message="Combined XRC File"
+            style="wxFLP_USE_TEXTCTRL|wxFLP_SAVE"
+            wildcard="*.xrc"
+            minimum_size="120,-1d"
+            flags="wxEXPAND"
+            proportion="1"
+            wxEVT_FILEPICKER_CHANGED="OnCombinedFilenameChanged" />
+        </node>
+        <node
+          class="StaticRadioBtnBoxSizer"
+          checked="0"
+          class_access="protected:"
+          label="Separate Files"
+          radiobtn_var_name="m_radio_separate"
+          var_name="m_separate_box"
+          flags="wxEXPAND"
+          wxEVT_RADIOBUTTON="OnSeparateFiles">
+          <node
+            class="wxStaticText"
+            class_access="none"
+            label="Forms not listed do not have xrc_file set."
+            var_name="staticText" />
+          <node
+            class="wxListBox"
+            minimum_size="-1,50d"
+            flags="wxEXPAND"
+            proportion="1" />
+        </node>
+        <node
+          class="wxStdDialogButtonSizer"
+          OK="0"
+          Save="1"
+          default_button="none"
+          flags="wxEXPAND"
+          SaveButtonClicked="OnSave" />
+      </node>
+    </node>
+    <node
+      class="wxDialog"
+      class_name="GridBagItemBase"
+      title="Append or Insert into wxGridBagSizer"
+      base_file="gridbag_item_base"
+      derived_class_name="GridBagItem"
+      wxEVT_INIT_DIALOG="OnInit">
+      <node
+        class="wxBoxSizer"
+        orientation="wxVERTICAL"
+        var_name="dlg_sizer"
+        flags="wxEXPAND">
+        <node
+          class="wxFlexGridSizer"
+          cols="4"
+          hgap="5">
+          <node
+            class="wxStaticText"
+            class_access="none"
+            label="&amp;Column:"
+            var_name="staticText"
+            alignment="wxALIGN_CENTER_VERTICAL" />
+          <node
+            class="wxSpinCtrl"
+            var_name="m_spin_column"
+            borders="wxTOP|wxBOTTOM|wxRIGHT"
+            wxEVT_SPINCTRL="OnColumn" />
+          <node
+            class="wxStaticText"
+            class_access="none"
+            label="Span c&amp;olumns:"
+            var_name="staticText_2"
+            alignment="wxALIGN_CENTER_VERTICAL" />
+          <node
+            class="wxSpinCtrl"
+            initial="1"
+            min="1"
+            var_name="m_spin_span_column"
+            borders="wxTOP|wxBOTTOM|wxRIGHT" />
+          <node
+            class="wxStaticText"
+            class_access="none"
+            label="&amp;Row:"
+            var_name="staticText_3"
+            alignment="wxALIGN_CENTER_VERTICAL" />
+          <node
+            class="wxSpinCtrl"
+            var_name="m_spin_row"
+            borders="wxTOP|wxBOTTOM|wxRIGHT"
+            wxEVT_SPINCTRL="OnRow" />
+          <node
+            class="wxStaticText"
+            class_access="none"
+            label="Span ro&amp;ws:"
+            var_name="staticText_4"
+            alignment="wxALIGN_CENTER_VERTICAL" />
+          <node
+            class="wxSpinCtrl"
+            initial="1"
+            min="1"
+            var_name="m_spin_span_row"
+            borders="wxTOP|wxBOTTOM|wxRIGHT" />
+        </node>
+        <node
+          class="wxInfoBar"
+          flags="wxEXPAND"
+          proportion="1" />
+        <node
+          class="wxBoxSizer">
+          <node
+            class="wxRadioButton"
+            label="Insert &amp;column"
+            style="wxRB_GROUP"
+            var_name="m_radio_column"
+            hidden="1" />
+          <node
+            class="wxRadioButton"
+            label="Insert &amp;row"
+            var_name="m_radio_row"
+            hidden="1" />
+        </node>
+        <node
+          class="wxStdDialogButtonSizer"
+          flags="wxEXPAND"
+          OKButtonClicked="OnOK" />
+      </node>
+    </node>
+    <node
+      class="wxDialog"
+      class_name="GridPropertyDlg"
+      title="Property Editor"
+      base_file="grid_property_dlg"
+      source_preamble="// This is the base class for editing multiple-field properties"
+      wxEVT_INIT_DIALOG="OnInit"
+      wxEVT_UPDATE_UI="OnUpdateUI">
+      <node
+        class="wxBoxSizer"
+        orientation="wxVERTICAL"
+        var_name="dlg_sizer"
+        flags="wxEXPAND">
+        <node
+          class="wxBoxSizer">
+          <node
+            class="wxStaticText"
+            label="property label"
+            var_comment="Shown to the left of the toolbar"
+            var_name="m_prop_label"
+            alignment="wxALIGN_CENTER" />
+          <node
+            class="wxToolBar"
+            style="wxTB_HORIZONTAL|wxTB_NODIVIDER">
+            <node
+              class="tool"
+              bitmap="Art;wxART_NEW|wxART_TOOLBAR"
+              id="id_NewRow"
+              label=""
+              var_name="tool_new"
+              wxEVT_TOOL="OnNewRow" />
+            <node
+              class="tool"
+              bitmap="Art;wxART_DELETE|wxART_TOOLBAR"
+              id="id_DeleteRow"
+              label=""
+              var_name="tool_delete"
+              wxEVT_TOOL="OnDeleteRow" />
+            <node
+              class="tool"
+              bitmap="Art;wxART_UNDO|wxART_TOOLBAR"
+              id="id_UndoDeleteRow"
+              label=""
+              var_name="tool_undo_delete"
+              wxEVT_TOOL="OnUndoDelete" />
+          </node>
+        </node>
+        <node
+          class="wxGrid"
+          cell_vert_alignment="wxALIGN_CENTER"
+          col_label_values="name;value"
+          cols="2"
+          drag_row_size="0"
+          rows="1"
+          selection_mode="wxGridSelectRows"
+          flags="wxEXPAND"
+          proportion="1" />
+        <node
+          class="wxStaticText"
+          label="Help text"
+          var_comment="Shown below the grid (initially hidden)"
+          var_name="m_help_text"
+          wrap="300"
+          hidden="1" />
+        <node
+          class="wxStdDialogButtonSizer"
+          flags="wxEXPAND"
+          CancelButtonClicked="OnCancel"
+          OKButtonClicked="OnOK" />
+      </node>
+    </node>
+    <node
+      class="wxDialog"
+      class_name="ImportBase"
+      icon="SVG;../art_src/import.svg;[16,16]"
+      title="New Imported Project"
+      base_file="import_base"
+      derived_class_name="ImportDlg"
+      wxEVT_INIT_DIALOG="OnInitDialog">
+      <node
+        class="wxBoxSizer"
+        orientation="wxVERTICAL"
+        var_name="parent_sizer"
+        flags="wxEXPAND">
+        <node
+          class="wxStaticBoxSizer"
+          class_access="protected:"
+          label="Import Type"
+          var_name="m_import_staticbox"
+          flags="wxEXPAND">
+          <node
+            class="wxFlexGridSizer">
+            <node
+              class="wxRadioButton"
+              label="wx&amp;Crafter Project(s)"
+              style="wxRB_GROUP"
+              var_name="m_radio_wxCrafter"
+              wxEVT_RADIOBUTTON="OnCrafter" />
+            <node
+              class="wxRadioButton"
+              label="wx&amp;FormBuilder Project(s)"
+              var_name="m_radio_wxFormBuilder"
+              wxEVT_RADIOBUTTON="OnFormBuilder" />
+            <node
+              class="wxRadioButton"
+              label="wx&amp;Glade Project(s)"
+              var_name="m_radio_wxGlade"
+              column="1"
+              wxEVT_RADIOBUTTON="OnWxGlade" />
+            <node
+              class="wxRadioButton"
+              label="wx&amp;Smith Project(s)"
+              var_name="m_radio_wxSmith"
+              column="1"
+              wxEVT_RADIOBUTTON="OnWxSmith" />
+            <node
+              class="wxRadioButton"
+              label="&amp;Windows Resource"
+              var_name="m_radio_WindowsResource"
+              row="1"
+              wxEVT_RADIOBUTTON="OnWindowsResource" />
+            <node
+              class="wxRadioButton"
+              label="&amp;DialogBlocks File(s)"
+              var_name="m_radio_DialogBlocks"
+              hidden="1"
+              column="1"
+              row="1"
+              wxEVT_RADIOBUTTON="OnDialogBlocks" />
+            <node
+              class="wxRadioButton"
+              label="&amp;XRC File(s)"
+              var_name="m_radio_XRC"
+              column="1"
+              row="1"
+              wxEVT_RADIOBUTTON="OnXRC" />
+          </node>
+          <node
+            class="wxBoxSizer">
+            <node
+              class="wxComboBox"
+              var_name="m_combo_recent_dirs"
+              hidden="1"
+              minimum_size="-1,-1"
+              wxEVT_COMBOBOX="OnRecentDir" />
+            <node
+              class="wxButton"
+              label="Remove"
+              var_comment="Remove file from history"
+              var_name="m_btnRemove"
+              hidden="1"
+              wxEVT_BUTTON="OnRemove" />
+          </node>
+          <node
+            class="wxBoxSizer"
+            var_name="box_sizer6"
+            flags="wxEXPAND">
+            <node
+              class="wxButton"
+              label="&amp;Directory..."
+              var_name="m_btnAddFile"
+              tooltip="You can add multiple formbuilder projects to a single wxUiEdtior project."
+              alignment="wxALIGN_CENTER_VERTICAL"
+              borders="wxTOP|wxRIGHT|wxLEFT"
+              wxEVT_BUTTON="OnDirectory" />
+            <node
+              class="wxStaticText"
+              label="..."
+              style="wxST_ELLIPSIZE_MIDDLE"
+              var_name="m_static_cwd"
+              alignment="wxALIGN_CENTER_VERTICAL"
+              proportion="1" />
+          </node>
+          <node
+            class="wxBoxSizer"
+            orientation="wxVERTICAL"
+            var_name="box_sizer7"
+            flags="wxEXPAND"
+            proportion="1">
+            <node
+              class="wxStaticText"
+              label="&amp;Files:"
+              var_name="m_staticImportList"
+              borders="wxLEFT|wxRIGHT|wxTOP" />
+            <node
+              class="wxCheckListBox"
+              var_name="m_checkListProjects"
+              minimum_size="-1,240"
+              flags="wxEXPAND"
+              wxEVT_CHECKLISTBOX="OnCheckFiles" />
+            <node
+              class="wxBoxSizer"
+              var_name="box_sizer_2">
+              <node
+                class="wxButton"
+                class_access="none"
+                label="Select &amp;All"
+                var_name="btn_2"
+                wxEVT_BUTTON="OnSelectAll" />
+              <node
+                class="wxButton"
+                class_access="none"
+                label="Select &amp;None"
+                var_name="btn__2"
+                wxEVT_BUTTON="OnSelectNone" />
+            </node>
+          </node>
+        </node>
+        <node
+          class="wxStdDialogButtonSizer"
+          class_access="protected:"
+          var_name="m_stdBtn"
+          flags="wxEXPAND"
+          OKButtonClicked="OnOK" />
+      </node>
+    </node>
+    <node
+      class="wxDialog"
+      class_name="ImportWinRes"
+      title="Import Windows Resource Dialogs"
+      base_file="..\import\import_winres_dlg"
+      no_closing_brace="1"
+      derived_class_name="ImportWinRes"
+      private_members="1"
+      use_derived_class="0"
+      wxEVT_INIT_DIALOG="OnInit">
+      <node
+        class="wxBoxSizer"
+        orientation="wxVERTICAL"
+        var_name="parent_sizer">
+        <node
+          class="wxBoxSizer"
+          orientation="wxVERTICAL"
+          var_name="box_sizer4"
+          flags="wxEXPAND"
+          proportion="1">
+          <node
+            class="wxStaticText"
+            label="&amp;Resource File:"
+            var_name="m_staticResFile"
+            borders="wxLEFT|wxRIGHT|wxTOP" />
+          <node
+            class="wxFilePickerCtrl"
+            style="wxFLP_FILE_MUST_EXIST|wxFLP_OPEN|wxFLP_USE_TEXTCTRL"
+            var_name="m_fileResource"
+            wildcard="Resource Files|*.rc;*.dlg||"
+            minimum_size="240,-1"
+            flags="wxEXPAND"
+            wxEVT_FILEPICKER_CHANGED="OnResourceFile" />
+        </node>
+        <node
+          class="wxBoxSizer"
+          orientation="wxVERTICAL"
+          var_name="box_sizer5"
+          flags="wxEXPAND">
+          <node
+            class="wxStaticText"
+            label="&amp;Dialogs to Import"
+            borders="wxLEFT|wxRIGHT|wxTOP" />
+          <node
+            class="wxCheckListBox"
+            var_name="m_checkListResUI"
+            minimum_size="-1,160"
+            tooltip="Uncheck any resources you don't want converted."
+            flags="wxEXPAND" />
+          <node
+            class="wxBoxSizer"
+            flags="wxEXPAND">
+            <node
+              class="wxButton"
+              label="Select &amp;All"
+              var_name="m_btnSelectAll"
+              wxEVT_BUTTON="OnSelectAll" />
+            <node
+              class="wxButton"
+              label="&amp;Clear All"
+              var_name="m_btnClearAll"
+              wxEVT_BUTTON="OnClearAll" />
+          </node>
+        </node>
+        <node
+          class="wxStdDialogButtonSizer"
+          flags="wxEXPAND"
+          OKButtonClicked="OnOk" />
+      </node>
+    </node>
+    <node
+      class="wxDialog"
+      class_name="InsertWidget"
+      icon="Art;wxART_EDIT|wxART_MENU"
+      title="Insert Widget"
+      minimum_size="-1,-1"
+      base_file="insert_widget"
+      inserted_hdr_code="tt_string GetWidget() { return m_widget; }"
+      class_members="&quot;tt_string m_widget;&quot;"
+      derived_class_name="InsertWidget"
+      private_members="1"
+      use_derived_class="0"
+      wxEVT_INIT_DIALOG="OnInit">
+      <node
+        class="wxBoxSizer"
+        orientation="wxVERTICAL"
+        minimum_size="300,400"
+        flags="wxEXPAND">
+        <node
+          class="wxBoxSizer"
+          var_name="box_sizer_2"
+          flags="wxEXPAND">
+          <node
+            class="wxStaticText"
+            class_access="none"
+            label="&amp;Name:"
+            var_name="staticText"
+            alignment="wxALIGN_CENTER_VERTICAL" />
+          <node
+            class="wxTextCtrl"
+            hint="type a portion of the name to filter the list"
+            var_name="m_text_name"
+            tooltip="Use Up/Down arrows to change list selection"
+            proportion="1"
+            wxEVT_TEXT="OnNameText"
+            wxEVT_KEY_DOWN="OnKeyDown" />
+        </node>
+        <node
+          class="wxBoxSizer"
+          var_name="box_sizer_4">
+          <node
+            class="wxStaticText"
+            class_access="none"
+            label="Only widgets that can be a child of the currently selected widget are shown. If the list is empty, no children can be added."
+            var_name="staticText_2"
+            wrap="300" />
+        </node>
+        <node
+          class="wxBoxSizer"
+          var_name="box_sizer_3"
+          flags="wxEXPAND"
+          proportion="1">
+          <node
+            class="wxListBox"
+            style="wxLB_SORT"
+            size="-1,300"
+            flags="wxEXPAND"
+            proportion="1"
+            wxEVT_LISTBOX="[this](wxCommandEvent&amp;)@@{@@m_stdBtn->GetAffirmativeButton()->Enable();@@}"
+            wxEVT_LISTBOX_DCLICK="OnListBoxDblClick" />
+        </node>
+        <node
+          class="wxStdDialogButtonSizer"
+          class_access="protected:"
+          var_name="m_stdBtn"
+          flags="wxEXPAND"
+          OKButtonClicked="OnOK" />
       </node>
     </node>
     <node

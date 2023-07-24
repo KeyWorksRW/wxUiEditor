@@ -548,26 +548,6 @@ int ToolGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_f
     return BaseGenerator::xrc_updated;
 }
 
-tt_string ToolGenerator::GetHelpURL(Node*)
-{
-    return "wx_tool_bar.html";
-}
-
-tt_string ToolGenerator::GetHelpText(Node*)
-{
-    return "wxToolBar";
-}
-
-tt_string ToolGenerator::GetPythonURL(Node*)
-{
-    return "wx.ToolBar.html";
-}
-
-tt_string ToolGenerator::GetPythonHelpText(Node*)
-{
-    return "wx.ToolBar";
-}
-
 //////////////////////////////////////////  ToolDropDownGenerator  //////////////////////////////////////////
 
 bool ToolDropDownGenerator::ConstructionCode(Code& code)
@@ -732,26 +712,6 @@ int ToolDropDownGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size
     return BaseGenerator::xrc_updated;
 }
 
-tt_string ToolDropDownGenerator::GetHelpURL(Node*)
-{
-    return "wx_tool_bar.html";
-}
-
-tt_string ToolDropDownGenerator::GetHelpText(Node*)
-{
-    return "wxToolBar";
-}
-
-tt_string ToolDropDownGenerator::GetPythonURL(Node*)
-{
-    return "wx.ToolBar.html";
-}
-
-tt_string ToolDropDownGenerator::GetPythonHelpText(Node*)
-{
-    return "wx.ToolBar";
-}
-
 //////////////////////////////////////////  ToolSeparatorGenerator  //////////////////////////////////////////
 
 bool ToolSeparatorGenerator::ConstructionCode(Code& code)
@@ -788,12 +748,22 @@ tt_string ToolSeparatorGenerator::GetHelpText(Node*)
 
 tt_string ToolSeparatorGenerator::GetPythonURL(Node*)
 {
-    return "wx.ToolBar.html";
+    return "wx.ToolBar.html?highlight=addseparator#wx.ToolBar.AddSeparator";
 }
 
 tt_string ToolSeparatorGenerator::GetPythonHelpText(Node*)
 {
     return "wx.ToolBar";
+}
+
+tt_string ToolSeparatorGenerator::GetRubyURL(Node*)
+{
+    return "Wx/ToolBar.html#add_separator-instance_method";
+}
+
+tt_string ToolSeparatorGenerator::GetRubyHelpText(Node*)
+{
+    return "Wx/ToolBar.html";
 }
 
 //////////////////////////////////////////  ToolStretchableGenerator  //////////////////////////////////////////
@@ -841,10 +811,20 @@ tt_string ToolStretchableGenerator::GetHelpText(Node*)
 
 tt_string ToolStretchableGenerator::GetPythonURL(Node*)
 {
-    return "wx.ToolBar.html";
+    return "wx.ToolBar.html?highlight=addstretchablespace#wx.ToolBar.AddStretchableSpace";
 }
 
 tt_string ToolStretchableGenerator::GetPythonHelpText(Node*)
 {
     return "wx.ToolBar";
+}
+
+tt_string ToolStretchableGenerator::GetRubyURL(Node*)
+{
+    return "Wx/ToolBar.html#add_stretchable_space-instance_method";
+}
+
+tt_string ToolStretchableGenerator::GetRubyHelpText(Node*)
+{
+    return "Wx/ToolBar.html";
 }

@@ -278,6 +278,8 @@ tt_string getClassHelpName(Node* node)
             class_name = "wxPropertyGridPage";
         else if (class_name == "submenu")
             class_name = "wxMenu";
+        else if (class_name == "tool" || class_name == "tool_dropdown")
+            class_name = "wxToolBarToolBase";
         else
             class_name.clear();  // Don't return a non-wxWidgets class name
     }
@@ -335,8 +337,37 @@ tt_string BaseGenerator::GetPythonURL(Node* node)
         {
             url = "wx.aui.AuiToolBar.html?highlight=addlabel#wx.aui.AuiToolBar.AddLabel";
         }
+        else if (tt::is_sameas(class_name, "spacer"))
+        {
+            url = "wx.Sizer.html?highlight=addspacer#wx.Sizer.AddSpacer";
+        }
         return url;
     }
+    url << ".html";
+    return url;
+}
+
+tt_string BaseGenerator::GetRubyURL(Node* node)
+{
+    tt_string url = GetRubyHelpText(node);
+    if (url.empty())
+    {
+        auto class_name = map_GenNames[node->getGenName()];
+        if (tt::is_sameas(class_name, "auitool_spacer"))
+        {
+            url = "Wx/AUI/AuiToolBar.html#add_spacer-instance_method";
+        }
+        else if (tt::is_sameas(class_name, "auitool_spacer"))
+        {
+            url = "Wx/AUI/AuiToolBar.html#add_label-instance_method";
+        }
+        else if (tt::is_sameas(class_name, "spacer"))
+        {
+            url = "Wx/Sizer.html#add_spacer-instance_method";
+        }
+        return url;
+    }
+    url.Replace("::", "/", true);
     url << ".html";
     return url;
 }
@@ -358,27 +389,6 @@ tt_string BaseGenerator::GetRubyHelpText(Node* node)
     help_text << prefix << class_name.subview(2);
 
     return help_text;
-}
-
-tt_string BaseGenerator::GetRubyURL(Node* node)
-{
-    tt_string url = GetRubyHelpText(node);
-    if (url.empty())
-    {
-        auto class_name = map_GenNames[node->getGenName()];
-        if (tt::is_sameas(class_name, "auitool_spacer"))
-        {
-            url = "Wx/AUI/AuiToolBar.html#add_spacer-instance_method";
-        }
-        else if (tt::is_sameas(class_name, "auitool_spacer"))
-        {
-            url = "Wx/AUI/AuiToolBar.html#add_label-instance_method";
-        }
-        return url;
-    }
-    url.Replace("::", "/", true);
-    url << ".html";
-    return url;
 }
 
 bool BaseGenerator::GetPythonImports(Node* node, std::set<std::string>& set_imports)
@@ -606,6 +616,10 @@ tt_string BaseGenerator::GetHelpURL(Node* node)
         {
             class_name = "simple_html_list_box";
         }
+        else if (class_name == "toolbartoolbase")
+        {
+            class_name = "tool_bar_tool_base";
+        }
         else
         {
             for (const auto& [key, value]: prefix_pair)
@@ -654,6 +668,10 @@ tt_string BaseGenerator::GetHelpURL(Node* node)
     else if (class_name == "RibbonToolBar")
     {
         return tt_string("wx_ribbon_tool_bar.html");
+    }
+    else if (class_name == "spacer")
+    {
+        return tt_string("wx_sizer.html");
     }
     else if (class_name == "StaticCheckboxBoxSizer" || class_name == "StaticRadioBtnBoxSizer")
     {

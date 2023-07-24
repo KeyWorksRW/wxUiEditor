@@ -477,7 +477,7 @@ bool MainFrameBase::Create(wxWindow* parent, wxWindowID id, const wxString& titl
     Bind(wxEVT_TOOL, &MainFrameBase::OnGenerateCode, this, id_GenerateCode);
     Bind(wxEVT_TOOL, &MainFrameBase::OnPreviewXrc, this, id_PreviewForm);
     Bind(wxEVT_UPDATE_UI,
-        [this](wxUpdateUIEvent& event)
+        [](wxUpdateUIEvent& event)
         {
             event.Enable(wxGetFrame().isModified());
         },

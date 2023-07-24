@@ -273,7 +273,7 @@ int ProjectHandler::getCodePreference() const
         return GEN_LANG_CPLUSPLUS;
 }
 
-size_t ProjectHandler::getOutputType() const
+size_t ProjectHandler::getOutputType(OUTPUT_FLAGS flags) const
 {
     size_t result = OUTPUT_NONE;
 
@@ -296,7 +296,8 @@ size_t ProjectHandler::getOutputType() const
                     }
                     result |= OUTPUT_CPLUS;
                 }
-                if (child->hasValue(prop_derived_file) && child->as_bool(prop_use_derived_class))
+                if (not(flags & OUT_FLAG_IGNORE_DERIVED) && child->hasValue(prop_derived_file) &&
+                    child->as_bool(prop_use_derived_class))
                 {
                     if (auto path = getDerivedFilename(child.get()); path.size())
                     {
@@ -329,7 +330,7 @@ size_t ProjectHandler::getOutputType() const
                     }
                     result |= OUTPUT_RUBY;
                 }
-                if (child->hasValue(prop_xrc_file))
+                if (not(flags & OUT_FLAG_IGNORE_XRC) && child->hasValue(prop_xrc_file))
                 {
                     result |= OUTPUT_XRC;
                 }

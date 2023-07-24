@@ -8,6 +8,8 @@
 // clang-format off
 
 #include <wx/button.h>
+#include <wx/persist.h>
+#include <wx/persist/toplevel.h>
 #include <wx/radiobut.h>
 #include <wx/sizer.h>
 #include <wx/stattext.h>
@@ -65,7 +67,7 @@ bool NodeSearchDlg::Create(wxWindow* parent, wxWindowID id, const wxString& titl
 
     m_listbox = new wxListBox(this, wxID_ANY);
     m_listbox->SetMinSize(ConvertDialogToPixels(wxSize(120, 100)));
-    box_sizer_5->Add(m_listbox, wxSizerFlags().Expand().Border(wxALL));
+    box_sizer_5->Add(m_listbox, wxSizerFlags(1).Expand().Border(wxALL));
 
     box_sizer_4->Add(box_sizer_5, wxSizerFlags(1).Expand().Border(wxALL));
 
@@ -76,18 +78,20 @@ bool NodeSearchDlg::Create(wxWindow* parent, wxWindowID id, const wxString& titl
 
     m_listbox_forms = new wxListBox(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, nullptr, wxLB_SINGLE|wxLB_SORT);
     m_listbox_forms->SetMinSize(ConvertDialogToPixels(wxSize(-1, 100)));
-    box_sizer_6->Add(m_listbox_forms, wxSizerFlags().Expand().Border(wxALL));
+    box_sizer_6->Add(m_listbox_forms, wxSizerFlags(1).Expand().Border(wxALL));
 
     box_sizer_4->Add(box_sizer_6, wxSizerFlags(1).Expand().Border(wxALL));
 
     dlg_sizer->Add(box_sizer_4,
-    wxSizerFlags().Expand().Border(wxLEFT|wxRIGHT|wxBOTTOM, wxSizerFlags::GetDefaultBorder()));
+    wxSizerFlags(1).Expand().Border(wxLEFT|wxRIGHT|wxBOTTOM, wxSizerFlags::GetDefaultBorder()));
 
     auto* stdBtn = CreateStdDialogButtonSizer(wxOK|wxCANCEL);
     dlg_sizer->Add(CreateSeparatedSizer(stdBtn), wxSizerFlags().Expand().Border(wxALL));
 
     SetSizerAndFit(dlg_sizer);
     Centre(wxBOTH);
+
+    wxPersistentRegisterAndRestore(this, "NodeSearchDlg");
 
     // Event handlers
     Bind(wxEVT_BUTTON, &NodeSearchDlg::OnOK, this, wxID_OK);

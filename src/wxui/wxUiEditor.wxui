@@ -5702,6 +5702,7 @@
       <node
         class="wxDialog"
         class_name="NodeSearchDlg"
+        persist="1"
         style="wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER"
         title="Node Search"
         minimum_size="-1,-1d"
@@ -5775,7 +5776,8 @@
             var_name="box_sizer_4"
             minimum_size="250,-1d"
             borders="wxBOTTOM|wxRIGHT|wxLEFT"
-            flags="wxEXPAND">
+            flags="wxEXPAND"
+            proportion="1">
             <node
               class="wxBoxSizer"
               orientation="wxVERTICAL"
@@ -5792,6 +5794,7 @@
                 class="wxListBox"
                 minimum_size="120,100d"
                 flags="wxEXPAND"
+                proportion="1"
                 wxEVT_LISTBOX="OnSelectLocated" />
             </node>
             <node
@@ -5811,7 +5814,8 @@
                 style="wxLB_SORT"
                 var_name="m_listbox_forms"
                 minimum_size="-1,100d"
-                flags="wxEXPAND" />
+                flags="wxEXPAND"
+                proportion="1" />
             </node>
           </node>
           <node

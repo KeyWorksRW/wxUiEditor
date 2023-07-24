@@ -243,13 +243,15 @@ bool BaseGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty
     return true;
 }
 
-tt_string BaseGenerator::GetHelpText(Node* node)
+tt_string getClassHelpName(Node* node)
 {
     tt_string class_name(map_GenNames[node->getGenName()]);
     if (!class_name.starts_with("wx"))
     {
         if (class_name == "BookPage")
-            class_name = "wxBookCtrl";
+        {
+            class_name = map_GenNames[node->getParent()->getGenName()];
+        }
         else if (class_name == "PanelForm")
             class_name = "wxPanel";
         else if (class_name == "RibbonBar")
@@ -260,11 +262,34 @@ tt_string BaseGenerator::GetHelpText(Node* node)
             class_name = "wxToolBar";
         else if (class_name == "AuiToolBar")
             class_name = "wxAuiToolBar";
+        else if (class_name == "auitool")
+            class_name = "wxAuiToolBarItem";
         else if (class_name == "StaticCheckboxBoxSizer" || class_name == "StaticRadioBtnBoxSizer")
             class_name = "wxStaticBoxSizer";
+        else if (class_name == "Check3State")
+            class_name = "wxCheckBox";
+        else if (class_name == "MenuBar")
+            class_name = "wxMenuBar";
+        else if (class_name == "propGridCategory")
+            class_name = "wxPropertyCategory";
+        else if (class_name == "propGridItem")
+            class_name = "wxPGProperty";
+        else if (class_name == "propGridPage")
+            class_name = "wxPropertyGridPage";
+        else if (class_name == "submenu")
+            class_name = "wxMenu";
+        else if (class_name == "tool" || class_name == "tool_dropdown")
+            class_name = "wxToolBarToolBase";
         else
             class_name.clear();  // Don't return a non-wxWidgets class name
     }
+
+    return class_name;
+}
+
+tt_string BaseGenerator::GetHelpText(Node* node)
+{
+    tt_string class_name = getClassHelpName(node);
 
 #if defined(_DEBUG)
     if (class_name.size())
@@ -276,33 +301,19 @@ tt_string BaseGenerator::GetHelpText(Node* node)
     return class_name;
 }
 
-extern std::map<std::string_view, std::string_view, std::less<>> g_map_class_prefix;
+extern std::map<std::string_view, std::string_view, std::less<>> g_map_python_prefix;
+extern std::map<std::string_view, std::string_view, std::less<>> g_map_ruby_prefix;
 
 tt_string BaseGenerator::GetPythonHelpText(Node* node)
 {
-    auto class_name = node->declName();
-    if (!class_name.starts_with("wx"))
+    tt_string class_name = getClassHelpName(node);
+    if (class_name.empty())
     {
-        if (class_name == "BookPage")
-            class_name = "wxBookCtrl";
-        else if (class_name == "PanelForm")
-            class_name = "wxPanel";
-        else if (class_name == "RibbonBar")
-            class_name = "wxRibbonBar";
-        else if (class_name == "PopupMenu")
-            class_name = "wxMenu";
-        else if (class_name == "ToolBar")
-            class_name = "wxToolBar";
-        else if (class_name == "AuiToolBar")
-            class_name = "wxAuiToolBar";
-        else if (class_name == "StaticCheckboxBoxSizer" || class_name == "StaticRadioBtnBoxSizer")
-            class_name = "wxStaticBoxSizer";
-        else
-            return {};
+        return class_name;
     }
 
     std::string_view prefix = "wx.";
-    if (auto wx_iter = g_map_class_prefix.find(class_name); wx_iter != g_map_class_prefix.end())
+    if (auto wx_iter = g_map_python_prefix.find(class_name); wx_iter != g_map_python_prefix.end())
     {
         prefix = wx_iter->second;
     }
@@ -317,40 +328,23 @@ tt_string BaseGenerator::GetPythonURL(Node* node)
     tt_string url = GetPythonHelpText(node);
     if (url.empty())
     {
+        auto class_name = map_GenNames[node->getGenName()];
+        if (tt::is_sameas(class_name, "auitool_spacer"))
+        {
+            url = "wx.aui.AuiToolBar.html?highlight=addspacer#wx.aui.AuiToolBar.AddSpacer";
+        }
+        else if (tt::is_sameas(class_name, "auitool_label"))
+        {
+            url = "wx.aui.AuiToolBar.html?highlight=addlabel#wx.aui.AuiToolBar.AddLabel";
+        }
+        else if (tt::is_sameas(class_name, "spacer"))
+        {
+            url = "wx.Sizer.html?highlight=addspacer#wx.Sizer.AddSpacer";
+        }
         return url;
     }
     url << ".html";
     return url;
-}
-
-tt_string BaseGenerator::GetRubyHelpText(Node* node)
-{
-    auto class_name = node->declName();
-    if (!class_name.starts_with("wx"))
-    {
-        if (class_name == "BookPage")
-            class_name = "wxBookCtrl";
-        else if (class_name == "PanelForm")
-            class_name = "wxPanel";
-        else if (class_name == "RibbonBar")
-            class_name = "wxRibbonBar";
-        else if (class_name == "PopupMenu")
-            class_name = "wxMenu";
-        else if (class_name == "ToolBar")
-            class_name = "wxToolBar";
-        else if (class_name == "AuiToolBar")
-            class_name = "wxAuiToolBar";
-        else if (class_name == "StaticCheckboxBoxSizer" || class_name == "StaticRadioBtnBoxSizer")
-            class_name = "wxStaticBoxSizer";
-        else
-            return {};
-    }
-
-    std::string_view prefix = "Wx::";
-    tt_string help_text;
-    help_text << prefix << class_name.subview(2);
-
-    return help_text;
 }
 
 tt_string BaseGenerator::GetRubyURL(Node* node)
@@ -358,11 +352,43 @@ tt_string BaseGenerator::GetRubyURL(Node* node)
     tt_string url = GetRubyHelpText(node);
     if (url.empty())
     {
+        auto class_name = map_GenNames[node->getGenName()];
+        if (tt::is_sameas(class_name, "auitool_spacer"))
+        {
+            url = "Wx/AUI/AuiToolBar.html#add_spacer-instance_method";
+        }
+        else if (tt::is_sameas(class_name, "auitool_spacer"))
+        {
+            url = "Wx/AUI/AuiToolBar.html#add_label-instance_method";
+        }
+        else if (tt::is_sameas(class_name, "spacer"))
+        {
+            url = "Wx/Sizer.html#add_spacer-instance_method";
+        }
         return url;
     }
-    url.Replace("::", "/");
+    url.Replace("::", "/", true);
     url << ".html";
     return url;
+}
+
+tt_string BaseGenerator::GetRubyHelpText(Node* node)
+{
+    tt_string class_name = getClassHelpName(node);
+    if (class_name.empty())
+    {
+        return class_name;
+    }
+
+    std::string_view prefix = "Wx::";
+    if (auto wx_iter = g_map_ruby_prefix.find(class_name); wx_iter != g_map_ruby_prefix.end())
+    {
+        prefix = wx_iter->second;
+    }
+    tt_string help_text;
+    help_text << prefix << class_name.subview(2);
+
+    return help_text;
 }
 
 bool BaseGenerator::GetPythonImports(Node* node, std::set<std::string>& set_imports)
@@ -374,7 +400,7 @@ bool BaseGenerator::GetPythonImports(Node* node, std::set<std::string>& set_impo
     }
 
     std::string_view prefix = "wx.";
-    if (auto wx_iter = g_map_class_prefix.find(class_name); wx_iter != g_map_class_prefix.end())
+    if (auto wx_iter = g_map_python_prefix.find(class_name); wx_iter != g_map_python_prefix.end())
     {
         prefix = wx_iter->second;
         tt_string import_lib("import ");
@@ -571,7 +597,8 @@ static std::vector<std::pair<const char*, const char*>> prefix_pair = {
 
 tt_string BaseGenerator::GetHelpURL(Node* node)
 {
-    tt_string class_name(map_GenNames[node->getGenName()]);
+    tt_string class_name = getClassHelpName(node);
+
     if (class_name.starts_with("wx"))
     {
         class_name.erase(0, 2);
@@ -589,6 +616,10 @@ tt_string BaseGenerator::GetHelpURL(Node* node)
         {
             class_name = "simple_html_list_box";
         }
+        else if (class_name == "toolbartoolbase")
+        {
+            class_name = "tool_bar_tool_base";
+        }
         else
         {
             for (const auto& [key, value]: prefix_pair)
@@ -602,6 +633,10 @@ tt_string BaseGenerator::GetHelpURL(Node* node)
         url << class_name << ".html";
         return url;
     }
+
+    // REVIEW: [Randalphwa - 07-23-2023] some of these are now being handled by getClassHelpName()
+    // and will therefore never make it this far.
+
     else if (class_name == "BookPage")
     {
         return tt_string("wx_book_ctrl_base.html");
@@ -633,6 +668,10 @@ tt_string BaseGenerator::GetHelpURL(Node* node)
     else if (class_name == "RibbonToolBar")
     {
         return tt_string("wx_ribbon_tool_bar.html");
+    }
+    else if (class_name == "spacer")
+    {
+        return tt_string("wx_sizer.html");
     }
     else if (class_name == "StaticCheckboxBoxSizer" || class_name == "StaticRadioBtnBoxSizer")
     {

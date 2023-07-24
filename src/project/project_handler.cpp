@@ -289,7 +289,7 @@ size_t ProjectHandler::getOutputType() const
             {
                 if (child->hasValue(prop_base_file))
                 {
-                    if (child->as_string(prop_base_file) == child->getPropDefaultValue(prop_ruby_file) &&
+                    if (child->as_string(prop_base_file) == child->getPropDefaultValue(prop_base_file) &&
                         getCodePreference() != GEN_LANG_CPLUSPLUS)
                     {
                         continue;

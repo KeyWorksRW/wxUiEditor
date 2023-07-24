@@ -44,7 +44,7 @@ public:
     void VerifyClassName();
 
 private:
-    bool m_is_info_shown { false };
+    // bool m_is_info_shown { false };
 
 protected:
 

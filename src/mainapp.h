@@ -81,7 +81,7 @@ private:
 
     int m_ProjectVersion;
     bool m_isMainFrameClosing { false };
-    bool m_isProject_updated { false };
+    // bool m_isProject_updated { false };
     bool m_TestingMenuEnabled { false };
 
 #if (DARK_MODE)

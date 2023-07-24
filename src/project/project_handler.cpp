@@ -273,7 +273,7 @@ int ProjectHandler::getCodePreference() const
         return GEN_LANG_CPLUSPLUS;
 }
 
-size_t ProjectHandler::getOutputType(OUTPUT_FLAGS flags) const
+size_t ProjectHandler::getOutputType(int flags) const
 {
     size_t result = OUTPUT_NONE;
 

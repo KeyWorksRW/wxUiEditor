@@ -32,7 +32,7 @@ enum : size_t
     OUTPUT_XRC = 1 << 4,
 };
 
-enum OUTPUT_FLAGS : size_t
+enum
 {
     OUT_FLAG_NONE = 0,
     OUT_FLAG_IGNORE_DERIVED = 1 << 0,  // Ignore derived output files
@@ -70,7 +70,7 @@ public:
     // Get a bit flag indicating which output types are enabled.
     //
     // OUTPUT_DERIVED is only set if the file is specified and does *not* exist.
-    size_t getOutputType(OUTPUT_FLAGS flags = OUT_FLAG_NONE) const;
+    size_t getOutputType(int flags = OUT_FLAG_NONE) const;
 
     // Change to the project's directory
     bool ChangeDir() const { return m_projectPath.ChangeDir(); }

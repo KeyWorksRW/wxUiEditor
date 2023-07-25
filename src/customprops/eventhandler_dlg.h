@@ -50,13 +50,20 @@ public:
 
     const wxString& GetResults() { return m_value; }
 
-    // Given a complete C++/wxPython value, this will return a string as if C++ was the only
-    // value specified.
+    // This will return a string as if C++ was the only value specified even if the original
+    // value had values for multiple languages. Note that this *will* return a value even if
+    // C++ is not enabled and another language specified a value.
     static tt_string GetCppValue(tt_string_view value);
 
-    // Given a complete C++/wxPython value, this will return a string as if wxPython was the
-    // only value specified.
+    // This will return a string as if Python was the only value specified even if the original
+    // value had values for multiple languages. Note that this *will* return a value even if
+    // Python is not enabled and another language specified a value.
     static tt_string GetPythonValue(tt_string_view value);
+
+    // This will return a string as if Ruby was the only value specified even if the original
+    // value had values for multiple languages. Note that this *will* return a value even if
+    // Ruby is not enabled and another language specified a value.
+    static tt_string GetRubyValue(tt_string_view value);
 
 protected:
     // This is used to colorize member variables in the C++ lambda
@@ -72,18 +79,30 @@ protected:
     void OnChange(wxCommandEvent& WXUNUSED(event)) override;
     void OnInit(wxInitDialogEvent& WXUNUSED(event)) override;
     void OnOK(wxCommandEvent& event) override;
-    void OnUseFunction(wxCommandEvent& WXUNUSED(event)) override;
-    void OnUseLambda(wxCommandEvent& WXUNUSED(event)) override;
+    void OnPageChanged(wxBookCtrlEvent& event) override;
+    void OnUseCppFunction(wxCommandEvent& WXUNUSED(event)) override;
+    void OnUseCppLambda(wxCommandEvent& WXUNUSED(event)) override;
     void OnUsePythonFunction(wxCommandEvent& event) override;
     void OnUsePythonLambda(wxCommandEvent& event) override;
-    void OnPageChanged(wxBookCtrlEvent& event) override;
+    void OnUseRubyFunction(wxCommandEvent& event) override;
+    void OnUseRubyLambda(wxCommandEvent& WXUNUSED(event)) override;
 
     wxString m_value;
 
 private:
     NodeEvent* m_event;
-    bool m_is_python_code { false };
+
+    size_t m_python_page;
+    size_t m_ruby_page;
+
+    size_t m_output_type;   // see ../project/project_handler.h for OUTPUT_TYPE_ defines
+    int m_code_preference;  // This will be one of the GEN_LANG values
+
+    bool m_is_cpp_enabled { false };
+    bool m_is_python_enabled { false };
+    bool m_is_ruby_enabled { false };
 
     bool m_is_cpp_lambda { false };
     bool m_is_python_lambda { false };
+    bool m_is_ruby_lambda { false };
 };

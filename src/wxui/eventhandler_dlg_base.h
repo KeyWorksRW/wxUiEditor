@@ -44,10 +44,12 @@ protected:
     virtual void OnInit(wxInitDialogEvent& event) { event.Skip(); }
     virtual void OnOK(wxCommandEvent& event) { event.Skip(); }
     virtual void OnPageChanged(wxBookCtrlEvent& event) { event.Skip(); }
-    virtual void OnUseFunction(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnUseLambda(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnUseCppFunction(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnUseCppLambda(wxCommandEvent& event) { event.Skip(); }
     virtual void OnUsePythonFunction(wxCommandEvent& event) { event.Skip(); }
     virtual void OnUsePythonLambda(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnUseRubyFunction(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnUseRubyLambda(wxCommandEvent& event) { event.Skip(); }
 
     // Class member variables
 
@@ -62,11 +64,17 @@ protected:
     wxStaticBoxSizer* m_py_function_box;
     wxRadioButton* m_py_radio_use_lambda;
     wxStaticBoxSizer* m_py_lambda_box;
+    wxRadioButton* m_ruby_radio_use_function;
+    wxStaticBoxSizer* m_ruby_function_box;
+    wxRadioButton* m_ruby_radio_use_lambda;
+    wxStaticBoxSizer* m_ruby_lambda_box;
     wxStaticText* m_static_bind_text;
     wxStyledTextCtrl* m_cpp_stc_lambda;
+    wxStyledTextCtrl* m_ruby_stc_lambda;
     wxTextCtrl* m_cpp_text_function;
     wxTextCtrl* m_py_text_function;
     wxTextCtrl* m_py_text_lambda;
+    wxTextCtrl* m_ruby_text_function;
 };
 
 // ************* End of generated code ***********

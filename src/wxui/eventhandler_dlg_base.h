@@ -44,10 +44,12 @@ protected:
     virtual void OnInit(wxInitDialogEvent& event) { event.Skip(); }
     virtual void OnOK(wxCommandEvent& event) { event.Skip(); }
     virtual void OnPageChanged(wxBookCtrlEvent& event) { event.Skip(); }
-    virtual void OnUseFunction(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnUseLambda(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnUseCppFunction(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnUseCppLambda(wxCommandEvent& event) { event.Skip(); }
     virtual void OnUsePythonFunction(wxCommandEvent& event) { event.Skip(); }
     virtual void OnUsePythonLambda(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnUseRubyFunction(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnUseRubyLambda(wxCommandEvent& event) { event.Skip(); }
 
     // Class member variables
 

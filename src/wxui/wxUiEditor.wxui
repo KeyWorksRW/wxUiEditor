@@ -2465,7 +2465,7 @@
                     radiobtn_var_name="m_cpp_radio_use_function"
                     var_name="m_cpp_function_box"
                     flags="wxEXPAND"
-                    wxEVT_RADIOBUTTON="OnUseFunction">
+                    wxEVT_RADIOBUTTON="OnUseCppFunction">
                     <node
                       class="wxTextCtrl"
                       var_name="m_cpp_text_function"
@@ -2481,7 +2481,7 @@
                     var_name="m_cpp_lambda_box"
                     flags="wxEXPAND"
                     proportion="1"
-                    wxEVT_RADIOBUTTON="OnUseLambda">
+                    wxEVT_RADIOBUTTON="OnUseCppLambda">
                     <node
                       class="wxBoxSizer"
                       var_name="box_sizer_2">
@@ -2590,7 +2590,7 @@
                     radiobtn_var_name="m_ruby_radio_use_function"
                     var_name="m_ruby_function_box"
                     flags="wxEXPAND"
-                    wxEVT_RADIOBUTTON="OnUsePythonFunction">
+                    wxEVT_RADIOBUTTON="OnUseRubyFunction">
                     <node
                       class="wxTextCtrl"
                       var_name="m_ruby_text_function"
@@ -2605,7 +2605,7 @@
                       var_name="m_ruby_lambda_box"
                       flags="wxEXPAND"
                       proportion="1"
-                      wxEVT_RADIOBUTTON="OnUseLambda">
+                      wxEVT_RADIOBUTTON="OnUseRubyLambda">
                       <node
                         class="wxBoxSizer"
                         var_name="box_sizer_3" />

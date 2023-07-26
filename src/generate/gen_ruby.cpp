@@ -26,10 +26,10 @@
 #include "pugixml.hpp"
 
 // This *must* be written on a line by itself with *no* indentation.
-const char* ruby_begin_cmt_block = "# begin";
+const char* ruby_begin_cmt_block = "=begin";
 
 // This *must* be written on a line by itself with *no* indentation.
-const char* ruby_end_cmt_block = "# end";
+const char* ruby_end_cmt_block = "=end";
 
 bool GenerateRubyFiles(GenResults& results, std::vector<tt_string>* pClassList)
 {
@@ -397,7 +397,6 @@ void BaseCodeGenerator::GenerateRubyClass(Node* form_node, PANEL_PAGE panel_type
             m_source->writeLine();
             m_source->writeLine(code);
         }
-        m_source->writeLine("\tend", indent::none);
     }
 
     // TODO: [Randalphwa - 07-13-2023] Need to figure out if wxRuby supports persistence
@@ -407,11 +406,17 @@ void BaseCodeGenerator::GenerateRubyClass(Node* form_node, PANEL_PAGE panel_type
         m_source->writeLine();
         m_source->writeLine("# Event handlers");
         GenSrcEventBinding(form_node, events);
+        m_source->writeLine("\tend", indent::none);
 
         m_source->ResetIndent();
         m_source->writeLine();
         m_source->Indent();
         GenRubyEventHandlers(events);
+    }
+    else
+    {
+        m_source->ResetIndent();
+        m_source->writeLine("\tend", indent::none);
     }
 
     if (m_form_node->isGen(gen_wxWizard))

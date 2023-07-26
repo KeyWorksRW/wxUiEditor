@@ -5,6 +5,8 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
+#include <algorithm>
+
 #include "gen_base.h"
 
 #include "../customprops/eventhandler_dlg.h"  // EventHandlerDlg static functions
@@ -31,9 +33,17 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
     {
         event_code = EventHandlerDlg::GetCppValue(event->get_value());
     }
-    else
+    else if (code.m_language == GEN_LANG_PYTHON)
     {
         event_code = EventHandlerDlg::GetPythonValue(event->get_value());
+    }
+    else if (code.m_language == GEN_LANG_RUBY)
+    {
+        event_code = EventHandlerDlg::GetPythonValue(event->get_value());
+    }
+    else
+    {
+        FAIL_MSG("Unknown language");
     }
 
     if (event_code.empty())
@@ -58,12 +68,21 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
             ExpandLambda(handler.GetCode());
             is_lambda = true;
         }
-        else
+        else if (code.is_python())
         {
             handler.Add(event->get_name()) += ", lambda event:";
             auto body_pos = event_code.find(']') + 1;
             event_code.erase(0, body_pos);
             handler.Str(event_code);
+            is_lambda = true;
+        }
+        else if (code.is_ruby())
+        {
+            handler << event->get_name() << ',' << event_code;
+            // Put the lambda expression on it's own line
+            handler.GetCode().Replace("[", "\n\t{");
+            comma = ",\n\t";
+            ExpandLambda(handler.GetCode());
             is_lambda = true;
         }
     }
@@ -87,14 +106,31 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
     }
     else
     {
-        handler.Add(event->get_name());
-        if (code.is_cpp())
-            handler << ", &" << class_name << "::" << event_code << ", this";
-        else
-            handler.Add(", self.") << event_code;
+        if (code.is_cpp() || code.is_python())
+        {
+            handler.Add(event->get_name());
+            if (code.is_cpp())
+                handler << ", &" << class_name << "::" << event_code << ", this";
+            else if (code.is_python())
+                handler.Add(", self.") << event_code;
+        }
+        else if (code.is_ruby())
+        {
+            tt_string event_name = event->get_name();
+            // remove "wx" prefix, make the rest of the name lower case
+            event_name.erase(0, 2);
+            std::transform(event_name.begin(), event_name.end(), event_name.begin(),
+                           [](unsigned char c)
+                           {
+                               return std::tolower(c);
+                           });
+
+            // handler << event_name << " " << event_code;
+            handler.Str(event_name).Str(" ").NodeName().Str(".get_id(), :") << event_code;
+        }
     }
 
-    // With lambdas, line break have already been added
+    // With lambdas, line breaks have already been added
     code.EnableAutoLineBreak(is_lambda ? false : true);
 
     // Do *NOT* assume that code.m_node is the same as event->getNode()!
@@ -114,23 +150,37 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
         {
             code.NodeName().Function("GetStaticBox()");
         }
-        code.Function("Bind(") << handler.GetCode();
+
+        if (code.is_cpp() || code.is_python())
+        {
+            code.Function("Bind(") << handler.GetCode();
+        }
+        else if (code.is_ruby())
+        {
+            code.Function("") << handler.GetCode();
+        }
 
         code.EndFunction();
     }
     else if (event->getNode()->isGen(gen_wxMenuItem) || event->getNode()->isGen(gen_tool) ||
              event->getNode()->isGen(gen_auitool))
     {
-        code.AddIfPython("self.");
-        code << "Bind(" << handler.GetCode() << comma;
-        if (event->getNode()->as_string(prop_id) != "wxID_ANY")
+        if (code.is_cpp() || code.is_python())
         {
-            auto id = event->getNode()->getPropId();
-            code.AddIfPython("id=").Add(id).EndFunction();
+            code.AddIfPython("self.");
+            code << "Bind(" << handler.GetCode() << comma;
+            if (event->getNode()->as_string(prop_id) != "wxID_ANY")
+            {
+                auto id = event->getNode()->getPropId();
+                code.AddIfPython("id=").Add(id).EndFunction();
+            }
+            else
+            {
+                code.AddIfPython("id=").Add(event->getNode()->getNodeName()).Function("GetId()").EndFunction();
+            }
         }
-        else
+        else if (code.is_ruby())
         {
-            code.AddIfPython("id=").Add(event->getNode()->getNodeName()).Function("GetId()").EndFunction();
         }
     }
     else if (event->getNode()->isGen(gen_ribbonTool))
@@ -139,29 +189,53 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
             code.Add("self.");
         if (!event->getNode()->hasValue(prop_id))
         {
-            code.AddIfCpp("// ").AddIfPython("# ");
-            code << "**WARNING** -- tool id not specified, event handler may never be called\n";
-            code << "Bind(" << handler.GetCode() << comma;
-            code.Add("wxID_ANY").EndFunction();
+            code.AddComment("**WARNING** -- tool id not specified, event handler may never be called\n");
+            if (code.is_cpp() || code.is_python())
+            {
+                code << "Bind(" << handler.GetCode() << comma;
+                code.Add("wxID_ANY").EndFunction();
+            }
+            else if (code.is_ruby())
+            {
+            }
         }
         else
         {
-            code << "Bind(" << handler.GetCode() << comma;
-            code.Add(event->getNode()->as_string(prop_id)).EndFunction();
+            if (code.is_cpp() || code.is_python())
+            {
+                code << "Bind(" << handler.GetCode() << comma;
+                code.Add(event->getNode()->as_string(prop_id)).EndFunction();
+            }
+            else if (code.is_ruby())
+            {
+            }
         }
     }
     else if (event->getNode()->isForm())
     {
-        code.AddIfPython("self.");
-        code << "Bind(" << handler.GetCode();
-        code.EndFunction();
+        if (code.is_cpp() || code.is_python())
+        {
+            code.AddIfPython("self.");
+            code << "Bind(" << handler.GetCode();
+            code.EndFunction();
+        }
+        else if (code.is_ruby())
+        {
+        }
     }
     else
     {
-        if (code.is_python() && !event->getNode()->isLocal())
-            code.Add("self.");
-        code.Add(event->getNode()->getNodeName()).Function("Bind(") << handler.GetCode();
-        code.EndFunction();
+        if (code.is_cpp() || code.is_python())
+        {
+            if (code.is_python() && !event->getNode()->isLocal())
+                code.Add("self.");
+            code.Add(event->getNode()->getNodeName()).Function("Bind(") << handler.GetCode();
+            code.EndFunction();
+        }
+        else if (code.is_ruby())
+        {
+            code << handler;
+        }
     }
 
     code.EnableAutoLineBreak(true);

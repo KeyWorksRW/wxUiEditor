@@ -59,3 +59,6 @@ bool isValidVarName(const std::string& str);
 tt_string CreateBaseFilename(Node* form_node, const tt_string& class_name);
 
 tt_string CreateDerivedFilename(Node* form_node, const tt_string& class_name);
+
+// Typically called to convert a string into a Ruby string which prefers snake_case
+tt_string ConvertToSnakeCase(tt_string_view str);

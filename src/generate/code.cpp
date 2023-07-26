@@ -13,6 +13,7 @@
 #include "mainapp.h"          // App class
 #include "node.h"             // Node class
 #include "project_handler.h"  // ProjectHandler class
+#include "utils.h"            // Miscellaneous utilities
 
 using namespace code;
 
@@ -410,21 +411,7 @@ Code& Code::Function(tt_string_view text)
         {
             if (is_ruby())
             {
-                std::string func(text);
-                // Ruby uses snake_case, so convert from camelCase
-                for (size_t pos = 0; pos < func.size(); ++pos)
-                {
-                    if (func[pos] >= 'A' && func[pos] <= 'Z')
-                    {
-                        func[pos] = func[pos] - 'A' + 'a';
-                        if (pos > 0)
-                        {
-                            func.insert(pos, "_");
-                            ++pos;
-                        }
-                    }
-                }
-                *this += func;
+                *this += ConvertToSnakeCase(text);
             }
             else
             {
@@ -458,21 +445,7 @@ Code& Code::ClassMethod(tt_string_view function_name)
     }
     if (is_ruby())
     {
-        std::string func(function_name);
-        // Ruby uses snake_case, so convert from camelCase
-        for (size_t pos = 0; pos < func.size(); ++pos)
-        {
-            if (func[pos] >= 'A' && func[pos] <= 'Z')
-            {
-                func[pos] = func[pos] - 'A' + 'a';
-                if (pos > 0)
-                {
-                    func.insert(pos, "_");
-                    ++pos;
-                }
-            }
-        }
-        *this += func;
+        *this += ConvertToSnakeCase(function_name);
     }
     else
     {
@@ -490,21 +463,7 @@ Code& Code::FormFunction(tt_string_view text)
     }
     else if (is_ruby())
     {
-        std::string func(text);
-        // Ruby uses snake_case, so convert from camelCase
-        for (size_t pos = 0; pos < func.size(); ++pos)
-        {
-            if (func[pos] >= 'A' && func[pos] <= 'Z')
-            {
-                func[pos] = func[pos] - 'A' + 'a';
-                if (pos > 0)
-                {
-                    func.insert(pos, "_");
-                    ++pos;
-                }
-            }
-        }
-        *this += func;
+        *this += ConvertToSnakeCase(text);
         return *this;
     }
 
@@ -1378,21 +1337,7 @@ Code& Code::SizerFlagsFunction(tt_string_view function_name)
     *this += '.';
     if (is_ruby())
     {
-        std::string func(function_name);
-        // Ruby uses snake_case, so convert from camelCase
-        for (size_t pos = 0; pos < func.size(); ++pos)
-        {
-            if (func[pos] >= 'A' && func[pos] <= 'Z')
-            {
-                func[pos] = func[pos] - 'A' + 'a';
-                if (pos > 0)
-                {
-                    func.insert(pos, "_");
-                    ++pos;
-                }
-            }
-        }
-        *this += func;
+        *this += ConvertToSnakeCase(function_name);
     }
     else
     {

@@ -446,3 +446,21 @@ tt_string CreateDerivedFilename(Node* form_node, const tt_string& class_name)
 
     return filename;
 }
+
+tt_string ConvertToSnakeCase(tt_string_view str)
+{
+    tt_string result(str);
+    for (size_t pos = 0; pos < result.size(); ++pos)
+    {
+        if (result[pos] >= 'A' && result[pos] <= 'Z')
+        {
+            result[pos] = result[pos] - 'A' + 'a';
+            if (pos > 0)
+            {
+                result.insert(pos, "_");
+                ++pos;
+            }
+        }
+    }
+    return result;
+}

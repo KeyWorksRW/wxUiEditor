@@ -411,7 +411,7 @@ void EventHandlerDlg::OnPageChanged(wxBookCtrlEvent& event)
     // once and been corrected, then further changes work fine. I have not been able to figure
     // out why this is happening, but this code works around it.
 
-    if (m_is_python_enabled && event.GetSelection() == m_python_page)
+    if (m_is_python_enabled && event.GetSelection() == (to_int) m_python_page)
     {
         if (m_is_python_lambda)
         {
@@ -425,7 +425,7 @@ void EventHandlerDlg::OnPageChanged(wxBookCtrlEvent& event)
         m_is_cpp_lambda = m_cpp_radio_use_lambda->GetValue();
         m_is_ruby_lambda = m_ruby_radio_use_lambda->GetValue();
     }
-    else if (m_is_cpp_enabled && event.GetSelection() == EVENT_PAGE_CPP)
+    else if (m_is_cpp_enabled && event.GetSelection() == (to_int) EVENT_PAGE_CPP)
     {
         if (m_is_cpp_lambda)
         {
@@ -439,7 +439,7 @@ void EventHandlerDlg::OnPageChanged(wxBookCtrlEvent& event)
         m_is_python_lambda = m_py_radio_use_lambda->GetValue();
         m_is_ruby_lambda = m_ruby_radio_use_lambda->GetValue();
     }
-    else if (m_is_ruby_enabled && event.GetSelection() == m_ruby_page)
+    else if (m_is_ruby_enabled && event.GetSelection() == (to_int) m_ruby_page)
     {
         if (m_is_ruby_lambda)
         {
@@ -466,11 +466,11 @@ void EventHandlerDlg::FormatBindText()
 {
     auto page = m_notebook->GetSelection();
     int language;
-    if (m_is_cpp_enabled && page == EVENT_PAGE_CPP)
+    if (m_is_cpp_enabled && page == (to_int) EVENT_PAGE_CPP)
         language = GEN_LANG_CPLUSPLUS;
-    else if (m_is_python_enabled && page == m_python_page)
+    else if (m_is_python_enabled && page == (to_int) m_python_page)
         language = GEN_LANG_PYTHON;
-    else if (m_is_ruby_enabled && page == m_ruby_page)
+    else if (m_is_ruby_enabled && page == (to_int) m_ruby_page)
         language = GEN_LANG_RUBY;
     else
         return;

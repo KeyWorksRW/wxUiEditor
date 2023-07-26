@@ -15,6 +15,7 @@
 #include "node_creator.h"     // NodeCreator -- Class used to create nodes
 #include "node_event.h"       // NodeEventInfo -- NodeEvent and NodeEventInfo classes
 #include "project_handler.h"  // ProjectHandler class
+#include "utils.h"            // Miscellaneous utilities
 
 // List of events and suggested function names
 extern const std::unordered_map<std::string_view, const char*> s_EventNames;
@@ -173,7 +174,7 @@ void EventHandlerDlg::OnInit(wxInitDialogEvent& WXUNUSED(event))
         }
         if (m_is_ruby_enabled)
         {
-            m_ruby_text_function->SetValue(m_value);
+            m_ruby_text_function->SetValue(ConvertToSnakeCase(m_value.ToStdString()).make_wxString());
             m_ruby_radio_use_function->SetValue(true);
             m_ruby_lambda_box->GetStaticBox()->Enable(false);
         }

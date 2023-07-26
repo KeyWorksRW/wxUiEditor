@@ -25,6 +25,12 @@
 
 #include "pugixml.hpp"
 
+// This *must* be written on a line by itself with *no* indentation.
+const char* ruby_begin_cmt_block = "# begin";
+
+// This *must* be written on a line by itself with *no* indentation.
+const char* ruby_end_cmt_block = "# end";
+
 bool GenerateRubyFiles(GenResults& results, std::vector<tt_string>* pClassList)
 {
     if (Project.getChildCount() == 0)

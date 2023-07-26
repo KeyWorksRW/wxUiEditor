@@ -16,8 +16,10 @@
 
 using namespace code;
 
-extern const char* python_end_cmt_line;  // "# ************* End of generated code"
-extern const char* python_triple_quote;  // "\"\"\"";
+extern const char* python_perl_ruby_end_cmt_line;  // "# ************* End of generated code"
+extern const char* python_triple_quote;            // "\"\"\"";
+extern const char* ruby_begin_cmt_block;           // "# begin";
+extern const char* ruby_end_cmt_block;             // "# end";
 
 /////////////////////////////////////////// Default generator event code ///////////////////////////////////////////
 
@@ -432,7 +434,7 @@ void BaseCodeGenerator::GenPythonEventHandlers(EventVector& events)
             size_t line_index;
             for (line_index = 0; line_index < org_file.size(); ++line_index)
             {
-                if (org_file[line_index].is_sameprefix(python_end_cmt_line))
+                if (org_file[line_index].is_sameprefix(python_perl_ruby_end_cmt_line))
                 {
                     break;
                 }
@@ -508,5 +510,134 @@ void BaseCodeGenerator::GenRubyEventHandlers(EventVector& events)
         return;
     }
 
-    // TODO: [Randalphwa - 07-13-2023] Need to implement this
+    // Multiple events can be bound to the same function, so use a set to make sure we only generate each function once.
+    std::unordered_set<std::string> code_lines;
+
+    Code code(m_form_node, GEN_LANG_RUBY);
+    auto sort_event_handlers = [](NodeEvent* a, NodeEvent* b)
+    {
+        return (EventHandlerDlg::GetRubyValue(a->get_value()) < EventHandlerDlg::GetRubyValue(b->get_value()));
+    };
+
+    // Sort events by function name
+    std::sort(events.begin(), events.end(), sort_event_handlers);
+
+    bool inherited_class = m_form_node->hasValue(prop_ruby_inherit_name);
+    if (!inherited_class)
+    {
+        m_header->Indent();
+    }
+    else
+    {
+        m_header->Unindent();
+        m_header->writeLine();
+    }
+
+    bool found_user_handlers = false;
+    if (m_panel_type == NOT_PANEL)
+    {
+        tt_view_vector org_file;
+        tt_string path;
+
+        // Set path to the output file
+        if (auto& base_file = m_form_node->as_string(prop_ruby_file); base_file.size())
+        {
+            path = Project.getBaseDirectory(m_form_node, GEN_LANG_RUBY);
+            if (path.size())
+            {
+                path.append_filename(base_file);
+            }
+            else
+            {
+                path = base_file;
+            }
+
+            if (path.extension().empty())
+            {
+                path += ".rb";
+            }
+            path.make_absolute();
+            path.backslashestoforward();
+        }
+
+        // If the user has defined any event handlers, add them to the code_lines set so we
+        // don't generate them again.
+        if (path.size() && org_file.ReadFile(path))
+        {
+            size_t line_index;
+            for (line_index = 0; line_index < org_file.size(); ++line_index)
+            {
+                if (org_file[line_index].is_sameprefix(python_perl_ruby_end_cmt_line))
+                {
+                    break;
+                }
+            }
+            for (++line_index; line_index < org_file.size(); ++line_index)
+            {
+                auto def = org_file[line_index].view_nonspace();
+                if (org_file[line_index].view_nonspace().starts_with("def "))
+                {
+                    code_lines.emplace(def);
+                    found_user_handlers = true;
+                }
+            }
+        }
+    }
+
+    if (found_user_handlers)
+    {
+        code.Str("# Unimplemented Event handler functions\n# Copy any listed and paste them below the comment block, or "
+                 "to your inherited class.");
+        code.Eol().Eol();
+        m_source->writeLine(code, indent::none);
+        m_source->writeLine(ruby_begin_cmt_block, indent::none);
+    }
+    else
+    {
+        code.Str("# Event handler functions\n# Add these below the comment block, or to your inherited class.");
+        code.Eol().Eol();
+        m_source->writeLine(code, indent::none);
+        m_source->writeLine(ruby_begin_cmt_block, indent::none);
+    }
+
+    code.clear();
+    for (auto& event: events)
+    {
+        auto ruby_handler = EventHandlerDlg::GetRubyValue(event->get_value());
+        // Ignore lambda's
+        if (ruby_handler.starts_with("[ruby:lambda]"))
+            continue;
+
+        tt_string set_code;
+        set_code << "def " << ruby_handler;
+        if (code_lines.find(set_code) != code_lines.end())
+            continue;
+        code_lines.emplace(set_code);
+
+        code.Str(set_code).Eol();
+        code.Tab().Str("event.skip()").Eol().Unindent();
+        code.Str("end").Eol().Eol();
+    }
+
+    if (found_user_handlers)
+    {
+        m_header->writeLine("# Unimplemented Event handler functions");
+    }
+    else
+    {
+        m_header->writeLine("# Event handler functions");
+    }
+    m_header->writeLine(code);
+
+    if (!inherited_class)
+    {
+        m_header->Unindent();
+    }
+    code.Eol(eol_if_needed);
+    m_source->writeLine(code);
+    m_source->writeLine(ruby_end_cmt_block, indent::none);
+
+    // Add a blank line after the comment block so that the final 'end' will be separated from
+    // the comment block.
+    m_source->writeLine();
 }

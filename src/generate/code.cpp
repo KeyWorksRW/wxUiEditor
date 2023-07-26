@@ -702,6 +702,8 @@ Code& Code::NodeName(Node* node)
         node = m_node;
     if (is_python() && !node->isLocal() && !node->isForm())
         *this += "self.";
+    else if (is_ruby() && not(node->isLocal()) && not(node->isForm()))
+        *this += "@";
     *this += node->getNodeName();
     return *this;
 }

@@ -39,7 +39,7 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
     }
     else if (code.m_language == GEN_LANG_RUBY)
     {
-        event_code = EventHandlerDlg::GetPythonValue(event->get_value());
+        event_code = EventHandlerDlg::GetRubyValue(event->get_value());
     }
     else
     {

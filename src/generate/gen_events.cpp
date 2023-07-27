@@ -124,9 +124,7 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
                            {
                                return std::tolower(c);
                            });
-
-            // handler << event_name << " " << event_code;
-            handler.Str(event_name).Str(" ").NodeName().Str(".get_id(), :") << event_code;
+            handler.Str(event_name).Str("(").NodeName().Str(".get_id, :") << event_code << ')';
         }
     }
 
@@ -181,6 +179,7 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
         }
         else if (code.is_ruby())
         {
+            code << handler;
         }
     }
     else if (event->getNode()->isGen(gen_ribbonTool))
@@ -197,6 +196,7 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
             }
             else if (code.is_ruby())
             {
+                code << handler;
             }
         }
         else
@@ -208,6 +208,7 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
             }
             else if (code.is_ruby())
             {
+                code << handler;
             }
         }
     }
@@ -221,6 +222,7 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
         }
         else if (code.is_ruby())
         {
+            code << handler;
         }
     }
     else

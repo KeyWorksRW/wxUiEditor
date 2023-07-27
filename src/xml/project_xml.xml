@@ -87,7 +87,7 @@ inline const char* project_xml = R"===(<?xml version="1.0"?>
 		<inherits class="wxRuby" />
 		<inherits class="XRC" />
 		<property name="code_preference" type="option"
-			help="Specify the code you prefer to generate. This can affect the UI display in the Mockup panel, and affects the initial expansion/contraction of language properties in wxUiEditor.">
+			help="Specify the code you prefer to generate. This can affect default settings for variable names, various initial UI states, and the UI display in the Mockup panel.">
 			<option name="C++" />
 			<option name="Python" />
 			<option name="Ruby" />

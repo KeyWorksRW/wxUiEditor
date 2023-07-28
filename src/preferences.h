@@ -28,6 +28,45 @@ struct PREFS
     // Enable WakaTime support
     bool is_WakaTimeEnabled() const { return m_enable_wakatime; }
 
+    bool is_DarkMode() const { return m_dark_mode; }
+    void set_DarkMode(bool value) { m_dark_mode = value; }
+
+    bool is_LoadLastProject() const { return m_is_load_last_project; }
+    void set_LoadLastProject(bool value) { m_is_load_last_project = value; }
+
+    bool is_RightPropGrid() const { return m_is_right_propgrid; }
+    void set_RightPropGrid(bool value) { m_is_right_propgrid = value; }
+
+    bool is_CppSnakeCase() const { return m_is_cpp_snake_case; }
+    void set_CppSnakeCase(bool value) { m_is_cpp_snake_case = value; }
+
+    int get_CppLineLength() const { return m_cpp_line_length; }
+    void set_CppLineLength(int length) { m_cpp_line_length = length; }
+
+    int get_PythonLineLength() const { return m_python_line_length; }
+    void set_PythonLineLength(int length) { m_python_line_length = length; }
+
+    int get_RubyLineLength() const { return m_ruby_line_length; }
+    void set_RubyLineLength(int length) { m_ruby_line_length = length; }
+
+    // Use this string to construct a FontProperty() to get the values
+    const tt_string& get_CodeDisplayFont() const { return m_code_display_font; }
+
+    // This should be the string returned from FontProperty::as_string()
+    void set_CodeDisplayFont(const tt_string& font) { m_code_display_font = font; }
+
+    const tt_string& get_CppWidgetsVersion() const { return m_cpp_widgets_version; }
+    void set_CppWidgetsVersion(const tt_string& version) { m_cpp_widgets_version = version; }
+
+    const wxColour& get_CppColour() const { return m_colour_cpp; }
+    void set_CppColour(const wxColour& colour) { m_colour_cpp = colour; }
+
+    const wxColour& get_PythonColour() const { return m_colour_python; }
+    void set_PythonColour(const wxColour& colour) { m_colour_python = colour; }
+
+    const wxColour& get_RubyColour() const { return m_colour_ruby; }
+    void set_RubyColour(const wxColour& colour) { m_colour_ruby = colour; }
+
     void set_SizersAllBorders(bool setting) { m_sizers_all_borders = setting; }
     void set_SizersExpand(bool setting) { m_sizers_always_expand = setting; }
     void set_VarPrefix(bool setting) { m_var_prefix = setting; }
@@ -75,10 +114,26 @@ private:
     long m_project_flags { 0 };
     PREVIEW_TYPE m_preview_type { PREVIEW_TYPE_XRC };
 
+    tt_string m_cpp_widgets_version { "3.2" };
+    tt_string m_code_display_font { "modern,10" };
+
+    wxColour m_colour_cpp { wxColour("#FF00FF") };
+    wxColour m_colour_python { wxColour("#FF00FF") };
+    wxColour m_colour_ruby { wxColour("#FF00FF") };
+
+    int m_cpp_line_length { 110 };
+    int m_python_line_length { 90 };
+    int m_ruby_line_length { 80 };
+
     bool m_sizers_all_borders { true };
     bool m_sizers_always_expand { true };
-    bool m_enable_wakatime { true };
     bool m_var_prefix { true };  // true to use "m_" prefix for member variables
+
+    bool m_enable_wakatime { true };
+    bool m_dark_mode { false };
+    bool m_is_load_last_project { false };
+    bool m_is_right_propgrid { false };
+    bool m_is_cpp_snake_case { false };
 };
 
 PREFS& Preferences();

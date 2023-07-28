@@ -322,6 +322,8 @@ set (file_list
     ui/import_dlg.cpp           # Dialog to import one or more projects
     ui/xrccompare.cpp           # C++/XRC UI Comparison dialog
 
+    # (generated) ui/preferences_dlg.cpp  # Preferences dialog
+
     # wxui
 
     # (generated) wxui/insert_widget.cpp

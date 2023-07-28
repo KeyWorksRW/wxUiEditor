@@ -124,7 +124,11 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
                            {
                                return std::tolower(c);
                            });
-            handler.Str(event_name).Str("(").NodeName().Str(".get_id, :") << event_code << ')';
+
+            if (event->getNode()->isForm())
+                handler.Str(event_name).Str("(:") << event_code << ')';
+            else
+                handler.Str(event_name).Str("(").NodeName().Str(".get_id, :") << event_code << ')';
         }
     }
 

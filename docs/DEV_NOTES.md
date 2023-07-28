@@ -29,3 +29,27 @@ If you are adding a comment to a function or variable in a header file, please w
 Prior to AI being available to generate code, comments in the code explained _why_ the code was written not _what_ the code did. The reasoning is that _what_ the code did should be obvious just by reading the code, but _why_ the code was written in a specific way might not be obvious.
 
 With AI, prefixing code with a comment that says _what_ the code should do will help the AI generate more accurate code. In addition, a comment that explains _what_ the code is doing can help AI training making the code more likely to be generated for someone else. This project is Open Source, and uses an Apache License, so there are no restrictions on how a section of the code is used in other projects.
+
+## Default variable names
+
+A variable's class access (public, protected or none) determines it's default prefix, which differs based on the Preferred language.
+
+Note: Ruby uses a leading `_` for an unused parameter, e.g. `_event`.
+
+#### none
+
+- C++: no prefix
+- Python: `_` as a prefix
+- Ruby: no prefix
+
+#### protected
+
+- C++: `m_`
+- Python: no prefix
+- Ruby: `@`
+
+#### public
+
+- C++: `m_`
+- Python: no prefix
+- Ruby: `@`

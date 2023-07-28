@@ -709,7 +709,7 @@ Node* Node::createChildNode(GenName name)
         if (Project.getCodePreference() != GEN_LANG_CPLUSPLUS)
         {
             tt_string member_name = new_node->as_string(prop_var_name);
-            if (Project.getCodePreference() == GEN_LANG_RUBY)
+            if (Project.getCodePreference() == GEN_LANG_RUBY || Project.getCodePreference() == GEN_LANG_PYTHON)
             {
                 member_name = ConvertToSnakeCase(member_name);
                 if (member_name != new_node->as_string(prop_var_name))

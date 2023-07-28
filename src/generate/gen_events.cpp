@@ -669,18 +669,14 @@ void BaseCodeGenerator::GenRubyEventHandlers(EventVector& events)
         code.Str("# Unimplemented Event handler functions\n# Copy any listed and paste them below the comment block, or "
                  "to your inherited class.");
         code.Eol().Eol();
-        m_source->writeLine(code, indent::none);
-        m_source->writeLine(ruby_begin_cmt_block, indent::none);
     }
     else
     {
         code.Str("# Event handler functions\n# Add these below the comment block, or to your inherited class.");
         code.Eol().Eol();
-        m_source->writeLine(code, indent::none);
-        m_source->writeLine(ruby_begin_cmt_block, indent::none);
     }
 
-    code.clear();
+    Code undefined_handlers(m_form_node, GEN_LANG_RUBY);
     for (auto& event: events)
     {
         auto ruby_handler = EventHandlerDlg::GetRubyValue(event->get_value());
@@ -694,9 +690,17 @@ void BaseCodeGenerator::GenRubyEventHandlers(EventVector& events)
             continue;
         code_lines.emplace(set_code);
 
-        code.Str(set_code).Eol();
-        code.Tab().Str("event.skip()").Eol().Unindent();
-        code.Str("end").Eol().Eol();
+        undefined_handlers.Str(set_code).Eol();
+        undefined_handlers.Tab().Str("event.skip()").Eol().Unindent();
+        undefined_handlers.Str("end").Eol().Eol();
+    }
+
+    if (undefined_handlers.size())
+    {
+        m_source->writeLine(code, indent::none);
+        m_source->writeLine(ruby_begin_cmt_block, indent::none);
+        m_source->writeLine(undefined_handlers);
+        m_source->writeLine(ruby_end_cmt_block, indent::none);
     }
 
     if (found_user_handlers)
@@ -713,11 +717,4 @@ void BaseCodeGenerator::GenRubyEventHandlers(EventVector& events)
     {
         m_header->Unindent();
     }
-    code.Eol(eol_if_needed);
-    m_source->writeLine(code);
-    m_source->writeLine(ruby_end_cmt_block, indent::none);
-
-    // Add a blank line after the comment block so that the final 'end' will be separated from
-    // the comment block.
-    m_source->writeLine();
 }

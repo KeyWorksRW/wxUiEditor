@@ -15,6 +15,7 @@
 #include "node_creator.h"     // NodeCreator -- Class used to create nodes
 #include "node_event.h"       // NodeEventInfo -- NodeEvent and NodeEventInfo classes
 #include "project_handler.h"  // ProjectHandler class
+#include "utils.h"            // Miscellaneous utilities
 
 // List of events and suggested function names
 extern const std::unordered_map<std::string_view, const char*> s_EventNames;
@@ -173,7 +174,7 @@ void EventHandlerDlg::OnInit(wxInitDialogEvent& WXUNUSED(event))
         }
         if (m_is_ruby_enabled)
         {
-            m_ruby_text_function->SetValue(m_value);
+            m_ruby_text_function->SetValue(ConvertToSnakeCase(m_value.ToStdString()).make_wxString());
             m_ruby_radio_use_function->SetValue(true);
             m_ruby_lambda_box->GetStaticBox()->Enable(false);
         }
@@ -741,7 +742,7 @@ tt_string EventHandlerDlg::GetCppValue(tt_string_view value)
     {
         value.remove_suffix(value.size() - pos_python);
     }
-    else if (auto pos_ruby = value.find("[ruby:"); pos_ruby != tt::npos)
+    if (auto pos_ruby = value.find("[ruby:"); pos_ruby != tt::npos)
     {
         value.remove_suffix(value.size() - pos_ruby);
     }
@@ -766,6 +767,10 @@ tt_string EventHandlerDlg::GetPythonValue(tt_string_view value)
         else
         {
             result = value;
+            if (auto pos_other = result.find("[ruby:"); pos_other != tt::npos)
+            {
+                result.erase(pos_other, result.size() - pos_other);
+            }
         }
         return result;
     }
@@ -793,8 +798,8 @@ tt_string EventHandlerDlg::GetPythonValue(tt_string_view value)
 tt_string EventHandlerDlg::GetRubyValue(tt_string_view value)
 {
     tt_string result;
-    auto pos_python = value.find("[ruby:");
-    if (pos_python == tt::npos)
+    auto pos_ruby = value.find("[ruby:");
+    if (pos_ruby == tt::npos)
     {
         if (value.front() == '[')
         {
@@ -804,12 +809,16 @@ tt_string EventHandlerDlg::GetRubyValue(tt_string_view value)
         else
         {
             result = value;
+            if (auto pos_other = result.find("[python:"); pos_other != tt::npos)
+            {
+                result.erase(pos_other, result.size() - pos_other);
+            }
         }
         return result;
     }
     else
     {
-        value.remove_prefix(pos_python);
+        value.remove_prefix(pos_ruby);
     }
 
     if (!value.starts_with("[ruby:lambda]"))

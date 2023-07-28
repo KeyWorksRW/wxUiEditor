@@ -5,6 +5,8 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
+#include <algorithm>
+
 #include "gen_base.h"
 
 #include "../customprops/eventhandler_dlg.h"  // EventHandlerDlg static functions
@@ -16,8 +18,10 @@
 
 using namespace code;
 
-extern const char* python_end_cmt_line;  // "# ************* End of generated code"
-extern const char* python_triple_quote;  // "\"\"\"";
+extern const char* python_perl_ruby_end_cmt_line;  // "# ************* End of generated code"
+extern const char* python_triple_quote;            // "\"\"\"";
+extern const char* ruby_begin_cmt_block;           // "# begin";
+extern const char* ruby_end_cmt_block;             // "# end";
 
 /////////////////////////////////////////// Default generator event code ///////////////////////////////////////////
 
@@ -29,9 +33,17 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
     {
         event_code = EventHandlerDlg::GetCppValue(event->get_value());
     }
-    else
+    else if (code.m_language == GEN_LANG_PYTHON)
     {
         event_code = EventHandlerDlg::GetPythonValue(event->get_value());
+    }
+    else if (code.m_language == GEN_LANG_RUBY)
+    {
+        event_code = EventHandlerDlg::GetRubyValue(event->get_value());
+    }
+    else
+    {
+        FAIL_MSG("Unknown language");
     }
 
     if (event_code.empty())
@@ -56,12 +68,21 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
             ExpandLambda(handler.GetCode());
             is_lambda = true;
         }
-        else
+        else if (code.is_python())
         {
             handler.Add(event->get_name()) += ", lambda event:";
             auto body_pos = event_code.find(']') + 1;
             event_code.erase(0, body_pos);
             handler.Str(event_code);
+            is_lambda = true;
+        }
+        else if (code.is_ruby())
+        {
+            handler << event->get_name() << ',' << event_code;
+            // Put the lambda expression on it's own line
+            handler.GetCode().Replace("[", "\n\t{");
+            comma = ",\n\t";
+            ExpandLambda(handler.GetCode());
             is_lambda = true;
         }
     }
@@ -85,14 +106,33 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
     }
     else
     {
-        handler.Add(event->get_name());
-        if (code.is_cpp())
-            handler << ", &" << class_name << "::" << event_code << ", this";
-        else
-            handler.Add(", self.") << event_code;
+        if (code.is_cpp() || code.is_python())
+        {
+            handler.Add(event->get_name());
+            if (code.is_cpp())
+                handler << ", &" << class_name << "::" << event_code << ", this";
+            else if (code.is_python())
+                handler.Add(", self.") << event_code;
+        }
+        else if (code.is_ruby())
+        {
+            tt_string event_name = event->get_name();
+            // remove "wx" prefix, make the rest of the name lower case
+            event_name.erase(0, 2);
+            std::transform(event_name.begin(), event_name.end(), event_name.begin(),
+                           [](unsigned char c)
+                           {
+                               return std::tolower(c);
+                           });
+
+            if (event->getNode()->isForm())
+                handler.Str(event_name).Str("(:") << event_code << ')';
+            else
+                handler.Str(event_name).Str("(").NodeName().Str(".get_id, :") << event_code << ')';
+        }
     }
 
-    // With lambdas, line break have already been added
+    // With lambdas, line breaks have already been added
     code.EnableAutoLineBreak(is_lambda ? false : true);
 
     // Do *NOT* assume that code.m_node is the same as event->getNode()!
@@ -112,23 +152,38 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
         {
             code.NodeName().Function("GetStaticBox()");
         }
-        code.Function("Bind(") << handler.GetCode();
+
+        if (code.is_cpp() || code.is_python())
+        {
+            code.Function("Bind(") << handler.GetCode();
+        }
+        else if (code.is_ruby())
+        {
+            code.Function("") << handler.GetCode();
+        }
 
         code.EndFunction();
     }
     else if (event->getNode()->isGen(gen_wxMenuItem) || event->getNode()->isGen(gen_tool) ||
              event->getNode()->isGen(gen_auitool))
     {
-        code.AddIfPython("self.");
-        code << "Bind(" << handler.GetCode() << comma;
-        if (event->getNode()->as_string(prop_id) != "wxID_ANY")
+        if (code.is_cpp() || code.is_python())
         {
-            auto id = event->getNode()->getPropId();
-            code.AddIfPython("id=").Add(id).EndFunction();
+            code.AddIfPython("self.");
+            code << "Bind(" << handler.GetCode() << comma;
+            if (event->getNode()->as_string(prop_id) != "wxID_ANY")
+            {
+                auto id = event->getNode()->getPropId();
+                code.AddIfPython("id=").Add(id).EndFunction();
+            }
+            else
+            {
+                code.AddIfPython("id=").Add(event->getNode()->getNodeName()).Function("GetId()").EndFunction();
+            }
         }
-        else
+        else if (code.is_ruby())
         {
-            code.AddIfPython("id=").Add(event->getNode()->getNodeName()).Function("GetId()").EndFunction();
+            code << handler;
         }
     }
     else if (event->getNode()->isGen(gen_ribbonTool))
@@ -137,29 +192,56 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
             code.Add("self.");
         if (!event->getNode()->hasValue(prop_id))
         {
-            code.AddIfCpp("// ").AddIfPython("# ");
-            code << "**WARNING** -- tool id not specified, event handler may never be called\n";
-            code << "Bind(" << handler.GetCode() << comma;
-            code.Add("wxID_ANY").EndFunction();
+            code.AddComment("**WARNING** -- tool id not specified, event handler may never be called\n");
+            if (code.is_cpp() || code.is_python())
+            {
+                code << "Bind(" << handler.GetCode() << comma;
+                code.Add("wxID_ANY").EndFunction();
+            }
+            else if (code.is_ruby())
+            {
+                code << handler;
+            }
         }
         else
         {
-            code << "Bind(" << handler.GetCode() << comma;
-            code.Add(event->getNode()->as_string(prop_id)).EndFunction();
+            if (code.is_cpp() || code.is_python())
+            {
+                code << "Bind(" << handler.GetCode() << comma;
+                code.Add(event->getNode()->as_string(prop_id)).EndFunction();
+            }
+            else if (code.is_ruby())
+            {
+                code << handler;
+            }
         }
     }
     else if (event->getNode()->isForm())
     {
-        code.AddIfPython("self.");
-        code << "Bind(" << handler.GetCode();
-        code.EndFunction();
+        if (code.is_cpp() || code.is_python())
+        {
+            code.AddIfPython("self.");
+            code << "Bind(" << handler.GetCode();
+            code.EndFunction();
+        }
+        else if (code.is_ruby())
+        {
+            code << handler;
+        }
     }
     else
     {
-        if (code.is_python() && !event->getNode()->isLocal())
-            code.Add("self.");
-        code.Add(event->getNode()->getNodeName()).Function("Bind(") << handler.GetCode();
-        code.EndFunction();
+        if (code.is_cpp() || code.is_python())
+        {
+            if (code.is_python() && !event->getNode()->isLocal())
+                code.Add("self.");
+            code.Add(event->getNode()->getNodeName()).Function("Bind(") << handler.GetCode();
+            code.EndFunction();
+        }
+        else if (code.is_ruby())
+        {
+            code << handler;
+        }
     }
 
     code.EnableAutoLineBreak(true);
@@ -432,7 +514,7 @@ void BaseCodeGenerator::GenPythonEventHandlers(EventVector& events)
             size_t line_index;
             for (line_index = 0; line_index < org_file.size(); ++line_index)
             {
-                if (org_file[line_index].is_sameprefix(python_end_cmt_line))
+                if (org_file[line_index].is_sameprefix(python_perl_ruby_end_cmt_line))
                 {
                     break;
                 }
@@ -508,5 +590,131 @@ void BaseCodeGenerator::GenRubyEventHandlers(EventVector& events)
         return;
     }
 
-    // TODO: [Randalphwa - 07-13-2023] Need to implement this
+    // Multiple events can be bound to the same function, so use a set to make sure we only generate each function once.
+    std::unordered_set<std::string> code_lines;
+
+    Code code(m_form_node, GEN_LANG_RUBY);
+    auto sort_event_handlers = [](NodeEvent* a, NodeEvent* b)
+    {
+        return (EventHandlerDlg::GetRubyValue(a->get_value()) < EventHandlerDlg::GetRubyValue(b->get_value()));
+    };
+
+    // Sort events by function name
+    std::sort(events.begin(), events.end(), sort_event_handlers);
+
+    bool inherited_class = m_form_node->hasValue(prop_ruby_inherit_name);
+    if (!inherited_class)
+    {
+        m_header->Indent();
+    }
+    else
+    {
+        m_header->Unindent();
+        m_header->writeLine();
+    }
+
+    bool found_user_handlers = false;
+    if (m_panel_type == NOT_PANEL)
+    {
+        tt_view_vector org_file;
+        tt_string path;
+
+        // Set path to the output file
+        if (auto& base_file = m_form_node->as_string(prop_ruby_file); base_file.size())
+        {
+            path = Project.getBaseDirectory(m_form_node, GEN_LANG_RUBY);
+            if (path.size())
+            {
+                path.append_filename(base_file);
+            }
+            else
+            {
+                path = base_file;
+            }
+
+            if (path.extension().empty())
+            {
+                path += ".rb";
+            }
+            path.make_absolute();
+            path.backslashestoforward();
+        }
+
+        // If the user has defined any event handlers, add them to the code_lines set so we
+        // don't generate them again.
+        if (path.size() && org_file.ReadFile(path))
+        {
+            size_t line_index;
+            for (line_index = 0; line_index < org_file.size(); ++line_index)
+            {
+                if (org_file[line_index].is_sameprefix(python_perl_ruby_end_cmt_line))
+                {
+                    break;
+                }
+            }
+            for (++line_index; line_index < org_file.size(); ++line_index)
+            {
+                auto def = org_file[line_index].view_nonspace();
+                if (org_file[line_index].view_nonspace().starts_with("def "))
+                {
+                    code_lines.emplace(def);
+                    found_user_handlers = true;
+                }
+            }
+        }
+    }
+
+    if (found_user_handlers)
+    {
+        code.Str("# Unimplemented Event handler functions\n# Copy any listed and paste them below the comment block, or "
+                 "to your inherited class.");
+        code.Eol().Eol();
+    }
+    else
+    {
+        code.Str("# Event handler functions\n# Add these below the comment block, or to your inherited class.");
+        code.Eol().Eol();
+    }
+
+    Code undefined_handlers(m_form_node, GEN_LANG_RUBY);
+    for (auto& event: events)
+    {
+        auto ruby_handler = EventHandlerDlg::GetRubyValue(event->get_value());
+        // Ignore lambda's
+        if (ruby_handler.starts_with("[ruby:lambda]"))
+            continue;
+
+        tt_string set_code;
+        set_code << "def " << ruby_handler;
+        if (code_lines.find(set_code) != code_lines.end())
+            continue;
+        code_lines.emplace(set_code);
+
+        undefined_handlers.Str(set_code).Eol();
+        undefined_handlers.Tab().Str("event.skip()").Eol().Unindent();
+        undefined_handlers.Str("end").Eol().Eol();
+    }
+
+    if (undefined_handlers.size())
+    {
+        m_source->writeLine(code, indent::none);
+        m_source->writeLine(ruby_begin_cmt_block, indent::none);
+        m_source->writeLine(undefined_handlers);
+        m_source->writeLine(ruby_end_cmt_block, indent::none);
+    }
+
+    if (found_user_handlers)
+    {
+        m_header->writeLine("# Unimplemented Event handler functions");
+    }
+    else
+    {
+        m_header->writeLine("# Event handler functions");
+    }
+    m_header->writeLine(code);
+
+    if (!inherited_class)
+    {
+        m_header->Unindent();
+    }
 }

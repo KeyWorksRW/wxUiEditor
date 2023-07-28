@@ -20,6 +20,7 @@
 #include "preferences.h"      // Preferences -- Stores user preferences
 #include "project_handler.h"  // ProjectHandler class
 #include "undo_cmds.h"        // InsertNodeAction -- Undoable command classes derived from UndoAction
+#include "utils.h"            // WXDLLIMPEXP_BASE -- Miscellaneous utilities
 
 using namespace GenEnum;
 
@@ -703,12 +704,31 @@ Node* Node::createChildNode(GenName name)
 
     if (new_node)
     {
+        bool is_name_changed = false;
+
         if (Project.getCodePreference() != GEN_LANG_CPLUSPLUS)
         {
             tt_string member_name = new_node->as_string(prop_var_name);
+            if (Project.getCodePreference() == GEN_LANG_RUBY || Project.getCodePreference() == GEN_LANG_PYTHON)
+            {
+                member_name = ConvertToSnakeCase(member_name);
+                if (member_name != new_node->as_string(prop_var_name))
+                    is_name_changed = true;
+            }
+
             if (member_name.starts_with("m_"))
             {
-                member_name.erase(0, 2);
+                if (Project.getCodePreference() == GEN_LANG_PYTHON)
+                {
+                    // Python public names don't have a prefix
+                    member_name.erase(0, 2);
+                }
+                else if (Project.getCodePreference() == GEN_LANG_RUBY)
+                {
+                    member_name.erase(0, 2);
+                    member_name.insert(0, "@");
+                }
+
                 if (member_name.ends_with("_2"))
                 {
                     // This is unlikely, but the previous check for duplication assumed a m_
@@ -717,6 +737,18 @@ Node* Node::createChildNode(GenName name)
                     // prefix is unlikely.
                     member_name.erase(member_name.size() - 2);
                 }
+
+                is_name_changed = true;
+            }
+            else if (Project.getCodePreference() == GEN_LANG_PYTHON)
+            {
+                // Python private names have '_' as a prefix
+                member_name.insert(0, "_");
+                is_name_changed = true;
+            }
+
+            if (is_name_changed)
+            {
                 new_node->set_value(prop_var_name, member_name);
                 new_node->fixDuplicateName();
             }

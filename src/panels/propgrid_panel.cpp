@@ -1681,64 +1681,81 @@ void PropGridPanel::ModifyOptionsProperty(NodeProperty* node_prop, wxPGProperty*
         else if (node_prop->isProp(prop_class_access) && wxGetApp().isPjtMemberPrefix())
         {
             tt_string name = node->as_string(prop_var_name);
-            if (Project.getCodePreference() == GEN_LANG_PYTHON)
+            bool is_name_changed = false;
+            auto access = &value;  // this is just to make the code more readable
+            if (Project.getCodePreference() == GEN_LANG_CPLUSPLUS)
             {
-                // The convention in python is to use a leading underscore for
-                // local members.
+                // If access is changed to local and the name starts with "m_", then
+                // the "m_" will be stripped off. Conversely, if the name is changed
+                // from local to a class member, a "m_" is added as a prefix if
+                // preferred language isw C++.
 
-                if (value == "none" && !name.starts_with("_"))
+                if (*access == "none" && name.starts_with("m_"))
                 {
-                    if (name.starts_with("_"))
-                    {
-                        name.erase(0, 1);
-                    }
-                    else
-                    {
-                        name.insert(0, "_");
-                    }
+                    name.erase(0, 2);
                     auto final_name = node->getUniqueName(name);
                     if (final_name.size())
                         name = final_name;
-                    auto propChange = selected_node->getPropPtr(prop_var_name);
-                    auto grid_property = m_prop_grid->GetPropertyByLabel("var_name");
-                    grid_property->SetValueFromString(name, 0);
-                    modifyProperty(propChange, name);
+                    is_name_changed = true;
                 }
-                else if (value != "none" && name.starts_with("_"))
+                else if (*access != "none" && !name.starts_with("m_") && Project.getCodePreference() == GEN_LANG_CPLUSPLUS)
+                {
+                    name.insert(0, "m_");
+                    auto final_name = node->getUniqueName(name);
+                    if (final_name.size())
+                        name = final_name;
+                    is_name_changed = true;
+                }
+            }
+            else if (Project.getCodePreference() == GEN_LANG_PYTHON)
+            {
+                // The convention in Python is to use a leading underscore for local members.
+
+                if (*access == "none" && !name.starts_with("_"))
+                {
+                    name.insert(0, "_");
+                    if (auto final_name = node->getUniqueName(name); final_name.size())
+                    {
+                        name = final_name;
+                    }
+                    is_name_changed = true;
+                }
+                else if (*access != "none" && name.starts_with("_"))
                 {
                     name.erase(0, 1);
-                    auto final_name = node->getUniqueName(name);
-                    if (final_name.size())
+                    if (auto final_name = node->getUniqueName(name); final_name.size())
+                    {
                         name = final_name;
-                    auto propChange = selected_node->getPropPtr(prop_var_name);
-                    auto grid_property = m_prop_grid->GetPropertyByLabel("var_name");
-                    grid_property->SetValueFromString(name, 0);
-                    modifyProperty(propChange, name);
+                    }
+                    is_name_changed = true;
+                }
+            }
+            else if (Project.getCodePreference() == GEN_LANG_RUBY)
+            {
+                // The convention in Ruby is to use a leading @ for non-local members.
+
+                if (*access == "none" && name.starts_with("@"))
+                {
+                    name.erase(0, 1);
+                    if (auto final_name = node->getUniqueName(name); final_name.size())
+                    {
+                        name = final_name;
+                    }
+                    is_name_changed = true;
+                }
+                else if (*access != "none" && !name.starts_with("@"))
+                {
+                    name.insert(0, "@");
+                    if (auto final_name = node->getUniqueName(name); final_name.size())
+                    {
+                        name = final_name;
+                    }
+                    is_name_changed = true;
                 }
             }
 
-            // If access is changed to local and the name starts with "m_", then
-            // the "m_" will be stripped off. Conversely, if the name is changed
-            // from local to a class member, a "m_" is added as a prefix if
-            // preferred language isw C++.
-
-            else if (value == "none" && name.starts_with("m_"))
+            if (is_name_changed)
             {
-                name.erase(0, 2);
-                auto final_name = node->getUniqueName(name);
-                if (final_name.size())
-                    name = final_name;
-                auto propChange = selected_node->getPropPtr(prop_var_name);
-                auto grid_property = m_prop_grid->GetPropertyByLabel("var_name");
-                grid_property->SetValueFromString(name, 0);
-                modifyProperty(propChange, name);
-            }
-            else if (value != "none" && !name.starts_with("m_") && Project.getCodePreference() == GEN_LANG_CPLUSPLUS)
-            {
-                name.insert(0, "m_");
-                auto final_name = node->getUniqueName(name);
-                if (final_name.size())
-                    name = final_name;
                 auto propChange = selected_node->getPropPtr(prop_var_name);
                 auto grid_property = m_prop_grid->GetPropertyByLabel("var_name");
                 grid_property->SetValueFromString(name, 0);

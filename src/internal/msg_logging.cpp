@@ -36,12 +36,12 @@ void MsgLogging::AddInfoMsg(tt_string_view msg)
     if (wxGetApp().isMainFrameClosing() || !g_pMsgLogging)
         return;
 
-    if (Preferences().GetDebugFlags() & PREFS::PREFS_MSG_INFO)
+    if (UserPrefs.GetDebugFlags() & Prefs::PREFS_MSG_INFO)
     {
         auto& str = m_Msgs.emplace_back(msg);
         str << '\n';
 
-        if ((Preferences().GetDebugFlags() & PREFS::PREFS_MSG_WINDOW) && !m_isFirstShown)
+        if ((UserPrefs.GetDebugFlags() & Prefs::PREFS_MSG_WINDOW) && !m_isFirstShown)
         {
             m_isFirstShown = true;
             ShowLogger();
@@ -61,12 +61,12 @@ void MsgLogging::AddEventMsg(tt_string_view msg)
     if (wxGetApp().isMainFrameClosing() || !g_pMsgLogging)
         return;
 
-    if (Preferences().GetDebugFlags() & PREFS::PREFS_MSG_EVENT)
+    if (UserPrefs.GetDebugFlags() & Prefs::PREFS_MSG_EVENT)
     {
         auto& str = m_Msgs.emplace_back("Event: ");
         str << msg << '\n';
 
-        if ((Preferences().GetDebugFlags() & PREFS::PREFS_MSG_WINDOW) && !m_isFirstShown)
+        if ((UserPrefs.GetDebugFlags() & Prefs::PREFS_MSG_WINDOW) && !m_isFirstShown)
         {
             m_isFirstShown = true;
             ShowLogger();
@@ -86,7 +86,7 @@ void MsgLogging::AddWarningMsg(tt_string_view msg)
     if (wxGetApp().isMainFrameClosing() || !g_pMsgLogging)
         return;
 
-    if (Preferences().GetDebugFlags() & PREFS::PREFS_MSG_WARNING)
+    if (UserPrefs.GetDebugFlags() & Prefs::PREFS_MSG_WARNING)
     {
         auto& str = m_Msgs.emplace_back("Warning: ");
         str << msg << '\n';
@@ -118,7 +118,7 @@ void MsgLogging::AddErrorMsg(tt_string_view msg)
     auto& str = m_Msgs.emplace_back("Error: ");
     str << msg << '\n';
 
-    if ((Preferences().GetDebugFlags() & PREFS::PREFS_MSG_WINDOW) && !m_isFirstShown)
+    if ((UserPrefs.GetDebugFlags() & Prefs::PREFS_MSG_WINDOW) && !m_isFirstShown)
     {
         m_isFirstShown = true;
         ShowLogger();
@@ -153,7 +153,7 @@ void MsgLogging::DoLogRecord(wxLogLevel level, const wxString& msg, const wxLogR
                 auto& str = m_Msgs.emplace_back("wxError: ");
                 str << msg.utf8_string() << '\n';
 
-                if ((Preferences().GetDebugFlags() & PREFS::PREFS_MSG_WINDOW) && !m_isFirstShown)
+                if ((UserPrefs.GetDebugFlags() & Prefs::PREFS_MSG_WINDOW) && !m_isFirstShown)
                 {
                     m_isFirstShown = true;
                     ShowLogger();
@@ -176,12 +176,12 @@ void MsgLogging::DoLogRecord(wxLogLevel level, const wxString& msg, const wxLogR
             break;
 
         case wxLOG_Warning:
-            if (Preferences().GetDebugFlags() & PREFS::PREFS_MSG_WARNING)
+            if (UserPrefs.GetDebugFlags() & Prefs::PREFS_MSG_WARNING)
             {
                 auto& str = m_Msgs.emplace_back("wxWarning: ");
                 str << msg.utf8_string() << '\n';
 
-                if ((Preferences().GetDebugFlags() & PREFS::PREFS_MSG_WINDOW) && !m_isFirstShown)
+                if ((UserPrefs.GetDebugFlags() & Prefs::PREFS_MSG_WINDOW) && !m_isFirstShown)
                 {
                     m_isFirstShown = true;
                     ShowLogger();
@@ -205,12 +205,12 @@ void MsgLogging::DoLogRecord(wxLogLevel level, const wxString& msg, const wxLogR
 
         case wxLOG_Info:
         case wxLOG_Message:
-            if (Preferences().GetDebugFlags() & PREFS::PREFS_MSG_INFO)
+            if (UserPrefs.GetDebugFlags() & Prefs::PREFS_MSG_INFO)
             {
                 auto& str = m_Msgs.emplace_back("wxInfo: ");
                 str << msg.utf8_string() << '\n';
 
-                if ((Preferences().GetDebugFlags() & PREFS::PREFS_MSG_WINDOW) && !m_isFirstShown)
+                if ((UserPrefs.GetDebugFlags() & Prefs::PREFS_MSG_WINDOW) && !m_isFirstShown)
                 {
                     m_isFirstShown = true;
                     ShowLogger();

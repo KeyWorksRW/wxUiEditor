@@ -123,10 +123,9 @@ void MainFrame::OnPreviewWinActivate(wxActivateEvent& event)
 void Preview(Node* form_node)
 {
     PreviewSettings dlg_preview_settings(wxGetMainFrame());
-    auto& prefs = Preferences();
-    if (prefs.GetPreviewType() == PREFS::PREVIEW_TYPE_XRC)
+    if (UserPrefs.GetPreviewType() == Prefs::PREVIEW_TYPE_XRC)
         dlg_preview_settings.set_type_xrc(true);
-    else if (prefs.GetPreviewType() == PREFS::PREVIEW_TYPE_BOTH)
+    else if (UserPrefs.GetPreviewType() == Prefs::PREVIEW_TYPE_BOTH)
         dlg_preview_settings.set_type_both(true);
     else
         dlg_preview_settings.set_type_cpp(true);
@@ -135,13 +134,13 @@ void Preview(Node* form_node)
         return;
 
     if (dlg_preview_settings.is_type_xrc())
-        prefs.SetPreviewType(PREFS::PREVIEW_TYPE_XRC);
+        UserPrefs.SetPreviewType(Prefs::PREVIEW_TYPE_XRC);
     else if (dlg_preview_settings.is_type_both())
-        prefs.SetPreviewType(PREFS::PREVIEW_TYPE_BOTH);
+        UserPrefs.SetPreviewType(Prefs::PREVIEW_TYPE_BOTH);
     else
-        prefs.SetPreviewType(PREFS::PREVIEW_TYPE_CPP);
+        UserPrefs.SetPreviewType(Prefs::PREVIEW_TYPE_CPP);
 
-    if (prefs.GetPreviewType() == PREFS::PREVIEW_TYPE_BOTH)
+    if (UserPrefs.GetPreviewType() == Prefs::PREVIEW_TYPE_BOTH)
     {
         if (!form_node->isGen(gen_wxDialog) && !form_node->isGen(gen_PanelForm))
         {
@@ -159,12 +158,12 @@ void Preview(Node* form_node)
         dlg_compare.ShowModal();
         return;
     }
-    else if (prefs.GetPreviewType() == PREFS::PREVIEW_TYPE_CPP)
+    else if (UserPrefs.GetPreviewType() == Prefs::PREVIEW_TYPE_CPP)
     {
         wxGetMainFrame()->PreviewCpp(form_node);
         return;
     }
-    else if (prefs.GetPreviewType() == PREFS::PREVIEW_TYPE_XRC)
+    else if (UserPrefs.GetPreviewType() == Prefs::PREVIEW_TYPE_XRC)
     {
         PreviewXrc(form_node);
         return;

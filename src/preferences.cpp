@@ -9,9 +9,9 @@
 
 #include "preferences.h"
 
-PREFS g_preferences;
+Prefs& UserPrefs = Prefs::getInstance();
 
-void PREFS::ReadConfig()
+void Prefs::ReadConfig()
 {
     auto* config = wxConfig::Get();
     config->SetPath("/preferences");
@@ -43,7 +43,7 @@ void PREFS::ReadConfig()
     config->SetPath("/");
 }
 
-void PREFS::WriteConfig()
+void Prefs::WriteConfig()
 {
     auto* config = wxConfig::Get();
     config->SetPath("/preferences");
@@ -69,9 +69,4 @@ void PREFS::WriteConfig()
     config->Write("ruby_line_length", m_ruby_line_length);
 
     config->SetPath("/");
-}
-
-PREFS& Preferences()
-{
-    return g_preferences;
 }

@@ -2030,7 +2030,7 @@ Node* MainFrame::FindChildSizerItem(Node* node, bool include_splitter)
 
 void MainFrame::UpdateWakaTime(bool FileSavedEvent)
 {
-    if (m_wakatime && Preferences().is_WakaTimeEnabled())
+    if (m_wakatime && UserPrefs.is_WakaTimeEnabled())
     {
         m_wakatime->SendHeartbeat(FileSavedEvent);
     }

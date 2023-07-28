@@ -7,8 +7,21 @@
 
 #pragma once
 
-struct PREFS
+class Prefs
 {
+    private:
+    Prefs() {}
+public:
+    Prefs(Prefs const&) = delete;
+
+    void operator=(Prefs const&) = delete;
+
+    static Prefs& getInstance()
+    {
+        static Prefs instance;
+        return instance;
+    }
+
     enum PREVIEW_TYPE
     {
         PREVIEW_TYPE_XRC = 0,
@@ -136,4 +149,5 @@ private:
     bool m_is_cpp_snake_case { false };
 };
 
-PREFS& Preferences();
+
+extern Prefs& UserPrefs;

@@ -121,7 +121,7 @@ constexpr const intmax_t waka_interval = 120;
 
 void WakaTime::SendHeartbeat(bool FileSavedEvent)
 {
-    if (!Preferences().is_WakaTimeEnabled())
+    if (!UserPrefs.is_WakaTimeEnabled())
     {
         return;
     }
@@ -155,7 +155,7 @@ void WakaTime::SendHeartbeat(bool FileSavedEvent)
 
 void WakaTime::ResetHeartbeat()
 {
-    if (Preferences().is_WakaTimeEnabled())
+    if (UserPrefs.is_WakaTimeEnabled())
     {
         auto result = time(nullptr);
 

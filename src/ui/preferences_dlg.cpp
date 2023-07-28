@@ -200,20 +200,20 @@ bool PreferencesDlg::Create(wxWindow* parent, wxWindowID id, const wxString& tit
 
 void PreferencesDlg::OnInit(wxInitDialogEvent& event)
 {
-    m_check_cpp_snake_case->SetValue(Preferences().is_CppSnakeCase());
-    m_check_dark_mode->SetValue(Preferences().is_DarkMode());
-    m_check_load_last->SetValue(Preferences().is_LoadLastProject());
-    m_check_right_propgrid->SetValue(Preferences().is_RightPropGrid());
-    m_isWakaTimeEnabled = Preferences().is_WakaTimeEnabled();
-    m_choice_cpp_version->SetStringSelection(Preferences().get_CppWidgetsVersion().make_wxString());
-    m_colour_cpp->SetColour(Preferences().get_CppColour());
-    m_colour_python->SetColour(Preferences().get_PythonColour());
-    m_colour_ruby->SetColour(Preferences().get_RubyColour());
+    m_check_cpp_snake_case->SetValue(UserPrefs.is_CppSnakeCase());
+    m_check_dark_mode->SetValue(UserPrefs.is_DarkMode());
+    m_check_load_last->SetValue(UserPrefs.is_LoadLastProject());
+    m_check_right_propgrid->SetValue(UserPrefs.is_RightPropGrid());
+    m_isWakaTimeEnabled = UserPrefs.is_WakaTimeEnabled();
+    m_choice_cpp_version->SetStringSelection(UserPrefs.get_CppWidgetsVersion().make_wxString());
+    m_colour_cpp->SetColour(UserPrefs.get_CppColour());
+    m_colour_python->SetColour(UserPrefs.get_PythonColour());
+    m_colour_ruby->SetColour(UserPrefs.get_RubyColour());
 
-    m_cpp_line_length = tt::itoa(Preferences().get_CppLineLength()).make_wxString();
-    m_python_line_length = tt::itoa(Preferences().get_PythonLineLength()).make_wxString();
-    m_ruby_line_length = tt::itoa(Preferences().get_RubyLineLength()).make_wxString();
-    // m_code_font_picker = Preferences().get_CodeDisplayFont();
+    m_cpp_line_length = tt::itoa(UserPrefs.get_CppLineLength()).make_wxString();
+    m_python_line_length = tt::itoa(UserPrefs.get_PythonLineLength()).make_wxString();
+    m_ruby_line_length = tt::itoa(UserPrefs.get_RubyLineLength()).make_wxString();
+    // m_code_font_picker = UserPrefs.get_CodeDisplayFont();
 
     // This will transfer data from the validator variables to the controls
     event.Skip();
@@ -224,25 +224,25 @@ void PreferencesDlg::OnOK(wxCommandEvent& WXUNUSED(event))
     if (!Validate() || !TransferDataFromWindow())
         return;
 
-    Preferences().set_CppSnakeCase(m_check_cpp_snake_case->GetValue());
-    Preferences().set_DarkMode(m_check_dark_mode->GetValue());
-    Preferences().set_LoadLastProject(m_check_load_last->GetValue());
-    Preferences().set_RightPropGrid(m_check_right_propgrid->GetValue());
-    Preferences().set_WakaTimeEnabled(m_isWakaTimeEnabled);
+    UserPrefs.set_CppSnakeCase(m_check_cpp_snake_case->GetValue());
+    UserPrefs.set_DarkMode(m_check_dark_mode->GetValue());
+    UserPrefs.set_LoadLastProject(m_check_load_last->GetValue());
+    UserPrefs.set_RightPropGrid(m_check_right_propgrid->GetValue());
+    UserPrefs.set_WakaTimeEnabled(m_isWakaTimeEnabled);
 
-    Preferences().set_CppWidgetsVersion(m_choice_cpp_version->GetStringSelection().ToStdString());
+    UserPrefs.set_CppWidgetsVersion(m_choice_cpp_version->GetStringSelection().ToStdString());
 
-    Preferences().set_CppColour(m_colour_cpp->GetColour());
-    Preferences().set_PythonColour(m_colour_python->GetColour());
-    Preferences().set_RubyColour(m_colour_ruby->GetColour());
+    UserPrefs.set_CppColour(m_colour_cpp->GetColour());
+    UserPrefs.set_PythonColour(m_colour_python->GetColour());
+    UserPrefs.set_RubyColour(m_colour_ruby->GetColour());
 
-    Preferences().set_CppLineLength(tt::atoi(m_cpp_line_length.ToStdString()));
-    Preferences().set_PythonLineLength(tt::atoi(m_python_line_length.ToStdString()));
-    Preferences().set_RubyLineLength(tt::atoi(m_ruby_line_length.ToStdString()));
+    UserPrefs.set_CppLineLength(tt::atoi(m_cpp_line_length.ToStdString()));
+    UserPrefs.set_PythonLineLength(tt::atoi(m_python_line_length.ToStdString()));
+    UserPrefs.set_RubyLineLength(tt::atoi(m_ruby_line_length.ToStdString()));
 
-    // Preferences().set_CodeDisplayFont(m_code_font_picker->GetSelectedFontInfo());
+    // UserPrefs.set_CodeDisplayFont(m_code_font_picker->GetSelectedFontInfo());
 
-    Preferences().WriteConfig();
+    UserPrefs.WriteConfig();
 
     EndModal(wxID_OK);
 }

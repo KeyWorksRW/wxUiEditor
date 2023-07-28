@@ -176,7 +176,7 @@ bool App::OnInit()
     wxHelpProvider::Set(new wxSimpleHelpProvider);
 
     SetVendorName("KeyWorks");
-    Preferences().ReadConfig();
+    UserPrefs.ReadConfig();
 
     return true;
 }
@@ -517,18 +517,18 @@ int App::OnExit()
 
 bool App::isFireCreationMsgs() const
 {
-    return (Preferences().GetDebugFlags() & PREFS::PREFS_CREATION_MSG);
+    return (UserPrefs.GetDebugFlags() & Prefs::PREFS_CREATION_MSG);
 }
 
 bool App::isPjtMemberPrefix() const
 {
-    return (Preferences().GetProjectFlags() & PREFS::PREFS_PJT_MEMBER_PREFIX);
+    return (UserPrefs.GetProjectFlags() & Prefs::PREFS_PJT_MEMBER_PREFIX);
 }
 
 #if defined(_DEBUG) || defined(INTERNAL_TESTING)
 bool App::AutoMsgWindow() const
 {
-    return (Preferences().GetDebugFlags() & PREFS::PREFS_MSG_WINDOW);
+    return (UserPrefs.GetDebugFlags() & Prefs::PREFS_MSG_WINDOW);
 }
 #endif
 

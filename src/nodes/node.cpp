@@ -718,7 +718,17 @@ Node* Node::createChildNode(GenName name)
 
             if (member_name.starts_with("m_"))
             {
-                member_name.erase(0, 2);
+                if (Project.getCodePreference() == GEN_LANG_PYTHON)
+                {
+                    // Python public names don't have a prefix
+                    member_name.erase(0, 2);
+                }
+                else if (Project.getCodePreference() == GEN_LANG_RUBY)
+                {
+                    member_name.erase(0, 2);
+                    member_name.insert(0, "@");
+                }
+
                 if (member_name.ends_with("_2"))
                 {
                     // This is unlikely, but the previous check for duplication assumed a m_
@@ -728,6 +738,12 @@ Node* Node::createChildNode(GenName name)
                     member_name.erase(member_name.size() - 2);
                 }
 
+                is_name_changed = true;
+            }
+            else if (Project.getCodePreference() == GEN_LANG_PYTHON)
+            {
+                // Python private names have '_' as a prefix
+                member_name.insert(0, "_");
                 is_name_changed = true;
             }
 

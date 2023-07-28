@@ -742,7 +742,7 @@ tt_string EventHandlerDlg::GetCppValue(tt_string_view value)
     {
         value.remove_suffix(value.size() - pos_python);
     }
-    else if (auto pos_ruby = value.find("[ruby:"); pos_ruby != tt::npos)
+    if (auto pos_ruby = value.find("[ruby:"); pos_ruby != tt::npos)
     {
         value.remove_suffix(value.size() - pos_ruby);
     }
@@ -767,6 +767,10 @@ tt_string EventHandlerDlg::GetPythonValue(tt_string_view value)
         else
         {
             result = value;
+            if (auto pos_other = result.find("[ruby:"); pos_other != tt::npos)
+            {
+                result.erase(pos_other, result.size() - pos_other);
+            }
         }
         return result;
     }
@@ -794,8 +798,8 @@ tt_string EventHandlerDlg::GetPythonValue(tt_string_view value)
 tt_string EventHandlerDlg::GetRubyValue(tt_string_view value)
 {
     tt_string result;
-    auto pos_python = value.find("[ruby:");
-    if (pos_python == tt::npos)
+    auto pos_ruby = value.find("[ruby:");
+    if (pos_ruby == tt::npos)
     {
         if (value.front() == '[')
         {
@@ -805,12 +809,16 @@ tt_string EventHandlerDlg::GetRubyValue(tt_string_view value)
         else
         {
             result = value;
+            if (auto pos_other = result.find("[python:"); pos_other != tt::npos)
+            {
+                result.erase(pos_other, result.size() - pos_other);
+            }
         }
         return result;
     }
     else
     {
-        value.remove_prefix(pos_python);
+        value.remove_prefix(pos_ruby);
     }
 
     if (!value.starts_with("[ruby:lambda]"))

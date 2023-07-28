@@ -3455,7 +3455,7 @@
         class_name="NewMdiForm"
         title="New MDI Application"
         base_file="..\newdialogs\new_mdi.cpp"
-        inserted_hdr_code="void createNode();@@void VerifyClassName();@@@@private:@@bool m_is_info_shown { false };"
+        inserted_hdr_code="void createNode();@@void VerifyClassName();@@"
         private_members="1"
         use_derived_class="0"
         wxEVT_INIT_DIALOG="[](wxInitDialogEvent&amp; event)@@{@@event.Skip();@@}[python:OnInit]">

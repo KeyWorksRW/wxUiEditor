@@ -43,9 +43,6 @@ public:
     void createNode();
     void VerifyClassName();
 
-private:
-    // bool m_is_info_shown { false };
-
 protected:
 
     // Event handlers

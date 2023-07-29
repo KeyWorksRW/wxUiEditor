@@ -29,6 +29,7 @@ set (wxue_generated_code
     ${CMAKE_CURRENT_LIST_DIR}/../tools/preview_settings.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../ui/code_preference_dlg.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../ui/generate_xrc_dlg.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/../ui/preferences_dlg.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../ui/startup_dlg.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../ui/xrccompare.cpp
     ${CMAKE_CURRENT_LIST_DIR}/dlg_gen_results.cpp

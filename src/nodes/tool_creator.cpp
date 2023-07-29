@@ -209,13 +209,13 @@ bool Node::createToolNode(GenName name)
 
         if (auto prop = node->getPropPtr(prop_borders); prop)
         {
-            if (Preferences().is_SizersAllBorders())
+            if (UserPrefs.is_SizersAllBorders())
                 prop->set_value("wxALL");
         }
 
         if (auto prop = node->getPropPtr(prop_flags); prop)
         {
-            if (Preferences().is_SizersExpand())
+            if (UserPrefs.is_SizersExpand())
                 prop->set_value("wxEXPAND");
         }
     }

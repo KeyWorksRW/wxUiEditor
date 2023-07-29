@@ -705,8 +705,16 @@ Node* Node::createChildNode(GenName name)
     if (new_node)
     {
         bool is_name_changed = false;
-
-        if (Project.getCodePreference() != GEN_LANG_CPLUSPLUS)
+        if (Project.getCodePreference() == GEN_LANG_CPLUSPLUS)
+        {
+            if (UserPrefs.is_CppSnakeCase())
+            {
+                auto member_name = ConvertToSnakeCase(new_node->as_string(prop_var_name));
+                new_node->set_value(prop_var_name, member_name);
+                new_node->fixDuplicateName();
+            }
+        }
+        else
         {
             tt_string member_name = new_node->as_string(prop_var_name);
             if (Project.getCodePreference() == GEN_LANG_RUBY || Project.getCodePreference() == GEN_LANG_PYTHON)
@@ -725,8 +733,9 @@ Node* Node::createChildNode(GenName name)
                 }
                 else if (Project.getCodePreference() == GEN_LANG_RUBY)
                 {
+                    // We don't add the '@' because that will be added automatically during
+                    // code generation.
                     member_name.erase(0, 2);
-                    member_name.insert(0, "@");
                 }
 
                 if (member_name.ends_with("_2"))

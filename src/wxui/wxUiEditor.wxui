@@ -6198,5 +6198,226 @@
         </node>
       </node>
     </node>
+    <node
+      class="wxDialog"
+      class_name="PreferencesDlg"
+      title="Preferences"
+      base_file="..\ui\preferences_dlg"
+      use_derived_class="0"
+      wxEVT_INIT_DIALOG="OnInit">
+      <node
+        class="wxBoxSizer"
+        orientation="wxVERTICAL"
+        var_name="dlg_sizer">
+        <node
+          class="wxNotebook"
+          class_access="none"
+          var_name="notebook"
+          flags="wxEXPAND"
+          proportion="1">
+          <node
+            class="BookPage"
+            label="General"
+            select="1"
+            var_name="page_general"
+            window_style="wxTAB_TRAVERSAL">
+            <node
+              class="wxBoxSizer"
+              orientation="wxVERTICAL"
+              var_name="page_sizer_1">
+              <node
+                class="wxCheckBox"
+                label="Dark Mode (requires closing and reopening wxUiEditor)"
+                var_name="m_check_dark_mode" />
+              <node
+                class="wxCheckBox"
+                label="Property Panel on Right"
+                var_name="m_check_right_propgrid"
+                tooltip="If checked, the Property panel will be moved to the right side" />
+              <node
+                class="wxCheckBox"
+                label="Always load last project"
+                var_name="m_check_load_last" />
+              <node
+                class="wxCheckBox"
+                checked="1"
+                class_access="none"
+                label="Enable WakaTime"
+                var_name="checkBox_wakatime"
+                validator_variable="m_isWakaTimeEnabled"
+                tooltip="If you have WakaTime installed, checking this will record time spent in the editor as &quot;designing&quot;. (See https://wakatime.com/about)" />
+              <node
+                class="wxBoxSizer"
+                var_name="box_sizer_2"
+                flags="wxEXPAND">
+                <node
+                  class="wxStaticText"
+                  class_access="none"
+                  label="Code Font:"
+                  var_name="staticText_2"
+                  wrap="200"
+                  alignment="wxALIGN_CENTER_VERTICAL" />
+                <node
+                  class="wxFontPickerCtrl"
+                  var_name="m_code_font_picker"
+                  minimum_size="-1,-1d"
+                  tooltip="This font will be used for all of the Code panels"
+                  flags="wxEXPAND"
+                  proportion="1" />
+              </node>
+            </node>
+          </node>
+          <node
+            class="BookPage"
+            label="C++"
+            var_name="page_cpp"
+            window_style="wxTAB_TRAVERSAL">
+            <node
+              class="wxBoxSizer"
+              orientation="wxVERTICAL"
+              var_name="page_sizer_2">
+              <node
+                class="wxBoxSizer">
+                <node
+                  class="wxStaticText"
+                  class_access="none"
+                  label="&amp;Line Length"
+                  var_name="staticText_3"
+                  wrap="200"
+                  alignment="wxALIGN_CENTER_VERTICAL" />
+                <node
+                  class="wxTextCtrl"
+                  class_access="none"
+                  var_name="text_cpp_line_length"
+                  validator_style="wxFILTER_DIGITS"
+                  validator_variable="m_cpp_line_length"
+                  tooltip="Most generated code will not exceed this length. This will be the initial value when a new project is created." />
+              </node>
+              <node
+                class="wxCheckBox"
+                label="Default variables should use snake_case"
+                var_name="m_check_cpp_snake_case"
+                tooltip="By default, default variables use camelCase. Check this to use snake_case instead (e.g., foo_bar instead of fooBar)" />
+              <node
+                class="wxBoxSizer"
+                var_name="box_sizer_5">
+                <node
+                  class="wxStaticText"
+                  class_access="none"
+                  label="wxWidgets version"
+                  var_name="static_text" />
+                <node
+                  class="wxChoice"
+                  contents="&quot;3.1&quot; &quot;3.2&quot;"
+                  selection_string="3.2"
+                  var_name="m_choice_cpp_version"
+                  tooltip="Code requiring a newer version then this will be placed in a conditional block." />
+              </node>
+              <node
+                class="wxBoxSizer"
+                var_name="box_sizer_8">
+                <node
+                  class="wxStaticText"
+                  class_access="none"
+                  label="wxWidgets &amp;keyword color:"
+                  var_name="staticText_7"
+                  alignment="wxALIGN_CENTER_VERTICAL" />
+                <node
+                  class="wxColourPickerCtrl"
+                  var_name="m_colour_cpp" />
+              </node>
+            </node>
+          </node>
+          <node
+            class="BookPage"
+            label="Python"
+            var_name="page_python"
+            window_style="wxTAB_TRAVERSAL">
+            <node
+              class="wxBoxSizer"
+              orientation="wxVERTICAL"
+              var_name="page_sizer_3">
+              <node
+                class="wxBoxSizer"
+                var_name="box_sizer_3">
+                <node
+                  class="wxStaticText"
+                  class_access="none"
+                  label="&amp;Line Length"
+                  var_name="staticText_4"
+                  wrap="200"
+                  alignment="wxALIGN_CENTER_VERTICAL" />
+                <node
+                  class="wxTextCtrl"
+                  class_access="none"
+                  var_name="text_python_line_length"
+                  validator_style="wxFILTER_DIGITS"
+                  validator_variable="m_python_line_length"
+                  tooltip="Most generated code will not exceed this length. This will be the initial value when a new project is created." />
+              </node>
+              <node
+                class="wxBoxSizer"
+                var_name="box_sizer_6">
+                <node
+                  class="wxStaticText"
+                  class_access="none"
+                  label="wxWidgets &amp;keyword color:"
+                  var_name="staticText"
+                  alignment="wxALIGN_CENTER_VERTICAL" />
+                <node
+                  class="wxColourPickerCtrl"
+                  var_name="m_colour_python" />
+              </node>
+            </node>
+          </node>
+          <node
+            class="BookPage"
+            label="Ruby"
+            var_name="page_ruby"
+            window_style="wxTAB_TRAVERSAL">
+            <node
+              class="wxBoxSizer"
+              orientation="wxVERTICAL"
+              var_name="page_sizer_4">
+              <node
+                class="wxBoxSizer"
+                var_name="box_sizer_4">
+                <node
+                  class="wxStaticText"
+                  class_access="none"
+                  label="&amp;Line Length"
+                  var_name="staticText_5"
+                  wrap="200"
+                  alignment="wxALIGN_CENTER_VERTICAL" />
+                <node
+                  class="wxTextCtrl"
+                  class_access="none"
+                  var_name="text_ruby_line_length"
+                  validator_style="wxFILTER_DIGITS"
+                  validator_variable="m_ruby_line_length"
+                  tooltip="Most generated code will not exceed this length. This will be the initial value when a new project is created." />
+              </node>
+              <node
+                class="wxBoxSizer"
+                var_name="box_sizer_7">
+                <node
+                  class="wxStaticText"
+                  class_access="none"
+                  label="wxWidgets &amp;keyword color:"
+                  var_name="staticText_6"
+                  alignment="wxALIGN_CENTER_VERTICAL" />
+                <node
+                  class="wxColourPickerCtrl"
+                  var_name="m_colour_ruby" />
+              </node>
+            </node>
+          </node>
+        </node>
+        <node
+          class="wxStdDialogButtonSizer"
+          flags="wxEXPAND"
+          OKButtonClicked="OnOK" />
+      </node>
+    </node>
   </node>
 </wxUiEditorData>

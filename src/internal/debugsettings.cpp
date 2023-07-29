@@ -115,12 +115,12 @@ bool DebugSettings::Create(wxWindow* parent, wxWindowID id, const wxString& titl
 
 void DebugSettings::OnInit(wxInitDialogEvent& event)
 {
-    m_orgFlags = Preferences().GetDebugFlags();
-    m_DisplayMsgWindow = (m_orgFlags & PREFS::PREFS_MSG_WINDOW);
-    m_DisplayMsgInfo = (m_orgFlags & PREFS::PREFS_MSG_INFO);
-    m_DisplayMsgEvent = (m_orgFlags & PREFS::PREFS_MSG_EVENT);
-    m_DisplayMsgWarnng = (m_orgFlags & PREFS::PREFS_MSG_WARNING);
-    m_FireCreationMsgs = (m_orgFlags & PREFS::PREFS_CREATION_MSG);
+    m_orgFlags = UserPrefs.GetDebugFlags();
+    m_DisplayMsgWindow = (m_orgFlags & Prefs::PREFS_MSG_WINDOW);
+    m_DisplayMsgInfo = (m_orgFlags & Prefs::PREFS_MSG_INFO);
+    m_DisplayMsgEvent = (m_orgFlags & Prefs::PREFS_MSG_EVENT);
+    m_DisplayMsgWarnng = (m_orgFlags & Prefs::PREFS_MSG_WARNING);
+    m_FireCreationMsgs = (m_orgFlags & Prefs::PREFS_CREATION_MSG);
 
     event.Skip();  // transfer all validator data to their windows and update UI
 }
@@ -136,34 +136,34 @@ void DebugSettings::OnOK(wxCommandEvent& event)
         return;
 
     if (m_DisplayMsgWindow)
-        m_orgFlags |= PREFS::PREFS_MSG_WINDOW;
+        m_orgFlags |= Prefs::PREFS_MSG_WINDOW;
     else
-        m_orgFlags &= ~PREFS::PREFS_MSG_WINDOW;
+        m_orgFlags &= ~Prefs::PREFS_MSG_WINDOW;
 
     if (m_DisplayMsgInfo)
-        m_orgFlags |= PREFS::PREFS_MSG_INFO;
+        m_orgFlags |= Prefs::PREFS_MSG_INFO;
     else
-        m_orgFlags &= ~PREFS::PREFS_MSG_INFO;
+        m_orgFlags &= ~Prefs::PREFS_MSG_INFO;
 
     if (m_DisplayMsgEvent)
-        m_orgFlags |= PREFS::PREFS_MSG_EVENT;
+        m_orgFlags |= Prefs::PREFS_MSG_EVENT;
     else
-        m_orgFlags &= ~PREFS::PREFS_MSG_EVENT;
+        m_orgFlags &= ~Prefs::PREFS_MSG_EVENT;
 
     if (m_DisplayMsgWarnng)
-        m_orgFlags |= PREFS::PREFS_MSG_WARNING;
+        m_orgFlags |= Prefs::PREFS_MSG_WARNING;
     else
-        m_orgFlags &= ~PREFS::PREFS_MSG_WARNING;
+        m_orgFlags &= ~Prefs::PREFS_MSG_WARNING;
 
     if (m_FireCreationMsgs)
-        m_orgFlags |= PREFS::PREFS_CREATION_MSG;
+        m_orgFlags |= Prefs::PREFS_CREATION_MSG;
     else
-        m_orgFlags &= ~PREFS::PREFS_CREATION_MSG;
+        m_orgFlags &= ~Prefs::PREFS_CREATION_MSG;
 
-    if (m_orgFlags != Preferences().GetDebugFlags())
+    if (m_orgFlags != UserPrefs.GetDebugFlags())
     {
-        Preferences().SetDebugFlags(m_orgFlags);
-        Preferences().WriteConfig();
+        UserPrefs.SetDebugFlags(m_orgFlags);
+        UserPrefs.WriteConfig();
     }
 
     event.Skip();  // Need to call this for Persist to work

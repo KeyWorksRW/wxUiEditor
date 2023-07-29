@@ -700,11 +700,33 @@ Code& Code::NodeName(Node* node)
 {
     if (!node)
         node = m_node;
-    if (is_python() && !node->isLocal() && !node->isForm())
-        *this += "self.";
-    else if (is_ruby() && not(node->isLocal()) && not(node->isForm()))
-        *this += "@";
-    *this += node->getNodeName();
+    auto& node_name = node->getNodeName();
+    if (is_python())
+    {
+        if (!node->isForm())
+        {
+            if (!node->isLocal())
+                *this += "_";
+            else
+                *this += "self.";
+        }
+    }
+    else if (is_ruby())
+    {
+        if (!(node->isLocal()) && not(node->isForm()))
+            *this += "@";
+    }
+
+    // We don't create these, preferring to add them like the above, however the user can
+    // create them. For Ruby and Python, they will get duplicated since they already got added
+    // above, and for C++ the @ is invalid, and the _ not recommended.
+    if (node_name[0] == '@' || node_name[0] == '_')
+        *this += node_name.subview(1);
+    // m_ prefix should only be used for C++ code, so remove it if this isn't C++ code
+    else if (!is_cpp() && node_name.is_sameprefix("m_"))
+        *this += node_name.subview(2);
+    else
+        *this += node_name;
     return *this;
 }
 

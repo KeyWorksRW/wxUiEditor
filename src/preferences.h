@@ -146,7 +146,7 @@ private:
     bool m_dark_mode { false };
     bool m_is_load_last_project { false };
     bool m_is_right_propgrid { false };
-    bool m_is_cpp_snake_case { false };
+    bool m_is_cpp_snake_case { true };
 };
 
 

@@ -28,7 +28,7 @@ void Prefs::ReadConfig()
     m_dark_mode = config->ReadBool("dark_mode", false);
     m_is_load_last_project = config->ReadBool("load_last_project", false);
     m_is_right_propgrid = config->ReadBool("right_propgrid", false);
-    m_is_cpp_snake_case = config->ReadBool("cpp_snake_case", false);
+    m_is_cpp_snake_case = config->ReadBool("cpp_snake_case", true);
 
     m_cpp_widgets_version = config->Read("cpp_widgets_version", "3.2");
 

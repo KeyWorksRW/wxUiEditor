@@ -9,8 +9,9 @@
 
 class Prefs
 {
-    private:
+private:
     Prefs() {}
+
 public:
     Prefs(Prefs const&) = delete;
 
@@ -148,6 +149,5 @@ private:
     bool m_is_right_propgrid { false };
     bool m_is_cpp_snake_case { true };
 };
-
 
 extern Prefs& UserPrefs;

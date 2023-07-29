@@ -725,8 +725,9 @@ Node* Node::createChildNode(GenName name)
                 }
                 else if (Project.getCodePreference() == GEN_LANG_RUBY)
                 {
+                    // We don't add the '@' because that will be added automatically during
+                    // code generation.
                     member_name.erase(0, 2);
-                    member_name.insert(0, "@");
                 }
 
                 if (member_name.ends_with("_2"))

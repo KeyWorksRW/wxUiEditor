@@ -1174,3 +1174,110 @@ void Node::findAllChildProperties(std::vector<NodeProperty*>& list, PropName nam
         }
     }
 }
+
+// clang-format off
+
+static std::unordered_set<GenEnum::GenName> s_bool_validators = {
+
+    gen_wxCheckBox,
+    gen_wxRadioButton,
+    gen_wxToggleButton,
+};
+
+static std::unordered_set<GenEnum::GenName> s_int_validators = {
+
+    gen_wxChoice,
+    gen_wxGauge,
+    gen_wxRadioBox,
+    gen_wxScrollBar,
+    gen_wxSlider,
+    gen_wxSpinButton,
+    // REVIEW: [Randalphwa - 07-31-2023] We list this as an int data type, but it's not listed
+    // at all in valgen.h -- seems more likely that it is a wxString type if used at all
+    //
+    // gen_wxSpinCtrl,
+
+};
+
+// These are for a read-only wxString
+static std::unordered_set<GenEnum::GenName> s_read_only_validators = {
+
+    gen_wxButton,
+    gen_wxComboBox,
+    gen_wxStaticText,
+    gen_wxTextCtrl,
+
+};
+
+// These use a wxArrayInt variable
+static std::unordered_set<GenEnum::GenName> s_array_int_validators = {
+
+    gen_wxCheckListBox,
+    gen_wxListBox,
+
+};
+
+// These use a wxDatePickerCtrl variable
+static std::unordered_set<GenEnum::GenName> s_date_picker_validators = {
+
+    gen_wxDatePickerCtrl,
+
+};
+
+// clang-format on
+
+tt_string Node::getValidatorDataType() const
+{
+    tt_string data_type;
+    if (hasProp(prop_validator_data_type))
+    {
+        data_type = as_string(prop_validator_data_type);
+    }
+    else
+    {
+        if (s_bool_validators.contains(getGenName()))
+        {
+            data_type = "bool";
+        }
+        else if (s_int_validators.contains(getGenName()))
+        {
+            data_type = "int";
+        }
+        else if (s_read_only_validators.contains(getGenName()))
+        {
+            data_type = "wxString";
+        }
+        else if (s_array_int_validators.contains(getGenName()))
+        {
+            data_type = "wxArrayInt";
+        }
+        else if (s_date_picker_validators.contains(getGenName()))
+        {
+            data_type = "wxDatePickerCtrl";
+        }
+    }
+
+    return data_type;
+}
+
+tt_string_view Node::getValidatorType() const
+{
+    if (!isGen(gen_wxTextCtrl))
+    {
+        return "wxGenericValidator";
+    }
+    else
+    {
+        auto& data_type = as_string(prop_validator_data_type);
+        if (data_type == "wxString")
+            return "wxTextValidator";
+        else if (data_type == "int" || data_type == "short" || data_type == "long" || data_type == "long long" ||
+                 data_type == "unsigned int" || data_type == "unsigned short" || data_type == "unsigned long" ||
+                 data_type == "unsigned long long")
+            return "wxIntegerValidator";
+        else if (data_type == "double" || data_type == "float")
+            return "wxFloatingPointValidator";
+        else
+            return "wxGenericValidator";
+    }
+}

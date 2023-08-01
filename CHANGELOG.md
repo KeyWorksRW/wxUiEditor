@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file.
 
 - New Doc panel will display a URL containing documentation for the currently selected widget. A toolbar in this panel lets you choose between C++, Python and Ruby documentation.
 - wxAuiToolBar can now be created as a form (it creates a class instead of a child widget)
+- Added support for additional integer and floating point validators for wxTextCtrl
 
 ### Changed
 

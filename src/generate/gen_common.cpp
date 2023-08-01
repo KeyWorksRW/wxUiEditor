@@ -921,7 +921,8 @@ void GenValidatorSettings(Code& code)
 
     auto& data_type = node->as_string(prop_validator_data_type);
     ASSERT(data_type.size())
-    if (data_type.empty()) {  // theoretically impossible
+    if (data_type.empty())
+    {  // theoretically impossible
         code.Add("wxDefaultValidator").EndFunction();
         return;
     }

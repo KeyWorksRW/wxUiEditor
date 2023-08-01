@@ -351,19 +351,22 @@ void BaseCodeGenerator::GenSettings(Node* node)
         if (code.size())
         {
             m_source->writeLine(code);
+            code.clear();
         }
     }
 
     if (node->getPropPtr(prop_window_extra_style))
     {
+        // TODO: [Randalphwa - 07-31-2023] Both Python Ruby supports all validators
         if (m_language == GEN_LANG_CPLUSPLUS)
         {
-            if (auto result = GenValidatorSettings(node); result)
+            GenValidatorSettings(code);
+            if (code.size())
             {
-                m_source->writeLine(result.value());
+                m_source->writeLine(code);
+                code.clear();
             }
         }
-        code.clear();
         code.GenWindowSettings();
         if (code.size())
             m_source->writeLine(code);

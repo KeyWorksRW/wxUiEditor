@@ -1320,7 +1320,10 @@ void MainFrame::CreateSplitters()
     m_property_panel = new PropGridPanel(m_SecondarySplitter, this);
     auto notebook = CreateNoteBook(m_SecondarySplitter);
 
-    m_SecondarySplitter->SplitVertically(m_property_panel, notebook, m_SecondarySashPosition);
+    if (UserPrefs.is_RightPropGrid())
+        m_SecondarySplitter->SplitVertically(notebook, m_property_panel, m_SecondarySashPosition);
+    else
+        m_SecondarySplitter->SplitVertically(m_property_panel, notebook, m_SecondarySashPosition);
 
     m_MainSplitter->SplitVertically(m_nav_panel, m_panel_right);
     m_MainSplitter->SetName("Navigation");

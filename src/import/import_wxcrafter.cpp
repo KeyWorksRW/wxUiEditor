@@ -581,7 +581,9 @@ void WxCrafter::ProcessStyles(Node* node, const Value& array)
 
     if (style)
     {
-        if (!node->isGen(gen_wxButton))  // if this was a wxBitmapButton, then wxBU_EXACTFIT will have been set
+        // Some styles will have been specifically set when other properties were processed, so
+        // we need to be careful about clearing all styles.
+        if (!node->isGen(gen_wxButton) && !node->isGen(gen_wxTextCtrl))
         {
             style->set_value("");
         }
@@ -987,6 +989,21 @@ GenEnum::PropName WxCrafter::UnknownProperty(Node* node, const Value& value, tt_
             return prop_processed;  // this doesn't apply to wxUiEditor
         else if (name.is_sameas("null page"))
             return prop_processed;  // unused
+        else if (name.is_sameas("enable spell checking") && node->hasProp(prop_spellcheck))
+        {
+            node->set_value(prop_spellcheck, "enabled");
+            tt_string style = node->as_string(prop_style);
+            if (style.size() && !style.contains("wxTE_RICH2"))
+                style << "|wxTE_RICH2";
+            else
+                style << "wxTE_RICH2";
+            node->set_value(prop_style, style);
+        }
+        else if (name.is_sameas("keep as a class member"))
+        {
+            if (node->as_string(prop_class_access) == "none")
+                node->set_value(prop_class_access, "protected:");
+        }
         else
         {
             if (!node->isGen(gen_propGridItem))

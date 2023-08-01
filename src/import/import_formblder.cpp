@@ -709,7 +709,8 @@ void FormBuilder::ProcessPropValue(pugi::xml_node& xml_prop, tt_string_view prop
     // wxGenericValidator
     else if (prop_name == "validator_type")
     {
-        // BUGBUG: [KeyWorks - 11-07-2020] This IS valid for text controls, so we need to process it
+        // wxUiEditor automatically switches validator type based on the data type used, so we
+        // ignore this property.
         return;
     }
 

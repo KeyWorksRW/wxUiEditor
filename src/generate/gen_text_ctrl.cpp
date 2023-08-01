@@ -224,14 +224,15 @@ void TextCtrlGenerator::ChangeEnableState(wxPropertyGridManager* prop_grid, Node
 bool TextCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
     InsertGeneratorInclude(node, "#include <wx/textctrl.h>", set_src, set_hdr);
-    if (node->as_string(prop_validator_variable).size())
+    if (auto val_type = node->getValidatorType(); val_type.size())
     {
-        if (node->as_string(prop_validator_type) == "wxGenericValidator")
+        if (val_type == "wxGenericValidator")
             InsertGeneratorInclude(node, "#include <wx/valgen.h>", set_src, set_hdr);
-        else
+        else if (val_type == "wxTextValidator")
             InsertGeneratorInclude(node, "#include <wx/valtext.h>", set_src, set_hdr);
+        else if (val_type == "wxIntegerValidator" || val_type == "wxFloatingPointValidator")
+            InsertGeneratorInclude(node, "#include <wx/valnum.h>", set_src, set_hdr);
     }
-
     return true;
 }
 

@@ -1179,6 +1179,8 @@ void Node::findAllChildProperties(std::vector<NodeProperty*>& list, PropName nam
 
 static std::unordered_set<GenEnum::GenName> s_bool_validators = {
 
+    gen_StaticCheckboxBoxSizer,
+    gen_StaticRadioBtnBoxSizer,
     gen_wxCheckBox,
     gen_wxRadioButton,
     gen_wxToggleButton,
@@ -1195,7 +1197,7 @@ static std::unordered_set<GenEnum::GenName> s_int_validators = {
     // REVIEW: [Randalphwa - 07-31-2023] We list this as an int data type, but it's not listed
     // at all in valgen.h -- seems more likely that it is a wxString type if used at all
     //
-    // gen_wxSpinCtrl,
+    gen_wxSpinCtrl,
 
 };
 

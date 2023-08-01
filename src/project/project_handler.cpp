@@ -258,9 +258,17 @@ Node* ProjectHandler::getFirstFormChild(Node* node) const
     return nullptr;
 }
 
-int ProjectHandler::getCodePreference() const
+int ProjectHandler::getCodePreference(Node* node) const
 {
-    auto& value = Project.as_string(prop_code_preference);
+    tt_string value = Project.as_string(prop_code_preference);
+    if (node)
+    {
+        if (auto folder = node->getFolder(); folder)
+        {
+            value = folder->as_string(prop_code_preference);
+        }
+    }
+
     if (value == "C++")
         return GEN_LANG_CPLUSPLUS;
     else if (value == "Python")
@@ -290,7 +298,7 @@ size_t ProjectHandler::getOutputType(int flags) const
                 if (child->hasValue(prop_base_file))
                 {
                     if (child->as_string(prop_base_file) == child->getPropDefaultValue(prop_base_file) &&
-                        getCodePreference() != GEN_LANG_CPLUSPLUS)
+                        getCodePreference(form) != GEN_LANG_CPLUSPLUS)
                     {
                         continue;
                     }
@@ -314,7 +322,7 @@ size_t ProjectHandler::getOutputType(int flags) const
                     if (child->isGen(gen_Images))
                     {
                         if (child->as_string(prop_python_file) == child->getPropDefaultValue(prop_python_file) &&
-                            getCodePreference() != GEN_LANG_PYTHON)
+                            getCodePreference(form) != GEN_LANG_PYTHON)
                         {
                             continue;
                         }
@@ -324,7 +332,7 @@ size_t ProjectHandler::getOutputType(int flags) const
                 if (child->hasValue(prop_ruby_file) && not(child->isGen(gen_Images)))
                 {
                     if (child->as_string(prop_ruby_file) == child->getPropDefaultValue(prop_ruby_file) &&
-                        getCodePreference() != GEN_LANG_RUBY)
+                        getCodePreference(form) != GEN_LANG_RUBY)
                     {
                         continue;
                     }

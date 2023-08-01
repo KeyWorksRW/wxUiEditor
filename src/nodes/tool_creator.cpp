@@ -87,6 +87,10 @@ bool Node::createToolNode(GenName name)
 
         if (auto new_node = NodeCreation.createNode(name, parent); new_node)
         {
+            if (new_node->isGen(gen_folder))
+            {
+                new_node->set_value(prop_code_preference, Project.as_string(prop_code_preference));
+            }
             wxGetFrame().Freeze();
             tt_string undo_string("Insert new folder");
             auto childPos = isForm() ? parent->getChildPosition(this) : 0;

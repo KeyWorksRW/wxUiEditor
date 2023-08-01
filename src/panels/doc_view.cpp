@@ -127,11 +127,12 @@ DocViewPanel::DocViewPanel(wxWindow* parent, MainFrame* frame)
 
 void DocViewPanel::ActivatePage()
 {
+    // Language can change if there is a folder override
+    m_language = Project.getCodePreference(m_mainframe->getSelectedNode());
     if (!m_webview)
     {
         wxBusyCursor wait;
 
-        m_language = Project.getCodePreference();
         m_toolBar->ToggleTool(ID_CPLUS, m_language == GEN_LANG_CPLUSPLUS);
         m_toolBar->ToggleTool(ID_PYTHON, m_language == GEN_LANG_PYTHON);
         m_toolBar->ToggleTool(ID_RUBY, m_language == GEN_LANG_RUBY);

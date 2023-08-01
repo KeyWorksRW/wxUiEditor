@@ -695,13 +695,8 @@ Code& Code::NodeName(Node* node)
         node = m_node;
     auto& node_name = node->getNodeName();
     if (is_python())
+    if (is_python() && !node->isForm() && !node->isLocal())
     {
-        if (!node->isForm())
-        {
-            if (!node->isLocal())
-                *this += "_";
-            else
-                *this += "self.";
         }
     }
     else if (is_ruby())

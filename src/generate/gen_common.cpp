@@ -851,7 +851,7 @@ std::optional<tt_string> GenGetSetCode(Node* node)
 
     if (auto& var_name = node->as_string(prop_validator_variable); var_name.size())
     {
-        auto& val_data_type = node->as_string(prop_validator_data_type);
+        auto val_data_type = node->getValidatorDataType();
         if (val_data_type.empty())
             return {};
         tt_string code;
@@ -888,39 +888,108 @@ std::optional<tt_string> GenGetSetCode(Node* node)
     return {};
 }
 
-std::optional<tt_string> GenValidatorSettings(Node* node)
+void GenValidatorSettings(Code& code)
 {
-    if (auto& var_name = node->as_string(prop_validator_variable); var_name.size())
-    {
-        auto& val_data_type = node->as_string(prop_validator_data_type);
-        if (val_data_type.empty())
-            return {};
+    // assignment just for convenience
+    const auto* node = code.node();
 
-        tt_string code;
-        auto& validator_type = node->as_string(prop_validator_type);
-        if (validator_type.is_sameas("wxTextValidator"))
+    // Unless there is a variable name, we ignore the entire validator section
+    auto& var_name = node->as_string(prop_validator_variable);
+    if (var_name.empty())
+        return;
+
+    code.Eol(eol_if_needed);
+
+    if (node->isGen(gen_StaticCheckboxBoxSizer))
+        code.Add(prop_checkbox_var_name);
+    else if (node->isGen(gen_StaticRadioBtnBoxSizer))
+        code.Add(prop_radiobtn_var_name);
+    else
+        code.NodeName();
+
+    if (node->isGen(gen_wxRearrangeCtrl))
+        code.Function("GetList()");
+
+    code.Function("SetValidator(");
+
+    if (!node->hasProp(prop_validator_data_type))
+    {
+        // Used for things like checkboxes, radio buttons, etc.
+        code.Add("wxGenericValidator(").AddIfCpp("&").Str(var_name).Str(")").EndFunction();
+        return;
+    }
+
+    auto& data_type = node->as_string(prop_validator_data_type);
+    ASSERT(data_type.size())
+    if (data_type.empty()) {  // theoretically impossible
+        code.Add("wxDefaultValidator").EndFunction();
+        return;
+    }
+
+    auto validator_type = node->getValidatorType();
+
+    code.Add(validator_type) << '(';
+
+    auto& style = node->as_string(prop_validator_style);
+    tt_string_vector styles(style, '|', tt::TRIM::both);
+    if (validator_type.is_sameas("wxTextValidator"))
+    {
+        if (style.contains("wxFILTER_"))
         {
-            code << node->getNodeName() << "->SetValidator(wxTextValidator(" << node->as_string(prop_validator_style)
-                 << ", &" << var_name << "));";
+            tt_string filters;
+            for (auto& iter: styles)
+            {
+                if (iter.starts_with("wxFILTER_"))
+                {
+                    if (filters.size())
+                        filters << '|';
+                    filters << iter;
+                }
+            }
+            code.Add(filters).Comma();
         }
         else
         {
-            if (node->isGen(gen_StaticCheckboxBoxSizer))
-                code << node->as_string(prop_checkbox_var_name);
-            else if (node->isGen(gen_StaticRadioBtnBoxSizer))
-                code << node->as_string(prop_radiobtn_var_name);
-            else
-                code << node->getNodeName();
-
-            if (node->isGen(gen_wxRearrangeCtrl))
-                code << "->GetList()";
-            code << "->SetValidator(wxGenericValidator(&" << var_name << "));";
+            code.Add("wxFILTER_NONE").Comma();
         }
 
-        return code;
+        code.AddIfCpp("&").Str(var_name).Str(")").EndFunction();
     }
+    else
+    {
+        if (validator_type.is_sameas("wxFloatingPointValidator"))
+        {
+            if (node->as_int(prop_precision) > 0)
+            {
+                code.Add(prop_precision).Comma();
+            }
+        }
+        code.AddIfCpp("&").Str(var_name);
 
-    return {};
+        if (validator_type.is_sameas("wxIntegerValidator") || validator_type.is_sameas("wxFloatingPointValidator"))
+        {
+            if (node->hasValue(prop_minValue) && node->hasValue(prop_maxValue))
+            {
+                code.Comma().Str(prop_minValue).Comma().Str(prop_maxValue);
+            }
+        }
+
+        if (style.contains("wxNUM_"))
+        {
+            tt_string num_styles;
+            for (auto& iter: styles)
+            {
+                if (iter.starts_with("wxNUM_"))
+                {
+                    if (num_styles.size())
+                        num_styles << '|';
+                    num_styles << iter;
+                }
+            }
+            code.Comma().Add(num_styles);
+        }
+        code.Str(")").EndFunction();
+    }
 }
 
 // Generates code for any class inheriting from wxTopLevelWindow -- this will generate everything needed to set the

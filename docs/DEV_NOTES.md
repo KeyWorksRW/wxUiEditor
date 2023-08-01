@@ -39,17 +39,17 @@ Note: Ruby uses a leading `_` for an unused parameter, e.g. `_event`.
 #### none
 
 - C++: no prefix
-- Python: `_` as a prefix
+- Python: no prefix
 - Ruby: no prefix
 
 #### protected
 
 - C++: `m_`
-- Python: no prefix
+- Python: self. if not a form
 - Ruby: `@`
 
 #### public
 
 - C++: `m_`
-- Python: no prefix
+- Python: self. if not a form
 - Ruby: `@`

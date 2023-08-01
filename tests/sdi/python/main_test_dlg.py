@@ -68,87 +68,85 @@ class MainTestDialog(wx.Dialog):
 
         dlg_sizer = wx.BoxSizer(wx.VERTICAL)
 
-        self.m_notebook = wx.Notebook(self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize,
+        self.notebook = wx.Notebook(self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize,
             wx.BK_TOP|wx.NB_MULTILINE)
-        dlg_sizer.Add(self.m_notebook, wx.SizerFlags().Expand().Border(wx.ALL))
+        dlg_sizer.Add(self.notebook, wx.SizerFlags().Expand().Border(wx.ALL))
 
-        page_2 = wx.Panel(self.m_notebook, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize,
+        page_2 = wx.Panel(self.notebook, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize,
             wx.TAB_TRAVERSAL)
-        self.m_notebook.AddPage(page_2, "Text")
+        self.notebook.AddPage(page_2, "Text")
 
         page_sizer_1 = wx.BoxSizer(wx.VERTICAL)
 
-        self.m_text_ctrl = wx.TextCtrl(page_2, TXT_CTRL, "", wx.DefaultPosition,
+        self.text_ctrl = wx.TextCtrl(page_2, TXT_CTRL, "", wx.DefaultPosition,
             wx.DefaultSize, wx.TE_RICH2)
-        self.m_text_ctrl.SetHint("wxTextCtrl")
-        page_sizer_1.Add(self.m_text_ctrl, wx.SizerFlags().Expand().Border(wx.ALL))
+        self.text_ctrl.SetHint("wxTextCtrl")
+        page_sizer_1.Add(self.text_ctrl, wx.SizerFlags().Expand().Border(wx.ALL))
 
-        self.m_richText = wx.richtext.RichTextCtrl(page_2, ID_RICHTEXT, "",
+        self.richText = wx.richtext.RichTextCtrl(page_2, ID_RICHTEXT, "",
             wx.DefaultPosition, wx.DefaultSize, wx.richtext.RE_MULTILINE|wx.VSCROLL|
             wx.HSCROLL|wx.NO_BORDER|wx.WANTS_CHARS)
-        self.m_richText.SetHint("wxRichTextCtrl")
-        self.m_richText.SetMinSize(self.ConvertDialogToPixels(wx.Size(150, 30)))
-        page_sizer_1.Add(self.m_richText, wx.SizerFlags().Expand().Border(wx.ALL))
+        self.richText.SetHint("wxRichTextCtrl")
+        self.richText.SetMinSize(self.ConvertDialogToPixels(wx.Size(150, 30)))
+        page_sizer_1.Add(self.richText, wx.SizerFlags().Expand().Border(wx.ALL))
 
-        self.m_scintilla = wx.stc.StyledTextCtrl(page_2, wx.ID_ANY)
-        self.m_scintilla.SetLexer(wx.stc.STC_LEX_CPP)
-        self.m_scintilla.SetEOLMode(wx.stc.STC_EOL_LF)
-        self.m_scintilla.SetViewWhiteSpace(wx.stc.STC_WS_VISIBLEALWAYS)
+        self.scintilla = wx.stc.StyledTextCtrl(page_2, wx.ID_ANY)
+        self.scintilla.SetLexer(wx.stc.STC_LEX_CPP)
+        self.scintilla.SetEOLMode(wx.stc.STC_EOL_LF)
+        self.scintilla.SetViewWhiteSpace(wx.stc.STC_WS_VISIBLEALWAYS)
         # Sets text margin scaled appropriately for the current DPI on Windows,
         # 5 on wxGTK or wxOSX
-        self.m_scintilla.SetMarginLeft(wx.SizerFlags.GetDefaultBorder())
-        self.m_scintilla.SetMarginRight(wx.SizerFlags.GetDefaultBorder())
-        self.m_scintilla.SetMarginWidth(1, 0) # Remove default margin
-        self.m_scintilla.SetBackSpaceUnIndents(True)
-        self.m_scintilla.SetMinSize(self.ConvertDialogToPixels(wx.Size(150, 60)))
-        page_sizer_1.Add(self.m_scintilla, wx.SizerFlags().Expand().Border(wx.ALL))
+        self.scintilla.SetMarginLeft(wx.SizerFlags.GetDefaultBorder())
+        self.scintilla.SetMarginRight(wx.SizerFlags.GetDefaultBorder())
+        self.scintilla.SetMarginWidth(1, 0) # Remove default margin
+        self.scintilla.SetBackSpaceUnIndents(True)
+        self.scintilla.SetMinSize(self.ConvertDialogToPixels(wx.Size(150, 60)))
+        page_sizer_1.Add(self.scintilla, wx.SizerFlags().Expand().Border(wx.ALL))
 
-        self.m_htmlWin = wx.html.HtmlWindow(page_2, wx.ID_ANY)
-        self.m_htmlWin.SetPage("This is an <b>HTML</b> window")
-        self.m_htmlWin.SetMinSize(self.ConvertDialogToPixels(wx.Size(100, 60)))
-        page_sizer_1.Add(self.m_htmlWin, wx.SizerFlags().Expand().Border(wx.ALL))
+        self.htmlWin = wx.html.HtmlWindow(page_2, wx.ID_ANY)
+        self.htmlWin.SetPage("This is an <b>HTML</b> window")
+        self.htmlWin.SetMinSize(self.ConvertDialogToPixels(wx.Size(100, 60)))
+        page_sizer_1.Add(self.htmlWin, wx.SizerFlags().Expand().Border(wx.ALL))
         page_2.SetSizerAndFit(page_sizer_1)
 
-        page_4 = wx.Panel(self.m_notebook, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize,
+        page_4 = wx.Panel(self.notebook, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize,
             wx.TAB_TRAVERSAL)
-        self.m_notebook.AddPage(page_4, "Buttons")
+        self.notebook.AddPage(page_4, "Buttons")
 
         box_sizer_3 = wx.BoxSizer(wx.VERTICAL)
 
         grid_bag_sizer = wx.GridBagSizer()
 
-        self.m_btn = wx.Button(page_4, wx.ID_ANY, "Normal")
-        self.m_btn.SetToolTip("A normal button")
-        grid_bag_sizer.Add(self.m_btn, wx.GBPosition(0, 0), wx.GBSpan(1, 1), wx.ALL, 5)
+        self.btn = wx.Button(page_4, wx.ID_ANY, "Normal")
+        self.btn.SetToolTip("A normal button")
+        grid_bag_sizer.Add(self.btn, wx.GBPosition(0, 0), wx.GBSpan(1, 1), wx.ALL, 5)
 
-        self.m_btn_2 = wx.Button(page_4, wx.ID_ANY, wx.EmptyString)
-        self.m_btn_2.SetLabelMarkup("<b><span foreground=\'red\'>Markup</span></b>")
-        self.m_btn_2.SetToolTip("Text should be Bold and Red.")
-        grid_bag_sizer.Add(self.m_btn_2, wx.GBPosition(0, 1), wx.GBSpan(1, 1), wx.ALL, 5)
+        self.btn_2 = wx.Button(page_4, wx.ID_ANY, wx.EmptyString)
+        self.btn_2.SetLabelMarkup("<b><span foreground=\'red\'>Markup</span></b>")
+        self.btn_2.SetToolTip("Text should be Bold and Red.")
+        grid_bag_sizer.Add(self.btn_2, wx.GBPosition(0, 1), wx.GBSpan(1, 1), wx.ALL, 5)
 
-        self.m_btn_bitmaps = wx.Button(page_4, wx.ID_ANY, "Bitmaps")
-        self.m_btn_bitmaps.SetBitmap(wx.BitmapBundle.FromBitmap(images.normal_png.Bitmap))
-        self.m_btn_bitmaps.SetBitmapDisabled(wx.BitmapBundle.FromBitmap(
-            images.no_hour_png.Bitmap))
-        self.m_btn_bitmaps.SetBitmapCurrent(wx.BitmapBundle.FromBitmap(images.focus_png.Bitmap))
-        self.m_btn_bitmaps.SetToolTip(
+        self.btn_bitmaps = wx.Button(page_4, wx.ID_ANY, "Bitmaps")
+        self.btn_bitmaps.SetBitmap(wx.BitmapBundle.FromBitmap(images.normal_png.Bitmap))
+        self.btn_bitmaps.SetBitmapDisabled(wx.BitmapBundle.FromBitmap(images.no_hour_png.Bitmap))
+        self.btn_bitmaps.SetBitmapCurrent(wx.BitmapBundle.FromBitmap(images.focus_png.Bitmap))
+        self.btn_bitmaps.SetToolTip(
         "Bitmap should change when mouse is over button, or button is disabled.")
-        grid_bag_sizer.Add(self.m_btn_bitmaps, wx.GBPosition(0, 2), wx.GBSpan(1, 1), wx.ALL,
+        grid_bag_sizer.Add(self.btn_bitmaps, wx.GBPosition(0, 2), wx.GBSpan(1, 1), wx.ALL,
             5)
 
-        self.m_btn_4 = wx.Button(page_4, wx.ID_ANY, "Right")
-        self.m_btn_4.SetBitmapPosition(wx.RIGHT)
-        self.m_btn_4.SetBitmap(wx.BitmapBundle.FromBitmap(images.normal_png.Bitmap))
-        self.m_btn_4.SetToolTip(
+        self.btn_4 = wx.Button(page_4, wx.ID_ANY, "Right")
+        self.btn_4.SetBitmapPosition(wx.RIGHT)
+        self.btn_4.SetBitmap(wx.BitmapBundle.FromBitmap(images.normal_png.Bitmap))
+        self.btn_4.SetToolTip(
         "Bitmap should be on the right side (fails in wxPython 4.2).")
-        grid_bag_sizer.Add(self.m_btn_4, wx.GBPosition(0, 3), wx.GBSpan(1, 1), wx.ALL, 5)
+        grid_bag_sizer.Add(self.btn_4, wx.GBPosition(0, 3), wx.GBSpan(1, 1), wx.ALL, 5)
 
-        self.m_toggleBtn = wx.ToggleButton(page_4, wx.ID_ANY, "Toggle", wx.DefaultPosition,
+        self.toggleBtn = wx.ToggleButton(page_4, wx.ID_ANY, "Toggle", wx.DefaultPosition,
             wx.DefaultSize, wx.BU_EXACTFIT)
-        self.m_toggleBtn.SetToolTip(
+        self.toggleBtn.SetToolTip(
         "Style set to exact fit, so it should be a bit smaller than usual.")
-        grid_bag_sizer.Add(self.m_toggleBtn, wx.GBPosition(0, 4), wx.GBSpan(1, 1), wx.ALL,
-            5)
+        grid_bag_sizer.Add(self.toggleBtn, wx.GBPosition(0, 4), wx.GBSpan(1, 1), wx.ALL, 5)
 
         disable_bitmaps = wx.CheckBox(page_4, wx.ID_ANY, "Disable")
         disable_bitmaps.SetToolTip(
@@ -160,12 +158,11 @@ class MainTestDialog(wx.Dialog):
 
         box_sizer_7 = wx.BoxSizer(wx.HORIZONTAL)
 
-        self.m_btn_5 = wx.adv.CommandLinkButton(page_4, wx.ID_ANY, "Command",
+        self.btn_5 = wx.adv.CommandLinkButton(page_4, wx.ID_ANY, "Command",
             "wxCommandLinkButton")
-        self.m_btn_5.SetBitmap(wx.ArtProvider.GetBitmapBundle(wx.ART_GO_FORWARD,
-            wx.ART_OTHER))
-        self.m_btn_5.SetToolTip("The bitmap for this is from Art Provider.")
-        box_sizer_7.Add(self.m_btn_5, wx.SizerFlags().Border(wx.ALL))
+        self.btn_5.SetBitmap(wx.ArtProvider.GetBitmapBundle(wx.ART_GO_FORWARD, wx.ART_OTHER))
+        self.btn_5.SetToolTip("The bitmap for this is from Art Provider.")
+        box_sizer_7.Add(self.btn_5, wx.SizerFlags().Border(wx.ALL))
 
         # Trailing spaces added to avoid clipping
         radioBox = wx.RadioBox(page_4, wx.ID_ANY, "Radio Box", wx.DefaultPosition,
@@ -177,36 +174,36 @@ class MainTestDialog(wx.Dialog):
         # wxPython currently does not support a checkbox as a static box label
         static_box_4 = wx.StaticBoxSizer(wx.VERTICAL, page_4, "Checkbox")
 
-        self.m_radioBtn_4 = wx.RadioButton(static_box_4.GetStaticBox(), wx.ID_ANY,
+        self.radioBtn_4 = wx.RadioButton(static_box_4.GetStaticBox(), wx.ID_ANY,
             "First button")
-        static_box_4.Add(self.m_radioBtn_4, wx.SizerFlags().Border(wx.ALL))
+        static_box_4.Add(self.radioBtn_4, wx.SizerFlags().Border(wx.ALL))
 
-        self.m_radioBtn_2 = wx.RadioButton(static_box_4.GetStaticBox(), wx.ID_ANY,
+        self.radioBtn_2 = wx.RadioButton(static_box_4.GetStaticBox(), wx.ID_ANY,
             "Second button")
-        self.m_radioBtn_2.SetValue(True)
-        static_box_4.Add(self.m_radioBtn_2, wx.SizerFlags().Border(wx.ALL))
+        self.radioBtn_2.SetValue(True)
+        static_box_4.Add(self.radioBtn_2, wx.SizerFlags().Border(wx.ALL))
 
-        self.m_radioBtn_3 = wx.RadioButton(static_box_4.GetStaticBox(), wx.ID_ANY,
+        self.radioBtn_3 = wx.RadioButton(static_box_4.GetStaticBox(), wx.ID_ANY,
             "Third button")
-        static_box_4.Add(self.m_radioBtn_3, wx.SizerFlags().Border(wx.ALL))
+        static_box_4.Add(self.radioBtn_3, wx.SizerFlags().Border(wx.ALL))
 
         box_sizer_7.Add(static_box_4, wx.SizerFlags().Border(wx.ALL))
 
         # wxPython currently does not support a radio button as a static box label
         static_box_5 = wx.StaticBoxSizer(wx.VERTICAL, page_4, "Radio")
 
-        self.m_radioBtn_5 = wx.RadioButton(static_box_5.GetStaticBox(), wx.ID_ANY,
+        self.radioBtn_5 = wx.RadioButton(static_box_5.GetStaticBox(), wx.ID_ANY,
             "First button")
-        static_box_5.Add(self.m_radioBtn_5, wx.SizerFlags().Border(wx.ALL))
+        static_box_5.Add(self.radioBtn_5, wx.SizerFlags().Border(wx.ALL))
 
-        self.m_radioBtn_6 = wx.RadioButton(static_box_5.GetStaticBox(), wx.ID_ANY,
+        self.radioBtn_6 = wx.RadioButton(static_box_5.GetStaticBox(), wx.ID_ANY,
             "Second button")
-        self.m_radioBtn_6.SetValue(True)
-        static_box_5.Add(self.m_radioBtn_6, wx.SizerFlags().Border(wx.ALL))
+        self.radioBtn_6.SetValue(True)
+        static_box_5.Add(self.radioBtn_6, wx.SizerFlags().Border(wx.ALL))
 
-        self.m_radioBtn_7 = wx.RadioButton(static_box_5.GetStaticBox(), wx.ID_ANY,
+        self.radioBtn_7 = wx.RadioButton(static_box_5.GetStaticBox(), wx.ID_ANY,
             "Third button")
-        static_box_5.Add(self.m_radioBtn_7, wx.SizerFlags().Border(wx.ALL))
+        static_box_5.Add(self.radioBtn_7, wx.SizerFlags().Border(wx.ALL))
 
         box_sizer_7.Add(static_box_5, wx.SizerFlags().Border(wx.ALL))
 
@@ -221,39 +218,39 @@ class MainTestDialog(wx.Dialog):
         wrap_sizer = wx.WrapSizer(wx.HORIZONTAL, wx.EXTEND_LAST_ON_EACH_LINE|
             wx.REMOVE_LEADING_SPACES)
 
-        self.m_btn_3 = wx.Button(page_4, wx.ID_ANY, "First btn")
-        wrap_sizer.Add(self.m_btn_3, wx.SizerFlags().Border(wx.ALL))
+        self.btn_3 = wx.Button(page_4, wx.ID_ANY, "First btn")
+        wrap_sizer.Add(self.btn_3, wx.SizerFlags().Border(wx.ALL))
 
         btn2 = wx.Button(page_4, wx.ID_ANY, "Popup")
         wrap_sizer.Add(btn2, wx.SizerFlags().Border(wx.ALL))
 
-        self.m_radioBtn = wx.RadioButton(page_4, wx.ID_ANY, "First radio",
+        self.radioBtn = wx.RadioButton(page_4, wx.ID_ANY, "First radio",
             wx.DefaultPosition, wx.DefaultSize, wx.RB_GROUP)
-        wrap_sizer.Add(self.m_radioBtn, wx.SizerFlags().Center().Border(wx.ALL))
+        wrap_sizer.Add(self.radioBtn, wx.SizerFlags().Center().Border(wx.ALL))
 
-        self.m_radioBtn2 = wx.RadioButton(page_4, wx.ID_ANY, "Second radio")
-        wrap_sizer.Add(self.m_radioBtn2, wx.SizerFlags().Center().Border(wx.ALL))
+        self.radioBtn2 = wx.RadioButton(page_4, wx.ID_ANY, "Second radio")
+        wrap_sizer.Add(self.radioBtn2, wx.SizerFlags().Center().Border(wx.ALL))
 
-        self.m_checkBox = wx.CheckBox(page_4, wx.ID_ANY, "Checkbox", wx.DefaultPosition,
+        self.checkBox = wx.CheckBox(page_4, wx.ID_ANY, "Checkbox", wx.DefaultPosition,
             wx.DefaultSize, wx.CHK_3STATE)
-        self.m_checkBox.Set3StateValue(wx.CHK_UNDETERMINED)
-        wrap_sizer.Add(self.m_checkBox, wx.SizerFlags().Center().Border(wx.ALL))
+        self.checkBox.Set3StateValue(wx.CHK_UNDETERMINED)
+        wrap_sizer.Add(self.checkBox, wx.SizerFlags().Center().Border(wx.ALL))
 
         box_sizer_19.Add(wrap_sizer, wx.SizerFlags().Expand().Border(wx.ALL))
 
         # wxPython currently does not support a checkbox as a static box label
         static_box_3 = wx.StaticBoxSizer(wx.VERTICAL, page_4, "Play Animation")
 
-        self.m_toggleBtn_2 = wx.ToggleButton(static_box_3.GetStaticBox(), wx.ID_ANY,
+        self.toggleBtn_2 = wx.ToggleButton(static_box_3.GetStaticBox(), wx.ID_ANY,
             "Play Animation", wx.DefaultPosition, wx.DefaultSize, wx.BU_EXACTFIT)
-        static_box_3.Add(self.m_toggleBtn_2, wx.SizerFlags().Border(wx.ALL))
+        static_box_3.Add(self.toggleBtn_2, wx.SizerFlags().Border(wx.ALL))
 
-        self.m_animation_ctrl = wx.adv.AnimationCtrl(static_box_3.GetStaticBox(), wx.ID_ANY,
+        self.animation_ctrl = wx.adv.AnimationCtrl(static_box_3.GetStaticBox(), wx.ID_ANY,
             wx.adv.Animation("../../art/clr_hourglass.gif"), wx.DefaultPosition,
             wx.DefaultSize, wx.adv.AC_DEFAULT_STYLE)
-        self.m_animation_ctrl.SetInactiveBitmap(wx.BitmapBundle.FromBitmap(
+        self.animation_ctrl.SetInactiveBitmap(wx.BitmapBundle.FromBitmap(
             images.disabled_png.Bitmap))
-        static_box_3.Add(self.m_animation_ctrl, wx.SizerFlags().Border(wx.ALL))
+        static_box_3.Add(self.animation_ctrl, wx.SizerFlags().Border(wx.ALL))
 
         box_sizer_19.Add(static_box_3, wx.SizerFlags().Border(wx.ALL))
 
@@ -264,9 +261,9 @@ class MainTestDialog(wx.Dialog):
         box_sizer_3.Add(box_sizer_19, wx.SizerFlags().Expand().Border(wx.ALL))
         page_4.SetSizerAndFit(box_sizer_3)
 
-        page_5 = wx.Panel(self.m_notebook, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize,
+        page_5 = wx.Panel(self.notebook, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize,
             wx.TAB_TRAVERSAL)
-        self.m_notebook.AddPage(page_5, "Lists")
+        self.notebook.AddPage(page_5, "Lists")
 
         box_sizer_5 = wx.BoxSizer(wx.VERTICAL)
 
@@ -274,12 +271,12 @@ class MainTestDialog(wx.Dialog):
 
         box_sizer_10 = wx.BoxSizer(wx.VERTICAL)
 
-        self.m_staticText_2 = wx.StaticText(page_5, wx.ID_ANY, "wxRearrangeCtrl")
-        box_sizer_10.Add(self.m_staticText_2, wx.SizerFlags().Expand().Border(wx.ALL))
+        self.staticText_2 = wx.StaticText(page_5, wx.ID_ANY, "wxRearrangeCtrl")
+        box_sizer_10.Add(self.staticText_2, wx.SizerFlags().Expand().Border(wx.ALL))
 
-        self.m_rearrange = wx.RearrangeCtrl(page_5, wx.ID_ANY, wx.DefaultPosition,
+        self.rearrange = wx.RearrangeCtrl(page_5, wx.ID_ANY, wx.DefaultPosition,
             wx.DefaultSize, [], [])
-        box_sizer_10.Add(self.m_rearrange, wx.SizerFlags().Border(wx.ALL))
+        box_sizer_10.Add(self.rearrange, wx.SizerFlags().Border(wx.ALL))
 
         flex_grid_sizer.Add(box_sizer_10, wx.SizerFlags().Border(wx.ALL))
 
@@ -288,46 +285,46 @@ class MainTestDialog(wx.Dialog):
         staticText_3 = wx.StaticText(page_5, wx.ID_ANY, "wxCheckListBox")
         box_sizer_11.Add(staticText_3, wx.SizerFlags().Expand().Border(wx.ALL))
 
-        self.m_checkList = wx.CheckListBox(page_5, wx.ID_ANY)
-        box_sizer_11.Add(self.m_checkList, wx.SizerFlags().Border(wx.ALL))
+        self.checkList = wx.CheckListBox(page_5, wx.ID_ANY)
+        box_sizer_11.Add(self.checkList, wx.SizerFlags().Border(wx.ALL))
 
         flex_grid_sizer.Add(box_sizer_11, wx.SizerFlags().Border(wx.ALL))
 
         box_sizer_12 = wx.BoxSizer(wx.VERTICAL)
 
-        self.m_staticText_4 = wx.StaticText(page_5, wx.ID_ANY, "wxListView")
-        box_sizer_12.Add(self.m_staticText_4, wx.SizerFlags().Border(wx.ALL))
+        self.staticText_4 = wx.StaticText(page_5, wx.ID_ANY, "wxListView")
+        box_sizer_12.Add(self.staticText_4, wx.SizerFlags().Border(wx.ALL))
 
-        self.m_listview = wx.ListView(page_5, wx.ID_ANY, wx.DefaultPosition,
-            wx.DefaultSize, wx.LC_SINGLE_SEL|wx.LC_REPORT)
-        self.m_listview.AppendColumn("name")
-        self.m_listview.AppendColumn("value")
+        self.listview = wx.ListView(page_5, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize,
+            wx.LC_SINGLE_SEL|wx.LC_REPORT)
+        self.listview.AppendColumn("name")
+        self.listview.AppendColumn("value")
         info = wx.ListItem()
         info.Clear()
         info.SetId(0)
-        idx = self.m_listview.InsertItem(info)
-        self.m_listview.SetItem(idx, 0, "meaning")
-        self.m_listview.SetItem(idx, 1, "42")
-        self.m_listview.SetToolTip("Separate content columns with a semi-colon (;)")
-        box_sizer_12.Add(self.m_listview, wx.SizerFlags().Border(wx.ALL))
+        idx = self.listview.InsertItem(info)
+        self.listview.SetItem(idx, 0, "meaning")
+        self.listview.SetItem(idx, 1, "42")
+        self.listview.SetToolTip("Separate content columns with a semi-colon (;)")
+        box_sizer_12.Add(self.listview, wx.SizerFlags().Border(wx.ALL))
 
         flex_grid_sizer.Add(box_sizer_12, wx.SizerFlags().Border(wx.ALL))
 
         box_sizer_13 = wx.BoxSizer(wx.HORIZONTAL)
 
-        self.m_edit_listbox = wx.adv.EditableListBox(page_5, wx.ID_ANY,
+        self.edit_listbox = wx.adv.EditableListBox(page_5, wx.ID_ANY,
             "My Editable ListBox", wx.DefaultPosition, wx.DefaultSize, wx.adv.EL_ALLOW_NEW|
             wx.adv.EL_ALLOW_EDIT|wx.adv.EL_ALLOW_DELETE)
-        box_sizer_13.Add(self.m_edit_listbox, wx.SizerFlags().Border(wx.ALL))
+        box_sizer_13.Add(self.edit_listbox, wx.SizerFlags().Border(wx.ALL))
 
         flex_grid_sizer.Add(box_sizer_13, wx.SizerFlags().Border(wx.ALL))
 
         box_sizer_5.Add(flex_grid_sizer, wx.SizerFlags().Border(wx.ALL))
         page_5.SetSizerAndFit(box_sizer_5)
 
-        page_3 = wx.Panel(self.m_notebook, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize,
+        page_3 = wx.Panel(self.notebook, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize,
             wx.TAB_TRAVERSAL)
-        self.m_notebook.AddPage(page_3, "Combos")
+        self.notebook.AddPage(page_3, "Combos")
 
         page_sizer_2 = wx.BoxSizer(wx.VERTICAL)
 
@@ -338,112 +335,112 @@ class MainTestDialog(wx.Dialog):
         static_box_sizer2 = wx.StaticBoxSizer(wx.VERTICAL, static_box.GetStaticBox(),
             "Combo")
 
-        self.m_staticText3 = wx.StaticText(static_box_sizer2.GetStaticBox(), wx.ID_ANY,
+        self.staticText3 = wx.StaticText(static_box_sizer2.GetStaticBox(), wx.ID_ANY,
             "Unsorted")
-        static_box_sizer2.Add(self.m_staticText3, wx.SizerFlags().Border(wx.ALL))
+        static_box_sizer2.Add(self.staticText3, wx.SizerFlags().Border(wx.ALL))
 
-        self.m_comboBox = wx.ComboBox(static_box_sizer2.GetStaticBox(), wx.ID_ANY)
-        self.m_comboBox.Append("item #1")
-        self.m_comboBox.Append("item #2")
-        self.m_comboBox.Append("item #0")
-        self.m_comboBox.SetStringSelection("item #2")
-        self.m_comboBox.SetToolTip("Item #0 should be selected by default")
-        static_box_sizer2.Add(self.m_comboBox, wx.SizerFlags().Expand().Border(wx.ALL))
+        self.comboBox = wx.ComboBox(static_box_sizer2.GetStaticBox(), wx.ID_ANY)
+        self.comboBox.Append("item #1")
+        self.comboBox.Append("item #2")
+        self.comboBox.Append("item #0")
+        self.comboBox.SetStringSelection("item #2")
+        self.comboBox.SetToolTip("Item #0 should be selected by default")
+        static_box_sizer2.Add(self.comboBox, wx.SizerFlags().Expand().Border(wx.ALL))
 
-        self.m_staticText4 = wx.StaticText(static_box_sizer2.GetStaticBox(), wx.ID_ANY,
+        self.staticText4 = wx.StaticText(static_box_sizer2.GetStaticBox(), wx.ID_ANY,
             "Sorted")
-        static_box_sizer2.Add(self.m_staticText4, wx.SizerFlags().Border(wx.ALL))
+        static_box_sizer2.Add(self.staticText4, wx.SizerFlags().Border(wx.ALL))
 
-        self.m_comboBox2 = wx.ComboBox(static_box_sizer2.GetStaticBox(), wx.ID_ANY,
+        self.comboBox2 = wx.ComboBox(static_box_sizer2.GetStaticBox(), wx.ID_ANY,
             wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, [], wx.CB_SORT)
-        self.m_comboBox2.Append("item #1")
-        self.m_comboBox2.Append("item #2")
-        self.m_comboBox2.Append("item #0")
-        self.m_comboBox2.SetStringSelection("item #2")
-        self.m_comboBox2.SetToolTip("Item #2 should be selected by default")
-        static_box_sizer2.Add(self.m_comboBox2, wx.SizerFlags().Border(wx.ALL))
+        self.comboBox2.Append("item #1")
+        self.comboBox2.Append("item #2")
+        self.comboBox2.Append("item #0")
+        self.comboBox2.SetStringSelection("item #2")
+        self.comboBox2.SetToolTip("Item #2 should be selected by default")
+        static_box_sizer2.Add(self.comboBox2, wx.SizerFlags().Border(wx.ALL))
 
         box_sizer3.Add(static_box_sizer2, wx.SizerFlags().Expand().Border(wx.ALL))
 
         static_box_sizer3 = wx.StaticBoxSizer(wx.VERTICAL, static_box.GetStaticBox(),
             "Choice")
 
-        self.m_staticText5 = wx.StaticText(static_box_sizer3.GetStaticBox(), wx.ID_ANY,
+        self.staticText5 = wx.StaticText(static_box_sizer3.GetStaticBox(), wx.ID_ANY,
             "Unsorted")
-        static_box_sizer3.Add(self.m_staticText5, wx.SizerFlags().Border(wx.ALL))
+        static_box_sizer3.Add(self.staticText5, wx.SizerFlags().Border(wx.ALL))
 
-        self.m_choice = wx.Choice(static_box_sizer3.GetStaticBox(), wx.ID_ANY)
-        self.m_choice.Append("item #1")
-        self.m_choice.Append("item #2")
-        self.m_choice.Append("item #0")
-        self.m_choice.SetSelection(2)
-        self.m_choice.SetToolTip("Item #0 should be selected by default")
-        static_box_sizer3.Add(self.m_choice, wx.SizerFlags().Border(wx.ALL))
+        self.choice = wx.Choice(static_box_sizer3.GetStaticBox(), wx.ID_ANY)
+        self.choice.Append("item #1")
+        self.choice.Append("item #2")
+        self.choice.Append("item #0")
+        self.choice.SetSelection(2)
+        self.choice.SetToolTip("Item #0 should be selected by default")
+        static_box_sizer3.Add(self.choice, wx.SizerFlags().Border(wx.ALL))
 
-        self.m_staticText6 = wx.StaticText(static_box_sizer3.GetStaticBox(), wx.ID_ANY,
+        self.staticText6 = wx.StaticText(static_box_sizer3.GetStaticBox(), wx.ID_ANY,
             "Sorted")
-        static_box_sizer3.Add(self.m_staticText6, wx.SizerFlags().Border(wx.ALL))
+        static_box_sizer3.Add(self.staticText6, wx.SizerFlags().Border(wx.ALL))
 
-        self.m_choice2 = wx.Choice(static_box_sizer3.GetStaticBox(), wx.ID_ANY,
+        self.choice2 = wx.Choice(static_box_sizer3.GetStaticBox(), wx.ID_ANY,
             wx.DefaultPosition, wx.DefaultSize, [], wx.CB_SORT)
-        self.m_choice2.Append("item #1")
-        self.m_choice2.Append("item #2")
-        self.m_choice2.Append("item #0")
-        self.m_choice2.SetSelection(2)
-        self.m_choice2.SetToolTip("Item #2 should be selected by default")
-        static_box_sizer3.Add(self.m_choice2, wx.SizerFlags().Border(wx.ALL))
+        self.choice2.Append("item #1")
+        self.choice2.Append("item #2")
+        self.choice2.Append("item #0")
+        self.choice2.SetSelection(2)
+        self.choice2.SetToolTip("Item #2 should be selected by default")
+        static_box_sizer3.Add(self.choice2, wx.SizerFlags().Border(wx.ALL))
 
         box_sizer3.Add(static_box_sizer3, wx.SizerFlags().Expand().Border(wx.ALL))
 
         static_box_sizer4 = wx.StaticBoxSizer(wx.VERTICAL, static_box.GetStaticBox(),
             "List")
 
-        self.m_staticText7 = wx.StaticText(static_box_sizer4.GetStaticBox(), wx.ID_ANY,
+        self.staticText7 = wx.StaticText(static_box_sizer4.GetStaticBox(), wx.ID_ANY,
             "Unsorted")
-        static_box_sizer4.Add(self.m_staticText7, wx.SizerFlags().Border(wx.ALL))
+        static_box_sizer4.Add(self.staticText7, wx.SizerFlags().Border(wx.ALL))
 
-        self.m_listbox = wx.ListBox(static_box_sizer4.GetStaticBox(), wx.ID_ANY)
-        self.m_listbox.Append("item #1")
-        self.m_listbox.Append("item #2")
-        self.m_listbox.Append("item #0")
-        static_box_sizer4.Add(self.m_listbox, wx.SizerFlags().Border(wx.ALL))
+        self.listbox = wx.ListBox(static_box_sizer4.GetStaticBox(), wx.ID_ANY)
+        self.listbox.Append("item #1")
+        self.listbox.Append("item #2")
+        self.listbox.Append("item #0")
+        static_box_sizer4.Add(self.listbox, wx.SizerFlags().Border(wx.ALL))
 
-        self.m_staticText8 = wx.StaticText(static_box_sizer4.GetStaticBox(), wx.ID_ANY,
+        self.staticText8 = wx.StaticText(static_box_sizer4.GetStaticBox(), wx.ID_ANY,
             "Sorted")
-        static_box_sizer4.Add(self.m_staticText8, wx.SizerFlags().Border(wx.ALL))
+        static_box_sizer4.Add(self.staticText8, wx.SizerFlags().Border(wx.ALL))
 
-        self.m_listBox2 = wx.ListBox(static_box_sizer4.GetStaticBox(), wx.ID_ANY,
+        self.listBox2 = wx.ListBox(static_box_sizer4.GetStaticBox(), wx.ID_ANY,
             wx.DefaultPosition, wx.DefaultSize, [], wx.LB_SINGLE|wx.LB_SORT)
-        self.m_listBox2.Append("item #1")
-        self.m_listBox2.Append("item #2")
-        self.m_listBox2.Append("item #0")
-        static_box_sizer4.Add(self.m_listBox2, wx.SizerFlags().Border(wx.ALL))
+        self.listBox2.Append("item #1")
+        self.listBox2.Append("item #2")
+        self.listBox2.Append("item #0")
+        static_box_sizer4.Add(self.listBox2, wx.SizerFlags().Border(wx.ALL))
 
         box_sizer3.Add(static_box_sizer4, wx.SizerFlags().Expand().Border(wx.ALL))
 
         static_box_sizer5 = wx.StaticBoxSizer(wx.VERTICAL, static_box.GetStaticBox(),
             "Checked")
 
-        self.m_staticText9 = wx.StaticText(static_box_sizer5.GetStaticBox(), wx.ID_ANY,
+        self.staticText9 = wx.StaticText(static_box_sizer5.GetStaticBox(), wx.ID_ANY,
             "Unsorted")
-        static_box_sizer5.Add(self.m_staticText9, wx.SizerFlags().Border(wx.ALL))
+        static_box_sizer5.Add(self.staticText9, wx.SizerFlags().Border(wx.ALL))
 
-        self.m_checkList_2 = wx.CheckListBox(static_box_sizer5.GetStaticBox(), wx.ID_ANY)
-        self.m_checkList_2.Append("item #1")
-        self.m_checkList_2.Append("item #2")
-        self.m_checkList_2.Append("item #0")
-        static_box_sizer5.Add(self.m_checkList_2, wx.SizerFlags().Border(wx.ALL))
+        self.checkList_2 = wx.CheckListBox(static_box_sizer5.GetStaticBox(), wx.ID_ANY)
+        self.checkList_2.Append("item #1")
+        self.checkList_2.Append("item #2")
+        self.checkList_2.Append("item #0")
+        static_box_sizer5.Add(self.checkList_2, wx.SizerFlags().Border(wx.ALL))
 
-        self.m_staticText10 = wx.StaticText(static_box_sizer5.GetStaticBox(), wx.ID_ANY,
+        self.staticText10 = wx.StaticText(static_box_sizer5.GetStaticBox(), wx.ID_ANY,
             "Sorted")
-        static_box_sizer5.Add(self.m_staticText10, wx.SizerFlags().Border(wx.ALL))
+        static_box_sizer5.Add(self.staticText10, wx.SizerFlags().Border(wx.ALL))
 
-        self.m_checkList2 = wx.CheckListBox(static_box_sizer5.GetStaticBox(), wx.ID_ANY,
+        self.checkList2 = wx.CheckListBox(static_box_sizer5.GetStaticBox(), wx.ID_ANY,
             wx.DefaultPosition, wx.DefaultSize, [], wx.LB_SINGLE|wx.LB_SORT)
-        self.m_checkList2.Append("item #1")
-        self.m_checkList2.Append("item #2")
-        self.m_checkList2.Append("item #0")
-        static_box_sizer5.Add(self.m_checkList2, wx.SizerFlags().Border(wx.ALL))
+        self.checkList2.Append("item #1")
+        self.checkList2.Append("item #2")
+        self.checkList2.Append("item #0")
+        static_box_sizer5.Add(self.checkList2, wx.SizerFlags().Border(wx.ALL))
 
         box_sizer3.Add(static_box_sizer5, wx.SizerFlags().Expand().Border(wx.ALL))
 
@@ -467,9 +464,9 @@ class MainTestDialog(wx.Dialog):
         page_sizer_2.Add(box_sizer_20, wx.SizerFlags().Border(wx.ALL))
         page_3.SetSizerAndFit(page_sizer_2)
 
-        page_6 = wx.Panel(self.m_notebook, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize,
+        page_6 = wx.Panel(self.notebook, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize,
             wx.BORDER_THEME|wx.TAB_TRAVERSAL)
-        self.m_notebook.AddPage(page_6, "Pickers")
+        self.notebook.AddPage(page_6, "Pickers")
 
         parent_sizer2 = wx.BoxSizer(wx.VERTICAL)
 
@@ -482,10 +479,10 @@ class MainTestDialog(wx.Dialog):
         staticText__2 = wx.StaticText(static_box_2.GetStaticBox(), wx.ID_ANY, "File:")
         box_sizer.Add(staticText__2, wx.SizerFlags().Center().Border(wx.ALL))
 
-        self.m_filePicker = wx.FilePickerCtrl(static_box_2.GetStaticBox(), wx.ID_ANY,
+        self.filePicker = wx.FilePickerCtrl(static_box_2.GetStaticBox(), wx.ID_ANY,
             wx.EmptyString, wx.FileSelectorPromptStr, "BMP files|*.bmp", wx.DefaultPosition,
             wx.DefaultSize, wx.FLP_USE_TEXTCTRL|wx.FLP_OPEN|wx.FLP_FILE_MUST_EXIST)
-        box_sizer.Add(self.m_filePicker, wx.SizerFlags().Border(wx.ALL))
+        box_sizer.Add(self.filePicker, wx.SizerFlags().Border(wx.ALL))
 
         grid_sizer.Add(box_sizer, wx.SizerFlags().Border(wx.ALL))
 
@@ -494,10 +491,10 @@ class MainTestDialog(wx.Dialog):
         staticText__3 = wx.StaticText(static_box_2.GetStaticBox(), wx.ID_ANY, "Directory:")
         box_sizer_2.Add(staticText__3, wx.SizerFlags().Center().Border(wx.ALL))
 
-        self.m_dirPicker = wx.DirPickerCtrl(static_box_2.GetStaticBox(), wx.ID_ANY, ".",
+        self.dirPicker = wx.DirPickerCtrl(static_box_2.GetStaticBox(), wx.ID_ANY, ".",
             wx.DirSelectorPromptStr, wx.DefaultPosition, wx.DefaultSize,
             wx.DIRP_DEFAULT_STYLE|wx.DIRP_SMALL)
-        box_sizer_2.Add(self.m_dirPicker, wx.SizerFlags().Border(wx.ALL))
+        box_sizer_2.Add(self.dirPicker, wx.SizerFlags().Border(wx.ALL))
 
         grid_sizer.Add(box_sizer_2, wx.SizerFlags().Border(wx.ALL))
 
@@ -506,9 +503,9 @@ class MainTestDialog(wx.Dialog):
         staticText__4 = wx.StaticText(static_box_2.GetStaticBox(), wx.ID_ANY, "Colour:")
         box_sizer_4.Add(staticText__4, wx.SizerFlags().Center().Border(wx.ALL))
 
-        self.m_colourPicker = wx.ColourPickerCtrl(static_box_2.GetStaticBox(), wx.ID_ANY,
+        self.colourPicker = wx.ColourPickerCtrl(static_box_2.GetStaticBox(), wx.ID_ANY,
             wx.BLACK)
-        box_sizer_4.Add(self.m_colourPicker, wx.SizerFlags().Border(wx.ALL))
+        box_sizer_4.Add(self.colourPicker, wx.SizerFlags().Border(wx.ALL))
 
         grid_sizer.Add(box_sizer_4, wx.SizerFlags().Border(wx.ALL))
 
@@ -517,11 +514,11 @@ class MainTestDialog(wx.Dialog):
         staticText__7 = wx.StaticText(static_box_2.GetStaticBox(), wx.ID_ANY, "Font:")
         box_sizer_9.Add(staticText__7, wx.SizerFlags().Center().Border(wx.ALL))
 
-        self.m_fontPicker = wx.FontPickerCtrl(static_box_2.GetStaticBox(), wx.ID_ANY,
+        self.fontPicker = wx.FontPickerCtrl(static_box_2.GetStaticBox(), wx.ID_ANY,
             wx.Font(wx.NORMAL_FONT.GetPointSize(), wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL,
             wx.FONTWEIGHT_NORMAL, False, "Comic Sans MS"), wx.DefaultPosition, wx.DefaultSize,
             wx.FNTP_DEFAULT_STYLE|wx.FNTP_USE_TEXTCTRL)
-        box_sizer_9.Add(self.m_fontPicker, wx.SizerFlags().Border(wx.ALL))
+        box_sizer_9.Add(self.fontPicker, wx.SizerFlags().Border(wx.ALL))
 
         grid_sizer.Add(box_sizer_9, wx.SizerFlags().Border(wx.ALL))
 
@@ -530,9 +527,9 @@ class MainTestDialog(wx.Dialog):
         staticText__5 = wx.StaticText(static_box_2.GetStaticBox(), wx.ID_ANY, "Date:")
         box_sizer_6.Add(staticText__5, wx.SizerFlags().Center().Border(wx.ALL))
 
-        self.m_datePicker = wx.adv.DatePickerCtrl(static_box_2.GetStaticBox(), wx.ID_ANY,
+        self.datePicker = wx.adv.DatePickerCtrl(static_box_2.GetStaticBox(), wx.ID_ANY,
             wx.DefaultDateTime)
-        box_sizer_6.Add(self.m_datePicker, wx.SizerFlags().Border(wx.ALL))
+        box_sizer_6.Add(self.datePicker, wx.SizerFlags().Border(wx.ALL))
 
         grid_sizer.Add(box_sizer_6, wx.SizerFlags().Border(wx.ALL))
 
@@ -541,9 +538,9 @@ class MainTestDialog(wx.Dialog):
         staticText__6 = wx.StaticText(static_box_2.GetStaticBox(), wx.ID_ANY, "Time:")
         box_sizer_8.Add(staticText__6, wx.SizerFlags().Center().Border(wx.ALL))
 
-        self.m_timePicker = wx.adv.TimePickerCtrl(static_box_2.GetStaticBox(), wx.ID_ANY,
+        self.timePicker = wx.adv.TimePickerCtrl(static_box_2.GetStaticBox(), wx.ID_ANY,
             wx.DefaultDateTime)
-        box_sizer_8.Add(self.m_timePicker, wx.SizerFlags().Border(wx.ALL))
+        box_sizer_8.Add(self.timePicker, wx.SizerFlags().Border(wx.ALL))
 
         grid_sizer.Add(box_sizer_8, wx.SizerFlags().Border(wx.ALL))
 
@@ -556,21 +553,21 @@ class MainTestDialog(wx.Dialog):
         parent_sizer2.Add(self.fileCtrl, wx.SizerFlags().Border(wx.ALL))
         page_6.SetSizerAndFit(parent_sizer2)
 
-        page = wx.Panel(self.m_notebook, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize,
+        page = wx.Panel(self.notebook, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize,
             wx.TAB_TRAVERSAL)
-        self.m_notebook.AddPage(page, "RibbonBar")
+        self.notebook.AddPage(page, "RibbonBar")
 
         page_sizer_3 = wx.BoxSizer(wx.VERTICAL)
 
-        self.m_rbnBar = wx.ribbon.RibbonBar(page, wx.ID_ANY, wx.DefaultPosition,
+        self.rbnBar = wx.ribbon.RibbonBar(page, wx.ID_ANY, wx.DefaultPosition,
             wx.DefaultSize, wx.ribbon.RIBBON_BAR_SHOW_PAGE_LABELS|
             wx.ribbon.RIBBON_BAR_SHOW_PAGE_ICONS|wx.ribbon.RIBBON_BAR_FLOW_HORIZONTAL)
 
-        self.m_rbnBar.SetArtProvider(wx.ribbon.RibbonAUIArtProvider())
-        page_sizer_3.Add(self.m_rbnBar, wx.SizerFlags().Expand().Border(wx.ALL))
+        self.rbnBar.SetArtProvider(wx.ribbon.RibbonAUIArtProvider())
+        page_sizer_3.Add(self.rbnBar, wx.SizerFlags().Expand().Border(wx.ALL))
 
-        rbnPage = wx.ribbon.RibbonPage(self.m_rbnBar, wx.ID_ANY, "First")
-        self.m_rbnBar.SetActivePage(rbnPage)
+        rbnPage = wx.ribbon.RibbonPage(self.rbnBar, wx.ID_ANY, "First")
+        self.rbnBar.SetActivePage(rbnPage)
 
         rbnPanel = wx.ribbon.RibbonPanel(rbnPage, wx.ID_ANY, "English",
             images.english_png.Bitmap)
@@ -579,13 +576,13 @@ class MainTestDialog(wx.Dialog):
 
         box_sizer_15 = wx.BoxSizer(wx.VERTICAL)
 
-        self.m_staticText = wx.StaticText(rbnPanel, wx.ID_ANY,
+        self.staticText = wx.StaticText(rbnPanel, wx.ID_ANY,
             "This is a sentence in English.")
-        self.m_staticText.Wrap(200)
-        box_sizer_15.Add(self.m_staticText, wx.SizerFlags().Border(wx.ALL))
+        self.staticText.Wrap(200)
+        box_sizer_15.Add(self.staticText, wx.SizerFlags().Border(wx.ALL))
 
-        self.m_btn_6 = wx.Button(rbnPanel, wx.ID_ANY, "Switch")
-        box_sizer_15.Add(self.m_btn_6, wx.SizerFlags().Center().Border(wx.ALL))
+        self.btn_6 = wx.Button(rbnPanel, wx.ID_ANY, "Switch")
+        box_sizer_15.Add(self.btn_6, wx.SizerFlags().Center().Border(wx.ALL))
 
         first_parent_sizer.Add(box_sizer_15, wx.SizerFlags(1).Expand().Border(wx.ALL))
         rbnPanel.SetSizerAndFit(first_parent_sizer)
@@ -598,18 +595,18 @@ class MainTestDialog(wx.Dialog):
 
         box_sizer_16 = wx.BoxSizer(wx.VERTICAL)
 
-        self.m_staticText_3 = wx.StaticText(rbnPanel_2, wx.ID_ANY,
+        self.staticText_3 = wx.StaticText(rbnPanel_2, wx.ID_ANY,
             "Ceci est une phrase en français.")
-        self.m_staticText_3.Wrap(200)
-        box_sizer_16.Add(self.m_staticText_3, wx.SizerFlags().Border(wx.ALL))
+        self.staticText_3.Wrap(200)
+        box_sizer_16.Add(self.staticText_3, wx.SizerFlags().Border(wx.ALL))
 
-        self.m_btn_7 = wx.Button(rbnPanel_2, wx.ID_ANY, "Switch")
-        box_sizer_16.Add(self.m_btn_7, wx.SizerFlags().Center().Border(wx.ALL))
+        self.btn_7 = wx.Button(rbnPanel_2, wx.ID_ANY, "Switch")
+        box_sizer_16.Add(self.btn_7, wx.SizerFlags().Center().Border(wx.ALL))
 
         first_parent_sizer_2.Add(box_sizer_16, wx.SizerFlags(1).Expand().Border(wx.ALL))
         rbnPanel_2.SetSizerAndFit(first_parent_sizer_2)
 
-        ribbonPage2 = wx.ribbon.RibbonPage(self.m_rbnBar, wx.ID_ANY, "Second")
+        ribbonPage2 = wx.ribbon.RibbonPage(self.rbnBar, wx.ID_ANY, "Second")
 
         ribbonPanel2 = wx.ribbon.RibbonPanel(ribbonPage2, wx.ID_ANY, "Button Panel")
 
@@ -620,7 +617,7 @@ class MainTestDialog(wx.Dialog):
             wx.ribbon.RIBBON_BUTTON_NORMAL)
         rbnBtnBar.Realize()
 
-        ribbonPage_2 = wx.ribbon.RibbonPage(self.m_rbnBar, wx.ID_ANY, "Third")
+        ribbonPage_2 = wx.ribbon.RibbonPage(self.rbnBar, wx.ID_ANY, "Third")
 
         ribbonPanel_2 = wx.ribbon.RibbonPanel(ribbonPage_2, wx.ID_ANY, "Tool Panel")
 
@@ -632,7 +629,7 @@ class MainTestDialog(wx.Dialog):
             wx.ART_TOOLBAR), "", wx.ribbon.RIBBON_BUTTON_NORMAL)
         rbnToolBar.Realize()
 
-        ribbonPage_3 = wx.ribbon.RibbonPage(self.m_rbnBar, wx.ID_ANY, "Fourth")
+        ribbonPage_3 = wx.ribbon.RibbonPage(self.rbnBar, wx.ID_ANY, "Fourth")
 
         rbnPanel_3 = wx.ribbon.RibbonPanel(ribbonPage_3, wx.ID_ANY, "Gallery Panel")
 
@@ -641,45 +638,45 @@ class MainTestDialog(wx.Dialog):
         rbnGallery.Realize()
         page.SetSizerAndFit(page_sizer_3)
 
-        page_7 = wx.Panel(self.m_notebook, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize,
+        page_7 = wx.Panel(self.notebook, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize,
             wx.TAB_TRAVERSAL)
-        self.m_notebook.AddPage(page_7, "Banners")
+        self.notebook.AddPage(page_7, "Banners")
         page_7.SetBackgroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_BTNFACE))
 
         page_sizer = wx.BoxSizer(wx.VERTICAL)
 
         box_sizer_17 = wx.BoxSizer(wx.HORIZONTAL)
 
-        self.m_banner_left = wx.adv.BannerWindow(page_7, wx.ID_ANY, wx.LEFT)
-        self.m_banner_left.SetText("Left Banner", "")
-        box_sizer_17.Add(self.m_banner_left, wx.SizerFlags().Border(wx.ALL))
+        self.banner_left = wx.adv.BannerWindow(page_7, wx.ID_ANY, wx.LEFT)
+        self.banner_left.SetText("Left Banner", "")
+        box_sizer_17.Add(self.banner_left, wx.SizerFlags().Border(wx.ALL))
 
-        self.m_banner_top = wx.adv.BannerWindow(page_7, wx.ID_ANY, wx.TOP)
-        self.m_banner_top.SetGradient(wx.SystemSettings.GetColour(
+        self.banner_top = wx.adv.BannerWindow(page_7, wx.ID_ANY, wx.TOP)
+        self.banner_top.SetGradient(wx.SystemSettings.GetColour(
             wx.SYS_COLOUR_INACTIVECAPTION),
             wx.SystemSettings.GetColour(wx.SYS_COLOUR_HIGHLIGHT))
-        self.m_banner_top.SetText("Top Banner", "This is the top banner message")
-        box_sizer_17.Add(self.m_banner_top, wx.SizerFlags().Border(wx.ALL))
+        self.banner_top.SetText("Top Banner", "This is the top banner message")
+        box_sizer_17.Add(self.banner_top, wx.SizerFlags().Border(wx.ALL))
 
-        self.m_banner_right = wx.adv.BannerWindow(page_7, wx.ID_ANY, wx.RIGHT)
-        self.m_banner_right.SetText("Right Banner", "")
-        box_sizer_17.Add(self.m_banner_right, wx.SizerFlags().Border(wx.ALL))
+        self.banner_right = wx.adv.BannerWindow(page_7, wx.ID_ANY, wx.RIGHT)
+        self.banner_right.SetText("Right Banner", "")
+        box_sizer_17.Add(self.banner_right, wx.SizerFlags().Border(wx.ALL))
 
         page_sizer.Add(box_sizer_17, wx.SizerFlags(1).Border(wx.ALL))
 
         box_sizer_18 = wx.BoxSizer(wx.HORIZONTAL)
 
-        self.m_banner = wx.adv.BannerWindow(page_7, wx.ID_ANY, wx.LEFT)
-        self.m_banner.SetBitmap(wx.BitmapBundle.FromBitmap(images.wiztest_png.Bitmap))
-        self.m_banner.SetText("This is a long title", "")
-        box_sizer_18.Add(self.m_banner, wx.SizerFlags().Border(wx.ALL))
+        self.banner = wx.adv.BannerWindow(page_7, wx.ID_ANY, wx.LEFT)
+        self.banner.SetBitmap(wx.BitmapBundle.FromBitmap(images.wiztest_png.Bitmap))
+        self.banner.SetText("This is a long title", "")
+        box_sizer_18.Add(self.banner, wx.SizerFlags().Border(wx.ALL))
 
         page_sizer.Add(box_sizer_18, wx.SizerFlags().Border(wx.ALL))
         page_7.SetSizerAndFit(page_sizer)
 
-        page_8 = wx.Panel(self.m_notebook, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize,
+        page_8 = wx.Panel(self.notebook, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize,
             wx.TAB_TRAVERSAL)
-        self.m_notebook.AddPage(page_8, "Data")
+        self.notebook.AddPage(page_8, "Data")
         page_8.SetBackgroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_BTNFACE))
 
         page_sizer_4 = wx.BoxSizer(wx.VERTICAL)
@@ -707,9 +704,9 @@ class MainTestDialog(wx.Dialog):
 
         dlg_sizer.Add(box_sizer_14, wx.SizerFlags().Border(wx.ALL))
 
-        self.m_events_list = wx.ListBox(self, wx.ID_ANY)
-        self.m_events_list.SetMinSize(self.ConvertDialogToPixels(wx.Size(-1, 60)))
-        dlg_sizer.Add(self.m_events_list, wx.SizerFlags(1).Expand().Border(wx.ALL))
+        self.events_list = wx.ListBox(self, wx.ID_ANY)
+        self.events_list.SetMinSize(self.ConvertDialogToPixels(wx.Size(-1, 60)))
+        dlg_sizer.Add(self.events_list, wx.SizerFlags(1).Expand().Border(wx.ALL))
 
         if "wxMac" not in wx.PlatformInfo:
             stdBtn_line = wx.StaticLine(self, wx.ID_ANY, wx.DefaultPosition, wx.Size(20, -1))
@@ -728,69 +725,69 @@ class MainTestDialog(wx.Dialog):
         self.Centre(wx.BOTH)
 
         # Bind Event handlers
-        self.m_btn.Bind(wx.EVT_BUTTON, lambda event:
-            self.m_events_list.Select(self.m_events_list.Append("Button: wx.EVT_BUTTON")))
-        self.m_btn_3.Bind(wx.EVT_BUTTON, lambda event:self.OnEventName("Button: wx.EVT_BUTTON"))
+        self.btn.Bind(wx.EVT_BUTTON, lambda event:
+            self.events_list.Select(self.events_list.Append("Button: wx.EVT_BUTTON")))
+        self.btn_3.Bind(wx.EVT_BUTTON, lambda event:self.OnEventName("Button: wx.EVT_BUTTON"))
         btn2.Bind(wx.EVT_BUTTON, self.OnPopupBtn)
-        self.m_btn_7.Bind(wx.EVT_BUTTON, lambda event:self.OnEventName("Ceci est une phrase en français."))
-        self.m_btn_2.Bind(wx.EVT_BUTTON, lambda event:
-            self.m_events_list.Select(self.m_events_list.Append("Button: wx.EVT_BUTTON")))
-        self.m_btn_bitmaps.Bind(wx.EVT_BUTTON, lambda event:
-            self.m_events_list.Select(self.m_events_list.Append("Button: wx.EVT_BUTTON")))
-        self.m_btn_4.Bind(wx.EVT_BUTTON, lambda event:
-            self.m_events_list.Select(self.m_events_list.Append("Button: wx.EVT_BUTTON")))
-        self.m_btn_6.Bind(wx.EVT_BUTTON, lambda event:self.OnEventName("This is a sentence in English."))
+        self.btn_7.Bind(wx.EVT_BUTTON, lambda event:self.OnEventName("Ceci est une phrase en français."))
+        self.btn_2.Bind(wx.EVT_BUTTON, lambda event:
+            self.events_list.Select(self.events_list.Append("Button: wx.EVT_BUTTON")))
+        self.btn_bitmaps.Bind(wx.EVT_BUTTON, lambda event:
+            self.events_list.Select(self.events_list.Append("Button: wx.EVT_BUTTON")))
+        self.btn_4.Bind(wx.EVT_BUTTON, lambda event:
+            self.events_list.Select(self.events_list.Append("Button: wx.EVT_BUTTON")))
+        self.btn_6.Bind(wx.EVT_BUTTON, lambda event:self.OnEventName("This is a sentence in English."))
         btn.Bind(wx.EVT_BUTTON, self.OnClearList)
-        self.m_btn_5.Bind(wx.EVT_BUTTON, lambda event:
-            self.m_events_list.Select(self.m_events_list.Append("CmdLinkBtn: wx.EVT_BUTTON")))
+        self.btn_5.Bind(wx.EVT_BUTTON, lambda event:
+            self.events_list.Select(self.events_list.Append("CmdLinkBtn: wx.EVT_BUTTON")))
         disable_bitmaps.Bind(wx.EVT_CHECKBOX, self.OnDisableBitmapsBtn)
-        self.m_checkList2.Bind(wx.EVT_CHECKLISTBOX, lambda event:
+        self.checkList2.Bind(wx.EVT_CHECKLISTBOX, lambda event:
             self.OnEventName("CheckListBox2: wx.EVT_CHECKLISTBOX"))
-        self.m_checkList_2.Bind(wx.EVT_CHECKLISTBOX, lambda event:
+        self.checkList_2.Bind(wx.EVT_CHECKLISTBOX, lambda event:
             self.OnEventName("CheckListBox1: wx.EVT_CHECKLISTBOX"))
-        self.m_choice.Bind(wx.EVT_CHOICE, lambda event:self.OnEventName("Choice: wx.EVT_CHOICE"))
-        self.m_choice2.Bind(wx.EVT_CHOICE, lambda event:self.OnEventName("OnChoice: wx.EVT_CHOICE"))
-        self.m_colourPicker.Bind(wx.EVT_COLOURPICKER_CHANGED, lambda event:
+        self.choice.Bind(wx.EVT_CHOICE, lambda event:self.OnEventName("Choice: wx.EVT_CHOICE"))
+        self.choice2.Bind(wx.EVT_CHOICE, lambda event:self.OnEventName("OnChoice: wx.EVT_CHOICE"))
+        self.colourPicker.Bind(wx.EVT_COLOURPICKER_CHANGED, lambda event:
             self.OnEventName("ColourPicker: wx.EVT_COLOURPICKER_CHANGED"))
-        self.m_comboBox.Bind(wx.EVT_COMBOBOX, lambda event:self.OnEventName("Combobox: wx.EVT_COMBOBOX"))
-        self.m_comboBox2.Bind(wx.EVT_COMBOBOX, lambda event:self.OnEventName("OnCombobox: wx.EVT_COMBOBOX"))
-        self.m_datePicker.Bind(wx.adv.EVT_DATE_CHANGED, lambda event:
+        self.comboBox.Bind(wx.EVT_COMBOBOX, lambda event:self.OnEventName("Combobox: wx.EVT_COMBOBOX"))
+        self.comboBox2.Bind(wx.EVT_COMBOBOX, lambda event:self.OnEventName("OnCombobox: wx.EVT_COMBOBOX"))
+        self.datePicker.Bind(wx.adv.EVT_DATE_CHANGED, lambda event:
             self.OnEventName("DatePicker: wx.EVT_DATE_CHANGED"))
-        self.m_dirPicker.Bind(wx.EVT_DIRPICKER_CHANGED, lambda event:
+        self.dirPicker.Bind(wx.EVT_DIRPICKER_CHANGED, lambda event:
             self.OnEventName("DirPicker: wx.EVT_DIRPICKER_CHANGED"))
-        self.m_filePicker.Bind(wx.EVT_FILEPICKER_CHANGED, lambda event:
+        self.filePicker.Bind(wx.EVT_FILEPICKER_CHANGED, lambda event:
             self.OnEventName("FilePicker: wx.EVT_FILEPICKER_CHANGED"))
-        self.m_fontPicker.Bind(wx.EVT_FONTPICKER_CHANGED, lambda event:
+        self.fontPicker.Bind(wx.EVT_FONTPICKER_CHANGED, lambda event:
             self.OnEventName("FontPicker: wx.OnFontChanged"))
         self.Bind(wx.EVT_INIT_DIALOG, self.OnInit)
-        self.m_listbox.Bind(wx.EVT_LISTBOX, lambda event:self.OnEventName("ListBox1: wx.EVT_LISTBOX"))
-        self.m_listBox2.Bind(wx.EVT_LISTBOX, lambda event:self.OnEventName("ListBox2: wx.EVT_LISTBOX"))
-        self.m_notebook.Bind(wx.EVT_NOTEBOOK_PAGE_CHANGED, self.OnPageChanged)
+        self.listbox.Bind(wx.EVT_LISTBOX, lambda event:self.OnEventName("ListBox1: wx.EVT_LISTBOX"))
+        self.listBox2.Bind(wx.EVT_LISTBOX, lambda event:self.OnEventName("ListBox2: wx.EVT_LISTBOX"))
+        self.notebook.Bind(wx.EVT_NOTEBOOK_PAGE_CHANGED, self.OnPageChanged)
         radioBox.Bind(wx.EVT_RADIOBOX, lambda event:self.OnEventName("RadioBox: wx.EVT_RADIOBOX"))
-        self.m_radioBtn_4.Bind(wx.EVT_RADIOBUTTON, lambda event:
+        self.radioBtn_4.Bind(wx.EVT_RADIOBUTTON, lambda event:
             self.OnEventName("wx.RadioButton: wx.EVT_RADIOBUTTON"))
-        self.m_radioBtn_2.Bind(wx.EVT_RADIOBUTTON, lambda event:
+        self.radioBtn_2.Bind(wx.EVT_RADIOBUTTON, lambda event:
             self.OnEventName("wx.RadioButton: wx.EVT_RADIOBUTTON"))
-        self.m_radioBtn_7.Bind(wx.EVT_RADIOBUTTON, lambda event:
+        self.radioBtn_7.Bind(wx.EVT_RADIOBUTTON, lambda event:
             self.OnEventName("wx.RadioButton: wx.EVT_RADIOBUTTON"))
-        self.m_radioBtn.Bind(wx.EVT_RADIOBUTTON, lambda event:
+        self.radioBtn.Bind(wx.EVT_RADIOBUTTON, lambda event:
             self.OnEventName("RadioButton: wx.EVT_RADIOBUTTON"))
-        self.m_radioBtn_6.Bind(wx.EVT_RADIOBUTTON, lambda event:
+        self.radioBtn_6.Bind(wx.EVT_RADIOBUTTON, lambda event:
             self.OnEventName("wx.RadioButton: wx.EVT_RADIOBUTTON"))
-        self.m_radioBtn2.Bind(wx.EVT_RADIOBUTTON, lambda event:
+        self.radioBtn2.Bind(wx.EVT_RADIOBUTTON, lambda event:
             self.OnEventName("RadioButton: wx.EVT_RADIOBUTTON"))
-        self.m_radioBtn_5.Bind(wx.EVT_RADIOBUTTON, lambda event:
+        self.radioBtn_5.Bind(wx.EVT_RADIOBUTTON, lambda event:
             self.OnEventName("wx.RadioButton: wx.EVT_RADIOBUTTON"))
-        self.m_radioBtn_3.Bind(wx.EVT_RADIOBUTTON, lambda event:
+        self.radioBtn_3.Bind(wx.EVT_RADIOBUTTON, lambda event:
             self.OnEventName("wx.RadioButton: wx.EVT_RADIOBUTTON"))
-        self.m_scintilla.Bind(wx.stc.EVT_STC_CHANGE, lambda event:
+        self.scintilla.Bind(wx.stc.EVT_STC_CHANGE, lambda event:
             self.OnEventName("wx.StyledTextCtrl: wx.EVT_STC_CHANGE"))
-        self.m_text_ctrl.Bind(wx.EVT_TEXT, lambda event:self.OnEventName("wx.TextCtrl: wx.EVT_TEXT"))
-        self.m_richText.Bind(wx.EVT_TEXT, lambda event:self.OnEventName("wx.RichTextCtrl: wx.EVT_TEXT"))
-        self.m_timePicker.Bind(wx.adv.EVT_TIME_CHANGED, lambda event:
+        self.text_ctrl.Bind(wx.EVT_TEXT, lambda event:self.OnEventName("wx.TextCtrl: wx.EVT_TEXT"))
+        self.richText.Bind(wx.EVT_TEXT, lambda event:self.OnEventName("wx.RichTextCtrl: wx.EVT_TEXT"))
+        self.timePicker.Bind(wx.adv.EVT_TIME_CHANGED, lambda event:
             self.OnEventName("TimePicker: wx.EVT_TIME_CHANGED"))
-        self.m_toggleBtn.Bind(wx.EVT_TOGGLEBUTTON, lambda event:self.OnEventName("OnToggle: wx.EVT_BUTTON"))
-        self.m_toggleBtn_2.Bind(wx.EVT_TOGGLEBUTTON, self.OnToggleButton)
+        self.toggleBtn.Bind(wx.EVT_TOGGLEBUTTON, lambda event:self.OnEventName("OnToggle: wx.EVT_BUTTON"))
+        self.toggleBtn_2.Bind(wx.EVT_TOGGLEBUTTON, self.OnToggleButton)
 
     # Unimplemented Event handler functions
     # Copy any listed and paste them below the comment block, or to your inherited class.
@@ -811,13 +808,13 @@ class MainTestDialog(wx.Dialog):
         event.Skip()
 
     def OnClearList(self, event):
-        self.m_events_list.Clear()
+        self.events_list.Clear()
 
     def OnDisableBitmapsBtn(self, event):
         self.m_btn_bitmaps.Enable(not event.IsChecked())
 
     def OnPageChanged(self, event):
-        self.m_events_list.Clear()
+        self.events_list.Clear()
         event.Skip()
 
     def OnPopupBtn(self, event):
@@ -828,8 +825,8 @@ class MainTestDialog(wx.Dialog):
         self.popupwin.Show()
 
     def OnEventName(self, event_name):
-        pos = self.m_events_list.Append(event_name)
-        self.m_events_list.Select(pos)
+        pos = self.events_list.Append(event_name)
+        self.events_list.Select(pos)
 
     def OnToggleButton(self, event):
         if (self.m_toggleBtn_2.GetValue()):

@@ -78,14 +78,14 @@ class PythonDlg(wx.Dialog):
         self.auiToolBar.Realize()
         box_sizer.Add(self.auiToolBar, wx.SizerFlags().Border(wx.ALL))
 
-        self.m_staticText = wx.StaticText(self, wx.ID_ANY,
+        self.staticText = wx.StaticText(self, wx.ID_ANY,
             "wxPython est génial n\'est-ce pas?",
             self.ConvertDialogToPixels(wx.Point(50, 100)),
             self.ConvertDialogToPixels(wx.Size(150, 32)), wx.ALIGN_CENTER_HORIZONTAL,
             "my_text")
-        self.m_staticText.SetWindowVariant(wx.WINDOW_VARIANT_LARGE)
-        self.m_staticText.SetForegroundColour(wx.Colour(0, 128, 0))
-        box_sizer.Add(self.m_staticText, wx.SizerFlags().Center().Border(wx.ALL))
+        self.staticText.SetWindowVariant(wx.WINDOW_VARIANT_LARGE)
+        self.staticText.SetForegroundColour(wx.Colour(0, 128, 0))
+        box_sizer.Add(self.staticText, wx.SizerFlags().Center().Border(wx.ALL))
 
         _svg_string_ = zlib.decompress(base64.b64decode(images.face_smile_svg))
         bmp = wx.StaticBitmap(self, wx.ID_ANY, wx.BitmapBundle.FromSVG(_svg_string_,
@@ -95,16 +95,16 @@ class PythonDlg(wx.Dialog):
         # wxPython currently does not support a checkbox as a static box label
         static_box_2 = wx.StaticBoxSizer(wx.VERTICAL, self, "Play Animation")
 
-        self.m_toggleBtn = wx.ToggleButton(static_box_2.GetStaticBox(), wx.ID_ANY,
+        self.toggleBtn = wx.ToggleButton(static_box_2.GetStaticBox(), wx.ID_ANY,
             "Play Animation", wx.DefaultPosition, wx.DefaultSize, wx.BU_EXACTFIT)
-        static_box_2.Add(self.m_toggleBtn, wx.SizerFlags().Border(wx.ALL))
+        static_box_2.Add(self.toggleBtn, wx.SizerFlags().Border(wx.ALL))
 
-        self.m_animation_ctrl = wx.adv.AnimationCtrl(static_box_2.GetStaticBox(), wx.ID_ANY,
+        self.animation_ctrl = wx.adv.AnimationCtrl(static_box_2.GetStaticBox(), wx.ID_ANY,
             wx.adv.Animation("../../art/clr_hourglass.gif"), wx.DefaultPosition,
             wx.DefaultSize, wx.adv.AC_DEFAULT_STYLE)
-        self.m_animation_ctrl.SetInactiveBitmap(wx.BitmapBundle.FromBitmap(
+        self.animation_ctrl.SetInactiveBitmap(wx.BitmapBundle.FromBitmap(
             images.disabled_png.Bitmap))
-        static_box_2.Add(self.m_animation_ctrl, wx.SizerFlags().Border(wx.ALL))
+        static_box_2.Add(self.animation_ctrl, wx.SizerFlags().Border(wx.ALL))
 
         box_sizer.Add(static_box_2, wx.SizerFlags().Border(wx.ALL))
 
@@ -128,7 +128,7 @@ class PythonDlg(wx.Dialog):
 
         # Bind Event handlers
         self.Bind(wx.EVT_INIT_DIALOG, self.OnInit)
-        self.m_toggleBtn.Bind(wx.EVT_TOGGLEBUTTON, lambda event:self.m_animation_ctrl.Play())
+        self.toggleBtn.Bind(wx.EVT_TOGGLEBUTTON, lambda event:self.m_animation_ctrl.Play())
 
     # Unimplemented Event handler functions
     # Copy any listed and paste them below the comment block, or to your inherited class.

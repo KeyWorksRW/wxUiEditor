@@ -178,7 +178,7 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
             }
             else
             {
-                code.AddIfPython("id=").Add(event->getNode()->getNodeName()).Function("GetId()").EndFunction();
+                code.AddIfPython("id=").NodeName(event->getNode()).Function("GetId()").EndFunction();
             }
         }
         else if (code.is_ruby())
@@ -233,9 +233,7 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
     {
         if (code.is_cpp() || code.is_python())
         {
-            if (code.is_python() && !event->getNode()->isLocal())
-                code.Add("self.");
-            code.Add(event->getNode()->getNodeName()).Function("Bind(") << handler.GetCode();
+            code.NodeName(event->getNode()).Function("Bind(") << handler.GetCode();
             code.EndFunction();
         }
         else if (code.is_ruby())

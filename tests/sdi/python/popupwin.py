@@ -15,10 +15,10 @@ class PopupWin(wx.PopupTransientWindow):
 
         parent_sizer = wx.BoxSizer(wx.VERTICAL)
 
-        self.m_staticText = wx.StaticText(self, wx.ID_ANY,
+        self.staticText = wx.StaticText(self, wx.ID_ANY,
             "This is a wxPopupTransientWindow set to use a raised border around it. Note that the default is to not have a border at all.\n\nBTW, right-click anywhere in the dialog to get a popup menu for changing some of the control values.\n\nClick outside this window to dismiss it.")
-        self.m_staticText.Wrap(250)
-        parent_sizer.Add(self.m_staticText, wx.SizerFlags().Border(wx.ALL))
+        self.staticText.Wrap(250)
+        parent_sizer.Add(self.staticText, wx.SizerFlags().Border(wx.ALL))
         self.SetSizerAndFit(parent_sizer)
 # ************* End of generated code ***********
 # DO NOT EDIT THIS COMMENT BLOCK!

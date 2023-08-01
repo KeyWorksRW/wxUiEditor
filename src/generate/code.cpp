@@ -694,15 +694,9 @@ Code& Code::NodeName(Node* node)
     if (!node)
         node = m_node;
     auto& node_name = node->getNodeName();
-    if (is_python())
+    if (is_python() && !node->isForm() && !node->isLocal())
     {
-        if (!node->isForm())
-        {
-            if (!node->isLocal())
-                *this += "_";
-            else
-                *this += "self.";
-        }
+        *this += "self.";
     }
     else if (is_ruby())
     {
@@ -725,9 +719,7 @@ Code& Code::NodeName(Node* node)
 
 Code& Code::ParentName()
 {
-    if (is_python() && !m_node->getParent()->isLocal() && !m_node->getParent()->isForm())
-        *this += "self.";
-    *this << m_node->getParent()->getNodeName();
+    NodeName(m_node->getParent());
     return *this;
 }
 
@@ -788,9 +780,7 @@ Code& Code::ValidParentName()
         {
             if (parent->isStaticBoxSizer())
             {
-                if (is_python() && !parent->isLocal() && !parent->isForm())
-                    *this += "self.";
-                *this += parent->getNodeName();
+                NodeName(parent);
                 Function("GetStaticBox()");
                 return *this;
             }
@@ -805,9 +795,7 @@ Code& Code::ValidParentName()
         {
             if (parent->isType(iter))
             {
-                if (is_python() && !parent->isLocal() && !parent->isForm())
-                    *this += "self.";
-                *this += parent->getNodeName();
+                NodeName(parent);
                 if (parent->isGen(gen_wxCollapsiblePane))
                 {
                     Function("GetPane()");

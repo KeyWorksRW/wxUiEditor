@@ -142,37 +142,35 @@ class MainFrame(wx.Frame):
 
         self.SetMenuBar(menubar)
 
-        self.m_toolBar = self.CreateToolBar()
+        self.toolBar = self.CreateToolBar()
 
-        tool_dropdown = self.m_toolBar.AddTool(wx.ID_ANY, "",
-            wx.ArtProvider.GetBitmapBundle(wx.ART_EXECUTABLE_FILE, wx.ART_MENU),
-            wx.EmptyString, wx.ITEM_DROPDOWN)
+        tool_dropdown = self.toolBar.AddTool(wx.ID_ANY, "", wx.ArtProvider.GetBitmapBundle(
+            wx.ART_EXECUTABLE_FILE, wx.ART_MENU), wx.EmptyString, wx.ITEM_DROPDOWN)
         tool_dropdown_menu = wx.Menu()
         menu_item = wx.MenuItem(tool_dropdown_menu, wx.ID_ANY, "Wizard...")
         menu_item.SetBitmap(wx.ArtProvider.GetBitmapBundle(wx.ART_FIND, wx.ART_MENU))
         tool_dropdown_menu.Append(menu_item)
         tool_dropdown.SetDropdownMenu(tool_dropdown_menu)
-        tool_4 = self.m_toolBar.AddTool(wx.ID_ANY, "MainTestDlg", wx.BitmapBundle.FromBitmap(
+        tool_4 = self.toolBar.AddTool(wx.ID_ANY, "MainTestDlg", wx.BitmapBundle.FromBitmap(
             images.debug_32_png.Bitmap))
 
-        tool_5 = self.m_toolBar.AddTool(wx.ID_ANY, "BookTestDlg", wx.BitmapBundle.FromBitmap(
+        tool_5 = self.toolBar.AddTool(wx.ID_ANY, "BookTestDlg", wx.BitmapBundle.FromBitmap(
             images.wxNotebook_png.Bitmap))
 
-        self.m_toolBar.AddSeparator()
-        tool_3 = self.m_toolBar.AddTool(wx.ID_ANY, "PythonDlg", wx.BitmapBundle.FromBitmap(
+        self.toolBar.AddSeparator()
+        tool_3 = self.toolBar.AddTool(wx.ID_ANY, "PythonDlg", wx.BitmapBundle.FromBitmap(
             images.wxPython_1_5x_png.Bitmap))
 
-        self.m_toolBar.AddStretchableSpace()
+        self.toolBar.AddStretchableSpace()
 
-        tool_2 = self.m_toolBar.AddTool(wx.ID_ANY, "Common Controls...",
+        tool_2 = self.toolBar.AddTool(wx.ID_ANY, "Common Controls...",
             wx.ArtProvider.GetBitmapBundle(wx.ART_TIP, wx.ART_TOOLBAR))
 
-        self.m_toolBar.Realize()
+        self.toolBar.Realize()
 
-        self.m_statusBar = self.CreateStatusBar(2)
-        self.m_statusBar.SetStatusWidths([100, -1])
-        self.m_statusBar.SetStatusStyles([wx.SB_FLAT, wx.SB_FLAT])
-
+        self.statusBar = self.CreateStatusBar(2)
+        self.statusBar.SetStatusWidths([100, -1])
+        self.statusBar.SetStatusStyles([wx.SB_FLAT, wx.SB_FLAT])
 
         self.Centre(wx.BOTH)
 

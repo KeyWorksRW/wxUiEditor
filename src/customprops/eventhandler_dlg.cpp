@@ -39,7 +39,7 @@ EventHandlerDlg::EventHandlerDlg(wxWindow* parent, NodeEvent* event) : EventHand
     m_ruby_page = EVENT_PAGE_RUBY;
 
     m_output_type = Project.getOutputType(OUT_FLAG_IGNORE_DERIVED | OUT_FLAG_IGNORE_XRC);
-    m_code_preference = Project.getCodePreference();
+    m_code_preference = Project.getCodePreference(event->getNode());
 
     m_is_cpp_enabled = (m_code_preference == GEN_LANG_CPLUSPLUS || m_output_type & OUTPUT_CPLUS);
     m_is_python_enabled = (m_code_preference == GEN_LANG_PYTHON || m_output_type & OUTPUT_PYTHON);

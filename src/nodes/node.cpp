@@ -705,7 +705,7 @@ Node* Node::createChildNode(GenName name)
     if (new_node)
     {
         bool is_name_changed = false;
-        if (Project.getCodePreference() == GEN_LANG_CPLUSPLUS)
+        if (Project.getCodePreference(this) == GEN_LANG_CPLUSPLUS)
         {
             if (UserPrefs.is_CppSnakeCase())
             {
@@ -717,7 +717,7 @@ Node* Node::createChildNode(GenName name)
         else
         {
             tt_string member_name = new_node->as_string(prop_var_name);
-            if (Project.getCodePreference() == GEN_LANG_RUBY || Project.getCodePreference() == GEN_LANG_PYTHON)
+            if (Project.getCodePreference(this) == GEN_LANG_RUBY || Project.getCodePreference(this) == GEN_LANG_PYTHON)
             {
                 member_name = ConvertToSnakeCase(member_name);
                 if (member_name != new_node->as_string(prop_var_name))
@@ -726,12 +726,12 @@ Node* Node::createChildNode(GenName name)
 
             if (member_name.starts_with("m_"))
             {
-                if (Project.getCodePreference() == GEN_LANG_PYTHON)
+                if (Project.getCodePreference(this) == GEN_LANG_PYTHON)
                 {
                     // Python public names don't have a prefix
                     member_name.erase(0, 2);
                 }
-                else if (Project.getCodePreference() == GEN_LANG_RUBY)
+                else if (Project.getCodePreference(this) == GEN_LANG_RUBY)
                 {
                     // We don't add the '@' because that will be added automatically during
                     // code generation.
@@ -749,7 +749,7 @@ Node* Node::createChildNode(GenName name)
 
                 is_name_changed = true;
             }
-            else if (Project.getCodePreference() == GEN_LANG_PYTHON)
+            else if (Project.getCodePreference(this) == GEN_LANG_PYTHON)
             {
                 // Python private names have '_' as a prefix
                 member_name.insert(0, "_");

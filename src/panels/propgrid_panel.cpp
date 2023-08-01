@@ -1703,7 +1703,7 @@ void PropGridPanel::ModifyOptionsProperty(NodeProperty* node_prop, wxPGProperty*
             tt_string name = node->as_string(prop_var_name);
             bool is_name_changed = false;
             auto access = &value;  // this is just to make the code more readable
-            if (Project.getCodePreference() == GEN_LANG_CPLUSPLUS)
+            if (Project.getCodePreference(selected_node) == GEN_LANG_CPLUSPLUS)
             {
                 // If access is changed to local and the name starts with "m_", then
                 // the "m_" will be stripped off. Conversely, if the name is changed
@@ -1718,7 +1718,8 @@ void PropGridPanel::ModifyOptionsProperty(NodeProperty* node_prop, wxPGProperty*
                         name = final_name;
                     is_name_changed = true;
                 }
-                else if (*access != "none" && !name.starts_with("m_") && Project.getCodePreference() == GEN_LANG_CPLUSPLUS)
+                else if (*access != "none" && !name.starts_with("m_") &&
+                         Project.getCodePreference(selected_node) == GEN_LANG_CPLUSPLUS)
                 {
                     name.insert(0, "m_");
                     auto final_name = node->getUniqueName(name);
@@ -1727,7 +1728,7 @@ void PropGridPanel::ModifyOptionsProperty(NodeProperty* node_prop, wxPGProperty*
                     is_name_changed = true;
                 }
             }
-            else if (Project.getCodePreference() == GEN_LANG_PYTHON)
+            else if (Project.getCodePreference(selected_node) == GEN_LANG_PYTHON)
             {
                 // The convention in Python is to use a leading underscore for local members.
 
@@ -1750,7 +1751,7 @@ void PropGridPanel::ModifyOptionsProperty(NodeProperty* node_prop, wxPGProperty*
                     is_name_changed = true;
                 }
             }
-            else if (Project.getCodePreference() == GEN_LANG_RUBY)
+            else if (Project.getCodePreference(selected_node) == GEN_LANG_RUBY)
             {
                 // The convention in Ruby is to use a leading @ for non-local members.
 

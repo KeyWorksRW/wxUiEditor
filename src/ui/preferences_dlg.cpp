@@ -224,6 +224,9 @@ void PreferencesDlg::OnOK(wxCommandEvent& WXUNUSED(event))
     if (!Validate() || !TransferDataFromWindow())
         return;
 
+    auto old_prop_grid_setting = UserPrefs.is_RightPropGrid();
+    auto old_dark_mode_setting = UserPrefs.is_DarkMode();
+
     UserPrefs.set_CppSnakeCase(m_check_cpp_snake_case->GetValue());
     UserPrefs.set_DarkMode(m_check_dark_mode->GetValue());
     UserPrefs.set_LoadLastProject(m_check_load_last->GetValue());
@@ -243,6 +246,11 @@ void PreferencesDlg::OnOK(wxCommandEvent& WXUNUSED(event))
     // UserPrefs.set_CodeDisplayFont(m_code_font_picker->GetSelectedFontInfo());
 
     UserPrefs.WriteConfig();
+
+    if (old_dark_mode_setting != UserPrefs.is_DarkMode())
+        wxMessageBox("You must close and reopen wxUiEditor for the Dark Mode setting to take effect.");
+    if (old_prop_grid_setting != UserPrefs.is_RightPropGrid())
+        wxMessageBox("You must close and reopen wxUiEditor for the Property Panel setting to take effect.");
 
     EndModal(wxID_OK);
 }

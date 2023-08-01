@@ -928,8 +928,15 @@ void GenValidatorSettings(Code& code)
     }
 
     auto validator_type = node->getValidatorType();
-
+    if (validator_type == "wxIntegerValidator")
+    {
+        code.Add(validator_type).Str("<").Str(data_type).Str(">(");
+    }
+    else
+    {
     code.Add(validator_type) << '(';
+    }
+
 
     auto& style = node->as_string(prop_validator_style);
     tt_string_vector styles(style, '|', tt::TRIM::both);

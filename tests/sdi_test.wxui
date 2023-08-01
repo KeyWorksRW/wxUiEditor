@@ -370,7 +370,7 @@
                   class="wxButton"
                   label="Normal"
                   tooltip="A normal button"
-                  wxEVT_BUTTON="[this](wxCommandEvent&amp;)@@{@@OnEventName(&quot;Button: wxEVT_BUTTON&quot;);@@}[python:lambda]self.m_events_list.Select(self.m_events_list.Append(&quot;Button: wx.EVT_BUTTON&quot;))" />
+                  wxEVT_BUTTON="[this](wxCommandEvent&amp;)@@{@@OnEventName(&quot;Button: wxEVT_BUTTON&quot;);@@}[python:lambda]self.events_list.Select(self.events_list.Append(&quot;Button: wx.EVT_BUTTON&quot;))" />
                 <node
                   class="wxButton"
                   label="&lt;b>&lt;span foreground='red'>Markup&lt;/span>&lt;/b>"
@@ -378,7 +378,7 @@
                   var_name="m_btn_2"
                   tooltip="Text should be Bold and Red."
                   column="1"
-                  wxEVT_BUTTON="[this](wxCommandEvent&amp;)@@{@@OnEventName(&quot;Button: wxEVT_BUTTON&quot;);@@}[python:lambda]self.m_events_list.Select(self.m_events_list.Append(&quot;Button: wx.EVT_BUTTON&quot;))" />
+                  wxEVT_BUTTON="[this](wxCommandEvent&amp;)@@{@@OnEventName(&quot;Button: wxEVT_BUTTON&quot;);@@}[python:lambda]self.events_list.Select(self.events_list.Append(&quot;Button: wx.EVT_BUTTON&quot;))" />
                 <node
                   class="wxButton"
                   label="Bitmaps"
@@ -388,7 +388,7 @@
                   disabled_bmp="Embed;no_hour.png"
                   tooltip="Bitmap should change when mouse is over button, or button is disabled."
                   column="2"
-                  wxEVT_BUTTON="[this](wxCommandEvent&amp;)@@{@@OnEventName(&quot;Button: wxEVT_BUTTON&quot;);@@}[python:lambda]self.m_events_list.Select(self.m_events_list.Append(&quot;Button: wx.EVT_BUTTON&quot;))" />
+                  wxEVT_BUTTON="[this](wxCommandEvent&amp;)@@{@@OnEventName(&quot;Button: wxEVT_BUTTON&quot;);@@}[python:lambda]self.events_list.Select(self.events_list.Append(&quot;Button: wx.EVT_BUTTON&quot;))" />
                 <node
                   class="wxButton"
                   label="Right"
@@ -397,7 +397,7 @@
                   position="wxRIGHT"
                   tooltip="Bitmap should be on the right side (fails in wxPython 4.2)."
                   column="3"
-                  wxEVT_BUTTON="[this](wxCommandEvent&amp;)@@{@@OnEventName(&quot;Button: wxEVT_BUTTON&quot;);@@}[python:lambda]self.m_events_list.Select(self.m_events_list.Append(&quot;Button: wx.EVT_BUTTON&quot;))" />
+                  wxEVT_BUTTON="[this](wxCommandEvent&amp;)@@{@@OnEventName(&quot;Button: wxEVT_BUTTON&quot;);@@}[python:lambda]self.events_list.Select(self.events_list.Append(&quot;Button: wx.EVT_BUTTON&quot;))" />
                 <node
                   class="wxToggleButton"
                   label="Toggle"
@@ -426,7 +426,7 @@
                   bitmap="Art;wxART_GO_FORWARD|wxART_OTHER"
                   tooltip="The bitmap for this is from Art Provider."
                   row="1"
-                  wxEVT_BUTTON="[this](wxCommandEvent&amp;)@@{@@OnEventName(&quot;CmdLinkBtn: wxEVT_BUTTON&quot;);@@}[python:lambda]self.m_events_list.Select(self.m_events_list.Append(&quot;CmdLinkBtn: wx.EVT_BUTTON&quot;))" />
+                  wxEVT_BUTTON="[this](wxCommandEvent&amp;)@@{@@OnEventName(&quot;CmdLinkBtn: wxEVT_BUTTON&quot;);@@}[python:lambda]self.events_list.Select(self.events_list.Append(&quot;CmdLinkBtn: wx.EVT_BUTTON&quot;))" />
                 <node
                   class="wxRadioBox"
                   class_access="none"
@@ -1854,10 +1854,10 @@
         style="wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER"
         title="Common controls"
         base_file="commonctrls"
+        inserted_hdr_code="public:@@    ~CommonCtrls();@@@@private:@@    PopupWin* m_popup_win { nullptr };"
         local_hdr_includes="popupwin.h"
         derived_class_name="CommonCtrls"
         derived_file="../ui/commonctrls"
-        inserted_hdr_code="public:@@    ~CommonCtrls();@@@@private:@@    PopupWin* m_popup_win { nullptr };"
         use_derived_class="0"
         xrc_file="commonctrls"
         wxEVT_INIT_DIALOG="OnInit"

@@ -1667,14 +1667,34 @@ void PropGridPanel::ModifyOptionsProperty(NodeProperty* node_prop, wxPGProperty*
                     modifyProperty(propType, "wxTextValidator");
                 }
             }
-            else
+            else if (value == "wxFileName")
             {
                 auto propType = selected_node->getPropPtr(prop_validator_type);
-                if (propType->as_string() == "wxTextValidator")
+                if (propType->as_string() != "wxGenericValidator")
                 {
                     auto grid_property = m_prop_grid->GetPropertyByLabel("validator_type");
                     grid_property->SetValueFromString("wxGenericValidator", 0);
                     modifyProperty(propType, "wxGenericValidator");
+                }
+            }
+            else if (value == "double" || value == "float")
+            {
+                auto propType = selected_node->getPropPtr(prop_validator_type);
+                if (propType->as_string() != "wxFloatingPointValidator")
+                {
+                    auto grid_property = m_prop_grid->GetPropertyByLabel("validator_type");
+                    grid_property->SetValueFromString("wxFloatingPointValidator", 0);
+                    modifyProperty(propType, "wxFloatingPointValidator");
+                }
+            }
+            else
+            {
+                auto propType = selected_node->getPropPtr(prop_validator_type);
+                if (propType->as_string() != "wxIntegerValidator")
+                {
+                    auto grid_property = m_prop_grid->GetPropertyByLabel("validator_type");
+                    grid_property->SetValueFromString("wxIntegerValidator", 0);
+                    modifyProperty(propType, "wxIntegerValidator");
                 }
             }
         }

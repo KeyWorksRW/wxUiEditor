@@ -689,8 +689,7 @@ void BaseCodeGenerator::GenValVarsBase(const NodeDeclaration* declaration, Node*
 
     if (auto& var_name = node->as_string(prop_validator_variable); var_name.size())
     {
-        // All validators must have a validator_data_type property, so we don't check if it exists.
-        if (auto& val_data_type = node->as_string(prop_validator_data_type); val_data_type.size())
+        if (auto val_data_type = node->getValidatorDataType(); val_data_type.size())
         {
             tt_string code;
 
@@ -731,7 +730,8 @@ void BaseCodeGenerator::GenValVarsBase(const NodeDeclaration* declaration, Node*
                 }
                 code << " { " << (bState ? "true" : "false") << " };";
             }
-            else if (val_data_type == "int")
+            else if (val_data_type.contains("int") || val_data_type.contains("short") || val_data_type.contains("long") ||
+                     val_data_type.contains("double") || val_data_type.contains("float"))
             {
                 auto prop = node->getPropPtr(prop_value);
                 if (!prop)
@@ -761,6 +761,7 @@ void BaseCodeGenerator::GenValVarsBase(const NodeDeclaration* declaration, Node*
                     code << ';';
                 }
             }
+            // BUGBUG: [Randalphwa - 07-31-2023] We need to handle wxArrayInt
             else
             {
                 code << ';';
@@ -834,13 +835,15 @@ void BaseCodeGenerator::GatherGeneratorIncludes(Node* node, std::set<std::string
     generator->GetIncludes(node, set_src, set_hdr);
     if (node->hasValue(prop_validator_variable))
     {
-        auto& var_name = node->as_string(prop_validator_variable);
-        if (var_name.size())
+        if (node->as_string(prop_validator_variable).size())
         {
+            // REVIEW: [Randalphwa - 07-31-2023] Why are these being added to the header file? Only the source
+            // file needs them with the exception of wxArrayInt.
             set_hdr.insert("#include <wx/valgen.h>");
-            if (node->isPropValue(prop_validator_data_type, "wxTextValidator"))
+            auto validator_type = node->getValidatorType();
+            if (validator_type == "wxTextValidator")
                 set_hdr.insert("#include <wx/valtext.h>");
-            if (node->isPropValue(prop_validator_data_type, "wxArrayInt"))
+            else if (validator_type == "wxArrayInt")
                 set_hdr.insert("#include <wx/dynarray.h>");
         }
     }

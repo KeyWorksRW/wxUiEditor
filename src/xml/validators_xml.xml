@@ -4,32 +4,46 @@ inline const char* validators_xml = R"===(<?xml version="1.0"?>
 	<gen class="Text Validator" type="interface">
 		<property name="validator_variable" type="string"
 			help="Name of a member variable associated with the validator" />
-		<property name="validator_type" type="option"
-			help="Type of a validator assigned to the window">
-			<option name="wxTextValidator"
-				help="Use this to transfer data to/from a wxString variable." />
-			<option name="wxGenericValidator"
-				help="Use this if you need to use something besides a wxString." />
-			wxTextValidator
-		</property>
 		<property name="validator_data_type" type="option"
 			help="Data type of the member variable">
 			<option name="wxString"
 				help="String value." />
 			<option name="wxFileName"
 				help="Only use this with a wxGenericValidator type." />
+				<option name="short"
+					help="Only use this with a wxIntegerValidator type." />
 			<option name="int"
-				help="Only use this with a wxGenericValidator type." />
+				help="Only use this with a wxIntegerValidator type." />
+			<option name="long"
+				help="Only use this with a wxIntegerValidator type." />
+			<option name="long long"
+				help="Only use this with a wxIntegerValidator type." />
+			<option name="unsigned short"
+					help="Only use this with a wxIntegerValidator type." />
+			<option name="unsigned int"
+				help="Only use this with a wxIntegerValidator type." />
+			<option name="unsigned long"
+				help="Only use this with a wxIntegerValidator type." />
+			<option name="unsigned long long"
+				help="Only use this with a wxIntegerValidator type." />
 			<option name="double"
-				help="Only use this with a wxGenericValidator type." />
+				help="Only use this with a wxFloatingPointValidator type." />
 			<option name="float"
-				help="Only use this with a wxGenericValidator type." />
+				help="Only use this with a wxFloatingPointValidator type." />
 			wxString
 		</property>
 		<property name="get_function" type="string"
 			help="Function name to get the value of the variable." />
 		<property name="set_function" type="string"
 			help="Function name to set the value of the variable." />
+		<property name="minValue" type="string"
+			help="Used by wxIntegerValidator and wxFloatingPointValidator, this is the minimum value accepted by the validator.\n\nIgnored unless maxValue is also set." />
+		<property name="maxValue" type="string"
+			help="Used by wxIntegerValidator and wxFloatingPointValidator, this is the maximum value accepted by the validator.\n\nIgnore unless minValue is also set." />
+		<property name="precision" type="int"
+			help="Used by wxFloatingPointValidator. The number of decimal digits after the decimal separator to show and accept. -1 uses the maximum precision possible.">
+			-1
+		</property>
 		<property name="validator_style" type="bitlist"
 			help="Data filtering style for wxTextValidator or wxGenericValidator.">
 			<option name="wxFILTER_NONE"
@@ -52,6 +66,12 @@ inline const char* validators_xml = R"===(<?xml version="1.0"?>
 				help="Use an include list. The validator checks if each input character is in the list (one character per list element), complaining if not. See wxTextValidator::SetIncludes." />
 			<option name="wxFILTER_EXCLUDE_CHAR_LIST"
 				help="Use an include list. The validator checks if each input character is in the list (one character per list element), complaining if it is. See wxTextValidator::SetExcludes." />
+			<option name="wxNUM_VAL_THOUSANDS_SEPARATOR"
+				help="Used by wxIntegerValidator. When this style is used, numbers are formatted using the thousands separators after validating the user entry (if the current locale uses the thousands separators character)." />
+			<option name="wxNUM_VAL_ZERO_AS_BLANK"
+				help="Used by wxIntegerValidator and wxFloatingPointValidator. With this style a value of zero in the associated variable is translated to an empty string and an empty value of the control is translated to a value of zero." />
+			<option name="wxNUM_VAL_NO_TRAILING_ZEROES"
+				help="Used by wxFloatingPointValidator. Indicates that trailing zeroes should be removed from the control text when it is validated. By default, as many zeroes as needed to satisfy the precision used when creating the validator will be appended." />
 			wxFILTER_NONE
 		</property>
 	</gen>
@@ -59,27 +79,15 @@ inline const char* validators_xml = R"===(<?xml version="1.0"?>
 	<gen class="Boolean Validator" type="interface">
 		<property name="validator_variable" type="string"
 			help="Name of a member variable associated with the validator" />
-		<property name="validator_data_type" type="option"
-			help="Data type of the member variable">
-			<option name="bool"
-				help="Boolean value." />
-			bool
-		</property>
 		<property name="get_function" type="string"
-			help="Function name to get the value of the variable." />
+			help="Optional public function to get the value of the variable." />
 		<property name="set_function" type="string"
-			help="Function name to set the value of the variable." />
+			help="Optional public function to set the value of the variable." />
 	</gen>
 
 	<gen class="Integer Validator" type="interface">
 		<property name="validator_variable" type="string"
 			help="Name of a member variable associated with the validator" />
-		<property name="validator_data_type" type="option"
-			help="Data type of the member variable">
-			<option name="int"
-				help="Integer value." />
-			int
-		</property>
 		<property name="get_function" type="string"
 			help="Function name to get the value of the variable." />
 		<property name="set_function" type="string"
@@ -106,14 +114,6 @@ inline const char* validators_xml = R"===(<?xml version="1.0"?>
 	<gen class="String Validator" type="interface">
 		<property name="validator_variable" type="string"
 			help="Name of a member variable associated with the validator" />
-		<property name="validator_data_type" type="option"
-			help="Data type of the member variable">
-			<option name="wxString"
-				help="String value." />
-			wxString
-		</property>
-		<property name="get_function" type="string"
-			help="Function name to get the value of the variable." />
 		<property name="set_function" type="string"
 			help="Function name to set the value of the variable." />
 	</gen>
@@ -121,12 +121,6 @@ inline const char* validators_xml = R"===(<?xml version="1.0"?>
 	<gen class="List Validator" type="interface">
 		<property name="validator_variable" type="string"
 			help="Name of a member variable associated with the validator" />
-		<property name="validator_data_type" type="option"
-			help="Data type of the member variable">
-			<option name="wxArrayInt"
-				help="Integer value." />
-			wxArrayInt
-		</property>
 		<property name="get_function" type="string"
 			help="Function name to get the value of the variable." />
 		<property name="set_function" type="string"

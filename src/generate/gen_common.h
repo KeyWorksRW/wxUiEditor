@@ -95,7 +95,7 @@ int GetBitlistInt(Node* node, GenEnum::PropName prop_name);
 // specified by the user in the project file.
 std::optional<tt_string> GenGetSetCode(Node* node);
 
-std::optional<tt_string> GenValidatorSettings(Node* node);
+void GenValidatorSettings(Code& code);
 
 // Generates code for any class inheriting from wxTopLevelWindow -- this will generate
 // everything needed to set the window's icon.

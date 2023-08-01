@@ -246,7 +246,7 @@ public:
     // Equivalent to calling as_string(prop_name)
     Code& Str(GenEnum::PropName prop_name) { return as_string(prop_name); }
 
-    // Adds -> or . to the string, then wxFunction or wx.Function
+    // Adds -> or . to the string, then function (fixing wx prefix if needed)
     Code& Function(tt_string_view text);
 
     // C++ will add "::" and the function name. Python will add "." and the function name.

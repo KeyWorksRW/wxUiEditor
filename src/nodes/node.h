@@ -159,6 +159,14 @@ public:
 
     NodeDeclaration* getNodeDeclaration() { return m_declaration; }
 
+    // Retrieves prop_validator_data_type if it has one, or correct data type for use with
+    // wxGenericValidator if it doesn't.
+    tt_string getValidatorDataType() const;
+
+    // This will return wxGenericValidator, wxTextValidator, wxIntValidator or
+    // wxFloatValidator
+    tt_string_view getValidatorType() const;
+
     // Returns true if the property exists, has a value (!= wxDefaultSize, !=
     // wxDefaultPosition, or non-sepcified bitmap)
     bool hasValue(PropName name) const;

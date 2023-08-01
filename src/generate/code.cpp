@@ -421,14 +421,7 @@ Code& Code::Function(tt_string_view text)
     }
     else
     {
-        if (is_ruby())
-        {
-            *this << "Wx::";
-        }
-        else
-        {
-            *this << "->" << text;
-        }
+        *this << "->" << text;
     }
     return *this;
 }

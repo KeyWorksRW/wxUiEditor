@@ -91,9 +91,10 @@ bool StaticCheckboxBoxSizerGenerator::ConstructionCode(Code& code)
         code.as_string(prop_checkbox_var_name) << " = new wxCheckBox(";
         code.ValidParentName().Comma().as_string(prop_id).Comma().QuotedString(prop_label).EndFunction();
 
-        if (auto result = GenValidatorSettings(node); result)
+        auto cur_size = code.size();
+        if (GenValidatorSettings(code); code.size() > cur_size)
         {
-            code.Eol().Str(result.value());
+            code.Eol();
         }
         code.Eol();
     }

@@ -19,30 +19,30 @@ class TestFormPanel(wx.Panel):
 
         parent_sizer = wx.BoxSizer(wx.VERTICAL)
 
-        self.m_splitter = wx.SplitterWindow(self, wx.ID_ANY, wx.DefaultPosition,
+        self.splitter = wx.SplitterWindow(self, wx.ID_ANY, wx.DefaultPosition,
             wx.DefaultSize, wx.SP_3D)
-        self.m_splitter.SetSashGravity(0.0)
-        self.m_splitter.SetMinimumPaneSize(150)
-        parent_sizer.Add(self.m_splitter, wx.SizerFlags(1).Expand().Border(wx.ALL))
+        self.splitter.SetSashGravity(0.0)
+        self.splitter.SetMinimumPaneSize(150)
+        parent_sizer.Add(self.splitter, wx.SizerFlags(1).Expand().Border(wx.ALL))
 
-        panel = wx.Panel(self.m_splitter, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize,
+        panel = wx.Panel(self.splitter, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize,
             wx.TAB_TRAVERSAL)
 
         parent_sizer2 = wx.BoxSizer(wx.VERTICAL)
 
-        self.m_staticText = wx.StaticText(panel, wx.ID_ANY, "Left Panel")
-        parent_sizer2.Add(self.m_staticText, wx.SizerFlags().Border(wx.ALL))
+        self.staticText = wx.StaticText(panel, wx.ID_ANY, "Left Panel")
+        parent_sizer2.Add(self.staticText, wx.SizerFlags().Border(wx.ALL))
         panel.SetSizerAndFit(parent_sizer2)
 
-        m_panel2 = wx.Panel(self.m_splitter, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize,
+        panel2 = wx.Panel(self.splitter, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize,
             wx.TAB_TRAVERSAL)
 
         parent_sizer3 = wx.BoxSizer(wx.VERTICAL)
 
-        self.m_staticText2 = wx.StaticText(m_panel2, wx.ID_ANY, "Right Panel")
-        parent_sizer3.Add(self.m_staticText2, wx.SizerFlags().Border(wx.ALL))
-        m_panel2.SetSizerAndFit(parent_sizer3)
-        self.m_splitter.SplitVertically(panel, m_panel2)
+        self.staticText2 = wx.StaticText(panel2, wx.ID_ANY, "Right Panel")
+        parent_sizer3.Add(self.staticText2, wx.SizerFlags().Border(wx.ALL))
+        panel2.SetSizerAndFit(parent_sizer3)
+        self.splitter.SplitVertically(panel, panel2)
 
         self.SetSizerAndFit(parent_sizer)
         self.SetSize(wx.Size(500, 300))

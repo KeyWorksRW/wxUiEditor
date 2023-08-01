@@ -44,6 +44,8 @@ public:
 
     bool is_DarkMode() const { return m_dark_mode; }
     void set_DarkMode(bool value) { m_dark_mode = value; }
+    bool is_HighContrast() const { return m_high_constrast; }
+    void set_HighContrast(bool value) { m_high_constrast = value; }
 
     bool is_LoadLastProject() const { return m_is_load_last_project; }
     void set_LoadLastProject(bool value) { m_is_load_last_project = value; }
@@ -143,8 +145,10 @@ private:
     bool m_sizers_always_expand { true };
     bool m_var_prefix { true };  // true to use "m_" prefix for member variables
 
-    bool m_enable_wakatime { true };
     bool m_dark_mode { false };
+    bool m_high_constrast { false };
+
+    bool m_enable_wakatime { true };
     bool m_is_load_last_project { false };
     bool m_is_right_propgrid { false };
     bool m_is_cpp_snake_case { true };

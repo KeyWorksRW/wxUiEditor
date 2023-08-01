@@ -16,18 +16,16 @@
 #include <wx/sysopt.h>   // wxSystemOptions
 #include <wx/utils.h>    // Miscellaneous utilities
 
-// clang-format off
-#if wxCHECK_VERSION(3, 3, 0)
-    #if defined(_WIN32)
-        #include <wx/msw/darkmode.h>
-        class DarkSettings : public wxDarkModeSettings
-        {
-        public:
-            wxColour GetColour(wxSystemColour index);
-        };
-    #endif
+#if wxCHECK_VERSION(3, 3, 0) && defined(_WIN32)
+
+    #include <wx/msw/darkmode.h>
+class DarkSettings : public wxDarkModeSettings
+{
+public:
+    wxColour GetColour(wxSystemColour index);
+};
+
 #endif
-// clang-format on
 
 #include "mainapp.h"
 
@@ -89,8 +87,7 @@ wxIMPLEMENT_APP(App);
 
 tt_string tt_empty_cstr;
 
-#if wxCHECK_VERSION(3, 3, 0)
-    #if defined(_WIN32)
+#if wxCHECK_VERSION(3, 3, 0) && defined(_WIN32)
 
 wxColour DarkSettings::GetColour(wxSystemColour index)
 {
@@ -99,26 +96,25 @@ wxColour DarkSettings::GetColour(wxSystemColour index)
         case wxSYS_COLOUR_WINDOW:
         case wxSYS_COLOUR_LISTBOX:
         case wxSYS_COLOUR_BTNFACE:
-            if (wxGetApp().isDarkHighContrast())
+            if (UserPrefs.is_HighContrast())
                 return wxColour(0, 0, 0);
             else
                 return wxColour(0x202020);
 
-        #if 0
+    #if 0
             case wxSYS_COLOUR_ACTIVECAPTION:
             case wxSYS_COLOUR_APPWORKSPACE:
             case wxSYS_COLOUR_INFOBK:
                 // Default colour used here is 0x202020.
                 return wxColour(0x202020);
-        #endif
+    #endif
 
         default:
             return wxDarkModeSettings::GetColour(index);
     }
 }
 
-    #endif  // _WIN32
-#endif      // wxCHECK_VERSION(3, 3, 0)
+#endif  // wxCHECK_VERSION(3, 3, 0) && defined(_WIN32)
 
 App::App() {}
 
@@ -144,19 +140,6 @@ bool App::OnInit()
 
     wxInitAllImageHandlers();
 
-#if wxCHECK_VERSION(3, 3, 0)
-    #if defined(_WIN32)
-
-    // [Randalphwa - 03-29-2023] Currently, this isn't really usable because we hard-code
-    // colors in our property sheet and scintilla code displays.
-    if (isDarkMode())
-    {
-        auto* darkSettings = new DarkSettings;
-        MSWEnableDarkMode(0, darkSettings);
-    }
-    #endif
-#endif
-
     // The name is sort of a standard. More importantly, it is sometimes used as the mask in Windows bitmaps for toolbar
     // images.
     wxTheColourDatabase->AddColour("Grey94", wxColour(240, 240, 240));
@@ -177,6 +160,17 @@ bool App::OnInit()
 
     SetVendorName("KeyWorks");
     UserPrefs.ReadConfig();
+
+#if wxCHECK_VERSION(3, 3, 0) && defined(_WIN32)
+
+    // [Randalphwa - 03-29-2023] Currently, this isn't really usable because we hard-code
+    // colors in our property sheet and scintilla code displays.
+    if (UserPrefs.is_DarkMode())
+    {
+        auto* darkSettings = new DarkSettings;
+        MSWEnableDarkMode(0, darkSettings);
+    }
+#endif
 
     return true;
 }

@@ -10,7 +10,6 @@
 #include <wx/button.h>
 #include <wx/notebook.h>
 #include <wx/panel.h>
-#include <wx/sizer.h>
 #include <wx/stattext.h>
 #include <wx/textctrl.h>
 #include <wx/valgen.h>
@@ -34,8 +33,17 @@ bool PreferencesDlg::Create(wxWindow* parent, wxWindowID id, const wxString& tit
 
     auto* page_sizer_1 = new wxBoxSizer(wxVERTICAL);
 
-    m_check_dark_mode = new wxCheckBox(page_general, wxID_ANY, "Dark Mode (requires closing and reopening wxUiEditor)");
-    page_sizer_1->Add(m_check_dark_mode, wxSizerFlags().Border(wxALL));
+    m_box_dark_settings = new wxBoxSizer(wxHORIZONTAL);
+
+    m_check_dark_mode = new wxCheckBox(page_general, wxID_ANY, "Dark Mode");
+    m_check_dark_mode->SetToolTip("Requires closing and restarting wxUiEditor");
+    m_box_dark_settings->Add(m_check_dark_mode, wxSizerFlags().Border(wxALL));
+
+    m_check_high_contrast = new wxCheckBox(page_general, wxID_ANY, "High Contrast");
+    m_check_high_contrast->SetToolTip("Only used if Dark Mode is selected");
+    m_box_dark_settings->Add(m_check_high_contrast, wxSizerFlags().Border(wxALL));
+
+    page_sizer_1->Add(m_box_dark_settings, wxSizerFlags().Expand().Border(wxALL));
 
     m_check_right_propgrid = new wxCheckBox(page_general, wxID_ANY, "Property Panel on Right");
     m_check_right_propgrid->SetToolTip("If checked, the Property panel will be moved to the right side");
@@ -200,8 +208,10 @@ bool PreferencesDlg::Create(wxWindow* parent, wxWindowID id, const wxString& tit
 
 void PreferencesDlg::OnInit(wxInitDialogEvent& event)
 {
-    m_check_cpp_snake_case->SetValue(UserPrefs.is_CppSnakeCase());
     m_check_dark_mode->SetValue(UserPrefs.is_DarkMode());
+    m_check_high_contrast->SetValue(UserPrefs.is_HighContrast());
+
+    m_check_cpp_snake_case->SetValue(UserPrefs.is_CppSnakeCase());
     m_check_load_last->SetValue(UserPrefs.is_LoadLastProject());
     m_check_right_propgrid->SetValue(UserPrefs.is_RightPropGrid());
     m_isWakaTimeEnabled = UserPrefs.is_WakaTimeEnabled();
@@ -215,6 +225,11 @@ void PreferencesDlg::OnInit(wxInitDialogEvent& event)
     m_ruby_line_length = tt::itoa(UserPrefs.get_RubyLineLength()).make_wxString();
     // m_code_font_picker = UserPrefs.get_CodeDisplayFont();
 
+#if !wxCHECK_VERSION(3, 3, 0) || !defined(_WIN32)
+    m_box_dark_settings->ShowItems(false);
+    Fit();
+#endif
+
     // This will transfer data from the validator variables to the controls
     event.Skip();
 }
@@ -226,9 +241,12 @@ void PreferencesDlg::OnOK(wxCommandEvent& WXUNUSED(event))
 
     auto old_prop_grid_setting = UserPrefs.is_RightPropGrid();
     auto old_dark_mode_setting = UserPrefs.is_DarkMode();
+    auto old_high_contrast_setting = UserPrefs.is_HighContrast();
+
+    UserPrefs.set_DarkMode(m_check_dark_mode->GetValue());
+    UserPrefs.set_HighContrast(m_check_high_contrast->GetValue());
 
     UserPrefs.set_CppSnakeCase(m_check_cpp_snake_case->GetValue());
-    UserPrefs.set_DarkMode(m_check_dark_mode->GetValue());
     UserPrefs.set_LoadLastProject(m_check_load_last->GetValue());
     UserPrefs.set_RightPropGrid(m_check_right_propgrid->GetValue());
     UserPrefs.set_WakaTimeEnabled(m_isWakaTimeEnabled);
@@ -247,7 +265,7 @@ void PreferencesDlg::OnOK(wxCommandEvent& WXUNUSED(event))
 
     UserPrefs.WriteConfig();
 
-    if (old_dark_mode_setting != UserPrefs.is_DarkMode())
+    if (old_dark_mode_setting != UserPrefs.is_DarkMode() || old_high_contrast_setting != UserPrefs.is_HighContrast())
         wxMessageBox("You must close and reopen wxUiEditor for the Dark Mode setting to take effect.");
     if (old_prop_grid_setting != UserPrefs.is_RightPropGrid())
         wxMessageBox("You must close and reopen wxUiEditor for the Property Panel setting to take effect.");

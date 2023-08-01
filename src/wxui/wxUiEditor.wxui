@@ -6225,9 +6225,21 @@
               orientation="wxVERTICAL"
               var_name="page_sizer_1">
               <node
-                class="wxCheckBox"
-                label="Dark Mode (requires closing and reopening wxUiEditor)"
-                var_name="m_check_dark_mode" />
+                class="wxBoxSizer"
+                class_access="protected:"
+                var_name="m_box_dark_settings"
+                flags="wxEXPAND">
+                <node
+                  class="wxCheckBox"
+                  label="Dark Mode"
+                  var_name="m_check_dark_mode"
+                  tooltip="Requires closing and restarting wxUiEditor" />
+                <node
+                  class="wxCheckBox"
+                  label="High Contrast"
+                  var_name="m_check_high_contrast"
+                  tooltip="Only used if Dark Mode is selected" />
+              </node>
               <node
                 class="wxCheckBox"
                 label="Property Panel on Right"

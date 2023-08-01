@@ -4686,7 +4686,6 @@
               class="wxRadioButton"
               label="&amp;DialogBlocks File(s)"
               var_name="m_radio_DialogBlocks"
-              hidden="1"
               column="1"
               row="1"
               wxEVT_RADIOBUTTON="OnDialogBlocks" />

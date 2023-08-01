@@ -548,7 +548,7 @@ void EventHandlerDlg::FormatBindText()
         if (m_event->getNode()->as_string(prop_id) != "wxID_ANY")
             code.as_string(prop_id).EndFunction();
         else
-            code.Add(m_event->getNode()->getNodeName()).Function("GetId()").EndFunction();
+            code.NodeName(m_event->getNode()).Function("GetId()").EndFunction();
     }
     else if (m_event->getNode()->isGen(gen_ribbonTool))
     {
@@ -563,7 +563,7 @@ void EventHandlerDlg::FormatBindText()
     }
     else
     {
-        code.Add(m_event->getNode()->getNodeName()).Function("Bind(").Add(handler).EndFunction();
+        code.NodeName(m_event->getNode()).Function("Bind(").Add(handler).EndFunction();
     }
 
     m_static_bind_text->SetLabel(code.make_wxString());

@@ -1650,55 +1650,7 @@ void PropGridPanel::ModifyOptionsProperty(NodeProperty* node_prop, wxPGProperty*
 
     if (auto selected_node = wxGetFrame().getSelectedNode(); selected_node)
     {
-        if (node_prop->isProp(prop_validator_data_type) && selected_node->isGen(gen_wxTextCtrl))
-        {
-            // You can only use a wxTextValidator if the validator data type is wxString. If it's not a
-            // string, the program will compile just fine, but the data member will not be read or written
-            // to. To prevent that, we switch the validator type to match the data type. The downside is that
-            // this is two actions, and so it takes two calls to Undo to get back to where we were.
-
-            if (value == "wxString")
-            {
-                auto propType = selected_node->getPropPtr(prop_validator_type);
-                if (propType->as_string() != "wxTextValidator")
-                {
-                    auto grid_property = m_prop_grid->GetPropertyByLabel("validator_type");
-                    grid_property->SetValueFromString("wxTextValidator", 0);
-                    modifyProperty(propType, "wxTextValidator");
-                }
-            }
-            else if (value == "wxFileName")
-            {
-                auto propType = selected_node->getPropPtr(prop_validator_type);
-                if (propType->as_string() != "wxGenericValidator")
-                {
-                    auto grid_property = m_prop_grid->GetPropertyByLabel("validator_type");
-                    grid_property->SetValueFromString("wxGenericValidator", 0);
-                    modifyProperty(propType, "wxGenericValidator");
-                }
-            }
-            else if (value == "double" || value == "float")
-            {
-                auto propType = selected_node->getPropPtr(prop_validator_type);
-                if (propType->as_string() != "wxFloatingPointValidator")
-                {
-                    auto grid_property = m_prop_grid->GetPropertyByLabel("validator_type");
-                    grid_property->SetValueFromString("wxFloatingPointValidator", 0);
-                    modifyProperty(propType, "wxFloatingPointValidator");
-                }
-            }
-            else
-            {
-                auto propType = selected_node->getPropPtr(prop_validator_type);
-                if (propType->as_string() != "wxIntegerValidator")
-                {
-                    auto grid_property = m_prop_grid->GetPropertyByLabel("validator_type");
-                    grid_property->SetValueFromString("wxIntegerValidator", 0);
-                    modifyProperty(propType, "wxIntegerValidator");
-                }
-            }
-        }
-        else if (node_prop->isProp(prop_class_access) && wxGetApp().isPjtMemberPrefix())
+        if (node_prop->isProp(prop_class_access) && wxGetApp().isPjtMemberPrefix())
         {
             tt_string name = node->as_string(prop_var_name);
             bool is_name_changed = false;

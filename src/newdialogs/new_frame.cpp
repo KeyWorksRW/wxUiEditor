@@ -51,6 +51,7 @@ bool NewFrame::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 
     m_checkBox_mainframe = new wxCheckBox(this, wxID_ANY, "Main Frame Window");
     m_checkBox_mainframe->SetValidator(wxGenericValidator(&m_has_mainframe));
+
     auto* static_box = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, m_checkBox_mainframe), wxVERTICAL);
 
     auto* box_sizer_2 = new wxBoxSizer(wxVERTICAL);

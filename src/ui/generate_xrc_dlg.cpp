@@ -25,6 +25,7 @@ bool GenerateXrcDlg::Create(wxWindow* parent, wxWindowID id, const wxString& tit
 
     m_radio_combined = new wxRadioButton(this, wxID_ANY, "Combined File");
     m_radio_combined->SetValidator(wxGenericValidator(&m_create_combined));
+
     m_combined_box = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, m_radio_combined), wxVERTICAL);
 
     m_filePicker = new wxFilePickerCtrl(m_combined_box->GetStaticBox(), wxID_ANY, wxEmptyString, "Combined XRC File",

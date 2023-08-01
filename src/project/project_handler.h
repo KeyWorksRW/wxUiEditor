@@ -110,8 +110,9 @@ public:
 
     size_t getChildCount() const { return m_project_node->getChildCount(); }
 
-    // Returns a GEN_LANG_... enum value
-    int getCodePreference() const;
+    // Returns a GEN_LANG_... enum value. Specify a node if you want to check for a folder
+    // override of the language.
+    int getCodePreference(Node* node = nullptr) const;
 
     // const tt_string& value(GenEnum::PropName name) const { return m_project_node->as_string(name); }
     const tt_string_view view(PropName name) const { return m_project_node->as_string(name); }

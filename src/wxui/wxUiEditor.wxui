@@ -5304,6 +5304,11 @@
                 label="&amp;Python"
                 var_name="m_radio_python"
                 wxEVT_RADIOBUTTON="OnPython" />
+              <node
+                class="wxRadioButton"
+                label="&amp;Ruby"
+                var_name="m_radio_ruby"
+                wxEVT_RADIOBUTTON="OnRuby" />
             </node>
             <node
               class="spacer"

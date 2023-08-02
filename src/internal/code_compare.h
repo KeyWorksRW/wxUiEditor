@@ -43,6 +43,7 @@ protected:
     void OnCPlusPlus(wxCommandEvent& event);
     void OnInit(wxInitDialogEvent& event);
     void OnPython(wxCommandEvent& event);
+    void OnRuby(wxCommandEvent& event);
     void OnWinMerge(wxCommandEvent& event);
 
 private:
@@ -53,6 +54,7 @@ private:
     wxListBox* m_list_changes;
     wxRadioButton* m_radio_cplusplus;
     wxRadioButton* m_radio_python;
+    wxRadioButton* m_radio_ruby;
 
     std::vector<tt_string> m_class_list;
 };

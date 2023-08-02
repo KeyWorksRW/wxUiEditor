@@ -1224,9 +1224,13 @@ void GenToolCode(Code& code, const bool is_bitmaps_list)
                 code.CheckLineLength();
             }
         }
-        else
+        else if (code.is_python())
         {
             PythonBundleCode(code, prop_bitmap);
+        }
+        else
+        {
+            code.Add("wxNullBitmap");
         }
     }
 

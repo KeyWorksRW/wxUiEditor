@@ -263,7 +263,11 @@ int ProjectHandler::getCodePreference(Node* node) const
     tt_string value = Project.as_string(prop_code_preference);
     if (node)
     {
-        if (auto folder = node->getFolder(); folder)
+        if (node->isGen(gen_folder))
+        {
+            value = node->as_string(prop_code_preference);
+        }
+        else if (auto folder = node->getFolder(); folder)
         {
             value = folder->as_string(prop_code_preference);
         }

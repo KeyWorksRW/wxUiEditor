@@ -491,6 +491,11 @@ void GenerateTmpFiles(const std::vector<tt_string>& ClassList, pugi::xml_node ro
         source_ext = ".py";
         header_ext = ".py";
     }
+    else if (language == GEN_LANG_RUBY)
+    {
+        source_ext = ".rb";
+        header_ext = ".rb";
+    }
 
     std::vector<Node*> forms;
     Project.CollectForms(forms);
@@ -547,6 +552,13 @@ void GenerateTmpFiles(const std::vector<tt_string>& ClassList, pugi::xml_node ro
                         SetPath(base_file);
                     }
                 }
+                else if (language == GEN_LANG_RUBY)
+                {
+                    if (auto& base_file = form->as_string(prop_ruby_file); base_file.size())
+                    {
+                        SetPath(base_file);
+                    }
+                }
 
                 if (path.empty())
                     continue;
@@ -569,6 +581,11 @@ void GenerateTmpFiles(const std::vector<tt_string>& ClassList, pugi::xml_node ro
                 {
                     codegen.GeneratePythonClass(form);
                 }
+                else if (language == GEN_LANG_RUBY)
+                {
+                    cpp_cw->SetTabToSpaces(2);
+                    codegen.GenerateRubyClass(form);
+                }
 
                 bool new_hdr = false;
                 if (language == GEN_LANG_CPLUSPLUS)
@@ -577,7 +594,7 @@ void GenerateTmpFiles(const std::vector<tt_string>& ClassList, pugi::xml_node ro
                     new_hdr = (h_cw->WriteFile(GEN_LANG_CPLUSPLUS, flag_test_only) > 0);
                 }
 
-                bool new_src = (cpp_cw->WriteFile(GEN_LANG_CPLUSPLUS, flag_test_only) > 0);
+                bool new_src = (cpp_cw->WriteFile(language, flag_test_only) > 0);
 
                 if (new_hdr || new_src)
                 {
@@ -607,6 +624,11 @@ void GenerateTmpFiles(const std::vector<tt_string>& ClassList, pugi::xml_node ro
                     else if (language == GEN_LANG_PYTHON)
                     {
                         codegen.GeneratePythonClass(form);
+                    }
+                    else if (language == GEN_LANG_RUBY)
+                    {
+                        cpp_cw->SetTabToSpaces(2);
+                        codegen.GenerateRubyClass(form);
                     }
 
                     // WinMerge accepts an XML file the provides the left and right filenames

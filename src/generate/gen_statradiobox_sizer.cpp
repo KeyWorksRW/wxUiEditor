@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   wxStaticBoxSizer with wxRadioButton generator
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -210,6 +210,8 @@ bool StaticRadioBtnBoxSizerGenerator::GetIncludes(Node* node, std::set<std::stri
 
     // The radiobtn is always a class member, so we need to force it to be added to the header set
     set_hdr.insert("#include <wx/radiobut.h>");
+    if (node->hasValue(prop_validator_variable))
+        set_src.insert("#include <wx/valgen.h>");
     return true;
 }
 

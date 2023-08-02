@@ -52,6 +52,10 @@ bool DatePickerCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set
 {
     InsertGeneratorInclude(node, "#include <wx/datectrl.h>", set_src, set_hdr);
     InsertGeneratorInclude(node, "#include <wx/dateevt.h>", set_src, set_hdr);
+#if 0  // See issue #1144 -- wxDatePickerCtrl doesn't support validators
+    if (node->hasValue(prop_validator_variable))
+        set_src.insert("#include <wx/valgen.h>");
+#endif
     return true;
 }
 

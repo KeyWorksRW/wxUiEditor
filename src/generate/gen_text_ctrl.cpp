@@ -224,14 +224,20 @@ void TextCtrlGenerator::ChangeEnableState(wxPropertyGridManager* prop_grid, Node
 bool TextCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
     InsertGeneratorInclude(node, "#include <wx/textctrl.h>", set_src, set_hdr);
-    if (auto val_type = node->getValidatorType(); val_type.size())
+
+    // Only insert validator header files if the validator is being used (which requires a
+    // variable name).
+    if (node->hasValue(prop_validator_variable))
     {
-        if (val_type == "wxGenericValidator")
-            InsertGeneratorInclude(node, "#include <wx/valgen.h>", set_src, set_hdr);
-        else if (val_type == "wxTextValidator")
-            InsertGeneratorInclude(node, "#include <wx/valtext.h>", set_src, set_hdr);
-        else if (val_type == "wxIntegerValidator" || val_type == "wxFloatingPointValidator")
-            InsertGeneratorInclude(node, "#include <wx/valnum.h>", set_src, set_hdr);
+        if (auto val_type = node->getValidatorType(); val_type.size())
+        {
+            if (val_type == "wxGenericValidator")
+                set_src.insert("#include <wx/valgen.h>");
+            else if (val_type == "wxTextValidator")
+                set_src.insert("#include <wx/valtext.h>");
+            else if (val_type == "wxIntegerValidator" || val_type == "wxFloatingPointValidator")
+                set_src.insert("#include <wx/valnum.h>");
+        }
     }
     return true;
 }

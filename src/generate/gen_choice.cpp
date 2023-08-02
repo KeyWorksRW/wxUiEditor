@@ -141,6 +141,8 @@ bool ChoiceGenerator::SettingsCode(Code& code)
 bool ChoiceGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
     InsertGeneratorInclude(node, "#include <wx/choice.h>", set_src, set_hdr);
+    if (node->hasValue(prop_validator_variable))
+        set_src.insert("#include <wx/valgen.h>");
     return true;
 }
 

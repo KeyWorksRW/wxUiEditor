@@ -150,6 +150,8 @@ bool ToggleButtonGenerator::SettingsCode(Code& code)
 bool ToggleButtonGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
     InsertGeneratorInclude(node, "#include <wx/tglbtn.h>", set_src, set_hdr);
+    if (node->as_string(prop_validator_variable).size())
+        set_src.insert("#include <wx/valgen.h>");
     return true;
 }
 

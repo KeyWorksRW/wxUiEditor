@@ -246,9 +246,24 @@ void PreferencesDlg::OnOK(wxCommandEvent& WXUNUSED(event))
         return;
     }
 
-    auto old_prop_grid_setting = UserPrefs.is_RightPropGrid();
-    auto old_dark_mode_setting = UserPrefs.is_DarkMode();
-    auto old_high_contrast_setting = UserPrefs.is_HighContrast();
+    bool is_color_changed = false;
+    bool is_prop_grid_changed = false;
+    bool is_dark_changed = false;
+
+    if (m_colour_cpp->GetColour() != UserPrefs.get_CppColour())
+        is_color_changed = true;
+    if (m_colour_python->GetColour() != UserPrefs.get_PythonColour())
+        is_color_changed = true;
+    if (m_colour_ruby->GetColour() != UserPrefs.get_RubyColour())
+        is_color_changed = true;
+
+    if (m_check_right_propgrid->GetValue() != UserPrefs.is_RightPropGrid())
+        is_prop_grid_changed = true;
+
+    if (m_check_dark_mode->GetValue() != UserPrefs.is_DarkMode())
+        is_dark_changed = true;
+    if (m_check_high_contrast->GetValue() != UserPrefs.is_HighContrast())
+        is_dark_changed = true;
 
     UserPrefs.set_DarkMode(m_check_dark_mode->GetValue());
     UserPrefs.set_HighContrast(m_check_high_contrast->GetValue());
@@ -289,10 +304,25 @@ void PreferencesDlg::OnOK(wxCommandEvent& WXUNUSED(event))
 
     UserPrefs.WriteConfig();
 
-    if (old_dark_mode_setting != UserPrefs.is_DarkMode() || old_high_contrast_setting != UserPrefs.is_HighContrast())
-        wxMessageBox("You must close and reopen wxUiEditor for the Dark Mode setting to take effect.");
-    if (old_prop_grid_setting != UserPrefs.is_RightPropGrid())
-        wxMessageBox("You must close and reopen wxUiEditor for the Property Panel setting to take effect.");
+    tt_string msg("You must close and reopen wxUiEditor for");
+    if (is_color_changed)
+        msg += " the color";
+    if (is_prop_grid_changed)
+    {
+        if (is_dark_changed)
+            msg += ", ";
+        else
+            msg += " and ";
+        msg += " the Property Panel";
+        if (is_dark_changed)
+            msg += " and Dark Mode";
+    }
+    if (is_dark_changed)
+        msg += " the Dark Mode";
+
+    msg += " settings to take effect.";
+
+    wxMessageBox(msg);
 
     EndModal(wxID_OK);
 }

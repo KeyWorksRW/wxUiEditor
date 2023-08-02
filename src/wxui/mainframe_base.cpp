@@ -205,8 +205,8 @@ bool MainFrameBase::Create(wxWindow* parent, wxWindowID id, const wxString& titl
     submenu->Append(menu_item_4);
     m_menuFile->AppendSubMenu(submenu, "&Append");
     m_menuFile->AppendSeparator();
-    auto* menu_preferences = new wxMenuItem(m_menuFile, id_OptionsDlg, "&Options...", "Code generation options",
-        wxITEM_NORMAL);
+    auto* menu_preferences = new wxMenuItem(m_menuFile, id_PreferencesDlg, "&Preferences...",
+        "Various global preferences", wxITEM_NORMAL);
     m_menuFile->Append(menu_preferences);
     m_menuFile->AppendSeparator();
     auto* menu_quit = new wxMenuItem(m_menuFile, wxID_EXIT, wxEmptyString);
@@ -415,7 +415,7 @@ bool MainFrameBase::Create(wxWindow* parent, wxWindowID id, const wxString& titl
     Bind(wxEVT_MENU, &MainFrameBase::OnAppendSmith, this, id_AppendSmith);
     Bind(wxEVT_MENU, &MainFrameBase::OnImportWindowsResource, this, id_AppendWinRes);
     Bind(wxEVT_MENU, &MainFrameBase::OnPreviewXrc, this, id_PreviewForm);
-    Bind(wxEVT_MENU, &MainFrameBase::OnOptionsDlg, this, id_OptionsDlg);
+    Bind(wxEVT_MENU, &MainFrameBase::OnPreferencesDlg, this, id_PreferencesDlg);
     Bind(wxEVT_MENU,
         [](wxCommandEvent&)
         {

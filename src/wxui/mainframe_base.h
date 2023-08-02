@@ -90,7 +90,7 @@ public:
         id_MoveUp,
         id_NewProject,
         id_OpenProject,
-        id_OptionsDlg,
+        id_PreferencesDlg,
         id_PreviewForm,
         id_SaveProjectAs,
         id_ShowHidden,
@@ -123,8 +123,8 @@ protected:
     virtual void OnImportWindowsResource(wxCommandEvent& event) { event.Skip(); }
     virtual void OnInsertWidget(wxCommandEvent& event) { event.Skip(); }
     virtual void OnOpenProject(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnOptionsDlg(wxCommandEvent& event) { event.Skip(); }
     virtual void OnPaste(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnPreferencesDlg(wxCommandEvent& event) { event.Skip(); }
     virtual void OnPreviewXrc(wxCommandEvent& event) { event.Skip(); }
     virtual void OnSaveAsProject(wxCommandEvent& event) { event.Skip(); }
     virtual void OnSaveProject(wxCommandEvent& event) { event.Skip(); }

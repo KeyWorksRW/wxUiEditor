@@ -78,11 +78,13 @@ bool OptionsDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 #include "mainframe.h"    // MainFrame -- Main window frame
 #include "preferences.h"  // Preferences -- Stores user preferences
 
+#if 0
 void MainFrame::OnOptionsDlg(wxCommandEvent& WXUNUSED(event))
 {
     OptionsDlg dlg(this);
     dlg.ShowModal();
 }
+#endif
 
 void OptionsDlg::OnInit(wxInitDialogEvent& event)
 {

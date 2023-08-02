@@ -544,11 +544,11 @@
               var_name="separator3" />
             <node
               class="wxMenuItem"
-              help="Code generation options"
-              id="id_OptionsDlg"
-              label="&amp;Options..."
+              help="Various global preferences"
+              id="id_PreferencesDlg"
+              label="&amp;Preferences..."
               var_name="menu_preferences"
-              wxEVT_MENU="OnOptionsDlg" />
+              wxEVT_MENU="OnPreferencesDlg" />
             <node
               class="separator"
               var_name="separator4" />

@@ -1205,7 +1205,7 @@ static std::unordered_set<GenEnum::GenName> s_int_validators = {
 static std::unordered_set<GenEnum::GenName> s_read_only_validators = {
 
     gen_wxButton,
-    gen_wxComboBox,
+    gen_wxComboBox,  // get should still work, unlike button and static text
     gen_wxStaticText,
     gen_wxTextCtrl,
 

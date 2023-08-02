@@ -14,8 +14,8 @@
 #include "mainframe.h"        // MainFrame -- Main window frame
 #include "node.h"             // Node class
 #include "node_creator.h"     // NodeCreator class
-#include "project_handler.h"  // ProjectHandler class
 #include "preferences.h"      // Prefs -- Set/Get wxUiEditor preferences
+#include "project_handler.h"  // ProjectHandler class
 
 using namespace GenEnum;
 

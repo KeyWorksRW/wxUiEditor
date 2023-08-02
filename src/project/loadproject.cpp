@@ -15,6 +15,7 @@
 #include "node.h"             // Node class
 #include "node_creator.h"     // NodeCreator class
 #include "project_handler.h"  // ProjectHandler class
+#include "preferences.h"      // Prefs -- Set/Get wxUiEditor preferences
 
 using namespace GenEnum;
 
@@ -903,6 +904,11 @@ bool ProjectHandler::NewProject(bool create_empty, bool allow_ui)
                 }
             }
         }
+
+        project->set_value(prop_cpp_line_length, UserPrefs.get_CppLineLength());
+        project->set_value(prop_python_line_length, UserPrefs.get_PythonLineLength());
+        project->set_value(prop_ruby_line_length, UserPrefs.get_RubyLineLength());
+        project->set_value(prop_wxWidgets_version, UserPrefs.get_CppWidgetsVersion());
 
         // Calling this will also initialize the ProjectImage class
         Project.Initialize(project);

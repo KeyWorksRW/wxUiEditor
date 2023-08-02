@@ -96,6 +96,7 @@ bool CodeCompare::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 
 #include "gen_base.h"         // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
 #include "gen_results.h"      // Code generation file writing functions
+#include "mainframe.h"        // MainFrame -- Main window frame
 #include "node.h"             // Node class
 #include "project_handler.h"  // ProjectHandler class
 
@@ -153,16 +154,23 @@ CodeCompare::~CodeCompare()
 
 void CodeCompare::OnInit(wxInitDialogEvent& /* event */)
 {
-    GenResults results;
-
-    GenerateCodeFiles(results, &m_class_list);
-    if (m_class_list.size())
+    int language = Project.getCodePreference(wxGetFrame().getSelectedNode());
+    wxCommandEvent dummy;
+    switch (language)
     {
-        for (auto& iter: m_class_list)
-        {
-            m_list_changes->AppendString(iter.make_wxString());
-        }
-        m_btn->Enable();
+        case GEN_LANG_PYTHON:
+            m_radio_python->SetValue(true);
+            OnPython(dummy);
+            break;
+        case GEN_LANG_RUBY:
+            m_radio_ruby->SetValue(true);
+            OnRuby(dummy);
+            break;
+        case GEN_LANG_CPLUSPLUS:
+        default:
+            m_radio_cplusplus->SetValue(true);
+            OnCPlusPlus(dummy);
+            break;
     }
 }
 
@@ -252,6 +260,8 @@ void CodeCompare::OnWinMerge(wxCommandEvent& /* event */)
     int language = GEN_LANG_CPLUSPLUS;
     if (m_radio_python->GetValue())
         language = GEN_LANG_PYTHON;
+    else if (m_radio_ruby->GetValue())
+        language = GEN_LANG_RUBY;
 
     GenerateTmpFiles(m_class_list, root, language);
 

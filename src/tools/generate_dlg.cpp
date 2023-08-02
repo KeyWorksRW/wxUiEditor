@@ -80,7 +80,8 @@ bool GenerateDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 #include "gen_base.h"         // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
 #include "gen_results.h"      // Code generation file writing functions
 #include "image_handler.h"    // ImageHandler class
-#include "mainframe.h"        // MainFrame -- Main application window
+#include "mainframe.h"        // MainFrame -- Main window frame
+#include "node.h"             // Node class
 #include "project_handler.h"  // ProjectHandler class
 
 #include "../wxui/dlg_gen_results.h"
@@ -195,7 +196,9 @@ void GenerateDlg::OnInit(wxInitDialogEvent& event)
 {
     auto output_type = Project.getOutputType();
 
-    if (Project.as_string(prop_code_preference) == "C++")
+    auto language = Project.getCodePreference(wxGetFrame().getSelectedNode());
+
+    if (language == GEN_LANG_CPLUSPLUS)
     {
         m_gen_python_code = false;
         m_gen_ruby_code = false;
@@ -215,7 +218,7 @@ void GenerateDlg::OnInit(wxInitDialogEvent& event)
             m_checkRuby->Hide();
         }
     }
-    else if (Project.as_string(prop_code_preference) == "Python")
+    else if (language == GEN_LANG_PYTHON)
     {
         m_gen_python_code = true;
         m_gen_ruby_code = false;
@@ -239,7 +242,7 @@ void GenerateDlg::OnInit(wxInitDialogEvent& event)
             m_checkRuby->Hide();
         }
     }
-    else if (Project.as_string(prop_code_preference) == "Ruby")
+    else if (language == GEN_LANG_RUBY)
     {
         m_gen_python_code = false;
         m_gen_ruby_code = true;
@@ -263,7 +266,7 @@ void GenerateDlg::OnInit(wxInitDialogEvent& event)
             m_checkPython->Hide();
         }
     }
-    else if (Project.as_string(prop_code_preference) == "XRC")
+    else if (language == GEN_LANG_XRC)
     {
         m_gen_python_code = false;
         m_gen_ruby_code = false;

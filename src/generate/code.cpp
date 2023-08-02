@@ -576,7 +576,16 @@ Code& Code::Assign(tt_string_view class_name)
 
 Code& Code::EndFunction()
 {
-    *this += ')';
+    if (is_ruby() && back() == '(')
+    {
+        // Ruby style guidelines recommend not using empty parentheses
+        pop_back();
+    }
+    else
+    {
+        *this += ')';
+    }
+
     if (is_cpp())
     {
         *this += ';';
@@ -919,8 +928,8 @@ Code& Code::WxSize(GenEnum::PropName prop_name, bool enable_dlg_units)
     {
         if (m_node->as_wxSize(prop_name) == wxDefaultSize)
         {
-            CheckLineLength((sizeof("size=Wx::DEFAULT_SIZE") - 1));
-            *this += "size=Wx::DEFAULT_SIZE";
+            CheckLineLength((sizeof("Wx::DEFAULT_SIZE") - 1));
+            *this += "Wx::DEFAULT_SIZE";
             return *this;
         }
 
@@ -928,14 +937,12 @@ Code& Code::WxSize(GenEnum::PropName prop_name, bool enable_dlg_units)
         bool dialog_units = m_node->as_string(prop_name).contains("d", tt::CASE::either);
         if (dialog_units && enable_dlg_units)
         {
-            CheckLineLength(sizeof(", size=convert_dialog_to_pixels(Wx::Size.new(999, 999))"));
-            *this += "size=";
+            CheckLineLength(sizeof(", convert_dialog_to_pixels(Wx::Size.new(999, 999))"));
             FormFunction("ConvertDialogToPixels(");
         }
         else
         {
-            CheckLineLength((sizeof(" size=Wx::Size.new") - 1));
-            *this += "size=";
+            CheckLineLength((sizeof(" Wx::Size.new") - 1));
         }
 
         auto size = m_node->as_wxSize(prop_name);
@@ -1004,7 +1011,7 @@ Code& Code::Pos(GenEnum::PropName prop_name, bool enable_dlg_units)
         if (m_node->as_wxPoint(prop_name) == wxDefaultPosition)
         {
             CheckLineLength((sizeof("pos=Wx::DEFAULT_POSITION") - 1));
-            *this += "pos=Wx::DEFAULT_POSITION";
+            *this += "Wx::DEFAULT_POSITION";
             return *this;
         }
 
@@ -1012,14 +1019,12 @@ Code& Code::Pos(GenEnum::PropName prop_name, bool enable_dlg_units)
         bool dialog_units = m_node->as_string(prop_name).contains("d", tt::CASE::either);
         if (dialog_units && enable_dlg_units)
         {
-            CheckLineLength(sizeof(", pos=convert_dialog_to_pixels(Wx::Point.new(999, 999))"));
-            *this += "pos=";
+            CheckLineLength(sizeof(", convert_dialog_to_pixels(Wx::Point.new(999, 999))"));
             FormFunction("ConvertDialogToPixels(");
         }
         else
         {
-            CheckLineLength((sizeof(" pos=Wx::Point.new") - 1));
-            *this += "pos=";
+            CheckLineLength((sizeof(" Wx::Point.new") - 1));
         }
 
         auto size = m_node->as_wxSize(prop_name);
@@ -1070,7 +1075,6 @@ Code& Code::Pos(GenEnum::PropName prop_name, bool enable_dlg_units)
 
 Code& Code::Style(const char* prefix, tt_string_view force_style)
 {
-    auto ruby_pos = size();  // Used in case we need to insert ", style="
     bool style_set = false;
     if (force_style.size())
     {
@@ -1187,11 +1191,6 @@ Code& Code::Style(const char* prefix, tt_string_view force_style)
     if (!style_set)
     {
         *this += "0";
-    }
-
-    if (is_ruby() && size() > ruby_pos)
-    {
-        insert(ruby_pos, "style=");
     }
 
     if (m_auto_break && size() > m_break_at)
@@ -1372,7 +1371,7 @@ Code& Code::GenSizerFlags()
     {
         *this << '(' << prop << ')';
     }
-    else
+    else if (!is_ruby())  // Don't use empty () for Ruby
     {
         *this << "()";
     }

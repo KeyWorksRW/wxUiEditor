@@ -171,7 +171,7 @@ tt_string ProjectHandler::getBaseDirectory(Node* node, int language) const
         else if (language == GEN_LANG_PYTHON && folder->hasValue(prop_folder_python_output_folder))
             result = folder->as_string(prop_folder_python_output_folder);
         else if (language == GEN_LANG_RUBY && folder->hasValue(prop_folder_ruby_output_folder))
-            result = folder->as_string(prop_folder_python_output_folder);
+            result = folder->as_string(prop_folder_ruby_output_folder);
         else if (language == GEN_LANG_XRC && folder->hasValue(prop_folder_xrc_directory))
             result = folder->as_string(prop_folder_xrc_directory);
     }

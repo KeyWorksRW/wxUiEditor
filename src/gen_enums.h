@@ -627,6 +627,7 @@ namespace GenEnum
         gen_folder_XRC,
         gen_folder_wxPHP,
         gen_folder_wxPython,
+        gen_folder_wxRuby,
         gen_sizer_child,
         gen_sizeritem_settings,
         gen_wxMdiWindow,

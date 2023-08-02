@@ -588,6 +588,7 @@ std::map<GenEnum::GenName, const char*> GenEnum::map_GenNames = {
     { gen_folder_Code, "Folder C++ Overrides" },
     { gen_folder_XRC, "Folder XRC Overrides" },
     { gen_folder_wxPython, "Folder wxPython Overrides" },
+    { gen_folder_wxRuby, "Folder wxRuby Overrides" },
     { gen_sizer_child, "sizer_child" },
     { gen_sizeritem_settings, "sizeritem_settings" },
     { gen_wxMdiWindow, "wxMdiWindow" },

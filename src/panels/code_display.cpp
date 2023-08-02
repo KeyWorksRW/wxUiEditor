@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Display code in scintilla control
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -16,6 +16,7 @@
 #include "node.h"            // Node class
 #include "node_creator.h"    // NodeCreator -- Class used to create nodes
 #include "node_event.h"      // NodeEvent and NodeEventInfo classes
+#include "preferences.h"     // Prefs -- Set/Get wxUiEditor preferences
 #include "propgrid_panel.h"  // PropGridPanel -- PropertyGrid class for node properties and events
 
 #ifndef SCI_SETKEYWORDS
@@ -84,7 +85,7 @@ CodeDisplay::CodeDisplay(wxWindow* parent, int panel_type) : CodeDisplayBase(par
         m_scintilla->SendMsg(SCI_SETKEYWORDS, 1, (wxIntPtr) wxPython_keywords.c_str());
 
         m_scintilla->StyleSetForeground(wxSTC_P_WORD, *wxBLUE);
-        m_scintilla->StyleSetForeground(wxSTC_P_WORD2, wxColour("#FF00FF"));
+        m_scintilla->StyleSetForeground(wxSTC_P_WORD2, UserPrefs.get_PythonColour());
         m_scintilla->StyleSetForeground(wxSTC_P_STRING, wxColour(0, 128, 0));
         m_scintilla->StyleSetForeground(wxSTC_P_STRINGEOL, wxColour(0, 128, 0));
         m_scintilla->StyleSetForeground(wxSTC_P_COMMENTLINE, wxColour(0, 128, 0));
@@ -119,7 +120,7 @@ CodeDisplay::CodeDisplay(wxWindow* parent, int panel_type) : CodeDisplayBase(par
 
         m_scintilla->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) wxRuby_keywords.c_str());
 
-        m_scintilla->StyleSetForeground(wxSTC_RB_WORD, "#FF00FF");
+        m_scintilla->StyleSetForeground(wxSTC_RB_WORD, UserPrefs.get_RubyColour());
         m_scintilla->StyleSetForeground(wxSTC_RB_STRING, wxColour(0, 128, 0));
         m_scintilla->StyleSetForeground(wxSTC_RB_COMMENTLINE, wxColour(0, 128, 0));
         m_scintilla->StyleSetForeground(wxSTC_RB_NUMBER, *wxRED);
@@ -151,7 +152,7 @@ CodeDisplay::CodeDisplay(wxWindow* parent, int panel_type) : CodeDisplayBase(par
         m_scintilla->SendMsg(SCI_SETKEYWORDS, 1, (wxIntPtr) widget_keywords.c_str());
         m_scintilla->StyleSetBold(wxSTC_C_WORD, true);
         m_scintilla->StyleSetForeground(wxSTC_C_WORD, *wxBLUE);
-        m_scintilla->StyleSetForeground(wxSTC_C_WORD2, wxColour("#FF00FF"));
+        m_scintilla->StyleSetForeground(wxSTC_C_WORD2, UserPrefs.get_CppColour());
         m_scintilla->StyleSetForeground(wxSTC_C_STRING, wxColour(0, 128, 0));
         m_scintilla->StyleSetForeground(wxSTC_C_STRINGEOL, wxColour(0, 128, 0));
         m_scintilla->StyleSetForeground(wxSTC_C_PREPROCESSOR, wxColour(49, 106, 197));

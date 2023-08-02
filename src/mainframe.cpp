@@ -93,7 +93,6 @@ enum
     id_GeneratePython,
     id_MockupPreview,
     id_NodeMemory,
-    id_UserPreferences,
     id_ShowLogger,
     id_XrcPreviewDlg,
     id_UndoInfo,
@@ -183,7 +182,6 @@ MainFrame::MainFrame() :
     // We want these available in internal Release builds
 
     menuInternal->AppendSeparator();
-    menuInternal->Append(id_UserPreferences, "Show &User Preferences", "Show user preferences dialog");
     menuInternal->Append(id_ShowLogger, "Show &Log Window", "Show window containing debug messages");
     menuInternal->Append(id_DebugPreferences, "Test &Settings...", "Settings to use in testing builds");
     menuInternal->AppendSeparator();
@@ -366,15 +364,6 @@ MainFrame::MainFrame() :
 
 #if defined(_DEBUG) || defined(INTERNAL_TESTING)
     Bind(wxEVT_MENU, &MainFrame::OnConvertImageDlg, this, id_ConvertImage);
-
-    Bind(
-        wxEVT_MENU,
-        [this](wxCommandEvent&)
-        {
-            PreferencesDlg dlg(this);
-            dlg.ShowModal();
-        },
-        id_UserPreferences);
     Bind(
         wxEVT_MENU,
         [](wxCommandEvent&)
@@ -1320,7 +1309,10 @@ void MainFrame::CreateSplitters()
     m_property_panel = new PropGridPanel(m_SecondarySplitter, this);
     auto notebook = CreateNoteBook(m_SecondarySplitter);
 
-    m_SecondarySplitter->SplitVertically(m_property_panel, notebook, m_SecondarySashPosition);
+    if (UserPrefs.is_RightPropGrid())
+        m_SecondarySplitter->SplitVertically(notebook, m_property_panel, m_SecondarySashPosition);
+    else
+        m_SecondarySplitter->SplitVertically(m_property_panel, notebook, m_SecondarySashPosition);
 
     m_MainSplitter->SplitVertically(m_nav_panel, m_panel_right);
     m_MainSplitter->SetName("Navigation");
@@ -2058,4 +2050,10 @@ void MainFrame::PushUndoAction(UndoActionPtr cmd, bool add_to_stack)
         cmd->Change();
     else
         m_undo_stack.Push(cmd);
+}
+
+void MainFrame::OnPreferencesDlg(wxCommandEvent& WXUNUSED(event))
+{
+    PreferencesDlg dlg(this);
+    dlg.ShowModal();
 }

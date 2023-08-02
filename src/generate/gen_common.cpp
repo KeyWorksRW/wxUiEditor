@@ -934,9 +934,8 @@ void GenValidatorSettings(Code& code)
     }
     else
     {
-    code.Add(validator_type) << '(';
+        code.Add(validator_type) << '(';
     }
-
 
     auto& style = node->as_string(prop_validator_style);
     tt_string_vector styles(style, '|', tt::TRIM::both);

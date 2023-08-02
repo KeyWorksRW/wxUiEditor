@@ -277,7 +277,7 @@ protected:
     void OnInsertWidget(wxCommandEvent&) override;
     void OnNewProject(wxCommandEvent& event);
     void OnOpenRecentProject(wxCommandEvent& event);
-    void OnOptionsDlg(wxCommandEvent& event) override;
+    void OnPreferencesDlg(wxCommandEvent& event) override;
     void OnPaste(wxCommandEvent& event) override;
     void OnSaveAsProject(wxCommandEvent& event) override;
     void OnToggleExpandLayout(wxCommandEvent&) override;

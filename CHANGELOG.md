@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
 ### Added
 
 - New Doc panel will display a URL containing documentation for the currently selected widget. A toolbar in this panel lets you choose between C++, Python and Ruby documentation.
+- New Preferences dialog available under the File menu lets you set several global preferences
 - wxAuiToolBar can now be created as a form (it creates a class instead of a child widget)
 - Added support for additional integer and floating point validators for wxTextCtrl
 - Folders now have their own code language preference that can override the Project's code preference

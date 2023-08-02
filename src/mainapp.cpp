@@ -422,6 +422,13 @@ int App::OnRun()
 #endif  // _DEBUG
     }
 
+    if (UserPrefs.is_LoadLastProject() && !is_project_loaded)
+    {
+        auto& file_history = m_frame->getFileHistory();
+        tt_string file = file_history.GetHistoryFile(0).utf8_string();
+        is_project_loaded = Project.LoadProject(file);
+    }
+
     if (!is_project_loaded)
     {
         StartupDlg start_dlg(nullptr);

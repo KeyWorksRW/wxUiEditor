@@ -1833,7 +1833,7 @@ void PropGridPanel::CreatePropCategory(tt_string_view name, Node* node, NodeDecl
     else if (name.contains("wxPython"))
     {
         m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#ccffcc"));
-        if (Project.as_string(prop_code_preference) != "any" && Project.as_string(prop_code_preference) != "Python")
+        if (Project.getCodePreference(node) != GEN_LANG_PYTHON)
         {
             m_prop_grid->Collapse(id);
         }
@@ -1841,7 +1841,7 @@ void PropGridPanel::CreatePropCategory(tt_string_view name, Node* node, NodeDecl
     else if (name.contains("wxRuby"))
     {
         m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#f8a9c7"));
-        if (Project.as_string(prop_code_preference) != "any" && Project.as_string(prop_code_preference) != "Ruby")
+        if (Project.getCodePreference(node) != GEN_LANG_RUBY)
         {
             m_prop_grid->Collapse(id);
         }
@@ -1849,7 +1849,7 @@ void PropGridPanel::CreatePropCategory(tt_string_view name, Node* node, NodeDecl
     else if (name.contains("C++"))
     {
         m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#ccccff"));
-        if (Project.as_string(prop_code_preference) != "any" && Project.as_string(prop_code_preference) != "C++")
+        if (Project.getCodePreference(node) != GEN_LANG_CPLUSPLUS)
         {
             m_prop_grid->Collapse(id);
         }
@@ -1857,7 +1857,7 @@ void PropGridPanel::CreatePropCategory(tt_string_view name, Node* node, NodeDecl
     else if (name.contains("XRC"))
     {
         m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#fff1d2"));
-        if (Project.as_string(prop_code_preference) != "any" && Project.as_string(prop_code_preference) != "XRC")
+        if (Project.getCodePreference(node) != GEN_LANG_XRC)
         {
             m_prop_grid->Collapse(id);
         }

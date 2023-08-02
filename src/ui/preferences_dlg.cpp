@@ -59,18 +59,18 @@ bool PreferencesDlg::Create(wxWindow* parent, wxWindowID id, const wxString& tit
     "If you have WakaTime installed, checking this will record time spent in the editor as \"designing\". (See https://wakatime.com/about)");
     page_sizer_1->Add(checkBox_wakatime, wxSizerFlags().Border(wxALL));
 
-    auto* box_sizer_2 = new wxBoxSizer(wxHORIZONTAL);
+    m_box_code_font = new wxBoxSizer(wxHORIZONTAL);
 
     auto* staticText_2 = new wxStaticText(page_general, wxID_ANY, "Code Font:");
     staticText_2->Wrap(200);
-    box_sizer_2->Add(staticText_2, wxSizerFlags().Center().Border(wxALL));
+    m_box_code_font->Add(staticText_2, wxSizerFlags().Center().Border(wxALL));
 
     m_code_font_picker = new wxFontPickerCtrl(page_general, wxID_ANY, wxNullFont, wxDefaultPosition, wxDefaultSize,
         wxFNTP_FONTDESC_AS_LABEL|wxFNTP_USEFONT_FOR_LABEL);
     m_code_font_picker->SetToolTip("This font will be used for all of the Code panels");
-    box_sizer_2->Add(m_code_font_picker, wxSizerFlags(1).Expand().Border(wxALL));
+    m_box_code_font->Add(m_code_font_picker, wxSizerFlags(1).Expand().Border(wxALL));
 
-    page_sizer_1->Add(box_sizer_2, wxSizerFlags().Expand().Border(wxALL));
+    page_sizer_1->Add(m_box_code_font, wxSizerFlags().Expand().Border(wxALL));
     page_general->SetSizerAndFit(page_sizer_1);
 
     auto* page_cpp = new wxPanel(notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
@@ -223,6 +223,9 @@ void PreferencesDlg::OnInit(wxInitDialogEvent& event)
     m_cpp_line_length = tt::itoa(UserPrefs.get_CppLineLength()).make_wxString();
     m_python_line_length = tt::itoa(UserPrefs.get_PythonLineLength()).make_wxString();
     m_ruby_line_length = tt::itoa(UserPrefs.get_RubyLineLength()).make_wxString();
+
+    // We aren't ready for setting the font yet
+    m_box_code_font->ShowItems(false);
     // m_code_font_picker = UserPrefs.get_CodeDisplayFont();
 
 #if !wxCHECK_VERSION(3, 3, 0) || !defined(_WIN32)
@@ -237,7 +240,11 @@ void PreferencesDlg::OnInit(wxInitDialogEvent& event)
 void PreferencesDlg::OnOK(wxCommandEvent& WXUNUSED(event))
 {
     if (!Validate() || !TransferDataFromWindow())
+    {
+        // TODO: [Randalphwa - 08-01-2023]
+        // If either of these fail, there's no warning to the user
         return;
+    }
 
     auto old_prop_grid_setting = UserPrefs.is_RightPropGrid();
     auto old_dark_mode_setting = UserPrefs.is_DarkMode();
@@ -257,9 +264,26 @@ void PreferencesDlg::OnOK(wxCommandEvent& WXUNUSED(event))
     UserPrefs.set_PythonColour(m_colour_python->GetColour());
     UserPrefs.set_RubyColour(m_colour_ruby->GetColour());
 
-    UserPrefs.set_CppLineLength(tt::atoi(m_cpp_line_length.ToStdString()));
-    UserPrefs.set_PythonLineLength(tt::atoi(m_python_line_length.ToStdString()));
-    UserPrefs.set_RubyLineLength(tt::atoi(m_ruby_line_length.ToStdString()));
+    auto line_length = tt::atoi(m_cpp_line_length.ToStdString());
+
+    auto fix_line_length = [&]()
+    {
+        if (line_length < 40)
+            line_length = 40;
+        else if (line_length > 300)
+            line_length = 300;
+    };
+
+    fix_line_length();
+    UserPrefs.set_CppLineLength(line_length);
+
+    line_length = tt::atoi(m_python_line_length.ToStdString());
+    fix_line_length();
+    UserPrefs.set_PythonLineLength(line_length);
+
+    line_length = tt::atoi(m_ruby_line_length.ToStdString());
+    fix_line_length();
+    UserPrefs.set_RubyLineLength(line_length);
 
     // UserPrefs.set_CodeDisplayFont(m_code_font_picker->GetSelectedFontInfo());
 

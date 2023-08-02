@@ -6259,7 +6259,8 @@
                 tooltip="If you have WakaTime installed, checking this will record time spent in the editor as &quot;designing&quot;. (See https://wakatime.com/about)" />
               <node
                 class="wxBoxSizer"
-                var_name="box_sizer_2"
+                class_access="protected:"
+                var_name="m_box_code_font"
                 flags="wxEXPAND">
                 <node
                   class="wxStaticText"

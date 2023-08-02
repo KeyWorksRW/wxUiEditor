@@ -50,6 +50,7 @@ protected:
 
     // Class member variables
 
+    wxBoxSizer* m_box_code_font;
     wxBoxSizer* m_box_dark_settings;
     wxCheckBox* m_check_cpp_snake_case;
     wxCheckBox* m_check_dark_mode;

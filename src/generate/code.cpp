@@ -576,7 +576,16 @@ Code& Code::Assign(tt_string_view class_name)
 
 Code& Code::EndFunction()
 {
-    *this += ')';
+    if (is_ruby() && back() == '(')
+    {
+        // Ruby style guidelines recommend not using empty parentheses
+        pop_back();
+    }
+    else
+    {
+        *this += ')';
+    }
+
     if (is_cpp())
     {
         *this += ';';
@@ -1372,7 +1381,7 @@ Code& Code::GenSizerFlags()
     {
         *this << '(' << prop << ')';
     }
-    else
+    else if (!is_ruby())  // Don't use empty () for Ruby
     {
         *this << "()";
     }

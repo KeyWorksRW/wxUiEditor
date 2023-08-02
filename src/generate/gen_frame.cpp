@@ -71,7 +71,17 @@ bool FrameFormGenerator::ConstructionCode(Code& code)
             code.Add("Wx::ID_ANY");
         }
         code.Comma().Str("title=").QuotedString(prop_title);
-        code.PosSizeFlags();
+        // We have to break these out in order to add the variable assignment (pos=, size=, etc.)
+        code.Comma().CheckLineLength(sizeof("pos=Wx::DEFAULT_POSITION")).Str("pos=").Pos(prop_pos);
+        code.Comma().CheckLineLength(sizeof("size=Wx::DEFAULT_SIZE")).Str("size=").WxSize(prop_size);
+        code.Comma().CheckLineLength(sizeof("style=Wx::DEFAULT_FRAME_STYLE")).Str("style=").Style();
+        if (code.hasValue(prop_window_name))
+        {
+            code.Comma().CheckLineLength(sizeof("name=") + code.as_string(prop_window_name).size() + 2);
+            code.Str("name=").QuotedString(prop_window_name);
+        }
+
+        code.EndFunction();
         code.Unindent();
     }
     else

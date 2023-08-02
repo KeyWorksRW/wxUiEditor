@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   wxBitmapComboBox generator
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -160,7 +160,7 @@ bool BitmapComboBoxGenerator::GetIncludes(Node* node, std::set<std::string>& set
 {
     InsertGeneratorInclude(node, "#include <wx/bmpcbox.h>", set_src, set_hdr);
     if (node->as_string(prop_validator_variable).size())
-        InsertGeneratorInclude(node, "#include <wx/valgen.h>", set_src, set_hdr);
+        set_src.insert("#include <wx/valgen.h>");
     return true;
 }
 

@@ -786,29 +786,13 @@ void BaseCodeGenerator::CollectIncludes(Node* node, std::set<std::string>& set_s
 {
     GatherGeneratorIncludes(node, set_src, set_hdr);
 
-    // If an include in going to be generated in the header file, then don't also generate it in the src file.
+    // If an include is going to be generated in the header file, then don't also generate it
+    // in the src file.
     for (auto& iter: set_hdr)
     {
         auto pos = set_src.find(iter);
         if (pos != set_src.end())
             set_src.erase(pos);
-    }
-
-    // We special-case valgen.h and valtext.h because validators are only used in the source code, but things like
-    // wxRadioBox will indicate that it requires it. Note the we add these any time a control is added that might have a
-    // validator -- we don't actually check to see if the validator is being used. Since this only gets included in the
-    // source file, the compile time impact of including it is negligible.
-
-    if (auto pos = set_hdr.find("#include <wx/valgen.h>"); pos != set_hdr.end())
-    {
-        set_hdr.erase(pos);
-        set_src.insert("#include <wx/valgen.h>");
-    }
-
-    if (auto pos = set_hdr.find("#include <wx/valtext.h>"); pos != set_hdr.end())
-    {
-        set_hdr.erase(pos);
-        set_src.insert("#include <wx/valtext.h>");
     }
 }
 
@@ -821,9 +805,9 @@ void BaseCodeGenerator::GatherGeneratorIncludes(Node* node, std::set<std::string
 
     bool isAddToSrc = false;
 
-    // If the component is set for local access only, then add the header file to the source set. Once all processing is
-    // done, if this header was also used by a component with non-local access, then it will be removed from the source
-    // set.
+    // If the component is set for local access only, then add the header file to the source
+    // set. Once all processing is done, if this header was also used by a component with
+    // non-local access, then it will be removed from the source set.
     if (node->isPropValue(prop_class_access, "none"))
         isAddToSrc = true;
 
@@ -833,20 +817,6 @@ void BaseCodeGenerator::GatherGeneratorIncludes(Node* node, std::set<std::string
         return;
 
     generator->GetIncludes(node, set_src, set_hdr);
-    if (node->hasValue(prop_validator_variable))
-    {
-        if (node->as_string(prop_validator_variable).size())
-        {
-            // REVIEW: [Randalphwa - 07-31-2023] Why are these being added to the header file? Only the source
-            // file needs them with the exception of wxArrayInt.
-            set_hdr.insert("#include <wx/valgen.h>");
-            auto validator_type = node->getValidatorType();
-            if (validator_type == "wxTextValidator")
-                set_hdr.insert("#include <wx/valtext.h>");
-            else if (validator_type == "wxArrayInt")
-                set_hdr.insert("#include <wx/dynarray.h>");
-        }
-    }
 
     if (node->hasValue(prop_derived_header))
     {

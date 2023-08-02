@@ -9,7 +9,6 @@
 
 #include <wx/button.h>
 #include <wx/sizer.h>
-#include <wx/valgen.h>
 #include <wx/valtext.h>
 
 #include "editstringdialog_base.h"

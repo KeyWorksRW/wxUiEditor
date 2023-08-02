@@ -12,6 +12,7 @@
 #include "code_display.h"  // auto-generated: wxui/codedisplay_base.h and wxui/codedisplay_base.cpp
 
 #include "base_panel.h"      // BasePanel -- Code generation panel
+#include "code.h"            // Code -- Helper class for generating code
 #include "mainframe.h"       // MainFrame -- Main window frame
 #include "node.h"            // Node class
 #include "node_creator.h"    // NodeCreator -- Class used to create nodes
@@ -257,9 +258,15 @@ void CodeDisplay::OnNodeSelected(Node* node)
 
     if (page == CPP_PANEL)
     {
-        if (m_panel_type == GEN_LANG_PYTHON && !node->isLocal())
-            name << "self.";
-        name << node->as_string(prop_var_name);
+        int language = GEN_LANG_CPLUSPLUS;
+        if (m_panel_type == GEN_LANG_PYTHON)
+            language = GEN_LANG_PYTHON;
+        else if (m_panel_type == GEN_LANG_RUBY)
+            language = GEN_LANG_RUBY;
+
+        Code code(node, language);
+        code.NodeName();
+        name << code.GetCode();
     }
 
     if (is_event)

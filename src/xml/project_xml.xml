@@ -137,6 +137,11 @@ inline const char* project_xml = R"===(<?xml version="1.0"?>
 -->
 	</gen>
 
+	<gen class="Folder wxRuby Overrides" type="interface">
+		<property name="folder_ruby_output_folder" type="path"
+		help="Overrides any project setting of the output folder used for all generated ruby code. Only affects the forms within this folder." />
+	</gen>
+
 	<gen class="Folder XRC Overrides" type="interface">
 		<property name="folder_xrc_directory" type="path"
 			help="Overrides any project setting of the output folder used for all generated XRC code. Only affects the forms within this folder." />
@@ -147,6 +152,7 @@ inline const char* project_xml = R"===(<?xml version="1.0"?>
 	<gen class="folder" image="folder" type="folder">
 		<inherits class="Folder C++ Overrides" />
 		<inherits class="Folder wxPython Overrides" />
+		<inherits class="Folder wxRuby Overrides" />
 		<inherits class="Folder XRC Overrides" />
 		<property name="label" type="string"
 			help="The name of the folder.">my_forms</property>

@@ -37,6 +37,9 @@ bool CodeCompare::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     m_radio_python = new wxRadioButton(this, wxID_ANY, "&Python");
     grid_sizer->Add(m_radio_python, wxSizerFlags().Border(wxALL));
 
+    m_radio_ruby = new wxRadioButton(this, wxID_ANY, "&Ruby");
+    grid_sizer->Add(m_radio_ruby, wxSizerFlags().Border(wxALL));
+
     box_sizer->Add(grid_sizer, wxSizerFlags().Center().Border(wxALL));
 
     box_sizer->AddSpacer(15);
@@ -68,6 +71,7 @@ bool CodeCompare::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     Bind(wxEVT_INIT_DIALOG, &CodeCompare::OnInit, this);
     m_radio_cplusplus->Bind(wxEVT_RADIOBUTTON, &CodeCompare::OnCPlusPlus, this);
     m_radio_python->Bind(wxEVT_RADIOBUTTON, &CodeCompare::OnPython, this);
+    m_radio_ruby->Bind(wxEVT_RADIOBUTTON, &CodeCompare::OnRuby, this);
 
     return true;
 }
@@ -168,8 +172,9 @@ void CodeCompare::OnCPlusPlus(wxCommandEvent& /* event */)
 
     m_class_list.clear();
     m_list_changes->Clear();
+    m_btn->Enable(false);
 
-    if (GenerateCodeFiles(results, &m_class_list))
+    if (GenerateCodeFiles(results, &m_class_list); m_class_list.size())
     {
         for (auto& iter: m_class_list)
         {
@@ -185,8 +190,27 @@ void CodeCompare::OnPython(wxCommandEvent& /* event */)
 
     m_class_list.clear();
     m_list_changes->Clear();
+    m_btn->Enable(false);
 
-    if (GeneratePythonFiles(results, &m_class_list))
+    if (GeneratePythonFiles(results, &m_class_list); m_class_list.size())
+    {
+        for (auto& iter: m_class_list)
+        {
+            m_list_changes->AppendString(iter.make_wxString());
+        }
+        m_btn->Enable();
+    }
+}
+
+void CodeCompare::OnRuby(wxCommandEvent& WXUNUSED(event))
+{
+    GenResults results;
+
+    m_class_list.clear();
+    m_list_changes->Clear();
+    m_btn->Enable(false);
+
+    if (GenerateRubyFiles(results, &m_class_list); m_class_list.size())
     {
         for (auto& iter: m_class_list)
         {

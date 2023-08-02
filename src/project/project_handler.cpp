@@ -171,7 +171,7 @@ tt_string ProjectHandler::getBaseDirectory(Node* node, int language) const
         else if (language == GEN_LANG_PYTHON && folder->hasValue(prop_folder_python_output_folder))
             result = folder->as_string(prop_folder_python_output_folder);
         else if (language == GEN_LANG_RUBY && folder->hasValue(prop_folder_ruby_output_folder))
-            result = folder->as_string(prop_folder_python_output_folder);
+            result = folder->as_string(prop_folder_ruby_output_folder);
         else if (language == GEN_LANG_XRC && folder->hasValue(prop_folder_xrc_directory))
             result = folder->as_string(prop_folder_xrc_directory);
     }
@@ -263,7 +263,11 @@ int ProjectHandler::getCodePreference(Node* node) const
     tt_string value = Project.as_string(prop_code_preference);
     if (node)
     {
-        if (auto folder = node->getFolder(); folder)
+        if (node->isGen(gen_folder))
+        {
+            value = node->as_string(prop_code_preference);
+        }
+        else if (auto folder = node->getFolder(); folder)
         {
             value = folder->as_string(prop_code_preference);
         }

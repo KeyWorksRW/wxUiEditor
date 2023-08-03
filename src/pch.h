@@ -104,6 +104,8 @@ enum
     GEN_LANG_PYTHON,
     GEN_LANG_RUBY,
     GEN_LANG_XRC,
+    GEN_LANG_LUA,   // Not currently supported
+    GEN_LANG_PERL,  // Not currently supported
 };
 
 // Used to index fields in a bitmap property

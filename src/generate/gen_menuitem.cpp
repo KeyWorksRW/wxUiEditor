@@ -195,9 +195,7 @@ bool MenuItemGenerator::SettingsCode(Code& code)
                 }
             }
         }
-
-        // wxPython version
-        else
+        else if (code.is_python())
         {
             bool is_list_created = PythonBitmapList(code, prop_bitmap);
             code.NodeName().Function("SetBitmap(");
@@ -210,6 +208,14 @@ bool MenuItemGenerator::SettingsCode(Code& code)
                 PythonBundleCode(code, prop_bitmap);
             }
             code.EndFunction();
+        }
+        else if (code.is_ruby())
+        {
+            // TODO: [Randalphwa - 08-02-2023] Fill in once we have figured out how to handle bitmaps in Ruby
+        }
+        else
+        {
+            ASSERT_MSG(false, "Unknown language in MenuItemGenerator::SettingsCode()");
         }
     }
     if (code.hasValue(prop_unchecked_bitmap))

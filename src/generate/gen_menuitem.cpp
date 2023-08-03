@@ -135,7 +135,7 @@ bool MenuItemGenerator::SettingsCode(Code& code)
             code.CloseBrace();
             code.UpdateBreakAt();
         }
-        else  // python
+        else if (code.is_python())  // python
         {
             code.Str("entry = ").Add("wxAcceleratorEntry()").Eol();
             for (auto& accel: accel_list)
@@ -143,6 +143,15 @@ bool MenuItemGenerator::SettingsCode(Code& code)
                 code.Str("if entry.FromString(").QuotedString(accel).Str(") :").Eol();
                 code.Tab().Str("menuQuit.AddExtraAccel(entry)").Eol();
             }
+        }
+        else if (code.is_ruby())
+        {
+            // TODO: [Randalphwa - 08-02-2023] Fill in once we have figured out how to handle
+            // wxAcceleratorEntry in Ruby
+        }
+        else
+        {
+            ASSERT_MSG(false, "Unknown language in MenuItemGenerator::SettingsCode()");
         }
     }
 

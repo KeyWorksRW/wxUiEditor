@@ -70,7 +70,7 @@ inline const char* project_xml = R"===(<?xml version="1.0"?>
 	</gen>
 
 	<gen class="wxRuby" type="interface">
-		<property name="wxRuby" type="option"
+		<property name="wxRuby_version" type="option"
 			help="Specifies the minimum version of wxRuby needed to run the generated code.">
 			<option name="1.0.0" />
 			1.0.0

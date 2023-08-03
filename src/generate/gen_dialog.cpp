@@ -85,6 +85,35 @@ bool DialogFormGenerator::ConstructionCode(Code& code)
         code.Unindent();
         code.Eol() += "wx.Dialog.__init__(self)";
     }
+    else if (code.is_ruby())
+    {
+        code.Add("class ").NodeName().Add(" < Wx::Dialog");
+        code.Eol().Tab().Add("def initialize(parent");
+        // Indent any wrapped lines
+        code.Indent(3);
+        code.Str(", id=");
+        if (code.hasValue(prop_id))
+        {
+            code.Add(prop_id);
+        }
+        else
+        {
+            code.Add("Wx::ID_ANY");
+        }
+        code.Comma().Str("title=").QuotedString(prop_title);
+        // We have to break these out in order to add the variable assignment (pos=, size=, etc.)
+        code.Comma().CheckLineLength(sizeof("pos=Wx::DEFAULT_POSITION")).Str("pos=").Pos(prop_pos);
+        code.Comma().CheckLineLength(sizeof("size=Wx::DEFAULT_SIZE")).Str("size=").WxSize(prop_size);
+        code.Comma().CheckLineLength(sizeof("style=Wx::DEFAULT_DIALOG_STYLE")).Str("style=").Style();
+        if (code.hasValue(prop_window_name))
+        {
+            code.Comma().CheckLineLength(sizeof("name=") + code.as_string(prop_window_name).size() + 2);
+            code.Str("name=").QuotedString(prop_window_name);
+        }
+
+        code.EndFunction();
+        code.Unindent();
+    }
     else
     {
         code.AddComment("Unknown language");
@@ -108,7 +137,17 @@ bool DialogFormGenerator::SettingsCode(Code& code)
         code.Eol(eol_if_needed) += "if not self.Create(parent, id, title, pos, size, style, name):";
         code.Eol().Tab().Str("return");
     }
+    else if (code.is_ruby())
+    {
+        code.Eol(eol_if_needed).Str("super(parent, id, title, pos, size, style)\n");
 
+        if (code.hasValue(prop_extra_style))
+        {
+            code.Eol(eol_if_needed).FormFunction("SetExtraStyle(");
+            code.Function("GetExtraStyle").Str(" | ").Add(prop_extra_style);
+            code.EndFunction();
+        }
+    }
     code.Eol(eol_if_needed).GenFontColourSettings();
 
     return true;
@@ -148,6 +187,7 @@ bool DialogFormGenerator::AfterChildrenCode(Code& code)
         {
             code.Eol().FormFunction("SetMaxSize(").WxSize(prop_maximum_size).EndFunction();
         }
+        // EndFunction() will remove the opening paren if Ruby code
         code.Eol().FormFunction("Fit(").EndFunction();
     }
 

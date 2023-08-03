@@ -361,7 +361,7 @@ namespace GenEnum
         prop_row_sizes,
         prop_rows,
         prop_rowspan,
-        prop_ruby_import_all_dialogs,
+        prop_ruby_require_all_dialogs,
         prop_sashgravity,
         prop_sashpos,
         prop_sashsize,

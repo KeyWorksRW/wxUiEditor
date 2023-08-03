@@ -343,7 +343,7 @@ std::map<GenEnum::PropName, const char*> GenEnum::map_PropNames = {
     { prop_row_sizes, "row_sizes" },
     { prop_rows, "rows" },
     { prop_rowspan, "rowspan" },
-    { prop_ruby_import_all_dialogs, "ruby_import_all_dialogs" },  // currently unused
+    { prop_ruby_require_all_dialogs, "ruby_require_all_dialogs" },  // currently unused
     { prop_sashgravity, "sashgravity" },
     { prop_sashpos, "sashpos" },
     { prop_sashsize, "sashsize" },

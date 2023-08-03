@@ -232,8 +232,8 @@ void BaseCodeGenerator::GenerateRubyClass(Node* form_node, PANEL_PAGE panel_type
 
     m_header->writeLine(tt_string("# Sample inherited class from ") << form_node->as_string(prop_class_name));
     m_header->writeLine();
-    m_source->writeLine("WX_GLOBAL_CONSTANTS=true unless defined? WX_GLOBAL_CONSTANTS\n\nrequire 'wx/core'");
-    m_header->writeLine("WX_GLOBAL_CONSTANTS=true unless defined? WX_GLOBAL_CONSTANTS\n\nrequire 'wx/core'");
+    m_source->writeLine("WX_GLOBAL_CONSTANTS = true unless defined? WX_GLOBAL_CONSTANTS\n\nrequire 'wx/core'");
+    m_header->writeLine("WX_GLOBAL_CONSTANTS = true unless defined? WX_GLOBAL_CONSTANTS\n\nrequire 'wx/core'");
 
     std::set<std::string> imports;
 

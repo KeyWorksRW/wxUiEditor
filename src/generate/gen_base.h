@@ -70,7 +70,7 @@ public:
     auto GetSrcWriter() { return m_source; }
 
     // Write code to m_source that will load any image handlers needed by the form's class
-    void GenerateHandlers();
+    void GenerateCppHandlers();
 
     PANEL_PAGE GetPanelType() { return m_panel_type; }
 
@@ -121,8 +121,8 @@ protected:
     void CollectMemberVariables(Node* node, Permission perm, std::set<std::string>& code_lines);
     void CollectValidatorVariables(Node* node, std::set<std::string>& code_lines);
 
-    void GenerateClassHeader(Node* form_node, EventVector& events);
-    void GenerateClassConstructor(Node* form_node, EventVector& events);
+    void GenerateCppClassHeader(Node* form_node, EventVector& events);
+    void GenerateCppClassConstructor(Node* form_node, EventVector& events);
 
     void GenSrcEventBinding(Node* class_node, EventVector& events);
     void GenHdrEvents(const EventVector& events);
@@ -130,16 +130,16 @@ protected:
     void GenRubyEventHandlers(EventVector& events);
 
     // Generates all the code lines for validator_variables initialized in the header file
-    void GenValVarsBase(const NodeDeclaration* info, Node* node, std::set<std::string>& code_lines);
+    void GenCppValVarsBase(const NodeDeclaration* info, Node* node, std::set<std::string>& code_lines);
 
     // Recursive function for generating all get/set validator functions in the header file
-    void GenValidatorFunctions(Node* node);
+    void GenCppValidatorFunctions(Node* node);
 
     // Recursive function for generating all include files needed by any nodes in the form
     void GatherGeneratorIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr);
 
     // Generates an enum of all use-defined ids
-    void GenEnumIds(Node* class_node);
+    void GenCppEnumIds(Node* class_node);
 
     // Determine if Header or Animation functions need to be generated, and whether the
     // wx/artprov.h is needed

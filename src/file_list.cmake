@@ -60,6 +60,7 @@ set (file_list
     generate/code.cpp              # Helper class for generating code
     generate/file_codewriter.cpp   # Classs to write code to disk
     generate/gen_base.cpp          # Generate Src and Hdr files for Base and Derived Class
+    generate/gen_codefiles.cpp     # Generate code functions
     generate/gen_construction.cpp  # Top level Object construction code
     generate/gen_cmake.cpp         # Auto-generate a .cmake file
     generate/gen_events.cpp        # Generate C++ and Python events
@@ -76,11 +77,11 @@ set (file_list
 
     # Code generation output languages
 
-    generate/gen_codefiles.cpp     # Generate code files
-    generate/gen_derived.cpp       # Generate Derived class code
+    generate/gen_cpp.cpp           # Generate C++ code files
+    generate/gen_derived.cpp       # Generate C++ Derived code files
     generate/gen_python.cpp        # Generate Python code files
     generate/gen_ruby.cpp          # Generate Ruby code files
-    generate/gen_xrc.cpp           # Generate XRC file
+    generate/gen_xrc.cpp           # Generate XRC files
 
     # Generators are responsible for displaying the widget in the Mockup window,
     # and generating both C++, Python and XRC code. If the generated object can

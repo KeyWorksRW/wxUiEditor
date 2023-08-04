@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Purpose:   Generate the derived class source and header file
+// Purpose:   Generate the C++ derived class source and header file
 // Author:    Ralph Walden
 // Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE

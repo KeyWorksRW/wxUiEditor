@@ -70,7 +70,7 @@ inline const char* project_xml = R"===(<?xml version="1.0"?>
 	</gen>
 
 	<gen class="wxRuby" type="interface">
-		<property name="wxRuby" type="option"
+		<property name="wxRuby_version" type="option"
 			help="Specifies the minimum version of wxRuby needed to run the generated code.">
 			<option name="1.0.0" />
 			1.0.0
@@ -79,6 +79,9 @@ inline const char* project_xml = R"===(<?xml version="1.0"?>
 			help="If a folder name is specified, it will be used for all ruby code." />
 		<property name="ruby_line_length" type="uint"
 			help="Specifies a guideline for generated code line length. Most lines will be wrapped so that they do not exceed this length.">80</property>
+		<property name="disable_rubo_cop" type="bool"
+			help="If checked, all RuboCop warnings will be disabled within the generated code.">
+			0</property>
 	</gen>
 
 	<gen class="Project" type="project" image="project">

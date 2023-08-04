@@ -202,12 +202,7 @@ bool MenuBarGenerator::ConstructionCode(Code& code)
 
 bool MenuBarGenerator::AfterChildrenCode(Code& code)
 {
-    code.Eol();
-    if (code.is_python())
-    {
-        code += "self.";
-    }
-    code.Add("SetMenuBar(").NodeName().EndFunction();
+    code.Eol().FormFunction("SetMenuBar(").NodeName().EndFunction();
     return true;
 }
 

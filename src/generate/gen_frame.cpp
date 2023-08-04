@@ -142,10 +142,13 @@ bool FrameFormGenerator::SettingsCode(Code& code)
     {
         code.Eol().FormFunction("SetMaxSize(").WxSize(prop_maximum_size).EndFunction();
     }
+
     if (code.hasValue(prop_window_extra_style))
     {
-        code.Eol(eol_if_needed).FormFunction("SetExtraStyle(").FormFunction("GetExtraStyle() | ");
-        code.Add(prop_window_extra_style).EndFunction();
+        code.Eol(eol_if_needed).FormFunction("SetExtraStyle(").FormFunction("GetExtraStyle");
+        if (!code.is_ruby())
+            code.Str("()");
+        code.Str(" | ").Add(prop_window_extra_style).EndFunction();
     }
 
     code.GenFontColourSettings();

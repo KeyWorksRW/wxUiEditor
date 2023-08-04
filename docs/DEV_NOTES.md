@@ -53,3 +53,7 @@ Note: Ruby uses a leading `_` for an unused parameter, e.g. `_event`.
 - C++: `m_`
 - Python: self. if not a form
 - Ruby: `@`
+
+## Ruby Notes
+
+The project file has a setting for disabling robocop warnings. In a Release build, this disables all warnings, however in a Debug build only specific warnings that we can't reasonably prevent are disabled.

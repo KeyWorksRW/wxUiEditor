@@ -103,6 +103,7 @@ protected:
 
     virtual void OnAbout(wxCommandEvent& event) { event.Skip(); }
     virtual void OnAppendCrafter(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnAppendDialogBlocks(wxCommandEvent& event) { event.Skip(); }
     virtual void OnAppendFormBuilder(wxCommandEvent& event) { event.Skip(); }
     virtual void OnAppendGlade(wxCommandEvent& event) { event.Skip(); }
     virtual void OnAppendSmith(wxCommandEvent& event) { event.Skip(); }

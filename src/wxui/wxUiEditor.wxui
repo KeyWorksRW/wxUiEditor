@@ -526,6 +526,13 @@
                 wxEVT_MENU="OnAppendSmith" />
               <node
                 class="wxMenuItem"
+                help="Append wxCrafter project into current project"
+                id="id_AppendCrafter"
+                label="DialogBlocks Project..."
+                var_name="menu_item_11"
+                wxEVT_MENU="OnAppendDialogBlocks" />
+              <node
+                class="wxMenuItem"
                 help="Append Windows Resource into current project"
                 id="id_AppendWinRes"
                 label="Windows Resource..."
@@ -535,7 +542,7 @@
                 class="wxMenuItem"
                 help="Append XRC project into current project"
                 id="id_AppendXRC"
-                label="XRC Project..."
+                label="XRC File..."
                 var_name="menu_item_4"
                 wxEVT_MENU="OnAppendXRC" />
             </node>

@@ -545,7 +545,6 @@ void MainFrame::OnAppendCrafter(wxCommandEvent&)
     }
 }
 
-#if 0
 void MainFrame::OnAppendDialogBlocks(wxCommandEvent&)
 {
     tt_cwd cwd(true);
@@ -558,7 +557,6 @@ void MainFrame::OnAppendDialogBlocks(wxCommandEvent&)
         Project.appendDialogBlocks(files);
     }
 }
-#endif
 
 void MainFrame::OnAppendFormBuilder(wxCommandEvent&)
 {

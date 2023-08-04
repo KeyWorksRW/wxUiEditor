@@ -102,6 +102,12 @@ bool IncludeFilesDialog::Create(wxWindow* parent, wxWindowID id, const wxString&
 void IncludeFilesDialog::Initialize(NodeProperty* prop)
 {
     m_prop = prop;
+    if (m_prop->isProp(prop_relative_require_list))
+        m_language = GEN_LANG_RUBY;
+    else if (m_prop->isProp(prop_python_import_list))
+        m_language = GEN_LANG_PYTHON;
+    else
+        m_language = GEN_LANG_CPLUSPLUS;
 }
 
 void IncludeFilesDialog::SetButtonsEnableState()
@@ -116,8 +122,17 @@ void IncludeFilesDialog::SetButtonsEnableState()
 
 void IncludeFilesDialog::OnInit(wxInitDialogEvent& WXUNUSED(event))
 {
+    if (m_prop->isProp(prop_relative_require_list))
+    {
+        m_staticText->SetLabel("These files will be loaded using relative require statements.");
+    }
+    else if (m_prop->isProp(prop_python_import_list))
+    {
+        m_staticText->SetLabel("These files will be loading using import statements.");
+    }
+
     ASSERT_MSG(m_prop, "m_prop is nullptr -- call Initialize()!");
-    if (m_prop->get_name() == prop_system_hdr_includes || m_prop->get_name() == prop_system_src_includes)
+    if (m_prop->isProp(prop_system_hdr_includes) || m_prop->isProp(prop_system_src_includes))
     {
         SetTitle("System Header Files");
     }
@@ -142,12 +157,22 @@ void IncludeFilesDialog::OnInit(wxInitDialogEvent& WXUNUSED(event))
 void IncludeFilesDialog::OnAdd(wxCommandEvent& WXUNUSED(event))
 {
     tt_string path;
-    if (m_prop->get_name() == prop_local_hdr_includes || m_prop->get_name() == prop_local_src_includes)
+    tt_string cur_file;
+    if (m_prop->isProp(prop_local_hdr_includes) || m_prop->isProp(prop_local_src_includes) ||
+        m_prop->isProp(prop_relative_require_list) || m_prop->isProp(prop_python_import_list))
     {
         auto* form = m_prop->getNode();
-        if (auto& base_file = form->as_string(prop_base_file); base_file.size())
+        GenEnum::PropName file_prop;
+        if (m_language == GEN_LANG_RUBY)
+            file_prop = prop_ruby_file;
+        else if (m_language == GEN_LANG_PYTHON)
+            file_prop = prop_python_file;
+        else
+            file_prop = prop_base_file;
+
+        if (auto& base_file = form->as_string(file_prop); base_file.size())
         {
-            path = Project.getBaseDirectory(form, GEN_LANG_CPLUSPLUS);
+            path = Project.getBaseDirectory(form, m_language);
             if (path.size())
             {
                 path.append_filename(base_file);
@@ -159,6 +184,16 @@ void IncludeFilesDialog::OnAdd(wxCommandEvent& WXUNUSED(event))
 
             path.make_absolute();
             path.backslashestoforward();
+            cur_file = path;
+
+            // We only got the node's filename in case it includes a path. We don't want the
+            // filename portion as part of the path.
+            path.remove_filename();
+
+            // We need to know the current filename so that properties that import modules
+            // (Python, Ruby, etc) don't try to load the current file.
+            cur_file.make_relative(path);
+            cur_file.backslashestoforward();
         }
 
         if (path.empty())
@@ -198,13 +233,45 @@ void IncludeFilesDialog::OnAdd(wxCommandEvent& WXUNUSED(event))
         }
     }
 
-    wxFileDialog dialog(this, "Include Header File", path.make_wxString(), wxEmptyString,
-                        "Header Files|*.;*.h;*.hh;*.hpp;*.hxx", wxFD_OPEN);
+    tt_string title;
+    tt_string filter;
+    if (m_prop->isProp(prop_python_import_list))
+    {
+        title = "Import Python File";
+        filter = "Python Files|*.py";
+    }
+    else if (m_prop->isProp(prop_relative_require_list))
+    {
+        title = "Require Ruby File";
+        filter = "Ruby Files|*.rb;*.rbw";
+    }
+    else
+    {
+        title = "Include Header File";
+        filter = "Header Files|*.;*.h;*.hh;*.hpp;*.hxx";
+    }
+
+    if (path.size() && path.back() == '/')
+    {
+        path.pop_back();
+    }
+
+    tt_cwd cwd(true);
+#if defined(_WIN32)
+    path.forwardslashestoback();
+#endif  // _WIN32
+    wxFileDialog dialog(this, title.make_wxString(), path.make_wxString(), wxEmptyString, filter.make_wxString(),
+                        wxFD_OPEN | wxFD_CHANGE_DIR);
     if (dialog.ShowModal() == wxID_OK)
     {
         tt_string filename = dialog.GetPath().utf8_string();
         filename.make_relative(path);
         filename.backslashestoforward();
+        if (filename == cur_file)
+        {
+            wxMessageBox("You cannot add the current file to the list.", title.make_wxString(), wxOK, this);
+            return;
+        }
         m_listbox->Append(filename.make_wxString());
         SetButtonsEnableState();
     }

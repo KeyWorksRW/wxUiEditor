@@ -535,8 +535,8 @@ void MainFrame::OnAppendCrafter(wxCommandEvent&)
 #if defined(_WIN32)
     cwd.forwardslashestoback();
 #endif  // _WIN32
-    wxFileDialog dlg(this, "Open or Import Project", cwd.make_wxString(), wxEmptyString, "wxCrafter Project File (*.wxcp)|*.wxcp||",
-                     wxFD_OPEN | wxFD_FILE_MUST_EXIST | wxFD_MULTIPLE);
+    wxFileDialog dlg(this, "Open or Import Project", cwd.make_wxString(), wxEmptyString,
+                     "wxCrafter Project File (*.wxcp)|*.wxcp||", wxFD_OPEN | wxFD_FILE_MUST_EXIST | wxFD_MULTIPLE);
     if (dlg.ShowModal() == wxID_OK)
     {
         wxArrayString files;
@@ -566,8 +566,8 @@ void MainFrame::OnAppendFormBuilder(wxCommandEvent&)
 #if defined(_WIN32)
     cwd.forwardslashestoback();
 #endif  // _WIN32
-    wxFileDialog dlg(this, "Open or Import Project", cwd.make_wxString(), wxEmptyString, "wxFormBuilder Project File (*.fbp)|*.fbp||",
-                     wxFD_OPEN | wxFD_FILE_MUST_EXIST | wxFD_MULTIPLE);
+    wxFileDialog dlg(this, "Open or Import Project", cwd.make_wxString(), wxEmptyString,
+                     "wxFormBuilder Project File (*.fbp)|*.fbp||", wxFD_OPEN | wxFD_FILE_MUST_EXIST | wxFD_MULTIPLE);
     if (dlg.ShowModal() == wxID_OK)
     {
         wxArrayString files;
@@ -582,8 +582,8 @@ void MainFrame::OnAppendGlade(wxCommandEvent&)
 #if defined(_WIN32)
     cwd.forwardslashestoback();
 #endif  // _WIN32
-    wxFileDialog dlg(this, "Open or Import Project", cwd.make_wxString(), wxEmptyString, "wxGlade Project File (*.wxg)|*.wxg||",
-                     wxFD_OPEN | wxFD_FILE_MUST_EXIST | wxFD_MULTIPLE);
+    wxFileDialog dlg(this, "Open or Import Project", cwd.make_wxString(), wxEmptyString,
+                     "wxGlade Project File (*.wxg)|*.wxg||", wxFD_OPEN | wxFD_FILE_MUST_EXIST | wxFD_MULTIPLE);
     if (dlg.ShowModal() == wxID_OK)
     {
         wxArrayString files;

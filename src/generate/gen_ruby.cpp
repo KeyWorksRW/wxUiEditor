@@ -219,7 +219,18 @@ void BaseCodeGenerator::GenerateRubyClass(Node* form_node, PANEL_PAGE panel_type
 
     if (m_panel_type == NOT_PANEL)
     {
-        m_source->writeLine(txt_PythonCmtBlock);
+        m_source->writeLine(txt_PyPerlRubyCmtBlock);
+
+        if (Project.as_bool(prop_disable_rubo_cop))
+        {
+#if defined(_DEBUG)
+            m_source->writeLine("# rubocop:disable Metrics/MethodLength");
+            m_source->writeLine("# rubocop:disable Metrics/ParameterLists");
+#else
+            m_source->writeLine("# rubocop:disable all");
+#endif
+            m_source->writeLine();
+        }
     }
 
     if (form_node->isGen(gen_Images))
@@ -428,13 +439,14 @@ void BaseCodeGenerator::GenerateRubyClass(Node* form_node, PANEL_PAGE panel_type
         code.Eol().Str("# Add the following below the comment block to add a simple");
         code.Eol().Str("# Run() function to launch the wizard").Eol().Str("=begin");
         // see for an example C:\rwCode\wxRuby3\samples\dialogs\wizard.rb
-        code.Eol().Str("=end").Eol().Eol();
+        code.Eol().Str("=end").Eol();
         m_source->writeLine(code);
     }
 
     // Make certain indentation is reset after all construction code is written
     m_source->ResetIndent();
     m_source->writeLine("end\n\n", indent::none);
+
     m_header->ResetIndent();
 
     // TODO: [Randalphwa - 07-13-2023] If we use embedded images, we need to write them out here.
@@ -445,6 +457,20 @@ void BaseCodeGenerator::GenerateRubyClass(Node* form_node, PANEL_PAGE panel_type
                   return (a->array_name.compare(b->array_name) < 0);
               });
 #endif
+
+    if (m_panel_type == NOT_PANEL)
+    {
+        if (Project.as_bool(prop_disable_rubo_cop))
+        {
+#if defined(_DEBUG)
+            m_source->writeLine("# rubocop:enable Metrics/MethodLength");
+            m_source->writeLine("# rubocop:enable Metrics/ParameterLists");
+#else
+            m_source->writeLine("# rubocop:enable all");
+#endif  // _DEBUG
+            m_source->writeLine();
+        }
+    }
 }
 
 tt_string MakeRubyPath(Node* node)

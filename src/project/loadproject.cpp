@@ -1081,10 +1081,23 @@ void ProjectHandler::appendCrafter(wxArrayString& files)
                 return;
             }
 
+            auto cur_sel = wxGetFrame().getSelectedNode();
+            if (!cur_sel)
+                cur_sel = m_project_node.get();
+            else
+            {
+                if (!cur_sel->isGen(gen_Project) && !cur_sel->isGen(gen_folder))
+                {
+                    cur_sel = cur_sel->getFolder();
+                    if (!cur_sel)
+                        cur_sel = m_project_node.get();
+                }
+            }
+
             auto form = project.child("node");
             while (form)
             {
-                NodeCreation.createNode(form, m_project_node.get(), true, m_allow_ui);
+                NodeCreation.createNode(form, cur_sel, true, m_allow_ui);
                 form = form.next_sibling("node");
             }
         }
@@ -1117,10 +1130,23 @@ void ProjectHandler::appendFormBuilder(wxArrayString& files)
                 return;
             }
 
+            auto cur_sel = wxGetFrame().getSelectedNode();
+            if (!cur_sel)
+                cur_sel = m_project_node.get();
+            else
+            {
+                if (!cur_sel->isGen(gen_Project) && !cur_sel->isGen(gen_folder))
+                {
+                    cur_sel = cur_sel->getFolder();
+                    if (!cur_sel)
+                        cur_sel = m_project_node.get();
+                }
+            }
+
             auto form = project.child("node");
             while (form)
             {
-                NodeCreation.createNode(form, m_project_node.get(), true, m_allow_ui);
+                NodeCreation.createNode(form, cur_sel, true, m_allow_ui);
                 form = form.next_sibling("node");
             }
         }
@@ -1153,10 +1179,23 @@ void ProjectHandler::appendDialogBlocks(wxArrayString& files)
                 return;
             }
 
+            auto cur_sel = wxGetFrame().getSelectedNode();
+            if (!cur_sel)
+                cur_sel = m_project_node.get();
+            else
+            {
+                if (!cur_sel->isGen(gen_Project) && !cur_sel->isGen(gen_folder))
+                {
+                    cur_sel = cur_sel->getFolder();
+                    if (!cur_sel)
+                        cur_sel = m_project_node.get();
+                }
+            }
+
             auto form = project.child("node");
             while (form)
             {
-                NodeCreation.createNode(form, m_project_node.get(), true, m_allow_ui);
+                NodeCreation.createNode(form, cur_sel, true, m_allow_ui);
                 form = form.next_sibling("node");
             }
         }
@@ -1189,10 +1228,23 @@ void ProjectHandler::appendGlade(wxArrayString& files)
                 return;
             }
 
+            auto cur_sel = wxGetFrame().getSelectedNode();
+            if (!cur_sel)
+                cur_sel = m_project_node.get();
+            else
+            {
+                if (!cur_sel->isGen(gen_Project) && !cur_sel->isGen(gen_folder))
+                {
+                    cur_sel = cur_sel->getFolder();
+                    if (!cur_sel)
+                        cur_sel = m_project_node.get();
+                }
+            }
+
             auto form = project.child("node");
             while (form)
             {
-                NodeCreation.createNode(form, m_project_node.get(), true, m_allow_ui);
+                NodeCreation.createNode(form, cur_sel, true, m_allow_ui);
                 form = form.next_sibling("node");
             }
         }
@@ -1225,10 +1277,23 @@ void ProjectHandler::appendSmith(wxArrayString& files)
                 return;
             }
 
+            auto cur_sel = wxGetFrame().getSelectedNode();
+            if (!cur_sel)
+                cur_sel = m_project_node.get();
+            else
+            {
+                if (!cur_sel->isGen(gen_Project) && !cur_sel->isGen(gen_folder))
+                {
+                    cur_sel = cur_sel->getFolder();
+                    if (!cur_sel)
+                        cur_sel = m_project_node.get();
+                }
+            }
+
             auto form = project.child("node");
             while (form)
             {
-                NodeCreation.createNode(form, m_project_node.get(), true, m_allow_ui);
+                NodeCreation.createNode(form, cur_sel, true, m_allow_ui);
                 form = form.next_sibling("node");
             }
         }
@@ -1262,10 +1327,23 @@ void ProjectHandler::appendXRC(wxArrayString& files)
                 return;
             }
 
+            auto cur_sel = wxGetFrame().getSelectedNode();
+            if (!cur_sel)
+                cur_sel = m_project_node.get();
+            else
+            {
+                if (!cur_sel->isGen(gen_Project) && !cur_sel->isGen(gen_folder))
+                {
+                    cur_sel = cur_sel->getFolder();
+                    if (!cur_sel)
+                        cur_sel = m_project_node.get();
+                }
+            }
+
             auto form = project.child("node");
             while (form)
             {
-                NodeCreation.createNode(form, m_project_node.get(), true, m_allow_ui);
+                NodeCreation.createNode(form, cur_sel, true, m_allow_ui);
                 form = form.next_sibling("node");
             }
         }

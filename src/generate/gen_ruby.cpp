@@ -269,6 +269,21 @@ void BaseCodeGenerator::GenerateRubyClass(Node* form_node, PANEL_PAGE panel_type
     m_source->writeLine();
     m_header->writeLine();
 
+    if (form_node->hasValue(prop_relative_require_list))
+    {
+        tt_string_vector list;
+        list.SetString(form_node->as_string(prop_relative_require_list));
+        for (auto& iter: list)
+        {
+            iter.remove_extension();
+            m_source->writeLine(tt_string("require_relative '") << iter << '\'');
+        }
+        if (list.size())
+        {
+            m_source->writeLine();
+        }
+    }
+
     if (form_node->isGen(gen_wxFrame) && form_node->as_bool(prop_import_all_dialogs))
     {
         for (auto& form: forms)

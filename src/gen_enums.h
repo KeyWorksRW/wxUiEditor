@@ -350,6 +350,7 @@ namespace GenEnum
         prop_pressed_bmp,
         prop_private_members,
         prop_proportion,
+        prop_python_import_list,
         prop_radiobtn_var_name,
         prop_range,
         prop_read_only,

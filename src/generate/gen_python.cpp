@@ -286,16 +286,18 @@ void BaseCodeGenerator::GeneratePythonClass(Node* form_node, PANEL_PAGE panel_ty
         m_header->writeLine(import);
     }
 
-    if (form_node->isGen(gen_wxFrame) && form_node->as_bool(prop_import_all_dialogs))
+    if (form_node->hasValue(prop_python_import_list))
     {
-        for (auto& form: forms)
+        tt_string_vector list;
+        list.SetString(form_node->as_string(prop_python_import_list));
+        for (auto& iter: list)
         {
-            if ((form->isGen(gen_wxDialog) || form->isGen(gen_wxWizard)) && form->hasValue(prop_python_file))
-            {
-                tt_string import_name(form->as_string(prop_python_file).filename());
-                import_name.remove_extension();
-                m_source->writeLine(tt_string("import ") << import_name);
-            }
+            iter.remove_extension();
+            m_source->writeLine(tt_string("import ") << iter);
+        }
+        if (list.size())
+        {
+            m_source->writeLine();
         }
     }
 

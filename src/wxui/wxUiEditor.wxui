@@ -3178,7 +3178,7 @@
         local_src_includes="node.h;node_prop.h;project_handler.h"
         system_src_includes="wx/filedlg.h;wx/tokenzr.h"
         header_preamble="class NodeProperty;"
-        class_members="&quot;wxString m_value;&quot; &quot;NodeProperty* m_prop;&quot;"
+        class_members="&quot;wxString m_value;&quot; &quot;NodeProperty* m_prop { nullptr };&quot; &quot;int m_language = GEN_LANG_CPLUSPLUS;&quot;"
         class_methods="&quot;void Initialize(NodeProperty* prop);&quot; &quot;const wxString&amp; GetResults() { return m_value; }&quot; &quot;void SetButtonsEnableState();&quot;"
         private_members="1"
         use_derived_class="0"

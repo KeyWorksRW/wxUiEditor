@@ -281,11 +281,11 @@ void XrcPreview::OnInit(wxInitDialogEvent& event)
 void XrcPreview::OnExport(wxCommandEvent& WXUNUSED(event))
 {
     tt_string path = Project.getProjectPath();
-#if defined(_WIN32)
+    #if defined(_WIN32)
     path.forwardslashestoback();
-#endif  // _WIN32
-    wxFileDialog dialog(this, "Export Project As XRC", path.make_wxString(), "preview_test.xrc",
-                        "XRC File (*.xrc)|*.xrc", wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
+    #endif  // _WIN32
+    wxFileDialog dialog(this, "Export Project As XRC", path.make_wxString(), "preview_test.xrc", "XRC File (*.xrc)|*.xrc",
+                        wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
 
     if (dialog.ShowModal() == wxID_OK)
     {

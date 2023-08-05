@@ -168,12 +168,14 @@ void EventHandlerDlg::OnInit(wxInitDialogEvent& WXUNUSED(event))
         }
         if (m_is_python_enabled)
         {
-            m_py_text_function->SetValue(m_value);
+            // Pylint recommends snake_case for Python functions, so we convert the default
+            m_py_text_function->SetValue(ConvertToSnakeCase(m_value.ToStdString()).make_wxString());
             m_py_radio_use_function->SetValue(true);
             m_py_lambda_box->GetStaticBox()->Enable(false);
         }
         if (m_is_ruby_enabled)
         {
+            // RuboCop recommends snake_case for Ruby functions, so we convert the default
             m_ruby_text_function->SetValue(ConvertToSnakeCase(m_value.ToStdString()).make_wxString());
             m_ruby_radio_use_function->SetValue(true);
             m_ruby_lambda_box->GetStaticBox()->Enable(false);

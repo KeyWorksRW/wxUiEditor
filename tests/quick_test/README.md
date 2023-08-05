@@ -1,0 +1,1 @@
+This directory is designed to use when you need to quickly test out code generation in one or more languages. As such, the directory itself is in the .gitignore list and only a few files (like this one) are tracked. The only generated files that are tracked are the main files used to launch the specific language app (e.g., py_main.py).

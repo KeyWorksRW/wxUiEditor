@@ -2,6 +2,7 @@
 bld/
 .private/
 __pycache__/
+tests/quick_test/
 
 # File extensions to ignore
 *.1

@@ -96,6 +96,8 @@ enum
     id_ShowLogger,
     id_XrcPreviewDlg,
     id_UndoInfo,
+    id_DebugPythonTest,
+    id_DebugRubyTest,
 
 };
 
@@ -190,6 +192,20 @@ MainFrame::MainFrame() :
 
     ////////////////////// Debug-only menu items //////////////////////
     #if defined(_DEBUG)
+
+    menuInternal->AppendSeparator();
+
+    if (tt::file_exists("python\\py_main.py"))
+    {
+        menuInternal->Append(id_DebugPythonTest, "&Python Test", "Python debugging test");
+        Bind(wxEVT_MENU, &App::DbgPythonTest, &wxGetApp(), id_DebugPythonTest);
+    }
+
+    if (tt::file_exists("ruby\\rb_main.rb"))
+    {
+        menuInternal->Append(id_DebugRubyTest, "&Ruby Test", "Ruby debugging test");
+        Bind(wxEVT_MENU, &App::DbgRubyTest, &wxGetApp(), id_DebugRubyTest);
+    }
 
     wxMenuItem* item;
     item = menuInternal->Append(id_DebugXrcImport, "&Text XRC import", "Export the current form, then verify importing it");

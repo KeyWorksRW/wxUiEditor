@@ -46,6 +46,11 @@ public:
     void DbgCurrentTest(wxCommandEvent& event);
 #endif
 
+#if defined(_DEBUG)
+    void DbgPythonTest(wxCommandEvent& event);
+    void DbgRubyTest(wxCommandEvent& event);
+#endif
+
     void setMainFrameClosing() { m_isMainFrameClosing = true; }
     bool isMainFrameClosing() { return m_isMainFrameClosing; }
 

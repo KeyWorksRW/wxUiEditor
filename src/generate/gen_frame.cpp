@@ -61,7 +61,7 @@ bool FrameFormGenerator::ConstructionCode(Code& code)
         code.Eol().Tab().Add("def initialize(parent");
         // Indent any wrapped lines
         code.Indent(3);
-        code.Str(", id=");
+        code.Str(", id = ");
         if (code.hasValue(prop_id))
         {
             code.Add(prop_id);
@@ -70,19 +70,25 @@ bool FrameFormGenerator::ConstructionCode(Code& code)
         {
             code.Add("Wx::ID_ANY");
         }
-        code.Comma().Str("title=").QuotedString(prop_title);
+        code.Comma().Str("title = ").QuotedString(prop_title);
         // We have to break these out in order to add the variable assignment (pos=, size=, etc.)
-        code.Comma().CheckLineLength(sizeof("pos=Wx::DEFAULT_POSITION")).Str("pos=").Pos(prop_pos);
-        code.Comma().CheckLineLength(sizeof("size=Wx::DEFAULT_SIZE")).Str("size=").WxSize(prop_size);
-        code.Comma().CheckLineLength(sizeof("style=Wx::DEFAULT_FRAME_STYLE")).Str("style=").Style();
+        code.Comma().CheckLineLength(sizeof("pos = Wx::DEFAULT_POSITION")).Str("pos = ").Pos(prop_pos);
+        code.Comma().CheckLineLength(sizeof("size = Wx::DEFAULT_SIZE")).Str("size = ").WxSize(prop_size);
+        code.Comma().CheckLineLength(sizeof("style = Wx::DEFAULT_FRAME_STYLE")).Str("style = ").Style();
         if (code.hasValue(prop_window_name))
         {
-            code.Comma().CheckLineLength(sizeof("name=") + code.as_string(prop_window_name).size() + 2);
-            code.Str("name=").QuotedString(prop_window_name);
+            code.Comma().CheckLineLength(sizeof("name = ") + code.as_string(prop_window_name).size() + 2);
+            code.Str("name = ").QuotedString(prop_window_name);
         }
 
         code.EndFunction();
         code.Unindent();
+        if (auto indent_pos = code.GetCode().find("parent"); tt::is_found(indent_pos))
+        {
+            indent_pos -= code.GetCode().find("\n");
+            std::string spaces(indent_pos, ' ');
+            code.GetCode().Replace("\t\t\t\t", spaces, true);
+        }
     }
     else
     {

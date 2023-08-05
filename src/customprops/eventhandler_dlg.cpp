@@ -523,16 +523,28 @@ void EventHandlerDlg::FormatBindText()
     }
     else if (language == GEN_LANG_RUBY)
     {
-        // BUGBUG: [Randalphwa - 07-24-2023] This is a placeholder until we can get the Ruby
-        // code
+        tt_string event_name = m_event->get_name();
+        // remove "wx" prefix, make the rest of the name lower case
+        event_name.erase(0, 2);
+        std::transform(event_name.begin(), event_name.end(), event_name.begin(),
+                       [](unsigned char c)
+                       {
+                           return std::tolower(c);
+                       });
+
         if (m_ruby_radio_use_function->GetValue())
         {
             auto value = m_ruby_text_function->GetValue().utf8_string();
-            handler.Add(m_event->get_name()) << ", self." += value;
+            if (m_event->getNode()->isForm())
+                handler.Str(event_name).Str("(:") << value << ')';
+            else
+                handler.Str(event_name).Str("(").NodeName().Str(".get_id, :") << value << ')';
+            m_static_bind_text->SetLabel(handler.make_wxString());
+            return;
         }
         else
         {
-            handler.Add(m_event->get_name()) += ", lambda event: ";
+            handler.Str(event_name) += ", lambda event: ";
 
             handler += "body";
         }

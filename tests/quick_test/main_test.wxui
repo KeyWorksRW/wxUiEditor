@@ -27,8 +27,7 @@
         var_name="dlg_sizer"
         flags="wxEXPAND">
         <node
-          class="wxBoxSizer"
-          var_name="box_sizer_2">
+          class="wxBoxSizer">
           <node
             class="wxStaticText"
             var_name="static_text"

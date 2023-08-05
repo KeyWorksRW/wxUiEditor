@@ -619,7 +619,6 @@ void App::ShowMsgWindow()
     g_pMsgLogging->ShowLogger();
 }
 
-
 void App::DbgCurrentTest(wxCommandEvent&)
 {
     if (tt::file_exists("c:\\rwCode\\wxTest\\src\\ruby\\rb_main.rb"))

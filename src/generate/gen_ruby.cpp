@@ -31,6 +31,15 @@ const char* ruby_begin_cmt_block = "=begin";
 // This *must* be written on a line by itself with *no* indentation.
 const char* ruby_end_cmt_block = "=end";
 
+#if defined(_DEBUG)
+static const std::vector<tt_string> disable_list = {
+    "Metrics/MethodLength",
+    "Metrics/ParameterLists",
+    "Style/Documentation",
+    "Metrics/AbcSize",
+};
+#endif  // _DEBUG
+
 bool GenerateRubyFiles(GenResults& results, std::vector<tt_string>* pClassList)
 {
     if (Project.getChildCount() == 0)
@@ -224,8 +233,10 @@ void BaseCodeGenerator::GenerateRubyClass(Node* form_node, PANEL_PAGE panel_type
         if (Project.as_bool(prop_disable_rubo_cop))
         {
 #if defined(_DEBUG)
-            m_source->writeLine("# rubocop:disable Metrics/MethodLength");
-            m_source->writeLine("# rubocop:disable Metrics/ParameterLists");
+            for (auto& iter: disable_list)
+            {
+                m_source->writeLine("# rubocop:disable " + iter);
+            }
 #else
             m_source->writeLine("# rubocop:disable all");
 #endif
@@ -478,8 +489,10 @@ void BaseCodeGenerator::GenerateRubyClass(Node* form_node, PANEL_PAGE panel_type
         if (Project.as_bool(prop_disable_rubo_cop))
         {
 #if defined(_DEBUG)
-            m_source->writeLine("# rubocop:enable Metrics/MethodLength");
-            m_source->writeLine("# rubocop:enable Metrics/ParameterLists");
+            for (auto& iter: disable_list)
+            {
+                m_source->writeLine("# rubocop:enable " + iter);
+            }
 #else
             m_source->writeLine("# rubocop:enable all");
 #endif  // _DEBUG

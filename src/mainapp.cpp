@@ -619,11 +619,49 @@ void App::ShowMsgWindow()
     g_pMsgLogging->ShowLogger();
 }
 
+
 void App::DbgCurrentTest(wxCommandEvent&)
 {
-    FAIL_MSG("test FAIL_MSG() macro")
+    if (tt::file_exists("c:\\rwCode\\wxTest\\src\\ruby\\rb_main.rb"))
+    {
+        wxExecuteEnv env;
+        env.cwd = "c:\\rwCode\\wxTest\\src\\ruby";
+
+        wxExecute("ruby rb_main.rb", wxEXEC_SYNC, nullptr, &env);
+        return;
+    }
 
     wxMessageBox("Add code you want to test to (mainapp.cpp) App::DbgCurrentTest()", txtVersion);
 }
 
+#endif
+
+#if defined(_DEBUG)
+void App::DbgPythonTest(wxCommandEvent&)
+{
+    if (tt::file_exists("c:\\rwCode\\wxTest\\src\\python\\py_main.py"))
+    {
+        wxExecuteEnv env;
+        env.cwd = "c:\\rwCode\\wxTest\\src\\python";
+
+        wxExecute("python py_main.py", wxEXEC_SYNC, nullptr, &env);
+        return;
+    }
+
+    wxMessageBox("Debug Python test not currently available", txtVersion);
+}
+
+void App::DbgRubyTest(wxCommandEvent&)
+{
+    if (tt::file_exists("c:\\rwCode\\wxTest\\src\\ruby\\rb_main.rb"))
+    {
+        wxExecuteEnv env;
+        env.cwd = "c:\\rwCode\\wxTest\\src\\ruby";
+
+        wxExecute("ruby rb_main.rb", wxEXEC_SYNC, nullptr, &env);
+        return;
+    }
+
+    wxMessageBox("Debug Ruby test not currently available", txtVersion);
+}
 #endif

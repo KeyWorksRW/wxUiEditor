@@ -447,6 +447,7 @@ void BaseCodeGenerator::GenerateRubyClass(Node* form_node, PANEL_PAGE panel_type
         m_source->writeLine("# Event handlers");
         GenSrcEventBinding(form_node, events);
         m_source->writeLine("\tend", indent::none);
+        m_source->SetLastLineBlank();
 
         m_source->ResetIndent();
         m_source->writeLine();

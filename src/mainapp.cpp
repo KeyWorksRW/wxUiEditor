@@ -639,10 +639,10 @@ void App::DbgCurrentTest(wxCommandEvent&)
 #if defined(_DEBUG)
 void App::DbgPythonTest(wxCommandEvent&)
 {
-    if (tt::file_exists("c:\\rwCode\\wxTest\\src\\python\\py_main.py"))
+    if (tt::file_exists("python\\py_main.py"))
     {
         wxExecuteEnv env;
-        env.cwd = "c:\\rwCode\\wxTest\\src\\python";
+        env.cwd = wxGetCwd() + "\\python";
 
         wxExecute("python py_main.py", wxEXEC_SYNC, nullptr, &env);
         return;
@@ -653,10 +653,10 @@ void App::DbgPythonTest(wxCommandEvent&)
 
 void App::DbgRubyTest(wxCommandEvent&)
 {
-    if (tt::file_exists("c:\\rwCode\\wxTest\\src\\ruby\\rb_main.rb"))
+    if (tt::file_exists("ruby\\rb_main.rb"))
     {
         wxExecuteEnv env;
-        env.cwd = "c:\\rwCode\\wxTest\\src\\ruby";
+        env.cwd = wxGetCwd() + "\\ruby";
 
         wxExecute("ruby rb_main.rb", wxEXEC_SYNC, nullptr, &env);
         return;

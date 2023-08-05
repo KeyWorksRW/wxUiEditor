@@ -195,13 +195,13 @@ MainFrame::MainFrame() :
 
     menuInternal->AppendSeparator();
 
-    if (tt::file_exists("c:\\rwCode\\wxTest\\src\\python\\py_main.py"))
+    if (tt::file_exists("python\\py_main.py"))
     {
         menuInternal->Append(id_DebugPythonTest, "&Python Test", "Python debugging test");
         Bind(wxEVT_MENU, &App::DbgPythonTest, &wxGetApp(), id_DebugPythonTest);
     }
 
-    if (tt::file_exists("c:\\rwCode\\wxTest\\src\\ruby\\rb_main.rb"))
+    if (tt::file_exists("ruby\\rb_main.rb"))
     {
         menuInternal->Append(id_DebugRubyTest, "&Ruby Test", "Ruby debugging test");
         Bind(wxEVT_MENU, &App::DbgRubyTest, &wxGetApp(), id_DebugRubyTest);

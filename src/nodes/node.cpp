@@ -885,7 +885,8 @@ tt_string Node::getUniqueName(const tt_string& proposed_name, PropName prop_name
             {
                 org_name.pop_back();
             }
-            new_name << org_name << '_' << i;
+            // new_name << org_name << '_' << i;
+            new_name << org_name << i;
         }
     }
 
@@ -946,7 +947,8 @@ bool Node::fixDuplicateName()
                 for (int i = 2; it != name_set.end(); it = name_set.find(new_name), ++i)
                 {
                     new_name.clear();
-                    new_name << org_name << '_' << i;
+                    // new_name << org_name << '_' << i;
+                    new_name << org_name << i;
                 }
 
                 auto fix_name = getPropPtr(iter);
@@ -1030,7 +1032,8 @@ void Node::fixDuplicateNodeNames(Node* form)
                 for (int i = 2; it != name_set.end(); it = name_set.find(new_name), ++i)
                 {
                     new_name.clear();
-                    new_name << org_name << '_' << i;
+                    // new_name << org_name << '_' << i;
+                    new_name << org_name << i;
                 }
 
                 auto fix_name = getPropPtr(iter);

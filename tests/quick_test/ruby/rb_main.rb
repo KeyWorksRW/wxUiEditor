@@ -7,6 +7,8 @@
 
 # rubocop:disable Metrics/MethodLength
 # rubocop:disable Metrics/ParameterLists
+# rubocop:disable Style/Documentation
+# rubocop:disable Metrics/AbcSize
 
 WX_GLOBAL_CONSTANTS = true unless defined? WX_GLOBAL_CONSTANTS
 
@@ -15,9 +17,9 @@ require 'wx/core'
 require_relative 'test_dlg'
 
 class MainFrame < Wx::Frame
-  def initialize(parent, id=Wx::ID_ANY, title="Tests",
-        pos=Wx::DEFAULT_POSITION, size=Wx::DEFAULT_SIZE,
-        style=Wx::DEFAULT_FRAME_STYLE)
+  def initialize(parent, id = Wx::ID_ANY, title = 'Tests',
+                 pos = Wx::DEFAULT_POSITION, size = Wx::DEFAULT_SIZE,
+                 style = Wx::DEFAULT_FRAME_STYLE)
 
     super(parent, id, title, pos, size, style)
 
@@ -28,13 +30,13 @@ class MainFrame < Wx::Frame
     @menu_file = Wx::Menu.new
     menu_item = Wx::MenuItem.new(@menu_file, Wx::ID_EXIT)
     @menu_file.append(menu_item)
-    @menubar.append(@menu_file, "&File")
+    @menubar.append(@menu_file, '&File')
 
     menu_dialogs = Wx::Menu.new
     menu_item_test_dlg = Wx::MenuItem.new(menu_dialogs, Wx::ID_ANY,
-      "Test Dialog")
+      'Test Dialog')
     menu_dialogs.append(menu_item_test_dlg)
-    @menubar.append(menu_dialogs, "Tests")
+    @menubar.append(menu_dialogs, 'Tests')
 
     set_menu_bar(@menubar)
 
@@ -42,14 +44,14 @@ class MainFrame < Wx::Frame
 
     panel = Wx::Panel.new(self, Wx::ID_ANY, Wx::DEFAULT_POSITION,
       Wx::DEFAULT_SIZE, Wx::TAB_TRAVERSAL)
-    box_sizer.add(panel, Wx::SizerFlags.new(1).expand())
+    box_sizer.add(panel, Wx::SizerFlags.new(1).expand)
 
     panel_sizer = Wx::BoxSizer.new(Wx::VERTICAL)
 
-    @text_ctrl = Wx::TextCtrl.new(panel, Wx::ID_ANY, "",
+    @text_ctrl = Wx::TextCtrl.new(panel, Wx::ID_ANY, '',
       Wx::DEFAULT_POSITION, Wx::DEFAULT_SIZE, Wx::TE_MULTILINE)
     @text_ctrl.set_min_size(convert_dialog_to_pixels(Wx::Size.new(200, 100)))
-    panel_sizer.add(@text_ctrl, Wx::SizerFlags.new(1).expand().border(Wx::ALL))
+    panel_sizer.add(@text_ctrl, Wx::SizerFlags.new(1).expand.border(Wx::ALL))
     panel.set_sizer_and_fit(panel_sizer)
     set_sizer_and_fit(box_sizer)
 
@@ -59,20 +61,12 @@ class MainFrame < Wx::Frame
     evt_menu(menu_item.get_id, :on_quit)
     evt_menu(menu_item_test_dlg.get_id, :on_test_dlg)
   end
-
-# Unimplemented Event handler functions
-# Copy any listed and paste them below the comment block, or to your inherited class.
-
-=begin
-  def on_test_dlg
-    event.skip()
-  end
-
-=end
 end
 
 # rubocop:enable Metrics/MethodLength
 # rubocop:enable Metrics/ParameterLists
+# rubocop:enable Style/Documentation
+# rubocop:enable Metrics/AbcSize
 
 # ************* End of generated code ***********
 # DO NOT EDIT THIS COMMENT BLOCK!

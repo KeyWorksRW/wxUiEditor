@@ -126,7 +126,8 @@ void ProjectHandler::FixupDuplicatedNode(Node* new_node)
                     for (int i = 2;; ++i)
                     {
                         new_name.clear();
-                        new_name << copy_name << '_' << i;
+                        // new_name << copy_name << '_' << i;
+                        new_name << copy_name << i;
                         if (!set_names.contains(new_name))
                             break;
                     }

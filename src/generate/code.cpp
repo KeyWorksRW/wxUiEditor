@@ -828,6 +828,10 @@ Code& Code::QuotedString(GenEnum::PropName prop_name)
             CheckLineLength(sizeof("wxEmptyString"));
             *this += "wxEmptyString";
         }
+        else if (is_ruby())
+        {
+            *this += "''";
+        }
         else
         {
             *this += "\"\"";
@@ -868,7 +872,10 @@ Code& Code::QuotedString(tt_string_view text)
         }
     }
 
-    *this += '"';
+    if (is_ruby())
+        *this += '\'';
+    else
+        *this += '"';
     for (auto c: text)
     {
         switch (c)
@@ -903,7 +910,10 @@ Code& Code::QuotedString(tt_string_view text)
                 break;
         }
     }
-    *this += '"';
+    if (is_ruby())
+        *this += '\'';
+    else
+        *this += '"';
 
     if (has_utf_char)
     {
@@ -1403,6 +1413,12 @@ Code& Code::GenSizerFlags()
         {
             SizerFlagsFunction("Bottom") += ')';
         }
+        if (is_ruby())
+        {
+            // Ruby style guidelines are to eliminate empty parenthesis
+            pop_back();
+            pop_back();
+        }
     }
 
     if (auto& prop = m_node->as_string(prop_flags); prop.size())
@@ -1422,6 +1438,12 @@ Code& Code::GenSizerFlags()
         if (prop.contains("wxRESERVE_SPACE_EVEN_IF_HIDDEN"))
         {
             SizerFlagsFunction("ReserveSpaceEvenIfHidden") += ')';
+        }
+        if (is_ruby())
+        {
+            // Ruby style guidelines are to eliminate empty parenthesis
+            pop_back();
+            pop_back();
         }
     }
 
@@ -1479,7 +1501,7 @@ Code& Code::GenSizerFlags()
                 if (is_cpp())
                     *this += "wxSizerFlags::GetDefaultBorder())";
                 else if (is_ruby())
-                    *this += "Wx::SizerFlags.get_default_border())";
+                    *this += "Wx::SizerFlags.get_default_border)";
                 else
                     *this << m_lang_wxPrefix << "SizerFlags.GetDefaultBorder())";
             }
@@ -1539,6 +1561,12 @@ void Code::GenWindowSettings()
         else
         {
             FormFunction("Hide(").EndFunction();
+        }
+        if (is_ruby())
+        {
+            // Ruby style guidelines are to eliminate empty parenthesis
+            pop_back();
+            pop_back();
         }
     }
 

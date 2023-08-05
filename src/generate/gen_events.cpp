@@ -529,38 +529,77 @@ void BaseCodeGenerator::GenPythonEventHandlers(EventVector& events)
         }
     }
 
+    bool is_all_events_implemented = true;
     if (found_user_handlers)
     {
-        code.Str("# Unimplemented Event handler functions\n# Copy any listed and paste them below the comment block, or "
-                 "to your inherited class.");
-        code.Eol().Str(python_triple_quote).Eol();
+        for (auto& event: events)
+        {
+            auto python_handler = EventHandlerDlg::GetPythonValue(event->get_value());
+            // Ignore lambda's
+            if (python_handler.starts_with("[python:lambda]"))
+                continue;
+
+            tt_string set_code;
+            // If the user doesn't use the `event` parameter, they may use '_' instead to indicate
+            // an unused parameter.
+            set_code << "def " << python_handler << "(self, _):";
+            if (code_lines.find(set_code) != code_lines.end())
+                continue;
+            set_code << "def " << python_handler << "(self, event):";
+            if (code_lines.find(set_code) != code_lines.end())
+                continue;
+
+            // At least one event wasn't implemented, so stop looking for more
+            is_all_events_implemented = false;
+
+            code.Str("# Unimplemented Event handler functions\n# Copy any listed and paste them below the comment block, or "
+                     "to your inherited class.");
+            code.Eol().Str(python_triple_quote).Eol();
+            break;
+        }
+        if (is_all_events_implemented)
+        {
+            // If the user has defined all the event handlers, then we don't need to output anything else.
+            return;
+        }
     }
     else
     {
+        // The user hasn't defined their own event handlers in this module
+        is_all_events_implemented = false;
+
         code.Str("# Event handler functions\n# Add these below the comment block, or to your inherited class.");
         code.Eol().Str(python_triple_quote).Eol();
     }
     m_source->writeLine(code);
 
     code.clear();
-    for (auto& event: events)
+    if (!is_all_events_implemented)
     {
-        auto python_handler = EventHandlerDlg::GetPythonValue(event->get_value());
-        // Ignore lambda's
-        if (python_handler.starts_with("[python:lambda]"))
-            continue;
+        for (auto& event: events)
+        {
+            auto python_handler = EventHandlerDlg::GetPythonValue(event->get_value());
+            // Ignore lambda's
+            if (python_handler.starts_with("[python:lambda]"))
+                continue;
 
-        tt_string set_code;
-        set_code << "def " << python_handler << "(self, event):";
-        if (code_lines.find(set_code) != code_lines.end())
-            continue;
-        code_lines.emplace(set_code);
+            tt_string set_code;
+            // If the user doesn't use the `event` parameter, they may use '_' instead to indicate
+            // an unused parameter.
+            set_code << "def " << python_handler << "(self, _):";
+            if (code_lines.find(set_code) != code_lines.end())
+                continue;
+            set_code.Replace("_)", "event)");
+            if (code_lines.find(set_code) != code_lines.end())
+                continue;
+            code_lines.emplace(set_code);
 
-        code.Str(set_code).Eol();
-        code.Tab().Str("event.Skip()").Eol().Eol();
+            code.Str(set_code).Eol();
+            code.Tab().Str("event.Skip()").Eol().Eol();
+        }
     }
 
-    if (found_user_handlers)
+    if (found_user_handlers && !is_all_events_implemented)
     {
         m_header->writeLine("# Unimplemented Event handler functions");
     }
@@ -574,8 +613,12 @@ void BaseCodeGenerator::GenPythonEventHandlers(EventVector& events)
     {
         m_header->Unindent();
     }
-    code.Eol(eol_if_needed).Str(python_triple_quote).Eol().Eol();
-    m_source->writeLine(code);
+
+    if (!is_all_events_implemented)
+    {
+        code.Eol(eol_if_needed).Str(python_triple_quote).Eol().Eol();
+        m_source->writeLine(code);
+    }
 }
 
 // This function simply generates unhandled event handlers in a multi-string comment.

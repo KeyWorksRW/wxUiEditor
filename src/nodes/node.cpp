@@ -45,8 +45,28 @@ inline const GenType lst_form_types[] =
 };
 
 const std::vector<std::string> reserved_names = {
-    "bitmaps",  // used for wxBitmapBundle
-    "_svg_string_", // used for python SVG image processing
+    "bitmaps",       // used for wxBitmapBundle
+    "_svg_string_",  // used for python SVG image processing
+
+    // Python variables
+    "_OK",
+    "_Yes",
+    "_Save",
+    "_Cancel",
+    "_No",
+    "_Close",
+    "_Help",
+    "_ContextHelp",
+
+    // Ruby variables
+    "_ok_btn",
+    "_yes_btn",
+    "_save_btn",
+    "_cancel_btn",
+    "_no_btn",
+    "_close_btn",
+    "_help_btn",
+    "_context_help_btn",
 
     "bundle_list",  // used for wxBitmapBundle, primarily for books
 

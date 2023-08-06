@@ -224,6 +224,7 @@ void BaseCodeGenerator::GenerateRubyClass(Node* form_node, PANEL_PAGE panel_type
 
     m_header->Clear();
     m_source->Clear();
+    m_source->SetTabToSpaces(2);
     m_source->SetLastLineBlank();
 
     if (m_panel_type == NOT_PANEL)

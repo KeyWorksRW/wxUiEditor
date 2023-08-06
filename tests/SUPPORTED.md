@@ -1,6 +1,6 @@
 # Contents
 
-The following tables indicate whether or not code is being generated in a specific language. A "???" or "---" indicates it has not been verified. "no" indcates that the language doesn't support it.
+The following tables indicate whether or not code is being generated in a specific language. A "???" or "---" indicates it has not been verified. "no" indcates that the language doesn't support it. `partial` means that not all properties for the control are supported.
 
 This does _not_ mean that the class is fully supported in every language -- this is just a guide to indicate whether or not it is at least partially implemented in the various languages.
 
@@ -67,7 +67,7 @@ This does _not_ mean that the class is fully supported in every language -- this
 | wxAuiToolBar | yes | ??? | --- | --- | ../src/generate/gen_aui_toolbar.cpp |
 | wxBannerWindow | yes | yes | --- | --- | ../src/generate/gen_banner_window.cpp |
 | wxBitmapComboBox | yes | ??? | --- | --- | ../src/generate/gen_bitmap_combo.cpp |
-| wxButton | yes | ??? | --- | --- | ../src/generate/gen_button.cpp |
+| wxButton | yes | yes | yes | partial | ../src/generate/gen_button.cpp |
 | wxCalendarCtrl | yes | yes | --- | --- | ../src/generate/gen_calendar_ctrl.cpp |
 | wxCheckBox | yes | yes | yes | yes | ../src/generate/gen_checkbox.cpp |
 | wxCheckListBox | yes | yes | --- | --- | ../src/generate/gen_check_listbox.cpp |
@@ -120,7 +120,7 @@ This does _not_ mean that the class is fully supported in every language -- this
 | wxStatusBar | yes | yes | --- | --- | ../src/generate/gen_status_bar.cpp |
 | wxStyledTextCtrl | yes | yes | --- | --- | ../src/generate/styled_text.cpp |
 | wxTextCtrl | yes | yes | yes | yes | ../src/generate/gen_text_ctrl.cpp |
-| wxToggleButton | yes | yes | --- | --- | ../src/generate/gen_toggle_btn.cpp |
+| wxToggleButton | yes | yes | yes | partial | ../src/generate/gen_toggle_btn.cpp |
 | wxToolBar | yes | yes | yes | --- | ../src/generate/gen_toolbar.cpp |
 | wxTreeCtrl | yes | ??? | --- | --- | ../src/generate/gen_tree_ctrl.cpp |
 | wxTreeListCtrl | yes | ??? | --- | no | ../src/generate/gen_tree_list.cpp |

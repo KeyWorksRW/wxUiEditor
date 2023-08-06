@@ -319,6 +319,12 @@ Code& Code::Add(tt_string_view text)
     }
     else
     {
+        if (is_ruby() && text == "wxEmptyString")
+        {
+            *this += "('')";
+            return *this;
+        }
+
         std::string_view wx_prefix = m_lang_wxPrefix;
         // Python has different prefixes based on the library being used. E.g., wxBoolProperty
         // has a prefix of wx.propgrid. rather than wx.
@@ -871,6 +877,8 @@ Code& Code::QuotedString(tt_string_view text)
             *this += "wxString::FromUTF8(";
         }
     }
+
+    // bool text_has_single_quote = (text.find('\'') != tt::npos);
 
     if (is_ruby())
         *this += '\'';

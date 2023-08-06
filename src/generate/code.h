@@ -221,7 +221,7 @@ public:
     Code& AddConstant(GenEnum::PropName prop_name, tt_string_view short_name);
 
     // Adds "true" for C++ or "True" for Python
-    Code& AddTrue() { return Str(is_cpp() ? "true" : "True"); }
+    Code& AddTrue() { return Str(is_cpp() || is_ruby() ? "true" : "True"); }
 
     // Adds "true" for C++ or "True" for Python
     Code& True() { return AddTrue(); }
@@ -230,7 +230,7 @@ public:
     Code& TrueFalseIf(GenEnum::PropName prop_name);
 
     // Adds "false" for C++ or "False" for Python
-    Code& AddFalse() { return Str(is_cpp() ? "false" : "False"); }
+    Code& AddFalse() { return Str(is_cpp() || is_ruby() ? "false" : "False"); }
 
     // Adds "false" for C++ or "False" for Python
     Code& False() { return AddFalse(); }

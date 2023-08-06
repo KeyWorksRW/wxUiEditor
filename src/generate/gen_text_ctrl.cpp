@@ -172,7 +172,7 @@ bool TextCtrlGenerator::SettingsCode(Code& code)
         {
             if (Project.as_string(prop_wxWidgets_version) == "3.1")
             {
-                code.Eol() << "#if wxCHECK_VERSION(3, 1, 6)";
+                code.Eol(eol_if_needed) << "#if wxCHECK_VERSION(3, 1, 6)";
                 code.Eol().Tab().NodeName() << "->EnableProofCheck(wxTextProofOptions::Default()";
                 if (code.PropContains(prop_spellcheck, "grammar"))
                     code << ".GrammarCheck()";
@@ -181,15 +181,29 @@ bool TextCtrlGenerator::SettingsCode(Code& code)
             }
             else
             {
-                code.NodeName() << "->EnableProofCheck(wxTextProofOptions::Default()";
+                code.Eol(eol_if_needed).NodeName() << "->EnableProofCheck(wxTextProofOptions::Default()";
                 if (code.PropContains(prop_spellcheck, "grammar"))
                     code << ".GrammarCheck()";
-                code << ");";
+                code.EndFunction();
             }
+        }
+        else if (code.is_python())
+        {
+            code.Eol(eol_if_needed).Add("# wxPython 4.2.0 does not support wxTextProofOptions").Eol();
+        }
+        else if (code.is_ruby())
+        {
+            // REVIEW: [Randalphwa - 08-05-2023] The code is correct, but spell-checking does
+            // not work as of wxRuby3 rc3
+            code.Eol(eol_if_needed).NodeName().Function("EnableProofCheck(");
+            code.Add("wxTextProofOptions").ClassMethod("Default");
+            if (code.PropContains(prop_spellcheck, "grammar"))
+                code.Function("GrammarCheck");
+            code << ')';
         }
         else
         {
-            code.Eol().Add("# wxPython 4.2.0 does not support wxTextProofOptions").Eol();
+            code.Eol(eol_if_needed).Str("# unknown language in TextCtrlGenerator::SettingsCode");
         }
     }
 

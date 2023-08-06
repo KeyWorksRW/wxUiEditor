@@ -55,7 +55,7 @@ This does _not_ mean that the class is fully supported in every language -- this
 | wxRadioBoxSizer | yes | no | --- | --- | ../src/generate/gen_statradiobox_sizer.cpp |
 | wxRadioButtonSizer | yes | no | --- | --- | ../src/generate/gen_statradiobox_sizer.cpp |
 | wxStaticBoxSizer | yes | yes | --- | --- | ../src/generate/gen_staticbox_sizer.cpp |
-| wxStdDialogButtonSizer | yes | yes | --- | --- | ../src/generate/gen_std_dlgbtn_sizer.cpp |
+| wxStdDialogButtonSizer | yes | yes | yes | partial | ../src/generate/gen_std_dlgbtn_sizer.cpp |
 | wxWrapSizer | yes | yes | --- | --- | ../src/generate/gen_wrap_sizer.cpp |
 
 # Classes

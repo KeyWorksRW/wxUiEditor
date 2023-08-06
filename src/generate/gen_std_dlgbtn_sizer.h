@@ -24,4 +24,5 @@ public:
 
 protected:
     void GenPythonConstruction(Code& code);
+    void GenRubyConstruction(Code& code);
 };

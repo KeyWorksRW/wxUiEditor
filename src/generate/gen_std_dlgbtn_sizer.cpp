@@ -90,6 +90,12 @@ bool StdDialogButtonSizerGenerator::ConstructionCode(Code& code)
         return true;
     }
 
+    else if (code.is_ruby())
+    {
+        GenRubyConstruction(code);
+        return true;
+    }
+
     code.AddAuto();
 
     Node* node = code.node();  // purely for convenience
@@ -338,6 +344,85 @@ void StdDialogButtonSizerGenerator::GenPythonConstruction(Code& code)
     code.Eol().NodeName().Function("Realize()");
 }
 
+void StdDialogButtonSizerGenerator::GenRubyConstruction(Code& code)
+{
+    // Note that wxRuby3 does not support CreateStdDialogButtonSizer or CreateSeparatedSizer
+
+    Node* node = code.node();  // purely for convenience
+
+    // Add a static line above the buttons unless it is a Mac
+
+    code += "if Wx::PLATFORM != 'WXMAC'";
+    code.Eol().Tab().NodeName().Str("_line = Wx::StaticLine.new(self, Wx::ID_ANY, Wx::DEFAULT_POSITION, ");
+    code.Eol().Tab(9 + (to_int) node->getNodeName().size()).Str("Wx::Size.new(20, -1))");
+    code.Eol().Tab().ParentName().Function("Add(").NodeName() += "_line, Wx::SizerFlags.new.expand.border(Wx::ALL))";
+    code.Eol() += "end";
+    code.Eol().NodeName().Add(" = Wx::StdDialogButtonSizer.new");
+
+    auto min_size = node->as_wxSize(prop_minimum_size);
+    if (min_size.GetX() != -1 || min_size.GetY() != -1)
+    {
+        code.Eol().NodeName().Function("SetMinSize(") << min_size.GetX() << ", " << min_size.GetY();
+        code.EndFunction();
+    }
+
+    auto& default_btn_name = node->as_string(prop_default_button);
+
+    auto gen_btn_code = [&](std::string_view def_btn_name, std::string_view btn_name, std::string_view id)
+    {
+        if (def_btn_name == default_btn_name)
+        {
+            code.Eol().Str("_").Str(btn_name).Str(" = Wx::Button.new(self, ").Str(id).Str(")");
+            code.Eol().NodeName().Function("add_button(_").Str(btn_name).Str(")");
+            code.Eol().Str("_").Str(btn_name).Str(".set_default");
+        }
+        else
+        {
+            code.Eol().NodeName().Function("add_button(").Str("Wx::Button.new(self, ").Str(id).Str("))");
+        }
+    };
+
+    // You can only have one of: Ok, Yes, Save
+    if (node->as_bool(prop_OK))
+    {
+        gen_btn_code("OK", "ok_btn", "Wx::ID_OK");
+    }
+    else if (node->as_bool(prop_Yes))
+    {
+        gen_btn_code("Yes", "yes_btn", "Wx::ID_YES");
+    }
+    else if (node->as_bool(prop_Save))
+    {
+        gen_btn_code("Save", "save_btn", "Wx::ID_SAVE");
+    }
+
+    if (node->as_bool(prop_No))
+    {
+        gen_btn_code("No", "no_btn", "Wx::ID_NO");
+    }
+
+    // You can only have one of: Cancel, Close
+    if (node->as_bool(prop_Cancel))
+    {
+        gen_btn_code("Cancel", "cancel_btn", "Wx::ID_CANCEL");
+    }
+    else if (node->as_bool(prop_Close))
+    {
+        gen_btn_code("Close", "close_btn", "Wx::ID_CLOSE");
+    }
+
+    if (node->as_bool(prop_Help))
+    {
+        gen_btn_code("Help", "help_btn", "Wx::ID_HELP");
+    }
+    else if (node->as_bool(prop_ContextHelp))
+    {
+        gen_btn_code("ContextHelp", "context_help_btn", "Wx::ID_CONTEXT_HELP");
+    }
+
+    code.Eol().NodeName().Function("realize");
+}
+
 int StdDialogButtonSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t /* xrc_flags */)
 {
     pugi::xml_node item;
@@ -345,6 +430,8 @@ int StdDialogButtonSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& obje
 
     if (node->getParent()->isSizer())
     {
+        // BUGBUG: [Randalphwa - 08-06-2023] This should be added with a platform directive
+
         // In C++, we would call CreateSeparatedSizer to get the line on Windows and Unix, but not on Mac. XRC doesn't
         // support this, so we emulate it by adding the line. That's not correct on a Mac, though...
 
@@ -385,6 +472,9 @@ int StdDialogButtonSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& obje
 
     item.append_attribute("class").set_value("wxStdDialogButtonSizer");
     item.append_attribute("name").set_value(node->as_string(prop_var_name));
+
+    // BUGBUG: [Randalphwa - 08-06-2023] Need to set min size if specified
+
     // You can only have one of: Ok, Yes, Save
     if (node->as_bool(prop_OK) || node->as_bool(prop_Yes) || node->as_bool(prop_Save))
     {

@@ -85,6 +85,7 @@ std::map<std::string_view, GenEnum::PropName, std::less<>> import_PropNames = {
     { "wxBitmapButton", gen_wxButton },
     { "wxListCtrl", gen_wxListView },
     { "wxScintilla", gen_wxStyledTextCtrl },
+    { "wxSpacer", gen_spacer },
 
 };
 

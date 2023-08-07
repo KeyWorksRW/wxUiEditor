@@ -50,8 +50,9 @@ bool DialogBlocks::Import(const tt_string& filename, bool write_doc)
         return false;
     }
 
-    // Using a try block means that if at any point it becomes obvious the formbuilder file is invalid and we cannot recover,
-    // then we can throw an error and give a standard response about an invalid file.
+    // Using a try block means that if at any point it becomes obvious the file is invalid and
+    // we cannot recover, then we can throw an error and give a standard response about an
+    // invalid file.
 
     try
     {
@@ -209,7 +210,9 @@ bool DialogBlocks::CreateFormNode(pugi::xml_node& form_xml, const NodeSharedPtr&
                 // it's not a folder.
                 return true;
             }
-            ASSERT_MSG(getGenName != gen_unknown, tt_string("Unrecognized proxy-type class: ") << type_name);
+            ASSERT_MSG(getGenName != gen_unknown, tt_string("Unrecognized proxy-type class: ")
+                                                      << type_name << "\n"
+                                                      << GatherErrorDetails(form_xml, getGenName));
             m_errors.emplace(tt_string("Unrecognized form class: ") << type_name);
             return false;
         }
@@ -222,6 +225,8 @@ bool DialogBlocks::CreateFormNode(pugi::xml_node& form_xml, const NodeSharedPtr&
                 switch (getGenName)
                 {
                     default:
+                        FAIL_MSG(tt_string() << "Unable to create " << type_name << "\n"
+                                             << GatherErrorDetails(form_xml, getGenName))
                         m_errors.emplace(tt_string("Unable to create ") << type_name);
                         return false;
 
@@ -247,12 +252,16 @@ bool DialogBlocks::CreateFormNode(pugi::xml_node& form_xml, const NodeSharedPtr&
                 }
                 if (form = NodeCreation.createNode(getGenName, parent.get()); !form)
                 {
+                    FAIL_MSG(tt_string() << "Unable to create " << type_name << "\n"
+                                         << GatherErrorDetails(form_xml, getGenName))
                     m_errors.emplace(tt_string("Unable to create ") << type_name);
                     return false;
                 }
             }
             else
             {
+                FAIL_MSG(tt_string() << "Unable to create " << type_name << "\n"
+                                     << GatherErrorDetails(form_xml, getGenName))
                 m_errors.emplace(tt_string("Unable to create ") << type_name);
                 return false;
             }
@@ -350,10 +359,14 @@ void DialogBlocks::createChildNode(pugi::xml_node& child_xml, Node* parent)
         auto type = child_xml.find_child_by_attribute("string", "name", "proxy-type");
         if (!type)
         {
+            FAIL_MSG(tt_string() << "Unable to determine class due to missing \"proxy-type\" property.\n"
+                                 << GatherErrorDetails(child_xml, getGenName))
             m_errors.emplace(tt_string("Unable to determine class due to missing \"proxy-type\" property."));
         }
         else
         {
+            FAIL_MSG(tt_string() << "Unrecognized class in \"proxy-type\" property: " << ExtractQuotedString(type) << "\n"
+                                 << GatherErrorDetails(child_xml, getGenName))
             m_errors.emplace(tt_string("Unrecognized class in \"proxy-type\" property: ") << ExtractQuotedString(type));
         }
         return;
@@ -409,7 +422,8 @@ void DialogBlocks::createChildNode(pugi::xml_node& child_xml, Node* parent)
     if (!node)
     {
         ASSERT_MSG(node, tt_string("Unable to create ")
-                             << map_GenNames[getGenName] << " as child of " << map_GenNames[parent->getGenName()]);
+                             << map_GenNames[getGenName] << " as child of " << map_GenNames[parent->getGenName()] << "\n"
+                             << GatherErrorDetails(child_xml, getGenName));
         m_errors.emplace(tt_string("Unable to create ") << map_GenNames[getGenName]);
         return;
     }
@@ -439,6 +453,8 @@ void DialogBlocks::createChildNode(pugi::xml_node& child_xml, Node* parent)
             }
             else
             {
+                FAIL_MSG(tt_string() << "Unrecognized orientation: " << direction << "\n"
+                                     << GatherErrorDetails(child_xml, getGenName));
                 m_errors.emplace(tt_string("Unrecognized orientation: ") << direction);
             }
         }
@@ -1051,4 +1067,30 @@ void DialogBlocks::ProcessValues(pugi::xml_node& node_xml, const NodeSharedPtr& 
             prop->set_value(value.text().as_int());
         }
     }
+}
+
+tt_string DialogBlocks::GatherErrorDetails(pugi::xml_node& xml_node, GenEnum::GenName getGenName)
+{
+    tt_string msg = "Name: ";
+    if (getGenName != gen_unknown)
+        msg << map_GenNames[getGenName];
+    else
+        msg << "Unknown gen_name";
+    if (auto value = xml_node.find_child_by_attribute("string", "name", "proxy-Label"); value)
+    {
+        if (auto str = ExtractQuotedString(value); str.size())
+            msg << ", Label: " << str;
+    }
+
+    if (auto value = xml_node.find_child_by_attribute("string", "name", "proxy-Member variable name"); value)
+    {
+        if (auto str = ExtractQuotedString(value); str.size())
+            msg << ", VarName: " << str;
+    }
+    if (auto value = xml_node.find_child_by_attribute("string", "name", "proxy-Id name"); value)
+    {
+        if (auto str = ExtractQuotedString(value); str.size())
+            msg << ", Id: " << str;
+    }
+    return msg;
 }

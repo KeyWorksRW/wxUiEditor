@@ -362,6 +362,28 @@ void DialogBlocks::createChildNode(pugi::xml_node& child_xml, Node* parent)
     auto node = NodeCreation.createNode(getGenName, parent);
     if (!node)
     {
+        if (parent->isGen(gen_wxStdDialogButtonSizer) && getGenName == gen_wxButton)
+        {
+            auto add_buttons = [&](std::string_view id, GenEnum::PropName propname)
+            {
+                if (auto value = child_xml.find_child_by_attribute("bool", "name", id); value && value.text().as_bool())
+                {
+                    parent->set_value(propname, true);
+                }
+            };
+
+            // Note that DialogBlocks does not use wxID_CLOSE
+
+            add_buttons("proxy-wxID_APPLY", prop_Apply);
+            add_buttons("proxy-wxID_OK", prop_OK);
+            add_buttons("proxy-wxID_CANCEL", prop_Cancel);
+            add_buttons("proxy-wxID_YES", prop_Yes);
+            add_buttons("proxy-wxID_NO", prop_No);
+            add_buttons("proxy-wxID_CONTEXT_HELP", prop_ContextHelp);
+            add_buttons("proxy-wxID_HELP", prop_Help);
+            add_buttons("proxy-wxID_SAVE", prop_Save);
+            return;
+        }
         if (parent->isSizer() && parent->getParent()->isForm())
         {
             node = NodeCreation.createNode(getGenName, parent->getParent());

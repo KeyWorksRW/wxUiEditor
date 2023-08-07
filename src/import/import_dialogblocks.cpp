@@ -210,9 +210,8 @@ bool DialogBlocks::CreateFormNode(pugi::xml_node& form_xml, const NodeSharedPtr&
                 // it's not a folder.
                 return true;
             }
-            ASSERT_MSG(getGenName != gen_unknown, tt_string("Unrecognized proxy-type class: ")
-                                                      << type_name << "\n"
-                                                      << GatherErrorDetails(form_xml, getGenName));
+            auto msg = GatherErrorDetails(form_xml, getGenName);
+            ASSERT_MSG(getGenName != gen_unknown, tt_string("Unrecognized proxy-type class: ") << type_name << "\n" << msg);
             m_errors.emplace(tt_string("Unrecognized form class: ") << type_name);
             return false;
         }
@@ -225,9 +224,11 @@ bool DialogBlocks::CreateFormNode(pugi::xml_node& form_xml, const NodeSharedPtr&
                 switch (getGenName)
                 {
                     default:
-                        FAIL_MSG(tt_string() << "Unable to create " << type_name << "\n"
-                                             << GatherErrorDetails(form_xml, getGenName))
-                        m_errors.emplace(tt_string("Unable to create ") << type_name);
+                        {
+                            auto msg = GatherErrorDetails(form_xml, getGenName);
+                            FAIL_MSG(tt_string() << "Unable to create " << type_name << "\n" << msg)
+                            m_errors.emplace(tt_string("Unable to create ") << type_name);
+                        }
                         return false;
 
                     case gen_wxPanel:
@@ -252,16 +253,16 @@ bool DialogBlocks::CreateFormNode(pugi::xml_node& form_xml, const NodeSharedPtr&
                 }
                 if (form = NodeCreation.createNode(getGenName, parent.get()); !form)
                 {
-                    FAIL_MSG(tt_string() << "Unable to create " << type_name << "\n"
-                                         << GatherErrorDetails(form_xml, getGenName))
+                    auto msg = GatherErrorDetails(form_xml, getGenName);
+                    FAIL_MSG(tt_string() << "Unable to create " << type_name << "\n" << msg)
                     m_errors.emplace(tt_string("Unable to create ") << type_name);
                     return false;
                 }
             }
             else
             {
-                FAIL_MSG(tt_string() << "Unable to create " << type_name << "\n"
-                                     << GatherErrorDetails(form_xml, getGenName))
+                auto msg = GatherErrorDetails(form_xml, getGenName);
+                FAIL_MSG(tt_string() << "Unable to create " << type_name << "\n" << msg)
                 m_errors.emplace(tt_string("Unable to create ") << type_name);
                 return false;
             }
@@ -359,14 +360,15 @@ void DialogBlocks::createChildNode(pugi::xml_node& child_xml, Node* parent)
         auto type = child_xml.find_child_by_attribute("string", "name", "proxy-type");
         if (!type)
         {
-            FAIL_MSG(tt_string() << "Unable to determine class due to missing \"proxy-type\" property.\n"
-                                 << GatherErrorDetails(child_xml, getGenName))
+            auto msg = GatherErrorDetails(child_xml, getGenName);
+            FAIL_MSG(tt_string() << "Unable to determine class due to missing \"proxy-type\" property.\n" << msg)
             m_errors.emplace(tt_string("Unable to determine class due to missing \"proxy-type\" property."));
         }
         else
         {
+            auto msg = GatherErrorDetails(child_xml, getGenName);
             FAIL_MSG(tt_string() << "Unrecognized class in \"proxy-type\" property: " << ExtractQuotedString(type) << "\n"
-                                 << GatherErrorDetails(child_xml, getGenName))
+                                 << msg)
             m_errors.emplace(tt_string("Unrecognized class in \"proxy-type\" property: ") << ExtractQuotedString(type));
         }
         return;
@@ -421,9 +423,10 @@ void DialogBlocks::createChildNode(pugi::xml_node& child_xml, Node* parent)
     }
     if (!node)
     {
+        auto msg = GatherErrorDetails(child_xml, getGenName);
         ASSERT_MSG(node, tt_string("Unable to create ")
                              << map_GenNames[getGenName] << " as child of " << map_GenNames[parent->getGenName()] << "\n"
-                             << GatherErrorDetails(child_xml, getGenName));
+                             << msg);
         m_errors.emplace(tt_string("Unable to create ") << map_GenNames[getGenName]);
         return;
     }
@@ -1071,6 +1074,7 @@ void DialogBlocks::ProcessValues(pugi::xml_node& node_xml, const NodeSharedPtr& 
 
 tt_string DialogBlocks::GatherErrorDetails(pugi::xml_node& xml_node, GenEnum::GenName getGenName)
 {
+#if defined(INTERNAL_TESTING)
     tt_string msg = "Name: ";
     if (getGenName != gen_unknown)
         msg << map_GenNames[getGenName];
@@ -1093,4 +1097,7 @@ tt_string DialogBlocks::GatherErrorDetails(pugi::xml_node& xml_node, GenEnum::Ge
             msg << ", Id: " << str;
     }
     return msg;
+#else
+    return {};
+#endif
 }

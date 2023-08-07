@@ -44,17 +44,26 @@ wxObject* BannerWindowGenerator::CreateMockup(Node* node, wxObject* parent)
 
 bool BannerWindowGenerator::ConstructionCode(Code& code)
 {
-    if (code.is_cpp() && code.is_local_var())
-        code << "auto* ";
-    code.NodeName().CreateClass();
+    if (code.is_ruby())
+    {
+        code += "# wxRuby3 does not support wxBannerWindow";
+        return true;
+    }
+
+    code.AddAuto().NodeName().CreateClass();
     if (code.is_cpp())
         code.ValidParentName().Comma().as_string(prop_direction);
-    else
+    else if (code.is_python())
     {
         // wxPython docs state that you only need the direction, but in 4.2, there's an error
         // if you don't inlude the id.
-        code.ValidParentName().Comma().as_string(prop_id).Comma().as_string(prop_direction);
+        code.ValidParentName().Comma().Add(prop_id).Comma().Add(prop_direction);
     }
+    else
+    {
+        code.Str("# unknown language") << "wxBannerWindow";
+    }
+
     code.PosSizeFlags(true);
 
     return true;
@@ -62,6 +71,11 @@ bool BannerWindowGenerator::ConstructionCode(Code& code)
 
 bool BannerWindowGenerator::SettingsCode(Code& code)
 {
+    if (code.is_ruby())
+    {
+        return false;
+    }
+
     if (code.hasValue(prop_bitmap))
     {
         if (code.is_cpp())

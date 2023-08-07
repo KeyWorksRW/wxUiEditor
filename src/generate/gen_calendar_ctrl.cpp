@@ -34,7 +34,15 @@ bool CalendarCtrlGenerator::ConstructionCode(Code& code)
     if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
     code.NodeName().CreateClass();
-    code.ValidParentName().Comma().as_string(prop_id).Comma().Add("wxDefaultDateTime");
+    code.ValidParentName().Comma().as_string(prop_id).Comma();
+    if (code.is_ruby())
+    {
+        code.Str("DateTime.now");
+    }
+    else
+    {
+        code.Add("wxDefaultDateTime, ");
+    }
     code.PosSizeFlags(true);
 
     return true;

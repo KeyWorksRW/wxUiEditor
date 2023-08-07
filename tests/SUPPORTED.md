@@ -62,18 +62,18 @@ This does _not_ mean that the class is fully supported in every language -- this
 
 | Class | C++ | Python | Ruby | XRC | file |
 -----------|-----|--------|------|------|------|
-| wxActivityIndicator | ??? | ??? | --- | --- | ../src/generate/gen_activity.cpp |
+| wxActivityIndicator | yes | yes | yes | yes | ../src/generate/gen_activity.cpp |
 | wxAnimationCtrl | yes | ??? | --- | --- | ../src/generate/gen_animation.cpp |
 | wxAuiToolBar | yes | ??? | --- | --- | ../src/generate/gen_aui_toolbar.cpp |
-| wxBannerWindow | yes | yes | --- | --- | ../src/generate/gen_banner_window.cpp |
+| wxBannerWindow | yes | yes | no | yes | ../src/generate/gen_banner_window.cpp |
 | wxBitmapComboBox | yes | ??? | --- | --- | ../src/generate/gen_bitmap_combo.cpp |
 | wxButton | yes | yes | yes | partial | ../src/generate/gen_button.cpp |
-| wxCalendarCtrl | yes | yes | --- | --- | ../src/generate/gen_calendar_ctrl.cpp |
+| wxCalendarCtrl | yes | yes | yes | yes | ../src/generate/gen_calendar_ctrl.cpp |
 | wxCheckBox | yes | yes | yes | yes | ../src/generate/gen_checkbox.cpp |
-| wxCheckListBox | yes | yes | --- | --- | ../src/generate/gen_check_listbox.cpp |
-| wxChoice | yes | yes | --- | --- | ../src/generate/gen_choice.cpp |
+| wxCheckListBox | yes | yes | yes | yes | ../src/generate/gen_check_listbox.cpp |
+| wxChoice | yes | yes | yes | yes | ../src/generate/gen_choice.cpp |
 | wxCollapsiblePane | yes | ??? | --- | --- | ../src/generate/gen_collapsible.cpp |
-| wxComboBox | yes | yes | --- | --- | ../src/generate/gen_combobox.cpp |
+| wxComboBox | yes | yes | yes | yes | ../src/generate/gen_combobox.cpp |
 | wxCommandLinkButton | yes | yes | --- | --- | ../src/generate/gen_cmd_link_btn.cpp |
 | wxDataViewListCtrl | yes | ??? | --- | --- | ../src/generate/dataview_widgets.cpp |
 | wxDataViewCtrl | yes | ??? | --- | --- | ../src/generate/dataview_widgets.cpp |
@@ -85,7 +85,7 @@ This does _not_ mean that the class is fully supported in every language -- this
 | wxHtmlWindow | yes | yes | --- | --- | ../src/generate/gen_html_window.cpp |
 | wxHyperlinkCtrl | yes | yes | --- | --- | ../src/generate/gen_hyperlink.cpp |
 | wxInfoBar | yes | ??? | --- | yes | ../src/generate/gen_infobar.cpp |
-| wxListBox | yes | yes | --- | --- | ../src/generate/gen_listbox.cpp |
+| wxListBox | yes | yes | yes | yes | ../src/generate/gen_listbox.cpp |
 | wxListView | yes | yes | --- | --- | ../src/generate/gen_listview.cpp |
 | wxMenu | yes | yes | yes | --- | ../src/generate/gen_menu.cpp |
 | wxMenuBar | yes | yes | yes | --- | ../src/generate/menu_widgets.cpp |
@@ -165,3 +165,4 @@ This does _not_ mean that the class is fully supported in every language -- this
 # Ruby unsupported
 
 - wxInfoBar
+- wxBannerWindow

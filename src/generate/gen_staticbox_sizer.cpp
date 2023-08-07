@@ -65,14 +65,16 @@ bool StaticBoxSizerGenerator::ConstructionCode(Code& code)
                 parent_name = parent->getNodeName();
                 if (code.is_cpp())
                     parent_name << "->GetStaticBox()";
-                else
+                else if (code.is_python())
                     parent_name << ".GetStaticBox()";
+                else if (code.is_ruby())
+                    code.NodeName(parent).Function("GetStaticBox");
                 break;
             }
             parent = parent->getParent();
         }
     }
-    code.AddAuto().NodeName().CreateClass().Str(prop_orientation).Comma().Str(parent_name);
+    code.AddAuto().NodeName().CreateClass().Add(prop_orientation).Comma().Str(parent_name);
 
     if (auto& label = node->as_string(prop_label); label.size())
     {

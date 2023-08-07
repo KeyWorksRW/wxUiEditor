@@ -796,7 +796,14 @@ Code& Code::ValidParentName()
             if (parent->isStaticBoxSizer())
             {
                 NodeName(parent);
-                Function("GetStaticBox()");
+                if (is_ruby())
+                {
+                    Function("GetStaticBox");
+                }
+                else
+                {
+                    Function("GetStaticBox()");
+                }
                 return *this;
             }
         }

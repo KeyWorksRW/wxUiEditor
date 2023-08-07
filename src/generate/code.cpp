@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Helper class for generating code
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2022-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -156,6 +156,12 @@ void Code::Init(Node* node, int language)
         // Always assume C++ code has one tab at the beginning of the line
         m_break_length -= m_indent_size;
     }
+    else if (language == GEN_LANG_LUA)
+    {
+        m_lang_wxPrefix = "wx.";
+        m_break_length = 80;
+        m_break_length -= m_indent_size;
+    }
     else if (language == GEN_LANG_PYTHON)
     {
         m_lang_wxPrefix = "wx.";
@@ -163,17 +169,38 @@ void Code::Init(Node* node, int language)
         // Always assume Python code has two tabs at the beginning of the line
         m_break_length -= (m_indent_size * 2);
     }
+    else if (language == GEN_LANG_GOLANG)
+    {
+        m_lang_wxPrefix = "wx.";
+        m_lang_assignment = " := ";
+        m_break_length = 100;
+        m_break_length -= m_indent_size;
+    }
+    else if (language == GEN_LANG_PERL)
+    {
+        m_lang_wxPrefix = "Wx::";
+        m_break_length = Project.as_size_t(prop_ruby_line_length);
+        m_break_length -= m_indent_size;
+    }
     else if (language == GEN_LANG_RUBY)
     {
         m_indent_size = 2;
         m_lang_wxPrefix = "Wx::";
+        m_lang_assignment = " = ";
         m_break_length = Project.as_size_t(prop_ruby_line_length);
         // Always assume Ruby code has two tabs at the beginning of the line
         m_break_length -= (m_indent_size * 2);
     }
+    else if (language == GEN_LANG_RUST)
+    {
+        m_lang_wxPrefix = "wx::";
+        m_break_length = 100;
+        m_break_length -= m_indent_size;
+    }
     else
     {
         m_lang_wxPrefix = "wx";
+        m_lang_assignment = " = ";
         m_break_length = 90;
         // Always assume code has one tab at the beginning of the line
         m_break_length -= m_indent_size;
@@ -406,7 +433,7 @@ Code& Code::Function(tt_string_view text)
     {
         *this << "->" << text;
     }
-    else if (is_python() || is_ruby())
+    else if (is_python() || is_ruby() || is_rust())
     {
         *this << '.';
         if (text.is_sameprefix("wx"))
@@ -476,7 +503,7 @@ Code& Code::Class(tt_string_view text)
     {
         *this += text;
     }
-    else if (is_python())
+    else if (is_python() || is_rust())
     {
         if (text.is_sameprefix("wx"))
         {
@@ -568,10 +595,17 @@ Code& Code::CreateClass(bool use_generic, tt_string_view override_name)
 
 Code& Code::Assign(tt_string_view class_name)
 {
-    *this += " = ";
+    if (is_golang())
+        *this += " := ";
+    else
+        *this += " = ";
     if (is_cpp())
     {
         *this << "new " << class_name << ';';
+    }
+    else if (is_ruby())
+    {
+        *this << "Wx::" << class_name.substr(2);
     }
     else
     {
@@ -899,7 +933,7 @@ Code& Code::QuotedString(tt_string_view text)
                 *this += "\\\"";
                 break;
 
-            // This generally isn't needed for C++, but is needed for Python
+            // This generally isn't needed for C++, but is needed for other languages
             case '\'':
                 *this += "\\'";
                 break;

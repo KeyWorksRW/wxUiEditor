@@ -500,6 +500,30 @@ namespace GenEnum
         prop_ruby_line_length,
         prop_ruby_output_folder,
 
+        prop_folder_golang_output_folder,
+        prop_golang_file,
+        prop_golang_insert,
+        prop_golang_line_length,
+        prop_golang_output_folder,
+
+        prop_folder_lua_output_folder,
+        prop_lua_file,
+        prop_lua_insert,
+        prop_lua_line_length,
+        prop_lua_output_folder,
+
+        prop_folder_perl_output_folder,
+        prop_perl_file,
+        prop_perl_insert,
+        prop_perl_line_length,
+        prop_perl_output_folder,
+
+        prop_folder_rust_output_folder,
+        prop_rust_file,
+        prop_rust_insert,
+        prop_rust_line_length,
+        prop_rust_output_folder,
+
         // This must always be the last item as it is used to calculate the array size needed to store all items
         prop_name_array_size,
         prop_unknown = prop_name_array_size,

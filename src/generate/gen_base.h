@@ -56,6 +56,13 @@ public:
     void GeneratePythonClass(Node* form_node, PANEL_PAGE panel_type = NOT_PANEL);
     void GenerateRubyClass(Node* form_node, PANEL_PAGE panel_type = NOT_PANEL);
 
+    // The following languages are experimental and may not work correctly
+
+    void GenerateGoLangClass(Node* form_node, PANEL_PAGE panel_type = NOT_PANEL);
+    void GenerateLuaClass(Node* form_node, PANEL_PAGE panel_type = NOT_PANEL);
+    void GeneratePerlClass(Node* form_node, PANEL_PAGE panel_type = NOT_PANEL);
+    void GenerateRustClass(Node* form_node, PANEL_PAGE panel_type = NOT_PANEL);
+
     // GenerateDerivedClass() is in gen_derived.cpp
 
     // Returns result::fail, result::exists, result::created, or result::ignored

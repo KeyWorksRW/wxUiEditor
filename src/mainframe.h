@@ -349,6 +349,14 @@ private:
     BasePanel* m_rubyPanel { nullptr };
     BasePanel* m_xrcPanel { nullptr };
 
+    // The following panels are experimental and may not work correctly. They are only
+    // displayed in a Debug build.
+
+    BasePanel* m_golangPanel { nullptr };
+    BasePanel* m_luaPanel { nullptr };
+    BasePanel* m_perlPanel { nullptr };
+    BasePanel* m_rustPanel { nullptr };
+
 #if defined(INTERNAL_TESTING)
     ImportPanel* m_imnportPanel { nullptr };
 #endif

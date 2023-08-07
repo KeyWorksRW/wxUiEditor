@@ -480,6 +480,30 @@ std::map<GenEnum::PropName, const char*> GenEnum::map_PropNames = {
     { prop_ruby_insert, "insert_ruby_code" },
     { prop_ruby_line_length, "ruby_line_length" },
     { prop_ruby_output_folder, "ruby_output_folder" },
+
+    { prop_folder_golang_output_folder, "folder_golang_output_folder" },
+    { prop_golang_file, "golang_file" },
+    { prop_golang_insert, "insert_golang_code" },
+    { prop_golang_line_length, "golang_line_length" },
+    { prop_golang_output_folder, "golang_output_folder" },
+
+    { prop_folder_lua_output_folder, "folder_lua_output_folder" },
+    { prop_lua_file, "lua_file" },
+    { prop_lua_insert, "insert_lua_code" },
+    { prop_lua_line_length, "lua_line_length" },
+    { prop_lua_output_folder, "lua_output_folder" },
+
+    { prop_folder_perl_output_folder, "folder_perl_output_folder" },
+    { prop_perl_file, "perl_file" },
+    { prop_perl_insert, "insert_perl_code" },
+    { prop_perl_line_length, "perl_line_length" },
+    { prop_perl_output_folder, "perl_output_folder" },
+
+    { prop_folder_rust_output_folder, "folder_rust_output_folder" },
+    { prop_rust_file, "rust_file" },
+    { prop_rust_insert, "insert_rust_code" },
+    { prop_rust_line_length, "rust_line_length" },
+    { prop_rust_output_folder, "rust_output_folder" },
 };
 std::map<std::string_view, GenEnum::PropName, std::less<>> GenEnum::rmap_PropNames;
 

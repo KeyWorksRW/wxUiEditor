@@ -77,11 +77,16 @@ set (file_list
 
     # Code generation output languages
 
-    generate/gen_cpp.cpp           # Generate C++ code files
-    generate/gen_derived.cpp       # Generate C++ Derived code files
-    generate/gen_python.cpp        # Generate Python code files
-    generate/gen_ruby.cpp          # Generate Ruby code files
-    generate/gen_xrc.cpp           # Generate XRC files
+    generate/gen_cpp.cpp           # Generate C++ code
+    generate/gen_derived.cpp       # Generate C++ Derived code
+    generate/gen_python.cpp        # Generate wxPython code
+    generate/gen_ruby.cpp          # Generate wxRuby3 code
+    generate/gen_xrc.cpp           # Generate XRC
+
+    generate/gen_golang.cpp        # Generate wxGo code (experimental)
+    generate/gen_lua.cpp           # Generate wxLua code (experimental)
+    generate/gen_perl.cpp          # Generate wxPerl code (experimental)
+    generate/gen_rust.cpp          # Generate wxRust2 code (experimental)
 
     # Generators are responsible for displaying the widget in the Mockup window,
     # and generating both C++, Python and XRC code. If the generated object can

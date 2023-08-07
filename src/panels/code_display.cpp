@@ -24,24 +24,23 @@
     #define SCI_SETKEYWORDS 4005
 #endif
 
+// For the actual Scintilla constants, see the following file.
+// ../../wxWidgets/src/stc/lexilla/include/SciLexer.h
+
 extern const char* g_u8_cpp_keywords;
+extern const char* g_python_keywords;
 
-const int node_marker = 1;
+extern const char* g_golang_keywords;
+extern const char* g_lua_keywords;
+extern const char* g_perl_keywords;
+extern const char* g_rust_keywords;
+extern const char* g_ruby_keywords;
 
-// XRC Keywords are defined in gen_xrc_utils.cpp so they can easily be updated as XRC generators support more XRC controls.
+// XRC Keywords are defined in gen_xrc_utils.cpp so they can easily be updated as XRC
+// generators support more XRC controls.
 extern const char* g_xrc_keywords;
 
-// clang-format off
-
-const char* g_python_keywords =
-    "False None True and as assert async break class continue def del elif else except finally for from global if import in is lambda "
-    "nonlocal not or pass raise return try while with yield";
-
-// clang-format on
-
-const char* g_ruby_keywords =
-    "ENCODING LINE FILE BEGIN END alias and begin break case class def defined do else elsif end ensure false for if in "
-    "module next nil not or redo require rescue retry return self super then true undef unless until when while yield";
+const int node_marker = 1;
 
 CodeDisplay::CodeDisplay(wxWindow* parent, int panel_type) : CodeDisplayBase(parent), m_panel_type(panel_type)
 {
@@ -96,6 +95,9 @@ CodeDisplay::CodeDisplay(wxWindow* parent, int panel_type) : CodeDisplayBase(par
     {
         m_scintilla->SetLexer(wxSTC_LEX_RUBY);
 
+        // We don't set ruby keywords because we can't colorize them differently from the
+        // wxWidgets keywords.
+
         tt_string wxRuby_keywords("ToolBar MenuBar BitmapBundle Bitmap Window Wx");
 
         // clang-format on
@@ -126,8 +128,173 @@ CodeDisplay::CodeDisplay(wxWindow* parent, int panel_type) : CodeDisplayBase(par
         m_scintilla->StyleSetForeground(wxSTC_RB_COMMENTLINE, wxColour(0, 128, 0));
         m_scintilla->StyleSetForeground(wxSTC_RB_NUMBER, *wxRED);
     }
+#if defined(_DEBUG)
+    // The following language panels are experimental and only appear in a Debug build
+
+    else if (panel_type == GEN_LANG_GOLANG)
+    {
+        // Currently, there is no lexer for GoLang, so we use the C++ lexer instead.
+        m_scintilla->SetLexer(wxSTC_LEX_CPP);
+
+        m_scintilla->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_golang_keywords);
+
+        // On Windows, this saves converting the UTF16 characters to ANSI.
+        m_scintilla->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_u8_cpp_keywords);
+
+        // Add regular classes that have different generator class names
+
+        tt_string widget_keywords("ToolBar MenuBar BitmapBundle Bitmap Image MemoryInputStream Vector Window");
+
+        for (auto iter: NodeCreation.getNodeDeclarationArray())
+        {
+            if (!iter)
+            {
+                // This will happen if there is an enumerated value but no generator for it
+                continue;
+            }
+
+            if (!iter->declName().starts_with("wx") || iter->declName().is_sameas("wxContextMenuEvent"))
+                continue;
+            widget_keywords << ' ' << iter->declName().subview(2);
+        }
+
+        // On Windows, this saves converting the UTF8 to UTF16 and then back to ANSI.
+        m_scintilla->SendMsg(SCI_SETKEYWORDS, 1, (wxIntPtr) widget_keywords.c_str());
+        m_scintilla->StyleSetBold(wxSTC_C_WORD, true);
+        m_scintilla->StyleSetForeground(wxSTC_C_WORD, *wxBLUE);
+        m_scintilla->StyleSetForeground(wxSTC_C_WORD2, UserPrefs.get_CppColour());
+        m_scintilla->StyleSetForeground(wxSTC_C_STRING, wxColour(0, 128, 0));
+        m_scintilla->StyleSetForeground(wxSTC_C_STRINGEOL, wxColour(0, 128, 0));
+        m_scintilla->StyleSetForeground(wxSTC_C_PREPROCESSOR, wxColour(49, 106, 197));
+        m_scintilla->StyleSetForeground(wxSTC_C_COMMENT, wxColour(0, 128, 0));
+        m_scintilla->StyleSetForeground(wxSTC_C_COMMENTLINE, wxColour(0, 128, 0));
+        m_scintilla->StyleSetForeground(wxSTC_C_COMMENTDOC, wxColour(0, 128, 0));
+        m_scintilla->StyleSetForeground(wxSTC_C_COMMENTLINEDOC, wxColour(0, 128, 0));
+        m_scintilla->StyleSetForeground(wxSTC_C_NUMBER, *wxRED);
+    }
+
+    else if (panel_type == GEN_LANG_LUA)
+    {
+        m_scintilla->SetLexer(wxSTC_LEX_LUA);
+
+        // On Windows, this saves converting the UTF16 characters to ANSI.
+        m_scintilla->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_lua_keywords);
+
+        // Add regular classes that have different generator class names
+
+        tt_string widget_keywords("ToolBar MenuBar BitmapBundle Bitmap Image MemoryInputStream Vector Window");
+
+        for (auto iter: NodeCreation.getNodeDeclarationArray())
+        {
+            if (!iter)
+            {
+                // This will happen if there is an enumerated value but no generator for it
+                continue;
+            }
+
+            if (!iter->declName().starts_with("wx") || iter->declName().is_sameas("wxContextMenuEvent"))
+                continue;
+            widget_keywords << ' ' << iter->declName().subview(2);
+        }
+
+        // On Windows, this saves converting the UTF8 to UTF16 and then back to ANSI.
+        m_scintilla->SendMsg(SCI_SETKEYWORDS, 1, (wxIntPtr) widget_keywords.c_str());
+        m_scintilla->StyleSetBold(wxSTC_LUA_WORD, true);
+        m_scintilla->StyleSetForeground(wxSTC_LUA_WORD, *wxBLUE);
+        m_scintilla->StyleSetForeground(wxSTC_LUA_WORD2, UserPrefs.get_CppColour());
+        m_scintilla->StyleSetForeground(wxSTC_LUA_STRING, wxColour(0, 128, 0));
+        m_scintilla->StyleSetForeground(wxSTC_LUA_STRINGEOL, wxColour(0, 128, 0));
+        m_scintilla->StyleSetForeground(wxSTC_LUA_PREPROCESSOR, wxColour(49, 106, 197));
+        m_scintilla->StyleSetForeground(wxSTC_LUA_COMMENT, wxColour(0, 128, 0));
+        m_scintilla->StyleSetForeground(wxSTC_LUA_COMMENTLINE, wxColour(0, 128, 0));
+        m_scintilla->StyleSetForeground(wxSTC_LUA_COMMENTDOC, wxColour(0, 128, 0));
+        // Currently, wxSTC_LUA_COMMENTLINEDOC doesn't exist
+        // m_scintilla->StyleSetForeground(wxSTC_LUA_COMMENTLINEDOC, wxColour(0, 128, 0));
+        m_scintilla->StyleSetForeground(wxSTC_LUA_NUMBER, *wxRED);
+    }
+
+    else if (panel_type == GEN_LANG_PERL)
+    {
+        m_scintilla->SetLexer(wxSTC_LEX_PERL);
+
+        // LEX_PERL doesn't support coloring WORD2, so we only color the wxWidgets keywords.
+        // m_scintilla->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_perl_keywords);
+
+        // Add regular classes that have different generator class names
+
+        tt_string widget_keywords("ToolBar MenuBar BitmapBundle Bitmap Image MemoryInputStream Vector Window");
+
+        for (auto iter: NodeCreation.getNodeDeclarationArray())
+        {
+            if (!iter)
+            {
+                // This will happen if there is an enumerated value but no generator for it
+                continue;
+            }
+
+            if (!iter->declName().starts_with("wx") || iter->declName().is_sameas("wxContextMenuEvent"))
+                continue;
+            widget_keywords << ' ' << iter->declName().subview(2);
+        }
+
+        // On Windows, this saves converting the UTF8 to UTF16 and then back to ANSI.
+        m_scintilla->SendMsg(SCI_SETKEYWORDS, 1, (wxIntPtr) widget_keywords.c_str());
+
+        m_scintilla->StyleSetBold(wxSTC_PL_WORD, true);
+        m_scintilla->StyleSetForeground(wxSTC_PL_WORD, *wxBLUE);
+        // m_scintilla->StyleSetForeground(wxSTC_PL_WORD2, UserPrefs.get_CppColour());
+        m_scintilla->StyleSetForeground(wxSTC_PL_STRING, wxColour(0, 128, 0));
+        // m_scintilla->StyleSetForeground(wxSTC_PL_STRINGEOL, wxColour(0, 128, 0));
+        m_scintilla->StyleSetForeground(wxSTC_PL_PREPROCESSOR, wxColour(49, 106, 197));
+        // m_scintilla->StyleSetForeground(wxSTC_PL_COMMENT, wxColour(0, 128, 0));
+        m_scintilla->StyleSetForeground(wxSTC_PL_COMMENTLINE, wxColour(0, 128, 0));
+        // m_scintilla->StyleSetForeground(wxSTC_PL_COMMENTDOC, wxColour(0, 128, 0));
+        // m_scintilla->StyleSetForeground(wxSTC_PL_COMMENTLINEDOC, wxColour(0, 128, 0));
+        m_scintilla->StyleSetForeground(wxSTC_PL_NUMBER, *wxRED);
+    }
+
+    else if (panel_type == GEN_LANG_RUST)
+    {
+        m_scintilla->SetLexer(wxSTC_LEX_RUST);
+
+        m_scintilla->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_rust_keywords);
+
+        // Add regular classes that have different generator class names
+
+        tt_string widget_keywords("ToolBar MenuBar BitmapBundle Bitmap Image MemoryInputStream Vector Window");
+
+        for (auto iter: NodeCreation.getNodeDeclarationArray())
+        {
+            if (!iter)
+            {
+                // This will happen if there is an enumerated value but no generator for it
+                continue;
+            }
+
+            if (!iter->declName().starts_with("wx") || iter->declName().is_sameas("wxContextMenuEvent"))
+                continue;
+            widget_keywords << ' ' << iter->declName().subview(2);
+        }
+
+        // On Windows, this saves converting the UTF8 to UTF16 and then back to ANSI.
+        m_scintilla->SendMsg(SCI_SETKEYWORDS, 1, (wxIntPtr) widget_keywords.c_str());
+        m_scintilla->StyleSetBold(wxSTC_RUST_WORD, true);
+        m_scintilla->StyleSetForeground(wxSTC_RUST_WORD, *wxBLUE);
+        m_scintilla->StyleSetForeground(wxSTC_RUST_WORD2, UserPrefs.get_CppColour());
+        m_scintilla->StyleSetForeground(wxSTC_RUST_STRING, wxColour(0, 128, 0));
+        // m_scintilla->StyleSetForeground(wxSTC_RUST_STRINGEOL, wxColour(0, 128, 0));
+        // m_scintilla->StyleSetForeground(wxSTC_RUST_PREPROCESSOR, wxColour(49, 106, 197));
+        // m_scintilla->StyleSetForeground(wxSTC_RUST_COMMENT, wxColour(0, 128, 0));
+        m_scintilla->StyleSetForeground(wxSTC_RUST_COMMENTLINE, wxColour(0, 128, 0));
+        // m_scintilla->StyleSetForeground(wxSTC_RUST_COMMENTDOC, wxColour(0, 128, 0));
+        m_scintilla->StyleSetForeground(wxSTC_RUST_COMMENTLINEDOC, wxColour(0, 128, 0));
+        m_scintilla->StyleSetForeground(wxSTC_RUST_NUMBER, *wxRED);
+    }
+#endif  // _DEBUG
+
     else  // C++
     {
+        m_scintilla->SetLexer(wxSTC_LEX_CPP);
         // On Windows, this saves converting the UTF16 characters to ANSI.
         m_scintilla->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_u8_cpp_keywords);
 

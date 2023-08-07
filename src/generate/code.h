@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Helper class for generating code
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2022-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -74,10 +74,12 @@ public:
     }
 
     bool is_cpp() const { return m_language == GEN_LANG_CPLUSPLUS; }
-    bool is_python() const { return m_language == GEN_LANG_PYTHON; }
-    bool is_ruby() const { return m_language == GEN_LANG_RUBY; }
+    bool is_golang() const { return m_language == GEN_LANG_GOLANG; }
     bool is_lua() const { return m_language == GEN_LANG_LUA; }
     bool is_perl() const { return m_language == GEN_LANG_PERL; }
+    bool is_python() const { return m_language == GEN_LANG_PYTHON; }
+    bool is_ruby() const { return m_language == GEN_LANG_RUBY; }
+    bool is_rust() const { return m_language == GEN_LANG_RUST; }
 
     bool is_local_var() const;
 
@@ -203,6 +205,27 @@ public:
         return *this;
     }
 
+    Code& AddIfGolang(tt_string_view text)
+    {
+        if (is_golang())
+            Add(text);
+        return *this;
+    }
+
+    Code& AddIfLua(tt_string_view text)
+    {
+        if (is_lua())
+            Add(text);
+        return *this;
+    }
+
+    Code& AddIfPerl(tt_string_view text)
+    {
+        if (is_perl())
+            Add(text);
+        return *this;
+    }
+
     Code& AddIfPython(tt_string_view text)
     {
         if (is_python())
@@ -217,11 +240,18 @@ public:
         return *this;
     }
 
+    Code& AddIfRust(tt_string_view text)
+    {
+        if (is_rust())
+            Add(text);
+        return *this;
+    }
+
     // Equibalent to Add(node->as_constant(prop_name, "...")
     Code& AddConstant(GenEnum::PropName prop_name, tt_string_view short_name);
 
     // Adds "true" for C++ or "True" for Python
-    Code& AddTrue() { return Str(is_cpp() || is_ruby() ? "true" : "True"); }
+    Code& AddTrue() { return Str(is_python() ? "True" : "true"); }
 
     // Adds "true" for C++ or "True" for Python
     Code& True() { return AddTrue(); }
@@ -230,7 +260,7 @@ public:
     Code& TrueFalseIf(GenEnum::PropName prop_name);
 
     // Adds "false" for C++ or "False" for Python
-    Code& AddFalse() { return Str(is_cpp() || is_ruby() ? "false" : "False"); }
+    Code& AddFalse() { return Str(is_python() ? "False" : "false"); }
 
     // Adds "false" for C++ or "False" for Python
     Code& False() { return AddFalse(); }
@@ -383,13 +413,14 @@ protected:
 private:
     // wx for C++, wx. for Python, Wx:: for Ruby
     tt_string m_lang_wxPrefix { "wx" };
+    tt_string m_lang_assignment { " = " };  // " = " default, " := " for Go
 
     size_t m_break_length { 80 };
     size_t m_break_at { 80 };       // this should be the same as m_break_length
     size_t m_minium_length { 10 };  // if the line is shorter than this, don't break it
 
     int m_indent { 0 };
-    int m_indent_size { 4 };  // amount of spaces to assume tab size is set to
+    int m_indent_size { 4 };  // amount of spaces to assume tab size is set to,  default: 4
 
     bool m_auto_break { true };
     bool m_within_braces { false };

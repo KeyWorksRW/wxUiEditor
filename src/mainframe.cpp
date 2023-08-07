@@ -1299,6 +1299,19 @@ wxWindow* MainFrame::CreateNoteBook(wxWindow* parent)
     m_rubyPanel = new BasePanel(m_notebook, this, GEN_LANG_RUBY);
     m_notebook->AddPage(m_rubyPanel, "Ruby", false, wxWithImages::NO_IMAGE);
 
+#if defined(_DEBUG)
+
+    m_golangPanel = new BasePanel(m_notebook, this, GEN_LANG_GOLANG);
+    m_notebook->AddPage(m_golangPanel, "Golang", false, wxWithImages::NO_IMAGE);
+    m_luaPanel = new BasePanel(m_notebook, this, GEN_LANG_LUA);
+    m_notebook->AddPage(m_luaPanel, "Lua", false, wxWithImages::NO_IMAGE);
+    m_perlPanel = new BasePanel(m_notebook, this, GEN_LANG_PERL);
+    m_notebook->AddPage(m_perlPanel, "Perl", false, wxWithImages::NO_IMAGE);
+    m_rustPanel = new BasePanel(m_notebook, this, GEN_LANG_RUST);
+    m_notebook->AddPage(m_rustPanel, "Rust", false, wxWithImages::NO_IMAGE);
+
+#endif  // _DEBUG
+
     m_xrcPanel = new BasePanel(m_notebook, this, GEN_LANG_XRC);
     m_notebook->AddPage(m_xrcPanel, "XRC", false, wxWithImages::NO_IMAGE);
 

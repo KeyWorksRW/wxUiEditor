@@ -37,6 +37,32 @@ const char* g_u8_cpp_keywords = "alignas alignof and and_eq atomic_cancel atomic
                                 " typename union unsigned using virtual void volatile wchar_t"
                                 " while xor xor_eq";
 
+const char* g_python_keywords = "False None True and as assert async break class continue def del elif else except finally "
+                                "for from global if import in is lambda "
+                                "nonlocal not or pass raise return try while with yield";
+
+const char* g_ruby_keywords = "ENCODING LINE FILE BEGIN END alias and begin break case class def defined do else"
+                              " elsif end ensure false for if in module next nil not or redo require rescue retry"
+                              " return self super then true undef unless until when while yield";
+
+// These are used everywhere we use scintilla to edit Golang code
+const char* g_golang_keywords = "break case chan const continue default defer else fallthrough for func go goto if import"
+                                " interface map package range return select struct switch type var";
+
+// These are used everywhere we use scintilla to edit Lua code
+const char* g_lua_keywords = "and break do else elseif end false for function goto if in local nil not or repeat"
+                             " return then true until while";
+
+// These are used everywhere we use scintilla to edit Perl code
+const char* g_perl_keywords = "if else elsif unless while until for foreach do my our local sub package use require"
+                              " no eval die warn print say chomp split join sort grep map shift pop push"
+                              " unshift scalar length exists defined ref";
+
+// These are used everywhere we use scintilla to edit Rust code
+const char* g_rust_keywords = "as break const continue crate dyn else enum extern false fn for if impl in let loop"
+                              " match mod move mut pub ref return self Self static struct super trait true type"
+                              " unsafe use where while";
+
 BasePanel::BasePanel(wxWindow* parent, MainFrame* frame, int panel_type) : wxPanel(parent)
 {
     m_panel_type = panel_type;
@@ -81,6 +107,54 @@ BasePanel::BasePanel(wxWindow* parent, MainFrame* frame, int panel_type) : wxPan
         m_hPanel = new CodeDisplay(m_notebook, panel_type);
         m_notebook->AddPage(m_hPanel, "inherit", false, wxWithImages::NO_IMAGE);
     }
+#if defined(_DEBUG)
+    // The following languages are experimental and may not work correctly
+
+    else if (m_panel_type == GEN_LANG_GOLANG)
+    {
+        m_cppPanel = new CodeDisplay(m_notebook, panel_type);
+        m_notebook->AddPage(m_cppPanel, "source", false, wxWithImages::NO_IMAGE);
+
+        // A lot of code expects m_hPanel to exist. This will give us something to add additional information to, such as
+        // which properties are not supported.
+
+        m_hPanel = new CodeDisplay(m_notebook, panel_type);
+        m_notebook->AddPage(m_hPanel, "info", false, wxWithImages::NO_IMAGE);
+    }
+    else if (m_panel_type == GEN_LANG_LUA)
+    {
+        m_cppPanel = new CodeDisplay(m_notebook, panel_type);
+        m_notebook->AddPage(m_cppPanel, "source", false, wxWithImages::NO_IMAGE);
+
+        // A lot of code expects m_hPanel to exist. This will give us something to add additional information to, such as
+        // which properties are not supported.
+
+        m_hPanel = new CodeDisplay(m_notebook, panel_type);
+        m_notebook->AddPage(m_hPanel, "info", false, wxWithImages::NO_IMAGE);
+    }
+    else if (m_panel_type == GEN_LANG_PERL)
+    {
+        m_cppPanel = new CodeDisplay(m_notebook, panel_type);
+        m_notebook->AddPage(m_cppPanel, "source", false, wxWithImages::NO_IMAGE);
+
+        // A lot of code expects m_hPanel to exist. This will give us something to add additional information to, such as
+        // which properties are not supported.
+
+        m_hPanel = new CodeDisplay(m_notebook, panel_type);
+        m_notebook->AddPage(m_hPanel, "info", false, wxWithImages::NO_IMAGE);
+    }
+    else if (m_panel_type == GEN_LANG_RUST)
+    {
+        m_cppPanel = new CodeDisplay(m_notebook, panel_type);
+        m_notebook->AddPage(m_cppPanel, "source", false, wxWithImages::NO_IMAGE);
+
+        // A lot of code expects m_hPanel to exist. This will give us something to add additional information to, such as
+        // which properties are not supported.
+
+        m_hPanel = new CodeDisplay(m_notebook, panel_type);
+        m_notebook->AddPage(m_hPanel, "info", false, wxWithImages::NO_IMAGE);
+    }
+#endif  // _DEBUG
     else if (m_panel_type == GEN_LANG_XRC)
     {
         m_cppPanel = new CodeDisplay(m_notebook, panel_type);
@@ -274,6 +348,26 @@ void BasePanel::GenerateBaseClass()
         case GEN_LANG_RUBY:
             codegen.GenerateRubyClass(m_cur_form, panel_page);
             break;
+
+#if defined(_DEBUG)
+            // The following languages are experimental and may not work correctly
+
+        case GEN_LANG_GOLANG:
+            codegen.GenerateGoLangClass(m_cur_form, panel_page);
+            break;
+
+        case GEN_LANG_LUA:
+            codegen.GenerateLuaClass(m_cur_form, panel_page);
+            break;
+
+        case GEN_LANG_PERL:
+            codegen.GeneratePerlClass(m_cur_form, panel_page);
+            break;
+
+        case GEN_LANG_RUST:
+            codegen.GenerateRustClass(m_cur_form, panel_page);
+            break;
+#endif  // _DEBUG
 
         case GEN_LANG_XRC:
             codegen.GenerateXrcClass(m_cur_form, panel_page);

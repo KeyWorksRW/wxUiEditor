@@ -41,6 +41,30 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
     {
         event_code = EventHandlerDlg::GetRubyValue(event->get_value());
     }
+
+    // The following languages are experimental, and do *not* have event handlers implemented yet.
+
+    else if (code.m_language == GEN_LANG_GOLANG)
+    {
+        // BUGBUG: [Randalphwa - 08-06-2023] Need to implement this as an actual Go event handler
+        event_code = EventHandlerDlg::GetCppValue(event->get_value());
+    }
+    else if (code.m_language == GEN_LANG_LUA)
+    {
+        // BUGBUG: [Randalphwa - 08-06-2023] Need to implement this as an actual Go event handler
+        event_code = EventHandlerDlg::GetCppValue(event->get_value());
+    }
+    else if (code.m_language == GEN_LANG_PERL)
+    {
+        // BUGBUG: [Randalphwa - 08-06-2023] Need to implement this as an actual Go event handler
+        event_code = EventHandlerDlg::GetCppValue(event->get_value());
+    }
+    else if (code.m_language == GEN_LANG_RUST)
+    {
+        // BUGBUG: [Randalphwa - 08-06-2023] Need to implement this as an actual Go event handler
+        event_code = EventHandlerDlg::GetCppValue(event->get_value());
+    }
+
     else
     {
         FAIL_MSG("Unknown language");

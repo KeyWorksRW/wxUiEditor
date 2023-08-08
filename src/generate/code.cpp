@@ -156,6 +156,13 @@ void Code::Init(Node* node, int language)
         // Always assume C++ code has one tab at the beginning of the line
         m_break_length -= m_indent_size;
     }
+    else if (language == GEN_LANG_GOLANG)
+    {
+        m_lang_wxPrefix = "wx.";
+        m_lang_assignment = " := ";
+        m_break_length = 100;
+        m_break_length -= m_indent_size;
+    }
     else if (language == GEN_LANG_LUA)
     {
         m_lang_wxPrefix = "wx.";
@@ -168,13 +175,6 @@ void Code::Init(Node* node, int language)
         m_break_length = Project.as_size_t(prop_python_line_length);
         // Always assume Python code has two tabs at the beginning of the line
         m_break_length -= (m_indent_size * 2);
-    }
-    else if (language == GEN_LANG_GOLANG)
-    {
-        m_lang_wxPrefix = "wx.";
-        m_lang_assignment = " := ";
-        m_break_length = 100;
-        m_break_length -= m_indent_size;
     }
     else if (language == GEN_LANG_PERL)
     {

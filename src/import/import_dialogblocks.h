@@ -60,6 +60,8 @@ protected:
     // the string without quotes.
     tt_string ExtractQuotedString(pugi::xml_node& str_node);
 
+    tt_string GatherErrorDetails(pugi::xml_node& xml_node, GenEnum::GenName getGenName);
+
 private:
     bool m_use_enums { true };
     bool m_class_uses_dlg_units { false };

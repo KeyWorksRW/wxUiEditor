@@ -86,6 +86,13 @@ std::map<std::string_view, GenEnum::PropName, std::less<>> import_PropNames = {
     { "wxListCtrl", gen_wxListView },
     { "wxScintilla", gen_wxStyledTextCtrl },
 
+    // DialogBlocks proxy conversion
+    { "wxSpacer", gen_spacer },
+    { "wxMenuSeparator", gen_separator },
+    { "wxSubmenu", gen_submenu },
+    { "wxToolBarSeparator", gen_toolSeparator },
+    { "wxToolBarButton", gen_tool },
+
 };
 
 std::map<std::string_view, std::string_view, std::less<>> s_map_old_events = {

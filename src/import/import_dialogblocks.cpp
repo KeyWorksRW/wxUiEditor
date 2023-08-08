@@ -50,8 +50,9 @@ bool DialogBlocks::Import(const tt_string& filename, bool write_doc)
         return false;
     }
 
-    // Using a try block means that if at any point it becomes obvious the formbuilder file is invalid and we cannot recover,
-    // then we can throw an error and give a standard response about an invalid file.
+    // Using a try block means that if at any point it becomes obvious the file is invalid and
+    // we cannot recover, then we can throw an error and give a standard response about an
+    // invalid file.
 
     try
     {
@@ -209,7 +210,8 @@ bool DialogBlocks::CreateFormNode(pugi::xml_node& form_xml, const NodeSharedPtr&
                 // it's not a folder.
                 return true;
             }
-            ASSERT_MSG(getGenName != gen_unknown, tt_string("Unrecognized proxy-type class: ") << type_name);
+            auto msg = GatherErrorDetails(form_xml, getGenName);
+            ASSERT_MSG(getGenName != gen_unknown, tt_string("Unrecognized proxy-type class: ") << type_name << "\n" << msg);
             m_errors.emplace(tt_string("Unrecognized form class: ") << type_name);
             return false;
         }
@@ -222,7 +224,11 @@ bool DialogBlocks::CreateFormNode(pugi::xml_node& form_xml, const NodeSharedPtr&
                 switch (getGenName)
                 {
                     default:
-                        m_errors.emplace(tt_string("Unable to create ") << type_name);
+                        {
+                            auto msg = GatherErrorDetails(form_xml, getGenName);
+                            FAIL_MSG(tt_string() << "Unable to create " << type_name << "\n" << msg)
+                            m_errors.emplace(tt_string("Unable to create ") << type_name);
+                        }
                         return false;
 
                     case gen_wxPanel:
@@ -247,12 +253,16 @@ bool DialogBlocks::CreateFormNode(pugi::xml_node& form_xml, const NodeSharedPtr&
                 }
                 if (form = NodeCreation.createNode(getGenName, parent.get()); !form)
                 {
+                    auto msg = GatherErrorDetails(form_xml, getGenName);
+                    FAIL_MSG(tt_string() << "Unable to create " << type_name << "\n" << msg)
                     m_errors.emplace(tt_string("Unable to create ") << type_name);
                     return false;
                 }
             }
             else
             {
+                auto msg = GatherErrorDetails(form_xml, getGenName);
+                FAIL_MSG(tt_string() << "Unable to create " << type_name << "\n" << msg)
                 m_errors.emplace(tt_string("Unable to create ") << type_name);
                 return false;
             }
@@ -350,18 +360,54 @@ void DialogBlocks::createChildNode(pugi::xml_node& child_xml, Node* parent)
         auto type = child_xml.find_child_by_attribute("string", "name", "proxy-type");
         if (!type)
         {
+            auto msg = GatherErrorDetails(child_xml, getGenName);
+            FAIL_MSG(tt_string() << "Unable to determine class due to missing \"proxy-type\" property.\n" << msg)
             m_errors.emplace(tt_string("Unable to determine class due to missing \"proxy-type\" property."));
         }
         else
         {
+            auto msg = GatherErrorDetails(child_xml, getGenName);
+            msg << ", Type: " << ExtractQuotedString(type);
+            FAIL_MSG(tt_string() << "Unrecognized class in \"proxy-type\" property: " << ExtractQuotedString(type) << "\n"
+                                 << msg)
             m_errors.emplace(tt_string("Unrecognized class in \"proxy-type\" property: ") << ExtractQuotedString(type));
         }
         return;
     }
 
+    // DialogBlocks uses wbToolBarButtonProxy for all toolbar buttons, so MapClassName() always
+    // turns it into gen_tool.
+    if (getGenName == gen_tool && parent->isGen(gen_wxAuiToolBar))
+    {
+        getGenName = gen_auitool;
+    }
+
     auto node = NodeCreation.createNode(getGenName, parent);
     if (!node)
     {
+        if (parent->isGen(gen_wxStdDialogButtonSizer) && getGenName == gen_wxButton)
+        {
+            auto add_buttons = [&](std::string_view id, GenEnum::PropName propname)
+            {
+                if (auto value = child_xml.find_child_by_attribute("bool", "name", id); value && value.text().as_bool())
+                {
+                    parent->set_value(propname, true);
+                }
+            };
+
+            // Note that DialogBlocks does not use wxID_CLOSE
+
+            add_buttons("proxy-wxID_APPLY", prop_Apply);
+            add_buttons("proxy-wxID_OK", prop_OK);
+            add_buttons("proxy-wxID_CANCEL", prop_Cancel);
+            add_buttons("proxy-wxID_YES", prop_Yes);
+            add_buttons("proxy-wxID_NO", prop_No);
+            add_buttons("proxy-wxID_CONTEXT_HELP", prop_ContextHelp);
+            add_buttons("proxy-wxID_HELP", prop_Help);
+            add_buttons("proxy-wxID_SAVE", prop_Save);
+            return;
+        }
+
         if (parent->isSizer() && parent->getParent()->isForm())
         {
             node = NodeCreation.createNode(getGenName, parent->getParent());
@@ -386,8 +432,10 @@ void DialogBlocks::createChildNode(pugi::xml_node& child_xml, Node* parent)
     }
     if (!node)
     {
+        auto msg = GatherErrorDetails(child_xml, getGenName);
         ASSERT_MSG(node, tt_string("Unable to create ")
-                             << map_GenNames[getGenName] << " as child of " << map_GenNames[parent->getGenName()]);
+                             << map_GenNames[getGenName] << " as child of " << map_GenNames[parent->getGenName()] << "\n"
+                             << msg);
         m_errors.emplace(tt_string("Unable to create ") << map_GenNames[getGenName]);
         return;
     }
@@ -417,6 +465,8 @@ void DialogBlocks::createChildNode(pugi::xml_node& child_xml, Node* parent)
             }
             else
             {
+                FAIL_MSG(tt_string() << "Unrecognized orientation: " << direction << "\n"
+                                     << GatherErrorDetails(child_xml, getGenName));
                 m_errors.emplace(tt_string("Unrecognized orientation: ") << direction);
             }
         }
@@ -1029,4 +1079,34 @@ void DialogBlocks::ProcessValues(pugi::xml_node& node_xml, const NodeSharedPtr& 
             prop->set_value(value.text().as_int());
         }
     }
+}
+
+tt_string DialogBlocks::GatherErrorDetails(pugi::xml_node& xml_node, GenEnum::GenName getGenName)
+{
+#if defined(INTERNAL_TESTING)
+    tt_string msg = "Name: ";
+    if (getGenName != gen_unknown)
+        msg << map_GenNames[getGenName];
+    else
+        msg << "Unknown gen_name";
+    if (auto value = xml_node.find_child_by_attribute("string", "name", "proxy-Label"); value)
+    {
+        if (auto str = ExtractQuotedString(value); str.size())
+            msg << ", Label: " << str;
+    }
+
+    if (auto value = xml_node.find_child_by_attribute("string", "name", "proxy-Member variable name"); value)
+    {
+        if (auto str = ExtractQuotedString(value); str.size())
+            msg << ", VarName: " << str;
+    }
+    if (auto value = xml_node.find_child_by_attribute("string", "name", "proxy-Id name"); value)
+    {
+        if (auto str = ExtractQuotedString(value); str.size())
+            msg << ", Id: " << str;
+    }
+    return msg;
+#else
+    return {};
+#endif
 }

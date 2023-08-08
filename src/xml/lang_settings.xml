@@ -84,6 +84,50 @@ inline const char* lang_settings_xml = R"===(<?xml version="1.0"?>
 			help="Specifies the ruby modules that are required by this module. These will be added using the relative_require command, and are relative to the location of this generated file." />
 	</gen>
 
+	<gen class="wxGo Settings" type="interface" enable="internal">
+		<property name="golang_file" type="file"
+			help="The filename to use if generating code for wxRuby." />
+		<property name="golang_inherit_name" type="string"
+			help="The name to use for an inherited class. If specified, the Inherit tab in the Ruby panel will include a sample for creating an inherited class." />
+		<property name="insert_golang_code" type="code_edit"
+			help="Specify the code to insert into the Go file after the generated import statements. This can be any valid Go code for use before the class definition." />
+		<property name="golang_import_list" type="include_files"
+			help="Specifies the Go modules that should be imported. These will be placed in quotes and added using the import command." />
+	</gen>
+
+	<gen class="wxLua Settings" type="interface" enable="internal">
+		<property name="lua_file" type="file"
+			help="The filename to use if generating code for wxRuby." />
+		<property name="lua_inherit_name" type="string"
+			help="The name to use for an inherited class. If specified, the Inherit tab in the Ruby panel will include a sample for creating an inherited class." />
+		<property name="insert_lua_code" type="code_edit"
+			help="Specify the code to insert into the Lua file after the generated import statements. This can be any valid Lua code for use before the class definition." />
+		<property name="lua_require_list" type="include_files"
+			help="Specifies the Lua modules that are required for this module. These will be placed in quotes and added using the require command." />
+	</gen>
+
+	<gen class="wxPerl Settings" type="interface" enable="internal">
+		<property name="perl_file" type="file"
+			help="The filename to use if generating code for wxRuby." />
+		<property name="perl_inherit_name" type="string"
+			help="The name to use for an inherited class. If specified, the Inherit tab in the Ruby panel will include a sample for creating an inherited class." />
+		<property name="insert_perl_code" type="code_edit"
+			help="Specify the code to insert into the Perl file after the generated import statements. This can be any valid Perl code for use before the class definition." />
+		<property name="perl_package_list" type="include_files"
+			help="Specifies the Perl packages that are required for this module. These will be added via the use command." />
+	</gen>
+
+	<gen class="wxRust Settings" type="interface" enable="internal">
+		<property name="rust_file" type="file"
+			help="The filename to use if generating code for wxRuby." />
+		<property name="rust_inherit_name" type="string"
+			help="The name to use for an inherited class. If specified, the Inherit tab in the Ruby panel will include a sample for creating an inherited class." />
+		<property name="insert_rust_code" type="code_edit"
+			help="Specify the code to insert into the Rust file after the generated import statements. This can be any valid Rust code for use before the class definition." />
+		<property name="rust_module_list" type="include_files"
+			help="Specifies the Rust modules that are used in this module. These will be added via the use command." />
+	</gen>
+
 	<gen class="XRC Settings" type="interface">
 		<property name="xrc_file" type="file"
 			help="The filename to use if generating XRC (wxPython can override this with its own file name)." />

@@ -486,24 +486,28 @@ std::map<GenEnum::PropName, const char*> GenEnum::map_PropNames = {
     { prop_golang_insert, "insert_golang_code" },
     { prop_golang_line_length, "golang_line_length" },
     { prop_golang_output_folder, "golang_output_folder" },
+    { prop_golang_import_list, "golang_import_list" },
 
     { prop_folder_lua_output_folder, "folder_lua_output_folder" },
     { prop_lua_file, "lua_file" },
     { prop_lua_insert, "insert_lua_code" },
     { prop_lua_line_length, "lua_line_length" },
     { prop_lua_output_folder, "lua_output_folder" },
+    { prop_lua_require_list, "lua_require_list" },
 
     { prop_folder_perl_output_folder, "folder_perl_output_folder" },
     { prop_perl_file, "perl_file" },
     { prop_perl_insert, "insert_perl_code" },
     { prop_perl_line_length, "perl_line_length" },
     { prop_perl_output_folder, "perl_output_folder" },
+    { prop_perl_package_list, "perl_package_list" },
 
     { prop_folder_rust_output_folder, "folder_rust_output_folder" },
     { prop_rust_file, "rust_file" },
     { prop_rust_insert, "insert_rust_code" },
     { prop_rust_line_length, "rust_line_length" },
     { prop_rust_output_folder, "rust_output_folder" },
+    { prop_rust_module_list, "rust_module_list" },
 };
 std::map<std::string_view, GenEnum::PropName, std::less<>> GenEnum::rmap_PropNames;
 
@@ -595,18 +599,13 @@ std::map<GenEnum::GenName, const char*> GenEnum::map_GenNames = {
 
     { gen_Bitmaps, "Bitmaps" },
     { gen_Boolean_Validator, "Boolean Validator" },
-    { gen_CPlusHeaderSettings, "C++ Header Settings" },
-    { gen_CPlusSettings, "C++ Settings" },
     { gen_Choice_Validator, "Choice Validator" },
     { gen_Code, "C++" },
     { gen_Code_Generation, "Code Generation" },
     { gen_Command_Bitmaps, "Command Bitmaps" },
-    { gen_DerivedCPlusSettings, "C++ Derived Class Settings" },
     { gen_DlgWindowSettings, "Dialog Window Settings" },
     { gen_Integer_Validator, "Integer Validator" },
     { gen_List_Validator, "List Validator" },
-    { gen_PythonSettings, "wxPython Settings" },
-    { gen_RubySettings, "wxRuby Settings" },
     { gen_String_Validator, "String Validator" },
     { gen_Text_Validator, "Text Validator" },
     { gen_Window_Events, "Window Events" },
@@ -625,6 +624,18 @@ std::map<GenEnum::GenName, const char*> GenEnum::map_GenNames = {
     { gen_wxTopLevelWindow, "wxTopLevelWindow" },
     { gen_wxTreeCtrlBase, "wxTreeCtrlBase" },
     { gen_wxWindow, "wxWindow" },
+
+    // Language settings categories
+
+    { gen_CPlusSettings, "C++ Settings" },
+    { gen_DerivedCPlusSettings, "C++ Derived Class Settings" },
+    { gen_CPlusHeaderSettings, "C++ Header Settings" },
+    { gen_PythonSettings, "wxPython Settings" },
+    { gen_RubySettings, "wxRuby Settings" },
+    { gen_GolangSettings, "wxGo Settings" },
+    { gen_LuaSettings, "wxLua Settings" },
+    { gen_PerlSettings, "wxPerl Settings" },
+    { gen_RustSettings, "wxRust Settings" },
 
     // These are special purpose generators. gen_Images is used for code, but gen_folder is
     // just for organtizing forms in the Navigation panel.

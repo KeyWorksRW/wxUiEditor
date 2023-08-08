@@ -7,6 +7,10 @@ inline const char* toolbars_xml = R"===(<?xml version="1.0"?>
 		<inherits class="C++ Derived Class Settings" />
 		<inherits class="wxPython Settings" />
 		<inherits class="wxRuby Settings" />
+		<inherits class="wxGo Settings" />
+		<inherits class="wxLua Settings" />
+		<inherits class="wxPerl Settings" />
+		<inherits class="wxRust Settings" />
 		<inherits class="XRC Settings" />
 		<inherits class="wxWindow">
 			<hide name="foreground_colour" />

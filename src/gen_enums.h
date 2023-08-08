@@ -354,7 +354,6 @@ namespace GenEnum
         prop_radiobtn_var_name,
         prop_range,
         prop_read_only,
-        prop_relative_require_list,
         prop_resize,
         prop_row,
         prop_row_label_horiz_alignment,
@@ -492,6 +491,7 @@ namespace GenEnum
         prop_ruby_conditional,
         prop_folder_ruby_combined_file,
         prop_folder_ruby_output_folder,
+        prop_relative_require_list,
         prop_ruby_combine_forms,
         prop_ruby_combined_file,
         prop_ruby_file,
@@ -505,24 +505,28 @@ namespace GenEnum
         prop_golang_insert,
         prop_golang_line_length,
         prop_golang_output_folder,
+        prop_golang_import_list,
 
         prop_folder_lua_output_folder,
         prop_lua_file,
         prop_lua_insert,
         prop_lua_line_length,
         prop_lua_output_folder,
+        prop_lua_require_list,
 
         prop_folder_perl_output_folder,
         prop_perl_file,
         prop_perl_insert,
         prop_perl_line_length,
         prop_perl_output_folder,
+        prop_perl_package_list,
 
         prop_folder_rust_output_folder,
         prop_rust_file,
         prop_rust_insert,
         prop_rust_line_length,
         prop_rust_output_folder,
+        prop_rust_module_list,
 
         // This must always be the last item as it is used to calculate the array size needed to store all items
         prop_name_array_size,
@@ -633,18 +637,13 @@ namespace GenEnum
 
         gen_Bitmaps,
         gen_Boolean_Validator,
-        gen_CPlusHeaderSettings,
-        gen_CPlusSettings,
         gen_Choice_Validator,
         gen_Code,
         gen_Code_Generation,
         gen_Command_Bitmaps,
-        gen_DerivedCPlusSettings,
         gen_DlgWindowSettings,
         gen_Integer_Validator,
         gen_List_Validator,
-        gen_PythonSettings,
-        gen_RubySettings,
         gen_String_Validator,
         gen_Text_Validator,
         gen_Window_Events,
@@ -664,6 +663,18 @@ namespace GenEnum
         gen_wxTopLevelWindow,
         gen_wxTreeCtrlBase,
         gen_wxWindow,
+
+        // Language settings categories
+
+        gen_CPlusSettings,
+        gen_DerivedCPlusSettings,
+        gen_CPlusHeaderSettings,
+        gen_GolangSettings,
+        gen_LuaSettings,
+        gen_PerlSettings,
+        gen_PythonSettings,
+        gen_RubySettings,
+        gen_RustSettings,
 
         // These are special purpose generators. gen_Images is used for code, but gen_folder is
         // just for organtizing forms in the Navigation panel.

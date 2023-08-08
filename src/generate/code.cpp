@@ -156,31 +156,12 @@ void Code::Init(Node* node, int language)
         // Always assume C++ code has one tab at the beginning of the line
         m_break_length -= m_indent_size;
     }
-    else if (language == GEN_LANG_GOLANG)
-    {
-        m_lang_wxPrefix = "wx.";
-        m_lang_assignment = " := ";
-        m_break_length = 100;
-        m_break_length -= m_indent_size;
-    }
-    else if (language == GEN_LANG_LUA)
-    {
-        m_lang_wxPrefix = "wx.";
-        m_break_length = 80;
-        m_break_length -= m_indent_size;
-    }
     else if (language == GEN_LANG_PYTHON)
     {
         m_lang_wxPrefix = "wx.";
         m_break_length = Project.as_size_t(prop_python_line_length);
         // Always assume Python code has two tabs at the beginning of the line
         m_break_length -= (m_indent_size * 2);
-    }
-    else if (language == GEN_LANG_PERL)
-    {
-        m_lang_wxPrefix = "Wx::";
-        m_break_length = Project.as_size_t(prop_ruby_line_length);
-        m_break_length -= m_indent_size;
     }
     else if (language == GEN_LANG_RUBY)
     {
@@ -191,14 +172,47 @@ void Code::Init(Node* node, int language)
         // Always assume Ruby code has two tabs at the beginning of the line
         m_break_length -= (m_indent_size * 2);
     }
+
+    // The following are experimental languages, which means the line length property will be
+    // zero under a non-internal release build.
+
+    else if (language == GEN_LANG_GOLANG)
+    {
+        m_lang_wxPrefix = "wx.";
+        m_lang_assignment = " := ";
+        m_break_length = Project.as_size_t(prop_golang_line_length);
+        if (m_break_length < 80)
+            m_break_length = 80;
+        m_break_length -= m_indent_size;
+    }
+    else if (language == GEN_LANG_LUA)
+    {
+        m_lang_wxPrefix = "wx.";
+        m_break_length = Project.as_size_t(prop_lua_line_length);
+        if (m_break_length < 80)
+            m_break_length = 80;
+        m_break_length -= m_indent_size;
+    }
+    else if (language == GEN_LANG_PERL)
+    {
+        m_lang_wxPrefix = "Wx::";
+        m_break_length = Project.as_size_t(prop_perl_line_length);
+        if (m_break_length < 80)
+            m_break_length = 80;
+        m_break_length -= m_indent_size;
+    }
     else if (language == GEN_LANG_RUST)
     {
         m_lang_wxPrefix = "wx::";
-        m_break_length = 100;
+        m_break_length = Project.as_size_t(prop_rust_line_length);
+        if (m_break_length < 80)
+            m_break_length = 80;
         m_break_length -= m_indent_size;
     }
+
     else
     {
+        FAIL_MSG("Unknown language");
         m_lang_wxPrefix = "wx";
         m_lang_assignment = " = ";
         m_break_length = 90;

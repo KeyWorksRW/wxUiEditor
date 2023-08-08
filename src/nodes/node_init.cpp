@@ -520,8 +520,10 @@ void NodeCreator::parseGeneratorFile(const char* xml_data)
         if (auto enable = generator.attribute("enable"); enable.as_sview() == "internal")
         {
 #if !defined(INTERNAL_TESTING)
-                generator = generator.next_sibling("gen");
-                continue;
+            // Skip this class if we're not doing an internal build (debug is always an
+            // internal build)
+            generator = generator.next_sibling("gen");
+            continue;
 #endif
         }
 

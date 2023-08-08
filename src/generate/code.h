@@ -7,8 +7,13 @@
 
 /*
 
-    This class is used to generate code for any language that wxUiEditor supports
-    (currently C++, Python and Ruby).
+    This class is used to generate code for any language that wxUiEditor supports.
+    Currently this is C++, Python and Ruby, with experimental support for Go, Lua,
+    Perl and Rust.
+
+    With 7 possible languages, the generators should use this class as much as possible
+    for all the code they generate, so that there is a single location to make
+    language-specific changes.
 
 */
 
@@ -44,7 +49,7 @@ namespace code
 
 };  // namespace code
 
-// Assume anyone including this header file needs acces to the code namespace
+// Assume anyone including this header file needs access to the code namespace
 using namespace code;
 
 class Code : public tt_string
@@ -74,11 +79,14 @@ public:
     }
 
     bool is_cpp() const { return m_language == GEN_LANG_CPLUSPLUS; }
+    bool is_python() const { return m_language == GEN_LANG_PYTHON; }
+    bool is_ruby() const { return m_language == GEN_LANG_RUBY; }
+
+    // The following are experimental languages
+
     bool is_golang() const { return m_language == GEN_LANG_GOLANG; }
     bool is_lua() const { return m_language == GEN_LANG_LUA; }
     bool is_perl() const { return m_language == GEN_LANG_PERL; }
-    bool is_python() const { return m_language == GEN_LANG_PYTHON; }
-    bool is_ruby() const { return m_language == GEN_LANG_RUBY; }
     bool is_rust() const { return m_language == GEN_LANG_RUST; }
 
     bool is_local_var() const;
@@ -205,6 +213,22 @@ public:
         return *this;
     }
 
+    Code& AddIfPython(tt_string_view text)
+    {
+        if (is_python())
+            Add(text);
+        return *this;
+    }
+
+    Code& AddIfRuby(tt_string_view text)
+    {
+        if (is_ruby())
+            Add(text);
+        return *this;
+    }
+
+    // The following AddIf...() functions are for the experimental languages
+
     Code& AddIfGolang(tt_string_view text)
     {
         if (is_golang())
@@ -226,20 +250,6 @@ public:
         return *this;
     }
 
-    Code& AddIfPython(tt_string_view text)
-    {
-        if (is_python())
-            Add(text);
-        return *this;
-    }
-
-    Code& AddIfRuby(tt_string_view text)
-    {
-        if (is_ruby())
-            Add(text);
-        return *this;
-    }
-
     Code& AddIfRust(tt_string_view text)
     {
         if (is_rust())
@@ -250,20 +260,14 @@ public:
     // Equibalent to Add(node->as_constant(prop_name, "...")
     Code& AddConstant(GenEnum::PropName prop_name, tt_string_view short_name);
 
-    // Adds "true" for C++ or "True" for Python
-    Code& AddTrue() { return Str(is_python() ? "True" : "true"); }
-
-    // Adds "true" for C++ or "True" for Python
-    Code& True() { return AddTrue(); }
+    // Adds "true" for all languages except Python, which adds "True"
+    Code& True() { return Str(is_python() ? "True" : "true"); }
 
     // Calls AddTrue() or AddFalse() depending on the boolean value of the property
     Code& TrueFalseIf(GenEnum::PropName prop_name);
 
-    // Adds "false" for C++ or "False" for Python
-    Code& AddFalse() { return Str(is_python() ? "False" : "false"); }
-
-    // Adds "false" for C++ or "False" for Python
-    Code& False() { return AddFalse(); }
+    // Adds "false" for all languages except Python, which adds "False"
+    Code& False() { return Str(is_python() ? "False" : "false"); }
 
     // Use Str() instead of Add() if you are *absolutely* certain you will never need
     // wxPython or wxRuby (or any other language) processing.

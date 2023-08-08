@@ -515,6 +515,18 @@ void NodeCreator::parseGeneratorFile(const char* xml_data)
         }
 #endif  // _DEBUG
 
+        // This code makes it possible to add `enable="internal"` to an XML class/interface to
+        // prevent it from being used in non-internal release builds.
+        if (auto enable = generator.attribute("enable"); enable.as_sview() == "internal")
+        {
+#if !defined(INTERNAL_TESTING)
+            // Skip this class if we're not doing an internal build (debug is always an
+            // internal build)
+            generator = generator.next_sibling("gen");
+            continue;
+#endif
+        }
+
         GenType type { gen_type_unknown };
         if (is_interface)
         {

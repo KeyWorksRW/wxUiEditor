@@ -156,31 +156,12 @@ void Code::Init(Node* node, int language)
         // Always assume C++ code has one tab at the beginning of the line
         m_break_length -= m_indent_size;
     }
-    else if (language == GEN_LANG_LUA)
-    {
-        m_lang_wxPrefix = "wx.";
-        m_break_length = 80;
-        m_break_length -= m_indent_size;
-    }
     else if (language == GEN_LANG_PYTHON)
     {
         m_lang_wxPrefix = "wx.";
         m_break_length = Project.as_size_t(prop_python_line_length);
         // Always assume Python code has two tabs at the beginning of the line
         m_break_length -= (m_indent_size * 2);
-    }
-    else if (language == GEN_LANG_GOLANG)
-    {
-        m_lang_wxPrefix = "wx.";
-        m_lang_assignment = " := ";
-        m_break_length = 100;
-        m_break_length -= m_indent_size;
-    }
-    else if (language == GEN_LANG_PERL)
-    {
-        m_lang_wxPrefix = "Wx::";
-        m_break_length = Project.as_size_t(prop_ruby_line_length);
-        m_break_length -= m_indent_size;
     }
     else if (language == GEN_LANG_RUBY)
     {
@@ -191,14 +172,47 @@ void Code::Init(Node* node, int language)
         // Always assume Ruby code has two tabs at the beginning of the line
         m_break_length -= (m_indent_size * 2);
     }
+
+    // The following are experimental languages, which means the line length property will be
+    // zero under a non-internal release build.
+
+    else if (language == GEN_LANG_GOLANG)
+    {
+        m_lang_wxPrefix = "wx.";
+        m_lang_assignment = " := ";
+        m_break_length = Project.as_size_t(prop_golang_line_length);
+        if (m_break_length < 80)
+            m_break_length = 80;
+        m_break_length -= m_indent_size;
+    }
+    else if (language == GEN_LANG_LUA)
+    {
+        m_lang_wxPrefix = "wx.";
+        m_break_length = Project.as_size_t(prop_lua_line_length);
+        if (m_break_length < 80)
+            m_break_length = 80;
+        m_break_length -= m_indent_size;
+    }
+    else if (language == GEN_LANG_PERL)
+    {
+        m_lang_wxPrefix = "Wx::";
+        m_break_length = Project.as_size_t(prop_perl_line_length);
+        if (m_break_length < 80)
+            m_break_length = 80;
+        m_break_length -= m_indent_size;
+    }
     else if (language == GEN_LANG_RUST)
     {
         m_lang_wxPrefix = "wx::";
-        m_break_length = 100;
+        m_break_length = Project.as_size_t(prop_rust_line_length);
+        if (m_break_length < 80)
+            m_break_length = 80;
         m_break_length -= m_indent_size;
     }
+
     else
     {
+        FAIL_MSG("Unknown language");
         m_lang_wxPrefix = "wx";
         m_lang_assignment = " = ";
         m_break_length = 90;
@@ -417,9 +431,9 @@ Code& Code::Add(tt_string_view text)
 Code& Code::TrueFalseIf(GenEnum::PropName prop_name)
 {
     if (m_node->as_bool(prop_name))
-        return AddTrue();
+        return True();
     else
-        return AddFalse();
+        return False();
 }
 
 Code& Code::AddConstant(GenEnum::PropName prop_name, tt_string_view short_name)
@@ -1592,11 +1606,11 @@ void Code::GenWindowSettings()
         Eol(eol_if_empty);
         if (!m_node->isForm())
         {
-            NodeName().Function("Enable(").AddFalse().EndFunction();
+            NodeName().Function("Enable(").False().EndFunction();
         }
         else
         {
-            FormFunction("Enable(").AddFalse().EndFunction();
+            FormFunction("Enable(").False().EndFunction();
         }
     }
 
@@ -1706,9 +1720,9 @@ void Code::GenFontColourSettings()
             if (fontprop.GetWeight() != wxFONTWEIGHT_NORMAL)
                 Eol().Str("font.SetWeight(").Str(font_weight_pairs.GetValue(fontprop.GetWeight())).EndFunction();
             if (fontprop.IsUnderlined())
-                Eol().Str("font.SetUnderlined(").AddTrue().EndFunction();
+                Eol().Str("font.SetUnderlined(").True().EndFunction();
             if (fontprop.IsStrikethrough())
-                Eol().Str("font.SetStrikethrough(").AddTrue().EndFunction();
+                Eol().Str("font.SetStrikethrough(").True().EndFunction();
             Eol();
 
             if (node->isForm())

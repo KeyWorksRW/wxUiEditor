@@ -152,7 +152,7 @@ bool PageCtrlGenerator::ConstructionCode(Code& code)
 
                 // Default is false, so only add parameter if it is true.
                 if (code.IsTrue(prop_select))
-                    code.Comma().AddTrue();
+                    code.Comma().True();
 
                 if (node->hasValue(prop_bitmap) &&
                     (node->getParent()->as_bool(prop_display_images) || node->isParent(gen_wxToolbook)))
@@ -179,7 +179,7 @@ bool PageCtrlGenerator::ConstructionCode(Code& code)
 
                     // If it is true, then the parameter has already been added
                     if (!node->as_bool(prop_select))
-                        code.Comma().AddFalse();
+                        code.Comma().False();
                     code.Comma().itoa(idx_image);
                 }
                 code.EndFunction();

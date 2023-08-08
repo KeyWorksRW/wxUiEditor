@@ -63,12 +63,12 @@ bool SearchCtrlGenerator::SettingsCode(Code& code)
 
     if (code.IsTrue(prop_search_button))
     {
-        code.Eol(eol_if_empty).NodeName().Function("ShowSearchButton(").AddTrue().EndFunction();
+        code.Eol(eol_if_empty).NodeName().Function("ShowSearchButton(").True().EndFunction();
     }
 
     if (code.IsTrue(prop_cancel_button))
     {
-        code.Eol(eol_if_empty).NodeName().Function("ShowCancelButton(").AddTrue().EndFunction();
+        code.Eol(eol_if_empty).NodeName().Function("ShowCancelButton(").True().EndFunction();
     }
 
     return true;

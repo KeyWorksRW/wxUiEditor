@@ -505,7 +505,7 @@ bool StyledTextGenerator::SettingsCode(Code& code)
     // Default is false, so only set if true
     if (code.IsTrue(prop_read_only))
     {
-        code.Eol(eol_if_needed).NodeName().Function("SetReadOnly(").AddTrue().EndFunction();
+        code.Eol(eol_if_needed).NodeName().Function("SetReadOnly(").True().EndFunction();
     }
 
     if (code.hasValue(prop_eol_mode))
@@ -516,7 +516,7 @@ bool StyledTextGenerator::SettingsCode(Code& code)
     // Default is false, so only set if true
     if (code.IsTrue(prop_view_eol))
     {
-        code.Eol(eol_if_needed).NodeName().Function("SetViewEol(").AddTrue().EndFunction();
+        code.Eol(eol_if_needed).NodeName().Function("SetViewEol(").True().EndFunction();
     }
 
     if (!code.isPropValue(prop_view_whitespace, "invisible"))
@@ -582,7 +582,7 @@ bool StyledTextGenerator::SettingsCode(Code& code)
 
         if (!code.IsTrue(prop_additional_carets_visible))
         {
-            code.Eol().NodeName().Function("SetAdditionalCaretsVisible(").AddFalse().EndFunction();
+            code.Eol().NodeName().Function("SetAdditionalCaretsVisible(").False().EndFunction();
         }
         else
         {
@@ -692,7 +692,7 @@ bool StyledTextGenerator::SettingsCode(Code& code)
         code.Eol().NodeName().Function("SetMarginWidth(").Str(margin).Comma().Str("16").EndFunction();
         code.Eol().NodeName().Function("SetMarginType(").Str(margin).Comma().Add("wxSTC_MARGIN_SYMBOL").EndFunction();
         code.Eol().NodeName().Function("SetMarginMask(").Str(margin).Comma().Add("wxSTC_MASK_FOLDERS").EndFunction();
-        code.Eol().NodeName().Function("SetMarginSensitive(").Str(margin).Comma().AddTrue().EndFunction();
+        code.Eol().NodeName().Function("SetMarginSensitive(").Str(margin).Comma().True().EndFunction();
 
         if (node->hasValue(prop_automatic_folding))
         {

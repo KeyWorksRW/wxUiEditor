@@ -168,7 +168,7 @@ bool StaticCheckboxBoxSizerGenerator::SettingsCode(Code& code)
 {
     if (code.IsTrue(prop_disabled))
     {
-        code.Eol(eol_if_needed).NodeName().Function("GetStaticBox()->Enable(").AddFalse().EndFunction();
+        code.Eol(eol_if_needed).NodeName().Function("GetStaticBox()->Enable(").False().EndFunction();
     }
 
     if (code.hasValue(prop_tooltip) && code.is_cpp())
@@ -184,7 +184,7 @@ bool StaticCheckboxBoxSizerGenerator::AfterChildrenCode(Code& code)
 {
     if (code.IsTrue(prop_hide_children))
     {
-        code.NodeName().Function("ShowItems(").AddFalse().EndFunction();
+        code.NodeName().Function("ShowItems(").False().EndFunction();
     }
 
     auto parent = code.node()->getParent();

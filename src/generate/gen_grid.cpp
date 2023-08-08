@@ -145,9 +145,9 @@ bool GridGenerator::SettingsCode(Code& code)
     code.OpenBrace().NodeName().Function("CreateGrid(").Str(prop_rows).Comma().Str(prop_cols).EndFunction();
 
     if (code.IsFalse(prop_editing))
-        code.Eol().NodeName().Function("EnableEditing(").AddFalse().EndFunction();
+        code.Eol().NodeName().Function("EnableEditing(").False().EndFunction();
     if (code.IsFalse(prop_grid_lines))
-        code.Eol().NodeName().Function("EnableGridLines(").AddFalse().EndFunction();
+        code.Eol().NodeName().Function("EnableGridLines(").False().EndFunction();
     if (code.hasValue(prop_grid_line_color))
         code.Eol().NodeName().Function("SetGridLineColour(").ColourCode(prop_grid_line_color).EndFunction();
 
@@ -273,10 +273,10 @@ bool GridGenerator::SettingsCode(Code& code)
     }
 
     if (code.IsTrue(prop_drag_col_move))
-        code.Eol().NodeName().Function("EnableDragColMove(").AddTrue().EndFunction();
+        code.Eol().NodeName().Function("EnableDragColMove(").True().EndFunction();
 
     if (code.IsFalse(prop_drag_col_size))
-        code.Eol().NodeName().Function("EnableDragColSize(").AddFalse().EndFunction();
+        code.Eol().NodeName().Function("EnableDragColSize(").False().EndFunction();
 
     code.Eol().NodeName().Function("SetColLabelAlignment(");
     code.itoa(prop_col_label_horiz_alignment, prop_col_label_vert_alignment).EndFunction();
@@ -311,7 +311,7 @@ bool GridGenerator::SettingsCode(Code& code)
     }
 
     if (code.IsFalse(prop_drag_row_size))
-        code.Eol().NodeName().Function("EnableDragRowSize(").AddFalse().EndFunction();
+        code.Eol().NodeName().Function("EnableDragRowSize(").False().EndFunction();
 
     code.Eol().NodeName().Function("SetRowLabelAlignment(");
     code.itoa(prop_row_label_horiz_alignment, prop_row_label_vert_alignment).EndFunction();

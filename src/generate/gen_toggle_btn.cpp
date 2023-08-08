@@ -116,7 +116,7 @@ bool ToggleButtonGenerator::SettingsCode(Code& code)
 {
     if (code.IsTrue(prop_pressed))
     {
-        code.Eol(eol_if_needed).NodeName().Function("SetValue(").AddTrue().EndFunction();
+        code.Eol(eol_if_needed).NodeName().Function("SetValue(").True().EndFunction();
     }
 
     if (code.IsTrue(prop_markup) && code.hasValue(prop_label))

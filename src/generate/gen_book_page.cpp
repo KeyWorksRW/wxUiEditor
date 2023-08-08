@@ -219,14 +219,14 @@ bool BookPageGenerator::ConstructionCode(Code& code)
 
         // Default is false, so only add parameter if it is true.
         if (code.IsTrue(prop_select))
-            code.Comma().AddTrue();
+            code.Comma().True();
 
         if (node->hasValue(prop_bitmap) && is_display_images)
         {
             int idx_image = GetTreebookImageIndex(node);
             if (!node->as_bool(prop_select))
             {
-                code.Comma().AddFalse();
+                code.Comma().False();
             }
             code.Comma() << idx_image;
         }
@@ -240,7 +240,7 @@ bool BookPageGenerator::ConstructionCode(Code& code)
 
         // Default is false, so only add parameter if it is true.
         if (code.IsTrue(prop_select))
-            code.Comma().AddTrue();
+            code.Comma().True();
 
         if (node->hasValue(prop_bitmap) &&
             (node->getParent()->as_bool(prop_display_images) || node->getParent()->isGen(gen_wxToolbook)))
@@ -271,7 +271,7 @@ bool BookPageGenerator::ConstructionCode(Code& code)
                 }
             }
             if (!node->as_bool(prop_select))
-                code.Comma().AddFalse();
+                code.Comma().False();
             code.Comma() << idx_image;
         }
         code.EndFunction();

@@ -5,8 +5,12 @@ inline const char* doc_view_app_xml = R"===(<?xml version="1.0"?>
 		<inherits class="C++ Settings" />
 		<inherits class="C++ Header Settings" />
 		<inherits class="C++ Derived Class Settings" />
-		<inherits class="wxPython Frame Settings" />
-		<inherits class="wxRuby Frame Settings" />
+		<inherits class="wxPython Settings" />
+		<inherits class="wxRuby Settings" />
+		<inherits class="wxGo Settings" />
+		<inherits class="wxLua Settings" />
+		<inherits class="wxPerl Settings" />
+		<inherits class="wxRust Settings" />
 		<inherits class="wxMdiWindow" />
 		<inherits class="Window Events" />
 		<property name="class_name" type="string"

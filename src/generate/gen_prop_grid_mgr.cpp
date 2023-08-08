@@ -111,7 +111,7 @@ bool PropertyGridManagerGenerator::AfterChildrenCode(Code& code)
 {
     if (code.IsTrue(prop_show_header))
     {
-        code.NodeName().Function("ShowHeader(").AddTrue().EndFunction();
+        code.NodeName().Function("ShowHeader(").True().EndFunction();
         return true;
     }
     else

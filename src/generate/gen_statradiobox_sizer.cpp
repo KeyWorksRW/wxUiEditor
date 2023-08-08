@@ -160,7 +160,7 @@ bool StaticRadioBtnBoxSizerGenerator::SettingsCode(Code& code)
 {
     if (code.IsTrue(prop_disabled))
     {
-        code.NodeName().Function("GetStaticBox()->Enable(").AddFalse().EndFunction();
+        code.NodeName().Function("GetStaticBox()->Enable(").False().EndFunction();
     }
 
     if (code.hasValue(prop_tooltip) && code.is_cpp())
@@ -176,7 +176,7 @@ bool StaticRadioBtnBoxSizerGenerator::AfterChildrenCode(Code& code)
 {
     if (code.IsTrue(prop_hide_children))
     {
-        code.NodeName().Function("ShowItems(").AddFalse().EndFunction();
+        code.NodeName().Function("ShowItems(").False().EndFunction();
     }
 
     auto parent = code.node()->getParent();

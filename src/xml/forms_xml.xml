@@ -5,8 +5,12 @@ inline const char* forms_xml = R"===(<?xml version="1.0"?>
 		<inherits class="C++ Settings" />
 		<inherits class="C++ Header Settings" />
 		<inherits class="C++ Derived Class Settings" />
-		<inherits class="wxPython Frame Settings" />
-		<inherits class="wxRuby Frame Settings" />
+		<inherits class="wxPython Settings" />
+		<inherits class="wxRuby Settings" />
+		<inherits class="wxGo Settings" />
+		<inherits class="wxLua Settings" />
+		<inherits class="wxPerl Settings" />
+		<inherits class="wxRust Settings" />
 		<inherits class="XRC Settings" />
 		<inherits class="wxTopLevelWindow" />
 		<inherits class="Window Events" />
@@ -77,6 +81,10 @@ inline const char* forms_xml = R"===(<?xml version="1.0"?>
 		<inherits class="C++ Derived Class Settings" />
 		<inherits class="wxPython Settings" />
 		<inherits class="wxRuby Settings" />
+		<inherits class="wxGo Settings" />
+		<inherits class="wxLua Settings" />
+		<inherits class="wxPerl Settings" />
+		<inherits class="wxRust Settings" />
 		<property name="class_name" type="string"
 			help="The name of the base class.">MyPopupBase</property>
 		<property name="border" type="option"
@@ -117,6 +125,10 @@ inline const char* forms_xml = R"===(<?xml version="1.0"?>
 		<inherits class="C++ Derived Class Settings" />
 		<inherits class="wxPython Settings" />
 		<inherits class="wxRuby Settings" />
+		<inherits class="wxGo Settings" />
+		<inherits class="wxLua Settings" />
+		<inherits class="wxPerl Settings" />
+		<inherits class="wxRust Settings" />
 		<inherits class="XRC Settings" />
 		<inherits class="wxWindow">
 			<hide name="platforms" />

@@ -53,7 +53,7 @@ bool BoxSizerGenerator::AfterChildrenCode(Code& code)
 {
     if (code.IsTrue(prop_hide_children))
     {
-        code.NodeName().Function("ShowItems(").AddFalse().EndFunction();
+        code.NodeName().Function("ShowItems(").False().EndFunction();
     }
 
     auto parent = code.m_node->getParent();

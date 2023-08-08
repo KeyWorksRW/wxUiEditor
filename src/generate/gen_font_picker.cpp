@@ -53,9 +53,9 @@ bool FontPickerGenerator::ConstructionCode(Code& code)
         code.Comma().Add(font.GetWeightString().utf8_string()).Comma();
 
         if (fontprop.IsUnderlined())
-            code.AddTrue();
+            code.True();
         else
-            code.AddFalse();
+            code.False();
         code.Comma();
         if (fontprop.GetFaceName().size())
             code.QuotedString(fontprop.GetFaceName().utf8_string());

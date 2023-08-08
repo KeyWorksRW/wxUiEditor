@@ -94,7 +94,7 @@ bool StaticBoxSizerGenerator::SettingsCode(Code& code)
 {
     if (code.IsTrue(prop_disabled))
     {
-        code.NodeName().Function("GetStaticBox()->Enable(").AddFalse().EndFunction();
+        code.NodeName().Function("GetStaticBox()->Enable(").False().EndFunction();
     }
 
     return true;
@@ -104,7 +104,7 @@ bool StaticBoxSizerGenerator::AfterChildrenCode(Code& code)
 {
     if (code.IsTrue(prop_hide_children))
     {
-        code.NodeName().Function("ShowItems(").AddFalse().EndFunction();
+        code.NodeName().Function("ShowItems(").False().EndFunction();
     }
 
     auto parent = code.node()->getParent();

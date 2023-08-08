@@ -57,7 +57,7 @@ bool WrapSizerGenerator::AfterChildrenCode(Code& code)
 {
     if (code.IsTrue(prop_hide_children))
     {
-        code.NodeName().Function("ShowItems(").AddFalse().EndFunction();
+        code.NodeName().Function("ShowItems(").False().EndFunction();
     }
 
     auto parent = code.node()->getParent();

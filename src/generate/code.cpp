@@ -431,9 +431,9 @@ Code& Code::Add(tt_string_view text)
 Code& Code::TrueFalseIf(GenEnum::PropName prop_name)
 {
     if (m_node->as_bool(prop_name))
-        return AddTrue();
+        return True();
     else
-        return AddFalse();
+        return False();
 }
 
 Code& Code::AddConstant(GenEnum::PropName prop_name, tt_string_view short_name)
@@ -1606,11 +1606,11 @@ void Code::GenWindowSettings()
         Eol(eol_if_empty);
         if (!m_node->isForm())
         {
-            NodeName().Function("Enable(").AddFalse().EndFunction();
+            NodeName().Function("Enable(").False().EndFunction();
         }
         else
         {
-            FormFunction("Enable(").AddFalse().EndFunction();
+            FormFunction("Enable(").False().EndFunction();
         }
     }
 
@@ -1720,9 +1720,9 @@ void Code::GenFontColourSettings()
             if (fontprop.GetWeight() != wxFONTWEIGHT_NORMAL)
                 Eol().Str("font.SetWeight(").Str(font_weight_pairs.GetValue(fontprop.GetWeight())).EndFunction();
             if (fontprop.IsUnderlined())
-                Eol().Str("font.SetUnderlined(").AddTrue().EndFunction();
+                Eol().Str("font.SetUnderlined(").True().EndFunction();
             if (fontprop.IsStrikethrough())
-                Eol().Str("font.SetStrikethrough(").AddTrue().EndFunction();
+                Eol().Str("font.SetStrikethrough(").True().EndFunction();
             Eol();
 
             if (node->isForm())

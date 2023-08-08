@@ -60,7 +60,7 @@ bool GenericDirCtrlGenerator::SettingsCode(Code& code)
 {
     if (code.IsTrue(prop_show_hidden))
     {
-        code.NodeName().Function("ShowHidden(").AddTrue().EndFunction();
+        code.NodeName().Function("ShowHidden(").True().EndFunction();
     }
 
     if (code.IsTrue(prop_focus))

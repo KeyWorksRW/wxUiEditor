@@ -86,7 +86,7 @@ bool FileCtrlGenerator::SettingsCode(Code& code)
 
     if (code.IsTrue(prop_show_hidden))
     {
-        code.Eol(eol_if_empty).NodeName().Function("ShowHidden(").AddTrue().EndFunction();
+        code.Eol(eol_if_empty).NodeName().Function("ShowHidden(").True().EndFunction();
     }
 
     return true;

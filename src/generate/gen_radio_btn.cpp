@@ -61,7 +61,7 @@ bool RadioButtonGenerator::SettingsCode(Code& code)
 {
     if (code.IsTrue(prop_checked))
     {
-        code.NodeName().Function("SetValue(").AddTrue().EndFunction();
+        code.NodeName().Function("SetValue(").True().EndFunction();
     }
     return true;
 }

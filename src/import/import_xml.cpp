@@ -85,7 +85,13 @@ std::map<std::string_view, GenEnum::PropName, std::less<>> import_PropNames = {
     { "wxBitmapButton", gen_wxButton },
     { "wxListCtrl", gen_wxListView },
     { "wxScintilla", gen_wxStyledTextCtrl },
+
+    // DialogBlocks proxy conversion
     { "wxSpacer", gen_spacer },
+    { "wxMenuSeparator", gen_separator },
+    { "wxSubmenu", gen_submenu },
+    { "wxToolBarSeparator", gen_toolSeparator },
+    { "wxToolBarButton", gen_tool },
 
 };
 

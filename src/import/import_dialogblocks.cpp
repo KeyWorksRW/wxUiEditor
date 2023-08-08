@@ -367,11 +367,19 @@ void DialogBlocks::createChildNode(pugi::xml_node& child_xml, Node* parent)
         else
         {
             auto msg = GatherErrorDetails(child_xml, getGenName);
+            msg << ", Type: " << ExtractQuotedString(type);
             FAIL_MSG(tt_string() << "Unrecognized class in \"proxy-type\" property: " << ExtractQuotedString(type) << "\n"
                                  << msg)
             m_errors.emplace(tt_string("Unrecognized class in \"proxy-type\" property: ") << ExtractQuotedString(type));
         }
         return;
+    }
+
+    // DialogBlocks uses wbToolBarButtonProxy for all toolbar buttons, so MapClassName() always
+    // turns it into gen_tool.
+    if (getGenName == gen_tool && parent->isGen(gen_wxAuiToolBar))
+    {
+        getGenName = gen_auitool;
     }
 
     auto node = NodeCreation.createNode(getGenName, parent);
@@ -399,6 +407,7 @@ void DialogBlocks::createChildNode(pugi::xml_node& child_xml, Node* parent)
             add_buttons("proxy-wxID_SAVE", prop_Save);
             return;
         }
+
         if (parent->isSizer() && parent->getParent()->isForm())
         {
             node = NodeCreation.createNode(getGenName, parent->getParent());

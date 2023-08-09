@@ -267,7 +267,6 @@ bool MainFrame::Create(wxWindow* parent, wxWindowID id, const wxString& title,
         m_statusBar->SetStatusStyles(2, sb_field_styles);
     }
 
-
     Centre(wxBOTH);
 
     // Event handlers

@@ -54,6 +54,13 @@
 #include <wx/tglbtn.h>
 #include <wx/timectrl.h>
 
+namespace wxue_img
+{
+    // Images declared in this class module:
+
+    extern const unsigned char clr_hourglass_gif[2017];
+}
+
 class MainTestDialog : public wxDialog
 {
 public:
@@ -172,13 +179,6 @@ protected:
     wxToggleButton* m_toggleBtn;
     wxToggleButton* m_toggleBtn_2;
 };
-
-namespace wxue_img
-{
-    // Images declared in this class module:
-
-    extern const unsigned char clr_hourglass_gif[2017];
-}
 
 // ************* End of generated code ***********
 // DO NOT EDIT THIS COMMENT BLOCK!

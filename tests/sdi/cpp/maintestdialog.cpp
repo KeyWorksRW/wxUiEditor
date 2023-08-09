@@ -219,8 +219,8 @@ bool MainTestDialog::Create(wxWindow* parent, wxWindowID id, const wxString& tit
 
     box_sizer_3->Add(box_sizer_7, wxSizerFlags().Border(wxALL));
 
-    auto* static_line = new wxStaticLine(page_4, wxID_ANY, wxDefaultPosition,
-        ConvertDialogToPixels(wxSize(20, -1)), wxLI_HORIZONTAL);
+    auto* static_line = new wxStaticLine(page_4, wxID_ANY, wxDefaultPosition, ConvertDialogToPixels(wxSize(20, -1)),
+        wxLI_HORIZONTAL);
     box_sizer_3->Add(static_line, wxSizerFlags().Expand().Border(wxALL));
 
     auto* box_sizer_19 = new wxBoxSizer(wxHORIZONTAL);

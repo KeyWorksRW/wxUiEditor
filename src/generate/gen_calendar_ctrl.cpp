@@ -41,7 +41,7 @@ bool CalendarCtrlGenerator::ConstructionCode(Code& code)
     }
     else
     {
-        code.Add("wxDefaultDateTime, ");
+        code.Add("wxDefaultDateTime");
     }
     code.PosSizeFlags(true);
 

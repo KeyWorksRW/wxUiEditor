@@ -163,8 +163,15 @@ void StaticTextGenerator::RequiredHandlers(Node* /* node */, std::set<std::strin
 bool StaticTextGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
     InsertGeneratorInclude(node, "#include <wx/stattext.h>", set_src, set_hdr);
+    if (node->as_bool(prop_markup) && node->as_int(prop_wrap) <= 0)
+        InsertGeneratorInclude(node, "#include <wx/generic/stattextg.h>", set_src, set_hdr);
     if (node->as_string(prop_validator_variable).size())
         set_src.insert("#include <wx/valgen.h>");
 
     return true;
+}
+
+bool StaticTextGenerator::IsGeneric(Node* node)
+{
+    return (node->as_bool(prop_markup) && node->as_int(prop_wrap) <= 0);
 }

@@ -148,6 +148,21 @@ void PropGridPanel::SaveDescBoxHeight()
     config->SetPath("/");
 }
 
+static std::map<int, std::string> s_lang_category_prefix = {
+
+    { GEN_LANG_CPLUSPLUS, "C++" },
+    { GEN_LANG_PYTHON, "wxPython" },
+    { GEN_LANG_RUBY, "wxRuby" },
+    { GEN_LANG_XRC, "XRC" },
+
+    // experimental languages
+
+    { GEN_LANG_GOLANG, "wxGo" },
+    { GEN_LANG_LUA, "wxLua" },
+    { GEN_LANG_PERL, "wxPerl" },
+    { GEN_LANG_RUST, "wxRust" },
+};
+
 void PropGridPanel::Create()
 {
     if (m_locked)
@@ -167,6 +182,7 @@ void PropGridPanel::Create()
         wxGetMainFrame()->SetStatusText(wxEmptyString, 2);
 
         m_currentSel = node;
+        m_preferred_lang = Project.getCodePreference(node);
 
         wxString pageName;
         if (int pageNumber = m_prop_grid->GetSelectedPage(); pageNumber != wxNOT_FOUND)
@@ -185,6 +201,8 @@ void PropGridPanel::Create()
         m_property_map.clear();
         m_event_map.clear();
 
+        tt_string lang_created;
+
         if (auto declaration = node->getNodeDeclaration(); declaration)
         {
             // These sets are used to prevent trying to add a duplicate property or event to the property grid. In Debug
@@ -199,16 +217,106 @@ void PropGridPanel::Create()
 
             // Calling GetBaseClassCount() is exepensive, so do it once and store the result
             auto num_base_classes = declaration->GetBaseClassCount();
-            for (size_t i = 0; i < num_base_classes; i++)
-            {
-                auto info_base = declaration->GetBaseClass(i);
-                if (info_base->isGen(gen_sizer_child))
-                    continue;
-                if (!info_base->declName().is_sameas("Window Events"))
-                    CreatePropCategory(info_base->declName(), node, info_base, prop_set);
-                CreateEventCategory(info_base->declName(), node, info_base, event_set);
-            }
 
+            auto& lang_prefix = s_lang_category_prefix[m_preferred_lang];
+
+            if (node->isForm() || node->isGen(gen_Project))
+            {
+                bool lang_found = false;
+                size_t lang_start = 0;
+                for (size_t i = 0; i < num_base_classes; i++)
+                {
+                    auto* info_base = declaration->GetBaseClass(i);
+                    if (info_base->isGen(gen_sizer_child))
+                        continue;
+                    if (!lang_found)
+                    {
+                        // There are a few forms like gen_wxDialog which have have a category
+                        // that appears *before* the various language categories. All
+                        // non-language categories need to be created in the same order as they
+                        // were specified in the XML interface file, so create those here if we
+                        // haven't seen a language category yet.
+
+                        for (auto& iter: s_lang_category_prefix)
+                        {
+                            if (info_base->declName().contains(iter.second))
+                            {
+                                lang_found = true;
+                                lang_start = i;  // save this for the for loop used later
+                                break;
+                            }
+                        }
+                        if (!lang_found)
+                        {
+                            if (!info_base->declName().is_sameas("Window Events"))
+                                CreatePropCategory(info_base->declName(), node, info_base, prop_set);
+                            else
+                                CreateEventCategory(info_base->declName(), node, info_base, event_set);
+                            continue;
+                        }
+                    }
+
+                    // We get here if we've seen a language category, so we check to see if it
+                    // is the preferred language, and if so, create it now and break out of the
+                    // loop.
+                    if (info_base->declName().is_sameprefix(lang_prefix))
+                    {
+                        CreatePropCategory(info_base->declName(), node, info_base, prop_set);
+
+                        // C++ settings are divided into three categories in consecutive order,
+                        // so we need to create the other two categories here if the preferred
+                        // language is C++.
+
+                        if (m_preferred_lang == GEN_LANG_CPLUSPLUS && info_base->declName().contains("Settings"))
+                        {
+                            info_base = declaration->GetBaseClass(++i);
+                            CreatePropCategory(info_base->declName(), node, info_base, prop_set);
+                            info_base = declaration->GetBaseClass(++i);
+                            CreatePropCategory(info_base->declName(), node, info_base, prop_set);
+                        }
+
+                        break;
+                    }
+                }
+
+                // At this point, we've created any pre-language categories, and the preferred language
+                // categories. Now we create any remaining categories.
+                for (; lang_start < num_base_classes; lang_start++)
+                {
+                    auto* info_base = declaration->GetBaseClass(lang_start);
+                    if (info_base->isGen(gen_sizer_child))
+                        continue;
+                    if (!info_base->declName().is_sameas("Window Events"))
+                    {
+                        if (info_base->declName().is_sameprefix(lang_prefix))
+                        {
+                            if (m_preferred_lang == GEN_LANG_CPLUSPLUS && info_base->declName().contains("Settings"))
+                            {
+                                lang_start += 2;  // skip over Header Settings and Derived Class Settings
+                            }
+                            continue;  // already added above
+                        }
+                        CreatePropCategory(info_base->declName(), node, info_base, prop_set);
+                    }
+                    CreateEventCategory(info_base->declName(), node, info_base, event_set);
+                }
+            }
+            else
+            {
+                for (size_t i = 0; i < num_base_classes; i++)
+                {
+                    auto* info_base = declaration->GetBaseClass(i);
+                    if (info_base->isGen(gen_sizer_child))
+                        continue;
+                    if (!info_base->declName().is_sameas("Window Events"))
+                    {
+                        if ((node->isForm() || node->isGen(gen_Project)) && info_base->declName().is_sameprefix(lang_prefix))
+                            continue;  // already added above
+                        CreatePropCategory(info_base->declName(), node, info_base, prop_set);
+                    }
+                    CreateEventCategory(info_base->declName(), node, info_base, event_set);
+                }
+            }
             if (node->isSpacer())
             {
                 if (node->isParent(gen_wxGridBagSizer))

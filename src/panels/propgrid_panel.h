@@ -125,6 +125,8 @@ private:
     // Class decorations
     wxArrayString m_astr_wx_decorations;
 
+    int m_preferred_lang { GEN_LANG_CPLUSPLUS };
+
     bool m_isPropChangeSuspended { false };
 
     bool m_locked { false };

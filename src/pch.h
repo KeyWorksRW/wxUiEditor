@@ -140,6 +140,9 @@ namespace xrc
     };
 }  // namespace xrc
 
+// Maps tt_string_view to std::string_view, allowing std::string_view comparisons
+using view_map = std::map<tt_string_view, std::string_view, std::less<>>;
+
 // When chaniging txtVersion, you also need to change the version in wxUiEditor.rc and
 // wxUiEditor.exe.manifest and ../CMakeLists.txt
 

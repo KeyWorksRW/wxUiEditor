@@ -95,7 +95,7 @@ std::map<std::string_view, GenEnum::PropName, std::less<>> import_PropNames = {
 
 };
 
-std::map<std::string_view, std::string_view, std::less<>> s_map_old_events = {
+static const view_map s_map_old_events = {
 
 
     { "wxEVT_COMMAND_BUTTON_CLICKED",          "wxEVT_BUTTON" },
@@ -127,10 +127,10 @@ std::map<std::string_view, std::string_view, std::less<>> s_map_old_events = {
     { "wxEVT_COMMAND_VLBOX_SELECTED",          "wxEVT_VLBOX" },
 
 };
-    // clang-format on
 
 };  // namespace xrc_import
 
+// clang-format on
 using namespace xrc_import;
 
 std::optional<pugi::xml_document> ImportXML::LoadDocFile(const tt_string& file)

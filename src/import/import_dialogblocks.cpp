@@ -817,7 +817,7 @@ auto lst_style = std::to_array({
 
 });
 
-std::map<std::string_view, std::string_view, std::less<>> s_map_old_borders = {
+static const view_map s_map_old_borders = {
 
     { "wxDOUBLE_BORDER", "wxBORDER_DOUBLE" },
     { "wxSUNKEN_BORDER", "wxBORDER_SUNKEN" },

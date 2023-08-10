@@ -40,9 +40,7 @@ bool GaugeGenerator::OnPropertyChange(wxObject* widget, Node* /* node */, NodePr
 
 bool GaugeGenerator::ConstructionCode(Code& code)
 {
-    if (code.is_cpp() && code.is_local_var())
-        code << "auto* ";
-    code.NodeName().CreateClass();
+    code.AddAuto().NodeName().CreateClass();
     code.ValidParentName().Comma().as_string(prop_id).Comma().as_string(prop_range);
     code.PosSizeFlags(true);
 

@@ -1160,9 +1160,11 @@ void GenToolCode(Code& code, const bool is_bitmaps_list)
     code.Eol(eol_if_needed);
     if (node->as_bool(prop_disabled) || (node->as_string(prop_id) == "wxID_ANY" && node->getInUseEventCount()))
     {
-        if (node->isLocal() && code.is_cpp())
-            code << "auto* ";
-        code.NodeName() << " = ";
+        code.AddAuto().NodeName();
+        if (code.is_golang())
+            code += " := ";
+        else
+            code += " = ";
     }
 
     if ((node->isLocal() && node->isGen(gen_tool_dropdown)) ||

@@ -59,9 +59,7 @@ wxObject* AnimationGenerator::CreateMockup(Node* node, wxObject* parent)
 
 bool AnimationGenerator::ConstructionCode(Code& code)
 {
-    if (code.is_cpp() && code.is_local_var())
-        code << "auto* ";
-    code.NodeName().CreateClass();
+    code.AddAuto().NodeName().CreateClass();
     code.ValidParentName().Comma().as_string(prop_id).Comma().CheckLineLength();
     // TODO: [Randalphwa - 12-08-2022] Enable Python support once image handling is worked out
     if (code.hasValue(prop_animation))

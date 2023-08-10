@@ -61,9 +61,7 @@ wxObject* HyperlinkGenerator::CreateMockup(Node* node, wxObject* parent)
 
 bool HyperlinkGenerator::ConstructionCode(Code& code)
 {
-    if (code.is_cpp() && code.is_local_var())
-        code << "auto* ";
-    code.NodeName().CreateClass();
+    code.AddAuto().NodeName().CreateClass();
     if (code.is_cpp() && !code.IsTrue(prop_underlined))
         code.Replace("wxHyperlinkCtrl", "wxGenericHyperlinkCtrl");
 

@@ -48,9 +48,7 @@ void ToolbookGenerator::OnPageChanged(wxBookCtrlEvent& event)
 
 bool ToolbookGenerator::ConstructionCode(Code& code)
 {
-    if (code.is_cpp() && code.is_local_var())
-        code << "auto* ";
-    code.NodeName().CreateClass();
+    code.AddAuto().NodeName().CreateClass();
     code.ValidParentName().Comma().as_string(prop_id).PosSizeFlags(false);
 
     BookCtorAddImagelist(code);

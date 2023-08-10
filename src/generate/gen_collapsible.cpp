@@ -56,9 +56,7 @@ void CollapsiblePaneGenerator::OnCollapse(wxCollapsiblePaneEvent& event)
 
 bool CollapsiblePaneGenerator::ConstructionCode(Code& code)
 {
-    if (code.is_cpp() && code.is_local_var())
-        code << "auto* ";
-    code.NodeName().CreateClass();
+    code.AddAuto().NodeName().CreateClass();
     code.ValidParentName().Comma().as_string(prop_id).Comma().QuotedString(prop_label);
     code.PosSizeFlags(true, "wxCP_DEFAULT_STYLE");
 

@@ -28,9 +28,7 @@ wxObject* StaticLineGenerator::CreateMockup(Node* node, wxObject* parent)
 
 bool StaticLineGenerator::ConstructionCode(Code& code)
 {
-    if (code.is_cpp() && code.is_local_var())
-        code << "auto* ";
-    code.NodeName().CreateClass();
+    code.AddAuto().NodeName().CreateClass();
     code.ValidParentName();
     if (!code.IsEqualTo(prop_id, "wxID_ANY") || code.hasValue(prop_pos) || code.hasValue(prop_size) ||
         code.hasValue(prop_window_name) || code.PropContains(prop_style, "wxLI_VERTICAL"))

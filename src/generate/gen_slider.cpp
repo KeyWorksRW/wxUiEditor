@@ -57,9 +57,7 @@ bool SliderGenerator::OnPropertyChange(wxObject* widget, Node* /* node */, NodeP
 
 bool SliderGenerator::ConstructionCode(Code& code)
 {
-    if (code.is_cpp() && code.is_local_var())
-        code << "auto* ";
-    code.NodeName().CreateClass();
+    code.AddAuto().NodeName().CreateClass();
     code.ValidParentName().Comma().as_string(prop_id).Comma();
     code.as_string(prop_position).Comma().as_string(prop_minValue).Comma().as_string(prop_maxValue);
     code.PosSizeFlags(true);

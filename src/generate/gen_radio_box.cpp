@@ -80,9 +80,7 @@ bool RadioBoxGenerator::ConstructionCode(Code& code)
     }
 
     code.Str((code.is_cpp() ? "// " : "# ")).Str("Trailing spaces added to avoid clipping").Eol();
-    if (code.is_cpp() && code.is_local_var())
-        code << "auto* ";
-    code.NodeName().CreateClass();
+    code.AddAuto().NodeName().CreateClass();
     code.ValidParentName().Comma().as_string(prop_id).Comma().QuotedString(prop_label);
     code.Comma().Pos().Comma().WxSize().Comma();
     if (code.is_cpp())

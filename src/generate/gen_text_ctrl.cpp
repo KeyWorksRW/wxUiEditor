@@ -101,9 +101,7 @@ bool TextCtrlGenerator::OnPropertyChange(wxObject* widget, Node* node, NodePrope
 
 bool TextCtrlGenerator::ConstructionCode(Code& code)
 {
-    if (code.is_cpp() && code.is_local_var())
-        code << "auto* ";
-    code.NodeName().CreateClass();
+    code.AddAuto().NodeName().CreateClass();
     code.ValidParentName().Comma().as_string(prop_id).Comma().CheckLineLength();
     code.QuotedString(prop_value);
     code.PosSizeFlags(true);

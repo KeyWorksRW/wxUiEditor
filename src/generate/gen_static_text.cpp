@@ -73,9 +73,12 @@ bool StaticTextGenerator::OnPropertyChange(wxObject* widget, Node* node, NodePro
 
 bool StaticTextGenerator::ConstructionCode(Code& code)
 {
-    if (code.is_cpp() && code.is_local_var())
-        code << "auto* ";
-    code.NodeName().CreateClass((code.m_node->as_bool(prop_markup) && code.m_node->as_int(prop_wrap) <= 0));
+    code.AddAuto().NodeName();
+    // Neither wxPython or wxRuby3 support wxGenericStaticText
+    if (code.is_cpp())
+        code.CreateClass((code.m_node->as_bool(prop_markup) && code.m_node->as_int(prop_wrap) <= 0));
+    else
+        code.CreateClass();
     code.ValidParentName().Comma().as_string(prop_id).Comma();
     if (code.m_node->as_bool(prop_markup))
     {

@@ -426,6 +426,14 @@ Code& Code::AddAuto()
     {
         *this += "auto* ";
     }
+    else if (is_perl())
+    {
+        *this += "my ";
+    }
+    else if (is_rust())
+    {
+        *this += "let ";
+    }
     return *this;
 }
 
@@ -561,11 +569,11 @@ Code& Code::AddConstant(GenEnum::PropName prop_name, tt_string_view short_name)
 
 Code& Code::Function(tt_string_view text)
 {
-    if (is_cpp())
+    if (is_cpp() || is_perl())
     {
         *this << "->" << text;
     }
-    else if (is_python() || is_ruby() || is_rust())
+    else if (is_golang() || is_lua() || is_python() || is_ruby() || is_rust())
     {
         *this << '.';
         if (text.is_sameprefix("wx"))
@@ -619,6 +627,10 @@ Code& Code::FormFunction(tt_string_view text)
     {
         *this += "self.";
     }
+    else if (is_golang())
+    {
+        *this += "f.";
+    }
     else if (is_ruby())
     {
         *this += ConvertToSnakeCase(text);
@@ -662,7 +674,10 @@ Code& Code::Class(tt_string_view text)
 
 Code& Code::CreateClass(bool use_generic, tt_string_view override_name)
 {
-    *this += " = ";
+    if (is_golang())
+        *this += " := ";
+    else
+        *this += " = ";
     if (is_cpp())
     {
         *this += "new ";
@@ -781,6 +796,10 @@ Code& Code::NodeName(Node* node)
     if (is_python() && !node->isForm() && !node->isLocal())
     {
         *this += "self.";
+    }
+    else if (is_perl())
+    {
+        *this += "$";
     }
     else if (is_ruby())
     {

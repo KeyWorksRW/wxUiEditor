@@ -52,6 +52,9 @@ namespace code
 // Assume anyone including this header file needs access to the code namespace
 using namespace code;
 
+extern const view_map g_map_python_prefix;
+extern const view_map g_map_ruby_prefix;
+
 class Code : public tt_string
 {
 public:

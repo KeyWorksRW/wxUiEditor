@@ -483,6 +483,18 @@ Code& Code::as_string(PropName prop_name)
 
 Code& Code::Add(tt_string_view text)
 {
+    bool old_linebreak = m_auto_break;
+    if (is_ruby())
+    {
+        // Ruby doesn't like breaking the parenthesis for a function call onto the next line,
+        // or the .new function
+        if (text.front() == '.' || text.front() == '(')
+        {
+            old_linebreak = m_auto_break;
+            m_auto_break = false;
+        }
+    }
+
     if (is_cpp() || text.size() < 3)
     {
         CheckLineLength(text.size());
@@ -550,6 +562,9 @@ Code& Code::Add(tt_string_view text)
             *this += text;
         }
     }
+
+    // In case linebreak was shut off
+    m_auto_break = old_linebreak;
 
     return *this;
 }

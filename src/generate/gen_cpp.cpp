@@ -689,8 +689,8 @@ void BaseCodeGenerator::GenerateCppClassHeader(Node* form_node, EventVector& eve
 
     code.Str("class ");
     if (form_node->hasValue(prop_class_decoration))
-        code.Str(prop_class_decoration) += " ";
-    code.Str(prop_class_name) += " : public ";
+        code.as_string(prop_class_decoration) += " ";
+    code.as_string(prop_class_name) += " : public ";
     if (generator->BaseClassNameCode(code))
     {
         if (m_form_node->hasValue(prop_additional_inheritance))
@@ -743,7 +743,7 @@ void BaseCodeGenerator::GenerateCppClassHeader(Node* form_node, EventVector& eve
         {
             code.Eol(eol_if_needed).Str("const int form_style = ");
             if (form_node->as_string(prop_style).size())
-                code.Str(prop_style) += ";";
+                code.as_string(prop_style) += ";";
             else
                 code.Str("0;");
         }
@@ -751,7 +751,7 @@ void BaseCodeGenerator::GenerateCppClassHeader(Node* form_node, EventVector& eve
         {
             code.Eol(eol_if_needed).Str("const int form_style = ");
             if (form_node->as_string(prop_window_style).size())
-                code.Str(prop_window_style) += ";";
+                code.as_string(prop_window_style) += ";";
             else
                 code.Str("0;");
         }
@@ -763,7 +763,7 @@ void BaseCodeGenerator::GenerateCppClassHeader(Node* form_node, EventVector& eve
         {
             code.Eol(eol_if_needed).Str("static const wxString form_title() { return ");
             if (form_node->hasValue(prop_title))
-                code.Str("wxString::FromUTF8(\"").Str(prop_title) += "\"); }";
+                code.Str("wxString::FromUTF8(\"").as_string(prop_title) += "\"); }";
             else
                 code.Str("wxEmptyString; }");
         }

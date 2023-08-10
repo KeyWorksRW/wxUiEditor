@@ -24,10 +24,10 @@ bool SpacerGenerator::ConstructionCode(Code& code)
     {
         auto flags = node->getSizerFlags();
 
-        code.Function("Add(").Str(prop_width).Comma().Str(prop_height);
-        code.Comma().Add("wxGBPosition(").Str(prop_row).Comma().Str(prop_column) += ")";
-        code.Comma().Add("wxGBSpan(").Str(prop_rowspan).Comma().Str(prop_colspan) += ")";
-        code.Comma().itoa(flags.GetFlags()).Comma().Str(prop_border_size);
+        code.Function("Add(").as_string(prop_width).Comma().as_string(prop_height);
+        code.Comma().Add("wxGBPosition(").as_string(prop_row).Comma().as_string(prop_column) += ")";
+        code.Comma().Add("wxGBSpan(").as_string(prop_rowspan).Comma().as_string(prop_colspan) += ")";
+        code.Comma().itoa(flags.GetFlags()).Comma().as_string(prop_border_size);
         if (node->as_bool(prop_add_default_border))
         {
             code.Str(" + ").Add("wxSizerFlags").ClassMethod("GetDefaultBorder()");
@@ -44,29 +44,29 @@ bool SpacerGenerator::ConstructionCode(Code& code)
         {
             if (node->as_int(prop_width) == node->as_int(prop_height))
             {
-                code.Function("AddSpacer(").Str(prop_width);
+                code.Function("AddSpacer(").as_string(prop_width);
             }
             else if (node->getParent()->hasValue(prop_orientation))
             {
                 code.Function("AddSpacer(");
                 if (node->getParent()->as_string(prop_orientation) == "wxVERTICAL")
                 {
-                    code.Str(prop_height);
+                    code.as_string(prop_height);
                 }
                 else
                 {
-                    code.Str(prop_width);
+                    code.as_string(prop_width);
                 }
             }
 
             else
             {
-                code.Function("Add(").Str(prop_width);
+                code.Function("Add(").as_string(prop_width);
                 if (node->as_bool(prop_add_default_border))
                 {
                     code.Str(" + ").Add("wxSizerFlags").ClassMethod("GetDefaultBorder()");
                 }
-                code.Comma().Str(prop_height);
+                code.Comma().as_string(prop_height);
             }
 
             if (node->as_bool(prop_add_default_border))

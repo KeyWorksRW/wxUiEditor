@@ -103,7 +103,7 @@ bool RadioBoxGenerator::ConstructionCode(Code& code)
         code.GetCode().pop_back();  // remove the last comma
         code << "]";
     }
-    code.Comma().CheckLineLength(3).Str(prop_majorDimension);
+    code.Comma().CheckLineLength(3).as_string(prop_majorDimension);
     code.Comma().Style("rb_");
     if (code.hasValue(prop_window_name))
     {
@@ -118,7 +118,7 @@ bool RadioBoxGenerator::SettingsCode(Code& code)
 {
     if (auto sel = code.IntValue(prop_selection); sel > 0)
     {
-        code.NodeName().Function("SetSelection(").Str(prop_selection).EndFunction();
+        code.NodeName().Function("SetSelection(").as_string(prop_selection).EndFunction();
     }
 
     return true;

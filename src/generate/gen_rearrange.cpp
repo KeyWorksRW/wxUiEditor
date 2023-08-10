@@ -151,7 +151,7 @@ bool RearrangeCtrlGenerator::SettingsCode(Code& code)
                     .NodeName()
                     .Function("GetList()")
                     .Function("SetSelection(")
-                    .Str(prop_selection_int)
+                    .as_string(prop_selection_int)
                     .EndFunction();
             }
         }

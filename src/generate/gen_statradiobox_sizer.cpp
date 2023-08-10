@@ -131,7 +131,7 @@ bool StaticRadioBtnBoxSizerGenerator::ConstructionCode(Code& code)
             code.as_string(prop_radiobtn_var_name) << "),";
             code.Eol().Str("#else").Eol().Tab().Str("wxEmptyString),");
             code.Eol().Str("#endif").Eol();
-            code.Str(prop_orientation).EndFunction();
+            code.as_string(prop_orientation).EndFunction();
         }
         else
         {
@@ -140,7 +140,7 @@ bool StaticRadioBtnBoxSizerGenerator::ConstructionCode(Code& code)
     }
     else
     {
-        code.NodeName().CreateClass(false, "wxStaticBoxSizer").Str(prop_orientation).Comma().Str(parent_name);
+        code.NodeName().CreateClass(false, "wxStaticBoxSizer").as_string(prop_orientation).Comma().Str(parent_name);
         if (code.hasValue(prop_label))
         {
             code.Comma().QuotedString(prop_label);

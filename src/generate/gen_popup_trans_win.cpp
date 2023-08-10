@@ -19,7 +19,7 @@ bool PopupWinGenerator::ConstructionCode(Code& code)
 {
     if (code.is_cpp())
     {
-        code.Str(prop_class_name).Str("::").Str(prop_class_name);
+        code.as_string(prop_class_name).Str("::").as_string(prop_class_name);
         code += "(wxWindow* parent, int style) : wxPopupTransientWindow(parent, style)\n{";
     }
     else
@@ -46,7 +46,7 @@ bool PopupWinGenerator::SettingsCode(Code& code)
 
 bool PopupWinGenerator::HeaderCode(Code& code)
 {
-    code.NodeName().Str("(wxWindow* parent, int style = ").Str(prop_border);
+    code.NodeName().Str("(wxWindow* parent, int style = ").as_string(prop_border);
     if (code.hasValue(prop_style))
     {
         code.Str(" | ").Add(prop_style);
@@ -60,7 +60,7 @@ bool PopupWinGenerator::BaseClassNameCode(Code& code)
 {
     if (code.hasValue(prop_derived_class))
     {
-        code.Str((prop_derived_class));
+        code.as_string(prop_derived_class);
     }
     else
     {

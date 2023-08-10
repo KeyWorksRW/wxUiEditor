@@ -62,7 +62,7 @@ bool SimplebookGenerator::SettingsCode(Code& code)
 
         if (code.IntValue(prop_duration) != 0)
         {
-            code.NodeName().Function("SetEffectTimeout(").Str(prop_duration).EndFunction();
+            code.NodeName().Function("SetEffectTimeout(").as_string(prop_duration).EndFunction();
         }
     }
     return true;

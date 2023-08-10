@@ -172,7 +172,7 @@ bool SpinCtrlDoubleGenerator::ConstructionCode(Code& code)
         return true;
     }
     code.Comma().as_string(prop_id).Comma().Add("wxEmptyString").Comma().Pos().Comma().WxSize().Comma().Style();
-    code.Comma().Str(prop_min).Comma().Str(prop_max).Comma().Str(prop_initial).Comma().Str(prop_inc);
+    code.Comma().as_string(prop_min).Comma().as_string(prop_max).Comma().as_string(prop_initial).Comma().as_string(prop_inc);
     if (needed_parms & window_name_needed)
         code.Comma().QuotedString(prop_window_name);
     code.EndFunction();
@@ -184,7 +184,7 @@ bool SpinCtrlDoubleGenerator::SettingsCode(Code& code)
 {
     if (code.IntValue(prop_digits) > 0)
     {
-        code.NodeName().Function("SetDigits(").Str(prop_digits).EndFunction();
+        code.NodeName().Function("SetDigits(").as_string(prop_digits).EndFunction();
     }
 
     return true;

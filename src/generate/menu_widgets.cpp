@@ -245,7 +245,7 @@ bool MenuBarFormGenerator::ConstructionCode(Code& code)
 {
     if (code.is_cpp())
     {
-        code.Str((prop_class_name)).Str("::").Str(prop_class_name);
+        code.as_string(prop_class_name).Str("::").as_string(prop_class_name);
         code.Str("(long style) : wxMenuBar(style)\n{");
     }
     else
@@ -272,7 +272,7 @@ bool MenuBarFormGenerator::BaseClassNameCode(Code& code)
 {
     if (code.hasValue(prop_derived_class))
     {
-        code.Str((prop_derived_class));
+        code.as_string(prop_derived_class);
     }
     else
     {
@@ -321,7 +321,7 @@ bool PopupMenuGenerator::ConstructionCode(Code& code)
 {
     if (code.is_cpp())
     {
-        code.Str((prop_class_name)).Str("::").Str(prop_class_name);
+        code.as_string(prop_class_name).Str("::").as_string(prop_class_name);
         code.Str("() : wxMenu()\n{");
     }
     else
@@ -348,7 +348,7 @@ bool PopupMenuGenerator::BaseClassNameCode(Code& code)
 {
     if (code.hasValue(prop_derived_class))
     {
-        code.Str((prop_derived_class));
+        code.as_string(prop_derived_class);
     }
     else
     {

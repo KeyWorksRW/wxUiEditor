@@ -142,7 +142,7 @@ bool GridGenerator::ConstructionCode(Code& code)
 
 bool GridGenerator::SettingsCode(Code& code)
 {
-    code.OpenBrace().NodeName().Function("CreateGrid(").Str(prop_rows).Comma().Str(prop_cols).EndFunction();
+    code.OpenBrace().NodeName().Function("CreateGrid(").as_string(prop_rows).Comma().as_string(prop_cols).EndFunction();
 
     if (code.IsFalse(prop_editing))
         code.Eol().NodeName().Function("EnableEditing(").False().EndFunction();
@@ -265,7 +265,7 @@ bool GridGenerator::SettingsCode(Code& code)
 
     if (code.IntValue(prop_default_col_size) > 0)
     {
-        code.Eol().NodeName().Function("SetDefaultColSize(").Str(prop_default_col_size).EndFunction();
+        code.Eol().NodeName().Function("SetDefaultColSize(").as_string(prop_default_col_size).EndFunction();
     }
     else if (code.IsTrue(prop_autosize_cols))
     {
@@ -286,7 +286,7 @@ bool GridGenerator::SettingsCode(Code& code)
     else if (code.IntValue(prop_col_label_size) == 0)
         code.Eol().NodeName().Function("HideColLabels(").EndFunction();
     else
-        code.Eol().NodeName().Function("SetColLabelSize(").Str(prop_col_label_size).EndFunction();
+        code.Eol().NodeName().Function("SetColLabelSize(").as_string(prop_col_label_size).EndFunction();
 
     if (code.hasValue(prop_col_label_values))
     {
@@ -303,7 +303,7 @@ bool GridGenerator::SettingsCode(Code& code)
 
     if (code.IntValue(prop_default_row_size) > 0)
     {
-        code.Eol().NodeName().Function("SetDefaultRowSize(").Str(prop_default_row_size).EndFunction();
+        code.Eol().NodeName().Function("SetDefaultRowSize(").as_string(prop_default_row_size).EndFunction();
     }
     else if (code.IsTrue(prop_autosize_rows))
     {
@@ -321,7 +321,7 @@ bool GridGenerator::SettingsCode(Code& code)
     else if (code.IntValue(prop_row_label_size) == 0)
         code.Eol().NodeName().Function("HideRowLabels(").EndFunction();
     else
-        code.Eol().NodeName().Function("SetRowLabelSize(").Str(prop_row_label_size).EndFunction();
+        code.Eol().NodeName().Function("SetRowLabelSize(").as_string(prop_row_label_size).EndFunction();
 
     if (code.hasValue(prop_col_label_values))
     {

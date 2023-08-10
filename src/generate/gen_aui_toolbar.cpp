@@ -111,7 +111,7 @@ bool AuiToolBarFormGenerator::ConstructionCode(Code& code)
     // Note: Form construction is called before any indentation is set
     if (code.is_cpp())
     {
-        code.Str((prop_class_name)).Str("::").Str(prop_class_name);
+        code.as_string(prop_class_name).Str("::").as_string(prop_class_name);
         code += "(wxWindow* parent, wxWindowID id";
         code.Comma().Str("const wxPoint& pos").Comma().Str("const wxSize& size");
         code.Comma().Str("long style)");
@@ -203,7 +203,7 @@ bool AuiToolBarFormGenerator::BaseClassNameCode(Code& code)
 {
     if (code.hasValue(prop_derived_class))
     {
-        code.Str((prop_derived_class));
+        code.as_string(prop_derived_class);
     }
     else
     {
@@ -227,17 +227,17 @@ bool AuiToolBarFormGenerator::SettingsCode(Code& code)
 
     if (!code.isPropValue(prop_separation, 5))
     {
-        code.Eol(eol_if_needed).NodeName().Function("SetToolSeparation(").Str(prop_separation).EndFunction();
+        code.Eol(eol_if_needed).NodeName().Function("SetToolSeparation(").as_string(prop_separation).EndFunction();
     }
 
     if (code.hasValue(prop_margins))
     {
-        code.Eol(eol_if_needed).NodeName().Function("SetMargins(").Str(prop_margins).EndFunction();
+        code.Eol(eol_if_needed).NodeName().Function("SetMargins(").as_string(prop_margins).EndFunction();
     }
 
     if (!code.isPropValue(prop_packing, 1))
     {
-        code.Eol(eol_if_needed).NodeName().Function("SetToolPacking(").Str(prop_packing).EndFunction();
+        code.Eol(eol_if_needed).NodeName().Function("SetToolPacking(").as_string(prop_packing).EndFunction();
     }
 
     return true;
@@ -418,17 +418,17 @@ bool AuiToolBarGenerator::SettingsCode(Code& code)
 
     if (!code.isPropValue(prop_separation, 5))
     {
-        code.Eol(eol_if_needed).NodeName().Function("SetToolSeparation(").Str(prop_separation).EndFunction();
+        code.Eol(eol_if_needed).NodeName().Function("SetToolSeparation(").as_string(prop_separation).EndFunction();
     }
 
     if (code.hasValue(prop_margins))
     {
-        code.Eol(eol_if_needed).NodeName().Function("SetMargins(").Str(prop_margins).EndFunction();
+        code.Eol(eol_if_needed).NodeName().Function("SetMargins(").as_string(prop_margins).EndFunction();
     }
 
     if (!code.isPropValue(prop_packing, 1))
     {
-        code.Eol(eol_if_needed).NodeName().Function("SetToolPacking(").Str(prop_packing).EndFunction();
+        code.Eol(eol_if_needed).NodeName().Function("SetToolPacking(").as_string(prop_packing).EndFunction();
     }
 
     return true;
@@ -524,7 +524,7 @@ bool AuiToolGenerator::ConstructionCode(Code& code)
 
     if (code.node()->as_string(prop_initial_state) != "wxAUI_BUTTON_STATE_NORMAL")
     {
-        code.Eol().NodeName().Function("SetState(").Str(prop_initial_state).EndFunction();
+        code.Eol().NodeName().Function("SetState(").as_string(prop_initial_state).EndFunction();
     }
 
     return true;
@@ -579,7 +579,7 @@ bool AuiToolLabelGenerator::ConstructionCode(Code& code)
     }
     code.as_string(prop_id).Comma().QuotedString(prop_label);
     if (code.IntValue(prop_width) >= 0)
-        code.Comma().Str(prop_width);
+        code.Comma().as_string(prop_width);
     code.EndFunction();
 
     return true;
@@ -606,7 +606,7 @@ bool AuiToolSpacerGenerator::ConstructionCode(Code& code)
     {
         code.FormFunction("AddSpacer(");
     }
-    code.ParentName().Function("FromDIP(").Str(prop_width).Str(")").EndFunction();
+    code.ParentName().Function("FromDIP(").as_string(prop_width).Str(")").EndFunction();
 
     return true;
 }
@@ -635,7 +635,7 @@ bool AuiToolStretchSpacerGenerator::ConstructionCode(Code& code)
 
     if (code.IntValue(prop_proportion) != 1)
     {
-        code.Str(prop_proportion);
+        code.as_string(prop_proportion);
     }
     code.EndFunction();
 

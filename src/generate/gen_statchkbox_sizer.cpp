@@ -148,7 +148,7 @@ bool StaticCheckboxBoxSizerGenerator::ConstructionCode(Code& code)
     }
     else
     {
-        code.NodeName().CreateClass(false, "wxStaticBoxSizer").Str(prop_orientation).Comma().Str(parent_name);
+        code.NodeName().CreateClass(false, "wxStaticBoxSizer").as_string(prop_orientation).Comma().Str(parent_name);
         if (code.hasValue(prop_label))
         {
             code.Comma().QuotedString(prop_label);
@@ -173,7 +173,7 @@ bool StaticCheckboxBoxSizerGenerator::SettingsCode(Code& code)
 
     if (code.hasValue(prop_tooltip) && code.is_cpp())
     {
-        code.Eol(eol_if_needed).Str(prop_checkbox_var_name).Function("SetToolTip(");
+        code.Eol(eol_if_needed).as_string(prop_checkbox_var_name).Function("SetToolTip(");
         code.QuotedString(prop_tooltip).EndFunction();
     }
 

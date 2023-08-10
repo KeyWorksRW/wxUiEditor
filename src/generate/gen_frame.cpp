@@ -22,7 +22,7 @@ bool FrameFormGenerator::ConstructionCode(Code& code)
 {
     if (code.is_cpp())
     {
-        code.Str("bool ").Str((prop_class_name));
+        code.Str("bool ").as_string(prop_class_name);
         code +=
             "::Create(wxWindow* parent, wxWindowID id, const wxString& title,\n\tconst wxPoint& pos, const wxSize& size, "
             "long style, const wxString &name)";
@@ -240,7 +240,7 @@ bool FrameFormGenerator::HeaderCode(Code& code)
     code.Str(")").Eol().OpenBrace().Str("Create(parent, id, title, pos, size, style, name);").CloseBrace();
 
     code.Eol().Str("bool Create(wxWindow *parent");
-    code.Comma().Str("wxWindowID id = ").Str(prop_id);
+    code.Comma().Str("wxWindowID id = ").as_string(prop_id);
     code.Comma().Str("const wxString& title = ").QuotedString(prop_title);
     code.Comma().Str("const wxPoint& pos = ");
 
@@ -294,7 +294,7 @@ bool FrameFormGenerator::BaseClassNameCode(Code& code)
 {
     if (code.hasValue(prop_derived_class))
     {
-        code.Str((prop_derived_class));
+        code.as_string(prop_derived_class);
     }
     else
     {

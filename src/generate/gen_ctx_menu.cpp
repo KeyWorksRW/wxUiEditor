@@ -64,7 +64,7 @@ bool CtxMenuGenerator::AfterChildrenCode(Code& code)
 {
     if (code.is_cpp())
     {
-        code.Str("void ").Str(code.node()->getFormName()).Str("::").Str(prop_handler_name);
+        code.Str("void ").Str(code.node()->getFormName()).Str("::").as_string(prop_handler_name);
         code.Str("(wxContextMenuEvent& event)").OpenBrace();
     }
 

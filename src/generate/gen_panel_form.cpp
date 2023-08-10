@@ -44,7 +44,7 @@ bool PanelFormGenerator::ConstructionCode(Code& code)
     // Note: Form construction is called before any indentation is set
     if (code.is_cpp())
     {
-        code.Str("bool ").Str((prop_class_name));
+        code.Str("bool ").as_string(prop_class_name);
         code += "::Create(wxWindow* parent, wxWindowID id";
         code.Comma().Str("const wxPoint& pos").Comma().Str("const wxSize& size");
         code.Comma().Str("long style").Comma().Str("const wxString& name)");
@@ -278,7 +278,7 @@ bool PanelFormGenerator::BaseClassNameCode(Code& code)
 {
     if (code.hasValue(prop_derived_class))
     {
-        code.Str((prop_derived_class));
+        code.as_string(prop_derived_class);
     }
     else
     {

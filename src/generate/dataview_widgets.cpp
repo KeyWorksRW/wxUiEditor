@@ -333,8 +333,14 @@ void DataViewTreeCtrl::RequiredHandlers(Node* /* node */, std::set<std::string>&
 
 bool DataViewColumn::ConstructionCode(Code& code)
 {
-    code.AddAuto().NodeName().Str(" = ").ParentName().Function("Append").Str(prop_type).Str("Column(");
-    code.QuotedString(prop_label).Comma().Str(prop_model_column).Comma().Str(prop_mode).Comma().Str(prop_width);
+    code.AddAuto().NodeName().Str(" = ").ParentName().Function("Append").as_string(prop_type).Str("Column(");
+    code.QuotedString(prop_label)
+        .Comma()
+        .as_string(prop_model_column)
+        .Comma()
+        .as_string(prop_mode)
+        .Comma()
+        .as_string(prop_width);
     code.Comma();
     if (code.is_cpp())
         code.Str("static_cast<wxAlignment>(");
@@ -355,8 +361,8 @@ bool DataViewColumn::ConstructionCode(Code& code)
 
 bool DataViewListColumn::ConstructionCode(Code& code)
 {
-    code.AddAuto().NodeName().Str(" = ").ParentName().Function("Append").Str(prop_type).Str("Column(");
-    code.QuotedString(prop_label).Comma().Str(prop_mode).Comma().Str(prop_width);
+    code.AddAuto().NodeName().Str(" = ").ParentName().Function("Append").as_string(prop_type).Str("Column(");
+    code.QuotedString(prop_label).Comma().as_string(prop_mode).Comma().as_string(prop_width);
     code.Comma();
     if (code.is_cpp())
         code.Str("static_cast<wxAlignment>(");

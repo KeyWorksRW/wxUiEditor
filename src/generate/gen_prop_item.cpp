@@ -21,22 +21,19 @@ bool PropertyGridItemGenerator::ConstructionCode(Code& code)
         parent = parent->getParent();
     }
 
-    code.AddAuto().NodeName().Str(" = ");
-    code.NodeName(parent);
+    code.AddAuto().NodeName().Assign().NodeName(parent);
     // .Function("Append(new wx").PropAs(prop_type).Str("Property(");
 
     if (code.view(prop_type) == "Category")
     {
-        // Break out the final '(' so that lookup for wxPropertyCategory will find the propgrid
-        // library
-        code.Function("Append(").Str(code.is_cpp() ? "new " : "").Add("wxPropertyCategory").Str("(");
+        code.Function("Append(").AddIfCpp("new ").Add("wxPropertyCategory").AddIfRuby(".new").Str("(");
         code.QuotedString(prop_label).Comma().QuotedString(prop_label).Str(")").EndFunction();
     }
     else
     {
         tt_string name("wx");
         name << code.node()->as_string(prop_type) << "Property";
-        code.Function("Append(").AddIfCpp("new ").Add(name).Str("(");
+        code.Function("Append(").AddIfCpp("new ").AddIfGolang("New").Add(name).AddIfRuby(".new").Str("(");
         code.QuotedString(prop_label).Comma().QuotedString(prop_help).Str(")").EndFunction();
     }
 

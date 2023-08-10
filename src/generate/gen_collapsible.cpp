@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   wxCollapsiblePane generator
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -20,9 +20,12 @@
 
 wxObject* CollapsiblePaneGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget =
-        new wxCollapsiblePane(wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxString(prop_label),
-                              DlgPoint(parent, node, prop_pos), DlgSize(parent, node, prop_size), GetStyleInt(node));
+    // ALWAYS add wxCP_NO_TLW_RESIZE to the Mockup version, otherwise the entire wxUiEditor main window will be
+    // resized when the pane is collapsed or expanded.
+
+    auto widget = new wxCollapsiblePane(wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxString(prop_label),
+                                        DlgPoint(parent, node, prop_pos), DlgSize(parent, node, prop_size),
+                                        GetStyleInt(node) | wxCP_NO_TLW_RESIZE);
 
     if (getMockup()->IsShowingHidden())
         widget->Collapse(false);

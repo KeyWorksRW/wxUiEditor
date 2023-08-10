@@ -754,18 +754,18 @@ Code& Code::Assign(tt_string_view class_name)
         *this += " := ";
     else
         *this += " = ";
+    if (class_name.empty())
+        return *this;
+
     if (is_cpp())
     {
         *this << "new " << class_name << ';';
     }
-    else if (is_ruby())
-    {
-        *this << "Wx::" << class_name.substr(2);
-    }
     else
     {
-        *this << "wx." << class_name.substr(2);
+        *this << m_language_wxPrefix << class_name.substr(2);
     }
+
     return *this;
 }
 

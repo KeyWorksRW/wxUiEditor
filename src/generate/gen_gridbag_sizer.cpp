@@ -141,7 +141,7 @@ bool GridBagSizerGenerator::ConstructionCode(Code& code)
 
     if (code.node()->as_int(prop_vgap) != 0 || code.node()->as_int(prop_hgap) != 0)
     {
-        code.Str(prop_vgap).Comma().Str(prop_hgap);
+        code.as_string(prop_vgap).Comma().as_string(prop_hgap);
     }
     code.EndFunction();
 

@@ -29,7 +29,7 @@ bool WizardFormGenerator::ConstructionCode(Code& code)
 {
     if (code.is_cpp())
     {
-        code.Str((prop_class_name)).Str("::").Str(prop_class_name);
+        code.as_string(prop_class_name).Str("::").as_string(prop_class_name);
         code += "(wxWindow* parent, wxWindowID id, const wxString& title";
         code.Comma().Str("const wxPoint& pos").Comma().Str("long style)");
         code.Str(" : wxWizard()").Eol() += "{";
@@ -73,15 +73,15 @@ bool WizardFormGenerator::SettingsCode(Code& code)
 
     if (!code.isPropValue(prop_border, 5))
     {
-        code.Eol(eol_if_needed).FormFunction("SetBorder(").Str(prop_border).EndFunction();
+        code.Eol(eol_if_needed).FormFunction("SetBorder(").as_string(prop_border).EndFunction();
     }
 
     if (code.IntValue(prop_bmp_placement))
     {
-        code.Eol(eol_if_needed).FormFunction("SetBitmapPlacement(").Str(prop_bmp_placement).EndFunction();
+        code.Eol(eol_if_needed).FormFunction("SetBitmapPlacement(").as_string(prop_bmp_placement).EndFunction();
         if (code.IntValue(prop_bmp_min_width) > 0)
         {
-            code.Eol().FormFunction("SetBitmapMinWidth(").Str(prop_bmp_min_width).EndFunction();
+            code.Eol().FormFunction("SetBitmapMinWidth(").as_string(prop_bmp_min_width).EndFunction();
         }
         if (code.hasValue(prop_bmp_background_colour))
         {
@@ -191,7 +191,7 @@ bool WizardFormGenerator::BaseClassNameCode(Code& code)
 {
     if (code.hasValue(prop_derived_class))
     {
-        code.Str((prop_derived_class));
+        code.as_string(prop_derived_class);
     }
     else
     {
@@ -203,7 +203,7 @@ bool WizardFormGenerator::HeaderCode(Code& code)
 {
     auto* node = code.node();
 
-    code.Str(prop_class_name).Str("(wxWindow* parent, wxWindowID id = ").Str(prop_id);
+    code.as_string(prop_class_name).Str("(wxWindow* parent, wxWindowID id = ").as_string(prop_id);
     code.Comma().Str("const wxString& title = ");
     auto& title = node->as_string(prop_title);
     if (code.hasValue(prop_title))
@@ -403,12 +403,12 @@ bool WizardPageGenerator::ConstructionCode(Code& code)
 {
     if (!code.hasValue(prop_bitmap))
     {
-        code.AddAuto().Str(prop_var_name).CreateClass().Str(code.is_cpp() ? "this" : "self").EndFunction();
+        code.AddAuto().as_string(prop_var_name).CreateClass().Str(code.is_cpp() ? "this" : "self").EndFunction();
     }
     else
     {
         auto is_bitmaps_list = BitmapList(code, prop_bitmap);
-        code.AddAuto().Str(prop_var_name).CreateClass().Str(code.is_cpp() ? "this" : "self");
+        code.AddAuto().as_string(prop_var_name).CreateClass().Str(code.is_cpp() ? "this" : "self");
         if (code.is_cpp())
         {
             code.Comma().Str("nullptr, nullptr").Comma();

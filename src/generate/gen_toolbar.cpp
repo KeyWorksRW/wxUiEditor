@@ -106,7 +106,7 @@ bool ToolBarFormGenerator::ConstructionCode(Code& code)
     // Note: Form construction is called before any indentation is set
     if (code.is_cpp())
     {
-        code.Str((prop_class_name)).Str("::").Str(prop_class_name);
+        code.as_string(prop_class_name).Str("::").as_string(prop_class_name);
         code += "(wxWindow* parent, wxWindowID id";
         code.Comma().Str("const wxPoint& pos").Comma().Str("const wxSize& size");
         code.Comma().Str("long style").Comma().Str("const wxString& name)");
@@ -239,7 +239,7 @@ bool ToolBarFormGenerator::BaseClassNameCode(Code& code)
 {
     if (code.hasValue(prop_derived_class))
     {
-        code.Str((prop_derived_class));
+        code.as_string(prop_derived_class);
     }
     else
     {
@@ -428,17 +428,17 @@ bool ToolBarGenerator::SettingsCode(Code& code)
 {
     if (code.node()->as_int(prop_separation) != 5)
     {
-        code.Eol().NodeName().Function("SetToolSeparation(").Str(prop_separation).EndFunction();
+        code.Eol().NodeName().Function("SetToolSeparation(").as_string(prop_separation).EndFunction();
     }
 
     if (code.hasValue(prop_margins))
     {
-        code.Eol().NodeName().Function("SetMargins(").Str(prop_margins).EndFunction();
+        code.Eol().NodeName().Function("SetMargins(").as_string(prop_margins).EndFunction();
     }
 
     if (code.node()->as_int(prop_packing) != 1)
     {
-        code.Eol().NodeName().Function("SetToolPacking(").Str(prop_packing).EndFunction();
+        code.Eol().NodeName().Function("SetToolPacking(").as_string(prop_packing).EndFunction();
     }
 
     return true;
@@ -780,7 +780,7 @@ bool ToolStretchableGenerator::ConstructionCode(Code& code)
         code.ParentName().Function("AddStretchSpacer(");
         if (code.IntValue(prop_proportion) != 1)
         {
-            code.Str(prop_proportion);
+            code.as_string(prop_proportion);
         }
         code.EndFunction();
     }

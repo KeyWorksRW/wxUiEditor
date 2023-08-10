@@ -977,7 +977,7 @@ void GenValidatorSettings(Code& code)
         {
             if (node->hasValue(prop_minValue) && node->hasValue(prop_maxValue))
             {
-                code.Comma().Str(prop_minValue).Comma().Str(prop_maxValue);
+                code.Comma().as_string(prop_minValue).Comma().as_string(prop_maxValue);
             }
         }
 

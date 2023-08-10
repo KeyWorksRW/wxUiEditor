@@ -52,6 +52,9 @@ namespace code
 // Assume anyone including this header file needs access to the code namespace
 using namespace code;
 
+extern const view_map g_map_python_prefix;
+extern const view_map g_map_ruby_prefix;
+
 class Code : public tt_string
 {
 public:
@@ -280,9 +283,6 @@ public:
         return *this;
     }
 
-    // Equivalent to calling as_string(prop_name)
-    Code& Str(GenEnum::PropName prop_name) { return as_string(prop_name); }
-
     // Adds -> or . to the string, then function (fixing wx prefix if needed)
     Code& Function(tt_string_view text);
 
@@ -323,7 +323,10 @@ public:
     // non-sizer parents.
     Code& ValidParentName();
 
-    // Handles regular or or'd styles for C++ or Python
+    // Handles regular or or'd properties.
+    //
+    // If the property value begins with wx and the language is not C++, this will change the
+    // prefix to match the language's prefix (e.g., wx. for wxPython).
     Code& as_string(GenEnum::PropName prop_name);
 
     Code& itoa(int val)
@@ -346,7 +349,7 @@ public:
 
     Code& itoa(GenEnum::PropName prop_name1, GenEnum::PropName prop_name2)
     {
-        Str(prop_name1).Comma().Str(prop_name2);
+        as_string(prop_name1).Comma().as_string(prop_name2);
         return *this;
     }
 
@@ -416,7 +419,7 @@ protected:
 
 private:
     // wx for C++, wx. for Python, Wx:: for Ruby
-    tt_string m_lang_wxPrefix { "wx" };
+    tt_string m_language_wxPrefix { "wx" };
     tt_string m_lang_assignment { " = " };  // " = " default, " := " for Go
 
     size_t m_break_length { 80 };

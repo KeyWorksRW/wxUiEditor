@@ -81,7 +81,7 @@ bool FileCtrlGenerator::SettingsCode(Code& code)
 
     if (code.IntValue(prop_filter_index) > 0)
     {
-        code.Eol(eol_if_empty).NodeName().Function("SetFilterIndex(").Str(prop_filter_index).EndFunction();
+        code.Eol(eol_if_empty).NodeName().Function("SetFilterIndex(").as_string(prop_filter_index).EndFunction();
     }
 
     if (code.IsTrue(prop_show_hidden))

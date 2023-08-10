@@ -49,7 +49,7 @@ bool ScrolledCanvasGenerator::SettingsCode(Code& code)
     if (code.hasValue(prop_scroll_rate_x) || code.hasValue(prop_scroll_rate_y))
     {
         code.Eol(eol_if_needed).NodeName().Function("SetScrollRate(");
-        code.Str(prop_scroll_rate_x).Comma().Str(prop_scroll_rate_y).EndFunction();
+        code.as_string(prop_scroll_rate_x).Comma().as_string(prop_scroll_rate_y).EndFunction();
     }
 
     return true;
@@ -98,7 +98,7 @@ bool ScrolledWindowGenerator::SettingsCode(Code& code)
     if (code.hasValue(prop_scroll_rate_x) || code.hasValue(prop_scroll_rate_y))
     {
         code.Eol(eol_if_needed).NodeName().Function("SetScrollRate(");
-        code.Str(prop_scroll_rate_x).Comma().Str(prop_scroll_rate_y).EndFunction();
+        code.as_string(prop_scroll_rate_x).Comma().as_string(prop_scroll_rate_y).EndFunction();
     }
 
     return true;

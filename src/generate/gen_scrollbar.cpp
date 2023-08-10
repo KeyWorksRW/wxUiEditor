@@ -38,8 +38,8 @@ bool ScrollBarGenerator::ConstructionCode(Code& code)
 
 bool ScrollBarGenerator::SettingsCode(Code& code)
 {
-    code.NodeName().Function("SetScrollbar(").Str(prop_position).Comma().Str(prop_thumbsize);
-    code.Comma().Str(prop_range).Comma().Str(prop_pagesize).EndFunction();
+    code.NodeName().Function("SetScrollbar(").as_string(prop_position).Comma().as_string(prop_thumbsize);
+    code.Comma().as_string(prop_range).Comma().as_string(prop_pagesize).EndFunction();
     return true;
 }
 

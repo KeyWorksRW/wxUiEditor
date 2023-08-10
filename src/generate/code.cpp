@@ -19,7 +19,8 @@ using namespace code;
 
 // clang-format off
 
-static const std::map<tt_string_view, std::string_view, std::less<>> s_short_python_map
+// This maps just the prefix
+static const view_map s_short_python_map
 {
     { "wxAUI_", "wx.aui."},
     { "wxCAL_", "wx.adv."},
@@ -41,9 +42,41 @@ static const std::map<tt_string_view, std::string_view, std::less<>> s_short_pyt
 
 };
 
-static const std::map<std::string_view, std::string_view, std::less<>> map_python_wx_prefix
+const view_map g_map_python_prefix
 {
-    { "wxAC_DEFAULT_STYLE", "wx.adv."},
+    { "wxAnimationCtrl", "wx.adv."},
+    { "wxAuiNotebook", "wx.aui."},
+    { "wxAuiToolBar", "wx.aui."},
+    { "wxAuiToolBarItem", "wx.aui."},
+    { "wxBannerWindow", "wx.adv."},
+    { "wxCalendarCtrl", "wx.adv."},
+    { "wxCommandLinkButton", "wx.adv."},
+    { "wxDatePickerCtrl", "wx.adv."},
+    { "wxEditableListBox", "wx.adv."},
+    { "wxHtmlWindow", "wx.html."},
+    { "wxSimpleHtmlListBox", "wx.html."},
+    { "wxHyperlinkCtrl", "wx.adv."},
+    { "wxRichTextCtrl", "wx.richtext."},
+    { "wxStyledTextCtrl", "wx.stc."},
+    { "wxTimePickerCtrl", "wx.adv."},
+    { "wxStyledTextCtrl", "wx.stc."},
+    { "wxWebView", "wx.html2."},
+    { "wxWizard", "wx.adv."},
+    { "wxWizardPageSimple", "wx.adv."},
+    { "wxRibbonBar", "wx.ribbon."},
+    { "wxRibbonButtonBar", "wx.ribbon."},
+    { "wxRibbonPage", "wx.ribbon."},
+    { "wxRibbonPanel", "wx.ribbon."},
+    { "wxRibbonToolBar", "wx.ribbon."},
+    { "wxRibbonGallery", "wx.ribbon."},
+    { "wxBitmapComboBox", "wx.adv."},
+    { "wxDataViewCtrl", "wx.dataview."},
+    { "wxDataViewListCtrl", "wx.dataview."},
+    { "wxDataViewTreeCtrl", "wx.dataview."},
+    { "wxGrid", "wx.grid."},
+    { "wxPropertyGridManager", "wx.propgrid."},
+    { "wxPropertyGrid", "wx.propgrid."},
+        { "wxAC_DEFAULT_STYLE", "wx.adv."},
     { "wxAC_NO_AUTORESIZE", "wx.adv."},
     { "wxNullAnimation", "wx.adv."},
     { "wxEL_ALLOW_NEW", "wx.adv."},
@@ -92,53 +125,125 @@ static const std::map<std::string_view, std::string_view, std::less<>> map_pytho
     // This doesn't get created as a class, so we have to add it as if it was a constant.
     { "wxWebView", "wx.html2."},
     { "wxWebViewBackendDefault", "wx.html2."},
-};
 
-std::map<std::string_view, std::string_view, std::less<>> g_map_python_prefix
-{
-    { "wxAnimationCtrl", "wx.adv."},
-    { "wxAuiNotebook", "wx.aui."},
-    { "wxAuiToolBar", "wx.aui."},
-    { "wxAuiToolBarItem", "wx.aui."},
-    { "wxBannerWindow", "wx.adv."},
-    { "wxCalendarCtrl", "wx.adv."},
-    { "wxCommandLinkButton", "wx.adv."},
-    { "wxDatePickerCtrl", "wx.adv."},
-    { "wxEditableListBox", "wx.adv."},
-    { "wxHtmlWindow", "wx.html."},
-    { "wxSimpleHtmlListBox", "wx.html."},
-    { "wxHyperlinkCtrl", "wx.adv."},
-    { "wxRichTextCtrl", "wx.richtext."},
-    { "wxStyledTextCtrl", "wx.stc."},
-    { "wxTimePickerCtrl", "wx.adv."},
-    { "wxStyledTextCtrl", "wx.stc."},
-    { "wxWebView", "wx.html2."},
-    { "wxWizard", "wx.adv."},
-    { "wxWizardPageSimple", "wx.adv."},
-    { "wxRibbonBar", "wx.ribbon."},
-    { "wxRibbonButtonBar", "wx.ribbon."},
-    { "wxRibbonPage", "wx.ribbon."},
-    { "wxRibbonPanel", "wx.ribbon."},
-    { "wxRibbonToolBar", "wx.ribbon."},
-    { "wxRibbonGallery", "wx.ribbon."},
-    { "wxBitmapComboBox", "wx.adv."},
-    { "wxDataViewCtrl", "wx.dataview."},
-    { "wxDataViewListCtrl", "wx.dataview."},
-    { "wxDataViewTreeCtrl", "wx.dataview."},
-    { "wxGrid", "wx.grid."},
-    { "wxPropertyGridManager", "wx.propgrid."},
-    { "wxPropertyGrid", "wx.propgrid."},
 
 };
 
-std::map<std::string_view, std::string_view, std::less<>> g_map_ruby_prefix
+static const view_map s_short_ruby_map
 {
-    { "wxAuiNotebook", "Wx::AUI::" },
-    { "wxAuiToolBar", "Wx::AUI::" },
+    { "wxAUI_", "Wx::AUI::"},
+    { "wxPG_", "Wx::PG::"},
+    { "wxRE_", "Wx::RTC::"},
+    { "wxRIBBON", "Wx::RBN::"},
+    { "wxSTC_", "Wx::STC::"},
+    { "wxGRID_", "Wx::GRID::"},
+
+};
+
+const view_map g_map_ruby_prefix
+{
+    { "wxAuiNotebook",    "Wx::AUI::" },
+    { "wxAuiToolBar",     "Wx::AUI::" },
     { "wxAuiToolBarItem", "Wx::AUI::" },
+
+    { "wxGrid", "Wx::GRID::"},
+
+    { "wxSimpleHtmlListBox", "Wx::HTML::"},
+    { "wxHtmlWindow",        "Wx::HTML::"},
+
+    { "wxEVT_PG_CHANGED",       "Wx::PG::" },
+    { "wxEVT_PG_CHANGING",      "Wx::PG::" },
+    { "wxPropertyCategory",     "Wx::PG::" },
+    { "wxBoolProperty",         "Wx::PG::" },
+    { "wxColourProperty",       "Wx::PG::" },
+    { "wxCursorProperty",       "Wx::PG::" },
+    { "wxDateProperty",         "Wx::PG::" },
+    { "wxDirProperty",          "Wx::PG::" },
+    { "wxEditEnumProperty",     "Wx::PG::" },
+    { "wxEnumProperty",         "Wx::PG::" },
+    { "wxFileProperty",         "Wx::PG::" },
+    { "wxFlagsProperty",        "Wx::PG::" },
+    { "wxFloatProperty",        "Wx::PG::" },
+    { "wxFontProperty",         "Wx::PG::" },
+    { "wxImageFileProperty",    "Wx::PG::" },
+    { "wxIntProperty",          "Wx::PG::" },
+    { "wxLongStringProperty",   "Wx::PG::" },
+    { "wxMultiChoiceProperty",  "Wx::PG::" },
+    { "wxStringProperty",       "Wx::PG::" },
+    { "wxSystemColourProperty", "Wx::PG::" },
+    { "wxUIntProperty",         "Wx::PG::" },
+
+    { "wxRibbonBar",       "Wx::RBN::"},
+    { "wxRibbonButtonBar", "Wx::RBN::"},
+    { "wxRibbonPage",      "Wx::RBN::"},
+    { "wxRibbonPanel",     "Wx::RBN::"},
+    { "wxRibbonToolBar",   "Wx::RBN::"},
+    { "wxRibbonGallery",   "Wx::RBN::"},
+
+    { "wxRichTextCtrl", "Wx::RTC::"},
+    { "wxStyledTextCtrl", "Wx::STC::"},
+
 };
 
 // clang-format on
+
+std::string_view GetLanguagePrefix(tt_string_view candidate, int language)
+{
+    const view_map* prefix_list;
+    const view_map* global_list;
+
+    switch (language)
+    {
+        case GEN_LANG_PYTHON:
+            prefix_list = &s_short_python_map;
+            global_list = &g_map_python_prefix;
+            break;
+
+        case GEN_LANG_RUBY:
+            prefix_list = &s_short_ruby_map;
+            global_list = &g_map_ruby_prefix;
+            break;
+
+        case GEN_LANG_GOLANG:
+            // wxGo doesn't have modules
+            return {};
+
+        case GEN_LANG_LUA:
+            // wxLua doesn't have modules
+            return {};
+
+        case GEN_LANG_PERL:
+            // wxPerl doesn't appear to have modules, but needs verification
+            return {};
+
+        case GEN_LANG_RUST:
+            // wxRust doesn't appear to have modules, but needs verification
+            return {};
+
+        case GEN_LANG_CPLUSPLUS:
+            FAIL_MSG("Don't call GetLanguagePrefix() for C++ code!");
+            return {};
+
+        default:
+            FAIL_MSG("Unknown language");
+            return {};
+    }
+
+    for (auto& iter_prefix: *prefix_list)
+    {
+        if (candidate.starts_with(iter_prefix.first))
+        {
+            return iter_prefix.second;
+        }
+    }
+
+    if (auto result = global_list->find(candidate); result != global_list->end())
+    {
+        return result->second;
+    }
+
+    return {};
+}
 
 Code::Code(Node* node, int language)
 {
@@ -151,14 +256,14 @@ void Code::Init(Node* node, int language)
     m_language = language;
     if (language == GEN_LANG_CPLUSPLUS)
     {
-        m_lang_wxPrefix = "wx";
+        m_language_wxPrefix = "wx";
         m_break_length = Project.as_size_t(prop_cpp_line_length);
         // Always assume C++ code has one tab at the beginning of the line
         m_break_length -= m_indent_size;
     }
     else if (language == GEN_LANG_PYTHON)
     {
-        m_lang_wxPrefix = "wx.";
+        m_language_wxPrefix = "wx.";
         m_break_length = Project.as_size_t(prop_python_line_length);
         // Always assume Python code has two tabs at the beginning of the line
         m_break_length -= (m_indent_size * 2);
@@ -166,7 +271,7 @@ void Code::Init(Node* node, int language)
     else if (language == GEN_LANG_RUBY)
     {
         m_indent_size = 2;
-        m_lang_wxPrefix = "Wx::";
+        m_language_wxPrefix = "Wx::";
         m_lang_assignment = " = ";
         m_break_length = Project.as_size_t(prop_ruby_line_length);
         // Always assume Ruby code has two tabs at the beginning of the line
@@ -178,7 +283,7 @@ void Code::Init(Node* node, int language)
 
     else if (language == GEN_LANG_GOLANG)
     {
-        m_lang_wxPrefix = "wx.";
+        m_language_wxPrefix = "wx.";
         m_lang_assignment = " := ";
         m_break_length = Project.as_size_t(prop_golang_line_length);
         if (m_break_length < 80)
@@ -187,7 +292,7 @@ void Code::Init(Node* node, int language)
     }
     else if (language == GEN_LANG_LUA)
     {
-        m_lang_wxPrefix = "wx.";
+        m_language_wxPrefix = "wx.";
         m_break_length = Project.as_size_t(prop_lua_line_length);
         if (m_break_length < 80)
             m_break_length = 80;
@@ -195,7 +300,7 @@ void Code::Init(Node* node, int language)
     }
     else if (language == GEN_LANG_PERL)
     {
-        m_lang_wxPrefix = "Wx::";
+        m_language_wxPrefix = "Wx::";
         m_break_length = Project.as_size_t(prop_perl_line_length);
         if (m_break_length < 80)
             m_break_length = 80;
@@ -203,7 +308,7 @@ void Code::Init(Node* node, int language)
     }
     else if (language == GEN_LANG_RUST)
     {
-        m_lang_wxPrefix = "wx::";
+        m_language_wxPrefix = "wx::";
         m_break_length = Project.as_size_t(prop_rust_line_length);
         if (m_break_length < 80)
             m_break_length = 80;
@@ -213,7 +318,7 @@ void Code::Init(Node* node, int language)
     else
     {
         FAIL_MSG("Unknown language");
-        m_lang_wxPrefix = "wx";
+        m_language_wxPrefix = "wx";
         m_lang_assignment = " = ";
         m_break_length = 90;
         // Always assume code has one tab at the beginning of the line
@@ -350,81 +455,94 @@ Code& Code::Tab(int tabs)
     return *this;
 }
 
+Code& Code::as_string(PropName prop_name)
+{
+    if (prop_name == prop_id)
+    {
+        auto result = m_node->getPropId();
+        CheckLineLength(result.size());
+
+        if (!is_cpp())
+        {
+            result.Replace("wx", m_language_wxPrefix);
+        }
+        *this += result;
+        return *this;
+    }
+
+    return Add(m_node->as_string(prop_name));
+}
+
 Code& Code::Add(tt_string_view text)
 {
-    CheckLineLength(text.size());
-
     if (is_cpp() || text.size() < 3)
     {
+        CheckLineLength(text.size());
         *this += text;
     }
     else
     {
         if (is_ruby() && text == "wxEmptyString")
         {
+            // wxRuby prefers ('') for an empty string instead of the expected Wx::empty_string
             *this += "('')";
             return *this;
         }
 
-        std::string_view wx_prefix = m_lang_wxPrefix;
-        // Python has different prefixes based on the library being used. E.g., wxBoolProperty
-        // has a prefix of wx.propgrid. rather than wx.
-        auto GetPythonPrefix = [&](tt_string_view candidate)
-        {
-            // Note that you can *NOT* allocate anything on the stack and return a
-            // std::string_view to it!
-
-            for (auto& iter_prefix: s_short_python_map)
-            {
-                if (candidate.starts_with(iter_prefix.first))
-                {
-                    wx_prefix = iter_prefix.second;
-                    return;
-                }
-            }
-            if (auto wx_iter = map_python_wx_prefix.find(candidate); wx_iter != map_python_wx_prefix.end())
-            {
-                wx_prefix = wx_iter->second;
-            }
-        };
-
         if (text.find('|') != tt::npos)
         {
-            bool style_set = false;
+            bool initial_combined_value_set = false;
             tt_view_vector multistr(text, "|", tt::TRIM::both);
             for (auto& iter: multistr)
             {
                 if (iter.empty())
                     continue;
-                if (style_set)
+                if (initial_combined_value_set)
                     *this += '|';
-                if (iter.is_sameprefix("wx"))
+                if (iter.is_sameprefix("wx") && !is_cpp())
                 {
-                    if (is_python())
+                    if (std::string_view language_prefix = GetLanguagePrefix(text, m_language); language_prefix.size())
                     {
-                        GetPythonPrefix(iter);
+                        // Some languages will have a module added after their standard prefix.
+                        CheckLineLength(language_prefix.size() + iter.size() - 2);
+                        *this << language_prefix << iter.substr(2);
                     }
-                    *this << wx_prefix << iter.substr(2);
+                    else
+                    {
+                        // If there was no sub-language module added (e.g., wx.aui. for
+                        // Python), then use the default language prefix.
+                        CheckLineLength(m_language_wxPrefix.size() + iter.size() - 2);
+                        *this << m_language_wxPrefix << iter.substr(2);
+                    }
                 }
                 else
+                {
+                    CheckLineLength(iter.size());
                     *this += iter;
-                style_set = true;
+                }
+                initial_combined_value_set = true;
             }
         }
-        // text.size() has already been checked to be certain it is at least 3 characters
-        else if (text.is_sameprefix("wx") && text[2] != '.')
+        else if (text.is_sameprefix("wx") && !is_cpp())
         {
-            if (is_python())
+            if (std::string_view language_prefix = GetLanguagePrefix(text, m_language); language_prefix.size())
             {
-                GetPythonPrefix(text);
+                CheckLineLength(language_prefix.size() + text.size() - 2);
+                *this << language_prefix << text.substr(2);
             }
-            *this << wx_prefix << text.substr(2);
+            else
+            {
+                CheckLineLength(m_language_wxPrefix.size() + text.size() - 2);
+                *this << m_language_wxPrefix << text.substr(2);
+            }
         }
         else
         {
+            CheckLineLength(text.size());
             *this += text;
         }
     }
+
     return *this;
 }
 
@@ -452,7 +570,7 @@ Code& Code::Function(tt_string_view text)
         *this << '.';
         if (text.is_sameprefix("wx"))
         {
-            *this << m_lang_wxPrefix << text.substr(sizeof("wx") - 1);
+            *this << m_language_wxPrefix << text.substr(sizeof("wx") - 1);
         }
         else
         {
@@ -578,31 +696,39 @@ Code& Code::CreateClass(bool use_generic, tt_string_view override_name)
         class_name = "wxPanel";
     }
 
-    if (m_language == GEN_LANG_CPLUSPLUS)
+    if (is_cpp())
         *this += class_name;
     else
     {
-        std::string_view prefix = m_lang_wxPrefix;
-        if (is_python())
+        if (class_name.is_sameprefix("wx") && !is_cpp())
         {
-            if (auto wx_iter = g_map_python_prefix.find(class_name); wx_iter != g_map_python_prefix.end())
+            if (std::string_view language_prefix = GetLanguagePrefix(class_name, m_language); language_prefix.size())
             {
-                prefix = wx_iter->second;
+                *this << language_prefix << class_name.substr(2);
+            }
+            else if (is_golang())
+            {
+                *this << m_language_wxPrefix << "New" << class_name.substr(2);
+            }
+            else
+            {
+                *this << m_language_wxPrefix << class_name.substr(2);
             }
         }
-        else if (is_ruby())
+        else
         {
-            if (auto wx_iter = g_map_ruby_prefix.find(class_name); wx_iter != g_map_ruby_prefix.end())
-            {
-                prefix = wx_iter->second;
-            }
+            *this += class_name;
         }
-        *this << prefix << class_name.substr(2);
         if (is_ruby())
         {
             *this += ".new";
         }
+        else if (is_rust())
+        {
+            *this += "::new";
+        }
     }
+
     *this += '(';
     return *this;
 }
@@ -644,111 +770,6 @@ Code& Code::EndFunction()
     {
         *this += ';';
     }
-    return *this;
-}
-
-Code& Code::as_string(PropName prop_name)
-{
-    if (prop_name == prop_id)
-    {
-        auto result = m_node->getPropId();
-        CheckLineLength(result.size());
-
-        if (is_python() && result._Starts_with("wx"))
-        {
-            result.insert(2, ".");
-        }
-        else if (is_ruby() && result._Starts_with("wx"))
-        {
-            result.Replace("wx", "Wx::");
-        }
-        *this += result;
-        return *this;
-    }
-    auto& str = m_node->as_string(prop_name);
-    if (is_cpp())
-    {
-        CheckLineLength(str.size());
-        *this += str;
-        return *this;
-    }
-    std::string_view wx_prefix = m_lang_wxPrefix;
-    auto GetPythonPrefix = [&](tt_string_view candidate)
-    {
-        for (auto& iter_prefix: s_short_python_map)
-        {
-            if (candidate.starts_with(iter_prefix.first))
-            {
-                wx_prefix = iter_prefix.second;
-                return;
-            }
-        }
-        if (auto wx_iter = map_python_wx_prefix.find(candidate); wx_iter != map_python_wx_prefix.end())
-        {
-            wx_prefix = wx_iter->second;
-            return;
-        }
-    };
-
-    if (!tt::is_found(str.find('|')))
-    {
-        if (str == "wxEmptyString")
-        {
-            *this += "\"\"";
-        }
-        else
-        {
-            if (str.is_sameprefix("wx"))
-            {
-                if (is_python())
-                {
-                    GetPythonPrefix(str);
-                }
-                CheckLineLength(str.size() + wx_prefix.size());
-                *this << wx_prefix << str.substr(sizeof("wx") - 1);
-            }
-            else
-            {
-                CheckLineLength(str.size());
-                *this += str;
-            }
-            return *this;
-        }
-    }
-
-    auto cur_pos = size();
-
-    tt_view_vector multistr(str, "|", tt::TRIM::both);
-    bool first = true;
-    for (auto& iter: multistr)
-    {
-        if (iter.empty())
-            continue;
-        if (!first)
-            *this += '|';
-        else
-            first = false;
-
-        if (iter == "wxEmptyString")
-            *this += "\"\"";
-        else if (iter.is_sameprefix("wx"))
-        {
-            if (is_python())
-            {
-                GetPythonPrefix(iter);
-            }
-            CheckLineLength(iter.size() + wx_prefix.size());
-            *this << wx_prefix << iter.substr(sizeof("wx") - 1);
-        }
-        else
-            *this += iter;
-    }
-
-    if (m_auto_break && size() > m_break_at)
-    {
-        InsertLineBreak(cur_pos);
-    }
-
     return *this;
 }
 
@@ -1036,8 +1057,8 @@ Code& Code::WxSize(GenEnum::PropName prop_name, bool enable_dlg_units)
 
     if (m_node->as_wxSize(prop_name) == wxDefaultSize)
     {
-        CheckLineLength((sizeof("DefaultSize") - 1) + m_lang_wxPrefix.size());
-        *this << m_lang_wxPrefix << "DefaultSize";
+        CheckLineLength((sizeof("DefaultSize") - 1) + m_language_wxPrefix.size());
+        *this << m_language_wxPrefix << "DefaultSize";
         return *this;
     }
 
@@ -1118,8 +1139,8 @@ Code& Code::Pos(GenEnum::PropName prop_name, bool enable_dlg_units)
 
     if (m_node->as_wxPoint(prop_name) == wxDefaultPosition)
     {
-        CheckLineLength((sizeof("DefaultPosition") - 1) + m_lang_wxPrefix.size());
-        *this << m_lang_wxPrefix << "DefaultPosition";
+        CheckLineLength((sizeof("DefaultPosition") - 1) + m_language_wxPrefix.size());
+        *this << m_language_wxPrefix << "DefaultPosition";
         return *this;
     }
 
@@ -1194,27 +1215,6 @@ Code& Code::Style(const char* prefix, tt_string_view force_style)
             else
             {
                 tt_view_vector multistr(m_node->as_constant(prop_style, prefix), "|", tt::TRIM::both);
-                std::string_view wx_prefix = m_lang_wxPrefix;
-                auto map_python_wxWidget = [&](tt_string_view candidate)
-                {
-                    for (auto& iter_prefix: s_short_python_map)
-                    {
-                        if (candidate.starts_with(iter_prefix.first))
-                        {
-                            wx_prefix = iter_prefix.second;
-                            return;
-                        }
-                    }
-                    if (is_python())
-                    {
-                        if (auto wx_iter = map_python_wx_prefix.find(candidate); wx_iter != map_python_wx_prefix.end())
-                        {
-                            wx_prefix = wx_iter->second;
-                            return;
-                        }
-                    }
-                };
-
                 for (auto& iter: multistr)
                 {
                     if (iter.empty())
@@ -1223,11 +1223,19 @@ Code& Code::Style(const char* prefix, tt_string_view force_style)
                         *this += '|';
                     if (iter.is_sameprefix("wx"))
                     {
-                        if (is_python())
+                        if (std::string_view language_prefix = GetLanguagePrefix(iter, m_language); language_prefix.size())
                         {
-                            map_python_wxWidget(iter);
+                            // Some languages will have a module added after their standard prefix.
+                            CheckLineLength(language_prefix.size() + iter.size() - 2);
+                            *this << language_prefix << iter.substr(2);
                         }
-                        *this << wx_prefix << iter.substr(2);
+                        else
+                        {
+                            // If there was no sub-language module added (e.g., wx.aui. for
+                            // Python), then use the default language prefix.
+                            CheckLineLength(m_language_wxPrefix.size() + iter.size() - 2);
+                            *this << m_language_wxPrefix << iter.substr(2);
+                        }
                     }
                     else
                         *this += iter;
@@ -1535,25 +1543,25 @@ Code& Code::GenSizerFlags()
             {
                 if (border_flags.size())
                     border_flags << '|';
-                border_flags << m_lang_wxPrefix << "LEFT";
+                border_flags << m_language_wxPrefix << "LEFT";
             }
             if (prop.contains("wxRIGHT"))
             {
                 if (border_flags.size())
                     border_flags << '|';
-                border_flags << m_lang_wxPrefix << "RIGHT";
+                border_flags << m_language_wxPrefix << "RIGHT";
             }
             if (prop.contains("wxTOP"))
             {
                 if (border_flags.size())
                     border_flags << '|';
-                border_flags << m_lang_wxPrefix << "TOP";
+                border_flags << m_language_wxPrefix << "TOP";
             }
             if (prop.contains("wxBOTTOM"))
             {
                 if (border_flags.size())
                     border_flags << '|';
-                border_flags << m_lang_wxPrefix << "BOTTOM";
+                border_flags << m_language_wxPrefix << "BOTTOM";
             }
             if (border_flags.empty())
                 border_flags = "0";
@@ -1566,7 +1574,7 @@ Code& Code::GenSizerFlags()
                 else if (is_ruby())
                     *this += "Wx::SizerFlags.get_default_border)";
                 else
-                    *this << m_lang_wxPrefix << "SizerFlags.GetDefaultBorder())";
+                    *this << m_language_wxPrefix << "SizerFlags.GetDefaultBorder())";
             }
             else
             {

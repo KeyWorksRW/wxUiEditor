@@ -103,7 +103,7 @@ void BaseCodeGenerator::GenConstruction(Node* node)
         tt_string code;
         gen_code.clear();
         if (parent->isType(type_toolbar_form) || parent->isType(type_aui_toolbar_form))
-            gen_code.Str("AddControl(").Str(prop_var_name).EndFunction();
+            gen_code.Str("AddControl(").as_string(prop_var_name).EndFunction();
         else
             gen_code.ParentName().Function("AddControl(").NodeName().EndFunction();
         m_source->writeLine(gen_code);

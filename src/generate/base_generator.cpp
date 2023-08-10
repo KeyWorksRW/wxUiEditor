@@ -301,9 +301,6 @@ tt_string BaseGenerator::GetHelpText(Node* node)
     return class_name;
 }
 
-extern std::map<std::string_view, std::string_view, std::less<>> g_map_python_prefix;
-extern std::map<std::string_view, std::string_view, std::less<>> g_map_ruby_prefix;
-
 tt_string BaseGenerator::GetPythonHelpText(Node* node)
 {
     tt_string class_name = getClassHelpName(node);

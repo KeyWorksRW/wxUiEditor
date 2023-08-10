@@ -46,7 +46,7 @@ bool DialogFormGenerator::ConstructionCode(Code& code)
 {
     if (code.is_cpp())
     {
-        code.Str("bool ").Str((prop_class_name));
+        code.Str("bool ").as_string(prop_class_name);
         code +=
             "::Create(wxWindow* parent, wxWindowID id, const wxString& title,\n\tconst wxPoint& pos, const wxSize& size, "
             "long style, const wxString &name)";
@@ -231,7 +231,7 @@ bool DialogFormGenerator::HeaderCode(Code& code)
 
     code.Comma().Eol().Tab().Str("long style = ");
     if (node->hasValue(prop_style))
-        code.Str(prop_style);
+        code.as_string(prop_style);
     else
         code.Str("wxDEFAULT_DIALOG_STYLE");
 
@@ -282,7 +282,7 @@ bool DialogFormGenerator::BaseClassNameCode(Code& code)
 {
     if (code.hasValue(prop_derived_class))
     {
-        code.Str((prop_derived_class));
+        code.as_string(prop_derived_class);
     }
     else
     {

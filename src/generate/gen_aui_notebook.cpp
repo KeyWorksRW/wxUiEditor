@@ -83,7 +83,7 @@ bool AuiNotebookGenerator::SettingsCode(Code& code)
 {
     if (code.IntValue(prop_tab_height) > 0)
     {
-        code.Eol().NodeName().Function("SetTabCtrlHeight(").Str(prop_tab_height).EndFunction();
+        code.Eol().NodeName().Function("SetTabCtrlHeight(").as_string(prop_tab_height).EndFunction();
     }
 
     return true;

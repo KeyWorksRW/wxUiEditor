@@ -132,7 +132,7 @@ bool CheckListBoxGenerator::SettingsCode(Code& code)
             int sel = node->as_int(prop_selection_int);
             if (sel > -1 && sel < (to_int) contents.size())
             {
-                code.Eol(eol_if_empty).NodeName().Function("SetSelection(").Str(prop_selection_int).EndFunction();
+                code.Eol(eol_if_empty).NodeName().Function("SetSelection(").as_string(prop_selection_int).EndFunction();
             }
         }
     }

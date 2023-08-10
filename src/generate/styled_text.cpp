@@ -499,7 +499,7 @@ bool StyledTextGenerator::SettingsCode(Code& code)
 
     if (code.hasValue(prop_stc_lexer) && !code.isPropValue(prop_stc_lexer, "NULL"))
     {
-        code.Eol(eol_if_needed).NodeName().Function("SetLexer(").Add("wxSTC_LEX_").Str(prop_stc_lexer).EndFunction();
+        code.Eol(eol_if_needed).NodeName().Function("SetLexer(").Add("wxSTC_LEX_").as_string(prop_stc_lexer).EndFunction();
     }
 
     // Default is false, so only set if true
@@ -566,7 +566,11 @@ bool StyledTextGenerator::SettingsCode(Code& code)
 
     if (code.hasValue(prop_stc_wrap_start_indent))
     {
-        code.Eol(eol_if_needed).NodeName().Function("SetWrapStartIndent(").Str(prop_stc_wrap_start_indent).EndFunction();
+        code.Eol(eol_if_needed)
+            .NodeName()
+            .Function("SetWrapStartIndent(")
+            .as_string(prop_stc_wrap_start_indent)
+            .EndFunction();
     }
 
     //////////// Selection category settings ////////////
@@ -608,7 +612,11 @@ bool StyledTextGenerator::SettingsCode(Code& code)
         }
         else
         {
-            code.Eol(eol_if_needed).NodeName().Function("SetMarginLeft(").Str(prop_stc_left_margin_width).EndFunction();
+            code.Eol(eol_if_needed)
+                .NodeName()
+                .Function("SetMarginLeft(")
+                .as_string(prop_stc_left_margin_width)
+                .EndFunction();
         }
     }
 
@@ -627,7 +635,7 @@ bool StyledTextGenerator::SettingsCode(Code& code)
         }
         else
         {
-            code.Str(prop_stc_right_margin_width).EndFunction();
+            code.as_string(prop_stc_right_margin_width).EndFunction();
         }
     }
 
@@ -838,7 +846,7 @@ bool StyledTextGenerator::SettingsCode(Code& code)
             margin = "0";
 
         code.Eol().NodeName().Function("SetMarginWidth(").Add(margin);
-        code.Comma().Str(prop_separator_width).EndFunction();
+        code.Comma().as_string(prop_separator_width).EndFunction();
         code.Eol().NodeName().Function("SetMarginType(").Str(margin).Comma().Add("wxSTC_MARGIN_FORE").EndFunction();
     }
 
@@ -848,7 +856,7 @@ bool StyledTextGenerator::SettingsCode(Code& code)
         if (margin.is_sameas("none"))
             margin = "0";
 
-        code.Eol().NodeName().Function("SetMarginWidth(").Str(margin).Comma().Str(prop_custom_width).EndFunction();
+        code.Eol().NodeName().Function("SetMarginWidth(").Str(margin).Comma().as_string(prop_custom_width).EndFunction();
         code.Eol().NodeName().Function("SetMarginType(").Str(margin);
         code.Comma().AddConstant(prop_custom_type, "stc_").EndFunction();
 
@@ -895,7 +903,7 @@ bool StyledTextGenerator::SettingsCode(Code& code)
 
         if (code.IntValue(prop_tab_width) != 8)
         {
-            code.Eol().NodeName().Function("SetTabWidth(").Str(prop_tab_width).EndFunction();
+            code.Eol().NodeName().Function("SetTabWidth(").as_string(prop_tab_width).EndFunction();
         }
     }
 

@@ -95,7 +95,7 @@ bool ListBoxGenerator::SettingsCode(Code& code)
             int sel = code.IntValue(prop_selection_int);
             if (sel > -1 && sel < (to_int) array.size())
             {
-                code.Eol(eol_if_empty).NodeName().Function("SetSelection(").Str(prop_selection_int).EndFunction();
+                code.Eol(eol_if_empty).NodeName().Function("SetSelection(").as_string(prop_selection_int).EndFunction();
             }
         }
     }

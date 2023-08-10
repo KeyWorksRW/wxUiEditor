@@ -39,7 +39,7 @@ bool TextSizerGenerator::ConstructionCode(Code& code)
         code << " = wxTextSizerWrapper(" << parent->getNodeName() << ").CreateSizer(";
     }
 
-    code.QuotedString(prop_text).Comma().Str(prop_width).EndFunction();
+    code.QuotedString(prop_text).Comma().as_string(prop_width).EndFunction();
 
     return true;
 }

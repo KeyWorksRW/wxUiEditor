@@ -34,7 +34,7 @@ bool CustomControl::ConstructionCode(Code& code)
     code.AddAuto().NodeName();
     code.Str(" = ").AddIfCpp("new ");
     if (code.hasValue(prop_namespace) && code.is_cpp())
-        code.Str(prop_namespace) += "::";
+        code.as_string(prop_namespace) += "::";
 
     tt_string parameters(code.view(prop_parameters));
     parameters.Replace("${parent}", code.node()->getParentName(), tt::REPLACE::all);
@@ -80,7 +80,7 @@ bool CustomControl::ConstructionCode(Code& code)
     if (parameters.back() != ')')
         parameters += ")";
 
-    code.Str(prop_class_name).Str(parameters).AddIfCpp(";");
+    code.as_string(prop_class_name).Str(parameters).AddIfCpp(";");
 
     return true;
 }

@@ -44,9 +44,9 @@ bool GridSizerGenerator::ConstructionCode(Code& code)
     code.AddAuto().NodeName().CreateClass();
     if (code.node()->as_int(prop_rows) != 0)
     {
-        code.Str(prop_rows).Comma();
+        code.as_string(prop_rows).Comma();
     }
-    code.Str(prop_cols).Comma().Str(prop_vgap).Comma().Str(prop_hgap).EndFunction();
+    code.as_string(prop_cols).Comma().as_string(prop_vgap).Comma().as_string(prop_hgap).EndFunction();
 
     if (code.hasValue(prop_minimum_size))
     {

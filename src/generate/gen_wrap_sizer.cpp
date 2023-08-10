@@ -40,7 +40,7 @@ bool WrapSizerGenerator::ConstructionCode(Code& code)
 {
     code.AddAuto().NodeName().CreateClass().as_string(prop_orientation).Comma();
     if (code.hasValue(prop_wrap_flags))
-        code.Str(prop_wrap_flags);
+        code.as_string(prop_wrap_flags);
     else
         code += "0";
     code.EndFunction();

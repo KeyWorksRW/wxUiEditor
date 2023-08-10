@@ -185,7 +185,7 @@ bool ButtonGenerator::SettingsCode(Code& code)
     {
         if (code.hasValue(prop_position))
         {
-            code.Eol(eol_if_needed).NodeName().Function("SetBitmapPosition(").Str(prop_position).EndFunction();
+            code.Eol(eol_if_needed).NodeName().Function("SetBitmapPosition(").as_string(prop_position).EndFunction();
         }
 
         if (code.hasValue(prop_margins))

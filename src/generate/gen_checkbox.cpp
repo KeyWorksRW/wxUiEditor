@@ -50,9 +50,7 @@ bool CheckBoxGenerator::OnPropertyChange(wxObject* widget, Node* node, NodePrope
 
 bool CheckBoxGenerator::ConstructionCode(Code& code)
 {
-    if (code.is_cpp() && code.is_local_var())
-        code << "auto* ";
-    code.NodeName().CreateClass();
+    code.AddAuto().NodeName().CreateClass();
     code.ValidParentName().Comma().as_string(prop_id).Comma().QuotedString(prop_label);
     code.PosSizeFlags(true);
 
@@ -148,9 +146,7 @@ bool Check3StateGenerator::OnPropertyChange(wxObject* widget, Node* node, NodePr
 
 bool Check3StateGenerator::ConstructionCode(Code& code)
 {
-    if (code.is_cpp() && code.is_local_var())
-        code << "auto* ";
-    code.NodeName().CreateClass(false, "wxCheckBox");
+    code.AddAuto().NodeName().CreateClass(false, "wxCheckBox");
     code.ValidParentName().Comma().as_string(prop_id).Comma().QuotedString(prop_label);
     code.PosSizeForceStyle("wxCHK_3STATE");
 

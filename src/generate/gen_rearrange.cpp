@@ -51,9 +51,7 @@ wxObject* RearrangeCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
 
 bool RearrangeCtrlGenerator::ConstructionCode(Code& code)
 {
-    if (code.is_cpp() && code.is_local_var())
-        code << "auto* ";
-    code.NodeName().CreateClass();
+    code.AddAuto().NodeName().CreateClass();
     code.ValidParentName().Comma().as_string(prop_id);
     code.Comma().Pos().Comma().WxSize();
     code.Comma();

@@ -194,9 +194,7 @@ wxObject* BookPageGenerator::CreateMockup(Node* node, wxObject* parent)
 
 bool BookPageGenerator::ConstructionCode(Code& code)
 {
-    if (code.is_cpp() && code.is_local_var())
-        code << "auto* ";
-    code.NodeName().CreateClass();
+    code.AddAuto().NodeName().CreateClass();
 
     Node* node = code.node();
     if (node->getParent()->isGen(gen_BookPage))

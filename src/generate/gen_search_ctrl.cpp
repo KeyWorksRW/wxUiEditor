@@ -40,9 +40,7 @@ wxObject* SearchCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
 
 bool SearchCtrlGenerator::ConstructionCode(Code& code)
 {
-    if (code.is_cpp() && code.is_local_var())
-        code << "auto* ";
-    code.NodeName().CreateClass();
+    code.AddAuto().NodeName().CreateClass();
     code.ValidParentName().Comma().as_string(prop_id).Comma().QuotedString(prop_value);
     code.PosSizeFlags(true);
 

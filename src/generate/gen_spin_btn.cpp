@@ -35,9 +35,7 @@ wxObject* SpinButtonGenerator::CreateMockup(Node* node, wxObject* parent)
 
 bool SpinButtonGenerator::ConstructionCode(Code& code)
 {
-    if (code.is_cpp() && code.is_local_var())
-        code << "auto* ";
-    code.NodeName().CreateClass().ValidParentName().Comma().as_string(prop_id);
+    code.AddAuto().NodeName().CreateClass().ValidParentName().Comma().as_string(prop_id);
     code.PosSizeFlags(false, "wxSP_VERTICAL");
 
     // If the last parameter is wxID_ANY, then remove it. This is the default value, so it's

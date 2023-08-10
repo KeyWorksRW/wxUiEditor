@@ -67,8 +67,6 @@ bool BitmapComboBoxGenerator::OnPropertyChange(wxObject* widget, Node* node, Nod
 
 bool BitmapComboBoxGenerator::ConstructionCode(Code& code)
 {
-    if (code.is_cpp() && code.is_local_var())
-        code << "auto* ";
     code.AddAuto().NodeName().CreateClass();
     code.ValidParentName().Comma().as_string(prop_id);
     if (code.hasValue(prop_style))

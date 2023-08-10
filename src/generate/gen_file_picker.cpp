@@ -47,9 +47,7 @@ wxObject* FilePickerGenerator::CreateMockup(Node* node, wxObject* parent)
 
 bool FilePickerGenerator::ConstructionCode(Code& code)
 {
-    if (code.is_cpp() && code.is_local_var())
-        code << "auto* ";
-    code.NodeName().CreateClass();
+    code.AddAuto().NodeName().CreateClass();
     code.ValidParentName().Comma().as_string(prop_id).Comma();
 
     if (auto& path = code.node()->as_string(prop_initial_path); path.size())

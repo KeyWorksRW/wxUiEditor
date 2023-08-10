@@ -31,9 +31,7 @@ wxObject* CalendarCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
 
 bool CalendarCtrlGenerator::ConstructionCode(Code& code)
 {
-    if (code.is_cpp() && code.is_local_var())
-        code << "auto* ";
-    code.NodeName().CreateClass();
+    code.AddAuto().NodeName().CreateClass();
     code.ValidParentName().Comma().as_string(prop_id).Comma();
     if (code.is_ruby())
     {

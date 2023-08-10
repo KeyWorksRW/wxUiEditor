@@ -86,10 +86,7 @@ bool StatusBarGenerator::ConstructionCode(Code& code)
     else
         num_fields = node->as_int(prop_fields);
 
-    if (code.is_cpp() && code.is_local_var())
-        code << "auto* ";
-
-    code.NodeName().Str(" = ").FormFunction("CreateStatusBar(");
+    code.AddAuto().NodeName().Str(" = ").FormFunction("CreateStatusBar(");
     if (node->hasValue(prop_window_name))
     {
         code.itoa(num_fields).Comma().as_string(prop_id).Comma().Style();

@@ -20,10 +20,15 @@
 
 wxObject* RearrangeCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    if (Project.getCodePreference() == GEN_LANG_RUBY)
+    if (Project.getCodePreference() == GEN_LANG_RUBY || Project.getCodePreference() == GEN_LANG_XRC)
     {
-        auto* widget = new wxStaticText(wxStaticCast(parent, wxWindow), wxID_ANY, "wxRearrangeCtrl not available in wxRuby3",
-                                        wxDefaultPosition, wxDefaultSize, wxALIGN_CENTER_HORIZONTAL | wxBORDER_RAISED);
+        tt_string msg = "wxRearrangeCtrl not available in ";
+        if (Project.getCodePreference() == GEN_LANG_RUBY)
+            msg += "wxRuby3";
+        else
+            msg += "XRC";
+        auto* widget = new wxStaticText(wxStaticCast(parent, wxWindow), wxID_ANY, msg.make_wxString(), wxDefaultPosition,
+                                        wxDefaultSize, wxALIGN_CENTER_HORIZONTAL | wxBORDER_RAISED);
         widget->Wrap(DlgPoint(parent, 150));
         return widget;
     }

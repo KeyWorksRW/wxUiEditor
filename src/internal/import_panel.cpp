@@ -80,6 +80,7 @@ void ImportPanel::SetImportFile(const tt_string& file, int lexer)
 
     m_lexer = lexer;
     m_scintilla->SetLexer(lexer);
+    m_import_file = file;
     m_scintilla->SetTabWidth(4);
 
     switch (lexer)
@@ -205,10 +206,22 @@ void ImportPanel::OnNodeSelected(Node* node)
     name << node->as_string(prop_var_name);
     int line = 0;
 
-    tt_string search(m_lexer != wxSTC_LEX_JSON ? "name=\"" : "\"");
+    tt_string search;
+    if (m_lexer == wxSTC_LEX_JSON || m_import_file.has_extension(".pjd"))
+    {
+        search = "\"";
+    }
+    else
+    {
+        search = "name=\"";
+    }
     if (node->hasProp(prop_id) && node->as_string(prop_id) != "wxID_ANY")
     {
         search << node->as_string(prop_id);
+        if (auto pos = search.find('='); tt::is_found(pos))
+        {
+            search.erase(pos - 1, search.size() - pos + 1);
+        }
     }
     else if (node->hasValue(prop_var_name))
     {
@@ -220,8 +233,25 @@ void ImportPanel::OnNodeSelected(Node* node)
     }
     line = (to_int) m_view.FindLineContaining(search);
 
+    if (!tt::is_found(line) && m_import_file.has_extension(".pjd") && node->hasValue(prop_var_name))
+    {
+        search = "\"" + node->as_string(prop_var_name);
+        line = (to_int) m_view.FindLineContaining(search);
+    }
+
+    if (!tt::is_found(line) && m_import_file.has_extension(".pjd"))
+    {
+        search = node->getNodeDeclaration()->declName();
+        // DialogBlocks uses wbClassName instead of the expected wxClassName
+        if (search.size() > 1 && search[1] == 'x')
+            search[1] = 'b';
+        line = (to_int) m_view.FindLineContaining(search);
+    }
+
     if (!tt::is_found(line))
+    {
         return;
+    }
 
     m_scintilla->MarkerDeleteAll(node_marker);
     m_scintilla->MarkerAdd(line, node_marker);

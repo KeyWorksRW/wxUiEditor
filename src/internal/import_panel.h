@@ -30,5 +30,6 @@ protected:
 private:
     tt_view_vector m_view;
     wxStyledTextCtrl* m_scintilla;
+    tt_string m_import_file;
     int m_lexer;
 };

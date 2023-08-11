@@ -5,7 +5,8 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include <wx/webview.h>  // Common interface and events for web view component
+#include <wx/stattext.h>  // wxStaticText base header
+#include <wx/webview.h>   // Common interface and events for web view component
 
 #include "code.h"             // Code -- Helper class for generating code
 #include "gen_common.h"       // GeneratorLibrary -- Generator classes
@@ -23,6 +24,13 @@
 
 wxObject* WebViewGenerator::CreateMockup(Node* node, wxObject* parent)
 {
+    if (Project.getCodePreference() == GEN_LANG_RUBY)
+    {
+        auto* widget = new wxStaticText(wxStaticCast(parent, wxWindow), wxID_ANY, "wxWebView not available in wxRuby3",
+                                        wxDefaultPosition, wxDefaultSize, wxALIGN_CENTER_HORIZONTAL | wxBORDER_RAISED);
+        widget->Wrap(DlgPoint(parent, 150));
+        return widget;
+    }
     auto widget = wxWebView::New(wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxString(prop_url),
                                  DlgPoint(parent, node, prop_pos), DlgSize(parent, node, prop_size), wxWebViewBackendDefault,
                                  GetStyleInt(node));

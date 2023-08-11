@@ -6,18 +6,27 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include <wx/rearrangectrl.h>  // various controls for rearranging the items interactively
+#include <wx/stattext.h>       // wxStaticText base header
 
-#include "gen_common.h"     // GeneratorLibrary -- Generator classes
-#include "gen_xrc_utils.h"  // Common XRC generating functions
-#include "node.h"           // Node class
-#include "pugixml.hpp"      // xml read/write/create/process
-#include "utils.h"          // Utility functions that work with properties
-#include "write_code.h"     // WriteCode -- Write code to Scintilla or file
+#include "gen_common.h"       // GeneratorLibrary -- Generator classes
+#include "gen_xrc_utils.h"    // Common XRC generating functions
+#include "node.h"             // Node class
+#include "project_handler.h"  // ProjectHandler class
+#include "pugixml.hpp"        // xml read/write/create/process
+#include "utils.h"            // Utility functions that work with properties
+#include "write_code.h"       // WriteCode -- Write code to Scintilla or file
 
 #include "gen_rearrange.h"
 
 wxObject* RearrangeCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
 {
+    if (Project.getCodePreference() == GEN_LANG_RUBY)
+    {
+        auto* widget = new wxStaticText(wxStaticCast(parent, wxWindow), wxID_ANY, "wxRearrangeCtrl not available in wxRuby3",
+                                        wxDefaultPosition, wxDefaultSize, wxALIGN_CENTER_HORIZONTAL | wxBORDER_RAISED);
+        widget->Wrap(DlgPoint(parent, 150));
+        return widget;
+    }
     auto widget = new wxRearrangeCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(parent, node, prop_pos),
                                       DlgSize(parent, node, prop_size), wxArrayInt(), wxArrayString(),
                                       node->as_int(prop_type) | GetStyleInt(node));

@@ -1,23 +1,32 @@
 //////////////////////////////////////////////////////////////////////////
 // Purpose:   wxInfoBar generator
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include <wx/infobar.h>  // declaration of wxInfoBarBase defining common API of wxInfoBar
-#include <wx/timer.h>    // wxTimer, wxStopWatch and global time-related functions
+#include <wx/infobar.h>   // declaration of wxInfoBarBase defining common API of wxInfoBar
+#include <wx/stattext.h>  // wxStaticText base header
+#include <wx/timer.h>     // wxTimer, wxStopWatch and global time-related functions
 
-#include "gen_common.h"     // GeneratorLibrary -- Generator classes
-#include "gen_xrc_utils.h"  // Common XRC generating functions
-#include "node.h"           // Node class
-#include "pugixml.hpp"      // xml read/write/create/process
-#include "utils.h"          // Utility functions that work with properties
+#include "gen_common.h"       // GeneratorLibrary -- Generator classes
+#include "gen_xrc_utils.h"    // Common XRC generating functions
+#include "node.h"             // Node class
+#include "project_handler.h"  // ProjectHandler class
+#include "pugixml.hpp"        // xml read/write/create/process
+#include "utils.h"            // Utility functions that work with properties
 
 #include "gen_infobar.h"
 
 wxObject* InfoBarGenerator::CreateMockup(Node* node, wxObject* parent)
 {
+    if (Project.getCodePreference() == GEN_LANG_RUBY)
+    {
+        auto* widget = new wxStaticText(wxStaticCast(parent, wxWindow), wxID_ANY, "wxInfoBar not available in wxRuby3",
+                                        wxDefaultPosition, wxDefaultSize, wxALIGN_CENTER_HORIZONTAL | wxBORDER_RAISED);
+        widget->Wrap(DlgPoint(parent, 150));
+        return widget;
+    }
     m_infobar = new wxInfoBar(wxStaticCast(parent, wxWindow));
 
     // Show the message before effects are added in case the show_effect has a delay (which would delay the display of

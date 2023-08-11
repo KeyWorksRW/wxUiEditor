@@ -1,24 +1,33 @@
 //////////////////////////////////////////////////////////////////////////
 // Purpose:   wxBannerWindow generator
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
 #include <wx/bannerwindow.h>  // wxBannerWindow class declaration
+#include <wx/stattext.h>      // wxStaticText base header
 
-#include "code.h"           // Code -- Helper class for generating code
-#include "gen_common.h"     // GeneratorLibrary -- Generator classes
-#include "gen_xrc_utils.h"  // Common XRC generating functions
-#include "node.h"           // Node class
-#include "pugixml.hpp"      // xml read/write/create/process
-#include "utils.h"          // Utility functions that work with properties
-#include "write_code.h"     // WriteCode -- Write code to Scintilla or file
+#include "code.h"             // Code -- Helper class for generating code
+#include "gen_common.h"       // GeneratorLibrary -- Generator classes
+#include "gen_xrc_utils.h"    // Common XRC generating functions
+#include "node.h"             // Node class
+#include "project_handler.h"  // ProjectHandler class
+#include "pugixml.hpp"        // xml read/write/create/process
+#include "utils.h"            // Utility functions that work with properties
+#include "write_code.h"       // WriteCode -- Write code to Scintilla or file
 
 #include "gen_banner_window.h"
 
 wxObject* BannerWindowGenerator::CreateMockup(Node* node, wxObject* parent)
 {
+    if (Project.getCodePreference() == GEN_LANG_RUBY)
+    {
+        auto* widget = new wxStaticText(wxStaticCast(parent, wxWindow), wxID_ANY, "wxBannerWindow not available in wxRuby3",
+                                        wxDefaultPosition, wxDefaultSize, wxALIGN_CENTER_HORIZONTAL | wxBORDER_RAISED);
+        widget->Wrap(DlgPoint(parent, 150));
+        return widget;
+    }
     auto widget = new wxBannerWindow(wxStaticCast(parent, wxWindow),
                                      (wxDirection) NodeCreation.getConstantAsInt(node->as_string(prop_direction)));
 

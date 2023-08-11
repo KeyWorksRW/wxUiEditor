@@ -67,8 +67,11 @@ protected:
                        bool is_child_cat = false);
 
     void ReplaceDerivedName(const tt_string& formName, NodeProperty* propType);
-    void ReplaceBaseFile(const tt_string& formName, NodeProperty* propType);
     void ReplaceDerivedFile(const tt_string& formName, NodeProperty* propType);
+
+    // Called when the class_name for a form changes. If the preferred code language output
+    // file is empty, then create a suggested file name based on the class name.
+    void CheckOutputFile(const tt_string& formName, Node* node);
 
     wxPGProperty* CreatePGProperty(NodeProperty* prop);
 

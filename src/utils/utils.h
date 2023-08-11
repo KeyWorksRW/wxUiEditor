@@ -56,6 +56,10 @@ bool isConvertibleMime(const tt_string& suffix);
 // Checks whether a string is a valid C++ variable name.
 bool isValidVarName(const std::string& str);
 
+// This takes the class_name of the form, converts it to lowercase, and if the class name
+// ends with Base, the a "_base" suffix is added.
+//
+// This does *not* check to see if the file already exists.
 tt_string CreateBaseFilename(Node* form_node, const tt_string& class_name);
 
 tt_string CreateDerivedFilename(Node* form_node, const tt_string& class_name);

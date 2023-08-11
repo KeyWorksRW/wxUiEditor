@@ -1278,27 +1278,24 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
 
                 if (prop->isProp(prop_class_name))
                 {
-                    auto selected_node = wxGetFrame().getSelectedNode();
-                    if (!selected_node)
-                        return;
-
-                    if (selected_node->isForm())
+                    if (auto selected_node = wxGetFrame().getSelectedNode(); selected_node && selected_node->isForm())
                     {
-                        if (!selected_node->hasValue(prop_base_file))
-                        {
-                            ReplaceBaseFile(newValue, selected_node->getPropPtr(prop_base_file));
-                        }
+                        CheckOutputFile(newValue, selected_node);
 
-                        if (!selected_node->as_bool(prop_use_derived_class))
-                            return;
-
-                        if (!selected_node->hasValue(prop_derived_class_name))
+                        if (Project.getCodePreference() == GEN_LANG_CPLUSPLUS)
                         {
-                            ReplaceDerivedName(newValue, selected_node->getPropPtr(prop_derived_class_name));
-                            ReplaceDerivedFile(selected_node->as_string(prop_derived_class_name),
-                                               selected_node->getPropPtr(prop_derived_file));
+                            if (!selected_node->as_bool(prop_use_derived_class))
+                                return;
+
+                            if (!selected_node->hasValue(prop_derived_class_name))
+                            {
+                                ReplaceDerivedName(newValue, selected_node->getPropPtr(prop_derived_class_name));
+                                ReplaceDerivedFile(selected_node->as_string(prop_derived_class_name),
+                                                   selected_node->getPropPtr(prop_derived_file));
+                            }
                         }
                     }
+                    return;
                 }
             }
             break;
@@ -2141,25 +2138,58 @@ void PropGridPanel::ReplaceDerivedName(const tt_string& newValue, NodeProperty* 
     modifyProperty(propType, drvName);
 }
 
-void PropGridPanel::ReplaceBaseFile(const tt_string& newValue, NodeProperty* propType)
+void PropGridPanel::CheckOutputFile(const tt_string& newValue, Node* node)
 {
-    auto form_node = propType->getNode()->getForm();
-    auto base_filename = CreateBaseFilename(form_node, newValue);
-    auto grid_property = m_prop_grid->GetPropertyByLabel("base_file");
-    grid_property->SetValueFromString(base_filename.make_wxString(), 0);
-    modifyProperty(propType, base_filename);
+    auto form_node = node->getForm();
 
-    if (Project.as_string(prop_code_preference) == "Python" && !form_node->hasValue(prop_python_file))
+    auto ChangeOutputFile = [&](PropName prop_name)
     {
-        grid_property = m_prop_grid->GetPropertyByLabel("python_file");
-        grid_property->SetValueFromString(base_filename.make_wxString(), 0);
-        modifyProperty(form_node->getPropPtr(prop_python_file), base_filename);
-    }
-    else if (Project.as_string(prop_code_preference) == "Ruby" && !form_node->hasValue(prop_ruby_file))
+        if (form_node->hasValue(prop_name))
+            return;
+        if (auto label = GetPropStringName(prop_name); label)
+        {
+            auto output_filename = CreateBaseFilename(form_node, newValue);
+            auto grid_property = m_prop_grid->GetPropertyByLabel(label->make_wxString());
+            grid_property->SetValueFromString(output_filename.make_wxString(), 0);
+            modifyProperty(form_node->getPropPtr(prop_name), output_filename);
+        }
+    };
+
+    switch (Project.getCodePreference())
     {
-        grid_property = m_prop_grid->GetPropertyByLabel("ruby_file");
-        grid_property->SetValueFromString(base_filename.make_wxString(), 0);
-        modifyProperty(form_node->getPropPtr(prop_ruby_file), base_filename);
+        case GEN_LANG_CPLUSPLUS:
+            ChangeOutputFile(prop_base_file);
+            break;
+
+        case GEN_LANG_PYTHON:
+            ChangeOutputFile(prop_python_file);
+            break;
+
+        case GEN_LANG_RUBY:
+            ChangeOutputFile(prop_ruby_file);
+            break;
+
+        case GEN_LANG_XRC:
+            ChangeOutputFile(prop_xrc_file);
+            break;
+
+            // The following are experimental
+
+        case GEN_LANG_GOLANG:
+            ChangeOutputFile(prop_golang_file);
+            break;
+
+        case GEN_LANG_LUA:
+            ChangeOutputFile(prop_lua_file);
+            break;
+
+        case GEN_LANG_PERL:
+            ChangeOutputFile(prop_perl_file);
+            break;
+
+        case GEN_LANG_RUST:
+            ChangeOutputFile(prop_rust_file);
+            break;
     }
 }
 

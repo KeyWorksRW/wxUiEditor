@@ -39,6 +39,9 @@ tt_string ConvertEscapeSlashes(tt_string_view str);
 // If the property specifies dialog units, then parent will be used to do the conversion
 wxPoint DlgPoint(wxObject* parent, Node* node, GenEnum::PropName prop);
 
+// Given a width (wxPoint::x) this will convert it into dialog units.
+int DlgPoint(wxObject* parent, int width);
+
 // If the property specifies dialog units, then parent will be used to do the conversion
 wxSize DlgSize(wxObject* parent, Node* node, GenEnum::PropName prop);
 

@@ -310,6 +310,13 @@ wxSize DlgSize(wxObject* parent, Node* node, GenEnum::PropName prop)
     }
 }
 
+int DlgPoint(wxObject* parent, int width)
+{
+    wxPoint pt = { width, -1 };
+    wxStaticCast(parent, wxWindow)->ConvertDialogToPixels(pt);
+    return pt.x;
+}
+
 wxSize GetSizeInfo(tt_string_view description)
 {
     wxSize size;

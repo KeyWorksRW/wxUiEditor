@@ -696,6 +696,10 @@ bool ProjectHandler::ImportProject(tt_string& file,
     {
         DialogBlocks db;
         result = Import(db, file);
+#if defined(INTERNAL_TESTING)
+        if (result && allow_ui)
+            wxGetFrame().getImportPanel()->SetImportFile(import_file, wxSTC_LEX_XML);
+#endif
     }
 
     return result;

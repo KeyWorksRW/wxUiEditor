@@ -66,7 +66,10 @@ bool FontPickerGenerator::ConstructionCode(Code& code)
     }
     else
     {
-        code.Add("wxNullFont");
+        if (code.is_ruby())
+            code.Str("Wx::NULL_FONT");
+        else
+            code.Add("wxNullFont");
     }
 
     code.PosSizeFlags(true);

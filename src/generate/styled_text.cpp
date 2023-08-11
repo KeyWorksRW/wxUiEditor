@@ -508,13 +508,21 @@ bool StyledTextGenerator::SettingsCode(Code& code)
 
     if (code.hasValue(prop_eol_mode))
     {
-        code.Eol(eol_if_needed).NodeName().Function("SetEOLMode(").AddConstant(prop_eol_mode, "stc_").EndFunction();
+        code.Eol(eol_if_needed).NodeName();
+        if (code.is_ruby())
+            // code.Function() would convert EOL to e_o_l
+            code.Str(".set_eol_mode(");
+        else
+            code.Function("SetEOLMode(");
+        code.AddConstant(prop_eol_mode, "stc_").EndFunction();
     }
 
     // Default is false, so only set if true
     if (code.IsTrue(prop_view_eol))
     {
-        code.Eol(eol_if_needed).NodeName().Function("SetViewEol(").True().EndFunction();
+        // REVIEW wxPython 3.2.0 does not support SetViewEol
+        if (!code.is_python())
+            code.Eol(eol_if_needed).NodeName().Function("SetViewEol(").True().EndFunction();
     }
 
     if (!code.isPropValue(prop_view_whitespace, "invisible"))

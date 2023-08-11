@@ -280,7 +280,8 @@ public:
     // This will call CheckLineLength(str.size()) first.
     Code& Str(std::string_view str)
     {
-        CheckLineLength(str.size());
+        if (!is_ruby() || (str.size() && str[0] != '('))
+            CheckLineLength(str.size());
         *this += str;
         return *this;
     }
@@ -301,8 +302,10 @@ public:
     // Adds wxClass or wx.Class
     Code& Class(tt_string_view text);
 
-    // Adds " = new wxClass;" or " = wx.Class"
-    Code& Assign(tt_string_view class_name);
+    // Adds " := " for wxGo, " = " for other languages.
+    // If class_name is specified, adds the " = new wxClass;" for C++ or normal
+    // class assignment for other languages.
+    Code& Assign(tt_string_view class_name = tt_empty_cstr);
 
     // Adds " = new wxClass(" or " = wx.Class('.
     // Adds wxGeneric prefix if use_generic is true.

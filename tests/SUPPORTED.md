@@ -36,12 +36,12 @@ This does _not_ mean that the class is fully supported in every language -- this
 
 | Class | C++ | Python | Ruby | XRC | file |
 -----------|-----|--------|------|------|------|
-| wxColourPickerCtrl | yes | yes | --- | --- | ../src/generate/gen_clr_picker.cpp |
-| wxDatePickerCtrl | yes | yes | --- | --- | ../src/generate/gen_date_picker.cpp |
-| wxDirPickerCtrl | yes | yes | --- | --- | ../src/generate/gen_dir_picker.cpp |
-| wxFilePickerCtrl | yes | yes | --- | --- | ../src/generate/gen_file_picker.cpp |
-| wxFontPickerCtrl | yes | yes | --- | --- | ../src/generate/gen_font_picker.cpp |
-| wxTimePickerCtrl | yes | yes | --- | --- | ../src/generate/gen_time_picker.cpp |
+| wxColourPickerCtrl | yes | yes | yes | yes | ../src/generate/gen_clr_picker.cpp |
+| wxDatePickerCtrl | yes | yes | yes | yes | ../src/generate/gen_date_picker.cpp |
+| wxDirPickerCtrl | yes | yes | yes | yes | ../src/generate/gen_dir_picker.cpp |
+| wxFilePickerCtrl | yes | yes | yes | yes | ../src/generate/gen_file_picker.cpp |
+| wxFontPickerCtrl | yes | yes | yes | yes | ../src/generate/gen_font_picker.cpp |
+| wxTimePickerCtrl | yes | yes | yes | yes | ../src/generate/gen_time_picker.cpp |
 
 ### Sizers
 
@@ -78,53 +78,53 @@ This does _not_ mean that the class is fully supported in every language -- this
 | wxDataViewListCtrl | yes | ??? | --- | --- | ../src/generate/dataview_widgets.cpp |
 | wxDataViewCtrl | yes | ??? | --- | --- | ../src/generate/dataview_widgets.cpp |
 | wxEditableListBox | yes | yes | --- | --- | ../src/generate/gen_edit_listbox.cpp |
-| wxFileCtrl | yes | ??? | --- | --- | ../src/generate/gen_file_ctrl.cpp |
-| wxGauge | yes | ??? | --- | --- | ../src/generate/gen_gauge.cpp |
-| wxGenericDirCtrl | yes | ??? | --- | --- | ../src/generate/gen_dir_ctrl.cpp |
+| wxFileCtrl | yes | yes | yes | yes | ../src/generate/gen_file_ctrl.cpp |
+| wxGauge | yes | yes | yes | --- | ../src/generate/gen_gauge.cpp |
+| wxGenericDirCtrl | yes | partial | yes | partial | ../src/generate/gen_dir_ctrl.cpp |
 | wxGrid | yes | yes | --- | --- | ../src/generate/gen_grid.cpp |
-| wxHtmlWindow | yes | yes | --- | --- | ../src/generate/gen_html_window.cpp |
-| wxHyperlinkCtrl | yes | yes | --- | --- | ../src/generate/gen_hyperlink.cpp |
-| wxInfoBar | yes | ??? | --- | yes | ../src/generate/gen_infobar.cpp |
+| wxHtmlWindow | yes | yes | yes | yes | ../src/generate/gen_html_window.cpp |
+| wxHyperlinkCtrl | yes | yes | fails | yes | ../src/generate/gen_hyperlink.cpp |
+| wxInfoBar | yes | ??? | no | yes | ../src/generate/gen_infobar.cpp |
 | wxListBox | yes | yes | yes | yes | ../src/generate/gen_listbox.cpp |
-| wxListView | yes | yes | --- | --- | ../src/generate/gen_listview.cpp |
+| wxListView | yes | yes | fails | partial | ../src/generate/gen_listview.cpp |
 | wxMenu | yes | yes | yes | --- | ../src/generate/gen_menu.cpp |
 | wxMenuBar | yes | yes | yes | --- | ../src/generate/menu_widgets.cpp |
-| wxMenuItem | yes | yes | --- | --- | ../src/generate/gen_menuitem.cpp |
-| wxPanel | yes | ??? | yes | --- | ../src/generate/gen_panel.cpp |
-| wxPropertyGrid | yes | ??? | --- | no | ../src/generate/gen_prop_grid.cpp |
-| wxPropertyGridManager | yes | yes | --- | no | ../src/generate/grid_widgets.cpp |
-| wxRadioBox | yes | yes | --- | --- | ../src/generate/gen_prop_grid.cpp |
-| wxRadioButton | yes | yes | --- | --- | ../src/generate/gen_radio_btn.cpp |
-| wxRearrangeCtrl | yes | yes | --- | no | ../src/generate/gen_rearrange.cpp |
+| wxMenuItem | yes | yes | yes | --- | ../src/generate/gen_menuitem.cpp |
+| wxPanel | yes | yes | yes | --- | ../src/generate/gen_panel.cpp |
+| wxPropertyGrid | yes | yes | yes | no | ../src/generate/gen_prop_grid.cpp |
+| wxPropertyGridManager | yes | yes | yes | no | ../src/generate/grid_widgets.cpp |
+| wxRadioBox | yes | yes | yes | yes | ../src/generate/gen_prop_grid.cpp |
+| wxRadioButton | yes | yes | yes | yes | ../src/generate/gen_radio_btn.cpp |
+| wxRearrangeCtrl | yes | yes | no | no | ../src/generate/gen_rearrange.cpp |
 | wxRibbonBar | yes | yes | --- | --- | ../src/generate/gen_ribbon_bar.cpp |
 | wxRibbonButtonBar | yes | yes | --- | --- | ../src/generate/gen_ribbon_button.cpp |
 | wxRibbonGallery | yes | yes | --- | --- | ../src/generate/ribbon_widgets.cpp |
 | wxRibbonPage | yes | yes | --- | --- | ../src/generate/gen_ribbon_page.cpp |
 | wxRibbonPanel | yes | yes | --- | --- | ../src/generate/gen_ribbon_page.cpp |
 | wxRibbonToolBar | yes | yes | --- | --- | ../src/generate/ribbon_widgets.cpp |
-| wxRichTextCtrl | yes | yes | --- | --- | ../src/generate/gen_rich_text.cpp |
+| wxRichTextCtrl | yes | yes | yes | yes | ../src/generate/gen_rich_text.cpp |
 | wxScrollBar | yes | yes | --- | --- | ../src/generate/gen_scrollbar.cpp |
 | wxScrolled\<wxPanel\> | yes | ??? | --- | --- | ../src/generate/styled_text.cpp |
 | wxScrolled\<wxWindow\> | yes | ??? | --- | --- | ../src/generate/styled_text.cpp |
 | wxSearchCtrl | yes | yes | --- | --- | ../src/generate/gen_search_ctrl.cpp |
 | wxSimpleHtmlListBox | yes | ??? | --- | --- | ../src/generate/gen_html_listbox.cpp |
-| wxSlider | yes | ??? | --- | --- | ../src/generate/gen_slider.cpp |
-| wxSpinButton | yes | yes | --- | --- | ../src/generate/gen_spin_btn.cpp |
-| wxSpinCtrl | yes | yes | --- | --- | ../src/generate/gen_spin_ctrl.cpp |
-| wxSpinCtrlDouble | yes | yes | --- | --- | ../src/generate/gen_spin_ctrl.cpp |
+| wxSlider | yes | yes | yes | yes | ../src/generate/gen_slider.cpp |
+| wxSpinButton | yes | yes | yes | yes | ../src/generate/gen_spin_btn.cpp |
+| wxSpinCtrl | yes | yes | yes | yes | ../src/generate/gen_spin_ctrl.cpp |
+| wxSpinCtrlDouble | yes | yes | no | yes | ../src/generate/gen_spin_ctrl.cpp |
 | wxSplitterWindow | yes | ??? | --- | --- | ../src/generate/gen_split_win.cpp |
 | wxStaticBitmap | yes | ??? | --- | --- | ../src/generate/gen_static_bmp.cpp |
 | wxStaticBox | yes | ??? | --- | --- | ../src/generate/gen_static_box.cpp |
-| wxStaticLine | yes | ??? | --- | --- | ../src/generate/gen_static_line.cpp |
+| wxStaticLine | yes | yes | yes | yes | ../src/generate/gen_static_line.cpp |
 | wxStaticText | yes | yes | yes | yes | ../src/generate/gen_static_text.cpp |
 | wxStatusBar | yes | yes | --- | --- | ../src/generate/gen_status_bar.cpp |
-| wxStyledTextCtrl | yes | yes | --- | --- | ../src/generate/styled_text.cpp |
+| wxStyledTextCtrl | yes | partial | yes | partial | ../src/generate/styled_text.cpp |
 | wxTextCtrl | yes | yes | yes | yes | ../src/generate/gen_text_ctrl.cpp |
 | wxToggleButton | yes | yes | yes | partial | ../src/generate/gen_toggle_btn.cpp |
 | wxToolBar | yes | yes | yes | --- | ../src/generate/gen_toolbar.cpp |
 | wxTreeCtrl | yes | ??? | --- | --- | ../src/generate/gen_tree_ctrl.cpp |
 | wxTreeListCtrl | yes | ??? | --- | no | ../src/generate/gen_tree_list.cpp |
-| wxWebView | yes | ??? | --- | no | ../src/generate/gen_web_view.cpp |
+| wxWebView | yes | yes | no | no | ../src/generate/gen_web_view.cpp |
 | wxWizardPageSimple | yes | yes | --- | --- | ../src/generate/gen_wizard.cpp |
 
 # Objects
@@ -157,6 +157,12 @@ This does _not_ mean that the class is fully supported in every language -- this
 | TreeListCtrlColumn | yes | ??? | --- | no | ../src/generate/gen_tree_list.cpp |
 | wxContextMenuEvent | yes | no | --- | no | gen_ctx_menu.cpp |
 
+# Special Notes:
+
+Neither wxPython or XRC support setting the initial folder in wxGenericDirCtrl, though it works fine in wxRuby3
+
+If a Ruby control is marked as `fails` it means there is a problem that appears to be on the wxRuby3 side. In each case, I've created an issue for the problem (https://github.com/mcorino/wxRuby3/issues) and will revisit after the issue is closed.
+
 # Python unsupported
 
 - CheckBoxSizer
@@ -164,5 +170,8 @@ This does _not_ mean that the class is fully supported in every language -- this
 
 # Ruby unsupported
 
-- wxInfoBar
 - wxBannerWindow
+- wxInfoBar
+- wxRearrangeCtrl
+- wxSpinCtrlDouble
+- wxWebView

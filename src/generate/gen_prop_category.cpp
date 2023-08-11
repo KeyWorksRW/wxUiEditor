@@ -16,10 +16,7 @@
 bool PropertyGridCategoryGenerator::ConstructionCode(Code& code)
 {
     code.AddAuto().NodeName().Str(" = ").ParentName();
-
-    // Break out the final '(' so that lookup for wxPropertyCategory will find the propgrid
-    // library
-    code.Function("Append(").AddIfCpp("new ").Add("wxPropertyCategory").Str("(");
+    code.Function("Append(").AddIfCpp("new ").Add("wxPropertyCategory").AddIfRuby(".new").Str("(");
     code.QuotedString(prop_label).Comma().QuotedString(prop_label).Str(")").EndFunction();
 
     return true;

@@ -56,7 +56,10 @@ bool DirPickerGenerator::ConstructionCode(Code& code)
     }
     else
     {
-        code.Add("wxDirSelectorPromptStr");
+        if (code.is_ruby())
+            code.Str("Wx::DIR_SELECTOR_PROMPT_STR");
+        else
+            code.Add("wxDirSelectorPromptStr");
     }
 
     code.PosSizeFlags(false, "wxDIRP_DEFAULT_STYLE");

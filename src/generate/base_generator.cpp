@@ -525,6 +525,21 @@ bool BaseGenerator::VerifyProperty(NodeProperty* prop)
     return result;
 }
 
+static const std::set<GenEnum::PropName> set_output_files = {
+    prop_base_file,
+    prop_python_file,
+    prop_ruby_file,
+    prop_xrc_file,
+
+    // experimental
+
+    prop_golang_file,
+    prop_lua_file,
+    prop_perl_file,
+    prop_rust_file,
+
+};
+
 std::optional<tt_string> BaseGenerator::GetHint(NodeProperty* prop)
 {
     if (prop->isProp(prop_derived_class_name) && !prop->hasValue())
@@ -540,7 +555,7 @@ std::optional<tt_string> BaseGenerator::GetHint(NodeProperty* prop)
     {
         return tt_string(!prop->getNode()->as_bool(prop_use_derived_class) ? "requires python_use_xrc" : "");
     }
-    else if (prop->isProp(prop_base_file) && !prop->hasValue())
+    else if (set_output_files.contains(prop->getPropDeclaration()->get_name()) && !prop->hasValue())
     {
         return tt_string("change class_name to auto-fill");
     }

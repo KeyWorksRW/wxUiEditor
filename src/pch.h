@@ -68,6 +68,15 @@
 // Without this, a huge number of #included wxWidgets header files will generate the warning
 #pragma warning(disable : 4251)  // needs to have dll-interface to be used by clients of class
 
+// REVIEW: [Randalphwa - 08-11-2023] See gen_infobar.cpp for an example. This may be fixed
+// in later versions of wxWidgets, but for now, we need to disable this warning.
+#pragma warning(disable : 5054)  // deprecated between enumerations of different types
+
+#if defined(__clang__)
+    // Same as #pragma warning(disable : 5054)
+    #pragma clang diagnostic ignored "-Wdeprecated-enum-enum-conversion"
+#endif
+
 #include <map>
 #include <unordered_map>
 

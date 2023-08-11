@@ -676,7 +676,7 @@ void MainFrame::OnImportRecent(wxCommandEvent& event)
         Project.appendSmith(files);
     else if (extension == ".xrc")
         Project.appendXRC(files);
-    else if (extension == ".fjd")
+    else if (extension == ".pjd")
         Project.appendDialogBlocks(files);
 }
 #endif  // defined(_DEBUG) || defined(INTERNAL_TESTING)

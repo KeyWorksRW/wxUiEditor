@@ -34,7 +34,10 @@ bool ColourPickerGenerator::ConstructionCode(Code& code)
         ColourCode(code, prop_colour);
     else
     {
-        code.Str((code.is_cpp() ? "*wxBLACK" : "wx.BLACK"));
+        if (code.is_cpp())
+            code.Str("*wxBLACK");
+        else
+            code.Add("wxBLACK");
     }
     code.PosSizeFlags(true, "wxCLRP_DEFAULT_STYLE");
 

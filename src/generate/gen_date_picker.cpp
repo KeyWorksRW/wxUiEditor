@@ -32,7 +32,16 @@ wxObject* DatePickerCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
 bool DatePickerCtrlGenerator::ConstructionCode(Code& code)
 {
     code.AddAuto().NodeName().CreateClass();
-    code.ValidParentName().Comma().as_string(prop_id).Comma().Add("wxDefaultDateTime");
+    code.ValidParentName().Comma().as_string(prop_id).Comma();
+    if (code.is_ruby())
+    {
+        code.Str("DateTime.now");
+    }
+    else
+    {
+        code.Add("wxDefaultDateTime");
+    }
+
     code.PosSizeFlags(true, "wxDP_DEFAULT|wxDP_SHOWCENTURY");
 
     return true;

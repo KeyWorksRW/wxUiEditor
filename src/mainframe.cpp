@@ -663,9 +663,12 @@ void MainFrame::OnOpenRecentProject(wxCommandEvent& event)
 void MainFrame::OnImportRecent(wxCommandEvent& event)
 {
     tt_string file = m_ImportHistory.GetHistoryFile(event.GetId() - (wxID_FILE1 + 1000)).utf8_string();
+    auto extension = file.extension();
+
+    #if 0
+
     wxArrayString files;
     files.Add(file.make_wxString());
-    auto extension = file.extension();
     if (extension == ".wxcp")
         Project.appendCrafter(files);
     else if (extension == ".fbp")
@@ -678,6 +681,26 @@ void MainFrame::OnImportRecent(wxCommandEvent& event)
         Project.appendXRC(files);
     else if (extension == ".pjd")
         Project.appendDialogBlocks(files);
+
+    #else
+
+    if (!SaveWarning())
+        return;
+
+    if (file.file_exists())
+    {
+        Project.ImportProject(file);
+    }
+    else if (wxMessageBox(
+                 wxString().Format(
+                     "The project file '%s' doesn't exist.\n\nWould you like to remove it from the recent files list?",
+                     file.c_str()),
+                 "Open recent project", wxICON_WARNING | wxYES_NO) == wxYES)
+    {
+        m_ImportHistory.RemoveFileFromHistory(event.GetId() - wxID_FILE1);
+    }
+
+    #endif
 }
 #endif  // defined(_DEBUG) || defined(INTERNAL_TESTING)
 

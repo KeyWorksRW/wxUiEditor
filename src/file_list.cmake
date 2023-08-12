@@ -277,12 +277,14 @@ set (file_list
 
     # Panels
 
-    panels/cstm_propgrid.cpp    # Derived wxPropertyGrid class
-    panels/code_display.cpp     # Display code in scintilla control
     panels/base_panel.cpp       # Code generation panel
+    panels/code_display.cpp     # Display code in scintilla control
+    # internal/import_panel.cpp  # Internal-only panel to display original Import file
+
     panels/nav_panel.cpp        # Navigation panel
     panels/navpopupmenu.cpp     # Context-menu for Navigation panel
     panels/propgrid_panel.cpp   # Property panel
+    panels/cstm_propgrid.cpp    # Derived wxPropertyGrid class
     panels/ribbon_tools.cpp     # Displays node creation tools in a wxRibbonBar
     # (generated) panels/doc_view.cpp         # Panel for displaying docs in wxWebView
     # (generated) panels/nav_toolbar.cpp

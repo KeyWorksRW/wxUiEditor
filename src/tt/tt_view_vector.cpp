@@ -14,6 +14,9 @@
 void tt_view_vector::SetString(std::string_view str, char separator, tt::TRIM trim)
 {
     clear();
+    if (str.empty())
+        return;
+
     size_t start = 0;
     size_t end = str.find_first_of(separator);
 

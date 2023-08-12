@@ -83,13 +83,22 @@ bool ListViewGenerator::SettingsCode(Code& code)
             if (code.is_cpp())
                 code.Str("auto ");
             code.Str("info").Assign().Add("wxListItem(").EndFunction();
-            code.Eol().Str("info").Function("Clear(").EndFunction();
+            code.Eol().Str("info");
+            if (code.is_ruby())
+                code.Str(".clear");
+            else
+                code.Str(".Clear(").EndFunction();
             auto strings = code.node()->as_ArrayString(prop_contents);
             int row_id = -1;
             for (auto& row: strings)
             {
                 ++row_id;
-                code.Eol().Str("info").Function("SetId(").itoa(row_id).EndFunction();
+                code.Eol().Str("info");
+                if (code.is_ruby())
+                    code.Str(".set_id(");
+                else
+                    code.Add(".SetId(");
+                code.itoa(row_id).EndFunction();
                 if (row_id == 0)
                     code.Eol().Str(code.is_cpp() ? "auto " : "").Str("idx").Assign();
                 else

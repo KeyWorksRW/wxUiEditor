@@ -663,10 +663,10 @@ void MainFrame::OnOpenRecentProject(wxCommandEvent& event)
 void MainFrame::OnImportRecent(wxCommandEvent& event)
 {
     tt_string file = m_ImportHistory.GetHistoryFile(event.GetId() - (wxID_FILE1 + 1000)).utf8_string();
-    auto extension = file.extension();
 
     #if 0
 
+    auto extension = file.extension();
     wxArrayString files;
     files.Add(file.make_wxString());
     if (extension == ".wxcp")
@@ -682,7 +682,7 @@ void MainFrame::OnImportRecent(wxCommandEvent& event)
     else if (extension == ".pjd")
         Project.appendDialogBlocks(files);
 
-    #else
+    #else  // not 0
 
     if (!SaveWarning())
         return;
@@ -700,7 +700,7 @@ void MainFrame::OnImportRecent(wxCommandEvent& event)
         m_ImportHistory.RemoveFileFromHistory(event.GetId() - wxID_FILE1);
     }
 
-    #endif
+    #endif  // 0
 }
 #endif  // defined(_DEBUG) || defined(INTERNAL_TESTING)
 

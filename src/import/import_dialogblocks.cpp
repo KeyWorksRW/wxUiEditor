@@ -475,16 +475,15 @@ void DialogBlocks::createChildNode(pugi::xml_node& child_xml, Node* parent)
     // These Set...() functions can be called whether or not the property exists, so no need to
     // check for it first.
 
-    SetNodeState(child_xml, node);        // Set disabled and hidden states
-    SetNodeDimensions(child_xml, node);   // Set pos and size
-    SetNodeVarname(child_xml, node);      // Set var_name and class access
-    SetNodeID(child_xml, node);           // Set ID
-    SetNodeValidator(child_xml, node);    // Set validator
-    SetNodeHelpTipText(child_xml, node);  // Set prop_context_help and prop_tooltip
+    SetNodeState(child_xml, node);       // Set disabled and hidden states
+    SetNodeDimensions(child_xml, node);  // Set pos and size
+    SetNodeVarname(child_xml, node);     // Set var_name and class access
+    SetNodeID(child_xml, node);          // Set ID
+    SetNodeValidator(child_xml, node);   // Set validator
 
     ProcessStyles(child_xml, node);  // Set all styles for the current node
     ProcessEvents(child_xml, node);  // Add all events for the current node
-    ProcessValues(child_xml, node);  // Set all values (min, max, initial, etc.) for the current node
+    ProcessMisc(child_xml, node);    // Set all other properties for the current node
 
     // Now add all the children of this child node
     for (auto& grand_child_xml: child_xml.children("document"))
@@ -507,13 +506,18 @@ GenEnum::GenName DialogBlocks::FindGenerator(pugi::xml_node& node_xml, Node* par
         {
             type_name[1] = 'x';
         }
-        type_name.Replace("Proxy", "");
+        // Proxy
+        type_name.Replace("Proxy", "", true);
         getGenName = MapClassName(type_name);
         if (getGenName == gen_unknown)
         {
             if (type_name == "wxWizardPage")
             {
                 return gen_wxWizardPageSimple;
+            }
+            else if (type_name == "wxAuiToolBarButton")
+            {
+                getGenName = gen_auitool;
             }
             else
             {
@@ -664,25 +668,6 @@ void DialogBlocks::SetNodeValidator(pugi::xml_node& node_xml, const NodeSharedPt
             {
                 new_node->set_value(prop_validator_type, ExtractQuotedString(value));
             }
-        }
-    }
-}
-
-void DialogBlocks::SetNodeHelpTipText(pugi::xml_node& node_xml, const NodeSharedPtr& new_node)
-{
-    if (auto prop = new_node->getPropPtr(prop_context_help); prop)
-    {
-        if (auto value = node_xml.find_child_by_attribute("string", "name", "proxy-Help text"); value)
-        {
-            prop->set_value(ExtractQuotedString(value));
-        }
-    }
-
-    if (auto prop = new_node->getPropPtr(prop_tooltip); prop)
-    {
-        if (auto value = node_xml.find_child_by_attribute("string", "name", "proxy-Tooltip text"); value)
-        {
-            prop->set_value(ExtractQuotedString(value));
         }
     }
 }
@@ -1054,29 +1039,190 @@ void DialogBlocks::ProcessStyles(pugi::xml_node& node_xml, const NodeSharedPtr& 
     // wxBannerWindow has a direction property that also uses wxLEFT, wxRIGHT etc.
 }
 
-void DialogBlocks::ProcessValues(pugi::xml_node& node_xml, const NodeSharedPtr& new_node)
+static const std::map<std::string_view, GenEnum::PropName, std::less<>> map_proxy_names = {
+
+    { "Column width", prop_default_col_size },
+    { "ColumnSpacing", prop_hgap },
+    { "Columns", prop_cols },
+    { "Default filter", prop_defaultfilter },
+    { "Default folder", prop_defaultfolder },
+    { "Filter", prop_filter },
+    { "Gravity", prop_sashgravity },
+    { "GrowableColumns", prop_growablecols },
+    { "GrowableRows", prop_growablerows },
+    { "HTML code", prop_html_content },
+    { "Help text", prop_context_help },
+    { "Kind", prop_kind },
+    { "Label", prop_label },
+    { "Max length", prop_maxlength },
+    { "Maximum value", prop_max },
+    { "Minimum pane size", prop_min_pane_size },
+    { "Minimum value", prop_min },
+    { "Page size", prop_pagesize },
+    { "Range", prop_range },
+    { "Row label width", prop_row_label_size },
+    { "RowSpacing", prop_vgap },
+    { "Rows", prop_rows },
+    { "Sash position", prop_sashpos },
+    { "Selection mode", prop_selection_mode },
+    { "Strings", prop_contents },
+    { "Thumb size", prop_thumbsize },
+    { "Tool packing", prop_packing },
+    { "Tool separation", prop_separation },
+    { "Tooltip text", prop_tooltip },
+    { "URL", prop_html_url },
+
+    { "Initial value", prop_value },  // In DialogBlocks used for all sorts of properties
+
+};
+
+void DialogBlocks::ProcessMisc(pugi::xml_node& node_xml, const NodeSharedPtr& node)
 {
-    if (auto prop = new_node->getPropPtr(prop_initial); prop)
+    for (auto& string_xml: node_xml.children("string"))
     {
-        if (auto value = node_xml.find_child_by_attribute("string", "name", "Initial value"); value)
+        auto name = string_xml.attribute("name").as_sview();
+        if (name.starts_with("proxy-"))
+            name.remove_prefix(sizeof("proxy-") - 1);
+        if (auto result = map_proxy_names.find(name); result != map_proxy_names.end())
         {
-            prop->set_value(value.text().as_int());
+            auto str = ExtractQuotedString(string_xml);
+            if (str.size())
+            {
+                switch (result->second)
+                {
+                    case prop_contents:
+                        {
+                            tt_string_vector multi(str, '|');
+                            str.clear();
+                            for (auto& iter: multi)
+                            {
+                                if (str.size())
+                                    str << ' ';
+                                str << '"' << iter << '"';
+                            }
+                            if (auto prop = node->getPropPtr(result->second); prop)
+                            {
+                                prop->set_value(str);
+                            }
+                        }
+                        break;
+
+                    case prop_value:
+                        if (node->isGen(gen_wxChoice) || node->isGen(gen_wxComboBox) || node->isGen(gen_wxListBox) ||
+                            node->isGen(gen_wxBitmapComboBox))
+                        {
+                            node->set_value(prop_selection_string, str);
+                        }
+                        else if (auto prop = node->getPropPtr(result->second); prop)
+                        {
+                            prop->set_value(str);
+                        }
+                        else if (node->isGen(gen_wxRadioBox))
+                        {
+                            node->set_value(prop_selection, str);
+                        }
+                        break;
+
+                    case prop_selection_mode:
+                        if (str == "Cells")
+                            node->set_value(prop_selection_mode, "wxGridSelectCells");
+                        else if (str == "Rows")
+                            node->set_value(prop_selection_mode, "wxGridSelectCells");
+                        else if (str == "Columns")
+                            node->set_value(prop_selection_mode, "wxGridSelectRows");
+                        break;
+
+                    case prop_kind:
+                        if (str == "Normal")
+                            node->set_value(prop_selection_mode, "wxITEM_NORMAL");
+                        else if (str == "Check")
+                            node->set_value(prop_selection_mode, "wxITEM_CHECK");
+                        else if (str == "Radio")
+                            node->set_value(prop_selection_mode, "wxITEM_RADIO");
+                        break;
+
+                    default:
+                        if (auto prop = node->getPropPtr(result->second); prop)
+                        {
+                            prop->set_value(str);
+                        }
+                        break;
+                }
+            }
         }
     }
 
-    if (auto prop = new_node->getPropPtr(prop_min); prop)
+    for (auto& string_xml: node_xml.children("long"))
     {
-        if (auto value = node_xml.find_child_by_attribute("string", "name", "Minimum value"); value)
+        auto name = string_xml.attribute("name").as_sview();
+        if (name.starts_with("proxy-"))
+            name.remove_prefix(sizeof("proxy-") - 1);
+        if (auto result = map_proxy_names.find(name); result != map_proxy_names.end())
         {
-            prop->set_value(value.text().as_int());
+            if (string_xml.text().as_int() > 0)
+            {
+                switch (result->second)
+                {
+                    case prop_value:
+                        if (node->isGen(gen_wxSlider) || node->isGen(gen_wxScrollBar))
+                        {
+                            node->set_value(prop_position, string_xml.text().as_string());
+                        }
+                        else if (node->isGen(gen_wxSpinButton) || node->isGen(gen_wxSpinCtrl))
+                        {
+                            node->set_value(prop_initial, string_xml.text().as_string());
+                        }
+                        else if (auto prop = node->getPropPtr(result->second); prop)
+                        {
+                            prop->set_value(string_xml.text().as_string());
+                        }
+                        break;
+
+                    default:
+                        if (auto prop = node->getPropPtr(result->second); prop)
+                        {
+                            // There's really no reason to convert the number, since set_value() would
+                            // just convert the number back to a string.
+                            prop->set_value(string_xml.text().as_string());
+                        }
+                        break;
+                }
+            }
         }
     }
 
-    if (auto prop = new_node->getPropPtr(prop_max); prop)
+    for (auto& string_xml: node_xml.children("bool"))
     {
-        if (auto value = node_xml.find_child_by_attribute("string", "name", "Maximum value"); value)
+        auto name = string_xml.attribute("name").as_sview();
+        if (name.starts_with("proxy-"))
+            name.remove_prefix(sizeof("proxy-") - 1);
+        if (auto result = map_proxy_names.find(name); result != map_proxy_names.end())
         {
-            prop->set_value(value.text().as_int());
+            switch (result->second)
+            {
+                case prop_value:
+                    if (node->isGen(gen_wxRadioButton) || node->isGen(gen_wxCheckBox))
+                    {
+                        if (string_xml.text().as_bool())
+                            node->set_value(prop_checked, true);
+                    }
+                    else if (node->isGen(gen_wxToggleButton))
+                    {
+                        if (string_xml.text().as_bool())
+                            node->set_value(prop_pressed, true);
+                    }
+                    break;
+
+                default:
+                    if (auto prop = node->getPropPtr(result->second); prop)
+                    {
+                        if (string_xml.text().as_bool())
+                        {
+                            prop->set_value(true);
+                        }
+                    }
+                    break;
+            }
         }
     }
 }

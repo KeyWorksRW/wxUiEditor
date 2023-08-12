@@ -23,10 +23,6 @@ public:
     int GetLanguage() const override { return GEN_LANG_CPLUSPLUS; }
 
 protected:
-    void ProcessValues(pugi::xml_node& node_xml, const NodeSharedPtr& new_node);
-    // Sets prop_context_help and prop_tooltip
-    void SetNodeHelpTipText(pugi::xml_node& node_xml, const NodeSharedPtr& new_node);
-
     // Sets validator variable name and variable handler type
     void SetNodeValidator(pugi::xml_node& node_xml, const NodeSharedPtr& new_node);
 
@@ -51,6 +47,10 @@ protected:
 
     // Add all events for the current node
     void ProcessEvents(pugi::xml_node& node_xml, const NodeSharedPtr& new_node);
+
+    // This will walk through all the immediate children of the current node, and process any
+    // known proxy settings.
+    void ProcessMisc(pugi::xml_node& node_xml, const NodeSharedPtr& new_node);
 
     // This will try to determine the generator to use based on either "proxy-Base class" or
     // "proxy-type" attributes.

@@ -967,6 +967,16 @@ Code& Code::QuotedString(tt_string_view text)
     if (Project.as_bool(prop_internationalize))
     {
         *this += is_cpp() ? "_(" : "wx.GetTranslation(";
+        if (is_cpp())
+        {
+            *this += "_(";
+        }
+        else
+        {
+            // REVIEW: [Randalphwa - 08-12-2023] Need to verify this for each language. I'm
+            // dubious this is correct for all languages.
+            Function("wxGetTranslation");
+        }
     }
 
     // This is only used by C++, but we need to know if it was set in order to generate closing parenthesis.

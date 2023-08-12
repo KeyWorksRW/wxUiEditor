@@ -358,9 +358,18 @@ public:
         return *this;
     }
 
-    // Handles prop_internationalize and strings containing at least one utf8 character.
-    // Generates correct code for C++ or Python.
+    // Places string in quotes (single for Ruby, double for other languages). If
+    // prop_internationalize is set, quoted string is placed in function call to
+    // wxGetTranslation().
+    //
+    // Empty strings generate wxEmptyString for C++, '' for Ruby and "" for other languages.
     Code& QuotedString(GenEnum::PropName prop_name);
+
+    // Places string in quotes (single for Ruby, double for other languages). If
+    // prop_internationalize is set, quoted string is placed in function call to
+    // wxGetTranslation().
+    //
+    // Empty strings generate wxEmptyString for C++, '' for Ruby and "" for other languages.
     Code& QuotedString(tt_string_view text);
 
     // Will either generate wxSize(...) or ConvertDialogToPixels(wxSize(...))

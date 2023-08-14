@@ -1041,6 +1041,12 @@ void DialogBlocks::ProcessStyles(pugi::xml_node& node_xml, const NodeSharedPtr& 
 
 static const std::map<std::string_view, GenEnum::PropName, std::less<>> map_proxy_names = {
 
+    { "Background colour", prop_background_colour },
+    { "Foreground colour", prop_foreground_colour },
+    { "Hover colour", prop_hover_color },
+    { "Normal colour", prop_normal_color },
+    { "Visited colour", prop_visited_color },
+
     { "Column width", prop_default_col_size },
     { "ColumnSpacing", prop_hgap },
     { "Columns", prop_cols },
@@ -1139,6 +1145,15 @@ void DialogBlocks::ProcessMisc(pugi::xml_node& node_xml, const NodeSharedPtr& no
                             node->set_value(prop_selection_mode, "wxITEM_CHECK");
                         else if (str == "Radio")
                             node->set_value(prop_selection_mode, "wxITEM_RADIO");
+                        break;
+
+                    case prop_background_colour:
+                    case prop_foreground_colour:
+                    case prop_hover_color:
+                    case prop_normal_color:
+                    case prop_visited_color:
+                        str.insert(0, "#");
+                        node->set_value(result->second, str);
                         break;
 
                     default:

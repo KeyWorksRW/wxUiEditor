@@ -10,7 +10,6 @@
 #pragma once
 
 #include <wx/clrpicker.h>
-#include <wx/combobox.h>
 #include <wx/dialog.h>
 #include <wx/event.h>
 #include <wx/gdicmn.h>
@@ -19,6 +18,7 @@
 #include <wx/statbox.h>
 #include <wx/stattext.h>
 
+class kwColourPickerCtrl;
 namespace wxue_ctrl
 {
 class ColourRectCtrl;
@@ -47,19 +47,14 @@ protected:
     virtual void OnInit(wxInitDialogEvent& event) { event.Skip(); }
     virtual void OnOK(wxCommandEvent& event) { event.Skip(); }
     virtual void OnRadioCustomColour(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnRadioSystemColour(wxCommandEvent& event) { event.Skip(); }
     virtual void OnSetDefault(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnSystemColourChange(wxCommandEvent& event) { event.Skip(); }
 
     // Class member variables
 
-    wxColourPickerCtrl* m_colourPicker;
-    wxComboBox* m_combo_system;
+    kwColourPickerCtrl* m_colourPicker;
     wxRadioButton* m_radio_custom;
     wxStaticBoxSizer* m_staticbox_custom;
     wxRadioButton* m_radio_default;
-    wxRadioButton* m_radio_system;
-    wxStaticBoxSizer* m_staticbox_system;
     wxStaticText* m_static_sample_text;
     wxue_ctrl::ColourRectCtrl* m_colour_rect;
 };

@@ -10,6 +10,7 @@
 #include <wx/button.h>
 
 #include "../custom_ctrls/colour_rect_ctrl.h"
+#include "../custom_ctrls/kw_color_picker.h"
 
 #include "colourprop_base.h"
 
@@ -52,29 +53,14 @@ bool ColourPropBase::Create(wxWindow* parent, wxWindowID id, const wxString& tit
     m_staticbox_custom = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, m_radio_custom), wxVERTICAL);
     m_staticbox_custom->GetStaticBox()->Enable(false);
 
-    m_colourPicker = new wxColourPickerCtrl(m_staticbox_custom->GetStaticBox(), wxID_ANY, *wxBLACK, wxDefaultPosition,
-        wxDefaultSize, wxCLRP_USE_TEXTCTRL);
+    m_colourPicker = new kwColourPickerCtrl(m_staticbox_custom->GetStaticBox(), wxID_ANY, *wxBLACK, wxDefaultPosition,
+        wxDefaultSize, wxCLRP_USE_TEXTCTRL|wxCLRP_SHOW_LABEL|wxWANTS_CHARS);
     m_colourPicker->Enable(false);
     m_staticbox_custom->Add(m_colourPicker, wxSizerFlags().Border(wxALL));
 
     dlg_sizer->Add(m_staticbox_custom, wxSizerFlags().Expand().Border(wxALL));
 
     dlg_sizer->AddSpacer(5 + wxSizerFlags::GetDefaultBorder());
-
-    m_radio_system = new wxRadioButton(this, wxID_ANY, "System Colour");
-    m_staticbox_system = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, m_radio_system), wxVERTICAL);
-    m_staticbox_system->GetStaticBox()->Enable(false);
-
-    m_combo_system = new wxComboBox(m_staticbox_system->GetStaticBox(), wxID_ANY);
-    m_combo_system->Enable(false);
-    m_staticbox_system->Add(m_combo_system, wxSizerFlags().Border(wxALL));
-
-    auto* staticText = new wxStaticText(m_staticbox_system->GetStaticBox(), wxID_ANY,
-        "Caution: On Windows, these are classic colours. They may not be the colours the user has set via a Theme or Dark Mode.");
-    staticText->Wrap(250);
-    m_staticbox_system->Add(staticText, wxSizerFlags().Border(wxALL));
-
-    dlg_sizer->Add(m_staticbox_system, wxSizerFlags().Expand().Border(wxALL));
 
     dlg_sizer->AddSpacer(5 + wxSizerFlags::GetDefaultBorder());
 
@@ -87,11 +73,9 @@ bool ColourPropBase::Create(wxWindow* parent, wxWindowID id, const wxString& tit
     // Event handlers
     Bind(wxEVT_BUTTON, &ColourPropBase::OnOK, this, wxID_OK);
     m_colourPicker->Bind(wxEVT_COLOURPICKER_CHANGED, &ColourPropBase::OnColourChanged, this);
-    m_combo_system->Bind(wxEVT_COMBOBOX, &ColourPropBase::OnSystemColourChange, this);
     Bind(wxEVT_INIT_DIALOG, &ColourPropBase::OnInit, this);
     m_radio_default->Bind(wxEVT_RADIOBUTTON, &ColourPropBase::OnSetDefault, this);
     m_radio_custom->Bind(wxEVT_RADIOBUTTON, &ColourPropBase::OnRadioCustomColour, this);
-    m_radio_system->Bind(wxEVT_RADIOBUTTON, &ColourPropBase::OnRadioSystemColour, this);
 
     return true;
 }

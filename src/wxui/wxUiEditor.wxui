@@ -2347,36 +2347,17 @@
             wxEVT_RADIOBUTTON="OnRadioCustomColour">
             <node
               class="wxColourPickerCtrl"
-              style="wxCLRP_USE_TEXTCTRL"
+              style="wxCLRP_USE_TEXTCTRL|wxCLRP_SHOW_LABEL"
+              derived_class="kwColourPickerCtrl"
+              derived_header="../custom_ctrls/kw_color_picker.h"
               disabled="1"
+              window_style="wxWANTS_CHARS"
               wxEVT_COLOURPICKER_CHANGED="OnColourChanged" />
           </node>
           <node
             class="spacer"
             add_default_border="1"
             height="5" />
-          <node
-            class="StaticRadioBtnBoxSizer"
-            checked="0"
-            class_access="protected:"
-            disabled="1"
-            label="System Colour"
-            radiobtn_var_name="m_radio_system"
-            var_name="m_staticbox_system"
-            flags="wxEXPAND"
-            wxEVT_RADIOBUTTON="OnRadioSystemColour">
-            <node
-              class="wxComboBox"
-              var_name="m_combo_system"
-              disabled="1"
-              wxEVT_COMBOBOX="OnSystemColourChange" />
-            <node
-              class="wxStaticText"
-              class_access="none"
-              label="Caution: On Windows, these are classic colours. They may not be the colours the user has set via a Theme or Dark Mode."
-              var_name="staticText"
-              wrap="250" />
-          </node>
           <node
             class="spacer"
             add_default_border="1"

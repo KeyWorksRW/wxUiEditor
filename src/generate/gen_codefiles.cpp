@@ -52,6 +52,9 @@ struct GenData
         }
     };
 #else
+    // REVIEW: [Randalphwa - 08-14-2023] The last time I tried using THREADED_CODE_GEN,
+    // it was slower then single-thread. That's probably because code generation creates
+    // several threads of it's own.
     std::mutex mutex_results;
     std::mutex mutex_class_list;
 

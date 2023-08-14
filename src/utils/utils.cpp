@@ -171,43 +171,6 @@ wxSystemColour ConvertToSystemColour(tt_string_view value)
     // clang-format on
 }
 
-wxColour ConvertToColour(tt_string_view value)
-{
-    // check for system colour
-    if (value.starts_with("wx"))
-    {
-        return wxSystemSettings::GetColour(ConvertToSystemColour(value));
-    }
-    else
-    {
-        tt_view_vector mstr(value, ',');
-        unsigned long rgb = 0;
-        if (mstr.size() > 2)
-        {
-            auto blue = mstr[2].atoi();
-            if (blue < 0 || blue > 255)
-                blue = 0;
-            rgb |= (blue << 16);
-        }
-        if (mstr.size() > 1)
-        {
-            auto green = mstr[1].atoi();
-            if (green < 0 || green > 255)
-                green = 0;
-            rgb |= (green << 8);
-        }
-        if (mstr.size() > 0)
-        {
-            auto red = mstr[0].atoi();
-            if (red < 0 || red > 255)
-                red = 0;
-            rgb |= red;
-        }
-        wxColour clr(rgb);
-        return clr;
-    }
-}
-
 const char* ConvertFontFamilyToString(wxFontFamily family)
 {
     const char* result;

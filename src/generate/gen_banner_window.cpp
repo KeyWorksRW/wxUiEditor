@@ -100,37 +100,14 @@ bool BannerWindowGenerator::SettingsCode(Code& code)
     }
     else if (code.hasValue(prop_start_colour) && code.hasValue(prop_end_colour))
     {
-        auto& start_colour = code.node()->as_string(prop_start_colour);
         code.NodeName().Function("SetGradient(");
-        if (start_colour.contains("wx"))
-        {
-            code.Add("wxSystemSettings").ClassMethod("GetColour(").Add(start_colour) << ")";
-        }
-        else
-        {
-            wxColour colour = ConvertToColour(start_colour);
-            tt_string clr_format;
-            clr_format.Format("wxColour(%i, %i, %i)", colour.Red(), colour.Green(), colour.Blue());
-            code.CheckLineLength(clr_format.size());
-            code.Add(clr_format);
-        }
 
+        auto colour = code.node()->as_wxColour(prop_start_colour);
+        code.Add("wxColour(").QuotedString(colour) += ')';
         code.Comma().CheckLineLength();
+        colour = code.node()->as_wxColour(prop_end_colour);
+        code.Add("wxColour(").QuotedString(colour) += ')';
 
-        auto& end_colour = code.node()->as_string(prop_end_colour);
-        if (end_colour.contains("wx"))
-        {
-            code.CheckLineLength(sizeof("wxSystemSettings::GetColour(") + end_colour.size() + sizeof(")"));
-            code.Add("wxSystemSettings").ClassMethod("GetColour(").Add(end_colour) << ")";
-        }
-        else
-        {
-            wxColour colour = ConvertToColour(end_colour);
-            tt_string clr_format;
-            clr_format.Format("wxColour(%i, %i, %i)", colour.Red(), colour.Green(), colour.Blue());
-            code.CheckLineLength(clr_format.size());
-            code.Add(clr_format);
-        }
         code.EndFunction();
     }
 

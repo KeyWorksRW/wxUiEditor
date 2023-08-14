@@ -269,6 +269,8 @@ wxSize NodeProperty::as_size() const
 // Defined in ../custom_ctrls/kw_color_picker.cpp
 extern const std::map<std::string, std::string, std::less<>> kw_css_colors;
 
+// Note that this is not only used to handle older wxUiEditor projects, but also some of the
+// imported projects such as wxFormBuilder.
 wxColour NodeProperty::as_color() const
 {
     if (m_value.empty())

@@ -460,6 +460,12 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
                 else if (!xml_prop.text().empty())
                 {
                     prop_ptr->set_value(xml_prop.text().as_string());
+                    if (prop_ptr->getPropDeclaration()->declName().contains("colour") ||
+                        prop_ptr->getPropDeclaration()->declName().contains("color"))
+                    {
+                        // Convert old style into #RRGGBB
+                        prop_ptr->set_value(prop_ptr->as_color().GetAsString(wxC2S_HTML_SYNTAX));
+                    }
                 }
                 continue;
             }

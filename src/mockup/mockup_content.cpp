@@ -369,14 +369,14 @@ void MockupContent::SetWindowProperties(Node* node, wxWindow* window, wxWindow* 
         window->SetFont(node->as_wxFont(prop_font));
     }
 
-    if (auto& fg_colour = node->as_string(prop_foreground_colour); fg_colour.size())
+    if (node->hasValue(prop_foreground_colour))
     {
-        window->SetForegroundColour(ConvertToColour(fg_colour));
+        window->SetForegroundColour(node->as_wxColour(prop_foreground_colour));
     }
 
-    if (auto& bg_colour = node->as_string(prop_background_colour); bg_colour.size())
+    if (node->hasValue(prop_background_colour))
     {
-        window->SetBackgroundColour(ConvertToColour(bg_colour));
+        window->SetBackgroundColour(node->as_wxColour(prop_background_colour));
     }
 
     if (auto extra_style = node->as_int(prop_window_extra_style); extra_style > 0)

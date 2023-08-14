@@ -966,7 +966,6 @@ Code& Code::QuotedString(tt_string_view text)
 
     if (Project.as_bool(prop_internationalize))
     {
-        *this += is_cpp() ? "_(" : "wx.GetTranslation(";
         if (is_cpp())
         {
             *this += "_(";
@@ -1901,8 +1900,16 @@ void Code::GenFontColourSettings()
         }
         else
         {
-            const auto colour = m_node->as_wxColour(prop_foreground_colour);
-            Add(tt_string().Format("wxColour(%i, %i, %i)", colour.Red(), colour.Green(), colour.Blue()));
+            if (fg_clr.starts_with('#'))
+            {
+                Add("wxColour(").QuotedString(fg_clr) += ')';
+            }
+            else
+            {
+                // This handles older project versions, and hand-edited project files
+                const auto colour = m_node->as_wxColour(prop_foreground_colour);
+                Add("wxColour(").QuotedString(colour.GetAsString(wxC2S_HTML_SYNTAX).ToStdString()) += ')';
+            }
         }
         EndFunction();
     }
@@ -1924,8 +1931,16 @@ void Code::GenFontColourSettings()
         }
         else
         {
-            const auto colour = m_node->as_wxColour(prop_background_colour);
-            Add(tt_string().Format("wxColour(%i, %i, %i)", colour.Red(), colour.Green(), colour.Blue()));
+            if (bg_clr.starts_with('#'))
+            {
+                Add("wxColour(").QuotedString(bg_clr) += ')';
+            }
+            else
+            {
+                // This handles older project versions, and hand-edited project files
+                const auto colour = m_node->as_wxColour(prop_background_colour);
+                Add("wxColour(").QuotedString(colour.GetAsString(wxC2S_HTML_SYNTAX).ToStdString()) += ')';
+            }
         }
         EndFunction();
     }
@@ -1962,15 +1977,8 @@ Code& Code::ColourCode(GenEnum::PropName prop_name)
     }
     else
     {
-        if (PropContains(prop_name, "wx"))
-        {
-            Add("wxSystemSettings").ClassMethod("GetColour(").Add(prop_name).Str(")");
-        }
-        else
-        {
-            auto colour = m_node->as_wxColour(prop_name);
-            Add(tt_string().Format("wxColour(%i, %i, %i)", colour.Red(), colour.Green(), colour.Blue()));
-        }
+        auto colour = m_node->as_wxColour(prop_name);
+        Add("wxColour(").QuotedString(colour) += ')';
     }
 
     return *this;

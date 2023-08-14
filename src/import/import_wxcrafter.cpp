@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Import a wxCrafter project
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2021-2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2021-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -1053,6 +1053,8 @@ void WxCrafter::KnownProperty(Node* node, const Value& value, GenEnum::PropName 
         if (auto& colour = FindValue(value, "colour"); colour.IsString())
         {
             node->set_value(prop_name, ConvertColour(colour));
+            // Convert old style into #RRGGBB
+            node->set_value(prop_name, node->as_wxColour(prop_name).GetAsString(wxC2S_HTML_SYNTAX));
         }
     }
     else if (prop_name == prop_id)

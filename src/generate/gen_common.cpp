@@ -39,15 +39,8 @@ void ColourCode(Code& code, GenEnum::PropName prop_name)
     }
     else
     {
-        if (code.PropContains(prop_name, "wx"))
-        {
-            code.Add("wxSystemSettings").ClassMethod("GetColour(").as_string(prop_name).Str(")");
-        }
-        else
-        {
-            auto colour = code.node()->as_wxColour(prop_name);
-            code.Add(tt_string().Format("wxColour(%i, %i, %i)", colour.Red(), colour.Green(), colour.Blue()));
-        }
+        auto colour = code.node()->as_wxColour(prop_name);
+        code.Add("wxColour(").QuotedString(colour) += ')';
     }
 }
 

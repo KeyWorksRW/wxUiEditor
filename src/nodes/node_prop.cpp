@@ -8,6 +8,7 @@
 #include <array>
 #include <charconv>
 #include <cstdlib>
+#include <sstream>
 
 #include <wx/animate.h>                // wxAnimation and wxAnimationCtrl
 #include <wx/propgrid/propgriddefs.h>  // wxPropertyGrid miscellaneous definitions
@@ -265,40 +266,51 @@ wxSize NodeProperty::as_size() const
     return result;
 }
 
+// Defined in ../custom_ctrls/kw_color_picker.cpp
+extern const std::map<std::string, std::string, std::less<>> kw_css_colors;
+
+// Note that this is not only used to handle older wxUiEditor projects, but also some of the
+// imported projects such as wxFormBuilder.
 wxColour NodeProperty::as_color() const
 {
+    if (m_value.empty())
+        return wxNullColour;
     // check for system colour
     if (m_value.starts_with("wx"))
     {
         return wxSystemSettings::GetColour(ConvertToSystemColour(m_value));
     }
+    else if (m_value.starts_with('#') || m_value.starts_with("RGB") || m_value.starts_with("rgb"))
+    {
+        return wxColour(m_value);
+    }
+    else if (tt::is_alpha(m_value[0]))
+    {
+        if (auto result = kw_css_colors.find(m_value); result != kw_css_colors.end())
+            return wxColour(result->second);
+        else
+        {
+            FAIL_MSG(tt_string("Unknown CSS color: ") << m_value);
+            return wxNullColour;
+        }
+    }
     else
     {
         tt_view_vector mstr(m_value, ',');
         unsigned long rgb = 0;
-        if (mstr.size() > 2)
+        size_t shift_value = 0;
+        for (auto& color: mstr)
         {
-            auto blue = mstr[2].atoi();
-            if (blue < 0 || blue > 255)
-                blue = 0;
-            rgb |= (blue << 16);
+            auto value = color.atoi();
+            if (value < 0 || value > 255)  // ensure value is in range
+                value = 0;
+            rgb |= (value << shift_value);
+            shift_value += 8;
+            if (shift_value > 24)  // limited to 4 values (RGBA)
+                break;
         }
-        if (mstr.size() > 1)
-        {
-            auto green = mstr[1].atoi();
-            if (green < 0 || green > 255)
-                green = 0;
-            rgb |= (green << 8);
-        }
-        if (mstr.size() > 0)
-        {
-            auto red = mstr[0].atoi();
-            if (red < 0 || red > 255)
-                red = 0;
-            rgb |= red;
-        }
-        wxColour clr(rgb);
-        return clr;
+
+        return wxColour(rgb);
     }
 }
 

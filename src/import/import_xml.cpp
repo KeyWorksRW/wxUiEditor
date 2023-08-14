@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Base class for XML importing
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2021 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2021-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -707,6 +707,12 @@ void ImportXML::ProcessProperties(const pugi::xml_node& xml_obj, Node* node, Nod
         if (prop)
         {
             prop->set_value(iter.text().as_string());
+            if (prop->getPropDeclaration()->declName().contains("colour") ||
+                prop->getPropDeclaration()->declName().contains("color"))
+            {
+                // Convert old style into #RRGGBB
+                prop->set_value(prop->as_color().GetAsString(wxC2S_HTML_SYNTAX));
+            }
             continue;
         }
         else if (node->isGen(gen_BookPage) && wxue_prop == prop_style)

@@ -54,6 +54,7 @@ set (file_list
     # (generated) customprops/id_editor_dlg.cpp
 
     custom_ctrls/colour_rect_ctrl.cpp   # Control that displays a solid color
+    custom_ctrls/kw_color_picker.cpp    # Modified version of wxColourPickerCtrl
 
     # Code generation modules
 

@@ -30,9 +30,6 @@ wxSystemColour ConvertToSystemColour(tt_string_view value);
 
 const char* ConvertFontFamilyToString(wxFontFamily family);
 
-// if value begins with 'wx' then it is assumed to be a wxSystemColour
-wxColour ConvertToColour(tt_string_view value);
-
 // Replace escape slashes with the actual character. Affects \\, \\n, \\r, and \\t
 tt_string ConvertEscapeSlashes(tt_string_view str);
 
@@ -47,9 +44,6 @@ wxSize DlgSize(wxObject* parent, Node* node, GenEnum::PropName prop);
 
 // Convert the parts[IndexSize] or equivalent string into wxSize dimensions
 wxSize GetSizeInfo(tt_string_view size_description);
-
-// Friendly name/wxSYS_COLOUR_ pairs (e.g. "tooltip"/wxSYS_COLOUR_INFOBK)
-extern std::map<std::string, const char*> g_sys_colour_pair;
 
 // Friendly name/wxSTC_WRAP_ constant
 extern std::map<std::string, const char*> g_stc_wrap_mode;

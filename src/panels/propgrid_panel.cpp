@@ -1454,30 +1454,8 @@ void PropGridPanel::OnNodePropChange(CustomEvent& event)
 
         case type_wxColour:
             {
-                auto value = prop->as_string();
-                if (value.empty())  // Default Colour
-                {
-                    wxColourPropertyValue def;
-                    def.m_type = wxSYS_COLOUR_WINDOW;
-                    def.m_colour = ConvertToSystemColour("wxSYS_COLOUR_WINDOW");
-                    m_prop_grid->SetPropertyValue(grid_property, def);
-                }
-                else
-                {
-                    if (value.find_first_of("wx") == 0)
-                    {
-                        // System Colour
-                        wxColourPropertyValue def;
-                        def.m_type = ConvertToSystemColour(value);
-                        def.m_colour = prop->as_color();
-                        m_prop_grid->SetPropertyValue(grid_property, def);
-                    }
-                    else
-                    {
-                        wxColourPropertyValue def(wxPG_COLOUR_CUSTOM, prop->as_color());
-                        m_prop_grid->SetPropertyValue(grid_property, def);
-                    }
-                }
+                wxColourPropertyValue def(wxPG_COLOUR_CUSTOM, prop->as_color());
+                m_prop_grid->SetPropertyValue(grid_property, def);
             }
             break;
 

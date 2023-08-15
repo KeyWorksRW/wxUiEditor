@@ -439,7 +439,7 @@ static const GenEnum::GenName lst_select_nodes[] = {
 
 void MockupContent::OnNodeSelected(Node* node)
 {
-    if (node->isForm())
+    if (!node || node->isForm())
         return;
 
     if (node->isType(type_embed_image))

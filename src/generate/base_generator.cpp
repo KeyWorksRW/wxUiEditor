@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Base widget generator class
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -219,7 +219,6 @@ bool BaseGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty
             {
                 event->SetValidationFailureMessage("The name you have chosen is already in use by another class.");
                 event->Veto();
-                wxGetFrame().setStatusField("Either change the name, or press ESC to restore the original value.");
                 return false;
             }
         }
@@ -236,8 +235,45 @@ bool BaseGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty
         {
             event->SetValidationFailureMessage("This label is already in use by another PropertyGrid item.");
             event->Veto();
-            wxGetFrame().setStatusField("Either change the name, or press ESC to restore the original value.");
             return false;
+        }
+    }
+    else if (prop->isProp(prop_get_function) || prop->isProp(prop_set_function))
+    {
+        auto property = wxStaticCast(event->GetProperty(), wxStringProperty);
+        auto variant = event->GetPropertyValue();
+        tt_string newValue = property->ValueToString(variant).utf8_string();
+
+        auto rlambda = [&](Node* check_node, auto&& rlambda) -> bool
+        {
+            if (check_node != node)
+            {
+                if (check_node->hasValue(prop_get_function) && check_node->as_string(prop_get_function) == newValue)
+                {
+                    event->SetValidationFailureMessage("This function name is already in use.");
+                    event->Veto();
+                    return false;
+                }
+                else if (check_node->hasValue(prop_set_function) && check_node->as_string(prop_set_function) == newValue)
+                {
+                    event->SetValidationFailureMessage("This function name is already in use.");
+                    event->Veto();
+                    return false;
+                }
+            }
+
+            for (auto& iter: check_node->getChildNodePtrs())
+            {
+                if (!rlambda(iter.get(), rlambda))
+                    return false;
+            }
+            return true;
+        };
+
+        if (auto form = node->getForm(); form)
+        {
+            if (!rlambda(form, rlambda))
+                return false;
         }
     }
 

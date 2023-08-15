@@ -134,7 +134,9 @@ bool BaseGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty
             return false;
         }
         auto unique_name = node->getUniqueName(newValue);
-        // getUniqueName() won't check the current node so if the name is unique, we still need to check within the same node
+
+        // The above call to getUniqueName() won't check the current node so if the name is
+        // unique, we still need to check within the same node
         bool is_duplicate = !newValue.is_sameas(unique_name);
         if (!is_duplicate)
         {
@@ -188,7 +190,6 @@ bool BaseGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty
         {
             event->SetValidationFailureMessage("The name you have chosen is already in use by another variable.");
             event->Veto();
-            wxGetFrame().setStatusField("Either change the name, or press ESC to restore the original value.");
             return false;
         }
 

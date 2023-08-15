@@ -886,19 +886,42 @@ void GenValidatorSettings(Code& code)
     // assignment just for convenience
     const auto* node = code.node();
 
+    if (code.is_ruby() && node->getValidatorType() != "wxTextValidator")
+        return;  // As of 8/2023, wxRuby3 only supports text validators
+
+    // Python supports user-created validator classes, but not any of the wxWidgets validators.
+    if (code.is_python())
+        return;
+
+    // Make a copy of this -- most languages will need to modify it.
+    auto var_name = node->as_string(prop_validator_variable);
     // Unless there is a variable name, we ignore the entire validator section
-    auto& var_name = node->as_string(prop_validator_variable);
     if (var_name.empty())
         return;
 
     code.Eol(eol_if_needed);
+    if (!code.is_cpp())
+    {
+        // This will add "my " for Perl, and "let " for Rust.
+        code.AddAuto();
+        if (code.is_python())
+            var_name.insert(0, "self.");
+        else if (code.is_ruby())
+            var_name.insert(0, "@");
+        else if (code.is_perl())
+            var_name.insert(0, "$");
+        code.Str(var_name).Eol().NodeName();
+    }
 
-    if (node->isGen(gen_StaticCheckboxBoxSizer))
-        code.Add(prop_checkbox_var_name);
-    else if (node->isGen(gen_StaticRadioBtnBoxSizer))
-        code.Add(prop_radiobtn_var_name);
-    else
-        code.NodeName();
+    if (code.is_cpp())
+    {
+        if (node->isGen(gen_StaticCheckboxBoxSizer))
+            code.Add(prop_checkbox_var_name);
+        else if (node->isGen(gen_StaticRadioBtnBoxSizer))
+            code.Add(prop_radiobtn_var_name);
+        else
+            code.NodeName();
+    }
 
     if (node->isGen(gen_wxRearrangeCtrl))
         code.Function("GetList()");
@@ -927,7 +950,7 @@ void GenValidatorSettings(Code& code)
     }
     else
     {
-        code.Add(validator_type) << '(';
+        code.Add(validator_type).AddIfRuby(".new") << '(';
     }
 
     auto& style = node->as_string(prop_validator_style);

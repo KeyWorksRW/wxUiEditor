@@ -366,10 +366,15 @@ void DialogBlocks::createChildNode(pugi::xml_node& child_xml, Node* parent)
         }
         else
         {
-            auto msg = GatherErrorDetails(child_xml, getGenName);
-            msg << ", Type: " << ExtractQuotedString(type);
-            FAIL_MSG(tt_string() << "Unrecognized class in \"proxy-type\" property: " << ExtractQuotedString(type) << "\n"
-                                 << msg)
+            // No point complaining about custom controls
+            if (ExtractQuotedString(type) != "wbForeignCtrlProxy")
+            {
+                auto msg = GatherErrorDetails(child_xml, getGenName);
+                msg << ", Type: " << ExtractQuotedString(type);
+                FAIL_MSG(tt_string() << "Unrecognized class in \"proxy-type\" property: " << ExtractQuotedString(type)
+                                     << "\n"
+                                     << msg)
+            }
             m_errors.emplace(tt_string("Unrecognized class in \"proxy-type\" property: ") << ExtractQuotedString(type));
         }
         return;
@@ -1047,6 +1052,14 @@ static const std::map<std::string_view, GenEnum::PropName, std::less<>> map_prox
     { "Normal colour", prop_normal_color },
     { "Visited colour", prop_visited_color },
 
+    // wxGridBoxSizer
+    { "Empty cell height", prop_empty_cell_size },
+    { "Empty cell width", prop_empty_cell_size },
+    { "Grid x", prop_column },
+    { "Grid y", prop_row },
+    { "Span x", prop_colspan },
+    { "Span y", prop_rowspan },
+
     { "Column width", prop_default_col_size },
     { "ColumnSpacing", prop_hgap },
     { "Columns", prop_cols },
@@ -1190,6 +1203,17 @@ void DialogBlocks::ProcessMisc(pugi::xml_node& node_xml, const NodeSharedPtr& no
                         else if (auto prop = node->getPropPtr(result->second); prop)
                         {
                             prop->set_value(string_xml.text().as_string());
+                        }
+                        break;
+
+                    case prop_empty_cell_size:
+                        {
+                            auto size = node->as_wxSize(prop_empty_cell_size);
+                            if (name == "Empty cell height")
+                                size.y = string_xml.text().as_int();
+                            else
+                                size.x = string_xml.text().as_int();
+                            node->set_value(prop_empty_cell_size, size);
                         }
                         break;
 

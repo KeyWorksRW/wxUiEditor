@@ -127,9 +127,9 @@ bool BaseGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty
         if (newValue.empty())
             return true;
 
-        if (!isValidVarName(newValue))
+        if (!isValidVarName(newValue, Project.getCodePreference()))
         {
-            event->SetValidationFailureMessage("The name you have specified is not a valid C++ variable name.");
+            event->SetValidationFailureMessage("The name you have specified is not a valid variable name.");
             event->Veto();
             return false;
         }

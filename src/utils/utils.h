@@ -51,7 +51,7 @@ extern std::map<std::string, const char*> g_stc_wrap_mode;
 bool isConvertibleMime(const tt_string& suffix);
 
 // Checks whether a string is a valid C++ variable name.
-bool isValidVarName(const std::string& str);
+bool isValidVarName(const std::string& str, int language = GEN_LANG_CPLUSPLUS);
 
 // This takes the class_name of the form, converts it to lowercase, and if the class name
 // ends with Base, the a "_base" suffix is added.

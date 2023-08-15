@@ -336,9 +336,22 @@ bool isConvertibleMime(const tt_string& suffix)
 }
 
 extern const char* g_u8_cpp_keywords;  // defined in ../panels/base_panel.cpp
-std::set<std::string> g_set_cpp_keywords;
+extern const char* g_python_keywords;
+extern const char* g_ruby_keywords;
+extern const char* g_golang_keywords;
+extern const char* g_lua_keywords;
+extern const char* g_perl_keywords;
+extern const char* g_rust_keywords;
 
-bool isValidVarName(const std::string& str)
+std::set<std::string> g_set_cpp_keywords;
+std::set<std::string> g_set_python_keywords;
+std::set<std::string> g_set_ruby_keywords;
+std::set<std::string> g_set_golang_keywords;
+std::set<std::string> g_set_lua_keywords;
+std::set<std::string> g_set_perl_keywords;
+std::set<std::string> g_set_rust_keywords;
+
+bool isValidVarName(const std::string& str, int language)
 {
     // variable names must start with an alphabetic character or underscore character
     if (!((str[0] >= 'a' && str[0] <= 'z') || (str[0] >= 'A' && str[0] <= 'Z') || str[0] == '_'))
@@ -350,20 +363,54 @@ bool isValidVarName(const std::string& str)
             return false;
     }
 
-    // Ensure that the variable name is not a C++ keyword
+    // Ensure that the variable name is not a keyword in the specified language
+
+    auto lambda = [&](std::set<std::string>& set_keywords, const char* language_keywords) -> bool
+    {
+        if (set_keywords.empty())
+        {
+            tt_string_vector keywords(language_keywords, ' ');
+            for (auto& iter: keywords)
+            {
+                set_keywords.emplace(iter);
+            }
+        }
+
+        if (set_keywords.contains(str))
+            return false;
+
+        return true;
+    };
 
     // The set is only initialized the first time this function is called.
-    if (g_set_cpp_keywords.empty())
+    if (language == GEN_LANG_CPLUSPLUS)
     {
-        tt_string_vector keywords(g_u8_cpp_keywords, ' ');
-        for (auto& iter: keywords)
-        {
-            g_set_cpp_keywords.emplace(iter);
-        }
+        return lambda(g_set_cpp_keywords, g_u8_cpp_keywords);
     }
-
-    if (g_set_cpp_keywords.contains(str))
-        return false;
+    else if (language == GEN_LANG_PYTHON)
+    {
+        return lambda(g_set_python_keywords, g_python_keywords);
+    }
+    else if (language == GEN_LANG_RUBY)
+    {
+        return lambda(g_set_ruby_keywords, g_ruby_keywords);
+    }
+    else if (language == GEN_LANG_GOLANG)
+    {
+        return lambda(g_set_golang_keywords, g_golang_keywords);
+    }
+    else if (language == GEN_LANG_LUA)
+    {
+        return lambda(g_set_lua_keywords, g_lua_keywords);
+    }
+    else if (language == GEN_LANG_PERL)
+    {
+        return lambda(g_set_perl_keywords, g_perl_keywords);
+    }
+    else if (language == GEN_LANG_RUST)
+    {
+        return lambda(g_set_rust_keywords, g_rust_keywords);
+    }
 
     return true;
 }

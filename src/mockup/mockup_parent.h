@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Top-level MockUp Parent window
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2021 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -43,6 +43,7 @@ public:
 
 protected:
     void OnNodeSelected(CustomEvent& event);
+    void OnNodeDeleted(CustomEvent& event);
     void OnReCreateContent(CustomEvent&);
     void OnNodePropModified(CustomEvent&);
 

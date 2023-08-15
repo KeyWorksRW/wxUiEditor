@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Top-level MockUp Parent window
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2021 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -96,9 +96,9 @@ MockupParent::MockupParent(wxWindow* parent, MainFrame* frame) : wxScrolled<wxPa
              CreateContent();
          });
     Bind(EVT_NodeDeleted,
-         [this](CustomEvent&)
+         [this](CustomEvent& event)
          {
-             CreateContent();
+             OnNodeDeleted(event);
          });
     Bind(EVT_ParentChanged,
          [this](CustomEvent&)
@@ -227,6 +227,28 @@ void MockupParent::CreateContent()
     }
     else
         m_MockupWindow->Enable();
+}
+
+void MockupParent::OnNodeDeleted(CustomEvent& /* event */)
+{
+    // When we get the deleted event, the node being deleted is still selected, which can cause
+    // a crash if we try to process it. After the node is deleted, a new node will be selected
+    // (which might be a different form entirely), so we delete everything now and hide the
+    // window. Once a new node is selected, CreateContent() will be called which will recreate
+    // everything and show the window again.
+    if (m_AreNodesCreated)
+    {
+        m_panelContent->RemoveNodes();
+        m_AreNodesCreated = false;
+        // This ensures that the we regenerate all content when a new node is selected. See
+        // the check for wxGetFrame().getSelectedForm() != m_form in OnNodeSelected().
+        m_form = nullptr;
+    }
+
+    if (!IsShown())
+        return;
+
+    m_MockupWindow->Hide();
 }
 
 void MockupParent::OnNodeSelected(CustomEvent& event)

@@ -1061,6 +1061,7 @@ static const std::map<std::string_view, GenEnum::PropName, std::less<>> map_prox
     { "Span y", prop_rowspan },
 
     { "Column width", prop_default_col_size },
+    { "Animation", prop_animation },
     { "ColumnSpacing", prop_hgap },
     { "Columns", prop_cols },
     { "Default filter", prop_defaultfilter },

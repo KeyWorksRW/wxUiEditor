@@ -416,6 +416,10 @@ public:
 
     void GenFontColourSettings();
 
+    // Calls the language-specific function to generate code for the specified bitmap
+    // property
+    Code& Bundle(GenEnum::PropName prop);
+
     // Creates a string using either wxSystemSettings::GetColour(name) or wxColour(r, g, b).
     // Generates wxNullColour if the property is empty.
     Code& ColourCode(GenEnum::PropName prop_name);

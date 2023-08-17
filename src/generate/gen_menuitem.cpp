@@ -214,7 +214,7 @@ bool MenuItemGenerator::SettingsCode(Code& code)
             }
             else
             {
-                PythonBundleCode(code, prop_bitmap);
+                code.Bundle(prop_bitmap);
             }
             code.EndFunction();
         }
@@ -293,7 +293,7 @@ bool MenuItemGenerator::SettingsCode(Code& code)
             }
             else
             {
-                PythonBundleCode(code, prop_bitmap);
+                code.Bundle(prop_bitmap);
             }
             code.Comma() += "False";
             code.EndFunction();

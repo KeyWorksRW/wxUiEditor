@@ -10,6 +10,7 @@
 
 #include "code.h"
 
+#include "gen_common.h"       // Common component functions
 #include "mainapp.h"          // App class
 #include "node.h"             // Node class
 #include "project_handler.h"  // ProjectHandler class
@@ -1979,6 +1980,18 @@ Code& Code::ColourCode(GenEnum::PropName prop_name)
     {
         auto colour = m_node->as_wxColour(prop_name);
         Add("wxColour(").QuotedString(colour) += ')';
+    }
+
+    return *this;
+}
+
+Code& Code::Bundle(GenEnum::PropName prop_name)
+{
+    switch (m_language)
+    {
+        case GEN_LANG_PYTHON:
+            PythonBundleCode(*this, prop_name);
+            break;
     }
 
     return *this;

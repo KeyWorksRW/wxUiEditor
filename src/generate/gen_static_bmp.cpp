@@ -61,7 +61,7 @@ bool StaticBitmapGenerator::ConstructionCode(Code& code)
             }
             else
             {
-                PythonBundleCode(code, prop_bitmap);
+                code.Bundle(prop_bitmap);
             }
             code.PosSizeFlags();
         }

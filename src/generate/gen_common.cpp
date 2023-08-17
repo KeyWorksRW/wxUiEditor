@@ -1244,7 +1244,7 @@ void GenToolCode(Code& code, const bool is_bitmaps_list)
         }
         else if (code.is_python())
         {
-            PythonBundleCode(code, prop_bitmap);
+            code.Bundle(prop_bitmap);
         }
         else
         {

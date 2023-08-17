@@ -764,7 +764,7 @@ void PythonBtnBimapCode(Code& code, bool is_single)
             else
             {
                 code.Eol(eol_if_needed).NodeName().Function(iter.function_name) << '(';
-                PythonBundleCode(code, iter.prop_name);
+                code.Bundle(iter.prop_name);
             }
             code.EndFunction();
         }

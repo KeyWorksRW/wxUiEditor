@@ -157,7 +157,7 @@ void BookCtorAddImagelist(Code& code)
                 if (child_node->hasValue(prop_bitmap))
                 {
                     Code bundle_code(child_node.get(), GEN_LANG_PYTHON);
-                    PythonBundleCode(bundle_code, prop_bitmap);
+                    bundle_code.Bundle(prop_bitmap);
                     code.Eol().Str("bundle_").itoa(++bitmap_index).Str(" = ") << bundle_code;
                 }
             }

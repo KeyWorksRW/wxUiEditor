@@ -122,7 +122,7 @@ bool WizardFormGenerator::SettingsCode(Code& code)
             }
             else
             {
-                PythonBundleCode(code, prop_bitmap);
+                code.Bundle(prop_bitmap);
             }
         }
         if (code.is_cpp())
@@ -463,7 +463,7 @@ bool WizardPageGenerator::ConstructionCode(Code& code)
             }
             else
             {
-                PythonBundleCode(code, prop_bitmap);
+                code.Bundle(prop_bitmap);
             }
         }
         code.EndFunction();

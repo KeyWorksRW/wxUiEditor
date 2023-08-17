@@ -40,6 +40,32 @@ R"===(##########################################################################
 
 )===";
 
+inline constexpr const auto txt_ruby_get_bundle =
+R"===(
+  # Loads image(s) from a string and returns a Wx::BitmapBundle object.
+  def get_bundle(image_name1, image_name2 = nil, image_name3 = nil)
+    image1 = Wx::Image.new
+    image1.load_stream(StringIO.new(image_name1))
+
+    if (image_name2)
+      image2 = Wx::Image.new
+      image2.load_stream(StringIO.new(image_name2))
+
+      if (image_name3)
+        image3 = Wx::Image.new
+        image3.load_stream(StringIO.new(image_name3))
+        bundle = Wx::BitmapBundle.new(image1, image2, image3)
+        return bundle
+      else
+        bundle = Wx::BitmapBundle.new(image1, image2)
+        return bundle
+      end
+    end
+
+    bundle = Wx::BitmapBundle.new(image1)
+    return bundle
+  end
+)===";
 // clang-format on
 
 // This *must* be written on a line by itself with *no* indentation.
@@ -334,12 +360,66 @@ void BaseCodeGenerator::GenerateRubyClass(Node* form_node, PANEL_PAGE panel_type
     }
 
     thrd_collect_img_headers.join();
+    m_NeedImageFunction = false;
     if (m_embedded_images.size())
     {
         m_source->writeLine();
 
-        // TODO: [Randalphwa - 07-13-2023] Need to figure out how to handle images in wxRuby. I
-        // don't know yet if we can use the zlib + base64 encoding that we use for wxPython.
+        // First see if we need to import the gen_Images List
+        bool images_file_imported = false;
+        bool svg_import_libs = false;
+        for (auto& iter: m_embedded_images)
+        {
+            if (iter->form == m_ImagesForm)
+            {
+                if (!images_file_imported)
+                {
+                    tt_string import_name = iter->form->as_string(prop_python_file).filename();
+                    import_name.remove_extension();
+                    code.Str("import ").Str(import_name);
+                    m_source->writeLine(code);
+                    code.clear();
+                    images_file_imported = true;
+                }
+                if (iter->type == wxBITMAP_TYPE_INVALID)
+                {
+                    // m_source->writeLine("import zlib");
+                    // m_source->writeLine("import base64");
+                    svg_import_libs = true;
+                }
+            }
+            else if (!svg_import_libs)
+            {
+                // SVG images have a wxBITMAP_TYPE_INVALID type
+                if (iter->type == wxBITMAP_TYPE_INVALID)
+                {
+                    // m_source->writeLine("require 'base64'");
+                    // m_source->writeLine("require 'stringio'");
+                    svg_import_libs = true;
+                }
+                if (iter->form != m_ImagesForm)
+                {
+                    // If the image isn't in the images file, then we need to add the base64 version
+                    // of the bitmap
+                    m_source->writeLine("require 'base64'");
+
+                    // At this point we know that some method is required, but until we have
+                    // processed all the images, we won't know if the images file is required.
+                    // The images file provides it's own function for loading images, so we can
+                    // use that if it's available.
+                    m_NeedImageFunction = true;
+                }
+            }
+        }
+        if (m_NeedImageFunction)
+        {
+            if (images_file_imported)
+                // The images file supplies the function we need
+                m_NeedImageFunction = false;
+            else
+                // We have to provide our own method, and that requires this library
+                m_source->writeLine("require 'stringio'");
+        }
     }
 
     m_source->writeLine();
@@ -462,6 +542,11 @@ void BaseCodeGenerator::GenerateRubyClass(Node* form_node, PANEL_PAGE panel_type
         m_source->writeLine("\tend", indent::none);
     }
 
+    if (m_NeedImageFunction)
+    {
+        m_source->writeLine(txt_ruby_get_bundle, indent::auto_keep_whitespace);
+    }
+
     if (m_form_node->isGen(gen_wxWizard))
     {
         code.clear();
@@ -474,18 +559,22 @@ void BaseCodeGenerator::GenerateRubyClass(Node* form_node, PANEL_PAGE panel_type
 
     // Make certain indentation is reset after all construction code is written
     m_source->ResetIndent();
-    m_source->writeLine("end\n\n", indent::none);
+    m_source->writeLine("end\n", indent::none);
 
     m_header->ResetIndent();
 
-    // TODO: [Randalphwa - 07-13-2023] If we use embedded images, we need to write them out here.
-#if 0
-    std::sort(m_embedded_images.begin(), m_embedded_images.end(),
-              [](const EmbeddedImage* a, const EmbeddedImage* b)
-              {
-                  return (a->array_name.compare(b->array_name) < 0);
-              });
-#endif
+    code.clear();
+    // Now write any embedded images that aren't declared in the gen_Images List
+    for (auto& iter: m_embedded_images)
+    {
+        // Only write the images that aren't declared in any gen_Images List. Note that
+        // this *WILL* result in duplicate images being written to different forms.
+        if (iter->form != m_ImagesForm)
+        {
+            WriteImageConstruction(code);
+            break;
+        }
+    }
 
     if (m_panel_type == NOT_PANEL)
     {

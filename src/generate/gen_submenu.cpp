@@ -94,8 +94,7 @@ bool SubMenuGenerator::AfterChildrenCode(Code& code)
             }
         }
 
-        // wxPython version
-        else
+        else if (code.is_python())
         {
             bool is_list_created = PythonBitmapList(code, prop_bitmap);
             code.Str(submenu_item_name).Function("SetBitmap(");
@@ -108,6 +107,10 @@ bool SubMenuGenerator::AfterChildrenCode(Code& code)
                 code.Bundle(prop_bitmap);
             }
             code.EndFunction();
+        }
+        else if (code.is_ruby())
+        {
+            code.Str(submenu_item_name).Function("SetBitmap(").Bundle(prop_bitmap).EndFunction();
         }
     }
 

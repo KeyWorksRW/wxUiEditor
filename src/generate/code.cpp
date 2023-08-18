@@ -1992,6 +1992,10 @@ Code& Code::Bundle(GenEnum::PropName prop_name)
         case GEN_LANG_PYTHON:
             PythonBundleCode(*this, prop_name);
             break;
+
+        case GEN_LANG_RUBY:
+            RubyBundleCode(*this, prop_name);
+            break;
     }
 
     return *this;

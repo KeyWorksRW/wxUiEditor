@@ -105,7 +105,7 @@ bool AnimationGenerator::ConstructionCode(Code& code)
         {
             code << GenerateBitmapCode(code.node()->as_string(prop_inactive_bitmap));
         }
-        else
+        else if (code.is_python())
         {
             bool is_list_created = PythonBitmapList(code, prop_inactive_bitmap);
             if (is_list_created)
@@ -116,6 +116,10 @@ bool AnimationGenerator::ConstructionCode(Code& code)
             {
                 code.Bundle(prop_inactive_bitmap);
             }
+        }
+        else if (code.is_ruby())
+        {
+            code.Bundle(prop_inactive_bitmap);
         }
         code.EndFunction();
     }

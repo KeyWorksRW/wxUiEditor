@@ -52,15 +52,23 @@ bool StaticBitmapGenerator::ConstructionCode(Code& code)
     {
         if (code.hasValue(prop_bitmap))
         {
-            bool is_list_created = PythonBitmapList(code, prop_bitmap);
-            code.NodeName().CreateClass().ValidParentName().Comma().as_string(prop_id).Comma();
+            if (code.is_python())
+            {
+                bool is_list_created = PythonBitmapList(code, prop_bitmap);
+                code.NodeName().CreateClass().ValidParentName().Comma().as_string(prop_id).Comma();
 
-            if (is_list_created)
-            {
-                code += "wx.BitmapBundle.FromBitmaps(bitmaps)";
+                if (is_list_created)
+                {
+                    code += "wx.BitmapBundle.FromBitmaps(bitmaps)";
+                }
+                else
+                {
+                    code.Bundle(prop_bitmap);
+                }
             }
-            else
+            else if (code.is_ruby())
             {
+                code.NodeName().CreateClass().ValidParentName().Comma().as_string(prop_id).Comma();
                 code.Bundle(prop_bitmap);
             }
             code.PosSizeFlags();

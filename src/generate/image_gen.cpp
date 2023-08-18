@@ -13,6 +13,7 @@
 #include "code.h"             // Code -- Helper class for generating code
 #include "gen_base.h"         // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
 #include "gen_common.h"       // Common component functions
+#include "gen_enums.h"        // Enumerations for generators
 #include "image_handler.h"    // ImageHandler class
 #include "project_handler.h"  // ProjectHandler class
 #include "utils.h"            // Utility functions that work with properties
@@ -136,7 +137,7 @@ void BaseCodeGenerator::WriteImageConstruction(Code& code)
             }
             code += "};\n";
         }
-        else
+        else if (code.is_python())
         {
             if (iter_array->form->isGen(gen_Images))
             {
@@ -157,9 +158,41 @@ void BaseCodeGenerator::WriteImageConstruction(Code& code)
             }
             m_source->writeLine(code);
             code.clear();
-            auto encoded = base64_encode(iter_array->array_data.get(), iter_array->array_size & 0xFFFFFFFF);
+            auto encoded = base64_encode(iter_array->array_data.get(), iter_array->array_size & 0xFFFFFFFF, GEN_LANG_PYTHON);
             if (encoded.size())
             {
+                encoded.back() += ")";
+                m_source->writeLine(encoded);
+            }
+        }
+        else if (code.is_ruby())
+        {
+            if (iter_array->form->isGen(gen_Images))
+            {
+                continue;
+            }
+            if (iter_array->filename.size())
+            {
+                code.Eol().Str("# ").Str(iter_array->filename);
+            }
+            code.Eol().Str("$").Str(iter_array->array_name);
+            if (iter_array->type == wxBITMAP_TYPE_INVALID)
+            {
+                code.Str(" = (");
+            }
+            else
+            {
+                code.Str(" = Base64.decode64(");
+            }
+            m_source->writeLine(code);
+            code.clear();
+            auto encoded = base64_encode(iter_array->array_data.get(), iter_array->array_size & 0xFFFFFFFF, GEN_LANG_RUBY);
+            if (encoded.size())
+            {
+                // Remove the trailing '+' character
+                encoded.back().pop_back();
+                // and the now trailing space
+                encoded.back().pop_back();
                 encoded.back() += ")";
                 m_source->writeLine(encoded);
             }
@@ -383,10 +416,32 @@ void BaseCodeGenerator::WriteImagePostHeader()
     }
 }
 
-std::vector<std::string> base64_encode(unsigned char const* data, size_t data_size)
+// clang-format off
+
+std::map<int, GenEnum::PropName> map_lang_to_prop = {
+
+    { GEN_LANG_CPLUSPLUS, prop_cpp_line_length },
+    { GEN_LANG_GOLANG, prop_golang_line_length },
+    { GEN_LANG_LUA, prop_lua_line_length },
+    { GEN_LANG_PERL, prop_perl_line_length },
+    { GEN_LANG_PYTHON, prop_python_line_length },
+    { GEN_LANG_RUBY, prop_ruby_line_length  },
+    { GEN_LANG_RUST, prop_rust_line_length },
+
+};
+
+// clang-format on
+
+std::vector<std::string> base64_encode(unsigned char const* data, size_t data_size, int language)
 {
-    const size_t tab_quote_prefix = 7;  // 4 for tab, 2 for quotes, 1 for 'b' prefix
-    size_t line_length = Project.as_size_t(prop_python_line_length) - tab_quote_prefix;
+    size_t tab_quote_prefix = 7;  // 4 for tab, 2 for quotes, 1 for 'b' prefix
+    if (language == GEN_LANG_RUBY)
+        tab_quote_prefix = 6;  // 2 for tab, 2 for quotes, 2 for " +" suffix
+    GenEnum::PropName prop = prop_python_line_length;
+    if (auto result = map_lang_to_prop.find(language); result != map_lang_to_prop.end())
+        prop = result->second;
+
+    size_t line_length = Project.as_size_t(prop) - tab_quote_prefix;
 
     const std::array<char, 64> base64_chars = { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
                                                 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
@@ -409,8 +464,21 @@ std::vector<std::string> base64_encode(unsigned char const* data, size_t data_si
         char_array_4[3] = char_array_3[2] & 0x3f;
     };
 
-    line = "\tb\"";
-    size_t line_pos = 3;
+    std::string line_begin = "\tb\"";
+    std::string line_end = "\"";
+    if (language == GEN_LANG_PYTHON)
+    {
+        line_begin = "\tb\"";
+        line_end = "\"";
+    }
+    else if (language == GEN_LANG_RUBY)
+    {
+        line_begin = "  '";
+        line_end = "' +";
+    }
+
+    line = line_begin;
+    size_t line_pos = line_begin.size();
     size_t a3_pos = 0;
     for (size_t idx = 0; idx < data_size; ++idx)
     {
@@ -428,9 +496,9 @@ std::vector<std::string> base64_encode(unsigned char const* data, size_t data_si
             line_pos += 4;
             if (line_pos >= line_length)
             {
-                line += "\"";
+                line += line_end;
                 result.emplace_back(line);
-                line_pos = 3;
+                line_pos = line_begin.size();
                 line.resize(line_pos);
             }
         }
@@ -454,7 +522,7 @@ std::vector<std::string> base64_encode(unsigned char const* data, size_t data_si
             line += '=';
         }
     }
-    line += "\"";
+    line += line_end;
     result.emplace_back(line);
 
     return result;
@@ -493,7 +561,7 @@ void BaseCodeGenerator::GeneratePythonImagesForm()
 
         m_source->writeLine(code);
         code.clear();
-        auto encoded = base64_encode(iter_array->array_data.get(), iter_array->array_size & 0xFFFFFFFF);
+        auto encoded = base64_encode(iter_array->array_data.get(), iter_array->array_size & 0xFFFFFFFF, GEN_LANG_PYTHON);
         if (encoded.size())
         {
             encoded.back() += ")";

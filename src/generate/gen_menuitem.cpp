@@ -220,7 +220,7 @@ bool MenuItemGenerator::SettingsCode(Code& code)
         }
         else if (code.is_ruby())
         {
-            // TODO: [Randalphwa - 08-02-2023] Fill in once we have figured out how to handle bitmaps in Ruby
+            code.Bundle(prop_bitmap).EndFunction();
         }
         else
         {
@@ -281,8 +281,7 @@ bool MenuItemGenerator::SettingsCode(Code& code)
             }
         }
 
-        // wxPython version
-        else
+        else if (code.is_python())
         {
             code.Eol(eol_if_needed);
             bool is_list_created = PythonBitmapList(code, prop_unchecked_bitmap);
@@ -295,8 +294,12 @@ bool MenuItemGenerator::SettingsCode(Code& code)
             {
                 code.Bundle(prop_bitmap);
             }
-            code.Comma() += "False";
-            code.EndFunction();
+            code.Comma().False().EndFunction();
+        }
+        else if (code.is_ruby())
+        {
+            code.Eol(eol_if_needed).NodeName().Function("SetBitmap(");
+            code.Bundle(prop_bitmap).Comma().False().EndFunction();
         }
     }
 

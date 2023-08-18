@@ -1937,13 +1937,13 @@ void Code::GenFontColourSettings()
         {
             if (fg_clr.starts_with('#'))
             {
-                Add("wxColour(").QuotedString(fg_clr) += ')';
+                Object("wxColour").QuotedString(fg_clr) += ')';
             }
             else
             {
                 // This handles older project versions, and hand-edited project files
                 const auto colour = m_node->as_wxColour(prop_foreground_colour);
-                Add("wxColour(").QuotedString(colour.GetAsString(wxC2S_HTML_SYNTAX).ToStdString()) += ')';
+                Object("wxColour").QuotedString(colour.GetAsString(wxC2S_HTML_SYNTAX).ToStdString()) += ')';
             }
         }
         EndFunction();
@@ -1968,13 +1968,13 @@ void Code::GenFontColourSettings()
         {
             if (bg_clr.starts_with('#'))
             {
-                Add("wxColour(").QuotedString(bg_clr) += ')';
+                Object("wxColour").QuotedString(bg_clr) += ')';
             }
             else
             {
                 // This handles older project versions, and hand-edited project files
                 const auto colour = m_node->as_wxColour(prop_background_colour);
-                Add("wxColour(").QuotedString(colour.GetAsString(wxC2S_HTML_SYNTAX).ToStdString()) += ')';
+                Object("wxColour").QuotedString(colour.GetAsString(wxC2S_HTML_SYNTAX).ToStdString()) += ')';
             }
         }
         EndFunction();
@@ -2013,7 +2013,7 @@ Code& Code::ColourCode(GenEnum::PropName prop_name)
     else
     {
         auto colour = m_node->as_wxColour(prop_name);
-        Add("wxColour(").QuotedString(colour) += ')';
+        Object("wxColour").QuotedString(colour) += ')';
     }
 
     return *this;

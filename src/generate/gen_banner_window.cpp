@@ -103,10 +103,10 @@ bool BannerWindowGenerator::SettingsCode(Code& code)
         code.NodeName().Function("SetGradient(");
 
         auto colour = code.node()->as_wxColour(prop_start_colour);
-        code.Add("wxColour(").QuotedString(colour) += ')';
+        code.Object("wxColour").QuotedString(colour) += ')';
         code.Comma().CheckLineLength();
         colour = code.node()->as_wxColour(prop_end_colour);
-        code.Add("wxColour(").QuotedString(colour) += ')';
+        code.Object("wxColour").QuotedString(colour) += ')';
 
         code.EndFunction();
     }

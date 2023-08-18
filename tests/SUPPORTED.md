@@ -30,7 +30,7 @@ This does _not_ mean that the class is fully supported in every language -- this
 | wxPopupTransientWindow | yes | yes | yes | no | ../src/generate/gen_popup_trans_win.cpp |
 | wxRibbonBar | yes | yes | --- | --- | ../src/generate/gen_ribbon_bar.cpp |
 | wxToolBar | yes | yes | --- | --- | ../src/generate/gen_toolbar.cpp |
-| wxWizard | yes | yes | --- | --- | ../src/generate/gen_wizard.cpp |
+| wxWizard | yes | yes | yes | yes | ../src/generate/gen_wizard.cpp |
 
 ### Pickers
 
@@ -125,7 +125,7 @@ This does _not_ mean that the class is fully supported in every language -- this
 | wxTreeCtrl | yes | ??? | --- | --- | ../src/generate/gen_tree_ctrl.cpp |
 | wxTreeListCtrl | yes | ??? | --- | no | ../src/generate/gen_tree_list.cpp |
 | wxWebView | yes | yes | no | no | ../src/generate/gen_web_view.cpp |
-| wxWizardPageSimple | yes | yes | --- | --- | ../src/generate/gen_wizard.cpp |
+| wxWizardPageSimple | yes | yes | yes | yes | ../src/generate/gen_wizard.cpp |
 
 # Objects
 

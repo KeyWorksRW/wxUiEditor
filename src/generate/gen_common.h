@@ -106,6 +106,10 @@ tt_string GenerateIconCode(const tt_string& description);
 // wxSize will be converted to dialog units if the size contains a 'd' character.
 tt_string GenerateWxSize(Node* node, PropName prop);
 
+// Creates a string using either wxSystemSettings::GetColour(name) or wxColour(r, g, b).
+// Generates wxNullColour if the property is empty.
+void ColourCode(Code& code, GenEnum::PropName prop_name);
+
 /////////////////////////////////////// Code-enabled Functions ///////////////////////////////////////
 
 // Generate settings common to all forms
@@ -132,13 +136,14 @@ bool PythonBundleCode(Code& code, GenEnum::PropName prop);
 // location which can be used as the parameter for make_relative().
 tt_string MakePythonPath(Node* node);
 
+// Python version of GenBtnBimapCode()
+void PythonBtnBimapCode(Code& code, bool is_single = false);
+
+/////////////////////////////////////// wxRuby Functions ///////////////////////////////////////
+
 // Deterimes where the ruby code will be written to, and returns an absolute path to that
 // location which can be used as the parameter for make_relative().
 tt_string MakeRubyPath(Node* node);
 
-// Creates a string using either wxSystemSettings::GetColour(name) or wxColour(r, g, b).
-// Generates wxNullColour if the property is empty.
-void ColourCode(Code& code, GenEnum::PropName prop_name);
-
-// Python version of GenBtnBimapCode()
-void PythonBtnBimapCode(Code& code, bool is_single = false);
+// Generates code to load a bitmap from Art, SVG, or up to three bitmap files.
+bool RubyBundleCode(Code& code, GenEnum::PropName prop);

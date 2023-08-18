@@ -42,29 +42,26 @@ R"===(##########################################################################
 
 inline constexpr const auto txt_ruby_get_bundle =
 R"===(
-  # Loads image(s) from a string and returns a Wx::BitmapBundle object.
-  def get_bundle(image_name1, image_name2 = nil, image_name3 = nil)
-    image1 = Wx::Image.new
-    image1.load_stream(StringIO.new(image_name1))
-
-    if (image_name2)
-      image2 = Wx::Image.new
-      image2.load_stream(StringIO.new(image_name2))
-
-      if (image_name3)
-        image3 = Wx::Image.new
-        image3.load_stream(StringIO.new(image_name3))
-        bundle = Wx::BitmapBundle.new(image1, image2, image3)
-        return bundle
-      else
-        bundle = Wx::BitmapBundle.new(image1, image2)
-        return bundle
-      end
+# Loads image(s) from a string and returns a Wx::BitmapBundle object.
+def get_bundle(image_name1, image_name2 = nil, image_name3 = nil)
+  image1 = Wx::Image.new
+  image1.load_stream(StringIO.new(image_name1))
+  if (image_name2)
+    image2 = Wx::Image.new
+    image2.load_stream(StringIO.new(image_name2))
+    if (image_name3)
+      image3 = Wx::Image.new
+      image3.load_stream(StringIO.new(image_name3))
+      bundle = Wx::BitmapBundle.new(image1, image2, image3)
+      return bundle
+    else
+      bundle = Wx::BitmapBundle.new(image1, image2)
+      return bundle
     end
-
-    bundle = Wx::BitmapBundle.new(image1)
-    return bundle
   end
+  bundle = Wx::BitmapBundle.new(image1)
+  return bundle
+end
 )===";
 // clang-format on
 
@@ -544,6 +541,7 @@ void BaseCodeGenerator::GenerateRubyClass(Node* form_node, PANEL_PAGE panel_type
 
     if (m_NeedImageFunction)
     {
+        m_source->doWrite("\n");  // force an extra line break
         m_source->writeLine(txt_ruby_get_bundle, indent::auto_keep_whitespace);
     }
 
@@ -572,6 +570,7 @@ void BaseCodeGenerator::GenerateRubyClass(Node* form_node, PANEL_PAGE panel_type
         if (iter->form != m_ImagesForm)
         {
             WriteImageConstruction(code);
+            m_source->doWrite("\n");  // force an extra line break
             break;
         }
     }
@@ -619,4 +618,148 @@ tt_string MakeRubyPath(Node* node)
     path.make_absolute();
     path.remove_filename();
     return path;
+}
+
+bool RubyBundleCode(Code& code, GenEnum::PropName prop)
+{
+    auto& description = code.node()->as_string(prop);
+    if (description.empty())
+    {
+        code.Add("wxNullBitmap");
+        return false;
+    }
+
+    tt_view_vector parts(description, BMP_PROP_SEPARATOR, tt::TRIM::both);
+
+    if (parts.size() <= 1 || parts[IndexImage].empty())
+    {
+        code.Add("wxNullBitmap");
+        return false;
+    }
+
+    if (parts[IndexType].contains("Art"))
+    {
+        tt_string art_id(parts[IndexArtID]);
+        tt_string art_client;
+        if (auto pos = art_id.find('|'); tt::is_found(pos))
+        {
+            art_client = art_id.subview(pos + 1);
+            art_id.erase(pos);
+        }
+
+        code.Str("Wx::ArtProvider.get_bitmap_bundle(").Add(art_id);
+
+        // Note that current documentation states that the client is required, but the header file says otherwise
+        if (art_client.size())
+            code.Comma().Add(art_client);
+        code << ')';
+        return true;
+    }
+
+    if (const ImageBundle* bundle = ProjectImages.GetPropertyImageBundle(description);
+        bundle && bundle->lst_filenames.size())
+    {
+        if (description.starts_with("SVG"))
+        {
+            // TODO: [Randalphwa - 08-17-2023]
+#if 0
+            auto embed = ProjectImages.GetEmbeddedImage(parts[IndexImage]);
+            ASSERT(embed);
+            tt_string svg_name;
+            if (embed->form != code.node()->getForm())
+            {
+                svg_name = embed->form->as_string(prop_python_file).filename();
+                svg_name.remove_extension();
+                svg_name << '.' << embed->array_name;
+            }
+            else
+            {
+                svg_name = embed->array_name;
+            }
+            code.insert(0, tt_string("_svg_string_ = zlib.decompress(base64.b64decode(") << svg_name << "))\n");
+            code += "wx.BitmapBundle.FromSVG(_svg_string_";
+            wxSize svg_size { -1, -1 };
+            if (parts[IndexSize].size())
+            {
+                svg_size = GetSizeInfo(parts[IndexSize]);
+            }
+            code.Comma().Add("wxSize(").itoa(svg_size.x).Comma().itoa(svg_size.y) += "))";
+#else
+            return false;
+#endif
+        }
+
+        else if (parts[IndexType].starts_with("Embed"))
+        {
+            if (bundle->lst_filenames.empty())
+            {
+                code.Add("wxNullBitmap");
+                return false;
+            }
+            if (const EmbeddedImage* embed1 = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[0]); embed1)
+            {
+                code.Str("get_bundle($").Str(embed1->array_name);
+                if (bundle->lst_filenames.size() > 1)
+                {
+                    if (EmbeddedImage* embed2 = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[1]); embed2)
+                    {
+                        code.Comma().Str("$").Str(embed2->array_name);
+                    }
+                    if (bundle->lst_filenames.size() > 2)
+                    {
+                        if (EmbeddedImage* embed3 = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[2]); embed3)
+                        {
+                            code.Comma().Str("$").Str(embed3->array_name);
+                        }
+                    }
+                }
+                code += ')';
+                return true;
+            }
+        }
+        else if (bundle->lst_filenames.size() == 1)
+        {
+            auto path = Project.getBaseDirectory(code.node(), GEN_LANG_RUBY);
+
+            tt_string name(bundle->lst_filenames[0]);
+            name.make_absolute();
+            name.make_relative(path);
+            name.backslashestoforward();
+
+            code.CheckLineLength(name.size() + name.size() + 27);
+            code.Str("Wx::Bitmap(").QuotedString(name).Str("))");
+        }
+        else if (bundle->lst_filenames.size() == 2)
+        {
+            auto path = Project.getBaseDirectory(code.node(), GEN_LANG_RUBY);
+
+            tt_string name(bundle->lst_filenames[0]);
+            name.make_absolute();
+            name.make_relative(path);
+            name.backslashestoforward();
+
+            tt_string name2(bundle->lst_filenames[1]);
+            name2.make_absolute();
+            name2.make_relative(path);
+            name2.backslashestoforward();
+
+            code.CheckLineLength(name.size() + name2.size() + 27);
+            code.Str("Wx::Bitmap(").QuotedString(name).Str(", Wx::Bitmap(").QuotedString(name2).Str("))");
+        }
+
+        else
+        {
+            FAIL_MSG("Unexpected number of images in bundle -- should be <= 2");
+            code.Add("wxNullBitmap");
+            return false;
+        }
+    }
+    else
+    {
+        FAIL_MSG("Missing bundle description");
+        code.Add("wxNullBitmap");
+        return false;
+    }
+
+    return false;
 }

@@ -464,11 +464,16 @@ std::vector<std::string> base64_encode(unsigned char const* data, size_t data_si
         char_array_4[3] = char_array_3[2] & 0x3f;
     };
 
-    std::string line_end = "\"";
     std::string line_begin = "\tb\"";
-    if (language == GEN_LANG_RUBY)
+    std::string line_end = "\"";
+    if (language == GEN_LANG_PYTHON)
     {
-        line_begin = "  `";
+        line_begin = "\tb\"";
+        line_end = "\"";
+    }
+    else if (language == GEN_LANG_RUBY)
+    {
+        line_begin = "  '";
         line_end = "' +";
     }
 

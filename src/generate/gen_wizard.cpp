@@ -108,7 +108,7 @@ bool WizardFormGenerator::SettingsCode(Code& code)
         {
             if (code.is_cpp())
                 code += "wxBitmapBundle::FromBitmaps(bitmaps)";
-            else
+            else if (code.is_python())
                 code += "wx.BitmapBundle.FromBitmaps(bitmaps)";
         }
         else
@@ -435,7 +435,7 @@ bool WizardPageGenerator::ConstructionCode(Code& code)
                     code.Eol() += "#endif";
                 }
             }
-            else
+            else if (code.is_python())
                 code += "wx.BitmapBundle.FromBitmaps(bitmaps)";
         }
         else

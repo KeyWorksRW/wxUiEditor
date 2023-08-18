@@ -662,7 +662,7 @@ bool RubyBundleCode(Code& code, GenEnum::PropName prop)
     {
         if (description.starts_with("SVG"))
         {
-            // TODO: [Randalphwa - 08-17-2023]
+            // TODO: [Randalphwa - 08-17-2023] This is waiting for wxRuby3 to implement the .from_...() methods
 #if 0
             auto embed = ProjectImages.GetEmbeddedImage(parts[IndexImage]);
             ASSERT(embed);
@@ -699,7 +699,7 @@ bool RubyBundleCode(Code& code, GenEnum::PropName prop)
             }
             if (const EmbeddedImage* embed1 = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[0]); embed1)
             {
-                code.Str("get_bundle($").Str(embed1->array_name);
+                code.Str("get_bundle(").Str("$").Str(embed1->array_name);
                 if (bundle->lst_filenames.size() > 1)
                 {
                     if (EmbeddedImage* embed2 = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[1]); embed2)

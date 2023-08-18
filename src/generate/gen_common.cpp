@@ -1242,7 +1242,7 @@ void GenToolCode(Code& code, const bool is_bitmaps_list)
                 code.CheckLineLength();
             }
         }
-        else if (code.is_python())
+        else if (code.is_python() || code.is_ruby())
         {
             code.Bundle(prop_bitmap);
         }
@@ -1294,7 +1294,8 @@ void GenToolCode(Code& code, const bool is_bitmaps_list)
 
 bool BitmapList(Code& code, const GenEnum::PropName prop)
 {
-    if (!code.node()->hasValue(prop))
+    // Note that Ruby always uses a function, and therefore has no need for a list
+    if (!code.node()->hasValue(prop) || code.is_ruby())
     {
         return false;
     }

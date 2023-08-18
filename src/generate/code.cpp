@@ -485,7 +485,7 @@ Code& Code::as_string(PropName prop_name)
 Code& Code::Add(tt_string_view text)
 {
     bool old_linebreak = m_auto_break;
-    if (is_ruby())
+    if (is_ruby() && text.size())
     {
         // Ruby doesn't like breaking the parenthesis for a function call onto the next line,
         // or the .new function

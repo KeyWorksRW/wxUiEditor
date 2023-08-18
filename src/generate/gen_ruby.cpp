@@ -52,10 +52,11 @@ def get_bundle(image_name1, image_name2 = nil, image_name3 = nil)
     if (image_name3)
       image3 = Wx::Image.new
       image3.load_stream(StringIO.new(image_name3))
-      bundle = Wx::BitmapBundle.new(image1, image2, image3)
+      bitmaps = [image1, image2, image3]
+      bundle = Wx::BitmapBundle.new.from_bitmaps(bitmaps)
       return bundle
     else
-      bundle = Wx::BitmapBundle.new(image1, image2)
+      bundle = Wx::BitmapBundle.new.from_bitmaps(image1, image2)
       return bundle
     end
   end

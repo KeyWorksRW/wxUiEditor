@@ -688,6 +688,40 @@ Code& Code::Class(tt_string_view text)
     return *this;
 }
 
+Code& Code::Object(tt_string_view class_name)
+{
+    if (is_cpp())
+    {
+        *this += class_name;
+    }
+    else if (is_python() || is_rust())
+    {
+        if (class_name.is_sameprefix("wx"))
+        {
+            *this << "wx." << class_name.substr(2);
+        }
+        else
+        {
+            *this += class_name;
+        }
+    }
+    else if (is_ruby())
+    {
+        if (class_name.is_sameprefix("wx"))
+        {
+            *this << "Wx::" << class_name.substr(2);
+        }
+        else
+        {
+            *this += class_name;
+        }
+        *this << ".new";
+    }
+    *this << '(';
+
+    return *this;
+}
+
 Code& Code::CreateClass(bool use_generic, tt_string_view override_name)
 {
     if (is_golang())

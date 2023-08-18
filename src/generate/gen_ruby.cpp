@@ -549,11 +549,9 @@ void BaseCodeGenerator::GenerateRubyClass(Node* form_node, PANEL_PAGE panel_type
     if (m_form_node->isGen(gen_wxWizard))
     {
         code.clear();
-        code.Eol().Str("# Add the following below the comment block to add a simple");
-        code.Eol().Str("# Run() function to launch the wizard").Eol().Str("=begin");
         // see for an example C:\rwCode\wxRuby3\samples\dialogs\wizard.rb
-        code.Eol().Str("=end").Eol();
-        m_source->writeLine(code);
+        // w = MyWizard.new(self)
+        // w.run_wizard(w.get_page_area_sizer.get_item(0).get_window)
     }
 
     // Make certain indentation is reset after all construction code is written

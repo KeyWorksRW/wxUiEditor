@@ -50,11 +50,18 @@ class MainFrame(wx.Frame):
         panel.SetSizerAndFit(panel_sizer)
         self.SetSizerAndFit(box_sizer)
 
+        self.tool_bar = self.CreateToolBar()
+        tool = self.tool_bar.AddTool(wx.ID_ANY, "", wx.ArtProvider.GetBitmapBundle(
+            wx.ART_EXECUTABLE_FILE, wx.ART_TOOLBAR))
+
+        self.tool_bar.Realize()
+
         self.Centre(wx.BOTH)
 
         # Bind Event handlers
         self.Bind(wx.EVT_MENU, self.on_quit, id=wx.ID_EXIT)
         self.Bind(wx.EVT_MENU, self.on_test_dlg, id=menu_item_test_dlg.GetId())
+        self.Bind(wx.EVT_TOOL, self.on_test_dlg, id=tool.GetId())
 
 # ************* End of generated code ***********
 # DO NOT EDIT THIS COMMENT BLOCK!

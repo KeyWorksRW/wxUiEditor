@@ -55,11 +55,18 @@ class MainFrame < Wx::Frame
     panel.set_sizer_and_fit(panel_sizer)
     set_sizer_and_fit(box_sizer)
 
+    @tool_bar = create_tool_bar
+    tool = @tool_bar.add_tool(Wx::ID_ANY, '', Wx::ArtProvider.get_bitmap_bundle(
+      Wx::ART_EXECUTABLE_FILE, Wx::ART_TOOLBAR))
+
+    @tool_bar.realize
+
     centre(Wx::BOTH)
 
     # Event handlers
     evt_menu(menu_item.get_id, :on_quit)
     evt_menu(menu_item_test_dlg.get_id, :on_test_dlg)
+    evt_tool(tool.get_id, :on_test_dlg)
   end
 end
 

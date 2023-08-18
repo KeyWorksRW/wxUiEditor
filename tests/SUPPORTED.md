@@ -113,7 +113,7 @@ This does _not_ mean that the class is fully supported in every language -- this
 | wxSpinCtrl | yes | yes | yes | yes | ../src/generate/gen_spin_ctrl.cpp |
 | wxSpinCtrlDouble | yes | yes | no | yes | ../src/generate/gen_spin_ctrl.cpp |
 | wxSplitterWindow | yes | ??? | --- | --- | ../src/generate/gen_split_win.cpp |
-| wxStaticBitmap | yes | ??? | --- | --- | ../src/generate/gen_static_bmp.cpp |
+| wxStaticBitmap | yes | yes | yes | yes | ../src/generate/gen_static_bmp.cpp |
 | wxStaticBox | yes | ??? | --- | --- | ../src/generate/gen_static_box.cpp |
 | wxStaticLine | yes | yes | yes | yes | ../src/generate/gen_static_line.cpp |
 | wxStaticText | yes | yes | yes | yes | ../src/generate/gen_static_text.cpp |
@@ -121,7 +121,7 @@ This does _not_ mean that the class is fully supported in every language -- this
 | wxStyledTextCtrl | yes | partial | yes | partial | ../src/generate/styled_text.cpp |
 | wxTextCtrl | yes | yes | yes | yes | ../src/generate/gen_text_ctrl.cpp |
 | wxToggleButton | yes | yes | yes | partial | ../src/generate/gen_toggle_btn.cpp |
-| wxToolBar | yes | yes | yes | --- | ../src/generate/gen_toolbar.cpp |
+| wxToolBar | yes | yes | yes | yes | ../src/generate/gen_toolbar.cpp |
 | wxTreeCtrl | yes | ??? | --- | --- | ../src/generate/gen_tree_ctrl.cpp |
 | wxTreeListCtrl | yes | ??? | --- | no | ../src/generate/gen_tree_list.cpp |
 | wxWebView | yes | yes | no | no | ../src/generate/gen_web_view.cpp |

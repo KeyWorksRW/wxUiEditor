@@ -72,9 +72,9 @@ This does _not_ mean that the class is fully supported in every language -- this
 | wxCheckBox | yes | yes | yes | yes | ../src/generate/gen_checkbox.cpp |
 | wxCheckListBox | yes | yes | yes | yes | ../src/generate/gen_check_listbox.cpp |
 | wxChoice | yes | yes | yes | yes | ../src/generate/gen_choice.cpp |
-| wxCollapsiblePane | yes | ??? | --- | --- | ../src/generate/gen_collapsible.cpp |
+| wxCollapsiblePane | yes | yes | yes | yes | ../src/generate/gen_collapsible.cpp |
 | wxComboBox | yes | yes | yes | yes | ../src/generate/gen_combobox.cpp |
-| wxCommandLinkButton | yes | yes | --- | --- | ../src/generate/gen_cmd_link_btn.cpp |
+| wxCommandLinkButton | yes | yes | no | yes | ../src/generate/gen_cmd_link_btn.cpp |
 | wxDataViewListCtrl | yes | ??? | --- | --- | ../src/generate/dataview_widgets.cpp |
 | wxDataViewCtrl | yes | ??? | --- | --- | ../src/generate/dataview_widgets.cpp |
 | wxEditableListBox | yes | yes | --- | --- | ../src/generate/gen_edit_listbox.cpp |
@@ -103,16 +103,16 @@ This does _not_ mean that the class is fully supported in every language -- this
 | wxRibbonPanel | yes | yes | --- | --- | ../src/generate/gen_ribbon_page.cpp |
 | wxRibbonToolBar | yes | yes | --- | --- | ../src/generate/ribbon_widgets.cpp |
 | wxRichTextCtrl | yes | yes | yes | yes | ../src/generate/gen_rich_text.cpp |
-| wxScrollBar | yes | yes | --- | --- | ../src/generate/gen_scrollbar.cpp |
+| wxScrollBar | yes | yes | yes | yes | ../src/generate/gen_scrollbar.cpp |
 | wxScrolled\<wxPanel\> | yes | ??? | --- | --- | ../src/generate/styled_text.cpp |
 | wxScrolled\<wxWindow\> | yes | ??? | --- | --- | ../src/generate/styled_text.cpp |
-| wxSearchCtrl | yes | yes | --- | --- | ../src/generate/gen_search_ctrl.cpp |
+| wxSearchCtrl | yes | yes | yes | yes | ../src/generate/gen_search_ctrl.cpp |
 | wxSimpleHtmlListBox | yes | ??? | --- | --- | ../src/generate/gen_html_listbox.cpp |
 | wxSlider | yes | yes | yes | yes | ../src/generate/gen_slider.cpp |
 | wxSpinButton | yes | yes | yes | yes | ../src/generate/gen_spin_btn.cpp |
 | wxSpinCtrl | yes | yes | yes | yes | ../src/generate/gen_spin_ctrl.cpp |
 | wxSpinCtrlDouble | yes | yes | no | yes | ../src/generate/gen_spin_ctrl.cpp |
-| wxSplitterWindow | yes | ??? | --- | --- | ../src/generate/gen_split_win.cpp |
+| wxSplitterWindow | yes | yes | yes | yes | ../src/generate/gen_split_win.cpp |
 | wxStaticBitmap | yes | yes | yes | yes | ../src/generate/gen_static_bmp.cpp |
 | wxStaticBox | yes | ??? | --- | --- | ../src/generate/gen_static_box.cpp |
 | wxStaticLine | yes | yes | yes | yes | ../src/generate/gen_static_line.cpp |
@@ -176,3 +176,4 @@ If a Ruby control is marked as `fails` it means there is a problem that appears 
 - wxSpinCtrlDouble
 - wxWebView
 - wxWrapSizer
+- wxCommandLinkButton

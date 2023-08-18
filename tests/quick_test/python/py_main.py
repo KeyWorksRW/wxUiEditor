@@ -31,13 +31,18 @@ class MainFrame(wx.Frame):
         menu_dialogs = wx.Menu()
         menu_item_test_dlg = wx.MenuItem(menu_dialogs, wx.ID_ANY, "Test Dialog")
         menu_dialogs.Append(menu_item_test_dlg)
+        menu_item_wizard = wx.MenuItem(menu_dialogs, wx.ID_ANY, "Wizard")
+        menu_dialogs.Append(menu_item_wizard)
         self.menubar.Append(menu_dialogs, "Tests")
 
         self.SetMenuBar(self.menubar)
 
         self.tool_bar = self.CreateToolBar()
-        tool = self.tool_bar.AddTool(wx.ID_ANY, "", wx.ArtProvider.GetBitmapBundle(
-            wx.ART_EXECUTABLE_FILE, wx.ART_TOOLBAR))
+        tool_test_dialog = self.tool_bar.AddTool(wx.ID_ANY, "",
+            wx.ArtProvider.GetBitmapBundle(wx.ART_REPORT_VIEW, wx.ART_TOOLBAR))
+
+        tool_wizard = self.tool_bar.AddTool(wx.ID_ANY, "", wx.ArtProvider.GetBitmapBundle(
+            wx.ART_TIP, wx.ART_TOOLBAR))
 
         self.tool_bar.Realize()
 
@@ -63,7 +68,14 @@ class MainFrame(wx.Frame):
         # Bind Event handlers
         self.Bind(wx.EVT_MENU, self.on_quit, id=wx.ID_EXIT)
         self.Bind(wx.EVT_MENU, self.on_test_dlg, id=menu_item_test_dlg.GetId())
-        self.Bind(wx.EVT_TOOL, self.on_test_dlg, id=tool.GetId())
+        self.Bind(wx.EVT_MENU, self.on_wizard, id=menu_item_wizard.GetId())
+        self.Bind(wx.EVT_TOOL, self.on_test_dlg, id=tool_test_dialog.GetId())
+        self.Bind(wx.EVT_TOOL, self.on_wizard, id=tool_wizard.GetId())
+
+    # Unimplemented Event handler functions
+    # Copy any listed and paste them below the comment block, or to your inherited class.
+    """
+    """
 
 # ************* End of generated code ***********
 # DO NOT EDIT THIS COMMENT BLOCK!
@@ -81,6 +93,9 @@ class MainFrame(wx.Frame):
         dlg = test_dlg.TestDialog(self)
         dlg.ShowModal()
         dlg.Destroy()
+
+    def on_wizard(self, event):
+        event.Skip()
 
 class App(wx.App):
     """Application class."""

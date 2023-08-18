@@ -34,12 +34,12 @@ bool WizardFormGenerator::ConstructionCode(Code& code)
         code.Comma().Str("const wxPoint& pos").Comma().Str("long style)");
         code.Str(" : wxWizard()").Eol() += "{";
     }
-    else
+    else if (code.is_python())
     {
         code.Add("class ").NodeName().Add("(wx.adv.Wizard):\n");
         code.Eol().Tab().Add("def __init__(self, parent, id=").Add(prop_id);
         code.Indent(3);
-        code.Comma().Str("title=").QuotedString(prop_title).Comma().Add("pos=").Pos(prop_pos);
+        code.Comma().Str("title=").QuotedString(prop_title).Comma().Str("pos=").Pos(prop_pos);
         // wxWizard does not use a size parameter
         code.CheckLineLength(sizeof(", style=") + code.node()->as_string(prop_style).size() + 4);
         code.Comma().Add("style=").Style().Str("):");
@@ -48,12 +48,60 @@ bool WizardFormGenerator::ConstructionCode(Code& code)
 
         code.ResetIndent();
     }
+    else if (code.is_ruby())
+    {
+        code.Add("class ").NodeName().Add(" < Wx::Wizard");
+        code.Eol().Tab().Add("def initialize(parent");
+        // Indent any wrapped lines
+        code.Indent(3);
+        code.Str(", id = ");
+        if (code.hasValue(prop_id))
+        {
+            code.Add(prop_id);
+        }
+        else
+        {
+            code.Add("Wx::ID_ANY");
+        }
+        code.Comma().Str("title = ").QuotedString(prop_title);
+        code.Comma().Str("bitmap = ");
+        if (code.hasValue(prop_bitmap))
+        {
+            code.Bundle(prop_bitmap);
+        }
+        else
+        {
+            code.Str("(Wx::BitmapBundle.new())");
+        }
+        code.Comma().Str("pos = ").Pos(prop_pos);
+        // wxWizard does not use a size parameter
+        code.Comma().CheckLineLength(sizeof("style = Wx::DEFAULT_DIALOG_STYLE")).Str("style = ").Style();
+        code.EndFunction();
+        code.Unindent();
+
+        if (auto indent_pos = code.GetCode().find("parent"); tt::is_found(indent_pos))
+        {
+            indent_pos -= code.GetCode().find("\n");
+            std::string spaces(indent_pos, ' ');
+            code.GetCode().Replace("\t\t\t\t", spaces, true);
+        }
+
+        code.ResetIndent();
+    }
+    else
+    {
+        code.AddComment("Unknown language");
+    }
 
     return true;
 }
 
 bool WizardFormGenerator::SettingsCode(Code& code)
 {
+    if (code.is_ruby())
+    {
+        code.Str("super(parent, id, title, bitmap, pos, style)\n");
+    }
     const auto min_size = code.node()->as_wxSize(prop_minimum_size);
     const auto max_size = code.node()->as_wxSize(prop_maximum_size);
     if (min_size != wxDefaultSize)
@@ -71,7 +119,7 @@ bool WizardFormGenerator::SettingsCode(Code& code)
         code.EndFunction();
     }
 
-    if (!code.isPropValue(prop_border, 5))
+    if (code.hasValue(prop_border) && !code.isPropValue(prop_border, 5))
     {
         code.Eol(eol_if_needed).FormFunction("SetBorder(").as_string(prop_border).EndFunction();
     }
@@ -89,14 +137,15 @@ bool WizardFormGenerator::SettingsCode(Code& code)
         }
     }
 
-    if (code.hasValue(prop_bitmap))
+    // Ruby passed the bitmap via the constructor
+    if (code.hasValue(prop_bitmap) && !code.is_ruby())
     {
         auto is_bitmaps_list = BitmapList(code, prop_bitmap);
         if (code.is_cpp())
         {
             code.Eol(eol_if_needed).Str("if (!Create(parent, id, title").Comma();
         }
-        else
+        else if (code.is_python())
         {
             code.Eol(eol_if_needed).Str("if not self.Create(parent, id, title").Comma();
         }
@@ -150,7 +199,7 @@ bool WizardFormGenerator::SettingsCode(Code& code)
             code.Eol(eol_if_needed).FormFunction("if (!Create(").Str("parent, id, title, pos, style, name))");
             code.Eol().Tab().Str("return;");
         }
-        else
+        else if (code.is_python())
         {
             code.Eol(eol_if_needed).Str("if not self.Create(parent, id, title, pos, style, name):");
             code.Eol().Tab().Str("return");
@@ -170,7 +219,7 @@ bool WizardFormGenerator::AfterChildrenCode(Code& code)
             code.Str(panes[1]->as_string(prop_var_name)) += ")";
             for (size_t pos = 1; pos + 1 < panes.size(); ++pos)
             {
-                code.Str(".Chain(").Str(panes[pos + 1]->as_string(prop_var_name)) += ")";
+                code.Function("Chain(").Str(panes[pos + 1]->as_string(prop_var_name)) += ")";
             }
             if (code.is_cpp())
                 code += ";";
@@ -403,19 +452,40 @@ bool WizardPageGenerator::ConstructionCode(Code& code)
 {
     if (!code.hasValue(prop_bitmap))
     {
-        code.AddAuto().as_string(prop_var_name).CreateClass().Str(code.is_cpp() ? "this" : "self").EndFunction();
+        code.AddAuto().as_string(prop_var_name).CreateClass();
+        if (code.is_cpp())
+        {
+            code << "this";
+        }
+        else if (code.is_python() || code.is_ruby())
+        {
+            code << "self";
+        }
+        code.EndFunction();
     }
     else
     {
         auto is_bitmaps_list = BitmapList(code, prop_bitmap);
-        code.AddAuto().as_string(prop_var_name).CreateClass().Str(code.is_cpp() ? "this" : "self");
+        code.AddAuto().as_string(prop_var_name).CreateClass();
+        if (code.is_cpp())
+        {
+            code << "this";
+        }
+        else if (code.is_python() || code.is_ruby())
+        {
+            code << "self";
+        }
         if (code.is_cpp())
         {
             code.Comma().Str("nullptr, nullptr").Comma();
         }
-        else
+        else if (code.is_python())
         {
             code.Comma().Str("None, None").Comma();
+        }
+        else if (code.is_ruby())
+        {
+            code.Comma().Str("nil, nil").Comma();
         }
         if (is_bitmaps_list)
         {

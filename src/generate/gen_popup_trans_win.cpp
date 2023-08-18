@@ -22,7 +22,7 @@ bool PopupWinGenerator::ConstructionCode(Code& code)
         code.as_string(prop_class_name).Str("::").as_string(prop_class_name);
         code += "(wxWindow* parent, int style) : wxPopupTransientWindow(parent, style)\n{";
     }
-    else
+    else if (code.is_python())
     {
         code.Add("class ").NodeName().Add("(wx.PopupTransientWindow):\n");
         code.Tab().Add("def __init__(self, parent):").Eol().Tab(2);
@@ -34,11 +34,32 @@ bool PopupWinGenerator::ConstructionCode(Code& code)
         }
         code.EndFunction();
     }
-
+    else if (code.is_ruby())
+    {
+        code.Add("class ").NodeName().Add(" < Wx::PopupTransientWindow");
+        code.Eol().Tab().Add("def initialize(parent, flags = ");
+        // Indent any wrapped lines
+        code.Indent(3);
+        code.Add(prop_border);
+        if (code.hasValue(prop_style))
+        {
+            code.Str(" | ").Add(prop_style);
+        }
+        code.EndFunction();
+        code.ResetIndent();
+    }
+    else
+    {
+        code.AddComment("Unknown language");
+    }
     return true;
 }
 bool PopupWinGenerator::SettingsCode(Code& code)
 {
+    if (code.is_ruby())
+    {
+        code.Eol(eol_if_needed).Str("super(parent, flags)\n");
+    }
     code.GenFontColourSettings();
 
     return true;

@@ -319,6 +319,11 @@ public:
     // Specify override_name to override node->declName()
     Code& CreateClass(bool use_generic = false, tt_string_view override_name = tt_empty_cstr);
 
+    // Adds the object's class name and a open parenthesis: class(
+    //
+    // For Ruby, the object will be followed by ".new": class.new(
+    Code& Object(tt_string_view class_name);
+
     // For Python code, a non-local, non-form name will be prefixed with "self."
     //
     // *this += node->getNodeName();

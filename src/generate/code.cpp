@@ -485,7 +485,7 @@ Code& Code::as_string(PropName prop_name)
 Code& Code::Add(tt_string_view text)
 {
     bool old_linebreak = m_auto_break;
-    if (is_ruby())
+    if (is_ruby() && text.size())
     {
         // Ruby doesn't like breaking the parenthesis for a function call onto the next line,
         // or the .new function
@@ -685,6 +685,40 @@ Code& Code::Class(tt_string_view text)
             *this += text;
         }
     }
+    return *this;
+}
+
+Code& Code::Object(tt_string_view class_name)
+{
+    if (is_cpp())
+    {
+        *this += class_name;
+    }
+    else if (is_python() || is_rust())
+    {
+        if (class_name.is_sameprefix("wx"))
+        {
+            *this << "wx." << class_name.substr(2);
+        }
+        else
+        {
+            *this += class_name;
+        }
+    }
+    else if (is_ruby())
+    {
+        if (class_name.is_sameprefix("wx"))
+        {
+            *this << "Wx::" << class_name.substr(2);
+        }
+        else
+        {
+            *this += class_name;
+        }
+        *this << ".new";
+    }
+    *this << '(';
+
     return *this;
 }
 
@@ -1903,13 +1937,13 @@ void Code::GenFontColourSettings()
         {
             if (fg_clr.starts_with('#'))
             {
-                Add("wxColour(").QuotedString(fg_clr) += ')';
+                Object("wxColour").QuotedString(fg_clr) += ')';
             }
             else
             {
                 // This handles older project versions, and hand-edited project files
                 const auto colour = m_node->as_wxColour(prop_foreground_colour);
-                Add("wxColour(").QuotedString(colour.GetAsString(wxC2S_HTML_SYNTAX).ToStdString()) += ')';
+                Object("wxColour").QuotedString(colour.GetAsString(wxC2S_HTML_SYNTAX).ToStdString()) += ')';
             }
         }
         EndFunction();
@@ -1934,13 +1968,13 @@ void Code::GenFontColourSettings()
         {
             if (bg_clr.starts_with('#'))
             {
-                Add("wxColour(").QuotedString(bg_clr) += ')';
+                Object("wxColour").QuotedString(bg_clr) += ')';
             }
             else
             {
                 // This handles older project versions, and hand-edited project files
                 const auto colour = m_node->as_wxColour(prop_background_colour);
-                Add("wxColour(").QuotedString(colour.GetAsString(wxC2S_HTML_SYNTAX).ToStdString()) += ')';
+                Object("wxColour").QuotedString(colour.GetAsString(wxC2S_HTML_SYNTAX).ToStdString()) += ')';
             }
         }
         EndFunction();
@@ -1979,7 +2013,7 @@ Code& Code::ColourCode(GenEnum::PropName prop_name)
     else
     {
         auto colour = m_node->as_wxColour(prop_name);
-        Add("wxColour(").QuotedString(colour) += ')';
+        Object("wxColour").QuotedString(colour) += ')';
     }
 
     return *this;

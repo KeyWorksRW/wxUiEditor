@@ -40,7 +40,7 @@ void ColourCode(Code& code, GenEnum::PropName prop_name)
     else
     {
         auto colour = code.node()->as_wxColour(prop_name);
-        code.Add("wxColour(").QuotedString(colour) += ')';
+        code.Object("wxColour").QuotedString(colour) += ')';
     }
 }
 

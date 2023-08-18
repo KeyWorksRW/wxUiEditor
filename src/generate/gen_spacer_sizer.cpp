@@ -18,15 +18,14 @@ bool SpacerGenerator::ConstructionCode(Code& code)
 {
     auto* node = code.node();
     code.ParentName();
-    ;
 
     if (node->getParent()->isGen(gen_wxGridBagSizer))
     {
         auto flags = node->getSizerFlags();
 
         code.Function("Add(").as_string(prop_width).Comma().as_string(prop_height);
-        code.Comma().Add("wxGBPosition(").as_string(prop_row).Comma().as_string(prop_column) += ")";
-        code.Comma().Add("wxGBSpan(").as_string(prop_rowspan).Comma().as_string(prop_colspan) += ")";
+        code.Comma().Object("wxGBPosition").as_string(prop_row).Comma().as_string(prop_column) += ")";
+        code.Comma().Object("wxGBSpan").as_string(prop_rowspan).Comma().as_string(prop_colspan) += ")";
         code.Comma().itoa(flags.GetFlags()).Comma().as_string(prop_border_size);
         if (node->as_bool(prop_add_default_border))
         {

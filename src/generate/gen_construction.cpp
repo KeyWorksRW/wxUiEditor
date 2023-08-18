@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Top level Object construction code
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -400,8 +400,8 @@ bool BaseCodeGenerator::GenAfterChildren(Node* node, bool need_closing_brace)
 
             if (parent->isGen(gen_wxGridBagSizer))
             {
-                gen_code.Add("wxGBPosition(").as_string(prop_row).Comma().as_string(prop_column) << "), ";
-                gen_code.Add("wxGBSpan(").as_string(prop_rowspan).Comma().as_string(prop_colspan) << "), ";
+                gen_code.Object("wxGBPosition").as_string(prop_row).Comma().as_string(prop_column) << "), ";
+                gen_code.Object("wxGBSpan").as_string(prop_rowspan).Comma().as_string(prop_colspan) << "), ";
 
                 if (node->hasValue(prop_borders))
                     gen_code.as_string(prop_borders);
@@ -483,8 +483,8 @@ void BaseCodeGenerator::GenParentSizer(Node* node, bool need_closing_brace)
 
         if (node->getParent()->isGen(gen_wxGridBagSizer))
         {
-            code.Add("wxGBPosition(").as_string(prop_row).Comma().as_string(prop_column) << "), ";
-            code.Add("wxGBSpan(").as_string(prop_rowspan).Comma().as_string(prop_colspan) << "), ";
+            code.Object("wxGBPosition").as_string(prop_row).Comma().as_string(prop_column) << "), ";
+            code.Object("wxGBSpan").as_string(prop_rowspan).Comma().as_string(prop_colspan) << "), ";
             tt_string flags(node->as_string(prop_borders));
             if (node->as_string(prop_flags).size())
             {

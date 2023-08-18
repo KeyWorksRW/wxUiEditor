@@ -572,6 +572,7 @@ void BaseCodeGenerator::GenerateRubyClass(Node* form_node, PANEL_PAGE panel_type
         {
             WriteImageConstruction(code);
             m_source->doWrite("\n");  // force an extra line break
+            m_source->SetLastLineBlank();
             break;
         }
     }
@@ -580,6 +581,7 @@ void BaseCodeGenerator::GenerateRubyClass(Node* form_node, PANEL_PAGE panel_type
     {
         if (Project.as_bool(prop_disable_rubo_cop))
         {
+            m_source->writeLine();
 #if defined(_DEBUG)
             for (auto& iter: disable_list)
             {

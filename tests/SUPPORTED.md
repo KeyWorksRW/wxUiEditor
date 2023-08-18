@@ -27,7 +27,7 @@ This does _not_ mean that the class is fully supported in every language -- this
 | wxMenu | yes | yes | --- | --- | ../src/generate/menu_widgets.cpp |
 | wxMenuBar | yes | yes | --- | --- | ../src/generate/menu_widgets.cpp |
 | wxPanel | yes | yes | yes | --- | ../src/generate/gen_panel_form.cpp |
-| wxPopupTransientWindow | yes | yes | --- | no | ../src/generate/gen_popup_trans_win.cpp |
+| wxPopupTransientWindow | yes | yes | yes | no | ../src/generate/gen_popup_trans_win.cpp |
 | wxRibbonBar | yes | yes | --- | --- | ../src/generate/gen_ribbon_bar.cpp |
 | wxToolBar | yes | yes | --- | --- | ../src/generate/gen_toolbar.cpp |
 | wxWizard | yes | yes | --- | --- | ../src/generate/gen_wizard.cpp |
@@ -48,15 +48,15 @@ This does _not_ mean that the class is fully supported in every language -- this
 | Class | C++ | Python | Ruby | XRC | file |
 -----------|-----|--------|------|------|------|
 | wxBoxSizer | yes | yes | yes | yes | ../src/generate/gen_box_sizer.cpp |
-| wxCheckBoxSizer | yes | no | --- | --- | ../src/generate/gen_statchkbox_sizer.cpp |
-| wxFlexGridSizer | yes | yes | --- | --- | ../src/generate/gen_flexgrid_sizer.cpp |
-| wxGridBagSizer | yes | yes | --- | --- | ../src/generate/gen_gridbag_sizer.cpp |
-| wxGridSizer | yes | ??? | --- | --- | ../src/generate/gen_grid_sizer.cpp |
-| wxRadioBoxSizer | yes | no | --- | --- | ../src/generate/gen_statradiobox_sizer.cpp |
-| wxRadioButtonSizer | yes | no | --- | --- | ../src/generate/gen_statradiobox_sizer.cpp |
-| wxStaticBoxSizer | yes | yes | --- | --- | ../src/generate/gen_staticbox_sizer.cpp |
+| wxCheckBoxSizer | yes | no | no | --- | ../src/generate/gen_statchkbox_sizer.cpp |
+| wxFlexGridSizer | yes | yes | yes | yes | ../src/generate/gen_flexgrid_sizer.cpp |
+| wxGridBagSizer | yes | yes | yes | yes | ../src/generate/gen_gridbag_sizer.cpp |
+| wxGridSizer | yes | yes | yes | yes | ../src/generate/gen_grid_sizer.cpp |
+| wxRadioBoxSizer | yes | no | no | --- | ../src/generate/gen_statradiobox_sizer.cpp |
+| wxRadioButtonSizer | yes | no | no | --- | ../src/generate/gen_statradiobox_sizer.cpp |
+| wxStaticBoxSizer | yes | yes | yes | yes | ../src/generate/gen_staticbox_sizer.cpp |
 | wxStdDialogButtonSizer | yes | yes | yes | partial | ../src/generate/gen_std_dlgbtn_sizer.cpp |
-| wxWrapSizer | yes | yes | --- | --- | ../src/generate/gen_wrap_sizer.cpp |
+| wxWrapSizer | yes | yes | no | yes | ../src/generate/gen_wrap_sizer.cpp |
 
 # Classes
 
@@ -175,3 +175,4 @@ If a Ruby control is marked as `fails` it means there is a problem that appears 
 - wxRearrangeCtrl
 - wxSpinCtrlDouble
 - wxWebView
+- wxWrapSizer

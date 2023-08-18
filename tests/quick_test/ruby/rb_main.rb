@@ -40,6 +40,12 @@ class MainFrame < Wx::Frame
 
     set_menu_bar(@menubar)
 
+    @tool_bar = create_tool_bar
+    tool = @tool_bar.add_tool(Wx::ID_ANY, '', Wx::ArtProvider.get_bitmap_bundle(
+      Wx::ART_EXECUTABLE_FILE, Wx::ART_TOOLBAR))
+
+    @tool_bar.realize
+
     box_sizer = Wx::BoxSizer.new(Wx::VERTICAL)
 
     panel = Wx::Panel.new(self, Wx::ID_ANY, Wx::DEFAULT_POSITION,
@@ -55,11 +61,7 @@ class MainFrame < Wx::Frame
     panel.set_sizer_and_fit(panel_sizer)
     set_sizer_and_fit(box_sizer)
 
-    @tool_bar = create_tool_bar
-    tool = @tool_bar.add_tool(Wx::ID_ANY, '', Wx::ArtProvider.get_bitmap_bundle(
-      Wx::ART_EXECUTABLE_FILE, Wx::ART_TOOLBAR))
-
-    @tool_bar.realize
+    @status_bar = create_status_bar(2)
 
     centre(Wx::BOTH)
 

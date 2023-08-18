@@ -35,6 +35,12 @@ class MainFrame(wx.Frame):
 
         self.SetMenuBar(self.menubar)
 
+        self.tool_bar = self.CreateToolBar()
+        tool = self.tool_bar.AddTool(wx.ID_ANY, "", wx.ArtProvider.GetBitmapBundle(
+            wx.ART_EXECUTABLE_FILE, wx.ART_TOOLBAR))
+
+        self.tool_bar.Realize()
+
         box_sizer = wx.BoxSizer(wx.VERTICAL)
 
         panel = wx.Panel(self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize,
@@ -50,11 +56,7 @@ class MainFrame(wx.Frame):
         panel.SetSizerAndFit(panel_sizer)
         self.SetSizerAndFit(box_sizer)
 
-        self.tool_bar = self.CreateToolBar()
-        tool = self.tool_bar.AddTool(wx.ID_ANY, "", wx.ArtProvider.GetBitmapBundle(
-            wx.ART_EXECUTABLE_FILE, wx.ART_TOOLBAR))
-
-        self.tool_bar.Realize()
+        self.status_bar = self.CreateStatusBar(2)
 
         self.Centre(wx.BOTH)
 

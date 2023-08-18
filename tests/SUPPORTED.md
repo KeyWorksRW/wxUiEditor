@@ -117,7 +117,7 @@ This does _not_ mean that the class is fully supported in every language -- this
 | wxStaticBox | yes | ??? | --- | --- | ../src/generate/gen_static_box.cpp |
 | wxStaticLine | yes | yes | yes | yes | ../src/generate/gen_static_line.cpp |
 | wxStaticText | yes | yes | yes | yes | ../src/generate/gen_static_text.cpp |
-| wxStatusBar | yes | yes | --- | --- | ../src/generate/gen_status_bar.cpp |
+| wxStatusBar | yes | yes | yes | yes | ../src/generate/gen_status_bar.cpp |
 | wxStyledTextCtrl | yes | partial | yes | partial | ../src/generate/styled_text.cpp |
 | wxTextCtrl | yes | yes | yes | yes | ../src/generate/gen_text_ctrl.cpp |
 | wxToggleButton | yes | yes | yes | partial | ../src/generate/gen_toggle_btn.cpp |

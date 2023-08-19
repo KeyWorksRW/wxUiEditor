@@ -25,6 +25,7 @@ static const view_map s_short_python_map
 {
     { "wxAUI_", "wx.aui."},
     { "wxCAL_", "wx.adv."},
+    { "wxEL_", "wx.adv."},
     { "wxDV_", "wx.dataview."},
     { "wxPG_", "wx.propgrid."},
     { "wxRE_", "wx.richtext."},
@@ -77,7 +78,7 @@ const view_map g_map_python_prefix
     { "wxGrid", "wx.grid."},
     { "wxPropertyGridManager", "wx.propgrid."},
     { "wxPropertyGrid", "wx.propgrid."},
-        { "wxAC_DEFAULT_STYLE", "wx.adv."},
+    { "wxAC_DEFAULT_STYLE", "wx.adv."},
     { "wxAC_NO_AUTORESIZE", "wx.adv."},
     { "wxNullAnimation", "wx.adv."},
     { "wxEL_ALLOW_NEW", "wx.adv."},

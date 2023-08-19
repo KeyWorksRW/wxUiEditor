@@ -33,6 +33,7 @@
 #include <wx/fontpicker.h>
 #include <wx/gdicmn.h>
 #include <wx/html/htmlwin.h>
+#include <wx/htmllbox.h>
 #include <wx/icon.h>
 #include <wx/image.h>
 #include <wx/listbase.h>
@@ -160,6 +161,7 @@ protected:
     wxRearrangeCtrl* m_rearrange;
     wxRibbonBar* m_rbnBar;
     wxRichTextCtrl* m_richText;
+    wxSimpleHtmlListBox* html_listbox;
     wxStaticText* m_staticText10;
     wxStaticText* m_staticText3;
     wxStaticText* m_staticText4;

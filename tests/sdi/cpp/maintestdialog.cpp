@@ -328,7 +328,20 @@ bool MainTestDialog::Create(wxWindow* parent, wxWindowID id, const wxString& tit
 
     flex_grid_sizer->Add(box_sizer_13, wxSizerFlags().Border(wxALL));
 
-    box_sizer_5->Add(flex_grid_sizer, wxSizerFlags().Border(wxALL));
+    auto* box_sizer2 = new wxBoxSizer(wxVERTICAL);
+
+    auto* staticText2 = new wxStaticText(page_5, wxID_ANY, "wxSimpleHtmlLiseBox");
+    box_sizer2->Add(staticText2, wxSizerFlags().Expand().Border(wxALL));
+
+    html_listbox = new wxSimpleHtmlListBox(page_5, wxID_ANY);
+    html_listbox->Append("<b>bold</b>");
+    html_listbox->Append("<i>italics</i>");
+    html_listbox->SetMinSize(ConvertDialogToPixels(wxSize(-1, 40)));
+    box_sizer2->Add(html_listbox, wxSizerFlags(1).Expand().Border(wxALL));
+
+    flex_grid_sizer->Add(box_sizer2, wxSizerFlags().Border(wxALL));
+
+    box_sizer_5->Add(flex_grid_sizer, wxSizerFlags().Expand().Border(wxALL));
     page_5->SetSizerAndFit(box_sizer_5);
 
     auto* page_3 = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);

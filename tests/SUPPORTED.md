@@ -107,7 +107,7 @@ This does _not_ mean that the class is fully supported in every language -- this
 | wxScrolled\<wxPanel\> | yes | ??? | --- | --- | ../src/generate/styled_text.cpp |
 | wxScrolled\<wxWindow\> | yes | ??? | --- | --- | ../src/generate/styled_text.cpp |
 | wxSearchCtrl | yes | yes | yes | yes | ../src/generate/gen_search_ctrl.cpp |
-| wxSimpleHtmlListBox | yes | ??? | --- | --- | ../src/generate/gen_html_listbox.cpp |
+| wxSimpleHtmlListBox | yes | yes | yes | yes | ../src/generate/gen_html_listbox.cpp |
 | wxSlider | yes | yes | yes | yes | ../src/generate/gen_slider.cpp |
 | wxSpinButton | yes | yes | yes | yes | ../src/generate/gen_spin_btn.cpp |
 | wxSpinCtrl | yes | yes | yes | yes | ../src/generate/gen_spin_ctrl.cpp |

@@ -203,8 +203,6 @@ void BaseCodeGenerator::GenerateCppClass(Node* form_node, PANEL_PAGE panel_type)
         src_includes.insert("#include <wx/icon.h>");
     }
 
-    thrd_need_img_func.join();
-
     if (m_NeedArtProviderHeader)
     {
         src_includes.insert("#include <wx/artprov.h>");

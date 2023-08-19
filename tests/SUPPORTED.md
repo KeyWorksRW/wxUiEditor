@@ -63,7 +63,7 @@ This does _not_ mean that the class is fully supported in every language -- this
 | Class | C++ | Python | Ruby | XRC | file |
 -----------|-----|--------|------|------|------|
 | wxActivityIndicator | yes | yes | yes | yes | ../src/generate/gen_activity.cpp |
-| wxAnimationCtrl | yes | ??? | --- | --- | ../src/generate/gen_animation.cpp |
+| wxAnimationCtrl | yes | ??? | yes | --- | ../src/generate/gen_animation.cpp |
 | wxAuiToolBar | yes | ??? | --- | --- | ../src/generate/gen_aui_toolbar.cpp |
 | wxBannerWindow | yes | yes | no | yes | ../src/generate/gen_banner_window.cpp |
 | wxBitmapComboBox | yes | ??? | --- | --- | ../src/generate/gen_bitmap_combo.cpp |
@@ -107,7 +107,7 @@ This does _not_ mean that the class is fully supported in every language -- this
 | wxScrolled\<wxPanel\> | yes | ??? | --- | --- | ../src/generate/styled_text.cpp |
 | wxScrolled\<wxWindow\> | yes | ??? | --- | --- | ../src/generate/styled_text.cpp |
 | wxSearchCtrl | yes | yes | yes | yes | ../src/generate/gen_search_ctrl.cpp |
-| wxSimpleHtmlListBox | yes | ??? | --- | --- | ../src/generate/gen_html_listbox.cpp |
+| wxSimpleHtmlListBox | yes | yes | yes | yes | ../src/generate/gen_html_listbox.cpp |
 | wxSlider | yes | yes | yes | yes | ../src/generate/gen_slider.cpp |
 | wxSpinButton | yes | yes | yes | yes | ../src/generate/gen_spin_btn.cpp |
 | wxSpinCtrl | yes | yes | yes | yes | ../src/generate/gen_spin_ctrl.cpp |

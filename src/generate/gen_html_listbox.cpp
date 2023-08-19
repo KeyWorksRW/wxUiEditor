@@ -125,6 +125,12 @@ bool HtmlListBoxGenerator::GetIncludes(Node* node, std::set<std::string>& set_sr
     return true;
 }
 
+bool HtmlListBoxGenerator::GetRubyImports(Node*, std::set<std::string>& set_imports)
+{
+    set_imports.insert("require 'wx/html'");
+    return true;
+}
+
 // ../../wxSnapShot/src/xrc/xh_simplehtmllbox.cpp
 // ../../../wxWidgets/src/xrc/xh_simplehtmllbox.cpp
 

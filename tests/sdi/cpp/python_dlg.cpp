@@ -81,7 +81,7 @@ bool PythonDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,
         ConvertDialogToPixels(wxPoint(50, 100)), ConvertDialogToPixels(wxSize(150, 32)), wxALIGN_CENTER_HORIZONTAL,
         "my_text");
     m_staticText->SetWindowVariant(wxWINDOW_VARIANT_LARGE);
-    m_staticText->SetForegroundColour(wxColour(0, 128, 0));
+    m_staticText->SetForegroundColour(wxColour("#008000"));
     box_sizer->Add(m_staticText, wxSizerFlags().Center().Border(wxALL));
 
         auto* bmp = new wxStaticBitmap(this, wxID_ANY, 

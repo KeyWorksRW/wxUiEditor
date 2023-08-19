@@ -61,12 +61,11 @@ bool AnimationGenerator::ConstructionCode(Code& code)
 {
     code.AddAuto().NodeName().CreateClass();
     code.ValidParentName().Comma().as_string(prop_id).Comma().CheckLineLength();
-    // TODO: [Randalphwa - 12-08-2022] Enable Python support once image handling is worked out
     if (code.hasValue(prop_animation))
     {
+        tt_view_vector parts(code.node()->as_string(prop_animation), ';');
         if (code.is_cpp())
         {
-            tt_view_vector parts(code.node()->as_string(prop_animation), ';');
             tt_string name(parts[IndexImage].filename());
             name.remove_extension();
             name.LeftTrim();
@@ -81,9 +80,8 @@ bool AnimationGenerator::ConstructionCode(Code& code)
 
             code << "wxueAnimation(" << name << ", sizeof(" << name << "))";
         }
-        else
+        else if (code.is_python())
         {
-            tt_view_vector parts(code.node()->as_string(prop_animation), ';');
             tt_string name(parts[IndexImage]);
             name.make_absolute();
             auto form_path = MakePythonPath(code.node());
@@ -92,10 +90,23 @@ bool AnimationGenerator::ConstructionCode(Code& code)
 
             code.Str("wx.adv.Animation(").QuotedString(name) += ")";
         }
-    }
-    else
-    {
-        code.Add("wxNullAnimation");
+        else if (code.is_ruby())
+        {
+            auto& description = code.node()->as_string(prop_animation);
+            if (const EmbeddedImage* embed = ProjectImages.GetEmbeddedImage(parts[IndexImage]); embed)
+            {
+                code.Str("get_animation(").Str("$").Str(embed->array_name) += ")";
+            }
+            else
+                code.Str("Wx::Animation.new");
+        }
+        else
+        {
+            if (code.is_ruby())
+                code.Str("Wx::Animation.new");
+            else
+                code.Add("wxNullAnimation");
+        }
     }
     code.PosSizeFlags(false);
     if (code.hasValue(prop_inactive_bitmap))

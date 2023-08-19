@@ -99,8 +99,8 @@
       derived_class_name="MainFrame"
       derived_file="../ui/mainframe"
       use_derived_class="0"
-      import_all_dialogs="1"
       python_file="mainframe"
+      python_import_list="main_test_dlg.py;booktest_dlg.py;wizard.py;python_dlg.py;dlgissue_956.py;dlgissue_960.py"
       python_inherit_name="mainframe"
       xrc_file="mainframe"
       size="500,300"
@@ -559,7 +559,8 @@
               var_name="box_sizer_5"
               flags="wxEXPAND">
               <node
-                class="wxFlexGridSizer">
+                class="wxFlexGridSizer"
+                flags="wxEXPAND">
                 <node
                   class="wxBoxSizer"
                   orientation="wxVERTICAL"
@@ -605,6 +606,24 @@
                   var_name="box_sizer_13">
                   <node
                     class="wxEditableListBox" />
+                </node>
+                <node
+                  class="wxBoxSizer"
+                  orientation="wxVERTICAL"
+                  var_name="_box_sizer2">
+                  <node
+                    class="wxStaticText"
+                    class_access="none"
+                    label="wxSimpleHtmlLiseBox"
+                    var_name="staticText2"
+                    flags="wxEXPAND" />
+                  <node
+                    class="wxSimpleHtmlListBox"
+                    contents="&quot;&lt;b>bold&lt;/b>&quot; &quot;&lt;i>italics&lt;/i>&quot;"
+                    var_name="html_listbox"
+                    minimum_size="-1,40d"
+                    flags="wxEXPAND"
+                    proportion="1" />
                 </node>
               </node>
             </node>
@@ -1729,7 +1748,7 @@
               class="wxToggleButton"
               label="Play Animation"
               style="wxBU_EXACTFIT"
-              wxEVT_TOGGLEBUTTON="[this](wxCommandEvent&amp;)@@{@@if (m_toggleBtn->GetValue()) @@{@@    m_animation_ctrl->Play();@@    m_checkPlayAnimation->SetValue(true);@@}@@else @@{  @@    m_animation_ctrl->Stop();@@    m_checkPlayAnimation->SetValue(false);@@}@@Fit();@@}[python:lambda]self.m_animation_ctrl.Play()" />
+              wxEVT_TOGGLEBUTTON="[this](wxCommandEvent&amp;)@@{@@if (m_toggleBtn->GetValue()) @@{@@    m_animation_ctrl->Play();@@    m_checkPlayAnimation->SetValue(true);@@}@@else @@{  @@    m_animation_ctrl->Stop();@@    m_checkPlayAnimation->SetValue(false);@@}@@Fit();@@}[python:lambda]self.animation_ctrl.Play()" />
             <node
               class="wxAnimationCtrl"
               animation="Embed;art/clr_hourglass.gif"

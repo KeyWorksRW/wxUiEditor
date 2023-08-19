@@ -64,6 +64,17 @@ def get_bundle(image_name1, image_name2 = nil, image_name3 = nil)
   return bundle
 end
 )===";
+
+inline constexpr const auto txt_ruby_get_animation =
+R"===(
+# Loads image from a string and returns a Wx::Animation object.
+def get_animation(image_name)
+  animation = Wx::Animation.new
+  animation.load(StringIO.new(image_name))
+  return animation
+end
+)===";
+
 // clang-format on
 
 // This *must* be written on a line by itself with *no* indentation.
@@ -223,9 +234,13 @@ void BaseCodeGenerator::GenerateRubyClass(Node* form_node, PANEL_PAGE panel_type
             break;
         }
     }
+    m_NeedImageFunction = false;
+    m_NeedAnimationFunction = false;
+    m_NeedSVGFunction = false;
 
     EventVector events;
     std::thread thrd_get_events(&BaseCodeGenerator::CollectEventHandlers, this, form_node, std::ref(events));
+    std::thread thrd_need_img_func(&BaseCodeGenerator::ParseImageProperties, this, form_node);
 
     // Caution! CollectImageHeaders() needs access to m_baseFullPath, so don't start this
     // thread until it has been set!
@@ -358,7 +373,6 @@ void BaseCodeGenerator::GenerateRubyClass(Node* form_node, PANEL_PAGE panel_type
     }
 
     thrd_collect_img_headers.join();
-    m_NeedImageFunction = false;
     if (m_embedded_images.size())
     {
         m_source->writeLine();
@@ -422,7 +436,7 @@ void BaseCodeGenerator::GenerateRubyClass(Node* form_node, PANEL_PAGE panel_type
 
     m_source->writeLine();
     m_header->writeLine();
-    m_header->writeLine(tt_string("requires '") << form_node->as_string(prop_python_file) << "'\n");
+    m_header->writeLine(tt_string("requires '") << form_node->as_string(prop_ruby_file) << "'\n");
     m_header->writeLine();
 
     if (m_form_node->hasValue(prop_ruby_insert))
@@ -540,10 +554,19 @@ void BaseCodeGenerator::GenerateRubyClass(Node* form_node, PANEL_PAGE panel_type
         m_source->writeLine("\tend", indent::none);
     }
 
+    thrd_need_img_func.join();
+
     if (m_NeedImageFunction)
     {
         m_source->doWrite("\n");  // force an extra line break
         m_source->writeLine(txt_ruby_get_bundle, indent::auto_keep_whitespace);
+    }
+
+    if (m_NeedAnimationFunction)
+    {
+        if (!m_NeedImageFunction)
+            m_source->doWrite("\n");  // force an extra line break
+        m_source->writeLine(txt_ruby_get_animation, indent::auto_keep_whitespace);
     }
 
     if (m_form_node->isGen(gen_wxWizard))

@@ -63,7 +63,7 @@ This does _not_ mean that the class is fully supported in every language -- this
 | Class | C++ | Python | Ruby | XRC | file |
 -----------|-----|--------|------|------|------|
 | wxActivityIndicator | yes | yes | yes | yes | ../src/generate/gen_activity.cpp |
-| wxAnimationCtrl | yes | ??? | --- | --- | ../src/generate/gen_animation.cpp |
+| wxAnimationCtrl | yes | ??? | yes | --- | ../src/generate/gen_animation.cpp |
 | wxAuiToolBar | yes | ??? | --- | --- | ../src/generate/gen_aui_toolbar.cpp |
 | wxBannerWindow | yes | yes | no | yes | ../src/generate/gen_banner_window.cpp |
 | wxBitmapComboBox | yes | ??? | --- | --- | ../src/generate/gen_bitmap_combo.cpp |

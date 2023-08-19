@@ -219,7 +219,9 @@ bool WizardFormGenerator::AfterChildrenCode(Code& code)
             code.Str(panes[1]->as_string(prop_var_name)) += ")";
             for (size_t pos = 1; pos + 1 < panes.size(); ++pos)
             {
-                code.Function("Chain(").Str(panes[pos + 1]->as_string(prop_var_name)) += ")";
+                // In C++, Chain() returns a reference, so "." is used instead of "->"
+                // Python and Ruby both use "."
+                code.Str(".").Add("Chain(").Str(panes[pos + 1]->as_string(prop_var_name)) += ")";
             }
             if (code.is_cpp())
                 code += ";";

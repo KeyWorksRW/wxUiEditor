@@ -92,13 +92,19 @@ bool AnimationGenerator::ConstructionCode(Code& code)
         }
         else if (code.is_ruby())
         {
-            auto& description = code.node()->as_string(prop_animation);
-            if (const EmbeddedImage* embed = ProjectImages.GetEmbeddedImage(parts[IndexImage]); embed)
+            bool found_embedded = false;
+            if (parts.size() > IndexImage)
             {
-                code.Str("get_animation(").Str("$").Str(embed->array_name) += ")";
+                if (const EmbeddedImage* embed = ProjectImages.GetEmbeddedImage(parts[IndexImage]); embed)
+                {
+                    code.Str("get_animation(").Str("$").Str(embed->array_name) += ")";
+                    found_embedded = true;
+                }
             }
-            else
+            if (!found_embedded)
+            {
                 code.Str("Wx::Animation.new");
+            }
         }
         else
         {

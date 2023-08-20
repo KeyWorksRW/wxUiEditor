@@ -634,6 +634,8 @@ std::map<GenEnum::GenName, const char*> GenEnum::map_GenNames = {
     { gen_wxPerl, "wxPerl" },
     { gen_wxRust, "wxRust" },
 
+    { gen_LanguageSettings, "Language Settings" },
+
     { gen_CPlusSettings, "C++ Settings" },
     { gen_DerivedCPlusSettings, "C++ Derived Class Settings" },
     { gen_CPlusHeaderSettings, "C++ Header Settings" },

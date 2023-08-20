@@ -2,15 +2,7 @@ inline const char* toolbars_xml = R"===(<?xml version="1.0"?>
 <!DOCTYPE GeneratorDefinitions SYSTEM "gen.dtd">
 <GeneratorDefinitions>
 	<gen class="ToolBar" image="wxToolBar" type="toolbar_form">
-		<inherits class="C++ Settings" />
-		<inherits class="C++ Header Settings" />
-		<inherits class="C++ Derived Class Settings" />
-		<inherits class="wxPython Settings" />
-		<inherits class="wxRuby Settings" />
-		<inherits class="wxGo Settings" />
-		<inherits class="wxLua Settings" />
-		<inherits class="wxPerl Settings" />
-		<inherits class="wxRust Settings" />
+		<inherits class="Language Settings" />
 		<inherits class="XRC Settings" />
 		<inherits class="wxWindow">
 			<hide name="foreground_colour" />

@@ -1,6 +1,9 @@
 inline const char* lang_settings_xml = R"===(<?xml version="1.0"?>
 <!DOCTYPE GeneratorDefinitions SYSTEM "gen.dtd">
 <GeneratorDefinitions>
+	<!-- Using Language Settings will pull in all language settings -->
+	<gen class="Language Settings" type="interface"></gen>
+
 	<gen class="C++ Settings" type="interface">
 		<property name="base_file" type="file"
 			help="The filename of the base class." />

@@ -2,15 +2,7 @@ inline const char* doc_view_app_xml = R"===(<?xml version="1.0"?>
 <!DOCTYPE GeneratorDefinitions SYSTEM "gen.dtd">
 <GeneratorDefinitions>
 	<gen class="DocViewApp" image="wxFrame" type="DocViewApp">
-		<inherits class="C++ Settings" />
-		<inherits class="C++ Header Settings" />
-		<inherits class="C++ Derived Class Settings" />
-		<inherits class="wxPython Settings" />
-		<inherits class="wxRuby Settings" />
-		<inherits class="wxGo Settings" />
-		<inherits class="wxLua Settings" />
-		<inherits class="wxPerl Settings" />
-		<inherits class="wxRust Settings" />
+		<inherits class="Language Settings" />
 		<inherits class="wxMdiWindow" />
 		<inherits class="Window Events" />
 		<property name="class_name" type="string"
@@ -69,9 +61,7 @@ inline const char* doc_view_app_xml = R"===(<?xml version="1.0"?>
 	</gen>
 
 	<gen class="DocumentTextCtrl" image="wxTextCtrl" type="wx_document">
-		<inherits class="C++ Settings" />
-		<inherits class="C++ Header Settings" />
-		<inherits class="C++ Derived Class Settings" />
+		<inherits class="Language Settings" />
 		<property name="class_name" type="string"
 			help="The name of the class.">DocumentTextCtrlBase</property>
 		<property name="mdi_class_name" type="string"
@@ -93,9 +83,7 @@ inline const char* doc_view_app_xml = R"===(<?xml version="1.0"?>
 	</gen>
 
 	<gen class="ViewTextCtrl" image="wxTextCtrl" type="wx_view">
-		<inherits class="C++ Settings" />
-		<inherits class="C++ Header Settings" />
-		<inherits class="C++ Derived Class Settings" />
+		<inherits class="Language Settings" />
 		<inherits class="wxMdiWindow" />
 		<property name="class_name" type="string"
 			help="The name of the class.">ViewTextCtrlBase</property>

@@ -618,9 +618,27 @@ void NodeCreator::parseGeneratorFile(const char* xml_data)
             while (elem_base)
             {
                 auto base_name = elem_base.attribute("class").as_string();
+                if (base_name == "Language Settings")
+                {
+                    class_info->AddBaseClass(getNodeDeclaration("C++ Settings"));
+                    class_info->AddBaseClass(getNodeDeclaration("C++ Header Settings"));
+                    class_info->AddBaseClass(getNodeDeclaration("C++ Derived Class Settings"));
+                    class_info->AddBaseClass(getNodeDeclaration("wxPython Settings"));
+                    class_info->AddBaseClass(getNodeDeclaration("wxRuby Settings"));
+#if defined(INTERNAL_TESTING)
+                    class_info->AddBaseClass(getNodeDeclaration("wxGo Settings"));
+                    class_info->AddBaseClass(getNodeDeclaration("wxLua Settings"));
+                    class_info->AddBaseClass(getNodeDeclaration("wxPerl Settings"));
+                    class_info->AddBaseClass(getNodeDeclaration("wxRust Settings"));
+#endif  // INTERNAL_TESTING
+
+                    elem_base = elem_base.next_sibling("inherits");
+                    continue;
+                }
 
                 // Add a reference to its base class
                 auto base_info = getNodeDeclaration(base_name);
+
                 if (class_info && base_info)
                 {
                     class_info->AddBaseClass(base_info);

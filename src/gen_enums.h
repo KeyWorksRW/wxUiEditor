@@ -682,6 +682,8 @@ namespace GenEnum
         gen_wxRust,
         gen_XRC,
 
+        gen_LanguageSettings,  // Using this will pull in all the language settings
+
         gen_CPlusSettings,
         gen_DerivedCPlusSettings,
         gen_CPlusHeaderSettings,

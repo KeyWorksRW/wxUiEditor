@@ -475,6 +475,7 @@ void BaseCodeGenerator::GenerateCppClass(Node* form_node, PANEL_PAGE panel_type)
         GenerateCppClassHeader(form_node, events);
     }
 
+    thrd_need_img_func.join();
     if (m_panel_type != HDR_PANEL && m_TranslationUnit)
     {
         // First, generate the header files needed

@@ -951,7 +951,7 @@ void DialogBlocks::ProcessStyles(pugi::xml_node& node_xml, const NodeSharedPtr& 
             {
                 if (style_str.size())
                     style_str << '|';
-                style_str << "wxRIGHT";
+                style_str << "wxALIGN_RIGHT";
             }
             else if (alignment.is_sameas("Centre", tt::CASE::either))
             {
@@ -962,18 +962,23 @@ void DialogBlocks::ProcessStyles(pugi::xml_node& node_xml, const NodeSharedPtr& 
         }
         if (auto value = node_xml.find_child_by_attribute("string", "name", "proxy-AlignV"); value)
         {
-            auto alignment = ExtractQuotedString(value);
-            if (alignment.is_sameas("Bottom", tt::CASE::either))
+            // Vertical alignment is invalid if the sizer's orientation is wxVERTICAL
+            if (auto parent = new_node->getParent();
+                parent && parent->isSizer() && parent->as_string(prop_orientation) != "wxVERTICAL")
             {
-                if (style_str.size())
-                    style_str << '|';
-                style_str << "wxBOTTOM";
-            }
-            else if (alignment.is_sameas("Centre", tt::CASE::either))
-            {
-                if (style_str.size())
-                    style_str << '|';
-                style_str << "wxALIGN_CENTER";
+                auto alignment = ExtractQuotedString(value);
+                if (alignment.is_sameas("Bottom", tt::CASE::either))
+                {
+                    if (style_str.size())
+                        style_str << '|';
+                    style_str << "wxALIGN_BOTTOM";
+                }
+                else if (alignment.is_sameas("Centre", tt::CASE::either))
+                {
+                    if (style_str.size())
+                        style_str << '|';
+                    style_str << "wxALIGN_CENTER";
+                }
             }
         }
         if (style_str.size())

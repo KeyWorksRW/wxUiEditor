@@ -1001,6 +1001,9 @@ bool ProjectHandler::NewProject(bool create_empty, bool allow_ui)
                 {
                     DialogBlocks db;
                     Import(db, iter, true);
+#if defined(INTERNAL_TESTING)
+                    wxGetFrame().getImportPanel()->SetImportFile(import_file, wxSTC_LEX_XML);
+#endif
                 }
 
                 if (imported_from.size())

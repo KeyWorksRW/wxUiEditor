@@ -49,7 +49,7 @@ wxObject* PropSheetDlgGenerator::CreateMockup(Node* node, wxObject* parent)
         widget = new wxToolbook(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(parent, node, prop_pos),
                                 DlgSize(parent, node, prop_size), GetStyleInt(node));
     }
-    else
+    else  // default to wxPROPSHEET_NOTEBOOK
     {
         widget = new wxNotebook(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(parent, node, prop_pos),
                                 DlgSize(parent, node, prop_size), GetStyleInt(node));
@@ -78,13 +78,18 @@ bool PropSheetDlgGenerator::ConstructionCode(Code& code)
     auto* node = code.node();  // for convenience
     if (code.is_cpp())
     {
-        auto class_name = node->declName();
-        code << class_name << "::Create"
-             << "(wxWindow* parent, wxWindowID id, const wxString& title,\n\tconst "
+        code.Str("bool ").as_string(prop_class_name);
+        code += "::Create(wxWindow* parent, wxWindowID id, const wxString& title,\n\tconst "
                 "wxPoint& pos, const wxSize& size, long style, const wxString& name)\n";
+        code.OpenBrace();
 
-        code.Indent(1);
-        code.Eol().FormFunction("SetSheetStyle(").Add(prop_book_type).EndFunction().Eol();
+        if (code.hasValue(prop_extra_style))
+        {
+            code.Eol(eol_if_needed).FormFunction("SetExtraStyle(GetExtraStyle() | ").Add(prop_extra_style);
+            code.EndFunction();
+        }
+
+        code.Eol(eol_if_needed).FormFunction("SetSheetStyle(").Add(prop_book_type).EndFunction().Eol();
         if (node->as_int(prop_inner_border) >= 0)
         {
             code.FormFunction("SetInnerBorder(").Add(prop_inner_border).EndFunction().Eol();
@@ -93,8 +98,11 @@ bool PropSheetDlgGenerator::ConstructionCode(Code& code)
         {
             code.FormFunction("SetOuterBorder(").Add(prop_outer_border).EndFunction().Eol();
         }
-        code.Str("wxPropertySheetDialog::Create(").Str("parent, id, title, pos, size, style, name").EndFunction().Eol();
-        code.Str("CreateButtons(").Add(prop_buttons).EndFunction().Eol();
+
+        code.Eol(eol_if_needed) += "if (!wxPropertySheetDialog::Create(parent, id, title, pos, size, style, name))";
+        code.Eol().Tab() += "return false;\n";
+
+        code.Eol().Str("CreateButtons(").Add(prop_buttons).EndFunction();
     }
     else if (code.is_python())
     {
@@ -316,7 +324,7 @@ bool PropSheetDlgGenerator::BaseClassNameCode(Code& code)
     }
     else
     {
-        code += "wxDialog";
+        code += "wxPropertySheetDialog";
     }
 
     return true;
@@ -324,7 +332,9 @@ bool PropSheetDlgGenerator::BaseClassNameCode(Code& code)
 
 bool PropSheetDlgGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
-    InsertGeneratorInclude(node, "#include <wx/dialog.h>", set_src, set_hdr);
+    InsertGeneratorInclude(node, "#include <wx/propdlg.h>", set_src, set_hdr);
+    set_src.insert("#include <wx/bookctrl.h>");
+
     return true;
 }
 
@@ -333,7 +343,7 @@ int PropSheetDlgGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size
     // We use item so that the macros in base_generator.h work, and the code looks the same
     // as other widget XRC generatorsl
     auto item = object;
-    GenXrcObjectAttributes(node, item, "wxDialog");
+    GenXrcObjectAttributes(node, item, "wxPropertySheetDialog");
 
     ADD_ITEM_PROP(prop_title, "title")
 
@@ -409,7 +419,7 @@ int PropSheetDlgGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size
 
 void PropSheetDlgGenerator::RequiredHandlers(Node* node, std::set<std::string>& handlers)
 {
-    handlers.emplace("wxDialogXmlHandler");
+    handlers.emplace("wxPropertySheetDialogXmlHandler");
     if (node->hasValue(prop_icon))
     {
         handlers.emplace("wxIconXmlHandler");

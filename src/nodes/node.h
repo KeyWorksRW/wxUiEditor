@@ -129,7 +129,7 @@ public:
     bool isSizer() const noexcept { return (isType(type_sizer) || isType(type_gbsizer)); }
     bool isContainer() const noexcept
     {
-        return (isType(type_container) || tt::contains(map_GenTypes[getGenType()], "book"));
+        return (isType(type_container) || isType(type_propsheetform) || tt::contains(map_GenTypes[getGenType()], "book"));
     }
 
     // Returns true if access property == none or there is no access property

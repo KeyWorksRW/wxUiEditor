@@ -466,6 +466,7 @@ void BaseCodeGenerator::GenerateCppClass(Node* form_node, PANEL_PAGE panel_type)
 
     if (form_node->isGen(gen_Images))
     {
+        thrd_need_img_func.join();
         GenerateImagesForm();
         return;
     }

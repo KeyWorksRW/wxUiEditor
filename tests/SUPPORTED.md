@@ -93,6 +93,7 @@ This does _not_ mean that the class is fully supported in every language -- this
 | wxPanel | yes | yes | yes | --- | ../src/generate/gen_panel.cpp |
 | wxPropertyGrid | yes | yes | yes | no | ../src/generate/gen_prop_grid.cpp |
 | wxPropertyGridManager | yes | yes | yes | no | ../src/generate/grid_widgets.cpp |
+| wxPropertySheetDialog | no | no | no | no | ../src/generate/gen_propsheet_dlg.cpp |
 | wxRadioBox | yes | yes | yes | yes | ../src/generate/gen_prop_grid.cpp |
 | wxRadioButton | yes | yes | yes | yes | ../src/generate/gen_radio_btn.cpp |
 | wxRearrangeCtrl | yes | yes | no | no | ../src/generate/gen_rearrange.cpp |

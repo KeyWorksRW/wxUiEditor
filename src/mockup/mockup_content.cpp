@@ -86,7 +86,8 @@ void MockupContent::CreateAllGenerators()
     else
     {
         if (form->isGen(gen_MenuBar) || form->isGen(gen_RibbonBar) || form->isGen(gen_ToolBar) ||
-            form->isGen(gen_AuiToolBar) || form->isGen(gen_PopupMenu) || form->isGen(gen_Images))
+            form->isGen(gen_AuiToolBar) || form->isGen(gen_PopupMenu) || form->isGen(gen_Images) ||
+            form->isGen(gen_wxPropertySheetDialog))
         {
             // In this case, the form itself is created as a child
             CreateChildren(form, this, this, m_parent_sizer);

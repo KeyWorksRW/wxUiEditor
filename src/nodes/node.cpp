@@ -38,6 +38,7 @@ inline const GenType lst_form_types[] =
     type_images,
     type_menubar_form,
     type_popup_menu,
+    type_propsheetform,
     type_ribbonbar_form,
     type_toolbar_form,
     type_wizard,

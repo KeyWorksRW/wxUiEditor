@@ -66,6 +66,7 @@
 #include "gen_prop_grid.h"           // PropertyGridGenerator -- wxPropertyGrid generator
 #include "gen_prop_grid_mgr.h"       // wxPropertyGridManager and wxPropertyGridPage generators
 #include "gen_prop_item.h"           // PropertyGridItemGenerator -- PropertyGrid/Manager Item generator
+#include "gen_propsheet_dlg.h"       // PropSheetDlgGenerator -- wxDialog generator
 #include "gen_radio_box.h"           // RadioBoxGenerator -- wxRadioBox generator
 #include "gen_radio_btn.h"           // RadioButtonGenerator -- Radio button and Radio box component classes
 #include "gen_rearrange.h"           // RearrangeCtrlGenerator -- wxRearrangeCtrl generator
@@ -250,10 +251,11 @@ void NodeCreator::initGenerators()
     SET_GENERATOR(gen_wxTreeListCtrl, TreeListCtrlGenerator)
     SET_GENERATOR(gen_TreeListCtrlColumn, TreeListCtrlColumnGenerator)
 
+    SET_GENERATOR(gen_PanelForm, PanelFormGenerator)
     SET_GENERATOR(gen_wxDialog, DialogFormGenerator)
     SET_GENERATOR(gen_wxFrame, FrameFormGenerator)
     SET_GENERATOR(gen_wxPopupTransientWindow, PopupWinGenerator)
-    SET_GENERATOR(gen_PanelForm, PanelFormGenerator)
+    SET_GENERATOR(gen_wxPropertySheetDialog, PropSheetDlgGenerator)
     SET_GENERATOR(gen_wxWizard, WizardFormGenerator)
 
     SET_GENERATOR(gen_VerticalBoxSizer, BoxSizerGenerator)

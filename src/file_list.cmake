@@ -182,6 +182,7 @@ set (file_list
     generate/gen_frame.cpp              # wxFrame generator
     generate/gen_panel_form.cpp         # wxPanel Form generator
     generate/gen_popup_trans_win.cpp    # wxPopupTransientWindow generator
+    generate/gen_propsheet_dlg.cpp      # wxPropertySheetDialog generator
     generate/gen_wizard.cpp             # wxWizard generator
 
     # Menus

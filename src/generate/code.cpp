@@ -78,6 +78,7 @@ const view_map g_map_python_prefix
     { "wxGrid", "wx.grid."},
     { "wxPropertyGridManager", "wx.propgrid."},
     { "wxPropertyGrid", "wx.propgrid."},
+    { "wxPropertySheetDialog", "wx.adv."},
     { "wxAC_DEFAULT_STYLE", "wx.adv."},
     { "wxAC_NO_AUTORESIZE", "wx.adv."},
     { "wxNullAnimation", "wx.adv."},

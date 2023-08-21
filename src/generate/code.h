@@ -296,10 +296,11 @@ public:
     Code& Function(tt_string_view text);
 
     // C++ will add "::" and the function name. Python will add "." and the function name.
+    // Ruby changes the function to snake_case.
     Code& ClassMethod(tt_string_view function_name);
 
     // For C++, this simply calls the function. For Python it prefixes "self." to the
-    // function name.
+    // function name. Ruby changes the function to snake_case.
     Code& FormFunction(tt_string_view text);
 
     // Adds ");" or ")"

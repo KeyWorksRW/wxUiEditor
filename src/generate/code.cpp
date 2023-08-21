@@ -591,6 +591,24 @@ Code& Code::Function(tt_string_view text)
     {
         *this << "->" << text;
     }
+    else if (is_ruby())
+    {
+        // Check for a preceeding empty "()" and remove it if found
+        if (ends_with("())"))
+        {
+            resize(size() - 2);
+        }
+
+        *this << '.';
+        if (text.is_sameprefix("wx"))
+        {
+            *this << m_language_wxPrefix << text.substr(sizeof("wx") - 1);
+        }
+        else
+        {
+            *this += ConvertToSnakeCase(text);
+        }
+    }
     else if (is_golang() || is_lua() || is_python() || is_ruby() || is_rust())
     {
         *this << '.';

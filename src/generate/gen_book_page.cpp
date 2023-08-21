@@ -232,9 +232,26 @@ bool BookPageGenerator::ConstructionCode(Code& code)
     }
     else
     {
-        code.ValidParentName().Comma().as_string(prop_id);
+        if (node->getParent()->isGen(gen_wxPropertySheetDialog))
+        {
+            code.FormFunction("GetBookCtrl()");
+            if (code.is_ruby())
+                code.GetCode().resize(code.GetCode().size() - 2);  // remove the trailing ()
+        }
+        else
+        {
+            code.ValidParentName();
+        }
+        code.Comma().as_string(prop_id);
         code.PosSizeFlags(false);
-        code.Eol().ParentName().Function("AddPage(").NodeName().Comma().QuotedString(prop_label);
+        if (node->getParent()->isGen(gen_wxPropertySheetDialog))
+        {
+            // Break out the close parenthesis so that the Ruby code can remove the () entirely.
+            code.Eol().FormFunction("GetBookCtrl()");
+            code.Function("AddPage(").NodeName().Comma().QuotedString(prop_label);
+        }
+        else
+            code.Eol().ParentName().Function("AddPage(").NodeName().Comma().QuotedString(prop_label);
 
         // Default is false, so only add parameter if it is true.
         if (code.IsTrue(prop_select))

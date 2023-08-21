@@ -1023,7 +1023,7 @@ void BaseCodeGenerator::GenerateCppClassConstructor(Node* form_node, EventVector
         }
     }
     if (form_node->isGen(gen_wxDialog) || form_node->isGen(gen_wxFrame) || form_node->isGen(gen_PanelForm) ||
-        form_node->isGen(gen_DocViewApp))
+        form_node->isGen(gen_DocViewApp) || form_node->isGen(gen_wxPropertySheetDialog))
     {
         m_source->writeLine("\nreturn true;");
     }

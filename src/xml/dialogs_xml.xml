@@ -149,13 +149,12 @@ inline const char* dialogs_xml = R"===(<?xml version="1.0"?>
 			help="The text to display on the dialog's title bar." />
 		<property name="book_type" type="option"
 			help="The type of book to use.">
-			<option name="wxPROPSHEET_DEFAULT" />
 			<option name="wxPROPSHEET_NOTEBOOK" />
 			<option name="wxPROPSHEET_CHOICEBOOK" />
 			<option name="wxPROPSHEET_LISTBOOK" />
 			<option name="wxPROPSHEET_TOOLBOOK" />
 			<option name="wxPROPSHEET_TREEBOOK" />
-			wxPROPSHEET_DEFAULT
+			wxPROPSHEET_NOTEBOOK
 		</property>
 		<property name="shrink_to_fit" type="bool"
 			help="Shrinks the dialog window to fit the currently selected page (common behaviour for property sheets on macOS)." >

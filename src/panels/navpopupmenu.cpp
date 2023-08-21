@@ -459,6 +459,18 @@ void NavPopupMenu::MenuAddCommands(Node* node)
 {
     if (node->isForm() || node->isGen(gen_Images) || node->isGen(gen_embedded_image))
     {
+        if (node->isGen(gen_wxPropertySheetDialog))
+        {
+            Append(MenuADD_PAGE, "Add Page");
+            Bind(
+                wxEVT_MENU,
+                [](wxCommandEvent&)
+                {
+                    wxGetFrame().createToolNode(gen_BookPage);
+                },
+                MenuADD_PAGE);
+            return;
+        }
         if (!node->isGen(gen_wxWizard) && !node->isToolBar())
         {
             return;
@@ -499,6 +511,11 @@ void NavPopupMenu::MenuAddCommands(Node* node)
                     wxGetFrame().createToolNode(gen_BookPage);
                 },
                 MenuADD_PAGE);
+            break;
+
+        case gen_BookPage:
+            add_sizer = true;
+            Append(MenuADD_PAGE, "Add Page");
             break;
 
         case gen_wxRibbonBar:

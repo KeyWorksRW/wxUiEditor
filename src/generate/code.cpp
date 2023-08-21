@@ -78,6 +78,7 @@ const view_map g_map_python_prefix
     { "wxGrid", "wx.grid."},
     { "wxPropertyGridManager", "wx.propgrid."},
     { "wxPropertyGrid", "wx.propgrid."},
+    { "wxPropertySheetDialog", "wx.adv."},
     { "wxAC_DEFAULT_STYLE", "wx.adv."},
     { "wxAC_NO_AUTORESIZE", "wx.adv."},
     { "wxNullAnimation", "wx.adv."},
@@ -589,6 +590,24 @@ Code& Code::Function(tt_string_view text)
     if (is_cpp() || is_perl())
     {
         *this << "->" << text;
+    }
+    else if (is_ruby())
+    {
+        // Check for a preceeding empty "()" and remove it if found
+        if (ends_with("())"))
+        {
+            resize(size() - 2);
+        }
+
+        *this << '.';
+        if (text.is_sameprefix("wx"))
+        {
+            *this << m_language_wxPrefix << text.substr(sizeof("wx") - 1);
+        }
+        else
+        {
+            *this += ConvertToSnakeCase(text);
+        }
     }
     else if (is_golang() || is_lua() || is_python() || is_ruby() || is_rust())
     {

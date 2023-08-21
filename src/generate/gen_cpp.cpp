@@ -466,6 +466,7 @@ void BaseCodeGenerator::GenerateCppClass(Node* form_node, PANEL_PAGE panel_type)
 
     if (form_node->isGen(gen_Images))
     {
+        thrd_need_img_func.join();
         GenerateImagesForm();
         return;
     }
@@ -1022,7 +1023,7 @@ void BaseCodeGenerator::GenerateCppClassConstructor(Node* form_node, EventVector
         }
     }
     if (form_node->isGen(gen_wxDialog) || form_node->isGen(gen_wxFrame) || form_node->isGen(gen_PanelForm) ||
-        form_node->isGen(gen_DocViewApp))
+        form_node->isGen(gen_DocViewApp) || form_node->isGen(gen_wxPropertySheetDialog))
     {
         m_source->writeLine("\nreturn true;");
     }

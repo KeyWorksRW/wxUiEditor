@@ -178,7 +178,8 @@ void MockupParent::CreateContent()
 #endif
     }
 
-    if (m_form->isGen(gen_wxFrame) || m_form->isGen(gen_wxDialog) || m_form->isGen(gen_wxWizard))
+    if (m_form->isGen(gen_wxFrame) || m_form->isGen(gen_wxDialog) || m_form->isGen(gen_wxWizard) ||
+        m_form->isGen(gen_wxPropertySheetDialog))
     {
         m_text_title->SetLabel(m_form->as_wxString(prop_title));
         m_panelTitleBar->Show();

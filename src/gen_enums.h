@@ -371,6 +371,7 @@ namespace GenEnum
         prop_sashgravity,
         prop_sashpos,
         prop_sashsize,
+        prop_scale_border_size,
         prop_scale_mode,
         prop_scroll_rate_x,
         prop_scroll_rate_y,

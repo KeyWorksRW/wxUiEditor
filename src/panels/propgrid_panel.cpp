@@ -1992,17 +1992,22 @@ void PropGridPanel::CreatePropCategory(tt_string_view name, Node* node, NodeDecl
     }
 }
 
+// clang-format off
 static constexpr std::initializer_list<PropName> lst_LayoutProps = {
 
-    prop_alignment, prop_borders, prop_border_size, prop_flags
+    prop_alignment,
+    prop_borders,
+    prop_border_size,
+    prop_scale_border_size,
+    prop_flags
 
 };
 
-// clang-format off
 static constexpr std::initializer_list<PropName> lst_GridBagProps = {
 
     prop_borders,
     prop_border_size,
+    prop_scale_border_size,
     prop_flags,
     prop_row,
     prop_column,

@@ -71,9 +71,8 @@ bool HtmlWindowGenerator::SettingsCode(Code& code)
 {
     if (code.IntValue(prop_html_borders) >= 0)
     {
-        code.Eol(eol_if_needed).NodeName().Function("SetBorders(");
-        code += (code.is_cpp() ? "this->FromDIP(, " : "self.FromDIP(, ");
-        code.as_string(prop_html_borders).Str(")").EndFunction();
+        code.Eol(eol_if_needed).NodeName().Function("SetBorders(").BorderSize(prop_html_borders);
+        code.EndFunction();
     }
 
     if (code.hasValue(prop_html_content))

@@ -395,6 +395,11 @@ public:
     // Will either generate wxSize(...) or ConvertDialogToPixels(wxSize(...))
     Code& WxSize(GenEnum::PropName prop_name = GenEnum::PropName::prop_size, bool enable_dlg_units = allow_dlg_units);
 
+    // If scale_border_size is true, will add the language-specific code for
+    // "FromDIP(wxSize(prop_border_size,-1)).x". Otherwise, it will just add
+    // prop_border_size
+    Code& BorderSize(GenEnum::PropName prop_name = prop_border_size);
+
     Code& EmptyString()
     {
         *this += is_cpp() ? "wxEmptyString" : "\"\"";

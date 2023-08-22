@@ -26,7 +26,7 @@ bool SpacerGenerator::ConstructionCode(Code& code)
         code.Function("Add(").as_string(prop_width).Comma().as_string(prop_height);
         code.Comma().Object("wxGBPosition").as_string(prop_row).Comma().as_string(prop_column) += ")";
         code.Comma().Object("wxGBSpan").as_string(prop_rowspan).Comma().as_string(prop_colspan) += ")";
-        code.Comma().itoa(flags.GetFlags()).Comma().as_string(prop_border_size);
+        code.Comma().itoa(flags.GetFlags()).Comma().BorderSize();
         if (node->as_bool(prop_add_default_border))
         {
             code.Str(" + ").Add("wxSizerFlags").ClassMethod("GetDefaultBorder()");

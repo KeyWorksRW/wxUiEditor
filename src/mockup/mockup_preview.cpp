@@ -57,7 +57,7 @@ void CreateMockupChildren(Node* node, wxWindow* parent, wxObject* parent_object,
                     ->Add(node->as_int(prop_width), node->as_int(prop_height),
                           wxGBPosition(node->as_int(prop_row), node->as_int(prop_column)),
                           wxGBSpan(node->as_int(prop_rowspan), node->as_int(prop_colspan)), flags.GetFlags(),
-                          node->as_int(prop_border_size));
+                          parent->FromDIP(wxSize(node->as_int(prop_border_size), -1)).x);
             }
             else
             {

@@ -355,6 +355,7 @@ std::map<GenEnum::PropName, const char*> GenEnum::map_PropNames = {
     { prop_sashpos, "sashpos" },
     { prop_sashsize, "sashsize" },
     { prop_scale_mode, "scale_mode" },
+    { prop_scale_border_size, "scale_border_size" },
     { prop_scroll_rate_x, "scroll_rate_x" },
     { prop_scroll_rate_y, "scroll_rate_y" },
     { prop_search_button, "search_button" },

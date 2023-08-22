@@ -1618,18 +1618,19 @@ Code& Code::GenSizerFlags()
 
     if (auto& prop = m_node->as_string(prop_borders); prop.size())
     {
-        auto border_size = m_node->as_string(prop_border_size);
+        auto border_size = m_node->as_int(prop_border_size);
         if (prop.contains("wxALL"))
         {
-            if (border_size == "5")
+            if (border_size == 5)
                 SizerFlagsFunction("Border").Add("wxALL)");
-            else if (border_size == "10")
+            else if (border_size == 10)
                 SizerFlagsFunction("DoubleBorder").Add("wxALL)");
-            else if (border_size == "15")
+            else if (border_size == 15)
                 SizerFlagsFunction("TripleBorder").Add("wxALL)");
             else
             {
-                SizerFlagsFunction("Border").Add("wxALL, ") << border_size << ')';
+                SizerFlagsFunction("Border").Add("wxALL, ");
+                BorderSize() += ')';
             }
         }
         else
@@ -1665,7 +1666,7 @@ Code& Code::GenSizerFlags()
                 border_flags = "0";
 
             *this << border_flags << ", ";
-            if (border_size == "5")
+            if (border_size == 5)
             {
                 if (is_cpp())
                     *this += "wxSizerFlags::GetDefaultBorder())";
@@ -1676,7 +1677,7 @@ Code& Code::GenSizerFlags()
             }
             else
             {
-                *this << border_size << ')';
+                BorderSize() += ')';
             }
         }
     }
@@ -1688,6 +1689,29 @@ Code& Code::GenSizerFlags()
         InsertLineBreak(cur_pos);
     }
 
+    return *this;
+}
+
+Code& Code::BorderSize(GenEnum::PropName prop_name)
+{
+    int border_size = m_node->as_int(prop_name);
+    bool is_scalable_border = (border_size > 0 && border_size != 5 && border_size != 10 && border_size != 15);
+    if ((prop_name == prop_border_size && m_node->as_bool(prop_scale_border_size)) && is_scalable_border)
+    {
+        if (is_ruby())
+        {
+            Str("from_dip(").Add("wxSize.new");
+        }
+        else
+        {
+            FormFunction("FromDIP(").Add("wxSize");
+        }
+        Str("(").itoa(border_size).Comma().Str("-1)).x");
+    }
+    else
+    {
+        *this += std::to_string(border_size);
+    }
     return *this;
 }
 

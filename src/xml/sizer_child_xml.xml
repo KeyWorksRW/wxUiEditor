@@ -33,6 +33,8 @@ inline const char* sizer_child_xml = R"===(<?xml version="1.0"?>
 		</property>
 		<property name="border_size" type="uint"
 			help="Sets the border size, if the flag parameter is set to include any border flag. The default value of 5 will be scaled on high DPI displayes.">5</property>
+		<property name="scale_border_size" type="bool"
+			help="If checked, the border size will be scaled on high DPI displays. Always scaled if size is 5, 10 or 15.">1</property>
 		<property name="flags" type="bitlist">
 			<option name="wxEXPAND"
 				help="The item will be expanded to fill the space assigned to the item." />
@@ -91,6 +93,8 @@ inline const char* sizer_child_xml = R"===(<?xml version="1.0"?>
 		</property>
 		<property name="border_size" type="uint"
 			help="Sets the border size, if the flag parameter is set to include any border flag. The default value of 5 will be scaled on high DPI displayes.">5</property>
+		<property name="scale_border_size" type="bool"
+			help="If checked, the border size will be scaled on high DPI displays. Always scaled if size is 5, 10 or 15.">1</property>
 		<property name="flags" type="bitlist">
 			<option name="wxEXPAND"
 				help="The item will be expanded to fill the space assigned to the item." />

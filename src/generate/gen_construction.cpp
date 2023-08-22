@@ -415,7 +415,7 @@ bool BaseCodeGenerator::GenAfterChildren(Node* node, bool need_closing_brace)
                 if (!node->hasValue(prop_borders) && !node->hasValue(prop_flags))
                     gen_code.GetCode() += '0';
 
-                gen_code.Comma().as_string(prop_border_size).EndFunction();
+                gen_code.Comma().BorderSize().EndFunction();
                 gen_code.GetCode().Replace(", 0, 0)", ")");
             }
             else
@@ -496,7 +496,7 @@ void BaseCodeGenerator::GenParentSizer(Node* node, bool need_closing_brace)
             if (flags.empty())
                 flags << '0';
 
-            code.Add(flags).Comma().as_string(prop_border_size).EndFunction();
+            code.Add(flags).Comma().BorderSize().EndFunction();
             if (is_cpp())
                 code.Replace(", 0, 0);", ");");
             else

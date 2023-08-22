@@ -163,7 +163,7 @@ void MockupContent::CreateChildren(Node* node, wxWindow* parent, wxObject* paren
                     ->Add(node->as_int(prop_width), node->as_int(prop_height),
                           wxGBPosition(node->as_int(prop_row), node->as_int(prop_column)),
                           wxGBSpan(node->as_int(prop_rowspan), node->as_int(prop_colspan)), flags.GetFlags(),
-                          node->as_int(prop_border_size));
+                          parent->FromDIP(wxSize(node->as_int(prop_border_size), -1)).x);
             }
             else
             {
@@ -292,6 +292,12 @@ void MockupContent::CreateChildren(Node* node, wxWindow* parent, wxObject* paren
         {
             auto child_obj = getNode(created_object);
             auto sizer_flags = child_obj->getSizerFlags();
+            int border_size = child_obj->as_int(prop_border_size);
+            if (child_obj->as_bool(prop_scale_border_size) && border_size != 0 && border_size != 5 && border_size != 10 &&
+                border_size != 15)
+            {
+                border_size = FromDIP(wxSize(border_size, -1)).x;
+            }
             if (obj_parent->isGen(gen_wxGridBagSizer))
             {
                 auto sizer = wxStaticCast(parent_object, wxGridBagSizer);
@@ -301,20 +307,18 @@ void MockupContent::CreateChildren(Node* node, wxWindow* parent, wxObject* paren
                 if (created_window)
                     sizer->Add(created_window, position, span, sizer_flags.GetFlags(), sizer_flags.GetBorderInPixels());
                 else
-                    sizer->Add(created_sizer, position, span, sizer_flags.GetFlags(), sizer_flags.GetBorderInPixels());
+                    sizer->Add(created_sizer, position, span, sizer_flags.GetFlags(), border_size);
             }
             else
             {
                 auto sizer = wxStaticCast(parent_object, wxSizer);
                 if (created_window && !child_obj->isStaticBoxSizer())
                 {
-                    sizer->Add(created_window, sizer_flags.GetProportion(), sizer_flags.GetFlags(),
-                               sizer_flags.GetBorderInPixels());
+                    sizer->Add(created_window, sizer_flags.GetProportion(), sizer_flags.GetFlags(), border_size);
                 }
                 else
                 {
-                    sizer->Add(created_sizer, sizer_flags.GetProportion(), sizer_flags.GetFlags(),
-                               sizer_flags.GetBorderInPixels());
+                    sizer->Add(created_sizer, sizer_flags.GetProportion(), sizer_flags.GetFlags(), border_size);
                 }
             }
         }

@@ -228,7 +228,7 @@ static const auto lstStdButtonEvents = {
 
 #include "utils.h"  // for old style art indices
 
-NodeSharedPtr NodeCreator::createNode(pugi::xml_node& xml_obj, Node* parent, bool check_for_duplicates, bool allow_ui)
+NodeSharedPtr NodeCreator::createNodeFromXml(pugi::xml_node& xml_obj, Node* parent, bool check_for_duplicates, bool allow_ui)
 {
     auto class_name = xml_obj.attribute("class").as_std_str();
     if (class_name.empty())
@@ -518,7 +518,7 @@ NodeSharedPtr NodeCreator::createNode(pugi::xml_node& xml_obj, Node* parent, boo
 
     for (auto child = xml_obj.child("node"); child; child = child.next_sibling("node"))
     {
-        createNode(child, new_node.get());
+        createNodeFromXml(child, new_node.get());
     }
 
     if (new_node->isGen(gen_wxGridBagSizer))
@@ -623,7 +623,7 @@ NodeSharedPtr NodeCreator::createProjectNode(pugi::xml_node* xml_obj, bool allow
 
     for (auto child = xml_obj->child("node"); child; child = child.next_sibling("node"))
     {
-        createNode(child, new_node.get(), false, allow_ui);
+        createNodeFromXml(child, new_node.get(), false, allow_ui);
     }
 
     if (new_node->isGen(gen_wxGridBagSizer))
@@ -719,7 +719,7 @@ bool ProjectHandler::Import(ImportXML& import, tt_string& file, bool append, boo
         }
 #endif  // _DEBUG
 
-        // By having the importer create an XML document, we can pass it through NodeCreation.createNode() which will
+        // By having the importer create an XML document, we can pass it through NodeCreation.createNodeFromXml() which will
         // fix bitflag conflicts, convert wxWidgets constants to friendly names, and handle old-project style
         // conversions.
 
@@ -739,7 +739,7 @@ bool ProjectHandler::Import(ImportXML& import, tt_string& file, bool append, boo
             auto form = project.child("node");
             while (form)
             {
-                NodeCreation.createNode(form, m_project_node.get(), false, allow_ui);
+                NodeCreation.createNodeFromXml(form, m_project_node.get(), false, allow_ui);
                 form = form.next_sibling("node");
             }
 
@@ -1104,7 +1104,7 @@ void ProjectHandler::appendCrafter(wxArrayString& files)
             auto form = project.child("node");
             while (form)
             {
-                NodeCreation.createNode(form, cur_sel, true, m_allow_ui);
+                NodeCreation.createNodeFromXml(form, cur_sel, true, m_allow_ui);
                 form = form.next_sibling("node");
             }
         }
@@ -1153,7 +1153,7 @@ void ProjectHandler::appendFormBuilder(wxArrayString& files)
             auto form = project.child("node");
             while (form)
             {
-                NodeCreation.createNode(form, cur_sel, true, m_allow_ui);
+                NodeCreation.createNodeFromXml(form, cur_sel, true, m_allow_ui);
                 form = form.next_sibling("node");
             }
         }
@@ -1202,7 +1202,7 @@ void ProjectHandler::appendDialogBlocks(wxArrayString& files)
             auto form = project.child("node");
             while (form)
             {
-                NodeCreation.createNode(form, cur_sel, true, m_allow_ui);
+                NodeCreation.createNodeFromXml(form, cur_sel, true, m_allow_ui);
                 form = form.next_sibling("node");
             }
         }
@@ -1251,7 +1251,7 @@ void ProjectHandler::appendGlade(wxArrayString& files)
             auto form = project.child("node");
             while (form)
             {
-                NodeCreation.createNode(form, cur_sel, true, m_allow_ui);
+                NodeCreation.createNodeFromXml(form, cur_sel, true, m_allow_ui);
                 form = form.next_sibling("node");
             }
         }
@@ -1300,7 +1300,7 @@ void ProjectHandler::appendSmith(wxArrayString& files)
             auto form = project.child("node");
             while (form)
             {
-                NodeCreation.createNode(form, cur_sel, true, m_allow_ui);
+                NodeCreation.createNodeFromXml(form, cur_sel, true, m_allow_ui);
                 form = form.next_sibling("node");
             }
         }
@@ -1350,7 +1350,7 @@ void ProjectHandler::appendXRC(wxArrayString& files)
             auto form = project.child("node");
             while (form)
             {
-                NodeCreation.createNode(form, cur_sel, true, m_allow_ui);
+                NodeCreation.createNodeFromXml(form, cur_sel, true, m_allow_ui);
                 form = form.next_sibling("node");
             }
         }

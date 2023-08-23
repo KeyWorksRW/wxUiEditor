@@ -54,11 +54,17 @@ public:
     // Only creates the node if the parent allows it as a child
     NodeSharedPtr createNode(tt_string_view name, Node* parent);
 
-    // Creates an orphaned node.
-    NodeSharedPtr newNode(GenEnum::GenName getGenName) { return newNode(m_a_declarations[getGenName]); }
+    NodeSharedPtr createNodeFromXml(pugi::xml_node& node, Node* parent = nullptr, bool check_for_duplicates = false,
+                                    bool allow_ui = true);
+
+    // Only use this with .wxui projects -- it will fail on a .fbp project
+    NodeSharedPtr createProjectNode(pugi::xml_node* xml_obj, bool allow_ui = true);
 
     // Creates an orphaned node.
     NodeSharedPtr newNode(NodeDeclaration* node_info);
+
+    // Creates an orphaned node.
+    NodeSharedPtr newNode(GenEnum::GenName getGenName) { return newNode(m_a_declarations[getGenName]); }
 
     // If you have the class enum value, this is the preferred way to get the Declaration
     // pointer.
@@ -66,24 +72,20 @@ public:
 
     NodeDeclaration* getNodeDeclaration(tt_string_view class_name);
 
+    const NodeDeclarationArray& getNodeDeclarationArray() const { return m_a_declarations; }
+
     // This returns the integer value of most wx constants used in various components
     int getConstantAsInt(const std::string& name, int defValue = 0) const;
 
-    NodeSharedPtr createNode(pugi::xml_node& node, Node* parent = nullptr, bool check_for_duplicates = false,
-                             bool allow_ui = true);
-
-    // Only use this with .wxui projects -- it will fail on a .fbp project
-    NodeSharedPtr createProjectNode(pugi::xml_node* xml_obj, bool allow_ui = true);
-
     // Makes a copy, including the entire child heirarchy. The copy does not have a parent.
     NodeSharedPtr makeCopy(Node* node, Node* parent = nullptr);
+
+    // Makes a copy, including the entire child heirarchy. The copy does not have a parent.
     NodeSharedPtr makeCopy(NodeSharedPtr node) { return makeCopy(node.get()); };
 
     void initGenerators();
 
     bool isOldHostType(tt_string_view old_type) const { return m_setOldHostTypes.contains(old_type); }
-
-    const NodeDeclarationArray& getNodeDeclarationArray() const { return m_a_declarations; }
 
     size_t countChildrenWithSameType(Node* parent, GenType type);
 

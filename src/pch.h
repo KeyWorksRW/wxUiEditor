@@ -75,6 +75,9 @@
 #if defined(__clang__)
     // Same as #pragma warning(disable : 5054)
     #pragma clang diagnostic ignored "-Wdeprecated-enum-enum-conversion"
+
+    // warning: definition of implicit copy constructor for '...' is deprecated
+    #pragma clang diagnostic ignored "-Wdeprecated-copy"
 #endif
 
 #include <map>

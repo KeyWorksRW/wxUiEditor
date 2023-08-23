@@ -467,13 +467,16 @@ tt_string CreateDerivedFilename(Node* form_node, const tt_string& class_name)
 tt_string ConvertToSnakeCase(tt_string_view str)
 {
     tt_string result(str);
-    for (size_t pos = 0; pos < result.size(); ++pos)
+    for (size_t pos = 0, original_pos = 0; pos < result.size(); ++pos, ++original_pos)
     {
         if (result[pos] >= 'A' && result[pos] <= 'Z')
         {
             result[pos] = result[pos] - 'A' + 'a';
             if (pos > 0)
             {
+                // Do not add an underscore if the previous letter is uppercase
+                if (str[original_pos - 1] >= 'A' && str[original_pos - 1] <= 'Z')
+                    continue;
                 result.insert(pos, "_");
                 ++pos;
             }

@@ -1002,18 +1002,27 @@ void DialogBlocks::ProcessStyles(pugi::xml_node& node_xml, const NodeSharedPtr& 
         {
             if (ExtractQuotedString(value).is_sameas("Expand", tt::CASE::either))
             {
-                if (style_str.size())
-                    style_str << '|';
-                style_str << "wxEXPAND";
+                if (auto parent = new_node->getParent();
+                    parent && parent->isSizer() && parent->as_string(prop_orientation) != "wxHORIZONTAL")
+                {
+                    if (style_str.size())
+                        style_str << '|';
+                    style_str << "wxEXPAND";
+                }
             }
         }
         if (auto value = node_xml.find_child_by_attribute("string", "name", "proxy-AlignV"); value)
         {
+            // Vertical alignment is invalid if the sizer's orientation is wxVERTICAL
             if (ExtractQuotedString(value).is_sameas("Expand", tt::CASE::either))
             {
-                if (style_str.size())
-                    style_str << '|';
-                style_str << "wxEXPAND";
+                if (auto parent = new_node->getParent();
+                    parent && parent->isSizer() && parent->as_string(prop_orientation) != "wxVERTICAL")
+                {
+                    if (style_str.size())
+                        style_str << '|';
+                    style_str << "wxEXPAND";
+                }
             }
         }
 

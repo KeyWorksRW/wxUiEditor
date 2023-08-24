@@ -64,7 +64,7 @@ This does _not_ mean that the class is fully supported in every language -- this
 -----------|-----|--------|------|------|------|
 | wxActivityIndicator | yes | yes | yes | yes | ../src/generate/gen_activity.cpp |
 | wxAnimationCtrl | yes | ??? | yes | --- | ../src/generate/gen_animation.cpp |
-| wxAuiToolBar | yes | ??? | --- | --- | ../src/generate/gen_aui_toolbar.cpp |
+| wxAuiToolBar | yes | yes | yes | yes | ../src/generate/gen_aui_toolbar.cpp |
 | wxBannerWindow | yes | yes | no | yes | ../src/generate/gen_banner_window.cpp |
 | wxBitmapComboBox | yes | ??? | --- | --- | ../src/generate/gen_bitmap_combo.cpp |
 | wxButton | yes | yes | yes | partial | ../src/generate/gen_button.cpp |
@@ -75,13 +75,13 @@ This does _not_ mean that the class is fully supported in every language -- this
 | wxCollapsiblePane | yes | yes | yes | yes | ../src/generate/gen_collapsible.cpp |
 | wxComboBox | yes | yes | yes | yes | ../src/generate/gen_combobox.cpp |
 | wxCommandLinkButton | yes | yes | no | yes | ../src/generate/gen_cmd_link_btn.cpp |
-| wxDataViewListCtrl | yes | ??? | --- | --- | ../src/generate/dataview_widgets.cpp |
-| wxDataViewCtrl | yes | ??? | --- | --- | ../src/generate/dataview_widgets.cpp |
-| wxEditableListBox | yes | yes | --- | --- | ../src/generate/gen_edit_listbox.cpp |
+| wxDataViewListCtrl | yes | yes | no | no | ../src/generate/dataview_widgets.cpp |
+| wxDataViewCtrl | yes | yes | no | no | ../src/generate/dataview_widgets.cpp |
+| wxEditableListBox | yes | yes | yes | yes | ../src/generate/gen_edit_listbox.cpp |
 | wxFileCtrl | yes | yes | yes | yes | ../src/generate/gen_file_ctrl.cpp |
 | wxGauge | yes | yes | yes | --- | ../src/generate/gen_gauge.cpp |
 | wxGenericDirCtrl | yes | partial | yes | partial | ../src/generate/gen_dir_ctrl.cpp |
-| wxGrid | yes | yes | --- | --- | ../src/generate/gen_grid.cpp |
+| wxGrid | yes | yes | yes | no | ../src/generate/gen_grid.cpp |
 | wxHtmlWindow | yes | yes | yes | yes | ../src/generate/gen_html_window.cpp |
 | wxHyperlinkCtrl | yes | yes | fails | yes | ../src/generate/gen_hyperlink.cpp |
 | wxInfoBar | yes | ??? | no | yes | ../src/generate/gen_infobar.cpp |
@@ -132,14 +132,14 @@ This does _not_ mean that the class is fully supported in every language -- this
 
 | Class | C++ | Python | Ruby | XRC | file |
 -----------|-----|--------|------|------|------|
-| AuiTool | yes | ??? | --- | --- | ../src/generate/gen_aui_toolbar.cpp |
-| AuiToolLabel | yes | ??? | --- | --- | ../src/generate/gen_aui_toolbar.cpp |
-| AuiToolSpacer | yes | ??? | --- | --- | ../src/generate/gen_aui_toolbar.cpp |
-| AuiToolStretchSpacer | yes | ??? | --- | --- | ../src/generate/gen_aui_toolbar.cpp |
-| BookPage | yes | yes | --- | --- | ../src/generate/gen_book_page.cpp |
+| AuiTool | yes | yes | yes | yes | ../src/generate/gen_aui_toolbar.cpp |
+| AuiToolLabel | yes | yes | yes | yes | ../src/generate/gen_aui_toolbar.cpp |
+| AuiToolSpacer | yes | yes | yes | yes | ../src/generate/gen_aui_toolbar.cpp |
+| AuiToolStretchSpacer | yes | yes | yes | yes | ../src/generate/gen_aui_toolbar.cpp |
+| BookPage | yes | yes | yes | yes | ../src/generate/gen_book_page.cpp |
 | Check3State | yes | ??? | --- | --- | ../src/generate/gen_checkbox.cpp |
 | CustomControl | yes | no | --- | --- | ../src/generate/gen_custom_ctrl.cpp |
-| DataViewColumn | yes | ??? | --- | --- | ../src/generate/dataview_widgets.cpp |
+| DataViewColumn | yes | yes | no | no | ../src/generate/dataview_widgets.cpp |
 | DataViewListColumn | yes | ??? | --- | --- | ../src/generate/dataview_widgets.cpp |
 | NewCloseButton | yes | ??? | --- | --- | ../src/generate/gen_close_btn.cpp |
 | PageCtrl | yes | ??? | --- | no | ../src/generate/gen_page_ctrl.cpp |
@@ -172,6 +172,10 @@ If a Ruby control is marked as `fails` it means there is a problem that appears 
 # Ruby unsupported
 
 - wxBannerWindow
+- wxDataViewListCtrl
+- wxDataViewCtrl
+- DataViewColumn
+- DataViewListColumn
 - wxInfoBar
 - wxRearrangeCtrl
 - wxSpinCtrlDouble

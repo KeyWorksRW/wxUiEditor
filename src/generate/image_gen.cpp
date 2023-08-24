@@ -216,6 +216,8 @@ void BaseCodeGenerator::WriteImageConstruction(Code& code)
     }
 }
 
+// wxWidgets 3.2 does not support wxBitmapBundle in the wxRibbon classes, so we need to generate
+// loading a single bitmap.
 void GenerateSingleBitmapCode(Code& code, const tt_string& description)
 {
     if (description.empty())
@@ -285,7 +287,7 @@ void GenerateSingleBitmapCode(Code& code, const tt_string& description)
             name.remove_extension();
             code << name << "_xpm)";
         }
-        else
+        else if (code.is_python())
         {
             tt_string name(parts[IndexImage]);
             name.make_absolute();
@@ -294,6 +296,14 @@ void GenerateSingleBitmapCode(Code& code, const tt_string& description)
             name.backslashestoforward();
 
             code.Str("wx.Image(").QuotedString(name) += ")";
+        }
+        else if (code.is_ruby())
+        {
+            // TODO: [Randalphwa - 08-24-2023] Need to support XPM files in Ruby
+        }
+        else
+        {
+            FAIL_MSG("Unknown language");
         }
     }
     else if (parts[IndexImage].empty())
@@ -321,7 +331,7 @@ void GenerateSingleBitmapCode(Code& code, const tt_string& description)
 
             code.Str(name).Comma().Str("sizeof(").Str(name) += "))";
         }
-        else
+        else if (code.is_python())
         {
             if (auto bundle = ProjectImages.GetPropertyImageBundle(description); bundle && bundle->lst_filenames.size())
             {
@@ -348,6 +358,12 @@ void GenerateSingleBitmapCode(Code& code, const tt_string& description)
                     code.Str("wx.Bitmap(").QuotedString(name) += ")";
                 }
             }
+        }
+        else if (code.is_ruby())
+        {
+            // TODO: [Randalphwa - 08-24-2023] I don't know if the wxRibbon classes will take a
+            // wxBitmapBundle directly. If not, then calling bundle.get_bitmap_for(self) will
+            // return a wxBitmap that could be used here.
         }
     }
 }

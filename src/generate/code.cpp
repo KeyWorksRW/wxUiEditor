@@ -177,14 +177,18 @@ const view_map g_map_ruby_prefix
     { "wxSystemColourProperty", "Wx::PG::" },
     { "wxUIntProperty",         "Wx::PG::" },
 
-    { "wxRibbonBar",       "Wx::RBN::"},
-    { "wxRibbonButtonBar", "Wx::RBN::"},
-    { "wxRibbonPage",      "Wx::RBN::"},
-    { "wxRibbonPanel",     "Wx::RBN::"},
-    { "wxRibbonToolBar",   "Wx::RBN::"},
-    { "wxRibbonGallery",   "Wx::RBN::"},
+    { "wxRibbonBar",                "Wx::RBN::"},
+    { "wxRibbonButtonBar",          "Wx::RBN::"},
+    { "wxRibbonPage",               "Wx::RBN::"},
+    { "wxRibbonPanel",              "Wx::RBN::"},
+    { "wxRibbonToolBar",            "Wx::RBN::"},
+    { "wxRibbonGallery",            "Wx::RBN::"},
+    { "wxRibbonAUIArtProvider",     "Wx::RBN::"},
+    { "wxRibbonArtProvider",        "Wx::RBN::"},
+    { "wxRibbonMSWArtProvider",     "Wx::RBN::"},
+    { "wxRibbonDefaultArtProvider", "Wx::RBN::"},
 
-    { "wxRichTextCtrl", "Wx::RTC::"},
+    { "wxRichTextCtrl",   "Wx::RTC::"},
     { "wxStyledTextCtrl", "Wx::STC::"},
 
 };

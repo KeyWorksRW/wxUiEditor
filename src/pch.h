@@ -261,9 +261,9 @@ constexpr const char BMP_PROP_SEPARATOR = ';';
 
 // While this file does change frequently, when it does almost every file in the project needs to be
 // recompiled. Since the files have to be recompiled anyway, we might as well pre-compile this file.
-#include "gen_enums.h" // Enumerations used by the generators
+#include "gen_enums.h"  // Enumerations used by the generators
 
 // This file changes rarely, but like gen_enums.h, when it does change, a large number of files in the
 // project need to be recompiled (currently 214 out of 274). The Node class is an integral part of all
 // the generators, as well as most of the Panels so it makes sense to pre-compile this file.
-#include "node.h"       // Node class
+#include "node.h"  // Node class

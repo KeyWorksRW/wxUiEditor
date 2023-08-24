@@ -26,6 +26,7 @@ static const view_map s_short_python_map
     { "wxAUI_", "wx.aui."},
     { "wxCAL_", "wx.adv."},
     { "wxEL_", "wx.adv."},
+    { "wxDATAVIEW_", "wx.dataview."},
     { "wxDV_", "wx.dataview."},
     { "wxPG_", "wx.propgrid."},
     { "wxRE_", "wx.richtext."},

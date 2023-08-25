@@ -10,7 +10,6 @@
 #include <set>
 
 #include <frozen/map.h>
-#include <frozen/string.h>
 
 #include <wx/mstream.h>  // Memory stream classes
 

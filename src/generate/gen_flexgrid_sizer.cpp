@@ -43,9 +43,9 @@ wxObject* FlexGridSizerGenerator::CreateMockup(Node* node, wxObject* parent)
                         proportion = tt::atoi(tt::find_nonspace(iter.data() + pos + 1));
                     }
                     if (prop_name == prop_growablerows)
-                        sizer->AddGrowableCol(value, proportion);
-                    else
                         sizer->AddGrowableRow(value, proportion);
+                    else
+                        sizer->AddGrowableCol(value, proportion);
                 }
             }
         }

@@ -5,6 +5,8 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
+#include <frozen/map.h>
+
 #include "import_xml.h"
 
 #include "base_generator.h"  // BaseGenerator -- Base Generator class
@@ -23,8 +25,7 @@ using namespace GenEnum;
 namespace xrc_import
 {
 
-std::map<std::string_view, GenEnum::PropName, std::less<>> import_PropNames = {
-
+constexpr auto map_import_prop_names = frozen::make_map<std::string_view, GenEnum::PropName>({
     { "accel", prop_shortcut },
     { "art-provider", prop_art_provider },
     { "bg", prop_background_colour },
@@ -67,11 +68,9 @@ std::map<std::string_view, GenEnum::PropName, std::less<>> import_PropNames = {
     { "tickfreq", prop_tick_frequency },
     { "windowlabel", prop_tab_height },
     { "wrapmode", prop_stc_wrap_mode },
+});
 
-};
-
- std::map<std::string_view, GenEnum::GenName, std::less<>> import_GenNames = {
-
+constexpr auto import_GenNames = frozen::make_map<std::string_view, GenEnum::GenName>({
     { "Custom", gen_CustomControl },
     { "CustomWidget", gen_CustomControl },
     { "Dialog", gen_wxDialog },
@@ -92,8 +91,7 @@ std::map<std::string_view, GenEnum::PropName, std::less<>> import_PropNames = {
     { "wxSubmenu", gen_submenu },
     { "wxToolBarSeparator", gen_toolSeparator },
     { "wxToolBarButton", gen_tool },
-
-};
+});
 
 static const view_map s_map_old_events = {
 
@@ -1392,7 +1390,7 @@ GenEnum::PropName ImportXML::MapPropName(std::string_view name) const
             return prop;
         }
 
-        if (auto result = import_PropNames.find(name); result != import_PropNames.end())
+        if (auto result = map_import_prop_names.find(name); result != map_import_prop_names.end())
         {
             return result->second;
         }

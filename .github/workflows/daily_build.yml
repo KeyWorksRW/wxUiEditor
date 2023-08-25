@@ -23,7 +23,7 @@ jobs:
       run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --target wxUiEditor
 
     - name: Create wxUiEditor Artifact
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: DailyExecutable
         path: |

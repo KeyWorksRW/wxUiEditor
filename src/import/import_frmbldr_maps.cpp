@@ -2,17 +2,65 @@
 // Purpose:   Array of formbuilder/wxuieditor event name pairs
 /////////////////////////////////////////////////////////////////////////////
 
-// This file just gets the long array out of the way of the main source code in import_form.cpp
+constexpr auto set_ignore_flags = frozen::make_set<std::string_view>({
+    "xrc_skip_sizer",  // used for XRC code generation which we don't support
 
-struct IMPORT_NAME_PAIR
-{
-    const char* wxfb_name;
-    const char* wxui_name;
-};
+    "event_handler",  // all events are now declared as virtual
+
+    // The following are wxFormBuilder properties for wxAuiToolBar
+
+    "label_visible",
+    "toolbar_label",
+    "use_explicit_ids",
+
+    // The following are AUI properties. Unless AUI frame windows gets implemented, these will all be ignored
+
+    "BottomDockable",
+    "LeftDockable",
+    "RightDockable",
+    "TopDockable",
+    "aui_layer",
+    "aui_managed",
+    "aui_manager_style",
+    "aui_name",
+    "aui_position",
+    "aui_row",
+    "best_size",
+    "caption",
+    "caption_visible",
+    "center_pane",
+    "close_button",
+    "context_menu",
+    "default_pane",
+    "dock",
+    "dock_fixed",
+    "docking",
+    "event_generation",
+    "first_id",
+    "floatable",
+    "gripper",
+    "max_size",
+    "maximize_button",
+    "min_size",
+    "minimize_button",
+    "moveable",
+    "pane_border",
+    "pane_position",
+    "pane_size",
+    "parent",
+    "pin_button",
+    "resize",
+    "show",
+    "toolbar_pane",
+
+    // This are miscellanious properties that we don't support
+
+    "two_step_creation",
+    "use_enum",
+});
 
 // The left name is what wxFormBuilder calls the event, the right name is what wxUiEditor calls the event
-constexpr const IMPORT_NAME_PAIR evt_pair[] = {
-
+constexpr auto map_evt_pair = frozen::make_map<std::string_view, std::string_view>({
     { "OnActivate", "wxEVT_ACTIVATE" },
 
     { "OnAuiFindManager", "wxEVT_AUI_FIND_MANAGER" },
@@ -353,6 +401,4 @@ constexpr const IMPORT_NAME_PAIR evt_pair[] = {
     { "OnOKButtonClick", "OKButtonClicked" },
     { "OnSaveButtonClick", "SaveButtonClicked" },
     { "OnYesButtonClick", "YesButtonClicked" },
-
-    { nullptr, nullptr },
-};
+});

@@ -1,16 +1,10 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   wxCrafter mappings
-// Author:    Ralph Walden
-// Copyright: Copyright (c) 2021-2022 KeyWorks Software (Ralph Walden)
-// License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
-
-#include "gen_enums.h"
 
 using namespace GenEnum;
 
-std::map<int, GenEnum::GenName> g_map_id_generator = {
-
+constexpr auto map_id_generator = frozen::make_map<int, GenEnum::GenName>({
     { 4400, gen_wxButton },         // verified
     { 4401, gen_wxBoxSizer },       // verified
     { 4402, gen_wxFrame },          // verified
@@ -138,10 +132,10 @@ std::map<int, GenEnum::GenName> g_map_id_generator = {
     { 4516, gen_unknown /* WXAUITOOLBARITEM_STRETCHSPACE */ },
     { 4517, gen_unknown /* WXTOOLBARITEM_STRETCHSPACE */ },
     { 4518, gen_unknown /* WXAUITOOLBARTOPLEVEL */ },
+});
 
-};
-
-std::map<std::string, GenEnum::PropName> g_map_crafter_props = {
+// std::map<std::string, GenEnum::PropName> g_map_crafter_props = {
+constexpr auto map_crafter_props = frozen::make_map<std::string_view, GenEnum::PropName>({
 
     // strings must be lower case even though they appear mixed case in the .wxcp file -- they are converted to lower-case
     // before pattern matching.
@@ -202,5 +196,32 @@ std::map<std::string, GenEnum::PropName> g_map_crafter_props = {
     { "use native header", prop_native_col_header },
     { "vertical gap", prop_vgap },
     { "visited colour", prop_visited_color },
+});
 
-};
+// wxCrafter doesn't put a space between the words
+constexpr auto map_sys_colour_pair = frozen::make_map<std::string_view, std::string_view>({
+    { "AppWorkspace", "wxSYS_COLOUR_APPWORKSPACE" },
+    { "ActiveBorder", "wxSYS_COLOUR_ACTIVEBORDER" },
+    { "ActiveCaption", "wxSYS_COLOUR_ACTIVECAPTION" },
+    { "ButtonFace", "wxSYS_COLOUR_BTNFACE" },
+    { "ButtonHighlight", "wxSYS_COLOUR_BTNHIGHLIGHT" },
+    { "ButtonShadow", "wxSYS_COLOUR_BTNSHADOW" },
+    { "ButtonText", "wxSYS_COLOUR_BTNTEXT" },
+    { "CaptionText", "wxSYS_COLOUR_CAPTIONTEXT" },
+    { "ControlDark", "wxSYS_COLOUR_3DDKSHADOW" },
+    { "ControlLight", "wxSYS_COLOUR_3DLIGHT" },
+    { "Desktop", "wxSYS_COLOUR_BACKGROUND" },
+    { "GrayText", "wxSYS_COLOUR_GRAYTEXT" },
+    { "Highlight", "wxSYS_COLOUR_HIGHLIGHT" },
+    { "HighlightText", "wxSYS_COLOUR_HIGHLIGHTTEXT" },
+    { "InactiveBorder", "wxSYS_COLOUR_INACTIVEBORDER" },
+    { "InactiveCaption", "wxSYS_COLOUR_INACTIVECAPTION" },
+    { "InactiveCaptionText", "wxSYS_COLOUR_INACTIVECAPTIONTEXT" },
+    { "Menu", "wxSYS_COLOUR_MENU" },
+    { "Scrollbar", "wxSYS_COLOUR_SCROLLBAR" },
+    { "Tooltip", "wxSYS_COLOUR_INFOBK" },
+    { "TooltipText", "wxSYS_COLOUR_INFOTEXT" },
+    { "Window", "wxSYS_COLOUR_WINDOW" },
+    { "WindowFrame", "wxSYS_COLOUR_WINDOWFRAME" },
+    { "WindowText", "wxSYS_COLOUR_WINDOWTEXT" },
+});

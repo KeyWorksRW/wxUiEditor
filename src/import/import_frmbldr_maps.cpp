@@ -60,7 +60,7 @@ constexpr auto set_ignore_flags = frozen::make_set<std::string_view>({
 });
 
 // The left name is what wxFormBuilder calls the event, the right name is what wxUiEditor calls the event
-constexpr auto evt_pair = frozen::make_map<std::string_view, std::string_view>({
+constexpr auto map_evt_pair = frozen::make_map<std::string_view, std::string_view>({
     { "OnActivate", "wxEVT_ACTIVATE" },
 
     { "OnAuiFindManager", "wxEVT_AUI_FIND_MANAGER" },

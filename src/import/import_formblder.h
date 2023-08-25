@@ -20,7 +20,7 @@ using ImportNameMap = std::unordered_map<std::string, const char*>;
 class FormBuilder : public ImportXML
 {
 public:
-    FormBuilder();
+    FormBuilder() {};
     ~FormBuilder() {};
 
     bool Import(const tt_string& filename, bool write_doc = true) override;
@@ -36,8 +36,6 @@ protected:
     void createProjectNode(pugi::xml_node& xml_obj, Node* new_node);
 
 private:
-    ImportNameMap m_mapEventNames;
-
     tt_string m_embedPath;
     tt_string m_eventGeneration;
     tt_string m_baseFile;

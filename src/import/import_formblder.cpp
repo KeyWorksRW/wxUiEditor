@@ -1,13 +1,17 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Import a wxFormBuider project
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2021 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
 #include <fstream>
 #include <iostream>
 #include <set>
+
+#include <frozen/map.h>
+#include <frozen/set.h>
+#include <frozen/string.h>
 
 #include <wx/mstream.h>  // Memory stream classes
 
@@ -21,89 +25,6 @@
 #include "utils.h"           // Utility functions that work with properties
 
 #include "import_arrays.cpp"  // Array of formbuilder/wxuieditor event name pairs
-
-// clang-format off
-
-const auto g_lstIgnoreProps = {
-
-    "xrc_skip_sizer",   // used for XRC code generation which we don't support
-
-    "event_handler",  // all events are now declared as virtual
-
-    // The following are wxFormBuilder properties for wxAuiToolBar
-
-    "label_visible",
-    "toolbar_label",
-    "use_explicit_ids",
-
-    // The following are AUI properties. Unless AUI frame windows gets implemented, these will all be ignored
-
-    "BottomDockable",
-    "LeftDockable",
-    "RightDockable",
-    "TopDockable",
-    "aui_layer",
-    "aui_managed",
-    "aui_manager_style",
-    "aui_name",
-    "aui_position",
-    "aui_row",
-    "best_size",
-    "caption",
-    "caption_visible",
-    "center_pane",
-    "close_button",
-    "context_menu",
-    "default_pane",
-    "dock",
-    "dock_fixed",
-    "docking",
-    "event_generation",
-    "first_id",
-    "floatable",
-    "gripper",
-    "max_size",
-    "maximize_button",
-    "min_size",
-    "minimize_button",
-    "moveable",
-    "pane_border",
-    "pane_position",
-    "pane_size",
-    "parent",
-    "pin_button",
-    "resize",
-    "show",
-    "toolbar_pane",
-
-    // This are miscellanious properties that we don't support
-
-    "two_step_creation",
-    "use_enum",
-
-};
-// clang-format on
-
-// The following gets initialized once if FormBuilder is constructed. They do not get destroyed since they are a) quite
-// small, and b) might be used again. This is in contrast to m_mapEventNames which is part of the FormBuilder class.
-
-std::unordered_set<std::string> g_setIgnoreProps;
-
-FormBuilder::FormBuilder()
-{
-    for (size_t pos = 0; evt_pair[pos].wxfb_name; ++pos)
-    {
-        m_mapEventNames[evt_pair[pos].wxfb_name] = evt_pair[pos].wxui_name;
-    }
-
-    if (g_setIgnoreProps.empty())
-    {
-        for (auto& iter: g_lstIgnoreProps)
-        {
-            g_setIgnoreProps.insert(iter);
-        }
-    }
-}
 
 bool FormBuilder::Import(const tt_string& filename, bool write_doc)
 {
@@ -589,10 +510,10 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
     auto xml_event = xml_obj.child("event");
     while (xml_event)
     {
-        if (auto event_name = xml_event.attribute("name").as_std_str();
+        if (auto event_name = xml_event.attribute("name").as_string();
             event_name.size() && xml_event.text().as_string().size())
         {
-            if (auto result = m_mapEventNames.find(event_name); result != m_mapEventNames.end())
+            if (auto result = evt_pair.find(event_name); result != evt_pair.end())
             {
                 event_name = result->second;
                 if (event_name == "wxEVT_MENU" && newobject->isGen(gen_tool))
@@ -699,7 +620,7 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
 void FormBuilder::ProcessPropValue(pugi::xml_node& xml_prop, tt_string_view prop_name, tt_string_view class_name,
                                    Node* newobject)
 {
-    if (g_setIgnoreProps.contains(std::string(prop_name)))
+    if (set_ignore_flags.contains(prop_name))
     {
         return;
     }

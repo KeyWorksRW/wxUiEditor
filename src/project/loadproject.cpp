@@ -834,6 +834,7 @@ bool ProjectHandler::Import(ImportXML& import, tt_string& file, bool append, boo
         FinalImportCheck(project_node.get());
         // Calling this will also initialize the ProjectImage class
         Project.Initialize(project_node, allow_ui);
+        file.replace_extension(".wxui");
         Project.setProjectFile(file);
         ProjectImages.CollectBundles();
 
@@ -841,7 +842,6 @@ bool ProjectHandler::Import(ImportXML& import, tt_string& file, bool append, boo
         // If the file has been created once before, then for the first form, copy the old classname and base filename to
         // the re-converted first form.
 
-        file.replace_extension(".wxui");
         if (m_project_node->getChildCount() && file.file_exists())
         {
             doc.reset();
@@ -919,6 +919,7 @@ bool ProjectHandler::NewProject(bool create_empty, bool allow_ui)
         FinalImportCheck(project.get());
         // Calling this will also initialize the ProjectImage class
         Project.Initialize(project);
+        file.replace_extension(".wxui");
         Project.setProjectFile(file);
 
         if (allow_ui)
@@ -945,6 +946,7 @@ bool ProjectHandler::NewProject(bool create_empty, bool allow_ui)
     FinalImportCheck(project.get());
     // Calling this will also initialize the ProjectImage class
     Project.Initialize(project);
+    file.replace_extension(".wxui");
     Project.setProjectFile(file);
 
     tt_string imported_from;

@@ -795,6 +795,22 @@ constexpr auto set_borders_flags = frozen::make_set<std::string_view>({
     "wxTOP",
 });
 
+constexpr auto set_modes = frozen::make_set<std::string_view>({
+    "wxLC_ICON",
+    "wxLC_SMALL_ICON",
+    "wxLC_LIST",
+    "wxLC_REPORT",
+    "wxDATAVIEW_CELL_INERT",
+    "wxDATAVIEW_CELL_ACTIVATABLE",
+    "wxDATAVIEW_CELL_EDITABLE",
+});
+
+constexpr auto set_listbox_types = frozen::make_set<std::string_view>({
+    "wxLB_SINGLE",
+    "wxLB_MULTIPLE",
+    "wxLB_EXTENDED_LIST",
+});
+
 // These are used to set prop_style
 constexpr auto set_styles = frozen::make_set<std::string_view>({
     "wxLI_HORIZONTAL",
@@ -869,9 +885,6 @@ constexpr auto set_styles = frozen::make_set<std::string_view>({
     "wxCB_READONLY",
     "wxCB_SORT",
 
-    "wxLB_SINGLE",
-    "wxLB_MULTIPLE",
-    "wxLB_EXTENDED",
     "wxLB_HSCROLL",
     "wxLB_ALWAYS_SB",
     "wxLB_NEEDED_SB",
@@ -963,10 +976,6 @@ constexpr auto set_styles = frozen::make_set<std::string_view>({
     "wxLC_SORT_DESCENDING",
     "wxLC_HRULES",
     "wxLC_VRULES",
-    "wxLC_ICON",
-    "wxLC_SMALL_ICON",
-    "wxLC_LIST",
-    "wxLC_REPORT",
     "wxLC_ALIGN_MASK",
     "wxLC_MASK_TYPE",
     "wxLC_MASK_ALIGN",
@@ -1190,6 +1199,18 @@ void DialogBlocks::ProcessStyles(pugi::xml_node& node_xml, const NodeSharedPtr& 
             if (border_flags.size())
                 border_flags << '|';
             border_flags << name;
+        }
+        else if (set_modes.contains(name))
+        {
+            // Only one mode can be set
+            new_node->set_value(prop_mode, name);
+            continue;
+        }
+        else if (set_listbox_types.contains(name))
+        {
+            // A wxListBox can only have one type set.
+            new_node->set_value(prop_type, name);
+            continue;
         }
     }
 
@@ -1448,6 +1469,8 @@ void DialogBlocks::ProcessMisc(pugi::xml_node& node_xml, const NodeSharedPtr& no
                             node->set_value(prop_selection_mode, "wxITEM_CHECK");
                         else if (str == "Radio")
                             node->set_value(prop_selection_mode, "wxITEM_RADIO");
+                        else if (str == "Dropdown")
+                            node->set_value(prop_selection_mode, "wxITEM_DROPDOWN");
                         break;
 
                     case prop_background_colour:

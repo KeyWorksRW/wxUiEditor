@@ -35,6 +35,11 @@ using namespace GenEnum;
     #include "../internal/import_panel.h"  // ImportPanel -- Panel to display original imported file
 #endif
 
+// Call this after a project is imported and converted into a Node tree. This will do a final
+// check and fixup for things like inconsistent styles, invalid gridbag sizer rows and
+// columns, etc. Because it runs on the Node tree, it doesn't matter what importer was used.
+void FinalImportCheck(Node* project, bool set_line_length = true);
+
 using namespace GenEnum;
 
 bool ProjectHandler::LoadProject(const tt_string& file, bool allow_ui)
@@ -142,6 +147,7 @@ bool ProjectHandler::LoadProject(const tt_string& file, bool allow_ui)
         return false;
     }
 
+    FinalImportCheck(project.get());
     // Calling this will also initialize the ImageHandler class
     Project.Initialize(project);
     Project.setProjectFile(file);
@@ -825,6 +831,7 @@ bool ProjectHandler::Import(ImportXML& import, tt_string& file, bool append, boo
             }
         }
 
+        FinalImportCheck(project_node.get());
         // Calling this will also initialize the ProjectImage class
         Project.Initialize(project_node, allow_ui);
         Project.setProjectFile(file);
@@ -909,11 +916,7 @@ bool ProjectHandler::NewProject(bool create_empty, bool allow_ui)
             }
         }
 
-        project->set_value(prop_cpp_line_length, UserPrefs.get_CppLineLength());
-        project->set_value(prop_python_line_length, UserPrefs.get_PythonLineLength());
-        project->set_value(prop_ruby_line_length, UserPrefs.get_RubyLineLength());
-        project->set_value(prop_wxWidgets_version, UserPrefs.get_CppWidgetsVersion());
-
+        FinalImportCheck(project.get());
         // Calling this will also initialize the ProjectImage class
         Project.Initialize(project);
         Project.setProjectFile(file);
@@ -939,6 +942,7 @@ bool ProjectHandler::NewProject(bool create_empty, bool allow_ui)
     file.assignCwd();
     file.append_filename("MyImportedProject");
 
+    FinalImportCheck(project.get());
     // Calling this will also initialize the ProjectImage class
     Project.Initialize(project);
     Project.setProjectFile(file);
@@ -1104,7 +1108,10 @@ void ProjectHandler::appendCrafter(wxArrayString& files)
             auto form = project.child("node");
             while (form)
             {
-                NodeCreation.createNodeFromXml(form, cur_sel, true, m_allow_ui);
+                if (auto new_node = NodeCreation.createNodeFromXml(form, cur_sel, true, m_allow_ui); new_node)
+                {
+                    FinalImportCheck(new_node.get(), false);
+                }
                 form = form.next_sibling("node");
             }
         }
@@ -1153,7 +1160,10 @@ void ProjectHandler::appendFormBuilder(wxArrayString& files)
             auto form = project.child("node");
             while (form)
             {
-                NodeCreation.createNodeFromXml(form, cur_sel, true, m_allow_ui);
+                if (auto new_node = NodeCreation.createNodeFromXml(form, cur_sel, true, m_allow_ui); new_node)
+                {
+                    FinalImportCheck(new_node.get(), false);
+                }
                 form = form.next_sibling("node");
             }
         }
@@ -1202,7 +1212,10 @@ void ProjectHandler::appendDialogBlocks(wxArrayString& files)
             auto form = project.child("node");
             while (form)
             {
-                NodeCreation.createNodeFromXml(form, cur_sel, true, m_allow_ui);
+                if (auto new_node = NodeCreation.createNodeFromXml(form, cur_sel, true, m_allow_ui); new_node)
+                {
+                    FinalImportCheck(new_node.get(), false);
+                }
                 form = form.next_sibling("node");
             }
         }
@@ -1251,7 +1264,10 @@ void ProjectHandler::appendGlade(wxArrayString& files)
             auto form = project.child("node");
             while (form)
             {
-                NodeCreation.createNodeFromXml(form, cur_sel, true, m_allow_ui);
+                if (auto new_node = NodeCreation.createNodeFromXml(form, cur_sel, true, m_allow_ui); new_node)
+                {
+                    FinalImportCheck(new_node.get(), false);
+                }
                 form = form.next_sibling("node");
             }
         }
@@ -1300,7 +1316,10 @@ void ProjectHandler::appendSmith(wxArrayString& files)
             auto form = project.child("node");
             while (form)
             {
-                NodeCreation.createNodeFromXml(form, cur_sel, true, m_allow_ui);
+                if (auto new_node = NodeCreation.createNodeFromXml(form, cur_sel, true, m_allow_ui); new_node)
+                {
+                    FinalImportCheck(new_node.get(), false);
+                }
                 form = form.next_sibling("node");
             }
         }
@@ -1350,7 +1369,10 @@ void ProjectHandler::appendXRC(wxArrayString& files)
             auto form = project.child("node");
             while (form)
             {
-                NodeCreation.createNodeFromXml(form, cur_sel, true, m_allow_ui);
+                if (auto new_node = NodeCreation.createNodeFromXml(form, cur_sel, true, m_allow_ui); new_node)
+                {
+                    FinalImportCheck(new_node.get(), false);
+                }
                 form = form.next_sibling("node");
             }
         }
@@ -1360,4 +1382,26 @@ void ProjectHandler::appendXRC(wxArrayString& files)
         wxGetFrame().FireProjectUpdatedEvent();
         wxGetFrame().setModified();
     }
+}
+
+// A lot of designers create projects that can result in assertion warnings when their
+// generated code is run under a Debug build of wxWidgets. While the generated UI usually works
+// fine, it would be better to generate the correct code in the first place. That means fixing
+// up conflicts between styles and other properties that either conflict or were not set
+// properlyy by the designer.
+
+void FinalImportCheck(Node* parent, bool set_line_length)
+{
+    if (set_line_length && parent->isGen(gen_Project))
+    {
+        parent->set_value(prop_cpp_line_length, UserPrefs.get_CppLineLength());
+        parent->set_value(prop_python_line_length, UserPrefs.get_PythonLineLength());
+        parent->set_value(prop_ruby_line_length, UserPrefs.get_RubyLineLength());
+        parent->set_value(prop_wxWidgets_version, UserPrefs.get_CppWidgetsVersion());
+    }
+
+    // REVIEW: [Randalphwa - 08-25-2023] Currently, this is not going to be very efficient. I
+    // want to first fix the problems I'm running into with a lot of different project types
+    // that I've downloaded from github to test. Once this seems to cover most if not all
+    // project issues, then it can be refactored for efficiency.
 }

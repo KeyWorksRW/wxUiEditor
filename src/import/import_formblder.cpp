@@ -24,7 +24,7 @@
 #include "node_creator.h"    // NodeCreator class
 #include "utils.h"           // Utility functions that work with properties
 
-#include "import_arrays.cpp"  // Array of formbuilder/wxuieditor event name pairs
+#include "import_frmbldr_maps.cpp"  // set_ignore_flags and map_evt_pair
 
 bool FormBuilder::Import(const tt_string& filename, bool write_doc)
 {
@@ -513,7 +513,7 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
         if (auto event_name = xml_event.attribute("name").as_string();
             event_name.size() && xml_event.text().as_string().size())
         {
-            if (auto result = evt_pair.find(event_name); result != evt_pair.end())
+            if (auto result = map_evt_pair.find(event_name); result != map_evt_pair.end())
             {
                 event_name = result->second;
                 if (event_name == "wxEVT_MENU" && newobject->isGen(gen_tool))

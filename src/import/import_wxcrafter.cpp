@@ -9,6 +9,9 @@
 #include <iostream>
 #include <set>
 
+#include <frozen/map.h>
+#include <frozen/string.h>
+
 #include <wx/mstream.h>  // Memory stream classes
 
 #define RAPIDJSON_HAS_STDSTRING 1
@@ -18,7 +21,15 @@
 
 #include "import_wxcrafter.h"  // This will include rapidjson/document.h
 
-#include "font_prop.h"  // FontProperty class
+#include "base_generator.h"  // BaseGenerator -- Base widget generator class
+#include "font_prop.h"       // FontProperty class
+#include "gen_enums.h"       // Enumerations for generators
+#include "mainframe.h"       // Main window frame
+#include "node.h"            // Node class
+#include "node_creator.h"    // NodeCreator class
+#include "utils.h"           // Utility functions that work with properties
+
+#include "import_crafter_maps.cpp"  // Map of wxCrafter properties to wxUiEditor properties
 
 namespace rapidjson
 {
@@ -54,15 +65,6 @@ namespace rapidjson
 }  // namespace rapidjson
 
 using namespace rapidjson;
-
-#include "base_generator.h"  // BaseGenerator -- Base widget generator class
-#include "mainframe.h"       // Main window frame
-#include "node.h"            // Node class
-#include "node_creator.h"    // NodeCreator class
-#include "utils.h"           // Utility functions that work with properties
-
-extern std::map<int, GenEnum::GenName> g_map_id_generator;
-extern std::map<std::string, GenEnum::PropName> g_map_crafter_props;
 
 WxCrafter::WxCrafter() {}
 
@@ -821,7 +823,7 @@ GenEnum::PropName WxCrafter::UnknownProperty(Node* node, const Value& value, tt_
 {
     GenEnum::PropName prop_name = prop_unknown;
 
-    if (auto result = g_map_crafter_props.find(name); result != g_map_crafter_props.end())
+    if (auto result = map_crafter_props.find(name); result != map_crafter_props.end())
     {
         prop_name = result->second;
     }
@@ -1516,7 +1518,7 @@ bool WxCrafter::ProcessScintillaProperty(Node* node, const Value& object)
 GenEnum::GenName rapidjson::GetGenName(const Value& value)
 {
     ASSERT(value.IsInt())
-    if (auto result = g_map_id_generator.find(value.GetInt()); result != g_map_id_generator.end())
+    if (auto result = map_id_generator.find(value.GetInt()); result != map_id_generator.end())
         return result->second;
     else
         return gen_unknown;
@@ -1548,37 +1550,6 @@ const Value& rapidjson::FindValue(const rapidjson::Value& object, const char* ke
         return empty_value;
 }
 
-// wxCrafter doesn't put a space between the words
-
-std::map<std::string, const char*, std::less<>> s_sys_colour_pair = {
-
-    { "AppWorkspace", "wxSYS_COLOUR_APPWORKSPACE" },
-    { "ActiveBorder", "wxSYS_COLOUR_ACTIVEBORDER" },
-    { "ActiveCaption", "wxSYS_COLOUR_ACTIVECAPTION" },
-    { "ButtonFace", "wxSYS_COLOUR_BTNFACE" },
-    { "ButtonHighlight", "wxSYS_COLOUR_BTNHIGHLIGHT" },
-    { "ButtonShadow", "wxSYS_COLOUR_BTNSHADOW" },
-    { "ButtonText", "wxSYS_COLOUR_BTNTEXT" },
-    { "CaptionText", "wxSYS_COLOUR_CAPTIONTEXT" },
-    { "ControlDark", "wxSYS_COLOUR_3DDKSHADOW" },
-    { "ControlLight", "wxSYS_COLOUR_3DLIGHT" },
-    { "Desktop", "wxSYS_COLOUR_BACKGROUND" },
-    { "GrayText", "wxSYS_COLOUR_GRAYTEXT" },
-    { "Highlight", "wxSYS_COLOUR_HIGHLIGHT" },
-    { "HighlightText", "wxSYS_COLOUR_HIGHLIGHTTEXT" },
-    { "InactiveBorder", "wxSYS_COLOUR_INACTIVEBORDER" },
-    { "InactiveCaption", "wxSYS_COLOUR_INACTIVECAPTION" },
-    { "InactiveCaptionText", "wxSYS_COLOUR_INACTIVECAPTIONTEXT" },
-    { "Menu", "wxSYS_COLOUR_MENU" },
-    { "Scrollbar", "wxSYS_COLOUR_SCROLLBAR" },
-    { "Tooltip", "wxSYS_COLOUR_INFOBK" },
-    { "TooltipText", "wxSYS_COLOUR_INFOTEXT" },
-    { "Window", "wxSYS_COLOUR_WINDOW" },
-    { "WindowFrame", "wxSYS_COLOUR_WINDOWFRAME" },
-    { "WindowText", "wxSYS_COLOUR_WINDOWTEXT" },
-
-};
-
 tt_string rapidjson::ConvertColour(const rapidjson::Value& colour)
 {
     tt_string result;
@@ -1603,7 +1574,7 @@ tt_string rapidjson::ConvertColour(const rapidjson::Value& colour)
             }
             else
             {
-                if (auto colour_pair = s_sys_colour_pair.find(clr_string); colour_pair != s_sys_colour_pair.end())
+                if (auto colour_pair = map_sys_colour_pair.find(clr_string); colour_pair != map_sys_colour_pair.end())
                 {
                     result = colour_pair->second;
                 }

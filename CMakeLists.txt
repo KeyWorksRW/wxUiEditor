@@ -301,6 +301,8 @@ target_include_directories(wxUiEditor PRIVATE
     ${BUILD_ROOT}/include
     ${setup_dir}
 
+    ${CMAKE_CURRENT_LIST_DIR}/frozen/include
+
     ${CMAKE_CURRENT_LIST_DIR}/src/
     ${CMAKE_CURRENT_LIST_DIR}/src/tt
     ${CMAKE_CURRENT_LIST_DIR}/src/nodes
@@ -316,6 +318,8 @@ target_include_directories(wxUiEditor PRIVATE
 target_include_directories(check_build PRIVATE
     ${BUILD_ROOT}/include
     ${setup_dir}
+
+    ${CMAKE_CURRENT_LIST_DIR}/frozen/include
 
     ${CMAKE_CURRENT_LIST_DIR}/src/
     ${CMAKE_CURRENT_LIST_DIR}/src/tt

@@ -25,6 +25,10 @@
 
 #include <set>
 
+#include <frozen/map.h>
+#include <frozen/set.h>
+#include <frozen/string.h>
+
 #include "import_dialogblocks.h"
 
 #include "node.h"          // Node class
@@ -713,95 +717,86 @@ tt_string DialogBlocks::ExtractQuotedString(pugi::xml_node& str_xml)
     return str;
 }
 
-auto lst_window_styles = std::to_array({
-    "wxBORDER_DEFAULT",
-    "wxBORDER_NONE",
-    "wxBORDER_STATIC",
-    "wxBORDER_SIMPLE",
-    "wxBORDER_RAISED",
-    "wxBORDER_SUNKEN",
-    "wxBORDER_DOUBLE",
-    "wxBORDER_THEME",
-    "wxTRANSPARENT_WINDOW",
-    "wxTAB_TRAVERSAL",
-    "wxWANTS_CHARS",
-    "wxVSCROLL",
+// Performance on such small lists isn't going to be an issue, so we use a set rather than an
+// unordered_set to reduce the memory footprint. Using frozen::make_set means the set is orderd
+// at compile time, so it has no impact on application startup time.
+
+constexpr auto set_window_styles = frozen::make_set<std::string_view>({
     "wxHSCROLL",
     "wxALWAYS_SHOW_SB",
+    "wxBORDER_DEFAULT",
+    "wxBORDER_DOUBLE",
+    "wxBORDER_NONE",
+    "wxBORDER_RAISED",
+    "wxBORDER_SIMPLE",
+    "wxBORDER_STATIC",
+    "wxBORDER_SUNKEN",
+    "wxBORDER_THEME",
     "wxCLIP_CHILDREN",
     "wxNO_FULL_REPAINT_ON_RESIZE",
+    "wxTAB_TRAVERSAL",
+    "wxTRANSPARENT_WINDOW",
+    "wxVSCROLL",
+    "wxWANTS_CHARS",
 });
 
-auto lst_exwindow_styles = std::to_array({
-
+constexpr auto set_exwindow_styles = frozen::make_set<std::string_view>({
     "wxWS_EX_VALIDATE_RECURSIVELY",
     "wxWS_EX_BLOCK_EVENTS",
     "wxWS_EX_TRANSIENT",
     "wxWS_EX_PROCESS_IDLE",
     "wxWS_EX_PROCESS_UI_UPDATES",
-
 });
 
-auto lst_dialog_styles = std::to_array({
-
+constexpr auto set_dialog_styles = frozen::make_set<std::string_view>({
     "wxCAPTION",
-    "wxMINIMIZE_BOX",
-    "wxMAXIMIZE_BOX",
-    "wxSYSTEM_MENU",
-    "wxRESIZE_BORDER",
     "wxCLOSE_BOX",
-    "wxDEFAYLT_DIALOG_STYLE",
-    "wxSTAY_ON_TOP",
+    "wxDEFAULT_DIALOG_STYLE",
     "wxDIALOG_NO_PARENT",
+    "wxMAXIMIZE_BOX",
+    "wxMINIMIZE_BOX",
+    "wxRESIZE_BORDER",
+    "wxSTAY_ON_TOP",
+    "wxSYSTEM_MENU",
     "wxWANTS_CHARS",
-
 });
 
-auto lst_exdialog_styles = std::to_array({
-
+constexpr auto set_dialog_exstyles = frozen::make_set<std::string_view>({
     "wxDIALOG_EX_CONTEXTHELP",
     "wxDIALOG_EX_METAL",
     "wxWS_EX_BLOCK_EVENTS",
     "wxWS_EX_PROCESS_IDLE",
     "wxWS_EX_PROCESS_UI_UPDATES",
     "wxWS_EX_VALIDATE_RECURSIVELY",
-
 });
 
-auto lst_alignment_styles = std::to_array({
-
-    "wxALIGN_TOP",
+constexpr auto set_alignment_styles = frozen::make_set<std::string_view>({
     "wxALIGN_BOTTOM",
+    "wxALIGN_CENTER",
+    "wxALIGN_CENTER_HORIZONTAL",
     "wxALIGN_CENTER_VERTICAL",
     "wxALIGN_LEFT",
     "wxALIGN_RIGHT",
-    "wxALIGN_CENTER_HORIZONTAL",
-    "wxALIGN_CENTER",
-
+    "wxALIGN_TOP",
 });
 
-auto lst_layout_flags = std::to_array({
-
+constexpr auto set_layout_flags = frozen::make_set<std::string_view>({
     "wxEXPAND",
-    "wxSHAPED",
     "wxFIXED_MINSIZE",
     "wxRESERVE_SPACE_EVEN_IF_HIDDEN",
-
+    "wxSHAPED",
 });
 
-auto lst_borders_flags = std::to_array({
-
+constexpr auto set_borders_flags = frozen::make_set<std::string_view>({
     "wxALL",
+    "wxBOTTOM",
     "wxLEFT",
     "wxRIGHT",
     "wxTOP",
-    "wxBOTTOM",
-
 });
 
 // These are used to set prop_style
-auto lst_style = std::to_array({
-
+constexpr auto set_styles = frozen::make_set<std::string_view>({
     "wxLI_HORIZONTAL",
     "wxLI_VERTICAL",
 
@@ -1111,24 +1106,26 @@ auto lst_style = std::to_array({
 
 });
 
-static const view_map s_map_old_borders = {
-
-    { "wxDOUBLE_BORDER", "wxBORDER_DOUBLE" },
-    { "wxSUNKEN_BORDER", "wxBORDER_SUNKEN" },
-    { "wxRAISED_BORDER", "wxBORDER_RAISED" },
+constexpr auto map_old_borders = frozen::make_map<std::string_view, std::string_view>({
     { "wxBORDER", "wxBORDER_SIMPLE" },
+    { "wxDOUBLE_BORDER", "wxBORDER_DOUBLE" },
+    { "wxNO_BORDER", "wxBORDER_NONE" },
+    { "wxRAISED_BORDER", "wxBORDER_RAISED" },
     { "wxSIMPLE_BORDER", "wxBORDER_SIMPLE" },
     { "wxSTATIC_BORDER", "wxBORDER_STATIC" },
-    {
-        "wxNO_BORDER",
-        "wxBORDER_NONE",
-    },
-
-};
+    { "wxSUNKEN_BORDER", "wxBORDER_SUNKEN" },
+});
 
 void DialogBlocks::ProcessStyles(pugi::xml_node& node_xml, const NodeSharedPtr& new_node)
 {
-    std::set<std::string> styles;
+    tt_string window_styles;
+    tt_string window_exstyles;
+    tt_string dialog_styles;
+    tt_string dialog_exstyles;
+    tt_string prop_styles;
+    tt_string alignment_styles;
+    tt_string layout_flags;
+    tt_string border_flags;
 
     for (auto& form: node_xml.children("bool"))
     {
@@ -1141,94 +1138,84 @@ void DialogBlocks::ProcessStyles(pugi::xml_node& node_xml, const NodeSharedPtr& 
         name.erase(0, sizeof("proxy-") - 1);
         if (!name.starts_with("wx"))
             continue;
-        if (auto result = s_map_old_borders.find(name); result != s_map_old_borders.end())
+        if (auto result = map_old_borders.find(name); result != map_old_borders.end())
         {
             name = result->second;
         }
 
-        styles.emplace(name);
-    }
-
-    if (styles.empty())
-        return;
-
-    tt_string style_str;
-    // Not all styles are valid for all forms, but we'll assume that DialogBlocks didn't add
-    // any invalid ones. I *think* unused ones will be ignored...
-    for (auto& style: lst_window_styles)
-    {
-        if (styles.contains(style))
+        if (set_window_styles.contains(name))
         {
-            if (style_str.size())
-                style_str << '|';
-            style_str << style;
+            if (window_styles.size())
+                window_styles << '|';
+            window_styles << name;
+        }
+        else if (set_exwindow_styles.contains(name))
+        {
+            if (window_exstyles.size())
+                window_exstyles << '|';
+            window_exstyles << name;
+        }
+        else if (set_dialog_styles.contains(name))
+        {
+            if (dialog_styles.size())
+                dialog_styles << '|';
+            dialog_styles << name;
+        }
+        else if (set_dialog_exstyles.contains(name))
+        {
+            if (dialog_exstyles.size())
+                dialog_exstyles << '|';
+            dialog_exstyles << name;
+        }
+        else if (set_styles.contains(name))
+        {
+            if (prop_styles.size())
+                prop_styles << '|';
+            prop_styles << name;
+        }
+        else if (set_alignment_styles.contains(name))
+        {
+            if (alignment_styles.size())
+                alignment_styles << '|';
+            alignment_styles << name;
+        }
+        else if (set_layout_flags.contains(name))
+        {
+            if (layout_flags.size())
+                layout_flags << '|';
+            layout_flags << name;
+        }
+        else if (set_borders_flags.contains(name))
+        {
+            if (border_flags.size())
+                border_flags << '|';
+            border_flags << name;
         }
     }
-    if (style_str.size())
+
+    if (window_styles.size())
     {
-        new_node->set_value(prop_window_style, style_str);
+        new_node->set_value(prop_window_style, window_styles);
+    }
+    if (window_exstyles.size())
+    {
+        new_node->set_value(prop_window_extra_style, window_exstyles);
     }
 
-    style_str.clear();
-    for (auto& style: lst_exwindow_styles)
+    if (prop_styles.size())
     {
-        if (styles.contains(style))
-        {
-            if (style_str.size())
-                style_str << '|';
-            style_str << style;
-        }
-    }
-    if (style_str.size())
-    {
-        new_node->set_value(prop_window_extra_style, style_str);
-    }
-
-    style_str.clear();
-    for (auto& style: lst_style)
-    {
-        if (styles.contains(style))
-        {
-            if (style_str.size())
-                style_str << '|';
-            style_str << style;
-        }
-    }
-    if (style_str.size())
-    {
-        new_node->set_value(prop_style, style_str);
+        new_node->set_value(prop_style, prop_styles);
     }
 
     if (new_node->isGen(gen_wxDialog))
     {
-        style_str.clear();
-        for (auto& style: lst_dialog_styles)
+        if (dialog_styles.size())
         {
-            if (styles.contains(style))
-            {
-                if (style_str.size())
-                    style_str << '|';
-                style_str << style;
-            }
+            new_node->set_value(prop_style, dialog_styles);
         }
-        if (style_str.size())
+        if (dialog_exstyles.size())
         {
-            new_node->set_value(prop_style, style_str);
-        }
-
-        style_str.clear();
-        for (auto& style: lst_exdialog_styles)
-        {
-            if (styles.contains(style))
-            {
-                if (style_str.size())
-                    style_str << '|';
-                style_str << style;
-            }
-        }
-        if (style_str.size())
-        {
-            new_node->set_value(prop_extra_style, style_str);
+            new_node->set_value(prop_extra_style, dialog_exstyles);
         }
     }
 
@@ -1238,15 +1225,10 @@ void DialogBlocks::ProcessStyles(pugi::xml_node& node_xml, const NodeSharedPtr& 
 
     if (new_node->hasProp(prop_alignment))
     {
-        style_str.clear();
-        for (auto& style: lst_alignment_styles)
+        tt_string style_str;
+        if (alignment_styles.size())
         {
-            if (styles.contains(style))
-            {
-                if (style_str.size())
-                    style_str << '|';
-                style_str << style;
-            }
+            style_str << alignment_styles;
         }
         if (auto value = node_xml.find_child_by_attribute("string", "name", "proxy-AlignH"); value)
         {
@@ -1292,14 +1274,9 @@ void DialogBlocks::ProcessStyles(pugi::xml_node& node_xml, const NodeSharedPtr& 
 
         // Check for layout flags
         style_str.clear();
-        for (auto& style: lst_layout_flags)
+        if (layout_flags.size())
         {
-            if (styles.contains(style))
-            {
-                if (style_str.size())
-                    style_str << '|';
-                style_str << style;
-            }
+            style_str << layout_flags;
         }
 
         if (auto value = node_xml.find_child_by_attribute("string", "name", "proxy-AlignH"); value)
@@ -1335,26 +1312,17 @@ void DialogBlocks::ProcessStyles(pugi::xml_node& node_xml, const NodeSharedPtr& 
             new_node->set_value(prop_flags, style_str);
         }
 
-        // Check for border flags
-        style_str.clear();
-        for (auto& style: lst_borders_flags)
+        if (border_flags.size())
         {
-            if (styles.contains(style))
+            if (border_flags.contains("wxLEFT") && border_flags.contains("wxRIGHT") && border_flags.contains("wxTOP") &&
+                border_flags.contains("wxBOTTOM"))
             {
-                if (style_str.size())
-                    style_str << '|';
-                style_str << style;
+                new_node->set_value(prop_borders, "wxALL");
             }
-        }
-        if (style_str.size())
-        {
-            if (style_str.contains("wxLEFT") && style_str.contains("wxRIGHT") && style_str.contains("wxTOP") &&
-                style_str.contains("wxBOTTOM"))
+            else
             {
-                style_str.clear();
-                style_str << "wxALL";
+                new_node->set_value(prop_borders, border_flags);
             }
-            new_node->set_value(prop_borders, style_str);
         }
     }
 
@@ -1362,8 +1330,7 @@ void DialogBlocks::ProcessStyles(pugi::xml_node& node_xml, const NodeSharedPtr& 
     // wxBannerWindow has a direction property that also uses wxLEFT, wxRIGHT etc.
 }
 
-static const std::map<std::string_view, GenEnum::PropName, std::less<>> map_proxy_names = {
-
+constexpr auto map_proxy_names = frozen::make_map<std::string_view, GenEnum::PropName>({
     { "Background colour", prop_background_colour },
     { "Foreground colour", prop_foreground_colour },
     { "Hover colour", prop_hover_color },
@@ -1416,7 +1383,7 @@ static const std::map<std::string_view, GenEnum::PropName, std::less<>> map_prox
 
     { "Initial value", prop_value },  // In DialogBlocks used for all sorts of properties
 
-};
+});
 
 void DialogBlocks::ProcessMisc(pugi::xml_node& node_xml, const NodeSharedPtr& node)
 {

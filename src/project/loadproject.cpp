@@ -1386,6 +1386,73 @@ void ProjectHandler::appendXRC(wxArrayString& files)
     }
 }
 
+void RecursiveNodeCheck(Node* node)
+{
+    if (auto prop_ptr = node->getPropPtr(prop_alignment); prop_ptr && prop_ptr->as_string().size())
+    {
+        if (auto parent = node->getParent(); parent && parent->isSizer())
+        {
+#if defined(_DEBUG)
+            tt_string old_value = prop_ptr->as_string();
+#endif  // _DEBUG
+            if (parent->as_string(prop_orientation).contains("wxVERTICAL"))
+            {
+                // You can't set vertical alignment flags if the parent sizer is vertical
+                prop_ptr->get_value().Replace("wxALIGN_TOP", "");
+                prop_ptr->get_value().Replace("wxALIGN_BOTTOM", "");
+                prop_ptr->get_value().Replace("wxALIGN_CENTER_VERTICAL", "");
+            }
+            else if (node->as_string(prop_flags).contains("wxEXPAND"))
+            {
+                // You can't set vertical alignment flags in a horizontal sizer if wxEXPAND is set
+                prop_ptr->get_value().Replace("wxALIGN_TOP", "");
+                prop_ptr->get_value().Replace("wxALIGN_BOTTOM", "");
+                prop_ptr->get_value().Replace("wxALIGN_CENTER_VERTICAL", "");
+            }
+
+            if (parent->as_string(prop_orientation).contains("wxHORIZONTAL"))
+            {
+                // You can't set horizontal alignment flags if the parent sizer is horizontal
+                prop_ptr->get_value().Replace("wxALIGN_LEFT", "");
+                prop_ptr->get_value().Replace("wxALIGN_RIGHT", "");
+                prop_ptr->get_value().Replace("wxALIGN_CENTER_HORIZONTAL", "");
+            }
+            else if (node->as_string(prop_flags).contains("wxEXPAND"))
+            {
+                // You can't set horizontal alignment flags in a vertical sizer if wxEXPAND is set
+                prop_ptr->get_value().Replace("wxALIGN_LEFT", "");
+                prop_ptr->get_value().Replace("wxALIGN_RIGHT", "");
+                prop_ptr->get_value().Replace("wxALIGN_CENTER_HORIZONTAL", "");
+            }
+#if defined(_DEBUG)
+            if (old_value != prop_ptr->as_string())
+            {
+                tt_string msg = "Alignment flags for " + node->as_string(prop_class_name) + " in " +
+                                parent->as_string(prop_class_name) + " changed from " + old_value + " to " +
+                                prop_ptr->as_string();
+                wxMessageBox(msg, "Alignment Flags Changed");
+            }
+#endif  // _DEBUG
+        }
+    }
+
+    if (node->isGen(gen_wxFlexGridSizer) || node->isGen(gen_wxGridSizer))
+    {
+        // Don't set prop_rows if prop_cols is set. This lets wxWidgets determine the number of
+        // rows rather than relying on the user to always figure it out (or for our code
+        // generation to always figure it out).
+        if (node->as_int(prop_rows) > 0 && node->as_int(prop_cols) > 0)
+        {
+            node->set_value(prop_rows, 0);
+        }
+    }
+
+    for (auto& iter: node->getChildNodePtrs())
+    {
+        RecursiveNodeCheck(iter.get());
+    }
+}
+
 // A lot of designers create projects that can result in assertion warnings when their
 // generated code is run under a Debug build of wxWidgets. While the generated UI usually works
 // fine, it would be better to generate the correct code in the first place. That means fixing
@@ -1402,8 +1469,5 @@ void FinalImportCheck(Node* parent, bool set_line_length)
         parent->set_value(prop_wxWidgets_version, UserPrefs.get_CppWidgetsVersion());
     }
 
-    // REVIEW: [Randalphwa - 08-25-2023] Currently, this is not going to be very efficient. I
-    // want to first fix the problems I'm running into with a lot of different project types
-    // that I've downloaded from github to test. Once this seems to cover most if not all
-    // project issues, then it can be refactored for efficiency.
+    RecursiveNodeCheck(parent);
 }

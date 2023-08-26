@@ -36,15 +36,15 @@ PropDeclaration* NodeDeclaration::getPropDeclaration(size_t idx) const
     }
 
     if (it != m_properties.end())
-        return it->second.get();
+        return it->second;
 
     return nullptr;
 }
 
-NodeEventInfo* NodeDeclaration::getEventInfo(tt_string_view name)
+const NodeEventInfo* NodeDeclaration::getEventInfo(tt_string_view name) const
 {
     if (auto it = m_events.find(name); it != m_events.end())
-        return it->second.get();
+        return it->second;
 
     return nullptr;
 }
@@ -62,7 +62,7 @@ const NodeEventInfo* NodeDeclaration::getEventInfo(size_t idx) const
     }
 
     if (it != m_events.end())
-        return it->second.get();
+        return it->second;
 
     return nullptr;
 }

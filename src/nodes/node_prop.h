@@ -165,7 +165,6 @@ public:
     bool isType(PropType type) const noexcept { return m_declaration->isType(type); }
 
     PropType type() const noexcept { return m_declaration->get_type(); }
-    const char* name_str() const noexcept { return m_declaration->name_str(); }
     PropName get_name() const noexcept { return m_declaration->get_name(); }
 
     PropDeclaration* getPropDeclaration() { return m_declaration; }

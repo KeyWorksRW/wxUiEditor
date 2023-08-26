@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   NodeDeclaration class
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2021 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -21,9 +21,8 @@
 
 using namespace GenEnum;
 
-using DblStrMap = std::map<std::string, std::string, std::less<>>;
-using PropDeclarationPtr = std::shared_ptr<PropDeclaration>;
-using PropDeclarationMap = std::map<std::string, PropDeclarationPtr>;
+using DeclPropMap = std::map<std::string, PropDeclaration*>;
+using DeclEventMap = std::map<std::string, NodeEventInfo*, std::less<>>;
 
 namespace pugi
 {
@@ -45,10 +44,11 @@ public:
 
     PropDeclaration* getPropDeclaration(size_t idx) const;
 
-    NodeEventInfo* getEventInfo(tt_string_view name);
+    const NodeEventInfo* getEventInfo(tt_string_view name) const;
     const NodeEventInfo* getEventInfo(size_t idx) const;
 
-    PropDeclarationMap& GetPropInfoMap() { return m_properties; }
+    auto& GetPropInfoMap() { return m_properties; }
+    auto& GetEventInfoMap() { return m_events; }
 
     NodeType* getNodeType() const { return m_type; }
 
@@ -106,8 +106,8 @@ private:
 
     NodeCategory m_category;
 
-    PropDeclarationMap m_properties;  // std::map<std::string, PropDeclarationPtr>
-    std::map<std::string, std::unique_ptr<NodeEventInfo>, std::less<>> m_events;
+    std::map<std::string, PropDeclaration*> m_properties;
+    std::map<std::string, NodeEventInfo*, std::less<>> m_events;
 
     std::map<GenEnum::PropName, std::string> m_override_def_values;
     std::set<GenEnum::PropName> m_hide_properties;

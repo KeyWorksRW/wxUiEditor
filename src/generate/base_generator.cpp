@@ -9,6 +9,8 @@
 #include <wx/propgrid/manager.h>   // wxPropertyGridManager
 #include <wx/propgrid/propgrid.h>  // wxPropertyGrid
 
+#include <frozen/set.h>
+
 #include "base_generator.h"
 
 #include "code.h"             // Code -- Helper class for generating code
@@ -805,4 +807,86 @@ int BaseGenerator::GetRequiredVersion(Node* node)
     }
 
     return minRequiredVer;
+}
+
+PropDeclaration* DeclAddProp(NodeDeclaration* declaration, PropName prop_name, PropType type, std::string_view help,
+                             std::string_view def_value)
+{
+    auto& properties = declaration->GetPropInfoMap();
+    auto prop_info = new PropDeclaration(prop_name, type, def_value, help);
+    declaration->GetCategory().addProperty(prop_name);
+    properties[map_PropNames[prop_name]] = prop_info;
+    return prop_info;
+}
+
+void DeclAddOption(PropDeclaration* prop_info, std::string_view name, std::string_view help)
+{
+    auto& options = prop_info->getOptions();
+    auto& opt = options.emplace_back();
+    opt.name = name;
+    opt.help = help;
+}
+
+// var_names for these generators will default to "none" for class access
+// inline const GenName set_no_class_access[] = {
+constexpr auto set_no_class_access = frozen::make_set<GenName>({
+
+    gen_BookPage,
+    gen_CloseButton,
+    gen_StaticCheckboxBoxSizer,
+    gen_StaticRadioBtnBoxSizer,
+    gen_TextSizer,
+    gen_VerticalBoxSizer,
+    gen_auitool,
+    gen_auitool_label,
+    gen_separator,
+    gen_submenu,
+    gen_tool,
+    gen_tool_dropdown,
+    gen_wxBoxSizer,
+    gen_wxFlexGridSizer,
+    gen_wxGridBagSizer,
+    gen_wxGridSizer,
+    gen_wxMenuItem,
+    gen_wxPanel,
+    gen_wxRibbonButtonBar,
+    gen_wxRibbonGallery,
+    gen_wxRibbonPage,
+    gen_wxRibbonPanel,
+    gen_wxRibbonToolBar,
+    gen_wxStaticBitmap,
+    gen_wxStaticBoxSizer,
+    gen_wxStaticLine,
+    gen_wxStdDialogButtonSizer,
+    gen_wxWizardPageSimple,
+    gen_wxWrapSizer,
+
+});
+
+void DeclAddVarNameProps(NodeDeclaration* declaration, std::string_view def_value)
+{
+    DeclAddProp(declaration, prop_var_name, type_string, {}, def_value);
+    DeclAddProp(declaration, prop_var_comment, type_string_edit_single);
+
+    tt_string access("protected:");
+    if (set_no_class_access.contains(declaration->getGenName()))
+    {
+        access = "none";
+    }
+
+    auto* prop_info = DeclAddProp(declaration, prop_class_access, type_option, {}, access);
+    DeclAddOption(prop_info, "none", "Derived classes do not have access to this item.");
+    DeclAddOption(prop_info, "protected:",
+                  "In C++, derived classes can access this item. For other languages, the variable is accessible by other "
+                  "classes and functions.");
+    DeclAddOption(prop_info, "public:",
+                  "In C++, item is added as a public: class member. For other languages, the variable is accessible by "
+                  "other classes and functions.");
+}
+
+void DeclAddEvent(NodeDeclaration* declaration, const std::string& evt_name, std::string_view event_class,
+                  std::string_view help)
+{
+    declaration->GetCategory().addEvent(evt_name);
+    declaration->GetEventInfoMap()[evt_name] = new NodeEventInfo(evt_name, event_class, help);
 }

@@ -35,9 +35,10 @@ public:
     bool isType(PropType type) const noexcept { return (type == m_prop_type); }
     bool isProp(PropName name) const noexcept { return (name == m_name_enum); }
 
-    // These get used to setup wxPGProperty, so both key and value need to be a wxString
     struct Options
     {
+        // REVIEW: [Randalphwa - 08-27-2023] Once *ALL* properties are created via generators,
+        // these can be changed to std::string_view
         tt_string name;
         tt_string help;
     };
@@ -45,6 +46,8 @@ public:
     std::vector<Options>& getOptions() { return m_options; }
 
 private:
+    // REVIEW: [Randalphwa - 08-27-2023] Once *ALL* properties are created via generators,
+    // these can be changed to std::string_view
     tt_string m_def_value;
     tt_string m_help;
 

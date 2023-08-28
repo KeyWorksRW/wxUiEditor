@@ -18,117 +18,108 @@
 
 using namespace GenEnum;
 
-// clang-format off
-
-// See g_xrc_keywords in generate/gen_xrc_utils.cpp for a list of XRC keywords
-
 namespace xrc_import
 {
+    constexpr auto map_import_prop_names = frozen::make_map<std::string_view, GenEnum::PropName>({
+        { "accel", prop_shortcut },
+        { "art-provider", prop_art_provider },
+        { "bg", prop_background_colour },
+        { "bitmap-bg", prop_bmp_background_colour },
+        { "bitmap-minwidth", prop_bmp_min_width },
+        { "bitmap-placement", prop_bmp_placement },
+        { "bitmapposition", prop_position },
+        { "bitmapsize", prop_image_size },  // BUGBUG: [Randalphwa - 06-17-2022] should this be prop_bitmapsize?
+        { "choices", prop_contents },
+        { "class", prop_class_name },
+        { "content", prop_contents },
+        { "defaultdirectory", prop_initial_folder },
+        { "defaultfilename", prop_initial_filename },
+        { "dimension", prop_majorDimension },
+        { "effectduration", prop_duration },
+        { "empty_cellsize", prop_empty_cell_size },
+        { "extra-accels", prop_extra_accels },
+        { "fg", prop_foreground_colour },
+        { "flexibledirection", prop_flexible_direction },
+        { "gradient-end", prop_end_colour },
+        { "gradient-start", prop_start_colour },
+        { "gravity", prop_sashgravity },
+        { "hideeffect", prop_hide_effect },
+        { "hover", prop_current },
+        { "htmlcode", prop_html_content },
+        { "inactive-bitmap", prop_inactive_bitmap },
+        { "include_file", prop_derived_header },
+        { "linesize", prop_line_size },
+        { "longhelp", prop_statusbar },  // Used by toolbar tools
+        { "minsize", prop_min_size },
+        { "nonflexiblegrowmode", prop_non_flexible_grow_mode },
+        { "pagesize", prop_page_size },
+        { "running", prop_auto_start },
+        { "selmax", prop_sel_end },
+        { "selmin", prop_sel_start },
+        { "settings", prop_settings_code },
+        { "showeffect", prop_show_effect },
+        { "tab_ctrl_height", prop_tab_height },
+        { "thumb", prop_thumb_length },
+        { "tickfreq", prop_tick_frequency },
+        { "windowlabel", prop_tab_height },
+        { "wrapmode", prop_stc_wrap_mode },
+    });
 
-constexpr auto map_import_prop_names = frozen::make_map<std::string_view, GenEnum::PropName>({
-    { "accel", prop_shortcut },
-    { "art-provider", prop_art_provider },
-    { "bg", prop_background_colour },
-    { "bitmap-bg", prop_bmp_background_colour },
-    { "bitmap-minwidth", prop_bmp_min_width },
-    { "bitmap-placement", prop_bmp_placement },
-    { "bitmapposition", prop_position },
-    { "bitmapsize", prop_image_size },  // BUGBUG: [Randalphwa - 06-17-2022] should this be prop_bitmapsize?
-    { "choices", prop_contents },
-    { "class", prop_class_name },
-    { "content", prop_contents },
-    { "defaultdirectory", prop_initial_folder },
-    { "defaultfilename", prop_initial_filename },
-    { "dimension", prop_majorDimension },
-    { "effectduration", prop_duration },
-    { "empty_cellsize", prop_empty_cell_size },
-    { "extra-accels", prop_extra_accels },
-    { "fg", prop_foreground_colour },
-    { "flexibledirection", prop_flexible_direction },
-    { "gradient-end", prop_end_colour },
-    { "gradient-start", prop_start_colour },
-    { "gravity", prop_sashgravity },
-    { "hideeffect", prop_hide_effect },
-    { "hover", prop_current },
-    { "htmlcode", prop_html_content },
-    { "inactive-bitmap", prop_inactive_bitmap },
-    { "include_file", prop_derived_header },
-    { "linesize", prop_line_size },
-    { "longhelp", prop_statusbar },  // Used by toolbar tools
-    { "minsize", prop_min_size },
-    { "nonflexiblegrowmode", prop_non_flexible_grow_mode },
-    { "pagesize", prop_page_size },
-    { "running", prop_auto_start },
-    { "selmax", prop_sel_end },
-    { "selmin", prop_sel_start },
-    { "settings", prop_settings_code },
-    { "showeffect", prop_show_effect },
-    { "tab_ctrl_height", prop_tab_height },
-    { "thumb", prop_thumb_length },
-    { "tickfreq", prop_tick_frequency },
-    { "windowlabel", prop_tab_height },
-    { "wrapmode", prop_stc_wrap_mode },
-});
+    constexpr auto import_GenNames = frozen::make_map<std::string_view, GenEnum::GenName>({
+        { "Custom", gen_CustomControl },
+        { "CustomWidget", gen_CustomControl },
+        { "Dialog", gen_wxDialog },
+        { "Frame", gen_wxFrame },
+        { "Panel", gen_PanelForm },
+        { "Wizard", gen_wxWizard },
+        { "WizardPageSimple", gen_wxWizardPageSimple },
+        { "bookpage", gen_oldbookpage },
+        { "panewindow", gen_VerticalBoxSizer },
+        { "unknown", gen_CustomControl },
+        { "wxBitmapButton", gen_wxButton },
+        { "wxListCtrl", gen_wxListView },
+        { "wxScintilla", gen_wxStyledTextCtrl },
 
-constexpr auto import_GenNames = frozen::make_map<std::string_view, GenEnum::GenName>({
-    { "Custom", gen_CustomControl },
-    { "CustomWidget", gen_CustomControl },
-    { "Dialog", gen_wxDialog },
-    { "Frame", gen_wxFrame },
-    { "Panel", gen_PanelForm },
-    { "Wizard", gen_wxWizard },
-    { "WizardPageSimple", gen_wxWizardPageSimple },
-    { "bookpage", gen_oldbookpage },
-    { "panewindow", gen_VerticalBoxSizer },
-    { "unknown", gen_CustomControl },
-    { "wxBitmapButton", gen_wxButton },
-    { "wxListCtrl", gen_wxListView },
-    { "wxScintilla", gen_wxStyledTextCtrl },
+        // DialogBlocks proxy conversion
+        { "wxSpacer", gen_spacer },
+        { "wxMenuSeparator", gen_separator },
+        { "wxSubmenu", gen_submenu },
+        { "wxToolBarSeparator", gen_toolSeparator },
+        { "wxToolBarButton", gen_tool },
+    });
 
-    // DialogBlocks proxy conversion
-    { "wxSpacer", gen_spacer },
-    { "wxMenuSeparator", gen_separator },
-    { "wxSubmenu", gen_submenu },
-    { "wxToolBarSeparator", gen_toolSeparator },
-    { "wxToolBarButton", gen_tool },
-});
-
-static const view_map s_map_old_events = {
-
-
-    { "wxEVT_COMMAND_BUTTON_CLICKED",          "wxEVT_BUTTON" },
-    { "wxEVT_COMMAND_CHECKBOX_CLICKED",        "wxEVT_CHECKBOX" },
-    { "wxEVT_COMMAND_CHECKLISTBOX_TOGGLED",    "wxEVT_CHECKLISTBOX" },
-    { "wxEVT_COMMAND_CHOICE_SELECTED",         "wxEVT_CHOICE" },
-    { "wxEVT_COMMAND_COMBOBOX_CLOSEUP",        "wxEVT_COMBOBOX_CLOSEUP" },
-    { "wxEVT_COMMAND_COMBOBOX_DROPDOWN",       "wxEVT_COMBOBOX_DROPDOWN" },
-    { "wxEVT_COMMAND_COMBOBOX_SELECTED",       "wxEVT_COMBOBOX" },
-    { "wxEVT_COMMAND_LISTBOX_DOUBLECLICKED",   "wxEVT_LISTBOX_DCLICK" },
-    { "wxEVT_COMMAND_LISTBOX_SELECTED",        "wxEVT_LISTBOX" },
-    { "wxEVT_COMMAND_MENU_SELECTED",           "wxEVT_MENU" },
-    { "wxEVT_COMMAND_RADIOBOX_SELECTED",       "wxEVT_RADIOBOX" },
-    { "wxEVT_COMMAND_RADIOBUTTON_SELECTED",    "wxEVT_RADIOBUTTON" },
-    { "wxEVT_COMMAND_SCROLLBAR_UPDATED",       "wxEVT_SCROLLBAR" },
-    { "wxEVT_COMMAND_SLIDER_UPDATED",          "wxEVT_SLIDER" },
-    { "wxEVT_COMMAND_TEXT_COPY",               "wxEVT_TEXT_COPY" },
-    { "wxEVT_COMMAND_TEXT_CUT",                "wxEVT_TEXT_CUT" },
-    { "wxEVT_COMMAND_TEXT_ENTER",              "wxEVT_TEXT_ENTER" },
-    { "wxEVT_COMMAND_TEXT_MAXLEN",             "wxEVT_TEXT_MAXLEN" },
-    { "wxEVT_COMMAND_TEXT_PASTE",              "wxEVT_TEXT_PASTE" },
-    { "wxEVT_COMMAND_TEXT_UPDATED",            "wxEVT_TEXT" },
-    { "wxEVT_COMMAND_TEXT_URL",                "wxEVT_TEXT_URL" },
-    { "wxEVT_COMMAND_THREAD",                  "wxEVT_THREAD" },
-    { "wxEVT_COMMAND_TOOL_CLICKED",            "wxEVT_TOOL" },
-    { "wxEVT_COMMAND_TOOL_DROPDOWN_CLICKED",   "wxEVT_TOOL_DROPDOWN" },
-    { "wxEVT_COMMAND_TOOL_ENTER",              "wxEVT_TOOL_ENTER" },
-    { "wxEVT_COMMAND_TOOL_RCLICKED",           "wxEVT_TOOL_RCLICKED" },
-    { "wxEVT_COMMAND_VLBOX_SELECTED",          "wxEVT_VLBOX" },
-
-};
+    constexpr auto map_old_events = frozen::make_map<std::string_view, std::string_view>({
+        { "wxEVT_COMMAND_BUTTON_CLICKED", "wxEVT_BUTTON" },
+        { "wxEVT_COMMAND_CHECKBOX_CLICKED", "wxEVT_CHECKBOX" },
+        { "wxEVT_COMMAND_CHECKLISTBOX_TOGGLED", "wxEVT_CHECKLISTBOX" },
+        { "wxEVT_COMMAND_CHOICE_SELECTED", "wxEVT_CHOICE" },
+        { "wxEVT_COMMAND_COMBOBOX_CLOSEUP", "wxEVT_COMBOBOX_CLOSEUP" },
+        { "wxEVT_COMMAND_COMBOBOX_DROPDOWN", "wxEVT_COMBOBOX_DROPDOWN" },
+        { "wxEVT_COMMAND_COMBOBOX_SELECTED", "wxEVT_COMBOBOX" },
+        { "wxEVT_COMMAND_LISTBOX_DOUBLECLICKED", "wxEVT_LISTBOX_DCLICK" },
+        { "wxEVT_COMMAND_LISTBOX_SELECTED", "wxEVT_LISTBOX" },
+        { "wxEVT_COMMAND_MENU_SELECTED", "wxEVT_MENU" },
+        { "wxEVT_COMMAND_RADIOBOX_SELECTED", "wxEVT_RADIOBOX" },
+        { "wxEVT_COMMAND_RADIOBUTTON_SELECTED", "wxEVT_RADIOBUTTON" },
+        { "wxEVT_COMMAND_SCROLLBAR_UPDATED", "wxEVT_SCROLLBAR" },
+        { "wxEVT_COMMAND_SLIDER_UPDATED", "wxEVT_SLIDER" },
+        { "wxEVT_COMMAND_TEXT_COPY", "wxEVT_TEXT_COPY" },
+        { "wxEVT_COMMAND_TEXT_CUT", "wxEVT_TEXT_CUT" },
+        { "wxEVT_COMMAND_TEXT_ENTER", "wxEVT_TEXT_ENTER" },
+        { "wxEVT_COMMAND_TEXT_MAXLEN", "wxEVT_TEXT_MAXLEN" },
+        { "wxEVT_COMMAND_TEXT_PASTE", "wxEVT_TEXT_PASTE" },
+        { "wxEVT_COMMAND_TEXT_UPDATED", "wxEVT_TEXT" },
+        { "wxEVT_COMMAND_TEXT_URL", "wxEVT_TEXT_URL" },
+        { "wxEVT_COMMAND_THREAD", "wxEVT_THREAD" },
+        { "wxEVT_COMMAND_TOOL_CLICKED", "wxEVT_TOOL" },
+        { "wxEVT_COMMAND_TOOL_DROPDOWN_CLICKED", "wxEVT_TOOL_DROPDOWN" },
+        { "wxEVT_COMMAND_TOOL_ENTER", "wxEVT_TOOL_ENTER" },
+        { "wxEVT_COMMAND_TOOL_RCLICKED", "wxEVT_TOOL_RCLICKED" },
+        { "wxEVT_COMMAND_VLBOX_SELECTED", "wxEVT_VLBOX" },
+    });
 
 };  // namespace xrc_import
 
-// clang-format on
 using namespace xrc_import;
 
 std::optional<pugi::xml_document> ImportXML::LoadDocFile(const tt_string& file)
@@ -1416,7 +1407,7 @@ GenEnum::GenName ImportXML::MapClassName(std::string_view name) const
 
 tt_string_view ImportXML::GetCorrectEventName(tt_string_view name)
 {
-    if (auto result = s_map_old_events.find(name); result != s_map_old_events.end())
+    if (auto result = map_old_events.find(name); result != map_old_events.end())
     {
         return result->second;
     }

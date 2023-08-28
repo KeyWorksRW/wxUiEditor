@@ -35,6 +35,11 @@ using namespace GenEnum;
     #include "../internal/import_panel.h"  // ImportPanel -- Panel to display original imported file
 #endif
 
+// Call this after a project is imported and converted into a Node tree. This will do a final
+// check and fixup for things like inconsistent styles, invalid gridbag sizer rows and
+// columns, etc. Because it runs on the Node tree, it doesn't matter what importer was used.
+void FinalImportCheck(Node* project, bool set_line_length = true);
+
 using namespace GenEnum;
 
 bool ProjectHandler::LoadProject(const tt_string& file, bool allow_ui)
@@ -142,6 +147,7 @@ bool ProjectHandler::LoadProject(const tt_string& file, bool allow_ui)
         return false;
     }
 
+    FinalImportCheck(project.get());
     // Calling this will also initialize the ImageHandler class
     Project.Initialize(project);
     Project.setProjectFile(file);
@@ -825,8 +831,10 @@ bool ProjectHandler::Import(ImportXML& import, tt_string& file, bool append, boo
             }
         }
 
+        FinalImportCheck(project_node.get());
         // Calling this will also initialize the ProjectImage class
         Project.Initialize(project_node, allow_ui);
+        file.replace_extension(".wxui");
         Project.setProjectFile(file);
         ProjectImages.CollectBundles();
 
@@ -834,7 +842,6 @@ bool ProjectHandler::Import(ImportXML& import, tt_string& file, bool append, boo
         // If the file has been created once before, then for the first form, copy the old classname and base filename to
         // the re-converted first form.
 
-        file.replace_extension(".wxui");
         if (m_project_node->getChildCount() && file.file_exists())
         {
             doc.reset();
@@ -909,13 +916,10 @@ bool ProjectHandler::NewProject(bool create_empty, bool allow_ui)
             }
         }
 
-        project->set_value(prop_cpp_line_length, UserPrefs.get_CppLineLength());
-        project->set_value(prop_python_line_length, UserPrefs.get_PythonLineLength());
-        project->set_value(prop_ruby_line_length, UserPrefs.get_RubyLineLength());
-        project->set_value(prop_wxWidgets_version, UserPrefs.get_CppWidgetsVersion());
-
+        FinalImportCheck(project.get());
         // Calling this will also initialize the ProjectImage class
         Project.Initialize(project);
+        file.replace_extension(".wxui");
         Project.setProjectFile(file);
 
         if (allow_ui)
@@ -939,8 +943,10 @@ bool ProjectHandler::NewProject(bool create_empty, bool allow_ui)
     file.assignCwd();
     file.append_filename("MyImportedProject");
 
+    FinalImportCheck(project.get());
     // Calling this will also initialize the ProjectImage class
     Project.Initialize(project);
+    file.replace_extension(".wxui");
     Project.setProjectFile(file);
 
     tt_string imported_from;
@@ -1104,7 +1110,10 @@ void ProjectHandler::appendCrafter(wxArrayString& files)
             auto form = project.child("node");
             while (form)
             {
-                NodeCreation.createNodeFromXml(form, cur_sel, true, m_allow_ui);
+                if (auto new_node = NodeCreation.createNodeFromXml(form, cur_sel, true, m_allow_ui); new_node)
+                {
+                    FinalImportCheck(new_node.get(), false);
+                }
                 form = form.next_sibling("node");
             }
         }
@@ -1153,7 +1162,10 @@ void ProjectHandler::appendFormBuilder(wxArrayString& files)
             auto form = project.child("node");
             while (form)
             {
-                NodeCreation.createNodeFromXml(form, cur_sel, true, m_allow_ui);
+                if (auto new_node = NodeCreation.createNodeFromXml(form, cur_sel, true, m_allow_ui); new_node)
+                {
+                    FinalImportCheck(new_node.get(), false);
+                }
                 form = form.next_sibling("node");
             }
         }
@@ -1202,7 +1214,10 @@ void ProjectHandler::appendDialogBlocks(wxArrayString& files)
             auto form = project.child("node");
             while (form)
             {
-                NodeCreation.createNodeFromXml(form, cur_sel, true, m_allow_ui);
+                if (auto new_node = NodeCreation.createNodeFromXml(form, cur_sel, true, m_allow_ui); new_node)
+                {
+                    FinalImportCheck(new_node.get(), false);
+                }
                 form = form.next_sibling("node");
             }
         }
@@ -1251,7 +1266,10 @@ void ProjectHandler::appendGlade(wxArrayString& files)
             auto form = project.child("node");
             while (form)
             {
-                NodeCreation.createNodeFromXml(form, cur_sel, true, m_allow_ui);
+                if (auto new_node = NodeCreation.createNodeFromXml(form, cur_sel, true, m_allow_ui); new_node)
+                {
+                    FinalImportCheck(new_node.get(), false);
+                }
                 form = form.next_sibling("node");
             }
         }
@@ -1300,7 +1318,10 @@ void ProjectHandler::appendSmith(wxArrayString& files)
             auto form = project.child("node");
             while (form)
             {
-                NodeCreation.createNodeFromXml(form, cur_sel, true, m_allow_ui);
+                if (auto new_node = NodeCreation.createNodeFromXml(form, cur_sel, true, m_allow_ui); new_node)
+                {
+                    FinalImportCheck(new_node.get(), false);
+                }
                 form = form.next_sibling("node");
             }
         }
@@ -1350,7 +1371,10 @@ void ProjectHandler::appendXRC(wxArrayString& files)
             auto form = project.child("node");
             while (form)
             {
-                NodeCreation.createNodeFromXml(form, cur_sel, true, m_allow_ui);
+                if (auto new_node = NodeCreation.createNodeFromXml(form, cur_sel, true, m_allow_ui); new_node)
+                {
+                    FinalImportCheck(new_node.get(), false);
+                }
                 form = form.next_sibling("node");
             }
         }
@@ -1360,4 +1384,90 @@ void ProjectHandler::appendXRC(wxArrayString& files)
         wxGetFrame().FireProjectUpdatedEvent();
         wxGetFrame().setModified();
     }
+}
+
+void RecursiveNodeCheck(Node* node)
+{
+    if (auto prop_ptr = node->getPropPtr(prop_alignment); prop_ptr && prop_ptr->as_string().size())
+    {
+        if (auto parent = node->getParent(); parent && parent->isSizer())
+        {
+#if defined(_DEBUG)
+            tt_string old_value = prop_ptr->as_string();
+#endif  // _DEBUG
+            if (parent->as_string(prop_orientation).contains("wxVERTICAL"))
+            {
+                // You can't set vertical alignment flags if the parent sizer is vertical
+                prop_ptr->get_value().Replace("wxALIGN_TOP", "");
+                prop_ptr->get_value().Replace("wxALIGN_BOTTOM", "");
+                prop_ptr->get_value().Replace("wxALIGN_CENTER_VERTICAL", "");
+            }
+            else if (node->as_string(prop_flags).contains("wxEXPAND"))
+            {
+                // You can't set vertical alignment flags in a horizontal sizer if wxEXPAND is set
+                prop_ptr->get_value().Replace("wxALIGN_TOP", "");
+                prop_ptr->get_value().Replace("wxALIGN_BOTTOM", "");
+                prop_ptr->get_value().Replace("wxALIGN_CENTER_VERTICAL", "");
+            }
+
+            if (parent->as_string(prop_orientation).contains("wxHORIZONTAL"))
+            {
+                // You can't set horizontal alignment flags if the parent sizer is horizontal
+                prop_ptr->get_value().Replace("wxALIGN_LEFT", "");
+                prop_ptr->get_value().Replace("wxALIGN_RIGHT", "");
+                prop_ptr->get_value().Replace("wxALIGN_CENTER_HORIZONTAL", "");
+            }
+            else if (node->as_string(prop_flags).contains("wxEXPAND"))
+            {
+                // You can't set horizontal alignment flags in a vertical sizer if wxEXPAND is set
+                prop_ptr->get_value().Replace("wxALIGN_LEFT", "");
+                prop_ptr->get_value().Replace("wxALIGN_RIGHT", "");
+                prop_ptr->get_value().Replace("wxALIGN_CENTER_HORIZONTAL", "");
+            }
+#if defined(_DEBUG)
+            if (old_value != prop_ptr->as_string())
+            {
+                tt_string msg = "Alignment flags for " + node->as_string(prop_class_name) + " in " +
+                                parent->as_string(prop_class_name) + " changed from " + old_value + " to " +
+                                prop_ptr->as_string();
+                wxMessageBox(msg, "Alignment Flags Changed");
+            }
+#endif  // _DEBUG
+        }
+    }
+
+    if (node->isGen(gen_wxFlexGridSizer) || node->isGen(gen_wxGridSizer))
+    {
+        // Don't set prop_rows if prop_cols is set. This lets wxWidgets determine the number of
+        // rows rather than relying on the user to always figure it out (or for our code
+        // generation to always figure it out).
+        if (node->as_int(prop_rows) > 0 && node->as_int(prop_cols) > 0)
+        {
+            node->set_value(prop_rows, 0);
+        }
+    }
+
+    for (auto& iter: node->getChildNodePtrs())
+    {
+        RecursiveNodeCheck(iter.get());
+    }
+}
+
+// A lot of designers create projects that can result in assertion warnings when their
+// generated code is run under a Debug build of wxWidgets. While the generated UI usually works
+// fine, it would be better to generate the correct code in the first place. That means fixing
+// up conflicts between styles and other properties that either conflict or were not set
+// properlyy by the designer.
+
+void FinalImportCheck(Node* parent, bool set_line_length)
+{
+    if (set_line_length && parent->isGen(gen_Project))
+    {
+        parent->set_value(prop_cpp_line_length, UserPrefs.get_CppLineLength());
+        parent->set_value(prop_python_line_length, UserPrefs.get_PythonLineLength());
+        parent->set_value(prop_ruby_line_length, UserPrefs.get_RubyLineLength());
+        parent->set_value(prop_wxWidgets_version, UserPrefs.get_CppWidgetsVersion());
+    }
+
+    RecursiveNodeCheck(parent);
 }

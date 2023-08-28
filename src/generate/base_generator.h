@@ -184,4 +184,6 @@ public:
     //
     // You will need to Bind to any commands you add.
     virtual bool PopupMenuAddCommands(NavPopupMenu*, Node*) { return false; }
+
+    virtual void AddPropsAndEvents(NodeDeclaration*) {}
 };

@@ -5,6 +5,8 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
+#include <frozen/set.h>
+
 #include "node_creator.h"
 
 #include "base_generator.h"  // BaseGenerator -- Base widget generator class
@@ -98,7 +100,8 @@ inline const char* lst_xml_generators[] = {
 };
 
 // var_names for these generators will default to "none" for class access
-inline const GenName lst_no_class_access[] = {
+// inline const GenName set_no_class_access[] = {
+constexpr auto set_no_class_access = frozen::make_set<GenName>({
 
     gen_BookPage,
     gen_CloseButton,
@@ -130,7 +133,7 @@ inline const GenName lst_no_class_access[] = {
     gen_wxWizardPageSimple,
     gen_wxWrapSizer,
 
-};
+});
 
 // clang-format on
 
@@ -469,7 +472,7 @@ void NodeCreator::Initialize()
             continue;
         if (auto gen = declaration->getGenerator(); gen)
         {
-            gen->AddPropsAndEvents(declaration->GetPropInfoMap(), declaration->GetEventInfoMap());
+            gen->AddPropsAndEvents(declaration);
         }
     }
 
@@ -795,16 +798,12 @@ void NodeCreator::parseProperties(pugi::xml_node& elem_obj, NodeDeclaration* nod
             category.addProperty(prop_class_access);
             tt_string access("protected:");
 
-            // Most widgets will default to protected: as their class access. Those in the lst_no_class_access array should
-            // have "none" as the default class access.
+            // Most widgets will default to protected: as their class access. Those in the
+            // set_no_class_access array should have "none" as the default class access.
 
-            for (auto generator: lst_no_class_access)
+            if (set_no_class_access.contains(node_declaration->getGenName()))
             {
-                if (node_declaration->isGen(generator))
-                {
-                    access = "none";
-                    break;
-                }
+                access = "none";
             }
 
             prop_info = new PropDeclaration(prop_class_access, type_option, access,

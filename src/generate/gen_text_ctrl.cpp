@@ -297,3 +297,99 @@ void TextCtrlGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>
 {
     handlers.emplace("wxActivityIndicatorXmlHandler");
 }
+
+void TextCtrlGenerator::AddPropsAndEvents(NodeDeclaration* declaration)
+{
+    DeclAddVarNameProps(declaration, "m_textCtrl");
+    // DeclAddProp(declaration, prop_var_name, type_string, "", "m_textCtrl");
+    DeclAddProp(declaration, prop_value, type_string_escapes, "Specifies the initial value of the text control.");
+    DeclAddProp(declaration, prop_hint, type_string_escapes,
+                "The maximum length of user-entered text. 0 means no limit. Note that in wxGTK "
+                "this function may only be used with single line text controls.");
+    DeclAddProp(declaration, prop_maxlength, type_string,
+                "The maximum length of user-entered text. 0 means no limit. Note that in wxGTK this function may only be "
+                "used with single line text controls.");
+    DeclAddProp(declaration, prop_auto_complete, type_stringlist_semi,
+                "If one or more strings are entered, they will be used to initialize autocomplete.");
+
+    auto* prop_info = DeclAddProp(declaration, prop_spellcheck, type_bitlist);
+    {
+        DeclAddOption(
+            prop_info, "enabled",
+            "Currently this is supported in wxMSW (when running under Windows 8 or later), wxGTK when using GTK 3 and "
+            "wxOSX. In addition, wxMSW requires that the text control has the wxTE_RICH2 style set, while wxOSX "
+            "requires that the control has the wxTE_MULTILINE style.\n\nAvailable since 3.1.6");
+        DeclAddOption(
+            prop_info, "grammar",
+            "Enables grammar checking in addition to spell checking. Currently this is supported in wxMSW (when "
+            "running under Windows 8 or later), wxGTK when using GTK 3 and wxOSX. In addition, wxMSW requires that "
+            "the text control has the wxTE_RICH2 style set, while wxOSX requires that the control has the "
+            "wxTE_MULTILINE style.\n\nAvailable since 3.1.6");
+    }
+
+    prop_info = DeclAddProp(declaration, prop_style, type_bitlist);
+    {
+        DeclAddOption(
+            prop_info, "wxTE_PROCESS_ENTER",
+            "The control will generate the event wxEVT_TEXT_ENTER (otherwise pressing Enter key is either processed "
+            "internally by the control or used for navigation between dialog controls).");
+        DeclAddOption(
+            prop_info, "wxTE_PROCESS_TAB",
+            "The control will receive wxEVT_CHAR events for TAB pressed - normally, TAB is used for passing to the "
+            "next control in a dialog instead. For the control created with this style, you can still use Ctrl-Enter "
+            "to pass to the next control from the keyboard.");
+        DeclAddOption(prop_info, "wxTE_MULTILINE", "The text control allows multiple lines.");
+        DeclAddOption(prop_info, "wxTE_PASSWORD", "The text will be echoed as asterisks.");
+        DeclAddOption(prop_info, "wxTE_READONLY", "The text will not be user-editable.");
+        DeclAddOption(prop_info, "wxTE_RICH",
+                      "Use rich text control under Windows. This allows having more than 64KB of text in the control. This "
+                      "style is ignored under other platforms.");
+        DeclAddOption(
+            prop_info, "wxTE_RICH2",
+            "Use rich text control version 2.0 or 3.0 under Windows. This style is ignored under other platforms.");
+        DeclAddOption(prop_info, "wxTE_AUTO_URL",
+                      "Highlight the URLs and generate the wxTextUrlEvents when mouse events occur over them. This style is "
+                      "only supported for wxTE_RICH Win32 and multi-line wxGTK2 text controls.");
+        DeclAddOption(
+            prop_info, "wxTE_NOHIDESEL",
+            "By default, the Windows text control doesn't show the selection when it doesn't have focus - use this "
+            "style to force it to always show it. This style is ignored under other platforms.");
+        DeclAddOption(
+            prop_info, "wxTE_NO_VSCROLL",
+            "For multiline controls only: a vertical scrollbar will never be created. This limits the amount of text "
+            "which can be entered into the control to what can be displayed in it under MSW but not under GTK2. "
+            "Currently not implemented for the other platforms.");
+        DeclAddOption(prop_info, "wxTE_LEFT", "The text in the control will be left-justified (default).");
+        DeclAddOption(prop_info, "wxTE_CENTER",
+                      "The text in the control will be centered (currently Windows and wxGTK2 only).");
+        DeclAddOption(prop_info, "wxTE_RIGHT",
+                      "The text in the control will be right-justified (currently Windows and wxGTK2 only).");
+        DeclAddOption(prop_info, "wxTE_DONTWRAP",
+                      "Same as wxHSCROLL style: don't wrap at all, show horizontal scrollbar instead.");
+        DeclAddOption(prop_info, "wxTE_CHARWRAP",
+                      "Wrap the lines too long to be shown entirely at any position (wxUniv and wxGTK2 only).");
+        DeclAddOption(prop_info, "wxTE_WORDWRAP",
+                      "Wrap the lines too long to be shown entirely at word boundaries (wxUniv and wxGTK2 only).");
+        DeclAddOption(
+            prop_info, "wxTE_BESTWRAP",
+            "Wrap the lines at word boundaries or at any other character if there are words longer than the window "
+            "width (this is the default).");
+    }
+
+    DeclAddProp(declaration, prop_focus, type_bool,
+                "When checked, this control will be set to receive keyboard input when the parent form is first created.",
+                "0");
+
+    // Add events
+    DeclAddEvent(declaration, "wxEVT_TEXT", "wxCommandEvent",
+                 "Generated when the text changes. Notice that this event will always be generated when the text controls "
+                 "contents changes - whether this is due to user input or comes from the program itself (for example, if "
+                 "SetValue() is called.)");
+    DeclAddEvent(declaration, "wxEVT_TEXT_ENTER", "wxCommandEvent",
+                 "Generated when enter is pressed in a text control (which must have wxTE_PROCESS_ENTER style for this "
+                 "event to be generated).");
+    DeclAddEvent(declaration, "wxEVT_TEXT_URL", "wxTextUrlEvent",
+                 "Generated when the a mouse event occurred over an URL in the text control (Windows and wxGTK2 only)");
+    DeclAddEvent(declaration, "wxEVT_TEXT_MAXLEN", "wxCommandEvent",
+                 "Generated when the user tries to enter more text into the control than the limit set by SetMaxLength.");
+}

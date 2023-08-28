@@ -733,7 +733,6 @@ void PropGridPanel::AddProperties(tt_string_view name, Node* node, NodeCategory&
             if (!IsPropAllowed(node, prop))
                 continue;
 
-            auto propInfo = prop->getPropDeclaration();
             auto pg = m_prop_grid->Append(CreatePGProperty(prop));
             auto propType = prop->type();
             if (propType != type_option)
@@ -768,16 +767,6 @@ void PropGridPanel::AddProperties(tt_string_view name, Node* node, NodeCategory&
                     {
                         m_prop_grid->SetPropertyAttribute(pg, wxPG_ATTR_AUTOCOMPLETE, m_astr_wx_decorations);
                     }
-                }
-            }
-
-            auto& customEditor = propInfo->getCustomEditor();
-            if (!customEditor.empty())
-            {
-                wxPGEditor* editor = m_prop_grid->GetEditorByName(customEditor);
-                if (editor)
-                {
-                    m_prop_grid->SetPropertyEditor(pg, editor);
                 }
             }
 

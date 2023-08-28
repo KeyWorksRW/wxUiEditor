@@ -184,4 +184,16 @@ public:
     //
     // You will need to Bind to any commands you add.
     virtual bool PopupMenuAddCommands(NavPopupMenu*, Node*) { return false; }
+
+    virtual void AddPropsAndEvents(NodeDeclaration*) {}
 };
+
+PropDeclaration* DeclAddProp(NodeDeclaration* declaration, PropName prop_name, PropType type, std::string_view help = {},
+                             std::string_view def_value = {});
+void DeclAddOption(PropDeclaration* prop_info, std::string_view name, std::string_view help = {});
+
+// This will add prop_var_name, prop_var_comment and prop_class_access
+void DeclAddVarNameProps(NodeDeclaration* declaration, std::string_view def_value);
+
+void DeclAddEvent(NodeDeclaration* declaration, const std::string& evt_name, std::string_view event_class,
+                  std::string_view help);

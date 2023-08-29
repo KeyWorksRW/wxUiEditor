@@ -91,8 +91,10 @@ size_t NodeDeclaration::GetBaseClassCount(bool inherited) const
         std::vector<NodeDeclaration*> classes;
 
         // Do the first loop here to avoid recursion if we're only one deep
-        for (auto& iter: m_base)
+        for (auto* iter: m_base)
         {
+            if (iter == nullptr)
+                continue;
             classes.push_back(iter);
 
             if (iter->hasBaseClasses())
@@ -109,8 +111,10 @@ size_t NodeDeclaration::GetBaseClassCount(bool inherited) const
 
 void NodeDeclaration::GetBaseClasses(std::vector<NodeDeclaration*>& classes, bool inherited) const
 {
-    for (auto& iter: m_base)
+    for (auto* iter: m_base)
     {
+        if (iter == nullptr)
+            continue;
         classes.emplace_back(iter);
 
         if (inherited && iter->hasBaseClasses())

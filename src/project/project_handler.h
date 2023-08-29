@@ -141,6 +141,16 @@ public:
 
     bool NewProject(bool create_empty = false, bool allow_ui = true);
 
+    // Call this after a project is imported and converted into a Node tree. This will do a
+    // final check and fixup for things like inconsistent styles, invalid gridbag sizer rows
+    // and columns, etc. Because it runs on the Node tree, it doesn't matter what importer
+    // was used.
+    void FinalImportCheck(Node* project, bool set_line_length = true);
+
+    // Called by FinalImportCheck() to recursively check the node and all of it's children,
+    // grandchildren, etc.
+    void RecursiveNodeCheck(Node* node);
+
 private:
     NodeSharedPtr m_project_node { nullptr };
 

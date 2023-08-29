@@ -35,11 +35,6 @@ using namespace GenEnum;
     #include "../internal/import_panel.h"  // ImportPanel -- Panel to display original imported file
 #endif
 
-// Call this after a project is imported and converted into a Node tree. This will do a final
-// check and fixup for things like inconsistent styles, invalid gridbag sizer rows and
-// columns, etc. Because it runs on the Node tree, it doesn't matter what importer was used.
-void FinalImportCheck(Node* project, bool set_line_length = true);
-
 using namespace GenEnum;
 
 bool ProjectHandler::LoadProject(const tt_string& file, bool allow_ui)
@@ -1391,7 +1386,7 @@ void ProjectHandler::appendXRC(wxArrayString& files)
     }
 }
 
-void RecursiveNodeCheck(Node* node)
+void ProjectHandler::RecursiveNodeCheck(Node* node)
 {
     if (auto prop_ptr = node->getPropPtr(prop_alignment); prop_ptr && prop_ptr->as_string().size())
     {
@@ -1444,6 +1439,8 @@ void RecursiveNodeCheck(Node* node)
                           parent->as_string(prop_var_name) + " changed from " + old_value + " to " + prop_ptr->as_string();
                 }
                 MSG_WARNING(msg);
+
+                m_isProject_updated = true;
             }
 #endif
         }
@@ -1456,7 +1453,16 @@ void RecursiveNodeCheck(Node* node)
         // generation to always figure it out).
         if (node->as_int(prop_rows) > 0 && node->as_int(prop_cols) > 0)
         {
+            // REVIEW: [Randalphwa - 08-29-2023] Need to check if it is a performance hit to make the sizer
+            // figure this out. We could set it whenver we generate the code for it.
             node->set_value(prop_rows, 0);
+            m_isProject_updated = true;
+#if defined(INTERNAL_TESTING)
+            {
+                MSG_WARNING(tt_string("Removed row setting from ")
+                            << node->as_string(prop_var_name) << " since cols is set");
+            }
+#endif
         }
     }
 
@@ -1472,7 +1478,7 @@ void RecursiveNodeCheck(Node* node)
 // up conflicts between styles and other properties that either conflict or were not set
 // properlyy by the designer.
 
-void FinalImportCheck(Node* parent, bool set_line_length)
+void ProjectHandler::FinalImportCheck(Node* parent, bool set_line_length)
 {
     if (set_line_length && parent->isGen(gen_Project))
     {

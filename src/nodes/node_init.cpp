@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Initialize NodeCreator class
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -22,6 +22,7 @@
 
 #include "../xml/interface_xml.xml"
 #include "../xml/lang_settings.xml"
+#include "../xml/project_interfaces_xml.xml"
 #include "../xml/sizer_child_xml.xml"
 #include "../xml/validators_xml.xml"
 #include "../xml/window_interfaces_xml.xml"
@@ -31,6 +32,7 @@ inline const char* lst_xml_interfaces[] = {
 
     // Note that interface_xml must *not* be added to this list! It is loaded as the root document.
     lang_settings_xml,
+    project_interfaces_xml,
     sizer_child_xml,
     validators_xml,
     window_interfaces_xml,

@@ -147,7 +147,12 @@ bool ProjectHandler::LoadProject(const tt_string& file, bool allow_ui)
         return false;
     }
 
+#if defined(INTERNAL_TESTING)
+    // This should NOT be necessary if all alignment in the project file has been set
+    // correctly. However, it it has not been set correctly, this will correct it and issue a
+    // MSG_WARNING about what got fixed.
     FinalImportCheck(project.get());
+#endif
     // Calling this will also initialize the ImageHandler class
     Project.Initialize(project);
     Project.setProjectFile(file);
@@ -1392,9 +1397,9 @@ void RecursiveNodeCheck(Node* node)
     {
         if (auto parent = node->getParent(); parent && parent->isSizer())
         {
-#if defined(_DEBUG)
+#if defined(INTERNAL_TESTING)
             tt_string old_value = prop_ptr->as_string();
-#endif  // _DEBUG
+#endif
             if (parent->as_string(prop_orientation).contains("wxVERTICAL"))
             {
                 // You can't set vertical alignment flags if the parent sizer is vertical
@@ -1424,15 +1429,23 @@ void RecursiveNodeCheck(Node* node)
                 prop_ptr->get_value().Replace("wxALIGN_RIGHT", "");
                 prop_ptr->get_value().Replace("wxALIGN_CENTER_HORIZONTAL", "");
             }
-#if defined(_DEBUG)
+#if defined(INTERNAL_TESTING)
             if (old_value != prop_ptr->as_string())
             {
-                tt_string msg = "Alignment flags for " + node->as_string(prop_class_name) + " in " +
-                                parent->as_string(prop_class_name) + " changed from " + old_value + " to " +
-                                prop_ptr->as_string();
-                wxMessageBox(msg, "Alignment Flags Changed");
+                tt_string msg;
+                if (prop_ptr->as_string().empty())
+                {
+                    msg = "Alignment flags for " + node->as_string(prop_var_name) + " in " +
+                          parent->as_string(prop_var_name) + " changed from " + old_value + " to no flags";
+                }
+                else
+                {
+                    msg = "Alignment flags for " + node->as_string(prop_var_name) + " in " +
+                          parent->as_string(prop_var_name) + " changed from " + old_value + " to " + prop_ptr->as_string();
+                }
+                MSG_WARNING(msg);
             }
-#endif  // _DEBUG
+#endif
         }
     }
 

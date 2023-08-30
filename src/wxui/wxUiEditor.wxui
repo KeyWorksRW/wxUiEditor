@@ -4,9 +4,9 @@
   <node
     class="Project"
     art_directory="../art_src"
-    cpp_line_length="120"
+    cpp_line_length="125"
     generate_cmake="1"
-    wxWidgets_version="3.1.6">
+    wxWidgets_version="3.2">
     <node
       class="Images"
       base_file="ui_images">
@@ -5445,7 +5445,6 @@
                           style="wxCB_READONLY"
                           var_name="m_comboHdrMask"
                           size="150,-1"
-                          alignment="wxALIGN_LEFT"
                           borders="wxLEFT|wxRIGHT|wxBOTTOM"
                           wxEVT_COMBOBOX="OnComboHdrMask" />
                       </node>
@@ -5510,7 +5509,6 @@
                           style="wxCB_READONLY"
                           var_name="m_comboXpmMask"
                           size="150,-1"
-                          alignment="wxALIGN_LEFT"
                           borders="wxLEFT|wxRIGHT|wxBOTTOM"
                           wxEVT_COMBOBOX="OnComboXpmMask" />
                       </node>
@@ -5582,7 +5580,6 @@
           <node
             class="wxFlexGridSizer"
             cols="1"
-            rows="2"
             var_name="flex_grid_sizer2"
             flags="wxEXPAND">
             <node

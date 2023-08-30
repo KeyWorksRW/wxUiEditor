@@ -82,7 +82,7 @@ bool ListViewGenerator::SettingsCode(Code& code)
             code.Eol(eol_if_needed);
             if (code.is_cpp())
                 code.Str("auto ");
-            code.Str("info").Assign().Add("wxListItem(").EndFunction();
+            code.Str("info").Assign().Add("wxListItem").AddIfRuby(".new").Str("(").EndFunction();
             code.Eol().Str("info");
             if (code.is_ruby())
                 code.Str(".clear");

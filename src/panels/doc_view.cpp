@@ -61,8 +61,8 @@ bool DocViewPanel::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos, c
 
     m_toolBar->AddTool(ID_PYTHON, "Python", wxue_img::bundle_python_logo_only_svg(16, 16), wxEmptyString, wxITEM_RADIO);
 
-    m_toolBar->AddTool(ID_RUBY, "Ruby", wxueBundleSVG(wxue_img::ruby_logo_svg, 1853, 10034, wxSize(16, 16)),
-        wxEmptyString, wxITEM_RADIO);
+    m_toolBar->AddTool(ID_RUBY, "Ruby", wxueBundleSVG(wxue_img::ruby_logo_svg, 1853, 10034, wxSize(16, 16)), wxEmptyString,
+        wxITEM_RADIO);
 
     m_toolBar->Realize();
     m_parent_sizer->Add(m_toolBar, wxSizerFlags().Expand().Border(wxALL));

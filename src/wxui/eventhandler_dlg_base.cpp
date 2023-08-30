@@ -168,8 +168,7 @@ bool EventHandlerDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString
     auto* page_sizer_3 = new wxBoxSizer(wxVERTICAL);
 
     m_ruby_radio_use_function = new wxRadioButton(ruby_page, wxID_ANY, "Use function");
-    m_ruby_function_box = new wxStaticBoxSizer(new wxStaticBox(ruby_page, wxID_ANY, m_ruby_radio_use_function),
-        wxVERTICAL);
+    m_ruby_function_box = new wxStaticBoxSizer(new wxStaticBox(ruby_page, wxID_ANY, m_ruby_radio_use_function), wxVERTICAL);
 
     m_ruby_text_function = new wxTextCtrl(m_ruby_function_box->GetStaticBox(), wxID_ANY, wxEmptyString);
     m_ruby_function_box->Add(m_ruby_text_function, wxSizerFlags().Expand().Border(wxALL));

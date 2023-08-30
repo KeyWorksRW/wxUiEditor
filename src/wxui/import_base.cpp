@@ -88,8 +88,8 @@ bool ImportBase::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     m_btnAddFile->SetToolTip("You can add multiple formbuilder projects to a single wxUiEdtior project.");
     box_sizer6->Add(m_btnAddFile, wxSizerFlags().Center().Border(wxLEFT|wxRIGHT|wxTOP, wxSizerFlags::GetDefaultBorder()));
 
-    m_static_cwd = new wxStaticText(m_import_staticbox->GetStaticBox(), wxID_ANY, "...", wxDefaultPosition,
-        wxDefaultSize, wxST_ELLIPSIZE_MIDDLE);
+    m_static_cwd = new wxStaticText(m_import_staticbox->GetStaticBox(), wxID_ANY, "...", wxDefaultPosition, wxDefaultSize,
+        wxST_ELLIPSIZE_MIDDLE);
     box_sizer6->Add(m_static_cwd, wxSizerFlags(1).Center().Border(wxALL));
 
     m_import_staticbox->Add(box_sizer6, wxSizerFlags().Expand().Border(wxALL));

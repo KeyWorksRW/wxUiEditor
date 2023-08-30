@@ -31,8 +31,8 @@ public:
         Create(parent, id, title, pos, size, style, name);
     }
 
-    bool Create(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "Convert Image",
-        const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
+    bool Create(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "Convert Image", const wxPoint& pos =
+        wxDefaultPosition, const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_DIALOG_STYLE, const wxString &name = wxDialogNameStr);
 
 protected:

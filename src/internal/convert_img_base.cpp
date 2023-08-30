@@ -31,8 +31,7 @@ bool ConvertImageBase::Create(wxWindow* parent, wxWindowID id, const wxString& t
 
     auto* collapsiblePane = new wxCollapsiblePane(this, wxID_ANY, "Dialog Description");
     collapsiblePane->Collapse();
-    box_sizer->Add(collapsiblePane,
-        wxSizerFlags(1).Expand().Border(wxLEFT|wxRIGHT|wxTOP, wxSizerFlags::GetDefaultBorder()));
+    box_sizer->Add(collapsiblePane, wxSizerFlags(1).Expand().Border(wxLEFT|wxRIGHT|wxTOP, wxSizerFlags::GetDefaultBorder()));
 
     auto* box_sizer2 = new wxBoxSizer(wxHORIZONTAL);
 
@@ -53,8 +52,8 @@ bool ConvertImageBase::Create(wxWindow* parent, wxWindowID id, const wxString& t
     flex_grid_sizer->Add(m_staticOriginal_2, wxSizerFlags().Center().Border(wxALL));
 
     m_fileOriginal = new wxFilePickerCtrl(this, wxID_ANY, wxEmptyString, wxFileSelectorPromptStr,
-        "Select file(s)\", \"All files|*.*|PNG|*.png|XPM|*.xpm|Tiff|*.tif;*.tiff|Bitmaps|*.bmp|Icon|*.ico||",
-        wxDefaultPosition, wxSize(300, -1), wxFLP_USE_TEXTCTRL|wxFLP_OPEN|wxFLP_FILE_MUST_EXIST);
+        "Select file(s)\", \"All files|*.*|PNG|*.png|XPM|*.xpm|Tiff|*.tif;*.tiff|Bitmaps|*.bmp|Icon|*.ico||", wxDefaultPosition,
+        wxSize(300, -1), wxFLP_USE_TEXTCTRL|wxFLP_OPEN|wxFLP_FILE_MUST_EXIST);
     flex_grid_sizer->Add(m_fileOriginal, wxSizerFlags().Expand().Border(wxALL));
 
     m_staticHeader = new wxStaticText(this, wxID_ANY, "O&utput:");
@@ -96,8 +95,7 @@ bool ConvertImageBase::Create(wxWindow* parent, wxWindowID id, const wxString& t
 
     m_comboHdrMask = new wxComboBox(hdr_static_box->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition,
         wxSize(150, -1), 0, nullptr, wxCB_READONLY);
-    box_sizer_3->Add(m_comboHdrMask,
-        wxSizerFlags().Left().Border(wxLEFT|wxRIGHT|wxBOTTOM, wxSizerFlags::GetDefaultBorder()));
+    box_sizer_3->Add(m_comboHdrMask, wxSizerFlags().Border(wxLEFT|wxRIGHT|wxBOTTOM, wxSizerFlags::GetDefaultBorder()));
 
     box_sizer_2->Add(box_sizer_3, wxSizerFlags().Border(wxALL));
 
@@ -140,8 +138,7 @@ bool ConvertImageBase::Create(wxWindow* parent, wxWindowID id, const wxString& t
 
     m_comboXpmMask = new wxComboBox(mask_static_box->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition,
         wxSize(150, -1), 0, nullptr, wxCB_READONLY);
-    box_sizer_4->Add(m_comboXpmMask,
-        wxSizerFlags().Left().Border(wxLEFT|wxRIGHT|wxBOTTOM, wxSizerFlags::GetDefaultBorder()));
+    box_sizer_4->Add(m_comboXpmMask, wxSizerFlags().Border(wxLEFT|wxRIGHT|wxBOTTOM, wxSizerFlags::GetDefaultBorder()));
 
     box_sizer7->Add(box_sizer_4, wxSizerFlags().Border(wxALL));
 
@@ -168,20 +165,17 @@ bool ConvertImageBase::Create(wxWindow* parent, wxWindowID id, const wxString& t
     box_sizer6->Add(m_staticDimensions,
         wxSizerFlags(1).Center().Border(wxLEFT|wxRIGHT|wxTOP, wxSizerFlags::GetDefaultBorder()));
 
-    parent_sizer->Add(box_sizer6,
-    wxSizerFlags().Expand().Border(wxLEFT|wxRIGHT|wxTOP, wxSizerFlags::GetDefaultBorder()));
+    parent_sizer->Add(box_sizer6, wxSizerFlags().Expand().Border(wxLEFT|wxRIGHT|wxTOP, wxSizerFlags::GetDefaultBorder()));
 
     auto* grid_sizer2 = new wxGridSizer(2, 0, 0);
 
     m_staticOriginal = new wxStaticText(this, wxID_ANY, "Source");
     m_staticOriginal->Hide();
-    grid_sizer2->Add(m_staticOriginal,
-        wxSizerFlags().Center().Border(wxLEFT|wxRIGHT|wxTOP, wxSizerFlags::GetDefaultBorder()));
+    grid_sizer2->Add(m_staticOriginal, wxSizerFlags().Center().Border(wxLEFT|wxRIGHT|wxTOP, wxSizerFlags::GetDefaultBorder()));
 
     m_staticOutput = new wxStaticText(this, wxID_ANY, "Current");
     m_staticOutput->Hide();
-    grid_sizer2->Add(m_staticOutput,
-        wxSizerFlags().Center().Border(wxLEFT|wxRIGHT|wxTOP, wxSizerFlags::GetDefaultBorder()));
+    grid_sizer2->Add(m_staticOutput, wxSizerFlags().Center().Border(wxLEFT|wxRIGHT|wxTOP, wxSizerFlags::GetDefaultBorder()));
 
     m_bmpOriginal = new wxStaticBitmap(this, wxID_ANY, wxNullBitmap);
     m_bmpOriginal->Hide();
@@ -193,7 +187,7 @@ bool ConvertImageBase::Create(wxWindow* parent, wxWindowID id, const wxString& t
 
     parent_sizer->Add(grid_sizer2, wxSizerFlags(1).Expand().Border(wxALL));
 
-    auto* flex_grid_sizer2 = new wxFlexGridSizer(2, 1, 0, 0);
+    auto* flex_grid_sizer2 = new wxFlexGridSizer(1, 0, 0);
 
     m_staticSave = new wxStaticText(this, wxID_ANY, "save");
     m_staticSave->Hide();

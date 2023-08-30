@@ -24,15 +24,15 @@ class InsertWidget : public wxDialog
 {
 public:
     InsertWidget() {}
-    InsertWidget(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "Insert Widget",
-        const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
+    InsertWidget(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "Insert Widget", const wxPoint& pos =
+        wxDefaultPosition, const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_DIALOG_STYLE, const wxString &name = wxDialogNameStr)
     {
         Create(parent, id, title, pos, size, style, name);
     }
 
-    bool Create(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "Insert Widget",
-        const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
+    bool Create(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "Insert Widget", const wxPoint& pos =
+        wxDefaultPosition, const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_DIALOG_STYLE, const wxString &name = wxDialogNameStr);
 
     tt_string GetWidget() { return m_widget; }

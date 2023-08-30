@@ -34,8 +34,7 @@ bool NodeSearchDlg::Create(wxWindow* parent, wxWindowID id, const wxString& titl
     auto* box_sizer_3 = new wxBoxSizer(wxHORIZONTAL);
     box_sizer_3->SetMinSize(250, -1);
 
-    auto* radioBtn_Generators = new wxRadioButton(this, wxID_ANY, "&Generators", wxDefaultPosition, wxDefaultSize,
-        wxRB_GROUP);
+    auto* radioBtn_Generators = new wxRadioButton(this, wxID_ANY, "&Generators", wxDefaultPosition, wxDefaultSize, wxRB_GROUP);
     radioBtn_Generators->SetValue(true);
     radioBtn_Generators->SetValidator(wxGenericValidator(&m_search_generators));
     box_sizer_3->Add(radioBtn_Generators, wxSizerFlags().Border(wxALL));
@@ -82,8 +81,7 @@ bool NodeSearchDlg::Create(wxWindow* parent, wxWindowID id, const wxString& titl
 
     box_sizer_4->Add(box_sizer_6, wxSizerFlags(1).Expand().Border(wxALL));
 
-    dlg_sizer->Add(box_sizer_4,
-    wxSizerFlags(1).Expand().Border(wxLEFT|wxRIGHT|wxBOTTOM, wxSizerFlags::GetDefaultBorder()));
+    dlg_sizer->Add(box_sizer_4, wxSizerFlags(1).Expand().Border(wxLEFT|wxRIGHT|wxBOTTOM, wxSizerFlags::GetDefaultBorder()));
 
     auto* stdBtn = CreateStdDialogButtonSizer(wxOK|wxCANCEL);
     dlg_sizer->Add(CreateSeparatedSizer(stdBtn), wxSizerFlags().Expand().Border(wxALL));

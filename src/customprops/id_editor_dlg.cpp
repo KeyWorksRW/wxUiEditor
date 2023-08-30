@@ -60,8 +60,8 @@ bool IDEditorDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     auto* staticText_4 = new wxStaticText(m_cstm_id_box->GetStaticBox(), wxID_ANY, "&Value:");
     box_sizer->Add(staticText_4, wxSizerFlags().Center().Border(wxALL));
 
-    m_textValue = new wxTextCtrl(m_cstm_id_box->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition,
-        wxDefaultSize, wxTE_PROCESS_ENTER);
+    m_textValue = new wxTextCtrl(m_cstm_id_box->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize,
+        wxTE_PROCESS_ENTER);
     m_textValue->SetHint("wxID_HIGHEST + 1");
     box_sizer->Add(m_textValue, wxSizerFlags(1).Border(wxALL));
 
@@ -79,8 +79,8 @@ bool IDEditorDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     staticText_8->SetToolTip("The prefix list is edited in the Project\'s id_prefixes property.");
     grid_bag_sizer->Add(staticText_8, wxGBPosition(1, 0), wxGBSpan(1, 1), wxALL, 5);
 
-    m_comboPrefixes = new wxComboBox(m_cstm_id_box->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition,
-        wxDefaultSize, 0, nullptr, wxCB_READONLY|wxCB_SORT);
+    m_comboPrefixes = new wxComboBox(m_cstm_id_box->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize,
+        0, nullptr, wxCB_READONLY|wxCB_SORT);
     m_comboPrefixes->Enable(false);
     m_comboPrefixes->SetMinSize(ConvertDialogToPixels(wxSize(75, -1)));
     m_comboPrefixes->SetToolTip("The prefix list is edited in the Project\'s id_prefixes property.");
@@ -90,8 +90,8 @@ bool IDEditorDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     staticText_9->SetToolTip("The suffix list is edited in the Project\'s id_suffixes property.");
     grid_bag_sizer->Add(staticText_9, wxGBPosition(1, 2), wxGBSpan(1, 1), wxALL, 5);
 
-    m_comboSuffix = new wxComboBox(m_cstm_id_box->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition,
-        wxDefaultSize, 0, nullptr, wxCB_READONLY|wxCB_SORT);
+    m_comboSuffix = new wxComboBox(m_cstm_id_box->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize,
+        0, nullptr, wxCB_READONLY|wxCB_SORT);
     m_comboSuffix->Enable(false);
     m_comboSuffix->SetMinSize(ConvertDialogToPixels(wxSize(75, -1)));
     m_comboSuffix->SetToolTip("The suffix list is edited in the Project\'s id_suffixes property.");

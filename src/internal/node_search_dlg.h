@@ -13,6 +13,7 @@
 #include <wx/event.h>
 #include <wx/gdicmn.h>
 #include <wx/listbox.h>
+#include <wx/textctrl.h>
 
 class Node;
 
@@ -25,8 +26,8 @@ class NodeSearchDlg : public wxDialog
 {
 public:
     NodeSearchDlg() {}
-    NodeSearchDlg(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "Node Search",
-        const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
+    NodeSearchDlg(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "Node Search", const wxPoint& pos =
+        wxDefaultPosition, const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER, const wxString &name = wxDialogNameStr)
     {
         Create(parent, id, title, pos, size, style, name);
@@ -62,6 +63,7 @@ protected:
     void OnInit(wxInitDialogEvent& event);
     void OnLabels(wxCommandEvent& event);
     void OnOK(wxCommandEvent& event);
+    void OnSearchText(wxCommandEvent& event);
     void OnSelectLocated(wxCommandEvent& event);
     void OnUnused(wxCommandEvent& event);
     void OnVariables(wxCommandEvent& event);
@@ -79,6 +81,7 @@ private:
 
     wxListBox* m_listbox;
     wxListBox* m_listbox_forms;
+    wxTextCtrl* m_text_search;
 
     std::string m_name;  // could be gen_name, var_name, label or ID
     Node* m_form = nullptr;

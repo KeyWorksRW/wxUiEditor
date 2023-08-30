@@ -96,8 +96,8 @@ bool FontPropDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString& ti
     auto* staticText = new wxStaticText(m_custom_box->GetStaticBox(), wxID_ANY, "F&amily:");
     box_sizer->Add(staticText, wxSizerFlags().Border(wxLEFT|wxRIGHT|wxTOP, wxSizerFlags::GetDefaultBorder()));
 
-    m_comboFamily = new wxComboBox(m_custom_box->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition,
-        wxDefaultSize, 0, nullptr, wxCB_READONLY);
+    m_comboFamily = new wxComboBox(m_custom_box->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize,
+        0, nullptr, wxCB_READONLY);
     box_sizer->Add(m_comboFamily, wxSizerFlags().Border(wxALL));
 
     box_sizer_3->Add(box_sizer, wxSizerFlags().Border(wxALL));
@@ -129,8 +129,8 @@ bool FontPropDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString& ti
     auto* staticText_5 = new wxStaticText(m_custom_box->GetStaticBox(), wxID_ANY, "Face&name:");
     box_sizer_8->Add(staticText_5, wxSizerFlags().Border(wxLEFT|wxRIGHT|wxTOP, wxSizerFlags::GetDefaultBorder()));
 
-    m_comboFacenames = new wxComboBox(m_custom_box->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition,
-        wxDefaultSize, 0, nullptr, wxCB_READONLY|wxCB_SORT);
+    m_comboFacenames = new wxComboBox(m_custom_box->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize,
+        0, nullptr, wxCB_READONLY|wxCB_SORT);
     m_comboFacenames->Append("default");
     m_comboFacenames->SetStringSelection("default");
     m_comboFacenames->SetToolTip(
@@ -148,8 +148,8 @@ bool FontPropDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString& ti
     auto* staticText_4 = new wxStaticText(m_custom_box->GetStaticBox(), wxID_ANY, "&Point Size:");
     box_sizer_6->Add(staticText_4, wxSizerFlags().Border(wxLEFT|wxRIGHT|wxTOP, wxSizerFlags::GetDefaultBorder()));
 
-    m_spinCustomPointSize = new wxSpinCtrlDouble(m_custom_box->GetStaticBox(), wxID_ANY, wxEmptyString,
-        wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 4, 72, 9, 0.5);
+    m_spinCustomPointSize = new wxSpinCtrlDouble(m_custom_box->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition,
+        wxDefaultSize, wxSP_ARROW_KEYS, 4, 72, 9, 0.5);
     m_spinCustomPointSize->SetDigits(1);
     box_sizer_6->Add(m_spinCustomPointSize, wxSizerFlags().Border(wxALL));
 

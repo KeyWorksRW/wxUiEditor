@@ -21,8 +21,8 @@ class NewDialog : public wxDialog
 {
 public:
     NewDialog() {}
-    NewDialog(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "Create New Dialog",
-        const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
+    NewDialog(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "Create New Dialog", const wxPoint& pos =
+        wxDefaultPosition, const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_DIALOG_STYLE, const wxString &name = wxDialogNameStr)
     {
         Create(parent, id, title, pos, size, style, name);

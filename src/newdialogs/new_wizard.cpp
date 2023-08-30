@@ -67,11 +67,9 @@ bool NewWizard::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     auto* box_sizer_4 = new wxBoxSizer(wxHORIZONTAL);
 
     auto* staticText_4 = new wxStaticText(this, wxID_ANY, "&Initial Pages:");
-    box_sizer_4->Add(staticText_4,
-        wxSizerFlags().Center().Border(wxLEFT|wxTOP|wxBOTTOM, wxSizerFlags::GetDefaultBorder()));
+    box_sizer_4->Add(staticText_4, wxSizerFlags().Center().Border(wxLEFT|wxTOP|wxBOTTOM, wxSizerFlags::GetDefaultBorder()));
 
-    m_spinCtrlTabs = new wxSpinCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 0,
-        7, 3);
+    m_spinCtrlTabs = new wxSpinCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 0, 7, 3);
     m_spinCtrlTabs->SetValidator(wxGenericValidator(&m_num_pages));
     box_sizer_4->Add(m_spinCtrlTabs, wxSizerFlags().Center().Border(wxALL));
 

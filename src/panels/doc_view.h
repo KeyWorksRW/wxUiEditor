@@ -23,14 +23,14 @@ class DocViewPanel : public wxPanel
 {
 public:
     DocViewPanel() {}
-    DocViewPanel(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
-        const wxSize& size = wxDefaultSize, long style = 0, const wxString &name = wxPanelNameStr)
+    DocViewPanel(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size =
+        wxDefaultSize, long style = 0, const wxString &name = wxPanelNameStr)
     {
         Create(parent, id, pos, size, style, name);
     }
 
-    bool Create(wxWindow *parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
-        const wxSize& size = wxDefaultSize, long style = 0, const wxString &name = wxPanelNameStr);
+    bool Create(wxWindow *parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size =
+        wxDefaultSize, long style = 0, const wxString &name = wxPanelNameStr);
 
     enum
     {
@@ -65,8 +65,8 @@ private:
 // Code below this comment block will be preserved
 // if the code for this class is re-generated.
 //
-    // clang-format on
-    // ***********************************************
+// clang-format on
+// ***********************************************
 
 public:
     DocViewPanel(wxWindow* parent, MainFrame* frame);

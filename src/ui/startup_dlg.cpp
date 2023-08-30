@@ -97,7 +97,7 @@ bool StartupDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     box_sizer_8->Add(box_sizer, wxSizerFlags().Border(wxALL));
 
     auto* static_line_2 = new wxStaticLine(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_VERTICAL);
-    box_sizer_8->Add(static_line_2, wxSizerFlags().Expand().Border(wxALL, 20));
+    box_sizer_8->Add(static_line_2, wxSizerFlags().Expand().Border(wxALL, FromDIP(wxSize(20, -1)).x));
 
     auto* box_sizer_2 = new wxBoxSizer(wxVERTICAL);
 

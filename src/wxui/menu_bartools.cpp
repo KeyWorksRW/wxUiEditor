@@ -39,8 +39,7 @@ MenuBarTools::MenuBarTools() : wxMenu()
     menu_item_2->SetBitmap(wxue_img::bundle_tool_dropdown_png());
     auto* menu_item_4 = Append(gen_toolSeparator, "Add Space", "Add space to separate tools", wxITEM_NORMAL);
     menu_item_4->SetBitmap(wxue_img::bundle_toolspacer_png());
-    auto* menu_item_5 = Append(gen_toolStretchable, "Add Stretchable Space", "Add space to separate tools",
-        wxITEM_NORMAL);
+    auto* menu_item_5 = Append(gen_toolStretchable, "Add Stretchable Space", "Add space to separate tools", wxITEM_NORMAL);
     menu_item_5->SetBitmap(wxue_img::bundle_toolStretchable_png());
     AppendSeparator();
     auto* menu_item_3 = Append(gen_wxComboBox, "Add Combobox", "Add a wxComboBox control", wxITEM_NORMAL);

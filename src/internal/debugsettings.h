@@ -19,15 +19,15 @@ class DebugSettings : public wxDialog
 {
 public:
     DebugSettings() {}
-    DebugSettings(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "Test Settings",
-        const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
+    DebugSettings(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "Test Settings", const wxPoint& pos =
+        wxDefaultPosition, const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER, const wxString &name = wxDialogNameStr)
     {
         Create(parent, id, title, pos, size, style, name);
     }
 
-    bool Create(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "Test Settings",
-        const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
+    bool Create(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "Test Settings", const wxPoint& pos =
+        wxDefaultPosition, const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER, const wxString &name = wxDialogNameStr);
 
 protected:

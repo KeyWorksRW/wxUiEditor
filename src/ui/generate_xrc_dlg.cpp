@@ -28,8 +28,8 @@ bool GenerateXrcDlg::Create(wxWindow* parent, wxWindowID id, const wxString& tit
 
     m_combined_box = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, m_radio_combined), wxVERTICAL);
 
-    m_filePicker = new wxFilePickerCtrl(m_combined_box->GetStaticBox(), wxID_ANY, wxEmptyString, "Combined XRC File",
-        "*.xrc", wxDefaultPosition, wxDefaultSize, wxFLP_USE_TEXTCTRL|wxFLP_SAVE);
+    m_filePicker = new wxFilePickerCtrl(m_combined_box->GetStaticBox(), wxID_ANY, wxEmptyString, "Combined XRC File", "*.xrc",
+        wxDefaultPosition, wxDefaultSize, wxFLP_USE_TEXTCTRL|wxFLP_SAVE);
     m_filePicker->SetMinSize(ConvertDialogToPixels(wxSize(120, -1)));
     m_combined_box->Add(m_filePicker, wxSizerFlags(1).Expand().Border(wxALL));
 

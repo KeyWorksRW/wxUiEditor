@@ -23,15 +23,15 @@ class NewRibbon : public wxDialog
 {
 public:
     NewRibbon() {}
-    NewRibbon(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "New Ribbon Bar",
-        const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
+    NewRibbon(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "New Ribbon Bar", const wxPoint& pos =
+        wxDefaultPosition, const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_DIALOG_STYLE, const wxString &name = wxDialogNameStr)
     {
         Create(parent, id, title, pos, size, style, name);
     }
 
-    bool Create(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "New Ribbon Bar",
-        const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
+    bool Create(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "New Ribbon Bar", const wxPoint& pos =
+        wxDefaultPosition, const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_DIALOG_STYLE, const wxString &name = wxDialogNameStr);
 
 protected:
@@ -63,8 +63,8 @@ private:
 // Code below this comment block will be preserved
 // if the code for this class is re-generated.
 //
-    // clang-format on
-    // ***********************************************
+// clang-format on
+// ***********************************************
 
 public:
     // Checks current selected node to see if it accepts a wxRibbonBar as a child

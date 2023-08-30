@@ -20,15 +20,15 @@ class NodeInfo : public wxDialog
 {
 public:
     NodeInfo() {}
-    NodeInfo(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "Node Information",
-        const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
+    NodeInfo(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "Node Information", const wxPoint& pos =
+        wxDefaultPosition, const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_DIALOG_STYLE, const wxString &name = wxDialogNameStr)
     {
         Create(parent, id, title, pos, size, style, name);
     }
 
-    bool Create(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "Node Information",
-        const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
+    bool Create(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "Node Information", const wxPoint& pos =
+        wxDefaultPosition, const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_DIALOG_STYLE, const wxString &name = wxDialogNameStr);
 
     struct NodeMemory

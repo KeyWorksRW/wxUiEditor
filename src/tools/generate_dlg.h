@@ -19,15 +19,15 @@ class GenerateDlg : public wxDialog
 {
 public:
     GenerateDlg() {}
-    GenerateDlg(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "Generate Code",
-        const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
+    GenerateDlg(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "Generate Code", const wxPoint& pos =
+        wxDefaultPosition, const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_DIALOG_STYLE, const wxString &name = wxDialogNameStr)
     {
         Create(parent, id, title, pos, size, style, name);
     }
 
-    bool Create(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "Generate Code",
-        const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
+    bool Create(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "Generate Code", const wxPoint& pos =
+        wxDefaultPosition, const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_DIALOG_STYLE, const wxString &name = wxDialogNameStr);
 
     bool is_gen_base() const { return m_gen_base_code; }

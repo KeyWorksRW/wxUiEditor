@@ -20,15 +20,15 @@ class NewPanel : public wxDialog
 {
 public:
     NewPanel() {}
-    NewPanel(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "Create New Panel",
-        const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
+    NewPanel(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "Create New Panel", const wxPoint& pos =
+        wxDefaultPosition, const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_DIALOG_STYLE, const wxString &name = wxDialogNameStr)
     {
         Create(parent, id, title, pos, size, style, name);
     }
 
-    bool Create(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "Create New Panel",
-        const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
+    bool Create(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "Create New Panel", const wxPoint& pos =
+        wxDefaultPosition, const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_DIALOG_STYLE, const wxString &name = wxDialogNameStr);
 
 protected:
@@ -57,8 +57,8 @@ private:
 // Code below this comment block will be preserved
 // if the code for this class is re-generated.
 //
-    // clang-format on
-    // ***********************************************
+// clang-format on
+// ***********************************************
 
 public:
     void WantFormVersion() { m_is_form = true; }

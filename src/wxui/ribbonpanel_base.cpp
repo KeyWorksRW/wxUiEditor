@@ -71,12 +71,12 @@ bool RibbonPanelBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos
 
     auto* forms_bar_windows = new wxRibbonToolBar(panel_form_windows, wxID_ANY);
     {
-        forms_bar_windows->AddTool(CreateNewDialog, wxueImage(wxue_img::wxDialog_png, sizeof(wxue_img::wxDialog_png)),
-            "wxDialog", wxRIBBON_BUTTON_NORMAL);
-        forms_bar_windows->AddTool(CreateNewPanel, wxueImage(wxue_img::wxPanel_png, sizeof(wxue_img::wxPanel_png)),
-            "wxPanel", wxRIBBON_BUTTON_NORMAL);
-        forms_bar_windows->AddTool(CreateNewFrame, wxueImage(wxue_img::wxFrame_png, sizeof(wxue_img::wxFrame_png)),
-            "wxFrame", wxRIBBON_BUTTON_NORMAL);
+        forms_bar_windows->AddTool(CreateNewDialog, wxueImage(wxue_img::wxDialog_png, sizeof(wxue_img::wxDialog_png)), "wxDialog",
+            wxRIBBON_BUTTON_NORMAL);
+        forms_bar_windows->AddTool(CreateNewPanel, wxueImage(wxue_img::wxPanel_png, sizeof(wxue_img::wxPanel_png)), "wxPanel",
+            wxRIBBON_BUTTON_NORMAL);
+        forms_bar_windows->AddTool(CreateNewFrame, wxueImage(wxue_img::wxFrame_png, sizeof(wxue_img::wxFrame_png)), "wxFrame",
+            wxRIBBON_BUTTON_NORMAL);
         forms_bar_windows->AddTool(gen_wxPopupTransientWindow, wxueImage(wxue_img::WXPOPupTransientWindow_png, sizeof(
             wxue_img::WXPOPupTransientWindow_png)), "wxPopupTransientWindow", wxRIBBON_BUTTON_NORMAL);
     }
@@ -86,8 +86,8 @@ bool RibbonPanelBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos
 
     auto* forms_bar_wizard = new wxRibbonToolBar(panel_wizard, wxID_ANY);
     {
-        forms_bar_wizard->AddTool(CreateNewWizard, wxueImage(wxue_img::wxWizard_png, sizeof(wxue_img::wxWizard_png)),
-            "wxWizard", wxRIBBON_BUTTON_NORMAL);
+        forms_bar_wizard->AddTool(CreateNewWizard, wxueImage(wxue_img::wxWizard_png, sizeof(wxue_img::wxWizard_png)), "wxWizard",
+            wxRIBBON_BUTTON_NORMAL);
         forms_bar_wizard->AddTool(gen_wxWizardPageSimple, wxueImage(wxue_img::wxWizardPageSimple_png, sizeof(
             wxue_img::wxWizardPageSimple_png)), "wxWizardPageSimple", wxRIBBON_BUTTON_NORMAL);
     }
@@ -97,8 +97,8 @@ bool RibbonPanelBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos
 
     auto* forms_bar_bars = new wxRibbonToolBar(panel_bars, wxID_ANY);
     {
-        forms_bar_bars->AddTool(gen_ToolBar, wxueImage(wxue_img::wxToolBar_png, sizeof(wxue_img::wxToolBar_png)),
-            "wxToolBar", wxRIBBON_BUTTON_NORMAL);
+        forms_bar_bars->AddTool(gen_ToolBar, wxueImage(wxue_img::wxToolBar_png, sizeof(wxue_img::wxToolBar_png)), "wxToolBar",
+            wxRIBBON_BUTTON_NORMAL);
         forms_bar_bars->AddTool(gen_AuiToolBar, wxueImage(wxue_img::auitoolbar_png, sizeof(wxue_img::auitoolbar_png)),
             "wxAuiToolBar", wxRIBBON_BUTTON_NORMAL);
         forms_bar_bars->AddTool(CreateNewFormRibbon, wxueImage(wxue_img::ribbon_bar_png, sizeof(wxue_img::ribbon_bar_png)),
@@ -110,8 +110,8 @@ bool RibbonPanelBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos
 
     auto* forms_bar_bars_2 = new wxRibbonToolBar(panel_menu, wxID_ANY);
     {
-        forms_bar_bars_2->AddTool(gen_MenuBar, wxueImage(wxue_img::wxMenuBar_png, sizeof(wxue_img::wxMenuBar_png)),
-            "wxMenuBar", wxRIBBON_BUTTON_NORMAL);
+        forms_bar_bars_2->AddTool(gen_MenuBar, wxueImage(wxue_img::wxMenuBar_png, sizeof(wxue_img::wxMenuBar_png)), "wxMenuBar",
+            wxRIBBON_BUTTON_NORMAL);
         forms_bar_bars_2->AddTool(gen_PopupMenu, wxueImage(wxue_img::menu_png, sizeof(wxue_img::menu_png)), "wxMenu",
             wxRIBBON_BUTTON_NORMAL);
         forms_bar_bars_2->AddTool(gen_wxContextMenuEvent, wxueImage(wxue_img::menuitem_png, sizeof(wxue_img::menuitem_png)),
@@ -125,8 +125,8 @@ bool RibbonPanelBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos
     {
         forms_bar_images->AddTool(gen_Images, wxueImage(wxue_img::pagectrl_png, sizeof(wxue_img::pagectrl_png)),
             "Create a file containing embedded images", wxRIBBON_BUTTON_NORMAL);
-        forms_bar_images->AddTool(gen_embedded_image, wxueImage(wxue_img::static_bitmap_png, sizeof(
-            wxue_img::static_bitmap_png)), "Add an embedded image to an Images file", wxRIBBON_BUTTON_NORMAL);
+        forms_bar_images->AddTool(gen_embedded_image, wxueImage(wxue_img::static_bitmap_png, sizeof(wxue_img::static_bitmap_png)),
+            "Add an embedded image to an Images file", wxRIBBON_BUTTON_NORMAL);
         forms_bar_images->AddTool(gen_folder, wxueImage(wxue_img::folder_png, sizeof(wxue_img::folder_png)),
             "Create a folder that can be used to organize forms.", wxRIBBON_BUTTON_NORMAL);
     }
@@ -138,12 +138,12 @@ bool RibbonPanelBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos
 
     auto* sizer_bar_basic = new wxRibbonToolBar(panel_basic, wxID_ANY);
     {
-        sizer_bar_basic->AddTool(gen_wxBoxSizer, wxueImage(wxue_img::sizer_horizontal_png, sizeof(
-            wxue_img::sizer_horizontal_png)), "Horizontal wxBoxSizer", wxRIBBON_BUTTON_NORMAL);
+        sizer_bar_basic->AddTool(gen_wxBoxSizer, wxueImage(wxue_img::sizer_horizontal_png, sizeof(wxue_img::sizer_horizontal_png)),
+            "Horizontal wxBoxSizer", wxRIBBON_BUTTON_NORMAL);
         sizer_bar_basic->AddTool(gen_VerticalBoxSizer, wxueImage(wxue_img::sizer_png, sizeof(wxue_img::sizer_png)),
             "Vertical wxBoxSizer", wxRIBBON_BUTTON_NORMAL);
-        sizer_bar_basic->AddTool(NewStaticSizer, wxueImage(wxue_img::wxStaticBoxSizer_png, sizeof(
-            wxue_img::wxStaticBoxSizer_png)), "wxStaticBoxSizer", wxRIBBON_BUTTON_DROPDOWN);
+        sizer_bar_basic->AddTool(NewStaticSizer, wxueImage(wxue_img::wxStaticBoxSizer_png, sizeof(wxue_img::wxStaticBoxSizer_png)),
+            "wxStaticBoxSizer", wxRIBBON_BUTTON_DROPDOWN);
         sizer_bar_basic->AddTool(gen_wxWrapSizer, wxueImage(wxue_img::wrap_sizer_png, sizeof(wxue_img::wrap_sizer_png)),
             "wxWrapSizer", wxRIBBON_BUTTON_NORMAL);
     }
@@ -157,8 +157,8 @@ bool RibbonPanelBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos
             "wxGridSizer", wxRIBBON_BUTTON_NORMAL);
         sizer_bar_grids->AddTool(gen_wxFlexGridSizer, wxueImage(wxue_img::flex_grid_sizer_png, sizeof(
             wxue_img::flex_grid_sizer_png)), "wxFlexGridSizer", wxRIBBON_BUTTON_NORMAL);
-        sizer_bar_grids->AddTool(gen_wxGridBagSizer, wxueImage(wxue_img::grid_bag_sizer_png, sizeof(
-            wxue_img::grid_bag_sizer_png)), "wxGridBagSizer", wxRIBBON_BUTTON_NORMAL);
+        sizer_bar_grids->AddTool(gen_wxGridBagSizer, wxueImage(wxue_img::grid_bag_sizer_png, sizeof(wxue_img::grid_bag_sizer_png)),
+            "wxGridBagSizer", wxRIBBON_BUTTON_NORMAL);
     }
     sizer_bar_grids->Realize();
 
@@ -181,14 +181,14 @@ bool RibbonPanelBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos
 
     auto* common_bar_controls = new wxRibbonToolBar(panel_common_controls, wxID_ANY);
     {
-        common_bar_controls->AddTool(gen_wxStaticText, wxueImage(wxue_img::wxStaticText_png, sizeof(
-            wxue_img::wxStaticText_png)), "wxStaticText", wxRIBBON_BUTTON_NORMAL);
+        common_bar_controls->AddTool(gen_wxStaticText, wxueImage(wxue_img::wxStaticText_png, sizeof(wxue_img::wxStaticText_png)),
+            "wxStaticText", wxRIBBON_BUTTON_NORMAL);
         common_bar_controls->AddTool(gen_wxTextCtrl, wxueImage(wxue_img::wxtextCtrl_png, sizeof(wxue_img::wxtextCtrl_png)),
             "wxTextCtrl", wxRIBBON_BUTTON_NORMAL);
         common_bar_controls->AddTool(NewCheckbox, wxueImage(wxue_img::wxcheckBox_png, sizeof(wxue_img::wxcheckBox_png)),
             "Check Boxes", wxRIBBON_BUTTON_DROPDOWN);
-        common_bar_controls->AddTool(gen_wxRadioButton, wxueImage(wxue_img::wxradioButton_png, sizeof(
-            wxue_img::wxradioButton_png)), "wxRadioButton", wxRIBBON_BUTTON_NORMAL);
+        common_bar_controls->AddTool(gen_wxRadioButton, wxueImage(wxue_img::wxradioButton_png, sizeof(wxue_img::wxradioButton_png)),
+            "wxRadioButton", wxRIBBON_BUTTON_NORMAL);
         common_bar_controls->AddTool(NewButton, wxueImage(wxue_img::wxButton_png, sizeof(wxue_img::wxButton_png)), "Buttons",
             wxRIBBON_BUTTON_DROPDOWN);
         common_bar_controls->AddTool(NewSpin, wxueImage(wxue_img::spin_ctrl_png, sizeof(wxue_img::spin_ctrl_png)),
@@ -213,18 +213,18 @@ bool RibbonPanelBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos
 
     auto* common_bar_pickers = new wxRibbonToolBar(panel_pickkers, wxID_ANY);
     {
-        common_bar_pickers->AddTool(gen_wxFilePickerCtrl, wxueImage(wxue_img::filePicker_png, sizeof(
-            wxue_img::filePicker_png)), "wxFilePickerCtrl", wxRIBBON_BUTTON_NORMAL);
+        common_bar_pickers->AddTool(gen_wxFilePickerCtrl, wxueImage(wxue_img::filePicker_png, sizeof(wxue_img::filePicker_png)),
+            "wxFilePickerCtrl", wxRIBBON_BUTTON_NORMAL);
         common_bar_pickers->AddTool(gen_wxDirPickerCtrl, wxueImage(wxue_img::dirPicker_png, sizeof(wxue_img::dirPicker_png)),
             "wxDirPickerCtrl", wxRIBBON_BUTTON_NORMAL);
-        common_bar_pickers->AddTool(gen_wxFontPickerCtrl, wxueImage(wxue_img::fontPicker_png, sizeof(
-            wxue_img::fontPicker_png)), "wxFontPickerCtrl", wxRIBBON_BUTTON_NORMAL);
+        common_bar_pickers->AddTool(gen_wxFontPickerCtrl, wxueImage(wxue_img::fontPicker_png, sizeof(wxue_img::fontPicker_png)),
+            "wxFontPickerCtrl", wxRIBBON_BUTTON_NORMAL);
         common_bar_pickers->AddTool(gen_wxColourPickerCtrl, wxueImage(wxue_img::colourPickerIcon_png, sizeof(
             wxue_img::colourPickerIcon_png)), "wxColourPickerCtrl", wxRIBBON_BUTTON_NORMAL);
-        common_bar_pickers->AddTool(gen_wxDatePickerCtrl, wxueImage(wxue_img::datepicker_png, sizeof(
-            wxue_img::datepicker_png)), "wxDatePickerCtrl", wxRIBBON_BUTTON_NORMAL);
-        common_bar_pickers->AddTool(gen_wxTimePickerCtrl, wxueImage(wxue_img::timepicker_png, sizeof(
-            wxue_img::timepicker_png)), "wxTimePickerCtrl", wxRIBBON_BUTTON_NORMAL);
+        common_bar_pickers->AddTool(gen_wxDatePickerCtrl, wxueImage(wxue_img::datepicker_png, sizeof(wxue_img::datepicker_png)),
+            "wxDatePickerCtrl", wxRIBBON_BUTTON_NORMAL);
+        common_bar_pickers->AddTool(gen_wxTimePickerCtrl, wxueImage(wxue_img::timepicker_png, sizeof(wxue_img::timepicker_png)),
+            "wxTimePickerCtrl", wxRIBBON_BUTTON_NORMAL);
     }
     common_bar_pickers->Realize();
 
@@ -232,8 +232,8 @@ bool RibbonPanelBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos
 
     auto* common_bar_other = new wxRibbonToolBar(panel_other, wxID_ANY);
     {
-        common_bar_other->AddTool(gen_wxStaticBitmap, wxueImage(wxue_img::static_bitmap_png, sizeof(
-            wxue_img::static_bitmap_png)), "wxStaticBitmap", wxRIBBON_BUTTON_NORMAL);
+        common_bar_other->AddTool(gen_wxStaticBitmap, wxueImage(wxue_img::static_bitmap_png, sizeof(wxue_img::static_bitmap_png)),
+            "wxStaticBitmap", wxRIBBON_BUTTON_NORMAL);
         common_bar_other->AddTool(gen_wxStaticLine, wxueImage(wxue_img::static_line_png, sizeof(wxue_img::static_line_png)),
             "wxStaticLine", wxRIBBON_BUTTON_NORMAL);
         common_bar_other->AddTool(gen_wxSlider, wxueImage(wxue_img::slider_png, sizeof(wxue_img::slider_png)), "wxSlider",
@@ -249,8 +249,8 @@ bool RibbonPanelBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos
 
     auto* container_bar_windows = new wxRibbonToolBar(panel_windows, wxID_ANY);
     {
-        container_bar_windows->AddTool(gen_wxPanel, wxueImage(wxue_img::wxPanel_png, sizeof(wxue_img::wxPanel_png)),
-            "wxPanel", wxRIBBON_BUTTON_NORMAL);
+        container_bar_windows->AddTool(gen_wxPanel, wxueImage(wxue_img::wxPanel_png, sizeof(wxue_img::wxPanel_png)), "wxPanel",
+            wxRIBBON_BUTTON_NORMAL);
         container_bar_windows->AddTool(gen_wxSplitterWindow, wxueImage(wxue_img::wxsplitterWindow_png, sizeof(
             wxue_img::wxsplitterWindow_png)), "wxSplitterWindow", wxRIBBON_BUTTON_NORMAL);
         container_bar_windows->AddTool(NewScrolled, wxueImage(wxue_img::wxscrolledWindow_png, sizeof(
@@ -264,16 +264,16 @@ bool RibbonPanelBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos
 
     auto* container_bar_books = new wxRibbonToolBar(panel_books, wxID_ANY);
     {
-        container_bar_books->AddTool(gen_wxAuiNotebook, wxueImage(wxue_img::auinotebook_png, sizeof(
-            wxue_img::auinotebook_png)), "wxAuiNotebook", wxRIBBON_BUTTON_NORMAL);
-        container_bar_books->AddTool(gen_wxChoicebook, wxueImage(wxue_img::wxChoicebook_png, sizeof(
-            wxue_img::wxChoicebook_png)), "wxChoicebook", wxRIBBON_BUTTON_NORMAL);
+        container_bar_books->AddTool(gen_wxAuiNotebook, wxueImage(wxue_img::auinotebook_png, sizeof(wxue_img::auinotebook_png)),
+            "wxAuiNotebook", wxRIBBON_BUTTON_NORMAL);
+        container_bar_books->AddTool(gen_wxChoicebook, wxueImage(wxue_img::wxChoicebook_png, sizeof(wxue_img::wxChoicebook_png)),
+            "wxChoicebook", wxRIBBON_BUTTON_NORMAL);
         container_bar_books->AddTool(gen_wxListbook, wxueImage(wxue_img::wxListbook_png, sizeof(wxue_img::wxListbook_png)),
             "wxListbook", wxRIBBON_BUTTON_NORMAL);
         container_bar_books->AddTool(gen_wxNotebook, wxueImage(wxue_img::wxnotebook_png, sizeof(wxue_img::wxnotebook_png)),
             "wxNotebook", wxRIBBON_BUTTON_NORMAL);
-        container_bar_books->AddTool(gen_wxSimplebook, wxueImage(wxue_img::wxsimplebook_png, sizeof(
-            wxue_img::wxsimplebook_png)), "wxSimplebook", wxRIBBON_BUTTON_NORMAL);
+        container_bar_books->AddTool(gen_wxSimplebook, wxueImage(wxue_img::wxsimplebook_png, sizeof(wxue_img::wxsimplebook_png)),
+            "wxSimplebook", wxRIBBON_BUTTON_NORMAL);
         container_bar_books->AddTool(gen_wxToolbook, wxueImage(wxue_img::wxToolbook_png, sizeof(wxue_img::wxToolbook_png)),
             "wxToolbook", wxRIBBON_BUTTON_NORMAL);
         container_bar_books->AddTool(gen_wxTreebook, wxueImage(wxue_img::wxTreebook_png, sizeof(wxue_img::wxTreebook_png)),
@@ -311,12 +311,12 @@ bool RibbonPanelBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos
             wxue_img::wxPropertyGrid_png)), "wxPropertyGrid", wxRIBBON_BUTTON_NORMAL);
         data_bar_properties->AddTool(gen_wxPropertyGridManager, wxueImage(wxue_img::wxPropertyGridManager_png, sizeof(
             wxue_img::wxPropertyGridManager_png)), "wxPropertyGridManager", wxRIBBON_BUTTON_NORMAL);
-        data_bar_properties->AddTool(gen_propGridPage, wxueImage(wxue_img::propgridpage_png, sizeof(
-            wxue_img::propgridpage_png)), "wxPropertyGrid Page", wxRIBBON_BUTTON_NORMAL);
+        data_bar_properties->AddTool(gen_propGridPage, wxueImage(wxue_img::propgridpage_png, sizeof(wxue_img::propgridpage_png)),
+            "wxPropertyGrid Page", wxRIBBON_BUTTON_NORMAL);
         data_bar_properties->AddTool(gen_propGridCategory, wxueImage(wxue_img::book_page_png, sizeof(wxue_img::book_page_png)),
             "wxPropertyGrid Category", wxRIBBON_BUTTON_NORMAL);
-        data_bar_properties->AddTool(gen_propGridItem, wxueImage(wxue_img::propgriditem_png, sizeof(
-            wxue_img::propgriditem_png)), "wxPropertyGrid Item", wxRIBBON_BUTTON_NORMAL);
+        data_bar_properties->AddTool(gen_propGridItem, wxueImage(wxue_img::propgriditem_png, sizeof(wxue_img::propgriditem_png)),
+            "wxPropertyGrid Item", wxRIBBON_BUTTON_NORMAL);
     }
     data_bar_properties->Realize();
 
@@ -324,8 +324,8 @@ bool RibbonPanelBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos
 
     auto* data_bar_trees = new wxRibbonToolBar(panel_data_trees, wxID_ANY);
     {
-        data_bar_trees->AddTool(gen_wxTreeCtrl, wxueImage(wxue_img::tree_ctrl_png, sizeof(wxue_img::tree_ctrl_png)),
-            "wxTreeCtrl", wxRIBBON_BUTTON_NORMAL);
+        data_bar_trees->AddTool(gen_wxTreeCtrl, wxueImage(wxue_img::tree_ctrl_png, sizeof(wxue_img::tree_ctrl_png)), "wxTreeCtrl",
+            wxRIBBON_BUTTON_NORMAL);
         data_bar_trees->AddTool(gen_wxTreeListCtrl, wxueImage(wxue_img::treelistctrl_png, sizeof(wxue_img::treelistctrl_png)),
             "wxTreeListCtrl", wxRIBBON_BUTTON_NORMAL);
         data_bar_trees->AddTool(gen_TreeListCtrlColumn, wxueImage(wxue_img::treelistctrlcolumn_png, sizeof(
@@ -352,16 +352,16 @@ bool RibbonPanelBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos
 
     auto* bars_bar_menu = new wxRibbonToolBar(panel_bars_menu, wxID_ANY);
     {
-        bars_bar_menu->AddTool(gen_wxMenuBar, wxueImage(wxue_img::wxmenuBar_png, sizeof(wxue_img::wxmenuBar_png)),
-            "wxMenuBar", wxRIBBON_BUTTON_NORMAL);
+        bars_bar_menu->AddTool(gen_wxMenuBar, wxueImage(wxue_img::wxmenuBar_png, sizeof(wxue_img::wxmenuBar_png)), "wxMenuBar",
+            wxRIBBON_BUTTON_NORMAL);
         bars_bar_menu->AddTool(gen_wxMenu, wxueImage(wxue_img::menu_png, sizeof(wxue_img::menu_png)), "wxMenu",
             wxRIBBON_BUTTON_NORMAL);
-        bars_bar_menu->AddTool(gen_wxMenuItem, wxueImage(wxue_img::menuitem_png, sizeof(wxue_img::menuitem_png)),
-            "wxMenuItem", wxRIBBON_BUTTON_NORMAL);
+        bars_bar_menu->AddTool(gen_wxMenuItem, wxueImage(wxue_img::menuitem_png, sizeof(wxue_img::menuitem_png)), "wxMenuItem",
+            wxRIBBON_BUTTON_NORMAL);
         bars_bar_menu->AddTool(gen_submenu, wxueImage(wxue_img::submenu_png, sizeof(wxue_img::submenu_png)), "submenu",
             wxRIBBON_BUTTON_NORMAL);
-        bars_bar_menu->AddTool(gen_separator, wxueImage(wxue_img::separator_png, sizeof(wxue_img::separator_png)),
-            "separator", wxRIBBON_BUTTON_NORMAL);
+        bars_bar_menu->AddTool(gen_separator, wxueImage(wxue_img::separator_png, sizeof(wxue_img::separator_png)), "separator",
+            wxRIBBON_BUTTON_NORMAL);
     }
     bars_bar_menu->Realize();
 
@@ -369,8 +369,8 @@ bool RibbonPanelBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos
 
     auto* bars_bar_tool = new wxRibbonToolBar(panel_bars_tool, wxID_ANY);
     {
-        bars_bar_tool->AddTool(gen_wxToolBar, wxueImage(wxue_img::wxtoolBar_png, sizeof(wxue_img::wxtoolBar_png)),
-            "wxToolBar", wxRIBBON_BUTTON_NORMAL);
+        bars_bar_tool->AddTool(gen_wxToolBar, wxueImage(wxue_img::wxtoolBar_png, sizeof(wxue_img::wxtoolBar_png)), "wxToolBar",
+            wxRIBBON_BUTTON_NORMAL);
         bars_bar_tool->AddTool(BarTools, wxueImage(wxue_img::tool_png, sizeof(wxue_img::tool_png)), wxEmptyString,
             wxRIBBON_BUTTON_DROPDOWN);
         bars_bar_tool->AddSeparator();
@@ -391,8 +391,8 @@ bool RibbonPanelBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos
             "wxRibbonPage", wxRIBBON_BUTTON_NORMAL);
         bars_bar_ribbon->AddTool(gen_wxRibbonPanel, wxueImage(wxue_img::ribbon_panel_png, sizeof(wxue_img::ribbon_panel_png)),
             "wxRibbonPanel", wxRIBBON_BUTTON_NORMAL);
-        bars_bar_ribbon->AddTool(NewRibbonType, wxueImage(wxue_img::ribbon_buttonbar_png, sizeof(
-            wxue_img::ribbon_buttonbar_png)), "Ribbon Bar Type", wxRIBBON_BUTTON_DROPDOWN);
+        bars_bar_ribbon->AddTool(NewRibbonType, wxueImage(wxue_img::ribbon_buttonbar_png, sizeof(wxue_img::ribbon_buttonbar_png)),
+            "Ribbon Bar Type", wxRIBBON_BUTTON_DROPDOWN);
         bars_bar_ribbon->AddTool(gen_ribbonButton, wxueImage(wxue_img::ribbon_button_png, sizeof(wxue_img::ribbon_button_png)),
             "Ribbon Button", wxRIBBON_BUTTON_NORMAL);
         bars_bar_ribbon->AddTool(gen_ribbonSeparator, wxueImage(wxue_img::toolspacer_png, sizeof(wxue_img::toolspacer_png)),
@@ -419,8 +419,8 @@ bool RibbonPanelBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos
 
     auto* other_bar_editors = new wxRibbonToolBar(panel_editors, wxID_ANY);
     {
-        other_bar_editors->AddTool(gen_wxRichTextCtrl, wxueImage(wxue_img::richtextctrl_png, sizeof(
-            wxue_img::richtextctrl_png)), "wxRichTextCtrl", wxRIBBON_BUTTON_NORMAL);
+        other_bar_editors->AddTool(gen_wxRichTextCtrl, wxueImage(wxue_img::richtextctrl_png, sizeof(wxue_img::richtextctrl_png)),
+            "wxRichTextCtrl", wxRIBBON_BUTTON_NORMAL);
         other_bar_editors->AddTool(gen_wxStyledTextCtrl, wxueImage(wxue_img::scintilla_png, sizeof(wxue_img::scintilla_png)),
             "wxStyledTextCtrl", wxRIBBON_BUTTON_NORMAL);
     }
@@ -430,10 +430,10 @@ bool RibbonPanelBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos
 
     auto* other_bar_ctrls = new wxRibbonToolBar(panel_controls, wxID_ANY);
     {
-        other_bar_ctrls->AddTool(gen_wxHyperlinkCtrl, wxueImage(wxue_img::hyperlink_ctrl_png, sizeof(
-            wxue_img::hyperlink_ctrl_png)), "wxHyperlinkCtrl", wxRIBBON_BUTTON_NORMAL);
-        other_bar_ctrls->AddTool(gen_wxSearchCtrl, wxueImage(wxue_img::search_png, sizeof(wxue_img::search_png)),
-            "wxSearchCtrl", wxRIBBON_BUTTON_NORMAL);
+        other_bar_ctrls->AddTool(gen_wxHyperlinkCtrl, wxueImage(wxue_img::hyperlink_ctrl_png, sizeof(wxue_img::hyperlink_ctrl_png)),
+            "wxHyperlinkCtrl", wxRIBBON_BUTTON_NORMAL);
+        other_bar_ctrls->AddTool(gen_wxSearchCtrl, wxueImage(wxue_img::search_png, sizeof(wxue_img::search_png)), "wxSearchCtrl",
+            wxRIBBON_BUTTON_NORMAL);
         other_bar_ctrls->AddTool(gen_wxCalendarCtrl, wxueImage(wxue_img::calendar_png, sizeof(wxue_img::calendar_png)),
             "wxCalendarCtrl", wxRIBBON_BUTTON_NORMAL);
         other_bar_ctrls->AddTool(gen_wxFileCtrl, wxueImage(wxue_img::wxfileCtrl_png, sizeof(wxue_img::wxfileCtrl_png)),
@@ -446,10 +446,10 @@ bool RibbonPanelBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos
             wxue_img::wxactivityIndicator_png)), "wxActivityIndicator", wxRIBBON_BUTTON_NORMAL);
         other_bar_ctrls->AddTool(gen_wxAnimationCtrl, wxueImage(wxue_img::wxanimation_png, sizeof(wxue_img::wxanimation_png)),
             "wxAnimationCtrl", wxRIBBON_BUTTON_NORMAL);
-        other_bar_ctrls->AddTool(gen_wxBannerWindow, wxueImage(wxue_img::wxbannerWindow_png, sizeof(
-            wxue_img::wxbannerWindow_png)), "wxBannerWindow", wxRIBBON_BUTTON_NORMAL);
-        other_bar_ctrls->AddTool(gen_CustomControl, wxueImage(wxue_img::customControl_png, sizeof(
-            wxue_img::customControl_png)), "CustomControl", wxRIBBON_BUTTON_NORMAL);
+        other_bar_ctrls->AddTool(gen_wxBannerWindow, wxueImage(wxue_img::wxbannerWindow_png, sizeof(wxue_img::wxbannerWindow_png)),
+            "wxBannerWindow", wxRIBBON_BUTTON_NORMAL);
+        other_bar_ctrls->AddTool(gen_CustomControl, wxueImage(wxue_img::customControl_png, sizeof(wxue_img::customControl_png)),
+            "CustomControl", wxRIBBON_BUTTON_NORMAL);
     }
     other_bar_ctrls->Realize();
 
@@ -457,8 +457,8 @@ bool RibbonPanelBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos
 
     auto* other_bar_html = new wxRibbonToolBar(panel_html, wxID_ANY);
     {
-        other_bar_html->AddTool(gen_wxHtmlWindow, wxueImage(wxue_img::htmlwin_png, sizeof(wxue_img::htmlwin_png)),
-            "wxHtmlWindow", wxRIBBON_BUTTON_NORMAL);
+        other_bar_html->AddTool(gen_wxHtmlWindow, wxueImage(wxue_img::htmlwin_png, sizeof(wxue_img::htmlwin_png)), "wxHtmlWindow",
+            wxRIBBON_BUTTON_NORMAL);
         other_bar_html->AddTool(gen_wxWebView, wxueImage(wxue_img::webview_png, sizeof(wxue_img::webview_png)), "wxWebView",
             wxRIBBON_BUTTON_NORMAL);
     }
@@ -508,1359 +508,1312 @@ namespace wxue_img
 {
 
     const unsigned char WXPOPupTransientWindow_png[358] {
-        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,
-        115,0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,1,24,73,68,65,84,56,203,237,149,189,138,132,48,20,133,207,13,130,
-        96,33,40,216,45,83,41,104,97,163,190,129,236,83,216,249,168,218,216,40,22,118,106,101,43,164,17,219,76,179,
-        186,235,223,56,178,59,197,194,28,8,9,132,124,220,123,110,114,3,188,245,37,2,128,170,170,196,111,32,66,44,143,
-        187,174,75,211,198,159,41,73,18,1,0,236,85,86,72,211,162,239,123,112,206,49,12,195,156,154,16,98,30,11,255,
-        136,64,68,243,90,85,85,152,166,185,15,38,34,140,227,8,206,249,67,240,79,224,52,75,146,116,28,49,0,24,134,1,
-        203,178,158,78,87,81,148,115,43,136,8,93,215,33,203,178,77,165,215,86,0,128,166,105,8,195,240,28,204,24,131,
-        109,219,112,28,103,99,193,30,88,215,245,231,138,71,68,40,203,18,109,219,30,194,54,143,128,8,66,136,217,239,
-        56,142,247,35,246,60,15,190,239,47,10,183,150,170,170,215,174,27,17,161,40,10,52,77,51,71,178,150,44,203,136,
-        162,232,58,56,8,2,4,65,112,90,184,75,96,198,24,242,60,71,93,215,15,123,193,119,54,4,34,32,12,63,113,187,125,
-        28,54,145,127,214,43,210,52,125,127,32,175,211,29,234,70,24,38,1,20,79,179,0,0,0,0,73,69,78,68,174,66,96,130
+        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,115,
+        0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,1,24,73,68,65,84,56,203,237,149,189,138,132,48,20,133,207,13,130,96,33,40,
+        216,45,83,41,104,97,163,190,129,236,83,216,249,168,218,216,40,22,118,106,101,43,164,17,219,76,179,186,235,223,56,
+        178,59,197,194,28,8,9,132,124,220,123,110,114,3,188,245,37,2,128,170,170,196,111,32,66,44,143,187,174,75,211,198,
+        159,41,73,18,1,0,236,85,86,72,211,162,239,123,112,206,49,12,195,156,154,16,98,30,11,255,136,64,68,243,90,85,85,
+        152,166,185,15,38,34,140,227,8,206,249,67,240,79,224,52,75,146,116,28,49,0,24,134,1,203,178,158,78,87,81,148,115,
+        43,136,8,93,215,33,203,178,77,165,215,86,0,128,166,105,8,195,240,28,204,24,131,109,219,112,28,103,99,193,30,88,
+        215,245,231,138,71,68,40,203,18,109,219,30,194,54,143,128,8,66,136,217,239,56,142,247,35,246,60,15,190,239,47,10,
+        183,150,170,170,215,174,27,17,161,40,10,52,77,51,71,178,150,44,203,136,162,232,58,56,8,2,4,65,112,90,184,75,96,
+        198,24,242,60,71,93,215,15,123,193,119,54,4,34,32,12,63,113,187,125,28,54,145,127,214,43,210,52,125,127,32,175,
+        211,29,234,70,24,38,1,20,79,179,0,0,0,0,73,69,78,68,174,66,96,130
     };
 
     const unsigned char auinotebook_png[284] {
-        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,
-        115,0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,0,206,73,68,65,84,56,203,99,96,160,17,96,100,96,96,96,40,232,217,
-        251,159,154,134,78,40,113,102,100,129,113,244,133,31,81,197,208,139,111,229,24,24,24,24,24,224,6,75,74,74,
-        50,48,48,48,48,204,154,53,11,175,198,180,180,52,2,6,51,160,26,204,203,203,203,208,219,219,203,176,118,229,
-        60,20,133,86,118,158,12,199,14,109,135,211,193,225,73,12,197,197,197,120,140,254,129,105,48,3,3,3,195,155,
-        15,191,81,148,109,218,180,137,193,202,206,147,97,211,166,77,112,57,152,90,162,12,110,104,104,192,170,204,207,
-        207,143,97,211,166,77,112,26,159,90,6,6,6,6,57,171,108,212,84,65,205,200,67,73,21,155,55,111,166,138,193,48,
-        23,195,13,110,170,43,163,138,193,115,246,124,101,96,96,96,96,96,162,85,206,27,53,120,212,224,81,131,241,0,
-        22,244,172,56,232,1,0,45,49,62,239,193,168,195,13,0,0,0,0,73,69,78,68,174,66,96,130
+        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,115,
+        0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,0,206,73,68,65,84,56,203,99,96,160,17,96,100,96,96,96,40,232,217,251,159,
+        154,134,78,40,113,102,100,129,113,244,133,31,81,197,208,139,111,229,24,24,24,24,24,224,6,75,74,74,50,48,48,48,48,
+        204,154,53,11,175,198,180,180,52,2,6,51,160,26,204,203,203,203,208,219,219,203,176,118,229,60,20,133,86,118,158,
+        12,199,14,109,135,211,193,225,73,12,197,197,197,120,140,254,129,105,48,3,3,3,195,155,15,191,81,148,109,218,180,
+        137,193,202,206,147,97,211,166,77,112,57,152,90,162,12,110,104,104,192,170,204,207,207,143,97,211,166,77,112,26,
+        159,90,6,6,6,6,57,171,108,212,84,65,205,200,67,73,21,155,55,111,166,138,193,48,23,195,13,110,170,43,163,138,193,
+        115,246,124,101,96,96,96,96,96,162,85,206,27,53,120,212,224,81,131,241,0,22,244,172,56,232,1,0,45,49,62,239,193,
+        168,195,13,0,0,0,0,73,69,78,68,174,66,96,130
     };
 
     const unsigned char book_page_png[229] {
-        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,
-        115,0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,0,151,73,68,65,84,56,203,99,96,160,17,96,100,96,96,96,248,255,255,
-        255,127,146,52,49,50,50,18,82,195,2,99,220,188,121,147,170,46,102,66,230,252,249,241,129,65,67,67,131,65,67,
-        67,131,225,207,143,15,112,140,204,159,177,229,41,233,6,195,192,149,11,39,24,116,12,44,24,24,24,24,24,116,12,
-        44,80,248,100,185,24,6,96,134,33,243,41,10,10,100,23,227,227,147,148,42,174,94,60,73,180,38,109,125,115,156,
-        114,133,189,251,24,38,148,56,51,178,144,19,227,196,56,130,137,86,25,100,212,224,81,131,71,13,30,8,131,225,
-        101,197,156,61,95,25,134,4,0,0,62,173,57,101,59,184,173,200,0,0,0,0,73,69,78,68,174,66,96,130
+        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,115,
+        0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,0,151,73,68,65,84,56,203,99,96,160,17,96,100,96,96,96,248,255,255,255,127,
+        146,52,49,50,50,18,82,195,2,99,220,188,121,147,170,46,102,66,230,252,249,241,129,65,67,67,131,65,67,67,131,225,
+        207,143,15,112,140,204,159,177,229,41,233,6,195,192,149,11,39,24,116,12,44,24,24,24,24,24,116,12,44,80,248,100,
+        185,24,6,96,134,33,243,41,10,10,100,23,227,227,147,148,42,174,94,60,73,180,38,109,125,115,156,114,133,189,251,24,
+        38,148,56,51,178,144,19,227,196,56,130,137,86,25,100,212,224,81,131,71,13,30,8,131,225,101,197,156,61,95,25,134,
+        4,0,0,62,173,57,101,59,184,173,200,0,0,0,0,73,69,78,68,174,66,96,130
     };
 
     const unsigned char calendar_png[937] {
-        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,
-        115,0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,3,91,73,68,65,84,56,203,213,148,61,108,92,69,16,199,127,51,59,239,
-        157,253,124,254,186,179,157,47,199,136,20,20,68,17,21,13,20,116,72,32,129,168,144,160,66,20,80,210,83,208,
-        82,210,209,80,80,210,4,132,16,20,41,17,22,29,52,52,56,72,132,36,150,227,216,231,179,184,59,159,239,222,219,
-        183,67,113,231,115,66,17,65,153,105,86,63,205,238,106,52,255,255,12,60,109,33,151,63,252,202,111,108,174,211,
-        176,64,194,255,251,67,160,78,48,42,19,142,51,42,29,1,68,156,123,199,93,236,218,90,155,55,111,188,192,105,89,
-        253,175,138,82,130,195,94,197,106,211,152,111,40,95,111,31,241,209,91,151,40,178,156,143,111,110,99,247,31,
-        86,220,252,169,67,149,226,180,18,1,1,247,73,245,34,2,14,206,57,187,67,21,19,115,185,242,242,245,37,84,161,
-        55,140,20,13,165,63,140,28,252,93,35,27,239,125,231,91,203,235,228,121,66,68,136,117,196,29,50,51,0,170,24,
-        17,1,11,83,174,42,84,21,85,5,132,34,79,52,26,70,127,232,8,78,85,41,127,118,15,177,113,140,188,241,210,50,31,
-        188,186,5,8,251,15,247,137,49,178,121,101,19,128,221,221,93,178,60,227,194,198,5,0,238,252,117,135,229,165,
-        37,90,173,54,8,236,236,252,65,123,173,205,90,171,69,114,231,139,91,247,248,236,135,61,76,21,86,23,26,92,92,
-        89,0,32,148,5,117,93,115,113,165,152,52,115,184,64,150,101,180,167,92,174,22,44,47,45,176,60,229,97,171,96,
-        99,125,145,230,226,132,91,139,13,84,193,44,8,65,245,17,185,195,68,242,105,184,40,46,231,121,81,3,13,231,23,
-        52,224,156,231,131,42,22,4,203,66,96,48,232,241,224,193,30,32,12,6,3,82,74,51,241,122,189,30,33,4,170,106,
-        226,154,126,191,79,146,121,202,250,20,7,202,148,209,57,234,50,24,244,1,24,12,122,100,33,96,121,16,240,68,140,
-        37,184,206,62,141,49,226,238,164,148,0,136,49,206,170,186,253,237,59,224,9,53,161,211,45,185,254,250,167,228,
-        27,215,72,105,12,158,200,131,96,42,78,171,181,202,213,171,207,0,112,124,124,76,74,137,118,187,13,64,167,211,
-        193,204,88,89,89,1,96,111,247,46,189,70,151,23,223,125,13,142,126,231,251,47,127,166,181,60,207,229,43,151,
-        38,61,222,185,139,202,125,44,4,33,200,249,196,137,200,196,187,103,45,84,253,23,27,54,215,32,140,127,132,219,
-        219,212,71,32,97,238,188,199,226,132,32,88,102,2,56,117,29,113,23,220,125,214,10,17,33,165,132,170,82,215,
-        53,238,142,136,242,112,119,143,95,191,129,209,29,56,232,64,170,199,212,201,193,107,192,201,76,48,179,192,120,
-        116,202,225,225,1,160,84,85,133,187,207,196,58,59,71,163,17,0,227,170,34,127,246,125,246,199,167,200,243,25,
-        91,207,213,148,41,231,168,115,68,74,37,227,209,41,102,1,83,117,154,205,130,181,181,117,64,24,14,135,164,148,
-        104,54,155,0,156,156,156,32,34,20,69,49,115,201,43,111,127,66,62,117,88,255,180,38,120,73,158,25,8,52,155,
-        37,170,142,153,10,185,25,102,25,0,121,158,225,238,216,116,164,51,51,52,232,140,243,60,135,56,134,188,49,249,
-        185,58,33,155,159,195,178,233,123,51,76,5,205,131,144,72,48,93,50,170,138,62,42,86,120,156,67,120,82,222,73,
-        76,237,182,84,24,251,221,49,159,223,218,193,66,160,174,39,2,132,233,210,57,19,49,132,201,180,197,170,66,84,
-        103,92,85,21,33,4,84,149,88,215,148,101,96,169,48,236,151,187,15,40,171,154,238,176,196,241,153,181,30,91,
-        155,60,121,141,226,19,18,132,86,145,243,219,222,1,79,95,252,3,56,25,136,163,101,80,218,107,0,0,0,0,73,69,78,
-        68,174,66,96,130
+        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,115,
+        0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,3,91,73,68,65,84,56,203,213,148,61,108,92,69,16,199,127,51,59,239,157,253,
+        124,254,186,179,157,47,199,136,20,20,68,17,21,13,20,116,72,32,129,168,144,160,66,20,80,210,83,208,82,210,209,80,
+        80,210,4,132,16,20,41,17,22,29,52,52,56,72,132,36,150,227,216,231,179,184,59,159,239,222,219,183,67,113,231,115,
+        66,17,65,153,105,86,63,205,238,106,52,255,255,12,60,109,33,151,63,252,202,111,108,174,211,176,64,194,255,251,67,
+        160,78,48,42,19,142,51,42,29,1,68,156,123,199,93,236,218,90,155,55,111,188,192,105,89,253,175,138,82,130,195,94,
+        197,106,211,152,111,40,95,111,31,241,209,91,151,40,178,156,143,111,110,99,247,31,86,220,252,169,67,149,226,180,
+        18,1,1,247,73,245,34,2,14,206,57,187,67,21,19,115,185,242,242,245,37,84,161,55,140,20,13,165,63,140,28,252,93,35,
+        27,239,125,231,91,203,235,228,121,66,68,136,117,196,29,50,51,0,170,24,17,1,11,83,174,42,84,21,85,5,132,34,79,52,
+        26,70,127,232,8,78,85,41,127,118,15,177,113,140,188,241,210,50,31,188,186,5,8,251,15,247,137,49,178,121,101,19,
+        128,221,221,93,178,60,227,194,198,5,0,238,252,117,135,229,165,37,90,173,54,8,236,236,252,65,123,173,205,90,171,
+        69,114,231,139,91,247,248,236,135,61,76,21,86,23,26,92,92,89,0,32,148,5,117,93,115,113,165,152,52,115,184,64,150,
+        101,180,167,92,174,22,44,47,45,176,60,229,97,171,96,99,125,145,230,226,132,91,139,13,84,193,44,8,65,245,17,185,
+        195,68,242,105,184,40,46,231,121,81,3,13,231,23,52,224,156,231,131,42,22,4,203,66,96,48,232,241,224,193,30,32,12,
+        6,3,82,74,51,241,122,189,30,33,4,170,106,226,154,126,191,79,146,121,202,250,20,7,202,148,209,57,234,50,24,244,1,
+        24,12,122,100,33,96,121,16,240,68,140,37,184,206,62,141,49,226,238,164,148,0,136,49,206,170,186,253,237,59,224,
+        9,53,161,211,45,185,254,250,167,228,27,215,72,105,12,158,200,131,96,42,78,171,181,202,213,171,207,0,112,124,124,
+        76,74,137,118,187,13,64,167,211,193,204,88,89,89,1,96,111,247,46,189,70,151,23,223,125,13,142,126,231,251,47,127,
+        166,181,60,207,229,43,151,38,61,222,185,139,202,125,44,4,33,200,249,196,137,200,196,187,103,45,84,253,23,27,54,
+        215,32,140,127,132,219,219,212,71,32,97,238,188,199,226,132,32,88,102,2,56,117,29,113,23,220,125,214,10,17,33,165,
+        132,170,82,215,53,238,142,136,242,112,119,143,95,191,129,209,29,56,232,64,170,199,212,201,193,107,192,201,76,48,
+        179,192,120,116,202,225,225,1,160,84,85,133,187,207,196,58,59,71,163,17,0,227,170,34,127,246,125,246,199,167,200,
+        243,25,91,207,213,148,41,231,168,115,68,74,37,227,209,41,102,1,83,117,154,205,130,181,181,117,64,24,14,135,164,
+        148,104,54,155,0,156,156,156,32,34,20,69,49,115,201,43,111,127,66,62,117,88,255,180,38,120,73,158,25,8,52,155,37,
+        170,142,153,10,185,25,102,25,0,121,158,225,238,216,116,164,51,51,52,232,140,243,60,135,56,134,188,49,249,185,58,
+        33,155,159,195,178,233,123,51,76,5,205,131,144,72,48,93,50,170,138,62,42,86,120,156,67,120,82,222,73,76,237,182,
+        84,24,251,221,49,159,223,218,193,66,160,174,39,2,132,233,210,57,19,49,132,201,180,197,170,66,84,103,92,85,21,33,
+        4,84,149,88,215,148,101,96,169,48,236,151,187,15,40,171,154,238,176,196,241,153,181,30,91,155,60,121,141,226,19,
+        18,132,86,145,243,219,222,1,79,95,252,3,56,25,136,163,101,80,218,107,0,0,0,0,73,69,78,68,174,66,96,130
     };
 
     const unsigned char colourPickerIcon_png[534] {
-        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,
-        115,0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,1,200,73,68,65,84,56,203,213,212,191,75,27,97,24,192,241,239,107,
-        143,84,8,130,67,74,16,21,161,18,141,162,96,16,110,80,16,113,72,168,75,20,157,148,78,162,226,84,168,58,56,244,
-        47,168,130,171,58,182,58,157,104,150,4,132,130,68,252,193,137,40,40,230,196,42,132,8,69,234,34,34,85,49,188,
-        14,241,142,92,176,54,234,57,244,93,238,225,185,227,243,190,60,247,60,47,188,210,18,219,7,103,50,208,51,239,
-        40,186,61,215,133,160,113,74,222,232,3,142,194,46,117,26,5,96,115,99,13,101,168,13,128,170,153,107,0,230,124,
-        5,0,124,74,151,2,32,191,239,0,208,240,57,147,31,22,18,128,144,208,239,185,73,0,140,248,23,0,10,94,171,198,
-        255,31,172,60,229,227,62,185,2,19,153,120,25,104,29,105,121,57,220,39,87,80,107,42,8,55,215,2,16,89,221,103,
-        121,60,78,104,180,240,239,176,171,170,9,126,92,1,240,243,254,133,154,206,60,215,129,153,111,17,11,53,126,93,
-        2,88,27,140,125,77,210,255,49,12,132,50,173,6,192,222,191,7,100,160,215,107,67,127,95,220,0,240,174,200,133,
-        191,196,77,100,117,31,61,145,100,122,246,212,54,32,74,160,218,35,30,173,65,239,162,204,69,1,43,14,55,215,162,
-        39,146,176,53,104,57,129,234,193,252,106,124,254,231,150,221,212,5,135,167,151,182,188,207,235,166,164,248,
-        237,243,219,109,73,55,8,214,123,240,121,221,54,52,88,239,97,73,55,158,215,21,157,254,91,22,140,20,0,65,213,
-        111,229,77,116,231,48,69,183,75,163,51,170,201,15,237,221,86,57,68,62,39,142,69,53,185,96,40,52,248,202,45,
-        60,27,45,171,105,225,36,17,39,253,190,3,19,23,249,246,177,137,103,47,19,173,172,83,57,218,211,109,184,120,
-        202,228,197,162,154,204,205,189,57,94,124,16,23,47,189,19,98,81,77,62,132,11,39,46,156,108,220,177,19,231,
-        226,217,63,16,39,113,51,190,3,94,116,196,49,66,178,212,68,0,0,0,0,73,69,78,68,174,66,96,130
-    };
-
-    const unsigned char customControl_png[740] {
-        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,
-        115,0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,2,150,73,68,65,84,56,203,181,149,203,107,19,81,20,135,191,59,147,
-        38,77,154,144,196,164,15,147,86,5,5,75,213,133,21,116,37,10,186,42,130,139,22,164,136,139,254,5,162,224,194,
-        93,87,22,220,248,90,40,42,22,5,17,23,130,40,20,65,93,212,86,55,21,17,36,109,85,218,154,58,109,90,218,52,77,
-        141,121,118,238,184,177,147,230,209,24,169,94,184,195,157,51,247,124,252,206,185,247,204,17,228,135,193,191,
-        25,194,124,0,70,223,80,146,218,154,154,178,59,199,181,112,137,173,181,121,123,137,45,157,203,113,241,176,3,
-        64,8,192,232,29,76,148,133,78,205,126,7,224,86,231,206,146,111,231,6,230,105,242,122,203,194,123,143,56,177,
-        0,8,85,37,35,101,65,78,102,34,26,183,187,118,109,24,239,149,142,70,206,62,25,197,233,107,193,182,78,148,80,
-        85,0,20,128,140,148,5,51,172,77,113,254,96,160,0,244,96,56,204,189,55,223,24,249,18,55,109,215,58,219,248,
-        185,24,38,181,170,23,248,155,224,180,174,147,249,61,181,104,148,211,109,126,90,183,57,0,120,254,97,142,238,
-        199,95,249,152,243,18,146,62,110,132,150,185,254,122,194,132,95,237,218,203,100,68,51,253,51,186,158,7,175,
-        133,111,0,50,21,231,216,190,250,188,210,209,5,252,245,13,228,12,131,172,148,184,221,30,94,206,166,11,162,113,
-        41,165,138,45,197,185,203,200,252,173,187,51,56,137,99,75,67,65,254,1,144,122,145,143,68,41,218,83,2,110,9,
-        238,160,251,209,39,2,117,86,38,82,10,110,143,106,134,7,16,139,45,209,211,230,55,223,223,141,47,17,195,138,
-        162,235,149,193,0,134,167,17,13,168,173,161,64,109,114,113,142,243,237,65,142,238,241,1,48,22,78,114,121,100,
-        26,167,63,80,18,85,9,120,38,149,98,125,229,172,29,174,37,22,225,217,153,118,211,54,24,138,210,247,94,195,238,
-        111,42,130,26,165,224,53,104,241,72,44,204,241,170,39,15,237,31,14,211,63,245,3,167,215,111,166,201,0,164,
-        97,20,94,183,74,80,128,227,91,29,230,250,254,219,48,119,167,211,88,93,110,50,82,154,183,9,64,17,2,251,250,
-        2,169,4,5,104,113,217,204,245,211,201,24,30,151,11,85,8,172,138,178,161,143,82,205,239,106,36,146,175,182,
-        164,197,129,52,12,20,33,42,250,88,170,1,71,29,77,156,120,56,134,195,238,32,232,243,17,73,167,255,232,83,81,
-        177,42,4,46,139,5,185,178,72,71,192,198,129,186,44,169,149,120,85,63,229,138,138,21,33,136,45,47,115,97,127,
-        144,67,187,61,0,92,26,248,204,208,170,109,115,138,179,82,162,168,42,137,108,46,95,190,186,220,188,98,1,96,
-        183,115,51,20,101,88,139,147,200,234,104,70,93,85,71,110,182,166,83,3,243,127,213,216,226,185,92,89,251,139,
-        147,205,102,107,250,47,205,244,23,242,202,43,28,111,13,237,245,0,0,0,0,73,69,78,68,174,66,96,130
-    };
-
-    const unsigned char dataviewlist_column_png[224] {
-        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,
-        115,0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,0,146,73,68,65,84,56,203,99,180,155,117,239,63,3,25,224,80,154,
-        18,35,62,121,22,6,6,6,6,247,215,203,25,24,24,24,24,150,47,95,206,16,25,25,9,103,95,102,191,130,83,35,35,1,
-        139,89,96,12,152,161,203,151,67,44,137,140,140,100,96,88,87,205,64,54,176,155,117,239,127,107,107,235,127,
-        172,192,152,1,167,56,33,115,153,24,104,4,104,102,48,60,140,119,238,220,137,33,233,206,192,192,192,96,194,72,
-        153,193,238,238,238,152,178,213,12,12,12,103,176,4,39,17,150,141,134,241,104,24,143,134,241,104,24,15,104,
-        24,51,210,170,50,5,0,160,86,97,60,76,160,24,178,0,0,0,0,73,69,78,68,174,66,96,130
-    };
-
-    const unsigned char datepicker_png[1047] {
-        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,
-        115,0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,3,201,73,68,65,84,56,203,173,148,75,108,148,85,20,199,127,247,49,
-        223,224,116,152,182,51,211,86,228,21,107,48,5,36,38,38,116,97,19,35,11,27,33,81,74,68,22,110,52,46,100,225,
-        130,189,70,66,112,227,206,157,27,23,134,184,144,144,42,213,40,8,178,17,193,69,19,13,137,143,78,109,164,192,
-        52,244,49,211,41,180,211,105,231,123,220,227,98,166,223,180,184,209,192,127,117,79,206,205,239,158,156,243,
-        63,87,61,113,252,11,217,183,173,139,164,53,56,132,255,42,5,68,14,86,125,135,32,172,250,130,2,148,18,238,44,
-        84,176,189,249,28,175,238,123,150,21,63,224,255,200,57,40,45,6,116,166,45,143,37,53,95,94,155,231,196,208,
-        22,82,9,143,247,134,175,97,139,179,1,195,63,149,9,92,216,172,68,129,2,145,70,245,74,41,16,16,90,177,8,4,161,
-        99,147,167,25,216,155,65,107,88,172,133,164,146,154,165,90,200,220,253,8,213,253,214,55,178,163,189,11,207,
-        115,40,165,8,163,16,17,72,88,11,64,16,134,40,5,214,52,227,32,64,107,141,214,26,80,164,60,71,50,105,89,170,
-        9,10,33,8,52,55,43,37,108,61,12,121,229,249,118,222,25,220,1,40,102,102,103,40,253,112,28,196,161,173,162,
-        92,241,233,123,253,12,61,221,61,0,76,222,154,164,61,147,33,155,205,129,130,241,241,9,114,249,28,249,108,22,
-        39,194,167,151,238,240,241,119,119,177,90,67,103,91,146,199,59,218,0,48,126,138,213,100,133,253,111,28,132,
-        249,2,223,126,246,51,219,58,219,200,117,164,0,240,59,83,180,103,218,104,111,198,181,108,138,238,174,205,164,
-        55,55,226,236,230,36,90,131,181,70,97,180,94,55,110,131,221,148,196,212,127,132,191,174,17,205,131,168,86,
-        94,105,11,218,180,238,107,131,208,202,27,173,177,70,97,19,198,80,173,46,50,61,125,23,80,84,171,85,102,167,
-        238,242,235,87,176,58,9,115,101,184,119,239,30,65,16,112,234,236,232,6,103,124,248,230,32,190,75,80,158,175,
-        80,173,46,1,80,173,46,146,48,6,235,25,5,226,8,67,31,68,227,156,195,123,242,109,102,234,43,168,61,9,118,60,
-        29,17,69,17,167,206,142,210,191,123,39,135,7,246,0,240,245,245,63,249,224,204,101,78,30,235,143,237,231,92,
-        29,196,225,25,133,213,74,200,102,59,217,190,125,39,0,11,11,11,228,95,122,151,92,46,7,64,185,92,230,253,207,
-        175,199,208,194,244,50,64,252,192,233,115,163,156,60,214,207,214,173,91,26,61,30,191,141,86,69,180,49,10,163,
-        90,27,167,148,106,120,183,169,7,161,165,37,159,210,146,79,97,122,153,195,3,123,232,223,189,147,211,231,90,
-        45,50,74,48,70,161,19,86,1,66,20,133,132,97,132,136,32,34,132,97,72,20,69,113,117,107,208,53,173,135,3,68,
-        174,193,0,33,97,21,214,90,67,125,117,133,82,105,14,208,4,65,128,136,16,4,173,21,191,191,18,242,91,113,137,
-        137,217,229,13,195,219,213,211,198,150,142,36,0,243,229,121,156,243,169,175,174,96,173,193,106,45,164,211,
-        41,242,249,46,64,81,171,213,112,206,145,78,167,99,192,229,209,2,131,253,125,0,49,124,87,79,27,131,251,242,
-        92,30,45,52,122,219,217,14,10,210,105,31,173,5,107,181,194,179,22,107,19,0,120,94,2,17,193,54,87,250,72,95,
-        200,249,66,17,32,134,3,49,244,198,68,145,163,222,48,87,174,132,188,124,240,181,6,75,171,134,221,28,14,16,64,
-        161,181,70,156,139,1,47,30,56,4,92,248,23,124,61,116,219,238,23,152,26,27,225,251,139,224,50,251,27,118,203,
-        164,44,51,149,58,159,92,26,199,26,211,28,152,96,154,159,78,24,134,40,189,151,35,125,127,112,190,80,228,198,
-        68,49,126,116,13,250,212,51,13,47,79,141,141,208,209,11,153,84,7,246,151,219,211,248,65,68,165,230,35,72,108,
-        181,13,223,38,32,226,241,209,1,127,195,240,34,134,152,26,27,1,216,0,63,241,220,16,138,135,212,197,11,195,98,
-        110,142,196,149,255,253,251,40,83,99,87,31,30,252,32,124,106,236,42,81,239,208,163,1,175,135,71,189,67,28,
-        60,116,244,145,113,99,248,218,249,31,139,93,191,25,36,239,164,91,0,0,0,0,73,69,78,68,174,66,96,130
-    };
-
-    const unsigned char dirPicker_png[690] {
-        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,
-        115,0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,2,100,73,68,65,84,56,203,173,148,77,72,20,97,24,199,127,51,187,
-        149,37,138,212,166,104,145,162,168,187,219,238,169,216,139,81,183,133,186,232,130,183,8,169,240,22,88,167,
-        14,65,151,78,29,234,22,102,17,4,69,68,8,22,133,130,135,4,41,130,237,34,126,236,14,43,74,160,226,202,38,154,
-        203,238,206,206,103,7,155,209,217,15,108,213,7,6,230,121,231,121,127,239,255,249,120,71,184,123,111,192,212,
-        13,141,66,83,20,5,0,67,55,120,249,226,149,64,133,230,214,13,141,219,55,251,203,6,12,14,61,99,63,230,6,136,
-        197,230,72,38,147,37,3,58,219,189,220,232,187,110,170,170,138,105,154,246,3,112,234,164,135,231,131,67,66,
-        89,176,223,127,30,81,116,149,61,189,169,233,140,195,23,69,17,151,203,197,251,15,239,202,43,86,20,133,88,108,
-        142,175,9,147,169,149,10,243,173,141,112,177,63,98,90,238,17,117,157,31,175,7,4,91,113,32,16,228,233,196,52,
-        15,110,93,65,86,117,246,107,79,222,124,115,150,98,118,118,6,128,141,140,66,106,43,191,47,232,57,207,9,103,
-        41,100,89,38,16,8,194,196,244,158,155,23,126,37,28,126,91,75,135,253,158,83,244,226,230,89,138,247,130,134,
-        124,205,116,119,249,1,248,244,61,70,52,158,112,192,29,13,206,102,179,219,138,255,19,42,173,102,144,86,51,116,
-        119,249,9,249,154,237,44,114,185,92,101,138,11,161,169,180,98,127,179,212,71,227,9,90,234,79,35,106,91,59,
-        138,173,169,0,56,126,116,103,150,77,176,47,66,41,104,42,173,216,202,1,178,114,30,209,212,75,43,214,116,131,
-        188,102,128,105,129,183,131,254,228,52,102,150,210,204,175,101,28,217,180,55,84,211,88,119,12,128,244,198,
-        6,162,158,45,86,124,161,81,70,116,137,228,85,3,89,221,62,64,209,12,0,198,163,18,225,160,135,246,134,106,7,
-        52,28,244,48,30,149,0,88,251,189,133,40,167,156,138,103,98,18,181,117,245,36,55,243,200,255,20,91,229,136,
-        120,53,70,164,37,0,194,33,175,189,209,130,78,205,47,209,123,116,152,199,155,33,220,235,63,157,224,170,70,63,
-        205,53,46,164,213,12,2,96,236,42,244,151,149,86,34,222,197,34,248,110,232,89,223,101,238,51,73,223,231,157,
-        57,23,58,125,29,102,205,165,135,123,206,241,163,72,21,35,146,219,177,102,65,219,2,33,22,102,163,44,199,39,
-        9,223,121,43,0,84,244,3,31,27,29,54,11,215,92,139,31,75,194,5,14,104,99,163,195,102,41,248,129,193,133,240,
-        229,248,36,122,107,207,225,128,119,195,245,214,30,174,94,235,61,52,110,81,15,254,2,67,133,52,126,121,31,175,
-        36,0,0,0,0,73,69,78,68,174,66,96,130
-    };
-
-    const unsigned char doc_mdi_parent_frame_png[543] {
-        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,
-        115,0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,1,209,73,68,65,84,56,203,213,148,191,107,83,81,20,199,63,109,163,
-        137,177,52,131,56,149,78,162,75,186,132,102,112,16,164,22,135,206,130,147,136,131,171,248,55,248,23,184,139,
-        163,160,224,38,104,6,13,56,8,46,150,135,226,224,46,129,66,140,208,66,73,234,123,231,123,28,222,143,220,23,
-        146,52,21,151,30,184,28,206,123,239,126,222,247,126,207,189,23,206,90,44,189,252,180,239,157,110,244,95,161,
-        187,59,45,42,157,110,68,251,122,139,27,87,46,0,240,173,119,204,225,72,115,39,110,53,122,0,236,29,172,179,213,
-        232,177,119,176,14,192,163,215,247,120,245,224,5,159,191,252,96,121,114,210,73,208,147,162,127,4,163,24,150,
-        238,63,233,248,198,181,171,0,184,57,238,14,158,194,221,29,73,40,175,37,92,66,150,214,249,59,47,106,67,114,
-        92,70,5,192,190,62,159,169,96,57,27,167,82,221,184,157,130,1,214,218,15,169,86,224,247,16,220,129,76,29,14,
-        230,134,203,51,117,134,220,113,51,76,98,237,92,204,240,143,168,246,222,21,96,203,21,3,56,176,189,121,121,110,
-        243,242,70,165,121,163,212,172,48,148,4,224,163,145,115,126,244,147,246,165,121,139,172,114,107,245,23,80,
-        101,251,98,159,239,143,159,178,73,159,15,67,163,62,241,229,88,177,139,102,179,249,79,59,193,222,188,47,43,
-        54,141,193,169,177,105,167,167,133,187,23,67,82,145,235,245,58,74,172,12,14,61,78,146,100,33,80,248,188,152,
-        27,199,19,224,64,177,100,167,6,134,32,102,122,172,96,211,47,8,156,20,53,213,10,51,43,242,162,192,113,179,28,
-        86,202,245,24,28,39,68,81,68,173,86,43,84,75,42,253,104,218,106,6,131,65,42,42,0,123,232,49,138,121,246,49,
-        70,118,136,44,0,102,57,189,23,210,123,192,45,59,133,18,18,184,142,103,123,188,186,255,118,241,141,155,95,30,
-        43,51,172,113,167,178,187,211,162,211,93,140,167,92,125,230,123,168,62,183,64,130,187,119,110,114,246,226,
-        47,211,33,185,112,154,32,122,154,0,0,0,0,73,69,78,68,174,66,96,130
-    };
-
-    const unsigned char filePicker_png[705] {
-        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,
-        115,0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,2,115,73,68,65,84,56,203,173,149,75,79,83,81,16,128,191,57,173,
-        16,109,98,36,34,77,83,163,9,132,4,8,134,149,133,182,60,92,40,177,110,192,200,127,112,227,198,133,16,77,183,
-        26,31,11,54,110,116,43,75,18,96,35,134,16,147,170,8,22,77,72,8,180,17,35,98,43,80,171,162,65,130,15,218,235,
-        162,247,30,91,91,90,8,206,106,206,100,230,155,57,51,231,206,149,155,183,175,27,236,81,12,195,224,106,95,80,
-        178,109,118,128,190,43,215,246,4,190,117,231,70,158,205,110,41,139,139,139,216,108,54,12,195,64,16,16,65,204,
-        26,68,235,218,128,152,149,186,221,238,130,201,52,56,19,156,9,156,156,154,200,245,18,50,201,254,145,86,127,
-        251,182,183,40,8,246,121,91,81,230,217,26,128,82,98,86,108,86,43,20,72,85,2,220,63,254,105,71,189,237,13,184,
-        118,6,86,74,145,74,167,1,240,212,164,56,211,116,128,217,216,23,94,199,43,243,2,163,43,155,186,144,162,224,
-        233,87,97,188,205,62,148,121,222,95,246,155,114,251,65,42,28,159,181,243,203,249,104,110,235,149,187,52,184,
-        249,100,11,46,151,139,229,229,101,0,18,95,43,24,10,39,217,252,121,4,17,97,122,46,130,167,254,56,93,254,6,0,
-        70,38,230,9,62,120,206,189,203,93,165,91,177,186,186,170,159,216,218,187,57,214,204,190,191,249,46,26,26,93,
-        217,0,208,9,46,246,143,80,189,163,225,25,25,114,252,253,7,68,224,199,225,99,57,208,228,250,47,29,108,193,195,
-        145,34,96,11,110,168,12,120,95,109,155,89,250,82,65,168,165,119,249,27,8,71,150,182,7,79,189,152,196,239,107,
-        69,16,122,3,46,125,131,224,192,18,223,54,183,152,141,173,179,144,216,200,9,174,117,58,112,29,42,47,222,99,
-        111,139,143,170,170,42,62,38,18,132,158,133,178,62,133,50,198,194,81,58,61,117,0,26,94,235,116,208,121,162,
-        146,177,112,180,244,240,146,201,36,6,208,209,214,1,162,80,34,56,166,67,12,69,99,0,26,14,104,232,204,66,140,
-        158,178,65,238,23,235,177,181,102,66,79,205,138,205,39,114,190,110,43,15,158,13,61,90,223,206,216,93,140,206,
-        75,3,178,253,240,68,232,104,59,133,136,66,4,68,9,130,2,30,51,20,141,49,179,16,211,254,22,180,166,209,147,73,
-        150,5,183,23,234,143,136,202,44,29,17,148,185,217,188,190,211,192,120,142,95,138,110,226,145,97,128,60,184,
-        6,59,157,206,146,75,231,108,224,66,158,237,209,40,5,225,246,116,58,93,240,15,176,27,105,106,252,91,121,60,
-        242,132,84,117,119,209,149,186,43,25,125,56,104,216,222,14,147,170,238,38,112,174,231,191,113,53,220,210,255,
-        0,176,66,225,250,172,80,128,61,0,0,0,0,73,69,78,68,174,66,96,130
-    };
-
-    const unsigned char flex_grid_sizer_png[139] {
-        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,
-        115,0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,0,61,73,68,65,84,56,203,99,96,24,106,128,17,153,243,159,129,225,
-        63,133,134,49,98,149,192,102,48,185,98,76,180,10,138,161,103,240,192,69,30,177,96,232,71,30,11,53,131,131,
-        232,112,26,205,32,163,6,15,197,178,98,72,0,0,78,21,28,8,134,72,167,206,0,0,0,0,73,69,78,68,174,66,96,130
-    };
-
-    const unsigned char fontPicker_png[763] {
-        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,
-        115,0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,2,173,73,68,65,84,56,203,173,212,223,75,20,81,20,192,241,175,235,
-        234,134,146,191,211,132,162,210,76,13,125,241,193,140,32,138,64,200,135,210,240,143,8,234,33,236,161,255,32,
-        136,162,31,208,67,216,107,61,4,69,86,146,102,97,100,84,32,90,70,209,110,89,146,237,210,170,107,73,45,59,187,
-        206,220,59,167,7,157,213,113,55,215,176,243,116,231,206,220,207,220,57,231,204,197,182,109,177,109,91,180,
-        214,162,181,22,165,148,40,101,137,101,153,98,154,166,140,77,68,164,127,52,36,137,68,66,18,137,184,196,227,
-        134,24,134,33,134,17,19,219,182,229,210,149,11,66,154,240,2,136,44,220,19,145,197,177,32,2,74,219,244,142,
-        78,83,94,144,187,56,39,174,103,87,11,239,114,104,249,24,132,231,254,89,126,68,77,148,165,82,208,76,176,39,
-        29,42,34,252,50,76,62,125,143,146,235,129,240,156,129,169,244,154,81,0,79,58,20,132,190,55,51,28,106,220,68,
-        233,70,47,150,101,51,245,51,190,34,85,146,9,150,21,249,19,190,69,12,230,77,205,142,242,60,202,11,114,177,148,
-        34,56,27,75,179,129,140,169,88,202,171,45,66,239,232,20,109,77,229,136,8,149,69,62,44,75,19,156,49,82,190,
-        42,99,241,28,84,68,24,249,60,199,214,18,31,197,249,57,136,8,155,139,55,160,148,38,24,137,210,213,61,232,90,
-        124,237,212,145,213,224,37,52,97,106,30,140,132,105,217,89,200,147,177,41,108,219,38,150,176,176,44,69,104,
-        118,138,230,250,109,28,221,183,27,128,123,47,62,112,252,242,125,234,179,51,182,155,240,248,237,52,77,219,11,
-        169,40,218,128,136,160,181,166,48,207,75,69,145,153,68,3,225,24,64,242,5,195,254,191,192,14,26,249,61,207,
-        216,196,28,103,142,213,146,237,33,153,203,211,215,7,93,104,36,106,38,23,59,56,23,123,164,187,171,61,43,165,
-        43,108,129,155,207,38,57,208,80,230,66,157,2,165,67,35,81,147,64,56,182,132,167,75,197,75,255,15,190,78,199,
-        56,113,184,106,197,207,178,0,255,138,43,222,5,163,140,79,199,92,139,107,42,242,169,44,242,165,111,183,87,31,
-        103,185,245,124,146,120,194,228,209,235,48,243,166,114,21,19,96,96,56,64,107,99,25,53,21,249,46,180,181,177,
-        140,129,225,64,250,29,183,236,42,101,79,77,137,171,71,157,22,244,229,120,232,168,83,220,13,4,1,104,109,174,
-        75,46,116,208,177,241,32,157,185,183,233,254,151,67,72,68,104,217,123,16,120,154,130,47,71,183,212,239,103,
-        224,42,210,122,242,70,178,128,89,178,150,19,5,232,239,187,195,221,128,215,53,231,160,213,13,205,124,121,63,
-        76,200,63,132,131,123,207,157,63,203,90,163,163,161,214,117,173,105,39,228,239,1,160,186,161,121,225,75,22,
-        119,158,197,58,163,239,225,109,201,158,232,73,217,249,186,225,149,120,200,63,132,174,106,255,63,240,114,92,
-        87,181,115,184,173,243,191,185,73,220,25,255,1,27,116,30,78,220,127,50,40,0,0,0,0,73,69,78,68,174,66,96,130
-    };
-
-    const unsigned char gauge_png[260] {
-        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,
-        115,0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,0,182,73,68,65,84,56,203,237,148,193,10,194,48,12,134,191,192,68,
-        15,59,85,123,114,108,224,195,249,80,62,162,119,97,101,27,241,96,23,186,89,16,97,122,234,127,9,63,105,191,180,
-        105,40,20,21,173,37,49,234,214,92,1,52,232,182,220,189,8,149,153,155,88,34,92,245,107,15,48,37,112,3,187,186,
-        94,84,77,253,244,193,63,98,60,0,253,26,220,56,103,221,153,82,31,117,118,238,245,32,34,244,64,227,142,111,207,
-        211,3,99,10,158,128,206,251,197,130,156,159,47,63,2,157,63,89,126,4,194,170,207,213,188,177,141,32,137,39,
-        104,35,72,13,228,109,140,130,121,69,17,131,14,192,46,25,55,189,199,169,8,192,62,83,61,167,25,50,100,114,23,
-        145,223,205,113,249,34,138,254,168,39,152,20,54,162,96,104,253,128,0,0,0,0,73,69,78,68,174,66,96,130
-    };
-
-    const unsigned char genericdir_ctrl_png[328] {
-        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,
-        115,0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,0,250,73,68,65,84,56,203,205,149,45,18,194,48,16,133,223,102,106,
-        56,68,13,71,192,213,0,87,169,0,85,199,57,112,85,84,212,50,12,22,223,65,80,199,17,64,112,136,206,96,130,160,
-        233,36,75,210,191,9,3,107,54,217,118,222,110,190,108,18,224,75,70,0,48,223,221,164,79,209,243,122,74,129,154,
-        60,47,167,230,67,153,39,32,34,0,128,148,239,156,68,212,140,219,108,145,221,1,0,66,15,110,87,51,227,39,93,168,
-        143,168,110,134,240,38,187,154,156,234,170,249,120,144,112,153,39,8,171,2,101,158,52,21,122,171,152,91,20,
-        167,136,226,212,185,10,125,206,227,162,79,118,37,238,66,99,219,88,49,180,149,108,72,164,148,32,34,35,89,208,
-        38,18,86,5,14,251,99,107,151,112,111,109,55,110,143,201,178,147,177,43,62,152,177,126,96,148,247,194,216,197,
-        253,127,25,247,225,61,138,177,237,64,168,184,30,19,99,121,186,250,249,131,113,20,167,64,189,244,174,107,211,
-        229,157,40,108,215,38,79,224,237,218,228,125,251,243,167,233,91,111,41,94,184,99,147,209,23,75,30,253,0,0,
-        0,0,73,69,78,68,174,66,96,130
-    };
-
-    const unsigned char grid_bag_sizer_png[145] {
-        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,
-        115,0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,0,67,73,68,65,84,56,203,99,96,24,106,128,17,198,248,207,192,240,
-        159,74,6,50,162,8,144,98,48,46,181,200,226,76,180,10,138,161,103,48,11,185,26,9,197,9,11,213,98,127,52,242,
-        6,95,206,35,55,71,142,70,222,104,114,195,159,213,135,6,0,0,107,184,22,20,23,111,101,87,0,0,0,0,73,69,78,68,
-        174,66,96,130
-    };
-
-    const unsigned char grid_png[171] {
-        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,
-        115,0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,0,93,73,68,65,84,56,203,99,96,160,17,96,132,210,255,169,109,46,
-        11,140,149,83,190,21,69,38,54,64,136,97,241,134,119,36,139,77,233,244,102,96,96,96,96,96,162,121,80,156,60,
-        126,156,42,6,154,91,90,162,6,5,54,47,154,89,88,160,136,157,58,113,130,40,177,209,160,24,13,138,209,160,24,
-        13,138,1,15,10,218,135,49,141,204,165,62,0,0,88,73,82,108,106,29,221,90,0,0,0,0,73,69,78,68,174,66,96,130
-    };
-
-    const unsigned char grid_sizer_png[127] {
-        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,
-        115,0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,0,49,73,68,65,84,56,203,99,96,24,106,128,17,198,248,207,192,240,
-        159,10,134,49,98,8,162,27,76,41,159,137,86,65,193,52,26,198,163,97,60,26,198,163,97,60,188,195,120,20,0,0,
-        43,71,49,238,218,78,100,17,0,0,0,0,73,69,78,68,174,66,96,130
-    };
-
-    const unsigned char htmlwin_png[1053] {
-        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,
-        115,0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,3,207,73,68,65,84,56,203,125,149,203,111,27,85,20,198,127,119,60,
-        15,63,147,168,117,147,38,117,221,56,77,82,36,40,21,166,21,17,85,119,32,64,93,0,82,187,66,98,83,118,44,145,
-        216,241,7,32,177,103,197,6,177,172,4,18,40,21,69,106,37,36,170,136,87,2,9,45,105,28,119,100,210,184,73,28,
-        199,207,201,140,61,115,47,139,54,86,28,219,61,210,213,104,206,213,253,206,157,239,124,243,29,193,179,240,60,
-        79,9,33,16,66,160,148,66,41,197,225,56,156,83,74,225,186,46,213,106,149,76,38,35,232,19,218,225,131,186,174,
-        19,10,133,208,117,29,195,48,208,117,189,43,119,120,153,166,73,165,82,97,109,109,77,61,23,24,64,74,217,41,34,
-        165,236,220,178,223,50,77,19,223,247,137,197,98,228,114,57,245,92,224,3,208,126,239,253,192,35,145,8,201,100,
-        146,120,60,142,109,219,93,7,245,65,28,30,60,133,16,72,41,59,220,31,45,62,63,63,79,171,213,34,147,201,80,40,
-        20,84,58,157,22,0,29,226,29,199,81,134,97,32,196,211,148,166,9,64,80,42,59,108,110,53,169,55,91,196,162,6,
-        19,99,49,162,150,34,26,141,118,125,89,173,86,195,182,109,178,217,172,232,186,241,225,8,133,52,74,229,125,22,
-        22,139,104,154,198,137,99,81,34,97,3,41,33,95,168,227,186,45,50,41,151,99,195,33,98,241,97,0,12,195,232,244,
-        168,135,10,41,37,166,105,240,223,102,141,91,119,11,92,190,152,34,61,145,160,82,247,104,236,183,9,2,197,104,
-        210,4,5,43,171,59,156,58,105,48,59,105,98,152,145,46,208,30,185,1,180,125,159,47,191,94,230,213,151,38,136,
-        134,13,22,31,148,216,40,54,216,46,57,20,30,215,177,55,234,180,219,146,212,201,17,110,221,45,178,239,105,60,
-        99,175,139,123,253,168,2,126,188,251,8,167,169,225,184,1,107,127,109,241,96,189,76,60,102,96,26,26,97,75,231,
-        202,165,113,188,150,100,171,228,16,54,34,124,255,83,142,15,175,159,239,81,83,23,176,166,105,220,252,225,1,
-        247,115,46,169,84,156,64,74,170,53,143,124,161,66,219,151,156,63,151,100,234,244,48,197,45,7,203,208,105,58,
-        146,59,247,242,92,187,122,182,163,251,190,84,8,33,88,254,119,135,53,187,196,55,223,254,77,114,36,194,27,151,
-        211,120,45,159,194,227,26,59,187,251,124,119,123,157,213,124,133,125,55,160,82,245,200,217,187,84,170,77,44,
-        203,26,204,113,16,4,248,190,79,16,40,74,229,38,43,171,37,198,79,36,248,228,198,69,174,189,51,205,107,175,140,
-        241,217,23,11,220,156,207,81,169,182,217,222,171,179,83,110,32,165,196,243,188,193,192,190,239,147,26,183,
-        240,218,79,59,252,199,202,38,235,118,21,63,80,228,11,85,254,92,46,113,230,212,8,142,19,176,83,114,49,244,16,
-        167,199,227,24,58,61,170,232,105,222,220,133,227,220,91,114,121,178,221,224,244,248,48,153,116,130,221,106,
-        147,165,251,59,36,98,97,116,29,30,109,236,34,3,73,126,179,194,133,115,58,195,67,17,26,205,118,127,142,15,128,
-        223,125,107,138,227,137,125,70,71,71,240,3,129,101,105,36,226,6,47,206,140,50,20,55,169,53,92,42,13,151,197,
-        213,39,180,220,61,62,120,111,22,41,67,131,85,33,165,68,211,52,166,38,83,124,122,227,12,159,127,85,100,118,
-        234,44,63,255,90,36,95,216,99,44,25,101,40,97,146,78,13,83,111,6,252,190,148,227,237,57,131,75,217,25,28,215,
-        235,249,123,123,168,112,61,159,235,239,95,161,213,190,195,237,95,86,201,61,18,204,101,211,12,37,44,54,138,
-        13,138,219,123,252,179,114,159,171,175,135,248,248,163,55,105,181,65,41,217,51,28,58,38,84,46,151,149,16,2,
-        215,117,17,66,195,50,5,15,31,174,179,240,219,26,94,75,199,10,91,184,174,135,30,106,145,189,48,201,203,231,
-        95,32,144,26,65,16,160,105,26,74,41,108,219,102,110,110,78,244,120,5,64,56,28,126,90,29,152,158,153,101,122,
-        102,182,175,165,250,129,66,169,110,59,29,72,197,32,99,239,183,119,244,204,129,221,246,0,251,190,143,235,186,
-        4,65,208,119,154,244,3,61,58,16,34,145,72,103,239,127,57,29,91,170,117,31,46,131,0,0,0,0,73,69,78,68,174,66,
-        96,130
-    };
-
-    const unsigned char hyperlink_ctrl_png[329] {
-        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,
-        115,0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,0,251,73,68,65,84,56,203,237,148,177,141,132,64,12,69,191,135,21,
-        4,4,20,0,25,45,80,13,5,80,2,77,208,1,69,80,1,1,5,144,32,68,35,72,4,104,24,253,11,238,208,114,90,64,48,171,
-        77,78,247,67,107,108,125,63,219,3,252,77,101,45,239,166,168,79,121,249,88,97,57,109,189,76,228,5,197,26,219,
-        123,119,155,237,182,240,94,108,71,143,219,195,42,19,75,198,89,75,148,137,28,180,71,146,0,192,247,24,175,252,
-        158,44,65,18,34,242,157,107,205,120,223,49,127,28,211,247,125,94,115,124,129,45,73,84,85,133,113,28,225,121,
-        30,210,52,5,178,22,86,206,131,32,96,158,231,92,29,119,93,199,190,239,217,52,13,235,186,230,21,230,167,24,138,
-        162,224,86,90,107,206,243,188,91,248,242,229,133,97,136,56,142,49,77,19,140,49,48,198,64,41,5,215,117,111,
-        108,197,249,240,176,44,11,68,4,34,2,165,212,115,75,108,255,138,40,138,48,12,3,28,199,249,85,220,194,224,241,
-        202,105,173,183,171,247,54,138,163,171,19,252,235,72,95,234,69,150,150,108,58,73,73,0,0,0,0,73,69,78,68,174,
-        66,96,130
-    };
-
-    const unsigned char infobar_png[556] {
-        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,
-        115,0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,1,222,73,68,65,84,56,203,237,147,75,104,19,81,20,134,191,153,59,
-        147,103,69,155,193,90,155,44,138,168,84,81,105,172,197,250,160,27,165,226,166,174,234,66,40,221,21,9,72,17,
-        151,46,220,136,175,141,8,42,10,34,42,212,71,69,16,164,138,49,21,2,10,218,44,148,202,104,37,214,26,155,38,29,
-        48,162,96,155,38,153,204,184,104,25,136,149,118,213,93,62,56,155,115,254,251,223,123,126,184,80,165,202,191,
-        72,182,157,178,151,195,88,1,136,190,55,136,244,103,200,254,145,56,218,230,230,66,119,19,66,150,150,60,108,
-        21,75,196,123,34,168,66,84,244,107,119,182,32,167,115,121,142,220,254,201,239,149,155,217,219,26,230,226,136,
-        198,213,231,169,121,73,129,193,193,215,0,204,26,227,196,18,227,11,204,189,110,149,26,159,187,162,132,144,145,
-        7,222,24,228,92,65,71,104,187,106,184,49,92,196,44,219,115,198,119,238,241,57,103,50,52,244,140,68,226,235,
-        127,95,222,253,56,206,147,228,119,14,13,196,48,166,243,115,81,124,152,178,65,86,88,237,23,116,108,240,19,77,
-        78,243,41,39,48,203,22,138,128,208,250,70,198,70,116,126,73,10,163,111,117,206,20,12,102,51,105,210,153,41,
-        78,94,62,15,192,185,125,173,28,126,244,146,83,237,97,214,248,189,0,200,75,229,184,106,109,144,140,62,140,47,
-        208,64,125,192,143,170,8,66,187,59,233,234,8,59,154,120,42,75,112,133,143,167,95,38,156,158,188,181,94,2,203,
-        172,48,219,164,149,81,196,252,157,178,143,58,23,108,220,177,133,34,96,76,102,209,99,15,120,24,125,231,232,
-        103,74,38,183,58,219,217,21,170,115,162,144,38,126,140,218,205,167,191,33,105,235,216,222,224,225,133,110,
-        112,105,255,12,199,14,54,46,186,201,181,179,87,232,58,209,75,178,183,15,143,75,173,152,121,154,183,161,132,
-        52,47,119,123,2,68,250,63,242,106,82,226,120,155,155,200,129,166,69,77,239,95,191,137,214,178,135,90,32,95,
-        40,97,154,86,197,92,45,91,203,247,65,170,84,89,200,95,195,251,161,60,207,129,119,184,0,0,0,0,73,69,78,68,174,
-        66,96,130
-    };
-
-    const unsigned char menu_png[795] {
-        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,
-        115,0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,2,205,73,68,65,84,56,203,157,149,203,79,147,65,20,197,127,109,191,
-        175,79,91,132,66,145,150,218,90,138,16,64,80,91,197,248,32,136,80,81,67,72,148,40,104,162,226,202,165,113,
-        225,202,133,127,128,38,186,49,26,54,70,217,248,32,70,23,70,163,98,98,84,98,162,66,125,37,190,0,3,5,26,160,
-        165,128,180,96,235,231,130,71,212,72,91,122,54,115,103,114,115,114,231,220,115,103,100,205,231,239,72,249,
-        246,28,150,2,49,52,200,246,98,11,110,183,91,182,88,142,144,111,207,161,98,67,9,75,67,9,239,189,222,184,25,
-        194,124,224,189,125,129,142,1,37,155,54,151,35,40,20,124,125,217,65,77,243,113,116,2,41,65,62,31,72,209,24,
-        154,180,12,244,70,13,3,223,250,136,69,163,12,190,125,204,245,75,23,121,215,51,148,58,49,40,40,112,111,195,
-        146,173,97,168,223,15,64,231,195,123,76,9,50,162,63,34,75,38,94,184,168,33,199,193,242,236,44,212,170,113,
-        114,237,86,212,138,25,204,150,2,158,189,248,134,40,42,82,39,118,108,173,155,139,140,84,213,121,22,18,236,101,
-        53,41,105,44,244,126,254,196,228,240,210,52,116,26,213,108,41,182,197,39,110,116,91,176,57,156,252,2,100,128,
-        20,103,229,159,179,164,164,144,3,87,250,68,114,245,218,164,43,191,220,21,146,0,62,143,77,115,174,210,36,251,
-        47,49,128,89,167,100,61,31,105,105,125,195,201,83,199,120,112,163,141,170,134,67,104,19,120,89,165,152,92,
-        188,226,121,68,167,167,96,178,159,231,157,95,8,142,12,51,210,251,154,167,237,175,112,22,89,49,58,54,210,253,
-        214,203,218,66,19,146,222,201,10,163,38,177,20,127,34,111,99,45,163,222,251,140,133,69,158,220,108,101,34,
-        221,74,48,52,142,247,214,13,2,254,33,66,161,92,42,235,138,147,29,144,185,49,17,181,232,151,165,177,179,214,
-        131,127,116,132,210,77,110,98,17,1,147,221,141,248,115,128,166,131,85,248,195,22,76,90,121,92,98,89,123,123,
-        187,100,115,56,1,184,230,83,98,55,232,82,242,237,209,53,250,197,155,183,67,244,177,50,123,21,225,201,49,130,
-        19,17,140,89,217,168,4,89,66,82,159,207,23,95,99,141,92,66,27,241,115,245,234,117,86,174,50,19,8,167,115,184,
-        177,134,68,3,29,82,72,137,155,231,239,249,128,213,85,75,253,182,60,90,91,174,112,187,229,44,221,17,17,77,70,
-        33,37,170,239,116,116,249,40,170,46,231,213,163,119,8,106,21,103,78,159,96,42,153,230,233,12,203,25,25,244,
-        49,19,14,50,49,163,132,88,148,157,251,143,192,88,31,157,111,222,99,46,45,35,227,215,52,101,21,187,89,147,25,
-        3,96,120,42,9,226,116,219,90,214,153,34,180,222,188,71,85,253,94,212,82,148,71,119,219,112,85,238,162,254,
-        64,3,209,80,16,101,154,149,213,182,76,242,75,93,179,47,163,152,140,143,229,2,174,202,61,184,230,182,163,230,
-        60,246,85,55,97,215,1,88,200,43,171,248,35,121,246,175,76,23,23,177,27,128,193,96,32,85,4,2,1,60,30,207,95,
-        246,249,13,151,143,223,233,229,195,217,101,0,0,0,0,73,69,78,68,174,66,96,130
-    };
-
-    const unsigned char menuitem_png[481] {
-        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,
-        115,0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,1,147,73,68,65,84,56,203,237,148,59,75,99,65,24,134,159,19,19,141,
-        174,23,68,188,32,187,226,70,84,52,133,96,68,69,176,80,196,78,252,13,98,155,98,43,97,127,130,221,194,178,165,
-        90,219,216,69,180,209,160,196,11,136,138,120,169,12,164,208,168,139,183,156,131,217,156,115,50,159,69,112,
-        141,24,77,36,54,130,47,12,188,124,243,206,195,240,14,12,124,234,195,74,123,48,63,150,207,197,83,94,148,23,
-        44,28,75,240,107,160,86,3,112,62,12,125,213,37,244,213,149,230,5,94,59,51,254,123,199,227,216,102,101,105,
-        129,189,237,221,39,225,141,197,212,202,69,201,52,239,76,223,208,175,79,8,5,215,9,239,46,16,60,140,209,233,
-        41,163,165,233,39,29,158,36,71,155,138,182,30,215,171,96,121,9,92,92,86,195,183,175,113,92,95,138,24,26,238,
-        38,169,159,3,224,237,45,192,216,180,128,20,88,89,6,14,215,235,181,57,211,237,224,240,200,179,64,104,254,31,
-        134,225,198,235,117,179,26,186,165,181,171,226,69,168,43,19,248,111,220,38,162,155,207,194,74,44,148,114,35,
-        2,125,189,21,204,45,70,105,236,174,202,8,190,136,219,185,191,244,244,236,169,220,220,136,92,94,166,86,52,42,
-        242,123,250,88,178,157,115,100,11,136,1,137,4,216,54,152,38,136,192,232,208,119,38,255,236,75,142,29,103,150,
-        74,166,234,177,44,80,74,8,174,71,56,136,92,17,51,109,242,3,43,147,187,59,33,16,216,161,191,191,157,202,210,
-        66,38,39,124,90,222,85,40,177,8,4,118,240,251,125,218,214,118,152,230,166,122,166,102,14,222,161,99,101,225,
-        247,63,222,80,215,19,180,54,55,100,133,107,111,253,15,210,129,227,99,94,141,79,101,211,61,62,197,162,136,135,
-        150,231,238,0,0,0,0,73,69,78,68,174,66,96,130
-    };
-
-    const unsigned char pagectrl_png[601] {
-        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,
-        115,0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,2,11,73,68,65,84,56,203,213,148,191,107,19,97,24,199,63,119,73,
-        99,82,67,165,21,11,69,74,117,117,20,113,16,167,76,10,69,71,161,56,56,233,38,130,13,244,111,80,161,162,131,
-        139,171,131,131,67,231,42,162,32,104,165,212,180,4,57,48,77,76,98,46,63,218,36,119,201,189,119,185,75,242,
-        58,164,173,14,185,20,83,3,250,192,11,239,240,240,125,191,239,231,251,188,47,140,178,228,128,186,247,232,141,
-        28,70,51,184,191,209,52,237,175,154,85,71,69,97,244,194,109,167,222,119,45,223,143,13,204,192,47,147,224,97,
-        39,39,19,159,254,45,20,135,58,254,188,113,10,85,141,32,4,52,155,208,104,116,41,138,50,119,111,186,195,11,191,
-        205,158,37,118,113,154,237,109,80,85,144,18,58,29,112,50,54,176,59,188,176,176,85,12,3,114,57,48,77,168,213,
-        160,82,1,93,15,30,13,133,81,151,212,162,80,44,130,174,67,62,15,115,115,26,75,75,155,24,86,10,16,128,141,162,
-        52,153,24,191,53,88,248,219,139,87,4,186,93,112,28,138,153,121,242,215,174,144,76,246,156,90,22,44,46,110,
-        18,139,157,3,198,1,3,104,2,13,18,137,135,4,137,247,23,14,126,252,194,245,133,133,158,61,211,100,189,26,98,
-        107,75,146,203,41,8,1,66,64,56,92,7,76,224,7,208,64,202,26,158,183,75,56,92,167,237,248,56,142,118,187,96,
-        24,80,40,128,105,114,251,116,154,229,15,37,162,229,16,90,237,56,174,11,82,126,7,102,128,2,158,167,35,132,142,
-        148,6,150,165,115,44,224,135,162,90,237,37,148,207,195,206,14,51,217,44,15,34,171,60,187,58,207,147,59,151,
-        0,176,90,27,120,222,25,60,239,43,158,87,65,202,230,30,231,134,63,99,37,149,130,201,73,208,52,40,149,216,191,
-        191,156,181,15,122,28,167,130,235,102,240,188,52,96,239,5,232,208,106,25,132,34,62,194,237,114,185,55,91,233,
-        52,7,47,194,113,232,136,95,240,78,158,120,202,218,218,13,198,198,92,20,197,69,74,27,41,219,76,77,188,247,119,
-        252,206,10,115,121,101,133,128,101,129,235,130,101,97,183,90,172,207,94,32,246,91,223,244,212,203,63,155,227,
-        243,143,227,136,62,77,241,163,252,21,207,95,91,252,23,245,19,111,59,83,216,73,231,114,168,0,0,0,0,73,69,78,
-        68,174,66,96,130
-    };
-
-    const unsigned char propgriditem_png[436] {
-        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,
-        115,0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,1,102,73,68,65,84,56,203,181,85,59,114,131,48,16,125,139,20,209,
-        184,241,76,238,65,225,75,164,246,33,114,12,102,40,124,157,212,230,14,161,160,117,225,113,231,134,210,51,9,
-        2,180,41,64,124,108,164,56,14,126,51,12,2,237,190,21,79,111,5,240,36,80,119,103,165,20,152,25,198,24,8,33,
-        250,113,16,4,32,162,73,18,51,59,223,105,173,1,128,36,0,40,165,16,199,241,77,240,35,72,146,4,90,107,72,91,77,
-        107,141,48,12,177,94,175,157,73,85,85,129,136,32,165,188,175,138,82,138,119,187,29,247,48,134,185,105,248,
-        26,135,195,129,79,167,19,251,176,90,173,24,64,187,98,234,180,28,148,167,246,154,65,167,161,27,77,131,158,88,
-        214,237,67,154,166,119,125,225,241,120,116,206,241,215,247,64,108,241,246,241,234,37,220,111,11,111,220,126,
-        91,244,54,11,0,128,159,224,227,150,120,172,239,63,193,47,114,144,162,145,2,198,24,124,190,251,147,138,86,9,
-        103,92,81,0,20,134,64,85,77,53,222,108,54,94,98,187,185,174,184,52,77,209,116,174,232,53,168,235,122,17,41,
-        38,196,115,189,255,40,108,87,182,13,66,4,33,4,178,44,115,182,171,45,172,148,66,158,231,206,121,219,104,127,
-        210,248,124,62,67,107,141,40,138,156,243,55,26,47,230,223,185,21,103,89,118,87,178,47,206,74,210,31,155,75,
-        217,205,186,75,142,171,0,64,89,150,191,174,216,23,99,55,127,242,107,178,187,126,109,65,59,54,198,76,116,156,
-        139,185,92,46,99,222,229,241,3,184,95,223,13,159,71,168,94,0,0,0,0,73,69,78,68,174,66,96,130
-    };
-
-    const unsigned char propgridpage_png[237] {
-        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,
-        115,0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,0,159,73,68,65,84,56,203,237,146,177,13,195,32,16,69,63,150,135,
-        185,77,24,128,113,168,143,153,96,136,235,25,35,101,10,75,164,178,149,196,49,28,142,157,52,254,21,247,245,121,
-        130,175,51,0,192,204,5,29,242,222,155,86,102,156,15,206,57,21,116,186,223,0,160,180,224,195,187,65,68,32,162,
-        149,215,171,225,147,153,115,94,96,68,244,50,127,5,158,97,167,188,184,54,239,2,111,65,123,225,102,207,186,169,
-        215,145,153,75,140,177,180,196,204,170,204,102,199,71,104,124,30,82,74,205,11,154,204,10,108,173,173,134,69,
-        68,149,185,170,184,170,248,113,21,231,119,44,34,203,55,106,10,33,224,175,122,0,136,59,151,224,122,102,234,
-        63,0,0,0,0,73,69,78,68,174,66,96,130
-    };
-
-    const unsigned char radio_box_png[488] {
-        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,
-        115,0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,1,154,73,68,65,84,56,203,229,148,221,43,131,81,28,199,63,143,240,
-        112,129,25,53,110,180,87,111,105,17,226,194,37,41,141,184,96,252,41,171,231,226,252,77,146,18,101,139,11,10,
-        81,36,47,115,102,55,44,154,103,115,33,141,29,23,82,179,103,102,54,174,252,234,116,206,249,157,206,167,239,
-        249,157,239,57,240,71,161,125,145,87,66,8,0,132,16,228,142,139,236,177,130,133,16,42,127,33,15,102,233,139,
-        133,16,66,171,206,157,228,171,46,36,228,59,240,135,200,234,18,78,83,86,141,45,224,195,189,109,117,113,25,35,
-        42,175,73,62,164,176,55,55,209,211,229,197,231,117,211,235,31,214,202,6,159,158,69,57,57,61,39,16,152,198,
-        52,77,108,54,27,242,234,146,166,230,150,31,41,174,202,79,236,31,28,49,59,59,135,148,146,80,40,132,148,146,
-        153,153,105,116,189,174,178,82,124,186,61,165,10,166,75,177,174,5,60,56,224,199,76,222,49,57,57,142,219,229,
-        194,231,243,144,78,61,144,205,102,191,243,126,113,197,61,221,94,26,26,237,100,95,50,116,250,220,188,190,102,
-        120,201,100,120,76,155,149,149,162,127,104,76,251,141,39,109,1,31,31,238,168,168,140,179,179,187,207,205,109,
-        130,246,54,7,163,35,131,120,92,29,244,245,143,150,111,183,168,140,179,188,178,134,97,24,56,157,78,98,177,24,
-        219,91,97,236,173,142,202,236,182,178,186,142,97,24,68,34,17,52,77,35,28,14,51,63,31,68,215,235,127,207,110,
-        95,185,176,20,187,89,20,7,166,38,136,108,110,176,24,92,64,41,197,210,98,144,196,77,156,231,231,167,92,64,161,
-        86,92,177,199,213,129,125,216,65,58,149,132,212,123,174,166,86,39,121,159,168,172,20,63,185,249,146,192,133,
-        62,251,255,21,111,124,157,148,73,232,140,102,176,0,0,0,0,73,69,78,68,174,66,96,130
-    };
-
-    const unsigned char ribbon_button_png[220] {
-        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,2,0,0,0,75,214,251,108,0,0,0,3,115,66,73,
-        84,8,8,8,219,225,79,224,0,0,0,9,112,72,89,115,0,0,10,240,0,0,10,240,1,66,172,52,152,0,0,0,127,73,68,65,84,
-        56,203,99,96,160,10,248,79,46,56,115,230,12,3,3,3,11,196,148,51,247,191,146,97,55,35,3,3,3,3,3,19,229,158,
-        24,28,70,176,96,10,153,42,241,224,209,112,250,222,23,194,70,64,226,8,123,248,49,50,18,229,10,8,56,123,246,
-        44,154,200,161,195,135,136,245,8,28,124,248,240,1,206,126,243,230,205,224,142,17,218,68,42,49,254,39,202,8,
-        92,225,79,172,17,88,227,159,4,35,48,211,223,80,136,17,42,69,234,217,179,103,25,25,6,20,0,0,22,140,88,92,205,
-        109,178,5,0,0,0,0,73,69,78,68,174,66,96,130
-    };
-
-    const unsigned char ribbon_gallery_item_png[679] {
-        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,2,0,0,0,75,214,251,108,0,0,0,3,115,66,73,
-        84,8,8,8,219,225,79,224,0,0,0,9,112,72,89,115,0,0,10,240,0,0,10,240,1,66,172,52,152,0,0,2,74,73,68,65,84,56,
-        203,221,148,203,75,84,97,24,198,159,239,118,206,55,231,246,125,103,198,193,75,55,133,2,137,144,4,75,34,48,
-        2,151,17,174,130,218,181,171,77,43,233,95,8,178,69,45,219,68,155,160,149,171,10,161,182,82,16,136,130,165,
-        98,106,26,77,94,112,110,103,102,156,203,153,115,90,8,81,112,138,200,32,232,89,189,155,231,199,251,62,15,188,
-        192,129,69,0,188,93,173,252,161,57,191,56,52,52,68,15,190,197,95,64,240,111,83,233,201,195,234,221,113,80,
-        26,51,70,24,5,23,124,224,172,186,125,207,236,59,241,187,136,218,196,248,229,1,3,150,5,215,134,242,144,246,
-        215,115,249,133,169,73,243,198,56,9,139,64,20,51,15,212,252,21,2,148,194,178,224,216,112,28,40,5,173,105,149,
-        48,178,109,212,222,152,165,231,4,173,166,61,210,76,13,70,162,11,132,255,4,193,24,92,7,158,11,229,65,171,88,
-        187,156,5,89,241,42,91,152,177,241,158,48,177,87,159,13,154,195,129,123,45,148,253,223,135,248,35,194,115,
-        161,21,180,130,175,154,94,140,244,231,163,254,154,107,124,228,166,132,72,165,200,110,42,124,77,42,205,34,189,
-        21,25,135,147,26,225,12,218,219,247,67,171,154,204,11,127,211,203,16,110,74,34,28,34,20,183,210,182,175,125,
-        115,73,32,159,92,42,205,118,85,185,85,165,178,18,27,65,155,7,237,205,148,211,98,134,36,194,1,87,48,179,48,
-        179,84,118,168,158,62,239,211,205,228,44,212,196,211,23,15,238,52,130,112,125,53,183,73,163,209,235,197,209,
-        94,147,8,27,134,6,115,192,109,8,29,49,29,65,34,110,36,35,228,241,254,99,247,31,175,189,43,77,79,174,207,89,
-        60,227,63,58,211,120,102,49,155,136,12,132,3,51,11,195,167,220,173,23,75,13,53,150,124,72,28,161,148,107,204,
-        204,21,118,50,162,231,152,218,149,231,114,149,35,245,182,29,11,5,163,3,194,7,247,90,45,82,46,97,79,95,77,222,
-        34,106,71,203,43,229,249,47,181,206,254,180,155,177,104,106,120,9,91,58,63,213,205,91,210,151,132,200,70,80,
-        41,151,105,33,30,9,89,103,50,34,191,211,152,93,44,170,83,186,187,87,219,146,59,210,169,242,43,43,237,76,117,
-        123,218,217,222,104,183,150,99,158,13,245,88,221,62,31,83,59,25,177,85,174,189,156,95,245,10,206,135,133,13,
-        206,40,163,132,81,8,116,137,240,2,107,151,24,194,75,23,79,14,30,58,29,83,103,255,69,252,159,255,130,228,23,
-        241,111,245,21,249,43,197,168,168,229,66,5,0,0,0,0,73,69,78,68,174,66,96,130
-    };
-
-    const unsigned char ribbon_page_png[368] {
-        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,
-        115,0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,1,34,73,68,65,84,56,203,237,148,189,74,195,80,24,134,159,156,156,
-        180,41,73,106,109,77,3,149,14,130,67,71,39,7,7,175,64,240,6,188,24,111,198,209,193,189,131,155,16,156,68,68,
-        58,116,81,168,67,17,52,181,169,249,59,78,133,148,84,65,218,12,133,190,240,45,135,151,231,59,223,207,57,176,
-        105,210,250,131,76,1,168,56,100,191,158,174,4,203,20,188,6,6,210,168,34,231,135,85,145,224,237,24,5,115,28,
-        197,4,97,12,128,109,215,168,232,218,159,240,209,103,12,228,192,0,89,86,52,206,166,17,190,255,204,184,210,226,
-        164,231,210,168,233,232,218,148,254,253,132,179,211,46,134,88,76,164,20,104,128,200,151,145,46,9,211,177,232,
-        186,22,110,187,193,240,97,192,245,221,11,227,143,9,143,195,119,194,88,21,252,115,201,124,166,52,91,94,158,
-        211,220,165,163,27,124,237,181,232,9,137,221,104,114,116,240,77,148,128,41,139,125,22,249,225,137,40,224,208,
-        51,86,222,134,167,81,130,52,109,228,44,12,145,2,58,117,253,215,27,255,71,109,71,240,22,132,104,92,222,42,207,
-        50,215,190,199,18,224,234,252,120,237,96,81,214,203,219,130,23,135,119,113,227,151,247,187,109,123,92,26,120,
-        243,244,3,222,59,107,50,255,78,63,254,0,0,0,0,73,69,78,68,174,66,96,130
-    };
-
-    const unsigned char ribbon_panel_png[392] {
-        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,
-        115,0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,1,58,73,68,65,84,56,203,237,146,201,74,66,97,0,133,191,235,117,
-        246,70,52,160,98,148,101,161,17,98,45,34,40,17,172,93,171,94,160,135,233,101,218,6,45,107,33,18,13,20,9,9,
-        54,108,196,208,104,210,224,90,87,202,225,254,127,235,200,202,192,22,66,103,127,62,14,231,28,232,53,41,108,
-        164,165,207,227,236,58,216,10,176,185,182,208,117,176,229,175,170,248,7,127,28,111,125,251,164,251,119,75,
-        95,233,178,247,170,0,168,27,6,153,108,158,155,106,3,227,21,250,7,60,68,99,97,34,195,214,31,16,53,142,82,37,
-        2,139,211,4,93,109,192,14,77,99,41,62,139,94,41,177,159,19,36,19,65,52,181,147,108,146,154,81,167,33,191,72,
-        220,206,96,84,238,73,157,62,210,162,69,211,53,196,106,124,12,243,174,200,78,182,138,93,109,96,247,142,179,
-        50,231,250,190,138,79,18,38,215,249,39,250,166,38,88,14,185,201,29,158,113,89,246,242,150,211,153,73,68,137,
-        105,38,7,123,231,20,95,194,191,31,79,81,64,8,9,82,208,50,85,156,14,80,144,152,38,32,5,66,90,177,219,232,44,
-        177,69,181,161,185,5,22,139,202,100,196,207,109,166,200,86,65,160,249,71,72,14,58,105,206,251,216,61,190,160,
-        160,72,2,145,16,163,30,133,7,205,129,93,233,249,31,151,245,103,254,5,240,14,85,232,106,211,219,79,205,14,0,
-        0,0,0,73,69,78,68,174,66,96,130
-    };
-
-    const unsigned char richtextctrl_png[736] {
-        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,
-        115,0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,2,146,73,68,65,84,56,203,237,147,189,107,28,71,24,198,127,51,59,
-        31,123,242,173,86,199,193,69,8,233,138,52,34,141,10,41,93,144,32,141,59,55,238,221,184,8,184,51,164,73,157,
-        164,180,235,3,131,9,164,72,17,242,15,36,4,33,220,165,80,161,216,68,18,24,131,5,50,226,140,57,73,119,156,246,
-        99,118,54,197,233,86,58,164,187,64,48,164,201,219,205,188,179,191,121,246,121,222,17,92,214,214,179,55,37,
-        31,161,94,124,245,169,0,80,215,55,183,31,182,233,118,187,120,239,209,90,147,101,25,66,8,164,148,8,33,80,74,
-        161,181,166,44,75,146,36,193,57,71,146,36,148,101,73,187,221,230,238,143,239,42,214,4,88,8,65,250,250,59,62,
-        236,119,110,85,211,252,236,17,159,124,254,148,131,131,3,156,115,24,99,56,63,63,39,77,83,150,150,150,38,206,
-        78,128,139,162,224,195,126,135,141,141,113,247,14,4,117,8,91,160,231,217,253,181,67,107,227,9,66,8,140,49,
-        120,239,177,214,34,165,36,8,130,233,96,239,253,181,206,37,84,71,16,220,1,189,80,181,140,49,88,107,177,214,
-        146,36,9,89,150,221,248,187,9,112,117,107,16,66,80,27,65,77,3,108,147,34,136,249,185,11,223,107,205,234,234,
-        234,4,100,108,203,84,240,213,13,115,160,34,208,243,35,165,65,141,175,127,123,197,239,243,45,190,245,158,163,
-        163,35,164,148,12,6,131,74,237,218,218,218,108,143,71,187,245,145,82,29,131,142,249,233,175,30,63,252,121,
-        200,189,251,171,120,239,233,118,187,156,157,157,145,101,25,74,41,172,181,164,105,58,1,150,215,23,101,121,57,
-        202,58,190,132,47,128,94,160,243,199,33,95,108,181,73,139,2,239,61,23,23,23,56,231,136,227,24,107,45,206,185,
-        217,225,1,232,179,37,118,183,95,86,235,95,222,67,47,106,177,216,136,25,230,35,133,235,235,235,149,5,99,49,
-        97,24,78,7,27,99,104,61,216,69,74,89,89,243,88,74,190,185,246,81,154,166,149,101,227,115,121,158,207,158,138,
-        60,207,217,219,219,67,107,77,16,4,212,235,117,134,195,33,89,150,81,150,37,205,102,147,211,211,83,162,40,34,
-        203,50,138,162,160,209,104,16,199,241,108,176,247,158,94,175,71,24,134,56,231,56,57,57,161,86,171,209,239,
-        247,113,206,49,24,12,40,138,130,227,227,99,140,49,104,173,145,82,254,51,120,172,90,41,133,49,134,60,207,201,
-        243,156,197,197,69,250,253,62,115,115,115,213,35,178,214,18,4,1,97,24,82,150,229,85,240,211,192,155,155,155,
-        40,165,42,143,165,148,52,26,13,242,60,71,8,81,5,54,30,47,165,20,66,136,170,119,43,216,90,203,202,202,202,173,
-        111,166,86,171,77,168,138,162,232,198,235,155,25,222,206,206,206,191,10,111,121,121,249,255,240,254,203,240,
-        190,124,254,150,143,85,127,3,2,106,94,210,181,28,159,166,0,0,0,0,73,69,78,68,174,66,96,130
-    };
-
-    const unsigned char scintilla_png[729] {
-        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,
-        115,0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,2,139,73,68,65,84,56,203,141,84,63,79,251,48,16,125,231,56,161,
-        81,50,48,192,132,132,20,49,23,21,150,124,3,102,144,80,119,254,108,48,241,61,24,186,244,51,116,100,66,98,165,
-        27,27,2,196,64,85,172,74,21,18,67,213,86,168,74,211,196,247,91,126,137,154,212,41,156,100,217,177,227,231,
-        187,119,239,142,240,223,230,243,57,19,17,136,8,204,12,102,198,178,45,239,49,51,162,40,194,100,50,65,16,4,4,
-        131,137,229,139,82,74,88,150,5,41,37,108,219,134,148,178,176,183,60,28,199,193,120,60,198,199,199,7,175,5,
-        6,0,173,117,254,136,214,58,247,210,52,28,199,65,146,36,240,60,15,189,94,143,215,2,103,160,166,111,19,184,235,
-        186,216,218,218,130,239,251,80,74,21,46,202,42,14,179,153,136,160,181,206,185,47,63,126,127,127,143,56,142,
-        17,4,1,6,131,1,239,238,238,18,0,228,196,207,102,51,182,109,123,173,183,229,53,17,65,8,1,102,198,108,54,131,
-        82,10,135,135,135,84,240,216,68,73,217,195,44,7,203,121,72,211,20,204,12,219,182,11,231,178,252,99,22,50,17,
-        173,112,187,142,178,114,110,132,41,105,150,101,65,107,93,80,201,95,64,151,49,164,41,252,78,167,3,165,20,226,
-        56,70,24,134,56,58,58,66,154,166,80,74,97,103,103,7,66,8,16,17,190,190,190,224,121,30,60,207,91,175,99,33,
-        4,222,223,223,161,148,194,245,245,53,46,46,46,240,243,243,147,75,171,213,106,33,73,18,72,41,225,251,62,238,
-        238,238,208,239,247,225,56,78,174,123,35,199,68,132,183,183,55,248,190,143,141,141,13,108,111,111,227,248,
-        248,24,47,47,47,184,189,189,197,247,247,55,206,207,207,113,118,118,134,135,135,7,124,126,126,226,241,241,17,
-        97,24,226,230,230,198,172,130,233,116,202,81,20,113,183,219,229,211,211,83,102,102,126,125,125,229,147,147,
-        19,30,143,199,60,28,14,121,127,127,159,187,221,46,15,135,67,30,12,6,220,108,54,185,221,110,115,175,215,227,
-        209,104,196,79,79,79,108,244,56,73,18,52,26,13,204,231,115,52,26,13,140,70,35,92,94,94,194,117,93,56,142,131,
-        171,171,43,236,237,237,161,86,171,65,74,137,102,179,137,32,8,176,185,185,89,144,90,161,64,38,147,9,103,73,
-        89,44,22,120,126,126,70,173,86,67,189,94,199,98,177,200,181,154,173,153,185,160,30,102,70,191,223,71,24,134,
-        84,169,10,203,178,112,112,112,0,102,46,0,197,113,156,23,74,230,128,169,191,20,128,181,214,16,66,252,90,206,
-        166,78,104,178,21,143,203,205,230,183,226,48,205,43,201,171,154,255,2,84,246,124,5,184,170,61,254,165,63,84,
-        82,81,213,216,171,192,203,20,26,129,147,36,65,20,69,72,211,212,24,222,111,81,16,17,92,215,205,207,254,1,107,
-        125,99,206,65,75,68,184,0,0,0,0,73,69,78,68,174,66,96,130
-    };
-
-    const unsigned char search_png[800] {
-        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,2,0,0,0,75,214,251,108,0,0,0,3,115,66,73,
-        84,8,8,8,219,225,79,224,0,0,0,9,112,72,89,115,0,0,10,240,0,0,10,240,1,66,172,52,152,0,0,2,195,73,68,65,84,
-        56,203,173,212,75,79,19,81,20,7,240,123,219,59,51,165,211,206,76,161,4,10,66,97,218,242,92,160,60,19,216,184,
-        82,2,11,215,198,149,198,15,224,2,55,126,3,23,18,195,158,152,184,128,133,113,99,98,128,133,110,160,146,200,
-        35,68,105,17,104,109,17,40,17,140,51,148,222,97,230,206,220,185,46,197,128,213,136,255,229,73,206,47,231,36,
-        39,7,78,205,44,129,203,5,1,0,110,15,247,254,115,255,244,236,178,7,92,58,232,124,73,215,181,76,54,163,233,26,
-        198,88,20,197,144,18,138,199,226,138,18,250,43,130,49,150,222,72,229,242,185,234,112,56,82,91,91,225,243,217,
-        14,53,12,99,225,221,130,218,172,182,183,117,64,8,255,64,164,55,82,133,66,33,145,72,108,239,29,175,31,20,45,
-        90,20,121,84,87,229,239,239,235,79,165,83,0,128,142,246,206,243,132,231,236,252,185,124,174,49,218,152,76,
-        29,126,183,184,246,132,58,50,212,53,208,213,98,49,110,62,85,232,233,238,203,229,243,186,174,149,35,50,217,
-        76,117,56,188,189,95,244,248,196,235,189,109,177,186,74,73,20,148,160,255,106,107,147,34,201,27,59,71,49,85,
-        205,126,206,150,35,52,93,147,130,210,87,221,82,235,107,56,175,71,244,161,128,224,229,17,244,122,96,83,164,
-        242,72,199,178,44,107,229,167,192,24,7,165,160,225,176,250,106,9,66,64,93,102,81,6,24,132,0,32,132,76,219,
-        17,120,161,84,42,149,35,2,129,128,109,59,34,143,14,190,21,29,215,37,142,107,18,106,83,215,101,204,50,45,206,
-        3,75,165,147,64,32,80,142,8,41,33,140,113,180,70,218,61,56,116,41,179,108,106,59,204,166,46,117,217,246,206,
-        190,226,247,106,186,166,200,74,57,34,166,198,118,190,236,244,119,54,49,74,22,63,108,21,79,74,22,177,78,48,
-        94,93,223,50,79,177,26,145,243,185,140,181,55,95,238,46,20,37,212,220,212,188,178,186,60,50,120,109,109,115,
-        119,237,83,214,36,142,88,193,85,7,133,120,44,178,185,241,49,90,43,111,189,126,188,4,204,190,91,143,126,123,
-        90,237,109,29,0,164,147,201,249,104,99,84,173,137,8,130,128,113,233,184,88,92,93,121,47,106,201,80,45,63,114,
-        127,98,102,242,1,0,224,172,242,11,1,33,108,73,180,86,85,133,243,249,220,65,161,128,79,13,127,133,95,146,101,
-        217,206,111,47,62,247,53,72,174,115,58,124,239,201,220,179,135,94,196,119,143,142,93,64,16,66,8,33,28,226,
-        98,106,220,235,245,66,8,25,99,148,82,79,188,197,67,113,250,205,132,75,95,80,98,244,12,222,124,251,234,233,
-        197,4,0,192,117,93,74,41,199,113,130,32,248,124,62,211,52,45,203,178,109,187,123,116,76,224,209,250,220,184,
-        105,190,212,137,216,208,121,227,226,69,120,158,71,8,9,130,64,8,49,12,3,99,140,16,226,121,158,227,56,66,200,
-        149,254,187,199,197,147,92,114,178,166,101,96,232,206,248,207,182,169,153,37,118,137,76,205,44,253,167,175,
-        53,61,187,124,25,226,7,202,64,139,110,48,82,97,56,0,0,0,0,73,69,78,68,174,66,96,130
-    };
-
-    const unsigned char separator_png[306] {
-        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,
-        115,0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,0,228,73,68,65,84,56,203,237,148,205,74,195,64,24,69,207,76,38,
-        233,196,252,181,8,6,187,16,65,200,128,47,163,110,242,132,214,39,80,159,67,237,66,230,9,196,133,20,92,88,108,
-        58,51,46,181,152,141,16,23,74,206,3,220,15,238,61,124,48,50,242,13,107,109,24,154,171,197,101,80,95,143,44,
-        31,238,121,92,222,161,179,18,157,149,132,237,59,193,59,162,34,195,109,182,172,95,94,209,101,69,90,85,164,10,
-        34,9,171,231,39,210,188,100,126,114,74,154,40,14,15,246,1,216,9,158,104,205,252,232,24,165,98,84,156,176,89,
-        191,225,157,35,46,10,124,231,208,65,145,228,57,147,60,71,250,14,17,60,211,217,140,88,239,17,73,129,20,159,
-        89,59,193,77,99,104,26,51,72,197,10,160,109,219,65,119,187,56,63,67,88,107,67,93,215,220,222,92,255,115,43,
-        186,85,191,13,189,227,253,196,10,79,191,13,191,110,133,52,198,136,161,1,144,227,83,251,187,124,0,38,28,251,
-        236,206,248,7,228,0,0,0,0,73,69,78,68,174,66,96,130
-    };
-
-    const unsigned char sizer_horizontal_png[129] {
-        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,
-        115,0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,0,51,73,68,65,84,56,203,99,96,24,5,163,128,110,128,145,129,129,
-        129,225,63,3,195,127,42,26,200,8,231,224,50,152,18,113,38,90,5,197,168,193,67,216,96,218,166,227,81,48,10,
-        80,0,0,229,90,12,7,148,200,4,113,0,0,0,0,73,69,78,68,174,66,96,130
-    };
-
-    const unsigned char sizer_png[133] {
-        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,
-        115,0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,0,55,73,68,65,84,56,203,99,96,160,17,96,196,37,241,159,129,225,
-        63,17,154,25,73,182,145,144,193,132,228,153,104,21,20,163,6,195,1,11,37,17,68,22,24,77,21,163,169,98,52,85,
-        140,166,138,33,13,0,44,233,20,20,55,124,84,254,0,0,0,0,73,69,78,68,174,66,96,130
-    };
-
-    const unsigned char spacer_png[183] {
-        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,
-        115,0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,0,105,73,68,65,84,56,203,237,84,49,10,0,49,8,139,210,255,15,253,
-        112,110,234,34,218,171,197,27,14,12,184,72,9,49,177,2,141,223,131,21,36,115,78,46,46,53,205,50,232,102,4,30,
-        140,201,20,49,1,10,32,111,196,2,72,68,62,34,21,76,248,238,9,81,239,193,77,89,33,250,213,154,169,231,217,77,
-        89,43,70,20,200,73,120,187,160,53,155,118,118,123,88,248,65,216,135,172,225,227,1,190,47,66,44,164,70,194,
-        29,0,0,0,0,73,69,78,68,174,66,96,130
-    };
-
-    const unsigned char static_bitmap_png[778] {
-        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,
-        115,0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,2,188,73,68,65,84,56,203,237,149,207,107,20,73,20,199,63,53,221,
-        227,196,137,171,6,18,133,141,63,34,44,98,110,198,67,88,97,61,173,30,22,188,9,123,241,224,201,255,192,255,32,
-        103,193,63,195,147,194,42,1,209,131,160,23,127,16,140,89,221,36,100,89,52,107,54,51,246,116,102,250,87,117,
-        85,119,87,237,161,58,76,60,140,96,206,62,120,20,244,163,62,239,213,123,223,170,134,239,86,155,248,90,240,229,
-        139,13,155,201,18,128,170,178,148,5,24,3,7,14,120,252,122,249,172,216,23,248,193,131,37,91,150,147,180,90,
-        63,144,166,32,165,243,60,135,56,82,40,253,15,11,11,23,71,238,111,140,10,116,187,30,179,179,39,57,114,228,40,
-        158,231,28,156,55,188,227,124,250,116,130,191,222,175,218,81,251,253,81,129,60,135,44,131,40,130,48,132,162,
-        128,193,192,85,157,36,16,199,130,178,52,124,51,120,47,52,8,28,172,211,129,94,15,140,201,104,54,183,233,247,
-        3,254,222,120,109,97,152,192,111,30,230,244,233,115,98,36,56,142,33,77,29,252,243,103,7,236,116,64,107,195,
-        245,235,143,152,155,107,112,232,80,134,101,27,200,1,141,181,146,48,76,89,91,93,178,62,192,202,147,199,54,234,
-        245,176,101,9,85,69,146,20,220,125,26,49,61,13,155,155,176,190,238,42,150,18,102,102,214,185,122,213,99,106,
-        234,44,240,17,200,234,131,75,192,96,76,201,219,229,69,252,215,139,15,237,68,154,113,230,216,113,87,94,158,
-        51,72,4,247,148,247,69,181,74,185,190,187,54,84,53,168,15,164,181,75,32,165,209,144,28,60,216,196,111,111,
-        119,153,158,159,119,231,238,245,64,107,198,132,100,118,236,95,22,31,133,100,178,69,16,128,214,14,156,36,105,
-        13,140,129,46,144,98,109,132,214,33,69,17,34,132,162,50,51,248,66,43,7,141,99,216,217,1,41,241,210,148,27,
-        39,255,99,188,215,97,67,142,17,206,77,114,248,199,73,42,3,237,246,58,214,166,64,2,236,0,49,82,110,81,20,125,
-        172,149,128,162,42,143,225,35,115,7,220,29,187,148,208,233,48,17,4,220,20,41,253,102,196,234,239,183,184,120,
-        237,146,0,120,254,236,158,205,243,119,84,213,4,198,108,162,84,151,178,28,0,170,30,162,2,20,62,81,228,4,186,
-        219,138,48,116,9,148,114,154,75,18,172,217,123,15,44,198,12,80,42,160,40,62,98,109,178,7,184,187,22,248,36,
-        49,124,248,224,26,184,182,230,18,228,249,112,90,89,6,118,168,211,95,46,93,19,203,203,151,237,248,56,24,19,
-        212,67,27,130,165,84,164,233,79,248,85,85,185,138,179,204,181,100,23,88,175,70,74,132,231,125,161,113,41,127,
-        227,213,171,39,52,26,99,181,212,218,64,137,181,22,152,229,202,149,5,33,222,252,113,223,182,111,223,97,42,207,
-        135,186,210,26,180,166,44,10,54,207,204,112,97,229,79,177,175,103,115,99,241,161,53,91,91,24,173,221,87,99,
-        193,26,188,86,139,214,249,243,156,154,255,89,124,255,195,236,219,254,7,145,179,181,64,11,59,61,193,0,0,0,0,
-        73,69,78,68,174,66,96,130
-    };
-
-    const unsigned char static_line_png[122] {
-        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,
-        115,0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,0,44,73,68,65,84,56,203,99,96,24,5,163,96,20,224,4,140,80,250,63,
-        181,205,132,25,204,112,224,192,1,170,25,238,224,224,192,56,26,103,163,96,20,12,43,0,0,218,235,5,3,22,132,145,
-        240,0,0,0,0,73,69,78,68,174,66,96,130
-    };
-
-    const unsigned char statusbar_png[432] {
-        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,
-        115,0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,1,98,73,68,65,84,56,203,237,147,61,72,66,81,24,134,159,235,213,
-        174,247,166,153,148,55,17,10,193,72,104,106,8,163,34,130,182,134,134,160,49,16,193,162,37,132,136,134,90,43,
-        104,148,166,134,8,35,10,10,218,162,161,8,199,26,138,134,196,177,161,161,12,201,232,7,127,174,121,91,50,8,37,
-        43,176,201,103,249,134,115,120,120,121,207,119,160,70,141,127,67,136,70,163,122,85,196,137,68,226,79,226,72,
-        36,130,223,239,47,123,22,143,199,49,84,171,10,3,192,217,254,26,87,41,177,236,5,51,25,14,183,195,204,47,174,
-        114,157,204,209,236,80,127,46,254,104,5,213,209,68,67,189,130,40,8,72,74,3,0,178,221,201,216,196,12,227,67,
-        93,104,217,52,121,157,223,138,117,114,153,91,214,195,43,44,76,79,17,90,218,196,170,170,164,82,143,152,244,
-        28,207,121,17,171,85,198,104,168,220,125,73,98,0,197,217,193,228,108,136,78,225,145,100,26,154,236,22,46,206,
-        47,41,40,141,184,93,45,36,239,239,191,21,23,31,244,75,98,16,144,36,9,163,108,198,36,232,20,10,58,119,55,55,
-        60,60,229,233,27,236,39,251,146,170,152,180,56,141,0,117,138,200,198,242,28,23,125,61,180,58,61,88,44,54,218,
-        218,221,200,34,100,114,175,156,30,237,177,123,112,76,175,215,9,222,97,70,187,93,37,226,96,48,136,166,105,4,
-        2,1,98,177,216,207,247,88,85,109,156,108,237,32,15,140,224,145,223,62,247,184,220,244,249,124,213,251,121,
-        53,170,207,59,46,243,122,68,108,214,113,100,0,0,0,0,73,69,78,68,174,66,96,130
-    };
-
-    const unsigned char submenu_png[760] {
-        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,
-        115,0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,2,170,73,68,65,84,56,203,213,149,205,110,83,71,20,199,127,115,231,
-        222,107,199,190,227,15,242,1,118,168,147,152,128,12,18,208,77,85,137,13,171,172,88,176,224,5,120,133,62,65,
-        197,115,176,104,43,94,160,123,35,36,16,202,34,32,33,4,8,5,1,113,27,192,13,9,182,99,59,246,157,185,31,195,34,
-        20,9,144,170,36,22,139,158,205,153,209,57,250,233,232,255,159,163,129,255,91,136,155,143,251,182,154,247,254,
-        179,41,209,35,106,209,38,74,169,3,65,7,131,1,238,113,47,230,159,39,143,88,62,117,138,76,54,75,28,91,180,30,
-        145,47,28,67,5,57,134,131,62,94,222,71,37,138,214,139,103,148,231,235,148,130,28,218,24,34,99,240,51,89,140,
-        30,35,16,28,175,84,113,196,62,220,149,73,200,120,48,96,107,227,57,137,204,97,195,33,110,113,150,212,104,102,
-        139,167,217,139,66,226,200,34,167,36,59,31,58,196,50,199,150,25,33,85,158,97,187,67,249,135,26,129,15,221,
-        173,54,185,242,28,211,42,139,148,18,55,73,65,5,1,170,24,16,225,35,124,137,95,42,51,229,75,0,50,153,41,140,
-        9,1,168,214,22,201,78,229,9,135,14,158,82,120,26,148,10,144,137,166,84,46,35,255,29,23,112,173,227,223,157,
-        158,46,113,250,220,5,132,16,223,232,21,20,138,232,208,131,56,188,124,254,194,143,95,22,235,251,169,211,233,
-        112,108,169,254,165,121,7,117,185,213,106,89,21,4,8,199,249,60,128,181,22,33,4,214,90,172,181,56,142,67,154,
-        166,251,230,29,230,9,173,221,191,195,220,210,57,102,202,5,194,80,19,155,8,47,227,99,134,93,254,126,191,203,
-        197,243,103,89,127,190,78,109,113,233,112,224,237,238,46,90,188,164,245,242,10,190,107,121,191,249,27,115,
-        141,6,39,114,18,19,142,121,248,224,30,27,173,61,106,139,139,135,3,255,244,243,37,92,207,99,109,205,101,249,
-        140,37,142,46,211,168,103,25,15,122,168,208,48,95,93,98,97,1,164,35,14,5,190,81,169,206,127,58,166,191,158,
-        172,9,34,81,39,10,13,174,55,186,145,241,125,102,103,43,72,41,233,245,122,71,91,215,91,183,180,29,143,173,221,
-        220,140,237,234,170,182,205,166,190,250,117,143,115,20,112,106,13,81,4,133,130,164,82,113,112,93,254,108,54,
-        245,194,196,224,196,223,35,77,33,73,160,88,116,57,89,115,0,90,19,131,191,9,107,153,153,75,104,54,117,231,243,
-        230,29,137,19,166,68,17,88,11,227,113,74,65,185,220,94,253,139,200,136,242,100,82,152,144,55,111,250,188,125,
-        155,240,174,61,160,211,53,52,150,75,244,71,163,95,38,3,39,33,219,219,49,59,59,201,31,239,218,61,250,187,9,
-        23,27,51,0,221,137,192,214,198,235,66,4,143,87,86,50,215,123,189,189,245,52,181,244,251,26,207,17,191,79,164,
-        49,54,189,182,178,146,121,246,233,118,237,245,70,251,233,171,215,150,153,188,243,253,255,188,143,69,91,31,
-        11,205,38,11,0,0,0,0,0,73,69,78,68,174,66,96,130
-    };
-
-    const unsigned char text_sizer_png[157] {
-        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,
-        115,0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,0,79,73,68,65,84,56,203,99,96,24,5,180,6,140,48,198,127,6,134,255,
-        84,50,144,145,129,129,129,129,5,69,244,63,133,102,51,194,221,201,192,68,171,160,96,193,110,49,35,201,6,253,
-        71,243,45,11,49,138,200,1,131,47,40,8,249,106,4,5,5,33,223,13,245,160,32,35,99,140,130,97,8,0,153,45,22,35,
-        83,6,111,55,0,0,0,0,73,69,78,68,174,66,96,130
-    };
-
-    const unsigned char timepicker_png[227] {
-        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,
-        115,0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,0,149,73,68,65,84,56,203,99,96,24,5,67,22,48,50,48,48,48,24,27,
-        167,253,167,166,161,103,207,206,98,100,129,113,206,156,153,73,180,70,19,147,116,134,133,115,147,176,202,197,
-        39,207,99,96,96,96,96,96,66,113,62,35,35,3,41,124,6,6,6,134,53,27,118,48,172,217,176,3,67,156,137,18,47,35,
-        27,136,110,56,11,214,128,103,100,100,248,255,255,63,78,62,12,132,4,120,224,180,20,171,139,209,13,193,102,40,
-        33,192,66,173,160,64,247,1,19,174,160,32,20,105,232,6,161,7,11,11,54,47,19,162,137,9,103,154,101,144,209,178,
-        103,20,208,17,0,0,183,221,56,21,144,47,83,61,0,0,0,0,73,69,78,68,174,66,96,130
-    };
-
-    const unsigned char tree_ctrl_png[246] {
-        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,
-        115,0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,0,168,73,68,65,84,56,203,99,96,160,17,96,100,96,96,96,176,155,117,
-        239,63,53,13,61,148,166,196,200,0,51,248,255,255,255,255,67,195,131,255,83,10,96,142,100,129,217,18,22,17,
-        194,176,122,230,92,134,176,136,16,134,85,43,214,48,88,38,78,193,234,154,227,243,115,136,119,58,45,92,204,68,
-        171,200,195,107,112,88,68,8,217,6,179,224,51,108,213,138,181,148,133,57,174,48,38,39,204,7,54,140,41,9,115,
-        22,82,12,91,77,68,152,179,89,121,147,30,198,196,132,57,89,97,188,106,197,154,65,30,198,171,86,172,161,77,24,
-        163,3,170,133,49,186,215,73,9,99,22,124,94,167,90,150,38,199,235,184,130,130,182,85,19,45,0,0,79,233,249,111,
-        171,192,184,164,0,0,0,0,73,69,78,68,174,66,96,130
-    };
-
-    const unsigned char treelistctrl_png[425] {
-        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,
-        115,0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,1,91,73,68,65,84,56,203,181,85,49,78,3,49,16,156,139,144,16,105,
-        3,63,160,67,84,190,130,38,13,21,20,84,9,33,47,184,188,128,87,240,130,43,232,16,66,16,41,101,160,161,161,161,
-        56,26,36,58,130,120,0,77,34,184,8,197,201,210,216,23,223,202,182,204,41,89,201,146,173,181,103,87,179,179,
-        107,96,77,22,1,128,16,9,173,26,120,67,111,238,135,231,43,3,61,58,190,64,173,202,195,207,209,8,219,59,187,97,
-        25,79,243,28,32,77,142,50,90,18,70,68,64,20,149,30,79,243,188,124,207,6,60,153,140,221,225,217,195,173,122,
-        29,111,175,79,172,82,14,224,189,253,38,0,160,211,109,227,246,166,31,68,137,52,246,191,0,230,197,233,106,9,
-        172,65,239,90,151,5,120,28,247,74,64,89,150,150,206,7,204,15,0,15,230,29,33,18,210,118,122,214,162,80,155,
-        169,245,173,214,152,136,190,136,72,136,132,106,85,37,37,13,10,160,104,152,1,88,112,142,173,221,211,123,169,
-        20,84,184,128,205,2,82,42,156,65,180,207,150,136,21,216,84,133,47,107,159,207,75,5,207,200,180,31,7,183,18,
-        192,73,12,127,75,119,186,109,107,209,76,80,238,147,190,140,53,160,214,244,199,123,3,0,240,172,52,186,169,212,
-        112,104,209,241,64,221,241,114,204,187,144,75,236,49,75,11,26,36,235,196,202,58,158,135,206,99,31,207,156,
-        138,127,13,122,155,93,7,14,163,96,96,205,45,31,50,60,99,95,241,214,246,231,253,1,212,144,197,241,8,79,6,65,
-        0,0,0,0,73,69,78,68,174,66,96,130
-    };
-
-    const unsigned char treelistctrlcolumn_png[504] {
-        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,
-        115,0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,1,170,73,68,65,84,56,203,181,149,191,74,3,65,16,135,191,147,188,
-        129,250,6,66,30,96,83,216,9,86,90,106,18,99,33,136,205,165,176,246,41,108,21,188,128,130,96,33,254,45,213,
-        214,202,226,174,17,27,65,44,44,20,196,70,16,37,36,113,44,220,193,189,203,110,34,130,3,203,193,205,206,143,
-        185,249,125,123,11,255,20,17,128,49,177,132,54,100,89,43,242,189,31,84,3,80,2,56,63,91,243,38,103,102,215,
-        9,137,134,106,180,110,100,80,210,215,173,49,177,108,109,204,51,54,62,193,208,142,63,222,223,127,222,8,204,
-        213,54,131,162,39,199,171,60,63,61,145,171,147,192,140,111,174,47,251,82,203,43,123,65,241,221,157,37,143,
-        74,190,22,128,122,163,42,190,80,131,110,11,61,25,19,139,136,72,199,89,111,34,242,106,151,49,177,148,0,14,171,
-        219,44,44,214,56,216,63,162,82,105,230,136,80,209,91,144,50,68,198,196,146,166,9,0,147,206,94,141,11,155,243,
-        118,92,68,73,197,181,83,13,183,91,237,248,197,214,123,169,72,211,36,199,105,217,78,49,203,90,145,126,81,215,
-        230,218,246,217,3,58,192,167,75,69,206,135,102,102,7,25,99,64,138,6,126,139,35,153,137,131,168,25,87,88,103,
-        12,32,137,161,82,105,6,169,80,81,73,140,191,41,87,88,69,129,95,137,22,133,188,225,195,45,244,47,80,3,139,134,
-        61,219,245,24,50,111,97,177,214,103,160,203,177,107,96,175,80,219,117,76,45,21,5,149,233,251,187,209,32,199,
-        87,105,66,27,152,246,112,124,26,226,184,222,168,14,228,184,19,24,195,163,136,60,216,245,39,142,39,3,99,40,
-        134,87,88,199,226,51,48,203,90,209,148,103,4,67,169,208,99,58,136,10,247,135,19,26,69,223,1,209,79,13,113,
-        172,198,49,196,60,239,157,247,215,123,206,141,47,199,86,201,106,42,157,196,120,0,0,0,0,73,69,78,68,174,66,
-        96,130
-    };
-
-    const unsigned char webview_png[1208] {
-        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,
-        115,0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,4,106,73,68,65,84,56,203,157,85,95,72,147,93,28,126,206,251,190,
-        115,110,142,169,225,212,49,145,73,217,162,212,33,134,138,154,83,241,66,237,149,84,34,217,72,216,69,94,134,
-        17,120,25,164,162,100,119,34,150,162,32,152,130,23,17,236,70,16,196,91,81,17,69,24,58,83,135,179,72,13,103,
-        254,65,212,218,158,110,62,87,126,95,95,159,125,63,56,240,252,206,239,156,231,230,60,207,115,4,46,89,193,96,
-        144,0,16,29,29,13,189,94,47,240,127,235,232,232,136,35,35,35,172,174,174,166,197,98,97,84,84,20,53,26,13,147,
-        147,147,89,81,81,193,129,129,1,126,249,242,133,127,68,58,57,57,73,187,221,78,33,4,1,80,8,193,220,220,92,22,
-        23,23,83,146,164,200,94,122,122,58,61,30,207,229,200,251,250,250,168,215,235,25,23,23,199,187,119,239,18,0,
-        85,85,229,225,225,33,79,78,78,232,118,187,9,128,229,229,229,76,76,76,164,86,171,101,103,103,231,239,201,223,
-        190,125,203,168,168,40,222,188,121,147,243,243,243,172,169,169,161,193,96,160,215,235,101,56,28,102,56,28,
-        230,230,230,38,77,38,19,11,10,10,232,243,249,152,159,159,79,69,81,216,215,215,247,107,242,205,205,77,38,37,
-        37,209,106,181,114,117,117,149,59,59,59,140,137,137,225,189,123,247,24,10,133,120,94,161,80,136,141,141,141,
-        212,104,52,244,249,124,220,218,218,98,102,102,38,141,70,35,189,94,111,132,92,58,7,163,163,163,48,153,76,120,
-        253,250,53,210,210,210,176,180,180,132,180,180,52,56,157,78,8,241,67,4,66,8,220,191,127,31,54,155,13,94,175,
-        23,38,147,9,253,253,253,176,90,173,24,30,30,254,113,238,28,124,251,246,141,36,33,73,18,132,16,32,137,112,56,
-        28,233,127,174,191,207,206,123,33,4,20,69,17,17,226,241,241,113,202,178,12,135,195,129,87,175,94,161,162,162,
-        2,138,162,96,108,108,12,161,80,8,143,30,61,194,194,194,2,252,126,63,92,46,23,6,7,7,113,114,114,130,219,183,
-        111,227,214,173,91,232,239,239,199,131,7,15,16,12,6,177,186,186,138,186,186,58,161,0,128,223,239,135,199,227,
-        129,217,108,198,211,167,79,177,187,187,139,184,184,56,44,46,46,98,98,98,2,14,135,3,157,157,157,152,157,157,
-        69,113,113,49,90,91,91,81,91,91,139,185,185,57,52,52,52,160,185,185,25,58,157,14,126,191,31,6,131,1,0,32,3,
-        64,91,91,219,243,174,174,46,196,196,196,32,16,8,96,111,111,15,193,96,16,85,85,85,216,217,217,1,73,120,60,30,
-        200,178,140,43,87,174,96,99,99,3,141,141,141,24,28,28,132,16,2,31,63,126,196,233,233,41,214,214,214,224,114,
-        185,48,52,52,212,2,0,56,56,56,96,106,106,42,175,95,191,206,174,174,46,154,205,102,154,205,102,174,175,175,
-        179,189,189,157,54,155,141,69,69,69,116,187,221,188,113,227,6,155,154,154,184,187,187,203,132,132,4,90,173,
-        86,118,119,119,51,57,57,153,233,233,233,23,85,97,52,26,69,118,118,54,2,129,0,234,234,234,96,54,155,97,48,24,
-        96,177,88,80,88,88,136,247,239,223,163,180,180,20,37,37,37,88,89,89,65,81,81,17,140,70,35,174,93,187,134,211,
-        211,83,212,215,215,67,146,36,36,38,38,70,30,88,62,7,47,95,190,124,126,245,234,85,168,170,10,189,94,143,156,
-        156,28,228,229,229,33,54,54,22,199,199,199,120,248,240,33,50,50,50,112,124,124,140,134,134,6,24,12,6,232,116,
-        58,216,237,118,148,149,149,65,171,213,194,225,112,224,221,187,119,45,23,228,246,151,9,32,73,82,68,82,231,50,
-        187,44,6,0,89,150,197,5,131,244,246,246,66,85,85,204,204,204,0,0,166,167,167,81,89,89,137,241,241,113,8,33,
-        46,172,159,103,36,225,243,249,160,170,42,94,188,120,241,79,75,47,47,47,51,54,54,150,89,89,89,220,222,222,230,
-        135,15,31,24,29,29,77,167,211,121,193,210,225,112,152,79,158,60,161,162,40,92,92,92,228,222,222,30,239,220,
-        185,67,157,78,199,169,169,169,95,231,69,111,111,47,21,69,161,195,225,224,198,198,6,203,203,203,25,31,31,79,
-        191,223,31,33,253,252,249,51,83,82,82,104,183,219,249,233,211,39,170,170,74,33,4,91,91,91,127,159,112,45,45,
-        45,212,104,52,76,77,77,165,211,233,36,0,186,221,110,158,157,157,241,235,215,175,108,110,110,166,16,130,181,
-        181,181,180,217,108,148,101,153,143,31,63,190,92,38,191,121,243,134,22,139,37,18,244,178,44,179,166,166,134,
-        46,151,139,138,162,68,130,222,100,50,177,167,167,231,207,126,145,173,173,45,118,116,116,48,59,59,155,90,173,
-        150,66,8,10,33,168,209,104,152,145,145,193,103,207,158,49,16,8,252,43,233,127,126,138,103,103,103,220,223,
-        223,143,88,59,33,33,1,241,241,241,208,106,181,191,189,251,29,47,199,80,217,253,198,166,116,0,0,0,0,73,69,78,
-        68,174,66,96,130
-    };
-
-    const unsigned char wrap_sizer_png[145] {
-        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,
-        115,0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,0,67,73,68,65,84,56,203,99,96,24,106,128,17,198,248,207,192,240,
-        159,74,6,50,162,8,80,195,96,100,51,152,104,21,20,52,51,152,133,218,193,129,55,124,70,195,120,240,132,49,62,
-        61,163,97,76,122,24,147,106,233,208,11,227,33,28,121,67,6,0,0,153,222,26,12,44,155,144,21,0,0,0,0,73,69,78,
-        68,174,66,96,130
-    };
-
-    const unsigned char wxChoicebook_png[434] {
-        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,
-        115,0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,1,100,73,68,65,84,56,203,205,148,189,78,2,65,16,199,127,123,183,
-        203,105,65,121,177,176,180,191,6,42,107,108,9,149,149,9,70,140,20,62,2,49,196,16,158,193,156,81,18,107,27,
-        99,237,35,64,67,235,3,220,3,216,8,4,214,226,62,216,187,67,145,47,227,36,151,217,157,219,252,230,191,115,51,
-        7,59,50,1,80,42,93,233,109,66,7,131,123,33,227,77,191,239,39,47,70,128,19,121,12,15,48,5,78,202,77,174,31,
-        124,16,224,40,176,44,80,54,72,27,58,167,77,0,100,238,10,66,0,160,181,102,2,204,12,160,233,99,168,146,96,137,
-        16,42,237,57,39,7,214,90,51,138,18,124,104,157,192,166,153,115,142,130,247,231,219,84,236,248,178,157,172,
-        45,243,250,49,112,47,82,61,203,64,199,209,3,161,82,239,172,157,130,218,139,20,79,128,162,161,178,40,68,74,
-        229,56,163,90,218,80,144,80,62,111,179,239,132,177,130,90,0,86,192,167,214,137,218,184,4,227,108,109,35,43,
-        200,16,174,228,252,195,217,214,95,182,219,211,227,197,86,160,245,70,47,223,21,47,175,111,27,65,107,213,202,
-        247,237,214,186,105,173,5,237,118,186,169,189,181,171,127,133,92,150,121,43,96,179,70,89,59,56,60,250,17,228,
-        223,249,235,151,34,8,2,92,215,37,8,130,212,218,117,221,220,217,149,192,158,231,49,28,14,241,60,47,23,219,8,
-        28,67,77,80,54,81,110,242,150,13,200,111,122,188,86,173,80,111,244,210,147,183,74,243,175,212,21,241,40,254,
-        123,251,2,143,154,113,80,11,145,155,118,0,0,0,0,73,69,78,68,174,66,96,130
-    };
-
-    const unsigned char wxCollapsiblePane_png[324] {
-        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,
-        115,0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,0,246,73,68,65,84,56,203,99,252,255,255,255,127,6,42,2,70,70,70,
-        70,6,6,6,6,198,255,255,255,255,191,122,241,36,213,12,158,179,231,43,195,132,18,103,70,38,66,10,27,90,122,224,
-        24,159,26,116,192,2,99,156,188,248,128,97,225,252,217,112,9,109,29,61,134,236,148,112,134,134,154,18,136,193,
-        80,26,195,208,154,18,132,3,160,108,6,6,6,6,184,139,205,245,21,24,44,173,108,24,14,29,216,203,32,38,38,206,
-        144,158,153,139,211,133,157,125,51,80,12,69,103,163,24,204,192,192,192,16,27,230,201,80,89,211,200,208,80,
-        149,199,192,242,251,21,78,131,203,139,50,48,130,0,221,55,3,23,121,228,2,154,25,204,130,79,242,23,147,48,209,
-        6,177,253,123,75,188,193,232,138,7,69,80,140,26,140,63,242,190,253,227,71,225,255,249,243,155,129,133,133,
-        149,225,231,207,31,12,204,204,204,152,134,176,176,50,112,49,125,36,108,48,186,34,6,54,168,56,231,104,228,145,
-        19,121,140,140,140,140,5,61,123,255,51,12,21,0,0,211,121,84,94,110,196,190,15,0,0,0,0,73,69,78,68,174,66,96,
-        130
-    };
-
-    const unsigned char wxDialog_png[636] {
-        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,
-        115,0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,2,46,73,68,65,84,56,203,181,149,65,107,19,81,16,199,127,187,217,
-        46,137,169,105,83,208,131,232,197,107,192,226,169,7,191,128,199,30,122,211,66,17,5,253,6,94,68,68,16,252,0,
-        94,42,42,222,122,216,67,234,41,7,233,61,34,74,48,17,4,111,193,92,114,73,147,26,105,179,111,198,195,190,221,
-        108,146,110,155,82,58,176,204,123,59,239,205,155,249,207,127,222,131,11,18,39,30,188,218,237,168,0,168,130,
-        2,42,168,234,196,7,160,98,255,99,215,136,34,170,44,184,138,43,35,158,111,222,114,0,92,128,23,59,191,180,176,
-        0,225,247,109,138,190,67,216,120,75,49,159,195,252,120,143,52,63,112,185,232,195,207,143,148,22,125,150,74,
-        121,150,75,5,202,165,2,229,165,34,43,229,69,252,205,199,56,247,158,80,44,149,120,250,238,155,2,120,0,234,122,
-        236,127,217,6,136,116,101,43,153,83,217,162,111,199,253,191,163,140,124,35,233,255,51,140,140,51,54,61,219,
-        249,173,215,87,252,76,176,156,105,15,199,138,114,116,20,210,238,236,243,250,209,109,199,3,200,231,224,206,
-        213,206,185,11,214,117,111,114,56,56,32,129,34,142,39,168,214,216,88,191,155,232,88,42,171,107,167,58,109,
-        53,234,92,242,29,188,28,99,199,216,138,167,157,6,213,90,242,239,79,103,190,108,68,5,35,66,194,10,75,158,115,
-        75,14,16,35,227,136,213,158,18,71,152,214,0,189,110,123,46,199,161,8,146,142,88,84,207,132,103,214,154,208,
-        72,18,164,155,198,56,222,16,235,160,90,75,190,105,167,211,107,34,144,73,58,52,130,34,106,102,90,141,58,149,
-        213,53,90,141,250,12,28,233,234,103,173,17,219,238,99,40,82,24,199,27,78,163,86,6,47,16,77,21,207,24,51,97,
-        94,190,114,99,102,75,92,192,147,108,32,152,208,164,89,49,75,183,207,141,201,123,161,185,23,176,117,127,227,
-        68,155,24,65,109,144,238,52,221,230,145,188,111,47,26,135,164,211,162,204,199,29,225,29,183,177,215,109,211,
-        220,11,200,178,125,173,5,89,247,80,34,94,86,84,113,218,103,181,77,56,238,15,134,180,135,215,80,149,136,210,
-        26,245,189,147,162,145,216,58,68,201,198,175,140,157,171,146,115,29,134,135,3,122,7,102,242,170,126,240,242,
-        147,138,68,79,141,138,32,106,181,49,72,124,160,229,188,138,36,205,16,209,75,163,23,77,148,221,55,15,29,46,
-        82,254,3,136,174,81,14,10,69,149,111,0,0,0,0,73,69,78,68,174,66,96,130
-    };
-
-    const unsigned char wxFrame_png[424] {
-        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,
-        115,0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,1,90,73,68,65,84,56,203,213,148,49,74,3,81,20,69,79,52,69,76,147,
-        5,4,73,33,218,4,139,16,11,11,193,194,202,90,16,4,17,55,224,34,220,129,139,16,20,108,130,8,41,36,157,96,99,
-        8,88,185,129,128,40,41,34,8,17,253,247,89,204,252,201,100,76,38,17,70,33,23,134,225,241,248,135,251,238,251,
-        124,152,55,229,46,238,158,173,217,234,100,10,221,221,169,145,111,182,58,108,108,214,216,90,89,2,224,177,251,
-        193,219,64,169,7,235,165,46,0,237,126,153,122,169,75,187,95,6,224,228,234,144,203,227,115,238,31,158,88,72,
-        30,154,6,157,166,215,119,24,124,66,238,232,180,105,203,107,171,0,152,51,204,12,44,128,155,25,146,144,175,37,
-        76,66,46,168,125,207,162,218,33,25,38,71,30,224,96,125,48,109,21,225,127,49,252,70,101,102,35,245,217,205,
-        75,0,174,86,171,153,46,207,93,223,6,96,63,214,44,50,179,200,161,143,202,215,146,40,22,139,232,203,253,92,94,
-        86,202,207,234,50,238,214,79,151,116,28,57,119,74,7,123,80,124,212,36,56,222,31,198,234,134,224,120,51,45,
-        195,100,198,227,36,233,31,50,142,223,138,180,12,39,185,156,24,133,115,110,44,120,86,216,8,216,217,16,92,40,
-        20,50,139,193,254,60,227,70,163,65,165,82,137,156,251,40,36,33,41,138,41,121,221,198,93,191,94,175,135,204,
-        126,247,208,203,185,240,69,11,151,41,135,57,27,121,253,36,216,223,219,102,254,244,13,104,151,59,187,208,145,
-        97,19,0,0,0,0,73,69,78,68,174,66,96,130
-    };
-
-    const unsigned char wxListbook_png[357] {
-        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,
-        115,0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,1,23,73,68,65,84,56,203,99,96,160,17,96,100,96,96,96,48,54,78,251,
-        79,77,67,207,158,157,197,200,2,227,156,57,51,19,167,66,19,147,116,134,133,115,147,136,50,52,62,121,30,3,3,
-        3,3,3,11,41,46,89,179,97,7,209,106,89,72,245,102,125,125,61,94,249,205,155,211,49,13,54,49,73,199,80,136,47,
-        136,136,118,49,49,134,52,54,54,82,63,40,66,2,60,8,170,217,188,153,94,145,199,152,126,22,167,34,99,74,35,239,
-        255,76,99,204,28,132,199,66,162,195,152,24,67,72,142,188,159,88,92,11,3,86,38,164,71,30,19,173,10,33,184,139,
-        255,16,169,65,92,90,25,167,220,203,167,119,177,135,177,29,150,156,119,8,41,211,136,75,43,51,48,138,136,48,
-        136,48,50,50,188,249,15,41,16,97,108,17,70,70,134,215,175,95,99,26,252,157,129,129,97,39,90,206,99,100,96,
-        96,248,129,102,17,178,65,232,134,255,127,243,6,174,142,228,48,70,55,20,89,140,168,44,253,157,129,129,129,19,
-        139,248,255,55,111,24,94,191,126,13,119,29,140,141,28,12,24,65,129,205,112,244,200,217,176,105,15,78,223,68,
-        38,100,208,190,106,162,85,50,102,0,0,203,220,113,170,85,125,15,227,0,0,0,0,73,69,78,68,174,66,96,130
-    };
-
-    const unsigned char wxMenuBar_png[490] {
-        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,
-        115,0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,1,156,73,68,65,84,56,203,237,146,191,75,27,1,20,199,63,231,221,
-        197,59,168,103,81,210,244,188,68,147,114,49,38,109,177,148,84,168,160,32,14,142,22,23,29,92,90,232,222,63,
-        193,169,179,244,143,208,53,113,16,90,73,135,18,28,130,81,210,78,41,73,91,127,224,121,81,68,175,173,248,227,
-        146,235,208,14,154,66,115,91,151,124,150,7,143,15,95,222,227,61,104,211,166,25,225,249,98,214,139,71,117,95,
-        178,124,106,49,113,223,104,233,213,106,53,164,120,84,103,252,201,3,95,193,149,82,29,211,52,125,185,226,228,
-        220,203,133,147,194,50,153,247,91,72,178,200,209,97,141,245,149,12,145,225,52,129,142,155,242,177,109,51,20,
-        185,224,213,139,5,78,197,0,9,51,134,40,216,188,89,204,162,6,92,236,175,101,26,193,40,87,206,49,18,128,231,
-        214,81,187,123,232,234,85,169,22,171,212,93,23,235,99,142,98,161,76,106,106,134,135,177,187,215,226,27,116,
-        200,10,122,40,196,151,226,42,107,155,85,246,191,119,98,237,148,41,228,114,220,113,52,38,77,141,63,51,137,36,
-        210,99,24,33,149,131,61,27,128,173,181,85,206,36,1,247,231,249,95,107,6,251,7,121,148,140,81,42,109,51,59,
-        63,141,166,136,88,187,71,196,83,41,70,159,62,6,248,61,177,166,223,227,118,40,136,210,233,16,142,70,80,196,
-        75,250,140,4,249,245,42,178,44,54,197,170,4,174,44,178,239,62,144,78,134,89,90,122,75,208,48,8,107,117,122,
-        110,193,167,141,77,70,6,52,132,215,153,130,231,255,120,37,158,141,38,91,123,149,10,210,183,207,101,126,28,
-        30,248,10,54,123,21,108,219,110,233,57,142,131,144,207,231,61,61,220,79,3,16,0,239,31,149,166,94,243,215,180,
-        105,243,159,248,5,209,231,135,48,146,219,194,246,0,0,0,0,73,69,78,68,174,66,96,130
-    };
-
-    const unsigned char wxPanel_png[156] {
-        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,
-        115,0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,0,78,73,68,65,84,56,203,237,204,49,13,128,80,16,68,193,125,228,
-        156,97,136,2,25,20,8,64,10,8,160,164,64,202,239,46,89,76,124,10,200,141,128,193,182,51,83,17,161,30,0,36,9,
-        219,190,175,83,189,108,123,211,58,143,12,122,73,197,21,87,92,113,197,63,143,3,96,90,14,235,43,30,175,247,19,
-        231,168,234,87,216,0,0,0,0,73,69,78,68,174,66,96,130
-    };
-
-    const unsigned char wxPropertyGridManager_png[225] {
-        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,
-        115,0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,0,147,73,68,65,84,56,203,237,83,193,13,196,32,12,243,85,172,195,
-        28,204,192,44,188,51,75,86,128,33,88,129,85,210,23,18,162,119,13,149,46,106,31,245,43,49,198,138,12,1,140,
-        240,25,106,153,120,249,161,91,194,54,54,173,53,156,245,143,152,24,214,25,203,191,125,93,175,136,8,0,192,204,
-        136,49,30,234,85,164,148,0,0,110,36,187,17,51,3,192,101,211,111,16,34,18,34,18,13,57,231,211,243,30,235,102,
-        245,120,110,38,74,41,234,165,21,205,193,56,132,160,154,106,154,55,138,155,162,240,222,171,155,87,107,189,102,
-        252,110,158,201,119,51,195,14,45,233,199,21,239,131,120,108,0,0,0,0,73,69,78,68,174,66,96,130
-    };
-
-    const unsigned char wxPropertyGrid_png[212] {
-        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,
-        115,0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,0,134,73,68,65,84,56,203,237,149,193,13,195,32,12,69,95,35,214,
-        97,14,102,96,22,206,158,197,43,192,16,204,68,46,69,170,154,170,78,164,88,185,240,47,88,198,60,89,31,44,192,
-        73,175,247,58,238,230,134,25,137,8,0,170,74,206,249,16,159,85,41,5,128,240,153,156,32,85,5,184,12,253,165,
-        33,34,67,68,134,165,90,235,223,253,105,235,230,117,121,225,59,209,90,51,15,157,169,57,128,83,74,38,212,170,
-        89,86,60,100,69,140,209,156,188,222,251,53,240,154,188,245,220,124,193,110,95,147,87,195,236,160,105,194,187,
-        92,180,57,148,0,0,0,0,73,69,78,68,174,66,96,130
-    };
-
-    const unsigned char wxToolBar_png[554] {
-        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,
-        115,0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,1,220,73,68,65,84,56,203,237,148,49,104,19,81,24,199,127,175,105,
-        114,114,54,5,131,222,34,233,34,26,132,6,4,135,12,182,16,194,27,196,65,167,182,131,147,14,21,75,160,29,156,
-        157,37,148,116,144,14,5,151,10,33,160,139,96,19,44,152,161,231,32,7,182,165,54,233,150,156,58,88,10,210,34,
-        151,114,141,71,121,14,105,26,143,107,221,50,20,250,223,222,123,223,251,127,255,255,247,125,239,193,57,142,
-        32,114,185,156,234,9,113,181,90,237,9,113,95,175,74,209,15,32,101,138,104,212,96,105,233,3,0,74,41,132,16,
-        0,120,158,231,187,48,50,50,76,40,20,33,147,121,16,32,179,44,11,33,4,165,82,137,254,233,233,199,108,111,207,
-        224,56,55,73,167,239,2,135,192,30,112,9,219,254,193,250,250,55,154,205,230,241,229,161,33,208,180,139,188,
-        190,243,61,64,124,235,171,198,254,190,211,81,220,0,46,16,141,126,98,117,117,6,104,1,117,224,26,227,227,115,
-        167,24,85,132,198,22,56,124,251,196,183,59,56,248,11,77,219,107,19,11,113,5,240,128,235,52,26,63,169,84,62,
-        3,183,129,247,216,246,85,138,197,34,186,174,163,148,66,74,217,233,57,0,161,177,5,127,190,66,166,91,99,165,
-        90,128,224,224,160,73,62,111,83,171,153,128,9,192,192,0,44,47,127,1,96,99,3,164,172,162,20,140,78,153,60,127,
-        89,8,248,24,157,50,249,56,151,236,148,162,5,244,49,59,187,131,227,188,33,157,14,26,175,215,33,149,122,218,
-        214,218,22,203,159,196,195,255,79,133,16,151,89,92,244,216,218,42,144,72,4,3,118,119,33,28,190,207,228,228,
-        51,92,215,69,29,77,125,254,81,242,56,38,30,143,147,205,102,217,49,238,117,137,45,171,129,174,191,34,153,252,
-        125,98,230,205,205,27,204,207,191,192,117,93,159,226,127,97,24,134,143,180,211,5,165,105,16,137,156,108,201,
-        52,215,8,135,253,135,19,19,195,212,106,221,117,44,22,67,74,73,165,242,142,149,149,181,179,250,164,203,229,
-        242,249,31,127,70,241,23,223,2,154,75,171,133,77,36,0,0,0,0,73,69,78,68,174,66,96,130
-    };
-
-    const unsigned char wxToolbook_png[450] {
-        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,
-        115,0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,1,116,73,68,65,84,56,203,221,148,187,75,130,81,20,192,127,218,151,
-        34,232,55,8,145,123,212,86,127,67,52,4,65,68,47,194,8,196,160,6,11,43,209,30,32,134,129,212,80,208,16,56,148,
-        67,99,25,225,210,16,84,8,45,61,192,33,200,193,208,200,169,2,145,242,1,89,249,217,100,56,100,229,107,168,31,
-        92,184,112,47,191,123,56,231,220,3,181,36,247,13,51,107,39,185,114,156,66,126,19,10,133,170,26,172,188,86,
-        89,168,189,248,253,229,233,203,181,110,237,248,182,6,197,106,34,252,244,114,240,234,226,31,228,56,153,74,99,
-        50,207,226,221,63,64,94,87,207,253,195,99,117,196,135,71,167,4,2,1,134,6,186,145,178,111,76,89,22,138,247,
-        113,41,68,34,17,36,73,98,119,207,135,82,169,68,20,53,149,139,119,188,62,252,126,63,58,157,14,81,212,160,80,
-        40,152,54,155,42,19,59,156,203,156,157,95,162,213,106,113,45,217,105,105,110,202,143,132,242,196,169,84,26,
-        235,188,131,235,235,32,109,109,173,172,174,56,81,171,213,159,231,50,153,236,119,226,92,14,242,119,67,55,97,
-        236,139,46,98,177,24,125,189,61,216,44,147,165,13,161,66,194,183,119,68,163,81,94,51,25,54,220,91,8,130,192,
-        248,216,40,35,250,129,202,250,120,211,179,77,34,145,228,249,57,65,60,30,199,96,48,148,36,45,42,206,102,37,
-        250,123,187,25,214,15,162,82,169,232,234,108,175,206,207,155,179,154,1,88,91,119,99,52,26,17,69,177,252,65,
-        95,136,174,177,1,0,155,101,2,0,41,251,86,190,216,115,156,230,79,240,1,16,26,204,66,167,181,35,126,0,0,0,0,
-        73,69,78,68,174,66,96,130
-    };
-
-    const unsigned char wxTreebook_png[484] {
-        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,
-        115,0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,1,150,73,68,65,84,56,203,197,148,61,75,99,65,20,134,159,153,92,
-        99,162,194,70,5,193,15,180,88,4,183,17,82,248,7,108,197,66,217,98,17,11,59,91,193,191,33,88,138,176,197,45,
-        20,182,16,23,196,101,23,86,177,182,210,136,95,49,11,171,160,73,148,68,115,77,194,222,36,115,103,44,130,86,
-        107,130,87,131,47,12,115,96,102,158,115,56,239,97,160,145,50,53,52,183,176,109,252,48,173,199,32,30,143,191,
-        105,177,178,81,93,104,60,88,185,185,255,174,197,249,209,154,30,60,231,137,85,47,243,81,108,183,241,173,176,
-        143,151,40,120,133,183,5,255,188,218,4,224,52,179,143,180,94,48,110,181,180,147,254,205,223,252,25,5,229,112,
-        232,64,48,216,202,112,123,244,117,21,239,165,246,56,191,59,193,81,89,92,169,72,229,147,236,39,99,92,58,201,
-        215,129,163,221,81,218,131,93,132,116,11,150,39,137,132,59,25,136,244,211,247,161,199,63,88,4,4,0,174,87,68,
-        9,133,17,144,251,151,165,168,243,213,115,41,253,129,141,103,88,255,243,141,116,233,138,178,113,49,194,160,
-        155,36,9,231,140,173,243,95,24,173,253,129,237,196,50,247,198,161,98,52,210,88,4,180,64,160,41,107,151,123,
-        247,22,59,177,236,111,42,102,6,103,89,75,174,146,45,5,64,121,8,1,24,65,115,83,136,201,161,169,234,107,229,
-        211,188,116,230,26,227,129,37,44,140,170,238,229,82,25,59,182,244,44,180,46,120,229,192,38,66,7,31,155,63,
-        161,84,149,162,42,21,122,195,3,132,100,27,43,7,182,191,86,76,15,207,60,197,55,9,197,247,181,31,76,124,30,163,
-        107,240,203,251,125,155,79,21,127,221,42,214,185,58,78,96,100,156,141,11,224,162,200,187,233,1,87,161,242,
-        30,54,176,24,226,0,0,0,0,73,69,78,68,174,66,96,130
-    };
-
-    const unsigned char wxWizardPageSimple_png[605] {
-        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,
-        115,0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,2,15,73,68,65,84,56,203,213,148,203,107,19,81,20,135,191,153,4,
-        114,41,33,206,116,161,153,238,178,156,128,139,118,37,133,32,196,133,24,161,139,6,68,200,159,160,136,143,130,
-        32,133,110,68,9,22,109,168,227,66,40,184,137,148,44,42,184,8,184,112,64,2,137,32,157,193,44,28,144,74,118,
-        62,32,18,9,77,59,33,47,23,193,162,237,164,121,160,11,127,155,203,61,231,240,221,195,185,231,28,169,213,106,
-        245,0,252,126,63,199,169,217,108,18,8,4,24,38,73,146,36,0,169,209,104,244,190,126,223,231,111,105,61,247,158,
-        181,165,115,146,44,132,240,12,152,170,190,225,219,203,71,19,63,32,203,178,236,233,80,178,203,132,213,210,228,
-        224,195,134,153,76,140,233,194,38,98,94,160,214,44,166,11,155,72,133,75,227,131,59,157,206,31,134,31,204,162,
-        112,23,119,94,69,36,231,16,181,171,168,44,142,13,246,251,124,190,131,154,42,217,101,92,29,220,120,20,161,172,
-        2,38,232,2,183,98,48,147,49,176,35,139,136,200,28,39,78,159,29,158,113,183,219,5,96,223,49,250,181,165,114,
-        36,72,56,253,83,87,53,52,109,196,140,127,129,123,177,28,159,99,48,149,185,70,152,45,220,139,75,253,136,252,
-        23,54,28,133,188,18,101,61,118,121,244,26,31,25,140,141,231,148,220,91,8,243,3,197,43,22,91,134,131,94,115,
-        153,141,234,220,75,175,76,222,21,123,229,42,167,22,110,96,62,214,136,70,18,164,136,144,116,42,148,204,60,17,
-        77,227,73,230,254,104,224,118,187,61,216,155,74,242,233,227,59,0,44,203,194,42,154,168,170,202,195,17,50,151,
-        7,237,136,168,99,83,19,58,0,219,229,29,0,204,98,31,174,105,218,80,184,220,108,54,61,29,123,229,42,129,224,
-        201,131,251,239,112,211,52,81,20,133,23,185,103,131,193,163,108,172,195,112,203,178,250,149,74,165,120,91,
-        120,229,13,174,215,235,99,77,212,118,121,135,120,60,142,166,105,132,195,97,18,137,132,39,92,14,133,66,99,143,
-        235,131,181,167,56,142,141,97,24,100,179,89,206,196,206,15,111,183,81,117,243,118,26,219,182,185,176,224,61,
-        52,242,238,238,238,196,171,241,206,74,122,240,231,5,131,65,254,133,252,146,36,73,215,87,95,247,248,95,244,
-        19,184,15,178,17,93,241,242,218,0,0,0,0,73,69,78,68,174,66,96,130
-    };
-
-    const unsigned char wxWizard_png[1047] {
-        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,
-        115,0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,3,201,73,68,65,84,56,203,213,149,77,104,92,85,20,199,127,239,35,
-        51,239,37,169,121,147,168,157,39,86,140,186,153,224,38,1,21,186,12,130,18,45,162,221,212,70,138,8,130,80,139,
-        213,166,136,109,55,82,65,4,55,74,7,68,90,63,105,23,162,213,133,212,6,101,236,198,148,22,59,145,104,141,160,
-        109,218,164,164,77,173,153,230,99,50,147,153,119,207,113,241,222,76,29,180,117,229,194,11,135,199,123,247,
-        190,223,57,247,156,123,254,23,254,111,195,58,241,203,239,122,244,212,21,186,186,3,86,106,138,0,168,130,2,42,
-        168,106,139,1,168,36,223,73,214,136,34,170,180,217,138,45,117,30,190,47,196,61,250,195,60,126,167,15,40,126,
-        91,211,31,0,155,178,39,153,26,43,114,226,174,173,36,200,107,33,233,63,133,9,82,175,243,249,119,51,184,106,
-        187,148,87,133,114,109,21,43,1,54,70,112,112,15,217,129,144,133,242,179,55,216,115,235,171,68,134,186,177,
-        112,141,40,65,187,77,167,231,52,39,183,140,62,68,117,96,43,222,122,143,204,197,34,47,100,190,164,196,97,190,
-        185,245,195,127,201,172,82,171,9,51,75,224,122,14,12,220,217,193,189,235,124,140,196,211,87,71,251,201,242,
-        26,213,245,125,120,100,224,179,231,201,100,246,177,161,191,235,134,88,215,177,88,92,169,243,197,210,50,174,
-        5,180,167,44,122,58,29,230,126,252,138,224,224,30,170,57,168,14,246,225,5,111,2,5,200,121,84,167,242,4,175,
-        231,25,239,125,2,175,119,128,142,187,115,45,80,47,237,177,166,167,27,210,22,174,3,46,170,136,10,43,149,26,
-        149,201,60,1,16,48,69,149,176,245,199,201,248,153,203,132,84,67,152,45,87,254,6,6,168,27,193,136,224,42,74,
-        35,187,157,15,30,100,226,158,243,220,241,201,219,100,57,76,245,145,145,120,226,200,69,14,76,6,28,9,250,248,
-        244,241,103,72,3,25,11,210,158,223,2,47,47,45,196,5,52,130,173,34,68,18,39,87,36,57,171,7,14,113,188,186,3,
-        175,240,51,99,91,139,28,206,79,146,43,85,233,239,203,177,109,231,78,124,223,39,157,78,95,55,215,34,130,45,
-        170,68,73,213,20,139,116,218,163,62,49,205,253,207,189,74,97,95,72,95,239,16,195,244,178,113,114,138,227,133,
-        35,244,134,33,35,35,35,68,81,116,93,168,138,96,163,10,18,71,235,182,185,100,179,107,241,125,159,114,185,28,
-        175,28,222,200,194,220,56,0,197,98,145,226,88,129,76,38,195,246,23,95,98,97,97,177,197,34,177,154,93,105,171,
-        10,34,2,8,41,215,161,221,247,72,181,57,160,17,125,147,227,148,188,28,142,5,23,166,207,1,80,24,139,225,97,24,
-        178,123,247,46,92,91,91,204,24,19,131,27,80,219,118,168,172,70,204,254,81,99,230,74,141,11,87,234,148,190,
-        191,196,154,174,91,40,93,93,164,30,25,166,206,158,105,194,11,133,2,65,16,240,206,187,251,57,51,23,177,88,181,
-        227,84,36,167,204,54,198,64,44,61,76,95,174,113,232,219,18,251,143,206,179,127,116,158,247,191,46,113,250,
-        124,5,85,105,230,176,1,47,22,139,113,166,134,135,249,233,228,40,167,207,149,155,221,103,34,131,173,162,72,
-        82,188,180,11,183,117,59,172,187,57,182,219,123,108,58,60,11,249,11,24,224,212,196,111,12,14,14,18,134,33,
-        217,108,150,161,161,33,46,255,90,72,148,15,212,24,92,21,193,24,165,188,82,161,231,38,155,13,15,116,54,165,
-        203,182,237,70,179,210,230,94,211,146,181,1,124,244,193,123,188,252,202,14,242,249,60,0,79,111,121,42,6,39,
-        114,106,55,36,208,177,33,229,66,202,85,82,174,69,202,181,112,44,5,49,212,86,43,44,45,151,169,213,163,216,162,
-        216,246,238,125,131,241,241,113,54,111,222,68,45,138,48,81,132,149,4,229,46,46,173,112,246,82,26,177,172,164,
-        65,4,213,216,153,168,52,85,81,164,138,72,67,149,147,5,10,143,62,185,157,99,197,89,80,197,177,45,86,86,13,87,
-        151,77,124,131,188,245,241,49,218,59,124,196,72,114,192,21,21,65,52,121,26,131,52,28,66,236,92,4,36,222,122,
-        92,3,141,47,30,81,118,109,123,236,191,187,243,254,4,61,95,30,87,232,10,12,187,0,0,0,0,73,69,78,68,174,66,96,
-        130
-    };
-
-    const unsigned char wxactivityIndicator_png[796] {
-        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,
-        115,0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,2,206,73,68,65,84,56,203,189,149,191,75,51,121,16,198,63,223,152,
-        96,192,40,72,32,9,137,226,207,34,85,138,104,10,65,82,88,216,8,54,198,34,249,15,44,44,252,23,172,236,172,196,
-        210,210,8,166,80,16,193,144,45,12,90,6,210,136,11,174,33,162,217,77,252,1,154,128,152,160,115,197,145,197,
-        189,247,120,213,187,227,166,154,153,157,121,118,102,246,225,89,197,55,172,94,175,203,243,243,51,0,62,159,143,
-        112,56,172,190,234,249,178,224,233,233,73,76,211,228,227,227,195,206,5,131,65,2,129,192,111,123,93,93,167,
-        88,44,202,210,210,146,4,131,65,89,91,91,19,203,178,4,160,221,110,59,64,1,222,222,222,108,95,215,117,209,52,
-        77,206,207,207,165,90,173,74,55,239,238,58,27,27,27,28,29,29,1,176,185,185,201,244,244,52,0,30,143,7,165,20,
-        34,118,15,30,143,7,0,211,52,165,84,42,1,240,250,250,74,171,213,194,1,108,89,150,140,142,142,58,166,42,20,10,
-        0,248,253,126,85,171,213,228,229,229,5,128,190,190,62,66,161,144,2,232,230,186,214,233,116,176,44,75,66,161,
-        144,114,1,132,66,33,149,201,100,28,69,233,116,218,246,195,225,176,138,70,163,42,26,141,170,225,225,97,251,
-        182,131,131,131,184,92,246,53,29,47,181,139,170,213,170,228,114,57,206,206,206,72,167,211,164,82,41,245,29,
-        198,152,166,41,181,90,141,222,222,94,2,129,192,151,31,245,191,177,122,189,46,249,124,94,234,245,186,252,27,
-        28,93,215,165,209,104,8,128,59,159,207,203,220,220,28,205,102,147,254,254,126,78,79,79,37,153,76,254,104,29,
-        203,178,164,80,40,160,105,26,46,151,139,114,185,44,106,126,126,94,46,47,47,237,162,68,34,65,46,151,251,17,
-        176,166,105,162,235,186,131,142,174,191,82,166,217,108,254,248,4,237,118,219,17,191,191,191,227,90,94,94,118,
-        36,83,169,212,143,129,39,39,39,29,241,248,248,248,159,116,203,102,179,82,169,84,136,197,98,44,44,44,252,35,
-        186,92,93,93,137,105,154,120,189,94,18,137,196,255,64,185,46,93,14,15,15,109,202,124,215,74,165,146,24,134,
-        33,127,43,155,187,187,187,178,181,181,101,107,238,246,246,54,99,99,99,191,93,233,225,225,65,118,118,118,120,
-        124,124,4,32,22,139,145,201,100,148,67,221,246,247,247,237,134,86,171,197,241,241,177,29,223,220,220,72,177,
-        88,4,96,106,106,138,104,52,170,0,174,175,175,109,80,128,139,139,11,238,238,238,36,18,137,40,247,103,1,249,
-        108,221,248,254,254,94,214,215,215,109,128,147,147,19,12,195,144,137,137,9,229,118,187,127,217,162,167,167,
-        199,41,244,139,139,139,248,124,62,0,134,134,134,72,38,147,0,84,42,21,199,84,157,78,135,114,185,12,64,60,30,
-        87,35,35,35,246,179,217,217,89,91,221,220,159,248,171,26,141,134,220,222,222,18,143,199,85,54,155,5,96,96,
-        96,224,151,169,252,126,191,237,175,172,172,40,195,48,196,235,245,18,137,68,212,183,255,121,0,123,123,123,114,
-        112,112,0,192,204,204,12,171,171,171,95,246,253,1,125,72,56,29,45,113,92,188,0,0,0,0,73,69,78,68,174,66,96,
-        130
-    };
-
-    const unsigned char wxanimation_png[248] {
-        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,
-        115,0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,0,170,73,68,65,84,56,203,205,149,91,14,196,32,8,69,185,205,236,
-        8,215,212,174,169,93,19,174,137,249,25,19,219,162,69,71,147,222,31,163,134,35,18,30,32,75,251,174,212,162,
-        109,35,34,66,126,244,169,26,172,235,121,127,28,238,183,80,185,107,241,250,198,41,122,44,34,46,98,8,193,60,
-        95,158,12,153,153,152,153,90,181,208,36,61,130,1,156,190,124,93,123,165,34,162,181,117,10,124,68,200,166,64,
-        111,240,161,89,225,205,107,79,229,229,80,53,138,2,127,121,156,160,121,145,252,188,215,110,176,5,245,194,225,
-        133,198,24,107,189,2,239,41,233,215,129,139,253,56,164,152,22,98,219,151,199,105,230,121,71,147,49,243,48,
-        96,44,153,172,47,100,228,97,136,167,219,12,202,0,0,0,0,73,69,78,68,174,66,96,130
-    };
-
-    const unsigned char wxbannerWindow_png[835] {
-        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,
-        115,0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,2,245,73,68,65,84,56,203,237,149,93,107,156,69,20,199,127,103,158,
-        217,236,171,219,221,77,178,217,52,178,164,73,99,68,42,24,11,42,69,20,17,47,212,94,136,32,120,239,157,248,9,
-        10,126,3,63,132,151,130,95,64,244,66,244,66,16,21,106,75,18,99,218,52,105,179,233,214,221,109,247,37,155,103,
-        247,121,153,227,197,110,94,108,176,205,7,232,31,102,24,152,153,223,156,57,115,206,25,120,166,177,228,243,175,
-        111,232,147,87,156,28,199,163,198,120,139,10,96,64,61,52,26,160,145,207,75,139,51,124,248,198,139,88,147,44,
-        240,116,176,3,57,60,95,79,45,80,132,164,10,213,201,115,92,125,103,153,73,1,139,184,179,92,108,100,157,0,34,
-        128,162,46,198,24,80,23,224,225,120,190,148,225,147,183,22,153,2,60,192,158,182,224,49,169,160,234,129,90,
-        48,138,120,10,196,168,27,18,71,1,150,144,197,234,44,111,175,204,144,79,128,145,8,139,197,30,58,241,242,202,
-        44,168,18,249,17,169,218,62,166,99,121,244,72,104,182,66,130,185,128,234,149,2,67,133,134,175,180,239,236,
-        225,121,134,40,138,57,151,51,92,152,78,82,201,66,66,192,195,192,200,226,17,120,48,28,185,196,5,80,206,230,
-        233,119,211,12,135,208,237,68,4,201,22,109,223,241,192,135,126,164,36,9,17,99,49,34,84,38,179,92,44,167,200,
-        11,88,64,48,232,8,60,82,224,15,145,48,32,232,57,26,237,28,181,77,216,220,132,169,169,187,124,240,234,117,82,
-        174,65,152,232,177,26,45,115,71,95,96,56,244,201,164,146,204,205,150,169,20,83,120,163,248,56,10,162,35,240,
-        210,198,79,84,90,91,212,239,11,191,4,31,241,231,237,44,181,26,92,187,182,197,251,239,149,128,46,170,109,150,
-        239,126,203,87,255,124,9,10,185,231,178,20,11,89,82,143,65,255,3,190,236,237,83,94,88,160,227,234,108,253,
-        126,147,159,111,55,216,109,78,224,220,54,144,38,142,55,24,12,182,137,162,29,80,131,77,76,224,31,28,208,237,
-        249,4,83,25,204,255,89,108,235,117,16,33,191,186,202,103,205,58,193,155,87,249,126,229,99,114,231,215,25,12,
-        82,132,225,31,196,113,131,48,108,1,6,227,25,14,250,251,220,219,107,114,191,120,158,106,193,226,9,227,167,59,
-        1,214,141,13,8,67,100,109,141,84,183,75,98,174,135,73,89,54,59,37,150,118,127,0,238,1,61,254,106,94,2,12,234,
-        28,206,9,123,15,30,178,85,74,83,46,76,31,195,78,130,215,111,213,88,106,237,34,173,22,81,175,199,78,114,146,
-        40,84,126,172,127,202,122,231,21,140,113,24,137,121,24,206,83,74,64,28,43,198,155,160,211,31,112,171,209,103,
-        190,58,205,133,236,177,47,228,139,111,118,244,169,137,231,12,234,4,49,10,198,129,64,28,197,8,224,162,125,138,
-        197,12,175,47,207,240,238,82,142,156,140,82,206,42,122,134,140,142,193,19,116,92,47,212,41,98,4,84,17,155,
-        166,221,139,249,245,230,54,105,153,231,181,139,57,82,2,86,176,79,68,203,97,119,34,150,140,145,113,241,81,80,
-        69,85,233,248,17,223,253,246,55,137,252,10,151,202,130,173,100,252,51,213,160,163,161,200,233,105,1,156,135,
-        58,203,218,245,27,44,92,121,249,217,135,116,172,127,1,22,43,59,120,219,69,88,83,0,0,0,0,73,69,78,68,174,66,
-        96,130
-    };
-
-    const unsigned char wxcheckBox_png[202] {
-        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,
-        115,0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,0,124,73,68,65,84,56,203,237,211,49,14,128,32,12,5,208,150,120,
-        240,63,50,50,112,31,88,29,29,60,15,78,36,134,128,109,141,14,26,254,248,33,47,77,3,68,51,159,13,183,5,128,98,
-        1,0,112,175,95,122,101,206,89,133,198,224,9,0,169,97,34,162,148,146,8,239,219,58,60,115,183,246,199,44,222,
-        113,111,160,34,220,34,90,84,53,113,197,206,104,41,229,153,85,88,81,17,110,17,45,170,154,184,98,22,84,189,10,
-        43,58,252,32,49,248,203,199,63,243,243,28,200,141,39,81,199,176,79,105,0,0,0,0,73,69,78,68,174,66,96,130
-    };
-
-    const unsigned char wxcomboBox_png[233] {
-        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,
-        115,0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,0,155,73,68,65,84,56,203,99,96,24,5,180,6,140,13,13,13,255,169,
-        109,104,125,125,61,3,203,129,3,7,168,106,232,148,9,29,12,12,12,12,12,44,12,12,12,12,251,247,239,199,171,248,
-        234,197,147,68,25,154,83,80,1,103,179,16,235,18,109,125,115,188,242,141,141,141,40,124,22,82,188,73,172,203,
-        25,24,24,24,152,104,149,42,88,72,213,160,99,96,129,33,118,229,194,9,202,93,140,110,8,54,67,201,14,10,152,97,
-        184,12,165,40,140,241,25,58,56,34,15,61,157,82,197,96,228,28,69,116,33,116,229,194,9,170,23,66,218,250,230,
-        12,140,255,255,255,255,207,48,10,104,9,0,42,152,44,128,9,231,17,89,0,0,0,0,73,69,78,68,174,66,96,130
-    };
-
-    const unsigned char wxfileCtrl_png[255] {
-        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,
-        115,0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,0,177,73,68,65,84,56,203,99,96,160,17,96,100,96,96,96,176,155,117,
-        239,63,53,13,61,148,166,196,200,2,227,28,76,85,164,138,161,246,179,239,51,48,48,48,48,176,32,11,126,190,228,
-        7,103,243,234,109,130,120,137,145,145,225,255,127,132,135,96,124,116,113,116,192,132,46,192,43,225,131,98,
-        8,46,54,62,67,177,26,252,249,197,22,20,62,54,3,96,46,70,182,12,29,160,4,5,204,251,216,12,133,177,209,105,162,
-        12,38,38,140,137,13,14,130,97,12,211,12,243,54,44,8,40,14,99,108,96,112,135,49,41,225,74,82,24,35,135,45,186,
-        56,190,160,32,42,29,227,114,41,62,215,19,21,198,164,134,239,104,24,211,39,140,153,104,85,53,177,160,151,252,
-        131,30,0,0,11,121,141,160,207,10,6,93,0,0,0,0,73,69,78,68,174,66,96,130
-    };
-
-    const unsigned char wxmenuBar_png[490] {
-        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,
-        115,0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,1,156,73,68,65,84,56,203,237,146,191,75,27,1,20,199,63,231,221,
-        197,59,168,103,81,210,244,188,68,147,114,49,38,109,177,148,84,168,160,32,14,142,22,23,29,92,90,232,222,63,
-        193,169,179,244,143,208,53,113,16,90,73,135,18,28,130,81,210,78,41,73,91,127,224,121,81,68,175,173,248,227,
-        146,235,208,14,154,66,115,91,151,124,150,7,143,15,95,222,227,61,104,211,166,25,225,249,98,214,139,71,117,95,
-        178,124,106,49,113,223,104,233,213,106,53,164,120,84,103,252,201,3,95,193,149,82,29,211,52,125,185,226,228,
-        220,203,133,147,194,50,153,247,91,72,178,200,209,97,141,245,149,12,145,225,52,129,142,155,242,177,109,51,20,
-        185,224,213,139,5,78,197,0,9,51,134,40,216,188,89,204,162,6,92,236,175,101,26,193,40,87,206,49,18,128,231,
-        214,81,187,123,232,234,85,169,22,171,212,93,23,235,99,142,98,161,76,106,106,134,135,177,187,215,226,27,116,
-        200,10,122,40,196,151,226,42,107,155,85,246,191,119,98,237,148,41,228,114,220,113,52,38,77,141,63,51,137,36,
-        210,99,24,33,149,131,61,27,128,173,181,85,206,36,1,247,231,249,95,107,6,251,7,121,148,140,81,42,109,51,59,
-        63,141,166,136,88,187,71,196,83,41,70,159,62,6,248,61,177,166,223,227,118,40,136,210,233,16,142,70,80,196,
-        75,250,140,4,249,245,42,178,44,54,197,170,4,174,44,178,239,62,144,78,134,89,90,122,75,208,48,8,107,117,122,
-        110,193,167,141,77,70,6,52,132,215,153,130,231,255,120,37,158,141,38,91,123,149,10,210,183,207,101,126,28,
-        30,248,10,54,123,21,108,219,110,233,57,142,131,144,207,231,61,61,220,79,3,16,0,239,31,149,166,94,243,215,180,
-        105,243,159,248,5,209,231,135,48,146,219,194,246,0,0,0,0,73,69,78,68,174,66,96,130
-    };
-
-    const unsigned char wxnotebook_png[177] {
-        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,
-        115,0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,0,99,73,68,65,84,56,203,99,96,160,37,248,143,7,20,244,236,37,90,
-        12,217,76,22,24,227,230,205,155,56,45,158,57,115,38,154,136,42,86,49,100,192,68,171,80,160,153,193,140,176,
-        48,190,122,241,36,86,5,218,250,230,36,25,88,216,187,143,97,66,137,51,35,11,33,133,184,44,28,176,160,24,53,
-        120,212,224,81,131,71,13,38,6,192,75,183,57,123,190,50,12,9,0,0,126,235,89,63,162,177,243,95,0,0,0,0,73,69,
-        78,68,174,66,96,130
-    };
-
-    const unsigned char wxradioButton_png[268] {
-        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,
-        115,0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,0,190,73,68,65,84,56,203,237,146,173,14,194,48,20,70,191,46,123,
-        27,72,192,129,92,29,18,193,251,172,18,137,224,49,38,38,231,54,89,92,73,202,243,20,117,73,219,220,174,157,64,
-        44,217,81,237,189,233,233,223,7,108,172,22,17,23,172,209,206,159,119,253,16,244,111,215,75,48,223,31,207,130,
-        19,215,169,29,73,56,77,19,219,143,55,40,18,119,253,240,19,142,227,24,244,164,148,0,128,182,109,241,121,191,
-        150,137,137,88,74,181,57,97,18,165,148,107,154,198,249,0,112,0,130,154,53,154,122,44,85,246,119,133,96,199,
-        57,170,127,197,45,43,246,111,59,115,243,60,214,104,199,189,51,247,190,113,230,139,78,252,124,220,217,223,47,
-        77,68,157,10,255,238,112,98,69,169,122,113,142,105,33,137,150,158,120,99,197,124,1,139,96,135,90,23,84,224,
-        156,0,0,0,0,73,69,78,68,174,66,96,130
-    };
-
-    const unsigned char wxscrolledWindow_png[258] {
-        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,
-        115,0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,0,180,73,68,65,84,56,203,99,96,160,17,96,100,96,96,96,248,253,251,
-        247,127,106,26,202,202,202,202,200,2,227,220,188,122,150,104,141,115,246,124,37,168,134,133,92,87,165,184,
-        112,227,181,148,137,82,111,175,217,176,131,97,205,134,29,24,226,76,148,26,138,141,77,81,80,48,48,48,48,132,
-        4,120,224,148,99,162,85,114,35,219,197,132,82,6,217,6,199,216,243,51,176,176,178,48,176,179,179,49,176,178,
-        178,51,176,115,176,49,112,176,113,48,180,46,186,68,105,80,224,207,83,76,20,102,90,250,71,30,205,130,130,236,
-        200,91,114,240,211,16,45,43,168,238,98,108,229,3,114,22,103,162,86,89,129,94,110,176,80,234,101,92,5,17,11,
-        3,3,3,67,233,196,67,84,47,43,104,6,0,244,134,43,188,27,112,106,156,0,0,0,0,73,69,78,68,174,66,96,130
-    };
-
-    const unsigned char wxsimplebook_png[249] {
-        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,
-        115,0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,0,171,73,68,65,84,56,203,99,96,160,17,96,252,253,251,247,255,111,
-        95,63,51,48,49,49,146,172,249,224,249,23,165,62,246,154,61,216,228,88,126,253,252,206,240,248,193,45,178,92,
-        117,229,246,143,110,6,6,6,172,6,51,209,42,40,40,54,248,243,167,247,255,63,127,122,255,127,203,193,235,37,40,
-        65,65,169,193,15,239,221,196,26,44,52,11,10,22,106,26,246,249,211,251,255,176,212,66,85,131,145,131,101,240,
-        166,138,81,131,7,206,96,150,115,55,223,148,158,186,244,163,155,28,205,239,191,254,195,109,176,173,177,82,15,
-        44,43,126,253,242,233,255,253,59,215,6,121,80,32,115,168,25,44,56,171,13,74,130,101,203,153,31,3,80,186,81,
-        26,44,0,249,93,93,215,32,170,61,92,0,0,0,0,73,69,78,68,174,66,96,130
-    };
-
-    const unsigned char wxsplitterWindow_png[266] {
-        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,
-        115,0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,0,188,73,68,65,84,56,203,237,147,49,10,194,64,16,69,95,54,233,60,
-        138,133,77,192,94,60,138,96,171,216,123,2,197,90,201,81,162,189,152,70,80,240,30,33,69,72,118,215,42,22,194,
-        226,44,102,187,252,106,97,62,143,153,63,179,16,82,86,168,213,238,236,172,25,99,108,211,52,182,109,91,11,144,
-        0,104,173,121,61,10,113,35,207,251,213,89,203,242,10,0,5,160,148,242,153,78,228,83,161,226,29,192,3,184,7,
-        112,20,69,97,192,101,89,138,124,201,47,67,247,69,59,109,79,55,22,243,209,255,96,128,195,102,246,121,175,247,
-        151,254,162,208,90,147,166,203,254,151,23,199,49,69,113,244,2,139,162,144,142,239,5,150,44,202,25,133,244,
-        54,179,188,98,60,153,250,117,252,125,86,46,213,117,45,246,6,209,27,126,194,121,73,178,21,71,29,0,0,0,0,73,
+        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,115,
+        0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,1,200,73,68,65,84,56,203,213,212,191,75,27,97,24,192,241,239,107,143,84,
+        8,130,67,74,16,21,161,18,141,162,96,16,110,80,16,113,72,168,75,20,157,148,78,162,226,84,168,58,56,244,47,168,130,
+        171,58,182,58,157,104,150,4,132,130,68,252,193,137,40,40,230,196,42,132,8,69,234,34,34,85,49,188,14,241,142,92,
+        176,54,234,57,244,93,238,225,185,227,243,190,60,247,60,47,188,210,18,219,7,103,50,208,51,239,40,186,61,215,133,
+        160,113,74,222,232,3,142,194,46,117,26,5,96,115,99,13,101,168,13,128,170,153,107,0,230,124,5,0,124,74,151,2,32,
+        191,239,0,208,240,57,147,31,22,18,128,144,208,239,185,73,0,140,248,23,0,10,94,171,198,255,31,172,60,229,227,62,
+        185,2,19,153,120,25,104,29,105,121,57,220,39,87,80,107,42,8,55,215,2,16,89,221,103,121,60,78,104,180,240,239,176,
+        171,170,9,126,92,1,240,243,254,133,154,206,60,215,129,153,111,17,11,53,126,93,2,88,27,140,125,77,210,255,49,12,
+        132,50,173,6,192,222,191,7,100,160,215,107,67,127,95,220,0,240,174,200,133,191,196,77,100,117,31,61,145,100,122,
+        246,212,54,32,74,160,218,35,30,173,65,239,162,204,69,1,43,14,55,215,162,39,146,176,53,104,57,129,234,193,252,106,
+        124,254,231,150,221,212,5,135,167,151,182,188,207,235,166,164,248,237,243,219,109,73,55,8,214,123,240,121,221,54,
+        52,88,239,97,73,55,158,215,21,157,254,91,22,140,20,0,65,213,111,229,77,116,231,48,69,183,75,163,51,170,201,15,237,
+        221,86,57,68,62,39,142,69,53,185,96,40,52,248,202,45,60,27,45,171,105,225,36,17,39,253,190,3,19,23,249,246,177,
+        137,103,47,19,173,172,83,57,218,211,109,184,120,202,228,197,162,154,204,205,189,57,94,124,16,23,47,189,19,98,81,
+        77,62,132,11,39,46,156,108,220,177,19,231,226,217,63,16,39,113,51,190,3,94,116,196,49,66,178,212,68,0,0,0,0,73,
         69,78,68,174,66,96,130
     };
 
+    const unsigned char customControl_png[740] {
+        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,115,
+        0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,2,150,73,68,65,84,56,203,181,149,203,107,19,81,20,135,191,59,147,38,77,154,
+        144,196,164,15,147,86,5,5,75,213,133,21,116,37,10,186,42,130,139,22,164,136,139,254,5,162,224,194,93,87,22,220,
+        248,90,40,42,22,5,17,23,130,40,20,65,93,212,86,55,21,17,36,109,85,218,154,58,109,90,218,52,77,141,121,118,238,184,
+        177,147,230,209,24,169,94,184,195,157,51,247,124,252,206,185,247,204,17,228,135,193,191,25,194,124,0,70,223,80,
+        146,218,154,154,178,59,199,181,112,137,173,181,121,123,137,45,157,203,113,241,176,3,64,8,192,232,29,76,148,133,
+        78,205,126,7,224,86,231,206,146,111,231,6,230,105,242,122,203,194,123,143,56,177,0,8,85,37,35,101,65,78,102,34,
+        26,183,187,118,109,24,239,149,142,70,206,62,25,197,233,107,193,182,78,148,80,85,0,20,128,140,148,5,51,172,77,113,
+        254,96,160,0,244,96,56,204,189,55,223,24,249,18,55,109,215,58,219,248,185,24,38,181,170,23,248,155,224,180,174,
+        147,249,61,181,104,148,211,109,126,90,183,57,0,120,254,97,142,238,199,95,249,152,243,18,146,62,110,132,150,185,
+        254,122,194,132,95,237,218,203,100,68,51,253,51,186,158,7,175,133,111,0,50,21,231,216,190,250,188,210,209,5,252,
+        245,13,228,12,131,172,148,184,221,30,94,206,166,11,162,113,41,165,138,45,197,185,203,200,252,173,187,51,56,137,
+        99,75,67,65,254,1,144,122,145,143,68,41,218,83,2,110,9,238,160,251,209,39,2,117,86,38,82,10,110,143,106,134,7,16,
+        139,45,209,211,230,55,223,223,141,47,17,195,138,162,235,149,193,0,134,167,17,13,168,173,161,64,109,114,113,142,
+        243,237,65,142,238,241,1,48,22,78,114,121,100,26,167,63,80,18,85,9,120,38,149,98,125,229,172,29,174,37,22,225,217,
+        153,118,211,54,24,138,210,247,94,195,238,111,42,130,26,165,224,53,104,241,72,44,204,241,170,39,15,237,31,14,211,
+        63,245,3,167,215,111,166,201,0,164,97,20,94,183,74,80,128,227,91,29,230,250,254,219,48,119,167,211,88,93,110,50,
+        82,154,183,9,64,17,2,251,250,2,169,4,5,104,113,217,204,245,211,201,24,30,151,11,85,8,172,138,178,161,143,82,205,
+        239,106,36,146,175,182,164,197,129,52,12,20,33,42,250,88,170,1,71,29,77,156,120,56,134,195,238,32,232,243,17,73,
+        167,255,232,83,81,177,42,4,46,139,5,185,178,72,71,192,198,129,186,44,169,149,120,85,63,229,138,138,21,33,136,45,
+        47,115,97,127,144,67,187,61,0,92,26,248,204,208,170,109,115,138,179,82,162,168,42,137,108,46,95,190,186,220,188,
+        98,1,96,183,115,51,20,101,88,139,147,200,234,104,70,93,85,71,110,182,166,83,3,243,127,213,216,226,185,92,89,251,
+        139,147,205,102,107,250,47,205,244,23,242,202,43,28,111,13,237,245,0,0,0,0,73,69,78,68,174,66,96,130
+    };
+
+    const unsigned char dataviewlist_column_png[224] {
+        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,115,
+        0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,0,146,73,68,65,84,56,203,99,180,155,117,239,63,3,25,224,80,154,18,35,62,
+        121,22,6,6,6,6,247,215,203,25,24,24,24,24,150,47,95,206,16,25,25,9,103,95,102,191,130,83,35,35,1,139,89,96,12,152,
+        161,203,151,67,44,137,140,140,100,96,88,87,205,64,54,176,155,117,239,127,107,107,235,127,172,192,152,1,167,56,33,
+        115,153,24,104,4,104,102,48,60,140,119,238,220,137,33,233,206,192,192,192,96,194,72,153,193,238,238,238,152,178,
+        213,12,12,12,103,176,4,39,17,150,141,134,241,104,24,143,134,241,104,24,15,104,24,51,210,170,50,5,0,160,86,97,60,
+        76,160,24,178,0,0,0,0,73,69,78,68,174,66,96,130
+    };
+
+    const unsigned char datepicker_png[1047] {
+        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,115,
+        0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,3,201,73,68,65,84,56,203,173,148,75,108,148,85,20,199,127,247,49,223,224,
+        116,152,182,51,211,86,228,21,107,48,5,36,38,38,116,97,19,35,11,27,33,81,74,68,22,110,52,46,100,225,130,189,70,66,
+        112,227,206,157,27,23,134,184,144,144,42,213,40,8,178,17,193,69,19,13,137,143,78,109,164,192,52,244,49,211,41,180,
+        211,105,231,123,220,227,98,166,223,180,184,209,192,127,117,79,206,205,239,158,156,243,63,87,61,113,252,11,217,183,
+        173,139,164,53,56,132,255,42,5,68,14,86,125,135,32,172,250,130,2,148,18,238,44,84,176,189,249,28,175,238,123,150,
+        21,63,224,255,200,57,40,45,6,116,166,45,143,37,53,95,94,155,231,196,208,22,82,9,143,247,134,175,97,139,179,1,195,
+        63,149,9,92,216,172,68,129,2,145,70,245,74,41,16,16,90,177,8,4,161,99,147,167,25,216,155,65,107,88,172,133,164,
+        146,154,165,90,200,220,253,8,213,253,214,55,178,163,189,11,207,115,40,165,8,163,16,17,72,88,11,64,16,134,40,5,214,
+        52,227,32,64,107,141,214,26,80,164,60,71,50,105,89,170,9,10,33,8,52,55,43,37,108,61,12,121,229,249,118,222,25,220,
+        1,40,102,102,103,40,253,112,28,196,161,173,162,92,241,233,123,253,12,61,221,61,0,76,222,154,164,61,147,33,155,205,
+        129,130,241,241,9,114,249,28,249,108,22,39,194,167,151,238,240,241,119,119,177,90,67,103,91,146,199,59,218,0,48,
+        126,138,213,100,133,253,111,28,132,249,2,223,126,246,51,219,58,219,200,117,164,0,240,59,83,180,103,218,104,111,
+        198,181,108,138,238,174,205,164,55,55,226,236,230,36,90,131,181,70,97,180,94,55,110,131,221,148,196,212,127,132,
+        191,174,17,205,131,168,86,94,105,11,218,180,238,107,131,208,202,27,173,177,70,97,19,198,80,173,46,50,61,125,23,
+        80,84,171,85,102,167,238,242,235,87,176,58,9,115,101,184,119,239,30,65,16,112,234,236,232,6,103,124,248,230,32,
+        190,75,80,158,175,80,173,46,1,80,173,46,146,48,6,235,25,5,226,8,67,31,68,227,156,195,123,242,109,102,234,43,168,
+        61,9,118,60,29,17,69,17,167,206,142,210,191,123,39,135,7,246,0,240,245,245,63,249,224,204,101,78,30,235,143,237,
+        231,92,29,196,225,25,133,213,74,200,102,59,217,190,125,39,0,11,11,11,228,95,122,151,92,46,7,64,185,92,230,253,207,
+        175,199,208,194,244,50,64,252,192,233,115,163,156,60,214,207,214,173,91,26,61,30,191,141,86,69,180,49,10,163,90,
+        27,167,148,106,120,183,169,7,161,165,37,159,210,146,79,97,122,153,195,3,123,232,223,189,147,211,231,90,45,50,74,
+        48,70,161,19,86,1,66,20,133,132,97,132,136,32,34,132,97,72,20,69,113,117,107,208,53,173,135,3,68,174,193,0,33,97,
+        21,214,90,67,125,117,133,82,105,14,208,4,65,128,136,16,4,173,21,191,191,18,242,91,113,137,137,217,229,13,195,219,
+        213,211,198,150,142,36,0,243,229,121,156,243,169,175,174,96,173,193,106,45,164,211,41,242,249,46,64,81,171,213,
+        112,206,145,78,167,99,192,229,209,2,131,253,125,0,49,124,87,79,27,131,251,242,92,30,45,52,122,219,217,14,10,210,
+        105,31,173,5,107,181,194,179,22,107,19,0,120,94,2,17,193,54,87,250,72,95,200,249,66,17,32,134,3,49,244,198,68,145,
+        163,222,48,87,174,132,188,124,240,181,6,75,171,134,221,28,14,16,64,161,181,70,156,139,1,47,30,56,4,92,248,23,124,
+        61,116,219,238,23,152,26,27,225,251,139,224,50,251,27,118,203,164,44,51,149,58,159,92,26,199,26,211,28,152,96,154,
+        159,78,24,134,40,189,151,35,125,127,112,190,80,228,198,68,49,126,116,13,250,212,51,13,47,79,141,141,208,209,11,
+        153,84,7,246,151,219,211,248,65,68,165,230,35,72,108,181,13,223,38,32,226,241,209,1,127,195,240,34,134,152,26,27,
+        1,216,0,63,241,220,16,138,135,212,197,11,195,98,110,142,196,149,255,253,251,40,83,99,87,31,30,252,32,124,106,236,
+        42,81,239,208,163,1,175,135,71,189,67,28,60,116,244,145,113,99,248,218,249,31,139,93,191,25,36,239,164,91,0,0,0,
+        0,73,69,78,68,174,66,96,130
+    };
+
+    const unsigned char dirPicker_png[690] {
+        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,115,
+        0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,2,100,73,68,65,84,56,203,173,148,77,72,20,97,24,199,127,51,187,149,37,138,
+        212,166,104,145,162,168,187,219,238,169,216,139,81,183,133,186,232,130,183,8,169,240,22,88,167,14,65,151,78,29,
+        234,22,102,17,4,69,68,8,22,133,130,135,4,41,130,237,34,126,236,14,43,74,160,226,202,38,154,203,238,206,206,103,
+        7,155,209,217,15,108,213,7,6,230,121,231,121,127,239,255,249,120,71,184,123,111,192,212,13,141,66,83,20,5,0,67,
+        55,120,249,226,149,64,133,230,214,13,141,219,55,251,203,6,12,14,61,99,63,230,6,136,197,230,72,38,147,37,3,58,219,
+        189,220,232,187,110,170,170,138,105,154,246,3,112,234,164,135,231,131,67,66,89,176,223,127,30,81,116,149,61,189,
+        169,233,140,195,23,69,17,151,203,197,251,15,239,202,43,86,20,133,88,108,142,175,9,147,169,149,10,243,173,141,112,
+        177,63,98,90,238,17,117,157,31,175,7,4,91,113,32,16,228,233,196,52,15,110,93,65,86,117,246,107,79,222,124,115,150,
+        98,118,118,6,128,141,140,66,106,43,191,47,232,57,207,9,103,41,100,89,38,16,8,194,196,244,158,155,23,126,37,28,126,
+        91,75,135,253,158,83,244,226,230,89,138,247,130,134,124,205,116,119,249,1,248,244,61,70,52,158,112,192,29,13,206,
+        102,179,219,138,255,19,42,173,102,144,86,51,116,119,249,9,249,154,237,44,114,185,92,101,138,11,161,169,180,98,127,
+        179,212,71,227,9,90,234,79,35,106,91,59,138,173,169,0,56,126,116,103,150,77,176,47,66,41,104,42,173,216,202,1,178,
+        114,30,209,212,75,43,214,116,131,188,102,128,105,129,183,131,254,228,52,102,150,210,204,175,101,28,217,180,55,84,
+        211,88,119,12,128,244,198,6,162,158,45,86,124,161,81,70,116,137,228,85,3,89,221,62,64,209,12,0,198,163,18,225,160,
+        135,246,134,106,7,52,28,244,48,30,149,0,88,251,189,133,40,167,156,138,103,98,18,181,117,245,36,55,243,200,255,20,
+        91,229,136,120,53,70,164,37,0,194,33,175,189,209,130,78,205,47,209,123,116,152,199,155,33,220,235,63,157,224,170,
+        70,63,205,53,46,164,213,12,2,96,236,42,244,151,149,86,34,222,197,34,248,110,232,89,223,101,238,51,73,223,231,157,
+        57,23,58,125,29,102,205,165,135,123,206,241,163,72,21,35,146,219,177,102,65,219,2,33,22,102,163,44,199,39,9,223,
+        121,43,0,84,244,3,31,27,29,54,11,215,92,139,31,75,194,5,14,104,99,163,195,102,41,248,129,193,133,240,229,248,36,
+        122,107,207,225,128,119,195,245,214,30,174,94,235,61,52,110,81,15,254,2,67,133,52,126,121,31,175,36,0,0,0,0,73,
+        69,78,68,174,66,96,130
+    };
+
+    const unsigned char doc_mdi_parent_frame_png[543] {
+        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,115,
+        0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,1,209,73,68,65,84,56,203,213,148,191,107,83,81,20,199,63,109,163,137,177,
+        52,131,56,149,78,162,75,186,132,102,112,16,164,22,135,206,130,147,136,131,171,248,55,248,23,184,139,163,160,224,
+        38,104,6,13,56,8,46,150,135,226,224,46,129,66,140,208,66,73,234,123,231,123,28,222,143,220,23,146,52,21,151,30,
+        184,28,206,123,239,126,222,247,126,207,189,23,206,90,44,189,252,180,239,157,110,244,95,161,187,59,45,42,157,110,
+        68,251,122,139,27,87,46,0,240,173,119,204,225,72,115,39,110,53,122,0,236,29,172,179,213,232,177,119,176,14,192,
+        163,215,247,120,245,224,5,159,191,252,96,121,114,210,73,208,147,162,127,4,163,24,150,238,63,233,248,198,181,171,
+        0,184,57,238,14,158,194,221,29,73,40,175,37,92,66,150,214,249,59,47,106,67,114,92,70,5,192,190,62,159,169,96,57,
+        27,167,82,221,184,157,130,1,214,218,15,169,86,224,247,16,220,129,76,29,14,230,134,203,51,117,134,220,113,51,76,
+        98,237,92,204,240,143,168,246,222,21,96,203,21,3,56,176,189,121,121,110,243,242,70,165,121,163,212,172,48,148,4,
+        224,163,145,115,126,244,147,246,165,121,139,172,114,107,245,23,80,101,251,98,159,239,143,159,178,73,159,15,67,163,
+        62,241,229,88,177,139,102,179,249,79,59,193,222,188,47,43,54,141,193,169,177,105,167,167,133,187,23,67,82,145,235,
+        245,58,74,172,12,14,61,78,146,100,33,80,248,188,152,27,199,19,224,64,177,100,167,6,134,32,102,122,172,96,211,47,
+        8,156,20,53,213,10,51,43,242,162,192,113,179,28,86,202,245,24,28,39,68,81,68,173,86,43,84,75,42,253,104,218,106,
+        6,131,65,42,42,0,123,232,49,138,121,246,49,70,118,136,44,0,102,57,189,23,210,123,192,45,59,133,18,18,184,142,103,
+        123,188,186,255,118,241,141,155,95,30,43,51,172,113,167,178,187,211,162,211,93,140,167,92,125,230,123,168,62,183,
+        64,130,187,119,110,114,246,226,47,211,33,185,112,154,32,122,154,0,0,0,0,73,69,78,68,174,66,96,130
+    };
+
+    const unsigned char filePicker_png[705] {
+        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,115,
+        0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,2,115,73,68,65,84,56,203,173,149,75,79,83,81,16,128,191,57,173,16,109,98,
+        36,34,77,83,163,9,132,4,8,134,149,133,182,60,92,40,177,110,192,200,127,112,227,198,133,16,77,183,26,31,11,54,110,
+        116,43,75,18,96,35,134,16,147,170,8,22,77,72,8,180,17,35,98,43,80,171,162,65,130,15,218,235,162,247,30,91,91,90,
+        8,206,106,206,100,230,155,57,51,231,206,149,155,183,175,27,236,81,12,195,224,106,95,80,178,109,118,128,190,43,215,
+        246,4,190,117,231,70,158,205,110,41,139,139,139,216,108,54,12,195,64,16,16,65,204,26,68,235,218,128,152,149,186,
+        221,238,130,201,52,56,19,156,9,156,156,154,200,245,18,50,201,254,145,86,127,251,182,183,40,8,246,121,91,81,230,
+        217,26,128,82,98,86,108,86,43,20,72,85,2,220,63,254,105,71,189,237,13,184,118,6,86,74,145,74,167,1,240,212,164,
+        56,211,116,128,217,216,23,94,199,43,243,2,163,43,155,186,144,162,224,233,87,97,188,205,62,148,121,222,95,246,155,
+        114,251,65,42,28,159,181,243,203,249,104,110,235,149,187,52,184,249,100,11,46,151,139,229,229,101,0,18,95,43,24,
+        10,39,217,252,121,4,17,97,122,46,130,167,254,56,93,254,6,0,70,38,230,9,62,120,206,189,203,93,165,91,177,186,186,
+        170,159,216,218,187,57,214,204,190,191,249,46,26,26,93,217,0,208,9,46,246,143,80,189,163,225,25,25,114,252,253,
+        7,68,224,199,225,99,57,208,228,250,47,29,108,193,195,145,34,96,11,110,168,12,120,95,109,155,89,250,82,65,168,165,
+        119,249,27,8,71,150,182,7,79,189,152,196,239,107,69,16,122,3,46,125,131,224,192,18,223,54,183,152,141,173,179,144,
+        216,200,9,174,117,58,112,29,42,47,222,99,111,139,143,170,170,42,62,38,18,132,158,133,178,62,133,50,198,194,81,58,
+        61,117,0,26,94,235,116,208,121,162,146,177,112,180,244,240,146,201,36,6,208,209,214,1,162,80,34,56,166,67,12,69,
+        99,0,26,14,104,232,204,66,140,158,178,65,238,23,235,177,181,102,66,79,205,138,205,39,114,190,110,43,15,158,13,61,
+        90,223,206,216,93,140,206,75,3,178,253,240,68,232,104,59,133,136,66,4,68,9,130,2,30,51,20,141,49,179,16,211,254,
+        22,180,166,209,147,73,150,5,183,23,234,143,136,202,44,29,17,148,185,217,188,190,211,192,120,142,95,138,110,226,
+        145,97,128,60,184,6,59,157,206,146,75,231,108,224,66,158,237,209,40,5,225,246,116,58,93,240,15,176,27,105,106,252,
+        91,121,60,242,132,84,117,119,209,149,186,43,25,125,56,104,216,222,14,147,170,238,38,112,174,231,191,113,53,220,
+        210,255,0,176,66,225,250,172,80,128,61,0,0,0,0,73,69,78,68,174,66,96,130
+    };
+
+    const unsigned char flex_grid_sizer_png[139] {
+        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,115,
+        0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,0,61,73,68,65,84,56,203,99,96,24,106,128,17,153,243,159,129,225,63,133,134,
+        49,98,149,192,102,48,185,98,76,180,10,138,161,103,240,192,69,30,177,96,232,71,30,11,53,131,131,232,112,26,205,32,
+        163,6,15,197,178,98,72,0,0,78,21,28,8,134,72,167,206,0,0,0,0,73,69,78,68,174,66,96,130
+    };
+
+    const unsigned char fontPicker_png[763] {
+        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,115,
+        0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,2,173,73,68,65,84,56,203,173,212,223,75,20,81,20,192,241,175,235,234,134,
+        146,191,211,132,162,210,76,13,125,241,193,140,32,138,64,200,135,210,240,143,8,234,33,236,161,255,32,136,162,31,
+        208,67,216,107,61,4,69,86,146,102,97,100,84,32,90,70,209,110,89,146,237,210,170,107,73,45,59,187,206,220,59,167,
+        7,157,213,113,55,215,176,243,116,231,206,220,207,220,57,231,204,197,182,109,177,109,91,180,214,162,181,22,165,148,
+        40,101,137,101,153,98,154,166,140,77,68,164,127,52,36,137,68,66,18,137,184,196,227,134,24,134,33,134,17,19,219,
+        182,229,210,149,11,66,154,240,2,136,44,220,19,145,197,177,32,2,74,219,244,142,78,83,94,144,187,56,39,174,103,87,
+        11,239,114,104,249,24,132,231,254,89,126,68,77,148,165,82,208,76,176,39,29,42,34,252,50,76,62,125,143,146,235,129,
+        240,156,129,169,244,154,81,0,79,58,20,132,190,55,51,28,106,220,68,233,70,47,150,101,51,245,51,190,34,85,146,9,150,
+        21,249,19,190,69,12,230,77,205,142,242,60,202,11,114,177,148,34,56,27,75,179,129,140,169,88,202,171,45,66,239,232,
+        20,109,77,229,136,8,149,69,62,44,75,19,156,49,82,190,42,99,241,28,84,68,24,249,60,199,214,18,31,197,249,57,136,
+        8,155,139,55,160,148,38,24,137,210,213,61,232,90,124,237,212,145,213,224,37,52,97,106,30,140,132,105,217,89,200,
+        147,177,41,108,219,38,150,176,176,44,69,104,118,138,230,250,109,28,221,183,27,128,123,47,62,112,252,242,125,234,
+        179,51,182,155,240,248,237,52,77,219,11,169,40,218,128,136,160,181,166,48,207,75,69,145,153,68,3,225,24,64,242,
+        5,195,254,191,192,14,26,249,61,207,216,196,28,103,142,213,146,237,33,153,203,211,215,7,93,104,36,106,38,23,59,56,
+        23,123,164,187,171,61,43,165,43,108,129,155,207,38,57,208,80,230,66,157,2,165,67,35,81,147,64,56,182,132,167,75,
+        197,75,255,15,190,78,199,56,113,184,106,197,207,178,0,255,138,43,222,5,163,140,79,199,92,139,107,42,242,169,44,
+        242,165,111,183,87,31,103,185,245,124,146,120,194,228,209,235,48,243,166,114,21,19,96,96,56,64,107,99,25,53,21,
+        249,46,180,181,177,140,129,225,64,250,29,183,236,42,101,79,77,137,171,71,157,22,244,229,120,232,168,83,220,13,4,
+        1,104,109,174,75,46,116,208,177,241,32,157,185,183,233,254,151,67,72,68,104,217,123,16,120,154,130,47,71,183,212,
+        239,103,224,42,210,122,242,70,178,128,89,178,150,19,5,232,239,187,195,221,128,215,53,231,160,213,13,205,124,121,
+        63,76,200,63,132,131,123,207,157,63,203,90,163,163,161,214,117,173,105,39,228,239,1,160,186,161,121,225,75,22,119,
+        158,197,58,163,239,225,109,201,158,232,73,217,249,186,225,149,120,200,63,132,174,106,255,63,240,114,92,87,181,115,
+        184,173,243,191,185,73,220,25,255,1,27,116,30,78,220,127,50,40,0,0,0,0,73,69,78,68,174,66,96,130
+    };
+
+    const unsigned char gauge_png[260] {
+        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,115,
+        0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,0,182,73,68,65,84,56,203,237,148,193,10,194,48,12,134,191,192,68,15,59,85,
+        123,114,108,224,195,249,80,62,162,119,97,101,27,241,96,23,186,89,16,97,122,234,127,9,63,105,191,180,105,40,20,21,
+        173,37,49,234,214,92,1,52,232,182,220,189,8,149,153,155,88,34,92,245,107,15,48,37,112,3,187,186,94,84,77,253,244,
+        193,63,98,60,0,253,26,220,56,103,221,153,82,31,117,118,238,245,32,34,244,64,227,142,111,207,211,3,99,10,158,128,
+        206,251,197,130,156,159,47,63,2,157,63,89,126,4,194,170,207,213,188,177,141,32,137,39,104,35,72,13,228,109,140,
+        130,121,69,17,131,14,192,46,25,55,189,199,169,8,192,62,83,61,167,25,50,100,114,23,145,223,205,113,249,34,138,254,
+        168,39,152,20,54,162,96,104,253,128,0,0,0,0,73,69,78,68,174,66,96,130
+    };
+
+    const unsigned char genericdir_ctrl_png[328] {
+        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,115,
+        0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,0,250,73,68,65,84,56,203,205,149,45,18,194,48,16,133,223,102,106,56,68,13,
+        71,192,213,0,87,169,0,85,199,57,112,85,84,212,50,12,22,223,65,80,199,17,64,112,136,206,96,130,160,233,36,75,210,
+        191,9,3,107,54,217,118,222,110,190,108,18,224,75,70,0,48,223,221,164,79,209,243,122,74,129,154,60,47,167,230,67,
+        153,39,32,34,0,128,148,239,156,68,212,140,219,108,145,221,1,0,66,15,110,87,51,227,39,93,168,143,168,110,134,240,
+        38,187,154,156,234,170,249,120,144,112,153,39,8,171,2,101,158,52,21,122,171,152,91,20,167,136,226,212,185,10,125,
+        206,227,162,79,118,37,238,66,99,219,88,49,180,149,108,72,164,148,32,34,35,89,208,38,18,86,5,14,251,99,107,151,112,
+        111,109,55,110,143,201,178,147,177,43,62,152,177,126,96,148,247,194,216,197,253,127,25,247,225,61,138,177,237,64,
+        168,184,30,19,99,121,186,250,249,131,113,20,167,64,189,244,174,107,211,229,157,40,108,215,38,79,224,237,218,228,
+        125,251,243,167,233,91,111,41,94,184,99,147,209,23,75,30,253,0,0,0,0,73,69,78,68,174,66,96,130
+    };
+
+    const unsigned char grid_bag_sizer_png[145] {
+        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,115,
+        0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,0,67,73,68,65,84,56,203,99,96,24,106,128,17,198,248,207,192,240,159,74,6,
+        50,162,8,144,98,48,46,181,200,226,76,180,10,138,161,103,48,11,185,26,9,197,9,11,213,98,127,52,242,6,95,206,35,55,
+        71,142,70,222,104,114,195,159,213,135,6,0,0,107,184,22,20,23,111,101,87,0,0,0,0,73,69,78,68,174,66,96,130
+    };
+
+    const unsigned char grid_png[171] {
+        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,115,
+        0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,0,93,73,68,65,84,56,203,99,96,160,17,96,132,210,255,169,109,46,11,140,149,
+        83,190,21,69,38,54,64,136,97,241,134,119,36,139,77,233,244,102,96,96,96,96,96,162,121,80,156,60,126,156,42,6,154,
+        91,90,162,6,5,54,47,154,89,88,160,136,157,58,113,130,40,177,209,160,24,13,138,209,160,24,13,138,1,15,10,218,135,
+        49,141,204,165,62,0,0,88,73,82,108,106,29,221,90,0,0,0,0,73,69,78,68,174,66,96,130
+    };
+
+    const unsigned char grid_sizer_png[127] {
+        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,115,
+        0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,0,49,73,68,65,84,56,203,99,96,24,106,128,17,198,248,207,192,240,159,10,134,
+        49,98,8,162,27,76,41,159,137,86,65,193,52,26,198,163,97,60,26,198,163,97,60,188,195,120,20,0,0,43,71,49,238,218,
+        78,100,17,0,0,0,0,73,69,78,68,174,66,96,130
+    };
+
+    const unsigned char htmlwin_png[1053] {
+        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,115,
+        0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,3,207,73,68,65,84,56,203,125,149,203,111,27,85,20,198,127,119,60,15,63,147,
+        168,117,147,38,117,221,56,77,82,36,40,21,166,21,17,85,119,32,64,93,0,82,187,66,98,83,118,44,145,216,241,7,32,177,
+        103,197,6,177,172,4,18,40,21,69,106,37,36,170,136,87,2,9,45,105,28,119,100,210,184,73,28,199,207,201,140,61,115,
+        47,139,54,86,28,219,61,210,213,104,206,213,253,206,157,239,124,243,29,193,179,240,60,79,9,33,16,66,160,148,66,41,
+        197,225,56,156,83,74,225,186,46,213,106,149,76,38,35,232,19,218,225,131,186,174,19,10,133,208,117,29,195,48,208,
+        117,189,43,119,120,153,166,73,165,82,97,109,109,77,61,23,24,64,74,217,41,34,165,236,220,178,223,50,77,19,223,247,
+        137,197,98,228,114,57,245,92,224,3,208,126,239,253,192,35,145,8,201,100,146,120,60,142,109,219,93,7,245,65,28,30,
+        60,133,16,72,41,59,220,31,45,62,63,63,79,171,213,34,147,201,80,40,20,84,58,157,22,0,29,226,29,199,81,134,97,32,
+        196,211,148,166,9,64,80,42,59,108,110,53,169,55,91,196,162,6,19,99,49,162,150,34,26,141,118,125,89,173,86,195,182,
+        109,178,217,172,232,186,241,225,8,133,52,74,229,125,22,22,139,104,154,198,137,99,81,34,97,3,41,33,95,168,227,186,
+        45,50,41,151,99,195,33,98,241,97,0,12,195,232,244,168,135,10,41,37,166,105,240,223,102,141,91,119,11,92,190,152,
+        34,61,145,160,82,247,104,236,183,9,2,197,104,210,4,5,43,171,59,156,58,105,48,59,105,98,152,145,46,208,30,185,1,
+        180,125,159,47,191,94,230,213,151,38,136,134,13,22,31,148,216,40,54,216,46,57,20,30,215,177,55,234,180,219,146,
+        212,201,17,110,221,45,178,239,105,60,99,175,139,123,253,168,2,126,188,251,8,167,169,225,184,1,107,127,109,241,96,
+        189,76,60,102,96,26,26,97,75,231,202,165,113,188,150,100,171,228,16,54,34,124,255,83,142,15,175,159,239,81,83,23,
+        176,166,105,220,252,225,1,247,115,46,169,84,156,64,74,170,53,143,124,161,66,219,151,156,63,151,100,234,244,48,197,
+        45,7,203,208,105,58,146,59,247,242,92,187,122,182,163,251,190,84,8,33,88,254,119,135,53,187,196,55,223,254,77,114,
+        36,194,27,151,211,120,45,159,194,227,26,59,187,251,124,119,123,157,213,124,133,125,55,160,82,245,200,217,187,84,
+        170,77,44,203,26,204,113,16,4,248,190,79,16,40,74,229,38,43,171,37,198,79,36,248,228,198,69,174,189,51,205,107,
+        175,140,241,217,23,11,220,156,207,81,169,182,217,222,171,179,83,110,32,165,196,243,188,193,192,190,239,147,26,183,
+        240,218,79,59,252,199,202,38,235,118,21,63,80,228,11,85,254,92,46,113,230,212,8,142,19,176,83,114,49,244,16,167,
+        199,227,24,58,61,170,232,105,222,220,133,227,220,91,114,121,178,221,224,244,248,48,153,116,130,221,106,147,165,
+        251,59,36,98,97,116,29,30,109,236,34,3,73,126,179,194,133,115,58,195,67,17,26,205,118,127,142,15,128,223,125,107,
+        138,227,137,125,70,71,71,240,3,129,101,105,36,226,6,47,206,140,50,20,55,169,53,92,42,13,151,197,213,39,180,220,
+        61,62,120,111,22,41,67,131,85,33,165,68,211,52,166,38,83,124,122,227,12,159,127,85,100,118,234,44,63,255,90,36,
+        95,216,99,44,25,101,40,97,146,78,13,83,111,6,252,190,148,227,237,57,131,75,217,25,28,215,235,249,123,123,168,112,
+        61,159,235,239,95,161,213,190,195,237,95,86,201,61,18,204,101,211,12,37,44,54,138,13,138,219,123,252,179,114,159,
+        171,175,135,248,248,163,55,105,181,65,41,217,51,28,58,38,84,46,151,149,16,2,215,117,17,66,195,50,5,15,31,174,179,
+        240,219,26,94,75,199,10,91,184,174,135,30,106,145,189,48,201,203,231,95,32,144,26,65,16,160,105,26,74,41,108,219,
+        102,110,110,78,244,120,5,64,56,28,126,90,29,152,158,153,101,122,102,182,175,165,250,129,66,169,110,59,29,72,197,
+        32,99,239,183,119,244,204,129,221,246,0,251,190,143,235,186,4,65,208,119,154,244,3,61,58,16,34,145,72,103,239,127,
+        57,29,91,170,117,31,46,131,0,0,0,0,73,69,78,68,174,66,96,130
+    };
+
+    const unsigned char hyperlink_ctrl_png[329] {
+        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,115,
+        0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,0,251,73,68,65,84,56,203,237,148,177,141,132,64,12,69,191,135,21,4,4,20,
+        0,25,45,80,13,5,80,2,77,208,1,69,80,1,1,5,144,32,68,35,72,4,104,24,253,11,238,208,114,90,64,48,171,77,78,247,67,
+        107,108,125,63,219,3,252,77,101,45,239,166,168,79,121,249,88,97,57,109,189,76,228,5,197,26,219,123,119,155,237,
+        182,240,94,108,71,143,219,195,42,19,75,198,89,75,148,137,28,180,71,146,0,192,247,24,175,252,158,44,65,18,34,242,
+        157,107,205,120,223,49,127,28,211,247,125,94,115,124,129,45,73,84,85,133,113,28,225,121,30,210,52,5,178,22,86,206,
+        131,32,96,158,231,92,29,119,93,199,190,239,217,52,13,235,186,230,21,230,167,24,138,162,224,86,90,107,206,243,188,
+        91,248,242,229,133,97,136,56,142,49,77,19,140,49,48,198,64,41,5,215,117,111,108,197,249,240,176,44,11,68,4,34,2,
+        165,212,115,75,108,255,138,40,138,48,12,3,28,199,249,85,220,194,224,241,202,105,173,183,171,247,54,138,163,171,
+        19,252,235,72,95,234,69,150,150,108,58,73,73,0,0,0,0,73,69,78,68,174,66,96,130
+    };
+
+    const unsigned char infobar_png[556] {
+        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,115,
+        0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,1,222,73,68,65,84,56,203,237,147,75,104,19,81,20,134,191,153,59,147,103,
+        69,155,193,90,155,44,138,168,84,81,105,172,197,250,160,27,165,226,166,174,234,66,40,221,21,9,72,17,151,46,220,136,
+        175,141,8,42,10,34,42,212,71,69,16,164,138,49,21,2,10,218,44,148,202,104,37,214,26,155,38,29,48,162,96,155,38,153,
+        204,184,104,25,136,149,118,213,93,62,56,155,115,254,251,223,123,126,184,80,165,202,191,72,182,157,178,151,195,88,
+        1,136,190,55,136,244,103,200,254,145,56,218,230,230,66,119,19,66,150,150,60,108,21,75,196,123,34,168,66,84,244,
+        107,119,182,32,167,115,121,142,220,254,201,239,149,155,217,219,26,230,226,136,198,213,231,169,121,73,129,193,193,
+        215,0,204,26,227,196,18,227,11,204,189,110,149,26,159,187,162,132,144,145,7,222,24,228,92,65,71,104,187,106,184,
+        49,92,196,44,219,115,198,119,238,241,57,103,50,52,244,140,68,226,235,127,95,222,253,56,206,147,228,119,14,13,196,
+        48,166,243,115,81,124,152,178,65,86,88,237,23,116,108,240,19,77,78,243,41,39,48,203,22,138,128,208,250,70,198,70,
+        116,126,73,10,163,111,117,206,20,12,102,51,105,210,153,41,78,94,62,15,192,185,125,173,28,126,244,146,83,237,97,
+        214,248,189,0,200,75,229,184,106,109,144,140,62,140,47,208,64,125,192,143,170,8,66,187,59,233,234,8,59,154,120,
+        42,75,112,133,143,167,95,38,156,158,188,181,94,2,203,172,48,219,164,149,81,196,252,157,178,143,58,23,108,220,177,
+        133,34,96,76,102,209,99,15,120,24,125,231,232,103,74,38,183,58,219,217,21,170,115,162,144,38,126,140,218,205,167,
+        191,33,105,235,216,222,224,225,133,110,112,105,255,12,199,14,54,46,186,201,181,179,87,232,58,209,75,178,183,15,
+        143,75,173,152,121,154,183,161,132,52,47,119,123,2,68,250,63,242,106,82,226,120,155,155,200,129,166,69,77,239,95,
+        191,137,214,178,135,90,32,95,40,97,154,86,197,92,45,91,203,247,65,170,84,89,200,95,195,251,161,60,207,129,119,184,
+        0,0,0,0,73,69,78,68,174,66,96,130
+    };
+
+    const unsigned char menu_png[795] {
+        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,115,
+        0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,2,205,73,68,65,84,56,203,157,149,203,79,147,65,20,197,127,109,191,175,79,
+        91,132,66,145,150,218,90,138,16,64,80,91,197,248,32,136,80,81,67,72,148,40,104,162,226,202,165,113,225,202,133,
+        127,128,38,186,49,26,54,70,217,248,32,70,23,70,163,98,98,84,98,162,66,125,37,190,0,3,5,26,160,165,128,180,96,235,
+        231,130,71,212,72,91,122,54,115,103,114,115,114,231,220,115,103,100,205,231,239,72,249,246,28,150,2,49,52,200,246,
+        98,11,110,183,91,182,88,142,144,111,207,161,98,67,9,75,67,9,239,189,222,184,25,194,124,224,189,125,129,142,1,37,
+        155,54,151,35,40,20,124,125,217,65,77,243,113,116,2,41,65,62,31,72,209,24,154,180,12,244,70,13,3,223,250,136,69,
+        163,12,190,125,204,245,75,23,121,215,51,148,58,49,40,40,112,111,195,146,173,97,168,223,15,64,231,195,123,76,9,50,
+        162,63,34,75,38,94,184,168,33,199,193,242,236,44,212,170,113,114,237,86,212,138,25,204,150,2,158,189,248,134,40,
+        42,82,39,118,108,173,155,139,140,84,213,121,22,18,236,101,53,41,105,44,244,126,254,196,228,240,210,52,116,26,213,
+        108,41,182,197,39,110,116,91,176,57,156,252,2,100,128,20,103,229,159,179,164,164,144,3,87,250,68,114,245,218,164,
+        43,191,220,21,146,0,62,143,77,115,174,210,36,251,47,49,128,89,167,100,61,31,105,105,125,195,201,83,199,120,112,
+        163,141,170,134,67,104,19,120,89,165,152,92,188,226,121,68,167,167,96,178,159,231,157,95,8,142,12,51,210,251,154,
+        167,237,175,112,22,89,49,58,54,210,253,214,203,218,66,19,146,222,201,10,163,38,177,20,127,34,111,99,45,163,222,
+        251,140,133,69,158,220,108,101,34,221,74,48,52,142,247,214,13,2,254,33,66,161,92,42,235,138,147,29,144,185,49,17,
+        181,232,151,165,177,179,214,131,127,116,132,210,77,110,98,17,1,147,221,141,248,115,128,166,131,85,248,195,22,76,
+        90,121,92,98,89,123,123,187,100,115,56,1,184,230,83,98,55,232,82,242,237,209,53,250,197,155,183,67,244,177,50,123,
+        21,225,201,49,130,19,17,140,89,217,168,4,89,66,82,159,207,23,95,99,141,92,66,27,241,115,245,234,117,86,174,50,19,
+        8,167,115,184,177,134,68,3,29,82,72,137,155,231,239,249,128,213,85,75,253,182,60,90,91,174,112,187,229,44,221,17,
+        17,77,70,33,37,170,239,116,116,249,40,170,46,231,213,163,119,8,106,21,103,78,159,96,42,153,230,233,12,203,25,25,
+        244,49,19,14,50,49,163,132,88,148,157,251,143,192,88,31,157,111,222,99,46,45,35,227,215,52,101,21,187,89,147,25,
+        3,96,120,42,9,226,116,219,90,214,153,34,180,222,188,71,85,253,94,212,82,148,71,119,219,112,85,238,162,254,64,3,
+        209,80,16,101,154,149,213,182,76,242,75,93,179,47,163,152,140,143,229,2,174,202,61,184,230,182,163,230,60,246,85,
+        55,97,215,1,88,200,43,171,248,35,121,246,175,76,23,23,177,27,128,193,96,32,85,4,2,1,60,30,207,95,246,249,13,151,
+        143,223,233,229,195,217,101,0,0,0,0,73,69,78,68,174,66,96,130
+    };
+
+    const unsigned char menuitem_png[481] {
+        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,115,
+        0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,1,147,73,68,65,84,56,203,237,148,59,75,99,65,24,134,159,19,19,141,174,23,
+        68,188,32,187,226,70,84,52,133,96,68,69,176,80,196,78,252,13,98,155,98,43,97,127,130,221,194,178,165,90,219,216,
+        69,180,209,160,196,11,136,138,120,169,12,164,208,168,139,183,156,131,217,156,115,50,159,69,112,141,24,77,36,54,
+        130,47,12,188,124,243,206,195,240,14,12,124,234,195,74,123,48,63,150,207,197,83,94,148,23,44,28,75,240,107,160,
+        86,3,112,62,12,125,213,37,244,213,149,230,5,94,59,51,254,123,199,227,216,102,101,105,129,189,237,221,39,225,141,
+        197,212,202,69,201,52,239,76,223,208,175,79,8,5,215,9,239,46,16,60,140,209,233,41,163,165,233,39,29,158,36,71,155,
+        138,182,30,215,171,96,121,9,92,92,86,195,183,175,113,92,95,138,24,26,238,38,169,159,3,224,237,45,192,216,180,128,
+        20,88,89,6,14,215,235,181,57,211,237,224,240,200,179,64,104,254,31,134,225,198,235,117,179,26,186,165,181,171,226,
+        69,168,43,19,248,111,220,38,162,155,207,194,74,44,148,114,35,2,125,189,21,204,45,70,105,236,174,202,8,190,136,219,
+        185,191,244,244,236,169,220,220,136,92,94,166,86,52,42,242,123,250,88,178,157,115,100,11,136,1,137,4,216,54,152,
+        38,136,192,232,208,119,38,255,236,75,142,29,103,150,74,166,234,177,44,80,74,8,174,71,56,136,92,17,51,109,242,3,
+        43,147,187,59,33,16,216,161,191,191,157,202,210,66,38,39,124,90,222,85,40,177,8,4,118,240,251,125,218,214,118,152,
+        230,166,122,166,102,14,222,161,99,101,225,247,63,222,80,215,19,180,54,55,100,133,107,111,253,15,210,129,227,99,
+        94,141,79,101,211,61,62,197,162,136,135,150,231,238,0,0,0,0,73,69,78,68,174,66,96,130
+    };
+
+    const unsigned char pagectrl_png[601] {
+        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,115,
+        0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,2,11,73,68,65,84,56,203,213,148,191,107,19,97,24,199,63,119,73,99,82,67,
+        165,21,11,69,74,117,117,20,113,16,167,76,10,69,71,161,56,56,233,38,130,13,244,111,80,161,162,131,139,171,131,131,
+        67,231,42,162,32,104,165,212,180,4,57,48,77,76,98,46,63,218,36,119,201,189,119,185,75,242,58,164,173,14,185,20,
+        83,3,250,192,11,239,240,240,125,191,239,231,251,188,47,140,178,228,128,186,247,232,141,28,70,51,184,191,209,52,
+        237,175,154,85,71,69,97,244,194,109,167,222,119,45,223,143,13,204,192,47,147,224,97,39,39,19,159,254,45,20,135,
+        58,254,188,113,10,85,141,32,4,52,155,208,104,116,41,138,50,119,111,186,195,11,191,205,158,37,118,113,154,237,109,
+        80,85,144,18,58,29,112,50,54,176,59,188,176,176,85,12,3,114,57,48,77,168,213,160,82,1,93,15,30,13,133,81,151,212,
+        162,80,44,130,174,67,62,15,115,115,26,75,75,155,24,86,10,16,128,141,162,52,153,24,191,53,88,248,219,139,87,4,186,
+        93,112,28,138,153,121,242,215,174,144,76,246,156,90,22,44,46,110,18,139,157,3,198,1,3,104,2,13,18,137,135,4,137,
+        247,23,14,126,252,194,245,133,133,158,61,211,100,189,26,98,107,75,146,203,41,8,1,66,64,56,92,7,76,224,7,208,64,
+        202,26,158,183,75,56,92,167,237,248,56,142,118,187,96,24,80,40,128,105,114,251,116,154,229,15,37,162,229,16,90,
+        237,56,174,11,82,126,7,102,128,2,158,167,35,132,142,148,6,150,165,115,44,224,135,162,90,237,37,148,207,195,206,
+        14,51,217,44,15,34,171,60,187,58,207,147,59,151,0,176,90,27,120,222,25,60,239,43,158,87,65,202,230,30,231,134,63,
+        99,37,149,130,201,73,208,52,40,149,216,191,191,156,181,15,122,28,167,130,235,102,240,188,52,96,239,5,232,208,106,
+        25,132,34,62,194,237,114,185,55,91,233,52,7,47,194,113,232,136,95,240,78,158,120,202,218,218,13,198,198,92,20,197,
+        69,74,27,41,219,76,77,188,247,119,252,206,10,115,121,101,133,128,101,129,235,130,101,97,183,90,172,207,94,32,246,
+        91,223,244,212,203,63,155,227,243,143,227,136,62,77,241,163,252,21,207,95,91,252,23,245,19,111,59,83,216,73,231,
+        114,168,0,0,0,0,73,69,78,68,174,66,96,130
+    };
+
+    const unsigned char propgriditem_png[436] {
+        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,115,
+        0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,1,102,73,68,65,84,56,203,181,85,59,114,131,48,16,125,139,20,209,184,241,
+        76,238,65,225,75,164,246,33,114,12,102,40,124,157,212,230,14,161,160,117,225,113,231,134,210,51,9,2,180,41,64,124,
+        108,164,56,14,126,51,12,2,237,190,21,79,111,5,240,36,80,119,103,165,20,152,25,198,24,8,33,250,113,16,4,32,162,73,
+        18,51,59,223,105,173,1,128,36,0,40,165,16,199,241,77,240,35,72,146,4,90,107,72,91,77,107,141,48,12,177,94,175,157,
+        73,85,85,129,136,32,165,188,175,138,82,138,119,187,29,247,48,134,185,105,248,26,135,195,129,79,167,19,251,176,90,
+        173,24,64,187,98,234,180,28,148,167,246,154,65,167,161,27,77,131,158,88,214,237,67,154,166,119,125,225,241,120,
+        116,206,241,215,247,64,108,241,246,241,234,37,220,111,11,111,220,126,91,244,54,11,0,128,159,224,227,150,120,172,
+        239,63,193,47,114,144,162,145,2,198,24,124,190,251,147,138,86,9,103,92,81,0,20,134,64,85,77,53,222,108,54,94,98,
+        187,185,174,184,52,77,209,116,174,232,53,168,235,122,17,41,38,196,115,189,255,40,108,87,182,13,66,4,33,4,178,44,
+        115,182,171,45,172,148,66,158,231,206,121,219,104,127,210,248,124,62,67,107,141,40,138,156,243,55,26,47,230,223,
+        185,21,103,89,118,87,178,47,206,74,210,31,155,75,217,205,186,75,142,171,0,64,89,150,191,174,216,23,99,55,127,242,
+        107,178,187,126,109,65,59,54,198,76,116,156,139,185,92,46,99,222,229,241,3,184,95,223,13,159,71,168,94,0,0,0,0,
+        73,69,78,68,174,66,96,130
+    };
+
+    const unsigned char propgridpage_png[237] {
+        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,115,
+        0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,0,159,73,68,65,84,56,203,237,146,177,13,195,32,16,69,63,150,135,185,77,24,
+        128,113,168,143,153,96,136,235,25,35,101,10,75,164,178,149,196,49,28,142,157,52,254,21,247,245,121,130,175,51,0,
+        192,204,5,29,242,222,155,86,102,156,15,206,57,21,116,186,223,0,160,180,224,195,187,65,68,32,162,149,215,171,225,
+        147,153,115,94,96,68,244,50,127,5,158,97,167,188,184,54,239,2,111,65,123,225,102,207,186,169,215,145,153,75,140,
+        177,180,196,204,170,204,102,199,71,104,124,30,82,74,205,11,154,204,10,108,173,173,134,69,68,149,185,170,184,170,
+        248,113,21,231,119,44,34,203,55,106,10,33,224,175,122,0,136,59,151,224,122,102,234,63,0,0,0,0,73,69,78,68,174,66,
+        96,130
+    };
+
+    const unsigned char radio_box_png[488] {
+        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,115,
+        0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,1,154,73,68,65,84,56,203,229,148,221,43,131,81,28,199,63,143,240,112,129,
+        25,53,110,180,87,111,105,17,226,194,37,41,141,184,96,252,41,171,231,226,252,77,146,18,101,139,11,10,81,36,47,115,
+        102,55,44,154,103,115,33,141,29,23,82,179,103,102,54,174,252,234,116,206,249,157,206,167,239,249,157,239,57,240,
+        71,161,125,145,87,66,8,0,132,16,228,142,139,236,177,130,133,16,42,127,33,15,102,233,139,133,16,66,171,206,157,228,
+        171,46,36,228,59,240,135,200,234,18,78,83,86,141,45,224,195,189,109,117,113,25,35,42,175,73,62,164,176,55,55,209,
+        211,229,197,231,117,211,235,31,214,202,6,159,158,69,57,57,61,39,16,152,198,52,77,108,54,27,242,234,146,166,230,
+        150,31,41,174,202,79,236,31,28,49,59,59,135,148,146,80,40,132,148,146,153,153,105,116,189,174,178,82,124,186,61,
+        165,10,166,75,177,174,5,60,56,224,199,76,222,49,57,57,142,219,229,194,231,243,144,78,61,144,205,102,191,243,126,
+        113,197,61,221,94,26,26,237,100,95,50,116,250,220,188,190,102,120,201,100,120,76,155,149,149,162,127,104,76,251,
+        141,39,109,1,31,31,238,168,168,140,179,179,187,207,205,109,130,246,54,7,163,35,131,120,92,29,244,245,143,150,111,
+        183,168,140,179,188,178,134,97,24,56,157,78,98,177,24,219,91,97,236,173,142,202,236,182,178,186,142,97,24,68,34,
+        17,52,77,35,28,14,51,63,31,68,215,235,127,207,110,95,185,176,20,187,89,20,7,166,38,136,108,110,176,24,92,64,41,
+        197,210,98,144,196,77,156,231,231,167,92,64,161,86,92,177,199,213,129,125,216,65,58,149,132,212,123,174,166,86,
+        39,121,159,168,172,20,63,185,249,146,192,133,62,251,255,21,111,124,157,148,73,232,140,102,176,0,0,0,0,73,69,78,
+        68,174,66,96,130
+    };
+
+    const unsigned char ribbon_button_png[220] {
+        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,2,0,0,0,75,214,251,108,0,0,0,3,115,66,73,84,8,
+        8,8,219,225,79,224,0,0,0,9,112,72,89,115,0,0,10,240,0,0,10,240,1,66,172,52,152,0,0,0,127,73,68,65,84,56,203,99,
+        96,160,10,248,79,46,56,115,230,12,3,3,3,11,196,148,51,247,191,146,97,55,35,3,3,3,3,3,19,229,158,24,28,70,176,96,
+        10,153,42,241,224,209,112,250,222,23,194,70,64,226,8,123,248,49,50,18,229,10,8,56,123,246,44,154,200,161,195,135,
+        136,245,8,28,124,248,240,1,206,126,243,230,205,224,142,17,218,68,42,49,254,39,202,8,92,225,79,172,17,88,227,159,
+        4,35,48,211,223,80,136,17,42,69,234,217,179,103,25,25,6,20,0,0,22,140,88,92,205,109,178,5,0,0,0,0,73,69,78,68,174,
+        66,96,130
+    };
+
+    const unsigned char ribbon_gallery_item_png[679] {
+        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,2,0,0,0,75,214,251,108,0,0,0,3,115,66,73,84,8,
+        8,8,219,225,79,224,0,0,0,9,112,72,89,115,0,0,10,240,0,0,10,240,1,66,172,52,152,0,0,2,74,73,68,65,84,56,203,221,
+        148,203,75,84,97,24,198,159,239,118,206,55,231,246,125,103,198,193,75,55,133,2,137,144,4,75,34,48,2,151,17,174,
+        130,218,181,171,77,43,233,95,8,178,69,45,219,68,155,160,149,171,10,161,182,82,16,136,130,165,98,106,26,77,94,112,
+        110,103,102,156,203,153,115,90,8,81,112,138,200,32,232,89,189,155,231,199,251,62,15,188,192,129,69,0,188,93,173,
+        252,161,57,191,56,52,52,68,15,190,197,95,64,240,111,83,233,201,195,234,221,113,80,26,51,70,24,5,23,124,224,172,
+        186,125,207,236,59,241,187,136,218,196,248,229,1,3,150,5,215,134,242,144,246,215,115,249,133,169,73,243,198,56,
+        9,139,64,20,51,15,212,252,21,2,148,194,178,224,216,112,28,40,5,173,105,149,48,178,109,212,222,152,165,231,4,173,
+        166,61,210,76,13,70,162,11,132,255,4,193,24,92,7,158,11,229,65,171,88,187,156,5,89,241,42,91,152,177,241,158,48,
+        177,87,159,13,154,195,129,123,45,148,253,223,135,248,35,194,115,161,21,180,130,175,154,94,140,244,231,163,254,154,
+        107,124,228,166,132,72,165,200,110,42,124,77,42,205,34,189,21,25,135,147,26,225,12,218,219,247,67,171,154,204,11,
+        127,211,203,16,110,74,34,28,34,20,183,210,182,175,125,115,73,32,159,92,42,205,118,85,185,85,165,178,18,27,65,155,
+        7,237,205,148,211,98,134,36,194,1,87,48,179,48,179,84,118,168,158,62,239,211,205,228,44,212,196,211,23,15,238,52,
+        130,112,125,53,183,73,163,209,235,197,209,94,147,8,27,134,6,115,192,109,8,29,49,29,65,34,110,36,35,228,241,254,
+        99,247,31,175,189,43,77,79,174,207,89,60,227,63,58,211,120,102,49,155,136,12,132,3,51,11,195,167,220,173,23,75,
+        13,53,150,124,72,28,161,148,107,204,204,21,118,50,162,231,152,218,149,231,114,149,35,245,182,29,11,5,163,3,194,
+        7,247,90,45,82,46,97,79,95,77,222,34,106,71,203,43,229,249,47,181,206,254,180,155,177,104,106,120,9,91,58,63,213,
+        205,91,210,151,132,200,70,80,41,151,105,33,30,9,89,103,50,34,191,211,152,93,44,170,83,186,187,87,219,146,59,210,
+        169,242,43,43,237,76,117,123,218,217,222,104,183,150,99,158,13,245,88,221,62,31,83,59,25,177,85,174,189,156,95,
+        245,10,206,135,133,13,206,40,163,132,81,8,116,137,240,2,107,151,24,194,75,23,79,14,30,58,29,83,103,255,69,252,159,
+        255,130,228,23,241,111,245,21,249,43,197,168,168,229,66,5,0,0,0,0,73,69,78,68,174,66,96,130
+    };
+
+    const unsigned char ribbon_page_png[368] {
+        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,115,
+        0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,1,34,73,68,65,84,56,203,237,148,189,74,195,80,24,134,159,156,156,180,41,
+        73,106,109,77,3,149,14,130,67,71,39,7,7,175,64,240,6,188,24,111,198,209,193,189,131,155,16,156,68,68,58,116,81,
+        168,67,17,52,181,169,249,59,78,133,148,84,65,218,12,133,190,240,45,135,151,231,59,223,207,57,176,105,210,250,131,
+        76,1,168,56,100,191,158,174,4,203,20,188,6,6,210,168,34,231,135,85,145,224,237,24,5,115,28,197,4,97,12,128,109,
+        215,168,232,218,159,240,209,103,12,228,192,0,89,86,52,206,166,17,190,255,204,184,210,226,164,231,210,168,233,232,
+        218,148,254,253,132,179,211,46,134,88,76,164,20,104,128,200,151,145,46,9,211,177,232,186,22,110,187,193,240,97,
+        192,245,221,11,227,143,9,143,195,119,194,88,21,252,115,201,124,166,52,91,94,158,211,220,165,163,27,124,237,181,
+        232,9,137,221,104,114,116,240,77,148,128,41,139,125,22,249,225,137,40,224,208,51,86,222,134,167,81,130,52,109,228,
+        44,12,145,2,58,117,253,215,27,255,71,109,71,240,22,132,104,92,222,42,207,50,215,190,199,18,224,234,252,120,237,
+        96,81,214,203,219,130,23,135,119,113,227,151,247,187,109,123,92,26,120,243,244,3,222,59,107,50,255,78,63,254,0,
+        0,0,0,73,69,78,68,174,66,96,130
+    };
+
+    const unsigned char ribbon_panel_png[392] {
+        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,115,
+        0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,1,58,73,68,65,84,56,203,237,146,201,74,66,97,0,133,191,235,117,246,70,52,
+        160,98,148,101,161,17,98,45,34,40,17,172,93,171,94,160,135,233,101,218,6,45,107,33,18,13,20,9,9,54,108,196,208,
+        104,210,224,90,87,202,225,254,127,235,200,202,192,22,66,103,127,62,14,231,28,232,53,41,108,164,165,207,227,236,
+        58,216,10,176,185,182,208,117,176,229,175,170,248,7,127,28,111,125,251,164,251,119,75,95,233,178,247,170,0,168,
+        27,6,153,108,158,155,106,3,227,21,250,7,60,68,99,97,34,195,214,31,16,53,142,82,37,2,139,211,4,93,109,192,14,77,
+        99,41,62,139,94,41,177,159,19,36,19,65,52,181,147,108,146,154,81,167,33,191,72,220,206,96,84,238,73,157,62,210,
+        162,69,211,53,196,106,124,12,243,174,200,78,182,138,93,109,96,247,142,179,50,231,250,190,138,79,18,38,215,249,39,
+        250,166,38,88,14,185,201,29,158,113,89,246,242,150,211,153,73,68,137,105,38,7,123,231,20,95,194,191,31,79,81,64,
+        8,9,82,208,50,85,156,14,80,144,152,38,32,5,66,90,177,219,232,44,177,69,181,161,185,5,22,139,202,100,196,207,109,
+        166,200,86,65,160,249,71,72,14,58,105,206,251,216,61,190,160,160,72,2,145,16,163,30,133,7,205,129,93,233,249,31,
+        151,245,103,254,5,240,14,85,232,106,211,219,79,205,14,0,0,0,0,73,69,78,68,174,66,96,130
+    };
+
+    const unsigned char richtextctrl_png[736] {
+        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,115,
+        0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,2,146,73,68,65,84,56,203,237,147,189,107,28,71,24,198,127,51,59,31,123,242,
+        173,86,199,193,69,8,233,138,52,34,141,10,41,93,144,32,141,59,55,238,221,184,8,184,51,164,73,157,164,180,235,3,131,
+        9,164,72,17,242,15,36,4,33,220,165,80,161,216,68,18,24,131,5,50,226,140,57,73,119,156,246,99,118,54,197,233,86,
+        58,164,187,64,48,164,201,219,205,188,179,191,121,246,121,222,17,92,214,214,179,55,37,31,161,94,124,245,169,0,80,
+        215,55,183,31,182,233,118,187,120,239,209,90,147,101,25,66,8,164,148,8,33,80,74,161,181,166,44,75,146,36,193,57,
+        71,146,36,148,101,73,187,221,230,238,143,239,42,214,4,88,8,65,250,250,59,62,236,119,110,85,211,252,236,17,159,124,
+        254,148,131,131,3,156,115,24,99,56,63,63,39,77,83,150,150,150,38,206,78,128,139,162,224,195,126,135,141,141,113,
+        247,14,4,117,8,91,160,231,217,253,181,67,107,227,9,66,8,140,49,120,239,177,214,34,165,36,8,130,233,96,239,253,181,
+        206,37,84,71,16,220,1,189,80,181,140,49,88,107,177,214,146,36,9,89,150,221,248,187,9,112,117,107,16,66,80,27,65,
+        77,3,108,147,34,136,249,185,11,223,107,205,234,234,234,4,100,108,203,84,240,213,13,115,160,34,208,243,35,165,65,
+        141,175,127,123,197,239,243,45,190,245,158,163,163,35,164,148,12,6,131,74,237,218,218,218,108,143,71,187,245,145,
+        82,29,131,142,249,233,175,30,63,252,121,200,189,251,171,120,239,233,118,187,156,157,157,145,101,25,74,41,172,181,
+        164,105,58,1,150,215,23,101,121,57,202,58,190,132,47,128,94,160,243,199,33,95,108,181,73,139,2,239,61,23,23,23,
+        56,231,136,227,24,107,45,206,185,217,225,1,232,179,37,118,183,95,86,235,95,222,67,47,106,177,216,136,25,230,35,
+        133,235,235,235,149,5,99,49,97,24,78,7,27,99,104,61,216,69,74,89,89,243,88,74,190,185,246,81,154,166,149,101,227,
+        115,121,158,207,158,138,60,207,217,219,219,67,107,77,16,4,212,235,117,134,195,33,89,150,81,150,37,205,102,147,211,
+        211,83,162,40,34,203,50,138,162,160,209,104,16,199,241,108,176,247,158,94,175,71,24,134,56,231,56,57,57,161,86,
+        171,209,239,247,113,206,49,24,12,40,138,130,227,227,99,140,49,104,173,145,82,254,51,120,172,90,41,133,49,134,60,
+        207,201,243,156,197,197,69,250,253,62,115,115,115,213,35,178,214,18,4,1,97,24,82,150,229,85,240,211,192,155,155,
+        155,40,165,42,143,165,148,52,26,13,242,60,71,8,81,5,54,30,47,165,20,66,136,170,119,43,216,90,203,202,202,202,173,
+        111,166,86,171,77,168,138,162,232,198,235,155,25,222,206,206,206,191,10,111,121,121,249,255,240,254,203,240,190,
+        124,254,150,143,85,127,3,2,106,94,210,181,28,159,166,0,0,0,0,73,69,78,68,174,66,96,130
+    };
+
+    const unsigned char scintilla_png[729] {
+        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,115,
+        0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,2,139,73,68,65,84,56,203,141,84,63,79,251,48,16,125,231,56,161,81,50,48,
+        192,132,132,20,49,23,21,150,124,3,102,144,80,119,254,108,48,241,61,24,186,244,51,116,100,66,98,165,27,27,2,196,
+        64,85,172,74,21,18,67,213,86,168,74,211,196,247,91,126,137,154,212,41,156,100,217,177,227,231,187,119,239,142,240,
+        223,230,243,57,19,17,136,8,204,12,102,198,178,45,239,49,51,162,40,194,100,50,65,16,4,4,131,137,229,139,82,74,88,
+        150,5,41,37,108,219,134,148,178,176,183,60,28,199,193,120,60,198,199,199,7,175,5,6,0,173,117,254,136,214,58,247,
+        210,52,28,199,65,146,36,240,60,15,189,94,143,215,2,103,160,166,111,19,184,235,186,216,218,218,130,239,251,80,74,
+        21,46,202,42,14,179,153,136,160,181,206,185,47,63,126,127,127,143,56,142,17,4,1,6,131,1,239,238,238,18,0,228,196,
+        207,102,51,182,109,123,173,183,229,53,17,65,8,1,102,198,108,54,131,82,10,135,135,135,84,240,216,68,73,217,195,44,
+        7,203,121,72,211,20,204,12,219,182,11,231,178,252,99,22,50,17,173,112,187,142,178,114,110,132,41,105,150,101,65,
+        107,93,80,201,95,64,151,49,164,41,252,78,167,3,165,20,226,56,70,24,134,56,58,58,66,154,166,80,74,97,103,103,7,66,
+        8,16,17,190,190,190,224,121,30,60,207,91,175,99,33,4,222,223,223,161,148,194,245,245,53,46,46,46,240,243,243,147,
+        75,171,213,106,33,73,18,72,41,225,251,62,238,238,238,208,239,247,225,56,78,174,123,35,199,68,132,183,183,55,248,
+        190,143,141,141,13,108,111,111,227,248,248,24,47,47,47,184,189,189,197,247,247,55,206,207,207,113,118,118,134,135,
+        135,7,124,126,126,226,241,241,17,97,24,226,230,230,198,172,130,233,116,202,81,20,113,183,219,229,211,211,83,102,
+        102,126,125,125,229,147,147,19,30,143,199,60,28,14,121,127,127,159,187,221,46,15,135,67,30,12,6,220,108,54,185,
+        221,110,115,175,215,227,209,104,196,79,79,79,108,244,56,73,18,52,26,13,204,231,115,52,26,13,140,70,35,92,94,94,
+        194,117,93,56,142,131,171,171,43,236,237,237,161,86,171,65,74,137,102,179,137,32,8,176,185,185,89,144,90,161,64,
+        38,147,9,103,73,89,44,22,120,126,126,70,173,86,67,189,94,199,98,177,200,181,154,173,153,185,160,30,102,70,191,223,
+        71,24,134,84,169,10,203,178,112,112,112,0,102,46,0,197,113,156,23,74,230,128,169,191,20,128,181,214,16,66,252,90,
+        206,166,78,104,178,21,143,203,205,230,183,226,48,205,43,201,171,154,255,2,84,246,124,5,184,170,61,254,165,63,84,
+        82,81,213,216,171,192,203,20,26,129,147,36,65,20,69,72,211,212,24,222,111,81,16,17,92,215,205,207,254,1,107,125,
+        99,206,65,75,68,184,0,0,0,0,73,69,78,68,174,66,96,130
+    };
+
+    const unsigned char search_png[800] {
+        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,2,0,0,0,75,214,251,108,0,0,0,3,115,66,73,84,8,
+        8,8,219,225,79,224,0,0,0,9,112,72,89,115,0,0,10,240,0,0,10,240,1,66,172,52,152,0,0,2,195,73,68,65,84,56,203,173,
+        212,75,79,19,81,20,7,240,123,219,59,51,165,211,206,76,161,4,10,66,97,218,242,92,160,60,19,216,184,82,2,11,215,198,
+        149,198,15,224,2,55,126,3,23,18,195,158,152,184,128,133,113,99,98,128,133,110,160,146,200,35,68,105,17,104,109,
+        17,40,17,140,51,148,222,97,230,206,220,185,46,197,128,213,136,255,229,73,206,47,231,36,39,7,78,205,44,129,203,5,
+        1,0,110,15,247,254,115,255,244,236,178,7,92,58,232,124,73,215,181,76,54,163,233,26,198,88,20,197,144,18,138,199,
+        226,138,18,250,43,130,49,150,222,72,229,242,185,234,112,56,82,91,91,225,243,217,14,53,12,99,225,221,130,218,172,
+        182,183,117,64,8,255,64,164,55,82,133,66,33,145,72,108,239,29,175,31,20,45,90,20,121,84,87,229,239,239,235,79,165,
+        83,0,128,142,246,206,243,132,231,236,252,185,124,174,49,218,152,76,29,126,183,184,246,132,58,50,212,53,208,213,
+        98,49,110,62,85,232,233,238,203,229,243,186,174,149,35,50,217,76,117,56,188,189,95,244,248,196,235,189,109,177,
+        186,74,73,20,148,160,255,106,107,147,34,201,27,59,71,49,85,205,126,206,150,35,52,93,147,130,210,87,221,82,235,107,
+        56,175,71,244,161,128,224,229,17,244,122,96,83,164,242,72,199,178,44,107,229,167,192,24,7,165,160,225,176,250,106,
+        9,66,64,93,102,81,6,24,132,0,32,132,76,219,17,120,161,84,42,149,35,2,129,128,109,59,34,143,14,190,21,29,215,37,
+        142,107,18,106,83,215,101,204,50,45,206,3,75,165,147,64,32,80,142,8,41,33,140,113,180,70,218,61,56,116,41,179,108,
+        106,59,204,166,46,117,217,246,206,190,226,247,106,186,166,200,74,57,34,166,198,118,190,236,244,119,54,49,74,22,
+        63,108,21,79,74,22,177,78,48,94,93,223,50,79,177,26,145,243,185,140,181,55,95,238,46,20,37,212,220,212,188,178,
+        186,60,50,120,109,109,115,119,237,83,214,36,142,88,193,85,7,133,120,44,178,185,241,49,90,43,111,189,126,188,4,204,
+        190,91,143,126,123,90,237,109,29,0,164,147,201,249,104,99,84,173,137,8,130,128,113,233,184,88,92,93,121,47,106,
+        201,80,45,63,114,127,98,102,242,1,0,224,172,242,11,1,33,108,73,180,86,85,133,243,249,220,65,161,128,79,13,127,133,
+        95,146,101,217,206,111,47,62,247,53,72,174,115,58,124,239,201,220,179,135,94,196,119,143,142,93,64,16,66,8,33,28,
+        226,98,106,220,235,245,66,8,25,99,148,82,79,188,197,67,113,250,205,132,75,95,80,98,244,12,222,124,251,234,233,197,
+        4,0,192,117,93,74,41,199,113,130,32,248,124,62,211,52,45,203,178,109,187,123,116,76,224,209,250,220,184,105,190,
+        212,137,216,208,121,227,226,69,120,158,71,8,9,130,64,8,49,12,3,99,140,16,226,121,158,227,56,66,200,149,254,187,
+        199,197,147,92,114,178,166,101,96,232,206,248,207,182,169,153,37,118,137,76,205,44,253,167,175,53,61,187,124,25,
+        226,7,202,64,139,110,48,82,97,56,0,0,0,0,73,69,78,68,174,66,96,130
+    };
+
+    const unsigned char separator_png[306] {
+        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,115,
+        0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,0,228,73,68,65,84,56,203,237,148,205,74,195,64,24,69,207,76,38,233,196,252,
+        181,8,6,187,16,65,200,128,47,163,110,242,132,214,39,80,159,67,237,66,230,9,196,133,20,92,88,108,58,51,46,181,152,
+        141,16,23,74,206,3,220,15,238,61,124,48,50,242,13,107,109,24,154,171,197,101,80,95,143,44,31,238,121,92,222,161,
+        179,18,157,149,132,237,59,193,59,162,34,195,109,182,172,95,94,209,101,69,90,85,164,10,34,9,171,231,39,210,188,100,
+        126,114,74,154,40,14,15,246,1,216,9,158,104,205,252,232,24,165,98,84,156,176,89,191,225,157,35,46,10,124,231,208,
+        65,145,228,57,147,60,71,250,14,17,60,211,217,140,88,239,17,73,129,20,159,89,59,193,77,99,104,26,51,72,197,10,160,
+        109,219,65,119,187,56,63,67,88,107,67,93,215,220,222,92,255,115,43,186,85,191,13,189,227,253,196,10,79,191,13,191,
+        110,133,52,198,136,161,1,144,227,83,251,187,124,0,38,28,251,236,206,248,7,228,0,0,0,0,73,69,78,68,174,66,96,130
+    };
+
+    const unsigned char sizer_horizontal_png[129] {
+        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,115,
+        0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,0,51,73,68,65,84,56,203,99,96,24,5,163,128,110,128,145,129,129,129,225,63,
+        3,195,127,42,26,200,8,231,224,50,152,18,113,38,90,5,197,168,193,67,216,96,218,166,227,81,48,10,80,0,0,229,90,12,
+        7,148,200,4,113,0,0,0,0,73,69,78,68,174,66,96,130
+    };
+
+    const unsigned char sizer_png[133] {
+        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,115,
+        0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,0,55,73,68,65,84,56,203,99,96,160,17,96,196,37,241,159,129,225,63,17,154,
+        25,73,182,145,144,193,132,228,153,104,21,20,163,6,195,1,11,37,17,68,22,24,77,21,163,169,98,52,85,140,166,138,33,
+        13,0,44,233,20,20,55,124,84,254,0,0,0,0,73,69,78,68,174,66,96,130
+    };
+
+    const unsigned char spacer_png[183] {
+        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,115,
+        0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,0,105,73,68,65,84,56,203,237,84,49,10,0,49,8,139,210,255,15,253,112,110,
+        234,34,218,171,197,27,14,12,184,72,9,49,177,2,141,223,131,21,36,115,78,46,46,53,205,50,232,102,4,30,140,201,20,
+        49,1,10,32,111,196,2,72,68,62,34,21,76,248,238,9,81,239,193,77,89,33,250,213,154,169,231,217,77,89,43,70,20,200,
+        73,120,187,160,53,155,118,118,123,88,248,65,216,135,172,225,227,1,190,47,66,44,164,70,194,29,0,0,0,0,73,69,78,68,
+        174,66,96,130
+    };
+
+    const unsigned char static_bitmap_png[778] {
+        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,115,
+        0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,2,188,73,68,65,84,56,203,237,149,207,107,20,73,20,199,63,53,221,227,196,
+        137,171,6,18,133,141,63,34,44,98,110,198,67,88,97,61,173,30,22,188,9,123,241,224,201,255,192,255,32,103,193,63,
+        195,147,194,42,1,209,131,160,23,127,16,140,89,221,36,100,89,52,107,54,51,246,116,102,250,87,117,85,119,87,237,161,
+        58,76,60,140,96,206,62,120,20,244,163,62,239,213,123,223,170,134,239,86,155,248,90,240,229,139,13,155,201,18,128,
+        170,178,148,5,24,3,7,14,120,252,122,249,172,216,23,248,193,131,37,91,150,147,180,90,63,144,166,32,165,243,60,135,
+        56,82,40,253,15,11,11,23,71,238,111,140,10,116,187,30,179,179,39,57,114,228,40,158,231,28,156,55,188,227,124,250,
+        116,130,191,222,175,218,81,251,253,81,129,60,135,44,131,40,130,48,132,162,128,193,192,85,157,36,16,199,130,178,
+        52,124,51,120,47,52,8,28,172,211,129,94,15,140,201,104,54,183,233,247,3,254,222,120,109,97,152,192,111,30,230,244,
+        233,115,98,36,56,142,33,77,29,252,243,103,7,236,116,64,107,195,245,235,143,152,155,107,112,232,80,134,101,27,200,
+        1,141,181,146,48,76,89,91,93,178,62,192,202,147,199,54,234,245,176,101,9,85,69,146,20,220,125,26,49,61,13,155,155,
+        176,190,238,42,150,18,102,102,214,185,122,213,99,106,234,44,240,17,200,234,131,75,192,96,76,201,219,229,69,252,
+        215,139,15,237,68,154,113,230,216,113,87,94,158,51,72,4,247,148,247,69,181,74,185,190,187,54,84,53,168,15,164,181,
+        75,32,165,209,144,28,60,216,196,111,111,119,153,158,159,119,231,238,245,64,107,198,132,100,118,236,95,22,31,133,
+        100,178,69,16,128,214,14,156,36,105,13,140,129,46,144,98,109,132,214,33,69,17,34,132,162,50,51,248,66,43,7,141,
+        99,216,217,1,41,241,210,148,27,39,255,99,188,215,97,67,142,17,206,77,114,248,199,73,42,3,237,246,58,214,166,64,
+        2,236,0,49,82,110,81,20,125,172,149,128,162,42,143,225,35,115,7,220,29,187,148,208,233,48,17,4,220,20,41,253,102,
+        196,234,239,183,184,120,237,146,0,120,254,236,158,205,243,119,84,213,4,198,108,162,84,151,178,28,0,170,30,162,2,
+        20,62,81,228,4,186,219,138,48,116,9,148,114,154,75,18,172,217,123,15,44,198,12,80,42,160,40,62,98,109,178,7,184,
+        187,22,248,36,49,124,248,224,26,184,182,230,18,228,249,112,90,89,6,118,168,211,95,46,93,19,203,203,151,237,248,
+        56,24,19,212,67,27,130,165,84,164,233,79,248,85,85,185,138,179,204,181,100,23,88,175,70,74,132,231,125,161,113,
+        41,127,227,213,171,39,52,26,99,181,212,218,64,137,181,22,152,229,202,149,5,33,222,252,113,223,182,111,223,97,42,
+        207,135,186,210,26,180,166,44,10,54,207,204,112,97,229,79,177,175,103,115,99,241,161,53,91,91,24,173,221,87,99,
+        193,26,188,86,139,214,249,243,156,154,255,89,124,255,195,236,219,254,7,145,179,181,64,11,59,61,193,0,0,0,0,73,69,
+        78,68,174,66,96,130
+    };
+
+    const unsigned char static_line_png[122] {
+        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,115,
+        0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,0,44,73,68,65,84,56,203,99,96,24,5,163,96,20,224,4,140,80,250,63,181,205,
+        132,25,204,112,224,192,1,170,25,238,224,224,192,56,26,103,163,96,20,12,43,0,0,218,235,5,3,22,132,145,240,0,0,0,
+        0,73,69,78,68,174,66,96,130
+    };
+
+    const unsigned char statusbar_png[432] {
+        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,115,
+        0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,1,98,73,68,65,84,56,203,237,147,61,72,66,81,24,134,159,235,213,174,247,166,
+        153,148,55,17,10,193,72,104,106,8,163,34,130,182,134,134,160,49,16,193,162,37,132,136,134,90,43,104,148,166,134,
+        8,35,10,10,218,162,161,8,199,26,138,134,196,177,161,161,12,201,232,7,127,174,121,91,50,8,37,43,176,201,103,249,
+        134,115,120,120,121,207,119,160,70,141,127,67,136,70,163,122,85,196,137,68,226,79,226,72,36,130,223,239,47,123,
+        22,143,199,49,84,171,10,3,192,217,254,26,87,41,177,236,5,51,25,14,183,195,204,47,174,114,157,204,209,236,80,127,
+        46,254,104,5,213,209,68,67,189,130,40,8,72,74,3,0,178,221,201,216,196,12,227,67,93,104,217,52,121,157,223,138,117,
+        114,153,91,214,195,43,44,76,79,17,90,218,196,170,170,164,82,143,152,244,28,207,121,17,171,85,198,104,168,220,125,
+        73,98,0,197,217,193,228,108,136,78,225,145,100,26,154,236,22,46,206,47,41,40,141,184,93,45,36,239,239,191,21,23,
+        31,244,75,98,16,144,36,9,163,108,198,36,232,20,10,58,119,55,55,60,60,229,233,27,236,39,251,146,170,152,180,56,141,
+        0,117,138,200,198,242,28,23,125,61,180,58,61,88,44,54,218,218,221,200,34,100,114,175,156,30,237,177,123,112,76,
+        175,215,9,222,97,70,187,93,37,226,96,48,136,166,105,4,2,1,98,177,216,207,247,88,85,109,156,108,237,32,15,140,224,
+        145,223,62,247,184,220,244,249,124,213,251,121,53,170,207,59,46,243,122,68,108,214,113,100,0,0,0,0,73,69,78,68,
+        174,66,96,130
+    };
+
+    const unsigned char submenu_png[760] {
+        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,115,
+        0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,2,170,73,68,65,84,56,203,213,149,205,110,83,71,20,199,127,115,231,222,107,
+        199,190,227,15,242,1,118,168,147,152,128,12,18,208,77,85,137,13,171,172,88,176,224,5,120,133,62,65,197,115,176,
+        104,43,94,160,123,35,36,16,202,34,32,33,4,8,5,1,113,27,192,13,9,182,99,59,246,157,185,31,195,34,20,9,144,170,36,
+        22,139,158,205,153,209,57,250,233,232,255,159,163,129,255,91,136,155,143,251,182,154,247,254,179,41,209,35,106,
+        209,38,74,169,3,65,7,131,1,238,113,47,230,159,39,143,88,62,117,138,76,54,75,28,91,180,30,145,47,28,67,5,57,134,
+        131,62,94,222,71,37,138,214,139,103,148,231,235,148,130,28,218,24,34,99,240,51,89,140,30,35,16,28,175,84,113,196,
+        62,220,149,73,200,120,48,96,107,227,57,137,204,97,195,33,110,113,150,212,104,102,139,167,217,139,66,226,200,34,
+        167,36,59,31,58,196,50,199,150,25,33,85,158,97,187,67,249,135,26,129,15,221,173,54,185,242,28,211,42,139,148,18,
+        55,73,65,5,1,170,24,16,225,35,124,137,95,42,51,229,75,0,50,153,41,140,9,1,168,214,22,201,78,229,9,135,14,158,82,
+        120,26,148,10,144,137,166,84,46,35,255,29,23,112,173,227,223,157,158,46,113,250,220,5,132,16,223,232,21,20,138,
+        232,208,131,56,188,124,254,194,143,95,22,235,251,169,211,233,112,108,169,254,165,121,7,117,185,213,106,89,21,4,
+        8,199,249,60,128,181,22,33,4,214,90,172,181,56,142,67,154,166,251,230,29,230,9,173,221,191,195,220,210,57,102,202,
+        5,194,80,19,155,8,47,227,99,134,93,254,126,191,203,197,243,103,89,127,190,78,109,113,233,112,224,237,238,46,90,
+        188,164,245,242,10,190,107,121,191,249,27,115,141,6,39,114,18,19,142,121,248,224,30,27,173,61,106,139,139,135,3,
+        255,244,243,37,92,207,99,109,205,101,249,140,37,142,46,211,168,103,25,15,122,168,208,48,95,93,98,97,1,164,35,14,
+        5,190,81,169,206,127,58,166,191,158,172,9,34,81,39,10,13,174,55,186,145,241,125,102,103,43,72,41,233,245,122,71,
+        91,215,91,183,180,29,143,173,221,220,140,237,234,170,182,205,166,190,250,117,143,115,20,112,106,13,81,4,133,130,
+        164,82,113,112,93,254,108,54,245,194,196,224,196,223,35,77,33,73,160,88,116,57,89,115,0,90,19,131,191,9,107,153,
+        153,75,104,54,117,231,243,230,29,137,19,166,68,17,88,11,227,113,74,65,185,220,94,253,139,200,136,242,100,82,152,
+        144,55,111,250,188,125,155,240,174,61,160,211,53,52,150,75,244,71,163,95,38,3,39,33,219,219,49,59,59,201,31,239,
+        218,61,250,187,9,23,27,51,0,221,137,192,214,198,235,66,4,143,87,86,50,215,123,189,189,245,52,181,244,251,26,207,
+        17,191,79,164,49,54,189,182,178,146,121,246,233,118,237,245,70,251,233,171,215,150,153,188,243,253,255,188,143,
+        69,91,31,11,205,38,11,0,0,0,0,0,73,69,78,68,174,66,96,130
+    };
+
+    const unsigned char text_sizer_png[157] {
+        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,115,
+        0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,0,79,73,68,65,84,56,203,99,96,24,5,180,6,140,48,198,127,6,134,255,84,50,
+        144,145,129,129,129,129,5,69,244,63,133,102,51,194,221,201,192,68,171,160,96,193,110,49,35,201,6,253,71,243,45,
+        11,49,138,200,1,131,47,40,8,249,106,4,5,5,33,223,13,245,160,32,35,99,140,130,97,8,0,153,45,22,35,83,6,111,55,0,
+        0,0,0,73,69,78,68,174,66,96,130
+    };
+
+    const unsigned char timepicker_png[227] {
+        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,115,
+        0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,0,149,73,68,65,84,56,203,99,96,24,5,67,22,48,50,48,48,48,24,27,167,253,167,
+        166,161,103,207,206,98,100,129,113,206,156,153,73,180,70,19,147,116,134,133,115,147,176,202,197,39,207,99,96,96,
+        96,96,96,66,113,62,35,35,3,41,124,6,6,6,134,53,27,118,48,172,217,176,3,67,156,137,18,47,35,27,136,110,56,11,214,
+        128,103,100,100,248,255,255,63,78,62,12,132,4,120,224,180,20,171,139,209,13,193,102,40,33,192,66,173,160,64,247,
+        1,19,174,160,32,20,105,232,6,161,7,11,11,54,47,19,162,137,9,103,154,101,144,209,178,103,20,208,17,0,0,183,221,56,
+        21,144,47,83,61,0,0,0,0,73,69,78,68,174,66,96,130
+    };
+
+    const unsigned char tree_ctrl_png[246] {
+        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,115,
+        0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,0,168,73,68,65,84,56,203,99,96,160,17,96,100,96,96,96,176,155,117,239,63,
+        53,13,61,148,166,196,200,0,51,248,255,255,255,255,67,195,131,255,83,10,96,142,100,129,217,18,22,17,194,176,122,
+        230,92,134,176,136,16,134,85,43,214,48,88,38,78,193,234,154,227,243,115,136,119,58,45,92,204,68,171,200,195,107,
+        112,88,68,8,217,6,179,224,51,108,213,138,181,148,133,57,174,48,38,39,204,7,54,140,41,9,115,22,82,12,91,77,68,152,
+        179,89,121,147,30,198,196,132,57,89,97,188,106,197,154,65,30,198,171,86,172,161,77,24,163,3,170,133,49,186,215,
+        73,9,99,22,124,94,167,90,150,38,199,235,184,130,130,182,85,19,45,0,0,79,233,249,111,171,192,184,164,0,0,0,0,73,
+        69,78,68,174,66,96,130
+    };
+
+    const unsigned char treelistctrl_png[425] {
+        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,115,
+        0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,1,91,73,68,65,84,56,203,181,85,49,78,3,49,16,156,139,144,16,105,3,63,160,
+        67,84,190,130,38,13,21,20,84,9,33,47,184,188,128,87,240,130,43,232,16,66,16,41,101,160,161,161,161,56,26,36,58,
+        130,120,0,77,34,184,8,197,201,210,216,23,223,202,182,204,41,89,201,146,173,181,103,87,179,179,107,96,77,22,1,128,
+        16,9,173,26,120,67,111,238,135,231,43,3,61,58,190,64,173,202,195,207,209,8,219,59,187,97,25,79,243,28,32,77,142,
+        50,90,18,70,68,64,20,149,30,79,243,188,124,207,6,60,153,140,221,225,217,195,173,122,29,111,175,79,172,82,14,224,
+        189,253,38,0,160,211,109,227,246,166,31,68,137,52,246,191,0,230,197,233,106,9,172,65,239,90,151,5,120,28,247,74,
+        64,89,150,150,206,7,204,15,0,15,230,29,33,18,210,118,122,214,162,80,155,169,245,173,214,152,136,190,136,72,136,
+        132,106,85,37,37,13,10,160,104,152,1,88,112,142,173,221,211,123,169,20,84,184,128,205,2,82,42,156,65,180,207,150,
+        136,21,216,84,133,47,107,159,207,75,5,207,200,180,31,7,183,18,192,73,12,127,75,119,186,109,107,209,76,80,238,147,
+        190,140,53,160,214,244,199,123,3,0,240,172,52,186,169,212,112,104,209,241,64,221,241,114,204,187,144,75,236,49,
+        75,11,26,36,235,196,202,58,158,135,206,99,31,207,156,138,127,13,122,155,93,7,14,163,96,96,205,45,31,50,60,99,95,
+        241,214,246,231,253,1,212,144,197,241,8,79,6,65,0,0,0,0,73,69,78,68,174,66,96,130
+    };
+
+    const unsigned char treelistctrlcolumn_png[504] {
+        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,115,
+        0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,1,170,73,68,65,84,56,203,181,149,191,74,3,65,16,135,191,147,188,129,250,
+        6,66,30,96,83,216,9,86,90,106,18,99,33,136,205,165,176,246,41,108,21,188,128,130,96,33,254,45,213,214,202,226,174,
+        17,27,65,44,44,20,196,70,16,37,36,113,44,220,193,189,203,110,34,130,3,203,193,205,206,143,185,249,125,123,11,255,
+        20,17,128,49,177,132,54,100,89,43,242,189,31,84,3,80,2,56,63,91,243,38,103,102,215,9,137,134,106,180,110,100,80,
+        210,215,173,49,177,108,109,204,51,54,62,193,208,142,63,222,223,127,222,8,204,213,54,131,162,39,199,171,60,63,61,
+        145,171,147,192,140,111,174,47,251,82,203,43,123,65,241,221,157,37,143,74,190,22,128,122,163,42,190,80,131,110,
+        11,61,25,19,139,136,72,199,89,111,34,242,106,151,49,177,148,0,14,171,219,44,44,214,56,216,63,162,82,105,230,136,
+        80,209,91,144,50,68,198,196,146,166,9,0,147,206,94,141,11,155,243,118,92,68,73,197,181,83,13,183,91,237,248,197,
+        214,123,169,72,211,36,199,105,217,78,49,203,90,145,126,81,215,230,218,246,217,3,58,192,167,75,69,206,135,102,102,
+        7,25,99,64,138,6,126,139,35,153,137,131,168,25,87,88,103,12,32,137,161,82,105,6,169,80,81,73,140,191,41,87,88,69,
+        129,95,137,22,133,188,225,195,45,244,47,80,3,139,134,61,219,245,24,50,111,97,177,214,103,160,203,177,107,96,175,
+        80,219,117,76,45,21,5,149,233,251,187,209,32,199,87,105,66,27,152,246,112,124,26,226,184,222,168,14,228,184,19,
+        24,195,163,136,60,216,245,39,142,39,3,99,40,134,87,88,199,226,51,48,203,90,209,148,103,4,67,169,208,99,58,136,10,
+        247,135,19,26,69,223,1,209,79,13,113,172,198,49,196,60,239,157,247,215,123,206,141,47,199,86,201,106,42,157,196,
+        120,0,0,0,0,73,69,78,68,174,66,96,130
+    };
+
+    const unsigned char webview_png[1208] {
+        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,115,
+        0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,4,106,73,68,65,84,56,203,157,85,95,72,147,93,28,126,206,251,190,115,110,
+        142,169,225,212,49,145,73,217,162,212,33,134,138,154,83,241,66,237,149,84,34,217,72,216,69,94,134,17,120,25,164,
+        162,100,119,34,150,162,32,152,130,23,17,236,70,16,196,91,81,17,69,24,58,83,135,179,72,13,103,254,65,212,218,158,
+        110,62,87,126,95,95,159,125,63,56,240,252,206,239,156,231,230,60,207,115,4,46,89,193,96,144,0,16,29,29,13,189,94,
+        47,240,127,235,232,232,136,35,35,35,172,174,174,166,197,98,97,84,84,20,53,26,13,147,147,147,89,81,81,193,129,129,
+        1,126,249,242,133,127,68,58,57,57,73,187,221,78,33,4,1,80,8,193,220,220,92,22,23,23,83,146,164,200,94,122,122,58,
+        61,30,207,229,200,251,250,250,168,215,235,25,23,23,199,187,119,239,18,0,85,85,229,225,225,33,79,78,78,232,118,187,
+        9,128,229,229,229,76,76,76,164,86,171,101,103,103,231,239,201,223,190,125,203,168,168,40,222,188,121,147,243,243,
+        243,172,169,169,161,193,96,160,215,235,101,56,28,102,56,28,230,230,230,38,77,38,19,11,10,10,232,243,249,152,159,
+        159,79,69,81,216,215,215,247,107,242,205,205,77,38,37,37,209,106,181,114,117,117,149,59,59,59,140,137,137,225,189,
+        123,247,24,10,133,120,94,161,80,136,141,141,141,212,104,52,244,249,124,220,218,218,98,102,102,38,141,70,35,189,
+        94,111,132,92,58,7,163,163,163,48,153,76,120,253,250,53,210,210,210,176,180,180,132,180,180,52,56,157,78,8,241,
+        67,4,66,8,220,191,127,31,54,155,13,94,175,23,38,147,9,253,253,253,176,90,173,24,30,30,254,113,238,28,124,251,246,
+        141,36,33,73,18,132,16,32,137,112,56,28,233,127,174,191,207,206,123,33,4,20,69,17,17,226,241,241,113,202,178,12,
+        135,195,129,87,175,94,161,162,162,2,138,162,96,108,108,12,161,80,8,143,30,61,194,194,194,2,252,126,63,92,46,23,
+        6,7,7,113,114,114,130,219,183,111,227,214,173,91,232,239,239,199,131,7,15,16,12,6,177,186,186,138,186,186,58,161,
+        0,128,223,239,135,199,227,129,217,108,198,211,167,79,177,187,187,139,184,184,56,44,46,46,98,98,98,2,14,135,3,157,
+        157,157,152,157,157,69,113,113,49,90,91,91,81,91,91,139,185,185,57,52,52,52,160,185,185,25,58,157,14,126,191,31,
+        6,131,1,0,32,3,64,91,91,219,243,174,174,46,196,196,196,32,16,8,96,111,111,15,193,96,16,85,85,85,216,217,217,1,73,
+        120,60,30,200,178,140,43,87,174,96,99,99,3,141,141,141,24,28,28,132,16,2,31,63,126,196,233,233,41,214,214,214,224,
+        114,185,48,52,52,212,2,0,56,56,56,96,106,106,42,175,95,191,206,174,174,46,154,205,102,154,205,102,174,175,175,179,
+        189,189,157,54,155,141,69,69,69,116,187,221,188,113,227,6,155,154,154,184,187,187,203,132,132,4,90,173,86,118,119,
+        119,51,57,57,153,233,233,233,23,85,97,52,26,69,118,118,54,2,129,0,234,234,234,96,54,155,97,48,24,96,177,88,80,88,
+        88,136,247,239,223,163,180,180,20,37,37,37,88,89,89,65,81,81,17,140,70,35,174,93,187,134,211,211,83,212,215,215,
+        67,146,36,36,38,38,70,30,88,62,7,47,95,190,124,126,245,234,85,168,170,10,189,94,143,156,156,28,228,229,229,33,54,
+        54,22,199,199,199,120,248,240,33,50,50,50,112,124,124,140,134,134,6,24,12,6,232,116,58,216,237,118,148,149,149,
+        65,171,213,194,225,112,224,221,187,119,45,23,228,246,151,9,32,73,82,68,82,231,50,187,44,6,0,89,150,197,5,131,244,
+        246,246,66,85,85,204,204,204,0,0,166,167,167,81,89,89,137,241,241,113,8,33,46,172,159,103,36,225,243,249,160,170,
+        42,94,188,120,241,79,75,47,47,47,51,54,54,150,89,89,89,220,222,222,230,135,15,31,24,29,29,77,167,211,121,193,210,
+        225,112,152,79,158,60,161,162,40,92,92,92,228,222,222,30,239,220,185,67,157,78,199,169,169,169,95,231,69,111,111,
+        47,21,69,161,195,225,224,198,198,6,203,203,203,25,31,31,79,191,223,31,33,253,252,249,51,83,82,82,104,183,219,249,
+        233,211,39,170,170,74,33,4,91,91,91,127,159,112,45,45,45,212,104,52,76,77,77,165,211,233,36,0,186,221,110,158,157,
+        157,241,235,215,175,108,110,110,166,16,130,181,181,181,180,217,108,148,101,153,143,31,63,190,92,38,191,121,243,
+        134,22,139,37,18,244,178,44,179,166,166,134,46,151,139,138,162,68,130,222,100,50,177,167,167,231,207,126,145,173,
+        173,45,118,116,116,48,59,59,155,90,173,150,66,8,10,33,168,209,104,152,145,145,193,103,207,158,49,16,8,252,43,233,
+        127,126,138,103,103,103,220,223,223,143,88,59,33,33,1,241,241,241,208,106,181,191,189,251,29,47,199,80,217,253,
+        198,166,116,0,0,0,0,73,69,78,68,174,66,96,130
+    };
+
+    const unsigned char wrap_sizer_png[145] {
+        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,115,
+        0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,0,67,73,68,65,84,56,203,99,96,24,106,128,17,198,248,207,192,240,159,74,6,
+        50,162,8,80,195,96,100,51,152,104,21,20,52,51,152,133,218,193,129,55,124,70,195,120,240,132,49,62,61,163,97,76,
+        122,24,147,106,233,208,11,227,33,28,121,67,6,0,0,153,222,26,12,44,155,144,21,0,0,0,0,73,69,78,68,174,66,96,130
+    };
+
+    const unsigned char wxChoicebook_png[434] {
+        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,115,
+        0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,1,100,73,68,65,84,56,203,205,148,189,78,2,65,16,199,127,123,183,203,105,
+        65,121,177,176,180,191,6,42,107,108,9,149,149,9,70,140,20,62,2,49,196,16,158,193,156,81,18,107,27,99,237,35,64,
+        67,235,3,220,3,216,8,4,214,226,62,216,187,67,145,47,227,36,151,217,157,219,252,230,191,115,51,7,59,50,1,80,42,93,
+        233,109,66,7,131,123,33,227,77,191,239,39,47,70,128,19,121,12,15,48,5,78,202,77,174,31,124,16,224,40,176,44,80,
+        54,72,27,58,167,77,0,100,238,10,66,0,160,181,102,2,204,12,160,233,99,168,146,96,137,16,42,237,57,39,7,214,90,51,
+        138,18,124,104,157,192,166,153,115,142,130,247,231,219,84,236,248,178,157,172,45,243,250,49,112,47,82,61,203,64,
+        199,209,3,161,82,239,172,157,130,218,139,20,79,128,162,161,178,40,68,74,229,56,163,90,218,80,144,80,62,111,179,
+        239,132,177,130,90,0,86,192,167,214,137,218,184,4,227,108,109,35,43,200,16,174,228,252,195,217,214,95,182,219,211,
+        227,197,86,160,245,70,47,223,21,47,175,111,27,65,107,213,202,247,237,214,186,105,173,5,237,118,186,169,189,181,
+        171,127,133,92,150,121,43,96,179,70,89,59,56,60,250,17,228,223,249,235,151,34,8,2,92,215,37,8,130,212,218,117,221,
+        220,217,149,192,158,231,49,28,14,241,60,47,23,219,8,28,67,77,80,54,81,110,242,150,13,200,111,122,188,86,173,80,
+        111,244,210,147,183,74,243,175,212,21,241,40,254,123,251,2,143,154,113,80,11,145,155,118,0,0,0,0,73,69,78,68,174,
+        66,96,130
+    };
+
+    const unsigned char wxCollapsiblePane_png[324] {
+        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,115,
+        0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,0,246,73,68,65,84,56,203,99,252,255,255,255,127,6,42,2,70,70,70,70,6,6,6,
+        6,198,255,255,255,255,191,122,241,36,213,12,158,179,231,43,195,132,18,103,70,38,66,10,27,90,122,224,24,159,26,116,
+        192,2,99,156,188,248,128,97,225,252,217,112,9,109,29,61,134,236,148,112,134,134,154,18,136,193,80,26,195,208,154,
+        18,132,3,160,108,6,6,6,6,184,139,205,245,21,24,44,173,108,24,14,29,216,203,32,38,38,206,144,158,153,139,211,133,
+        157,125,51,80,12,69,103,163,24,204,192,192,192,16,27,230,201,80,89,211,200,208,80,149,199,192,242,251,21,78,131,
+        203,139,50,48,130,0,221,55,3,23,121,228,2,154,25,204,130,79,242,23,147,48,209,6,177,253,123,75,188,193,232,138,
+        7,69,80,140,26,140,63,242,190,253,227,71,225,255,249,243,155,129,133,133,149,225,231,207,31,12,204,204,204,152,
+        134,176,176,50,112,49,125,36,108,48,186,34,6,54,168,56,231,104,228,145,19,121,140,140,140,140,5,61,123,255,51,12,
+        21,0,0,211,121,84,94,110,196,190,15,0,0,0,0,73,69,78,68,174,66,96,130
+    };
+
+    const unsigned char wxDialog_png[636] {
+        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,115,
+        0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,2,46,73,68,65,84,56,203,181,149,65,107,19,81,16,199,127,187,217,46,137,169,
+        105,83,208,131,232,197,107,192,226,169,7,191,128,199,30,122,211,66,17,5,253,6,94,68,68,16,252,0,94,42,42,222,122,
+        216,67,234,41,7,233,61,34,74,48,17,4,111,193,92,114,73,147,26,105,179,111,198,195,190,221,108,146,110,155,82,58,
+        176,204,123,59,239,205,155,249,207,127,222,131,11,18,39,30,188,218,237,168,0,168,130,2,42,168,234,196,7,160,98,
+        255,99,215,136,34,170,44,184,138,43,35,158,111,222,114,0,92,128,23,59,191,180,176,0,225,247,109,138,190,67,216,
+        120,75,49,159,195,252,120,143,52,63,112,185,232,195,207,143,148,22,125,150,74,121,150,75,5,202,165,2,229,165,34,
+        43,229,69,252,205,199,56,247,158,80,44,149,120,250,238,155,2,120,0,234,122,236,127,217,6,136,116,101,43,153,83,
+        217,162,111,199,253,191,163,140,124,35,233,255,51,140,140,51,54,61,219,249,173,215,87,252,76,176,156,105,15,199,
+        138,114,116,20,210,238,236,243,250,209,109,199,3,200,231,224,206,213,206,185,11,214,117,111,114,56,56,32,129,34,
+        142,39,168,214,216,88,191,155,232,88,42,171,107,167,58,109,53,234,92,242,29,188,28,99,199,216,138,167,157,6,213,
+        90,242,239,79,103,190,108,68,5,35,66,194,10,75,158,115,75,14,16,35,227,136,213,158,18,71,152,214,0,189,110,123,
+        46,199,161,8,146,142,88,84,207,132,103,214,154,208,72,18,164,155,198,56,222,16,235,160,90,75,190,105,167,211,107,
+        34,144,73,58,52,130,34,106,102,90,141,58,149,213,53,90,141,250,12,28,233,234,103,173,17,219,238,99,40,82,24,199,
+        27,78,163,86,6,47,16,77,21,207,24,51,97,94,190,114,99,102,75,92,192,147,108,32,152,208,164,89,49,75,183,207,141,
+        201,123,161,185,23,176,117,127,227,68,155,24,65,109,144,238,52,221,230,145,188,111,47,26,135,164,211,162,204,199,
+        29,225,29,183,177,215,109,211,220,11,200,178,125,173,5,89,247,80,34,94,86,84,113,218,103,181,77,56,238,15,134,180,
+        135,215,80,149,136,210,26,245,189,147,162,145,216,58,68,201,198,175,140,157,171,146,115,29,134,135,3,122,7,102,
+        242,170,126,240,242,147,138,68,79,141,138,32,106,181,49,72,124,160,229,188,138,36,205,16,209,75,163,23,77,148,221,
+        55,15,29,46,82,254,3,136,174,81,14,10,69,149,111,0,0,0,0,73,69,78,68,174,66,96,130
+    };
+
+    const unsigned char wxFrame_png[424] {
+        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,115,
+        0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,1,90,73,68,65,84,56,203,213,148,49,74,3,81,20,69,79,52,69,76,147,5,4,73,
+        33,218,4,139,16,11,11,193,194,202,90,16,4,17,55,224,34,220,129,139,16,20,108,130,8,41,36,157,96,99,8,88,185,129,
+        128,40,41,34,8,17,253,247,89,204,252,201,100,76,38,17,70,33,23,134,225,241,248,135,251,238,251,124,152,55,229,46,
+        238,158,173,217,234,100,10,221,221,169,145,111,182,58,108,108,214,216,90,89,2,224,177,251,193,219,64,169,7,235,
+        165,46,0,237,126,153,122,169,75,187,95,6,224,228,234,144,203,227,115,238,31,158,88,72,30,154,6,157,166,215,119,
+        24,124,66,238,232,180,105,203,107,171,0,152,51,204,12,44,128,155,25,146,144,175,37,76,66,46,168,125,207,162,218,
+        33,25,38,71,30,224,96,125,48,109,21,225,127,49,252,70,101,102,35,245,217,205,75,0,174,86,171,153,46,207,93,223,
+        6,96,63,214,44,50,179,200,161,143,202,215,146,40,22,139,232,203,253,92,94,86,202,207,234,50,238,214,79,151,116,
+        28,57,119,74,7,123,80,124,212,36,56,222,31,198,234,134,224,120,51,45,195,100,198,227,36,233,31,50,142,223,138,180,
+        12,39,185,156,24,133,115,110,44,120,86,216,8,216,217,16,92,40,20,50,139,193,254,60,227,70,163,65,165,82,137,156,
+        251,40,36,33,41,138,41,121,221,198,93,191,94,175,135,204,126,247,208,203,185,240,69,11,151,41,135,57,27,121,253,
+        36,216,223,219,102,254,244,13,104,151,59,187,208,145,97,19,0,0,0,0,73,69,78,68,174,66,96,130
+    };
+
+    const unsigned char wxListbook_png[357] {
+        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,115,
+        0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,1,23,73,68,65,84,56,203,99,96,160,17,96,100,96,96,96,48,54,78,251,79,77,
+        67,207,158,157,197,200,2,227,156,57,51,19,167,66,19,147,116,134,133,115,147,136,50,52,62,121,30,3,3,3,3,3,11,41,
+        46,89,179,97,7,209,106,89,72,245,102,125,125,61,94,249,205,155,211,49,13,54,49,73,199,80,136,47,136,136,118,49,
+        49,134,52,54,54,82,63,40,66,2,60,8,170,217,188,153,94,145,199,152,126,22,167,34,99,74,35,239,255,76,99,204,28,132,
+        199,66,162,195,152,24,67,72,142,188,159,88,92,11,3,86,38,164,71,30,19,173,10,33,184,139,255,16,169,65,92,90,25,
+        167,220,203,167,119,177,135,177,29,150,156,119,8,41,211,136,75,43,51,48,138,136,48,136,48,50,50,188,249,15,41,16,
+        97,108,17,70,70,134,215,175,95,99,26,252,157,129,129,97,39,90,206,99,100,96,96,248,129,102,17,178,65,232,134,255,
+        127,243,6,174,142,228,48,70,55,20,89,140,168,44,253,157,129,129,129,19,139,248,255,55,111,24,94,191,126,13,119,
+        29,140,141,28,12,24,65,129,205,112,244,200,217,176,105,15,78,223,68,38,100,208,190,106,162,85,50,102,0,0,203,220,
+        113,170,85,125,15,227,0,0,0,0,73,69,78,68,174,66,96,130
+    };
+
+    const unsigned char wxMenuBar_png[490] {
+        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,115,
+        0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,1,156,73,68,65,84,56,203,237,146,191,75,27,1,20,199,63,231,221,197,59,168,
+        103,81,210,244,188,68,147,114,49,38,109,177,148,84,168,160,32,14,142,22,23,29,92,90,232,222,63,193,169,179,244,
+        143,208,53,113,16,90,73,135,18,28,130,81,210,78,41,73,91,127,224,121,81,68,175,173,248,227,146,235,208,14,154,66,
+        115,91,151,124,150,7,143,15,95,222,227,61,104,211,166,25,225,249,98,214,139,71,117,95,178,124,106,49,113,223,104,
+        233,213,106,53,164,120,84,103,252,201,3,95,193,149,82,29,211,52,125,185,226,228,220,203,133,147,194,50,153,247,
+        91,72,178,200,209,97,141,245,149,12,145,225,52,129,142,155,242,177,109,51,20,185,224,213,139,5,78,197,0,9,51,134,
+        40,216,188,89,204,162,6,92,236,175,101,26,193,40,87,206,49,18,128,231,214,81,187,123,232,234,85,169,22,171,212,
+        93,23,235,99,142,98,161,76,106,106,134,135,177,187,215,226,27,116,200,10,122,40,196,151,226,42,107,155,85,246,191,
+        119,98,237,148,41,228,114,220,113,52,38,77,141,63,51,137,36,210,99,24,33,149,131,61,27,128,173,181,85,206,36,1,
+        247,231,249,95,107,6,251,7,121,148,140,81,42,109,51,59,63,141,166,136,88,187,71,196,83,41,70,159,62,6,248,61,177,
+        166,223,227,118,40,136,210,233,16,142,70,80,196,75,250,140,4,249,245,42,178,44,54,197,170,4,174,44,178,239,62,144,
+        78,134,89,90,122,75,208,48,8,107,117,122,110,193,167,141,77,70,6,52,132,215,153,130,231,255,120,37,158,141,38,91,
+        123,149,10,210,183,207,101,126,28,30,248,10,54,123,21,108,219,110,233,57,142,131,144,207,231,61,61,220,79,3,16,
+        0,239,31,149,166,94,243,215,180,105,243,159,248,5,209,231,135,48,146,219,194,246,0,0,0,0,73,69,78,68,174,66,96,
+        130
+    };
+
+    const unsigned char wxPanel_png[156] {
+        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,115,
+        0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,0,78,73,68,65,84,56,203,237,204,49,13,128,80,16,68,193,125,228,156,97,136,
+        2,25,20,8,64,10,8,160,164,64,202,239,46,89,76,124,10,200,141,128,193,182,51,83,17,161,30,0,36,9,219,190,175,83,
+        189,108,123,211,58,143,12,122,73,197,21,87,92,113,197,63,143,3,96,90,14,235,43,30,175,247,19,231,168,234,87,216,
+        0,0,0,0,73,69,78,68,174,66,96,130
+    };
+
+    const unsigned char wxPropertyGridManager_png[225] {
+        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,115,
+        0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,0,147,73,68,65,84,56,203,237,83,193,13,196,32,12,243,85,172,195,28,204,192,
+        44,188,51,75,86,128,33,88,129,85,210,23,18,162,119,13,149,46,106,31,245,43,49,198,138,12,1,140,240,25,106,153,120,
+        249,161,91,194,54,54,173,53,156,245,143,152,24,214,25,203,191,125,93,175,136,8,0,192,204,136,49,30,234,85,164,148,
+        0,0,110,36,187,17,51,3,192,101,211,111,16,34,18,34,18,13,57,231,211,243,30,235,102,245,120,110,38,74,41,234,165,
+        21,205,193,56,132,160,154,106,154,55,138,155,162,240,222,171,155,87,107,189,102,252,110,158,201,119,51,195,14,45,
+        233,199,21,239,131,120,108,0,0,0,0,73,69,78,68,174,66,96,130
+    };
+
+    const unsigned char wxPropertyGrid_png[212] {
+        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,115,
+        0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,0,134,73,68,65,84,56,203,237,149,193,13,195,32,12,69,95,35,214,97,14,102,
+        96,22,206,158,197,43,192,16,204,68,46,69,170,154,170,78,164,88,185,240,47,88,198,60,89,31,44,192,73,175,247,58,
+        238,230,134,25,137,8,0,170,74,206,249,16,159,85,41,5,128,240,153,156,32,85,5,184,12,253,165,33,34,67,68,134,165,
+        90,235,223,253,105,235,230,117,121,225,59,209,90,51,15,157,169,57,128,83,74,38,212,170,89,86,60,100,69,140,209,
+        156,188,222,251,53,240,154,188,245,220,124,193,110,95,147,87,195,236,160,105,194,187,92,180,57,148,0,0,0,0,73,69,
+        78,68,174,66,96,130
+    };
+
+    const unsigned char wxToolBar_png[554] {
+        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,115,
+        0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,1,220,73,68,65,84,56,203,237,148,49,104,19,81,24,199,127,175,105,114,114,
+        54,5,131,222,34,233,34,26,132,6,4,135,12,182,16,194,27,196,65,167,182,131,147,14,21,75,160,29,156,157,37,148,116,
+        144,14,5,151,10,33,160,139,96,19,44,152,161,231,32,7,182,165,54,233,150,156,58,88,10,210,34,151,114,141,71,121,
+        14,105,26,143,107,221,50,20,250,223,222,123,223,251,127,255,255,247,125,239,193,57,142,32,114,185,156,234,9,113,
+        181,90,237,9,113,95,175,74,209,15,32,101,138,104,212,96,105,233,3,0,74,41,132,16,0,120,158,231,187,48,50,50,76,
+        40,20,33,147,121,16,32,179,44,11,33,4,165,82,137,254,233,233,199,108,111,207,224,56,55,73,167,239,2,135,192,30,
+        112,9,219,254,193,250,250,55,154,205,230,241,229,161,33,208,180,139,188,190,243,61,64,124,235,171,198,254,190,211,
+        81,220,0,46,16,141,126,98,117,117,6,104,1,117,224,26,227,227,115,167,24,85,132,198,22,56,124,251,196,183,59,56,
+        248,11,77,219,107,19,11,113,5,240,128,235,52,26,63,169,84,62,3,183,129,247,216,246,85,138,197,34,186,174,163,148,
+        66,74,217,233,57,0,161,177,5,127,190,66,166,91,99,165,90,128,224,224,160,73,62,111,83,171,153,128,9,192,192,0,44,
+        47,127,1,96,99,3,164,172,162,20,140,78,153,60,127,89,8,248,24,157,50,249,56,151,236,148,162,5,244,49,59,187,131,
+        227,188,33,157,14,26,175,215,33,149,122,218,214,218,22,203,159,196,195,255,79,133,16,151,89,92,244,216,218,42,144,
+        72,4,3,118,119,33,28,190,207,228,228,51,92,215,69,29,77,125,254,81,242,56,38,30,143,147,205,102,217,49,238,117,
+        137,45,171,129,174,191,34,153,252,125,98,230,205,205,27,204,207,191,192,117,93,159,226,127,97,24,134,143,180,211,
+        5,165,105,16,137,156,108,201,52,215,8,135,253,135,19,19,195,212,106,221,117,44,22,67,74,73,165,242,142,149,149,
+        181,179,250,164,203,229,242,249,31,127,70,241,23,223,2,154,75,171,133,77,36,0,0,0,0,73,69,78,68,174,66,96,130
+    };
+
+    const unsigned char wxToolbook_png[450] {
+        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,115,
+        0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,1,116,73,68,65,84,56,203,221,148,187,75,130,81,20,192,127,218,151,34,232,
+        55,8,145,123,212,86,127,67,52,4,65,68,47,194,8,196,160,6,11,43,209,30,32,134,129,212,80,208,16,56,148,67,99,25,
+        225,210,16,84,8,45,61,192,33,200,193,208,200,169,2,145,242,1,89,249,217,100,56,100,229,107,168,31,92,184,112,47,
+        191,123,56,231,220,3,181,36,247,13,51,107,39,185,114,156,66,126,19,10,133,170,26,172,188,86,89,168,189,248,253,
+        229,233,203,181,110,237,248,182,6,197,106,34,252,244,114,240,234,226,31,228,56,153,74,99,50,207,226,221,63,64,94,
+        87,207,253,195,99,117,196,135,71,167,4,2,1,134,6,186,145,178,111,76,89,22,138,247,113,41,68,34,17,36,73,98,119,
+        207,135,82,169,68,20,53,149,139,119,188,62,252,126,63,58,157,14,81,212,160,80,40,152,54,155,42,19,59,156,203,156,
+        157,95,162,213,106,113,45,217,105,105,110,202,143,132,242,196,169,84,26,235,188,131,235,235,32,109,109,173,172,
+        174,56,81,171,213,159,231,50,153,236,119,226,92,14,242,119,67,55,97,236,139,46,98,177,24,125,189,61,216,44,147,
+        165,13,161,66,194,183,119,68,163,81,94,51,25,54,220,91,8,130,192,248,216,40,35,250,129,202,250,120,211,179,77,34,
+        145,228,249,57,65,60,30,199,96,48,148,36,45,42,206,102,37,250,123,187,25,214,15,162,82,169,232,234,108,175,206,
+        207,155,179,154,1,88,91,119,99,52,26,17,69,177,252,65,95,136,174,177,1,0,155,101,2,0,41,251,86,190,216,115,156,
+        230,79,240,1,16,26,204,66,167,181,35,126,0,0,0,0,73,69,78,68,174,66,96,130
+    };
+
+    const unsigned char wxTreebook_png[484] {
+        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,115,
+        0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,1,150,73,68,65,84,56,203,197,148,61,75,99,65,20,134,159,153,92,99,162,194,
+        70,5,193,15,180,88,4,183,17,82,248,7,108,197,66,217,98,17,11,59,91,193,191,33,88,138,176,197,45,20,182,16,23,196,
+        101,23,86,177,182,210,136,95,49,11,171,160,73,148,68,115,77,194,222,36,115,103,44,130,86,107,130,87,131,47,12,115,
+        96,102,158,115,56,239,97,160,145,50,53,52,183,176,109,252,48,173,199,32,30,143,191,105,177,178,81,93,104,60,88,
+        185,185,255,174,197,249,209,154,30,60,231,137,85,47,243,81,108,183,241,173,176,143,151,40,120,133,183,5,255,188,
+        218,4,224,52,179,143,180,94,48,110,181,180,147,254,205,223,252,25,5,229,112,232,64,48,216,202,112,123,244,117,21,
+        239,165,246,56,191,59,193,81,89,92,169,72,229,147,236,39,99,92,58,201,215,129,163,221,81,218,131,93,132,116,11,
+        150,39,137,132,59,25,136,244,211,247,161,199,63,88,4,4,0,174,87,68,9,133,17,144,251,151,165,168,243,213,115,41,
+        253,129,141,103,88,255,243,141,116,233,138,178,113,49,194,160,155,36,9,231,140,173,243,95,24,173,253,129,237,196,
+        50,247,198,161,98,52,210,88,4,180,64,160,41,107,151,123,247,22,59,177,236,111,42,102,6,103,89,75,174,146,45,5,64,
+        121,8,1,24,65,115,83,136,201,161,169,234,107,229,211,188,116,230,26,227,129,37,44,140,170,238,229,82,25,59,182,
+        244,44,180,46,120,229,192,38,66,7,31,155,63,161,84,149,162,42,21,122,195,3,132,100,27,43,7,182,191,86,76,15,207,
+        60,197,55,9,197,247,181,31,76,124,30,163,107,240,203,251,125,155,79,21,127,221,42,214,185,58,78,96,100,156,141,
+        11,224,162,200,187,233,1,87,161,242,30,54,176,24,226,0,0,0,0,73,69,78,68,174,66,96,130
+    };
+
+    const unsigned char wxWizardPageSimple_png[605] {
+        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,115,
+        0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,2,15,73,68,65,84,56,203,213,148,203,107,19,81,20,135,191,153,4,114,41,33,
+        206,116,161,153,238,178,156,128,139,118,37,133,32,196,133,24,161,139,6,68,200,159,160,136,143,130,32,133,110,68,
+        9,22,109,168,227,66,40,184,137,148,44,42,184,8,184,112,64,2,137,32,157,193,44,28,144,74,118,62,32,18,9,77,59,33,
+        47,23,193,162,237,164,121,160,11,127,155,203,61,231,240,221,195,185,231,28,169,213,106,245,0,252,126,63,199,169,
+        217,108,18,8,4,24,38,73,146,36,0,169,209,104,244,190,126,223,231,111,105,61,247,158,181,165,115,146,44,132,240,
+        12,152,170,190,225,219,203,71,19,63,32,203,178,236,233,80,178,203,132,213,210,228,224,195,134,153,76,140,233,194,
+        38,98,94,160,214,44,166,11,155,72,133,75,227,131,59,157,206,31,134,31,204,162,112,23,119,94,69,36,231,16,181,171,
+        168,44,142,13,246,251,124,190,131,154,42,217,101,92,29,220,120,20,161,172,2,38,232,2,183,98,48,147,49,176,35,139,
+        136,200,28,39,78,159,29,158,113,183,219,5,96,223,49,250,181,165,114,36,72,56,253,83,87,53,52,109,196,140,127,129,
+        123,177,28,159,99,48,149,185,70,152,45,220,139,75,253,136,252,23,54,28,133,188,18,101,61,118,121,244,26,31,25,140,
+        141,231,148,220,91,8,243,3,197,43,22,91,134,131,94,115,153,141,234,220,75,175,76,222,21,123,229,42,167,22,110,96,
+        62,214,136,70,18,164,136,144,116,42,148,204,60,17,77,227,73,230,254,104,224,118,187,61,216,155,74,242,233,227,59,
+        0,44,203,194,42,154,168,170,202,195,17,50,151,7,237,136,168,99,83,19,58,0,219,229,29,0,204,98,31,174,105,218,80,
+        184,220,108,54,61,29,123,229,42,129,224,201,131,251,239,112,211,52,81,20,133,23,185,103,131,193,163,108,172,195,
+        112,203,178,250,149,74,165,120,91,120,229,13,174,215,235,99,77,212,118,121,135,120,60,142,166,105,132,195,97,18,
+        137,132,39,92,14,133,66,99,143,235,131,181,167,56,142,141,97,24,100,179,89,206,196,206,15,111,183,81,117,243,118,
+        26,219,182,185,176,224,61,52,242,238,238,238,196,171,241,206,74,122,240,231,5,131,65,254,133,252,146,36,73,215,
+        87,95,247,248,95,244,19,184,15,178,17,93,241,242,218,0,0,0,0,73,69,78,68,174,66,96,130
+    };
+
+    const unsigned char wxWizard_png[1047] {
+        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,115,
+        0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,3,201,73,68,65,84,56,203,213,149,77,104,92,85,20,199,127,239,35,51,239,37,
+        169,121,147,168,157,39,86,140,186,153,224,38,1,21,186,12,130,18,45,162,221,212,70,138,8,130,80,139,213,166,136,
+        109,55,82,65,4,55,74,7,68,90,63,105,23,162,213,133,212,6,101,236,198,148,22,59,145,104,141,160,109,218,164,164,
+        77,173,153,230,99,50,147,153,119,207,113,241,222,76,29,180,117,229,194,11,135,199,123,247,190,223,57,247,156,123,
+        254,23,254,111,195,58,241,203,239,122,244,212,21,186,186,3,86,106,138,0,168,130,2,42,168,106,139,1,168,36,223,73,
+        214,136,34,170,180,217,138,45,117,30,190,47,196,61,250,195,60,126,167,15,40,126,91,211,31,0,155,178,39,153,26,43,
+        114,226,174,173,36,200,107,33,233,63,133,9,82,175,243,249,119,51,184,106,187,148,87,133,114,109,21,43,1,54,70,112,
+        112,15,217,129,144,133,242,179,55,216,115,235,171,68,134,186,177,112,141,40,65,187,77,167,231,52,39,183,140,62,
+        68,117,96,43,222,122,143,204,197,34,47,100,190,164,196,97,190,185,245,195,127,201,172,82,171,9,51,75,224,122,14,
+        12,220,217,193,189,235,124,140,196,211,87,71,251,201,242,26,213,245,125,120,100,224,179,231,201,100,246,177,161,
+        191,235,134,88,215,177,88,92,169,243,197,210,50,174,5,180,167,44,122,58,29,230,126,252,138,224,224,30,170,57,168,
+        14,246,225,5,111,2,5,200,121,84,167,242,4,175,231,25,239,125,2,175,119,128,142,187,115,45,80,47,237,177,166,167,
+        27,210,22,174,3,46,170,136,10,43,149,26,149,201,60,1,16,48,69,149,176,245,199,201,248,153,203,132,84,67,152,45,
+        87,254,6,6,168,27,193,136,224,42,74,35,187,157,15,30,100,226,158,243,220,241,201,219,100,57,76,245,145,145,120,
+        226,200,69,14,76,6,28,9,250,248,244,241,103,72,3,25,11,210,158,223,2,47,47,45,196,5,52,130,173,34,68,18,39,87,36,
+        57,171,7,14,113,188,186,3,175,240,51,99,91,139,28,206,79,146,43,85,233,239,203,177,109,231,78,124,223,39,157,78,
+        95,55,215,34,130,45,170,68,73,213,20,139,116,218,163,62,49,205,253,207,189,74,97,95,72,95,239,16,195,244,178,113,
+        114,138,227,133,35,244,134,33,35,35,35,68,81,116,93,168,138,96,163,10,18,71,235,182,185,100,179,107,241,125,159,
+        114,185,28,175,28,222,200,194,220,56,0,197,98,145,226,88,129,76,38,195,246,23,95,98,97,97,177,197,34,177,154,93,
+        105,171,10,34,2,8,41,215,161,221,247,72,181,57,160,17,125,147,227,148,188,28,142,5,23,166,207,1,80,24,139,225,97,
+        24,178,123,247,46,92,91,91,204,24,19,131,27,80,219,118,168,172,70,204,254,81,99,230,74,141,11,87,234,148,190,191,
+        196,154,174,91,40,93,93,164,30,25,166,206,158,105,194,11,133,2,65,16,240,206,187,251,57,51,23,177,88,181,227,84,
+        36,167,204,54,198,64,44,61,76,95,174,113,232,219,18,251,143,206,179,127,116,158,247,191,46,113,250,124,5,85,105,
+        230,176,1,47,22,139,113,166,134,135,249,233,228,40,167,207,149,155,221,103,34,131,173,162,72,82,188,180,11,183,
+        117,59,172,187,57,182,219,123,108,58,60,11,249,11,24,224,212,196,111,12,14,14,18,134,33,217,108,150,161,161,33,
+        46,255,90,72,148,15,212,24,92,21,193,24,165,188,82,161,231,38,155,13,15,116,54,165,203,182,237,70,179,210,230,94,
+        211,146,181,1,124,244,193,123,188,252,202,14,242,249,60,0,79,111,121,42,6,39,114,106,55,36,208,177,33,229,66,202,
+        85,82,174,69,202,181,112,44,5,49,212,86,43,44,45,151,169,213,163,216,162,216,246,238,125,131,241,241,113,54,111,
+        222,68,45,138,48,81,132,149,4,229,46,46,173,112,246,82,26,177,172,164,65,4,213,216,153,168,52,85,81,164,138,72,
+        67,149,147,5,10,143,62,185,157,99,197,89,80,197,177,45,86,86,13,87,151,77,124,131,188,245,241,49,218,59,124,196,
+        72,114,192,21,21,65,52,121,26,131,52,28,66,236,92,4,36,222,122,92,3,141,47,30,81,118,109,123,236,191,187,243,254,
+        4,61,95,30,87,232,10,12,187,0,0,0,0,73,69,78,68,174,66,96,130
+    };
+
+    const unsigned char wxactivityIndicator_png[796] {
+        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,115,
+        0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,2,206,73,68,65,84,56,203,189,149,191,75,51,121,16,198,63,223,152,96,192,
+        40,72,32,9,137,226,207,34,85,138,104,10,65,82,88,216,8,54,198,34,249,15,44,44,252,23,172,236,172,196,210,210,8,
+        166,80,16,193,144,45,12,90,6,210,136,11,174,33,162,217,77,252,1,154,128,152,160,115,197,145,197,189,247,120,213,
+        187,227,166,154,153,157,121,118,102,246,225,89,197,55,172,94,175,203,243,243,51,0,62,159,143,112,56,172,190,234,
+        249,178,224,233,233,73,76,211,228,227,227,195,206,5,131,65,2,129,192,111,123,93,93,167,88,44,202,210,210,146,4,
+        131,65,89,91,91,19,203,178,4,160,221,110,59,64,1,222,222,222,108,95,215,117,209,52,77,206,207,207,165,90,173,74,
+        55,239,238,58,27,27,27,28,29,29,1,176,185,185,201,244,244,52,0,30,143,7,165,20,34,118,15,30,143,7,0,211,52,165,
+        84,42,1,240,250,250,74,171,213,194,1,108,89,150,140,142,142,58,166,42,20,10,0,248,253,126,85,171,213,228,229,229,
+        5,128,190,190,62,66,161,144,2,232,230,186,214,233,116,176,44,75,66,161,144,114,1,132,66,33,149,201,100,28,69,233,
+        116,218,246,195,225,176,138,70,163,42,26,141,170,225,225,97,251,182,131,131,131,184,92,246,53,29,47,181,139,170,
+        213,170,228,114,57,206,206,206,72,167,211,164,82,41,245,29,198,152,166,41,181,90,141,222,222,94,2,129,192,151,31,
+        245,191,177,122,189,46,249,124,94,234,245,186,252,27,28,93,215,165,209,104,8,128,59,159,207,203,220,220,28,205,
+        102,147,254,254,126,78,79,79,37,153,76,254,104,29,203,178,164,80,40,160,105,26,46,151,139,114,185,44,106,126,126,
+        94,46,47,47,237,162,68,34,65,46,151,251,17,176,166,105,162,235,186,131,142,174,191,82,166,217,108,254,248,4,237,
+        118,219,17,191,191,191,227,90,94,94,118,36,83,169,212,143,129,39,39,39,29,241,248,248,248,159,116,203,102,179,82,
+        169,84,136,197,98,44,44,44,252,35,186,92,93,93,137,105,154,120,189,94,18,137,196,255,64,185,46,93,14,15,15,109,
+        202,124,215,74,165,146,24,134,33,127,43,155,187,187,187,178,181,181,101,107,238,246,246,54,99,99,99,191,93,233,
+        225,225,65,118,118,118,120,124,124,4,32,22,139,145,201,100,148,67,221,246,247,247,237,134,86,171,197,241,241,177,
+        29,223,220,220,72,177,88,4,96,106,106,138,104,52,170,0,174,175,175,109,80,128,139,139,11,238,238,238,36,18,137,
+        40,247,103,1,249,108,221,248,254,254,94,214,215,215,109,128,147,147,19,12,195,144,137,137,9,229,118,187,127,217,
+        162,167,167,199,41,244,139,139,139,248,124,62,0,134,134,134,72,38,147,0,84,42,21,199,84,157,78,135,114,185,12,64,
+        60,30,87,35,35,35,246,179,217,217,89,91,221,220,159,248,171,26,141,134,220,222,222,18,143,199,85,54,155,5,96,96,
+        96,224,151,169,252,126,191,237,175,172,172,40,195,48,196,235,245,18,137,68,212,183,255,121,0,123,123,123,114,112,
+        112,0,192,204,204,12,171,171,171,95,246,253,1,125,72,56,29,45,113,92,188,0,0,0,0,73,69,78,68,174,66,96,130
+    };
+
+    const unsigned char wxanimation_png[248] {
+        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,115,
+        0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,0,170,73,68,65,84,56,203,205,149,91,14,196,32,8,69,185,205,236,8,215,212,
+        174,169,93,19,174,137,249,25,19,219,162,69,71,147,222,31,163,134,35,18,30,32,75,251,174,212,162,109,35,34,66,126,
+        244,169,26,172,235,121,127,28,238,183,80,185,107,241,250,198,41,122,44,34,46,98,8,193,60,95,158,12,153,153,152,
+        153,90,181,208,36,61,130,1,156,190,124,93,123,165,34,162,181,117,10,124,68,200,166,64,111,240,161,89,225,205,107,
+        79,229,229,80,53,138,2,127,121,156,160,121,145,252,188,215,110,176,5,245,194,225,133,198,24,107,189,2,239,41,233,
+        215,129,139,253,56,164,152,22,98,219,151,199,105,230,121,71,147,49,243,48,96,44,153,172,47,100,228,97,136,167,219,
+        12,202,0,0,0,0,73,69,78,68,174,66,96,130
+    };
+
+    const unsigned char wxbannerWindow_png[835] {
+        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,115,
+        0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,2,245,73,68,65,84,56,203,237,149,93,107,156,69,20,199,127,103,158,217,236,
+        171,219,221,77,178,217,52,178,164,73,99,68,42,24,11,42,69,20,17,47,212,94,136,32,120,239,157,248,9,10,126,3,63,
+        132,151,130,95,64,244,66,244,66,16,21,106,75,18,99,218,52,105,179,233,214,221,109,247,37,155,103,247,121,153,227,
+        197,110,94,108,176,205,7,232,31,102,24,152,153,223,156,57,115,206,25,120,166,177,228,243,175,111,232,147,87,156,
+        28,199,163,198,120,139,10,96,64,61,52,26,160,145,207,75,139,51,124,248,198,139,88,147,44,240,116,176,3,57,60,95,
+        79,45,80,132,164,10,213,201,115,92,125,103,153,73,1,139,184,179,92,108,100,157,0,34,128,162,46,198,24,80,23,224,
+        225,120,190,148,225,147,183,22,153,2,60,192,158,182,224,49,169,160,234,129,90,48,138,120,10,196,168,27,18,71,1,
+        150,144,197,234,44,111,175,204,144,79,128,145,8,139,197,30,58,241,242,202,44,168,18,249,17,169,218,62,166,99,121,
+        244,72,104,182,66,130,185,128,234,149,2,67,133,134,175,180,239,236,225,121,134,40,138,57,151,51,92,152,78,82,201,
+        66,66,192,195,192,200,226,17,120,48,28,185,196,5,80,206,230,233,119,211,12,135,208,237,68,4,201,22,109,223,241,
+        192,135,126,164,36,9,17,99,49,34,84,38,179,92,44,167,200,11,88,64,48,232,8,60,82,224,15,145,48,32,232,57,26,237,
+        28,181,77,216,220,132,169,169,187,124,240,234,117,82,174,65,152,232,177,26,45,115,71,95,96,56,244,201,164,146,204,
+        205,150,169,20,83,120,163,248,56,10,162,35,240,210,198,79,84,90,91,212,239,11,191,4,31,241,231,237,44,181,26,92,
+        187,182,197,251,239,149,128,46,170,109,150,239,126,203,87,255,124,9,10,185,231,178,20,11,89,82,143,65,255,3,190,
+        236,237,83,94,88,160,227,234,108,253,126,147,159,111,55,216,109,78,224,220,54,144,38,142,55,24,12,182,137,162,29,
+        80,131,77,76,224,31,28,208,237,249,4,83,25,204,255,89,108,235,117,16,33,191,186,202,103,205,58,193,155,87,249,126,
+        229,99,114,231,215,25,12,82,132,225,31,196,113,131,48,108,1,6,227,25,14,250,251,220,219,107,114,191,120,158,106,
+        193,226,9,227,167,59,1,214,141,13,8,67,100,109,141,84,183,75,98,174,135,73,89,54,59,37,150,118,127,0,238,1,61,254,
+        106,94,2,12,234,28,206,9,123,15,30,178,85,74,83,46,76,31,195,78,130,215,111,213,88,106,237,34,173,22,81,175,199,
+        78,114,146,40,84,126,172,127,202,122,231,21,140,113,24,137,121,24,206,83,74,64,28,43,198,155,160,211,31,112,171,
+        209,103,190,58,205,133,236,177,47,228,139,111,118,244,169,137,231,12,234,4,49,10,198,129,64,28,197,8,224,162,125,
+        138,197,12,175,47,207,240,238,82,142,156,140,82,206,42,122,134,140,142,193,19,116,92,47,212,41,98,4,84,17,155,166,
+        221,139,249,245,230,54,105,153,231,181,139,57,82,2,86,176,79,68,203,97,119,34,150,140,145,113,241,81,80,69,85,233,
+        248,17,223,253,246,55,137,252,10,151,202,130,173,100,252,51,213,160,163,161,200,233,105,1,156,135,58,203,218,245,
+        27,44,92,121,249,217,135,116,172,127,1,22,43,59,120,219,69,88,83,0,0,0,0,73,69,78,68,174,66,96,130
+    };
+
+    const unsigned char wxcheckBox_png[202] {
+        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,115,
+        0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,0,124,73,68,65,84,56,203,237,211,49,14,128,32,12,5,208,150,120,240,63,50,
+        50,112,31,88,29,29,60,15,78,36,134,128,109,141,14,26,254,248,33,47,77,3,68,51,159,13,183,5,128,98,1,0,112,175,95,
+        122,101,206,89,133,198,224,9,0,169,97,34,162,148,146,8,239,219,58,60,115,183,246,199,44,222,113,111,160,34,220,
+        34,90,84,53,113,197,206,104,41,229,153,85,88,81,17,110,17,45,170,154,184,98,22,84,189,10,43,58,252,32,49,248,203,
+        199,63,243,243,28,200,141,39,81,199,176,79,105,0,0,0,0,73,69,78,68,174,66,96,130
+    };
+
+    const unsigned char wxcomboBox_png[233] {
+        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,115,
+        0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,0,155,73,68,65,84,56,203,99,96,24,5,180,6,140,13,13,13,255,169,109,104,125,
+        125,61,3,203,129,3,7,168,106,232,148,9,29,12,12,12,12,12,44,12,12,12,12,251,247,239,199,171,248,234,197,147,68,
+        25,154,83,80,1,103,179,16,235,18,109,125,115,188,242,141,141,141,40,124,22,82,188,73,172,203,25,24,24,24,152,104,
+        149,42,88,72,213,160,99,96,129,33,118,229,194,9,202,93,140,110,8,54,67,201,14,10,152,97,184,12,165,40,140,241,25,
+        58,56,34,15,61,157,82,197,96,228,28,69,116,33,116,229,194,9,170,23,66,218,250,230,12,140,255,255,255,255,207,48,
+        10,104,9,0,42,152,44,128,9,231,17,89,0,0,0,0,73,69,78,68,174,66,96,130
+    };
+
+    const unsigned char wxfileCtrl_png[255] {
+        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,115,
+        0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,0,177,73,68,65,84,56,203,99,96,160,17,96,100,96,96,96,176,155,117,239,63,
+        53,13,61,148,166,196,200,2,227,28,76,85,164,138,161,246,179,239,51,48,48,48,48,176,32,11,126,190,228,7,103,243,
+        234,109,130,120,137,145,145,225,255,127,132,135,96,124,116,113,116,192,132,46,192,43,225,131,98,8,46,54,62,67,177,
+        26,252,249,197,22,20,62,54,3,96,46,70,182,12,29,160,4,5,204,251,216,12,133,177,209,105,162,12,38,38,140,137,13,
+        14,130,97,12,211,12,243,54,44,8,40,14,99,108,96,112,135,49,41,225,74,82,24,35,135,45,186,56,190,160,32,42,29,227,
+        114,41,62,215,19,21,198,164,134,239,104,24,211,39,140,153,104,85,53,177,160,151,252,131,30,0,0,11,121,141,160,207,
+        10,6,93,0,0,0,0,73,69,78,68,174,66,96,130
+    };
+
+    const unsigned char wxmenuBar_png[490] {
+        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,115,
+        0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,1,156,73,68,65,84,56,203,237,146,191,75,27,1,20,199,63,231,221,197,59,168,
+        103,81,210,244,188,68,147,114,49,38,109,177,148,84,168,160,32,14,142,22,23,29,92,90,232,222,63,193,169,179,244,
+        143,208,53,113,16,90,73,135,18,28,130,81,210,78,41,73,91,127,224,121,81,68,175,173,248,227,146,235,208,14,154,66,
+        115,91,151,124,150,7,143,15,95,222,227,61,104,211,166,25,225,249,98,214,139,71,117,95,178,124,106,49,113,223,104,
+        233,213,106,53,164,120,84,103,252,201,3,95,193,149,82,29,211,52,125,185,226,228,220,203,133,147,194,50,153,247,
+        91,72,178,200,209,97,141,245,149,12,145,225,52,129,142,155,242,177,109,51,20,185,224,213,139,5,78,197,0,9,51,134,
+        40,216,188,89,204,162,6,92,236,175,101,26,193,40,87,206,49,18,128,231,214,81,187,123,232,234,85,169,22,171,212,
+        93,23,235,99,142,98,161,76,106,106,134,135,177,187,215,226,27,116,200,10,122,40,196,151,226,42,107,155,85,246,191,
+        119,98,237,148,41,228,114,220,113,52,38,77,141,63,51,137,36,210,99,24,33,149,131,61,27,128,173,181,85,206,36,1,
+        247,231,249,95,107,6,251,7,121,148,140,81,42,109,51,59,63,141,166,136,88,187,71,196,83,41,70,159,62,6,248,61,177,
+        166,223,227,118,40,136,210,233,16,142,70,80,196,75,250,140,4,249,245,42,178,44,54,197,170,4,174,44,178,239,62,144,
+        78,134,89,90,122,75,208,48,8,107,117,122,110,193,167,141,77,70,6,52,132,215,153,130,231,255,120,37,158,141,38,91,
+        123,149,10,210,183,207,101,126,28,30,248,10,54,123,21,108,219,110,233,57,142,131,144,207,231,61,61,220,79,3,16,
+        0,239,31,149,166,94,243,215,180,105,243,159,248,5,209,231,135,48,146,219,194,246,0,0,0,0,73,69,78,68,174,66,96,
+        130
+    };
+
+    const unsigned char wxnotebook_png[177] {
+        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,115,
+        0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,0,99,73,68,65,84,56,203,99,96,160,37,248,143,7,20,244,236,37,90,12,217,76,
+        22,24,227,230,205,155,56,45,158,57,115,38,154,136,42,86,49,100,192,68,171,80,160,153,193,140,176,48,190,122,241,
+        36,86,5,218,250,230,36,25,88,216,187,143,97,66,137,51,35,11,33,133,184,44,28,176,160,24,53,120,212,224,81,131,71,
+        13,38,6,192,75,183,57,123,190,50,12,9,0,0,126,235,89,63,162,177,243,95,0,0,0,0,73,69,78,68,174,66,96,130
+    };
+
+    const unsigned char wxradioButton_png[268] {
+        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,115,
+        0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,0,190,73,68,65,84,56,203,237,146,173,14,194,48,20,70,191,46,123,27,72,192,
+        129,92,29,18,193,251,172,18,137,224,49,38,38,231,54,89,92,73,202,243,20,117,73,219,220,174,157,64,44,217,81,237,
+        189,233,233,223,7,108,172,22,17,23,172,209,206,159,119,253,16,244,111,215,75,48,223,31,207,130,19,215,169,29,73,
+        56,77,19,219,143,55,40,18,119,253,240,19,142,227,24,244,164,148,0,128,182,109,241,121,191,150,137,137,88,74,181,
+        57,97,18,165,148,107,154,198,249,0,112,0,130,154,53,154,122,44,85,246,119,133,96,199,57,170,127,197,45,43,246,111,
+        59,115,243,60,214,104,199,189,51,247,190,113,230,139,78,252,124,220,217,223,47,77,68,157,10,255,238,112,98,69,169,
+        122,113,142,105,33,137,150,158,120,99,197,124,1,139,96,135,90,23,84,224,156,0,0,0,0,73,69,78,68,174,66,96,130
+    };
+
+    const unsigned char wxscrolledWindow_png[258] {
+        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,115,
+        0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,0,180,73,68,65,84,56,203,99,96,160,17,96,100,96,96,96,248,253,251,247,127,
+        106,26,202,202,202,202,200,2,227,220,188,122,150,104,141,115,246,124,37,168,134,133,92,87,165,184,112,227,181,148,
+        137,82,111,175,217,176,131,97,205,134,29,24,226,76,148,26,138,141,77,81,80,48,48,48,48,132,4,120,224,148,99,162,
+        85,114,35,219,197,132,82,6,217,6,199,216,243,51,176,176,178,48,176,179,179,49,176,178,178,51,176,115,176,49,112,
+        176,113,48,180,46,186,68,105,80,224,207,83,76,20,102,90,250,71,30,205,130,130,236,200,91,114,240,211,16,45,43,168,
+        238,98,108,229,3,114,22,103,162,86,89,129,94,110,176,80,234,101,92,5,17,11,3,3,3,67,233,196,67,84,47,43,104,6,0,
+        244,134,43,188,27,112,106,156,0,0,0,0,73,69,78,68,174,66,96,130
+    };
+
+    const unsigned char wxsimplebook_png[249] {
+        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,115,
+        0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,0,171,73,68,65,84,56,203,99,96,160,17,96,252,253,251,247,255,111,95,63,51,
+        48,49,49,146,172,249,224,249,23,165,62,246,154,61,216,228,88,126,253,252,206,240,248,193,45,178,92,117,229,246,
+        143,110,6,6,6,172,6,51,209,42,40,40,54,248,243,167,247,255,63,127,122,255,127,203,193,235,37,40,65,65,169,193,15,
+        239,221,196,26,44,52,11,10,22,106,26,246,249,211,251,255,176,212,66,85,131,145,131,101,240,166,138,81,131,7,206,
+        96,150,115,55,223,148,158,186,244,163,155,28,205,239,191,254,195,109,176,173,177,82,15,44,43,126,253,242,233,255,
+        253,59,215,6,121,80,32,115,168,25,44,56,171,13,74,130,101,203,153,31,3,80,186,81,26,44,0,249,93,93,215,32,170,61,
+        92,0,0,0,0,73,69,78,68,174,66,96,130
+    };
+
+    const unsigned char wxsplitterWindow_png[266] {
+        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,115,
+        0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,0,188,73,68,65,84,56,203,237,147,49,10,194,64,16,69,95,54,233,60,138,133,
+        77,192,94,60,138,96,171,216,123,2,197,90,201,81,162,189,152,70,80,240,30,33,69,72,118,215,42,22,194,226,44,102,
+        187,252,106,97,62,143,153,63,179,16,82,86,168,213,238,236,172,25,99,108,211,52,182,109,91,11,144,0,104,173,121,
+        61,10,113,35,207,251,213,89,203,242,10,0,5,160,148,242,153,78,228,83,161,226,29,192,3,184,7,112,20,69,97,192,101,
+        89,138,124,201,47,67,247,69,59,109,79,55,22,243,209,255,96,128,195,102,246,121,175,247,151,254,162,208,90,147,166,
+        203,254,151,23,199,49,69,113,244,2,139,162,144,142,239,5,150,44,202,25,133,244,54,179,188,98,60,153,250,117,252,
+        125,86,46,213,117,45,246,6,209,27,126,194,121,73,178,21,71,29,0,0,0,0,73,69,78,68,174,66,96,130
+    };
+
     const unsigned char wxtextCtrl_png[283] {
-        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,
-        115,0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,0,205,73,68,65,84,56,203,237,149,77,78,195,48,20,132,191,160,220,
-        198,28,34,151,176,175,147,199,142,37,11,78,241,114,136,100,9,187,86,114,206,51,44,82,35,53,208,54,133,68,162,
-        21,35,89,150,229,241,39,235,141,127,96,35,85,102,166,181,161,109,219,82,3,12,195,176,26,244,245,229,25,96,
-        2,3,244,125,191,10,120,220,191,3,240,176,85,141,239,2,220,145,170,71,158,198,75,75,207,251,54,219,49,102,166,
-        166,105,52,201,21,65,148,22,77,22,80,176,124,152,142,34,152,242,23,159,171,40,239,222,36,73,51,112,129,7,21,
-        214,52,142,242,207,254,148,239,24,188,160,20,17,119,72,85,2,119,226,13,28,183,142,148,192,229,144,18,221,207,
-        194,43,25,125,31,94,182,112,8,111,238,91,20,222,239,116,69,120,127,236,74,215,229,13,45,207,221,106,63,136,
-        36,241,47,224,3,33,124,48,32,169,38,70,178,0,0,0,0,73,69,78,68,174,66,96,130
+        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,115,
+        0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,0,205,73,68,65,84,56,203,237,149,77,78,195,48,20,132,191,160,220,198,28,
+        34,151,176,175,147,199,142,37,11,78,241,114,136,100,9,187,86,114,206,51,44,82,35,53,208,54,133,68,162,21,35,89,
+        150,229,241,39,235,141,127,96,35,85,102,166,181,161,109,219,82,3,12,195,176,26,244,245,229,25,96,2,3,244,125,191,
+        10,120,220,191,3,240,176,85,141,239,2,220,145,170,71,158,198,75,75,207,251,54,219,49,102,166,166,105,52,201,21,
+        65,148,22,77,22,80,176,124,152,142,34,152,242,23,159,171,40,239,222,36,73,51,112,129,7,21,214,52,142,242,207,254,
+        148,239,24,188,160,20,17,119,72,85,2,119,226,13,28,183,142,148,192,229,144,18,221,207,194,43,25,125,31,94,182,112,
+        8,111,238,91,20,222,239,116,69,120,127,236,74,215,229,13,45,207,221,106,63,136,36,241,47,224,3,33,124,48,32,169,
+        38,70,178,0,0,0,0,73,69,78,68,174,66,96,130
     };
 
     const unsigned char wxtoolBar_png[554] {
-        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,
-        115,0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,1,220,73,68,65,84,56,203,237,148,49,104,19,81,24,199,127,175,105,
-        114,114,54,5,131,222,34,233,34,26,132,6,4,135,12,182,16,194,27,196,65,167,182,131,147,14,21,75,160,29,156,
-        157,37,148,116,144,14,5,151,10,33,160,139,96,19,44,152,161,231,32,7,182,165,54,233,150,156,58,88,10,210,34,
-        151,114,141,71,121,14,105,26,143,107,221,50,20,250,223,222,123,223,251,127,255,255,247,125,239,193,57,142,
-        32,114,185,156,234,9,113,181,90,237,9,113,95,175,74,209,15,32,101,138,104,212,96,105,233,3,0,74,41,132,16,
-        0,120,158,231,187,48,50,50,76,40,20,33,147,121,16,32,179,44,11,33,4,165,82,137,254,233,233,199,108,111,207,
-        224,56,55,73,167,239,2,135,192,30,112,9,219,254,193,250,250,55,154,205,230,241,229,161,33,208,180,139,188,
-        190,243,61,64,124,235,171,198,254,190,211,81,220,0,46,16,141,126,98,117,117,6,104,1,117,224,26,227,227,115,
-        167,24,85,132,198,22,56,124,251,196,183,59,56,248,11,77,219,107,19,11,113,5,240,128,235,52,26,63,169,84,62,
-        3,183,129,247,216,246,85,138,197,34,186,174,163,148,66,74,217,233,57,0,161,177,5,127,190,66,166,91,99,165,
-        90,128,224,224,160,73,62,111,83,171,153,128,9,192,192,0,44,47,127,1,96,99,3,164,172,162,20,140,78,153,60,127,
-        89,8,248,24,157,50,249,56,151,236,148,162,5,244,49,59,187,131,227,188,33,157,14,26,175,215,33,149,122,218,
-        214,218,22,203,159,196,195,255,79,133,16,151,89,92,244,216,218,42,144,72,4,3,118,119,33,28,190,207,228,228,
-        51,92,215,69,29,77,125,254,81,242,56,38,30,143,147,205,102,217,49,238,117,137,45,171,129,174,191,34,153,252,
-        125,98,230,205,205,27,204,207,191,192,117,93,159,226,127,97,24,134,143,180,211,5,165,105,16,137,156,108,201,
-        52,215,8,135,253,135,19,19,195,212,106,221,117,44,22,67,74,73,165,242,142,149,149,181,179,250,164,203,229,
-        242,249,31,127,70,241,23,223,2,154,75,171,133,77,36,0,0,0,0,73,69,78,68,174,66,96,130
+        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,115,
+        0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,1,220,73,68,65,84,56,203,237,148,49,104,19,81,24,199,127,175,105,114,114,
+        54,5,131,222,34,233,34,26,132,6,4,135,12,182,16,194,27,196,65,167,182,131,147,14,21,75,160,29,156,157,37,148,116,
+        144,14,5,151,10,33,160,139,96,19,44,152,161,231,32,7,182,165,54,233,150,156,58,88,10,210,34,151,114,141,71,121,
+        14,105,26,143,107,221,50,20,250,223,222,123,223,251,127,255,255,247,125,239,193,57,142,32,114,185,156,234,9,113,
+        181,90,237,9,113,95,175,74,209,15,32,101,138,104,212,96,105,233,3,0,74,41,132,16,0,120,158,231,187,48,50,50,76,
+        40,20,33,147,121,16,32,179,44,11,33,4,165,82,137,254,233,233,199,108,111,207,224,56,55,73,167,239,2,135,192,30,
+        112,9,219,254,193,250,250,55,154,205,230,241,229,161,33,208,180,139,188,190,243,61,64,124,235,171,198,254,190,211,
+        81,220,0,46,16,141,126,98,117,117,6,104,1,117,224,26,227,227,115,167,24,85,132,198,22,56,124,251,196,183,59,56,
+        248,11,77,219,107,19,11,113,5,240,128,235,52,26,63,169,84,62,3,183,129,247,216,246,85,138,197,34,186,174,163,148,
+        66,74,217,233,57,0,161,177,5,127,190,66,166,91,99,165,90,128,224,224,160,73,62,111,83,171,153,128,9,192,192,0,44,
+        47,127,1,96,99,3,164,172,162,20,140,78,153,60,127,89,8,248,24,157,50,249,56,151,236,148,162,5,244,49,59,187,131,
+        227,188,33,157,14,26,175,215,33,149,122,218,214,218,22,203,159,196,195,255,79,133,16,151,89,92,244,216,218,42,144,
+        72,4,3,118,119,33,28,190,207,228,228,51,92,215,69,29,77,125,254,81,242,56,38,30,143,147,205,102,217,49,238,117,
+        137,45,171,129,174,191,34,153,252,125,98,230,205,205,27,204,207,191,192,117,93,159,226,127,97,24,134,143,180,211,
+        5,165,105,16,137,156,108,201,52,215,8,135,253,135,19,19,195,212,106,221,117,44,22,67,74,73,165,242,142,149,149,
+        181,179,250,164,203,229,242,249,31,127,70,241,23,223,2,154,75,171,133,77,36,0,0,0,0,73,69,78,68,174,66,96,130
     };
 
 }

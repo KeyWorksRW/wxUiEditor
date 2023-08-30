@@ -5826,6 +5826,16 @@
               wxEVT_BUTTON="OnUnused" />
           </node>
           <node
+            class="wxBoxSizer">
+            <node
+              class="wxTextCtrl"
+              focus="1"
+              hint="Enter item to search for"
+              var_name="m_text_search"
+              borders="wxTOP|wxRIGHT|wxLEFT"
+              wxEVT_TEXT="OnSearchText" />
+          </node>
+          <node
             class="wxBoxSizer"
             var_name="box_sizer_4"
             minimum_size="250,-1d"

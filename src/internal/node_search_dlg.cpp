@@ -56,6 +56,15 @@ bool NodeSearchDlg::Create(wxWindow* parent, wxWindowID id, const wxString& titl
 
     dlg_sizer->Add(box_sizer_3, wxSizerFlags().Expand().Border(wxALL));
 
+    auto* box_sizer = new wxBoxSizer(wxHORIZONTAL);
+
+    m_text_search = new wxTextCtrl(this, wxID_ANY, wxEmptyString);
+    m_text_search->SetHint("Enter item to search for");
+    m_text_search->SetFocus();
+    box_sizer->Add(m_text_search, wxSizerFlags().Border(wxLEFT|wxRIGHT|wxTOP, wxSizerFlags::GetDefaultBorder()));
+
+    dlg_sizer->Add(box_sizer, wxSizerFlags().Border(wxALL));
+
     auto* box_sizer_4 = new wxBoxSizer(wxHORIZONTAL);
     box_sizer_4->SetMinSize(250, -1);
 
@@ -100,6 +109,7 @@ bool NodeSearchDlg::Create(wxWindow* parent, wxWindowID id, const wxString& titl
     radio_variables->Bind(wxEVT_RADIOBUTTON, &NodeSearchDlg::OnVariables, this);
     radioBtn_Labels->Bind(wxEVT_RADIOBUTTON, &NodeSearchDlg::OnLabels, this);
     radioBtn_IDs->Bind(wxEVT_RADIOBUTTON, &NodeSearchDlg::OnIDs, this);
+    m_text_search->Bind(wxEVT_TEXT, &NodeSearchDlg::OnSearchText, this);
 
     return true;
 }
@@ -525,6 +535,8 @@ void NodeSearchDlg::OnInit(wxInitDialogEvent& event)
     wxCommandEvent dummy;
     OnGenerators(dummy);
 
+    m_text_search->SetFocus();
+
     event.Skip();
 }
 
@@ -579,4 +591,19 @@ void NodeSearchDlg::OnUnused(wxCommandEvent& WXUNUSED(event))
 {
     UnusedGenerators dlg(this);
     dlg.ShowModal();
+}
+
+void NodeSearchDlg::OnSearchText(wxCommandEvent& WXUNUSED(event))
+{
+    auto search_text = m_text_search->GetValue().ToStdString();
+    for (auto& iter: m_map_found)
+    {
+        if (iter.first.starts_with(search_text))
+        {
+            m_listbox->SetSelection(m_listbox->FindString(iter.first));
+            wxCommandEvent dummy_event;
+            OnSelectLocated(dummy_event);
+            break;
+        }
+    }
 }

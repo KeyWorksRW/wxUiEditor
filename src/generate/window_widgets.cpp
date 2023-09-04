@@ -36,8 +36,7 @@ bool ScrolledCanvasGenerator::ConstructionCode(Code& code)
     }
     else
     {
-        code.NodeName().Str(" = wx.ScrolledCanvas(");
-        code.ValidParentName().Comma().as_string(prop_id);
+        code.NodeName().CreateClass().ValidParentName().Comma().as_string(prop_id);
         code.PosSizeFlags(true);
     }
 
@@ -85,8 +84,7 @@ bool ScrolledWindowGenerator::ConstructionCode(Code& code)
     }
     else
     {
-        code.NodeName().Str(" = wx.ScrolledWindow(");
-        code.ValidParentName().Comma().as_string(prop_id);
+        code.NodeName().CreateClass().ValidParentName().Comma().as_string(prop_id);
         code.PosSizeFlags(true);
     }
 

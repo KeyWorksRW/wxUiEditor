@@ -15,7 +15,6 @@ WX_GLOBAL_CONSTANTS = true unless defined? WX_GLOBAL_CONSTANTS
 require 'wx/core'
 
 require_relative 'test_dlg'
-require_relative 'wizard'
 
 class MainFrame < Wx::Frame
   def initialize(parent, id = Wx::ID_ANY, title = 'Tests',
@@ -37,20 +36,9 @@ class MainFrame < Wx::Frame
     menu_item_test_dlg = Wx::MenuItem.new(menu_dialogs, Wx::ID_ANY,
       'Test Dialog')
     menu_dialogs.append(menu_item_test_dlg)
-    menu_item_wizard = Wx::MenuItem.new(menu_dialogs, Wx::ID_ANY, 'Wizard')
-    menu_dialogs.append(menu_item_wizard)
     @menubar.append(menu_dialogs, 'Tests')
 
     set_menu_bar(@menubar)
-
-    @tool_bar = create_tool_bar
-    tool_test_dialog = @tool_bar.add_tool(Wx::ID_ANY, '',
-      Wx::ArtProvider.get_bitmap_bundle(Wx::ART_REPORT_VIEW, Wx::ART_TOOLBAR))
-
-    tool_wizard = @tool_bar.add_tool(Wx::ID_ANY, '',
-      Wx::ArtProvider.get_bitmap_bundle(Wx::ART_TIP, Wx::ART_TOOLBAR))
-
-    @tool_bar.realize
 
     box_sizer = Wx::BoxSizer.new(Wx::VERTICAL)
 
@@ -67,16 +55,11 @@ class MainFrame < Wx::Frame
     panel.set_sizer_and_fit(panel_sizer)
     set_sizer_and_fit(box_sizer)
 
-    @status_bar = create_status_bar(2)
-
     centre(Wx::BOTH)
 
     # Event handlers
     evt_menu(menu_item.get_id, :on_quit)
     evt_menu(menu_item_test_dlg.get_id, :on_test_dlg)
-    evt_menu(menu_item_wizard.get_id, :on_wizard)
-    evt_tool(tool_test_dialog.get_id, :on_test_dlg)
-    evt_tool(tool_wizard.get_id, :on_wizard)
   end
 end
 

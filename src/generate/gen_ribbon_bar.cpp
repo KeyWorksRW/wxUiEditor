@@ -248,17 +248,17 @@ bool RibbonBarGenerator::SettingsCode(Code& code)
     if (theme.is_sameas("Default"))
     {
         code.Eol().NodeName().Function("SetArtProvider(").Str(code.is_cpp() ? "new " : "").Add("wxRibbonDefaultArtProvider");
-        code.AddIfPython("()");
+        code.AddIfRuby(".new").AddIfPython("()");
     }
     else if (theme.is_sameas("Generic"))
     {
         code.Eol().NodeName().Function("SetArtProvider(").Str(code.is_cpp() ? "new " : "").Add("wxRibbonAUIArtProvider");
-        code.AddIfPython("()");
+        code.AddIfRuby(".new").AddIfPython("()");
     }
     else if (theme.is_sameas("MSW"))
     {
         code.Eol().NodeName().Function("SetArtProvider(").Str(code.is_cpp() ? "new " : "").Add("wxRibbonMSWArtProvider");
-        code.AddIfPython("()");
+        code.AddIfRuby(".new").AddIfPython("()");
     }
     code.EndFunction();
 

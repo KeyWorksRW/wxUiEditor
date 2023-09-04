@@ -16,7 +16,7 @@ This does _not_ mean that the class is fully supported in every language -- this
 | wxNotebook | yes | yes | yes | --- | ../src/generate/gen_notebook.cpp |
 | wxSimplebook | yes | ??? | yes | --- | ../src/generate/gen_simplebook.cpp |
 | wxToolbook | yes | yes | --- | --- | ../src/generate/gen_toolbook.cpp |
-| wxTreebook | yes | yes | --- | --- | ../src/generate/gen_treebook.cpp |
+| wxTreebook | yes | yes | yes | yes | ../src/generate/gen_treebook.cpp |
 
 ### Forms
 
@@ -105,8 +105,8 @@ This does _not_ mean that the class is fully supported in every language -- this
 | wxRibbonToolBar | yes | yes | --- | --- | ../src/generate/ribbon_widgets.cpp |
 | wxRichTextCtrl | yes | yes | yes | yes | ../src/generate/gen_rich_text.cpp |
 | wxScrollBar | yes | yes | yes | yes | ../src/generate/gen_scrollbar.cpp |
-| wxScrolled\<wxPanel\> | yes | ??? | --- | --- | ../src/generate/styled_text.cpp |
-| wxScrolled\<wxWindow\> | yes | ??? | --- | --- | ../src/generate/styled_text.cpp |
+| wxScrolled\<wxPanel\> | yes | yes | yes | --- | ../src/generate/window_widgets.cpp |
+| wxScrolled\<wxWindow\> | yes | yes | yes | --- | ../src/generate/window_widgets.cpp |
 | wxSearchCtrl | yes | yes | yes | yes | ../src/generate/gen_search_ctrl.cpp |
 | wxSimpleHtmlListBox | yes | yes | yes | yes | ../src/generate/gen_html_listbox.cpp |
 | wxSlider | yes | yes | yes | yes | ../src/generate/gen_slider.cpp |
@@ -123,8 +123,8 @@ This does _not_ mean that the class is fully supported in every language -- this
 | wxTextCtrl | yes | yes | yes | yes | ../src/generate/gen_text_ctrl.cpp |
 | wxToggleButton | yes | yes | yes | partial | ../src/generate/gen_toggle_btn.cpp |
 | wxToolBar | yes | yes | yes | yes | ../src/generate/gen_toolbar.cpp |
-| wxTreeCtrl | yes | ??? | --- | --- | ../src/generate/gen_tree_ctrl.cpp |
-| wxTreeListCtrl | yes | ??? | --- | no | ../src/generate/gen_tree_list.cpp |
+| wxTreeCtrl | yes | yes | yes | yes | ../src/generate/gen_tree_ctrl.cpp |
+| wxTreeListCtrl | yes | no | no | no | ../src/generate/gen_tree_list.cpp |
 | wxWebView | yes | yes | no | no | ../src/generate/gen_web_view.cpp |
 | wxWizardPageSimple | yes | yes | yes | yes | ../src/generate/gen_wizard.cpp |
 
@@ -141,7 +141,7 @@ This does _not_ mean that the class is fully supported in every language -- this
 | CustomControl | yes | no | --- | --- | ../src/generate/gen_custom_ctrl.cpp |
 | DataViewColumn | yes | yes | no | no | ../src/generate/dataview_widgets.cpp |
 | DataViewListColumn | yes | ??? | --- | --- | ../src/generate/dataview_widgets.cpp |
-| NewCloseButton | yes | ??? | --- | --- | ../src/generate/gen_close_btn.cpp |
+| NewCloseButton | yes | yes | yes | yes | ../src/generate/gen_close_btn.cpp |
 | PageCtrl | yes | ??? | --- | no | ../src/generate/gen_page_ctrl.cpp |
 | PropertyGridItem | yes | yes | --- | no | ../src/generate/gen_prop_item.cpp |
 | PropertyGridPage | yes | yes | --- | no | ../src/generate/grid_widgets.cpp |
@@ -168,17 +168,20 @@ If a Ruby control is marked as `fails` it means there is a problem that appears 
 
 - CheckBoxSizer
 - RadioBoxSizer
+- wxTreeListCtrl
 
 # Ruby unsupported
 
 - wxBannerWindow
-- wxDataViewListCtrl
-- wxDataViewCtrl
-- DataViewColumn
-- DataViewListColumn
 - wxInfoBar
 - wxRearrangeCtrl
 - wxSpinCtrlDouble
 - wxWebView
 - wxWrapSizer
 - wxCommandLinkButton
+
+- wxDataViewListCtrl
+- wxDataViewCtrl
+- DataViewColumn
+- DataViewListColumn
+- wxTreeListCtrl

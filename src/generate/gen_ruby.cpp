@@ -52,15 +52,18 @@ def get_bundle(image_name1, image_name2 = nil, image_name3 = nil)
     if (image_name3)
       image3 = Wx::Image.new
       image3.load_stream(StringIO.new(image_name3))
-      bitmaps = [image1, image2, image3]
-      bundle = Wx::BitmapBundle.new.from_bitmaps(bitmaps)
+      bitmaps = [Wx::Bitmap.new(image1),
+                 Wx::Bitmap.new(image2),
+                 Wx::Bitmap.new(image3)]
+      bundle = Wx::BitmapBundle.from_bitmaps(bitmaps)
       return bundle
     else
-      bundle = Wx::BitmapBundle.new.from_bitmaps(image1, image2)
+      bundle = Wx::BitmapBundle.from_bitmaps(Wx::Bitmap.new(image1),
+                                             Wx::Bitmap.new(image2))
       return bundle
     end
   end
-  bundle = Wx::BitmapBundle.new(image1)
+  bundle = Wx::BitmapBundle.from_image(image1)
   return bundle
 end
 )===";
@@ -701,7 +704,7 @@ bool RubyBundleCode(Code& code, GenEnum::PropName prop)
                 svg_name = embed->array_name;
             }
             code.insert(0, tt_string("_svg_string_ = zlib.decompress(base64.b64decode(") << svg_name << "))\n");
-            code += "wx.BitmapBundle.FromSVG(_svg_string_";
+            code += "Wx::BitmapBundle.FromSVG(_svg_string_";
             wxSize svg_size { -1, -1 };
             if (parts[IndexSize].size())
             {

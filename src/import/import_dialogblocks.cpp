@@ -1287,7 +1287,7 @@ void DialogBlocks::ProcessStyles(pugi::xml_node& node_xml, const NodeSharedPtr& 
             {
                 if (style_str.size())
                     style_str << '|';
-                style_str << "wxALIGN_CENTER";
+                style_str << "wxALIGN_CENTER_HORIZONTAL";
             }
         }
         if (auto value = node_xml.find_child_by_attribute("string", "name", "proxy-AlignV"); value)
@@ -1307,7 +1307,7 @@ void DialogBlocks::ProcessStyles(pugi::xml_node& node_xml, const NodeSharedPtr& 
                 {
                     if (style_str.size())
                         style_str << '|';
-                    style_str << "wxALIGN_CENTER";
+                    style_str << "wxALIGN_CENTER_VERTICAL";
                 }
             }
         }

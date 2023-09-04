@@ -8,4 +8,4 @@ assignees: ''
 ---
 
 ### Description:
-<!-- Provide a description of of what you want to happen here -->
+<!-- Provide a description of what you want to happen here -->

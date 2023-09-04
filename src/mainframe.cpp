@@ -1057,6 +1057,8 @@ void MainFrame::OnBrowseDocs(wxCommandEvent& WXUNUSED(event))
             {
                 // wxString url("https://docs.wxwidgets.org/trunk/class");
                 wxString url("https://docs.wxwidgets.org/3.2.0/class");
+                if (file.starts_with("group"))
+                    url.RemoveLast(sizeof("class") - 1);
                 url << file.make_wxString();
                 wxLaunchDefaultBrowser(url);
                 return;

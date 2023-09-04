@@ -63,8 +63,8 @@ private:
 // Code below this comment block will be preserved
 // if the code for this class is re-generated.
 //
-// clang-format on
-// ***********************************************
+    // clang-format on
+    // ***********************************************
 
 public:
     // Checks current selected node to see if it accepts a wxRibbonBar as a child

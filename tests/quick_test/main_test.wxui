@@ -27,19 +27,9 @@
         var_name="dlg_sizer"
         flags="wxEXPAND">
         <node
-          class="wxBoxSizer">
-          <node
-            class="wxStaticText"
-            var_name="static_text"
-            alignment="wxALIGN_CENTER_VERTICAL" />
-          <node
-            class="wxTextCtrl"
-            var_name="text_ctrl" />
-          <node
-            class="wxCheckBox"
-            var_name="check_box"
-            alignment="wxALIGN_CENTER_VERTICAL" />
-        </node>
+          class="wxStdDialogButtonSizer"
+          var_name="std_btn"
+          flags="wxEXPAND" />
       </node>
     </node>
     <node

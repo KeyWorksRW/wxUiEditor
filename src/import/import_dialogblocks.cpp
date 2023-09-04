@@ -219,6 +219,17 @@ bool DialogBlocks::CreateFormNode(pugi::xml_node& form_xml, const NodeSharedPtr&
             m_errors.emplace(tt_string("Unrecognized form class: ") << type_name);
             return false;
         }
+        else if (getGenName == gen_wxDialog)
+        {
+            if (auto base_class = form_xml.find_child_by_attribute("string", "name", "proxy-Base class"); base_class)
+            {
+                auto base_name = ExtractQuotedString(base_class);
+                if (base_name == "wxPanel")
+                {
+                    getGenName = gen_PanelForm;
+                }
+            }
+        }
 
         auto form = NodeCreation.createNode(getGenName, parent.get());
         if (!form)
@@ -659,6 +670,18 @@ void DialogBlocks::SetNodeDimensions(pugi::xml_node& node_xml, const NodeSharedP
         if (m_class_uses_dlg_units)
         {
             prop->get_value() << 'd';
+        }
+    }
+
+    if (new_node->isGen(gen_spacer))
+    {
+        if (auto value = node_xml.find_child_by_attribute("long", "name", "proxy-Width"); value)
+        {
+            new_node->set_value(prop_width, value.text().as_int());
+        }
+        if (auto value = node_xml.find_child_by_attribute("long", "name", "proxy-Height"); value)
+        {
+            new_node->set_value(prop_height, value.text().as_int());
         }
     }
 }
@@ -1264,7 +1287,7 @@ void DialogBlocks::ProcessStyles(pugi::xml_node& node_xml, const NodeSharedPtr& 
             {
                 if (style_str.size())
                     style_str << '|';
-                style_str << "wxALIGN_CENTER";
+                style_str << "wxALIGN_CENTER_HORIZONTAL";
             }
         }
         if (auto value = node_xml.find_child_by_attribute("string", "name", "proxy-AlignV"); value)
@@ -1284,7 +1307,7 @@ void DialogBlocks::ProcessStyles(pugi::xml_node& node_xml, const NodeSharedPtr& 
                 {
                     if (style_str.size())
                         style_str << '|';
-                    style_str << "wxALIGN_CENTER";
+                    style_str << "wxALIGN_CENTER_VERTICAL";
                 }
             }
         }
@@ -1373,6 +1396,7 @@ constexpr auto map_proxy_names = frozen::make_map<std::string_view, GenEnum::Pro
     { "Columns", prop_cols },
     { "Default filter", prop_defaultfilter },
     { "Default folder", prop_defaultfolder },
+    { "Field count", prop_fields },
     { "Filter", prop_filter },
     { "Gravity", prop_sashgravity },
     { "GrowableColumns", prop_growablecols },
@@ -1401,6 +1425,9 @@ constexpr auto map_proxy_names = frozen::make_map<std::string_view, GenEnum::Pro
     { "Tool separation", prop_separation },
     { "Tooltip text", prop_tooltip },
     { "URL", prop_html_url },
+
+    { "wxRA_SPECIFY_COLS", prop_style },
+    { "wxRA_SPECIFY_ROWS", prop_style },
 
     { "Initial value", prop_value },  // In DialogBlocks used for all sorts of properties
 
@@ -1564,6 +1591,15 @@ void DialogBlocks::ProcessMisc(pugi::xml_node& node_xml, const NodeSharedPtr& no
                             node->set_value(prop_pressed, true);
                     }
                     break;
+
+                case prop_style:
+                    if (node->isGen(gen_wxRadioBox))
+                    {
+                        if (name == "wxRA_SPECIFY_COLS")
+                            node->set_value(prop_style, "columns");
+                        else if (name == "wxRA_SPECIFY_ROWS")
+                            node->set_value(prop_style, "rows");
+                    }
 
                 default:
                     if (auto prop = node->getPropPtr(result->second); prop)

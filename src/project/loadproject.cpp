@@ -1408,6 +1408,7 @@ void ProjectHandler::RecursiveNodeCheck(Node* node)
                 prop_ptr->get_value().Replace("wxALIGN_TOP", "");
                 prop_ptr->get_value().Replace("wxALIGN_BOTTOM", "");
                 prop_ptr->get_value().Replace("wxALIGN_CENTER_VERTICAL", "");
+                prop_ptr->get_value().Replace("wxALIGN_CENTER", "");
             }
 
             if (parent->as_string(prop_orientation).contains("wxHORIZONTAL"))
@@ -1423,6 +1424,7 @@ void ProjectHandler::RecursiveNodeCheck(Node* node)
                 prop_ptr->get_value().Replace("wxALIGN_LEFT", "");
                 prop_ptr->get_value().Replace("wxALIGN_RIGHT", "");
                 prop_ptr->get_value().Replace("wxALIGN_CENTER_HORIZONTAL", "");
+                prop_ptr->get_value().Replace("wxALIGN_CENTER", "");
             }
 #if defined(INTERNAL_TESTING)
             if (old_value != prop_ptr->as_string())

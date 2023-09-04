@@ -28,8 +28,8 @@ wxObject* CloseButtonGenerator::CreateMockup(Node* /* node */, wxObject* parent)
 
 bool CloseButtonGenerator::ConstructionCode(Code& code)
 {
-    code.AddAuto().NodeName().Add(" = ").Add("wxBitmapButton") << (code.is_cpp() ? "::" : ".");
-    code.Add("NewCloseButton(").ValidParentName().Comma().as_string(prop_id);
+    code.AddAuto().NodeName().Add(" = ").Add("wxBitmapButton").ClassMethod("NewCloseButton(");
+    code.ValidParentName().Comma().as_string(prop_id);
     if (code.hasValue(prop_window_name))
         code.Comma().QuotedString(prop_window_name);
     code.EndFunction();

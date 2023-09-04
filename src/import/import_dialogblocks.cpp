@@ -672,6 +672,18 @@ void DialogBlocks::SetNodeDimensions(pugi::xml_node& node_xml, const NodeSharedP
             prop->get_value() << 'd';
         }
     }
+
+    if (new_node->isGen(gen_spacer))
+    {
+        if (auto value = node_xml.find_child_by_attribute("long", "name", "proxy-Width"); value)
+        {
+            new_node->set_value(prop_width, value.text().as_int());
+        }
+        if (auto value = node_xml.find_child_by_attribute("long", "name", "proxy-Height"); value)
+        {
+            new_node->set_value(prop_height, value.text().as_int());
+        }
+    }
 }
 
 void DialogBlocks::SetNodeValidator(pugi::xml_node& node_xml, const NodeSharedPtr& new_node)

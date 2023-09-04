@@ -171,7 +171,7 @@ bool Node::createToolNode(GenName name)
     {
         PostProcessPage(new_node);
     }
-    else if (name == gen_wxPanel)
+    else if (name == gen_wxPanel || name == gen_wxScrolledWindow)
     {
         PostProcessPanel(new_node);
     }

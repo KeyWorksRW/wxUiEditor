@@ -219,6 +219,17 @@ bool DialogBlocks::CreateFormNode(pugi::xml_node& form_xml, const NodeSharedPtr&
             m_errors.emplace(tt_string("Unrecognized form class: ") << type_name);
             return false;
         }
+        else if (getGenName == gen_wxDialog)
+        {
+            if (auto base_class = form_xml.find_child_by_attribute("string", "name", "proxy-Base class"); base_class)
+            {
+                auto base_name = ExtractQuotedString(base_class);
+                if (base_name == "wxPanel")
+                {
+                    getGenName = gen_PanelForm;
+                }
+            }
+        }
 
         auto form = NodeCreation.createNode(getGenName, parent.get());
         if (!form)

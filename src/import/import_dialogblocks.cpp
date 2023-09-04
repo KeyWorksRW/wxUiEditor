@@ -1402,6 +1402,9 @@ constexpr auto map_proxy_names = frozen::make_map<std::string_view, GenEnum::Pro
     { "Tooltip text", prop_tooltip },
     { "URL", prop_html_url },
 
+    { "wxRA_SPECIFY_COLS", prop_style },
+    { "wxRA_SPECIFY_ROWS", prop_style },
+
     { "Initial value", prop_value },  // In DialogBlocks used for all sorts of properties
 
 });
@@ -1564,6 +1567,15 @@ void DialogBlocks::ProcessMisc(pugi::xml_node& node_xml, const NodeSharedPtr& no
                             node->set_value(prop_pressed, true);
                     }
                     break;
+
+                case prop_style:
+                    if (node->isGen(gen_wxRadioBox))
+                    {
+                        if (name == "wxRA_SPECIFY_COLS")
+                            node->set_value(prop_style, "columns");
+                        else if (name == "wxRA_SPECIFY_ROWS")
+                            node->set_value(prop_style, "rows");
+                    }
 
                 default:
                     if (auto prop = node->getPropPtr(result->second); prop)

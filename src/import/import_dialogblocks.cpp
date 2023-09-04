@@ -1396,6 +1396,7 @@ constexpr auto map_proxy_names = frozen::make_map<std::string_view, GenEnum::Pro
     { "Columns", prop_cols },
     { "Default filter", prop_defaultfilter },
     { "Default folder", prop_defaultfolder },
+    { "Field count", prop_fields },
     { "Filter", prop_filter },
     { "Gravity", prop_sashgravity },
     { "GrowableColumns", prop_growablecols },

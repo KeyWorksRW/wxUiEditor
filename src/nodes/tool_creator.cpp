@@ -151,7 +151,39 @@ bool Node::createToolNode(GenName name)
 
     auto new_node = createChildNode(name);
     if (!new_node)
-        return false;
+    {
+        switch (name)
+        {
+            case gen_wxRibbonPanel:
+                if (isSizer())
+                {
+                    // Note that neither the wxRibbonBar or wxRibbonPage are added to the undo
+                    // stack
+                    if (auto parent = createChildNode(gen_wxRibbonBar); parent)
+                    {
+                        auto page = parent->createChildNode(gen_wxRibbonPage);
+                        new_node = page->createChildNode(name);
+                        return (new_node != nullptr);
+                    }
+                }
+                return false;
+
+            case gen_wxRibbonPage:
+                if (isSizer())
+                {
+                    // Note that neither the wxRibbonBar is not added to the undo stack
+                    if (auto parent = createChildNode(gen_wxRibbonBar); parent)
+                    {
+                        new_node = parent->createChildNode(name);
+                        return (new_node != nullptr);
+                    }
+                }
+                return false;
+
+            default:
+                return false;
+        }
+    }
 
     if (name == gen_wxDialog || name == gen_PanelForm || name == gen_wxPopupTransientWindow)
     {
@@ -281,7 +313,31 @@ void MainFrame::createToolNode(GenName name)
             return;  // The user has already been notified of the problem
         }
 
-        wxMessageBox(tt_string() << "Unable to create " << map_GenNames[name] << " as a child of "
-                                 << m_selected_node->declName());
+        switch (name)
+        {
+            case gen_wxRibbonToolBar:
+                wxMessageBox("A wxRibbonToolBar can only be created as a child of a wxRibbonPanel.",
+                             "Cannot create wxRibbonToolBar", wxOK | wxICON_ERROR);
+                break;
+
+            case gen_wxRibbonGallery:
+                wxMessageBox("A wxRibbonGallery can only be created as a child of a wxRibbonPanel.",
+                             "Cannot create wxRibbonGallery", wxOK | wxICON_ERROR);
+                break;
+
+            case gen_wxRibbonButtonBar:
+                wxMessageBox("A wxRibbonButtonBar can only be created as a child of a wxRibbonPanel.",
+                             "Cannot create wxRibbonButtonBar", wxOK | wxICON_ERROR);
+                break;
+
+            case gen_wxRibbonPanel:
+                wxMessageBox("A wxRibbonPanel can only be created as a child of a wxRibbonPage.",
+                             "Cannot create wxRibbonPanel", wxOK | wxICON_ERROR);
+                break;
+
+            default:
+                wxMessageBox(tt_string() << "Unable to create " << map_GenNames[name] << " as a child of "
+                                         << m_selected_node->declName());
+        }
     }
 }

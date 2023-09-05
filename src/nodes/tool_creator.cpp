@@ -180,6 +180,22 @@ bool Node::createToolNode(GenName name)
                 }
                 return false;
 
+            case gen_ribbonTool:
+                if (getParent()->isGen(gen_wxRibbonToolBar))
+                {
+                    new_node = getParent()->createChildNode(name);
+                    return (new_node != nullptr);
+                }
+                return false;
+
+            case gen_ribbonButton:
+                if (getParent()->isGen(gen_wxRibbonButtonBar))
+                {
+                    new_node = getParent()->createChildNode(name);
+                    return (new_node != nullptr);
+                }
+                return false;
+
             default:
                 return false;
         }

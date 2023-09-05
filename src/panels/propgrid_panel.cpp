@@ -1035,7 +1035,10 @@ void PropGridPanel::OnPropertyGridChanging(wxPropertyGridEvent& event)
             break;
 
         case type_path:
-            AllowDirectoryChange(event, prop, node);
+            if (!node->isGen(gen_wxFilePickerCtrl))
+            {
+                AllowDirectoryChange(event, prop, node);
+            }
             break;
 
         case type_id:

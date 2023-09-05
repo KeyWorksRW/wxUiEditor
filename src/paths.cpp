@@ -172,16 +172,18 @@ void AllowFileChange(wxPropertyGridEvent& event, NodeProperty* prop, Node* node)
     }
 }
 
-void OnPathChanged(wxPropertyGridEvent& event, NodeProperty* prop, Node* /* node */)
+void OnPathChanged(wxPropertyGridEvent& event, NodeProperty* prop, Node* node)
 {
     // If the user clicked the path button, the current directory may have changed.
     Project.ChangeDir();
 
     tt_string newValue = event.GetPropertyValue().GetString().utf8_string();
-    newValue.make_absolute();
-    newValue.make_relative(Project.getProjectPath());
-    newValue.backslashestoforward();
-
+    if (!node->isGen(gen_wxFilePickerCtrl))
+    {
+        newValue.make_absolute();
+        newValue.make_relative(Project.getProjectPath());
+        newValue.backslashestoforward();
+    }
     // Note that on Windows, even though we changed the property to a forward slash, it will still be displayed
     // with a backslash. However, modifyProperty() will save our forward slash version, so even thought the
     // display isn't correct, it will be stored in the project file correctly.

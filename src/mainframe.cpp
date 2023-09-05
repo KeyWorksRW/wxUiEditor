@@ -1494,31 +1494,6 @@ bool MainFrame::SelectNode(Node* node, size_t flags)
     return true;
 }
 
-void MainFrame::createToolNode(GenName name)
-{
-    if (!m_selected_node)
-    {
-        wxMessageBox("You need to select something first in order to properly place this widget.");
-        return;
-    }
-
-    if (name == gen_tool && (m_selected_node->isType(type_aui_toolbar) || m_selected_node->isType(type_aui_tool)))
-    {
-        name = gen_auitool;
-    }
-
-    if (!m_selected_node->createToolNode(name))
-    {
-        if (m_selected_node->isGen(gen_wxSplitterWindow))
-        {
-            return;  // The user has already been notified of the problem
-        }
-
-        wxMessageBox(tt_string() << "Unable to create " << map_GenNames[name] << " as a child of "
-                                 << m_selected_node->declName());
-    }
-}
-
 void MainFrame::CopyNode(Node* node)
 {
     ASSERT(node);

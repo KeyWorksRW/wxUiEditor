@@ -48,6 +48,36 @@ bool TreeListCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_s
     return true;
 }
 
+std::optional<tt_string> TreeListCtrlGenerator::GetWarning(Node* node, int language)
+{
+    switch (language)
+    {
+        case GEN_LANG_PYTHON:
+            {
+                tt_string msg;
+                if (auto form = node->getForm(); form && form->hasValue(prop_class_name))
+                {
+                    msg << form->as_string(prop_class_name) << ": ";
+                }
+                msg << "wxPython currently does not support wxTreeListCtrl";
+                return msg;
+            }
+
+        case GEN_LANG_RUBY:
+            {
+                tt_string msg;
+                if (auto form = node->getForm(); form && form->hasValue(prop_class_name))
+                {
+                    msg << form->as_string(prop_class_name) << ": ";
+                }
+                msg << "wxRuby currently does not support wxTreeListCtrl";
+                return msg;
+            }
+        default:
+            return {};
+    }
+}
+
 //////////////////////////////////////////  TreeListCtrlColumnGenerator  //////////////////////////////////////////
 
 bool TreeListCtrlColumnGenerator::ConstructionCode(Code& code)

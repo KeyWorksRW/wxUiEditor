@@ -37,6 +37,11 @@ void BaseCodeGenerator::GenConstruction(Node* node)
     if (!generator)
         return;
 
+    if (auto warning_msg = generator->GetWarning(node, m_language); warning_msg)
+    {
+        m_warnings.emplace(warning_msg.value());
+    }
+
     if (node->hasValue(prop_platforms) && node->as_string(prop_platforms) != "Windows|Unix|Mac")
     {
         BeginPlatformCode(node);

@@ -186,6 +186,9 @@ public:
     virtual bool PopupMenuAddCommands(NavPopupMenu*, Node*) { return false; }
 
     virtual void AddPropsAndEvents(NodeDeclaration*) {}
+
+    // Call this to retrieve any warning text when generating code for the specific language.
+    virtual std::optional<tt_string> GetWarning(Node*, int /* language */) { return {}; }
 };
 
 PropDeclaration* DeclAddProp(NodeDeclaration* declaration, PropName prop_name, PropType type, std::string_view help = {},

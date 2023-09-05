@@ -21,6 +21,8 @@ public:
 
     int GenXrcObject(Node*, pugi::xml_node& /* object */, size_t /* xrc_flags */) override;
     void RequiredHandlers(Node*, std::set<std::string>& /* handlers */) override;
+
+    std::optional<tt_string> GetWarning(Node* node, int language) override;
 };
 
 class DataViewListCtrl : public BaseGenerator
@@ -35,6 +37,8 @@ public:
 
     int GenXrcObject(Node*, pugi::xml_node& /* object */, size_t /* xrc_flags */) override;
     void RequiredHandlers(Node*, std::set<std::string>& /* handlers */) override;
+
+    std::optional<tt_string> GetWarning(Node* node, int language) override;
 };
 
 class DataViewTreeCtrl : public BaseGenerator
@@ -48,6 +52,8 @@ public:
 
     int GenXrcObject(Node*, pugi::xml_node& /* object */, size_t /* xrc_flags */) override;
     void RequiredHandlers(Node*, std::set<std::string>& /* handlers */) override;
+
+    std::optional<tt_string> GetWarning(Node* node, int language) override;
 };
 
 class DataViewColumn : public BaseGenerator

@@ -153,6 +153,14 @@ bool GeneratePythonFiles(GenResults& results, std::vector<tt_string>* pClassList
                 flags |= flag_test_only;
             auto retval = cpp_cw->WriteFile(GEN_LANG_PYTHON, flags);
 
+            if (auto warning_msgs = codegen.getWarnings(); warning_msgs.size())
+            {
+                for (auto& iter: warning_msgs)
+                {
+                    results.msgs.emplace_back() << iter << '\n';
+                }
+            }
+
             if (retval > 0)
             {
                 if (!pClassList)
@@ -186,6 +194,11 @@ bool GeneratePythonFiles(GenResults& results, std::vector<tt_string>* pClassList
                          "Code generation");
             continue;
         }
+    }
+
+    if (results.msgs.size())
+    {
+        results.msgs.emplace_back() << '\n';
     }
 
 #if defined(_DEBUG) || defined(INTERNAL_TESTING)

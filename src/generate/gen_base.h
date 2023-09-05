@@ -85,6 +85,9 @@ public:
 
     static void CollectIDs(Node* node, std::set<std::string>& set_enum_ids, std::set<std::string>& set_const_ids);
 
+    // Retrieve a list of any warnings the generators have created
+    auto getWarnings() { return m_warnings; }
+
 protected:
     // Generate extern references to images used in the current form that are defined in the
     // gen_Images node.
@@ -192,6 +195,9 @@ private:
     std::set<wxBitmapType> m_type_generated;
     std::set<std::string> m_set_enum_ids;
     std::set<std::string> m_set_const_ids;
+
+    // Warnings to be displayed to the user when generating code to a file
+    std::set<tt_string> m_warnings;
 
     Node* m_form_node { nullptr };
     Node* m_ImagesForm { nullptr };

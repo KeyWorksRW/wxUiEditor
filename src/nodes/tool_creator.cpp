@@ -185,109 +185,133 @@ bool Node::createToolNode(GenName name)
         }
     }
 
-    if (name == gen_wxDialog || name == gen_PanelForm || name == gen_wxPopupTransientWindow)
+    // The following switch statement does post-processing of the newly created node.
+
+    switch (name)
     {
-        if (auto sizer = new_node->createChildNode(gen_VerticalBoxSizer); sizer)
-        {
-            sizer->set_value(prop_var_name, "parent_sizer");
-            sizer->fixDuplicateName();
-            wxGetFrame().FirePropChangeEvent(sizer->getPropPtr(prop_var_name));
-        }
-    }
-    else if (name == gen_wxNotebook || name == gen_wxSimplebook || name == gen_wxChoicebook || name == gen_wxListbook ||
-             name == gen_wxAuiNotebook)
-    {
-        PostProcessBook(new_node);
-    }
-    else if (name == gen_BookPage)
-    {
-        PostProcessPage(new_node);
-    }
-    else if (name == gen_wxPanel || name == gen_wxScrolledWindow)
-    {
-        PostProcessPanel(new_node);
-    }
-    else if (name == gen_wxWizard)
-    {
-        new_node = new_node->createChildNode(gen_wxWizardPageSimple);
-        PostProcessPage(new_node);
-    }
-    else if (name == gen_wxWizardPageSimple)
-    {
-        PostProcessPage(new_node);
-    }
-    else if (name == gen_wxMenuBar || name == gen_MenuBar)
-    {
-        if (auto node_menu = new_node->createChildNode(gen_wxMenu); node_menu)
-        {
-            node_menu->createChildNode(gen_wxMenuItem);
-        }
-        if (name == gen_MenuBar)
-        {
+        case gen_wxDialog:
+        case gen_PanelForm:
+        case gen_wxPopupTransientWindow:
+            if (auto sizer = new_node->createChildNode(gen_VerticalBoxSizer); sizer)
+            {
+                sizer->set_value(prop_var_name, "parent_sizer");
+                sizer->fixDuplicateName();
+                wxGetFrame().FirePropChangeEvent(sizer->getPropPtr(prop_var_name));
+            }
+            break;
+
+        case gen_wxNotebook:
+        case gen_wxSimplebook:
+        case gen_wxChoicebook:
+        case gen_wxListbook:
+        case gen_wxAuiNotebook:
+            PostProcessBook(new_node);
+            break;
+
+        case gen_BookPage:
+        case gen_wxWizardPageSimple:
+            PostProcessPage(new_node);
+            break;
+
+        case gen_wxPanel:
+        case gen_wxScrolledWindow:
+            PostProcessPanel(new_node);
+            break;
+
+        case gen_wxWizard:
+            new_node = new_node->createChildNode(gen_wxWizardPageSimple);
+            PostProcessPage(new_node);
+            break;
+
+        case gen_wxMenuBar:
+        case gen_MenuBar:
+            if (auto node_menu = new_node->createChildNode(gen_wxMenu); node_menu)
+            {
+                node_menu->createChildNode(gen_wxMenuItem);
+            }
+            if (name == gen_MenuBar)
+            {
+                wxGetFrame().getRibbonPanel()->ActivateBarPage();
+            }
+            break;
+
+        case gen_PopupMenu:
+            new_node->createChildNode(gen_wxMenuItem);
             wxGetFrame().getRibbonPanel()->ActivateBarPage();
-        }
-    }
-    else if (name == gen_PopupMenu)
-    {
-        new_node->createChildNode(gen_wxMenuItem);
-        wxGetFrame().getRibbonPanel()->ActivateBarPage();
-    }
-    else if (name == gen_wxToolBar || name == gen_ToolBar)
-    {
-        new_node->createChildNode(gen_tool);
-    }
-    else if (name == gen_wxBoxSizer || name == gen_VerticalBoxSizer || name == gen_wxWrapSizer || name == gen_wxGridSizer ||
-             name == gen_wxFlexGridSizer || name == gen_wxGridBagSizer || name == gen_wxStaticBoxSizer ||
-             name == gen_StaticCheckboxBoxSizer || name == gen_StaticRadioBtnBoxSizer)
-    {
-        auto node = new_node->getParent();
-        ASSERT(node);
+            break;
 
-        if (auto prop = node->getPropPtr(prop_borders); prop)
-        {
-            if (UserPrefs.is_SizersAllBorders())
-                prop->set_value("wxALL");
-        }
+        case gen_wxToolBar:
+        case gen_ToolBar:
+            new_node->createChildNode(gen_tool);
+            break;
 
-        if (auto prop = node->getPropPtr(prop_flags); prop)
-        {
-            if (UserPrefs.is_SizersExpand())
+        case gen_wxBoxSizer:
+        case gen_VerticalBoxSizer:
+        case gen_wxWrapSizer:
+        case gen_wxGridSizer:
+        case gen_wxFlexGridSizer:
+        case gen_wxGridBagSizer:
+        case gen_wxStaticBoxSizer:
+        case gen_StaticCheckboxBoxSizer:
+        case gen_StaticRadioBtnBoxSizer:
+            if (auto node = new_node->getParent(); node)
+            {
+                if (auto prop = node->getPropPtr(prop_borders); prop)
+                {
+                    if (UserPrefs.is_SizersAllBorders())
+                        prop->set_value("wxALL");
+                }
+
+                if (auto prop = node->getPropPtr(prop_flags); prop)
+                {
+                    if (UserPrefs.is_SizersExpand())
+                        prop->set_value("wxEXPAND");
+                }
+            }
+            break;
+
+        case gen_wxStaticLine:
+            if (auto sizer = new_node->getParent(); sizer->isSizer())
+            {
+                // Set a default width that is large enough to see
+                new_node->set_value(prop_size, "20,-1d");
+                wxGetFrame().FirePropChangeEvent(new_node->getPropPtr(prop_size));
+            }
+            if (auto prop = new_node->getPropPtr(prop_flags); prop)
+            {
                 prop->set_value("wxEXPAND");
-        }
-    }
-    else if (name == gen_wxStaticLine)
-    {
-        if (auto sizer = new_node->getParent(); sizer->isSizer())
-        {
-            // Set a default width that is large enough to see
-            new_node->set_value(prop_size, "20,-1d");
-            wxGetFrame().FirePropChangeEvent(new_node->getPropPtr(prop_size));
-        }
-    }
-    else if (name == gen_wxStdDialogButtonSizer || name == gen_wxStaticLine)
-    {
-        if (auto prop = new_node->getPropPtr(prop_flags); prop)
-        {
-            prop->set_value("wxEXPAND");
-            wxGetFrame().FirePropChangeEvent(prop);
-        }
-    }
-    else if (name == gen_wxContextMenuEvent)
-    {
-        auto event = new_node->getParent()->getEvent("wxEVT_CONTEXT_MENU");
-        if (event)
-        {
-            event->set_value(new_node->as_string(prop_handler_name));
-        }
+                wxGetFrame().FirePropChangeEvent(prop);
+            }
+            break;
 
-        // Create an initial menu item
-        new_node->createChildNode(gen_wxMenuItem);
-    }
-    else if (name == gen_wxHtmlWindow || name == gen_wxStyledTextCtrl || name == gen_wxRichTextCtrl ||
-             name == gen_wxGenericDirCtrl)
-    {
-        new_node->set_value(prop_flags, "wxEXPAND");
-        new_node->set_value(prop_proportion, 1);
+        case gen_wxStdDialogButtonSizer:
+            if (auto prop = new_node->getPropPtr(prop_flags); prop)
+            {
+                prop->set_value("wxEXPAND");
+                wxGetFrame().FirePropChangeEvent(prop);
+            }
+            break;
+
+        case gen_wxContextMenuEvent:
+            if (auto event = new_node->getParent()->getEvent("wxEVT_CONTEXT_MENU"); event)
+            {
+                event->set_value(new_node->as_string(prop_handler_name));
+            }
+
+            // Create an initial menu item
+            new_node->createChildNode(gen_wxMenuItem);
+            break;
+
+        case gen_wxHtmlWindow:
+        case gen_wxStyledTextCtrl:
+        case gen_wxRichTextCtrl:
+        case gen_wxGenericDirCtrl:
+            new_node->set_value(prop_flags, "wxEXPAND");
+            new_node->set_value(prop_proportion, 1);
+            break;
+
+        default:
+            break;
     }
 
     return true;

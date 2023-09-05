@@ -35,19 +35,32 @@ bool DirectoryDialogAdapter::DoShowDialog(wxPropertyGrid* propGrid, wxPGProperty
     }
 
     tt_string path = Project.getProjectPath();
-    path.append_filename(m_prop->as_string());
-    path.make_absolute();
+    auto node = m_prop->getNode();
+    if (node->isGen(gen_wxFilePickerCtrl))
+    {
+        path = m_prop->as_string().size() ? m_prop->as_string() : Project.getProjectPath();
+    }
+    else
+    {
+        path.append_filename(m_prop->as_string());
+        path.make_absolute();
+    }
 
     // If the directory doesn't exist, then we need to reset it. Otherwise on Windows, the
     // dialog will be for the computer, requiring the user to drill down to where the project
     // file is.
-    if (!path.dir_exists())
+    if (!node->isGen(gen_wxFilePickerCtrl) && !path.dir_exists())
     {
         path = Project.getProjectPath();
     }
 
-    wxDirDialog dlg(propGrid, "Choose a directory:", path.make_wxString(),
-                    wxDD_DEFAULT_STYLE | wxDD_CHANGE_DIR | wxDD_DIR_MUST_EXIST, dlg_pos, dlg_sz);
+    auto style = wxDD_DEFAULT_STYLE | wxDD_CHANGE_DIR;
+    if (!node->isGen(gen_wxFilePickerCtrl))
+    {
+        style |= wxDD_DIR_MUST_EXIST;
+    }
+
+    wxDirDialog dlg(propGrid, wxDirSelectorPromptStr, path.make_wxString(), style, dlg_pos, dlg_sz);
     if (dlg.ShowModal() == wxID_OK)
     {
         SetValue(dlg.GetPath());

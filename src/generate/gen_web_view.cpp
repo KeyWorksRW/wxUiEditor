@@ -88,3 +88,22 @@ bool WebViewGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, s
     InsertGeneratorInclude(node, "#include <wx/webview.h>", set_src, set_hdr);
     return true;
 }
+
+std::optional<tt_string> WebViewGenerator::GetWarning(Node* node, int language)
+{
+    switch (language)
+    {
+        case GEN_LANG_RUBY:
+            {
+                tt_string msg;
+                if (auto form = node->getForm(); form && form->hasValue(prop_class_name))
+                {
+                    msg << form->as_string(prop_class_name) << ": ";
+                }
+                msg << "wxRuby currently does not support Wx::WebView";
+                return msg;
+            }
+        default:
+            return {};
+    }
+}

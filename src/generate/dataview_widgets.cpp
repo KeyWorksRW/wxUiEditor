@@ -163,6 +163,25 @@ void DataViewCtrl::RequiredHandlers(Node* /* node */, std::set<std::string>& han
     handlers.emplace("wxDataViewXmlHandler");
 }
 
+std::optional<tt_string> DataViewCtrl::GetWarning(Node* node, int language)
+{
+    switch (language)
+    {
+        case GEN_LANG_RUBY:
+            {
+                tt_string msg;
+                if (auto form = node->getForm(); form && form->hasValue(prop_class_name))
+                {
+                    msg << form->as_string(prop_class_name) << ": ";
+                }
+                msg << "wxRuby currently does not support Wx::DataViewCtrl";
+                return msg;
+            }
+        default:
+            return {};
+    }
+}
+
 //////////////////////////////////////////  DataViewListCtrl  //////////////////////////////////////////
 
 wxObject* DataViewListCtrl::CreateMockup(Node* node, wxObject* parent)
@@ -274,6 +293,25 @@ void DataViewListCtrl::RequiredHandlers(Node* /* node */, std::set<std::string>&
     handlers.emplace("wxDataViewXmlHandler");
 }
 
+std::optional<tt_string> DataViewListCtrl::GetWarning(Node* node, int language)
+{
+    switch (language)
+    {
+        case GEN_LANG_RUBY:
+            {
+                tt_string msg;
+                if (auto form = node->getForm(); form && form->hasValue(prop_class_name))
+                {
+                    msg << form->as_string(prop_class_name) << ": ";
+                }
+                msg << "wxRuby currently does not support Wx::DataViewListCtrl";
+                return msg;
+            }
+        default:
+            return {};
+    }
+}
+
 //////////////////////////////////////////  DataViewTreeCtrl  //////////////////////////////////////////
 
 wxObject* DataViewTreeCtrl::CreateMockup(Node* node, wxObject* parent)
@@ -298,6 +336,25 @@ bool DataViewTreeCtrl::GetIncludes(Node* node, std::set<std::string>& set_src, s
 {
     InsertGeneratorInclude(node, "#include <wx/dataview.h>", set_src, set_hdr);
     return true;
+}
+
+std::optional<tt_string> DataViewTreeCtrl::GetWarning(Node* node, int language)
+{
+    switch (language)
+    {
+        case GEN_LANG_RUBY:
+            {
+                tt_string msg;
+                if (auto form = node->getForm(); form && form->hasValue(prop_class_name))
+                {
+                    msg << form->as_string(prop_class_name) << ": ";
+                }
+                msg << "wxRuby currently does not support Wx::DataViewTreeCtrl";
+                return msg;
+            }
+        default:
+            return {};
+    }
 }
 
 // ../../wxSnapShot/src/xrc/xh_dataview.cpp

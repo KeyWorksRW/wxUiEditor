@@ -2255,9 +2255,15 @@
                 label="Size: 333x333"
                 var_name="m_text" />
               <node
-                class="wxStaticBitmap"
-                class_access="protected:"
-                var_name="m_canvas" />
+                class="wxStaticBoxSizer"
+                label="">
+                <node
+                  class="wxStaticBitmap"
+                  class_access="protected:"
+                  var_name="m_canvas"
+                  border_size="0"
+                  borders="" />
+              </node>
             </node>
           </node>
           <node

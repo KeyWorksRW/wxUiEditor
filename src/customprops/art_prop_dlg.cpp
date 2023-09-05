@@ -10,6 +10,7 @@
 #include <wx/bmpbndl.h>
 #include <wx/button.h>
 #include <wx/sizer.h>
+#include <wx/statbox.h>
 
 #include "art_prop_dlg.h"
 
@@ -36,8 +37,12 @@ bool ArtBrowserDialog::Create(wxWindow* parent, wxWindowID id, const wxString& t
     m_text = new wxStaticText(this, wxID_ANY, "Size: 333x333");
     box_sizer3->Add(m_text, wxSizerFlags().Border(wxALL));
 
-    m_canvas = new wxStaticBitmap(this, wxID_ANY, wxNullBitmap);
-    box_sizer3->Add(m_canvas, wxSizerFlags().Border(wxALL));
+    auto* static_box = new wxStaticBoxSizer(wxVERTICAL, this);
+
+    m_canvas = new wxStaticBitmap(static_box->GetStaticBox(), wxID_ANY, wxNullBitmap);
+    static_box->Add(m_canvas, wxSizerFlags());
+
+    box_sizer3->Add(static_box, wxSizerFlags().Border(wxALL));
 
     box_sizer->Add(box_sizer3, wxSizerFlags(1).Border(wxALL));
 
@@ -191,6 +196,7 @@ void ArtBrowserDialog::OnSelectItem(wxListEvent& event)
         m_canvas->SetSize(bmp.GetWidth(), bmp.GetHeight());
         m_canvas->SetBitmap(bmp);
         m_text->SetLabel(tt_string().Format("Size: %d x %d", bmp.GetWidth(), bmp.GetHeight()));
+        Layout();
     }
     Refresh();
 }

@@ -60,6 +60,57 @@ static void PostProcessPanel(Node* panel_node)
     }
 }
 
+static void SetUniqueRibbonToolID(Node* node)
+{
+    auto* bar_parent = node->getParent();
+    while (bar_parent && !bar_parent->isGen(gen_wxRibbonBar))
+    {
+        bar_parent = bar_parent->getParent();
+    }
+    ASSERT(bar_parent);
+    if (!bar_parent)
+        return;  // should never happen, but don't crash if it does
+
+    std::unordered_set<std::string> name_set;
+
+    auto rlambda = [&](Node* child, auto&& rlambda) -> void
+    {
+        if (child->isGen(gen_ribbonTool) || child->isGen(gen_ribbonButton))
+        {
+            if (child->hasValue(prop_id) && !child->as_string(prop_id).starts_with("wx"))
+            {
+                name_set.insert(child->as_string(prop_id));
+            }
+        }
+        else
+        {
+            for (auto& iter: child->getChildNodePtrs())
+            {
+                rlambda(iter.get(), rlambda);
+            }
+        }
+    };
+
+    for (auto& iter: bar_parent->getChildNodePtrs())
+    {
+        rlambda(iter.get(), rlambda);
+    }
+
+    tt_string new_name("tool1");
+
+    if (auto it = name_set.find(new_name); it != name_set.end())
+    {
+        // Keep adding higher and higher numbers until we get a unique one.
+        for (int i = 2; it != name_set.end(); it = name_set.find(new_name), ++i)
+        {
+            new_name.clear();
+            new_name << "tool" << i;
+        }
+    }
+
+    node->set_value(prop_id, new_name);
+}
+
 bool Node::createToolNode(GenName name)
 {
     if (isGen(gen_Project))
@@ -147,6 +198,10 @@ bool Node::createToolNode(GenName name)
         }
         image_node->createChildNode(name);
         return true;
+    }
+    else if (name == gen_ribbonButton && (isGen(gen_wxRibbonToolBar) || getParent()->isGen(gen_wxRibbonToolBar)))
+    {
+        name = gen_ribbonTool;
     }
 
     auto new_node = createChildNode(name);
@@ -324,6 +379,11 @@ bool Node::createToolNode(GenName name)
         case gen_wxGenericDirCtrl:
             new_node->set_value(prop_flags, "wxEXPAND");
             new_node->set_value(prop_proportion, 1);
+            break;
+
+        case gen_ribbonTool:
+            SetUniqueRibbonToolID(new_node);
+            wxGetFrame().FirePropChangeEvent(new_node->getPropPtr(prop_id));
             break;
 
         default:

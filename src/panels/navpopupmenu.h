@@ -112,6 +112,8 @@ public:
         MenuADD_RIBBON_BUTTONBAR,
         MenuADD_RIBBON_TOOLBAR,
         MenuADD_RIBBON_GALLERY,
+        MenuADD_RIBBON_BUTTON,
+        MenuADD_RIBBON_GALLERY_ITEM,
 
         MenuADD_PROPGRID_PAGE,
         MenuADD_PROPGRID_ITEM,

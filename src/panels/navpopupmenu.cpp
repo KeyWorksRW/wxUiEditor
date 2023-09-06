@@ -544,9 +544,18 @@ void NavPopupMenu::MenuAddCommands(Node* node)
             break;
 
         case gen_wxRibbonPanel:
+            add_sizer = false;
             if (node->getChildCount())
             {
-                return;
+                Append(MenuADD_RIBBON_PANEL, "Add Panel");
+                Bind(
+                    wxEVT_MENU,
+                    [](wxCommandEvent&)
+                    {
+                        wxGetFrame().createToolNode(gen_wxRibbonPanel);
+                    },
+                    MenuADD_RIBBON_PANEL);
+                break;
             }
             else
             {
@@ -577,6 +586,34 @@ void NavPopupMenu::MenuAddCommands(Node* node)
                     },
                     MenuADD_RIBBON_GALLERY);
             }
+            break;
+
+        case gen_wxRibbonButtonBar:
+        case gen_wxRibbonToolBar:
+        case gen_ribbonButton:
+        case gen_ribbonTool:
+            add_sizer = false;
+            Append(MenuADD_RIBBON_BUTTON, "Add Button");
+            Bind(
+                wxEVT_MENU,
+                [](wxCommandEvent&)
+                {
+                    wxGetFrame().createToolNode(gen_ribbonButton);
+                },
+                MenuADD_RIBBON_BUTTON);
+            break;
+
+        case gen_wxRibbonGallery:
+        case gen_ribbonGalleryItem:
+            add_sizer = false;
+            Append(MenuADD_RIBBON_GALLERY_ITEM, "Add Gallery Item");
+            Bind(
+                wxEVT_MENU,
+                [](wxCommandEvent&)
+                {
+                    wxGetFrame().createToolNode(gen_ribbonGalleryItem);
+                },
+                MenuADD_RIBBON_GALLERY_ITEM);
             break;
 
         case gen_AuiToolBar:

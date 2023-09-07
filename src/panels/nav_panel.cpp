@@ -78,7 +78,7 @@ NavigationPanel::NavigationPanel(wxWindow* parent) : wxPanel(parent)
             // This will happen if there is an enumerated value but no generator for it
             continue;
         }
-        auto image = iter->GetImage().Scale(gen_image_size.x, gen_image_size.y);
+        auto image = iter->GetImage().Scale(gen_image_size.x, gen_image_size.y, wxIMAGE_QUALITY_BILINEAR);
         m_iconList->Add(image);
         m_iconIdx[iter->getGenName()] = index++;
     }

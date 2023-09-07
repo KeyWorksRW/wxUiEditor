@@ -37,7 +37,7 @@
             id="wxID_EXIT"
             label="&amp;Quit"
             stock_id="wxID_EXIT"
-            wxEVT_MENU="OnMenuSelection[python:on_quit][ruby:on_quit]" />
+            wxEVT_MENU="OnQuit[python:on_quit][ruby:on_quit]" />
         </node>
         <node
           class="wxMenu"
@@ -48,7 +48,7 @@
             class="wxMenuItem"
             label="Test Dialog"
             var_name="menu_item_test_dlg"
-            wxEVT_MENU="OnMenuSelection[python:on_test_dlg][ruby:on_test_dlg]" />
+            wxEVT_MENU="OnTestDialog[python:on_test_dlg][ruby:on_test_dlg]" />
         </node>
       </node>
       <node

@@ -3,7 +3,9 @@
   data_version="15">
   <node
     class="Project"
+    art_directory="../art"
     code_preference="Ruby"
+    base_directory="cpp"
     cpp_line_length="125"
     wxWidgets_version="3.2"
     python_output_folder="python"
@@ -11,31 +13,11 @@
     ruby_output_folder="ruby"
     xrc_directory="xrc">
     <node
-      class="wxDialog"
-      class_name="TestDialog"
-      title="Test Dialog"
-      base_file="rubytest"
-      derived_class_name="TestDialogDerived"
-      derived_file="testdialog_derived"
-      python_file="test_dlg"
-      ruby_file="test_dlg"
-      xrc_file="test_dlg"
-      wxEVT_INIT_DIALOG="OnInit[python:on_init][ruby:on_init]">
-      <node
-        class="wxBoxSizer"
-        orientation="wxVERTICAL"
-        var_name="dlg_sizer"
-        flags="wxEXPAND">
-        <node
-          class="wxStdDialogButtonSizer"
-          var_name="std_btn"
-          flags="wxEXPAND" />
-      </node>
-    </node>
-    <node
       class="wxFrame"
       class_name="MainFrame"
       title="Tests"
+      base_file="main_frame"
+      use_derived_class="0"
       python_file="py_main"
       python_import_list="test_dlg.py"
       relative_require_list="test_dlg.rb"

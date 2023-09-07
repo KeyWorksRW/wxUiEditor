@@ -170,6 +170,7 @@ public:
     // Ignored by Python and Ruby.
     Code& OpenBrace();
 
+    // In C++, this adds "\\n}" and removes indentation set by OpenBrace().
     Code& CloseBrace();
 
     // If C++ and node is a local variable, will add "auto* "

@@ -1182,15 +1182,17 @@ void GenToolCode(Code& code, const bool is_bitmaps_list)
         else
             code += " = ";
     }
+    bool need_variable_result =
+        (node->hasValue(prop_var_name) &&
+         (node->isGen(gen_tool_dropdown) ||
+          (node->isGen(gen_auitool) && node->as_string(prop_initial_state) != "wxAUI_BUTTON_STATE_NORMAL")));
 
-    if ((node->isLocal() && node->isGen(gen_tool_dropdown)) ||
-        (node->isGen(gen_auitool) && node->as_string(prop_initial_state) != "wxAUI_BUTTON_STATE_NORMAL"))
+    if (need_variable_result)
     {
-        code.AddIfCpp("auto* ").NodeName().Add(" = ");
-    }
-    // If the user doesn't want access, then we have no use for the return value.
-    else if (!node->isLocal())
-    {
+        if (node->isLocal())
+        {
+            code.AddIfCpp("auto* ");
+        }
         code.NodeName().Add(" = ");
     }
 
@@ -1207,9 +1209,23 @@ void GenToolCode(Code& code, const bool is_bitmaps_list)
     {
         code.Comma();
         if (code.is_cpp())
-            code += "wxBitmapBundle::FromBitmaps(bitmaps)";
+        {
+            if (need_variable_result)
+            {
+                tt_string lambda_name;
+                lambda_name.Format("make_%s_bundle()", node->as_string(prop_var_name).c_str());
+                code.CheckLineLength(lambda_name.size());
+                code += lambda_name;
+            }
+            else
+            {
+                code += "wxBitmapBundle::FromBitmaps(bitmaps)";
+            }
+        }
         else
+        {
             code += "wx.BitmapBundle.FromBitmaps(bitmaps)";
+        }
     }
     else
     {
@@ -1294,13 +1310,14 @@ void GenToolCode(Code& code, const bool is_bitmaps_list)
 
 bool BitmapList(Code& code, const GenEnum::PropName prop)
 {
+    auto* node = code.node();  // for convenience
     // Note that Ruby always uses a function, and therefore has no need for a list
-    if (!code.node()->hasValue(prop) || code.is_ruby())
+    if (!node->hasValue(prop) || code.is_ruby())
     {
         return false;
     }
 
-    auto& description = code.node()->as_string(prop);
+    auto& description = node->as_string(prop);
     tt_view_vector parts(description, BMP_PROP_SEPARATOR, tt::TRIM::both);
 
     if (parts[IndexImage].empty() || parts[IndexType].contains("Art") || parts[IndexType].contains("SVG"))
@@ -1354,6 +1371,15 @@ bool BitmapList(Code& code, const GenEnum::PropName prop)
     {
         code.Add("#if wxCHECK_VERSION(3, 1, 6)");
     }
+
+    bool use_lambda = (node->hasValue(prop_var_name) &&
+                       (node->isGen(gen_tool_dropdown) ||
+                        (node->isGen(gen_auitool) && node->as_string(prop_initial_state) != "wxAUI_BUTTON_STATE_NORMAL")));
+
+    if (use_lambda)
+    {
+        code.Str("auto make_").NodeName() << "_bundle = [&]() -> wxBitmapBundle";
+    }
     code.OpenBrace().Add("wxVector<wxBitmap> bitmaps;");
 
     for (auto& iter: bundle->lst_filenames)
@@ -1379,6 +1405,13 @@ bool BitmapList(Code& code, const GenEnum::PropName prop)
         }
     }
     code.Eol();
+
+    if (use_lambda)
+    {
+        code.Str("return wxBitmapBundle::FromBitmaps(bitmaps);").CloseBrace();
+        code.pop_back();  // remove the linefeed
+        code.Str(";").Eol();
+    }
 
     // Caller should add the function that uses the bitmaps, add the closing brace, and if
     // prop_wxWidgets_version == 3.1, follow this with a #else and the alternate code.

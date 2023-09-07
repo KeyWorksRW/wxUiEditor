@@ -15,4 +15,4 @@ void AddPythonImageName(Code& code, const EmbeddedImage* embed);
 
 // Primarily designed for wxRibbon which doesn't support wxBitmapBundle.
 // This will generate the code to load a single wxBitmap.
-void GenerateSingleBitmapCode(Code& code, const tt_string& description);
+void GenerateRibbonBitmapCode(Code& code, const tt_string& description);

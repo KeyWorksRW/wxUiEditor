@@ -218,7 +218,7 @@ void BaseCodeGenerator::WriteImageConstruction(Code& code)
 
 // wxWidgets 3.2 does not support wxBitmapBundle in the wxRibbon classes, so we need to generate
 // loading a single bitmap.
-void GenerateSingleBitmapCode(Code& code, const tt_string& description)
+void GenerateRibbonBitmapCode(Code& code, const tt_string& description)
 {
     if (description.empty())
     {

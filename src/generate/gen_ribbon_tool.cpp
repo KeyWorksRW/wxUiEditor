@@ -102,7 +102,7 @@ bool RibbonToolGenerator::ConstructionCode(Code& code)
 {
     code.ParentName().Function("AddTool(").as_string(prop_id);
     code.Comma();
-    GenerateSingleBitmapCode(code, code.node()->as_string(prop_bitmap));
+    GenerateRibbonBitmapCode(code, code.node()->as_string(prop_bitmap));
     code.Comma().QuotedString(prop_help).Comma().Add(prop_kind).EndFunction();
 
     return true;

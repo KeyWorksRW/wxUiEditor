@@ -71,7 +71,7 @@ bool RibbonButtonGenerator::ConstructionCode(Code& code)
 {
     code.ParentName().Function("AddButton(").as_string(prop_id).Comma().QuotedString(prop_label);
     code.Comma();
-    GenerateSingleBitmapCode(code, code.node()->as_string(prop_bitmap));
+    GenerateRibbonBitmapCode(code, code.node()->as_string(prop_bitmap));
     code.Comma().QuotedString(prop_help).Comma().Add(prop_kind).EndFunction();
 
     return true;

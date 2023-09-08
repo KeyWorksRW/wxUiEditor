@@ -371,9 +371,64 @@ void GenerateRibbonBitmapCode(Code& code, const tt_string& description)
                     if (auto embed = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[0]); embed)
                     {
                         code << ".Rescale(";
-                        code.Eol() << "\tFromDIP(" << embed->size.x << "), FromDIP(" << embed->size.y << "), wxIMAGE_QUALITY_BILINEAR)";
+                        code.Eol() << "\tFromDIP(" << embed->size.x << "), FromDIP(" << embed->size.y
+                                   << "), wxIMAGE_QUALITY_BILINEAR)";
                     }
 
+                    return;
+                }
+                else if (bundle->lst_filenames.size() == 2)
+                {
+                    code << "wxBitmapBundle::FromBitmaps(wxueImage(";
+                    tt_string name(bundle->lst_filenames[0].filename());
+                    name.remove_extension();
+                    name.Replace(".", "_", true);
+
+                    if (parts[IndexType].starts_with("Embed"))
+                    {
+                        if (auto embed = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[0]); embed)
+                        {
+                            name = "wxue_img::" + embed->array_name;
+                        }
+                    }
+                    code << name << ", sizeof(" << name << ")), wxueImage(";
+
+                    name = bundle->lst_filenames[1].filename();
+                    name.remove_extension();
+                    name.Replace(".", "_", true);
+
+                    if (parts[IndexType].starts_with("Embed"))
+                    {
+                        if (auto embed = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[1]); embed)
+                        {
+                            name = "wxue_img::" + embed->array_name;
+                        }
+                    }
+                    code << name << ", sizeof(" << name << ")))";
+                    if (auto embed = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[0]); embed)
+                    {
+                        code << ".GetBitmap(wxSize(";
+                        code.Eol() << "\tFromDIP(" << embed->size.x << "), FromDIP(" << embed->size.y
+                                   << ")))";
+                    }
+                }
+                else
+                {
+                    code << "{\n\t\t\twxVector<wxBitmap> bitmaps;\n";
+                    for (auto& iter: bundle->lst_filenames)
+                    {
+                        tt_string name(iter.filename());
+                        name.remove_extension();
+                        name.Replace(".", "_", true);
+                        if (parts[IndexType].starts_with("Embed"))
+                        {
+                            if (auto embed = ProjectImages.GetEmbeddedImage(iter); embed)
+                            {
+                                name = "wxue_img::" + embed->array_name;
+                            }
+                        }
+                        code << "\t\t\tbitmaps.push_back(wxueImage(" << name << ", sizeof(" << name << ")));\n";
+                    }
                     return;
                 }
             }

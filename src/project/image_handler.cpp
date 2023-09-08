@@ -25,18 +25,8 @@
 
 ImageHandler& ProjectImages = ImageHandler::getInstance();
 
-// Note that we do *not* support @1_5x or @2x as suffixes. Since these suffixes will become part of the string name when
-// converted to an embedded character array, the compiler will not accept the '@' character. We could of course change it,
-// but then we don't know if it's unique if there is an actual filename that used a leading suffix '_' character instead of a
-// leading '@'.
-
-inline const std::array<const char*, 6> suffixes {
-    "_1_25x",
-    "_1_5x",
-    "_1_75x",
-    "_2x",
-    "@1_5x",
-    "@2x",
+inline const std::array<const char*, 8> suffixes {
+    "_1_25x", "_1_5x", "_1_75x", "_2x", "@1_25x", "@1_5x", "@1_75x", "@2x",
 };
 
 namespace wxue_img

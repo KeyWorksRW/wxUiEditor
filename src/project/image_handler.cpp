@@ -30,8 +30,10 @@ ImageHandler& ProjectImages = ImageHandler::getInstance();
 // but then we don't know if it's unique if there is an actual filename that used a leading suffix '_' character instead of a
 // leading '@'.
 
-inline const std::array<const char*, 4> suffixes {
+inline const std::array<const char*, 6> suffixes {
+    "_1_25x",
     "_1_5x",
+    "_1_75x",
     "_2x",
     "@1_5x",
     "@2x",
@@ -351,13 +353,25 @@ bool ImageHandler::AddEmbeddedImage(tt_string path, Node* form, bool is_animatio
         }
         else
         {
-            path.insert(pos, "_1_5x");
+            path.insert(pos, "_1_25x");
             if (path.file_exists())
             {
                 AddNewEmbeddedImage(path, form, add_lock);
                 add_lock.lock();
             }
-            path.Replace("_1_5x", "_2x");
+            path.Replace("_1_25x", "_1_5x");
+            if (path.file_exists())
+            {
+                AddNewEmbeddedImage(path, form, add_lock);
+                add_lock.lock();
+            }
+            path.Replace("_1_5x", "_1_75x");
+            if (path.file_exists())
+            {
+                AddNewEmbeddedImage(path, form, add_lock);
+                add_lock.lock();
+            }
+            path.Replace("_1_75x", "_2x");
             if (path.file_exists())
             {
                 AddNewEmbeddedImage(path, form, add_lock);
@@ -751,6 +765,7 @@ bool ImageHandler::AddEmbeddedBundleImage(tt_string path, Node* form)
                 auto embed = m_map_embedded[path.filename().as_str()].get();
                 InitializeArrayName(embed, path.filename());
                 embed->form = form;
+                embed->size = image.GetSize();
 
                 // If possible, convert the file to a PNG -- even if the original file is a PNG, since we might end up with
                 // better compression.

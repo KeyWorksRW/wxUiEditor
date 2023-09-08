@@ -348,10 +348,36 @@ void GenerateRibbonBitmapCode(Code& code, const tt_string& description)
     {
         code.Add("wxNullBitmap");
     }
-    else
+    else  // It's an embedded image
     {
         if (code.is_cpp())
         {
+#if 1
+            if (auto bundle = ProjectImages.GetPropertyImageBundle(description); bundle)
+            {
+                if (bundle->lst_filenames.size() == 1)
+                {
+                    code.Eol() << "\twxueImage(";
+
+                    tt_string name = "wxNullBitmap";
+
+                    if (auto embed = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[0]); embed)
+                    {
+                        name = "wxue_img::" + embed->array_name;
+                    }
+
+                    code << name << ", sizeof(" << name << "))";
+
+                    if (auto embed = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[0]); embed)
+                    {
+                        code << ".Rescale(";
+                        code.Eol() << "\tFromDIP(" << embed->size.x << "), FromDIP(" << embed->size.y << "), wxIMAGE_QUALITY_BILINEAR)";
+                    }
+
+                    return;
+                }
+            }
+#else
             code << "wxueImage(";
 
             tt_string name(parts[1].filename());
@@ -368,6 +394,7 @@ void GenerateRibbonBitmapCode(Code& code, const tt_string& description)
             }
 
             code.Str(name).Comma().Str("sizeof(").Str(name) += "))";
+#endif
         }
         else if (code.is_python())
         {

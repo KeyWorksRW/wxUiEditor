@@ -229,6 +229,12 @@ void GenerateRibbonBitmapCode(Code& code, const tt_string& description)
 
     if (parts[IndexType].starts_with("SVG"))
     {
+        wxSize svg_size { -1, -1 };
+        if (parts[IndexSize].size())
+        {
+            svg_size = GetSizeInfo(parts[IndexSize]);
+        }
+
         if (code.is_cpp())
         {
             if (Project.as_string(prop_wxWidgets_version) == "3.1")
@@ -236,28 +242,60 @@ void GenerateRibbonBitmapCode(Code& code, const tt_string& description)
                 code += "wxNullBitmap /* SVG images require wxWidgets 3.1.6 */";
                 return;
             }
+            if (auto function_name = ProjectImages.GetBundleFuncName(description); function_name.size())
+            {
+                code.Str(function_name).Comma().Str("FromDIP(wxSize(").itoa(svg_size.x).Comma().itoa(svg_size.y) += ")))";
+                code.Str(".").Add("GetBitmap(").Add("wxDefaultSize)");
+                return;
+            }
         }
-        tt_string name(parts[IndexImage]);
 
-        if (code.is_python())
+        auto embed = ProjectImages.GetEmbeddedImage(parts[IndexImage]);
+        if (!embed)
         {
-            name.make_absolute();
-            auto path = MakePythonPath(code.node());
-            name.make_relative(path);
+            FAIL_MSG(tt_string() << description << " not embedded!")
+            code << "wxNullBitmap";
+            return;
         }
-        name.backslashestoforward();
 
-        // SVG files don't have an innate size, so we must rely on the size specified in the property
-
-        code.Add("wx.BitmapBundle.FromSVGFile(");
-        code.QuotedString(name);
-        wxSize svg_size { -1, -1 };
-        if (parts[IndexSize].size())
+        if (code.is_cpp())
         {
-            svg_size = GetSizeInfo(parts[IndexSize]);
+            tt_string name = "wxue_img::" + embed->array_name;
+            code << "wxueBundleSVG(" << name << ", " << (embed->array_size & 0xFFFFFFFF) << ", ";
+            code << (embed->array_size >> 32) << ", FromDIP(wxSize(" << svg_size.x << ", " << svg_size.y << ")))";
+            code.Str(".").Add("GetBitmap(").Add("wxDefaultSize)");
+            return;
         }
-        code.Comma().Add("wxSize(").itoa(svg_size.x).Comma().itoa(svg_size.y) += "))";
-        code.Str("GetBitmap(").Add("wxSize(").itoa(svg_size.x).Comma().itoa(svg_size.y).EndFunction();
+        else
+        {
+            tt_string name(parts[IndexImage]);
+
+            if (code.is_python())
+            {
+                name.make_absolute();
+                auto path = MakePythonPath(code.node());
+                name.make_relative(path);
+            }
+            name.backslashestoforward();
+
+            // SVG files don't have an innate size, so we must rely on the size specified in the property
+
+            code.Add("wxBitmapBundle").ClassMethod("FromSVGFile(");
+            code.QuotedString(name);
+            code.Comma()
+                .CheckLineLength(sizeof("FromDIP(wxSize(32, 32))).GetBitmap(wxDefaultSize)"))
+                .FormFunction("FromDIP(");
+            if (code.is_ruby())
+            {
+                code.Add("Wx::Size.new(");
+            }
+            else
+            {
+                code.Add("wxSize(");
+            }
+            code.itoa(svg_size.x).Comma().itoa(svg_size.y) += ")))";
+            code.Str(".").Add("GetBitmap(").Add("wxDefaultSize)");
+        }
         return;
     }
     else if (parts[IndexType].contains("Art"))

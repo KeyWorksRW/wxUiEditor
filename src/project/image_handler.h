@@ -30,6 +30,7 @@ struct EmbeddedImage
     size_t array_size;
     std::unique_ptr<unsigned char[]> array_data;
     wxBitmapType type;
+    wxSize size;  // dimensions of the first image in the array
 };
 
 wxBitmapBundle LoadSVG(EmbeddedImage* embed, tt_string_view size_description);

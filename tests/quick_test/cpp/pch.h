@@ -41,6 +41,9 @@
     #pragma warning(pop)
 #endif
 
+// Without this, a huge number of #included wxWidgets header files will generate the warning
+#pragma warning(disable : 4251)  // needs to have dll-interface to be used by clients of class
+
 inline constexpr const auto txtVersion = "QuickTest 1.0.0";
 inline constexpr const auto txtCopyRight = "Copyright (c) 2023 KeyWorks Software (Ralph Walden)";
 inline constexpr const auto txtAppname = "QuickTest";

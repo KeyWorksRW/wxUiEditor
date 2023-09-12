@@ -30,6 +30,7 @@ struct EmbeddedImage
     size_t array_size;
     std::unique_ptr<unsigned char[]> array_data;
     wxBitmapType type;
+    wxSize size;  // dimensions of the first image in the array
 };
 
 wxBitmapBundle LoadSVG(EmbeddedImage* embed, tt_string_view size_description);
@@ -114,7 +115,9 @@ public:
 
     // Convert a filename to a valid variable name. This will handle filnames with leading
     // numbers, utf8 characters, and other characters that are not valid in a variable name.
-    std::optional<tt_string> FileNameToVarName(tt_string_view filename);
+    //
+    // If max_length is exceeded, the name will be have ""_name_truncated" as a suffix
+    static std::optional<tt_string> FileNameToVarName(tt_string_view filename, size_t max_length = 100);
 
 protected:
     bool CheckNode(Node* node);

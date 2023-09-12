@@ -37,7 +37,7 @@ bool RibbonPageGenerator::ConstructionCode(Code& code)
     if (code.hasValue(prop_bitmap))
     {
         code.Comma();
-        GenerateSingleBitmapCode(code, code.node()->as_string(prop_bitmap));
+        GenerateRibbonBitmapCode(code, code.node()->as_string(prop_bitmap));
     }
     code.EndFunction();
 
@@ -105,7 +105,7 @@ bool RibbonPanelGenerator::ConstructionCode(Code& code)
     if (code.hasValue(prop_bitmap))
     {
         code.Comma();
-        GenerateSingleBitmapCode(code, code.node()->as_string(prop_bitmap));
+        GenerateRibbonBitmapCode(code, code.node()->as_string(prop_bitmap));
     }
     code.EndFunction();
 

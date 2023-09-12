@@ -25,16 +25,8 @@
 
 ImageHandler& ProjectImages = ImageHandler::getInstance();
 
-// Note that we do *not* support @1_5x or @2x as suffixes. Since these suffixes will become part of the string name when
-// converted to an embedded character array, the compiler will not accept the '@' character. We could of course change it,
-// but then we don't know if it's unique if there is an actual filename that used a leading suffix '_' character instead of a
-// leading '@'.
-
-inline const std::array<const char*, 4> suffixes {
-    "_1_5x",
-    "_2x",
-    "@1_5x",
-    "@2x",
+inline const std::array<const char*, 8> suffixes {
+    "_1_25x", "_1_5x", "_1_75x", "_2x", "@1_25x", "@1_5x", "@1_75x", "@2x",
 };
 
 namespace wxue_img
@@ -351,13 +343,25 @@ bool ImageHandler::AddEmbeddedImage(tt_string path, Node* form, bool is_animatio
         }
         else
         {
-            path.insert(pos, "_1_5x");
+            path.insert(pos, "_1_25x");
             if (path.file_exists())
             {
                 AddNewEmbeddedImage(path, form, add_lock);
                 add_lock.lock();
             }
-            path.Replace("_1_5x", "_2x");
+            path.Replace("_1_25x", "_1_5x");
+            if (path.file_exists())
+            {
+                AddNewEmbeddedImage(path, form, add_lock);
+                add_lock.lock();
+            }
+            path.Replace("_1_5x", "_1_75x");
+            if (path.file_exists())
+            {
+                AddNewEmbeddedImage(path, form, add_lock);
+                add_lock.lock();
+            }
+            path.Replace("_1_75x", "_2x");
             if (path.file_exists())
             {
                 AddNewEmbeddedImage(path, form, add_lock);
@@ -751,6 +755,7 @@ bool ImageHandler::AddEmbeddedBundleImage(tt_string path, Node* form)
                 auto embed = m_map_embedded[path.filename().as_str()].get();
                 InitializeArrayName(embed, path.filename());
                 embed->form = form;
+                embed->size = image.GetSize();
 
                 // If possible, convert the file to a PNG -- even if the original file is a PNG, since we might end up with
                 // better compression.
@@ -1267,8 +1272,10 @@ tt_string ImageHandler::GetBundleFuncName(const tt_string& description)
     return name;
 }
 
-std::optional<tt_string> ImageHandler::FileNameToVarName(tt_string_view filename)
+std::optional<tt_string> ImageHandler::FileNameToVarName(tt_string_view filename, size_t max_length)
 {
+    ASSERT(max_length > sizeof("_name_truncated"))
+
     if (filename.empty())
     {
         // caller's description does not include a filename
@@ -1313,7 +1320,7 @@ std::optional<tt_string> ImageHandler::FileNameToVarName(tt_string_view filename
             }
         }
 
-        if (var_name.size() > 135)
+        if (var_name.size() > (max_length - sizeof("_name_truncated")))
         {
             // We don't want to create a variable name that is too long
             var_name += "_name_truncated";

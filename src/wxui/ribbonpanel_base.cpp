@@ -71,14 +71,18 @@ bool RibbonPanelBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos
 
     auto* forms_bar_windows = new wxRibbonToolBar(panel_form_windows, wxID_ANY);
     {
-        forms_bar_windows->AddTool(CreateNewDialog, wxueImage(wxue_img::wxDialog_png, sizeof(wxue_img::wxDialog_png)), "wxDialog",
-            wxRIBBON_BUTTON_NORMAL);
-        forms_bar_windows->AddTool(CreateNewPanel, wxueImage(wxue_img::wxPanel_png, sizeof(wxue_img::wxPanel_png)), "wxPanel",
-            wxRIBBON_BUTTON_NORMAL);
-        forms_bar_windows->AddTool(CreateNewFrame, wxueImage(wxue_img::wxFrame_png, sizeof(wxue_img::wxFrame_png)), "wxFrame",
-            wxRIBBON_BUTTON_NORMAL);
-        forms_bar_windows->AddTool(gen_wxPopupTransientWindow, wxueImage(wxue_img::WXPOPupTransientWindow_png, sizeof(
-            wxue_img::WXPOPupTransientWindow_png)), "wxPopupTransientWindow", wxRIBBON_BUTTON_NORMAL);
+        forms_bar_windows->AddTool(CreateNewDialog,
+            wxueImage(wxue_img::wxDialog_png, sizeof(wxue_img::wxDialog_png)).Rescale(
+            FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "wxDialog", wxRIBBON_BUTTON_NORMAL);
+        forms_bar_windows->AddTool(CreateNewPanel,
+            wxueImage(wxue_img::wxPanel_png, sizeof(wxue_img::wxPanel_png)).Rescale(
+            FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "wxPanel", wxRIBBON_BUTTON_NORMAL);
+        forms_bar_windows->AddTool(CreateNewFrame,
+            wxueImage(wxue_img::wxFrame_png, sizeof(wxue_img::wxFrame_png)).Rescale(
+            FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "wxFrame", wxRIBBON_BUTTON_NORMAL);
+        forms_bar_windows->AddTool(gen_wxPopupTransientWindow,
+            wxueImage(wxue_img::WXPOPupTransientWindow_png, sizeof(wxue_img::WXPOPupTransientWindow_png)).Rescale(
+            FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "wxPopupTransientWindow", wxRIBBON_BUTTON_NORMAL);
     }
     forms_bar_windows->Realize();
 
@@ -86,10 +90,12 @@ bool RibbonPanelBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos
 
     auto* forms_bar_wizard = new wxRibbonToolBar(panel_wizard, wxID_ANY);
     {
-        forms_bar_wizard->AddTool(CreateNewWizard, wxueImage(wxue_img::wxWizard_png, sizeof(wxue_img::wxWizard_png)), "wxWizard",
-            wxRIBBON_BUTTON_NORMAL);
-        forms_bar_wizard->AddTool(gen_wxWizardPageSimple, wxueImage(wxue_img::wxWizardPageSimple_png, sizeof(
-            wxue_img::wxWizardPageSimple_png)), "wxWizardPageSimple", wxRIBBON_BUTTON_NORMAL);
+        forms_bar_wizard->AddTool(CreateNewWizard,
+            wxueImage(wxue_img::wxWizard_png, sizeof(wxue_img::wxWizard_png)).Rescale(
+            FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "wxWizard", wxRIBBON_BUTTON_NORMAL);
+        forms_bar_wizard->AddTool(gen_wxWizardPageSimple,
+            wxueImage(wxue_img::wxWizardPageSimple_png, sizeof(wxue_img::wxWizardPageSimple_png)).Rescale(
+            FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "wxWizardPageSimple", wxRIBBON_BUTTON_NORMAL);
     }
     forms_bar_wizard->Realize();
 
@@ -97,12 +103,15 @@ bool RibbonPanelBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos
 
     auto* forms_bar_bars = new wxRibbonToolBar(panel_bars, wxID_ANY);
     {
-        forms_bar_bars->AddTool(gen_ToolBar, wxueImage(wxue_img::wxToolBar_png, sizeof(wxue_img::wxToolBar_png)), "wxToolBar",
-            wxRIBBON_BUTTON_NORMAL);
-        forms_bar_bars->AddTool(gen_AuiToolBar, wxueImage(wxue_img::auitoolbar_png, sizeof(wxue_img::auitoolbar_png)),
-            "wxAuiToolBar", wxRIBBON_BUTTON_NORMAL);
-        forms_bar_bars->AddTool(CreateNewFormRibbon, wxueImage(wxue_img::ribbon_bar_png, sizeof(wxue_img::ribbon_bar_png)),
-            "wxRibbonBar", wxRIBBON_BUTTON_NORMAL);
+        forms_bar_bars->AddTool(gen_ToolBar,
+            wxueImage(wxue_img::wxToolBar_png, sizeof(wxue_img::wxToolBar_png)).Rescale(
+            FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "wxToolBar", wxRIBBON_BUTTON_NORMAL);
+        forms_bar_bars->AddTool(gen_AuiToolBar,
+            wxueImage(wxue_img::auitoolbar_png, sizeof(wxue_img::auitoolbar_png)).Rescale(
+            FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "wxAuiToolBar", wxRIBBON_BUTTON_NORMAL);
+        forms_bar_bars->AddTool(CreateNewFormRibbon,
+            wxueImage(wxue_img::ribbon_bar_png, sizeof(wxue_img::ribbon_bar_png)).Rescale(
+            FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "wxRibbonBar", wxRIBBON_BUTTON_NORMAL);
     }
     forms_bar_bars->Realize();
 
@@ -110,12 +119,15 @@ bool RibbonPanelBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos
 
     auto* forms_bar_bars_2 = new wxRibbonToolBar(panel_menu, wxID_ANY);
     {
-        forms_bar_bars_2->AddTool(gen_MenuBar, wxueImage(wxue_img::wxMenuBar_png, sizeof(wxue_img::wxMenuBar_png)), "wxMenuBar",
-            wxRIBBON_BUTTON_NORMAL);
-        forms_bar_bars_2->AddTool(gen_PopupMenu, wxueImage(wxue_img::menu_png, sizeof(wxue_img::menu_png)), "wxMenu",
-            wxRIBBON_BUTTON_NORMAL);
-        forms_bar_bars_2->AddTool(gen_wxContextMenuEvent, wxueImage(wxue_img::menuitem_png, sizeof(wxue_img::menuitem_png)),
-            "wxContextMenuEvent", wxRIBBON_BUTTON_NORMAL);
+        forms_bar_bars_2->AddTool(gen_MenuBar,
+            wxueImage(wxue_img::wxMenuBar_png, sizeof(wxue_img::wxMenuBar_png)).Rescale(
+            FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "wxMenuBar", wxRIBBON_BUTTON_NORMAL);
+        forms_bar_bars_2->AddTool(gen_PopupMenu,
+            wxueImage(wxue_img::menu_png, sizeof(wxue_img::menu_png)).Rescale(
+            FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "wxMenu", wxRIBBON_BUTTON_NORMAL);
+        forms_bar_bars_2->AddTool(gen_wxContextMenuEvent,
+            wxueImage(wxue_img::menuitem_png, sizeof(wxue_img::menuitem_png)).Rescale(
+            FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "wxContextMenuEvent", wxRIBBON_BUTTON_NORMAL);
     }
     forms_bar_bars_2->Realize();
 
@@ -123,12 +135,16 @@ bool RibbonPanelBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos
 
     auto* forms_bar_images = new wxRibbonToolBar(panel_wizard_2, wxID_ANY);
     {
-        forms_bar_images->AddTool(gen_Images, wxueImage(wxue_img::pagectrl_png, sizeof(wxue_img::pagectrl_png)),
-            "Create a file containing embedded images", wxRIBBON_BUTTON_NORMAL);
-        forms_bar_images->AddTool(gen_embedded_image, wxueImage(wxue_img::static_bitmap_png, sizeof(wxue_img::static_bitmap_png)),
-            "Add an embedded image to an Images file", wxRIBBON_BUTTON_NORMAL);
-        forms_bar_images->AddTool(gen_folder, wxueImage(wxue_img::folder_png, sizeof(wxue_img::folder_png)),
-            "Create a folder that can be used to organize forms.", wxRIBBON_BUTTON_NORMAL);
+        forms_bar_images->AddTool(gen_Images,
+            wxueImage(wxue_img::pagectrl_png, sizeof(wxue_img::pagectrl_png)).Rescale(
+            FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "Create a file containing embedded images", wxRIBBON_BUTTON_NORMAL);
+        forms_bar_images->AddTool(gen_embedded_image,
+            wxueImage(wxue_img::static_bitmap_png, sizeof(wxue_img::static_bitmap_png)).Rescale(
+            FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "Add an embedded image to an Images file", wxRIBBON_BUTTON_NORMAL);
+        forms_bar_images->AddTool(gen_folder,
+            wxueImage(wxue_img::folder_png, sizeof(wxue_img::folder_png)).Rescale(
+            FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "Create a folder that can be used to organize forms.",
+            wxRIBBON_BUTTON_NORMAL);
     }
     forms_bar_images->Realize();
 
@@ -138,14 +154,18 @@ bool RibbonPanelBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos
 
     auto* sizer_bar_basic = new wxRibbonToolBar(panel_basic, wxID_ANY);
     {
-        sizer_bar_basic->AddTool(gen_wxBoxSizer, wxueImage(wxue_img::sizer_horizontal_png, sizeof(wxue_img::sizer_horizontal_png)),
-            "Horizontal wxBoxSizer", wxRIBBON_BUTTON_NORMAL);
-        sizer_bar_basic->AddTool(gen_VerticalBoxSizer, wxueImage(wxue_img::sizer_png, sizeof(wxue_img::sizer_png)),
-            "Vertical wxBoxSizer", wxRIBBON_BUTTON_NORMAL);
-        sizer_bar_basic->AddTool(NewStaticSizer, wxueImage(wxue_img::wxStaticBoxSizer_png, sizeof(wxue_img::wxStaticBoxSizer_png)),
-            "wxStaticBoxSizer", wxRIBBON_BUTTON_DROPDOWN);
-        sizer_bar_basic->AddTool(gen_wxWrapSizer, wxueImage(wxue_img::wrap_sizer_png, sizeof(wxue_img::wrap_sizer_png)),
-            "wxWrapSizer", wxRIBBON_BUTTON_NORMAL);
+        sizer_bar_basic->AddTool(gen_wxBoxSizer,
+            wxueImage(wxue_img::sizer_horizontal_png, sizeof(wxue_img::sizer_horizontal_png)).Rescale(
+            FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "Horizontal wxBoxSizer", wxRIBBON_BUTTON_NORMAL);
+        sizer_bar_basic->AddTool(gen_VerticalBoxSizer,
+            wxueImage(wxue_img::sizer_png, sizeof(wxue_img::sizer_png)).Rescale(
+            FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "Vertical wxBoxSizer", wxRIBBON_BUTTON_NORMAL);
+        sizer_bar_basic->AddTool(NewStaticSizer,
+            wxueImage(wxue_img::wxStaticBoxSizer_png, sizeof(wxue_img::wxStaticBoxSizer_png)).Rescale(
+            FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "wxStaticBoxSizer", wxRIBBON_BUTTON_DROPDOWN);
+        sizer_bar_basic->AddTool(gen_wxWrapSizer,
+            wxueImage(wxue_img::wrap_sizer_png, sizeof(wxue_img::wrap_sizer_png)).Rescale(
+            FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "wxWrapSizer", wxRIBBON_BUTTON_NORMAL);
     }
     sizer_bar_basic->Realize();
 
@@ -153,12 +173,15 @@ bool RibbonPanelBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos
 
     auto* sizer_bar_grids = new wxRibbonToolBar(sizer_panel_grids, wxID_ANY);
     {
-        sizer_bar_grids->AddTool(gen_wxGridSizer, wxueImage(wxue_img::grid_sizer_png, sizeof(wxue_img::grid_sizer_png)),
-            "wxGridSizer", wxRIBBON_BUTTON_NORMAL);
-        sizer_bar_grids->AddTool(gen_wxFlexGridSizer, wxueImage(wxue_img::flex_grid_sizer_png, sizeof(
-            wxue_img::flex_grid_sizer_png)), "wxFlexGridSizer", wxRIBBON_BUTTON_NORMAL);
-        sizer_bar_grids->AddTool(gen_wxGridBagSizer, wxueImage(wxue_img::grid_bag_sizer_png, sizeof(wxue_img::grid_bag_sizer_png)),
-            "wxGridBagSizer", wxRIBBON_BUTTON_NORMAL);
+        sizer_bar_grids->AddTool(gen_wxGridSizer,
+            wxueImage(wxue_img::grid_sizer_png, sizeof(wxue_img::grid_sizer_png)).Rescale(
+            FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "wxGridSizer", wxRIBBON_BUTTON_NORMAL);
+        sizer_bar_grids->AddTool(gen_wxFlexGridSizer,
+            wxueImage(wxue_img::flex_grid_sizer_png, sizeof(wxue_img::flex_grid_sizer_png)).Rescale(
+            FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "wxFlexGridSizer", wxRIBBON_BUTTON_NORMAL);
+        sizer_bar_grids->AddTool(gen_wxGridBagSizer,
+            wxueImage(wxue_img::grid_bag_sizer_png, sizeof(wxue_img::grid_bag_sizer_png)).Rescale(
+            FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "wxGridBagSizer", wxRIBBON_BUTTON_NORMAL);
     }
     sizer_bar_grids->Realize();
 
@@ -166,12 +189,15 @@ bool RibbonPanelBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos
 
     auto* sizer_bar_other = new wxRibbonToolBar(sizer_panel_other, wxID_ANY);
     {
-        sizer_bar_other->AddTool(gen_wxStdDialogButtonSizer, wxueImage(wxue_img::stddialogbuttonsizer_png, sizeof(
-            wxue_img::stddialogbuttonsizer_png)), "wxStdDialogButtonSizer", wxRIBBON_BUTTON_NORMAL);
-        sizer_bar_other->AddTool(gen_TextSizer, wxueImage(wxue_img::text_sizer_png, sizeof(wxue_img::text_sizer_png)),
-            "wxTextSizerWrapper", wxRIBBON_BUTTON_NORMAL);
-        sizer_bar_other->AddTool(gen_spacer, wxueImage(wxue_img::spacer_png, sizeof(wxue_img::spacer_png)), "spacer",
-            wxRIBBON_BUTTON_NORMAL);
+        sizer_bar_other->AddTool(gen_wxStdDialogButtonSizer,
+            wxueImage(wxue_img::stddialogbuttonsizer_png, sizeof(wxue_img::stddialogbuttonsizer_png)).Rescale(
+            FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "wxStdDialogButtonSizer", wxRIBBON_BUTTON_NORMAL);
+        sizer_bar_other->AddTool(gen_TextSizer,
+            wxueImage(wxue_img::text_sizer_png, sizeof(wxue_img::text_sizer_png)).Rescale(
+            FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "wxTextSizerWrapper", wxRIBBON_BUTTON_NORMAL);
+        sizer_bar_other->AddTool(gen_spacer,
+            wxueImage(wxue_img::spacer_png, sizeof(wxue_img::spacer_png)).Rescale(
+            FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "spacer", wxRIBBON_BUTTON_NORMAL);
     }
     sizer_bar_other->Realize();
 
@@ -181,18 +207,24 @@ bool RibbonPanelBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos
 
     auto* common_bar_controls = new wxRibbonToolBar(panel_common_controls, wxID_ANY);
     {
-        common_bar_controls->AddTool(gen_wxStaticText, wxueImage(wxue_img::wxStaticText_png, sizeof(wxue_img::wxStaticText_png)),
-            "wxStaticText", wxRIBBON_BUTTON_NORMAL);
-        common_bar_controls->AddTool(gen_wxTextCtrl, wxueImage(wxue_img::wxtextCtrl_png, sizeof(wxue_img::wxtextCtrl_png)),
-            "wxTextCtrl", wxRIBBON_BUTTON_NORMAL);
-        common_bar_controls->AddTool(NewCheckbox, wxueImage(wxue_img::wxcheckBox_png, sizeof(wxue_img::wxcheckBox_png)),
-            "Check Boxes", wxRIBBON_BUTTON_DROPDOWN);
-        common_bar_controls->AddTool(gen_wxRadioButton, wxueImage(wxue_img::wxradioButton_png, sizeof(wxue_img::wxradioButton_png)),
-            "wxRadioButton", wxRIBBON_BUTTON_NORMAL);
-        common_bar_controls->AddTool(NewButton, wxueImage(wxue_img::wxButton_png, sizeof(wxue_img::wxButton_png)), "Buttons",
-            wxRIBBON_BUTTON_DROPDOWN);
-        common_bar_controls->AddTool(NewSpin, wxueImage(wxue_img::spin_ctrl_png, sizeof(wxue_img::spin_ctrl_png)),
-            "Spin controls", wxRIBBON_BUTTON_DROPDOWN);
+        common_bar_controls->AddTool(gen_wxStaticText,
+            wxueImage(wxue_img::wxStaticText_png, sizeof(wxue_img::wxStaticText_png)).Rescale(
+            FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "wxStaticText", wxRIBBON_BUTTON_NORMAL);
+        common_bar_controls->AddTool(gen_wxTextCtrl,
+            wxueImage(wxue_img::wxtextCtrl_png, sizeof(wxue_img::wxtextCtrl_png)).Rescale(
+            FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "wxTextCtrl", wxRIBBON_BUTTON_NORMAL);
+        common_bar_controls->AddTool(NewCheckbox,
+            wxueImage(wxue_img::wxcheckBox_png, sizeof(wxue_img::wxcheckBox_png)).Rescale(
+            FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "Check Boxes", wxRIBBON_BUTTON_DROPDOWN);
+        common_bar_controls->AddTool(gen_wxRadioButton,
+            wxueImage(wxue_img::wxradioButton_png, sizeof(wxue_img::wxradioButton_png)).Rescale(
+            FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "wxRadioButton", wxRIBBON_BUTTON_NORMAL);
+        common_bar_controls->AddTool(NewButton,
+            wxueImage(wxue_img::wxButton_png, sizeof(wxue_img::wxButton_png)).Rescale(
+            FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "Buttons", wxRIBBON_BUTTON_DROPDOWN);
+        common_bar_controls->AddTool(NewSpin,
+            wxueImage(wxue_img::spin_ctrl_png, sizeof(wxue_img::spin_ctrl_png)).Rescale(
+            FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "Spin controls", wxRIBBON_BUTTON_DROPDOWN);
     }
     common_bar_controls->Realize();
 
@@ -200,12 +232,15 @@ bool RibbonPanelBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos
 
     auto* common_bar_choices = new wxRibbonToolBar(panel_choices, wxID_ANY);
     {
-        common_bar_choices->AddTool(NewCombobox, wxueImage(wxue_img::wxcomboBox_png, sizeof(wxue_img::wxcomboBox_png)),
-            "Combos & Choice", wxRIBBON_BUTTON_DROPDOWN);
-        common_bar_choices->AddTool(NewListbox, wxueImage(wxue_img::wxListBox_png, sizeof(wxue_img::wxListBox_png)), "Lists",
-            wxRIBBON_BUTTON_DROPDOWN);
-        common_bar_choices->AddTool(gen_wxRadioBox, wxueImage(wxue_img::radio_box_png, sizeof(wxue_img::radio_box_png)),
-            "wxRadioBox", wxRIBBON_BUTTON_NORMAL);
+        common_bar_choices->AddTool(NewCombobox,
+            wxueImage(wxue_img::wxcomboBox_png, sizeof(wxue_img::wxcomboBox_png)).Rescale(
+            FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "Combos & Choice", wxRIBBON_BUTTON_DROPDOWN);
+        common_bar_choices->AddTool(NewListbox,
+            wxueImage(wxue_img::wxListBox_png, sizeof(wxue_img::wxListBox_png)).Rescale(
+            FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "Lists", wxRIBBON_BUTTON_DROPDOWN);
+        common_bar_choices->AddTool(gen_wxRadioBox,
+            wxueImage(wxue_img::radio_box_png, sizeof(wxue_img::radio_box_png)).Rescale(
+            FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "wxRadioBox", wxRIBBON_BUTTON_NORMAL);
     }
     common_bar_choices->Realize();
 
@@ -213,18 +248,24 @@ bool RibbonPanelBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos
 
     auto* common_bar_pickers = new wxRibbonToolBar(panel_pickkers, wxID_ANY);
     {
-        common_bar_pickers->AddTool(gen_wxFilePickerCtrl, wxueImage(wxue_img::filePicker_png, sizeof(wxue_img::filePicker_png)),
-            "wxFilePickerCtrl", wxRIBBON_BUTTON_NORMAL);
-        common_bar_pickers->AddTool(gen_wxDirPickerCtrl, wxueImage(wxue_img::dirPicker_png, sizeof(wxue_img::dirPicker_png)),
-            "wxDirPickerCtrl", wxRIBBON_BUTTON_NORMAL);
-        common_bar_pickers->AddTool(gen_wxFontPickerCtrl, wxueImage(wxue_img::fontPicker_png, sizeof(wxue_img::fontPicker_png)),
-            "wxFontPickerCtrl", wxRIBBON_BUTTON_NORMAL);
-        common_bar_pickers->AddTool(gen_wxColourPickerCtrl, wxueImage(wxue_img::colourPickerIcon_png, sizeof(
-            wxue_img::colourPickerIcon_png)), "wxColourPickerCtrl", wxRIBBON_BUTTON_NORMAL);
-        common_bar_pickers->AddTool(gen_wxDatePickerCtrl, wxueImage(wxue_img::datepicker_png, sizeof(wxue_img::datepicker_png)),
-            "wxDatePickerCtrl", wxRIBBON_BUTTON_NORMAL);
-        common_bar_pickers->AddTool(gen_wxTimePickerCtrl, wxueImage(wxue_img::timepicker_png, sizeof(wxue_img::timepicker_png)),
-            "wxTimePickerCtrl", wxRIBBON_BUTTON_NORMAL);
+        common_bar_pickers->AddTool(gen_wxFilePickerCtrl,
+            wxueImage(wxue_img::filePicker_png, sizeof(wxue_img::filePicker_png)).Rescale(
+            FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "wxFilePickerCtrl", wxRIBBON_BUTTON_NORMAL);
+        common_bar_pickers->AddTool(gen_wxDirPickerCtrl,
+            wxueImage(wxue_img::dirPicker_png, sizeof(wxue_img::dirPicker_png)).Rescale(
+            FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "wxDirPickerCtrl", wxRIBBON_BUTTON_NORMAL);
+        common_bar_pickers->AddTool(gen_wxFontPickerCtrl,
+            wxueImage(wxue_img::fontPicker_png, sizeof(wxue_img::fontPicker_png)).Rescale(
+            FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "wxFontPickerCtrl", wxRIBBON_BUTTON_NORMAL);
+        common_bar_pickers->AddTool(gen_wxColourPickerCtrl,
+            wxueImage(wxue_img::colourPickerIcon_png, sizeof(wxue_img::colourPickerIcon_png)).Rescale(
+            FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "wxColourPickerCtrl", wxRIBBON_BUTTON_NORMAL);
+        common_bar_pickers->AddTool(gen_wxDatePickerCtrl,
+            wxueImage(wxue_img::datepicker_png, sizeof(wxue_img::datepicker_png)).Rescale(
+            FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "wxDatePickerCtrl", wxRIBBON_BUTTON_NORMAL);
+        common_bar_pickers->AddTool(gen_wxTimePickerCtrl,
+            wxueImage(wxue_img::timepicker_png, sizeof(wxue_img::timepicker_png)).Rescale(
+            FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "wxTimePickerCtrl", wxRIBBON_BUTTON_NORMAL);
     }
     common_bar_pickers->Realize();
 
@@ -232,14 +273,18 @@ bool RibbonPanelBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos
 
     auto* common_bar_other = new wxRibbonToolBar(panel_other, wxID_ANY);
     {
-        common_bar_other->AddTool(gen_wxStaticBitmap, wxueImage(wxue_img::static_bitmap_png, sizeof(wxue_img::static_bitmap_png)),
-            "wxStaticBitmap", wxRIBBON_BUTTON_NORMAL);
-        common_bar_other->AddTool(gen_wxStaticLine, wxueImage(wxue_img::static_line_png, sizeof(wxue_img::static_line_png)),
-            "wxStaticLine", wxRIBBON_BUTTON_NORMAL);
-        common_bar_other->AddTool(gen_wxSlider, wxueImage(wxue_img::slider_png, sizeof(wxue_img::slider_png)), "wxSlider",
-            wxRIBBON_BUTTON_NORMAL);
-        common_bar_other->AddTool(gen_wxGauge, wxueImage(wxue_img::gauge_png, sizeof(wxue_img::gauge_png)), "wxGauge",
-            wxRIBBON_BUTTON_NORMAL);
+        common_bar_other->AddTool(gen_wxStaticBitmap,
+            wxueImage(wxue_img::static_bitmap_png, sizeof(wxue_img::static_bitmap_png)).Rescale(
+            FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "wxStaticBitmap", wxRIBBON_BUTTON_NORMAL);
+        common_bar_other->AddTool(gen_wxStaticLine,
+            wxueImage(wxue_img::static_line_png, sizeof(wxue_img::static_line_png)).Rescale(
+            FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "wxStaticLine", wxRIBBON_BUTTON_NORMAL);
+        common_bar_other->AddTool(gen_wxSlider,
+            wxueImage(wxue_img::slider_png, sizeof(wxue_img::slider_png)).Rescale(
+            FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "wxSlider", wxRIBBON_BUTTON_NORMAL);
+        common_bar_other->AddTool(gen_wxGauge,
+            wxueImage(wxue_img::gauge_png, sizeof(wxue_img::gauge_png)).Rescale(
+            FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "wxGauge", wxRIBBON_BUTTON_NORMAL);
     }
     common_bar_other->Realize();
 
@@ -249,14 +294,18 @@ bool RibbonPanelBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos
 
     auto* container_bar_windows = new wxRibbonToolBar(panel_windows, wxID_ANY);
     {
-        container_bar_windows->AddTool(gen_wxPanel, wxueImage(wxue_img::wxPanel_png, sizeof(wxue_img::wxPanel_png)), "wxPanel",
-            wxRIBBON_BUTTON_NORMAL);
-        container_bar_windows->AddTool(gen_wxSplitterWindow, wxueImage(wxue_img::wxsplitterWindow_png, sizeof(
-            wxue_img::wxsplitterWindow_png)), "wxSplitterWindow", wxRIBBON_BUTTON_NORMAL);
-        container_bar_windows->AddTool(NewScrolled, wxueImage(wxue_img::wxscrolledWindow_png, sizeof(
-            wxue_img::wxscrolledWindow_png)), "wxScrolled (Panel or Window)", wxRIBBON_BUTTON_DROPDOWN);
-        container_bar_windows->AddTool(gen_wxCollapsiblePane, wxueImage(wxue_img::wxCollapsiblePane_png, sizeof(
-            wxue_img::wxCollapsiblePane_png)), "wxCollapsiblePane", wxRIBBON_BUTTON_NORMAL);
+        container_bar_windows->AddTool(gen_wxPanel,
+            wxueImage(wxue_img::wxPanel_png, sizeof(wxue_img::wxPanel_png)).Rescale(
+            FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "wxPanel", wxRIBBON_BUTTON_NORMAL);
+        container_bar_windows->AddTool(gen_wxSplitterWindow,
+            wxueImage(wxue_img::wxsplitterWindow_png, sizeof(wxue_img::wxsplitterWindow_png)).Rescale(
+            FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "wxSplitterWindow", wxRIBBON_BUTTON_NORMAL);
+        container_bar_windows->AddTool(NewScrolled,
+            wxueImage(wxue_img::wxscrolledWindow_png, sizeof(wxue_img::wxscrolledWindow_png)).Rescale(
+            FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "wxScrolled (Panel or Window)", wxRIBBON_BUTTON_DROPDOWN);
+        container_bar_windows->AddTool(gen_wxCollapsiblePane,
+            wxueImage(wxue_img::wxCollapsiblePane_png, sizeof(wxue_img::wxCollapsiblePane_png)).Rescale(
+            FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "wxCollapsiblePane", wxRIBBON_BUTTON_NORMAL);
     }
     container_bar_windows->Realize();
 
@@ -264,20 +313,27 @@ bool RibbonPanelBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos
 
     auto* container_bar_books = new wxRibbonToolBar(panel_books, wxID_ANY);
     {
-        container_bar_books->AddTool(gen_wxAuiNotebook, wxueImage(wxue_img::auinotebook_png, sizeof(wxue_img::auinotebook_png)),
-            "wxAuiNotebook", wxRIBBON_BUTTON_NORMAL);
-        container_bar_books->AddTool(gen_wxChoicebook, wxueImage(wxue_img::wxChoicebook_png, sizeof(wxue_img::wxChoicebook_png)),
-            "wxChoicebook", wxRIBBON_BUTTON_NORMAL);
-        container_bar_books->AddTool(gen_wxListbook, wxueImage(wxue_img::wxListbook_png, sizeof(wxue_img::wxListbook_png)),
-            "wxListbook", wxRIBBON_BUTTON_NORMAL);
-        container_bar_books->AddTool(gen_wxNotebook, wxueImage(wxue_img::wxnotebook_png, sizeof(wxue_img::wxnotebook_png)),
-            "wxNotebook", wxRIBBON_BUTTON_NORMAL);
-        container_bar_books->AddTool(gen_wxSimplebook, wxueImage(wxue_img::wxsimplebook_png, sizeof(wxue_img::wxsimplebook_png)),
-            "wxSimplebook", wxRIBBON_BUTTON_NORMAL);
-        container_bar_books->AddTool(gen_wxToolbook, wxueImage(wxue_img::wxToolbook_png, sizeof(wxue_img::wxToolbook_png)),
-            "wxToolbook", wxRIBBON_BUTTON_NORMAL);
-        container_bar_books->AddTool(gen_wxTreebook, wxueImage(wxue_img::wxTreebook_png, sizeof(wxue_img::wxTreebook_png)),
-            "wxTreebook", wxRIBBON_BUTTON_NORMAL);
+        container_bar_books->AddTool(gen_wxAuiNotebook,
+            wxueImage(wxue_img::auinotebook_png, sizeof(wxue_img::auinotebook_png)).Rescale(
+            FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "wxAuiNotebook", wxRIBBON_BUTTON_NORMAL);
+        container_bar_books->AddTool(gen_wxChoicebook,
+            wxueImage(wxue_img::wxChoicebook_png, sizeof(wxue_img::wxChoicebook_png)).Rescale(
+            FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "wxChoicebook", wxRIBBON_BUTTON_NORMAL);
+        container_bar_books->AddTool(gen_wxListbook,
+            wxueImage(wxue_img::wxListbook_png, sizeof(wxue_img::wxListbook_png)).Rescale(
+            FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "wxListbook", wxRIBBON_BUTTON_NORMAL);
+        container_bar_books->AddTool(gen_wxNotebook,
+            wxueImage(wxue_img::wxnotebook_png, sizeof(wxue_img::wxnotebook_png)).Rescale(
+            FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "wxNotebook", wxRIBBON_BUTTON_NORMAL);
+        container_bar_books->AddTool(gen_wxSimplebook,
+            wxueImage(wxue_img::wxsimplebook_png, sizeof(wxue_img::wxsimplebook_png)).Rescale(
+            FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "wxSimplebook", wxRIBBON_BUTTON_NORMAL);
+        container_bar_books->AddTool(gen_wxToolbook,
+            wxueImage(wxue_img::wxToolbook_png, sizeof(wxue_img::wxToolbook_png)).Rescale(
+            FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "wxToolbook", wxRIBBON_BUTTON_NORMAL);
+        container_bar_books->AddTool(gen_wxTreebook,
+            wxueImage(wxue_img::wxTreebook_png, sizeof(wxue_img::wxTreebook_png)).Rescale(
+            FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "wxTreebook", wxRIBBON_BUTTON_NORMAL);
     }
     container_bar_books->Realize();
 
@@ -285,10 +341,13 @@ bool RibbonPanelBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos
 
     auto* container_bar_page = new wxRibbonToolBar(panel_page, wxID_ANY);
     {
-        container_bar_page->AddTool(gen_BookPage, wxueImage(wxue_img::book_page_png, sizeof(wxue_img::book_page_png)),
-            "Adds a wxPanel, allowing for multiple controls", wxRIBBON_BUTTON_NORMAL);
-        container_bar_page->AddTool(gen_PageCtrl, wxueImage(wxue_img::pagectrl_png, sizeof(wxue_img::pagectrl_png)),
-            "Adds a single control as the page", wxRIBBON_BUTTON_NORMAL);
+        container_bar_page->AddTool(gen_BookPage,
+            wxueImage(wxue_img::book_page_png, sizeof(wxue_img::book_page_png)).Rescale(
+            FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "Adds a wxPanel, allowing for multiple controls",
+            wxRIBBON_BUTTON_NORMAL);
+        container_bar_page->AddTool(gen_PageCtrl,
+            wxueImage(wxue_img::pagectrl_png, sizeof(wxue_img::pagectrl_png)).Rescale(
+            FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "Adds a single control as the page", wxRIBBON_BUTTON_NORMAL);
     }
     container_bar_page->Realize();
 
@@ -298,8 +357,9 @@ bool RibbonPanelBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos
 
     auto* data_bar_grid = new wxRibbonToolBar(panel_misc, wxID_ANY);
     {
-        data_bar_grid->AddTool(gen_wxGrid, wxueImage(wxue_img::grid_png, sizeof(wxue_img::grid_png)), "wxGrid",
-            wxRIBBON_BUTTON_NORMAL);
+        data_bar_grid->AddTool(gen_wxGrid,
+            wxueImage(wxue_img::grid_png, sizeof(wxue_img::grid_png)).Rescale(
+            FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "wxGrid", wxRIBBON_BUTTON_NORMAL);
     }
     data_bar_grid->Realize();
 
@@ -307,16 +367,21 @@ bool RibbonPanelBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos
 
     auto* data_bar_properties = new wxRibbonToolBar(panel_properties, wxID_ANY);
     {
-        data_bar_properties->AddTool(gen_wxPropertyGrid, wxueImage(wxue_img::wxPropertyGrid_png, sizeof(
-            wxue_img::wxPropertyGrid_png)), "wxPropertyGrid", wxRIBBON_BUTTON_NORMAL);
-        data_bar_properties->AddTool(gen_wxPropertyGridManager, wxueImage(wxue_img::wxPropertyGridManager_png, sizeof(
-            wxue_img::wxPropertyGridManager_png)), "wxPropertyGridManager", wxRIBBON_BUTTON_NORMAL);
-        data_bar_properties->AddTool(gen_propGridPage, wxueImage(wxue_img::propgridpage_png, sizeof(wxue_img::propgridpage_png)),
-            "wxPropertyGrid Page", wxRIBBON_BUTTON_NORMAL);
-        data_bar_properties->AddTool(gen_propGridCategory, wxueImage(wxue_img::book_page_png, sizeof(wxue_img::book_page_png)),
-            "wxPropertyGrid Category", wxRIBBON_BUTTON_NORMAL);
-        data_bar_properties->AddTool(gen_propGridItem, wxueImage(wxue_img::propgriditem_png, sizeof(wxue_img::propgriditem_png)),
-            "wxPropertyGrid Item", wxRIBBON_BUTTON_NORMAL);
+        data_bar_properties->AddTool(gen_wxPropertyGrid,
+            wxueImage(wxue_img::wxPropertyGrid_png, sizeof(wxue_img::wxPropertyGrid_png)).Rescale(
+            FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "wxPropertyGrid", wxRIBBON_BUTTON_NORMAL);
+        data_bar_properties->AddTool(gen_wxPropertyGridManager,
+            wxueImage(wxue_img::wxPropertyGridManager_png, sizeof(wxue_img::wxPropertyGridManager_png)).Rescale(
+            FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "wxPropertyGridManager", wxRIBBON_BUTTON_NORMAL);
+        data_bar_properties->AddTool(gen_propGridPage,
+            wxueImage(wxue_img::propgridpage_png, sizeof(wxue_img::propgridpage_png)).Rescale(
+            FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "wxPropertyGrid Page", wxRIBBON_BUTTON_NORMAL);
+        data_bar_properties->AddTool(gen_propGridCategory,
+            wxueImage(wxue_img::book_page_png, sizeof(wxue_img::book_page_png)).Rescale(
+            FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "wxPropertyGrid Category", wxRIBBON_BUTTON_NORMAL);
+        data_bar_properties->AddTool(gen_propGridItem,
+            wxueImage(wxue_img::propgriditem_png, sizeof(wxue_img::propgriditem_png)).Rescale(
+            FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "wxPropertyGrid Item", wxRIBBON_BUTTON_NORMAL);
     }
     data_bar_properties->Realize();
 
@@ -324,12 +389,15 @@ bool RibbonPanelBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos
 
     auto* data_bar_trees = new wxRibbonToolBar(panel_data_trees, wxID_ANY);
     {
-        data_bar_trees->AddTool(gen_wxTreeCtrl, wxueImage(wxue_img::tree_ctrl_png, sizeof(wxue_img::tree_ctrl_png)), "wxTreeCtrl",
-            wxRIBBON_BUTTON_NORMAL);
-        data_bar_trees->AddTool(gen_wxTreeListCtrl, wxueImage(wxue_img::treelistctrl_png, sizeof(wxue_img::treelistctrl_png)),
-            "wxTreeListCtrl", wxRIBBON_BUTTON_NORMAL);
-        data_bar_trees->AddTool(gen_TreeListCtrlColumn, wxueImage(wxue_img::treelistctrlcolumn_png, sizeof(
-            wxue_img::treelistctrlcolumn_png)), "wxTreeListCtrl Column", wxRIBBON_BUTTON_NORMAL);
+        data_bar_trees->AddTool(gen_wxTreeCtrl,
+            wxueImage(wxue_img::tree_ctrl_png, sizeof(wxue_img::tree_ctrl_png)).Rescale(
+            FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "wxTreeCtrl", wxRIBBON_BUTTON_NORMAL);
+        data_bar_trees->AddTool(gen_wxTreeListCtrl,
+            wxueImage(wxue_img::treelistctrl_png, sizeof(wxue_img::treelistctrl_png)).Rescale(
+            FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "wxTreeListCtrl", wxRIBBON_BUTTON_NORMAL);
+        data_bar_trees->AddTool(gen_TreeListCtrlColumn,
+            wxueImage(wxue_img::treelistctrlcolumn_png, sizeof(wxue_img::treelistctrlcolumn_png)).Rescale(
+            FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "wxTreeListCtrl Column", wxRIBBON_BUTTON_NORMAL);
     }
     data_bar_trees->Realize();
 
@@ -337,12 +405,15 @@ bool RibbonPanelBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos
 
     auto* data_bar_dataview = new wxRibbonToolBar(panel_trees, wxID_ANY);
     {
-        data_bar_dataview->AddTool(NewDataCtrl, wxueImage(wxue_img::dataview_ctrl_png, sizeof(wxue_img::dataview_ctrl_png)),
-            "Data Control", wxRIBBON_BUTTON_DROPDOWN);
-        data_bar_dataview->AddTool(gen_dataViewColumn, wxueImage(wxue_img::dataviewlist_column_png, sizeof(
-            wxue_img::dataviewlist_column_png)), "DataView Column", wxRIBBON_BUTTON_NORMAL);
-        data_bar_dataview->AddTool(gen_dataViewListColumn, wxueImage(wxue_img::doc_mdi_parent_frame_png, sizeof(
-            wxue_img::doc_mdi_parent_frame_png)), "DataViewList Column", wxRIBBON_BUTTON_NORMAL);
+        data_bar_dataview->AddTool(NewDataCtrl,
+            wxueImage(wxue_img::dataview_ctrl_png, sizeof(wxue_img::dataview_ctrl_png)).Rescale(
+            FromDIP(21), FromDIP(21), wxIMAGE_QUALITY_BILINEAR), "Data Control", wxRIBBON_BUTTON_DROPDOWN);
+        data_bar_dataview->AddTool(gen_dataViewColumn,
+            wxueImage(wxue_img::dataviewlist_column_png, sizeof(wxue_img::dataviewlist_column_png)).Rescale(
+            FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "DataView Column", wxRIBBON_BUTTON_NORMAL);
+        data_bar_dataview->AddTool(gen_dataViewListColumn,
+            wxueImage(wxue_img::doc_mdi_parent_frame_png, sizeof(wxue_img::doc_mdi_parent_frame_png)).Rescale(
+            FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "DataViewList Column", wxRIBBON_BUTTON_NORMAL);
     }
     data_bar_dataview->Realize();
 
@@ -352,16 +423,21 @@ bool RibbonPanelBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos
 
     auto* bars_bar_menu = new wxRibbonToolBar(panel_bars_menu, wxID_ANY);
     {
-        bars_bar_menu->AddTool(gen_wxMenuBar, wxueImage(wxue_img::wxmenuBar_png, sizeof(wxue_img::wxmenuBar_png)), "wxMenuBar",
-            wxRIBBON_BUTTON_NORMAL);
-        bars_bar_menu->AddTool(gen_wxMenu, wxueImage(wxue_img::menu_png, sizeof(wxue_img::menu_png)), "wxMenu",
-            wxRIBBON_BUTTON_NORMAL);
-        bars_bar_menu->AddTool(gen_wxMenuItem, wxueImage(wxue_img::menuitem_png, sizeof(wxue_img::menuitem_png)), "wxMenuItem",
-            wxRIBBON_BUTTON_NORMAL);
-        bars_bar_menu->AddTool(gen_submenu, wxueImage(wxue_img::submenu_png, sizeof(wxue_img::submenu_png)), "submenu",
-            wxRIBBON_BUTTON_NORMAL);
-        bars_bar_menu->AddTool(gen_separator, wxueImage(wxue_img::separator_png, sizeof(wxue_img::separator_png)), "separator",
-            wxRIBBON_BUTTON_NORMAL);
+        bars_bar_menu->AddTool(gen_wxMenuBar,
+            wxueImage(wxue_img::wxmenuBar_png, sizeof(wxue_img::wxmenuBar_png)).Rescale(
+            FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "wxMenuBar", wxRIBBON_BUTTON_NORMAL);
+        bars_bar_menu->AddTool(gen_wxMenu,
+            wxueImage(wxue_img::menu_png, sizeof(wxue_img::menu_png)).Rescale(
+            FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "wxMenu", wxRIBBON_BUTTON_NORMAL);
+        bars_bar_menu->AddTool(gen_wxMenuItem,
+            wxueImage(wxue_img::menuitem_png, sizeof(wxue_img::menuitem_png)).Rescale(
+            FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "wxMenuItem", wxRIBBON_BUTTON_NORMAL);
+        bars_bar_menu->AddTool(gen_submenu,
+            wxueImage(wxue_img::submenu_png, sizeof(wxue_img::submenu_png)).Rescale(
+            FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "submenu", wxRIBBON_BUTTON_NORMAL);
+        bars_bar_menu->AddTool(gen_separator,
+            wxueImage(wxue_img::separator_png, sizeof(wxue_img::separator_png)).Rescale(
+            FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "separator", wxRIBBON_BUTTON_NORMAL);
     }
     bars_bar_menu->Realize();
 
@@ -369,15 +445,19 @@ bool RibbonPanelBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos
 
     auto* bars_bar_tool = new wxRibbonToolBar(panel_bars_tool, wxID_ANY);
     {
-        bars_bar_tool->AddTool(gen_wxToolBar, wxueImage(wxue_img::wxtoolBar_png, sizeof(wxue_img::wxtoolBar_png)), "wxToolBar",
-            wxRIBBON_BUTTON_NORMAL);
-        bars_bar_tool->AddTool(BarTools, wxueImage(wxue_img::tool_png, sizeof(wxue_img::tool_png)), wxEmptyString,
-            wxRIBBON_BUTTON_DROPDOWN);
+        bars_bar_tool->AddTool(gen_wxToolBar,
+            wxueImage(wxue_img::wxtoolBar_png, sizeof(wxue_img::wxtoolBar_png)).Rescale(
+            FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "wxToolBar", wxRIBBON_BUTTON_NORMAL);
+        bars_bar_tool->AddTool(BarTools,
+            wxueImage(wxue_img::tool_png, sizeof(wxue_img::tool_png)).Rescale(
+            FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), wxEmptyString, wxRIBBON_BUTTON_DROPDOWN);
         bars_bar_tool->AddSeparator();
-        bars_bar_tool->AddTool(gen_wxAuiToolBar, wxueImage(wxue_img::auitoolbar_png, sizeof(wxue_img::auitoolbar_png)),
-            "wxAuiToolBar", wxRIBBON_BUTTON_NORMAL);
-        bars_bar_tool->AddTool(AuiBarTools, wxueImage(wxue_img::tool_png, sizeof(wxue_img::tool_png)), wxEmptyString,
-            wxRIBBON_BUTTON_DROPDOWN);
+        bars_bar_tool->AddTool(gen_wxAuiToolBar,
+            wxueImage(wxue_img::auitoolbar_png, sizeof(wxue_img::auitoolbar_png)).Rescale(
+            FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "wxAuiToolBar", wxRIBBON_BUTTON_NORMAL);
+        bars_bar_tool->AddTool(AuiBarTools,
+            wxueImage(wxue_img::tool_png, sizeof(wxue_img::tool_png)).Rescale(
+            FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), wxEmptyString, wxRIBBON_BUTTON_DROPDOWN);
     }
     bars_bar_tool->Realize();
 
@@ -385,20 +465,27 @@ bool RibbonPanelBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos
 
     auto* bars_bar_ribbon = new wxRibbonToolBar(panel_bars_ribbon, wxID_ANY);
     {
-        bars_bar_ribbon->AddTool(CreateNewRibbon, wxueImage(wxue_img::ribbon_bar_png, sizeof(wxue_img::ribbon_bar_png)),
-            "wxRibbonBar", wxRIBBON_BUTTON_NORMAL);
-        bars_bar_ribbon->AddTool(gen_wxRibbonPage, wxueImage(wxue_img::ribbon_page_png, sizeof(wxue_img::ribbon_page_png)),
-            "wxRibbonPage", wxRIBBON_BUTTON_NORMAL);
-        bars_bar_ribbon->AddTool(gen_wxRibbonPanel, wxueImage(wxue_img::ribbon_panel_png, sizeof(wxue_img::ribbon_panel_png)),
-            "wxRibbonPanel", wxRIBBON_BUTTON_NORMAL);
-        bars_bar_ribbon->AddTool(NewRibbonType, wxueImage(wxue_img::ribbon_buttonbar_png, sizeof(wxue_img::ribbon_buttonbar_png)),
-            "Ribbon Bar Type", wxRIBBON_BUTTON_DROPDOWN);
-        bars_bar_ribbon->AddTool(gen_ribbonButton, wxueImage(wxue_img::ribbon_button_png, sizeof(wxue_img::ribbon_button_png)),
-            "Ribbon Button", wxRIBBON_BUTTON_NORMAL);
-        bars_bar_ribbon->AddTool(gen_ribbonSeparator, wxueImage(wxue_img::toolspacer_png, sizeof(wxue_img::toolspacer_png)),
-            "Tool Separator", wxRIBBON_BUTTON_NORMAL);
-        bars_bar_ribbon->AddTool(gen_ribbonGalleryItem, wxueImage(wxue_img::ribbon_gallery_item_png, sizeof(
-            wxue_img::ribbon_gallery_item_png)), "Ribbon Gallery Item", wxRIBBON_BUTTON_NORMAL);
+        bars_bar_ribbon->AddTool(CreateNewRibbon,
+            wxueImage(wxue_img::ribbon_bar_png, sizeof(wxue_img::ribbon_bar_png)).Rescale(
+            FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "wxRibbonBar", wxRIBBON_BUTTON_NORMAL);
+        bars_bar_ribbon->AddTool(gen_wxRibbonPage,
+            wxueImage(wxue_img::ribbon_page_png, sizeof(wxue_img::ribbon_page_png)).Rescale(
+            FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "wxRibbonPage", wxRIBBON_BUTTON_NORMAL);
+        bars_bar_ribbon->AddTool(gen_wxRibbonPanel,
+            wxueImage(wxue_img::ribbon_panel_png, sizeof(wxue_img::ribbon_panel_png)).Rescale(
+            FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "wxRibbonPanel", wxRIBBON_BUTTON_NORMAL);
+        bars_bar_ribbon->AddTool(NewRibbonType,
+            wxueImage(wxue_img::ribbon_buttonbar_png, sizeof(wxue_img::ribbon_buttonbar_png)).Rescale(
+            FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "Ribbon Bar Type", wxRIBBON_BUTTON_DROPDOWN);
+        bars_bar_ribbon->AddTool(gen_ribbonButton,
+            wxueImage(wxue_img::ribbon_button_png, sizeof(wxue_img::ribbon_button_png)).Rescale(
+            FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "Ribbon Button", wxRIBBON_BUTTON_NORMAL);
+        bars_bar_ribbon->AddTool(gen_ribbonSeparator,
+            wxueImage(wxue_img::toolspacer_png, sizeof(wxue_img::toolspacer_png)).Rescale(
+            FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "Tool Separator", wxRIBBON_BUTTON_NORMAL);
+        bars_bar_ribbon->AddTool(gen_ribbonGalleryItem,
+            wxueImage(wxue_img::ribbon_gallery_item_png, sizeof(wxue_img::ribbon_gallery_item_png)).Rescale(
+            FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "Ribbon Gallery Item", wxRIBBON_BUTTON_NORMAL);
     }
     bars_bar_ribbon->Realize();
 
@@ -406,10 +493,12 @@ bool RibbonPanelBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos
 
     auto* bars_bar_other = new wxRibbonToolBar(panel_bars_rother, wxID_ANY);
     {
-        bars_bar_other->AddTool(gen_wxStatusBar, wxueImage(wxue_img::statusbar_png, sizeof(wxue_img::statusbar_png)),
-            "wxStatusBar", wxRIBBON_BUTTON_NORMAL);
-        bars_bar_other->AddTool(gen_wxInfoBar, wxueImage(wxue_img::infobar_png, sizeof(wxue_img::infobar_png)), "wxInfoBar",
-            wxRIBBON_BUTTON_NORMAL);
+        bars_bar_other->AddTool(gen_wxStatusBar,
+            wxueImage(wxue_img::statusbar_png, sizeof(wxue_img::statusbar_png)).Rescale(
+            FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "wxStatusBar", wxRIBBON_BUTTON_NORMAL);
+        bars_bar_other->AddTool(gen_wxInfoBar,
+            wxueImage(wxue_img::infobar_png, sizeof(wxue_img::infobar_png)).Rescale(
+            FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "wxInfoBar", wxRIBBON_BUTTON_NORMAL);
     }
     bars_bar_other->Realize();
 
@@ -419,10 +508,12 @@ bool RibbonPanelBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos
 
     auto* other_bar_editors = new wxRibbonToolBar(panel_editors, wxID_ANY);
     {
-        other_bar_editors->AddTool(gen_wxRichTextCtrl, wxueImage(wxue_img::richtextctrl_png, sizeof(wxue_img::richtextctrl_png)),
-            "wxRichTextCtrl", wxRIBBON_BUTTON_NORMAL);
-        other_bar_editors->AddTool(gen_wxStyledTextCtrl, wxueImage(wxue_img::scintilla_png, sizeof(wxue_img::scintilla_png)),
-            "wxStyledTextCtrl", wxRIBBON_BUTTON_NORMAL);
+        other_bar_editors->AddTool(gen_wxRichTextCtrl,
+            wxueImage(wxue_img::richtextctrl_png, sizeof(wxue_img::richtextctrl_png)).Rescale(
+            FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "wxRichTextCtrl", wxRIBBON_BUTTON_NORMAL);
+        other_bar_editors->AddTool(gen_wxStyledTextCtrl,
+            wxueImage(wxue_img::scintilla_png, sizeof(wxue_img::scintilla_png)).Rescale(
+            FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "wxStyledTextCtrl", wxRIBBON_BUTTON_NORMAL);
     }
     other_bar_editors->Realize();
 
@@ -430,26 +521,36 @@ bool RibbonPanelBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos
 
     auto* other_bar_ctrls = new wxRibbonToolBar(panel_controls, wxID_ANY);
     {
-        other_bar_ctrls->AddTool(gen_wxHyperlinkCtrl, wxueImage(wxue_img::hyperlink_ctrl_png, sizeof(wxue_img::hyperlink_ctrl_png)),
-            "wxHyperlinkCtrl", wxRIBBON_BUTTON_NORMAL);
-        other_bar_ctrls->AddTool(gen_wxSearchCtrl, wxueImage(wxue_img::search_png, sizeof(wxue_img::search_png)), "wxSearchCtrl",
-            wxRIBBON_BUTTON_NORMAL);
-        other_bar_ctrls->AddTool(gen_wxCalendarCtrl, wxueImage(wxue_img::calendar_png, sizeof(wxue_img::calendar_png)),
-            "wxCalendarCtrl", wxRIBBON_BUTTON_NORMAL);
-        other_bar_ctrls->AddTool(gen_wxFileCtrl, wxueImage(wxue_img::wxfileCtrl_png, sizeof(wxue_img::wxfileCtrl_png)),
-            "wxFileCtrl", wxRIBBON_BUTTON_NORMAL);
-        other_bar_ctrls->AddTool(gen_wxGenericDirCtrl, wxueImage(wxue_img::genericdir_ctrl_png, sizeof(
-            wxue_img::genericdir_ctrl_png)), "wxGenericDirCtrl", wxRIBBON_BUTTON_NORMAL);
-        other_bar_ctrls->AddTool(gen_wxScrollBar, wxueImage(wxue_img::scrollbar_png, sizeof(wxue_img::scrollbar_png)),
-            "wxScrollBar", wxRIBBON_BUTTON_NORMAL);
-        other_bar_ctrls->AddTool(gen_wxActivityIndicator, wxueImage(wxue_img::wxactivityIndicator_png, sizeof(
-            wxue_img::wxactivityIndicator_png)), "wxActivityIndicator", wxRIBBON_BUTTON_NORMAL);
-        other_bar_ctrls->AddTool(gen_wxAnimationCtrl, wxueImage(wxue_img::wxanimation_png, sizeof(wxue_img::wxanimation_png)),
-            "wxAnimationCtrl", wxRIBBON_BUTTON_NORMAL);
-        other_bar_ctrls->AddTool(gen_wxBannerWindow, wxueImage(wxue_img::wxbannerWindow_png, sizeof(wxue_img::wxbannerWindow_png)),
-            "wxBannerWindow", wxRIBBON_BUTTON_NORMAL);
-        other_bar_ctrls->AddTool(gen_CustomControl, wxueImage(wxue_img::customControl_png, sizeof(wxue_img::customControl_png)),
-            "CustomControl", wxRIBBON_BUTTON_NORMAL);
+        other_bar_ctrls->AddTool(gen_wxHyperlinkCtrl,
+            wxueImage(wxue_img::hyperlink_ctrl_png, sizeof(wxue_img::hyperlink_ctrl_png)).Rescale(
+            FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "wxHyperlinkCtrl", wxRIBBON_BUTTON_NORMAL);
+        other_bar_ctrls->AddTool(gen_wxSearchCtrl,
+            wxueImage(wxue_img::search_png, sizeof(wxue_img::search_png)).Rescale(
+            FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "wxSearchCtrl", wxRIBBON_BUTTON_NORMAL);
+        other_bar_ctrls->AddTool(gen_wxCalendarCtrl,
+            wxueImage(wxue_img::calendar_png, sizeof(wxue_img::calendar_png)).Rescale(
+            FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "wxCalendarCtrl", wxRIBBON_BUTTON_NORMAL);
+        other_bar_ctrls->AddTool(gen_wxFileCtrl,
+            wxueImage(wxue_img::wxfileCtrl_png, sizeof(wxue_img::wxfileCtrl_png)).Rescale(
+            FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "wxFileCtrl", wxRIBBON_BUTTON_NORMAL);
+        other_bar_ctrls->AddTool(gen_wxGenericDirCtrl,
+            wxueImage(wxue_img::genericdir_ctrl_png, sizeof(wxue_img::genericdir_ctrl_png)).Rescale(
+            FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "wxGenericDirCtrl", wxRIBBON_BUTTON_NORMAL);
+        other_bar_ctrls->AddTool(gen_wxScrollBar,
+            wxueImage(wxue_img::scrollbar_png, sizeof(wxue_img::scrollbar_png)).Rescale(
+            FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "wxScrollBar", wxRIBBON_BUTTON_NORMAL);
+        other_bar_ctrls->AddTool(gen_wxActivityIndicator,
+            wxueImage(wxue_img::wxactivityIndicator_png, sizeof(wxue_img::wxactivityIndicator_png)).Rescale(
+            FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "wxActivityIndicator", wxRIBBON_BUTTON_NORMAL);
+        other_bar_ctrls->AddTool(gen_wxAnimationCtrl,
+            wxueImage(wxue_img::wxanimation_png, sizeof(wxue_img::wxanimation_png)).Rescale(
+            FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "wxAnimationCtrl", wxRIBBON_BUTTON_NORMAL);
+        other_bar_ctrls->AddTool(gen_wxBannerWindow,
+            wxueImage(wxue_img::wxbannerWindow_png, sizeof(wxue_img::wxbannerWindow_png)).Rescale(
+            FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "wxBannerWindow", wxRIBBON_BUTTON_NORMAL);
+        other_bar_ctrls->AddTool(gen_CustomControl,
+            wxueImage(wxue_img::customControl_png, sizeof(wxue_img::customControl_png)).Rescale(
+            FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "CustomControl", wxRIBBON_BUTTON_NORMAL);
     }
     other_bar_ctrls->Realize();
 
@@ -457,10 +558,12 @@ bool RibbonPanelBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos
 
     auto* other_bar_html = new wxRibbonToolBar(panel_html, wxID_ANY);
     {
-        other_bar_html->AddTool(gen_wxHtmlWindow, wxueImage(wxue_img::htmlwin_png, sizeof(wxue_img::htmlwin_png)), "wxHtmlWindow",
-            wxRIBBON_BUTTON_NORMAL);
-        other_bar_html->AddTool(gen_wxWebView, wxueImage(wxue_img::webview_png, sizeof(wxue_img::webview_png)), "wxWebView",
-            wxRIBBON_BUTTON_NORMAL);
+        other_bar_html->AddTool(gen_wxHtmlWindow,
+            wxueImage(wxue_img::htmlwin_png, sizeof(wxue_img::htmlwin_png)).Rescale(
+            FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "wxHtmlWindow", wxRIBBON_BUTTON_NORMAL);
+        other_bar_html->AddTool(gen_wxWebView,
+            wxueImage(wxue_img::webview_png, sizeof(wxue_img::webview_png)).Rescale(
+            FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "wxWebView", wxRIBBON_BUTTON_NORMAL);
     }
     other_bar_html->Realize();
 

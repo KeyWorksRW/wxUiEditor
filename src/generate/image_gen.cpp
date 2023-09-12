@@ -218,7 +218,7 @@ void BaseCodeGenerator::WriteImageConstruction(Code& code)
 
 // wxWidgets 3.2 does not support wxBitmapBundle in the wxRibbon classes, so we need to generate
 // loading a single bitmap.
-void GenerateSingleBitmapCode(Code& code, const tt_string& description)
+void GenerateRibbonBitmapCode(Code& code, const tt_string& description)
 {
     if (description.empty())
     {
@@ -229,6 +229,12 @@ void GenerateSingleBitmapCode(Code& code, const tt_string& description)
 
     if (parts[IndexType].starts_with("SVG"))
     {
+        wxSize svg_size { -1, -1 };
+        if (parts[IndexSize].size())
+        {
+            svg_size = GetSizeInfo(parts[IndexSize]);
+        }
+
         if (code.is_cpp())
         {
             if (Project.as_string(prop_wxWidgets_version) == "3.1")
@@ -236,28 +242,60 @@ void GenerateSingleBitmapCode(Code& code, const tt_string& description)
                 code += "wxNullBitmap /* SVG images require wxWidgets 3.1.6 */";
                 return;
             }
+            if (auto function_name = ProjectImages.GetBundleFuncName(description); function_name.size())
+            {
+                code.Str(function_name).Comma().Str("FromDIP(wxSize(").itoa(svg_size.x).Comma().itoa(svg_size.y) += ")))";
+                code.Str(".").Add("GetBitmap(").Add("wxDefaultSize)");
+                return;
+            }
         }
-        tt_string name(parts[IndexImage]);
 
-        if (code.is_python())
+        auto embed = ProjectImages.GetEmbeddedImage(parts[IndexImage]);
+        if (!embed)
         {
-            name.make_absolute();
-            auto path = MakePythonPath(code.node());
-            name.make_relative(path);
+            FAIL_MSG(tt_string() << description << " not embedded!")
+            code << "wxNullBitmap";
+            return;
         }
-        name.backslashestoforward();
 
-        // SVG files don't have an innate size, so we must rely on the size specified in the property
-
-        code.Add("wx.BitmapBundle.FromSVGFile(");
-        code.QuotedString(name);
-        wxSize svg_size { -1, -1 };
-        if (parts[IndexSize].size())
+        if (code.is_cpp())
         {
-            svg_size = GetSizeInfo(parts[IndexSize]);
+            tt_string name = "wxue_img::" + embed->array_name;
+            code << "wxueBundleSVG(" << name << ", " << (embed->array_size & 0xFFFFFFFF) << ", ";
+            code << (embed->array_size >> 32) << ", FromDIP(wxSize(" << svg_size.x << ", " << svg_size.y << ")))";
+            code.Str(".").Add("GetBitmap(").Add("wxDefaultSize)");
+            return;
         }
-        code.Comma().Add("wxSize(").itoa(svg_size.x).Comma().itoa(svg_size.y) += "))";
-        code.Str("GetBitmap(").Add("wxSize(").itoa(svg_size.x).Comma().itoa(svg_size.y).EndFunction();
+        else
+        {
+            tt_string name(parts[IndexImage]);
+
+            if (code.is_python())
+            {
+                name.make_absolute();
+                auto path = MakePythonPath(code.node());
+                name.make_relative(path);
+            }
+            name.backslashestoforward();
+
+            // SVG files don't have an innate size, so we must rely on the size specified in the property
+
+            code.Add("wxBitmapBundle").ClassMethod("FromSVGFile(");
+            code.QuotedString(name);
+            code.Comma()
+                .CheckLineLength(sizeof("FromDIP(wxSize(32, 32))).GetBitmap(wxDefaultSize)"))
+                .FormFunction("FromDIP(");
+            if (code.is_ruby())
+            {
+                code.Add("Wx::Size.new(");
+            }
+            else
+            {
+                code.Add("wxSize(");
+            }
+            code.itoa(svg_size.x).Comma().itoa(svg_size.y) += ")))";
+            code.Str(".").Add("GetBitmap(").Add("wxDefaultSize)");
+        }
         return;
     }
     else if (parts[IndexType].contains("Art"))
@@ -310,10 +348,101 @@ void GenerateSingleBitmapCode(Code& code, const tt_string& description)
     {
         code.Add("wxNullBitmap");
     }
-    else
+    else  // It's an embedded image
     {
         if (code.is_cpp())
         {
+#if 1
+            if (auto bundle = ProjectImages.GetPropertyImageBundle(description); bundle)
+            {
+                if (bundle->lst_filenames.size() == 1)
+                {
+                    code.Eol() << "\twxueImage(";
+
+                    tt_string name = "wxNullBitmap";
+
+                    if (auto embed = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[0]); embed)
+                    {
+                        name = "wxue_img::" + embed->array_name;
+                    }
+
+                    code << name << ", sizeof(" << name << "))";
+
+                    if (auto embed = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[0]); embed)
+                    {
+                        code << ".Rescale(";
+                        code.Eol() << "\tFromDIP(" << embed->size.x << "), FromDIP(" << embed->size.y
+                                   << "), wxIMAGE_QUALITY_BILINEAR)";
+                    }
+
+                    return;
+                }
+                else if (bundle->lst_filenames.size() == 2)
+                {
+                    code << "wxBitmapBundle::FromBitmaps(wxueImage(";
+                    tt_string name(bundle->lst_filenames[0].filename());
+                    name.remove_extension();
+                    name.Replace(".", "_", true);
+
+                    if (parts[IndexType].starts_with("Embed"))
+                    {
+                        if (auto embed = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[0]); embed)
+                        {
+                            name = "wxue_img::" + embed->array_name;
+                        }
+                    }
+                    code << name << ", sizeof(" << name << ")), wxueImage(";
+
+                    name = bundle->lst_filenames[1].filename();
+                    name.remove_extension();
+                    name.Replace(".", "_", true);
+
+                    if (parts[IndexType].starts_with("Embed"))
+                    {
+                        if (auto embed = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[1]); embed)
+                        {
+                            name = "wxue_img::" + embed->array_name;
+                        }
+                    }
+                    code << name << ", sizeof(" << name << ")))";
+                    if (auto embed = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[0]); embed)
+                    {
+                        code << ".GetBitmap(wxSize(";
+                        code.Eol() << "\tFromDIP(" << embed->size.x << "), FromDIP(" << embed->size.y << ")))";
+                    }
+                }
+                else
+                {
+                    code.Str("[&]()");
+                    code.OpenBrace().Add("wxVector<wxBitmap> bitmaps;");
+
+                    for (auto& iter: bundle->lst_filenames)
+                    {
+                        tt_string name(iter.filename());
+                        name.remove_extension();
+                        name.Replace(".", "_", true);
+                        if (parts[IndexType].starts_with("Embed"))
+                        {
+                            auto embed = ProjectImages.GetEmbeddedImage(iter);
+                            if (embed)
+                            {
+                                name = "wxue_img::" + embed->array_name;
+                            }
+                        }
+                        code.Eol().Str("bitmaps.push_back(wxueImage(") << name << ", sizeof(" << name << ")));";
+                    }
+                    code.Eol();
+                    code.Str("return wxBitmapBundle::FromBitmaps(bitmaps);").CloseBrace();
+                    code.pop_back();  // remove the linefeed
+                    code.Str("()");
+                    if (auto embed = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[0]); embed)
+                    {
+                        code << ".GetBitmap(wxSize(FromDIP(" << embed->size.x << "), FromDIP(" << embed->size.y << ")))";
+                    }
+                    return;
+                }
+            }
+#else
             code << "wxueImage(";
 
             tt_string name(parts[1].filename());
@@ -330,6 +459,7 @@ void GenerateSingleBitmapCode(Code& code, const tt_string& description)
             }
 
             code.Str(name).Comma().Str("sizeof(").Str(name) += "))";
+#endif
         }
         else if (code.is_python())
         {

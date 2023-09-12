@@ -12,6 +12,7 @@
 #include "code.h"        // Code -- Helper class for generating code
 #include "gen_common.h"  // GeneratorLibrary -- Generator classes
 #include "image_gen.h"   // Functions for generating embedded images
+#include "mainframe.h"   // MainFrame -- Main window frame
 #include "node.h"        // Node class
 #include "utils.h"       // Utility functions that work with properties
 
@@ -48,8 +49,9 @@ void RibbonToolBarGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxpar
             auto bmp = child->as_wxBitmap(prop_bitmap);
             if (!bmp.IsOk())
                 bmp = GetInternalImage("default");
-            // REVIEW: This is still a bitmap rather then a bundle as of the 3.1.6 release
-            btn_bar->AddTool(wxID_ANY, bmp, child->as_wxString(prop_help), (wxRibbonButtonKind) child->as_int(prop_kind));
+            auto scaled_bmp = child->as_wxBitmapBundle(prop_bitmap).GetBitmap(wxGetMainFrame()->FromDIP(bmp.GetSize()));
+            btn_bar->AddTool(wxID_ANY, scaled_bmp, child->as_wxString(prop_help),
+                             (wxRibbonButtonKind) child->as_int(prop_kind));
         }
     }
     btn_bar->Realize();
@@ -100,7 +102,7 @@ bool RibbonToolGenerator::ConstructionCode(Code& code)
 {
     code.ParentName().Function("AddTool(").as_string(prop_id);
     code.Comma();
-    GenerateSingleBitmapCode(code, code.node()->as_string(prop_bitmap));
+    GenerateRibbonBitmapCode(code, code.node()->as_string(prop_bitmap));
     code.Comma().QuotedString(prop_help).Comma().Add(prop_kind).EndFunction();
 
     return true;

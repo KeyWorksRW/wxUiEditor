@@ -69,7 +69,8 @@ NavigationPanel::NavigationPanel(wxWindow* parent) : wxPanel(parent)
                                  wxTR_HAS_BUTTONS | wxTR_LINES_AT_ROOT | wxTR_DEFAULT_STYLE | wxBORDER_SUNKEN);
 
     int index = 0;
-    m_iconList = new wxImageList(GenImageSize, GenImageSize);
+    wxSize gen_image_size = parent->FromDIP(wxSize(GenImageSize, GenImageSize));
+    m_iconList = new wxImageList(gen_image_size.x, gen_image_size.y);
     for (auto iter: NodeCreation.getNodeDeclarationArray())
     {
         if (!iter)
@@ -77,7 +78,8 @@ NavigationPanel::NavigationPanel(wxWindow* parent) : wxPanel(parent)
             // This will happen if there is an enumerated value but no generator for it
             continue;
         }
-        m_iconList->Add(iter->GetImage());
+        auto image = iter->GetImage().Scale(gen_image_size.x, gen_image_size.y, wxIMAGE_QUALITY_BILINEAR);
+        m_iconList->Add(image);
         m_iconIdx[iter->getGenName()] = index++;
     }
     m_tree_ctrl->AssignImageList(m_iconList);

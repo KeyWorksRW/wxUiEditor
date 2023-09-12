@@ -408,13 +408,14 @@ void GenerateRibbonBitmapCode(Code& code, const tt_string& description)
                     if (auto embed = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[0]); embed)
                     {
                         code << ".GetBitmap(wxSize(";
-                        code.Eol() << "\tFromDIP(" << embed->size.x << "), FromDIP(" << embed->size.y
-                                   << ")))";
+                        code.Eol() << "\tFromDIP(" << embed->size.x << "), FromDIP(" << embed->size.y << ")))";
                     }
                 }
                 else
                 {
-                    code << "{\n\t\t\twxVector<wxBitmap> bitmaps;\n";
+                    code.Str("[&]()");
+                    code.OpenBrace().Add("wxVector<wxBitmap> bitmaps;");
+
                     for (auto& iter: bundle->lst_filenames)
                     {
                         tt_string name(iter.filename());
@@ -422,12 +423,21 @@ void GenerateRibbonBitmapCode(Code& code, const tt_string& description)
                         name.Replace(".", "_", true);
                         if (parts[IndexType].starts_with("Embed"))
                         {
-                            if (auto embed = ProjectImages.GetEmbeddedImage(iter); embed)
+                            auto embed = ProjectImages.GetEmbeddedImage(iter);
+                            if (embed)
                             {
                                 name = "wxue_img::" + embed->array_name;
                             }
                         }
-                        code << "\t\t\tbitmaps.push_back(wxueImage(" << name << ", sizeof(" << name << ")));\n";
+                        code.Eol().Str("bitmaps.push_back(wxueImage(") << name << ", sizeof(" << name << ")));";
+                    }
+                    code.Eol();
+                    code.Str("return wxBitmapBundle::FromBitmaps(bitmaps);").CloseBrace();
+                    code.pop_back();  // remove the linefeed
+                    code.Str("()");
+                    if (auto embed = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[0]); embed)
+                    {
+                        code << ".GetBitmap(wxSize(FromDIP(" << embed->size.x << "), FromDIP(" << embed->size.y << ")))";
                     }
                     return;
                 }

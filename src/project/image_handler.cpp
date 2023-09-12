@@ -1272,8 +1272,10 @@ tt_string ImageHandler::GetBundleFuncName(const tt_string& description)
     return name;
 }
 
-std::optional<tt_string> ImageHandler::FileNameToVarName(tt_string_view filename)
+std::optional<tt_string> ImageHandler::FileNameToVarName(tt_string_view filename, size_t max_length)
 {
+    ASSERT(max_length > sizeof("_name_truncated"))
+
     if (filename.empty())
     {
         // caller's description does not include a filename
@@ -1318,7 +1320,7 @@ std::optional<tt_string> ImageHandler::FileNameToVarName(tt_string_view filename
             }
         }
 
-        if (var_name.size() > 135)
+        if (var_name.size() > (max_length - sizeof("_name_truncated")))
         {
             // We don't want to create a variable name that is too long
             var_name += "_name_truncated";

@@ -17,14 +17,7 @@
 #include <wx/utils.h>    // Miscellaneous utilities
 
 #if wxCHECK_VERSION(3, 3, 0) && defined(_WIN32)
-
-    #include <wx/msw/darkmode.h>
-class DarkSettings : public wxDarkModeSettings
-{
-public:
-    wxColour GetColour(wxSystemColour index);
-};
-
+    #include "dark_settings.h"
 #endif
 
 #include "mainapp.h"
@@ -86,35 +79,7 @@ wxIMPLEMENT_APP(App);
 #endif  // _WIN32 && defined(_DEBUG)
 
 tt_string tt_empty_cstr;
-
-#if wxCHECK_VERSION(3, 3, 0) && defined(_WIN32)
-
-wxColour DarkSettings::GetColour(wxSystemColour index)
-{
-    switch (index)
-    {
-        case wxSYS_COLOUR_WINDOW:
-        case wxSYS_COLOUR_LISTBOX:
-        case wxSYS_COLOUR_BTNFACE:
-            if (UserPrefs.is_HighContrast())
-                return wxColour(0, 0, 0);
-            else
-                return wxColour(0x202020);
-
-    #if 0
-            case wxSYS_COLOUR_ACTIVECAPTION:
-            case wxSYS_COLOUR_APPWORKSPACE:
-            case wxSYS_COLOUR_INFOBK:
-                // Default colour used here is 0x202020.
-                return wxColour(0x202020);
-    #endif
-
-        default:
-            return wxDarkModeSettings::GetColour(index);
-    }
-}
-
-#endif  // wxCHECK_VERSION(3, 3, 0) && defined(_WIN32)
+DarkSettings* DarkModeSettings;
 
 App::App() {}
 
@@ -167,8 +132,8 @@ bool App::OnInit()
     // colors in our property sheet and scintilla code displays.
     if (UserPrefs.is_DarkMode())
     {
-        auto* darkSettings = new DarkSettings;
-        MSWEnableDarkMode(0, darkSettings);
+        DarkModeSettings = new DarkSettings;
+        MSWEnableDarkMode(0, DarkModeSettings);
     }
 #endif
 

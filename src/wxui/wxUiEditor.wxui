@@ -6234,6 +6234,7 @@
                 class="wxBoxSizer"
                 class_access="protected:"
                 var_name="m_box_dark_settings"
+                borders="wxTOP|wxBOTTOM|wxRIGHT"
                 flags="wxEXPAND">
                 <node
                   class="wxCheckBox"

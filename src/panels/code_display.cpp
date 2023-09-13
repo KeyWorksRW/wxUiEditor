@@ -9,6 +9,10 @@
 #include <wx/fdrepdlg.h>     // wxFindReplaceDialog class
 #include <wx/msgdlg.h>       // common header and base class for wxMessageDialog
 
+#if wxCHECK_VERSION(3, 3, 0) && defined(_WIN32)
+    #include "dark_settings.h"
+#endif
+
 #include "code_display.h"  // auto-generated: wxui/codedisplay_base.h and wxui/codedisplay_base.cpp
 
 #include "base_panel.h"      // BasePanel -- Code generation panel
@@ -51,13 +55,34 @@ CodeDisplay::CodeDisplay(wxWindow* parent, int panel_type) : CodeDisplayBase(par
         m_scintilla->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_xrc_keywords);
 
         m_scintilla->StyleSetBold(wxSTC_H_TAG, true);
-        m_scintilla->StyleSetForeground(wxSTC_H_ATTRIBUTE, wxColour("#FF00FF"));
-        m_scintilla->StyleSetForeground(wxSTC_H_TAG, *wxBLUE);
-        m_scintilla->StyleSetForeground(wxSTC_H_COMMENT, wxColour(0, 128, 0));
-        m_scintilla->StyleSetForeground(wxSTC_H_NUMBER, *wxRED);
-        m_scintilla->StyleSetForeground(wxSTC_H_ENTITY, *wxRED);
-        m_scintilla->StyleSetForeground(wxSTC_H_DOUBLESTRING, wxColour(0, 128, 0));
-        m_scintilla->StyleSetForeground(wxSTC_H_SINGLESTRING, wxColour(0, 128, 0));
+        if (UserPrefs.is_DarkMode())
+        {
+            auto fg = DarkModeSettings->GetColour(wxSYS_COLOUR_WINDOWTEXT);
+            auto bg = DarkModeSettings->GetColour(wxSYS_COLOUR_WINDOW);
+            for (int idx = 0; idx <= wxSTC_STYLE_LASTPREDEFINED; idx++)
+            {
+                m_scintilla->StyleSetForeground(idx, fg);
+                m_scintilla->StyleSetBackground(idx, bg);
+            }
+
+            m_scintilla->StyleSetForeground(wxSTC_H_ATTRIBUTE, wxColour("#FF00FF"));
+            m_scintilla->StyleSetForeground(wxSTC_H_TAG, wxColour("#80ccff"));
+            m_scintilla->StyleSetForeground(wxSTC_H_COMMENT, wxColour("#85e085"));
+            m_scintilla->StyleSetForeground(wxSTC_H_NUMBER, wxColour("#ff6666"));
+            m_scintilla->StyleSetForeground(wxSTC_H_ENTITY, wxColour("#ff6666"));
+            m_scintilla->StyleSetForeground(wxSTC_H_DOUBLESTRING, wxColour("#85e085"));
+            m_scintilla->StyleSetForeground(wxSTC_H_SINGLESTRING, wxColour("#85e085"));
+        }
+        else
+        {
+            m_scintilla->StyleSetForeground(wxSTC_H_ATTRIBUTE, wxColour("#FF00FF"));
+            m_scintilla->StyleSetForeground(wxSTC_H_TAG, *wxBLUE);
+            m_scintilla->StyleSetForeground(wxSTC_H_COMMENT, wxColour(0, 128, 0));
+            m_scintilla->StyleSetForeground(wxSTC_H_NUMBER, *wxRED);
+            m_scintilla->StyleSetForeground(wxSTC_H_ENTITY, *wxRED);
+            m_scintilla->StyleSetForeground(wxSTC_H_DOUBLESTRING, wxColour(0, 128, 0));
+            m_scintilla->StyleSetForeground(wxSTC_H_SINGLESTRING, wxColour(0, 128, 0));
+        }
     }
     else if (panel_type == GEN_LANG_PYTHON)
     {
@@ -83,13 +108,38 @@ CodeDisplay::CodeDisplay(wxWindow* parent, int panel_type) : CodeDisplayBase(par
 
         // On Windows, this saves converting the UTF8 to UTF16 and then back to ANSI.
         m_scintilla->SendMsg(SCI_SETKEYWORDS, 1, (wxIntPtr) wxPython_keywords.c_str());
-
-        m_scintilla->StyleSetForeground(wxSTC_P_WORD, *wxBLUE);
         m_scintilla->StyleSetForeground(wxSTC_P_WORD2, UserPrefs.get_PythonColour());
-        m_scintilla->StyleSetForeground(wxSTC_P_STRING, wxColour(0, 128, 0));
-        m_scintilla->StyleSetForeground(wxSTC_P_STRINGEOL, wxColour(0, 128, 0));
-        m_scintilla->StyleSetForeground(wxSTC_P_COMMENTLINE, wxColour(0, 128, 0));
-        m_scintilla->StyleSetForeground(wxSTC_P_NUMBER, *wxRED);
+
+        if (UserPrefs.is_DarkMode())
+        {
+            auto fg = DarkModeSettings->GetColour(wxSYS_COLOUR_WINDOWTEXT);
+            auto bg = DarkModeSettings->GetColour(wxSYS_COLOUR_WINDOW);
+            for (int idx = 0; idx <= wxSTC_STYLE_LASTPREDEFINED; idx++)
+            {
+                m_scintilla->StyleSetForeground(idx, fg);
+                m_scintilla->StyleSetBackground(idx, bg);
+            }
+
+            double hue, saturation, luminance;
+            wxColourToHSL(wxColour(0, 128, 0), hue, saturation, luminance);
+            luminance = .80;
+            auto light_green = HSLToWxColour(hue, saturation, luminance);
+
+            m_scintilla->StyleSetForeground(wxSTC_P_WORD, wxColour("#80ccff"));
+            // m_scintilla->StyleSetForeground(wxSTC_P_STRING, wxColour("#85e085"));
+            m_scintilla->StyleSetForeground(wxSTC_P_STRING, light_green);
+            m_scintilla->StyleSetForeground(wxSTC_P_STRINGEOL, wxColour("#85e085"));
+            m_scintilla->StyleSetForeground(wxSTC_P_COMMENTLINE, wxColour("#85e085"));
+            m_scintilla->StyleSetForeground(wxSTC_P_NUMBER, wxColour("#ff6666"));
+        }
+        else
+        {
+            m_scintilla->StyleSetForeground(wxSTC_P_WORD, *wxBLUE);
+            m_scintilla->StyleSetForeground(wxSTC_P_STRING, wxColour(0, 128, 0));
+            m_scintilla->StyleSetForeground(wxSTC_P_STRINGEOL, wxColour(0, 128, 0));
+            m_scintilla->StyleSetForeground(wxSTC_P_COMMENTLINE, wxColour(0, 128, 0));
+            m_scintilla->StyleSetForeground(wxSTC_P_NUMBER, *wxRED);
+        }
     }
     else if (panel_type == GEN_LANG_RUBY)
     {
@@ -122,11 +172,28 @@ CodeDisplay::CodeDisplay(wxWindow* parent, int panel_type) : CodeDisplayBase(par
         // the wxWidgets keywords.
 
         m_scintilla->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) wxRuby_keywords.c_str());
-
         m_scintilla->StyleSetForeground(wxSTC_RB_WORD, UserPrefs.get_RubyColour());
-        m_scintilla->StyleSetForeground(wxSTC_RB_STRING, wxColour(0, 128, 0));
-        m_scintilla->StyleSetForeground(wxSTC_RB_COMMENTLINE, wxColour(0, 128, 0));
-        m_scintilla->StyleSetForeground(wxSTC_RB_NUMBER, *wxRED);
+
+        if (UserPrefs.is_DarkMode())
+        {
+            auto fg = DarkModeSettings->GetColour(wxSYS_COLOUR_WINDOWTEXT);
+            auto bg = DarkModeSettings->GetColour(wxSYS_COLOUR_WINDOW);
+            for (int idx = 0; idx <= wxSTC_STYLE_LASTPREDEFINED; idx++)
+            {
+                m_scintilla->StyleSetForeground(idx, fg);
+                m_scintilla->StyleSetBackground(idx, bg);
+            }
+
+            m_scintilla->StyleSetForeground(wxSTC_RB_STRING, wxColour("#85e085"));
+            m_scintilla->StyleSetForeground(wxSTC_RB_COMMENTLINE, wxColour("#85e085"));
+            m_scintilla->StyleSetForeground(wxSTC_RB_NUMBER, wxColour("#ff6666"));
+        }
+        else
+        {
+            m_scintilla->StyleSetForeground(wxSTC_RB_STRING, wxColour(0, 128, 0));
+            m_scintilla->StyleSetForeground(wxSTC_RB_COMMENTLINE, wxColour(0, 128, 0));
+            m_scintilla->StyleSetForeground(wxSTC_RB_NUMBER, *wxRED);
+        }
     }
 #if defined(_DEBUG)
     // The following language panels are experimental and only appear in a Debug build
@@ -161,16 +228,41 @@ CodeDisplay::CodeDisplay(wxWindow* parent, int panel_type) : CodeDisplayBase(par
         // On Windows, this saves converting the UTF8 to UTF16 and then back to ANSI.
         m_scintilla->SendMsg(SCI_SETKEYWORDS, 1, (wxIntPtr) widget_keywords.c_str());
         m_scintilla->StyleSetBold(wxSTC_C_WORD, true);
-        m_scintilla->StyleSetForeground(wxSTC_C_WORD, *wxBLUE);
         m_scintilla->StyleSetForeground(wxSTC_C_WORD2, UserPrefs.get_CppColour());
-        m_scintilla->StyleSetForeground(wxSTC_C_STRING, wxColour(0, 128, 0));
-        m_scintilla->StyleSetForeground(wxSTC_C_STRINGEOL, wxColour(0, 128, 0));
-        m_scintilla->StyleSetForeground(wxSTC_C_PREPROCESSOR, wxColour(49, 106, 197));
-        m_scintilla->StyleSetForeground(wxSTC_C_COMMENT, wxColour(0, 128, 0));
-        m_scintilla->StyleSetForeground(wxSTC_C_COMMENTLINE, wxColour(0, 128, 0));
-        m_scintilla->StyleSetForeground(wxSTC_C_COMMENTDOC, wxColour(0, 128, 0));
-        m_scintilla->StyleSetForeground(wxSTC_C_COMMENTLINEDOC, wxColour(0, 128, 0));
-        m_scintilla->StyleSetForeground(wxSTC_C_NUMBER, *wxRED);
+
+        if (UserPrefs.is_DarkMode())
+        {
+            auto fg = DarkModeSettings->GetColour(wxSYS_COLOUR_WINDOWTEXT);
+            auto bg = DarkModeSettings->GetColour(wxSYS_COLOUR_WINDOW);
+            for (int idx = 0; idx <= wxSTC_STYLE_LASTPREDEFINED; idx++)
+            {
+                m_scintilla->StyleSetForeground(idx, fg);
+                m_scintilla->StyleSetBackground(idx, bg);
+            }
+
+            m_scintilla->StyleSetForeground(wxSTC_C_WORD, wxColour("#80ccff"));
+            m_scintilla->StyleSetForeground(wxSTC_C_STRING, wxColour("#85e085"));
+            m_scintilla->StyleSetForeground(wxSTC_C_STRINGEOL, wxColour("#85e085"));
+            m_scintilla->StyleSetForeground(wxSTC_C_PREPROCESSOR, wxColour(49, 106, 197));
+            m_scintilla->StyleSetForeground(wxSTC_C_COMMENT, wxColour("#85e085"));
+            m_scintilla->StyleSetForeground(wxSTC_C_COMMENTLINE, wxColour("#85e085"));
+            m_scintilla->StyleSetForeground(wxSTC_C_COMMENTDOC, wxColour("#85e085"));
+            m_scintilla->StyleSetForeground(wxSTC_C_COMMENT, wxColour("#85e085"));
+            m_scintilla->StyleSetForeground(wxSTC_C_COMMENTLINEDOC, wxColour("#ff6666"));
+            m_scintilla->StyleSetForeground(wxSTC_C_NUMBER, wxColour("#ff6666"));
+        }
+        else
+        {
+            m_scintilla->StyleSetForeground(wxSTC_C_WORD, *wxBLUE);
+            m_scintilla->StyleSetForeground(wxSTC_C_STRING, wxColour(0, 128, 0));
+            m_scintilla->StyleSetForeground(wxSTC_C_STRINGEOL, wxColour(0, 128, 0));
+            m_scintilla->StyleSetForeground(wxSTC_C_PREPROCESSOR, wxColour(49, 106, 197));
+            m_scintilla->StyleSetForeground(wxSTC_C_COMMENT, wxColour(0, 128, 0));
+            m_scintilla->StyleSetForeground(wxSTC_C_COMMENTLINE, wxColour(0, 128, 0));
+            m_scintilla->StyleSetForeground(wxSTC_C_COMMENTDOC, wxColour(0, 128, 0));
+            m_scintilla->StyleSetForeground(wxSTC_C_COMMENTLINEDOC, wxColour(0, 128, 0));
+            m_scintilla->StyleSetForeground(wxSTC_C_NUMBER, *wxRED);
+        }
     }
 
     else if (panel_type == GEN_LANG_LUA)
@@ -200,16 +292,39 @@ CodeDisplay::CodeDisplay(wxWindow* parent, int panel_type) : CodeDisplayBase(par
         // On Windows, this saves converting the UTF8 to UTF16 and then back to ANSI.
         m_scintilla->SendMsg(SCI_SETKEYWORDS, 1, (wxIntPtr) widget_keywords.c_str());
         m_scintilla->StyleSetBold(wxSTC_LUA_WORD, true);
-        m_scintilla->StyleSetForeground(wxSTC_LUA_WORD, *wxBLUE);
         m_scintilla->StyleSetForeground(wxSTC_LUA_WORD2, UserPrefs.get_CppColour());
-        m_scintilla->StyleSetForeground(wxSTC_LUA_STRING, wxColour(0, 128, 0));
-        m_scintilla->StyleSetForeground(wxSTC_LUA_STRINGEOL, wxColour(0, 128, 0));
-        m_scintilla->StyleSetForeground(wxSTC_LUA_PREPROCESSOR, wxColour(49, 106, 197));
-        m_scintilla->StyleSetForeground(wxSTC_LUA_COMMENT, wxColour(0, 128, 0));
-        m_scintilla->StyleSetForeground(wxSTC_LUA_COMMENTLINE, wxColour(0, 128, 0));
-        m_scintilla->StyleSetForeground(wxSTC_LUA_COMMENTDOC, wxColour(0, 128, 0));
-        // Currently, wxSTC_LUA_COMMENTLINEDOC doesn't exist
-        // m_scintilla->StyleSetForeground(wxSTC_LUA_COMMENTLINEDOC, wxColour(0, 128, 0));
+
+        if (UserPrefs.is_DarkMode())
+        {
+            auto fg = DarkModeSettings->GetColour(wxSYS_COLOUR_WINDOWTEXT);
+            auto bg = DarkModeSettings->GetColour(wxSYS_COLOUR_WINDOW);
+            for (int idx = 0; idx <= wxSTC_STYLE_LASTPREDEFINED; idx++)
+            {
+                m_scintilla->StyleSetForeground(idx, fg);
+                m_scintilla->StyleSetBackground(idx, bg);
+            }
+
+            m_scintilla->StyleSetForeground(wxSTC_C_WORD, wxColour("#80ccff"));
+            m_scintilla->StyleSetForeground(wxSTC_C_STRING, wxColour("#85e085"));
+            m_scintilla->StyleSetForeground(wxSTC_C_STRINGEOL, wxColour("#85e085"));
+            m_scintilla->StyleSetForeground(wxSTC_C_PREPROCESSOR, wxColour(49, 106, 197));
+            m_scintilla->StyleSetForeground(wxSTC_C_COMMENT, wxColour("#85e085"));
+            m_scintilla->StyleSetForeground(wxSTC_C_COMMENTLINE, wxColour("#85e085"));
+            m_scintilla->StyleSetForeground(wxSTC_C_COMMENTDOC, wxColour("#85e085"));
+            m_scintilla->StyleSetForeground(wxSTC_C_COMMENT, wxColour("#85e085"));
+            m_scintilla->StyleSetForeground(wxSTC_C_COMMENTLINEDOC, wxColour("#ff6666"));
+            m_scintilla->StyleSetForeground(wxSTC_C_NUMBER, wxColour("#ff6666"));
+        }
+        else
+        {
+            m_scintilla->StyleSetForeground(wxSTC_LUA_WORD, *wxBLUE);
+            m_scintilla->StyleSetForeground(wxSTC_LUA_STRING, wxColour(0, 128, 0));
+            m_scintilla->StyleSetForeground(wxSTC_LUA_STRINGEOL, wxColour(0, 128, 0));
+            m_scintilla->StyleSetForeground(wxSTC_LUA_PREPROCESSOR, wxColour(49, 106, 197));
+            m_scintilla->StyleSetForeground(wxSTC_LUA_COMMENT, wxColour(0, 128, 0));
+            m_scintilla->StyleSetForeground(wxSTC_LUA_COMMENTLINE, wxColour(0, 128, 0));
+            m_scintilla->StyleSetForeground(wxSTC_LUA_COMMENTDOC, wxColour(0, 128, 0));
+        }
         m_scintilla->StyleSetForeground(wxSTC_LUA_NUMBER, *wxRED);
     }
 
@@ -239,18 +354,32 @@ CodeDisplay::CodeDisplay(wxWindow* parent, int panel_type) : CodeDisplayBase(par
 
         // On Windows, this saves converting the UTF8 to UTF16 and then back to ANSI.
         m_scintilla->SendMsg(SCI_SETKEYWORDS, 1, (wxIntPtr) widget_keywords.c_str());
-
         m_scintilla->StyleSetBold(wxSTC_PL_WORD, true);
-        m_scintilla->StyleSetForeground(wxSTC_PL_WORD, *wxBLUE);
-        // m_scintilla->StyleSetForeground(wxSTC_PL_WORD2, UserPrefs.get_CppColour());
-        m_scintilla->StyleSetForeground(wxSTC_PL_STRING, wxColour(0, 128, 0));
-        // m_scintilla->StyleSetForeground(wxSTC_PL_STRINGEOL, wxColour(0, 128, 0));
-        m_scintilla->StyleSetForeground(wxSTC_PL_PREPROCESSOR, wxColour(49, 106, 197));
-        // m_scintilla->StyleSetForeground(wxSTC_PL_COMMENT, wxColour(0, 128, 0));
-        m_scintilla->StyleSetForeground(wxSTC_PL_COMMENTLINE, wxColour(0, 128, 0));
-        // m_scintilla->StyleSetForeground(wxSTC_PL_COMMENTDOC, wxColour(0, 128, 0));
-        // m_scintilla->StyleSetForeground(wxSTC_PL_COMMENTLINEDOC, wxColour(0, 128, 0));
-        m_scintilla->StyleSetForeground(wxSTC_PL_NUMBER, *wxRED);
+
+        if (UserPrefs.is_DarkMode())
+        {
+            auto fg = DarkModeSettings->GetColour(wxSYS_COLOUR_WINDOWTEXT);
+            auto bg = DarkModeSettings->GetColour(wxSYS_COLOUR_WINDOW);
+            for (int idx = 0; idx <= wxSTC_STYLE_LASTPREDEFINED; idx++)
+            {
+                m_scintilla->StyleSetForeground(idx, fg);
+                m_scintilla->StyleSetBackground(idx, bg);
+            }
+
+            m_scintilla->StyleSetForeground(wxSTC_PL_WORD, wxColour("#80ccff"));
+            m_scintilla->StyleSetForeground(wxSTC_PL_STRING, wxColour("#85e085"));
+            m_scintilla->StyleSetForeground(wxSTC_PL_PREPROCESSOR, wxColour(49, 106, 197));
+            m_scintilla->StyleSetForeground(wxSTC_PL_COMMENTLINE, wxColour("#85e085"));
+            m_scintilla->StyleSetForeground(wxSTC_PL_NUMBER, wxColour("#ff6666"));
+        }
+        else
+        {
+            m_scintilla->StyleSetForeground(wxSTC_PL_WORD, *wxBLUE);
+            m_scintilla->StyleSetForeground(wxSTC_PL_STRING, wxColour(0, 128, 0));
+            m_scintilla->StyleSetForeground(wxSTC_PL_PREPROCESSOR, wxColour(49, 106, 197));
+            m_scintilla->StyleSetForeground(wxSTC_PL_COMMENTLINE, wxColour(0, 128, 0));
+            m_scintilla->StyleSetForeground(wxSTC_PL_NUMBER, *wxRED);
+        }
     }
 
     else if (panel_type == GEN_LANG_RUST)
@@ -279,16 +408,32 @@ CodeDisplay::CodeDisplay(wxWindow* parent, int panel_type) : CodeDisplayBase(par
         // On Windows, this saves converting the UTF8 to UTF16 and then back to ANSI.
         m_scintilla->SendMsg(SCI_SETKEYWORDS, 1, (wxIntPtr) widget_keywords.c_str());
         m_scintilla->StyleSetBold(wxSTC_RUST_WORD, true);
-        m_scintilla->StyleSetForeground(wxSTC_RUST_WORD, *wxBLUE);
         m_scintilla->StyleSetForeground(wxSTC_RUST_WORD2, UserPrefs.get_CppColour());
-        m_scintilla->StyleSetForeground(wxSTC_RUST_STRING, wxColour(0, 128, 0));
-        // m_scintilla->StyleSetForeground(wxSTC_RUST_STRINGEOL, wxColour(0, 128, 0));
-        // m_scintilla->StyleSetForeground(wxSTC_RUST_PREPROCESSOR, wxColour(49, 106, 197));
-        // m_scintilla->StyleSetForeground(wxSTC_RUST_COMMENT, wxColour(0, 128, 0));
-        m_scintilla->StyleSetForeground(wxSTC_RUST_COMMENTLINE, wxColour(0, 128, 0));
-        // m_scintilla->StyleSetForeground(wxSTC_RUST_COMMENTDOC, wxColour(0, 128, 0));
-        m_scintilla->StyleSetForeground(wxSTC_RUST_COMMENTLINEDOC, wxColour(0, 128, 0));
-        m_scintilla->StyleSetForeground(wxSTC_RUST_NUMBER, *wxRED);
+
+        if (UserPrefs.is_DarkMode())
+        {
+            auto fg = DarkModeSettings->GetColour(wxSYS_COLOUR_WINDOWTEXT);
+            auto bg = DarkModeSettings->GetColour(wxSYS_COLOUR_WINDOW);
+            for (int idx = 0; idx <= wxSTC_STYLE_LASTPREDEFINED; idx++)
+            {
+                m_scintilla->StyleSetForeground(idx, fg);
+                m_scintilla->StyleSetBackground(idx, bg);
+            }
+
+            m_scintilla->StyleSetForeground(wxSTC_RUST_WORD, wxColour("#80ccff"));
+            m_scintilla->StyleSetForeground(wxSTC_RUST_STRING, wxColour("#85e085"));
+            m_scintilla->StyleSetForeground(wxSTC_RUST_COMMENTLINE, wxColour("#85e085"));
+            m_scintilla->StyleSetForeground(wxSTC_RUST_COMMENTLINEDOC, wxColour("#ff6666"));
+            m_scintilla->StyleSetForeground(wxSTC_RUST_NUMBER, wxColour("#ff6666"));
+        }
+        else
+        {
+            m_scintilla->StyleSetForeground(wxSTC_RUST_WORD, *wxBLUE);
+            m_scintilla->StyleSetForeground(wxSTC_RUST_STRING, wxColour(0, 128, 0));
+            m_scintilla->StyleSetForeground(wxSTC_RUST_COMMENTLINE, wxColour(0, 128, 0));
+            m_scintilla->StyleSetForeground(wxSTC_RUST_COMMENTLINEDOC, wxColour(0, 128, 0));
+            m_scintilla->StyleSetForeground(wxSTC_RUST_NUMBER, *wxRED);
+        }
     }
 #endif  // _DEBUG
 
@@ -319,16 +464,59 @@ CodeDisplay::CodeDisplay(wxWindow* parent, int panel_type) : CodeDisplayBase(par
         // On Windows, this saves converting the UTF8 to UTF16 and then back to ANSI.
         m_scintilla->SendMsg(SCI_SETKEYWORDS, 1, (wxIntPtr) widget_keywords.c_str());
         m_scintilla->StyleSetBold(wxSTC_C_WORD, true);
-        m_scintilla->StyleSetForeground(wxSTC_C_WORD, *wxBLUE);
-        m_scintilla->StyleSetForeground(wxSTC_C_WORD2, UserPrefs.get_CppColour());
-        m_scintilla->StyleSetForeground(wxSTC_C_STRING, wxColour(0, 128, 0));
-        m_scintilla->StyleSetForeground(wxSTC_C_STRINGEOL, wxColour(0, 128, 0));
-        m_scintilla->StyleSetForeground(wxSTC_C_PREPROCESSOR, wxColour(49, 106, 197));
-        m_scintilla->StyleSetForeground(wxSTC_C_COMMENT, wxColour(0, 128, 0));
-        m_scintilla->StyleSetForeground(wxSTC_C_COMMENTLINE, wxColour(0, 128, 0));
-        m_scintilla->StyleSetForeground(wxSTC_C_COMMENTDOC, wxColour(0, 128, 0));
-        m_scintilla->StyleSetForeground(wxSTC_C_COMMENTLINEDOC, wxColour(0, 128, 0));
-        m_scintilla->StyleSetForeground(wxSTC_C_NUMBER, *wxRED);
+
+        // First set all possible foreground/background colours
+        if (UserPrefs.is_DarkMode())
+        {
+            auto fg = DarkModeSettings->GetColour(wxSYS_COLOUR_WINDOWTEXT);
+            auto bg = DarkModeSettings->GetColour(wxSYS_COLOUR_WINDOW);
+            for (int idx = 0; idx <= wxSTC_STYLE_LASTPREDEFINED; idx++)
+            {
+                m_scintilla->StyleSetForeground(idx, fg);
+                m_scintilla->StyleSetBackground(idx, bg);
+            }
+        }
+
+        auto clr_green = wxColour(0, 128, 0);
+        if (UserPrefs.is_DarkMode())
+        {
+            if (UserPrefs.is_HighContrast())
+            {
+                clr_green = wxColour("#1cc462");
+            }
+            else
+            {
+                wxColour(0, 192, 0);
+            }
+        }
+        m_scintilla->StyleSetForeground(wxSTC_C_STRING, clr_green);
+        m_scintilla->StyleSetForeground(wxSTC_C_STRINGEOL, clr_green);
+        m_scintilla->StyleSetForeground(wxSTC_C_COMMENT, clr_green);
+        m_scintilla->StyleSetForeground(wxSTC_C_COMMENTLINE, clr_green);
+        m_scintilla->StyleSetForeground(wxSTC_C_COMMENTDOC, clr_green);
+        m_scintilla->StyleSetForeground(wxSTC_C_COMMENTLINEDOC, clr_green);
+
+        if (UserPrefs.is_DarkMode())
+        {
+            m_scintilla->StyleSetForeground(wxSTC_C_WORD2, wxColourToDarkForeground(UserPrefs.get_CppColour()));
+            m_scintilla->StyleSetForeground(wxSTC_C_WORD, wxColourToDarkForeground(*wxBLUE));
+            if (UserPrefs.is_HighContrast())
+            {
+                m_scintilla->StyleSetForeground(wxSTC_C_PREPROCESSOR, wxColour("#569CD6"));
+            }
+            else
+            {
+                m_scintilla->StyleSetForeground(wxSTC_C_PREPROCESSOR, wxColour(49, 106, 197));
+            }
+            m_scintilla->StyleSetForeground(wxSTC_C_NUMBER, wxColour("#ff6666"));
+        }
+        else
+        {
+            m_scintilla->StyleSetForeground(wxSTC_C_WORD2, UserPrefs.get_CppColour());
+            m_scintilla->StyleSetForeground(wxSTC_C_WORD, *wxBLUE);
+            m_scintilla->StyleSetForeground(wxSTC_C_PREPROCESSOR, wxColour(49, 106, 197));
+            m_scintilla->StyleSetForeground(wxSTC_C_NUMBER, *wxRED);
+        }
     }
 
     // TODO: [KeyWorks - 01-02-2022] We do this because currently font selection uses a facename which is not cross-platform.

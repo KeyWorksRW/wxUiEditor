@@ -756,7 +756,10 @@ void PropGridPanel::AddProperties(tt_string_view name, Node* node, NodeCategory&
                 else if (propType == type_image || propType == type_animation)
                 {
                     m_prop_grid->Expand(pg);
-                    m_prop_grid->SetPropertyBackgroundColour(pg, wxColour("#fff1d2"));
+                    if (UserPrefs.is_DarkMode())
+                        m_prop_grid->SetPropertyBackgroundColour(pg, wxColour("#996900"));
+                    else
+                        m_prop_grid->SetPropertyBackgroundColour(pg, wxColour("#fff1d2"));
 
                     // This causes it to display the bitmap in the image/id property
                     pg->RefreshChildren();
@@ -772,7 +775,12 @@ void PropGridPanel::AddProperties(tt_string_view name, Node* node, NodeCategory&
 
             if (name.is_sameas("wxWindow") || name.is_sameas("wxMdiWindow") ||
                 category.GetName().Contains("Window Settings"))
-                m_prop_grid->SetPropertyBackgroundColour(pg, wxColour("#e7f4e4"));
+            {
+                if (UserPrefs.is_DarkMode())
+                    m_prop_grid->SetPropertyBackgroundColour(pg, wxColour("#386d2c"));
+                else
+                    m_prop_grid->SetPropertyBackgroundColour(pg, wxColour("#e7f4e4"));
+            }
 
             // Automatically collapse properties that are rarely used
             if (prop_name == prop_unchecked_bitmap)
@@ -904,7 +912,12 @@ void PropGridPanel::AddEvents(tt_string_view name, Node* node, NodeCategory& cat
             m_event_grid->SetPropertyHelpString(id, wxGetTranslation(eventInfo->get_help()));
 
             if (name.is_sameas("Window Events") || name.is_sameas("wxTopLevelWindow"))
-                m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#e7f4e4"));
+            {
+                if (UserPrefs.is_DarkMode())
+                    m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#386d2c"));
+                else
+                    m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#e7f4e4"));
+            }
 
             if (auto it = m_expansion_map.find(eventName); it != m_expansion_map.end())
             {
@@ -1895,11 +1908,17 @@ void PropGridPanel::CreatePropCategory(tt_string_view name, Node* node, NodeDecl
     else if (name.is_sameas("Bitmaps") || name.is_sameas("Command Bitmaps"))
     {
         m_prop_grid->Collapse(id);
-        m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#dce4ef"));
+        if (UserPrefs.is_DarkMode())
+            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#304869"));
+        else
+            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#dce4ef"));
     }
     else if (name.contains("Validator"))
     {
-        m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#fff1d2"));
+        if (UserPrefs.is_DarkMode())
+            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#996900"));
+        else
+            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#fff1d2"));
 
         // It's going to be rare to want a validator for these classes, so collapse the validator for them
         if (node->isGen(gen_wxButton) || node->isGen(gen_wxStaticText))
@@ -1907,7 +1926,10 @@ void PropGridPanel::CreatePropCategory(tt_string_view name, Node* node, NodeDecl
     }
     else if (name.contains("C++"))
     {
-        m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#ccccff"));  // Light blue
+        if (UserPrefs.is_DarkMode())
+            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#000099"));
+        else
+            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#ccccff"));  // Light blue
         if (Project.getCodePreference(node) != GEN_LANG_CPLUSPLUS)
         {
             m_prop_grid->Collapse(id);
@@ -1915,7 +1937,10 @@ void PropGridPanel::CreatePropCategory(tt_string_view name, Node* node, NodeDecl
     }
     else if (name.contains("XRC"))
     {
-        m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#ffe7b3"));  // Light yellow
+        if (UserPrefs.is_DarkMode())
+            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#996900"));
+        else
+            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#ffe7b3"));  // Light yellow
         if (Project.getCodePreference(node) != GEN_LANG_XRC)
         {
             m_prop_grid->Collapse(id);
@@ -1923,7 +1948,10 @@ void PropGridPanel::CreatePropCategory(tt_string_view name, Node* node, NodeDecl
     }
     else if (name.contains("wxPython"))
     {
-        m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#ccffcc"));  // Light green
+        if (UserPrefs.is_DarkMode())
+            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#009900"));
+        else
+            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#ccffcc"));  // Light green
         if (Project.getCodePreference(node) != GEN_LANG_PYTHON)
         {
             m_prop_grid->Collapse(id);
@@ -1931,7 +1959,10 @@ void PropGridPanel::CreatePropCategory(tt_string_view name, Node* node, NodeDecl
     }
     else if (name.contains("wxRuby"))
     {
-        m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#f8a9c7"));  // Ruby
+        if (UserPrefs.is_DarkMode())
+            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#8e0b3d"));
+        else
+            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#f8a9c7"));  // Ruby
         if (Project.getCodePreference(node) != GEN_LANG_RUBY)
         {
             m_prop_grid->Collapse(id);
@@ -1939,7 +1970,10 @@ void PropGridPanel::CreatePropCategory(tt_string_view name, Node* node, NodeDecl
     }
     else if (name.contains("wxGo"))
     {
-        m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#66e0ff"));  // Light Gopher Blue
+        if (UserPrefs.is_DarkMode())
+            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#007a99"));
+        else
+            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#66e0ff"));  // Light Gopher Blue
         if (Project.getCodePreference(node) != GEN_LANG_GOLANG)
         {
             m_prop_grid->Collapse(id);
@@ -1947,7 +1981,10 @@ void PropGridPanel::CreatePropCategory(tt_string_view name, Node* node, NodeDecl
     }
     else if (name.contains("wxLua"))
     {
-        m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#bf80ff"));  // light purple
+        if (UserPrefs.is_DarkMode())
+            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#4d0099"));
+        else
+            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#bf80ff"));  // light purple
         if (Project.getCodePreference(node) != GEN_LANG_LUA)
         {
             m_prop_grid->Collapse(id);
@@ -1955,7 +1992,10 @@ void PropGridPanel::CreatePropCategory(tt_string_view name, Node* node, NodeDecl
     }
     else if (name.contains("wxPerl"))
     {
-        m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#eae0c8"));  // Pearl
+        if (UserPrefs.is_DarkMode())
+            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#6f5a2a"));
+        else
+            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#eae0c8"));  // Pearl
         if (Project.getCodePreference(node) != GEN_LANG_PERL)
         {
             m_prop_grid->Collapse(id);
@@ -1963,7 +2003,10 @@ void PropGridPanel::CreatePropCategory(tt_string_view name, Node* node, NodeDecl
     }
     else if (name.contains("wxRust"))
     {
-        m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#f49871"));  // Light Rust
+        if (UserPrefs.is_DarkMode())
+            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#8e320b"));
+        else
+            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#f49871"));  // Light Rust
         if (Project.getCodePreference(node) != GEN_LANG_RUST)
         {
             m_prop_grid->Collapse(id);
@@ -2062,7 +2105,10 @@ void PropGridPanel::CreateLayoutCategory(Node* node)
 
     m_prop_grid->Expand(id);
 
-    m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#e1f3f8"));
+    if (UserPrefs.is_DarkMode())
+        m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#1d677c"));
+    else
+        m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#e1f3f8"));
 }
 
 void PropGridPanel::CreateEventCategory(tt_string_view name, Node* node, NodeDeclaration* declaration, EventSet& event_set)

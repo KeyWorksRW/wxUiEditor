@@ -104,6 +104,10 @@ public:
     PREVIEW_TYPE GetPreviewType() const { return m_preview_type; }
     void SetPreviewType(PREVIEW_TYPE type) { m_preview_type = type; }
 
+    // The returned colour will depend on whether dark mode (and high contrast) is enabled or
+    // not.
+    wxColour GetColour(wxSystemColour index);
+
     // clang-format off
     enum : long
     {
@@ -155,3 +159,10 @@ private:
 };
 
 extern Prefs& UserPrefs;
+
+// These are utiltiy functions for converting colors
+
+void wxColourToHSL(const wxColour& colour, double& hue, double& saturation, double& luminance);
+wxColour HSLToWxColour(double hue, double saturation, double luminance);
+wxColour wxColourToDarkForeground(const wxColour& colour);
+wxColour wxColourToDarkBackground(const wxColour& colour);

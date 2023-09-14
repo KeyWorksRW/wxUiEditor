@@ -1519,8 +1519,33 @@ void DialogBlocks::ProcessMisc(pugi::xml_node& node_xml, const NodeSharedPtr& no
                     break;
             }
         }
+        else if (name == "Field widths")
+        {
+            auto width_value = ExtractQuotedString(string_xml);
+            tt_string_vector widths(width_value, ',');
+            tt_string_vector fields(node->as_string(prop_fields), ';');
+            size_t pos = 0;
+            for (auto& iter: widths)
+            {
+                if (fields.size() < pos + 1)
+                {
+                    fields.push_back("wxSB_NORMAL");
                 }
+                if (!fields[pos].starts_with("wxSB_"))
+                {
+                    fields[pos] = "wxSB_NORMAL";
+                }
+                fields[pos] << '|' << iter;
+                ++pos;
             }
+            tt_string new_fields;
+            for (auto& iter: fields)
+            {
+                if (new_fields.size())
+                    new_fields << ';';
+                new_fields << iter;
+            }
+            node->set_value(prop_fields, new_fields);
         }
     }
 
@@ -1559,6 +1584,14 @@ void DialogBlocks::ProcessMisc(pugi::xml_node& node_xml, const NodeSharedPtr& no
                                 size.x = string_xml.text().as_int();
                             node->set_value(prop_empty_cell_size, size);
                         }
+                        break;
+
+                    case prop_fields:
+                        if (!node->hasValue(prop_fields))
+                        {
+                            node->set_value(prop_fields, string_xml.text().as_string());
+                        }
+                        // It will have a value already if Field Widths has been processed
                         break;
 
                     default:

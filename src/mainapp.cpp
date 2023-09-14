@@ -16,10 +16,6 @@
 #include <wx/sysopt.h>   // wxSystemOptions
 #include <wx/utils.h>    // Miscellaneous utilities
 
-#if wxCHECK_VERSION(3, 3, 0) && defined(_WIN32)
-    #include "dark_settings.h"
-#endif
-
 #include "mainapp.h"
 
 #include "bitmaps.h"          // Contains various images handling functions
@@ -79,7 +75,17 @@ wxIMPLEMENT_APP(App);
 #endif  // _WIN32 && defined(_DEBUG)
 
 tt_string tt_empty_cstr;
-DarkSettings* DarkModeSettings;
+
+#if wxCHECK_VERSION(3, 3, 0) && defined(_WIN32)
+    #include <wx/msw/darkmode.h>
+
+class DarkSettings : public wxDarkModeSettings
+{
+public:
+    wxColour GetColour(wxSystemColour index) { return UserPrefs.GetColour(index); }
+};
+
+#endif
 
 App::App() {}
 
@@ -132,7 +138,7 @@ bool App::OnInit()
     // colors in our property sheet and scintilla code displays.
     if (UserPrefs.is_DarkMode())
     {
-        DarkModeSettings = new DarkSettings;
+        auto* DarkModeSettings = new DarkSettings;
         MSWEnableDarkMode(0, DarkModeSettings);
     }
 #endif

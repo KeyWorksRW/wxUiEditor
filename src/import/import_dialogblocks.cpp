@@ -1619,7 +1619,11 @@ void DialogBlocks::ProcessMisc(pugi::xml_node& node_xml, const NodeSharedPtr& no
     }
 }
 
+#if defined(INTERNAL_TESTING)
 tt_string DialogBlocks::GatherErrorDetails(pugi::xml_node& xml_node, GenEnum::GenName getGenName)
+#else
+tt_string DialogBlocks::GatherErrorDetails(pugi::xml_node& /* xml_node */, GenEnum::GenName /* getGenName */)
+#endif
 {
 #if defined(INTERNAL_TESTING)
     tt_string msg = "Name: ";

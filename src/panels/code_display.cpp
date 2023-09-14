@@ -9,10 +9,6 @@
 #include <wx/fdrepdlg.h>     // wxFindReplaceDialog class
 #include <wx/msgdlg.h>       // common header and base class for wxMessageDialog
 
-#if wxCHECK_VERSION(3, 3, 0) && defined(_WIN32)
-    #include "dark_settings.h"
-#endif
-
 #include "code_display.h"  // auto-generated: wxui/codedisplay_base.h and wxui/codedisplay_base.cpp
 
 #include "base_panel.h"      // BasePanel -- Code generation panel
@@ -57,8 +53,8 @@ CodeDisplay::CodeDisplay(wxWindow* parent, int panel_type) : CodeDisplayBase(par
         m_scintilla->StyleSetBold(wxSTC_H_TAG, true);
         if (UserPrefs.is_DarkMode())
         {
-            auto fg = DarkModeSettings->GetColour(wxSYS_COLOUR_WINDOWTEXT);
-            auto bg = DarkModeSettings->GetColour(wxSYS_COLOUR_WINDOW);
+            auto fg = UserPrefs.GetColour(wxSYS_COLOUR_WINDOWTEXT);
+            auto bg = UserPrefs.GetColour(wxSYS_COLOUR_WINDOW);
             for (int idx = 0; idx <= wxSTC_STYLE_LASTPREDEFINED; idx++)
             {
                 m_scintilla->StyleSetForeground(idx, fg);
@@ -112,8 +108,8 @@ CodeDisplay::CodeDisplay(wxWindow* parent, int panel_type) : CodeDisplayBase(par
 
         if (UserPrefs.is_DarkMode())
         {
-            auto fg = DarkModeSettings->GetColour(wxSYS_COLOUR_WINDOWTEXT);
-            auto bg = DarkModeSettings->GetColour(wxSYS_COLOUR_WINDOW);
+            auto fg = UserPrefs.GetColour(wxSYS_COLOUR_WINDOWTEXT);
+            auto bg = UserPrefs.GetColour(wxSYS_COLOUR_WINDOW);
             for (int idx = 0; idx <= wxSTC_STYLE_LASTPREDEFINED; idx++)
             {
                 m_scintilla->StyleSetForeground(idx, fg);
@@ -176,8 +172,8 @@ CodeDisplay::CodeDisplay(wxWindow* parent, int panel_type) : CodeDisplayBase(par
 
         if (UserPrefs.is_DarkMode())
         {
-            auto fg = DarkModeSettings->GetColour(wxSYS_COLOUR_WINDOWTEXT);
-            auto bg = DarkModeSettings->GetColour(wxSYS_COLOUR_WINDOW);
+            auto fg = UserPrefs.GetColour(wxSYS_COLOUR_WINDOWTEXT);
+            auto bg = UserPrefs.GetColour(wxSYS_COLOUR_WINDOW);
             for (int idx = 0; idx <= wxSTC_STYLE_LASTPREDEFINED; idx++)
             {
                 m_scintilla->StyleSetForeground(idx, fg);
@@ -232,8 +228,8 @@ CodeDisplay::CodeDisplay(wxWindow* parent, int panel_type) : CodeDisplayBase(par
 
         if (UserPrefs.is_DarkMode())
         {
-            auto fg = DarkModeSettings->GetColour(wxSYS_COLOUR_WINDOWTEXT);
-            auto bg = DarkModeSettings->GetColour(wxSYS_COLOUR_WINDOW);
+            auto fg = UserPrefs.GetColour(wxSYS_COLOUR_WINDOWTEXT);
+            auto bg = UserPrefs.GetColour(wxSYS_COLOUR_WINDOW);
             for (int idx = 0; idx <= wxSTC_STYLE_LASTPREDEFINED; idx++)
             {
                 m_scintilla->StyleSetForeground(idx, fg);
@@ -296,8 +292,8 @@ CodeDisplay::CodeDisplay(wxWindow* parent, int panel_type) : CodeDisplayBase(par
 
         if (UserPrefs.is_DarkMode())
         {
-            auto fg = DarkModeSettings->GetColour(wxSYS_COLOUR_WINDOWTEXT);
-            auto bg = DarkModeSettings->GetColour(wxSYS_COLOUR_WINDOW);
+            auto fg = UserPrefs.GetColour(wxSYS_COLOUR_WINDOWTEXT);
+            auto bg = UserPrefs.GetColour(wxSYS_COLOUR_WINDOW);
             for (int idx = 0; idx <= wxSTC_STYLE_LASTPREDEFINED; idx++)
             {
                 m_scintilla->StyleSetForeground(idx, fg);
@@ -358,8 +354,8 @@ CodeDisplay::CodeDisplay(wxWindow* parent, int panel_type) : CodeDisplayBase(par
 
         if (UserPrefs.is_DarkMode())
         {
-            auto fg = DarkModeSettings->GetColour(wxSYS_COLOUR_WINDOWTEXT);
-            auto bg = DarkModeSettings->GetColour(wxSYS_COLOUR_WINDOW);
+            auto fg = UserPrefs.GetColour(wxSYS_COLOUR_WINDOWTEXT);
+            auto bg = UserPrefs.GetColour(wxSYS_COLOUR_WINDOW);
             for (int idx = 0; idx <= wxSTC_STYLE_LASTPREDEFINED; idx++)
             {
                 m_scintilla->StyleSetForeground(idx, fg);
@@ -412,8 +408,8 @@ CodeDisplay::CodeDisplay(wxWindow* parent, int panel_type) : CodeDisplayBase(par
 
         if (UserPrefs.is_DarkMode())
         {
-            auto fg = DarkModeSettings->GetColour(wxSYS_COLOUR_WINDOWTEXT);
-            auto bg = DarkModeSettings->GetColour(wxSYS_COLOUR_WINDOW);
+            auto fg = UserPrefs.GetColour(wxSYS_COLOUR_WINDOWTEXT);
+            auto bg = UserPrefs.GetColour(wxSYS_COLOUR_WINDOW);
             for (int idx = 0; idx <= wxSTC_STYLE_LASTPREDEFINED; idx++)
             {
                 m_scintilla->StyleSetForeground(idx, fg);
@@ -468,8 +464,8 @@ CodeDisplay::CodeDisplay(wxWindow* parent, int panel_type) : CodeDisplayBase(par
         // First set all possible foreground/background colours
         if (UserPrefs.is_DarkMode())
         {
-            auto fg = DarkModeSettings->GetColour(wxSYS_COLOUR_WINDOWTEXT);
-            auto bg = DarkModeSettings->GetColour(wxSYS_COLOUR_WINDOW);
+            auto fg = UserPrefs.GetColour(wxSYS_COLOUR_WINDOWTEXT);
+            auto bg = UserPrefs.GetColour(wxSYS_COLOUR_WINDOW);
             for (int idx = 0; idx <= wxSTC_STYLE_LASTPREDEFINED; idx++)
             {
                 m_scintilla->StyleSetForeground(idx, fg);

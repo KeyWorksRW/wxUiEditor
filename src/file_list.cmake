@@ -11,7 +11,6 @@ set (file_list
     bitmaps.cpp           # Map of bitmaps accessed by name
     clipboard.cpp         # Handles reading and writing OS clipboard data
     cstm_event.cpp        # Custom Event handling
-    dark_settings.cpp     # Dark Settings class
     frame_status_bar.cpp  # MainFrame status bar functions
     gen_enums.cpp         # Enumerations for generators
     paths.cpp             # Handles *_directory properties

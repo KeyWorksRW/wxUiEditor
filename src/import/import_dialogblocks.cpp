@@ -831,7 +831,7 @@ constexpr auto set_modes = frozen::make_set<std::string_view>({
 constexpr auto set_listbox_types = frozen::make_set<std::string_view>({
     "wxLB_SINGLE",
     "wxLB_MULTIPLE",
-    "wxLB_EXTENDED_LIST",
+    "wxLB_EXTENDED",
 });
 
 // These are used to set prop_style
@@ -905,6 +905,8 @@ constexpr auto set_styles = frozen::make_set<std::string_view>({
 
     "wxTBK_HORZ_LAYOUT",
 
+    "wxCB_SIMPLE",
+    "wxCB_DROPDOWN",
     "wxCB_READONLY",
     "wxCB_SORT",
 

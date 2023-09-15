@@ -386,6 +386,15 @@ bool Node::createToolNode(GenName name)
             wxGetFrame().FirePropChangeEvent(new_node->getPropPtr(prop_id));
             break;
 
+        case gen_wxSplitterWindow:
+            if (auto sizer = new_node->getParent(); sizer->isSizer())
+            {
+                // Set a default width that is large enough to see
+                new_node->set_value(prop_size, "200,-1d");
+                wxGetFrame().FirePropChangeEvent(new_node->getPropPtr(prop_size));
+            }
+            break;
+
         default:
             break;
     }

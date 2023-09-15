@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Dialog for inserting an item into a wxGridBagSizer node
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2021 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2021-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -28,6 +28,9 @@ public:
     auto GetColumnSpan() const { return m_column_span; }
     auto GetRowSpan() const { return m_row_span; }
 
+    void SetGbSizer(Node* gbsizer) { m_gbsizer = gbsizer; }
+    void SetNewNode(Node* new_node) { m_new_node = new_node; }
+
     auto GetAction() const { return m_action; }
 
 protected:
@@ -39,6 +42,7 @@ protected:
 
 private:
     Node* m_gbsizer { nullptr };
+    Node* m_new_node { nullptr };
 
     int m_column;
     int m_row;

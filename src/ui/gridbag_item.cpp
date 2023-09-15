@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Dialog for inserting an item into a wxGridBagSizer node
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2021 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2021-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -17,7 +17,14 @@ GridBagItem::GridBagItem(wxWindow* parent) : GridBagItemBase(parent) {}
 
 void GridBagItem::OnInit(wxInitDialogEvent& WXUNUSED(event))
 {
-    if (auto cur_node = wxGetFrame().getSelectedNode(); cur_node && !cur_node->isGen(gen_Project))
+    if (m_gbsizer)
+    {
+        GridBag gb(m_gbsizer);
+        m_max_column = gb.GetMaxColumn();
+        m_max_row = gb.GetMaxRow();
+        m_spin_row->SetValue(m_max_row + 1);
+    }
+    else if (auto cur_node = wxGetFrame().getSelectedNode(); cur_node && !cur_node->isGen(gen_Project))
     {
         if (cur_node->isGen(gen_wxGridBagSizer))
         {

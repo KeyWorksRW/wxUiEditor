@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Create and modify a node containing a wxGridBagSizer
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2021 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2021-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -9,11 +9,12 @@
 
 #include "node_gridbag.h"  // GridBag class
 
-#include "gridbag_item.h"  // GridBagItem -- Dialog for inserting an item into a wxGridBagSizer node
-#include "mainapp.h"       // App -- Main application class
-#include "mainframe.h"     // Main window frame
-#include "node.h"          // Node class
-#include "undo_cmds.h"     // Undoable command classes derived from UndoAction
+#include "../panels/nav_panel.h"  // NavigationPanel -- Navigation Panel
+#include "gridbag_item.h"         // GridBagItem -- Dialog for inserting an item into a wxGridBagSizer node
+#include "mainapp.h"              // App -- Main application class
+#include "mainframe.h"            // Main window frame
+#include "node.h"                 // Node class
+#include "undo_cmds.h"            // Undoable command classes derived from UndoAction
 
 GridBag::GridBag(Node* node_gridbag) : m_gridbag(node_gridbag)
 {
@@ -47,7 +48,7 @@ void GridBag::Initialize()
 
 bool GridBag::InsertNode(Node* gbsizer, Node* new_node)
 {
-    GridBagItem dlg(wxGetMainFrame());
+    GridBagItem dlg(wxGetMainFrame()->getNavigationPanel());
     if (dlg.ShowModal() != wxID_OK)
         return false;
 

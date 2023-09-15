@@ -592,7 +592,8 @@ void CodeDisplay::CodeGenerationComplete()
 
 void CodeDisplay::OnNodeSelected(Node* node)
 {
-    if (!node->hasProp(prop_var_name) && m_panel_type != GEN_LANG_XRC)
+    if (!node->hasProp(prop_var_name) && m_panel_type != GEN_LANG_XRC && !node->isGen(gen_ribbonTool) &&
+        !node->isGen(gen_ribbonButton))
     {
         return;  // probably a form, spacer, or image
     }
@@ -607,15 +608,16 @@ void CodeDisplay::OnNodeSelected(Node* node)
 
     tt_string name(" ");
 
+    int language = GEN_LANG_CPLUSPLUS;
+    if (m_panel_type == GEN_LANG_PYTHON)
+        language = GEN_LANG_PYTHON;
+    else if (m_panel_type == GEN_LANG_RUBY)
+        language = GEN_LANG_RUBY;
+
+    Code code(node, language);
+
     if (page == CPP_PANEL)
     {
-        int language = GEN_LANG_CPLUSPLUS;
-        if (m_panel_type == GEN_LANG_PYTHON)
-            language = GEN_LANG_PYTHON;
-        else if (m_panel_type == GEN_LANG_RUBY)
-            language = GEN_LANG_RUBY;
-
-        Code code(node, language);
         code.NodeName();
         name << code.GetCode();
     }
@@ -666,22 +668,58 @@ void CodeDisplay::OnNodeSelected(Node* node)
     }
     else
     {
-        if (page == CPP_PANEL)
+        if (node->isGen(gen_tool) || node->isGen(gen_auitool) || node->isGen(gen_ribbonTool) ||
+            node->isGen(gen_ribbonButton))
         {
-            name << " = ";
-            line = (to_int) m_view.FindLineContaining(name);
-        }
-        else
-        {
-            if (node->getForm()->as_bool(prop_generate_translation_unit))
+            if (node->hasValue(prop_bitmap))
             {
-                name << node->as_string(prop_var_name) << ";";
+                tt_view_vector parts(node->as_string(prop_bitmap), BMP_PROP_SEPARATOR, tt::TRIM::both);
+                if (parts.size() && parts[IndexImage].size())
+                {
+                    if (auto result = ProjectImages.FileNameToVarName(parts[IndexImage]); result)
+                    {
+                        code.clear();
+                        code.Function(node->isGen(gen_ribbonButton) ? "AddButton" : "AddTool");
+                        line = (to_int) m_view.FindLineContaining(code.GetCode());
+                        if (tt::is_found(line))
+                        {
+                            line = (to_int) m_view.FindLineContaining(*result, line);
+                        }
+                    }
+                }
+            }
+
+            if (!tt::is_found(line) && node->hasValue(prop_label))
+            {
+                code.clear();
+                code.Function("AddTool");
+                line = (to_int) m_view.FindLineContaining(code.GetCode());
+                if (tt::is_found(line))
+                {
+                    line = (to_int) m_view.FindLineContaining(node->as_string(prop_label), line);
+                }
+            }
+        }
+
+        if (!tt::is_found(line))
+        {
+            if (page == CPP_PANEL)
+            {
+                name << " = ";
                 line = (to_int) m_view.FindLineContaining(name);
             }
             else
             {
-                name << node->as_string(prop_var_name) << " = ";
-                line = (to_int) m_view.FindLineContaining(name);
+                if (node->getForm()->as_bool(prop_generate_translation_unit))
+                {
+                    name << node->as_string(prop_var_name) << ";";
+                    line = (to_int) m_view.FindLineContaining(name);
+                }
+                else
+                {
+                    name << node->as_string(prop_var_name) << " = ";
+                    line = (to_int) m_view.FindLineContaining(name);
+                }
             }
         }
     }

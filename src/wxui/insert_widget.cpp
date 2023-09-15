@@ -142,6 +142,11 @@ void InsertWidget::OnNameText(wxCommandEvent& WXUNUSED(event))
     m_listbox->Clear();
     auto node = wxGetFrame().getSelectedNode();
 
+    if (node->isType(type_widget))
+    {
+        node = node->getParent();
+    }
+
     for (auto iter: NodeCreation.getNodeDeclarationArray())
     {
         if (!iter)

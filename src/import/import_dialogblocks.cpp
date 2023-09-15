@@ -228,6 +228,14 @@ bool DialogBlocks::CreateFormNode(pugi::xml_node& form_xml, const NodeSharedPtr&
                 {
                     getGenName = gen_PanelForm;
                 }
+                else if (base_class = form_xml.find_child_by_attribute("string", "name", "proxy-Window kind"); base_class)
+                {
+                    base_name = ExtractQuotedString(base_class);
+                    if (base_name == "wxPanel")
+                    {
+                        getGenName = gen_PanelForm;
+                    }
+                }
             }
         }
 

@@ -831,7 +831,7 @@ constexpr auto set_modes = frozen::make_set<std::string_view>({
 constexpr auto set_listbox_types = frozen::make_set<std::string_view>({
     "wxLB_SINGLE",
     "wxLB_MULTIPLE",
-    "wxLB_EXTENDED_LIST",
+    "wxLB_EXTENDED",
 });
 
 // These are used to set prop_style
@@ -905,6 +905,8 @@ constexpr auto set_styles = frozen::make_set<std::string_view>({
 
     "wxTBK_HORZ_LAYOUT",
 
+    "wxCB_SIMPLE",
+    "wxCB_DROPDOWN",
     "wxCB_READONLY",
     "wxCB_SORT",
 
@@ -1440,83 +1442,110 @@ void DialogBlocks::ProcessMisc(pugi::xml_node& node_xml, const NodeSharedPtr& no
         auto name = string_xml.attribute("name").as_sview();
         if (name.starts_with("proxy-"))
             name.remove_prefix(sizeof("proxy-") - 1);
+        auto str = ExtractQuotedString(string_xml);
+        if (str.empty())
+            continue;
         if (auto result = map_proxy_names.find(name); result != map_proxy_names.end())
         {
-            auto str = ExtractQuotedString(string_xml);
-            if (str.size())
+            switch (result->second)
             {
-                switch (result->second)
-                {
-                    case prop_contents:
+                case prop_contents:
+                    {
+                        tt_string_vector multi(str, '|');
+                        str.clear();
+                        for (auto& iter: multi)
                         {
-                            tt_string_vector multi(str, '|');
-                            str.clear();
-                            for (auto& iter: multi)
-                            {
-                                if (str.size())
-                                    str << ' ';
-                                str << '"' << iter << '"';
-                            }
-                            if (auto prop = node->getPropPtr(result->second); prop)
-                            {
-                                prop->set_value(str);
-                            }
+                            if (str.size())
+                                str << ' ';
+                            str << '"' << iter << '"';
                         }
-                        break;
-
-                    case prop_value:
-                        if (node->isGen(gen_wxChoice) || node->isGen(gen_wxComboBox) || node->isGen(gen_wxListBox) ||
-                            node->isGen(gen_wxBitmapComboBox))
-                        {
-                            node->set_value(prop_selection_string, str);
-                        }
-                        else if (auto prop = node->getPropPtr(result->second); prop)
-                        {
-                            prop->set_value(str);
-                        }
-                        else if (node->isGen(gen_wxRadioBox))
-                        {
-                            node->set_value(prop_selection, str);
-                        }
-                        break;
-
-                    case prop_selection_mode:
-                        if (str == "Cells")
-                            node->set_value(prop_selection_mode, "wxGridSelectCells");
-                        else if (str == "Rows")
-                            node->set_value(prop_selection_mode, "wxGridSelectCells");
-                        else if (str == "Columns")
-                            node->set_value(prop_selection_mode, "wxGridSelectRows");
-                        break;
-
-                    case prop_kind:
-                        if (str == "Normal")
-                            node->set_value(prop_selection_mode, "wxITEM_NORMAL");
-                        else if (str == "Check")
-                            node->set_value(prop_selection_mode, "wxITEM_CHECK");
-                        else if (str == "Radio")
-                            node->set_value(prop_selection_mode, "wxITEM_RADIO");
-                        else if (str == "Dropdown")
-                            node->set_value(prop_selection_mode, "wxITEM_DROPDOWN");
-                        break;
-
-                    case prop_background_colour:
-                    case prop_foreground_colour:
-                    case prop_hover_color:
-                    case prop_normal_color:
-                    case prop_visited_color:
-                        str.insert(0, "#");
-                        node->set_value(result->second, str);
-                        break;
-
-                    default:
                         if (auto prop = node->getPropPtr(result->second); prop)
                         {
                             prop->set_value(str);
                         }
-                        break;
-                }
+                    }
+                    break;
+
+                case prop_value:
+                    if (node->isGen(gen_wxChoice) || node->isGen(gen_wxComboBox) || node->isGen(gen_wxListBox) ||
+                        node->isGen(gen_wxBitmapComboBox))
+                    {
+                        node->set_value(prop_selection_string, str);
+                    }
+                    else if (auto prop = node->getPropPtr(result->second); prop)
+                    {
+                        prop->set_value(str);
+                    }
+                    else if (node->isGen(gen_wxRadioBox))
+                    {
+                        node->set_value(prop_selection, str);
+                    }
+                    break;
+
+                case prop_selection_mode:
+                    if (str == "Cells")
+                        node->set_value(prop_selection_mode, "wxGridSelectCells");
+                    else if (str == "Rows")
+                        node->set_value(prop_selection_mode, "wxGridSelectCells");
+                    else if (str == "Columns")
+                        node->set_value(prop_selection_mode, "wxGridSelectRows");
+                    break;
+
+                case prop_kind:
+                    if (str == "Normal")
+                        node->set_value(prop_selection_mode, "wxITEM_NORMAL");
+                    else if (str == "Check")
+                        node->set_value(prop_selection_mode, "wxITEM_CHECK");
+                    else if (str == "Radio")
+                        node->set_value(prop_selection_mode, "wxITEM_RADIO");
+                    else if (str == "Dropdown")
+                        node->set_value(prop_selection_mode, "wxITEM_DROPDOWN");
+                    break;
+
+                case prop_background_colour:
+                case prop_foreground_colour:
+                case prop_hover_color:
+                case prop_normal_color:
+                case prop_visited_color:
+                    str.insert(0, "#");
+                    node->set_value(result->second, str);
+                    break;
+
+                default:
+                    if (auto prop = node->getPropPtr(result->second); prop)
+                    {
+                        prop->set_value(str);
+                    }
+                    break;
             }
+        }
+        else if (name == "Field widths")
+        {
+            auto width_value = ExtractQuotedString(string_xml);
+            tt_string_vector widths(width_value, ',');
+            tt_string_vector fields(node->as_string(prop_fields), ';');
+            size_t pos = 0;
+            for (auto& iter: widths)
+            {
+                if (fields.size() < pos + 1)
+                {
+                    fields.push_back("wxSB_NORMAL");
+                }
+                if (!fields[pos].starts_with("wxSB_"))
+                {
+                    fields[pos] = "wxSB_NORMAL";
+                }
+                fields[pos] << '|' << iter;
+                ++pos;
+            }
+            tt_string new_fields;
+            for (auto& iter: fields)
+            {
+                if (new_fields.size())
+                    new_fields << ';';
+                new_fields << iter;
+            }
+            node->set_value(prop_fields, new_fields);
         }
     }
 
@@ -1555,6 +1584,14 @@ void DialogBlocks::ProcessMisc(pugi::xml_node& node_xml, const NodeSharedPtr& no
                                 size.x = string_xml.text().as_int();
                             node->set_value(prop_empty_cell_size, size);
                         }
+                        break;
+
+                    case prop_fields:
+                        if (!node->hasValue(prop_fields))
+                        {
+                            node->set_value(prop_fields, string_xml.text().as_string());
+                        }
+                        // It will have a value already if Field Widths has been processed
                         break;
 
                     default:
@@ -1615,7 +1652,11 @@ void DialogBlocks::ProcessMisc(pugi::xml_node& node_xml, const NodeSharedPtr& no
     }
 }
 
+#if defined(INTERNAL_TESTING)
 tt_string DialogBlocks::GatherErrorDetails(pugi::xml_node& xml_node, GenEnum::GenName getGenName)
+#else
+tt_string DialogBlocks::GatherErrorDetails(pugi::xml_node& /* xml_node */, GenEnum::GenName /* getGenName */)
+#endif
 {
 #if defined(INTERNAL_TESTING)
     tt_string msg = "Name: ";

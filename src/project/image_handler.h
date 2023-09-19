@@ -91,6 +91,9 @@ public:
     // If there is an Image form containing this bundle, return it's name
     tt_string GetBundleFuncName(const tt_string& description);
 
+    // If there is an Image form containing this bundle, return it's name
+    tt_string GetBundleFuncName(const tt_string_vector& parts);
+
     ImageBundle* ProcessBundleProperty(const tt_string_vector& parts, Node* node);
 
     inline ImageBundle* ProcessBundleProperty(const tt_string& description, Node* node)

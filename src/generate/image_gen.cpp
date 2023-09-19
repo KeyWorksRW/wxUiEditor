@@ -497,7 +497,6 @@ void GenerateRibbonBitmapCode(Code& code, const tt_string& description)
         }
     }
 }
-
 // clang-format off
 
 inline constexpr const auto txt_wxueImageFunction = R"===(
@@ -738,4 +737,149 @@ void AddPythonImageName(Code& code, const EmbeddedImage* embed)
         code.Str(import_name).Str(".");
     }
     code.Str(embed->array_name);
+}
+
+static void GenerateSVGBundle(Code& code, const tt_string_vector& parts, bool get_bitmap);
+
+// get_bitmap will be set to true when adding a too to a wxRibbonBar which doesn't support
+// wxBitmapBundle (as of 3.3.0)
+void GenerateBundleParameter(Code& code, const tt_string& description, bool get_bitmap)
+{
+    if (description.empty())
+    {
+        code.Add("wxNullBitmap");
+        return;
+    }
+
+    tt_string_vector parts(description, BMP_PROP_SEPARATOR, tt::TRIM::both);
+
+    if (parts.size() <= 1 || parts[IndexImage].empty())
+    {
+        code.Add("wxNullBitmap");
+        return;
+    }
+
+    if (parts[IndexType].starts_with("SVG"))
+    {
+        if (code.is_cpp() && Project.as_string(prop_wxWidgets_version) == "3.1")
+        {
+            code += "wxNullBitmap";
+        }
+        else
+        {
+            GenerateSVGBundle(code, parts, get_bitmap);
+        }
+    }
+}
+
+void GenerateBundleParameter(Code& code, const tt_string_vector& parts, bool get_bitmap)
+{
+    ASSERT(parts.size() > 1 && parts[IndexImage].size())
+
+    if (parts[IndexType].starts_with("SVG"))
+    {
+        if (code.is_cpp() && Project.as_string(prop_wxWidgets_version) == "3.1")
+        {
+            code += "wxNullBitmap";
+        }
+        else
+        {
+            GenerateSVGBundle(code, parts, get_bitmap);
+        }
+    }
+}
+
+static void GenerateSVGBundle(Code& code, const tt_string_vector& parts, bool get_bitmap)
+{
+    ASSERT_MSG(!(code.is_cpp() && Project.as_string(prop_wxWidgets_version) == "3.1"),
+               "Don't call GenerateSVGBundle() if C++ and project file is set to 3.1")
+
+    wxSize svg_size { -1, -1 };
+    if (parts[IndexSize].size())
+    {
+        svg_size = GetSizeInfo(parts[IndexSize]);
+    }
+
+    if (code.is_cpp())
+    {
+        if (auto function_name = ProjectImages.GetBundleFuncName(parts); function_name.size())
+        {
+            code.Eol().Str(function_name).Comma().Str("FromDIP(wxSize(").itoa(svg_size.x).Comma().itoa(svg_size.y) += ")))";
+            if (get_bitmap)
+            {
+                code.Str(".").Add("GetBitmap(").Add("wxDefaultSize)");
+            }
+            return;
+        }
+    }
+
+    auto embed = ProjectImages.GetEmbeddedImage(parts[IndexImage]);
+    if (!embed)
+    {
+        FAIL_MSG(tt_string() << parts[IndexImage] << " not embedded!")
+        code.Add("wxNullBitmap");
+        return;
+    }
+
+    if (code.is_cpp())
+    {
+        tt_string name = "wxue_img::" + embed->array_name;
+        code.Eol() << "\twxueBundleSVG(" << name << ", " << (embed->array_size & 0xFFFFFFFF) << ", ";
+        code.itoa(embed->array_size >> 32).Comma();
+        if (get_bitmap)
+        {
+            code.FormFunction("FromDIP(").Add("wxSize(").itoa(svg_size.x).Comma().itoa(svg_size.y) += ")))";
+            code.Str(".").Add("GetBitmap(").Add("wxDefaultSize)");
+        }
+        else
+        {
+            code.Add("wxSize(").itoa(svg_size.x).Comma().itoa(svg_size.y) += "))";
+        }
+        return;
+    }
+    else if (code.is_python())
+    {
+        tt_string svg_name;
+
+        if (embed->form != code.node()->getForm())
+        {
+            svg_name = embed->form->as_string(prop_python_file).filename();
+            svg_name.remove_extension();
+            svg_name << '.' << embed->array_name;
+        }
+        else
+        {
+            svg_name = embed->array_name;
+        }
+        code.insert(0, tt_string("_svg_string_ = zlib.decompress(base64.b64decode(") << svg_name << "))\n");
+        code.Eol() += "\twx.BitmapBundle.FromSVG(_svg_string_";
+    }
+    if (get_bitmap)
+    {
+        code.Comma().Eol().Tab();
+        code.CheckLineLength(sizeof("FromDIP(wx::Size.new(32, 32))).GetBitmap(wxDefaultSize)")).FormFunction("FromDIP(");
+        if (code.is_ruby())
+        {
+            code.Add("Wx::Size.new(");
+        }
+        else
+        {
+            code.Add("wxSize(");
+        }
+        code.itoa(svg_size.x).Comma().itoa(svg_size.y) += ")))";
+        code.Str(".").Add("GetBitmap(").Add("wxDefaultSize)");
+    }
+    else
+    {
+        code.Comma();
+        if (code.is_ruby())
+        {
+            code.Add("Wx::Size.new(");
+        }
+        else
+        {
+            code.Add("wxSize(");
+        }
+        code.itoa(svg_size.x).Comma().itoa(svg_size.y) += "))";
+    }
 }

@@ -1226,7 +1226,7 @@ tt_string ImageHandler::GetBundleFuncName(const tt_string& description)
     {
         if (form->isGen(gen_Images))
         {
-            tt_view_vector parts(description, BMP_PROP_SEPARATOR, tt::TRIM::both);
+            tt_string_vector parts(description, BMP_PROP_SEPARATOR, tt::TRIM::both);
             if (parts.size() < 2)
             {
                 // caller's description does not include a filename
@@ -1243,7 +1243,54 @@ tt_string ImageHandler::GetBundleFuncName(const tt_string& description)
 
                 if (parts[0] == form_image_parts[0] && parts[1].filename() == form_image_parts[1].filename())
                 {
-                    if (auto bundle = GetPropertyImageBundle(description); bundle && bundle->lst_filenames.size())
+                    if (auto bundle = GetPropertyImageBundle(parts); bundle && bundle->lst_filenames.size())
+                    {
+                        auto embed = GetEmbeddedImage(bundle->lst_filenames[0]);
+                        if (embed->type == wxBITMAP_TYPE_INVALID)
+                        {
+                            name << "wxue_img::bundle_" << embed->array_name << "(";
+
+                            wxSize svg_size { -1, -1 };
+                            if (parts[IndexSize].size())
+                            {
+                                svg_size = GetSizeInfo(parts[IndexSize]);
+                            }
+                            name << svg_size.x << ", " << svg_size.y << ")";
+                        }
+                        else
+                        {
+                            name << "wxue_img::bundle_" << embed->array_name << "()";
+                        }
+                    }
+                    break;
+                }
+            }
+            break;
+        }
+    }
+
+    return name;
+}
+
+tt_string ImageHandler::GetBundleFuncName(const tt_string_vector& parts)
+{
+    tt_string name;
+
+    for (const auto& form: Project.getChildNodePtrs())
+    {
+        if (form->isGen(gen_Images))
+        {
+            for (const auto& child: form->getChildNodePtrs())
+            {
+                tt_string_vector form_image_parts(child->as_string(prop_bitmap), BMP_PROP_SEPARATOR, tt::TRIM::both);
+                if (form_image_parts.size() < 2)
+                {
+                    continue;
+                }
+
+                if (parts[0] == form_image_parts[0] && parts[1].filename() == form_image_parts[1].filename())
+                {
+                    if (auto bundle = GetPropertyImageBundle(parts); bundle && bundle->lst_filenames.size())
                     {
                         auto embed = GetEmbeddedImage(bundle->lst_filenames[0]);
                         if (embed->type == wxBITMAP_TYPE_INVALID)

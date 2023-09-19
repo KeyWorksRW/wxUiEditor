@@ -30,8 +30,8 @@ if (BUILD_CUSTOM AND BUILD_FORK)
 endif()
 
 if (BUILD_FORK)
-    set(BUILD_ROOT ${BUILD_FORK_DIR} CACHE PATH "${CMAKE_CURRENT_LIST_DIR}/../wxWidgets" FORCE)
-    message(NOTICE "Building with forked/cloned version of wxWidgets")
+    set(BUILD_ROOT ${BUILD_FORK_DIR} CACHE PATH "${CMAKE_CURRENT_LIST_DIR}/../../../wxWidgets" FORCE)
+    message(NOTICE "Building with forked/cloned version of wxWidgets: ${BUILD_ROOT}")
 elseif (BUILD_CUSTOM)
     set(BUILD_ROOT ${BUILD_CUSTOM_DIR} CACHE PATH "${CMAKE_CURRENT_LIST_DIR}/../" FORCE)
     message(NOTICE "Building with custom build of wxWidgets")
@@ -93,7 +93,6 @@ else()
     set (widget_dir ${CMAKE_CURRENT_LIST_DIR}/../../wxWidgets)
 endif()
 
-message(STATUS "widget_dir: ${widget_dir}")
 
 if (WIN32)
     if (BUILD_FORK)
@@ -109,6 +108,8 @@ else()
     endif()
 endif()
 
+message(STATUS "widget_dir: ${widget_dir}")
+
 ####################### Libraries and Executables #######################
 
 # Setting CMAKE_MODULE_PATH causes ninja to fail rebuilding until CMake re-generates. Specifying the full path and extension
@@ -118,8 +119,6 @@ include( cpp/file_list.cmake )  # This will set ${file_list} with a list of file
 list(TRANSFORM file_list PREPEND "${file_list_dir}/")
 
 add_executable(QuickTest WIN32
-    ${setup_dir}
-    ${widget_dir}/include
     ${file_list}
 )
 
@@ -151,8 +150,9 @@ endif()
 target_precompile_headers(QuickTest PRIVATE "cpp/pch.h")
 
 target_include_directories(QuickTest PRIVATE
+    # ${BUILD_ROOT}/include
+    ${CMAKE_CURRENT_LIST_DIR}/../../../wxWidgets/include
     ${setup_dir}
-    ${widget_dir}/include
     ${CMAKE_CURRENT_LIST_DIR}/cpp
 )
 

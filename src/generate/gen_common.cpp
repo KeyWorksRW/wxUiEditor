@@ -10,7 +10,7 @@
 #include "gen_common.h"
 
 #include "gen_base.h"         // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
-#include "image_handler.h"    // ProjectImage class
+#include "image_gen.h"        // Functions for generating embedded images
 #include "image_handler.h"    // ImageHandler class
 #include "lambdas.h"          // Functions for formatting and storage of lamda events
 #include "node.h"             // Node class
@@ -1234,37 +1234,69 @@ void GenToolCode(Code& code, const bool is_bitmaps_list)
         {
             code.Add("wxNullBitmap");
         }
-        else if (code.is_cpp())
+        else
         {
-            if (Project.as_string(prop_wxWidgets_version) == "3.1")
-            {
-                code.Eol() += "#if wxCHECK_VERSION(3, 1, 6)\n\t";
-            }
+            tt_string_vector parts(node->as_string(prop_bitmap), BMP_PROP_SEPARATOR, tt::TRIM::both);
 
-            tt_string bundle_code;
-            GenerateBundleCode(node->as_string(prop_bitmap), bundle_code);
-            code.CheckLineLength(bundle_code.size());
-            code += bundle_code;
-
-            if (Project.as_string(prop_wxWidgets_version) == "3.1")
+            if (parts.size() <= 1 || parts[IndexImage].empty())
             {
-                code.Eol() += "#else\n\t";
-                code << "wxBitmap(" << GenerateBitmapCode(node->as_string(prop_bitmap)) << ")";
-                code.Eol() += "#endif";
-                code.Eol();
+                code.Add("wxNullBitmap");
             }
             else
             {
-                code.CheckLineLength();
+                if (parts[IndexType].contains("SVG"))
+                {
+                    if (code.is_cpp() && Project.as_string(prop_wxWidgets_version) == "3.1")
+                    {
+                        code.Eol() += "#if wxCHECK_VERSION(3, 1, 6)\n\t";
+                    }
+
+                    GenerateBundleParameter(code, parts);
+
+                    if (code.is_cpp() && Project.as_string(prop_wxWidgets_version) == "3.1")
+                    {
+                        code.Eol() += "#else\n\t";
+                        code << "wxBitmap(" << GenerateBitmapCode(node->as_string(prop_bitmap)) << ")";
+                        code.Eol() += "#endif";
+                        code.Eol();
+                    }
+                }
+                else
+                {
+                    if (code.is_cpp())
+                    {
+                        if (Project.as_string(prop_wxWidgets_version) == "3.1")
+                        {
+                            code.Eol() += "#if wxCHECK_VERSION(3, 1, 6)\n\t";
+                        }
+
+                        tt_string bundle_code;
+                        GenerateBundleCode(node->as_string(prop_bitmap), bundle_code);
+                        code.CheckLineLength(bundle_code.size());
+                        code += bundle_code;
+
+                        if (Project.as_string(prop_wxWidgets_version) == "3.1")
+                        {
+                            code.Eol() += "#else\n\t";
+                            code << "wxBitmap(" << GenerateBitmapCode(node->as_string(prop_bitmap)) << ")";
+                            code.Eol() += "#endif";
+                            code.Eol();
+                        }
+                        else
+                        {
+                            code.CheckLineLength();
+                        }
+                    }
+                    else if (code.is_python() || code.is_ruby())
+                    {
+                        code.Bundle(prop_bitmap);
+                    }
+                    else
+                    {
+                        code.Add("wxNullBitmap");
+                    }
+                }
             }
-        }
-        else if (code.is_python() || code.is_ruby())
-        {
-            code.Bundle(prop_bitmap);
-        }
-        else
-        {
-            code.Add("wxNullBitmap");
         }
     }
 

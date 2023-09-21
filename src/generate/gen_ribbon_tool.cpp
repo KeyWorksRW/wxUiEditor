@@ -102,8 +102,10 @@ bool RibbonToolGenerator::ConstructionCode(Code& code)
 {
     code.ParentName().Function("AddTool(").as_string(prop_id);
     code.Comma();
-    // GenerateRibbonBitmapCode(code, code.node()->as_string(prop_bitmap));
-    GenerateBundleParameter(code, code.node()->as_string(prop_bitmap), true);
+
+    tt_string_vector parts(code.node()->as_string(prop_bitmap), BMP_PROP_SEPARATOR, tt::TRIM::both);
+    GenerateBundleParameter(code, parts, true);
+
     code.Comma().CheckLineLength(sizeof("wxEmptyString")).QuotedString(prop_help).Comma().Add(prop_kind).EndFunction();
 
     return true;

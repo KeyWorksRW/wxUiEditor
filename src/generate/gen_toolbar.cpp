@@ -504,22 +504,7 @@ void ToolBarGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>&
 
 bool ToolGenerator::ConstructionCode(Code& code)
 {
-    auto is_bitmaps_list = BitmapList(code, prop_bitmap);
-    GenToolCode(code, is_bitmaps_list);
-    if (is_bitmaps_list && code.is_cpp())
-    {
-        if (Project.as_string(prop_wxWidgets_version) == "3.1")
-        {
-            code.CloseBrace().Eol();
-            code.Add("#else").Eol();
-            GenToolCode(code, false);
-            code.Eol().Add("#endif").Eol();
-        }
-        else
-        {
-            code.CloseBrace().Eol();
-        }
-    }
+    GenToolCode(code);
 
     if (code.IsTrue(prop_disabled))
     {
@@ -552,32 +537,7 @@ int ToolGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_f
 
 bool ToolDropDownGenerator::ConstructionCode(Code& code)
 {
-    if (code.hasValue(prop_bitmap))
-    {
-        auto is_bitmaps_list = BitmapList(code, prop_bitmap);
-        bool uses_lambda = (code.is_cpp() && code.GetCode().ends_with("};\n"));
-        GenToolCode(code, is_bitmaps_list);
-        if (is_bitmaps_list && code.is_cpp())
-        {
-            if (!uses_lambda)
-            {
-                code.CloseBrace();
-            }
-            code.Eol();
-
-            if (Project.as_string(prop_wxWidgets_version) == "3.1")
-            {
-                code.Add("#else").Eol();
-                GenToolCode(code, false);
-                code.Eol().Add("#endif").Eol();
-            }
-        }
-    }
-    else
-    {
-        GenToolCode(code, false);
-    }
-
+    GenToolCode(code);
     return true;
 }
 

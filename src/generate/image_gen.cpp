@@ -215,288 +215,6 @@ void BaseCodeGenerator::WriteImageConstruction(Code& code)
         m_source = save_writer;
     }
 }
-
-// wxWidgets 3.2 does not support wxBitmapBundle in the wxRibbon classes, so we need to generate
-// loading a single bitmap.
-void GenerateRibbonBitmapCode(Code& code, const tt_string& description)
-{
-    if (description.empty())
-    {
-        code += "wxNullBitmap";
-        return;
-    }
-    tt_view_vector parts(description, BMP_PROP_SEPARATOR, tt::TRIM::both);
-
-    if (parts[IndexType].starts_with("SVG"))
-    {
-        wxSize svg_size { -1, -1 };
-        if (parts[IndexSize].size())
-        {
-            svg_size = GetSizeInfo(parts[IndexSize]);
-        }
-
-        if (code.is_cpp())
-        {
-            if (Project.as_string(prop_wxWidgets_version) == "3.1")
-            {
-                code += "wxNullBitmap /* SVG images require wxWidgets 3.1.6 */";
-                return;
-            }
-            if (auto function_name = ProjectImages.GetBundleFuncName(description); function_name.size())
-            {
-                code.Str(function_name).Comma().Str("FromDIP(wxSize(").itoa(svg_size.x).Comma().itoa(svg_size.y) += ")))";
-                code.Str(".").Add("GetBitmap(").Add("wxDefaultSize)");
-                return;
-            }
-        }
-
-        auto embed = ProjectImages.GetEmbeddedImage(parts[IndexImage]);
-        if (!embed)
-        {
-            FAIL_MSG(tt_string() << description << " not embedded!")
-            code << "wxNullBitmap";
-            return;
-        }
-
-        if (code.is_cpp())
-        {
-            tt_string name = "wxue_img::" + embed->array_name;
-            code << "wxueBundleSVG(" << name << ", " << (embed->array_size & 0xFFFFFFFF) << ", ";
-            code << (embed->array_size >> 32) << ", FromDIP(wxSize(" << svg_size.x << ", " << svg_size.y << ")))";
-            code.Str(".").Add("GetBitmap(").Add("wxDefaultSize)");
-            return;
-        }
-        else
-        {
-            tt_string name(parts[IndexImage]);
-
-            if (code.is_python())
-            {
-                name.make_absolute();
-                auto path = MakePythonPath(code.node());
-                name.make_relative(path);
-            }
-            name.backslashestoforward();
-
-            // SVG files don't have an innate size, so we must rely on the size specified in the property
-
-            code.Add("wxBitmapBundle").ClassMethod("FromSVGFile(");
-            code.QuotedString(name);
-            code.Comma()
-                .CheckLineLength(sizeof("FromDIP(wxSize(32, 32))).GetBitmap(wxDefaultSize)"))
-                .FormFunction("FromDIP(");
-            if (code.is_ruby())
-            {
-                code.Add("Wx::Size.new(");
-            }
-            else
-            {
-                code.Add("wxSize(");
-            }
-            code.itoa(svg_size.x).Comma().itoa(svg_size.y) += ")))";
-            code.Str(".").Add("GetBitmap(").Add("wxDefaultSize)");
-        }
-        return;
-    }
-    else if (parts[IndexType].contains("Art"))
-    {
-        tt_string art_id(parts[IndexArtID]);
-        tt_string art_client;
-        if (auto pos = art_id.find('|'); tt::is_found(pos))
-        {
-            art_client = art_id.subview(pos + 1);
-            art_id.erase(pos);
-        }
-
-        code.Add("wxArtProvider").ClassMethod("GetBitmap(").Add(art_id);
-
-        // Note that current documentation states that the client is required, but the header file says otherwise
-        if (art_client.size())
-            code.Comma().Add(art_client);
-        code += ")";
-    }
-    else if (parts[IndexType].is_sameas("XPM"))
-    {
-        if (code.is_cpp())
-        {
-            code.Add("wxImage(");
-
-            tt_string name(parts[IndexImage].filename());
-            name.remove_extension();
-            code << name << "_xpm)";
-        }
-        else if (code.is_python())
-        {
-            tt_string name(parts[IndexImage]);
-            name.make_absolute();
-            auto path = MakePythonPath(code.node());
-            name.make_relative(path);
-            name.backslashestoforward();
-
-            code.Str("wx.Image(").QuotedString(name) += ")";
-        }
-        else if (code.is_ruby())
-        {
-            // TODO: [Randalphwa - 08-24-2023] Need to support XPM files in Ruby
-        }
-        else
-        {
-            FAIL_MSG("Unknown language");
-        }
-    }
-    else if (parts[IndexImage].empty())
-    {
-        code.Add("wxNullBitmap");
-    }
-    else  // It's an embedded image
-    {
-        if (code.is_cpp())
-        {
-#if 1
-            if (auto bundle = ProjectImages.GetPropertyImageBundle(description); bundle)
-            {
-                if (bundle->lst_filenames.size() == 1)
-                {
-                    code.Eol() << "\twxueImage(";
-
-                    tt_string name = "wxNullBitmap";
-
-                    if (auto embed = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[0]); embed)
-                    {
-                        name = "wxue_img::" + embed->array_name;
-                    }
-
-                    code << name << ", sizeof(" << name << "))";
-
-                    if (auto embed = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[0]); embed)
-                    {
-                        code << ".Rescale(";
-                        code.Eol() << "\tFromDIP(" << embed->size.x << "), FromDIP(" << embed->size.y
-                                   << "), wxIMAGE_QUALITY_BILINEAR)";
-                    }
-
-                    return;
-                }
-                else if (bundle->lst_filenames.size() == 2)
-                {
-                    code << "wxBitmapBundle::FromBitmaps(wxueImage(";
-                    tt_string name(bundle->lst_filenames[0].filename());
-                    name.remove_extension();
-                    name.Replace(".", "_", true);
-
-                    if (parts[IndexType].starts_with("Embed"))
-                    {
-                        if (auto embed = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[0]); embed)
-                        {
-                            name = "wxue_img::" + embed->array_name;
-                        }
-                    }
-                    code << name << ", sizeof(" << name << ")), wxueImage(";
-
-                    name = bundle->lst_filenames[1].filename();
-                    name.remove_extension();
-                    name.Replace(".", "_", true);
-
-                    if (parts[IndexType].starts_with("Embed"))
-                    {
-                        if (auto embed = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[1]); embed)
-                        {
-                            name = "wxue_img::" + embed->array_name;
-                        }
-                    }
-                    code << name << ", sizeof(" << name << ")))";
-                    if (auto embed = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[0]); embed)
-                    {
-                        code << ".GetBitmap(wxSize(";
-                        code.Eol() << "\tFromDIP(" << embed->size.x << "), FromDIP(" << embed->size.y << ")))";
-                    }
-                }
-                else
-                {
-                    code.Str("[&]()");
-                    code.OpenBrace().Add("wxVector<wxBitmap> bitmaps;");
-
-                    for (auto& iter: bundle->lst_filenames)
-                    {
-                        tt_string name(iter.filename());
-                        name.remove_extension();
-                        name.Replace(".", "_", true);
-                        if (parts[IndexType].starts_with("Embed"))
-                        {
-                            auto embed = ProjectImages.GetEmbeddedImage(iter);
-                            if (embed)
-                            {
-                                name = "wxue_img::" + embed->array_name;
-                            }
-                        }
-                        code.Eol().Str("bitmaps.push_back(wxueImage(") << name << ", sizeof(" << name << ")));";
-                    }
-                    code.Eol();
-                    code.Str("return wxBitmapBundle::FromBitmaps(bitmaps);").CloseBrace();
-                    code.pop_back();  // remove the linefeed
-                    code.Str("()");
-                    if (auto embed = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[0]); embed)
-                    {
-                        code << ".GetBitmap(wxSize(FromDIP(" << embed->size.x << "), FromDIP(" << embed->size.y << ")))";
-                    }
-                    return;
-                }
-            }
-#else
-            code << "wxueImage(";
-
-            tt_string name(parts[1].filename());
-            name.remove_extension();
-            name.Replace(".", "_", true);  // wxFormBuilder writes files with the extra dots that have to be converted to '_'
-
-            if (parts[IndexType].starts_with("Embed"))
-            {
-                auto embed = ProjectImages.GetEmbeddedImage(parts[IndexImage]);
-                if (embed)
-                {
-                    name = "wxue_img::" + embed->array_name;
-                }
-            }
-
-            code.Str(name).Comma().Str("sizeof(").Str(name) += "))";
-#endif
-        }
-        else if (code.is_python())
-        {
-            if (auto bundle = ProjectImages.GetPropertyImageBundle(description); bundle && bundle->lst_filenames.size())
-            {
-                bool is_embed_success = false;
-
-                if (parts[IndexType].starts_with("Embed"))
-                {
-                    if (auto embed = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[0]); embed)
-                    {
-                        code.CheckLineLength(embed->array_name.size() + sizeof(".Bitmap)"));
-                        AddPythonImageName(code, embed);
-                        code += ".Bitmap";
-                        is_embed_success = true;
-                    }
-                }
-
-                if (!is_embed_success)
-                {
-                    tt_string name(bundle->lst_filenames[0]);
-                    name.make_absolute();
-                    auto path = MakePythonPath(code.node());
-                    name.make_relative(path);
-                    name.backslashestoforward();
-                    code.Str("wx.Bitmap(").QuotedString(name) += ")";
-                }
-            }
-        }
-        else if (code.is_ruby())
-        {
-            // TODO: [Randalphwa - 08-24-2023] I don't know if the wxRibbon classes will take a
-            // wxBitmapBundle directly. If not, then calling bundle.get_bitmap_for(self) will
-            // return a wxBitmap that could be used here.
-        }
-    }
-}
 // clang-format off
 
 inline constexpr const auto txt_wxueImageFunction = R"===(
@@ -739,60 +457,20 @@ void AddPythonImageName(Code& code, const EmbeddedImage* embed)
     code.Str(embed->array_name);
 }
 
-static void GenerateSVGBundle(Code& code, const tt_string_vector& parts, bool get_bitmap);
-
-// get_bitmap will be set to true when adding a too to a wxRibbonBar which doesn't support
-// wxBitmapBundle (as of 3.3.0)
-void GenerateBundleParameter(Code& code, const tt_string& description, bool get_bitmap)
-{
-    if (description.empty())
-    {
-        code.Add("wxNullBitmap");
-        return;
-    }
-
-    tt_string_vector parts(description, BMP_PROP_SEPARATOR, tt::TRIM::both);
-
-    if (parts.size() <= 1 || parts[IndexImage].empty())
-    {
-        code.Add("wxNullBitmap");
-        return;
-    }
-
-    if (parts[IndexType].starts_with("SVG"))
-    {
-        if (code.is_cpp() && Project.as_string(prop_wxWidgets_version) == "3.1")
-        {
-            code += "wxNullBitmap";
-        }
-        else
-        {
-            GenerateSVGBundle(code, parts, get_bitmap);
-        }
-    }
-}
-
-void GenerateBundleParameter(Code& code, const tt_string_vector& parts, bool get_bitmap)
-{
-    ASSERT(parts.size() > 1 && parts[IndexImage].size())
-
-    if (parts[IndexType].starts_with("SVG"))
-    {
-        if (code.is_cpp() && Project.as_string(prop_wxWidgets_version) == "3.1")
-        {
-            code += "wxNullBitmap";
-        }
-        else
-        {
-            GenerateSVGBundle(code, parts, get_bitmap);
-        }
-    }
-}
+// ******************************* Bundle Code Generation *******************************
+//
+// Call GenerateBundleParameter() to generate the code to create a wxBitmapBundle, or
+// optionally a wxBitmap.
+//
+// **************************************************************************************
 
 static void GenerateSVGBundle(Code& code, const tt_string_vector& parts, bool get_bitmap)
 {
-    ASSERT_MSG(!(code.is_cpp() && Project.as_string(prop_wxWidgets_version) == "3.1"),
-               "Don't call GenerateSVGBundle() if C++ and project file is set to 3.1")
+    if (code.is_cpp() && Project.as_string(prop_wxWidgets_version) == "3.1")
+    {
+        code.Eol().Tab().Str("wxNullBitmap /* SVG images require wxWidgets 3.2 or higher */").Eol().Tab();
+        return;
+    }
 
     wxSize svg_size { -1, -1 };
     if (parts[IndexSize].size())
@@ -881,5 +559,320 @@ static void GenerateSVGBundle(Code& code, const tt_string_vector& parts, bool ge
             code.Add("wxSize(");
         }
         code.itoa(svg_size.x).Comma().itoa(svg_size.y) += "))";
+    }
+}
+
+static void GenerateARTBundle(Code& code, const tt_string_vector& parts, bool get_bitmap)
+{
+    code.Add("wxArtProvider");
+    if (get_bitmap || (code.is_cpp() && Project.as_string(prop_wxWidgets_version) == "3.1"))
+    {
+        code.ClassMethod("GetBitmap(");
+    }
+    else
+    {
+        code.ClassMethod("GetBitmapBundle(");
+    }
+
+    tt_string art_id(parts[IndexArtID]);
+    tt_string art_client;
+    if (auto pos = art_id.find('|'); tt::is_found(pos))
+    {
+        art_client = art_id.subview(pos + 1);
+        art_id.erase(pos);
+    }
+
+    code.Add(art_id);
+    // Note that current documentation states that the client is required, but the header file says otherwise
+    if (art_client.size())
+        code.Comma().Add(art_client);
+    code << ')';
+}
+
+static void GenerateEmbedBundle(Code& code, const tt_string_vector& parts, bool get_bitmap)
+{
+    if (code.is_cpp())
+    {
+        if (auto function_name = ProjectImages.GetBundleFuncName(parts); function_name.size())
+        {
+            code.Str(function_name);
+            if (get_bitmap)
+            {
+                // BUGBUG: [Randalphwa - 09-19-2023] This is not correct. We need to get the
+                // size of the embedded image and use that to get the bitmap including
+                // rescaling it if it is a single image.
+                code.Str(".").Add("GetBitmap(").Add("wxDefaultSize)");
+            }
+            return;
+        }
+    }
+
+    auto bundle = ProjectImages.GetPropertyImageBundle(parts);
+    if (!bundle || !bundle->lst_filenames.size())
+    {
+        FAIL_MSG("Missing bundle description");
+        code.Add("wxNullBitmap");
+        return;
+    }
+
+    auto embed = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[0]);
+    if (!embed)
+    {
+        FAIL_MSG(tt_string("Missing embed for ") << bundle->lst_filenames[0]);
+        code.Add("wxNullBitmap");
+        return;
+    }
+
+    if (code.is_ruby())
+    {
+        // Ruby has a single function that will create a bundle from 1 to 3 images
+        code.Str("get_bundle(").Str("$").Str(embed->array_name);
+        if (bundle->lst_filenames.size() > 1)
+        {
+            if (EmbeddedImage* embed2 = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[1]); embed2)
+            {
+                code.Comma().Str("$").Str(embed2->array_name);
+            }
+            if (bundle->lst_filenames.size() > 2)
+            {
+                if (EmbeddedImage* embed3 = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[2]); embed3)
+                {
+                    code.Comma().Str("$").Str(embed3->array_name);
+                }
+            }
+        }
+        code += ')';
+
+        if (get_bitmap)
+        {
+            code.Comma().Eol().Tab();
+            code.CheckLineLength(sizeof("FromDIP(wx::Size.new(32, 32))).GetBitmap(wxDefaultSize)"));
+            code.Function("GetBitmap(").Add("Wx::Size.new(");
+            code.Eol() << "\tFromDIP(" << embed->size.x << "), FromDIP(" << embed->size.y << ")))";
+            // TODO: [Randalphwa - 09-19-2023] If it's a single image, then it may need to be rescaled
+            // using wxIMAGE_QUALITY_BILINEAR rather than letting the wxBitmapBundle do it.
+            return;
+        }
+    }
+
+    tt_string path;
+    if (code.is_python())
+    {
+        path = MakePythonPath(code.node());
+    }
+    else if (code.is_ruby())
+    {
+        path = MakeRubyPath(code.node());
+    }
+
+    tt_string name(bundle->lst_filenames[0]);
+    name.make_absolute();
+    name.make_relative(path);
+    name.backslashestoforward();
+
+    if (bundle->lst_filenames.size() == 1)
+    {
+        if (code.is_cpp())
+        {
+            code.Eol().Tab() << "wxueImage(";
+
+            name = "wxue_img::" + embed->array_name;
+
+            code << name << ", sizeof(" << name << "))";
+            if (get_bitmap)
+            {
+                code << ".Rescale(";
+                code.Eol() << "\tFromDIP(" << embed->size.x << "), FromDIP(" << embed->size.y
+                           << "), wxIMAGE_QUALITY_BILINEAR)";
+            }
+        }
+        else if (code.is_python())
+        {
+            if (get_bitmap)
+            {
+                code.Str("wx.Bitmap(");
+            }
+            AddPythonImageName(code, embed);
+            code += get_bitmap ? ".Image" : ".Bitmap";
+            if (get_bitmap)
+            {
+                code.Str(".Rescale(").Eol().Tab();
+                code.FormFunction("FromDIP(").itoa(embed->size.x).Str("), ").FormFunction("FromDIP(");
+                code.itoa(embed->size.y) << "), wx.IMAGE_QUALITY_BILINEAR))";
+            }
+        }
+    }
+    else if (bundle->lst_filenames.size() == 2)
+    {
+        code.Add("wxBitmapBundle").ClassMethod("FromBitmaps(");
+        if (code.is_cpp())
+        {
+            code << "wxueImage(";
+            name = "wxue_img::" + embed->array_name;
+            code << name << ", sizeof(" << name << ")), wxueImage(";
+
+            if (auto embed2 = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[1]); embed2)
+            {
+                name = "wxue_img::" + embed2->array_name;
+                name.remove_extension();
+                code << name << ", sizeof(" << name << ")))";
+            }
+            else
+            {
+                code << "wxNullBitmap))";
+            }
+
+            if (get_bitmap)
+            {
+                code.CheckLineLength(sizeof(".GetBitmap(wxSize(FromDIP(32), FromDIP(32)))"));
+                code << ".GetBitmap(wxSize(";
+                code.Eol().Tab() << "FromDIP(" << embed->size.x << "), FromDIP(" << embed->size.y << ")))";
+            }
+        }
+        else if (code.is_python())
+        {
+            code.CheckLineLength(embed->array_name.size() + sizeof(".Bitmap)"));
+            AddPythonImageName(code, embed);
+            code += ".Bitmap";
+            if (auto embed2 = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[1]); embed2)
+            {
+                code.Comma().CheckLineLength(embed2->array_name.size() + sizeof(".Bitmap)"));
+                AddPythonImageName(code, embed2);
+                code += ".Bitmap";
+            }
+            else
+            {
+                code.Comma().Str("wx.NullBitmap");
+            }
+            if (get_bitmap)
+            {
+                code.CheckLineLength(sizeof("FromDIP(wx::Size.new(32, 32))).GetBitmap(wxDefaultSize)"));
+                code.Str(").GetBitmap(").Add("wxSize(");
+                code.Eol().Tab().FormFunction("FromDIP(").itoa(embed->size.x).Str("), ").FormFunction("FromDIP(");
+                code.itoa(embed->size.y) << "))";
+            }
+            code << ')';
+        }
+    }
+    else
+    {
+        if (code.is_cpp())
+        {
+            code.Str("[&]()");
+            code.OpenBrace().Add("wxVector<wxBitmap> bitmaps;");
+
+            for (auto& iter: bundle->lst_filenames)
+            {
+                tt_string name_img(iter.filename());
+                name_img.remove_extension();
+                name_img.Replace(".", "_", true);
+                if (parts[IndexType].starts_with("Embed"))
+                {
+                    auto embed_img = ProjectImages.GetEmbeddedImage(iter);
+                    if (embed_img)
+                    {
+                        name_img = "wxue_img::" + embed_img->array_name;
+                    }
+                }
+                code.Eol().Str("bitmaps.push_back(wxueImage(") << name_img << ", sizeof(" << name_img << ")));";
+            }
+            code.Eol();
+            code.Str("return wxBitmapBundle::FromBitmaps(bitmaps);").CloseBrace();
+            code.pop_back();  // remove the linefeed
+            code.Str("()");
+            if (get_bitmap)
+            {
+                code << ".GetBitmap(wxSize(FromDIP(" << embed->size.x << "), FromDIP(" << embed->size.y << ")))";
+            }
+        }
+        else if (code.is_python())
+        {
+            bool is_xpm = (parts[IndexType].is_sameas("XPM"));
+
+            code += "wx.BitmapBundle.FromBitmaps([ ";
+            bool needs_comma = false;
+            for (auto& iter: bundle->lst_filenames)
+            {
+                if (needs_comma)
+                {
+                    code.UpdateBreakAt();
+                    code.Comma(false).Eol().Tab(3);
+                }
+
+                bool is_embed_success = false;
+                if (auto embed_img = ProjectImages.GetEmbeddedImage(iter); embed_img)
+                {
+                    AddPythonImageName(code, embed_img);
+                    code += ".Bitmap";
+                    needs_comma = true;
+                    is_embed_success = true;
+                }
+
+                if (!is_embed_success)
+                {
+                    tt_string name_img(iter);
+                    name.make_absolute();
+                    name.make_relative(path);
+                    name.backslashestoforward();
+
+                    code.Str("wx.Bitmap(").QuotedString(name);
+                    if (is_xpm)
+                        code.Comma().Str("wx.BITMAP_TYPE_XPM");
+                    code += ")";
+                    needs_comma = true;
+                }
+            }
+            code += " ])";
+            if (get_bitmap)
+            {
+                code.CheckLineLength(sizeof("FromDIP(wx::Size.new(32, 32))).GetBitmap(wxDefaultSize)"));
+                code.Str(".GetBitmap(").Add("wxSize(");
+                code.FormFunction("FromDIP(").itoa(embed->size.x).Str("), ").FormFunction("FromDIP(");
+                code.itoa(embed->size.y) << ")))";
+            }
+        }
+    }
+}
+
+static void GenerateXpmBitmap(Code& code, const tt_string_vector& parts, bool /* get_bitmap */)
+{
+    // We only marginally support XPM files -- we only allow a single file, and we don't attempt to scale it.
+    code.Add("wxImage(");
+
+    tt_string name(parts[IndexImage].filename());
+    name.remove_extension();
+    code << name << "_xpm)";
+}
+
+void GenerateBundleParameter(Code& code, const tt_string_vector& parts, bool get_bitmap)
+{
+    if (parts.size() <= 1 || parts[IndexImage].empty())
+    {
+        code.Add("wxNullBitmap");
+        return;
+    }
+
+    if (parts[IndexType].starts_with("SVG"))
+    {
+        if (code.is_cpp() && Project.as_string(prop_wxWidgets_version) == "3.1")
+        {
+            code += "wxNullBitmap";
+        }
+        else
+        {
+            GenerateSVGBundle(code, parts, get_bitmap);
+        }
+    }
+    else if (parts[IndexType].contains("Art"))
+    {
+        GenerateARTBundle(code, parts, get_bitmap);
+    }
+    else if (parts[IndexType].starts_with("Embed"))
+    {
+        GenerateEmbedBundle(code, parts, get_bitmap);
+    }
+    else if (parts[IndexType].starts_with("XPM"))
+    {
+        GenerateXpmBitmap(code, parts, get_bitmap);
     }
 }

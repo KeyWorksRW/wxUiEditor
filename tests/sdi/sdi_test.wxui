@@ -3,14 +3,13 @@
   data_version="17">
   <node
     class="Project"
-    art_directory="art"
+    art_directory="../art"
     id_prefixes="ISSUE_"
     id_suffixes="_TEST; _PYTHON"
-    base_directory="sdi/cpp"
-    cmake_file="cpp/wxui_code.cmake"
+    base_directory="cpp"
     cmake_varname="sdi_generated_code"
     cpp_line_length="125"
-    derived_directory="sdi/cpp"
+    derived_directory="cpp"
     generate_cmake="1"
     wxWidgets_version="3.2"
     python_output_folder="sdi/python"
@@ -32,10 +31,10 @@
         bitmap="Embed;bottom(1).png" />
       <node
         class="embedded_image"
-        bitmap="Embed;../src/art_src/debug_32.png" />
+        bitmap="Embed;disabled.png" />
       <node
         class="embedded_image"
-        bitmap="Embed;disabled.png" />
+        bitmap="Embed;../../src/art_src/debug_32.png" />
       <node
         class="embedded_image"
         bitmap="Embed;english.png" />
@@ -83,10 +82,10 @@
         bitmap="Embed;wiztest2.png" />
       <node
         class="embedded_image"
-        bitmap="Embed;../src/art_src/wxNotebook.png" />
+        bitmap="Embed;wxPython.png" />
       <node
         class="embedded_image"
-        bitmap="Embed;wxPython.png" />
+        bitmap="Embed;../../src/art_src/wxNotebook.png" />
       <node
         class="embedded_image"
         bitmap="Embed;wxPython_1_5x.png" />
@@ -555,7 +554,7 @@
                     wxEVT_TOGGLEBUTTON="[this](wxCommandEvent&amp;)@@{@@if (m_toggleBtn->GetValue()) @@{@@    m_animation_ctrl->Play();@@    m_checkPlayAnimation->SetValue(true);@@}@@else @@{  @@    m_animation_ctrl->Stop();@@    m_checkPlayAnimation->SetValue(false);@@}@@@@}[python:OnToggleButton]" />
                   <node
                     class="wxAnimationCtrl"
-                    animation="Embed;art/clr_hourglass.gif"
+                    animation="Embed;clr_hourglass.gif"
                     inactive_bitmap="Embed;disabled.png" />
                 </node>
                 <node

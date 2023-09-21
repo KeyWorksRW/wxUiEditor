@@ -10,9 +10,10 @@
     base_directory="sdi/cpp"
     cmake_file="sdi/cpp/wxui_code.cmake"
     cmake_varname="sdi_generated_code"
-    cpp_line_length="120"
+    cpp_line_length="125"
     derived_directory="sdi/cpp"
     generate_cmake="1"
+    wxWidgets_version="3.2"
     python_output_folder="sdi/python"
     combine_all_forms="0"
     combined_xrc_file="combined"
@@ -217,16 +218,27 @@
             wxEVT_MENU="OnPythonDlg" />
           <node
             class="wxMenuItem"
+            bitmap="Embed;../../src/art_src/wxToolBar.png"
+            help="Dialog for testing different types of toolbars"
+            label="Tools Dialog"
+            var_name="_menu_tools_dlg2"
+            wxEVT_MENU="OnToolsDlg[python:on_tools_dlg][ruby:on_tools_dlg]" />
+          <node
+            class="wxMenuItem"
+            bitmap="Embed;../../src/art_src/wxWizard.png"
+            label="Wizard"
+            var_name="menuItem3"
+            wxEVT_MENU="OnWizard" />
+          <node
+            class="separator"
+            var_name="_separator" />
+          <node
+            class="wxMenuItem"
             bitmap="Art;wxART_TIP|wxART_MENU"
             help="Common controls"
             label="Common Controls..."
             var_name="menuItem_2"
             wxEVT_MENU="OnCommonDialog" />
-          <node
-            class="wxMenuItem"
-            label="Wizard"
-            var_name="menuItem3"
-            wxEVT_MENU="OnWizard" />
           <node
             class="separator"
             var_name="separator_2" />
@@ -260,6 +272,12 @@
             bitmap="Art;wxART_FIND|wxART_MENU"
             label="Wizard..."
             wxEVT_MENU="OnWizard" />
+          <node
+            class="wxMenuItem"
+            help="Dialog for testing different types of toolbars"
+            label="Tools Dialog"
+            var_name="_menu_tools_dlg"
+            wxEVT_MENU="OnToolsDlg[python:on_tools_dlg][ruby:on_tools_dlg]" />
         </node>
         <node
           class="tool"
@@ -1733,7 +1751,7 @@
             size="150,32d"
             variant="large"
             window_name="my_text"
-            alignment="wxALIGN_CENTER_VERTICAL|wxALIGN_CENTER_HORIZONTAL" />
+            alignment="|wxALIGN_CENTER_HORIZONTAL" />
           <node
             class="wxStaticBitmap"
             bitmap="SVG;face-smile.svg;[32,32]" />
@@ -1778,6 +1796,126 @@
           class="wxStaticText"
           label="This is a wxPopupTransientWindow set to use a raised border around it. Note that the default is to not have a border at all.&#10;&#10;BTW, right-click anywhere in the dialog to get a popup menu for changing some of the control values.&#10;&#10;Click outside this window to dismiss it."
           wrap="250" />
+      </node>
+    </node>
+    <node
+      class="wxDialog"
+      class_name="ToolBarsDialog"
+      title="Test Dialog"
+      minimum_size="200,-1d"
+      base_file="tools_dlg.cpp"
+      derived_class_name="TestDialogDerived"
+      derived_file="testdialog_derived"
+      python_file="tools_dlg"
+      ruby_file="test_dlg"
+      xrc_file="test_dlg"
+      wxEVT_INIT_DIALOG="OnInit[python:on_init][ruby:on_init]">
+      <node
+        class="wxBoxSizer"
+        orientation="wxVERTICAL">
+        <node
+          class="wxToolBar"
+          var_name="m_tool_bar">
+          <node
+            class="tool"
+            bitmap="SVG;left.svg;[24,24]"
+            label=""
+            var_name="tool_svg"
+            wxEVT_TOOL="OnTool" />
+          <node
+            class="tool"
+            bitmap="Art;wxART_CUT|wxART_TOOLBAR"
+            label=""
+            var_name="tool_art" />
+          <node
+            class="tool"
+            bitmap="Embed;undo.png"
+            label=""
+            var_name="tool1" />
+          <node
+            class="tool"
+            bitmap="Embed;redo.png"
+            label=""
+            var_name="tool_2" />
+          <node
+            class="tool"
+            bitmap="Embed;wxPython.png"
+            label=""
+            var_name="tool_3" />
+          <node
+            class="tool"
+            bitmap="Embed;fontPicker.png"
+            label=""
+            var_name="tool_list" />
+        </node>
+        <node
+          class="wxAuiToolBar"
+          style="wxAUI_TB_PLAIN_BACKGROUND|wxAUI_TB_DEFAULT_STYLE"
+          var_name="m_aui_tool_bar">
+          <node
+            class="auitool"
+            bitmap="SVG;left.svg;[24,24]"
+            label=""
+            var_name="aui_tool_svg" />
+          <node
+            class="auitool"
+            bitmap="Art;wxART_CUT|wxART_TOOLBAR"
+            label=""
+            var_name="aui_toolart" />
+          <node
+            class="auitool"
+            bitmap="Embed;redo.png"
+            label=""
+            var_name="aui_tool2" />
+          <node
+            class="auitool"
+            bitmap="Embed;wxPython.png"
+            label=""
+            var_name="aui_tool3" />
+          <node
+            class="auitool"
+            bitmap="Embed;fontPicker.png"
+            label=""
+            var_name="aui_tool_list" />
+        </node>
+        <node
+          class="wxRibbonBar">
+          <node
+            class="wxRibbonPage"
+            label="Page 1">
+            <node
+              class="wxRibbonPanel"
+              label="Page 1, panel 1">
+              <node
+                class="wxRibbonToolBar">
+                <node
+                  class="ribbonTool"
+                  bitmap="SVG;left.svg;[24,24]"
+                  id="rbn_tool_svg" />
+                <node
+                  class="ribbonTool"
+                  bitmap="Art;wxART_CUT|wxART_TOOLBAR"
+                  id="rbn_tool_art" />
+                <node
+                  class="ribbonTool"
+                  bitmap="Embed;undo.png"
+                  id="rbn_tool1" />
+                <node
+                  class="ribbonTool"
+                  bitmap="Embed;redo.png"
+                  id="rbn_tool2" />
+                <node
+                  class="ribbonTool"
+                  bitmap="Embed;wxPython.png"
+                  id="rbn_tool3" />
+                <node
+                  class="ribbonTool"
+                  bitmap="Embed;fontPicker.png"
+                  id="rbn_tool_list" />
+              </node>
+            </node>
+          </node>
+        </node>
       </node>
     </node>
     <node

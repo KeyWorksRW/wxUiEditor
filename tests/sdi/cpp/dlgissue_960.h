@@ -23,8 +23,8 @@ public:
     static const wxString form_title() { return wxEmptyString; }
 
     DlgIssue_960() {}
-    DlgIssue_960(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = wxEmptyString,
-        const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
+    DlgIssue_960(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = wxEmptyString, const wxPoint& pos =
+        wxDefaultPosition, const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_DIALOG_STYLE, const wxString &name = wxDialogNameStr)
     {
         Create(parent, id, title, pos, size, style, name);

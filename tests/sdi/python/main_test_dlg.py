@@ -134,8 +134,7 @@ class MainTestDialog(wx.Dialog):
         self.btn_bitmaps.SetBitmapCurrent(wx.BitmapBundle.FromBitmap(images.focus_png.Bitmap))
         self.btn_bitmaps.SetToolTip(
         "Bitmap should change when mouse is over button, or button is disabled.")
-        grid_bag_sizer.Add(self.btn_bitmaps, wx.GBPosition(0, 2), wx.GBSpan(1, 1), wx.ALL,
-            5)
+        grid_bag_sizer.Add(self.btn_bitmaps, wx.GBPosition(0, 2), wx.GBSpan(1, 1), wx.ALL, 5)
 
         self.btn_4 = wx.Button(page_4, wx.ID_ANY, "Right")
         self.btn_4.SetBitmapPosition(wx.RIGHT)
@@ -153,8 +152,7 @@ class MainTestDialog(wx.Dialog):
         disable_bitmaps = wx.CheckBox(page_4, wx.ID_ANY, "Disable")
         disable_bitmaps.SetToolTip(
         "This will change the enable state and bitmap of the Bitmaps button.")
-        grid_bag_sizer.Add(disable_bitmaps, wx.GBPosition(2, 2), wx.GBSpan(1, 1), wx.ALL,
-            5)
+        grid_bag_sizer.Add(disable_bitmaps, wx.GBPosition(2, 2), wx.GBSpan(1, 1), wx.ALL, 5)
 
         box_sizer_3.Add(grid_bag_sizer, wx.SizerFlags().Border(wx.ALL))
 
@@ -585,8 +583,9 @@ class MainTestDialog(wx.Dialog):
         rbnPage = wx.ribbon.RibbonPage(self.rbnBar, wx.ID_ANY, "First")
         self.rbnBar.SetActivePage(rbnPage)
 
-        rbnPanel = wx.ribbon.RibbonPanel(rbnPage, wx.ID_ANY, "English",
-            images.english_png.Bitmap)
+        rbnPanel = wx.ribbon.RibbonPanel(rbnPage, wx.ID_ANY, "English", wx.Bitmap(images.
+            english_png.Image.Rescale(
+            self.FromDIP(19), self.FromDIP(15), wx.IMAGE_QUALITY_BILINEAR)))
 
         first_parent_sizer = wx.BoxSizer(wx.VERTICAL)
 
@@ -603,8 +602,9 @@ class MainTestDialog(wx.Dialog):
         first_parent_sizer.Add(box_sizer_15, wx.SizerFlags(1).Expand().Border(wx.ALL))
         rbnPanel.SetSizerAndFit(first_parent_sizer)
 
-        rbnPanel_2 = wx.ribbon.RibbonPanel(rbnPage, wx.ID_ANY, "French",
-            images.french_png.Bitmap)
+        rbnPanel_2 = wx.ribbon.RibbonPanel(rbnPage, wx.ID_ANY, "French", wx.Bitmap(images.
+            french_png.Image.Rescale(
+            self.FromDIP(19), self.FromDIP(15), wx.IMAGE_QUALITY_BILINEAR)))
         rbnPanel_2.SetBackgroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_MENU))
 
         first_parent_sizer_2 = wx.BoxSizer(wx.VERTICAL)
@@ -629,7 +629,9 @@ class MainTestDialog(wx.Dialog):
         rbnBtnBar = wx.ribbon.RibbonButtonBar(ribbonPanel2, wx.ID_ANY)
         rbnBtnBar.AddButton(wx.ID_ANY, "Forward", wx.ArtProvider.GetBitmap(
             wx.ART_GO_FORWARD, wx.ART_OTHER), "", wx.ribbon.RIBBON_BUTTON_NORMAL)
-        rbnBtnBar.AddButton(wx.ID_ANY, "Backward", images.left_png.Bitmap, "",
+        rbnBtnBar.AddButton(wx.ID_ANY, "Backward", wx.Bitmap(images.left_png.Image
+            .Rescale(
+            self.FromDIP(24), self.FromDIP(24), wx.IMAGE_QUALITY_BILINEAR)), "",
             wx.ribbon.RIBBON_BUTTON_NORMAL)
         rbnBtnBar.Realize()
 
@@ -650,7 +652,8 @@ class MainTestDialog(wx.Dialog):
         rbnPanel_3 = wx.ribbon.RibbonPanel(ribbonPage_3, wx.ID_ANY, "Gallery Panel")
 
         rbnGallery = wx.ribbon.RibbonGallery(rbnPanel_3, wx.ID_ANY)
-        rbnGallery.Append(images.toggle_button_png.Bitmap, wx.ID_ANY)
+        rbnGallery.Append(wx.Bitmap(images.toggle_button_png.Image.Rescale(
+            self.FromDIP(22), self.FromDIP(22), wx.IMAGE_QUALITY_BILINEAR)), wx.ID_ANY)
         rbnGallery.Realize()
         page.SetSizerAndFit(page_sizer_3)
 

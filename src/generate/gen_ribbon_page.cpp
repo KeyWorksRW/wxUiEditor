@@ -37,7 +37,9 @@ bool RibbonPageGenerator::ConstructionCode(Code& code)
     if (code.hasValue(prop_bitmap))
     {
         code.Comma();
-        GenerateRibbonBitmapCode(code, code.node()->as_string(prop_bitmap));
+
+        tt_string_vector parts(code.node()->as_string(prop_bitmap), BMP_PROP_SEPARATOR, tt::TRIM::both);
+        GenerateBundleParameter(code, parts, true);
     }
     code.EndFunction();
 
@@ -105,7 +107,9 @@ bool RibbonPanelGenerator::ConstructionCode(Code& code)
     if (code.hasValue(prop_bitmap))
     {
         code.Comma();
-        GenerateRibbonBitmapCode(code, code.node()->as_string(prop_bitmap));
+
+        tt_string_vector parts(code.node()->as_string(prop_bitmap), BMP_PROP_SEPARATOR, tt::TRIM::both);
+        GenerateBundleParameter(code, parts, true);
     }
     code.EndFunction();
 

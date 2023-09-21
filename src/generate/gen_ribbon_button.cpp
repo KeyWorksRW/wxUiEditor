@@ -71,7 +71,10 @@ bool RibbonButtonGenerator::ConstructionCode(Code& code)
 {
     code.ParentName().Function("AddButton(").as_string(prop_id).Comma().QuotedString(prop_label);
     code.Comma();
-    GenerateRibbonBitmapCode(code, code.node()->as_string(prop_bitmap));
+
+    tt_string_vector parts(code.node()->as_string(prop_bitmap), BMP_PROP_SEPARATOR, tt::TRIM::both);
+    GenerateBundleParameter(code, parts, true);
+
     code.Comma().QuotedString(prop_help).Comma().Add(prop_kind).EndFunction();
 
     return true;

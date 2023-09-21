@@ -68,8 +68,10 @@ class PythonDlg(wx.Dialog):
         self.auiToolBar = wx.aui.AuiToolBar(self, wx.ID_ANY, wx.DefaultPosition,
             wx.DefaultSize, wx.aui.AUI_TB_PLAIN_BACKGROUND|wx.aui.AUI_TB_DEFAULT_STYLE)
         self.auiToolBar.AddLabel(wx.ID_ANY, "Label")
-        tool_2 = self.auiToolBar.AddTool(wx.ID_ANY, "Search", wx.BitmapBundle.FromBitmap(
-            images.fontPicker_png.Bitmap), wx.NullBitmap, wx.ITEM_NORMAL,
+        tool_2 = self.auiToolBar.AddTool(wx.ID_ANY, "Search", wx.BitmapBundle.FromBitmaps([
+            images.fontPicker_png.Bitmap,
+                    images.fontPicker_1_25x_png.Bitmap,
+                    images.fontPicker_1_5x_png.Bitmap ]), wx.NullBitmap, wx.ITEM_NORMAL,
             "This tool should be initially disabled.",
             "This tool should be initially disabled.", None)
         tool_2.SetState(wx.aui.AUI_BUTTON_STATE_NORMAL|wx.aui.AUI_BUTTON_STATE_DISABLED)
@@ -90,8 +92,8 @@ class PythonDlg(wx.Dialog):
         box_sizer.Add(self.staticText, wx.SizerFlags().Center().Border(wx.ALL))
 
         _svg_string_ = zlib.decompress(base64.b64decode(images.face_smile_svg))
-        bmp = wx.StaticBitmap(self, wx.ID_ANY, wx.BitmapBundle.FromSVG(_svg_string_,
-            wx.Size(32, 32)))
+        bmp = wx.StaticBitmap(self, wx.ID_ANY,
+            wx.BitmapBundle.FromSVG(_svg_string_, wx.Size(32, 32)))
         box_sizer.Add(bmp, wx.SizerFlags().Border(wx.ALL))
 
         # wxPython currently does not support a checkbox as a static box label

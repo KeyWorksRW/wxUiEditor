@@ -11,6 +11,7 @@
 #include "code.h"
 
 #include "gen_common.h"       // Common component functions
+#include "image_gen.h"        // Functions for generating embedded images
 #include "mainapp.h"          // App class
 #include "node.h"             // Node class
 #include "project_handler.h"  // ProjectHandler class
@@ -2070,15 +2071,30 @@ Code& Code::ColourCode(GenEnum::PropName prop_name)
 
 Code& Code::Bundle(GenEnum::PropName prop_name)
 {
-    switch (m_language)
-    {
-        case GEN_LANG_PYTHON:
-            PythonBundleCode(*this, prop_name);
-            break;
+    tt_string_vector parts(m_node->as_string(prop_name), BMP_PROP_SEPARATOR, tt::TRIM::both);
 
-        case GEN_LANG_RUBY:
-            RubyBundleCode(*this, prop_name);
-            break;
+    if (parts.size() <= 1 || parts[IndexImage].empty())
+    {
+        return Add("wxNullBitmap");
+    }
+
+    if (parts[IndexType].contains("SVG"))
+    {
+        GenerateBundleParameter(*this, parts);
+    }
+
+    else
+    {
+        switch (m_language)
+        {
+            case GEN_LANG_PYTHON:
+                PythonBundleCode(*this, prop_name);
+                break;
+
+            case GEN_LANG_RUBY:
+                RubyBundleCode(*this, prop_name);
+                break;
+        }
     }
 
     return *this;

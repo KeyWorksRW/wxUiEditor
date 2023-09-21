@@ -115,8 +115,8 @@ void ColourCode(Code& code, GenEnum::PropName prop_name);
 // Generate settings common to all forms
 void GenFormSettings(Code& code);
 
-// This is called to add a tool to either wxToolBar or wxAuiToolBar
-void GenToolCode(Code& code, const bool is_bitmaps_list);
+// This is called to add a tool to wxToolBar, wxAuiToolBar or wxRibbonToolBar
+void GenToolCode(Code& code);
 
 // Returns true if a bitmaps vector was created (C++ or Python)
 //

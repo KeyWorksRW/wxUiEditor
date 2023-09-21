@@ -27,8 +27,7 @@ class DlgIssue_956(wx.Dialog):
         grid_bag_sizer = wx.GridBagSizer()
 
         self.staticText_4 = wx.StaticText(panel_2, wx.ID_ANY, "list test")
-        grid_bag_sizer.Add(self.staticText_4, wx.GBPosition(0, 0), wx.GBSpan(1, 1), wx.ALL,
-            5)
+        grid_bag_sizer.Add(self.staticText_4, wx.GBPosition(0, 0), wx.GBSpan(1, 1), wx.ALL, 5)
 
         self.choice = wx.Choice(panel_2, wx.ID_ANY)
         grid_bag_sizer.Add(self.choice, wx.GBPosition(0, 1), wx.GBSpan(1, 1), wx.ALL|
@@ -51,8 +50,7 @@ class DlgIssue_956(wx.Dialog):
         grid_bag_sizer.Add(self.btn_4, wx.GBPosition(0, 5), wx.GBSpan(1, 1), wx.ALL, 5)
 
         self.staticText_5 = wx.StaticText(panel_2, wx.ID_ANY, "test type")
-        grid_bag_sizer.Add(self.staticText_5, wx.GBPosition(1, 0), wx.GBSpan(1, 1), wx.ALL,
-            5)
+        grid_bag_sizer.Add(self.staticText_5, wx.GBPosition(1, 0), wx.GBSpan(1, 1), wx.ALL, 5)
 
         self.choice_2 = wx.Choice(panel_2, wx.ID_ANY)
         grid_bag_sizer.Add(self.choice_2, wx.GBPosition(1, 1), wx.GBSpan(1, 5), wx.ALL|

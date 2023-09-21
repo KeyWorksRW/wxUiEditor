@@ -11,9 +11,7 @@
 
 #include <wx/gdicmn.h>
 
-#if !wxCHECK_VERSION(3, 1, 6)
-    #error "You must build with wxWidgets 3.1.6 or later to use SVG images."
-#endif
+#include <wx/bmpbndl.h>
 
 wxImage wxueImage(const unsigned char* data, size_t size_data);
 
@@ -55,6 +53,10 @@ namespace wxue_img
     // face-smile.svg
     extern const unsigned char face_smile_svg[1781];
     extern const unsigned char focus_png[517];
+    // fontPicker@1_25x.png
+    extern const unsigned char fontPicker_1_25x_png[1330];
+    // fontPicker@1_5x.png
+    extern const unsigned char fontPicker_1_5x_png[1507];
     extern const unsigned char fontPicker_png[763];
     extern const unsigned char french_png[252];
     // 1_bottom.png

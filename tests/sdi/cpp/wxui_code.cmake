@@ -19,5 +19,6 @@ set (sdi_generated_code
     ${CMAKE_CURRENT_LIST_DIR}/dlgissue_960.cpp
     ${CMAKE_CURRENT_LIST_DIR}/form_toolbar_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/maintestdialog.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/tools_dlg.cpp
 
 )

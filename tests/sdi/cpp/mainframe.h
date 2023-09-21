@@ -25,6 +25,8 @@ namespace wxue_img
     // Images declared in this class module:
 
     extern const unsigned char wxDialog_png[636];
+    extern const unsigned char wxToolBar_png[554];
+    extern const unsigned char wxWizard_png[1047];
 }
 
 class MainFrame : public wxFrame
@@ -53,6 +55,7 @@ protected:
     void OnMainTestDlg(wxCommandEvent& event);
     void OnPythonDlg(wxCommandEvent& event);
     void OnQuit(wxCommandEvent& event);
+    void OnToolsDlg(wxCommandEvent& event);
     void OnWizard(wxCommandEvent& event);
 
     // Class member variables

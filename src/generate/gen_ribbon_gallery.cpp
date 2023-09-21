@@ -73,7 +73,10 @@ int RibbonGalleryGenerator::GenXrcObject(Node* node, pugi::xml_node& object, siz
 bool RibbonGalleryItemGenerator::ConstructionCode(Code& code)
 {
     code.ParentName().Function("Append(");
-    GenerateRibbonBitmapCode(code, code.node()->as_string(prop_bitmap));
+
+    tt_string_vector parts(code.node()->as_string(prop_bitmap), BMP_PROP_SEPARATOR, tt::TRIM::both);
+    GenerateBundleParameter(code, parts, true);
+
     code.Comma().Add("wxID_ANY").EndFunction();
 
     return true;

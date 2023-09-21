@@ -496,32 +496,7 @@ bool AuiToolBarGenerator::GetRubyImports(Node*, std::set<std::string>& set_impor
 
 bool AuiToolGenerator::ConstructionCode(Code& code)
 {
-    if (code.hasValue(prop_bitmap))
-    {
-        auto is_bitmaps_list = BitmapList(code, prop_bitmap);
-        bool uses_lambda = (code.is_cpp() && code.GetCode().ends_with("};\n"));
-        GenToolCode(code, is_bitmaps_list);
-        if (is_bitmaps_list && code.is_cpp())
-        {
-            if (!uses_lambda)
-            {
-                code.CloseBrace();
-            }
-            code.Eol();
-
-            if (Project.as_string(prop_wxWidgets_version) == "3.1")
-            {
-                code.Add("#else").Eol();
-                GenToolCode(code, false);
-                code.Eol().Add("#endif").Eol();
-            }
-        }
-    }
-    else
-    {
-        GenToolCode(code, false);
-    }
-
+    GenToolCode(code);
     if (code.node()->as_string(prop_initial_state) != "wxAUI_BUTTON_STATE_NORMAL")
     {
         code.Eol().NodeName().Function("SetState(").as_string(prop_initial_state).EndFunction();

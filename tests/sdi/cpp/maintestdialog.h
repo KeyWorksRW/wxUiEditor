@@ -75,8 +75,8 @@ public:
         Create(parent, id, title, pos, size, style, name);
     }
 
-    bool Create(wxWindow *parent, wxWindowID id = DLG_MAINTEST, const wxString& title = wxEmptyString,
-        const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
+    bool Create(wxWindow *parent, wxWindowID id = DLG_MAINTEST, const wxString& title = wxEmptyString, const wxPoint& pos =
+        wxDefaultPosition, const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_DIALOG_STYLE, const wxString &name = wxDialogNameStr);
 
     static const int DLG_MAINTEST = wxID_HIGHEST + 100;

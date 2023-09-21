@@ -7,12 +7,7 @@
 
 // clang-format off
 
-#if wxCHECK_VERSION(3, 1, 6)
-    #include <wx/bmpbndl.h>
-#else
-    #include <wx/bitmap.h>
-#endif
-
+#include <wx/bmpbndl.h>
 #include <wx/button.h>
 #include <wx/sizer.h>
 #include <wx/statbmp.h>
@@ -48,30 +43,15 @@ bool DlgIssue_960::Create(wxWindow* parent, wxWindowID id, const wxString& title
 
     auto* box_sizer = new wxBoxSizer(wxHORIZONTAL);
 
-        auto* bmp = new wxStaticBitmap(this, wxID_ANY, 
-#if wxCHECK_VERSION(3, 1, 6)
-            wxue_img::bundle_img_1_bottom_png());
-#else
-        wxBitmap(wxueImage(wxue_img::img_1_bottom_png, sizeof(wxue_img::img_1_bottom_png))));
-#endif
+    auto* bmp = new wxStaticBitmap(this, wxID_ANY, wxue_img::bundle_img_1_bottom_png());
     box_sizer->Add(bmp, wxSizerFlags().Border(wxALL));
 
-        auto* bmp_2 = new wxStaticBitmap(this, wxID_ANY, 
-#if wxCHECK_VERSION(3, 1, 6)
-            wxue_img::bundle_bottom_1__png());
-#else
-        wxBitmap(wxueImage(wxue_img::bottom_1__png, sizeof(wxue_img::bottom_1__png))));
-#endif
+    auto* bmp_2 = new wxStaticBitmap(this, wxID_ANY, wxue_img::bundle_bottom_1__png());
     box_sizer->Add(bmp_2, wxSizerFlags().Border(wxALL));
 
     dlg_sizer->Add(box_sizer, wxSizerFlags().Border(wxALL));
 
-        auto* bmp_3 = new wxStaticBitmap(this, wxID_ANY, 
-#if wxCHECK_VERSION(3, 1, 6)
-            wxue_img::bundle_Ainsi_c3_a_se_passe_png());
-#else
-        wxBitmap(wxueImage(wxue_img::Ainsi_c3_a_se_passe_png, sizeof(wxue_img::Ainsi_c3_a_se_passe_png))));
-#endif
+    auto* bmp_3 = new wxStaticBitmap(this, wxID_ANY, wxue_img::bundle_Ainsi_c3_a_se_passe_png());
     dlg_sizer->Add(bmp_3, wxSizerFlags().Border(wxALL));
 
     auto* stdBtn = CreateStdDialogButtonSizer(wxOK|wxCANCEL);

@@ -7,13 +7,8 @@
 
 // clang-format off
 
-#if wxCHECK_VERSION(3, 1, 6)
-    #include <wx/bmpbndl.h>
-#else
-    #include <wx/bitmap.h>
-#endif
-
 #include <wx/aui/framemanager.h>
+#include <wx/bmpbndl.h>
 #include <wx/button.h>
 #include <wx/sizer.h>
 #include <wx/statbmp.h>
@@ -41,6 +36,10 @@ namespace wxue_img
     extern const unsigned char disabled_png[437];
     // face-smile.svg
     extern const unsigned char face_smile_svg[1781];
+    // fontPicker@1_25x.png
+    extern const unsigned char fontPicker_1_25x_png[1330];
+    // fontPicker@1_5x.png
+    extern const unsigned char fontPicker_1_5x_png[1507];
     extern const unsigned char fontPicker_png[763];
 }
 
@@ -61,14 +60,8 @@ bool PythonDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     auiToolBar = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize,
         wxAUI_TB_PLAIN_BACKGROUND);
     auiToolBar->AddLabel(wxID_ANY, "Label");
-    auto* tool_2 = auiToolBar->AddTool(wxID_ANY, "Search",
-#if wxCHECK_VERSION(3, 1, 6)
-        wxue_img::bundle_fontPicker_png()
-#else
-        wxBitmap(wxueImage(wxue_img::fontPicker_png, sizeof(wxue_img::fontPicker_png)))
-#endif
-    , wxNullBitmap, wxITEM_NORMAL, "This tool should be initially disabled.", "This tool should be initially disabled.",
-        nullptr);
+    auto* tool_2 = auiToolBar->AddTool(wxID_ANY, "Search", wxue_img::bundle_fontPicker_png(), wxNullBitmap, wxITEM_NORMAL,
+        "This tool should be initially disabled.", "This tool should be initially disabled.", nullptr);
     tool_2->SetState(wxAUI_BUTTON_STATE_NORMAL|wxAUI_BUTTON_STATE_DISABLED);
     auiToolBar->AddSpacer(auiToolBar->FromDIP(10));
 
@@ -78,28 +71,16 @@ bool PythonDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     box_sizer->Add(auiToolBar, wxSizerFlags().Border(wxALL));
 
     m_staticText = new wxStaticText(this, wxID_ANY, wxString::FromUTF8("wxPython est génial n\'est-ce pas?"),
-        ConvertDialogToPixels(wxPoint(50, 100)), ConvertDialogToPixels(wxSize(150, 32)), wxALIGN_CENTER_HORIZONTAL,
-        "my_text");
+        ConvertDialogToPixels(wxPoint(50, 100)), ConvertDialogToPixels(wxSize(150, 32)), wxALIGN_CENTER_HORIZONTAL, "my_text");
     m_staticText->SetWindowVariant(wxWINDOW_VARIANT_LARGE);
     m_staticText->SetForegroundColour(wxColour("#008000"));
     box_sizer->Add(m_staticText, wxSizerFlags().Center().Border(wxALL));
 
-        auto* bmp = new wxStaticBitmap(this, wxID_ANY, 
-#if wxCHECK_VERSION(3, 1, 6)
-            wxue_img::bundle_face_smile_svg(32, 32));
-#else
-        wxBitmap(wxNullBitmap /* SVG images require wxWidgets 3.1.6 */));
-#endif
+    auto* bmp = new wxStaticBitmap(this, wxID_ANY, wxue_img::bundle_face_smile_svg(32, 32));
     box_sizer->Add(bmp, wxSizerFlags().Border(wxALL));
 
     m_checkPlayAnimation = new wxCheckBox(this, wxID_ANY, "Play Animation");
-    auto* static_box_2 = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY,
-#if wxCHECK_VERSION(3, 1, 1)
-        m_checkPlayAnimation),
-#else
-        wxEmptyString),
-#endif
-    wxVERTICAL);
+    auto* static_box_2 = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, m_checkPlayAnimation), wxVERTICAL);
 
     m_toggleBtn = new wxToggleButton(static_box_2->GetStaticBox(), wxID_ANY, "Play Animation", wxDefaultPosition,
         wxDefaultSize, wxBU_EXACTFIT);

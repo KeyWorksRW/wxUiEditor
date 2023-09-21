@@ -26,12 +26,7 @@ Wizard::Wizard(wxWindow* parent, wxWindowID id, const wxString& title, const wxP
 
     SetExtraStyle(GetExtraStyle() | wxWIZARD_EX_HELPBUTTON);
     SetBorder(15);
-    if (!Create(parent, id, title,
-#if wxCHECK_VERSION(3, 1, 6)
-            wxue_img::bundle_wiztest_png(), pos, style))
-#else
-            wxBitmap(wxueImage(wxue_img::wiztest_png, sizeof(wxue_img::wiztest_png))), pos, style))
-#endif
+    if (!Create(parent, id, title, wxue_img::bundle_wiztest_png(), pos, style))
         return;
 
     auto* wizPage = new wxWizardPageSimple(this);
@@ -71,8 +66,8 @@ Wizard::Wizard(wxWindow* parent, wxWindowID id, const wxString& title, const wxP
     staticText_2 = new wxStaticText(m_wizPage2, wxID_ANY, "Normal SpinCtrl");
     box_sizer_3->Add(staticText_2, wxSizerFlags().Border(wxALL));
 
-    m_spinCtrl = new wxSpinCtrl(m_wizPage2, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS,
-        0, 100, 4);
+    m_spinCtrl = new wxSpinCtrl(m_wizPage2, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 0,
+        100, 4);
     m_spinCtrl->SetValidator(wxGenericValidator(&m_spinValidate));
     box_sizer_3->Add(m_spinCtrl, wxSizerFlags().Border(wxALL));
 
@@ -102,13 +97,7 @@ Wizard::Wizard(wxWindow* parent, wxWindowID id, const wxString& title, const wxP
     box_sizer2->Add(parent_sizer3, wxSizerFlags().Border(wxALL));
     m_wizPage2->SetSizerAndFit(box_sizer2);
 
-    auto* m_wizPage3 = new wxWizardPageSimple(this, nullptr, nullptr,
-#if wxCHECK_VERSION(3, 1, 6)
-        wxue_img::bundle_wiztest2_png()
-#else
-        wxueImage(wxue_img::wiztest2_png, sizeof(wxue_img::wiztest2_png))
-#endif
-    );
+    auto* m_wizPage3 = new wxWizardPageSimple(this, nullptr, nullptr, wxue_img::bundle_wiztest2_png());
 
     auto* box_sizer3 = new wxBoxSizer(wxVERTICAL);
 

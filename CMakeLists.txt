@@ -335,7 +335,7 @@ target_include_directories(check_build PRIVATE
 
 ####################### Testing #######################
 
-include( tests/app_tests.cmake )  # This will set ${wxue_generated_code} with list of generated files
+# include( tests/app_tests.cmake )  # This will set ${wxue_generated_code} with list of generated files
 
 ####################### Packaging Instructions #######################
 

@@ -24,7 +24,6 @@ namespace wxue_img
 {
     // Images declared in this class module:
 
-    extern const unsigned char wxDialog_png[636];
     extern const unsigned char wxToolBar_png[554];
     extern const unsigned char wxWizard_png[1047];
 }

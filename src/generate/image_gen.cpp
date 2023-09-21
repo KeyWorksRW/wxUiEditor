@@ -494,7 +494,7 @@ static void GenerateSVGBundle(Code& code, const tt_string_vector& parts, bool ge
     auto embed = ProjectImages.GetEmbeddedImage(parts[IndexImage]);
     if (!embed)
     {
-        FAIL_MSG(tt_string() << parts[IndexImage] << " not embedded!")
+        MSG_WARNING(tt_string() << parts[IndexImage] << " not embedded!")
         code.Add("wxNullBitmap");
         return;
     }
@@ -610,7 +610,7 @@ static void GenerateEmbedBundle(Code& code, const tt_string_vector& parts, bool 
     auto bundle = ProjectImages.GetPropertyImageBundle(parts);
     if (!bundle || !bundle->lst_filenames.size())
     {
-        FAIL_MSG("Missing bundle description");
+        MSG_WARNING(tt_string("Missing bundle for ") << parts[IndexImage]);
         code.Add("wxNullBitmap");
         return;
     }

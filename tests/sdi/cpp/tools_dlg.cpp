@@ -278,3 +278,18 @@ namespace wxue_img
 //
 // clang-format on
 // ***********************************************
+
+/////////////////// Non-generated Copyright/License Info ////////////////////
+// Purpose:   Multiple Tests dialog
+// Author:    Ralph Walden
+// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
+// License:   Apache License -- see ../../LICENSE
+/////////////////////////////////////////////////////////////////////////////
+
+#include "mainframe.h"  // MainFrame -- Main window
+
+void MainFrame::OnToolsDlg(wxCommandEvent& WXUNUSED(event))
+{
+    ToolBarsDialog dlg(this);
+    dlg.ShowModal();
+}

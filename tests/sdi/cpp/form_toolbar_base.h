@@ -16,8 +16,8 @@
 class MyToolBarBase : public wxToolBar
 {
 public:
-    MyToolBarBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
-        const wxSize& size = wxDefaultSize, long style = wxTB_HORIZONTAL, const wxString &name = wxPanelNameStr);
+    MyToolBarBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size =
+        wxDefaultSize, long style = wxTB_HORIZONTAL, const wxString &name = wxPanelNameStr);
 
 protected:
 

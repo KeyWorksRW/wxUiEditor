@@ -146,28 +146,24 @@ class MainFrame(wx.Frame):
 
         self.toolBar = self.CreateToolBar()
 
-        tool_dropdown = self.toolBar.AddTool(wx.ID_ANY, "",
-            wx.ArtProvider.GetBitmapBundle(wx.ART_EXECUTABLE_FILE, wx.ART_MENU),
-            wx.EmptyString, wx.ITEM_DROPDOWN)
+        tool_dropdown = self.toolBar.AddTool(wx.ID_ANY, "", wx.ArtProvider.GetBitmapBundle(
+            wx.ART_EXECUTABLE_FILE, wx.ART_MENU), wx.EmptyString, wx.ITEM_DROPDOWN)
         tool_dropdown_menu = wx.Menu()
         menu_item = wx.MenuItem(tool_dropdown_menu, wx.ID_ANY, "Wizard...")
         menu_item.SetBitmap(wx.ArtProvider.GetBitmapBundle(wx.ART_FIND, wx.ART_MENU))
         tool_dropdown_menu.Append(menu_item)
         tool_dropdown.SetDropdownMenu(tool_dropdown_menu)
-        tool_4 = self.toolBar.AddTool(wx.ID_ANY, "MainTestDlg", wx.BitmapBundle.FromBitmap(
-            images.debug_32_png.Bitmap))
+        tool_4 = self.toolBar.AddTool(wx.ID_ANY, "MainTestDlg", images.debug_32_png.Bitmap)
 
-        tool_5 = self.toolBar.AddTool(wx.ID_ANY, "BookTestDlg", wx.BitmapBundle.FromBitmap(
-            images.wxNotebook_png.Bitmap))
+        tool_5 = self.toolBar.AddTool(wx.ID_ANY, "BookTestDlg", images.wxNotebook_png.Bitmap)
 
         self.toolBar.AddSeparator()
-        tool_3 = self.toolBar.AddTool(wx.ID_ANY, "PythonDlg", wx.BitmapBundle.FromBitmap(
-            images.wxPython_1_5x_png.Bitmap))
+        tool_3 = self.toolBar.AddTool(wx.ID_ANY, "PythonDlg", images.wxPython_1_5x_png.Bitmap)
 
         self.toolBar.AddStretchableSpace()
 
-        tool_2 = self.toolBar.AddTool(wx.ID_ANY, "Common Controls...",
-            wx.ArtProvider.GetBitmapBundle(wx.ART_TIP, wx.ART_TOOLBAR))
+        tool_2 = self.toolBar.AddTool(wx.ID_ANY, "Common Controls...", wx.ArtProvider.GetBitmapBundle(
+            wx.ART_TIP, wx.ART_TOOLBAR))
 
         self.toolBar.Realize()
 

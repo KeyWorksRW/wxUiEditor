@@ -10,9 +10,10 @@
     base_directory="sdi/cpp"
     cmake_file="sdi/cpp/wxui_code.cmake"
     cmake_varname="sdi_generated_code"
-    cpp_line_length="120"
+    cpp_line_length="125"
     derived_directory="sdi/cpp"
     generate_cmake="1"
+    wxWidgets_version="3.2"
     python_output_folder="sdi/python"
     combine_all_forms="0"
     combined_xrc_file="combined"
@@ -1733,7 +1734,7 @@
             size="150,32d"
             variant="large"
             window_name="my_text"
-            alignment="wxALIGN_CENTER_VERTICAL|wxALIGN_CENTER_HORIZONTAL" />
+            alignment="|wxALIGN_CENTER_HORIZONTAL" />
           <node
             class="wxStaticBitmap"
             bitmap="SVG;face-smile.svg;[32,32]" />

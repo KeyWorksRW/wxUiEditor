@@ -7,12 +7,7 @@
 
 // clang-format off
 
-#if wxCHECK_VERSION(3, 1, 6)
-    #include <wx/bmpbndl.h>
-#else
-    #include <wx/bitmap.h>
-#endif
-
+#include <wx/bmpbndl.h>
 #include <wx/event.h>
 #include <wx/menu.h>
 #include <wx/sizer.h>
@@ -85,8 +80,7 @@ bool CommonCtrls::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     box_sizer->Add(m_textCtrl, wxSizerFlags().Border(wxALL));
 
     m_staticText2 = new wxStaticText(this, wxID_ANY, "More text:");
-    box_sizer->Add(m_staticText2,
-        wxSizerFlags().Center().Border(wxLEFT|wxTOP|wxBOTTOM, wxSizerFlags::GetDefaultBorder()));
+    box_sizer->Add(m_staticText2, wxSizerFlags().Center().Border(wxLEFT|wxTOP|wxBOTTOM, wxSizerFlags::GetDefaultBorder()));
 
     m_textCtrl2 = new wxTextCtrl(this, wxID_ANY, "Another ctrl");
     box_sizer->Add(m_textCtrl2, wxSizerFlags().Border(wxALL));
@@ -135,8 +129,8 @@ bool CommonCtrls::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     m_staticText4 = new wxStaticText(static_box_sizer2->GetStaticBox(), wxID_ANY, "Sorted");
     static_box_sizer2->Add(m_staticText4, wxSizerFlags().Border(wxALL));
 
-    m_comboBox2 = new wxComboBox(static_box_sizer2->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition,
-        wxDefaultSize, 0, nullptr, wxCB_SORT);
+    m_comboBox2 = new wxComboBox(static_box_sizer2->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize,
+        0, nullptr, wxCB_SORT);
     m_comboBox2->Append("item #1");
     m_comboBox2->Append("item #2");
     m_comboBox2->Append("item #0");
@@ -244,12 +238,7 @@ bool CommonCtrls::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 
     auto* box_sizer_2 = new wxBoxSizer(wxVERTICAL);
 
-        auto* bmp = new wxStaticBitmap(this, wxID_ANY, 
-#if wxCHECK_VERSION(3, 1, 6)
-            wxue_img::bundle_face_smile_svg(64, 64));
-#else
-        wxBitmap(wxNullBitmap /* SVG images require wxWidgets 3.1.6 */));
-#endif
+    auto* bmp = new wxStaticBitmap(this, wxID_ANY, wxue_img::bundle_face_smile_svg(64, 64));
     box_sizer_2->Add(bmp, wxSizerFlags().Border(wxALL));
 
     m_staticText_2 = new wxStaticText(this, wxID_ANY, "SVG image");
@@ -262,13 +251,7 @@ bool CommonCtrls::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     flex_grid_sizer->Add(m_bmpComboBox, wxSizerFlags().Border(wxALL));
 
     m_checkPlayAnimation = new wxCheckBox(this, wxID_ANY, "Play Animation");
-    auto* static_box_2 = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY,
-#if wxCHECK_VERSION(3, 1, 1)
-        m_checkPlayAnimation),
-#else
-        wxEmptyString),
-#endif
-    wxVERTICAL);
+    auto* static_box_2 = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, m_checkPlayAnimation), wxVERTICAL);
 
     m_toggleBtn = new wxToggleButton(static_box_2->GetStaticBox(), wxID_ANY, "Play Animation", wxDefaultPosition,
         wxDefaultSize, wxBU_EXACTFIT);
@@ -329,16 +312,14 @@ bool CommonCtrls::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     auto* box_sizer5 = new wxBoxSizer(wxHORIZONTAL);
 
     m_staticText12 = new wxStaticText(this, wxID_ANY, "Slider:");
-    box_sizer5->Add(m_staticText12,
-        wxSizerFlags().Center().Border(wxLEFT|wxTOP|wxBOTTOM, wxSizerFlags::GetDefaultBorder()));
+    box_sizer5->Add(m_staticText12, wxSizerFlags().Center().Border(wxLEFT|wxTOP|wxBOTTOM, wxSizerFlags::GetDefaultBorder()));
 
     m_slider = new wxSlider(this, wxID_ANY, 50, 0, 100);
     m_slider->SetValue(50);
     box_sizer5->Add(m_slider, wxSizerFlags().Border(wxALL));
 
     m_staticText13 = new wxStaticText(this, wxID_ANY, "Gauge:");
-    box_sizer5->Add(m_staticText13,
-        wxSizerFlags().Center().Border(wxLEFT|wxTOP|wxBOTTOM, wxSizerFlags::GetDefaultBorder()));
+    box_sizer5->Add(m_staticText13, wxSizerFlags().Center().Border(wxLEFT|wxTOP|wxBOTTOM, wxSizerFlags::GetDefaultBorder()));
 
     m_gauge = new wxGauge(this, wxID_ANY, 100);
     m_gauge->SetValue(0);

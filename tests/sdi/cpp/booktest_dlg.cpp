@@ -122,24 +122,11 @@ bool BookTestDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 
     m_listbook = new wxListbook(page_3, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLB_LEFT);
     {
-#if wxCHECK_VERSION(3, 1, 6)
         wxBookCtrlBase::Images bundle_list;
         bundle_list.push_back(wxue_img::bundle_english_png());
         bundle_list.push_back(wxue_img::bundle_french_png());
         bundle_list.push_back(wxue_img::bundle_japanese_png());
         m_listbook->SetImages(bundle_list);
-
-#else  // older version of wxWidgets that don't support bitmap bundles
-
-        auto img_list = new wxImageList;
-        auto img_0 = wxueImage(wxue_img::english_png, sizeof(wxue_img::english_png));
-        img_list->Add(img_0);
-        auto img_1 = wxueImage(wxue_img::french_png, sizeof(wxue_img::french_png));
-        img_list->Add(img_1);
-        auto img_2 = wxueImage(wxue_img::japanese_png, sizeof(wxue_img::japanese_png));
-        img_list->Add(img_2);
-        m_listbook->AssignImageList(img_list);
-#endif  // wxCHECK_VERSION(3, 1, 6)
     }
     m_listbook->SetMinSize(wxSize(400, 400));
     page_sizer_2->Add(m_listbook, wxSizerFlags().Border(wxALL));
@@ -183,24 +170,11 @@ bool BookTestDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 
     m_notebook_2 = new wxNotebook(page_4, wxID_ANY);
     {
-#if wxCHECK_VERSION(3, 1, 6)
         wxBookCtrlBase::Images bundle_list;
         bundle_list.push_back(wxue_img::bundle_english_png());
         bundle_list.push_back(wxue_img::bundle_french_png());
         bundle_list.push_back(wxue_img::bundle_japanese_png());
         m_notebook_2->SetImages(bundle_list);
-
-#else  // older version of wxWidgets that don't support bitmap bundles
-
-        auto img_list = new wxImageList;
-        auto img_0 = wxueImage(wxue_img::english_png, sizeof(wxue_img::english_png));
-        img_list->Add(img_0);
-        auto img_1 = wxueImage(wxue_img::french_png, sizeof(wxue_img::french_png));
-        img_list->Add(img_1);
-        auto img_2 = wxueImage(wxue_img::japanese_png, sizeof(wxue_img::japanese_png));
-        img_list->Add(img_2);
-        m_notebook_2->AssignImageList(img_list);
-#endif  // wxCHECK_VERSION(3, 1, 6)
     }
     m_notebook_2->SetMinSize(wxSize(400, 400));
     page_sizer_3->Add(m_notebook_2, wxSizerFlags().Expand().Border(wxALL));
@@ -244,24 +218,11 @@ bool BookTestDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 
     m_toolbook = new wxToolbook(page_5, wxID_ANY);
     {
-#if wxCHECK_VERSION(3, 1, 6)
         wxBookCtrlBase::Images bundle_list;
         bundle_list.push_back(wxue_img::bundle_english_png());
         bundle_list.push_back(wxue_img::bundle_french_png());
         bundle_list.push_back(wxue_img::bundle_japanese_png());
         m_toolbook->SetImages(bundle_list);
-
-#else  // older version of wxWidgets that don't support bitmap bundles
-
-        auto img_list = new wxImageList;
-        auto img_0 = wxueImage(wxue_img::english_png, sizeof(wxue_img::english_png));
-        img_list->Add(img_0);
-        auto img_1 = wxueImage(wxue_img::french_png, sizeof(wxue_img::french_png));
-        img_list->Add(img_1);
-        auto img_2 = wxueImage(wxue_img::japanese_png, sizeof(wxue_img::japanese_png));
-        img_list->Add(img_2);
-        m_toolbook->AssignImageList(img_list);
-#endif  // wxCHECK_VERSION(3, 1, 6)
     }
     m_toolbook->SetMinSize(wxSize(400, 400));
     page_sizer_4->Add(m_toolbook, wxSizerFlags().Border(wxALL));
@@ -305,28 +266,11 @@ bool BookTestDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 
     m_treebook = new wxTreebook(page, wxID_ANY);
     {
-#if wxCHECK_VERSION(3, 1, 6)
         wxBookCtrlBase::Images bundle_list;
         bundle_list.push_back(wxue_img::bundle_english_png());
         bundle_list.push_back(wxue_img::bundle_french_png());
         bundle_list.push_back(wxue_img::bundle_japanese_png());
         m_treebook->SetImages(bundle_list);
-
-#else  // older version of wxWidgets that don't support bitmap bundles
-
-        auto img_list = new wxImageList;
-        auto img_0 = wxueImage(wxue_img::english_png, sizeof(wxue_img::english_png));
-        img_list->Add(img_0);
-        auto img_1 = wxueImage(wxue_img::re_png, sizeof(wxue_img::re_png));
-        img_list->Add(img_1);
-        auto img_2 = wxueImage(wxue_img::er_png, sizeof(wxue_img::er_png));
-        img_list->Add(img_2);
-        auto img_3 = wxueImage(wxue_img::french_png, sizeof(wxue_img::french_png));
-        img_list->Add(img_3);
-        auto img_4 = wxueImage(wxue_img::japanese_png, sizeof(wxue_img::japanese_png));
-        img_list->Add(img_4);
-        m_treebook->AssignImageList(img_list);
-#endif  // wxCHECK_VERSION(3, 1, 6)
     }
     m_treebook->SetMinSize(wxSize(400, 400));
     page_sizer_5->Add(m_treebook, wxSizerFlags().Border(wxALL));

@@ -9,6 +9,7 @@
 #include <wx/string.h>    // wxString class
 
 #include <cstdarg>  // for va_list
+#include <cstring>
 #include <sstream>  // for std::stringstream
 
 #include "tt_string.h"

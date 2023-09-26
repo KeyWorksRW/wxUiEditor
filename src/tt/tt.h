@@ -126,7 +126,7 @@ namespace tt
 
     template <typename T>
     // Converts a numeric vaslue into a string.
-    tt_string itoa(T value)
+    std::string itoa(T value)
     {
         return std::to_string(value);
     }

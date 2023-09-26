@@ -5,6 +5,8 @@
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
+#include <cstring>
+
 #include "tt_string_view.h"
 
 bool tt_string_view::is_sameas(std::string_view str, tt::CASE checkcase) const

@@ -221,9 +221,9 @@ void PreferencesDlg::OnInit(wxInitDialogEvent& event)
     m_colour_python->SetColour(UserPrefs.get_PythonColour());
     m_colour_ruby->SetColour(UserPrefs.get_RubyColour());
 
-    m_cpp_line_length = tt::itoa(UserPrefs.get_CppLineLength()).make_wxString();
-    m_python_line_length = tt::itoa(UserPrefs.get_PythonLineLength()).make_wxString();
-    m_ruby_line_length = tt::itoa(UserPrefs.get_RubyLineLength()).make_wxString();
+    m_cpp_line_length = std::to_string(UserPrefs.get_CppLineLength());
+    m_python_line_length = std::to_string(UserPrefs.get_PythonLineLength());
+    m_ruby_line_length = std::to_string(UserPrefs.get_RubyLineLength());
 
     // We aren't ready for setting the font yet
     m_box_code_font->ShowItems(false);

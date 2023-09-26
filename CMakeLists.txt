@@ -49,9 +49,24 @@ option(BUILD_FORK "Builds wxWidgets using wxWidgets/wx_3_3")
 # to verify the wxUSE_UNICODE_UTF8 build option for MSW.
 
 option(BUILD_CUSTOM "Builds with custom version of wxWidgets")
+option(BUILD_WIDGETS_3_2 "Builds with wxWidgets 3.2")
 
-if (BUILD_CUSTOM AND BUILD_FORK)
-    message(FATAL_ERROR "BUILD_FORK and BUILD_CUSTOM cannot be combined")
+if (BUILD_WIDGETS_3_2)
+    if (BUILD_CUSTOM OR BUILD_FORK)
+        message(FATAL_ERROR "BUILD_WIDGETS_3_2 cannot be combined with BUILD_FORK or BUILD_CUSTOM")
+    endif()
+endif()
+
+if (BUILD_FORK)
+    if (BUILD_CUSTOM OR BUILD_WIDGETS_3_2)
+        message(FATAL_ERROR "BUILD_FORK cannot be combined with BUILD_WIDGETS_3_2 or BUILD_CUSTOM")
+    endif()
+endif()
+
+if (BUILD_CUSTOM)
+    if (BUILD_FORK OR BUILD_WIDGETS_3_2)
+        message(FATAL_ERROR "BUILD_CUSTOM cannot be combined with BUILD_WIDGETS_3_2 or BUILD_FORK")
+    endif()
 endif()
 
 if (BUILD_FORK)
@@ -60,10 +75,14 @@ if (BUILD_FORK)
 elseif (BUILD_CUSTOM)
     set(BUILD_ROOT ${BUILD_CUSTOM_DIR} CACHE PATH "${CMAKE_CURRENT_LIST_DIR}/../" FORCE)
     message(NOTICE "Building with custom build of wxWidgets")
-else()
+elseif (BUILD_WIDGETS_3_2)
     set(BUILD_ROOT wxWidgets CACHE PATH "wxWidgets" FORCE)
+    message(NOTICE "Building with wxWidgets 3.2")
+else()
+    set(BUILD_ROOT wxSnapshot CACHE PATH "wxSnapshot" FORCE)
 endif()
 
+#  These settings will force dark mode on unless user preferences has shut it off. Shouldn't really be needed anymore.
 option(INTERNAL_DARK_MODE "Enable dark mode (used with wxWidgets 3.3 in _WIN32 builds)" OFF)
 option(INTERNAL_DARK_HIGH_CONTRAST "Enable dark mode high contrast (used with wxWidgets 3.3 in _WIN32 builds)" OFF)
 
@@ -167,9 +186,12 @@ if (BUILD_FORK)
 elseif(BUILD_CUSTOM)
     set (widget_dir ${CMAKE_CURRENT_LIST_DIR}/wxWidgets/wx_custom)
     add_subdirectory(${widget_dir})
-else()
+elseif(BUILD_WXWIN_3_2)
     set (widget_dir ${CMAKE_CURRENT_LIST_DIR}/wxWidgets)
     add_subdirectory(${widget_dir}/wx_3_2)
+else()
+    set (widget_dir ${CMAKE_CURRENT_LIST_DIR}/wxSnapshot)
+    add_subdirectory(${widget_dir})
 endif()
 
 message(STATUS "widget_dir: ${widget_dir}")
@@ -179,13 +201,14 @@ if (WIN32)
         set(setup_dir ${CMAKE_CURRENT_LIST_DIR}/wxWidgets/wx_3_3/setup/win)
     elseif(BUILD_CUSTOM)
         set(setup_dir ${CMAKE_CURRENT_LIST_DIR}/wxWidgets/wx_custom/setup/win)
-    else()
+    elseif(BUILD_WIDGETS_3_2)
         set(setup_dir ${CMAKE_CURRENT_LIST_DIR}/wxWidgets/wx_3_2/setup/win)
+    else()
+        set(setup_dir ${CMAKE_CURRENT_LIST_DIR}/wxSnapshot/win)
     endif()
-else()
-    if (NOT BUILD_FORK)
-        set(setup_dir ${CMAKE_CURRENT_LIST_DIR}/wxWidgets/wx_3_3/setup/unix)
-    endif()
+elseif (UNIX)
+    # Currently, this is the only build location supported for a UNIX build
+    set(setup_dir ${CMAKE_CURRENT_LIST_DIR}/wxSnapshot/unix)
 endif()
 
 ####################### Libraries and Executables #######################
@@ -216,7 +239,11 @@ if (BUILD_SHARED_LIBS)
     target_compile_definitions(check_build PRIVATE WXUSINGDLL)
 else()
     # This is built into wxWidgets if a shared library is created
-    set(CLib wxCLib)
+    if (WIN32)
+        set(CLib wxCLib)
+    elseif(UNIX)
+        set(CLib libwxCLib)
+    endif()
 endif()
 
 if (NOT BUILD_FORK)
@@ -246,19 +273,29 @@ endif()
 if (NOT BUILD_FORK AND NOT BUILD_CUSTOM)
     if (WIN32)
         target_link_libraries(wxUiEditor PRIVATE wxWidgets ${CLib} comctl32 Imm32 Shlwapi Version UxTheme)
+    elseif (UNIX)
+        target_link_libraries(wxUiEditor PRIVATE libwxWidgets ${CLib})
     endif()
-else()
+elseif(BUILD_FORK)
     if (WIN32)
         target_link_directories(wxUiEditor PRIVATE
             $<$<CONFIG:Debug>:${widget_dir}/bld/build/Debug>
             $<$<CONFIG:Release>:${widget_dir}/bld/build/Release>
         )
         target_link_libraries(wxUiEditor PRIVATE wxWidgets ${CLib})
-    else()
-        target_link_libraries(wxUiEditor PRIVATE wxWidgets ${CLib})
+    endif()
+elseif(BUILD_CUSTOM)
+    if (WIN32)
         target_link_directories(wxUiEditor PRIVATE
-            $<$<CONFIG:Debug>:${widget_lib_dir}>
-            $<$<CONFIG:Release>:${widget_lib_dir}>
+            $<$<CONFIG:Debug>:${widget_dir}/build/Debug>
+            $<$<CONFIG:Release>:${widget_dir}/build/Release>
+        )
+        target_link_libraries(wxUiEditor PRIVATE wxWidgets ${CLib} comctl32 Imm32 Shlwapi Version UxTheme)
+    elseif(UNIX)
+        target_link_libraries(wxUiEditor PRIVATE libwxWidgets ${CLib})
+        target_link_directories(wxTest PRIVATE
+            $<$<CONFIG:Debug>:${widget_dir}/build/Debug>
+            $<$<CONFIG:Release>:${widget_dir}/build/Release>
         )
     endif()
 endif()

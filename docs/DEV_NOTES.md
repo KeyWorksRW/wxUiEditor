@@ -4,6 +4,12 @@ If you are planning on contributing code, the following sections contain informa
 
 Note that the code requires a C++20 compliant compiler -- which means you should be using C++20 coding conventions. That includes using `std::string_view` (or `tt_stringview`) for strings when practical. See the **Strings** section below for information about working with `wxString`.
 
+## wxWidgets libraries
+
+Abbreviated versions of wxWidgets 3.2 and 3.3 are part of the repository. These versions generally only contain source and header files, and they are built with a custom CMakeLists.txt file. The default is to build with `wxSnapshot/` which is a subtree of `https://github.com/KeyWorksRW/wxSnapshot.git` which contains a development version of wxWidgets 3.3. This is _not_ necessarily a release version of wxWidgets -- it's being used to get Dark mode and UTF8 when building on Windows.
+
+The `wxWidgets/` directory contains a snapshot of wxWidgets 3.2. At some point, it may not be possible to build wxUiEditor with this library, but it will still be available for building the projects in the `tests/` directory.
+
 ## Debug builds
 
 When you create a Debug build, there will be an additional `Testing` and `Internal` menu to the right of the **Help** menu that will give you access to additional functionality for easier debugging. You can also get these menus in a Release build if you set INTERNAL_BLD_TESTING to true in your CMake configuration.

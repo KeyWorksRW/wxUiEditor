@@ -72,7 +72,12 @@ bool ListBoxGenerator::SettingsCode(Code& code)
 {
     if (code.IsTrue(prop_focus))
     {
-        code.Eol(eol_if_empty).NodeName().Function("SetFocus(").EndFunction();
+        auto form = code.node()->getForm();
+        // wxDialog and wxFrame will set the focus to this control after all controls are created.
+        if (!form->isGen(gen_wxDialog) && !form->isGen(gen_wxFrame))
+        {
+            code.Eol(eol_if_empty).NodeName().Function("SetFocus(").EndFunction();
+        }
     }
 
     if (code.hasValue(prop_contents))

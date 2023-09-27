@@ -161,22 +161,22 @@ bool DialogFormGenerator::SettingsCode(Code& code)
 
 bool DialogFormGenerator::AfterChildrenCode(Code& code)
 {
-    Node* dlg = code.node();
-    Node* child_node = dlg;
-    ASSERT_MSG(dlg->getChildCount(), "Trying to generate code for a dialog with no children.")
-    if (!dlg->getChildCount())
+    Node* form = code.node();
+    Node* child_node = form;
+    ASSERT_MSG(form->getChildCount(), "Trying to generate code for a dialog with no children.")
+    if (!form->getChildCount())
         return {};  // empty dialog, so nothing to do
-    ASSERT_MSG(dlg->getChild(0)->isSizer(), "Expected first child of a dialog to be a sizer.");
-    if (dlg->getChild(0)->isSizer())
+    ASSERT_MSG(form->getChild(0)->isSizer(), "Expected first child of a dialog to be a sizer.");
+    if (form->getChild(0)->isSizer())
     {
         // If the first child is not a sizer, then child_node will still point to the dialog
         // node, which means the SetSizer...(child_node) calls below will generate invalid
         // code.
-        child_node = dlg->getChild(0);
+        child_node = form->getChild(0);
     }
 
-    const auto min_size = dlg->as_wxSize(prop_minimum_size);
-    const auto max_size = dlg->as_wxSize(prop_maximum_size);
+    const auto min_size = form->as_wxSize(prop_minimum_size);
+    const auto max_size = form->as_wxSize(prop_maximum_size);
 
     if (min_size == wxDefaultSize && max_size == wxDefaultSize)
     {
@@ -197,7 +197,40 @@ bool DialogFormGenerator::AfterChildrenCode(Code& code)
         code.Eol().FormFunction("Fit(").EndFunction();
     }
 
-    auto& center = dlg->as_string(prop_center);
+    bool is_focus_set = false;
+    auto SetChildFocus = [&](Node* child, auto&& SetChildFocus) -> void
+    {
+        if (child->hasProp(prop_focus))
+        {
+            if (child->as_bool(prop_focus))
+            {
+                code.Eol().NodeName(child).Function("SetFocus(").EndFunction();
+                is_focus_set = true;
+                return;
+            }
+        }
+        else if (child->getChildCount())
+        {
+            for (auto& iter: child->getChildNodePtrs())
+            {
+                SetChildFocus(iter.get(), SetChildFocus);
+                if (is_focus_set)
+                    return;
+            }
+        }
+    };
+
+    for (auto& iter: form->getChildNodePtrs())
+    {
+        SetChildFocus(iter.get(), SetChildFocus);
+        if (is_focus_set)
+        {
+            code.Eol();
+            break;
+        }
+    }
+
+    auto& center = form->as_string(prop_center);
     if (center.size() && !center.is_sameas("no"))
     {
         code.Eol().FormFunction("Centre(").Add(center).EndFunction();

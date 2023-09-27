@@ -18,6 +18,7 @@ All notable changes to this project will be documented in this file.
 - controls that have one or more default window styles set (e.g., wxPanel has wxTAB_TRAVERSAL set) can now have that style unchecked and that state will be stored with the project file.
 - Color properties dialog now supports _all_ CSS color names
 - Generated code for colors now uses a CSS HTML String (#RRGGBB) instead of numerical values for red, green and blue.
+- Generated code for wxRibbonToolBar images are now scaled on high DPI displays
 
 ### Fixed
 

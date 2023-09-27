@@ -482,7 +482,10 @@ static void GenerateSVGBundle(Code& code, const tt_string_vector& parts, bool ge
     {
         if (auto function_name = ProjectImages.GetBundleFuncName(parts); function_name.size())
         {
-            code.Eol().Str(function_name).Comma().Str("FromDIP(wxSize(").itoa(svg_size.x).Comma().itoa(svg_size.y) += ")))";
+            // The function name includes the size, but we need to replace the size with a DIP version.
+            function_name.erase_from("(");
+            code.Eol().Tab().Str(function_name).Str("(FromDIP(").itoa(svg_size.x).Str("), FromDIP(").itoa(svg_size.y);
+            code += "))";
             if (get_bitmap)
             {
                 code.Str(".").Add("GetBitmap(").Add("wxDefaultSize)");
@@ -511,7 +514,7 @@ static void GenerateSVGBundle(Code& code, const tt_string_vector& parts, bool ge
         }
         else
         {
-            code.Add("wxSize(").itoa(svg_size.x).Comma().itoa(svg_size.y) += "))";
+            code.Add("FromDIP(wxSize(").itoa(svg_size.x).Comma().itoa(svg_size.y) += ")))";
         }
         return;
     }

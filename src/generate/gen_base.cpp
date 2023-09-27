@@ -122,9 +122,10 @@ void BaseCodeGenerator::CollectIncludes(Node* node, std::set<std::string>& set_s
     // in the src file.
     for (auto& iter: set_hdr)
     {
-        auto pos = set_src.find(iter);
-        if (pos != set_src.end())
+        if (auto pos = set_src.find(iter); pos != set_src.end())
+        {
             set_src.erase(pos);
+        }
     }
 }
 

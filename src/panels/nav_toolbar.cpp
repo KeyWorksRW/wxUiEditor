@@ -39,15 +39,17 @@ NavToolbar::NavToolbar(wxWindow* parent, wxWindowID id, const wxPoint& pos, cons
 
     AddStretchableSpace();
 
-    AddTool(id_NavCollExpand, wxEmptyString, wxueBundleSVG(wxue_img::nav_coll_expand_svg, 249, 482, wxSize(16, 16)),
-        wxNullBitmap, wxITEM_NORMAL, "Collapse siblings, expand children",
-        "Expand selected item, collapse all other items at the same level");
+    AddTool(id_NavCollExpand, wxEmptyString,
+        wxueBundleSVG(wxue_img::nav_coll_expand_svg, 249, 482, FromDIP(wxSize(16, 16))), wxNullBitmap, wxITEM_NORMAL,
+        "Collapse siblings, expand children", "Expand selected item, collapse all other items at the same level");
 
-    AddTool(id_NavExpand, wxEmptyString, wxueBundleSVG(wxue_img::nav_expand_svg, 248, 410, wxSize(16, 16)), wxNullBitmap,
-        wxITEM_NORMAL, "Expand all children", "Expand selected item and all of it\'s sub-items");
+    AddTool(id_NavExpand, wxEmptyString,
+        wxueBundleSVG(wxue_img::nav_expand_svg, 248, 410, FromDIP(wxSize(16, 16))), wxNullBitmap, wxITEM_NORMAL,
+        "Expand all children", "Expand selected item and all of it\'s sub-items");
 
-    AddTool(id_NavCollapse, wxEmptyString, wxueBundleSVG(wxue_img::nav_collapse_svg, 244, 432, wxSize(16, 16)), wxNullBitmap,
-        wxITEM_NORMAL, "Collapse all siblings", "Collapse selected item and all items at the same level");
+    AddTool(id_NavCollapse, wxEmptyString,
+        wxueBundleSVG(wxue_img::nav_collapse_svg, 244, 432, FromDIP(wxSize(16, 16))), wxNullBitmap, wxITEM_NORMAL,
+        "Collapse all siblings", "Collapse selected item and all items at the same level");
 
     AddSeparator();
     AddTool(id_NavMoveLeft, wxEmptyString, wxArtProvider::GetBitmapBundle(wxART_GO_BACK, wxART_MENU), wxNullBitmap,

@@ -225,6 +225,33 @@ void BaseCodeGenerator::GenerateCppClass(Node* form_node, PANEL_PAGE panel_type)
             }
         }
 
+        std::vector<std::string> ordered_includes;
+        if (auto pos = hdr_includes.find("#include <wx/generic/stattextg.h>"); pos != hdr_includes.end())
+        {
+            hdr_includes.erase(pos);
+            if (pos = hdr_includes.find("#include <wx/stattext.h>"); pos != hdr_includes.end())
+            {
+                hdr_includes.erase(pos);
+            }
+
+            if (ordered_includes.empty())
+            {
+                ordered_includes.emplace_back("// Order dependent includes");
+            }
+
+            ordered_includes.emplace_back("#include <wx/stattext.h>");
+            ordered_includes.emplace_back("#include <wx/generic/stattextg.h>");
+        }
+
+        if (ordered_includes.size())
+        {
+            for (auto& iter: ordered_includes)
+            {
+                m_header->writeLine(iter);
+            }
+            m_header->writeLine();
+        }
+
         // First output all the wxWidget header files
         for (auto& iter: hdr_includes)
         {
@@ -332,7 +359,33 @@ void BaseCodeGenerator::GenerateCppClass(Node* form_node, PANEL_PAGE panel_type)
 
     if (m_TranslationUnit)
     {
-        // First output all the wxWidget header files
+        std::vector<std::string> ordered_includes;
+        if (auto pos = src_includes.find("#include <wx/generic/stattextg.h>"); pos != src_includes.end())
+        {
+            src_includes.erase(pos);
+            if (pos = src_includes.find("#include <wx/stattext.h>"); pos != src_includes.end())
+            {
+                src_includes.erase(pos);
+            }
+
+            if (ordered_includes.empty())
+            {
+                ordered_includes.emplace_back("// Order dependent includes");
+            }
+
+            ordered_includes.emplace_back("#include <wx/stattext.h>");
+            ordered_includes.emplace_back("#include <wx/generic/stattextg.h>");
+        }
+
+        if (ordered_includes.size())
+        {
+            for (auto& iter: ordered_includes)
+            {
+                m_source->writeLine(iter);
+            }
+            m_source->writeLine();
+        }
+
         for (auto& iter: src_includes)
         {
             if (tt::contains(iter, "<wx"))

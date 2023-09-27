@@ -60,7 +60,6 @@ bool NodeSearchDlg::Create(wxWindow* parent, wxWindowID id, const wxString& titl
 
     m_text_search = new wxTextCtrl(this, wxID_ANY, wxEmptyString);
     m_text_search->SetHint("Enter item to search for");
-    m_text_search->SetFocus();
     box_sizer->Add(m_text_search, wxSizerFlags().Border(wxLEFT|wxRIGHT|wxTOP, wxSizerFlags::GetDefaultBorder()));
 
     dlg_sizer->Add(box_sizer, wxSizerFlags().Border(wxALL));
@@ -96,6 +95,8 @@ bool NodeSearchDlg::Create(wxWindow* parent, wxWindowID id, const wxString& titl
     dlg_sizer->Add(CreateSeparatedSizer(stdBtn), wxSizerFlags().Expand().Border(wxALL));
 
     SetSizerAndFit(dlg_sizer);
+    m_text_search->SetFocus();
+
     Centre(wxBOTH);
 
     wxPersistentRegisterAndRestore(this, "NodeSearchDlg");

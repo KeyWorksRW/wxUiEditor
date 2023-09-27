@@ -29,7 +29,6 @@ bool GlobalCustomIDS::Create(wxWindow* parent, wxWindowID id, const wxString& ti
     box_sizer_13->Add(staticText, wxSizerFlags().Border(wxALL));
 
     m_lb_folders = new wxListBox(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, nullptr, wxLB_MULTIPLE);
-    m_lb_folders->SetFocus();
     m_lb_folders->SetMinSize(ConvertDialogToPixels(wxSize(-1, 80)));
     box_sizer_13->Add(m_lb_folders, wxSizerFlags().Expand().Border(wxALL));
 
@@ -165,6 +164,8 @@ bool GlobalCustomIDS::Create(wxWindow* parent, wxWindowID id, const wxString& ti
     dlg_sizer->Add(CreateSeparatedSizer(stdBtn), wxSizerFlags().Expand().Border(wxALL));
 
     SetSizerAndFit(dlg_sizer);
+    m_lb_folders->SetFocus();
+
     Centre(wxBOTH);
 
     // Event handlers

@@ -164,6 +164,43 @@ bool FrameFormGenerator::SettingsCode(Code& code)
 
 bool FrameFormGenerator::AfterChildrenCode(Code& code)
 {
+    Node* form = code.node();
+    if (form->getChildCount())
+    {
+        bool is_focus_set = false;
+        auto SetChildFocus = [&](Node* child, auto&& SetChildFocus) -> void
+        {
+            if (child->hasProp(prop_focus))
+            {
+                if (child->as_bool(prop_focus))
+                {
+                    code.NodeName(child).Function("SetFocus(").EndFunction();
+                    is_focus_set = true;
+                    return;
+                }
+            }
+            else if (child->getChildCount())
+            {
+                for (auto& iter: child->getChildNodePtrs())
+                {
+                    SetChildFocus(iter.get(), SetChildFocus);
+                    if (is_focus_set)
+                        return;
+                }
+            }
+        };
+
+        for (auto& iter: form->getChildNodePtrs())
+        {
+            SetChildFocus(iter.get(), SetChildFocus);
+            if (is_focus_set)
+            {
+                code.Eol();
+                break;
+            }
+        }
+    }
+
     auto& center = code.node()->as_string(prop_center);
     if (center.size() && !center.is_sameas("no"))
     {

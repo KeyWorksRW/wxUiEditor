@@ -48,7 +48,6 @@ bool NewMdiForm::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     box_sizer_8->Add(staticText_6, wxSizerFlags().Center().Border(wxALL));
 
     auto* folder_name = new wxTextCtrl(this, wxID_ANY, "Mdi Application");
-    folder_name->SetFocus();
     folder_name->SetValidator(wxTextValidator(wxFILTER_NONE, &m_folder_name));
     folder_name->SetToolTip("Change this to something unique to your project.");
     box_sizer_8->Add(folder_name, wxSizerFlags(1).Border(wxALL));
@@ -158,6 +157,8 @@ bool NewMdiForm::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     box_sizer->Add(CreateSeparatedSizer(stdBtn), wxSizerFlags().Expand().Border(wxALL));
 
     SetSizerAndFit(box_sizer);
+    folder_name->SetFocus();
+
     Centre(wxBOTH);
 
     // Event handlers

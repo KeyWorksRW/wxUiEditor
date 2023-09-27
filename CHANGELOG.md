@@ -19,6 +19,7 @@ All notable changes to this project will be documented in this file.
 - Color properties dialog now supports _all_ CSS color names
 - Generated code for colors now uses a CSS HTML String (#RRGGBB) instead of numerical values for red, green and blue.
 - Generated code for wxRibbonToolBar images are now scaled on high DPI displays
+- A control within a wxDialog or wxFrame with the focus property set will now call SetFocus() after all other controls have been created.
 
 ### Fixed
 

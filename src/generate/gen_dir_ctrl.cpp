@@ -65,7 +65,12 @@ bool GenericDirCtrlGenerator::SettingsCode(Code& code)
 
     if (code.IsTrue(prop_focus))
     {
-        code.NodeName().Function("SetFocus(").EndFunction();
+        auto form = code.node()->getForm();
+        // wxDialog and wxFrame will set the focus to this control after all controls are created.
+        if (!form->isGen(gen_wxDialog) && !form->isGen(gen_wxFrame))
+        {
+            code.NodeName().Function("SetFocus(").EndFunction();
+        }
     }
 
     return true;

@@ -35,7 +35,6 @@ bool IncludeFilesDialog::Create(wxWindow* parent, wxWindowID id, const wxString&
     auto* box_sizer = new wxBoxSizer(wxHORIZONTAL);
 
     m_listbox = new wxListBox(this, wxID_ANY);
-    m_listbox->SetFocus();
     m_listbox->SetMinSize(ConvertDialogToPixels(wxSize(100, 80)));
     box_sizer->Add(m_listbox, wxSizerFlags().Border(wxALL));
 
@@ -69,6 +68,8 @@ bool IncludeFilesDialog::Create(wxWindow* parent, wxWindowID id, const wxString&
     dlg_sizer->Add(CreateSeparatedSizer(stdBtn), wxSizerFlags().Expand().Border(wxALL));
 
     SetSizerAndFit(dlg_sizer);
+    m_listbox->SetFocus();
+
     Centre(wxBOTH);
 
     // Event handlers

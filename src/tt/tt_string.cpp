@@ -1147,7 +1147,7 @@ bool tt_string::MkDir(const tt_string& path, bool recursive)
     else
         return std::filesystem::create_directory(dir_path);
 #else
-    auto dir_path = std::filesystem::path(path);
+    auto dir_path = std::filesystem::path(path.c_str());
     if (recursive)
         return std::filesystem::create_directories(dir_path);
     else

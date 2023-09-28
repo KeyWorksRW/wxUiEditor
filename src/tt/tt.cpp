@@ -581,11 +581,12 @@ void tt::utf8to16(std::string_view str, std::wstring& dest)
 }
 
 #if (defined(_WIN32))
-
     #include <shellapi.h>
+#else
+    #include <wx/utils.h>
+#endif
 
-    #include <wx/string.h>  // wxString class
-
+#if (defined(_WIN32))
 HINSTANCE tt::ShellRun_wx(const wxString& filename, const wxString& args, const wxString& dir, INT nShow, HWND hwndParent)
 {
     #if !(wxUSE_UNICODE_UTF8)
@@ -595,5 +596,13 @@ HINSTANCE tt::ShellRun_wx(const wxString& filename, const wxString& args, const 
                          tt::utf8to16(args.utf8_string()).c_str(), tt::utf8to16(dir.utf8_string()).c_str(), nShow);
     #endif
 }
-
-#endif  // defined(_WX_DEFS_H_)
+#else
+int tt::ShellRun_wx(const wxString& filename, const wxString& args, const wxString& dir, int /* nShow */, void* /* hwndParent */)
+{
+    // Run the command using the wxWidgets method for executing a file
+    wxString cmd = filename + " " + args;
+    wxExecuteEnv env;
+    env.cwd = dir;
+    return wxExecute(cmd, wxEXEC_ASYNC, nullptr, &env);    
+}
+#endif

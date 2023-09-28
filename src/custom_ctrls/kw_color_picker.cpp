@@ -5,6 +5,8 @@
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
+#include <wx/settings.h>  // wxSystemColour enum
+
 #include "kw_color_picker.h"
 
 // Contains all the colors from https://www.w3.org/TR/css-color-3/

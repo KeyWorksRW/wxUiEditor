@@ -48,10 +48,13 @@ void BaseCodeGenerator::GenConstruction(Node* node)
     if (node->hasValue(prop_platforms) && node->as_string(prop_platforms) != "Windows|Unix|Mac")
     {
         BeginPlatformCode(gen_code, node->as_string(prop_platforms));
-        gen_code.Eol();
+        if (m_language != GEN_LANG_PYTHON)
+            gen_code.Eol();
         m_source->writeLine(gen_code);
-        if (m_language == GEN_LANG_PYTHON)
+        if (m_language == GEN_LANG_PYTHON) {
             m_source->Indent();
+            m_source->SetLastLineBlank();
+        }
     }
 
     if (generator->ConstructionCode(gen_code))
@@ -260,11 +263,11 @@ void BaseCodeGenerator::BeginPlatformCode(Code& code, const tt_string& platforms
         switch (m_language)
         {
             case GEN_LANG_CPLUSPLUS:
-                code << "\n#if defined(__WINDOWS__)";
+                code.Eol() << "#if defined(__WINDOWS__)";
                 break;
 
             case GEN_LANG_PYTHON:
-                code << "\nif defined(__WINDOWS__)";
+                code.Eol() << "if wx.Platform == \"msw\"";
                 break;
         }
     }
@@ -276,16 +279,16 @@ void BaseCodeGenerator::BeginPlatformCode(Code& code, const tt_string& platforms
                 if (code.size())
                     code << " || ";
                 else
-                    code << "\n#if ";
+                    code.Eol() << "#if ";
                 code << "defined(__UNIX__)";
                 break;
 
             case GEN_LANG_PYTHON:
                 if (code.size())
-                    code << " || ";
+                    code << " or ";
                 else
-                    code << "\nif ";
-                code << "defined(__UNIX__)";
+                    code.Eol() << "if ";
+                code << "wx.Platform == \"unix\"";
                 break;
         }
     }
@@ -297,18 +300,22 @@ void BaseCodeGenerator::BeginPlatformCode(Code& code, const tt_string& platforms
                 if (code.size())
                     code << " || ";
                 else
-                    code << "\n#if ";
+                    code.Eol() << "#if ";
                 code << "defined(__WXOSX__)";
                 break;
 
             case GEN_LANG_PYTHON:
                 if (code.size())
-                    code << " || ";
+                    code << " or ";
                 else
-                    code << "\nif ";
-                code << "defined(__WXOSX__)";
+                    code.Eol() << "if ";
+                code << "wx.Platform == \"mac\"";
                 break;
         }
+    }
+    if (m_language == GEN_LANG_PYTHON)
+    {
+        code << ':';
     }
 }
 

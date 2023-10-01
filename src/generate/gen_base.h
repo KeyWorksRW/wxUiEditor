@@ -138,7 +138,7 @@ protected:
     void GenerateCppClassConstructor();
 
     void GenSrcEventBinding(Node* class_node, EventVector& events);
-    void GenHdrEvents(const EventVector& events);
+    void GenHdrEvents();
     void GenPythonEventHandlers(EventVector& events);
     void GenRubyEventHandlers(EventVector& events);
 
@@ -172,7 +172,7 @@ protected:
 
 protected:
     const char* LangPtr() const;
-    void BeginPlatformCode(Node* node);
+    void BeginPlatformCode(Code& code, const tt_string& platforms);
     void EndPlatformCode();
     bool GenAfterChildren(Node* node, bool need_closing_brace);
 
@@ -194,6 +194,7 @@ private:
 
     std::vector<NodeEvent*> m_CtxMenuEvents;
     std::vector<NodeEvent*> m_events;
+    std::map<tt_string, std::vector<NodeEvent*>> m_map_conditional_events;
 
     std::vector<const EmbeddedImage*> m_embedded_images;
     std::set<wxBitmapType> m_type_generated;

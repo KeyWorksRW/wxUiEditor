@@ -272,7 +272,7 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
 void BaseCodeGenerator::GenSrcEventBinding(Node* node, EventVector& events)
 {
     ASSERT_MSG(events.size(), "GenSrcEventBinding() shouldn't be called if there are no events");
-    if (events.empty())
+    if (events.empty() && m_map_conditional_events.empty())
     {
         return;
     }
@@ -291,20 +291,26 @@ void BaseCodeGenerator::GenSrcEventBinding(Node* node, EventVector& events)
         return;
     }
 
-    auto lambda = [](NodeEvent* a, NodeEvent* b)
+    Code code(node, m_language);
+
+    auto sort_by_event_name = [](NodeEvent* a, NodeEvent* b)
     {
         return (a->get_name() < b->get_name());
     };
 
     // Sort events by event name
-    std::sort(events.begin(), events.end(), lambda);
+    std::sort(events.begin(), events.end(), sort_by_event_name);
 
-    for (auto& iter: events)
+    // The node for each event handler might be conditionalized, or the node might be in a
+    // container that is conditionalized. If so, then events need to be grouped into their
+    // conditional sections, and written out within a conditional block.
+
+    for (auto& event: events)
     {
-        if (auto generator = iter->getNode()->getGenerator(); generator)
+        if (auto generator = event->getNode()->getGenerator(); generator)
         {
-            Code code(node, m_language);
-            if (generator->GenEvent(code, iter, class_name); code.size())
+            code.clear();
+            if (generator->GenEvent(code, event, class_name); code.size())
             {
                 if (!code.GetCode().contains("["))
                 {
@@ -348,17 +354,83 @@ void BaseCodeGenerator::GenSrcEventBinding(Node* node, EventVector& events)
             }
         }
     }
+
+    for (auto& map_entry: m_map_conditional_events)
+    {
+        auto& conditional_events = map_entry.second;
+        std::sort(conditional_events.begin(), conditional_events.end(), sort_by_event_name);
+
+        code.clear();
+        BeginPlatformCode(code, map_entry.first);
+        code.Eol();
+        m_source->writeLine(code);
+        if (m_language == GEN_LANG_PYTHON)
+            m_source->Indent();
+
+        for (auto& conditional_event: conditional_events)
+        {
+            code.clear();
+            if (auto generator = conditional_event->getNode()->getGenerator(); generator)
+            {
+                if (generator->GenEvent(code, conditional_event, class_name); code.size())
+                {
+                    if (!code.GetCode().contains("["))
+                    {
+                        m_source->writeLine(code);
+                    }
+                    else  // this is a lambda
+                    {
+                        if (!is_cpp())
+                        {
+                            m_source->writeLine("# You cannot use C++ lambda functions as an event handler in wxPython.");
+                        }
+                        else
+                        {
+                            tt_string convert(code.GetCode());
+                            convert.Replace("@@", "\n", tt::REPLACE::all);
+                            tt_string_vector lines(convert, '\n');
+                            bool initial_bracket = false;
+                            for (auto& line: lines)
+                            {
+                                if (line.contains("}"))
+                                {
+                                    m_source->Unindent();
+                                }
+                                else if (!initial_bracket && line.contains("["))
+                                {
+                                    initial_bracket = true;
+                                    m_source->Indent();
+                                }
+
+                                size_t indentation = indent::auto_no_whitespace;
+                                m_source->writeLine(line, indentation);
+
+                                if (line.contains("{"))
+                                {
+                                    m_source->Indent();
+                                }
+                            }
+                            m_source->Unindent();
+                        }
+                    }
+                }
+            }
+        }
+
+        EndPlatformCode();
+        m_source->writeLine();
+    }
 }
 
-void BaseCodeGenerator::GenHdrEvents(const EventVector& events)
+void BaseCodeGenerator::GenHdrEvents()
 {
     ASSERT(m_language == GEN_LANG_CPLUSPLUS);
 
-    if (events.size() || m_CtxMenuEvents.size())
+    if (m_events.size() || m_CtxMenuEvents.size())
     {
         std::set<tt_string> code_lines;
 
-        for (auto& event: events)
+        for (auto& event: m_events)
         {
             auto event_code = EventHandlerDlg::GetCppValue(event->get_value());
             // Ignore lambda's and functions in another class
@@ -367,8 +439,8 @@ void BaseCodeGenerator::GenHdrEvents(const EventVector& events)
 
             tt_string code;
 
-            // If the form has a wxContextMenuEvent node, then the handler for the form's wxEVT_CONTEXT_MENU is a method of
-            // the base class and is not virtual.
+            // If the form has a wxContextMenuEvent node, then the handler for the form's wxEVT_CONTEXT_MENU is a method
+            // of the base class and is not virtual.
 
             if (event->getNode()->isForm() && event->get_name() == "wxEVT_CONTEXT_MENU")
             {
@@ -421,8 +493,8 @@ void BaseCodeGenerator::GenHdrEvents(const EventVector& events)
             code_lines.insert(code);
         }
 
-        // Unlike the above code, there shouldn't be any wxEVT_CONTEXT_MENU events since m_CtxMenuEvents should only contain
-        // menu items events.
+        // Unlike the above code, there shouldn't be any wxEVT_CONTEXT_MENU events since m_CtxMenuEvents should only
+        // contain menu items events.
 
         for (const auto& event: m_CtxMenuEvents)
         {
@@ -463,6 +535,57 @@ void BaseCodeGenerator::GenHdrEvents(const EventVector& events)
             {
                 m_header->writeLine(iter.subview());
             }
+        }
+    }
+
+    if (m_map_conditional_events.size())
+    {
+        auto sort_events_by_handler = [](NodeEvent* a, NodeEvent* b)
+        {
+            return (a->get_value() < b->get_value());
+        };
+
+        if (m_events.empty() || m_CtxMenuEvents.empty())
+        {
+            m_header->writeLine();
+            if (m_form_node->as_bool(prop_use_derived_class))
+            {
+                m_header->writeLine("// Virtual event handlers -- override them in your derived class");
+            }
+            else
+            {
+                m_header->writeLine("// Event handlers");
+            }
+        }
+
+        for (auto& iter: m_map_conditional_events)
+        {
+            auto& events = iter.second;
+            std::sort(events.begin(), events.end(), sort_events_by_handler);
+            Code code(nullptr, GEN_LANG_CPLUSPLUS);
+            BeginPlatformCode(code, iter.first);
+            code.Eol();
+            for (auto& event: events)
+            {
+                auto event_code = EventHandlerDlg::GetCppValue(event->get_value());
+                // Ignore lambda's and functions in another class
+                if (event_code.contains("[") || event_code.contains("::"))
+                    continue;
+
+                if (m_form_node->as_bool(prop_use_derived_class))
+                {
+                    code << "virtual void " << event_code << "(" << event->getEventInfo()->get_event_class()
+                         << "& event) { event.Skip(); }";
+                }
+                else
+                {
+                    code << "void " << event_code << "(" << event->getEventInfo()->get_event_class() << "& event);";
+                }
+                code.Eol();
+            }
+            code << "#endif  // limited to specific platforms";
+            code.Eol();
+            m_header->writeLine(code);
         }
     }
 }

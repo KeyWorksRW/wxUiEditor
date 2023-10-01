@@ -1307,3 +1307,16 @@ tt_string_view Node::getValidatorType() const
             return "wxGenericValidator";
     }
 }
+
+Node* Node::getPlatformContainer()
+{
+    auto parent = getParent();
+    do
+    {
+        if (parent->hasProp(prop_platforms) && parent->as_string(prop_platforms) != "Windows|Unix|Mac")
+            return parent;
+        parent = parent->getParent();
+    } while (parent && !parent->isGen(gen_Project));
+
+    return nullptr;
+}

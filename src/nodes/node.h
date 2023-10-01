@@ -60,6 +60,10 @@ public:
     NodeEvent* getEvent(tt_string_view name);
     NodeMapEvents& getMapEvents() { return m_map_events; }
 
+    // Walk up the node tree looking for a container with a limited set of platforms. If
+    // found, the container's node will be returned -- otherwise nullptr is returned.
+    Node* getPlatformContainer();
+
     auto getPropertyCount() const { return m_properties.size(); }
     size_t getInUseEventCount() const;
 

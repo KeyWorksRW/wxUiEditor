@@ -445,11 +445,55 @@ void BaseCodeGenerator::CollectIDs(Node* node, std::set<std::string>& set_enum_i
 void BaseCodeGenerator::CollectEventHandlers(Node* node, std::vector<NodeEvent*>& events)
 {
     ASSERT(node);
+
+    auto CheckIfEventExists = [](const EventVector& vectors, const NodeEvent* event) -> bool
+    {
+        for (const auto vector_event: vectors)
+        {
+            if (vector_event == event)
+                return true;
+        }
+        return false;
+    };
+
     for (auto& iter: node->getMapEvents())
     {
+        // Only add the event if a handler was specified
         if (iter.second.get_value().size())
         {
-            m_events.push_back(&iter.second);
+            // Because the NodeEvent* gets stored in a set if there is a conditional, it won't get duplicated
+            // even if it is added by both the Node and any container containing the same conditional
+
+            if (node->hasProp(prop_platforms) && node->as_string(prop_platforms) != "Windows|Unix|Mac")
+            {
+                if (!m_map_conditional_events.contains(node->as_string(prop_platforms)))
+                {
+                    m_map_conditional_events[node->as_string(prop_platforms)] = std::vector<NodeEvent*>();
+                }
+                if (!CheckIfEventExists(m_map_conditional_events[node->as_string(prop_platforms)], &iter.second))
+                {
+                    m_map_conditional_events[node->as_string(prop_platforms)].push_back(&iter.second);
+                }
+            }
+
+            // If node_container is non-null, it means the current node is within a container that
+            // has a conditional.
+            else if (auto node_container = node->getPlatformContainer(); node_container)
+            {
+                if (!m_map_conditional_events.contains(node_container->as_string(prop_platforms)))
+                {
+                    m_map_conditional_events[node_container->as_string(prop_platforms)] = std::vector<NodeEvent*>();
+                }
+                if (!CheckIfEventExists(m_map_conditional_events[node_container->as_string(prop_platforms)], &iter.second))
+                {
+                    m_map_conditional_events[node_container->as_string(prop_platforms)].push_back(&iter.second);
+                }
+            }
+
+            else
+            {
+                m_events.push_back(&iter.second);
+            }
         }
     }
 
@@ -529,8 +573,8 @@ void BaseCodeGenerator::CollectImageHeaders(Node* node, std::set<std::string>& e
             }
             else
             {
-                // Since this is a thread, you can't send the standard MSG_WARNING if the window is opened, or it will lock
-                // the debugger.
+                // Since this is a thread, you can't send the standard MSG_WARNING if the window is opened, or it will
+                // lock the debugger.
             }
         }
 

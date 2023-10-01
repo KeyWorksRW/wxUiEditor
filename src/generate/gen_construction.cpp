@@ -42,13 +42,17 @@ void BaseCodeGenerator::GenConstruction(Node* node)
         m_warnings.emplace(warning_msg.value());
     }
 
-    if (node->hasValue(prop_platforms) && node->as_string(prop_platforms) != "Windows|Unix|Mac")
-    {
-        BeginPlatformCode(node);
-    }
-
     bool need_closing_brace = false;
     Code gen_code(node, m_language);
+
+    if (node->hasValue(prop_platforms) && node->as_string(prop_platforms) != "Windows|Unix|Mac")
+    {
+        BeginPlatformCode(gen_code, node->as_string(prop_platforms));
+        gen_code.Eol();
+        m_source->writeLine(gen_code);
+        if (m_language == GEN_LANG_PYTHON)
+            m_source->Indent();
+    }
 
     if (generator->ConstructionCode(gen_code))
     {
@@ -249,10 +253,9 @@ const char* BaseCodeGenerator::LangPtr() const
     }
 }
 
-void BaseCodeGenerator::BeginPlatformCode(Node* node)
+void BaseCodeGenerator::BeginPlatformCode(Code& code, const tt_string& platforms)
 {
-    tt_string code;
-    if (node->as_string(prop_platforms).contains("Windows"))
+    if (platforms.contains("Windows"))
     {
         switch (m_language)
         {
@@ -265,7 +268,7 @@ void BaseCodeGenerator::BeginPlatformCode(Node* node)
                 break;
         }
     }
-    if (node->as_string(prop_platforms).contains("Unix"))
+    if (platforms.contains("Unix"))
     {
         switch (m_language)
         {
@@ -286,7 +289,7 @@ void BaseCodeGenerator::BeginPlatformCode(Node* node)
                 break;
         }
     }
-    if (node->as_string(prop_platforms).contains("Mac"))
+    if (platforms.contains("Mac"))
     {
         switch (m_language)
         {
@@ -307,11 +310,6 @@ void BaseCodeGenerator::BeginPlatformCode(Node* node)
                 break;
         }
     }
-
-    m_source->writeLine(code);
-    m_source->SetLastLineBlank();
-    if (m_language == GEN_LANG_PYTHON)
-        m_source->Indent();
 }
 
 void BaseCodeGenerator::EndPlatformCode()

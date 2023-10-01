@@ -202,7 +202,7 @@ void BaseCodeGenerator::GenerateCppClass(PANEL_PAGE panel_type)
     // Delay calling join() for as long as possible to increase the chance that the thread will
     // have already completed.
     thrd_get_events.join();
-    if (m_events.size() || m_CtxMenuEvents.size())
+    if (m_events.size() || m_map_conditional_events.size() || m_CtxMenuEvents.size())
     {
         hdr_includes.insert("#include <wx/event.h>");
     }
@@ -892,7 +892,7 @@ void BaseCodeGenerator::GenerateCppClassHeader()
     m_header->writeLine("protected:");
     m_header->Indent();
 
-    GenHdrEvents(m_events);
+    GenHdrEvents();
 
     if (!m_form_node->as_bool(prop_use_derived_class) && m_form_node->as_bool(prop_private_members))
     {
@@ -1067,7 +1067,7 @@ void BaseCodeGenerator::GenerateCppClassConstructor()
 
         AddPersistCode(m_form_node);
 
-        if (m_events.size())
+        if (m_events.size() || m_map_conditional_events.size())
         {
             m_source->writeLine();
             m_source->writeLine("// Event handlers");

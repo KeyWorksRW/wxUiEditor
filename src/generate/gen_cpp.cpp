@@ -186,12 +186,6 @@ void BaseCodeGenerator::GenerateCppClass(Node* form_node, PANEL_PAGE panel_type)
 
     CollectIncludes(form_node, src_includes, hdr_includes);
 
-    thrd_get_events.join();
-    if (events.size() || m_CtxMenuEvents.size())
-    {
-        hdr_includes.insert("#include <wx/event.h>");
-    }
-
     if (form_node->as_bool(prop_persist))
     {
         src_includes.insert("#include <wx/persist.h>");
@@ -206,6 +200,14 @@ void BaseCodeGenerator::GenerateCppClass(Node* form_node, PANEL_PAGE panel_type)
     if (m_NeedArtProviderHeader)
     {
         src_includes.insert("#include <wx/artprov.h>");
+    }
+
+    // Delay calling join() for as long as possible to increase the chance that the thread will
+    // have already completed.
+    thrd_get_events.join();
+    if (events.size() || m_CtxMenuEvents.size())
+    {
+        hdr_includes.insert("#include <wx/event.h>");
     }
 
     if (panel_type != CPP_PANEL)

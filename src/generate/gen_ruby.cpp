@@ -487,8 +487,6 @@ void BaseCodeGenerator::GenerateRubyClass(Node* form_node, PANEL_PAGE panel_type
         m_header->writeLine();
     }
 
-    thrd_get_events.join();
-
     auto generator = form_node->getNodeDeclaration()->getGenerator();
     code.clear();
     if (generator->ConstructionCode(code))
@@ -551,6 +549,9 @@ void BaseCodeGenerator::GenerateRubyClass(Node* form_node, PANEL_PAGE panel_type
 
     // TODO: [Randalphwa - 07-13-2023] Need to figure out if wxRuby supports persistence
 
+    // Delay calling join() for as long as possible to increase the chance that the thread will
+    // have already completed.
+    thrd_get_events.join();
     if (events.size())
     {
         m_source->writeLine();

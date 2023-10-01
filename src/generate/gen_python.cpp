@@ -436,8 +436,6 @@ void BaseCodeGenerator::GeneratePythonClass(Node* form_node, PANEL_PAGE panel_ty
         m_header->writeLine();
     }
 
-    thrd_get_events.join();
-
     auto generator = form_node->getNodeDeclaration()->getGenerator();
     code.clear();
     if (generator->ConstructionCode(code))
@@ -503,6 +501,9 @@ void BaseCodeGenerator::GeneratePythonClass(Node* form_node, PANEL_PAGE panel_ty
     // TODO: [Randalphwa - 12-04-2022] Python supports persistence, though it's not as easy as it is in C++.
     // See https://docs.wxpython.org/wx.lib.agw.persist.html?highlight=persist#module-wx.lib.agw.persist
 
+    // Delay calling join() for as long as possible to increase the chance that the thread will
+    // have already completed.
+    thrd_get_events.join();
     if (events.size())
     {
         m_source->writeLine();

@@ -320,7 +320,7 @@ void BasePanel::GenerateBaseClass()
         }
     }
 
-    BaseCodeGenerator codegen(m_panel_type);
+    BaseCodeGenerator codegen(m_panel_type, m_cur_form);
 
     m_cppPanel->Clear();
     codegen.SetSrcWriteCode(m_cppPanel);
@@ -331,7 +331,7 @@ void BasePanel::GenerateBaseClass()
     switch (m_panel_type)
     {
         case GEN_LANG_CPLUSPLUS:
-            codegen.GenerateCppClass(m_cur_form, panel_page);
+            codegen.GenerateCppClass(panel_page);
 
             m_derived_src_panel->Clear();
             codegen.SetSrcWriteCode(m_derived_src_panel);
@@ -342,35 +342,35 @@ void BasePanel::GenerateBaseClass()
             break;
 
         case GEN_LANG_PYTHON:
-            codegen.GeneratePythonClass(m_cur_form, panel_page);
+            codegen.GeneratePythonClass(panel_page);
             break;
 
         case GEN_LANG_RUBY:
-            codegen.GenerateRubyClass(m_cur_form, panel_page);
+            codegen.GenerateRubyClass(panel_page);
             break;
 
 #if defined(_DEBUG)
             // The following languages are experimental and may not work correctly
 
         case GEN_LANG_GOLANG:
-            codegen.GenerateGoLangClass(m_cur_form, panel_page);
+            codegen.GenerateGoLangClass(panel_page);
             break;
 
         case GEN_LANG_LUA:
-            codegen.GenerateLuaClass(m_cur_form, panel_page);
+            codegen.GenerateLuaClass(panel_page);
             break;
 
         case GEN_LANG_PERL:
-            codegen.GeneratePerlClass(m_cur_form, panel_page);
+            codegen.GeneratePerlClass(panel_page);
             break;
 
         case GEN_LANG_RUST:
-            codegen.GenerateRustClass(m_cur_form, panel_page);
+            codegen.GenerateRustClass(panel_page);
             break;
 #endif  // _DEBUG
 
         case GEN_LANG_XRC:
-            codegen.GenerateXrcClass(m_cur_form, panel_page);
+            codegen.GenerateXrcClass(panel_page);
             break;
 
         default:

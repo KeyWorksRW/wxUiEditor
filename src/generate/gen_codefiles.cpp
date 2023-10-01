@@ -121,7 +121,7 @@ void GenThreadCpp(GenData& gen_data, Node* form)
         return;
     }
 
-    BaseCodeGenerator codegen(GEN_LANG_CPLUSPLUS);
+    BaseCodeGenerator codegen(GEN_LANG_CPLUSPLUS, form);
 
     path.replace_extension(header_ext);
     auto h_cw = std::make_unique<FileCodeWriter>(path);
@@ -131,7 +131,7 @@ void GenThreadCpp(GenData& gen_data, Node* form)
     auto cpp_cw = std::make_unique<FileCodeWriter>(path);
     codegen.SetSrcWriteCode(cpp_cw.get());
 
-    codegen.GenerateCppClass(form);
+    codegen.GenerateCppClass();
 
     path.replace_extension(header_ext);
 
@@ -375,7 +375,7 @@ void GenInhertedClass(GenResults& results)
             continue;
         }
 
-        BaseCodeGenerator codegen(GEN_LANG_CPLUSPLUS);
+        BaseCodeGenerator codegen(GEN_LANG_CPLUSPLUS, form);
 
         path.replace_extension(header_ext);
         auto h_cw = std::make_unique<FileCodeWriter>(path);
@@ -566,7 +566,7 @@ void GenerateTmpFiles(const std::vector<tt_string>& ClassList, pugi::xml_node ro
                 if (path.empty())
                     continue;
 
-                BaseCodeGenerator codegen(language);
+                BaseCodeGenerator codegen(language, form);
 
                 path.replace_extension(header_ext);
                 auto h_cw = std::make_unique<FileCodeWriter>(path);
@@ -578,16 +578,16 @@ void GenerateTmpFiles(const std::vector<tt_string>& ClassList, pugi::xml_node ro
 
                 if (language == GEN_LANG_CPLUSPLUS)
                 {
-                    codegen.GenerateCppClass(form);
+                    codegen.GenerateCppClass();
                 }
                 else if (language == GEN_LANG_PYTHON)
                 {
-                    codegen.GeneratePythonClass(form);
+                    codegen.GeneratePythonClass();
                 }
                 else if (language == GEN_LANG_RUBY)
                 {
                     cpp_cw->SetTabToSpaces(2);
-                    codegen.GenerateRubyClass(form);
+                    codegen.GenerateRubyClass();
                 }
 
                 bool new_hdr = false;
@@ -622,16 +622,16 @@ void GenerateTmpFiles(const std::vector<tt_string>& ClassList, pugi::xml_node ro
 
                     if (language == GEN_LANG_CPLUSPLUS)
                     {
-                        codegen.GenerateCppClass(form);
+                        codegen.GenerateCppClass();
                     }
                     else if (language == GEN_LANG_PYTHON)
                     {
-                        codegen.GeneratePythonClass(form);
+                        codegen.GeneratePythonClass();
                     }
                     else if (language == GEN_LANG_RUBY)
                     {
                         cpp_cw->SetTabToSpaces(2);
-                        codegen.GenerateRubyClass(form);
+                        codegen.GenerateRubyClass();
                     }
 
                     // WinMerge accepts an XML file the provides the left and right filenames

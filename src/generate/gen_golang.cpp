@@ -51,13 +51,12 @@ bool GenerateGolangFiles(GenResults& /* results */, std::vector<tt_string>* /* p
     return false;
 }
 
-void BaseCodeGenerator::GenerateGoLangClass(Node* form_node, PANEL_PAGE panel_type)
+void BaseCodeGenerator::GenerateGoLangClass(PANEL_PAGE panel_type)
 {
-    Code code(form_node, GEN_LANG_GOLANG);
+    Code code(m_form_node, GEN_LANG_GOLANG);
 
     m_embedded_images.clear();
 
-    m_form_node = form_node;
     m_ImagesForm = nullptr;
 
     for (const auto& form: Project.getChildNodePtrs())
@@ -83,7 +82,7 @@ void BaseCodeGenerator::GenerateGoLangClass(Node* form_node, PANEL_PAGE panel_ty
     }
 
     EventVector events;
-    std::thread thrd_get_events(&BaseCodeGenerator::CollectEventHandlers, this, form_node, std::ref(events));
+    std::thread thrd_get_events(&BaseCodeGenerator::CollectEventHandlers, this, m_form_node, std::ref(events));
 
     // Caution! CollectImageHeaders() needs access to m_baseFullPath, so don't start this
     // thread until it has been set!
@@ -91,7 +90,7 @@ void BaseCodeGenerator::GenerateGoLangClass(Node* form_node, PANEL_PAGE panel_ty
     // thrd_collect_img_headers will populate m_embedded_images;
 
     std::set<std::string> img_include_set;
-    std::thread thrd_collect_img_headers(&BaseCodeGenerator::CollectImageHeaders, this, form_node,
+    std::thread thrd_collect_img_headers(&BaseCodeGenerator::CollectImageHeaders, this, m_form_node,
                                          std::ref(img_include_set));
 
     // If the code files are being written to disk, then UpdateEmbedNodes() has already been called.
@@ -127,9 +126,9 @@ void BaseCodeGenerator::GenerateGoLangClass(Node* form_node, PANEL_PAGE panel_ty
             GatherImportModules(child.get(), GatherImportModules);
         }
     };
-    GatherImportModules(form_node, GatherImportModules);
+    GatherImportModules(m_form_node, GatherImportModules);
 
-    if (form_node->isGen(gen_Images))
+    if (m_form_node->isGen(gen_Images))
     {
         thrd_get_events.join();
         thrd_collect_img_headers.join();
@@ -139,7 +138,7 @@ void BaseCodeGenerator::GenerateGoLangClass(Node* form_node, PANEL_PAGE panel_ty
 
     m_set_enum_ids.clear();
     m_set_const_ids.clear();
-    BaseCodeGenerator::CollectIDs(form_node, m_set_enum_ids, m_set_const_ids);
+    BaseCodeGenerator::CollectIDs(m_form_node, m_set_enum_ids, m_set_const_ids);
 
     int id_value = wxID_HIGHEST;
     for (auto& iter: m_set_enum_ids)
@@ -170,7 +169,7 @@ void BaseCodeGenerator::GenerateGoLangClass(Node* form_node, PANEL_PAGE panel_ty
 
     thrd_get_events.join();
 
-    auto generator = form_node->getNodeDeclaration()->getGenerator();
+    auto generator = m_form_node->getNodeDeclaration()->getGenerator();
     code.clear();
     if (generator->ConstructionCode(code))
     {
@@ -202,7 +201,7 @@ void BaseCodeGenerator::GenerateGoLangClass(Node* form_node, PANEL_PAGE panel_ty
         }
     }
 
-    if (form_node->getPropPtr(prop_window_extra_style))
+    if (m_form_node->getPropPtr(prop_window_extra_style))
     {
         code.clear();
         code.GenWindowSettings();
@@ -213,7 +212,7 @@ void BaseCodeGenerator::GenerateGoLangClass(Node* form_node, PANEL_PAGE panel_ty
     }
 
     m_source->SetLastLineBlank();
-    for (const auto& child: form_node->getChildNodePtrs())
+    for (const auto& child: m_form_node->getChildNodePtrs())
     {
         if (child->isGen(gen_wxContextMenuEvent))
             continue;
@@ -236,7 +235,7 @@ void BaseCodeGenerator::GenerateGoLangClass(Node* form_node, PANEL_PAGE panel_ty
     {
         m_source->writeLine();
         m_source->writeLine("// Event handlers");
-        GenSrcEventBinding(form_node, events);
+        GenSrcEventBinding(m_form_node, events);
         m_source->writeLine("\t}", indent::none);
         m_source->SetLastLineBlank();
 

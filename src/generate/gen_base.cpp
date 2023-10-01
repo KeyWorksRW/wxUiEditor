@@ -30,9 +30,10 @@ std::map<wxBitmapType, std::string> g_map_types;
 
 #define ADD_TYPE(name) g_map_types[name] = #name;
 
-BaseCodeGenerator::BaseCodeGenerator(int language)
+BaseCodeGenerator::BaseCodeGenerator(int language, Node* form_node)
 {
     m_language = language;
+    m_form_node = form_node;
 
     if (g_map_types.empty())
     {

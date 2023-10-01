@@ -81,20 +81,18 @@ R"===(//////////////////////////////////////////////////////////////////////////
 
 // clang-format on
 
-void BaseCodeGenerator::GenerateCppClass(Node* form_node, PANEL_PAGE panel_type)
+void BaseCodeGenerator::GenerateCppClass(PANEL_PAGE panel_type)
 {
-    ASSERT(form_node)
     ASSERT(m_language == GEN_LANG_CPLUSPLUS)
 
-    Code code(form_node, GEN_LANG_CPLUSPLUS);
+    Code code(m_form_node, GEN_LANG_CPLUSPLUS);
 
     m_CtxMenuEvents.clear();
     m_embedded_images.clear();
     m_type_generated.clear();
 
-    m_form_node = form_node;
     m_ImagesForm = nullptr;
-    m_TranslationUnit = (form_node->as_bool(prop_generate_translation_unit) || form_node->isGen(gen_Images));
+    m_TranslationUnit = (m_form_node->as_bool(prop_generate_translation_unit) || m_form_node->isGen(gen_Images));
 
     for (const auto& form: Project.getChildNodePtrs())
     {
@@ -125,8 +123,8 @@ void BaseCodeGenerator::GenerateCppClass(Node* form_node, PANEL_PAGE panel_type)
     m_NeedImageFunction = false;
 
     EventVector events;
-    std::thread thrd_get_events(&BaseCodeGenerator::CollectEventHandlers, this, form_node, std::ref(events));
-    std::thread thrd_need_img_func(&BaseCodeGenerator::ParseImageProperties, this, form_node);
+    std::thread thrd_get_events(&BaseCodeGenerator::CollectEventHandlers, this, m_form_node, std::ref(events));
+    std::thread thrd_need_img_func(&BaseCodeGenerator::ParseImageProperties, this, m_form_node);
 
     // If the code files are being written to disk, then UpdateEmbedNodes() has already been called.
     if (panel_type != NOT_PANEL)
@@ -151,7 +149,7 @@ void BaseCodeGenerator::GenerateCppClass(Node* form_node, PANEL_PAGE panel_type)
     }
 
     tt_string file;
-    if (auto& base_file = form_node->as_string(prop_base_file); base_file.size())
+    if (auto& base_file = m_form_node->as_string(prop_base_file); base_file.size())
     {
         tt_cwd cwd(true);
         Project.ChangeDir();
@@ -167,7 +165,7 @@ void BaseCodeGenerator::GenerateCppClass(Node* form_node, PANEL_PAGE panel_type)
 
     // Caution! CollectImageHeaders() needs access to m_baseFullPath, so don't start this thread until it has been set!
     std::set<std::string> img_include_set;
-    std::thread thrd_collect_img_headers(&BaseCodeGenerator::CollectImageHeaders, this, form_node,
+    std::thread thrd_collect_img_headers(&BaseCodeGenerator::CollectImageHeaders, this, m_form_node,
                                          std::ref(img_include_set));
 
     m_header->writeLine("#pragma once");
@@ -184,15 +182,15 @@ void BaseCodeGenerator::GenerateCppClass(Node* form_node, PANEL_PAGE panel_type)
     // almost always needed.
     hdr_includes.insert("#include <wx/gdicmn.h>");
 
-    CollectIncludes(form_node, src_includes, hdr_includes);
+    CollectIncludes(m_form_node, src_includes, hdr_includes);
 
-    if (form_node->as_bool(prop_persist))
+    if (m_form_node->as_bool(prop_persist))
     {
         src_includes.insert("#include <wx/persist.h>");
         src_includes.insert("#include <wx/persist/toplevel.h>");
     }
 
-    if (form_node->hasValue(prop_icon))
+    if (m_form_node->hasValue(prop_icon))
     {
         src_includes.insert("#include <wx/icon.h>");
     }
@@ -272,27 +270,27 @@ void BaseCodeGenerator::GenerateCppClass(Node* form_node, PANEL_PAGE panel_type)
 
         m_header->writeLine();
 
-        if (form_node->hasValue(prop_header_preamble))
+        if (m_form_node->hasValue(prop_header_preamble))
         {
-            WritePropHdrCode(form_node, prop_header_preamble);
+            WritePropHdrCode(m_form_node, prop_header_preamble);
         }
 
-        if (form_node->hasValue(prop_system_hdr_includes))
+        if (m_form_node->hasValue(prop_system_hdr_includes))
         {
             m_header->writeLine();
             tt_view_vector list;
-            list.SetString(form_node->as_string(prop_system_hdr_includes));
+            list.SetString(m_form_node->as_string(prop_system_hdr_includes));
             for (auto& iter: list)
             {
                 m_header->writeLine(tt_string("#include <") << iter << '>');
             }
         }
 
-        if (form_node->hasValue(prop_local_hdr_includes))
+        if (m_form_node->hasValue(prop_local_hdr_includes))
         {
             m_header->writeLine();
             tt_view_vector list;
-            list.SetString(form_node->as_string(prop_local_hdr_includes));
+            list.SetString(m_form_node->as_string(prop_local_hdr_includes));
             for (auto& iter: list)
             {
                 m_header->writeLine(tt_string("#include \"") << iter << '"');
@@ -300,11 +298,11 @@ void BaseCodeGenerator::GenerateCppClass(Node* form_node, PANEL_PAGE panel_type)
         }
     }
 
-    if (form_node->hasValue(prop_cpp_conditional) && m_TranslationUnit)
+    if (m_form_node->hasValue(prop_cpp_conditional) && m_TranslationUnit)
     {
-        if (!form_node->as_string(prop_cpp_conditional).starts_with("#"))
+        if (!m_form_node->as_string(prop_cpp_conditional).starts_with("#"))
             code.Str("#if ");
-        code.Str(form_node->as_string(prop_cpp_conditional));
+        code.Str(m_form_node->as_string(prop_cpp_conditional));
         m_source->writeLine(code);
         m_source->writeLine();
         code.clear();
@@ -410,16 +408,16 @@ void BaseCodeGenerator::GenerateCppClass(Node* form_node, PANEL_PAGE panel_type)
             WritePropSourceCode(Project.getProjectNode(), prop_src_preamble);
         }
 
-        if (form_node->hasValue(prop_source_preamble))
+        if (m_form_node->hasValue(prop_source_preamble))
         {
-            WritePropSourceCode(form_node, prop_source_preamble);
+            WritePropSourceCode(m_form_node, prop_source_preamble);
         }
 
-        if (form_node->hasValue(prop_system_src_includes))
+        if (m_form_node->hasValue(prop_system_src_includes))
         {
             m_source->writeLine();
             tt_view_vector list;
-            list.SetString(form_node->as_string(prop_system_src_includes));
+            list.SetString(m_form_node->as_string(prop_system_src_includes));
             for (auto& iter: list)
             {
                 m_source->writeLine(tt_string("#include <") << iter << '>');
@@ -439,11 +437,11 @@ void BaseCodeGenerator::GenerateCppClass(Node* form_node, PANEL_PAGE panel_type)
             m_source->writeLine(tt_string() << "#include \"" << file.filename() << "\"");
         }
 
-        if (form_node->hasValue(prop_local_src_includes))
+        if (m_form_node->hasValue(prop_local_src_includes))
         {
             m_source->writeLine();
             tt_view_vector list;
-            list.SetString(form_node->as_string(prop_local_src_includes));
+            list.SetString(m_form_node->as_string(prop_local_src_includes));
             for (auto& iter: list)
             {
                 m_source->writeLine(tt_string("#include \"") << iter << '"');
@@ -475,7 +473,7 @@ void BaseCodeGenerator::GenerateCppClass(Node* form_node, PANEL_PAGE panel_type)
 
     // Make a copy of the string so that we can tweak it
     tt_string namespace_prop = Project.as_string(prop_name_space);
-    if (auto* node_namespace = form_node->getFolder(); node_namespace && node_namespace->hasValue(prop_folder_namespace))
+    if (auto* node_namespace = m_form_node->getFolder(); node_namespace && node_namespace->hasValue(prop_folder_namespace))
     {
         namespace_prop = node_namespace->as_string(prop_folder_namespace);
     }
@@ -519,7 +517,7 @@ void BaseCodeGenerator::GenerateCppClass(Node* form_node, PANEL_PAGE panel_type)
         }
     }
 
-    if (form_node->isGen(gen_Images))
+    if (m_form_node->isGen(gen_Images))
     {
         thrd_need_img_func.join();
         GenerateImagesForm();
@@ -528,7 +526,7 @@ void BaseCodeGenerator::GenerateCppClass(Node* form_node, PANEL_PAGE panel_type)
 
     if (m_panel_type != CPP_PANEL)
     {
-        GenerateCppClassHeader(form_node, events);
+        GenerateCppClassHeader(m_form_node, events);
     }
 
     thrd_need_img_func.join();
@@ -606,7 +604,7 @@ void BaseCodeGenerator::GenerateCppClass(Node* form_node, PANEL_PAGE panel_type)
             }
         }
 
-        GenerateCppClassConstructor(form_node, events);
+        GenerateCppClassConstructor(m_form_node, events);
 
         if (m_embedded_images.size())
         {
@@ -624,9 +622,9 @@ void BaseCodeGenerator::GenerateCppClass(Node* form_node, PANEL_PAGE panel_type)
         m_header->writeLine();
     }
 
-    if (form_node->hasValue(prop_cpp_conditional) && m_TranslationUnit)
+    if (m_form_node->hasValue(prop_cpp_conditional) && m_TranslationUnit)
     {
-        code.Eol().Str("#endif  // ").Str(form_node->as_string(prop_cpp_conditional));
+        code.Eol().Str("#endif  // ").Str(m_form_node->as_string(prop_cpp_conditional));
         m_source->writeLine(code);
     }
 

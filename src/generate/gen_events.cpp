@@ -269,8 +269,6 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
     code.EnableAutoLineBreak(true);
 }
 
-// This function is called by both C++ and Python code generation.
-
 void BaseCodeGenerator::GenSrcEventBinding(Node* node, EventVector& events)
 {
     ASSERT_MSG(events.size(), "GenSrcEventBinding() shouldn't be called if there are no events");
@@ -293,16 +291,16 @@ void BaseCodeGenerator::GenSrcEventBinding(Node* node, EventVector& events)
         return;
     }
 
+    auto lambda = [](NodeEvent* a, NodeEvent* b)
+    {
+        return (a->get_name() < b->get_name());
+    };
+
+    // Sort events by event name
+    std::sort(events.begin(), events.end(), lambda);
+
     for (auto& iter: events)
     {
-        auto lambda = [](NodeEvent* a, NodeEvent* b)
-        {
-            return (a->get_name() < b->get_name());
-        };
-
-        // Sort events by event name
-        std::sort(events.begin(), events.end(), lambda);
-
         if (auto generator = iter->getNode()->getGenerator(); generator)
         {
             Code code(node, m_language);

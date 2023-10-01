@@ -26,6 +26,9 @@ namespace pugi
     class xml_node;
 }
 
+// The NodeEvent class is used to store event information specific to what the user has
+// requsted (node containing the event, name of the event handler) along with a pointer to
+// the fixed event information.
 using EventVector = std::vector<NodeEvent*>;
 
 namespace result

@@ -9,6 +9,8 @@
 
 class Node;
 
+// This class is used to store fixed information about an event that never changes (it is
+// created during app initialization).
 class NodeEventInfo
 {
 public:
@@ -27,6 +29,9 @@ private:
     tt_string m_help;
 };
 
+// This class is used to store event information specific to what the user has requsted (node
+// containing the event, name of the event handler) along with a pointer to the fixed event
+// information.
 class NodeEvent
 {
 public:

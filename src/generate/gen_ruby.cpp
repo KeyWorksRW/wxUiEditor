@@ -144,7 +144,7 @@ bool GenerateRubyFiles(GenResults& results, std::vector<tt_string>* pClassList)
 
         try
         {
-            BaseCodeGenerator codegen(GEN_LANG_RUBY);
+            BaseCodeGenerator codegen(GEN_LANG_RUBY, form);
 
             auto h_cw = std::make_unique<FileCodeWriter>(path);
             h_cw->SetTabToSpaces(2);
@@ -157,7 +157,7 @@ bool GenerateRubyFiles(GenResults& results, std::vector<tt_string>* pClassList)
             cpp_cw->SetTabToSpaces(2);
             codegen.SetSrcWriteCode(cpp_cw.get());
 
-            codegen.GenerateRubyClass(form);
+            codegen.GenerateRubyClass();
             int flags = flag_no_ui;
             if (pClassList)
                 flags |= flag_test_only;
@@ -220,13 +220,12 @@ bool GenerateRubyFiles(GenResults& results, std::vector<tt_string>* pClassList)
 
 // Equivalent to GenerateBaseClass in gen_base.cpp
 
-void BaseCodeGenerator::GenerateRubyClass(Node* form_node, PANEL_PAGE panel_type)
+void BaseCodeGenerator::GenerateRubyClass(PANEL_PAGE panel_type)
 {
-    Code code(form_node, GEN_LANG_RUBY);
+    Code code(m_form_node, GEN_LANG_RUBY);
 
     m_embedded_images.clear();
 
-    m_form_node = form_node;
     m_ImagesForm = nullptr;
 
     for (const auto& form: Project.getChildNodePtrs())
@@ -254,9 +253,8 @@ void BaseCodeGenerator::GenerateRubyClass(Node* form_node, PANEL_PAGE panel_type
     m_NeedAnimationFunction = false;
     m_NeedSVGFunction = false;
 
-    EventVector events;
-    std::thread thrd_get_events(&BaseCodeGenerator::CollectEventHandlers, this, form_node, std::ref(events));
-    std::thread thrd_need_img_func(&BaseCodeGenerator::ParseImageProperties, this, form_node);
+    std::thread thrd_get_events(&BaseCodeGenerator::CollectEventHandlers, this, m_form_node, std::ref(m_events));
+    std::thread thrd_need_img_func(&BaseCodeGenerator::ParseImageProperties, this, m_form_node);
 
     // Caution! CollectImageHeaders() needs access to m_baseFullPath, so don't start this
     // thread until it has been set!
@@ -264,7 +262,7 @@ void BaseCodeGenerator::GenerateRubyClass(Node* form_node, PANEL_PAGE panel_type
     // thrd_collect_img_headers will populate m_embedded_images;
 
     std::set<std::string> img_include_set;
-    std::thread thrd_collect_img_headers(&BaseCodeGenerator::CollectImageHeaders, this, form_node,
+    std::thread thrd_collect_img_headers(&BaseCodeGenerator::CollectImageHeaders, this, m_form_node,
                                          std::ref(img_include_set));
 
     // If the code files are being written to disk, then UpdateEmbedNodes() has already been called.
@@ -301,7 +299,7 @@ void BaseCodeGenerator::GenerateRubyClass(Node* form_node, PANEL_PAGE panel_type
         }
     }
 
-    if (form_node->isGen(gen_Images))
+    if (m_form_node->isGen(gen_Images))
     {
         thrd_get_events.join();
         thrd_collect_img_headers.join();
@@ -309,7 +307,7 @@ void BaseCodeGenerator::GenerateRubyClass(Node* form_node, PANEL_PAGE panel_type
         return;
     }
 
-    m_header->writeLine(tt_string("# Sample inherited class from ") << form_node->as_string(prop_class_name));
+    m_header->writeLine(tt_string("# Sample inherited class from ") << m_form_node->as_string(prop_class_name));
     m_header->writeLine();
     m_source->writeLine("WX_GLOBAL_CONSTANTS = true unless defined? WX_GLOBAL_CONSTANTS\n\nrequire 'wx/core'");
     m_header->writeLine("WX_GLOBAL_CONSTANTS = true unless defined? WX_GLOBAL_CONSTANTS\n\nrequire 'wx/core'");
@@ -327,7 +325,7 @@ void BaseCodeGenerator::GenerateRubyClass(Node* form_node, PANEL_PAGE panel_type
             GatherImportModules(child.get(), GatherImportModules);
         }
     };
-    GatherImportModules(form_node, GatherImportModules);
+    GatherImportModules(m_form_node, GatherImportModules);
 
     for (const auto& import: imports)
     {
@@ -337,10 +335,10 @@ void BaseCodeGenerator::GenerateRubyClass(Node* form_node, PANEL_PAGE panel_type
     m_source->writeLine();
     m_header->writeLine();
 
-    if (form_node->hasValue(prop_relative_require_list))
+    if (m_form_node->hasValue(prop_relative_require_list))
     {
         tt_string_vector list;
-        list.SetString(form_node->as_string(prop_relative_require_list));
+        list.SetString(m_form_node->as_string(prop_relative_require_list));
         for (auto& iter: list)
         {
             iter.remove_extension();
@@ -352,7 +350,7 @@ void BaseCodeGenerator::GenerateRubyClass(Node* form_node, PANEL_PAGE panel_type
         }
     }
 
-    if (form_node->isGen(gen_wxFrame) && form_node->as_bool(prop_import_all_dialogs))
+    if (m_form_node->isGen(gen_wxFrame) && m_form_node->as_bool(prop_import_all_dialogs))
     {
         for (auto& form: forms)
         {
@@ -367,7 +365,7 @@ void BaseCodeGenerator::GenerateRubyClass(Node* form_node, PANEL_PAGE panel_type
 
     m_set_enum_ids.clear();
     m_set_const_ids.clear();
-    BaseCodeGenerator::CollectIDs(form_node, m_set_enum_ids, m_set_const_ids);
+    BaseCodeGenerator::CollectIDs(m_form_node, m_set_enum_ids, m_set_const_ids);
 
     int id_value = wxID_HIGHEST;
     for (auto& iter: m_set_enum_ids)
@@ -452,7 +450,7 @@ void BaseCodeGenerator::GenerateRubyClass(Node* form_node, PANEL_PAGE panel_type
 
     m_source->writeLine();
     m_header->writeLine();
-    m_header->writeLine(tt_string("requires '") << form_node->as_string(prop_ruby_file) << "'\n");
+    m_header->writeLine(tt_string("requires '") << m_form_node->as_string(prop_ruby_file) << "'\n");
     m_header->writeLine();
 
     if (m_form_node->hasValue(prop_ruby_insert))
@@ -468,16 +466,16 @@ void BaseCodeGenerator::GenerateRubyClass(Node* form_node, PANEL_PAGE panel_type
         m_source->doWrite("\n");
     }
 
-    tt_string inherit_name = form_node->as_string(prop_ruby_inherit_name);
+    tt_string inherit_name = m_form_node->as_string(prop_ruby_inherit_name);
     if (inherit_name.empty())
     {
-        inherit_name += " < " + form_node->as_string(prop_class_name);
+        inherit_name += " < " + m_form_node->as_string(prop_class_name);
     }
     if (inherit_name.size())
     {
         tt_string inherit("class ");
         inherit << inherit_name;
-        inherit << form_node->as_string(prop_ruby_file) << "." << form_node->as_string(prop_class_name) << "):";
+        inherit << m_form_node->as_string(prop_ruby_file) << "." << m_form_node->as_string(prop_class_name) << "):";
 
         m_header->writeLine(inherit);
         m_header->Indent();
@@ -487,7 +485,7 @@ void BaseCodeGenerator::GenerateRubyClass(Node* form_node, PANEL_PAGE panel_type
         m_header->writeLine();
     }
 
-    auto generator = form_node->getNodeDeclaration()->getGenerator();
+    auto generator = m_form_node->getNodeDeclaration()->getGenerator();
     code.clear();
     if (generator->ConstructionCode(code))
     {
@@ -519,7 +517,7 @@ void BaseCodeGenerator::GenerateRubyClass(Node* form_node, PANEL_PAGE panel_type
         }
     }
 
-    if (form_node->getPropPtr(prop_window_extra_style))
+    if (m_form_node->getPropPtr(prop_window_extra_style))
     {
         code.clear();
         code.GenWindowSettings();
@@ -530,7 +528,7 @@ void BaseCodeGenerator::GenerateRubyClass(Node* form_node, PANEL_PAGE panel_type
     }
 
     m_source->SetLastLineBlank();
-    for (const auto& child: form_node->getChildNodePtrs())
+    for (const auto& child: m_form_node->getChildNodePtrs())
     {
         if (child->isGen(gen_wxContextMenuEvent))
             continue;
@@ -552,18 +550,18 @@ void BaseCodeGenerator::GenerateRubyClass(Node* form_node, PANEL_PAGE panel_type
     // Delay calling join() for as long as possible to increase the chance that the thread will
     // have already completed.
     thrd_get_events.join();
-    if (events.size())
+    if (m_events.size())
     {
         m_source->writeLine();
         m_source->writeLine("# Event handlers");
-        GenSrcEventBinding(form_node, events);
+        GenSrcEventBinding(m_form_node, m_events);
         m_source->writeLine("\tend", indent::none);
         m_source->SetLastLineBlank();
 
         m_source->ResetIndent();
         m_source->writeLine();
         m_source->Indent();
-        GenRubyEventHandlers(events);
+        GenRubyEventHandlers(m_events);
     }
     else
     {

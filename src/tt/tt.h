@@ -210,7 +210,7 @@ namespace tt
     HINSTANCE ShellRun_wx(const wxString& filename, const wxString& args, const wxString& directory,
                           INT nShow = SW_SHOWNORMAL, HWND hwndParent = NULL);
 #else
-    int ShellRun_wx(const wxString& filename, const wxString& args, const wxString& directory,
-                          int nShow = 0, void* hwndParent = nullptr);
+    int ShellRun_wx(const wxString& filename, const wxString& args, const wxString& directory, int nShow = 0,
+                    void* hwndParent = nullptr);
 #endif
 }  // namespace tt

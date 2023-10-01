@@ -50,21 +50,21 @@ int WriteCMakeFile(Node* parent_node, std::vector<tt_string>& updated_files,
 class BaseCodeGenerator
 {
 public:
-    BaseCodeGenerator(int language);
+    BaseCodeGenerator(int language, Node* form_node);
 
     void SetHdrWriteCode(WriteCode* cw) { m_header = cw; }
     void SetSrcWriteCode(WriteCode* cw) { m_source = cw; }
 
-    void GenerateCppClass(Node* form_node, PANEL_PAGE panel_type = NOT_PANEL);
-    void GeneratePythonClass(Node* form_node, PANEL_PAGE panel_type = NOT_PANEL);
-    void GenerateRubyClass(Node* form_node, PANEL_PAGE panel_type = NOT_PANEL);
+    void GenerateCppClass(PANEL_PAGE panel_type = NOT_PANEL);
+    void GeneratePythonClass(PANEL_PAGE panel_type = NOT_PANEL);
+    void GenerateRubyClass(PANEL_PAGE panel_type = NOT_PANEL);
 
     // The following languages are experimental and may not work correctly
 
-    void GenerateGoLangClass(Node* form_node, PANEL_PAGE panel_type = NOT_PANEL);
-    void GenerateLuaClass(Node* form_node, PANEL_PAGE panel_type = NOT_PANEL);
-    void GeneratePerlClass(Node* form_node, PANEL_PAGE panel_type = NOT_PANEL);
-    void GenerateRustClass(Node* form_node, PANEL_PAGE panel_type = NOT_PANEL);
+    void GenerateGoLangClass(PANEL_PAGE panel_type = NOT_PANEL);
+    void GenerateLuaClass(PANEL_PAGE panel_type = NOT_PANEL);
+    void GeneratePerlClass(PANEL_PAGE panel_type = NOT_PANEL);
+    void GenerateRustClass(PANEL_PAGE panel_type = NOT_PANEL);
 
     // GenerateDerivedClass() is in gen_derived.cpp
 
@@ -72,7 +72,7 @@ public:
     int GenerateDerivedClass(Node* project, Node* form_node, PANEL_PAGE panel_type = NOT_PANEL);
 
     // code for this is in gen_xrc.cpp
-    void GenerateXrcClass(Node* form_node, PANEL_PAGE panel_type = NOT_PANEL);
+    void GenerateXrcClass(PANEL_PAGE panel_type = NOT_PANEL);
 
     void PreviewXrcClass(Node* form_node);
 
@@ -134,8 +134,8 @@ protected:
     void CollectMemberVariables(Node* node, Permission perm, std::set<std::string>& code_lines);
     void CollectValidatorVariables(Node* node, std::set<std::string>& code_lines);
 
-    void GenerateCppClassHeader(Node* form_node, EventVector& events);
-    void GenerateCppClassConstructor(Node* form_node, EventVector& events);
+    void GenerateCppClassHeader();
+    void GenerateCppClassConstructor();
 
     void GenSrcEventBinding(Node* class_node, EventVector& events);
     void GenHdrEvents(const EventVector& events);
@@ -192,7 +192,8 @@ private:
     tt_string m_baseFullPath;
     tt_string m_header_ext { ".h" };
 
-    EventVector m_CtxMenuEvents;
+    std::vector<NodeEvent*> m_CtxMenuEvents;
+    std::vector<NodeEvent*> m_events;
 
     std::vector<const EmbeddedImage*> m_embedded_images;
     std::set<wxBitmapType> m_type_generated;

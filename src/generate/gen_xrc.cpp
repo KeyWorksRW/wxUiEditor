@@ -228,21 +228,12 @@ std::string GenerateXrcStr(Node* node_start, size_t xrc_flags)
     return xml_stream.str();
 }
 
-void BaseCodeGenerator::GenerateXrcClass(Node* form_node, PANEL_PAGE panel_type)
+void BaseCodeGenerator::GenerateXrcClass(PANEL_PAGE panel_type)
 {
     m_panel_type = panel_type;
 
     m_header->Clear();
     m_source->Clear();
-
-    if (form_node)
-    {
-        m_form_node = form_node;
-    }
-    else
-    {
-        m_form_node = Project.getFirstFormChild();
-    }
 
     if (!m_form_node)
         return;
@@ -258,7 +249,7 @@ void BaseCodeGenerator::GenerateXrcClass(Node* form_node, PANEL_PAGE panel_type)
 
     else  // Info panel
     {
-        if (form_node != Project.getProjectNode())
+        if (m_form_node != Project.getProjectNode())
         {
             m_header->writeLine(tt_string("Resource name is ") << m_form_node->as_string(prop_class_name));
             m_header->writeLine();

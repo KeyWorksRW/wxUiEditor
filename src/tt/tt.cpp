@@ -597,12 +597,13 @@ HINSTANCE tt::ShellRun_wx(const wxString& filename, const wxString& args, const 
     #endif
 }
 #else
-int tt::ShellRun_wx(const wxString& filename, const wxString& args, const wxString& dir, int /* nShow */, void* /* hwndParent */)
+int tt::ShellRun_wx(const wxString& filename, const wxString& args, const wxString& dir, int /* nShow */,
+                    void* /* hwndParent */)
 {
     // Run the command using the wxWidgets method for executing a file
     wxString cmd = filename + " " + args;
     wxExecuteEnv env;
     env.cwd = dir;
-    return wxExecute(cmd, wxEXEC_ASYNC, nullptr, &env);    
+    return wxExecute(cmd, wxEXEC_ASYNC, nullptr, &env);
 }
 #endif

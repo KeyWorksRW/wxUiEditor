@@ -442,14 +442,14 @@ void BaseCodeGenerator::CollectIDs(Node* node, std::set<std::string>& set_enum_i
     }
 }
 
-void BaseCodeGenerator::CollectEventHandlers(Node* node, EventVector& events)
+void BaseCodeGenerator::CollectEventHandlers(Node* node, std::vector<NodeEvent*>& events)
 {
     ASSERT(node);
     for (auto& iter: node->getMapEvents())
     {
         if (iter.second.get_value().size())
         {
-            events.push_back(&iter.second);
+            m_events.push_back(&iter.second);
         }
     }
 

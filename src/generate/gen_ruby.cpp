@@ -253,8 +253,7 @@ void BaseCodeGenerator::GenerateRubyClass(PANEL_PAGE panel_type)
     m_NeedAnimationFunction = false;
     m_NeedSVGFunction = false;
 
-    EventVector events;
-    std::thread thrd_get_events(&BaseCodeGenerator::CollectEventHandlers, this, m_form_node, std::ref(events));
+    std::thread thrd_get_events(&BaseCodeGenerator::CollectEventHandlers, this, m_form_node, std::ref(m_events));
     std::thread thrd_need_img_func(&BaseCodeGenerator::ParseImageProperties, this, m_form_node);
 
     // Caution! CollectImageHeaders() needs access to m_baseFullPath, so don't start this
@@ -551,18 +550,18 @@ void BaseCodeGenerator::GenerateRubyClass(PANEL_PAGE panel_type)
     // Delay calling join() for as long as possible to increase the chance that the thread will
     // have already completed.
     thrd_get_events.join();
-    if (events.size())
+    if (m_events.size())
     {
         m_source->writeLine();
         m_source->writeLine("# Event handlers");
-        GenSrcEventBinding(m_form_node, events);
+        GenSrcEventBinding(m_form_node, m_events);
         m_source->writeLine("\tend", indent::none);
         m_source->SetLastLineBlank();
 
         m_source->ResetIndent();
         m_source->writeLine();
         m_source->Indent();
-        GenRubyEventHandlers(events);
+        GenRubyEventHandlers(m_events);
     }
     else
     {

@@ -134,8 +134,8 @@ protected:
     void CollectMemberVariables(Node* node, Permission perm, std::set<std::string>& code_lines);
     void CollectValidatorVariables(Node* node, std::set<std::string>& code_lines);
 
-    void GenerateCppClassHeader(Node* form_node, EventVector& events);
-    void GenerateCppClassConstructor(Node* form_node, EventVector& events);
+    void GenerateCppClassHeader();
+    void GenerateCppClassConstructor();
 
     void GenSrcEventBinding(Node* class_node, EventVector& events);
     void GenHdrEvents(const EventVector& events);
@@ -192,7 +192,8 @@ private:
     tt_string m_baseFullPath;
     tt_string m_header_ext { ".h" };
 
-    EventVector m_CtxMenuEvents;
+    std::vector<NodeEvent*> m_CtxMenuEvents;
+    std::vector<NodeEvent*> m_events;
 
     std::vector<const EmbeddedImage*> m_embedded_images;
     std::set<wxBitmapType> m_type_generated;

@@ -240,8 +240,7 @@ void BaseCodeGenerator::GeneratePythonClass(PANEL_PAGE panel_type)
         }
     }
 
-    EventVector events;
-    std::thread thrd_get_events(&BaseCodeGenerator::CollectEventHandlers, this, m_form_node, std::ref(events));
+    std::thread thrd_get_events(&BaseCodeGenerator::CollectEventHandlers, this, m_form_node, std::ref(m_events));
 
     m_baseFullPath = MakePythonPath(m_form_node);
 
@@ -503,16 +502,16 @@ void BaseCodeGenerator::GeneratePythonClass(PANEL_PAGE panel_type)
     // Delay calling join() for as long as possible to increase the chance that the thread will
     // have already completed.
     thrd_get_events.join();
-    if (events.size())
+    if (m_events.size())
     {
         m_source->writeLine();
         m_source->writeLine("# Bind Event handlers");
-        GenSrcEventBinding(m_form_node, events);
+        GenSrcEventBinding(m_form_node, m_events);
 
         m_source->ResetIndent();
         m_source->writeLine();
         m_source->Indent();
-        GenPythonEventHandlers(events);
+        GenPythonEventHandlers(m_events);
     }
 
     if (m_form_node->isGen(gen_wxWizard))

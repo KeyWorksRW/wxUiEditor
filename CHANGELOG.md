@@ -20,11 +20,14 @@ All notable changes to this project will be documented in this file.
 - Generated code for colors now uses a CSS HTML String (#RRGGBB) instead of numerical values for red, green and blue.
 - Generated code for wxRibbonToolBar images are now scaled on high DPI displays
 - A control within a wxDialog or wxFrame with the focus property set will now call SetFocus() after all other controls have been created.
+- Limiting the platforms for a container (such as a wxPanel) will now also limit the platforms for any child widgets.
 
 ### Fixed
 
 - You can now change the Window styles in a wxRichTextCtrl without generating an invalid constructor.
 - Color properties are correctly saved in a project
+- widgets set to specific platforms will also place events in a conditional block
+- For C++, widgets set to specific platforms will have the header member declarations in a conditional block
 
 ## [Released (1.1.2)]
 

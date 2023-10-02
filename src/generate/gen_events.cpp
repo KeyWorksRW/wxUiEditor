@@ -364,7 +364,7 @@ void BaseCodeGenerator::GenSrcEventBinding(Node* node, EventVector& events)
         BeginPlatformCode(code, map_entry.first);
         code.Eol();
         m_source->writeLine(code);
-        if (m_language == GEN_LANG_PYTHON)
+        if (m_language == GEN_LANG_PYTHON || m_language == GEN_LANG_RUBY)
             m_source->Indent();
 
         for (auto& conditional_event: conditional_events)

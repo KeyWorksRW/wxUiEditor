@@ -51,7 +51,9 @@ void BaseCodeGenerator::GenConstruction(Node* node)
         if (m_language != GEN_LANG_PYTHON)
             gen_code.Eol();
         m_source->writeLine(gen_code);
-        if (m_language == GEN_LANG_PYTHON) {
+        gen_code.clear();
+        if (m_language == GEN_LANG_PYTHON || m_language == GEN_LANG_RUBY)
+        {
             m_source->Indent();
             m_source->SetLastLineBlank();
         }
@@ -269,6 +271,10 @@ void BaseCodeGenerator::BeginPlatformCode(Code& code, const tt_string& platforms
             case GEN_LANG_PYTHON:
                 code.Eol() << "if wx.Platform == \"msw\"";
                 break;
+
+            case GEN_LANG_RUBY:
+                code.Eol() << "if Wx::OperatingSystemId & Wx::OS_WINDOWS";
+                break;
         }
     }
     if (platforms.contains("Unix"))
@@ -289,6 +295,14 @@ void BaseCodeGenerator::BeginPlatformCode(Code& code, const tt_string& platforms
                 else
                     code.Eol() << "if ";
                 code << "wx.Platform == \"unix\"";
+                break;
+
+            case GEN_LANG_RUBY:
+                if (code.size())
+                    code << " || ";
+                else
+                    code.Eol() << "if ";
+                code << "Wx::OperatingSystemId & Wx::OS_UNIX";
                 break;
         }
     }
@@ -311,6 +325,14 @@ void BaseCodeGenerator::BeginPlatformCode(Code& code, const tt_string& platforms
                     code.Eol() << "if ";
                 code << "wx.Platform == \"mac\"";
                 break;
+
+            case GEN_LANG_RUBY:
+                if (code.size())
+                    code << " || ";
+                else
+                    code.Eol() << "if ";
+                code << "Wx::OperatingSystemId & Wx::OS_MAC";
+                break;
         }
     }
     if (m_language == GEN_LANG_PYTHON)
@@ -329,6 +351,11 @@ void BaseCodeGenerator::EndPlatformCode()
 
         case GEN_LANG_PYTHON:
             m_source->Unindent();
+            break;
+
+        case GEN_LANG_RUBY:
+            m_source->Unindent();
+            m_source->writeLine("end");
             break;
     }
 }

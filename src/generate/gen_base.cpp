@@ -160,7 +160,9 @@ void BaseCodeGenerator::CollectMemberVariables(Node* node, Permission perm, std:
 void BaseCodeGenerator::CollectValidatorVariables(Node* node, std::set<std::string>& code_lines)
 {
     if (m_language == GEN_LANG_CPLUSPLUS)
+    {
         GenCppValVarsBase(node->getNodeDeclaration(), node, code_lines);
+    }
 
     for (const auto& child: node->getChildNodePtrs())
     {
@@ -303,30 +305,6 @@ void BaseCodeGenerator::GatherGeneratorIncludes(Node* node, std::set<std::string
 tt_string BaseCodeGenerator::GetDeclaration(Node* node)
 {
     tt_string code;
-#if 0
-    if (node->hasValue(prop_platforms) && node->as_string(prop_platforms) != "Windows|Unix|Mac")
-    {
-        if (node->as_string(prop_platforms).contains("Windows"))
-            code << "\n#if defined(__WINDOWS__)";
-        if (node->as_string(prop_platforms).contains("Unix"))
-        {
-            if (code.size())
-                code << " || ";
-            else
-                code << "\n#if ";
-            code << "defined(__UNIX__)";
-        }
-        if (node->as_string(prop_platforms).contains("Mac"))
-        {
-            if (code.size())
-                code << " || ";
-            else
-                code << "\n#if ";
-            code << "defined(__WXOSX__)";
-        }
-        code << "\n";
-    }
-#endif
 
     tt_string class_name(node->declName());
 
@@ -464,12 +442,7 @@ tt_string BaseCodeGenerator::GetDeclaration(Node* node)
     {
         code << "  // " << node->as_string(prop_var_comment);
     }
-#if 0
-    if (node->hasValue(prop_platforms) && node->as_string(prop_platforms) != "Windows|Unix|Mac")
-    {
-        code << "\n#endif  // limited to specific platforms";
-    }
-#endif
+
     return code;
 }
 

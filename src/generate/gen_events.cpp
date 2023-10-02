@@ -545,7 +545,7 @@ void BaseCodeGenerator::GenHdrEvents()
             return (a->get_value() < b->get_value());
         };
 
-        if (m_events.empty() || m_CtxMenuEvents.empty())
+        if (m_events.empty() && m_CtxMenuEvents.empty())
         {
             m_header->writeLine();
             if (m_form_node->as_bool(prop_use_derived_class))

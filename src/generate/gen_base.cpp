@@ -75,33 +75,86 @@ void BaseCodeGenerator::CollectMemberVariables(Node* node, Permission perm, std:
             {
                 auto code = GetDeclaration(node);
                 if (code.size())
-                    code_lines.insert(code);
+                {
+                    if (node->hasProp(prop_platforms) && node->as_string(prop_platforms) != "Windows|Unix|Mac")
+                    {
+                        if (perm == Permission::Public)
+                        {
+                            if (!m_map_public_members.contains(node->as_string(prop_platforms)))
+                            {
+                                m_map_public_members[node->as_string(prop_platforms)] = std::set<tt_string>();
+                            }
+                            m_map_public_members[node->as_string(prop_platforms)].insert(code);
+                        }
+                        else
+                        {
+                            if (!m_map_protected.contains(node->as_string(prop_platforms)))
+                            {
+                                m_map_protected[node->as_string(prop_platforms)] = std::set<tt_string>();
+                            }
+                            m_map_protected[node->as_string(prop_platforms)].insert(code);
+                        }
+                    }
+                    // If node_container is non-null, it means the current node is within a container that
+                    // has a conditional.
+                    else if (auto node_container = node->getPlatformContainer(); node_container)
+                    {
+                        if (perm == Permission::Public)
+                        {
+                            if (!m_map_public_members.contains(node_container->as_string(prop_platforms)))
+                            {
+                                m_map_public_members[node_container->as_string(prop_platforms)] = std::set<tt_string>();
+                            }
+                            m_map_public_members[node_container->as_string(prop_platforms)].insert(code);
+                        }
+                        else
+                        {
+                            if (!m_map_protected.contains(node_container->as_string(prop_platforms)))
+                            {
+                                m_map_protected[node_container->as_string(prop_platforms)] = std::set<tt_string>();
+                            }
+                            m_map_protected[node_container->as_string(prop_platforms)].insert(code);
+                        }
+                    }
+                    else
+                    {
+                        code_lines.insert(code);
+                    }
+                }
             }
         }
+    }
 
-        if (perm == Permission::Protected)
+    if (perm == Permission::Protected)
+    {
+        // StaticCheckboxBoxSizer and StaticRadioBtnBoxSizer have internal variables
+        if (node->hasValue(prop_checkbox_var_name) || node->hasValue(prop_radiobtn_var_name))
         {
-            // StaticCheckboxBoxSizer and StaticRadioBtnBoxSizer have internal variables
-            if (node->hasValue(prop_checkbox_var_name) || node->hasValue(prop_radiobtn_var_name))
+            auto code = GetDeclaration(node);
+            if (code.size())
             {
-                auto code = GetDeclaration(node);
-                if (code.size())
+                if (node->hasProp(prop_platforms) && node->as_string(prop_platforms) != "Windows|Unix|Mac")
+                {
+                    if (!m_map_protected.contains(node->as_string(prop_platforms)))
+                    {
+                        m_map_protected[node->as_string(prop_platforms)] = std::set<tt_string>();
+                    }
+                    m_map_protected[node->as_string(prop_platforms)].insert(code);
+                }
+                else
+                {
                     code_lines.insert(code);
+                }
             }
         }
-
-        for (const auto& child: node->getChildNodePtrs())
-        {
-            CollectMemberVariables(child.get(), perm, code_lines);
-        }
-
-        return;
     }
 
     for (const auto& child: node->getChildNodePtrs())
     {
         CollectMemberVariables(child.get(), perm, code_lines);
     }
+
+    return;
 }
 
 void BaseCodeGenerator::CollectValidatorVariables(Node* node, std::set<std::string>& code_lines)
@@ -250,6 +303,7 @@ void BaseCodeGenerator::GatherGeneratorIncludes(Node* node, std::set<std::string
 tt_string BaseCodeGenerator::GetDeclaration(Node* node)
 {
     tt_string code;
+#if 0
     if (node->hasValue(prop_platforms) && node->as_string(prop_platforms) != "Windows|Unix|Mac")
     {
         if (node->as_string(prop_platforms).contains("Windows"))
@@ -272,6 +326,7 @@ tt_string BaseCodeGenerator::GetDeclaration(Node* node)
         }
         code << "\n";
     }
+#endif
 
     tt_string class_name(node->declName());
 
@@ -409,12 +464,12 @@ tt_string BaseCodeGenerator::GetDeclaration(Node* node)
     {
         code << "  // " << node->as_string(prop_var_comment);
     }
-
+#if 0
     if (node->hasValue(prop_platforms) && node->as_string(prop_platforms) != "Windows|Unix|Mac")
     {
         code << "\n#endif  // limited to specific platforms";
     }
-
+#endif
     return code;
 }
 

@@ -194,7 +194,15 @@ private:
 
     std::vector<NodeEvent*> m_CtxMenuEvents;
     std::vector<NodeEvent*> m_events;
+
+    // Maps platorm string to vector of NodeEvent pointers
     std::map<tt_string, std::vector<NodeEvent*>> m_map_conditional_events;
+
+    // Maps platorm string to set of public: member declarations
+    std::map<tt_string, std::set<tt_string>> m_map_public_members;
+
+    // Maps platorm string to set of protected: member declarations
+    std::map<tt_string, std::set<tt_string>> m_map_protected;
 
     std::vector<const EmbeddedImage*> m_embedded_images;
     std::set<wxBitmapType> m_type_generated;

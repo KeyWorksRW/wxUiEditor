@@ -780,6 +780,18 @@ void BaseCodeGenerator::GenerateCppClassHeader()
         m_header->writeLine();
     }
 
+    for (auto& member: m_map_public_members)
+    {
+        code.clear();
+        BeginPlatformCode(code, member.first);
+        m_header->writeLine(code);
+        for (auto& member_code: member.second)
+        {
+            m_header->writeLine(member_code);
+        }
+        m_header->writeLine("#endif  // limited to specific platforms");
+    }
+
     if (m_form_node->as_bool(prop_const_values))
     {
         code.clear();
@@ -914,12 +926,27 @@ void BaseCodeGenerator::GenerateCppClassHeader()
     CollectMemberVariables(m_form_node, Permission::Protected, code_lines);
     generator->AddProtectedHdrMembers(code_lines);
 
-    if (code_lines.size())
+    if (code_lines.size() || m_map_protected.size())
     {
         m_header->writeLine();
         m_header->writeLine("// Class member variables");
         m_header->writeLine();
-        WriteSetLines(m_header, code_lines);
+        if (code_lines.size())
+        {
+            WriteSetLines(m_header, code_lines);
+        }
+    }
+
+    for (auto& member: m_map_protected)
+    {
+        code.clear();
+        BeginPlatformCode(code, member.first);
+        m_header->writeLine(code);
+        for (auto& code_line: member.second)
+        {
+            m_header->writeLine(code_line);
+        }
+        m_header->writeLine("#endif  // limited to specific platforms");
     }
 
     if (m_form_node->hasValue(prop_class_members))

@@ -520,7 +520,10 @@ void BaseCodeGenerator::CollectEventHandlers(Node* node, std::vector<NodeEvent*>
 
             else
             {
-                m_events.push_back(&iter.second);
+                if (node->getParent()->isGen(gen_wxContextMenuEvent))
+                    m_ctx_menu_events.push_back(&iter.second);
+                else
+                    m_events.push_back(&iter.second);
             }
         }
     }

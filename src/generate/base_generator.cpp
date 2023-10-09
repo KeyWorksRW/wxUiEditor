@@ -42,8 +42,124 @@ void BaseGenerator::OnLeftClick(wxMouseEvent& event)
     event.Skip();
 }
 
+bool BaseGenerator::AllowIdPropertyChange(wxPropertyGridEvent* event, NodeProperty* /* prop */, Node* node)
+{
+    tt_string newValue = event->GetPropertyValue().GetString().utf8_string();
+    if (newValue.empty())
+        return true;
+
+    auto form = node->getForm();
+    if (node->isGen(gen_wxMenuItem))
+    {
+        form = node->getParent();
+        while (form && !form->isGen(gen_wxMenuBar) && !form->isGen(gen_MenuBar))
+        {
+            form = form->getParent();
+        }
+
+        // This shouldn't happen, but return true just in case
+        if (!form)
+        {
+            return true;
+        }
+    }
+    else if (node->isGen(gen_auitool))
+    {
+        form = node->getParent();
+        while (form && !form->isGen(gen_AuiToolBar) && !form->isGen(gen_wxAuiToolBar))
+        {
+            form = form->getParent();
+        }
+
+        // This shouldn't happen, but return true just in case
+        if (!form)
+        {
+            return true;
+        }
+    }
+    else if (node->isGen(gen_tool) || node->isGen(gen_tool_dropdown))
+    {
+        form = node->getParent();
+        while (form && !form->isGen(gen_ToolBar) && !form->isGen(gen_wxToolBar))
+        {
+            form = form->getParent();
+        }
+
+        // This shouldn't happen, but return true just in case
+        if (!form)
+        {
+            return true;
+        }
+    }
+    else if (node->isGen(gen_ribbonTool) || node->isGen(gen_ribbonButton) || node->isGen(gen_ribbonGalleryItem))
+    {
+        form = node->getParent();
+        while (form && !form->isGen(gen_RibbonBar) && !form->isGen(gen_wxRibbonBar))
+        {
+            form = form->getParent();
+        }
+
+        // This shouldn't happen, but return true just in case
+        if (!form)
+        {
+            return true;
+        }
+    }
+
+    std::set<tt_string> ids;
+
+    auto rlambda = [&](Node* child, auto&& rlambda) -> void
+    {
+        if (child != node && child->hasValue(prop_id) && !child->as_string(prop_id).is_sameprefix("wx"))
+        {
+            ids.emplace(child->getPropId());
+        }
+
+        for (const auto& iter: child->getChildNodePtrs())
+        {
+            if (iter->hasValue(prop_id) && !iter->as_string(prop_id).is_sameprefix("wx"))
+            {
+                ids.emplace(iter->getPropId());
+            }
+            rlambda(iter.get(), rlambda);
+        }
+    };
+
+    rlambda(form, rlambda);
+
+    // Same as NodeProperty::getPropId() -- strip off any assginment
+    tt_string new_id;
+    if (auto pos = newValue.find('='); pos != tt::npos)
+    {
+        while (pos > 0 && tt::is_whitespace(newValue[pos - 1]))
+        {
+            --pos;
+        }
+        new_id = newValue.substr(0, pos);
+    }
+    else
+    {
+        new_id = newValue;
+    }
+
+    if (ids.contains(new_id))
+    {
+        event->SetValidationFailureMessage(
+            "You have already used this ID for another control. Please choose a different ID.");
+        event->Veto();
+        return false;
+    }
+
+    return true;
+}
+
 bool BaseGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty* prop, Node* node)
 {
+    if (prop->isProp(prop_id))
+    {
+        return AllowIdPropertyChange(event, prop, node);
+    }
+
     if (prop->isProp(prop_alignment))
     {
         auto property = wxStaticCast(event->GetProperty(), wxFlagsProperty);

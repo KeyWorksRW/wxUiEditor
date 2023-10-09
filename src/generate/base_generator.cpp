@@ -49,6 +49,62 @@ bool BaseGenerator::AllowIdPropertyChange(wxPropertyGridEvent* event, NodeProper
         return true;
 
     auto form = node->getForm();
+    if (node->isGen(gen_wxMenuItem))
+    {
+        form = node->getParent();
+        while (form && !form->isGen(gen_wxMenuBar) && !form->isGen(gen_MenuBar))
+        {
+            form = form->getParent();
+        }
+
+        // This shouldn't happen, but return true just in case
+        if (!form)
+        {
+            return true;
+        }
+    }
+    else if (node->isGen(gen_auitool))
+    {
+        form = node->getParent();
+        while (form && !form->isGen(gen_AuiToolBar) && !form->isGen(gen_wxAuiToolBar))
+        {
+            form = form->getParent();
+        }
+
+        // This shouldn't happen, but return true just in case
+        if (!form)
+        {
+            return true;
+        }
+    }
+    else if (node->isGen(gen_tool) || node->isGen(gen_tool_dropdown))
+    {
+        form = node->getParent();
+        while (form && !form->isGen(gen_ToolBar) && !form->isGen(gen_wxToolBar))
+        {
+            form = form->getParent();
+        }
+
+        // This shouldn't happen, but return true just in case
+        if (!form)
+        {
+            return true;
+        }
+    }
+    else if (node->isGen(gen_ribbonTool) || node->isGen(gen_ribbonButton) || node->isGen(gen_ribbonGalleryItem))
+    {
+        form = node->getParent();
+        while (form && !form->isGen(gen_RibbonBar) && !form->isGen(gen_wxRibbonBar))
+        {
+            form = form->getParent();
+        }
+
+        // This shouldn't happen, but return true just in case
+        if (!form)
+        {
+            return true;
+        }
+    }
 
     std::set<tt_string> ids;
 

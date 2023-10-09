@@ -37,7 +37,7 @@ static void GenCtxConstruction(Code& code)
     }
 }
 
-void CtxMenuGenerator::CollectEventHandlers(Node* node, std::vector<NodeEvent*>& events)
+void CtxMenuGenerator::CollectCtxMenuEventHandlers(Node* node, std::vector<NodeEvent*>& events)
 {
     ASSERT(node);
     for (auto& iter: node->getMapEvents())
@@ -54,7 +54,7 @@ void CtxMenuGenerator::CollectEventHandlers(Node* node, std::vector<NodeEvent*>&
         {
             for (const auto& ctx_child: child->getChildNodePtrs())
             {
-                CollectEventHandlers(ctx_child.get(), m_CtxMenuEvents);
+                CollectCtxMenuEventHandlers(ctx_child.get(), m_CtxMenuEvents);
             }
         }
     }
@@ -102,7 +102,7 @@ bool CtxMenuGenerator::AfterChildrenCode(Code& code)
         {
             for (const auto& ctx_child: child->getChildNodePtrs())
             {
-                CollectEventHandlers(ctx_child.get(), m_CtxMenuEvents);
+                CollectCtxMenuEventHandlers(ctx_child.get(), m_CtxMenuEvents);
             }
         }
     }

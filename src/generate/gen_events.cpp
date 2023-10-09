@@ -426,7 +426,7 @@ void BaseCodeGenerator::GenHdrEvents()
 {
     ASSERT(m_language == GEN_LANG_CPLUSPLUS);
 
-    if (m_events.size() || m_CtxMenuEvents.size())
+    if (m_events.size() || m_ctx_menu_events.size())
     {
         std::set<tt_string> code_lines;
 
@@ -493,10 +493,10 @@ void BaseCodeGenerator::GenHdrEvents()
             code_lines.insert(code);
         }
 
-        // Unlike the above code, there shouldn't be any wxEVT_CONTEXT_MENU events since m_CtxMenuEvents should only
+        // Unlike the above code, there shouldn't be any wxEVT_CONTEXT_MENU events since m_ctx_menu_events should only
         // contain menu items events.
 
-        for (const auto& event: m_CtxMenuEvents)
+        for (const auto& event: m_ctx_menu_events)
         {
             auto event_code = EventHandlerDlg::GetCppValue(event->get_value());
             // Ignore lambda's and functions in another class
@@ -545,7 +545,7 @@ void BaseCodeGenerator::GenHdrEvents()
             return (a->get_value() < b->get_value());
         };
 
-        if (m_events.empty() && m_CtxMenuEvents.empty())
+        if (m_events.empty() && m_ctx_menu_events.empty())
         {
             m_header->writeLine();
             if (m_form_node->as_bool(prop_use_derived_class))

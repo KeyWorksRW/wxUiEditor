@@ -534,7 +534,7 @@ void BaseCodeGenerator::CollectEventHandlers(Node* node, std::vector<NodeEvent*>
         {
             for (const auto& ctx_child: child->getChildNodePtrs())
             {
-                CollectEventHandlers(ctx_child.get(), m_CtxMenuEvents);
+                CollectEventHandlers(ctx_child.get(), m_ctx_menu_events);
             }
             continue;
         }

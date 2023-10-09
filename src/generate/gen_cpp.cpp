@@ -87,7 +87,7 @@ void BaseCodeGenerator::GenerateCppClass(PANEL_PAGE panel_type)
 
     Code code(m_form_node, GEN_LANG_CPLUSPLUS);
 
-    m_CtxMenuEvents.clear();
+    m_ctx_menu_events.clear();
     m_embedded_images.clear();
     m_type_generated.clear();
 
@@ -202,7 +202,7 @@ void BaseCodeGenerator::GenerateCppClass(PANEL_PAGE panel_type)
     // Delay calling join() for as long as possible to increase the chance that the thread will
     // have already completed.
     thrd_get_events.join();
-    if (m_events.size() || m_map_conditional_events.size() || m_CtxMenuEvents.size())
+    if (m_events.size() || m_map_conditional_events.size() || m_ctx_menu_events.size())
     {
         hdr_includes.insert("#include <wx/event.h>");
     }

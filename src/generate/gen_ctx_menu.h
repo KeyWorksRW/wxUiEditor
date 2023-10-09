@@ -19,7 +19,7 @@ public:
     bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr) override;
 
 protected:
-    void CollectEventHandlers(Node* node, std::vector<NodeEvent*>& events);
+    void CollectCtxMenuEventHandlers(Node* node, std::vector<NodeEvent*>& events);
 
 private:
     std::vector<NodeEvent*> m_CtxMenuEvents;

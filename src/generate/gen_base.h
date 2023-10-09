@@ -192,7 +192,7 @@ private:
     tt_string m_baseFullPath;
     tt_string m_header_ext { ".h" };
 
-    std::vector<NodeEvent*> m_CtxMenuEvents;
+    std::vector<NodeEvent*> m_ctx_menu_events;
     std::vector<NodeEvent*> m_events;
 
     // Maps platorm string to vector of NodeEvent pointers

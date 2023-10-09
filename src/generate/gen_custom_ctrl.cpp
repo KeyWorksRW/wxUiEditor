@@ -37,6 +37,8 @@ bool CustomControl::ConstructionCode(Code& code)
         code.as_string(prop_namespace) += "::";
 
     tt_string parameters(code.view(prop_parameters));
+    if (parameters.starts_with('('))
+        parameters.erase(0, 1);
     parameters.Replace("${parent}", code.node()->getParentName(), tt::REPLACE::all);
     if (code.is_cpp())
     {
@@ -53,9 +55,32 @@ bool CustomControl::ConstructionCode(Code& code)
     {
         if (parameters.find(iter.first) != tt::npos)
         {
+            Code code_temp(code.node(), code.get_language());
             if (iter.second == prop_window_style && code.node()->as_string(iter.second).empty())
             {
                 parameters.Replace(iter.first, "0");
+            }
+            else if (iter.second == prop_id)
+            {
+                parameters.Replace(iter.first, code.node()->getPropId());
+            }
+            else if (iter.second == prop_pos)
+            {
+                auto pos = code.node()->as_wxPoint(prop_pos);
+                if (pos.x == -1 && pos.y == -1)
+                    code_temp.Add("wxDefaultPosition");
+                else
+                    code_temp.Add("wxPoint(") << pos.x << ", " << pos.y << ")";
+                parameters.Replace(iter.first, code_temp);
+            }
+            else if (iter.second == prop_size)
+            {
+                auto size = code.node()->as_wxSize(prop_size);
+                if (size.x == -1 && size.y == -1)
+                    code_temp.Add("wxDefaultSize");
+                else
+                    code_temp.Add("wxSize(") << size.x << ", " << size.y << ")";
+                parameters.Replace(iter.first, code_temp);
             }
             else
             {
@@ -67,7 +92,7 @@ bool CustomControl::ConstructionCode(Code& code)
                 }
                 else
                 {
-                    Code macro(code.node(), GEN_LANG_PYTHON);
+                    Code macro(code.node(), code.get_language());
                     macro.Add(code.view(iter.second));
                     parameters.Replace(iter.first, macro);
                 }
@@ -75,12 +100,10 @@ bool CustomControl::ConstructionCode(Code& code)
         }
     }
 
-    if (!parameters.starts_with("("))
-        parameters.insert(0, "(");
     if (parameters.back() != ')')
         parameters += ")";
 
-    code.as_string(prop_class_name).Str(parameters).AddIfCpp(";");
+    code.as_string(prop_class_name).Str("(").CheckLineLength(parameters.size()).Str(parameters).AddIfCpp(";");
 
     return true;
 }

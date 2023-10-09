@@ -389,16 +389,17 @@ void DialogBlocks::createChildNode(pugi::xml_node& child_xml, Node* parent)
         }
         else
         {
-            // No point complaining about custom controls
-            if (ExtractQuotedString(type) != "wbForeignCtrlProxy")
+            if (ExtractQuotedString(type) == "wbForeignCtrlProxy")
             {
-                auto msg = GatherErrorDetails(child_xml, getGenName);
-                msg << ", Type: " << ExtractQuotedString(type);
-                FAIL_MSG(tt_string() << "Unrecognized class in \"proxy-type\" property: " << ExtractQuotedString(type)
-                                     << "\n"
-                                     << msg)
+                CreateCustomNode(child_xml, parent);
+                return;
             }
-            m_errors.emplace(tt_string("Unrecognized class in \"proxy-type\" property: ") << ExtractQuotedString(type));
+
+            // No point complaining about custom controls
+            auto msg = GatherErrorDetails(child_xml, getGenName);
+            msg << ", Type: " << ExtractQuotedString(type);
+            FAIL_MSG(tt_string() << "Unrecognized class in \"proxy-type\" property: " << ExtractQuotedString(type) << "\n"
+                                 << msg)
         }
         return;
     }
@@ -517,6 +518,49 @@ void DialogBlocks::createChildNode(pugi::xml_node& child_xml, Node* parent)
     for (auto& grand_child_xml: child_xml.children("document"))
     {
         createChildNode(grand_child_xml, node.get());
+    }
+}
+
+void DialogBlocks::CreateCustomNode(pugi::xml_node& child_xml, Node* parent)
+{
+    auto node = NodeCreation.createNode(gen_CustomControl, parent);
+    if (!node)
+    {
+        auto msg = GatherErrorDetails(child_xml, gen_CustomControl);
+        ASSERT_MSG(node, tt_string("Unable to create ") << map_GenNames[gen_CustomControl] << " as child of "
+                                                        << map_GenNames[parent->getGenName()] << "\n"
+                                                        << msg);
+        m_errors.emplace(tt_string("Unable to create ") << map_GenNames[gen_CustomControl]);
+        return;
+    }
+
+    parent->adoptChild(node);
+
+    SetNodeState(child_xml, node);       // Set disabled and hidden states
+    SetNodeDimensions(child_xml, node);  // Set pos and size
+    SetNodeVarname(child_xml, node);     // Set var_name and class access
+    SetNodeID(child_xml, node);          // Set ID
+
+    ProcessStyles(child_xml, node);  // Set all styles for the current node
+    ProcessEvents(child_xml, node);  // Add all events for the current node
+    ProcessMisc(child_xml, node);    // Set all other properties for the current node
+
+    if (auto value = child_xml.find_child_by_attribute("string", "name", "proxy-Class"); value)
+    {
+        node->set_value(prop_class_name, ExtractQuotedString(value));
+    }
+
+    if (auto value = child_xml.find_child_by_attribute("string", "name", "proxy-Custom arguments"); value)
+    {
+        auto result = ExtractQuotedString(value);
+        result.Replace("%PARENT%", "this", true);
+        result.Replace("%ID%", "${id}", true);
+        result.Replace("%POSITION%", "${pos}", true);
+        result.Replace("%SIZE%", "${size}", true);
+        result.Replace("%STYLE%", "${window_style}", true);
+        result.insert(0, "(");
+        result << ")";
+        node->set_value(prop_parameters, result);
     }
 }
 

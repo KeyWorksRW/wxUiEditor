@@ -42,8 +42,68 @@ void BaseGenerator::OnLeftClick(wxMouseEvent& event)
     event.Skip();
 }
 
+bool BaseGenerator::AllowIdPropertyChange(wxPropertyGridEvent* event, NodeProperty* /* prop */, Node* node)
+{
+    tt_string newValue = event->GetPropertyValue().GetString().utf8_string();
+    if (newValue.empty())
+        return true;
+
+    auto form = node->getForm();
+
+    std::set<tt_string> ids;
+
+    auto rlambda = [&](Node* child, auto&& rlambda) -> void
+    {
+        if (child != node && child->hasValue(prop_id) && !child->as_string(prop_id).is_sameprefix("wx"))
+        {
+            ids.emplace(child->getPropId());
+        }
+
+        for (const auto& iter: child->getChildNodePtrs())
+        {
+            if (iter->hasValue(prop_id) && !iter->as_string(prop_id).is_sameprefix("wx"))
+            {
+                ids.emplace(iter->getPropId());
+            }
+            rlambda(iter.get(), rlambda);
+        }
+    };
+
+    rlambda(form, rlambda);
+
+    // Same as NodeProperty::getPropId() -- strip off any assginment
+    tt_string new_id;
+    if (auto pos = newValue.find('='); pos != tt::npos)
+    {
+        while (pos > 0 && tt::is_whitespace(newValue[pos - 1]))
+        {
+            --pos;
+        }
+        new_id = newValue.substr(0, pos);
+    }
+    else
+    {
+        new_id = newValue;
+    }
+
+    if (ids.contains(new_id))
+    {
+        event->SetValidationFailureMessage(
+            "You have already used this ID for another control. Please choose a different ID.");
+        event->Veto();
+        return false;
+    }
+
+    return true;
+}
+
 bool BaseGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty* prop, Node* node)
 {
+    if (prop->isProp(prop_id))
+    {
+        return AllowIdPropertyChange(event, prop, node);
+    }
+
     if (prop->isProp(prop_alignment))
     {
         auto property = wxStaticCast(event->GetProperty(), wxFlagsProperty);

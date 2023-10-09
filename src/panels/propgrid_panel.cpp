@@ -1054,10 +1054,6 @@ void PropGridPanel::OnPropertyGridChanging(wxPropertyGridEvent& event)
             }
             break;
 
-        case type_id:
-            AllowIdChange(event, prop, node);
-            break;
-
         default:
             break;
     }
@@ -2309,63 +2305,4 @@ tt_string PropGridPanel::GetPropHelp(NodeProperty* prop) const
     }
     description.Replace("\\n", "\n", true);
     return description;
-}
-
-void PropGridPanel::AllowIdChange(wxPropertyGridEvent& event, NodeProperty* /* prop */, Node* node)
-{
-    tt_string newValue = event.GetPropertyValue().GetString().utf8_string();
-    if (newValue.empty())
-        return;
-
-    auto form = node->getForm();
-
-    std::set<tt_string> ids;
-
-    auto rlambda = [&](Node* child, auto&& rlambda) -> void
-    {
-        if (child != node && child->hasValue(prop_id) && !child->as_string(prop_id).is_sameprefix("wx"))
-        {
-            ids.emplace(child->getPropId());
-        }
-
-        for (const auto& iter: child->getChildNodePtrs())
-        {
-            if (iter->hasValue(prop_id) && !iter->as_string(prop_id).is_sameprefix("wx"))
-            {
-                ids.emplace(iter->getPropId());
-            }
-            rlambda(iter.get(), rlambda);
-        }
-    };
-
-    rlambda(form, rlambda);
-
-    // Same as NodeProperty::getPropId() -- strip off any assginment
-    tt_string new_id;
-    if (auto pos = newValue.find('='); pos != tt::npos)
-    {
-        while (pos > 0 && tt::is_whitespace(newValue[pos - 1]))
-        {
-            --pos;
-        }
-        new_id = newValue.substr(0, pos);
-    }
-    else
-    {
-        new_id = newValue;
-    }
-
-    if (ids.contains(new_id))
-    {
-        event.SetValidationFailureMessage(
-            "You have already used this ID for another control. Please choose a different ID.");
-        event.Veto();
-    }
-    else
-    {
-        // If the event was previously veto'd, and the user corrected the file, then we have to set it here,
-        // otherwise it will revert back to the original name before the Veto.
-
-        event.GetProperty()->SetValueFromString(newValue, 0);
-    }
 }

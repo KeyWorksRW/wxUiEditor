@@ -135,6 +135,9 @@ public:
     // Called while processing an wxEVT_PG_CHANGING event.
     virtual bool AllowPropertyChange(wxPropertyGridEvent*, NodeProperty*, Node*);
 
+    // Called while processing an wxEVT_PG_CHANGING event.
+    virtual bool AllowIdPropertyChange(wxPropertyGridEvent*, NodeProperty*, Node*);
+
     // Bind wxEVT_LEFT_DOWN to this so that clicking on the widget will select it in the navigation panel
     void OnLeftClick(wxMouseEvent& event);
 

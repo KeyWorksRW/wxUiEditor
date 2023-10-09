@@ -257,13 +257,14 @@ set (file_list
     # Dialogs for creating new forms
 
     newdialogs/new_common.cpp   # Contains code common between all new_ dialogs
-    # (generated) newdialogs/new_dialog.cpp   # Dialog for creating a new project dialog
-    # (generated) newdialogs/new_frame.cpp    # Dialog for creating a new project wxFrame
-    # (generated) newdialogs/new_mdi.cpp      # Dialog for creating a new MDI application
-    # (generated) newdialogs/new_panel.cpp    # Dialog for creating a new form panel
-    # (generated) newdialogs/new_ribbon.cpp   # Dialog for creating a new wxRibbonBar
-    # (generated) newdialogs/new_wizard.cpp   # Dialog for creating a new wxWizard
-    # (generated) newdialogs/new_dialog.cpp  # Dialog for creating a new project dialog
+    # (generated) newdialogs/new_dialog.cpp     # Dialog for creating a new project dialog
+    # (generated) newdialogs/new_frame.cpp      # Dialog for creating a new project wxFrame
+    # (generated) newdialogs/new_mdi.cpp        # Dialog for creating a new MDI application
+    # (generated) newdialogs/new_panel.cpp      # Dialog for creating a new form panel
+    # (generated) newdialogs/new_propsheet.cpp  # Dialog for creating a new wxPropertySheetDialog
+    # (generated) newdialogs/new_ribbon.cpp     # Dialog for creating a new wxRibbonBar
+    # (generated) newdialogs/new_wizard.cpp     # Dialog for creating a new wxWizard
+    # (generated) newdialogs/new_dialog.cpp     # Dialog for creating a new project dialog
 
     # Nodes
 

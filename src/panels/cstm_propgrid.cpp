@@ -20,17 +20,21 @@
 
 bool CustomPropertyGrid::DoOnValidationFailure(wxPGProperty* property, wxVariant& WXUNUSED(invalidValue))
 {
+#if wxCHECK_VERSION(3, 3, 0)
+    auto validation_behaviour = static_cast<int>(m_validationInfo.GetFailureBehavior());
+#else
     auto validation_behaviour = m_validationInfo.GetFailureBehavior();
+#endif
 
 #if wxCHECK_VERSION(3, 3, 0)
-    if (validation_behaviour == wxPGVFBFlags::Beep)
+    if (validation_behaviour & static_cast<int>(wxPGVFBFlags::Beep))
 #else
     if (validation_behaviour & wxPG_VFB_BEEP)
 #endif
         ::wxBell();
 
 #if wxCHECK_VERSION(3, 3, 0)
-    if ((validation_behaviour == wxPGVFBFlags::MarkCell) && !property->HasFlag(wxPG_PROP_INVALID_VALUE))
+    if ((validation_behaviour & static_cast<int>(wxPGVFBFlags::MarkCell)) && !property->HasFlag(wxPG_PROP_INVALID_VALUE))
 #else
     if ((validation_behaviour & wxPG_VFB_MARK_CELL) && !property->HasFlag(wxPG_PROP_INVALID_VALUE))
 #endif
@@ -63,8 +67,9 @@ bool CustomPropertyGrid::DoOnValidationFailure(wxPGProperty* property, wxVariant
     // wxPG_VFB_SHOW_MESSAGE is set.
 
 #if wxCHECK_VERSION(3, 3, 0)
-    if (validation_behaviour == wxPGVFBFlags::ShowMessageBox || validation_behaviour == wxPGVFBFlags::ShowMessage ||
-        validation_behaviour == wxPGVFBFlags::ShowMessageOnStatusBar)
+    if (validation_behaviour & static_cast<int>(wxPGVFBFlags::ShowMessageBox) ||
+        validation_behaviour & static_cast<int>(wxPGVFBFlags::ShowMessage) ||
+        validation_behaviour & static_cast<int>(wxPGVFBFlags::ShowMessageOnStatusBar))
 #else
     if (validation_behaviour & wxPG_VFB_SHOW_MESSAGEBOX || validation_behaviour & wxPG_VFB_SHOW_MESSAGE ||
         validation_behaviour & wxPG_VFB_SHOW_MESSAGE_ON_STATUSBAR)
@@ -78,7 +83,7 @@ bool CustomPropertyGrid::DoOnValidationFailure(wxPGProperty* property, wxVariant
         }
 
 #if wxCHECK_VERSION(3, 3, 0)
-        if (validation_behaviour == wxPGVFBFlags::ShowMessageOnStatusBar)
+        if (validation_behaviour & static_cast<int>(wxPGVFBFlags::ShowMessageOnStatusBar))
 #else
         if (validation_behaviour & wxPG_VFB_SHOW_MESSAGE_ON_STATUSBAR)
 #endif
@@ -93,7 +98,7 @@ bool CustomPropertyGrid::DoOnValidationFailure(wxPGProperty* property, wxVariant
         }
 
 #if wxCHECK_VERSION(3, 3, 0)
-        if (validation_behaviour == wxPGVFBFlags::ShowMessageBox)
+        if (validation_behaviour & static_cast<int>(wxPGVFBFlags::ShowMessageBox))
 #else
         if (validation_behaviour & wxPG_VFB_SHOW_MESSAGEBOX)
 #endif
@@ -113,7 +118,7 @@ bool CustomPropertyGrid::DoOnValidationFailure(wxPGProperty* property, wxVariant
     }
 
 #if wxCHECK_VERSION(3, 3, 0)
-    return (validation_behaviour == wxPGVFBFlags::StayInProperty) ? false : true;
+    return (validation_behaviour & static_cast<int>(wxPGVFBFlags::StayInProperty)) ? false : true;
 #else
     return (validation_behaviour & wxPG_VFB_STAY_IN_PROPERTY) ? false : true;
 #endif

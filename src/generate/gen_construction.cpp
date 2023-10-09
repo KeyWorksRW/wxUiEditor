@@ -42,13 +42,22 @@ void BaseCodeGenerator::GenConstruction(Node* node)
         m_warnings.emplace(warning_msg.value());
     }
 
-    if (node->hasValue(prop_platforms) && node->as_string(prop_platforms) != "Windows|Unix|Mac")
-    {
-        BeginPlatformCode(node);
-    }
-
     bool need_closing_brace = false;
     Code gen_code(node, m_language);
+
+    if (node->hasValue(prop_platforms) && node->as_string(prop_platforms) != "Windows|Unix|Mac")
+    {
+        BeginPlatformCode(gen_code, node->as_string(prop_platforms));
+        if (m_language != GEN_LANG_PYTHON)
+            gen_code.Eol();
+        m_source->writeLine(gen_code);
+        gen_code.clear();
+        if (m_language == GEN_LANG_PYTHON || m_language == GEN_LANG_RUBY)
+        {
+            m_source->Indent();
+            m_source->SetLastLineBlank();
+        }
+    }
 
     if (generator->ConstructionCode(gen_code))
     {
@@ -249,23 +258,26 @@ const char* BaseCodeGenerator::LangPtr() const
     }
 }
 
-void BaseCodeGenerator::BeginPlatformCode(Node* node)
+void BaseCodeGenerator::BeginPlatformCode(Code& code, const tt_string& platforms)
 {
-    tt_string code;
-    if (node->as_string(prop_platforms).contains("Windows"))
+    if (platforms.contains("Windows"))
     {
         switch (m_language)
         {
             case GEN_LANG_CPLUSPLUS:
-                code << "\n#if defined(__WINDOWS__)";
+                code.Eol() << "#if defined(__WINDOWS__)";
                 break;
 
             case GEN_LANG_PYTHON:
-                code << "\nif defined(__WINDOWS__)";
+                code.Eol() << "if wx.Platform == \"msw\"";
+                break;
+
+            case GEN_LANG_RUBY:
+                code.Eol() << "if Wx::OperatingSystemId & Wx::OS_WINDOWS";
                 break;
         }
     }
-    if (node->as_string(prop_platforms).contains("Unix"))
+    if (platforms.contains("Unix"))
     {
         switch (m_language)
         {
@@ -273,20 +285,28 @@ void BaseCodeGenerator::BeginPlatformCode(Node* node)
                 if (code.size())
                     code << " || ";
                 else
-                    code << "\n#if ";
+                    code.Eol() << "#if ";
                 code << "defined(__UNIX__)";
                 break;
 
             case GEN_LANG_PYTHON:
                 if (code.size())
+                    code << " or ";
+                else
+                    code.Eol() << "if ";
+                code << "wx.Platform == \"unix\"";
+                break;
+
+            case GEN_LANG_RUBY:
+                if (code.size())
                     code << " || ";
                 else
-                    code << "\nif ";
-                code << "defined(__UNIX__)";
+                    code.Eol() << "if ";
+                code << "Wx::OperatingSystemId & Wx::OS_UNIX";
                 break;
         }
     }
-    if (node->as_string(prop_platforms).contains("Mac"))
+    if (platforms.contains("Mac"))
     {
         switch (m_language)
         {
@@ -294,24 +314,31 @@ void BaseCodeGenerator::BeginPlatformCode(Node* node)
                 if (code.size())
                     code << " || ";
                 else
-                    code << "\n#if ";
+                    code.Eol() << "#if ";
                 code << "defined(__WXOSX__)";
                 break;
 
             case GEN_LANG_PYTHON:
                 if (code.size())
+                    code << " or ";
+                else
+                    code.Eol() << "if ";
+                code << "wx.Platform == \"mac\"";
+                break;
+
+            case GEN_LANG_RUBY:
+                if (code.size())
                     code << " || ";
                 else
-                    code << "\nif ";
-                code << "defined(__WXOSX__)";
+                    code.Eol() << "if ";
+                code << "Wx::OperatingSystemId & Wx::OS_MAC";
                 break;
         }
     }
-
-    m_source->writeLine(code);
-    m_source->SetLastLineBlank();
     if (m_language == GEN_LANG_PYTHON)
-        m_source->Indent();
+    {
+        code << ':';
+    }
 }
 
 void BaseCodeGenerator::EndPlatformCode()
@@ -324,6 +351,11 @@ void BaseCodeGenerator::EndPlatformCode()
 
         case GEN_LANG_PYTHON:
             m_source->Unindent();
+            break;
+
+        case GEN_LANG_RUBY:
+            m_source->Unindent();
+            m_source->writeLine("end");
             break;
     }
 }

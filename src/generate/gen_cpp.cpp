@@ -87,7 +87,7 @@ void BaseCodeGenerator::GenerateCppClass(PANEL_PAGE panel_type)
 
     Code code(m_form_node, GEN_LANG_CPLUSPLUS);
 
-    m_CtxMenuEvents.clear();
+    m_ctx_menu_events.clear();
     m_embedded_images.clear();
     m_type_generated.clear();
 
@@ -202,7 +202,7 @@ void BaseCodeGenerator::GenerateCppClass(PANEL_PAGE panel_type)
     // Delay calling join() for as long as possible to increase the chance that the thread will
     // have already completed.
     thrd_get_events.join();
-    if (m_events.size() || m_CtxMenuEvents.size())
+    if (m_events.size() || m_map_conditional_events.size() || m_ctx_menu_events.size())
     {
         hdr_includes.insert("#include <wx/event.h>");
     }
@@ -780,6 +780,18 @@ void BaseCodeGenerator::GenerateCppClassHeader()
         m_header->writeLine();
     }
 
+    for (auto& member: m_map_public_members)
+    {
+        code.clear();
+        BeginPlatformCode(code, member.first);
+        m_header->writeLine(code);
+        for (auto& member_code: member.second)
+        {
+            m_header->writeLine(member_code);
+        }
+        m_header->writeLine("#endif  // limited to specific platforms");
+    }
+
     if (m_form_node->as_bool(prop_const_values))
     {
         code.clear();
@@ -892,7 +904,7 @@ void BaseCodeGenerator::GenerateCppClassHeader()
     m_header->writeLine("protected:");
     m_header->Indent();
 
-    GenHdrEvents(m_events);
+    GenHdrEvents();
 
     if (!m_form_node->as_bool(prop_use_derived_class) && m_form_node->as_bool(prop_private_members))
     {
@@ -903,23 +915,57 @@ void BaseCodeGenerator::GenerateCppClassHeader()
     }
 
     CollectValidatorVariables(m_form_node, code_lines);
-    if (code_lines.size())
+    if (code_lines.size() || m_map_protected.size())
     {
         m_header->writeLine();
         m_header->writeLine("// Validator variables");
-        m_header->writeLine();
-        WriteSetLines(m_header, code_lines);
+        if (code_lines.size())
+        {
+            m_header->writeLine();
+            WriteSetLines(m_header, code_lines);
+        }
+    }
+
+    if (m_map_protected.size())
+    {
+        for (auto& member: m_map_protected)
+        {
+            code.clear();
+            BeginPlatformCode(code, member.first);
+            m_header->writeLine(code);
+            for (auto& code_line: member.second)
+            {
+                m_header->writeLine(code_line);
+            }
+            m_header->writeLine("#endif  // limited to specific platforms");
+        }
+        m_map_protected.clear();
     }
 
     CollectMemberVariables(m_form_node, Permission::Protected, code_lines);
     generator->AddProtectedHdrMembers(code_lines);
 
-    if (code_lines.size())
+    if (code_lines.size() || m_map_protected.size())
     {
         m_header->writeLine();
         m_header->writeLine("// Class member variables");
-        m_header->writeLine();
-        WriteSetLines(m_header, code_lines);
+        if (code_lines.size())
+        {
+            m_header->writeLine();
+            WriteSetLines(m_header, code_lines);
+        }
+    }
+
+    for (auto& member: m_map_protected)
+    {
+        code.clear();
+        BeginPlatformCode(code, member.first);
+        m_header->writeLine(code);
+        for (auto& code_line: member.second)
+        {
+            m_header->writeLine(code_line);
+        }
+        m_header->writeLine("#endif  // limited to specific platforms");
     }
 
     if (m_form_node->hasValue(prop_class_members))
@@ -1067,7 +1113,7 @@ void BaseCodeGenerator::GenerateCppClassConstructor()
 
         AddPersistCode(m_form_node);
 
-        if (m_events.size())
+        if (m_events.size() || m_map_conditional_events.size())
         {
             m_source->writeLine();
             m_source->writeLine("// Event handlers");
@@ -1184,30 +1230,6 @@ void BaseCodeGenerator::GenCppValVarsBase(const NodeDeclaration* declaration, No
         if (auto val_data_type = node->getValidatorDataType(); val_data_type.size())
         {
             tt_string code;
-
-            if (node->hasValue(prop_platforms) && node->as_string(prop_platforms) != "Windows|Unix|Mac")
-            {
-                if (node->as_string(prop_platforms).contains("Windows"))
-                    code << "\n#if defined(__WINDOWS__)";
-                if (node->as_string(prop_platforms).contains("Unix"))
-                {
-                    if (code.size())
-                        code << " || ";
-                    else
-                        code << "\n#if ";
-                    code << "defined(__UNIX__)";
-                }
-                if (node->as_string(prop_platforms).contains("Mac"))
-                {
-                    if (code.size())
-                        code << " || ";
-                    else
-                        code << "\n#if ";
-                    code << "defined(__WXOSX__)";
-                }
-                code << "\n";
-            }
-
             code << val_data_type << ' ' << var_name;
 
             if (val_data_type == "bool")
@@ -1259,12 +1281,31 @@ void BaseCodeGenerator::GenCppValVarsBase(const NodeDeclaration* declaration, No
                 code << ';';
             }
 
-            if (node->hasValue(prop_platforms) && node->as_string(prop_platforms) != "Windows|Unix|Mac")
-            {
-                code << "\n#endif  // limited to specific platforms";
-            }
+            // Validator variables are always written to the protected: section even if the
+            // node variable is marked as public:
 
-            code_lines.insert(code);
+            if (node->hasProp(prop_platforms) && node->as_string(prop_platforms) != "Windows|Unix|Mac")
+            {
+                if (!m_map_protected.contains(node->as_string(prop_platforms)))
+                {
+                    m_map_protected[node->as_string(prop_platforms)] = std::set<tt_string>();
+                }
+                m_map_protected[node->as_string(prop_platforms)].insert(code);
+            }
+            // If node_container is non-null, it means the current node is within a container that
+            // has a conditional.
+            else if (auto node_container = node->getPlatformContainer(); node_container)
+            {
+                if (!m_map_protected.contains(node_container->as_string(prop_platforms)))
+                {
+                    m_map_protected[node_container->as_string(prop_platforms)] = std::set<tt_string>();
+                }
+                m_map_protected[node_container->as_string(prop_platforms)].insert(code);
+            }
+            else
+            {
+                code_lines.insert(code);
+            }
         }
     }
 

@@ -75,39 +75,94 @@ void BaseCodeGenerator::CollectMemberVariables(Node* node, Permission perm, std:
             {
                 auto code = GetDeclaration(node);
                 if (code.size())
-                    code_lines.insert(code);
+                {
+                    if (node->hasProp(prop_platforms) && node->as_string(prop_platforms) != "Windows|Unix|Mac")
+                    {
+                        if (perm == Permission::Public)
+                        {
+                            if (!m_map_public_members.contains(node->as_string(prop_platforms)))
+                            {
+                                m_map_public_members[node->as_string(prop_platforms)] = std::set<tt_string>();
+                            }
+                            m_map_public_members[node->as_string(prop_platforms)].insert(code);
+                        }
+                        else
+                        {
+                            if (!m_map_protected.contains(node->as_string(prop_platforms)))
+                            {
+                                m_map_protected[node->as_string(prop_platforms)] = std::set<tt_string>();
+                            }
+                            m_map_protected[node->as_string(prop_platforms)].insert(code);
+                        }
+                    }
+                    // If node_container is non-null, it means the current node is within a container that
+                    // has a conditional.
+                    else if (auto node_container = node->getPlatformContainer(); node_container)
+                    {
+                        if (perm == Permission::Public)
+                        {
+                            if (!m_map_public_members.contains(node_container->as_string(prop_platforms)))
+                            {
+                                m_map_public_members[node_container->as_string(prop_platforms)] = std::set<tt_string>();
+                            }
+                            m_map_public_members[node_container->as_string(prop_platforms)].insert(code);
+                        }
+                        else
+                        {
+                            if (!m_map_protected.contains(node_container->as_string(prop_platforms)))
+                            {
+                                m_map_protected[node_container->as_string(prop_platforms)] = std::set<tt_string>();
+                            }
+                            m_map_protected[node_container->as_string(prop_platforms)].insert(code);
+                        }
+                    }
+                    else
+                    {
+                        code_lines.insert(code);
+                    }
+                }
             }
         }
+    }
 
-        if (perm == Permission::Protected)
+    if (perm == Permission::Protected)
+    {
+        // StaticCheckboxBoxSizer and StaticRadioBtnBoxSizer have internal variables
+        if (node->hasValue(prop_checkbox_var_name) || node->hasValue(prop_radiobtn_var_name))
         {
-            // StaticCheckboxBoxSizer and StaticRadioBtnBoxSizer have internal variables
-            if (node->hasValue(prop_checkbox_var_name) || node->hasValue(prop_radiobtn_var_name))
+            auto code = GetDeclaration(node);
+            if (code.size())
             {
-                auto code = GetDeclaration(node);
-                if (code.size())
+                if (node->hasProp(prop_platforms) && node->as_string(prop_platforms) != "Windows|Unix|Mac")
+                {
+                    if (!m_map_protected.contains(node->as_string(prop_platforms)))
+                    {
+                        m_map_protected[node->as_string(prop_platforms)] = std::set<tt_string>();
+                    }
+                    m_map_protected[node->as_string(prop_platforms)].insert(code);
+                }
+                else
+                {
                     code_lines.insert(code);
+                }
             }
         }
-
-        for (const auto& child: node->getChildNodePtrs())
-        {
-            CollectMemberVariables(child.get(), perm, code_lines);
-        }
-
-        return;
     }
 
     for (const auto& child: node->getChildNodePtrs())
     {
         CollectMemberVariables(child.get(), perm, code_lines);
     }
+
+    return;
 }
 
 void BaseCodeGenerator::CollectValidatorVariables(Node* node, std::set<std::string>& code_lines)
 {
     if (m_language == GEN_LANG_CPLUSPLUS)
+    {
         GenCppValVarsBase(node->getNodeDeclaration(), node, code_lines);
+    }
 
     for (const auto& child: node->getChildNodePtrs())
     {
@@ -250,28 +305,6 @@ void BaseCodeGenerator::GatherGeneratorIncludes(Node* node, std::set<std::string
 tt_string BaseCodeGenerator::GetDeclaration(Node* node)
 {
     tt_string code;
-    if (node->hasValue(prop_platforms) && node->as_string(prop_platforms) != "Windows|Unix|Mac")
-    {
-        if (node->as_string(prop_platforms).contains("Windows"))
-            code << "\n#if defined(__WINDOWS__)";
-        if (node->as_string(prop_platforms).contains("Unix"))
-        {
-            if (code.size())
-                code << " || ";
-            else
-                code << "\n#if ";
-            code << "defined(__UNIX__)";
-        }
-        if (node->as_string(prop_platforms).contains("Mac"))
-        {
-            if (code.size())
-                code << " || ";
-            else
-                code << "\n#if ";
-            code << "defined(__WXOSX__)";
-        }
-        code << "\n";
-    }
 
     tt_string class_name(node->declName());
 
@@ -410,11 +443,6 @@ tt_string BaseCodeGenerator::GetDeclaration(Node* node)
         code << "  // " << node->as_string(prop_var_comment);
     }
 
-    if (node->hasValue(prop_platforms) && node->as_string(prop_platforms) != "Windows|Unix|Mac")
-    {
-        code << "\n#endif  // limited to specific platforms";
-    }
-
     return code;
 }
 
@@ -445,11 +473,58 @@ void BaseCodeGenerator::CollectIDs(Node* node, std::set<std::string>& set_enum_i
 void BaseCodeGenerator::CollectEventHandlers(Node* node, std::vector<NodeEvent*>& events)
 {
     ASSERT(node);
+
+    auto CheckIfEventExists = [](const EventVector& vectors, const NodeEvent* event) -> bool
+    {
+        for (const auto vector_event: vectors)
+        {
+            if (vector_event == event)
+                return true;
+        }
+        return false;
+    };
+
     for (auto& iter: node->getMapEvents())
     {
+        // Only add the event if a handler was specified
         if (iter.second.get_value().size())
         {
-            m_events.push_back(&iter.second);
+            // Because the NodeEvent* gets stored in a set if there is a conditional, it won't get duplicated
+            // even if it is added by both the Node and any container containing the same conditional
+
+            if (node->hasProp(prop_platforms) && node->as_string(prop_platforms) != "Windows|Unix|Mac")
+            {
+                if (!m_map_conditional_events.contains(node->as_string(prop_platforms)))
+                {
+                    m_map_conditional_events[node->as_string(prop_platforms)] = std::vector<NodeEvent*>();
+                }
+                if (!CheckIfEventExists(m_map_conditional_events[node->as_string(prop_platforms)], &iter.second))
+                {
+                    m_map_conditional_events[node->as_string(prop_platforms)].push_back(&iter.second);
+                }
+            }
+
+            // If node_container is non-null, it means the current node is within a container that
+            // has a conditional.
+            else if (auto node_container = node->getPlatformContainer(); node_container)
+            {
+                if (!m_map_conditional_events.contains(node_container->as_string(prop_platforms)))
+                {
+                    m_map_conditional_events[node_container->as_string(prop_platforms)] = std::vector<NodeEvent*>();
+                }
+                if (!CheckIfEventExists(m_map_conditional_events[node_container->as_string(prop_platforms)], &iter.second))
+                {
+                    m_map_conditional_events[node_container->as_string(prop_platforms)].push_back(&iter.second);
+                }
+            }
+
+            else
+            {
+                if (node->getParent()->isGen(gen_wxContextMenuEvent))
+                    m_ctx_menu_events.push_back(&iter.second);
+                else
+                    m_events.push_back(&iter.second);
+            }
         }
     }
 
@@ -459,7 +534,7 @@ void BaseCodeGenerator::CollectEventHandlers(Node* node, std::vector<NodeEvent*>
         {
             for (const auto& ctx_child: child->getChildNodePtrs())
             {
-                CollectEventHandlers(ctx_child.get(), m_CtxMenuEvents);
+                CollectEventHandlers(ctx_child.get(), m_ctx_menu_events);
             }
             continue;
         }
@@ -529,8 +604,8 @@ void BaseCodeGenerator::CollectImageHeaders(Node* node, std::set<std::string>& e
             }
             else
             {
-                // Since this is a thread, you can't send the standard MSG_WARNING if the window is opened, or it will lock
-                // the debugger.
+                // Since this is a thread, you can't send the standard MSG_WARNING if the window is opened, or it will
+                // lock the debugger.
             }
         }
 

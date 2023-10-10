@@ -1,6 +1,6 @@
 # XML Files
 
-The XML files in this directory declare every type node that can be created. During the build process, these files are converted into gzip and saved as a `*.hgz` file which is a `unsigned char` array that is added to the program via `#include` statements.
+The XML files in this directory declare every type node that can be created. Properties and events are either specified in the XML file, or they are created by the generator class calling AddPropsAndEvents(). Having the generator create is is preferable since there are no limitations on string size as there is with the XML files (limited to 16k per file).
 
 ## Inheriting interface classes
 

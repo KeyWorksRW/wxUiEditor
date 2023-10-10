@@ -6351,11 +6351,18 @@
                 class="wxCheckBox"
                 label="Property Panel on Right"
                 var_name="m_check_right_propgrid"
-                tooltip="If checked, the Property panel will be moved to the right side" />
+                tooltip="If checked, the Property panel will be moved to the right side"
+                proportion="1" />
               <node
                 class="wxCheckBox"
                 label="Always load last project"
-                var_name="m_check_load_last" />
+                var_name="m_check_load_last"
+                proportion="1" />
+              <node
+                class="wxCheckBox"
+                label="Full project path in title bar"
+                var_name="m_check_fullpath"
+                proportion="1" />
               <node
                 class="wxCheckBox"
                 checked="1"

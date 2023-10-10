@@ -48,10 +48,13 @@ bool PreferencesDlg::Create(wxWindow* parent, wxWindowID id, const wxString& tit
 
     m_check_right_propgrid = new wxCheckBox(page_general, wxID_ANY, "Property Panel on Right");
     m_check_right_propgrid->SetToolTip("If checked, the Property panel will be moved to the right side");
-    page_sizer_1->Add(m_check_right_propgrid, wxSizerFlags().Border(wxALL));
+    page_sizer_1->Add(m_check_right_propgrid, wxSizerFlags(1).Border(wxALL));
 
     m_check_load_last = new wxCheckBox(page_general, wxID_ANY, "Always load last project");
-    page_sizer_1->Add(m_check_load_last, wxSizerFlags().Border(wxALL));
+    page_sizer_1->Add(m_check_load_last, wxSizerFlags(1).Border(wxALL));
+
+    m_check_fullpath = new wxCheckBox(page_general, wxID_ANY, "Full project path in title bar");
+    page_sizer_1->Add(m_check_fullpath, wxSizerFlags(1).Border(wxALL));
 
     auto* checkBox_wakatime = new wxCheckBox(page_general, wxID_ANY, "Enable WakaTime");
     checkBox_wakatime->SetValue(true);
@@ -205,12 +208,14 @@ bool PreferencesDlg::Create(wxWindow* parent, wxWindowID id, const wxString& tit
 // clang-format on
 // ***********************************************
 
+#include "mainframe.h"    // CMainFrame -- Main window frame
 #include "preferences.h"  // Set/Get wxUiEditor preferences
 
 void PreferencesDlg::OnInit(wxInitDialogEvent& event)
 {
     m_check_dark_mode->SetValue(UserPrefs.is_DarkMode());
     m_check_high_contrast->SetValue(UserPrefs.is_HighContrast());
+    m_check_fullpath->SetValue(UserPrefs.is_FullPathTitle());
 
     m_check_cpp_snake_case->SetValue(UserPrefs.is_CppSnakeCase());
     m_check_load_last->SetValue(UserPrefs.is_LoadLastProject());
@@ -250,6 +255,7 @@ void PreferencesDlg::OnOK(wxCommandEvent& WXUNUSED(event))
     bool is_color_changed = false;
     bool is_prop_grid_changed = false;
     bool is_dark_changed = false;
+    bool is_fullpath_changed = false;
 
     if (m_colour_cpp->GetColour() != UserPrefs.get_CppColour())
         is_color_changed = true;
@@ -265,9 +271,12 @@ void PreferencesDlg::OnOK(wxCommandEvent& WXUNUSED(event))
         is_dark_changed = true;
     if (m_check_high_contrast->GetValue() != UserPrefs.is_HighContrast())
         is_dark_changed = true;
+    if (m_check_fullpath->GetValue() != UserPrefs.is_FullPathTitle())
+        is_fullpath_changed = true;
 
     UserPrefs.set_DarkMode(m_check_dark_mode->GetValue());
     UserPrefs.set_HighContrast(m_check_high_contrast->GetValue());
+    UserPrefs.set_FullPathTitle(m_check_fullpath->GetValue());
 
     UserPrefs.set_CppSnakeCase(m_check_cpp_snake_case->GetValue());
     UserPrefs.set_LoadLastProject(m_check_load_last->GetValue());
@@ -305,25 +314,33 @@ void PreferencesDlg::OnOK(wxCommandEvent& WXUNUSED(event))
 
     UserPrefs.WriteConfig();
 
-    tt_string msg("You must close and reopen wxUiEditor for");
-    if (is_color_changed)
-        msg += " the color";
-    if (is_prop_grid_changed)
+    if (is_color_changed || is_prop_grid_changed || is_dark_changed)
     {
+        tt_string msg("You must close and reopen wxUiEditor for");
+        if (is_color_changed)
+            msg += " the color";
+        if (is_prop_grid_changed)
+        {
+            if (is_dark_changed)
+                msg += ", ";
+            else
+                msg += " and ";
+            msg += " the Property Panel";
+            if (is_dark_changed)
+                msg += " and Dark Mode";
+        }
         if (is_dark_changed)
-            msg += ", ";
-        else
-            msg += " and ";
-        msg += " the Property Panel";
-        if (is_dark_changed)
-            msg += " and Dark Mode";
+            msg += " the Dark Mode";
+
+        msg += " settings to take effect.";
+
+        wxMessageBox(msg);
     }
-    if (is_dark_changed)
-        msg += " the Dark Mode";
 
-    msg += " settings to take effect.";
-
-    wxMessageBox(msg);
+    if (is_fullpath_changed)
+    {
+        wxGetFrame().UpdateFrame();
+    }
 
     EndModal(wxID_OK);
 }

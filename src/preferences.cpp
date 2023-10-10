@@ -23,6 +23,7 @@ void Prefs::ReadConfig()
     m_sizers_all_borders = config->ReadBool("all_borders", true);
     m_sizers_always_expand = config->ReadBool("always_expand", true);
     m_var_prefix = config->ReadBool("var_prefix", true);
+    m_fullpath_title = config->ReadBool("fullpath_title", false);
 
     m_enable_wakatime = config->ReadBool("enable_wakatime", true);
     m_dark_mode = config->ReadBool("dark_mode", false);
@@ -52,6 +53,7 @@ void Prefs::WriteConfig()
     config->Write("all_borders", m_sizers_all_borders);
     config->Write("always_expand", m_sizers_always_expand);
     config->Write("var_prefix", m_var_prefix);
+    config->Write("fullpath_title", m_fullpath_title);
 
     config->Write("enable_wakatime", m_enable_wakatime);
     config->Write("dark_mode", m_dark_mode);

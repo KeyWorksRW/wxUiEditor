@@ -54,6 +54,7 @@ protected:
     wxBoxSizer* m_box_dark_settings;
     wxCheckBox* m_check_cpp_snake_case;
     wxCheckBox* m_check_dark_mode;
+    wxCheckBox* m_check_fullpath;
     wxCheckBox* m_check_high_contrast;
     wxCheckBox* m_check_load_last;
     wxCheckBox* m_check_right_propgrid;

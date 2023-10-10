@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 - wxAuiToolBar can now be created as a form (it creates a class instead of a child widget)
 - Added support for additional integer and floating point validators for wxTextCtrl
 - Folders now have their own code language preference that can override the Project's code preference
+- Added support for wxPropertySheetDialog as a form
 
 ### Changed
 

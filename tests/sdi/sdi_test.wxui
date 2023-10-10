@@ -99,7 +99,7 @@
       derived_file="../ui/mainframe"
       use_derived_class="0"
       python_file="mainframe"
-      python_import_list="main_test_dlg.py;booktest_dlg.py;wizard.py;python_dlg.py;dlgissue_956.py;dlgissue_960.py"
+      python_import_list="main_test_dlg.py;booktest_dlg.py;wizard.py;python_dlg.py;dlgissue_956.py;dlgissue_960.py;../../python/tools_dlg.py"
       python_inherit_name="mainframe"
       xrc_file="mainframe"
       size="500,300"
@@ -343,7 +343,7 @@
               <node
                 class="wxTextCtrl"
                 hint="wxTextCtrl"
-                style="wxTE_RICH2"
+                style="wxTE_MULTILINE|wxTE_READONLY|wxTE_RICH2"
                 var_name="m_text_ctrl"
                 id="TXT_CTRL"
                 flags="wxEXPAND"

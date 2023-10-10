@@ -70,7 +70,8 @@ bool MainTestDialog::Create(wxWindow* parent, wxWindowID id, const wxString& tit
 
     auto* page_sizer_1 = new wxBoxSizer(wxVERTICAL);
 
-    m_text_ctrl = new wxTextCtrl(page_2, TXT_CTRL, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_RICH2);
+    m_text_ctrl = new wxTextCtrl(page_2, TXT_CTRL, wxEmptyString, wxDefaultPosition, wxDefaultSize,
+        wxTE_MULTILINE|wxTE_READONLY|wxTE_RICH2);
     m_text_ctrl->SetHint("wxTextCtrl");
     page_sizer_1->Add(m_text_ctrl, wxSizerFlags().Expand().Border(wxALL));
 

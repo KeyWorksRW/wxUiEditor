@@ -262,7 +262,7 @@ void wxString::PosLenToImpl(size_t pos, size_t len,
             // going beyond the end of the string, just as std::string does
             const const_iterator e(end());
             const_iterator i(b);
-            while ( len && i <= e )
+            while ( len && i < e )
             {
                 ++i;
                 --len;
@@ -1637,6 +1637,7 @@ wxString& wxString::Truncate(size_t uiLen)
     if ( uiLen < length() )
     {
         erase(begin() + uiLen, end());
+        wxSTRING_SET_CACHED_LENGTH(uiLen);
     }
     //else: nothing to do, string is already short enough
 
@@ -1877,7 +1878,7 @@ wxString wxString::FromCDouble(double val, int precision)
     // imbue() stream method is called (for the record, the latest libstdc++
     // version included in OS X does it and so seem to do the versions
     // currently included in Android NDK and both FreeBSD and OpenBSD), so we
-    // can't do this neither and are reduced to this hack.
+    // can't do this either and are reduced to this hack.
 
     wxString s = FromDouble(val, precision);
 #if wxUSE_INTL
@@ -1975,7 +1976,7 @@ int wxString::DoPrintfUtf8(const char *format, ...)
     va_list argptr;
     va_start(argptr, format);
 
-    int iLen = PrintfV(format, argptr);
+    int iLen = PrintfV(wxString::FromUTF8(format), argptr);
 
     va_end(argptr);
 
@@ -2070,6 +2071,13 @@ static int DoStringPrintfV(wxString& str,
         // options.
         if ( len < 0 )
         {
+            // When vswprintf() returns an error, it can leave invalid bytes in
+            // the buffer, e.g. using "%c" with an invalid character results in
+            // U+FFFFFFFF in the buffer, which would trigger an assert when we
+            // try to copy it back to wxString as UTF-8 in "tmp" buffer dtor,
+            // so ensure we don't try to do it.
+            buf[0] = L'\0';
+
             // assume it only returns error if there is not enough space, but
             // as we don't know how much we need, double the current size of
             // the buffer

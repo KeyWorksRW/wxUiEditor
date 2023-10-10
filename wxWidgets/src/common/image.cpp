@@ -227,6 +227,10 @@ void wxImage::Destroy()
 
 void wxImage::Clear(unsigned char value)
 {
+    wxCHECK_RET( IsOk(), wxT("invalid image") );
+
+    AllocExclusive();
+
     memset(M_IMGDATA->m_data, value, M_IMGDATA->m_width*M_IMGDATA->m_height*3);
 }
 
@@ -390,11 +394,11 @@ wxImage wxImage::ShrinkBy( int xFactor , int yFactor ) const
                     unsigned char red = pixel[0] ;
                     unsigned char green = pixel[1] ;
                     unsigned char blue = pixel[2] ;
-                    unsigned char alpha = 255  ;
-                    if ( source_alpha )
-                        alpha = *(source_alpha + y_offset + x * xFactor + x1) ;
                     if ( !hasMask || red != maskRed || green != maskGreen || blue != maskBlue )
                     {
+                        unsigned char alpha = 255  ;
+                        if ( source_alpha )
+                            alpha = *(source_alpha + y_offset + x * xFactor + x1) ;
                         if ( alpha > 0 )
                         {
                             avgRed += red ;
@@ -673,7 +677,8 @@ wxImage wxImage::ResampleBox(int width, int height) const
             const BoxPrecalc& hPrecalc = hPrecalcs[x];
 
             // Box of pixels to average
-            averaged_pixels = 0;
+            averaged_pixels = (vPrecalc.boxEnd - vPrecalc.boxStart + 1)
+                                * (hPrecalc.boxEnd - hPrecalc.boxStart + 1);
             sum_r = sum_g = sum_b = sum_a = 0.0;
 
             for ( int j = vPrecalc.boxStart; j <= vPrecalc.boxEnd; ++j )
@@ -696,8 +701,6 @@ wxImage wxImage::ResampleBox(int width, int height) const
                         sum_g += src_data[src_pixel_index * 3 + 1];
                         sum_b += src_data[src_pixel_index * 3 + 2];
                     }
-
-                    averaged_pixels++;
                 }
             }
 
@@ -1737,6 +1740,14 @@ wxImage::Paste(const wxImage & image, int x, int y,
                         float light_left = (alpha_target_data[i] / 255.0f) * (1.0f - source_alpha);
                         float result_alpha = source_alpha + light_left;
                         alpha_target_data[i] = (unsigned char)((result_alpha * 255) + 0.5f);
+                        if (result_alpha <= 0)
+                        {
+                            int c = 3 * i;
+                            target_data[c++] = 0;
+                            target_data[c++] = 0;
+                            target_data[c] = 0;
+                            continue;
+                        }
                         for (int c = 3 * i; c < 3 * (i + 1); c++)
                         {
                             target_data[c] =

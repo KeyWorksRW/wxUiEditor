@@ -131,7 +131,7 @@ wxTangoArtProvider::CreateBitmapBundle(const wxArtID& id,
     {
         // Tango does have bookmark-new but no matching bookmark-delete and
         // using mismatching icons would be ugly so we don't provide this one
-        // neither, we should add both of them if Tango ever adds the other one.
+        // either, we should add both of them if Tango ever adds the other one.
         //{ wxART_ADD_BOOKMARK,       BITMAP_DATA(bookmark_new)},
         //{ wxART_DEL_BOOKMARK,       BITMAP_DATA() },
 
@@ -209,7 +209,7 @@ wxTangoArtProvider::CreateBitmapBundle(const wxArtID& id,
         if ( entry.id != id )
             continue;
 
-        wxSize sizeDef = size != wxDefaultSize ? size : GetSizeHint(client);
+        wxSize sizeDef = size != wxDefaultSize ? size : GetDIPSizeHint(client);
         if (sizeDef == wxDefaultSize)
         {
             // We really need some default size here, so keep using the same

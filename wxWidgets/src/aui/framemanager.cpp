@@ -3902,7 +3902,8 @@ void wxAuiManager::Render(wxDC* dc)
 
 void wxAuiManager::Repaint(wxDC* dc)
 {
-#ifdef __WXMAC__
+#if defined(__WXMAC__) || defined(__WXGTK3__)
+    // We can't use wxClientDC in these ports.
     if ( dc == NULL )
     {
         m_frame->Refresh() ;
@@ -3953,10 +3954,9 @@ void wxAuiManager::OnDestroy(wxWindowDestroyEvent& event)
         if ( frame )
             frame->ProcessWindowEventLocally(event);
     }
-    else
-    {
-        event.Skip();
-    }
+
+    // Make sure this event get's propagated to other handlers.
+    event.Skip();
 }
 
 void wxAuiManager::OnPaint(wxPaintEvent& WXUNUSED(event))
@@ -4851,7 +4851,7 @@ void wxAuiManager::OnPaneButton(wxAuiManagerEvent& evt)
 
             if (e.GetVeto())
             {
-                // If it can't be restored, it can't be floated neither.
+                // If it can't be restored, it can't be floated either.
                 return;
             }
 

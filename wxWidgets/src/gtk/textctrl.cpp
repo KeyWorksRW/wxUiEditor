@@ -829,7 +829,7 @@ bool wxTextCtrl::Create( wxWindow *parent,
 
         // The call to SetInitialSize() from inside PostCreation() didn't take
         // the value into account because it hadn't been set yet when it was
-        // called (and setting it earlier wouldn't have been correct neither,
+        // called (and setting it earlier wouldn't have been correct either,
         // as the appropriate size depends on the presence of the borders,
         // which are configured in PostCreation()), so recompute the initial
         // size again now that we have set it.
@@ -2156,29 +2156,16 @@ wxSize wxTextCtrl::DoGetSizeFromTextSize(int xlen, int ylen) const
 {
     wxASSERT_MSG( m_widget, wxS("GetSizeFromTextSize called before creation") );
 
-    wxSize tsize(xlen, 0);
     int cHeight = GetCharHeight();
+    wxSize tsize(xlen, cHeight);
 
     if ( IsSingleLine() )
     {
-        if ( HasFlag(wxBORDER_NONE) )
-        {
-            tsize.y = cHeight;
-#ifdef __WXGTK3__
-            tsize.IncBy(9, 0);
-#else
-            tsize.IncBy(4, 0);
-#endif // GTK3
-        }
-        else
-        {
-            // default height
-            tsize.y = GTKGetPreferredSize(m_widget).y;
-            // Add the margins we have previously set, but only the horizontal border
-            // as vertical one has been taken account at GTKGetPreferredSize().
-            // Also get other GTK+ margins.
-            tsize.IncBy( GTKGetEntryMargins(GetEntry()).x, 0);
-        }
+        // Default height
+        tsize.y = GTKGetPreferredSize(m_widget).y;
+
+        // Add padding + border size
+        tsize.x += GTKGetEntryMargins(GetEntry()).x;
     }
 
     //multiline
@@ -2189,7 +2176,6 @@ wxSize wxTextCtrl::DoGetSizeFromTextSize(int xlen, int ylen) const
             tsize.IncBy(GTKGetPreferredSize(GTK_WIDGET(m_scrollBar[1])).x + 3, 0);
 
         // height
-        tsize.y = cHeight;
         if ( ylen <= 0 )
         {
             tsize.y = 1 + cHeight * wxMax(wxMin(GetNumberOfLines(), 10), 2);
@@ -2205,10 +2191,9 @@ wxSize wxTextCtrl::DoGetSizeFromTextSize(int xlen, int ylen) const
         }
     }
 
-    // Perhaps the user wants something different from CharHeight, or ylen
-    // is used as the height of a multiline text.
-    if ( ylen > 0 )
-        tsize.IncBy(0, ylen - cHeight);
+    // We should always use at least the specified height if it's valid.
+    if ( ylen > tsize.y )
+        tsize.y = ylen;
 
     return tsize;
 }

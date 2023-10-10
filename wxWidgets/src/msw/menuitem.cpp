@@ -26,6 +26,7 @@
 #include "wx/stockitem.h"
 
 #ifndef WX_PRECOMP
+    #include "wx/dcclient.h"
     #include "wx/dcmemory.h"
     #include "wx/font.h"
     #include "wx/bitmap.h"
@@ -692,12 +693,21 @@ wxBitmap wxMenuItem::GetBitmap(bool bChecked) const
 {
     wxBitmap bmp = GetBitmapFromBundle(bChecked ? m_bitmap : m_bmpUnchecked);
 #if wxUSE_IMAGE
-    if ( bmp.IsOk() && !bmp.HasAlpha() && wxGetWinVersion() >= wxWinVersion_Vista)
+    if ( bmp.IsOk() && wxGetWinVersion() >= wxWinVersion_Vista)
     {
         // we must use PARGB DIB for the menu bitmaps so ensure that we do
-        wxImage img(bmp.ConvertToImage());
-        img.InitAlpha();
-        bmp = wxBitmap(img);
+        if ( !bmp.HasAlpha() )
+        {
+            wxImage img(bmp.ConvertToImage());
+            img.InitAlpha();
+            bmp = wxBitmap(img);
+        }
+        else
+        {
+            // even if the bitmap already has alpha, it might be a DDB, while
+            // the menu code only handles alpha correctly for DIBs
+            bmp.ConvertToDIB();
+        }
     }
 #endif // wxUSE_IMAGE
     return bmp;
@@ -751,6 +761,13 @@ void wxMenuItem::DoSetBitmap(const wxBitmapBundle& bmpNew, bool bChecked)
 
 void wxMenuItem::SetupBitmaps()
 {
+    // Owner-drawn items must not return valid bitmaps even if they have them,
+    // this somehow breaks the item measuring logic and the menu may not become
+    // wide enough to accommodate the items text, so just don't do anything at
+    // all for them here.
+    if ( IsOwnerDrawn() )
+        return;
+
     const int itemPos = MSGetMenuItemPos();
     if ( itemPos == -1 )
     {
@@ -783,19 +800,28 @@ void wxMenuItem::SetupBitmaps()
 
 #if wxUSE_OWNER_DRAWN
 
-int wxMenuItem::MeasureAccelWidth() const
+wxSize wxMenuItem::GetMenuTextExtent(const wxString& text) const
 {
-    wxString accel = GetItemLabel().AfterFirst(wxT('\t'));
+    // We need to use the window that this menu is associated with to use the
+    // correct DPI.
+    //
+    // Note that we must have both a valid menu and a valid window by the time
+    // we can be called -- and GetFontToUse() already assumes this, so there is
+    // no need to check that they're both non-null here.
+    wxClientDC dc(GetMenu()->GetWindow());
 
-    wxMemoryDC dc;
     wxFont font;
     GetFontToUse(font);
     dc.SetFont(font);
 
-    wxCoord w;
-    dc.GetTextExtent(accel, &w, NULL);
+    return dc.GetTextExtent(text);
+}
 
-    return w;
+int wxMenuItem::MeasureAccelWidth() const
+{
+    wxString accel = GetItemLabel().AfterFirst(wxT('\t'));
+
+    return GetMenuTextExtent(accel).x;
 }
 
 wxString wxMenuItem::GetName() const
@@ -821,20 +847,12 @@ bool wxMenuItem::OnMeasureItem(size_t *width, size_t *height)
             return true;
         }
 
-        wxString str = GetName();
+        const wxSize extent = GetMenuTextExtent(GetName());
 
-        wxMemoryDC dc;
-        wxFont font;
-        GetFontToUse(font);
-        dc.SetFont(font);
+        *width = data->TextBorder + extent.x + data->AccelBorder;
+        *height = extent.y;
 
-        wxCoord w, h;
-        dc.GetTextExtent(str, &w, &h);
-
-        *width = data->TextBorder + w + data->AccelBorder;
-        *height = h;
-
-        w = m_parentMenu->GetMaxAccelWidth();
+        int w = m_parentMenu->GetMaxAccelWidth();
         if ( w > 0 )
             *width += w + data->ArrowBorder;
 

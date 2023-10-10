@@ -1449,12 +1449,32 @@ bool wxListCtrl::EnableCheckBoxes(bool enable)
 
 void wxListCtrl::CheckItem(long item, bool state)
 {
-    ListView_SetCheckState(GetHwnd(), (UINT)item, (BOOL)state);
+    wxCHECK_RET( HasCheckBoxes(), "checkboxes are disabled" );
+
+    if ( IsVirtual() )
+    {
+        // ListView_SetCheckState does nothing for a virtual control, so generate
+        // the event that would normally be generated in the LVN_ITEMCHANGED callback.
+        wxListEvent le(state ? wxEVT_LIST_ITEM_CHECKED : wxEVT_LIST_ITEM_UNCHECKED, GetId());
+        le.SetEventObject(this);
+        le.m_itemIndex = item;
+        GetEventHandler()->ProcessEvent(le);
+    }
+    else
+    {
+        ListView_SetCheckState(GetHwnd(), (UINT)item, (BOOL)state);
+    }
 }
 
 bool wxListCtrl::IsItemChecked(long item) const
 {
-    return ListView_GetCheckState(GetHwnd(), (UINT)item) != 0;
+    if ( !HasCheckBoxes() )
+        return false;
+
+    if ( IsVirtual() )
+        return OnGetItemIsChecked(item);
+    else
+        return ListView_GetCheckState(GetHwnd(), (UINT)item) != 0;
 }
 
 void wxListCtrl::ShowSortIndicator(int idx, bool ascending)
@@ -2050,7 +2070,7 @@ long wxListCtrl::DoInsertColumn(long col, const wxListItem& item)
 
     // LVSCW_AUTOSIZE_USEHEADER is not supported when inserting new column,
     // we'll deal with it below instead. Plain LVSCW_AUTOSIZE is not supported
-    // neither but it doesn't need any special handling as we use fixed value
+    // either but it doesn't need any special handling as we use fixed value
     // for it here, both because we can't do anything else (there are no items
     // with values in this column to compute the size from yet) and for
     // compatibility as wxLIST_AUTOSIZE == -1 and -1 as InsertColumn() width
@@ -3144,7 +3164,7 @@ static void HandleItemPaint(LPNMLVCUSTOMDRAW pLVCD, HFONT hfont)
             syscolFg = COLOR_WINDOWTEXT;
             syscolBg = COLOR_BTNFACE;
 
-            // don't grey out the icon in this case neither
+            // don't grey out the icon in this case either
             nmcd.uItemState &= ~CDIS_SELECTED;
         }
 

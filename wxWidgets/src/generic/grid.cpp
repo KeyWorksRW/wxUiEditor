@@ -725,7 +725,7 @@ wxGridCellRenderer* wxGridCellAttr::GetRenderer(const wxGrid* grid, int row, int
             if ( (m_defGridAttr != NULL) && (m_defGridAttr != this) )
             {
                 // if we still don't have one then use the grid default
-                // (no need for IncRef() here neither)
+                // (no need for IncRef() here either)
                 renderer = m_defGridAttr->GetRenderer(NULL, 0, 0);
             }
             else // default grid attr
@@ -769,7 +769,7 @@ wxGridCellEditor* wxGridCellAttr::GetEditor(const wxGrid* grid, int row, int col
             if ( (m_defGridAttr != NULL) && (m_defGridAttr != this) )
             {
                 // if we still don't have one then use the grid default
-                // (no need for IncRef() here neither)
+                // (no need for IncRef() here either)
                 editor = m_defGridAttr->GetEditor(NULL, 0, 0);
             }
             else // default grid attr
@@ -2929,6 +2929,9 @@ wxGrid::SetTable(wxGridTableBase *table,
             HideCellEditControl();
             m_cellEditCtrlEnabled = false;
 
+            // Don't hold on to attributes cached from the old table
+            ClearAttrCache();
+
             m_table->SetView(0);
             if( m_ownTable )
                 delete m_table;
@@ -2971,6 +2974,8 @@ wxGrid::SetTable(wxGridTableBase *table,
     }
 
     InvalidateBestSize();
+
+    UpdateCurrentCellOnRedim();
 
     return m_created;
 }
@@ -3094,7 +3099,7 @@ void wxGrid::Init()
     m_extraHeight = 0;
 
     // we can't call SetScrollRate() as the window isn't created yet but OTOH
-    // we don't need to call it neither as the scroll position is (0, 0) right
+    // we don't need to call it either as the scroll position is (0, 0) right
     // now anyhow, so just set the parameters directly
     m_xScrollPixelsPerLine = GRID_SCROLL_LINE_X;
     m_yScrollPixelsPerLine = GRID_SCROLL_LINE_Y;
@@ -3245,8 +3250,8 @@ wxSize wxGrid::GetSizeAvailableForScrollTarget(const wxSize& size)
 {
     wxPoint offset = GetGridWindowOffset(m_gridWin);
     wxSize sizeGridWin(size);
-    sizeGridWin.x -= m_rowLabelWidth - offset.x;
-    sizeGridWin.y -= m_colLabelHeight - offset.y;
+    sizeGridWin.x -= m_rowLabelWidth + offset.x;
+    sizeGridWin.y -= m_colLabelHeight + offset.y;
 
     return sizeGridWin;
 }
@@ -5803,7 +5808,7 @@ void wxGrid::RefreshBlock(int topRow, int leftCol,
         wxASSERT( topRow == -1 && leftCol == -1 );
 
         // And specifying bottom right corner when the top left one is not
-        // specified doesn't make sense neither.
+        // specified doesn't make sense either.
         wxASSERT( noBottomRight );
 
         return;
@@ -8959,12 +8964,10 @@ void wxGrid::SetLabelBackgroundColour( const wxColour& colour )
         m_rowLabelWin->SetBackgroundColour( colour );
         m_colLabelWin->SetBackgroundColour( colour );
         m_cornerLabelWin->SetBackgroundColour( colour );
-        if ( m_frozenRowGridWin )
-            m_frozenRowGridWin->SetBackgroundColour( colour );
-        if ( m_frozenColGridWin )
-            m_frozenColGridWin->SetBackgroundColour( colour );
-        if ( m_frozenCornerGridWin )
-            m_frozenCornerGridWin->SetBackgroundColour( colour );
+        if ( m_rowFrozenLabelWin )
+            m_rowFrozenLabelWin->SetBackgroundColour( colour );
+        if ( m_colFrozenLabelWin )
+            m_colFrozenLabelWin->SetBackgroundColour( colour );
 
         if ( ShouldRefresh() )
         {
@@ -8972,12 +8975,10 @@ void wxGrid::SetLabelBackgroundColour( const wxColour& colour )
             m_colLabelWin->Refresh();
             m_cornerLabelWin->Refresh();
 
-            if ( m_frozenRowGridWin )
-                m_frozenRowGridWin->Refresh();
-            if ( m_frozenColGridWin )
-                m_frozenColGridWin->Refresh();
-            if ( m_frozenCornerGridWin )
-                m_frozenCornerGridWin->Refresh();
+            if ( m_rowFrozenLabelWin )
+                m_rowFrozenLabelWin->Refresh();
+            if ( m_colFrozenLabelWin )
+                m_colFrozenLabelWin->Refresh();
         }
     }
 }
@@ -10971,7 +10972,7 @@ DoGetRowOrColBlocks(wxGridBlocks blocks, const wxGridOperations& oper)
             if ( lastNew < firstThis )
             {
                 // Not only it doesn't overlap this block, but it won't overlap
-                // any subsequent ones neither, so insert it here and stop.
+                // any subsequent ones either, so insert it here and stop.
                 res.insert(res.begin() + n, *it);
                 break;
             }

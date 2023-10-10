@@ -1,6 +1,12 @@
 cmake_minimum_required(VERSION 3.20)
 
-project(wxWidgets LANGUAGES CXX C)
+project(wxWidgets
+    LANGUAGES
+    CXX C
+    VERSION 3.2.3.0
+    DESCRIPTION "wxWidgets 3.2.3"  # see ../include/wx/version.h
+    HOMEPAGE_URL "https://github.com/wxWidgets/wxWidgets"
+)
 
 ####################### Options #######################
 
@@ -72,13 +78,13 @@ else()
 endif()
 
 include( wxWidgets.cmake ) # This will set ${common_sources}, ${msw_sources}, ${unix_sources} and ${osx_sources}
-list(TRANSFORM common_sources PREPEND "${cmn_src_dir}")
-list(TRANSFORM msw_sources PREPEND "${cmn_src_dir}")
-list(TRANSFORM unix_sources PREPEND "${cmn_src_dir}")
-list(TRANSFORM osx_sources PREPEND "${cmn_src_dir}")
-list(TRANSFORM wxCLib_sources PREPEND "${cmn_src_dir}")
+list(TRANSFORM common_sources PREPEND "${cmn_src_dir}/")
+list(TRANSFORM msw_sources PREPEND "${cmn_src_dir}/")
+list(TRANSFORM unix_sources PREPEND "${cmn_src_dir}/")
+list(TRANSFORM osx_sources PREPEND "${cmn_src_dir}/")
+list(TRANSFORM wxCLib_sources PREPEND "${cmn_src_dir}/")
 
-message(STATUS "common_sources: ${cmn_src_dir}../src")
+message(STATUS "common_sources: ${cmn_src_dir}/src")
 
 if (WIN32)
     add_library(wxWidgets ${override_sources} ${common_sources} ${msw_sources} )

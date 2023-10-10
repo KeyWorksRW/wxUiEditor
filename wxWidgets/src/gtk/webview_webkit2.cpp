@@ -11,6 +11,13 @@
 
 #if wxUSE_WEBVIEW && wxUSE_WEBVIEW_WEBKIT2
 
+// In Ubuntu 18.04 compiling glib.h with gcc 4.8 results in the warnings inside
+// it, and disabling them temporarily using wxGCC_WARNING_SUPPRESS/RESTORE
+// doesn't work (i.e. they're still given), so disable them globally here.
+#if wxCHECK_GCC_VERSION(4, 8) && !wxCHECK_GCC_VERSION(4, 9)
+    #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
+
 #include "wx/dir.h"
 #include "wx/dynlib.h"
 #include "wx/filename.h"
@@ -166,15 +173,18 @@ wxgtk_webview_webkit_load_failed(WebKitWebView *,
     {
         switch (error->code)
         {
+#if SOUP_MAJOR_VERSION < 3
             case SOUP_STATUS_CANCELLED:
                 type = wxWEBVIEW_NAV_ERR_USER_CANCELLED;
                 break;
 
             case SOUP_STATUS_CANT_RESOLVE:
+#endif
             case SOUP_STATUS_NOT_FOUND:
                 type = wxWEBVIEW_NAV_ERR_NOT_FOUND;
                 break;
 
+#if SOUP_MAJOR_VERSION < 3
             case SOUP_STATUS_CANT_RESOLVE_PROXY:
             case SOUP_STATUS_CANT_CONNECT:
             case SOUP_STATUS_CANT_CONNECT_PROXY:
@@ -186,6 +196,7 @@ wxgtk_webview_webkit_load_failed(WebKitWebView *,
             case SOUP_STATUS_MALFORMED:
                 type = wxWEBVIEW_NAV_ERR_REQUEST;
                 break;
+#endif
 
             case SOUP_STATUS_BAD_REQUEST:
                 type = wxWEBVIEW_NAV_ERR_REQUEST;
@@ -526,7 +537,7 @@ wxgtk_initialize_web_extensions(WebKitWebContext *context,
 
             for ( size_t n = 0; n < WXSIZEOF(directories); ++n )
             {
-                if ( !TrySetWebExtensionsDirectory(context, directories[n]) )
+                if ( TrySetWebExtensionsDirectory(context, directories[n]) )
                     break;
             }
         }

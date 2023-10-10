@@ -304,6 +304,10 @@ typedef short int WXTYPE;
 #if __cplusplus >= 201103L || wxCHECK_VISUALC_VERSION(14)
     #define wxHAS_MEMBER_DEFAULT
 
+    // Rvalue references are supported since MSVS 2010, but enabling them
+    // causes compilation errors on versions before 2015
+    #define wxHAS_RVALUE_REF
+
     #define wxHAS_NOEXCEPT
     #define wxNOEXCEPT noexcept
 #else
@@ -605,7 +609,12 @@ typedef short int WXTYPE;
     #if __has_cpp_attribute(deprecated)
         /* gcc 5 claims to support this attribute, but actually doesn't */
         #if !defined(__GNUC__) || wxCHECK_GCC_VERSION(6, 0)
-            #define wxHAS_DEPRECATED_ATTR
+            /* Even later gcc versions only support it when using C++11. */
+            #ifdef __cplusplus
+                #if __cplusplus >= 201103L
+                    #define wxHAS_DEPRECATED_ATTR
+                #endif
+            #endif
         #endif
     #endif
 #endif
@@ -698,6 +707,43 @@ typedef short int WXTYPE;
 #endif
 
 /*
+    Some gcc versions choke on __has_cpp_attribute(gnu::visibility) due to the
+    presence of the colon, but we only need this macro in C++ code, so just
+    don't define it when using C.
+ */
+#ifdef __cplusplus
+
+/*
+    wxDEPRECATED_EXPORT_CORE is a special macro used for the classes that are
+    exported and deprecated (but not when building the library itself, as this
+    would trigger warnings about using this class when implementing it).
+
+    It exists because standard [[deprecated]] attribute can't be combined with
+    legacy __attribute__((visibility)), but we can't use [[visibility]] instead
+    of the latter because it can't be use in the same place in the declarations
+    where we use WXDLLIMPEXP_CORE. So we define this special macro which uses
+    the standard visibility attribute just where we can't do otherwise.
+ */
+#ifdef WXBUILDING
+    #define wxDEPRECATED_EXPORT_CORE(msg) WXDLLIMPEXP_CORE
+#else /* !WXBUILDING */
+    #ifdef wxHAS_DEPRECATED_ATTR
+        #if __has_cpp_attribute(gnu::visibility)
+            #define wxDEPRECATED_EXPORT_CORE(msg) \
+                [[deprecated(msg), gnu::visibility("default")]]
+        #endif
+    #endif
+
+    #ifndef wxDEPRECATED_EXPORT_CORE
+        /* Fall back when nothing special is needed or available. */
+        #define wxDEPRECATED_EXPORT_CORE(msg) \
+            wxDEPRECATED_MSG(msg) WXDLLIMPEXP_CORE
+    #endif
+#endif /* WXBUILDING/!WXBUILDING */
+
+#endif /* __cplusplus */
+
+/*
    Macros to suppress and restore gcc warnings, requires g++ >= 4.6 and don't
    do anything otherwise.
 
@@ -724,7 +770,7 @@ typedef short int WXTYPE;
 /*
     Similar macros but for gcc-specific warnings.
  */
-#ifdef __GNUC__
+#if defined(__GNUC__) && !defined(__clang__)
 #   define wxGCC_ONLY_WARNING_SUPPRESS(x) wxGCC_WARNING_SUPPRESS(x)
 #   define wxGCC_ONLY_WARNING_RESTORE(x) wxGCC_WARNING_RESTORE(x)
 #else
@@ -1465,11 +1511,21 @@ enum wxBorder
     Elements of these enums can be combined with each other when using
     wxSizer::Add() overload not using wxSizerFlags.
  */
+wxALLOW_COMBINING_ENUMS(wxAlignment, wxBorder)
 wxALLOW_COMBINING_ENUMS(wxAlignment, wxDirection)
 wxALLOW_COMBINING_ENUMS(wxAlignment, wxGeometryCentre)
+wxALLOW_COMBINING_ENUMS(wxAlignment, wxSizerFlagBits)
 wxALLOW_COMBINING_ENUMS(wxAlignment, wxStretch)
-wxALLOW_COMBINING_ENUMS(wxDirection, wxStretch)
+wxALLOW_COMBINING_ENUMS(wxBorder, wxDirection)
+wxALLOW_COMBINING_ENUMS(wxBorder, wxGeometryCentre)
+wxALLOW_COMBINING_ENUMS(wxBorder, wxSizerFlagBits)
+wxALLOW_COMBINING_ENUMS(wxBorder, wxStretch)
 wxALLOW_COMBINING_ENUMS(wxDirection, wxGeometryCentre)
+wxALLOW_COMBINING_ENUMS(wxDirection, wxStretch)
+wxALLOW_COMBINING_ENUMS(wxDirection, wxSizerFlagBits)
+wxALLOW_COMBINING_ENUMS(wxGeometryCentre, wxSizerFlagBits)
+wxALLOW_COMBINING_ENUMS(wxGeometryCentre, wxStretch)
+wxALLOW_COMBINING_ENUMS(wxSizerFlagBits, wxStretch)
 
 /*  ---------------------------------------------------------------------------- */
 /*  Window style flags */

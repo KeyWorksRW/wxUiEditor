@@ -990,7 +990,6 @@ void wxOwnerDrawnComboBox::DoSetPopupControl(wxComboPopup* popup)
     if ( !GetVListBoxComboPopup()->GetCount() )
     {
         GetVListBoxComboPopup()->Populate(m_initChs);
-        m_initChs.Clear();
     }
 }
 
@@ -1113,6 +1112,7 @@ int wxOwnerDrawnComboBox::DoInsertItems(const wxArrayStringsAdapter& items,
             AssignNewItemClientData(n, clientData, i, type);
         }
 
+        InvalidateBestSize();
         return n;
     }
     else
@@ -1123,6 +1123,7 @@ int wxOwnerDrawnComboBox::DoInsertItems(const wxArrayStringsAdapter& items,
             AssignNewItemClientData(pos, clientData, i, type);
         }
 
+        InvalidateBestSize();
         return pos - 1;
     }
 }

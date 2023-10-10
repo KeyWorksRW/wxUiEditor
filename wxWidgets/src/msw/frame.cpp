@@ -707,7 +707,7 @@ void wxFrame::IconizeChildFrames(bool bIconize)
                 frame->m_wasMinimized = frame->IsIconized();
             }
 
-            // note that we shouldn't touch the hidden frames neither because
+            // note that we shouldn't touch the hidden frames either because
             // iconizing/restoring them would show them as a side effect
             if ( !frame->m_wasMinimized && frame->IsShown() )
                 frame->Iconize(bIconize);
@@ -764,7 +764,7 @@ bool wxFrame::HandleSize(int WXUNUSED(x), int WXUNUSED(y), WXUINT id)
         case SIZE_RESTORED:
         case SIZE_MAXIMIZED:
             // only do it it if we were iconized before, otherwise resizing the
-            // parent frame has a curious side effect of bringing it under it's
+            // parent frame has a curious side effect of bringing it under its
             // children
             if ( m_showCmd != SW_MINIMIZE )
                 break;

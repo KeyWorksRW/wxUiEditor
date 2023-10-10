@@ -62,7 +62,7 @@
     #define wxSOCKET_MSG_NOSIGNAL MSG_NOSIGNAL
 #else // MSG_NOSIGNAL not available (BSD including OS X)
     // next best possibility is to use SO_NOSIGPIPE socket option, this covers
-    // BSD systems (including OS X) -- but if we don't have it neither (AIX and
+    // BSD systems (including OS X) -- but if we don't have it either (AIX and
     // old HP-UX do not), we have to fall back to the old way of simply
     // disabling SIGPIPE temporarily, so define a class to do it in a safe way
     #if defined(__UNIX__) && !defined(SO_NOSIGPIPE)
@@ -689,7 +689,15 @@ int wxSocketImpl::RecvDgram(void *buffer, int size)
                                   0, &from.addr, &fromlen) );
 
     if ( ret == SOCKET_ERROR )
-        return SOCKET_ERROR;
+    {
+#ifdef __WINDOWS__
+        if ( WSAGetLastError() == WSAEMSGSIZE )
+            ret = size;
+        else
+#endif // __WINDOWS__
+            return SOCKET_ERROR;
+    }
+
 
     m_peer = wxSockAddressImpl(from.addr, fromlen);
     if ( !m_peer.IsOk() )
@@ -1131,14 +1139,48 @@ wxSocketBase& wxSocketBase::ReadMsg(void* buffer, wxUint32 nbytes)
 
 wxSocketBase& wxSocketBase::Peek(void* buffer, wxUint32 nbytes)
 {
+    // If we're already closed, don't try switching the invalid socket into
+    // non-blocking mode, but still use the already read data, if any.
+    if ( m_impl->m_fd == INVALID_SOCKET )
+    {
+        m_lcount = GetPushback(buffer, nbytes, true);
+        return *this;
+    }
+
     wxSocketReadGuard read(this);
 
     // Peek() should never block
     wxSocketWaitModeChanger changeFlags(this, wxSOCKET_NOWAIT);
 
-    m_lcount = DoRead(buffer, nbytes);
+    // Guard against data loss when reading fewer bytes
+    // than are present in a received datagram
+    void* readbuf;
+    wxUint32 readbytes;
+    const wxUint32 DGRAM_MIN_READ = 65536;  // 64K is enough for UDP
+    std::vector<unsigned char> peekbuf;
+    bool usePeekbuf = !m_impl->m_stream && nbytes < DGRAM_MIN_READ;
+    if ( usePeekbuf )
+    {
+        // Allocate our own buffer
+        peekbuf.resize(DGRAM_MIN_READ);
+        readbuf = &peekbuf[0];
+        readbytes = DGRAM_MIN_READ;
+    }
+    else
+    {
+        // Use the caller-supplied buffer directly
+        readbuf = buffer;
+        readbytes = nbytes;
+    }
 
-    Pushback(buffer, m_lcount);
+    wxUint32 lcount = DoRead(readbuf, readbytes);
+
+    Pushback(readbuf, lcount);
+
+    if ( usePeekbuf )
+        lcount = GetPushback(buffer, nbytes, true);
+
+    m_lcount = lcount;
 
     return *this;
 }

@@ -146,12 +146,9 @@ bool wxApp::DoIdle()
         gs_focusChange = 0;
     }
 
-    bool needMore;
-    do {
-        ProcessPendingEvents();
+    ProcessPendingEvents();
+    const bool needMore = ProcessIdle();
 
-        needMore = ProcessIdle();
-    } while (needMore && gtk_events_pending() == 0);
     gdk_threads_leave();
 
 #if wxUSE_THREADS
@@ -184,6 +181,7 @@ bool wxApp::DoIdle()
 namespace wxGTKImpl
 {
 
+bool LogFilter::ms_allowed = false;
 bool LogFilter::ms_installed = false;
 LogFilter* LogFilter::ms_first = NULL;
 
@@ -205,6 +203,9 @@ LogFilter::wx_log_writer(GLogLevelFlags   log_level,
 
 bool LogFilter::Install()
 {
+    if ( !ms_allowed )
+        return false;
+
     if ( !ms_installed )
     {
         if ( glib_check_version(2, 50, 0) != 0 )
@@ -278,11 +279,23 @@ void wxApp::GTKSuppressDiagnostics(int flags)
     s_logFilter.SetLevelToIgnore(flags);
     s_logFilter.Install();
 }
+
+/* static */
+void wxApp::GTKAllowDiagnosticsControl()
+{
+    wxGTKImpl::LogFilter::Allow();
+}
 #else // !wxHAS_GLIB_LOG_WRITER
 /* static */
 void wxApp::GTKSuppressDiagnostics(int WXUNUSED(flags))
 {
     // We can't do anything here.
+}
+
+/* static */
+void wxApp::GTKAllowDiagnosticsControl()
+{
+    // And don't need to do anything here.
 }
 #endif // wxHAS_GLIB_LOG_WRITER/!wxHAS_GLIB_LOG_WRITER
 

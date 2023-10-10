@@ -69,7 +69,6 @@ public:
 
     virtual ~wxGLCanvasEGL();
 
-
     // implement wxGLCanvasBase methods
     // --------------------------------
 
@@ -117,6 +116,14 @@ public:
     // is responsible for freeing the pointer
     static EGLConfig *InitConfig(const wxGLAttributes& dispAttrs);
 
+    // private Wayland-specific callbacks
+#if wxABI_VERSION >= 30203
+    void CreateWaylandSubsurface();
+    void DestroyWaylandSubsurface();
+
+    void OnWLFrameCallback();
+#endif // wxABI_VERSION >= 3.2.3
+
     bool m_readyToDraw;
     wl_compositor *m_wlCompositor;
     wl_subcompositor *m_wlSubcompositor;
@@ -136,6 +143,8 @@ private:
 
     // the global/default versions of the above
     static EGLConfig *ms_glEGLConfig;
+
+    friend void wxEGLUpdatePosition(wxGLCanvasEGL* win);
 };
 
 // ----------------------------------------------------------------------------

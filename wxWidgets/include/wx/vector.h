@@ -63,6 +63,11 @@ WXDLLIMPEXP_BASE void wxQsort(void* pbase, size_t total_elems,
 
 #endif // !wxQSORT_DECLARED
 
+// Fix using placement new in case it was redefined by wx/msw/msvcrt.h.
+#ifdef WXDEBUG_NEW
+    #undef new
+#endif
+
 namespace wxPrivate
 {
 
@@ -519,6 +524,15 @@ public:
         const size_t idx = it - begin();
         const size_t after = end() - it;
 
+        // Unfortunately gcc 12 still complains about use-after-free even
+        // though our code is correct because it actually optimizes it to be
+        // wrong, with -O2 or higher, by moving the assignment above below the
+        // call to reserve() below, so use this hack to avoid the warning with
+        // it by preventing it from rearranging the code.
+#if wxCHECK_GCC_VERSION(12, 1)
+        __asm__ __volatile__("":::"memory");
+#endif
+
         reserve(size() + count);
 
         // the place where the new element is going to be inserted
@@ -705,6 +719,11 @@ inline bool wxVectorContains(const wxVector<T>& v, const T& obj)
 
     return false;
 }
+
+// Redefine if it we undefined it above.
+#ifdef WXDEBUG_NEW
+    #define new WXDEBUG_NEW
+#endif
 
 #endif // wxUSE_STD_CONTAINERS/!wxUSE_STD_CONTAINERS
 

@@ -28,6 +28,8 @@
 #include "wx/thread.h"
 #include "wx/except.h"
 
+#include "wx/private/threadinfo.h"
+
 #ifndef WX_PRECOMP
     #include "wx/app.h"
     #include "wx/dynarray.h"
@@ -900,7 +902,7 @@ void *wxThreadInternal::PthreadStart(wxThread *thread)
 
         wxTRY
         {
-            pthread->m_exitcode = thread->CallEntry();
+            pthread->m_exitcode = thread->Entry();
 
             wxLogTrace(TRACE_THREADS,
                        wxT("Thread %p Entry() returned %lu."),
@@ -2022,6 +2024,53 @@ void wxMutexGuiLeaveImpl()
 }
 
 #endif
+
+wxThreadSpecificInfo& wxThreadSpecificInfo::Get()
+{
+    // Since wxTlsValue only allows POD types, we need to use TLS API directly instead
+    // to free the allocated object automatically on thread exit.
+    class wxThreadSpecificInfoTLS
+    {
+    private:
+        static void DeleteThreadSpecificInfo(void *ptr)
+        {
+            delete static_cast<wxThreadSpecificInfo*>(ptr);
+        }
+        pthread_key_t m_key;
+
+    public:
+        wxThreadSpecificInfoTLS()
+        {
+            pthread_key_create(&m_key, &DeleteThreadSpecificInfo);
+        }
+
+        ~wxThreadSpecificInfoTLS()
+        {
+            pthread_key_delete(m_key);
+        }
+
+        wxThreadSpecificInfo& Get() const
+        {
+            wxThreadSpecificInfo* info =
+                static_cast<wxThreadSpecificInfo*>(pthread_getspecific(m_key));
+            if (!info)
+            {
+                info = new wxThreadSpecificInfo;
+                if (pthread_setspecific(m_key, info) != 0)
+                {
+                    // This will crash, but we'd leak memory otherwise which
+                    // could be even worse and less immediately discoverable.
+                    delete info;
+                    info = NULL;
+                }
+            }
+            return *info;
+        }
+    };
+
+    static const wxThreadSpecificInfoTLS s_info;
+    return s_info.Get();
+}
 
 // ----------------------------------------------------------------------------
 // include common implementation code

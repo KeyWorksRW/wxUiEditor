@@ -987,14 +987,19 @@
                     id="CreateNewDialog" />
                   <node
                     class="ribbonTool"
+                    bitmap="Embed;wxFrame.png"
+                    help="wxFrame"
+                    id="CreateNewFrame" />
+                  <node
+                    class="ribbonTool"
                     bitmap="Embed;wxPanel.png"
                     help="wxPanel"
                     id="CreateNewPanel" />
                   <node
                     class="ribbonTool"
-                    bitmap="Embed;wxFrame.png"
-                    help="wxFrame"
-                    id="CreateNewFrame" />
+                    bitmap="Embed;wxNotebook.png"
+                    help="wxPropertySheetDialog"
+                    id="CreateNewPropertySheet" />
                   <node
                     class="ribbonTool"
                     bitmap="Embed;WXPOPupTransientWindow.png"
@@ -3737,6 +3742,101 @@
               var_name="checkTabTraversal"
               validator_variable="m_tab_traversal"
               tooltip="Checking this will cause the tab key to traverse child windows." />
+          </node>
+          <node
+            class="wxStdDialogButtonSizer"
+            flags="wxEXPAND" />
+        </node>
+      </node>
+      <node
+        class="wxDialog"
+        class_name="NewPropSheet"
+        title="Create New PropertySheet Dialog"
+        base_file="..\newdialogs\new_propsheet.cpp"
+        inserted_hdr_code="void createNode();@@void VerifyClassName();"
+        class_members="&quot;bool m_is_info_shown { false };&quot;"
+        private_members="1"
+        use_derived_class="0"
+        wxEVT_INIT_DIALOG="OnInit">
+        <node
+          class="wxBoxSizer"
+          orientation="wxVERTICAL"
+          var_name="parent_sizer"
+          flags="wxEXPAND">
+          <node
+            class="wxBoxSizer"
+            orientation="wxVERTICAL"
+            var_name="box_sizer_3">
+            <node
+              class="wxStaticText"
+              class_access="none"
+              label="These are initial values -- all of them can be changed after the property sheet is created."
+              var_name="staticText_3"
+              wrap="300" />
+            <node
+              class="wxInfoBar"
+              flags="wxEXPAND" />
+          </node>
+          <node
+            class="wxBoxSizer"
+            var_name="box_sizer_2"
+            flags="wxEXPAND">
+            <node
+              class="wxStaticText"
+              class_access="none"
+              label="&amp;Base class name:"
+              var_name="staticText"
+              tooltip="Change this to something unique to your project."
+              alignment="wxALIGN_CENTER_VERTICAL" />
+            <node
+              class="wxTextCtrl"
+              value="MySettingsBase"
+              var_name="m_classname"
+              validator_variable="m_base_class"
+              tooltip="Change this to something unique to your project."
+              proportion="1"
+              wxEVT_TEXT="[this](wxCommandEvent&amp;)@@{VerifyClassName();@@}" />
+          </node>
+          <node
+            class="wxBoxSizer"
+            var_name="box_sizer__2"
+            flags="wxEXPAND">
+            <node
+              class="wxStaticText"
+              class_access="none"
+              label="&amp;Title:"
+              var_name="staticText_2"
+              alignment="wxALIGN_CENTER_VERTICAL" />
+            <node
+              class="wxTextCtrl"
+              hint="Text for property sheet's Title Bar"
+              var_name="m_textCtrl_title"
+              validator_variable="m_title"
+              proportion="1" />
+          </node>
+          <node
+            class="wxBoxSizer"
+            orientation="wxVERTICAL">
+            <node
+              class="wxBoxSizer"
+              var_name="box_sizer_4"
+              borders="wxTOP|wxBOTTOM|wxRIGHT">
+              <node
+                class="wxStaticText"
+                class_access="none"
+                label="Page&amp;s:"
+                var_name="staticText_4"
+                alignment="wxALIGN_CENTER_VERTICAL"
+                borders="wxTOP|wxBOTTOM|wxLEFT" />
+              <node
+                class="wxSpinCtrl"
+                initial="3"
+                max="7"
+                min="1"
+                var_name="m_spinCtrlTabs"
+                validator_variable="m_num_tabs"
+                alignment="wxALIGN_CENTER_VERTICAL" />
+            </node>
           </node>
           <node
             class="wxStdDialogButtonSizer"

@@ -28,6 +28,7 @@ enum
     CreateNewDialog,
     CreateNewFrame,
     CreateNewPanel,
+    CreateNewPropertySheet,
     CreateNewRibbon,
     CreateNewFormRibbon,
     CreateNewWizard,

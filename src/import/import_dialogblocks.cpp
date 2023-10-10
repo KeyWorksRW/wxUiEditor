@@ -410,6 +410,10 @@ void DialogBlocks::createChildNode(pugi::xml_node& child_xml, Node* parent)
     {
         getGenName = gen_auitool;
     }
+    else if (getGenName == gen_wxPanel && parent->isGen(gen_wxPropertySheetDialog))
+    {
+        getGenName = gen_BookPage;
+    }
 
     auto node = NodeCreation.createNode(getGenName, parent);
     if (!node)
@@ -1474,6 +1478,7 @@ constexpr auto map_proxy_names = frozen::make_map<std::string_view, GenEnum::Pro
     { "Strings", prop_contents },
     { "Stretch factor", prop_proportion },
     { "Strings", prop_contents },
+    { "Tab label", prop_label },
     { "Thumb size", prop_thumbsize },
     { "Tool packing", prop_packing },
     { "Tool separation", prop_separation },

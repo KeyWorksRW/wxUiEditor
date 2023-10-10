@@ -81,6 +81,7 @@ namespace wxue_img
     extern const unsigned char wxFrame_png[424];
     extern const unsigned char wxListbook_png[357];
     extern const unsigned char wxMenuBar_png[490];
+    extern const unsigned char wxNotebook_png[177];
     extern const unsigned char wxPanel_png[156];
     extern const unsigned char wxPropertyGridManager_png[225];
     extern const unsigned char wxPropertyGrid_png[212];

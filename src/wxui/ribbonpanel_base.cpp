@@ -74,12 +74,15 @@ bool RibbonPanelBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos
         forms_bar_windows->AddTool(CreateNewDialog,
             wxueImage(wxue_img::wxDialog_png, sizeof(wxue_img::wxDialog_png)).Rescale(
             FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "wxDialog", wxRIBBON_BUTTON_NORMAL);
-        forms_bar_windows->AddTool(CreateNewPanel,
-            wxueImage(wxue_img::wxPanel_png, sizeof(wxue_img::wxPanel_png)).Rescale(
-            FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "wxPanel", wxRIBBON_BUTTON_NORMAL);
         forms_bar_windows->AddTool(CreateNewFrame,
             wxueImage(wxue_img::wxFrame_png, sizeof(wxue_img::wxFrame_png)).Rescale(
             FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "wxFrame", wxRIBBON_BUTTON_NORMAL);
+        forms_bar_windows->AddTool(CreateNewPanel,
+            wxueImage(wxue_img::wxPanel_png, sizeof(wxue_img::wxPanel_png)).Rescale(
+            FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "wxPanel", wxRIBBON_BUTTON_NORMAL);
+        forms_bar_windows->AddTool(CreateNewPropertySheet,
+            wxueImage(wxue_img::wxNotebook_png, sizeof(wxue_img::wxNotebook_png)).Rescale(
+            FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "wxPropertySheetDialog", wxRIBBON_BUTTON_NORMAL);
         forms_bar_windows->AddTool(gen_wxPopupTransientWindow,
             wxueImage(wxue_img::WXPOPupTransientWindow_png, sizeof(wxue_img::WXPOPupTransientWindow_png)).Rescale(
             FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "wxPopupTransientWindow", wxRIBBON_BUTTON_NORMAL);
@@ -1556,6 +1559,14 @@ namespace wxue_img
         123,149,10,210,183,207,101,126,28,30,248,10,54,123,21,108,219,110,233,57,142,131,144,207,231,61,61,220,79,3,16,
         0,239,31,149,166,94,243,215,180,105,243,159,248,5,209,231,135,48,146,219,194,246,0,0,0,0,73,69,78,68,174,66,96,
         130
+    };
+
+    const unsigned char wxNotebook_png[177] {
+        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,115,
+        0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,0,99,73,68,65,84,56,203,99,96,160,37,248,143,7,20,244,236,37,90,12,217,76,
+        22,24,227,230,205,155,56,45,158,57,115,38,154,136,42,86,49,100,192,68,171,80,160,153,193,140,176,48,190,122,241,
+        36,86,5,218,250,230,36,25,88,216,187,143,97,66,137,51,35,11,33,133,184,44,28,176,160,24,53,120,212,224,81,131,71,
+        13,38,6,192,75,183,57,123,190,50,12,9,0,0,126,235,89,63,162,177,243,95,0,0,0,0,73,69,78,68,174,66,96,130
     };
 
     const unsigned char wxPanel_png[156] {

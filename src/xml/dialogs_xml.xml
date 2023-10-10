@@ -143,99 +143,23 @@ inline const char* dialogs_xml = R"===(<?xml version="1.0"?>
 		<inherits class="XRC Settings" />
 		<inherits class="wxTopLevelWindow" />
 		<inherits class="Window Events" />
-		<property name="class_name" type="string"
-			help="The name of the base class.">MyPropSheetDlgBase</property>
-		<property name="title" type="string_escapes"
-			help="The text to display on the dialog's title bar." />
-		<property name="book_type" type="option"
-			help="The type of book to use.">
-			<option name="wxPROPSHEET_NOTEBOOK" />
-			<option name="wxPROPSHEET_CHOICEBOOK" />
-			<option name="wxPROPSHEET_LISTBOOK" />
-			<option name="wxPROPSHEET_TOOLBOOK" />
-			<option name="wxPROPSHEET_TREEBOOK" />
-			wxPROPSHEET_NOTEBOOK
-		</property>
-		<property name="shrink_to_fit" type="bool"
-			help="Shrinks the dialog window to fit the currently selected page (common behaviour for property sheets on macOS)." >
-			0
-		</property>
-		<property name="buttons" type="bitlist">
-			<option name="wxOK"
-			help="Create a 'OK' button. Cannot be combined with Yes button." />
-			<option name="wxYES"
-			help="Create a 'Yes' button. Cannot be combined with OK button." />
-			<option name="wxAPPLY"
-			help="Create a 'Apply' button" />
-			<option name="wxNO"
-			help="Create a 'No' button" />
-			<option name="wxCANCEL"
-			help="Create a 'Cancel' button. Cannot be combined with Close button." />
-			<option name="wxCLOSE"
-			help="Create a 'Close' button. Cannot be combined with Cancel button." />
-			<option name="wxHELP"
-			help="Create a 'Help' button." />
-			wxOK|wxCANCEL
-		</property>
-		<property name="inner_border" type="int"
-			help="Sets the border around the book control only. Size is in dialog units -- igorned if set to -1 (default).">
-			-1
-		</property>
-		<property name="outer_border" type="int"
-			help="Sets the border around the whole dialog. Size is in dialog units -- igorned if set to -1 (default).">
-			-1
-		</property>
-		<property name="persist" type="bool">0</property>
-		<property name="style" type="bitlist">
-			<option name="wxCAPTION"
-				help="Puts a caption on the dialog box." />
-			<option name="wxCLOSE_BOX"
-				help="Displays a close box on the dialog." />
-			<option name="wxDEFAULT_DIALOG_STYLE"
-				help="Equivalent to a combination of wxCAPTION, wxCLOSE_BOX and wxSYSTEM_MENU (the last one is not used under Unix)" />
-			<option name="wxDIALOG_NO_PARENT"
-				help="By default, a dialog created with a NULL parent window will be given the application's top level window as parent. Use this style to prevent this from happening and create an orphan dialog. Not recommended for modal dialogs." />
-			<option name="wxMAXIMIZE_BOX"
-				help="Displays a maximize box on the dialog." />
-			<option name="wxMINIMIZE_BOX"
-				help="Displays a minimize box on the dialog." />
-			<option name="wxRESIZE_BORDER"
-				help="Display a resizeable frame around the window." />
-			<option name="wxSTAY_ON_TOP"
-				help="The dialog stays on top of all other windows." />
-			<option name="wxSYSTEM_MENU"
-				help="Display a system menu." />
-			<option name="wxWANTS_CHARS"
-				help="Use this to indicate that the window wants to get all char/key events for all keys - even for keys like TAB or ENTER which are usually used for dialog navigation and which wouldn't be generated without this style. If you need to use this style in order to get the arrows or etc., but would still like to have normal keyboard navigation take place, you should call Navigate in response to the key events for Tab and Shift-Tab." />
-			wxDEFAULT_DIALOG_STYLE
-		</property>
-		<property name="extra_style" type="bitlist">
-			<option name="wxDIALOG_EX_CONTEXTHELP"
-				help="Under Windows, puts a query button on the caption. When pressed, Windows will go into a context-sensitive help mode and wxWidgets will send a wxEVT_HELP event if the user clicked on an application window. Note: The Project's &quot;help_provider&quot; property must be set for context-sensitive help to work." />
-			<option name="wxDIALOG_EX_METAL"
-				help="On Mac OS X, frames with this style will be shown with a metallic look." />
-			<option name="wxWS_EX_BLOCK_EVENTS"
-				help="wxCommandEvents are propagated upward to the parent window, it's parent window, etc. Setting this flag blocks this propagation at this window, preventing events from being propagated further upwards." />
-			<option name="wxWS_EX_PROCESS_IDLE"
-				help="The dialog should always process idle events, even if the mode set by wxIdleEvent::SetMode is wxIDLE_PROCESS_SPECIFIED." />
-			<option name="wxWS_EX_PROCESS_UI_UPDATES"
-				help="The dialog should always process UI update events, even if the mode set by wxUpdateUIEvent::SetMode is   wxUPDATE_UI_PROCESS_SPECIFIED." />
-			<option name="wxWS_EX_VALIDATE_RECURSIVELY"
-				help="By default, Validate/TransferDataTo/FromWindow() only work on direct children of the window (compatible behaviour). Set this flag to make them recursively descend into all subwindows." />
-		</property>
-		<property name="center" type="option"
-			help="Centers the dialog box on the display in the chosen direction.">
-			<option name="no" />
-			<option name="wxHORIZONTAL" />
-			<option name="wxVERTICAL" />
-			<option name="wxBOTH" />
-			wxBOTH
-		</property>
-		<property name="icon" type="image"
-			help="Specifies the image to display in the title bar of the dialog." />
-		<property name="cpp_conditional" type="string_code_single"
-			help="In C++ code, any value in this property will be used to place a conditional (#if/#endif) block around the Dialog's generated code." />
 		<event name="wxEVT_INIT_DIALOG" class="wxInitDialogEvent"
 			help="Generated when the dialog is being initialized." />
+		<category name="Click Events">
+				<event name="OKButtonClicked" class="wxCommandEvent"
+					help="Process a wxEVT_BUTTON event when the OK button is clicked" />
+				<event name="YesButtonClicked" class="wxCommandEvent"
+					help="Process a wxEVT_BUTTON event when the Yes button is clicked" />
+				<event name="ApplyButtonClicked" class="wxCommandEvent"
+					help="Process a wxEVT_BUTTON event when the Apply the button is clicked" />
+				<event name="NoButtonClicked" class="wxCommandEvent"
+					help="Process a wxEVT_BUTTON event when the No button is clicked" />
+				<event name="CancelButtonClicked" class="wxCommandEvent"
+					help="Process a wxEVT_BUTTON event when the Cancel button is clicked" />
+				<event name="CloseButtonClicked" class="wxCommandEvent"
+					help="Process a wxEVT_BUTTON event when the Close button is clicked" />
+				<event name="HelpButtonClicked" class="wxCommandEvent"
+					help="Process a wxEVT_BUTTON event when the Help button is clicked" />
+		</category>
 	</gen>
 </GeneratorDefinitions>)===";

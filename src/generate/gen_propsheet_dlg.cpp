@@ -426,3 +426,107 @@ void PropSheetDlgGenerator::RequiredHandlers(Node* node, std::set<std::string>& 
         handlers.emplace("wxBitmapXmlHandler");
     }
 }
+
+void PropSheetDlgGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& class_name)
+{
+    BaseGenerator::GenEvent(code, event, class_name);
+}
+
+void PropSheetDlgGenerator::AddPropsAndEvents(NodeDeclaration* declaration)
+{
+    DeclAddProp(declaration, prop_class_name, type_string, "The name of the base class.", "MyPropSheetDlgBase");
+    DeclAddProp(declaration, prop_title, type_string_escapes, "The text to display on the PropertySheet's title bar.");
+    auto* prop_info =
+        DeclAddProp(declaration, prop_book_type, type_option, "The type of book to use.", "wxPROPSHEET_NOTEBOOK");
+    {
+        DeclAddOption(prop_info, "wxPROPSHEET_NOTEBOOK");
+        DeclAddOption(prop_info, "wxPROPSHEET_CHOICEBOOK");
+        DeclAddOption(prop_info, "wxPROPSHEET_LISTBOOK");
+        DeclAddOption(prop_info, "wxPROPSHEET_TOOLBOOK");
+        DeclAddOption(prop_info, "wxPROPSHEET_TREEBOOK");
+    }
+
+    DeclAddProp(
+        declaration, prop_shrink_to_fit, type_bool,
+        "Shrinks the dialog window to fit the currently selected page (common behaviour for property sheets on macOS).",
+        "0");
+
+    prop_info =
+        DeclAddProp(declaration, prop_buttons, type_bitlist, "Specifies the standard buttons to create.", "wxOK|wxCANCEL");
+    {
+        DeclAddOption(prop_info, "wxOK", "Create a 'OK' button. Cannot be combined with Yes button.");
+        DeclAddOption(prop_info, "wxYES", "Create a 'Yes' button. Cannot be combined with OK button.");
+        DeclAddOption(prop_info, "wxAPPLY", "Create a 'Apply' button.");
+        DeclAddOption(prop_info, "wxNO", "Create a 'No' button.");
+        DeclAddOption(prop_info, "wxCANCEL", "Create a 'Cancel' button. Cannot be combined with Close button.");
+        DeclAddOption(prop_info, "wxCLOSE", "Create a 'Close' button. Cannot be combined with Cancel button.");
+        DeclAddOption(prop_info, "wxHELP", "Create a 'Help' button.");
+    }
+
+    DeclAddProp(declaration, prop_outer_border, type_int,
+                "Sets the border around the book control only. Size is in dialog units -- igorned if set to -1 (default).",
+                "-1");
+    DeclAddProp(declaration, prop_inner_border, type_int,
+                "Sets the border around the whole dialog. Size is in dialog units -- igorned if set to -1 (default).", "-1");
+    DeclAddProp(declaration, prop_persist, type_bool, {}, "0");
+
+    prop_info = DeclAddProp(declaration, prop_style, type_bitlist, {}, "wxDEFAULT_DIALOG_STYLE");
+    {
+        DeclAddOption(prop_info, "wxCAPTION", "Puts a caption on the dialog box.");
+        DeclAddOption(prop_info, "wxCLOSE_BOX", "Displays a close box on the dialog.");
+        DeclAddOption(
+            prop_info, "wxDEFAULT_DIALOG_STYLE",
+            "Equivalent to a combination of wxCAPTION, wxCLOSE_BOX and wxSYSTEM_MENU (the last one is not used on Unix)");
+        DeclAddOption(prop_info, "wxDIALOG_NO_PARENT",
+                      "By default, a dialog created with a NULL parent window will be given the application's top level "
+                      "window as parent. Use this style to prevent this from happening and create an orphan dialog. Not "
+                      "recommended for modal dialogs.");
+        DeclAddOption(prop_info, "wxMAXIMIZE_BOX", "Displays a maximize box on the dialog.");
+        DeclAddOption(prop_info, "wxMINIMIZE_BOX", "Displays a minimize box on the dialog.");
+        DeclAddOption(prop_info, "wxRESIZE_BORDER", "Display a resizeable frame around the dialog.");
+        DeclAddOption(prop_info, "wxSTAY_ON_TOP", "The dialog stays on top of all other windows.");
+        DeclAddOption(prop_info, "wxSYSTEM_MENU", "Display a system menu.");
+        DeclAddOption(
+            prop_info, "wxWANTS_CHARS",
+            "Use this to indicate that the window wants to get all char/key events for all keys - even for keys like TAB or "
+            "ENTER which are usually used for dialog navigation and which wouldn't be generated without this style. If you "
+            "need to use this style in order to get the arrows or etc., but would still like to have normal keyboard "
+            "navigation take place, you should call Navigate in response to the key events for Tab and Shift-Tab.");
+    }
+    prop_info = DeclAddProp(declaration, prop_extra_style, type_bitlist);
+    {
+        DeclAddOption(
+            prop_info, "wxDIALOG_EX_CONTEXTHELP",
+            "Under Windows, puts a query button on the caption. When pressed, Windows will go into a context-sensitive help "
+            "mode and wxWidgets will send a wxEVT_HELP event if the user clicked on an application window. Note: The "
+            "Project's &quot;help_provider&quot; property must be set for context-sensitive help to work.");
+        DeclAddOption(prop_info, "wxDIALOG_EX_METAL",
+                      "On Mac OS X, frames with this style will be shown with a metallic look.");
+        DeclAddOption(
+            prop_info, "wxWS_EX_BLOCK_EVENTS",
+            "wxCommandEvents are propagated upward to the parent window, it's parent window, etc. Setting this flag blocks "
+            "this propagation at this window, preventing events from being propagated further upwards.");
+        DeclAddOption(prop_info, "wxWS_EX_PROCESS_IDLE",
+                      "The dialog should always process idle events, even if the mode set by wxIdleEvent::SetMode is "
+                      "wxIDLE_PROCESS_SPECIFIED.");
+        DeclAddOption(prop_info, "wxWS_EX_PROCESS_UI_UPDATES",
+                      "The dialog should always process UI update events, even if the mode set by wxUpdateUIEvent::SetMode "
+                      "is wxUPDATE_UI_PROCESS_SPECIFIED.");
+        DeclAddOption(prop_info, "wxWS_EX_VALIDATE_RECURSIVELY",
+                      "By default, Validate/TransferDataTo/FromWindow() only work on direct children of the window "
+                      "(compatible behaviour). Set this flag to make them recursively descend into all subwindows.");
+    }
+    prop_info = DeclAddProp(declaration, prop_center, type_option,
+                            "Centers the dialog box on the display in the chosen direction.", "wxBOTH");
+    {
+        DeclAddOption(prop_info, "no");
+        DeclAddOption(prop_info, "wxHORIZONTAL");
+        DeclAddOption(prop_info, "wxVERTICAL");
+        DeclAddOption(prop_info, "wxBOTH");
+    }
+
+    DeclAddProp(declaration, prop_icon, type_image, "Specifies the image to display in the title bar of the dialog.");
+    DeclAddProp(declaration, prop_cpp_conditional, type_string_code_single,
+                "In C++ code, any value in this property will be used to place a conditional (#if/#endif) block around the "
+                "Dialog's generated code.");
+}

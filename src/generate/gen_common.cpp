@@ -656,7 +656,7 @@ bool GenerateBundleCode(const tt_string& description, tt_string& code)
                 }
                 code << name << ", sizeof(" << name << ")))";
             }
-            else
+            else if (bundle->lst_filenames.size() > 2)
             {
                 code << "{\n\t\t\twxVector<wxBitmap> bitmaps;\n";
                 for (auto& iter: bundle->lst_filenames)
@@ -677,6 +677,13 @@ bool GenerateBundleCode(const tt_string& description, tt_string& code)
 
                 // Return true to indicate a code block was generated
                 return true;
+            }
+            else
+            {
+                FAIL_MSG(tt_string(description) << " was not converted to a bundle ahead of time!")
+
+                // This should never happen, but if it does, at least generate something that will compile
+                code << "wxNullBitmsap";
             }
         }
         else

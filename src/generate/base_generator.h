@@ -93,7 +93,7 @@ public:
 
     // Generate code to bind the event to a handler -- only override if you need to do
     // something special
-    virtual void GenEvent(Code&, NodeEvent*, const std::string&);
+    virtual void GenEvent(Code& code, NodeEvent* event, const std::string& class_name);
 
     // Add attributes to object, and all properties
     //

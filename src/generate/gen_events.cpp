@@ -7,6 +7,10 @@
 
 #include <algorithm>
 
+#include <frozen/map.h>
+#include <frozen/set.h>
+#include <frozen/string.h>
+
 #include "gen_base.h"
 
 #include "../customprops/eventhandler_dlg.h"  // EventHandlerDlg static functions
@@ -24,6 +28,15 @@ extern const char* ruby_begin_cmt_block;           // "# begin";
 extern const char* ruby_end_cmt_block;             // "# end";
 
 /////////////////////////////////////////// Default generator event code ///////////////////////////////////////////
+
+constexpr auto prop_sheet_events =
+    frozen::make_map<std::string_view, std::string_view>({ { "OKButtonClicked", "wxID_OK" },
+                                                           { "YesButtonClicked", "wxID_YES" },
+                                                           { "ApplyButtonClicked", "wxID_APPLY" },
+                                                           { "NoButtonClicked", "wxID_NO" },
+                                                           { "CancelButtonClicked", "wxID_CANCEL" },
+                                                           { "CloseButtonClicked", "wxID_CLOSE" },
+                                                           { "HelpButtonClicked", "wxID_HELP" } });
 
 void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& class_name)
 {
@@ -130,9 +143,14 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
     }
     else
     {
+        tt_string event_name = event->get_name();
+        if (auto result = prop_sheet_events.find(event_name); result != prop_sheet_events.end())
+        {
+            event_name = "wxEVT_BUTTON";
+        }
         if (code.is_cpp() || code.is_python())
         {
-            handler.Add(event->get_name());
+            handler.Add(event_name);
             if (code.is_cpp())
                 handler << ", &" << class_name << "::" << event_code << ", this";
             else if (code.is_python())
@@ -140,7 +158,6 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
         }
         else if (code.is_ruby())
         {
-            tt_string event_name = event->get_name();
             // remove "wx" prefix, make the rest of the name lower case
             event_name.erase(0, 2);
             std::transform(event_name.begin(), event_name.end(), event_name.begin(),
@@ -246,11 +263,19 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
         {
             code.AddIfPython("self.");
             code << "Bind(" << handler.GetCode();
+            if (auto result = prop_sheet_events.find(event->get_name()); result != prop_sheet_events.end())
+            {
+                code.Comma() << result->second;
+            }
             code.EndFunction();
         }
         else if (code.is_ruby())
         {
             code << handler;
+            if (auto result = prop_sheet_events.find(event->get_name()); result != prop_sheet_events.end())
+            {
+                code.Comma() << result->second;
+            }
         }
     }
     else

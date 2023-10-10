@@ -31,10 +31,10 @@
         bitmap="Embed;bottom(1).png" />
       <node
         class="embedded_image"
-        bitmap="Embed;disabled.png" />
+        bitmap="Embed;../../src/art_src/debug_32.png" />
       <node
         class="embedded_image"
-        bitmap="Embed;../../src/art_src/debug_32.png" />
+        bitmap="Embed;disabled.png" />
       <node
         class="embedded_image"
         bitmap="Embed;english.png" />
@@ -82,10 +82,10 @@
         bitmap="Embed;wiztest2.png" />
       <node
         class="embedded_image"
-        bitmap="Embed;wxPython.png" />
+        bitmap="Embed;../../src/art_src/wxNotebook.png" />
       <node
         class="embedded_image"
-        bitmap="Embed;../../src/art_src/wxNotebook.png" />
+        bitmap="Embed;wxPython.png" />
       <node
         class="embedded_image"
         bitmap="Embed;wxPython_1_5x.png" />
@@ -242,7 +242,7 @@
             var_name="separator_2" />
           <node
             class="submenu"
-            bitmap="Embed;../src/art_src/wxDialog.png"
+            bitmap="Embed;../../src/art_src/wxDialog.png"
             label="Issue Dialogs">
             <node
               class="wxMenuItem"

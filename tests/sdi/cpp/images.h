@@ -22,6 +22,7 @@ namespace wxue_img
     wxBitmapBundle bundle_img_1_bottom_png();
     wxBitmapBundle bundle_Ainsi_c3_a_se_passe_png();
     wxBitmapBundle bundle_bottom_1__png();
+    wxBitmapBundle bundle_debug_32_png();
     wxBitmapBundle bundle_disabled_png();
     wxBitmapBundle bundle_english_png();
     wxBitmapBundle bundle_er_png();
@@ -37,6 +38,7 @@ namespace wxue_img
     wxBitmapBundle bundle_toggle_button_png();
     wxBitmapBundle bundle_wiztest_png();
     wxBitmapBundle bundle_wiztest2_png();
+    wxBitmapBundle bundle_wxNotebook_png();
     wxBitmapBundle bundle_wxPython_png();
     wxBitmapBundle bundle_wxPython_1_5x_png();
 
@@ -44,6 +46,7 @@ namespace wxue_img
     extern const unsigned char Ainsi_c3_a_se_passe_png[148];
     // bottom(1).png
     extern const unsigned char bottom_1__png[148];
+    extern const unsigned char debug_32_png[1701];
     extern const unsigned char disabled_png[437];
     extern const unsigned char english_png[541];
     extern const unsigned char er_png[302];
@@ -67,6 +70,7 @@ namespace wxue_img
     extern const unsigned char toggle_button_png[277];
     extern const unsigned char wiztest2_png[6797];
     extern const unsigned char wiztest_png[1239];
+    extern const unsigned char wxNotebook_png[177];
     extern const unsigned char wxPython_1_5x_png[765];
     extern const unsigned char wxPython_2x_png[251];
     extern const unsigned char wxPython_png[399];

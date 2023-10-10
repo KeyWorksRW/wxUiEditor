@@ -47,6 +47,9 @@ public:
     bool is_HighContrast() const { return m_high_constrast; }
     void set_HighContrast(bool value) { m_high_constrast = value; }
 
+    bool is_FullPathTitle() const { return m_fullpath_title; }
+    void set_FullPathTitle(bool value) { m_fullpath_title = value; }
+
     bool is_LoadLastProject() const { return m_is_load_last_project; }
     void set_LoadLastProject(bool value) { m_is_load_last_project = value; }
 
@@ -151,6 +154,8 @@ private:
 
     bool m_dark_mode { false };
     bool m_high_constrast { false };
+
+    bool m_fullpath_title { false };  // If true, the full path to the project is displayed in the title bar
 
     bool m_enable_wakatime { true };
     bool m_is_load_last_project { false };

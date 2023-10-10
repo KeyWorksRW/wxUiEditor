@@ -942,7 +942,11 @@ void MainFrame::UpdateLayoutTools()
 
 void MainFrame::UpdateFrame()
 {
-    tt_string filename = Project.getProjectFile().filename();
+    tt_string filename;
+    if (UserPrefs.is_FullPathTitle())
+        filename = Project.getProjectFile();
+    else
+        filename = Project.getProjectFile().filename();
 
     if (filename.empty())
     {

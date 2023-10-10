@@ -90,9 +90,8 @@ if (BUILD_FORK)
 elseif(BUILD_CUSTOM)
     set (widget_dir ${CMAKE_CURRENT_LIST_DIR}/../../wxWidgets/wx_custom)
 else()
-    set (widget_dir ${CMAKE_CURRENT_LIST_DIR}/../../wxWidgets)
+    set (widget_dir ${CMAKE_CURRENT_LIST_DIR}/../../wxWidgets/wx_3_2)
 endif()
-
 
 if (WIN32)
     if (BUILD_FORK)
@@ -158,12 +157,21 @@ endif()
 target_precompile_headers(sdi_test PRIVATE "cpp/pch.h")
 target_precompile_headers(check_build PRIVATE "cpp/pch.h")
 
-target_include_directories(sdi_test PRIVATE
-    # ${BUILD_ROOT}/include
-    ${CMAKE_CURRENT_LIST_DIR}/../../../wxWidgets/include
-    ${setup_dir}
-    ${CMAKE_CURRENT_LIST_DIR}/cpp/
-)
+if (NOT BUILD_FORK AND NOT BUILD_CUSTOM)
+    target_include_directories(sdi_test PRIVATE
+        # ${BUILD_ROOT}/include
+        ${CMAKE_CURRENT_LIST_DIR}/../../wxWidgets/include
+        ${setup_dir}
+        ${CMAKE_CURRENT_LIST_DIR}/cpp/
+    )
+else()
+    target_include_directories(sdi_test PRIVATE
+        # ${BUILD_ROOT}/include
+        ${CMAKE_CURRENT_LIST_DIR}/../../../wxWidgets/include
+        ${setup_dir}
+        ${CMAKE_CURRENT_LIST_DIR}/cpp/
+    )
+endif()
 
 target_include_directories(check_build PRIVATE
     # ${BUILD_ROOT}/include
@@ -172,9 +180,16 @@ target_include_directories(check_build PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}/cpp
 )
 
-# Note that we do not build these libraries -- we assume they are already built in
-# when wxUiEditor was built.
-target_link_directories(sdi_test PRIVATE
-    $<$<CONFIG:Debug>:${CMAKE_CURRENT_LIST_DIR}/../../build/stage/lib/Debug>
-    $<$<CONFIG:Release>:${CMAKE_CURRENT_LIST_DIR}/../../build/stage/lib/Release>
-)
+if (NOT BUILD_FORK AND NOT BUILD_CUSTOM)
+    target_link_directories(sdi_test PRIVATE
+        $<$<CONFIG:Debug>:${widget_dir}/build/Debug>
+        $<$<CONFIG:Release>:${widget_dir}/build/Release>
+    )
+else()
+    # Note that we do not build these libraries -- we assume they are already built in
+    # when wxUiEditor was built.
+    target_link_directories(sdi_test PRIVATE
+        $<$<CONFIG:Debug>:${CMAKE_CURRENT_LIST_DIR}/../../build/stage/lib/Debug>
+        $<$<CONFIG:Release>:${CMAKE_CURRENT_LIST_DIR}/../../build/stage/lib/Release>
+    )
+endif()

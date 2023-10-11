@@ -315,11 +315,11 @@ public:
     // class assignment for other languages.
     Code& Assign(tt_string_view class_name = tt_empty_cstr);
 
-    // Adds " = new wxClass(" or " = wx.Class('.
+    // Adds " = new wxClass(" or " = wx.Class('. Set assign to false to not add the '='
     // Adds wxGeneric prefix if use_generic is true.
     // Creates wxPanel if node is a book page.
     // Specify override_name to override node->declName()
-    Code& CreateClass(bool use_generic = false, tt_string_view override_name = tt_empty_cstr);
+    Code& CreateClass(bool use_generic = false, tt_string_view override_name = tt_empty_cstr, bool assign = true);
 
     // Adds the object's class name and a open parenthesis: class(
     //
@@ -426,6 +426,8 @@ public:
     //
     // If style is a friendly name, add the prefix parameter to prefix lookups.
     Code& Style(const char* prefix = nullptr, tt_string_view force_style = tt_empty_cstr);
+
+    Code& GenFont(GenEnum::PropName prop_name = prop_font, tt_string_view font_function = "SetFont(");
 
     // Generates code for prop_window_extra_style, prop_background_colour,
     // prop_foreground_colour, prop_disabled, prop_hidden, prop_maximum_size, prop_variant,

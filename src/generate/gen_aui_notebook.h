@@ -1,7 +1,7 @@
 //////////////////////////////////////////////////////////////////////////
 // Purpose:   wxAuiNotebook generator
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -25,6 +25,8 @@ public:
     void RequiredHandlers(Node*, std::set<std::string>& /* handlers */) override;
 
     bool GetRubyImports(Node*, std::set<std::string>& /* set_imports */) override;
+
+    void AddPropsAndEvents(NodeDeclaration* declaration) override;
 
 protected:
     void OnPageChanged(wxBookCtrlEvent& event);

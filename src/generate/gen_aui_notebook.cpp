@@ -76,20 +76,20 @@ bool AuiNotebookGenerator::ConstructionCode(Code& code)
     code.ValidParentName().Comma().as_string(prop_id).PosSizeFlags(false);
     BookCtorAddImagelist(code);
 
-    // REVIEW: [Randalphwa - 12-21-2022] We use this ourselves in base_panel.cpp and it is in wx/aui/tabart.h
-    // without any specific comments, however it is not documented. Should we support it? Currently there
-    // is no setting for it in aui_xml.xml.
-
     if (code.IsEqualTo(prop_art_provider, "wxAuiGenericTabArt"))
     {
         if (code.is_cpp())
         {
             code.Eol().NodeName().Function("SetArtProvider(");
-            code.Str(code.is_cpp() ? "new wxAuiGenericTabArt()" : "wx.aui.wxAuiGenericTabArt()").EndFunction();
+            code.Str("new wxAuiGenericTabArt()").EndFunction();
         }
-        else
+        else if (code.is_python())
         {
             code.Eol() += "# wxPython does not support wxAuiGenericTabArt";
+        }
+        else if (code.is_ruby())
+        {
+            code.Eol() += "# wxRuby does not support wxAuiGenericTabArt";
         }
     }
     else if (code.IsEqualTo(prop_art_provider, "wxAuiSimpleTabArt"))
@@ -195,6 +195,8 @@ void AuiNotebookGenerator::AddPropsAndEvents(NodeDeclaration* declaration)
     {
         DeclAddOption(prop_info, "wxAuiDefaultTabArt",
                       "Use bitmap art and a colour scheme that is adapted to the major platforms' look.");
+        DeclAddOption(prop_info, "wxAuiGenericTabArt",
+                      "Use platform-specific bitmap art and colour schemes on MSW and GTK, and wxAuiDefaultTabArt on Mac.");
         DeclAddOption(prop_info, "wxAuiSimpleTabArt",
                       "Use a simple art and colour scheme with a slanted left side for the tabs.");
     }

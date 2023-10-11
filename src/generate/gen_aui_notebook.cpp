@@ -95,7 +95,7 @@ bool AuiNotebookGenerator::ConstructionCode(Code& code)
     else if (code.IsEqualTo(prop_art_provider, "wxAuiSimpleTabArt"))
     {
         code.Eol().NodeName().Function("SetArtProvider(");
-        code.Str(code.is_cpp() ? "new wxAuiSimpleTabArt()" : "wx.aui.AuiSimpleTabArt()").EndFunction();
+        code.CreateClass(false, "wxAuiSimpleTabArt", false).Str(")").EndFunction();
     }
 
     return true;

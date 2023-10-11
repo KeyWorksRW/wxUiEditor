@@ -427,6 +427,8 @@ public:
     // If style is a friendly name, add the prefix parameter to prefix lookups.
     Code& Style(const char* prefix = nullptr, tt_string_view force_style = tt_empty_cstr);
 
+    Code& GenFont(GenEnum::PropName prop_name = prop_font, tt_string_view font_function = "SetFont(");
+
     // Generates code for prop_window_extra_style, prop_background_colour,
     // prop_foreground_colour, prop_disabled, prop_hidden, prop_maximum_size, prop_variant,
     // prop_tooltip, and prop_context_help

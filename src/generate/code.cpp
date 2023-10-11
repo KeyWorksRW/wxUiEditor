@@ -1846,92 +1846,55 @@ void Code::GenWindowSettings()
     GenFontColourSettings();
 }
 
-void Code::GenFontColourSettings()
+Code& Code::GenFont(GenEnum::PropName prop_name, tt_string_view font_function)
 {
-    auto* node = m_node;
-    if (hasValue(prop_font))
+    FontProperty fontprop(m_node->getPropPtr(prop_name));
+    if (fontprop.isDefGuiFont())
     {
-        FontProperty fontprop(node->getPropPtr(prop_font));
-        if (fontprop.isDefGuiFont())
+        OpenBrace();
+        Add("wxFont font(").Add("wxSystemSettings").ClassMethod("GetFont(").Add("wxSYS_DEFAULT_GUI_FONT").Str(")");
+        EndFunction();
+
+        if (fontprop.GetSymbolSize() != wxFONTSIZE_MEDIUM)
+            Eol().Str("font.SetSymbolicSize(").Add(font_symbol_pairs.GetValue(fontprop.GetSymbolSize())).EndFunction();
+        if (fontprop.GetStyle() != wxFONTSTYLE_NORMAL)
+            Eol().Str("font.SetStyle(").Add(font_style_pairs.GetValue(fontprop.GetStyle())).EndFunction();
+        if (fontprop.GetWeight() != wxFONTWEIGHT_NORMAL)
+            Eol().Str("font.SetWeight(").Str(font_weight_pairs.GetValue(fontprop.GetWeight())).EndFunction();
+        if (fontprop.IsUnderlined())
+            Eol().Str("font.SetUnderlined(").True().EndFunction();
+        if (fontprop.IsStrikethrough())
+            Eol().Str("font.SetStrikethrough(").True().EndFunction();
+        Eol();
+
+        if (m_node->isForm())
         {
-            OpenBrace();
-            Add("wxFont font(").Add("wxSystemSettings").ClassMethod("GetFont(").Add("wxSYS_DEFAULT_GUI_FONT").Str(")");
-            EndFunction();
-
-            if (fontprop.GetSymbolSize() != wxFONTSIZE_MEDIUM)
-                Eol().Str("font.SetSymbolicSize(").Add(font_symbol_pairs.GetValue(fontprop.GetSymbolSize())).EndFunction();
-            if (fontprop.GetStyle() != wxFONTSTYLE_NORMAL)
-                Eol().Str("font.SetStyle(").Add(font_style_pairs.GetValue(fontprop.GetStyle())).EndFunction();
-            if (fontprop.GetWeight() != wxFONTWEIGHT_NORMAL)
-                Eol().Str("font.SetWeight(").Str(font_weight_pairs.GetValue(fontprop.GetWeight())).EndFunction();
-            if (fontprop.IsUnderlined())
-                Eol().Str("font.SetUnderlined(").True().EndFunction();
-            if (fontprop.IsStrikethrough())
-                Eol().Str("font.SetStrikethrough(").True().EndFunction();
-            Eol();
-
-            if (node->isForm())
-            {
-                FormFunction("SetFont(font").EndFunction();
-                CloseBrace();
-            }
-            else if (node->isGen(gen_wxStyledTextCtrl))
-            {
-                NodeName().Function("StyleSetFont(").Add("wxSTC_STYLE_DEFAULT");
-                Comma().Str("font").EndFunction();
-                CloseBrace();
-            }
-            else
-            {
-                NodeName().Function("SetFont(font").EndFunction();
-                CloseBrace();
-            }
+            FormFunction("SetFont(font").EndFunction();
+            CloseBrace();
         }
-        else  // not isDefGuiFont()
+        else if (m_node->isGen(gen_wxStyledTextCtrl))
         {
-            const auto point_size = fontprop.GetFractionalPointSize();
-            OpenBrace();
-            Add("wxFontInfo font_info(");
-            if (point_size != static_cast<int>(point_size))  // is there a fractional value?
+            NodeName().Function("StyleSetFont(").Add("wxSTC_STYLE_DEFAULT");
+            Comma().Str("font").EndFunction();
+            CloseBrace();
+        }
+        else
+        {
+            NodeName().Function(font_function).Str("font").EndFunction();
+            CloseBrace();
+        }
+    }
+    else  // not isDefGuiFont()
+    {
+        const auto point_size = fontprop.GetFractionalPointSize();
+        OpenBrace();
+        Add("wxFontInfo font_info(");
+        if (point_size != static_cast<int>(point_size))  // is there a fractional value?
+        {
+            if (is_cpp() && Project.as_string(prop_wxWidgets_version) == "3.1")
             {
-                if (is_cpp() && Project.as_string(prop_wxWidgets_version) == "3.1")
-                {
-                    Eol().Str("#if !wxCHECK_VERSION(3, 1, 2)").Eol().Tab();
+                Eol().Str("#if !wxCHECK_VERSION(3, 1, 2)").Eol().Tab();
 
-                    if (point_size <= 0)
-                    {
-                        Add("wxSystemSettings").ClassMethod("GetFont()").Function("GetPointSize()").EndFunction();
-                    }
-                    else
-                    {
-                        // GetPointSize() will round the result rather than truncating the decimal
-                        itoa(fontprop.GetPointSize()).EndFunction();
-                    }
-                }
-                else
-                {
-                    if (is_cpp() && Project.as_string(prop_wxWidgets_version) == "3.1")
-                    {
-                        Eol().Str("#else // fractional point sizes are new to wxWidgets 3.1.2").Eol().Tab();
-                    }
-
-                    std::array<char, 10> float_str;
-                    if (auto [ptr, ec] = std::to_chars(float_str.data(), float_str.data() + float_str.size(), point_size);
-                        ec == std::errc())
-                    {
-                        Str(std::string_view(float_str.data(), ptr - float_str.data())).EndFunction();
-                    }
-
-                    // REVIEW: [Randalphwa - 12-30-2022] We don't output anything if std::to_chars() results in an error
-
-                    if (is_cpp() && Project.as_string(prop_wxWidgets_version) == "3.1")
-                    {
-                        Eol().Str("#endif");
-                    }
-                }
-            }
-            else
-            {
                 if (point_size <= 0)
                 {
                     Add("wxSystemSettings").ClassMethod("GetFont()").Function("GetPointSize()").EndFunction();
@@ -1942,40 +1905,84 @@ void Code::GenFontColourSettings()
                     itoa(fontprop.GetPointSize()).EndFunction();
                 }
             }
-
-            Eol(eol_if_needed).Str("font_info.");
-            if (fontprop.GetFaceName().size() && fontprop.GetFaceName() != "default")
-                Str("FaceName(").QuotedString(tt_string() << fontprop.GetFaceName().utf8_string()) += ").";
-            if (fontprop.GetFamily() != wxFONTFAMILY_DEFAULT)
-                Str("Family(").Str(font_family_pairs.GetValue(fontprop.GetFamily())) += ").";
-            if (fontprop.GetStyle() != wxFONTSTYLE_NORMAL)
-                Str("Style(").Str(font_style_pairs.GetValue(fontprop.GetStyle())) += ").";
-            if (fontprop.GetWeight() != wxFONTWEIGHT_NORMAL)
-                Str("Weight(").Str(font_weight_pairs.GetValue(fontprop.GetWeight())) += ").";
-            if (fontprop.IsUnderlined())
-                Str("Underlined().");
-            if (fontprop.IsStrikethrough())
-                Str("Strikethrough()");
-
-            if (back() == '.')
+            else
             {
-                pop_back();
+                if (is_cpp() && Project.as_string(prop_wxWidgets_version) == "3.1")
+                {
+                    Eol().Str("#else // fractional point sizes are new to wxWidgets 3.1.2").Eol().Tab();
+                }
+
+                std::array<char, 10> float_str;
+                if (auto [ptr, ec] = std::to_chars(float_str.data(), float_str.data() + float_str.size(), point_size);
+                    ec == std::errc())
+                {
+                    Str(std::string_view(float_str.data(), ptr - float_str.data())).EndFunction();
+                }
+
+                // REVIEW: [Randalphwa - 12-30-2022] We don't output anything if std::to_chars() results in an error
+
+                if (is_cpp() && Project.as_string(prop_wxWidgets_version) == "3.1")
+                {
+                    Eol().Str("#endif");
+                }
             }
-            if (is_cpp())
-                *this += ';';
-            Eol();
-
-            if (node->isForm())
+        }
+        else
+        {
+            if (point_size <= 0)
             {
-                FormFunction("SetFont(").Add("wxFont(font_info)").EndFunction();
+                Add("wxSystemSettings").ClassMethod("GetFont()").Function("GetPointSize()").EndFunction();
             }
             else
             {
-                NodeName().Function("SetFont(wxFont(font_info)").EndFunction();
+                // GetPointSize() will round the result rather than truncating the decimal
+                itoa(fontprop.GetPointSize()).EndFunction();
             }
-            CloseBrace();
         }
-    }  // End of font handling code
+
+        Eol(eol_if_needed).Str("font_info.");
+        if (fontprop.GetFaceName().size() && fontprop.GetFaceName() != "default")
+            Str("FaceName(").QuotedString(tt_string() << fontprop.GetFaceName().utf8_string()) += ").";
+        if (fontprop.GetFamily() != wxFONTFAMILY_DEFAULT)
+            Str("Family(").Str(font_family_pairs.GetValue(fontprop.GetFamily())) += ").";
+        if (fontprop.GetStyle() != wxFONTSTYLE_NORMAL)
+            Str("Style(").Str(font_style_pairs.GetValue(fontprop.GetStyle())) += ").";
+        if (fontprop.GetWeight() != wxFONTWEIGHT_NORMAL)
+            Str("Weight(").Str(font_weight_pairs.GetValue(fontprop.GetWeight())) += ").";
+        if (fontprop.IsUnderlined())
+            Str("Underlined().");
+        if (fontprop.IsStrikethrough())
+            Str("Strikethrough()");
+
+        if (back() == '.')
+        {
+            pop_back();
+        }
+        if (is_cpp())
+            *this += ';';
+        Eol();
+
+        if (m_node->isForm())
+        {
+            FormFunction(font_function).Add("wxFont(font_info)").EndFunction();
+        }
+        else
+        {
+            NodeName().Function(font_function).Add("wxFont(font_info)").EndFunction();
+        }
+        CloseBrace();
+    }
+
+    return *this;
+}
+
+void Code::GenFontColourSettings()
+{
+    auto* node = m_node;
+    if (hasValue(prop_font))
+    {
+        GenFont();
+    }
 
     if (auto& fg_clr = node->as_string(prop_foreground_colour); fg_clr.size())
     {

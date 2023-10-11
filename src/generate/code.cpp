@@ -748,12 +748,15 @@ Code& Code::Object(tt_string_view class_name)
     return *this;
 }
 
-Code& Code::CreateClass(bool use_generic, tt_string_view override_name)
+Code& Code::CreateClass(bool use_generic, tt_string_view override_name, bool assign)
 {
-    if (is_golang())
-        *this += " := ";
-    else
-        *this += " = ";
+    if (assign)
+    {
+        if (is_golang())
+            *this += " := ";
+        else
+            *this += " = ";
+    }
     if (is_cpp())
     {
         *this += "new ";

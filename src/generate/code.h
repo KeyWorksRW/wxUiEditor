@@ -315,11 +315,11 @@ public:
     // class assignment for other languages.
     Code& Assign(tt_string_view class_name = tt_empty_cstr);
 
-    // Adds " = new wxClass(" or " = wx.Class('.
+    // Adds " = new wxClass(" or " = wx.Class('. Set assign to false to not add the '='
     // Adds wxGeneric prefix if use_generic is true.
     // Creates wxPanel if node is a book page.
     // Specify override_name to override node->declName()
-    Code& CreateClass(bool use_generic = false, tt_string_view override_name = tt_empty_cstr);
+    Code& CreateClass(bool use_generic = false, tt_string_view override_name = tt_empty_cstr, bool assign = true);
 
     // Adds the object's class name and a open parenthesis: class(
     //

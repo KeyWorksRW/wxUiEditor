@@ -41,6 +41,22 @@ wxObject* AuiNotebookGenerator::CreateMockup(Node* node, wxObject* parent)
         }
     }
 
+    if (node->hasValue(prop_selected_tab_font))
+    {
+        if (auto font = node->as_wxFont(prop_selected_tab_font); font.IsOk())
+        {
+            widget->SetSelectedFont(font);
+        }
+    }
+
+    if (node->hasValue(prop_non_selected_tab_font))
+    {
+        if (auto font = node->as_wxFont(prop_non_selected_tab_font); font.IsOk())
+        {
+            widget->SetNormalFont(font);
+        }
+    }
+
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
     widget->Bind(wxEVT_NOTEBOOK_PAGE_CHANGED, &AuiNotebookGenerator::OnPageChanged, this);
 
@@ -101,18 +117,31 @@ bool AuiNotebookGenerator::ConstructionCode(Code& code)
     return true;
 }
 
-bool AuiNotebookGenerator::SettingsCode(Code& /* code */)
+bool AuiNotebookGenerator::SettingsCode(Code& code)
 {
+    bool is_changed = false;
     // Note that currently there is no UI to set this -- it's simply here to handle importing from other designers.
     // See issue #936
 #if 0
     if (code.IntValue(prop_tab_height) > 0)
     {
         code.Eol().NodeName().Function("SetTabCtrlHeight(").as_string(prop_tab_height).EndFunction();
+        is_changed = true;
     }
 #endif
 
-    return false;
+    if (code.node()->hasValue(prop_selected_tab_font))
+    {
+        code.GenFont(prop_selected_tab_font, "SetSelectedFont(");
+        is_changed = true;
+    }
+    if (code.node()->hasValue(prop_non_selected_tab_font))
+    {
+        code.GenFont(prop_non_selected_tab_font, "SetNormalFont(");
+        is_changed = true;
+    }
+
+    return is_changed;
 }
 
 bool AuiNotebookGenerator::AfterChildrenCode(Code& code)
@@ -200,6 +229,10 @@ void AuiNotebookGenerator::AddPropsAndEvents(NodeDeclaration* declaration)
         DeclAddOption(prop_info, "wxAuiSimpleTabArt",
                       "Use a simple art and colour scheme with a slanted left side for the tabs.");
     }
+
+    DeclAddProp(declaration, prop_selected_tab_font, type_wxFont, "The font to use for the selected tab.");
+    DeclAddProp(declaration, prop_non_selected_tab_font, type_wxFont, "The font to use for the non-selected tabs.");
+
     prop_info =
         DeclAddProp(declaration, prop_style, type_option, {},
                     /* the default values are equivalent to wxAUI_NB_DEFAULT_STYLE */

@@ -13,6 +13,7 @@ All notable changes to this project will be documented in this file.
 - Added support for additional integer and floating point validators for wxTextCtrl
 - Folders now have their own code language preference that can override the Project's code preference
 - Added support for wxPropertySheetDialog as a form
+- tooltips in wxAuiNotebook pages are now displayed when hovering over the tab display rather than the page itself
 
 ### Changed
 

@@ -32,10 +32,34 @@ wxObject* AuiNotebookGenerator::CreateMockup(Node* node, wxObject* parent)
 
     AddBookImageList(node, widget);
 
+    for (size_t idx = 0; idx < node->getChildCount(); ++idx)
+    {
+        auto child = node->getChild(idx);
+        if (child->hasValue(prop_tooltip))
+        {
+            widget->SetPageToolTip(idx, child->as_string(prop_tooltip));
+        }
+    }
+
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
     widget->Bind(wxEVT_NOTEBOOK_PAGE_CHANGED, &AuiNotebookGenerator::OnPageChanged, this);
 
     return widget;
+}
+
+void AuiNotebookGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/, Node* node, bool /* is_preview */)
+{
+    if (auto notebook = wxStaticCast(wxobject, wxAuiNotebook); notebook)
+    {
+        for (size_t idx = 0; idx < node->getChildCount(); ++idx)
+        {
+            auto child = node->getChild(idx);
+            if (child->hasValue(prop_tooltip))
+            {
+                notebook->SetPageToolTip(idx, child->as_string(prop_tooltip));
+            }
+        }
+    }
 }
 
 void AuiNotebookGenerator::OnPageChanged(wxNotebookEvent& event)
@@ -77,14 +101,36 @@ bool AuiNotebookGenerator::ConstructionCode(Code& code)
     return true;
 }
 
-bool AuiNotebookGenerator::SettingsCode(Code& code)
+bool AuiNotebookGenerator::SettingsCode(Code& /* code */)
 {
+    // Note that currently there is no UI to set this -- it's simply here to handle importing from other designers.
+    // See issue #936
+#if 0
     if (code.IntValue(prop_tab_height) > 0)
     {
         code.Eol().NodeName().Function("SetTabCtrlHeight(").as_string(prop_tab_height).EndFunction();
     }
+#endif
 
-    return true;
+    return false;
+}
+
+bool AuiNotebookGenerator::AfterChildrenCode(Code& code)
+{
+    bool is_tooltip_set = false;
+    for (size_t idx = 0; idx < code.node()->getChildCount(); ++idx)
+    {
+        auto child = code.node()->getChild(idx);
+        if (child->hasValue(prop_tooltip))
+        {
+            is_tooltip_set = true;
+            code.Eol().NodeName().Function("SetPageToolTip(").itoa(idx).Comma();
+            code.CheckLineLength(child->as_string(prop_tooltip).size() + 2)
+                .QuotedString(child->as_string(prop_tooltip))
+                .EndFunction();
+        }
+    }
+    return is_tooltip_set;
 }
 
 bool AuiNotebookGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)

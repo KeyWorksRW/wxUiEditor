@@ -1814,13 +1814,19 @@ void Code::GenWindowSettings()
         EndFunction();
     }
 
-    if (hasValue(prop_tooltip))
+    // wxAuiNotebook uses page tooltips for the tabs, so it should be ignored when generating
+    // the page cade.
+    if (hasValue(prop_tooltip) && !m_node->getParent()->isGen(gen_wxAuiNotebook))
     {
         Eol(eol_if_empty);
         if (!m_node->isForm())
+        {
             NodeName().Function("SetToolTip(");
+        }
         else
+        {
             FormFunction("SetToolTip(");
+        }
         QuotedString(prop_tooltip).EndFunction();
     }
 

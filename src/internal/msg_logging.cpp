@@ -56,6 +56,14 @@ void MsgLogging::AddInfoMsg(tt_string_view msg)
         frame->setRightStatusField(msg);
 }
 
+void MsgLogging::Clear()
+{
+    if (m_msgFrame && !m_bDestroyed)
+    {
+        m_msgFrame->Clear();
+    }
+}
+
 void MsgLogging::AddEventMsg(tt_string_view msg)
 {
     if (wxGetApp().isMainFrameClosing() || !g_pMsgLogging)

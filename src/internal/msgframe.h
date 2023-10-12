@@ -29,6 +29,8 @@ public:
 
     void Add_wxInfoMsg(tt_string_view msg);
 
+    void Clear();
+
 protected:
     void UpdateNodeInfo();
 

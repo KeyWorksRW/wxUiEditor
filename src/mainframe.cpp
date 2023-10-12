@@ -689,6 +689,7 @@ void MainFrame::OnImportRecent(wxCommandEvent& event)
 
     if (file.file_exists())
     {
+        g_pMsgLogging->Clear();
         Project.ImportProject(file);
     }
     else if (wxMessageBox(
@@ -717,6 +718,10 @@ void MainFrame::OnImportProject(wxCommandEvent&)
 {
     if (!SaveWarning())
         return;
+
+#if (defined(_DEBUG) || defined(INTERNAL_TESTING))
+        g_pMsgLogging->Clear();
+#endif  // _DEBUG
 
     Project.NewProject();
 }

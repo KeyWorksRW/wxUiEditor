@@ -39,6 +39,8 @@ public:
 
     void OnNodeSelected();
 
+    void Clear();
+
 #if defined(_DEBUG)
     void DoLogRecord(wxLogLevel level, const wxString& msg, const wxLogRecordInfo& info) override;
 #endif

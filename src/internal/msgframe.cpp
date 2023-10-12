@@ -201,10 +201,15 @@ void MsgFrame::OnSaveAs(wxCommandEvent& WXUNUSED(event))
     }
 }
 
-void MsgFrame::OnClear(wxCommandEvent& WXUNUSED(event))
+void MsgFrame::Clear()
 {
     m_textCtrl->Clear();
     m_pMsgs->clear();
+}
+
+void MsgFrame::OnClear(wxCommandEvent& WXUNUSED(event))
+{
+    Clear();
 }
 
 void MsgFrame::OnHide(wxCommandEvent& WXUNUSED(event))

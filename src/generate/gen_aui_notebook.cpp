@@ -237,7 +237,7 @@ void AuiNotebookGenerator::AddPropsAndEvents(NodeDeclaration* declaration)
         DeclAddProp(declaration, prop_style, type_option, {},
                     /* the default values are equivalent to wxAUI_NB_DEFAULT_STYLE */
                     "wxAUI_NB_TOP|wxAUI_NB_TAB_SPLIT|wxAUI_NB_TAB_MOVE|wxAUI_NB_SCROLL_BUTTONS|wxAUI_NB_CLOSE_ON_ACTIVE_TAB"
-                    "ACTIVE_TAB|wxAUI_NB_MIDDLE_CLICK_CLOSE");
+                    "|wxAUI_NB_MIDDLE_CLICK_CLOSE");
     {
         DeclAddOption(prop_info, "wxAUI_NB_CLOSE_BUTTON", "Adds a close button on the tab bar.");
         DeclAddOption(prop_info, "wxAUI_NB_CLOSE_ON_ACTIVE_TAB", "Adds a close button on the active tab.");

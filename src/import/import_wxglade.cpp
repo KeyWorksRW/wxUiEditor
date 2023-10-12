@@ -224,12 +224,8 @@ NodeSharedPtr WxGlade::CreateGladeNode(pugi::xml_node& xml_obj, Node* parent, No
         new_node->set_value(prop_class_name, object_name);
     }
 
-    if (getGenName == gen_wxMenuBar && new_node)
+    if (new_node)
     {
-        parent->adoptChild(new_node);
-        CreateMenus(xml_obj, new_node.get());
-        return new_node;
-    }
         if (getGenName == gen_wxMenuBar)
         {
             parent->adoptChild(new_node);
@@ -243,13 +239,14 @@ NodeSharedPtr WxGlade::CreateGladeNode(pugi::xml_node& xml_obj, Node* parent, No
             return new_node;
         }
 
-    if (getGenName == gen_BookPage && new_node)
-    {
-        if (!xml_obj.attribute("name").empty())
+        else if (getGenName == gen_BookPage)
         {
-            if (auto tab = m_notebook_tabs.find(xml_obj.attribute("name").as_string()); tab != m_notebook_tabs.end())
+            if (!xml_obj.attribute("name").empty())
             {
-                new_node->set_value(prop_label, tab->second);
+                if (auto tab = m_notebook_tabs.find(xml_obj.attribute("name").as_string()); tab != m_notebook_tabs.end())
+                {
+                    new_node->set_value(prop_label, tab->second);
+                }
             }
         }
     }
@@ -560,6 +557,11 @@ bool WxGlade::HandleUnknownProperty(const pugi::xml_node& xml_obj, Node* node, N
         // This gets set to 1 if the form has a menubar. We don't need to do anything with it.
         return true;
     }
+    else if (node_name == "focused" && node->isForm())
+    {
+        // This is an option for dialogs -- no idea what it is supposed to do...
+        return true;
+    }
     return false;
 }
 
@@ -656,8 +658,8 @@ void WxGlade::CreateMenus(pugi::xml_node& xml_obj, Node* parent)
         {
             auto id = item.child("id");
 
-            auto new_item = NodeCreation.createNode(id.text().as_string() == "---" ? gen_separator :
-                gen_wxMenuItem, menu_node.get());
+            auto new_item =
+                NodeCreation.createNode(id.text().as_string() == "---" ? gen_separator : gen_wxMenuItem, menu_node.get());
             menu_node->adoptChild(new_item);
 
             for (auto& iter: item.children())

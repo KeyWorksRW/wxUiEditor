@@ -201,10 +201,15 @@ void MsgFrame::OnSaveAs(wxCommandEvent& WXUNUSED(event))
     }
 }
 
-void MsgFrame::OnClear(wxCommandEvent& WXUNUSED(event))
+void MsgFrame::Clear()
 {
     m_textCtrl->Clear();
     m_pMsgs->clear();
+}
+
+void MsgFrame::OnClear(wxCommandEvent& WXUNUSED(event))
+{
+    Clear();
 }
 
 void MsgFrame::OnHide(wxCommandEvent& WXUNUSED(event))
@@ -260,7 +265,7 @@ void MsgFrame::OnInfo(wxCommandEvent& WXUNUSED(event))
     UserPrefs.WriteConfig();
 }
 
-void MsgFrame::OnPageChanged(wxBookCtrlEvent& WXUNUSED(event))
+void MsgFrame::OnPageChanged(wxAuiNotebookEvent& WXUNUSED(event))
 {
     m_isXrcPage = (m_notebook->GetCurrentPage() == m_page_xrc);
     m_isNodeInfoPage = (m_notebook->GetCurrentPage() == m_page_node);

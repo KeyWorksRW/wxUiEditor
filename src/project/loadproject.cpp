@@ -167,7 +167,9 @@ bool ProjectHandler::LoadProject(const tt_string& file, bool allow_ui)
     {
         wxGetFrame().setImportedFlag(false);
         wxGetFrame().FireProjectLoadedEvent();
-
+#if defined(INTERNAL_TESTING)
+        wxGetFrame().getImportPanel()->SetImportFile(file);
+#endif
         if (m_isProject_updated || m_ProjectVersion < minRequiredVer)
             wxGetFrame().setModified();
     }
@@ -1440,7 +1442,7 @@ void ProjectHandler::RecursiveNodeCheck(Node* node)
                     msg = "Alignment flags for " + node->as_string(prop_var_name) + " in " +
                           parent->as_string(prop_var_name) + " changed from " + old_value + " to " + prop_ptr->as_string();
                 }
-                MSG_WARNING(msg);
+                MSG_INFO(msg);
 
                 m_isProject_updated = true;
             }
@@ -1461,8 +1463,7 @@ void ProjectHandler::RecursiveNodeCheck(Node* node)
             m_isProject_updated = true;
 #if defined(INTERNAL_TESTING)
             {
-                MSG_WARNING(tt_string("Removed row setting from ")
-                            << node->as_string(prop_var_name) << " since cols is set");
+                MSG_INFO(tt_string("Removed row setting from ") << node->as_string(prop_var_name) << " since cols is set");
             }
 #endif
         }

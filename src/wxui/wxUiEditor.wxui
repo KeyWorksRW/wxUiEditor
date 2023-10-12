@@ -6073,121 +6073,143 @@
           </node>
         </node>
         <node
-          class="wxBoxSizer"
-          orientation="wxVERTICAL"
-          var_name="parent_sizer">
+          class="wxToolBar"
+          var_name="m_tool_bar">
           <node
-            class="wxNotebook"
+            class="tool"
+            bitmap="Art;wxART_FILE_SAVE_AS|wxART_TOOLBAR"
+            id="wxID_SAVEAS"
+            label=""
+            var_name="tool_saveas"
+            wxEVT_TOOL="OnSaveAs" />
+          <node
+            class="toolSeparator" />
+          <node
+            class="tool"
+            bitmap="Art;wxART_CUT|wxART_TOOLBAR"
+            label=""
+            var_name="tool_item_clear"
+            wxEVT_TOOL="OnClear" />
+          <node
+            class="tool"
+            bitmap="Embed;hide.png"
+            id="id_hide"
+            label=""
+            var_name="tool_hide"
+            wxEVT_TOOL="OnHide" />
+        </node>
+        <node
+          class="wxAuiNotebook"
+          art_provider="wxAuiGenericTabArt"
+          background_colour="wxSYS_COLOUR_BTNFACE"
+          flags="wxEXPAND"
+          proportion="1"
+          wxEVT_AUINOTEBOOK_PAGE_CHANGED="OnPageChanged">
+          <node
+            class="BookPage"
+            class_access="protected:"
+            label="Log"
+            var_name="m_page_log"
             background_colour="wxSYS_COLOUR_BTNFACE"
-            flags="wxEXPAND"
-            proportion="1"
-            wxEVT_NOTEBOOK_PAGE_CHANGED="OnPageChanged">
+            window_style="wxTAB_TRAVERSAL">
             <node
-              class="BookPage"
-              class_access="protected:"
-              label="Log"
-              var_name="m_page_log"
-              background_colour="wxSYS_COLOUR_BTNFACE"
-              window_style="wxTAB_TRAVERSAL">
+              class="wxBoxSizer"
+              orientation="wxVERTICAL"
+              var_name="log_sizer">
               <node
-                class="wxBoxSizer"
-                orientation="wxVERTICAL"
-                var_name="log_sizer">
-                <node
-                  class="wxTextCtrl"
-                  style="wxTE_MULTILINE|wxTE_READONLY|wxTE_RICH|wxHSCROLL"
-                  minimum_size="350,300"
-                  border_size="0"
-                  flags="wxEXPAND"
-                  proportion="1" />
-              </node>
+                class="wxTextCtrl"
+                style="wxTE_MULTILINE|wxTE_READONLY|wxTE_RICH|wxHSCROLL"
+                minimum_size="350,300"
+                border_size="0"
+                flags="wxEXPAND"
+                proportion="1" />
             </node>
+          </node>
+          <node
+            class="BookPage"
+            class_access="protected:"
+            label="Node"
+            var_name="m_page_node"
+            background_colour="wxSYS_COLOUR_BTNFACE"
+            window_style="wxTAB_TRAVERSAL">
             <node
-              class="BookPage"
-              class_access="protected:"
-              label="Node"
-              var_name="m_page_node"
-              background_colour="wxSYS_COLOUR_BTNFACE"
-              window_style="wxTAB_TRAVERSAL">
+              class="wxBoxSizer"
+              orientation="wxVERTICAL"
+              var_name="node_sizer">
               <node
-                class="wxBoxSizer"
-                orientation="wxVERTICAL"
-                var_name="node_sizer">
-                <node
-                  class="wxStaticBoxSizer"
-                  label="Selected Node"
-                  var_name="static_box_2"
-                  flags="wxEXPAND">
-                  <node
-                    class="wxBoxSizer"
-                    flags="wxEXPAND">
-                    <node
-                      class="wxStaticText"
-                      label="Name:"
-                      var_name="m_txt_generator"
-                      flags="wxEXPAND"
-                      proportion="1" />
-                    <node
-                      class="wxButton"
-                      class_access="none"
-                      label="Parent..."
-                      var_name="btn"
-                      alignment="wxALIGN_CENTER_VERTICAL"
-                      wxEVT_BUTTON="OnParent" />
-                  </node>
-                  <node
-                    class="wxStaticText"
-                    label="Type:"
-                    var_name="m_txt_type" />
-                  <node
-                    class="wxStaticText"
-                    label="Memory:"
-                    var_name="m_txt_memory" />
-                  <node
-                    class="wxHyperlinkCtrl"
-                    label="wxWidgets Documentation"
-                    url="https://docs.wxwidgets.org/trunk/"
-                    flags="wxEXPAND" />
-                </node>
-                <node
-                  class="wxStaticBoxSizer"
-                  label="Memory Usage"
-                  flags="wxEXPAND">
-                  <node
-                    class="wxStaticText"
-                    label="Project:"
-                    var_name="m_txt_project" />
-                  <node
-                    class="wxStaticText"
-                    label="Clipboard:"
-                    var_name="m_txt_clipboard" />
-                </node>
-              </node>
-            </node>
-            <node
-              class="BookPage"
-              class_access="protected:"
-              label="XRC"
-              var_name="m_page_xrc"
-              background_colour="wxSYS_COLOUR_BTNFACE"
-              window_style="wxTAB_TRAVERSAL">
-              <node
-                class="wxBoxSizer"
-                orientation="wxVERTICAL"
-                var_name="page_sizer">
+                class="wxStaticBoxSizer"
+                label="Selected Node"
+                var_name="static_box_2"
+                flags="wxEXPAND">
                 <node
                   class="wxBoxSizer"
-                  var_name="box_sizer_3"
-                  flags="wxEXPAND"
-                  proportion="1">
+                  flags="wxEXPAND">
                   <node
-                    class="wxStyledTextCtrl"
-                    fold_margin="1"
-                    lexer="XML"
-                    read_only="1"
+                    class="wxStaticText"
+                    label="Name:"
+                    var_name="m_txt_generator"
                     flags="wxEXPAND"
                     proportion="1" />
+                  <node
+                    class="wxButton"
+                    class_access="none"
+                    label="Parent..."
+                    var_name="btn"
+                    alignment="wxALIGN_CENTER_VERTICAL"
+                    wxEVT_BUTTON="OnParent" />
                 </node>
+                <node
+                  class="wxStaticText"
+                  label="Type:"
+                  var_name="m_txt_type" />
+                <node
+                  class="wxStaticText"
+                  label="Memory:"
+                  var_name="m_txt_memory" />
+                <node
+                  class="wxHyperlinkCtrl"
+                  label="wxWidgets Documentation"
+                  url="https://docs.wxwidgets.org/trunk/"
+                  flags="wxEXPAND" />
+              </node>
+              <node
+                class="wxStaticBoxSizer"
+                label="Memory Usage"
+                flags="wxEXPAND">
+                <node
+                  class="wxStaticText"
+                  label="Project:"
+                  var_name="m_txt_project" />
+                <node
+                  class="wxStaticText"
+                  label="Clipboard:"
+                  var_name="m_txt_clipboard" />
+              </node>
+            </node>
+          </node>
+          <node
+            class="BookPage"
+            class_access="protected:"
+            label="XRC"
+            var_name="m_page_xrc"
+            background_colour="wxSYS_COLOUR_BTNFACE"
+            window_style="wxTAB_TRAVERSAL">
+            <node
+              class="wxBoxSizer"
+              orientation="wxVERTICAL"
+              var_name="page_sizer">
+              <node
+                class="wxBoxSizer"
+                var_name="box_sizer_3"
+                flags="wxEXPAND"
+                proportion="1">
+                <node
+                  class="wxStyledTextCtrl"
+                  fold_margin="1"
+                  lexer="XML"
+                  read_only="1"
+                  flags="wxEXPAND"
+                  proportion="1" />
               </node>
             </node>
           </node>

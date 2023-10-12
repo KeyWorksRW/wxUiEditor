@@ -68,11 +68,22 @@ bool MsgFrameBase::Create(wxWindow* parent, wxWindowID id, const wxString& title
 
     SetMenuBar(menubar);
 
-    auto* parent_sizer = new wxBoxSizer(wxVERTICAL);
+    m_tool_bar = CreateToolBar();
+    m_tool_bar->AddTool(wxID_SAVEAS, wxEmptyString, wxArtProvider::GetBitmapBundle(wxART_FILE_SAVE_AS, wxART_TOOLBAR));
 
-    m_notebook = new wxNotebook(this, wxID_ANY);
+    m_tool_bar->AddSeparator();
+    auto* tool_item_clear = m_tool_bar->AddTool(wxID_ANY, wxEmptyString, wxArtProvider::GetBitmapBundle(wxART_CUT,
+        wxART_TOOLBAR));
+
+    m_tool_bar->AddTool(id_hide, wxEmptyString, wxue_img::bundle_hide_png());
+
+    m_tool_bar->Realize();
+
+    m_notebook = new wxAuiNotebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize,
+        wxAUI_NB_TOP|wxAUI_NB_TAB_SPLIT|wxAUI_NB_TAB_MOVE|wxAUI_NB_SCROLL_BUTTONS|wxAUI_NB_CLOSE_ON_ACTIVE_TAB|wxAUI_NB_MIDDLE_CLICK_CLOSE
+    );
+    m_notebook->SetArtProvider(new wxAuiGenericTabArt());
     m_notebook->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
-    parent_sizer->Add(m_notebook, wxSizerFlags(1).Expand().Border(wxALL));
 
     m_page_log = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
     m_notebook->AddPage(m_page_log, "Log");
@@ -163,11 +174,10 @@ bool MsgFrameBase::Create(wxWindow* parent, wxWindowID id, const wxString& title
     page_sizer->Add(box_sizer_3, wxSizerFlags(1).Expand().Border(wxALL));
     m_page_xrc->SetSizerAndFit(page_sizer);
 
-    SetSizerAndFit(parent_sizer);
-
     Centre(wxBOTH);
 
     // Event handlers
+    m_notebook->Bind(wxEVT_AUINOTEBOOK_PAGE_CHANGED, &MsgFrameBase::OnPageChanged, this);
     btn->Bind(wxEVT_BUTTON, &MsgFrameBase::OnParent, this);
     Bind(wxEVT_CLOSE_WINDOW, &MsgFrameBase::OnClose, this);
     Bind(wxEVT_MENU, &MsgFrameBase::OnSaveAs, this, wxID_SAVEAS);
@@ -176,7 +186,9 @@ bool MsgFrameBase::Create(wxWindow* parent, wxWindowID id, const wxString& title
     Bind(wxEVT_MENU, &MsgFrameBase::OnWarnings, this, id_warning_msgs);
     Bind(wxEVT_MENU, &MsgFrameBase::OnEvents, this, id_event_msgs);
     Bind(wxEVT_MENU, &MsgFrameBase::OnInfo, this, wxID_INFO);
-    m_notebook->Bind(wxEVT_NOTEBOOK_PAGE_CHANGED, &MsgFrameBase::OnPageChanged, this);
+    Bind(wxEVT_TOOL, &MsgFrameBase::OnSaveAs, this, wxID_SAVEAS);
+    Bind(wxEVT_TOOL, &MsgFrameBase::OnClear, this, tool_item_clear->GetId());
+    Bind(wxEVT_TOOL, &MsgFrameBase::OnHide, this, id_hide);
 
     return true;
 }

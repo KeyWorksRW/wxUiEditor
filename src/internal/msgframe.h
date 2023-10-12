@@ -29,6 +29,8 @@ public:
 
     void Add_wxInfoMsg(tt_string_view msg);
 
+    void Clear();
+
 protected:
     void UpdateNodeInfo();
 
@@ -38,7 +40,7 @@ protected:
     void OnEvents(wxCommandEvent& WXUNUSED(event)) override;
     void OnHide(wxCommandEvent& WXUNUSED(event)) override;
     void OnInfo(wxCommandEvent& WXUNUSED(event)) override;
-    void OnPageChanged(wxBookCtrlEvent& WXUNUSED(event)) override;
+    void OnPageChanged(wxAuiNotebookEvent& WXUNUSED(event)) override;
     void OnParent(wxCommandEvent& event) override;
     void OnSaveAs(wxCommandEvent& WXUNUSED(event)) override;
     void OnWarnings(wxCommandEvent& WXUNUSED(event)) override;

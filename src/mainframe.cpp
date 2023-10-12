@@ -720,7 +720,7 @@ void MainFrame::OnImportProject(wxCommandEvent&)
         return;
 
 #if (defined(_DEBUG) || defined(INTERNAL_TESTING))
-        g_pMsgLogging->Clear();
+    g_pMsgLogging->Clear();
 #endif  // _DEBUG
 
     Project.NewProject();

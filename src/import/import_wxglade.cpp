@@ -529,6 +529,23 @@ bool WxGlade::HandleUnknownProperty(const pugi::xml_node& xml_obj, Node* node, N
             node->set_value(prop_source_preamble, xml_obj.text().as_string());
         return true;
     }
+    else if (node_name == "stockitem" && node->isGen(gen_wxButton))
+    {
+        if (node->as_string(prop_id).empty() || node->as_string(prop_id) == "wxID_ANY")
+        {
+            tt_string id("wxID_");
+            id << xml_obj.text().as_string();
+            node->set_value(prop_id, id);
+
+            if (node->as_string(prop_label).empty() || node->as_string(prop_label) == "MyButton")
+            {
+                // This is a stock button, so let wxWidgets set the label
+                node->set_value(prop_label, "");
+            }
+
+            return true;
+        }
+    }
     else if (node_name == "scrollable")
     {
         // [Randalphwa - 10-11-2023]

@@ -265,7 +265,7 @@ void MsgFrame::OnInfo(wxCommandEvent& WXUNUSED(event))
     UserPrefs.WriteConfig();
 }
 
-void MsgFrame::OnPageChanged(wxBookCtrlEvent& WXUNUSED(event))
+void MsgFrame::OnPageChanged(wxAuiNotebookEvent& WXUNUSED(event))
 {
     m_isXrcPage = (m_notebook->GetCurrentPage() == m_page_xrc);
     m_isNodeInfoPage = (m_notebook->GetCurrentPage() == m_page_node);

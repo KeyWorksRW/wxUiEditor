@@ -79,7 +79,10 @@ bool MsgFrameBase::Create(wxWindow* parent, wxWindowID id, const wxString& title
 
     m_tool_bar->Realize();
 
-    m_notebook = new wxNotebook(this, wxID_ANY);
+    m_notebook = new wxAuiNotebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize,
+        wxAUI_NB_TOP|wxAUI_NB_TAB_SPLIT|wxAUI_NB_TAB_MOVE|wxAUI_NB_SCROLL_BUTTONS|wxAUI_NB_CLOSE_ON_ACTIVE_TAB|wxAUI_NB_MIDDLE_CLICK_CLOSE
+    );
+    m_notebook->SetArtProvider(new wxAuiGenericTabArt());
     m_notebook->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
 
     m_page_log = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
@@ -174,6 +177,7 @@ bool MsgFrameBase::Create(wxWindow* parent, wxWindowID id, const wxString& title
     Centre(wxBOTH);
 
     // Event handlers
+    m_notebook->Bind(wxEVT_AUINOTEBOOK_PAGE_CHANGED, &MsgFrameBase::OnPageChanged, this);
     btn->Bind(wxEVT_BUTTON, &MsgFrameBase::OnParent, this);
     Bind(wxEVT_CLOSE_WINDOW, &MsgFrameBase::OnClose, this);
     Bind(wxEVT_MENU, &MsgFrameBase::OnSaveAs, this, wxID_SAVEAS);
@@ -182,7 +186,6 @@ bool MsgFrameBase::Create(wxWindow* parent, wxWindowID id, const wxString& title
     Bind(wxEVT_MENU, &MsgFrameBase::OnWarnings, this, id_warning_msgs);
     Bind(wxEVT_MENU, &MsgFrameBase::OnEvents, this, id_event_msgs);
     Bind(wxEVT_MENU, &MsgFrameBase::OnInfo, this, wxID_INFO);
-    m_notebook->Bind(wxEVT_NOTEBOOK_PAGE_CHANGED, &MsgFrameBase::OnPageChanged, this);
     Bind(wxEVT_TOOL, &MsgFrameBase::OnSaveAs, this, wxID_SAVEAS);
     Bind(wxEVT_TOOL, &MsgFrameBase::OnClear, this, tool_item_clear->GetId());
     Bind(wxEVT_TOOL, &MsgFrameBase::OnHide, this, id_hide);

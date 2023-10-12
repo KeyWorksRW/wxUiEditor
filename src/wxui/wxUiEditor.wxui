@@ -6099,11 +6099,12 @@
             wxEVT_TOOL="OnHide" />
         </node>
         <node
-          class="wxNotebook"
+          class="wxAuiNotebook"
+          art_provider="wxAuiGenericTabArt"
           background_colour="wxSYS_COLOUR_BTNFACE"
           flags="wxEXPAND"
           proportion="1"
-          wxEVT_NOTEBOOK_PAGE_CHANGED="OnPageChanged">
+          wxEVT_AUINOTEBOOK_PAGE_CHANGED="OnPageChanged">
           <node
             class="BookPage"
             class_access="protected:"

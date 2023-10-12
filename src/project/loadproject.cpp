@@ -167,7 +167,9 @@ bool ProjectHandler::LoadProject(const tt_string& file, bool allow_ui)
     {
         wxGetFrame().setImportedFlag(false);
         wxGetFrame().FireProjectLoadedEvent();
-
+#if defined(INTERNAL_TESTING)
+        wxGetFrame().getImportPanel()->SetImportFile(file);
+#endif
         if (m_isProject_updated || m_ProjectVersion < minRequiredVer)
             wxGetFrame().setModified();
     }

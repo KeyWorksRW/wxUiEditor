@@ -239,6 +239,30 @@ BasePanel::BasePanel(wxWindow* parent, MainFrame* frame, int panel_type) : wxPan
 
 BasePanel::~BasePanel() {}
 
+wxString BasePanel::GetSelectedText()
+{
+    auto notebook = wxStaticCast(m_cppPanel->GetParent(), wxAuiNotebook);
+    auto text = notebook->GetPageText(notebook->GetSelection());
+    if (text == "source")
+    {
+        return m_cppPanel->GetTextCtrl()->GetSelectedText();
+    }
+    else if (text == "derived_src")
+    {
+        return m_derived_src_panel->GetTextCtrl()->GetSelectedText();
+    }
+    else if (text == "header" || text == "inherit" || text == "info")
+    {
+        return m_hPanel->GetTextCtrl()->GetSelectedText();
+    }
+    else if (text == "derived_hdr")
+    {
+        return m_derived_hdr_panel->GetTextCtrl()->GetSelectedText();
+    }
+
+    return {};
+}
+
 void BasePanel::OnFind(wxFindDialogEvent& event)
 {
     auto notebook = wxStaticCast(m_cppPanel->GetParent(), wxAuiNotebook);

@@ -35,6 +35,7 @@ public:
     ~BasePanel() override;
 
     void GenerateBaseClass();
+    wxString GetSelectedText();
 
     PANEL_PAGE GetPanelPage() const;
 

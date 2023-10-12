@@ -24,6 +24,8 @@ public:
 
     void OnNodeSelected(Node* node);
 
+    wxStyledTextCtrl* GetTextCtrl() { return m_scintilla; };
+
 protected:
     void OnFind(wxFindDialogEvent& event);
 

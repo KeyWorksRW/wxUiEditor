@@ -1293,6 +1293,18 @@ void MainFrame::OnFindDialog(wxCommandEvent&)
 {
     if (!m_findDialog)
     {
+        if (auto page = m_notebook->GetCurrentPage(); page)
+        {
+#if defined(INTERNAL_TESTING)
+            if (page == m_imnportPanel)
+                m_findData.SetFindString(m_imnportPanel->GetTextCtrl()->GetSelectedText());
+            else
+#endif
+                if (page != m_mockupPanel && page != m_docviewPanel)
+            {
+                m_findData.SetFindString(static_cast<BasePanel*>(page)->GetSelectedText());
+            }
+        }
         m_findDialog = new wxFindReplaceDialog(this, &m_findData, "Find");
         m_findDialog->Centre(wxCENTRE_ON_SCREEN | wxBOTH);
     }

@@ -515,3 +515,79 @@ bool WxGlade::HandleNormalProperty(const pugi::xml_node& xml_obj, Node* node, No
 
     return false;
 }
+
+void WxGlade::CreateMenus(pugi::xml_node& xml_obj, Node* parent)
+{
+    auto menus = xml_obj.child("menus");
+    ASSERT(menus);
+    if (!menus)
+        return;
+
+    for (auto& menu: menus.children("menu"))
+    {
+        auto menu_node = NodeCreation.createNode(gen_wxMenu, parent);
+        parent->adoptChild(menu_node);
+        for (auto& iter: menu.attributes())
+        {
+            if (iter.name() == "name")
+            {
+                menu_node->set_value(prop_var_name, iter.value());
+            }
+            else if (iter.name() == "label")
+            {
+                menu_node->set_value(prop_label, iter.value());
+            }
+        }
+
+        for (auto& item: menu.children("item"))
+        {
+            auto id = item.child("id");
+
+            auto new_item = NodeCreation.createNode(id.text().as_string() == "---" ? gen_separator :
+                gen_wxMenuItem, menu_node.get());
+            menu_node->adoptChild(new_item);
+
+            for (auto& iter: item.children())
+            {
+                if (iter.name() == "label")
+                {
+                    new_item->set_value(prop_label, iter.text().as_string());
+                }
+                else if (iter.name() == "id")
+                {
+                    tt_string id_value = iter.text().as_string();
+                    if (m_language == GEN_LANG_PYTHON)
+                    {
+                        id_value.Replace(".", "", true);
+                    }
+                    new_item->set_value(prop_id, id_value);
+                }
+                else if (iter.name() == "name")
+                {
+                    new_item->set_value(prop_var_name, iter.text().as_string());
+                }
+                else if (iter.name() == "help_str")
+                {
+                    new_item->set_value(prop_help, iter.text().as_string());
+                }
+                else if (iter.name() == "checkable")
+                {
+                    new_item->set_value(prop_checked, iter.text().as_string());
+                    new_item->set_value(prop_kind, "wxITEM_CHECK");
+                }
+                else if (iter.name() == "radio")
+                {
+                    new_item->set_value(prop_checked, iter.text().as_string());
+                    new_item->set_value(prop_kind, "wxITEM_RADIO");
+                }
+                else if (iter.name() == "handler")
+                {
+                    if (auto* event = new_item->getEvent("wxEVT_MENU"); event)
+                    {
+                        event->set_value(iter.text().as_string());
+                    }
+                }
+            }
+        }
+    }
+}

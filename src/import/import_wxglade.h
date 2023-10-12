@@ -25,6 +25,7 @@ public:
 
 protected:
     NodeSharedPtr CreateGladeNode(pugi::xml_node& xml_obj, Node* parent, Node* sizeritem = nullptr);
+    void CreateMenus(pugi::xml_node& xml_obj, Node* parent);
 
 private:
 };

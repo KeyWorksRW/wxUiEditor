@@ -1007,7 +1007,7 @@ void ImportXML::ProcessContent(const pugi::xml_node& xml_obj, Node* node)
     tt_string choices;
     for (auto& iter: xml_obj.children())
     {
-        if (iter.name() == "item")
+        if (iter.name() == "item" || iter.name() == "choice")
         {
             auto child = iter.child_as_cstr();
             child.Replace("\"", "\\\"", true);

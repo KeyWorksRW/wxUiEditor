@@ -165,6 +165,17 @@ bool MsgFrameBase::Create(wxWindow* parent, wxWindowID id, const wxString& title
 
     SetSizerAndFit(parent_sizer);
 
+    m_tool_bar = CreateToolBar();
+    m_tool_bar->AddTool(wxID_SAVEAS, wxEmptyString, wxArtProvider::GetBitmapBundle(wxART_FILE_SAVE_AS, wxART_TOOLBAR));
+
+    m_tool_bar->AddSeparator();
+    auto* tool_item_clear = m_tool_bar->AddTool(wxID_ANY, wxEmptyString, wxArtProvider::GetBitmapBundle(wxART_CUT,
+        wxART_TOOLBAR));
+
+    m_tool_bar->AddTool(id_hide, wxEmptyString, wxue_img::bundle_hide_png());
+
+    m_tool_bar->Realize();
+
     Centre(wxBOTH);
 
     // Event handlers
@@ -177,6 +188,9 @@ bool MsgFrameBase::Create(wxWindow* parent, wxWindowID id, const wxString& title
     Bind(wxEVT_MENU, &MsgFrameBase::OnEvents, this, id_event_msgs);
     Bind(wxEVT_MENU, &MsgFrameBase::OnInfo, this, wxID_INFO);
     m_notebook->Bind(wxEVT_NOTEBOOK_PAGE_CHANGED, &MsgFrameBase::OnPageChanged, this);
+    Bind(wxEVT_TOOL, &MsgFrameBase::OnSaveAs, this, wxID_SAVEAS);
+    Bind(wxEVT_TOOL, &MsgFrameBase::OnClear, this, tool_item_clear->GetId());
+    Bind(wxEVT_TOOL, &MsgFrameBase::OnHide, this, id_hide);
 
     return true;
 }

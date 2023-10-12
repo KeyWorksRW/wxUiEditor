@@ -6192,6 +6192,32 @@
             </node>
           </node>
         </node>
+        <node
+          class="wxToolBar"
+          var_name="m_tool_bar">
+          <node
+            class="tool"
+            bitmap="Art;wxART_FILE_SAVE_AS|wxART_TOOLBAR"
+            id="wxID_SAVEAS"
+            label=""
+            var_name="tool_saveas"
+            wxEVT_TOOL="OnSaveAs" />
+          <node
+            class="toolSeparator" />
+          <node
+            class="tool"
+            bitmap="Art;wxART_CUT|wxART_TOOLBAR"
+            label=""
+            var_name="tool_item_clear"
+            wxEVT_TOOL="OnClear" />
+          <node
+            class="tool"
+            bitmap="Embed;hide.png"
+            id="id_hide"
+            label=""
+            var_name="tool_hide"
+            wxEVT_TOOL="OnHide" />
+        </node>
       </node>
       <node
         class="wxDialog"

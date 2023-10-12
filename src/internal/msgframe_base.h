@@ -24,6 +24,7 @@
 #include <wx/stattext.h>
 #include <wx/stc/stc.h>
 #include <wx/textctrl.h>
+#include <wx/toolbar.h>
 
 class MsgFrameBase : public wxFrame
 {
@@ -78,6 +79,7 @@ protected:
     wxStaticText* m_txt_type;
     wxStyledTextCtrl* m_scintilla;
     wxTextCtrl* m_textCtrl;
+    wxToolBar* m_tool_bar;
 };
 
 // ************* End of generated code ***********

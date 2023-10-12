@@ -2697,6 +2697,7 @@
       <node
         class="wxDialog"
         class_name="EditStringDialogBase"
+        style="wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER"
         base_file="editstringdialog_base"
         derived_class_name="EditStringDialog">
         <node
@@ -2719,6 +2720,9 @@
             minimum_size="500,-1"
             border_size="15"
             flags="wxEXPAND" />
+          <node
+            class="spacer"
+            proportion="1" />
           <node
             class="wxStdDialogButtonSizer"
             var_name="stdBtn_2"

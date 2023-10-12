@@ -30,6 +30,8 @@ bool EditStringDialogBase::Create(wxWindow* parent, wxWindowID id, const wxStrin
     m_textCtrl->SetMinSize(wxSize(500, -1));
     parent_sizer->Add(m_textCtrl, wxSizerFlags().Expand().TripleBorder(wxALL));
 
+    parent_sizer->AddStretchSpacer(1);
+
     auto* stdBtn_2 = CreateStdDialogButtonSizer(wxOK|wxCANCEL);
     parent_sizer->Add(CreateSeparatedSizer(stdBtn_2), wxSizerFlags().Expand().Border(wxALL));
 

@@ -24,6 +24,7 @@ namespace xrc_import
         { "accel", prop_shortcut },
         { "art-provider", prop_art_provider },
         { "bg", prop_background_colour },
+        { "background", prop_background_colour },
         { "bitmap-bg", prop_bmp_background_colour },
         { "bitmap-minwidth", prop_bmp_min_width },
         { "bitmap-placement", prop_bmp_placement },
@@ -31,6 +32,7 @@ namespace xrc_import
         { "bitmapsize", prop_image_size },  // BUGBUG: [Randalphwa - 06-17-2022] should this be prop_bitmapsize?
         { "choices", prop_contents },
         { "class", prop_class_name },
+        { "clicked", prop_checked },
         { "content", prop_contents },
         { "defaultdirectory", prop_initial_folder },
         { "defaultfilename", prop_initial_filename },
@@ -39,9 +41,12 @@ namespace xrc_import
         { "empty_cellsize", prop_empty_cell_size },
         { "extra-accels", prop_extra_accels },
         { "fg", prop_foreground_colour },
+        { "foreground", prop_foreground_colour },
         { "flexibledirection", prop_flexible_direction },
         { "gradient-end", prop_end_colour },
         { "gradient-start", prop_start_colour },
+        { "growable_rows", prop_growablerows },
+        { "growable_cols", prop_growablecols },
         { "gravity", prop_sashgravity },
         { "hideeffect", prop_hide_effect },
         { "hover", prop_current },
@@ -52,6 +57,7 @@ namespace xrc_import
         { "longhelp", prop_statusbar },  // Used by toolbar tools
         { "minsize", prop_min_size },
         { "nonflexiblegrowmode", prop_non_flexible_grow_mode },
+        { "orient", prop_orientation },
         { "pagesize", prop_page_size },
         { "running", prop_auto_start },
         { "selmax", prop_sel_end },
@@ -557,7 +563,6 @@ void ImportXML::ProcessAttributes(const pugi::xml_node& xml_obj, Node* new_node)
             {
                 if (auto prop = new_node->getPropPtr(prop_class_name); prop)
                 {
-                    prop->set_value(iter.value());
                     if (prop->as_string().empty())
                     {
                         prop->set_value(iter.value());

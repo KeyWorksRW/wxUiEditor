@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Panel to display original imported file
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2022-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -15,6 +15,7 @@
 #include "cstm_event.h"  // CustomEvent -- Custom Event class
 #include "mainapp.h"     // App -- Main application class
 #include "mainframe.h"   // MainFrame -- Main window frame
+#include "pugixml.hpp"   // xml read/write/create/process
 
 #include "../panels/propgrid_panel.h"  // PropGridPanel -- PropertyGrid class for node properties and events
 #include "node.h"                      // Node class
@@ -89,8 +90,49 @@ void ImportPanel::SetImportFile(const tt_string& file, int lexer)
             // This uses the XRC keywords, which will generally be fine for XRC, wxSMith, and wxGlade. wxFormBuilder
             // could probably use some extra keywords...
 
-            // On Windows, this saves converting the UTF8 to UTF16 and then back to ANSI.
-            m_scintilla->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_xrc_keywords);
+            {
+                pugi::xml_document doc;
+                if (auto result = doc.load_file(file.c_str()); result)
+                {
+                    std::set<tt_string> keywords;
+                    auto root = doc.first_child();
+                    keywords.insert(root.name());
+                    for (auto& iter: root.attributes())
+                    {
+                        keywords.insert(iter.name());
+                    }
+
+                    auto add_keywords = [&](pugi::xml_node node, auto&& add_keywords) -> void
+                    {
+                        keywords.insert(node.name());
+                        for (auto& iter: node.attributes())
+                        {
+                            keywords.insert(iter.name());
+                        }
+                        for (auto child: node.children())
+                        {
+                            add_keywords(child, add_keywords);
+                        }
+                    };
+
+                    for (auto child: root.children())
+                    {
+                        add_keywords(child, add_keywords);
+                    }
+
+                    tt_string keywords_str;
+                    for (auto& iter: keywords)
+                    {
+                        keywords_str << iter << " ";
+                    }
+
+                    m_scintilla->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) keywords_str.c_str());
+                }
+                else
+                {
+                    m_scintilla->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_xrc_keywords);
+                }
+            }
 
             m_scintilla->StyleSetBold(wxSTC_H_TAG, true);
             m_scintilla->StyleSetForeground(wxSTC_H_ATTRIBUTE, wxColour("#E91AFF"));

@@ -512,6 +512,40 @@ bool WxGlade::HandleNormalProperty(const pugi::xml_node& xml_obj, Node* node, No
         node->set_value(prop_id, id);
         return true;
     }
+    else if (wxue_prop == prop_font)
+    {
+        FontProperty font_info;
+        if (auto size_child = xml_obj.child("size"); size_child)
+        {
+            font_info.PointSize(size_child.text().as_double());
+        }
+        if (auto family_child = xml_obj.child("family"); family_child && family_child.text().as_string() != "default")
+        {
+            FontFamilyPairs family_pair;
+            font_info.Family(family_pair.GetValue(family_child.text().as_string()));
+        }
+        if (auto style_child = xml_obj.child("style"); style_child && style_child.text().as_string() != "normal")
+        {
+            FontStylePairs style_pair;
+            font_info.Style(style_pair.GetValue(style_child.text().as_string()));
+        }
+        if (auto weight_child = xml_obj.child("weight"); weight_child && weight_child.text().as_string() != "normal")
+        {
+            FontWeightPairs weight_pair;
+            font_info.Weight(weight_pair.GetValue(weight_child.text().as_string()));
+        }
+        if (auto underline_child = xml_obj.child("underline"); underline_child)
+        {
+            font_info.Underlined(underline_child.text().as_bool());
+        }
+        if (auto face_child = xml_obj.child("face"); face_child)
+        {
+            font_info.FaceName(face_child.text().as_cstr().make_wxString());
+        }
+
+        node->set_value(prop_font, font_info.as_string());
+        return true;
+    }
 
     return false;
 }

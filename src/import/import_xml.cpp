@@ -1061,6 +1061,12 @@ void ImportXML::ProcessBitmap(const pugi::xml_node& xml_obj, Node* node, GenEnum
     else
     {
         auto file = xml_obj.child_as_cstr();
+        if (file.starts_with("code:"))
+        {
+            // This is a wxGlade bitmap
+            // TODO: [Randalphwa - 10-12-2023] wxGlade bitmaps are not yet supported
+        }
+
         if (file.contains(".xpm", tt::CASE::either))
         {
             tt_string bitmap("XPM; ");

@@ -173,8 +173,10 @@ NodeSharedPtr WxGlade::CreateGladeNode(pugi::xml_node& xml_obj, Node* parent, No
 
     bool isBitmapButton = (object_name == "wxBitmapButton");
     auto getGenName = ConvertToGenName(object_name, parent);
+    bool object_not_generator = false;
     if (getGenName == gen_unknown)
     {
+        object_not_generator = true;
         // If we don't recognize the class, then try the base= attribute
         auto base = xml_obj.attribute("base").as_string();
         if (base == "EditFrame")
@@ -217,13 +219,34 @@ NodeSharedPtr WxGlade::CreateGladeNode(pugi::xml_node& xml_obj, Node* parent, No
     }
 
     auto new_node = NodeCreation.createNode(getGenName, parent);
-    if (getGenName == gen_BookPage && new_node)
+    if (new_node && object_not_generator)
     {
-        if (!xml_obj.attribute("name").empty())
+        new_node->set_value(prop_class_name, object_name);
+    }
+
+    if (new_node)
+    {
+        if (getGenName == gen_wxMenuBar)
         {
-            if (auto tab = m_notebook_tabs.find(xml_obj.attribute("name").as_string()); tab != m_notebook_tabs.end())
+            parent->adoptChild(new_node);
+            CreateMenus(xml_obj, new_node.get());
+            return new_node;
+        }
+        else if (getGenName == gen_wxToolBar)
+        {
+            parent->adoptChild(new_node);
+            CreateToolbar(xml_obj, new_node.get());
+            return new_node;
+        }
+
+        else if (getGenName == gen_BookPage)
+        {
+            if (!xml_obj.attribute("name").empty())
             {
-                new_node->set_value(prop_label, tab->second);
+                if (auto tab = m_notebook_tabs.find(xml_obj.attribute("name").as_string()); tab != m_notebook_tabs.end())
+                {
+                    new_node->set_value(prop_label, tab->second);
+                }
             }
         }
     }
@@ -380,6 +403,8 @@ NodeSharedPtr WxGlade::CreateGladeNode(pugi::xml_node& xml_obj, Node* parent, No
     }
 
     auto child = xml_obj.child("object");
+    if (!child && new_node->isGen(gen_wxMenuBar))
+        child = xml_obj.child("menus");
     if (NodeCreation.isOldHostType(new_node->declName()))
     {
         ProcessAttributes(xml_obj, new_node.get());
@@ -406,7 +431,6 @@ NodeSharedPtr WxGlade::CreateGladeNode(pugi::xml_node& xml_obj, Node* parent, No
     else if (parent)
     {
         parent->adoptChild(new_node);
-
         ProcessAttributes(xml_obj, new_node.get());
         ProcessProperties(xml_obj, new_node.get());
     }
@@ -481,11 +505,68 @@ bool WxGlade::HandleUnknownProperty(const pugi::xml_node& xml_obj, Node* node, N
     {
         // wxGlade adds these even when the exact same buttons
     }
+    else if (node_name == "option" && node->isGen(gen_sizeritem))
+    {
+        node->set_value(prop_proportion, xml_obj.text().as_string());
+        return true;
+    }
+    else if (node_name == "scroll_rate")
+    {
+        tt_string param = xml_obj.text().as_string();
+        tt_view_vector params(param, ',');
+        node->set_value(prop_scroll_rate_x, params[0]);
+        node->set_value(prop_scroll_rate_y, params[1]);
+        return true;
+    }
+    else if (node_name == "extracode_post")
+    {
+        if (m_language == GEN_LANG_PYTHON)
+            node->set_value(prop_python_insert, xml_obj.text().as_string());
+        else if (m_language == GEN_LANG_CPLUSPLUS)
+            node->set_value(prop_source_preamble, xml_obj.text().as_string());
+        return true;
+    }
+    else if (node_name == "stockitem" && node->isGen(gen_wxButton))
+    {
+        if (node->as_string(prop_id).empty() || node->as_string(prop_id) == "wxID_ANY")
+        {
+            tt_string id("wxID_");
+            id << xml_obj.text().as_string();
+            node->set_value(prop_id, id);
+
+            if (node->as_string(prop_label).empty() || node->as_string(prop_label) == "MyButton")
+            {
+                // This is a stock button, so let wxWidgets set the label
+                node->set_value(prop_label, "");
+            }
+
+            return true;
+        }
+    }
+    else if (node_name == "scrollable")
+    {
+        // [Randalphwa - 10-11-2023]
+        // wxGlade will set this to 1 for wxScrolledWindow. In the wxGlade interface (1.1.0) if
+        // you uncheck this it will generate an Error in wxGlade, but will generate code and
+        // XML file using wxPanel without this property. Unless it's used for something besides
+        // wxScrolledWindow, I think we can just ignore it.
+        return true;
+    }
+    else if (node_name == "menubar")
+    {
+        // This gets set to 1 if the form has a menubar. We don't need to do anything with it.
+        return true;
+    }
+    else if (node_name == "focused" && node->isForm())
+    {
+        // This is an option for dialogs -- no idea what it is supposed to do...
+        return true;
+    }
     return false;
 }
 
 // Called by ImportXML -- return true if the property is processed. Use this when the property conversion
-// is incorrect for the type of note being processed.
+// is different in wxGlade then for other XML projects for the type of node being processed.
 bool WxGlade::HandleNormalProperty(const pugi::xml_node& xml_obj, Node* node, Node* parent, GenEnum::PropName wxue_prop)
 {
     if (node->isGen(gen_sizeritem))
@@ -512,6 +593,159 @@ bool WxGlade::HandleNormalProperty(const pugi::xml_node& xml_obj, Node* node, No
         node->set_value(prop_id, id);
         return true;
     }
+    else if (wxue_prop == prop_font)
+    {
+        FontProperty font_info;
+        if (auto size_child = xml_obj.child("size"); size_child)
+        {
+            font_info.PointSize(size_child.text().as_double());
+        }
+        if (auto family_child = xml_obj.child("family"); family_child && family_child.text().as_string() != "default")
+        {
+            FontFamilyPairs family_pair;
+            font_info.Family(family_pair.GetValue(family_child.text().as_string()));
+        }
+        if (auto style_child = xml_obj.child("style"); style_child && style_child.text().as_string() != "normal")
+        {
+            FontStylePairs style_pair;
+            font_info.Style(style_pair.GetValue(style_child.text().as_string()));
+        }
+        if (auto weight_child = xml_obj.child("weight"); weight_child && weight_child.text().as_string() != "normal")
+        {
+            FontWeightPairs weight_pair;
+            font_info.Weight(weight_pair.GetValue(weight_child.text().as_string()));
+        }
+        if (auto underline_child = xml_obj.child("underline"); underline_child)
+        {
+            font_info.Underlined(underline_child.text().as_bool());
+        }
+        if (auto face_child = xml_obj.child("face"); face_child)
+        {
+            font_info.FaceName(face_child.text().as_cstr().make_wxString());
+        }
+
+        node->set_value(prop_font, font_info.as_string());
+        return true;
+    }
 
     return false;
+}
+
+void WxGlade::CreateMenus(pugi::xml_node& xml_obj, Node* parent)
+{
+    auto menus = xml_obj.child("menus");
+    ASSERT(menus);
+    if (!menus)
+        return;
+
+    for (auto& menu: menus.children("menu"))
+    {
+        auto menu_node = NodeCreation.createNode(gen_wxMenu, parent);
+        parent->adoptChild(menu_node);
+        for (auto& iter: menu.attributes())
+        {
+            if (iter.name() == "name")
+            {
+                menu_node->set_value(prop_var_name, iter.value());
+            }
+            else if (iter.name() == "label")
+            {
+                menu_node->set_value(prop_label, iter.value());
+            }
+        }
+
+        for (auto& item: menu.children("item"))
+        {
+            auto id = item.child("id");
+
+            auto new_item =
+                NodeCreation.createNode(id.text().as_string() == "---" ? gen_separator : gen_wxMenuItem, menu_node.get());
+            menu_node->adoptChild(new_item);
+
+            for (auto& iter: item.children())
+            {
+                if (iter.name() == "label")
+                {
+                    new_item->set_value(prop_label, iter.text().as_string());
+                }
+                else if (iter.name() == "id")
+                {
+                    tt_string id_value = iter.text().as_string();
+                    if (m_language == GEN_LANG_PYTHON)
+                    {
+                        id_value.Replace(".", "", true);
+                    }
+                    new_item->set_value(prop_id, id_value);
+                }
+                else if (iter.name() == "name")
+                {
+                    new_item->set_value(prop_var_name, iter.text().as_string());
+                }
+                else if (iter.name() == "help_str")
+                {
+                    new_item->set_value(prop_help, iter.text().as_string());
+                }
+                else if (iter.name() == "checkable")
+                {
+                    new_item->set_value(prop_checked, iter.text().as_string());
+                    new_item->set_value(prop_kind, "wxITEM_CHECK");
+                }
+                else if (iter.name() == "radio")
+                {
+                    new_item->set_value(prop_checked, iter.text().as_string());
+                    new_item->set_value(prop_kind, "wxITEM_RADIO");
+                }
+                else if (iter.name() == "handler")
+                {
+                    if (auto* event = new_item->getEvent("wxEVT_MENU"); event)
+                    {
+                        event->set_value(iter.text().as_string());
+                    }
+                }
+            }
+        }
+    }
+}
+
+void WxGlade::CreateToolbar(pugi::xml_node& xml_obj, Node* parent)
+{
+    auto tools = xml_obj.child("tools");
+    ASSERT(tools);
+    if (!tools)
+        return;
+
+    for (auto& tool: tools.children("tool"))
+    {
+        auto id = tool.child("id");
+
+        auto new_tool = NodeCreation.createNode(id.text().as_string() == "---" ? gen_separator : gen_wxMenuItem, parent);
+        parent->adoptChild(new_tool);
+        for (auto& iter: tool.children())
+        {
+            if (iter.name() == "label")
+            {
+                new_tool->set_value(prop_label, iter.text().as_string());
+            }
+            else if (iter.name() == "id")
+            {
+                tt_string id_value = iter.text().as_string();
+                if (m_language == GEN_LANG_PYTHON)
+                {
+                    id_value.Replace(".", "", true);
+                }
+                new_tool->set_value(prop_id, id_value);
+            }
+            else if (iter.name() == "short_help")
+            {
+                new_tool->set_value(prop_tooltip, iter.text().as_string());
+            }
+            else if (iter.name() == "handler")
+            {
+                if (auto* event = new_tool->getEvent("wxEVT_TOOL"); event)
+                {
+                    event->set_value(iter.text().as_string());
+                }
+            }
+        }
+    }
 }

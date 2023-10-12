@@ -68,6 +68,7 @@ public:
     FontProperty& PointSize(double point_size)
     {
         m_pointSize = point_size;
+        m_isDefGuiFont = false;
         return *this;
     }
 
@@ -83,11 +84,15 @@ public:
     FontProperty& Family(wxFontFamily family)
     {
         m_family = family;
+        if (m_family != wxFONTFAMILY_DEFAULT)
+            m_isDefGuiFont = false;
         return *this;
     }
     FontProperty& FaceName(const wxString& faceName)
     {
         m_faceName = faceName;
+        if (m_faceName.size())
+            m_isDefGuiFont = false;
         return *this;
     }
 

@@ -481,6 +481,20 @@ bool WxGlade::HandleUnknownProperty(const pugi::xml_node& xml_obj, Node* node, N
     {
         // wxGlade adds these even when the exact same buttons
     }
+    else if (node_name == "scrollable")
+    {
+        // [Randalphwa - 10-11-2023]
+        // wxGlade will set this to 1 for wxScrolledWindow. In the wxGlade interface (1.1.0) if
+        // you uncheck this it will generate an Error in wxGlade, but will generate code and
+        // XML file using wxPanel without this property. Unless it's used for something besides
+        // wxScrolledWindow, I think we can just ignore it.
+        return true;
+    }
+    else if (node_name == "menubar")
+    {
+        // This gets set to 1 if the form has a menubar. We don't need to do anything with it.
+        return true;
+    }
     return false;
 }
 

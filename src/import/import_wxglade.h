@@ -25,7 +25,12 @@ public:
 
 protected:
     NodeSharedPtr CreateGladeNode(pugi::xml_node& xml_obj, Node* parent, Node* sizeritem = nullptr);
+
+    // parent should be a wxMenuBar
     void CreateMenus(pugi::xml_node& xml_obj, Node* parent);
+
+    // parent should be a wxToolBar
+    void CreateToolbar(pugi::xml_node& xml_obj, Node* parent);
 
 private:
 };

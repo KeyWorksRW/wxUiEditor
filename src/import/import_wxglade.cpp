@@ -230,6 +230,18 @@ NodeSharedPtr WxGlade::CreateGladeNode(pugi::xml_node& xml_obj, Node* parent, No
         CreateMenus(xml_obj, new_node.get());
         return new_node;
     }
+        if (getGenName == gen_wxMenuBar)
+        {
+            parent->adoptChild(new_node);
+            CreateMenus(xml_obj, new_node.get());
+            return new_node;
+        }
+        else if (getGenName == gen_wxToolBar)
+        {
+            parent->adoptChild(new_node);
+            CreateToolbar(xml_obj, new_node.get());
+            return new_node;
+        }
 
     if (getGenName == gen_BookPage && new_node)
     {
@@ -670,6 +682,49 @@ void WxGlade::CreateMenus(pugi::xml_node& xml_obj, Node* parent)
                     {
                         event->set_value(iter.text().as_string());
                     }
+                }
+            }
+        }
+    }
+}
+
+void WxGlade::CreateToolbar(pugi::xml_node& xml_obj, Node* parent)
+{
+    auto tools = xml_obj.child("tools");
+    ASSERT(tools);
+    if (!tools)
+        return;
+
+    for (auto& tool: tools.children("tool"))
+    {
+        auto id = tool.child("id");
+
+        auto new_tool = NodeCreation.createNode(id.text().as_string() == "---" ? gen_separator : gen_wxMenuItem, parent);
+        parent->adoptChild(new_tool);
+        for (auto& iter: tool.children())
+        {
+            if (iter.name() == "label")
+            {
+                new_tool->set_value(prop_label, iter.text().as_string());
+            }
+            else if (iter.name() == "id")
+            {
+                tt_string id_value = iter.text().as_string();
+                if (m_language == GEN_LANG_PYTHON)
+                {
+                    id_value.Replace(".", "", true);
+                }
+                new_tool->set_value(prop_id, id_value);
+            }
+            else if (iter.name() == "short_help")
+            {
+                new_tool->set_value(prop_tooltip, iter.text().as_string());
+            }
+            else if (iter.name() == "handler")
+            {
+                if (auto* event = new_tool->getEvent("wxEVT_TOOL"); event)
+                {
+                    event->set_value(iter.text().as_string());
                 }
             }
         }

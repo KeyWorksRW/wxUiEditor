@@ -558,6 +558,10 @@ void ImportXML::ProcessAttributes(const pugi::xml_node& xml_obj, Node* new_node)
                 if (auto prop = new_node->getPropPtr(prop_class_name); prop)
                 {
                     prop->set_value(iter.value());
+                    if (prop->as_string().empty())
+                    {
+                        prop->set_value(iter.value());
+                    }
                 }
             }
             else if (iter.as_string().starts_with("wxID_"))

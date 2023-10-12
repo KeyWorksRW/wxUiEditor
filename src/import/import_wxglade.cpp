@@ -173,8 +173,10 @@ NodeSharedPtr WxGlade::CreateGladeNode(pugi::xml_node& xml_obj, Node* parent, No
 
     bool isBitmapButton = (object_name == "wxBitmapButton");
     auto getGenName = ConvertToGenName(object_name, parent);
+    bool object_not_generator = false;
     if (getGenName == gen_unknown)
     {
+        object_not_generator = true;
         // If we don't recognize the class, then try the base= attribute
         auto base = xml_obj.attribute("base").as_string();
         if (base == "EditFrame")
@@ -217,6 +219,11 @@ NodeSharedPtr WxGlade::CreateGladeNode(pugi::xml_node& xml_obj, Node* parent, No
     }
 
     auto new_node = NodeCreation.createNode(getGenName, parent);
+    if (new_node && object_not_generator)
+    {
+        new_node->set_value(prop_class_name, object_name);
+    }
+
     if (getGenName == gen_BookPage && new_node)
     {
         if (!xml_obj.attribute("name").empty())

@@ -224,6 +224,13 @@ NodeSharedPtr WxGlade::CreateGladeNode(pugi::xml_node& xml_obj, Node* parent, No
         new_node->set_value(prop_class_name, object_name);
     }
 
+    if (getGenName == gen_wxMenuBar && new_node)
+    {
+        parent->adoptChild(new_node);
+        CreateMenus(xml_obj, new_node.get());
+        return new_node;
+    }
+
     if (getGenName == gen_BookPage && new_node)
     {
         if (!xml_obj.attribute("name").empty())
@@ -387,6 +394,8 @@ NodeSharedPtr WxGlade::CreateGladeNode(pugi::xml_node& xml_obj, Node* parent, No
     }
 
     auto child = xml_obj.child("object");
+    if (!child && new_node->isGen(gen_wxMenuBar))
+        child = xml_obj.child("menus");
     if (NodeCreation.isOldHostType(new_node->declName()))
     {
         ProcessAttributes(xml_obj, new_node.get());
@@ -413,7 +422,6 @@ NodeSharedPtr WxGlade::CreateGladeNode(pugi::xml_node& xml_obj, Node* parent, No
     else if (parent)
     {
         parent->adoptChild(new_node);
-
         ProcessAttributes(xml_obj, new_node.get());
         ProcessProperties(xml_obj, new_node.get());
     }
@@ -527,7 +535,7 @@ bool WxGlade::HandleUnknownProperty(const pugi::xml_node& xml_obj, Node* node, N
 }
 
 // Called by ImportXML -- return true if the property is processed. Use this when the property conversion
-// is incorrect for the type of note being processed.
+// is different in wxGlade then for other XML projects for the type of node being processed.
 bool WxGlade::HandleNormalProperty(const pugi::xml_node& xml_obj, Node* node, Node* parent, GenEnum::PropName wxue_prop)
 {
     if (node->isGen(gen_sizeritem))

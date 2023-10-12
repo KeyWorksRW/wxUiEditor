@@ -488,6 +488,27 @@ bool WxGlade::HandleUnknownProperty(const pugi::xml_node& xml_obj, Node* node, N
     {
         // wxGlade adds these even when the exact same buttons
     }
+    else if (node_name == "option" && node->isGen(gen_sizeritem))
+    {
+        node->set_value(prop_proportion, xml_obj.text().as_string());
+        return true;
+    }
+    else if (node_name == "scroll_rate")
+    {
+        tt_string param = xml_obj.text().as_string();
+        tt_view_vector params(param, ',');
+        node->set_value(prop_scroll_rate_x, params[0]);
+        node->set_value(prop_scroll_rate_y, params[1]);
+        return true;
+    }
+    else if (node_name == "extracode_post")
+    {
+        if (m_language == GEN_LANG_PYTHON)
+            node->set_value(prop_python_insert, xml_obj.text().as_string());
+        else if (m_language == GEN_LANG_CPLUSPLUS)
+            node->set_value(prop_source_preamble, xml_obj.text().as_string());
+        return true;
+    }
     else if (node_name == "scrollable")
     {
         // [Randalphwa - 10-11-2023]

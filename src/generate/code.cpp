@@ -1879,11 +1879,19 @@ Code& Code::GenFont(GenEnum::PropName prop_name, tt_string_view font_function)
         EndFunction();
 
         if (fontprop.GetSymbolSize() != wxFONTSIZE_MEDIUM)
-            Eol().Str("font").VariableMethod("SetSymbolicSize(").Add(font_symbol_pairs.GetValue(fontprop.GetSymbolSize())).EndFunction();
+            Eol()
+                .Str("font")
+                .VariableMethod("SetSymbolicSize(")
+                .Add(font_symbol_pairs.GetValue(fontprop.GetSymbolSize()))
+                .EndFunction();
         if (fontprop.GetStyle() != wxFONTSTYLE_NORMAL)
             Eol().Str("font").VariableMethod("SetStyle(").Add(font_style_pairs.GetValue(fontprop.GetStyle())).EndFunction();
         if (fontprop.GetWeight() != wxFONTWEIGHT_NORMAL)
-            Eol().Str("font").VariableMethod("SetWeight(").Add(font_weight_pairs.GetValue(fontprop.GetWeight())).EndFunction();
+            Eol()
+                .Str("font")
+                .VariableMethod("SetWeight(")
+                .Add(font_weight_pairs.GetValue(fontprop.GetWeight()))
+                .EndFunction();
         if (fontprop.IsUnderlined())
             Eol().Str("font").VariableMethod("SetUnderlined(").True().EndFunction();
         if (fontprop.IsStrikethrough())

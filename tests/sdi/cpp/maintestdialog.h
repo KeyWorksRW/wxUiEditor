@@ -174,7 +174,11 @@ protected:
     wxStaticText* m_staticText_2;
     wxStaticText* m_staticText_3;
     wxStaticText* m_staticText_4;
+    wxStaticText* m_static_text;
     wxStaticText* staticText_5;
+    wxStaticText* static_text2;
+    wxStaticText* static_text3;
+    wxStaticText* static_text;
     wxStyledTextCtrl* m_scintilla;
     wxTextCtrl* m_text_ctrl;
     wxTimePickerCtrl* m_timePicker;

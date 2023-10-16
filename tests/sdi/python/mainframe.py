@@ -310,6 +310,9 @@ class MainFrame(wx.Frame):
         dlg.ShowModal()
         dlg.Destroy()
 
+    def on_tools_dlg(self, event):
+        event.Skip()
+
 class MyApp(wx.App):
     def OnInit(self):
         frame = MainFrame(None)

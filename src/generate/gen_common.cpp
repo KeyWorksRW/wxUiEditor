@@ -658,7 +658,7 @@ bool GenerateBundleCode(const tt_string& description, tt_string& code)
             }
             else if (bundle->lst_filenames.size() > 2)
             {
-                code << "{\n\t\t\twxVector<wxBitmap> bitmaps;\n";
+                code << "{\n\t\twxVector<wxBitmap> bitmaps;\n";
                 for (auto& iter: bundle->lst_filenames)
                 {
                     tt_string name(iter.filename());
@@ -672,7 +672,7 @@ bool GenerateBundleCode(const tt_string& description, tt_string& code)
                             name = "wxue_img::" + embed->array_name;
                         }
                     }
-                    code << "\t\t\tbitmaps.push_back(wxueImage(" << name << ", sizeof(" << name << ")));\n";
+                    code << "\t\tbitmaps.push_back(wxueImage(" << name << ", sizeof(" << name << ")));\n";
                 }
 
                 // Return true to indicate a code block was generated

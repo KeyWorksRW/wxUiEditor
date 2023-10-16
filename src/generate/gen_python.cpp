@@ -731,9 +731,25 @@ bool PythonBundleCode(Code& code, GenEnum::PropName prop)
         }
         else
         {
-            FAIL_MSG("Unexpected number of images in bundle -- should be <= 2");
-            code.Add("wxNullBitmap");
-            return false;
+            code += "wx.BitmapBundle.FromBitmaps([";
+            for (size_t idx = 0; idx < bundle->lst_filenames.size(); ++idx)
+            {
+                if (parts[IndexType].starts_with("Embed"))
+                {
+                    if (auto embed = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[idx]); embed)
+                    {
+                        code.CheckLineLength(embed->array_name.size() + sizeof(".Bitmap"));
+                        AddPythonImageName(code, embed);
+
+                        code += ".Bitmap";
+                        if (idx < bundle->lst_filenames.size() - 1)
+                        {
+                            code.Comma();
+                        }
+                    }
+                }
+            }
+            code += "])";
         }
     }
     else

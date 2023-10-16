@@ -128,7 +128,7 @@ void BookCtorAddImagelist(Code& code)
         code.Eol(eol_if_needed);
         if (code.is_cpp())
         {
-            code.Eol(eol_if_needed) << "wxBookCtrlBase::Images bundle_list;";
+            code.Eol(eol_if_needed) << "wxWithImages::Images bundle_list;";
             for (const auto& child_node: code.node()->getChildNodePtrs())
             {
                 if (child_node->hasValue(prop_bitmap))
@@ -137,7 +137,7 @@ void BookCtorAddImagelist(Code& code)
                     if (GenerateBundleCode(child_node->as_string(prop_bitmap), bundle_code))
                     {
                         code.Eol() << bundle_code;
-                        code.Eol() << "bundle_list.push_back(wxBitmapBundle::FromBitmaps(bitmaps));";
+                        code.Eol() << "\tbundle_list.push_back(wxBitmapBundle::FromBitmaps(bitmaps));";
                         // Close the brace that was opened by GenerateBundleCode()
                         code.Eol() << "}";
                     }
@@ -149,31 +149,36 @@ void BookCtorAddImagelist(Code& code)
                 }
             }
         }
-        else  // wxPython code
+        else if (code.is_python() || code.is_ruby())
         {
-            int bitmap_index = 0;
+            code.Eol().Str("bundle_list = [");
+            code.Indent();
             for (const auto& child_node: code.node()->getChildNodePtrs())
             {
                 if (child_node->hasValue(prop_bitmap))
                 {
-                    Code bundle_code(child_node.get(), GEN_LANG_PYTHON);
+                    Code bundle_code(child_node.get(), code.get_language());
                     bundle_code.Bundle(prop_bitmap);
-                    code.Eol().Str("bundle_").itoa(++bitmap_index).Str(" = ") << bundle_code;
-                }
-            }
-            code.Eol().Str("bundle_list = [");
-            code.Indent();
-            for (int index = 1; index <= bitmap_index; ++index)
-            {
-                if (index > 1)
-                {
+                    code.Eol() << bundle_code;
                     code.Str(",");
                 }
-                code.Eol();
-                code.Str("bundle_").itoa(index);
+            }
+
+            if (code.back() == ',')
+            {
+                // There may have been a line break, so remove that too
+                code.pop_back();
+                while (code.back() == '\t')
+                    code.pop_back();
+                if (code.back() == '\n')
+                    code.pop_back();
             }
             code.Unindent();
-            code.Eol().Str("]");
+            code.Eol(eol_if_needed).Str("]");
+        }
+        else
+        {
+            FAIL_MSG("Unknown language");
         }
 
         code.Eol().NodeName().Function("SetImages(bundle_list").EndFunction();

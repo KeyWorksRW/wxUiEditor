@@ -1867,19 +1867,27 @@ Code& Code::GenFont(GenEnum::PropName prop_name, tt_string_view font_function)
     if (fontprop.isDefGuiFont())
     {
         OpenBrace();
-        Add("wxFont font(").Add("wxSystemSettings").ClassMethod("GetFont(").Add("wxSYS_DEFAULT_GUI_FONT").Str(")");
+        if (is_cpp())
+        {
+            Add("wxFont font(");
+        }
+        else
+        {
+            Add("font").CreateClass(false, "wxFont");
+        }
+        Add("wxSystemSettings").ClassMethod("GetFont(").Add("wxSYS_DEFAULT_GUI_FONT").Str(")");
         EndFunction();
 
         if (fontprop.GetSymbolSize() != wxFONTSIZE_MEDIUM)
-            Eol().Str("font.SetSymbolicSize(").Add(font_symbol_pairs.GetValue(fontprop.GetSymbolSize())).EndFunction();
+            Eol().Str("font").VariableMethod("SetSymbolicSize(").Add(font_symbol_pairs.GetValue(fontprop.GetSymbolSize())).EndFunction();
         if (fontprop.GetStyle() != wxFONTSTYLE_NORMAL)
-            Eol().Str("font.SetStyle(").Add(font_style_pairs.GetValue(fontprop.GetStyle())).EndFunction();
+            Eol().Str("font").VariableMethod("SetStyle(").Add(font_style_pairs.GetValue(fontprop.GetStyle())).EndFunction();
         if (fontprop.GetWeight() != wxFONTWEIGHT_NORMAL)
-            Eol().Str("font.SetWeight(").Str(font_weight_pairs.GetValue(fontprop.GetWeight())).EndFunction();
+            Eol().Str("font").VariableMethod("SetWeight(").Add(font_weight_pairs.GetValue(fontprop.GetWeight())).EndFunction();
         if (fontprop.IsUnderlined())
-            Eol().Str("font.SetUnderlined(").True().EndFunction();
+            Eol().Str("font").VariableMethod("SetUnderlined(").True().EndFunction();
         if (fontprop.IsStrikethrough())
-            Eol().Str("font.SetStrikethrough(").True().EndFunction();
+            Eol().Str("font").VariableMethod("SetStrikethrough(").True().EndFunction();
         Eol();
 
         if (m_node->isForm())
@@ -1903,7 +1911,16 @@ Code& Code::GenFont(GenEnum::PropName prop_name, tt_string_view font_function)
     {
         const auto point_size = fontprop.GetFractionalPointSize();
         OpenBrace();
-        Add("wxFontInfo font_info(");
+
+        if (is_cpp())
+        {
+            Add("wxFontInfo font_info(");
+        }
+        else
+        {
+            Add("font_info").CreateClass(false, "wxFontInfo");
+        }
+
         if (point_size != static_cast<int>(point_size))  // is there a fractional value?
         {
             if (is_cpp() && Project.as_string(prop_wxWidgets_version) == "3.1")
@@ -1955,19 +1972,19 @@ Code& Code::GenFont(GenEnum::PropName prop_name, tt_string_view font_function)
             }
         }
 
-        Eol(eol_if_needed).Str("font_info.");
+        Eol(eol_if_needed).Str("font_info");
         if (fontprop.GetFaceName().size() && fontprop.GetFaceName() != "default")
-            Str("FaceName(").QuotedString(tt_string() << fontprop.GetFaceName().utf8_string()) += ").";
+            VariableMethod("FaceName(").QuotedString(tt_string() << fontprop.GetFaceName().utf8_string()) += ")";
         if (fontprop.GetFamily() != wxFONTFAMILY_DEFAULT)
-            Str("Family(").Str(font_family_pairs.GetValue(fontprop.GetFamily())) += ").";
+            VariableMethod("Family(").Add(font_family_pairs.GetValue(fontprop.GetFamily())) += ")";
         if (fontprop.GetStyle() != wxFONTSTYLE_NORMAL)
-            Str("Style(").Str(font_style_pairs.GetValue(fontprop.GetStyle())) += ").";
+            VariableMethod("Style(").Add(font_style_pairs.GetValue(fontprop.GetStyle())) += ")";
         if (fontprop.GetWeight() != wxFONTWEIGHT_NORMAL)
-            Str("Weight(").Str(font_weight_pairs.GetValue(fontprop.GetWeight())) += ").";
+            VariableMethod("Weight(").Add(font_weight_pairs.GetValue(fontprop.GetWeight())) += ")";
         if (fontprop.IsUnderlined())
-            Str("Underlined().");
+            VariableMethod("Underlined()");
         if (fontprop.IsStrikethrough())
-            Str("Strikethrough()");
+            VariableMethod("Strikethrough()");
 
         if (back() == '.')
         {
@@ -1979,11 +1996,11 @@ Code& Code::GenFont(GenEnum::PropName prop_name, tt_string_view font_function)
 
         if (m_node->isForm())
         {
-            FormFunction(font_function).Add("wxFont(font_info)").EndFunction();
+            FormFunction(font_function).Object("wxFont").Str("font_info").Str(")").EndFunction();
         }
         else
         {
-            NodeName().Function(font_function).Add("wxFont(font_info)").EndFunction();
+            NodeName().Function(font_function).Object("wxFont").Str("font_info").Str(")").EndFunction();
         }
         CloseBrace();
     }

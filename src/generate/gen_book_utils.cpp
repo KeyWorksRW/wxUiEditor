@@ -128,7 +128,7 @@ void BookCtorAddImagelist(Code& code)
         code.Eol(eol_if_needed);
         if (code.is_cpp())
         {
-            code.Eol(eol_if_needed) << "wxBookCtrlBase::Images bundle_list;";
+            code.Eol(eol_if_needed) << "wxWithImages::Images bundle_list;";
             for (const auto& child_node: code.node()->getChildNodePtrs())
             {
                 if (child_node->hasValue(prop_bitmap))

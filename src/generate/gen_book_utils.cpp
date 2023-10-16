@@ -149,7 +149,7 @@ void BookCtorAddImagelist(Code& code)
                 }
             }
         }
-        else if (code.is_python())
+        else if (code.is_python() || code.is_ruby())
         {
             code.Eol().Str("bundle_list = [");
             code.Indent();
@@ -157,7 +157,7 @@ void BookCtorAddImagelist(Code& code)
             {
                 if (child_node->hasValue(prop_bitmap))
                 {
-                    Code bundle_code(child_node.get(), GEN_LANG_PYTHON);
+                    Code bundle_code(child_node.get(), code.get_language());
                     bundle_code.Bundle(prop_bitmap);
                     code.Eol() << bundle_code;
                     code.Str(",");
@@ -176,6 +176,11 @@ void BookCtorAddImagelist(Code& code)
             code.Unindent();
             code.Eol(eol_if_needed).Str("]");
         }
+        else
+        {
+            FAIL_MSG("Unknown language");
+        }
+
 
         code.Eol().NodeName().Function("SetImages(bundle_list").EndFunction();
 

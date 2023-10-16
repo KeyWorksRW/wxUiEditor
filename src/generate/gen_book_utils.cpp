@@ -181,7 +181,6 @@ void BookCtorAddImagelist(Code& code)
             FAIL_MSG("Unknown language");
         }
 
-
         code.Eol().NodeName().Function("SetImages(bundle_list").EndFunction();
 
         if (code.is_cpp() && Project.as_string(prop_wxWidgets_version) == "3.1")

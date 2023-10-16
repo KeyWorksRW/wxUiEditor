@@ -90,7 +90,7 @@ if (BUILD_FORK)
 elseif(BUILD_CUSTOM)
     set (widget_dir ${CMAKE_CURRENT_LIST_DIR}/../../wxWidgets/wx_custom)
 else()
-    set (widget_dir ${CMAKE_CURRENT_LIST_DIR}/../../wxWidgets)
+    set (widget_dir ${CMAKE_CURRENT_LIST_DIR}/../../wxWidgets/wx_3_2)
 endif()
 
 

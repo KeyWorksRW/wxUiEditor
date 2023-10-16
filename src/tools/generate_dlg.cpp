@@ -73,9 +73,11 @@ bool GenerateDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 /////////////////// Non-generated Copyright/License Info ////////////////////
 // Purpose:   Dialog for choosing and generating specific language file(s)
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2021-2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2021-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+
+#include <wx/config.h>  // wxConfig base header
 
 #include "gen_base.h"         // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
 #include "gen_results.h"      // Code generation file writing functions
@@ -85,6 +87,14 @@ bool GenerateDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 #include "project_handler.h"  // ProjectHandler class
 
 #include "../wxui/dlg_gen_results.h"
+
+#if defined(INTERNAL_TESTING)
+static bool gen_base_code = true;
+static bool gen_derived_code = false;
+static bool gen_python_code = false;
+static bool gen_ruby_code = false;
+static bool gen_xrc_code = false;
+#endif
 
 // This generates the base class files. For the derived class files, see OnGenInhertedClass()
 // in generate/gen_codefiles.cpp
@@ -133,27 +143,52 @@ void MainFrame::OnGenerateCode(wxCommandEvent&)
             {
                 GenerateCodeFiles(results);
                 code_generated = true;
+#if defined(INTERNAL_TESTING)
+                gen_base_code = true;
+#endif
             }
             if (dlg.is_gen_inherited())
             {
                 GenInhertedClass(results);
                 code_generated = true;
+#if defined(INTERNAL_TESTING)
+                gen_derived_code = true;
+#endif
             }
             if (dlg.is_gen_python())
             {
                 GeneratePythonFiles(results);
                 code_generated = true;
+#if defined(INTERNAL_TESTING)
+                gen_python_code = true;
+#endif
             }
             if (dlg.is_gen_ruby())
             {
                 GenerateRubyFiles(results);
                 code_generated = true;
+#if defined(INTERNAL_TESTING)
+                gen_ruby_code = true;
+#endif
             }
             if (dlg.is_gen_xrc())
             {
                 GenerateXrcFiles(results);
                 code_generated = true;
+#if defined(INTERNAL_TESTING)
+                gen_xrc_code = true;
+#endif
             }
+
+#if defined(INTERNAL_TESTING)
+            auto* config = wxConfig::Get();
+            config->SetPath("/preferences");
+            config->Write("gen_base_code", gen_base_code);
+            config->Write("gen_python_code", gen_python_code);
+            config->Write("gen_ruby_code", gen_ruby_code);
+            config->Write("gen_xrc_code", gen_xrc_code);
+            config->SetPath("/");
+#endif
         }
     }
 
@@ -194,6 +229,16 @@ void MainFrame::OnGenerateCode(wxCommandEvent&)
 
 void GenerateDlg::OnInit(wxInitDialogEvent& event)
 {
+#if defined(INTERNAL_TESTING)
+    auto* config = wxConfig::Get();
+    config->SetPath("/preferences");
+    gen_base_code = config->ReadBool("gen_base_code", true);
+    gen_python_code = config->ReadBool("gen_python_code", false);
+    gen_ruby_code = config->ReadBool("gen_ruby_code", false);
+    gen_xrc_code = config->ReadBool("gen_xrc_code", false);
+    config->SetPath("/");
+#endif
+
     auto output_type = Project.getOutputType();
 
     auto language = Project.getCodePreference(wxGetFrame().getSelectedNode());
@@ -286,6 +331,12 @@ void GenerateDlg::OnInit(wxInitDialogEvent& event)
         // We get here if a new language preference has been added but we haven't updated this
         // dialog to support it yet.
     }
+#if defined(INTERNAL_TESTING)
+    m_gen_python_code = gen_python_code;
+    m_gen_ruby_code = gen_ruby_code;
+    m_gen_base_code = gen_base_code;
+    m_gen_xrc_code = gen_xrc_code;
+#endif
 
     // Some checkboxes may be hidden at this point, so we need to resize the dialog to fit.
 

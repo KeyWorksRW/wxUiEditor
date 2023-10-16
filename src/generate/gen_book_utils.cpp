@@ -149,31 +149,32 @@ void BookCtorAddImagelist(Code& code)
                 }
             }
         }
-        else  // wxPython code
+        else if (code.is_python())
         {
-            int bitmap_index = 0;
+            code.Eol().Str("bundle_list = [");
+            code.Indent();
             for (const auto& child_node: code.node()->getChildNodePtrs())
             {
                 if (child_node->hasValue(prop_bitmap))
                 {
                     Code bundle_code(child_node.get(), GEN_LANG_PYTHON);
                     bundle_code.Bundle(prop_bitmap);
-                    code.Eol().Str("bundle_").itoa(++bitmap_index).Str(" = ") << bundle_code;
-                }
-            }
-            code.Eol().Str("bundle_list = [");
-            code.Indent();
-            for (int index = 1; index <= bitmap_index; ++index)
-            {
-                if (index > 1)
-                {
+                    code.Eol() << bundle_code;
                     code.Str(",");
                 }
-                code.Eol();
-                code.Str("bundle_").itoa(index);
+            }
+
+            if (code.back() == ',')
+            {
+                // There may have been a line break, so remove that too
+                code.pop_back();
+                while (code.back() == '\t')
+                    code.pop_back();
+                if (code.back() == '\n')
+                    code.pop_back();
             }
             code.Unindent();
-            code.Eol().Str("]");
+            code.Eol(eol_if_needed).Str("]");
         }
 
         code.Eol().NodeName().Function("SetImages(bundle_list").EndFunction();

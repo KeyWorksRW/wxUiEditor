@@ -663,6 +663,21 @@ Code& Code::ClassMethod(tt_string_view function_name)
     return *this;
 }
 
+Code& Code::VariableMethod(tt_string_view function_name)
+{
+    *this += '.';
+    if (is_ruby())
+    {
+        *this += ConvertToSnakeCase(function_name);
+    }
+    else
+    {
+        *this += function_name;
+    }
+
+    return *this;
+}
+
 Code& Code::FormFunction(tt_string_view text)
 {
     if (is_python())

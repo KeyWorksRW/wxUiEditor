@@ -300,6 +300,12 @@ public:
     // Ruby changes the function to snake_case.
     Code& ClassMethod(tt_string_view function_name);
 
+    // Like ClassMethod(), but assumes a variable not a class. C++ and Python add "." and the
+    // name.
+    //
+    // Ruby adds "." and changes the function to snake_case.
+    Code& VariableMethod(tt_string_view function_name);
+
     // For C++, this simply calls the function. For Python it prefixes "self." to the
     // function name. Ruby changes the function to snake_case.
     Code& FormFunction(tt_string_view text);

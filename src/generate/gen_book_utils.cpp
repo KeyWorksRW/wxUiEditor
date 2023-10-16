@@ -137,7 +137,7 @@ void BookCtorAddImagelist(Code& code)
                     if (GenerateBundleCode(child_node->as_string(prop_bitmap), bundle_code))
                     {
                         code.Eol() << bundle_code;
-                        code.Eol() << "bundle_list.push_back(wxBitmapBundle::FromBitmaps(bitmaps));";
+                        code.Eol() << "\tbundle_list.push_back(wxBitmapBundle::FromBitmaps(bitmaps));";
                         // Close the brace that was opened by GenerateBundleCode()
                         code.Eol() << "}";
                     }

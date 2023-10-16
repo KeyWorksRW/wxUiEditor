@@ -14,8 +14,8 @@ This does _not_ mean that the class is fully supported in every language -- this
 | wxChoicebook | yes | yes | yes | --- | ../src/generate/gen_choicebook.cpp |
 | wxListbook | yes | yes | yes | --- | ../src/generate/gen_listbook.cpp |
 | wxNotebook | yes | yes | yes | --- | ../src/generate/gen_notebook.cpp |
-| wxSimplebook | yes | ??? | yes | --- | ../src/generate/gen_simplebook.cpp |
-| wxToolbook | yes | yes | --- | --- | ../src/generate/gen_toolbook.cpp |
+| wxSimplebook | yes | yes | yes | --- | ../src/generate/gen_simplebook.cpp |
+| wxToolbook | yes | yes | yes | --- | ../src/generate/gen_toolbook.cpp |
 | wxTreebook | yes | yes | yes | yes | ../src/generate/gen_treebook.cpp |
 
 ### Forms

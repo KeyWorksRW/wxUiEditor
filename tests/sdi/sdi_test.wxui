@@ -339,7 +339,8 @@
               class="wxBoxSizer"
               orientation="wxVERTICAL"
               var_name="page_sizer_1"
-              minimum_size="-1,-1d">
+              minimum_size="-1,-1d"
+              flags="wxEXPAND">
               <node
                 class="wxTextCtrl"
                 hint="wxTextCtrl"
@@ -348,6 +349,30 @@
                 id="TXT_CTRL"
                 flags="wxEXPAND"
                 wxEVT_TEXT="[this](wxCommandEvent&amp;)@@{@@OnEventName(&quot;wxTextCtrl: wxEVT_TEXT&quot;);@@}[python:lambda]self.OnEventName(&quot;wx.TextCtrl: wx.EVT_TEXT&quot;)" />
+              <node
+                class="wxGridSizer"
+                var_name="grid_sizer2">
+                <node
+                  class="wxStaticText"
+                  label="12-pt default font"
+                  var_name="static_text"
+                  font="Segoe UI,11.5" />
+                <node
+                  class="wxStaticText"
+                  label="Comic Sans MS"
+                  var_name="m_static_text"
+                  font="Comic Sans MS,10.5" />
+                <node
+                  class="wxStaticText"
+                  label="italic"
+                  var_name="static_text2"
+                  font="normal size,italic" />
+                <node
+                  class="wxStaticText"
+                  label="bold, underlined Times New Roman, 12.5"
+                  var_name="static_text3"
+                  font="Times New Roman,12.5,,bold,,underlined" />
+              </node>
               <node
                 class="wxRichTextCtrl"
                 hint="wxRichTextCtrl"

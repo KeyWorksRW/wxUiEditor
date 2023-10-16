@@ -75,6 +75,42 @@ bool MainTestDialog::Create(wxWindow* parent, wxWindowID id, const wxString& tit
     m_text_ctrl->SetHint("wxTextCtrl");
     page_sizer_1->Add(m_text_ctrl, wxSizerFlags().Expand().Border(wxALL));
 
+    auto* grid_sizer2 = new wxGridSizer(2, 0, 0);
+
+    static_text = new wxStaticText(page_2, wxID_ANY, "12-pt default font");
+    {
+        wxFontInfo font_info(11.5);
+        font_info.FaceName("Segoe UI");
+        static_text->SetFont(wxFont(font_info));
+    }
+    grid_sizer2->Add(static_text, wxSizerFlags().Border(wxALL));
+
+    m_static_text = new wxStaticText(page_2, wxID_ANY, "Comic Sans MS");
+    {
+        wxFontInfo font_info(10.5);
+        font_info.FaceName("Comic Sans MS");
+        m_static_text->SetFont(wxFont(font_info));
+    }
+    grid_sizer2->Add(m_static_text, wxSizerFlags().Border(wxALL));
+
+    static_text2 = new wxStaticText(page_2, wxID_ANY, "italic");
+    {
+        wxFont font(wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT));
+        font.SetStyle(wxFONTSTYLE_ITALIC);
+        static_text2->SetFont(font);
+    }
+    grid_sizer2->Add(static_text2, wxSizerFlags().Border(wxALL));
+
+    static_text3 = new wxStaticText(page_2, wxID_ANY, "bold, underlined Times New Roman, 12.5");
+    {
+        wxFontInfo font_info(12.5);
+        font_info.FaceName("Times New Roman").Weight(wxFONTWEIGHT_BOLD).Underlined();
+        static_text3->SetFont(wxFont(font_info));
+    }
+    grid_sizer2->Add(static_text3, wxSizerFlags().Border(wxALL));
+
+    page_sizer_1->Add(grid_sizer2, wxSizerFlags().Border(wxALL));
+
     m_richText = new wxRichTextCtrl(page_2, ID_RICHTEXT, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxRE_MULTILINE|
         wxVSCROLL | wxHSCROLL | wxNO_BORDER | wxWANTS_CHARS);
     m_richText->SetHint("wxRichTextCtrl");

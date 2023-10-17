@@ -15,7 +15,7 @@ require_relative 'images'
 require 'base64'
 
 class MainFrame < Wx::Frame
-  def initialize(parent, id = Wx::ID_ANY, title = 'pytest',
+  def initialize(parent, id = Wx::ID_ANY, title = 'SDI Tests',
                  pos = Wx::DEFAULT_POSITION, size = Wx::Size.new(500, 300),
                  style = Wx::DEFAULT_FRAME_STYLE|Wx::TAB_TRAVERSAL)
 
@@ -156,7 +156,7 @@ class MainFrame < Wx::Frame
     centre(Wx::BOTH)
 
     # Event handlers
-    evt_menu(menuQuit.get_id, :OnQuit)
+    evt_menu(menuQuit.get_id, :on_quit)
     evt_menu(menu_item_3.get_id, :OnMainTestDlg)
     evt_menu(menu_item_4.get_id, :OnBookTestDlg)
     evt_menu(menu_item_2.get_id, :OnPythonDlg)
@@ -254,8 +254,8 @@ def OnPythonDlg(event)
   event.skip
 end
 
-def OnQuit(event)
-  event.skip
+def on_quit(event)
+  close(true)
 end
 
 def OnWizard(event)

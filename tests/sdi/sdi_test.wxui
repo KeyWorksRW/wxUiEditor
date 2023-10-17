@@ -94,7 +94,7 @@
     <node
       class="wxFrame"
       class_name="MainFrame"
-      title="pytest"
+      title="SDI Tests"
       base_file="mainframe"
       derived_class_name="MainFrame"
       derived_file="../ui/mainframe"
@@ -191,7 +191,7 @@
             label="&amp;Quit"
             stock_id="wxID_EXIT"
             var_name="menuQuit"
-            wxEVT_MENU="OnQuit" />
+            wxEVT_MENU="OnQuit[python:on_quit][ruby:on_quit]" />
         </node>
         <node
           class="wxMenu"

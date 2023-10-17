@@ -68,7 +68,7 @@ wxDialog_png = PyEmbeddedImage(
 
 class MainFrame(wx.Frame):
 
-    def __init__(self, parent, id=wx.ID_ANY, title="pytest", pos=
+    def __init__(self, parent, id=wx.ID_ANY, title="SDI Tests", pos=
                 wx.DefaultPosition, size=wx.Size(500, 300),
                 style=wx.DEFAULT_FRAME_STYLE|wx.TAB_TRAVERSAL,
                 name=wx.FrameNameStr):
@@ -216,7 +216,7 @@ class MainFrame(wx.Frame):
         self.Centre(wx.BOTH)
 
         # Bind Event handlers
-        self.Bind(wx.EVT_MENU, self.OnQuit, id=wx.ID_EXIT)
+        self.Bind(wx.EVT_MENU, self.on_quit, id=wx.ID_EXIT)
         self.Bind(wx.EVT_MENU, self.OnMainTestDlg, id=menu_item_3.GetId())
         self.Bind(wx.EVT_MENU, self.OnBookTestDlg, id=menu_item_4.GetId())
         self.Bind(wx.EVT_MENU, self.OnPythonDlg, id=menu_item_2.GetId())
@@ -266,7 +266,7 @@ class MainFrame(wx.Frame):
     def OnOtherCtrls(self, event):
         event.Skip()
 
-    def OnQuit(self, event):
+    def on_quit(self, event):
         self.Close()
 
     def OnRibbonDialog(self, event):

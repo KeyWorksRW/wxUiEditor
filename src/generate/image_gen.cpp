@@ -435,11 +435,75 @@ void BaseCodeGenerator::GeneratePythonImagesForm()
     m_source->writeLine();
 }
 
+inline constexpr const auto txt_ruby_get_bundle =
+    R"===(
+# Loads image(s) from a string and returns a Wx::BitmapBundle object.
+def wxue_get_bundle(image_name1, image_name2 = nil, image_name3 = nil)
+  image1 = Wx::Image.new
+  image1.load_stream(StringIO.new(image_name1))
+  if (image_name2)
+    image2 = Wx::Image.new
+    image2.load_stream(StringIO.new(image_name2))
+    if (image_name3)
+      image3 = Wx::Image.new
+      image3.load_stream(StringIO.new(image_name3))
+      bitmaps = [Wx::Bitmap.new(image1),
+                 Wx::Bitmap.new(image2),
+                 Wx::Bitmap.new(image3)]
+      bundle = Wx::BitmapBundle.from_bitmaps(bitmaps)
+      return bundle
+    else
+      bundle = Wx::BitmapBundle.from_bitmaps(Wx::Bitmap.new(image1),
+                                             Wx::Bitmap.new(image2))
+      return bundle
+    end
+  end
+  bundle = Wx::BitmapBundle.from_image(image1)
+  return bundle
+end
+)===";
+
 void BaseCodeGenerator::GenerateRubyImagesForm()
 {
     if (m_embedded_images.empty() || !m_form_node->getChildCount())
     {
         return;
+    }
+
+    m_source->writeLine(txt_ruby_get_bundle, indent::auto_keep_whitespace);
+
+    Code code(m_form_node, GEN_LANG_RUBY);
+
+    for (auto iter_array: m_embedded_images)
+    {
+        if (iter_array->form != m_form_node)
+            continue;
+
+        if (iter_array->filename.size())
+        {
+            code.Eol().Str("# ").Str(iter_array->filename);
+        }
+        code.Eol().Str("$").Str(iter_array->array_name);
+        if (iter_array->type == wxBITMAP_TYPE_INVALID)
+        {
+            code.Str(" = (");
+        }
+        else
+        {
+            code.Str(" = Base64.decode64(");
+        }
+        m_source->writeLine(code);
+        code.clear();
+        auto encoded = base64_encode(iter_array->array_data.get(), iter_array->array_size & 0xFFFFFFFF, GEN_LANG_RUBY);
+        if (encoded.size())
+        {
+            // Remove the trailing '+' character
+            encoded.back().pop_back();
+            // and the now trailing space
+            encoded.back().pop_back();
+            encoded.back() += ")";
+            m_source->writeLine(encoded);
+        }
     }
 
     m_source->writeLine();
@@ -629,7 +693,7 @@ static void GenerateEmbedBundle(Code& code, const tt_string_vector& parts, bool 
     if (code.is_ruby())
     {
         // Ruby has a single function that will create a bundle from 1 to 3 images
-        code.Str("get_bundle(").Str("$").Str(embed->array_name);
+        code.Str("wxue_get_bundle(").Str("$").Str(embed->array_name);
         if (bundle->lst_filenames.size() > 1)
         {
             if (EmbeddedImage* embed2 = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[1]); embed2)

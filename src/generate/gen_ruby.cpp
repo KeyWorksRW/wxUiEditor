@@ -43,7 +43,7 @@ R"===(##########################################################################
 inline constexpr const auto txt_ruby_get_bundle =
 R"===(
 # Loads image(s) from a string and returns a Wx::BitmapBundle object.
-def get_bundle(image_name1, image_name2 = nil, image_name3 = nil)
+def wxue_get_bundle(image_name1, image_name2 = nil, image_name3 = nil)
   image1 = Wx::Image.new
   image1.load_stream(StringIO.new(image_name1))
   if (image_name2)
@@ -228,6 +228,8 @@ void BaseCodeGenerator::GenerateRubyClass(PANEL_PAGE panel_type)
 
     m_ImagesForm = nullptr;
 
+    bool base64_requirement_written = false;
+
     for (const auto& form: Project.getChildNodePtrs())
     {
         if (form->isGen(gen_folder))
@@ -281,7 +283,15 @@ void BaseCodeGenerator::GenerateRubyClass(PANEL_PAGE panel_type)
     m_source->SetTabToSpaces(2);
     m_source->SetLastLineBlank();
 
+#if !defined(_DEBUG)
     if (m_panel_type == NOT_PANEL)
+#else
+    if (m_panel_type != NOT_PANEL)
+    {
+        m_source->writeLine(
+            "# The following comment block is only displayed in a _DEBUG build, or when written to a file.\n\n");
+    }
+#endif  // _DEBUG
     {
         m_source->writeLine(txt_PyPerlRubyCmtBlock);
 
@@ -299,18 +309,25 @@ void BaseCodeGenerator::GenerateRubyClass(PANEL_PAGE panel_type)
         }
     }
 
+    m_source->writeLine("WX_GLOBAL_CONSTANTS = true unless defined? WX_GLOBAL_CONSTANTS\n\nrequire 'wx/core'");
+
     if (m_form_node->isGen(gen_Images))
     {
+        m_source->writeLine();
+        m_source->writeLine("require 'base64'");
+        m_source->writeLine("require 'stringio'");
+        m_source->writeLine();
+
         thrd_get_events.join();
         thrd_collect_img_headers.join();
+        thrd_need_img_func.join();
         GenerateRubyImagesForm();
         return;
     }
 
+    m_header->writeLine("WX_GLOBAL_CONSTANTS = true unless defined? WX_GLOBAL_CONSTANTS\n\nrequire 'wx/core'");
     m_header->writeLine(tt_string("# Sample inherited class from ") << m_form_node->as_string(prop_class_name));
     m_header->writeLine();
-    m_source->writeLine("WX_GLOBAL_CONSTANTS = true unless defined? WX_GLOBAL_CONSTANTS\n\nrequire 'wx/core'");
-    m_header->writeLine("WX_GLOBAL_CONSTANTS = true unless defined? WX_GLOBAL_CONSTANTS\n\nrequire 'wx/core'");
 
     std::set<std::string> imports;
 
@@ -358,7 +375,7 @@ void BaseCodeGenerator::GenerateRubyClass(PANEL_PAGE panel_type)
             {
                 tt_string import_name(form->as_string(prop_ruby_file).filename());
                 import_name.remove_extension();
-                m_source->writeLine(tt_string("require '") << import_name << "'");
+                m_source->writeLine(tt_string("require_relative '") << import_name << "'");
             }
         }
     }
@@ -402,15 +419,15 @@ void BaseCodeGenerator::GenerateRubyClass(PANEL_PAGE panel_type)
                 {
                     tt_string import_name = iter->form->as_string(prop_python_file).filename();
                     import_name.remove_extension();
-                    code.Str("import ").Str(import_name);
+                    code.Str("require_relative '").Str(import_name) << "'";
                     m_source->writeLine(code);
                     code.clear();
                     images_file_imported = true;
                 }
                 if (iter->type == wxBITMAP_TYPE_INVALID)
                 {
-                    // m_source->writeLine("import zlib");
-                    // m_source->writeLine("import base64");
+                    // m_source->writeLine("require zlib");
+                    // m_source->writeLine("require base64");
                     svg_import_libs = true;
                 }
             }
@@ -427,7 +444,11 @@ void BaseCodeGenerator::GenerateRubyClass(PANEL_PAGE panel_type)
                 {
                     // If the image isn't in the images file, then we need to add the base64 version
                     // of the bitmap
-                    m_source->writeLine("require 'base64'");
+                    if (!base64_requirement_written)
+                    {
+                        base64_requirement_written = true;
+                        m_source->writeLine("require 'base64'");
+                    }
 
                     // At this point we know that some method is required, but until we have
                     // processed all the images, we won't know if the images file is required.
@@ -613,7 +634,9 @@ void BaseCodeGenerator::GenerateRubyClass(PANEL_PAGE panel_type)
         }
     }
 
+#if !defined(_DEBUG)
     if (m_panel_type == NOT_PANEL)
+#endif  // _DEBUG
     {
         if (Project.as_bool(prop_disable_rubo_cop))
         {
@@ -737,7 +760,7 @@ bool RubyBundleCode(Code& code, GenEnum::PropName prop)
             }
             if (const EmbeddedImage* embed1 = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[0]); embed1)
             {
-                code.Str("get_bundle(").Str("$").Str(embed1->array_name);
+                code.Str("wxue_get_bundle(").Str("$").Str(embed1->array_name);
                 if (bundle->lst_filenames.size() > 1)
                 {
                     if (EmbeddedImage* embed2 = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[1]); embed2)

@@ -314,11 +314,8 @@ void BaseCodeGenerator::GenerateRubyClass(PANEL_PAGE panel_type)
     if (m_form_node->isGen(gen_Images))
     {
         m_source->writeLine();
-        if (!base64_requirement_written)
-        {
-            base64_requirement_written = true;
-            m_source->writeLine("require 'base64'");
-        }
+        m_source->writeLine("require 'base64'");
+        m_source->writeLine("require 'stringio'");
         m_source->writeLine();
 
         thrd_get_events.join();
@@ -378,7 +375,7 @@ void BaseCodeGenerator::GenerateRubyClass(PANEL_PAGE panel_type)
             {
                 tt_string import_name(form->as_string(prop_ruby_file).filename());
                 import_name.remove_extension();
-                m_source->writeLine(tt_string("require '") << import_name << "'");
+                m_source->writeLine(tt_string("require_relative '") << import_name << "'");
             }
         }
     }
@@ -422,15 +419,15 @@ void BaseCodeGenerator::GenerateRubyClass(PANEL_PAGE panel_type)
                 {
                     tt_string import_name = iter->form->as_string(prop_python_file).filename();
                     import_name.remove_extension();
-                    code.Str("import ").Str(import_name);
+                    code.Str("require_relative '").Str(import_name) << "'";
                     m_source->writeLine(code);
                     code.clear();
                     images_file_imported = true;
                 }
                 if (iter->type == wxBITMAP_TYPE_INVALID)
                 {
-                    // m_source->writeLine("import zlib");
-                    // m_source->writeLine("import base64");
+                    // m_source->writeLine("require zlib");
+                    // m_source->writeLine("require base64");
                     svg_import_libs = true;
                 }
             }

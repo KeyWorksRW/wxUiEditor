@@ -9,11 +9,12 @@
 #include <wx/propgrid/manager.h>   // wxPropertyGridManager
 #include <wx/propgrid/propgrid.h>  // wxPropertyGrid
 
-#include "gen_common.h"    // GeneratorLibrary -- Generator classes
-#include "mainframe.h"     // MainFrame -- Main window frame
-#include "node.h"          // Node class
-#include "node_creator.h"  // NodeCreator -- NodeCreator class
-#include "undo_cmds.h"     // InsertNodeAction -- Undoable command classes derived from UndoAction
+#include "gen_common.h"       // GeneratorLibrary -- Generator classes
+#include "mainframe.h"        // MainFrame -- Main window frame
+#include "node.h"             // Node class
+#include "node_creator.h"     // NodeCreator -- NodeCreator class
+#include "project_handler.h"  // ProjectHandler class
+#include "undo_cmds.h"        // InsertNodeAction -- Undoable command classes derived from UndoAction
 
 #include "gen_menu.h"
 
@@ -33,7 +34,22 @@ bool MenuGenerator::AfterChildrenCode(Code& code)
         code.ParentName().Function("Append(").NodeName().Comma();
         if (node->as_string(prop_stock_id) != "none")
         {
-            code.Add("wxGetStockLabel(").Add(prop_stock_id).Str(")");
+            if (code.is_ruby() && Project.getProjectNode()->as_string(prop_wxRuby_version) == "0.9.0")
+            {
+                if (auto stock_id = NodeCreation.getConstantAsInt(node->as_string(prop_stock_id)); stock_id > 0)
+                {
+                    code << "'" << wxGetStockLabel(stock_id).utf8_string() << "'";
+                }
+                else
+                {
+                    FAIL_MSG(tt_string() << "Invalid stock ID: " << node->as_string(prop_stock_id));
+                    code << "'" << node->as_string(prop_stock_id) << "'";
+                }
+            }
+            else
+            {
+                code.Add("wxGetStockLabel(").Add(prop_stock_id).Str(")");
+            }
         }
         else
         {

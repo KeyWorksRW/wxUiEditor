@@ -858,6 +858,10 @@ Code& Code::Assign(tt_string_view class_name)
     else
     {
         *this << m_language_wxPrefix << class_name.substr(2);
+        if (is_ruby())
+        {
+            *this << ".new";
+        }
     }
 
     return *this;

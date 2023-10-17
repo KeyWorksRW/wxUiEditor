@@ -283,7 +283,15 @@ void BaseCodeGenerator::GenerateRubyClass(PANEL_PAGE panel_type)
     m_source->SetTabToSpaces(2);
     m_source->SetLastLineBlank();
 
+#if !defined(_DEBUG)
     if (m_panel_type == NOT_PANEL)
+#else
+    if (m_panel_type != NOT_PANEL)
+    {
+        m_source->writeLine(
+            "# The following comment block is only displayed in a _DEBUG build, or when written to a file.\n\n");
+    }
+#endif  // _DEBUG
     {
         m_source->writeLine(txt_PyPerlRubyCmtBlock);
 
@@ -629,7 +637,9 @@ void BaseCodeGenerator::GenerateRubyClass(PANEL_PAGE panel_type)
         }
     }
 
+#if !defined(_DEBUG)
     if (m_panel_type == NOT_PANEL)
+#endif  // _DEBUG
     {
         if (Project.as_bool(prop_disable_rubo_cop))
         {

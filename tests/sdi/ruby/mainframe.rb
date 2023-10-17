@@ -125,7 +125,7 @@ class MainFrame < Wx::Frame
 
     tool_dropdown = @toolBar.add_tool(Wx::ID_ANY, '', Wx::ArtProvider.get_bitmap_bundle(
       Wx::ART_EXECUTABLE_FILE, Wx::ART_MENU), (''), Wx::ITEM_DROPDOWN)
-    tool_dropdown_menu = Wx::Menu
+    tool_dropdown_menu = Wx::Menu.new
     menu_item = Wx::MenuItem.new(tool_dropdown_menu, Wx::ID_ANY, 'Wizard...')
     menu_item.set_bitmap(Wx::ArtProvider.get_bitmap_bundle(Wx::ART_FIND,
       Wx::ART_MENU))
@@ -172,47 +172,6 @@ class MainFrame < Wx::Frame
     evt_tool(tool_3.get_id, :OnPythonDlg)
     evt_tool(tool_2.get_id, :OnCommonDialog)
   end
-# Unimplemented Event handler functions
-# Copy any listed and paste them below the comment block, or to your inherited class.
-
-=begin
-  def OnBookTestDlg
-    event.skip()
-  end
-
-  def OnCommonDialog
-    event.skip()
-  end
-
-  def OnDlgIssue_956
-    event.skip()
-  end
-
-  def OnDlgIssue_960
-    event.skip()
-  end
-
-  def OnMainTestDlg
-    event.skip()
-  end
-
-  def OnPythonDlg
-    event.skip()
-  end
-
-  def OnQuit
-    event.skip()
-  end
-
-  def OnWizard
-    event.skip()
-  end
-
-  def on_tools_dlg
-    event.skip()
-  end
-
-=end
 end
 
 $wxToolBar_png = Base64.decode64(
@@ -270,6 +229,42 @@ $wxDialog_png = Base64.decode64(
 # Code below this comment block will be preserved
 # if the code for this class is re-generated.
 # ***********************************************
+
+def OnBookTestDlg(event)
+  event.skip
+end
+
+def OnCommonDialog(event)
+  event.skip
+end
+
+def OnDlgIssue_956(event)
+  event.skip
+end
+
+def OnDlgIssue_960(event)
+  event.skip
+end
+
+def OnMainTestDlg(event)
+  event.skip
+end
+
+def OnPythonDlg(event)
+  event.skip
+end
+
+def OnQuit(event)
+  event.skip
+end
+
+def OnWizard(event)
+  event.skip
+end
+
+def on_tools_dlg(event)
+  event.skip
+end
 
 class App < Wx::App
   def on_init

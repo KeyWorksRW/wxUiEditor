@@ -220,6 +220,7 @@ bool MenuItemGenerator::SettingsCode(Code& code)
         }
         else if (code.is_ruby())
         {
+            code.NodeName().Function("SetBitmap(");
             code.Bundle(prop_bitmap).EndFunction();
         }
         else

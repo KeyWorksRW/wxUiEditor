@@ -228,6 +228,8 @@ void BaseCodeGenerator::GenerateRubyClass(PANEL_PAGE panel_type)
 
     m_ImagesForm = nullptr;
 
+    bool base64_requirement_written = false;
+
     for (const auto& form: Project.getChildNodePtrs())
     {
         if (form->isGen(gen_folder))
@@ -304,7 +306,11 @@ void BaseCodeGenerator::GenerateRubyClass(PANEL_PAGE panel_type)
     if (m_form_node->isGen(gen_Images))
     {
         m_source->writeLine();
-        m_source->writeLine("require 'base64'");
+        if (!base64_requirement_written)
+        {
+            base64_requirement_written = true;
+            m_source->writeLine("require 'base64'");
+        }
         m_source->writeLine();
 
         thrd_get_events.join();
@@ -433,7 +439,11 @@ void BaseCodeGenerator::GenerateRubyClass(PANEL_PAGE panel_type)
                 {
                     // If the image isn't in the images file, then we need to add the base64 version
                     // of the bitmap
-                    m_source->writeLine("require 'base64'");
+                    if (!base64_requirement_written)
+                    {
+                        base64_requirement_written = true;
+                        m_source->writeLine("require 'base64'");
+                    }
 
                     // At this point we know that some method is required, but until we have
                     // processed all the images, we won't know if the images file is required.

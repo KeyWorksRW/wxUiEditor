@@ -121,13 +121,10 @@ class BookTestDlg(wx.Dialog):
         self.listbook = wx.Listbook(page_3, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize,
             wx.LB_LEFT)
 
-        bundle_1 = wx.BitmapBundle.FromBitmap(images.english_png.Bitmap)
-        bundle_2 = wx.BitmapBundle.FromBitmap(images.french_png.Bitmap)
-        bundle_3 = wx.BitmapBundle.FromBitmap(images.japanese_png.Bitmap)
         bundle_list = [
-            bundle_1,
-            bundle_2,
-            bundle_3
+            wx.BitmapBundle.FromBitmap(images.english_png.Bitmap),
+            wx.BitmapBundle.FromBitmap(images.french_png.Bitmap),
+            wx.BitmapBundle.FromBitmap(images.japanese_png.Bitmap)
         ]
         self.listbook.SetImages(bundle_list)
         self.listbook.SetMinSize(wx.Size(400, 400))
@@ -179,13 +176,10 @@ class BookTestDlg(wx.Dialog):
 
         self.notebook_2 = wx.Notebook(page_4, wx.ID_ANY)
 
-        bundle_1 = wx.BitmapBundle.FromBitmap(images.english_png.Bitmap)
-        bundle_2 = wx.BitmapBundle.FromBitmap(images.french_png.Bitmap)
-        bundle_3 = wx.BitmapBundle.FromBitmap(images.japanese_png.Bitmap)
         bundle_list = [
-            bundle_1,
-            bundle_2,
-            bundle_3
+            wx.BitmapBundle.FromBitmap(images.english_png.Bitmap),
+            wx.BitmapBundle.FromBitmap(images.french_png.Bitmap),
+            wx.BitmapBundle.FromBitmap(images.japanese_png.Bitmap)
         ]
         self.notebook_2.SetImages(bundle_list)
         self.notebook_2.SetMinSize(wx.Size(400, 400))
@@ -237,13 +231,10 @@ class BookTestDlg(wx.Dialog):
 
         self.toolbook = wx.Toolbook(page_5, wx.ID_ANY)
 
-        bundle_1 = wx.BitmapBundle.FromBitmap(images.english_png.Bitmap)
-        bundle_2 = wx.BitmapBundle.FromBitmap(images.french_png.Bitmap)
-        bundle_3 = wx.BitmapBundle.FromBitmap(images.japanese_png.Bitmap)
         bundle_list = [
-            bundle_1,
-            bundle_2,
-            bundle_3
+            wx.BitmapBundle.FromBitmap(images.english_png.Bitmap),
+            wx.BitmapBundle.FromBitmap(images.french_png.Bitmap),
+            wx.BitmapBundle.FromBitmap(images.japanese_png.Bitmap)
         ]
         self.toolbook.SetImages(bundle_list)
         self.toolbook.SetMinSize(wx.Size(400, 400))
@@ -295,13 +286,10 @@ class BookTestDlg(wx.Dialog):
 
         self.treebook = wx.Treebook(page, wx.ID_ANY)
 
-        bundle_1 = wx.BitmapBundle.FromBitmap(images.english_png.Bitmap)
-        bundle_2 = wx.BitmapBundle.FromBitmap(images.french_png.Bitmap)
-        bundle_3 = wx.BitmapBundle.FromBitmap(images.japanese_png.Bitmap)
         bundle_list = [
-            bundle_1,
-            bundle_2,
-            bundle_3
+            wx.BitmapBundle.FromBitmap(images.english_png.Bitmap),
+            wx.BitmapBundle.FromBitmap(images.french_png.Bitmap),
+            wx.BitmapBundle.FromBitmap(images.japanese_png.Bitmap)
         ]
         self.treebook.SetImages(bundle_list)
         self.treebook.SetMinSize(wx.Size(400, 400))

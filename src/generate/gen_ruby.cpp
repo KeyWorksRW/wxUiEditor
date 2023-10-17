@@ -303,6 +303,7 @@ void BaseCodeGenerator::GenerateRubyClass(PANEL_PAGE panel_type)
     {
         thrd_get_events.join();
         thrd_collect_img_headers.join();
+        thrd_need_img_func.join();
         GenerateRubyImagesForm();
         return;
     }

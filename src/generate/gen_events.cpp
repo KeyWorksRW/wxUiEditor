@@ -896,13 +896,13 @@ void BaseCodeGenerator::GenRubyEventHandlers(EventVector& events)
             continue;
 
         tt_string set_code;
-        set_code << "def " << ruby_handler;
+        set_code << "def " << ruby_handler << "(event)";
         if (code_lines.find(set_code) != code_lines.end())
             continue;
         code_lines.emplace(set_code);
 
         undefined_handlers.Str(set_code).Eol();
-        undefined_handlers.Tab().Str("event.skip()").Eol().Unindent();
+        undefined_handlers.Tab().Str("event.skip").Eol().Unindent();
         undefined_handlers.Str("end").Eol().Eol();
     }
 

@@ -122,7 +122,7 @@ bool BookTestDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 
     m_listbook = new wxListbook(page_3, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLB_LEFT);
     {
-        wxBookCtrlBase::Images bundle_list;
+        wxWithImages::Images bundle_list;
         bundle_list.push_back(wxue_img::bundle_english_png());
         bundle_list.push_back(wxue_img::bundle_french_png());
         bundle_list.push_back(wxue_img::bundle_japanese_png());
@@ -170,7 +170,7 @@ bool BookTestDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 
     m_notebook_2 = new wxNotebook(page_4, wxID_ANY);
     {
-        wxBookCtrlBase::Images bundle_list;
+        wxWithImages::Images bundle_list;
         bundle_list.push_back(wxue_img::bundle_english_png());
         bundle_list.push_back(wxue_img::bundle_french_png());
         bundle_list.push_back(wxue_img::bundle_japanese_png());
@@ -218,7 +218,7 @@ bool BookTestDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 
     m_toolbook = new wxToolbook(page_5, wxID_ANY);
     {
-        wxBookCtrlBase::Images bundle_list;
+        wxWithImages::Images bundle_list;
         bundle_list.push_back(wxue_img::bundle_english_png());
         bundle_list.push_back(wxue_img::bundle_french_png());
         bundle_list.push_back(wxue_img::bundle_japanese_png());
@@ -266,7 +266,7 @@ bool BookTestDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 
     m_treebook = new wxTreebook(page, wxID_ANY);
     {
-        wxBookCtrlBase::Images bundle_list;
+        wxWithImages::Images bundle_list;
         bundle_list.push_back(wxue_img::bundle_english_png());
         bundle_list.push_back(wxue_img::bundle_french_png());
         bundle_list.push_back(wxue_img::bundle_japanese_png());

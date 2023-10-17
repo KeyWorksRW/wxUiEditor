@@ -12,11 +12,12 @@
     derived_directory="cpp"
     generate_cmake="1"
     wxWidgets_version="3.2"
-    python_output_folder="sdi/python"
+    python_output_folder="python"
+    ruby_output_folder="ruby"
     combine_all_forms="0"
     combined_xrc_file="combined"
     xrc_art_directory="art"
-    xrc_directory="sdi/xrc">
+    xrc_directory="xrc">
     <node
       class="Images"
       base_file="images">
@@ -99,8 +100,9 @@
       derived_file="../ui/mainframe"
       use_derived_class="0"
       python_file="mainframe"
-      python_import_list="main_test_dlg.py;booktest_dlg.py;wizard.py;python_dlg.py;dlgissue_956.py;dlgissue_960.py;../../python/tools_dlg.py"
+      python_import_list="main_test_dlg.py;booktest_dlg.py;wizard.py;python_dlg.py;tools_dlg.py;dlgissue_956.py;dlgissue_960.py"
       python_inherit_name="mainframe"
+      ruby_file="mainframe"
       xrc_file="mainframe"
       size="500,300"
       window_style="wxTAB_TRAVERSAL">
@@ -1830,7 +1832,6 @@
       derived_class_name="TestDialogDerived"
       derived_file="testdialog_derived"
       python_file="tools_dlg"
-      ruby_file="test_dlg"
       xrc_file="test_dlg"
       wxEVT_INIT_DIALOG="OnInit[python:on_init][ruby:on_init]">
       <node

@@ -14,6 +14,7 @@ import main_test_dlg
 import booktest_dlg
 import wizard
 import python_dlg
+import tools_dlg
 import dlgissue_956
 import dlgissue_960
 
@@ -234,9 +235,6 @@ class MainFrame(wx.Frame):
     # Unimplemented Event handler functions
     # Copy any listed and paste them below the comment block, or to your inherited class.
     """
-    def on_tools_dlg(self, event):
-        event.Skip()
-
     """
 
 # ************* End of generated code ***********

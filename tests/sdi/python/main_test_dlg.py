@@ -81,9 +81,38 @@ class MainTestDialog(wx.Dialog):
         page_sizer_1 = wx.BoxSizer(wx.VERTICAL)
 
         self.text_ctrl = wx.TextCtrl(page_2, TXT_CTRL, "", wx.DefaultPosition,
-            wx.DefaultSize, wx.TE_RICH2)
+            wx.DefaultSize, wx.TE_MULTILINE|wx.TE_READONLY|wx.TE_RICH2)
         self.text_ctrl.SetHint("wxTextCtrl")
         page_sizer_1.Add(self.text_ctrl, wx.SizerFlags().Expand().Border(wx.ALL))
+
+        grid_sizer2 = wx.GridSizer(2, 0, 0)
+
+        self.static_text = wx.StaticText(page_2, wx.ID_ANY, "12-pt default font")
+        font_info = wx.FontInfo(11.5)
+        font_info.FaceName("Segoe UI")
+        self.static_text.SetFont(wx.Font(font_info))
+        grid_sizer2.Add(self.static_text, wx.SizerFlags().Border(wx.ALL))
+
+        self.static_text = wx.StaticText(page_2, wx.ID_ANY, "Comic Sans MS")
+        font_info = wx.FontInfo(10.5)
+        font_info.FaceName("Comic Sans MS")
+        self.static_text.SetFont(wx.Font(font_info))
+        grid_sizer2.Add(self.static_text, wx.SizerFlags().Border(wx.ALL))
+
+        self.static_text2 = wx.StaticText(page_2, wx.ID_ANY, "italic")
+        font = wx.Font(wx.SystemSettings.GetFont(wx.SYS_DEFAULT_GUI_FONT))
+        font.SetStyle(wx.FONTSTYLE_ITALIC)
+        self.static_text2.SetFont(font)
+        grid_sizer2.Add(self.static_text2, wx.SizerFlags().Border(wx.ALL))
+
+        self.static_text3 = wx.StaticText(page_2, wx.ID_ANY,
+            "bold, underlined Times New Roman, 12.5")
+        font_info = wx.FontInfo(12.5)
+        font_info.FaceName("Times New Roman").Weight(wx.FONTWEIGHT_BOLD).Underlined()
+        self.static_text3.SetFont(wx.Font(font_info))
+        grid_sizer2.Add(self.static_text3, wx.SizerFlags().Border(wx.ALL))
+
+        page_sizer_1.Add(grid_sizer2, wx.SizerFlags().Border(wx.ALL))
 
         self.richText = wx.richtext.RichTextCtrl(page_2, ID_RICHTEXT, "",
             wx.DefaultPosition, wx.DefaultSize, wx.richtext.RE_MULTILINE|wx.VSCROLL|
@@ -247,8 +276,8 @@ class MainTestDialog(wx.Dialog):
         static_box_3.Add(self.toggleBtn_2, wx.SizerFlags().Border(wx.ALL))
 
         self.animation_ctrl = wx.adv.AnimationCtrl(static_box_3.GetStaticBox(), wx.ID_ANY,
-            wx.adv.Animation("../../art/clr_hourglass.gif"), wx.DefaultPosition,
-            wx.DefaultSize, wx.adv.AC_DEFAULT_STYLE)
+            wx.adv.Animation("../clr_hourglass.gif"), wx.DefaultPosition, wx.DefaultSize,
+            wx.adv.AC_DEFAULT_STYLE)
         self.animation_ctrl.SetInactiveBitmap(wx.BitmapBundle.FromBitmap(
             images.disabled_png.Bitmap))
         static_box_3.Add(self.animation_ctrl, wx.SizerFlags().Border(wx.ALL))

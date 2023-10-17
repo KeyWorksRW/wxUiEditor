@@ -299,8 +299,14 @@ void BaseCodeGenerator::GenerateRubyClass(PANEL_PAGE panel_type)
         }
     }
 
+    m_source->writeLine("WX_GLOBAL_CONSTANTS = true unless defined? WX_GLOBAL_CONSTANTS\n\nrequire 'wx/core'");
+
     if (m_form_node->isGen(gen_Images))
     {
+        m_source->writeLine();
+        m_source->writeLine("require 'base64'");
+        m_source->writeLine();
+
         thrd_get_events.join();
         thrd_collect_img_headers.join();
         thrd_need_img_func.join();
@@ -308,10 +314,9 @@ void BaseCodeGenerator::GenerateRubyClass(PANEL_PAGE panel_type)
         return;
     }
 
+    m_header->writeLine("WX_GLOBAL_CONSTANTS = true unless defined? WX_GLOBAL_CONSTANTS\n\nrequire 'wx/core'");
     m_header->writeLine(tt_string("# Sample inherited class from ") << m_form_node->as_string(prop_class_name));
     m_header->writeLine();
-    m_source->writeLine("WX_GLOBAL_CONSTANTS = true unless defined? WX_GLOBAL_CONSTANTS\n\nrequire 'wx/core'");
-    m_header->writeLine("WX_GLOBAL_CONSTANTS = true unless defined? WX_GLOBAL_CONSTANTS\n\nrequire 'wx/core'");
 
     std::set<std::string> imports;
 

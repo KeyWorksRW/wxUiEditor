@@ -43,7 +43,7 @@ R"===(##########################################################################
 inline constexpr const auto txt_ruby_get_bundle =
 R"===(
 # Loads image(s) from a string and returns a Wx::BitmapBundle object.
-def get_bundle(image_name1, image_name2 = nil, image_name3 = nil)
+def wxue_get_bundle(image_name1, image_name2 = nil, image_name3 = nil)
   image1 = Wx::Image.new
   image1.load_stream(StringIO.new(image_name1))
   if (image_name2)
@@ -760,7 +760,7 @@ bool RubyBundleCode(Code& code, GenEnum::PropName prop)
             }
             if (const EmbeddedImage* embed1 = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[0]); embed1)
             {
-                code.Str("get_bundle(").Str("$").Str(embed1->array_name);
+                code.Str("wxue_get_bundle(").Str("$").Str(embed1->array_name);
                 if (bundle->lst_filenames.size() > 1)
                 {
                     if (EmbeddedImage* embed2 = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[1]); embed2)

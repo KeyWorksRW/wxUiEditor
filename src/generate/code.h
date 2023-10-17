@@ -281,7 +281,7 @@ public:
     // This will call CheckLineLength(str.size()) first.
     Code& Str(std::string_view str)
     {
-        if (is_ruby() && size() && (back() == '$' || back() == '('))
+        if (is_ruby() && size() && (back() == '$' || back() == '(' || ends_with(".new")))
         {
             *this += str;
         }

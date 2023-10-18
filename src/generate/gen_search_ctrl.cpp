@@ -21,7 +21,12 @@ wxObject* SearchCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
                                    DlgPoint(parent, node, prop_pos), DlgSize(parent, node, prop_size), GetStyleInt(node));
 
     if (node->hasValue(prop_hint))
+    {
+        // REVIEW: [Randalphwa - 10-17-2023] In 3.3, this now generates an assertion error,
+        // even though it works fine. I have entered issue #23975 for this in the wxWidgets
+        // repo.
         widget->SetHint(node->as_wxString(prop_hint));
+    }
 
     if (node->hasValue(prop_search_button))
     {

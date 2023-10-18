@@ -94,7 +94,7 @@
     <node
       class="wxFrame"
       class_name="MainFrame"
-      title="pytest"
+      title="SDI Tests"
       base_file="mainframe"
       derived_class_name="MainFrame"
       derived_file="../ui/mainframe"
@@ -102,6 +102,7 @@
       python_file="mainframe"
       python_import_list="main_test_dlg.py;booktest_dlg.py;wizard.py;python_dlg.py;tools_dlg.py;dlgissue_956.py;dlgissue_960.py"
       python_inherit_name="mainframe"
+      relative_require_list="dlgissue_956.rb;dlgissue_960.rb;booktest_dlg.rb"
       ruby_file="mainframe"
       xrc_file="mainframe"
       size="500,300"
@@ -191,7 +192,7 @@
             label="&amp;Quit"
             stock_id="wxID_EXIT"
             var_name="menuQuit"
-            wxEVT_MENU="OnQuit" />
+            wxEVT_MENU="OnQuit[python:on_quit][ruby:on_quit]" />
         </node>
         <node
           class="wxMenu"
@@ -320,6 +321,7 @@
       inserted_hdr_code="void OnEventName(const std::string&amp; event_name)@@{@@    m_events_list->Select(m_events_list->Append(wxString().FromUTF8(event_name)));@@}"
       insert_python_code="import popupwin"
       python_file="main_test_dlg"
+      ruby_file="main_test_dlg"
       xrc_file="main_test_dlg"
       wxEVT_INIT_DIALOG="OnInit">
       <node
@@ -1175,6 +1177,7 @@
       base_file="booktest_dlg"
       use_derived_class="0"
       python_file="booktest_dlg"
+      ruby_file="booktest_dlg"
       xrc_file="booktest_dlg">
       <node
         class="wxBoxSizer"
@@ -1619,6 +1622,7 @@
       use_derived_class="0"
       python_file="wizard"
       python_inherit_name="Wizard"
+      ruby_file="wizard"
       xrc_file="wizard"
       wxEVT_INIT_DIALOG="OnInit"
       wxEVT_WIZARD_BEFORE_PAGE_CHANGED="OnBeforeChange">
@@ -1832,6 +1836,7 @@
       derived_class_name="TestDialogDerived"
       derived_file="testdialog_derived"
       python_file="tools_dlg"
+      ruby_file="tools_dlg"
       xrc_file="test_dlg"
       wxEVT_INIT_DIALOG="OnInit[python:on_init][ruby:on_init]">
       <node
@@ -2380,8 +2385,9 @@
         class="wxDialog"
         class_name="DlgIssue_956"
         title="colspan codegen issue"
-        base_file="dlgissue_956.cpp"
-        python_file="dlgissue_956.py"
+        base_file="dlgissue_956"
+        python_file="dlgissue_956"
+        ruby_file="dlgissue_956"
         xrc_file="dlgissue_956.py">
         <node
           class="wxBoxSizer"
@@ -2458,6 +2464,7 @@
         derived_class_name="DlgIssue_960Derived"
         derived_file="dlgissue_960_derived"
         python_file="dlgissue_960"
+        ruby_file="dlgissue_960"
         xrc_file="dlgissue_960">
         <node
           class="wxBoxSizer"

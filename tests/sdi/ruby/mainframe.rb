@@ -11,11 +11,15 @@ require 'wx/core'
 require 'wx/grid'
 require 'wx/pg'
 
+require_relative 'dlgissue_956'
+require_relative 'dlgissue_960'
+require_relative 'booktest_dlg'
+
 require_relative 'images'
 require 'base64'
 
 class MainFrame < Wx::Frame
-  def initialize(parent, id = Wx::ID_ANY, title = 'pytest',
+  def initialize(parent, id = Wx::ID_ANY, title = 'SDI Tests',
                  pos = Wx::DEFAULT_POSITION, size = Wx::Size.new(500, 300),
                  style = Wx::DEFAULT_FRAME_STYLE|Wx::TAB_TRAVERSAL)
 
@@ -81,7 +85,7 @@ class MainFrame < Wx::Frame
     menuQuit.set_bitmap(Wx::ArtProvider.get_bitmap_bundle(Wx::ART_QUIT,
       Wx::ART_MENU))
     @menu.append(menuQuit)
-    menubar.append(@menu, Wx::GetStockLabel(Wx::ID_FILE))
+    menubar.append(@menu, '&File')
 
     menuDialogs = Wx::Menu.new
     menu_item_3 = Wx::MenuItem.new(menuDialogs, Wx::ID_ANY, 'MainTestDlg')
@@ -125,7 +129,7 @@ class MainFrame < Wx::Frame
 
     tool_dropdown = @toolBar.add_tool(Wx::ID_ANY, '', Wx::ArtProvider.get_bitmap_bundle(
       Wx::ART_EXECUTABLE_FILE, Wx::ART_MENU), (''), Wx::ITEM_DROPDOWN)
-    tool_dropdown_menu = Wx::Menu
+    tool_dropdown_menu = Wx::Menu.new
     menu_item = Wx::MenuItem.new(tool_dropdown_menu, Wx::ID_ANY, 'Wizard...')
     menu_item.set_bitmap(Wx::ArtProvider.get_bitmap_bundle(Wx::ART_FIND,
       Wx::ART_MENU))
@@ -156,7 +160,7 @@ class MainFrame < Wx::Frame
     centre(Wx::BOTH)
 
     # Event handlers
-    evt_menu(menuQuit.get_id, :OnQuit)
+    evt_menu(menuQuit.get_id, :on_quit)
     evt_menu(menu_item_3.get_id, :OnMainTestDlg)
     evt_menu(menu_item_4.get_id, :OnBookTestDlg)
     evt_menu(menu_item_2.get_id, :OnPythonDlg)
@@ -176,40 +180,12 @@ class MainFrame < Wx::Frame
 # Copy any listed and paste them below the comment block, or to your inherited class.
 
 =begin
-  def OnBookTestDlg
-    event.skip()
+  def OnDlgIssue_956(event)
+    event.skip
   end
 
-  def OnCommonDialog
-    event.skip()
-  end
-
-  def OnDlgIssue_956
-    event.skip()
-  end
-
-  def OnDlgIssue_960
-    event.skip()
-  end
-
-  def OnMainTestDlg
-    event.skip()
-  end
-
-  def OnPythonDlg
-    event.skip()
-  end
-
-  def OnQuit
-    event.skip()
-  end
-
-  def OnWizard
-    event.skip()
-  end
-
-  def on_tools_dlg
-    event.skip()
+  def OnDlgIssue_960(event)
+    event.skip
   end
 
 =end
@@ -270,6 +246,62 @@ $wxDialog_png = Base64.decode64(
 # Code below this comment block will be preserved
 # if the code for this class is re-generated.
 # ***********************************************
+
+def OnBookTestDlg(event)
+  event.skip
+# def OnBookTestDlg
+  # no error msgs, but ruby terminates when this is called
+  # dlg = BookTestDlg.new(self)
+  # dlg.show_modal
+  # dlg.destroy
+end
+
+def OnCommonDialog(event)
+  event.skip
+end
+
+def OnDlgIssue_956
+  dlg = DlgIssue_956.new(self)
+  dlg.show_modal
+  dlg.destroy
+end
+
+def OnDlgIssue_960
+  dlg = DlgIssue_960.new(self)
+  dlg.show_modal
+  dlg.destroy
+end
+
+def OnMainTestDlg(event)
+  event.skip
+# def OnMainTestDlg
+  # dlg = MainTestDialog.new(self)
+  # dlg.show_modal
+  # dlg.destroy
+end
+
+def OnPythonDlg(event)
+  event.skip
+end
+
+def on_quit(event)
+  close(true)
+end
+
+def OnWizard(event)
+  event.skip
+# def OnWizard
+  # wizard = Wizard.new(self)
+  # wizard.run_wizard(wizard.get_first_page)
+end
+
+def on_tools_dlg(event)
+  event.skip
+  # enable after SVG files are supported
+  # dlg = ToolBarsDialog.new(self)
+  # dlg.show_modal
+  # dlg.destroy
+end
 
 class App < Wx::App
   def on_init

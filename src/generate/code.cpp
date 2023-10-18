@@ -591,52 +591,69 @@ Code& Code::AddConstant(GenEnum::PropName prop_name, tt_string_view short_name)
     return Add(m_node->as_constant(prop_name, short_name));
 }
 
-Code& Code::Function(tt_string_view text)
+Code& Code::Function(tt_string_view text, bool add_operator)
 {
-    if (is_cpp() || is_perl())
+    if (!add_operator)
     {
-        *this << "->" << text;
-    }
-    else if (is_ruby())
-    {
-        // Check for a preceeding empty "()" and remove it if found
-        if (ends_with("())"))
-        {
-            resize(size() - 2);
-        }
-
-        *this << '.';
-        if (text.is_sameprefix("wx"))
-        {
-            *this << m_language_wxPrefix << text.substr(sizeof("wx") - 1);
-        }
-        else
-        {
-            *this += ConvertToSnakeCase(text);
-        }
-    }
-    else if (is_golang() || is_lua() || is_python() || is_ruby() || is_rust())
-    {
-        *this << '.';
-        if (text.is_sameprefix("wx"))
-        {
-            *this << m_language_wxPrefix << text.substr(sizeof("wx") - 1);
-        }
-        else
+        if (text.is_sameprefix("wx") && (is_golang() || is_lua() || is_python() || is_ruby() || is_rust()))
         {
             if (is_ruby())
-            {
-                *this += ConvertToSnakeCase(text);
-            }
+                *this << m_language_wxPrefix << ConvertToSnakeCase(text.substr(sizeof("wx") - 1));
             else
-            {
-                *this += text;
-            }
+                *this << m_language_wxPrefix << text.substr(sizeof("wx") - 1);
+        }
+        else
+        {
+            *this += text;
         }
     }
     else
     {
-        *this << "->" << text;
+        if (is_cpp() || is_perl())
+        {
+            *this << "->" << text;
+        }
+        else if (is_ruby())
+        {
+            // Check for a preceeding empty "()" and remove it if found
+            if (ends_with("())"))
+            {
+                resize(size() - 2);
+            }
+
+            *this << '.';
+            if (text.is_sameprefix("wx"))
+            {
+                *this << m_language_wxPrefix << text.substr(sizeof("wx") - 1);
+            }
+            else
+            {
+                *this += ConvertToSnakeCase(text);
+            }
+        }
+        else if (is_golang() || is_lua() || is_python() || is_ruby() || is_rust())
+        {
+            *this << '.';
+            if (text.is_sameprefix("wx"))
+            {
+                *this << m_language_wxPrefix << text.substr(sizeof("wx") - 1);
+            }
+            else
+            {
+                if (is_ruby())
+                {
+                    *this += ConvertToSnakeCase(text);
+                }
+                else
+                {
+                    *this += text;
+                }
+            }
+        }
+        else
+        {
+            *this << "->" << text;
+        }
     }
     return *this;
 }

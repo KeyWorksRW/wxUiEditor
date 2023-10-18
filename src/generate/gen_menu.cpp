@@ -34,22 +34,8 @@ bool MenuGenerator::AfterChildrenCode(Code& code)
         code.ParentName().Function("Append(").NodeName().Comma();
         if (node->as_string(prop_stock_id) != "none")
         {
-            if (code.is_ruby() && Project.getProjectNode()->as_string(prop_wxRuby_version) == "0.9.0")
-            {
-                if (auto stock_id = NodeCreation.getConstantAsInt(node->as_string(prop_stock_id)); stock_id > 0)
-                {
-                    code << "'" << wxGetStockLabel(stock_id).utf8_string() << "'";
-                }
-                else
-                {
-                    FAIL_MSG(tt_string() << "Invalid stock ID: " << node->as_string(prop_stock_id));
-                    code << "'" << node->as_string(prop_stock_id) << "'";
-                }
-            }
-            else
-            {
-                code.Add("wxGetStockLabel(").Add(prop_stock_id).Str(")");
-            }
+            // Call Function(..., false) so that Ruby will convert the function to snake-case
+            code.Function("wxGetStockLabel(", false).Add(prop_stock_id).Str(")");
         }
         else
         {

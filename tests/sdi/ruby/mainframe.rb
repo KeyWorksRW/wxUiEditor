@@ -86,7 +86,7 @@ class MainFrame < Wx::Frame
     menuQuit.set_bitmap(Wx::ArtProvider.get_bitmap_bundle(Wx::ART_QUIT,
       Wx::ART_MENU))
     @menu.append(menuQuit)
-    menubar.append(@menu, '&File')
+    menubar.append(@menu, Wx::get_stock_label(Wx::ID_FILE))
 
     menuDialogs = Wx::Menu.new
     menu_item_3 = Wx::MenuItem.new(menuDialogs, Wx::ID_ANY, 'MainTestDlg')

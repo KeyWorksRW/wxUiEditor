@@ -119,17 +119,8 @@ class Wizard < Wx::Wizard
 
     # Event handlers
     evt_init_dialog(:OnInit)
-    evt_wizard_before_page_changed(:on_before_page_change)
+    evt_wizard_before_page_changed(get_id, :on_before_page_change)
   end
-# Unimplemented Event handler functions
-# Copy any listed and paste them below the comment block, or to your inherited class.
-
-=begin
-  def on_before_page_change(event)
-    event.skip
-  end
-
-=end
 end
 # ************* End of generated code ***********
 # DO NOT EDIT THIS COMMENT BLOCK!

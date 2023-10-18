@@ -167,7 +167,16 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
                            });
 
             if (event->getNode()->isForm())
-                handler.Str(event_name).Str("(:") << event_code << ')';
+            {
+                if (code.is_ruby() && event->get_name().starts_with("wxEVT_WIZARD"))
+                {
+                    handler.Str(event_name).Str("(get_id, ").Str(":") << event_code << ')';
+                }
+                else
+                {
+                    handler.Str(event_name).Str("(:") << event_code << ')';
+                }
+            }
             else
                 handler.Str(event_name).Str("(").NodeName().Str(".get_id, :") << event_code << ')';
         }

@@ -14,6 +14,7 @@ require 'wx/pg'
 require_relative 'dlgissue_956'
 require_relative 'dlgissue_960'
 require_relative 'booktest_dlg'
+require_relative 'wizard'
 
 require_relative 'images'
 require 'base64'
@@ -188,6 +189,10 @@ class MainFrame < Wx::Frame
     event.skip
   end
 
+  def OnWizard(event)
+    event.skip
+  end
+
 =end
 end
 
@@ -288,11 +293,10 @@ def on_quit(event)
   close(true)
 end
 
-def OnWizard(event)
-  event.skip
-# def OnWizard
-  # wizard = Wizard.new(self)
-  # wizard.run_wizard(wizard.get_first_page)
+def OnWizard
+  my_wizard = Wizard.new(self)
+  my_wizard.run_wizard(my_wizard.get_page_area_sizer.get_item(0).get_window)
+  my_wizard.destroy
 end
 
 def on_tools_dlg(event)

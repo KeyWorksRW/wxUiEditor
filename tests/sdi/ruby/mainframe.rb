@@ -11,6 +11,10 @@ require 'wx/core'
 require 'wx/grid'
 require 'wx/pg'
 
+require_relative 'dlgissue_956'
+require_relative 'dlgissue_960'
+require_relative 'booktest_dlg'
+
 require_relative 'images'
 require 'base64'
 
@@ -172,6 +176,19 @@ class MainFrame < Wx::Frame
     evt_tool(tool_3.get_id, :OnPythonDlg)
     evt_tool(tool_2.get_id, :OnCommonDialog)
   end
+# Unimplemented Event handler functions
+# Copy any listed and paste them below the comment block, or to your inherited class.
+
+=begin
+  def OnDlgIssue_956(event)
+    event.skip
+  end
+
+  def OnDlgIssue_960(event)
+    event.skip
+  end
+
+=end
 end
 
 $wxToolBar_png = Base64.decode64(
@@ -232,22 +249,35 @@ $wxDialog_png = Base64.decode64(
 
 def OnBookTestDlg(event)
   event.skip
+# def OnBookTestDlg
+  # no error msgs, but ruby terminates when this is called
+  # dlg = BookTestDlg.new(self)
+  # dlg.show_modal
+  # dlg.destroy
 end
 
 def OnCommonDialog(event)
   event.skip
 end
 
-def OnDlgIssue_956(event)
-  event.skip
+def OnDlgIssue_956
+  dlg = DlgIssue_956.new(self)
+  dlg.show_modal
+  dlg.destroy
 end
 
-def OnDlgIssue_960(event)
-  event.skip
+def OnDlgIssue_960
+  dlg = DlgIssue_960.new(self)
+  dlg.show_modal
+  dlg.destroy
 end
 
 def OnMainTestDlg(event)
   event.skip
+# def OnMainTestDlg
+  # dlg = MainTestDialog.new(self)
+  # dlg.show_modal
+  # dlg.destroy
 end
 
 def OnPythonDlg(event)
@@ -260,10 +290,17 @@ end
 
 def OnWizard(event)
   event.skip
+# def OnWizard
+  # wizard = Wizard.new(self)
+  # wizard.run_wizard(wizard.get_first_page)
 end
 
 def on_tools_dlg(event)
   event.skip
+  # enable after SVG files are supported
+  # dlg = ToolBarsDialog.new(self)
+  # dlg.show_modal
+  # dlg.destroy
 end
 
 class App < Wx::App

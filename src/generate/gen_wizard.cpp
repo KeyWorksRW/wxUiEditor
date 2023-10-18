@@ -196,12 +196,12 @@ bool WizardFormGenerator::SettingsCode(Code& code)
     {
         if (code.is_cpp())
         {
-            code.Eol(eol_if_needed).FormFunction("if (!Create(").Str("parent, id, title, pos, style, name))");
+            code.Eol(eol_if_needed).FormFunction("if (!Create(").Str("parent, id, title, wxBitmapBundle(), pos, style))");
             code.Eol().Tab().Str("return;");
         }
         else if (code.is_python())
         {
-            code.Eol(eol_if_needed).Str("if not self.Create(parent, id, title, pos, style, name):");
+            code.Eol(eol_if_needed).Str("if not self.Create(parent, id, title, wx.BitmapBundle(), pos, style):");
             code.Eol().Tab().Str("return");
         }
     }

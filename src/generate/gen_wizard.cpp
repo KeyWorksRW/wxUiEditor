@@ -221,7 +221,11 @@ bool WizardFormGenerator::AfterChildrenCode(Code& code)
             {
                 // In C++, Chain() returns a reference, so "." is used instead of "->"
                 // Python and Ruby both use "."
-                code.Str(".").Add("Chain(").Str(panes[pos + 1]->as_string(prop_var_name)) += ")";
+                if (code.is_cpp())
+                    code.Str(".").Add("Chain(");
+                else
+                    code.Function("Chain(");
+                code.Str(panes[pos + 1]->as_string(prop_var_name)) += ")";
             }
             if (code.is_cpp())
                 code += ";";

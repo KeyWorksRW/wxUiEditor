@@ -37,7 +37,7 @@ class Wizard(wx.adv.Wizard):
         box_sizer.Add(self.calendar, wx.SizerFlags().Border(wx.ALL))
         wizPage.SetSizerAndFit(box_sizer)
 
-        m_wizPage2 = wx.adv.WizardPageSimple(self)
+        wizPage2 = wx.adv.WizardPageSimple(self)
 
         box_sizer2 = wx.BoxSizer(wx.VERTICAL)
 
@@ -94,7 +94,7 @@ class Wizard(wx.adv.Wizard):
         box_sizer2.Add(parent_sizer3, wx.SizerFlags().Border(wx.ALL))
         wizPage2.SetSizerAndFit(box_sizer2)
 
-        m_wizPage3 = wx.adv.WizardPageSimple(self, None, None, wx.BitmapBundle.FromBitmap(
+        wizPage3 = wx.adv.WizardPageSimple(self, None, None, wx.BitmapBundle.FromBitmap(
             images.wiztest2_png.Bitmap))
 
         box_sizer3 = wx.BoxSizer(wx.VERTICAL)
@@ -118,7 +118,7 @@ class Wizard(wx.adv.Wizard):
         box_sizer3.Add(box_sizer_6, wx.SizerFlags().Expand().Border(wx.ALL))
         wizPage3.SetSizerAndFit(box_sizer3)
 
-        wizPage.Chain(m_wizPage2).Chain(m_wizPage3)
+        wizPage.Chain(wizPage2).Chain(wizPage3)
         self.GetPageAreaSizer().Add(wizPage)
         self.Center(wx.BOTH)
 

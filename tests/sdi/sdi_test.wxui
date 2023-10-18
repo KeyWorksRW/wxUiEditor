@@ -102,7 +102,7 @@
       python_file="mainframe"
       python_import_list="main_test_dlg.py;booktest_dlg.py;wizard.py;python_dlg.py;tools_dlg.py;dlgissue_956.py;dlgissue_960.py"
       python_inherit_name="mainframe"
-      relative_require_list="dlgissue_956.rb;dlgissue_960.rb;booktest_dlg.rb"
+      relative_require_list="dlgissue_956.rb;dlgissue_960.rb;booktest_dlg.rb;wizard.rb"
       ruby_file="mainframe"
       xrc_file="mainframe"
       size="500,300"
@@ -1625,7 +1625,7 @@
       ruby_file="wizard"
       xrc_file="wizard"
       wxEVT_INIT_DIALOG="OnInit"
-      wxEVT_WIZARD_BEFORE_PAGE_CHANGED="OnBeforeChange">
+      wxEVT_WIZARD_BEFORE_PAGE_CHANGED="OnBeforeChange[python:OnBeforeChange][ruby:on_before_page_change]">
       <node
         class="wxWizardPageSimple">
         <node
@@ -1640,7 +1640,7 @@
       </node>
       <node
         class="wxWizardPageSimple"
-        var_name="m_wizPage2">
+        var_name="wizPage2">
         <node
           class="wxBoxSizer"
           orientation="wxVERTICAL"
@@ -1703,7 +1703,7 @@
       <node
         class="wxWizardPageSimple"
         bitmap="Embed;wiztest2.png"
-        var_name="m_wizPage3">
+        var_name="wizPage3">
         <node
           class="wxBoxSizer"
           orientation="wxVERTICAL"

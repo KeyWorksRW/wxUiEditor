@@ -33,7 +33,7 @@ class Wizard < Wx::Wizard
     box_sizer.add(@calendar, Wx::SizerFlags.new.border(Wx::ALL))
     wizPage.set_sizer_and_fit(box_sizer)
 
-    m_wizPage2 = Wx::WizardPageSimple.new(self)
+    wizPage2 = Wx::WizardPageSimple.new(self)
 
     box_sizer2 = Wx::BoxSizer.new(Wx::VERTICAL)
 
@@ -90,7 +90,7 @@ class Wizard < Wx::Wizard
     box_sizer2.add(parent_sizer3, Wx::SizerFlags.new.border(Wx::ALL))
     wizPage2.set_sizer_and_fit(box_sizer2)
 
-    m_wizPage3 = Wx::WizardPageSimple.new(self, nil, nil, wxue_get_bundle($wiztest2_png))
+    wizPage3 = Wx::WizardPageSimple.new(self, nil, nil, wxue_get_bundle($wiztest2_png))
 
     box_sizer3 = Wx::BoxSizer.new(Wx::VERTICAL)
 
@@ -113,23 +113,19 @@ class Wizard < Wx::Wizard
     box_sizer3.add(box_sizer_6, Wx::SizerFlags.new.expand.border(Wx::ALL))
     wizPage3.set_sizer_and_fit(box_sizer3)
 
-    wizPage.chain(m_wizPage2).Chain(m_wizPage3)
+    wizPage.chain(wizPage2).chain(wizPage3)
     get_page_area_sizer().add(wizPage)
     center(Wx::BOTH)
 
     # Event handlers
     evt_init_dialog(:OnInit)
-    evt_wizard_before_page_changed(:OnBeforeChange)
+    evt_wizard_before_page_changed(:on_before_page_change)
   end
-# Event handler functions
-# Add these below the comment block, or to your inherited class.
+# Unimplemented Event handler functions
+# Copy any listed and paste them below the comment block, or to your inherited class.
 
 =begin
-  def OnBeforeChange(event)
-    event.skip
-  end
-
-  def OnInit(event)
+  def on_before_page_change(event)
     event.skip
   end
 
@@ -141,3 +137,11 @@ end
 # Code below this comment block will be preserved
 # if the code for this class is re-generated.
 # ***********************************************
+
+def on_before_page_change(event)
+  event.skip
+end
+
+def OnInit(event)
+  event.skip
+end

@@ -5,16 +5,14 @@
 # Any changes before that block will be lost if it is re-generated!
 ###############################################################################
 
-# rubocop:disable Metrics/MethodLength
-# rubocop:disable Metrics/ParameterLists
-# rubocop:disable Style/Documentation
-# rubocop:disable Metrics/AbcSize
+# rubocop:disable all
 
 WX_GLOBAL_CONSTANTS = true unless defined? WX_GLOBAL_CONSTANTS
 
 require 'wx/core'
 
 require_relative 'test_dlg'
+require_relative 'wizard'
 
 class MainFrame < Wx::Frame
   def initialize(parent, id = Wx::ID_ANY, title = 'Tests',
@@ -34,8 +32,11 @@ class MainFrame < Wx::Frame
 
     menu_dialogs = Wx::Menu.new
     menu_item_test_dlg = Wx::MenuItem.new(menu_dialogs, Wx::ID_ANY,
-      'Test Dialog')
+      'Test Dialog...')
     menu_dialogs.append(menu_item_test_dlg)
+    menu_item_test_wizard = Wx::MenuItem.new(menu_dialogs, Wx::ID_ANY,
+      'Wizard...')
+    menu_dialogs.append(menu_item_test_wizard)
     @menubar.append(menu_dialogs, 'Tests')
 
     set_menu_bar(@menubar)
@@ -60,13 +61,28 @@ class MainFrame < Wx::Frame
     # Event handlers
     evt_menu(menu_item.get_id, :on_quit)
     evt_menu(menu_item_test_dlg.get_id, :on_test_dlg)
+    evt_menu(menu_item_test_wizard.get_id, :on_wizard)
   end
+# Unimplemented Event handler functions
+# Copy any listed and paste them below the comment block, or to your inherited class.
+
+=begin
+  def on_quit(event)
+    event.skip
+  end
+
+  def on_test_dlg(event)
+    event.skip
+  end
+
+  def on_wizard(event)
+    event.skip
+  end
+
+=end
 end
 
-# rubocop:enable Metrics/MethodLength
-# rubocop:enable Metrics/ParameterLists
-# rubocop:enable Style/Documentation
-# rubocop:enable Metrics/AbcSize
+# rubocop:enable all
 
 # ************* End of generated code ***********
 # DO NOT EDIT THIS COMMENT BLOCK!
@@ -86,8 +102,9 @@ def on_test_dlg
 end
 
 def on_wizard
-  w = MyWizard.new(self)
-  w.run_wizard(w.get_page_area_sizer.get_item(0).get_window)
+  my_wizard = Wizard.new(self)
+  my_wizard.run_wizard(my_wizard.get_page_area_sizer.get_item(0).get_window)
+  my_wizard.destroy
 end
 
 class App < Wx::App

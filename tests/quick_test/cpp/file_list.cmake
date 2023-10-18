@@ -6,4 +6,10 @@ set (file_list
     mainapp.cpp
     main_frame.cpp
     rubytest.cpp
+    wizard.cpp
+)
+
+set (other_files
+    python/py_main.py
+    ruby/rb_main.rb
 )

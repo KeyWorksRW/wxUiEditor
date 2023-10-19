@@ -229,6 +229,8 @@ void BaseCodeGenerator::GenerateRubyClass(PANEL_PAGE panel_type)
     m_ImagesForm = nullptr;
 
     bool base64_requirement_written = false;
+    bool stringio_requirement_written = false;
+    bool zlib_requirement_written = false;
 
     for (const auto& form: Project.getChildNodePtrs())
     {
@@ -426,8 +428,21 @@ void BaseCodeGenerator::GenerateRubyClass(PANEL_PAGE panel_type)
                 }
                 if (iter->type == wxBITMAP_TYPE_INVALID)
                 {
-                    // m_source->writeLine("require zlib");
-                    // m_source->writeLine("require base64");
+                    if (!zlib_requirement_written)
+                    {
+                        zlib_requirement_written = true;
+                        m_source->writeLine("require 'zlib'");
+                    }
+                    if (!base64_requirement_written)
+                    {
+                        base64_requirement_written = true;
+                        m_source->writeLine("require 'base64'");
+                    }
+                    if (!stringio_requirement_written)
+                    {
+                        stringio_requirement_written = true;
+                        m_source->writeLine("require 'stringio'");
+                    }
                     svg_import_libs = true;
                 }
             }
@@ -436,8 +451,21 @@ void BaseCodeGenerator::GenerateRubyClass(PANEL_PAGE panel_type)
                 // SVG images have a wxBITMAP_TYPE_INVALID type
                 if (iter->type == wxBITMAP_TYPE_INVALID)
                 {
-                    // m_source->writeLine("require 'base64'");
-                    // m_source->writeLine("require 'stringio'");
+                    if (!zlib_requirement_written)
+                    {
+                        zlib_requirement_written = true;
+                        m_source->writeLine("require 'zlib'");
+                    }
+                    if (!base64_requirement_written)
+                    {
+                        base64_requirement_written = true;
+                        m_source->writeLine("require 'base64'");
+                    }
+                    if (!stringio_requirement_written)
+                    {
+                        stringio_requirement_written = true;
+                        m_source->writeLine("require 'stringio'");
+                    }
                     svg_import_libs = true;
                 }
                 if (iter->form != m_ImagesForm)
@@ -464,8 +492,14 @@ void BaseCodeGenerator::GenerateRubyClass(PANEL_PAGE panel_type)
                 // The images file supplies the function we need
                 m_NeedImageFunction = false;
             else
+            {
                 // We have to provide our own method, and that requires this library
-                m_source->writeLine("require 'stringio'");
+                if (!stringio_requirement_written)
+                {
+                    stringio_requirement_written = true;
+                    m_source->writeLine("require 'stringio'");
+                }
+            }
         }
     }
 
@@ -723,32 +757,27 @@ bool RubyBundleCode(Code& code, GenEnum::PropName prop)
     {
         if (description.starts_with("SVG"))
         {
-            // TODO: [Randalphwa - 08-17-2023] This is waiting for wxRuby3 to implement the .from_...() methods
-#if 0
             auto embed = ProjectImages.GetEmbeddedImage(parts[IndexImage]);
             ASSERT(embed);
             tt_string svg_name;
             if (embed->form != code.node()->getForm())
             {
-                svg_name = embed->form->as_string(prop_python_file).filename();
+                svg_name = embed->form->as_string(prop_ruby_file).filename();
                 svg_name.remove_extension();
-                svg_name << '.' << embed->array_name;
+                svg_name << ".$" << embed->array_name;
             }
             else
             {
-                svg_name = embed->array_name;
+                svg_name = "$" + embed->array_name;
             }
-            code.insert(0, tt_string("_svg_string_ = zlib.decompress(base64.b64decode(") << svg_name << "))\n");
-            code += "Wx::BitmapBundle.FromSVG(_svg_string_";
+            code.insert(0, tt_string("_svg_string_ = Zlib::Inflate.inflate(Base64.decode64(") << svg_name << "))\n");
+            code += "Wx::BitmapBundle.from_svg(_svg_string_";
             wxSize svg_size { -1, -1 };
             if (parts[IndexSize].size())
             {
                 svg_size = GetSizeInfo(parts[IndexSize]);
             }
             code.Comma().Add("wxSize(").itoa(svg_size.x).Comma().itoa(svg_size.y) += "))";
-#else
-            return false;
-#endif
         }
 
         else if (parts[IndexType].starts_with("Embed"))

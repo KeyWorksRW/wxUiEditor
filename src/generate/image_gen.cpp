@@ -599,6 +599,12 @@ static void GenerateSVGBundle(Code& code, const tt_string_vector& parts, bool ge
         code.insert(0, tt_string("_svg_string_ = zlib.decompress(base64.b64decode(") << svg_name << "))\n");
         code.Eol() += "\twx.BitmapBundle.FromSVG(_svg_string_";
     }
+    else if (code.is_ruby())
+    {
+        tt_string svg_name;
+        code.insert(0, tt_string("_svg_string_ = Zlib::Inflate.inflate(Base64.decode64($") << embed->array_name << "))\n");
+        code.Eol() += "\tWx::BitmapBundle.from_svg(_svg_string_";
+    }
     if (get_bitmap)
     {
         code.Comma().Eol().Tab();

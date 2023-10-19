@@ -305,7 +305,8 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
 
 void BaseCodeGenerator::GenSrcEventBinding(Node* node, EventVector& events)
 {
-    ASSERT_MSG(events.size(), "GenSrcEventBinding() shouldn't be called if there are no events");
+    ASSERT_MSG(events.size() || m_map_conditional_events.size(),
+               "GenSrcEventBinding() shouldn't be called if there are no events");
     if (events.empty() && m_map_conditional_events.empty())
     {
         return;

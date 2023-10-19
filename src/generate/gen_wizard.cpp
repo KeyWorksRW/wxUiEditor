@@ -196,12 +196,12 @@ bool WizardFormGenerator::SettingsCode(Code& code)
     {
         if (code.is_cpp())
         {
-            code.Eol(eol_if_needed).FormFunction("if (!Create(").Str("parent, id, title, pos, style, name))");
+            code.Eol(eol_if_needed).FormFunction("if (!Create(").Str("parent, id, title, wxBitmapBundle(), pos, style))");
             code.Eol().Tab().Str("return;");
         }
         else if (code.is_python())
         {
-            code.Eol(eol_if_needed).Str("if not self.Create(parent, id, title, pos, style, name):");
+            code.Eol(eol_if_needed).Str("if not self.Create(parent, id, title, wx.BitmapBundle(), pos, style):");
             code.Eol().Tab().Str("return");
         }
     }
@@ -221,7 +221,11 @@ bool WizardFormGenerator::AfterChildrenCode(Code& code)
             {
                 // In C++, Chain() returns a reference, so "." is used instead of "->"
                 // Python and Ruby both use "."
-                code.Str(".").Add("Chain(").Str(panes[pos + 1]->as_string(prop_var_name)) += ")";
+                if (code.is_cpp())
+                    code.Str(".").Add("Chain(");
+                else
+                    code.Function("Chain(");
+                code.Str(panes[pos + 1]->as_string(prop_var_name)) += ")";
             }
             if (code.is_cpp())
                 code += ";";

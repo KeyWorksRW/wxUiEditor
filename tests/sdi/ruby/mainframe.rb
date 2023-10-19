@@ -14,6 +14,7 @@ require 'wx/pg'
 require_relative 'dlgissue_956'
 require_relative 'dlgissue_960'
 require_relative 'booktest_dlg'
+require_relative 'wizard'
 
 require_relative 'images'
 require 'base64'
@@ -85,7 +86,7 @@ class MainFrame < Wx::Frame
     menuQuit.set_bitmap(Wx::ArtProvider.get_bitmap_bundle(Wx::ART_QUIT,
       Wx::ART_MENU))
     @menu.append(menuQuit)
-    menubar.append(@menu, '&File')
+    menubar.append(@menu, Wx::get_stock_label(Wx::ID_FILE))
 
     menuDialogs = Wx::Menu.new
     menu_item_3 = Wx::MenuItem.new(menuDialogs, Wx::ID_ANY, 'MainTestDlg')
@@ -185,6 +186,10 @@ class MainFrame < Wx::Frame
   end
 
   def OnDlgIssue_960(event)
+    event.skip
+  end
+
+  def OnWizard(event)
     event.skip
   end
 
@@ -288,11 +293,10 @@ def on_quit(event)
   close(true)
 end
 
-def OnWizard(event)
-  event.skip
-# def OnWizard
-  # wizard = Wizard.new(self)
-  # wizard.run_wizard(wizard.get_first_page)
+def OnWizard
+  my_wizard = Wizard.new(self)
+  my_wizard.run_wizard(my_wizard.get_page_area_sizer.get_item(0).get_window)
+  my_wizard.destroy
 end
 
 def on_tools_dlg(event)

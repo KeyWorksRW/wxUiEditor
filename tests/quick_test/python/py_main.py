@@ -9,6 +9,7 @@
 
 import wx
 import test_dlg
+import wizard
 
 class MainFrame(wx.Frame):
 
@@ -29,8 +30,10 @@ class MainFrame(wx.Frame):
         self.menubar.Append(self.menu_file, "&File")
 
         menu_dialogs = wx.Menu()
-        menu_item_test_dlg = wx.MenuItem(menu_dialogs, wx.ID_ANY, "Test Dialog")
+        menu_item_test_dlg = wx.MenuItem(menu_dialogs, wx.ID_ANY, "Test Dialog...")
         menu_dialogs.Append(menu_item_test_dlg)
+        menu_item_test_wizard = wx.MenuItem(menu_dialogs, wx.ID_ANY, "Wizard...")
+        menu_dialogs.Append(menu_item_test_wizard)
         self.menubar.Append(menu_dialogs, "Tests")
 
         self.SetMenuBar(self.menubar)
@@ -55,6 +58,12 @@ class MainFrame(wx.Frame):
         # Bind Event handlers
         self.Bind(wx.EVT_MENU, self.on_quit, id=wx.ID_EXIT)
         self.Bind(wx.EVT_MENU, self.on_test_dlg, id=menu_item_test_dlg.GetId())
+        self.Bind(wx.EVT_MENU, self.on_wizard, id=menu_item_test_wizard.GetId())
+
+    # Unimplemented Event handler functions
+    # Copy any listed and paste them below the comment block, or to your inherited class.
+    """
+    """
 
 # ************* End of generated code ***********
 # DO NOT EDIT THIS COMMENT BLOCK!
@@ -74,7 +83,9 @@ class MainFrame(wx.Frame):
         dlg.Destroy()
 
     def on_wizard(self, event):
-        event.Skip()
+        my_wizard = wizard.Wizard(self)
+        my_wizard.Run()
+        my_wizard.Destroy()
 
 class App(wx.App):
     """Application class."""

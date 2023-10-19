@@ -293,8 +293,11 @@ public:
         return *this;
     }
 
-    // Adds -> or . to the string, then function (fixing wx prefix if needed)
-    Code& Function(tt_string_view text);
+    // If add_operator is true, adds -> or . to the string, then function (fixing wx prefix
+    // if needed)
+    //
+    // Use add_operator = false to convert a wxFunction to snake_case for Ruby.
+    Code& Function(tt_string_view text, bool add_operator = true);
 
     // C++ will add "::" and the function name. Python will add "." and the function name.
     // Ruby changes the function to snake_case.

@@ -132,8 +132,15 @@ void BaseCodeGenerator::GenConstruction(Node* node)
         }
         else
         {
-            gen_code.ParentName().Function("GetControlSizer()").Function("Add(").NodeName();
-            gen_code.CheckLineLength().Comma().Add("wxSizerFlags()").Add(".Expand().Border(").Add("wxALL)").EndFunction();
+            gen_code.ParentName().Function("GetControlSizer").AddIfCpp("()").Function("Add(").NodeName().Comma();
+            gen_code.CheckLineLength(sizeof("wxSizerFlags().Expand().Border(wxALL));")).Add("wxSizerFlags");
+            if (gen_code.is_ruby())
+                gen_code.Str(".new.expand.border(Wx::ALL)");
+            else if (gen_code.is_cpp())
+                gen_code.Str(".Expand().Border(").Add("wxALL)");
+            else
+                FAIL_MSG("Unknown language!");
+            gen_code.EndFunction();
         }
         m_source->writeLine(gen_code);
     }

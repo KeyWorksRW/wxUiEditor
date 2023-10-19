@@ -595,9 +595,8 @@ class MainTestDialog < Wx::Dialog
     @rbnBar.set_active_page(rbnPage)
 
     rbnPanel = Wx::RBN::RibbonPanel.new(rbnPage, Wx::ID_ANY, 'English',
-      wxue_get_bundle($english_png),
-      .get_bitmap(Wx::Size.new(
-      FromDIP(19), FromDIP(15))))
+      wxue_get_bundle($english_png).get_bitmap(Wx::Size.new(
+      from_dip(19), from_dip(15))))
 
     first_parent_sizer = Wx::BoxSizer.new(Wx::VERTICAL)
 
@@ -616,9 +615,8 @@ class MainTestDialog < Wx::Dialog
     rbnPanel.set_sizer_and_fit(first_parent_sizer)
 
     rbnPanel_2 = Wx::RBN::RibbonPanel.new(rbnPage, Wx::ID_ANY, 'French',
-      wxue_get_bundle($french_png),
-      .get_bitmap(Wx::Size.new(
-      FromDIP(19), FromDIP(15))))
+      wxue_get_bundle($french_png).get_bitmap(Wx::Size.new(
+      from_dip(19), from_dip(15))))
     rbnPanel_2.set_background_colour(Wx::SystemSettings.get_colour(
       Wx::SYS_COLOUR_MENU))
 
@@ -646,9 +644,8 @@ class MainTestDialog < Wx::Dialog
     rbnBtnBar = Wx::RBN::RibbonButtonBar.new(ribbonPanel2, Wx::ID_ANY)
     rbnBtnBar.add_button(Wx::ID_ANY, 'Forward', Wx::ArtProvider.get_bitmap(
       Wx::ART_GO_FORWARD, Wx::ART_OTHER), '', Wx::RBN::RIBBON_BUTTON_NORMAL)
-    rbnBtnBar.add_button(Wx::ID_ANY, 'Backward', wxue_get_bundle($left_png),
-      .get_bitmap(Wx::Size.new(
-      FromDIP(24), FromDIP(24))), '', Wx::RBN::RIBBON_BUTTON_NORMAL)
+    rbnBtnBar.add_button(Wx::ID_ANY, 'Backward', wxue_get_bundle($left_png).get_bitmap(Wx::Size.new(
+      from_dip(24), from_dip(24))), '', Wx::RBN::RIBBON_BUTTON_NORMAL)
     rbnBtnBar.realize
 
     ribbonPage_2 = Wx::RBN::RibbonPage.new(@rbnBar, Wx::ID_ANY, 'Third')
@@ -670,9 +667,8 @@ class MainTestDialog < Wx::Dialog
       'Gallery Panel')
 
     rbnGallery = Wx::RBN::RibbonGallery.new(rbnPanel_3, Wx::ID_ANY)
-    rbnGallery.append(wxue_get_bundle($toggle_button_png),
-      .get_bitmap(Wx::Size.new(
-      FromDIP(22), FromDIP(22))), Wx::ID_ANY)
+    rbnGallery.append(wxue_get_bundle($toggle_button_png).get_bitmap(Wx::Size.new(
+      from_dip(22), from_dip(22))), Wx::ID_ANY)
     rbnGallery.realize
     page.set_sizer_and_fit(page_sizer_3)
 

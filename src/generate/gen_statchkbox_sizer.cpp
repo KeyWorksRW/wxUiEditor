@@ -98,9 +98,25 @@ bool StaticCheckboxBoxSizerGenerator::ConstructionCode(Code& code)
         }
         code.Eol();
     }
-    else
+    else if (code.is_python())
     {
         code.Str("# wxPython currently does not support a checkbox as a static box label").Eol();
+    }
+    else if (code.is_ruby())
+    {
+        if (Project.as_string(prop_wxRuby_version) == "0.9.0")
+        {
+            code.Str("# wxRuby3 0.9.0 does not support a checkbox as a static box label").Eol();
+        }
+        else
+        {
+            tt_string var_name = code.node()->as_string(prop_checkbox_var_name);
+            if (var_name.is_sameprefix("m_"))
+                var_name.erase(0, 2);
+            code.Str(var_name) << " = Wx::CheckBox.new(";
+            code.ValidParentName().Comma().as_string(prop_id).Comma().QuotedString(prop_label).EndFunction();
+            code.Eol();
+        }
     }
 
     code.AddAuto();
@@ -149,9 +165,19 @@ bool StaticCheckboxBoxSizerGenerator::ConstructionCode(Code& code)
     else
     {
         code.NodeName().CreateClass(false, "wxStaticBoxSizer").as_string(prop_orientation).Comma().Str(parent_name);
-        if (code.hasValue(prop_label))
+        if (code.is_ruby() && Project.as_string(prop_wxRuby_version) != "0.9.0")
         {
-            code.Comma().QuotedString(prop_label);
+            tt_string var_name = code.node()->as_string(prop_checkbox_var_name);
+            if (var_name.is_sameprefix("m_"))
+                var_name.erase(0, 2);
+            code.Comma().Str(var_name);
+        }
+        else
+        {
+            if (code.hasValue(prop_label))
+            {
+                code.Comma().QuotedString(prop_label);
+            }
         }
         code.EndFunction();
     }

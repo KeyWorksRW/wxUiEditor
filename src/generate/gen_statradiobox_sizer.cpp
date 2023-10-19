@@ -92,9 +92,13 @@ bool StaticRadioBtnBoxSizerGenerator::ConstructionCode(Code& code)
         }
         code.Eol();
     }
-    else
+    else if (code.is_python())
     {
         code.Str("# wxPython currently does not support a radio button as a static box label").Eol();
+    }
+    else if (code.is_ruby())
+    {
+        code.Str("# wxRuby3 currently does not support a radio button as a static box label").Eol();
     }
 
     tt_string parent_name(code.is_cpp() ? "this" : "self");

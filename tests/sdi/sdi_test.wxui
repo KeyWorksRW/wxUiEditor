@@ -1205,12 +1205,14 @@
                   class_access="none"
                   label="First"
                   var_name="btn"
+                  platforms="Unix|Mac"
                   wxEVT_BUTTON="[this](wxCommandEvent&amp;)@@{@@m_choicebook->SetSelection(0);@@}[python:lambda]self.m_choicebook.SetSelection(0)" />
                 <node
                   class="wxButton"
                   class_access="none"
                   label="Last"
                   var_name="btn_2"
+                  platforms="Unix|Mac"
                   wxEVT_BUTTON="[this](wxCommandEvent&amp;)@@{@@m_choicebook->SetSelection(2);@@}[python:lambda]self.m_choicebook.SetSelection(2)" />
                 <node
                   class="BookPage"

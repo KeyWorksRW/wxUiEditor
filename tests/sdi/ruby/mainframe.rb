@@ -181,6 +181,10 @@ class MainFrame < Wx::Frame
 # Copy any listed and paste them below the comment block, or to your inherited class.
 
 =begin
+  def OnBookTestDlg(event)
+    event.skip
+  end
+
   def OnDlgIssue_956(event)
     event.skip
   end
@@ -252,13 +256,12 @@ $wxDialog_png = Base64.decode64(
 # if the code for this class is re-generated.
 # ***********************************************
 
-def OnBookTestDlg(event)
-  event.skip
-# def OnBookTestDlg
-  # no error msgs, but ruby terminates when this is called
-  # dlg = BookTestDlg.new(self)
-  # dlg.show_modal
-  # dlg.destroy
+# def OnBookTestDlg(event)
+  # event.skip
+def OnBookTestDlg
+  dlg = BookTestDlg.new(self)
+  dlg.show_modal
+  dlg.destroy
 end
 
 def OnCommonDialog(event)

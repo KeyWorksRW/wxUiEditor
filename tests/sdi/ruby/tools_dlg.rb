@@ -18,7 +18,9 @@ $rbn_tool_art = 6003
 $rbn_tool_list = 6004
 $rbn_tool_svg = 6005
 
+require 'zlib'
 require 'base64'
+require 'stringio'
 require_relative 'images'
 
 class ToolBarsDialog < Wx::Dialog
@@ -39,7 +41,9 @@ class ToolBarsDialog < Wx::Dialog
 
     @tool_bar = Wx::ToolBar.new(self, Wx::ID_ANY, Wx::DEFAULT_POSITION,
       Wx::DEFAULT_SIZE, Wx::TB_HORIZONTAL)
-    tool_svg = @tool_bar.add_tool(Wx::ID_ANY, '', , Wx::Size.new(24, 24)))
+    _svg_string_ = Zlib::Inflate.inflate(Base64.decode64($left_svg))
+    tool_svg = @tool_bar.add_tool(Wx::ID_ANY, '',
+      Wx::BitmapBundle.from_svg(_svg_string_, Wx::Size.new(24, 24)))
 
     @tool_bar.add_tool(Wx::ID_ANY, '', Wx::ArtProvider.get_bitmap_bundle(
       Wx::ART_CUT, Wx::ART_TOOLBAR))
@@ -61,7 +65,9 @@ class ToolBarsDialog < Wx::Dialog
     @aui_tool_bar = Wx::AUI::AuiToolBar.new(self, Wx::ID_ANY,
       Wx::DEFAULT_POSITION, Wx::DEFAULT_SIZE, Wx::AUI::AUI_TB_PLAIN_BACKGROUND|
       Wx::AUI::AUI_TB_DEFAULT_STYLE)
-    @aui_tool_bar.add_tool(Wx::ID_ANY, '', , Wx::Size.new(24, 24)))
+    _svg_string_ = Zlib::Inflate.inflate(Base64.decode64($left_svg))
+    @aui_tool_bar.add_tool(Wx::ID_ANY, '',
+      Wx::BitmapBundle.from_svg(_svg_string_, Wx::Size.new(24, 24)))
     @aui_tool_bar.add_tool(Wx::ID_ANY, '', Wx::ArtProvider.get_bitmap_bundle(
       Wx::ART_CUT, Wx::ART_TOOLBAR))
     @aui_tool_bar.add_tool(Wx::ID_ANY, '', wxue_get_bundle($redo_png, $redo_2x_png)
@@ -83,7 +89,9 @@ class ToolBarsDialog < Wx::Dialog
     rbnPanel = Wx::RBN::RibbonPanel.new(rbnPage, Wx::ID_ANY, 'Page 1, panel 1')
 
     rbnToolBar = Wx::RBN::RibbonToolBar.new(rbnPanel, Wx::ID_ANY)
-    rbnToolBar.add_tool(rbn_tool_svg, ,
+    _svg_string_ = Zlib::Inflate.inflate(Base64.decode64($left_svg))
+    rbnToolBar.add_tool(rbn_tool_svg,
+      Wx::BitmapBundle.from_svg(_svg_string_,
       from_dip(Wx::Size.new(24, 24))).GetBitmap(Wx::DefaultSize), '',
       Wx::RBN::RIBBON_BUTTON_NORMAL)
     rbnToolBar.add_tool(rbn_tool_art, Wx::ArtProvider.get_bitmap(Wx::ART_CUT,

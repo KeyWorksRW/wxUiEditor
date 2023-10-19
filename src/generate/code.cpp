@@ -479,7 +479,13 @@ Code& Code::as_string(PropName prop_name)
         auto result = m_node->getPropId();
         CheckLineLength(result.size());
 
-        if (!is_cpp())
+        // For Ruby, if it doesn't start with 'wx' then assume it is a global with a '$' prefix
+        if (is_ruby() && !result.is_sameprefix("wx"))
+        {
+            *this << '$' << result;
+            return *this;
+        }
+        else if (!is_cpp())
         {
             result.Replace("wx", m_language_wxPrefix);
         }

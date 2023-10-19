@@ -718,12 +718,11 @@ static void GenerateEmbedBundle(Code& code, const tt_string_vector& parts, bool 
 
         if (get_bitmap)
         {
-            code.Comma().Eol().Tab();
-            code.CheckLineLength(sizeof("FromDIP(wx::Size.new(32, 32))).GetBitmap(wxDefaultSize)"));
-            code.Function("GetBitmap(").Add("Wx::Size.new(");
-            code.Eol() << "\tFromDIP(" << embed->size.x << "), FromDIP(" << embed->size.y << ")))";
+            code.Str(".get_bitmap(").Eol().Tab(2).Str("Wx::Size.new(");
+            code << ("from_dip(") << embed->size.x << "), from_dip(" << embed->size.y << ")))";
             // TODO: [Randalphwa - 09-19-2023] If it's a single image, then it may need to be rescaled
-            // using wxIMAGE_QUALITY_BILINEAR rather than letting the wxBitmapBundle do it.
+            // using wxIMAGE_QUALITY_BILINEAR rather than letting the wxBitmapBundle do it. However, the
+            // only embedded images we support are bundles, so this probably isn't practical.
             return;
         }
     }

@@ -263,6 +263,11 @@ public:
         return *this;
     }
 
+    // Use this for wxWidgets types such as wxDefaultPosition, wxNullBitmap, etc.
+    // Python will replace the "wx" with "wx."
+    // Ruby will replace the "wx" with "Wx::" and change the name up uppercase snake_case.
+    Code& AddType(tt_string_view text);
+
     // Equibalent to Add(node->as_constant(prop_name, "...")
     Code& AddConstant(GenEnum::PropName prop_name, tt_string_view short_name);
 

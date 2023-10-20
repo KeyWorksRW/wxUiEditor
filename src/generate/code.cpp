@@ -496,6 +496,28 @@ Code& Code::as_string(PropName prop_name)
     return Add(m_node->as_string(prop_name));
 }
 
+Code& Code::AddType(tt_string_view text)
+{
+    if (is_cpp() || text.size() < 3)
+    {
+        CheckLineLength(text.size());
+        *this += text;
+    }
+    else if (is_ruby())
+    {
+        auto new_text = ConvertToUpperSnakeCase(text.substr(2));
+        CheckLineLength(sizeof("Wx::") + new_text.size());
+        *this << "Wx::" << new_text;
+    }
+    else
+    {
+        CheckLineLength(m_language_wxPrefix.size() + text.size() - 2);
+        *this << m_language_wxPrefix << text.substr(2);
+    }
+
+    return *this;
+}
+
 Code& Code::Add(tt_string_view text)
 {
     bool old_linebreak = m_auto_break;

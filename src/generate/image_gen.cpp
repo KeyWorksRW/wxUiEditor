@@ -626,7 +626,7 @@ static void GenerateSVGBundle(Code& code, const tt_string_vector& parts, bool ge
             code.Add("wxSize(");
             code.itoa(svg_size.x).Comma().itoa(svg_size.y) += ")))";
         }
-        code.VariableMethod("GetBitmap(").Add("wxDefaultSize").Str(")");
+        code.VariableMethod("GetBitmap(").AddType("wxDefaultSize").Str(")");
     }
     else
     {

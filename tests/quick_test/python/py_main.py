@@ -91,7 +91,7 @@ class App(wx.App):
     """Application class."""
     def OnInit(self):
         """Initialize the application."""
-        frame = MainFrame(None)
+        frame = MainFrame(None, title="Python implementation")
         self.SetTopWindow(frame)
 
         frame.Show(True)

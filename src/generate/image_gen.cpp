@@ -602,36 +602,40 @@ static void GenerateSVGBundle(Code& code, const tt_string_vector& parts, bool ge
     else if (code.is_ruby())
     {
         tt_string svg_name;
-        code.insert(0, tt_string("_svg_string_ = Zlib::Inflate.inflate(Base64.decode64($") << embed->array_name << "))\n");
-        code.Eol() += "\tWx::BitmapBundle.from_svg(_svg_string_";
-    }
-    if (get_bitmap)
-    {
-        code.Comma().Eol().Tab();
-        code.CheckLineLength(sizeof("FromDIP(wx::Size.new(32, 32))).GetBitmap(wxDefaultSize)")).FormFunction("FromDIP(");
-        if (code.is_ruby())
+        if (embed->form != code.node()->getForm())
         {
-            code.Add("Wx::Size.new(");
+            svg_name = embed->form->as_string(prop_ruby_file).filename();
+            svg_name.remove_extension();
+            svg_name << ".$" << embed->array_name;
         }
         else
         {
-            code.Add("wxSize(");
+            svg_name = "$" + embed->array_name;
         }
-        code.itoa(svg_size.x).Comma().itoa(svg_size.y) += ")))";
-        code.Str(".").Add("GetBitmap(").Add("wxDefaultSize)");
+        code.insert(0, tt_string("_svg_string_ = Zlib::Inflate.inflate(Base64.decode64(") << svg_name << "))\n");
+        code += "Wx::BitmapBundle.from_svg(_svg_string_";
+        code.Comma().Str("Wx::Size.new(").itoa(svg_size.x).Comma().itoa(svg_size.y) += "))";
+    }
+
+    if (get_bitmap)
+    {
+        if (!code.is_ruby())
+        {
+            code.CheckLineLength(sizeof("FromDIP(wx::Size.new(32, 32))).GetBitmap(wxDefaultSize)")).FormFunction("FromDIP(");
+            code.Comma().Eol().Tab();
+            code.Add("wxSize(");
+            code.itoa(svg_size.x).Comma().itoa(svg_size.y) += ")))";
+        }
+        code.VariableMethod("GetBitmap(").Add("wxDefaultSize").Str(")");
     }
     else
     {
-        code.Comma();
-        if (code.is_ruby())
+        // wxSize already added above
+        if (!code.is_ruby())
         {
-            code.Add("Wx::Size.new(");
+            code.Comma().Add("wxSize(");
+            code.itoa(svg_size.x).Comma().itoa(svg_size.y) += "))";
         }
-        else
-        {
-            code.Add("wxSize(");
-        }
-        code.itoa(svg_size.x).Comma().itoa(svg_size.y) += "))";
     }
 }
 
@@ -723,8 +727,8 @@ static void GenerateEmbedBundle(Code& code, const tt_string_vector& parts, bool 
             // TODO: [Randalphwa - 09-19-2023] If it's a single image, then it may need to be rescaled
             // using wxIMAGE_QUALITY_BILINEAR rather than letting the wxBitmapBundle do it. However, the
             // only embedded images we support are bundles, so this probably isn't practical.
-            return;
         }
+        return;
     }
 
     tt_string path;

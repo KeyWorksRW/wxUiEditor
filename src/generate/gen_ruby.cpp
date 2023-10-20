@@ -765,7 +765,7 @@ bool RubyBundleCode(Code& code, GenEnum::PropName prop)
             {
                 svg_size = GetSizeInfo(parts[IndexSize]);
             }
-            code.Comma().Add("wxSize(").itoa(svg_size.x).Comma().itoa(svg_size.y) += "))";
+            code.Comma().Str("Wx::Size.new(").itoa(svg_size.x).Comma().itoa(svg_size.y) += "))";
         }
 
         else if (parts[IndexType].starts_with("Embed"))

@@ -517,11 +517,24 @@ Code& Code::Add(tt_string_view text)
     }
     else
     {
-        if (is_ruby() && text == "wxEmptyString")
+        if (is_ruby())
         {
-            // wxRuby prefers ('') for an empty string instead of the expected Wx::empty_string
-            *this += "('')";
-            return *this;
+            if (text == "wxEmptyString")
+            {
+                // wxRuby prefers ('') for an empty string instead of the expected Wx::empty_string
+                *this += "('')";
+                return *this;
+            }
+            else if (text == "wxDefaultSize")
+            {
+                *this += "Wx::DEFAULT_SIZE";
+                return *this;
+            }
+            else if (text == "wxDefaultPosition")
+            {
+                *this += "Wx::DEFAULT_POSITION";
+                return *this;
+            }
         }
 
         if (text.find('|') != tt::npos)

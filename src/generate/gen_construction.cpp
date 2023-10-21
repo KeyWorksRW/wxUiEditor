@@ -280,7 +280,7 @@ void BaseCodeGenerator::BeginPlatformCode(Code& code, const tt_string& platforms
                 break;
 
             case GEN_LANG_RUBY:
-                code.Eol() << "if Wx::OperatingSystemId & Wx::OS_WINDOWS";
+                code.Eol() << "if Wx::PLATFORM == 'WXMSW'";
                 break;
         }
     }
@@ -309,7 +309,7 @@ void BaseCodeGenerator::BeginPlatformCode(Code& code, const tt_string& platforms
                     code << " || ";
                 else
                     code.Eol() << "if ";
-                code << "Wx::OperatingSystemId & Wx::OS_UNIX";
+                code << "Wx::PLATFORM == 'WXUNIX'";
                 break;
         }
     }
@@ -338,7 +338,7 @@ void BaseCodeGenerator::BeginPlatformCode(Code& code, const tt_string& platforms
                     code << " || ";
                 else
                     code.Eol() << "if ";
-                code << "Wx::OperatingSystemId & Wx::OS_MAC";
+                code << "Wx::PLATFORM == 'WXOSX'";
                 break;
         }
     }

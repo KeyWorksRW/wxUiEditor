@@ -15,6 +15,8 @@ require_relative 'dlgissue_956'
 require_relative 'dlgissue_960'
 require_relative 'booktest_dlg'
 require_relative 'wizard'
+require_relative 'main_test_dlg'
+require_relative 'tools_dlg'
 
 require_relative 'images'
 require 'base64'
@@ -181,11 +183,19 @@ class MainFrame < Wx::Frame
 # Copy any listed and paste them below the comment block, or to your inherited class.
 
 =begin
+  def OnBookTestDlg(event)
+    event.skip
+  end
+
   def OnDlgIssue_956(event)
     event.skip
   end
 
   def OnDlgIssue_960(event)
+    event.skip
+  end
+
+  def OnMainTestDlg(event)
     event.skip
   end
 
@@ -252,13 +262,10 @@ $wxDialog_png = Base64.decode64(
 # if the code for this class is re-generated.
 # ***********************************************
 
-def OnBookTestDlg(event)
-  event.skip
-# def OnBookTestDlg
-  # no error msgs, but ruby terminates when this is called
-  # dlg = BookTestDlg.new(self)
-  # dlg.show_modal
-  # dlg.destroy
+def OnBookTestDlg
+  dlg = BookTestDlg.new(self)
+  dlg.show_modal
+  dlg.destroy
 end
 
 def OnCommonDialog(event)
@@ -277,12 +284,10 @@ def OnDlgIssue_960
   dlg.destroy
 end
 
-def OnMainTestDlg(event)
-  event.skip
-# def OnMainTestDlg
-  # dlg = MainTestDialog.new(self)
-  # dlg.show_modal
-  # dlg.destroy
+def OnMainTestDlg
+  dlg = MainTestDialog.new(self)
+  dlg.show_modal
+  dlg.destroy
 end
 
 def OnPythonDlg(event)
@@ -300,11 +305,9 @@ def OnWizard
 end
 
 def on_tools_dlg(event)
-  event.skip
-  # enable after SVG files are supported
-  # dlg = ToolBarsDialog.new(self)
-  # dlg.show_modal
-  # dlg.destroy
+  dlg = ToolBarsDialog.new(self)
+  dlg.show_modal
+  dlg.destroy
 end
 
 class App < Wx::App

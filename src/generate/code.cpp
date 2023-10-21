@@ -479,7 +479,13 @@ Code& Code::as_string(PropName prop_name)
         auto result = m_node->getPropId();
         CheckLineLength(result.size());
 
-        if (!is_cpp())
+        // For Ruby, if it doesn't start with 'wx' then assume it is a global with a '$' prefix
+        if (is_ruby() && !result.is_sameprefix("wx"))
+        {
+            *this << '$' << result;
+            return *this;
+        }
+        else if (!is_cpp())
         {
             result.Replace("wx", m_language_wxPrefix);
         }
@@ -488,6 +494,28 @@ Code& Code::as_string(PropName prop_name)
     }
 
     return Add(m_node->as_string(prop_name));
+}
+
+Code& Code::AddType(tt_string_view text)
+{
+    if (is_cpp() || text.size() < 3)
+    {
+        CheckLineLength(text.size());
+        *this += text;
+    }
+    else if (is_ruby())
+    {
+        auto new_text = ConvertToUpperSnakeCase(text.substr(2));
+        CheckLineLength(sizeof("Wx::") + new_text.size());
+        *this << "Wx::" << new_text;
+    }
+    else
+    {
+        CheckLineLength(m_language_wxPrefix.size() + text.size() - 2);
+        *this << m_language_wxPrefix << text.substr(2);
+    }
+
+    return *this;
 }
 
 Code& Code::Add(tt_string_view text)
@@ -511,11 +539,29 @@ Code& Code::Add(tt_string_view text)
     }
     else
     {
-        if (is_ruby() && text == "wxEmptyString")
+        if (is_ruby())
         {
-            // wxRuby prefers ('') for an empty string instead of the expected Wx::empty_string
-            *this += "('')";
-            return *this;
+            if (text == "wxEmptyString")
+            {
+                // wxRuby prefers ('') for an empty string instead of the expected Wx::empty_string
+                *this += "('')";
+                return *this;
+            }
+            else if (text == "wxDefaultSize")
+            {
+                *this += "Wx::DEFAULT_SIZE";
+                return *this;
+            }
+            else if (text == "wxDefaultPosition")
+            {
+                *this += "Wx::DEFAULT_POSITION";
+                return *this;
+            }
+            else if (text == "wxNullBitmap")
+            {
+                *this += "Wx::NULL_BITMAP";
+                return *this;
+            }
         }
 
         if (text.find('|') != tt::npos)

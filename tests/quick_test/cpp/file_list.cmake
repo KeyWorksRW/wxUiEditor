@@ -5,7 +5,7 @@ set (file_list
 
     mainapp.cpp
     main_frame.cpp
-    rubytest.cpp
+    test_dlg.cpp
     wizard.cpp
 )
 

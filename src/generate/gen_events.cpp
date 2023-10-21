@@ -189,6 +189,13 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
 
     if (event->getNode()->isStaticBoxSizer())
     {
+        if (code.is_ruby() && Project.as_string(prop_wxRuby_version) == "0.9.0")
+        {
+            code.Str("# wxRuby3 0.9.0 does not support a checkbox as a static box label").Eol();
+            code.EnableAutoLineBreak(true);
+            return;
+        }
+
         code.AddIfPython("self.");
         if (event->get_name() == "wxEVT_CHECKBOX")
         {
@@ -305,7 +312,8 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
 
 void BaseCodeGenerator::GenSrcEventBinding(Node* node, EventVector& events)
 {
-    ASSERT_MSG(events.size(), "GenSrcEventBinding() shouldn't be called if there are no events");
+    ASSERT_MSG(events.size() || m_map_conditional_events.size(),
+               "GenSrcEventBinding() shouldn't be called if there are no events");
     if (events.empty() && m_map_conditional_events.empty())
     {
         return;

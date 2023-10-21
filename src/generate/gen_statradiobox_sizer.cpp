@@ -92,12 +92,21 @@ bool StaticRadioBtnBoxSizerGenerator::ConstructionCode(Code& code)
         }
         code.Eol();
     }
-    else
+    else if (code.is_ruby())
+    {
+        tt_string var_name = code.node()->as_string(prop_radiobtn_var_name);
+        if (var_name.is_sameprefix("m_"))
+            var_name.erase(0, 2);
+        code.Str(var_name) << " = Wx::RadioButton.new(";
+        code.ValidParentName().Comma().as_string(prop_id).Comma().QuotedString(prop_label).EndFunction();
+        code.Eol();
+    }
+    else if (code.is_python())
     {
         code.Str("# wxPython currently does not support a radio button as a static box label").Eol();
     }
 
-    tt_string parent_name(code.is_cpp() ? "this" : "self");
+    Code parent_name(code.node(), code.get_language());
     if (!node->getParent()->isForm())
     {
         auto parent = node->getParent();
@@ -105,22 +114,23 @@ bool StaticRadioBtnBoxSizerGenerator::ConstructionCode(Code& code)
         {
             if (parent->isContainer())
             {
-                parent_name = parent->getNodeName();
+                parent_name.NodeName(parent);
                 break;
             }
             else if (parent->isGen(gen_wxStaticBoxSizer) || parent->isGen(gen_StaticCheckboxBoxSizer) ||
                      parent->isGen(gen_StaticRadioBtnBoxSizer))
             {
-                parent_name = parent->getNodeName();
-                if (code.is_cpp())
-                    parent_name << "->GetStaticBox()";
-                else
-                    parent_name << ".GetStaticBox()";
+                parent_name.NodeName(parent).Function("GetStaticBox");
                 break;
             }
             parent = parent->getParent();
         }
     }
+    if (parent_name.empty())
+    {
+        parent_name.Str(code.is_cpp() ? "this" : "self");
+    }
+
     if (code.is_cpp())
     {
         code.AddAuto().NodeName() << " = new wxStaticBoxSizer(new wxStaticBox(" << parent_name << ", wxID_ANY";
@@ -137,6 +147,16 @@ bool StaticRadioBtnBoxSizerGenerator::ConstructionCode(Code& code)
         {
             code.as_string(prop_radiobtn_var_name).Str("), ").as_string(prop_orientation).EndFunction();
         }
+    }
+    else if (code.is_ruby())
+    {
+        code.NodeName().Assign("wxStaticBoxSizer").Str("(").CreateClass(false, "wxStaticBox", false);
+        tt_string var_name = code.node()->as_string(prop_radiobtn_var_name);
+        if (var_name.is_sameprefix("m_"))
+            var_name.erase(0, 2);
+
+        code.Str(parent_name).Comma().Add("wxID_ANY").Comma().Str(var_name).Str(")");
+        code.Comma().Add(prop_orientation).EndFunction();
     }
     else
     {

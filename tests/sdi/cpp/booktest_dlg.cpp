@@ -51,11 +51,17 @@ bool BookTestDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     m_choicebook->SetMinSize(wxSize(400, 400));
     page_sizer_1->Add(m_choicebook, wxSizerFlags().Border(wxALL));
 
+#if defined(__UNIX__) || defined(__WXOSX__)
+
     auto* btn = new wxButton(m_choicebook, wxID_ANY, "First");
-    m_choicebook->GetControlSizer()->Add(btn, wxSizerFlags().Expand().Border(wxALL));
+    m_choicebook->GetControlSizer()->Add(btn, wxSizerFlags.Expand().Border(wxALL));
+#endif  // limited to specific platforms
+
+#if defined(__UNIX__) || defined(__WXOSX__)
 
     auto* btn_2 = new wxButton(m_choicebook, wxID_ANY, "Last");
-    m_choicebook->GetControlSizer()->Add(btn_2, wxSizerFlags().Expand().Border(wxALL));
+    m_choicebook->GetControlSizer()->Add(btn_2, wxSizerFlags.Expand().Border(wxALL));
+#endif  // limited to specific platforms
 
     auto* page_20 = new wxPanel(m_choicebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
     m_choicebook->AddPage(page_20, "English");
@@ -334,6 +340,8 @@ bool BookTestDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     Centre(wxBOTH);
 
     // Event handlers
+
+#if defined(__UNIX__) || defined(__WXOSX__)
     btn->Bind(wxEVT_BUTTON,
         [this](wxCommandEvent&)
         {
@@ -344,6 +352,7 @@ bool BookTestDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,
         {
             m_choicebook->SetSelection(2);
         });
+#endif  // limited to specific platforms
 
     return true;
 }

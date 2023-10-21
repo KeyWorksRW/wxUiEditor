@@ -22,11 +22,9 @@ require_relative 'images'
 require 'base64'
 
 class MainTestDialog < Wx::Dialog
-  def initialize(parent, id = DLG_MAINTEST, title = '',
+  def initialize(parent, id = $DLG_MAINTEST, title = '',
                  pos = Wx::DEFAULT_POSITION, size = Wx::DEFAULT_SIZE,
                  style = Wx::DEFAULT_DIALOG_STYLE)
-
-    @TXT_CTRL6000
 
     super(parent, id, title, pos, size, style)
 
@@ -42,8 +40,9 @@ class MainTestDialog < Wx::Dialog
 
     page_sizer_1 = Wx::BoxSizer.new(Wx::VERTICAL)
 
-    @text_ctrl = Wx::TextCtrl.new(page_2, TXT_CTRL, '', Wx::DEFAULT_POSITION,
-      Wx::DEFAULT_SIZE, Wx::TE_MULTILINE|Wx::TE_READONLY|Wx::TE_RICH2)
+    @text_ctrl = Wx::TextCtrl.new(page_2, $TXT_CTRL, '',
+      Wx::DEFAULT_POSITION, Wx::DEFAULT_SIZE, Wx::TE_MULTILINE|Wx::TE_READONLY|
+      Wx::TE_RICH2)
     @text_ctrl.set_hint('wxTextCtrl')
     page_sizer_1.add(@text_ctrl, Wx::SizerFlags.new.expand.border(Wx::ALL))
 
@@ -76,7 +75,7 @@ class MainTestDialog < Wx::Dialog
 
     page_sizer_1.add(grid_sizer2, Wx::SizerFlags.new.border(Wx::ALL))
 
-    @richText = Wx::RTC::RichTextCtrl.new(page_2, ID_RICHTEXT, '',
+    @richText = Wx::RTC::RichTextCtrl.new(page_2, $ID_RICHTEXT, '',
       Wx::DEFAULT_POSITION, Wx::DEFAULT_SIZE, Wx::RTC::RE_MULTILINE|Wx::VSCROLL|
       Wx::HSCROLL|Wx::NO_BORDER|Wx::WANTS_CHARS)
     @richText.set_hint('wxRichTextCtrl')
@@ -169,8 +168,9 @@ class MainTestDialog < Wx::Dialog
     radioBox.set_selection(1)
     box_sizer_7.add(radioBox, Wx::SizerFlags.new.border(Wx::ALL))
 
-    # wxPython currently does not support a checkbox as a static box label
-    static_box_4 = Wx::StaticBoxSizer.new(Wx::VERTICAL, page_4, 'Checkbox')
+    checkBox_sizer = Wx::CheckBox.new(page_4, Wx::ID_ANY, 'Checkbox')
+    static_box_4 = Wx::StaticBoxSizer.new(Wx::StaticBox.new(page_4, Wx::ID_ANY,
+      checkBox_sizer), Wx::VERTICAL)
 
     @radioBtn_4 = Wx::RadioButton.new(static_box_4.get_static_box, Wx::ID_ANY,
       'First button')
@@ -187,8 +187,9 @@ class MainTestDialog < Wx::Dialog
 
     box_sizer_7.add(static_box_4, Wx::SizerFlags.new.border(Wx::ALL))
 
-    # wxPython currently does not support a radio button as a static box label
-    static_box_5 = Wx::StaticBoxSizer.new(Wx::VERTICAL, page_4, 'Radio')
+    radioBtn__sizer = Wx::RadioButton.new(page_4, Wx::ID_ANY, 'Radio')
+    static_box_5 = Wx::StaticBoxSizer.new(Wx::StaticBox.new(page_4, Wx::ID_ANY,
+      radioBtn__sizer), Wx::VERTICAL)
 
     @radioBtn_5 = Wx::RadioButton.new(static_box_5.get_static_box, Wx::ID_ANY,
       'First button')
@@ -232,13 +233,14 @@ class MainTestDialog < Wx::Dialog
 
     @checkBox = Wx::CheckBox.new(page_4, Wx::ID_ANY, 'Checkbox',
       Wx::DEFAULT_POSITION, Wx::DEFAULT_SIZE, Wx::CHK_3STATE)
-    @checkBox.set3_state_value(Wx::CHK_UNDETERMINED)
+    @checkBox.set3state_value(Wx::CHK_UNDETERMINED)
     wrap_sizer.add(@checkBox, Wx::SizerFlags.new.center.border(Wx::ALL))
 
     box_sizer_19.add(wrap_sizer, Wx::SizerFlags.new.expand.border(Wx::ALL))
 
-    # wxPython currently does not support a checkbox as a static box label
-    static_box_3 = Wx::StaticBoxSizer.new(Wx::VERTICAL, page_4, 'Play Animation')
+    checkPlayAnimation = Wx::CheckBox.new(page_4, Wx::ID_ANY, 'Play Animation')
+    static_box_3 = Wx::StaticBoxSizer.new(Wx::StaticBox.new(page_4, Wx::ID_ANY,
+      checkPlayAnimation), Wx::VERTICAL)
 
     @toggleBtn_2 = Wx::ToggleButton.new(static_box_3.get_static_box, Wx::ID_ANY,
       'Play Animation', Wx::DEFAULT_POSITION, Wx::DEFAULT_SIZE, Wx::BU_EXACTFIT)
@@ -595,9 +597,8 @@ class MainTestDialog < Wx::Dialog
     @rbnBar.set_active_page(rbnPage)
 
     rbnPanel = Wx::RBN::RibbonPanel.new(rbnPage, Wx::ID_ANY, 'English',
-      wxue_get_bundle($english_png),
-      .get_bitmap(Wx::Size.new(
-      FromDIP(19), FromDIP(15))))
+      wxue_get_bundle($english_png).get_bitmap(
+        Wx::Size.new(from_dip(19), from_dip(15))))
 
     first_parent_sizer = Wx::BoxSizer.new(Wx::VERTICAL)
 
@@ -616,9 +617,8 @@ class MainTestDialog < Wx::Dialog
     rbnPanel.set_sizer_and_fit(first_parent_sizer)
 
     rbnPanel_2 = Wx::RBN::RibbonPanel.new(rbnPage, Wx::ID_ANY, 'French',
-      wxue_get_bundle($french_png),
-      .get_bitmap(Wx::Size.new(
-      FromDIP(19), FromDIP(15))))
+      wxue_get_bundle($french_png).get_bitmap(
+        Wx::Size.new(from_dip(19), from_dip(15))))
     rbnPanel_2.set_background_colour(Wx::SystemSettings.get_colour(
       Wx::SYS_COLOUR_MENU))
 
@@ -646,9 +646,10 @@ class MainTestDialog < Wx::Dialog
     rbnBtnBar = Wx::RBN::RibbonButtonBar.new(ribbonPanel2, Wx::ID_ANY)
     rbnBtnBar.add_button(Wx::ID_ANY, 'Forward', Wx::ArtProvider.get_bitmap(
       Wx::ART_GO_FORWARD, Wx::ART_OTHER), '', Wx::RBN::RIBBON_BUTTON_NORMAL)
-    rbnBtnBar.add_button(Wx::ID_ANY, 'Backward', wxue_get_bundle($left_png),
-      .get_bitmap(Wx::Size.new(
-      FromDIP(24), FromDIP(24))), '', Wx::RBN::RIBBON_BUTTON_NORMAL)
+    rbnBtnBar.add_button(Wx::ID_ANY, 'Backward', wxue_get_bundle($left_png)
+      .get_bitmap(
+        Wx::Size.new(from_dip(24), from_dip(24))), '',
+      Wx::RBN::RIBBON_BUTTON_NORMAL)
     rbnBtnBar.realize
 
     ribbonPage_2 = Wx::RBN::RibbonPage.new(@rbnBar, Wx::ID_ANY, 'Third')
@@ -670,9 +671,8 @@ class MainTestDialog < Wx::Dialog
       'Gallery Panel')
 
     rbnGallery = Wx::RBN::RibbonGallery.new(rbnPanel_3, Wx::ID_ANY)
-    rbnGallery.append(wxue_get_bundle($toggle_button_png),
-      .get_bitmap(Wx::Size.new(
-      FromDIP(22), FromDIP(22))), Wx::ID_ANY)
+    rbnGallery.append(wxue_get_bundle($toggle_button_png).get_bitmap(
+        Wx::Size.new(from_dip(22), from_dip(22))), Wx::ID_ANY)
     rbnGallery.realize
     page.set_sizer_and_fit(page_sizer_3)
 
@@ -768,7 +768,7 @@ class MainTestDialog < Wx::Dialog
     evt_button(@btn_6.get_id, :OnEvent)
     evt_button(btn.get_id, :OnClearList)
     evt_button(@btn_5.get_id, :OnEvent)
-    m_checkPlayAnimation.evt_checkbox(static_box_3.get_id, :OnEvent))
+    m_checkPlayAnimation.evt_checkbox(static_box_3.get_id, :on_check_play_animation))
     evt_checkbox(disable_bitmaps.get_id, :OnDisableBitmapsBtn)
     evt_checklistbox(@checkList2.get_id, :OnEvent)
     evt_checklistbox(@checkList_2.get_id, :OnEvent)
@@ -826,6 +826,10 @@ class MainTestDialog < Wx::Dialog
   end
 
   def OnPopupBtn(event)
+    event.skip
+  end
+
+  def on_check_play_animation(event)
     event.skip
   end
 

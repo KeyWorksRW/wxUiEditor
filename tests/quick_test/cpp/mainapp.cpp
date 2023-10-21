@@ -41,7 +41,7 @@ bool MainApp::OnInit()
     SetAppDisplayName(txtAppname);
     SetVendorName("KeyWorks");
 
-    m_mainframe = new MainFrame(nullptr);
+    m_mainframe = new MainFrame(nullptr, wxID_ANY, "C++ implementation");
     m_mainframe->Show(true);
     return true;
 }

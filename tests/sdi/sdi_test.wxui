@@ -14,6 +14,7 @@
     wxWidgets_version="3.2"
     python_output_folder="python"
     ruby_output_folder="ruby"
+    wxRuby_version="1.0.0"
     combine_all_forms="0"
     combined_xrc_file="combined"
     xrc_art_directory="art"
@@ -102,7 +103,7 @@
       python_file="mainframe"
       python_import_list="main_test_dlg.py;booktest_dlg.py;wizard.py;python_dlg.py;tools_dlg.py;dlgissue_956.py;dlgissue_960.py"
       python_inherit_name="mainframe"
-      relative_require_list="dlgissue_956.rb;dlgissue_960.rb;booktest_dlg.rb;wizard.rb"
+      relative_require_list="dlgissue_956.rb;dlgissue_960.rb;booktest_dlg.rb;wizard.rb;main_test_dlg.rb;tools_dlg.rb"
       ruby_file="mainframe"
       xrc_file="mainframe"
       size="500,300"
@@ -574,7 +575,7 @@
                   checked="0"
                   label="Play Animation"
                   var_name="static_box_3"
-                  wxEVT_CHECKBOX="[this](wxCommandEvent&amp;)@@{@@if (m_checkPlayAnimation->GetValue()) @@{@@    m_animation_ctrl->Play();@@}@@else @@{  @@    m_animation_ctrl->Stop();@@}@@}[python:]">
+                  wxEVT_CHECKBOX="[this](wxCommandEvent&amp;)@@{@@if (m_checkPlayAnimation->GetValue()) @@{@@    m_animation_ctrl->Play();@@}@@else @@{  @@    m_animation_ctrl->Stop();@@}@@}[python:OnCheckBox][ruby:on_check_play_animation]">
                   <node
                     class="wxToggleButton"
                     label="Play Animation"
@@ -1205,12 +1206,14 @@
                   class_access="none"
                   label="First"
                   var_name="btn"
+                  platforms="Unix|Mac"
                   wxEVT_BUTTON="[this](wxCommandEvent&amp;)@@{@@m_choicebook->SetSelection(0);@@}[python:lambda]self.m_choicebook.SetSelection(0)" />
                 <node
                   class="wxButton"
                   class_access="none"
                   label="Last"
                   var_name="btn_2"
+                  platforms="Unix|Mac"
                   wxEVT_BUTTON="[this](wxCommandEvent&amp;)@@{@@m_choicebook->SetSelection(2);@@}[python:lambda]self.m_choicebook.SetSelection(2)" />
                 <node
                   class="BookPage"

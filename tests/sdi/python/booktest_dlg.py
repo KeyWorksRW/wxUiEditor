@@ -40,13 +40,15 @@ class BookTestDlg(wx.Dialog):
         self.choicebook.SetMinSize(wx.Size(400, 400))
         page_sizer_1.Add(self.choicebook, wx.SizerFlags().Border(wx.ALL))
 
-        btn = wx.Button(self.choicebook, wx.ID_ANY, "First")
-        # wxPython 4.2.0 does not support wx.Choicebook.GetControlSizer()
-        # so btn cannot be added to the Choicebook.
+        if wx.Platform == "unix" or wx.Platform == "mac":
+            btn = wx.Button(self.choicebook, wx.ID_ANY, "First")
+            # wxPython 4.2.0 does not support wx.Choicebook.GetControlSizer()
+            # so btn cannot be added to the Choicebook.
 
-        btn_2 = wx.Button(self.choicebook, wx.ID_ANY, "Last")
-        # wxPython 4.2.0 does not support wx.Choicebook.GetControlSizer()
-        # so btn_2 cannot be added to the Choicebook.
+        if wx.Platform == "unix" or wx.Platform == "mac":
+            btn_2 = wx.Button(self.choicebook, wx.ID_ANY, "Last")
+            # wxPython 4.2.0 does not support wx.Choicebook.GetControlSizer()
+            # so btn_2 cannot be added to the Choicebook.
 
         page_20 = wx.Panel(self.choicebook, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize,
             wx.TAB_TRAVERSAL)
@@ -370,16 +372,6 @@ class BookTestDlg(wx.Dialog):
 
         self.SetSizerAndFit(dlg_sizer)
         self.Centre(wx.BOTH)
-
-        # Bind Event handlers
-        btn.Bind(wx.EVT_BUTTON, lambda event:self.m_choicebook.SetSelection(0))
-        btn_2.Bind(wx.EVT_BUTTON, lambda event:self.m_choicebook.SetSelection(2))
-
-    # Event handler functions
-    # Add these below the comment block, or to your inherited class.
-    """
-    """
-
 # ************* End of generated code ***********
 # DO NOT EDIT THIS COMMENT BLOCK!
 #

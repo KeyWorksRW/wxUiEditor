@@ -158,11 +158,24 @@ bool Check3StateGenerator::SettingsCode(Code& code)
     auto& state = code.node()->as_string(prop_initial_state);
     if (state == "wxCHK_CHECKED")
     {
-        code.NodeName().Function("Set3StateValue(").Add("wxCHK_CHECKED").EndFunction();
+        if (code.is_ruby())
+        {
+            // It's so rare for a number to be in a function name, that it's not worth
+            // special-casing Code::Function() to deal with this exception to the
+            // ConvertToSnakeCase() function.
+            code.NodeName().Str(".set3state_value(").Add("wxCHK_CHECKED").EndFunction();
+        }
+        else
+            code.NodeName().Function("Set3StateValue(").Add("wxCHK_CHECKED").EndFunction();
     }
     else if (state == "wxCHK_UNDETERMINED")
     {
-        code.NodeName().Function("Set3StateValue(").Add("wxCHK_UNDETERMINED").EndFunction();
+        if (code.is_ruby())
+        {
+            code.NodeName().Str(".set3state_value(").Add("wxCHK_UNDETERMINED").EndFunction();
+        }
+        else
+            code.NodeName().Function("Set3StateValue(").Add("wxCHK_UNDETERMINED").EndFunction();
     }
 
     return true;

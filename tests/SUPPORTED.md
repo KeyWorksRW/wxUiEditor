@@ -24,11 +24,11 @@ This does _not_ mean that the class is fully supported in every language -- this
 -----------|-----|--------|------|------|------|
 | wxDialog | yes | yes | yes | yes | ../src/generate/gen_dialog.cpp |
 | wxFrame | yes | yes | yes | yes | ../src/generate/gen_frame.cpp |
-| wxMenu | yes | yes | --- | --- | ../src/generate/menu_widgets.cpp |
+| wxMenu | yes | yes | yes | --- | ../src/generate/menu_widgets.cpp |
 | wxMenuBar | yes | yes | --- | --- | ../src/generate/menu_widgets.cpp |
 | wxPanel | yes | yes | yes | --- | ../src/generate/gen_panel_form.cpp |
 | wxPopupTransientWindow | yes | yes | yes | no | ../src/generate/gen_popup_trans_win.cpp |
-| wxRibbonBar | yes | yes | --- | --- | ../src/generate/gen_ribbon_bar.cpp |
+| wxRibbonBar | yes | yes | yes | --- | ../src/generate/gen_ribbon_bar.cpp |
 | wxToolBar | yes | yes | --- | --- | ../src/generate/gen_toolbar.cpp |
 | wxWizard | yes | yes | yes | yes | ../src/generate/gen_wizard.cpp |
 
@@ -48,12 +48,11 @@ This does _not_ mean that the class is fully supported in every language -- this
 | Class | C++ | Python | Ruby | XRC | file |
 -----------|-----|--------|------|------|------|
 | wxBoxSizer | yes | yes | yes | yes | ../src/generate/gen_box_sizer.cpp |
-| wxCheckBoxSizer | yes | no | no | --- | ../src/generate/gen_statchkbox_sizer.cpp |
+| wxCheckBoxSizer | yes | no | yes | --- | ../src/generate/gen_statchkbox_sizer.cpp |
 | wxFlexGridSizer | yes | yes | yes | yes | ../src/generate/gen_flexgrid_sizer.cpp |
 | wxGridBagSizer | yes | yes | yes | yes | ../src/generate/gen_gridbag_sizer.cpp |
 | wxGridSizer | yes | yes | yes | yes | ../src/generate/gen_grid_sizer.cpp |
-| wxRadioBoxSizer | yes | no | no | --- | ../src/generate/gen_statradiobox_sizer.cpp |
-| wxRadioButtonSizer | yes | no | no | --- | ../src/generate/gen_statradiobox_sizer.cpp |
+| wxStaticRadioBtnBoxSizer | yes | no | yes | --- | ../src/generate/gen_statradiobox_sizer.cpp |
 | wxStaticBoxSizer | yes | yes | yes | yes | ../src/generate/gen_staticbox_sizer.cpp |
 | wxStdDialogButtonSizer | yes | yes | yes | partial | ../src/generate/gen_std_dlgbtn_sizer.cpp |
 | wxWrapSizer | yes | yes | no | yes | ../src/generate/gen_wrap_sizer.cpp |
@@ -97,12 +96,12 @@ This does _not_ mean that the class is fully supported in every language -- this
 | wxRadioBox | yes | yes | yes | yes | ../src/generate/gen_prop_grid.cpp |
 | wxRadioButton | yes | yes | yes | yes | ../src/generate/gen_radio_btn.cpp |
 | wxRearrangeCtrl | yes | yes | no | no | ../src/generate/gen_rearrange.cpp |
-| wxRibbonBar | yes | yes | --- | --- | ../src/generate/gen_ribbon_bar.cpp |
-| wxRibbonButtonBar | yes | yes | --- | --- | ../src/generate/gen_ribbon_button.cpp |
-| wxRibbonGallery | yes | yes | --- | --- | ../src/generate/ribbon_widgets.cpp |
-| wxRibbonPage | yes | yes | --- | --- | ../src/generate/gen_ribbon_page.cpp |
-| wxRibbonPanel | yes | yes | --- | --- | ../src/generate/gen_ribbon_page.cpp |
-| wxRibbonToolBar | yes | yes | --- | --- | ../src/generate/ribbon_widgets.cpp |
+| wxRibbonBar | yes | yes | yes | --- | ../src/generate/gen_ribbon_bar.cpp |
+| wxRibbonButtonBar | yes | yes | yes | --- | ../src/generate/gen_ribbon_button.cpp |
+| wxRibbonGallery | yes | yes | yes | --- | ../src/generate/ribbon_widgets.cpp |
+| wxRibbonPage | yes | yes | yes | --- | ../src/generate/gen_ribbon_page.cpp |
+| wxRibbonPanel | yes | yes | yes | --- | ../src/generate/gen_ribbon_page.cpp |
+| wxRibbonToolBar | yes | yes | yes | --- | ../src/generate/ribbon_widgets.cpp |
 | wxRichTextCtrl | yes | yes | yes | yes | ../src/generate/gen_rich_text.cpp |
 | wxScrollBar | yes | yes | yes | yes | ../src/generate/gen_scrollbar.cpp |
 | wxScrolled\<wxPanel\> | yes | yes | yes | --- | ../src/generate/window_widgets.cpp |
@@ -161,8 +160,6 @@ This does _not_ mean that the class is fully supported in every language -- this
 # Special Notes:
 
 Neither wxPython or XRC support setting the initial folder in wxGenericDirCtrl, though it works fine in wxRuby3
-
-If a Ruby control is marked as `fails` it means there is a problem that appears to be on the wxRuby3 side. In each case, I've created an issue for the problem (https://github.com/mcorino/wxRuby3/issues) and will revisit after the issue is closed.
 
 # Python unsupported
 

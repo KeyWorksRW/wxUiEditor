@@ -63,3 +63,6 @@ tt_string CreateDerivedFilename(Node* form_node, const tt_string& class_name);
 
 // Typically called to convert a string into a Ruby string which prefers snake_case
 tt_string ConvertToSnakeCase(tt_string_view str);
+
+// Converts string to snake_case, then converts to upper case
+tt_string ConvertToUpperSnakeCase(tt_string_view str);

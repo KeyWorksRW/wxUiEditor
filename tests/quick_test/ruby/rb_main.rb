@@ -109,7 +109,7 @@ end
 
 class App < Wx::App
   def on_init
-    frame = MainFrame.new(nil)
+    frame = MainFrame.new(nil, Wx::ID_ANY, 'Ruby implementation')
     frame.show
     set_top_window(frame)
     true

@@ -484,3 +484,28 @@ tt_string ConvertToSnakeCase(tt_string_view str)
     }
     return result;
 }
+
+tt_string ConvertToUpperSnakeCase(tt_string_view str)
+{
+    tt_string result(str);
+    for (size_t pos = 0, original_pos = 0; pos < result.size(); ++pos, ++original_pos)
+    {
+        if (result[pos] >= 'A' && result[pos] <= 'Z')
+        {
+            if (pos > 0)
+            {
+                // Do not add an underscore if the previous letter is uppercase
+                if (str[original_pos - 1] >= 'A' && str[original_pos - 1] <= 'Z')
+                    continue;
+                result.insert(pos, "_");
+                ++pos;
+            }
+        }
+        else if (result[pos] >= 'a' && result[pos] <= 'z')
+        {
+            // convert to uppercase
+            result[pos] = result[pos] - 'a' + 'A';
+        }
+    }
+    return result;
+}

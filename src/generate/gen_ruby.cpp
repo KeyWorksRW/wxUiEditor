@@ -548,18 +548,6 @@ void BaseCodeGenerator::GenerateRubyClass(PANEL_PAGE panel_type)
         m_source->writeLine();
         m_source->Indent();
         m_source->Indent();
-
-        id_value = wxID_HIGHEST;
-        for (auto& iter: m_set_enum_ids)
-        {
-            m_source->writeLine(tt_string() << '@' << iter << id_value++);
-        }
-
-        if (id_value > 1)
-        {
-            // If at least one id was set, add a blank line
-            m_source->writeLine();
-        }
     }
 
     code.clear();
@@ -777,7 +765,7 @@ bool RubyBundleCode(Code& code, GenEnum::PropName prop)
             {
                 svg_size = GetSizeInfo(parts[IndexSize]);
             }
-            code.Comma().Add("wxSize(").itoa(svg_size.x).Comma().itoa(svg_size.y) += "))";
+            code.Comma().Str("Wx::Size.new(").itoa(svg_size.x).Comma().itoa(svg_size.y) += "))";
         }
 
         else if (parts[IndexType].starts_with("Embed"))

@@ -28,13 +28,6 @@ class ToolBarsDialog < Wx::Dialog
                  pos = Wx::DEFAULT_POSITION, size = Wx::DEFAULT_SIZE,
                  style = Wx::DEFAULT_DIALOG_STYLE)
 
-    @rbn_tool16000
-    @rbn_tool26001
-    @rbn_tool36002
-    @rbn_tool_art6003
-    @rbn_tool_list6004
-    @rbn_tool_svg6005
-
     super(parent, id, title, pos, size, style)
 
     box_sizer = Wx::BoxSizer.new(Wx::VERTICAL)
@@ -42,16 +35,15 @@ class ToolBarsDialog < Wx::Dialog
     @tool_bar = Wx::ToolBar.new(self, Wx::ID_ANY, Wx::DEFAULT_POSITION,
       Wx::DEFAULT_SIZE, Wx::TB_HORIZONTAL)
     _svg_string_ = Zlib::Inflate.inflate(Base64.decode64($left_svg))
-    tool_svg = @tool_bar.add_tool(Wx::ID_ANY, '',
-      Wx::BitmapBundle.from_svg(_svg_string_, Wx::Size.new(24, 24)))
+    tool_svg = @tool_bar.add_tool(Wx::ID_ANY, '', Wx::BitmapBundle.from_svg(_svg_string_,
+      Wx::Size.new(24, 24)))
 
     @tool_bar.add_tool(Wx::ID_ANY, '', Wx::ArtProvider.get_bitmap_bundle(
       Wx::ART_CUT, Wx::ART_TOOLBAR))
 
     @tool_bar.add_tool(Wx::ID_ANY, '', wxue_get_bundle($undo_png))
 
-    @tool_bar.add_tool(Wx::ID_ANY, '', wxue_get_bundle($redo_png, $redo_2x_png)
-      Wx::BitmapBundle.from_bitmaps
+    @tool_bar.add_tool(Wx::ID_ANY, '', wxue_get_bundle($redo_png, $redo_2x_png))
 
     @tool_bar.add_tool(Wx::ID_ANY, '', wxue_get_bundle($wxPython_png, $wxPython_1_5x_png,
       $wxPython_2x_png))
@@ -66,12 +58,11 @@ class ToolBarsDialog < Wx::Dialog
       Wx::DEFAULT_POSITION, Wx::DEFAULT_SIZE, Wx::AUI::AUI_TB_PLAIN_BACKGROUND|
       Wx::AUI::AUI_TB_DEFAULT_STYLE)
     _svg_string_ = Zlib::Inflate.inflate(Base64.decode64($left_svg))
-    @aui_tool_bar.add_tool(Wx::ID_ANY, '',
-      Wx::BitmapBundle.from_svg(_svg_string_, Wx::Size.new(24, 24)))
+    @aui_tool_bar.add_tool(Wx::ID_ANY, '', Wx::BitmapBundle.from_svg(_svg_string_,
+      Wx::Size.new(24, 24)))
     @aui_tool_bar.add_tool(Wx::ID_ANY, '', Wx::ArtProvider.get_bitmap_bundle(
       Wx::ART_CUT, Wx::ART_TOOLBAR))
-    @aui_tool_bar.add_tool(Wx::ID_ANY, '', wxue_get_bundle($redo_png, $redo_2x_png)
-      Wx::BitmapBundle.from_bitmaps
+    @aui_tool_bar.add_tool(Wx::ID_ANY, '', wxue_get_bundle($redo_png, $redo_2x_png))
     @aui_tool_bar.add_tool(Wx::ID_ANY, '', wxue_get_bundle($wxPython_png, $wxPython_1_5x_png,
       $wxPython_2x_png))
     @aui_tool_bar.add_tool(Wx::ID_ANY, '', wxue_get_bundle($fontPicker_png, $fontPicker_1_25x_png,
@@ -90,26 +81,26 @@ class ToolBarsDialog < Wx::Dialog
 
     rbnToolBar = Wx::RBN::RibbonToolBar.new(rbnPanel, Wx::ID_ANY)
     _svg_string_ = Zlib::Inflate.inflate(Base64.decode64($left_svg))
-    rbnToolBar.add_tool(rbn_tool_svg,
-      Wx::BitmapBundle.from_svg(_svg_string_,
-      from_dip(Wx::Size.new(24, 24))).GetBitmap(Wx::DefaultSize), '',
+    rbnToolBar.add_tool($rbn_tool_svg, Wx::BitmapBundle.from_svg(_svg_string_,
+      Wx::Size.new(24, 24)).get_bitmap(Wx::DEFAULT_SIZE), '',
       Wx::RBN::RIBBON_BUTTON_NORMAL)
-    rbnToolBar.add_tool(rbn_tool_art, Wx::ArtProvider.get_bitmap(Wx::ART_CUT,
+    rbnToolBar.add_tool($rbn_tool_art, Wx::ArtProvider.get_bitmap(Wx::ART_CUT,
       Wx::ART_TOOLBAR), '', Wx::RBN::RIBBON_BUTTON_NORMAL)
-    rbnToolBar.add_tool(rbn_tool1, wxue_get_bundle($undo_png),
-      .get_bitmap(Wx::Size.new(
-      FromDIP(24), FromDIP(24))), '', Wx::RBN::RIBBON_BUTTON_NORMAL)
-    rbnToolBar.add_tool(rbn_tool2, wxue_get_bundle($redo_png, $redo_2x_png),
-      .get_bitmap(Wx::Size.new(
-      FromDIP(24), FromDIP(24))), '', Wx::RBN::RIBBON_BUTTON_NORMAL)
-    rbnToolBar.add_tool(rbn_tool3, wxue_get_bundle($wxPython_png, $wxPython_1_5x_png,
-      $wxPython_2x_png),
-      .get_bitmap(Wx::Size.new(
-      FromDIP(16), FromDIP(16))), '', Wx::RBN::RIBBON_BUTTON_NORMAL)
-    rbnToolBar.add_tool(rbn_tool_list, wxue_get_bundle($fontPicker_png, $fontPicker_1_25x_png,
-      $fontPicker_1_5x_png),
-      .get_bitmap(Wx::Size.new(
-      FromDIP(22), FromDIP(22))), '', Wx::RBN::RIBBON_BUTTON_NORMAL)
+    rbnToolBar.add_tool($rbn_tool1, wxue_get_bundle($undo_png).get_bitmap(
+        Wx::Size.new(from_dip(24), from_dip(24))), '',
+      Wx::RBN::RIBBON_BUTTON_NORMAL)
+    rbnToolBar.add_tool($rbn_tool2, wxue_get_bundle($redo_png, $redo_2x_png)
+      .get_bitmap(
+        Wx::Size.new(from_dip(24), from_dip(24))), '',
+      Wx::RBN::RIBBON_BUTTON_NORMAL)
+    rbnToolBar.add_tool($rbn_tool3, wxue_get_bundle($wxPython_png, $wxPython_1_5x_png,
+      $wxPython_2x_png).get_bitmap(
+        Wx::Size.new(from_dip(16), from_dip(16))), '',
+      Wx::RBN::RIBBON_BUTTON_NORMAL)
+    rbnToolBar.add_tool($rbn_tool_list, wxue_get_bundle($fontPicker_png, $fontPicker_1_25x_png,
+      $fontPicker_1_5x_png).get_bitmap(
+        Wx::Size.new(from_dip(22), from_dip(22))), '',
+      Wx::RBN::RIBBON_BUTTON_NORMAL)
     rbnToolBar.realize
 
     set_sizer(box_sizer)
@@ -121,19 +112,6 @@ class ToolBarsDialog < Wx::Dialog
     evt_init_dialog(:on_init)
     evt_tool(tool_svg.get_id, :OnTool)
   end
-# Event handler functions
-# Add these below the comment block, or to your inherited class.
-
-=begin
-  def OnTool(event)
-    event.skip
-  end
-
-  def on_init(event)
-    event.skip
-  end
-
-=end
 end
 
 $left_svg = (
@@ -222,3 +200,11 @@ $redo_2x_png = Base64.decode64(
 # Code below this comment block will be preserved
 # if the code for this class is re-generated.
 # ***********************************************
+
+def OnTool(event)
+  event.skip
+end
+
+def on_init(event)
+  event.skip
+end

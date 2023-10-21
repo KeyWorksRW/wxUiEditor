@@ -786,6 +786,7 @@ class MainTestDialog(wx.Dialog):
         btn.Bind(wx.EVT_BUTTON, self.OnClearList)
         self.btn_5.Bind(wx.EVT_BUTTON, lambda event:
             self.events_list.Select(self.events_list.Append("CmdLinkBtn: wx.EVT_BUTTON")))
+        self.m_checkPlayAnimation.Bind(wx.EVT_CHECKBOX, self.OnCheckBox)
         disable_bitmaps.Bind(wx.EVT_CHECKBOX, self.OnDisableBitmapsBtn)
         self.checkList2.Bind(wx.EVT_CHECKLISTBOX, lambda event:
             self.OnEventName("CheckListBox2: wx.EVT_CHECKLISTBOX"))
@@ -838,7 +839,7 @@ class MainTestDialog(wx.Dialog):
     # Unimplemented Event handler functions
     # Copy any listed and paste them below the comment block, or to your inherited class.
     """
-    def (self, event):
+    def OnCheckBox(self, event):
         event.Skip()
 
     """

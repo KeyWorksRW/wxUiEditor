@@ -7,11 +7,12 @@
 
 #include <wx/filectrl.h>  // Header for wxFileCtrlBase and other common functions used by
 
-#include "gen_common.h"     // GeneratorLibrary -- Generator classes
-#include "gen_xrc_utils.h"  // Common XRC generating functions
-#include "node.h"           // Node class
-#include "pugixml.hpp"      // xml read/write/create/process
-#include "utils.h"          // Utility functions that work with properties
+#include "gen_common.h"       // GeneratorLibrary -- Generator classes
+#include "gen_xrc_utils.h"    // Common XRC generating functions
+#include "node.h"             // Node class
+#include "project_handler.h"  // ProjectHandler class
+#include "pugixml.hpp"        // xml read/write/create/process
+#include "utils.h"            // Utility functions that work with properties
 
 #include "gen_file_ctrl.h"
 
@@ -42,6 +43,11 @@ wxObject* FileCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
 
 bool FileCtrlGenerator::ConstructionCode(Code& code)
 {
+    if (code.is_ruby() && Project.getProjectNode()->as_string(prop_wxRuby_version) == "0.9.0")
+    {
+        code << "# wxRuby 0.9.0 does not support wxFileCtrl";
+        return true;
+    }
     code.AddAuto().NodeName().CreateClass();
     code.ValidParentName().Comma().as_string(prop_id);
     code.Comma().QuotedString(prop_initial_folder).Comma().QuotedString(prop_initial_filename);
@@ -72,6 +78,11 @@ bool FileCtrlGenerator::ConstructionCode(Code& code)
 
 bool FileCtrlGenerator::SettingsCode(Code& code)
 {
+    if (code.is_ruby() && Project.getProjectNode()->as_string(prop_wxRuby_version) == "0.9.0")
+    {
+        return false;
+    }
+
     if (code.IsTrue(prop_focus))
     {
         auto form = code.node()->getForm();

@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.20)
 
-project(wxWidgets 
+project(wxWidgets33
     LANGUAGES
     CXX C
     VERSION 3.3.0.0
@@ -79,11 +79,11 @@ endif()
 
 
 if (WIN32)
-    add_library(wxWidgets ${common_sources} ${msw_sources} )
+    add_library(wxWidgets33 ${common_sources} ${msw_sources} )
 elseif (APPLE)
-    add_library(wxWidgets ${common_sources} ${osx_sources} )
+    add_library(wxWidgets33 ${common_sources} ${osx_sources} )
 elseif (UNIX)
-    add_library(wxWidgets ${common_sources} ${unix_sources} )
+    add_library(wxWidgets33 ${common_sources} ${unix_sources} )
 endif()
 
 add_library(wxCLib STATIC 
@@ -91,27 +91,27 @@ add_library(wxCLib STATIC
 )
 
 if (BUILD_SHARED_LIBS)
-    target_compile_definitions(wxWidgets PRIVATE WXMAKINGDLL)
+    target_compile_definitions(wxWidgets33 PRIVATE WXMAKINGDLL)
 endif()
 
 if (MSVC)
     # /GL -- combined with the Linker flag /LTCG allows whole program optimization in Release build
-    target_compile_options(wxWidgets PRIVATE "$<$<CONFIG:Release>:/GL>")
+    target_compile_options(wxWidgets33 PRIVATE "$<$<CONFIG:Release>:/GL>")
 endif()
 
 if (WIN32)
-    target_compile_definitions(wxWidgets PRIVATE
+    target_compile_definitions(wxWidgets33 PRIVATE
         __WXMSW__
         WIN32
     )
 elseif (UNIX)
-    target_compile_definitions(wxWidgets PRIVATE
+    target_compile_definitions(wxWidgets33 PRIVATE
         __WXGTK3__
         __UNIX__
     )
 endif()
 
-target_compile_definitions(wxWidgets PRIVATE
+target_compile_definitions(wxWidgets33 PRIVATE
     WXBUILDING
     _CRT_SECURE_NO_DEPRECATE=1
     _CRT_NON_CONFORMING_SWPRINTFS=1
@@ -147,7 +147,7 @@ else()
     )
 endif()
 
-target_precompile_headers(wxWidgets PRIVATE "include/wx/wxprec.h")
+target_precompile_headers(wxWidgets33 PRIVATE "include/wx/wxprec.h")
 
 if (WIN32)
     set(setup_dir win)
@@ -155,7 +155,7 @@ elseif (UNIX)
     set(setup_dir unix)
 endif()
 
-target_include_directories(wxWidgets PRIVATE
+target_include_directories(wxWidgets33 PRIVATE
     include
     ${setup_dir}
     src/tiff/libtiff
@@ -185,6 +185,6 @@ target_include_directories(wxCLib PRIVATE
 
 if (BUILD_SHARED_LIBS)
     if (WIN32)
-        target_link_libraries(wxWidgets PRIVATE wxCLib Winmm Ws2_32 Rpcrt4 Comctl32)
+        target_link_libraries(wxWidgets33 PRIVATE wxCLib Winmm Ws2_32 Rpcrt4 Comctl32)
     endif()
 endif()

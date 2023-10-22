@@ -252,7 +252,7 @@ endif()
 
 if (NOT BUILD_FORK AND NOT BUILD_CUSTOM)
     if (WIN32)
-        target_link_libraries(wxUiEditor PRIVATE wxWidgets ${CLib} comctl32 Imm32 Shlwapi Version UxTheme)
+        target_link_libraries(wxUiEditor PRIVATE wxWidgets33 ${CLib} comctl32 Imm32 Shlwapi Version UxTheme)
     elseif (UNIX)
         target_link_libraries(wxUiEditor PRIVATE libwxWidgets ${CLib})
     endif()

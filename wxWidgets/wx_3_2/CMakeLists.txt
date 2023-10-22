@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.20)
 
-project(wxWidgets
+project(wxWidgets32
     LANGUAGES
     CXX C
     VERSION 3.2.3.0
@@ -87,32 +87,32 @@ list(TRANSFORM wxCLib_sources PREPEND "${cmn_src_dir}/")
 message(STATUS "common_sources: ${cmn_src_dir}/src")
 
 if (WIN32)
-    add_library(wxWidgets ${override_sources} ${common_sources} ${msw_sources} )
+    add_library(wxWidgets32 ${override_sources} ${common_sources} ${msw_sources} )
 elseif (APPLE)
-    add_library(wxWidgets ${override_sources} ${common_sources} ${osx_sources} )
+    add_library(wxWidgets32 ${override_sources} ${common_sources} ${osx_sources} )
 elseif (UNIX)
-    add_library(wxWidgets ${override_sources} ${common_sources} ${unix_sources} )
+    add_library(wxWidgets32 ${override_sources} ${common_sources} ${unix_sources} )
 endif()
 
 add_library(wxCLib STATIC ${wxCLib_sources} )
 
 if (MSVC)
     # /GL -- combined with the Linker flag /LTCG allows whole program optimization in Release build
-    target_compile_options(wxWidgets PRIVATE "$<$<CONFIG:Release>:/GL>")
+    target_compile_options(wxWidgets32 PRIVATE "$<$<CONFIG:Release>:/GL>")
 endif()
 
 if (WIN32)
-    target_compile_definitions(wxWidgets PRIVATE
+    target_compile_definitions(wxWidgets32 PRIVATE
         __WXMSW__
         WIN32
     )
 endif()
 
 if (BUILD_SHARED_LIBS)
-    target_compile_definitions(wxWidgets PRIVATE WXMAKINGDLL)
+    target_compile_definitions(wxWidgets32 PRIVATE WXMAKINGDLL)
 endif()
 
-target_compile_definitions(wxWidgets PRIVATE
+target_compile_definitions(wxWidgets32 PRIVATE
     WXBUILDING
     _CRT_SECURE_NO_DEPRECATE=1
     _CRT_NON_CONFORMING_SWPRINTFS=1
@@ -149,7 +149,7 @@ if (WIN32)
     )
 endif()
 
-target_precompile_headers(wxWidgets PRIVATE "../include/wx/wxprec.h")
+target_precompile_headers(wxWidgets32 PRIVATE "../include/wx/wxprec.h")
 
 if (WIN32)
     set(setup_dir ${CMAKE_CURRENT_LIST_DIR}/setup/win)
@@ -157,7 +157,7 @@ endif()
 
 message(STATUS "setup_dir: ${setup_dir}")
 
-target_include_directories(wxWidgets PRIVATE
+target_include_directories(wxWidgets32 PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}/../include
     ${setup_dir}
     ../src/tiff/libtiff
@@ -186,6 +186,6 @@ target_include_directories(wxCLib PRIVATE
 
 if (BUILD_SHARED_LIBS)
     if (WIN32)
-        target_link_libraries(wxWidgets PRIVATE wxCLib Winmm Ws2_32 Rpcrt4 Comctl32)
+        target_link_libraries(wxWidgets32 PRIVATE wxCLib Winmm Ws2_32 Rpcrt4 Comctl32)
     endif()
 endif()

@@ -49,7 +49,7 @@ bool FileCtrlGenerator::ConstructionCode(Code& code)
     if (code.hasValue(prop_wildcard))
         code.QuotedString(prop_wildcard);
     else
-        code.Add("wxFileSelectorDefaultWildcardStr");
+        code.AddType("wxFileSelectorDefaultWildcardStr");
 
     // Unlike most controls, wxFileCtrl expects the style to be specified *before* the
     // position and size.

@@ -70,7 +70,7 @@ bool FilePickerGenerator::ConstructionCode(Code& code)
         if (code.is_ruby() && Project.getProjectNode()->as_string(prop_wxRuby_version) == "0.9.0")
             code << "'" << wxFileSelectorPromptStr << "'";
         else
-            code.Add("wxFileSelectorPromptStr");
+            code.AddType("wxFileSelectorPromptStr");
     }
 
     code.Comma();
@@ -80,7 +80,7 @@ bool FilePickerGenerator::ConstructionCode(Code& code)
     }
     else
     {
-        code.Add("wxFileSelectorDefaultWildcardStr");
+        code.AddType("wxFileSelectorDefaultWildcardStr");
     }
 
     code.PosSizeFlags(true, "wxFLP_DEFAULT_STYLE");

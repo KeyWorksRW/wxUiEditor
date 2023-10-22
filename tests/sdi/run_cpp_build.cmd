@@ -4,9 +4,7 @@
 @REM is in the ..\..\build\stage\bin\debug directory.
 
 echo Generating C++ files...
-cd ..
-..\build\stage\bin\debug\wxUiEditor.exe --gen_cpp sdi_test.wxui
+..\..\build\stage\bin\debug\wxUiEditor.exe --gen_cpp sdi_test.wxui
 type sdi_test.log
-cd ..
 cmake.exe --build build --config Debug --target sdi_test
-build\stage\bin\Debug\sdi_test.exe
+build\Debug\sdi_test.exe

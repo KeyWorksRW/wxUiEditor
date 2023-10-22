@@ -82,10 +82,6 @@ else()
     set(BUILD_ROOT wxSnapshot CACHE PATH "wxSnapshot" FORCE)
 endif()
 
-#  These settings will force dark mode on unless user preferences has shut it off. Shouldn't really be needed anymore.
-option(INTERNAL_DARK_MODE "Enable dark mode (used with wxWidgets 3.3 in _WIN32 builds)" OFF)
-option(INTERNAL_DARK_HIGH_CONTRAST "Enable dark mode high contrast (used with wxWidgets 3.3 in _WIN32 builds)" OFF)
-
 ####################### Check for Multi-Config Generator #######################
 
 get_property(isMultiConfig GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
@@ -252,22 +248,6 @@ if (NOT BUILD_FORK)
 else()
     target_compile_definitions(wxUiEditor PRIVATE wxUSE_UNICODE_UTF8=1 wxUSE_UTF8_LOCALE_ONLY=1)
     target_compile_definitions(check_build PRIVATE wxUSE_UNICODE_UTF8=1 wxUSE_UTF8_LOCALE_ONLY=1)
-endif()
-
-if (INTERNAL_DARK_MODE)
-    if (NOT BUILD_FORK AND NOT BUILD_CUSTOM)
-        message(FATAL_ERROR "DARK mode is only supported for the fork and custom builds")
-    endif()
-
-    if (WIN32)
-        target_compile_definitions(wxUiEditor PRIVATE DARK_MODE=1)
-        if (INTERNAL_DARK_HIGH_CONTRAST)
-            message(NOTICE "Building with Dark mode and High Contrast")
-            target_compile_definitions(wxUiEditor PRIVATE DARK_HIGH_CONTRAST=1)
-        else()
-            message(NOTICE "Building with Dark mode, but not High Contrast")
-        endif()
-    endif()
 endif()
 
 if (NOT BUILD_FORK AND NOT BUILD_CUSTOM)

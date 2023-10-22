@@ -168,7 +168,7 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
 
             if (event->getNode()->isForm())
             {
-                if (code.is_ruby() && event->get_name().starts_with("wxEVT_WIZARD"))
+                if (event->get_name().starts_with("wxEVT_WIZARD"))
                 {
                     handler.Str(event_name).Str("(get_id, ").Str(":") << event_code << ')';
                 }
@@ -177,8 +177,22 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
                     handler.Str(event_name).Str("(:") << event_code << ')';
                 }
             }
+            else if (event->getNode()->isGen(gen_StaticCheckboxBoxSizer))
+            {
+                code.Str(event_name).Str("(").Str(event->getNode()->as_string(prop_checkbox_var_name)).Str(".get_id, :")
+                    << event_code << ')';
+                return;
+            }
+            else if (event->getNode()->isGen(gen_StaticRadioBtnBoxSizer))
+            {
+                code.Str(event_name).Str("(").Str(event->getNode()->as_string(prop_radiobtn_var_name)).Str(".get_id, :")
+                    << event_code << ')';
+                return;
+            }
             else
+            {
                 handler.Str(event_name).Str("(").NodeName().Str(".get_id, :") << event_code << ')';
+            }
         }
     }
 
@@ -189,13 +203,7 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
 
     if (event->getNode()->isStaticBoxSizer())
     {
-        if (code.is_ruby() && Project.as_string(prop_wxRuby_version) == "0.9.0")
-        {
-            code.Str("# wxRuby3 0.9.0 does not support a checkbox as a static box label").Eol();
-            code.EnableAutoLineBreak(true);
-            return;
-        }
-
+        ASSERT_MSG(!code.is_ruby(), "StaticBoxSizer events have already been handled for Ruby");
         code.AddIfPython("self.");
         if (event->get_name() == "wxEVT_CHECKBOX")
         {
@@ -218,7 +226,6 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
         {
             code.Function("") << handler.GetCode();
         }
-
         code.EndFunction();
     }
     else if (event->getNode()->isGen(gen_wxMenuItem) || event->getNode()->isGen(gen_tool) ||

@@ -137,9 +137,9 @@ else()
 endif()
 
 if (WIN32)
-    target_link_libraries(sdi_test PRIVATE wxWidgets ${CLib} comctl32 Imm32 Shlwapi Version UxTheme)
+    target_link_libraries(sdi_test PRIVATE wxWidgets32 ${CLib} comctl32 Imm32 Shlwapi Version UxTheme)
 else()
-    target_link_libraries(sdi_test PRIVATE wxWidgets ${CLib})
+    target_link_libraries(sdi_test PRIVATE wxWidgets32 ${CLib})
 endif()
 
 if (MSVC)

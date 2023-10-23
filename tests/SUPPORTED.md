@@ -10,7 +10,7 @@ This does _not_ mean that the class is fully supported in every language -- this
 
 | Class | C++ | Python | Ruby | XRC | file |
 -----------|-----|--------|------|------|------|
-| wxAuiNotebook | yes | yes | crashes | --- | ../src/generate/gen_aui_notebook.cpp |
+| wxAuiNotebook | yes | yes | yes | --- | ../src/generate/gen_aui_notebook.cpp |
 | wxChoicebook | yes | yes | yes | --- | ../src/generate/gen_choicebook.cpp |
 | wxListbook | yes | yes | yes | --- | ../src/generate/gen_listbook.cpp |
 | wxNotebook | yes | yes | yes | --- | ../src/generate/gen_notebook.cpp |
@@ -25,11 +25,11 @@ This does _not_ mean that the class is fully supported in every language -- this
 | wxDialog | yes | yes | yes | yes | ../src/generate/gen_dialog.cpp |
 | wxFrame | yes | yes | yes | yes | ../src/generate/gen_frame.cpp |
 | wxMenu | yes | yes | yes | --- | ../src/generate/menu_widgets.cpp |
-| wxMenuBar | yes | yes | --- | --- | ../src/generate/menu_widgets.cpp |
+| wxMenuBar | yes | yes | yes | --- | ../src/generate/menu_widgets.cpp |
 | wxPanel | yes | yes | yes | --- | ../src/generate/gen_panel_form.cpp |
 | wxPopupTransientWindow | yes | yes | yes | no | ../src/generate/gen_popup_trans_win.cpp |
 | wxRibbonBar | yes | yes | yes | --- | ../src/generate/gen_ribbon_bar.cpp |
-| wxToolBar | yes | yes | --- | --- | ../src/generate/gen_toolbar.cpp |
+| wxToolBar | yes | yes | yes | --- | ../src/generate/gen_toolbar.cpp |
 | wxWizard | yes | yes | yes | yes | ../src/generate/gen_wizard.cpp |
 
 ### Pickers
@@ -55,7 +55,7 @@ This does _not_ mean that the class is fully supported in every language -- this
 | wxStaticRadioBtnBoxSizer | yes | no | yes | --- | ../src/generate/gen_statradiobox_sizer.cpp |
 | wxStaticBoxSizer | yes | yes | yes | yes | ../src/generate/gen_staticbox_sizer.cpp |
 | wxStdDialogButtonSizer | yes | yes | yes | partial | ../src/generate/gen_std_dlgbtn_sizer.cpp |
-| wxWrapSizer | yes | yes | no | yes | ../src/generate/gen_wrap_sizer.cpp |
+| wxWrapSizer | yes | yes | yes | yes | ../src/generate/gen_wrap_sizer.cpp |
 
 # Classes
 
@@ -64,8 +64,8 @@ This does _not_ mean that the class is fully supported in every language -- this
 | wxActivityIndicator | yes | yes | yes | yes | ../src/generate/gen_activity.cpp |
 | wxAnimationCtrl | yes | ??? | yes | --- | ../src/generate/gen_animation.cpp |
 | wxAuiToolBar | yes | yes | yes | yes | ../src/generate/gen_aui_toolbar.cpp |
-| wxBannerWindow | yes | yes | no | yes | ../src/generate/gen_banner_window.cpp |
-| wxBitmapComboBox | yes | ??? | --- | --- | ../src/generate/gen_bitmap_combo.cpp |
+| wxBannerWindow | yes | yes | yes | yes | ../src/generate/gen_banner_window.cpp |
+| wxBitmapComboBox | ??? | ??? | ??? | --- | ../src/generate/gen_bitmap_combo.cpp |
 | wxButton | yes | yes | yes | partial | ../src/generate/gen_button.cpp |
 | wxCalendarCtrl | yes | yes | yes | yes | ../src/generate/gen_calendar_ctrl.cpp |
 | wxCheckBox | yes | yes | yes | yes | ../src/generate/gen_checkbox.cpp |
@@ -82,10 +82,10 @@ This does _not_ mean that the class is fully supported in every language -- this
 | wxGenericDirCtrl | yes | partial | yes | partial | ../src/generate/gen_dir_ctrl.cpp |
 | wxGrid | yes | yes | yes | no | ../src/generate/gen_grid.cpp |
 | wxHtmlWindow | yes | yes | yes | yes | ../src/generate/gen_html_window.cpp |
-| wxHyperlinkCtrl | yes | yes | fails | yes | ../src/generate/gen_hyperlink.cpp |
-| wxInfoBar | yes | ??? | no | yes | ../src/generate/gen_infobar.cpp |
+| wxHyperlinkCtrl | yes | yes | yes | yes | ../src/generate/gen_hyperlink.cpp |
+| wxInfoBar | yes | ??? | ??? | yes | ../src/generate/gen_infobar.cpp |
 | wxListBox | yes | yes | yes | yes | ../src/generate/gen_listbox.cpp |
-| wxListView | yes | yes | fails | partial | ../src/generate/gen_listview.cpp |
+| wxListView | yes | yes | yes | partial | ../src/generate/gen_listview.cpp |
 | wxMenu | yes | yes | yes | --- | ../src/generate/gen_menu.cpp |
 | wxMenuBar | yes | yes | yes | --- | ../src/generate/menu_widgets.cpp |
 | wxMenuItem | yes | yes | yes | --- | ../src/generate/gen_menuitem.cpp |
@@ -95,7 +95,7 @@ This does _not_ mean that the class is fully supported in every language -- this
 | wxPropertySheetDialog | no | no | no | no | ../src/generate/gen_propsheet_dlg.cpp |
 | wxRadioBox | yes | yes | yes | yes | ../src/generate/gen_prop_grid.cpp |
 | wxRadioButton | yes | yes | yes | yes | ../src/generate/gen_radio_btn.cpp |
-| wxRearrangeCtrl | yes | yes | no | no | ../src/generate/gen_rearrange.cpp |
+| wxRearrangeCtrl | yes | yes | yes | no | ../src/generate/gen_rearrange.cpp |
 | wxRibbonBar | yes | yes | yes | --- | ../src/generate/gen_ribbon_bar.cpp |
 | wxRibbonButtonBar | yes | yes | yes | --- | ../src/generate/gen_ribbon_button.cpp |
 | wxRibbonGallery | yes | yes | yes | --- | ../src/generate/ribbon_widgets.cpp |
@@ -111,7 +111,7 @@ This does _not_ mean that the class is fully supported in every language -- this
 | wxSlider | yes | yes | yes | yes | ../src/generate/gen_slider.cpp |
 | wxSpinButton | yes | yes | yes | yes | ../src/generate/gen_spin_btn.cpp |
 | wxSpinCtrl | yes | yes | yes | yes | ../src/generate/gen_spin_ctrl.cpp |
-| wxSpinCtrlDouble | yes | yes | no | yes | ../src/generate/gen_spin_ctrl.cpp |
+| wxSpinCtrlDouble | yes | yes | yes | yes | ../src/generate/gen_spin_ctrl.cpp |
 | wxSplitterWindow | yes | yes | yes | yes | ../src/generate/gen_split_win.cpp |
 | wxStaticBitmap | yes | yes | yes | yes | ../src/generate/gen_static_bmp.cpp |
 | wxStaticBox | yes | ??? | --- | --- | ../src/generate/gen_static_box.cpp |
@@ -144,9 +144,9 @@ This does _not_ mean that the class is fully supported in every language -- this
 | PageCtrl | yes | ??? | --- | no | ../src/generate/gen_page_ctrl.cpp |
 | PropertyGridItem | yes | yes | --- | no | ../src/generate/gen_prop_item.cpp |
 | PropertyGridPage | yes | yes | --- | no | ../src/generate/grid_widgets.cpp |
-| RibbonButton | yes | yes | --- | --- | ../src/generate/ribbon_widgets.cpp |
-| RibbonGalleryItem | yes | yes | --- | --- | ../src/generate/ribbon_widgets.cpp |
-| RibbonTool | yes | yes | --- | --- | ../src/generate/ribbon_widgets.cpp |
+| RibbonButton | yes | yes | yes | --- | ../src/generate/ribbon_widgets.cpp |
+| RibbonGalleryItem | yes | yes | yes | --- | ../src/generate/ribbon_widgets.cpp |
+| RibbonTool | yes | yes | yes | --- | ../src/generate/ribbon_widgets.cpp |
 | Separator | yes | ??? | --- | --- | ../src/generate/menu_widgets.cpp |
 | Spacer | yes | ??? | --- | --- | ../src/generate/gen_spacer_sizer.cpp |
 | SubMenu | yes | ??? | --- | --- | ../src/generate/gen_submenu.cpp |

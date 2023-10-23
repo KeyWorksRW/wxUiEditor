@@ -276,6 +276,10 @@ class MainTestDialog < Wx::Dialog
 
     @rearrange = Wx::RearrangeCtrl.new(page_5, Wx::ID_ANY,
       Wx::DEFAULT_POSITION, Wx::DEFAULT_SIZE, [], [])
+    item_position = @rearrange.get_list().append('My Cat')
+    @rearrange.get_list().check(item_position)
+    item_position = @rearrange.get_list().append('My Dog')
+    @rearrange.get_list().check(item_position)
     box_sizer_10.add(@rearrange, Wx::SizerFlags.new.border(Wx::ALL))
 
     flex_grid_sizer.add(box_sizer_10, Wx::SizerFlags.new.border(Wx::ALL))

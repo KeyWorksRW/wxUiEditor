@@ -306,6 +306,10 @@ class MainTestDialog(wx.Dialog):
 
         self.rearrange = wx.RearrangeCtrl(page_5, wx.ID_ANY, wx.DefaultPosition,
             wx.DefaultSize, [], [])
+        item_position = self.rearrange.GetList().Append("My Cat")
+        self.rearrange.GetList().Check(item_position)
+        item_position = self.rearrange.GetList().Append("My Dog")
+        self.rearrange.GetList().Check(item_position)
         box_sizer_10.Add(self.rearrange, wx.SizerFlags().Border(wx.ALL))
 
         flex_grid_sizer.Add(box_sizer_10, wx.SizerFlags().Border(wx.ALL))
@@ -557,8 +561,8 @@ class MainTestDialog(wx.Dialog):
         staticText__7 = wx.StaticText(static_box_2.GetStaticBox(), wx.ID_ANY, "Font:")
         box_sizer_9.Add(staticText__7, wx.SizerFlags().Center().Border(wx.ALL))
 
-        self.fontPicker = wx.FontPickerCtrl(static_box_2.GetStaticBox(), wx.ID_ANY,
-            wx.Font(wx.NORMAL_FONT.GetPointSize(), wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL,
+        self.fontPicker = wx.FontPickerCtrl(static_box_2.GetStaticBox(), wx.ID_ANY, wx.Font(
+            wx.NORMAL_FONT.GetPointSize(), wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL,
             wx.FONTWEIGHT_NORMAL, False, "Comic Sans MS"), wx.DefaultPosition, wx.DefaultSize,
             wx.FNTP_DEFAULT_STYLE|wx.FNTP_USE_TEXTCTRL)
         box_sizer_9.Add(self.fontPicker, wx.SizerFlags().Border(wx.ALL))
@@ -700,7 +704,7 @@ class MainTestDialog(wx.Dialog):
         box_sizer_17.Add(self.banner_left, wx.SizerFlags().Border(wx.ALL))
 
         self.banner_top = wx.adv.BannerWindow(page_7, wx.ID_ANY, wx.TOP)
-        self.banner_top.SetGradient(wx.Colour("#BFCDDB"), wx.Colour("#0078D7"))
+        self.banner_top.SetGradient(wx.Colour("#2B2B2B"), wx.Colour("#777777"))
         self.banner_top.SetText("Top Banner", "This is the top banner message")
         box_sizer_17.Add(self.banner_top, wx.SizerFlags().Border(wx.ALL))
 

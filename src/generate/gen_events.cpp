@@ -179,13 +179,13 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
             }
             else if (event->getNode()->isGen(gen_StaticCheckboxBoxSizer))
             {
-                code.Str(event_name).Str("(").Str(event->getNode()->as_string(prop_checkbox_var_name)).Str(".get_id, :")
+                code.Str(event_name).Str("(").VarName(event->getNode()->as_string(prop_checkbox_var_name)).Str(".get_id, :")
                     << event_code << ')';
                 return;
             }
             else if (event->getNode()->isGen(gen_StaticRadioBtnBoxSizer))
             {
-                code.Str(event_name).Str("(").Str(event->getNode()->as_string(prop_radiobtn_var_name)).Str(".get_id, :")
+                code.Str(event_name).Str("(").VarName(event->getNode()->as_string(prop_radiobtn_var_name)).Str(".get_id, :")
                     << event_code << ')';
                 return;
             }

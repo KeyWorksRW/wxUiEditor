@@ -94,10 +94,7 @@ bool StaticRadioBtnBoxSizerGenerator::ConstructionCode(Code& code)
     }
     else if (code.is_ruby())
     {
-        tt_string var_name = code.node()->as_string(prop_radiobtn_var_name);
-        if (var_name.is_sameprefix("m_"))
-            var_name.erase(0, 2);
-        code.Str(var_name) << " = Wx::RadioButton.new(";
+        code.VarName(code.node()->as_string(prop_radiobtn_var_name)) << " = Wx::RadioButton.new(";
         code.ValidParentName().Comma().as_string(prop_id).Comma().QuotedString(prop_label).EndFunction();
         code.Eol();
     }
@@ -151,11 +148,8 @@ bool StaticRadioBtnBoxSizerGenerator::ConstructionCode(Code& code)
     else if (code.is_ruby())
     {
         code.NodeName().Assign("wxStaticBoxSizer").Str("(").CreateClass(false, "wxStaticBox", false);
-        tt_string var_name = code.node()->as_string(prop_radiobtn_var_name);
-        if (var_name.is_sameprefix("m_"))
-            var_name.erase(0, 2);
-
-        code.Str(parent_name).Comma().Add("wxID_ANY").Comma().Str(var_name).Str(")");
+        code.Str(parent_name).Comma().Add("wxID_ANY").Comma();
+        code.VarName(code.node()->as_string(prop_radiobtn_var_name)).Str(")");
         code.Comma().Add(prop_orientation).EndFunction();
     }
     else

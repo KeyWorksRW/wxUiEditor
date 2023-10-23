@@ -100,10 +100,7 @@ bool StaticCheckboxBoxSizerGenerator::ConstructionCode(Code& code)
     }
     else if (code.is_ruby())
     {
-        tt_string var_name = code.node()->as_string(prop_checkbox_var_name);
-        if (var_name.is_sameprefix("m_"))
-            var_name.erase(0, 2);
-        code.Str(var_name) << " = Wx::CheckBox.new(";
+        code.VarName(code.node()->as_string(prop_checkbox_var_name)) << " = Wx::CheckBox.new(";
         code.ValidParentName().Comma().as_string(prop_id).Comma().QuotedString(prop_label).EndFunction();
         code.Eol();
     }
@@ -159,29 +156,20 @@ bool StaticCheckboxBoxSizerGenerator::ConstructionCode(Code& code)
     else if (code.is_ruby())
     {
         code.NodeName().Assign("wxStaticBoxSizer").Str("(").CreateClass(false, "wxStaticBox", false);
-        tt_string var_name = code.node()->as_string(prop_checkbox_var_name);
-        if (var_name.is_sameprefix("m_"))
-            var_name.erase(0, 2);
-
-        code.Str(parent_name).Comma().Add("wxID_ANY").Comma().Str(var_name).Str(")");
+        code.Str(parent_name)
+            .Comma()
+            .Add("wxID_ANY")
+            .Comma()
+            .VarName(code.node()->as_string(prop_checkbox_var_name))
+            .Str(")");
         code.Comma().Add(prop_orientation).EndFunction();
     }
     else
     {
         code.NodeName().CreateClass(false, "wxStaticBoxSizer").as_string(prop_orientation).Comma().Str(parent_name);
-        if (code.is_ruby() && Project.as_string(prop_wxRuby_version) != "0.9.0")
+        if (code.hasValue(prop_label))
         {
-            tt_string var_name = code.node()->as_string(prop_checkbox_var_name);
-            if (var_name.is_sameprefix("m_"))
-                var_name.erase(0, 2);
-            code.Comma().Str(var_name);
-        }
-        else
-        {
-            if (code.hasValue(prop_label))
-            {
-                code.Comma().QuotedString(prop_label);
-            }
+            code.Comma().QuotedString(prop_label);
         }
         code.EndFunction();
     }

@@ -958,14 +958,13 @@ Code& Code::NodeName(Node* node)
     {
         *this += "self.";
     }
+    if (is_ruby() && !node->isForm() && !node->isLocal())
+    {
+        *this += "@";
+    }
     else if (is_perl())
     {
         *this += "$";
-    }
-    else if (is_ruby())
-    {
-        if (!(node->isLocal()) && not(node->isForm()))
-            *this += "@";
     }
 
     // We don't create these, preferring to add them like the above, however the user can
@@ -978,6 +977,35 @@ Code& Code::NodeName(Node* node)
         *this += node_name.subview(2);
     else
         *this += node_name;
+    return *this;
+}
+
+Code& Code::VarName(tt_string_view var_name, bool class_access)
+{
+    if (is_cpp())
+    {
+        // If a Ruby user added this, then it must be removed for valid C++ code
+        if (var_name.is_sameprefix("@"))
+            *this += var_name.subview(1);
+        else
+            *this += var_name;
+        return *this;
+    }
+
+    if (class_access)
+    {
+        if (is_python())
+            *this += "self.";
+        else if (is_ruby())
+            *this += "@";
+    }
+
+    if (var_name.is_sameprefix("m_"))
+
+        *this += var_name.subview(2);
+    else
+        *this += var_name;
+
     return *this;
 }
 

@@ -7,11 +7,12 @@
 
 #include <wx/filepicker.h>  // wxFilePickerCtrl, wxDirPickerCtrl base header
 
-#include "gen_common.h"     // GeneratorLibrary -- Generator classes
-#include "gen_xrc_utils.h"  // Common XRC generating functions
-#include "node.h"           // Node class
-#include "pugixml.hpp"      // xml read/write/create/process
-#include "utils.h"          // Utility functions that work with properties
+#include "gen_common.h"       // GeneratorLibrary -- Generator classes
+#include "gen_xrc_utils.h"    // Common XRC generating functions
+#include "node.h"             // Node class
+#include "project_handler.h"  // ProjectHandler class
+#include "pugixml.hpp"        // xml read/write/create/process
+#include "utils.h"            // Utility functions that work with properties
 
 #include "gen_file_picker.h"
 
@@ -66,7 +67,10 @@ bool FilePickerGenerator::ConstructionCode(Code& code)
     }
     else
     {
-        code.Add("wxFileSelectorPromptStr");
+        if (code.is_ruby() && Project.getProjectNode()->as_string(prop_wxRuby_version) == "0.9.0")
+            code << "'" << wxFileSelectorPromptStr << "'";
+        else
+            code.AddType("wxFileSelectorPromptStr");
     }
 
     code.Comma();
@@ -76,7 +80,7 @@ bool FilePickerGenerator::ConstructionCode(Code& code)
     }
     else
     {
-        code.Add("wxFileSelectorDefaultWildcardStr");
+        code.AddType("wxFileSelectorDefaultWildcardStr");
     }
 
     code.PosSizeFlags(true, "wxFLP_DEFAULT_STYLE");

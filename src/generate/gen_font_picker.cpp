@@ -40,7 +40,7 @@ bool FontPickerGenerator::ConstructionCode(Code& code)
         auto fontprop = code.node()->as_font_prop(prop_initial_font);
         wxFont font = fontprop.GetFont();
 
-        code.Add("wxFont(");
+        code.Object("wxFont");
 
         if (fontprop.GetPointSize() <= 0)
         {

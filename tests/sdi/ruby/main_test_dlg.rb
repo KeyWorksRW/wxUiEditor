@@ -168,9 +168,9 @@ class MainTestDialog < Wx::Dialog
     radioBox.set_selection(1)
     box_sizer_7.add(radioBox, Wx::SizerFlags.new.border(Wx::ALL))
 
-    checkBox_sizer = Wx::CheckBox.new(page_4, Wx::ID_ANY, 'Checkbox')
-    static_box_4 = Wx::StaticBoxSizer.new(Wx::StaticBox.new(page_4, Wx::ID_ANY,
-      checkBox_sizer), Wx::VERTICAL)
+    @checkBox_sizer = Wx::CheckBox.new(page_4, Wx::ID_ANY, 'Checkbox')
+    static_box_4 = Wx::StaticBoxSizer.new(Wx::StaticBox.new(page_4, Wx::ID_ANY, @checkBox_sizer
+      ), Wx::VERTICAL)
 
     @radioBtn_4 = Wx::RadioButton.new(static_box_4.get_static_box, Wx::ID_ANY,
       'First button')
@@ -187,9 +187,9 @@ class MainTestDialog < Wx::Dialog
 
     box_sizer_7.add(static_box_4, Wx::SizerFlags.new.border(Wx::ALL))
 
-    radioBtn__sizer = Wx::RadioButton.new(page_4, Wx::ID_ANY, 'Radio')
-    static_box_5 = Wx::StaticBoxSizer.new(Wx::StaticBox.new(page_4, Wx::ID_ANY,
-      radioBtn__sizer), Wx::VERTICAL)
+    @radioBtn__sizer = Wx::RadioButton.new(page_4, Wx::ID_ANY, 'Radio')
+    static_box_5 = Wx::StaticBoxSizer.new(Wx::StaticBox.new(page_4, Wx::ID_ANY, @radioBtn__sizer
+      ), Wx::VERTICAL)
 
     @radioBtn_5 = Wx::RadioButton.new(static_box_5.get_static_box, Wx::ID_ANY,
       'First button')
@@ -238,9 +238,9 @@ class MainTestDialog < Wx::Dialog
 
     box_sizer_19.add(wrap_sizer, Wx::SizerFlags.new.expand.border(Wx::ALL))
 
-    checkPlayAnimation = Wx::CheckBox.new(page_4, Wx::ID_ANY, 'Play Animation')
-    static_box_3 = Wx::StaticBoxSizer.new(Wx::StaticBox.new(page_4, Wx::ID_ANY,
-      checkPlayAnimation), Wx::VERTICAL)
+    @checkPlayAnimation = Wx::CheckBox.new(page_4, Wx::ID_ANY, 'Play Animation')
+    static_box_3 = Wx::StaticBoxSizer.new(Wx::StaticBox.new(page_4, Wx::ID_ANY, @checkPlayAnimation
+      ), Wx::VERTICAL)
 
     @toggleBtn_2 = Wx::ToggleButton.new(static_box_3.get_static_box, Wx::ID_ANY,
       'Play Animation', Wx::DEFAULT_POSITION, Wx::DEFAULT_SIZE, Wx::BU_EXACTFIT)
@@ -276,6 +276,10 @@ class MainTestDialog < Wx::Dialog
 
     @rearrange = Wx::RearrangeCtrl.new(page_5, Wx::ID_ANY,
       Wx::DEFAULT_POSITION, Wx::DEFAULT_SIZE, [], [])
+    item_position = @rearrange.get_list().append('My Cat')
+    @rearrange.get_list().check(item_position)
+    item_position = @rearrange.get_list().append('My Dog')
+    @rearrange.get_list().check(item_position)
     box_sizer_10.add(@rearrange, Wx::SizerFlags.new.border(Wx::ALL))
 
     flex_grid_sizer.add(box_sizer_10, Wx::SizerFlags.new.border(Wx::ALL))
@@ -347,8 +351,8 @@ class MainTestDialog < Wx::Dialog
 
     box_sizer3 = Wx::BoxSizer.new(Wx::HORIZONTAL)
 
-    static_box.get_static_boxstatic_box_sizer2 = Wx::StaticBoxSizer.new(
-      Wx::VERTICAL, static_box, 'Combo')
+    static_box_sizer2 = Wx::StaticBoxSizer.new(Wx::VERTICAL,
+      static_box.get_static_box, 'Combo')
 
     @staticText3 = Wx::StaticText.new(static_box_sizer2.get_static_box, Wx::ID_ANY,
       'Unsorted')
@@ -377,8 +381,8 @@ class MainTestDialog < Wx::Dialog
 
     box_sizer3.add(static_box_sizer2, Wx::SizerFlags.new.expand.border(Wx::ALL))
 
-    static_box.get_static_boxstatic_box_sizer3 = Wx::StaticBoxSizer.new(
-      Wx::VERTICAL, static_box, 'Choice')
+    static_box_sizer3 = Wx::StaticBoxSizer.new(Wx::VERTICAL,
+      static_box.get_static_box, 'Choice')
 
     @staticText5 = Wx::StaticText.new(static_box_sizer3.get_static_box, Wx::ID_ANY,
       'Unsorted')
@@ -407,8 +411,8 @@ class MainTestDialog < Wx::Dialog
 
     box_sizer3.add(static_box_sizer3, Wx::SizerFlags.new.expand.border(Wx::ALL))
 
-    static_box.get_static_boxstatic_box_sizer4 = Wx::StaticBoxSizer.new(
-      Wx::VERTICAL, static_box, 'List')
+    static_box_sizer4 = Wx::StaticBoxSizer.new(Wx::VERTICAL,
+      static_box.get_static_box, 'List')
 
     @staticText7 = Wx::StaticText.new(static_box_sizer4.get_static_box, Wx::ID_ANY,
       'Unsorted')
@@ -433,8 +437,8 @@ class MainTestDialog < Wx::Dialog
 
     box_sizer3.add(static_box_sizer4, Wx::SizerFlags.new.expand.border(Wx::ALL))
 
-    static_box.get_static_boxstatic_box_sizer5 = Wx::StaticBoxSizer.new(
-      Wx::VERTICAL, static_box, 'Checked')
+    static_box_sizer5 = Wx::StaticBoxSizer.new(Wx::VERTICAL,
+      static_box.get_static_box, 'Checked')
 
     @staticText9 = Wx::StaticText.new(static_box_sizer5.get_static_box, Wx::ID_ANY,
       'Unsorted')
@@ -499,9 +503,9 @@ class MainTestDialog < Wx::Dialog
       'File:')
     box_sizer.add(staticText__2, Wx::SizerFlags.new.center.border(Wx::ALL))
 
-    @filePicker = Wx::FilePickerCtrl.new(static_box_2.get_static_box, Wx::ID_ANY, (''),
-      Wx::FileSelectorPromptStr, 'BMP files|*.bmp', Wx::DEFAULT_POSITION,
-      Wx::DEFAULT_SIZE, Wx::FLP_USE_TEXTCTRL|Wx::FLP_OPEN|Wx::FLP_FILE_MUST_EXIST)
+    @filePicker = Wx::FilePickerCtrl.new(static_box_2.get_static_box, Wx::ID_ANY, (''), 'Select a file',
+      'BMP files|*.bmp', Wx::DEFAULT_POSITION, Wx::DEFAULT_SIZE,
+      Wx::FLP_USE_TEXTCTRL|Wx::FLP_OPEN|Wx::FLP_FILE_MUST_EXIST)
     box_sizer.add(@filePicker, Wx::SizerFlags.new.border(Wx::ALL))
 
     grid_sizer.add(box_sizer, Wx::SizerFlags.new.border(Wx::ALL))
@@ -537,8 +541,8 @@ class MainTestDialog < Wx::Dialog
       'Font:')
     box_sizer_9.add(staticText__7, Wx::SizerFlags.new.center.border(Wx::ALL))
 
-    @fontPicker = Wx::FontPickerCtrl.new(static_box_2.get_static_box, Wx::ID_ANY,
-      Wx::Font(Wx::NORMAL_FONT.get_point_size(), Wx::FONTFAMILY_DEFAULT,
+    @fontPicker = Wx::FontPickerCtrl.new(static_box_2.get_static_box, Wx::ID_ANY, Wx::Font.new(
+      Wx::NORMAL_FONT.get_point_size(), Wx::FONTFAMILY_DEFAULT,
       Wx::FONTSTYLE_NORMAL, Wx::FONTWEIGHT_NORMAL, false, 'Comic Sans MS'),
       Wx::DEFAULT_POSITION, Wx::DEFAULT_SIZE, Wx::FNTP_DEFAULT_STYLE|
       Wx::FNTP_USE_TEXTCTRL)
@@ -574,10 +578,7 @@ class MainTestDialog < Wx::Dialog
 
     parent_sizer2.add(static_box_2, Wx::SizerFlags.new.expand.border(Wx::ALL))
 
-    @fileCtrl = Wx::FileCtrl.new(page_6, Wx::ID_ANY, '', '',
-      Wx::FileSelectorDefaultWildcardStr, Wx::FC_OPEN, Wx::DEFAULT_POSITION,
-      Wx::DEFAULT_SIZE)
-    parent_sizer2.add(@fileCtrl, Wx::SizerFlags.new.border(Wx::ALL))
+    # wxRuby 0.9.0 does not support wxFileCtrl
     page_6.set_sizer_and_fit(parent_sizer2)
 
     page = Wx::Panel.new(@notebook, Wx::ID_ANY, Wx::DEFAULT_POSITION,
@@ -686,20 +687,26 @@ class MainTestDialog < Wx::Dialog
 
     box_sizer_17 = Wx::BoxSizer.new(Wx::HORIZONTAL)
 
-    # wxRuby3 does not support wxBannerWindow
+    @banner_left = Wx::BannerWindow.new(page_7, Wx::ID_ANY, Wx::LEFT)
+    @banner_left.set_text('Left Banner', '')
     box_sizer_17.add(@banner_left, Wx::SizerFlags.new.border(Wx::ALL))
 
-    # wxRuby3 does not support wxBannerWindow
+    @banner_top = Wx::BannerWindow.new(page_7, Wx::ID_ANY, Wx::TOP)
+    @banner_top.set_gradient(Wx::Colour.new('#2B2B2B'), Wx::Colour.new('#777777'))
+    @banner_top.set_text('Top Banner', 'This is the top banner message')
     box_sizer_17.add(@banner_top, Wx::SizerFlags.new.border(Wx::ALL))
 
-    # wxRuby3 does not support wxBannerWindow
+    @banner_right = Wx::BannerWindow.new(page_7, Wx::ID_ANY, Wx::RIGHT)
+    @banner_right.set_text('Right Banner', '')
     box_sizer_17.add(@banner_right, Wx::SizerFlags.new.border(Wx::ALL))
 
     page_sizer.add(box_sizer_17, Wx::SizerFlags.new(1).border(Wx::ALL))
 
     box_sizer_18 = Wx::BoxSizer.new(Wx::HORIZONTAL)
 
-    # wxRuby3 does not support wxBannerWindow
+    @banner = Wx::BannerWindow.new(page_7, Wx::ID_ANY, Wx::LEFT)
+    @banner.set_bitmap(wxue_get_bundle($wiztest_png))
+    @banner.set_text('This is a long title', '')
     box_sizer_18.add(@banner, Wx::SizerFlags.new.border(Wx::ALL))
 
     page_sizer.add(box_sizer_18, Wx::SizerFlags.new.border(Wx::ALL))
@@ -768,7 +775,7 @@ class MainTestDialog < Wx::Dialog
     evt_button(@btn_6.get_id, :OnEvent)
     evt_button(btn.get_id, :OnClearList)
     evt_button(@btn_5.get_id, :OnEvent)
-    m_checkPlayAnimation.evt_checkbox(static_box_3.get_id, :on_check_play_animation))
+    evt_checkbox(@checkPlayAnimation.get_id, :on_check_play_animation)
     evt_checkbox(disable_bitmaps.get_id, :OnDisableBitmapsBtn)
     evt_checklistbox(@checkList2.get_id, :OnEvent)
     evt_checklistbox(@checkList_2.get_id, :OnEvent)
@@ -801,40 +808,6 @@ class MainTestDialog < Wx::Dialog
     evt_togglebutton(@toggleBtn.get_id, :OnEvent)
     evt_togglebutton(@toggleBtn_2.get_id, :OnEvent)
   end
-# Event handler functions
-# Add these below the comment block, or to your inherited class.
-
-=begin
-  def OnClearList(event)
-    event.skip
-  end
-
-  def OnDisableBitmapsBtn(event)
-    event.skip
-  end
-
-  def OnEvent(event)
-    event.skip
-  end
-
-  def OnInit(event)
-    event.skip
-  end
-
-  def OnPageChanged(event)
-    event.skip
-  end
-
-  def OnPopupBtn(event)
-    event.skip
-  end
-
-  def on_check_play_animation(event)
-    event.skip
-  end
-
-=end
-
 
   # Loads image from a string and returns a Wx::Animation object.
   def get_animation(image_name)
@@ -890,3 +863,31 @@ $clr_hourglass_gif = Base64.decode64(
 # Code below this comment block will be preserved
 # if the code for this class is re-generated.
 # ***********************************************
+
+def OnClearList(event)
+  event.skip
+end
+
+def OnDisableBitmapsBtn(event)
+  event.skip
+end
+
+def OnEvent(event)
+  event.skip
+end
+
+def OnInit(event)
+  event.skip
+end
+
+def OnPageChanged(event)
+  event.skip
+end
+
+def OnPopupBtn(event)
+  event.skip
+end
+
+def on_check_play_animation(event)
+  event.skip
+end

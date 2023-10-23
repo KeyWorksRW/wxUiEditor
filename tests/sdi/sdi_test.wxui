@@ -14,7 +14,6 @@
     wxWidgets_version="3.2"
     python_output_folder="python"
     ruby_output_folder="ruby"
-    wxRuby_version="1.0.0"
     combine_all_forms="0"
     combined_xrc_file="combined"
     xrc_art_directory="art"
@@ -617,7 +616,8 @@
                     var_name="m_staticText_2"
                     flags="wxEXPAND" />
                   <node
-                    class="wxRearrangeCtrl" />
+                    class="wxRearrangeCtrl"
+                    contents="My Cat|1;My Dog|1" />
                 </node>
                 <node
                   class="wxBoxSizer"

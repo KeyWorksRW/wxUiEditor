@@ -5,12 +5,13 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include "code.h"        // Code -- Helper class for generating code
-#include "gen_base.h"    // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
-#include "gen_common.h"  // Common component functions
-#include "node.h"        // Node class
-#include "node_decl.h"   // NodeDeclaration class
-#include "write_code.h"  // Write code to Scintilla or file
+#include "code.h"             // Code -- Helper class for generating code
+#include "gen_base.h"         // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
+#include "gen_common.h"       // Common component functions
+#include "node.h"             // Node class
+#include "node_decl.h"        // NodeDeclaration class
+#include "project_handler.h"  // ProjectHandler class
+#include "write_code.h"       // Write code to Scintilla or file
 
 // clang-format off
 
@@ -109,7 +110,14 @@ void BaseCodeGenerator::GenConstruction(Node* node)
 
     if (parent->isSizer())
     {
-        GenParentSizer(node, need_closing_brace);
+        if (node->isGen(gen_wxFileCtrl) && m_language == GEN_LANG_RUBY &&
+            Project.getProjectNode()->as_string(prop_wxRuby_version) == "0.9.0")
+        {
+        }
+        else
+        {
+            GenParentSizer(node, need_closing_brace);
+        }
     }
     else if (parent->isToolBar() && !node->isType(type_tool) && !node->isType(type_aui_tool) &&
              !node->isType(type_tool_separator) && !node->isType(type_tool_dropdown))

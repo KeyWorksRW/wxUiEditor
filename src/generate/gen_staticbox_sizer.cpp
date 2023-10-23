@@ -68,7 +68,7 @@ bool StaticBoxSizerGenerator::ConstructionCode(Code& code)
                 else if (code.is_python())
                     parent_name << ".GetStaticBox()";
                 else if (code.is_ruby())
-                    code.NodeName(parent).Function("GetStaticBox");
+                    parent_name << ".get_static_box";
                 break;
             }
             parent = parent->getParent();

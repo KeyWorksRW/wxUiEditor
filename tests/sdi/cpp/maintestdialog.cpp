@@ -290,6 +290,13 @@ bool MainTestDialog::Create(wxWindow* parent, wxWindowID id, const wxString& tit
     box_sizer_10->Add(m_staticText_2, wxSizerFlags().Expand().Border(wxALL));
 
     m_rearrange = new wxRearrangeCtrl(page_5, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxArrayInt(), wxArrayString());
+    {
+        int item_position;
+        item_position = m_rearrange->GetList()->Append("My Cat");
+        m_rearrange->GetList()->Check(item_position);
+        item_position = m_rearrange->GetList()->Append("My Dog");
+        m_rearrange->GetList()->Check(item_position);
+    }
     box_sizer_10->Add(m_rearrange, wxSizerFlags().Border(wxALL));
 
     flex_grid_sizer->Add(box_sizer_10, wxSizerFlags().Border(wxALL));
@@ -658,7 +665,7 @@ bool MainTestDialog::Create(wxWindow* parent, wxWindowID id, const wxString& tit
     box_sizer_17->Add(m_banner_left, wxSizerFlags().Border(wxALL));
 
     m_banner_top = new wxBannerWindow(page_7, wxTOP);
-    m_banner_top->SetGradient(wxColour("#BFCDDB"), wxColour("#0078D7"));
+    m_banner_top->SetGradient(wxColour("#2B2B2B"), wxColour("#777777"));
     m_banner_top->SetText("Top Banner", "This is the top banner message");
     box_sizer_17->Add(m_banner_top, wxSizerFlags().Border(wxALL));
 

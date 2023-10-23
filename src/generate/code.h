@@ -340,10 +340,18 @@ public:
     // For Ruby, the object will be followed by ".new": class.new(
     Code& Object(tt_string_view class_name);
 
-    // For Python code, a non-local, non-form name will be prefixed with "self."
+    // For non-C++ languages, this will remove any "m_" prefix from the node name
+    // (node->getNodeName()).
     //
-    // *this += node->getNodeName();
+    // For Python code, a non-local, non-form name will be prefixed with "self."
+    // For Ruby code, a non-local, non-form name will be prefixed with "@"
     Code& NodeName(Node* node = nullptr);
+
+    // For C++, adds the var_name unchanged. Otherwise, and "m_" is removed.
+    // If class_access is true, then "self." is prefixed for Python, or "@" for Ruby.
+    //
+    // Use this when NodeName() is not appropriate, e.g., checkbox in wxStaticBoxSizer
+    Code& VarName(tt_string_view var_name, bool class_access = true);
 
     // For Python code, a non-local, non-form name will be prefixed with "self."
     //

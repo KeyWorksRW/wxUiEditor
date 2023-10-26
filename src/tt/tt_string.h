@@ -72,6 +72,14 @@ public:
     // Caution: std::string_view will be invalid if tt_string is modified or destroyed.
     tt_string_view subview(size_t start = 0) const;
 
+    // Used when caller refuses to accept tt_string as a std::string (e.g., std::format()).
+    // Name is identical to wxString::ToStdString()
+    const std::string& ToStdString() const { return *this; }
+
+    // Used when caller refuses to accept tt_string_view via subview as a std::string_view
+    // (e.g. std::format())
+    const std::string_view ToStdView(size_t start = 0) const { return subview(start); }
+
     // Case-insensitive comparison.
     int comparei(std::string_view str) const;
 

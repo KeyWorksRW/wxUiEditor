@@ -503,7 +503,7 @@ NodeSharedPtr NodeCreator::createNodeFromXml(pugi::xml_node& xml_obj, Node* pare
 
                     tt_string prop_name = iter.name();
                     tt_string prop_value = iter.value();
-                    wxMessageBox(tt_string().Format(
+                    wxMessageBox(wxString().Format(
                         "The property named \"%s\" of class \"%s\" is not supported by this version of wxUiEditor.\n\n"
                         "If your project file was just converted from an older version, then the conversion was not "
                         "complete. Otherwise, this project is from a newer version of wxUiEditor.\n\n"

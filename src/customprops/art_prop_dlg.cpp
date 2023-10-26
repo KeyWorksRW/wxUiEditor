@@ -195,7 +195,7 @@ void ArtBrowserDialog::OnSelectItem(wxListEvent& event)
     {
         m_canvas->SetSize(bmp.GetWidth(), bmp.GetHeight());
         m_canvas->SetBitmap(bmp);
-        m_text->SetLabel(tt_string().Format("Size: %d x %d", bmp.GetWidth(), bmp.GetHeight()));
+        m_text->SetLabel(wxString().Format("Size: %d x %d", bmp.GetWidth(), bmp.GetHeight()));
         Layout();
     }
     Refresh();

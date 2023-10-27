@@ -768,12 +768,14 @@ size_t tt_string::stepover(size_t start) const
     return pos;
 }
 
+#if defined(_WIN32)
 std::wstring tt_string::to_utf16() const
 {
     std::wstring str16;
     tt::utf8to16(*this, str16);
     return str16;
 }
+#endif
 
 tt_string_view tt_string::subview(size_t start, size_t len) const
 {

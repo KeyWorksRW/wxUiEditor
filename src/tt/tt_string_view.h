@@ -37,6 +37,13 @@ public:
     std::string wx_str() const { return std::string(*this); }
 #endif  // _WIN32
 
+    // Used when caller refuses to accept tt_string_view as a std::string_view (e.g.
+    // std::format())
+    const std::string_view& ToStdView() const { return *this; }
+
+    // Same result as wxString::ToStdString()
+    const std::string ToStdString() const { return std::string(*this); }
+
     std::string as_str() const { return std::string(*this); }
     std::wstring as_utf16() const { return to_utf16(); };
 

@@ -34,43 +34,37 @@ public:
 
     tt_string(const std::filesystem::directory_entry& dir) : std_base(dir.path().string(), dir.path().string().size()) {}
 
+#if wxUSE_UNICODE_UTF8
+    tt_string(const wxString& str) { *this = str.ToStdString(); }
+#else
     tt_string(const wxString& str) { *this = str.utf8_string(); }
+#endif
 
+#if defined(_WIN32)
     tt_string& from_utf16(std::wstring_view str)
     {
         clear();
         tt::utf16to8(str, *this);
         return *this;
     }
+
     std::wstring to_utf16() const;
-    std::wstring as_utf16() const { return to_utf16(); };
-
-    tt_string& utf(std::wstring_view str)
-    {
-        clear();
-        tt::utf16to8(str, *this);
-        return *this;
-    }
-
-    tt_string& utf(std::string_view str)
-    {
-        *this = str;
-        return *this;
-    }
+#endif
 
     // FromUTF8() is very efficient if wxUSE_UNICODE_UTF8 is defined as no UTF conversion is
     // done.
     wxString make_wxString() const { return wxString::FromUTF8(data(), size()); }
 
-// If on Windows, and not a wxUSE_UNICODE_UTF8 build, return value converts to UTF16
-#if defined(_WIN32) && !(wxUSE_UNICODE_UTF8)
-    std::wstring wx_str() const { return to_utf16(); };
-#else
-    std::string wx_str() const { return substr(); }
-#endif  // _WIN32
-
     // Caution: std::string_view will be invalid if tt_string is modified or destroyed.
     tt_string_view subview(size_t start = 0) const;
+
+    // Used when caller refuses to accept tt_string as a std::string (e.g., std::format()).
+    // Name is identical to wxString::ToStdString()
+    const std::string& ToStdString() const { return *this; }
+
+    // Used when caller refuses to accept tt_string_view via subview as a std::string_view
+    // (e.g. std::format())
+    const std::string_view ToStdView(size_t start = 0) const { return subview(start); }
 
     // Case-insensitive comparison.
     int comparei(std::string_view str) const;
@@ -299,7 +293,6 @@ public:
 
     // Replaces the filename portion of the string. Returns a view to the entire string.
     tt_string& replace_filename(std::string_view newFilename);
-    tt_string& replace_filename(std::wstring_view newFilename) { return replace_filename(tt::utf16to8(newFilename)); }
 
     // Removes the filename portion of the string. Returns a view to the entire string.
     tt_string& remove_filename() { return replace_filename(""); }
@@ -307,7 +300,6 @@ public:
     // Appends the filename -- assumes current string is a path. This will add a trailing
     // slash (if needed) before adding the filename.
     tt_string& append_filename(std::string_view filename);
-    tt_string& append_filename(std::wstring_view filename) { return append_filename(tt::utf16to8(filename)); }
 
     // Makes the current path relative to the supplied path. Use an empty string to be
     // relative to the current directory. Supplied path should not contain a filename.
@@ -337,12 +329,6 @@ public:
         return *this;
     }
 
-    tt_string& operator<<(std::wstring_view str)
-    {
-        tt::utf16to8(str, *this);
-        return *this;
-    }
-
     tt_string& operator<<(char ch)
     {
         *this += ch;
@@ -363,7 +349,11 @@ public:
 
     tt_string& assign_wx(const wxString& str)
     {
+#if wxUSE_UNICODE_UTF8
+        *this = str.ToStdString();
+#else
         *this = str.utf8_string();
+#endif
         return *this;
     }
 

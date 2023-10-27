@@ -768,12 +768,14 @@ size_t tt_string::stepover(size_t start) const
     return pos;
 }
 
+#if defined(_WIN32)
 std::wstring tt_string::to_utf16() const
 {
     std::wstring str16;
     tt::utf8to16(*this, str16);
     return str16;
 }
+#endif
 
 tt_string_view tt_string::subview(size_t start, size_t len) const
 {
@@ -943,11 +945,14 @@ tt_string& tt_string::Format(std::string_view format, ...)
                     buffer << va_arg(args, char);
                 else
                 {
+                    FAIL_MSG("%lc should not be used, since it only works on Windows");
+#if defined(_WIN32)
                     std::wstring str16;
                     str16 += va_arg(args, wchar_t);
                     std::string str8;
                     tt::utf16to8(str16, str8);
                     buffer << str8;
+#endif
                 }
             }
             else if (format.at(pos) == 's')
@@ -961,6 +966,8 @@ tt_string& tt_string::Format(std::string_view format, ...)
                 }
                 else
                 {
+                    FAIL_MSG("%ls should not be used, since it only works on Windows");
+#if defined(_WIN32)
                     std::wstring str16;
                     str16 += va_arg(args, const wchar_t*);
                     std::string str8;
@@ -969,6 +976,7 @@ tt_string& tt_string::Format(std::string_view format, ...)
                         buffer << std::quoted(str8);
                     else
                         buffer << str8;
+#endif
                 }
             }
             else if (format.at(pos) == 'd' || format.at(pos) == 'i')

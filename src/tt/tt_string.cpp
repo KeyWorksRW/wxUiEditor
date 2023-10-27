@@ -945,11 +945,14 @@ tt_string& tt_string::Format(std::string_view format, ...)
                     buffer << va_arg(args, char);
                 else
                 {
+                    FAIL_MSG("%lc should not be used, since it only works on Windows");
+#if defined(_WIN32)
                     std::wstring str16;
                     str16 += va_arg(args, wchar_t);
                     std::string str8;
                     tt::utf16to8(str16, str8);
                     buffer << str8;
+#endif
                 }
             }
             else if (format.at(pos) == 's')
@@ -963,6 +966,8 @@ tt_string& tt_string::Format(std::string_view format, ...)
                 }
                 else
                 {
+                    FAIL_MSG("%ls should not be used, since it only works on Windows");
+#if defined(_WIN32)
                     std::wstring str16;
                     str16 += va_arg(args, const wchar_t*);
                     std::string str8;
@@ -971,6 +976,7 @@ tt_string& tt_string::Format(std::string_view format, ...)
                         buffer << std::quoted(str8);
                     else
                         buffer << str8;
+#endif
                 }
             }
             else if (format.at(pos) == 'd' || format.at(pos) == 'i')

@@ -12,7 +12,7 @@
 #include <wx/icon.h>
 #include <wx/image.h>
 
-#include "..\wxui\ui_images.h"
+#include "../wxui/ui_images.h"
 
 #include "doc_view.h"
 
@@ -100,10 +100,8 @@ bool DocViewPanel::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos, c
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include <wx/webview.h>
-
-#if !wxUSE_WEBVIEW_WEBKIT && !wxUSE_WEBVIEW_WEBKIT2 && !wxUSE_WEBVIEW_IE && !wxUSE_WEBVIEW_EDGE
-    #error "A wxWebView backend is required!"
+#if wxUSE_WEBVIEW
+    #include <wx/webview.h>
 #endif
 
 #include "doc_view.h"
@@ -139,8 +137,10 @@ void DocViewPanel::ActivatePage()
         m_toolBar->ToggleTool(ID_PYTHON, m_language == GEN_LANG_PYTHON);
         m_toolBar->ToggleTool(ID_RUBY, m_language == GEN_LANG_RUBY);
 
+#if wxUSE_WEBVIEW
         m_webview = wxWebView::New(this, wxID_ANY, "about:blank");
         m_parent_sizer->Add(m_webview, wxSizerFlags(1).Expand().Border(wxALL));
+#endif
         m_parent_sizer->Layout();
     }
 
@@ -169,6 +169,7 @@ void DocViewPanel::OnNodeSelected(CustomEvent& WXUNUSED(event))
 
 void DocViewPanel::OnCPlus(wxCommandEvent& /* event */)
 {
+#if wxUSE_WEBVIEW
     wxBusyCursor wait;
     m_language = GEN_LANG_CPLUSPLUS;
     if (auto* cur_sel = m_mainframe->getSelectedNode(); cur_sel)
@@ -190,10 +191,12 @@ void DocViewPanel::OnCPlus(wxCommandEvent& /* event */)
     m_webview->SetPage("<html><title>Select Node</title>"
                        "<body>The selected node does not have any specific documentation for this language.</body></html>",
                        wxEmptyString);
+#endif
 }
 
 void DocViewPanel::OnPython(wxCommandEvent& /* event */)
 {
+#if wxUSE_WEBVIEW
     wxBusyCursor wait;
     m_language = GEN_LANG_PYTHON;
     if (auto* cur_sel = m_mainframe->getSelectedNode(); cur_sel)
@@ -213,10 +216,12 @@ void DocViewPanel::OnPython(wxCommandEvent& /* event */)
     m_webview->SetPage("<html><title>Select Node</title>"
                        "<body>The selected node does not have any specific documentation for this language.</body></html>",
                        wxEmptyString);
+#endif
 }
 
 void DocViewPanel::OnRuby(wxCommandEvent& /* event */)
 {
+#if wxUSE_WEBVIEW
     wxBusyCursor wait;
     m_language = GEN_LANG_RUBY;
     if (auto* cur_sel = m_mainframe->getSelectedNode(); cur_sel)
@@ -236,6 +241,7 @@ void DocViewPanel::OnRuby(wxCommandEvent& /* event */)
     m_webview->SetPage("<html><title>Select Node</title>"
                        "<body>The selected node does not have any specific documentation for this language.</body></html>",
                        wxEmptyString);
+#endif
 }
 
 void DocViewPanel::OnHome(wxCommandEvent& WXUNUSED(event))
@@ -245,19 +251,24 @@ void DocViewPanel::OnHome(wxCommandEvent& WXUNUSED(event))
 
 void DocViewPanel::OnBack(wxCommandEvent& WXUNUSED(event))
 {
+#if wxUSE_WEBVIEW
     wxBusyCursor wait;
 
     m_webview->GoBack();
+#endif
 }
 
 void DocViewPanel::OnForward(wxCommandEvent& WXUNUSED(event))
 {
+#if wxUSE_WEBVIEW
     wxBusyCursor wait;
     m_webview->GoForward();
+#endif
 }
 
 void DocViewPanel::OnUpdateBack(wxUpdateUIEvent& event)
 {
+#if wxUSE_WEBVIEW
     if (!m_webview)
     {
         event.Enable(false);
@@ -271,10 +282,12 @@ void DocViewPanel::OnUpdateBack(wxUpdateUIEvent& event)
     }
 
     event.Enable(m_webview->CanGoBack());
+#endif
 }
 
 void DocViewPanel::OnUpdateForward(wxUpdateUIEvent& event)
 {
+#if wxUSE_WEBVIEW
     if (!m_webview)
     {
         event.Enable(false);
@@ -283,4 +296,5 @@ void DocViewPanel::OnUpdateForward(wxUpdateUIEvent& event)
     }
 
     event.Enable(m_webview->CanGoForward());
+#endif
 }

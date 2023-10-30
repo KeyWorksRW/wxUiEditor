@@ -12,15 +12,15 @@ project(wxWidgets
 
 option(BUILD_SHARED_LIBS "Build wxWidgets shared libraries" OFF)
 
-set(BUILD_VADZ_DIR "${CMAKE_CURRENT_LIST_DIR}/../../../vadz" CACHE PATH "Root directory of wxWidgets UTF8 repository")
-if (NOT EXISTS ${BUILD_VADZ_DIR})
-    message(FATAL_ERROR "Can't find directory in ${BUILD_VADZ_DIR}")
+set(BUILD_CUSTOM_DIR "${CMAKE_CURRENT_LIST_DIR}/../../wxSnapshot" CACHE PATH "Root directory of wxCustom UTF8 repository")
+if (NOT EXISTS ${BUILD_CUSTOM_DIR})
+    message(FATAL_ERROR "Can't find directory in ${BUILD_CUSTOM_DIR}")
 endif()
 
 if (BUILD_SHARED_LIBS)
-    message(NOTICE "Building wxWidgets vadz shared libraries")
+    message(NOTICE "Building custom wxWidgets shared libraries")
 else()
-    message(NOTICE "Building wxWidgets vadz static libraries")
+    message(NOTICE "Building custom wxWidgets static libraries")
 endif()
 
 ####################### Check for Multi-Config Generator #######################
@@ -76,13 +76,15 @@ else()
 endif()
 
 include( wxWidgets.cmake )  # This will set ${common_sources}, ${msw_sources}, ${unix_sources} and ${osx_sources}
-list(TRANSFORM common_sources PREPEND "${BUILD_VADZ_DIR}/")
-list(TRANSFORM msw_sources PREPEND "${BUILD_VADZ_DIR}/")
-list(TRANSFORM unix_sources PREPEND "${BUILD_VADZ_DIR}/")
-list(TRANSFORM osx_sources PREPEND "${BUILD_VADZ_DIR}/")
-list(TRANSFORM wxCLib_sources PREPEND "${BUILD_VADZ_DIR}/")
+include( wxCLib.cmake )     # This will set ${wxCLib_sources} with list of files
 
-message(STATUS "common_sources: ${BUILD_VADZ_DIR}/src")
+list(TRANSFORM common_sources PREPEND "${BUILD_CUSTOM_DIR}/")
+list(TRANSFORM msw_sources PREPEND "${BUILD_CUSTOM_DIR}/")
+list(TRANSFORM unix_sources PREPEND "${BUILD_CUSTOM_DIR}/")
+list(TRANSFORM osx_sources PREPEND "${BUILD_CUSTOM_DIR}/")
+list(TRANSFORM wxCLib_sources PREPEND "${BUILD_CUSTOM_DIR}/")
+
+message(STATUS "custom common_sources: ${BUILD_CUSTOM_DIR}/src")
 
 if (WIN32)
     add_library(wxWidgets ${override_sources} ${common_sources} ${msw_sources} )
@@ -146,44 +148,42 @@ if (WIN32)
     )
 endif()
 
-target_precompile_headers(wxWidgets PRIVATE "${BUILD_VADZ_DIR}/include/wx/wxprec.h")
+target_precompile_headers(wxWidgets PRIVATE "${BUILD_CUSTOM_DIR}/include/wx/wxprec.h")
 
 if (WIN32)
     set(setup_dir ${CMAKE_CURRENT_LIST_DIR}/setup/win)
+elseif(UNIX)
+    set(setup_dir ${CMAKE_CURRENT_LIST_DIR}/setup/unix)
 endif()
 
-message(STATUS "setup_dir: ${setup_dir}")
+
+message(STATUS "custom BUILD_CUSTOM_DIR: ${BUILD_CUSTOM_DIR}")
+message(STATUS "custom setup_dir: ${setup_dir}")
 
 target_include_directories(wxWidgets PRIVATE
-    ${BUILD_VADZ_DIR}/include
+    ${BUILD_CUSTOM_DIR}/include
     ${setup_dir}
-    ${BUILD_VADZ_DIR}/src/tiff/libtiff
-    ${BUILD_VADZ_DIR}/src/jpeg
-    ${BUILD_VADZ_DIR}/src/png
-    ${BUILD_VADZ_DIR}/src/zlib
-    ${BUILD_VADZ_DIR}/3rdparty/pcre/src/wx
-    ${BUILD_VADZ_DIR}/src/expat/expat/lib
+    ${BUILD_CUSTOM_DIR}/src/tiff/libtiff
+    ${BUILD_CUSTOM_DIR}/src/jpeg
+    ${BUILD_CUSTOM_DIR}/src/png
+    ${BUILD_CUSTOM_DIR}/src/zlib
+    ${BUILD_CUSTOM_DIR}/3rdparty/pcre/src/wx
+    ${BUILD_CUSTOM_DIR}/src/expat/expat/lib
 
     # Needed for the wx_stc library
-    ${BUILD_VADZ_DIR}/src/stc/scintilla/include
-    ${BUILD_VADZ_DIR}/src/stc/lexilla/include
-    ${BUILD_VADZ_DIR}/src/stc/lexilla/access
-    ${BUILD_VADZ_DIR}/src/stc/lexilla/lexlib
-    ${BUILD_VADZ_DIR}/src/stc/scintilla/src
+    ${BUILD_CUSTOM_DIR}/src/stc/scintilla/include
+    ${BUILD_CUSTOM_DIR}/src/stc/lexilla/include
+    ${BUILD_CUSTOM_DIR}/src/stc/lexilla/access
+    ${BUILD_CUSTOM_DIR}/src/stc/lexilla/lexlib
+    ${BUILD_CUSTOM_DIR}/src/stc/scintilla/src
 )
 
 target_include_directories(wxCLib PRIVATE
-    ${BUILD_VADZ_DIR}/include
+    ${BUILD_CUSTOM_DIR}/include
     ${setup_dir}
-    ${BUILD_VADZ_DIR}/src/tiff/libtiff
-    ${BUILD_VADZ_DIR}/src/jpeg
-    ${BUILD_VADZ_DIR}/src/zlib
-    ${BUILD_VADZ_DIR}/3rdparty/pcre/src/wx
-    ${BUILD_VADZ_DIR}/src/expat/expat/lib
+    ${BUILD_CUSTOM_DIR}/src/tiff/libtiff
+    ${BUILD_CUSTOM_DIR}/src/jpeg
+    ${BUILD_CUSTOM_DIR}/src/zlib
+    ${BUILD_CUSTOM_DIR}/3rdparty/pcre/src/wx
+    ${BUILD_CUSTOM_DIR}/src/expat/expat/lib
 )
-
-if (BUILD_SHARED_LIBS)
-    if (WIN32)
-        target_link_libraries(wxWidgets PRIVATE wxCLib Winmm Ws2_32 Rpcrt4 Comctl32)
-    endif()
-endif()

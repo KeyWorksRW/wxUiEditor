@@ -113,7 +113,7 @@ void ConvertImageDlg::OnInputChange(wxFileDirPickerEvent& WXUNUSED(event))
     // Don't do this on Windows! If the full path is specified, the user can press CTRL+BACKSPACE to remove extension or
     // filename and then continue to use auto-complete. If a relative path is specified, then auto-complete stops working.
 
-    file.make_relative_wx(m_cwd);
+    file.make_relative(m_cwd);
     file.backslashestoforward();
     m_fileOriginal->SetPath(file);
 #endif  // _WIN32

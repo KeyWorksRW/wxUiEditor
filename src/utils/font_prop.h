@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   FontProperty class
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2019-2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2019-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 //////////////////////////////////////////////////////////////////////////
 
@@ -9,7 +9,8 @@
 
 #include <cmath>  // for std::round
 
-#include "wx/font.h"  // wxFontBase class: the interface of wxFont
+#include <wx/font.h>      // wxFontBase class: the interface of wxFont
+#include <wx/settings.h>  // for wxSystemSettings
 
 class wxVariant;
 class NodeProperty;

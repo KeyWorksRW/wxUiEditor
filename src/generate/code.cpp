@@ -7,6 +7,7 @@
 
 #include <array>
 #include <map>
+#include <charconv>  // for std::to_chars()
 
 #include "code.h"
 

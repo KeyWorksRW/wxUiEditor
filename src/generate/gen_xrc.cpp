@@ -5,6 +5,7 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
+#include <cstring>  // for std::memcmp
 #include <future>
 #include <sstream>
 #include <thread>

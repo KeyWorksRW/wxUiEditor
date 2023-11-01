@@ -244,11 +244,6 @@ add_library(check_build STATIC EXCLUDE_FROM_ALL
 if (BUILD_SHARED_LIBS)
     target_compile_definitions(wxUiEditor PRIVATE WXUSINGDLL)
     target_compile_definitions(check_build PRIVATE WXUSINGDLL)
-    if(UNIX)  # UNIX still requires a static wxCLib even if wxWidgets is shared
-        set(CLib wxCLib)
-    endif()
-else()
-    set(CLib wxCLib)
 endif()
 
 if (UNIX)
@@ -284,7 +279,7 @@ if (BUILD_WIDGETS_3_2)
     target_compile_definitions(check_build PRIVATE wxUSE_UNICODE=1)
 endif()
 
-target_link_libraries(wxUiEditor PRIVATE wxWidgets33 ${SYSTEM_LIBS} ${CLib})
+target_link_libraries(wxUiEditor PRIVATE wxWidgets33 wxCLib ${SYSTEM_LIBS})
 
 if(BUILD_FORK)
     target_link_directories(wxUiEditor PRIVATE

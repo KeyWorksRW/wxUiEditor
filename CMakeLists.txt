@@ -279,12 +279,9 @@ elseif (WIN32)
     set(SYSTEM_LIBS comctl32 Imm32 Shlwapi Version UxTheme)
 endif()
 
-if (NOT BUILD_FORK AND NOT BUILD_CUSTOM)
+if (BUILD_WIDGETS_3_2)
     target_compile_definitions(wxUiEditor PRIVATE wxUSE_UNICODE=1)
     target_compile_definitions(check_build PRIVATE wxUSE_UNICODE=1)
-else()
-    target_compile_definitions(wxUiEditor PRIVATE wxUSE_UNICODE_UTF8=1 wxUSE_UTF8_LOCALE_ONLY=0)
-    target_compile_definitions(check_build PRIVATE wxUSE_UNICODE_UTF8=1 wxUSE_UTF8_LOCALE_ONLY=0)
 endif()
 
 target_link_libraries(wxUiEditor PRIVATE wxWidgets33 ${SYSTEM_LIBS} ${CLib})

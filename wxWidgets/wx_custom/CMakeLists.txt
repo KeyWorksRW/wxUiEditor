@@ -155,7 +155,7 @@ endif()
 target_precompile_headers(wxWidgets33 PRIVATE "${BUILD_CUSTOM_DIR}/include/wx/wxprec.h")
 
 if (WIN32)
-    set(setup_dir ${CMAKE_CURRENT_LIST_DIR}/setup/win)
+    set(setup_dir ${BUILD_CUSTOM_DIR}/win)
 elseif(UNIX)
     set(setup_dir ${BUILD_CUSTOM_DIR}/unix)
 endif()

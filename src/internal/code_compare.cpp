@@ -277,4 +277,11 @@ void CodeCompare::OnWinMerge(wxCommandEvent& /* event */)
     winShellRun("WinMergeU.exe", "/e /u ~wxue_.WinMerge", cwd.c_str());
 }
 
+#else
+
+void CodeCompare::OnWinMerge(wxCommandEvent& /* event */)
+{
+    wxMessageBox("WinMerge is only supported on Windows.", "WinMerge Not Found", wxOK | wxICON_INFORMATION);
+}
+
 #endif  // _WIN32

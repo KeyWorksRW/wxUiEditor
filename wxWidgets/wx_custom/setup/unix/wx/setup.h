@@ -1746,6 +1746,7 @@
 // exact GTK version (without including GTK+ headers that we don't want to
 // include from our own public headers), just assume a recent GTK 2.x.
 #define __WXGTK__
+#define __WXGTK220__
 #define __WXGTK3__
 
 #define wxUSE_LIBMSPACK 0

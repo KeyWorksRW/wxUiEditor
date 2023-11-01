@@ -944,6 +944,7 @@ set (unix_sources
     src/unix/stdpaths.cpp
     src/unix/threadpsx.cpp
     src/unix/timerunx.cpp
+    src/unix/uilocale.cpp
     src/unix/utilsunx.cpp
     src/unix/utilsx11.cpp
     src/unix/wakeuppipe.cpp

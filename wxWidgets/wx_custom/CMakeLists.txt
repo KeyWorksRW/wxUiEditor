@@ -78,6 +78,10 @@ endif()
 include( wxWidgets.cmake )  # This will set ${common_sources}, ${msw_sources}, ${unix_sources} and ${osx_sources}
 include( wxCLib.cmake )     # This will set ${wxCLib_sources} with list of files
 
+if (WIN32)
+    list(APPEND wxCLib_sources src/tiff/libtiff/tif_win32.c)
+endif()
+
 list(TRANSFORM common_sources PREPEND "${BUILD_CUSTOM_DIR}/")
 list(TRANSFORM msw_sources PREPEND "${BUILD_CUSTOM_DIR}/")
 list(TRANSFORM unix_sources PREPEND "${BUILD_CUSTOM_DIR}/")

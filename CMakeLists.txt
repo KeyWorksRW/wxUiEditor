@@ -61,7 +61,7 @@ if (MSVC)
     if (NOT BUILD_SHARED_LIBS)
         set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
     endif()
-else()
+elseif(UNIX)
     # This should work for gcc and clang (including xcode which is based on clang)
     # -O2 can result in faster code than -O3 due to CPU caching.
     string(REPLACE "-O3" "-O2" cl_optimize ${CMAKE_CXX_FLAGS_RELEASE})
@@ -86,8 +86,20 @@ elseif (UNIX)
     add_library(wxWidgets33 ${common_sources} ${unix_sources} )
 endif()
 
-add_library(wxCLib STATIC 
+if (UNIX)
+    set (wxCLib_platform_files
+        # src/gtk/treeentry_gtk.c
+        src/tiff/libtiff/tif_unix.c
+        src/tiff/libtiff/libtiff.def
+    )
+else()
+    set (wxCLib_platform_files src/tiff/libtiff/tif_win32.c)
+    # set (wxCLib_platform_files "")
+endif()
+
+add_library(wxCLib STATIC
     ${wxCLib_sources}
+    ${wxCLib_platform_files}
 )
 
 if (BUILD_SHARED_LIBS)
@@ -97,6 +109,9 @@ endif()
 if (MSVC)
     # /GL -- combined with the Linker flag /LTCG allows whole program optimization in Release build
     target_compile_options(wxWidgets33 PRIVATE "$<$<CONFIG:Release>:/GL>")
+elseif(UNIX)
+    target_compile_options(wxWidgets33 PRIVATE "-fPIC")
+    target_compile_options(wxCLib PRIVATE "-fPIC")
 endif()
 
 if (WIN32)
@@ -107,6 +122,7 @@ if (WIN32)
 elseif (UNIX)
     target_compile_definitions(wxWidgets33 PRIVATE
         __WXGTK3__
+        __WXGTK220__  # required for activityindicator.cpp to be pulled in
         __UNIX__
     )
 endif()

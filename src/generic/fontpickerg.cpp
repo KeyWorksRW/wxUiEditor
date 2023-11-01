@@ -2,7 +2,6 @@
 // Name:        src/generic/fontpickerg.cpp
 // Purpose:     wxGenericFontButton class implementation
 // Author:      Francesco Montorsi
-// Modified by:
 // Created:     15/04/2006
 // Copyright:   (c) Francesco Montorsi
 // Licence:     wxWindows licence
@@ -27,10 +26,6 @@
 #endif // WX_PRECOMP
 
 #include "wx/fontpicker.h"
-
-#if defined(__WXGTK__)
-    #include "wx/generic/fontpickerg.h"
-#endif
 
 #include "wx/fontdlg.h"
 

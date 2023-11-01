@@ -201,13 +201,13 @@
 #define wxUSE_LOG 1
 
 // Recommended setting: 1
-#define wxUSE_LOGWINDOW 1
+#define wxUSE_LOGWINDOW 0
 
 // Recommended setting: 1
 #define wxUSE_LOGGUI 1
 
 // Recommended setting: 1
-#define wxUSE_LOG_DIALOG 1
+#define wxUSE_LOG_DIALOG 0
 
 // Support for command line parsing using wxCmdLineParser class.
 //
@@ -229,7 +229,7 @@
 // Default is 1
 //
 // Recommended setting: 0 unless you do plan to develop MT applications
-#define wxUSE_THREADS 1
+#define wxUSE_THREADS 0
 
 // If enabled, compiles wxWidgets streams classes
 //
@@ -255,7 +255,7 @@
 // Default is 1
 //
 // Recommended setting: 1 if you want to support multiple languages
-#define wxUSE_PRINTF_POS_PARAMS      1
+#define wxUSE_PRINTF_POS_PARAMS      0
 
 // ----------------------------------------------------------------------------
 // Interoperability with the standard library.
@@ -273,15 +273,11 @@
 // disabled, wx streams are used instead.
 //
 // Notice that enabling this does not replace wx streams with std streams
-// everywhere, in a lot of places wx streams are used no matter what and in
-// other places this option enables the use of standard streams in _addition_
-// to the wx ones. The only exception is wxDocument which defines functions
-// working with standard streams only when this option is on, and only
-// functions working with wx streams when it's off.
+// everywhere, in a lot of places wx streams are used no matter what.
 //
 // Default is 1.
 //
-// Recommended setting: 1, there should be no reason to disable it.
+// Recommended setting: 1.
 #define wxUSE_STD_IOSTREAM  1
 
 // ----------------------------------------------------------------------------
@@ -376,7 +372,7 @@
 // Default is 1
 //
 // Recommended setting: 1 (but may be safely disabled if you don't use it)
-#define wxUSE_SECRETSTORE   1
+#define wxUSE_SECRETSTORE   0
 
 // Allow the use of the OS built-in spell checker in wxTextCtrl.
 //
@@ -402,7 +398,7 @@
 #define wxUSE_TEXTFILE      1
 
 // i18n support: _() macro, wxLocale class.
-#define wxUSE_INTL          1
+#define wxUSE_INTL          0
 
 // Provide wxFoo_l() functions similar to standard foo() functions but taking
 // an extra locale parameter.
@@ -440,7 +436,7 @@
 //
 // Default is 1
 //
-// Recommended setting: 1
+// Recommended setting: 1 (needed by wxSocket)
 #define wxUSE_STOPWATCH     1
 
 // Set wxUSE_FSWATCHER to 1 if you want to enable wxFileSystemWatcher
@@ -491,10 +487,10 @@
 // Default is 1.
 //
 // Recommended setting: 1
-#define wxUSE_DYNLIB_CLASS    1
+#define wxUSE_DYNLIB_CLASS    0
 
 // experimental, don't use for now
-#define wxUSE_DYNAMIC_LOADER  1
+#define wxUSE_DYNAMIC_LOADER  0
 
 // Set to 1 to use socket classes
 #define wxUSE_SOCKETS       1
@@ -661,7 +657,7 @@
 // Default is 1.
 //
 // Recommended setting: 1
-#define wxUSE_MEDIACTRL     1
+#define wxUSE_MEDIACTRL     0
 
 // Use wxWidget's XRC XML-based resource system.  Recommended.
 //
@@ -776,7 +772,7 @@
 // Default is 0
 //
 // Recommended setting: 0
-#define wxUSE_CAIRO 0
+#define wxUSE_CAIRO 1
 
 
 // ----------------------------------------------------------------------------
@@ -1126,7 +1122,7 @@
 //
 // Recommended setting: 1 (but can be safely disabled if you don't use it and
 // want to avoid extra dependencies under Linux, for example).
-#define wxUSE_PRIVATE_FONTS 1
+#define wxUSE_PRIVATE_FONTS 0
 
 // wxRichToolTip is a customizable tooltip class which has more functionality
 // than the stock (but native, unlike this class) wxToolTip.
@@ -1546,14 +1542,15 @@
 //
 // Default is 1.
 //
-// Recommended setting: 1, GDI+ is always available.
+// Recommended setting: 1 if you need to support XP, as Direct2D is not
+// available there.
 #define wxUSE_GRAPHICS_GDIPLUS wxUSE_GRAPHICS_CONTEXT
 
 // Enable support for Direct2D-based implementation of wxGraphicsContext.
 //
-// Default is 1 for MSVS. MinGW-w64 supports Direct2D as well, but if you use
-// it, you need to change this setting manually as other MinGW distributions
-// may not support it.
+// Default is 1 for compilers which support it, i.e. MSVS currently. If you
+// use another compiler and installed the necessary SDK components manually,
+// you need to change this setting.
 //
 // Recommended setting: 1 for faster and better quality graphics.
 #if defined(_MSC_VER)
@@ -1742,10 +1739,14 @@
 #define wxUSE_CRASHREPORT 0
 /* --- end MSW options --- */
 
+// [Randalphwa - 10-26-2023] Throws a recursive assertion in GTK debug build
+#define wxUSE_LOG_TRACE 0
+
 // GTK-specific options used when not using configure. As we can't test for the
 // exact GTK version (without including GTK+ headers that we don't want to
 // include from our own public headers), just assume a recent GTK 2.x.
 #define __WXGTK__
+#define __WXGTK220__
 #define __WXGTK3__
 
 #define wxUSE_LIBMSPACK 0

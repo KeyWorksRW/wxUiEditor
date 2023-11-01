@@ -2,7 +2,6 @@
 // Name:        src/generic/clrpickerg.cpp
 // Purpose:     wxGenericColourButton class implementation
 // Author:      Francesco Montorsi (readapted code written by Vadim Zeitlin)
-// Modified by:
 // Created:     15/04/2006
 // Copyright:   (c) Vadim Zeitlin, Francesco Montorsi
 // Licence:     wxWindows licence
@@ -25,10 +24,6 @@
 #include "wx/clrpicker.h"
 #include "wx/colordlg.h"
 #include "wx/dcmemory.h"
-
-#if defined(__WXGTK__)
-    #include "wx/generic/clrpickerg.h"
-#endif
 
 namespace // anonymous namespace
 {

@@ -44,11 +44,15 @@ option(BUILD_FORK "Builds wxWidgets using wxWidgets/wx_3_3")
 # option(INTERNAL_PGO_GENERATE "Create instrumented build for profiling run (MSVC only)" OFF)
 # option(INTERNAL_PGO_USEPROFILE "Create optimized build using profile data (MSVC only)" OFF)
 
-# This option is makes it possible to test against long-running branches from vadz's fork of
-# wxWidgets. Currently, this is being used internally to verfiy backports from 3.3 to 3.2, and
-# to verify the wxUSE_UNICODE_UTF8 build option for MSW.
+# BUILD_CUSTOM is used internally to build wxWidgets from the wxSnapshot repository rather
+# then the subtree version. This makes it possible to test changes to the wxSnapshot repository
+# before syncing them into the subtree.
 
 option(BUILD_CUSTOM "Builds with custom version of wxWidgets")
+
+# BUILD_WIDGETS_3_2 is going to go away once wxWidgets 3.3 is locked in as a required minimum
+# version.
+
 option(BUILD_WIDGETS_3_2 "Builds with wxWidgets 3.2")
 
 if (BUILD_WIDGETS_3_2)
@@ -194,15 +198,20 @@ if (WIN32)
     if (BUILD_FORK)
         set(setup_dir ${CMAKE_CURRENT_LIST_DIR}/wxWidgets/wx_3_3/setup/win)
     elseif(BUILD_CUSTOM)
-        set(setup_dir ${CMAKE_CURRENT_LIST_DIR}/wxWidgets/wx_custom/setup/win)
+        set(setup_dir ${BUILD_CUSTOM_DIR}/win)
     elseif(BUILD_WIDGETS_3_2)
         set(setup_dir ${CMAKE_CURRENT_LIST_DIR}/wxWidgets/wx_3_2/setup/win)
     else()
         set(setup_dir ${CMAKE_CURRENT_LIST_DIR}/wxSnapshot/win)
     endif()
 elseif (UNIX)
-    # Currently, this is the only build location supported for a UNIX build
-    set(setup_dir ${CMAKE_CURRENT_LIST_DIR}/wxSnapshot/unix)
+    if (BUILD_FORK)
+        set(setup_dir ${BUILD_FORK_DIR}/unix)
+    elseif(BUILD_CUSTOM)
+        set(setup_dir ${BUILD_CUSTOM_DIR}/unix)
+    else()
+        set(setup_dir ${CMAKE_CURRENT_LIST_DIR}/wxSnapshot/unix)
+    endif()
 endif()
 
 message(STATUS "widget_dir: ${widget_dir}")
@@ -236,20 +245,13 @@ if (BUILD_SHARED_LIBS)
     target_compile_definitions(wxUiEditor PRIVATE WXUSINGDLL)
     target_compile_definitions(check_build PRIVATE WXUSINGDLL)
     if(UNIX)  # UNIX still requires a static wxCLib even if wxWidgets is shared
-        set(CLib libwxCLib)
+        set(CLib wxCLib)
     endif()
 else()
-    # This is built into wxWidgets if a shared library is created
-    if (WIN32)
-        set(CLib wxCLib)
-    elseif(UNIX)
-        set(CLib libwxCLib)
-    endif()
+    set(CLib wxCLib)
 endif()
 
 if (UNIX)
-    # always link to this library under UNIX
-    set(CLib wxCLib)
     set(SYSTEM_LIBS
         gtk-3
         gdk-3
@@ -261,23 +263,14 @@ if (UNIX)
         gio-2.0
         gobject-2.0
         glib-2.0
-        libpthread.so
 
-        /usr/lib/x86_64-linux-gnu/libSM.a
-        /usr/lib/x86_64-linux-gnu/libICE.a
-        /usr/lib/x86_64-linux-gnu/libX11.a
-        /usr/lib/x86_64-linux-gnu/libXext.a
-        /usr/lib/x86_64-linux-gnu/libXtst.a
-        /usr/lib/x86_64-linux-gnu/libEGL.so
-        /usr/lib/x86_64-linux-gnu/libGLU.a
-        /usr/lib/x86_64-linux-gnu/libGLX.so
-        /usr/lib/x86_64-linux-gnu/libOpenGL.so
-        /usr/lib/x86_64-linux-gnu/libGLX.so
-        /usr/lib/x86_64-linux-gnu/libGLU.a
-        /usr/lib/x86_64-linux-gnu/libxcb.a
-        /usr/lib/x86_64-linux-gnu/libdl.so
-        /usr/lib/x86_64-linux-gnu/libXau.so
-        /usr/lib/x86_64-linux-gnu/libXdmcp.so
+        /usr/lib/x86_64-linux-gnu/libtiff.so.5
+        pthread
+
+        X11
+        Xext
+        Xtst
+        dl
 
         wayland-egl
         wayland-client
@@ -290,11 +283,11 @@ if (NOT BUILD_FORK AND NOT BUILD_CUSTOM)
     target_compile_definitions(wxUiEditor PRIVATE wxUSE_UNICODE=1)
     target_compile_definitions(check_build PRIVATE wxUSE_UNICODE=1)
 else()
-    target_compile_definitions(wxUiEditor PRIVATE wxUSE_UNICODE_UTF8=1 wxUSE_UTF8_LOCALE_ONLY=1)
-    target_compile_definitions(check_build PRIVATE wxUSE_UNICODE_UTF8=1 wxUSE_UTF8_LOCALE_ONLY=1)
+    target_compile_definitions(wxUiEditor PRIVATE wxUSE_UNICODE_UTF8=1 wxUSE_UTF8_LOCALE_ONLY=0)
+    target_compile_definitions(check_build PRIVATE wxUSE_UNICODE_UTF8=1 wxUSE_UTF8_LOCALE_ONLY=0)
 endif()
 
-target_link_libraries(wxUiEditor PRIVATE wxWidgets33 ${CLib} ${SYSTEM_LIBS})
+target_link_libraries(wxUiEditor PRIVATE wxWidgets33 ${SYSTEM_LIBS} ${CLib})
 
 if(BUILD_FORK)
     target_link_directories(wxUiEditor PRIVATE

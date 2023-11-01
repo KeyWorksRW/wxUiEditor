@@ -2,7 +2,6 @@
 // Name:        src/msw/bitmap.cpp
 // Purpose:     wxBitmap
 // Author:      Julian Smart
-// Modified by:
 // Created:     04/01/98
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
@@ -1222,16 +1221,15 @@ wxDC *wxBitmap::GetSelectedInto() const
 #endif
 }
 
-void wxBitmap::UseAlpha(bool use)
+bool wxBitmap::UseAlpha(bool use)
 {
-    if ( GetBitmapData() )
-    {
-        // Only 32bpp bitmaps can contain alpha channel.
-        if ( use && GetBitmapData()->m_depth < 32 )
-            use = false;
+    // Only 32bpp bitmaps can contain alpha channel.
+    if ( !GetBitmapData() || (use && GetBitmapData()->m_depth < 32) )
+        return false;
 
-        GetBitmapData()->m_hasAlpha = use;
-    }
+    GetBitmapData()->m_hasAlpha = use;
+
+    return true;
 }
 
 bool wxBitmap::HasAlpha() const

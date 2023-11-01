@@ -374,11 +374,11 @@ bool MainFrameBase::Create(wxWindow* parent, wxWindowID id, const wxString& titl
     auto* menu_item_9 = new wxMenuItem(m_menuHelp, wxID_ANY, "wxPython Documentation",
         "Open wxPython documentation in your default browser.", wxITEM_NORMAL);
     {
-        wxVector<wxBitmap> bitmaps;
-        bitmaps.push_back(wxueImage(wxue_img::wxPython_png, sizeof(wxue_img::wxPython_png)));
-        bitmaps.push_back(wxueImage(wxue_img::wxPython_1_5x_png, sizeof(wxue_img::wxPython_1_5x_png)));
-        bitmaps.push_back(wxueImage(wxue_img::wxPython_2x_png, sizeof(wxue_img::wxPython_2x_png)));
-        menu_item_9->SetBitmap(wxBitmapBundle::FromBitmaps(bitmaps));
+        // wxVector<wxBitmap> bitmaps;
+        // bitmaps.push_back(wxueImage(wxue_img::wxPython_png, sizeof(wxue_img::wxPython_png)));
+        // bitmaps.push_back(wxueImage(wxue_img::wxPython_1_5x_png, sizeof(wxue_img::wxPython_1_5x_png)));
+        // bitmaps.push_back(wxueImage(wxue_img::wxPython_2x_png, sizeof(wxue_img::wxPython_2x_png)));
+        // menu_item_9->SetBitmap(wxBitmapBundle::FromBitmaps(bitmaps));
     }
 
     m_menuHelp->Append(menu_item_9);

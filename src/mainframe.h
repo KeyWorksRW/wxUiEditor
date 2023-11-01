@@ -339,7 +339,7 @@ private:
     std::unique_ptr<WakaTime> m_wakatime { nullptr };
 
     MockupParent* m_mockupPanel;
-    DocViewPanel* m_docviewPanel;
+    DocViewPanel* m_docviewPanel { nullptr };
 
     BasePanel* m_generatedPanel { nullptr };
     BasePanel* m_derivedPanel { nullptr };

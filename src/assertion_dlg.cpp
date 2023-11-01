@@ -14,6 +14,8 @@ static std::mutex g_mutexAssert;
 
 #if defined(__cpp_consteval)
 
+    #include <source_location>
+
 bool AssertionDlg(const std::source_location& location, const char* cond, std::string_view msg)
 {
     // This is in case additional message processing results in an assert while this one is already being displayed.

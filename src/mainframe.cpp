@@ -1271,10 +1271,12 @@ void MainFrame::OnAuiNotebookPageChanged(wxAuiNotebookEvent&)
         {
             m_mockupPanel->CreateContent();
         }
+#if wxUSE_WEBVIEW
         else if (page == m_docviewPanel)
         {
             m_docviewPanel->ActivatePage();
         }
+#endif
 #if defined(INTERNAL_TESTING)
         else if (page != m_imnportPanel)
         {
@@ -1366,8 +1368,10 @@ wxWindow* MainFrame::CreateNoteBook(wxWindow* parent)
     m_notebook->AddPage(m_imnportPanel, "Import", false, wxWithImages::NO_IMAGE);
 #endif
 
+#if wxUSE_WEBVIEW
     m_docviewPanel = new DocViewPanel(m_notebook, this);
     m_notebook->AddPage(m_docviewPanel, "Docs", false, wxWithImages::NO_IMAGE);
+#endif
 
     return m_notebook;
 }

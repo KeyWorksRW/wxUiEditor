@@ -37,6 +37,7 @@ wxObject* TextCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
     if (node->hasValue(prop_hint))
         widget->SetHint(node->as_wxString(prop_hint));
 
+#if wxUSE_SPELLCHECK
     if (node->as_string(prop_spellcheck).contains("enabled"))
     {
         if (node->as_string(prop_spellcheck).contains("grammar"))
@@ -44,6 +45,7 @@ wxObject* TextCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
         else
             widget->EnableProofCheck(wxTextProofOptions::Default());
     }
+#endif
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 

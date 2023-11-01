@@ -282,9 +282,6 @@ PUGI__FN bool strequalrange(const char_t* lhs, const char_t* rhs, size_t count)
     return lhs[count] == 0;
 }
 
-    #if 0
-// REVIEW: [KeyWorks - 05-16-2022] This function is not declared in pugixml.hpp, and therefore never used
-
 	// Get length of wide string, even if CRT lacks wide character support
 	PUGI__FN size_t strlength_wide(const wchar_t* s)
 	{
@@ -298,7 +295,6 @@ PUGI__FN bool strequalrange(const char_t* lhs, const char_t* rhs, size_t count)
 		return static_cast<size_t>(end - s);
         #endif
 	}
-    #endif
 PUGI__NS_END
 
 // auto_ptr-like object for exception recovery

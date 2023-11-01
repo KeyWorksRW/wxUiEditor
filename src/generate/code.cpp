@@ -6,6 +6,7 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include <array>
+#include <charconv>  // for std::to_chars()
 #include <map>
 
 #include "code.h"

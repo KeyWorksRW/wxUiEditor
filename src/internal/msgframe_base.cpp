@@ -14,7 +14,7 @@
 #include <wx/sizer.h>
 #include <wx/statbox.h>
 
-#include "..\wxui\ui_images.h"
+#include "../wxui/ui_images.h"
 
 #include "msgframe_base.h"
 

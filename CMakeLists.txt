@@ -44,11 +44,15 @@ option(BUILD_FORK "Builds wxWidgets using wxWidgets/wx_3_3")
 # option(INTERNAL_PGO_GENERATE "Create instrumented build for profiling run (MSVC only)" OFF)
 # option(INTERNAL_PGO_USEPROFILE "Create optimized build using profile data (MSVC only)" OFF)
 
-# This option is makes it possible to test against long-running branches from vadz's fork of
-# wxWidgets. Currently, this is being used internally to verfiy backports from 3.3 to 3.2, and
-# to verify the wxUSE_UNICODE_UTF8 build option for MSW.
+# BUILD_CUSTOM is used internally to build wxWidgets from the wxSnapshot repository rather
+# then the subtree version. This makes it possible to test changes to the wxSnapshot repository
+# before syncing them into the subtree.
 
 option(BUILD_CUSTOM "Builds with custom version of wxWidgets")
+
+# BUILD_WIDGETS_3_2 is going to go away once wxWidgets 3.3 is locked in as a required minimum
+# version.
+
 option(BUILD_WIDGETS_3_2 "Builds with wxWidgets 3.2")
 
 if (BUILD_WIDGETS_3_2)
@@ -190,22 +194,29 @@ else()
     add_subdirectory(${widget_dir})
 endif()
 
-message(STATUS "widget_dir: ${widget_dir}")
-
 if (WIN32)
     if (BUILD_FORK)
         set(setup_dir ${CMAKE_CURRENT_LIST_DIR}/wxWidgets/wx_3_3/setup/win)
     elseif(BUILD_CUSTOM)
-        set(setup_dir ${CMAKE_CURRENT_LIST_DIR}/wxWidgets/wx_custom/setup/win)
+        set(setup_dir ${BUILD_CUSTOM_DIR}/win)
     elseif(BUILD_WIDGETS_3_2)
         set(setup_dir ${CMAKE_CURRENT_LIST_DIR}/wxWidgets/wx_3_2/setup/win)
     else()
         set(setup_dir ${CMAKE_CURRENT_LIST_DIR}/wxSnapshot/win)
     endif()
 elseif (UNIX)
-    # Currently, this is the only build location supported for a UNIX build
-    set(setup_dir ${CMAKE_CURRENT_LIST_DIR}/wxSnapshot/unix)
+    if (BUILD_FORK)
+        set(setup_dir ${BUILD_FORK_DIR}/unix)
+    elseif(BUILD_CUSTOM)
+        set(setup_dir ${BUILD_CUSTOM_DIR}/unix)
+    else()
+        set(setup_dir ${CMAKE_CURRENT_LIST_DIR}/wxSnapshot/unix)
+    endif()
 endif()
+
+message(STATUS "widget_dir: ${widget_dir}")
+message(STATUS "setup_dir: ${setup_dir}")
+message(STATUS "BUILD_ROOT: ${BUILD_ROOT}")
 
 ####################### Libraries and Executables #######################
 
@@ -233,51 +244,57 @@ add_library(check_build STATIC EXCLUDE_FROM_ALL
 if (BUILD_SHARED_LIBS)
     target_compile_definitions(wxUiEditor PRIVATE WXUSINGDLL)
     target_compile_definitions(check_build PRIVATE WXUSINGDLL)
-else()
-    # This is built into wxWidgets if a shared library is created
-    if (WIN32)
+    if(UNIX)  # UNIX still requires a static wxCLib even if wxWidgets is shared
         set(CLib wxCLib)
-    elseif(UNIX)
-        set(CLib libwxCLib)
     endif()
+else()
+    set(CLib wxCLib)
 endif()
 
-if (NOT BUILD_FORK)
-    target_compile_definitions(wxUiEditor PRIVATE wxUSE_UNICODE=1)
-    target_compile_definitions(check_build PRIVATE wxUSE_UNICODE=1)
-else()
-    target_compile_definitions(wxUiEditor PRIVATE wxUSE_UNICODE_UTF8=1 wxUSE_UTF8_LOCALE_ONLY=1)
-    target_compile_definitions(check_build PRIVATE wxUSE_UNICODE_UTF8=1 wxUSE_UTF8_LOCALE_ONLY=1)
+if (UNIX)
+    set(SYSTEM_LIBS
+        gtk-3
+        gdk-3
+        pangocairo-1.0
+        pango-1.0
+        cairo-gobject
+        cairo
+        gdk_pixbuf-2.0
+        gio-2.0
+        gobject-2.0
+        glib-2.0
+
+        /usr/lib/x86_64-linux-gnu/libtiff.so.5
+        pthread
+
+        X11
+        Xext
+        Xtst
+        dl
+
+        wayland-egl
+        wayland-client
+    )
+elseif (WIN32)
+    set(SYSTEM_LIBS comctl32 Imm32 Shlwapi Version UxTheme)
 endif()
 
 if (NOT BUILD_FORK AND NOT BUILD_CUSTOM)
-    if (WIN32)
-        target_link_libraries(wxUiEditor PRIVATE wxWidgets33 ${CLib} comctl32 Imm32 Shlwapi Version UxTheme)
-    elseif (UNIX)
-        target_link_libraries(wxUiEditor PRIVATE libwxWidgets ${CLib})
-    endif()
-elseif(BUILD_FORK)
-    if (WIN32)
-        target_link_directories(wxUiEditor PRIVATE
-            $<$<CONFIG:Debug>:${widget_dir}/bld/build/Debug>
-            $<$<CONFIG:Release>:${widget_dir}/bld/build/Release>
-        )
-        target_link_libraries(wxUiEditor PRIVATE wxWidgets ${CLib})
-    endif()
-elseif(BUILD_CUSTOM)
-    if (WIN32)
-        target_link_directories(wxUiEditor PRIVATE
-            $<$<CONFIG:Debug>:${widget_dir}/build/Debug>
-            $<$<CONFIG:Release>:${widget_dir}/build/Release>
-        )
-        target_link_libraries(wxUiEditor PRIVATE wxWidgets ${CLib} comctl32 Imm32 Shlwapi Version UxTheme)
-    elseif(UNIX)
-        target_link_libraries(wxUiEditor PRIVATE libwxWidgets ${CLib})
-        target_link_directories(wxTest PRIVATE
-            $<$<CONFIG:Debug>:${widget_dir}/build/Debug>
-            $<$<CONFIG:Release>:${widget_dir}/build/Release>
-        )
-    endif()
+    target_compile_definitions(wxUiEditor PRIVATE wxUSE_UNICODE=1)
+    target_compile_definitions(check_build PRIVATE wxUSE_UNICODE=1)
+else()
+    target_compile_definitions(wxUiEditor PRIVATE wxUSE_UNICODE_UTF8=1 wxUSE_UTF8_LOCALE_ONLY=0)
+    target_compile_definitions(check_build PRIVATE wxUSE_UNICODE_UTF8=1 wxUSE_UTF8_LOCALE_ONLY=0)
+endif()
+
+target_link_libraries(wxUiEditor PRIVATE wxWidgets33 ${SYSTEM_LIBS} ${CLib})
+
+if(BUILD_FORK)
+    target_link_directories(wxUiEditor PRIVATE
+        $<$<CONFIG:Debug>:${widget_dir}/bld/build/Debug>
+        $<$<CONFIG:Release>:${widget_dir}/bld/build/Release>
+    )
+
 endif()
 
 if (MSVC)
@@ -309,6 +326,8 @@ if (MSVC)
 
     # Assume the manifest is in the resource file
     target_link_options(wxUiEditor PRIVATE "/manifest:no")
+elseif(UNIX)
+    target_compile_options(wxUiEditor PRIVATE "-fPIC")
 endif()
 
 target_precompile_headers(wxUiEditor PRIVATE "src/pch.h")

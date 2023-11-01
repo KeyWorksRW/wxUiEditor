@@ -67,7 +67,7 @@ public:
 protected:
     bool OnInit() override;
 
-#if wxUSE_ON_FATAL_EXCEPTION && wxUSE_STACKWALKER
+#if defined(_MSC_VER) && defined(wxUSE_ON_FATAL_EXCEPTION) && defined(wxUSE_STACKWALKER)
     void OnFatalException() override;
 #endif
 

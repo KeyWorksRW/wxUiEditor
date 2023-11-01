@@ -143,7 +143,6 @@ set (common_sources
     src/common/markupparser.cpp
     src/common/matrix.cpp
     src/common/mediactrlcmn.cpp
-    # src/common/memory.cpp # not used in 3.3
     src/common/menucmn.cpp
     src/common/mimecmn.cpp
     src/common/modalhook.cpp
@@ -203,7 +202,6 @@ set (common_sources
     src/common/strconv.cpp
     src/common/stream.cpp
     src/common/string.cpp
-    # src/common/stringimpl.cpp  # not used in 3.3
     src/common/stringops.cpp
     src/common/strvararg.cpp
     src/common/sysopt.cpp
@@ -214,7 +212,6 @@ set (common_sources
     src/common/textentrycmn.cpp
     src/common/textfile.cpp
     src/common/textmeasurecmn.cpp
-    src/common/threadinfo.cpp
     src/common/time.cpp
     src/common/timercmn.cpp
     src/common/timerimpl.cpp
@@ -357,6 +354,7 @@ set (common_sources
     src/propgrid/props.cpp
     src/ribbon/art_aui.cpp
     src/ribbon/art_internal.cpp
+    src/ribbon/art_msw.cpp
     src/ribbon/bar.cpp
     src/ribbon/buttonbar.cpp
     src/ribbon/control.cpp
@@ -511,10 +509,7 @@ set (common_sources
     src/stc/scintilla/src/CallTip.cxx
     src/stc/scintilla/src/CaseConvert.cxx
     src/stc/scintilla/src/CaseFolder.cxx
-    # src/stc/scintilla/src/Catalogue.cxx  # not used in 3.3
     src/stc/scintilla/src/CellBuffer.cxx
-    # src/stc/scintilla/src/CharacterCategory.cxx
-    # src/stc/scintilla/src/CharacterSet.cxx
     src/stc/scintilla/src/CharClassify.cxx
     src/stc/scintilla/src/ContractionState.cxx
     src/stc/scintilla/src/DBCS.cxx
@@ -523,7 +518,6 @@ set (common_sources
     src/stc/scintilla/src/EditModel.cxx
     src/stc/scintilla/src/EditView.cxx
     src/stc/scintilla/src/Editor.cxx
-    # src/stc/scintilla/src/ExternalLexer.cxx  # not used in 3.3
     src/stc/scintilla/src/Indicator.cxx
     src/stc/scintilla/src/KeyMap.cxx
     src/stc/scintilla/src/LineMarker.cxx
@@ -555,7 +549,6 @@ set (common_sources
     src/xrc/xh_bmpbt.cpp
     src/xrc/xh_bmpcbox.cpp
     src/xrc/xh_bookctrlbase.cpp
-    src/xrc/xh_bttn.cpp
     src/xrc/xh_cald.cpp
     src/xrc/xh_chckb.cpp
     src/xrc/xh_chckl.cpp
@@ -580,7 +573,6 @@ set (common_sources
     src/xrc/xh_grid.cpp
     src/xrc/xh_html.cpp
     src/xrc/xh_htmllbox.cpp
-    src/xrc/xh_hyperlink.cpp
     src/xrc/xh_infobar.cpp
     src/xrc/xh_listb.cpp
     src/xrc/xh_listbk.cpp
@@ -607,7 +599,6 @@ set (common_sources
     src/xrc/xh_stbmp.cpp
     src/xrc/xh_stbox.cpp
     src/xrc/xh_stlin.cpp
-    src/xrc/xh_sttxt.cpp
     src/xrc/xh_styledtextctrl.cpp
     src/xrc/xh_text.cpp
     src/xrc/xh_tglbtn.cpp
@@ -622,11 +613,9 @@ set (common_sources
     src/xrc/xmlreshandler.cpp
     src/xrc/xmlrsall.cpp
 
-)
-
-set (override_sources
-
-    ${CMAKE_CURRENT_LIST_DIR}/../src/override/extended.cpp  # C++ copy of extended.c
+    src/xrc/xh_bttn.cpp
+    src/xrc/xh_hyperlink.cpp
+    src/xrc/xh_sttxt.cpp
 
 )
 
@@ -805,11 +794,10 @@ set (msw_sources
     src/msw/webview_edge.cpp
     src/msw/webview_ie.cpp
     src/msw/window.cpp
-    src/ribbon/art_msw.cpp
 )
 
 set (unix_sources
-    src/aui/tabartgtk.cpp
+    # src/aui/tabartgtk.cpp
     src/common/fdiodispatcher.cpp
     src/common/selectdispatcher.cpp
     src/common/socketiohandler.cpp
@@ -818,7 +806,7 @@ set (unix_sources
     src/generic/activityindicator.cpp
     src/generic/caret.cpp
     src/generic/clrpickerg.cpp
-    src/generic/collpaneg.cpp
+    # src/generic/collpaneg.cpp
     src/generic/colrdlgg.cpp
     src/generic/dirdlgg.cpp
     src/generic/fdrepdlg.cpp
@@ -826,10 +814,53 @@ set (unix_sources
     src/generic/filepickerg.cpp
     src/generic/fontdlgg.cpp
     src/generic/fontpickerg.cpp
+    src/generic/icon.cpp
     src/generic/imaglist.cpp
     src/generic/listctrl.cpp
+    src/generic/paletteg.cpp
     src/generic/prntdlgg.cpp
     src/generic/statusbr.cpp
+
+    src/gtk/app.cpp
+    src/gtk/assertdlg_gtk.cpp
+    src/gtk/bitmap.cpp
+    src/gtk/brush.cpp
+    src/gtk/clipbrd.cpp
+    src/gtk/colour.cpp
+    src/gtk/cursor.cpp
+    src/gtk/dataobj.cpp
+    src/gtk/dc.cpp
+    src/gtk/display.cpp
+    src/gtk/dnd.cpp
+    src/gtk/evtloop.cpp
+    src/gtk/filectrl.cpp
+    src/gtk/filehistory.cpp
+    src/gtk/font.cpp
+    src/gtk/image_gtk.cpp
+    src/gtk/sockgtk.cpp
+    src/gtk/mimetype.cpp
+    src/gtk/minifram.cpp
+    src/gtk/nonownedwnd.cpp
+    src/gtk/overlay.cpp
+    src/gtk/pen.cpp
+    src/gtk/popupwin.cpp
+    src/gtk/private.cpp
+    src/gtk/region.cpp
+    src/gtk/renderer.cpp
+    src/gtk/settings.cpp
+    src/gtk/textmeasure.cpp
+    src/gtk/timer.cpp
+    src/gtk/tooltip.cpp
+    src/gtk/toplevel.cpp
+    src/gtk/utilsgtk.cpp
+    src/gtk/win_gtk.cpp
+    src/gtk/window.cpp
+
+    # GTK2_LOWLEVEL_SRC
+    # src/gtk/dcclient.cpp
+    # src/gtk/dcmemory.cpp
+    # src/gtk/dcscreen.cpp
+
     src/gtk/aboutdlg.cpp
     src/gtk/activityindicator.cpp
     src/gtk/animate.cpp
@@ -886,41 +917,11 @@ set (unix_sources
     src/gtk/textentry.cpp
     src/gtk/tglbtn.cpp
     src/gtk/toolbar.cpp
-    src/gtk/webview_webkit.cpp
-    src/gtk/webview_webkit2.cpp
-    src/gtk/webview_webkit2_extension.cpp
-    src/gtk1/bmpbuttn.cpp
-    src/gtk1/button.cpp
-    src/gtk1/checkbox.cpp
-    src/gtk1/checklst.cpp
-    src/gtk1/choice.cpp
-    src/gtk1/combobox.cpp
-    src/gtk1/control.cpp
-    src/gtk1/dialog.cpp
-    src/gtk1/filedlg.cpp
-    src/gtk1/fontdlg.cpp
-    src/gtk1/frame.cpp
-    src/gtk1/gauge.cpp
-    src/gtk1/listbox.cpp
-    src/gtk1/mdi.cpp
-    src/gtk1/menu.cpp
-    src/gtk1/mnemonics.cpp
-    src/gtk1/notebook.cpp
-    src/gtk1/radiobox.cpp
-    src/gtk1/radiobut.cpp
-    src/gtk1/scrolbar.cpp
-    src/gtk1/scrolwin.cpp
-    src/gtk1/slider.cpp
-    src/gtk1/spinbutt.cpp
-    src/gtk1/spinctrl.cpp
-    src/gtk1/statbmp.cpp
-    src/gtk1/statbox.cpp
-    src/gtk1/statline.cpp
-    src/gtk1/stattext.cpp
-    src/gtk1/taskbar.cpp
-    src/gtk1/textctrl.cpp
-    src/gtk1/tglbtn.cpp
-    src/gtk1/toolbar.cpp
+    # src/gtk/webview_webkit.cpp
+    # src/gtk/webview_webkit2.cpp
+    # src/gtk/webview_webkit2_extension.cpp
+    src/gtk/treeentry_gtk.c
+
     src/unix/apptraits.cpp
     src/unix/appunix.cpp
     src/unix/dir.cpp
@@ -935,13 +936,17 @@ set (unix_sources
     src/unix/glx11.cpp
     src/unix/mediactrl.cpp
     src/unix/mediactrl_gstplayer.cpp
+    src/unix/mimetype.cpp
     src/unix/snglinst.cpp
     src/unix/sockunix.cpp
     src/unix/sound_sdl.cpp
     src/unix/stackwalk.cpp
+    src/unix/stdpaths.cpp
     src/unix/threadpsx.cpp
     src/unix/timerunx.cpp
+    src/unix/uilocale.cpp
     src/unix/utilsunx.cpp
+    src/unix/utilsx11.cpp
     src/unix/wakeuppipe.cpp
 )
 
@@ -1038,165 +1043,4 @@ set (osx_sources
     src/osx/uiaction_osx.cpp
     src/osx/utils_osx.cpp
     src/osx/window_osx.cpp
-)
-
-set (wxCLib_sources
-    src/jpeg/jaricom.c
-    src/jpeg/jcapimin.c
-    src/jpeg/jcapistd.c
-    src/jpeg/jcarith.c
-    src/jpeg/jccoefct.c
-    src/jpeg/jccolor.c
-    src/jpeg/jcdctmgr.c
-    src/jpeg/jchuff.c
-    src/jpeg/jcinit.c
-    src/jpeg/jcmainct.c
-    src/jpeg/jcmarker.c
-    src/jpeg/jcmaster.c
-    src/jpeg/jcomapi.c
-    src/jpeg/jcparam.c
-    src/jpeg/jcprepct.c
-    src/jpeg/jcsample.c
-    src/jpeg/jctrans.c
-    src/jpeg/jdapimin.c
-    src/jpeg/jdapistd.c
-    src/jpeg/jdarith.c
-    src/jpeg/jdatadst.c
-    src/jpeg/jdatasrc.c
-    src/jpeg/jdcoefct.c
-    src/jpeg/jdcolor.c
-    src/jpeg/jddctmgr.c
-    src/jpeg/jdhuff.c
-    src/jpeg/jdinput.c
-    src/jpeg/jdmainct.c
-    src/jpeg/jdmarker.c
-    src/jpeg/jdmaster.c
-    src/jpeg/jdmerge.c
-    src/jpeg/jdpostct.c
-    src/jpeg/jdsample.c
-    src/jpeg/jdtrans.c
-    src/jpeg/jerror.c
-    src/jpeg/jfdctflt.c
-    src/jpeg/jfdctfst.c
-    src/jpeg/jfdctint.c
-    src/jpeg/jidctflt.c
-    src/jpeg/jidctfst.c
-    src/jpeg/jidctint.c
-    src/jpeg/jmemmgr.c
-    src/jpeg/jmemnobs.c
-    src/jpeg/jquant1.c
-    src/jpeg/jquant2.c
-    src/jpeg/jutils.c
-
-    src/tiff/libtiff/tif_aux.c
-    src/tiff/libtiff/tif_close.c
-    src/tiff/libtiff/tif_codec.c
-    src/tiff/libtiff/tif_color.c
-    src/tiff/libtiff/tif_compress.c
-    src/tiff/libtiff/tif_dir.c
-    src/tiff/libtiff/tif_dirinfo.c
-    src/tiff/libtiff/tif_dirread.c
-    src/tiff/libtiff/tif_dirwrite.c
-    src/tiff/libtiff/tif_dumpmode.c
-    src/tiff/libtiff/tif_error.c
-    src/tiff/libtiff/tif_extension.c
-    src/tiff/libtiff/tif_fax3.c
-    src/tiff/libtiff/tif_fax3sm.c
-    src/tiff/libtiff/tif_flush.c
-    src/tiff/libtiff/tif_getimage.c
-    src/tiff/libtiff/tif_jbig.c
-    src/tiff/libtiff/tif_jpeg.c
-    src/tiff/libtiff/tif_jpeg_12.c
-    src/tiff/libtiff/tif_luv.c
-    src/tiff/libtiff/tif_lzma.c
-    src/tiff/libtiff/tif_lzw.c
-    src/tiff/libtiff/tif_next.c
-    src/tiff/libtiff/tif_ojpeg.c
-    src/tiff/libtiff/tif_open.c
-    src/tiff/libtiff/tif_packbits.c
-    src/tiff/libtiff/tif_pixarlog.c
-    src/tiff/libtiff/tif_predict.c
-    src/tiff/libtiff/tif_print.c
-    src/tiff/libtiff/tif_read.c
-    src/tiff/libtiff/tif_strip.c
-    src/tiff/libtiff/tif_swab.c
-    src/tiff/libtiff/tif_thunder.c
-    src/tiff/libtiff/tif_tile.c
-    src/tiff/libtiff/tif_version.c
-    src/tiff/libtiff/tif_warning.c
-    src/tiff/libtiff/tif_webp.c
-    src/tiff/libtiff/tif_win32.c
-    src/tiff/libtiff/tif_write.c
-    src/tiff/libtiff/tif_zip.c
-    src/tiff/libtiff/tif_zstd.c
-
-    src/png/png.c
-    src/png/pngerror.c
-    src/png/pngget.c
-    src/png/pngmem.c
-    src/png/pngpread.c
-    src/png/pngread.c
-    src/png/pngrio.c
-    src/png/pngrtran.c
-    src/png/pngrutil.c
-    src/png/pngset.c
-    src/png/pngtrans.c
-    src/png/pngwio.c
-    src/png/pngwrite.c
-    src/png/pngwtran.c
-    src/png/pngwutil.c
-    src/png/arm/arm_init.c
-    src/png/arm/filter_neon_intrinsics.c
-    src/png/arm/palette_neon_intrinsics.c
-    src/png/intel/intel_init.c
-    src/png/intel/filter_sse2_intrinsics.c
-
-    src/zlib/adler32.c
-    src/zlib/compress.c
-    src/zlib/crc32.c
-    src/zlib/deflate.c
-    src/zlib/gzclose.c
-    src/zlib/gzlib.c
-    src/zlib/gzread.c
-    src/zlib/gzwrite.c
-    src/zlib/infback.c
-    src/zlib/inffast.c
-    src/zlib/inflate.c
-    src/zlib/inftrees.c
-    src/zlib/trees.c
-    src/zlib/uncompr.c
-    src/zlib/zutil.c
-
-    3rdparty/pcre/src/pcre2_auto_possess.c
-    3rdparty/pcre/src/pcre2_chartables.c
-    3rdparty/pcre/src/pcre2_compile.c
-    3rdparty/pcre/src/pcre2_config.c
-    3rdparty/pcre/src/pcre2_context.c
-    3rdparty/pcre/src/pcre2_convert.c
-    3rdparty/pcre/src/pcre2_dfa_match.c
-    3rdparty/pcre/src/pcre2_error.c
-    3rdparty/pcre/src/pcre2_extuni.c
-    3rdparty/pcre/src/pcre2_find_bracket.c
-    3rdparty/pcre/src/pcre2_jit_compile.c
-    3rdparty/pcre/src/pcre2_maketables.c
-    3rdparty/pcre/src/pcre2_match.c
-    3rdparty/pcre/src/pcre2_match_data.c
-    3rdparty/pcre/src/pcre2_newline.c
-    3rdparty/pcre/src/pcre2_ord2utf.c
-    3rdparty/pcre/src/pcre2_pattern_info.c
-    3rdparty/pcre/src/pcre2_script_run.c
-    3rdparty/pcre/src/pcre2_serialize.c
-    3rdparty/pcre/src/pcre2_string_utils.c
-    3rdparty/pcre/src/pcre2_study.c
-    3rdparty/pcre/src/pcre2_substitute.c
-    3rdparty/pcre/src/pcre2_substring.c
-    3rdparty/pcre/src/pcre2_tables.c
-    3rdparty/pcre/src/pcre2_ucd.c
-    3rdparty/pcre/src/pcre2_valid_utf.c
-    3rdparty/pcre/src/pcre2_xclass.c
-
-    src/expat/expat/lib/xmlparse.c
-    src/expat/expat/lib/xmlrole.c
-    src/expat/expat/lib/xmltok.c
-    # src/common/extended.c
 )

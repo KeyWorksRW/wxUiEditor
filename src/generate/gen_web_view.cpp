@@ -18,10 +18,6 @@
 
 #include "gen_web_view.h"
 
-#if !wxUSE_WEBVIEW_WEBKIT && !wxUSE_WEBVIEW_WEBKIT2 && !wxUSE_WEBVIEW_IE
-    #error "A wxWebView backend is required for the wxWebView Mockup"
-#endif
-
 wxObject* WebViewGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     if (Project.getCodePreference() == GEN_LANG_RUBY || Project.getCodePreference() == GEN_LANG_XRC)
@@ -36,9 +32,16 @@ wxObject* WebViewGenerator::CreateMockup(Node* node, wxObject* parent)
         widget->Wrap(DlgPoint(parent, 150));
         return widget;
     }
+#if (WIN32)
     auto widget = wxWebView::New(wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxString(prop_url),
                                  DlgPoint(parent, node, prop_pos), DlgSize(parent, node, prop_size), wxWebViewBackendDefault,
                                  GetStyleInt(node));
+#else
+    auto* widget =
+        new wxStaticText(wxStaticCast(parent, wxWindow), wxID_ANY, "wxWebView mockup currently only available for Windows",
+                         wxDefaultPosition, wxDefaultSize, wxALIGN_CENTER_HORIZONTAL | wxBORDER_RAISED);
+    widget->Wrap(DlgPoint(parent, 150));
+#endif
 
     return widget;
 }

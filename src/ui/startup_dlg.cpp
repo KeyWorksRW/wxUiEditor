@@ -14,7 +14,7 @@
 #include <wx/statbmp.h>
 #include <wx/statline.h>
 
-#include "..\wxui\ui_images.h"
+#include "../wxui/ui_images.h"
 
 #include "startup_dlg.h"
 

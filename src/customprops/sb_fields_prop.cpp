@@ -64,7 +64,7 @@ void SBarFieldsDialog::OnInit(wxInitDialogEvent& WXUNUSED(event))
     for (int row = 0; auto& iter: fields)
     {
         if (wxGridCellChoiceEditor* editor = static_cast<wxGridCellChoiceEditor*>(m_grid->GetCellEditor(row, 0)); editor)
-            editor->SetParameters(wxT("wxSB_NORMAL,wxSB_FLAT,wxSB_RAISED,wxSB_SUNKEN"));
+            editor->SetParameters("wxSB_NORMAL,wxSB_FLAT,wxSB_RAISED,wxSB_SUNKEN");
         m_grid->SetCellValue(row, 0, iter.style);
         m_grid->SetCellValue(row, 1, iter.width);
         m_grid->SetRowLabelValue(row, " ");

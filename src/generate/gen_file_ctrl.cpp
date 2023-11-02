@@ -43,11 +43,6 @@ wxObject* FileCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
 
 bool FileCtrlGenerator::ConstructionCode(Code& code)
 {
-    if (code.is_ruby() && Project.getProjectNode()->as_string(prop_wxRuby_version) == "0.9.0")
-    {
-        code << "# wxRuby 0.9.0 does not support wxFileCtrl";
-        return true;
-    }
     code.AddAuto().NodeName().CreateClass();
     code.ValidParentName().Comma().as_string(prop_id);
     code.Comma().QuotedString(prop_initial_folder).Comma().QuotedString(prop_initial_filename);

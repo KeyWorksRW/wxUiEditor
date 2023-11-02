@@ -503,9 +503,9 @@ class MainTestDialog < Wx::Dialog
       'File:')
     box_sizer.add(staticText__2, Wx::SizerFlags.new.center.border(Wx::ALL))
 
-    @filePicker = Wx::FilePickerCtrl.new(static_box_2.get_static_box, Wx::ID_ANY, (''), 'Select a file',
-      'BMP files|*.bmp', Wx::DEFAULT_POSITION, Wx::DEFAULT_SIZE,
-      Wx::FLP_USE_TEXTCTRL|Wx::FLP_OPEN|Wx::FLP_FILE_MUST_EXIST)
+    @filePicker = Wx::FilePickerCtrl.new(static_box_2.get_static_box, Wx::ID_ANY, (''),
+      Wx::FILE_SELECTOR_PROMPT_STR, 'BMP files|*.bmp', Wx::DEFAULT_POSITION,
+      Wx::DEFAULT_SIZE, Wx::FLP_USE_TEXTCTRL|Wx::FLP_OPEN|Wx::FLP_FILE_MUST_EXIST)
     box_sizer.add(@filePicker, Wx::SizerFlags.new.border(Wx::ALL))
 
     grid_sizer.add(box_sizer, Wx::SizerFlags.new.border(Wx::ALL))
@@ -578,7 +578,10 @@ class MainTestDialog < Wx::Dialog
 
     parent_sizer2.add(static_box_2, Wx::SizerFlags.new.expand.border(Wx::ALL))
 
-    # wxRuby 0.9.0 does not support wxFileCtrl
+    @fileCtrl = Wx::FileCtrl.new(page_6, Wx::ID_ANY, '', '',
+      Wx::FILE_SELECTOR_DEFAULT_WILDCARD_STR, Wx::FC_OPEN,
+      Wx::DEFAULT_POSITION, Wx::DEFAULT_SIZE)
+    parent_sizer2.add(@fileCtrl, Wx::SizerFlags.new.border(Wx::ALL))
     page_6.set_sizer_and_fit(parent_sizer2)
 
     page = Wx::Panel.new(@notebook, Wx::ID_ANY, Wx::DEFAULT_POSITION,

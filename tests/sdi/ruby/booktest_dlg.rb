@@ -39,17 +39,13 @@ class BookTestDlg < Wx::Dialog
     @choicebook.set_min_size(Wx::Size.new(400, 400))
     page_sizer_1.add(@choicebook, Wx::SizerFlags.new.border(Wx::ALL))
 
-    if Wx::PLATFORM == 'WXUNIX' || Wx::PLATFORM == 'WXOSX'
-      btn = Wx::Button.new(@choicebook, Wx::ID_ANY, 'First')
-      @choicebook.get_control_sizer.add(btn,
-        Wx::SizerFlags.new.expand.border(Wx::ALL))
-    end
+    btn = Wx::Button.new(@choicebook, Wx::ID_ANY, 'First')
+    @choicebook.get_control_sizer.add(btn,
+      Wx::SizerFlags.new.expand.border(Wx::ALL))
 
-    if Wx::PLATFORM == 'WXUNIX' || Wx::PLATFORM == 'WXOSX'
-      btn_2 = Wx::Button.new(@choicebook, Wx::ID_ANY, 'Last')
-      @choicebook.get_control_sizer.add(btn_2,
-        Wx::SizerFlags.new.expand.border(Wx::ALL))
-    end
+    btn_2 = Wx::Button.new(@choicebook, Wx::ID_ANY, 'Last')
+    @choicebook.get_control_sizer.add(btn_2,
+      Wx::SizerFlags.new.expand.border(Wx::ALL))
 
     page_20 = Wx::Panel.new(@choicebook, Wx::ID_ANY, Wx::DEFAULT_POSITION,
       Wx::DEFAULT_SIZE, Wx::TAB_TRAVERSAL)
@@ -390,6 +386,10 @@ class BookTestDlg < Wx::Dialog
 
     set_sizer_and_fit(dlg_sizer)
     centre(Wx::BOTH)
+
+    # Event handlers
+    evt_button(btn.get_id, :OnEvent)
+    evt_button(btn_2.get_id, :OnEvent)
   end
 end
 # ************* End of generated code ***********

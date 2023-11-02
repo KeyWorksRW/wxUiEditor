@@ -67,10 +67,7 @@ bool FilePickerGenerator::ConstructionCode(Code& code)
     }
     else
     {
-        if (code.is_ruby() && Project.getProjectNode()->as_string(prop_wxRuby_version) == "0.9.0")
-            code << "'" << wxFileSelectorPromptStr << "'";
-        else
-            code.AddType("wxFileSelectorPromptStr");
+        code.AddType("wxFileSelectorPromptStr");
     }
 
     code.Comma();

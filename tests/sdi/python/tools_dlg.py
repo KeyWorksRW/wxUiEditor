@@ -166,9 +166,9 @@ class ToolBarsDialog(wx.Dialog):
         rbnToolBar = wx.ribbon.RibbonToolBar(rbnPanel, wx.ID_ANY)
         _svg_string_ = zlib.decompress(base64.b64decode(left_svg))
         rbnToolBar.AddTool(rbn_tool_svg,
-            wx.BitmapBundle.FromSVG(_svg_string_
-            self.FromDIP(,
-            wx.Size(24, 24))).GetBitmap(wx.DefaultSize), "", wx.ribbon.RIBBON_BUTTON_NORMAL)
+            wx.BitmapBundle.FromSVG(_svg_string_,
+            self.FromDIP(wx.Size(24, 24))).GetBitmap(wx.DefaultSize), "",
+            wx.ribbon.RIBBON_BUTTON_NORMAL)
         rbnToolBar.AddTool(rbn_tool_art, wx.ArtProvider.GetBitmap(wx.ART_CUT,
             wx.ART_TOOLBAR), "", wx.ribbon.RIBBON_BUTTON_NORMAL)
         rbnToolBar.AddTool(rbn_tool1, wx.Bitmap(undo_png.Image.Rescale(

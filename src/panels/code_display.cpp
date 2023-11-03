@@ -456,6 +456,7 @@ CodeDisplay::CodeDisplay(wxWindow* parent, int panel_type) : CodeDisplayBase(par
                 continue;
             widget_keywords << ' ' << iter->declName();
         }
+        widget_keywords << " wxAuiToolBarItem wxToolBarToolBase";
 
         // On Windows, this saves converting the UTF8 to UTF16 and then back to ANSI.
         m_scintilla->SendMsg(SCI_SETKEYWORDS, 1, (wxIntPtr) widget_keywords.c_str());

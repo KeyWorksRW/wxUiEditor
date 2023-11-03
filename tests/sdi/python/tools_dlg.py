@@ -199,15 +199,9 @@ class ToolBarsDialog(wx.Dialog):
         self.Bind(wx.EVT_INIT_DIALOG, self.on_init)
         self.Bind(wx.EVT_TOOL, self.OnTool, id=tool_svg.GetId())
 
-    # Event handler functions
-    # Add these below the comment block, or to your inherited class.
+    # Unimplemented Event handler functions
+    # Copy any listed and paste them below the comment block, or to your inherited class.
     """
-    def OnTool(self, event):
-        event.Skip()
-
-    def on_init(self, event):
-        event.Skip()
-
     """
 
 # ************* End of generated code ***********

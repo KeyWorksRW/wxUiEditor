@@ -1,21 +1,22 @@
 //////////////////////////////////////////////////////////////////////////
 // Purpose:   wxAnimationCtrl generator
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
 #include <wx/animate.h>          // wxAnimation and wxAnimationCtrl
 #include <wx/generic/animate.h>  // wxGenericAnimationCtrl
 
-#include "code.h"           // Code -- Helper class for generating code
-#include "gen_common.h"     // GeneratorLibrary -- Generator classes
-#include "gen_xrc_utils.h"  // Common XRC generating functions
-#include "image_gen.h"      // Functions for generating embedded images
-#include "image_handler.h"  // ImageHandler class
-#include "node.h"           // Node class
-#include "pugixml.hpp"      // xml read/write/create/process
-#include "utils.h"          // Utility functions that work with properties
+#include "code.h"             // Code -- Helper class for generating code
+#include "gen_common.h"       // GeneratorLibrary -- Generator classes
+#include "gen_xrc_utils.h"    // Common XRC generating functions
+#include "image_gen.h"        // Functions for generating embedded images
+#include "image_handler.h"    // ImageHandler class
+#include "node.h"             // Node class
+#include "project_handler.h"  // ProjectHandler class
+#include "pugixml.hpp"        // xml read/write/create/process
+#include "utils.h"            // Utility functions that work with properties
 
 #include "gen_animation.h"
 
@@ -84,6 +85,12 @@ bool AnimationGenerator::ConstructionCode(Code& code)
         {
             tt_string name(parts[IndexImage]);
             name.make_absolute();
+            if (!name.file_exists())
+            {
+                name = Project.ArtDirectory();
+                name.append_filename(parts[IndexImage]);
+                name.make_absolute();
+            }
             auto form_path = MakePythonPath(code.node());
             name.make_relative(form_path);
             name.backslashestoforward();

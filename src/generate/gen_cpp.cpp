@@ -358,6 +358,11 @@ void BaseCodeGenerator::GenerateCppClass(PANEL_PAGE panel_type)
 
     if (m_TranslationUnit)
     {
+        if (Project.hasValue(prop_src_preamble))
+        {
+            WritePropSourceCode(Project.getProjectNode(), prop_src_preamble);
+        }
+
         std::vector<std::string> ordered_includes;
         if (auto pos = src_includes.find("#include <wx/generic/stattextg.h>"); pos != src_includes.end())
         {
@@ -401,11 +406,6 @@ void BaseCodeGenerator::GenerateCppClass(PANEL_PAGE panel_type)
         }
 
         m_source->writeLine();
-
-        if (Project.hasValue(prop_src_preamble))
-        {
-            WritePropSourceCode(Project.getProjectNode(), prop_src_preamble);
-        }
 
         if (m_form_node->hasValue(prop_source_preamble))
         {

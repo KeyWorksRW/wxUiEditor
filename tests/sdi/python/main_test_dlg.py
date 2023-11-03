@@ -276,8 +276,8 @@ class MainTestDialog(wx.Dialog):
         static_box_3.Add(self.toggleBtn_2, wx.SizerFlags().Border(wx.ALL))
 
         self.animation_ctrl = wx.adv.AnimationCtrl(static_box_3.GetStaticBox(), wx.ID_ANY,
-            wx.adv.Animation("../clr_hourglass.gif"), wx.DefaultPosition, wx.DefaultSize,
-            wx.adv.AC_DEFAULT_STYLE)
+            wx.adv.Animation("../../art/clr_hourglass.gif"), wx.DefaultPosition,
+            wx.DefaultSize, wx.adv.AC_DEFAULT_STYLE)
         self.animation_ctrl.SetInactiveBitmap(wx.BitmapBundle.FromBitmap(
             images.disabled_png.Bitmap))
         static_box_3.Add(self.animation_ctrl, wx.SizerFlags().Border(wx.ALL))
@@ -790,7 +790,7 @@ class MainTestDialog(wx.Dialog):
         btn.Bind(wx.EVT_BUTTON, self.OnClearList)
         self.btn_5.Bind(wx.EVT_BUTTON, lambda event:
             self.events_list.Select(self.events_list.Append("CmdLinkBtn: wx.EVT_BUTTON")))
-        self.m_checkPlayAnimation.Bind(wx.EVT_CHECKBOX, self.OnCheckBox)
+        # You cannot use C++ lambda functions as an event handler in wxPython.
         disable_bitmaps.Bind(wx.EVT_CHECKBOX, self.OnDisableBitmapsBtn)
         self.checkList2.Bind(wx.EVT_CHECKLISTBOX, lambda event:
             self.OnEventName("CheckListBox2: wx.EVT_CHECKLISTBOX"))
@@ -843,9 +843,6 @@ class MainTestDialog(wx.Dialog):
     # Unimplemented Event handler functions
     # Copy any listed and paste them below the comment block, or to your inherited class.
     """
-    def OnCheckBox(self, event):
-        event.Skip()
-
     """
 
 # ************* End of generated code ***********

@@ -166,9 +166,9 @@ class ToolBarsDialog(wx.Dialog):
         rbnToolBar = wx.ribbon.RibbonToolBar(rbnPanel, wx.ID_ANY)
         _svg_string_ = zlib.decompress(base64.b64decode(left_svg))
         rbnToolBar.AddTool(rbn_tool_svg,
-            wx.BitmapBundle.FromSVG(_svg_string_
-            self.FromDIP(,
-            wx.Size(24, 24))).GetBitmap(wx.DefaultSize), "", wx.ribbon.RIBBON_BUTTON_NORMAL)
+            wx.BitmapBundle.FromSVG(_svg_string_,
+            self.FromDIP(wx.Size(24, 24))).GetBitmap(wx.DefaultSize), "",
+            wx.ribbon.RIBBON_BUTTON_NORMAL)
         rbnToolBar.AddTool(rbn_tool_art, wx.ArtProvider.GetBitmap(wx.ART_CUT,
             wx.ART_TOOLBAR), "", wx.ribbon.RIBBON_BUTTON_NORMAL)
         rbnToolBar.AddTool(rbn_tool1, wx.Bitmap(undo_png.Image.Rescale(
@@ -199,15 +199,9 @@ class ToolBarsDialog(wx.Dialog):
         self.Bind(wx.EVT_INIT_DIALOG, self.on_init)
         self.Bind(wx.EVT_TOOL, self.OnTool, id=tool_svg.GetId())
 
-    # Event handler functions
-    # Add these below the comment block, or to your inherited class.
+    # Unimplemented Event handler functions
+    # Copy any listed and paste them below the comment block, or to your inherited class.
     """
-    def OnTool(self, event):
-        event.Skip()
-
-    def on_init(self, event):
-        event.Skip()
-
     """
 
 # ************* End of generated code ***********
@@ -216,3 +210,10 @@ class ToolBarsDialog(wx.Dialog):
 # Code below this comment block will be preserved
 # if the code for this class is re-generated.
 # ***********************************************
+
+    def OnTool(self, event):
+        event.Skip()
+
+    def on_init(self, event):
+        event.Skip()
+

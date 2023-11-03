@@ -80,6 +80,7 @@ bool MainApp::OnInit()
 int MainApp::OnRun()
 {
     m_mainframe = new MainFrame(nullptr);
+    m_mainframe->SetTitle("C++ SDI Tests");
     m_mainframe->Show(true);
 
     return wxApp::OnRun();

@@ -621,9 +621,8 @@ static void GenerateSVGBundle(Code& code, const tt_string_vector& parts, bool ge
     {
         if (!code.is_ruby())
         {
-            code.CheckLineLength(sizeof("FromDIP(wx::Size.new(32, 32))).GetBitmap(wxDefaultSize)")).FormFunction("FromDIP(");
-            code.Comma().Eol().Tab();
-            code.Add("wxSize(");
+            code.Comma().CheckLineLength(sizeof("FromDIP(wx::Size.new(32, 32))).GetBitmap(wxDefaultSize)"));
+            code.FormFunction("FromDIP(").Add("wxSize(");
             code.itoa(svg_size.x).Comma().itoa(svg_size.y) += ")))";
         }
         code.VariableMethod("GetBitmap(").AddType("wxDefaultSize").Str(")");

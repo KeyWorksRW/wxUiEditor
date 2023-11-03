@@ -574,7 +574,7 @@
                   checked="0"
                   label="Play Animation"
                   var_name="static_box_3"
-                  wxEVT_CHECKBOX="[this](wxCommandEvent&amp;)@@{@@if (m_checkPlayAnimation->GetValue()) @@{@@    m_animation_ctrl->Play();@@}@@else @@{  @@    m_animation_ctrl->Stop();@@}@@}[python:OnCheckBox][ruby:on_check_play_animation]">
+                  wxEVT_CHECKBOX="[this](wxCommandEvent&amp;)@@{@@if (m_checkPlayAnimation->GetValue()) @@{@@    m_animation_ctrl->Play();@@}@@else @@{  @@    m_animation_ctrl->Stop();@@}@@}[python:lambda][ruby:on_check_play_animation]">
                   <node
                     class="wxToggleButton"
                     label="Play Animation"
@@ -1799,7 +1799,7 @@
               wxEVT_TOGGLEBUTTON="[this](wxCommandEvent&amp;)@@{@@if (m_toggleBtn->GetValue()) @@{@@    m_animation_ctrl->Play();@@    m_checkPlayAnimation->SetValue(true);@@}@@else @@{  @@    m_animation_ctrl->Stop();@@    m_checkPlayAnimation->SetValue(false);@@}@@Fit();@@}[python:lambda]self.animation_ctrl.Play()" />
             <node
               class="wxAnimationCtrl"
-              animation="Embed;art/clr_hourglass.gif"
+              animation="Embed;clr_hourglass.gif"
               inactive_bitmap="Embed;disabled.png" />
           </node>
         </node>

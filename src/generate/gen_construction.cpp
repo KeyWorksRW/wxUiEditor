@@ -145,7 +145,7 @@ void BaseCodeGenerator::GenConstruction(Node* node)
             if (gen_code.is_ruby())
                 gen_code.Str(".new.expand.border(Wx::ALL)");
             else if (gen_code.is_cpp())
-                gen_code.Str(".Expand().Border(").Add("wxALL)");
+                gen_code.Str("().Expand().Border(").Add("wxALL)");
             else
                 FAIL_MSG("Unknown language!");
             gen_code.EndFunction();

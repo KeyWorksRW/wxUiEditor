@@ -37,11 +37,6 @@ public:
 
 protected:
 
-    // Event handlers
-
-#if defined(__UNIX__) || defined(__WXOSX__)
-#endif  // limited to specific platforms
-
     // Class member variables
 
     wxAuiNotebook* m_notebook;

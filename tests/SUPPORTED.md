@@ -73,7 +73,7 @@ This does _not_ mean that the class is fully supported in every language -- this
 | wxChoice | yes | yes | yes | yes | ../src/generate/gen_choice.cpp |
 | wxCollapsiblePane | yes | yes | yes | yes | ../src/generate/gen_collapsible.cpp |
 | wxComboBox | yes | yes | yes | yes | ../src/generate/gen_combobox.cpp |
-| wxCommandLinkButton | yes | yes | no | yes | ../src/generate/gen_cmd_link_btn.cpp |
+| wxCommandLinkButton | yes | yes | yes | yes | ../src/generate/gen_cmd_link_btn.cpp |
 | wxDataViewListCtrl | yes | yes | no | no | ../src/generate/dataview_widgets.cpp |
 | wxDataViewCtrl | yes | yes | no | no | ../src/generate/dataview_widgets.cpp |
 | wxEditableListBox | yes | yes | yes | yes | ../src/generate/gen_edit_listbox.cpp |

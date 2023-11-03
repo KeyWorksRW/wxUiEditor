@@ -309,11 +309,15 @@ class MainFrame(wx.Frame):
         dlg.Destroy()
 
     def on_tools_dlg(self, event):
+        dlg = tools_dlg.ToolBarsDialog(self)
+        dlg.ShowModal()
+        dlg.Destroy()
         event.Skip()
 
 class MyApp(wx.App):
     def OnInit(self):
         frame = MainFrame(None)
+        frame.SetTitle("Python SDI Tests")
         self.SetTopWindow(frame)
 
         frame.Show(True)

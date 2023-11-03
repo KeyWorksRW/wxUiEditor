@@ -148,8 +148,12 @@ inline const char* interface_xml = R"===(<?xml version="1.0"?>
 			help="Sets the minimum size of the dialog. The default is (-1, -1) which indicates wxWidgets should calculate a minimum size large enough to display all visible elements." />
 		<property name="maximum_size" type="wxSize"
 			help="Sets the maximum size of the dialog." />
+		<property name="foreground_colour" type="wxColour"
+			help="Sets the foreground colour of the dialog." />
 		<property name="background_colour" type="wxColour"
-			help="Sets the background colour of the dialog. Use &quot;Window&quot; to let wxWidgets choose the color, otherwise specify one of the system colors in the list." />
+			help="Sets the background colour of the dialog." />
+		<property name="font" type="wxFont"
+			help="Sets the font for the dialog. This should not be used if you don't want the font to be inherited by the dialog's children" />
 		<property name="window_name" type="string_escapes"
 			help="Used to associate a name with the window, allowing the application user to set Motif resource values for individual dialog boxes." />
 		<property name="derived_class" type="string"

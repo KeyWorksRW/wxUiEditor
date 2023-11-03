@@ -216,3 +216,10 @@ class ToolBarsDialog(wx.Dialog):
 # Code below this comment block will be preserved
 # if the code for this class is re-generated.
 # ***********************************************
+
+    def OnTool(self, event):
+        event.Skip()
+
+    def on_init(self, event):
+        event.Skip()
+

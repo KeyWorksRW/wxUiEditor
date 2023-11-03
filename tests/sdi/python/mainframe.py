@@ -309,6 +309,9 @@ class MainFrame(wx.Frame):
         dlg.Destroy()
 
     def on_tools_dlg(self, event):
+        dlg = tools_dlg.ToolBarsDialog(self)
+        dlg.ShowModal()
+        dlg.Destroy()
         event.Skip()
 
 class MyApp(wx.App):

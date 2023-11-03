@@ -35,7 +35,7 @@ class ToolBarsDialog < Wx::Dialog
     @tool_bar = Wx::ToolBar.new(self, Wx::ID_ANY, Wx::DEFAULT_POSITION,
       Wx::DEFAULT_SIZE, Wx::TB_HORIZONTAL)
     _svg_string_ = Zlib::Inflate.inflate(Base64.decode64($left_svg))
-    tool_svg = @tool_bar.add_tool(Wx::ID_ANY, '', Wx::BitmapBundle.from_svg(_svg_string_,
+    @tool_svg = @tool_svg = @tool_bar.add_tool(Wx::ID_ANY, '', Wx::BitmapBundle.from_svg(_svg_string_,
       Wx::Size.new(24, 24)))
 
     @tool_bar.add_tool(Wx::ID_ANY, '', Wx::ArtProvider.get_bitmap_bundle(
@@ -58,7 +58,7 @@ class ToolBarsDialog < Wx::Dialog
       Wx::DEFAULT_POSITION, Wx::DEFAULT_SIZE, Wx::AUI::AUI_TB_PLAIN_BACKGROUND|
       Wx::AUI::AUI_TB_DEFAULT_STYLE)
     _svg_string_ = Zlib::Inflate.inflate(Base64.decode64($left_svg))
-    @aui_tool_bar.add_tool(Wx::ID_ANY, '', Wx::BitmapBundle.from_svg(_svg_string_,
+    @aui_tool_svg = @aui_tool_bar.add_tool(Wx::ID_ANY, '', Wx::BitmapBundle.from_svg(_svg_string_,
       Wx::Size.new(24, 24)))
     @aui_tool_bar.add_tool(Wx::ID_ANY, '', Wx::ArtProvider.get_bitmap_bundle(
       Wx::ART_CUT, Wx::ART_TOOLBAR))
@@ -110,7 +110,7 @@ class ToolBarsDialog < Wx::Dialog
 
     # Event handlers
     evt_init_dialog(:on_init)
-    evt_tool(tool_svg.get_id, :OnTool)
+    evt_tool(@tool_svg.get_id, :OnTool)
   end
 end
 

@@ -309,6 +309,11 @@ void BaseCodeGenerator::GenerateRubyClass(PANEL_PAGE panel_type)
 #endif
             m_source->writeLine();
         }
+
+        if (Project.hasValue(prop_ruby_project_preamble))
+        {
+            WritePropSourceCode(Project.getProjectNode(), prop_ruby_project_preamble);
+        }
     }
 
     m_source->writeLine("WX_GLOBAL_CONSTANTS = true unless defined? WX_GLOBAL_CONSTANTS\n\nrequire 'wx/core'");

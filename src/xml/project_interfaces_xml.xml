@@ -67,6 +67,8 @@ inline const char* project_interfaces_xml = R"===(<?xml version="1.0"?>
 -->
 		<property name="python_line_length" type="uint"
 			help="Specifies a guideline for generated code line length. Most lines will be wrapped so that they do not exceed this length.">90</property>
+		<property name="python_project_preamble" type="code_edit"
+			help="Code to generate at the top of every source file after the comment block and before the first import statement." />
 	</gen>
 
 	<gen class="wxRuby" type="interface">
@@ -83,6 +85,8 @@ inline const char* project_interfaces_xml = R"===(<?xml version="1.0"?>
 		<property name="disable_rubo_cop" type="bool"
 			help="If checked, all RuboCop warnings will be disabled within the generated code.">
 			0</property>
+		<property name="ruby_project_preamble" type="code_edit"
+			help="Code to generate at the top of every source file after the comment block and any disabled RuboCop warnings." />
 	</gen>
 
 	<gen class="wxGo" type="interface" enable="internal">

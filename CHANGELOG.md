@@ -24,6 +24,7 @@ All notable changes to this project will be documented in this file.
 - Generated code for wxRibbonToolBar images are now scaled on high DPI displays
 - A control within a wxDialog or wxFrame with the focus property set will now call SetFocus() after all other controls have been created.
 - Limiting the platforms for a container (such as a wxPanel) will now also limit the platforms for any child widgets.
+- C++ src_preamble contents is now placed at the top of the file instead of after the includes.
 
 ### Fixed
 

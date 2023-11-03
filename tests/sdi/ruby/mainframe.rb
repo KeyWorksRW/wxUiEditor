@@ -313,6 +313,7 @@ end
 class App < Wx::App
   def on_init
     frame = MainFrame.new(nil)
+    frame.set_title('Ruby SDI Tests')
     frame.show
     set_top_window(frame)
     true

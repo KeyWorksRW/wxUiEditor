@@ -317,6 +317,7 @@ class MainFrame(wx.Frame):
 class MyApp(wx.App):
     def OnInit(self):
         frame = MainFrame(None)
+        frame.SetTitle("Python SDI Tests")
         self.SetTopWindow(frame)
 
         frame.Show(True)

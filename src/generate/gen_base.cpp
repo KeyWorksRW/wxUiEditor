@@ -74,6 +74,11 @@ void BaseCodeGenerator::CollectMemberVariables(Node* node, Permission perm, std:
                 (perm == Permission::Protected && prop->as_string() == "protected:"))
             {
                 auto code = GetDeclaration(node);
+                if (code.empty() && node->isGen(gen_auitool))
+                {
+                    code += "wxAuiToolBarItem* " + node->as_string(prop_var_name) + ';';
+                }
+
                 if (code.size())
                 {
                     if (node->hasProp(prop_platforms) && node->as_string(prop_platforms) != "Windows|Unix|Mac")

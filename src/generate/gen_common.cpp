@@ -1191,7 +1191,7 @@ void GenToolCode(Code& code)
     }
     bool need_variable_result =
         (node->hasValue(prop_var_name) &&
-         (node->isGen(gen_tool_dropdown) ||
+         ((node->as_string(prop_class_access) != "none") || node->isGen(gen_tool_dropdown) ||
           (node->isGen(gen_auitool) && node->as_string(prop_initial_state) != "wxAUI_BUTTON_STATE_NORMAL")));
 
     if (need_variable_result)

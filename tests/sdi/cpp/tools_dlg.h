@@ -68,8 +68,10 @@ protected:
     // Class member variables
 
     wxAuiToolBar* m_aui_tool_bar;
+    wxAuiToolBarItem* m_aui_tool_svg;
     wxRibbonBar* m_rbnBar;
     wxToolBar* m_tool_bar;
+    wxToolBarToolBase* m_tool_svg;
 };
 
 // ************* End of generated code ***********

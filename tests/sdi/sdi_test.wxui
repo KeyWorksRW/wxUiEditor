@@ -1849,8 +1849,9 @@
           <node
             class="tool"
             bitmap="SVG;left.svg;[24,24]"
+            class_access="protected:"
             label=""
-            var_name="tool_svg"
+            var_name="m_tool_svg"
             wxEVT_TOOL="OnTool" />
           <node
             class="tool"
@@ -1885,8 +1886,9 @@
           <node
             class="auitool"
             bitmap="SVG;left.svg;[24,24]"
+            class_access="protected:"
             label=""
-            var_name="aui_tool_svg" />
+            var_name="m_aui_tool_svg" />
           <node
             class="auitool"
             bitmap="Art;wxART_CUT|wxART_TOOLBAR"

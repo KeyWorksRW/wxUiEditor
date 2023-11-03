@@ -110,7 +110,7 @@ class ToolBarsDialog(wx.Dialog):
         self.tool_bar = wx.ToolBar(self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize,
             wx.TB_HORIZONTAL)
         _svg_string_ = zlib.decompress(base64.b64decode(left_svg))
-        tool_svg = self.tool_bar.AddTool(wx.ID_ANY, "",
+        self.tool_svg = self.tool_svg = self.tool_bar.AddTool(wx.ID_ANY, "",
             wx.BitmapBundle.FromSVG(_svg_string_, wx.Size(24, 24)))
 
         self.tool_bar.AddTool(wx.ID_ANY, "", wx.ArtProvider.GetBitmapBundle(wx.ART_CUT,
@@ -137,7 +137,7 @@ class ToolBarsDialog(wx.Dialog):
         self.aui_tool_bar = wx.aui.AuiToolBar(self, wx.ID_ANY, wx.DefaultPosition,
             wx.DefaultSize, wx.aui.AUI_TB_PLAIN_BACKGROUND|wx.aui.AUI_TB_DEFAULT_STYLE)
         _svg_string_ = zlib.decompress(base64.b64decode(left_svg))
-        self.aui_tool_bar.AddTool(wx.ID_ANY, "",
+        self.aui_tool_svg = self.aui_tool_bar.AddTool(wx.ID_ANY, "",
             wx.BitmapBundle.FromSVG(_svg_string_, wx.Size(24, 24)))
         self.aui_tool_bar.AddTool(wx.ID_ANY, "", wx.ArtProvider.GetBitmapBundle(wx.ART_CUT,
             wx.ART_TOOLBAR))
@@ -197,7 +197,7 @@ class ToolBarsDialog(wx.Dialog):
 
         # Bind Event handlers
         self.Bind(wx.EVT_INIT_DIALOG, self.on_init)
-        self.Bind(wx.EVT_TOOL, self.OnTool, id=tool_svg.GetId())
+        self.Bind(wx.EVT_TOOL, self.OnTool, id=self.tool_svg.GetId())
 
     # Unimplemented Event handler functions
     # Copy any listed and paste them below the comment block, or to your inherited class.

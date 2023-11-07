@@ -42,7 +42,7 @@ bool PreferencesDlg::Create(wxWindow* parent, wxWindowID id, const wxString& tit
     m_check_high_contrast = new wxCheckBox(page_general, wxID_ANY, "High Contrast");
     m_check_high_contrast->SetToolTip("Only used if Dark Mode is selected");
     m_box_dark_settings->Add(m_check_high_contrast, wxSizerFlags().Border(wxALL));
-
+    m_box_dark_settings->ShowItems(false);
     page_sizer_1->Add(m_box_dark_settings,
     wxSizerFlags().Expand().Border(wxRIGHT|wxTOP|wxBOTTOM, wxSizerFlags::GetDefaultBorder()));
 

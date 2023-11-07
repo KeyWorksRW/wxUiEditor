@@ -64,7 +64,7 @@ bool EventHandlerDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString
 
     m_notebook = new wxNotebook(this, wxID_ANY);
     {
-        wxBookCtrlBase::Images bundle_list;
+        wxWithImages::Images bundle_list;
         bundle_list.push_back(wxue_img::bundle_cpp_logo_svg(16, 16));
         bundle_list.push_back(wxue_img::bundle_wxPython_png());
         bundle_list.push_back(wxueBundleSVG(wxue_img::ruby_logo_svg, 1853, 10034, wxSize(16, 16)));

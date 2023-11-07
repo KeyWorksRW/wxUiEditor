@@ -58,7 +58,7 @@ wxObject* HtmlWindowGenerator::CreateMockup(Node* node, wxObject* parent)
 bool HtmlWindowGenerator::ConstructionCode(Code& code)
 {
     code.AddAuto().NodeName().CreateClass().ValidParentName().Comma().as_string(prop_id);
-    code.PosSizeFlags(true, "wxHW_SCROLLBAR_AUTO");
+    code.PosSizeFlags(false, "wxHW_SCROLLBAR_AUTO");
 
     // If the last parameter is wxID_ANY, then remove it. This is the default value, so it's
     // not needed.

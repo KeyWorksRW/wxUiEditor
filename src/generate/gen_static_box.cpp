@@ -30,7 +30,7 @@ bool StaticBoxGenerator::ConstructionCode(Code& code)
 {
     code.AddAuto().NodeName().CreateClass();
     code.ValidParentName().Comma().Add(prop_id).Comma().QuotedString(prop_label);
-    code.PosSizeFlags(true);
+    code.PosSizeFlags();
 
     return true;
 }

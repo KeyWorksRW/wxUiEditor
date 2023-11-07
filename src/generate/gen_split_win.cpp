@@ -164,7 +164,7 @@ bool SplitterWindowGenerator::ConstructionCode(Code& code)
 {
     code.AddAuto().NodeName().CreateClass();
     code.ValidParentName().Comma().as_string(prop_id);
-    code.PosSizeFlags(true);
+    code.PosSizeFlags();
 
     return true;
 }

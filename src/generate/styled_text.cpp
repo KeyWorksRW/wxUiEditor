@@ -478,7 +478,7 @@ bool StyledTextGenerator::ConstructionCode(Code& code)
 {
     code.AddAuto().NodeName().CreateClass();
     code.ValidParentName().Comma().as_string(prop_id);
-    code.PosSizeFlags(true);
+    code.PosSizeFlags();
 
     // If the last parameter is wxID_ANY, then remove it. This is the default value, so it's
     // not needed.

@@ -35,7 +35,7 @@ bool PanelGenerator::ConstructionCode(Code& code)
     else
     {
         code.Comma().as_string(prop_id);
-        code.PosSizeFlags(true);
+        code.PosSizeFlags();
     }
     return true;
 }

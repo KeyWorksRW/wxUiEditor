@@ -194,6 +194,13 @@ tt_string ProjectHandler::getBaseDirectory(Node* node, int language) const
     if (result.empty())
         result = m_projectPath;
 
+    tt_string base_file = node->as_string(prop_base_file);
+    base_file.remove_filename();
+    if (base_file.size())
+    {
+        result.append_filename(base_file);
+    }
+
     result.make_absolute();
 
     return result;

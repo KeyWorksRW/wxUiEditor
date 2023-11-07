@@ -268,11 +268,15 @@ void BaseCodeGenerator::GatherGeneratorIncludes(Node* node, std::set<std::string
                         {
                             if (form->isGen(gen_Images))
                             {
-                                tt_string image_file = Project.getProjectPath();
-                                image_file.append_filename(form->as_string(prop_base_file));
-                                image_file.replace_extension(m_header_ext);
-                                image_file.make_relative(m_baseFullPath);
-                                set_src.insert(tt_string() << "#include \"" << image_file << '\"');
+                                if (form->hasValue(prop_base_file))
+                                {
+                                    tt_string image_file = Project.getBaseDirectory(form);
+                                    image_file.append_filename(form->as_string(prop_base_file));
+                                    image_file.replace_extension(m_header_ext);
+                                    image_file.make_relative(Project.getBaseDirectory(node->getForm()).make_absolute());
+                                    image_file.backslashestoforward();
+                                    set_src.insert(tt_string() << "#include \"" << image_file << '\"');
+                                }
                                 break;
                             }
                         }

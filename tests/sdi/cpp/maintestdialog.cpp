@@ -1037,6 +1037,6 @@ void MainFrame::OnDlgIssue_956(wxCommandEvent& WXUNUSED(event))
 
 void MainFrame::OnDlgIssue_960(wxCommandEvent& WXUNUSED(event))
 {
-    DlgIssue_960 dlg(this);
+    DlgIssue_960 dlg(this, DlgIssue_960::form_id, DlgIssue_960::form_title(), DlgIssue_960::form_pos());
     dlg.ShowModal();
 }

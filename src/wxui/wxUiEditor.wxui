@@ -6359,6 +6359,7 @@
               <node
                 class="wxBoxSizer"
                 class_access="protected:"
+                hide_children="1"
                 var_name="m_box_dark_settings"
                 borders="wxTOP|wxBOTTOM|wxRIGHT"
                 flags="wxEXPAND">

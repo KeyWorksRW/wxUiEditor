@@ -665,7 +665,7 @@ bool MainTestDialog::Create(wxWindow* parent, wxWindowID id, const wxString& tit
     box_sizer_17->Add(m_banner_left, wxSizerFlags().Border(wxALL));
 
     m_banner_top = new wxBannerWindow(page_7, wxTOP);
-    m_banner_top->SetGradient(wxColour("#2B2B2B"), wxColour("#777777"));
+    m_banner_top->SetGradient(wxColour("#BFCDDB"), wxColour("#0078D7"));
     m_banner_top->SetText("Top Banner", "This is the top banner message");
     box_sizer_17->Add(m_banner_top, wxSizerFlags().Border(wxALL));
 

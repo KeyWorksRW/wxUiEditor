@@ -1091,9 +1091,9 @@
                   var_name="m_banner_left" />
                 <node
                   class="wxBannerWindow"
-                  end_colour="wxSYS_COLOUR_HIGHLIGHT"
+                  end_colour="#0078D7"
                   message="This is the top banner message"
-                  start_colour="wxSYS_COLOUR_INACTIVECAPTION"
+                  start_colour="#BFCDDB"
                   title="Top Banner"
                   var_name="m_banner_top" />
                 <node

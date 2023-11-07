@@ -354,6 +354,7 @@ namespace GenEnum
         prop_pressed,
         prop_pressed_bmp,
         prop_private_members,
+        prop_project_src_includes,
         prop_proportion,
         prop_python_import_list,
         prop_radiobtn_var_name,

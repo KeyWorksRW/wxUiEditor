@@ -398,6 +398,23 @@ void BaseCodeGenerator::GenerateCppClass(PANEL_PAGE panel_type)
 
         m_source->writeLine();
 
+        if (Project.getProjectNode()->hasValue(prop_project_src_includes))
+        {
+            m_source->writeLine();
+            tt_view_vector list;
+            list.SetString(Project.getProjectNode()->as_string(prop_project_src_includes));
+            for (auto& iter: list)
+            {
+                tt_string include = iter;
+                include.make_absolute();
+                include.make_relative(Project.getBaseDirectory(m_form_node));
+                include.backslashestoforward();
+                m_source->writeLine(tt_string("#include \"") << include << '"');
+            }
+
+            m_source->writeLine();
+        }
+
         // Now output all the other header files (this will include derived_class header files)
         for (auto& iter: src_includes)
         {

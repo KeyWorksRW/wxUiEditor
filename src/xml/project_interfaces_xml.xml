@@ -30,7 +30,9 @@ inline const char* project_interfaces_xml = R"===(<?xml version="1.0"?>
 		<property name="local_pch_file" type="file"
 			help="The filename of a local precompiled header file. The file will be included in quotes." />
 		<property name="src_preamble" type="code_edit"
-			help="Code to generate at the top of the source file after the inclusion of any local precompiled header file. This can include header files, comments, macros, etc." />
+			help="Code to generate at the top of all source files after the inclusion of any local precompiled header file. This can include header files, comments, macros, etc." />
+		<property name="project_src_includes" type="include_files"
+			help="Lists one or more local header files to include in all generated source files." />
 		<property name="name_space" type="string"
 			help="Namespace to enclose class declarations in. Separate nested namespaces with a double colon (e.g. company::app::subname)" />
 		<property name="generate_cmake" type="bool"

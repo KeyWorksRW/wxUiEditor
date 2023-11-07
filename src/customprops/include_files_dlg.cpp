@@ -160,7 +160,8 @@ void IncludeFilesDialog::OnAdd(wxCommandEvent& WXUNUSED(event))
     tt_string path;
     tt_string cur_file;
     if (m_prop->isProp(prop_local_hdr_includes) || m_prop->isProp(prop_local_src_includes) ||
-        m_prop->isProp(prop_relative_require_list) || m_prop->isProp(prop_python_import_list))
+        m_prop->isProp(prop_project_src_includes) || m_prop->isProp(prop_relative_require_list) ||
+        m_prop->isProp(prop_python_import_list))
     {
         auto* form = m_prop->getNode();
         GenEnum::PropName file_prop;

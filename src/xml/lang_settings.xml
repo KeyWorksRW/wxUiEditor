@@ -45,7 +45,7 @@ inline const char* lang_settings_xml = R"===(<?xml version="1.0"?>
 
 	<gen class="C++ Derived Class Settings" type="interface">
 		<property name="use_derived_class" type="bool"
-			help="Check this if you will be creating a derived class. If not checked, you will need to create a source file implementing any event handlers.">
+			help="Check this if you will be creating a derived class. If not checked, you can implement any event handlers below the generated file's final comment block.">
 			1</property>
 		<property name="derived_class_name" type="string"
 			help="The name of the derived class. Ignored if use_derived_class is unchecked." />

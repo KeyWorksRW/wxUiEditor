@@ -117,6 +117,8 @@ bool StaticRadioBtnBoxSizerGenerator::ConstructionCode(Code& code)
             else if (parent->isGen(gen_wxStaticBoxSizer) || parent->isGen(gen_StaticCheckboxBoxSizer) ||
                      parent->isGen(gen_StaticRadioBtnBoxSizer))
             {
+                // The () isn't added because Python and Ruby don't use it. C++ adds it in its
+                // own section below.
                 parent_name.NodeName(parent).Function("GetStaticBox");
                 break;
             }
@@ -130,6 +132,8 @@ bool StaticRadioBtnBoxSizerGenerator::ConstructionCode(Code& code)
 
     if (code.is_cpp())
     {
+        if (parent_name.ends_with("GetStaticBox"))
+            parent_name += "()";
         code.AddAuto().NodeName() << " = new wxStaticBoxSizer(new wxStaticBox(" << parent_name << ", wxID_ANY";
         code.Comma();
         if (Project.as_string(prop_wxWidgets_version) == "3.1")

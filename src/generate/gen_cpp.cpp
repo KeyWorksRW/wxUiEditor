@@ -797,7 +797,7 @@ void BaseCodeGenerator::GenerateCppClassHeader()
         code.clear();
         if (m_form_node->hasProp(prop_id))
         {
-            code.Eol(eol_if_needed).Str("const int form_id = ");
+            code.Eol(eol_if_needed).Str("static const int form_id = ");
             if (m_form_node->as_string(prop_id).size())
                 code.as_string(prop_id) += ";";
             else
@@ -805,7 +805,7 @@ void BaseCodeGenerator::GenerateCppClassHeader()
         }
         if (m_form_node->hasProp(prop_style))
         {
-            code.Eol(eol_if_needed).Str("const int form_style = ");
+            code.Eol(eol_if_needed).Str("static const int form_style = ");
             if (m_form_node->as_string(prop_style).size())
                 code.as_string(prop_style) += ";";
             else
@@ -813,16 +813,21 @@ void BaseCodeGenerator::GenerateCppClassHeader()
         }
         else if (m_form_node->hasProp(prop_window_style))
         {
-            code.Eol(eol_if_needed).Str("const int form_style = ");
+            code.Eol(eol_if_needed).Str("static const int form_style = ");
             if (m_form_node->as_string(prop_window_style).size())
                 code.as_string(prop_window_style) += ";";
             else
                 code.Str("0;");
         }
         if (m_form_node->hasProp(prop_pos))
-            code.Eol(eol_if_needed).Str("const wxPoint form_pos = ").Pos(prop_pos, no_dlg_units) += ";";
+        {
+            code.Eol(eol_if_needed).Str("static const wxPoint form_pos() { return ").Pos(prop_pos, no_dlg_units) += "; }";
+        }
         if (m_form_node->hasProp(prop_size))
-            code.Eol(eol_if_needed).Str("const wxSize form_size = ").WxSize(prop_size, no_dlg_units) += ";";
+        {
+            code.Eol(eol_if_needed).Str("static const wxSize form_size() { return  ").WxSize(prop_size, no_dlg_units) +=
+                "; }";
+        }
         if (m_form_node->hasProp(prop_title))
         {
             code.Eol(eol_if_needed).Str("static const wxString form_title() { return ");

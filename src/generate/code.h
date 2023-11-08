@@ -347,7 +347,7 @@ public:
     // For Ruby code, a non-local, non-form name will be prefixed with "@"
     Code& NodeName(Node* node = nullptr);
 
-    // For C++, adds the var_name unchanged. Otherwise, and "m_" is removed.
+    // For C++, adds the var_name unchanged. Otherwise, any "m_" is removed.
     // If class_access is true, then "self." is prefixed for Python, or "@" for Ruby.
     //
     // Use this when NodeName() is not appropriate, e.g., checkbox in wxStaticBoxSizer

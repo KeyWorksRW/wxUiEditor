@@ -90,6 +90,7 @@
 #include "gen_std_dlgbtn_sizer.h"    // StdDialogButtonSizerGenerator -- wxStdDialogButtonSizer generator
 #include "gen_text_ctrl.h"           // TextCtrlGenerator -- wxTextCtrl generator
 #include "gen_text_sizer.h"          // TextSizerGenerator -- wxTextSizerWrapper generator
+#include "gen_timer.h"               // TimerGenerator -- wxTimer generator
 #include "gen_time_picker.h"         // TimePickerCtrlGenerator -- wxTimePickerCtrl generator
 #include "gen_toggle_btn.h"          // ToggleButtonGenerator -- wxToggleButton generator
 #include "gen_toolbar.h"             // wxToolBar generator
@@ -172,6 +173,7 @@ void NodeCreator::initGenerators()
     SET_GENERATOR(gen_wxStatusBar, StatusBarGenerator)
     SET_GENERATOR(gen_wxStyledTextCtrl, StyledTextGenerator)
     SET_GENERATOR(gen_wxTextCtrl, TextCtrlGenerator)
+    SET_GENERATOR(gen_wxTimer, TimerGenerator)
     SET_GENERATOR(gen_wxToggleButton, ToggleButtonGenerator)
     SET_GENERATOR(gen_wxCalendarCtrl, CalendarCtrlGenerator)
     SET_GENERATOR(gen_wxFileCtrl, FileCtrlGenerator)

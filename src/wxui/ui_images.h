@@ -76,6 +76,7 @@ namespace wxue_img
     wxBitmapBundle bundle_wxStaticCheckBoxSizer_png();
     wxBitmapBundle bundle_wxStaticRadioBtnSizer_png();
     wxBitmapBundle bundle_wxStaticText_png();
+    wxBitmapBundle bundle_wxTimer_png();
 
     extern const unsigned char auitoolbar_png[476];
     extern const unsigned char bmp_combo_box_png[492];
@@ -136,6 +137,7 @@ namespace wxue_img
     extern const unsigned char wxStaticCheckBoxSizer_png[341];
     extern const unsigned char wxStaticRadioBtnSizer_png[367];
     extern const unsigned char wxStaticText_png[290];
+    extern const unsigned char wxTimer_png[1323];
     extern const unsigned char wxlogo_svg[1331];
     extern const unsigned char xrc_compare_svg[260];
 }

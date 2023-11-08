@@ -143,6 +143,7 @@ static const ImageMap png_headers[] = {
     { "wxSplitterWindow", wxsplitterWindow_png, sizeof(wxsplitterWindow_png) },
     { "wxStaticText", wxStaticText_png, sizeof(wxStaticText_png) },
     { "wxTextCtrl", wxtextCtrl_png, sizeof(wxtextCtrl_png) },
+    { "wxTimer", wxTimer_png, sizeof(wxTimer_png) },
     { "wxToolBar", wxToolBar_png, sizeof(wxToolBar_png) },
     { "wxToolbook", wxToolbook_png, sizeof(wxToolbook_png) },
     { "wxTreebook", wxTreebook_png, sizeof(wxTreebook_png) },

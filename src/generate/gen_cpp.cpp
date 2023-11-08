@@ -16,6 +16,7 @@
 #include "gen_base.h"         // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
 #include "gen_common.h"       // Common component functions
 #include "gen_results.h"      // Code generation file writing functions
+#include "gen_timer.h"        // TimerGenerator class
 #include "image_gen.h"        // Functions for generating embedded images
 #include "image_handler.h"    // ImageHandler class
 #include "node.h"             // Node class
@@ -1140,6 +1141,13 @@ void BaseCodeGenerator::GenerateCppClassConstructor()
             m_source->writeLine();
             m_source->writeLine("// Event handlers");
             GenSrcEventBinding(m_form_node, m_events);
+        }
+
+        code.clear();
+        if (TimerGenerator::StartIfChildTimer(m_form_node, code))
+        {
+            m_source->writeLine(code);
+            m_source->writeLine();
         }
     }
     if (m_form_node->isGen(gen_wxDialog) || m_form_node->isGen(gen_wxFrame) || m_form_node->isGen(gen_PanelForm) ||

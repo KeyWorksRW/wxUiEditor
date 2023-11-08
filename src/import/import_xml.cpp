@@ -39,6 +39,7 @@ namespace xrc_import
         { "dimension", prop_majorDimension },
         { "effectduration", prop_duration },
         { "empty_cellsize", prop_empty_cell_size },
+        { "enabled", prop_auto_start },
         { "extra-accels", prop_extra_accels },
         { "fg", prop_foreground_colour },
         { "foreground", prop_foreground_colour },
@@ -57,8 +58,10 @@ namespace xrc_import
         { "longhelp", prop_statusbar },  // Used by toolbar tools
         { "minsize", prop_min_size },
         { "nonflexiblegrowmode", prop_non_flexible_grow_mode },
+        { "oneshot", prop_one_shot },
         { "orient", prop_orientation },
         { "pagesize", prop_page_size },
+        { "period", prop_interval },
         { "running", prop_auto_start },
         { "selmax", prop_sel_end },
         { "selmin", prop_sel_start },

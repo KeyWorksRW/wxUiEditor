@@ -1,4 +1,4 @@
-inline const char* images_xml = R"===(<?xml version="1.0"?>
+inline const char* objects_xml = R"===(<?xml version="1.0"?>
 <!DOCTYPE GeneratorDefinitions SYSTEM "gen.dtd">
 <GeneratorDefinitions>
     <gen class="Images" image="pagectrl" type="images">
@@ -15,4 +15,20 @@ inline const char* images_xml = R"===(<?xml version="1.0"?>
     <gen class="embedded_image" image="static_bitmap" type="embed_image">
 		    <property name="bitmap" type="image" />
     </gen>
+
+    <gen class="wxTimer" image="wxTimer" type="timer">
+        <property name="var_name" type="string">m_timer</property>
+        <property name="interval" type="int"
+            help="Specifies the number of milliseconds between timer events.">1000</property>
+		<property name="auto_start" type="bool"
+			help="If checked, this will start start the timer in the parent class Create function.">0</property>
+		<property name="one_shot" type="bool"
+			help="If checked, this will start a one shot timer (ignored if auto_start isn't checked).">0</property>
+        <property name="id" type="id"
+			help="Specifies the timer's identifier.">wxID_ANY</property>
+        <event name="wxEVT_TIMER" class="wxTimerEvent"
+			help="Timer event that will be sent to the parent form's class." />
+    </gen>
+
+
 </GeneratorDefinitions>)===";

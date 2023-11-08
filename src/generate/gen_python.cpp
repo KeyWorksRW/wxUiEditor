@@ -16,6 +16,7 @@
 #include "gen_base.h"         // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
 #include "gen_common.h"       // Common component functions
 #include "gen_results.h"      // Code generation file writing functions
+#include "gen_timer.h"        // TimerGenerator class
 #include "image_gen.h"        // Functions for generating embedded images
 #include "image_handler.h"    // ImageHandler class
 #include "node.h"             // Node class
@@ -505,6 +506,16 @@ void BaseCodeGenerator::GeneratePythonClass(PANEL_PAGE panel_type)
     // TODO: [Randalphwa - 12-04-2022] Python supports persistence, though it's not as easy as it is in C++.
     // See https://docs.wxpython.org/wx.lib.agw.persist.html?highlight=persist#module-wx.lib.agw.persist
 
+    // Timer code must be created before the events, otherwise the timer variable won't exist
+    // when the event is created.
+
+    code.clear();
+    if (TimerGenerator::StartIfChildTimer(m_form_node, code))
+    {
+        m_source->writeLine(code);
+        m_source->writeLine();
+    }
+
     // Delay calling join() for as long as possible to increase the chance that the thread will
     // have already completed.
     thrd_get_events.join();
@@ -513,7 +524,6 @@ void BaseCodeGenerator::GeneratePythonClass(PANEL_PAGE panel_type)
         m_source->writeLine();
         m_source->writeLine("# Bind Event handlers");
         GenSrcEventBinding(m_form_node, m_events);
-
         m_source->ResetIndent();
         m_source->writeLine();
         m_source->Indent();

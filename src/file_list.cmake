@@ -142,6 +142,7 @@ set (file_list
     generate/gen_static_text.cpp    # wxStaticText generator
     generate/gen_status_bar.cpp     # wxStatusBar generator
     generate/gen_text_ctrl.cpp      # wxTextCtrl generator
+    generate/gen_timer.cpp          # wxTimer generator
     generate/gen_toggle_btn.cpp     # wxToggleButton generator
     generate/gen_tree_ctrl.cpp      # wxTreeCtrl generator
     generate/gen_tree_list.cpp      # wxTreeListCtrl generator

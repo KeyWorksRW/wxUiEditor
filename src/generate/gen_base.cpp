@@ -74,6 +74,11 @@ void BaseCodeGenerator::CollectMemberVariables(Node* node, Permission perm, std:
                 (perm == Permission::Protected && prop->as_string() == "protected:"))
             {
                 auto code = GetDeclaration(node);
+                if (node->isGen(gen_wxTimer))
+                {
+                    // Remove the pointer, wxTimer needs to be a class.
+                    code.Replace("*", "");
+                }
                 if (code.empty() && node->isGen(gen_auitool))
                 {
                     code += "wxAuiToolBarItem* " + node->as_string(prop_var_name) + ';';

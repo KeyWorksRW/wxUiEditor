@@ -53,9 +53,9 @@ inline const char* lst_xml_interfaces[] = {
 #include "../xml/doc_view_app_xml.xml"
 #include "../xml/forms_xml.xml"
 #include "../xml/grid_xml.xml"
-#include "../xml/images_xml.xml"
 #include "../xml/listview_xml.xml"
 #include "../xml/menus_xml.xml"
+#include "../xml/objects_xml.xml"
 #include "../xml/pickers_xml.xml"
 #include "../xml/project_xml.xml"
 #include "../xml/propgrid_xml.xml"
@@ -83,7 +83,7 @@ inline const char* lst_xml_generators[] = {
     doc_view_app_xml,
     forms_xml,
     grid_xml,
-    images_xml,
+    objects_xml,
     listview_xml,
     menus_xml,
     pickers_xml,
@@ -213,6 +213,7 @@ static const ParentChild lstParentChild[] = {
     { type_frame_form, type_aui_toolbar, one },
     { type_frame_form, type_menubar, one },
     { type_frame_form, type_ctx_menu, one },
+    { type_frame_form, type_timer, one },
 
     { type_frame_form, type_choicebook, infinite },
     { type_frame_form, type_listbook, infinite },
@@ -223,6 +224,7 @@ static const ParentChild lstParentChild[] = {
     { type_form, type_ctx_menu, one },
     { type_form, type_gbsizer, one },
     { type_form, type_sizer, one },
+    { type_form, type_timer, one },
 
     { type_propsheetform, type_bookpage, infinite },
 
@@ -814,9 +816,12 @@ void NodeCreator::parseProperties(pugi::xml_node& elem_obj, NodeDeclaration* nod
 
             auto& opts = prop_info->getOptions();
 
-            opts.emplace_back();
-            opts[opts.size() - 1].name = "none";
-            opts[opts.size() - 1].help = "Derived classes do not have access to this item.";
+            if (!node_declaration->isGen(gen_wxTimer))
+            {
+                opts.emplace_back();
+                opts[opts.size() - 1].name = "none";
+                opts[opts.size() - 1].help = "Derived classes do not have access to this item.";
+            }
 
             opts.emplace_back();
             opts[opts.size() - 1].name = "protected:";

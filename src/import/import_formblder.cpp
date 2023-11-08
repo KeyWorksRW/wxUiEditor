@@ -677,6 +677,13 @@ void FormBuilder::ProcessPropValue(pugi::xml_node& xml_prop, tt_string_view prop
             newobject->set_value(prop_class_access, "protected:");
         else if (value == "public")
             newobject->set_value(prop_class_access, "public:");
+        else if (value == "none" && class_name == "wxTimer")
+        {
+            // wxFormBuilder allows none as permission even though it then generates code that
+            // destroys the wxTimer in the form's ctor. We force the member to be protected
+            // instead so that the timer will acutally work.
+            newobject->set_value(prop_class_access, "protected:");
+        }
         else
             newobject->set_value(prop_class_access, "none");
     }
@@ -837,7 +844,6 @@ void FormBuilder::ProcessPropValue(pugi::xml_node& xml_prop, tt_string_view prop
             newobject->set_value(prop_line_margin, "1");
         }
     }
-
     else
     {
         if (xml_prop.text().as_string().size())

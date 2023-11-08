@@ -46,6 +46,7 @@ namespace wxue_img
     extern const unsigned char wxListBox_png[310];
     extern const unsigned char wxStaticBoxSizer_png[199];
     extern const unsigned char wxStaticText_png[290];
+    extern const unsigned char wxTimer_png[1323];
 }
 
 bool RibbonPanelBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style,
@@ -532,6 +533,8 @@ bool RibbonPanelBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos
         other_bar_ctrls->AddTool(gen_wxBannerWindow,
             wxueImage(wxue_img::wxbannerWindow_png, sizeof(wxue_img::wxbannerWindow_png)).Rescale(
             FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "wxBannerWindow", wxRIBBON_BUTTON_NORMAL);
+        other_bar_ctrls->AddTool(gen_wxTimer, wxue_img::bundle_wxTimer_png().GetBitmap(wxDefaultSize), "wxTimer",
+            wxRIBBON_BUTTON_NORMAL);
         other_bar_ctrls->AddTool(gen_CustomControl,
             wxueImage(wxue_img::customControl_png, sizeof(wxue_img::customControl_png)).Rescale(
             FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "CustomControl", wxRIBBON_BUTTON_NORMAL);

@@ -506,6 +506,16 @@ void BaseCodeGenerator::GeneratePythonClass(PANEL_PAGE panel_type)
     // TODO: [Randalphwa - 12-04-2022] Python supports persistence, though it's not as easy as it is in C++.
     // See https://docs.wxpython.org/wx.lib.agw.persist.html?highlight=persist#module-wx.lib.agw.persist
 
+    // Timer code must be created before the events, otherwise the timer variable won't exist
+    // when the event is created.
+
+    code.clear();
+    if (TimerGenerator::StartIfChildTimer(m_form_node, code))
+    {
+        m_source->writeLine(code);
+        m_source->writeLine();
+    }
+
     // Delay calling join() for as long as possible to increase the chance that the thread will
     // have already completed.
     thrd_get_events.join();
@@ -514,26 +524,10 @@ void BaseCodeGenerator::GeneratePythonClass(PANEL_PAGE panel_type)
         m_source->writeLine();
         m_source->writeLine("# Bind Event handlers");
         GenSrcEventBinding(m_form_node, m_events);
-
-        code.clear();
-        if (TimerGenerator::StartIfChildTimer(m_form_node, code))
-        {
-            m_source->writeLine(code);
-            m_source->writeLine();
-        }
         m_source->ResetIndent();
         m_source->writeLine();
         m_source->Indent();
         GenPythonEventHandlers(m_events);
-    }
-    else
-    {
-        code.clear();
-        if (TimerGenerator::StartIfChildTimer(m_form_node, code))
-        {
-            m_source->writeLine(code);
-            m_source->writeLine();
-        }
     }
 
     if (m_form_node->isGen(gen_wxWizard))

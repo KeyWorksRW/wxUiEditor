@@ -1005,6 +1005,22 @@ GenEnum::PropName WxCrafter::UnknownProperty(Node* node, const Value& value, tt_
             if (node->as_string(prop_class_access) == "none")
                 node->set_value(prop_class_access, "protected:");
         }
+        else if (name.is_sameas("Start the timer"))
+        {
+            if (auto& setting = FindValue(value, "m_value"); setting.IsBool())
+            {
+                node->set_value(prop_auto_start, setting.GetBool());
+            }
+            return prop_processed;
+        }
+        else if (name.is_sameas("One Shot Timer"))
+        {
+            if (auto& setting = FindValue(value, "m_value"); setting.IsBool())
+            {
+                node->set_value(prop_auto_start, setting.GetBool());
+            }
+            return prop_processed;
+        }
         else
         {
             if (!node->isGen(gen_propGridItem))

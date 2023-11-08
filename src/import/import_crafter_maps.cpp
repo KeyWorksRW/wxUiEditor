@@ -78,6 +78,7 @@ constexpr auto map_id_generator = frozen::make_map<int, GenEnum::GenName>({
     { 4475, gen_wxCollapsiblePane },       // verified
     { 4477, gen_wxInfoBar },               // verified
     { 4479, gen_wxWebView },               // verified
+    { 4483, gen_wxTimer },                 // verified
     { 4484, gen_wxPopupTransientWindow },  // no way for wxCrafter to create this
     { 4485, gen_wxPropertyGridManager },   // verified
     { 4486, gen_propGridItem },            // verified
@@ -177,6 +178,7 @@ constexpr auto map_crafter_props = frozen::make_map<std::string_view, GenEnum::P
     { "minimum pane size", prop_min_pane_size },
     { "minimum size", prop_minimum_size },
     { "normal colour", prop_normal_color },
+    { "one shot timer", prop_one_shot },
     { "padding", prop_packing },
     { "page size", prop_pagesize },
     { "ribbon theme", prop_theme },
@@ -191,6 +193,7 @@ constexpr auto map_crafter_props = frozen::make_map<std::string_view, GenEnum::P
     { "show cancel button", prop_cancel_button },
     { "show hidden files", prop_show_hidden },
     { "show search button", prop_search_button },
+    { "start the timer", prop_auto_start },
     { "split mode", prop_splitmode },
     { "text hint", prop_hint },
     { "use native header", prop_native_col_header },

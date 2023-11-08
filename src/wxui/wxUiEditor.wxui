@@ -1770,6 +1770,11 @@
                     id="gen_wxBannerWindow" />
                   <node
                     class="ribbonTool"
+                    bitmap="Embed;wxTimer.png"
+                    help="wxTimer"
+                    id="gen_wxTimer" />
+                  <node
+                    class="ribbonTool"
                     bitmap="Embed;customControl.png"
                     help="CustomControl"
                     id="gen_CustomControl" />

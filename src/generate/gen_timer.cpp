@@ -7,38 +7,56 @@
 
 #include <wx/timer.h>
 
-#include "code.h"           // Code -- Helper class for generating code
-#include "gen_common.h"     // GeneratorLibrary -- Generator classes
-#include "gen_xrc_utils.h"  // Common XRC generating functions
-#include "node.h"           // Node class
-#include "pugixml.hpp"      // xml read/write/create/process
-#include "utils.h"          // Utility functions that work with properties
+#include "code.h"        // Code -- Helper class for generating code
+#include "gen_common.h"  // GeneratorLibrary -- Generator classes
+#include "node.h"        // Node class
+#include "utils.h"       // Utility functions that work with properties
 
 #include "gen_timer.h"
 
-bool TimerGenerator::ConstructionCode(Code& code)
+bool TimerGenerator::GetIncludes(Node* /* node */, std::set<std::string>& /* set_src */, std::set<std::string>& set_hdr)
 {
-    code.AddAuto().NodeName().CreateClass();
-    code.ValidParentName().Comma().as_string(prop_id);
-    code.PosSizeFlags();
-
+    set_hdr.insert("#include <wx/timer.h>");
     return true;
 }
 
-bool TimerGenerator::SettingsCode(Code& code)
-{
-    if (code.IsTrue(prop_auto_start))
-        code.NodeName().Function("Start(").as_string(prop_interval).TrueFalseIf(prop_one_shot).EndFunction();
-    return true;
-}
-
-bool TimerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
-{
-    InsertGeneratorInclude(node, "#include <wx/timer.h>", set_src, set_hdr);
-    return true;
-}
-
-int TimerGenerator::GetRequiredVersion(Node* node)
+int TimerGenerator::GetRequiredVersion(Node* /* node */)
 {
     return 19;  // Introduced in version 1.2.0
+}
+
+bool TimerGenerator::StartIfChildTimer(Node* form, Code& code)
+{
+    if (!form->isGen(gen_wxFrame) && !form->isGen(gen_wxDialog) && !form->isGen(gen_PanelForm) &&
+        !form->isGen(gen_wxMdiWindow) && !form->isGen(gen_wxAuiMDIChildFrame) && !form->isGen(gen_wxPopupTransientWindow))
+        return false;
+
+    for (auto& iter: form->getChildNodePtrs())
+    {
+        if (iter->isGen(gen_wxTimer))
+        {
+            if (iter->as_bool(prop_auto_start))
+            {
+                auto save_node = code.m_node;
+                code.m_node = iter.get();
+                if (code.is_ruby() || code.is_python())
+                {
+                    code.Eol().NodeName().CreateClass();
+                    code.Str("self").Comma().Add(prop_id).EndFunction();
+                }
+                else if (code.is_cpp())
+                {
+                    code.Eol().NodeName().VariableMethod("SetOwner(").Str("this").Comma();
+                    code.Add(prop_id).EndFunction();
+                }
+
+                code.Eol().NodeName().VariableMethod("Start(").as_string(prop_interval).Comma();
+                code.TrueFalseIf(prop_one_shot).EndFunction();
+                code.m_node = save_node;
+                return true;
+            }
+            break;
+        }
+    }
+    return false;
 }

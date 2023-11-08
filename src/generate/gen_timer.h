@@ -14,6 +14,7 @@ class TimerGenerator : public BaseGenerator
 public:
     int GetRequiredVersion(Node* node) override;
     bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr) override;
+    void GenEvent(Code& code, NodeEvent* event, const std::string& class_name) override;
 
     static bool StartIfChildTimer(Node* form, Code& code);
 };

@@ -90,8 +90,8 @@
 #include "gen_std_dlgbtn_sizer.h"    // StdDialogButtonSizerGenerator -- wxStdDialogButtonSizer generator
 #include "gen_text_ctrl.h"           // TextCtrlGenerator -- wxTextCtrl generator
 #include "gen_text_sizer.h"          // TextSizerGenerator -- wxTextSizerWrapper generator
-#include "gen_timer.h"               // TimerGenerator -- wxTimer generator
 #include "gen_time_picker.h"         // TimePickerCtrlGenerator -- wxTimePickerCtrl generator
+#include "gen_timer.h"               // TimerGenerator -- wxTimer generator
 #include "gen_toggle_btn.h"          // ToggleButtonGenerator -- wxToggleButton generator
 #include "gen_toolbar.h"             // wxToolBar generator
 #include "gen_toolbook.h"            // ToolbookGenerator -- wxToolbook generator

@@ -175,7 +175,7 @@ constexpr const int minRequiredVer = 15;
 // 1.1.0 == version 16
 // 1.1.1 == version 17 (beta 1 of 1.1.2)
 // 1.1.2 == version 18
-// 1.1.3 == version 19 (beta 1 of 1.2.0)
+// 1.2.0 == version 19 (beta 1 of 1.2.0)
 
 // Use when you need to return an empty const tt_string&
 extern tt_string tt_empty_cstr;

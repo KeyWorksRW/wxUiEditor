@@ -805,7 +805,7 @@ set (unix_sources
     src/generic/accel.cpp
     src/generic/activityindicator.cpp
     src/generic/caret.cpp
-    src/generic/clrpickerg.cpp
+    # src/generic/clrpickerg.cpp
     # src/generic/collpaneg.cpp
     src/generic/colrdlgg.cpp
     src/generic/dirdlgg.cpp
@@ -813,7 +813,7 @@ set (unix_sources
     src/generic/filedlgg.cpp
     src/generic/filepickerg.cpp
     src/generic/fontdlgg.cpp
-    src/generic/fontpickerg.cpp
+    # src/generic/fontpickerg.cpp
     src/generic/icon.cpp
     src/generic/imaglist.cpp
     src/generic/listctrl.cpp

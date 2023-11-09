@@ -149,7 +149,7 @@ bool FontPropDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString& ti
     box_sizer_6->Add(staticText_4, wxSizerFlags().Border(wxLEFT|wxRIGHT|wxTOP, wxSizerFlags::GetDefaultBorder()));
 
     m_spinCustomPointSize = new wxSpinCtrlDouble(m_custom_box->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition,
-        wxDefaultSize, wxSP_ARROW_KEYS, 4, 72, 9, 0.5);
+        wxDefaultSize, wxSP_ARROW_KEYS, -1, 72, 9, 0.5);
     m_spinCustomPointSize->SetDigits(1);
     box_sizer_6->Add(m_spinCustomPointSize, wxSizerFlags().Border(wxALL));
 
@@ -169,7 +169,7 @@ bool FontPropDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString& ti
 
     box_sizer_13->Add(box_sizer_7, wxSizerFlags().Border(wxALL));
 
-    box_sizer_5->Add(box_sizer_13, wxSizerFlags().Border(wxALL));
+    box_sizer_5->Add(box_sizer_13, wxSizerFlags().Bottom().Border(wxALL));
 
     auto* box_sizer_9 = new wxBoxSizer(wxVERTICAL);
 

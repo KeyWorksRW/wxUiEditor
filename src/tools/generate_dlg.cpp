@@ -332,10 +332,22 @@ void GenerateDlg::OnInit(wxInitDialogEvent& event)
         // dialog to support it yet.
     }
 #if defined(INTERNAL_TESTING)
-    m_gen_python_code = gen_python_code;
-    m_gen_ruby_code = gen_ruby_code;
-    m_gen_base_code = gen_base_code;
-    m_gen_xrc_code = gen_xrc_code;
+    if (output_type & OUTPUT_PYTHON)
+    {
+        m_gen_python_code = gen_python_code;
+    }
+    if (output_type & OUTPUT_RUBY)
+    {
+        m_gen_ruby_code = gen_ruby_code;
+    }
+    if (output_type & OUTPUT_CPLUS)
+    {
+        m_gen_base_code = gen_base_code;
+    }
+    if (output_type & OUTPUT_XRC)
+    {
+        m_gen_xrc_code = gen_xrc_code;
+    }
 #endif
 
     // Some checkboxes may be hidden at this point, so we need to resize the dialog to fit.

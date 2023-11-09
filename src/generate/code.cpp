@@ -2013,12 +2013,17 @@ Code& Code::GenFont(GenEnum::PropName prop_name, tt_string_view font_function)
     }
     else  // not isDefGuiFont()
     {
+        bool more_than_pointsize =
+            ((fontprop.GetFaceName().size() && fontprop.GetFaceName() != "default") ||
+             fontprop.GetFamily() != wxFONTFAMILY_DEFAULT || fontprop.GetStyle() != wxFONTSTYLE_NORMAL ||
+             fontprop.GetWeight() != wxFONTWEIGHT_NORMAL || fontprop.IsUnderlined() || fontprop.IsStrikethrough());
+
         const auto point_size = fontprop.GetFractionalPointSize();
         OpenBrace();
 
         if (is_cpp())
         {
-            Add("wxFontInfo font_info(");
+            Str("wxFontInfo font_info(");
         }
         else
         {
@@ -2033,7 +2038,8 @@ Code& Code::GenFont(GenEnum::PropName prop_name, tt_string_view font_function)
 
                 if (point_size <= 0)
                 {
-                    Add("wxSystemSettings").ClassMethod("GetFont()").Function("GetPointSize()").EndFunction();
+                    Add("wxSystemSettings").ClassMethod("GetFont(").Add("wxSYS_DEFAULT_GUI_FONT").Str(")");
+                    VariableMethod("GetPointSize()").EndFunction();
                 }
                 else
                 {
@@ -2067,7 +2073,12 @@ Code& Code::GenFont(GenEnum::PropName prop_name, tt_string_view font_function)
         {
             if (point_size <= 0)
             {
-                Add("wxSystemSettings").ClassMethod("GetFont()").Function("GetPointSize()").EndFunction();
+                Add("wxSystemSettings").ClassMethod("GetFont(").Add("wxSYS_DEFAULT_GUI_FONT").Str(")");
+                VariableMethod("GetPointSize()").EndFunction();
+                if (!is_cpp() && more_than_pointsize)
+                {
+                    Eol().Str("font_info");
+                }
             }
             else
             {
@@ -2076,7 +2087,15 @@ Code& Code::GenFont(GenEnum::PropName prop_name, tt_string_view font_function)
             }
         }
 
-        Eol(eol_if_needed).Str("font_info");
+        if (is_cpp())
+        {
+            Eol();
+            if (more_than_pointsize)
+            {
+                Str("font_info");
+            }
+        }
+
         if (fontprop.GetFaceName().size() && fontprop.GetFaceName() != "default")
             VariableMethod("FaceName(").QuotedString(tt_string() << fontprop.GetFaceName().utf8_string()) += ")";
         if (fontprop.GetFamily() != wxFONTFAMILY_DEFAULT)

@@ -110,7 +110,7 @@ bool NewMdiForm::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     flex_grid_sizer->SetFlexibleDirection(wxHORIZONTAL);
 
     auto* staticText_2 = new wxStaticText(static_box_3->GetStaticBox(), wxID_ANY, "&Description:");
-    flex_grid_sizer->Add(staticText_2, wxSizerFlags().Center().Border(wxALL));
+    flex_grid_sizer->Add(staticText_2, wxSizerFlags().CenterVertical().Border(wxALL));
 
     auto* description = new wxTextCtrl(static_box_3->GetStaticBox(), wxID_ANY, wxEmptyString);
     description->SetHint("Text");
@@ -121,7 +121,7 @@ bool NewMdiForm::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 
     auto* staticText_10 = new wxStaticText(static_box_3->GetStaticBox(), wxID_ANY, "Class name:");
     staticText_10->SetToolTip("Change this to something unique to your project.");
-    flex_grid_sizer->Add(staticText_10, wxSizerFlags().Center().Border(wxALL));
+    flex_grid_sizer->Add(staticText_10, wxSizerFlags().CenterVertical().Border(wxALL));
 
     auto* doc_classname = new wxTextCtrl(static_box_3->GetStaticBox(), wxID_ANY, "DocumentTextCtrlBase");
     doc_classname->SetValidator(wxTextValidator(wxFILTER_NONE, &m_doc_class));
@@ -130,7 +130,7 @@ bool NewMdiForm::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     flex_grid_sizer->Add(doc_classname, wxSizerFlags(1).Border(wxALL));
 
     auto* staticText_5 = new wxStaticText(static_box_3->GetStaticBox(), wxID_ANY, "&Extension:");
-    flex_grid_sizer->Add(staticText_5, wxSizerFlags().Center().Border(wxALL));
+    flex_grid_sizer->Add(staticText_5, wxSizerFlags().CenterVertical().Border(wxALL));
 
     auto* extension = new wxTextCtrl(static_box_3->GetStaticBox(), wxID_ANY, wxEmptyString);
     extension->SetHint("txt");
@@ -139,7 +139,7 @@ bool NewMdiForm::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     flex_grid_sizer->Add(extension, wxSizerFlags().Expand().Border(wxALL));
 
     auto* staticText_4 = new wxStaticText(static_box_3->GetStaticBox(), wxID_ANY, "&Filter:");
-    flex_grid_sizer->Add(staticText_4, wxSizerFlags().Center().Border(wxALL));
+    flex_grid_sizer->Add(staticText_4, wxSizerFlags().CenterVertical().Border(wxALL));
 
     auto* filter = new wxTextCtrl(static_box_3->GetStaticBox(), wxID_ANY, wxEmptyString);
     filter->SetHint("*.txt");

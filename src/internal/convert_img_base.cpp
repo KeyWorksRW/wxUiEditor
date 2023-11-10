@@ -171,7 +171,8 @@ bool ConvertImageBase::Create(wxWindow* parent, wxWindowID id, const wxString& t
 
     m_staticOriginal = new wxStaticText(this, wxID_ANY, "Source");
     m_staticOriginal->Hide();
-    grid_sizer2->Add(m_staticOriginal, wxSizerFlags().Center().Border(wxLEFT|wxRIGHT|wxTOP, wxSizerFlags::GetDefaultBorder()));
+    grid_sizer2->Add(m_staticOriginal,
+        wxSizerFlags().CenterHorizontal().Border(wxLEFT|wxRIGHT|wxTOP, wxSizerFlags::GetDefaultBorder()));
 
     m_staticOutput = new wxStaticText(this, wxID_ANY, "Current");
     m_staticOutput->Hide();

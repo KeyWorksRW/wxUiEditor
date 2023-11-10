@@ -1677,7 +1677,20 @@ Code& Code::GenSizerFlags()
 
     if (auto& prop = m_node->as_string(prop_alignment); prop.size())
     {
-        if (prop.contains("wxALIGN_CENTER"))
+        if (prop.contains("wxALIGN_CENTER_HORIZONTAL") &&
+            (m_node->getParent()->isGen(gen_wxGridSizer) || m_node->getParent()->isGen(gen_wxFlexGridSizer) ||
+             m_node->getParent()->isGen(gen_wxGridBagSizer)))
+        {
+            SizerFlagsFunction("CenterHorizontal") += ')';
+        }
+        else if (prop.contains("wxALIGN_CENTER_VERTICAL") &&
+                 (m_node->getParent()->isGen(gen_wxGridSizer) || m_node->getParent()->isGen(gen_wxFlexGridSizer) ||
+                  m_node->getParent()->isGen(gen_wxGridBagSizer)))
+
+        {
+            SizerFlagsFunction("CenterVertical") += ')';
+        }
+        else if (prop.contains("wxALIGN_CENTER"))
         {
             // Note that CenterHorizontal() and CenterVertical() require wxWidgets 3.1 or higher. Their advantage is
             // generating an assert if you try to use one that is invalid if the sizer parent's orientation doesn't

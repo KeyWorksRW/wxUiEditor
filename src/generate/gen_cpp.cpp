@@ -810,6 +810,8 @@ void BaseCodeGenerator::GenerateCppClassHeader()
         m_header->writeLine("#endif  // limited to specific platforms");
     }
 
+    GenCppEnumIds(m_form_node);
+
     if (m_form_node->as_bool(prop_const_values))
     {
         code.clear();
@@ -904,8 +906,6 @@ void BaseCodeGenerator::GenerateCppClassHeader()
 
     GenCppValidatorFunctions(m_form_node);
     m_header->writeLine();
-
-    GenCppEnumIds(m_form_node);
 
     if (m_form_node->hasValue(prop_inserted_hdr_code))
     {

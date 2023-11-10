@@ -46,7 +46,7 @@ class TestFormPanel(wx.Panel):
         panel2.SetSizerAndFit(parent_sizer3)
         self.splitter.SplitVertically(panel, panel2)
 
-        self.SetSizerAndFit(parent_sizer)
+        self.SetSizer(parent_sizer)
         self.SetSize(wx.Size(500, 300))
 # ************* End of generated code ***********
 # DO NOT EDIT THIS COMMENT BLOCK!

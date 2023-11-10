@@ -222,12 +222,16 @@ bool StaticCheckboxBoxSizerGenerator::AfterChildrenCode(Code& code)
             if (GetParentName(code.node()) != "this")
             {
                 code.ParentName().Add(".");
-                code.Function("SetSizerAndFit(").NodeName().EndFunction();
+                code.Function("SetSizerAndFit(");
             }
             else
             {
-                code.FormFunction("SetSizerAndFit(").NodeName().EndFunction();
+                if (parent->as_wxSize(prop_size) == wxDefaultSize)
+                    code.FormFunction("SetSizerAndFit(");
+                else  // Don't call Fit() if size has been specified
+                    code.FormFunction("SetSizer(");
             }
+            code.NodeName().EndFunction();
         }
     }
 

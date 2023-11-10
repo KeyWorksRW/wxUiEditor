@@ -44,6 +44,7 @@ wxObject* DialogFormGenerator::CreateMockup(Node* node, wxObject* parent)
 
 bool DialogFormGenerator::ConstructionCode(Code& code)
 {
+    bool dialog_units = code.node()->as_string(prop_size).contains("d", tt::CASE::either);
     if (code.is_cpp())
     {
         code.Str("bool ").as_string(prop_class_name);
@@ -63,7 +64,11 @@ bool DialogFormGenerator::ConstructionCode(Code& code)
             code.as_string(prop_derived_class);
         else
             code += "wxDialog";
-        code += "::Create(parent, id, title, pos, size, style, name))";
+        code += "::Create(parent, id, title, pos, ";
+        if (dialog_units)
+            code += "ConvertDialogToPixels(size), style, name))";
+        else
+            code += "size, style, name))";
         code.Eol().Tab() += "return false;\n";
     }
     else if (code.is_python())
@@ -183,7 +188,7 @@ bool DialogFormGenerator::AfterChildrenCode(Code& code)
     const auto min_size = form->as_wxSize(prop_minimum_size);
     const auto max_size = form->as_wxSize(prop_maximum_size);
 
-    if (min_size == wxDefaultSize && max_size == wxDefaultSize)
+    if (min_size == wxDefaultSize && max_size == wxDefaultSize && form->as_wxSize(prop_size) == wxDefaultSize)
     {
         code.FormFunction("SetSizerAndFit(").NodeName(child_node).EndFunction();
     }
@@ -198,8 +203,11 @@ bool DialogFormGenerator::AfterChildrenCode(Code& code)
         {
             code.Eol().FormFunction("SetMaxSize(").WxSize(prop_maximum_size).EndFunction();
         }
-        // EndFunction() will remove the opening paren if Ruby code
-        code.Eol().FormFunction("Fit(").EndFunction();
+
+        if (form->as_wxSize(prop_size) == wxDefaultSize)
+        {
+            code.Eol().FormFunction("Fit(").EndFunction();
+        }
     }
 
     bool is_focus_set = false;

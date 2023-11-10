@@ -154,14 +154,17 @@ bool PanelFormGenerator::AfterChildrenCode(Code& code)
     const auto max_size = panel->as_wxSize(prop_maximum_size);
     const auto size = panel->as_wxSize(prop_size);
 
-    if (min_size == wxDefaultSize && max_size == wxDefaultSize)
+    if (min_size == wxDefaultSize && max_size == wxDefaultSize && size == wxDefaultSize)
     {
         code.FormFunction("SetSizerAndFit(").NodeName(node).EndFunction();
     }
     else
     {
         code.FormFunction("SetSizer(").NodeName(node).EndFunction();
-        code.Eol().FormFunction("Fit(").EndFunction();
+        if (size == wxDefaultSize)
+        {
+            code.Eol().FormFunction("Fit(").EndFunction();
+        }
     }
 
     if (size != wxDefaultSize)

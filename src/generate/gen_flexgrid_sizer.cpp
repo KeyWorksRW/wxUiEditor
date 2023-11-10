@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   wxFlexGridSizer generator
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -163,12 +163,16 @@ bool FlexGridSizerGenerator::AfterChildrenCode(Code& code)
         {
             if (GetParentName(code.node()) != "this")
             {
-                code.ParentName().Function("SetSizerAndFit(").NodeName().EndFunction();
+                code.ValidParentName().Function("SetSizerAndFit(");
             }
             else
             {
-                code.FormFunction("SetSizerAndFit(").NodeName().EndFunction();
+                if (parent->as_wxSize(prop_size) == wxDefaultSize)
+                    code.FormFunction("SetSizerAndFit(");
+                else  // Don't call Fit() if size has been specified
+                    code.FormFunction("SetSizer(");
             }
+            code.NodeName().EndFunction();
         }
     }
 

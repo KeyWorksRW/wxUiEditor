@@ -183,7 +183,7 @@ bool DialogFormGenerator::AfterChildrenCode(Code& code)
     const auto min_size = form->as_wxSize(prop_minimum_size);
     const auto max_size = form->as_wxSize(prop_maximum_size);
 
-    if (min_size == wxDefaultSize && max_size == wxDefaultSize)
+    if (min_size == wxDefaultSize && max_size == wxDefaultSize && form->as_wxSize(prop_size) == wxDefaultSize)
     {
         code.FormFunction("SetSizerAndFit(").NodeName(child_node).EndFunction();
     }
@@ -198,8 +198,11 @@ bool DialogFormGenerator::AfterChildrenCode(Code& code)
         {
             code.Eol().FormFunction("SetMaxSize(").WxSize(prop_maximum_size).EndFunction();
         }
-        // EndFunction() will remove the opening paren if Ruby code
-        code.Eol().FormFunction("Fit(").EndFunction();
+
+        if (form->as_wxSize(prop_size) == wxDefaultSize)
+        {
+            code.Eol().FormFunction("Fit(").EndFunction();
+        }
     }
 
     bool is_focus_set = false;

@@ -99,7 +99,12 @@ bool PropSheetDlgGenerator::ConstructionCode(Code& code)
             code.FormFunction("SetOuterBorder(").Add(prop_outer_border).EndFunction().Eol();
         }
 
-        code.Eol(eol_if_needed) += "if (!wxPropertySheetDialog::Create(parent, id, title, pos, size, style, name))";
+        code.Eol(eol_if_needed) += "if (!";
+        if (code.node()->hasValue(prop_derived_class))
+            code.as_string(prop_derived_class);
+        else
+            code += "wxPropertySheetDialog";
+        code += "::Create(parent, id, title, pos, size, style, name))";
         code.Eol().Tab() += "return false;\n";
 
         code.Eol().Str("CreateButtons(").Add(prop_buttons).EndFunction();

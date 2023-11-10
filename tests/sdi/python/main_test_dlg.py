@@ -87,14 +87,13 @@ class MainTestDialog(wx.Dialog):
 
         grid_sizer2 = wx.GridSizer(2, 0, 0)
 
-        self.static_text = wx.StaticText(page_2, wx.ID_ANY, "12-pt default font")
-        font_info = wx.FontInfo(11.5)
-        font_info.FaceName("Segoe UI")
+        self.static_text = wx.StaticText(page_2, wx.ID_ANY, "11.5-pt default font")
+        font_info = wx.FontInfo(11.5).FaceName("Segoe UI")
         self.static_text.SetFont(wx.Font(font_info))
         grid_sizer2.Add(self.static_text, wx.SizerFlags().Border(wx.ALL))
 
-        self.static_text = wx.StaticText(page_2, wx.ID_ANY, "Comic Sans MS")
-        font_info = wx.FontInfo(10.5)
+        self.static_text = wx.StaticText(page_2, wx.ID_ANY, "Comic Sans MS -1 pt size")
+        font_info = wx.FontInfo(wx.SystemSettings.GetFont(wx.SYS_DEFAULT_GUI_FONT).GetPointSize())
         font_info.FaceName("Comic Sans MS")
         self.static_text.SetFont(wx.Font(font_info))
         grid_sizer2.Add(self.static_text, wx.SizerFlags().Border(wx.ALL))
@@ -107,8 +106,8 @@ class MainTestDialog(wx.Dialog):
 
         self.static_text3 = wx.StaticText(page_2, wx.ID_ANY,
             "bold, underlined Times New Roman, 12.5")
-        font_info = wx.FontInfo(12.5)
-        font_info.FaceName("Times New Roman").Weight(wx.FONTWEIGHT_BOLD).Underlined()
+        font_info = wx.FontInfo(12.5).FaceName("Times New Roman").Weight(
+            wx.FONTWEIGHT_BOLD).Underlined()
         self.static_text3.SetFont(wx.Font(font_info))
         grid_sizer2.Add(self.static_text3, wx.SizerFlags().Border(wx.ALL))
 
@@ -704,7 +703,7 @@ class MainTestDialog(wx.Dialog):
         box_sizer_17.Add(self.banner_left, wx.SizerFlags().Border(wx.ALL))
 
         self.banner_top = wx.adv.BannerWindow(page_7, wx.ID_ANY, wx.TOP)
-        self.banner_top.SetGradient(wx.Colour("#2B2B2B"), wx.Colour("#777777"))
+        self.banner_top.SetGradient(wx.Colour("#BFCDDB"), wx.Colour("#0078D7"))
         self.banner_top.SetText("Top Banner", "This is the top banner message")
         box_sizer_17.Add(self.banner_top, wx.SizerFlags().Border(wx.ALL))
 

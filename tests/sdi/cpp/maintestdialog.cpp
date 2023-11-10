@@ -77,7 +77,7 @@ bool MainTestDialog::Create(wxWindow* parent, wxWindowID id, const wxString& tit
 
     auto* grid_sizer2 = new wxGridSizer(2, 0, 0);
 
-    static_text = new wxStaticText(page_2, wxID_ANY, "12-pt default font");
+    static_text = new wxStaticText(page_2, wxID_ANY, "11.5-pt default font");
     {
         wxFontInfo font_info(11.5);
         font_info.FaceName("Segoe UI");
@@ -85,9 +85,9 @@ bool MainTestDialog::Create(wxWindow* parent, wxWindowID id, const wxString& tit
     }
     grid_sizer2->Add(static_text, wxSizerFlags().Border(wxALL));
 
-    m_static_text = new wxStaticText(page_2, wxID_ANY, "Comic Sans MS");
+    m_static_text = new wxStaticText(page_2, wxID_ANY, "Comic Sans MS -1 pt size");
     {
-        wxFontInfo font_info(10.5);
+        wxFontInfo font_info(wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT).GetPointSize());
         font_info.FaceName("Comic Sans MS");
         m_static_text->SetFont(wxFont(font_info));
     }

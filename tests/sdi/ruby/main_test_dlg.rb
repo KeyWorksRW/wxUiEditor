@@ -48,14 +48,15 @@ class MainTestDialog < Wx::Dialog
 
     grid_sizer2 = Wx::GridSizer.new(2, 0, 0)
 
-    @static_text = Wx::StaticText.new(page_2, Wx::ID_ANY, '12-pt default font')
-    font_info = Wx::FontInfo.new(11.5)
-    font_info.face_name('Segoe UI')
+    @static_text = Wx::StaticText.new(page_2, Wx::ID_ANY, '11.5-pt default font')
+    font_info = Wx::FontInfo.new(11.5).face_name('Segoe UI')
     @static_text.set_font(Wx::Font.new(font_info))
     grid_sizer2.add(@static_text, Wx::SizerFlags.new.border(Wx::ALL))
 
-    @static_text = Wx::StaticText.new(page_2, Wx::ID_ANY, 'Comic Sans MS')
-    font_info = Wx::FontInfo.new(10.5)
+    @static_text = Wx::StaticText.new(page_2, Wx::ID_ANY,
+      'Comic Sans MS -1 pt size')
+    font_info = Wx::FontInfo.new(Wx::SystemSettings.get_font(
+      Wx::SYS_DEFAULT_GUI_FONT).get_point_size())
     font_info.face_name('Comic Sans MS')
     @static_text.set_font(Wx::Font.new(font_info))
     grid_sizer2.add(@static_text, Wx::SizerFlags.new.border(Wx::ALL))
@@ -68,8 +69,8 @@ class MainTestDialog < Wx::Dialog
 
     @static_text3 = Wx::StaticText.new(page_2, Wx::ID_ANY,
       'bold, underlined Times New Roman, 12.5')
-    font_info = Wx::FontInfo.new(12.5)
-    font_info.face_name('Times New Roman').weight(Wx::FONTWEIGHT_BOLD).underlined()
+    font_info = Wx::FontInfo.new(12.5).face_name('Times New Roman').weight(
+      Wx::FONTWEIGHT_BOLD).underlined()
     @static_text3.set_font(Wx::Font.new(font_info))
     grid_sizer2.add(@static_text3, Wx::SizerFlags.new.border(Wx::ALL))
 
@@ -695,7 +696,7 @@ class MainTestDialog < Wx::Dialog
     box_sizer_17.add(@banner_left, Wx::SizerFlags.new.border(Wx::ALL))
 
     @banner_top = Wx::BannerWindow.new(page_7, Wx::ID_ANY, Wx::TOP)
-    @banner_top.set_gradient(Wx::Colour.new('#2B2B2B'), Wx::Colour.new('#777777'))
+    @banner_top.set_gradient(Wx::Colour.new('#BFCDDB'), Wx::Colour.new('#0078D7'))
     @banner_top.set_text('Top Banner', 'This is the top banner message')
     box_sizer_17.add(@banner_top, Wx::SizerFlags.new.border(Wx::ALL))
 

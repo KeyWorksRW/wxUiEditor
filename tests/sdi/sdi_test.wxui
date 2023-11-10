@@ -358,14 +358,14 @@
                 var_name="grid_sizer2">
                 <node
                   class="wxStaticText"
-                  label="12-pt default font"
+                  label="11.5-pt default font"
                   var_name="static_text"
                   font="Segoe UI,11.5" />
                 <node
                   class="wxStaticText"
-                  label="Comic Sans MS"
+                  label="Comic Sans MS -1 pt size"
                   var_name="m_static_text"
-                  font="Comic Sans MS,10.5" />
+                  font="Comic Sans MS,-1" />
                 <node
                   class="wxStaticText"
                   label="italic"

@@ -26,6 +26,7 @@ All notable changes to this project will be documented in this file.
 - A control within a wxDialog or wxFrame with the focus property set will now call SetFocus() after all other controls have been created.
 - Limiting the platforms for a container (such as a wxPanel) will now also limit the platforms for any child widgets.
 - C++ src_preamble contents is now placed at the top of the file instead of after the includes.
+- Custom font point size can be set to -1 to indicate that a default point size should be used.
 
 ### Fixed
 
@@ -33,6 +34,7 @@ All notable changes to this project will be documented in this file.
 - Color properties are correctly saved in a project
 - widgets set to specific platforms will also place events in a conditional block
 - For C++, widgets set to specific platforms will have the header member declarations in a conditional block
+- C++ code generation for fonts with a negative point size fixed
 
 ## [Released (1.1.2)]
 

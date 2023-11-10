@@ -2954,7 +2954,7 @@
                   inc="0.5"
                   initial="9"
                   max="72"
-                  min="4"
+                  min="-1"
                   var_name="m_spinCustomPointSize"
                   wxEVT_SPINCTRLDOUBLE="OnPointSize"
                   wxEVT_TEXT="OnEditPointSize" />
@@ -2962,7 +2962,8 @@
               <node
                 class="wxBoxSizer"
                 orientation="wxVERTICAL"
-                var_name="box_sizer_13">
+                var_name="box_sizer_13"
+                alignment="wxALIGN_BOTTOM">
                 <node
                   class="spacer"
                   height="20" />

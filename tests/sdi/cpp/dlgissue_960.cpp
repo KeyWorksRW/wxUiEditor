@@ -36,10 +36,10 @@ bool DlgIssue_960::Create(wxWindow* parent, wxWindowID id, const wxString& title
 
     auto* dlg_sizer = new wxBoxSizer(wxVERTICAL);
 
-    staticText = new wxStaticText(this, wxID_ANY,
+    m_staticText = new wxStaticText(this, wxID_ANY,
         "The following are bitmaps that have filenames which are invalid as C++ or Python variables. This is used to test resolution of issue #960.");
-    staticText->Wrap(300);
-    dlg_sizer->Add(staticText, wxSizerFlags().Border(wxALL));
+    m_staticText->Wrap(300);
+    dlg_sizer->Add(m_staticText, wxSizerFlags().Border(wxALL));
 
     auto* box_sizer = new wxBoxSizer(wxHORIZONTAL);
 

@@ -9,11 +9,14 @@ WX_GLOBAL_CONSTANTS = true unless defined? WX_GLOBAL_CONSTANTS
 
 require 'wx/core'
 
+$ISSUE_DLG_960 = 6000
+
 require_relative 'images'
 
 class DlgIssue_960 < Wx::Dialog
-  def initialize(parent, id = Wx::ID_ANY, title = '',
-                 pos = Wx::DEFAULT_POSITION, size = Wx::DEFAULT_SIZE,
+  def initialize(parent, id = $ISSUE_DLG_960, title =
+  'C’est une bonne journée pour tester', pos =
+                 Wx::DEFAULT_POSITION, size = Wx::DEFAULT_SIZE,
                  style = Wx::DEFAULT_DIALOG_STYLE)
 
     super(parent, id, title, pos, size, style)

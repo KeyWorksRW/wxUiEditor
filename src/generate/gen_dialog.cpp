@@ -44,6 +44,7 @@ wxObject* DialogFormGenerator::CreateMockup(Node* node, wxObject* parent)
 
 bool DialogFormGenerator::ConstructionCode(Code& code)
 {
+    bool dialog_units = code.node()->as_string(prop_size).contains("d", tt::CASE::either);
     if (code.is_cpp())
     {
         code.Str("bool ").as_string(prop_class_name);
@@ -63,7 +64,11 @@ bool DialogFormGenerator::ConstructionCode(Code& code)
             code.as_string(prop_derived_class);
         else
             code += "wxDialog";
-        code += "::Create(parent, id, title, pos, size, style, name))";
+        code += "::Create(parent, id, title, pos, ";
+        if (dialog_units)
+            code += "ConvertDialogToPixels(size), style, name))";
+        else
+            code += "size, style, name))";
         code.Eol().Tab() += "return false;\n";
     }
     else if (code.is_python())

@@ -118,7 +118,12 @@ bool FrameFormGenerator::SettingsCode(Code& code)
 
     if (code.is_cpp())
     {
-        code.Eol(eol_if_needed).FormFunction("if (!wxFrame::Create(").Str("parent, id, title, pos, size, style, name))");
+        code.Eol(eol_if_needed) += "if (!";
+        if (code.node()->hasValue(prop_derived_class))
+            code.as_string(prop_derived_class);
+        else
+            code += "wxFrame";
+        code += "::Create(parent, id, title, pos, size, style, name))";
         code.Eol().Tab().Str("return false;");
     }
     else if (code.is_python())

@@ -58,7 +58,12 @@ bool DialogFormGenerator::ConstructionCode(Code& code)
             code.EndFunction();
         }
 
-        code.Eol(eol_if_needed) += "if (!wxDialog::Create(parent, id, title, pos, size, style, name))";
+        code.Eol(eol_if_needed) += "if (!";
+        if (code.node()->hasValue(prop_derived_class))
+            code.as_string(prop_derived_class);
+        else
+            code += "wxDialog";
+        code += "::Create(parent, id, title, pos, size, style, name))";
         code.Eol().Tab() += "return false;\n";
     }
     else if (code.is_python())

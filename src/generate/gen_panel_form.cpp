@@ -104,7 +104,12 @@ bool PanelFormGenerator::SettingsCode(Code& code)
 {
     if (code.is_cpp())
     {
-        code.Eol(eol_if_needed).FormFunction("if (!wxPanel::Create(").Str("parent, id, pos, size, style, name))");
+        code.Eol(eol_if_needed) += "if (!";
+        if (code.node()->hasValue(prop_derived_class))
+            code.as_string(prop_derived_class);
+        else
+            code += "wxPanel";
+        code += "::Create(parent, id, pos, size, style, name))";
         code.Eol().Tab().Str("return false;\n");
     }
     else if (code.is_python())

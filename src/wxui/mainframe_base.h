@@ -51,18 +51,6 @@ namespace wxue_img
 class MainFrameBase : public wxFrame
 {
 public:
-    MainFrameBase() {}
-    MainFrameBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxEmptyString, const wxPoint& pos =
-        wxDefaultPosition, const wxSize& size = wxSize(1000, 1000), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL,
-        const wxString &name = wxFrameNameStr)
-    {
-        Create(parent, id, title, pos, size, style, name);
-    }
-
-    bool Create(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = wxEmptyString, const wxPoint& pos =
-        wxDefaultPosition, const wxSize& size = wxSize(1000, 1000), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL,
-        const wxString &name = wxFrameNameStr);
-
     enum
     {
         id_AlignBottom = wxID_HIGHEST + 1,
@@ -96,6 +84,18 @@ public:
         id_ShowHidden,
         id_insert_widget
     };
+
+    MainFrameBase() {}
+    MainFrameBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxEmptyString, const wxPoint& pos =
+        wxDefaultPosition, const wxSize& size = wxSize(1000, 1000), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL,
+        const wxString &name = wxFrameNameStr)
+    {
+        Create(parent, id, title, pos, size, style, name);
+    }
+
+    bool Create(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = wxEmptyString, const wxPoint& pos =
+        wxDefaultPosition, const wxSize& size = wxSize(1000, 1000), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL,
+        const wxString &name = wxFrameNameStr);
 
 protected:
 

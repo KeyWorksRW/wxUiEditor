@@ -36,6 +36,16 @@ namespace wxue_img
 class ToolBarsDialog : public wxDialog
 {
 public:
+    enum
+    {
+        rbn_tool1 = wxID_HIGHEST + 1,
+        rbn_tool2,
+        rbn_tool3,
+        rbn_tool_art,
+        rbn_tool_list,
+        rbn_tool_svg
+    };
+
     ToolBarsDialog() {}
     ToolBarsDialog(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "Test Dialog", const wxPoint& pos =
         wxDefaultPosition, const wxSize& size = wxDefaultSize,
@@ -47,16 +57,6 @@ public:
     bool Create(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "Test Dialog", const wxPoint& pos =
         wxDefaultPosition, const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_DIALOG_STYLE, const wxString &name = wxDialogNameStr);
-
-    enum
-    {
-        rbn_tool1 = wxID_HIGHEST + 1,
-        rbn_tool2,
-        rbn_tool3,
-        rbn_tool_art,
-        rbn_tool_list,
-        rbn_tool_svg
-    };
 
 protected:
 

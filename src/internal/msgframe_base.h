@@ -29,6 +29,13 @@
 class MsgFrameBase : public wxFrame
 {
 public:
+    enum
+    {
+        id_event_msgs = wxID_HIGHEST + 1,
+        id_hide,
+        id_warning_msgs
+    };
+
     MsgFrameBase() {}
     MsgFrameBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = "wxUiEditor Messages",
         const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
@@ -40,13 +47,6 @@ public:
     bool Create(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "wxUiEditor Messages",
         const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL, const wxString &name = wxFrameNameStr);
-
-    enum
-    {
-        id_event_msgs = wxID_HIGHEST + 1,
-        id_hide,
-        id_warning_msgs
-    };
 
 protected:
 

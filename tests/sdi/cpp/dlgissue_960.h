@@ -16,29 +16,38 @@
 class DlgIssue_960 : public wxDialog
 {
 public:
-    static const int form_id = wxID_ANY;
+    wxStaticText* m_staticText;  // Test of a public member
+
+    enum
+    {
+        ISSUE_DLG_960 = wxID_HIGHEST + 1
+    };
+
+    static const int form_id = ISSUE_DLG_960;
     static const int form_style = wxDEFAULT_DIALOG_STYLE;
     static const wxPoint form_pos() { return wxDefaultPosition; }
     static const wxSize form_size() { return  wxDefaultSize; }
-    static const wxString form_title() { return wxEmptyString; }
+    static const wxString form_title() { return wxString::FromUTF8("C’est une bonne journée pour tester"); }
 
     DlgIssue_960() {}
-    DlgIssue_960(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = wxEmptyString, const wxPoint& pos =
-        wxDefaultPosition, const wxSize& size = wxDefaultSize,
+    DlgIssue_960(wxWindow *parent, wxWindowID id = ISSUE_DLG_960, const wxString& title =
+        wxString::FromUTF8("C’est une bonne journée pour tester"), const wxPoint& pos = wxDefaultPosition,
+        const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_DIALOG_STYLE, const wxString &name = wxDialogNameStr)
     {
         Create(parent, id, title, pos, size, style, name);
     }
 
-    bool Create(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = wxEmptyString, const wxPoint& pos =
-        wxDefaultPosition, const wxSize& size = wxDefaultSize,
+    bool Create(wxWindow *parent, wxWindowID id = ISSUE_DLG_960, const wxString& title =
+        wxString::FromUTF8("C’est une bonne journée pour tester"), const wxPoint& pos = wxDefaultPosition,
+        const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_DIALOG_STYLE, const wxString &name = wxDialogNameStr);
+
+    // This is inserted_hdr_code
 
 protected:
 
-    // Class member variables
-
-    wxStaticText* staticText;
+    wxString m_my_string;  // This is an additional class member
 };
 
 // ************* End of generated code ***********

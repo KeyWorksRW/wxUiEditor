@@ -24,9 +24,6 @@ namespace wxue_img
 class NavToolbar : public wxToolBar
 {
 public:
-    NavToolbar(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size =
-        wxDefaultSize, long style = wxTB_FLAT|wxTB_HORIZONTAL, const wxString &name = wxPanelNameStr);
-
     enum
     {
         id_NavCollExpand = wxID_HIGHEST + 1,
@@ -37,6 +34,9 @@ public:
         id_NavMoveRight,
         id_NavMoveUp
     };
+
+    NavToolbar(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size =
+        wxDefaultSize, long style = wxTB_FLAT|wxTB_HORIZONTAL, const wxString &name = wxPanelNameStr);
 
 protected:
 };

@@ -19,6 +19,13 @@
 class GridPropertyDlg : public wxDialog
 {
 public:
+    enum
+    {
+        id_DeleteRow = wxID_HIGHEST + 1,
+        id_NewRow,
+        id_UndoDeleteRow
+    };
+
     GridPropertyDlg() {}
     GridPropertyDlg(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "Property Editor",
         const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
@@ -30,13 +37,6 @@ public:
     bool Create(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "Property Editor", const wxPoint& pos =
         wxDefaultPosition, const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_DIALOG_STYLE, const wxString &name = wxDialogNameStr);
-
-    enum
-    {
-        id_DeleteRow = wxID_HIGHEST + 1,
-        id_NewRow,
-        id_UndoDeleteRow
-    };
 
 protected:
 

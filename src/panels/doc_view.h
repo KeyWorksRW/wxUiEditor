@@ -22,6 +22,13 @@ class MainFrame;
 class DocViewPanel : public wxPanel
 {
 public:
+    enum
+    {
+        ID_CPLUS = wxID_HIGHEST + 1,
+        ID_PYTHON,
+        ID_RUBY
+    };
+
     DocViewPanel() {}
     DocViewPanel(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size =
         wxDefaultSize, long style = 0, const wxString &name = wxPanelNameStr)
@@ -31,13 +38,6 @@ public:
 
     bool Create(wxWindow *parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size =
         wxDefaultSize, long style = 0, const wxString &name = wxPanelNameStr);
-
-    enum
-    {
-        ID_CPLUS = wxID_HIGHEST + 1,
-        ID_PYTHON,
-        ID_RUBY
-    };
 
 protected:
 
@@ -65,8 +65,8 @@ private:
 // Code below this comment block will be preserved
 // if the code for this class is re-generated.
 //
-    // clang-format on
-    // ***********************************************
+// clang-format on
+// ***********************************************
 
 public:
     DocViewPanel(wxWindow* parent, MainFrame* frame);

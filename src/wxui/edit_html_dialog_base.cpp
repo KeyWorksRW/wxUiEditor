@@ -64,7 +64,7 @@ bool EditHtmlDialogBase::Create(wxWindow* parent, wxWindowID id, const wxString&
     auto* stdBtn_2 = CreateStdDialogButtonSizer(wxOK|wxCANCEL);
     parent_sizer->Add(CreateSeparatedSizer(stdBtn_2), wxSizerFlags().Expand().Border(wxALL));
 
-    SetSizerAndFit(parent_sizer);
+    SetSizer(parent_sizer);
     Centre(wxBOTH);
 
     wxPersistentRegisterAndRestore(this, "EditHtmlDialogBase");

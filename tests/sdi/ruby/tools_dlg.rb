@@ -112,6 +112,31 @@ class ToolBarsDialog < Wx::Dialog
     evt_init_dialog(:on_init)
     evt_tool(@tool_svg.get_id, :OnTool)
   end
+
+  # Loads image(s) from a string and returns a Wx::BitmapBundle object.
+  def wxue_get_bundle(image_name1, image_name2 = nil, image_name3 = nil)
+    image1 = Wx::Image.new
+    image1.load_stream(StringIO.new(image_name1))
+    if (image_name2)
+      image2 = Wx::Image.new
+      image2.load_stream(StringIO.new(image_name2))
+      if (image_name3)
+        image3 = Wx::Image.new
+        image3.load_stream(StringIO.new(image_name3))
+        bitmaps = [Wx::Bitmap.new(image1),
+                   Wx::Bitmap.new(image2),
+                   Wx::Bitmap.new(image3)]
+        bundle = Wx::BitmapBundle.from_bitmaps(bitmaps)
+        return bundle
+      else
+        bundle = Wx::BitmapBundle.from_bitmaps(Wx::Bitmap.new(image1),
+                                               Wx::Bitmap.new(image2))
+        return bundle
+      end
+    end
+    bundle = Wx::BitmapBundle.from_image(image1)
+    return bundle
+  end
 end
 
 $left_svg = (

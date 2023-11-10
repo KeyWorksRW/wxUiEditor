@@ -154,7 +154,7 @@ bool MainFrameBase::Create(wxWindow* parent, wxWindowID id, const wxString& titl
     m_right_panel_sizer = new wxBoxSizer(wxVERTICAL);
     m_panel_right->SetSizerAndFit(m_right_panel_sizer);
     m_MainSplitter->SplitVertically(m_nav_panel, m_panel_right);
-    SetSizerAndFit(m_mainframe_sizer);
+    SetSizer(m_mainframe_sizer);
 
     m_menubar = new wxMenuBar();
 

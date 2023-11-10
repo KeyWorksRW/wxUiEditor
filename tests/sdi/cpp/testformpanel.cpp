@@ -42,7 +42,7 @@ bool TestFormPanel::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos, 
     m_panel2->SetSizerAndFit(parent_sizer3);
     m_splitter->SplitVertically(panel, m_panel2);
 
-    SetSizerAndFit(parent_sizer);
+    SetSizer(parent_sizer);
     SetSize(wxSize(500, 300));
 
     return true;

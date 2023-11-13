@@ -124,6 +124,19 @@ if (MSVC)
         set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
     endif()
 else()
+    # Use the package PkgConfig to detect GTK+ headers/library files
+    find_package(PkgConfig REQUIRED)
+
+    pkg_check_modules(GTK3 REQUIRED gtk+-3.0)
+    include_directories(${GTK3_INCLUDE_DIRS})
+    link_directories(${GTK3_LIBRARY_DIRS})
+    add_definitions(${GTK3_CFLAGS_OTHER})
+
+    pkg_check_modules(X11 REQUIRED x11)
+    include_directories(${X11_INCLUDE_DIRS})
+    link_directories(${X11_LIBRARY_DIRS})
+    add_definitions(${X11_CFLAGS_OTHER})
+
     # This should work for gcc and clang (including xcode which is based on clang)
     # -O2 can result in faster code than -O3 due to CPU caching.
     string(REPLACE "-O3" "-O2" cl_optimize "${CMAKE_CXX_FLAGS_RELEASE}")
@@ -248,27 +261,13 @@ endif()
 
 if (UNIX)
     set(SYSTEM_LIBS
-        gtk-3
-        gdk-3
-        pangocairo-1.0
-        pango-1.0
-        cairo-gobject
-        cairo
-        gdk_pixbuf-2.0
-        gio-2.0
-        gobject-2.0
-        glib-2.0
-
-        /usr/lib/x86_64-linux-gnu/libtiff.so.5
+        ${GTK3_LIBRARIES}
+        ${X11_LIBRARIES}
         pthread
-
-        X11
-        Xext
-        Xtst
+        png
         dl
-
-        wayland-egl
-        wayland-client
+        # use static version so this works on older versions of Linux
+        libstdc++.a
     )
 elseif (WIN32)
     set(SYSTEM_LIBS comctl32 Imm32 Shlwapi Version UxTheme)

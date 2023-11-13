@@ -219,6 +219,10 @@ bool GenerateCodeFiles(GenResults& results, std::vector<tt_string>* pClassList)
     tt_cwd cwd(true);
     Project.ChangeDir();
 
+#if defined(_DEBUG) || defined(INTERNAL_TESTING)
+    results.StartClock();
+#endif
+
     if (Project.as_bool(prop_generate_cmake) && !pClassList)
     {
         for (auto& iter: Project.getChildNodePtrs())
@@ -286,9 +290,6 @@ bool GenerateCodeFiles(GenResults& results, std::vector<tt_string>* pClassList)
     size_t thread_idx = 0;
 #endif
 
-#if defined(_DEBUG) || defined(INTERNAL_TESTING)
-    results.StartClock();
-#endif
     for (const auto& form: forms)
     {
 #if defined(THREADED_CODE_GEN)

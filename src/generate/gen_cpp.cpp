@@ -44,6 +44,11 @@ wxImage wxueImage(const unsigned char* data, size_t size_data)
 };
 )===";
 
+inline constexpr const auto txt_extern_wxueImageFunction = R"===(
+// Convert a data array into a wxImage
+wxImage wxueImage(const unsigned char* data, size_t size_data);
+)===";
+
 inline constexpr const auto txt_GetBundleFromSVG = R"===(
 // Convert compressed SVG string into a wxBitmapBundle
 wxBitmapBundle wxueBundleSVG(const unsigned char* data,
@@ -56,6 +61,11 @@ wxBitmapBundle wxueBundleSVG(const unsigned char* data,
     return wxBitmapBundle::FromSVG(str.get(), def_size);
 };
 )===";
+inline constexpr const auto txt_extern_GetBundleFromSVG = R"===(
+// Convert compressed SVG string into a wxBitmapBundle
+wxBitmapBundle wxueBundleSVG(const unsigned char* data,
+    size_t size_data, size_t size_svg, wxSize def_size);
+)===";
 
 inline constexpr const auto txt_GetAnimFromHdrFunction = R"===(
 // Convert a data array into a wxAnimation
@@ -66,6 +76,11 @@ wxAnimation wxueAnimation(const unsigned char* data, size_t size_data)
     animation.Load(strm);
     return animation;
 };
+)===";
+
+inline constexpr const auto txt_extern_GetAnimFromHdrFunction = R"===(
+// Convert a data array into a wxAnimation
+wxAnimation wxueAnimation(const unsigned char* data, size_t size_data);
 )===";
 
 inline constexpr const auto txt_BaseCmtBlock =
@@ -572,7 +587,8 @@ void BaseCodeGenerator::GenerateCppClass(PANEL_PAGE panel_type)
         if (m_NeedImageFunction || m_NeedHeaderFunction)
         {
             tt_string_vector function;
-            function.ReadString(txt_wxueImageFunction);
+            function.ReadString(Project.getForm_Image() == m_form_node ? txt_wxueImageFunction :
+                                                                         txt_extern_wxueImageFunction);
             for (auto& iter: function)
             {
                 m_source->writeLine(iter, indent::none);
@@ -594,7 +610,8 @@ void BaseCodeGenerator::GenerateCppClass(PANEL_PAGE panel_type)
             }
 
             tt_string_vector function;
-            function.ReadString(txt_GetBundleFromSVG);
+            function.ReadString(Project.getForm_BundleSVG() == m_form_node ? txt_GetBundleFromSVG :
+                                                                             txt_extern_GetBundleFromSVG);
             for (auto& iter: function)
             {
                 m_source->writeLine(iter, indent::none);
@@ -605,7 +622,8 @@ void BaseCodeGenerator::GenerateCppClass(PANEL_PAGE panel_type)
         if (m_NeedAnimationFunction)
         {
             tt_string_vector function;
-            function.ReadString(txt_GetAnimFromHdrFunction);
+            function.ReadString(Project.getForm_Animation() == m_form_node ? txt_GetAnimFromHdrFunction :
+                                                                             txt_extern_GetAnimFromHdrFunction);
             for (auto& iter: function)
             {
                 m_source->writeLine(iter, indent::none);
@@ -698,7 +716,7 @@ void BaseCodeGenerator::GenerateCppClassHeader()
             m_header->writeLine("#include <memory>  // for std::make_unique", indent::none);
         }
 
-        if (m_NeedImageFunction || m_NeedHeaderFunction)
+        if ((m_NeedImageFunction && Project.getForm_Image() == m_form_node) || m_NeedHeaderFunction)
         {
             tt_string_vector function;
             function.ReadString(txt_wxueImageFunction);
@@ -709,7 +727,7 @@ void BaseCodeGenerator::GenerateCppClassHeader()
             m_header->writeLine();
         }
 
-        if (m_NeedSVGFunction)
+        if (m_NeedSVGFunction && Project.getForm_BundleSVG() != m_form_node)
         {
             if (Project.as_string(prop_wxWidgets_version) == "3.1")
             {
@@ -731,7 +749,7 @@ void BaseCodeGenerator::GenerateCppClassHeader()
             m_header->writeLine();
         }
 
-        if (m_NeedAnimationFunction)
+        if (m_NeedAnimationFunction && Project.getForm_Animation() != m_form_node)
         {
             tt_string_vector function;
             function.ReadString(txt_GetAnimFromHdrFunction);

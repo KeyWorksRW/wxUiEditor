@@ -219,7 +219,7 @@ void BaseCodeGenerator::WriteImageConstruction(Code& code)
 
 inline constexpr const auto txt_wxueImageFunction = R"===(
 // Convert a data array into a wxImage
-inline wxImage wxueImage(const unsigned char* data, size_t size_data)
+wxImage wxueImage(const unsigned char* data, size_t size_data)
 {
     wxMemoryInputStream strm(data, size_data);
     wxImage image;

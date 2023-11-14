@@ -35,7 +35,7 @@ extern std::map<wxBitmapType, std::string> g_map_types;
 
 inline constexpr const auto txt_wxueImageFunction = R"===(
 // Convert a data array into a wxImage
-inline wxImage wxueImage(const unsigned char* data, size_t size_data)
+wxImage wxueImage(const unsigned char* data, size_t size_data)
 {
     wxMemoryInputStream strm(data, size_data);
     wxImage image;
@@ -46,7 +46,7 @@ inline wxImage wxueImage(const unsigned char* data, size_t size_data)
 
 inline constexpr const auto txt_GetBundleFromSVG = R"===(
 // Convert compressed SVG string into a wxBitmapBundle
-inline wxBitmapBundle wxueBundleSVG(const unsigned char* data,
+wxBitmapBundle wxueBundleSVG(const unsigned char* data,
     size_t size_data, size_t size_svg, wxSize def_size)
 {
     auto str = std::make_unique<char[]>(size_svg);
@@ -59,7 +59,7 @@ inline wxBitmapBundle wxueBundleSVG(const unsigned char* data,
 
 inline constexpr const auto txt_GetAnimFromHdrFunction = R"===(
 // Convert a data array into a wxAnimation
-inline wxAnimation wxueAnimation(const unsigned char* data, size_t size_data)
+wxAnimation wxueAnimation(const unsigned char* data, size_t size_data)
 {
     wxMemoryInputStream strm(data, size_data);
     wxAnimation animation;

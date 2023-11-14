@@ -261,6 +261,7 @@ bool GenerateCodeFiles(GenResults& results, std::vector<tt_string>* pClassList)
 
     std::vector<Node*> forms;
     Project.CollectForms(forms);
+    Project.FindWxueFunctions(forms);
 
     GenData gen_data(results, pClassList);
     gen_data.source_ext = source_ext;

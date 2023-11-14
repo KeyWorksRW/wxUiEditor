@@ -17,30 +17,49 @@ else()
     message(NOTICE "Building with wxWidgets static libraries")
 endif()
 
-# This option is designed to make it possible to check changes to a wxWidgets fork, and/or to
-# build with the current wxWidgets sources (assuming the wxWidgets fork is in sync).
-# Realistically, this is only going to be usable by the maintainers of this project.
+# Fork and Custom assume a repository at the same level as wxUiEditor. Both are
+# assumed to be built from wxWidgets 3.3 sources and that they have their own
+# custom setup.h files.
 
 option(BUILD_FORK "Builds wxWidgets using wxWidgets/wx_3_3")
-
 option(BUILD_CUSTOM "Builds with custom version of wxWidgets")
+option(BUILD_WIDGETS_3_2 "Builds with wxWidgets 3.2")
 
-if (BUILD_CUSTOM AND BUILD_FORK)
-    message(FATAL_ERROR "BUILD_FORK and BUILD_CUSTOM cannot be combined")
+if (BUILD_WIDGETS_3_2)
+    if (BUILD_CUSTOM AND BUILD_FORK)
+        message(FATAL_ERROR "BUILD_FORK and BUILD_CUSTOM cannot be combined")
+    endif()
 endif()
 
 if (BUILD_FORK)
+    if (BUILD_CUSTOM OR BUILD_WIDGETS_3_2)
+        message(FATAL_ERROR "BUILD_FORK cannot be combined with BUILD_WIDGETS_3_2 or BUILD_CUSTOM")
+    endif()
+endif()
+
+if (BUILD_CUSTOM)
+    if (BUILD_FORK OR BUILD_WIDGETS_3_2)
+        message(FATAL_ERROR "BUILD_CUSTOM cannot be combined with BUILD_WIDGETS_3_2 or BUILD_FORK")
+    endif()
+endif()
+
+if (BUILD_FORK)
+    # Assume the forked/cloned repository is at the same level as wxUiEditor
     set(BUILD_ROOT ${BUILD_FORK_DIR} CACHE PATH "${CMAKE_CURRENT_LIST_DIR}/../../../wxWidgets" FORCE)
     message(NOTICE "Building with forked/cloned version of wxWidgets: ${BUILD_ROOT}")
 elseif (BUILD_CUSTOM)
-    set(BUILD_ROOT ${BUILD_CUSTOM_DIR} CACHE PATH "${CMAKE_CURRENT_LIST_DIR}/../" FORCE)
+    # Assume the original wxSnapshot repository is at the same level as wxUiEditor
+    set(BUILD_ROOT ${BUILD_CUSTOM_DIR} CACHE PATH "${CMAKE_CURRENT_LIST_DIR}/../../../wxSnapshot" FORCE)
     message(NOTICE "Building with custom build of wxWidgets")
+elseif (BUILD_WIDGETS_3_2)
+    set(BUILD_ROOT "${CMAKE_CURRENT_LIST_DIR}/../../wxWidgets")
+    message(NOTICE "Building with wxWidgets 3.2")
 else()
-    set(BUILD_ROOT wxWidgets CACHE PATH "wxWidgets" FORCE)
+    set(BUILD_ROOT "${CMAKE_CURRENT_LIST_DIR}/../../wxSnapshot")
+    message(NOTICE "Building with wxSnapshot 3.3")
 endif()
 
-option(INTERNAL_DARK_MODE "Enable dark mode (used with wxWidgets 3.3 in _WIN32 builds)" OFF)
-option(INTERNAL_DARK_HIGH_CONTRAST "Enable dark mode high contrast (used with wxWidgets 3.3 in _WIN32 builds)" OFF)
+option(INTERNAL_DARK_MODE "Enable dark mode (used with wxWidgets 3.3 in WIN32 builds)" OFF)
 
 ####################### Check for Multi-Config Generator #######################
 
@@ -61,7 +80,7 @@ endif()
 
 ####################### General Settings #######################
 
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
@@ -79,36 +98,52 @@ if (MSVC)
     if (NOT BUILD_SHARED_LIBS)
         set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
     endif()
+else()
+    # Use the package PkgConfig to detect GTK+ headers/library files
+    find_package(PkgConfig REQUIRED)
+
+    pkg_check_modules(GTK3 REQUIRED gtk+-3.0)
+    include_directories(${GTK3_INCLUDE_DIRS})
+    link_directories(${GTK3_LIBRARY_DIRS})
+    add_definitions(${GTK3_CFLAGS_OTHER})
+
+    pkg_check_modules(X11 REQUIRED x11)
+    include_directories(${X11_INCLUDE_DIRS})
+    link_directories(${X11_LIBRARY_DIRS})
+    add_definitions(${X11_CFLAGS_OTHER})
+
+    # This should work for gcc and clang (including xcode which is based on clang)
+    # -O2 can result in faster code than -O3 due to CPU caching.
+    string(REPLACE "-O3" "-O2" cl_optimize "${CMAKE_CXX_FLAGS_RELEASE}")
+    set(CMAKE_CXX_FLAGS_RELEASE ${cl_optimize} CACHE STRING "C++ Release flags" FORCE)
 endif()
 
 add_compile_definitions($<$<CONFIG:Release>:NDEBUG>)
 
 ####################### Set wxWidgets location macros #######################
 
-if (BUILD_FORK)
-    set (widget_dir ${CMAKE_CURRENT_LIST_DIR}/../../wxWidgets/wx_3_3)
-elseif(BUILD_CUSTOM)
-    set (widget_dir ${CMAKE_CURRENT_LIST_DIR}/../../wxWidgets/wx_custom)
-else()
-    set (widget_dir ${CMAKE_CURRENT_LIST_DIR}/../../wxWidgets/wx_3_2)
-endif()
-
-
 if (WIN32)
     if (BUILD_FORK)
         set(setup_dir ${CMAKE_CURRENT_LIST_DIR}/../../wxWidgets/wx_3_3/setup/win)
     elseif(BUILD_CUSTOM)
-        set(setup_dir ${CMAKE_CURRENT_LIST_DIR}/../../wxWidgets/wx_custom/setup/win)
-    else()
+        set(setup_dir ${BUILD_CUSTOM_DIR}/win)
+    elseif(BUILD_WIDGETS_3_2)
         set(setup_dir ${CMAKE_CURRENT_LIST_DIR}/../../wxWidgets/wx_3_2/setup/win)
+    else()
+        set(setup_dir ${CMAKE_CURRENT_LIST_DIR}/../../wxSnapshot/win)
     endif()
-else()
-    if (NOT BUILD_FORK)
-        set(setup_dir ${CMAKE_CURRENT_LIST_DIR}/../../wxWidgets/wx_3_3/setup/unix)
+elseif (UNIX)
+    if (BUILD_FORK)
+        set(setup_dir ${BUILD_FORK_DIR}/unix)
+    elseif(BUILD_CUSTOM)
+        set(setup_dir ${BUILD_CUSTOM_DIR}/unix)
+    else()
+        set(setup_dir ${CMAKE_CURRENT_LIST_DIR}/../../wxSnapshot/unix)
     endif()
 endif()
 
-message(STATUS "widget_dir: ${widget_dir}")
+message(STATUS "BUILD_ROOT: ${BUILD_ROOT}")
+message(STATUS "setup_dir: ${setup_dir}")
 
 ####################### Libraries and Executables #######################
 
@@ -130,9 +165,23 @@ else()
 endif()
 
 if (WIN32)
-    target_link_libraries(QuickTest PRIVATE wxWidgets ${CLib} comctl32 Imm32 Shlwapi Version UxTheme)
+    set(SYSTEM_LIBS comctl32 Imm32 Shlwapi Version UxTheme)
+elseif (UNIX)
+    set(SYSTEM_LIBS
+        ${GTK3_LIBRARIES}
+        ${X11_LIBRARIES}
+        pthread
+        png
+        dl
+        # use static version so this works on older versions of Linux
+        libstdc++.a
+    )
+endif()
+
+if (BUILD_WIDGETS_3_2)
+    target_link_libraries(QuickTest PRIVATE wxWidgets wxCLib ${SYSTEM_LIBS})
 else()
-    target_link_libraries(QuickTest PRIVATE wxWidgets ${CLib})
+    target_link_libraries(QuickTest PRIVATE wxWidgets33 wxCLib ${SYSTEM_LIBS})
 endif()
 
 if (MSVC)
@@ -150,15 +199,33 @@ endif()
 target_precompile_headers(QuickTest PRIVATE "cpp/pch.h")
 
 target_include_directories(QuickTest PRIVATE
-    # ${BUILD_ROOT}/include
-    ${CMAKE_CURRENT_LIST_DIR}/../../../wxWidgets/include
+    ${BUILD_ROOT}/include
     ${setup_dir}
+
     ${CMAKE_CURRENT_LIST_DIR}/cpp
 )
 
 # Note that we do not build these libraries -- we assume they are already built
 # when wxUiEditor was built.
-target_link_directories(QuickTest PRIVATE
-    $<$<CONFIG:Debug>:${CMAKE_CURRENT_LIST_DIR}/../../build/stage/lib/Debug>
-    $<$<CONFIG:Release>:${CMAKE_CURRENT_LIST_DIR}/../../build/stage/lib/Release>
-)
+
+if(BUILD_FORK)
+    target_link_directories(QuickTest PRIVATE
+        $<$<CONFIG:Debug>:${CMAKE_CURRENT_LIST_DIR}/../../../bld/build/Debug>
+        $<$<CONFIG:Release>:${CMAKE_CURRENT_LIST_DIR}/../../../bld/build/Release>
+    )
+elseif(BUILD_CUSTOM)
+    target_link_directories(QuickTest PRIVATE
+        $<$<CONFIG:Debug>:${BUILD_CUSTOM_DIR}/build/Debug>
+        $<$<CONFIG:Release>:${BUILD_CUSTOM_DIR}/build/Release>
+    )
+elseif(BUILD_WIDGETS_3_2)
+    target_link_directories(QuickTest PRIVATE
+        $<$<CONFIG:Debug>:${CMAKE_CURRENT_LIST_DIR}/../../wxWidgets/wx_3_2/build/Debug>
+        $<$<CONFIG:Release>:${BUILD_CUSTOM_DIR}/../../wxWidgets/wx_3_2/build/Release>
+    )
+else()
+    target_link_directories(QuickTest PRIVATE
+        $<$<CONFIG:Debug>:${CMAKE_CURRENT_LIST_DIR}/../../build/stage/lib/Debug>
+        $<$<CONFIG:Release>:${CMAKE_CURRENT_LIST_DIR}/../../build/stage/lib/Release>
+    )
+endif()

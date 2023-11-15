@@ -15,7 +15,7 @@
 #include <memory>  // for std::make_unique
 
 // Convert compressed SVG string into a wxBitmapBundle
-inline wxBitmapBundle wxueBundleSVG(const unsigned char* data,
+wxBitmapBundle wxueBundleSVG(const unsigned char* data,
     size_t size_data, size_t size_svg, wxSize def_size)
 {
     auto str = std::make_unique<char[]>(size_svg);
@@ -26,7 +26,7 @@ inline wxBitmapBundle wxueBundleSVG(const unsigned char* data,
 };
 
 // Convert a data array into a wxImage
-inline wxImage wxueImage(const unsigned char* data, size_t size_data)
+wxImage wxueImage(const unsigned char* data, size_t size_data)
 {
     wxMemoryInputStream strm(data, size_data);
     wxImage image;
@@ -35,7 +35,7 @@ inline wxImage wxueImage(const unsigned char* data, size_t size_data)
 };
 
 // Convert multiple bitmaps into a wxBitmapBundle
-inline wxBitmapBundle wxueBundleBitmaps(const wxBitmap& bmp1, const wxBitmap& bmp2, const wxBitmap& bmp3)
+wxBitmapBundle wxueBundleBitmaps(const wxBitmap& bmp1, const wxBitmap& bmp2, const wxBitmap& bmp3)
 {
     wxVector<wxBitmap> bitmaps;
     if (bmp1.IsOk())

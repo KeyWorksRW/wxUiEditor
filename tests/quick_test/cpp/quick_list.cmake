@@ -5,9 +5,9 @@ set (file_list
 
     mainapp.cpp
     main_frame.cpp
-    test_dlg.cpp
-    wizard.cpp
 )
+
+# ../quick_test/quick_code.cmake
 
 set (other_files
     python/py_main.py

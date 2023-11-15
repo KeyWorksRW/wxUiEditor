@@ -403,20 +403,28 @@ void ProjectHandler::FindWxueFunctions(std::vector<Node*>& forms)
                         if (iter.type() == type_animation)
                         {
                             if (!m_form_Animation)
-                                m_form_Animation = child->getForm();
+                            {
+                                m_form_Animation = m_ImagesForm ? m_ImagesForm : child->getForm();
+                            }
                         }
                         else
                         {
                             if (!m_form_Image)
-                                m_form_Image = child->getForm();
+                            {
+                                m_form_Image = m_ImagesForm ? m_ImagesForm : child->getForm();
+                            }
                             if (!m_form_BundleBitmaps && ProjectImages.GetPropertyImageBundle(parts))
-                                m_form_BundleBitmaps = child->getForm();
+                            {
+                                m_form_BundleBitmaps = m_ImagesForm ? m_ImagesForm : child->getForm();
+                            }
                         }
                     }
                     else if ((parts[IndexType] == "SVG"))
                     {
                         if (!m_form_BundleSVG)
-                            m_form_BundleSVG = child->getForm();
+                        {
+                            m_form_BundleSVG = m_ImagesForm ? m_ImagesForm : child->getForm();
+                        }
                     }
 
                     if (m_form_Animation && m_form_BundleSVG && m_form_BundleBitmaps && m_form_Image)
@@ -441,9 +449,16 @@ void ProjectHandler::FindWxueFunctions(std::vector<Node*>& forms)
     m_form_BundleBitmaps = nullptr;
     m_form_Image = nullptr;
     m_form_Animation = nullptr;
+    m_ImagesForm = nullptr;
 
     for (auto form: forms)
     {
+        if (form->isGen(gen_Images))
+        {
+            m_ImagesForm = form;
+            continue;
+        }
+
         if (form->hasValue(prop_icon))
         {
             tt_string_vector parts(form->as_string(prop_icon), BMP_PROP_SEPARATOR, tt::TRIM::both);

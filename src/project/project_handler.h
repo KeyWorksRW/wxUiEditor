@@ -178,6 +178,7 @@ private:
     Node* m_form_Image { nullptr };
     Node* m_form_BundleBitmaps { nullptr };
     Node* m_form_Animation { nullptr };
+    Node* m_ImagesForm { nullptr };
 
     tt_string m_projectFile;
     tt_string m_projectPath;

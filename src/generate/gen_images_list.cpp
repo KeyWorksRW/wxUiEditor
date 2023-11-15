@@ -10,7 +10,7 @@
 #include <wx/statbmp.h>   // wxStaticBitmap class interface
 #include <wx/stattext.h>  // wxStaticText base header
 
-#include "images_list.h"
+#include "gen_images_list.h"
 
 #include "bitmaps.h"          // Contains various images handling functions
 #include "gen_base.h"         // BaseCodeGenerator -- Generate Src and Hdr files for Base Class

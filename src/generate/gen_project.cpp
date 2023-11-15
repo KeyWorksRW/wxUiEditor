@@ -20,7 +20,7 @@
 
 #include "../panels/navpopupmenu.h"  // NavPopupMenu -- Context-menu for Navigation Panel
 
-#include "project.h"
+#include "gen_project.h"
 
 bool ProjectGenerator::PopupMenuAddCommands(NavPopupMenu* menu, Node* /* node */)
 {

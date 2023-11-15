@@ -9,7 +9,7 @@
 
 #include "../panels/nav_panel.h"     // NavigationPanel -- Navigation Panel
 #include "../panels/ribbon_tools.h"  // RibbonPanel -- Displays component tools in a wxRibbonBar
-#include "images_list.h"             // ImagesGenerator -- Images List Embedded images generator
+#include "gen_images_list.h"             // ImagesGenerator -- Images List Embedded images generator
 #include "mainframe.h"               // MainFrame -- Main window frame
 #include "node_creator.h"            // NodeCreator class
 #include "node_decl.h"               // NodeDeclaration class

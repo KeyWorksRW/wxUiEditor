@@ -20,7 +20,7 @@
 #include "project_handler.h"      // ProjectHandler class
 #include "utils.h"                // Utility functions that work with properties
 
-#include "generate/images_list.h"  // Needed for GatherImages() declaration
+#include "generate/gen_images_list.h"  // Needed for GatherImages() declaration
 
 ///////////////////////////////// InsertNodeAction ////////////////////////////////////
 

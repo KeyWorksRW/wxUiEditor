@@ -13,7 +13,7 @@
 #include <wx/sizer.h>              // provide wxSizer class for layout
 #include <wx/stc/stc.h>            // A wxWidgets implementation of Scintilla.
 
-#include "styled_text.h"
+#include "gen_styled_text.h"
 
 #include "gen_common.h"    // GeneratorLibrary -- Generator classes
 #include "node.h"          // Node class

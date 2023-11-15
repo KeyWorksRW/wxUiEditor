@@ -71,8 +71,10 @@ set (file_list
     generate/base_generator.cpp    # Base widget generator class
     generate/gen_initialize.cpp    # Initialize all widget generate classes
     generate/gen_common.cpp        # Common widget generation functions
+
     generate/gen_xrc_utils.cpp     # Common XRC generating functions
     generate/gen_book_utils.cpp    # Common Book utilities
+    generate/utils_prop_grid.cpp   # PropertyGrid utilities
 
     ############################# begin generators ##############################
 
@@ -94,13 +96,11 @@ set (file_list
     # can be used in a Dialog or Frame, then the generator must also be able to
     # create a preview of the object for the Preview display.
 
-    generate/images_list.cpp       # Images List Embedded images generator
-    generate/project.cpp           # Project generator
+    generate/gen_images_list.cpp   # Images List Embedded images generator
+    generate/gen_project.cpp       # Project generator
 
     generate/dataview_widgets.cpp  # wxDataView generation classes
-    generate/styled_text.cpp       # wxStyledText (scintilla) generate
-
-    generate/utils_prop_grid.cpp   # PropertyGrid utilities
+    generate/gen_styled_text.cpp   # wxStyledText (scintilla) generate
 
     # Misc widgets
 
@@ -258,6 +258,7 @@ set (file_list
     # Dialogs for creating new forms
 
     newdialogs/new_common.cpp   # Contains code common between all new_ dialogs
+
     # (generated) newdialogs/new_dialog.cpp     # Dialog for creating a new project dialog
     # (generated) newdialogs/new_frame.cpp      # Dialog for creating a new project wxFrame
     # (generated) newdialogs/new_mdi.cpp        # Dialog for creating a new MDI application

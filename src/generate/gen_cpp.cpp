@@ -571,11 +571,12 @@ void BaseCodeGenerator::GenerateCppClass(PANEL_PAGE panel_type)
         {
             m_source->writeLine("#include <wx/animate.h>", indent::none);
         }
-        if (m_NeedImageFunction || m_NeedHeaderFunction || m_NeedSVGFunction || m_NeedAnimationFunction)
+        if (!Project.getImagesForm() &&
+            (m_NeedImageFunction || m_NeedHeaderFunction || m_NeedSVGFunction || m_NeedAnimationFunction))
         {
             m_source->writeLine("\n#include <wx/mstream.h>  // memory stream classes", indent::none);
         }
-        if (m_NeedSVGFunction)
+        if (!Project.getImagesForm() && m_NeedSVGFunction)
         {
             m_source->writeLine("#include <wx/zstream.h>  // zlib stream classes", indent::none);
             m_source->writeLine();

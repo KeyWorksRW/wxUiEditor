@@ -1,4 +1,4 @@
-name: "Build Unix Setup"
+name: "Build Executables"
 
 on:
   workflow_dispatch:
@@ -7,7 +7,28 @@ env:
   BUILD_TYPE: Release
 
 jobs:
-  build:
+  buildWindows:
+    runs-on: windows-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - run: mkdir ${{github.workspace}}/build
+
+    - name: Configure CMake
+      run: cmake -G "Visual Studio 17 2022" -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+
+    - name: Build wxUiEditor
+      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --target wxUiEditor
+
+    - name: Create wxUiEditor Artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: WindowsExecutable
+        path: |
+          build/stage/bin/Release/wxUiEditor.exe
+
+  buildUnix:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout repository
@@ -26,14 +47,9 @@ jobs:
     - name: Build wxUiEditor
       run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --target wxUiEditor
 
-    # delete-artifact
-    - uses: geekyeggo/delete-artifact@v2
-      with:
-          name: Executables
-
     - name: Create wxUiEditor Artifact
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
-        name: Executables
+        name: UnixExecutable
         path: |
           build/stage/bin/Release/wxUiEditor

@@ -52,4 +52,4 @@ jobs:
       with:
         name: UnixExecutable
         path: |
-          build/stage/bin/Release/wxUiEditor
+          stage/bin/wxUiEditor

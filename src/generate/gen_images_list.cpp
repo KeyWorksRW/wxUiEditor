@@ -128,6 +128,17 @@ wxBitmapBundle wxueBundleSVG(const unsigned char* data,
 };
 )===";
 
+inline constexpr const auto txt_GetAnimFromHdrFunction = R"===(
+// Convert a data array into a wxAnimation
+wxAnimation wxueAnimation(const unsigned char* data, size_t size_data)
+{
+    wxMemoryInputStream strm(data, size_data);
+    wxAnimation animation;
+    animation.Load(strm);
+    return animation;
+};
+)===";
+
 inline constexpr const auto txt_GetBundleFromBitmaps = R"===(
 // Convert multiple bitmaps into a wxBitmapBundle
 wxBitmapBundle wxueBundleBitmaps(const wxBitmap& bmp1, const wxBitmap& bmp2, const wxBitmap& bmp3)
@@ -147,20 +158,31 @@ wxBitmapBundle wxueBundleBitmaps(const wxBitmap& bmp1, const wxBitmap& bmp2, con
 
 void BaseCodeGenerator::GenerateImagesForm()
 {
+    ASSERT_MSG(m_form_node, "Attempting to generate Images List when no form was located.");
+
     if (m_embedded_images.empty() || !m_form_node->getChildCount())
     {
-        return;
+        if (Project.getForm_BundleSVG() != m_form_node && Project.getForm_Image() != m_form_node &&
+            Project.getForm_BundleBitmaps() != m_form_node && Project.getForm_Animation() != m_form_node)
+        {
+            return;
+        }
     }
 
     bool is_old_widgets = (Project.as_string(prop_wxWidgets_version) == "3.1");
 
     if (m_panel_type != HDR_PANEL)
     {
-        m_source->writeLine("\n#include <wx/mstream.h>  // memory stream classes", indent::none);
+        if (m_NeedAnimationFunction || Project.getForm_Animation() == m_form_node)
+        {
+            m_source->writeLine("#include <wx/animate.h>  // wxAnimation class", indent::none);
+        }
+        m_source->writeLine("#include <wx/mstream.h>  // memory stream classes", indent::none);
 
-        if (m_NeedSVGFunction)
+        if (m_NeedSVGFunction || Project.getForm_BundleSVG() == m_form_node)
         {
             m_source->writeLine("#include <wx/zstream.h>  // zlib stream classes", indent::none);
+
             m_source->writeLine();
             m_source->writeLine("#include <memory>  // for std::make_unique", indent::none);
 
@@ -183,7 +205,7 @@ void BaseCodeGenerator::GenerateImagesForm()
             }
         }
 
-        if (m_NeedImageFunction)
+        if (m_NeedImageFunction || Project.getForm_Image() == m_form_node)
         {
             tt_string_vector function;
             function.ReadString(txt_wxueImageFunction);
@@ -208,6 +230,22 @@ void BaseCodeGenerator::GenerateImagesForm()
             if (is_old_widgets)
             {
                 m_source->writeLine("#endif", indent::none);
+            }
+        }
+
+        if (m_NeedAnimationFunction || Project.getForm_Animation() == m_form_node)
+        {
+            tt_string_vector function;
+            function.ReadString(txt_GetAnimFromHdrFunction);
+            for (auto& iter: function)
+            {
+                m_source->writeLine(iter, indent::none);
+            }
+
+            m_source->writeLine();
+            if (is_old_widgets)
+            {
+                m_source->writeLine("#if wxCHECK_VERSION(3, 1, 6)", indent::none);
             }
         }
 

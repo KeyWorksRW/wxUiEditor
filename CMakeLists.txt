@@ -268,6 +268,7 @@ if (UNIX)
         dl
         # use static version so this works on older versions of Linux
         libstdc++.a
+        libgcc.a
     )
 elseif (WIN32)
     set(SYSTEM_LIBS comctl32 Imm32 Shlwapi Version UxTheme)

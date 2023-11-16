@@ -395,7 +395,6 @@ set(CPACK_RPM_PACKAGE_DESCRIPTION "wxWidgets UI designer")
 set(CPACK_RPM_PACKAGE_SUMMARY "wxWidgets UI designer")
 
 set(CPACK_DEBIAN_PACKAGE_MAINTAINER "KeyWorks Software <https://github.com/KeyWorksRW>")
-set(CPACK_DEBIAN_PACKAGE_DEPENDS "libwxgtk3.0-dev, libwxgtk3.0-gtk3-dev")
 set(CPACK_DEBIAN_PACKAGE_HOMEPAGE "https://github.com/KeyWorksRW/wxUiEditor")
 set(CPACK_DEBIAN_PACKAGE_DESCRIPTION "wxWidgets UI designer")
 set(CPACK_DEBIAN_PACKAGE_SUMMARY "wxWidgets UI designer")

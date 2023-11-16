@@ -369,6 +369,10 @@ target_include_directories(check_build PRIVATE
 
 ####################### Packaging Instructions #######################
 
+if (UNIX)
+    INSTALL(FILES wxUiEditor.desktop DESTINATION share/applications)
+endif()
+
 # Note: packing is currently only set for a static wxWidgets library build
 
 set(CPACK_PACKAGE_VENDOR "KeyWorks Software")
@@ -395,6 +399,7 @@ set(CPACK_RPM_PACKAGE_DESCRIPTION "wxWidgets UI designer")
 set(CPACK_RPM_PACKAGE_SUMMARY "wxWidgets UI designer")
 
 set(CPACK_DEBIAN_PACKAGE_MAINTAINER "KeyWorks Software <https://github.com/KeyWorksRW>")
+# set(CPACK_DEBIAN_PACKAGE_DEPENDS "libgtk-3-0")
 set(CPACK_DEBIAN_PACKAGE_HOMEPAGE "https://github.com/KeyWorksRW/wxUiEditor")
 set(CPACK_DEBIAN_PACKAGE_DESCRIPTION "wxWidgets UI designer")
 set(CPACK_DEBIAN_PACKAGE_SUMMARY "wxWidgets UI designer")

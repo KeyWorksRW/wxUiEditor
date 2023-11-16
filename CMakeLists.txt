@@ -271,6 +271,7 @@ if (UNIX)
         libstdc++.a
         libc.a
         libgcc.a
+        libglib-2.0.a
     )
 elseif (WIN32)
     set(SYSTEM_LIBS comctl32 Imm32 Shlwapi Version UxTheme)

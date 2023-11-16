@@ -264,10 +264,12 @@ if (UNIX)
         ${GTK3_LIBRARIES}
         ${X11_LIBRARIES}
         pthread
-        png
         dl
-        # use static version so this works on older versions of Linux
+        libz.a
+        png.a
+        # use static versions so this works on older versions of Linux
         libstdc++.a
+        libc.a
         libgcc.a
     )
 elseif (WIN32)

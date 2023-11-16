@@ -374,6 +374,7 @@ set(CPACK_VERBATIM_VARIABLES YES)
 set(CPACK_RESOURCE_FILE_LICENSE ${CMAKE_CURRENT_LIST_DIR}/EULA.TXT)
 set(CPACK_PACKAGE_INSTALL_DIRECTORY "wxUiEditor")
 set(CPACK_PACKAGE_EXECUTABLES "wxUiEditor" "wxUiEditor")
+set(CPACK_CREATE_DESKTOP_LINKS wxUiEditor)
 
 set(CPACK_NSIS_MUI_ICON ${CMAKE_CURRENT_LIST_DIR}/src/wxUiEditor.ico)
 set(CPACK_NSIS_MUI_UNIICO ${CMAKE_CURRENT_LIST_DIR}/src/wxUiEditor.ico)
@@ -383,7 +384,19 @@ set(CPACK_NSIS_MUI_FINISHPAGE_RUN wxUiEditor.exe)
 set(CPACK_NSIS_BRANDING_TEXT "KeyWorks Software")
 set(CPACK_NSIS_BRANDING_TEXT_TRIM_POSITION CENTER)
 set(CPACK_NSIS_MODIFY_PATH YES)
-set(CPACK_CREATE_DESKTOP_LINKS wxUiEditor)
+
+set(CPACK_RPM_PACKAGE_LICENSE ${CMAKE_CURRENT_LIST_DIR}/EULA.TXT)
+set(CPACK_RPM_PACKAGE_VENDOR "KeyWorks Software")
+set(CPACK_RPM_PACKAGE_GROUP "Development/Tools")
+set(CPACK_RPM_PACKAGE_URL "https://github.com/KeyWorksRW/wxUiEditor")
+set(CPACK_RPM_PACKAGE_DESCRIPTION "wxWidgets UI designer")
+set(CPACK_RPM_PACKAGE_SUMMARY "wxWidgets UI designer")
+
+set(CPACK_DEBIAN_PACKAGE_MAINTAINER "KeyWorks Software <https://github.com/KeyWorksRW>")
+set(CPACK_DEBIAN_PACKAGE_DEPENDS "libwxgtk3.0-dev, libwxgtk3.0-gtk3-dev")
+set(CPACK_DEBIAN_PACKAGE_HOMEPAGE "https://github.com/KeyWorksRW/wxUiEditor")
+set(CPACK_DEBIAN_PACKAGE_DESCRIPTION "wxWidgets UI designer")
+set(CPACK_DEBIAN_PACKAGE_SUMMARY "wxWidgets UI designer")
 
 # Register .wxui file extension with wxUiEditor
 
@@ -394,8 +407,8 @@ set (CPACK_PROJECT_CONFIG_FILE "${PROJECT_BINARY_DIR}/nsis_options.cmake")
 
 if (WIN32)
     set(CPACK_GENERATOR ZIP NSIS)
-else()
-    set(CPACK_GENERATOR TGZ)
+elseif(UNIX)
+    set(CPACK_GENERATOR "RPM;DEB")
 endif()
 
 # include(GNUInstallDirs)

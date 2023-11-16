@@ -36,5 +36,4 @@ jobs:
       with:
         name: UnixExecutable
         path: |
-          build/stage/bin/wxUiEditor
           build/wxUiEditor-1.1.3-Linux.deb

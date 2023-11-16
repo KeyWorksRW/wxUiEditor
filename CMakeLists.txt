@@ -410,7 +410,7 @@ set (CPACK_PROJECT_CONFIG_FILE "${PROJECT_BINARY_DIR}/nsis_options.cmake")
 if (WIN32)
     set(CPACK_GENERATOR ZIP NSIS)
 elseif(UNIX)
-    set(CPACK_GENERATOR "RPM;DEB")
+    set(CPACK_GENERATOR "DEB")
 endif()
 
 # include(GNUInstallDirs)

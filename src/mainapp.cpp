@@ -504,7 +504,7 @@ bool App::AutoMsgWindow() const
 }
 #endif
 
-#if defined(_DEBUG) && defined(wxUSE_ON_FATAL_EXCEPTION) && defined(wxUSE_STACKWALKER)
+#if defined(_WIN32) && defined(_DEBUG) && defined(wxUSE_ON_FATAL_EXCEPTION) && defined(wxUSE_STACKWALKER)
 
     #include <wx/stackwalk.h>
 
@@ -559,7 +559,7 @@ protected:
 
 void App::OnFatalException()
 {
-    #if defined(_DEBUG)
+    #if defined(_DEBUG) &&  defined(wxUSE_STACKWALKER)
 
     StackLogger logger;
     logger.WalkFromException();

@@ -44,10 +44,6 @@ option(BUILD_FORK "Builds wxWidgets using wxWidgets/wx_3_3")
 # option(INTERNAL_PGO_GENERATE "Create instrumented build for profiling run (MSVC only)" OFF)
 # option(INTERNAL_PGO_USEPROFILE "Create optimized build using profile data (MSVC only)" OFF)
 
-# BUILD_CUSTOM is used internally to build wxWidgets from the wxSnapshot repository rather
-# then the subtree version. This makes it possible to test changes to the wxSnapshot repository
-# before syncing them into the subtree.
-
 option(BUILD_CUSTOM "Builds with custom version of wxWidgets")
 
 # BUILD_WIDGETS_3_2 is going to go away once wxWidgets 3.3 is locked in as a required minimum
@@ -67,7 +63,7 @@ elseif (BUILD_CUSTOM)
     set(BUILD_ROOT ${BUILD_CUSTOM_DIR} CACHE PATH "${CMAKE_CURRENT_LIST_DIR}/../" FORCE)
     message(NOTICE "Building with custom build of wxWidgets")
 else()
-    set(BUILD_ROOT wxSnapshot CACHE PATH "wxWidgets" FORCE)
+    set(BUILD_ROOT wxWidgets CACHE PATH "wxWidgets" FORCE)
     message(NOTICE "Building with wxWidgets 3.3")
 endif()
 

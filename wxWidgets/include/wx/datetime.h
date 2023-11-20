@@ -3,7 +3,6 @@
 // Purpose:     declarations of time/date related classes (wxDateTime,
 //              wxTimeSpan)
 // Author:      Vadim Zeitlin
-// Modified by:
 // Created:     10.02.99
 // Copyright:   (c) 1998 Vadim Zeitlin <zeitlin@dptmaths.ens-cachan.fr>
 // Licence:     wxWindows licence
@@ -265,11 +264,19 @@ public:
         // flags for GetWeekDayName and GetMonthName
     enum NameFlags
     {
-        Name_Full = 0x01,       // return full name
-        Name_Abbr = 0x02        // return abbreviated name
+        Name_Full = 0x01,        // return full name
+        Name_Abbr = 0x02,        // return abbreviated name
+        Name_Shortest = 0x03     // return shortest name
     };
 
-        // flags for GetWeekOfYear and GetWeekOfMonth
+    // context for GetWeekDayName and GetMonthName
+    enum NameContext
+    {
+        Context_Formatting,      // return name for date formatting context
+        Context_Standalone       // return name for standalone context
+    };
+
+    // flags for GetWeekOfYear and GetWeekOfMonth
     enum WeekFlags
     {
         Default_First,   // Sunday_First for US, Monday_First for the rest
@@ -288,6 +295,28 @@ public:
 
     // helper classes
     // ------------------------------------------------------------------------
+
+        // Describes the form of the month or week-day name.
+    class NameForm
+    {
+    public:
+        // Ctor is non-explicit for compatibility.
+        NameForm(NameFlags flags = Name_Full) : m_flags(flags) {}
+
+        // Chainable methods allowing to set various fields.
+        NameForm& Full() { m_flags = Name_Full; return *this; }
+        NameForm& Abbr() { m_flags = Name_Abbr; return *this; }
+        NameForm& Shortest() { m_flags = Name_Shortest; return *this; }
+        NameForm& Formatting() { m_context = Context_Formatting; return *this; }
+        NameForm& Standalone() { m_context = Context_Standalone; return *this; }
+
+        NameFlags GetFlags() const { return m_flags; }
+        NameContext GetContext() const { return m_context; }
+
+    private:
+        NameFlags m_flags;
+        NameContext m_context = Context_Formatting;
+    };
 
         // a class representing a time zone: basically, this is just an offset
         // (in seconds) from GMT
@@ -411,23 +440,23 @@ public:
                                         Calendar cal = Gregorian);
 
 
-        // get the full (default) or abbreviated month name in the current
+        // get the full (default), abbreviated or shortest month name in the current
         // locale, returns empty string on error
     static wxString GetMonthName(Month month,
-                                 NameFlags flags = Name_Full);
+                                 const NameForm& form = {});
 
-        // get the standard English full (default) or abbreviated month name
+        // get the standard English full (default), abbreviated or shortest month name
     static wxString GetEnglishMonthName(Month month,
-                                        NameFlags flags = Name_Full);
+                                        const NameForm& form = {});
 
-        // get the full (default) or abbreviated weekday name in the current
+        // get the full (default), abbreviated or shortest weekday name in the current
         // locale, returns empty string on error
     static wxString GetWeekDayName(WeekDay weekday,
-                                   NameFlags flags = Name_Full);
+                                   const NameForm& form = {});
 
-        // get the standard English full (default) or abbreviated weekday name
+        // get the standard English full (default), abbreviated or shortest weekday name
     static wxString GetEnglishWeekDayName(WeekDay weekday,
-                                          NameFlags flags = Name_Full);
+                                          const NameForm& form = {});
 
         // get the AM and PM strings in the current locale (may be empty)
     static void GetAmPmStrings(wxString *am, wxString *pm);
@@ -927,7 +956,7 @@ public:
 
     // all conversions functions return true to indicate whether parsing
     // succeeded or failed and fill in the provided end iterator, which must
-    // not be NULL, with the location of the character where the parsing
+    // not be null, with the location of the character where the parsing
     // stopped (this will be end() of the passed string if everything was
     // parsed)
 
@@ -1021,7 +1050,7 @@ public:
 
     // backwards compatible versions of the parsing functions: they return an
     // object representing the next character following the date specification
-    // (i.e. the one where the scan had to stop) or a special NULL-like object
+    // (i.e. the one where the scan had to stop) or a special nullptr-like object
     // on failure
     //
     // they're not deprecated because a lot of existing code uses them and
@@ -1120,7 +1149,7 @@ public:
     inline wxLongLong GetValue() const;
 
     // a helper function to get the current time_t
-    static time_t GetTimeNow() { return time(NULL); }
+    static time_t GetTimeNow() { return time(nullptr); }
 
     // another one to get the current time broken down
     static struct tm *GetTmNow()
@@ -1525,7 +1554,7 @@ private:
 // wxDateTimeArray: array of dates.
 // ----------------------------------------------------------------------------
 
-WX_DECLARE_USER_EXPORTED_OBJARRAY(wxDateTime, wxDateTimeArray, WXDLLIMPEXP_BASE);
+using wxDateTimeArray = wxBaseArray<wxDateTime>;
 
 // ----------------------------------------------------------------------------
 // wxDateTimeHolidayAuthority: an object of this class will decide whether a
@@ -1590,10 +1619,10 @@ private:
 class WXDLLIMPEXP_BASE wxDateTimeWorkDays : public wxDateTimeHolidayAuthority
 {
 protected:
-    virtual bool DoIsHoliday(const wxDateTime& dt) const wxOVERRIDE;
+    virtual bool DoIsHoliday(const wxDateTime& dt) const override;
     virtual size_t DoGetHolidaysInRange(const wxDateTime& dtStart,
                                         const wxDateTime& dtEnd,
-                                        wxDateTimeArray& holidays) const wxOVERRIDE;
+                                        wxDateTimeArray& holidays) const override;
 };
 
 // ============================================================================

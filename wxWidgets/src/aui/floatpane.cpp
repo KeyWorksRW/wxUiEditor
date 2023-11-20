@@ -2,7 +2,6 @@
 // Name:        src/aui/floatpane.cpp
 // Purpose:     wxaui: wx advanced user interface - docking window manager
 // Author:      Benjamin I. Williams
-// Modified by:
 // Created:     2005-05-17
 // Copyright:   (C) Copyright 2005-2006, Kirix Corporation, All Rights Reserved
 // Licence:     wxWindows Library Licence, Version 3.1
@@ -72,7 +71,7 @@ wxAuiFloatingFrame::~wxAuiFloatingFrame()
     // if we do not do this, then we can crash...
     if (m_ownerMgr && m_ownerMgr->m_actionWindow == this)
     {
-        m_ownerMgr->m_actionWindow = NULL;
+        m_ownerMgr->m_actionWindow = nullptr;
     }
 
     m_mgr.UnInit();

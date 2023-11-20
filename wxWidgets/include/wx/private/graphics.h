@@ -2,7 +2,6 @@
 // Name:        wx/private/graphics.h
 // Purpose:     private graphics context header
 // Author:      Stefan Csomor
-// Modified by:
 // Created:
 // Copyright:   (c) Stefan Csomor
 // Licence:     wxWindows licence
@@ -55,8 +54,8 @@ public :
            wxDouble tx=0.0, wxDouble ty=0.0) = 0;
 
        // gets the component values of the matrix
-       virtual void Get(wxDouble* a=NULL, wxDouble* b=NULL,  wxDouble* c=NULL,
-                        wxDouble* d=NULL, wxDouble* tx=NULL, wxDouble* ty=NULL) const = 0;
+       virtual void Get(wxDouble* a=nullptr, wxDouble* b=nullptr,  wxDouble* c=nullptr,
+                        wxDouble* d=nullptr, wxDouble* tx=nullptr, wxDouble* ty=nullptr) const = 0;
 
        // makes this the inverse matrix
        virtual void Invert() = 0;

@@ -2,7 +2,6 @@
 // Name:        wx/propgrid/advprops.h
 // Purpose:     wxPropertyGrid Advanced Properties (font, colour, etc.)
 // Author:      Jaakko Salli
-// Modified by:
 // Created:     2004-09-25
 // Copyright:   (c) Jaakko Salli
 // Licence:     wxWindows licence
@@ -40,12 +39,11 @@ WX_PG_DECLARE_EDITOR_WITH_DECL(DatePickerCtrl,WXDLLIMPEXP_PROPGRID)
 
 
 // Web colour is currently unsupported
-#define wxPG_COLOUR_WEB_BASE        0x10000
+constexpr wxUint32 wxPG_COLOUR_WEB_BASE = 0x10000;
 //#define wxPG_TO_WEB_COLOUR(A)   ((wxUint32)(A+wxPG_COLOUR_WEB_BASE))
 
-
-#define wxPG_COLOUR_CUSTOM      0xFFFFFF
-#define wxPG_COLOUR_UNSPECIFIED (wxPG_COLOUR_CUSTOM+1)
+constexpr wxUint32 wxPG_COLOUR_CUSTOM = 0xFFFFFF;
+constexpr wxUint32 wxPG_COLOUR_UNSPECIFIED = wxPG_COLOUR_CUSTOM + 1;
 
 // Because text, background and other colours tend to differ between
 // platforms, wxSystemColourProperty must be able to select between system
@@ -75,9 +73,7 @@ public:
     {
     }
 
-    virtual ~wxColourPropertyValue()
-    {
-    }
+    virtual ~wxColourPropertyValue() = default;
 
     wxColourPropertyValue( const wxColourPropertyValue& v )
         : wxObject()
@@ -138,24 +134,25 @@ public:
     wxFontProperty(const wxString& label = wxPG_LABEL,
                    const wxString& name = wxPG_LABEL,
                    const wxFont& value = wxFont());
-    virtual ~wxFontProperty();
-    virtual void OnSetValue() wxOVERRIDE;
-    virtual wxString ValueToString( wxVariant& value, int argFlags = 0 ) const wxOVERRIDE;
+    virtual ~wxFontProperty() = default;
+    virtual void OnSetValue() override;
+    virtual wxString ValueToString( wxVariant& value, int argFlags = 0 ) const override;
     virtual wxVariant ChildChanged( wxVariant& thisValue,
                                     int childIndex,
-                                    wxVariant& childValue ) const wxOVERRIDE;
-    virtual void RefreshChildren() wxOVERRIDE;
+                                    wxVariant& childValue ) const override;
+    virtual void RefreshChildren() override;
 
 protected:
-    virtual bool DisplayEditorDialog(wxPropertyGrid* pg, wxVariant& value) wxOVERRIDE;
+    virtual bool DisplayEditorDialog(wxPropertyGrid* pg, wxVariant& value) override;
 };
 
 // -----------------------------------------------------------------------
 
-
+#if WXWIN_COMPATIBILITY_3_2
 // If set, then match from list is searched for a custom colour.
-#define wxPG_PROP_TRANSLATE_CUSTOM      wxPG_PROP_CLASS_SPECIFIC_1
-
+wxDEPRECATED_BUT_USED_INTERNALLY_MSG("wxPG_PROP_TRANSLATE_CUSTOM is intended for internal use.")
+constexpr wxPGPropertyFlags wxPG_PROP_TRANSLATE_CUSTOM = wxPG_PROP_RESERVED_1;
+#endif // WXWIN_COMPATIBILITY_3_2
 
 // Has dropdown list of wxWidgets system colours. Value used is
 // of wxColourPropertyValue type.
@@ -168,12 +165,12 @@ public:
                             const wxString& name = wxPG_LABEL,
                             const wxColourPropertyValue&
                                 value = wxColourPropertyValue() );
-    virtual ~wxSystemColourProperty();
+    virtual ~wxSystemColourProperty() = default;
 
-    virtual void OnSetValue() wxOVERRIDE;
+    virtual void OnSetValue() override;
     virtual bool IntToValue(wxVariant& variant,
                             int number,
-                            int argFlags = 0) const wxOVERRIDE;
+                            int argFlags = 0) const override;
 
     // Override in derived class to customize how colours are printed as
     // strings.
@@ -184,16 +181,16 @@ public:
     // (default is last).
     virtual int GetCustomColourIndex() const;
 
-    virtual wxString ValueToString( wxVariant& value, int argFlags = 0 ) const wxOVERRIDE;
+    virtual wxString ValueToString( wxVariant& value, int argFlags = 0 ) const override;
     virtual bool StringToValue( wxVariant& variant,
                                 const wxString& text,
-                                int argFlags = 0 ) const wxOVERRIDE;
+                                int argFlags = 0 ) const override;
     virtual bool OnEvent( wxPropertyGrid* propgrid,
-                          wxWindow* primary, wxEvent& event ) wxOVERRIDE;
-    virtual bool DoSetAttribute( const wxString& name, wxVariant& value ) wxOVERRIDE;
-    virtual wxSize OnMeasureImage( int item ) const wxOVERRIDE;
+                          wxWindow* primary, wxEvent& event ) override;
+    virtual bool DoSetAttribute( const wxString& name, wxVariant& value ) override;
+    virtual wxSize OnMeasureImage( int item ) const override;
     virtual void OnCustomPaint( wxDC& dc,
-                                const wxRect& rect, wxPGPaintData& paintdata ) wxOVERRIDE;
+                                const wxRect& rect, wxPGPaintData& paintdata ) override;
 
     // Helper function to show the colour dialog
     bool QueryColourFromUser( wxVariant& variant ) const;
@@ -202,7 +199,7 @@ public:
     // custom colour tables etc.
     virtual wxColour GetColour( int index ) const;
 
-    wxColourPropertyValue GetVal( const wxVariant* pVariant = NULL ) const;
+    wxColourPropertyValue GetVal( const wxVariant* pVariant = nullptr ) const;
 
 protected:
 
@@ -241,13 +238,13 @@ public:
     wxColourProperty( const wxString& label = wxPG_LABEL,
                       const wxString& name = wxPG_LABEL,
                       const wxColour& value = *wxWHITE );
-    virtual ~wxColourProperty();
+    virtual ~wxColourProperty() = default;
 
-    virtual wxString ValueToString( wxVariant& value, int argFlags = 0 ) const wxOVERRIDE;
-    virtual wxColour GetColour( int index ) const wxOVERRIDE;
+    virtual wxString ValueToString( wxVariant& value, int argFlags = 0 ) const override;
+    virtual wxColour GetColour( int index ) const override;
 
 protected:
-    virtual wxVariant DoTranslateVal( wxColourPropertyValue& v ) const wxOVERRIDE;
+    virtual wxVariant DoTranslateVal( wxColourPropertyValue& v ) const override;
 
 private:
     void Init( wxColour colour );
@@ -263,12 +260,12 @@ class WXDLLIMPEXP_PROPGRID wxCursorProperty : public wxEnumProperty
     wxCursorProperty( const wxString& label= wxPG_LABEL,
                       const wxString& name= wxPG_LABEL,
                       int value = 0 );
-    virtual ~wxCursorProperty();
+    virtual ~wxCursorProperty() = default;
 
-    virtual wxString ValueToString(wxVariant& value, int argFlags = 0) const wxOVERRIDE;
-    virtual wxSize OnMeasureImage( int item ) const wxOVERRIDE;
+    virtual wxString ValueToString(wxVariant& value, int argFlags = 0) const override;
+    virtual wxSize OnMeasureImage( int item ) const override;
     virtual void OnCustomPaint( wxDC& dc,
-                                const wxRect& rect, wxPGPaintData& paintdata ) wxOVERRIDE;
+                                const wxRect& rect, wxPGPaintData& paintdata ) override;
 };
 
 // -----------------------------------------------------------------------
@@ -287,14 +284,14 @@ public:
 
     wxImageFileProperty( const wxString& label= wxPG_LABEL,
                          const wxString& name = wxPG_LABEL,
-                         const wxString& value = wxEmptyString);
-    virtual ~wxImageFileProperty();
+                         const wxString& value = wxString());
+    virtual ~wxImageFileProperty() = default;
 
-    virtual void OnSetValue() wxOVERRIDE;
+    virtual void OnSetValue() override;
 
-    virtual wxSize OnMeasureImage( int item ) const wxOVERRIDE;
+    virtual wxSize OnMeasureImage( int item ) const override;
     virtual void OnCustomPaint( wxDC& dc,
-                                const wxRect& rect, wxPGPaintData& paintdata ) wxOVERRIDE;
+                                const wxRect& rect, wxPGPaintData& paintdata ) override;
 
 protected:
     void SetImage(const wxImage& img);
@@ -332,14 +329,14 @@ public:
                            const wxString& name = wxPG_LABEL,
                            const wxArrayString& value = wxArrayString() );
 
-    virtual ~wxMultiChoiceProperty();
+    virtual ~wxMultiChoiceProperty() = default;
 
-    virtual void OnSetValue() wxOVERRIDE;
-    virtual wxString ValueToString( wxVariant& value, int argFlags = 0 ) const wxOVERRIDE;
+    virtual void OnSetValue() override;
+    virtual wxString ValueToString( wxVariant& value, int argFlags = 0 ) const override;
     virtual bool StringToValue(wxVariant& variant,
                                const wxString& text,
-                               int argFlags = 0) const wxOVERRIDE;
-    virtual bool DoSetAttribute( const wxString& name, wxVariant& value ) wxOVERRIDE;
+                               int argFlags = 0) const override;
+    virtual bool DoSetAttribute( const wxString& name, wxVariant& value ) override;
 
     wxArrayInt GetValueAsArrayInt() const
     {
@@ -347,7 +344,7 @@ public:
     }
 
 protected:
-    virtual bool DisplayEditorDialog(wxPropertyGrid* pg, wxVariant& value) wxOVERRIDE;
+    virtual bool DisplayEditorDialog(wxPropertyGrid* pg, wxVariant& value) override;
 
 #if WXWIN_COMPATIBILITY_3_0
     wxDEPRECATED_MSG("use function GenerateValueAsString(val) returning wxString")
@@ -382,15 +379,15 @@ public:
     wxDateProperty( const wxString& label = wxPG_LABEL,
                     const wxString& name = wxPG_LABEL,
                     const wxDateTime& value = wxDateTime() );
-    virtual ~wxDateProperty();
+    virtual ~wxDateProperty() = default;
 
-    virtual void OnSetValue() wxOVERRIDE;
-    virtual wxString ValueToString( wxVariant& value, int argFlags = 0 ) const wxOVERRIDE;
+    virtual void OnSetValue() override;
+    virtual wxString ValueToString( wxVariant& value, int argFlags = 0 ) const override;
     virtual bool StringToValue(wxVariant& variant,
                                const wxString& text,
-                               int argFlags = 0) const wxOVERRIDE;
+                               int argFlags = 0) const override;
 
-    virtual bool DoSetAttribute( const wxString& name, wxVariant& value ) wxOVERRIDE;
+    virtual bool DoSetAttribute( const wxString& name, wxVariant& value ) override;
 
     void SetFormat( const wxString& format )
     {
@@ -459,13 +456,13 @@ class WXDLLIMPEXP_PROPGRID wxPGSpinCtrlEditor : public wxPGTextCtrlEditor
 public:
     virtual ~wxPGSpinCtrlEditor();
 
-    wxString GetName() const wxOVERRIDE;
+    wxString GetName() const override;
     virtual wxPGWindowList CreateControls(wxPropertyGrid* propgrid,
                                           wxPGProperty* property,
                                           const wxPoint& pos,
-                                          const wxSize& size) const wxOVERRIDE;
+                                          const wxSize& size) const override;
     virtual bool OnEvent( wxPropertyGrid* propgrid, wxPGProperty* property,
-        wxWindow* wnd, wxEvent& event ) const wxOVERRIDE;
+        wxWindow* wnd, wxEvent& event ) const override;
 
 private:
     mutable wxString m_tempString;

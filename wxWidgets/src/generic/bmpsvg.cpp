@@ -27,7 +27,7 @@
 // and update the corresponding submodule.
 #ifdef __has_include
     #if ! __has_include("../../3rdparty/nanosvg/src/nanosvg.h")
-        #error You need to run "git submodule update --init 3rdparty/nanosvg".
+        #error You need to run "git submodule update --init 3rdparty/nanosvg" from the wxWidgets directory.
         #undef wxHAS_SVG
     #endif
 #endif // __has_include
@@ -49,12 +49,6 @@
     #pragma warning(push)
     #pragma warning(disable:4456)
     #pragma warning(disable:4702)
-
-    // Also make nanosvg.h compile with older MSVC versions which didn't have
-    // strtoll().
-    #if _MSC_VER < 1800
-        #define strtoll _strtoi64
-    #endif
 #endif
 
 #if !wxUSE_NANOSVG_EXTERNAL || defined(wxUSE_NANOSVG_EXTERNAL_ENABLE_IMPL)
@@ -115,9 +109,9 @@ public:
         nsvgDelete(m_svgImage);
     }
 
-    virtual wxSize GetDefaultSize() const wxOVERRIDE;
-    virtual wxSize GetPreferredBitmapSizeAtScale(double scale) const wxOVERRIDE;
-    virtual wxBitmap GetBitmap(const wxSize& size) wxOVERRIDE;
+    virtual wxSize GetDefaultSize() const override;
+    virtual wxSize GetPreferredBitmapSizeAtScale(double scale) const override;
+    virtual wxBitmap GetBitmap(const wxSize& size) override;
 
 private:
     wxBitmap DoRasterize(const wxSize& size);

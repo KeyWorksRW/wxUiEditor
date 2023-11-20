@@ -2,7 +2,6 @@
 // Name:        src/msw/printwin.cpp
 // Purpose:     wxWindowsPrinter framework
 // Author:      Julian Smart
-// Modified by:
 // Created:     04/01/98
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
@@ -79,7 +78,7 @@ wxWindowsPrinter::wxWindowsPrinter(wxPrintDialogData *data)
 bool wxWindowsPrinter::Print(wxWindow *parent, wxPrintout *printout, bool prompt)
 {
     sm_abortIt = false;
-    sm_abortWindow = NULL;
+    sm_abortWindow = nullptr;
 
     if (!printout)
     {
@@ -87,35 +86,59 @@ bool wxWindowsPrinter::Print(wxWindow *parent, wxPrintout *printout, bool prompt
         return false;
     }
 
+    // Small helper ensuring that we destroy sm_abortWindow if it was created.
+    class AbortWindowCloser
+    {
+    public:
+        AbortWindowCloser() = default;
+
+        void Initialize(wxWindow* win)
+        {
+            wxPrinterBase::sm_abortWindow = win;
+            win->Show();
+            wxSafeYield();
+        }
+
+        ~AbortWindowCloser()
+        {
+            if ( wxPrinterBase::sm_abortWindow )
+            {
+                wxPrinterBase::sm_abortWindow->Show(false);
+                wxDELETE(wxPrinterBase::sm_abortWindow);
+            }
+        }
+
+        AbortWindowCloser(const AbortWindowCloser&) = delete;
+        AbortWindowCloser& operator=(const AbortWindowCloser&) = delete;
+    } abortWindowCloser;
+
     if (m_printDialogData.GetMinPage() < 1)
         m_printDialogData.SetMinPage(1);
     if (m_printDialogData.GetMaxPage() < 1)
         m_printDialogData.SetMaxPage(9999);
 
     // Create a suitable device context
-    wxPrinterDC *dc wxDUMMY_INITIALIZE(NULL);
+    std::unique_ptr<wxPrinterDC> dc;
     if (prompt)
     {
-        dc = wxDynamicCast(PrintDialog(parent), wxPrinterDC);
+        dc.reset(wxDynamicCast(PrintDialog(parent), wxPrinterDC));
         if (!dc)
             return false;
     }
     else
     {
-        dc = new wxPrinterDC(m_printDialogData.GetPrintData());
+        dc.reset(new wxPrinterDC(m_printDialogData.GetPrintData()));
     }
 
     // May have pressed cancel.
     if (!dc || !dc->IsOk())
     {
-        if (dc) delete dc;
         return false;
     }
 
     // Set printout parameters
     if (!printout->SetUp(*dc))
     {
-        delete dc;
         sm_lastError = wxPRINTER_ERROR;
         return false;
     }
@@ -151,12 +174,10 @@ bool wxWindowsPrinter::Print(wxWindow *parent, wxPrintout *printout, bool prompt
         wxLogDebug(wxT("Could not create an abort dialog."));
         sm_lastError = wxPRINTER_ERROR;
 
-        delete dc;
         return false;
     }
-    sm_abortWindow = win;
-    sm_abortWindow->Show();
-    wxSafeYield();
+
+    abortWindowCloser.Initialize(win);
 
     printout->OnBeginPrinting();
 
@@ -164,7 +185,12 @@ bool wxWindowsPrinter::Print(wxWindow *parent, wxPrintout *printout, bool prompt
 
     int minPageNum = minPage, maxPageNum = maxPage;
 
-    if ( !(m_printDialogData.GetAllPages() || m_printDialogData.GetSelection()) )
+    if ( m_printDialogData.GetCurrentPage() || m_printDialogData.GetSelection() )
+    {
+        minPageNum = fromPage;
+        maxPageNum = toPage;
+    }
+    else if ( !m_printDialogData.GetAllPages() )
     {
         minPageNum = m_printDialogData.GetFromPage();
         maxPageNum = m_printDialogData.GetToPage();
@@ -198,6 +224,10 @@ bool wxWindowsPrinter::Print(wxWindow *parent, wxPrintout *printout, bool prompt
               pn <= maxPageNum && printout->HasPage(pn);
               pn++ )
         {
+            // allow non-consecutive selected pages
+            if ( m_printDialogData.GetSelection() && !printout->IsPageSelected(pn) )
+                continue;
+
             win->SetProgress(pn - minPageNum + 1,
                              maxPageNum - minPageNum + 1,
                              copyCount, maxCopyCount);
@@ -224,20 +254,12 @@ bool wxWindowsPrinter::Print(wxWindow *parent, wxPrintout *printout, bool prompt
 
     printout->OnEndPrinting();
 
-    if (sm_abortWindow)
-    {
-        sm_abortWindow->Show(false);
-        wxDELETE(sm_abortWindow);
-    }
-
-    delete dc;
-
     return sm_lastError == wxPRINTER_NO_ERROR;
 }
 
 wxDC *wxWindowsPrinter::PrintDialog(wxWindow *parent)
 {
-    wxDC *dc = NULL;
+    wxDC *dc = nullptr;
 
     wxWindowsPrintDialog dialog(parent, & m_printDialogData);
     int ret = dialog.ShowModal();
@@ -246,7 +268,7 @@ wxDC *wxWindowsPrinter::PrintDialog(wxWindow *parent)
     {
         dc = dialog.GetPrintDC();
         m_printDialogData = dialog.GetPrintDialogData();
-        if (dc == NULL)
+        if (dc == nullptr)
             sm_lastError = wxPRINTER_ERROR;
         else
             sm_lastError = wxPRINTER_NO_ERROR;

@@ -2,7 +2,6 @@
 // Name:        src/msw/combobox.cpp
 // Purpose:     wxComboBox class
 // Author:      Julian Smart
-// Modified by:
 // Created:     01/02/97
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
@@ -81,7 +80,7 @@ wxComboEditWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 // ---------------------------------------------------------------------------
 
 // the pointer to standard radio button wnd proc
-static WNDPROC gs_wndprocEdit = (WNDPROC)NULL;
+static WNDPROC gs_wndprocEdit = nullptr;
 
 // ============================================================================
 // implementation
@@ -412,7 +411,7 @@ WXHWND wxComboBox::GetEditHWNDIfAvailable() const
     }
 
     // we assume that the only child of the combobox is the edit window
-    return (WXHWND)::FindWindowEx(GetHwnd(), NULL, wxT("EDIT"), NULL);
+    return (WXHWND)::FindWindowEx(GetHwnd(), nullptr, wxT("EDIT"), nullptr);
 }
 
 WXHWND wxComboBox::GetEditHWND() const
@@ -760,24 +759,6 @@ void wxComboBox::DoSetToolTip(wxToolTip *tip)
 
 #endif // wxUSE_TOOLTIPS
 
-#if wxUSE_UXTHEME
-
-bool wxComboBox::SetHint(const wxString& hintOrig)
-{
-    wxString hint(hintOrig);
-    if ( wxUxThemeIsActive() )
-    {
-        // under XP (but not Vista) there is a bug in cue banners
-        // implementation for combobox edit control: the first character is
-        // partially chopped off, so prepend a space to make it fully visible
-        hint.insert(0, " ");
-    }
-
-    return wxTextEntry::SetHint(hint);
-}
-
-#endif // wxUSE_UXTHEME
-
 wxSize wxComboBox::DoGetSizeFromTextSize(int xlen, int ylen) const
 {
     wxSize tsize( wxChoice::DoGetSizeFromTextSize(xlen, ylen) );
@@ -806,7 +787,7 @@ wxWindow *wxComboBox::MSWFindItem(long id, WXHWND hWnd) const
     if ( id == GetId() && hWnd && hWnd != GetHWND() )
     {
         // Must be the case described above.
-        return NULL;
+        return nullptr;
     }
 
     return wxChoice::MSWFindItem(id, hWnd);

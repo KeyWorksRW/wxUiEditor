@@ -38,14 +38,12 @@
     #include "wx/wxcrtvararg.h"
     #if USE_PUTENV
         #include "wx/module.h"
-        #include "wx/hashmap.h"
     #endif
 #endif
 
 #include "wx/apptrait.h"
 
 #include "wx/process.h"
-#include "wx/scopedptr.h"
 #include "wx/thread.h"
 
 #include "wx/cmdline.h"
@@ -64,6 +62,8 @@
 #include "wx/private/fdioeventloopsourcehandler.h"
 #include "wx/config.h"
 #include "wx/filename.h"
+
+#include <memory>
 
 #include <pwd.h>
 #include <sys/wait.h>       // waitpid()
@@ -87,7 +87,11 @@
 // different platforms and even different versions of the same system (Solaris
 // 7 and 8): if you want to test for this, don't forget that the problems only
 // appear if the large files support is enabled
-#ifdef HAVE_STATFS
+#if defined(HAVE_STATVFS)
+    #include <sys/statvfs.h>
+
+    #define wxStatfs statvfs
+#elif defined(HAVE_STATFS)
     #ifdef __BSD__
         #include <sys/param.h>
         #include <sys/mount.h>
@@ -101,15 +105,9 @@
         // some systems lack statfs() prototype in the system headers (AIX 4)
         extern "C" int statfs(const char *path, struct statfs *buf);
     #endif
-#endif // HAVE_STATFS
+#endif // HAVE_STATVFS/HAVE_STATFS
 
-#ifdef HAVE_STATVFS
-    #include <sys/statvfs.h>
-
-    #define wxStatfs statvfs
-#endif // HAVE_STATVFS
-
-#if defined(HAVE_STATFS) || defined(HAVE_STATVFS)
+#if defined(HAVE_STATVFS) || defined(HAVE_STATFS)
     // WX_STATFS_T is detected by configure
     #define wxStatfs_t WX_STATFS_T
 #endif
@@ -192,7 +190,7 @@ void wxMicroSleep(unsigned long microseconds)
     tmReq.tv_nsec = (microseconds % 1000000) * 1000;
 
     // we're not interested in remaining time nor in return value
-    (void)nanosleep(&tmReq, NULL);
+    (void)nanosleep(&tmReq, nullptr);
 #elif defined(HAVE_USLEEP)
     // uncomment this if you feel brave or if you are sure that your version
     // of Solaris has a safe usleep() function but please notice that usleep()
@@ -334,7 +332,7 @@ bool wxPipeInputStream::CanRead() const
     wxFD_ZERO(&readfds);
     wxFD_SET(fd, &readfds);
 
-    switch ( select(fd + 1, &readfds, NULL, NULL, &tv) )
+    switch ( select(fd + 1, &readfds, nullptr, nullptr, &tv) )
     {
         case -1:
             wxLogSysError(_("Impossible to get child process input"));
@@ -447,7 +445,6 @@ public:
         }
     }
 
-#if wxUSE_UNICODE
     ArgsArray(const wchar_t* const* wargv)
     {
         int argc = 0;
@@ -461,7 +458,6 @@ public:
             m_argv[i] = wxSafeConvertWX2MB(wargv[i]).release();
         }
     }
-#endif // wxUSE_UNICODE
 
     ~ArgsArray()
     {
@@ -480,7 +476,7 @@ private:
     {
         m_argc = argc;
         m_argv = new char *[m_argc + 1];
-        m_argv[m_argc] = NULL;
+        m_argv[m_argc] = nullptr;
     }
 
     int m_argc;
@@ -508,8 +504,6 @@ long wxExecute(const wxString& command, int flags, wxProcess *process,
     return wxExecute(argv, flags, process, env);
 }
 
-#if wxUSE_UNICODE
-
 long wxExecute(const wchar_t* const* wargv, int flags, wxProcess* process,
         const wxExecuteEnv *env)
 {
@@ -517,8 +511,6 @@ long wxExecute(const wchar_t* const* wargv, int flags, wxProcess* process,
 
     return wxExecute(argv, flags, process, env);
 }
-
-#endif // wxUSE_UNICODE
 
 namespace
 {
@@ -556,12 +548,12 @@ int BlockUntilChildExit(wxExecuteData& execData)
 
     // Do register all the FDs we want to monitor here: first, the one used to
     // handle the signals asynchronously.
-    wxScopedPtr<wxFDIOHandler>
+    std::unique_ptr<wxFDIOHandler>
         signalHandler(wxTheApp->RegisterSignalWakeUpPipe(dispatcher));
 
 #if wxUSE_STREAMS
     // And then the two for the child output and error streams if necessary.
-    wxScopedPtr<wxFDIOHandler>
+    std::unique_ptr<wxFDIOHandler>
         stdoutHandler,
         stderrHandler;
     if ( execData.IsRedirected() )
@@ -632,7 +624,7 @@ long wxExecute(const char* const* argv, int flags, wxProcess* process,
 #endif // __DARWIN__
 
     // this struct contains all information which we use for housekeeping
-    wxScopedPtr<wxExecuteData> execDataPtr(new wxExecuteData);
+    std::unique_ptr<wxExecuteData> execDataPtr(new wxExecuteData);
     wxExecuteData& execData = *execDataPtr;
 
     execData.m_flags = flags;
@@ -917,19 +909,19 @@ const wxChar* wxGetHomeDir( wxString *home  )
 
 wxString wxGetUserHome( const wxString &user )
 {
-    struct passwd *who = (struct passwd *) NULL;
+    struct passwd *who = (struct passwd *) nullptr;
 
     if ( !user )
     {
         wxChar *ptr;
 
-        if ((ptr = wxGetenv(wxT("HOME"))) != NULL)
+        if ((ptr = wxGetenv(wxT("HOME"))) != nullptr)
         {
             return ptr;
         }
 
-        if ((ptr = wxGetenv(wxT("USER"))) != NULL ||
-             (ptr = wxGetenv(wxT("LOGNAME"))) != NULL)
+        if ((ptr = wxGetenv(wxT("USER"))) != nullptr ||
+             (ptr = wxGetenv(wxT("LOGNAME"))) != nullptr)
         {
             who = getpwnam(wxSafeConvertWX2MB(ptr));
         }
@@ -945,7 +937,7 @@ wxString wxGetUserHome( const wxString &user )
       who = getpwnam (user.mb_str());
     }
 
-    return wxSafeConvertMB2WX(who ? who->pw_dir : 0);
+    return wxSafeConvertMB2WX(who ? who->pw_dir : nullptr);
 }
 
 // ----------------------------------------------------------------------------
@@ -1000,7 +992,7 @@ wxGetCommandOutput(const wxString &cmd, wxMBConv& conv = wxConvISO8859_1)
 // private use only)
 static bool wxGetHostNameInternal(wxChar *buf, int sz)
 {
-    wxCHECK_MSG( buf, false, wxT("NULL pointer in wxGetHostNameInternal") );
+    wxCHECK_MSG( buf, false, wxT("null pointer in wxGetHostNameInternal") );
 
     *buf = wxT('\0');
 
@@ -1084,7 +1076,7 @@ bool wxGetUserId(wxChar *buf, int sz)
     struct passwd *who;
 
     *buf = wxT('\0');
-    if ((who = getpwuid(getuid ())) != NULL)
+    if ((who = getpwuid(getuid ())) != nullptr)
     {
         wxStrlcpy (buf, wxSafeConvertMB2WX(who->pw_name), sz);
         return true;
@@ -1099,7 +1091,7 @@ bool wxGetUserName(wxChar *buf, int sz)
     struct passwd *who;
 
     *buf = wxT('\0');
-    if ((who = getpwuid (getuid ())) != NULL)
+    if ((who = getpwuid (getuid ())) != nullptr)
     {
        char *comma = strchr(who->pw_gecos, ',');
        if (comma)
@@ -1140,7 +1132,7 @@ wxString wxGetNativeCpuArchitectureName()
     // macOS on ARM will report an x86_64 process as translated, assume the native CPU is arm64
     int translated;
     size_t translated_size = sizeof(translated);
-    if (sysctlbyname("sysctl.proc_translated", &translated, &translated_size, NULL, 0) == 0)
+    if (sysctlbyname("sysctl.proc_translated", &translated, &translated_size, nullptr, 0) == 0)
         return "arm64";
     else
 #endif
@@ -1402,9 +1394,9 @@ bool wxGetDiskSpace(const wxString& path, wxDiskspaceSize_t *pTotal, wxDiskspace
 
 #if USE_PUTENV
 
-WX_DECLARE_STRING_HASH_MAP(char *, wxEnvVars);
+#include <unordered_map>
 
-static wxEnvVars gs_envVars;
+static std::unordered_map<wxString, char*> gs_envVars;
 
 class wxSetEnvModule : public wxModule
 {
@@ -1412,7 +1404,7 @@ public:
     virtual bool OnInit() { return true; }
     virtual void OnExit()
     {
-        for ( wxEnvVars::const_iterator i = gs_envVars.begin();
+        for ( auto i = gs_envVars.begin();
               i != gs_envVars.end();
               ++i )
         {
@@ -1455,7 +1447,7 @@ static bool wxDoSetEnv(const wxString& variable, const char *value)
         unsetenv(variable.mb_str());
         return true;
 #else
-        value = ""; // we can't pass NULL to setenv()
+        value = ""; // we can't pass nullptr to setenv()
 #endif
     }
 
@@ -1496,7 +1488,7 @@ bool wxSetEnv(const wxString& variable, const wxString& value)
 
 bool wxUnsetEnv(const wxString& variable)
 {
-    return wxDoSetEnv(variable, NULL);
+    return wxDoSetEnv(variable, nullptr);
 }
 
 // ----------------------------------------------------------------------------
@@ -1508,7 +1500,7 @@ bool wxUnsetEnv(const wxString& variable)
 #include <signal.h>
 
 extern "C" {
-static void wxFatalSignalHandler(wxTYPE_SA_HANDLER)
+static void wxFatalSignalHandler(int WXUNUSED(signal))
 {
     if ( wxTheApp )
     {
@@ -1556,10 +1548,10 @@ bool wxHandleFatalExceptions(bool doit)
     else if ( s_savedHandlers )
     {
         // uninstall the signal handler
-        ok &= sigaction(SIGFPE, &s_handlerFPE, NULL) == 0;
-        ok &= sigaction(SIGILL, &s_handlerILL, NULL) == 0;
-        ok &= sigaction(SIGBUS, &s_handlerBUS, NULL) == 0;
-        ok &= sigaction(SIGSEGV, &s_handlerSEGV, NULL) == 0;
+        ok &= sigaction(SIGFPE, &s_handlerFPE, nullptr) == 0;
+        ok &= sigaction(SIGILL, &s_handlerILL, nullptr) == 0;
+        ok &= sigaction(SIGBUS, &s_handlerBUS, nullptr) == 0;
+        ok &= sigaction(SIGSEGV, &s_handlerSEGV, nullptr) == 0;
         if ( !ok )
         {
             wxLogDebug(wxT("Failed to uninstall our signal handler."));
@@ -1608,7 +1600,7 @@ wxAppTraits::RunLoopUntilChildExit(wxExecuteData& execData,
 
 #if wxUSE_STREAMS
     // Monitor the child streams if necessary.
-    wxScopedPtr<wxEventLoopSourceHandler>
+    std::unique_ptr<wxEventLoopSourceHandler>
         stdoutHandler,
         stderrHandler;
     if ( execData.IsRedirected() )
@@ -1713,11 +1705,9 @@ void wxExecuteData::OnSomeChildExited(int WXUNUSED(sig))
     // Make a copy of the list before iterating over it to avoid problems due
     // to deleting entries from it in the process.
     const ChildProcessesData allChildProcesses = ms_childProcesses;
-    for ( ChildProcessesData::const_iterator it = allChildProcesses.begin();
-          it != allChildProcesses.end();
-          ++it )
+    for ( const auto& kv : allChildProcesses )
     {
-        const int pid = it->first;
+        const int pid = kv.first;
 
         // Check whether this child exited.
         int exitcode;
@@ -1727,7 +1717,7 @@ void wxExecuteData::OnSomeChildExited(int WXUNUSED(sig))
         // And handle its termination if it did.
         //
         // Notice that this will implicitly remove it from ms_childProcesses.
-        it->second->OnExit(exitcode);
+        kv.second->OnExit(exitcode);
     }
 }
 

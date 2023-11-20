@@ -2,7 +2,6 @@
 // Name:        src/generic/vlbox.cpp
 // Purpose:     implementation of wxVListBox
 // Author:      Vadim Zeitlin
-// Modified by:
 // Created:     31.05.03
 // Copyright:   (c) 2003 Vadim Zeitlin <vadim@wxwidgets.org>
 // Licence:     wxWindows licence
@@ -66,7 +65,7 @@ void wxVListBox::Init()
 {
     m_current =
     m_anchor = wxNOT_FOUND;
-    m_selStore = NULL;
+    m_selStore = nullptr;
 }
 
 bool wxVListBox::Create(wxWindow *parent,

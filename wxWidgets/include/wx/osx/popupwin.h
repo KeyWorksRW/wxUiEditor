@@ -2,7 +2,6 @@
 // Name:        wx/osx/popupwin.h
 // Purpose:     wxPopupWindow class for wxMac
 // Author:      Stefan Csomor
-// Modified by:
 // Created:
 // Copyright:   (c) 2006 Stefan Csomor
 // Licence:     wxWindows licence
@@ -26,7 +25,7 @@ public:
 
     bool Create(wxWindow *parent, int flags = wxBORDER_NONE);
 
-    virtual bool Show(bool show = true) wxOVERRIDE;
+    virtual bool Show(bool show = true) override;
 
     wxDECLARE_DYNAMIC_CLASS_NO_COPY(wxPopupWindow);
 };

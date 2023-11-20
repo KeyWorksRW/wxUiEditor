@@ -3,7 +3,6 @@
 // Purpose:     This dummy header includes the proper header file for the
 //              system we're compiling under.
 // Author:      John Norris, minor changes by Axel Schlueter
-// Modified by:
 // Created:     08.02.01
 // Copyright:   (c) 2000 Johnny C. Norris II
 // Licence:     wxWindows Licence
@@ -37,12 +36,12 @@ public:
     virtual bool GetValue() const = 0;
 
     // The current "normal" state for the toggle button depends upon its value.
-    virtual State GetNormalState() const wxOVERRIDE
+    virtual State GetNormalState() const override
     {
         return GetValue() ? State_Pressed : State_Normal;
     }
 
-    void UpdateWindowUI(long flags) wxOVERRIDE
+    void UpdateWindowUI(long flags) override
     {
         wxControl::UpdateWindowUI(flags);
 
@@ -76,13 +75,9 @@ protected:
 #elif defined(__WXMSW__)
     #include "wx/msw/tglbtn.h"
     #define wxHAS_BITMAPTOGGLEBUTTON
-#elif defined(__WXGTK20__)
+#elif defined(__WXGTK__)
     #include "wx/gtk/tglbtn.h"
     #define wxHAS_BITMAPTOGGLEBUTTON
-#elif defined(__WXGTK__)
-    #include "wx/gtk1/tglbtn.h"
-# elif defined(__WXMOTIF__)
-    #include "wx/motif/tglbtn.h"
 #elif defined(__WXMAC__)
     #include "wx/osx/tglbtn.h"
     #define wxHAS_BITMAPTOGGLEBUTTON

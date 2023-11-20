@@ -32,8 +32,6 @@
 #include "wx/apptrait.h"
 #include "wx/scopeguard.h"
 
-#include "wx/private/threadinfo.h"
-
 #include "wx/msw/private.h"
 #include "wx/msw/missing.h"
 #include "wx/msw/seh.h"
@@ -107,10 +105,10 @@ static bool gs_bGuiOwnedByMainThread = true;
 // critical section which controls access to all GUI functions: any secondary
 // thread (i.e. except the main one) must enter this crit section before doing
 // any GUI calls
-static wxCriticalSection *gs_critsectGui = NULL;
+static wxCriticalSection *gs_critsectGui = nullptr;
 
 // critical section which protects gs_nWaitingForGui variable
-static wxCriticalSection *gs_critsectWaitingForGui = NULL;
+static wxCriticalSection *gs_critsectWaitingForGui = nullptr;
 
 // number of threads waiting for GUI in wxMutexGuiEnter()
 static size_t gs_nWaitingForGui = 0;
@@ -121,111 +119,6 @@ static bool gs_waitingForThread = false;
 // ============================================================================
 // Windows implementation of thread and related classes
 // ============================================================================
-
-// Create a wrapper class for storing wxThreadSpecificInfo
-// using FLS or TLS api. Preferably we want to use FLS
-// since it supports freeing the created objects automatically
-// on thread exit. However, this is only supported from
-// Windows Vista and newer, so TLS is used as a fallback.
-// Note that with TLS we need to clean up the objects
-// manually in wxThreadInternal::WinThreadStart, and
-// if the running thread is not a wxThread, the objects
-// will not be freed until program exit. As mentioned,
-// this will only affect Windows XP.
-class wxThreadSpecificInfoTLS
-{
-private:
-    typedef DWORD(WINAPI *AllocCallback_t)(void (WINAPI*)(void*));
-    AllocCallback_t AllocCallback;
-
-    typedef DWORD(WINAPI *Alloc_t)();
-    Alloc_t Alloc;
-
-    typedef BOOL(WINAPI *Free_t)(DWORD);
-    Free_t Free;
-
-    typedef void* (WINAPI *GetValue_t)(DWORD);
-    GetValue_t GetValue;
-
-    typedef BOOL(WINAPI *SetValue_t)(DWORD, void*);
-    SetValue_t SetValue;
-
-    DWORD m_idx;
-
-    static void WINAPI DeleteThreadSpecificInfo(void* ptr)
-    {
-        delete static_cast<wxThreadSpecificInfo*>(ptr);
-    }
-
-    static const wxThreadSpecificInfoTLS& Instance()
-    {
-        static wxThreadSpecificInfoTLS s_instance;
-        return s_instance;
-    }
-
-    wxThreadSpecificInfoTLS():
-        AllocCallback(reinterpret_cast<AllocCallback_t>(GetProcAddress(GetModuleHandle(_T("kernel32.dll")), "FlsAlloc"))),
-        Alloc(NULL),
-        Free(reinterpret_cast<Free_t>(GetProcAddress(GetModuleHandle(_T("kernel32.dll")), "FlsFree"))),
-        GetValue(reinterpret_cast<GetValue_t>(GetProcAddress(GetModuleHandle(_T("kernel32.dll")), "FlsGetValue"))),
-        SetValue(reinterpret_cast<SetValue_t>(GetProcAddress(GetModuleHandle(_T("kernel32.dll")), "FlsSetValue")))
-    {
-        if (AllocCallback && Free && GetValue && SetValue)
-        {
-            // FLS API was available, so use it to free objects automatically
-            m_idx = AllocCallback(&DeleteThreadSpecificInfo);
-        }
-        else
-        {
-            // FLS API was not available (Windows XP?), so use TLS as fallback
-            AllocCallback = NULL;
-            Alloc = reinterpret_cast<Alloc_t>(TlsAlloc);
-            Free = reinterpret_cast<Free_t>(TlsFree);
-            GetValue = reinterpret_cast<GetValue_t>(TlsGetValue);
-            SetValue = reinterpret_cast<SetValue_t>(TlsSetValue);
-            m_idx = Alloc();
-        }
-    }
-
-public:
-    static wxThreadSpecificInfo* Get()
-    {
-        return static_cast<wxThreadSpecificInfo*>(Instance().GetValue(Instance().m_idx));
-    }
-
-    // wxThreadSpecificInfo will try to delete info when thread ends
-    static bool Set(wxThreadSpecificInfo* info)
-    {
-        return Instance().SetValue(Instance().m_idx, info);
-    }
-
-    static void CleanUp()
-    {
-        if (!Instance().AllocCallback)
-        {
-            // FLS API was not available, which means that objects will not be freed automatically.
-            delete Get();
-            Set(NULL);
-        }
-    }
-};
-
-wxThreadSpecificInfo& wxThreadSpecificInfo::Get()
-{
-    wxThreadSpecificInfo* info = wxThreadSpecificInfoTLS::Get();
-    if (!info)
-    {
-        info = new wxThreadSpecificInfo;
-        if (!wxThreadSpecificInfoTLS::Set(info))
-        {
-            // This will crash, but we'd leak memory otherwise which
-            // could be even worse and less immediately discoverable.
-            delete info;
-            info = NULL;
-        }
-    }
-    return *info;
-}
 
 // ----------------------------------------------------------------------------
 // wxCriticalSection
@@ -269,7 +162,7 @@ public:
     wxMutexInternal(wxMutexType mutexType);
     ~wxMutexInternal();
 
-    bool IsOk() const { return m_mutex != NULL; }
+    bool IsOk() const { return m_mutex != nullptr; }
 
     wxMutexError Lock() { return LockTimeout(INFINITE); }
     wxMutexError Lock(unsigned long ms) { return LockTimeout(ms); }
@@ -293,9 +186,9 @@ wxMutexInternal::wxMutexInternal(wxMutexType mutexType)
     // create a nameless (hence intra process and always private) mutex
     m_mutex = ::CreateMutex
                 (
-                    NULL,       // default secutiry attributes
+                    nullptr,    // default secutiry attributes
                     FALSE,      // not initially locked
-                    NULL        // no name
+                    nullptr     // no name
                 );
 
     m_type = mutexType;
@@ -399,7 +292,7 @@ public:
     wxSemaphoreInternal(int initialcount, int maxcount);
     ~wxSemaphoreInternal();
 
-    bool IsOk() const { return m_semaphore != NULL; }
+    bool IsOk() const { return m_semaphore != nullptr; }
 
     wxSemaError Wait() { return WaitTimeout(INFINITE); }
 
@@ -432,10 +325,10 @@ wxSemaphoreInternal::wxSemaphoreInternal(int initialcount, int maxcount)
 
     m_semaphore = ::CreateSemaphore
                     (
-                        NULL,           // default security attributes
+                        nullptr,           // default security attributes
                         initialcount,
                         maxcount,
-                        NULL            // no name
+                        nullptr            // no name
                     );
     if ( !m_semaphore )
     {
@@ -475,7 +368,7 @@ wxSemaError wxSemaphoreInternal::WaitTimeout(unsigned long milliseconds)
 
 wxSemaError wxSemaphoreInternal::Post()
 {
-    if ( !::ReleaseSemaphore(m_semaphore, 1, NULL /* ptr to previous count */) )
+    if ( !::ReleaseSemaphore(m_semaphore, 1, nullptr /* ptr to previous count */) )
     {
         if ( GetLastError() == ERROR_TOO_MANY_POSTS )
         {
@@ -512,11 +405,6 @@ public:
 
     ~wxThreadInternal()
     {
-        Free();
-    }
-
-    void Free()
-    {
         if ( m_hThread )
         {
             if ( !::CloseHandle(m_hThread) )
@@ -536,7 +424,7 @@ public:
     wxThreadError WaitForTerminate(wxCriticalSection& cs,
                                    wxThread::ExitCode *pRc,
                                    wxThreadWait waitMode,
-                                   wxThread *threadToDelete = NULL);
+                                   wxThread *threadToDelete = nullptr);
 
     // kill the thread unconditionally
     wxThreadError Kill();
@@ -690,12 +578,6 @@ THREAD_RETVAL THREAD_CALLCONV wxThreadInternal::WinThreadStart(void *param)
     if ( isDetached )
         thread->m_internal->LetDie();
 
-    // Do this as the very last thing to ensure that thread-specific info is
-    // not recreated any longer.
-    // Note thatg this is necessary only if the wxThreadSpecificInfoTLS cannot
-    // perform the cleanup automatically. That is, with Windows XP or older.
-    wxThreadSpecificInfoTLS::CleanUp();
-
     return rc;
 }
 
@@ -746,7 +628,7 @@ bool wxThreadInternal::Create(wxThread *thread, unsigned int stackSize)
 #ifdef wxUSE_BEGIN_THREAD
     m_hThread = (HANDLE)_beginthreadex
                         (
-                          NULL,                             // default security
+                          nullptr,                          // default security
                           stackSize,
                           wxThreadInternal::WinThreadStart, // entry point
                           thread,
@@ -756,7 +638,7 @@ bool wxThreadInternal::Create(wxThread *thread, unsigned int stackSize)
 #else // compiler doesn't have _beginthreadex
     m_hThread = ::CreateThread
                   (
-                    NULL,                               // default security
+                    nullptr,                            // default security
                     stackSize,                          // stack size
                     wxThreadInternal::WinThreadStart,   // thread entry point
                     (LPVOID)thread,                     // parameter
@@ -765,7 +647,7 @@ bool wxThreadInternal::Create(wxThread *thread, unsigned int stackSize)
                   );
 #endif // _beginthreadex/CreateThread
 
-    if ( m_hThread == NULL )
+    if ( m_hThread == nullptr )
     {
         wxLogSysError(_("Can't create thread"));
 
@@ -791,8 +673,6 @@ wxThreadError wxThreadInternal::Kill()
         return wxTHREAD_MISC_ERROR;
     }
 
-    Free();
-
     return wxTHREAD_NO_ERROR;
 }
 
@@ -809,7 +689,7 @@ wxThreadInternal::WaitForTerminate(wxCriticalSection& cs,
 
     // we may either wait passively for the thread to terminate (when called
     // from Wait()) or ask it to terminate (when called from Delete())
-    bool shouldDelete = threadToDelete != NULL;
+    bool shouldDelete = threadToDelete != nullptr;
 
     DWORD rc = 0;
 
@@ -819,10 +699,11 @@ wxThreadInternal::WaitForTerminate(wxCriticalSection& cs,
     // as Delete() (which calls us) is always safe to call we need to consider
     // all possible states
     {
-        wxCriticalSectionLocker lock(cs);
+    wxCriticalSectionLocker lock(cs);
 
-        if ( m_state == STATE_NEW )
-        {
+    switch ( m_state )
+    {
+        case STATE_NEW:
             if ( shouldDelete )
             {
                 // WinThreadStart() will see it and terminate immediately, no
@@ -839,12 +720,34 @@ wxThreadInternal::WaitForTerminate(wxCriticalSection& cs,
             }
             //else: shouldResume is correctly set to false here, wait until
             //      someone else runs the thread and it finishes
-        }
-        else // running, paused, cancelled or even exited
-        {
-            shouldResume = m_state == STATE_PAUSED;
-        }
+            break;
+
+        case STATE_RUNNING:
+            // Nothing special to do, just wait for the thread to exit.
+            break;
+
+        case STATE_PAUSED:
+            shouldResume = true;
+            break;
+
+        case STATE_CANCELED:
+            // No need to cancel it again.
+            shouldDelete = false;
+            break;
+
+        case STATE_EXITED:
+            // We don't need to wait for the thread to exit if it already did,
+            // but doing it does no harm neither and it's a rare case not worth
+            // optimizing for.
+            //
+            // Just ensure we don't call OnDelete() again as we may have
+            // already done it (unfortunately we have no way of knowing if we
+            // did, but it seems better not to do it at all rather than do it
+            // twice).
+            threadToDelete = nullptr;
+            break;
     }
+    } // release cs
 
     // resume the thread if it is paused
     if ( shouldResume )
@@ -962,10 +865,6 @@ wxThreadInternal::WaitForTerminate(wxCriticalSection& cs,
     if ( pRc )
         *pRc = wxUIntToPtr(rc);
 
-    // we don't need the thread handle any more in any case
-    Free();
-
-
     return rc == THREAD_ERROR_EXIT ? wxTHREAD_MISC_ERROR : wxTHREAD_NO_ERROR;
 }
 
@@ -1035,7 +934,7 @@ wxThread *wxThread::This()
     {
         wxLogSysError(_("Couldn't get the current thread pointer"));
 
-        // return NULL...
+        // return nullptr...
     }
 
     return thread;
@@ -1242,7 +1141,7 @@ wxThreadError wxThread::Kill()
 static bool wxSetThreadNameOnWindows10(const WCHAR *threadName)
 {
     typedef HRESULT(WINAPI* SetThreadDescription_t)(HANDLE, PCWSTR);
-    static SetThreadDescription_t s_pfnSetThreadDescription = NULL;
+    static SetThreadDescription_t s_pfnSetThreadDescription = nullptr;
 
     static bool s_initDone = false;
     if ( !s_initDone )
@@ -1328,8 +1227,6 @@ bool wxThread::SetNameForCurrent(const wxString &name)
 void wxThread::Exit(ExitCode status)
 {
     wxThreadInternal::DoThreadOnExit(this);
-
-    m_internal->Free();
 
     if ( IsDetached() )
     {
@@ -1418,8 +1315,8 @@ bool wxThread::TestDestroy()
 class wxThreadModule : public wxModule
 {
 public:
-    virtual bool OnInit() wxOVERRIDE;
-    virtual void OnExit() wxOVERRIDE;
+    virtual bool OnInit() override;
+    virtual void OnExit() override;
 
 private:
     wxDECLARE_DYNAMIC_CLASS(wxThreadModule);

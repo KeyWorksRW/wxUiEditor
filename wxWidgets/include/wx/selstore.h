@@ -2,7 +2,6 @@
 // Name:        wx/selstore.h
 // Purpose:     wxSelectionStore stores selected items in a control
 // Author:      Vadim Zeitlin
-// Modified by:
 // Created:     08.06.03 (extracted from src/generic/listctrl.cpp)
 // Copyright:   (c) 2000-2003 Vadim Zeitlin <vadim@wxwidgets.org>
 // Licence:     wxWindows licence
@@ -70,7 +69,7 @@ public:
     // individually)
     bool SelectRange(unsigned itemFrom, unsigned itemTo,
                      bool select = true,
-                     wxArrayInt *itemsChanged = NULL);
+                     wxArrayInt *itemsChanged = nullptr);
 
     // return true if the given item is selected
     bool IsSelected(unsigned item) const;

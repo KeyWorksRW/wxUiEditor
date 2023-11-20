@@ -1,30 +1,19 @@
-About
------
+This repository contains a snapshot of the **wxWidgets** (https://github.com/wxWidgets/wxWidgets) sources. It is desgined to be used as a submodule or subtree of various KeyWorks Software repositories. As such, it only contains a single custom CMake build file rather than the various wxWidgets build files. It also does not contain documentation, samples, or anything not specifically needed for building the wxWidgets libraries.
 
-wxWidgets is a free and open source cross-platform C++ framework
-for writing advanced GUI applications using native controls.
+All release versions of wxWidgets are in named branches. The main branch is a snapshot of the developmenet version of wxWidgets (currently 3.3.x) and is _not_ a release build.
 
-![wxWidgets Logo](https://www.wxwidgets.org/assets/img/header-logo.png)
+For the official wxWidgets readme file, please see [wxREADME](wxREADME.md).
 
-wxWidgets allows you to write native-looking GUI applications for
-all the major desktop platforms and also helps with abstracting
-the differences in the non-GUI aspects between them. It is free
-for the use in both open source and commercial applications, comes
-with the full, easy to read and modify, source and extensive
-documentation and a collection of more than a hundred examples.
-You can learn more about wxWidgets at https://www.wxwidgets.org/
-and read its documentation online at https://docs.wxwidgets.org/
+## CMake
 
-Licence
--------
+The `CMakeLists.txt` file is _not_ the same file that is part of the wxWidgets repository. This is a custom version, designed to build two librarys: **wxCLib** and **wxWidgets**. If building the shared libary version, you only need to link to the wxWidgets library. If building the static version, you need to link to both the wxCLib and wxWidgets libraries.
 
-[wxWidgets licence](https://github.com/wxWidgets/wxWidgets/blob/master/docs/licence.txt)
-is a modified version of LGPL explicitly allowing not distributing the sources
-of an application using the library even in the case of static linking.
+The `wxWidgets.lib` library is a subset of the monolithic library that would normally be built using the original wxWidgets build scripts. In particular, it does not include the following sub-libraries:
 
-Directory
--------
+- wxGL (monolithic library doesn't include this either)
+- wxMedia
+- wxNet
+- wxQA
 
-This directory contains a copy of the source code and header files necessary to build the wxWidgets libaries. This is _not_ the full directory tree of the official wxWidgets repository. Only the files needed to build **wxUiEditor** are included here.
+The other difference between these libraries and the official wxWidgets libraries is the compiler and linker options used. Under MSW, the compiler is told to optimize for space rather than speed (which often results in faster code due to CPU caching). Debug builds are built using using /Z7 instead of /Zi -- this results in a slightly larger PDB file, but faster compilation with ninja. Finally, when using MSVC, the compiler uses /GL and the linker uses /LTCG allowing for whole program optimization.
 
-There are several sub-folders containing custom `CMakeLists.txt`, `wxWidgets.cmake` and `setup.h` files used to build either from this folder, or from clones or forks of official wxWidgets repositories. All of these files are designed to allow building using CMake from the root of the wxUiEditor directory.

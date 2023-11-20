@@ -27,11 +27,14 @@
 #include "wx/evtloop.h"
 
 #ifdef __WINDOWS__
-    #include "wx/hashset.h"
     #include "wx/msw/wrapwin.h"
+
+    #include <unordered_set>
 #else
     #include "wx/evtloopsrc.h"
     #include "wx/evtloop.h"
+
+    #include <unordered_map>
 #endif
 
 
@@ -187,7 +190,7 @@ wxFileOffset wxWebResponseCURL::GetContentLength() const
 
 wxString wxWebResponseCURL::GetURL() const
 {
-    char* urlp = NULL;
+    char* urlp = nullptr;
     curl_easy_getinfo(GetHandle(), CURLINFO_EFFECTIVE_URL, &urlp);
 
     // While URLs should contain ASCII characters only as per
@@ -232,7 +235,7 @@ wxWebRequestCURL::wxWebRequestCURL(wxWebSession & session,
     wxWebRequestImpl(session, sessionImpl, handler, id),
     m_sessionImpl(sessionImpl)
 {
-    m_headerList = NULL;
+    m_headerList = nullptr;
 
     m_handle = curl_easy_init();
     if ( !m_handle )
@@ -399,7 +402,7 @@ void wxWebRequestCURL::DestroyHeaderList()
     if ( m_headerList )
     {
         curl_slist_free_all(m_headerList);
-        m_headerList = NULL;
+        m_headerList = nullptr;
     }
 }
 
@@ -519,16 +522,16 @@ class WinSock1SocketPoller: public SocketPollerImpl
 public:
     WinSock1SocketPoller(wxEvtHandler*);
     virtual ~WinSock1SocketPoller();
-    virtual bool StartPolling(curl_socket_t, int) wxOVERRIDE;
-    virtual void StopPolling(curl_socket_t) wxOVERRIDE;
-    virtual void ResumePolling(curl_socket_t) wxOVERRIDE;
+    virtual bool StartPolling(curl_socket_t, int) override;
+    virtual void StopPolling(curl_socket_t) override;
+    virtual void ResumePolling(curl_socket_t) override;
 
 private:
     static LRESULT CALLBACK MsgProc(HWND hwnd, WXUINT uMsg, WXWPARAM wParam,
                                     WXLPARAM lParam);
     static const WXUINT SOCKET_MESSAGE;
 
-    WX_DECLARE_HASH_SET(curl_socket_t, wxIntegerHash, wxIntegerEqual, SocketSet);
+    using SocketSet = std::unordered_set<curl_socket_t>;
 
     SocketSet m_polledSockets;
     WXHWND m_hwnd;
@@ -547,19 +550,19 @@ WinSock1SocketPoller::WinSock1SocketPoller(wxEvtHandler* hndlr)
     m_hwnd = CreateWindowEx(
         0,              //DWORD     dwExStyle,
         TEXT("STATIC"), //LPCSTR    lpClassName,
-        NULL,           //LPCSTR    lpWindowName,
+        nullptr,        //LPCSTR    lpWindowName,
         0,              //DWORD     dwStyle,
         0,              //int       X,
         0,              //int       Y,
         0,              //int       nWidth,
         0,              //int       nHeight,
         HWND_MESSAGE,   //HWND      hWndParent,
-        NULL,           //HMENU     hMenu,
-        NULL,           //HINSTANCE hInstance,
-        NULL            //LPVOID    lpParam
+        nullptr,        //HMENU     hMenu,
+        nullptr,        //HINSTANCE hInstance,
+        nullptr         //LPVOID    lpParam
     );
 
-    if ( m_hwnd == NULL )
+    if ( m_hwnd == nullptr )
     {
         wxLogError("Unable to create message window for WinSock1SocketPoller");
         return;
@@ -709,9 +712,9 @@ class SocketPollerSourceHandler: public wxEventLoopSourceHandler
 public:
     SocketPollerSourceHandler(curl_socket_t, wxEvtHandler*);
 
-    void OnReadWaiting() wxOVERRIDE;
-    void OnWriteWaiting() wxOVERRIDE;
-    void OnExceptionWaiting() wxOVERRIDE;
+    void OnReadWaiting() override;
+    void OnWriteWaiting() override;
+    void OnExceptionWaiting() override;
     ~SocketPollerSourceHandler(){}
 private:
     void SendEvent(int);
@@ -756,13 +759,12 @@ class SourceSocketPoller: public SocketPollerImpl
 public:
     SourceSocketPoller(wxEvtHandler*);
     ~SourceSocketPoller();
-    bool StartPolling(curl_socket_t, int) wxOVERRIDE;
-    void StopPolling(curl_socket_t) wxOVERRIDE;
-    void ResumePolling(curl_socket_t) wxOVERRIDE;
+    bool StartPolling(curl_socket_t, int) override;
+    void StopPolling(curl_socket_t) override;
+    void ResumePolling(curl_socket_t) override;
 
 private:
-    WX_DECLARE_HASH_MAP(curl_socket_t, wxEventLoopSource*, wxIntegerHash,\
-                        wxIntegerEqual, SocketDataMap);
+    using SocketDataMap = std::unordered_map<curl_socket_t, wxEventLoopSource*>;
 
     void CleanUpSocketSource(wxEventLoopSource*);
 
@@ -809,7 +811,7 @@ static int SocketPoller2EventSource(int pollAction)
 bool SourceSocketPoller::StartPolling(curl_socket_t sock, int pollAction)
 {
     SocketDataMap::iterator it = m_socketData.find(sock);
-    wxEventLoopSourceHandler* srcHandler = NULL;
+    wxEventLoopSourceHandler* srcHandler = nullptr;
 
     if ( it != m_socketData.end() )
     {
@@ -833,7 +835,7 @@ bool SourceSocketPoller::StartPolling(curl_socket_t sock, int pollAction)
     wxEventLoopSource* newSrc =
         wxEventLoopBase::AddSourceForFD(sock, srcHandler, eventSourceFlag);
 
-    if ( newSrc == NULL )
+    if ( newSrc == nullptr )
     {
         // We were not able to add a source for this socket.
         wxLogDebug(wxString::Format(
@@ -893,7 +895,7 @@ int wxWebSessionCURL::ms_activeSessions = 0;
 unsigned int wxWebSessionCURL::ms_runtimeVersion = 0;
 
 wxWebSessionCURL::wxWebSessionCURL() :
-    m_handle(NULL)
+    m_handle(nullptr)
 {
     // Initialize CURL globally if no sessions are active
     if ( ms_activeSessions == 0 )

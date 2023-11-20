@@ -2,7 +2,6 @@
 // Name:        wx/gtk/dataform.h
 // Purpose:     declaration of the wxDataFormat class
 // Author:      Vadim Zeitlin
-// Modified by:
 // Created:     19.10.99 (extracted from gtk/dataobj.h)
 // Copyright:   (c) 1998 Vadim Zeitlin <zeitlin@dptmaths.ens-cachan.fr>
 // Licence:     wxWindows licence
@@ -70,8 +69,6 @@ private:
 
     wxDataFormatId   m_type;
     NativeFormat     m_format;
-
-    void PrepareFormats();
 };
 
 #endif // _WX_GTK_DATAFORM_H

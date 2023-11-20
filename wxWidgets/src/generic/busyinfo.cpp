@@ -84,7 +84,7 @@ void wxBusyInfo::Init(const wxBusyInfoFlags& flags)
     }
     else
     {
-        title = NULL;
+        title = nullptr;
     }
 
     // Vertically center the text in the window.

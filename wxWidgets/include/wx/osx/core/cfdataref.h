@@ -2,7 +2,6 @@
 // Name:        wx/osx/core/cfdataref.h
 // Purpose:     wxCFDataRef class
 // Author:      Stefan Csomor
-// Modified by:
 // Created:     2007/05/10
 // Copyright:   (c) 2007 Stefan Csomor
 // Licence:     wxWindows licence
@@ -26,7 +25,7 @@ class wxCFDataRef : public wxCFRef< CFDataRef >
 {
 public:
     /*! @method     wxCFDataRef
-        @abstract   Creates a NULL data ref
+        @abstract   Creates a null data ref
     */
     wxCFDataRef()
     {}
@@ -35,7 +34,7 @@ public:
 
     /*! @method     wxCFDataRef
         @abstract   Assumes ownership of r and creates a reference to it.
-        @param r        The data reference to assume ownership of.  May be NULL.
+        @param r        The data reference to assume ownership of.  May be null.
         @discussion Like shared_ptr, it is assumed that the caller has a strong reference to r and intends
                     to transfer ownership of that reference to this ref holder.  If the object comes from
                     a Create or Copy method then this is the correct behaviour.  If the object comes from

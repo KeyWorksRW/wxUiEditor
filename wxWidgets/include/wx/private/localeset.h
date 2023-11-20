@@ -19,7 +19,7 @@ class wxLocaleSetter
 {
 public:
     wxLocaleSetter(const char *loc)
-        : m_locOld(wxStrdupA(setlocale(LC_ALL, NULL)))
+        : m_locOld(wxStrdupA(setlocale(LC_ALL, nullptr)))
     {
         setlocale(LC_ALL, loc);
     }
@@ -51,7 +51,7 @@ private:
 // under the other platforms currently).
 inline void wxEnsureLocaleIsCompatibleWithCRT()
 {
-#if wxUSE_UNICODE && defined(__DARWIN__)
+#if defined(__DARWIN__)
     // In OS X and iOS, wchar_t CRT functions convert to char* and fail under
     // some locales. The safest fix is to set LC_CTYPE to UTF-8 to ensure that
     // they can handle any input.
@@ -61,7 +61,7 @@ inline void wxEnsureLocaleIsCompatibleWithCRT()
     //
     // See https://stackoverflow.com/questions/11713745/why-does-the-printf-family-of-functions-care-about-locale
     setlocale(LC_CTYPE, "UTF-8");
-#endif // wxUSE_UNICODE && defined(__DARWIN__)
+#endif // defined(__DARWIN__)
 }
 
 #endif // _WX_PRIVATE_LOCALESET_H_

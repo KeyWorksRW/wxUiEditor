@@ -13,8 +13,6 @@
 
 #include "wx/radiobut.h"
 
-#include "wx/hashmap.h"
-
 #include "wx/gtk/private.h"
 
 //-----------------------------------------------------------------------------
@@ -22,17 +20,6 @@
 //-----------------------------------------------------------------------------
 
 extern bool           g_blockEventsOnDrag;
-
-namespace
-{
-
-WX_DECLARE_VOIDPTR_HASH_MAP(GtkWidget*, wxRadioButtonHashMap);
-
-// This map contains the hidden GtkRadioButtons created for wxRadioButtons with
-// wxRB_SINGLE style in order to allow unchecking them.
-wxRadioButtonHashMap gs_hiddenButtons;
-
-} // anonymous namespace
 
 //-----------------------------------------------------------------------------
 // "clicked"
@@ -76,7 +63,7 @@ bool wxRadioButton::Create( wxWindow *parent,
     // Check if this radio button should be put into an existing group. This
     // shouldn't be done if it's given a style to explicitly start a new group
     // or if it's not meant to be a part of a group at all.
-    GSList* radioButtonGroup = NULL;
+    GSList* radioButtonGroup = nullptr;
     if (!HasFlag(wxRB_GROUP) && !HasFlag(wxRB_SINGLE))
     {
         // search backward for last group start
@@ -110,9 +97,8 @@ bool wxRadioButton::Create( wxWindow *parent,
     // hidden radio button.
     if (HasFlag(wxRB_SINGLE))
     {
-        GtkWidget* const hiddenButton = gtk_radio_button_new( NULL );
-        gs_hiddenButtons[this] = hiddenButton;
-        m_widget = gtk_radio_button_new_with_label_from_widget( GTK_RADIO_BUTTON(hiddenButton), label.utf8_str() );
+        m_hiddenButton = gtk_radio_button_new( nullptr );
+        m_widget = gtk_radio_button_new_with_label_from_widget( GTK_RADIO_BUTTON(m_hiddenButton), label.utf8_str() );
         // Since this is the second button in the group, we need to ensure it
         // is active by default and not the first hidden one.
         gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON(m_widget), TRUE );
@@ -136,14 +122,9 @@ bool wxRadioButton::Create( wxWindow *parent,
     return true;
 }
 
-wxRadioButton::~wxRadioButton()
-{
-    gs_hiddenButtons.erase(this);
-}
-
 void wxRadioButton::SetLabel( const wxString& label )
 {
-    wxCHECK_RET( m_widget != NULL, wxT("invalid radiobutton") );
+    wxCHECK_RET( m_widget != nullptr, wxT("invalid radiobutton") );
 
     // save the original label
     wxControlBase::SetLabel(label);
@@ -153,7 +134,7 @@ void wxRadioButton::SetLabel( const wxString& label )
 
 void wxRadioButton::SetValue( bool val )
 {
-    wxCHECK_RET( m_widget != NULL, wxT("invalid radiobutton") );
+    wxCHECK_RET( m_widget != nullptr, wxT("invalid radiobutton") );
 
     if (val == GetValue())
         return;
@@ -172,7 +153,7 @@ void wxRadioButton::SetValue( bool val )
         // manually, which is implemented by turning a hidden button on, as
         // it's the only way to do it with GTK.
         if (HasFlag(wxRB_SINGLE))
-            gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON(gs_hiddenButtons[this]), TRUE );
+            gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON(m_hiddenButton), TRUE );
     }
 
     g_signal_handlers_unblock_by_func(
@@ -181,7 +162,7 @@ void wxRadioButton::SetValue( bool val )
 
 bool wxRadioButton::GetValue() const
 {
-    wxCHECK_MSG( m_widget != NULL, false, wxT("invalid radiobutton") );
+    wxCHECK_MSG( m_widget != nullptr, false, wxT("invalid radiobutton") );
 
     return gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(m_widget)) != 0;
 }
@@ -215,7 +196,7 @@ wxRadioButton::GTKGetWindow(wxArrayGdkWindows& WXUNUSED(windows)) const
 wxVisualAttributes
 wxRadioButton::GetClassDefaultAttributes(wxWindowVariant WXUNUSED(variant))
 {
-    return GetDefaultAttributesFromGTKWidget(gtk_radio_button_new_with_label(NULL, ""));
+    return GetDefaultAttributesFromGTKWidget(gtk_radio_button_new_with_label(nullptr, ""));
 }
 
 

@@ -16,7 +16,12 @@
 // headers
 // ----------------------------------------------------------------------------
 
-#include "wx/memory.h"
+// This really shouldn't be done here, but keep including this header for
+// compatibility as it used to be included from here in the previous versions
+// of wx and a lot of code would be broken by removing it.
+#ifndef WXBUILDING
+    #include "wx/string.h"
+#endif
 
 #define wxDECLARE_CLASS_INFO_ITERATORS()                                     \
 class WXDLLIMPEXP_BASE const_iterator                                    \
@@ -36,7 +41,7 @@ class WXDLLIMPEXP_BASE const_iterator                                    \
     \
     const_iterator(Node* node, wxHashTable* table)                       \
     : m_node(node), m_table(table) { }                               \
-    const_iterator() : m_node(NULL), m_table(NULL) { }                   \
+    const_iterator() : m_node(nullptr), m_table(nullptr) { }                   \
     value_type operator*() const;                                        \
     itor& operator++();                                                  \
     const itor operator++(int);                                          \
@@ -150,7 +155,7 @@ name##PluginSentinel  m_pluginsentinel
 // The 'this' pointer is always true, so use this version
 // to cast the this pointer and avoid compiler warnings.
 #define wxDynamicCastThis(className) \
-     (IsKindOf(&className::ms_classInfo) ? (className*)this : NULL)
+     (IsKindOf(&className::ms_classInfo) ? (className*)this : nullptr)
 
 template <class T>
 inline T *wxCheckCast(const void *ptr)
@@ -160,47 +165,6 @@ inline T *wxCheckCast(const void *ptr)
 }
 
 #define wxStaticCast(obj, className) wxCheckCast<className>(obj)
-
-// ----------------------------------------------------------------------------
-// set up memory debugging macros
-// ----------------------------------------------------------------------------
-
-/*
-    Which new/delete operator variants do we want?
-
-    _WX_WANT_NEW_SIZET_WXCHAR_INT             = void *operator new (size_t size, wxChar *fileName = 0, int lineNum = 0)
-    _WX_WANT_DELETE_VOID                      = void operator delete (void * buf)
-    _WX_WANT_DELETE_VOID_WXCHAR_INT           = void operator delete(void *buf, wxChar*, int)
-    _WX_WANT_ARRAY_NEW_SIZET_WXCHAR_INT       = void *operator new[] (size_t size, wxChar *fileName , int lineNum = 0)
-    _WX_WANT_ARRAY_DELETE_VOID                = void operator delete[] (void *buf)
-    _WX_WANT_ARRAY_DELETE_VOID_WXCHAR_INT     = void operator delete[] (void* buf, wxChar*, int )
-*/
-
-#if wxUSE_MEMORY_TRACING
-
-// All compilers get these ones
-#define _WX_WANT_NEW_SIZET_WXCHAR_INT
-#define _WX_WANT_DELETE_VOID
-
-#if defined(__VISUALC__)
-    #define _WX_WANT_DELETE_VOID_WXCHAR_INT
-#endif
-
-// Now see who (if anyone) gets the array memory operators
-#if wxUSE_ARRAY_MEMORY_OPERATORS
-
-    // Everyone except Visual C++ (cause problems for VC++ - crashes)
-    #if !defined(__VISUALC__)
-        #define _WX_WANT_ARRAY_NEW_SIZET_WXCHAR_INT
-    #endif
-
-    // Everyone except Visual C++ (cause problems for VC++ - crashes)
-    #if !defined(__VISUALC__)
-        #define _WX_WANT_ARRAY_DELETE_VOID
-    #endif
-#endif // wxUSE_ARRAY_MEMORY_OPERATORS
-
-#endif // wxUSE_MEMORY_TRACING
 
 // ----------------------------------------------------------------------------
 // Compatibility macro aliases DECLARE group
@@ -268,7 +232,7 @@ class wxObjectDataPtr
 public:
     typedef T element_type;
 
-    explicit wxObjectDataPtr(T *ptr = NULL) : m_ptr(ptr) {}
+    explicit wxObjectDataPtr(T *ptr = nullptr) : m_ptr(ptr) {}
 
     // copy ctor
     wxObjectDataPtr(const wxObjectDataPtr<T> &tocopy)
@@ -300,18 +264,18 @@ public:
     typedef T *(wxObjectDataPtr<T>::*unspecified_bool_type)() const;
     operator unspecified_bool_type() const
     {
-        return m_ptr ? &wxObjectDataPtr<T>::get : NULL;
+        return m_ptr ? &wxObjectDataPtr<T>::get : nullptr;
     }
 
     T& operator*() const
     {
-        wxASSERT(m_ptr != NULL);
+        wxASSERT(m_ptr != nullptr);
         return *(m_ptr);
     }
 
     T *operator->() const
     {
-        wxASSERT(m_ptr != NULL);
+        wxASSERT(m_ptr != nullptr);
         return get();
     }
 
@@ -325,7 +289,7 @@ public:
     T* release()
     {
         T* const ptr = m_ptr;
-        m_ptr = NULL;
+        m_ptr = nullptr;
         return ptr;
     }
 
@@ -377,7 +341,7 @@ class WXDLLIMPEXP_BASE wxObject
 #endif
 
 public:
-    wxObject() { m_refData = NULL; }
+    wxObject() { m_refData = nullptr; }
     virtual ~wxObject() { UnRef(); }
 
     wxObject(const wxObject& other)
@@ -401,7 +365,7 @@ public:
     // Turn on the correct set of new and delete operators
 
 #ifdef _WX_WANT_NEW_SIZET_WXCHAR_INT
-    void *operator new ( size_t size, const wxChar *fileName = NULL, int lineNum = 0 );
+    void *operator new ( size_t size, const wxChar *fileName = nullptr, int lineNum = 0 );
 #endif
 
 #ifdef _WX_WANT_DELETE_VOID
@@ -413,7 +377,7 @@ public:
 #endif
 
 #ifdef _WX_WANT_ARRAY_NEW_SIZET_WXCHAR_INT
-    void *operator new[] ( size_t size, const wxChar *fileName = NULL, int lineNum = 0 );
+    void *operator new[] ( size_t size, const wxChar *fileName = nullptr, int lineNum = 0 );
 #endif
 
 #ifdef _WX_WANT_ARRAY_DELETE_VOID
@@ -471,26 +435,10 @@ protected:
 
 inline wxObject *wxCheckDynamicCast(wxObject *obj, wxClassInfo *classInfo)
 {
-    return obj && obj->GetClassInfo()->IsKindOf(classInfo) ? obj : NULL;
+    return obj && obj->GetClassInfo()->IsKindOf(classInfo) ? obj : nullptr;
 }
 
 #include "wx/xti2.h"
-
-// ----------------------------------------------------------------------------
-// more debugging macros
-// ----------------------------------------------------------------------------
-
-#if wxUSE_DEBUG_NEW_ALWAYS
-    #define WXDEBUG_NEW new(__TFILE__,__LINE__)
-
-    #if wxUSE_GLOBAL_MEMORY_OPERATORS
-        #define new WXDEBUG_NEW
-    #elif defined(__VISUALC__)
-        // Including this file redefines new and allows leak reports to
-        // contain line numbers
-        #include "wx/msw/msvcrt.h"
-    #endif
-#endif // wxUSE_DEBUG_NEW_ALWAYS
 
 // ----------------------------------------------------------------------------
 // Compatibility macro aliases IMPLEMENT group

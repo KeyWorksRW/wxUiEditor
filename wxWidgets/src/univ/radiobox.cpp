@@ -2,7 +2,6 @@
 // Name:        src/univ/radiobox.cpp
 // Purpose:     wxRadioBox implementation
 // Author:      Vadim Zeitlin
-// Modified by:
 // Created:     11.09.00
 // Copyright:   (c) 2000 SciTech Software, Inc. (www.scitechsoft.com)
 // Licence:     wxWindows licence
@@ -360,7 +359,7 @@ void wxRadioBox::DoSetToolTip(wxToolTip *tooltip)
         if (tooltip)
             m_buttons[n]->SetToolTip(tooltip->GetTip());
         else
-            m_buttons[n]->SetToolTip(NULL);
+            m_buttons[n]->SetToolTip(nullptr);
     }
 }
 #endif // wxUSE_TOOLTIPS

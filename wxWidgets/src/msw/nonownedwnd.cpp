@@ -35,8 +35,9 @@
 #endif // wxUSE_GRAPHICS_CONTEXT
 
 #include "wx/dynlib.h"
-#include "wx/scopedptr.h"
 #include "wx/msw/missing.h"
+
+#include <memory>
 
 // ============================================================================
 // wxNonOwnedWindow implementation
@@ -44,7 +45,7 @@
 
 bool wxNonOwnedWindow::DoClearShape()
 {
-    if (::SetWindowRgn(GetHwnd(), NULL, TRUE) == 0)
+    if (::SetWindowRgn(GetHwnd(), nullptr, TRUE) == 0)
     {
         wxLogLastError(wxT("SetWindowRgn"));
         return false;
@@ -57,10 +58,10 @@ bool wxNonOwnedWindow::DoSetRegionShape(const wxRegion& region)
 {
     // Windows takes ownership of the region, so
     // we'll have to make a copy of the region to give to it.
-    DWORD noBytes = ::GetRegionData(GetHrgnOf(region), 0, NULL);
+    DWORD noBytes = ::GetRegionData(GetHrgnOf(region), 0, nullptr);
     RGNDATA *rgnData = (RGNDATA*) new char[noBytes];
     ::GetRegionData(GetHrgnOf(region), noBytes, rgnData);
-    HRGN hrgn = ::ExtCreateRegion(NULL, noBytes, rgnData);
+    HRGN hrgn = ::ExtCreateRegion(nullptr, noBytes, rgnData);
     delete[] (char*) rgnData;
 
     // SetWindowRgn expects the region to be in coordinates
@@ -91,7 +92,7 @@ public:
     {
         // Create the region corresponding to this path and set it as windows
         // shape.
-        wxScopedPtr<wxGraphicsContext> context(wxGraphicsContext::Create(win));
+        std::unique_ptr<wxGraphicsContext> context(wxGraphicsContext::Create(win));
         Region gr(static_cast<GraphicsPath*>(m_path.GetNativePath()));
         win->SetShape(
             wxRegion(
@@ -117,7 +118,7 @@ private:
         event.Skip();
 
         wxPaintDC dc(m_win);
-        wxScopedPtr<wxGraphicsContext> context(wxGraphicsContext::Create(dc));
+        std::unique_ptr<wxGraphicsContext> context(wxGraphicsContext::Create(dc));
         context->SetPen(wxPen(*wxLIGHT_GREY, 2));
         context->StrokePath(m_path);
     }
@@ -141,7 +142,7 @@ bool wxNonOwnedWindow::DoSetPathShape(const wxGraphicsPath& path)
 wxNonOwnedWindow::wxNonOwnedWindow()
 {
 #if wxUSE_GRAPHICS_CONTEXT
-    m_shapeImpl = NULL;
+    m_shapeImpl = nullptr;
 #endif // wxUSE_GRAPHICS_CONTEXT
 
     m_activeDPI = wxDefaultSize;
@@ -182,12 +183,11 @@ static bool IsPerMonitorDPIAware(HWND hwnd)
 
     // Determine if 'Per Monitor v2' DPI awareness is enabled in the
     // applications manifest.
-#if wxUSE_DYNLIB_CLASS
     #define WXDPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2 ((WXDPI_AWARENESS_CONTEXT)-4)
     typedef WXDPI_AWARENESS_CONTEXT(WINAPI * GetWindowDpiAwarenessContext_t)(HWND hwnd);
     typedef BOOL(WINAPI * AreDpiAwarenessContextsEqual_t)(WXDPI_AWARENESS_CONTEXT dpiContextA, WXDPI_AWARENESS_CONTEXT dpiContextB);
-    static GetWindowDpiAwarenessContext_t s_pfnGetWindowDpiAwarenessContext = NULL;
-    static AreDpiAwarenessContextsEqual_t s_pfnAreDpiAwarenessContextsEqual = NULL;
+    static GetWindowDpiAwarenessContext_t s_pfnGetWindowDpiAwarenessContext = nullptr;
+    static AreDpiAwarenessContextsEqual_t s_pfnAreDpiAwarenessContextsEqual = nullptr;
     static bool s_initDone = false;
 
     if ( !s_initDone )
@@ -207,7 +207,6 @@ static bool IsPerMonitorDPIAware(HWND hwnd)
             dpiAware = true;
         }
     }
-#endif // wxUSE_DYNLIB_CLASS
 
     return dpiAware;
 }

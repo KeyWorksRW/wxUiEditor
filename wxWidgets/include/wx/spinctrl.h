@@ -2,7 +2,6 @@
 // Name:        wx/spinctrl.h
 // Purpose:     wxSpinCtrlBase class
 // Author:      Vadim Zeitlin
-// Modified by:
 // Created:     22.07.99
 // Copyright:   (c) Vadim Zeitlin
 // Licence:     wxWindows licence
@@ -82,7 +81,7 @@ public:
     double GetValue() const       { return m_value; }
     void   SetValue(double value) { m_value = value; }
 
-    virtual wxEvent *Clone() const wxOVERRIDE { return new wxSpinDoubleEvent(*this); }
+    virtual wxEvent *Clone() const override { return new wxSpinDoubleEvent(*this); }
 
 protected:
     double m_value;
@@ -121,13 +120,10 @@ typedef void (wxEvtHandler::*wxSpinDoubleEventFunction)(wxSpinDoubleEvent&);
 #elif defined(__WXMSW__)
     #define wxHAS_NATIVE_SPINCTRL
     #include "wx/msw/spinctrl.h"
-#elif defined(__WXGTK20__)
+#elif defined(__WXGTK__)
     #define wxHAS_NATIVE_SPINCTRL
     #define wxHAS_NATIVE_SPINCTRLDOUBLE
     #include "wx/gtk/spinctrl.h"
-#elif defined(__WXGTK__)
-    #define wxHAS_NATIVE_SPINCTRL
-    #include "wx/gtk1/spinctrl.h"
 #elif defined(__WXQT__)
     #define wxHAS_NATIVE_SPINCTRL
     #define wxHAS_NATIVE_SPINCTRLDOUBLE

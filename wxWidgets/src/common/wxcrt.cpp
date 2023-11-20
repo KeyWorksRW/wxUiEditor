@@ -41,7 +41,6 @@
 
 #ifndef WX_PRECOMP
     #include "wx/string.h"
-    #include "wx/hash.h"
     #include "wx/utils.h"     // for wxMin and wxMax
     #include "wx/log.h"
 #endif
@@ -77,15 +76,15 @@ WXDLLIMPEXP_BASE size_t wxMB2WC(wchar_t *buf, const char *psz, size_t n)
   }
 
   // Note that we rely on common (and required by Unix98 but unfortunately not
-  // C99) extension which allows to call mbs(r)towcs() with NULL output pointer
+  // C99) extension which allows to call mbs(r)towcs() with null output pointer
   // to just get the size of the needed buffer -- this is needed as otherwise
   // we have no idea about how much space we need. Currently all supported
   // compilers do provide it and if they don't, HAVE_WCSRTOMBS shouldn't be
   // defined at all.
 #ifdef HAVE_WCSRTOMBS
-  return mbsrtowcs(NULL, &psz, 0, &mbstate);
+  return mbsrtowcs(nullptr, &psz, 0, &mbstate);
 #else
-  return wxMbstowcs(NULL, psz, 0);
+  return wxMbstowcs(nullptr, psz, 0);
 #endif
 }
 
@@ -110,16 +109,16 @@ WXDLLIMPEXP_BASE size_t wxWC2MB(char *buf, const wchar_t *pwz, size_t n)
   }
 
 #ifdef HAVE_WCSRTOMBS
-  return wcsrtombs(NULL, &pwz, 0, &mbstate);
+  return wcsrtombs(nullptr, &pwz, 0, &mbstate);
 #else
-  return wxWcstombs(NULL, pwz, 0);
+  return wxWcstombs(nullptr, pwz, 0);
 #endif
 }
 
 char* wxSetlocale(int category, const char *locale)
 {
     char *rv = setlocale(category, locale);
-    if ( locale != NULL /* setting locale, not querying */ &&
+    if ( locale != nullptr /* setting locale, not querying */ &&
          rv /* call was successful */ )
     {
         wxUpdateLocaleIsUtf8();
@@ -241,9 +240,9 @@ static int vswscanf(const wchar_t *ws, const wchar_t *format, va_list argptr)
     // of the function. This doesn't work with %c and %s because of difference
     // in size of char and wchar_t, though.
 
-    wxCHECK_MSG( wxStrstr(format, L"%s") == NULL, -1,
+    wxCHECK_MSG( wxStrstr(format, L"%s") == nullptr, -1,
                  wxT("incomplete vswscanf implementation doesn't allow %s") );
-    wxCHECK_MSG( wxStrstr(format, L"%c") == NULL, -1,
+    wxCHECK_MSG( wxStrstr(format, L"%c") == nullptr, -1,
                  wxT("incomplete vswscanf implementation doesn't allow %c") );
 
     return wxCRT_VsscanfA(static_cast<const char*>(wxConvLibc.cWC2MB(ws)),
@@ -421,8 +420,6 @@ int wxDoSprintfUtf8(char *str, const char *format, ...)
 }
 #endif // wxUSE_UNICODE_UTF8
 
-#if wxUSE_UNICODE
-
 #if !wxUSE_UTF8_LOCALE_ONLY
 int wxDoSprintfWchar(wchar_t *str, const wxChar *format, ...)
 {
@@ -448,8 +445,6 @@ int wxDoSprintfUtf8(wchar_t *str, const char *format, ...)
     return rv;
 }
 #endif // wxUSE_UNICODE_UTF8
-
-#endif // wxUSE_UNICODE
 
 #if !wxUSE_UTF8_LOCALE_ONLY
 int wxDoSnprintfWchar(char *str, size_t size, const wxChar *format, ...)
@@ -477,8 +472,6 @@ int wxDoSnprintfUtf8(char *str, size_t size, const char *format, ...)
 }
 #endif // wxUSE_UNICODE_UTF8
 
-#if wxUSE_UNICODE
-
 #if !wxUSE_UTF8_LOCALE_ONLY
 int wxDoSnprintfWchar(wchar_t *str, size_t size, const wxChar *format, ...)
 {
@@ -505,14 +498,10 @@ int wxDoSnprintfUtf8(wchar_t *str, size_t size, const char *format, ...)
 }
 #endif // wxUSE_UNICODE_UTF8
 
-#endif // wxUSE_UNICODE
-
 
 #ifdef HAVE_BROKEN_VSNPRINTF_DECL
     #define vsnprintf wx_fixed_vsnprintf
 #endif
-
-#if wxUSE_UNICODE
 
 namespace
 {
@@ -566,7 +555,6 @@ static size_t PrintfViaString(T *out, size_t outsize,
 
     return ConvertStringToBuf(s, out, outsize);
 }
-#endif // wxUSE_UNICODE
 
 int wxVsprintf(char *str, const wxString& format, va_list argptr)
 {
@@ -578,15 +566,10 @@ int wxVsprintf(char *str, const wxString& format, va_list argptr)
         return wxCRT_VsprintfA(str, format.wx_str(), argptr);
     else
     #endif
-    #if wxUSE_UNICODE
     return PrintfViaString(str, wxNO_LEN, format, argptr);
-    #else
-    return wxCRT_VsprintfA(str, format.mb_str(), argptr);
-    #endif
 #endif
 }
 
-#if wxUSE_UNICODE
 int wxVsprintf(wchar_t *str, const wxString& format, va_list argptr)
 {
 #if wxUSE_UNICODE_WCHAR
@@ -600,7 +583,6 @@ int wxVsprintf(wchar_t *str, const wxString& format, va_list argptr)
         return PrintfViaString(str, wxNO_LEN, format, argptr);
 #endif // wxUSE_UNICODE_UTF8
 }
-#endif // wxUSE_UNICODE
 
 int wxVsnprintf(char *str, size_t size, const wxString& format, va_list argptr)
 {
@@ -613,16 +595,12 @@ int wxVsnprintf(char *str, size_t size, const wxString& format, va_list argptr)
         rv = wxCRT_VsnprintfA(str, size, format.wx_str(), argptr);
     else
     #endif
-    #if wxUSE_UNICODE
     {
         // NB: if this code is called, then wxString::PrintV() would use the
         //     wchar_t* version of wxVsnprintf(), so it's safe to use PrintV()
         //     from here
         rv = PrintfViaString(str, size, format, argptr);
     }
-    #else
-    rv = wxCRT_VsnprintfA(str, size, format.mb_str(), argptr);
-    #endif
 #endif
 
     // VsnprintfTestCase reveals that glibc's implementation of vswprintf
@@ -632,7 +610,6 @@ int wxVsnprintf(char *str, size_t size, const wxString& format, va_list argptr)
     return rv;
 }
 
-#if wxUSE_UNICODE
 int wxVsnprintf(wchar_t *str, size_t size, const wxString& format, va_list argptr)
 {
     int rv;
@@ -660,8 +637,6 @@ int wxVsnprintf(wchar_t *str, size_t size, const wxString& format, va_list argpt
 
     return rv;
 }
-#endif // wxUSE_UNICODE
-
 
 // ----------------------------------------------------------------------------
 // ctype.h stuff (currently unused)
@@ -1008,21 +983,21 @@ static T *wxCRT_DoStrtok(T *psz, const T *delim, T **save_ptr)
     {
         psz = *save_ptr;
         if ( !psz )
-            return NULL;
+            return nullptr;
     }
 
     psz += wxStrspn(psz, delim);
     if (!*psz)
     {
-        *save_ptr = NULL;
-        return NULL;
+        *save_ptr = nullptr;
+        return nullptr;
     }
 
     T *ret = psz;
     psz = wxStrpbrk(psz, delim);
     if (!psz)
     {
-        *save_ptr = NULL;
+        *save_ptr = nullptr;
     }
     else
     {
@@ -1094,7 +1069,7 @@ static bool wxIsLocaleUtf8()
 
     // check LC_CTYPE string: this also works with (sufficiently recent) MSVC
     // and on any other system without nl_langinfo()
-    const char *lc_ctype = setlocale(LC_CTYPE, NULL);
+    const char *lc_ctype = setlocale(LC_CTYPE, nullptr);
     if ( lc_ctype )
     {
         // check if we're running under the "C" locale: it is 7bit subset
@@ -1156,13 +1131,9 @@ int wxFputs(const wxString& s, FILE *stream)
 
 int wxFputc(const wxUniChar& c, FILE *stream)
 {
-#if !wxUSE_UNICODE // FIXME-UTF8: temporary, remove this with ANSI build
-    return wxCRT_FputcA((char)c, stream);
-#else
     CALL_ANSI_OR_UNICODE(return,
                          wxCRT_FputsA(c.AsUTF8(), stream),
                          wxCRT_FputcW((wchar_t)c, stream));
-#endif
 }
 
 #ifdef wxCRT_PerrorA
@@ -1182,17 +1153,17 @@ void wxPerror(const wxString& s)
 
 wchar_t *wxFgets(wchar_t *s, int size, FILE *stream)
 {
-    wxCHECK_MSG( s, NULL, "empty buffer passed to wxFgets()" );
+    wxCHECK_MSG( s, nullptr, "empty buffer passed to wxFgets()" );
 
     wxCharBuffer buf(size - 1);
     // FIXME: this reads too little data if wxConvLibc uses UTF-8 ('size' wide
     //        characters may be encoded by up to 'size'*4 bytes), but what
     //        else can we do?
-    if ( wxFgets(buf.data(), size, stream) == NULL )
-        return NULL;
+    if ( wxFgets(buf.data(), size, stream) == nullptr )
+        return nullptr;
 
     if ( wxConvLibc.ToWChar(s, size, buf, wxNO_LEN) == wxCONV_FAILED )
-        return NULL;
+        return nullptr;
 
     return s;
 }
@@ -1241,7 +1212,7 @@ int wxVsscanf(const wxCStrData& str, const wchar_t *format, va_list ap)
         if(dstendp) \
             *endptr = (wchar_t*)(nptr + (dstendp - dst)); \
         else \
-            *endptr = NULL; \
+            *endptr = nullptr; \
     } \
     return d;
 

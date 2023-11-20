@@ -2,7 +2,6 @@
 // Name:        wx/msw/icon.h
 // Purpose:     wxIcon class
 // Author:      Julian Smart
-// Modified by:
 // Created:     01/02/97
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
@@ -29,7 +28,7 @@ public:
     wxIconRefData() { }
     virtual ~wxIconRefData() { Free(); }
 
-    virtual void Free() wxOVERRIDE;
+    virtual void Free() override;
 };
 
 // ---------------------------------------------------------------------------
@@ -79,12 +78,12 @@ public:
     void CopyFromBitmap(const wxBitmap& bmp);
 
 protected:
-    virtual wxGDIImageRefData *CreateData() const wxOVERRIDE
+    virtual wxGDIImageRefData *CreateData() const override
     {
         return new wxIconRefData;
     }
 
-    virtual wxObjectRefData *CloneRefData(const wxObjectRefData *data) const wxOVERRIDE;
+    virtual wxObjectRefData *CloneRefData(const wxObjectRefData *data) const override;
 
     // create from XPM data
     void CreateIconFromXpm(const char* const* data);

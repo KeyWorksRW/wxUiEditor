@@ -28,18 +28,19 @@
     #include "wx/msw/private.h"
 #endif
 
+#include <unordered_map>
+
 // ----------------------------------------------------------------------------
 // default languages table & initialization
 // ----------------------------------------------------------------------------
 
 // Hash maps to look up language script aliases from script names and vice versa
-#include "wx/hashmap.h"
-static wxStringToStringHashMap gs_scmap_name2alias;
-static wxStringToStringHashMap gs_scmap_alias2name;
+static std::unordered_map<wxString, wxString> gs_scmap_name2alias;
+static std::unordered_map<wxString, wxString> gs_scmap_alias2name;
 
 /* static */ wxString wxUILocale::GetScriptAliasFromName(const wxString& scriptName)
 {
-    wxStringToStringHashMap::iterator scIter = gs_scmap_name2alias.find(scriptName);
+    const auto scIter = gs_scmap_name2alias.find(scriptName);
     if (scIter != gs_scmap_name2alias.end())
         return scIter->second;
     else
@@ -48,7 +49,7 @@ static wxStringToStringHashMap gs_scmap_alias2name;
 
 /* static */ wxString wxUILocale::GetScriptNameFromAlias(const wxString& scriptAlias)
 {
-    wxStringToStringHashMap::iterator scIter = gs_scmap_alias2name.find(scriptAlias);
+    const auto scIter = gs_scmap_alias2name.find(scriptAlias);
     if (scIter != gs_scmap_alias2name.end())
         return scIter->second;
     else
@@ -202,8 +203,8 @@ tabLangData[] =
     { wxLANGUAGE_CENTRAL_ATLAS_TAMAZIGHT_TIFINAGH,                 "tzm-Tfng"       , "tzm@tifinagh"              , ""             , 0x5f, 0x04, wxLayout_LeftToRight, "Central Atlas Tamazight (Tifinagh)","Tamazight (Tifinagh)" },
     { wxLANGUAGE_CENTRAL_ATLAS_TAMAZIGHT_TIFINAGH_MOROCCO,         "tzm-Tfng-MA"    , "tzm_MA@tifinagh"           , ""             , 0x5f, 0x04, wxLayout_LeftToRight, "Central Atlas Tamazight (Tifinagh, Morocco)","\342\265\234\342\264\260\342\265\216\342\264\260\342\265\243\342\265\211\342\265\226\342\265\234 (\342\265\215\342\265\216\342\265\226\342\265\224\342\265\211\342\264\261)" },
     { wxLANGUAGE_CENTRAL_KURDISH,                                  "ku"             , "ku"                        , ""             , 0x92, 0x01, wxLayout_RightToLeft, "Central Kurdish","\332\251\331\210\330\261\330\257\333\214\333\214 \331\206\330\247\331\210\333\225\332\225\330\247\330\263\330\252" },
-    { wxLANGUAGE_CENTRAL_KURDISH,                                  "ku-Arab"        , "ku@arabic"                 , ""             , 0x92, 0x01, wxLayout_RightToLeft, "Central Kurdish","\332\251\331\210\330\261\330\257\333\214\333\214 \331\206\330\247\331\210\333\225\332\225\330\247\330\263\330\252" },
-    { wxLANGUAGE_CENTRAL_KURDISH_IRAQ,                             "ku-Arab-IQ"     , "ku_IQ@arabic"              , ""             , 0x92, 0x01, wxLayout_RightToLeft, "Central Kurdish (Iraq)","\332\251\331\210\330\261\330\257\333\214\333\214 \331\206\330\247\331\210\333\225\332\225\330\247\330\263\330\252 (\330\271\333\216\330\261\330\247\331\202)" },
+    { wxLANGUAGE_CENTRAL_KURDISH_ARABIC,                           "ku-Arab"        , "ku@arabic"                 , ""             , 0x92, 0x01, wxLayout_RightToLeft, "Central Kurdish","\332\251\331\210\330\261\330\257\333\214\333\214 \331\206\330\247\331\210\333\225\332\225\330\247\330\263\330\252" },
+    { wxLANGUAGE_CENTRAL_KURDISH_ARABIC_IRAQ,                      "ku-Arab-IQ"     , "ku_IQ@arabic"              , ""             , 0x92, 0x01, wxLayout_RightToLeft, "Central Kurdish (Iraq)","\332\251\331\210\330\261\330\257\333\214\333\214 \331\206\330\247\331\210\333\225\332\225\330\247\330\263\330\252 (\330\271\333\216\330\261\330\247\331\202)" },
     { wxLANGUAGE_CHAKMA,                                           "ccp"            , "ccp"                       , ""             , 0x00, 0x04, wxLayout_LeftToRight, "Chakma","\360\221\204\214\360\221\204\213\360\221\204\264\360\221\204\237\360\221\204\263\360\221\204\246" },
     { wxLANGUAGE_CHAKMA_CHAKMA,                                    "ccp-Cakm"       , "ccp@chakma"                , ""             , 0x00, 0x04, wxLayout_LeftToRight, "Chakma (Chakma)","\360\221\204\214\360\221\204\213\360\221\204\264\360\221\204\237\360\221\204\263\360\221\204\246 (\360\221\204\214\360\221\204\207\360\221\204\264\360\221\204\237)" },
     { wxLANGUAGE_CHAKMA_CHAKMA_BANGLADESH,                         "ccp-Cakm-BD"    , "ccp_BD@chakma"             , ""             , 0x00, 0x04, wxLayout_LeftToRight, "Chakma (Chakma, Bangladesh)","\360\221\204\214\360\221\204\213\360\221\204\264\360\221\204\237\360\221\204\263\360\221\204\246 (\360\221\204\235\360\221\204\201\360\221\204\243\360\221\204\230\360\221\204\254\360\221\204\214\360\221\204\264)" },
@@ -245,6 +246,9 @@ tabLangData[] =
     { wxLANGUAGE_DARI_AFGHANISTAN,                                 "prs-AF"         , "prs_AF"                    , ""             , 0x8c, 0x01, wxLayout_RightToLeft, "Dari (Afghanistan)","\330\257\330\261\331\211 (\330\247\331\201\330\272\330\247\331\206\330\263\330\252\330\247\331\206)" },
     { wxLANGUAGE_DIVEHI,                                           "dv"             , "dv"                        , "dv_MV"        , 0x65, 0x01, wxLayout_RightToLeft, "Divehi","\336\213\336\250\336\210\336\254\336\200\336\250\336\204\336\246\336\220\336\260" },
     { wxLANGUAGE_DIVEHI_MALDIVES,                                  "dv-MV"          , "dv_MV"                     , ""             , 0x65, 0x01, wxLayout_RightToLeft, "Divehi (Maldives)","\336\213\336\250\336\210\336\254\336\200\336\250\336\204\336\246\336\220\336\260 (\336\213\336\250\336\210\336\254\336\200\336\250 \336\203\336\247\336\207\336\260\336\226\336\254)" },
+    { wxLANGUAGE_DOGRI,                                            "doi"            , "doi"                       , ""             , 0x00, 0x04, wxLayout_LeftToRight, "Dogri","\340\244\241\340\245\213\340\244\227\340\244\260\340\245\200" },
+    { wxLANGUAGE_DOGRI_DEVANAGARI,                                 "doi-Deva"       , "doi@devanagari"            , ""             , 0x00, 0x04, wxLayout_LeftToRight, "Dogri (Devanagari)","\340\244\241\340\245\213\340\244\227\340\244\260\340\245\200 (\340\244\246\340\245\207\340\244\265\340\244\250\340\244\276\340\244\227\340\244\260\340\245\200)" },
+    { wxLANGUAGE_DOGRI_DEVANAGARI_INDIA,                           "doi-Deva-IN"    , "doi_IN@devanagari"         , ""             , 0x00, 0x04, wxLayout_LeftToRight, "Dogri (Devanagari, India)","\340\244\241\340\245\213\340\244\227\340\244\260\340\245\200 (\340\244\255\340\244\276\340\244\260\340\244\244)" },
     { wxLANGUAGE_DUALA,                                            "dua"            , "dua"                       , "dua_CM"       , 0x00, 0x04, wxLayout_LeftToRight, "Duala","du\303\241l\303\241" },
     { wxLANGUAGE_DUALA_CAMEROON,                                   "dua-CM"         , "dua_CM"                    , ""             , 0x00, 0x04, wxLayout_LeftToRight, "Duala (Cameroon)","du\303\241l\303\241 (Cameroun)" },
     { wxLANGUAGE_DUTCH,                                            "nl"             , "nl"                        , "nl_NL"        , 0x13, 0x01, wxLayout_LeftToRight, "Dutch","Nederlands" },
@@ -381,7 +385,6 @@ tabLangData[] =
     { wxLANGUAGE_FAEROESE,                                         "fo"             , "fo"                        , "fo_FO"        , 0x38, 0x01, wxLayout_LeftToRight, "Faroese","f\303\270royskt" },
     { wxLANGUAGE_FAEROESE_DENMARK,                                 "fo-DK"          , "fo_DK"                     , ""             , 0x00, 0x04, wxLayout_LeftToRight, "Faroese (Denmark)","f\303\270royskt (Danmark)" },
     { wxLANGUAGE_FAEROESE_FAROE_ISLANDS,                           "fo-FO"          , "fo_FO"                     , ""             , 0x38, 0x01, wxLayout_LeftToRight, "Faroese (Faroe Islands)","f\303\270royskt (F\303\270royar)" },
-    { wxLANGUAGE_FARSI,                                            "fa"             , "fa"                        , "fa_IR"        , 0x29, 0x01, wxLayout_RightToLeft, "Persian","\331\201\330\247\330\261\330\263\333\214" },
     { wxLANGUAGE_FIJI,                                             "fj"             , "fj"                        , ""             , 0   , 0   , wxLayout_LeftToRight, "Fiji","Na Vosa Vakaviti" },
     { wxLANGUAGE_FILIPINO,                                         "fil"            , "fil"                       , "fil_PH"       , 0x64, 0x01, wxLayout_LeftToRight, "Filipino","Filipino" },
     { wxLANGUAGE_FILIPINO_PHILIPPINES,                             "fil-PH"         , "fil_PH"                    , ""             , 0x64, 0x01, wxLayout_LeftToRight, "Filipino (Philippines)","Filipino (Pilipinas)" },
@@ -395,7 +398,7 @@ tabLangData[] =
     { wxLANGUAGE_FRENCH_BURUNDI,                                   "fr-BI"          , "fr_BI"                     , ""             , 0x00, 0x04, wxLayout_LeftToRight, "French (Burundi)","fran\303\247ais (Burundi)" },
     { wxLANGUAGE_FRENCH_CAMEROON,                                  "fr-CM"          , "fr_CM"                     , ""             , 0x0c, 0x0b, wxLayout_LeftToRight, "French (Cameroon)","fran\303\247ais (Cameroun)" },
     { wxLANGUAGE_FRENCH_CANADIAN,                                  "fr-CA"          , "fr_CA"                     , ""             , 0x0c, 0x03, wxLayout_LeftToRight, "French (Canada)","fran\303\247ais (Canada)" },
-    { wxLANGUAGE_FRENCH_CARIBBEAN,                                 "fr-029"         , "fr_029"                    , ""             , 0x0c, 0x07, wxLayout_LeftToRight, "French (Caribbean)","fran\303\247ais (cara\303\257bes)" },
+    { wxLANGUAGE_FRENCH_CARIBBEAN,                                 "fr-029"         , "fr_029"                    , ""             , 0x0c, 0x07, wxLayout_LeftToRight, "French (Caribbean)","fran\303\247ais (Cara\303\257bes)" },
     { wxLANGUAGE_FRENCH_CENTRAL_AFRICAN_REPUBLIC,                  "fr-CF"          , "fr_CF"                     , ""             , 0x00, 0x04, wxLayout_LeftToRight, "French (Central African Republic)","fran\303\247ais (R\303\251publique centrafricaine)" },
     { wxLANGUAGE_FRENCH_CHAD,                                      "fr-TD"          , "fr_TD"                     , ""             , 0x00, 0x04, wxLayout_LeftToRight, "French (Chad)","fran\303\247ais (Tchad)" },
     { wxLANGUAGE_FRENCH_COMOROS,                                   "fr-KM"          , "fr_KM"                     , ""             , 0x00, 0x04, wxLayout_LeftToRight, "French (Comoros)","fran\303\247ais (Comores)" },
@@ -440,6 +443,19 @@ tabLangData[] =
     { wxLANGUAGE_FRIULIAN,                                         "fur"            , "fur"                       , "fur_IT"       , 0x00, 0x04, wxLayout_LeftToRight, "Friulian","furlan" },
     { wxLANGUAGE_FRIULIAN_ITALY,                                   "fur-IT"         , "fur_IT"                    , ""             , 0x00, 0x04, wxLayout_LeftToRight, "Friulian (Italy)","furlan (Italie)" },
     { wxLANGUAGE_FULAH,                                            "ff"             , "ff"                        , ""             , 0x67, 0x02, wxLayout_LeftToRight, "Fulah (Latin)","Pulaar" },
+    { wxLANGUAGE_FULAH_ADLAM,                                      "ff-Adlm"        , "ff@adlam"                  , ""             , 0x00, 0x04, wxLayout_LeftToRight, "Fulah (Adlam)","\360\236\244\206\360\236\244\265\360\236\244\244\360\236\244\242\360\236\244\252 (\360\236\244\200\360\236\244\201\360\236\244\202\360\236\244\242\360\236\244\203)" },
+    { wxLANGUAGE_FULAH_ADLAM_BURKINA_FASO,                         "ff-Adlm-BF"     , "ff_BF@adlam"               , ""             , 0x00, 0x04, wxLayout_LeftToRight, "Fulah (Adlam, Burkina Faso)","\360\236\244\206\360\236\244\265\360\236\244\244\360\236\244\242\360\236\244\252 (\360\236\244\204\360\236\244\265\360\236\244\252\360\236\244\263\360\236\244\255\360\236\244\262\360\236\244\242 \360\236\244\212\360\236\244\242\360\236\244\247\360\236\244\256\360\236\245\205)" },
+    { wxLANGUAGE_FULAH_ADLAM_CAMEROON,                             "ff-Adlm-CM"     , "ff_CM@adlam"               , ""             , 0x00, 0x04, wxLayout_LeftToRight, "Fulah (Adlam, Cameroon)","\360\236\244\206\360\236\244\265\360\236\244\244\360\236\244\242\360\236\244\252 (\360\236\244\221\360\236\244\242\360\236\244\245\360\236\244\242\360\236\244\252\360\236\244\265\360\236\245\205\360\236\244\262)" },
+    { wxLANGUAGE_FULAH_ADLAM_GAMBIA,                               "ff-Adlm-GM"     , "ff_GM@adlam"               , ""             , 0x00, 0x04, wxLayout_LeftToRight, "Fulah (Adlam, Gambia)","\360\236\244\206\360\236\244\265\360\236\244\244\360\236\244\242\360\236\244\252 (\360\236\244\230\360\236\244\242\360\236\244\245\360\236\244\246\360\236\244\255\360\236\244\264\360\236\244\242)" },
+    { wxLANGUAGE_FULAH_ADLAM_GHANA,                                "ff-Adlm-GH"     , "ff_GH@adlam"               , ""             , 0x00, 0x04, wxLayout_LeftToRight, "Fulah (Adlam, Ghana)","\360\236\244\206\360\236\244\265\360\236\244\244\360\236\244\242\360\236\244\252 (\360\236\244\230\360\236\244\242\360\236\244\262\360\236\244\242)" },
+    { wxLANGUAGE_FULAH_ADLAM_GUINEA,                               "ff-Adlm-GN"     , "ff_GN@adlam"               , ""             , 0x00, 0x04, wxLayout_LeftToRight, "Fulah (Adlam, Guinea)","\360\236\244\206\360\236\244\265\360\236\244\244\360\236\244\242\360\236\244\252 (\360\236\244\230\360\236\244\255\360\236\244\262\360\236\244\253)" },
+    { wxLANGUAGE_FULAH_ADLAM_GUINEA_BISSAU,                        "ff-Adlm-GW"     , "ff_GW@adlam"               , ""             , 0x00, 0x04, wxLayout_LeftToRight, "Fulah (Adlam, Guinea-Bissau)","\360\236\244\206\360\236\244\265\360\236\244\244\360\236\244\242\360\236\244\252 (\360\236\244\230\360\236\244\255\360\236\244\262\360\236\244\253-\360\236\244\204\360\236\244\255\360\236\244\247\360\236\244\242\360\236\244\261\360\236\244\256\360\236\245\205)" },
+    { wxLANGUAGE_FULAH_ADLAM_LIBERIA,                              "ff-Adlm-LR"     , "ff_LR@adlam"               , ""             , 0x00, 0x04, wxLayout_LeftToRight, "Fulah (Adlam, Liberia)","\360\236\244\206\360\236\244\265\360\236\244\244\360\236\244\242\360\236\244\252 (\360\236\244\202\360\236\244\242\360\236\244\246\360\236\244\255\360\236\244\252\360\236\244\255\360\236\244\264\360\236\244\242\360\236\245\204)" },
+    { wxLANGUAGE_FULAH_ADLAM_MAURITANIA,                           "ff-Adlm-MR"     , "ff_MR@adlam"               , ""             , 0x00, 0x04, wxLayout_LeftToRight, "Fulah (Adlam, Mauritania)","\360\236\244\206\360\236\244\265\360\236\244\244\360\236\244\242\360\236\244\252 (\360\236\244\203\360\236\244\256\360\236\244\252\360\236\244\274\360\236\244\242\360\236\244\262\360\236\244\255\360\236\245\205)" },
+    { wxLANGUAGE_FULAH_ADLAM_NIGER,                                "ff-Adlm-NE"     , "ff_NE@adlam"               , ""             , 0x00, 0x04, wxLayout_LeftToRight, "Fulah (Adlam, Niger)","\360\236\244\206\360\236\244\265\360\236\244\244\360\236\244\242\360\236\244\252 (\360\236\244\220\360\236\244\255\360\236\245\205\360\236\244\266\360\236\244\253\360\236\244\252)" },
+    { wxLANGUAGE_FULAH_ADLAM_NIGERIA,                              "ff-Adlm-NG"     , "ff_NG@adlam"               , ""             , 0x00, 0x04, wxLayout_LeftToRight, "Fulah (Adlam, Nigeria)","\360\236\244\206\360\236\244\265\360\236\244\244\360\236\244\242\360\236\244\252 (\360\236\244\220\360\236\244\242\360\236\244\266\360\236\244\253\360\236\244\252\360\236\244\255\360\236\244\264\360\236\244\242\360\236\245\204)" },
+    { wxLANGUAGE_FULAH_ADLAM_SENEGAL,                              "ff-Adlm-SN"     , "ff_SN@adlam"               , ""             , 0x00, 0x04, wxLayout_LeftToRight, "Fulah (Adlam, Senegal)","\360\236\244\206\360\236\244\265\360\236\244\244\360\236\244\242\360\236\244\252 (\360\236\244\205\360\236\244\253\360\236\244\262\360\236\244\253\360\236\244\272\360\236\244\242\360\236\245\204\360\236\244\244)" },
+    { wxLANGUAGE_FULAH_ADLAM_SIERRA_LEONE,                         "ff-Adlm-SL"     , "ff_SL@adlam"               , ""             , 0x00, 0x04, wxLayout_LeftToRight, "Fulah (Adlam, Sierra Leone)","\360\236\244\206\360\236\244\265\360\236\244\244\360\236\244\242\360\236\244\252 (\360\236\244\205\360\236\244\242\360\236\244\252\360\236\244\242\360\236\244\244\360\236\244\256\360\236\244\262)" },
     { wxLANGUAGE_FULAH_LATIN,                                      "ff-Latn"        , "ff@latin"                  , ""             , 0x67, 0x02, wxLayout_LeftToRight, "Fulah (Latin)","Pulaar" },
     { wxLANGUAGE_FULAH_LATIN_BURKINA_FASO,                         "ff-Latn-BF"     , "ff_BF@latin"               , ""             , 0x00, 0x04, wxLayout_LeftToRight, "Fulah (Latin, Burkina Faso)","Pulaar (Burkibaa Faaso)" },
     { wxLANGUAGE_FULAH_LATIN_CAMEROON,                             "ff-Latn-CM"     , "ff_CM@latin"               , ""             , 0x00, 0x04, wxLayout_LeftToRight, "Fulah (Latin, Cameroon)","Pulaar (Kameruun)" },
@@ -470,7 +486,6 @@ tabLangData[] =
     { wxLANGUAGE_GREEK,                                            "el"             , "el"                        , "el_GR"        , 0x08, 0x01, wxLayout_LeftToRight, "Greek","\316\225\316\273\316\273\316\267\316\275\316\271\316\272\316\254" },
     { wxLANGUAGE_GREEK_CYPRUS,                                     "el-CY"          , "el_CY"                     , ""             , 0x00, 0x04, wxLayout_LeftToRight, "Greek (Cyprus)","\316\225\316\273\316\273\316\267\316\275\316\271\316\272\316\254 (\316\232\317\215\317\200\317\201\316\277\317\202)" },
     { wxLANGUAGE_GREEK_GREECE,                                     "el-GR"          , "el_GR"                     , ""             , 0x08, 0x01, wxLayout_LeftToRight, "Greek (Greece)","\316\225\316\273\316\273\316\267\316\275\316\271\316\272\316\254 (\316\225\316\273\316\273\316\254\316\264\316\261)" },
-    { wxLANGUAGE_GREENLANDIC,                                      "kl-GL"          , "kl_GL"                     , ""             , 0x6f, 0x01, wxLayout_LeftToRight, "Kalaallisut (Greenland)","kalaallisut (Kalaallit Nunaat)" },
     { wxLANGUAGE_GUARANI,                                          "gn"             , "gn"                        , "gn_PY"        , 0x74, 0x01, wxLayout_LeftToRight, "Guarani","Ava\303\261e\342\200\231\341\272\275" },
     { wxLANGUAGE_GUARANI_PARAGUAY,                                 "gn-PY"          , "gn_PY"                     , ""             , 0x74, 0x01, wxLayout_LeftToRight, "Guarani (Paraguay)","Ava\303\261e\342\200\231\341\272\275 (Paragu\303\241i)" },
     { wxLANGUAGE_GUJARATI,                                         "gu"             , "gu"                        , "gu_IN"        , 0x47, 0x01, wxLayout_LeftToRight, "Gujarati","\340\252\227\340\253\201\340\252\234\340\252\260\340\252\276\340\252\244\340\253\200" },
@@ -509,6 +524,7 @@ tabLangData[] =
     { wxLANGUAGE_INUPIAK,                                          "ik"             , "ik"                        , ""             , 0   , 0   , wxLayout_LeftToRight, "Inupiak","Inupiaq" },
     { wxLANGUAGE_IRISH,                                            "ga"             , "ga"                        , "ga_IE"        , 0x3c, 0x02, wxLayout_LeftToRight, "Irish","Gaeilge" },
     { wxLANGUAGE_IRISH_IRELAND,                                    "ga-IE"          , "ga_IE"                     , ""             , 0x3c, 0x02, wxLayout_LeftToRight, "Irish (Ireland)","Gaeilge (\303\211ire)" },
+    { wxLANGUAGE_IRISH_UNITED_KINGDOM,                             "ga-GB"          , "ga_GB"                     , ""             , 0x00, 0x04, wxLayout_LeftToRight, "Irish (United Kingdom)","Gaeilge (an R\303\255ocht Aontaithe)" },
     { wxLANGUAGE_ITALIAN,                                          "it"             , "it"                        , "it_IT"        , 0x10, 0x01, wxLayout_LeftToRight, "Italian","italiano" },
     { wxLANGUAGE_ITALIAN_ITALY,                                    "it-IT"          , "it_IT"                     , ""             , 0x10, 0x01, wxLayout_LeftToRight, "Italian (Italy)","italiano (Italia)" },
     { wxLANGUAGE_ITALIAN_SAN_MARINO,                               "it-SM"          , "it_SM"                     , ""             , 0x00, 0x04, wxLayout_LeftToRight, "Italian (San Marino)","italiano (San Marino)" },
@@ -517,10 +533,10 @@ tabLangData[] =
     { wxLANGUAGE_JAPANESE,                                         "ja"             , "ja"                        , "ja_JP"        , 0x11, 0x01, wxLayout_LeftToRight, "Japanese","\346\227\245\346\234\254\350\252\236" },
     { wxLANGUAGE_JAPANESE_JAPAN,                                   "ja-JP"          , "ja_JP"                     , ""             , 0x11, 0x01, wxLayout_LeftToRight, "Japanese (Japan)","\346\227\245\346\234\254\350\252\236 (\346\227\245\346\234\254)" },
     { wxLANGUAGE_JAVANESE,                                         "jv"             , "jv"                        , ""             , 0x00, 0x04, wxLayout_LeftToRight, "Javanese","Basa Jawa" },
-    { wxLANGUAGE_JAVANESE,                                         "jv-Latn"        , "jv@latin"                  , "jv"           , 0x00, 0x04, wxLayout_LeftToRight, "Javanese","Basa Jawa" },
-    { wxLANGUAGE_JAVANESE_INDONESIA,                               "jv-Latn-ID"     , "jv_ID@latin"               , ""             , 0x00, 0x04, wxLayout_LeftToRight, "Javanese (Indonesia)","Basa Jawa (Indonesia)" },
     { wxLANGUAGE_JAVANESE_JAVANESE,                                "jv-Java"        , "jv@javanese"               , ""             , 0x00, 0x04, wxLayout_LeftToRight, "Javanese (Javanese)","\352\246\247\352\246\261\352\246\227\352\246\256" },
     { wxLANGUAGE_JAVANESE_JAVANESE_INDONESIA,                      "jv-Java-ID"     , "jv_ID@javanese"            , ""             , 0x00, 0x04, wxLayout_LeftToRight, "Javanese (Javanese, Indonesia)","\352\246\247\352\246\261\352\246\227\352\246\256 (Indon\303\251sia)" },
+    { wxLANGUAGE_JAVANESE_LATIN,                                   "jv-Latn"        , "jv@latin"                  , ""             , 0x00, 0x04, wxLayout_LeftToRight, "Javanese","Basa Jawa" },
+    { wxLANGUAGE_JAVANESE_LATIN_INDONESIA,                         "jv-Latn-ID"     , "jv_ID@latin"               , ""             , 0x00, 0x04, wxLayout_LeftToRight, "Javanese (Indonesia)","Basa Jawa (Indonesia)" },
     { wxLANGUAGE_JOLA_FONYI,                                       "dyo"            , "dyo"                       , "dyo_SN"       , 0x00, 0x04, wxLayout_LeftToRight, "Jola-Fonyi","joola" },
     { wxLANGUAGE_JOLA_FONYI_SENEGAL,                               "dyo-SN"         , "dyo_SN"                    , ""             , 0x00, 0x04, wxLayout_LeftToRight, "Jola-Fonyi (Senegal)","joola (Senegal)" },
     { wxLANGUAGE_KABUVERDIANU,                                     "kea"            , "kea"                       , "kea_CV"       , 0x00, 0x04, wxLayout_LeftToRight, "Kabuverdianu","kabuverdianu" },
@@ -530,21 +546,22 @@ tabLangData[] =
     { wxLANGUAGE_KAKO,                                             "kkj"            , "kkj"                       , "kkj_CM"       , 0x00, 0x04, wxLayout_LeftToRight, "Kako","kak\311\224" },
     { wxLANGUAGE_KAKO_CAMEROON,                                    "kkj-CM"         , "kkj_CM"                    , ""             , 0x00, 0x04, wxLayout_LeftToRight, "Kako (Cameroon)","kak\311\224 (Kam\311\233run)" },
     { wxLANGUAGE_KALAALLISUT,                                      "kl"             , "kl"                        , "kl_GL"        , 0x6f, 0x01, wxLayout_LeftToRight, "Kalaallisut","kalaallisut" },
+    { wxLANGUAGE_KALAALLISUT_GREENLAND,                            "kl-GL"          , "kl_GL"                     , ""             , 0x6f, 0x01, wxLayout_LeftToRight, "Kalaallisut (Greenland)","kalaallisut (Kalaallit Nunaat)" },
     { wxLANGUAGE_KALENJIN,                                         "kln"            , "kln"                       , "kln_KE"       , 0x00, 0x04, wxLayout_LeftToRight, "Kalenjin","Kalenjin" },
     { wxLANGUAGE_KALENJIN_KENYA,                                   "kln-KE"         , "kln_KE"                    , ""             , 0x00, 0x04, wxLayout_LeftToRight, "Kalenjin (Kenya)","Kalenjin (Emetab Kenya)" },
     { wxLANGUAGE_KAMBA,                                            "kam"            , "kam"                       , "kam_KE"       , 0x00, 0x04, wxLayout_LeftToRight, "Kamba","Kikamba" },
     { wxLANGUAGE_KAMBA_KENYA,                                      "kam-KE"         , "kam_KE"                    , ""             , 0x00, 0x04, wxLayout_LeftToRight, "Kamba (Kenya)","Kikamba (Kenya)" },
     { wxLANGUAGE_KANNADA,                                          "kn"             , "kn"                        , "kn_IN"        , 0x4b, 0x01, wxLayout_LeftToRight, "Kannada","\340\262\225\340\262\250\340\263\215\340\262\250\340\262\241" },
     { wxLANGUAGE_KANNADA_INDIA,                                    "kn-IN"          , "kn_IN"                     , ""             , 0x4b, 0x01, wxLayout_LeftToRight, "Kannada (India)","\340\262\225\340\262\250\340\263\215\340\262\250\340\262\241 (\340\262\255\340\262\276\340\262\260\340\262\244)" },
-    { wxLANGUAGE_KANURI,                                           "kr"             , "kr"                        , ""             , 0x71, 0x01, wxLayout_LeftToRight, "Kanuri","Kanuri" },
-    { wxLANGUAGE_KANURI_LATIN,                                     "kr-Latn"        , "kr@latin"                  , ""             , 0x71, 0x01, wxLayout_LeftToRight, "Kanuri","Kanuri" },
-    { wxLANGUAGE_KANURI_NIGERIA,                                   "kr-Latn-NG"     , "kr_NG@latin"               , ""             , 0x71, 0x01, wxLayout_LeftToRight, "Kanuri (Nigeria)","Kanuri (Nigeria)" },
+    { wxLANGUAGE_KANURI,                                           "kr"             , "kr"                        , ""             , 0x71, 0x01, wxLayout_LeftToRight, "Kanuri (Latin)","Kanuri" },
+    { wxLANGUAGE_KANURI_LATIN,                                     "kr-Latn"        , "kr@latin"                  , ""             , 0x71, 0x01, wxLayout_LeftToRight, "Kanuri (Latin)","Kanuri" },
+    { wxLANGUAGE_KANURI_LATIN_NIGERIA,                             "kr-Latn-NG"     , "kr_NG@latin"               , ""             , 0x71, 0x01, wxLayout_LeftToRight, "Kanuri (Latin, Nigeria)","Kanuri (Nigeria)" },
     { wxLANGUAGE_KASHMIRI,                                         "ks"             , "ks"                        , "ks_IN"        , 0x00, 0x04, wxLayout_RightToLeft, "Kashmiri","\332\251\331\262\330\264\331\217\330\261" },
+    { wxLANGUAGE_KASHMIRI_ARABIC,                                  "ks-Arab"        , "ks@arabic"                 , ""             , 0x00, 0x04, wxLayout_RightToLeft, "Kashmiri (Arabic)","\332\251\331\262\330\264\331\217\330\261 (\330\247\331\216\330\261\330\250\333\214)" },
+    { wxLANGUAGE_KASHMIRI_ARABIC_INDIA,                            "ks-Arab-IN"     , "ks_IN@arabic"              , ""             , 0x00, 0x04, wxLayout_RightToLeft, "Kashmiri (Arabic)","\332\251\331\262\330\264\331\217\330\261 (\330\247\331\216\330\261\330\250\333\214)" },
     { wxLANGUAGE_KASHMIRI_DEVANAGARI,                              "ks-Deva"        , "ks@devanagari"             , ""             , 0x60, 0x02, wxLayout_LeftToRight, "Kashmiri (Devanagari)","\340\244\225\340\245\211\340\244\266\340\245\201\340\244\260" },
-    { wxLANGUAGE_KASHMIRI_DEVANAGARI_INDIA,                        "ks-Deva-IN"     , "ks_IN@devanagari"          , ""             , 0x60, 0x02, wxLayout_LeftToRight, "Kashmiri (Devanagari)","\340\244\225\340\245\211\340\244\266\340\245\201\340\244\260" },
+    { wxLANGUAGE_KASHMIRI_DEVANAGARI_INDIA,                        "ks-Deva-IN"     , "ks_IN@devanagari"          , ""             , 0x60, 0x02, wxLayout_LeftToRight, "Kashmiri (Devanagari, India)","\340\244\225\340\245\211\340\244\266\340\245\201\340\244\260 (India)" },
     { wxLANGUAGE_KASHMIRI_INDIA,                                   "ks-IN"          , "ks_IN"                     , ""             , 0x00, 0x04, wxLayout_RightToLeft, "Kashmiri (India)","\332\251\330\264\331\210\330\261 (\330\250\332\276\330\247\330\261\330\252)" },
-    { wxLANGUAGE_KASHMIRI_PERSO_ARABIC,                            "ks-Arab"        , "ks@arabic"                 , ""             , 0x00, 0x04, wxLayout_RightToLeft, "Kashmiri (Perso-Arabic)","\332\251\331\262\330\264\331\217\330\261 (\330\247\331\216\330\261\330\250\333\214)" },
-    { wxLANGUAGE_KASHMIRI_PERSO_ARABIC_INDIA,                      "ks-Arab-IN"     , "ks_IN@arabic"              , ""             , 0x00, 0x04, wxLayout_RightToLeft, "Kashmiri (Perso-Arabic)","\332\251\331\262\330\264\331\217\330\261 (\330\247\331\216\330\261\330\250\333\214)" },
     { wxLANGUAGE_KAZAKH,                                           "kk"             , "kk"                        , "kk_KZ"        , 0x3f, 0x01, wxLayout_LeftToRight, "Kazakh","\322\233\320\260\320\267\320\260\322\233 \321\202\321\226\320\273\321\226" },
     { wxLANGUAGE_KAZAKH_KAZAKHSTAN,                                "kk-KZ"          , "kk_KZ"                     , ""             , 0x3f, 0x01, wxLayout_LeftToRight, "Kazakh (Kazakhstan)","\322\233\320\260\320\267\320\260\322\233 \321\202\321\226\320\273\321\226 (\322\232\320\260\320\267\320\260\322\233\321\201\321\202\320\260\320\275)" },
     { wxLANGUAGE_KHMER,                                            "km"             , "km"                        , "km_KH"        , 0x53, 0x01, wxLayout_LeftToRight, "Khmer","\341\236\201\341\237\222\341\236\230\341\237\202\341\236\232" },
@@ -569,8 +586,8 @@ tabLangData[] =
     { wxLANGUAGE_KOYRABORO_SENNI_MALI,                             "ses-ML"         , "ses_ML"                    , ""             , 0x00, 0x04, wxLayout_LeftToRight, "Koyraboro Senni (Mali)","Koyraboro senni (Maali)" },
     { wxLANGUAGE_KOYRA_CHIINI,                                     "khq"            , "khq"                       , "khq_ML"       , 0x00, 0x04, wxLayout_LeftToRight, "Koyra Chiini","Koyra ciini" },
     { wxLANGUAGE_KOYRA_CHIINI_MALI,                                "khq-ML"         , "khq_ML"                    , ""             , 0x00, 0x04, wxLayout_LeftToRight, "Koyra Chiini (Mali)","Koyra ciini (Maali)" },
-    { wxLANGUAGE_KURDISH,                                          "ku-TR"          , "ku_TR"                     , ""             , 0   , 0   , wxLayout_LeftToRight, "Kurdish","Kurdî" },
-    { wxLANGUAGE_KURDISH_PERSO_ARABIC_IRAN,                        "ku-Arab-IR"     , "ku_IR@arabic"              , ""             , 0x00, 0x04, wxLayout_RightToLeft, "Kurdish (Perso-Arabic, Iran)","\332\251\331\210\330\261\330\257\333\214 (\330\246\333\216\330\261\330\247\331\206)" },
+    { wxLANGUAGE_KURDISH,                                          "ku-TR"          , "ku_TR"                     , ""             , 0   , 0   , wxLayout_LeftToRight, "Kurdish","Kurd\303\256" },
+    { wxLANGUAGE_KURDISH_ARABIC_IRAN,                              "ku-Arab-IR"     , "ku_IR@arabic"              , ""             , 0x00, 0x04, wxLayout_RightToLeft, "Kurdish (Arabic, Iran)","\332\251\331\210\330\261\330\257\333\214 (\330\246\333\216\330\261\330\247\331\206)" },
     { wxLANGUAGE_KWASIO,                                           "nmg"            , "nmg"                       , "nmg_CM"       , 0x00, 0x04, wxLayout_LeftToRight, "Kwasio","Kwasio" },
     { wxLANGUAGE_KWASIO_CAMEROON,                                  "nmg-CM"         , "nmg_CM"                    , ""             , 0x00, 0x04, wxLayout_LeftToRight, "Kwasio (Cameroon)","Kwasio (Kamerun)" },
     { wxLANGUAGE_LAKOTA,                                           "lkt"            , "lkt"                       , "lkt_US"       , 0x00, 0x04, wxLayout_LeftToRight, "Lakota","Lak\310\237\303\263l\312\274iyapi" },
@@ -579,7 +596,8 @@ tabLangData[] =
     { wxLANGUAGE_LANGI_TANZANIA,                                   "lag-TZ"         , "lag_TZ"                    , ""             , 0x00, 0x04, wxLayout_LeftToRight, "Langi (Tanzania)","K\311\250laangi (Taansan\303\255a)" },
     { wxLANGUAGE_LAOTHIAN,                                         "lo"             , "lo"                        , "lo_LA"        , 0x54, 0x01, wxLayout_LeftToRight, "Lao","\340\272\245\340\272\262\340\272\247" },
     { wxLANGUAGE_LAOTHIAN_LAOS,                                    "lo-LA"          , "lo_LA"                     , ""             , 0x54, 0x01, wxLayout_LeftToRight, "Lao (Laos)","\340\272\245\340\272\262\340\272\247 (\340\272\245\340\272\262\340\272\247)" },
-    { wxLANGUAGE_LATIN,                                            "la"             , "la"                        , ""             , 0x76, 0x01, wxLayout_LeftToRight, "Latin","Latina" },
+    { wxLANGUAGE_LATIN,                                            "la"             , "la"                        , "la_VA"        , 0x76, 0x01, wxLayout_LeftToRight, "Latin","Latina" },
+    { wxLANGUAGE_LATIN_VATICAN_CITY,                               "la-VA"          , "la_VA"                     , ""             , 0x76, 0x01, wxLayout_LeftToRight, "Latin (Vatican City)","Latina (Civitas Vaticana)" },
     { wxLANGUAGE_LATIN_WORLD,                                      "la-001"         , "la_001"                    , ""             , 0x76, 0x01, wxLayout_LeftToRight, "Latin (World)","Latina (Mundus)" },
     { wxLANGUAGE_LATVIAN,                                          "lv"             , "lv"                        , "lv_LV"        , 0x26, 0x01, wxLayout_LeftToRight, "Latvian","latvie\305\241u" },
     { wxLANGUAGE_LATVIAN_LATVIA,                                   "lv-LV"          , "lv_LV"                     , ""             , 0x26, 0x01, wxLayout_LeftToRight, "Latvian (Latvia)","latvie\305\241u (Latvija)" },
@@ -607,6 +625,8 @@ tabLangData[] =
     { wxLANGUAGE_MACEDONIAN_NORTH_MACEDONIA,                       "mk-MK"          , "mk_MK"                     , ""             , 0x2f, 0x01, wxLayout_LeftToRight, "Macedonian (North Macedonia)","\320\274\320\260\320\272\320\265\320\264\320\276\320\275\321\201\320\272\320\270 (\320\241\320\265\320\262\320\265\321\200\320\275\320\260 \320\234\320\260\320\272\320\265\320\264\320\276\320\275\320\270\321\230\320\260)" },
     { wxLANGUAGE_MACHAME,                                          "jmc"            , "jmc"                       , "jmc_TZ"       , 0x00, 0x04, wxLayout_LeftToRight, "Machame","Kimachame" },
     { wxLANGUAGE_MACHAME_TANZANIA,                                 "jmc-TZ"         , "jmc_TZ"                    , ""             , 0x00, 0x04, wxLayout_LeftToRight, "Machame (Tanzania)","Kimachame (Tanzania)" },
+    { wxLANGUAGE_MAITHILI,                                         "mai"            , "mai"                       , "mai_IN"       , 0x00, 0x04, wxLayout_LeftToRight, "Maithili","\340\244\256\340\245\210\340\244\245\340\244\277\340\244\262\340\245\200" },
+    { wxLANGUAGE_MAITHILI_INDIA,                                   "mai-IN"         , "mai_IN"                    , ""             , 0x00, 0x04, wxLayout_LeftToRight, "Maithili (India)","\340\244\256\340\245\210\340\244\245\340\244\277\340\244\262\340\245\200 (\340\244\255\340\244\276\340\244\260\340\244\244)" },
     { wxLANGUAGE_MAKHUWA_MEETTO,                                   "mgh"            , "mgh"                       , "mgh_MZ"       , 0x00, 0x04, wxLayout_LeftToRight, "Makhuwa-Meetto","Makua" },
     { wxLANGUAGE_MAKHUWA_MEETTO_MOZAMBIQUE,                        "mgh-MZ"         , "mgh_MZ"                    , ""             , 0x00, 0x04, wxLayout_LeftToRight, "Makhuwa-Meetto (Mozambique)","Makua (Umozambiki)" },
     { wxLANGUAGE_MAKONDE,                                          "kde"            , "kde"                       , "kde_TZ"       , 0x00, 0x04, wxLayout_LeftToRight, "Makonde","Chimakonde" },
@@ -617,12 +637,14 @@ tabLangData[] =
     { wxLANGUAGE_MALAYALAM,                                        "ml"             , "ml"                        , "ml_IN"        , 0x4c, 0x01, wxLayout_LeftToRight, "Malayalam","\340\264\256\340\264\262\340\264\257\340\264\276\340\264\263\340\264\202" },
     { wxLANGUAGE_MALAYALAM_INDIA,                                  "ml-IN"          , "ml_IN"                     , ""             , 0x4c, 0x01, wxLayout_LeftToRight, "Malayalam (India)","\340\264\256\340\264\262\340\264\257\340\264\276\340\264\263\340\264\202 (\340\264\207\340\264\250\340\265\215\340\264\244\340\265\215\340\264\257)" },
     { wxLANGUAGE_MALAY_BRUNEI,                                     "ms-BN"          , "ms_BN"                     , ""             , 0x3e, 0x02, wxLayout_LeftToRight, "Malay (Brunei)","Melayu (Brunei)" },
+    { wxLANGUAGE_MALAY_INDONESIA,                                  "ms-ID"          , "ms_ID"                     , ""             , 0x00, 0x04, wxLayout_LeftToRight, "Malay (Indonesia)","Melayu (Indonesia)" },
     { wxLANGUAGE_MALAY_MALAYSIA,                                   "ms-MY"          , "ms_MY"                     , ""             , 0x3e, 0x01, wxLayout_LeftToRight, "Malay (Malaysia)","Melayu (Malaysia)" },
     { wxLANGUAGE_MALAY_SINGAPORE,                                  "ms-SG"          , "ms_SG"                     , ""             , 0x00, 0x04, wxLayout_LeftToRight, "Malay (Singapore)","Melayu (Singapura)" },
     { wxLANGUAGE_MALTESE,                                          "mt"             , "mt"                        , "mt_MT"        , 0x3a, 0x01, wxLayout_LeftToRight, "Maltese","Malti" },
     { wxLANGUAGE_MALTESE_MALTA,                                    "mt-MT"          , "mt_MT"                     , ""             , 0x3a, 0x01, wxLayout_LeftToRight, "Maltese (Malta)","Malti (Malta)" },
-    { wxLANGUAGE_MANIPURI,                                         "mni"            , "mni"                       , "mni_IN"       , 0x58, 0x01, wxLayout_LeftToRight, "Manipuri","\340\246\256\340\247\210\340\246\244\340\247\210\340\246\262\340\247\213\340\246\250\340\247\215" },
-    { wxLANGUAGE_MANIPURI_INDIA,                                   "mni-IN"         , "mni_IN"                    , ""             , 0x58, 0x01, wxLayout_LeftToRight, "Manipuri (India)","\340\246\256\340\247\210\340\246\244\340\247\210\340\246\262\340\247\213\340\246\250\340\247\215 (\340\246\207\340\246\250\340\247\215\340\246\246\340\246\277\340\246\257\340\246\274\340\246\276)" },
+    { wxLANGUAGE_MANIPURI,                                         "mni"            , "mni"                       , "mni_IN"       , 0x58, 0x01, wxLayout_LeftToRight, "Manipuri (Bangla)","\340\246\256\340\247\210\340\246\244\340\247\210\340\246\262\340\247\213\340\246\250\340\247\215" },
+    { wxLANGUAGE_MANIPURI_BENGALI,                                 "mni-Beng"       , "mni@bengali"               , ""             , 0x58, 0x01, wxLayout_LeftToRight, "Manipuri (Bangla)","\340\246\256\340\247\210\340\246\244\340\247\210\340\246\262\340\247\213\340\246\250\340\247\215" },
+    { wxLANGUAGE_MANIPURI_INDIA,                                   "mni-IN"         , "mni_IN"                    , ""             , 0x58, 0x01, wxLayout_LeftToRight, "Manipuri (Bangla, India)","\340\246\256\340\247\210\340\246\244\340\247\210\340\246\262\340\247\213\340\246\250\340\247\215 (\340\246\207\340\246\250\340\247\215\340\246\246\340\246\277\340\246\257\340\246\274\340\246\276)" },
     { wxLANGUAGE_MANX,                                             "gv"             , "gv"                        , "gv_IM"        , 0x00, 0x04, wxLayout_LeftToRight, "Manx","Gaelg" },
     { wxLANGUAGE_MANX_ISLE_OF_MAN,                                 "gv-IM"          , "gv_IM"                     , ""             , 0x00, 0x04, wxLayout_LeftToRight, "Manx (Isle of Man)","Gaelg (Ellan Vannin)" },
     { wxLANGUAGE_MAORI,                                            "mi"             , "mi"                        , "mi_NZ"        , 0x81, 0x01, wxLayout_LeftToRight, "Maori","te reo M\304\201ori" },
@@ -663,6 +685,9 @@ tabLangData[] =
     { wxLANGUAGE_NGIEMBOON_CAMEROON,                               "nnh-CM"         , "nnh_CM"                    , ""             , 0x00, 0x04, wxLayout_LeftToRight, "Ngiemboon (Cameroon)","Shw\303\263\305\213\303\262 ngiemb\311\224\311\224n (K\303\240mal\303\273m)" },
     { wxLANGUAGE_NGOMBA,                                           "jgo"            , "jgo"                       , "jgo_CM"       , 0x00, 0x04, wxLayout_LeftToRight, "Ngomba","Nda\352\236\214a" },
     { wxLANGUAGE_NGOMBA_CAMEROON,                                  "jgo-CM"         , "jgo_CM"                    , ""             , 0x00, 0x04, wxLayout_LeftToRight, "Ngomba (Cameroon)","Nda\352\236\214a (Kam\311\233l\303\273n)" },
+    { wxLANGUAGE_NIGERIAN_PIDGIN,                                  "pcm"            , "pcm"                       , ""             , 0x00, 0x04, wxLayout_LeftToRight, "Nigerian Pidgin","Naij\303\255ri\303\241 P\303\255jin" },
+    { wxLANGUAGE_NIGERIAN_PIDGIN_LATIN,                            "pcm-Latn"       , "pcm@latin"                 , ""             , 0x00, 0x04, wxLayout_LeftToRight, "Nigerian Pidgin (Latin)","Naij\303\255ri\303\241 P\303\255jin (L\303\241tin)" },
+    { wxLANGUAGE_NIGERIAN_PIDGIN_LATIN_NIGERIA,                    "pcm-Latn-NG"    , "pcm_NG@latin"              , ""             , 0x00, 0x04, wxLayout_LeftToRight, "Nigerian Pidgin (Latin, Nigeria)","Naij\303\255ri\303\241 P\303\255jin (Naij\303\255ria)" },
     { wxLANGUAGE_NKO,                                              "nqo"            , "nqo"                       , "nqo_GN"       , 0x00, 0x04, wxLayout_RightToLeft, "N'ko","\337\222\337\236\337\217" },
     { wxLANGUAGE_NKO_GUINEA,                                       "nqo-GN"         , "nqo_GN"                    , ""             , 0x00, 0x04, wxLayout_RightToLeft, "N'ko (Guinea)","\337\222\337\236\337\217 (\337\226\337\214\337\254\337\243\337\215\337\254 \337\236\337\212\337\262\337\223\337\215\337\262)" },
     { wxLANGUAGE_NORTHERN_LURI,                                    "lrc"            , "lrc"                       , "lrc_IR"       , 0x00, 0x04, wxLayout_RightToLeft, "Northern Luri","\331\204\333\212\330\261\333\214 \330\264\331\210\331\205\330\247\331\204\333\214" },
@@ -695,10 +720,11 @@ tabLangData[] =
     { wxLANGUAGE_PASHTO,                                           "ps"             , "ps"                        , "ps_AF"        , 0x63, 0x01, wxLayout_RightToLeft, "Pashto","\331\276\332\232\330\252\331\210" },
     { wxLANGUAGE_PASHTO_AFGHANISTAN,                               "ps-AF"          , "ps_AF"                     , ""             , 0x63, 0x01, wxLayout_RightToLeft, "Pashto (Afghanistan)","\331\276\332\232\330\252\331\210 (\330\247\331\201\330\272\330\247\331\206\330\263\330\252\330\247\331\206)" },
     { wxLANGUAGE_PASHTO_PAKISTAN,                                  "ps-PK"          , "ps_PK"                     , ""             , 0x00, 0x04, wxLayout_RightToLeft, "Pashto (Pakistan)","\331\276\332\232\330\252\331\210 (\331\276\330\247\332\251\330\263\330\252\330\247\331\206)" },
+    { wxLANGUAGE_PERSIAN,                                          "fa"             , "fa"                        , "fa_IR"        , 0x29, 0x01, wxLayout_RightToLeft, "Persian","\331\201\330\247\330\261\330\263\333\214" },
     { wxLANGUAGE_PERSIAN_IRAN,                                     "fa-IR"          , "fa_IR"                     , ""             , 0x29, 0x01, wxLayout_RightToLeft, "Persian (Iran)","\331\201\330\247\330\261\330\263\333\214 (\330\247\333\214\330\261\330\247\331\206)" },
     { wxLANGUAGE_POLISH,                                           "pl"             , "pl"                        , "pl_PL"        , 0x15, 0x01, wxLayout_LeftToRight, "Polish","polski" },
     { wxLANGUAGE_POLISH_POLAND,                                    "pl-PL"          , "pl_PL"                     , ""             , 0x15, 0x01, wxLayout_LeftToRight, "Polish (Poland)","polski (Polska)" },
-    { wxLANGUAGE_PORTUGUESE,                                       "pt"             , "pt"                        , "pt_PT"        , 0x16, 0x01, wxLayout_LeftToRight, "Portuguese","portugu\303\252s" },
+    { wxLANGUAGE_PORTUGUESE,                                       "pt"             , "pt"                        , "pt_PT"        , 0x16, 0x02, wxLayout_LeftToRight, "Portuguese","portugu\303\252s" },
     { wxLANGUAGE_PORTUGUESE_ANGOLA,                                "pt-AO"          , "pt_AO"                     , ""             , 0x00, 0x04, wxLayout_LeftToRight, "Portuguese (Angola)","portugu\303\252s (Angola)" },
     { wxLANGUAGE_PORTUGUESE_BRAZILIAN,                             "pt-BR"          , "pt_BR"                     , ""             , 0x16, 0x01, wxLayout_LeftToRight, "Portuguese (Brazil)","portugu\303\252s (Brasil)" },
     { wxLANGUAGE_PORTUGUESE_CABO_VERDE,                            "pt-CV"          , "pt_CV"                     , ""             , 0x00, 0x04, wxLayout_LeftToRight, "Portuguese (Cabo Verde)","portugu\303\252s (Cabo Verde)" },
@@ -766,17 +792,20 @@ tabLangData[] =
     { wxLANGUAGE_SANGU_TANZANIA,                                   "sbp-TZ"         , "sbp_TZ"                    , ""             , 0x00, 0x04, wxLayout_LeftToRight, "Sangu (Tanzania)","Ishisangu (Tansaniya)" },
     { wxLANGUAGE_SANSKRIT,                                         "sa"             , "sa"                        , "sa_IN"        , 0x4f, 0x01, wxLayout_LeftToRight, "Sanskrit","\340\244\270\340\244\202\340\244\270\340\245\215\340\244\225\340\245\203\340\244\244" },
     { wxLANGUAGE_SANSKRIT_INDIA,                                   "sa-IN"          , "sa_IN"                     , ""             , 0x4f, 0x01, wxLayout_LeftToRight, "Sanskrit (India)","\340\244\270\340\244\202\340\244\270\340\245\215\340\244\225\340\245\203\340\244\244 (\340\244\255\340\244\276\340\244\260\340\244\244\340\244\256\340\245\215)" },
+    { wxLANGUAGE_SANTALI,                                          "sat"            , "sat"                       , ""             , 0x00, 0x04, wxLayout_LeftToRight, "Santali","\341\261\245\341\261\237\341\261\261\341\261\233\341\261\237\341\261\262\341\261\244" },
+    { wxLANGUAGE_SANTALI_OL_CHIKI,                                 "sat-Olck"       , "sat@ol_chiki"              , ""             , 0x00, 0x04, wxLayout_LeftToRight, "Santali (Ol Chiki)","\341\261\245\341\261\237\341\261\261\341\261\233\341\261\237\341\261\262\341\261\244 (\341\261\232\341\261\236 \341\261\252\341\261\244\341\261\240\341\261\244)" },
+    { wxLANGUAGE_SANTALI_OL_CHIKI_INDIA,                           "sat-Olck-IN"    , "sat_IN@ol_chiki"           , ""             , 0x00, 0x04, wxLayout_LeftToRight, "Santali (Ol Chiki, India)","\341\261\245\341\261\237\341\261\261\341\261\233\341\261\237\341\261\262\341\261\244 (\341\261\244\341\261\261\341\261\260\341\261\244\341\261\255\341\261\237)" },
     { wxLANGUAGE_SCOTS_GAELIC,                                     "gd"             , "gd"                        , "gd_GB"        , 0x91, 0x01, wxLayout_LeftToRight, "Scottish Gaelic","G\303\240idhlig" },
     { wxLANGUAGE_SCOTS_GAELIC_UK,                                  "gd-GB"          , "gd_GB"                     , ""             , 0x91, 0x01, wxLayout_LeftToRight, "Scottish Gaelic (United Kingdom)","G\303\240idhlig (An R\303\254oghachd Aonaichte)" },
     { wxLANGUAGE_SENA,                                             "seh"            , "seh"                       , "seh_MZ"       , 0x00, 0x04, wxLayout_LeftToRight, "Sena","sena" },
     { wxLANGUAGE_SENA_MOZAMBIQUE,                                  "seh-MZ"         , "seh_MZ"                    , ""             , 0x00, 0x04, wxLayout_LeftToRight, "Sena (Mozambique)","sena (Mo\303\247ambique)" },
     { wxLANGUAGE_SERBIAN,                                          "sr"             , "sr"                        , "sr_RS"        , 0x1a, 0x01, wxLayout_LeftToRight, "Serbian","srpski" },
-    { wxLANGUAGE_SERBIAN_CYRILLIC,                                 "sr-Cyrl"        , "sr@cyrillic"               , "sr_RS"        , 0x1a, 0x0a, wxLayout_LeftToRight, "Serbian (Cyrillic)","\321\201\321\200\320\277\321\201\320\272\320\270 (\320\213\320\270\321\200\320\270\320\273\320\270\321\206\320\260)" },
+    { wxLANGUAGE_SERBIAN_CYRILLIC,                                 "sr-Cyrl"        , "sr@cyrillic"               , ""             , 0x1a, 0x0a, wxLayout_LeftToRight, "Serbian (Cyrillic)","\321\201\321\200\320\277\321\201\320\272\320\270 (\320\213\320\270\321\200\320\270\320\273\320\270\321\206\320\260)" },
     { wxLANGUAGE_SERBIAN_CYRILLIC_BOSNIA_AND_HERZEGOVINA,          "sr-Cyrl-BA"     , "sr_BA@cyrillic"            , ""             , 0x1a, 0x07, wxLayout_LeftToRight, "Serbian (Cyrillic, Bosnia and Herzegovina)","\321\201\321\200\320\277\321\201\320\272\320\270 (\320\221\320\276\321\201\320\275\320\260 \320\270 \320\245\320\265\321\200\321\206\320\265\320\263\320\276\320\262\320\270\320\275\320\260)" },
     { wxLANGUAGE_SERBIAN_CYRILLIC_KOSOVO,                          "sr-Cyrl-XK"     , "sr_XK@cyrillic"            , ""             , 0x00, 0x04, wxLayout_LeftToRight, "Serbian (Cyrillic, Kosovo)","\321\201\321\200\320\277\321\201\320\272\320\270 (\320\232\320\276\321\201\320\276\320\262\320\276)" },
     { wxLANGUAGE_SERBIAN_CYRILLIC_MONTENEGRO,                      "sr-Cyrl-ME"     , "sr_ME@cyrillic"            , ""             , 0x1a, 0x0c, wxLayout_LeftToRight, "Serbian (Cyrillic, Montenegro)","\321\201\321\200\320\277\321\201\320\272\320\270 (\320\246\321\200\320\275\320\260 \320\223\320\276\321\200\320\260)" },
     { wxLANGUAGE_SERBIAN_CYRILLIC_SERBIA,                          "sr-Cyrl-RS"     , "sr_RS@cyrillic"            , ""             , 0x1a, 0x0a, wxLayout_LeftToRight, "Serbian (Cyrillic, Serbia)","\321\201\321\200\320\277\321\201\320\272\320\270 (\320\241\321\200\320\261\320\270\321\230\320\260)" },
-    { wxLANGUAGE_SERBIAN_CYRILLIC_YU,                              "sr-Cyrl-YU"     , "sr_YU@cyrillic"            , "sr_YU"        , 0x1a, 0x03, wxLayout_LeftToRight, "Serbian (Cyrillic)","српски (Србија)" },
+    { wxLANGUAGE_SERBIAN_CYRILLIC_YU,                              "sr-Cyrl-YU"     , "sr_YU@cyrillic"            , ""             , 0x1a, 0x03, wxLayout_LeftToRight, "Serbian (Cyrillic)","\321\201\321\200\320\277\321\201\320\272\320\270 (\320\241\321\200\320\261\320\270\321\230\320\260)" },
     { wxLANGUAGE_SERBIAN_LATIN,                                    "sr-Latn"        , "sr@latin"                  , ""             , 0x1a, 0x09, wxLayout_LeftToRight, "Serbian (Latin)","srpski (latinica)" },
     { wxLANGUAGE_SERBIAN_LATIN_BOSNIA_AND_HERZEGOVINA,             "sr-Latn-BA"     , "sr_BA@latin"               , ""             , 0x1a, 0x06, wxLayout_LeftToRight, "Serbian (Latin, Bosnia and Herzegovina)","srpski (Bosna i Hercegovina)" },
     { wxLANGUAGE_SERBIAN_LATIN_KOSOVO,                             "sr-Latn-XK"     , "sr_XK@latin"               , ""             , 0x00, 0x04, wxLayout_LeftToRight, "Serbian (Latin, Kosovo)","srpski (Kosovo)" },
@@ -853,6 +882,8 @@ tabLangData[] =
     { wxLANGUAGE_STANDARD_MOROCCAN_TAMAZIGHT_TIFINAGH,             "zgh-Tfng"       , "zgh@tifinagh"              , ""             , 0x00, 0x04, wxLayout_LeftToRight, "Standard Moroccan Tamazight (Tifinagh)","\342\265\234\342\264\260\342\265\216\342\264\260\342\265\243\342\265\211\342\265\226\342\265\234 (Tifinagh)" },
     { wxLANGUAGE_STANDARD_MOROCCAN_TAMAZIGHT_TIFINAGH_MOROCCO,     "zgh-Tfng-MA"    , "zgh_MA@tifinagh"           , ""             , 0x00, 0x04, wxLayout_LeftToRight, "Standard Moroccan Tamazight (Tifinagh, Morocco)","\342\265\234\342\264\260\342\265\216\342\264\260\342\265\243\342\265\211\342\265\226\342\265\234 (\342\265\215\342\265\216\342\265\226\342\265\224\342\265\211\342\264\261)" },
     { wxLANGUAGE_SUNDANESE,                                        "su"             , "su"                        , ""             , 0x00, 0x04, wxLayout_LeftToRight, "Sundanese","Basa Sunda" },
+    { wxLANGUAGE_SUNDANESE_LATIN,                                  "su-Latn"        , "su@latin"                  , ""             , 0x00, 0x04, wxLayout_LeftToRight, "Sundanese (Latin)","Basa Sunda (Latin)" },
+    { wxLANGUAGE_SUNDANESE_LATIN_INDONESIA,                        "su-Latn-ID"     , "su_ID@latin"               , ""             , 0x00, 0x04, wxLayout_LeftToRight, "Sundanese (Latin, Indonesia)","Basa Sunda (Indonesia)" },
     { wxLANGUAGE_SWAHILI,                                          "sw"             , "sw"                        , "sw_KE"        , 0x41, 0x01, wxLayout_LeftToRight, "Kiswahili","Kiswahili" },
     { wxLANGUAGE_SWAHILI_CONGO_DRC,                                "sw-CD"          , "sw_CD"                     , ""             , 0x00, 0x04, wxLayout_LeftToRight, "Kiswahili (Congo DRC)","Kiswahili (Jamhuri ya Kidemokrasia ya Kongo)" },
     { wxLANGUAGE_SWAHILI_KENYA,                                    "sw-KE"          , "sw_KE"                     , ""             , 0x41, 0x01, wxLayout_LeftToRight, "Kiswahili (Kenya)","Kiswahili (Kenya)" },
@@ -922,12 +953,12 @@ tabLangData[] =
     { wxLANGUAGE_URDU_INDIA,                                       "ur-IN"          , "ur_IN"                     , ""             , 0x20, 0x02, wxLayout_RightToLeft, "Urdu (India)","\330\247\330\261\330\257\331\210 (\330\250\332\276\330\247\330\261\330\252)" },
     { wxLANGUAGE_URDU_PAKISTAN,                                    "ur-PK"          , "ur_PK"                     , ""             , 0x20, 0x01, wxLayout_RightToLeft, "Urdu (Pakistan)","\330\247\331\217\330\261\330\257\331\210 (\331\276\330\247\332\251\330\263\330\252\330\247\331\206)" },
     { wxLANGUAGE_UZBEK,                                            "uz"             , "uz"                        , ""             , 0x43, 0x01, wxLayout_LeftToRight, "Uzbek","o\342\200\230zbek" },
+    { wxLANGUAGE_UZBEK_ARABIC,                                     "uz-Arab"        , "uz@arabic"                 , ""             , 0x00, 0x04, wxLayout_RightToLeft, "Uzbek (Arabic)","\330\247\331\210\330\262\330\250\333\214\332\251 (\330\271\330\261\330\250\333\214)" },
+    { wxLANGUAGE_UZBEK_ARABIC_AFGHANISTAN,                         "uz-Arab-AF"     , "uz_AF@arabic"              , ""             , 0x00, 0x04, wxLayout_RightToLeft, "Uzbek (Arabic, Afghanistan)","\330\247\331\210\330\262\330\250\333\214\332\251 (\330\247\331\201\330\272\330\247\331\206\330\263\330\252\330\247\331\206)" },
     { wxLANGUAGE_UZBEK_CYRILLIC,                                   "uz-Cyrl"        , "uz@cyrillic"               , ""             , 0x43, 0x02, wxLayout_LeftToRight, "Uzbek (Cyrillic)","\320\216\320\267\320\261\320\265\320\272 (\320\232\320\270\321\200\320\270\320\273)" },
     { wxLANGUAGE_UZBEK_CYRILLIC_UZBEKISTAN,                        "uz-Cyrl-UZ"     , "uz_UZ@cyrillic"            , ""             , 0x43, 0x02, wxLayout_LeftToRight, "Uzbek (Cyrillic, Uzbekistan)","\321\236\320\267\320\261\320\265\320\272\321\207\320\260 (\320\216\320\267\320\261\320\265\320\272\320\270\321\201\321\202\320\276\320\275)" },
     { wxLANGUAGE_UZBEK_LATIN,                                      "uz-Latn"        , "uz@latin"                  , ""             , 0x43, 0x01, wxLayout_LeftToRight, "Uzbek (Latin)","o\342\200\230zbek" },
     { wxLANGUAGE_UZBEK_LATIN_UZBEKISTAN,                           "uz-Latn-UZ"     , "uz_UZ@latin"               , ""             , 0x43, 0x01, wxLayout_LeftToRight, "Uzbek (Latin, Uzbekistan)","o\342\200\230zbek (O\312\273zbekiston)" },
-    { wxLANGUAGE_UZBEK_PERSO_ARABIC,                               "uz-Arab"        , "uz@arabic"                 , ""             , 0x00, 0x04, wxLayout_RightToLeft, "Uzbek (Perso-Arabic)","\330\247\331\210\330\262\330\250\333\214\332\251 (\330\271\330\261\330\250\333\214)" },
-    { wxLANGUAGE_UZBEK_PERSO_ARABIC_AFGHANISTAN,                   "uz-Arab-AF"     , "uz_AF@arabic"              , ""             , 0x00, 0x04, wxLayout_RightToLeft, "Uzbek (Perso-Arabic, Afghanistan)","\330\247\331\210\330\262\330\250\333\214\332\251 (\330\247\331\201\330\272\330\247\331\206\330\263\330\252\330\247\331\206)" },
     { wxLANGUAGE_VAI,                                              "vai"            , "vai"                       , ""             , 0x00, 0x04, wxLayout_LeftToRight, "Vai","\352\225\231\352\224\244" },
     { wxLANGUAGE_VAI_LATIN,                                        "vai-Latn"       , "vai@latin"                 , ""             , 0x00, 0x04, wxLayout_LeftToRight, "Vai (Latin)","Vai (Latin)" },
     { wxLANGUAGE_VAI_LATIN_LIBERIA,                                "vai-Latn-LR"    , "vai_LR@latin"              , ""             , 0x00, 0x04, wxLayout_LeftToRight, "Vai (Latin, Liberia)","Vai (Laibhiya)" },
@@ -967,7 +998,7 @@ tabLangData[] =
     { wxLANGUAGE_ZULU,                                             "zu"             , "zu"                        , "zu_ZA"        , 0x35, 0x01, wxLayout_LeftToRight, "isiZulu","isiZulu" },
     { wxLANGUAGE_ZULU_SOUTH_AFRICA,                                "zu-ZA"          , "zu_ZA"                     , ""             , 0x35, 0x01, wxLayout_LeftToRight, "isiZulu (South Africa)","isiZulu (iNingizimu Afrika)" },
 
-    { 0, NULL, NULL, NULL, 0, 0, wxLayout_Default, NULL, NULL }
+    { 0, nullptr, nullptr, nullptr, 0, 0, wxLayout_Default, nullptr, nullptr }
 };
 
 // Data table for known language scripts
@@ -1003,6 +1034,7 @@ tabScriptData[] =
     { "Cher", "cherokee" },
     { "Chrs", "chorasmian" },
     { "Copt", "coptic" },
+    { "Cpmn", "cypro_minoan" },
     { "Cprt", "cypriot" },
     { "Cyrl", "cyrillic" },
     { "Deva", "devanagari" },
@@ -1083,6 +1115,7 @@ tabScriptData[] =
     { "Orya", "oriya" },
     { "Osge", "osage" },
     { "Osma", "osmanya" },
+    { "Ougr", "old_uyghur" },
     { "Palm", "palmyrene" },
     { "Pauc", "pau_cin_hau" },
     { "Perm", "old_permic" },
@@ -1125,8 +1158,11 @@ tabScriptData[] =
     { "Thai", "thai" },
     { "Tibt", "tibetan" },
     { "Tirh", "tirhuta" },
+    { "Tnsa", "tangsa" },
+    { "Toto", "toto" },
     { "Ugar", "ugaritic" },
     { "Vaii", "vai" },
+    { "Vith", "vithkuqi" },
     { "Wara", "warang_citi" },
     { "Wcho", "wancho" },
     { "Xpeo", "old_persian" },
@@ -1138,7 +1174,7 @@ tabScriptData[] =
     { "Zyyy", "common" },
     { "Zzzz", "unknown" },
 
-    { NULL, NULL }
+    { nullptr, nullptr }
 };
 
 void wxUILocale::InitLanguagesDB()

@@ -2,7 +2,6 @@
 // Name:        wx/x11/bitmap.h
 // Purpose:     wxBitmap class
 // Author:      Julian Smart, Robert Roebling
-// Modified by:
 // Created:     17/09/98
 // Copyright:   (c) Julian Smart, Robert Roebling
 // Licence:     wxWindows licence
@@ -94,7 +93,7 @@ public:
 
     wxBitmap GetSubBitmap( const wxRect& rect ) const;
 
-    bool SaveFile( const wxString &name, wxBitmapType type, const wxPalette *palette = NULL ) const;
+    bool SaveFile( const wxString &name, wxBitmapType type, const wxPalette *palette = nullptr ) const;
     bool LoadFile( const wxString &name, wxBitmapType type = wxBITMAP_DEFAULT_TYPE );
 
     wxPalette *GetPalette() const;

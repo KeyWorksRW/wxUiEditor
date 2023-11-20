@@ -2,7 +2,6 @@
 // Name:        src/aui/dockart.cpp
 // Purpose:     wxaui: wx advanced user interface - docking window manager
 // Author:      Benjamin I. Williams
-// Modified by:
 // Created:     2005-05-17
 // Copyright:   (C) Copyright 2005-2006, Kirix Corporation, All Rights Reserved
 // Licence:     wxWindows Library Licence, Version 3.1
@@ -41,12 +40,7 @@
 
 #ifdef __WXGTK__
 #include "wx/renderer.h"
-#ifdef __WXGTK20__
-    #include "wx/gtk/private/wrapgtk.h"
-#else
-    #include <gtk/gtk.h>
-    #define gtk_widget_is_drawable GTK_WIDGET_DRAWABLE
-#endif
+#include "wx/gtk/private/wrapgtk.h"
 #ifdef __WXGTK3__
     #include "wx/graphics.h"
     #include "wx/gtk/private.h"
@@ -166,7 +160,7 @@ wxString wxAuiChopText(wxDC& dc, const wxString& text, int max_size)
     if (x <= max_size)
         return text;
 
-    size_t i, len = text.Length();
+    size_t i, len = text.length();
     size_t last_good_length = 0;
     for (i = 0; i < len; ++i)
     {
@@ -209,14 +203,14 @@ wxAuiDefaultDockArt::wxAuiDefaultDockArt()
     GetThemeMetric( kThemeMetricSmallPaneSplitterHeight , &height );
     m_sashSize     = height;
 #elif defined(__WXGTK__)
-    m_sashSize     = wxRendererNative::Get().GetSplitterParams(NULL).widthSash;
+    m_sashSize     = wxRendererNative::Get().GetSplitterParams(nullptr).widthSash;
 #else
-    m_sashSize     = wxWindow::FromDIP( 4, NULL);
+    m_sashSize     = wxWindow::FromDIP( 4, nullptr);
 #endif
-    m_captionSize  = wxWindow::FromDIP(17, NULL);
+    m_captionSize  = wxWindow::FromDIP(17, nullptr);
     m_borderSize   = 1;
-    m_buttonSize   = wxWindow::FromDIP(14, NULL);
-    m_gripperSize  = wxWindow::FromDIP( 9, NULL);
+    m_buttonSize   = wxWindow::FromDIP(14, nullptr);
+    m_gripperSize  = wxWindow::FromDIP( 9, nullptr);
     m_gradientType = wxAUI_GRADIENT_VERTICAL;
 
     InitBitmaps();
@@ -324,7 +318,7 @@ void wxAuiDefaultDockArt::UpdateColoursFromSystem()
     m_gripperBrush = wxBrush(baseColour);
 
     m_borderPen = wxPen(darker2Colour);
-    int pen_width = wxWindow::FromDIP(1, NULL);
+    int pen_width = wxWindow::FromDIP(1, nullptr);
     m_gripperPen1 = wxPen(darker5Colour, pen_width);
     m_gripperPen2 = wxPen(darker3Colour, pen_width);
     m_gripperPen3 = wxPen(*wxStockGDI::GetColour(wxStockGDI::COLOUR_WHITE), pen_width);
@@ -483,7 +477,7 @@ void wxAuiDefaultDockArt::DrawSash(wxDC& dc, wxWindow *window, int orientation, 
         // flags & wxCONTROL_CURRENT ? GTK_STATE_PRELIGHT : GTK_STATE_NORMAL,
         GTK_STATE_NORMAL,
         GTK_SHADOW_NONE,
-        NULL /* no clipping */,
+        nullptr /* no clipping */,
         window->m_wxwindow,
         "paned",
         rect.x,
@@ -544,7 +538,7 @@ void wxAuiDefaultDockArt::DrawBorder(wxDC& dc, wxWindow* window, const wxRect& _
     else
     {
         // notebooks draw the border themselves, so they can use native rendering (e.g. tabartgtk)
-        wxAuiTabArt* art = 0;
+        wxAuiTabArt* art = nullptr;
         wxAuiNotebook* nb = wxDynamicCast(window, wxAuiNotebook);
         if (nb)
             art = nb->GetArtProvider();
@@ -662,7 +656,7 @@ void wxAuiDefaultDockArt::DrawCaption(wxDC& dc,
 #if WXWIN_COMPATIBILITY_3_0
 void wxAuiDefaultDockArt::DrawIcon(wxDC& dc, const wxRect& rect, wxAuiPaneInfo& pane)
 {
-    DrawIcon(dc, NULL, rect, pane);
+    DrawIcon(dc, nullptr, rect, pane);
 }
 #endif
 

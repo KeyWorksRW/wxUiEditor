@@ -2,7 +2,6 @@
 // Name:        src/msw/dir.cpp
 // Purpose:     wxDir implementation for Win32
 // Author:      Vadim Zeitlin
-// Modified by:
 // Created:     08.12.99
 // Copyright:   (c) 1999 Vadim Zeitlin <zeitlin@dptmaths.ens-cachan.fr>
 // Licence:     wxWindows licence
@@ -76,7 +75,7 @@ CheckFoundMatch(const FIND_STRUCT* finddata, const wxString& filter)
     if ( filter.empty() )
         return true;
 
-    return ::PathMatchSpec(finddata->cFileName, filter.t_str()) == TRUE;
+    return ::PathMatchSpec(finddata->cFileName, filter) == TRUE;
 }
 
 inline bool
@@ -317,7 +316,7 @@ bool wxDirData::Read(wxString *filename)
 
 wxDir::wxDir(const wxString& dirname)
 {
-    m_data = NULL;
+    m_data = nullptr;
 
     (void)Open(dirname);
 }
@@ -335,7 +334,7 @@ bool wxDir::Open(const wxString& dirname)
     }
     else
     {
-        m_data = NULL;
+        m_data = nullptr;
 
         return false;
     }
@@ -343,7 +342,7 @@ bool wxDir::Open(const wxString& dirname)
 
 bool wxDir::IsOpened() const
 {
-    return m_data != NULL;
+    return m_data != nullptr;
 }
 
 wxString wxDir::GetName() const
@@ -373,7 +372,7 @@ void wxDir::Close()
     if ( m_data )
     {
         delete m_data;
-        m_data = NULL;
+        m_data = nullptr;
     }
 }
 

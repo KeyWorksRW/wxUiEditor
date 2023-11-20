@@ -33,10 +33,6 @@
     #include <stat.h>
 #endif
 
-#if wxUSE_STD_IOSTREAM
-    #include <fstream>
-#endif
-
 #include "wx/filefn.h"
 #include "wx/sysopt.h"
 #include "wx/thread.h"
@@ -71,7 +67,7 @@ void wxTextCtrl::Init()
 {
     m_dirty = false;
 
-    m_privateContextMenu = NULL;
+    m_privateContextMenu = nullptr;
 }
 
 wxTextCtrl::~wxTextCtrl()
@@ -200,6 +196,7 @@ wxSize wxTextCtrl::DoGetBestSize() const
 wxSize wxTextCtrl::DoGetSizeFromTextSize(int xlen, int ylen) const
 {
     static const int TEXTCTRL_BORDER_SIZE = 5;
+    static const int TEXTCTRL_MAX_EMPTY_WIDTH = 5;
 
     // Compute the default height if not specified.
     int hText = ylen;
@@ -237,11 +234,13 @@ wxSize wxTextCtrl::DoGetSizeFromTextSize(int xlen, int ylen) const
 
     // Keep using the same default 100px width as was used previously in the
     // special case of having invalid width.
-    wxSize size(xlen > 0 ? xlen : 100, hText);
+    // since this method is now called with native field widths, an empty field still
+    // has small positive xlen, therefore don't compare just with > 0 anymore
+    wxSize size(xlen > TEXTCTRL_MAX_EMPTY_WIDTH ? xlen : 100, hText);
 
     // Use extra margin size which works under macOS 10.15: note that we don't
     // need the vertical margin when using the automatically determined hText.
-    if ( xlen > 0 )
+    if ( xlen > TEXTCTRL_MAX_EMPTY_WIDTH )
         size.x += 4;
     if ( ylen > 0 )
         size.y += 2;
@@ -628,7 +627,7 @@ void wxTextCtrl::OnContextMenu(wxContextMenuEvent& event)
     }
 
 #if wxUSE_MENUS
-    if (m_privateContextMenu == NULL)
+    if (m_privateContextMenu == nullptr)
     {
         m_privateContextMenu = new wxMenu;
         m_privateContextMenu->Append(wxID_UNDO, _("&Undo"));

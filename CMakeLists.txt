@@ -44,10 +44,6 @@ option(BUILD_FORK "Builds wxWidgets using wxWidgets/wx_3_3")
 # option(INTERNAL_PGO_GENERATE "Create instrumented build for profiling run (MSVC only)" OFF)
 # option(INTERNAL_PGO_USEPROFILE "Create optimized build using profile data (MSVC only)" OFF)
 
-# BUILD_CUSTOM is used internally to build wxWidgets from the wxSnapshot repository rather
-# then the subtree version. This makes it possible to test changes to the wxSnapshot repository
-# before syncing them into the subtree.
-
 option(BUILD_CUSTOM "Builds with custom version of wxWidgets")
 
 # BUILD_WIDGETS_3_2 is going to go away once wxWidgets 3.3 is locked in as a required minimum
@@ -55,23 +51,10 @@ option(BUILD_CUSTOM "Builds with custom version of wxWidgets")
 
 option(BUILD_WIDGETS_3_2 "Builds with wxWidgets 3.2")
 
-if (BUILD_WIDGETS_3_2)
-    if (BUILD_CUSTOM OR BUILD_FORK)
-        message(FATAL_ERROR "BUILD_WIDGETS_3_2 cannot be combined with BUILD_FORK or BUILD_CUSTOM")
-    endif()
+if (BUILD_CUSTOM OR BUILD_FORK)
+    message(FATAL_ERROR "BUILD_WIDGETS_3_2 cannot be combined with BUILD_FORK or BUILD_CUSTOM")
 endif()
 
-if (BUILD_FORK)
-    if (BUILD_CUSTOM OR BUILD_WIDGETS_3_2)
-        message(FATAL_ERROR "BUILD_FORK cannot be combined with BUILD_WIDGETS_3_2 or BUILD_CUSTOM")
-    endif()
-endif()
-
-if (BUILD_CUSTOM)
-    if (BUILD_FORK OR BUILD_WIDGETS_3_2)
-        message(FATAL_ERROR "BUILD_CUSTOM cannot be combined with BUILD_WIDGETS_3_2 or BUILD_FORK")
-    endif()
-endif()
 
 if (BUILD_FORK)
     set(BUILD_ROOT ${BUILD_FORK_DIR} CACHE PATH "${CMAKE_CURRENT_LIST_DIR}/../wxWidgets" FORCE)
@@ -79,11 +62,9 @@ if (BUILD_FORK)
 elseif (BUILD_CUSTOM)
     set(BUILD_ROOT ${BUILD_CUSTOM_DIR} CACHE PATH "${CMAKE_CURRENT_LIST_DIR}/../" FORCE)
     message(NOTICE "Building with custom build of wxWidgets")
-elseif (BUILD_WIDGETS_3_2)
-    set(BUILD_ROOT wxWidgets CACHE PATH "wxWidgets" FORCE)
-    message(NOTICE "Building with wxWidgets 3.2")
 else()
-    set(BUILD_ROOT wxSnapshot CACHE PATH "wxSnapshot" FORCE)
+    set(BUILD_ROOT wxWidgets CACHE PATH "wxWidgets" FORCE)
+    message(NOTICE "Building with wxWidgets 3.3")
 endif()
 
 ####################### Check for Multi-Config Generator #######################
@@ -199,11 +180,8 @@ if (BUILD_FORK)
 elseif(BUILD_CUSTOM)
     set (widget_dir ${CMAKE_CURRENT_LIST_DIR}/wxWidgets/wx_custom)
     add_subdirectory(${widget_dir})
-elseif(BUILD_WXWIN_3_2)
-    set (widget_dir ${CMAKE_CURRENT_LIST_DIR}/wxWidgets)
-    add_subdirectory(${widget_dir}/wx_3_2)
 else()
-    set (widget_dir ${CMAKE_CURRENT_LIST_DIR}/wxSnapshot)
+    set (widget_dir ${CMAKE_CURRENT_LIST_DIR}/wxWidgets)
     add_subdirectory(${widget_dir})
 endif()
 
@@ -212,10 +190,8 @@ if (WIN32)
         set(setup_dir ${CMAKE_CURRENT_LIST_DIR}/wxWidgets/wx_3_3/setup/win)
     elseif(BUILD_CUSTOM)
         set(setup_dir ${BUILD_CUSTOM_DIR}/win)
-    elseif(BUILD_WIDGETS_3_2)
-        set(setup_dir ${CMAKE_CURRENT_LIST_DIR}/wxWidgets/wx_3_2/setup/win)
     else()
-        set(setup_dir ${CMAKE_CURRENT_LIST_DIR}/wxSnapshot/win)
+        set(setup_dir ${CMAKE_CURRENT_LIST_DIR}/wxWidgets/win)
     endif()
 elseif (UNIX)
     if (BUILD_FORK)
@@ -223,7 +199,7 @@ elseif (UNIX)
     elseif(BUILD_CUSTOM)
         set(setup_dir ${BUILD_CUSTOM_DIR}/unix)
     else()
-        set(setup_dir ${CMAKE_CURRENT_LIST_DIR}/wxSnapshot/unix)
+        set(setup_dir ${CMAKE_CURRENT_LIST_DIR}/wxWidgets/unix)
     endif()
 endif()
 
@@ -277,11 +253,6 @@ elseif (WIN32)
     set(SYSTEM_LIBS comctl32 Imm32 Shlwapi Version UxTheme)
 endif()
 
-if (BUILD_WIDGETS_3_2)
-    target_compile_definitions(wxUiEditor PRIVATE wxUSE_UNICODE=1)
-    target_compile_definitions(check_build PRIVATE wxUSE_UNICODE=1)
-endif()
-
 target_link_libraries(wxUiEditor PRIVATE wxWidgets33 wxCLib ${SYSTEM_LIBS})
 
 if(BUILD_FORK)
@@ -289,35 +260,15 @@ if(BUILD_FORK)
         $<$<CONFIG:Debug>:${widget_dir}/bld/build/Debug>
         $<$<CONFIG:Release>:${widget_dir}/bld/build/Release>
     )
-
 endif()
 
 if (MSVC)
     # /GL -- combined with the Linker flag /LTCG to perform whole program optimization in Release build
     # /FC -- Full path to source code file in diagnostics
     target_compile_options(wxUiEditor PRIVATE "$<$<CONFIG:Release>:/GL>" "/FC" "/W4" "/Zc:__cplusplus" "/utf-8")
+
     target_link_options(wxUiEditor PRIVATE "$<$<CONFIG:Release>:/LTCG>")
-
-    if (INTERNAL_PGO_GENERATE)
-        if (INTERNAL_PGO_USEPROFILE)
-            message(FATAL_ERROR "You cannot set both INTERNAL_PGO_GENERATE and INTERNAL_PGO_USEPROFILE")
-        endif()
-
-        message(NOTICE "Creating instrumented build for profiling run")
-
-        target_link_options(wxUiEditor PRIVATE "$<$<CONFIG:Release>:/GENPROFILE:EXACT>")
-    endif()
-
-    if (INTERNAL_PGO_USEPROFILE)
-        message(NOTICE "Creating optimized build using profile data")
-
-        target_link_options(wxUiEditor PRIVATE "$<$<CONFIG:Release>:/USEPROFILE>")
-    endif()
-
-    target_link_options(wxUiEditor PRIVATE
-        # "$<$<CONFIG:Debug>:/natvis:${CMAKE_CURRENT_LIST_DIR}/src/wxui.natvis>"
-        "$<$<CONFIG:Debug>:/OPT:REF>"
-    )
+    target_link_options(wxUiEditor PRIVATE "$<$<CONFIG:Debug>:/OPT:REF>")
 
     # Assume the manifest is in the resource file
     target_link_options(wxUiEditor PRIVATE "/manifest:no")

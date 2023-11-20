@@ -2,7 +2,6 @@
 // Name:        wx/gdicmn.h
 // Purpose:     Common GDI classes, types and declarations
 // Author:      Julian Smart
-// Modified by:
 // Created:     01/02/97
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
@@ -19,7 +18,6 @@
 #include "wx/list.h"
 #include "wx/string.h"
 #include "wx/fontenc.h"
-#include "wx/hashmap.h"
 #include "wx/math.h"
 
 // ---------------------------------------------------------------------------
@@ -218,9 +216,6 @@ enum wxEllipsizeMode
 #elif defined(__WXMAC__)
     // Initialize from an included XPM
     #define wxICON(X) wxIcon( X##_xpm )
-#elif defined(__WXMOTIF__)
-    // Initialize from an included XPM
-    #define wxICON(X) wxIcon( X##_xpm )
 #elif defined(__WXX11__)
     // Initialize from an included XPM
     #define wxICON(X) wxIcon( X##_xpm )
@@ -234,19 +229,15 @@ enum wxEllipsizeMode
 
 /* Another macro: this one is for portable creation of bitmaps. We assume that
    under Unix bitmaps live in XPMs and under Windows they're in resources.
+
+   This is a legacy macro, prefer using wxBITMAP_PNG() in the new code.
  */
 
 #if defined(__WINDOWS__) && wxUSE_WXDIB
     #define wxBITMAP(name) wxBitmap(wxT(#name), wxBITMAP_TYPE_BMP_RESOURCE)
-#elif defined(__WXGTK__)   || \
-      defined(__WXMOTIF__) || \
-      defined(__WXX11__)   || \
-      defined(__WXMAC__)   || \
-      defined(__WXDFB__)
+#else
     // Initialize from an included XPM
     #define wxBITMAP(name) wxBitmap(name##_xpm)
-#else // other platforms
-    #define wxBITMAP(name) wxBitmap(name##_xpm, wxBITMAP_TYPE_XPM)
 #endif // platform
 
 // Macro for creating wxBitmap from in-memory PNG data.
@@ -339,6 +330,10 @@ public:
     int GetHeight() const { return y; }
 
     bool IsFullySpecified() const { return x != wxDefaultCoord && y != wxDefaultCoord; }
+
+    // Check that this size object is at least as big as the other one in both
+    // directions.
+    bool IsAtLeast(const wxSize& sz) const { return x >= sz.x && y >= sz.y; }
 
     // combine this size with the other one replacing the default (i.e. equal
     // to wxDefaultCoord) components of this object with those of the other
@@ -856,11 +851,20 @@ public:
 
     // centre this rectangle in the given (usually, but not necessarily,
     // larger) one
+    void MakeCenteredIn(const wxRect& r, int dir = wxBOTH)
+    {
+        if ( dir & wxHORIZONTAL )
+            x = r.x + (r.width - width)/2;
+        if ( dir & wxVERTICAL )
+            y = r.y + (r.height - height)/2;
+    }
+
+    // same as above but returns the new rectangle instead of modifying this one
     wxRect CentreIn(const wxRect& r, int dir = wxBOTH) const
     {
-        return wxRect(dir & wxHORIZONTAL ? r.x + (r.width - width)/2 : x,
-                      dir & wxVERTICAL ? r.y + (r.height - height)/2 : y,
-                      width, height);
+        wxRect rect(*this);
+        rect.MakeCenteredIn(r, dir);
+        return rect;
     }
 
     wxRect CenterIn(const wxRect& r, int dir = wxBOTH) const
@@ -911,7 +915,7 @@ protected:
     wxList list;
 };
 
-WX_DECLARE_STRING_HASH_MAP(wxColour*, wxStringToColourHashMap);
+class wxStringToColourHashMap;
 
 class WXDLLIMPEXP_CORE wxColourDatabase
 {
@@ -922,6 +926,9 @@ public:
     // find colour by name or name for the given colour
     wxColour Find(const wxString& name) const;
     wxString FindName(const wxColour& colour) const;
+
+    // list all known colours by name
+    wxVector<wxString> GetAllNames() const;
 
     // add a new colour to the database
     void AddColour(const wxString& name, const wxColour& colour);
@@ -934,15 +941,30 @@ private:
     wxStringToColourHashMap *m_map;
 };
 
-class WXDLLIMPEXP_CORE wxResourceCache: public wxList
+#if WXWIN_COMPATIBILITY_3_2
+
+class
+wxDEPRECATED_MSG("Use wxList directly or just a standard container")
+wxResourceCache : public wxList
 {
 public:
     wxResourceCache() { }
 #if !wxUSE_STD_CONTAINERS
     wxResourceCache(unsigned int keyType) : wxList(keyType) { }
 #endif
-    virtual ~wxResourceCache();
+    virtual ~wxResourceCache()
+    {
+        wxList::compatibility_iterator node = GetFirst ();
+        while (node) {
+            wxObject *item = (wxObject *)node->GetData();
+            delete item;
+
+            node = node->GetNext ();
+        }
+    }
 };
+
+#endif // WXWIN_COMPATIBILITY_3_2
 
 // ---------------------------------------------------------------------------
 // global variables

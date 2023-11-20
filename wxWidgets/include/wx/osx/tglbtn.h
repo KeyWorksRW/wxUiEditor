@@ -3,7 +3,6 @@
 // Purpose:     Declaration of the wxToggleButton class, which implements a
 //              toggle button under wxMac.
 // Author:      Stefan Csomor
-// Modified by:
 // Created:     08.02.01
 // Copyright:   (c) 2004 Stefan Csomor
 // Licence:     wxWindows licence
@@ -37,15 +36,15 @@ public:
                 const wxValidator& validator = wxDefaultValidator,
                 const wxString& name = wxASCII_STR(wxCheckBoxNameStr));
 
-    virtual void SetValue(bool value) wxOVERRIDE;
-    virtual bool GetValue() const wxOVERRIDE;
+    virtual void SetValue(bool value) override;
+    virtual bool GetValue() const override;
 
-    virtual bool OSXHandleClicked( double timestampsec ) wxOVERRIDE;
+    virtual bool OSXHandleClicked( double timestampsec ) override;
 
-    virtual void Command(wxCommandEvent& event) wxOVERRIDE;
+    virtual void Command(wxCommandEvent& event) override;
 
 protected:
-    virtual wxBorder GetDefaultBorder() const wxOVERRIDE { return wxBORDER_NONE; }
+    virtual wxBorder GetDefaultBorder() const override { return wxBORDER_NONE; }
 
 private:
     wxDECLARE_DYNAMIC_CLASS_NO_COPY(wxToggleButton);

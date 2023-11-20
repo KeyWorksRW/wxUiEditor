@@ -2,7 +2,6 @@
 // Name:        wx/generic/icon.h
 // Purpose:     wxIcon implementation for ports where it's same as wxBitmap
 // Author:      Julian Smart
-// Modified by:
 // Created:     17/09/98
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
@@ -44,7 +43,7 @@ public:
 
     // unhide the base class version
     virtual bool LoadFile(const wxString& name,
-                          wxBitmapType flags = wxICON_DEFAULT_TYPE) wxOVERRIDE
+                          wxBitmapType flags = wxICON_DEFAULT_TYPE) override
         { return wxBitmap::LoadFile(name, flags); }
 
     // create from bitmap (which should have a mask unless it's monochrome):

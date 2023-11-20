@@ -1,15 +1,25 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Assertion Dialog
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2022-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License ( see ../LICENSE )
 /////////////////////////////////////////////////////////////////////////////
 
 #pragma once  // NOLINT(#pragma once in main file)
 
+// [Randalphwa - 11-20-2023]
+
+// Until the github runner for Ubuntu build can use Ubuntu 22.04 and GCC 11.4 or later, this
+// code isn't going to work on that runner.
+
+// While it is considered more "modern" there's nothing in the current code base for wxUiEditor
+// that would benefit from using std::source_location.
+
+#if 0
+
 #include <source_location>
 
-#if defined(__cpp_consteval)
+// #if defined(__cpp_consteval)
 
 // This should *ONLY* be called in the GUI thread!
 //

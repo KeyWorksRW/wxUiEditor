@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Assertion Dialog
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2022-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License ( see ../LICENSE )
 /////////////////////////////////////////////////////////////////////////////
 
@@ -12,7 +12,9 @@
 
 static std::mutex g_mutexAssert;
 
-#if defined(__cpp_consteval)
+#if 0  // see explanation in the header file as to why this was removed
+
+// #if defined(__cpp_consteval)
 
     #include <source_location>
 

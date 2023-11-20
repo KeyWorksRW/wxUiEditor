@@ -22,14 +22,14 @@ In addition to creating new projects, the following project types can be importe
 
 It's fine to create a `build/` directory in the root of the repository as .gitignore tells git to ignore it.
 
-You will need a C++20 compliant compiler to build **wxUiEditor**. Currently only Windows builds are supported. To build, run the following two commands from the root of the repository:
+You will need a C++20 compliant compiler to build **wxUiEditor**. To build, run the following two commands from the root of the repository:
 
 ```
     cmake -G "Ninja Multi-Config" . -B build
-    cmake --build build --config Release
+    cmake --build build --config Release --target wxUiEditor
 ```
 
-Note that the linking stage of the Release build will take quite a bit of time in order to perform a global optimization pass on the entire codebase (including the wxWidgets static libraries).
+For Unix builds, you will currently need a minimum of gcc 11.4 to be able to compile the sources.
 
 See [Developer notes](docs/DEV_NOTES.md) for more information about the current branches, and some high level overview of the code.
 

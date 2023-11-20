@@ -241,7 +241,8 @@ elseif (WIN32)
     set(SYSTEM_LIBS comctl32 Imm32 Shlwapi Version UxTheme)
 endif()
 
-target_link_libraries(wxUiEditor PRIVATE wxWidgets33 ${SYSTEM_LIBS} -static-libgcc -static-libstdc++ wxCLib)
+target_link_libraries(wxUiEditor PRIVATE wxWidgets33 ${SYSTEM_LIBS} wxCLib)
+# target_link_libraries(wxUiEditor PRIVATE wxWidgets33 ${SYSTEM_LIBS} -static-libgcc -static-libstdc++ wxCLib)
 
 if(BUILD_FORK)
     target_link_directories(wxUiEditor PRIVATE
@@ -354,7 +355,7 @@ set (CPACK_PROJECT_CONFIG_FILE "${PROJECT_BINARY_DIR}/nsis_options.cmake")
 if (WIN32)
     set(CPACK_GENERATOR ZIP NSIS)
 elseif(UNIX)
-    set(CPACK_GENERATOR "DEB")
+    set(CPACK_GENERATOR "DEB RPM")
 endif()
 
 # include(GNUInstallDirs)

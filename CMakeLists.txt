@@ -46,15 +46,9 @@ option(BUILD_FORK "Builds wxWidgets using wxWidgets/wx_3_3")
 
 option(BUILD_CUSTOM "Builds with custom version of wxWidgets")
 
-# BUILD_WIDGETS_3_2 is going to go away once wxWidgets 3.3 is locked in as a required minimum
-# version.
-
-option(BUILD_WIDGETS_3_2 "Builds with wxWidgets 3.2")
-
-if (BUILD_CUSTOM OR BUILD_FORK)
-    message(FATAL_ERROR "BUILD_WIDGETS_3_2 cannot be combined with BUILD_FORK or BUILD_CUSTOM")
+if (BUILD_CUSTOM AND BUILD_FORK)
+    message(FATAL_ERROR "You cannot combine BUILD_FORK or BUILD_CUSTOM")
 endif()
-
 
 if (BUILD_FORK)
     set(BUILD_ROOT ${BUILD_FORK_DIR} CACHE PATH "${CMAKE_CURRENT_LIST_DIR}/../wxWidgets" FORCE)
@@ -241,19 +235,13 @@ if (UNIX)
         ${X11_LIBRARIES}
         pthread
         dl
-        libz.a
-        png.a
-        # use static versions so this works on older versions of Linux
-        libstdc++.a
-        libc.a
-        libgcc.a
-        libglib-2.0.a
+        png
     )
 elseif (WIN32)
     set(SYSTEM_LIBS comctl32 Imm32 Shlwapi Version UxTheme)
 endif()
 
-target_link_libraries(wxUiEditor PRIVATE wxWidgets33 wxCLib ${SYSTEM_LIBS})
+target_link_libraries(wxUiEditor PRIVATE wxWidgets33 ${SYSTEM_LIBS} -static-libgcc -static-libstdc++ wxCLib)
 
 if(BUILD_FORK)
     target_link_directories(wxUiEditor PRIVATE

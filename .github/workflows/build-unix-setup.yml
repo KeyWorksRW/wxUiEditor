@@ -20,14 +20,27 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y cmake ninja-build libgtk-3-dev
 
-    - name: Install g++ 11.4
+    - name: Install g++ 11
       run: |
         sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
-        sudo apt-get install g++-11.4 -y
+        sudo apt-get install g++-11 -y
 
     - name: Check g++ version
       run: |
         gcc --version
+        export GCC_VERSION=$(gcc -dumpversion)
+        if [[ "$GCC_VERSION" < "11.4" ]]; then
+          echo "GCC version is less than 11.4. Failing the workflow."
+          exit 1
+        fi
+
+    - name: Check glibc version
+      run: |
+        export GLIBC_VERSION=$(ldd --version | awk '/ldd/{print $NF}')
+        if [[ "$GLIBC_VERSION" > "2.31" ]]; then
+          echo "glibc version is greater than 2.31. Failing the workflow."
+          exit 1
+        fi
 
     - name: Configure CMake
       run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}

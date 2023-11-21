@@ -344,6 +344,7 @@ set(CPACK_DEBIAN_PACKAGE_MAINTAINER "KeyWorks Software <https://github.com/KeyWo
 set(CPACK_DEBIAN_PACKAGE_DEPENDS "libgtk-3-0, libc6 (>= 2.31)")
 set(CPACK_DEBIAN_PACKAGE_HOMEPAGE "https://github.com/KeyWorksRW/wxUiEditor")
 set(CPACK_DEBIAN_PACKAGE_DESCRIPTION "wxWidgets UI designer")
+set(CPACK_DEBIAN_PACKAGE_ICON ${CMAKE_CURRENT_LIST_DIR}/src/art_src/logo.svg)
 set(CPACK_DEBIAN_PACKAGE_SUMMARY "wxWidgets UI designer")
 
 # Register .wxui file extension with wxUiEditor

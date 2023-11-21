@@ -11,8 +11,12 @@
 
 #include <wx/gdicmn.h>
 
+#include <wx/animate.h>  // wxAnimation class
 #include <wx/bmpbndl.h>
 
+wxAnimation wxueAnimation(const unsigned char* data, size_t size_data);
+wxBitmapBundle wxueBundleSVG(const unsigned char* data,
+    size_t size_data, size_t size_svg, wxSize def_size);
 wxImage wxueImage(const unsigned char* data, size_t size_data);
 
 namespace wxue_img

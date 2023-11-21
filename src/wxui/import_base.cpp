@@ -11,11 +11,6 @@
 
 #include "import_base.h"
 
-#include <wx/mstream.h>  // memory stream classes
-#include <wx/zstream.h>  // zlib stream classes
-
-#include <memory>  // for std::make_unique
-
 // Convert compressed SVG string into a wxBitmapBundle
 wxBitmapBundle wxueBundleSVG(const unsigned char* data,
     size_t size_data, size_t size_svg, wxSize def_size);

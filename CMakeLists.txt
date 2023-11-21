@@ -343,6 +343,7 @@ set(CPACK_RPM_PACKAGE_URL "https://github.com/KeyWorksRW/wxUiEditor")
 set(CPACK_RPM_PACKAGE_DESCRIPTION "wxWidgets UI designer")
 set(CPACK_RPM_PACKAGE_SUMMARY "wxWidgets UI designer")
 
+set(CPACK_DEBIAN_PACKAGE_CONTROL_EXTRA "${CMAKE_CURRENT_SOURCE_DIR}/debian/preinst")
 set(CPACK_DEBIAN_PACKAGE_MAINTAINER "KeyWorks Software <https://github.com/KeyWorksRW>")
 set(CPACK_DEBIAN_PACKAGE_DEPENDS "libgtk-3-0, libc6 (>= 2.31)")
 set(CPACK_DEBIAN_PACKAGE_HOMEPAGE "https://github.com/KeyWorksRW/wxUiEditor")

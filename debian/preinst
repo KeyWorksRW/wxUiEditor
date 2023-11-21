@@ -1,0 +1,27 @@
+#!/bin/bash
+
+# Display the EULA
+cat << EULA
+End User License Agreement (EULA)
+
+Please read the following terms and conditions carefully before installing this software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+...
+
+EULA
+
+# Prompt the user to accept the EULA
+read -p "Do you accept the terms and conditions of the EULA? [Y/n]: " response
+
+# Check the user's response
+if [[ $response =~ ^[Yy]$ ]]; then
+    echo "EULA accepted. Proceeding with the installation..."
+else
+    echo "EULA not accepted. Aborting the installation..."
+    exit 1
+fi
+
+# Continue with the installation process
+# ...

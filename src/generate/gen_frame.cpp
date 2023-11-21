@@ -162,8 +162,6 @@ bool FrameFormGenerator::SettingsCode(Code& code)
         code.Str(" | ").Add(prop_window_extra_style).EndFunction();
     }
 
-    code.GenFontColourSettings();
-
     return true;
 }
 

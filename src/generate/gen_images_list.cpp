@@ -73,7 +73,7 @@ wxObject* ImagesGenerator::CreateMockup(Node* /* node */, wxObject* wxobject)
         }
 
         auto bmp = node->as_wxBitmapBundle(prop_bitmap);
-        ASSERT(bmp.IsOk());
+        ASSERT_MSG(bmp.IsOk(), tt_string("as_wxBitmapBundle(\"") << node->as_string(prop_bitmap) << "\") failed");
         if (!bmp.IsOk())
         {
             m_text_info->SetLabel("Cannot locate image!");

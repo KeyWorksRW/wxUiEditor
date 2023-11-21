@@ -18,11 +18,6 @@ using namespace GenEnum;
 
 #include "ribbonpanel_base.h"
 
-#include <wx/mstream.h>  // memory stream classes
-
-// Convert a data array into a wxImage
-wxImage wxueImage(const unsigned char* data, size_t size_data);
-
 namespace wxue_img
 {
     extern const unsigned char auitoolbar_png[476];

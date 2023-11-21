@@ -47,6 +47,15 @@ wxBitmapBundle wxueBundleBitmaps(const wxBitmap& bmp1, const wxBitmap& bmp2, con
     return wxBitmapBundle::FromBitmaps(bitmaps);
 };
 
+// Convert a data array into a wxAnimation
+wxAnimation wxueAnimation(const unsigned char* data, size_t size_data)
+{
+    wxMemoryInputStream strm(data, size_data);
+    wxAnimation animation;
+    animation.Load(strm);
+    return animation;
+};
+
 namespace wxue_img
 {
     wxBitmapBundle bundle_cpp_logo_svg(int width, int height)

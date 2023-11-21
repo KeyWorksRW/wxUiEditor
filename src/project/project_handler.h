@@ -151,8 +151,38 @@ public:
     // grandchildren, etc.
     void RecursiveNodeCheck(Node* node);
 
+    // Assumes CollectForms() has already been called. Finds out which form should be used
+    // to generate wxue() functions for embedded images.
+    void FindWxueFunctions(std::vector<Node*>& forms);
+
+    // After calling FindWxueFunctions(), this will return the form that should be used to
+    // generate the one copy of wxueBundleSVG() that is used by all forms.
+    Node* getForm_BundleSVG() const { return m_form_BundleSVG; }
+
+    // After calling FindWxueFunctions(), this will return the form that should be used to
+    // generate the one copy of wxueImage() that is used by all forms.
+    Node* getForm_Image() const { return m_form_Image; }
+
+    // After calling FindWxueFunctions(), this will return the form that should be used to
+    // generate the one copy of wxueBundleBitmaps() that is used by all forms.
+    Node* getForm_BundleBitmaps() const { return m_form_BundleBitmaps; }
+
+    // After calling FindWxueFunctions(), this will return the form that should be used to
+    // generate the one copy of wxueAnimation() that is used by all forms.
+    Node* getForm_Animation() const { return m_form_BundleBitmaps; }
+
+    // This will assume any ImagesList class will be the first child of the project, and will
+    // either return that Node* or nullptr if no ImagesList class is found.
+    Node* getImagesForm();
+
 private:
     NodeSharedPtr m_project_node { nullptr };
+
+    Node* m_form_BundleSVG { nullptr };
+    Node* m_form_Image { nullptr };
+    Node* m_form_BundleBitmaps { nullptr };
+    Node* m_form_Animation { nullptr };
+    Node* m_ImagesForm { nullptr };
 
     tt_string m_projectFile;
     tt_string m_projectPath;

@@ -384,3 +384,114 @@ tt_string ProjectHandler::getDerivedFilename(Node* form) const
     path.replace_extension(source_ext);
     return path;
 }
+
+void ProjectHandler::FindWxueFunctions(std::vector<Node*>& forms)
+{
+    auto ParseImageProps = [&](Node* node, auto&& ParseImageProps) -> void
+    {
+        for (const auto& child: node->getChildNodePtrs())
+        {
+            for (const auto& iter: child->getPropsVector())
+            {
+                if ((iter.type() == type_image || iter.type() == type_animation) && iter.hasValue())
+                {
+                    tt_string_vector parts(iter.as_string(), BMP_PROP_SEPARATOR, tt::TRIM::both);
+                    if (parts.size() < IndexImage + 1)
+                        continue;
+                    if (parts[IndexType] == "Embed")
+                    {
+                        if (iter.type() == type_animation)
+                        {
+                            if (!m_form_Animation)
+                            {
+                                m_form_Animation = m_ImagesForm ? m_ImagesForm : child->getForm();
+                            }
+                        }
+                        else
+                        {
+                            if (!m_form_Image)
+                            {
+                                m_form_Image = m_ImagesForm ? m_ImagesForm : child->getForm();
+                            }
+                            if (!m_form_BundleBitmaps && ProjectImages.GetPropertyImageBundle(parts))
+                            {
+                                m_form_BundleBitmaps = m_ImagesForm ? m_ImagesForm : child->getForm();
+                            }
+                        }
+                    }
+                    else if ((parts[IndexType] == "SVG"))
+                    {
+                        if (!m_form_BundleSVG)
+                        {
+                            m_form_BundleSVG = m_ImagesForm ? m_ImagesForm : child->getForm();
+                        }
+                    }
+
+                    if (m_form_Animation && m_form_BundleSVG && m_form_BundleBitmaps && m_form_Image)
+                    {
+                        return;
+                    }
+                }
+            }
+            if (child->getChildCount())
+            {
+                ParseImageProps(child.get(), ParseImageProps);
+
+                if (m_form_Animation && m_form_BundleSVG && m_form_BundleBitmaps && m_form_Image)
+                {
+                    return;
+                }
+            }
+        }
+    };
+
+    m_form_BundleSVG = nullptr;
+    m_form_BundleBitmaps = nullptr;
+    m_form_Image = nullptr;
+    m_form_Animation = nullptr;
+    m_ImagesForm = nullptr;
+
+    for (auto form: forms)
+    {
+        if (form->isGen(gen_Images))
+        {
+            m_ImagesForm = form;
+            continue;
+        }
+
+        if (form->hasValue(prop_icon))
+        {
+            tt_string_vector parts(form->as_string(prop_icon), BMP_PROP_SEPARATOR, tt::TRIM::both);
+            if (parts.size() >= IndexImage + 1)
+            {
+                if (parts[IndexType] == "Embed")
+                {
+                    if (!m_form_Image)
+                        m_form_Image = form;
+                    if (!m_form_BundleBitmaps && ProjectImages.GetPropertyImageBundle(parts))
+                        m_form_BundleBitmaps = form;
+                }
+                else if ((parts[IndexType] == "SVG"))
+                {
+                    if (!m_form_BundleSVG)
+                        m_form_BundleSVG = form;
+                }
+            }
+        }
+
+        ParseImageProps(form, ParseImageProps);
+        if (m_form_Animation && m_form_BundleSVG && m_form_BundleBitmaps && m_form_Image)
+        {
+            return;
+        }
+    }
+}
+
+Node* ProjectHandler::getImagesForm()
+{
+    if (!m_ImagesForm && m_project_node->getChildCount() > 0 && m_project_node->getChild(0)->isGen(gen_Images))
+    {
+        m_ImagesForm = m_project_node->getChild(0);
+    }
+    return m_ImagesForm;
+}

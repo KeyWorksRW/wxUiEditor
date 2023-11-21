@@ -53,6 +53,13 @@ inline tt_string ConvertToLookup(const tt_string& description)
     return lookup_str;
 }
 
+inline tt_string ConvertToLookup(const tt_string_vector& parts)
+{
+    tt_string lookup_str;
+    lookup_str << parts[0] << ';' << parts[1].filename();
+    return lookup_str;
+}
+
 void ImageHandler::Initialize(NodeSharedPtr project, bool allow_ui)
 {
     m_project_node = project;
@@ -589,8 +596,7 @@ bool ImageHandler::AddNewEmbeddedBundle(const tt_string_vector& parts, tt_string
 {
     ASSERT(parts.size() > 1)
 
-    tt_string lookup_str;
-    lookup_str << parts[0] << ';' << parts[1].filename();
+    auto lookup_str = ConvertToLookup(parts);
 
     ImageBundle img_bundle;
 
@@ -815,10 +821,7 @@ ImageBundle* ImageHandler::ProcessBundleProperty(const tt_string_vector& parts, 
 {
     ASSERT(parts.size() > 1)
 
-    tt_string lookup_str;
-    lookup_str << parts[0] << ';' << parts[1].filename();
-
-    ASSERT_MSG(!m_bundles.contains(lookup_str), "ProcessBundleProperty should not be called if bundle already exists!")
+    auto lookup_str = ConvertToLookup(parts);
 
     if (parts[IndexImage].empty())
     {
@@ -1004,15 +1007,10 @@ void ImageHandler::UpdateBundle(const tt_string_vector& parts, Node* node)
     if (parts.size() < 2 || node->isFormParent())
         return;
 
-    tt_string lookup_str;
-    lookup_str << parts[0] << ';' << parts[1].filename();
+    // ProcessBundleProperty() will add a new bundle, or replace an old bundle if the path has changed.
 
-    auto result = m_bundles.find(lookup_str);
-    if (result == m_bundles.end())
-    {
-        ProcessBundleProperty(parts, node);
-        result = m_bundles.find(lookup_str);
-    }
+    ProcessBundleProperty(parts, node);
+    auto result = m_bundles.find(ConvertToLookup(parts));
 
     if (result != m_bundles.end() && result->second.lst_filenames.size())
     {
@@ -1044,10 +1042,7 @@ wxBitmapBundle ImageHandler::GetPropertyBitmapBundle(tt_string_view description,
         return GetInternalImage("unknown");
     }
 
-    tt_string lookup_str;
-    lookup_str << parts[IndexType] << ';' << parts[IndexImage].filename();
-
-    if (auto result = m_bundles.find(lookup_str); result != m_bundles.end())
+    if (auto result = m_bundles.find(ConvertToLookup(parts)); result != m_bundles.end())
     {
         // At this point we know that the bundle has been stored, but the actual size for
         // display can change any time the property is used to retrieve the bundle.
@@ -1077,10 +1072,7 @@ const ImageBundle* ImageHandler::GetPropertyImageBundle(const tt_string_vector& 
         return nullptr;
     }
 
-    tt_string lookup_str;
-    lookup_str << parts[0] << ';' << parts[1].filename();
-
-    if (auto result = m_bundles.find(lookup_str); result != m_bundles.end())
+    if (auto result = m_bundles.find(ConvertToLookup(parts)); result != m_bundles.end())
     {
         return &result->second;
     }

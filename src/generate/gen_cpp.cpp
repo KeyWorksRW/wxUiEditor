@@ -35,7 +35,7 @@ extern std::map<wxBitmapType, std::string> g_map_types;
 
 inline constexpr const auto txt_wxueImageFunction = R"===(
 // Convert a data array into a wxImage
-inline wxImage wxueImage(const unsigned char* data, size_t size_data)
+wxImage wxueImage(const unsigned char* data, size_t size_data)
 {
     wxMemoryInputStream strm(data, size_data);
     wxImage image;
@@ -44,9 +44,14 @@ inline wxImage wxueImage(const unsigned char* data, size_t size_data)
 };
 )===";
 
+inline constexpr const auto txt_extern_wxueImageFunction = R"===(
+// Convert a data array into a wxImage
+wxImage wxueImage(const unsigned char* data, size_t size_data);
+)===";
+
 inline constexpr const auto txt_GetBundleFromSVG = R"===(
 // Convert compressed SVG string into a wxBitmapBundle
-inline wxBitmapBundle wxueBundleSVG(const unsigned char* data,
+wxBitmapBundle wxueBundleSVG(const unsigned char* data,
     size_t size_data, size_t size_svg, wxSize def_size)
 {
     auto str = std::make_unique<char[]>(size_svg);
@@ -56,16 +61,26 @@ inline wxBitmapBundle wxueBundleSVG(const unsigned char* data,
     return wxBitmapBundle::FromSVG(str.get(), def_size);
 };
 )===";
+inline constexpr const auto txt_extern_GetBundleFromSVG = R"===(
+// Convert compressed SVG string into a wxBitmapBundle
+wxBitmapBundle wxueBundleSVG(const unsigned char* data,
+    size_t size_data, size_t size_svg, wxSize def_size);
+)===";
 
 inline constexpr const auto txt_GetAnimFromHdrFunction = R"===(
 // Convert a data array into a wxAnimation
-inline wxAnimation wxueAnimation(const unsigned char* data, size_t size_data)
+wxAnimation wxueAnimation(const unsigned char* data, size_t size_data)
 {
     wxMemoryInputStream strm(data, size_data);
     wxAnimation animation;
     animation.Load(strm);
     return animation;
 };
+)===";
+
+inline constexpr const auto txt_extern_GetAnimFromHdrFunction = R"===(
+// Convert a data array into a wxAnimation
+wxAnimation wxueAnimation(const unsigned char* data, size_t size_data);
 )===";
 
 inline constexpr const auto txt_BaseCmtBlock =
@@ -183,6 +198,20 @@ void BaseCodeGenerator::GenerateCppClass(PANEL_PAGE panel_type)
     hdr_includes.insert("#include <wx/gdicmn.h>");
 
     CollectIncludes(m_form_node, src_includes, hdr_includes);
+
+    bool has_images_list_header = false;
+    if (auto images_form = Project.getImagesForm(); images_form && images_form != m_form_node)
+    {
+        tt_string image_file = Project.getBaseDirectory(images_form);
+        image_file.append_filename(images_form->as_string(prop_base_file));
+        image_file.replace_extension(m_header_ext);
+        image_file.make_relative(Project.getBaseDirectory(m_form_node->getForm()).make_absolute());
+        image_file.backslashestoforward();
+        if (src_includes.contains(tt_string() << "#include \"" << image_file << '\"'))
+        {
+            has_images_list_header = true;
+        }
+    }
 
     if (m_form_node->as_bool(prop_persist))
     {
@@ -556,28 +585,34 @@ void BaseCodeGenerator::GenerateCppClass(PANEL_PAGE panel_type)
         {
             m_source->writeLine("#include <wx/animate.h>", indent::none);
         }
-        if (m_NeedImageFunction || m_NeedHeaderFunction || m_NeedSVGFunction || m_NeedAnimationFunction)
+        if (!Project.getImagesForm() &&
+            (m_NeedImageFunction || m_NeedHeaderFunction || m_NeedSVGFunction || m_NeedAnimationFunction))
         {
             m_source->writeLine("\n#include <wx/mstream.h>  // memory stream classes", indent::none);
         }
-        if (m_NeedSVGFunction)
+        if (!Project.getImagesForm() && m_NeedSVGFunction)
         {
             m_source->writeLine("#include <wx/zstream.h>  // zlib stream classes", indent::none);
             m_source->writeLine();
             m_source->writeLine("#include <memory>  // for std::make_unique", indent::none);
         }
+        m_source->writeLine();
 
         // Now generate the functions
 
         if (m_NeedImageFunction || m_NeedHeaderFunction)
         {
-            tt_string_vector function;
-            function.ReadString(txt_wxueImageFunction);
-            for (auto& iter: function)
+            if (Project.getForm_Image() == m_form_node || !has_images_list_header)
             {
-                m_source->writeLine(iter, indent::none);
+                tt_string_vector function;
+                function.ReadString(Project.getForm_Image() == m_form_node ? txt_wxueImageFunction :
+                                                                             txt_extern_wxueImageFunction);
+                for (auto& iter: function)
+                {
+                    m_source->writeLine(iter, indent::none);
+                }
+                m_source->writeLine();
             }
-            m_source->writeLine();
         }
 
         if (m_NeedSVGFunction)
@@ -593,22 +628,30 @@ void BaseCodeGenerator::GenerateCppClass(PANEL_PAGE panel_type)
                 m_source->writeLine("#endif", indent::none);
             }
 
-            tt_string_vector function;
-            function.ReadString(txt_GetBundleFromSVG);
-            for (auto& iter: function)
+            if (Project.getForm_BundleSVG() == m_form_node || !has_images_list_header)
             {
-                m_source->writeLine(iter, indent::none);
+                tt_string_vector function;
+                function.ReadString(Project.getForm_BundleSVG() == m_form_node ? txt_GetBundleFromSVG :
+                                                                                 txt_extern_GetBundleFromSVG);
+                for (auto& iter: function)
+                {
+                    m_source->writeLine(iter, indent::none);
+                }
+                m_source->writeLine();
             }
-            m_source->writeLine();
         }
 
         if (m_NeedAnimationFunction)
         {
-            tt_string_vector function;
-            function.ReadString(txt_GetAnimFromHdrFunction);
-            for (auto& iter: function)
+            if (Project.getForm_Animation() == m_form_node || !has_images_list_header)
             {
-                m_source->writeLine(iter, indent::none);
+                tt_string_vector function;
+                function.ReadString(Project.getForm_Animation() == m_form_node ? txt_GetAnimFromHdrFunction :
+                                                                                 txt_extern_GetAnimFromHdrFunction);
+                for (auto& iter: function)
+                {
+                    m_source->writeLine(iter, indent::none);
+                }
             }
         }
 
@@ -698,7 +741,7 @@ void BaseCodeGenerator::GenerateCppClassHeader()
             m_header->writeLine("#include <memory>  // for std::make_unique", indent::none);
         }
 
-        if (m_NeedImageFunction || m_NeedHeaderFunction)
+        if ((m_NeedImageFunction && Project.getForm_Image() == m_form_node) || m_NeedHeaderFunction)
         {
             tt_string_vector function;
             function.ReadString(txt_wxueImageFunction);
@@ -709,7 +752,7 @@ void BaseCodeGenerator::GenerateCppClassHeader()
             m_header->writeLine();
         }
 
-        if (m_NeedSVGFunction)
+        if (m_NeedSVGFunction && Project.getForm_BundleSVG() != m_form_node)
         {
             if (Project.as_string(prop_wxWidgets_version) == "3.1")
             {
@@ -731,7 +774,7 @@ void BaseCodeGenerator::GenerateCppClassHeader()
             m_header->writeLine();
         }
 
-        if (m_NeedAnimationFunction)
+        if (m_NeedAnimationFunction && Project.getForm_Animation() != m_form_node)
         {
             tt_string_vector function;
             function.ReadString(txt_GetAnimFromHdrFunction);

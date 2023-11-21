@@ -430,6 +430,16 @@ void BaseCodeGenerator::GenerateImagesForm()
         }
 
         m_header->writeLine();
+        if (m_NeedAnimationFunction || Project.getForm_Animation() == m_form_node)
+        {
+            m_header->writeLine("wxAnimation wxueAnimation(const unsigned char* data, size_t size_data);");
+        }
+        if (m_NeedSVGFunction || Project.getForm_BundleSVG() == m_form_node)
+        {
+            m_header->writeLine("wxBitmapBundle wxueBundleSVG(const unsigned char* data,\n\t"
+                                "size_t size_data, size_t size_svg, wxSize def_size);",
+                                indent::auto_keep_whitespace);
+        }
         m_header->writeLine("wxImage wxueImage(const unsigned char* data, size_t size_data);");
         m_header->writeLine();
         m_header->writeLine("namespace wxue_img\n{");

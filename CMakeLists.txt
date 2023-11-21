@@ -241,8 +241,11 @@ elseif (WIN32)
     set(SYSTEM_LIBS comctl32 Imm32 Shlwapi Version UxTheme)
 endif()
 
-target_link_libraries(wxUiEditor PRIVATE wxWidgets33 ${SYSTEM_LIBS} wxCLib)
-# target_link_libraries(wxUiEditor PRIVATE wxWidgets33 ${SYSTEM_LIBS} -static-libgcc -static-libstdc++ wxCLib)
+if (CMAKE_CXX_COMPILER_AR STREQUAL "/usr/bin/gcc-ar-11")
+    target_link_libraries(wxUiEditor PRIVATE wxWidgets33 ${SYSTEM_LIBS} -static-libgcc -static-libstdc++ wxCLib)
+else()
+    target_link_libraries(wxUiEditor PRIVATE wxWidgets33 ${SYSTEM_LIBS} wxCLib)
+endif()
 
 if(BUILD_FORK)
     target_link_directories(wxUiEditor PRIVATE

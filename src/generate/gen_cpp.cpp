@@ -199,6 +199,20 @@ void BaseCodeGenerator::GenerateCppClass(PANEL_PAGE panel_type)
 
     CollectIncludes(m_form_node, src_includes, hdr_includes);
 
+    bool has_images_list_header = false;
+    if (auto images_form = Project.getImagesForm(); images_form && images_form != m_form_node)
+    {
+        tt_string image_file = Project.getBaseDirectory(images_form);
+        image_file.append_filename(images_form->as_string(prop_base_file));
+        image_file.replace_extension(m_header_ext);
+        image_file.make_relative(Project.getBaseDirectory(m_form_node->getForm()).make_absolute());
+        image_file.backslashestoforward();
+        if (src_includes.contains(tt_string() << "#include \"" << image_file << '\"'))
+        {
+            has_images_list_header = true;
+        }
+    }
+
     if (m_form_node->as_bool(prop_persist))
     {
         src_includes.insert("#include <wx/persist.h>");
@@ -582,19 +596,23 @@ void BaseCodeGenerator::GenerateCppClass(PANEL_PAGE panel_type)
             m_source->writeLine();
             m_source->writeLine("#include <memory>  // for std::make_unique", indent::none);
         }
+        m_source->writeLine();
 
         // Now generate the functions
 
         if (m_NeedImageFunction || m_NeedHeaderFunction)
         {
-            tt_string_vector function;
-            function.ReadString(Project.getForm_Image() == m_form_node ? txt_wxueImageFunction :
-                                                                         txt_extern_wxueImageFunction);
-            for (auto& iter: function)
+            if (Project.getForm_Image() == m_form_node || !has_images_list_header)
             {
-                m_source->writeLine(iter, indent::none);
+                tt_string_vector function;
+                function.ReadString(Project.getForm_Image() == m_form_node ? txt_wxueImageFunction :
+                                                                             txt_extern_wxueImageFunction);
+                for (auto& iter: function)
+                {
+                    m_source->writeLine(iter, indent::none);
+                }
+                m_source->writeLine();
             }
-            m_source->writeLine();
         }
 
         if (m_NeedSVGFunction)
@@ -610,24 +628,30 @@ void BaseCodeGenerator::GenerateCppClass(PANEL_PAGE panel_type)
                 m_source->writeLine("#endif", indent::none);
             }
 
-            tt_string_vector function;
-            function.ReadString(Project.getForm_BundleSVG() == m_form_node ? txt_GetBundleFromSVG :
-                                                                             txt_extern_GetBundleFromSVG);
-            for (auto& iter: function)
+            if (Project.getForm_BundleSVG() == m_form_node || !has_images_list_header)
             {
-                m_source->writeLine(iter, indent::none);
+                tt_string_vector function;
+                function.ReadString(Project.getForm_BundleSVG() == m_form_node ? txt_GetBundleFromSVG :
+                                                                                 txt_extern_GetBundleFromSVG);
+                for (auto& iter: function)
+                {
+                    m_source->writeLine(iter, indent::none);
+                }
+                m_source->writeLine();
             }
-            m_source->writeLine();
         }
 
         if (m_NeedAnimationFunction)
         {
-            tt_string_vector function;
-            function.ReadString(Project.getForm_Animation() == m_form_node ? txt_GetAnimFromHdrFunction :
-                                                                             txt_extern_GetAnimFromHdrFunction);
-            for (auto& iter: function)
+            if (Project.getForm_Animation() == m_form_node || !has_images_list_header)
             {
-                m_source->writeLine(iter, indent::none);
+                tt_string_vector function;
+                function.ReadString(Project.getForm_Animation() == m_form_node ? txt_GetAnimFromHdrFunction :
+                                                                                 txt_extern_GetAnimFromHdrFunction);
+                for (auto& iter: function)
+                {
+                    m_source->writeLine(iter, indent::none);
+                }
             }
         }
 

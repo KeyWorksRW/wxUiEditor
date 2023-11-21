@@ -1006,13 +1006,10 @@ void ImageHandler::UpdateBundle(const tt_string_vector& parts, Node* node)
 
     tt_string lookup_str;
     lookup_str << parts[0] << ';' << parts[1].filename();
+    // ProcessBundleProperty() will add a new bundle, or replace an old bundle if the path has changed.
 
-    auto result = m_bundles.find(lookup_str);
-    if (result == m_bundles.end())
-    {
-        ProcessBundleProperty(parts, node);
-        result = m_bundles.find(lookup_str);
-    }
+    ProcessBundleProperty(parts, node);
+    auto result = m_bundles.find(ConvertToLookup(parts));
 
     if (result != m_bundles.end() && result->second.lst_filenames.size())
     {

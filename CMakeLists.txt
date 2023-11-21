@@ -23,9 +23,9 @@ option(INTERNAL_BLD_TESTING "Build with internal testing functionality")
 # not set -- it's used for a long-running feature that will only be enabled in regular builds
 # when the feature is ready for release or testing.
 
-option(INTERNAL_FEATURE1 "Build with Feature #1 enabled")
-option(INTERNAL_FEATURE2 "Build with Feature #2 enabled")
-option(INTERNAL_FEATURE3 "Build with Feature #3 enabled")
+option(INTERNAL_FEATURE1 "Build with Feature #1 enabled")  # Currently tied to IndexAltName
+option(INTERNAL_FEATURE2 "Build with Feature #2 enabled")  # unused
+option(INTERNAL_FEATURE3 "Build with Feature #3 enabled")  # unused
 
 # This option is designed to make it possible to check changes to a wxWidgets fork, and/or to
 # build with the current wxWidgets sources (assuming the wxWidgets fork is in sync).

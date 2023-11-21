@@ -65,10 +65,12 @@ PropertyGrid_Image::PropertyGrid_Image(const wxString& label, NodeProperty* prop
     AddPrivateChild(new CustomPointProperty("Original Size (ignored)", prop, CustomPointProperty::type_SVG));
     Item(IndexSize)->SetHelpString("Default size -- ignored unless it's a SVG file.");
 
+#if defined(INTERNAL_FEATURE1)
     AddPrivateChild(new EditStringProperty("Alternate name", prop));
     Item(IndexAltName)
         ->SetHelpString("Variable name to use for the image. If not specified, the filename portion of the image file is "
                         "used as the variable name.");
+#endif
 }
 
 void PropertyGrid_Image::RefreshChildren()
@@ -90,28 +92,40 @@ void PropertyGrid_Image::RefreshChildren()
         if (m_img_props.type == "Art")
         {
             Item(IndexImage)->SetLabel("id");
+#if defined(INTERNAL_FEATURE1)
             Item(IndexAltName)->SetLabel("Alternate name (ignored)");
+#endif
             Item(IndexImage)->SetHelpString("Specifies the art ID and optional Client (separated by a | character).");
+#if defined(INTERNAL_FEATURE1)
             Item(IndexAltName)->SetHelpString("Ignored when using Art images.");
+#endif
         }
         else if (m_img_props.type == "Embed" || m_img_props.type == "SVG")
         {
             Item(IndexImage)->SetLabel("image");
+#if defined(INTERNAL_FEATURE1)
             Item(IndexAltName)->SetLabel("Alternate name");
+#endif
             Item(IndexImage)
                 ->SetHelpString("Specifies the original image which will be embedded into a generated class source file as "
                                 "an unsigned char array.");
+#if defined(INTERNAL_FEATURE1)
             Item(IndexAltName)
                 ->SetHelpString(
                     "Variable name to use for the image. If not specified, the filename portion of the image file is "
                     "used as the variable name.");
+#endif
         }
         else if (m_img_props.type == "XPM")
         {
             Item(IndexImage)->SetLabel("image");
+#if defined(INTERNAL_FEATURE1)
             Item(IndexAltName)->SetLabel("Alternate name (ignored)");
+#endif
             Item(IndexImage)->SetHelpString("Specifies the XPM file to include.");
+#if defined(INTERNAL_FEATURE1)
             Item(IndexAltName)->SetHelpString("Ignored when including XPM files.");
+#endif
         }
 
         if (m_old_image != m_img_props.image || m_old_type != m_img_props.type)
@@ -171,7 +185,9 @@ void PropertyGrid_Image::RefreshChildren()
     Item(IndexType)->SetValue(m_img_props.type.make_wxString());
     Item(IndexImage)->SetValue(m_img_props.image.make_wxString());
     Item(IndexSize)->SetValue(m_img_props.CombineDefaultSize());
+#if defined(INTERNAL_FEATURE1)
     Item(IndexAltName)->SetValue(m_img_props.alt_name.make_wxString());
+#endif
 }
 
 void PropertyGrid_Image::SetAutoComplete()
@@ -287,11 +303,13 @@ wxVariant PropertyGrid_Image::ChildChanged(wxVariant& thisValue, int childIndex,
             }
             break;
 
+#if defined(INTERNAL_FEATURE1)
         case IndexAltName:
             {
                 img_props.alt_name = childValue.GetString().utf8_string();
             }
             break;
+#endif
     }
 
     value = img_props.CombineValues().make_wxString();

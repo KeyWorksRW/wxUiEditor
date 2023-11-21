@@ -173,10 +173,6 @@ void BaseCodeGenerator::GenerateImagesForm()
 
     if (m_panel_type != HDR_PANEL)
     {
-        if (m_NeedAnimationFunction || Project.getForm_Animation() == m_form_node)
-        {
-            m_source->writeLine("#include <wx/animate.h>  // wxAnimation class", indent::none);
-        }
         m_source->writeLine("#include <wx/mstream.h>  // memory stream classes", indent::none);
 
         if (m_NeedSVGFunction || Project.getForm_BundleSVG() == m_form_node)
@@ -406,6 +402,11 @@ void BaseCodeGenerator::GenerateImagesForm()
 
     if (m_panel_type != CPP_PANEL)
     {
+        if (m_NeedAnimationFunction || Project.getForm_Animation() == m_form_node)
+        {
+            m_header->writeLine("#include <wx/animate.h>  // wxAnimation class", indent::none);
+        }
+
         if (m_NeedSVGFunction && is_old_widgets)
         {
             m_source->writeLine();

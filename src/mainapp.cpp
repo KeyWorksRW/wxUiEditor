@@ -47,10 +47,6 @@
     #endif
 #endif
 
-#if defined(_DEBUG)
-tt_string widgets_build_signature = WX_BUILD_OPTIONS_SIGNATURE;
-#endif  // _DEBUG
-
 // add_executable(wxUiEditor WIN32 -- this must be used if wxIMPLEMENT_APP is used.
 
 // If wxIMPLEMENT_APP is used, then std::cout and std::cerr will not work.

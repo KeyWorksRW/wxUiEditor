@@ -171,7 +171,9 @@ public:
     // generate the one copy of wxueAnimation() that is used by all forms.
     Node* getForm_Animation() const { return m_form_BundleBitmaps; }
 
-    Node* getImagesForm() const { return m_ImagesForm; }
+    // This will assume any ImagesList class will be the first child of the project, and will
+    // either return that Node* or nullptr if no ImagesList class is found.
+    Node* getImagesForm();
 
 private:
     NodeSharedPtr m_project_node { nullptr };

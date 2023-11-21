@@ -486,3 +486,12 @@ void ProjectHandler::FindWxueFunctions(std::vector<Node*>& forms)
         }
     }
 }
+
+Node* ProjectHandler::getImagesForm()
+{
+    if (!m_ImagesForm && m_project_node->getChildCount() > 0 && m_project_node->getChild(0)->isGen(gen_Images))
+    {
+        m_ImagesForm = m_project_node->getChild(0);
+    }
+    return m_ImagesForm;
+}

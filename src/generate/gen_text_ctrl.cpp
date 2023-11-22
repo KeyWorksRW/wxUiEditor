@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   wxTextCtrl generator
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -26,7 +26,10 @@ wxObject* TextCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
     auto widget = new wxTextCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxString(prop_value),
                                  DlgPoint(parent, node, prop_pos), DlgSize(parent, node, prop_size), GetStyleInt(node));
 
-    widget->SetMaxLength(node->as_int(prop_maxlength));
+#if defined(__WXGTK__)
+    if (widget->IsSingleLine())
+#endif
+        widget->SetMaxLength(node->as_int(prop_maxlength));
 
     if (node->hasValue(prop_auto_complete))
     {

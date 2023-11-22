@@ -20,6 +20,8 @@ inline const char* project_xml = R"===(<?xml version="1.0"?>
 		</property>
 		<property name="art_directory" type="path"
 			help="The directory containing your images (png, ico, xpm, etc.).">./</property>
+		<property name="dialog_units" type="bool"
+			help="When checked, dimensions will default to using dialog units. You can turn on or off dialog units for each individual dimension -- this just sets the default for new dimensions.">1</property>
 		<property name="internationalize" type="bool"
 			help="Wrap strings in a _() macro.">0</property>
 		<property name="help_provider" type="option"

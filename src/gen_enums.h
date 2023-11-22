@@ -194,6 +194,7 @@ namespace GenEnum
         prop_derived_file,
         prop_derived_header,
         prop_derived_params,
+        prop_dialog_units,
         prop_digits,
         prop_direction,
         prop_disable_rubo_cop,

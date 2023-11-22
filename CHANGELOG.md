@@ -1,25 +1,26 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
-## [Uneleased (1.1.3)]
+## [Uneleased (1.2.0)]
 
 ### Added
 
 - Code can now be generated for wxRuby3 -- see https://github.com/mcorino/wxRuby3
-- New Doc panel will display a URL containing documentation for the currently selected widget. A toolbar in this panel lets you choose between C++, Python and Ruby documentation.
+- New Doc panel (Windows version only) will display a URL containing documentation for the currently selected widget. A toolbar in this panel lets you choose between C++, Python and Ruby documentation.
 - New Preferences dialog available under the File menu lets you set several global preferences
-- wxTimer is now supported as a child of a diloag, frame or form version of wxPanel
+- wxTimer is now supported as a child of a dialag, frame or form version of wxPanel
 - DialogBlocks projects saved as XML can be imported
 - wxAuiToolBar can now be created as a form (it creates a class instead of a child widget)
 - Added support for additional integer and floating point validators for wxTextCtrl
 - Folders now have their own code language preference that can override the Project's code preference
 - Added support for wxPropertySheetDialog as a form
-- tooltips set in wxAuiNotebook pages are now displayed when hovering over the tab display rather than the page itself
+- Tooltips set in wxAuiNotebook pages are now displayed when hovering over the tab display rather than the page itself
 - You can now set selected and non-selected fonts for wxAuiNotebook tabs
+- Added `dialog_units` property to the Project properties list to change default units for new dimensions
 
 ### Changed
 
-- controls that have one or more default window styles set (e.g., wxPanel has wxTAB_TRAVERSAL set) can now have that style unchecked and that state will be stored with the project file.
+- Controls that have one or more default window styles set (e.g., wxPanel has wxTAB_TRAVERSAL set) can now have that style unchecked and that state will be stored with the project file.
 - Color properties dialog now supports _all_ CSS color names
 - Generated code for colors now uses a CSS HTML String (#RRGGBB) instead of numerical values for red, green and blue.
 - Generated code for wxRibbonToolBar images are now scaled on high DPI displays
@@ -32,7 +33,7 @@ All notable changes to this project will be documented in this file.
 
 - You can now change the Window styles in a wxRichTextCtrl without generating an invalid constructor.
 - Color properties are correctly saved in a project
-- widgets set to specific platforms will also place events in a conditional block
+- Widgets set to specific platforms will also place events in a conditional block
 - For C++, widgets set to specific platforms will have the header member declarations in a conditional block
 - C++ code generation for fonts with a negative point size fixed
 

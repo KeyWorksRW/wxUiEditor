@@ -108,19 +108,22 @@ enum class MoveDirection
     Right
 };
 
-// This is used to determine the type of file that is being generated
+// This is used to determine the type of file that is being generated. It is created as bit
+// flags so that code like that in ImportFormbuilder can track multiple languages. However the
+// Code class only supports a single language, and passing in multiple languages will cause it
+// to fail to generate any language.
 enum
 {
-    GEN_LANG_NONE,
-    GEN_LANG_CPLUSPLUS,
-    GEN_LANG_PYTHON,
-    GEN_LANG_RUBY,
-    GEN_LANG_XRC,
+    GEN_LANG_NONE = 0,
+    GEN_LANG_CPLUSPLUS = 1,
+    GEN_LANG_PYTHON = 1 << 1,
+    GEN_LANG_RUBY = 1 << 2,
+    GEN_LANG_XRC = 1 << 3,
 
-    GEN_LANG_GOLANG,  // experimental
-    GEN_LANG_LUA,     // experimental
-    GEN_LANG_PERL,    // experimental
-    GEN_LANG_RUST,    // experimental
+    GEN_LANG_GOLANG = 1 << 4,  // experimental
+    GEN_LANG_LUA = 1 << 5,     // experimental
+    GEN_LANG_PERL = 1 << 6,    // experimental
+    GEN_LANG_RUST = 1 << 7,    // experimental
 };
 
 // Used to index fields in a bitmap property

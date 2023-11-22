@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Custom property grid class for wxPoint
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2021 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2021-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -9,8 +9,9 @@
 
 #include "pg_point.h"
 
-#include "node.h"   // Node -- Node class
-#include "utils.h"  // Utility functions that work with properties
+#include "node.h"             // Node -- Node class
+#include "project_handler.h"  // ProjectHandler class
+#include "utils.h"            // Utility functions that work with properties
 
 wxIMPLEMENT_ABSTRACT_CLASS(CustomPointProperty, wxPGProperty);
 
@@ -103,7 +104,7 @@ void CustomPointProperty::InitValues(tt_string_view value)
     {
         m_point.x = -1;
         m_point.y = -1;
-        m_dialog_units = true;
+        m_dialog_units = Project.as_bool(prop_dialog_units);
     }
     else
     {
@@ -117,7 +118,7 @@ void CustomPointProperty::InitValues(tt_string_view value)
         {
             m_point.x = -1;
             m_point.y = -1;
-            m_dialog_units = true;
+            m_dialog_units = Project.as_bool(prop_dialog_units);
             return;
         }
 

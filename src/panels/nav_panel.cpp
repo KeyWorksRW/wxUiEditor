@@ -66,7 +66,7 @@ NavigationPanel::NavigationPanel(wxWindow* parent) : wxPanel(parent)
     SetWindowStyle(wxBORDER_RAISED);
 
     m_tree_ctrl = new wxTreeCtrl(this, wxID_ANY, wxDefaultPosition, wxDefaultSize,
-                                 wxTR_HAS_BUTTONS | wxTR_LINES_AT_ROOT | wxTR_DEFAULT_STYLE | wxBORDER_SUNKEN);
+                                 wxTR_DEFAULT_STYLE | wxBORDER_SUNKEN);
 
     int index = 0;
     wxSize gen_image_size = parent->FromDIP(wxSize(GenImageSize, GenImageSize));

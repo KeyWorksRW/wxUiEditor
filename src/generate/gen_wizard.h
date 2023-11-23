@@ -21,7 +21,7 @@ public:
     bool HeaderCode(Code&) override;
     bool BaseClassNameCode(Code&) override;
 
-    bool GetIncludes(Node*, std::set<std::string>& set_src, std::set<std::string>& set_hdr) override;
+    bool GetIncludes(Node*, std::set<std::string>& set_src, std::set<std::string>& set_hdr, int /* language */) override;
 
     std::optional<tt_string> GetHint(NodeProperty*) override;
     bool PopupMenuAddCommands(NavPopupMenu*, Node*) override;

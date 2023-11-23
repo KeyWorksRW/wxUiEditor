@@ -182,7 +182,8 @@ void RibbonBarFormGenerator::GenEvent(Code& code, NodeEvent* event, const std::s
     code.Replace(tt_string() << event->getNode()->as_string(prop_var_name) << "->", "");
 }
 
-bool RibbonBarFormGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
+bool RibbonBarFormGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
+                                         int /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/ribbon/art.h>", set_src, set_hdr);
     InsertGeneratorInclude(node, "#include <wx/ribbon/bar.h>", set_src, set_hdr);
@@ -265,7 +266,8 @@ bool RibbonBarGenerator::SettingsCode(Code& code)
     return true;
 }
 
-bool RibbonBarGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
+bool RibbonBarGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
+                                     int /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/ribbon/art.h>", set_src, set_hdr);
     InsertGeneratorInclude(node, "#include <wx/ribbon/bar.h>", set_src, set_hdr);

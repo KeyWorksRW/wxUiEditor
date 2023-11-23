@@ -117,8 +117,14 @@ public:
     // wxUiEditor.
     virtual int GetRequiredVersion(Node* /*node*/);
 
-    // Add any required include files to base source and/or header file
-    virtual bool GetIncludes(Node*, std::set<std::string>& /* set_src */, std::set<std::string>& /* set_hdr */)
+    // REVIEW: [Randalphwa - 11-22-2023] Currently, GetIncludes() is only called for C++. If
+    // all the generators used the language to determine what to add, then it could be used for
+    // imports for Python and requires for Ruby as well. I added it now thinking it might work
+    // for Python custom controls, but all the generators need to be updated first.
+
+    // Add any required include files to base source and/or header file.
+    virtual bool GetIncludes(Node*, std::set<std::string>& /* set_src */, std::set<std::string>& /* set_hdr */,
+                             int /* language */)
     {
         return false;
     };

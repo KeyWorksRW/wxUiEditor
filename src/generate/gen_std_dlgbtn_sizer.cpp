@@ -658,7 +658,8 @@ void StdDialogButtonSizerGenerator::GenEvent(Code& code, NodeEvent* event, const
     code.EndFunction();
 }
 
-bool StdDialogButtonSizerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
+bool StdDialogButtonSizerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
+                                                int /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/button.h>", set_src, set_hdr);
     InsertGeneratorInclude(node, "#include <wx/sizer.h>", set_src, set_hdr);

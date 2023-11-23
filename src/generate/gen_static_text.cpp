@@ -163,7 +163,8 @@ void StaticTextGenerator::RequiredHandlers(Node* /* node */, std::set<std::strin
     handlers.emplace("wxStaticTextXmlHandler");
 }
 
-bool StaticTextGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
+bool StaticTextGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
+                                      int /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/stattext.h>", set_src, set_hdr);
     if (node->as_bool(prop_markup) && node->as_int(prop_wrap) <= 0)

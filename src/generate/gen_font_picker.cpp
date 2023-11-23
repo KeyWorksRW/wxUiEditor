@@ -93,7 +93,8 @@ bool FontPickerGenerator::SettingsCode(Code& code)
     return true;
 }
 
-bool FontPickerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
+bool FontPickerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
+                                      int /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/fontpicker.h>", set_src, set_hdr);
     InsertGeneratorInclude(node, "#include <wx/font.h>", set_src, set_hdr);

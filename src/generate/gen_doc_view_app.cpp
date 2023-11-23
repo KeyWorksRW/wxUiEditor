@@ -182,7 +182,8 @@ void DocViewAppGenerator::AddProtectedHdrMembers(std::set<std::string>& code_lin
     code_lines.emplace("std::vector<wxDocTemplate*> m_docTemplates;");
 }
 
-bool DocViewAppGenerator::GetIncludes(Node* /* node */, std::set<std::string>& set_src, std::set<std::string>& /* set_hdr */)
+bool DocViewAppGenerator::GetIncludes(Node* /* node */, std::set<std::string>& set_src, std::set<std::string>& /* set_hdr */,
+                                      int /* language */)
 {
     set_src.insert("#include <wx/aui/tabmdi.h");
     set_src.insert("#include <wx/config.h");

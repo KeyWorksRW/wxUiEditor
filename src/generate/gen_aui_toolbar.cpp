@@ -243,7 +243,8 @@ bool AuiToolBarFormGenerator::SettingsCode(Code& code)
     return true;
 }
 
-bool AuiToolBarFormGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
+bool AuiToolBarFormGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
+                                          int /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/aui/auibar.h>", set_src, set_hdr);
 
@@ -432,7 +433,8 @@ bool AuiToolBarGenerator::SettingsCode(Code& code)
     return true;
 }
 
-bool AuiToolBarGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
+bool AuiToolBarGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
+                                      int /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/aui/auibar.h>", set_src, set_hdr);
 
@@ -527,7 +529,8 @@ int AuiToolGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xr
     return BaseGenerator::xrc_updated;
 }
 
-bool AuiToolGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& /* set_hdr */)
+bool AuiToolGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& /* set_hdr */,
+                                   int /* language */)
 {
     if (node->as_string(prop_initial_state) != "wxAUI_BUTTON_STATE_NORMAL")
     {

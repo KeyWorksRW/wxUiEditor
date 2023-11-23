@@ -21,7 +21,8 @@ public:
     bool SettingsCode(Code&) override;
     bool AfterChildrenCode(Code&) override;
 
-    bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr) override;
+    bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
+                     int /* language */) override;
 
     bool OnPropertyChange(wxObject* widget, Node* node, NodeProperty* prop) override;
 

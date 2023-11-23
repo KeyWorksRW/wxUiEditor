@@ -130,7 +130,8 @@ bool DataViewCtrl::ConstructionCode(Code& code)
     return true;
 }
 
-bool DataViewCtrl::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
+bool DataViewCtrl::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
+                               int /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/dataview.h>", set_src, set_hdr);
     return true;
@@ -260,7 +261,8 @@ bool DataViewListCtrl::ConstructionCode(Code& code)
     return true;
 }
 
-bool DataViewListCtrl::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
+bool DataViewListCtrl::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
+                                   int /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/dataview.h>", set_src, set_hdr);
     return true;
@@ -332,7 +334,8 @@ bool DataViewTreeCtrl::ConstructionCode(Code& code)
     return true;
 }
 
-bool DataViewTreeCtrl::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
+bool DataViewTreeCtrl::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
+                                   int /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/dataview.h>", set_src, set_hdr);
     return true;

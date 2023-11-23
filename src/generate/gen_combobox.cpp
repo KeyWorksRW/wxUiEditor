@@ -144,7 +144,8 @@ bool ComboBoxGenerator::SettingsCode(Code& code)
     return true;
 }
 
-bool ComboBoxGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
+bool ComboBoxGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
+                                    int /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/combobox.h>", set_src, set_hdr);
     if (node->hasValue(prop_validator_variable))

@@ -152,7 +152,8 @@ int CheckListBoxGenerator::GetRequiredVersion(Node* node)
     return BaseGenerator::GetRequiredVersion(node);
 }
 
-bool CheckListBoxGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
+bool CheckListBoxGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
+                                        int /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/checklst.h>", set_src, set_hdr);
     if (node->hasValue(prop_validator_variable))

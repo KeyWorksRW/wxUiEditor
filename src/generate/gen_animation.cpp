@@ -211,7 +211,8 @@ void AnimationGenerator::RequiredHandlers(Node* node, std::set<std::string>& han
     }
 }
 
-bool AnimationGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
+bool AnimationGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
+                                     int /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/animate.h>", set_src, set_hdr);
     if (node->as_bool(prop_use_generic))

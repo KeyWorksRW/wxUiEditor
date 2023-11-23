@@ -81,7 +81,8 @@ void InfoBarGenerator::OnTimer(wxTimerEvent& /* event */)
     m_infobar->ShowMessage("Message ...");
 }
 
-bool InfoBarGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
+bool InfoBarGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
+                                   int /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/infobar.h>", set_src, set_hdr);
     return true;

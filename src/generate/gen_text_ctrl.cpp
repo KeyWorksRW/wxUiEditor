@@ -243,7 +243,8 @@ void TextCtrlGenerator::ChangeEnableState(wxPropertyGridManager* prop_grid, Node
     }
 }
 
-bool TextCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
+bool TextCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
+                                    int /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/textctrl.h>", set_src, set_hdr);
 

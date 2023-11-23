@@ -56,7 +56,8 @@ bool RibbonPageGenerator::SettingsCode(Code& code)
     return true;
 }
 
-bool RibbonPageGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
+bool RibbonPageGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
+                                      int /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/ribbon/page.h>", set_src, set_hdr);
 
@@ -116,7 +117,8 @@ bool RibbonPanelGenerator::ConstructionCode(Code& code)
     return true;
 }
 
-bool RibbonPanelGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
+bool RibbonPanelGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
+                                       int /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/ribbon/panel.h>", set_src, set_hdr);
 

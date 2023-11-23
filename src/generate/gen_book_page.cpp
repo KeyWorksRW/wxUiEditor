@@ -295,7 +295,8 @@ bool BookPageGenerator::ConstructionCode(Code& code)
     return true;
 }
 
-bool BookPageGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
+bool BookPageGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
+                                    int /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/panel.h>", set_src, set_hdr);
     return true;

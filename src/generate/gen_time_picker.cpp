@@ -43,7 +43,8 @@ bool TimePickerCtrlGenerator::ConstructionCode(Code& code)
     return true;
 }
 
-bool TimePickerCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
+bool TimePickerCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
+                                          int /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/timectrl.h>", set_src, set_hdr);
     InsertGeneratorInclude(node, "#include <wx/dateevt.h>", set_src, set_hdr);

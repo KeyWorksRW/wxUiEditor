@@ -186,7 +186,8 @@ int RearrangeCtrlGenerator::GetRequiredVersion(Node* node)
     return BaseGenerator::GetRequiredVersion(node);
 }
 
-bool RearrangeCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
+bool RearrangeCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
+                                         int /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/rearrangectrl.h>", set_src, set_hdr);
     return true;

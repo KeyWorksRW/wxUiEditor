@@ -54,7 +54,8 @@ bool GaugeGenerator::SettingsCode(Code& code)
     return true;
 }
 
-bool GaugeGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
+bool GaugeGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
+                                 int /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/gauge.h>", set_src, set_hdr);
     if (node->as_string(prop_validator_variable).size())

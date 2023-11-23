@@ -18,7 +18,8 @@ public:
 
     void GenEvent(Code&, NodeEvent*, const std::string&) override;
 
-    bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr) override;
+    bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
+                     int /* language */) override;
 
     std::optional<tt_string> GetWarning(Node* node, int language) override;
 };

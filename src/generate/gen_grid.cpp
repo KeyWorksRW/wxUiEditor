@@ -354,7 +354,8 @@ int GridGenerator::GetRequiredVersion(Node* node)
     return BaseGenerator::GetRequiredVersion(node);
 }
 
-bool GridGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
+bool GridGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
+                                int /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/grid.h>", set_src, set_hdr);
 

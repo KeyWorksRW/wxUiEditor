@@ -25,7 +25,8 @@ public:
 
     void GenEvent(Code&, NodeEvent*, const std::string&) override;
 
-    bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr) override;
+    bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
+                     int /* language */) override;
 
     int GenXrcObject(Node*, pugi::xml_node& /* object */, size_t /* xrc_flags */) override;
     void RequiredHandlers(Node*, std::set<std::string>& /* handlers */) override;
@@ -46,7 +47,8 @@ public:
     bool SettingsCode(Code&) override;
     bool AfterChildrenCode(Code&) override;
 
-    bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr) override;
+    bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
+                     int /* language */) override;
 
     int GenXrcObject(Node*, pugi::xml_node& /* object */, size_t /* xrc_flags */) override;
     void RequiredHandlers(Node*, std::set<std::string>& /* handlers */) override;
@@ -61,7 +63,8 @@ class AuiToolGenerator : public BaseGenerator
 {
 public:
     bool ConstructionCode(Code& code) override;
-    bool GetIncludes(Node*, std::set<std::string>& /* set_src */, std::set<std::string>& /* set_hdr */) override;
+    bool GetIncludes(Node*, std::set<std::string>& /* set_src */, std::set<std::string>& /* set_hdr */,
+                     int /* language */) override;
 
     int GenXrcObject(Node*, pugi::xml_node& /* object */, size_t /* xrc_flags */) override;
     int GetRequiredVersion(Node* /*node*/) override;

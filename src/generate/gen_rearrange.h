@@ -18,5 +18,6 @@ public:
     bool SettingsCode(Code&) override;
 
     int GetRequiredVersion(Node* node) override;
-    bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr) override;
+    bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
+                     int /* language */) override;
 };

@@ -46,7 +46,8 @@ bool TreebookGenerator::ConstructionCode(Code& code)
     return true;
 }
 
-bool TreebookGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
+bool TreebookGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
+                                    int /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/treebook.h>", set_src, set_hdr);
     if (node->hasValue(prop_persist_name))

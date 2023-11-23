@@ -48,7 +48,8 @@ bool ListbookGenerator::ConstructionCode(Code& code)
     return true;
 }
 
-bool ListbookGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
+bool ListbookGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
+                                    int /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/listbook.h>", set_src, set_hdr);
     if (node->hasValue(prop_persist_name))

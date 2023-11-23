@@ -258,7 +258,8 @@ void ButtonGenerator::RequiredHandlers(Node* node, std::set<std::string>& handle
     handlers.emplace(old_button ? "wxBitmapButtonXmlHandler" : "wxButtonXmlHandler");
 }
 
-bool ButtonGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
+bool ButtonGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
+                                  int /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/button.h>", set_src, set_hdr);
     if (node->hasValue(prop_validator_variable))

@@ -33,7 +33,8 @@ bool TreeCtrlGenerator::ConstructionCode(Code& code)
     return true;
 }
 
-bool TreeCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
+bool TreeCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
+                                    int /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/treectrl.h>", set_src, set_hdr);
     return true;

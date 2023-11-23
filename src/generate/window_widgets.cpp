@@ -54,7 +54,8 @@ bool ScrolledCanvasGenerator::SettingsCode(Code& code)
     return true;
 }
 
-bool ScrolledCanvasGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
+bool ScrolledCanvasGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
+                                          int /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/scrolwin.h>", set_src, set_hdr);
 
@@ -102,7 +103,8 @@ bool ScrolledWindowGenerator::SettingsCode(Code& code)
     return true;
 }
 
-bool ScrolledWindowGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
+bool ScrolledWindowGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
+                                          int /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/scrolwin.h>", set_src, set_hdr);
 

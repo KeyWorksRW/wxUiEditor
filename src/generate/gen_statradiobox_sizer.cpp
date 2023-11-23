@@ -225,7 +225,8 @@ bool StaticRadioBtnBoxSizerGenerator::AfterChildrenCode(Code& code)
     return true;
 }
 
-bool StaticRadioBtnBoxSizerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
+bool StaticRadioBtnBoxSizerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
+                                                  int /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/sizer.h>", set_src, set_hdr);
     InsertGeneratorInclude(node, "#include <wx/statbox.h>", set_src, set_hdr);

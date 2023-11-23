@@ -60,7 +60,8 @@ bool CalendarCtrlGenerator::SettingsCode(Code& code)
     return true;
 }
 
-bool CalendarCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
+bool CalendarCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
+                                        int /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/calctrl.h>", set_src, set_hdr);
     return true;

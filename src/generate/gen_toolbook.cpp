@@ -56,7 +56,8 @@ bool ToolbookGenerator::ConstructionCode(Code& code)
     return true;
 }
 
-bool ToolbookGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
+bool ToolbookGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
+                                    int /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/toolbook.h>", set_src, set_hdr);
 

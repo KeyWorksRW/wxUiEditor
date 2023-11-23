@@ -16,7 +16,8 @@ public:
 
     bool ConstructionCode(Code&) override;
 
-    bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr) override;
+    bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
+                     int /* language */) override;
     void GenEvent(Code&, NodeEvent*, const std::string&) override;
 
     int GenXrcObject(Node*, pugi::xml_node& /* object */, size_t /* xrc_flags */) override;

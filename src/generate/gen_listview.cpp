@@ -118,7 +118,8 @@ bool ListViewGenerator::SettingsCode(Code& code)
     return true;
 }
 
-bool ListViewGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
+bool ListViewGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
+                                    int /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/listctrl.h>", set_src, set_hdr);
     return true;

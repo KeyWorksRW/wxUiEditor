@@ -17,7 +17,8 @@ public:
     bool ConstructionCode(Code& code) override;
     bool SettingsCode(Code&) override;
 
-    bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr) override;
+    bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
+                     int /* language */) override;
 
     void ChangeEnableState(wxPropertyGridManager*, NodeProperty*) override;
 

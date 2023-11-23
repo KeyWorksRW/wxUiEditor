@@ -145,7 +145,8 @@ bool ToggleButtonGenerator::SettingsCode(Code& code)
     return true;
 }
 
-bool ToggleButtonGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
+bool ToggleButtonGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
+                                        int /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/tglbtn.h>", set_src, set_hdr);
     if (node->as_string(prop_validator_variable).size())

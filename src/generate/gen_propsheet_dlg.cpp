@@ -335,7 +335,8 @@ bool PropSheetDlgGenerator::BaseClassNameCode(Code& code)
     return true;
 }
 
-bool PropSheetDlgGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
+bool PropSheetDlgGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
+                                        int /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/propdlg.h>", set_src, set_hdr);
     set_src.insert("#include <wx/bookctrl.h>");

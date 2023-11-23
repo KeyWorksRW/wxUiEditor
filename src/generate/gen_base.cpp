@@ -215,7 +215,7 @@ void BaseCodeGenerator::GatherGeneratorIncludes(Node* node, std::set<std::string
     if (!generator)
         return;
 
-    generator->GetIncludes(node, set_src, set_hdr);
+    generator->GetIncludes(node, set_src, set_hdr, m_language);
 
     if (node->hasValue(prop_derived_header))
     {

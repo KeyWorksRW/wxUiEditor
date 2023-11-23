@@ -14,7 +14,8 @@
 
 #include "gen_timer.h"
 
-bool TimerGenerator::GetIncludes(Node* /* node */, std::set<std::string>& /* set_src */, std::set<std::string>& set_hdr)
+bool TimerGenerator::GetIncludes(Node* /* node */, std::set<std::string>& /* set_src */, std::set<std::string>& set_hdr,
+                                 int /* language */)
 {
     set_hdr.insert("#include <wx/timer.h>");
     return true;

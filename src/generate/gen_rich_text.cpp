@@ -83,7 +83,8 @@ void RichTextCtrlGenerator::RequiredHandlers(Node* /* node */, std::set<std::str
     handlers.emplace("wxRichTextCtrlXmlHandler -- you must explicitly add this handler");
 }
 
-bool RichTextCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
+bool RichTextCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
+                                        int /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/richtext/richtextctrl.h>", set_src, set_hdr);
     return true;

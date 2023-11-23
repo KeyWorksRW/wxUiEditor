@@ -44,7 +44,8 @@ bool TextSizerGenerator::ConstructionCode(Code& code)
     return true;
 }
 
-bool TextSizerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
+bool TextSizerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
+                                     int /* language */)
 {
     auto parent = node->getParent();
     while (parent->isSizer())

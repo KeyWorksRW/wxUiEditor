@@ -90,7 +90,8 @@ void RadioButtonGenerator::RequiredHandlers(Node* /* node */, std::set<std::stri
     handlers.emplace("wxRadioButtonXmlHandler");
 }
 
-bool RadioButtonGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
+bool RadioButtonGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
+                                       int /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/radiobut.h>", set_src, set_hdr);
     if (node->as_string(prop_validator_variable).size())

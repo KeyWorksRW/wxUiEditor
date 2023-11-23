@@ -257,7 +257,8 @@ void ToolBarFormGenerator::GenEvent(Code& code, NodeEvent* event, const std::str
     code.Replace(tt_string() << event->getNode()->as_string(prop_var_name) << "->", "");
 }
 
-bool ToolBarFormGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
+bool ToolBarFormGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
+                                       int /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/toolbar.h>", set_src, set_hdr);
 
@@ -451,7 +452,8 @@ bool ToolBarGenerator::AfterChildrenCode(Code& code)
     return true;
 }
 
-bool ToolBarGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
+bool ToolBarGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
+                                   int /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/toolbar.h>", set_src, set_hdr);
 

@@ -124,7 +124,8 @@ bool HtmlListBoxGenerator::SettingsCode(Code& code)
     return true;
 }
 
-bool HtmlListBoxGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
+bool HtmlListBoxGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
+                                       int /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/htmllbox.h>", set_src, set_hdr);
     return true;

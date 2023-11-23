@@ -86,7 +86,8 @@ void WebViewGenerator::GenEvent(Code& code, NodeEvent* event, const std::string&
     }
 }
 
-bool WebViewGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
+bool WebViewGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
+                                   int /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/webview.h>", set_src, set_hdr);
     return true;

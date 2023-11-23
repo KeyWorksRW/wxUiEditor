@@ -309,7 +309,8 @@ bool WizardFormGenerator::HeaderCode(Code& code)
     return true;
 }
 
-bool WizardFormGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
+bool WizardFormGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
+                                      int /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/wizard.h>", set_src, set_hdr);
 

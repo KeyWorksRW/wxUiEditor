@@ -64,7 +64,8 @@ void StaticBoxGenerator::RequiredHandlers(Node* /* node */, std::set<std::string
     handlers.emplace("wxStaticBoxXmlHandler");
 }
 
-bool StaticBoxGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
+bool StaticBoxGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
+                                     int /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/statbox.h>", set_src, set_hdr);
 

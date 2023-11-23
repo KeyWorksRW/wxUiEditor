@@ -16,7 +16,8 @@ class CtxMenuGenerator : public BaseGenerator
 public:
     bool AfterChildrenCode(Code& code) override;
 
-    bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr) override;
+    bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
+                     int /* language */) override;
 
 protected:
     void CollectCtxMenuEventHandlers(Node* node, std::vector<NodeEvent*>& events);

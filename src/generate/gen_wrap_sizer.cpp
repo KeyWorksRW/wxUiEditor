@@ -88,7 +88,8 @@ bool WrapSizerGenerator::AfterChildrenCode(Code& code)
     return true;
 }
 
-bool WrapSizerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
+bool WrapSizerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
+                                     int /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/wrapsizer.h>", set_src, set_hdr);
     return true;

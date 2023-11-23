@@ -481,7 +481,7 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
             // properties that don't have a value.
             if (auto value = xml_prop.text().as_string(); value.size())
             {
-                ProcessPropValue(xml_prop, prop_name, class_name, newobject.get());
+                ProcessPropValue(xml_prop, prop_name, class_name, newobject.get(), parent);
             }
         }
     }
@@ -560,7 +560,18 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
                     continue;
                 }
 
-                MSG_INFO(tt_string() << event_name << " event not supported");
+#if defined(INTERNAL_TESTING)
+                if (parent && parent->getForm())
+                {
+                    MSG_INFO(tt_string() << "Event " << event_name
+                                         << " not supported. Form: " << parent->getForm()->as_string(prop_class_name));
+                }
+                else
+                {
+                    MSG_INFO(tt_string() << "Event " << event_name << " not supported");
+                }
+#endif  // _DEBUG
+
                 xml_event = xml_event.next_sibling("event");
                 continue;
             }
@@ -653,7 +664,7 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
 }
 
 void FormBuilder::ProcessPropValue(pugi::xml_node& xml_prop, tt_string_view prop_name, tt_string_view class_name,
-                                   Node* newobject)
+                                   Node* newobject, Node* parent)
 {
     if (set_ignore_flags.contains(prop_name))
     {
@@ -894,8 +905,20 @@ void FormBuilder::ProcessPropValue(pugi::xml_node& xml_prop, tt_string_view prop
             }
             else if (xml_prop.text().as_string() == "wxWS_EX_VALIDATE_RECURSIVELY")
                 return;
-            MSG_INFO(tt_string() << prop_name << "(" << xml_prop.text().as_string() << ") property in " << class_name
-                                 << " class not supported");
+
+#if defined(INTERNAL_TESTING)
+            if (parent && parent->getForm())
+            {
+                MSG_INFO(tt_string("Unsupported ")
+                         << prop_name << "(" << xml_prop.text().as_string() << ") property in " << class_name
+                         << ". Form: " << parent->getForm()->as_string(prop_class_name));
+            }
+            else
+            {
+                MSG_INFO(tt_string("Unsupported ")
+                         << prop_name << "(" << xml_prop.text().as_string() << ") property in " << class_name);
+            }
+#endif
         }
     }
 }

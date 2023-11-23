@@ -861,7 +861,19 @@ void ImportXML::ProcessUnknownProperty(const pugi::xml_node& xml_obj, Node* node
                     }
                     else
                     {
-                        MSG_INFO(tt_string() << "Unrecognized property: " << xml_obj.name() << " for " << node->declName());
+#if defined(INTERNAL_TESTING)
+                        if (parent && parent->getForm())
+                        {
+                            MSG_INFO(tt_string()
+                                     << "Unrecognized property: " << xml_obj.name() << " for " << node->declName() << " in "
+                                     << parent->getForm()->as_string(prop_class_name));
+                        }
+                        else
+                        {
+                            MSG_INFO(tt_string()
+                                     << "Unrecognized property: " << xml_obj.name() << " for " << node->declName());
+                        }
+#endif
                     }
                     return;
                 }
@@ -888,7 +900,17 @@ void ImportXML::ProcessUnknownProperty(const pugi::xml_node& xml_obj, Node* node
                 else if (!node->isGen(gen_spacer))
                 {
                     // spacer's don't use alignment or border styles
-                    MSG_INFO(tt_string() << xml_obj.name() << " not supported for " << node->declName());
+#if defined(INTERNAL_TESTING)
+                    if (parent && parent->getForm())
+                    {
+                        MSG_INFO(tt_string() << xml_obj.name() << " not supported for " << node->declName() << " in "
+                                             << parent->getForm()->as_string(prop_class_name));
+                    }
+                    else
+                    {
+                        MSG_INFO(tt_string() << xml_obj.name() << " not supported for " << node->declName());
+                    }
+#endif
                 }
                 return;
 
@@ -910,8 +932,18 @@ void ImportXML::ProcessUnknownProperty(const pugi::xml_node& xml_obj, Node* node
                 }
                 else
                 {
-                    MSG_INFO(tt_string() << "\"option\" specified for node that doesn't have prop_proportion: "
-                                         << node->declName());
+#if defined(INTERNAL_TESTING)
+                    if (parent && parent->getForm())
+                    {
+                        MSG_INFO(tt_string() << "\"option\" specified for node that doesn't have prop_proportion: "
+                                             << node->declName() << " in " << parent->getForm()->as_string(prop_class_name));
+                    }
+                    else
+                    {
+                        MSG_INFO(tt_string()
+                                 << "\"option\" specified for node that doesn't have prop_proportion: " << node->declName());
+                    }
+#endif
                 }
                 return;
 
@@ -1007,7 +1039,17 @@ void ImportXML::ProcessUnknownProperty(const pugi::xml_node& xml_obj, Node* node
         }
     }
 
-    MSG_INFO(tt_string() << "Unrecognized property: " << xml_obj.name() << " for " << node->declName());
+#if defined(INTERNAL_TESTING)
+    if (parent && parent->getForm())
+    {
+        MSG_INFO(tt_string() << "Unrecognized property: " << xml_obj.name() << " for " << node->declName() << " in "
+                             << parent->getForm()->as_string(prop_class_name));
+    }
+    else
+    {
+        MSG_INFO(tt_string() << "Unrecognized property: " << xml_obj.name() << " for " << node->declName());
+    }
+#endif
 }
 
 void ImportXML::ProcessContent(const pugi::xml_node& xml_obj, Node* node)
@@ -1144,7 +1186,17 @@ NodeSharedPtr ImportXML::CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, No
         }
         else
         {
-            MSG_INFO(tt_string() << "Unrecognized object: " << object_name);
+#if defined(INTERNAL_TESTING)
+            if (parent && parent->getForm())
+            {
+                MSG_INFO(tt_string() << "Unrecognized object: " << object_name << " in "
+                                     << parent->getForm()->as_string(prop_class_name));
+            }
+            else
+            {
+                MSG_INFO(tt_string() << "Unrecognized object: " << object_name);
+            }
+#endif
             return NodeSharedPtr();
         }
     }

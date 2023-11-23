@@ -30,7 +30,8 @@ protected:
     void ConvertNameSpaceProp(NodeProperty* prop, std::string_view org_names);
 
     // Called when a property is unknown and has a value set.
-    void ProcessPropValue(pugi::xml_node& xml_prop, tt_string_view prop_name, tt_string_view class_name, Node* newobject);
+    void ProcessPropValue(pugi::xml_node& xml_prop, tt_string_view prop_name, tt_string_view class_name, Node* newobject,
+                          Node* parent);
 
     void BitmapProperty(pugi::xml_node& xml_obj, NodeProperty* prop);
     void createProjectNode(pugi::xml_node& xml_obj, Node* new_node);

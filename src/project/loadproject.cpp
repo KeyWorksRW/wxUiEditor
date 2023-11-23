@@ -793,18 +793,13 @@ bool ProjectHandler::Import(ImportXML& import, tt_string& file, bool append, boo
 
         if (auto language = import.GetLanguage(); language != GEN_LANG_NONE)
         {
-            switch (language)
-            {
-                case GEN_LANG_CPLUSPLUS:
-                    project_node->set_value(prop_code_preference, "C++");
-                    break;
-                case GEN_LANG_PYTHON:
-                    project_node->set_value(prop_code_preference, "Python");
-                    break;
-                case GEN_LANG_XRC:
-                    project_node->set_value(prop_code_preference, "XRC");
-                    break;
-            }
+            if (language & GEN_LANG_CPLUSPLUS)
+                project_node->set_value(prop_code_preference, "C++");
+            else if (language & GEN_LANG_PYTHON)
+                project_node->set_value(prop_code_preference, "Python");
+            else if (language & GEN_LANG_XRC)
+                project_node->set_value(prop_code_preference, "XRC");
+
             SetLangFilenames();
         }
 

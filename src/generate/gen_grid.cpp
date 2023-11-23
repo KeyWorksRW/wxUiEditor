@@ -323,17 +323,6 @@ bool GridGenerator::SettingsCode(Code& code)
     else
         code.Eol().NodeName().Function("SetRowLabelSize(").as_string(prop_row_label_size).EndFunction();
 
-    if (code.hasValue(prop_col_label_values))
-    {
-        auto labels = code.node()->as_ArrayString(prop_col_label_values);
-        int num_cols = code.IntValue(prop_cols);
-        for (int col = 0; col < (int) labels.size() && col < num_cols; ++col)
-        {
-            code.Eol().NodeName().Function("SetColLabelValue(").itoa(col);
-            code.Comma().QuotedString(labels[col]).EndFunction();
-        }
-    }
-
     code.CloseBrace();
 
     return true;

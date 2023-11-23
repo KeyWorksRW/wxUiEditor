@@ -440,7 +440,7 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
                     copy.erase_from(';');
                 }
 
-                newobject->set_value(prop_parameters, copy);
+                newobject->set_value(prop_construction, copy);
                 continue;
             }
             else if (prop_name == "settings")

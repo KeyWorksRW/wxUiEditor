@@ -157,11 +157,16 @@ void FormBuilder::createProjectNode(pugi::xml_node& xml_obj, Node* new_node)
                 else if (prop_name.as_string() == "code_generation")
                 {
                     if (tt::contains(xml_prop.text().as_string(), "Python"))
-                        m_language = GEN_LANG_PYTHON;
+                        m_language |= GEN_LANG_PYTHON;
                     else if (tt::contains(xml_prop.text().as_string(), "C++"))
-                        m_language = GEN_LANG_CPLUSPLUS;
+                        m_language |= GEN_LANG_CPLUSPLUS;
                     else if (tt::contains(xml_prop.text().as_string(), "XRC"))
-                        m_language = GEN_LANG_XRC;
+                        m_language |= GEN_LANG_XRC;
+                    else if (tt::contains(xml_prop.text().as_string(), "Lua"))
+                        m_language |= GEN_LANG_LUA;
+
+                    // wxFormBuilder also generates PHP code, but wxUiEditor currently doesn't support that since
+                    // wxPHP is not being actively maintained.
                 }
             }
         }
@@ -435,7 +440,7 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
                     copy.erase_from(';');
                 }
 
-                newobject->set_value(prop_parameters, copy);
+                newobject->set_value(prop_construction, copy);
                 continue;
             }
             else if (prop_name == "settings")
@@ -444,11 +449,30 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
             }
             else if (prop_name == "include")
             {
-                tt_string header;
-                header.ExtractSubString(xml_prop.text().as_sview().view_stepover());
-                if (header.size())
+                if (m_language & GEN_LANG_PYTHON)
                 {
-                    newobject->set_value(prop_header, header);
+                    tt_string header(xml_prop.text().as_sview());
+                    if (parent)
+                    {
+                        auto form = parent->getForm();
+                        tt_string cur_value = form->as_string(prop_python_import_list);
+                        if (cur_value.size())
+                        {
+                            cur_value += ';';
+                        }
+                        cur_value += header;
+                        form->set_value(prop_python_import_list, cur_value);
+                    }
+                    continue;
+                }
+                else
+                {
+                    tt_string header;
+                    header.ExtractSubString(xml_prop.text().as_sview());
+                    if (header.size())
+                    {
+                        newobject->set_value(prop_header, header);
+                    }
                 }
                 continue;
             }
@@ -605,12 +629,24 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
         child = child.next_sibling("object");
     }
 
-    if (newobject->isGen(gen_wxDialog) && m_baseFile.size())
+    // wxFormBuilder allows creating multiple forms and putting them all in the same file. wxUE
+    // doesn't allow that, in part because it allows the dev to edit each generated form. To
+    // work around this, we add numerical suffixes to each filename generated.
+
+    if (newobject->isForm() && m_baseFile.size())
     {
-        if (auto prop = newobject->getPropPtr(prop_base_file); prop)
-        {
-            prop->set_value(m_baseFile);
-        }
+        if (m_language & GEN_LANG_CPLUSPLUS)
+            newobject->set_value(prop_base_file, m_baseFile);
+        if (m_language & GEN_LANG_PYTHON)
+            newobject->set_value(prop_python_file, m_baseFile);
+        if (m_language & GEN_LANG_XRC)
+            newobject->set_value(prop_xrc_file, m_baseFile);
+#if defined(INTERNAL_TESTING)
+        if (m_language & GEN_LANG_LUA)
+            newobject->set_value(prop_lua_file, m_baseFile);
+#endif
+        // We don't want to use the same file for the next form, so we clear it.
+        m_baseFile.clear();
     }
 
     return newobject;

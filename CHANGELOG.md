@@ -17,6 +17,7 @@ All notable changes to this project will be documented in this file.
 - Tooltips set in wxAuiNotebook pages are now displayed when hovering over the tab display rather than the page itself
 - You can now set selected and non-selected fonts for wxAuiNotebook tabs
 - Added `dialog_units` property to the Project properties list to change default units for new dimensions
+- Custom controls now have a `construction` property allowing you to replace the normal wxUiEditor-generated construction of the control with your own code.
 
 ### Changed
 
@@ -28,6 +29,7 @@ All notable changes to this project will be documented in this file.
 - Limiting the platforms for a container (such as a wxPanel) will now also limit the platforms for any child widgets.
 - C++ src_preamble contents is now placed at the top of the file instead of after the includes.
 - Custom font point size can be set to -1 to indicate that a default point size should be used.
+- Importing wxFormBuilder and wxGlade projects now supports converting a construction property for a custom control.
 
 ### Fixed
 

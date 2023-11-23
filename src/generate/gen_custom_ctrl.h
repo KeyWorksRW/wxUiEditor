@@ -21,4 +21,6 @@ public:
                      int /* language */) override;
 
     int GenXrcObject(Node*, pugi::xml_node& /* object */, size_t /* xrc_flags */) override;
+
+    void AddPropsAndEvents(NodeDeclaration* declaration) override;
 };

@@ -312,8 +312,15 @@ void BaseCodeGenerator::GeneratePythonClass(PANEL_PAGE panel_type)
         list.SetString(m_form_node->as_string(prop_python_import_list));
         for (auto& iter: list)
         {
-            iter.remove_extension();
-            m_source->writeLine(tt_string("import ") << iter);
+            if (!iter.starts_with("import "))
+            {
+                iter.remove_extension();
+                m_source->writeLine(tt_string("import ") << iter);
+            }
+            else
+            {
+                m_source->writeLine(iter);
+            }
         }
         if (list.size())
         {

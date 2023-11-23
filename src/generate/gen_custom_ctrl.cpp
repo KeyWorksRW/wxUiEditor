@@ -31,6 +31,15 @@ wxObject* CustomControl::CreateMockup(Node* /* node */, wxObject* parent)
 
 bool CustomControl::ConstructionCode(Code& code)
 {
+    if (code.hasValue(prop_construction))
+    {
+        tt_string construction = code.view(prop_construction);
+        construction.BothTrim();
+        construction.Replace("@@", "\n", tt::REPLACE::all);
+        code += construction;
+        return true;
+    }
+
     code.AddAuto().NodeName();
     code.Str(" = ").AddIfCpp("new ");
     if (code.hasValue(prop_namespace) && code.is_cpp())
@@ -146,12 +155,35 @@ int CustomControl::GenXrcObject(Node* node, pugi::xml_node& object, size_t /* xr
     return result;
 }
 
-bool CustomControl::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                int /* language */)
+bool CustomControl::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr, int language)
 {
-    if (node->hasValue(prop_header))
+    if (node->hasValue(prop_header) && language == GEN_LANG_CPLUSPLUS)
     {
-        set_src.insert(tt_string() << "#include \"" << node->as_string(prop_header) << '"');
+        tt_string_view cur_value = node->as_string(prop_header);
+        if (cur_value.starts_with("#"))
+        {
+            cur_value.remove_prefix(1);
+            cur_value = cur_value.view_nonspace();
+            if (cur_value.starts_with("include"))
+            {
+                tt_string convert(node->as_string(prop_header));
+                convert.Replace("@@", "\n", tt::REPLACE::all);
+                set_src.insert(convert);
+            }
+            else
+            {
+                set_src.insert(tt_string() << "#include \"" << node->as_string(prop_header) << '"');
+            }
+        }
+        else
+        {
+            // Because the header is now a multi-line editor, it's easy for it to have a
+            // trailing @@ -- we remove that here.
+            tt_string convert(node->as_string(prop_header));
+            convert.Replace("@@", "", tt::REPLACE::all);
+
+            set_src.insert(tt_string() << "#include \"" << convert << '"');
+        }
     }
 
     if (node->as_string(prop_class_access) != "none" && node->hasValue(prop_class_name))
@@ -165,4 +197,28 @@ bool CustomControl::GetIncludes(Node* node, std::set<std::string>& set_src, std:
             set_hdr.insert(tt_string() << "class " << node->as_string(prop_class_name) << ';');
     }
     return true;
+}
+
+void CustomControl::AddPropsAndEvents(NodeDeclaration* declaration)
+{
+    DeclAddVarNameProps(declaration, "m_custom");
+    DeclAddProp(declaration, prop_header, type_code_edit,
+                "The header file that declares the class. If the first line does not start with #include then the entire "
+                "contents will be placed in quotes and prefixed with #include. Python and Ruby code should use "
+                "python_import_list and ruby_require_list instead of this property.");
+    DeclAddProp(declaration, prop_namespace, type_string,
+                "C++ namespace the class is declared in. This property is ignored in any langauage besides C++.");
+    DeclAddProp(declaration, prop_class_name, type_string, "The name of the custom class.", "CustomClass");
+
+    DeclAddProp(declaration, prop_construction, type_code_edit,
+                "Optional code to construct the control instead of having wxUiEditor construct it. After this code is "
+                "placed into the generated file, the var_name property will be used to access the control.");
+    DeclAddProp(declaration, prop_parameters, type_string_code_single,
+                "The parameters to use when the class is constructed. The macros ${id}, ${pos}, ${size}, "
+                "${window_extra_style}, ${window_name}, and ${window_style} will be replaced with the matching property. In "
+                "Python, this will be replaced with self.",
+                "(this)");
+
+    DeclAddProp(declaration, prop_settings_code, type_code_edit,
+                "Additional code to include after the class is constructed.");
 }

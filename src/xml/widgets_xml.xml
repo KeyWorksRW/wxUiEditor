@@ -74,17 +74,6 @@ inline const char* widgets_xml = R"===(<?xml version="1.0"?>
 		</inherits>
 		<inherits class="Window Events" />
 		<inherits class="sizer_child" />
-		<property name="var_name" type="string">m_custom</property>
-		<property name="header" type="code_edit"
-			help="The header file that declares the class. If the first line does not start with #include then the entire contents will be placed in quotes and prefixed with #include. Python and Ruby code should use python_import_list and ruby_require_list instead of this property." />
-		<property name="namespace" type="string"
-			help="The namespace the class is declared in." />
-		<property name="class_name" type="string"
-			help="The name of the custom class.">CustomClass</property>
-		<property name="parameters" type="string_code_single"
-			help="The parameters to use when the class is constructed. The macros ${id}, ${pos}, ${size}, ${window_extra_style}, ${window_name}, and ${window_style} will be replaced with the matching property. In Python, this will be replaced with self.">(this)</property>
-		<property name="settings_code" type="code_edit"
-			help="Additional code to include after the class is constructed." />
 	</gen>
 
 	<gen class="wxRearrangeCtrl" image="wxRearrangeCtrl" type="widget">

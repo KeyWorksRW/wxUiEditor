@@ -157,11 +157,16 @@ void FormBuilder::createProjectNode(pugi::xml_node& xml_obj, Node* new_node)
                 else if (prop_name.as_string() == "code_generation")
                 {
                     if (tt::contains(xml_prop.text().as_string(), "Python"))
-                        m_language = GEN_LANG_PYTHON;
+                        m_language |= GEN_LANG_PYTHON;
                     else if (tt::contains(xml_prop.text().as_string(), "C++"))
-                        m_language = GEN_LANG_CPLUSPLUS;
+                        m_language |= GEN_LANG_CPLUSPLUS;
                     else if (tt::contains(xml_prop.text().as_string(), "XRC"))
-                        m_language = GEN_LANG_XRC;
+                        m_language |= GEN_LANG_XRC;
+                    else if (tt::contains(xml_prop.text().as_string(), "Lua"))
+                        m_language |= GEN_LANG_LUA;
+
+                    // wxFormBuilder also generates PHP code, but wxUiEditor currently doesn't support that since
+                    // wxPHP is not being actively maintained.
                 }
             }
         }

@@ -32,7 +32,7 @@ wxObject* WebViewGenerator::CreateMockup(Node* node, wxObject* parent)
         widget->Wrap(DlgPoint(parent, 150));
         return widget;
     }
-#if (WIN32)
+#if defined(WIN32)
     auto widget = wxWebView::New(wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxString(prop_url),
                                  DlgPoint(parent, node, prop_pos), DlgSize(parent, node, prop_size), wxWebViewBackendDefault,
                                  GetStyleInt(node));

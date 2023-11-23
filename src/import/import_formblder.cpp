@@ -449,9 +449,6 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
             }
             else if (prop_name == "include")
             {
-                tt_string header;
-                header.ExtractSubString(xml_prop.text().as_sview().view_stepover());
-                if (header.size())
                 if (m_language & GEN_LANG_PYTHON)
                 {
                     tt_string header(xml_prop.text().as_sview());
@@ -632,12 +629,24 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
         child = child.next_sibling("object");
     }
 
-    if (newobject->isGen(gen_wxDialog) && m_baseFile.size())
+    // wxFormBuilder allows creating multiple forms and putting them all in the same file. wxUE
+    // doesn't allow that, in part because it allows the dev to edit each generated form. To
+    // work around this, we add numerical suffixes to each filename generated.
+
+    if (newobject->isForm() && m_baseFile.size())
     {
-        if (auto prop = newobject->getPropPtr(prop_base_file); prop)
-        {
-            prop->set_value(m_baseFile);
-        }
+        if (m_language & GEN_LANG_CPLUSPLUS)
+            newobject->set_value(prop_base_file, m_baseFile);
+        if (m_language & GEN_LANG_PYTHON)
+            newobject->set_value(prop_python_file, m_baseFile);
+        if (m_language & GEN_LANG_XRC)
+            newobject->set_value(prop_xrc_file, m_baseFile);
+#if defined(INTERNAL_TESTING)
+        if (m_language & GEN_LANG_LUA)
+            newobject->set_value(prop_lua_file, m_baseFile);
+#endif
+        // We don't want to use the same file for the next form, so we clear it.
+        m_baseFile.clear();
     }
 
     return newobject;

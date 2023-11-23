@@ -44,6 +44,11 @@ bool WxGlade::Import(const tt_string& filename, bool write_doc)
             m_language = GEN_LANG_CPLUSPLUS;
         }
     }
+    else
+    {
+        // We don't support Perl or Lisp
+        m_language = GEN_LANG_CPLUSPLUS;
+    }
 
     // Using a try block means that if at any point it becomes obvious the project file is invalid and we cannot recover,
     // then we can throw an error and give a standard response about an invalid file.

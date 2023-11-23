@@ -567,6 +567,30 @@ bool WxGlade::HandleUnknownProperty(const pugi::xml_node& xml_obj, Node* node, N
         // This is an option for dialogs -- no idea what it is supposed to do...
         return true;
     }
+    else if (node_name == "custom_constructor" && node->isGen(gen_CustomControl))
+    {
+        // wxGlade specifes the construction code on the right side of the = sign, so we need to
+        // insert what should be on the left side.
+        tt_string construction;
+        if (m_language == GEN_LANG_PYTHON)
+        {
+            construction = "self." + node->as_string(prop_var_name) + " = ";
+            construction += xml_obj.text().as_string();
+        }
+        else if (m_language == GEN_LANG_CPLUSPLUS)
+        {
+            construction = node->as_string(prop_var_name) + " = ";
+            construction += xml_obj.text().as_string();
+        }
+        else
+        {
+            // Construction is not supported in any other language
+            return true;
+        }
+
+        node->set_value(prop_construction, construction);
+        return true;
+    }
     return false;
 }
 

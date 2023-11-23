@@ -146,12 +146,35 @@ int CustomControl::GenXrcObject(Node* node, pugi::xml_node& object, size_t /* xr
     return result;
 }
 
-bool CustomControl::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                int /* language */)
+bool CustomControl::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr, int language)
 {
-    if (node->hasValue(prop_header))
+    if (node->hasValue(prop_header) && language == GEN_LANG_CPLUSPLUS)
     {
-        set_src.insert(tt_string() << "#include \"" << node->as_string(prop_header) << '"');
+        tt_string_view cur_value = node->as_string(prop_header);
+        if (cur_value.starts_with("#"))
+        {
+            cur_value.remove_prefix(1);
+            cur_value = cur_value.view_nonspace();
+            if (cur_value.starts_with("include"))
+            {
+                tt_string convert(node->as_string(prop_header));
+                convert.Replace("@@", "\n", tt::REPLACE::all);
+                set_src.insert(convert);
+            }
+            else
+            {
+                set_src.insert(tt_string() << "#include \"" << node->as_string(prop_header) << '"');
+            }
+        }
+        else
+        {
+            // Because the header is now a multi-line editor, it's easy for it to have a
+            // trailing @@ -- we remove that here.
+            tt_string convert(node->as_string(prop_header));
+            convert.Replace("@@", "", tt::REPLACE::all);
+
+            set_src.insert(tt_string() << "#include \"" << convert << '"');
+        }
     }
 
     if (node->as_string(prop_class_access) != "none" && node->hasValue(prop_class_name))

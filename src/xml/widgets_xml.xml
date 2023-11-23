@@ -75,8 +75,8 @@ inline const char* widgets_xml = R"===(<?xml version="1.0"?>
 		<inherits class="Window Events" />
 		<inherits class="sizer_child" />
 		<property name="var_name" type="string">m_custom</property>
-		<property name="header" type="file"
-			help="The header file that declares the class." />
+		<property name="header" type="code_edit"
+			help="The header file that declares the class. If the first line does not start with #include then the entire contents will be placed in quotes and prefixed with #include. Python and Ruby code should use python_import_list and ruby_require_list instead of this property." />
 		<property name="namespace" type="string"
 			help="The namespace the class is declared in." />
 		<property name="class_name" type="string"

@@ -452,8 +452,30 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
                 tt_string header;
                 header.ExtractSubString(xml_prop.text().as_sview().view_stepover());
                 if (header.size())
+                if (m_language & GEN_LANG_PYTHON)
                 {
-                    newobject->set_value(prop_header, header);
+                    tt_string header(xml_prop.text().as_sview());
+                    if (parent)
+                    {
+                        auto form = parent->getForm();
+                        tt_string cur_value = form->as_string(prop_python_import_list);
+                        if (cur_value.size())
+                        {
+                            cur_value += ';';
+                        }
+                        cur_value += header;
+                        form->set_value(prop_python_import_list, cur_value);
+                    }
+                    continue;
+                }
+                else
+                {
+                    tt_string header;
+                    header.ExtractSubString(xml_prop.text().as_sview());
+                    if (header.size())
+                    {
+                        newobject->set_value(prop_header, header);
+                    }
                 }
                 continue;
             }

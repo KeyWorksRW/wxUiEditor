@@ -31,6 +31,15 @@ wxObject* CustomControl::CreateMockup(Node* /* node */, wxObject* parent)
 
 bool CustomControl::ConstructionCode(Code& code)
 {
+    if (code.hasValue(prop_construction))
+    {
+        tt_string construction = code.view(prop_construction);
+        construction.BothTrim();
+        construction.Replace("@@", "\n", tt::REPLACE::all);
+        code += construction;
+        return true;
+    }
+
     code.AddAuto().NodeName();
     code.Str(" = ").AddIfCpp("new ");
     if (code.hasValue(prop_namespace) && code.is_cpp())
@@ -200,11 +209,16 @@ void CustomControl::AddPropsAndEvents(NodeDeclaration* declaration)
     DeclAddProp(declaration, prop_namespace, type_string,
                 "C++ namespace the class is declared in. This property is ignored in any langauage besides C++.");
     DeclAddProp(declaration, prop_class_name, type_string, "The name of the custom class.", "CustomClass");
+
+    DeclAddProp(declaration, prop_construction, type_code_edit,
+                "Optional code to construct the control instead of having wxUiEditor construct it. After this code is "
+                "placed into the generated file, the var_name property will be used to access the control.");
     DeclAddProp(declaration, prop_parameters, type_string_code_single,
                 "The parameters to use when the class is constructed. The macros ${id}, ${pos}, ${size}, "
                 "${window_extra_style}, ${window_name}, and ${window_style} will be replaced with the matching property. In "
                 "Python, this will be replaced with self.",
                 "(this)");
+
     DeclAddProp(declaration, prop_settings_code, type_code_edit,
                 "Additional code to include after the class is constructed.");
 }

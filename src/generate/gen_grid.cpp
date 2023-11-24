@@ -235,10 +235,10 @@ bool GridGenerator::SettingsCode(Code& code)
     // TODO: [KeyWorks - 02-27-2021] GenerateFontCode() was removed because it was obsolete and broken. It needs to
     // be replaced, but it should be part of an entire wxGrid overhaul.
 
-#if 0
-    if (node->hasValue(prop_label_font))
-        code << braced_indent << node->getNodeName() << "->SetLabelFont(" << GenerateFontCode(node, "label_font") << ");";
-#endif
+    if (code.hasValue(prop_label_font))
+    {
+        code.GenFont(prop_label_font, "SetLabelFont(");
+    }
     if (code.hasValue(prop_label_text))
         code.Eol().NodeName().Function("SetLabelTextColour(").ColourCode(prop_label_text).EndFunction();
 
@@ -249,17 +249,13 @@ bool GridGenerator::SettingsCode(Code& code)
     if (code.hasValue(prop_cell_text))
         code.Eol().NodeName().Function("SetDefaultCellTextColour(").ColourCode(prop_cell_text).EndFunction();
 
-#if 0
-    if (node->hasValue(prop_cell_font))
-        code << braced_indent << node->getNodeName() << "->SetDefaultCellFont(" << GenerateFontCode(node, "cell_font")
-             << ");";
-#endif
+    if (code.hasValue(prop_cell_font))
+    {
+        code.GenFont(prop_label_font, "SetDefaultCellFont");
+    }
 
-    code.Eol()
-        .NodeName()
-        .Function("SetDefaultCellAlignment(")
-        .itoa(prop_cell_horiz_alignment, prop_cell_vert_alignment)
-        .EndFunction();
+    code.Eol().NodeName().Function("SetDefaultCellAlignment(");
+    code.itoa(prop_cell_horiz_alignment, prop_cell_vert_alignment).EndFunction();
 
     // Columns category
 

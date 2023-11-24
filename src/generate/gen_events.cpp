@@ -177,6 +177,11 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
                     handler.Str(event_name).Str("(:") << event_code << ')';
                 }
             }
+            else if (code.is_ruby() && event->getEventInfo()->get_name() == "wxEVT_SIZE")
+            {
+                // wxRuby3 doesn't allow an id for this event
+                handler.Str(event_name).Str("(:") << event_code << ')';
+            }
             else if (event->getNode()->isGen(gen_StaticCheckboxBoxSizer))
             {
                 code.Str(event_name).Str("(").VarName(event->getNode()->as_string(prop_checkbox_var_name)).Str(".get_id, :")

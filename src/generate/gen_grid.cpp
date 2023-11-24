@@ -75,10 +75,22 @@ wxObject* GridGenerator::CreateMockup(Node* node, wxObject* parent)
     grid->EnableDragColMove(node->as_bool(prop_drag_col_move));
     grid->EnableDragColSize(node->as_bool(prop_drag_col_size));
 
-    wxArrayString columnLabels = node->as_wxArrayString(prop_col_label_values);
-    for (int i = 0; i < (int) columnLabels.size() && i < grid->GetNumberCols(); ++i)
+    if (node->hasValue(prop_column_sizes))
     {
-        grid->SetColLabelValue(i, columnLabels[i]);
+        int index = 0;
+        for (auto& iter: node->as_wxArrayString(prop_column_sizes))
+        {
+            grid->SetColSize(index++, wxAtoi(iter));
+        }
+    }
+
+    if (node->hasValue(prop_col_label_values))
+    {
+        int index = 0;
+        for (auto& iter: node->as_wxArrayString(prop_col_label_values))
+        {
+            grid->SetColLabelValue(index++, iter);
+        }
     }
 
     // Rows category
@@ -91,10 +103,22 @@ wxObject* GridGenerator::CreateMockup(Node* node, wxObject* parent)
 
     grid->EnableDragRowSize(node->as_bool(prop_drag_row_size));
 
-    wxArrayString labels = node->as_wxArrayString(prop_row_label_values);
-    for (int i = 0; i < (int) labels.size() && i < grid->GetNumberRows(); ++i)
+    if (node->hasValue(prop_row_sizes))
     {
-        grid->SetRowLabelValue(i, labels[i]);
+        int index = 0;
+        for (auto& iter: node->as_wxArrayString(prop_row_sizes))
+        {
+            grid->SetRowSize(index++, wxAtoi(iter));
+        }
+    }
+
+    if (node->hasValue(prop_row_label_values))
+    {
+        int index = 0;
+        for (auto& iter: node->as_wxArrayString(prop_row_label_values))
+        {
+            grid->SetRowLabelValue(index++, iter);
+        }
     }
 
     // Cell Properties
@@ -235,10 +259,10 @@ bool GridGenerator::SettingsCode(Code& code)
     // TODO: [KeyWorks - 02-27-2021] GenerateFontCode() was removed because it was obsolete and broken. It needs to
     // be replaced, but it should be part of an entire wxGrid overhaul.
 
-#if 0
-    if (node->hasValue(prop_label_font))
-        code << braced_indent << node->getNodeName() << "->SetLabelFont(" << GenerateFontCode(node, "label_font") << ");";
-#endif
+    if (code.hasValue(prop_label_font))
+    {
+        code.GenFont(prop_label_font, "SetLabelFont(");
+    }
     if (code.hasValue(prop_label_text))
         code.Eol().NodeName().Function("SetLabelTextColour(").ColourCode(prop_label_text).EndFunction();
 
@@ -249,17 +273,13 @@ bool GridGenerator::SettingsCode(Code& code)
     if (code.hasValue(prop_cell_text))
         code.Eol().NodeName().Function("SetDefaultCellTextColour(").ColourCode(prop_cell_text).EndFunction();
 
-#if 0
-    if (node->hasValue(prop_cell_font))
-        code << braced_indent << node->getNodeName() << "->SetDefaultCellFont(" << GenerateFontCode(node, "cell_font")
-             << ");";
-#endif
+    if (code.hasValue(prop_cell_font))
+    {
+        code.GenFont(prop_label_font, "SetDefaultCellFont");
+    }
 
-    code.Eol()
-        .NodeName()
-        .Function("SetDefaultCellAlignment(")
-        .itoa(prop_cell_horiz_alignment, prop_cell_vert_alignment)
-        .EndFunction();
+    code.Eol().NodeName().Function("SetDefaultCellAlignment(");
+    code.itoa(prop_cell_horiz_alignment, prop_cell_vert_alignment).EndFunction();
 
     // Columns category
 
@@ -288,40 +308,71 @@ bool GridGenerator::SettingsCode(Code& code)
     else
         code.Eol().NodeName().Function("SetColLabelSize(").as_string(prop_col_label_size).EndFunction();
 
+    if (code.hasValue(prop_column_sizes))
+    {
+        int index = 0;
+        for (auto& iter: code.node()->as_ArrayString(prop_column_sizes))
+        {
+            code.Eol().NodeName().Function("SetColSize(").itoa(index++);
+            code.Comma().Str(iter).EndFunction();
+        }
+    }
+
     if (code.hasValue(prop_col_label_values))
     {
-        auto labels = code.node()->as_ArrayString(prop_col_label_values);
-        int num_cols = code.IntValue(prop_cols);
-        for (int col = 0; col < (int) labels.size() && col < num_cols; ++col)
+        int index = 0;
+        for (auto& iter: code.node()->as_ArrayString(prop_col_label_values))
         {
-            code.Eol().NodeName().Function("SetColLabelValue(").itoa(col);
-            code.Comma().QuotedString(labels[col]).EndFunction();
+            code.Eol().NodeName().Function("SetColLabelValue(").itoa(index++);
+            code.Comma().QuotedString(iter).EndFunction();
         }
     }
 
     // Rows category
 
+    code.Str("\n\n");  // Force a break between column and row settings
+
     if (code.IntValue(prop_default_row_size) > 0)
     {
-        code.Eol().NodeName().Function("SetDefaultRowSize(").as_string(prop_default_row_size).EndFunction();
+        code.Eol(eol_if_needed).NodeName().Function("SetDefaultRowSize(").as_string(prop_default_row_size).EndFunction();
     }
     else if (code.IsTrue(prop_autosize_rows))
     {
-        code.Eol().NodeName().Function("AutoSizeRows(").EndFunction();
+        code.Eol(eol_if_needed).NodeName().Function("AutoSizeRows(").EndFunction();
     }
 
     if (code.IsFalse(prop_drag_row_size))
-        code.Eol().NodeName().Function("EnableDragRowSize(").False().EndFunction();
+        code.Eol(eol_if_needed).NodeName().Function("EnableDragRowSize(").False().EndFunction();
 
-    code.Eol().NodeName().Function("SetRowLabelAlignment(");
+    code.Eol(eol_if_needed).NodeName().Function("SetRowLabelAlignment(");
     code.itoa(prop_row_label_horiz_alignment, prop_row_label_vert_alignment).EndFunction();
 
     if (code.IntValue(prop_row_label_size) == -1)
-        code.Eol().NodeName().Function("SetRowLabelSize(").Add("wxGRID_AUTOSIZE").EndFunction();
+        code.Eol(eol_if_needed).NodeName().Function("SetRowLabelSize(").Add("wxGRID_AUTOSIZE").EndFunction();
     else if (code.IntValue(prop_row_label_size) == 0)
-        code.Eol().NodeName().Function("HideRowLabels(").EndFunction();
+        code.Eol(eol_if_needed).NodeName().Function("HideRowLabels(").EndFunction();
     else
-        code.Eol().NodeName().Function("SetRowLabelSize(").as_string(prop_row_label_size).EndFunction();
+        code.Eol(eol_if_needed).NodeName().Function("SetRowLabelSize(").as_string(prop_row_label_size).EndFunction();
+
+    if (code.hasValue(prop_row_sizes))
+    {
+        int index = 0;
+        for (auto& iter: code.node()->as_ArrayString(prop_row_sizes))
+        {
+            code.Eol().NodeName().Function("SetRowSize(").itoa(index++);
+            code.Comma().Str(iter).EndFunction();
+        }
+    }
+
+    if (code.hasValue(prop_row_label_values))
+    {
+        int index = 0;
+        for (auto& iter: code.node()->as_ArrayString(prop_row_label_values))
+        {
+            code.Eol().NodeName().Function("SetRowLabelValue(").itoa(index++);
+            code.Comma().QuotedString(iter).EndFunction();
+        }
+    }
 
     code.CloseBrace();
 

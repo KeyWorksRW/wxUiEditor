@@ -64,7 +64,7 @@ set (file_list
     generate/gen_codefiles.cpp     # Generate code functions
     generate/gen_construction.cpp  # Top level Object construction code
     generate/gen_cmake.cpp         # Auto-generate a .cmake file
-    generate/gen_events.cpp        # Generate C++ and Python events
+    generate/gen_events.cpp        # Generate C++, Python and Ruby events
     generate/write_code.cpp        # Write code to Scintilla or file
     generate/image_gen.cpp         # Functions for generating embedded images
 

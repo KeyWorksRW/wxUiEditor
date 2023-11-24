@@ -33,6 +33,8 @@ inline const char* dialogs_xml = R"===(<?xml version="1.0"?>
 				help="Display a system menu." />
 			<option name="wxWANTS_CHARS"
 				help="Use this to indicate that the window wants to get all char/key events for all keys - even for keys like TAB or ENTER which are usually used for dialog navigation and which wouldn't be generated without this style. If you need to use this style in order to get the arrows or etc., but would still like to have normal keyboard navigation take place, you should call Navigate in response to the key events for Tab and Shift-Tab." />
+			<option name="wxFULL_REPAINT_ON_RESIZE"
+				help="Use this style to force a complete redraw of the window whenever it is resized instead of redrawing just the part of the window affected by resizing. Currently this style applies on GTK+ 2 and Windows only, and full repainting is always done on other platforms." />
 			wxDEFAULT_DIALOG_STYLE
 		</property>
 		<property name="extra_style" type="bitlist">
@@ -99,7 +101,9 @@ inline const char* dialogs_xml = R"===(<?xml version="1.0"?>
 					help="Use this style to enable a horizontal scrollbar. The same limitations as for wxVSCROLL apply to this style." />
 				<option name="wxCLIP_CHILDREN"
 					help="Use this style to eliminate flicker caused by the background being repainted, then children being painted over them. Windows only." />
-				wxTAB_TRAVERSAL
+				<option name="wxFULL_REPAINT_ON_RESIZE"
+					help="Use this style to force a complete redraw of the window whenever it is resized instead of redrawing just the part of the window affected by resizing. Currently this style applies on GTK+ 2 and Windows only, and full repainting is always done on other platforms." />
+					wxTAB_TRAVERSAL
 			</property>
 			<property name="window_extra_style" type="bitlist">
 				<option name="wxWS_EX_VALIDATE_RECURSIVELY"

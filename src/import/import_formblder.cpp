@@ -901,6 +901,13 @@ void FormBuilder::ProcessPropValue(pugi::xml_node& xml_prop, tt_string_view prop
             newobject->set_value(prop_line_margin, "1");
         }
     }
+    else if (prop_name == "checked" && newobject->isGen(gen_Check3State))
+    {
+        if (xml_prop.text().as_bool())
+        {
+            newobject->set_value(prop_initial_state, "wxCHK_CHECKED");
+        }
+    }
     else
     {
         if (xml_prop.text().as_string().size())

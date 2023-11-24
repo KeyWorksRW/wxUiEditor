@@ -908,6 +908,17 @@ void FormBuilder::ProcessPropValue(pugi::xml_node& xml_prop, tt_string_view prop
             newobject->set_value(prop_initial_state, "wxCHK_CHECKED");
         }
     }
+    else if (prop_name == "window_style" && newobject->isGen(gen_wxDialog))
+    {
+        if (xml_prop.text().as_sview().contains("wxFULL_REPAINT_ON_RESIZE"))
+        {
+            tt_string value = newobject->as_string(prop_style);
+            if (value.size())
+                value += "|";
+            value += "wxFULL_REPAINT_ON_RESIZE";
+            newobject->set_value(prop_style, value);
+        }
+    }
     else
     {
         if (xml_prop.text().as_string().size())

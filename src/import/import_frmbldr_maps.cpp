@@ -7,6 +7,8 @@ constexpr auto set_ignore_flags = frozen::make_set<std::string_view>({
 
     "event_handler",  // all events are now declared as virtual
 
+    "drag_accept_files", // wxUiEditor will turn on drag support if there is an event handler for it
+
     // The following are wxFormBuilder properties for wxAuiToolBar
 
     "label_visible",

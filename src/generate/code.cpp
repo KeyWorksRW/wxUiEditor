@@ -389,6 +389,8 @@ Code& Code::Eol(int flag)
     if (m_within_braces && is_cpp() && size() && back() != '\t')
     {
         *this += '\t';
+        if (m_within_font_braces)
+            *this += '\t';
     }
     else if (m_indent > 0)
     {
@@ -428,6 +430,35 @@ Code& Code::CloseBrace()
         Eol().Str("}").Eol();
     }
     return *this;
+}
+
+void Code::OpenFontBrace()
+{
+    if (is_cpp())
+    {
+        if (size() && back() != '\n')
+        {
+            *this += '\n';
+        }
+        m_within_font_braces = true;
+        if (m_within_braces)
+            *this += '\t';
+        *this += '{';
+        ++m_indent;
+        Eol();
+    }
+}
+
+void Code::CloseFontBrace()
+{
+    if (is_cpp())
+    {
+        while (tt::is_whitespace(back()))
+            pop_back();
+        --m_indent;
+        m_within_font_braces = false;
+        Eol().Str("}").Eol();
+    }
 }
 
 Code& Code::AddAuto()
@@ -1975,7 +2006,7 @@ Code& Code::GenFont(GenEnum::PropName prop_name, tt_string_view font_function)
     FontProperty fontprop(m_node->getPropPtr(prop_name));
     if (fontprop.isDefGuiFont())
     {
-        OpenBrace();
+        OpenFontBrace();
         if (is_cpp())
         {
             Add("wxFont font(");
@@ -2010,18 +2041,18 @@ Code& Code::GenFont(GenEnum::PropName prop_name, tt_string_view font_function)
         if (m_node->isForm())
         {
             FormFunction("SetFont(font").EndFunction();
-            CloseBrace();
+            CloseFontBrace();
         }
         else if (m_node->isGen(gen_wxStyledTextCtrl))
         {
             NodeName().Function("StyleSetFont(").Add("wxSTC_STYLE_DEFAULT");
             Comma().Str("font").EndFunction();
-            CloseBrace();
+            CloseFontBrace();
         }
         else
         {
             NodeName().Function(font_function).Str("font").EndFunction();
-            CloseBrace();
+            CloseFontBrace();
         }
     }
     else  // not isDefGuiFont()
@@ -2032,15 +2063,14 @@ Code& Code::GenFont(GenEnum::PropName prop_name, tt_string_view font_function)
              fontprop.GetWeight() != wxFONTWEIGHT_NORMAL || fontprop.IsUnderlined() || fontprop.IsStrikethrough());
 
         const auto point_size = fontprop.GetFractionalPointSize();
-        OpenBrace();
-
         if (is_cpp())
         {
+            OpenFontBrace();
             Str("wxFontInfo font_info(");
         }
         else
         {
-            Add("font_info").CreateClass(false, "wxFontInfo");
+            Eol(eol_if_needed).Add("font_info").CreateClass(false, "wxFontInfo");
         }
 
         if (point_size != static_cast<int>(point_size))  // is there a fractional value?
@@ -2127,8 +2157,13 @@ Code& Code::GenFont(GenEnum::PropName prop_name, tt_string_view font_function)
             pop_back();
         }
         if (is_cpp())
-            *this += ';';
-        Eol();
+        {
+            while (back() == '\t')
+                pop_back();
+            if (back() != '\n')
+                *this += ';';
+        }
+        Eol(eol_if_needed);
 
         if (m_node->isForm())
         {
@@ -2138,7 +2173,7 @@ Code& Code::GenFont(GenEnum::PropName prop_name, tt_string_view font_function)
         {
             NodeName().Function(font_function).Object("wxFont").Str("font_info").Str(")").EndFunction();
         }
-        CloseBrace();
+        CloseFontBrace();
     }
 
     return *this;

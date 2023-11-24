@@ -485,6 +485,9 @@ protected:
     // Prefix with a period, lowercase for wxRuby, and add open parenthesis
     Code& SizerFlagsFunction(tt_string_view function_name);
 
+    void OpenFontBrace();
+    void CloseFontBrace();
+
 private:
     // wx for C++, wx. for Python, Wx:: for Ruby
     tt_string m_language_wxPrefix { "wx" };
@@ -499,4 +502,5 @@ private:
 
     bool m_auto_break { true };
     bool m_within_braces { false };
+    bool m_within_font_braces { false };
 };

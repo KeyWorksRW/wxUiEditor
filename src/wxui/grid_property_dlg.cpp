@@ -57,8 +57,6 @@ bool GridPropertyDlg::Create(wxWindow* parent, wxWindowID id, const wxString& ti
         m_grid->EnableDragRowSize(false);
         m_grid->SetRowLabelAlignment(wxALIGN_CENTER, wxALIGN_CENTER);
         m_grid->SetRowLabelSize(wxGRID_AUTOSIZE);
-        m_grid->SetColLabelValue(0, "name");
-        m_grid->SetColLabelValue(1, "value");
     }
     dlg_sizer->Add(m_grid, wxSizerFlags(1).Expand().Border(wxALL));
 

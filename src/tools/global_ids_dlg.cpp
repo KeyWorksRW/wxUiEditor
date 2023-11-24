@@ -152,8 +152,6 @@ bool GlobalCustomIDS::Create(wxWindow* parent, wxWindowID id, const wxString& ti
         m_grid->SetColLabelValue(1, "Modified");
         m_grid->SetRowLabelAlignment(wxALIGN_CENTER, wxALIGN_CENTER);
         m_grid->HideRowLabels();
-        m_grid->SetColLabelValue(0, "Original");
-        m_grid->SetColLabelValue(1, "Modified");
     }
     static_box->Add(m_grid, wxSizerFlags(1).Expand().Border(wxALL));
 

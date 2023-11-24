@@ -302,6 +302,16 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
             auto wxue_prop = MapPropName(xml_prop.attribute("name").value());
             auto prop_ptr = newobject->getPropPtr(wxue_prop);
 
+            if (wxue_prop == prop_column_sizes || wxue_prop == prop_row_sizes)
+            {
+                // override default processing because we need to separate the values with
+                // semicolons instead of commas
+                tt_string sizes = xml_prop.text().as_string();
+                sizes.Replace(",", ";", true);
+                prop_ptr->set_value(sizes);
+                continue;
+            }
+
             if (prop_ptr)
             {
                 if (wxue_prop == prop_bitmap)

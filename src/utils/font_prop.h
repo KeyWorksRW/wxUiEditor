@@ -29,7 +29,10 @@ public:
 
     wxFont GetFont() const;
 
-    void Convert(tt_string_view font);
+    // If old_style is true, then assume:
+    // face name, style, weight, point size, family, underlined
+    void Convert(tt_string_view font, bool old_style = false);
+
     wxString as_wxString() const;
     tt_string as_string() const;
 

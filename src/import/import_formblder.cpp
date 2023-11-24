@@ -360,7 +360,7 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
                     if (!xml_prop.text().empty())
                     {
                         FontProperty font_prop;
-                        font_prop.Convert(xml_prop.text().as_string());
+                        font_prop.Convert(xml_prop.text().as_string(), true);
                         prop_ptr->set_value(font_prop.as_string());
                     }
                 }

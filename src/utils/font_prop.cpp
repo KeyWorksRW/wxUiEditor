@@ -99,7 +99,7 @@ FontProperty::FontProperty(NodeProperty* prop)
 // facename font (point is a floating-point number)
 //     facename, point size, family, style, weight, underlined, strikethrough
 
-void FontProperty::Convert(tt_string_view font)
+void FontProperty::Convert(tt_string_view font, bool old_style)
 {
     if (font.empty())
     {
@@ -186,7 +186,8 @@ void FontProperty::Convert(tt_string_view font)
     if (mstr.size() > font::idx_facename_style)
     {
         auto value = std::atof(std::string(mstr[font::idx_facename_style]).c_str());
-        if (value < static_cast<double>(wxFONTSTYLE_NORMAL))  // wxFONTSTYLE_NORMAL == 90, so too large to be a point size
+        if (!old_style &&
+            value < static_cast<double>(wxFONTSTYLE_NORMAL))  // wxFONTSTYLE_NORMAL == 90, so too large to be a point size
         {
             m_pointSize = value;
 

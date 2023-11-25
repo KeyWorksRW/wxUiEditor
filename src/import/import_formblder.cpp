@@ -248,6 +248,18 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
     }
 
     auto newobject = NodeCreation.createNode(getGenName, parent);
+    if (!newobject && parent && tt::contains(map_GenTypes[parent->getGenType()], "book"))
+    {
+        if (auto page_ctrl = NodeCreation.createNode(gen_PageCtrl, parent); page_ctrl)
+        {
+            if (newobject = NodeCreation.createNode(getGenName, page_ctrl.get()); newobject)
+            {
+                page_ctrl->adoptChild(newobject);
+                parent->adoptChild(page_ctrl);
+            }
+        }
+    }
+
     if (!newobject)
     {
         tt_string msg("Unable to create ");
@@ -598,7 +610,16 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
     auto child = xml_obj.child("object");
     if (NodeCreation.isOldHostType(newobject->declName()))
     {
+        auto old_book_page = newobject;
         newobject = CreateFbpNode(child, parent, newobject.get());
+        if (newobject && newobject->getParent() && newobject->getParent()->isGen(gen_PageCtrl))
+        {
+            auto page_ctrl = newobject->getParent();
+            page_ctrl->set_value(prop_label, old_book_page->as_string(prop_label));
+            page_ctrl->set_value(prop_bitmap, old_book_page->as_string(prop_bitmap));
+            page_ctrl->set_value(prop_select, old_book_page->as_bool(prop_select));
+        }
+
         if (!newobject)
         {
             return newobject;
@@ -634,12 +655,12 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
             auto prop = newobject->addNodeProperty(iter.getPropDeclaration());
             prop->set_value(iter.as_string());
         }
-        if (parent)
+        if (parent && newobject->getParent() == nullptr)
         {
             parent->adoptChild(newobject);
         }
     }
-    else if (parent)
+    else if (parent && newobject->getParent() == nullptr)
     {
         parent->adoptChild(newobject);
     }

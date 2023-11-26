@@ -23,8 +23,9 @@ namespace GenEnum
         type_bmp_combo_item,
         type_bool,
         type_checklist_item,
-        type_code_edit,   // includes a button that triggers a dialog with a scintilla editor
-        type_editoption,  // same as option, except that property grid uses wxEditEnumProperty instead of wxEnumProperty
+        type_code_edit,      // includes a button that triggers a dialog with a scintilla editor
+        type_custom_mockup,  // uses EditCustomMockup dialog
+        type_editoption,     // same as option, except that property grid uses wxEditEnumProperty instead of wxEnumProperty
         type_file,
         type_float,
         type_html_edit,  // includes a button that triggers a dialog with a scintilla editor
@@ -179,6 +180,7 @@ namespace GenEnum
         prop_custom_colour,
         prop_custom_margin,
         prop_custom_mask_folders,
+        prop_custom_mockup,
         prop_custom_mouse_sensitive,
         prop_custom_type,
         prop_custom_width,

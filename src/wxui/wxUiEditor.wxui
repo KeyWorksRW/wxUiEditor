@@ -3184,6 +3184,74 @@
       </node>
       <node
         class="wxDialog"
+        class_name="EditCustomMockupBase"
+        title="Mockup Widget Settings"
+        base_file="..\customprops\edit_custom_mockup_base"
+        class_members="&quot;wxString m_result;&quot;"
+        class_methods="&quot;wxString GetResults() { return m_result; }&quot;"
+        private_members="0"
+        use_derived_class="0"
+        wxEVT_INIT_DIALOG="OnInit">
+        <node
+          class="wxBoxSizer"
+          orientation="wxVERTICAL"
+          var_name="dlg_sizer"
+          flags="wxEXPAND">
+          <node
+            class="wxStaticText"
+            class_access="none"
+            label="Mockup widget"
+            var_name="static_text3" />
+          <node
+            class="wxChoice"
+            class_access="none"
+            contents="&quot;wxBitmap&quot;"
+            selection_string="wxBitmap"
+            var_name="widget_type"
+            get_function="get_WidgetType"
+            set_function="set_WidgetType"
+            validator_variable="m_widget_type"
+            flags="wxEXPAND" />
+          <node
+            class="wxFlexGridSizer">
+            <node
+              class="wxStaticText"
+              label="width:"
+              var_name="m_static_text"
+              alignment="wxALIGN_CENTER_VERTICAL" />
+            <node
+              class="wxTextCtrl"
+              class_access="none"
+              var_name="width"
+              get_function="get_Width"
+              maxValue="9999"
+              minValue="-1"
+              set_function="set_Width"
+              validator_data_type="int"
+              validator_style="wxFILTER_NONE|wxFILTER_NUMERIC"
+              validator_variable="m_width" />
+            <node
+              class="wxStaticText"
+              label="height:"
+              var_name="m_static_text2"
+              alignment="wxALIGN_CENTER_VERTICAL" />
+            <node
+              class="wxTextCtrl"
+              class_access="none"
+              var_name="text_ctrl2"
+              get_function="get_Height"
+              set_function="set_Height"
+              validator_style="wxFILTER_NONE|wxFILTER_NUMERIC"
+              validator_variable="m_height" />
+          </node>
+          <node
+            class="wxStdDialogButtonSizer"
+            flags="wxEXPAND"
+            OKButtonClicked="OnOK" />
+        </node>
+      </node>
+      <node
+        class="wxDialog"
         class_name="IncludeFilesDialog"
         title="Include Files"
         base_file="..\customprops\include_files_dlg.cpp"

@@ -6,6 +6,7 @@ set (wxue_generated_code
 
     # Non-base classes
     ${CMAKE_CURRENT_LIST_DIR}/../customprops/art_prop_dlg.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/../customprops/edit_custom_mockup_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../customprops/id_editor_dlg.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../customprops/include_files_dlg.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../import/import_winres_dlg.cpp

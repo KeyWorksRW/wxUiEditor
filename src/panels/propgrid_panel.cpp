@@ -44,6 +44,7 @@
 #include "../customprops/custom_colour_prop.h"  // EditColourDialogAdapter -- Property editor for colour
 #include "../customprops/custom_param_prop.h"   // EditParamProperty -- dialog for editing CustomControl parameter
 #include "../customprops/directory_prop.h"      // DirectoryDialogAdapter
+#include "../customprops/edit_custom_mockup.h"  // Custom Property editor for pop_custom_mockup
 #include "../customprops/evt_string_prop.h"     // EventStringProperty -- dialog for editing event handlers
 #include "../customprops/font_string_prop.h"    // FontStringProperty
 #include "../customprops/html_string_prop.h"    // EditHtmlProperty
@@ -422,6 +423,10 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
         case type_code_edit:
             // This includes a button that triggers a small single-line custom text editor dialog
             return new EditCodeProperty(prop->declName().make_wxString(), prop);
+
+        case type_custom_mockup:
+            // This includes a button that triggers a small single-line custom text editor dialog
+            return new EditCustomMockupProperty(prop->declName().make_wxString(), prop);
 
         case type_html_edit:
             // This includes a button that triggers a small single-line custom text editor dialog

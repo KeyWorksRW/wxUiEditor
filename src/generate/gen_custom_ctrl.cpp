@@ -238,6 +238,7 @@ void CustomControl::AddPropsAndEvents(NodeDeclaration* declaration)
                 "Additional code to include after the class is constructed.");
     DeclAddProp(declaration, prop_custom_mockup, type_custom_mockup,
                 "Set how you want your custom control represented in the Mockup panel. This will have no effect on the code "
-                "generated for your control.",
+                "generated for your control. If both width and height are set to -1, then the control will be set to the "
+                "size property in the Window Settings section.",
                 "wxBitmap;-1;-1");
 }

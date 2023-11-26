@@ -1465,6 +1465,7 @@ constexpr auto map_proxy_names = frozen::make_map<std::string_view, GenEnum::Pro
     { "Span y", prop_rowspan },
 
     { "Animation", prop_animation },
+    { "Bitmap", prop_bitmap },
     { "Border", prop_border_size },
     { "Column width", prop_default_col_size },
     { "ColumnSpacing", prop_hgap },

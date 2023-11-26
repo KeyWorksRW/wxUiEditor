@@ -17,9 +17,15 @@
 
 #include "gen_custom_ctrl.h"
 
-wxObject* CustomControl::CreateMockup(Node* /* node */, wxObject* parent)
+wxObject* CustomControl::CreateMockup(Node* node, wxObject* parent)
 {
+    tt_string_vector parts(node->as_string(prop_custom_mockup), ";");
     auto widget = new wxGenericStaticBitmap(wxStaticCast(parent, wxWindow), wxID_ANY, GetInternalImage("CustomControl"));
+    if (parts.size() > 2)
+    {
+        widget->SetMinSize(wxSize(parts[1].atoi(), parts[2].atoi()));
+        widget->SetScaleMode(wxStaticBitmap::Scale_Fill);
+    }
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
@@ -221,4 +227,8 @@ void CustomControl::AddPropsAndEvents(NodeDeclaration* declaration)
 
     DeclAddProp(declaration, prop_settings_code, type_code_edit,
                 "Additional code to include after the class is constructed.");
+    DeclAddProp(declaration, prop_custom_mockup, type_custom_mockup,
+                "Set how you want your custom control represented in the Mockup panel. This will have no effect on the code "
+                "generated for your control.",
+                "wxBitmap;-1;-1");
 }

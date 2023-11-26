@@ -415,6 +415,7 @@ void DialogBlocks::createChildNode(pugi::xml_node& child_xml, Node* parent)
         getGenName = gen_BookPage;
     }
 
+    bool allow_adoption = true;  // set to false if node has already been adopted, e.g. a genPageCtrl was inserted
     auto node = NodeCreation.createNode(getGenName, parent);
     if (!node)
     {
@@ -462,7 +463,20 @@ void DialogBlocks::createChildNode(pugi::xml_node& child_xml, Node* parent)
                 }
             }
         }
+        else if (tt::contains(map_GenTypes[parent->getGenType()], "book"))
+        {
+            if (auto page_ctrl = NodeCreation.createNode(gen_PageCtrl, parent); page_ctrl)
+            {
+                if (node = NodeCreation.createNode(getGenName, page_ctrl.get()); node)
+                {
+                    page_ctrl->adoptChild(node);
+                    parent->adoptChild(page_ctrl);
+                    allow_adoption = false;
+                }
+            }
+        }
     }
+
     if (!node)
     {
         auto msg = GatherErrorDetails(child_xml, getGenName);
@@ -473,7 +487,10 @@ void DialogBlocks::createChildNode(pugi::xml_node& child_xml, Node* parent)
         return;
     }
 
-    parent->adoptChild(node);
+    if (allow_adoption)
+    {
+        parent->adoptChild(node);
+    }
 
     if (auto prop = node->getPropPtr(prop_label); prop)
     {
@@ -1479,6 +1496,7 @@ constexpr auto map_proxy_names = frozen::make_map<std::string_view, GenEnum::Pro
     { "Stretch factor", prop_proportion },
     { "Strings", prop_contents },
     { "Tab label", prop_label },
+    { "Tab icon", prop_bitmap },
     { "Thumb size", prop_thumbsize },
     { "Tool packing", prop_packing },
     { "Tool separation", prop_separation },
@@ -1566,6 +1584,28 @@ void DialogBlocks::ProcessMisc(pugi::xml_node& node_xml, const NodeSharedPtr& no
                 case prop_visited_color:
                     str.insert(0, "#");
                     node->set_value(result->second, str);
+                    break;
+
+                case prop_label:
+                    if (node->getParent()->isGen(gen_PageCtrl))
+                    {
+                        node->getParent()->set_value(prop_label, str);
+                    }
+                    else
+                    {
+                        node->set_value(prop_label, str);
+                    }
+                    break;
+
+                case prop_bitmap:
+                    if (node->getParent()->isGen(gen_PageCtrl))
+                    {
+                        node->getParent()->set_value(prop_bitmap, tt_string("Embed;") << str);
+                    }
+                    else
+                    {
+                        node->set_value(prop_bitmap, tt_string("Embed;") << str);
+                    }
                     break;
 
                 default:

@@ -21,10 +21,19 @@ wxObject* CustomControl::CreateMockup(Node* node, wxObject* parent)
 {
     tt_string_vector parts(node->as_string(prop_custom_mockup), ";");
     auto widget = new wxGenericStaticBitmap(wxStaticCast(parent, wxWindow), wxID_ANY, GetInternalImage("CustomControl"));
-    if (parts.size() > 2)
+    if (parts.size() > 2 && parts[1] != "-1" && parts[2] != "-1")
     {
         widget->SetMinSize(wxSize(parts[1].atoi(), parts[2].atoi()));
         widget->SetScaleMode(wxStaticBitmap::Scale_Fill);
+    }
+    else
+    {
+        auto size = node->as_wxSize(prop_size);
+        if (size.x != -1 && size.y != -1)
+        {
+            widget->SetMinSize(size);
+            widget->SetScaleMode(wxStaticBitmap::Scale_Fill);
+        }
     }
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);

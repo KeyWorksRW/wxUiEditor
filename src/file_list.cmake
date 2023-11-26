@@ -1,5 +1,7 @@
 set (file_list_dir ${CMAKE_CURRENT_LIST_DIR})
 
+# wxui/wxui_code.cmake
+
 set (file_list
 
     wxUiEditor.rc         # Only processed when compiling for Windows, ignored otherwise
@@ -30,6 +32,7 @@ set (file_list
 
     customprops/code_string_prop.cpp    # Derived wxStringProperty class for code
     customprops/custom_colour_prop.cpp  # Property editor for colour
+    customprops/edit_custom_mockup.cpp  # Custom Property editor for pop_custom_mockup
     customprops/custom_param_prop.cpp   # Derived wxStringProperty class for custom control parameters
     customprops/directory_prop.cpp      # Derived wxStringProperty class for choosing a directory
     customprops/evt_string_prop.cpp     # Derived wxStringProperty class for event function
@@ -358,8 +361,6 @@ set (file_list
 
     $<$<CONFIG:Debug>:tests/test_xrc_import.cpp>  # XRC Import tests
 )
-
-# wxui/wxui_code.cmake
 
 set (debug_files
     # These are just here to make it easier to open with a VSCode extension

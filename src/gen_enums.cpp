@@ -161,6 +161,7 @@ std::map<GenEnum::PropName, const char*> GenEnum::map_PropNames = {
     { prop_custom_colour, "custom_colour" },
     { prop_custom_margin, "custom_margin" },
     { prop_custom_mask_folders, "custom_mask_folders" },
+    { prop_custom_mockup, "custom_mockup" },
     { prop_custom_mouse_sensitive, "custom_mouse_sensitive" },
     { prop_custom_type, "custom_type" },
     { prop_custom_width, "custom_width" },

@@ -6,9 +6,7 @@ Note that the code requires a C++20 compliant compiler -- which means you should
 
 ## wxWidgets libraries
 
-Abbreviated versions of wxWidgets 3.2 and 3.3 are part of the repository. These versions generally only contain source and header files, and they are built with a custom CMakeLists.txt file. The default is to build with `wxSnapshot/` which is a subtree of `https://github.com/KeyWorksRW/wxSnapshot.git` which contains a development version of wxWidgets 3.3. This is _not_ necessarily a release version of wxWidgets -- it's being used to get Dark mode and UTF8 when building on Windows.
-
-The `wxWidgets/` directory contains a snapshot of wxWidgets 3.2. At some point, it may not be possible to build wxUiEditor with this library, but it will still be available for building the projects in the `tests/` directory.
+The `wxWidgets/` directory contains a snapshot of wxWidgets 3.3.x. Note that the setup file used to build this is fairly restritctive, avoiding many sections of the library that aren't used by wxUiEditor. This particular build is not intended to be used for anything other than wxUiEditor.
 
 ## Debug builds
 

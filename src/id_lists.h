@@ -7,13 +7,11 @@
 
 #pragma once
 
-// This file is designed to be #included into propgrid_panel.cpp, so it doesn't have the normal precompiled header.
-
 #include <array>
 
 // clang-format off
 
-auto inline list_wx_ids = std::to_array({
+constexpr auto list_wx_ids = std::to_array({
 
     "wxID_ABORT",
     "wxID_ABOUT",
@@ -148,7 +146,7 @@ auto inline list_wx_ids = std::to_array({
 
 });
 
-auto inline lst_stock_ids = std::to_array({
+constexpr auto lst_stock_ids = std::to_array({
     "wxID_ABOUT",
     "wxID_ADD",
     "wxID_APPLY",

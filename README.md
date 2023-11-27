@@ -29,7 +29,7 @@ You will need a C++20 compliant compiler to build **wxUiEditor**. To build, run 
     cmake --build build --config Release --target wxUiEditor
 ```
 
-For Unix builds, you will currently need a minimum of gcc 11.4 to be able to compile the sources.
+For Unix builds, you currently need a minimum of gcc 11.4 to be able to compile the sources.
 
 See [Developer notes](docs/DEV_NOTES.md) for more information about the current branches, and some high level overview of the code.
 
@@ -38,7 +38,7 @@ See [Developer notes](docs/DEV_NOTES.md) for more information about the current 
 - All KeyWorks Software code uses the Apache License 2.0 [LICENSE](LICENSE).
 - The pugixml code uses a MIT [LICENSE](pugixml/LICENSE.md).
 - The rapidjson code uses a MIT [LICENSE](src/import/rapidjson/license.txt).
-- The wxWidgets code in the wxSnapshot module uses the wxWindows  [LICENSE](wxSnapshot/License.txt).
+- The wxWidgets code uses the wxWindows  [LICENSE](wxWidgets/License.txt).
 
 ## Screen shots
 

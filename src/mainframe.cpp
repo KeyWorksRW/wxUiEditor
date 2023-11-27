@@ -750,10 +750,14 @@ void MainFrame::OnAbout(wxCommandEvent&)
     }
 
     aboutInfo.SetDescription(description);
-    aboutInfo.SetCopyright(txtCopyRight);
     aboutInfo.SetWebSite("https://github.com/KeyWorksRW/wxUiEditor");
 
-    aboutInfo.AddDeveloper("Ralph Walden");
+    aboutInfo.SetCopyright(txtCopyRight);
+
+#if 0
+    // Save this for when/if other people contribute to the project
+    aboutInfo.AddDeveloper("Randalphwa");
+#endif
 
     aboutInfo.SetIcon(wxueBundleSVG(wxue_img::wxUiEditor_svg, 1943, 7265, wxSize(64, 64)).GetIconFor(this));
 

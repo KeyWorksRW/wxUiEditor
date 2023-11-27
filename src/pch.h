@@ -161,7 +161,7 @@ using view_map = std::map<tt_string_view, std::string_view, std::less<>>;
 // When chaniging txtVersion, you also need to change the version in wxUiEditor.rc and
 // wxUiEditor.exe.manifest and ../CMakeLists.txt
 
-constexpr const char* txtVersion = "wxUiEditor 1.1.3";
+constexpr const char* txtVersion = "wxUiEditor 1.2.0";
 constexpr const char* txtCopyRight = "Copyright (c) 2019-2023 KeyWorks Software";
 constexpr const char* txtAppname = "wxUiEditor";
 
@@ -178,7 +178,7 @@ constexpr const int minRequiredVer = 15;
 // 1.1.0 == version 16
 // 1.1.1 == version 17 (beta 1 of 1.1.2)
 // 1.1.2 == version 18
-// 1.2.0 == version 19 (beta 1 of 1.2.0)
+// 1.2.0 == version 19 (1.2.0)
 
 // Use when you need to return an empty const tt_string&
 extern tt_string tt_empty_cstr;

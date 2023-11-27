@@ -26,11 +26,6 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y cmake ninja-build libgtk-3-dev
 
-    - name: Install g++ 11
-      run: |
-        sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
-        sudo apt-get install g++-12 -y
-
     - name: Configure CMake
       run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
 

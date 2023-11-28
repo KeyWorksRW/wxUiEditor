@@ -22,7 +22,7 @@ jobs:
     - name: Build wxUiEditor
       run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --target wxUiEditor
 
-    - name: Create wxUiEditor Artifact
+    - name: Create Windows Artifact
       uses: actions/upload-artifact@v3
       with:
         name: WindowsExecutable
@@ -53,9 +53,9 @@ jobs:
         cd build
         cpack -G DEB -C Release
 
-    - name: Create wxUiEditor Artifact
+    - name: Create Debian Artifact
       uses: actions/upload-artifact@v3
       with:
-        name: UnixExecutable
+        name: DebianSetup
         path: |
           build/wxUiEditor-1.1.3-Linux.deb

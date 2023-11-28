@@ -2,7 +2,7 @@
 Name=wxUiEditor
 Comment=Start wxUiEditor
 Exec=/usr/bin/wxUiEditor
-Icon=/usr/bin/wxUiEditor
+Icon=/usr/share/icons/hicolor/scalable/apps/wxUiEditor.svg
 Terminal=false
 Type=Application
 Categories=Development;Application;

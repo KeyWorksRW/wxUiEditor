@@ -23,10 +23,10 @@ namespace wxue_img
 {
     wxBitmapBundle bundle_cpp_logo_svg(int width, int height);
     wxBitmapBundle bundle_import_svg(int width, int height);
-    wxBitmapBundle bundle_logo_svg(int width, int height);
     wxBitmapBundle bundle_python_logo_only_svg(int width, int height);
     wxBitmapBundle bundle_redo_svg(int width, int height);
     wxBitmapBundle bundle_undo_svg(int width, int height);
+    wxBitmapBundle bundle_wxUiEditor_svg(int width, int height);
     wxBitmapBundle bundle_wxlogo_svg(int width, int height);
     wxBitmapBundle bundle_xrc_compare_svg(int width, int height);
 
@@ -100,7 +100,6 @@ namespace wxue_img
     extern const unsigned char logo16_png[639];
     extern const unsigned char logo32_png[1470];
     extern const unsigned char logo64_png[1718];
-    extern const unsigned char logo_svg[1943];
     extern const unsigned char project_png[899];
     // python-logo-only.svg
     extern const unsigned char python_logo_only_svg[1648];
@@ -142,6 +141,7 @@ namespace wxue_img
     extern const unsigned char wxStaticRadioBtnSizer_png[367];
     extern const unsigned char wxStaticText_png[290];
     extern const unsigned char wxTimer_png[1323];
+    extern const unsigned char wxUiEditor_svg[1943];
     extern const unsigned char wxlogo_svg[1331];
     extern const unsigned char xrc_compare_svg[260];
 }

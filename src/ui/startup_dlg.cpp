@@ -21,9 +21,9 @@
 namespace wxue_img
 {
     extern const unsigned char import_svg[418];
-    extern const unsigned char logo_svg[1943];
     // new-project.svg
     extern const unsigned char new_project_svg[921];
+    extern const unsigned char wxUiEditor_svg[1943];
 }
 
 bool StartupDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,
@@ -32,13 +32,11 @@ bool StartupDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     if (!wxDialog::Create(parent, id, title, pos, size, style, name))
         return false;
 
-    SetIcon(wxueBundleSVG(wxue_img::logo_svg, 1943, 7265, wxSize(16, 16)).GetIconFor(this));
-
     auto* dlg_sizer = new wxBoxSizer(wxVERTICAL);
 
     auto* box_sizer_6 = new wxBoxSizer(wxHORIZONTAL);
 
-    auto* bmp_4 = new wxStaticBitmap(this, wxID_ANY, wxue_img::bundle_logo_svg(64, 64));
+    auto* bmp_4 = new wxStaticBitmap(this, wxID_ANY, wxue_img::bundle_wxUiEditor_svg(64, 64));
     box_sizer_6->Add(bmp_4, wxSizerFlags().Border(wxALL));
 
     box_sizer_6->AddSpacer(10 + wxSizerFlags::GetDefaultBorder());

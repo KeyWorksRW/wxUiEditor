@@ -18,14 +18,14 @@ In addition to creating new projects, the following project types can be importe
 
 ## Building
 
-You will need a C++20 compliant compiler to build **wxUiEditor**. To build, run the following two commands from the root of the repository:
+You will need a C++20 compliant compiler to build **wxUiEditor**. To build using CMake 3.20 or higher, run the following two commands from the root of the repository:
 
 ```
     cmake -G "Ninja Multi-Config" . -B build
     cmake --build build --config Release --target wxUiEditor
 ```
 
-For Unix builds, you currently need a minimum of gcc 11.4 to be able to compile the sources.
+For Unix builds, you currently need a minimum of gcc 11.4 to be able to compile the sources. After building, you can can change to the build/ directory and run `cpack -G DEB -C Release` or `cpack -G RPM -C Release` to create a Ubuntu or Fedora package.
 
 See [Developer notes](docs/DEV_NOTES.md) if you want information about contributing to the project.
 

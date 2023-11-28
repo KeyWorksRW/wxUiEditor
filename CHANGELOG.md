@@ -1,7 +1,7 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
-## [Uneleased (1.2.0)]
+## [Released (1.2.0)]
 
 ### Added
 

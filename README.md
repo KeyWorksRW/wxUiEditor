@@ -1,6 +1,6 @@
 # ![logo](src/art_src/logo64.png) wxUiEditor
 
-This WYSIWYG tool is used to create and maintain [wxWidgets](https://docs.wxwidgets.org/trunk/index.html) UI elements (dialogs, menus, etc.), generating either C++, Python or XRC code. Minimal requirement for compiling C++ output files is a C++11 compliant compiler and **wxWidgets** 3.0 (version 3.2 needed for full functionality). Minimal requirement for Python code is wxPython 4.2.
+This WYSIWYG tool is used to create and maintain [wxWidgets](https://docs.wxwidgets.org/trunk/index.html) UI elements (dialogs, menus, etc.), generating either C++, [wxPython](https://wxpython.org/), [wxRuby3](https://github.com/mcorino/wxRuby3) or XRC code. It supports almost all of the wxWidgets UI controls along with bitmap bundles and SVG files.
 
 In addition to creating new projects, the following project types can be imported:
 
@@ -12,36 +12,32 @@ In addition to creating new projects, the following project types can be importe
 - **XRC** (including exports from **DialogBlocks**)
 - **Windows Resource Dialogs** (Click [here](docs/import_winres.md) for more information)
 
-**wxUiEditor** is a 64-bit app that runs natively on Windows 10 or later, and with **Wine** on Unix systems.
-
 ## Status
 
 [![CodeQL](https://github.com/KeyWorksRW/wxUiEditor/workflows/CodeQL/badge.svg)](https://github.com/KeyWorksRW/wxUiEditor/actions?query=workflow:"CodeQL") [![GitHub tag](https://img.shields.io/github/tag/KeyWorksRW/wxUiEditor?include_prereleases=&sort=semver&color=blue)](https://github.com/KeyWorksRW/wxUiEditor/releases/)
 
 ## Building
 
-It's fine to create a `build/` directory in the root of the repository as .gitignore tells git to ignore it.
-
-You will need a C++20 compliant compiler to build **wxUiEditor**. To build, run the following two commands from the root of the repository:
+You will need a C++20 compliant compiler to build **wxUiEditor**. To build using CMake 3.20 or higher, run the following two commands from the root of the repository:
 
 ```
     cmake -G "Ninja Multi-Config" . -B build
     cmake --build build --config Release --target wxUiEditor
 ```
 
-For Unix builds, you will currently need a minimum of gcc 11.4 to be able to compile the sources.
+For Unix builds, you currently need a minimum of gcc 11.4 to be able to compile the sources. After building, you can can change to the build/ directory and run `cpack -G DEB -C Release` or `cpack -G RPM -C Release` to create a Ubuntu or Fedora package.
 
-See [Developer notes](docs/DEV_NOTES.md) for more information about the current branches, and some high level overview of the code.
+See [Developer notes](docs/DEV_NOTES.md) if you want information about contributing to the project.
 
 ## Licenses
 
 - All KeyWorks Software code uses the Apache License 2.0 [LICENSE](LICENSE).
 - The pugixml code uses a MIT [LICENSE](pugixml/LICENSE.md).
 - The rapidjson code uses a MIT [LICENSE](src/import/rapidjson/license.txt).
-- The wxWidgets code in the wxSnapshot module uses the wxWindows  [LICENSE](wxSnapshot/License.txt).
+- The wxWidgets code uses the wxWindows  [LICENSE](wxWidgets/License.txt).
 
 ## Screen shots
 
-The following is a screen shot of **wxUiEditor**:
+The following is a sample screen shot of **wxUiEditor** showing the Event handler dialog and an example of one of the drop-down lists of controls:
 
 ![image](screenshot.jpg)

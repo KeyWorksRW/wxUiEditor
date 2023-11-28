@@ -1,12 +1,14 @@
 # Developer notes
 
-If you are planning on contributing code, the following sections contain information about the code that might not be immediately obvious. Reading these sections may make the code easier to understand, as well as ensuring that PR's are written in a way that matches the rest of the code base. In addition, some of the directories also have README files that provide explanations specific to the files in that directory. See [generate](../src/generate/README.md), [nodes](../src/nodes/README.md), [winres](../src/winres/README.md) and [xml](../src/xml/README.md).
+Contributions are welcome! If you are interested in contributing, please read the following sections.
 
-Note that the code requires a C++20 compliant compiler -- which means you should be using C++20 coding conventions. That includes using `std::string_view` (or `tt_stringview`) for strings when practical. See the **Strings** section below for information about working with `wxString`.
+Note that in addition to this file, some of the directories also have README files that provide explanations specific to the files in that directory. See [generate](../src/generate/README.md), [nodes](../src/nodes/README.md), [winres](../src/winres/README.md) and [xml](../src/xml/README.md).
+
+The code requires a C++20 compliant compiler -- which means you should be using C++20 coding conventions. That includes using `std::string_view` (or `tt_stringview`) for strings when practical. See the **Strings** section below for information about working with `wxString`.
 
 ## wxWidgets libraries
 
-The `wxWidgets/` directory contains a snapshot of wxWidgets 3.3.x. Note that the setup file used to build this is fairly restritctive, avoiding many sections of the library that aren't used by wxUiEditor. This particular build is not intended to be used for anything other than wxUiEditor.
+The `wxWidgets/` directory contains a snapshot of wxWidgets 3.3.x. Note that the `setup.h` file used to build this is fairly restritctive, avoiding many sections of the library that aren't used by wxUiEditor. This particular build is not intended to be used for anything other than wxUiEditor.
 
 ## Debug builds
 
@@ -14,7 +16,7 @@ When you create a Debug build, there will be an additional `Testing` and `Intern
 
 ## Strings
 
-Internally strings are normally placed into `tt_string` or `tt_stringview` classes. These classes inherit from `std::string` and `std::string_view` respectively, and provide additional functionality common across both of these classes. When you need to convert a tt_string or tt_stringview to a wxString to pass to wxWidgets, use the method `make_wxString()`. If you need to pass a wxString to tt_string, use `utf8_string()`. These two methods ensure that UTF8/16 conversion is correctly handled on Windows. It also ensure a seamless transition between wxWidgets 3.2 and 3.3 where the underlying wxString is changed from UTF16 to UTF8.
+Internally strings are normally placed into `tt_string` or `tt_stringview` classes. These classes inherit from `std::string` and `std::string_view` respectively, and provide additional functionality common across both of these classes. Note that the wxWidgets library is built as UTF8 even on Windows (new option in wxWidgets 3.3).
 
 ### Debugging macros
 

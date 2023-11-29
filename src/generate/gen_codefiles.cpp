@@ -614,26 +614,28 @@ void GenerateTmpFiles(const std::vector<tt_string>& ClassList, pugi::xml_node ro
                         tmp_path.insert(0, "~wxue_");
                     }
 
+                    BaseCodeGenerator new_codegen(language, form);
+
                     tmp_path.replace_extension(header_ext);
                     h_cw = std::make_unique<FileCodeWriter>(tmp_path);
-                    codegen.SetHdrWriteCode(h_cw.get());
+                    new_codegen.SetHdrWriteCode(h_cw.get());
 
                     tmp_path.replace_extension(source_ext);
                     cpp_cw = std::make_unique<FileCodeWriter>(tmp_path);
-                    codegen.SetSrcWriteCode(cpp_cw.get());
+                    new_codegen.SetSrcWriteCode(cpp_cw.get());
 
                     if (language == GEN_LANG_CPLUSPLUS)
                     {
-                        codegen.GenerateCppClass();
+                        new_codegen.GenerateCppClass();
                     }
                     else if (language == GEN_LANG_PYTHON)
                     {
-                        codegen.GeneratePythonClass();
+                        new_codegen.GeneratePythonClass();
                     }
                     else if (language == GEN_LANG_RUBY)
                     {
                         cpp_cw->SetTabToSpaces(2);
-                        codegen.GenerateRubyClass();
+                        new_codegen.GenerateRubyClass();
                     }
 
                     // WinMerge accepts an XML file the provides the left and right filenames

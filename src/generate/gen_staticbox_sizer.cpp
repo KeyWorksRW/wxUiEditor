@@ -90,16 +90,16 @@ bool StaticBoxSizerGenerator::SettingsCode(Code& code)
         code.NodeName().Function("GetStaticBox()->Enable(").False().EndFunction();
     }
 
+    if (code.IsTrue(prop_hidden))
+    {
+        code.NodeName().Function("GetStaticBox()").Function("Show(").False().EndFunction();
+    }
+
     return true;
 }
 
 bool StaticBoxSizerGenerator::AfterChildrenCode(Code& code)
 {
-    if (code.IsTrue(prop_hide_children))
-    {
-        code.NodeName().Function("ShowItems(").False().EndFunction();
-    }
-
     auto parent = code.node()->getParent();
     if (!parent->isSizer() && !parent->isGen(gen_wxDialog) && !parent->isGen(gen_PanelForm))
     {

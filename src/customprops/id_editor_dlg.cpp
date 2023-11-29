@@ -189,10 +189,7 @@ bool IDEditorDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 
 void IDEditorDlg::OnInit(wxInitDialogEvent& event)
 {
-    for (auto& iter: list_wx_ids)
-    {
-        m_standard_ids->Append(iter);
-    }
+    m_standard_ids->Append(list_wx_ids);
 
     ASSERT_MSG(m_node, "You must call SetNode() before calling OnInit()")
 
@@ -276,11 +273,11 @@ void IDEditorDlg::OnStdChange(wxCommandEvent& WXUNUSED(event))
     m_result = m_standard_ids->GetStringSelection();
     m_final_id->SetLabel(m_result);
 
-    for (auto& iter: lst_stock_ids)
+    for (auto& iter: list_stock_ids)
     {
         if (iter == m_result)
         {
-            if (auto stock_id = NodeCreation.getConstantAsInt(m_result.utf8_string()); stock_id > 0)
+            if (auto stock_id = NodeCreation.getConstantAsInt(iter); stock_id > 0)
             {
                 m_flex_grid_sizer->ShowItems(true);
                 m_stock_label->SetLabel(wxGetStockLabel(stock_id));

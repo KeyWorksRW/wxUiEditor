@@ -3201,14 +3201,42 @@
             var_name="static_text3" />
           <node
             class="wxChoice"
-            class_access="none"
-            contents="&quot;wxBitmap&quot;"
+            contents="&quot;wxBitmap&quot; &quot;wxStaticText&quot;"
             selection_string="wxBitmap"
-            var_name="widget_type"
+            var_name="m_widget_types"
             get_function="get_WidgetType"
             set_function="set_WidgetType"
             validator_variable="m_widget_type"
-            flags="wxEXPAND" />
+            flags="wxEXPAND"
+            wxEVT_CHOICE="OnSelect" />
+          <node
+            class="wxStaticBoxSizer"
+            class_access="protected:"
+            hidden="1"
+            label="wxStaticText options"
+            var_name="m_static_box"
+            flags="wxEXPAND">
+            <node
+              class="wxBoxSizer"
+              flags="wxEXPAND">
+              <node
+                class="wxStaticText"
+                label="Text:"
+                var_name="m_static_text3"
+                alignment="wxALIGN_CENTER_VERTICAL" />
+              <node
+                class="wxTextCtrl"
+                var_name="m_text_static" />
+            </node>
+            <node
+              class="wxBoxSizer"
+              var_name="box_sizer2">
+              <node
+                class="wxCheckBox"
+                label="Centered"
+                var_name="m_check_centered" />
+            </node>
+          </node>
           <node
             class="wxFlexGridSizer">
             <node

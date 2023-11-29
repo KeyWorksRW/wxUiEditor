@@ -9,10 +9,15 @@
 
 #pragma once
 
+#include <wx/checkbox.h>
+#include <wx/choice.h>
 #include <wx/dialog.h>
 #include <wx/event.h>
 #include <wx/gdicmn.h>
+#include <wx/sizer.h>
+#include <wx/statbox.h>
 #include <wx/stattext.h>
+#include <wx/textctrl.h>
 
 class EditCustomMockupBase : public wxDialog
 {
@@ -44,6 +49,7 @@ protected:
 
     void OnInit(wxInitDialogEvent& event);
     void OnOK(wxCommandEvent& event);
+    void OnSelect(wxCommandEvent& event);
 
     // Validator variables
 
@@ -53,8 +59,13 @@ protected:
 
     // Class member variables
 
+    wxCheckBox* m_check_centered;
+    wxChoice* m_widget_types;
+    wxStaticBoxSizer* m_static_box;
     wxStaticText* m_static_text2;
+    wxStaticText* m_static_text3;
     wxStaticText* m_static_text;
+    wxTextCtrl* m_text_static;
 
     wxString m_result;
 };

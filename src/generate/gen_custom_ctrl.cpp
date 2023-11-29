@@ -6,6 +6,7 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include <wx/generic/statbmpg.h>  // wxGenericStaticBitmap header
+#include <wx/stattext.h>          // wxStaticText base header
 
 #include "bitmaps.h"        // Contains various images handling functions
 #include "gen_common.h"     // GeneratorLibrary -- Generator classes
@@ -20,19 +21,51 @@
 wxObject* CustomControl::CreateMockup(Node* node, wxObject* parent)
 {
     tt_string_vector parts(node->as_string(prop_custom_mockup), ";");
-    auto widget = new wxGenericStaticBitmap(wxStaticCast(parent, wxWindow), wxID_ANY, GetInternalImage("CustomControl"));
-    if (parts.size() > 2 && parts[1] != "-1" && parts[2] != "-1")
+    wxWindow* widget = nullptr;
+
+    if (!parts.size() || parts[0].starts_with("wxBitmap"))
     {
-        widget->SetMinSize(wxSize(parts[1].atoi(), parts[2].atoi()));
-        widget->SetScaleMode(wxStaticBitmap::Scale_Fill);
-    }
-    else
-    {
-        auto size = node->as_wxSize(prop_size);
-        if (size.x != -1 && size.y != -1)
+        widget = new wxGenericStaticBitmap(wxStaticCast(parent, wxWindow), wxID_ANY, GetInternalImage("CustomControl"));
+        if (parts.size() > 2 && parts[1] != "-1" && parts[2] != "-1")
         {
-            widget->SetMinSize(size);
-            widget->SetScaleMode(wxStaticBitmap::Scale_Fill);
+            widget->SetMinSize(wxSize(parts[1].atoi(), parts[2].atoi()));
+            wxStaticCast(widget, wxGenericStaticBitmap)->SetScaleMode(wxStaticBitmap::Scale_Fill);
+        }
+        else
+        {
+            auto size = node->as_wxSize(prop_size);
+            if (size.x != -1 && size.y != -1)
+            {
+                widget->SetMinSize(size);
+                wxStaticCast(widget, wxGenericStaticBitmap)->SetScaleMode(wxStaticBitmap::Scale_Fill);
+            }
+        }
+    }
+    else if (parts[0].starts_with("wxStaticText"))
+    {
+        if (auto pos = parts[0].find('('); pos != tt::npos)
+        {
+            tt_string_vector options(parts[0].subview(pos + 1), ",");
+            widget = new wxStaticText(wxStaticCast(parent, wxWindow), wxID_ANY, options[0], wxDefaultPosition, wxDefaultSize,
+                                      wxBORDER_SIMPLE |
+                                          (options.size() > 1 && options[1].contains("1") ? wxALIGN_CENTER_HORIZONTAL : 0));
+        }
+        else
+        {
+            widget = new wxStaticText(wxStaticCast(parent, wxWindow), wxID_ANY, wxEmptyString, wxDefaultPosition,
+                                      wxDefaultSize, wxBORDER_SIMPLE);
+        }
+        if (parts.size() > 2 && parts[1] != "-1" && parts[2] != "-1")
+        {
+            widget->SetMinSize(wxSize(parts[1].atoi(), parts[2].atoi()));
+        }
+        else
+        {
+            auto size = node->as_wxSize(prop_size);
+            if (size.x != -1 && size.y != -1)
+            {
+                widget->SetMinSize(size);
+            }
         }
     }
 

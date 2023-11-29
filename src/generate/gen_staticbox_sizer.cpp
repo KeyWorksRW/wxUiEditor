@@ -29,19 +29,12 @@ wxObject* StaticBoxSizerGenerator::CreateMockup(Node* node, wxObject* parent)
     if (min_size.x != -1 || min_size.y != -1)
         sizer->SetMinSize(min_size);
 
-    if (node->as_bool(prop_hidden) && !getMockup()->IsShowingHidden())
-        sizer->GetStaticBox()->Hide();
+    if (node->as_bool(prop_hidden))
+    {
+        sizer->GetStaticBox()->Show(getMockup()->IsShowingHidden());
+    }
 
     return sizer;
-}
-
-void StaticBoxSizerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/, Node* node, bool /* is_preview */)
-{
-    if (node->as_bool(prop_hide_children))
-    {
-        if (auto sizer = wxStaticCast(wxobject, wxSizer); sizer)
-            sizer->ShowItems(false);
-    }
 }
 
 bool StaticBoxSizerGenerator::ConstructionCode(Code& code)
@@ -97,16 +90,16 @@ bool StaticBoxSizerGenerator::SettingsCode(Code& code)
         code.NodeName().Function("GetStaticBox()->Enable(").False().EndFunction();
     }
 
+    if (code.IsTrue(prop_hidden))
+    {
+        code.NodeName().Function("GetStaticBox()").Function("Show(").False().EndFunction();
+    }
+
     return true;
 }
 
 bool StaticBoxSizerGenerator::AfterChildrenCode(Code& code)
 {
-    if (code.IsTrue(prop_hide_children))
-    {
-        code.NodeName().Function("ShowItems(").False().EndFunction();
-    }
-
     auto parent = code.node()->getParent();
     if (!parent->isSizer() && !parent->isGen(gen_wxDialog) && !parent->isGen(gen_PanelForm))
     {

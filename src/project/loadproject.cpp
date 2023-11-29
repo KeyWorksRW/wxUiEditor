@@ -304,6 +304,16 @@ NodeSharedPtr NodeCreator::createNodeFromXml(pugi::xml_node& xml_obj, Node* pare
                     }
                 };
 
+                // wxUiEditor 1.2.0 mistakenly added both prop_hidden and prop_hide_children.
+                // 1.2.1 removes the duplicate prop_hide_children, so this sets prop_hidden to
+                // true if prop_hide_children is true.
+                if (prop->get_name() == prop_hide_children && new_node->isGen(gen_wxStaticBoxSizer) && iter.as_bool())
+                {
+                    new_node->set_value(prop_hidden, true);
+                    prop->set_value(false);
+                    continue;
+                }
+
                 if (prop->type() == type_bool)
                 {
                     prop->set_value(iter.as_bool());

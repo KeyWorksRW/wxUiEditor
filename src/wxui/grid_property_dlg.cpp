@@ -54,6 +54,7 @@ bool GridPropertyDlg::Create(wxWindow* parent, wxWindowID id, const wxString& ti
         m_grid->SetColLabelSize(wxGRID_AUTOSIZE);
         m_grid->SetColLabelValue(0, "name");
         m_grid->SetColLabelValue(1, "value");
+
         m_grid->EnableDragRowSize(false);
         m_grid->SetRowLabelAlignment(wxALIGN_CENTER, wxALIGN_CENTER);
         m_grid->SetRowLabelSize(wxGRID_AUTOSIZE);

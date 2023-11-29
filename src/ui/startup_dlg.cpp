@@ -32,6 +32,8 @@ bool StartupDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     if (!wxDialog::Create(parent, id, title, pos, size, style, name))
         return false;
 
+    SetIcon(wxueBundleSVG(wxue_img::wxUiEditor_svg, 1943, 7265, wxSize(16, 16)).GetIconFor(this));
+
     auto* dlg_sizer = new wxBoxSizer(wxVERTICAL);
 
     auto* box_sizer_6 = new wxBoxSizer(wxHORIZONTAL);

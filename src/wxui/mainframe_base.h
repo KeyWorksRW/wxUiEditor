@@ -45,6 +45,7 @@ namespace wxue_img
     extern const unsigned char ruby_logo_svg[1853];
     extern const unsigned char save_svg[717];
     extern const unsigned char top_svg[586];
+    extern const unsigned char wxlogo_svg[1331];
     extern const unsigned char xrc_preview_svg[469];
 }
 

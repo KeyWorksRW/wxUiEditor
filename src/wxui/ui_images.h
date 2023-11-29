@@ -27,7 +27,6 @@ namespace wxue_img
     wxBitmapBundle bundle_redo_svg(int width, int height);
     wxBitmapBundle bundle_undo_svg(int width, int height);
     wxBitmapBundle bundle_wxUiEditor_svg(int width, int height);
-    wxBitmapBundle bundle_wxlogo_svg(int width, int height);
     wxBitmapBundle bundle_xrc_compare_svg(int width, int height);
 
     wxBitmapBundle bundle_auitoolbar_png();
@@ -142,7 +141,6 @@ namespace wxue_img
     extern const unsigned char wxStaticText_png[290];
     extern const unsigned char wxTimer_png[1323];
     extern const unsigned char wxUiEditor_svg[1943];
-    extern const unsigned char wxlogo_svg[1331];
     extern const unsigned char xrc_compare_svg[260];
 }
 

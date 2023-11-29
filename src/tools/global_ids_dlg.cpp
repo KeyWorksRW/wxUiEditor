@@ -150,6 +150,7 @@ bool GlobalCustomIDS::Create(wxWindow* parent, wxWindowID id, const wxString& ti
         m_grid->SetColLabelSize(wxGRID_AUTOSIZE);
         m_grid->SetColLabelValue(0, "Original");
         m_grid->SetColLabelValue(1, "Modified");
+
         m_grid->SetRowLabelAlignment(wxALIGN_CENTER, wxALIGN_CENTER);
         m_grid->HideRowLabels();
     }

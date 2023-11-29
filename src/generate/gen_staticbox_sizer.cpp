@@ -37,10 +37,12 @@ wxObject* StaticBoxSizerGenerator::CreateMockup(Node* node, wxObject* parent)
 
 void StaticBoxSizerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/, Node* node, bool /* is_preview */)
 {
-    if (node->as_bool(prop_hide_children))
+    if (!node->as_bool(prop_hidden) && node->as_bool(prop_hide_children) && !getMockup()->IsShowingHidden())
     {
         if (auto sizer = wxStaticCast(wxobject, wxSizer); sizer)
+        {
             sizer->ShowItems(false);
+        }
     }
 }
 

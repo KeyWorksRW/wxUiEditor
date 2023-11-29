@@ -395,6 +395,7 @@ set (doc_list
 
     ../CHANGELOG.md
     ../README.md
+    ../docs/build_notes.md
     ../docs/DEV_NOTES.md
     ../docs/images.md
     ../docs/import_crafter.md

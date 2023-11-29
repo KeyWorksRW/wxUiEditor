@@ -8,9 +8,6 @@
 // clang-format off
 
 #include <wx/button.h>
-#include <wx/choice.h>
-#include <wx/sizer.h>
-#include <wx/textctrl.h>
 #include <wx/valgen.h>
 #include <wx/valnum.h>
 #include <wx/valtext.h>
@@ -28,11 +25,34 @@ bool EditCustomMockupBase::Create(wxWindow* parent, wxWindowID id, const wxStrin
     auto* static_text3 = new wxStaticText(this, wxID_ANY, "Mockup widget");
     dlg_sizer->Add(static_text3, wxSizerFlags().Border(wxALL));
 
-    auto* widget_type = new wxChoice(this, wxID_ANY);
-    widget_type->Append("wxBitmap");
+    m_widget_types = new wxChoice(this, wxID_ANY);
+    m_widget_types->Append("wxBitmap");
+    m_widget_types->Append("wxStaticText");
     m_widget_type = "wxBitmap";  // set validator variable
-    widget_type->SetValidator(wxGenericValidator(&m_widget_type));
-    dlg_sizer->Add(widget_type, wxSizerFlags().Expand().Border(wxALL));
+    m_widget_types->SetValidator(wxGenericValidator(&m_widget_type));
+    dlg_sizer->Add(m_widget_types, wxSizerFlags().Expand().Border(wxALL));
+
+    m_static_box = new wxStaticBoxSizer(wxVERTICAL, this, "wxStaticText options");
+    m_static_box->GetStaticBox()->Show(false);
+
+    auto* box_sizer = new wxBoxSizer(wxHORIZONTAL);
+
+    m_static_text3 = new wxStaticText(m_static_box->GetStaticBox(), wxID_ANY, "Text:");
+    box_sizer->Add(m_static_text3, wxSizerFlags().Center().Border(wxALL));
+
+    m_text_static = new wxTextCtrl(m_static_box->GetStaticBox(), wxID_ANY, wxEmptyString);
+    box_sizer->Add(m_text_static, wxSizerFlags().Border(wxALL));
+
+    m_static_box->Add(box_sizer, wxSizerFlags().Expand().Border(wxALL));
+
+    auto* box_sizer2 = new wxBoxSizer(wxHORIZONTAL);
+
+    m_check_centered = new wxCheckBox(m_static_box->GetStaticBox(), wxID_ANY, "Centered");
+    box_sizer2->Add(m_check_centered, wxSizerFlags().Border(wxALL));
+
+    m_static_box->Add(box_sizer2, wxSizerFlags().Border(wxALL));
+
+    dlg_sizer->Add(m_static_box, wxSizerFlags().Expand().Border(wxALL));
 
     auto* flex_grid_sizer = new wxFlexGridSizer(2, 0, 0);
 
@@ -60,6 +80,7 @@ bool EditCustomMockupBase::Create(wxWindow* parent, wxWindowID id, const wxStrin
 
     // Event handlers
     Bind(wxEVT_BUTTON, &EditCustomMockupBase::OnOK, this, wxID_OK);
+    m_widget_types->Bind(wxEVT_CHOICE, &EditCustomMockupBase::OnSelect, this);
     Bind(wxEVT_INIT_DIALOG, &EditCustomMockupBase::OnInit, this);
 
     return true;
@@ -74,6 +95,12 @@ bool EditCustomMockupBase::Create(wxWindow* parent, wxWindowID id, const wxStrin
 // clang-format on
 // ***********************************************
 
+/////////////////// Non-generated Copyright/License Info ////////////////////
+// Author:    Ralph Walden
+// Copyright: Copyright (c) 2023 KeyWorks Software (Ralph Walden)
+// License:   Apache License -- see ../../LICENSE
+/////////////////////////////////////////////////////////////////////////////
+
 void EditCustomMockupBase::OnInit(wxInitDialogEvent& event)
 {
     tt_string_vector parts(m_result.ToStdString(), ';');
@@ -82,9 +109,39 @@ void EditCustomMockupBase::OnInit(wxInitDialogEvent& event)
         m_widget_type = parts[0];
         m_width = parts[1].atoi();
         m_height = parts[2];
+
+        if (m_widget_type.starts_with("wxStaticText"))
+        {
+            if (auto pos = m_widget_type.find('('); pos != tt::npos)
+            {
+                tt_string_vector options(m_widget_type.Mid(pos + 1).utf8_string(), ",");
+                m_text_static->SetValue(options[0]);
+                if (options.size() > 1)
+                    m_check_centered->SetValue(options[1].contains("1"));
+            }
+
+            m_widget_types->SetStringSelection("wxStaticText");
+            m_static_box->GetStaticBox()->Show(true);
+            Fit();
+        }
     }
 
     event.Skip();
+}
+
+void EditCustomMockupBase::OnSelect(wxCommandEvent& WXUNUSED(event))
+{
+    auto widget_type = m_widget_types->GetStringSelection();
+    if (widget_type.StartsWith("wxStaticText"))
+    {
+        m_static_box->GetStaticBox()->Show(true);
+        Fit();
+    }
+    else
+    {
+        m_static_box->GetStaticBox()->Show(false);
+        Fit();
+    }
 }
 
 void EditCustomMockupBase::OnOK(wxCommandEvent& event)
@@ -93,6 +150,16 @@ void EditCustomMockupBase::OnOK(wxCommandEvent& event)
         return;
 
     m_result.clear();
-    m_result << m_widget_type << ";" << m_width << ";" << m_height;
+    m_result << m_widget_type;
+    if (m_widget_type.StartsWith("wxStaticText"))
+    {
+        m_result << "(" << m_text_static->GetValue();
+        m_result << (m_check_centered->GetValue() ? ", 1" : ", 0");
+        m_result << ")";
+    }
+
+    // wxBitmap is the default, and currently we don't allow any parameters for it
+
+    m_result << ";" << m_width << ";" << m_height;
     event.Skip();
 }

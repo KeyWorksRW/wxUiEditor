@@ -33,18 +33,18 @@ set (file_list
 
     customprops/code_string_prop.cpp    # Derived wxStringProperty class for code
     customprops/custom_colour_prop.cpp  # Property editor for colour
-    customprops/edit_custom_mockup.cpp  # Custom Property editor for pop_custom_mockup
     customprops/custom_param_prop.cpp   # Derived wxStringProperty class for custom control parameters
     customprops/directory_prop.cpp      # Derived wxStringProperty class for choosing a directory
+    customprops/edit_custom_mockup.cpp  # Custom Property editor for pop_custom_mockup
     customprops/evt_string_prop.cpp     # Derived wxStringProperty class for event function
     customprops/font_string_prop.cpp    # Derived wxStringProperty class for font property
     customprops/html_string_prop.cpp    # Derived wxStringProperty class for HTML
-    customprops/include_files_prop.cpp  # Derived wxStringProperty class for Include Files
+    customprops/id_prop.cpp             # Uses IDEditorDlg to edit a custom ID
     customprops/img_string_prop.cpp     # Derived wxStringProperty class for handling wxImage files or art
+    customprops/include_files_prop.cpp  # Derived wxStringProperty class for Include Files
     customprops/rearrange_prop.cpp      # wxRearangeList contents editor
     customprops/sb_fields_prop.cpp      # Property editor for status bar fields
     customprops/txt_string_prop.cpp     # Derived wxStringProperty class for single-line text
-    customprops/id_prop.cpp             # Uses IDEditorDlg to edit a custom ID
 
     customprops/eventhandler_dlg.cpp    # Dialog for editing event handlers
     customprops/font_prop_dlg.cpp       # Dialog for editing Font Property

@@ -32,6 +32,8 @@ When an interface is inherited (`<inherits class=`) you can add child nodes call
 
 The files `gen_enums.h` and `gen_enums.cpp` _must_ be updated any time you add a new component or a property, or if you change an existing class name or property type. In a DEBUG build you will get warnings if you forget to update one or more of the enumeration lists and there's a fairly good chance the program will not work correctly or even crash if you try to use a component with the missing enumeration.
 
+You can hide a specific property by including the attribute `hide="1"`.
+
 ## Adding a new generator
 
 - Add the declaration to one of the XML files.

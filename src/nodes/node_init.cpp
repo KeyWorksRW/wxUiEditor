@@ -773,6 +773,10 @@ void NodeCreator::parseProperties(pugi::xml_node& elem_obj, NodeDeclaration* nod
 
         auto prop_info = new PropDeclaration(prop_name, property_type, def_value, description);
         node_declaration->GetPropInfoMap()[name] = prop_info;
+        if (elem_prop.attribute("hide").as_bool())
+        {
+            node_declaration->HideProperty(prop_name);
+        }
 
         if (property_type == type_bitlist || property_type == type_option || property_type == type_editoption)
         {

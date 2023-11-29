@@ -27,12 +27,12 @@ jobs:
       run: |
         cd build
         cpack -G NSIS
-        
-    # delete-artifact
-    - uses: geekyeggo/delete-artifact@v2
+
+    - name: Delete Artifact
+      uses: geekyeggo/delete-artifact@v2
       with:
           name: Executables
-         
+
     - name: Create wxUiEditor Artifact
       uses: actions/upload-artifact@v2
       with:

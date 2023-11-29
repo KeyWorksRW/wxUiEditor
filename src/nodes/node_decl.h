@@ -83,6 +83,7 @@ public:
 
     void ParseEvents(pugi::xml_node& elem_obj, NodeCategory& category);
 
+    // no_win_events, no_key_events, no_mouse_events, no_focus_events
     const tt_string& GetGeneratorFlags() { return m_internal_flags; }
     void SetGeneratorFlags(std::string_view flags) { m_internal_flags = flags; }
 

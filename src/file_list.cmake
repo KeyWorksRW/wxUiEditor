@@ -399,6 +399,7 @@ set (doc_list
     ../docs/build_notes.md
     ../docs/DEV_NOTES.md
     ../docs/images.md
+    ../docs/release_prep.md
     ../docs/import_crafter.md
     ../docs/import_dialogblocks.md
     ../docs/import_formbuilder.md

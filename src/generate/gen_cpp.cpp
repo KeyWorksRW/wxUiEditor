@@ -107,9 +107,10 @@ void BaseCodeGenerator::GenerateCppClass(PANEL_PAGE panel_type)
     m_embedded_images.clear();
     m_type_generated.clear();
 
-    m_ImagesForm = nullptr;
     m_TranslationUnit = (m_form_node->as_bool(prop_generate_translation_unit) || m_form_node->isGen(gen_Images));
 
+    // A lot of the code generation depends on knowing if there is an Images form, so check for that first
+    m_ImagesForm = nullptr;
     for (const auto& form: Project.getChildNodePtrs())
     {
         if (form->isGen(gen_folder))
@@ -130,6 +131,19 @@ void BaseCodeGenerator::GenerateCppClass(PANEL_PAGE panel_type)
             m_ImagesForm = form.get();
             break;
         }
+    }
+
+    // If there is an Images form, then calculate the #include file relative to the current
+    // form's output file.
+    m_include_images_statement.clear();
+    if (m_ImagesForm && m_ImagesForm->hasValue(prop_base_file))
+    {
+        tt_string image_file = Project.getBaseDirectory(m_ImagesForm);
+        image_file.append_filename(m_ImagesForm->as_string(prop_base_file));
+        image_file.replace_extension(m_header_ext);
+        image_file.make_relative(Project.getBaseDirectory(m_form_node).make_absolute());
+        image_file.backslashestoforward();
+        m_include_images_statement << "#include \"" << image_file << '\"';
     }
 
     m_NeedAnimationFunction = false;
@@ -200,17 +214,9 @@ void BaseCodeGenerator::GenerateCppClass(PANEL_PAGE panel_type)
     CollectIncludes(m_form_node, src_includes, hdr_includes);
 
     bool has_images_list_header = false;
-    if (auto images_form = Project.getImagesForm(); images_form && images_form != m_form_node)
+    if (m_ImagesForm && m_include_images_statement.size() && src_includes.contains(m_include_images_statement))
     {
-        tt_string image_file = Project.getBaseDirectory(images_form);
-        image_file.append_filename(images_form->as_string(prop_base_file));
-        image_file.replace_extension(m_header_ext);
-        image_file.make_relative(Project.getBaseDirectory(m_form_node->getForm()).make_absolute());
-        image_file.backslashestoforward();
-        if (src_includes.contains(tt_string() << "#include \"" << image_file << '\"'))
-        {
-            has_images_list_header = true;
-        }
+        has_images_list_header = true;
     }
 
     if (m_form_node->as_bool(prop_persist))
@@ -498,11 +504,14 @@ void BaseCodeGenerator::GenerateCppClass(PANEL_PAGE panel_type)
     }
 
     thrd_collect_img_headers.join();
-    std::sort(m_embedded_images.begin(), m_embedded_images.end(),
-              [](const EmbeddedImage* a, const EmbeddedImage* b)
-              {
-                  return (a->array_name.compare(b->array_name) < 0);
-              });
+    if (m_embedded_images.size())
+    {
+        std::sort(m_embedded_images.begin(), m_embedded_images.end(),
+                  [](const EmbeddedImage* a, const EmbeddedImage* b)
+                  {
+                      return (a->array_name.compare(b->array_name) < 0);
+                  });
+    }
 
     if (m_panel_type != HDR_PANEL)
     {
@@ -602,7 +611,7 @@ void BaseCodeGenerator::GenerateCppClass(PANEL_PAGE panel_type)
 
         if (m_NeedImageFunction || m_NeedHeaderFunction)
         {
-            if (Project.getForm_Image() == m_form_node || !has_images_list_header)
+            if (Project.getForm_Image() == m_form_node && !has_images_list_header)
             {
                 tt_string_vector function;
                 function.ReadString(Project.getForm_Image() == m_form_node ? txt_wxueImageFunction :
@@ -628,7 +637,7 @@ void BaseCodeGenerator::GenerateCppClass(PANEL_PAGE panel_type)
                 m_source->writeLine("#endif", indent::none);
             }
 
-            if (Project.getForm_BundleSVG() == m_form_node || !has_images_list_header)
+            if (Project.getForm_BundleSVG() == m_form_node && !has_images_list_header)
             {
                 tt_string_vector function;
                 function.ReadString(Project.getForm_BundleSVG() == m_form_node ? txt_GetBundleFromSVG :
@@ -643,7 +652,7 @@ void BaseCodeGenerator::GenerateCppClass(PANEL_PAGE panel_type)
 
         if (m_NeedAnimationFunction)
         {
-            if (Project.getForm_Animation() == m_form_node || !has_images_list_header)
+            if (Project.getForm_Animation() == m_form_node && !has_images_list_header)
             {
                 tt_string_vector function;
                 function.ReadString(Project.getForm_Animation() == m_form_node ? txt_GetAnimFromHdrFunction :

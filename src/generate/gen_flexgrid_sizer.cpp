@@ -144,6 +144,15 @@ bool FlexGridSizerGenerator::ConstructionCode(Code& code)
     return true;
 }
 
+void FlexGridSizerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/, Node* node, bool /* is_preview */)
+{
+    if (node->as_bool(prop_hide_children))
+    {
+        if (auto sizer = wxStaticCast(wxobject, wxSizer); sizer)
+            sizer->ShowItems(getMockup()->IsShowingHidden());
+    }
+}
+
 bool FlexGridSizerGenerator::AfterChildrenCode(Code& code)
 {
     if (code.IsTrue(prop_hide_children))
@@ -177,15 +186,6 @@ bool FlexGridSizerGenerator::AfterChildrenCode(Code& code)
     }
 
     return true;
-}
-
-void FlexGridSizerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/, Node* node, bool /* is_preview */)
-{
-    if (node->as_bool(prop_hide_children))
-    {
-        if (auto sizer = wxStaticCast(wxobject, wxSizer); sizer)
-            sizer->ShowItems(false);
-    }
 }
 
 bool FlexGridSizerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,

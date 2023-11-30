@@ -161,7 +161,7 @@ using view_map = std::map<tt_string_view, std::string_view, std::less<>>;
 // When chaniging txtVersion, you also need to change the version in wxUiEditor.rc and
 // wxUiEditor.exe.manifest and ../CMakeLists.txt
 
-constexpr const char* txtVersion = "wxUiEditor 1.2.0";
+constexpr const char* txtVersion = "wxUiEditor 1.2.0.1";
 constexpr const char* txtCopyRight = "Copyright (c) 2019-2023 KeyWorks Software";
 constexpr const char* txtAppname = "wxUiEditor";
 

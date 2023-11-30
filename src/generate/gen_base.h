@@ -214,6 +214,7 @@ private:
 
     Node* m_form_node { nullptr };
     Node* m_ImagesForm { nullptr };
+    tt_string m_include_images_statement;
 
     PANEL_PAGE m_panel_type { NOT_PANEL };
 

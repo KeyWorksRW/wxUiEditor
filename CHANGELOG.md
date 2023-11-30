@@ -1,6 +1,21 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [unreleased (1.2.1)]
+
+### Added
+
+- Dark Mode and High Contrast Dark Mode are now available in the Prefences dialog on Windows.
+
+### Changed
+
+- The `hide_children` property in the wxStaticBoxSizer has been removed since the `hidden` property does exactly the same thing. Projects where `hide_children` was set will be automatically converted to use `hidden` instead.
+
+### Fixed
+
+- The Show Hidden on the toolbar now shows (in the Mockup panel) the children of sizers that have their children hidden.
+- Setting `hidden` in a wxStaticBoxSizer did not generate any code to hide the wxStaticBox and it's children (you had to check `hide_children` to get the code). This has been fixed.
+
 ## [Released (1.2.0)]
 
 ### Added

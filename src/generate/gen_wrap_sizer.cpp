@@ -32,7 +32,7 @@ void WrapSizerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*
     if (node->as_bool(prop_hide_children))
     {
         if (auto sizer = wxStaticCast(wxobject, wxSizer); sizer)
-            sizer->ShowItems(false);
+            sizer->ShowItems(getMockup()->IsShowingHidden());
     }
 }
 

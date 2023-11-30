@@ -43,7 +43,9 @@ public:
     bool is_WakaTimeEnabled() const { return m_enable_wakatime; }
 
     bool is_DarkMode() const { return m_dark_mode; }
+    bool is_DarkModePending() const { return m_dark_mode_pending; }
     void set_DarkMode(bool value) { m_dark_mode = value; }
+    void set_DarkModePending(size_t value) { m_dark_mode_pending = value; }
     bool is_HighContrast() const { return m_high_constrast; }
     void set_HighContrast(bool value) { m_high_constrast = value; }
 
@@ -128,6 +130,13 @@ public:
         PREFS_PJT_MEMBER_PREFIX = 1 << 1,
     };
 
+    enum : size_t
+    {
+        PENDING_DARK_MODE_ENABLE = 1,
+        PENDING_DARK_MODE_ON = 1 << 1,
+        PENDING_DARK_MODE_OFF = 1 << 2,
+    };
+
     // clang-format on
 
 private:
@@ -143,6 +152,8 @@ private:
     wxColour m_colour_cpp { wxColour("#FF00FF") };
     wxColour m_colour_python { wxColour("#FF00FF") };
     wxColour m_colour_ruby { wxColour("#FF00FF") };
+
+    size_t m_dark_mode_pending { 0 };  // 0 = no change, 1 = dark_mode_on, 2 = dark_mode_off
 
     int m_cpp_line_length { 110 };
     int m_python_line_length { 90 };

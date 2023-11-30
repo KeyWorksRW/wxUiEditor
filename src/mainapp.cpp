@@ -69,7 +69,7 @@ wxIMPLEMENT_APP(App);
 
 tt_string tt_empty_cstr;
 
-#if wxCHECK_VERSION(3, 3, 0) && defined(_WIN32)
+#if defined(_WIN32)
     #include <wx/msw/darkmode.h>
 
 class DarkSettings : public wxDarkModeSettings

@@ -52,6 +52,7 @@ protected:
 
     wxBoxSizer* m_box_code_font;
     wxBoxSizer* m_box_dark_settings;
+    wxBoxSizer* m_general_page_sizer;
     wxCheckBox* m_check_cpp_snake_case;
     wxCheckBox* m_check_dark_mode;
     wxCheckBox* m_check_fullpath;

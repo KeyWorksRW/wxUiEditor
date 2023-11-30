@@ -6456,8 +6456,9 @@
             window_style="wxTAB_TRAVERSAL">
             <node
               class="wxBoxSizer"
+              class_access="protected:"
               orientation="wxVERTICAL"
-              var_name="page_sizer_1">
+              var_name="m_general_page_sizer">
               <node
                 class="wxBoxSizer"
                 class_access="protected:"

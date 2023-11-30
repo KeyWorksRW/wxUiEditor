@@ -180,9 +180,15 @@ void BaseCodeGenerator::CollectValidatorVariables(Node* node, std::set<std::stri
     }
 }
 
-void BaseCodeGenerator::CollectIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
+void BaseCodeGenerator::CollectIncludes(Node* form, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
-    GatherGeneratorIncludes(node, set_src, set_hdr);
+    ASSERT_MSG(form->isForm(), "Only forms should be passed to CollectIncludes()");
+    if (form->isGen(gen_Images))
+    {
+        return;
+    }
+
+    GatherGeneratorIncludes(form, set_src, set_hdr);
 
     // If an include is going to be generated in the header file, then don't also generate it
     // in the src file.
@@ -197,10 +203,7 @@ void BaseCodeGenerator::CollectIncludes(Node* node, std::set<std::string>& set_s
 
 void BaseCodeGenerator::GatherGeneratorIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
-    if (node->isGen(gen_Images) || node->isGen(gen_folder))
-    {
-        return;
-    }
+    ASSERT_MSG(!node->isNonWidget(), "Non-widget nodes should not be passed to GatherGeneratorIncludes()");
 
     bool isAddToSrc = false;
 
@@ -262,31 +265,15 @@ void BaseCodeGenerator::GatherGeneratorIncludes(Node* node, std::set<std::string
             }
             else if (iter.type() == type_image)
             {
-                if (!iter.isProp(prop_icon))
+                if (m_ImagesForm && m_include_images_statement.size() &&
+                    (iter.as_string().starts_with("Embed") || iter.as_string().starts_with("SVG")))
                 {
-                    if (auto function_name = ProjectImages.GetBundleFuncName(iter.as_string()); function_name.size())
-                    {
-                        std::vector<Node*> forms;
-                        Project.CollectForms(forms);
+                    set_src.insert(m_include_images_statement);
+                }
 
-                        for (const auto& form: forms)
-                        {
-                            if (form->isGen(gen_Images))
-                            {
-                                if (form->hasValue(prop_base_file))
-                                {
-                                    tt_string image_file = Project.getBaseDirectory(form);
-                                    image_file.append_filename(form->as_string(prop_base_file));
-                                    image_file.replace_extension(m_header_ext);
-                                    image_file.make_relative(Project.getBaseDirectory(node->getForm()).make_absolute());
-                                    image_file.backslashestoforward();
-                                    set_src.insert(tt_string() << "#include \"" << image_file << '\"');
-                                }
-                                break;
-                            }
-                        }
-                        continue;
-                    }
+                if (auto function_name = ProjectImages.GetBundleFuncName(iter.as_string()); function_name.size())
+                {
+                    continue;
                 }
 
                 // The problem at this point is that we don't know how the bitmap will be used. It could be just a

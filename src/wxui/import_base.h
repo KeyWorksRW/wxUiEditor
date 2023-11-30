@@ -9,15 +9,12 @@
 
 #pragma once
 
-#include <wx/bitmap.h>
 #include <wx/button.h>
 #include <wx/checklst.h>
 #include <wx/combobox.h>
 #include <wx/dialog.h>
 #include <wx/event.h>
 #include <wx/gdicmn.h>
-#include <wx/icon.h>
-#include <wx/image.h>
 #include <wx/radiobut.h>
 #include <wx/sizer.h>
 #include <wx/statbox.h>

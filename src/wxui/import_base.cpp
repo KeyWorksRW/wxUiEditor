@@ -9,11 +9,9 @@
 
 #include <wx/icon.h>
 
-#include "import_base.h"
+#include "ui_images.h"
 
-// Convert compressed SVG string into a wxBitmapBundle
-wxBitmapBundle wxueBundleSVG(const unsigned char* data,
-    size_t size_data, size_t size_svg, wxSize def_size);
+#include "import_base.h"
 
 namespace wxue_img
 {

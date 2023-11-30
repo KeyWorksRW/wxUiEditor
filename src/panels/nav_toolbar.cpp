@@ -12,14 +12,12 @@
 #include <wx/icon.h>
 #include <wx/image.h>
 
+#include "../wxui/ui_images.h"
+
 #include "nav_toolbar.h"
 
 #include "mainframe.h"
 #include "project_handler.h"
-
-// Convert compressed SVG string into a wxBitmapBundle
-wxBitmapBundle wxueBundleSVG(const unsigned char* data,
-    size_t size_data, size_t size_svg, wxSize def_size);
 
 NavToolbar::NavToolbar(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style,
     const wxString& name) : wxToolBar(parent, id, pos, size, style, name)

@@ -8,9 +8,11 @@
 // clang-format off
 
 #include <wx/artprov.h>
+#include <wx/bitmap.h>
 #include <wx/bmpbndl.h>
 #include <wx/button.h>
 #include <wx/icon.h>
+#include <wx/image.h>
 #include <wx/statbmp.h>
 #include <wx/statline.h>
 

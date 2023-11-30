@@ -9,15 +9,12 @@
 
 #pragma once
 
-#include <wx/bitmap.h>
 #include <wx/dialog.h>
 #include <wx/event.h>
 #include <wx/font.h>
 #include <wx/gdicmn.h>
 #include <wx/hyperlink.h>
 #include <wx/generic/hyperlink.h>
-#include <wx/icon.h>
-#include <wx/image.h>
 #include <wx/sizer.h>
 #include <wx/stattext.h>
 
@@ -59,8 +56,8 @@ private:
 // Code below this comment block will be preserved
 // if the code for this class is re-generated.
 //
-    // clang-format on
-    // ***********************************************
+// clang-format on
+// ***********************************************
 
 public:
     enum : size_t

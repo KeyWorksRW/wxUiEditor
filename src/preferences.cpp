@@ -56,7 +56,6 @@ void Prefs::WriteConfig()
     config->Write("fullpath_title", m_fullpath_title);
 
     config->Write("enable_wakatime", m_enable_wakatime);
-    config->Write("dark_mode", m_dark_mode);
     config->Write("high_contrast", m_high_constrast);
     config->Write("load_last_project", m_is_load_last_project);
     config->Write("right_propgrid", m_is_right_propgrid);
@@ -71,6 +70,11 @@ void Prefs::WriteConfig()
     config->Write("cpp_line_length", m_cpp_line_length);
     config->Write("python_line_length", m_python_line_length);
     config->Write("ruby_line_length", m_ruby_line_length);
+
+    if (m_dark_mode_pending & PENDING_DARK_MODE_ENABLE)
+    {
+        config->Write("dark_mode", m_dark_mode_pending & PENDING_DARK_MODE_ON ? true : false);
+    }
 
     config->SetPath("/");
 }

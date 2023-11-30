@@ -31,7 +31,7 @@ bool PreferencesDlg::Create(wxWindow* parent, wxWindowID id, const wxString& tit
     auto* page_general = new wxPanel(notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
     notebook->AddPage(page_general, "General", true);
 
-    auto* page_sizer_1 = new wxBoxSizer(wxVERTICAL);
+    m_general_page_sizer = new wxBoxSizer(wxVERTICAL);
 
     m_box_dark_settings = new wxBoxSizer(wxHORIZONTAL);
 
@@ -43,25 +43,25 @@ bool PreferencesDlg::Create(wxWindow* parent, wxWindowID id, const wxString& tit
     m_check_high_contrast->SetToolTip("Only used if Dark Mode is selected");
     m_box_dark_settings->Add(m_check_high_contrast, wxSizerFlags().Border(wxALL));
     m_box_dark_settings->ShowItems(false);
-    page_sizer_1->Add(m_box_dark_settings,
+    m_general_page_sizer->Add(m_box_dark_settings,
     wxSizerFlags().Expand().Border(wxRIGHT|wxTOP|wxBOTTOM, wxSizerFlags::GetDefaultBorder()));
 
     m_check_right_propgrid = new wxCheckBox(page_general, wxID_ANY, "Property Panel on Right");
     m_check_right_propgrid->SetToolTip("If checked, the Property panel will be moved to the right side");
-    page_sizer_1->Add(m_check_right_propgrid, wxSizerFlags(1).Border(wxALL));
+    m_general_page_sizer->Add(m_check_right_propgrid, wxSizerFlags(1).Border(wxALL));
 
     m_check_load_last = new wxCheckBox(page_general, wxID_ANY, "Always load last project");
-    page_sizer_1->Add(m_check_load_last, wxSizerFlags(1).Border(wxALL));
+    m_general_page_sizer->Add(m_check_load_last, wxSizerFlags(1).Border(wxALL));
 
     m_check_fullpath = new wxCheckBox(page_general, wxID_ANY, "Full project path in title bar");
-    page_sizer_1->Add(m_check_fullpath, wxSizerFlags(1).Border(wxALL));
+    m_general_page_sizer->Add(m_check_fullpath, wxSizerFlags(1).Border(wxALL));
 
     auto* checkBox_wakatime = new wxCheckBox(page_general, wxID_ANY, "Enable WakaTime");
     checkBox_wakatime->SetValue(true);
     checkBox_wakatime->SetValidator(wxGenericValidator(&m_isWakaTimeEnabled));
     checkBox_wakatime->SetToolTip(
     "If you have WakaTime installed, checking this will record time spent in the editor as \"designing\". (See https://wakatime.com/about)");
-    page_sizer_1->Add(checkBox_wakatime, wxSizerFlags().Border(wxALL));
+    m_general_page_sizer->Add(checkBox_wakatime, wxSizerFlags().Border(wxALL));
 
     m_box_code_font = new wxBoxSizer(wxHORIZONTAL);
 
@@ -74,8 +74,8 @@ bool PreferencesDlg::Create(wxWindow* parent, wxWindowID id, const wxString& tit
     m_code_font_picker->SetToolTip("This font will be used for all of the Code panels");
     m_box_code_font->Add(m_code_font_picker, wxSizerFlags(1).Expand().Border(wxALL));
 
-    page_sizer_1->Add(m_box_code_font, wxSizerFlags().Expand().Border(wxALL));
-    page_general->SetSizerAndFit(page_sizer_1);
+    m_general_page_sizer->Add(m_box_code_font, wxSizerFlags().Expand().Border(wxALL));
+    page_general->SetSizerAndFit(m_general_page_sizer);
 
     auto* page_cpp = new wxPanel(notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
     notebook->AddPage(page_cpp, "C++");
@@ -234,8 +234,9 @@ void PreferencesDlg::OnInit(wxInitDialogEvent& event)
     m_box_code_font->ShowItems(false);
     // m_code_font_picker = UserPrefs.get_CodeDisplayFont();
 
-#if !wxCHECK_VERSION(3, 3, 0) || !defined(_WIN32)
-    m_box_dark_settings->ShowItems(false);
+#if defined(__WXMSW__)
+    m_box_dark_settings->ShowItems(true);
+    m_general_page_sizer->Layout();
     Fit();
 #endif
 
@@ -274,7 +275,9 @@ void PreferencesDlg::OnOK(wxCommandEvent& WXUNUSED(event))
     if (m_check_fullpath->GetValue() != UserPrefs.is_FullPathTitle())
         is_fullpath_changed = true;
 
-    UserPrefs.set_DarkMode(m_check_dark_mode->GetValue());
+    UserPrefs.set_DarkModePending(
+        Prefs::PENDING_DARK_MODE_ENABLE |
+        (m_check_dark_mode->GetValue() ? Prefs::PENDING_DARK_MODE_ON : Prefs::PENDING_DARK_MODE_OFF));
     UserPrefs.set_HighContrast(m_check_high_contrast->GetValue());
     UserPrefs.set_FullPathTitle(m_check_fullpath->GetValue());
 

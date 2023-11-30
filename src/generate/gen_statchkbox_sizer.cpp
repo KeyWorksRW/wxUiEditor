@@ -69,7 +69,7 @@ void StaticCheckboxBoxSizerGenerator::AfterCreation(wxObject* wxobject, wxWindow
     if (node->as_bool(prop_hidden))
     {
         if (auto sizer = wxStaticCast(wxobject, wxSizer); sizer)
-            sizer->ShowItems(false);
+            sizer->ShowItems(getMockup()->IsShowingHidden());
     }
 }
 

@@ -196,7 +196,18 @@ bool WizardFormGenerator::SettingsCode(Code& code)
     {
         if (code.is_cpp())
         {
+            if (Project.as_string(prop_wxWidgets_version) == "3.1")
+            {
+                code.Eol() += "#if wxCHECK_VERSION(3, 1, 6)\n\t\t";
+            }
             code.Eol(eol_if_needed).FormFunction("if (!Create(").Str("parent, id, title, wxBitmapBundle(), pos, style))");
+
+            if (Project.as_string(prop_wxWidgets_version) == "3.1")
+            {
+                code.Eol() += "#else\n\t\t";
+                code.Eol(eol_if_needed).FormFunction("if (!Create(").Str("parent, id, title, wxNullBitmap, pos, style))");
+                code.Eol() += "#endif";
+            }
             code.Eol().Tab().Str("return;");
         }
         else if (code.is_python())
@@ -204,6 +215,7 @@ bool WizardFormGenerator::SettingsCode(Code& code)
             code.Eol(eol_if_needed).Str("if not self.Create(parent, id, title, wx.BitmapBundle(), pos, style):");
             code.Eol().Tab().Str("return");
         }
+        // wxRuby3 code generation doesn't use 2-step construction.
     }
 
     return true;

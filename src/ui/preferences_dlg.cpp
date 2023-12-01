@@ -208,8 +208,9 @@ bool PreferencesDlg::Create(wxWindow* parent, wxWindowID id, const wxString& tit
 // clang-format on
 // ***********************************************
 
-#include "mainframe.h"    // CMainFrame -- Main window frame
-#include "preferences.h"  // Set/Get wxUiEditor preferences
+#include "mainframe.h"        // CMainFrame -- Main window frame
+#include "preferences.h"      // Set/Get wxUiEditor preferences
+#include "project_handler.h"  // ProjectHandler class
 
 void PreferencesDlg::OnInit(wxInitDialogEvent& event)
 {
@@ -257,6 +258,7 @@ void PreferencesDlg::OnOK(wxCommandEvent& WXUNUSED(event))
     bool is_prop_grid_changed = false;
     bool is_dark_changed = false;
     bool is_fullpath_changed = false;
+    bool is_cpp_preferences_changed = false;
 
     if (m_colour_cpp->GetColour() != UserPrefs.get_CppColour())
         is_color_changed = true;
@@ -275,6 +277,9 @@ void PreferencesDlg::OnOK(wxCommandEvent& WXUNUSED(event))
     if (m_check_fullpath->GetValue() != UserPrefs.is_FullPathTitle())
         is_fullpath_changed = true;
 
+    if (m_choice_cpp_version->GetStringSelection().ToStdString() != UserPrefs.get_CppWidgetsVersion())
+        is_cpp_preferences_changed = true;
+
     UserPrefs.set_DarkModePending(
         Prefs::PENDING_DARK_MODE_ENABLE |
         (m_check_dark_mode->GetValue() ? Prefs::PENDING_DARK_MODE_ON : Prefs::PENDING_DARK_MODE_OFF));
@@ -287,6 +292,11 @@ void PreferencesDlg::OnOK(wxCommandEvent& WXUNUSED(event))
     UserPrefs.set_WakaTimeEnabled(m_isWakaTimeEnabled);
 
     UserPrefs.set_CppWidgetsVersion(m_choice_cpp_version->GetStringSelection().ToStdString());
+    if (is_cpp_preferences_changed)
+    {
+        // Project.getProjectNode()->set_value(prop_wxWidgets_version, UserPrefs.get_CppWidgetsVersion());
+        Project.getProjectNode()->modifyProperty(prop_wxWidgets_version, UserPrefs.get_CppWidgetsVersion());
+    }
 
     UserPrefs.set_CppColour(m_colour_cpp->GetColour());
     UserPrefs.set_PythonColour(m_colour_python->GetColour());

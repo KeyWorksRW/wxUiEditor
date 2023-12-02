@@ -611,7 +611,7 @@ void BaseCodeGenerator::GenerateCppClass(PANEL_PAGE panel_type)
 
         if (m_NeedImageFunction || m_NeedHeaderFunction)
         {
-            if (Project.getForm_Image() == m_form_node && !has_images_list_header)
+            if (!has_images_list_header)
             {
                 tt_string_vector function;
                 function.ReadString(Project.getForm_Image() == m_form_node ? txt_wxueImageFunction :
@@ -637,7 +637,7 @@ void BaseCodeGenerator::GenerateCppClass(PANEL_PAGE panel_type)
                 m_source->writeLine("#endif", indent::none);
             }
 
-            if (Project.getForm_BundleSVG() == m_form_node && !has_images_list_header)
+            if (!has_images_list_header)
             {
                 tt_string_vector function;
                 function.ReadString(Project.getForm_BundleSVG() == m_form_node ? txt_GetBundleFromSVG :
@@ -652,7 +652,7 @@ void BaseCodeGenerator::GenerateCppClass(PANEL_PAGE panel_type)
 
         if (m_NeedAnimationFunction)
         {
-            if (Project.getForm_Animation() == m_form_node && !has_images_list_header)
+            if (!has_images_list_header)
             {
                 tt_string_vector function;
                 function.ReadString(Project.getForm_Animation() == m_form_node ? txt_GetAnimFromHdrFunction :

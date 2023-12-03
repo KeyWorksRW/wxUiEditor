@@ -695,7 +695,14 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
 }
 
 void FormBuilder::ProcessPropValue(pugi::xml_node& xml_prop, tt_string_view prop_name, tt_string_view class_name,
-                                   Node* newobject, Node* parent)
+                                   Node* newobject,
+                                   Node*
+#if defined(INTERNAL_TESTING)
+                                       parent
+#else
+/* parent is only used in internal builds */
+#endif
+)
 {
     if (set_ignore_flags.contains(prop_name))
     {

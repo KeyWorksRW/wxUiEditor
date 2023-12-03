@@ -169,7 +169,7 @@ void BaseCodeGenerator::GenerateImagesForm()
         }
     }
 
-    bool is_old_widgets = (Project.as_string(prop_wxWidgets_version) == "3.1");
+    bool is_old_widgets = (Project.is_wxWidgets31());
 
     if (m_panel_type != HDR_PANEL)
     {

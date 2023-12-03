@@ -56,7 +56,7 @@ bool SubMenuGenerator::AfterChildrenCode(Code& code)
             if (!is_vector_code)
             {
                 code.Str(submenu_item_name).Function("SetBitmap(");
-                if (Project.as_string(prop_wxWidgets_version) != "3.1")
+                if (!Project.is_wxWidgets31())
                 {
                     GenerateBundleCode(description, code.GetCode());
                     code.EndFunction();
@@ -75,7 +75,7 @@ bool SubMenuGenerator::AfterChildrenCode(Code& code)
             else
             {
                 code.Tab().Str(submenu_item_name).Function("SetBitmap(");
-                if (Project.as_string(prop_wxWidgets_version) != "3.1")
+                if (!Project.is_wxWidgets31())
                 {
                     code += "wxBitmapBundle::FromBitmaps(bitmaps)";
                     code.UpdateBreakAt();

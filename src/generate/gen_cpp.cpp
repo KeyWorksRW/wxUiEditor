@@ -357,7 +357,7 @@ void BaseCodeGenerator::GenerateCppClass(PANEL_PAGE panel_type)
     // wxBitmap if older. We need to conditionalize the header output by removing the "#include <wx/bmpbndl.h>" entry and
     // creating our own conditionalized header.
 
-    if (Project.as_string(prop_wxWidgets_version) == "3.1")
+    if (Project.is_wxWidgets31())
     {
         if (auto bmpbndl_hdr = src_includes.find("#include <wx/bmpbndl.h>"); bmpbndl_hdr != src_includes.end())
         {
@@ -626,7 +626,7 @@ void BaseCodeGenerator::GenerateCppClass(PANEL_PAGE panel_type)
 
         if (m_NeedSVGFunction)
         {
-            if (Project.as_string(prop_wxWidgets_version) == "3.1")
+            if (Project.is_wxWidgets31())
             {
                 m_source->writeLine();
                 m_source->writeLine("#if !wxCHECK_VERSION(3, 1, 6)", indent::none);
@@ -763,7 +763,7 @@ void BaseCodeGenerator::GenerateCppClassHeader()
 
         if (m_NeedSVGFunction && Project.getForm_BundleSVG() != m_form_node)
         {
-            if (Project.as_string(prop_wxWidgets_version) == "3.1")
+            if (Project.is_wxWidgets31())
             {
                 m_header->writeLine();
                 m_header->writeLine("#if !wxCHECK_VERSION(3, 1, 6)", indent::none);

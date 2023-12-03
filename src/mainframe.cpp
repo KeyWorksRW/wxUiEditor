@@ -840,6 +840,11 @@ void MainFrame::ProjectLoaded()
              });
     }
 
+    if (!Project.hasValue(prop_wxWidgets_version))
+    {
+        Project.set_value(prop_wxWidgets_version, UserPrefs.get_CppWidgetsVersion());
+    }
+
     m_selected_node = Project.getProjectNode()->getSharedPtr();
 }
 

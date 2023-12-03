@@ -114,7 +114,7 @@ void BookCtorAddImagelist(Code& code)
     if ((code.IsTrue(prop_display_images) || code.IsGen(gen_wxToolbook)) && isBookHasImage(code.node()))
     {
         code.OpenBrace();
-        if (code.is_cpp() && Project.as_string(prop_wxWidgets_version) == "3.1")
+        if (code.is_cpp() && Project.is_wxWidgets31())
         {
             if (code.back() == '\t')
             {
@@ -183,7 +183,7 @@ void BookCtorAddImagelist(Code& code)
 
         code.Eol().NodeName().Function("SetImages(bundle_list").EndFunction();
 
-        if (code.is_cpp() && Project.as_string(prop_wxWidgets_version) == "3.1")
+        if (code.is_cpp() && Project.is_wxWidgets31())
         {
             // Don't use Eol() here, because we want to insert the #if at the beginning of the line
             code << "\n\n#else  // older version of wxWidgets that don't support bitmap bundles\n";

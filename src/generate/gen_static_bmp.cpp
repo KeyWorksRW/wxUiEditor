@@ -120,14 +120,14 @@ void StaticBitmapGenerator::GenCppConstruction(Code& gen_code)
         if (!is_vector_code)
         {
             tt_string bundle_code;
-            if (Project.as_string(prop_wxWidgets_version) != "3.1")
+            if (!Project.is_wxWidgets31())
             {
                 GenerateBundleCode(description, bundle_code);
                 code << bundle_code;
             }
             else
             {
-                if (Project.as_string(prop_wxWidgets_version) == "3.1")
+                if (Project.is_wxWidgets31())
                 {
                     code.insert(0, "\t");
                     code += "\n#if wxCHECK_VERSION(3, 1, 6)\n\t\t";
@@ -154,7 +154,7 @@ void StaticBitmapGenerator::GenCppConstruction(Code& gen_code)
         }
         else
         {
-            if (Project.as_string(prop_wxWidgets_version) != "3.1")
+            if (!Project.is_wxWidgets31())
             {
                 code += "wxBitmapBundle::FromBitmaps(bitmaps)";
             }

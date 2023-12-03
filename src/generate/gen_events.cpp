@@ -518,7 +518,7 @@ void BaseCodeGenerator::GenHdrEvents()
             }
             if ((event->get_name() == "wxEVT_WEBVIEW_FULL_SCREEN_CHANGED" ||
                  event->get_name() == "wxEVT_WEBVIEW_SCRIPT_MESSAGE_RECEIVED") &&
-                Project.as_string(prop_wxWidgets_version) == "3.1")
+                Project.is_wxWidgets31())
             {
                 code << "\n#if wxCHECK_VERSION(3, 1, 5)\n";
                 if (m_form_node->as_bool(prop_use_derived_class))

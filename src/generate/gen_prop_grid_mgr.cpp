@@ -138,7 +138,7 @@ bool PropertyGridPageGenerator::ConstructionCode(Code& code)
         code.Comma();
         if (is_bitmaps_list)
         {
-            if (code.is_cpp() && Project.as_string(prop_wxWidgets_version) == "3.1")
+            if (code.is_cpp() && Project.is_wxWidgets31())
             {
                 code.Eol() += "#if wxCHECK_VERSION(3, 1, 6)\n\t";
             }
@@ -146,7 +146,7 @@ bool PropertyGridPageGenerator::ConstructionCode(Code& code)
                 code += "wxBitmapBundle::FromBitmaps(bitmaps)";
             else
                 code += "wx.BitmapBundle.FromBitmaps(bitmaps)";
-            if (code.is_cpp() && Project.as_string(prop_wxWidgets_version) == "3.1")
+            if (code.is_cpp() && Project.is_wxWidgets31())
             {
                 code.Eol().Str("#else").Eol();
                 tt_string bundle_code;

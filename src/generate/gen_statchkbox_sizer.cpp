@@ -144,7 +144,7 @@ bool StaticCheckboxBoxSizerGenerator::ConstructionCode(Code& code)
             parent_name += "()";
         code.NodeName() << " = new wxStaticBoxSizer(new wxStaticBox(" << parent_name << ", wxID_ANY";
         code.Comma();
-        if (Project.as_string(prop_wxWidgets_version) == "3.1")
+        if (Project.is_wxWidgets31())
         {
             code.Eol().Str("#if wxCHECK_VERSION(3, 1, 1)").Eol().Tab();
             code.as_string(prop_checkbox_var_name) << "),";

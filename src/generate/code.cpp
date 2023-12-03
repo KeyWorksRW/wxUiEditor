@@ -2075,7 +2075,7 @@ Code& Code::GenFont(GenEnum::PropName prop_name, tt_string_view font_function)
 
         if (point_size != static_cast<int>(point_size))  // is there a fractional value?
         {
-            if (is_cpp() && Project.as_string(prop_wxWidgets_version) == "3.1")
+            if (is_cpp() && Project.is_wxWidgets31())
             {
                 Eol().Str("#if !wxCHECK_VERSION(3, 1, 2)").Eol().Tab();
 
@@ -2092,7 +2092,7 @@ Code& Code::GenFont(GenEnum::PropName prop_name, tt_string_view font_function)
             }
             else
             {
-                if (is_cpp() && Project.as_string(prop_wxWidgets_version) == "3.1")
+                if (is_cpp() && Project.is_wxWidgets31())
                 {
                     Eol().Str("#else // fractional point sizes are new to wxWidgets 3.1.2").Eol().Tab();
                 }
@@ -2106,7 +2106,7 @@ Code& Code::GenFont(GenEnum::PropName prop_name, tt_string_view font_function)
 
                 // REVIEW: [Randalphwa - 12-30-2022] We don't output anything if std::to_chars() results in an error
 
-                if (is_cpp() && Project.as_string(prop_wxWidgets_version) == "3.1")
+                if (is_cpp() && Project.is_wxWidgets31())
                 {
                     Eol().Str("#endif");
                 }

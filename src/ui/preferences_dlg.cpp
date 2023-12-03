@@ -294,7 +294,6 @@ void PreferencesDlg::OnOK(wxCommandEvent& WXUNUSED(event))
     UserPrefs.set_CppWidgetsVersion(m_choice_cpp_version->GetStringSelection().ToStdString());
     if (is_cpp_preferences_changed)
     {
-        // Project.getProjectNode()->set_value(prop_wxWidgets_version, UserPrefs.get_CppWidgetsVersion());
         Project.getProjectNode()->modifyProperty(prop_wxWidgets_version, UserPrefs.get_CppWidgetsVersion());
     }
 

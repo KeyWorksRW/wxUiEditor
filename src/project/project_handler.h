@@ -108,6 +108,8 @@ public:
 
     bool isUiAllowed() const { return m_allow_ui; }
 
+    bool is_wxWidgets31() const { return m_project_node->as_string(prop_wxWidgets_version) == "3.1"; }
+
     size_t getChildCount() const { return m_project_node->getChildCount(); }
 
     // Returns a GEN_LANG_... enum value. Specify a node if you want to check for a folder
@@ -174,6 +176,22 @@ public:
     // This will assume any ImagesList class will be the first child of the project, and will
     // either return that Node* or nullptr if no ImagesList class is found.
     Node* getImagesForm();
+
+    // Sets project property value only if the property exists, returns false if it doesn't
+    // exist.
+    template <typename T>
+    bool set_value(PropName name, T value)
+    {
+        if (auto prop = m_project_node->getPropPtr(name); prop)
+        {
+            prop->set_value(value);
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
 
 private:
     NodeSharedPtr m_project_node { nullptr };

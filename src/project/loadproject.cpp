@@ -146,7 +146,7 @@ bool ProjectHandler::LoadProject(const tt_string& file, bool allow_ui)
     // This should NOT be necessary if all alignment in the project file has been set
     // correctly. However, it it has not been set correctly, this will correct it and issue a
     // MSG_WARNING about what got fixed.
-    FinalImportCheck(project.get());
+    RecursiveNodeCheck(project.get());
 #endif
     // Calling this will also initialize the ImageHandler class
     Project.Initialize(project);
@@ -1493,7 +1493,10 @@ void ProjectHandler::FinalImportCheck(Node* parent, bool set_line_length)
         parent->set_value(prop_cpp_line_length, UserPrefs.get_CppLineLength());
         parent->set_value(prop_python_line_length, UserPrefs.get_PythonLineLength());
         parent->set_value(prop_ruby_line_length, UserPrefs.get_RubyLineLength());
-        parent->set_value(prop_wxWidgets_version, UserPrefs.get_CppWidgetsVersion());
+        if (!parent->hasValue(prop_wxWidgets_version))
+        {
+            parent->set_value(prop_wxWidgets_version, "3.1");
+        }
     }
 
     RecursiveNodeCheck(parent);

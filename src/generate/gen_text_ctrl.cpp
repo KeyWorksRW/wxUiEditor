@@ -178,7 +178,7 @@ bool TextCtrlGenerator::SettingsCode(Code& code)
     {
         if (code.is_cpp())
         {
-            if (Project.as_string(prop_wxWidgets_version) == "3.1")
+            if (Project.is_wxWidgets31())
             {
                 code.Eol(eol_if_needed) << "#if wxCHECK_VERSION(3, 1, 6)";
                 code.Eol().Tab().NodeName() << "->EnableProofCheck(wxTextProofOptions::Default()";

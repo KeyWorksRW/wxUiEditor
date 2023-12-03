@@ -113,7 +113,7 @@ bool MenuItemGenerator::SettingsCode(Code& code)
             // auto_indent = indent::auto_keep_whitespace;
             code.OpenBrace().Add("wxAcceleratorEntry entry;").Eol();
 
-            bool is_old_widgets = (Project.as_string(prop_wxWidgets_version) == "3.1");
+            bool is_old_widgets = (Project.is_wxWidgets31());
             if (is_old_widgets)
             {
                 code += "#if wxCHECK_VERSION(3, 1, 6)\n";
@@ -167,7 +167,7 @@ bool MenuItemGenerator::SettingsCode(Code& code)
             if (!is_vector_code)
             {
                 code.NodeName().Function("SetBitmap(");
-                if (Project.as_string(prop_wxWidgets_version) != "3.1")
+                if (!Project.is_wxWidgets31())
                 {
                     GenerateBundleCode(description, code.GetCode());
                     code.EndFunction();
@@ -186,7 +186,7 @@ bool MenuItemGenerator::SettingsCode(Code& code)
             else
             {
                 code.Tab().NodeName().Function("SetBitmap(");
-                if (Project.as_string(prop_wxWidgets_version) != "3.1")
+                if (!Project.is_wxWidgets31())
                 {
                     code += "wxBitmapBundle::FromBitmaps(bitmaps)";
                     code.UpdateBreakAt();
@@ -241,7 +241,7 @@ bool MenuItemGenerator::SettingsCode(Code& code)
             if (!is_vector_code)
             {
                 code.NodeName().Function("SetBitmap(");
-                if (Project.as_string(prop_wxWidgets_version) != "3.1")
+                if (!Project.is_wxWidgets31())
                 {
                     GenerateBundleCode(description, code.GetCode());
                     code.UpdateBreakAt();
@@ -261,7 +261,7 @@ bool MenuItemGenerator::SettingsCode(Code& code)
             else
             {
                 code.Tab().NodeName().Function("SetBitmap(");
-                if (Project.as_string(prop_wxWidgets_version) != "3.1")
+                if (!Project.is_wxWidgets31())
                 {
                     code += "wxBitmapBundle::FromBitmaps(bitmaps)";
                     code.UpdateBreakAt();

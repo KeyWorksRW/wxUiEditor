@@ -149,7 +149,7 @@ bool WizardFormGenerator::SettingsCode(Code& code)
         {
             code.Eol(eol_if_needed).Str("if not self.Create(parent, id, title").Comma();
         }
-        if (code.is_cpp() && Project.as_string(prop_wxWidgets_version) == "3.1")
+        if (code.is_cpp() && Project.is_wxWidgets31())
         {
             code.Eol() += "#if wxCHECK_VERSION(3, 1, 6)\n\t\t";
         }
@@ -177,7 +177,7 @@ bool WizardFormGenerator::SettingsCode(Code& code)
         if (code.is_cpp())
         {
             code.Comma().Str("pos").Comma().Str("style))");
-            if (Project.as_string(prop_wxWidgets_version) == "3.1")
+            if (Project.is_wxWidgets31())
             {
                 code.Eol() += "#else\n\t\t";
                 code << "wxBitmap(" << GenerateBitmapCode(code.node()->as_string(prop_bitmap)) << ")";
@@ -498,14 +498,14 @@ bool WizardPageGenerator::ConstructionCode(Code& code)
         {
             if (code.is_cpp())
             {
-                if (Project.as_string(prop_wxWidgets_version) == "3.1")
+                if (Project.is_wxWidgets31())
                 {
                     code.Eol() += "#if wxCHECK_VERSION(3, 1, 6)\n\t";
                 }
 
                 code += "wxBitmapBundle::FromBitmaps(bitmaps)";
 
-                if (Project.as_string(prop_wxWidgets_version) == "3.1")
+                if (Project.is_wxWidgets31())
                 {
                     code += "\n#else\n\t";
                     code += GenerateBitmapCode(code.node()->as_string(prop_bitmap));
@@ -519,7 +519,7 @@ bool WizardPageGenerator::ConstructionCode(Code& code)
         {
             if (code.is_cpp())
             {
-                if (Project.as_string(prop_wxWidgets_version) == "3.1")
+                if (Project.is_wxWidgets31())
                 {
                     code.Eol() += "#if wxCHECK_VERSION(3, 1, 6)\n\t";
                     tt_string bundle_code;

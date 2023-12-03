@@ -297,7 +297,7 @@ bool GenBtnBimapCode(Node* node, tt_string& code, bool is_single)
     if (code.size())
         code << '\n';
 
-    bool is_old_widgets = (Project.as_string(prop_wxWidgets_version) == "3.1");
+    bool is_old_widgets = (Project.is_wxWidgets31());
     if (is_old_widgets)
     {
         if (code.size() && !(code.back() == '\n'))
@@ -722,7 +722,7 @@ bool GenerateVectorCode(const tt_string& description, tt_string& code)
     // If we get here, then we need to first put the bitmaps into a wxVector in order for wxBitmapBundle to load them.
 
     code << "{\n";
-    if (Project.as_string(prop_wxWidgets_version) == "3.1")
+    if (Project.is_wxWidgets31())
     {
         code << "#if wxCHECK_VERSION(3, 1, 6)\n";
     }
@@ -752,7 +752,7 @@ bool GenerateVectorCode(const tt_string& description, tt_string& code)
             code << "\tbitmaps.push_back(wxueImage(" << name << ", sizeof(" << name << ")));\n";
         }
     }
-    if (Project.as_string(prop_wxWidgets_version) == "3.1")
+    if (Project.is_wxWidgets31())
     {
         code << "#endif\n";
     }
@@ -1049,7 +1049,7 @@ tt_string GenerateIconCode(const tt_string& description)
         return code;
     }
 
-    if (Project.as_string(prop_wxWidgets_version) == "3.1" && !parts[IndexType].is_sameas("SVG"))
+    if (Project.is_wxWidgets31() && !parts[IndexType].is_sameas("SVG"))
     {
         code << "#if wxCHECK_VERSION(3, 1, 6)\n";
     }
@@ -1139,7 +1139,7 @@ tt_string GenerateIconCode(const tt_string& description)
         }
     }
 
-    if (Project.as_string(prop_wxWidgets_version) == "3.1")
+    if (Project.is_wxWidgets31())
     {
         code << "#else\n";
         auto image_code = GenerateBitmapCode(description);
@@ -1227,14 +1227,14 @@ void GenToolCode(Code& code)
         }
         else
         {
-            if (code.is_cpp() && Project.as_string(prop_wxWidgets_version) == "3.1")
+            if (code.is_cpp() && Project.is_wxWidgets31())
             {
                 code.Eol() += "#if wxCHECK_VERSION(3, 1, 6)\n\t";
             }
 
             GenerateBundleParameter(code, parts);
 
-            if (code.is_cpp() && Project.as_string(prop_wxWidgets_version) == "3.1")
+            if (code.is_cpp() && Project.is_wxWidgets31())
             {
                 code.Eol() += "#else\n\t";
                 code << "wxBitmap(" << GenerateBitmapCode(node->as_string(prop_bitmap)) << ")";
@@ -1343,7 +1343,7 @@ bool BitmapList(Code& code, const GenEnum::PropName prop)
     }
 
     //////////////// C++ code starts here ////////////////
-    if (Project.as_string(prop_wxWidgets_version) == "3.1")
+    if (Project.is_wxWidgets31())
     {
         code.Add("#if wxCHECK_VERSION(3, 1, 6)");
     }

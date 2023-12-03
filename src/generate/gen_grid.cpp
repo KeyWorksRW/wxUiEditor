@@ -182,7 +182,7 @@ bool GridGenerator::SettingsCode(Code& code)
     {
         if (code.isPropValue(prop_cell_fit, "clip"))
         {
-            if (code.is_cpp() && Project.as_string(prop_wxWidgets_version) == "3.1")
+            if (code.is_cpp() && Project.is_wxWidgets31())
             {
                 code.Eol().Str("#if wxCHECK_VERSION(3, 1, 4)");
                 code.Eol().Tab().NodeName().Function("SetDefaultCellFitMode(");
@@ -197,7 +197,7 @@ bool GridGenerator::SettingsCode(Code& code)
         }
         else if (code.isPropValue(prop_cell_fit, "ellipsize"))
         {
-            if (code.is_cpp() && Project.as_string(prop_wxWidgets_version) == "3.1")
+            if (code.is_cpp() && Project.is_wxWidgets31())
             {
                 code.Eol().Str("#if wxCHECK_VERSION(3, 1, 4)");
                 code.Eol().Tab().NodeName().Function("SetDefaultCellFitMode(");
@@ -214,11 +214,11 @@ bool GridGenerator::SettingsCode(Code& code)
 
     if (code.IntValue(prop_selection_mode) != 0)
     {
-        if (code.is_cpp() && Project.as_string(prop_wxWidgets_version) == "3.1")
+        if (code.is_cpp() && Project.is_wxWidgets31())
         {
             if (code.isPropValue(prop_selection_mode, "wxGridSelectNone"))
             {
-                if (code.is_cpp() && Project.as_string(prop_wxWidgets_version) == "3.1")
+                if (code.is_cpp() && Project.is_wxWidgets31())
                 {
                     code.Eol().Str("#if wxCHECK_VERSION(3, 1, 5)");
                     code.Eol().Tab().NodeName().Function("SetSelectionMode(");

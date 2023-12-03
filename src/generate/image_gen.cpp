@@ -530,7 +530,7 @@ void AddPythonImageName(Code& code, const EmbeddedImage* embed)
 
 static void GenerateSVGBundle(Code& code, const tt_string_vector& parts, bool get_bitmap)
 {
-    if (code.is_cpp() && Project.as_string(prop_wxWidgets_version) == "3.1")
+    if (code.is_cpp() && Project.is_wxWidgets31())
     {
         code.Eol().Tab().Str("wxNullBitmap /* SVG images require wxWidgets 3.2 or higher */").Eol().Tab();
         return;
@@ -641,7 +641,7 @@ static void GenerateSVGBundle(Code& code, const tt_string_vector& parts, bool ge
 static void GenerateARTBundle(Code& code, const tt_string_vector& parts, bool get_bitmap)
 {
     code.Add("wxArtProvider");
-    if (get_bitmap || (code.is_cpp() && Project.as_string(prop_wxWidgets_version) == "3.1"))
+    if (get_bitmap || (code.is_cpp() && Project.is_wxWidgets31()))
     {
         code.ClassMethod("GetBitmap(");
     }
@@ -929,7 +929,7 @@ void GenerateBundleParameter(Code& code, const tt_string_vector& parts, bool get
 
     if (parts[IndexType].starts_with("SVG"))
     {
-        if (code.is_cpp() && Project.as_string(prop_wxWidgets_version) == "3.1")
+        if (code.is_cpp() && Project.is_wxWidgets31())
         {
             code += "wxNullBitmap";
         }

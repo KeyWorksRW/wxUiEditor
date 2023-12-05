@@ -6,6 +6,8 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include <array>
+#include <utility>
+#include <vector>
 
 #include <wx/animate.h>   // wxAnimation and wxAnimationCtrl
 #include <wx/artprov.h>   // wxArtProvider class
@@ -22,6 +24,20 @@
 #include "utils.h"            // Miscellaneous utilities
 
 #include "pugixml.hpp"  // xml parser
+
+// clang-format off
+
+std::vector<std::pair<std::string_view, std::string_view>> map_bundle_extensions = {
+    { "@1_25x", "@1_5x" },
+    { "@1_5x", "@1_75x" },
+    { "@1_75x", "@2x" },
+
+    { "_1_25x", "_1_5x" },
+    { "_1_5x", "_1_75x" },
+    { "_1_75x", "_2x" },
+};
+
+// clang-format on
 
 ImageHandler& ProjectImages = ImageHandler::getInstance();
 
@@ -647,11 +663,12 @@ bool ImageHandler::AddNewEmbeddedBundle(const tt_string_vector& parts, tt_string
 
             _16x16, _24x24, _32x32
             _24x24, _36x36, _48x48
-            any, _1_5x, _2x
+            any, _1_5x, _1_75x, _2x
+            any, @1_5x, @1_75, x@2x
 
     */
 
-    if (auto pos = path.find_last_of('.'); tt::is_found(pos))
+    if (tt_string extension = path.extension(); extension.size())
     {
         if (path.contains("_16x16."))
         {
@@ -693,17 +710,58 @@ bool ImageHandler::AddNewEmbeddedBundle(const tt_string_vector& parts, tt_string
         }
         else
         {
-            tt_string additional_path;
-            for (auto& iter: suffixes)
+            tt_string additional_path = path;
+            // size_t file_count = 1;
+            auto map_pos = map_bundle_extensions.begin();
+            for (; map_pos != map_bundle_extensions.end(); ++map_pos)
             {
-                additional_path = path;
-                additional_path.insert(pos, iter);
+                if (path.contains(map_pos->first))
+                    break;
+            }
+
+            // This will be the most common case where the first filename contains no suffix.
+            if (map_pos == map_bundle_extensions.end())
+            {
+                tt_string file_extension = additional_path.extension();
+                additional_path.remove_extension();
+                auto erase_pos = additional_path.size();
+                for (map_pos = map_bundle_extensions.begin(); map_pos != map_bundle_extensions.end(); ++map_pos)
+                {
+                    if (erase_pos < additional_path.size())
+                        additional_path.erase(erase_pos);
+                    additional_path << map_pos->first << file_extension;
+                    if (additional_path.file_exists())
+                    {
+                        if (auto added = AddEmbeddedBundleImage(additional_path, form); added)
+                        {
+                            img_bundle.lst_filenames.emplace_back(additional_path);
+                            // ++file_count;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            bool is_at_suffix = (map_pos != map_bundle_extensions.end() && map_pos->first.starts_with('@'));
+            // while (file_count < 2 && map_pos != map_bundle_extensions.end())
+            while (map_pos != map_bundle_extensions.end())
+            {
+                // If we have a map position, then we have found a suffix, so we now try to find the next matching filename.
+                additional_path.Replace(map_pos->first, map_pos->second);
                 if (additional_path.file_exists())
                 {
                     if (auto added = AddEmbeddedBundleImage(additional_path, form); added)
                     {
                         img_bundle.lst_filenames.emplace_back(additional_path);
+                        // ++file_count;
                     }
+                }
+
+                ++map_pos;
+                if (is_at_suffix && map_pos != map_bundle_extensions.end() && !map_pos->first.starts_with('@'))
+                {
+                    // We have run out of '@' suffixes to look for
+                    break;
                 }
             }
         }
@@ -763,8 +821,8 @@ bool ImageHandler::AddEmbeddedBundleImage(tt_string path, Node* form)
                 embed->form = form;
                 embed->size = image.GetSize();
 
-                // If possible, convert the file to a PNG -- even if the original file is a PNG, since we might end up with
-                // better compression.
+                // If possible, convert the file to a PNG -- even if the original file is a PNG, since we might end up
+                // with better compression.
 
                 if (isConvertibleMime(handler->GetMimeType()))
                 {

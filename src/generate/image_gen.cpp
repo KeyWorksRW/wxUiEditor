@@ -232,10 +232,14 @@ wxImage wxueImage(const unsigned char* data, size_t size_data)
 
 void BaseCodeGenerator::WriteImagePostHeader()
 {
+    auto images_form = Project.getImagesForm();
+    if (!images_form)
+        return;
+
     bool is_namespace_written = false;
     for (auto iter_array: m_embedded_images)
     {
-        if (iter_array->form != m_form_node)
+        if (iter_array->form != images_form)
             continue;
 
         if (!is_namespace_written)
@@ -260,7 +264,15 @@ void BaseCodeGenerator::WriteImagePostHeader()
             m_header->Indent();
             if (!m_form_node->isType(type_images))
             {
-                m_header->writeLine("// Images declared in this class module:");
+                tt_string comment("// Images defined in ");
+                comment << images_form->as_string(prop_base_file).filename();
+                tt_string source_ext(".cpp");
+                if (auto& extProp = Project.as_string(prop_source_ext); extProp.size())
+                {
+                    source_ext = extProp;
+                }
+                comment += source_ext;
+                m_header->writeLine(comment);
                 m_header->writeLine();
             }
             is_namespace_written = true;
@@ -272,6 +284,7 @@ void BaseCodeGenerator::WriteImagePostHeader()
         m_header->writeLine(tt_string("extern const unsigned char ")
                             << iter_array->array_name << '[' << (iter_array->array_size & 0xFFFFFFFF) << "];");
     }
+
     if (is_namespace_written)
     {
         m_header->Unindent();

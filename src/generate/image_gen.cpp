@@ -72,9 +72,12 @@ void BaseCodeGenerator::WriteImageConstruction(Code& code)
     // -12 to account for 8 indent + max 3 chars for number + comma
     size_t cpp_line_length = Project.as_size_t(prop_cpp_line_length) - 12;
 
+    auto images_form = Project.getImagesForm();
+
     for (auto iter_array: m_embedded_images)
     {
-        if (iter_array->form != m_form_node && code.is_cpp())
+        // The images form contains global images, so no need to generate code for them here.
+        if (iter_array->form == images_form)
             continue;
 
         if (code.is_cpp())

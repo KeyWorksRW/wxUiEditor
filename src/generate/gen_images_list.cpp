@@ -104,39 +104,28 @@ wxObject* ImagesGenerator::CreateMockup(Node* /* node */, wxObject* wxobject)
 
 // These strings are also in gen_base.cpp
 
-inline constexpr const auto txt_wxueImageFunction = R"===(
-// Convert a data array into a wxImage
-wxImage wxueImage(const unsigned char* data, size_t size_data)
-{
-    wxMemoryInputStream strm(data, size_data);
-    wxImage image;
-    image.LoadFile(strm);
-    return image;
-};
+inline constexpr const auto txt_get_image_function = R"===(
+    // Convert a data array into a wxImage
+    wxImage get_image(const unsigned char* data, size_t size_data)
+    {
+        wxMemoryInputStream strm(data, size_data);
+        wxImage image;
+        image.LoadFile(strm);
+        return image;
+    };
 )===";
 
-inline constexpr const auto txt_GetBundleFromSVG = R"===(
-// Convert compressed SVG string into a wxBitmapBundle
-wxBitmapBundle wxueBundleSVG(const unsigned char* data,
-    size_t size_data, size_t size_svg, wxSize def_size)
-{
-    auto str = std::make_unique<char[]>(size_svg);
-    wxMemoryInputStream stream_in(data, size_data);
-    wxZlibInputStream zlib_strm(stream_in);
-    zlib_strm.Read(str.get(), size_svg);
-    return wxBitmapBundle::FromSVG(str.get(), def_size);
-};
-)===";
-
-inline constexpr const auto txt_GetAnimFromHdrFunction = R"===(
-// Convert a data array into a wxAnimation
-wxAnimation wxueAnimation(const unsigned char* data, size_t size_data)
-{
-    wxMemoryInputStream strm(data, size_data);
-    wxAnimation animation;
-    animation.Load(strm);
-    return animation;
-};
+inline constexpr const auto txt_get_bundle_svg_function = R"===(
+    // Convert compressed SVG string into a wxBitmapBundle
+    wxBitmapBundle get_bundle_svg(const unsigned char* data,
+        size_t size_data, size_t size_svg, wxSize def_size)
+    {
+        auto str = std::make_unique<char[]>(size_svg);
+        wxMemoryInputStream stream_in(data, size_data);
+        wxZlibInputStream zlib_strm(stream_in);
+        zlib_strm.Read(str.get(), size_svg);
+        return wxBitmapBundle::FromSVG(str.get(), def_size);
+    };
 )===";
 
 inline constexpr const auto txt_GetBundleFromBitmaps = R"===(
@@ -181,7 +170,15 @@ void BaseCodeGenerator::GenerateImagesForm()
 
             m_source->writeLine();
             m_source->writeLine("#include <memory>  // for std::make_unique", indent::none);
+        }
 
+        m_source->writeLine();
+        m_source->writeLine("namespace wxue_img\n{");
+        m_source->Indent();
+        m_source->SetLastLineBlank();
+
+        if (m_NeedSVGFunction || Project.getForm_BundleSVG() == m_form_node)
+        {
             if (is_old_widgets)
             {
                 m_source->writeLine();
@@ -194,7 +191,7 @@ void BaseCodeGenerator::GenerateImagesForm()
             }
 
             tt_string_vector function;
-            function.ReadString(txt_GetBundleFromSVG);
+            function.ReadString(txt_get_bundle_svg_function);
             for (auto& iter: function)
             {
                 m_source->writeLine(iter, indent::none);
@@ -204,7 +201,7 @@ void BaseCodeGenerator::GenerateImagesForm()
         if (m_NeedImageFunction || Project.getForm_Image() == m_form_node)
         {
             tt_string_vector function;
-            function.ReadString(txt_wxueImageFunction);
+            function.ReadString(txt_get_image_function);
             for (auto& iter: function)
             {
                 m_source->writeLine(iter, indent::none);
@@ -229,27 +226,6 @@ void BaseCodeGenerator::GenerateImagesForm()
             }
         }
 
-        if (m_NeedAnimationFunction || Project.getForm_Animation() == m_form_node)
-        {
-            tt_string_vector function;
-            function.ReadString(txt_GetAnimFromHdrFunction);
-            for (auto& iter: function)
-            {
-                m_source->writeLine(iter, indent::none);
-            }
-
-            m_source->writeLine();
-            if (is_old_widgets)
-            {
-                m_source->writeLine("#if wxCHECK_VERSION(3, 1, 6)", indent::none);
-            }
-        }
-
-        m_source->writeLine();
-        m_source->writeLine("namespace wxue_img\n{");
-        m_source->Indent();
-        m_source->SetLastLineBlank();
-
         if (m_NeedSVGFunction)
         {
             for (auto embed: m_embedded_images)
@@ -261,7 +237,7 @@ void BaseCodeGenerator::GenerateImagesForm()
                 m_source->writeLine(code);
                 m_source->writeLine("{");
                 m_source->Indent();
-                code = "return wxueBundleSVG(wxue_img::";
+                code = "return get_bundle_svg(";
                 code << embed->array_name << ", " << (embed->array_size & 0xFFFFFFFF) << ", ";
                 code << (embed->array_size >> (to_size_t) 32) << ", wxSize(width, height));";
                 m_source->writeLine(code);
@@ -299,7 +275,7 @@ void BaseCodeGenerator::GenerateImagesForm()
                     m_source->Indent();
                     if (bundle->lst_filenames.size() == 1)
                     {
-                        code = "return wxBitmapBundle::FromBitmap(wxBitmap(wxueImage(";
+                        code = "return wxBitmapBundle::FromBitmap(wxBitmap(get_image(";
                         code << embed->array_name << ", " << embed->array_size << ")));";
                         m_source->writeLine(code);
                     }
@@ -307,13 +283,13 @@ void BaseCodeGenerator::GenerateImagesForm()
                     {
                         m_source->writeLine("return wxueBundleBitmaps(");
                         m_source->Indent();
-                        code = "wxBitmap(wxueImage(";
+                        code = "wxBitmap(get_image(";
                         embed = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[0]);
                         code << embed->array_name << ", " << embed->array_size << ")),";
                         m_source->writeLine(code);
                         code.clear();
                         embed = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[1]);
-                        code << "wxBitmap(wxueImage(" << embed->array_name << ", " << embed->array_size << ")),";
+                        code << "wxBitmap(get_image(" << embed->array_name << ", " << embed->array_size << ")),";
                         m_source->writeLine(code);
                         code.clear();
                         if (bundle->lst_filenames.size() == 2)
@@ -323,7 +299,7 @@ void BaseCodeGenerator::GenerateImagesForm()
                         else
                         {
                             embed = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[2]);
-                            code = "wxBitmap(wxueImage(";
+                            code = "wxBitmap(get_image(";
                             code << embed->array_name << ", " << embed->array_size << ")));";
                         }
                         m_source->writeLine(code);
@@ -348,7 +324,7 @@ void BaseCodeGenerator::GenerateImagesForm()
                     m_source->writeLine(code);
                     m_source->writeLine("{");
                     m_source->Indent();
-                    code = "return wxueImage(";
+                    code = "return get_image(";
                     code << embed->array_name << ", " << embed->array_size << ");";
                     m_source->writeLine(code);
                     m_source->Unindent();
@@ -402,11 +378,6 @@ void BaseCodeGenerator::GenerateImagesForm()
 
     if (m_panel_type != CPP_PANEL)
     {
-        if (m_NeedAnimationFunction || Project.getForm_Animation() == m_form_node)
-        {
-            m_header->writeLine("#include <wx/animate.h>  // wxAnimation class", indent::none);
-        }
-
         if (m_NeedSVGFunction && is_old_widgets)
         {
             m_source->writeLine();
@@ -431,26 +402,22 @@ void BaseCodeGenerator::GenerateImagesForm()
         }
 
         m_header->writeLine();
-        if (m_NeedAnimationFunction || Project.getForm_Animation() == m_form_node)
-        {
-            m_header->writeLine("wxAnimation wxueAnimation(const unsigned char* data, size_t size_data);");
-        }
-        if (m_NeedSVGFunction || Project.getForm_BundleSVG() == m_form_node)
-        {
-            m_header->writeLine("wxBitmapBundle wxueBundleSVG(const unsigned char* data,\n\t"
-                                "size_t size_data, size_t size_svg, wxSize def_size);",
-                                indent::auto_keep_whitespace);
-        }
-        m_header->writeLine("wxImage wxueImage(const unsigned char* data, size_t size_data);");
-        m_header->writeLine();
         m_header->writeLine("namespace wxue_img\n{");
         m_header->Indent();
         m_header->SetLastLineBlank();
+        m_header->writeLine("wxImage get_image(const unsigned char* data, size_t size_data);");
+        if (m_NeedSVGFunction && !is_old_widgets)
+        {
+            m_header->writeLine("wxBitmapBundle get_bundle_svg(const unsigned char* data, size_t size_data, size_t "
+                                "size_svg, wxSize def_size);");
+        }
+        m_header->writeLine();
 
         if (m_NeedSVGFunction)
         {
             for (auto embed: m_embedded_images)
             {
+                // wxBITMAP_TYPE_INVALID is used to indicate an SVG file since wxWidgets doesn't define it.
                 if (embed->form != m_form_node || embed->type != wxBITMAP_TYPE_INVALID)
                     continue;
                 tt_string code("wxBitmapBundle bundle_");
@@ -471,12 +438,19 @@ void BaseCodeGenerator::GenerateImagesForm()
                 bundle && bundle->lst_filenames.size())
             {
                 auto embed = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[0]);
-                if (embed->type == wxBITMAP_TYPE_INVALID)
+                if (embed->type == wxBITMAP_TYPE_INVALID || embed->type == wxBITMAP_TYPE_ICO ||
+                    embed->type == wxBITMAP_TYPE_CUR || embed->type == wxBITMAP_TYPE_GIF || embed->type == wxBITMAP_TYPE_ANI)
                 {
-                    continue;  // This is an SVG image which we already handled
+                    // Don't generate bundle functions for image types that are probably being used for something else
+                    continue;
                 }
                 tt_string code("wxBitmapBundle bundle_");
                 code << embed->array_name << "();";
+                if (bundle->lst_filenames[0].size())
+                {
+                    code << "  // " << bundle->lst_filenames[0].filename();
+                }
+
                 m_header->writeLine(code);
             }
         }
@@ -510,12 +484,17 @@ void BaseCodeGenerator::GenerateImagesForm()
         if (iter_array->form != m_form_node)
             continue;
 
+        tt_string line("extern const unsigned char ");
+        line << iter_array->array_name << '[' << (iter_array->array_size & 0xFFFFFFFF) << "];";
+#if 0
+// REVIEW: [Randalphwa - 12-08-2023] All the bundle functions have the filename lists, so adding them here is redundant
+// since the function name will be used when compiling for wxWidgets 3.2 or later.
         if (iter_array->filename.size())
         {
-            m_header->writeLine(tt_string("// ") << iter_array->filename);
+            line << "  // " << iter_array->filename;
         }
-        m_header->writeLine(tt_string("extern const unsigned char ")
-                            << iter_array->array_name << '[' << (iter_array->array_size & 0xFFFFFFFF) << "];");
+#endif
+        m_header->writeLine(line);
     }
 
     m_header->Unindent();

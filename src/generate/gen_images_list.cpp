@@ -102,8 +102,6 @@ wxObject* ImagesGenerator::CreateMockup(Node* /* node */, wxObject* wxobject)
 
 // clang-format off
 
-// These strings are also in gen_base.cpp
-
 inline constexpr const auto txt_get_image_function = R"===(
     // Convert a data array into a wxImage
     wxImage get_image(const unsigned char* data, size_t size_data)
@@ -128,21 +126,6 @@ inline constexpr const auto txt_get_bundle_svg_function = R"===(
     };
 )===";
 
-inline constexpr const auto txt_GetBundleFromBitmaps = R"===(
-// Convert multiple bitmaps into a wxBitmapBundle
-wxBitmapBundle wxueBundleBitmaps(const wxBitmap& bmp1, const wxBitmap& bmp2, const wxBitmap& bmp3)
-{
-    wxVector<wxBitmap> bitmaps;
-    if (bmp1.IsOk())
-        bitmaps.push_back(bmp1);
-    if (bmp2.IsOk())
-        bitmaps.push_back(bmp2);
-    if (bmp3.IsOk())
-        bitmaps.push_back(bmp3);
-    return wxBitmapBundle::FromBitmaps(bitmaps);
-};
-)===";
-
 // clang-format on
 
 void BaseCodeGenerator::GenerateImagesForm()
@@ -151,11 +134,7 @@ void BaseCodeGenerator::GenerateImagesForm()
 
     if (m_embedded_images.empty() || !m_form_node->getChildCount())
     {
-        if (Project.getForm_BundleSVG() != m_form_node && Project.getForm_Image() != m_form_node &&
-            Project.getForm_BundleBitmaps() != m_form_node && Project.getForm_Animation() != m_form_node)
-        {
-            return;
-        }
+        return;
     }
 
     bool is_old_widgets = (Project.is_wxWidgets31());
@@ -177,7 +156,7 @@ void BaseCodeGenerator::GenerateImagesForm()
         m_source->Indent();
         m_source->SetLastLineBlank();
 
-        if (m_NeedSVGFunction || Project.getForm_BundleSVG() == m_form_node)
+        if (m_NeedSVGFunction)
         {
             if (is_old_widgets)
             {
@@ -211,13 +190,6 @@ void BaseCodeGenerator::GenerateImagesForm()
             if (is_old_widgets)
             {
                 m_source->writeLine("#if wxCHECK_VERSION(3, 1, 6)", indent::none);
-            }
-
-            function.clear();
-            function.ReadString(txt_GetBundleFromBitmaps);
-            for (auto& iter: function)
-            {
-                m_source->writeLine(iter, indent::none);
             }
 
             if (is_old_widgets)
@@ -263,9 +235,16 @@ void BaseCodeGenerator::GenerateImagesForm()
                     bundle && bundle->lst_filenames.size())
                 {
                     auto embed = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[0]);
-                    if (embed->type == wxBITMAP_TYPE_INVALID)
+                    if (embed->type == wxBITMAP_TYPE_INVALID || embed->type == wxBITMAP_TYPE_ICO ||
+                        embed->type == wxBITMAP_TYPE_CUR || embed->type == wxBITMAP_TYPE_GIF ||
+                        embed->type == wxBITMAP_TYPE_ANI)
                     {
-                        continue;  // This is an SVG image which we already handled
+                        // Ignore types that can't be placed into a bundle. Technically, a .gif
+                        // file could be added to a bundle, but use of .git instead of .png
+                        // would be highly unusual. A more common scenario is that any .git
+                        // file is being used for an animation control, which doesn't use a
+                        // bundle.
+                        continue;
                     }
                     m_source->writeLine();
                     tt_string code("wxBitmapBundle bundle_");
@@ -281,29 +260,21 @@ void BaseCodeGenerator::GenerateImagesForm()
                     }
                     else
                     {
-                        m_source->writeLine("return wxueBundleBitmaps(");
-                        m_source->Indent();
-                        code = "wxBitmap(get_image(";
-                        embed = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[0]);
-                        code << embed->array_name << ", " << embed->array_size << ")),";
-                        m_source->writeLine(code);
-                        code.clear();
-                        embed = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[1]);
-                        code << "wxBitmap(get_image(" << embed->array_name << ", " << embed->array_size << ")),";
-                        m_source->writeLine(code);
-                        code.clear();
-                        if (bundle->lst_filenames.size() == 2)
+                        code = "wxVector<wxBitmap> bitmaps;\n";
+                        for (auto& iter: bundle->lst_filenames)
                         {
-                            code << "wxNullBitmap);";
+                            // tt_string name(iter.filename());
+                            // name.remove_extension();
+                            // name.Replace(".", "_", true);  // fix wxFormBuilder header files
+                            embed = ProjectImages.GetEmbeddedImage(iter);
+                            ASSERT_MSG(embed, tt_string("Unable to locate embedded image for ") << iter);
+                            if (embed)
+                            {
+                                code << "\t\tbitmaps.push_back(get_image(" << embed->array_name << ", sizeof(" << embed->array_name << ")));\n";
+                            }
                         }
-                        else
-                        {
-                            embed = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[2]);
-                            code = "wxBitmap(get_image(";
-                            code << embed->array_name << ", " << embed->array_size << ")));";
-                        }
+                        code += "return wxBitmapBundle::FromBitmaps(bitmaps);";
                         m_source->writeLine(code);
-                        m_source->Unindent();  // end indented parameters
                     }
                     m_source->Unindent();  // end function block
                     m_source->writeLine("}");

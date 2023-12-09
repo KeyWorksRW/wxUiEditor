@@ -1369,6 +1369,25 @@ tt_string ImageHandler::GetBundleFuncName(const tt_string_vector& parts)
     return name;
 }
 
+tt_string ImageHandler::GetBundleFuncName(const EmbeddedImage* embed, wxSize svg_size)
+{
+    tt_string name;
+    if (!embed || embed->form != Project.getImagesForm())
+    {
+        return name;
+    }
+    if (embed->type == wxBITMAP_TYPE_INVALID)
+    {
+        name << "wxue_img::bundle_" << embed->array_name << "(";
+        name << svg_size.x << ", " << svg_size.y << ")";
+    }
+    else
+    {
+        name << "wxue_img::bundle_" << embed->array_name << "()";
+    }
+    return name;
+}
+
 std::optional<tt_string> ImageHandler::FileNameToVarName(tt_string_view filename, size_t max_length)
 {
     ASSERT(max_length > sizeof("_name_truncated"))

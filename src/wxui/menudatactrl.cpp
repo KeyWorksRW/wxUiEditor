@@ -16,13 +16,6 @@ using namespace GenEnum;
 
 #include "menudatactrl.h"
 
-namespace wxue_img
-{
-    extern const unsigned char dataview_ctrl_png[231];
-    extern const unsigned char dataviewlist_ctrl_png[685];
-    extern const unsigned char dataviewtree_ctrl_png[238];
-}
-
 MenuDataCtrl::MenuDataCtrl() : wxMenu()
 {
     if (!wxImage::FindHandler(wxBITMAP_TYPE_PNG))

@@ -18,11 +18,6 @@
 
 #include "msgframe_base.h"
 
-namespace wxue_img
-{
-    extern const unsigned char hide_png[242];
-}
-
 bool MsgFrameBase::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     const wxPoint& pos, const wxSize& size, long style, const wxString &name)
 {
@@ -47,7 +42,6 @@ bool MsgFrameBase::Create(wxWindow* parent, wxWindowID id, const wxString& title
     menu_file->Append(menu_item_clear);
     auto* menu_item_hide = new wxMenuItem(menu_file, id_hide, "&Hide");
     menu_item_hide->SetBitmap(wxue_img::bundle_hide_png());
-
     menu_file->Append(menu_item_hide);
     menubar->Append(menu_file, "&File");
 

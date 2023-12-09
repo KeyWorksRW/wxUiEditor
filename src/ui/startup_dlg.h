@@ -18,6 +18,12 @@
 #include <wx/sizer.h>
 #include <wx/stattext.h>
 
+namespace wxue_img
+{
+    // new-project.svg
+    extern const unsigned char new_project_svg[921];
+}
+
 class StartupDlg : public wxDialog
 {
 public:
@@ -56,8 +62,8 @@ private:
 // Code below this comment block will be preserved
 // if the code for this class is re-generated.
 //
-    // clang-format on
-    // ***********************************************
+// clang-format on
+// ***********************************************
 
 public:
     enum : size_t

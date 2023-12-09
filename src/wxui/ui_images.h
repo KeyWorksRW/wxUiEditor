@@ -11,75 +11,124 @@
 
 #include <wx/gdicmn.h>
 
-#include <wx/animate.h>  // wxAnimation class
 #include <wx/bmpbndl.h>
-
-wxAnimation wxueAnimation(const unsigned char* data, size_t size_data);
-wxBitmapBundle wxueBundleSVG(const unsigned char* data,
-    size_t size_data, size_t size_svg, wxSize def_size);
-wxImage wxueImage(const unsigned char* data, size_t size_data);
 
 namespace wxue_img
 {
+    wxImage get_image(const unsigned char* data, size_t size_data);
+
+    wxBitmapBundle bundle_auitoolbar_png();  // auitoolbar.png
+    wxBitmapBundle bundle_bmp_combo_box_png();  // bmp_combo_box.png
+    wxBitmapBundle bundle_check3state_png();  // check3state.png
+    wxBitmapBundle bundle_close_btn_png();  // close_btn.png
     wxBitmapBundle bundle_cpp_logo_svg(int width, int height);
+    wxBitmapBundle bundle_dataview_ctrl_png();  // dataview_ctrl.png
+    wxBitmapBundle bundle_dataviewlist_ctrl_png();  // dataviewlist_ctrl.png
+    wxBitmapBundle bundle_dataviewtree_ctrl_png();  // dataviewtree_ctrl.png
+    wxBitmapBundle bundle_debug_16_png();  // debug_16.png
+    wxBitmapBundle bundle_debug_32_png();  // debug_32.png
+    wxBitmapBundle bundle_default_png();  // default.png
+    wxBitmapBundle bundle_empty_png();  // empty.png
+    wxBitmapBundle bundle_folder_png();  // folder.png
+    wxBitmapBundle bundle_hide_png();  // hide.png
     wxBitmapBundle bundle_import_svg(int width, int height);
+    wxBitmapBundle bundle_logo16_png();  // logo16.png
+    wxBitmapBundle bundle_logo32_png();  // logo32.png
+    wxBitmapBundle bundle_logo64_png();  // logo64.png
+    wxBitmapBundle bundle_project_png();  // project.png
     wxBitmapBundle bundle_python_logo_only_svg(int width, int height);
     wxBitmapBundle bundle_redo_svg(int width, int height);
+    wxBitmapBundle bundle_ribbon_bar_png();  // ribbon_bar.png
+    wxBitmapBundle bundle_ribbon_buttonbar_png();  // ribbon_buttonbar.png
+    wxBitmapBundle bundle_ribbon_gallery_png();  // ribbon_gallery.png
+    wxBitmapBundle bundle_scrollbar_png();  // scrollbar.png
+    wxBitmapBundle bundle_slider_png();  // slider.png
+    wxBitmapBundle bundle_spin_ctrl_png();  // spin_ctrl.png
+    wxBitmapBundle bundle_spin_ctrl_double_png();  // spin_ctrl_double.png
+    wxBitmapBundle bundle_spinbtn_png();  // spinbtn.png
+    wxBitmapBundle bundle_stddialogbuttonsizer_png();  // stddialogbuttonsizer.png
+    wxBitmapBundle bundle_title_close_png();  // title_close.png
+    wxBitmapBundle bundle_toggle_button_png();  // toggle_button.png
+    wxBitmapBundle bundle_tool_png();  // tool.png
+    wxBitmapBundle bundle_toolStretchable_png();  // toolStretchable.png
+    wxBitmapBundle bundle_tool_dropdown_png();  // tool_dropdown.png
+    wxBitmapBundle bundle_toolseparator_png();  // toolseparator.png
+    wxBitmapBundle bundle_toolspacer_png();  // toolspacer.png
     wxBitmapBundle bundle_undo_svg(int width, int height);
+    wxBitmapBundle bundle_unknown_png();  // unknown.png
+    wxBitmapBundle bundle_wxButton_png();  // wxButton.png
+    wxBitmapBundle bundle_wxCheckBox_png();  // wxCheckBox.png
+    wxBitmapBundle bundle_wxCheckListBox_png();  // wxCheckListBox.png
+    wxBitmapBundle bundle_wxChoice_png();  // wxChoice.png
+    wxBitmapBundle bundle_wxComboBox_png();  // wxComboBox.png
+    wxBitmapBundle bundle_wxCommandLinkButton_png();  // wxCommandLinkButton.png
+    wxBitmapBundle bundle_wxEditListBox_png();  // wxEditListBox.png
+    wxBitmapBundle bundle_wxListBox_png();  // wxListBox.png
+    wxBitmapBundle bundle_wxListView_png();  // wxListView.png
+    wxBitmapBundle bundle_wxPython_png();  // wxPython.png
+    wxBitmapBundle bundle_wxRearrangeCtrl_png();  // wxRearrangeCtrl.png
+    wxBitmapBundle bundle_wxSimpleHtmlListBox_png();  // wxSimpleHtmlListBox.png
+    wxBitmapBundle bundle_wxStaticBoxSizer_png();  // wxStaticBoxSizer.png
+    wxBitmapBundle bundle_wxStaticCheckBoxSizer_png();  // wxStaticCheckBoxSizer.png
+    wxBitmapBundle bundle_wxStaticRadioBtnSizer_png();  // wxStaticRadioBtnSizer.png
+    wxBitmapBundle bundle_wxStaticText_png();  // wxStaticText.png
+    wxBitmapBundle bundle_wxTimer_png();  // wxTimer.png
     wxBitmapBundle bundle_wxUiEditor_svg(int width, int height);
     wxBitmapBundle bundle_xrc_compare_svg(int width, int height);
 
-    wxBitmapBundle bundle_auitoolbar_png();
-    wxBitmapBundle bundle_bmp_combo_box_png();
-    wxBitmapBundle bundle_check3state_png();
-    wxBitmapBundle bundle_close_btn_png();
-    wxBitmapBundle bundle_dataview_ctrl_png();
-    wxBitmapBundle bundle_dataviewlist_ctrl_png();
-    wxBitmapBundle bundle_dataviewtree_ctrl_png();
-    wxBitmapBundle bundle_debug_16_png();
-    wxBitmapBundle bundle_debug_32_png();
-    wxBitmapBundle bundle_default_png();
-    wxBitmapBundle bundle_empty_png();
-    wxBitmapBundle bundle_folder_png();
-    wxBitmapBundle bundle_hide_png();
-    wxBitmapBundle bundle_logo16_png();
-    wxBitmapBundle bundle_logo32_png();
-    wxBitmapBundle bundle_logo64_png();
-    wxBitmapBundle bundle_project_png();
-    wxBitmapBundle bundle_ribbon_bar_png();
-    wxBitmapBundle bundle_ribbon_buttonbar_png();
-    wxBitmapBundle bundle_ribbon_gallery_png();
-    wxBitmapBundle bundle_scrollbar_png();
-    wxBitmapBundle bundle_slider_png();
-    wxBitmapBundle bundle_spin_ctrl_png();
-    wxBitmapBundle bundle_spin_ctrl_double_png();
-    wxBitmapBundle bundle_spinbtn_png();
-    wxBitmapBundle bundle_stddialogbuttonsizer_png();
-    wxBitmapBundle bundle_title_close_png();
-    wxBitmapBundle bundle_toggle_button_png();
-    wxBitmapBundle bundle_tool_png();
-    wxBitmapBundle bundle_toolStretchable_png();
-    wxBitmapBundle bundle_tool_dropdown_png();
-    wxBitmapBundle bundle_toolseparator_png();
-    wxBitmapBundle bundle_toolspacer_png();
-    wxBitmapBundle bundle_unknown_png();
-    wxBitmapBundle bundle_wxButton_png();
-    wxBitmapBundle bundle_wxCheckBox_png();
-    wxBitmapBundle bundle_wxCheckListBox_png();
-    wxBitmapBundle bundle_wxChoice_png();
-    wxBitmapBundle bundle_wxComboBox_png();
-    wxBitmapBundle bundle_wxCommandLinkButton_png();
-    wxBitmapBundle bundle_wxEditListBox_png();
-    wxBitmapBundle bundle_wxListBox_png();
-    wxBitmapBundle bundle_wxListView_png();
-    wxBitmapBundle bundle_wxPython_png();
-    wxBitmapBundle bundle_wxRearrangeCtrl_png();
-    wxBitmapBundle bundle_wxSimpleHtmlListBox_png();
-    wxBitmapBundle bundle_wxStaticBoxSizer_png();
-    wxBitmapBundle bundle_wxStaticCheckBoxSizer_png();
-    wxBitmapBundle bundle_wxStaticRadioBtnSizer_png();
-    wxBitmapBundle bundle_wxStaticText_png();
-    wxBitmapBundle bundle_wxTimer_png();
+    wxImage image_auitoolbar_png();
+    wxImage image_bmp_combo_box_png();
+    wxImage image_check3state_png();
+    wxImage image_close_btn_png();
+    wxImage image_dataview_ctrl_png();
+    wxImage image_dataviewlist_ctrl_png();
+    wxImage image_dataviewtree_ctrl_png();
+    wxImage image_debug_16_png();
+    wxImage image_debug_32_png();
+    wxImage image_default_png();
+    wxImage image_empty_png();
+    wxImage image_folder_png();
+    wxImage image_hide_png();
+    wxImage image_logo16_png();
+    wxImage image_logo32_png();
+    wxImage image_logo64_png();
+    wxImage image_project_png();
+    wxImage image_ribbon_bar_png();
+    wxImage image_ribbon_buttonbar_png();
+    wxImage image_ribbon_gallery_png();
+    wxImage image_scrollbar_png();
+    wxImage image_slider_png();
+    wxImage image_spin_ctrl_double_png();
+    wxImage image_spin_ctrl_png();
+    wxImage image_spinbtn_png();
+    wxImage image_stddialogbuttonsizer_png();
+    wxImage image_title_close_png();
+    wxImage image_toggle_button_png();
+    wxImage image_toolStretchable_png();
+    wxImage image_tool_dropdown_png();
+    wxImage image_tool_png();
+    wxImage image_toolseparator_png();
+    wxImage image_toolspacer_png();
+    wxImage image_unknown_png();
+    wxImage image_wxButton_png();
+    wxImage image_wxCheckBox_png();
+    wxImage image_wxCheckListBox_png();
+    wxImage image_wxChoice_png();
+    wxImage image_wxComboBox_png();
+    wxImage image_wxCommandLinkButton_png();
+    wxImage image_wxEditListBox_png();
+    wxImage image_wxListBox_png();
+    wxImage image_wxListView_png();
+    wxImage image_wxPython_1_5x_png();
+    wxImage image_wxPython_2x_png();
+    wxImage image_wxPython_png();
+    wxImage image_wxRearrangeCtrl_png();
+    wxImage image_wxSimpleHtmlListBox_png();
+    wxImage image_wxStaticBoxSizer_png();
+    wxImage image_wxStaticCheckBoxSizer_png();
+    wxImage image_wxStaticRadioBtnSizer_png();
+    wxImage image_wxStaticText_png();
+    wxImage image_wxTimer_png();
 
     extern const unsigned char auitoolbar_png[476];
     extern const unsigned char bmp_combo_box_png[492];
@@ -100,8 +149,7 @@ namespace wxue_img
     extern const unsigned char logo32_png[1470];
     extern const unsigned char logo64_png[1718];
     extern const unsigned char project_png[899];
-    // python-logo-only.svg
-    extern const unsigned char python_logo_only_svg[1648];
+    extern const unsigned char python_logo_only_svg[1648];  // python-logo-only.svg
     extern const unsigned char redo_svg[919];
     extern const unsigned char ribbon_bar_png[844];
     extern const unsigned char ribbon_buttonbar_png[300];

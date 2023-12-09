@@ -162,7 +162,7 @@ void PropertyGrid_Image::RefreshChildren()
             }
 
             if (!bundle.IsOk())
-                bundle = wxBitmapBundle::FromBitmap(LoadHeaderImage(empty_png, sizeof(empty_png)).Scale(15, 15));
+                bundle = wxue_img::bundle_empty_png();
 
             Item(IndexImage)->SetValueImage(bundle);
 

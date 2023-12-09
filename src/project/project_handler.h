@@ -166,10 +166,6 @@ public:
     Node* getForm_Image() const { return m_form_Image; }
 
     // After calling FindWxueFunctions(), this will return the form that should be used to
-    // generate the one copy of wxueBundleBitmaps() that is used by all forms.
-    Node* getForm_BundleBitmaps() const { return m_form_BundleBitmaps; }
-
-    // After calling FindWxueFunctions(), this will return the form that should be used to
     // generate the one copy of wxueAnimation() that is used by all forms.
     Node* getForm_Animation() const { return m_form_BundleBitmaps; }
 

@@ -17,14 +17,48 @@
 #include "mainframe.h"
 #include "project_handler.h"
 
+#include <wx/mstream.h>  // memory stream classes
+#include <wx/zstream.h>  // zlib stream classes
+
+#include <memory>  // for std::make_unique
+
+// Convert compressed SVG string into a wxBitmapBundle
+#ifdef __cpp_inline_variables
+inline wxBitmapBundle wxueBundleSVG(const unsigned char* data,
+    size_t size_data, size_t size_svg, wxSize def_size)
+#else
+static wxBitmapBundle wxueBundleSVG(const unsigned char* data,
+    size_t size_data, size_t size_svg, wxSize def_size)
+#endif
+{
+    auto str = std::make_unique<char[]>(size_svg);
+    wxMemoryInputStream stream_in(data, size_data);
+    wxZlibInputStream zlib_strm(stream_in);
+    zlib_strm.Read(str.get(), size_svg);
+    return wxBitmapBundle::FromSVG(str.get(), def_size);
+};
+
 namespace wxue_img
 {
-    extern const unsigned char import_svg[418];
-    extern const unsigned char redo_svg[919];
-    extern const unsigned char undo_svg[882];
-    extern const unsigned char wxPython_1_5x_png[765];
-    extern const unsigned char wxPython_2x_png[251];
-    extern const unsigned char wxPython_png[399];
+    extern const unsigned char alignbottom_svg[658];
+    extern const unsigned char aligncenter_svg[898];
+    extern const unsigned char alignleft_svg[688];
+    extern const unsigned char alignright_svg[690];
+    extern const unsigned char aligntop_svg[688];
+    extern const unsigned char alignvertcenter_svg[911];
+    extern const unsigned char bottom_svg[585];
+    extern const unsigned char expand_svg[819];
+    extern const unsigned char generate_svg[780];
+    extern const unsigned char hidden_svg[2111];
+    extern const unsigned char left_svg[585];
+    extern const unsigned char magnify_svg[3953];
+    extern const unsigned char new_project_svg[921];  // new-project.svg
+    extern const unsigned char right_svg[599];
+    extern const unsigned char ruby_logo_svg[1853];
+    extern const unsigned char save_svg[717];
+    extern const unsigned char top_svg[586];
+    extern const unsigned char wxlogo_svg[1331];
+    extern const unsigned char xrc_preview_svg[469];
 }
 
 bool MainFrameBase::Create(wxWindow* parent, wxWindowID id, const wxString& title,
@@ -156,7 +190,6 @@ bool MainFrameBase::Create(wxWindow* parent, wxWindowID id, const wxString& titl
     m_menuFile->AppendSubMenu(m_submenu_recent, "Open &Recent");
     auto* menu_import = new wxMenuItem(m_menuFile, wxID_ANY, "&Import...");
     menu_import->SetBitmap(wxue_img::bundle_import_svg(16, 16));
-
     m_menuFile->Append(menu_import);
     m_menuFile->AppendSeparator();
     auto* menu_item = new wxMenuItem(m_menuFile, wxID_SAVE, "&Save\tCtrl+S", "Save current project", wxITEM_NORMAL);
@@ -207,11 +240,9 @@ bool MainFrameBase::Create(wxWindow* parent, wxWindowID id, const wxString& titl
     m_menuEdit = new wxMenu();
     auto* menu_undo = new wxMenuItem(m_menuEdit, wxID_UNDO, wxEmptyString);
     menu_undo->SetBitmap(wxue_img::bundle_undo_svg(16, 16));
-
     m_menuEdit->Append(menu_undo);
     auto* menu_redo = new wxMenuItem(m_menuEdit, wxID_REDO, wxEmptyString);
     menu_redo->SetBitmap(wxue_img::bundle_redo_svg(16, 16));
-
     m_menuEdit->Append(menu_redo);
     m_menuEdit->AppendSeparator();
     auto* menu_cut = new wxMenuItem(m_menuEdit, wxID_CUT, wxEmptyString);
@@ -356,14 +387,7 @@ bool MainFrameBase::Create(wxWindow* parent, wxWindowID id, const wxString& titl
     m_menuHelp->Append(menu_item_6);
     auto* menu_item_9 = new wxMenuItem(m_menuHelp, wxID_ANY, "wxPython Documentation",
         "Open wxPython documentation in your default browser.", wxITEM_NORMAL);
-    {
-        wxVector<wxBitmap> bitmaps;
-        bitmaps.push_back(wxueImage(wxue_img::wxPython_png, sizeof(wxue_img::wxPython_png)));
-        bitmaps.push_back(wxueImage(wxue_img::wxPython_1_5x_png, sizeof(wxue_img::wxPython_1_5x_png)));
-        bitmaps.push_back(wxueImage(wxue_img::wxPython_2x_png, sizeof(wxue_img::wxPython_2x_png)));
-        menu_item_9->SetBitmap(wxBitmapBundle::FromBitmaps(bitmaps));
-    }
-
+    menu_item_9->SetBitmap(wxue_img::bundle_wxPython_png());
     m_menuHelp->Append(menu_item_9);
     auto* menu_item_10 = new wxMenuItem(m_menuHelp, wxID_ANY, "wxRuby Documentation",
         "Open wxRuby documentation in your default browser.", wxITEM_NORMAL);

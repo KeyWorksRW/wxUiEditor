@@ -16,17 +16,6 @@ using namespace GenEnum;
 
 #include "menu_bartools.h"
 
-namespace wxue_img
-{
-    extern const unsigned char slider_png[248];
-    extern const unsigned char spin_ctrl_png[300];
-    extern const unsigned char toolStretchable_png[578];
-    extern const unsigned char tool_dropdown_png[447];
-    extern const unsigned char tool_png[629];
-    extern const unsigned char toolspacer_png[459];
-    extern const unsigned char wxComboBox_png[233];
-}
-
 MenuBarTools::MenuBarTools() : wxMenu()
 {
     if (!wxImage::FindHandler(wxBITMAP_TYPE_PNG))

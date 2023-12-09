@@ -96,6 +96,7 @@ namespace GenEnum
         prop_TopDockable,
         prop_Yes,
         prop_add_default_border,
+        prop_add_externs,
         prop_additional_carets_blink,
         prop_additional_carets_visible,
         prop_additional_inheritance,

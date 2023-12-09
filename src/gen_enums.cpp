@@ -77,6 +77,7 @@ std::map<GenEnum::PropName, const char*> GenEnum::map_PropNames = {
     { prop_TopDockable, "TopDockable" },
     { prop_Yes, "Yes" },
     { prop_add_default_border, "add_default_border" },
+    { prop_add_externs, "add_externs" },
     { prop_additional_carets_blink, "additional_carets_blink" },
     { prop_additional_carets_visible, "additional_carets_visible" },
     { prop_additional_inheritance, "additional_inheritance" },

@@ -442,7 +442,7 @@ CodeDisplay::CodeDisplay(wxWindow* parent, int panel_type) : CodeDisplayBase(par
         // Add regular classes that have different generator class names
 
         tt_string widget_keywords(
-            "wxToolBar wxMenuBar wxBitmapBundle wxBitmap wxImage wxMemoryInputStream wxVector wxWindow");
+            "wxToolBar wxMenuBar wxBitmapBundle wxBitmap wxImage wxMemoryInputStream wxVector wxWindow wxZlibInputStream");
 
         for (auto iter: NodeCreation.getNodeDeclarationArray())
         {

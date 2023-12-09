@@ -23,34 +23,31 @@
 // gen_Images node. These are written before the class constructor.
 void BaseCodeGenerator::WriteImagePreConstruction(Code& code)
 {
+    ASSERT_MSG(code.is_cpp(), "This function is only used for C++ code generation");
     code.clear();
 
     bool is_namespace_written = false;
     for (auto iter_array: m_embedded_images)
     {
-        // If the image is defined in this form, then it will already have been declared in the class's header file.
-        // For the source code, we only care about images defined in another source module.
-
-        if (iter_array->form == m_form_node)
+        // If the image is in ImagesForm then it's header file will be included which already
+        // has the extern declarations.
+        if (iter_array->form == Project.getImagesForm())
             continue;
 
-        if (code.is_cpp())
+        if (!is_namespace_written)
         {
-            if (!is_namespace_written)
-            {
-                is_namespace_written = true;
-                code.Str("namespace wxue_img").OpenBrace();
-            }
-            if (iter_array->filename.size())
-            {
-                code.Eol(eol_if_needed).Str("// ").Str(iter_array->filename);
-            }
-            code.Eol(eol_if_needed).Str("extern const unsigned char ").Str(iter_array->array_name);
-            code.Str("[").itoa(iter_array->array_size & 0xFFFFFFFF).Str("];");
+            is_namespace_written = true;
+            code.Str("namespace wxue_img").OpenBrace();
+        }
+        code.Eol(eol_if_needed).Str("extern const unsigned char ").Str(iter_array->array_name);
+        code.Str("[").itoa(iter_array->array_size & 0xFFFFFFFF).Str("];");
+        if (iter_array->filename.size())
+        {
+            code.Str("  // ").Str(iter_array->filename);
         }
     }
 
-    if (code.is_cpp() && is_namespace_written)
+    if (is_namespace_written)
     {
         code.CloseBrace().Eol();
     }
@@ -74,7 +71,9 @@ void BaseCodeGenerator::WriteImageConstruction(Code& code)
 
     for (auto iter_array: m_embedded_images)
     {
-        if (iter_array->form != m_form_node && code.is_cpp())
+        // The images form contains global images, so no need to generate code for them here.
+        // if (iter_array->form == images_form)
+        if (iter_array->form != m_form_node)
             continue;
 
         if (code.is_cpp())
@@ -99,9 +98,9 @@ void BaseCodeGenerator::WriteImageConstruction(Code& code)
                 if (!inlined_warning)
                 {
                     inlined_warning = true;
-                    code.Str("// WARNING: This will only work if compiled with C++17 or later.");
-                    code.Eol().Str("// Create an Images List and check auto_update to prevent the image");
-                    code.Eol().Str("// from being added to this header file.").Eol();
+                    code.Eol().Str("#if __cplusplus < 201703L");
+                    code.Eol().Str("#warning \"This code requires C++17 or later\"");
+                    code.Eol().Str("#endif");
                 }
                 // The header file can be included multiple times, so we need to set this to
                 // inline to avoid multiple definitions. Note that this requires C++17 --
@@ -215,27 +214,17 @@ void BaseCodeGenerator::WriteImageConstruction(Code& code)
         m_source = save_writer;
     }
 }
-// clang-format off
-
-inline constexpr const auto txt_wxueImageFunction = R"===(
-// Convert a data array into a wxImage
-wxImage wxueImage(const unsigned char* data, size_t size_data)
-{
-    wxMemoryInputStream strm(data, size_data);
-    wxImage image;
-    image.LoadFile(strm);
-    return image;
-};
-)===";
-
-// clang-format on
 
 void BaseCodeGenerator::WriteImagePostHeader()
 {
+    auto images_form = Project.getImagesForm();
+    if (!images_form)
+        return;
+
     bool is_namespace_written = false;
     for (auto iter_array: m_embedded_images)
     {
-        if (iter_array->form != m_form_node)
+        if (iter_array->form == images_form)
             continue;
 
         if (!is_namespace_written)
@@ -243,26 +232,7 @@ void BaseCodeGenerator::WriteImagePostHeader()
             m_header->writeLine();
             m_header->writeLine("namespace wxue_img\n{");
 
-            if (m_form_node->isType(type_images))
-            {
-                tt_view_vector function;
-                function.ReadString(txt_wxueImageFunction);
-                for (auto& iter: function)
-                {
-                    m_header->write("\t");
-                    if (iter.size() && iter.at(0) == ' ')
-                        m_header->write("\t");
-                    m_header->writeLine(iter);
-                }
-                m_header->writeLine();
-            }
-
             m_header->Indent();
-            if (!m_form_node->isType(type_images))
-            {
-                m_header->writeLine("// Images declared in this class module:");
-                m_header->writeLine();
-            }
             is_namespace_written = true;
         }
         if (iter_array->filename.size())
@@ -272,6 +242,7 @@ void BaseCodeGenerator::WriteImagePostHeader()
         m_header->writeLine(tt_string("extern const unsigned char ")
                             << iter_array->array_name << '[' << (iter_array->array_size & 0xFFFFFFFF) << "];");
     }
+
     if (is_namespace_written)
     {
         m_header->Unindent();

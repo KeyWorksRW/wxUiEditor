@@ -16,13 +16,6 @@ using namespace GenEnum;
 
 #include "menucombobox.h"
 
-namespace wxue_img
-{
-    extern const unsigned char bmp_combo_box_png[492];
-    extern const unsigned char wxChoice_png[330];
-    extern const unsigned char wxComboBox_png[233];
-}
-
 MenuCombobox::MenuCombobox() : wxMenu()
 {
     if (!wxImage::FindHandler(wxBITMAP_TYPE_PNG))

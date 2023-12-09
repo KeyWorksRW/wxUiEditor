@@ -127,7 +127,10 @@ bool AnimationGenerator::ConstructionCode(Code& code)
         code.Eol(eol_if_needed).NodeName().Function("SetInactiveBitmap(");
         if (code.is_cpp())
         {
-            code << GenerateBitmapCode(code.node()->as_string(prop_inactive_bitmap));
+            tt_string bundle_code;
+            GenerateBundleCode(code.node()->as_string(prop_inactive_bitmap), bundle_code);
+            code.CheckLineLength(bundle_code.size());
+            code += bundle_code;
         }
         else if (code.is_python())
         {

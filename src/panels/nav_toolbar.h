@@ -14,8 +14,6 @@
 
 namespace wxue_img
 {
-    // Images declared in this class module:
-
     extern const unsigned char nav_coll_expand_svg[249];
     extern const unsigned char nav_collapse_svg[244];
     extern const unsigned char nav_expand_svg[248];

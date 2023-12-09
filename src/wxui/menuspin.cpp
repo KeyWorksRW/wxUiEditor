@@ -16,13 +16,6 @@ using namespace GenEnum;
 
 #include "menuspin.h"
 
-namespace wxue_img
-{
-    extern const unsigned char spin_ctrl_double_png[219];
-    extern const unsigned char spin_ctrl_png[300];
-    extern const unsigned char spinbtn_png[192];
-}
-
 MenuSpin::MenuSpin() : wxMenu()
 {
     if (!wxImage::FindHandler(wxBITMAP_TYPE_PNG))

@@ -9,6 +9,7 @@
     wxWidgets_version="3.2">
     <node
       class="Images"
+      add_externs="1"
       base_file="ui_images">
       <node
         class="embedded_image"

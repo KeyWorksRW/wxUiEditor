@@ -35,7 +35,11 @@ extern std::map<wxBitmapType, std::string> g_map_types;
 
 inline constexpr const auto txt_wxueImageFunction = R"===(
 // Convert a data array into a wxImage
-wxImage wxueImage(const unsigned char* data, size_t size_data)
+#ifdef __cpp_inline_variables
+inline wxImage wxueImage(const unsigned char* data, size_t size_data)
+#else
+static wxImage wxueImage(const unsigned char* data, size_t size_data)
+#endif
 {
     wxMemoryInputStream strm(data, size_data);
     wxImage image;
@@ -44,15 +48,15 @@ wxImage wxueImage(const unsigned char* data, size_t size_data)
 };
 )===";
 
-inline constexpr const auto txt_extern_wxueImageFunction = R"===(
-// Convert a data array into a wxImage
-wxImage wxueImage(const unsigned char* data, size_t size_data);
-)===";
-
 inline constexpr const auto txt_GetBundleFromSVG = R"===(
 // Convert compressed SVG string into a wxBitmapBundle
-wxBitmapBundle wxueBundleSVG(const unsigned char* data,
+#ifdef __cpp_inline_variables
+inline wxBitmapBundle wxueBundleSVG(const unsigned char* data,
     size_t size_data, size_t size_svg, wxSize def_size)
+#else
+static wxBitmapBundle wxueBundleSVG(const unsigned char* data,
+    size_t size_data, size_t size_svg, wxSize def_size)
+#endif
 {
     auto str = std::make_unique<char[]>(size_svg);
     wxMemoryInputStream stream_in(data, size_data);
@@ -61,26 +65,20 @@ wxBitmapBundle wxueBundleSVG(const unsigned char* data,
     return wxBitmapBundle::FromSVG(str.get(), def_size);
 };
 )===";
-inline constexpr const auto txt_extern_GetBundleFromSVG = R"===(
-// Convert compressed SVG string into a wxBitmapBundle
-wxBitmapBundle wxueBundleSVG(const unsigned char* data,
-    size_t size_data, size_t size_svg, wxSize def_size);
-)===";
 
 inline constexpr const auto txt_GetAnimFromHdrFunction = R"===(
 // Convert a data array into a wxAnimation
-wxAnimation wxueAnimation(const unsigned char* data, size_t size_data)
+#ifdef __cpp_inline_variables
+inline wxAnimation wxueAnimation(const unsigned char* data, size_t size_data)
+#else
+static wxAnimation wxueAnimation(const unsigned char* data, size_t size_data)
+#endif
 {
     wxMemoryInputStream strm(data, size_data);
     wxAnimation animation;
     animation.Load(strm);
     return animation;
 };
-)===";
-
-inline constexpr const auto txt_extern_GetAnimFromHdrFunction = R"===(
-// Convert a data array into a wxAnimation
-wxAnimation wxueAnimation(const unsigned char* data, size_t size_data);
 )===";
 
 inline constexpr const auto txt_BaseCmtBlock =
@@ -593,13 +591,21 @@ void BaseCodeGenerator::GenerateCppClass(PANEL_PAGE panel_type)
         if (m_NeedAnimationFunction)
         {
             m_source->writeLine("#include <wx/animate.h>", indent::none);
+            m_source->writeLine("\n#include <wx/mstream.h>  // memory stream classes", indent::none);
+            if (!m_NeedSVGFunction)
+            {
+                m_source->writeLine("#include <wx/zstream.h>  // zlib stream classes", indent::none);
+
+                m_source->writeLine();
+                m_source->writeLine("#include <memory>  // for std::make_unique", indent::none);
+            }
         }
-        if (!Project.getImagesForm() &&
-            (m_NeedImageFunction || m_NeedHeaderFunction || m_NeedSVGFunction || m_NeedAnimationFunction))
+        else if (m_NeedImageFunction || m_NeedHeaderFunction || m_NeedSVGFunction)
         {
             m_source->writeLine("\n#include <wx/mstream.h>  // memory stream classes", indent::none);
         }
-        if (!Project.getImagesForm() && m_NeedSVGFunction)
+
+        if (m_NeedSVGFunction)
         {
             m_source->writeLine("#include <wx/zstream.h>  // zlib stream classes", indent::none);
             m_source->writeLine();
@@ -607,21 +613,18 @@ void BaseCodeGenerator::GenerateCppClass(PANEL_PAGE panel_type)
         }
         m_source->writeLine();
 
-        // Now generate the functions
+        // m_NeedImageFunction and m_NeedSVGFunction will be set to true if there is an image
+        // that is not added to an Image List where it can be loaded via a wxue_img:: function.
 
         if (m_NeedImageFunction || m_NeedHeaderFunction)
         {
-            if (!has_images_list_header)
+            tt_string_vector function;
+            function.ReadString(txt_wxueImageFunction);
+            for (auto& iter: function)
             {
-                tt_string_vector function;
-                function.ReadString(Project.getForm_Image() == m_form_node ? txt_wxueImageFunction :
-                                                                             txt_extern_wxueImageFunction);
-                for (auto& iter: function)
-                {
-                    m_source->writeLine(iter, indent::none);
-                }
-                m_source->writeLine();
+                m_source->writeLine(iter, indent::none);
             }
+            m_source->writeLine();
         }
 
         if (m_NeedSVGFunction)
@@ -637,31 +640,28 @@ void BaseCodeGenerator::GenerateCppClass(PANEL_PAGE panel_type)
                 m_source->writeLine("#endif", indent::none);
             }
 
-            if (!has_images_list_header)
+            tt_string_vector function;
+            function.ReadString(txt_GetBundleFromSVG);
+            for (auto& iter: function)
             {
-                tt_string_vector function;
-                function.ReadString(Project.getForm_BundleSVG() == m_form_node ? txt_GetBundleFromSVG :
-                                                                                 txt_extern_GetBundleFromSVG);
-                for (auto& iter: function)
-                {
-                    m_source->writeLine(iter, indent::none);
-                }
-                m_source->writeLine();
+                m_source->writeLine(iter, indent::none);
             }
+            m_source->writeLine();
         }
 
         if (m_NeedAnimationFunction)
         {
-            if (!has_images_list_header)
+            // Note that we write the function even if the Image List file also has the
+            // function. It won't matter for C++17, and for C++14 the animation isn't likely to
+            // appear in a lot of forms, so any duplication of the function won't matter very
+            // much.
+            tt_string_vector function;
+            function.ReadString(txt_GetAnimFromHdrFunction);
+            for (auto& iter: function)
             {
-                tt_string_vector function;
-                function.ReadString(Project.getForm_Animation() == m_form_node ? txt_GetAnimFromHdrFunction :
-                                                                                 txt_extern_GetAnimFromHdrFunction);
-                for (auto& iter: function)
-                {
-                    m_source->writeLine(iter, indent::none);
-                }
+                m_source->writeLine(iter, indent::none);
             }
+            m_source->writeLine();
         }
 
         if (m_embedded_images.size())
@@ -761,7 +761,7 @@ void BaseCodeGenerator::GenerateCppClassHeader()
             m_header->writeLine();
         }
 
-        if (m_NeedSVGFunction && Project.getForm_BundleSVG() != m_form_node)
+        if (m_NeedSVGFunction)
         {
             if (Project.is_wxWidgets31())
             {

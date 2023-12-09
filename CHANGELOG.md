@@ -10,6 +10,7 @@ All notable changes to this project will be documented in this file.
 ### Changed
 
 - The `hide_children` property in the wxStaticBoxSizer has been removed since the `hidden` property does exactly the same thing. Projects where `hide_children` was set will be automatically converted to use `hidden` instead.
+- The Image List file now includes wxue_img::image_ functions for each image in the list, replacing the `extern` declarations that were previously used. This allows the Image List to be used in multiple projects without having to copy the source files.
 
 ### Fixed
 

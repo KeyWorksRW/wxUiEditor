@@ -24,8 +24,6 @@
 
 namespace wxue_img
 {
-    // Images declared in this class module:
-
     extern const unsigned char WXPOPupTransientWindow_png[358];
     extern const unsigned char auinotebook_png[284];
     extern const unsigned char book_page_png[229];

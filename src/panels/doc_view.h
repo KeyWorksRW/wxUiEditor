@@ -19,6 +19,11 @@ class CustomEvent;
 class wxWebView;
 class MainFrame;
 
+namespace wxue_img
+{
+    extern const unsigned char ruby_logo_svg[1853];
+}
+
 class DocViewPanel : public wxPanel
 {
 public:
@@ -65,8 +70,8 @@ private:
 // Code below this comment block will be preserved
 // if the code for this class is re-generated.
 //
-    // clang-format on
-    // ***********************************************
+// clang-format on
+// ***********************************************
 
 public:
     DocViewPanel(wxWindow* parent, MainFrame* frame);

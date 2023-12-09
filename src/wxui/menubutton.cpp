@@ -16,15 +16,6 @@ using namespace GenEnum;
 
 #include "menubutton.h"
 
-namespace wxue_img
-{
-    extern const unsigned char close_btn_png[956];
-    extern const unsigned char stddialogbuttonsizer_png[524];
-    extern const unsigned char toggle_button_png[277];
-    extern const unsigned char wxButton_png[500];
-    extern const unsigned char wxCommandLinkButton_png[582];
-}
-
 MenuButton::MenuButton() : wxMenu()
 {
     if (!wxImage::FindHandler(wxBITMAP_TYPE_PNG))

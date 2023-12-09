@@ -16,13 +16,6 @@ using namespace GenEnum;
 
 #include "menuribbontype.h"
 
-namespace wxue_img
-{
-    extern const unsigned char ribbon_bar_png[844];
-    extern const unsigned char ribbon_buttonbar_png[300];
-    extern const unsigned char ribbon_gallery_png[215];
-}
-
 MenuRibbonType::MenuRibbonType() : wxMenu()
 {
     if (!wxImage::FindHandler(wxBITMAP_TYPE_PNG))

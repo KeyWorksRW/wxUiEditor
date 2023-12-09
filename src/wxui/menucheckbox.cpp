@@ -16,12 +16,6 @@ using namespace GenEnum;
 
 #include "menucheckbox.h"
 
-namespace wxue_img
-{
-    extern const unsigned char check3state_png[194];
-    extern const unsigned char wxCheckBox_png[202];
-}
-
 MenuCheckbox::MenuCheckbox() : wxMenu()
 {
     if (!wxImage::FindHandler(wxBITMAP_TYPE_PNG))

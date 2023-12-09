@@ -16,16 +16,6 @@ using namespace GenEnum;
 
 #include "menulistbox.h"
 
-namespace wxue_img
-{
-    extern const unsigned char wxCheckListBox_png[498];
-    extern const unsigned char wxEditListBox_png[707];
-    extern const unsigned char wxListBox_png[310];
-    extern const unsigned char wxListView_png[356];
-    extern const unsigned char wxRearrangeCtrl_png[332];
-    extern const unsigned char wxSimpleHtmlListBox_png[676];
-}
-
 MenuListbox::MenuListbox() : wxMenu()
 {
     if (!wxImage::FindHandler(wxBITMAP_TYPE_PNG))

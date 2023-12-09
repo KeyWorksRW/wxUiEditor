@@ -25,8 +25,6 @@ class NavigationPanel;
 
 namespace wxue_img
 {
-    // Images declared in this class module:
-
     extern const unsigned char alignbottom_svg[658];
     extern const unsigned char aligncenter_svg[898];
     extern const unsigned char alignleft_svg[688];

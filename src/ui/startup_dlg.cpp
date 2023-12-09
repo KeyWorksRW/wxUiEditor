@@ -20,12 +20,30 @@
 
 #include "startup_dlg.h"
 
+#include <wx/mstream.h>  // memory stream classes
+#include <wx/zstream.h>  // zlib stream classes
+
+#include <memory>  // for std::make_unique
+
+// Convert compressed SVG string into a wxBitmapBundle
+#ifdef __cpp_inline_variables
+inline wxBitmapBundle wxueBundleSVG(const unsigned char* data,
+    size_t size_data, size_t size_svg, wxSize def_size)
+#else
+static wxBitmapBundle wxueBundleSVG(const unsigned char* data,
+    size_t size_data, size_t size_svg, wxSize def_size)
+#endif
+{
+    auto str = std::make_unique<char[]>(size_svg);
+    wxMemoryInputStream stream_in(data, size_data);
+    wxZlibInputStream zlib_strm(stream_in);
+    zlib_strm.Read(str.get(), size_svg);
+    return wxBitmapBundle::FromSVG(str.get(), def_size);
+};
+
 namespace wxue_img
 {
-    extern const unsigned char import_svg[418];
-    // new-project.svg
-    extern const unsigned char new_project_svg[921];
-    extern const unsigned char wxUiEditor_svg[1943];
+    extern const unsigned char new_project_svg[921];  // new-project.svg
 }
 
 bool StartupDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,

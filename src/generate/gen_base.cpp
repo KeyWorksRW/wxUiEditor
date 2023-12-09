@@ -724,9 +724,40 @@ void BaseCodeGenerator::ParseImageProperties(Node* node)
                 if (parts[IndexType] == "Embed")
                 {
                     if (iter.type() == type_animation)
+                    {
                         m_NeedAnimationFunction = true;
+                    }
                     else
-                        m_NeedImageFunction = true;
+                    {
+                        if (!m_ImagesForm)
+                        {
+                            m_NeedImageFunction = true;
+                        }
+
+                        // If we haven't already encountered an image that requires a function,
+                        // then check to see if this image is in the Images List file and has a
+                        // bundle function to access it. If it does, then we still don't need
+                        // to generate an image function in the class file.
+                        else if (!m_NeedImageFunction)
+                        {
+                            if (auto bundle = ProjectImages.GetPropertyImageBundle(parts);
+                                bundle && bundle->lst_filenames.size())
+                            {
+                                if (auto embed = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[0]); embed)
+                                {
+#if defined(_DEBUG)
+                                    auto name = ProjectImages.GetBundleFuncName(embed);
+                                    if (name.empty())
+#else
+                                    if (ProjectImages.GetBundleFuncName(embed).empty())
+#endif  // _DEBUG
+                                    {
+                                        m_NeedImageFunction = true;
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
                 else if ((parts[IndexType] == "Art"))
                 {
@@ -734,7 +765,29 @@ void BaseCodeGenerator::ParseImageProperties(Node* node)
                 }
                 else if ((parts[IndexType] == "SVG"))
                 {
-                    m_NeedSVGFunction = true;
+                    if (!m_ImagesForm)
+                    {
+                        m_NeedSVGFunction = true;
+                    }
+                    else if (!m_NeedSVGFunction)
+                    {
+                        if (auto bundle = ProjectImages.GetPropertyImageBundle(parts);
+                            bundle && bundle->lst_filenames.size())
+                        {
+                            if (auto embed = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[0]); embed)
+                            {
+#if defined(_DEBUG)
+                                auto name = ProjectImages.GetBundleFuncName(embed);
+                                if (name.empty())
+#else
+                                if (ProjectImages.GetBundleFuncName(embed).empty())
+#endif  // _DEBUG
+                                {
+                                    m_NeedSVGFunction = true;
+                                }
+                            }
+                        }
+                    }
                 }
                 else if (parts[IndexType] == "Header")
                 {

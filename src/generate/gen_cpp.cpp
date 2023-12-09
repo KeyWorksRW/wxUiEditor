@@ -613,7 +613,8 @@ void BaseCodeGenerator::GenerateCppClass(PANEL_PAGE panel_type)
         }
         m_source->writeLine();
 
-        // Now generate the functions
+        // m_NeedImageFunction and m_NeedSVGFunction will be set to true if there is an image
+        // that is not added to an Image List where it can be loaded via a wxue_img:: function.
 
         if (m_NeedImageFunction || m_NeedHeaderFunction)
         {
@@ -760,7 +761,7 @@ void BaseCodeGenerator::GenerateCppClassHeader()
             m_header->writeLine();
         }
 
-        if (m_NeedSVGFunction && Project.getForm_BundleSVG() != m_form_node)
+        if (m_NeedSVGFunction)
         {
             if (Project.is_wxWidgets31())
             {

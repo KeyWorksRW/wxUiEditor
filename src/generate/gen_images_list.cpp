@@ -407,26 +407,23 @@ void BaseCodeGenerator::GenerateImagesForm()
         }
     }
 
-#if 0
-    m_header->writeLine();
-    for (auto iter_array: m_embedded_images)
+    if (m_form_node->as_bool(prop_add_externs))
     {
-        if (iter_array->form != m_form_node)
-            continue;
-
-        tt_string line("extern const unsigned char ");
-        line << iter_array->array_name << '[' << (iter_array->array_size & 0xFFFFFFFF) << "];";
-    #if 0
-// REVIEW: [Randalphwa - 12-08-2023] All the bundle functions have the filename lists, so adding them here is redundant
-// since the function name will be used when compiling for wxWidgets 3.2 or later.
-        if (iter_array->filename.size())
+        m_header->writeLine();
+        for (auto iter_array: m_embedded_images)
         {
-            line << "  // " << iter_array->filename;
+            if (iter_array->form != m_form_node)
+                continue;
+
+            tt_string line("extern const unsigned char ");
+            line << iter_array->array_name << '[' << (iter_array->array_size & 0xFFFFFFFF) << "];";
+            if (iter_array->filename.size())
+            {
+                line << "  // " << iter_array->filename;
+            }
+            m_header->writeLine(line);
         }
-    #endif
-        m_header->writeLine(line);
     }
-#endif
 
     m_header->Unindent();
     m_header->writeLine("}\n");

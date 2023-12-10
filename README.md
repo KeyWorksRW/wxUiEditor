@@ -32,9 +32,10 @@ See [Developer notes](docs/DEV_NOTES.md) if you want information about contribut
 ## Licenses
 
 - All KeyWorks Software code uses the Apache License 2.0 [LICENSE](LICENSE).
+- The frozen code uses the Apache License 2.0 [LICENSE](frozen/LICENSE).
 - The pugixml code uses a MIT [LICENSE](pugixml/LICENSE.md).
 - The rapidjson code uses a MIT [LICENSE](src/import/rapidjson/license.txt).
-- The wxWidgets code uses the wxWindows  [LICENSE](wxWidgets/License.txt).
+- The wxWidgets code uses the wxWindows [LICENSE](wxWidgets/License.txt).
 
 ## Screen shots
 

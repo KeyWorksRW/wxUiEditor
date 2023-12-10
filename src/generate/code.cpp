@@ -2078,37 +2078,36 @@ Code& Code::GenFont(GenEnum::PropName prop_name, tt_string_view font_function)
             if (is_cpp() && Project.is_wxWidgets31())
             {
                 Eol().Str("#if !wxCHECK_VERSION(3, 1, 2)").Eol().Tab();
-
-                if (point_size <= 0)
                 {
-                    Add("wxSystemSettings").ClassMethod("GetFont(").Add("wxSYS_DEFAULT_GUI_FONT").Str(")");
-                    VariableMethod("GetPointSize()").EndFunction();
+                    if (point_size <= 0)
+                    {
+                        Add("wxSystemSettings").ClassMethod("GetFont(").Add("wxSYS_DEFAULT_GUI_FONT").Str(")");
+                        VariableMethod("GetPointSize()").EndFunction();
+                    }
+                    else
+                    {
+                        // GetPointSize() will round the result rather than truncating the decimal
+                        itoa(fontprop.GetPointSize()).EndFunction();
+                    }
                 }
-                else
+                Eol().Str("#else // fractional point sizes are new to wxWidgets 3.1.2").Eol().Tab();
                 {
-                    // GetPointSize() will round the result rather than truncating the decimal
-                    itoa(fontprop.GetPointSize()).EndFunction();
+                    std::array<char, 10> float_str;
+                    if (auto [ptr, ec] = std::to_chars(float_str.data(), float_str.data() + float_str.size(), point_size);
+                        ec == std::errc())
+                    {
+                        Str(std::string_view(float_str.data(), ptr - float_str.data())).EndFunction();
+                    }
                 }
+                Eol().Str("#endif");
             }
             else
             {
-                if (is_cpp() && Project.is_wxWidgets31())
-                {
-                    Eol().Str("#else // fractional point sizes are new to wxWidgets 3.1.2").Eol().Tab();
-                }
-
                 std::array<char, 10> float_str;
                 if (auto [ptr, ec] = std::to_chars(float_str.data(), float_str.data() + float_str.size(), point_size);
                     ec == std::errc())
                 {
                     Str(std::string_view(float_str.data(), ptr - float_str.data())).EndFunction();
-                }
-
-                // REVIEW: [Randalphwa - 12-30-2022] We don't output anything if std::to_chars() results in an error
-
-                if (is_cpp() && Project.is_wxWidgets31())
-                {
-                    Eol().Str("#endif");
                 }
             }
         }
@@ -2146,7 +2145,44 @@ Code& Code::GenFont(GenEnum::PropName prop_name, tt_string_view font_function)
         if (fontprop.GetStyle() != wxFONTSTYLE_NORMAL)
             VariableMethod("Style(").Add(font_style_pairs.GetValue(fontprop.GetStyle())) += ")";
         if (fontprop.GetWeight() != wxFONTWEIGHT_NORMAL)
-            VariableMethod("Weight(").Add(font_weight_pairs.GetValue(fontprop.GetWeight())) += ")";
+        {
+            if (is_cpp() && Project.is_wxWidgets31())
+            {
+                Eol().Str("#if !wxCHECK_VERSION(3, 1, 2)").Eol().Tab();
+                {
+                    // wxFontInfo::SetFlag() would have worked around this, unfortunately it is a private: function
+                    bool is_code_added = false;
+                    if (fontprop.GetWeight() == wxFONTWEIGHT_LIGHT)
+                    {
+                        VariableMethod("Light();");
+                        is_code_added = true;
+                    }
+                    else if (fontprop.GetWeight() == wxFONTWEIGHT_BOLD)
+                    {
+                        VariableMethod("Bold()");
+                        is_code_added = true;
+                    }
+
+                    if (!is_code_added)
+                    {
+                        Str("// Only Bold and Light are supported in wxWidgets 3.1.1 and earlier");
+                    }
+                }
+                Eol().Str("#else // Weight() is new to wxWidgets 3.1.2").Eol().Tab();
+                {
+                    VariableMethod("Weight(").Add(font_weight_pairs.GetValue(fontprop.GetWeight())) += ")";
+                }
+                Eol().Str("#endif").Eol();
+                if (!fontprop.IsUnderlined() && !fontprop.IsStrikethrough())
+                {
+                    Str(";").Eol();
+                }
+            }
+            else
+            {
+                VariableMethod("Weight(").Add(font_weight_pairs.GetValue(fontprop.GetWeight())) += ")";
+            }
+        }
         if (fontprop.IsUnderlined())
             VariableMethod("Underlined()");
         if (fontprop.IsStrikethrough())

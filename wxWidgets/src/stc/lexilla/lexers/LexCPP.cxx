@@ -1343,7 +1343,9 @@ void SCI_METHOD LexerCPP::Lex(Sci_PositionU startPos, Sci_Position length, int i
 							// as that means that it contributed to the result.
 							if (!preproc.CurrentIfTaken()) {
 								// Inactive, may become active if parent scope active
-								assert(sc.state == (SCE_C_PREPROCESSOR|inactiveFlag));
+								// [Randalphwa - 12-03-2023] I commented out the assert because I was hitting
+								// it non-stop while working on wxUiEditor-generated code.
+								// assert(sc.state == (SCE_C_PREPROCESSOR|inactiveFlag));
 								preproc.InvertCurrentLevel();
 								activitySet = preproc.ActiveState();
 								// If following is active then show "else" as active

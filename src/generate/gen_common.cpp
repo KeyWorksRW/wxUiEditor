@@ -609,7 +609,6 @@ bool GenerateBundleCode(const tt_string& description, tt_string& code)
         {
             if (bundle->lst_filenames.size() == 1)
             {
-                code << "wxBitmapBundle::FromBitmap(wxueImage(";
                 tt_string name(bundle->lst_filenames[0].filename());
                 name.remove_extension();
                 name.Replace(".", "_", true);  // fix wxFormBuilder header files
@@ -623,11 +622,24 @@ bool GenerateBundleCode(const tt_string& description, tt_string& code)
                     }
                 }
 
-                code << name << ", sizeof(" << name << ")))";
+                if (Project.is_wxWidgets31())
+                {
+                    code << "\n#if wxCHECK_VERSION(3, 1, 6)\n\t";
+                    code << "wxBitmapBundle::FromBitmap(wxueImage(";
+                    code << name << ", sizeof(" << name << ")))";
+                    code << "\n#else\n\t";
+                    code << "wxueImage(";
+                    code << name << ", sizeof(" << name << "))";  // one less closing parenthesis
+                    code << "\n#endif\n";
+                }
+                else
+                {
+                    code << "wxBitmapBundle::FromBitmap(wxueImage(";
+                    code << name << ", sizeof(" << name << ")))";
+                }
             }
             else if (bundle->lst_filenames.size() == 2)
             {
-                code << "wxBitmapBundle::FromBitmaps(wxueImage(";
                 tt_string name(bundle->lst_filenames[0].filename());
                 name.remove_extension();
                 name.Replace(".", "_", true);  // fix wxFormBuilder header files
@@ -640,6 +652,16 @@ bool GenerateBundleCode(const tt_string& description, tt_string& code)
                         name = "wxue_img::" + embed->array_name;
                     }
                 }
+
+                if (Project.is_wxWidgets31())
+                {
+                    code << "\n#if !wxCHECK_VERSION(3, 1, 6)\n\t";
+                    code << "wxueImage(";
+                    code << name << ", sizeof(" << name << "))";  // one less closing parenthesis
+                    code << "\n#else\n";
+                }
+
+                code << "wxBitmapBundle::FromBitmaps(wxueImage(";
                 code << name << ", sizeof(" << name << ")), wxueImage(";
 
                 name = bundle->lst_filenames[1].filename();
@@ -655,9 +677,34 @@ bool GenerateBundleCode(const tt_string& description, tt_string& code)
                     }
                 }
                 code << name << ", sizeof(" << name << ")))";
+                if (Project.is_wxWidgets31())
+                {
+                    code << "\n#endif\n";
+                }
             }
             else if (bundle->lst_filenames.size() > 2)
             {
+                if (Project.is_wxWidgets31())
+                {
+                    tt_string name(bundle->lst_filenames[0].filename());
+                    name.remove_extension();
+                    name.Replace(".", "_", true);  // fix wxFormBuilder header files
+
+                    if (parts[IndexType].starts_with("Embed"))
+                    {
+                        auto embed = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[0]);
+                        if (embed)
+                        {
+                            name = "wxue_img::" + embed->array_name;
+                        }
+                    }
+
+                    code << "\n#if !wxCHECK_VERSION(3, 1, 6)\n\t";
+                    code << "wxueImage(";
+                    code << name << ", sizeof(" << name << "))";  // one less closing parenthesis
+                    code << "\n#else\n";
+                }
+
                 code << "{\n\t\twxVector<wxBitmap> bitmaps;\n";
                 for (auto& iter: bundle->lst_filenames)
                 {
@@ -673,6 +720,10 @@ bool GenerateBundleCode(const tt_string& description, tt_string& code)
                         }
                     }
                     code << "\t\tbitmaps.push_back(wxueImage(" << name << ", sizeof(" << name << ")));\n";
+                }
+                if (Project.is_wxWidgets31())
+                {
+                    code << "\n#endif\n";
                 }
 
                 // Return true to indicate a code block was generated

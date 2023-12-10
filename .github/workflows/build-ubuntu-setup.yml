@@ -6,15 +6,16 @@ on:
 env:
   BUILD_TYPE: Release
 
-# wxUiEditor currently requires a minimum of gcc 11.4 to build. While it is possible to install
-# that version on a dev's machine, it is not possible to install on a github runner. As such,
-# this version uses ubuntu-22.04 and gcc 12.
+# wxUiEditor currently requires a minimum of gcc 11.4 in order to support the C++20 code that
+# wxUiEditor is created with. While it is possible to install that version on a dev's machine,
+# it is not possible to install on a github runner. As such, this version uses ubuntu-22.04
+# and gcc 12.
 
-# Note that this build will require GLIBC_2.34 on the OS, which means Ununtu 22.04
+# Note that this build will require GLIBC_2.34 on the OS, which means it requires Ununtu 22.04
 
 jobs:
   buildUnix:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
     - name: Checkout repository
       uses: actions/checkout@v3
@@ -42,4 +43,4 @@ jobs:
       with:
         name: DebianSetup
         path: |
-          build/wxUiEditor-1.2.0-Linux.deb
+          build/wxUiEditor-*-Linux.deb

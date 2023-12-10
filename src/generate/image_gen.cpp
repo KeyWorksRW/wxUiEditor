@@ -716,7 +716,17 @@ static void GenerateEmbedBundle(Code& code, const tt_string_vector& parts, bool 
     name.make_relative(path);
     name.backslashestoforward();
 
-    if (bundle->lst_filenames.size() == 1)
+    if (code.is_cpp() && get_bitmap)
+    {
+        code.Eol().Tab() << "wxueImage(";
+
+        name = "wxue_img::" + embed->array_name;
+
+        code << name << ", sizeof(" << name << "))";
+        code << ".Rescale(";
+        code.Eol() << "\tFromDIP(" << embed->size.x << "), FromDIP(" << embed->size.y << "), wxIMAGE_QUALITY_BILINEAR)";
+    }
+    else if (bundle->lst_filenames.size() == 1)
     {
         if (code.is_cpp())
         {
@@ -725,12 +735,6 @@ static void GenerateEmbedBundle(Code& code, const tt_string_vector& parts, bool 
             name = "wxue_img::" + embed->array_name;
 
             code << name << ", sizeof(" << name << "))";
-            if (get_bitmap)
-            {
-                code << ".Rescale(";
-                code.Eol() << "\tFromDIP(" << embed->size.x << "), FromDIP(" << embed->size.y
-                           << "), wxIMAGE_QUALITY_BILINEAR)";
-            }
         }
         else if (code.is_python())
         {
@@ -766,13 +770,6 @@ static void GenerateEmbedBundle(Code& code, const tt_string_vector& parts, bool 
             else
             {
                 code << "wxNullBitmap))";
-            }
-
-            if (get_bitmap)
-            {
-                code.CheckLineLength(sizeof(".GetBitmap(wxSize(FromDIP(32), FromDIP(32)))"));
-                code << ".GetBitmap(wxSize(";
-                code.Eol().Tab() << "FromDIP(" << embed->size.x << "), FromDIP(" << embed->size.y << ")))";
             }
         }
         else if (code.is_python())
@@ -826,10 +823,6 @@ static void GenerateEmbedBundle(Code& code, const tt_string_vector& parts, bool 
             code.Str("return wxBitmapBundle::FromBitmaps(bitmaps);").CloseBrace();
             code.pop_back();  // remove the linefeed
             code.Str("()");
-            if (get_bitmap)
-            {
-                code << ".GetBitmap(wxSize(FromDIP(" << embed->size.x << "), FromDIP(" << embed->size.y << ")))";
-            }
         }
         else if (code.is_python())
         {

@@ -15,8 +15,8 @@
 // {
 //     return result->second;
 
-#if !(__cplusplus >= 202002L || (defined(_MSVC_LANG) && _MSVC_LANG >= 202002L))
-    #error "This method can only be used with a C++20 or later compiler"
+#if !(__cplusplus >= 201703L || (defined(_MSVC_LANG) && _MSVC_LANG >= 201703L))
+    #error "std::hash<std::string_view> requires C++17 or later."
 #endif
 
 #pragma once

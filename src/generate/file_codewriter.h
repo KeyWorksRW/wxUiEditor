@@ -1,7 +1,7 @@
 //////////////////////////////////////////////////////////////////////////
 // Purpose:   Classs to write code to disk
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -15,8 +15,9 @@ namespace code
     enum
     {
         flag_none = 0,
-        flag_test_only = 1 << 0,  // Don't write the file, just return the result
-        flag_no_ui = 1 << 1,      // Don't display any UI (cannot create missing folder)
+        flag_test_only = 1 << 0,          // Don't write the file, just return the result
+        flag_no_ui = 1 << 1,              // Don't display any UI (cannot create missing folder)
+        flag_add_closing_brace = 1 << 2,  // Set when no_closing_brace property is set
     };
 
     enum

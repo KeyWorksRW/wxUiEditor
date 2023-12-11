@@ -142,14 +142,10 @@ void BaseCodeGenerator::GenerateImagesForm()
     if (m_panel_type != HDR_PANEL)
     {
         m_source->writeLine("#include <wx/mstream.h>  // memory stream classes", indent::none);
+        m_source->writeLine("#include <wx/zstream.h>  // zlib stream classes", indent::none);
 
-        if (m_NeedSVGFunction || Project.getForm_BundleSVG() == m_form_node)
-        {
-            m_source->writeLine("#include <wx/zstream.h>  // zlib stream classes", indent::none);
-
-            m_source->writeLine();
-            m_source->writeLine("#include <memory>  // for std::make_unique", indent::none);
-        }
+        m_source->writeLine();
+        m_source->writeLine("#include <memory>  // for std::make_unique", indent::none);
 
         m_source->writeLine();
         m_source->writeLine("namespace wxue_img\n{");

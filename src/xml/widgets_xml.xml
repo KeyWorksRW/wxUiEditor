@@ -134,11 +134,11 @@ inline const char* widgets_xml = R"===(<?xml version="1.0"?>
 			<option name="None"
 				help="Do not scale the image." />
 			<option name="Fill"
-				help="Requires version 3.1. Scale the bitmap to fill the size of the control." />
+				help="Scale the bitmap to fill the size of the control." />
 			<option name="AspectFit"
-				help="Requires version 3.1. Scale the bitmap to fit the size of the control by maintaining the aspect ratio." />
+				help="Scale the bitmap to fit the size of the control by maintaining the aspect ratio." />
 			<option name="AspectFill"
-				help="Requires version 3.1. Scale the bitmap to fit the size of the control by changing the aspect ratio of the bitmap if necessary." />
+				help="Scale the bitmap to fit the size of the control by changing the aspect ratio of the bitmap if necessary." />
 			None
 		</property>
 		<property name="bitmap" type="image" />

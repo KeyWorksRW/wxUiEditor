@@ -200,7 +200,7 @@ inline const char* sizers_xml = R"===(<?xml version="1.0"?>
 		<property name="text" type="string_edit_escapes"
 			help="Splits text up at newlines and places the lines into wxStaticText objects with the specified maximum width in a vertical wxBoxSizer.">MyText</property>
 		<property name="width" type="int"
-			help="Specifies the text's maximum width (this argument is available since version 3.1.1, previous versions always behaved as if the maximal width of -1 was specified).">-1</property>
+			help="Specifies the text's maximum width.">-1</property>
 	</gen>
 
 	<gen class="spacer" image="spacer" type="widget">

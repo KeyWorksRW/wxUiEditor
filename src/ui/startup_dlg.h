@@ -62,8 +62,9 @@ private:
 // Code below this comment block will be preserved
 // if the code for this class is re-generated.
 //
-// clang-format on
 // ***********************************************
+
+    // clang-format on
 
 public:
     enum : size_t

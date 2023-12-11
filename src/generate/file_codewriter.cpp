@@ -1,7 +1,7 @@
 //////////////////////////////////////////////////////////////////////////
 // Purpose:   Classs to write code to disk
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -53,9 +53,37 @@ int FileCodeWriter::WriteFile(int language, int flags)
     size_t block_length = (language == GEN_LANG_CPLUSPLUS) ? 8 : 6;
 
     if (language == GEN_LANG_CPLUSPLUS)
-        m_buffer += txt_EndCppBlock;
+    {
+        if (flags & flag_add_closing_brace)
+        {
+            tt_string_vector lines;
+            lines.ReadString(txt_EndCppBlock);
+            for (auto& iter: lines)
+            {
+                if (iter.is_sameprefix("// clang-format on"))
+                {
+                    // Skip this line, and reduce the block length acccordingly
+                    --block_length;
+                }
+                else
+                {
+                    m_buffer << iter << "\n";
+                }
+            }
+            if (!file_exists)
+            {
+                m_buffer += "  // clang-format on\n};\n";
+            }
+        }
+        else
+        {
+            m_buffer += txt_EndCppBlock;
+        }
+    }
     else if (language == GEN_LANG_PYTHON || language == GEN_LANG_RUBY)
+    {
         m_buffer += end_python_perl_ruby_block;
+    }
 
     size_t additional_content = (to_size_t) -1;
     bool old_style_file = false;  // true if this doesn't have a trailing comment block

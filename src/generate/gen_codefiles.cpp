@@ -138,6 +138,8 @@ void GenThreadCpp(GenData& gen_data, Node* form)
     int flags = flag_no_ui;
     if (gen_data.pClassList)
         flags |= flag_test_only;
+    if (form->as_bool(prop_no_closing_brace))
+        flags |= flag_add_closing_brace;
     auto retval = h_cw->WriteFile(GEN_LANG_CPLUSPLUS, flags);
 
     if (retval > 0)
@@ -403,7 +405,10 @@ void GenInhertedClass(GenResults& results)
             }
 
             // If we get here, the source file exists, but the header file does not.
-            retval = h_cw->WriteFile(GEN_LANG_CPLUSPLUS, flag_no_ui);
+            int flags = flag_no_ui;
+            if (form->as_bool(prop_no_closing_brace))
+                flags |= flag_add_closing_brace;
+            retval = h_cw->WriteFile(GEN_LANG_CPLUSPLUS, flags);
             if (retval == result::fail)
             {
                 results.msgs.emplace_back() << "Cannot create or write to the file " << path << '\n';
@@ -426,9 +431,17 @@ void GenInhertedClass(GenResults& results)
 
         path.replace_extension(header_ext);
         if (path.file_exists())
+        {
             retval = result::exists;
+        }
         else
-            retval = h_cw->WriteFile(GEN_LANG_CPLUSPLUS, flag_no_ui);
+        {
+            int flags = flag_no_ui;
+            if (form->as_bool(prop_no_closing_brace))
+                flags |= flag_add_closing_brace;
+
+            retval = h_cw->WriteFile(GEN_LANG_CPLUSPLUS, flags);
+        }
 
         if (retval == result::fail)
         {

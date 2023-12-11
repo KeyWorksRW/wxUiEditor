@@ -432,7 +432,7 @@ void BaseCodeGenerator::GenerateRubyClass(PANEL_PAGE panel_type)
                     code.clear();
                     images_file_imported = true;
                 }
-                if (iter->type == wxBITMAP_TYPE_INVALID)
+                if (iter->type == wxBITMAP_TYPE_SVG)
                 {
                     if (!zlib_requirement_written)
                     {
@@ -454,8 +454,7 @@ void BaseCodeGenerator::GenerateRubyClass(PANEL_PAGE panel_type)
             }
             else if (!svg_import_libs)
             {
-                // SVG images have a wxBITMAP_TYPE_INVALID type
-                if (iter->type == wxBITMAP_TYPE_INVALID)
+                if (iter->type == wxBITMAP_TYPE_SVG)
                 {
                     if (!zlib_requirement_written)
                     {

@@ -241,7 +241,7 @@ void BaseCodeGenerator::GenerateImagesForm()
                 m_source->writeLine();
                 tt_string code("wxBitmapBundle bundle_");
 
-                if (embed->type == wxBITMAP_TYPE_INVALID)
+                if (embed->type == wxBITMAP_TYPE_SVG)
                 {
                     code << embed->array_name << "(int width, int height)";
                     m_source->writeLine(code);
@@ -301,7 +301,7 @@ void BaseCodeGenerator::GenerateImagesForm()
         {
             // Unlike the wxBitmapBundle functions above, the wxImage functions work on a much wider variety of
             // images, including ICO, CUR, and GIT. The only types that don't work are .svg and .ani.
-            if (embed->type == wxBITMAP_TYPE_INVALID || embed->type == wxBITMAP_TYPE_SVG || embed->type == wxBITMAP_TYPE_ANI)
+            if (embed->type == wxBITMAP_TYPE_SVG || embed->type == wxBITMAP_TYPE_ANI)
                 continue;
 
             m_source->writeLine();
@@ -376,7 +376,7 @@ void BaseCodeGenerator::GenerateImagesForm()
                 }
 
                 tt_string code("wxBitmapBundle bundle_");
-                if (embed->type == wxBITMAP_TYPE_INVALID)
+                if (embed->type == wxBITMAP_TYPE_SVG)
                 {
                     code << embed->array_name << "(int width, int height);";
                 }
@@ -402,7 +402,7 @@ void BaseCodeGenerator::GenerateImagesForm()
         {
             // Unlike the wxBitmapBundle functions above, the wxImage functions work on a much wider variety of
             // images, including ICO, CUR, and GIT. The only types that don't work are .svg and .ani.
-            if (embed->type == wxBITMAP_TYPE_INVALID || embed->type == wxBITMAP_TYPE_SVG || embed->type == wxBITMAP_TYPE_ANI)
+            if (embed->type == wxBITMAP_TYPE_SVG || embed->type == wxBITMAP_TYPE_ANI)
                 continue;
             tt_string code("wxImage image_");
             code << embed->array_name << "();";

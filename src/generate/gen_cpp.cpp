@@ -1269,8 +1269,7 @@ void BaseCodeGenerator::GenerateCppHandlers()
     {
         for (auto& iter_img: m_embedded_images)
         {
-            // wxBITMAP_TYPE_INVALID means it is a zlib compressed SVG string
-            if (iter_img->type != wxBITMAP_TYPE_BMP && iter_img->type != wxBITMAP_TYPE_INVALID &&
+            if (iter_img->type != wxBITMAP_TYPE_BMP && iter_img->type != wxBITMAP_TYPE_SVG &&
                 m_type_generated.find(iter_img->type) == m_type_generated.end())
             {
                 m_source->writeLine(tt_string("if (!wxImage::FindHandler(") << g_map_types[iter_img->type] << "))");

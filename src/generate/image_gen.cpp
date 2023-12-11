@@ -147,7 +147,7 @@ void BaseCodeGenerator::WriteImageConstruction(Code& code)
                 code.Eol().Str("# ").Str(iter_array->filename);
             }
             code.Eol().Str(iter_array->array_name);
-            if (iter_array->type == wxBITMAP_TYPE_INVALID)
+            if (iter_array->type == wxBITMAP_TYPE_SVG)
             {
                 code.Str(" = (");
             }
@@ -175,7 +175,7 @@ void BaseCodeGenerator::WriteImageConstruction(Code& code)
                 code.Eol().Str("# ").Str(iter_array->filename);
             }
             code.Eol().Str("$").Str(iter_array->array_name);
-            if (iter_array->type == wxBITMAP_TYPE_INVALID)
+            if (iter_array->type == wxBITMAP_TYPE_SVG)
             {
                 code.Str(" = (");
             }
@@ -384,7 +384,7 @@ void BaseCodeGenerator::GeneratePythonImagesForm()
             code.Eol().Str("# ").Str(iter_array->filename);
         }
         code.Eol().Str(iter_array->array_name);
-        if (iter_array->type == wxBITMAP_TYPE_INVALID)
+        if (iter_array->type == wxBITMAP_TYPE_SVG)
         {
             code.Str(" = (");
         }
@@ -455,7 +455,7 @@ void BaseCodeGenerator::GenerateRubyImagesForm()
             code.Eol().Str("# ").Str(iter_array->filename);
         }
         code.Eol().Str("$").Str(iter_array->array_name);
-        if (iter_array->type == wxBITMAP_TYPE_INVALID)
+        if (iter_array->type == wxBITMAP_TYPE_SVG)
         {
             code.Str(" = (");
         }

@@ -598,6 +598,10 @@ bool GenerateBundleCode(const tt_string& description, tt_string& code)
     }
     else
     {
+        // Code generation differs for 1, 2 or 3+ images, and each of those differ depending on
+        // if there is an Images List function to load the image, and it further differs
+        // depending on if the Project specifies wxWidgets 3.1 as the minimum.
+
         ASSERT_MSG(description.starts_with("Embed"), "Unknown image type!");
         if (auto function_name = ProjectImages.GetBundleFuncName(description); function_name.size())
         {

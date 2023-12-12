@@ -162,7 +162,7 @@ protected:
     void GenConstruction(Node* node);
 
     // This allows generators to create calls to a widget after it has been created.
-    void GenSettings(Node* node);
+    void GenSettings(Node* node, bool within_brace = false);
 
     // Write everything in the set and then clear it
     void WriteSetLines(WriteCode* pDest, std::set<std::string>& code_lines);

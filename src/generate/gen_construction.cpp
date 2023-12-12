@@ -76,7 +76,7 @@ void BaseCodeGenerator::GenConstruction(Node* node)
         }
     }
 
-    GenSettings(node);
+    GenSettings(node, need_closing_brace);
 
     if (type == type_ribbontoolbar || type == type_ribbonbuttonbar || type == type_ribbongallery)
     {
@@ -393,7 +393,7 @@ void BaseCodeGenerator::EndBrace()
     }
 }
 
-void BaseCodeGenerator::GenSettings(Node* node)
+void BaseCodeGenerator::GenSettings(Node* node, bool within_brace)
 {
     auto generator = node->getGenerator();
 
@@ -402,7 +402,17 @@ void BaseCodeGenerator::GenSettings(Node* node)
     {
         if (code.size())
         {
-            m_source->writeLine(code);
+            if (m_language == GEN_LANG_CPLUSPLUS && within_brace)
+            {
+                m_source->Indent();
+                m_source->writeLine(code);
+                m_source->Unindent();
+            }
+            else
+            {
+                m_source->writeLine(code);
+            }
+
             code.clear();
         }
     }

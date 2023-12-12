@@ -165,14 +165,6 @@ public:
     // spaces when the line is written.
     Code& Tab(int nTabs = 1);
 
-    // In C++, this adds "{\n" and indents all lines until CloseBrace() is called.
-    //
-    // Ignored by Python and Ruby.
-    Code& OpenBrace();
-
-    // In C++, this adds "\\n}" and removes indentation set by OpenBrace().
-    Code& CloseBrace();
-
     // If C++ and node is a local variable, will add "auto* "
     // If Perl, it will add "my "
     // If Rust, it will add "let "
@@ -478,7 +470,18 @@ public:
         }
     }
     void ResetIndent() { m_indent = 0; }
+
+    // In C++, this adds "{\n" and indents all lines until CloseBrace() is called.
+    //
+    // Ignored by Python and Ruby.
+    Code& OpenBrace();
+
+    // In C++, this adds "\\n}" and removes indentation set by OpenBrace().
+    Code& CloseBrace();
+
     void ResetBraces() { m_within_braces = false; }
+
+    bool is_WithinBraces() const { return m_within_braces; }
 
 protected:
     void InsertLineBreak(size_t cur_pos);

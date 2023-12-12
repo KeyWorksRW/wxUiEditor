@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Common component functions
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -57,12 +57,6 @@ bool GenBtnBimapCode(Node* node, tt_string& code, bool is_single = false);
 // returns wxueImage() (which is a wxImage). pDpiWindow is the name of the window
 // to use for wxBitmapBundle::GetBitmapFrom()
 tt_string GenerateBitmapCode(const tt_string& description);
-
-// If a wxVector is required to create the wxBitmapBundle, this will generate the opening
-// brace and the vector code and returns true with code filled in.
-//
-// Call this before calling GenerateBundleCode()
-bool GenerateVectorCode(const tt_string& description, tt_string& code);
 
 // Generates the code necessary to create a wxBitmapBundle used to pass as an argument to a
 // function, or the start of a code block containing: { wxVector<wxBitmap> bitmaps;

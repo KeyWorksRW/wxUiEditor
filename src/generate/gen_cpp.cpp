@@ -211,12 +211,6 @@ void BaseCodeGenerator::GenerateCppClass(PANEL_PAGE panel_type)
 
     CollectIncludes(m_form_node, src_includes, hdr_includes);
 
-    bool has_images_list_header = false;
-    if (m_ImagesForm && m_include_images_statement.size() && src_includes.contains(m_include_images_statement))
-    {
-        has_images_list_header = true;
-    }
-
     if (m_form_node->as_bool(prop_persist))
     {
         src_includes.insert("#include <wx/persist.h>");

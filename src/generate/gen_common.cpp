@@ -598,9 +598,10 @@ bool GenerateBundleCode(const tt_string& description, tt_string& code)
     }
     else
     {
+        ASSERT_MSG(description.starts_with("Embed"), "Unknown image type!");
         if (auto function_name = ProjectImages.GetBundleFuncName(description); function_name.size())
         {
-            // We get here if there is an Image form that contains the function to retrieve this bundle.
+            // We get here if there is an Images List that contains the function to retrieve this bundle.
             code << function_name;
             return false;
         }
@@ -610,16 +611,16 @@ bool GenerateBundleCode(const tt_string& description, tt_string& code)
             if (bundle->lst_filenames.size() == 1)
             {
                 tt_string name(bundle->lst_filenames[0].filename());
-                name.remove_extension();
-                name.Replace(".", "_", true);  // fix wxFormBuilder header files
 
-                if (parts[IndexType].starts_with("Embed"))
+                if (auto embed = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[0]); embed)
                 {
-                    auto embed = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[0]);
-                    if (embed)
+                    if (auto function_name = ProjectImages.GetBundleFuncName(embed); function_name.size())
                     {
-                        name = "wxue_img::" + embed->array_name;
+                        code << function_name;
+                        return false;
                     }
+
+                    name = "wxue_img::" + embed->array_name;
                 }
 
                 if (Project.is_wxWidgets31())
@@ -640,43 +641,58 @@ bool GenerateBundleCode(const tt_string& description, tt_string& code)
             }
             else if (bundle->lst_filenames.size() == 2)
             {
-                tt_string name(bundle->lst_filenames[0].filename());
-                name.remove_extension();
-                name.Replace(".", "_", true);  // fix wxFormBuilder header files
+                tt_string first_name, second_name;
+                tt_string first_function, second_function;
 
-                if (parts[IndexType].starts_with("Embed"))
+                if (auto embed = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[0]); embed)
                 {
-                    auto embed = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[0]);
-                    if (embed)
-                    {
-                        name = "wxue_img::" + embed->array_name;
-                    }
+                    first_function = ProjectImages.GetBundleFuncName(embed);
+                    first_name = "wxue_img::" + embed->array_name;
+                }
+                if (auto embed = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[1]); embed)
+                {
+                    second_function = ProjectImages.GetBundleFuncName(embed);
+                    second_name = "wxue_img::" + embed->array_name;
                 }
 
                 if (Project.is_wxWidgets31())
                 {
                     code << "\n#if !wxCHECK_VERSION(3, 1, 6)\n\t";
-                    code << "wxueImage(";
-                    code << name << ", sizeof(" << name << "))";  // one less closing parenthesis
+                    if (first_function.size())
+                    {
+                        code << first_function;
+                    }
+                    else
+                    {
+                        code << "wxueImage(";
+                        code << first_name << ", sizeof(" << first_name << "))";  // one less closing parenthesis
+                    }
                     code << "\n#else\n";
                 }
 
-                code << "wxBitmapBundle::FromBitmaps(wxueImage(";
-                code << name << ", sizeof(" << name << ")), wxueImage(";
-
-                name = bundle->lst_filenames[1].filename();
-                name.remove_extension();
-                name.Replace(".", "_", true);
-
-                if (parts[IndexType].starts_with("Embed"))
+                code << "wxBitmapBundle::FromBitmaps(\n\t\t";
+                if (first_function.size())
                 {
-                    auto embed = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[1]);
-                    if (embed)
-                    {
-                        name = "wxue_img::" + embed->array_name;
-                    }
+                    code << first_function;
                 }
-                code << name << ", sizeof(" << name << ")))";
+                else
+                {
+                    code << "wxueImage(";
+                    code << first_name << ", sizeof(" << first_name << "))";  // one less closing parenthesis
+                }
+                code << ",\n\t\t";
+
+                if (second_function.size())
+                {
+                    code << second_function;
+                }
+                else
+                {
+                    code << "wxueImage(";
+                    code << second_name << ", sizeof(" << second_name << "))";
+                }
+                code << ")";  // Close FromBitmaps()
+
                 if (Project.is_wxWidgets31())
                 {
                     code << "\n#endif\n";
@@ -684,42 +700,48 @@ bool GenerateBundleCode(const tt_string& description, tt_string& code)
             }
             else if (bundle->lst_filenames.size() > 2)
             {
+                tt_string name, function;
                 if (Project.is_wxWidgets31())
                 {
-                    tt_string name(bundle->lst_filenames[0].filename());
-                    name.remove_extension();
-                    name.Replace(".", "_", true);  // fix wxFormBuilder header files
 
-                    if (parts[IndexType].starts_with("Embed"))
+                    if (auto embed = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[0]); embed)
                     {
-                        auto embed = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[0]);
-                        if (embed)
-                        {
-                            name = "wxue_img::" + embed->array_name;
-                        }
+                        function = ProjectImages.GetBundleFuncName(embed);
+                        name = "wxue_img::" + embed->array_name;
                     }
 
                     code << "\n#if !wxCHECK_VERSION(3, 1, 6)\n\t";
-                    code << "wxueImage(";
-                    code << name << ", sizeof(" << name << "))";  // one less closing parenthesis
-                    code << "\n#else\n";
+                    if (function.size())
+                    {
+                        code << function;
+                    }
+                    else
+                    {
+                        ASSERT_MSG(name.size(), "Image is embedded, but has no array name!");
+                        code << "wxueImage(";
+                        code << name << ", sizeof(" << name << "))";  // one less closing parenthesis
+                        code << "\n#else\n";
+                    }
                 }
 
-                code << "{\n\t\twxVector<wxBitmap> bitmaps;\n";
+                code << "{\n\twxVector<wxBitmap> bitmaps;\n";
                 for (auto& iter: bundle->lst_filenames)
                 {
-                    tt_string name(iter.filename());
-                    name.remove_extension();
-                    name.Replace(".", "_", true);  // fix wxFormBuilder header files
-                    if (parts[IndexType].starts_with("Embed"))
+                    if (auto embed = ProjectImages.GetEmbeddedImage(iter); embed)
                     {
-                        auto embed = ProjectImages.GetEmbeddedImage(iter);
-                        if (embed)
-                        {
-                            name = "wxue_img::" + embed->array_name;
-                        }
+                        function = ProjectImages.GetBundleFuncName(embed);
+                        name = "wxue_img::" + embed->array_name;
                     }
-                    code << "\t\tbitmaps.push_back(wxueImage(" << name << ", sizeof(" << name << ")));\n";
+                    code << "\tbitmaps.push_back(";
+                    if (function.size())
+                    {
+                        code << function << ");\n";
+                    }
+                    else
+                    {
+                        code << "wxueImage(";
+                        code << name << ", sizeof(" << name << ")));\n";
+                    }
                 }
                 if (Project.is_wxWidgets31())
                 {
@@ -772,6 +794,10 @@ bool GenerateVectorCode(const tt_string& description, tt_string& code)
 
     // If we get here, then we need to first put the bitmaps into a wxVector in order for wxBitmapBundle to load them.
 
+    tt_string does_this_work;
+    GenerateBundleCode(description, does_this_work);
+    code << "// does this work\n" << does_this_work << "\n// end does this work\n";
+
     code << "{\n";
     if (Project.is_wxWidgets31())
     {
@@ -791,7 +817,6 @@ bool GenerateVectorCode(const tt_string& description, tt_string& code)
         }
         else
         {
-            name.Replace(".", "_", true);  // fix wxFormBuilder header files
             if (parts[IndexType].starts_with("Embed"))
             {
                 auto embed = ProjectImages.GetEmbeddedImage(iter);

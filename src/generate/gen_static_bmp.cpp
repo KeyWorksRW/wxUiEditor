@@ -84,26 +84,25 @@ bool StaticBitmapGenerator::ConstructionCode(Code& code)
     return true;
 }
 
-// Check for pos, size, flags, window_flags, and window name, and generate code if needed
-// starting with a comma, e.g. -- ", wxPoint(x, y), wxSize(x, y), styles, name);"
-//
-// If the only style specified is def_style, then it will not be added.
-static void GeneratePosSizeFlags(Node* node, tt_string& code, bool uses_def_validator = false,
-                                 tt_string_view def_style = tt_empty_cstr);
-
-void StaticBitmapGenerator::GenCppConstruction(Code& gen_code)
+void StaticBitmapGenerator::GenCppConstruction(Code& code)
 {
-    Node* node = gen_code.node();
-    tt_string& code = gen_code.GetCode();
+    Node* node = code.node();
     if (node->hasValue(prop_bitmap))
     {
         auto& description = node->as_string(prop_bitmap);
-        bool is_vector_code = GenerateVectorCode(description, code);
-        gen_code.UpdateBreakAt();
+        tt_string bundle_code;
+        bool is_vector_code = GenerateBundleCode(description, bundle_code);
+        code.UpdateBreakAt();
 
         if (is_vector_code)
         {
-            gen_code.Tab();
+            if (bundle_code.starts_with("{\n\t"))
+            {
+                bundle_code.erase(0, 3);
+                code.OpenBrace();
+                code += bundle_code;
+            }
+            code.Tab();
         }
 
         if (node->isLocal())
@@ -111,30 +110,25 @@ void StaticBitmapGenerator::GenCppConstruction(Code& gen_code)
 
         bool use_generic_version = (node->as_string(prop_scale_mode) != "None");
         if (use_generic_version)
-            gen_code.NodeName() << " = new wxGenericStaticBitmap(";
+            code.NodeName() << " = new wxGenericStaticBitmap(";
         else
-            gen_code.NodeName() << " = new wxStaticBitmap(";
+            code.NodeName() << " = new wxStaticBitmap(";
 
-        gen_code.ValidParentName().Comma().as_string(prop_id).Comma();
+        code.ValidParentName().Comma().as_string(prop_id).Comma();
 
         if (!is_vector_code)
         {
-            tt_string bundle_code;
             if (!Project.is_wxWidgets31())
             {
-                GenerateBundleCode(description, bundle_code);
-                code << bundle_code;
+                code += bundle_code;
             }
             else
             {
-                if (Project.is_wxWidgets31())
-                {
-                    code.insert(0, "\t");
-                    code += "\n#if wxCHECK_VERSION(3, 1, 6)\n\t\t";
-                    GenerateBundleCode(description, bundle_code);
-                    code << bundle_code;
-                    GeneratePosSizeFlags(node, code);
-                }
+                code.GetCode().insert(0, "\t");
+                code += "\n#if wxCHECK_VERSION(3, 1, 6)\n\t\t";
+                code += bundle_code;
+                code.UpdateBreakAt();
+                code.PosSizeFlags();
 
                 code += "\n#else\n\t";
                 if (use_generic_version)
@@ -147,12 +141,13 @@ void StaticBitmapGenerator::GenCppConstruction(Code& gen_code)
                     // wxStaticBitmap requires a wxGDIImage for the bitmap, and that won't accept a wxImage.
                     code << "wxBitmap(" << GenerateBitmapCode(description) << ")";
                 }
-                gen_code.PosSizeFlags();
+                code.UpdateBreakAt();
+                code.PosSizeFlags();
                 code << "\n#endif";
                 return;
             }
         }
-        else
+        else  // bundle_code contains a vector
         {
             if (!Project.is_wxWidgets31())
             {
@@ -162,7 +157,8 @@ void StaticBitmapGenerator::GenCppConstruction(Code& gen_code)
             {
                 code += "\n#if wxCHECK_VERSION(3, 1, 6)\n\t\t";
                 code += "wxBitmapBundle::FromBitmaps(bitmaps)";
-                GeneratePosSizeFlags(node, code);
+                code.Eol().Tab();
+                code.PosSizeFlags();
 
                 code += "\n#else\n\t\t";
                 if (use_generic_version)
@@ -175,30 +171,29 @@ void StaticBitmapGenerator::GenCppConstruction(Code& gen_code)
                     // wxStaticBitmap requires a wxGDIImage for the bitmap, and that won't accept a wxImage.
                     code << "wxBitmap(" << GenerateBitmapCode(description) << ")";
                 }
-                gen_code.PosSizeFlags();
+                code.PosSizeFlags();
 
                 code << "\n#endif";
                 return;
             }
         }
     }
-    else
+    else  // no bitmap
     {
         if (node->isLocal())
             code << "auto* ";
 
         bool use_generic_version = (node->as_string(prop_scale_mode) != "None");
         if (use_generic_version)
-            gen_code.NodeName() << " = new wxGenericStaticBitmap(";
+            code.NodeName() += " = new wxGenericStaticBitmap(";
         else
-            gen_code.NodeName() << " = new wxStaticBitmap(";
+            code.NodeName() += " = new wxStaticBitmap(";
 
-        gen_code.ValidParentName().Comma().as_string(prop_id).Comma();
-
-        code << "wxNullBitmap";
+        code.ValidParentName().Comma().as_string(prop_id).Comma();
+        code += "wxNullBitmap";
     }
 
-    gen_code.PosSizeFlags();
+    code.PosSizeFlags();
 }
 
 bool StaticBitmapGenerator::SettingsCode(Code& code)
@@ -261,91 +256,4 @@ void StaticBitmapGenerator::RequiredHandlers(Node* /* node */, std::set<std::str
 {
     handlers.emplace("wxStaticBitmapXmlHandler");
     handlers.emplace("wxBitmapXmlHandler");
-}
-
-static void GeneratePosSizeFlags(Node* node, tt_string& code, bool uses_def_validator, tt_string_view def_style)
-{
-    if (node->hasValue(prop_window_name))
-    {
-        // Window name is always the last parameter, so if it is specified, everything has to be generated.
-        if (code.size() < 80)
-            code << ", ";
-        else
-            code << ",\n\t";
-
-        GenPos(node, code);
-        code << ", ";
-        GenSize(node, code);
-        code << ", ";
-        GenStyle(node, code);
-        if (uses_def_validator)
-            code << ", wxDefaultValidator";
-        code << ", " << node->as_string(prop_window_name) << ");";
-        return;
-    }
-
-    tt_string all_styles;
-    GenStyle(node, all_styles);
-    if (all_styles.is_sameas("0") || all_styles.is_sameas(def_style))
-        all_styles.clear();
-
-    bool isPosSet { false };
-    auto pos = node->as_wxPoint(prop_pos);
-    if (pos.x != -1 || pos.y != -1)
-    {
-        if (node->as_string(prop_pos).contains("d", tt::CASE::either))
-        {
-            code << ", ConvertDialogToPixels(wxPoint(" << pos.x << ", " << pos.y << "))";
-        }
-        else
-        {
-            code << ", wxPoint(" << pos.x << ", " << pos.y << ")";
-        }
-
-        isPosSet = true;
-    }
-
-    bool isSizeSet { false };
-    if (node->as_wxSize(prop_size) != wxDefaultSize)
-    {
-        if (!isPosSet)
-        {
-            code << ", wxDefaultPosition";
-            isPosSet = true;
-        }
-        code << ", " << GenerateWxSize(node, prop_size);
-
-        isSizeSet = true;
-    }
-
-    if (node->hasValue(prop_window_style) && !node->as_string(prop_window_style).is_sameas("wxTAB_TRAVERSAL"))
-    {
-        if (!isPosSet)
-            code << ", wxDefaultPosition";
-        if (!isSizeSet)
-            code << ", wxDefaultSize";
-
-        code << ", " << all_styles << ");";
-        return;
-    }
-
-    if (all_styles.size())
-    {
-        if (!isPosSet)
-            code << ", wxDefaultPosition";
-        if (!isSizeSet)
-            code << ", wxDefaultSize";
-
-        if (code.size() < 100)
-            code << ", ";
-        else
-        {
-            code << ",\n\t";
-        }
-
-        code << all_styles << ");";
-        return;
-    }
-
-    code << ");";
 }

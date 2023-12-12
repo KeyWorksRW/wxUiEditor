@@ -631,13 +631,7 @@ void BaseCodeGenerator::GenerateCppClass(PANEL_PAGE panel_type)
         {
             if (Project.is_wxWidgets31())
             {
-                m_source->writeLine();
-                m_source->writeLine("#if !wxCHECK_VERSION(3, 1, 6)", indent::none);
-                m_source->Indent();
-                m_source->writeLine("#error \"You must build with wxWidgets 3.1.6 or later to use SVG images.\"",
-                                    indent::auto_no_whitespace);
-                m_source->Unindent();
-                m_source->writeLine("#endif", indent::none);
+                m_source->writeLine("#if wxCHECK_VERSION(3, 1, 6)", indent::none);
             }
 
             tt_string_vector function;
@@ -647,6 +641,11 @@ void BaseCodeGenerator::GenerateCppClass(PANEL_PAGE panel_type)
                 m_source->writeLine(iter, indent::none);
             }
             m_source->writeLine();
+            if (Project.is_wxWidgets31())
+            {
+                m_source->writeLine("#endif  // requires wxCHECK_VERSION(3, 1, 6)", indent::none);
+                m_source->writeLine();
+            }
         }
 
         if (m_NeedAnimationFunction)

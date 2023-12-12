@@ -211,12 +211,6 @@ void BaseCodeGenerator::GenerateCppClass(PANEL_PAGE panel_type)
 
     CollectIncludes(m_form_node, src_includes, hdr_includes);
 
-    bool has_images_list_header = false;
-    if (m_ImagesForm && m_include_images_statement.size() && src_includes.contains(m_include_images_statement))
-    {
-        has_images_list_header = true;
-    }
-
     if (m_form_node->as_bool(prop_persist))
     {
         src_includes.insert("#include <wx/persist.h>");
@@ -631,13 +625,7 @@ void BaseCodeGenerator::GenerateCppClass(PANEL_PAGE panel_type)
         {
             if (Project.is_wxWidgets31())
             {
-                m_source->writeLine();
-                m_source->writeLine("#if !wxCHECK_VERSION(3, 1, 6)", indent::none);
-                m_source->Indent();
-                m_source->writeLine("#error \"You must build with wxWidgets 3.1.6 or later to use SVG images.\"",
-                                    indent::auto_no_whitespace);
-                m_source->Unindent();
-                m_source->writeLine("#endif", indent::none);
+                m_source->writeLine("#if wxCHECK_VERSION(3, 1, 6)", indent::none);
             }
 
             tt_string_vector function;
@@ -647,6 +635,11 @@ void BaseCodeGenerator::GenerateCppClass(PANEL_PAGE panel_type)
                 m_source->writeLine(iter, indent::none);
             }
             m_source->writeLine();
+            if (Project.is_wxWidgets31())
+            {
+                m_source->writeLine("#endif  // requires wxCHECK_VERSION(3, 1, 6)", indent::none);
+                m_source->writeLine();
+            }
         }
 
         if (m_NeedAnimationFunction)
@@ -1269,8 +1262,7 @@ void BaseCodeGenerator::GenerateCppHandlers()
     {
         for (auto& iter_img: m_embedded_images)
         {
-            // wxBITMAP_TYPE_INVALID means it is a zlib compressed SVG string
-            if (iter_img->type != wxBITMAP_TYPE_BMP && iter_img->type != wxBITMAP_TYPE_INVALID &&
+            if (iter_img->type != wxBITMAP_TYPE_BMP && iter_img->type != wxBITMAP_TYPE_SVG &&
                 m_type_generated.find(iter_img->type) == m_type_generated.end())
             {
                 m_source->writeLine(tt_string("if (!wxImage::FindHandler(") << g_map_types[iter_img->type] << "))");

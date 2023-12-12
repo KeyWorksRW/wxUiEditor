@@ -1236,7 +1236,7 @@ bool ImageHandler::AddSvgBundleImage(tt_string path, Node* form)
     auto compressed_size = memory_stream.TellO();
 
     auto read_stream = memory_stream.GetOutputStreamBuffer();
-    embed->type = wxBITMAP_TYPE_INVALID;
+    embed->type = wxBITMAP_TYPE_SVG;
     embed->array_size = (compressed_size | (org_size << 32));
     embed->array_data = std::make_unique<unsigned char[]>(compressed_size);
     memcpy(embed->array_data.get(), read_stream->GetBufferStart(), compressed_size);
@@ -1296,7 +1296,7 @@ tt_string ImageHandler::GetBundleFuncName(const tt_string& description)
                     if (auto bundle = GetPropertyImageBundle(parts); bundle && bundle->lst_filenames.size())
                     {
                         auto embed = GetEmbeddedImage(bundle->lst_filenames[0]);
-                        if (embed->type == wxBITMAP_TYPE_INVALID)
+                        if (embed->type == wxBITMAP_TYPE_SVG)
                         {
                             name << "wxue_img::bundle_" << embed->array_name << "(";
 
@@ -1343,7 +1343,7 @@ tt_string ImageHandler::GetBundleFuncName(const tt_string_vector& parts)
                     if (auto bundle = GetPropertyImageBundle(parts); bundle && bundle->lst_filenames.size())
                     {
                         auto embed = GetEmbeddedImage(bundle->lst_filenames[0]);
-                        if (embed->type == wxBITMAP_TYPE_INVALID)
+                        if (embed->type == wxBITMAP_TYPE_SVG)
                         {
                             name << "wxue_img::bundle_" << embed->array_name << "(";
 
@@ -1376,7 +1376,7 @@ tt_string ImageHandler::GetBundleFuncName(const EmbeddedImage* embed, wxSize svg
     {
         return name;
     }
-    if (embed->type == wxBITMAP_TYPE_INVALID)
+    if (embed->type == wxBITMAP_TYPE_SVG)
     {
         name << "wxue_img::bundle_" << embed->array_name << "(";
         name << svg_size.x << ", " << svg_size.y << ")";

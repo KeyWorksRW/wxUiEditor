@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
 ### Added
 
 - Dark Mode and High Contrast Dark Mode are now available in the Prefences dialog on Windows.
+- XPM files are now supported in wxPython and wxRuby3
 
 ### Changed
 

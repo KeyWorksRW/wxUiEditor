@@ -100,6 +100,10 @@
 #include "tt/tt_string_view.h"    // tt_string_view -- std::string_view with additional methods
 #include "tt/tt_view_vector.h"    // tt_view_vector -- Class for reading and writing line-oriented strings/files
 
+#ifndef wxBITMAP_TYPE_SVG
+    #define wxBITMAP_TYPE_SVG static_cast<wxBitmapType>(wxBITMAP_TYPE_ANY - 1)
+#endif
+
 enum class MoveDirection
 {
     Up = 1,

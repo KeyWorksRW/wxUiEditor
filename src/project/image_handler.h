@@ -88,13 +88,13 @@ public:
         return GetPropertyImageBundle(parts, node);
     }
 
-    // If there is an Image form containing this bundle, return it's name
+    // If there is an Image form containing this bundle, return it's function name
     tt_string GetBundleFuncName(const tt_string& description);
 
-    // If there is an Image form containing this bundle, return it's name
+    // If there is an Images List containing this bundle, return it's function name
     tt_string GetBundleFuncName(const tt_string_vector& parts);
 
-    // If there is an Image form containing this bundle, return it's name
+    // If there is an Images List containing this image, return it's function name
     tt_string GetBundleFuncName(const EmbeddedImage* embed, wxSize svg_size = wxDefaultSize);
 
     ImageBundle* ProcessBundleProperty(const tt_string_vector& parts, Node* node);

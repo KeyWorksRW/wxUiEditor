@@ -784,6 +784,23 @@ bool RubyBundleCode(Code& code, GenEnum::PropName prop)
             code.Comma().Str("Wx::Size.new(").itoa(svg_size.x).Comma().itoa(svg_size.y) += "))";
         }
 
+        else if (description.starts_with("XPM"))
+        {
+            auto path = MakeRubyPath(code.node());
+            tt_string name(bundle->lst_filenames[0]);
+            name.make_absolute();
+            if (!name.file_exists())
+            {
+                name = Project.ArtDirectory();
+                name.append_filename(bundle->lst_filenames[0]);
+            }
+            name.make_relative(path);
+            name.backslashestoforward();
+
+            code.CheckLineLength(name.size() + sizeof("Wx::Bitmap.new()") + sizeof("wx.BITMAP_TYPE_XPM)"));
+            code.Str("Wx::Bitmap.new(").QuotedString(name).Comma().Str("Wx::BITMAP_TYPE_XPM)");
+        }
+
         else if (parts[IndexType].starts_with("Embed"))
         {
             if (bundle->lst_filenames.empty())

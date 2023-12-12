@@ -876,11 +876,46 @@ static void GenerateEmbedBundle(Code& code, const tt_string_vector& parts, bool 
 static void GenerateXpmBitmap(Code& code, const tt_string_vector& parts, bool /* get_bitmap */)
 {
     // We only marginally support XPM files -- we only allow a single file, and we don't attempt to scale it.
-    code.Add("wxImage(");
 
     tt_string name(parts[IndexImage].filename());
-    name.remove_extension();
-    code << name << "_xpm)";
+    if (code.is_cpp())
+    {
+        code.Str("wxBitmap(");
+        name.remove_extension();
+        code << name << "_xpm)";
+    }
+    else if (code.is_python())
+    {
+        auto path = MakePythonPath(code.node());
+        name.make_absolute();
+        if (!name.file_exists())
+        {
+            name = Project.ArtDirectory();
+            name.append_filename(parts[IndexImage].filename());
+        }
+        name.make_relative(path);
+        name.backslashestoforward();
+
+        code.Str("wx.Bitmap(");
+        code.QuotedString(name);
+        code.Comma().Str("wx.BITMAP_TYPE_XPM)");
+    }
+    else if (code.is_ruby())
+    {
+        auto path = MakeRubyPath(code.node());
+        name.make_absolute();
+        if (!name.file_exists())
+        {
+            name = Project.ArtDirectory();
+            name.append_filename(parts[IndexImage].filename());
+        }
+        name.make_relative(path);
+        name.backslashestoforward();
+
+        code.Str("Wx::Bitmap.new(");
+        code.QuotedString(name);
+        code.Comma().Str("Wx::BITMAP_TYPE_XPM)");
+    }
 }
 
 void GenerateBundleParameter(Code& code, const tt_string_vector& parts, bool get_bitmap)

@@ -663,6 +663,11 @@ bool PythonBundleCode(Code& code, GenEnum::PropName prop)
     {
         tt_string name(bundle->lst_filenames[0]);
         name.make_absolute();
+        if (!name.file_exists())
+        {
+            name = Project.ArtDirectory();
+            name.append_filename(bundle->lst_filenames[0]);
+        }
         name.make_relative(path);
         name.backslashestoforward();
 
@@ -689,6 +694,12 @@ bool PythonBundleCode(Code& code, GenEnum::PropName prop)
                 svg_size = GetSizeInfo(parts[IndexSize]);
             }
             code.Comma().Add("wxSize(").itoa(svg_size.x).Comma().itoa(svg_size.y) += "))";
+        }
+
+        else if (description.starts_with("XPM"))
+        {
+            code.CheckLineLength(name.size() + sizeof("wx.Bitmap()") + sizeof("wx.BITMAP_TYPE_XPM)"));
+            code.Str("wx.Bitmap(").QuotedString(name).Comma().Str("wx.BITMAP_TYPE_XPM)");
         }
 
         else if (bundle->lst_filenames.size() == 1)

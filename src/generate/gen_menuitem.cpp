@@ -173,7 +173,6 @@ bool MenuItemGenerator::SettingsCode(Code& code)
             {
                 tt_string bundle_code;
                 bool is_vector_code = GenerateBundleCode(description, bundle_code);
-                code.UpdateBreakAt();
 
                 if (!is_vector_code)
                 {
@@ -197,22 +196,14 @@ bool MenuItemGenerator::SettingsCode(Code& code)
                 else  // bundle_code contains a vector
                 {
                     code += bundle_code;
-                    code.Tab().NodeName().Function("SetBitmap(");
-                    if (!Project.is_wxWidgets31())
+                    code.Tab().NodeName().Function("SetBitmap(wxBitmapBundle::FromBitmaps(bitmaps));");
+                    code.CloseBrace();
+                    if (Project.is_wxWidgets31())
                     {
-                        code += "wxBitmapBundle::FromBitmaps(bitmaps)";
-                        code.UpdateBreakAt();
-                        code.EndFunction().CloseBrace();
-                    }
-                    else
-                    {
-                        code += "\n#if wxCHECK_VERSION(3, 1, 6)\n\t";
-                        code.Tab() += "wxBitmapBundle::FromBitmaps(bitmaps)";
-                        code += "\n#else\n\t";
-                        code.Tab() << "wxBitmap(" << GenerateBitmapCode(description) << ")\n";
+                        code += "#else";
+                        code.Eol().NodeName().Function("SetBitmap(");
+                        code << "wxBitmap(" << GenerateBitmapCode(description) << "));\n";
                         code << "#endif\n";
-                        code.UpdateBreakAt();
-                        code.Tab().EndFunction().CloseBrace();
                     }
                 }
             }

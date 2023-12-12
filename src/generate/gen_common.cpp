@@ -703,25 +703,25 @@ bool GenerateBundleCode(const tt_string& description, tt_string& code)
                 tt_string name, function;
                 if (Project.is_wxWidgets31())
                 {
-
                     if (auto embed = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[0]); embed)
                     {
                         function = ProjectImages.GetBundleFuncName(embed);
                         name = "wxue_img::" + embed->array_name;
                     }
 
-                    code << "\n#if !wxCHECK_VERSION(3, 1, 6)\n\t";
                     if (function.size())
                     {
+                        code << "\n#if wxCHECK_VERSION(3, 1, 6)\n\t";
                         code << function;
-                    }
-                    else
-                    {
+                        code << "\n#else\n";
                         ASSERT_MSG(name.size(), "Image is embedded, but has no array name!");
                         code << "wxueImage(";
                         code << name << ", sizeof(" << name << "))";  // one less closing parenthesis
-                        code << "\n#else\n";
+                        code << "\n#endif\n";
+                        return false;
                     }
+
+                    code << "\n#if wxCHECK_VERSION(3, 1, 6)\n";
                 }
 
                 code << "{\n\twxVector<wxBitmap> bitmaps;\n";
@@ -742,10 +742,6 @@ bool GenerateBundleCode(const tt_string& description, tt_string& code)
                         code << "wxueImage(";
                         code << name << ", sizeof(" << name << ")));\n";
                     }
-                }
-                if (Project.is_wxWidgets31())
-                {
-                    code << "\n#endif\n";
                 }
 
                 // Return true to indicate a code block was generated

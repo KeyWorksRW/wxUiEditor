@@ -61,8 +61,8 @@ tt_string GenerateBitmapCode(const tt_string& description);
 // Generates the code necessary to create a wxBitmapBundle used to pass as an argument to a
 // function, or the start of a code block containing: { wxVector<wxBitmap> bitmaps;
 //
-// Returns true if the returned string starts with a '{' character and a wxVector was
-// generated.
+// Returns true if the returned string contains a wxVector. For 3.1 code, this will start
+// with "#if wxCHECK_VERSION(3, 1, 6)" and caller must supply #else and #endif.
 bool GenerateBundleCode(const tt_string& description, tt_string& code);
 
 // Will generate "wxDefaultPosition" if prop_pos is -1;-1

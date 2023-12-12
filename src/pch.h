@@ -101,7 +101,7 @@
 #include "tt/tt_view_vector.h"    // tt_view_vector -- Class for reading and writing line-oriented strings/files
 
 #ifndef wxBITMAP_TYPE_SVG
-    #define wxBITMAP_TYPE_SVG static_cast<wxBitmapType> (wxBITMAP_TYPE_ANY - 1)
+    #define wxBITMAP_TYPE_SVG static_cast<wxBitmapType>(wxBITMAP_TYPE_ANY - 1)
 #endif
 
 enum class MoveDirection

@@ -425,7 +425,7 @@ Code& Code::CloseBrace()
     if (is_cpp())
     {
         m_within_braces = false;
-        while (tt::is_whitespace(back()))
+        while (size() && tt::is_whitespace(back()))
             pop_back();
         Eol().Str("}").Eol();
     }

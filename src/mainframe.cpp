@@ -52,6 +52,7 @@
 #include "panels/ribbon_tools.h"    // RibbonPanel -- Displays component tools in a wxRibbonBar
 
 #include "preferences_dlg.h"  // PreferencesDlg -- Dialog for setting user preferences
+#include "startup_dlg.h"      // StartupDlg -- Dialog to display if wxUE is launched with no arguments
 
 #include "wxui/ui_images.h"  // This is generated from the Images List
 
@@ -642,7 +643,6 @@ void MainFrame::OnOpenRecentProject(wxCommandEvent& event)
 {
     if (!SaveWarning())
         return;
-
     tt_string file = m_FileHistory.GetHistoryFile(event.GetId() - wxID_FILE1).utf8_string();
 
     if (file.file_exists())
@@ -2136,4 +2136,70 @@ void MainFrame::OnPreferencesDlg(wxCommandEvent& WXUNUSED(event))
 {
     PreferencesDlg dlg(this);
     dlg.ShowModal();
+}
+
+void MainFrame::OnDifferentProject(wxCommandEvent& WXUNUSED(event))
+{
+    if (!SaveWarning())
+        return;
+
+    StartupDlg start_dlg(m_nav_panel);
+    if (auto result = start_dlg.ShowModal(); result == wxID_OK)
+    {
+        switch (start_dlg.GetCommandType())
+        {
+            case StartupDlg::START_MRU:
+                if (!start_dlg.GetProjectFile().extension().is_sameas(".wxui", tt::CASE::either) &&
+                    !start_dlg.GetProjectFile().extension().is_sameas(".wxue", tt::CASE::either))
+                {
+                    Project.ImportProject(start_dlg.GetProjectFile());
+                }
+                else
+                {
+                    Project.LoadProject(start_dlg.GetProjectFile());
+                }
+                break;
+
+            case StartupDlg::START_EMPTY:
+                Project.NewProject(true);
+                break;
+
+            case StartupDlg::START_CONVERT:
+                Project.NewProject(false);
+                break;
+
+            case StartupDlg::START_OPEN:
+                {
+                    // TODO: [KeyWorks - 02-21-2021] A CodeBlocks file will contain all of the wxSmith resources -- so it
+                    // would actually make sense to process it since we can combine all of those resources into our
+                    // single project file.
+
+                    wxFileDialog dialog(nullptr, "Open or Import Project", wxEmptyString, wxEmptyString,
+                                        "wxUiEditor Project File (*.wxui)|*.wxui"
+                                        "|wxCrafter Project File (*.wxcp)|*.wxcp"
+                                        "|DialogBlocks Project File (*.fjd)|*.fjd"
+                                        "|wxFormBuilder Project File (*.fbp)|*.fbp"
+                                        "|wxGlade File (*.wxg)|*.wxg"
+                                        "|wxSmith File (*.wxs)|*.wxs"
+                                        "|XRC File (*.xrc)|*.xrc"
+                                        "|Windows Resource File (*.rc)|*.rc||",
+                                        wxFD_OPEN);
+
+                    if (dialog.ShowModal() == wxID_OK)
+                    {
+                        tt_string filename = dialog.GetPath().utf8_string();
+                        if (!filename.extension().is_sameas(".wxui", tt::CASE::either) &&
+                            !filename.extension().is_sameas(".wxue", tt::CASE::either))
+                        {
+                            Project.ImportProject(filename);
+                        }
+                        else
+                        {
+                            Project.LoadProject(dialog.GetPath());
+                        }
+                    }
+                }
+                break;
+        }
+    }
 }

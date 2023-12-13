@@ -68,6 +68,7 @@ public:
         id_BorderLeft,
         id_BorderRight,
         id_BorderTop,
+        id_DifferentProject,
         id_Expand,
         id_GenerateCode,
         id_Magnify,
@@ -116,6 +117,7 @@ protected:
     virtual void OnCopy(wxCommandEvent& event) { event.Skip(); }
     virtual void OnCut(wxCommandEvent& event) { event.Skip(); }
     virtual void OnDelete(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnDifferentProject(wxCommandEvent& event) { event.Skip(); }
     virtual void OnDuplicate(wxCommandEvent& event) { event.Skip(); }
     virtual void OnEditCustomIds(wxCommandEvent& event) { event.Skip(); }
     virtual void OnFindDialog(wxCommandEvent& event) { event.Skip(); }

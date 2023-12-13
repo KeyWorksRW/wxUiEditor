@@ -18,7 +18,11 @@
 
 #include "../wxui/ui_images.h"
 
+#include <wx/display.h>
+
 #include "startup_dlg.h"
+
+#include "../mainframe.h"
 
 #include <wx/mstream.h>  // memory stream classes
 #include <wx/zstream.h>  // zlib stream classes
@@ -163,7 +167,6 @@ bool StartupDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     dlg_sizer->Add(box_sizer_7, wxSizerFlags().Expand().Border(wxALL));
 
     SetSizerAndFit(dlg_sizer);
-    Centre(wxBOTH);
 
     // Event handlers
     hyperlink_2->Bind(wxEVT_HYPERLINK, &StartupDlg::OnOpen, this);
@@ -180,7 +183,6 @@ bool StartupDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 // Code below this comment block will be preserved
 // if the code for this class is re-generated.
 //
-// clang-format on
 // ***********************************************
 
 /////////////////////////////////////////////////////////////////////////////
@@ -190,10 +192,24 @@ bool StartupDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include "mainframe.h"  // MainFrame -- Main window frame
+// clang-format on
 
 void StartupDlg::OnInit(wxInitDialogEvent& event)
 {
+    if (!GetParent())
+    {
+        wxDisplay desktop(this);
+        wxRect rect_parent(desktop.GetClientArea());
+        wxRect rect_this(GetSize());
+        rect_this.x = rect_parent.x + (rect_parent.width - rect_this.width) / 2;
+        rect_this.y = rect_parent.y + (rect_parent.height - rect_this.height) / 3;
+        SetSize(rect_this, wxSIZE_ALLOW_MINUS_ONE);
+    }
+    else
+    {
+        Center(wxHORIZONTAL);
+    }
+
     m_name_version->SetLabel(txtVersion);
 
     auto& history = wxGetMainFrame()->getFileHistory();

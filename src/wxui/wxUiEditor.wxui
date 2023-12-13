@@ -214,17 +214,11 @@
               class="toolSeparator" />
             <node
               class="tool"
-              bitmap="SVG;new-project.svg;[24,24]"
-              id="id_NewProject"
-              label="New"
-              tooltip="New Project (Ctrl+N)" />
-            <node
-              class="tool"
-              bitmap="Art;wxART_FILE_OPEN|wxART_TOOLBAR"
-              id="id_OpenProject"
-              label="Open"
-              tooltip="Open Project (Ctrl+O)"
-              var_name="tool2" />
+              bitmap="SVG;wxUiEditor.svg;[24,24]"
+              id="id_DifferentProject"
+              label="Different Project..."
+              tooltip="Different Project... (Ctrl+D)"
+              var_name="tool4" />
             <node
               class="tool"
               bitmap="SVG;save.svg;[24,24]"
@@ -236,8 +230,8 @@
               class="tool"
               bitmap="SVG;generate.svg;[24,24]"
               id="id_GenerateCode"
-              label=""
-              tooltip="Generate code"
+              label="Generate..."
+              tooltip="Generate code..."
               var_name="Generate"
               wxEVT_TOOL="OnGenerateCode" />
             <node
@@ -448,18 +442,29 @@
             var_name="m_menuFile">
             <node
               class="wxMenuItem"
+              bitmap="SVG;wxUiEditor.svg;[16,16]"
+              help="Open a project"
+              id="id_DifferentProject"
+              label="&amp;Different Project..."
+              shortcut="Ctrl+D"
+              var_name="menuItem3"
+              wxEVT_MENU="OnDifferentProject" />
+            <node
+              class="wxMenuItem"
               bitmap="SVG;new-project.svg;[16,16]"
               help="Create an empty project"
               id="id_NewProject"
-              label="&amp;New Project...&#09;Ctrl+N"
+              label="&amp;New Project..."
+              shortcut="Ctrl+N"
               var_name="menuItem"
               wxEVT_MENU="[](wxCommandEvent&amp;)@@{@@Project.NewProject(true);@@}" />
             <node
               class="wxMenuItem"
-              bitmap="Art;wxART_FILE_OPEN|wxART_OTHER"
+              bitmap="Art;wxART_FILE_OPEN|wxART_MENU"
               help="Open a project"
               id="id_OpenProject"
-              label="&amp;Open Project...&#09;Ctrl+O"
+              label="&amp;Open Project..."
+              shortcut="Ctrl+O"
               var_name="menuItem2"
               wxEVT_MENU="OnOpenProject" />
             <node
@@ -470,7 +475,7 @@
             <node
               class="wxMenuItem"
               bitmap="SVG;import.svg;[16,16]"
-              label="&amp;Import..."
+              label="&amp;Import Project..."
               var_name="menu_import"
               wxEVT_MENU="[](wxCommandEvent&amp;)@@{@@// Specifying false tells NewProject to import@@Project.NewProject(false);@@}" />
             <node
@@ -5168,10 +5173,13 @@
     </node>
     <node
       class="wxDialog"
+      center="no"
       class_name="StartupDlg"
       icon="SVG;wxUiEditor.svg;[16,16]"
       title="Open, Import, or Create Project"
       base_file="..\ui\startup_dlg"
+      local_src_includes="../mainframe.h"
+      system_src_includes="wx/display.h"
       no_closing_brace="1"
       private_members="1"
       use_derived_class="0"

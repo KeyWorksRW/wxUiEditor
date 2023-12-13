@@ -268,6 +268,7 @@ protected:
     void OnCopy(wxCommandEvent& event) override;
     void OnCut(wxCommandEvent& event) override;
     void OnDelete(wxCommandEvent& event) override;
+    void OnDifferentProject(wxCommandEvent& event) override;
     void OnDuplicate(wxCommandEvent& event) override;
     void OnEditCustomIds(wxCommandEvent& event) override;
     void OnFindDialog(wxCommandEvent& event) override;
@@ -277,8 +278,8 @@ protected:
     void OnInsertWidget(wxCommandEvent&) override;
     void OnNewProject(wxCommandEvent& event);
     void OnOpenRecentProject(wxCommandEvent& event);
-    void OnPreferencesDlg(wxCommandEvent& event) override;
     void OnPaste(wxCommandEvent& event) override;
+    void OnPreferencesDlg(wxCommandEvent& event) override;
     void OnSaveAsProject(wxCommandEvent& event) override;
     void OnToggleExpandLayout(wxCommandEvent&) override;
     void OnUpdateBrowseDocs(wxUpdateUIEvent& event) override;

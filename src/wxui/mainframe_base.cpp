@@ -43,17 +43,14 @@ bool MainFrameBase::Create(wxWindow* parent, wxWindowID id, const wxString& titl
     m_toolbar = new wxToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT|wxTB_HORIZONTAL|wxTB_NODIVIDER);
 
     m_toolbar->AddSeparator();
-    m_toolbar->AddTool(id_NewProject, "New",
-        wxueBundleSVG(wxue_img::new_project_svg, 921, 2208, FromDIP(wxSize(24, 24))), "New Project (Ctrl+N)");
-
-    m_toolbar->AddTool(id_OpenProject, "Open", wxArtProvider::GetBitmapBundle(wxART_FILE_OPEN, wxART_TOOLBAR),
-        "Open Project (Ctrl+O)");
+    m_toolbar->AddTool(id_DifferentProject, "Different Project...",
+        wxue_img::bundle_wxUiEditor_svg(FromDIP(24), FromDIP(24)), "Different Project... (Ctrl+D)");
 
     m_toolbar->AddTool(wxID_SAVE, "Save",
         wxueBundleSVG(wxue_img::save_svg, 717, 2603, FromDIP(wxSize(24, 24))), "Save current project");
 
-    m_toolbar->AddTool(id_GenerateCode, wxEmptyString,
-        wxueBundleSVG(wxue_img::generate_svg, 780, 2716, FromDIP(wxSize(24, 24))), "Generate code");
+    m_toolbar->AddTool(id_GenerateCode, "Generate...",
+        wxueBundleSVG(wxue_img::generate_svg, 780, 2716, FromDIP(wxSize(24, 24))), "Generate code...");
 
     m_toolbar->AddSeparator();
     m_toolbar->AddTool(wxID_UNDO, wxEmptyString,
@@ -142,19 +139,23 @@ bool MainFrameBase::Create(wxWindow* parent, wxWindowID id, const wxString& titl
     m_menubar = new wxMenuBar();
 
     m_menuFile = new wxMenu();
+    auto* menuItem3 = new wxMenuItem(m_menuFile, id_DifferentProject, "&Different Project...\tCtrl+D", "Open a project",
+        wxITEM_NORMAL);
+    menuItem3->SetBitmap(wxue_img::bundle_wxUiEditor_svg(16, 16));
+    m_menuFile->Append(menuItem3);
     auto* menuItem = new wxMenuItem(m_menuFile, id_NewProject, "&New Project...\tCtrl+N", "Create an empty project",
         wxITEM_NORMAL);
     menuItem->SetBitmap(wxueBundleSVG(wxue_img::new_project_svg, 921, 2208, wxSize(16, 16)));
 
     m_menuFile->Append(menuItem);
     auto* menuItem2 = new wxMenuItem(m_menuFile, id_OpenProject, "&Open Project...\tCtrl+O", "Open a project", wxITEM_NORMAL);
-    menuItem2->SetBitmap(wxArtProvider::GetBitmapBundle(wxART_FILE_OPEN, wxART_OTHER));
+    menuItem2->SetBitmap(wxArtProvider::GetBitmapBundle(wxART_FILE_OPEN, wxART_MENU));
 
     m_menuFile->Append(menuItem2);
 
     m_submenu_recent = new wxMenu();
     m_menuFile->AppendSubMenu(m_submenu_recent, "Open &Recent");
-    auto* menu_import = new wxMenuItem(m_menuFile, wxID_ANY, "&Import...");
+    auto* menu_import = new wxMenuItem(m_menuFile, wxID_ANY, "&Import Project...");
     menu_import->SetBitmap(wxue_img::bundle_import_svg(16, 16));
 
     m_menuFile->Append(menu_import);
@@ -380,6 +381,7 @@ bool MainFrameBase::Create(wxWindow* parent, wxWindowID id, const wxString& titl
     Bind(wxEVT_CLOSE_WINDOW, &MainFrameBase::OnClose, this);
     Bind(wxEVT_MENU, &MainFrameBase::OnToggleExpandLayout, this, id_Expand);
     Bind(wxEVT_MENU, &MainFrameBase::OnGenerateCode, this, id_GenerateCode);
+    Bind(wxEVT_MENU, &MainFrameBase::OnDifferentProject, this, id_DifferentProject);
     Bind(wxEVT_MENU,
         [](wxCommandEvent&)
         {
@@ -395,14 +397,14 @@ bool MainFrameBase::Create(wxWindow* parent, wxWindowID id, const wxString& titl
         },
         menu_import->GetId());
     Bind(wxEVT_MENU, &MainFrameBase::OnSaveProject, this, wxID_SAVE);
-    Bind(wxEVT_MENU, &MainFrameBase::OnImportWindowsResource, this, id_AppendWinRes);
+    Bind(wxEVT_MENU, &MainFrameBase::OnPreviewXrc, this, id_PreviewForm);
     Bind(wxEVT_MENU, &MainFrameBase::OnSaveAsProject, this, id_SaveProjectAs);
     Bind(wxEVT_MENU, &MainFrameBase::OnAppendCrafter, this, id_AppendCrafter);
     Bind(wxEVT_MENU, &MainFrameBase::OnAppendFormBuilder, this, id_AppendFormBuilder);
     Bind(wxEVT_MENU, &MainFrameBase::OnAppendGlade, this, id_AppendGlade);
     Bind(wxEVT_MENU, &MainFrameBase::OnAppendSmith, this, id_AppendSmith);
     Bind(wxEVT_MENU, &MainFrameBase::OnAppendDialogBlocks, this, id_AppendCrafter);
-    Bind(wxEVT_MENU, &MainFrameBase::OnPreviewXrc, this, id_PreviewForm);
+    Bind(wxEVT_MENU, &MainFrameBase::OnImportWindowsResource, this, id_AppendWinRes);
     Bind(wxEVT_MENU, &MainFrameBase::OnAppendXRC, this, id_AppendXRC);
     Bind(wxEVT_MENU, &MainFrameBase::OnPreferencesDlg, this, id_PreferencesDlg);
     Bind(wxEVT_MENU,

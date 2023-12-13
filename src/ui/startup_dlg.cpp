@@ -183,6 +183,7 @@ bool StartupDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 // Code below this comment block will be preserved
 // if the code for this class is re-generated.
 //
+// clang-format on
 // ***********************************************
 
 /////////////////////////////////////////////////////////////////////////////

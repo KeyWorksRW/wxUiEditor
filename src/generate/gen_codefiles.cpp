@@ -141,6 +141,8 @@ void GenThreadCpp(GenData& gen_data, Node* form)
     if (form->as_bool(prop_no_closing_brace))
         flags |= flag_add_closing_brace;
     auto retval = h_cw->WriteFile(GEN_LANG_CPLUSPLUS, flags);
+    if (form->as_bool(prop_no_closing_brace))
+        flags = flags & ~flag_add_closing_brace;
 
     if (retval > 0)
     {

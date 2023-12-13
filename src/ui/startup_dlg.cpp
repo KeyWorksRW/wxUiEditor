@@ -18,7 +18,11 @@
 
 #include "../wxui/ui_images.h"
 
+#include <wx/display.h>
+
 #include "startup_dlg.h"
+
+#include "../mainframe.h"
 
 #include <wx/mstream.h>  // memory stream classes
 #include <wx/zstream.h>  // zlib stream classes
@@ -180,7 +184,6 @@ bool StartupDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 // if the code for this class is re-generated.
 //
 // ***********************************************
-// ***********************************************
 
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Dialog to display if wxUiEditor is launched with no arguments
@@ -189,9 +192,7 @@ bool StartupDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include "mainframe.h"  // MainFrame -- Main window frame
-
-#include <wx/display.h>  // wxDisplay: represents a display/monitor attached to the system
+// clang-format on
 
 void StartupDlg::OnInit(wxInitDialogEvent& event)
 {

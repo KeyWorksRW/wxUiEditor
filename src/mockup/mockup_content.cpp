@@ -72,7 +72,7 @@ void MockupContent::CreateAllGenerators()
 
         m_parent_sizer->Add(m_wizard, wxSizerFlags(1).Expand());
     }
-    else if (form->isGen(gen_Images))
+    else if (form->isGen(gen_Images) || form->isGen(gen_Data))
     {
         ASSERT_MSG(form->getGenerator(), tt_string() << "Missing component for " << form->declName());
         auto generator = form->getGenerator();
@@ -86,8 +86,7 @@ void MockupContent::CreateAllGenerators()
     else
     {
         if (form->isGen(gen_MenuBar) || form->isGen(gen_RibbonBar) || form->isGen(gen_ToolBar) ||
-            form->isGen(gen_AuiToolBar) || form->isGen(gen_PopupMenu) || form->isGen(gen_Images) ||
-            form->isGen(gen_wxPropertySheetDialog))
+            form->isGen(gen_AuiToolBar) || form->isGen(gen_PopupMenu) || form->isGen(gen_wxPropertySheetDialog))
         {
             // In this case, the form itself is created as a child
             CreateChildren(form, this, this, m_parent_sizer);
@@ -227,7 +226,7 @@ void MockupContent::CreateChildren(Node* node, wxWindow* parent, wxObject* paren
     else
     {
         created_window = wxStaticCast(created_object, wxWindow);
-        if (!node->isType(type_images))
+        if (!node->isType(type_images) && !node->isType(type_data_list))
         {
             SetWindowProperties(node, created_window, m_mockupParent);
         }
@@ -237,7 +236,7 @@ void MockupContent::CreateChildren(Node* node, wxWindow* parent, wxObject* paren
     m_obj_node_pair[created_object] = node;
     m_node_obj_pair[node] = created_object;
 
-    if (node->isType(type_images))
+    if (node->isType(type_images) || node->isType(type_data_list))
     {
         if (parent_sizer)
         {

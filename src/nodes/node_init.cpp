@@ -237,9 +237,11 @@ static const ParentChild lstParentChild[] = {
     { type_aui_toolbar_form, type_tool_separator, infinite },
     { type_aui_toolbar_form, type_widget, infinite },
 
+    { type_data_list, type_data_string, infinite },
     { type_images, type_embed_image, infinite },
     { type_wizard, type_wizardpagesimple, infinite },
 
+    { type_project, type_data_list, one },
     { type_project, type_form, infinite },
     { type_project, type_folder, infinite },
     { type_project, type_frame_form, infinite },
@@ -252,12 +254,7 @@ static const ParentChild lstParentChild[] = {
     { type_project, type_wizard, infinite },
     { type_project, type_propsheetform, infinite },
 
-    // type_images is not allowed because there can only be one for the entire project.
-
-    // There is a lot of code that iterates over the top level forms. It's fairly straight
-    // forward to add a single additional loop to iterate over the forms within a folder, but
-    // nested folders would require a recursive function, which would significantly
-    // complicate the code. For now, don't allow folders to have a folder child.
+    // Folders and sub-folders
 
     { type_folder, type_sub_folder, infinite },
     { type_folder, type_form, infinite },

@@ -134,7 +134,7 @@ Node* FindNodeByClassName(Node* node_start, const std::string& classname)
 {
     for (const auto& child_form: node_start->getChildNodePtrs())
     {
-        if (child_form->isGen(gen_Images))
+        if (child_form->isGen(gen_Images) || child_form->isGen(gen_Data))
             continue;
 
         if (child_form->hasValue(prop_class_name) && child_form->as_string(prop_class_name) == classname)
@@ -250,10 +250,10 @@ void MainFrame::OnFindWidget(wxCommandEvent& WXUNUSED(event))
 
 void NodeSearchDlg::FindGenerators(Node* node)
 {
-    if (node->isGen(gen_Images))
+    if (node->isGen(gen_Images) || node->isGen(gen_Data))
         return;
 
-    if (!node->isGen(gen_folder) && !node->isGen(gen_sub_folder) && !node->isGen(gen_Images))
+    if (!node->isGen(gen_folder) && !node->isGen(gen_sub_folder))
     {
         if (!m_map_found.contains(map_GenNames[node->getGenName()]))
         {
@@ -294,11 +294,11 @@ void NodeSearchDlg::FindGenerators(Node* node)
 
 void NodeSearchDlg::FindVariables(Node* node)
 {
-    if (node->isGen(gen_Images))
+    if (node->isGen(gen_Images) || node->isGen(gen_Data))
         return;
 
     if (node->hasProp(prop_var_name) && node->hasValue(prop_var_name) && !node->isGen(gen_folder) &&
-        !node->isGen(gen_sub_folder) && !node->isGen(gen_Images))
+        !node->isGen(gen_sub_folder))
     {
         if (!m_map_found.contains(node->as_string(prop_var_name)))
         {
@@ -339,11 +339,10 @@ void NodeSearchDlg::FindVariables(Node* node)
 
 void NodeSearchDlg::FindLabels(Node* node)
 {
-    if (node->isGen(gen_Images))
+    if (node->isGen(gen_Images) || node->isGen(gen_Data))
         return;
 
-    if (node->hasProp(prop_label) && node->hasValue(prop_label) && !node->isGen(gen_folder) &&
-        !node->isGen(gen_sub_folder) && !node->isGen(gen_Images))
+    if (node->hasProp(prop_label) && node->hasValue(prop_label) && !node->isGen(gen_folder) && !node->isGen(gen_sub_folder))
     {
         if (!m_map_found.contains(node->as_string(prop_label)))
         {
@@ -468,7 +467,7 @@ void NodeSearchDlg::OnIDs(wxCommandEvent& WXUNUSED(event))
 
     auto FindIDs = [&](Node* node, auto&& FindIDs) -> void
     {
-        if (node->isGen(gen_Images))
+        if (node->isGen(gen_Images) || node->isGen(gen_Data))
             return;
 
         if (!node->isNonWidget() && node->hasProp(prop_id) && node->hasValue(prop_id) &&

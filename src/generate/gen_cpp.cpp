@@ -105,7 +105,8 @@ void BaseCodeGenerator::GenerateCppClass(PANEL_PAGE panel_type)
     m_embedded_images.clear();
     m_type_generated.clear();
 
-    m_TranslationUnit = (m_form_node->as_bool(prop_generate_translation_unit) || m_form_node->isGen(gen_Images));
+    m_TranslationUnit = (m_form_node->as_bool(prop_generate_translation_unit) || m_form_node->isGen(gen_Images) ||
+                         m_form_node->isGen(gen_Data));
 
     // A lot of the code generation depends on knowing if there is an Images form, so check for that first
     m_ImagesForm = nullptr;
@@ -570,6 +571,12 @@ void BaseCodeGenerator::GenerateCppClass(PANEL_PAGE panel_type)
         GenerateImagesForm();
         return;
     }
+    else if (m_form_node->isGen(gen_Data))
+    {
+        thrd_need_img_func.join();
+        GenerateDataForm();
+        return;
+    }
 
     if (m_panel_type != CPP_PANEL)
     {
@@ -700,7 +707,7 @@ void BaseCodeGenerator::GenerateCppClassHeader()
 {
     ASSERT(m_language == GEN_LANG_CPLUSPLUS);
 
-    if (m_form_node->isGen(gen_Images))
+    if (m_form_node->isGen(gen_Images) || m_form_node->isGen(gen_Data))
     {
         // There is a header for this, but it's not a class header
         return;

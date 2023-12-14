@@ -584,6 +584,8 @@ namespace GenEnum
         type_choicebook,
         type_container,
         type_ctx_menu,
+        type_data_list,
+        type_data_string,
         type_dataviewcolumn,
         type_dataviewctrl,
         type_dataviewlistcolumn,
@@ -717,7 +719,10 @@ namespace GenEnum
         // These are special purpose generators. gen_Images is used for code, but gen_folder is
         // just for organtizing forms in the Navigation panel.
 
+        gen_Data,
         gen_Images,
+        gen_data_string,
+        gen_embedded_image,
         gen_folder,
         gen_sub_folder,
 
@@ -755,7 +760,6 @@ namespace GenEnum
         gen_auitool_stretchable,
         gen_dataViewColumn,
         gen_dataViewListColumn,
-        gen_embedded_image,
         gen_gbsizeritem,
         gen_oldbookpage,
         gen_propGridCategory,

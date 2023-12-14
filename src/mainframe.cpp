@@ -1915,6 +1915,14 @@ bool MainFrame::MoveNode(Node* node, MoveDirection where, bool check_only)
         }
         return false;
     }
+    else if (node->isGen(gen_Data) || parent->isGen(gen_Data))
+    {
+        if (!check_only)
+        {
+            wxMessageBox("You can't move data strings within Data List", "Error", wxICON_ERROR);
+        }
+        return false;
+    }
 
     if (parent->isGen(gen_wxGridBagSizer))
         return GridBag::MoveNode(node, where, check_only);

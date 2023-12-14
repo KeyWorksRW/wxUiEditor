@@ -9,6 +9,7 @@
 #include "node_creator.h"  // NodeCreator
 
 #include "dataview_widgets.h"  // DataViewCtrl -- wxDataView component classes
+#include "gen_data_list.h"     // DataGenerator -- Data List generator
 #include "gen_images_list.h"   // ImagesGenerator -- Embedded images generator
 #include "gen_project.h"       // Project generator
 #include "gen_styled_text.h"   // StyledTextGenerator -- wxStyledText (scintilla) generate
@@ -202,6 +203,8 @@ void NodeCreator::initGenerators()
     SET_GENERATOR(gen_MdiFrameMenuBar, MdiFrameMenuBar)
     SET_GENERATOR(gen_MdiDocMenuBar, MdiDocumentMenuBar)
 
+    SET_GENERATOR(gen_Data, DataGenerator)
+    SET_GENERATOR(gen_data_string, DataStringGenerator)
     SET_GENERATOR(gen_Images, ImagesGenerator)
     SET_GENERATOR(gen_embedded_image, EmbeddedImageGenerator)
 

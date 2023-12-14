@@ -122,7 +122,7 @@ void CreateMockupChildren(Node* node, wxWindow* parent, wxObject* parent_object,
     else
     {
         created_window = wxStaticCast(created_object, wxWindow);
-        if (!node->isType(type_images))
+        if (!node->isType(type_images) && !node->isType(type_data_list))
         {
             MockupContent::SetWindowProperties(node, created_window, form_window);
         }

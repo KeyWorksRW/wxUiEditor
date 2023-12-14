@@ -540,6 +540,8 @@ std::map<GenType, std::string_view> GenEnum::map_GenTypes = {
     { type_choicebook, "choicebook" },
     { type_container, "container" },
     { type_ctx_menu, "ctx_menu" },
+    { type_data_list, "data_list" },
+    { type_data_string, "data_string" },
     { type_dataviewcolumn, "dataviewcolumn" },
     { type_dataviewctrl, "dataviewctrl" },
     { type_dataviewlistcolumn, "dataviewlistcolumn" },
@@ -668,7 +670,10 @@ std::map<GenEnum::GenName, const char*> GenEnum::map_GenNames = {
     // These are special purpose generators. gen_Images is used for code, but gen_folder is
     // just for organtizing forms in the Navigation panel.
 
+    { gen_Data, "Data" },
     { gen_Images, "Images" },
+    { gen_data_string, "data_string" },
+    { gen_embedded_image, "embedded_image" },
     { gen_folder, "folder" },
     { gen_sub_folder, "sub_folder" },
 
@@ -706,7 +711,6 @@ std::map<GenEnum::GenName, const char*> GenEnum::map_GenNames = {
     { gen_auitool_stretchable, "auitool_stretchable" },
     { gen_dataViewColumn, "dataViewColumn" },
     { gen_dataViewListColumn, "dataViewListColumn" },
-    { gen_embedded_image, "embedded_image" },
     { gen_gbsizeritem, "gbsizeritem" },
     { gen_oldbookpage, "oldbookpage" },
     { gen_propGridCategory, "propGridCategory" },

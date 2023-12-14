@@ -117,8 +117,11 @@ protected:
         Public
     };
 
-    // This method is in images_form.cpp, and handles both source and header code generation
+    // This method is in gen_images.cpp, and handles both source and header code generation
     void GenerateImagesForm();
+
+    // This method is in gen_data_list.cpp, and handles both source and header code generation
+    void GenerateDataForm();
 
     // This method is in image_gen.cpp, and handles Python code generation
     void GeneratePythonImagesForm();  // declared in image_gen.cpp

@@ -448,7 +448,8 @@ void NavPopupMenu::CreateCommonMenu(Node* node)
 
     MenuAddCommands(node);
     MenuAddMoveCommands(node);
-    if (!node->isGen(gen_Images) && !node->isGen(gen_embedded_image))
+    if (!node->isGen(gen_Images) && !node->isGen(gen_embedded_image) && !node->isGen(gen_Data) &&
+        !node->isGen(gen_data_string))
     {
         AppendSeparator();
     }
@@ -457,7 +458,8 @@ void NavPopupMenu::CreateCommonMenu(Node* node)
 
 void NavPopupMenu::MenuAddCommands(Node* node)
 {
-    if (node->isForm() || node->isGen(gen_Images) || node->isGen(gen_embedded_image))
+    if (node->isForm() || node->isGen(gen_Images) || node->isGen(gen_embedded_image) || node->isGen(gen_Data) ||
+        node->isGen(gen_data_string))
     {
         if (node->isGen(gen_wxPropertySheetDialog))
         {
@@ -771,7 +773,8 @@ void NavPopupMenu::MenuAddChildSizerCommands(Node* child)
 
 void NavPopupMenu::MenuAddMoveCommands(Node* node)
 {
-    if (node->isGen(gen_Project) || node->isGen(gen_Images) || node->isGen(gen_embedded_image))
+    if (node->isGen(gen_Project) || node->isGen(gen_Images) || node->isGen(gen_embedded_image) || node->isGen(gen_Data) ||
+        node->isGen(gen_data_string))
     {
         return;
     }
@@ -942,7 +945,7 @@ void NavPopupMenu::MenuAddMoveCommands(Node* node)
 
 void NavPopupMenu::MenuAddStandardCommands(Node* node)
 {
-    if (node->isGen(gen_Images) || node->isGen(gen_embedded_image))
+    if (node->isGen(gen_Images) || node->isGen(gen_embedded_image) || node->isGen(gen_Data) || node->isGen(gen_data_string))
     {
         auto* menu_item = Append(wxID_DELETE);
         menu_item->SetBitmap(wxArtProvider::GetBitmapBundle(wxART_DELETE, wxART_MENU));

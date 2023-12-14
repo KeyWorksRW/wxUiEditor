@@ -868,6 +868,8 @@ static const auto parentless_types = {
     type_aui_tool,
     type_bookpage,
     type_ctx_menu,
+    type_data_list,
+    type_data_string,
     type_dataviewcolumn,
     type_dataviewlistcolumn,
     type_embed_image,

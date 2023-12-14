@@ -101,6 +101,7 @@ set (file_list
     # create a preview of the object for the Preview display.
 
     generate/gen_images_list.cpp   # Images List Embedded images generator
+    generate/gen_data_list.cpp     # Data List generator
     generate/gen_project.cpp       # Project generator
 
     generate/dataview_widgets.cpp  # wxDataView generation classes

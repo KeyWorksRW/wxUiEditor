@@ -1,11 +1,13 @@
 /////////////////////////////////////////////////////////////////////////////
-// Purpose:   Utility functions that work with properties
+// Purpose:   Miscellaneous utility functions
 // Author:    Ralph Walden
 // Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
 #pragma once
+
+#include <optional>
 
 #include <wx/settings.h>
 
@@ -41,6 +43,12 @@ int DlgPoint(wxObject* parent, int width);
 
 // If the property specifies dialog units, then parent will be used to do the conversion
 wxSize DlgSize(wxObject* parent, Node* node, GenEnum::PropName prop);
+
+// Convert a filename to a valid variable name. This will handle filnames with leading
+// numbers, utf8 characters, and other characters that are not valid in a variable name.
+//
+// If max_length is exceeded, the name will be have ""_name_truncated" as a suffix
+std::optional<tt_string> FileNameToVarName(tt_string_view filename, size_t max_length = 100);
 
 // Convert the parts[IndexSize] or equivalent string into wxSize dimensions
 wxSize GetSizeInfo(tt_string_view size_description);

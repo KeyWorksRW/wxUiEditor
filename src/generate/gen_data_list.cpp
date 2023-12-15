@@ -92,4 +92,28 @@ int DataGenerator::GetRequiredVersion(Node* node)
 void BaseCodeGenerator::GenerateDataForm()
 {
     ASSERT_MSG(m_form_node, "Attempting to generate Data List when no form was located.");
+//////////////////////////////////////////  data_list namespace functions  ////////////////////////////////
+
+Node* data_list::FindDataList()
+{
+    Node* data_node = nullptr;
+    if (Project.getChildCount() > 0)
+    {
+        if (Project.getChild(0)->isGen(gen_Data))
+        {
+            data_node = Project.getChild(0);
+        }
+        else
+        {
+            for (const auto& iter: Project.getChildNodePtrs())
+            {
+                if (iter->isGen(gen_Data))
+                {
+                    data_node = iter.get();
+                    break;
+                }
+            }
+        }
+    }
+    return data_node;
 }

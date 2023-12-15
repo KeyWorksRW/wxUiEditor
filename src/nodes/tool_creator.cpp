@@ -230,17 +230,14 @@ bool Node::createToolNode(GenName name)
     }
     else if (name == gen_data_string)
     {
-#if 0
-// TODO: [Randalphwa - 12-13-2023] This code is not yet implemented
-        auto* data_node = img_list::FindDataList();
+        auto* data_node = data_list::FindDataList();
         if (!data_node)
         {
-            wxMessageBox("A Data List must be created before you can add an data string.",
-                         "Cannot create data string", wxOK | wxICON_ERROR);
+            wxMessageBox("A Data List must be created before you can add a data string.", "Cannot create data string",
+                         wxOK | wxICON_ERROR);
             return true;  // indicate that we have fully processed creation even though it's just an error message
         }
         data_node->createChildNode(name);
-#endif
         return true;
     }
     else if (name == gen_ribbonButton && (isGen(gen_wxRibbonToolBar) || getParent()->isGen(gen_wxRibbonToolBar)))

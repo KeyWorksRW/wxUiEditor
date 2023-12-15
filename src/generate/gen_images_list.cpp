@@ -404,28 +404,28 @@ void BaseCodeGenerator::GenerateImagesForm()
             code << embed->array_name << "();";
             m_header->writeLine(code);
         }
-    }
 
-    if (m_form_node->as_bool(prop_add_externs))
-    {
-        m_header->writeLine();
-        for (auto iter_array: m_embedded_images)
+        if (m_form_node->as_bool(prop_add_externs))
         {
-            if (iter_array->form != m_form_node)
-                continue;
-
-            tt_string line("extern const unsigned char ");
-            line << iter_array->array_name << '[' << (iter_array->array_size & 0xFFFFFFFF) << "];";
-            if (iter_array->filename.size())
+            m_header->writeLine();
+            for (auto iter_array: m_embedded_images)
             {
-                line << "  // " << iter_array->filename;
-            }
-            m_header->writeLine(line);
-        }
-    }
+                if (iter_array->form != m_form_node)
+                    continue;
 
-    m_header->Unindent();
-    m_header->writeLine("}\n");
+                tt_string line("extern const unsigned char ");
+                line << iter_array->array_name << '[' << (iter_array->array_size & 0xFFFFFFFF) << "];";
+                if (iter_array->filename.size())
+                {
+                    line << "  // " << iter_array->filename;
+                }
+                m_header->writeLine(line);
+            }
+        }
+
+        m_header->Unindent();
+        m_header->writeLine("}\n");
+    }
 }
 
 int ImagesGenerator::GetRequiredVersion(Node* node)

@@ -45,9 +45,11 @@ inline const char* objects_xml = R"===(<?xml version="1.0"?>
             help="Automatically add any embedded or svg images specified for controls or forms. Will only add images in folders if the folder does not have its own image form.">0</property> -->
     </gen>
 
-    <gen class="data_string" image="static_bitmap" type="data_string">
-        <property name="var_name" type="string">my_data_string</property>
+    <gen class="data_string" image="filePicker" type="data_string">
+        <property name="string_name" type="string">my_data_string</property>
         <property name="file" type="file" />
+        <property name="add_externs" type="bool"
+            help="If checked, each data array will be added to the header file as an extern.">0</property>
     </gen>
 
 </GeneratorDefinitions>)===";

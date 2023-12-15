@@ -444,6 +444,9 @@ public:
     void setMockupObject(wxObject* object) { m_mockup_object = object; }
     const wxObject* getMockupObject() const { return m_mockup_object; }
 
+    // This will create a std::unique_ptr<std::vector<tt_string>> if one doesn't already exist.
+    std::vector<tt_string>* getInternalData();
+
 protected:
     void findAllChildProperties(std::vector<NodeProperty*>& list, PropName name);
 
@@ -465,6 +468,7 @@ private:
     NodeDeclaration* m_declaration;
 
     wxObject* m_mockup_object { nullptr };
+    std::unique_ptr<std::vector<tt_string>> m_internal_data;
 };
 
 using NodeMapEvents = std::unordered_map<std::string, NodeEvent, str_view_hash, std::equal_to<>>;

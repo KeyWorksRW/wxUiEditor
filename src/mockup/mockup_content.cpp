@@ -72,7 +72,7 @@ void MockupContent::CreateAllGenerators()
 
         m_parent_sizer->Add(m_wizard, wxSizerFlags(1).Expand());
     }
-    else if (form->isGen(gen_Images) || form->isGen(gen_Data))
+    else if (form->isGen(gen_Images))
     {
         ASSERT_MSG(form->getGenerator(), tt_string() << "Missing component for " << form->declName());
         auto generator = form->getGenerator();
@@ -82,7 +82,17 @@ void MockupContent::CreateAllGenerators()
         auto sizer = generator->CreateMockup(form, this);
         m_parent_sizer->Add(wxStaticCast(sizer, wxBoxSizer), wxSizerFlags(1).Expand());
     }
+    else if (form->isGen(gen_Data))
+    {
+        ASSERT_MSG(form->getGenerator(), tt_string() << "Missing component for " << form->declName());
+        auto generator = form->getGenerator();
+        if (!generator)
+            return;
 
+        auto sizer = generator->CreateMockup(form, this);
+        // sizer type needs to match DataGenerator::CreateMockup in ../generate/gen_data_list.cpp
+        m_parent_sizer->Add(wxStaticCast(sizer, wxFlexGridSizer), wxSizerFlags(1).Expand());
+    }
     else
     {
         if (form->isGen(gen_MenuBar) || form->isGen(gen_RibbonBar) || form->isGen(gen_ToolBar) ||

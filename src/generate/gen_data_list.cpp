@@ -10,6 +10,9 @@
 #include <wx/statbmp.h>   // wxStaticBitmap class interface
 #include <wx/stattext.h>  // wxStaticText base header
 
+// Blank line added because wx/stattext.h must be included first
+#include <wx/generic/stattextg.h>  // wxGenericStaticText header
+
 #include "gen_data_list.h"
 
 #include "bitmaps.h"          // Contains various images handling functions
@@ -31,51 +34,28 @@
 
 //////////////////////////////////////////  ImagesGenerator  //////////////////////////////////////////
 
-wxObject* DataGenerator::CreateMockup(Node* /* node */, wxObject* wxobject)
+// horizontal spacing between the cells in the grid sizer
+constexpr int horizontal_spacing = 5;
+constexpr int number_of_columns = 2;
+
+wxObject* DataGenerator::CreateMockup(Node* node, wxObject* wxobject)
 {
-    auto parent = wxStaticCast(wxobject, wxWindow);
-
-    m_item_name = new wxStaticText(parent, wxID_ANY, "Select an item below to display information about it.");
-    m_text_info = new wxStaticText(parent, wxID_ANY, wxEmptyString);
-
-    auto node = wxGetFrame().getSelectedNode();
-    if (node->isGen(gen_embedded_image))
+    auto* parent = wxStaticCast(wxobject, wxWindow);
+    // sizer type needs to match "else if (form->isGen(gen_Data))" section of mockup_content.cpp
+    auto* flex_grid_sizer =
+        new wxFlexGridSizer(number_of_columns, static_cast<int>(node->getChildCount()), horizontal_spacing);
+    for (auto& iter: node->getChildNodePtrs())
     {
-        auto bundle = ProjectImages.GetPropertyImageBundle(node->as_string(prop_bitmap));
+        auto* string_name = new wxStaticText(parent, wxID_ANY, iter->as_string(prop_string_name));
+        flex_grid_sizer->Add(string_name, wxSizerFlags().Border(wxALL));
 
-        tt_view_vector mstr(node->as_string(prop_bitmap), ';');
-
-        if (mstr.size() > 1)
-        {
-            if (bundle && bundle->lst_filenames.size())
-            {
-                tt_string list;
-                for (auto& iter: bundle->lst_filenames)
-                {
-                    if (list.size())
-                    {
-                        list << '\n';
-                    }
-                    list << iter;
-                }
-                m_item_name->SetLabel(list.make_wxString());
-            }
-            else
-            {
-                m_item_name->SetLabel(mstr[1].make_wxString());
-            }
-        }
-        else
-        {
-            m_item_name->SetLabel(wxEmptyString);
-        }
+        // wxGenericStaticText used so that at some point we can make the text red if the file
+        // cannot be found.
+        auto* file_name = new wxGenericStaticText(parent, wxID_ANY, iter->as_string(prop_file));
+        flex_grid_sizer->Add(file_name, wxSizerFlags().Border(wxALL));
     }
 
-    auto sizer = new wxBoxSizer(wxVERTICAL);
-    sizer->Add(m_item_name, wxSizerFlags(0).Border(wxALL).Expand());
-    sizer->Add(m_text_info, wxSizerFlags(0).Border(wxALL).Expand());
-
-    return sizer;
+    return flex_grid_sizer;
 }
 
 int DataGenerator::GetRequiredVersion(Node* node)

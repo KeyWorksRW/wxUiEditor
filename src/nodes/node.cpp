@@ -1320,3 +1320,10 @@ Node* Node::getPlatformContainer()
 
     return nullptr;
 }
+
+std::vector<tt_string>* Node::getInternalData()
+{
+    if (!m_internal_data)
+        m_internal_data = std::make_unique<std::vector<tt_string>>();
+    return m_internal_data.get();
+}

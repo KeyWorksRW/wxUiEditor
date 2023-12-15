@@ -47,9 +47,16 @@ inline const char* objects_xml = R"===(<?xml version="1.0"?>
 
     <gen class="data_string" image="filePicker" type="data_string">
         <property name="string_name" type="string">my_data_string</property>
-        <property name="file" type="file" />
-        <property name="add_externs" type="bool"
-            help="If checked, each data array will be added to the header file as an extern.">0</property>
+        <property name="data_file" type="file" />
+    </gen>
+
+    <gen class="data_xml" image="fontPicker" type="data_string">
+        <property name="string_name" type="string">my_xml_string</property>
+        <property name="data_file" type="file" />
+        <property name="xml_condense_format" type="bool"
+            help="If checked, the file is parsed and rewritten, removing all line breaks, indetation and comments."/>
+        <property name="xml_trim_whitespace" type="bool"
+            help="If checked, all leading and trailing whitespace is removed from plain character data. This option is ignored unless xml_condense_format is checked as it requires parsing the XML before writing."/>
     </gen>
 
 </GeneratorDefinitions>)===";

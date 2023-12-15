@@ -51,7 +51,7 @@ wxObject* DataGenerator::CreateMockup(Node* node, wxObject* wxobject)
 
         // wxGenericStaticText used so that at some point we can make the text red if the file
         // cannot be found.
-        auto* file_name = new wxGenericStaticText(parent, wxID_ANY, iter->as_string(prop_file));
+        auto* file_name = new wxGenericStaticText(parent, wxID_ANY, iter->as_string(prop_data_file));
         flex_grid_sizer->Add(file_name, wxSizerFlags().Border(wxALL));
     }
 
@@ -140,9 +140,9 @@ void BaseCodeGenerator::GenerateDataForm()
             {
                 tt_string line("extern const unsigned char ");
                 line << data_child->as_string(prop_string_name) << "[];";
-                if (data_child->hasValue(prop_file))
+                if (data_child->hasValue(prop_data_file))
                 {
-                    line << "  // " << data_child->as_string(prop_file);
+                    line << "  // " << data_child->as_string(prop_data_file);
                 }
                 m_header->writeLine(line);
             }

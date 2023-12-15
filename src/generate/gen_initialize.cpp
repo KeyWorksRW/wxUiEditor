@@ -205,6 +205,7 @@ void NodeCreator::initGenerators()
 
     SET_GENERATOR(gen_Data, DataGenerator)
     SET_GENERATOR(gen_data_string, DataStringGenerator)
+    SET_GENERATOR(gen_data_xml, DataXmlGenerator)
     SET_GENERATOR(gen_Images, ImagesGenerator)
     SET_GENERATOR(gen_embedded_image, EmbeddedImageGenerator)
 

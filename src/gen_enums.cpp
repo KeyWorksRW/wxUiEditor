@@ -315,6 +315,7 @@ std::map<GenEnum::PropName, const char*> GenEnum::map_PropNames = {
     { prop_native_col_header, "native_col_header" },
     { prop_native_col_labels, "native_col_labels" },
     { prop_no_closing_brace, "no_closing_brace" },
+    { prop_no_compression, "no_compression" },
     { prop_non_flexible_grow_mode, "non_flexible_grow_mode" },
     { prop_non_selected_tab_font, "non_selected_tab_font" },
     { prop_normal_color, "normal_color" },

@@ -334,6 +334,7 @@ namespace GenEnum
         prop_native_col_header,
         prop_native_col_labels,
         prop_no_closing_brace,
+        prop_no_compression,
         prop_non_flexible_grow_mode,
         prop_non_selected_tab_font,
         prop_normal_color,

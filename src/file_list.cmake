@@ -301,6 +301,7 @@ set (file_list
     # Project classes
 
     project/project_handler.cpp # ProjectHandler class
+    project/data_handler.cpp    # DataHandler class
     project/image_handler.cpp   # ProjectImage class
     project/loadproject.cpp     # Load wxUiEditor project
     project/saveproject.cpp     # Save a wxUiEditor project file

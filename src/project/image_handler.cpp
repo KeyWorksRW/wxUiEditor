@@ -505,7 +505,7 @@ void ImageHandler::InitializeArrayName(EmbeddedImage* embed, tt_string_view file
     }
 }
 
-static bool CopyStreamData(wxInputStream* inputStream, wxOutputStream* outputStream, size_t size)
+bool CopyStreamData(wxInputStream* inputStream, wxOutputStream* outputStream, size_t size)
 {
     size_t buf_size;
     if (size == tt::npos || size > (64 * 1024))

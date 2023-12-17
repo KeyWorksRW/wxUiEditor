@@ -9,6 +9,7 @@
 
 #include "../panels/nav_panel.h"     // NavigationPanel -- Navigation Panel
 #include "../panels/ribbon_tools.h"  // RibbonPanel -- Displays component tools in a wxRibbonBar
+#include "gen_data_list.h"           // DataGenerator -- Data List generator
 #include "gen_images_list.h"         // ImagesGenerator -- Images List Embedded images generator
 #include "mainframe.h"               // MainFrame -- Main window frame
 #include "node_creator.h"            // NodeCreator class
@@ -180,8 +181,36 @@ bool Node::createToolNode(GenName name)
         auto new_node = NodeCreation.createNode(name, Project.getProjectNode());
         if (!new_node)
             return false;
+        // Note that this will insert itself in front of any Data List
         auto insert_node =
             std::make_shared<InsertNodeAction>(new_node.get(), Project.getProjectNode(), "insert Images list", 0);
+        insert_node->SetFireCreatedEvent(true);
+        wxGetFrame().PushUndoAction(insert_node);
+        wxGetFrame().SelectNode(new_node, evt_flags::fire_event | evt_flags::force_selection);
+        return true;
+    }
+    else if (name == gen_Data)
+    {
+        size_t insert_pos = 0;
+        for (const auto& iter: Project.getChildNodePtrs())
+        {
+            if (iter->isGen(gen_Data))
+            {
+                wxMessageBox("Only one Data List is allowed per project.", "Cannot create Data List", wxOK | wxICON_ERROR);
+                return true;  // indicate that we have fully processed creation even though it's just an error message
+            }
+            else if (iter->isGen(gen_Images))
+            {
+                // Always insert *after* any Images List
+                insert_pos = 1;
+            }
+        }
+
+        auto new_node = NodeCreation.createNode(name, Project.getProjectNode());
+        if (!new_node)
+            return false;
+        auto insert_node =
+            std::make_shared<InsertNodeAction>(new_node.get(), Project.getProjectNode(), "insert Data list", insert_pos);
         insert_node->SetFireCreatedEvent(true);
         wxGetFrame().PushUndoAction(insert_node);
         wxGetFrame().SelectNode(new_node, evt_flags::fire_event | evt_flags::force_selection);
@@ -197,6 +226,18 @@ bool Node::createToolNode(GenName name)
             return true;  // indicate that we have fully processed creation even though it's just an error message
         }
         image_node->createChildNode(name);
+        return true;
+    }
+    else if (name == gen_data_string)
+    {
+        auto* data_node = data_list::FindDataList();
+        if (!data_node)
+        {
+            wxMessageBox("A Data List must be created before you can add a data string.", "Cannot create data string",
+                         wxOK | wxICON_ERROR);
+            return true;  // indicate that we have fully processed creation even though it's just an error message
+        }
+        data_node->createChildNode(name);
         return true;
     }
     else if (name == gen_ribbonButton && (isGen(gen_wxRibbonToolBar) || getParent()->isGen(gen_wxRibbonToolBar)))

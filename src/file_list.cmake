@@ -101,6 +101,7 @@ set (file_list
     # create a preview of the object for the Preview display.
 
     generate/gen_images_list.cpp   # Images List Embedded images generator
+    generate/gen_data_list.cpp     # Data List generator
     generate/gen_project.cpp       # Project generator
 
     generate/dataview_widgets.cpp  # wxDataView generation classes
@@ -300,6 +301,7 @@ set (file_list
     # Project classes
 
     project/project_handler.cpp # ProjectHandler class
+    project/data_handler.cpp    # DataHandler class
     project/image_handler.cpp   # ProjectImage class
     project/loadproject.cpp     # Load wxUiEditor project
     project/saveproject.cpp     # Save a wxUiEditor project file

@@ -183,7 +183,7 @@ void BaseCodeGenerator::CollectValidatorVariables(Node* node, std::set<std::stri
 void BaseCodeGenerator::CollectIncludes(Node* form, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
     ASSERT_MSG(form->isForm(), "Only forms should be passed to CollectIncludes()");
-    if (form->isGen(gen_Images))
+    if (form->isGen(gen_Images) || form->isGen(gen_Data))
     {
         return;
     }

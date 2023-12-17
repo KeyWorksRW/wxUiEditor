@@ -182,6 +182,8 @@ bool GenerateRubyFiles(GenResults& results, std::vector<tt_string>* pClassList)
                 {
                     if (form->isGen(gen_Images))
                         pClassList->emplace_back(GenEnum::map_GenNames[gen_Images]);
+                    else if (form->isGen(gen_Data))
+                        pClassList->emplace_back(GenEnum::map_GenNames[gen_Data]);
                     else
                         pClassList->emplace_back(form->as_string(prop_class_name));
                     continue;

@@ -157,6 +157,10 @@ void GenThreadCpp(GenData& gen_data, Node* form)
                 // While technically this is a "form" it doesn't have the usual properties set
                 gen_data.AddClassName(GenEnum::map_GenNames[gen_Images]);
             }
+            else if (form->isGen(gen_Data))
+            {
+                gen_data.AddClassName(GenEnum::map_GenNames[gen_Data]);
+            }
             else
             {
                 gen_data.AddClassName(form->as_string(prop_class_name));
@@ -173,7 +177,7 @@ void GenThreadCpp(GenData& gen_data, Node* form)
         gen_data.UpdateFileCount();
     }
 
-    if (!form->as_bool(prop_generate_translation_unit) && !form->isGen(gen_Images))
+    if (!form->as_bool(prop_generate_translation_unit) && !form->isGen(gen_Images) && !form->isGen(gen_Data))
     {
         gen_data.UpdateFileCount();
         return;
@@ -194,6 +198,10 @@ void GenThreadCpp(GenData& gen_data, Node* form)
             {
                 // While technically this is a "form" it doesn't have the usual properties set
                 gen_data.AddClassName("Images List");
+            }
+            else if (form->isGen(gen_Data))
+            {
+                gen_data.AddClassName("Data List");
             }
             else
             {
@@ -535,6 +543,12 @@ void GenerateTmpFiles(const std::vector<tt_string>& ClassList, pugi::xml_node ro
                     continue;
                 class_name = "Images List";
             }
+            else if (form->isGen(gen_Data))
+            {
+                if (language != GEN_LANG_CPLUSPLUS)
+                    continue;
+                class_name = "Data List";
+            }
 
             if (class_name.is_sameas(iter_class))
             {
@@ -674,7 +688,8 @@ void GenerateTmpFiles(const std::vector<tt_string>& ClassList, pugi::xml_node ro
                         paths.append_child("right").text().set(tmp_path.c_str());
                         paths.append_child("right-readonly").text().set("1");
                     }
-                    if (new_src && (form->as_bool(prop_generate_translation_unit) || form->isGen(gen_Images)))
+                    if (new_src &&
+                        (form->as_bool(prop_generate_translation_unit) || form->isGen(gen_Images) || form->isGen(gen_Data)))
                     {
                         auto paths = root.append_child("paths");
                         tmp_path.replace_extension(source_ext);

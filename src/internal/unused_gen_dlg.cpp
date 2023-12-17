@@ -68,9 +68,9 @@ bool UnusedGenerators::Create(wxWindow* parent, wxWindowID id, const wxString& t
 
 void FindGenerators(Node* node, std::unordered_set<std::string, str_view_hash, std::equal_to<>>& used)
 {
-    if (node->isGen(gen_Images))
+    if (node->isGen(gen_Images) || node->isGen(gen_Data))
         return;
-    if (!node->isGen(gen_folder) && !node->isGen(gen_sub_folder) && !node->isGen(gen_Images))
+    if (!node->isGen(gen_folder) && !node->isGen(gen_sub_folder))
     {
         if (!used.contains(map_GenNames[node->getGenName()]))
         {

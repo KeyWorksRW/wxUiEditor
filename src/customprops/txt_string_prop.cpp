@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Derived wxStringProperty class for single-line text
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2021 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2021-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -11,6 +11,7 @@
 
 #include "image_handler.h"  // ImageHandler class
 #include "node_prop.h"      // NodeProperty class
+#include "utils.h"          // Miscellaneous utility functions
 
 #include "wxui/editstringdialog_base.h"  // auto-generated: wxui/editstringdialog_base.cpp
 
@@ -37,7 +38,7 @@ public:
                 m_value.clear();
                 if (mstr.size() > IndexImage)
                 {
-                    if (auto result = ProjectImages.FileNameToVarName(mstr[IndexImage].filename()); result)
+                    if (auto result = FileNameToVarName(mstr[IndexImage].filename()); result)
                     {
                         m_textCtrl->SetHint(result->make_wxString());
                     }

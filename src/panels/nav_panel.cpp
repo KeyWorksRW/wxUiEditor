@@ -314,7 +314,7 @@ void NavigationPanel::OnBeginDrag(wxTreeEvent& event)
     if (node)
     {
         auto* parent = node->getParent();
-        if (node->isGen(gen_Images) || parent->isGen(gen_Images))
+        if (node->isGen(gen_Images) || node->isGen(gen_Data) || parent->isGen(gen_Images) || parent->isGen(gen_Data))
         {
             event.Veto();
             return;

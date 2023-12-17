@@ -160,6 +160,13 @@ void InsertWidget::OnNameText(wxCommandEvent& WXUNUSED(event))
             continue;
         }
 
+#ifndef INTERNAL_TESTING
+        if (iter - declName().starts_with("Data", tt::CASE::either))
+        {
+            continue;
+        }
+#endif
+
         if (name.empty() || iter->declName().contains(name, tt::CASE::either))
         {
             m_listbox->AppendString(iter->declName().make_wxString());

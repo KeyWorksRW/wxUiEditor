@@ -21,7 +21,7 @@
 #include "mainframe.h"        // MainFrame -- Main window frame
 #include "node.h"             // Node class
 #include "project_handler.h"  // ProjectHandler -- Project class
-#include "utils.h"            // Miscellaneous utilities
+#include "utils.h"            // Miscellaneous utility functions
 
 #include "pugixml.hpp"  // xml parser
 
@@ -505,7 +505,7 @@ void ImageHandler::InitializeArrayName(EmbeddedImage* embed, tt_string_view file
     }
 }
 
-static bool CopyStreamData(wxInputStream* inputStream, wxOutputStream* outputStream, size_t size)
+bool CopyStreamData(wxInputStream* inputStream, wxOutputStream* outputStream, size_t size)
 {
     size_t buf_size;
     if (size == tt::npos || size > (64 * 1024))
@@ -1386,65 +1386,6 @@ tt_string ImageHandler::GetBundleFuncName(const EmbeddedImage* embed, wxSize svg
         name << "wxue_img::bundle_" << embed->array_name << "()";
     }
     return name;
-}
-
-std::optional<tt_string> ImageHandler::FileNameToVarName(tt_string_view filename, size_t max_length)
-{
-    ASSERT(max_length > sizeof("_name_truncated"))
-
-    if (filename.empty())
-    {
-        // caller's description does not include a filename
-        return {};
-    }
-
-    tt_string var_name;
-
-    if (tt::is_digit(filename[0]))
-    {
-        var_name += "img_";
-    }
-
-    for (auto iter: filename)
-    {
-        if (tt::is_alnum(iter) || iter == '_')
-        {
-            var_name += iter;
-        }
-        else
-        {
-            if (iter == '.')
-            {
-                // Always convert a period to an underscore in case it is preceeding the extension
-                var_name += '_';
-            }
-            else if (var_name.back() != '_')
-            {
-                var_name += '_';
-            }
-            else
-            {
-                // convert char to hex string
-                tt_string hex;
-                hex.Format("%x", static_cast<int>(iter) & 0xFF);
-
-                // Ignore any 0xff characters which are utf-8 bytes
-                if (hex != "ff")
-                {
-                    var_name += hex;
-                }
-            }
-        }
-
-        if (var_name.size() > (max_length - sizeof("_name_truncated")))
-        {
-            // We don't want to create a variable name that is too long
-            var_name += "_name_truncated";
-            break;
-        }
-    }
-
-    return var_name;
 }
 
 namespace wxue_img

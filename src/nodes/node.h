@@ -104,8 +104,11 @@ public:
         return (getParent() ? name == getParent()->m_declaration->getGenName() : false);
     }
 
-    // Returns true if this node is a folder, subfolder, or Images List
-    bool isNonWidget() const noexcept { return (isGen(gen_folder) || isGen(gen_sub_folder) || isGen(gen_Images)); }
+    // Returns true if this node is a folder, subfolder, Images List or Data List
+    bool isNonWidget() const noexcept
+    {
+        return (isGen(gen_folder) || isGen(gen_sub_folder) || isGen(gen_Images) || isGen(gen_Data));
+    }
 
     // Returns true if the node is either a folder or subfolder
     bool isFolder() const noexcept { return (isGen(gen_folder) || isGen(gen_sub_folder)); }

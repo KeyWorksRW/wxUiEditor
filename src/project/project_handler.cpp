@@ -331,7 +331,7 @@ size_t ProjectHandler::getOutputType(int flags) const
 
                 if (child->hasValue(prop_python_file))
                 {
-                    if (child->isGen(gen_Images))
+                    if (child->isGen(gen_Images) || child->isGen(gen_Data))
                     {
                         if (child->as_string(prop_python_file) == child->getPropDefaultValue(prop_python_file) &&
                             getCodePreference(form) != GEN_LANG_PYTHON)
@@ -341,12 +341,15 @@ size_t ProjectHandler::getOutputType(int flags) const
                     }
                     result |= OUTPUT_PYTHON;
                 }
-                if (child->hasValue(prop_ruby_file) && not(child->isGen(gen_Images)))
+                if (child->hasValue(prop_ruby_file))
                 {
-                    if (child->as_string(prop_ruby_file) == child->getPropDefaultValue(prop_ruby_file) &&
-                        getCodePreference(form) != GEN_LANG_RUBY)
+                    if (child->isGen(gen_Images) || child->isGen(gen_Data))
                     {
-                        continue;
+                        if (child->as_string(prop_ruby_file) == child->getPropDefaultValue(prop_ruby_file) &&
+                            getCodePreference(form) != GEN_LANG_RUBY)
+                        {
+                            continue;
+                        }
                     }
                     result |= OUTPUT_RUBY;
                 }

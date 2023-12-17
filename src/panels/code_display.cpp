@@ -19,6 +19,7 @@
 #include "node_event.h"      // NodeEvent and NodeEventInfo classes
 #include "preferences.h"     // Prefs -- Set/Get wxUiEditor preferences
 #include "propgrid_panel.h"  // PropGridPanel -- PropertyGrid class for node properties and events
+#include "utils.h"           // Miscellaneous utility functions
 
 #ifndef SCI_SETKEYWORDS
     #define SCI_SETKEYWORDS 4005
@@ -677,7 +678,7 @@ void CodeDisplay::OnNodeSelected(Node* node)
                 tt_view_vector parts(node->as_string(prop_bitmap), BMP_PROP_SEPARATOR, tt::TRIM::both);
                 if (parts.size() && parts[IndexImage].size())
                 {
-                    if (auto result = ProjectImages.FileNameToVarName(parts[IndexImage]); result)
+                    if (auto result = FileNameToVarName(parts[IndexImage]); result)
                     {
                         code.clear();
                         code.Function(node->isGen(gen_ribbonButton) ? "AddButton" : "AddTool");

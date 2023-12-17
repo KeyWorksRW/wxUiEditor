@@ -33,6 +33,7 @@ inline const GenType lst_form_types[] =
     type_wx_view,
 
     type_aui_toolbar_form,
+    type_data_list,
     type_form,
     type_frame_form,
     type_images,

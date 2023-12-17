@@ -620,6 +620,21 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
             new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH, Project.getProjectPath());
             new_pg_property->SetAttribute(wxPG_FILE_SHOW_RELATIVE_PATH, Project.getProjectPath());
         }
+        else if (prop->isProp(prop_data_file))
+        {
+            if (prop->getNode()->isGen(gen_data_xml))
+            {
+                new_pg_property->SetAttribute(wxPG_DIALOG_TITLE, "XML file");
+                new_pg_property->SetAttribute(wxPG_FILE_WILDCARD, "XML/XRC Files|*.xml;*.xrc");
+            }
+            else
+            {
+                new_pg_property->SetAttribute(wxPG_DIALOG_TITLE, "Data file");
+                new_pg_property->SetAttribute(wxPG_FILE_WILDCARD, "Files|*.*");
+            }
+            new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH, Project.getProjectPath());
+            new_pg_property->SetAttribute(wxPG_FILE_SHOW_RELATIVE_PATH, Project.getProjectPath());
+        }
         else if (prop->isProp(prop_derived_header))
         {
             new_pg_property->SetAttribute(wxPG_DIALOG_TITLE, "Derived Header");

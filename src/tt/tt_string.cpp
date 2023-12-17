@@ -942,10 +942,15 @@ tt_string& tt_string::Format(std::string_view format, ...)
             if (format.at(pos) == 'c')
             {
                 if (width != WIDTH_LONG)
+                {
+                    FAIL_MSG("%c should not be used, since it only works when compiled with MSVC");
+#if defined(_WIN32)
                     buffer << va_arg(args, char);
+#endif
+                }
                 else
                 {
-                    FAIL_MSG("%lc should not be used, since it only works on Windows");
+                    FAIL_MSG("%lc should not be used, since it only works with MSVC compiler.");
 #if defined(_WIN32)
                     std::wstring str16;
                     str16 += va_arg(args, wchar_t);
@@ -993,11 +998,17 @@ tt_string& tt_string::Format(std::string_view format, ...)
                         break;
 
                     case WIDTH_CHAR:
+                        FAIL_MSG("%lc should not be used, since it only works with MSVC compiler.");
+#if defined(_WIN32)
                         buffer << va_arg(args, signed char);
+#endif
                         break;
 
                     case WIDTH_SHORT:
+                        FAIL_MSG("%lh should not be used, since it only works with MSVC compiler.");
+#if defined(_WIN32)
                         buffer << va_arg(args, short);
+#endif
                         break;
 
                     case WIDTH_LONG:
@@ -1058,11 +1069,17 @@ tt_string& tt_string::Format(std::string_view format, ...)
                         break;
 
                     case WIDTH_CHAR:
+                        FAIL_MSG("%luc should not be used, since it only works with MSVC compiler.");
+#if defined(_WIN32)
                         buffer << va_arg(args, unsigned char);
+#endif
                         break;
 
                     case WIDTH_SHORT:
+                        FAIL_MSG("%lh should not be used, since it only works with MSVC compiler.");
+#if defined(_WIN32)
                         buffer << va_arg(args, unsigned short);
+#endif
                         break;
 
                     case WIDTH_LONG:

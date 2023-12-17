@@ -147,7 +147,7 @@ void InsertWidget::OnNameText(wxCommandEvent& WXUNUSED(event))
         node = node->getParent();
     }
 
-    for (auto iter: NodeCreation.getNodeDeclarationArray())
+    for (auto* iter: NodeCreation.getNodeDeclarationArray())
     {
         if (!iter)
         {
@@ -161,7 +161,7 @@ void InsertWidget::OnNameText(wxCommandEvent& WXUNUSED(event))
         }
 
 #ifndef INTERNAL_TESTING
-        if (iter - declName().starts_with("Data", tt::CASE::either))
+        if (iter->declName().starts_with("Data"))
         {
             continue;
         }

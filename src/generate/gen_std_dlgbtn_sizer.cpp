@@ -6,6 +6,7 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include <wx/button.h>
+#include <wx/cshelp.h>  // Context-sensitive help support classes
 #include <wx/sizer.h>
 #include <wx/statline.h>
 
@@ -62,7 +63,8 @@ wxObject* StdDialogButtonSizerGenerator::CreateMockup(Node* node, wxObject* pare
     if (node->as_bool(prop_Help))
         sizer->AddButton(new wxButton(wxStaticCast(parent, wxWindow), wxID_HELP));
     else if (node->as_bool(prop_ContextHelp))
-        sizer->AddButton(new wxButton(wxStaticCast(parent, wxWindow), wxID_CONTEXT_HELP));
+        // sizer->AddButton(new wxButton(wxStaticCast(parent, wxWindow), wxID_CONTEXT_HELP, "?"));
+        sizer->AddButton(new wxContextHelpButton(wxStaticCast(parent, wxWindow), wxID_CONTEXT_HELP));
 
     sizer->Realize();
 
@@ -212,7 +214,7 @@ bool StdDialogButtonSizerGenerator::ConstructionCode(Code& code)
     else if (node->as_bool(prop_ContextHelp))
     {
         code.Eol().NodeName().Function("AddButton(");
-        code += "new wxButton(this, wxID_CONTEXT_HELP));";
+        code += "new wxContextHelpButton(this, wxID_CONTEXT_HELP));";
     }
 
     if (def_btn_name == "OK" || def_btn_name == "Yes" || def_btn_name == "Save")
@@ -318,7 +320,7 @@ void StdDialogButtonSizerGenerator::GenPythonConstruction(Code& code)
     }
     else if (node->as_bool(prop_ContextHelp))
     {
-        code.Eol().NodeName().Add("_ContextHelp = wx.Button(self, wx.ID_CONTEXT_HELP)");
+        code.Eol().NodeName().Add("_ContextHelp = wx.ContextHelpButton(self, wx.ID_CONTEXT_HELP)");
         code.Eol().NodeName().Function("AddButton(").NodeName().Add("_ContextHelp").EndFunction();
     }
 
@@ -417,7 +419,8 @@ void StdDialogButtonSizerGenerator::GenRubyConstruction(Code& code)
     }
     else if (node->as_bool(prop_ContextHelp))
     {
-        gen_btn_code("ContextHelp", "context_help_btn", "Wx::ID_CONTEXT_HELP");
+        code.Eol().NodeName().Function("add_button(").Str("Wx::ContextHelpButton.new(self, Wx::ID_CONTEXT_HELP))");
+        // gen_btn_code("ContextHelp", "context_help_btn", "Wx::ID_CONTEXT_HELP");
     }
 
     code.Eol().NodeName().Function("realize");
@@ -579,6 +582,7 @@ int StdDialogButtonSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& obje
         else if (node->as_bool(prop_ContextHelp))
         {
             button.append_attribute("name").set_value("wxID_CONTEXT_HELP");
+            button.append_child("label").text().set("?");
         }
     }
 
@@ -663,6 +667,8 @@ bool StdDialogButtonSizerGenerator::GetIncludes(Node* node, std::set<std::string
 {
     InsertGeneratorInclude(node, "#include <wx/button.h>", set_src, set_hdr);
     InsertGeneratorInclude(node, "#include <wx/sizer.h>", set_src, set_hdr);
+    if (node->as_bool(prop_ContextHelp))
+        set_src.insert("#include <wx/cshelp.h>");
 
     return true;
 }

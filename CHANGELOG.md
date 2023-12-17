@@ -10,13 +10,14 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 
-- The `hide_children` property in the wxStaticBoxSizer has been removed since the `hidden` property does exactly the same thing. Projects where `hide_children` was set will be automatically converted to use `hidden` instead.
+- The `hide_children` property in the `wxStaticBoxSizer` has been removed since the `hidden` property does exactly the same thing. Projects where `hide_children` was set will be automatically converted to use `hidden` instead.
 - The Image List file now includes wxue_img::image_ functions for each image in the list, replacing the `extern` declarations that were previously used. A new `add_externs` property has been added -- check that if you still need the extern declarations.
 
 ### Fixed
 
 - The Show Hidden on the toolbar now shows (in the Mockup panel) the children of sizers that have their children hidden.
-- Setting `hidden` in a wxStaticBoxSizer did not generate any code to hide the wxStaticBox and it's children (you had to check `hide_children` to get the code). This has been fixed.
+- Setting `hidden` in a `wxStaticBoxSizer` did not generate any code to hide the wxStaticBox and it's children (you had to check `hide_children` to get the code). This has been fixed.
+- The Context Help button in wxStdDialogButtonSizer did not have a label. This now generates a `wxContextHelpButton` which uses a bitmap rather than a label, and automatically places the dialog in context-help mode when clicked.
 
 ## [Released (1.2.0)]
 

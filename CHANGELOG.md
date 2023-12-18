@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file.
 
 - Dark Mode and High Contrast Dark Mode are now available in the Prefences dialog on Windows.
 - XPM files are now supported in wxPython and wxRuby3
+- Setting a static bitmap's scale mode will now use wxGenericStaticBitmap in wxPython (4.2.1) and wxRuby3 (0/9/3) to ensure that all platforms will support the scaling.
 
 ### Changed
 

@@ -68,7 +68,14 @@ bool StaticBitmapGenerator::ConstructionCode(Code& code)
             }
             else if (code.is_ruby())
             {
-                code.NodeName().CreateClass().ValidParentName().Comma().as_string(prop_id).Comma();
+                bool use_generic_version = (code.node()->as_string(prop_scale_mode) != "None");
+                if (!use_generic_version)
+                    code.NodeName().CreateClass().ValidParentName().Comma().as_string(prop_id).Comma();
+                else
+                {
+                    code.NodeName().CreateClass("GenericStaticBitmap").ValidParentName().Comma().as_string(prop_id).Comma();
+                }
+
                 code.Bundle(prop_bitmap);
             }
             code.PosSizeFlags();
@@ -204,12 +211,36 @@ bool StaticBitmapGenerator::SettingsCode(Code& code)
         if (code.is_cpp())
         {
             code += "::Scale_";
+            code.as_string(prop_scale_mode);
+        }
+        else if (code.is_ruby())
+        {
+            tt_string mode = code.node()->as_string(prop_scale_mode);
+            tt_string comment("  # ");
+            if (mode == "Fill")
+            {
+                mode = "::ScaleMode.new(1)";
+                comment += "Fill";
+            }
+            else if (mode == "AspectFit")
+            {
+                mode = "::ScaleMode.new(2)";
+                comment += "AspectFit";
+            }
+            else if (mode == "AspectFill")
+            {
+                mode = "::ScaleMode.new(3)";
+                comment += "AspectFill";
+            }
+            code.Str(mode).EndFunction() += comment;
+            return true;
         }
         else
         {
             code += ".Scale_";
+            code.as_string(prop_scale_mode);
         }
-        code.as_string(prop_scale_mode).EndFunction();
+        code.EndFunction();
     }
     return true;
 }

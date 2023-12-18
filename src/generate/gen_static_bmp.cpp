@@ -52,10 +52,14 @@ bool StaticBitmapGenerator::ConstructionCode(Code& code)
     {
         if (code.hasValue(prop_bitmap))
         {
+            bool use_generic_version = (code.node()->as_string(prop_scale_mode) != "None");
             if (code.is_python())
             {
                 bool is_list_created = PythonBitmapList(code, prop_bitmap);
-                code.NodeName().CreateClass().ValidParentName().Comma().as_string(prop_id).Comma();
+                if (!use_generic_version)
+                    code.NodeName().CreateClass().ValidParentName().Comma().as_string(prop_id).Comma();
+                else
+                    code.NodeName().CreateClass("GenericStaticBitmap").ValidParentName().Comma().as_string(prop_id).Comma();
 
                 if (is_list_created)
                 {
@@ -68,7 +72,6 @@ bool StaticBitmapGenerator::ConstructionCode(Code& code)
             }
             else if (code.is_ruby())
             {
-                bool use_generic_version = (code.node()->as_string(prop_scale_mode) != "None");
                 if (!use_generic_version)
                     code.NodeName().CreateClass().ValidParentName().Comma().as_string(prop_id).Comma();
                 else
@@ -207,7 +210,11 @@ bool StaticBitmapGenerator::SettingsCode(Code& code)
 {
     if (code.node()->as_string(prop_scale_mode) != "None")
     {
-        code.NodeName().Function("SetScaleMode(").Add("wxStaticBitmap");
+        // C++ and wxRuby3 use wxStaticBitmap::ScaleMode, wxPython uses wxGenericStaticBitmap::ScaleMode
+        if (!code.is_python())
+            code.NodeName().Function("SetScaleMode(").Add("wxStaticBitmap");
+        else
+            code.NodeName().Function("SetScaleMode(").Add("wxGenericStaticBitmap");
         if (code.is_cpp())
         {
             code += "::Scale_";

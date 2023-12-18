@@ -792,6 +792,7 @@ namespace GenEnum
         gen_wxAuiToolBar,
         gen_wxBannerWindow,
         gen_wxBitmapComboBox,
+        gen_wxBitmapToggleButton,
         gen_wxBoxSizer,
         gen_wxButton,
         gen_wxCalendarCtrl,

@@ -240,7 +240,7 @@ inline const char* buttons_xml = R"===(<?xml version="1.0"?>
 		<event name="wxEVT_SPIN_DOWN" class="wxSpinEvent"
 			help="Generated when right/down arrow is pressed." />
 	</gen>
-
+	)===" R"===(
 	<gen class="wxToggleButton" image="toggle_button" type="widget">
 		<inherits class="Bitmaps" />
 		<inherits class="wxWindow" />
@@ -248,7 +248,7 @@ inline const char* buttons_xml = R"===(<?xml version="1.0"?>
 		<inherits class="Boolean Validator" />
 		<inherits class="sizer_child" />
 		<property name="var_name" type="string">m_toggleBtn</property>
-		<property name="label" type="string_escapes">MyButton</property>
+		<property name="label" type="string_escapes">MyToggleButton</property>
 		<property name="markup" type="bool"
 			help="This can be used to apply fonts or colours to different parts of the label.">0</property>
 		<property name="pressed" type="bool">0</property>
@@ -267,6 +267,23 @@ inline const char* buttons_xml = R"===(<?xml version="1.0"?>
 				help="Disables the display of the text label in the button even if it has one or its id is one of the standard stock ids with an associated label: without using this style a button which is only supposed to show a bitmap but uses a standard id would display a label too." />
 			<option name="wxBORDER_NONE"
 				help="Creates a button without border. This is currently implemented in MSW, GTK2 and OSX/Cocoa and OSX/Carbon ports but in the latter only applies to buttons with bitmaps and using bitmap of one of the standard sizes only, namely 128*128, 48*48, 24*24 or 16*16. In all the other cases wxBORDER_NONE is ignored under OSX/Carbon (these restrictions don't exist in OSX/Cocoa however)." />
+		</property>
+		<event name="wxEVT_TOGGLEBUTTON" class="wxCommandEvent"
+			help="" />
+	</gen>
+	<gen class="wxBitmapToggleButton" image="bitmap_toggle_button" type="widget">
+		<inherits class="Bitmaps" />
+		<inherits class="wxWindow" />
+		<inherits class="Window Events" />
+		<inherits class="Boolean Validator" />
+		<inherits class="sizer_child" />
+		<property name="var_name" type="string">m_bmp_toggle_btn</property>
+		<property name="pressed" type="bool">0</property>
+		<property name="style" type="bitlist">
+			<option name="wxBU_EXACTFIT"
+				help="If specified, the button will be made just big enough for its contents." />
+			<option name="wxBORDER_NONE"
+				help="Creates a button without a border. This is currently implemented in MSW, GTK2 and OSX/Cocoa and OSX/Carbon ports. In OSX it only applies to bitmaps of one of the standard sizes, namely 128*128, 48*48, 24*24 or 16*16. In all the other cases wxBORDER_NONE is ignored under OSX/Carbon (these restrictions don't exist in OSX/Cocoa however)." />
 		</property>
 		<event name="wxEVT_TOGGLEBUTTON" class="wxCommandEvent"
 			help="" />

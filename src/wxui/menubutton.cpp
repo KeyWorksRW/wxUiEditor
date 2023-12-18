@@ -23,14 +23,16 @@ MenuButton::MenuButton() : wxMenu()
 
     auto* menu_item = Append(gen_wxButton, "Insert wxButton");
     menu_item->SetBitmap(wxue_img::bundle_wxButton_png());
-    auto* menu_item_2 = Append(gen_wxToggleButton, "Insert wxToggleButton");
+    auto* menu_item_2 = Append(gen_wxBitmapToggleButton, "Insert wxBitmapToggleButton");
     menu_item_2->SetBitmap(wxue_img::bundle_toggle_button_png());
-    auto* menu_item_3 = Append(gen_wxStdDialogButtonSizer, "Insert wxStdDialogButtonSizer");
-    menu_item_3->SetBitmap(wxue_img::bundle_stddialogbuttonsizer_png());
-    auto* menu_item_4 = Append(gen_wxCommandLinkButton, "Insert wxCommandLinkButton");
-    menu_item_4->SetBitmap(wxue_img::bundle_wxCommandLinkButton_png());
     auto* menu_item_5 = Append(gen_CloseButton, "Insert Close Button");
     menu_item_5->SetBitmap(wxue_img::bundle_close_btn_png());
+    auto* menu_item_4 = Append(gen_wxCommandLinkButton, "Insert wxCommandLinkButton");
+    menu_item_4->SetBitmap(wxue_img::bundle_wxCommandLinkButton_png());
+    auto* menu_item_3 = Append(gen_wxStdDialogButtonSizer, "Insert wxStdDialogButtonSizer");
+    menu_item_3->SetBitmap(wxue_img::bundle_stddialogbuttonsizer_png());
+    auto* menu_item2 = Append(gen_wxToggleButton, "Insert wxToggleButton");
+    menu_item2->SetBitmap(wxue_img::bundle_toggle_button_png());
 }
 
 // ************* End of generated code ***********

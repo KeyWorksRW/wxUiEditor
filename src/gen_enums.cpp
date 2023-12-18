@@ -743,6 +743,7 @@ std::map<GenEnum::GenName, const char*> GenEnum::map_GenNames = {
     { gen_wxAuiToolBar, "wxAuiToolBar" },
     { gen_wxBannerWindow, "wxBannerWindow" },
     { gen_wxBitmapComboBox, "wxBitmapComboBox" },
+    { gen_wxBitmapToggleButton, "wxBitmapToggleButton" },
     { gen_wxBoxSizer, "wxBoxSizer" },
     { gen_wxButton, "wxButton" },
     { gen_wxCalendarCtrl, "wxCalendarCtrl" },

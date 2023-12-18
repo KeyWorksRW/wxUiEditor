@@ -16,6 +16,9 @@
         bitmap="Embed;auitoolbar.png" />
       <node
         class="embedded_image"
+        bitmap="Embed;bitmap_toggle_button.png" />
+      <node
+        class="embedded_image"
         bitmap="Embed;bmp_combo_box.png" />
       <node
         class="embedded_image"
@@ -4218,15 +4221,15 @@
         <node
           class="wxMenuItem"
           bitmap="Embed;toggle_button.png"
-          id="gen_wxToggleButton"
-          label="Insert wxToggleButton"
+          id="gen_wxBitmapToggleButton"
+          label="Insert wxBitmapToggleButton"
           var_name="menu_item_2" />
         <node
           class="wxMenuItem"
-          bitmap="Embed;stddialogbuttonsizer.png"
-          id="gen_wxStdDialogButtonSizer"
-          label="Insert wxStdDialogButtonSizer"
-          var_name="menu_item_3" />
+          bitmap="Embed;close_btn.png"
+          id="gen_CloseButton"
+          label="Insert Close Button"
+          var_name="menu_item_5" />
         <node
           class="wxMenuItem"
           bitmap="Embed;wxCommandLinkButton.png"
@@ -4235,10 +4238,16 @@
           var_name="menu_item_4" />
         <node
           class="wxMenuItem"
-          bitmap="Embed;close_btn.png"
-          id="gen_CloseButton"
-          label="Insert Close Button"
-          var_name="menu_item_5" />
+          bitmap="Embed;stddialogbuttonsizer.png"
+          id="gen_wxStdDialogButtonSizer"
+          label="Insert wxStdDialogButtonSizer"
+          var_name="menu_item_3" />
+        <node
+          class="wxMenuItem"
+          bitmap="Embed;toggle_button.png"
+          id="gen_wxToggleButton"
+          label="Insert wxToggleButton"
+          var_name="menu_item2" />
       </node>
       <node
         class="PopupMenu"

@@ -51,6 +51,7 @@ static const ImageMap png_headers[] = {
 
     { "auinotebook", auinotebook_png, sizeof(auinotebook_png) },
     { "auitoolbar", auitoolbar_png, sizeof(auitoolbar_png) },
+    { "bitmap_toggle_button", bitmap_toggle_button_png, sizeof(bitmap_toggle_button_png) },
     { "bmp_combo_box", bmp_combo_box_png, sizeof(bmp_combo_box_png) },
     { "book_page", book_page_png, sizeof(book_page_png) },
     { "calendar", calendar_png, sizeof(calendar_png) },

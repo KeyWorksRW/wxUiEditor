@@ -180,3 +180,128 @@ void ToggleButtonGenerator::RequiredHandlers(Node* /* node */, std::set<std::str
 {
     handlers.emplace("wxToggleButtonXmlHandler");
 }
+
+//////////////////////////////////////////  BitmapToggleButtonGenerator  //////////////////////////////////////////
+
+wxObject* BitmapToggleButtonGenerator::CreateMockup(Node* node, wxObject* parent)
+{
+    auto widget =
+        new wxBitmapToggleButton(wxStaticCast(parent, wxWindow), wxID_ANY, wxNullBitmap, DlgPoint(parent, node, prop_pos),
+                                 DlgSize(parent, node, prop_size), GetStyleInt(node));
+
+    widget->SetValue((node->as_bool(prop_pressed)));
+
+    if (node->hasValue(prop_bitmap))
+        widget->SetBitmap(node->as_wxBitmapBundle(prop_bitmap));
+
+    if (node->hasValue(prop_disabled_bmp))
+        widget->SetBitmapDisabled(node->as_wxBitmapBundle(prop_disabled_bmp));
+
+    if (node->hasValue(prop_pressed_bmp))
+        widget->SetBitmapPressed(node->as_wxBitmapBundle(prop_pressed_bmp));
+
+    if (node->hasValue(prop_focus_bmp))
+        widget->SetBitmapFocus(node->as_wxBitmapBundle(prop_focus_bmp));
+
+    if (node->hasValue(prop_current))
+        widget->SetBitmapCurrent(node->as_wxBitmapBundle(prop_current));
+
+    if (node->hasValue(prop_position))
+        widget->SetBitmapPosition(static_cast<wxDirection>(node->as_int(prop_position)));
+
+    if (node->hasValue(prop_margins))
+        widget->SetBitmapMargins(node->as_wxSize(prop_margins));
+
+    widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
+
+    return widget;
+}
+
+bool BitmapToggleButtonGenerator::OnPropertyChange(wxObject* widget, Node* /* node */, NodeProperty* prop)
+{
+    if (prop->isProp(prop_pressed))
+    {
+        wxStaticCast(widget, wxToggleButton)->SetValue(prop->as_bool());
+        return true;
+    }
+
+    return false;
+}
+
+bool BitmapToggleButtonGenerator::ConstructionCode(Code& code)
+{
+    code.AddAuto().NodeName().CreateClass();
+    code.ValidParentName().Comma().as_string(prop_id).Comma();
+
+    code.Add("wxNullBitmap");
+
+    code.PosSizeFlags(true);
+
+    return true;
+}
+
+bool BitmapToggleButtonGenerator::SettingsCode(Code& code)
+{
+    if (code.IsTrue(prop_pressed))
+    {
+        code.Eol(eol_if_needed).NodeName().Function("SetValue(").True().EndFunction();
+    }
+
+    if (code.hasValue(prop_bitmap))
+    {
+        if (code.hasValue(prop_position))
+        {
+            code.Eol(eol_if_needed).NodeName().Function("SetBitmapPosition(").as_string(prop_position).EndFunction();
+        }
+
+        if (code.hasValue(prop_margins))
+        {
+            auto size = code.node()->as_wxSize(prop_margins);
+            code.Eol(eol_if_needed).NodeName().Function("SetBitmapMargins(");
+            code.itoa(size.GetWidth()).Comma().itoa(size.GetHeight()).EndFunction();
+        }
+
+        if (code.is_cpp())
+            GenBtnBimapCode(code.node(), code.GetCode());
+        else
+            PythonBtnBimapCode(code);
+    }
+
+    return true;
+}
+
+bool BitmapToggleButtonGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
+                                              int /* language */)
+{
+    InsertGeneratorInclude(node, "#include <wx/tglbtn.h>", set_src, set_hdr);
+    if (node->as_string(prop_validator_variable).size())
+        set_src.insert("#include <wx/valgen.h>");
+    return true;
+}
+
+int BitmapToggleButtonGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
+{
+    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto item = InitializeXrcObject(node, object);
+
+    GenXrcObjectAttributes(node, item, "wxBitmapToggleButton");
+
+    ADD_ITEM_BOOL(prop_pressed, "checked")
+
+    GenXrcBitmap(node, item, xrc_flags);
+    GenXrcStylePosSize(node, item);
+    GenXrcWindowSettings(node, item);
+
+    if (xrc_flags & xrc::add_comments)
+    {
+        GenXrcComments(node, item);
+    }
+
+    return result;
+}
+
+void BitmapToggleButtonGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>& handlers)
+{
+    // This handler also handles wxBitmapToggleButton
+    handlers.emplace("wxToggleButtonXmlHandler");
+}

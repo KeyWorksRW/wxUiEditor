@@ -1923,7 +1923,10 @@ void PropGridPanel::CreatePropCategory(tt_string_view name, Node* node, NodeDecl
     }
     else if (name.is_sameas("Bitmaps") || name.is_sameas("Command Bitmaps"))
     {
-        m_prop_grid->Collapse(id);
+        if (!node->isGen(gen_wxBitmapToggleButton))
+        {
+            m_prop_grid->Collapse(id);
+        }
         if (UserPrefs.is_DarkMode())
             m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#304869"));
         else

@@ -18,6 +18,7 @@ namespace wxue_img
     wxImage get_image(const unsigned char* data, size_t size_data);
 
     wxBitmapBundle bundle_auitoolbar_png();  // auitoolbar.png
+    wxBitmapBundle bundle_bitmap_toggle_button_png();  // bitmap_toggle_button.png
     wxBitmapBundle bundle_bmp_combo_box_png();  // bmp_combo_box.png
     wxBitmapBundle bundle_check3state_png();  // check3state.png
     wxBitmapBundle bundle_close_btn_png();  // close_btn.png
@@ -77,6 +78,7 @@ namespace wxue_img
     wxBitmapBundle bundle_xrc_compare_svg(int width, int height);
 
     wxImage image_auitoolbar_png();
+    wxImage image_bitmap_toggle_button_png();
     wxImage image_bmp_combo_box_png();
     wxImage image_check3state_png();
     wxImage image_close_btn_png();
@@ -131,6 +133,7 @@ namespace wxue_img
     wxImage image_wxTimer_png();
 
     extern const unsigned char auitoolbar_png[476];
+    extern const unsigned char bitmap_toggle_button_png[641];
     extern const unsigned char bmp_combo_box_png[492];
     extern const unsigned char check3state_png[194];
     extern const unsigned char close_btn_png[956];

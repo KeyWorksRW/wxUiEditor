@@ -52,10 +52,14 @@ bool StaticBitmapGenerator::ConstructionCode(Code& code)
     {
         if (code.hasValue(prop_bitmap))
         {
+            bool use_generic_version = (code.node()->as_string(prop_scale_mode) != "None");
             if (code.is_python())
             {
                 bool is_list_created = PythonBitmapList(code, prop_bitmap);
-                code.NodeName().CreateClass().ValidParentName().Comma().as_string(prop_id).Comma();
+                if (!use_generic_version)
+                    code.NodeName().CreateClass().ValidParentName().Comma().as_string(prop_id).Comma();
+                else
+                    code.NodeName().CreateClass("GenericStaticBitmap").ValidParentName().Comma().as_string(prop_id).Comma();
 
                 if (is_list_created)
                 {
@@ -68,7 +72,13 @@ bool StaticBitmapGenerator::ConstructionCode(Code& code)
             }
             else if (code.is_ruby())
             {
-                code.NodeName().CreateClass().ValidParentName().Comma().as_string(prop_id).Comma();
+                if (!use_generic_version)
+                    code.NodeName().CreateClass().ValidParentName().Comma().as_string(prop_id).Comma();
+                else
+                {
+                    code.NodeName().CreateClass("GenericStaticBitmap").ValidParentName().Comma().as_string(prop_id).Comma();
+                }
+
                 code.Bundle(prop_bitmap);
             }
             code.PosSizeFlags();
@@ -200,16 +210,44 @@ bool StaticBitmapGenerator::SettingsCode(Code& code)
 {
     if (code.node()->as_string(prop_scale_mode) != "None")
     {
-        code.NodeName().Function("SetScaleMode(").Add("wxStaticBitmap");
+        // C++ and wxRuby3 use wxStaticBitmap::ScaleMode, wxPython uses wxGenericStaticBitmap::ScaleMode
+        if (!code.is_python())
+            code.NodeName().Function("SetScaleMode(").Add("wxStaticBitmap");
+        else
+            code.NodeName().Function("SetScaleMode(").Add("wxGenericStaticBitmap");
         if (code.is_cpp())
         {
             code += "::Scale_";
+            code.as_string(prop_scale_mode);
+        }
+        else if (code.is_ruby())
+        {
+            tt_string mode = code.node()->as_string(prop_scale_mode);
+            tt_string comment("  # ");
+            if (mode == "Fill")
+            {
+                mode = "::ScaleMode.new(1)";
+                comment += "Fill";
+            }
+            else if (mode == "AspectFit")
+            {
+                mode = "::ScaleMode.new(2)";
+                comment += "AspectFit";
+            }
+            else if (mode == "AspectFill")
+            {
+                mode = "::ScaleMode.new(3)";
+                comment += "AspectFill";
+            }
+            code.Str(mode).EndFunction() += comment;
+            return true;
         }
         else
         {
             code += ".Scale_";
+            code.as_string(prop_scale_mode);
         }
-        code.as_string(prop_scale_mode).EndFunction();
+        code.EndFunction();
     }
     return true;
 }

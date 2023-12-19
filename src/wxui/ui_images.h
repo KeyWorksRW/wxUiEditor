@@ -23,6 +23,7 @@ namespace wxue_img
     wxBitmapBundle bundle_check3state_png();  // check3state.png
     wxBitmapBundle bundle_close_btn_png();  // close_btn.png
     wxBitmapBundle bundle_cpp_logo_svg(int width, int height);
+    wxBitmapBundle bundle_ctx_help_btn_png();  // ctx_help_btn.png
     wxBitmapBundle bundle_dataview_ctrl_png();  // dataview_ctrl.png
     wxBitmapBundle bundle_dataviewlist_ctrl_png();  // dataviewlist_ctrl.png
     wxBitmapBundle bundle_dataviewtree_ctrl_png();  // dataviewtree_ctrl.png
@@ -82,6 +83,7 @@ namespace wxue_img
     wxImage image_bmp_combo_box_png();
     wxImage image_check3state_png();
     wxImage image_close_btn_png();
+    wxImage image_ctx_help_btn_png();
     wxImage image_dataview_ctrl_png();
     wxImage image_dataviewlist_ctrl_png();
     wxImage image_dataviewtree_ctrl_png();
@@ -138,6 +140,7 @@ namespace wxue_img
     extern const unsigned char check3state_png[194];
     extern const unsigned char close_btn_png[956];
     extern const unsigned char cpp_logo_svg[587];
+    extern const unsigned char ctx_help_btn_png[1140];
     extern const unsigned char dataview_ctrl_png[231];
     extern const unsigned char dataviewlist_ctrl_png[685];
     extern const unsigned char dataviewtree_ctrl_png[238];

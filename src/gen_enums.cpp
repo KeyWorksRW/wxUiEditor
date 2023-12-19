@@ -755,6 +755,7 @@ std::map<GenEnum::GenName, const char*> GenEnum::map_GenNames = {
     { gen_wxColourPickerCtrl, "wxColourPickerCtrl" },
     { gen_wxComboBox, "wxComboBox" },
     { gen_wxCommandLinkButton, "wxCommandLinkButton" },
+    { gen_wxContextHelpButton, "wxContextHelpButton" },
     { gen_wxContextMenuEvent, "wxContextMenuEvent" },
     { gen_wxDataViewCtrl, "wxDataViewCtrl" },
     { gen_wxDataViewListCtrl, "wxDataViewListCtrl" },

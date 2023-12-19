@@ -58,6 +58,7 @@ static const ImageMap png_headers[] = {
     { "check3state", check3state_png, sizeof(check3state_png) },
     { "close_btn", close_btn_png, sizeof(close_btn_png) },
     { "colourPickerIcon", colourPickerIcon_png, sizeof(colourPickerIcon_png) },
+    { "ctx_help_btn", ctx_help_btn_png, sizeof(ctx_help_btn_png) },
     { "CustomControl", customControl_png, sizeof(customControl_png) },
     { "dataview_ctrl", dataview_ctrl_png, sizeof(dataview_ctrl_png) },
     { "dataviewlist_column", dataviewlist_column_png, sizeof(dataviewlist_column_png) },

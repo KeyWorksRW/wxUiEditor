@@ -35,6 +35,7 @@
 #include "gen_cmd_link_btn.h"        // CommandLinkBtnGenerator -- wxCommandLinkButton generator
 #include "gen_collapsible.h"         // CollapsiblePaneGenerator -- wxCollapsiblePane generator
 #include "gen_combobox.h"            // ComboBoxGenerator -- wxComboBox generator
+#include "gen_ctx_help_btn.h"        // CtxHelpButtonGenerator -- wxContextHelpButton generator
 #include "gen_ctx_menu.h"            // CtxMenuGenerator -- generates function and includes
 #include "gen_custom_ctrl.h"         // CustomControl -- Custom Control generator
 #include "gen_date_picker.h"         // DatePickerCtrlGenerator -- wxDatePickerCtrl generator
@@ -145,6 +146,7 @@ void NodeCreator::initGenerators()
     SET_GENERATOR(gen_wxCollapsiblePane, CollapsiblePaneGenerator)
     SET_GENERATOR(gen_wxComboBox, ComboBoxGenerator)
     SET_GENERATOR(gen_wxCommandLinkButton, CommandLinkBtnGenerator)
+    SET_GENERATOR(gen_wxContextHelpButton, CtxHelpButtonGenerator)
     SET_GENERATOR(gen_wxGauge, GaugeGenerator)
     SET_GENERATOR(gen_wxHtmlWindow, HtmlWindowGenerator)
     SET_GENERATOR(gen_wxHyperlinkCtrl, HyperlinkGenerator)

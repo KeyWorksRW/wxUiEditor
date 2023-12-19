@@ -29,6 +29,8 @@ MenuButton::MenuButton() : wxMenu()
     menu_item_5->SetBitmap(wxue_img::bundle_close_btn_png());
     auto* menu_item_4 = Append(gen_wxCommandLinkButton, "Insert wxCommandLinkButton");
     menu_item_4->SetBitmap(wxue_img::bundle_wxCommandLinkButton_png());
+    auto* menu_item3 = Append(gen_wxContextHelpButton, "Insert wxContextHelpButton");
+    menu_item3->SetBitmap(wxue_img::bundle_ctx_help_btn_png());
     auto* menu_item_3 = Append(gen_wxStdDialogButtonSizer, "Insert wxStdDialogButtonSizer");
     menu_item_3->SetBitmap(wxue_img::bundle_stddialogbuttonsizer_png());
     auto* menu_item2 = Append(gen_wxToggleButton, "Insert wxToggleButton");

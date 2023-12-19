@@ -436,6 +436,10 @@ bool Node::createToolNode(GenName name)
             }
             break;
 
+        case gen_wxContextHelpButton:
+            new_node->set_value(prop_id, "wxID_CONTEXT_HELP");
+            break;
+
         default:
             break;
     }

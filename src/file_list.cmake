@@ -121,6 +121,7 @@ set (file_list
     generate/gen_close_btn.cpp      # wxBitmapButton::CreateCloseButton generator
     generate/gen_cmd_link_btn.cpp   # wxCommandLinkButton generator
     generate/gen_combobox.cpp       # wxComboBox generator
+    generate/gen_ctx_help_btn.cpp   # wxContextHelpButton generator
     generate/gen_custom_ctrl.cpp    # Custom Control generator
     generate/gen_edit_listbox.cpp   # wxEditableListBox generator
     generate/gen_file_ctrl.cpp      # wxFileCtrl generator

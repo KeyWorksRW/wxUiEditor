@@ -288,4 +288,12 @@ inline const char* buttons_xml = R"===(<?xml version="1.0"?>
 		<event name="wxEVT_TOGGLEBUTTON" class="wxCommandEvent"
 			help="" />
 	</gen>
+
+	<gen class="wxContextHelpButton" image="ctx_help_btn" type="widget">
+		<inherits class="wxWindow" />
+		<inherits class="sizer_child" />
+		<property name="var_name" type="string">m_ctx_help_btn</property>
+		<event name="wxEVT_HELP" class="wxHelpEvent"
+			help="Generated when the button is clicked" />
+	</gen>
 </GeneratorDefinitions>)===";

@@ -804,6 +804,7 @@ namespace GenEnum
         gen_wxColourPickerCtrl,
         gen_wxComboBox,
         gen_wxCommandLinkButton,
+        gen_wxContextHelpButton,
         gen_wxContextMenuEvent,
         gen_wxDataViewCtrl,
         gen_wxDataViewListCtrl,

@@ -234,14 +234,6 @@ public:
     // Current string is replaced if found, cleared if not.
     bool assignEnvVar(const char* env_var);
 
-    // Similer to sprintf, but without floating point support.
-    //
-    // %k flag will place a string argument in quotes, and format a numerical argument
-    // with commas or periods (depending on the current locale).
-    //
-    // %z is considered unsigned unless the value is -1.
-    tt_string& Format(std::string_view format, ...);
-
     // Caution: view is only valid until tt_string is modified or destroyed!
     tt_string_view subview(size_t start, size_t len) const;
 

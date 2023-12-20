@@ -202,7 +202,7 @@ int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_PAG
         else
         {
             baseFile.replace_extension(header_ext);
-            m_header->writeLine(tt_string().Format("#include %ks", baseFile.c_str()));
+            m_header->writeLine(tt_string("include ") << '"' << baseFile << '"');
             baseFile.remove_extension();
         }
         m_header->writeLine();
@@ -285,7 +285,7 @@ int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_PAG
                 // Add a comment to the header that specifies the generated header and source filenames
                 baseFile.replace_extension(header_ext);
                 derived_file.replace_extension(header_ext);
-                inc.Format("#include %ks", std::string(derived_file.filename()).c_str());
+                inc << "include \"" << derived_file.filename() << "\"";
 
                 tt_string comment(tt_string(header_ext) << "\"  // auto-generated: ");
                 comment << baseFile << " and ";
@@ -313,7 +313,7 @@ int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_PAG
             {
                 baseFile.replace_extension(header_ext);
                 tt_string inc;
-                inc.Format("#include %ks", baseFile.c_str());
+                inc << "include \"" << baseFile << "\"";
                 m_source->writeLine("// Non-generated additions to base class (virtual events is unchecked)");
                 m_source->writeLine("// Copy and paste into your own code as needed.");
                 m_source->writeLine();
@@ -377,7 +377,7 @@ int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_PAG
                     }
                 }
 
-                tt_string prototype;
+                wxString prototype;
 
                 // If this is a button that closes a dialog, and the dialog is marked as persist, then event.Skip() must be
                 // called.
@@ -392,7 +392,7 @@ int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_PAG
                     prototype.Format("%s(%s& WXUNUSED(event))", event_code.c_str(),
                                      event->getEventInfo()->get_event_class().c_str());
                 }
-                m_header->writeLine(tt_string().Format("void %s override;", prototype.c_str()));
+                m_header->writeLine(tt_string("void ") << prototype.ToStdString() << " override;");
 
                 if (panel_type != HDR_PANEL)
                 {
@@ -413,7 +413,7 @@ int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_PAG
                             continue;
                     }
                     m_source->writeLine();
-                    m_source->writeLine(tt_string() << "void " << derived_name << "::" << prototype);
+                    m_source->writeLine(tt_string() << "void " << derived_name << "::" << prototype.ToStdString());
                     m_source->writeLine("{");
                     m_source->Indent();
                     auto name = event->getEventInfo()->get_name();
@@ -452,8 +452,7 @@ int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_PAG
                     }
                     else
                     {
-                        m_source->writeLine(tt_string().Format("    // TODO: Implement %s", event_code.c_str()),
-                                            indent::auto_no_whitespace);
+                        m_source->writeLine(tt_string("    // TODO: Implement ") << event_code, indent::auto_no_whitespace);
                     }
                     m_source->Unindent();
 

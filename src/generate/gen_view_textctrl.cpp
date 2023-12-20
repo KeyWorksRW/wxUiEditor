@@ -92,7 +92,7 @@ bool TextViewGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, 
             if (hdr_file.size())
             {
                 hdr_file += Project.as_string(prop_header_ext);
-                set_src.insert(tt_string().Format("#include %ks", hdr_file.c_str()));
+                set_src.insert(tt_string("#include ") << '"' << hdr_file << '"');
             }
             else
             {

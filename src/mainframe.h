@@ -78,6 +78,7 @@ public:
     NavigationPanel* getNavigationPanel() { return m_nav_panel; }
     RibbonPanel* getRibbonPanel() { return m_ribbon_panel; }
     BasePanel* getGeneratedPanel() { return m_generatedPanel; }
+    wxAuiNotebook* getTopNotebook() { return m_notebook; }
     DocViewPanel* getDocViewPanel() { return m_docviewPanel; }
 
 #if defined(INTERNAL_TESTING)

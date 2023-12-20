@@ -454,10 +454,11 @@ void ConvertImageDlg::ImgageInHeaderOut()
     string_name.Replace(".", "_", true);
 
     tt_string_vector file;
-
-    file.addEmptyLine().Format("static const unsigned char %s[%zu] = {", string_name.filename().as_str().c_str(),
-                               read_stream->GetBufferSize());
-
+    {
+        auto& line = file.addEmptyLine();
+        line << "static const unsigned char " << string_name.filename() << '['
+             << std::to_string(read_stream->GetBufferSize()) << "] = {";
+    }
     read_stream->Seek(0, wxFromStart);
 
     auto buf = static_cast<unsigned char*>(read_stream->GetBufferStart());
@@ -483,8 +484,8 @@ void ConvertImageDlg::ImgageInHeaderOut()
 
     if (out_name.empty())
     {
-        m_staticSize->SetLabelText(
-            tt_string().Format("Original size: %kzu -- Output size if saved: %kzu", m_orginal_size, buf_size));
+        m_staticSize->SetLabelText(tt_string() << "Original size: " << std::to_string(m_orginal_size)
+                                               << " -- Output size if saved: " << std::to_string(buf_size));
         m_staticSize->Show();
     }
     else
@@ -493,8 +494,8 @@ void ConvertImageDlg::ImgageInHeaderOut()
         {
             m_staticSave->SetLabelText(out_name.make_wxString() << " saved.");
             m_staticSave->Show();
-            m_staticSize->SetLabelText(
-                tt_string().Format("Original size: %kzu -- Output size: %kzu", m_orginal_size, buf_size));
+            m_staticSize->SetLabelText(tt_string() << "Original size: " << std::to_string(m_orginal_size)
+                                                   << " -- Output size: " << std::to_string(buf_size));
             m_staticSize->Show();
             m_lastOutputFile = out_name;
             m_btnConvert->Disable();
@@ -538,7 +539,12 @@ void ConvertImageDlg::ImageInXpmOut()
             m_staticSave->SetLabelText(wxString() << out_name << " saved.");
             m_staticSave->Show();
             m_staticSize->SetLabelText(
-                tt_string().Format("Original size: %kzu -- XPM size: %kzu", m_orginal_size, output_size));
+#ifdef __cpp_lib_format
+                std::format(std::locale(""), "Original size: {:L} -- XPM size: {:L}", m_orginal_size, output_size)
+#else
+                tt_string() << "Original size:" << m_orginal_size << " -- XPM size: " << output_size;
+#endif
+            );
             m_staticSize->Show();
             m_lastOutputFile = out_name;
             m_btnConvert->Disable();

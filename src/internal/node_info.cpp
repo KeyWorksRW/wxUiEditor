@@ -110,15 +110,26 @@ void NodeInfo::OnInit(wxInitDialogEvent& /* event */)
         node_memory.size = 0;
         node_memory.children = 0;
         CalcNodeMemory(cur_sel, node_memory);
+#ifdef __cpp_lib_format
+        label = std::format(std::locale(""), "Memory: {:L} ({:L} node{})", node_memory.size, node_memory.children,
+                            node_memory.children == 1 ? "" : "s");
+#else
         label.clear();
-        label.Format("Memory: %kzu (%kzu node%s)", node_memory.size, node_memory.children,
-                     node_memory.children == 1 ? "" : "s");
+        label << "Memory: " << node_memory.size << " (" << node_memory.children << ") node"
+              << (node_memory.children == 1 ? "" : "s");
+#endif
         m_txt_memory->SetLabel(label);
     }
 
     CalcNodeMemory(Project.getProjectNode(), node_memory);
 
-    label.Format("Project: %kzu (%kzu nodes)", node_memory.size, node_memory.children);
+#ifdef __cpp_lib_format
+        label = std::format(std::locale(""), "Project: {:L} ({:L} nodes)", node_memory.size, node_memory.children);
+#else
+        label.clear();
+        label << "Project: " << node_memory.size << " (" << node_memory.children << ") node"
+              << (node_memory.children == 1 ? "" : "s");
+#endif
     m_txt_project->SetLabel(label);
 
     auto clipboard = wxGetFrame().getClipboard();
@@ -127,8 +138,13 @@ void NodeInfo::OnInit(wxInitDialogEvent& /* event */)
         node_memory.size = 0;
         node_memory.children = 0;
         CalcNodeMemory(clipboard, node_memory);
-        label.clear();
-        label.Format("Clipboard: %kzu (%kzu nodes)", node_memory.size, node_memory.children);
+#ifdef __cpp_lib_format
+            label = std::format(std::locale(""), "Clipboard: {:L} ({:L} nodes)", node_memory.size, node_memory.children);
+#else
+            label.clear();
+            label << "Clipboard: " << node_memory.size << " (" << node_memory.children << ") node"
+                  << (node_memory.children == 1 ? "" : "s");
+#endif
         m_txt_clipboard->SetLabel(label);
     }
 

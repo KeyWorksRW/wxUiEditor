@@ -453,8 +453,12 @@ bool ImageHandler::AddNewEmbeddedImage(tt_string path, Node* form, std::unique_l
 #if defined(_DEBUG) || defined(INTERNAL_TESTING)
                         size_t org_size = (to_size_t) stream.GetLength();
                         auto png_size = read_stream->GetBufferSize();
+    #ifdef __cpp_lib_format
+                        auto size_comparison = std::format(std::locale(""), "Original: {:L}, new: {:L}", org_size, png_size);
+    #else
                         tt_string size_comparison;
-                        size_comparison.Format("Original: %ku, new: %ku", org_size, png_size);
+                        size_comparison << "Original: " << org_size << ", new: " << png_size;
+    #endif
 #endif  // _DEBUG
 
                         embed->type = handler->GetType();
@@ -848,8 +852,12 @@ bool ImageHandler::AddEmbeddedBundleImage(tt_string path, Node* form)
 #if defined(_DEBUG) || defined(INTERNAL_TESTING)
                         size_t org_size = (to_size_t) stream.GetLength();
                         auto png_size = read_stream->GetBufferSize();
+    #ifdef __cpp_lib_format
+                        auto size_comparison = std::format(std::locale(""), "Original: {:L}, new: {:L}", org_size, png_size);
+    #else
                         tt_string size_comparison;
-                        size_comparison.Format("Original: %ku, new: %ku", org_size, png_size);
+                        size_comparison << "Original: " << org_size << ", new: " << png_size;
+    #endif
 #endif
 
                         embed->type = handler->GetType();
@@ -1248,8 +1256,13 @@ bool ImageHandler::AddSvgBundleImage(tt_string path, Node* form)
         auto file_size = file_original.Length();
         tt_string size_comparison;
         int percent = static_cast<int>(100 - (100 / (file_size / compressed_size)));
-        size_comparison.Format("%s -- Original: %ku, compressed: %ku, %u percent", path.filename().as_str().c_str(),
-                               file_size, compressed_size, percent);
+    #ifdef __cpp_lib_format
+        size_comparison = std::format(std::locale(""), "{} -- Original: {:L}, compressed: {:L}, {} percent",
+                                      path.filename().ToStdString(), file_size, compressed_size, percent);
+    #else
+        size_comparison << path.filename().ToStdString() << " -- Original: " << file_size
+                        << ", compressed: " << compressed_size << ", " << percent << " percent";
+    #endif
         // Enable line below to show results for every file
         // MSG_INFO(size_comparison)
     }

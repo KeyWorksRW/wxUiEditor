@@ -161,15 +161,24 @@ void UndoInfo::OnInit(wxInitDialogEvent& event)
             }
         }
 
+#ifdef __cpp_lib_format
+        auto txt_items = std::format(std::locale(""), "{:L}", actions.size());
+#else
         tt_string txt_items;
-        txt_items.Format("%kzu", actions.size());
+        txt_items << actions.size();
+#endif
         ptxt_items->SetLabel(txt_items);
 
         if (node_memory.size > 0)
         {
+#ifdef __cpp_lib_format
+            auto txt_totals = std::format(std::locale(""), "{:L} ({:L} node{})", node_memory.size, node_memory.children,
+                                     node_memory.children == 1 ? "" : "s");
+#else
             tt_string txt_totals;
-            txt_totals.Format("%kzu (%kzu node%s)", node_memory.size, node_memory.children,
-                              node_memory.children == 1 ? "" : "s");
+            txt_totals << node_memory.size << " (" << node_memory.children << ") node"
+                       << (node_memory.children == 1 ? "" : "s");
+#endif
             ptxt_memory->SetLabel(txt_totals);
         }
         else

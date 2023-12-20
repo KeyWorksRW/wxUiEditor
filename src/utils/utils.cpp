@@ -547,13 +547,13 @@ std::optional<tt_string> FileNameToVarName(tt_string_view filename, size_t max_l
             else
             {
                 // convert char to hex string
-                tt_string hex;
+                wxString hex;
                 hex.Format("%x", static_cast<int>(iter) & 0xFF);
 
                 // Ignore any 0xff characters which are utf-8 bytes
                 if (hex != "ff")
                 {
-                    var_name += hex;
+                    var_name += hex.ToStdString();
                 }
             }
         }

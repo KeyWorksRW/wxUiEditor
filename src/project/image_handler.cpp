@@ -1260,8 +1260,8 @@ bool ImageHandler::AddSvgBundleImage(tt_string path, Node* form)
         size_comparison = std::format(std::locale(""), "{} -- Original: {:L}, compressed: {:L}, {} percent",
                                       path.filename().ToStdString(), file_size, compressed_size, percent);
     #else
-        size_comparison << path.filename().ToStdString() << " -- Original: " << file_size
-                        << ", compressed: " << compressed_size << ", " << percent << " percent";
+        size_comparison << path.filename().ToStdString() << " -- Original: " << static_cast<size_t>(file_size)
+                        << ", compressed: " << static_cast<size_t>(compressed_size) << ", " << percent << " percent";
     #endif
         // Enable line below to show results for every file
         // MSG_INFO(size_comparison)

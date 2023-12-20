@@ -542,7 +542,7 @@ void ConvertImageDlg::ImageInXpmOut()
 #ifdef __cpp_lib_format
                 std::format(std::locale(""), "Original size: {:L} -- XPM size: {:L}", m_orginal_size, output_size)
 #else
-                tt_string() << "Original size:" << m_orginal_size << " -- XPM size: " << output_size;
+                tt_string() << "Original size:" << m_orginal_size << " -- XPM size: " << output_size
 #endif
             );
             m_staticSize->Show();

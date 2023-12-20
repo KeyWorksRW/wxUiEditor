@@ -173,7 +173,7 @@ void UndoInfo::OnInit(wxInitDialogEvent& event)
         {
 #ifdef __cpp_lib_format
             auto txt_totals = std::format(std::locale(""), "{:L} ({:L} node{})", node_memory.size, node_memory.children,
-                                     node_memory.children == 1 ? "" : "s");
+                                          node_memory.children == 1 ? "" : "s");
 #else
             tt_string txt_totals;
             txt_totals << node_memory.size << " (" << node_memory.children << ") node"

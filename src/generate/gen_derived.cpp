@@ -452,8 +452,7 @@ int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_PAG
                     }
                     else
                     {
-                        m_source->writeLine(tt_string("    // TODO: Implement ") << event_code,
-                                            indent::auto_no_whitespace);
+                        m_source->writeLine(tt_string("    // TODO: Implement ") << event_code, indent::auto_no_whitespace);
                     }
                     m_source->Unindent();
 

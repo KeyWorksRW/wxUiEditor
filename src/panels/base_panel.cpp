@@ -289,15 +289,18 @@ void BasePanel::OnFind(wxFindDialogEvent& event)
 
 PANEL_PAGE BasePanel::GetPanelPage() const
 {
-    if (auto page = m_notebook->GetCurrentPage(); page)
+    auto* top_notebook = wxGetFrame().getTopNotebook();
+    auto top_page_name = top_notebook->GetPageText(top_notebook->GetSelection());
+    auto* child_panel = static_cast<BasePanel*>(top_notebook->GetCurrentPage());
+    if (auto* page = child_panel->m_notebook->GetCurrentPage(); page)
     {
-        if (page == m_cppPanel)
+        if (page == child_panel->m_cppPanel)
             return CPP_PANEL;
-        else if (page == m_hPanel)
+        else if (page == child_panel->m_hPanel)
             return HDR_PANEL;
-        else if (page == m_derived_src_panel)
+        else if (page == child_panel->m_derived_src_panel)
             return DERIVED_SRC_PANEL;
-        else if (page == m_derived_hdr_panel)
+        else if (page == child_panel->m_derived_hdr_panel)
             return DERIVED_HDR_PANEL;
     }
     return CPP_PANEL;

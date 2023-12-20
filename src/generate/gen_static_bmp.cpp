@@ -226,20 +226,17 @@ bool StaticBitmapGenerator::SettingsCode(Code& code)
             tt_string comment("  # ");
             if (mode == "Fill")
             {
-                mode = "::ScaleMode.new(1)";
-                comment += "Fill";
+                mode = "::ScaleMode::Scale_Fill";
             }
             else if (mode == "AspectFit")
             {
-                mode = "::ScaleMode.new(2)";
-                comment += "AspectFit";
+                mode = "::ScaleMode::Scale_AspectFit";
             }
             else if (mode == "AspectFill")
             {
-                mode = "::ScaleMode.new(3)";
-                comment += "AspectFill";
+                mode = "::ScaleMode::Scale_AspectFill";
             }
-            code.Str(mode).EndFunction() += comment;
+            code.Str(mode).EndFunction();
             return true;
         }
         else

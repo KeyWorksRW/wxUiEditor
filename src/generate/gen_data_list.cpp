@@ -16,6 +16,7 @@
 #include "gen_data_list.h"
 
 #include "bitmaps.h"          // Contains various images handling functions
+#include "data_handler.h"     // DataHandler class
 #include "gen_base.h"         // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
 #include "image_handler.h"    // ImageHandler class
 #include "mainframe.h"        // MainFrame -- Main window frame
@@ -40,6 +41,7 @@ constexpr int number_of_columns = 2;
 
 wxObject* DataGenerator::CreateMockup(Node* node, wxObject* wxobject)
 {
+    ProjectData.Initialize();
     auto* parent = wxStaticCast(wxobject, wxWindow);
     // sizer type needs to match "else if (form->isGen(gen_Data))" section of mockup_content.cpp
     auto* flex_grid_sizer =
@@ -67,116 +69,4 @@ int DataGenerator::GetRequiredVersion(Node* node)
     }
 
     return minRequiredVer;
-}
-
-// clang-format off
-
-inline constexpr const auto txt_get_data_function = R"===(
-    // Convert compressed data string into a char array
-    std::shared_ptr<char[]> get_data(const unsigned char* data,
-        size_t size_data, size_t size_data_uncompressed)
-    {
-        auto str = std::make_shared_ptr<char[]>(size_data_uncompressed);
-        wxMemoryInputStream stream_in(data, size_data);
-        wxZlibInputStream zlib_strm(stream_in);
-        zlib_strm.Read(str.get(), size_data);
-        return str;
-    };
-)===";
-
-// clang-format on
-
-void BaseCodeGenerator::GenerateDataForm()
-{
-    ASSERT_MSG(m_form_node, "Attempting to generate Data List when no form was located.");
-
-    if (!m_form_node->getChildCount())
-    {
-        return;
-    }
-    if (m_panel_type != HDR_PANEL)
-    {
-        m_source->writeLine("#include <wx/mstream.h>  // memory stream classes", indent::none);
-        m_source->writeLine("#include <wx/zstream.h>  // zlib stream classes", indent::none);
-
-        m_source->writeLine();
-        m_source->writeLine("#include <memory>  // for std::make_unique", indent::none);
-
-        m_source->writeLine();
-        m_source->writeLine("namespace wxue_data\n{");
-        m_source->Indent();
-        m_source->SetLastLineBlank();
-
-        tt_string_vector function;
-        function.ReadString(txt_get_data_function);
-        for (auto& iter: function)
-        {
-            m_source->writeLine(iter, indent::none);
-        }
-
-        // TODO: [Randalphwa - 12-13-2023] Add the actual data here, followed by the function names
-
-        m_source->Unindent();
-        m_source->writeLine("}\n");
-    }
-
-    /////////////// Header code ///////////////
-
-    if (m_panel_type != CPP_PANEL)
-    {
-        m_header->writeLine();
-        m_header->writeLine("namespace wxue_data\n{");
-        m_header->Indent();
-        m_header->SetLastLineBlank();
-        m_header->writeLine(
-            "std::shared_ptr<char[]> get_data(const unsigned char* data, size_t size_data, size_t size_data_uncompressed);");
-
-        m_header->writeLine();
-
-        if (m_form_node->as_bool(prop_add_externs))
-        {
-            m_header->writeLine();
-            for (auto data_child: m_form_node->getChildNodePtrs())
-            {
-                tt_string line("extern const unsigned char ");
-                line << data_child->as_string(prop_string_name) << "[];";
-                if (data_child->hasValue(prop_data_file))
-                {
-                    line << "  // " << data_child->as_string(prop_data_file);
-                }
-                m_header->writeLine(line);
-            }
-        }
-
-        m_header->Unindent();
-        m_header->writeLine("}\n");
-    }
-}
-
-//////////////////////////////////////////  DataStringGenerator  //////////////////////////////////////////
-
-//////////////////////////////////////////  data_list namespace functions  ////////////////////////////////
-
-Node* data_list::FindDataList()
-{
-    Node* data_node = nullptr;
-    if (Project.getChildCount() > 0)
-    {
-        if (Project.getChild(0)->isGen(gen_Data))
-        {
-            data_node = Project.getChild(0);
-        }
-        else
-        {
-            for (const auto& iter: Project.getChildNodePtrs())
-            {
-                if (iter->isGen(gen_Data))
-                {
-                    data_node = iter.get();
-                    break;
-                }
-            }
-        }
-    }
-    return data_node;
 }

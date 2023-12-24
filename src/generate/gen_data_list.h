@@ -32,9 +32,3 @@ class DataXmlGenerator : public BaseGenerator
 {
 public:
 };
-
-namespace data_list
-{
-    Node* FindDataList();
-
-};  // namespace data_list

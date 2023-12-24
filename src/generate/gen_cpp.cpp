@@ -12,6 +12,7 @@
 
 #include "base_generator.h"   // BaseGenerator -- Base widget generator class
 #include "code.h"             // Code -- Helper class for generating code
+#include "data_handler.h"     // DataHandler class
 #include "file_codewriter.h"  // FileCodeWriter -- Classs to write code to disk
 #include "gen_base.h"         // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
 #include "gen_common.h"       // Common component functions
@@ -98,6 +99,11 @@ R"===(//////////////////////////////////////////////////////////////////////////
 void BaseCodeGenerator::GenerateCppClass(PANEL_PAGE panel_type)
 {
     ASSERT(m_language == GEN_LANG_CPLUSPLUS)
+    if (m_form_node->isGen(gen_Data))
+    {
+        GenerateDataClassConstructor(panel_type);
+        return;
+    }
 
     Code code(m_form_node, GEN_LANG_CPLUSPLUS);
 
@@ -167,7 +173,9 @@ void BaseCodeGenerator::GenerateCppClass(PANEL_PAGE panel_type)
     m_source->SetLastLineBlank();
     m_header->SetLastLineBlank();
 
+#if !defined(_DEBUG)
     if (m_panel_type == NOT_PANEL)
+#endif  // _DEBUG
     {
         m_header->writeLine(txt_BaseCmtBlock);
         if (m_TranslationUnit)
@@ -1455,4 +1463,109 @@ void BaseCodeGenerator::GenCppEnumIds(Node* class_node)
         m_header->writeLine("};");
         m_header->writeLine();
     }
+}
+
+void BaseCodeGenerator::GenerateDataClassConstructor(PANEL_PAGE panel_type)
+{
+    Code code(m_form_node, GEN_LANG_CPLUSPLUS);
+
+    m_panel_type = panel_type;
+
+    m_header->Clear();
+    m_source->Clear();
+    m_source->SetLastLineBlank();
+    m_header->SetLastLineBlank();
+
+#if !defined(_DEBUG)
+    if (m_panel_type == NOT_PANEL)
+#endif  // _DEBUG
+    {
+        m_header->writeLine(txt_BaseCmtBlock);
+        m_source->writeLine(txt_BaseCmtBlock);
+    }
+
+    tt_string file;
+    if (auto& base_file = m_form_node->as_string(prop_base_file); base_file.size())
+    {
+        tt_cwd cwd(true);
+        Project.ChangeDir();
+        file = base_file;
+        file.make_relative(Project.getProjectPath());
+        file.backslashestoforward();
+        file.remove_extension();
+
+        m_baseFullPath = base_file;
+        m_baseFullPath.make_absolute();
+        m_baseFullPath.remove_filename();
+    }
+
+    m_header->writeLine("#pragma once");
+    m_header->writeLine();
+
+    if (Project.hasValue(prop_local_pch_file) && m_TranslationUnit)
+    {
+        m_source->writeLine(tt_string() << "#include \"" << Project.as_string(prop_local_pch_file) << '"');
+        m_source->writeLine();
+    }
+
+    // Make certain there is a blank line before the the wxWidget #includes
+    m_source->writeLine();
+
+    if (Project.hasValue(prop_src_preamble))
+    {
+        WritePropSourceCode(Project.getProjectNode(), prop_src_preamble);
+    }
+
+    m_source->writeLine();
+
+    if (Project.getProjectNode()->hasValue(prop_project_src_includes))
+    {
+        m_source->writeLine();
+        tt_view_vector list;
+        list.SetString(Project.getProjectNode()->as_string(prop_project_src_includes));
+        for (auto& iter: list)
+        {
+            tt_string include = iter;
+            include.make_absolute();
+            include.make_relative(Project.getBaseDirectory(m_form_node));
+            include.backslashestoforward();
+            m_source->writeLine(tt_string("#include \"") << include << '"');
+        }
+
+        m_source->writeLine();
+    }
+
+    m_source->writeLine();
+
+    if (m_form_node->hasValue(prop_source_preamble))
+    {
+        WritePropSourceCode(m_form_node, prop_source_preamble);
+    }
+
+    if (file.empty())
+    {
+        m_source->writeLine();
+        m_source->writeLine("// Specify the filename to use in the base_file property");
+        m_source->writeLine("#include \"Your filename here\"");
+    }
+    else
+    {
+        file.replace_extension(m_header_ext);
+        m_source->writeLine();
+        m_source->writeLine(tt_string() << "#include \"" << file.filename() << "\"");
+    }
+
+    if (m_form_node->hasValue(prop_local_src_includes))
+    {
+        m_source->writeLine();
+        tt_view_vector list;
+        list.SetString(m_form_node->as_string(prop_local_src_includes));
+        for (auto& iter: list)
+        {
+            m_source->writeLine(tt_string("#include \"") << iter << '"');
+        }
+    }
+
+    m_source->writeLine();
+    GenerateDataForm();
 }

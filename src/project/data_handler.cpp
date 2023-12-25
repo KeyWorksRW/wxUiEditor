@@ -30,15 +30,15 @@ DataHandler& ProjectData = DataHandler::getInstance();
 
 void DataHandler::Initialize()
 {
-    auto* data_list = data_list::FindDataList();
-    if (!data_list)
+    auto* node_data_list = data_list::FindDataList();
+    if (!node_data_list)
     {
         return;
     }
 
-    for (const auto& node: data_list->getChildNodePtrs())
+    for (const auto& node: node_data_list->getChildNodePtrs())
     {
-        if (m_embedded_data.contains(node->as_string(prop_string_name)))
+        if (m_embedded_data.contains(node->as_string(prop_var_name)))
         {
             continue;
         }
@@ -49,8 +49,8 @@ void DataHandler::Initialize()
 bool DataHandler::LoadAndCompress(const Node* node)
 {
     ASSERT(node->isGen(gen_data_string) || node->isGen(gen_data_xml));
-    m_embedded_data[node->as_string(prop_string_name)] = {};
-    auto& embed = m_embedded_data[node->as_string(prop_string_name)];
+    m_embedded_data[node->as_string(prop_var_name)] = {};
+    auto& embed = m_embedded_data[node->as_string(prop_var_name)];
     embed.array_size = 0;
     embed.array_data = nullptr;
     embed.type = tt::npos;
@@ -378,7 +378,7 @@ void BaseCodeGenerator::GenerateDataForm()
             for (auto data_child: m_form_node->getChildNodePtrs())
             {
                 tt_string line("extern const unsigned char ");
-                line << data_child->as_string(prop_string_name) << "[];";
+                line << data_child->as_string(prop_var_name) << "[];";
                 if (data_child->hasValue(prop_data_file))
                 {
                     line << "  // " << data_child->as_string(prop_data_file);

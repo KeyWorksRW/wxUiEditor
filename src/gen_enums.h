@@ -426,7 +426,6 @@ namespace GenEnum
         prop_stc_wrap_visual_flag,
         prop_stc_wrap_visual_location,
         prop_stock_id,
-        prop_string_name,
         prop_style,
         prop_symbol_margin,
         prop_symbol_mouse_sensitive,

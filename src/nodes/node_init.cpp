@@ -792,7 +792,8 @@ void NodeCreator::parseProperties(pugi::xml_node& elem_obj, NodeDeclaration* nod
         // Any time there is a var_name property, it needs to be followed by a var_comment and class_access property. Rather
         // than add this to all the XML generator specifications, we simply insert it here if it doesn't exist.
 
-        if (tt::is_sameas(name, map_PropNames[prop_var_name]))
+        if (tt::is_sameas(name, map_PropNames[prop_var_name]) && !node_declaration->isGen(gen_data_string) &&
+            !node_declaration->isGen(gen_data_xml))
         {
             category.addProperty(prop_var_comment);
             prop_info = new PropDeclaration(prop_var_comment, type_string_edit_single, tt_empty_cstr,

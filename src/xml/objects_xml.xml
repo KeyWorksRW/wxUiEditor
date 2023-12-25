@@ -46,14 +46,14 @@ inline const char* objects_xml = R"===(<?xml version="1.0"?>
     </gen>
 
     <gen class="data_string" image="filePicker" type="data_string">
-        <property name="string_name" type="string">my_data_string</property>
+        <property name="var_name" type="string">my_data_string</property>
         <property name="data_file" type="file" />
         <property name="no_compression" type="bool"
             help="If checked, the file will not be compressed. Check this when adding a binary file that has already been compressed. If unchecked, the file will be compressed using zlib.">0</property>
     </gen>
 
     <gen class="data_xml" image="fontPicker" type="data_string">
-        <property name="string_name" type="string">my_xml_string</property>
+        <property name="var_name" type="string">my_xml_string</property>
         <property name="data_file" type="file" />
         <property name="xml_condense_format" type="bool"
             help="If checked, the file is parsed and rewritten, removing all line breaks, indetation and comments. This will speed up parsing if the string is passed to an XML parser.">1</property>

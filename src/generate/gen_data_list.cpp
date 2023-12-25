@@ -48,8 +48,8 @@ wxObject* DataGenerator::CreateMockup(Node* node, wxObject* wxobject)
         new wxFlexGridSizer(number_of_columns, static_cast<int>(node->getChildCount()), horizontal_spacing);
     for (auto& iter: node->getChildNodePtrs())
     {
-        auto* string_name = new wxStaticText(parent, wxID_ANY, iter->as_string(prop_string_name));
-        flex_grid_sizer->Add(string_name, wxSizerFlags().Border(wxALL));
+        auto* var_name = new wxStaticText(parent, wxID_ANY, iter->as_string(prop_var_name));
+        flex_grid_sizer->Add(var_name, wxSizerFlags().Border(wxALL));
 
         // wxGenericStaticText used so that at some point we can make the text red if the file
         // cannot be found.

@@ -230,7 +230,7 @@ void DataHandler::WriteDataConstruction(Code& code, WriteCode* source)
 
         if (embed.filename.size())
         {
-            code.Eol().Str("// ").Str(embed.filename);
+            code.Eol().Str("// ").Str(embed.filename).Str(" (").itoa(embed.array_size >> 32).Str(" bytes)");
         }
         code.Eol();
 

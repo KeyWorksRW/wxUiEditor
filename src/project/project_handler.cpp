@@ -19,6 +19,7 @@
 #include "project_handler.h"
 
 #include "bitmaps.h"        // Map of bitmaps accessed by name
+#include "data_handler.h"   // DataHandler class
 #include "image_handler.h"  // ProjectImage class
 #include "mainapp.h"        // App -- App class
 #include "mainframe.h"      // MainFrame -- Main window frame
@@ -36,6 +37,7 @@ void ProjectHandler::Initialize(NodeSharedPtr project, bool allow_ui)
     // reference count won't go to zero until we call this function.
 
     ProjectImages.Initialize(m_project_node, allow_ui);
+    ProjectData.Clear();
 }
 
 void ProjectHandler::setProjectFile(const tt_string& file)

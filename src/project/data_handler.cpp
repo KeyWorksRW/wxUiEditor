@@ -36,11 +36,52 @@ void DataHandler::Initialize()
         return;
     }
 
+    if (m_embedded_data.size())
+    {
+        // Ideally, this shouldn't be necessary, but just in case this removes any entry that
+        // doesn't have a matching node.
+
+        std::set<tt_string> var_names;
+        for (const auto& node: node_data_list->getChildNodePtrs())
+        {
+            var_names.insert(node->as_string(prop_var_name));
+        }
+
+        for (auto iter = m_embedded_data.begin(); iter != m_embedded_data.end();)
+        {
+            if (var_names.contains(iter->first))
+            {
+                ++iter;
+                continue;
+            }
+            m_embedded_data.erase(iter);
+            if (m_embedded_data.empty())
+            {
+                break;
+            }
+            else
+            {
+                iter = m_embedded_data.begin();
+            }
+
+        }
+    }
+
     for (const auto& node: node_data_list->getChildNodePtrs())
     {
         if (m_embedded_data.contains(node->as_string(prop_var_name)))
         {
-            continue;
+            auto& embed = m_embedded_data[node->as_string(prop_var_name)];
+            if (embed.filename == node->as_string(prop_data_file) && embed.type != tt::npos)
+                continue;
+
+            // If the filename is empty, there's nothing to load.
+            if (node->as_string(prop_data_file).empty())
+                continue;
+
+            // If we get here, the variable name and filename was specified, but either the
+            // filename changed or it could not be found. Calling LoadAndCompress() will
+            // replace the EmbeddedData structure.
         }
         LoadAndCompress(node.get());
     }

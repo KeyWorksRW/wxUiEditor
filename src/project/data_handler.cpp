@@ -15,6 +15,8 @@
 
 #include <fstream>
 
+#include <pugixml.hpp>
+
 #include "code.h"             // Code -- Helper class for generating code
 #include "gen_base.h"         // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
 #include "project_handler.h"  // ProjectHandler class
@@ -63,7 +65,6 @@ void DataHandler::Initialize()
             {
                 iter = m_embedded_data.begin();
             }
-
         }
     }
 
@@ -71,13 +72,18 @@ void DataHandler::Initialize()
     {
         if (m_embedded_data.contains(node->as_string(prop_var_name)))
         {
-            auto& embed = m_embedded_data[node->as_string(prop_var_name)];
-            if (embed.filename == node->as_string(prop_data_file) && embed.type != tt::npos)
-                continue;
-
             // If the filename is empty, there's nothing to load.
             if (node->as_string(prop_data_file).empty())
                 continue;
+
+            auto& embed = m_embedded_data[node->as_string(prop_var_name)];
+
+            if (embed.filename == node->as_string(prop_data_file) && embed.type != tt::npos)
+            {
+                // If it's an XML file, then don't continue if xml_condensed has changed
+                if (!node->isGen(gen_data_xml) || node->as_bool(prop_xml_condensed_format) == embed.xml_condensed)
+                    continue;
+            }
 
             // If we get here, the variable name and filename was specified, but either the
             // filename changed or it could not be found. Calling LoadAndCompress() will
@@ -122,7 +128,41 @@ bool DataHandler::LoadAndCompress(const Node* node)
         embed.filename = filename;
     }
 
-    std::ifstream file(filename, std::ios::binary | std::ios::ate);
+    if (node->isGen(gen_data_xml) && node->as_bool(prop_xml_condensed_format))
+    {
+        pugi::xml_document doc;
+        if (auto result = doc.load_file(embed.filename.c_str(), pugi::parse_trim_pcdata | pugi::parse_default); !result)
+        {
+            return false;
+        }
+        std::ostringstream xml_stream;
+        doc.save(xml_stream, "", pugi::format_raw | pugi::format_no_declaration);
+        std::string str = xml_stream.str();
+
+        // Include the trailing zero -- we need to read this back as a string, not a data array
+        wxMemoryInputStream stream(str.c_str(), str.size() + 1);
+
+        wxMemoryOutputStream memory_stream;
+        wxZlibOutputStream save_strem(memory_stream, wxZ_BEST_COMPRESSION);
+        if (!CopyStreamData(&stream, &save_strem, stream.GetLength()))
+        {
+            // TODO: [KeyWorks - 03-16-2022] This would be really bad, though it should be impossible
+            return false;
+        }
+        save_strem.Close();
+        size_t org_size = (str.size() & 0xFFFFFFFF);
+        size_t compressed_size = memory_stream.TellO();
+        auto read_stream = memory_stream.GetOutputStreamBuffer();
+
+        embed.type = 1;
+        embed.xml_condensed = true;
+        embed.array_size = (compressed_size | (org_size << 32));
+        embed.array_data = std::make_unique<unsigned char[]>(compressed_size);
+        memcpy(embed.array_data.get(), read_stream->GetBufferStart(), compressed_size);
+        return true;
+    }
+
+    std::ifstream file(embed.filename, std::ios::binary | std::ios::ate);
     if (file.is_open())
     {
         std::streampos fileSize = file.tellg();
@@ -147,17 +187,15 @@ bool DataHandler::LoadAndCompress(const Node* node)
         size_t compressed_size = memory_stream.TellO();
         auto read_stream = memory_stream.GetOutputStreamBuffer();
 
-        embed.type = 0;
+        embed.type = node->isGen(gen_data_xml) ? 1 : 0;
+        embed.xml_condensed = false;
         embed.array_size = (compressed_size | (org_size << 32));
         embed.array_data = std::make_unique<unsigned char[]>(compressed_size);
         memcpy(embed.array_data.get(), read_stream->GetBufferStart(), compressed_size);
-    }
-    else
-    {
-        return false;
+        return true;
     }
 
-    return true;
+    return false;
 }
 
 void DataHandler::WriteDataPreConstruction(Code& code)

@@ -372,21 +372,6 @@ void BaseCodeGenerator::GenerateDataForm()
 
         m_header->writeLine();
 
-        if (m_form_node->as_bool(prop_add_externs))
-        {
-            m_header->writeLine();
-            for (auto data_child: m_form_node->getChildNodePtrs())
-            {
-                tt_string line("extern const unsigned char ");
-                line << data_child->as_string(prop_var_name) << "[];";
-                if (data_child->hasValue(prop_data_file))
-                {
-                    line << "  // " << data_child->as_string(prop_data_file);
-                }
-                m_header->writeLine(line);
-            }
-        }
-
         m_header->Unindent();
         m_header->writeLine("}\n");
     }

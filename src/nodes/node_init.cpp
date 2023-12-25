@@ -5,6 +5,8 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
+#include <functional>
+
 #include <frozen/set.h>
 
 #include "node_creator.h"
@@ -15,6 +17,7 @@
 #include "node.h"            // Node class
 #include "node_types.h"      // NodeType -- Class for storing node types and allowable child count
 #include "prop_decl.h"       // PropChildDeclaration and PropDeclaration classes
+#include "wxue_data.h"       // Generated wxue_data strings and functions
 
 #include "pugixml.hpp"
 
@@ -79,9 +82,7 @@ inline const char* lst_xml_generators[] = {
     buttons_xml,
     containers_xml,
     dataview_xml,
-    dialogs_xml,
     doc_view_app_xml,
-    forms_xml,
     grid_xml,
     objects_xml,
     listview_xml,
@@ -97,7 +98,11 @@ inline const char* lst_xml_generators[] = {
     toolbars_xml,
     trees_xml,
     widgets_xml,
+#if !defined(INTERNAL_FEATURE2)
+    forms_xml,
+    dialogs_xml,
     wizard_xml,
+#endif
 
 };
 
@@ -138,6 +143,8 @@ constexpr auto set_no_class_access = frozen::make_set<GenName>({
 });
 
 // clang-format on
+
+const static std::function<std::string()> functionArray[] = { wxue_data::get_forms };
 
 using namespace child_count;
 using namespace GenEnum;
@@ -456,6 +463,16 @@ void NodeCreator::Initialize()
         // Now parse the completed m_pdoc_interface document
         parseGeneratorFile("");
 
+#if defined(INTERNAL_FEATURE2)
+        for (auto& iter: functionArray)
+        {
+            auto xml_data = iter();
+            if (xml_data.size())
+            {
+                parseGeneratorFile(xml_data.c_str());
+            }
+        }
+#endif
         for (auto& iter: lst_xml_generators)
         {
             parseGeneratorFile(iter);

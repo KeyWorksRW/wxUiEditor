@@ -193,6 +193,13 @@
         bitmap="SVG;xrc_compare.svg;[16,16]" />
     </node>
     <node
+      class="Data">
+      <node
+        class="data_xml"
+        data_file="../xml/formsl.xml"
+        var_name="forms" />
+    </node>
+    <node
       class="folder"
       label="Main UI">
       <node

@@ -24,7 +24,7 @@
 #include "../generate/gen_data_list.h"  // DataGenerator -- Data List generator
 
 // Normally, wxMemoryInputStream inputStream, wxZlibOutputStream outputStream
-bool CopyStreamData(wxInputStream* inputStream, wxOutputStream* outputStream, size_t original_size);
+bool CopyStreamData(wxInputStream* inputStream, wxOutputStream* outputStream, size_t compressed_size);
 
 DataHandler& ProjectData = DataHandler::getInstance();
 
@@ -184,8 +184,8 @@ void DataHandler::WriteDataConstruction(Code& code, WriteCode* source)
             continue;
         }
 
-        // The original size is in the high 32 bits
-        size_t max_pos = (embed.array_size & 0xFFFFFFFF);
+        // The original size is in the high 32 bits, so mask that to just get the compressed size
+        size_t compressed_size = (embed.array_size & 0xFFFFFFFF);
 
         if (embed.filename.size())
         {
@@ -194,20 +194,20 @@ void DataHandler::WriteDataConstruction(Code& code, WriteCode* source)
         code.Eol();
 
         code.Str("const unsigned char ").Str(iter_array.first);
-        code.Str("[").itoa(max_pos).Str("] {");
+        code.Str("[").itoa(compressed_size).Str("] {");
         source->writeLine(code);
         code.clear();
         // Since we don't call Eol() in the following loop, the indentation is not processed.
         code.Tab(2);
 
         size_t pos = 0;
-        while (pos < max_pos)
+        while (pos < compressed_size)
         {
-            for (; pos < max_pos && code.size() < cpp_line_length; ++pos)
+            for (; pos < compressed_size && code.size() < cpp_line_length; ++pos)
             {
                 code.itoa(embed.array_data[pos]) += ",";
             }
-            if (pos >= max_pos && code.GetCode().back() == ',')
+            if (pos >= compressed_size && code.GetCode().back() == ',')
             {
                 code.GetCode().pop_back();
             }
@@ -221,6 +221,28 @@ void DataHandler::WriteDataConstruction(Code& code, WriteCode* source)
             code.pop_back();
         }
         code += "};\n";
+        source->writeLine(code);
+        code.clear();
+    }
+    source->writeLine();
+
+    // Now add the functions
+
+    for (auto& iter_array: m_embedded_data)
+    {
+        auto& embed = iter_array.second;
+        if (embed.type == tt::npos)
+        {
+            continue;
+        }
+
+        code.Str("std::string get_").Str(iter_array.first) << "()\n{\n\t";
+        // original size is in the high 32 bits
+        code.Str("return std::string((const char*) get_data(").Str(iter_array.first).Str(", sizeof(").Str(iter_array.first)
+            << "), " << (embed.array_size >> 32) << ").get(), " << (embed.array_size >> 32) << ");";
+        code.Eol().Str("}\n");
+        source->writeLine(code);
+        code.clear();
     }
 
     if (code.size())
@@ -243,7 +265,27 @@ void DataHandler::WriteImagePostHeader(WriteCode* header)
         if (!is_namespace_written)
         {
             header->writeLine();
-            header->writeLine("namespace wxue_img\n{");
+            header->writeLine("namespace wxue_data\n{");
+
+            header->Indent();
+            is_namespace_written = true;
+        }
+        header->writeLine(tt_string("std::string get_") << iter_array.first << "();");
+    }
+    header->writeLine();
+
+    for (auto& iter_array: m_embedded_data)
+    {
+        auto& embed = iter_array.second;
+        if (embed.type == tt::npos)
+        {
+            // filename was not found
+            continue;
+        }
+        if (!is_namespace_written)
+        {
+            header->writeLine();
+            header->writeLine("namespace wxue_data\n{");
 
             header->Indent();
             is_namespace_written = true;
@@ -253,7 +295,8 @@ void DataHandler::WriteImagePostHeader(WriteCode* header)
             header->writeLine(tt_string("// ") << embed.filename);
         }
         header->writeLine(tt_string("extern const unsigned char ")
-                          << iter_array.first << '[' << (embed.array_size & 0xFFFFFFFF) << "];");
+                          << iter_array.first << '[' << (embed.array_size & 0xFFFFFFFF) << "]; // "
+                          << (embed.array_size >> 32));
     }
 
     if (is_namespace_written)
@@ -267,13 +310,13 @@ void DataHandler::WriteImagePostHeader(WriteCode* header)
 
 inline constexpr const auto txt_get_data_function = R"===(
     // Convert compressed data string into a char array
-    std::shared_ptr<char[]> get_data(const unsigned char* data,
+    std::unique_ptr<unsigned char[]> get_data(const unsigned char* data,
         size_t size_data, size_t size_data_uncompressed)
     {
-        auto str = std::make_shared_ptr<char[]>(size_data_uncompressed);
+        auto str = std::unique_ptr<unsigned char[]>(new unsigned char[size_data_uncompressed]);
         wxMemoryInputStream stream_in(data, size_data);
         wxZlibInputStream zlib_strm(stream_in);
-        zlib_strm.Read(str.get(), size_data);
+        zlib_strm.Read(str.get(), size_data_uncompressed);
         return str;
     };
 )===";
@@ -292,9 +335,6 @@ void BaseCodeGenerator::GenerateDataForm()
     {
         m_source->writeLine("#include <wx/mstream.h>  // memory stream classes", indent::none);
         m_source->writeLine("#include <wx/zstream.h>  // zlib stream classes", indent::none);
-
-        m_source->writeLine();
-        m_source->writeLine("#include <memory>  // for std::make_unique", indent::none);
 
         m_source->writeLine();
         m_source->writeLine("namespace wxue_data\n{");
@@ -321,11 +361,14 @@ void BaseCodeGenerator::GenerateDataForm()
     if (m_panel_type != CPP_PANEL)
     {
         m_header->writeLine();
+        m_header->writeLine("#include <memory>  // for std::make_unique", indent::none);
+
+        m_header->writeLine();
         m_header->writeLine("namespace wxue_data\n{");
         m_header->Indent();
         m_header->SetLastLineBlank();
-        m_header->writeLine(
-            "std::shared_ptr<char[]> get_data(const unsigned char* data, size_t size_data, size_t size_data_uncompressed);");
+        m_header->writeLine("std::unique_ptr<unsigned char[]> get_data(const unsigned char* data, size_t size_data, size_t "
+                            "size_data_uncompressed);");
 
         m_header->writeLine();
 

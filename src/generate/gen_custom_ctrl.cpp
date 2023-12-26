@@ -23,25 +23,7 @@ wxObject* CustomControl::CreateMockup(Node* node, wxObject* parent)
     tt_string_vector parts(node->as_string(prop_custom_mockup), ";");
     wxWindow* widget = nullptr;
 
-    if (!parts.size() || parts[0].starts_with("wxBitmap"))
-    {
-        widget = new wxGenericStaticBitmap(wxStaticCast(parent, wxWindow), wxID_ANY, GetInternalImage("CustomControl"));
-        if (parts.size() > 2 && parts[1] != "-1" && parts[2] != "-1")
-        {
-            widget->SetMinSize(wxSize(parts[1].atoi(), parts[2].atoi()));
-            wxStaticCast(widget, wxGenericStaticBitmap)->SetScaleMode(wxStaticBitmap::Scale_Fill);
-        }
-        else
-        {
-            auto size = node->as_wxSize(prop_size);
-            if (size.x != -1 && size.y != -1)
-            {
-                widget->SetMinSize(size);
-                wxStaticCast(widget, wxGenericStaticBitmap)->SetScaleMode(wxStaticBitmap::Scale_Fill);
-            }
-        }
-    }
-    else if (parts[0].starts_with("wxStaticText"))
+    if (parts.size() &&parts[0].starts_with("wxStaticText"))
     {
         if (auto pos = parts[0].find('('); pos != tt::npos)
         {
@@ -65,6 +47,26 @@ wxObject* CustomControl::CreateMockup(Node* node, wxObject* parent)
             if (size.x != -1 && size.y != -1)
             {
                 widget->SetMinSize(size);
+            }
+        }
+    }
+
+    // Default to a bitmap if no mockup is specified
+    else
+    {
+        widget = new wxGenericStaticBitmap(wxStaticCast(parent, wxWindow), wxID_ANY, GetInternalImage("CustomControl"));
+        if (parts.size() > 2 && parts[1] != "-1" && parts[2] != "-1")
+        {
+            widget->SetMinSize(wxSize(parts[1].atoi(), parts[2].atoi()));
+            wxStaticCast(widget, wxGenericStaticBitmap)->SetScaleMode(wxStaticBitmap::Scale_Fill);
+        }
+        else
+        {
+            auto size = node->as_wxSize(prop_size);
+            if (size.x != -1 && size.y != -1)
+            {
+                widget->SetMinSize(size);
+                wxStaticCast(widget, wxGenericStaticBitmap)->SetScaleMode(wxStaticBitmap::Scale_Fill);
             }
         }
     }

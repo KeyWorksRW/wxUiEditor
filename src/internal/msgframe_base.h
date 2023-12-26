@@ -64,7 +64,7 @@ protected:
 
     // Class member variables
 
-    wxAuiNotebook* m_notebook;
+    wxAuiNotebook* m_aui_notebook;
     wxHyperlinkCtrl* m_hyperlink;
     wxMenuItem* m_menu_item_events;
     wxMenuItem* m_menu_item_info;

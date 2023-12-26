@@ -73,14 +73,12 @@ bool MsgFrameBase::Create(wxWindow* parent, wxWindowID id, const wxString& title
 
     m_tool_bar->Realize();
 
-    m_notebook = new wxAuiNotebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize,
-        wxAUI_NB_TOP|wxAUI_NB_TAB_SPLIT|wxAUI_NB_TAB_MOVE|wxAUI_NB_SCROLL_BUTTONS|wxAUI_NB_CLOSE_ON_ACTIVE_TAB|wxAUI_NB_MIDDLE_CLICK_CLOSE
-    );
-    m_notebook->SetArtProvider(new wxAuiGenericTabArt());
-    m_notebook->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
+    m_aui_notebook = new wxAuiNotebook(this, wxID_ANY);
+    m_aui_notebook->SetArtProvider(new wxAuiGenericTabArt());
+    m_aui_notebook->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
 
-    m_page_log = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
-    m_notebook->AddPage(m_page_log, "Log");
+    m_page_log = new wxPanel(m_aui_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
+    m_aui_notebook->AddPage(m_page_log, "Log");
     m_page_log->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
 
     auto* log_sizer = new wxBoxSizer(wxVERTICAL);
@@ -91,8 +89,8 @@ bool MsgFrameBase::Create(wxWindow* parent, wxWindowID id, const wxString& title
     log_sizer->Add(m_textCtrl, wxSizerFlags(1).Expand().Border(wxALL, 0));
     m_page_log->SetSizerAndFit(log_sizer);
 
-    m_page_node = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
-    m_notebook->AddPage(m_page_node, "Node");
+    m_page_node = new wxPanel(m_aui_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
+    m_aui_notebook->AddPage(m_page_node, "Node");
     m_page_node->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
 
     auto* node_sizer = new wxBoxSizer(wxVERTICAL);
@@ -132,8 +130,8 @@ bool MsgFrameBase::Create(wxWindow* parent, wxWindowID id, const wxString& title
     node_sizer->Add(static_box, wxSizerFlags().Expand().Border(wxALL));
     m_page_node->SetSizerAndFit(node_sizer);
 
-    m_page_xrc = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
-    m_notebook->AddPage(m_page_xrc, "XRC");
+    m_page_xrc = new wxPanel(m_aui_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
+    m_aui_notebook->AddPage(m_page_xrc, "XRC");
     m_page_xrc->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
 
     auto* page_sizer = new wxBoxSizer(wxVERTICAL);
@@ -171,7 +169,7 @@ bool MsgFrameBase::Create(wxWindow* parent, wxWindowID id, const wxString& title
     Centre(wxBOTH);
 
     // Event handlers
-    m_notebook->Bind(wxEVT_AUINOTEBOOK_PAGE_CHANGED, &MsgFrameBase::OnPageChanged, this);
+    m_aui_notebook->Bind(wxEVT_AUINOTEBOOK_PAGE_CHANGED, &MsgFrameBase::OnPageChanged, this);
     btn->Bind(wxEVT_BUTTON, &MsgFrameBase::OnParent, this);
     Bind(wxEVT_CLOSE_WINDOW, &MsgFrameBase::OnClose, this);
     Bind(wxEVT_MENU, &MsgFrameBase::OnSaveAs, this, wxID_SAVEAS);

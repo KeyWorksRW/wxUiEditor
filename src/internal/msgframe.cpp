@@ -267,8 +267,8 @@ void MsgFrame::OnInfo(wxCommandEvent& WXUNUSED(event))
 
 void MsgFrame::OnPageChanged(wxAuiNotebookEvent& WXUNUSED(event))
 {
-    m_isXrcPage = (m_notebook->GetCurrentPage() == m_page_xrc);
-    m_isNodeInfoPage = (m_notebook->GetCurrentPage() == m_page_node);
+    m_isXrcPage = (m_aui_notebook->GetCurrentPage() == m_page_xrc);
+    m_isNodeInfoPage = (m_aui_notebook->GetCurrentPage() == m_page_node);
     if (m_isNodeInfoPage || m_isXrcPage)
     {
         UpdateNodeInfo();

@@ -21,28 +21,6 @@
 
 #include "pugixml.hpp"
 
-// The following are interfaces
-
-#include "../xml/interface_xml.xml"
-#include "../xml/lang_settings.xml"
-#include "../xml/project_interfaces_xml.xml"
-#include "../xml/sizer_child_xml.xml"
-#include "../xml/validators_xml.xml"
-#include "../xml/window_interfaces_xml.xml"
-
-// clang-format off
-inline const char* lst_xml_interfaces[] = {
-
-    // Note that interface_xml must *not* be added to this list! It is loaded as the root document.
-    lang_settings_xml,
-    project_interfaces_xml,
-    sizer_child_xml,
-    validators_xml,
-    window_interfaces_xml,
-
-};
-// clang-format on
-
 // clang-format off
 
 const static std::function<std::string()> functionArray[] = {
@@ -387,29 +365,11 @@ void NodeCreator::Initialize()
         pugi::xml_document interface_doc;
         m_pdoc_interface = &interface_doc;
 
-        // We start by loading the main interface_xml string, then we append the nodes from all the other interface strings.
-        auto result = interface_doc.load_string(interface_xml);
+        auto result = interface_doc.load_string(wxue_data::get_interfaces().c_str());
         if (!result)
         {
-            FAIL_MSG("xml/interface_xml.xml is corrupted!");
+            FAIL_MSG("xml/interfaces.xml is corrupted!");
             throw std::runtime_error("Internal XML file is corrupted.");
-        }
-        auto interface_root = interface_doc.child("GeneratorDefinitions");
-
-        for (auto& iter: lst_xml_interfaces)
-        {
-            pugi::xml_document sub_interface;
-            result = sub_interface.load_string(iter);
-            if (!result)
-            {
-                FAIL_MSG("XML file is corrupted!");
-                throw std::runtime_error("Internal XML file is corrupted.");
-            }
-            auto root = sub_interface.child("GeneratorDefinitions");
-            for (auto& child_node: root)
-            {
-                interface_root.append_copy(child_node);
-            }
         }
 
         // Now parse the completed m_pdoc_interface document

@@ -25,6 +25,7 @@ namespace wxue_data
     std::string get_containers();
     std::string get_data_ctrls();
     std::string get_forms();
+    std::string get_interfaces();
     std::string get_mdi();
     std::string get_pickers();
     std::string get_project();
@@ -33,7 +34,7 @@ namespace wxue_data
     std::string get_widgets();
 
     // ../xml/bars.xml
-    extern const unsigned char bars[4260]; // 27568
+    extern const unsigned char bars[6181]; // 39002
     // ../xml/boxes.xml
     extern const unsigned char boxes[2436]; // 14348
     // ../xml/buttons.xml
@@ -44,6 +45,8 @@ namespace wxue_data
     extern const unsigned char data_ctrls[7982]; // 43786
     // ../xml/forms.xml
     extern const unsigned char forms[5587]; // 25188
+    // ../xml/interfaces.xml
+    extern const unsigned char interfaces[10565]; // 51420
     // ../xml/mdi.xml
     extern const unsigned char mdi[1791]; // 5631
     // ../xml/pickers.xml

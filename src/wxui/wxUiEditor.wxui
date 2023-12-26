@@ -242,6 +242,10 @@
         class="data_xml"
         data_file="../xml/pickers.xml"
         var_name="pickers" />
+      <node
+        class="data_xml"
+        data_file="../xml/interfaces.xml"
+        var_name="interfaces" />
     </node>
     <node
       class="folder"

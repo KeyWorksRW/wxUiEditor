@@ -43,70 +43,7 @@ inline const char* lst_xml_interfaces[] = {
 };
 // clang-format on
 
-// The following are generators
-
-#if !defined(INTERNAL_FEATURE2)
-    #include "../xml/aui_xml.xml"
-    #include "../xml/bars_xml.xml"
-    #include "../xml/books_xml.xml"
-    #include "../xml/boxes_xml.xml"
-    #include "../xml/buttons_xml.xml"
-    #include "../xml/containers_xml.xml"
-    #include "../xml/dataview_xml.xml"
-    #include "../xml/dialogs_xml.xml"
-    #include "../xml/doc_view_app_xml.xml"
-    #include "../xml/forms_xml.xml"
-    #include "../xml/grid_xml.xml"
-    #include "../xml/listview_xml.xml"
-    #include "../xml/menus_xml.xml"
-    #include "../xml/objects_xml.xml"
-    #include "../xml/pickers_xml.xml"
-    #include "../xml/project_xml.xml"
-    #include "../xml/propgrid_xml.xml"
-    #include "../xml/ribbon_xml.xml"
-    #include "../xml/scintilla_xml.xml"
-    #include "../xml/sizers_xml.xml"
-    #include "../xml/std_dlg_btns_xml.xml"
-    #include "../xml/textctrls_xml.xml"
-    #include "../xml/toolbars_xml.xml"
-    #include "../xml/trees_xml.xml"
-    #include "../xml/widgets_xml.xml"
-    #include "../xml/wizard_xml.xml"
-#endif
-
 // clang-format off
-inline const char* lst_xml_generators[] = {
-
-#if !defined(INTERNAL_FEATURE2)
-    aui_xml,
-    bars_xml,
-    books_xml,
-    boxes_xml,
-    buttons_xml,
-    containers_xml,
-    dataview_xml,
-    dialogs_xml,
-    doc_view_app_xml,
-    forms_xml,
-    grid_xml,
-    listview_xml,
-    menus_xml,
-    objects_xml,
-    pickers_xml,
-    project_xml,
-    propgrid_xml,
-    ribbon_xml,
-    scintilla_xml,
-    sizers_xml,
-    std_dlg_btns_xml,
-    textctrls_xml,
-    toolbars_xml,
-    trees_xml,
-    widgets_xml,
-    wizard_xml,
-#endif
-
-};
 
 const static std::function<std::string()> functionArray[] = {
     wxue_data::get_bars,
@@ -478,7 +415,6 @@ void NodeCreator::Initialize()
         // Now parse the completed m_pdoc_interface document
         parseGeneratorFile("");
 
-#if defined(INTERNAL_FEATURE2)
         for (auto& iter: functionArray)
         {
             auto xml_data = iter();
@@ -487,12 +423,6 @@ void NodeCreator::Initialize()
                 parseGeneratorFile(xml_data.c_str());
             }
         }
-#else
-        for (auto& iter: lst_xml_generators)
-        {
-            parseGeneratorFile(iter);
-        }
-#endif
 
         m_interfaces.clear();
         m_pdoc_interface = nullptr;

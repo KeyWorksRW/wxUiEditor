@@ -19,10 +19,43 @@ namespace wxue_data
 
 namespace wxue_data
 {
+    std::string get_bars();
+    std::string get_boxes();
+    std::string get_buttons();
+    std::string get_containers();
+    std::string get_data_ctrls();
     std::string get_forms();
+    std::string get_mdi();
+    std::string get_pickers();
+    std::string get_project();
+    std::string get_sizers();
+    std::string get_text_ctrls();
+    std::string get_widgets();
 
-    // ../xml/formsl.xml
+    // ../xml/bars.xml
+    extern const unsigned char bars[4260]; // 27568
+    // ../xml/boxes.xml
+    extern const unsigned char boxes[2436]; // 14348
+    // ../xml/buttons.xml
+    extern const unsigned char buttons[2712]; // 15282
+    // ../xml/containers.xml
+    extern const unsigned char containers[4234]; // 23307
+    // ../xml/data_ctrls.xml
+    extern const unsigned char data_ctrls[7982]; // 43786
+    // ../xml/forms.xml
     extern const unsigned char forms[5587]; // 25188
+    // ../xml/mdi.xml
+    extern const unsigned char mdi[1791]; // 5631
+    // ../xml/pickers.xml
+    extern const unsigned char pickers[2481]; // 10224
+    // ../xml/project.xml
+    extern const unsigned char project[1338]; // 4709
+    // ../xml/sizers.xml
+    extern const unsigned char sizers[2296]; // 12909
+    // ../xml/text_ctrls.xml
+    extern const unsigned char text_ctrls[6047]; // 25418
+    // ../xml/widgets.xml
+    extern const unsigned char widgets[6176]; // 26961
 }
 
 // ************* End of generated code ***********

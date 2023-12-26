@@ -45,36 +45,39 @@ inline const char* lst_xml_interfaces[] = {
 
 // The following are generators
 
-#include "../xml/aui_xml.xml"
-#include "../xml/bars_xml.xml"
-#include "../xml/books_xml.xml"
-#include "../xml/boxes_xml.xml"
-#include "../xml/buttons_xml.xml"
-#include "../xml/containers_xml.xml"
-#include "../xml/dataview_xml.xml"
-#include "../xml/dialogs_xml.xml"
-#include "../xml/doc_view_app_xml.xml"
-#include "../xml/forms_xml.xml"
-#include "../xml/grid_xml.xml"
-#include "../xml/listview_xml.xml"
-#include "../xml/menus_xml.xml"
-#include "../xml/objects_xml.xml"
-#include "../xml/pickers_xml.xml"
-#include "../xml/project_xml.xml"
-#include "../xml/propgrid_xml.xml"
-#include "../xml/ribbon_xml.xml"
-#include "../xml/scintilla_xml.xml"
-#include "../xml/sizers_xml.xml"
-#include "../xml/std_dlg_btns_xml.xml"
-#include "../xml/textctrls_xml.xml"
-#include "../xml/toolbars_xml.xml"
-#include "../xml/trees_xml.xml"
-#include "../xml/widgets_xml.xml"
-#include "../xml/wizard_xml.xml"
+#if !defined(INTERNAL_FEATURE2)
+    #include "../xml/aui_xml.xml"
+    #include "../xml/bars_xml.xml"
+    #include "../xml/books_xml.xml"
+    #include "../xml/boxes_xml.xml"
+    #include "../xml/buttons_xml.xml"
+    #include "../xml/containers_xml.xml"
+    #include "../xml/dataview_xml.xml"
+    #include "../xml/dialogs_xml.xml"
+    #include "../xml/doc_view_app_xml.xml"
+    #include "../xml/forms_xml.xml"
+    #include "../xml/grid_xml.xml"
+    #include "../xml/listview_xml.xml"
+    #include "../xml/menus_xml.xml"
+    #include "../xml/objects_xml.xml"
+    #include "../xml/pickers_xml.xml"
+    #include "../xml/project_xml.xml"
+    #include "../xml/propgrid_xml.xml"
+    #include "../xml/ribbon_xml.xml"
+    #include "../xml/scintilla_xml.xml"
+    #include "../xml/sizers_xml.xml"
+    #include "../xml/std_dlg_btns_xml.xml"
+    #include "../xml/textctrls_xml.xml"
+    #include "../xml/toolbars_xml.xml"
+    #include "../xml/trees_xml.xml"
+    #include "../xml/widgets_xml.xml"
+    #include "../xml/wizard_xml.xml"
+#endif
 
 // clang-format off
 inline const char* lst_xml_generators[] = {
 
+#if !defined(INTERNAL_FEATURE2)
     aui_xml,
     bars_xml,
     books_xml,
@@ -82,11 +85,13 @@ inline const char* lst_xml_generators[] = {
     buttons_xml,
     containers_xml,
     dataview_xml,
+    dialogs_xml,
     doc_view_app_xml,
+    forms_xml,
     grid_xml,
-    objects_xml,
     listview_xml,
     menus_xml,
+    objects_xml,
     pickers_xml,
     project_xml,
     propgrid_xml,
@@ -98,12 +103,24 @@ inline const char* lst_xml_generators[] = {
     toolbars_xml,
     trees_xml,
     widgets_xml,
-#if !defined(INTERNAL_FEATURE2)
-    forms_xml,
-    dialogs_xml,
     wizard_xml,
 #endif
 
+};
+
+const static std::function<std::string()> functionArray[] = {
+    wxue_data::get_bars,
+    wxue_data::get_boxes,
+    wxue_data::get_buttons,
+    wxue_data::get_containers,
+    wxue_data::get_data_ctrls,
+    wxue_data::get_forms,
+    wxue_data::get_mdi,
+    wxue_data::get_pickers,
+    wxue_data::get_project,
+    wxue_data::get_sizers,
+    wxue_data::get_text_ctrls,
+    wxue_data::get_widgets,
 };
 
 // var_names for these generators will default to "none" for class access
@@ -143,8 +160,6 @@ constexpr auto set_no_class_access = frozen::make_set<GenName>({
 });
 
 // clang-format on
-
-const static std::function<std::string()> functionArray[] = { wxue_data::get_forms };
 
 using namespace child_count;
 using namespace GenEnum;
@@ -472,11 +487,12 @@ void NodeCreator::Initialize()
                 parseGeneratorFile(xml_data.c_str());
             }
         }
-#endif
+#else
         for (auto& iter: lst_xml_generators)
         {
             parseGeneratorFile(iter);
         }
+#endif
 
         m_interfaces.clear();
         m_pdoc_interface = nullptr;

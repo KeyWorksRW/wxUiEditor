@@ -1,0 +1,122 @@
+<?xml version="1.0"?>
+<!DOCTYPE GeneratorDefinitions SYSTEM "gen.dtd">
+<!-- project_xml, objects_xml -->
+<GeneratorDefinitions>
+    <gen class="Project" type="project" image="project">
+        <inherits class="C++"/>
+        <inherits class="wxPython"/>
+        <inherits class="wxRuby"/>
+        <inherits class="wxGo"/>
+        <inherits class="wxLua"/>
+        <inherits class="wxPerl"/>
+        <inherits class="wxRust"/>
+        <inherits class="XRC"/>
+        <property name="code_preference" type="option"
+            help="Specify the code you prefer to generate. This can affect default settings for variable names, various initial UI states, and the UI display in the Mockup panel.">
+            <option name="C++"/>
+			<option name="Python"/>
+			<option name="Ruby"/>
+			<option name="XRC"/> C++ </property>
+        <property name="art_directory" type="path"
+            help="The directory containing your images (png, ico, xpm, etc.).">./</property>
+        <property name="dialog_units" type="bool"
+            help="When checked, dimensions will default to using dialog units. You can turn on or off dialog units for each individual dimension -- this just sets the default for new dimensions.">
+            1</property>
+        <property name="internationalize" type="bool"
+            help="Wrap strings in a _() macro.">0</property>
+        <property name="help_provider" type="option"
+            help="The class of help provider to use for context-sensitive help.">
+            <option name="none"
+                help="No support for context-sensitive help."/>
+			<option name="wxSimpleHelpProvider"
+                help="Use wxSimpleHelpProvider to provide context-sensitive help."/>
+			<option
+                name="wxHelpControllerHelpProvider"
+                help="Use wxHelpControllerHelpProvider to provide context-sensitive help."/> none </property>
+        <property name="id_prefixes" type="stringlist_semi"
+            help="Optional prefixes to apply before a custom id. These can be added in the ID Editor dialog."/>
+        <property name="id_suffixes" type="stringlist_semi"
+            help="Optional suffixes to apply after a custom id. These can be added in the ID Editor dialog."/>
+    </gen>
+
+    <gen class="folder" image="folder" type="folder">
+        <inherits class="Folder C++ Overrides"/>
+        <inherits class="Folder wxPython Overrides"/>
+        <inherits class="Folder wxRuby Overrides"/>
+        <inherits class="Folder XRC Overrides"/>
+        <property name="label" type="string"
+            help="The name of the folder.">my_forms</property>
+        <property name="code_preference" type="option"
+            help="Specify the code you prefer to generate. This can affect default settings for variable names, various initial UI states, and the UI display in the Mockup panel.">
+            <option name="C++"/>
+			<option name="Python"/>
+			<option name="Ruby"/>
+			<option name="XRC"/> C++ </property>
+    </gen>
+
+    <gen class="sub_folder" image="folder" type="sub_folder">
+        <property name="label" type="string"
+            help="The name of the folder.">my_forms</property>
+    </gen>
+
+    <gen class="Images" image="pagectrl" type="images">
+        <property name="base_file" type="file"
+            help="The C++ filename to store all the embedded images in.">my_images</property>
+        <property name="python_file" type="file"
+            help="The Python filename to store all the embedded images in.">images</property>
+        <property name="ruby_file" type="file"
+            help="The Ruby filename to store all the embedded images in.">images</property>
+        <property name="add_externs" type="bool"
+            help="If checked, each image data array will be added to the header file as an extern.">0</property>
+        <!-- <property name="auto_update" type="bool"
+            help="Automatically add any embedded or svg images specified for controls or forms. Will only add images in folders if
+        the folder does not have its own image form.">0</property> -->
+    </gen>
+
+    <gen class="embedded_image" image="static_bitmap" type="embed_image">
+        <property name="bitmap" type="image"/>
+    </gen>
+
+    <gen class="wxTimer" image="wxTimer" type="timer">
+        <property name="var_name" type="string">m_timer</property>
+        <property name="interval" type="int"
+            help="Specifies the number of milliseconds between timer events.">1000</property>
+        <property name="auto_start" type="bool"
+            help="If checked, this will start start the timer in the parent class Create function.">0</property>
+        <property name="one_shot" type="bool"
+            help="If checked, this will start a one shot timer (ignored if auto_start isn't checked).">0</property>
+        <property name="id" type="id"
+            help="Specifies the timer's identifier.">wxID_ANY</property>
+        <event name="wxEVT_TIMER" class="wxTimerEvent"
+            help="Timer event that will be sent to the parent form's class."/>
+    </gen>
+
+    <gen class="Data" image="text_sizer" type="data_list">
+        <property name="base_file" type="file"
+            help="The C++ filename to store all the data strings in.">wxue_data</property>
+        <!-- <property name="python_file" type="file"
+            help="The Python filename to store all the data strings in.">wxue_data</property> -->
+        <!-- <property name="ruby_file" type="file"
+            help="The Ruby filename to store all the data strings in.">wxue_data</property> -->
+        <!-- <property name="auto_update" type="bool"
+            help="Automatically add any embedded or svg images specified for controls or forms. Will only add images in folders if
+        the folder does not have its own image form.">0</property> -->
+    </gen>
+
+    <gen class="data_string" image="filePicker" type="data_string">
+        <property name="var_name" type="string">my_data_string</property>
+        <property name="data_file" type="file"/>
+        <!-- <property name="no_compression" type="bool"
+            help="If checked, the file will not be compressed. Check this when adding a binary file that has already been
+        compressed. If unchecked, the file will be compressed using zlib.">0</property> -->
+    </gen>
+
+    <gen class="data_xml" image="fontPicker" type="data_string">
+        <property name="var_name" type="string">my_xml_string</property>
+        <property name="data_file" type="file"/>
+        <property name="xml_condensed_format" type="bool"
+            help="If checked, the file is parsed and rewritten, removing all line breaks, indetation and comments. This will speed up parsing if the string is passed to an XML parser.">
+            1</property>
+    </gen>
+
+</GeneratorDefinitions>

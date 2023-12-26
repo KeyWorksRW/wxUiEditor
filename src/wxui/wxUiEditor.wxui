@@ -196,8 +196,52 @@
       class="Data">
       <node
         class="data_xml"
-        data_file="../xml/formsl.xml"
+        data_file="../xml/forms.xml"
         var_name="forms" />
+      <node
+        class="data_xml"
+        data_file="../xml/widgets.xml"
+        var_name="widgets" />
+      <node
+        class="data_xml"
+        data_file="../xml/containers.xml"
+        var_name="containers" />
+      <node
+        class="data_xml"
+        data_file="../xml/bars.xml"
+        var_name="bars" />
+      <node
+        class="data_xml"
+        data_file="../xml/project.xml"
+        var_name="project" />
+      <node
+        class="data_xml"
+        data_file="../xml/sizers.xml"
+        var_name="sizers" />
+      <node
+        class="data_xml"
+        data_file="../xml/text_ctrls.xml"
+        var_name="text_ctrls" />
+      <node
+        class="data_xml"
+        data_file="../xml/buttons.xml"
+        var_name="buttons" />
+      <node
+        class="data_xml"
+        data_file="../xml/boxes.xml"
+        var_name="boxes" />
+      <node
+        class="data_xml"
+        data_file="../xml/data_ctrls.xml"
+        var_name="data_ctrls" />
+      <node
+        class="data_xml"
+        data_file="../xml/mdi.xml"
+        var_name="mdi" />
+      <node
+        class="data_xml"
+        data_file="../xml/pickers.xml"
+        var_name="pickers" />
     </node>
     <node
       class="folder"

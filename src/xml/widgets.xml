@@ -1,0 +1,575 @@
+<?xml version="1.0"?>
+<!DOCTYPE GeneratorDefinitions SYSTEM "gen.dtd">
+<GeneratorDefinitions>
+    <gen class="wxActivityIndicator" image="wxActivityIndicator" type="widget">
+        <inherits class="wxWindow">
+            <hide name="foreground_colour"/>
+            <hide name="font"/>
+        </inherits>
+        <inherits class="Window Events"/>
+        <inherits class="sizer_child"/>
+        <property name="var_name" type="string">m_indicator</property>
+        <property name="auto_start" type="bool"/>
+    </gen>
+
+    <gen class="wxAnimationCtrl" image="wxAnimation" type="widget">
+        <inherits class="wxWindow">
+            <hide name="variant"/>
+            <hide name="window_style"/>
+            <hide name="window_extra_style"/>
+            <hide name="disabled"/>
+            <hide name="foreground_colour"/>
+            <hide name="font"/>
+        </inherits>
+        <inherits class="sizer_child"/>
+        <property name="var_name" type="string">m_animation_ctrl</property>
+        <property name="play" type="bool" help="If checked, Play() will be called as soon as the control is created."/>
+        <property name="style" type="bitlist">
+            <option name="wxAC_DEFAULT_STYLE"
+                help="The default style: wxBORDER_NONE."/>
+			<option name="wxAC_NO_AUTORESIZE"
+                help="By default, the control will adjust its size to exactly fit the size of the animation. If this style flag is set, the control will not change its size."/>
+            wxAC_DEFAULT_STYLE </property>
+        <property name="use_generic" type="bool"
+            help="If checked, wxGenericAnimationCtrl will be used instead of wxAnimationCtrl."/>
+        <property name="animation" type="animation"/>
+        <property name="inactive_bitmap" type="image"/>
+    </gen>
+
+    <gen class="wxBannerWindow" image="wxBannerWindow" type="widget" flags="no_focus_events no_key_events">
+        <inherits class="wxWindow">
+            <hide name="window_style"/>
+            <hide name="window_extra_style"/>
+            <hide name="disabled"/>
+            <hide name="background_colour"/>
+        </inherits>
+        <inherits class="Window Events"/>
+        <inherits class="sizer_child"/>
+        <property name="var_name" type="string">m_banner</property>
+        <property name="title" type="string_escapes"
+            help="Title is rendered in bold and should be a single line."/>
+        <property name="message" type="string_edit_escapes"
+            help="The message can have multiple lines but is not wrapped automatically. Include explicit line breaks in the string if you want to have multiple lines."/>
+        <property name="bitmap" type="image"
+            help="Specifies a bitmap to use as the background."/>
+        <property name="start_colour" type="wxColour"
+            help="Specifies the starting colour of a gradient. Ignored if a bitmap is specified."/>
+        <property name="end_colour" type="wxColour"
+            help="Specifies the ending colour of a gradient. Ignored if a bitmap is specified"/>
+        <property name="direction" type="option"
+            help="Determines the placement of the banner and the direction of any text.">
+            <option name="wxTOP"/>
+			<option name="wxBOTTOM"/>
+			<option name="wxLEFT"/>
+			<option name="wxRIGHT"/> wxTOP </property>
+    </gen>
+
+    <gen class="CustomControl" image="CustomControl" type="widget">
+        <inherits class="wxWindow">
+            <hide name="derived_class"/>
+            <hide name="derived_header"/>
+        </inherits>
+        <inherits class="Window Events"/>
+        <inherits class="sizer_child"/>
+    </gen>
+
+    <gen class="wxRearrangeCtrl" image="wxRearrangeCtrl" type="widget">
+        <inherits class="List Validator"/>
+        <inherits class="wxWindow"/>
+        <inherits class="Window Events"/>
+        <inherits class="sizer_child"/>
+        <property name="var_name" type="string">m_rearrange</property>
+        <property name="selection_string" type="string_escapes"
+            help="Selects the item with the specified string in the control. Note that this is case-insensitive, i.e. the string is compared with all the elements of the control case-insensitively and the first matching entry is selected, even if it doesn't have exactly the same case as this string and there is an exact match afterwards."/>
+        <property name="selection_int" type="int"
+            help="Sets the selection to the value unless it is -1. Ignored if the selection_string property contains a value.">
+            -1</property>
+        <property name="contents" type="checklist_item"
+            help="List of default values and their checked state."/>
+        <property name="type" type="option">
+            <option name="wxLB_SINGLE"
+                help="Single-selection list."/>
+			<option name="wxLB_MULTIPLE"
+                help="Multiple-selection list: the user can toggle multiple items on and off. This is the same as wxLB_EXTENDED in wxGTK2 port."/>
+			<option
+                name="wxLB_EXTENDED"
+                help="Extended-selection list: the user can extend the selection by using SHIFT or CTRL keys together with the cursor movement keys or the mouse."/>
+            wxLB_SINGLE </property>
+        <property name="style" type="bitlist">
+            <option name="wxLB_HSCROLL"
+                help="Create a horizontal scrollbar if contents are too wide (Windows only)."/>
+            <option name="wxLB_ALWAYS_SB"
+                help="Always show a vertical scrollbar."/>
+            <option name="wxLB_NEEDED_SB"
+                help="Only create a vertical scrollbar if needed."/>
+            <option name="wxLB_NO_SB"
+                help="Don't create a vertical scrollbar (Windows only)."/>
+            <option name="wxLB_SORT"
+                help="The listbox contents are sorted in alphabetical order."/>
+        </property>
+        <property name="focus" type="bool"
+            help="When checked, this control will be set to receive keyboard input when the parent form is first created.">
+            0</property>
+        <event name="wxEVT_CHECKLISTBOX" class="wxCommandEvent"
+            help="Generated when an item in the check list box is checked or unchecked."/>
+        <event name="wxEVT_LISTBOX" class="wxCommandEvent"
+            help="Generated when an item in the list is selected."/>
+        <event name="wxEVT_LISTBOX_DCLICK" class="wxCommandEvent"
+            help="Generated when the listbox is double-clicked."/>
+    </gen>
+
+    <gen class="wxStaticBitmap" image="static_bitmap" type="widget" flags="no_focus_events no_key_events">
+        <inherits class="wxWindow">
+            <hide name="variant"/>
+            <hide name="window_extra_style"/>
+            <hide name="disabled"/>
+            <hide name="foreground_colour"/>
+            <hide name="font"/>
+        </inherits>
+        <inherits class="Window Events"/>
+        <inherits class="sizer_child"/>
+        <property name="var_name" type="string">bmp</property>
+        <property name="scale_mode" type="option">
+            <option name="None"
+                help="Do not scale the image."/>
+			<option name="Fill"
+                help="Scale the bitmap to fill the size of the control."/>
+			<option name="AspectFit"
+                help="Scale the bitmap to fit the size of the control by maintaining the aspect ratio."/>
+			<option
+                name="AspectFill"
+                help="Scale the bitmap to fit the size of the control by changing the aspect ratio of the bitmap if necessary."/>
+            None </property>
+        <property name="bitmap" type="image"/>
+    </gen>
+
+    <gen class="wxStaticLine" image="static_line" type="widget"
+    >
+        <inherits class="wxWindow">
+            <hide name="variant"/>
+            <hide name="tooltip"/>
+            <hide name="window_style"/>
+            <hide name="window_extra_style"/>
+            <hide name="disabled"/>
+            <hide name="foreground_colour"/>
+            <hide name="background_colour"/>
+            <hide name="context_help"/>
+            <hide name="font"/>
+        </inherits>
+        <inherits class="sizer_child"/>
+        <property name="var_name" type="string">static_line</property>
+        <property name="style" type="option">
+            <option name="wxLI_HORIZONTAL"
+                help="Creates a horizontal line."/>
+			<option name="wxLI_VERTICAL"
+                help="Creates a vertical line."/> wxLI_HORIZONTAL </property>
+    </gen>
+
+    <gen class="wxSlider" image="slider" type="widget">
+        <inherits class="Integer Validator"/>
+        <inherits class="wxWindow"/>
+        <inherits class="Window Events"/>
+        <inherits class="sizer_child"/>
+        <property name="var_name" type="string">m_slider</property>
+        <property name="position" type="int"
+            help="Initial position for the slider.">50</property>
+        <property name="minValue" type="int"
+            help="Minimum slider position.">0</property>
+        <property name="maxValue" type="int"
+            help="Maximum slider position.">100</property>
+        <property name="sel_start" type="int"
+            help="Selection starting position. Only usable on Windows.">-1</property>
+        <property name="sel_end" type="int"
+            help="Selection starting position. Only usable on Windows.">-1</property>
+        <property name="line_size" type="int"
+            help="If >0, sets the number of steps the slider moves when the user moves up or down a line.">0</property>
+        <property name="page_size" type="int"
+            help="If >0, sets the number of steps the slider moves when the user pages up or down.">0</property>
+        <property name="tick_frequency" type="int"
+            help="If >0, sets tick frequency and position. Only usable on Windows.">0</property>
+        <property name="thumb_length" type="int"
+            help="If >0, sets the slider thumb length. Only usable on Windows.">0</property>
+        <property name="orientation" type="option">
+            <option name="wxSL_HORIZONTAL"
+                help="Create a horizontal gauge."/>
+			<option name="wxSL_VERTICAL"
+                help="Create a vertical gauge."/> wxSL_HORIZONTAL </property>
+        <property name="style" type="bitlist">
+            <option name="wxSL_AUTOTICKS"
+                help="Displays tick marks when running on Windows."/>
+            <option name="wxSL_MIN_MAX_LABELS"
+                help="Displays minimum, maximum labels."/>
+            <option name="wxSL_VALUE_LABEL"
+                help="Displays value label."/>
+            <option name="wxSL_LABELS"
+                help="Displays minimum, maximum and value labels (same as wxSL_VALUE_LABEL and wxSL_MIN_MAX_LABELS together)."/>
+            <option name="wxSL_LEFT"
+                help="Displays ticks on the left and forces the slider to be vertical."/>
+            <option name="wxSL_RIGHT"
+                help="Displays ticks on the right and forces the slider to be vertical."/>
+            <option name="wxSL_TOP"
+                help="Displays ticks on the top."/>
+            <option name="wxSL_BOTTOM"
+                help="Displays ticks on the bottom (this is the default)."/>
+            <option name="wxSL_BOTH"
+                help="Displays ticks on both sides."/>
+            <option name="wxSL_SELRANGE"
+                help="Allows the user to select a range on the slider. Windows only."/>
+            <option name="wxSL_INVERSE"
+                help="Inverses the mininum and maximum endpoints on the slider. Not compatible with wxSL_SELRANGE."/>
+        </property>
+        <event name="wxEVT_SLIDER" class="wxCommandEvent"
+            help="Generated after any change of wxSlider position."/>
+        <event name="wxEVT_SCROLL_TOP" class="wxScrollEvent"
+            help=""/>
+        <event name="wxEVT_SCROLL_BOTTOM" class="wxScrollEvent"
+            help=""/>
+        <event name="wxEVT_SCROLL_LINEUP" class="wxScrollEvent"
+            help=""/>
+        <event name="wxEVT_SCROLL_LINEDOWN" class="wxScrollEvent"
+            help=""/>
+        <event name="wxEVT_SCROLL_PAGEUP" class="wxScrollEvent"
+            help=""/>
+        <event name="wxEVT_SCROLL_PAGEDOWN" class="wxScrollEvent"
+            help=""/>
+        <event name="wxEVT_SCROLL_THUMBTRACK" class="wxScrollEvent"
+            help="Generated as the user drags the thumbtrack."/>
+        <event name="wxEVT_SCROLL_THUMBRELEASE" class="wxScrollEvent"
+            help=""/>
+        <event name="wxEVT_SCROLL_CHANGED" class="wxScrollEvent"
+            help="Generated on Windows only."/>
+    </gen>
+
+    <gen class="wxGauge" image="gauge" type="widget" flags="no_focus_events no_key_events">
+        <inherits class="Integer Validator"/>
+        <inherits class="wxWindow">
+            <hide name="variant"/>
+            <hide name="disabled"/>
+            <hide name="foreground_colour"/>
+            <hide name="background_colour"/>
+            <hide name="font"/>
+        </inherits>
+        <inherits class="Window Events"/>
+        <inherits class="sizer_child"/>
+        <property name="var_name" type="string">m_gauge</property>
+        <property name="position" type="uint"
+            help="Initial position for the gauge.">0</property>
+        <property name="range" type="uint"
+            help="Integer range (maximum value) of the gauge.">100</property>
+        <property name="orientation" type="option">
+            <option name="wxGA_HORIZONTAL"
+                help="Create a horizontal gauge."/>
+			<option name="wxGA_VERTICAL"
+                help="Create a vertical gauge."/> wxGA_HORIZONTAL </property>
+        <property name="style" type="bitlist">
+            <option name="wxGA_SMOOTH"
+                help="Create a smooth progress bar with one pixel wide update step (not supported by all platforms)."/>
+        </property>
+    </gen>
+
+    <gen class="wxScrollBar" image="scrollbar" type="widget">
+        <inherits class="Integer Validator"/>
+        <inherits class="wxWindow"/>
+        <inherits class="Window Events"/>
+        <inherits class="sizer_child"/>
+        <property name="var_name" type="string">m_scrollBar</property>
+        <property name="position"
+            help="The position of the scrollbar in scroll units." type="uint">0</property>
+        <property name="range"
+            help="The maximum position of the scrollbar." type="uint">100</property>
+        <property name="thumbsize"
+            help="The size of the thumb, or visible portion of the scrollbar, in scroll units." type="uint">1</property>
+        <property name="pagesize"
+            help="This is the number of scroll units that will be scrolled when the user pages up or down." type="uint">
+            1</property>
+        <property name="style" type="option">
+            <option name="wxSB_HORIZONTAL"
+                help="Specifies a horizontal scrollbar."/>
+			<option name="wxSB_VERTICAL"
+                help="Specifies a vertical scrollbar."/> wxSB_HORIZONTAL </property>
+        <event name="wxEVT_SCROLL_TOP" class="wxScrollEvent"
+            help=""/>
+        <event name="wxEVT_SCROLL_BOTTOM" class="wxScrollEvent"
+            help=""/>
+        <event name="wxEVT_SCROLL_LINEUP" class="wxScrollEvent"
+            help=""/>
+        <event name="wxEVT_SCROLL_LINEDOWN" class="wxScrollEvent"
+            help=""/>
+        <event name="wxEVT_SCROLL_PAGEUP" class="wxScrollEvent"
+            help=""/>
+        <event name="wxEVT_SCROLL_PAGEDOWN" class="wxScrollEvent"
+            help=""/>
+        <event name="wxEVT_SCROLL_THUMBTRACK" class="wxScrollEvent"
+            help="Generated as the user drags the thumbtrack."/>
+        <event name="wxEVT_SCROLL_THUMBRELEASE" class="wxScrollEvent"
+            help=""/>
+        <event name="wxEVT_SCROLL_CHANGED" class="wxScrollEvent"
+            help="Generated on Windows only."/>
+    </gen>
+
+    <gen class="wxHyperlinkCtrl" image="hyperlink_ctrl" type="widget" flags="no_focus_events no_key_events">
+        <inherits class="wxWindow"/>
+        <inherits class="Window Events"/>
+        <inherits class="sizer_child"/>
+        <property name="var_name" type="string">m_hyperlink</property>
+        <property name="label" type="string_escapes"
+            help="Text of the hyperlink">Hyperlink</property>
+        <property name="url" type="string_escapes"
+            help="Target of the hyperlink"/>
+        <property name="hover_color" type="wxColour"
+            help="The colour used to print the label of the hyperlink when the mouse is over the control."/>
+        <property name="normal_color" type="wxColour"
+            help="The colour used to print the label when the link has never been clicked before (i.e. the link has not been visited) and the mouse is not over the control."/>
+        <property name="visited_color" type="wxColour"
+            help="The colour used to print the label when the mouse is not over the control and the link has already been clicked before (i.e. the link has been visited)."/>
+        <property name="underlined" type="bool"
+            help="If checked, the text will be underlined. If not checked, a wxGenericHyperlinkCtrl is used instead (not available for wxPython), and a non-underlined default GUI font will be used to display the text. On Windows, colors cannot be set unless a wxGenericHyperlinkCtrl is used (underline is unchecked).">
+            1</property>
+        <property name="sync_hover_colour" type="bool"
+            help="If checked, hover colour will be set to the same value as normal colour. If the above underlined property is unchecked, then check this to prevent the hover colour from being set to red. Ignored if hover_colour is already set.">
+            0</property>
+        <property name="style" type="bitlist">
+            <option name="wxHL_ALIGN_LEFT"
+                help="Align the text to the left."/>
+			<option name="wxHL_ALIGN_RIGHT"
+                help="Align the text to the right."/>
+			<option name="wxHL_ALIGN_CENTRE"
+                help="Center the text (horizontally)."/>
+			<option name="wxHL_CONTEXTMENU"
+                help="Pop up a context menu when the hyperlink is right-clicked. The context menu contains a &quot;Copy URL&quot; menu item which is automatically handled by the hyperlink and which just copies in the clipboard the URL (not the label) of the control."/>
+			<option
+                name="wxHL_DEFAULT_STYLE"
+                help="The default style for wxHyperlinkCtrl: wxBORDER_NONE | wxHL_CONTEXTMENU | wxHL_ALIGN_CENTRE."/>
+            wxHL_DEFAULT_STYLE </property>
+        <event name="wxEVT_HYPERLINK" class="wxHyperlinkEvent"
+            help="If this event is not handled (or it's skipped; see wxEvent::Skip), then a call to wxLaunchDefaultBrowser is done with the hyperlink's URL."/>
+    </gen>
+
+    <gen class="wxSearchCtrl" image="search" type="widget">
+        <inherits class="wxWindow"/>
+        <inherits class="Window Events"/>
+        <inherits class="sizer_child"/>
+        <property name="var_name" type="string">m_searchCtrl</property>
+        <property name="value" type="string_escapes"
+            help="Initial value"/>
+        <property name="hint" type="string_escapes"
+            help="Sets a hint to be shown when the control is empty and does not have the focus."/>
+        <property name="search_button" type="bool"
+            help="Shows or hides the search button.">1</property>
+        <property name="cancel_button" type="bool"
+            help="Shows or hides the cancel button.">0</property>
+        <property name="style" type="bitlist">
+            <option name="wxTE_PROCESS_ENTER"
+                help="The control will generate the event wxEVT_TEXT_ENTER (otherwise pressing Enter key is either processed internally by the control or used for navigation between dialog controls)."/>
+            <option name="wxTE_PROCESS_TAB"
+                help="The control will receive wxEVT_CHAR events for TAB pressed - normally, TAB is used for passing to the next control in a dialog instead. For the control created with this style, you can still use Ctrl-Enter to pass to the next control from the keyboard."/>
+            <option name="wxTE_NOHIDESEL"
+                help="By default, the Windows text control doesn't show the selection when it doesn't have focus - use this style to force it to always show it. It doesn't do anything under other platforms."/>
+            <option name="wxTE_LEFT"
+                help="The text in the control will be left-justified (default)."/>
+            <option name="wxTE_CENTER"
+                help="The text in the control will be centered (currently wxMSW and wxGTK2 only). "/>
+            <option name="wxTE_RIGHT"
+                help="The text in the control will be right-justified (currently wxMSW and wxGTK2 only)."/>
+        </property>
+        <property name="focus" type="bool"
+            help="When checked, this control will be set to receive keyboard input when the parent form is first created.">
+            0</property>
+        <event name="wxEVT_TEXT" class="wxCommandEvent"
+            help="Generated when the text changes. Notice that this event will always be sent when the text controls contents changes - whether this is due to user input or comes from the program itself (for example, if SetValue() is called)"/>
+        <event name="wxEVT_TEXT_ENTER" class="wxCommandEvent"
+            help="Generated when enter is pressed in a text control (which must have wxTE_PROCESS_ENTER style for this event to be generated)."/>
+        <event name="wxEVT_SEARCHCTRL_SEARCH_BTN" class="wxCommandEvent"
+            help="Generated when the search button is clicked. Note that this does not initiate a search on its own, you need to perform the appropriate action in your event handler. You may use event.GetString() to retrieve the string to search for in the event handler code."/>
+        <event name="wxEVT_SEARCHCTRL_CANCEL_BTN" class="wxCommandEvent"
+            help="Generated when the cancel button is clicked."/>
+    </gen>
+
+    <gen class="wxHtmlWindow" image="htmlwin" type="widget">
+        <inherits class="wxWindow"/>
+        <inherits class="Window Events"/>
+        <inherits class="sizer_child"/>
+        <property name="var_name" type="string">m_htmlWin</property>
+        <property name="style" type="bitlist">
+            <option name="wxHW_SCROLLBAR_NEVER"
+                help="Never display scrollbars, not even when the page is larger than the window."/>
+			<option
+                name="wxHW_SCROLLBAR_AUTO"
+                help="Display scrollbars only if page's size exceeds window's size."/>
+			<option name="wxHW_NO_SELECTION"
+                help="Don't allow the user to select text."/> wxHW_SCROLLBAR_AUTO </property>
+        <property name="html_borders" type="int"
+            help="Specifies the space between the window and the contents in DPI-independent pixels. -1 indicates that a default border size should be used.">
+            -1</property>
+        <property name="html_content" help="The HTML contents to be displayed." type="html_edit"/>
+        <property name="html_url"
+            help="The URL to load and display. Note that https: protocol is not currently supported (but http: is). You can specify a local file with or without a file:/// prefix."
+            type="string_edit_single"/>
+        <event name="wxEVT_HTML_CELL_CLICKED" class="wxHtmlCellEvent"
+            help=""/>
+        <event name="wxEVT_HTML_CELL_HOVER" class="wxHtmlCellEvent"
+            help=""/>
+        <event name="wxEVT_HTML_LINK_CLICKED" class="wxHtmlLinkEvent"
+            help=""/>
+    </gen>
+
+    <gen class="wxWebView" image="webview" type="widget">
+        <inherits class="wxWindow">
+            <property name="proportion" type="uint">1</property>
+            <property name="flags" type="bitlist">wxEXPAND</property>
+        </inherits>
+        <inherits class="sizer_child"/>
+        <property name="var_name" type="string">m_webview</property>
+        <property name="url" type="string_escapes"/>
+        <event name="wxEVT_WEBVIEW_NAVIGATING" class="wxWebViewEvent"
+            help="Generated before trying to get a resource."/>
+        <event name="wxEVT_WEBVIEW_NAVIGATED" class="wxWebViewEvent"
+            help="Generated after it was confirmed that a resource would be requested."/>
+        <event name="wxEVT_WEBVIEW_LOADED" class="wxWebViewEvent"
+            help="Generated when the document is fully loaded and displayed."/>
+        <event name="wxEVT_WEBVIEW_ERROR" class="wxWebViewEvent"
+            help="Generated when a navigation error occurs."/>
+        <event name="wxEVT_WEBVIEW_NEWWINDOW" class="wxWebViewEvent"
+            help="Generated when a new window is created."/>
+        <event name="wxEVT_WEBVIEW_TITLE_CHANGED" class="wxWebViewEvent"
+            help="Generated when the page title changes."/>
+        <event name="wxEVT_WEBVIEW_FULL_SCREEN_CHANGED" class="wxWebViewEvent"
+            help="Generated when the page wants to enter or leave fullscreen. Available since wxWidgets 3.1.5"/>
+        <event name="wxEVT_WEBVIEW_SCRIPT_MESSAGE_RECEIVED" class="wxWebViewEvent"
+            help="Available since wxWidgets 3.1.5"/>
+    </gen>
+
+    <gen class="wxCalendarCtrl" image="calendar" type="widget">
+        <inherits class="wxWindow">
+            <hide name="variant"/>
+            <hide name="foreground_colour"/>
+            <hide name="font"/>
+        </inherits>
+        <inherits class="Window Events"/>
+        <inherits class="sizer_child"/>
+        <property name="var_name" type="string">m_calendar</property>
+        <property name="style" type="bitlist">
+            <option name="wxCAL_SUNDAY_FIRST"
+                help="Show Sunday as the first day in the week (not in wxGTK)"/>
+			<option name="wxCAL_MONDAY_FIRST"
+                help="Show Monday as the first day in the week (not in wxGTK)"/>
+			<option name="wxCAL_SHOW_HOLIDAYS"
+                help="Highlight holidays in the calendar (only generic)"/>
+			<option name="wxCAL_NO_YEAR_CHANGE"
+                help="Disable the year changing (deprecated, only generic)"/>
+			<option name="wxCAL_NO_MONTH_CHANGE"
+                help="Disable the month (and, implicitly, the year) changing"/>
+			<option
+                name="wxCAL_SHOW_SURROUNDING_WEEKS"
+                help="Show the neighbouring weeks in the previous and next months (only generic, always on for the native controls)"/>
+			<option
+                name="wxCAL_SEQUENTIAL_MONTH_SELECTION"
+                help="Use alternative, more compact, style for the month and year selection controls (only generic)"/>
+			<option
+                name="wxCAL_SHOW_WEEK_NUMBERS"
+                help="Show week numbers on the left side of the calendar (not in generic)"/> wxCAL_SHOW_HOLIDAYS </property>
+        <property name="focus" type="bool"
+            help="When checked, this control will be set to receive keyboard input when the parent form is first created.">
+            0</property>
+        <event name="wxEVT_CALENDAR_DOUBLECLICKED" class="wxCalendarEvent"
+            help="A day was double clicked in the calendar."/>
+        <event name="wxEVT_CALENDAR_SEL_CHANGED" class="wxCalendarEvent"
+            help="The selected date changed."/>
+        <event name="wxEVT_CALENDAR_PAGE_CHANGED" class="wxCalendarEvent"
+            help="The selected month (and/or year) changed."/>
+        <event name="wxEVT_CALENDAR_DAY_CHANGED" class="wxCalendarEvent"
+            help="The selected day changed."/>
+        <event name="wxEVT_CALENDAR_MONTH_CHANGED" class="wxCalendarEvent"
+            help="The selected month changed."/>
+        <event name="wxEVT_CALENDAR_YEAR_CHANGED" class="wxCalendarEvent"
+            help="The selected year changed."/>
+        <event name="EVT_CALENDAR_WEEK_CLICKED" class="wxCalendarEvent"
+            help="User clicked on the week day header (only generic)."/>
+        <event name="wxEVT_CALENDAR_WEEK_CLICKED" class="wxCalendarEvent"
+            help="User clicked on the week of the year number (only generic)."/>
+    </gen>
+
+    <gen class="wxGenericDirCtrl" image="genericdir_ctrl" type="widget">
+        <inherits class="wxWindow">
+            <hide name="variant"/>
+            <hide name="foreground_colour"/>
+            <hide name="font"/>
+        </inherits>
+        <inherits class="Window Events"/>
+        <inherits class="sizer_child"/>
+        <property name="var_name" type="string">m_genericDirCtrl</property>
+        <property name="defaultfolder" type="string_escapes"
+            help="Initial Directory."/>
+        <property name="filter" type="string_escapes"
+            help="A filter string, using the same syntax as that for wxFileDialog. This may be empty if filters are not being used. Example: &quot;All files (*.*)|*.*|JPEG files (*.jpg)|*.jpg&quot;."/>
+        <property name="defaultfilter" type="uint"
+            help="The zero-indexed default filter setting.">0</property>
+        <property name="show_hidden" type="bool"
+            help="Show hidden files">0</property>
+        <property name="style" type="bitlist">
+            <option name="wxDIRCTRL_DIR_ONLY"
+                help="Only show directories, and not files."/>
+			<option name="wxDIRCTRL_3D_INTERNAL"
+                help="Use 3D borders for internal controls."/>
+			<option name="wxDIRCTRL_SELECT_FIRST"
+                help="When setting the default path, select the first file in the directory."/>
+			<option
+                name="wxDIRCTRL_SHOW_FILTERS"
+                help="Show the drop-down filter list."/>
+			<option name="wxDIRCTRL_EDIT_LABELS"
+                help="Allow the folder and file labels to be editable."/>
+			<option name="wxDIRCTRL_MULTIPLE"
+                help="Allows multiple files and folders to be selected simultaneously"/> wxDIRCTRL_3D_INTERNAL </property>
+        <property name="focus" type="bool"
+            help="When checked, this control will be set to receive keyboard input when the parent form is first created.">
+            0</property>
+        <event name="wxEVT_DIRCTRL_SELECTIONCHANGED" class="wxCommandEvent"
+            help="Selected directory has changed. Notice that this event is generated even for the changes done by the program itself and not only those done by the user."/>
+        <event name="wxEVT_DIRCTRL_FILEACTIVATED" class="wxCommandEvent"
+            help="The user activated a file by double-clicking or pressing Enter."/>
+    </gen>
+
+    <gen class="wxFileCtrl" image="wxFileCtrl" type="widget">
+        <inherits class="wxWindow">
+            <hide name="variant"/>
+            <hide name="foreground_colour"/>
+            <hide name="font"/>
+        </inherits>
+        <inherits class="Window Events"/>
+        <inherits class="sizer_child"/>
+        <property name="var_name" type="string">m_fileCtrl</property>
+        <property name="initial_folder" type="path"
+            help="Initial folder."/>
+        <property name="initial_filename" type="file"
+            help="Initial file name."/>
+        <property name="wildcard" type="string_escapes"
+            help="Sets the wildcard, which can contain multiple file types, for example: &quot;BMP files (*.bmp)|*.bmp|GIF files (*.gif)|*.gif&quot;."/>
+        <property name="filter_index" type="uint"
+            help="Sets the current filter (wildcard) index, starting from zero."/>
+        <property name="show_hidden" type="bool"
+            help="Show hidden files">0</property>
+        <property name="style" type="bitlist">
+            <option name="wxFC_OPEN"
+                help="Creates a file control suitable for opening files. Cannot be used with wxFC_SAVE."/>
+			<option
+                name="wxFC_SAVE"
+                help="Creates an file control suitable for saving files. Cannot be used with wxFC_OPEN."/>
+			<option
+                name="wxFC_MULTIPLE"
+                help="For wxFC_OPEN control only. Allows selecting multiple files. Cannot be combined with wxFC_SAVE."/>
+			<option
+                name="wxFC_NOSHOWHIDDEN"
+                help="Hides the &quot;Show Hidden Files&quot; checkbox. Ignored on wxGTK"/> wxFC_OPEN </property>
+        <property name="focus" type="bool"
+            help="When checked, this control will be set to receive keyboard input when the parent form is first created.">
+            0</property>
+        <event name="wxEVT_FILECTRL_FILEACTIVATED" class="wxCommandEvent"
+            help="The user activated a file(by double-clicking or pressing Enter)."/>
+        <event name="wxEVT_FILECTRL_SELECTIONCHANGED" class="wxCommandEvent"
+            help="The user changed the current selection(by selecting or deselecting a file) ."/>
+        <event name="wxEVT_FILECTRL_FOLDERCHANGED" class="wxCommandEvent"
+            help="The current folder of the file control has been changed."/>
+        <event name="wxEVT_FILECTRL_FILTERCHANGED" class="wxCommandEvent"
+            help="The current file filter of the file control has been changed."/>
+    </gen>
+</GeneratorDefinitions>

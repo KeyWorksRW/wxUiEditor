@@ -130,15 +130,6 @@ if (INTERNAL_BLD_TESTING)
         src/internal/import_panel.cpp
         src/internal/convert_img.cpp
     )
-elseif (INTERNAL_FEATURE1)
-    message(NOTICE "Building with Feature #1 enabled")
-    add_compile_definitions(INTERNAL_FEATURE1)
-elseif (INTERNAL_FEATURE2)
-    message(NOTICE "Building with Feature #2 enabled")
-    add_compile_definitions(INTERNAL_FEATURE2)
-elseif (INTERNAL_FEATURE3)
-    message(NOTICE "Building with Feature #3 enabled")
-    add_compile_definitions(INTERNAL_FEATURE3)
 else()
     set (wxui_internal_files
         $<$<CONFIG:Debug>:src/internal/msg_logging.cpp>
@@ -146,6 +137,21 @@ else()
         $<$<CONFIG:Debug>:src/internal/import_panel.cpp>
         $<$<CONFIG:Debug>:src/internal/convert_img.cpp>
     )
+endif()
+
+if (INTERNAL_FEATURE1)
+    message(NOTICE "Building with Feature #1 enabled")
+    add_compile_definitions(INTERNAL_FEATURE1)
+endif()
+
+if (INTERNAL_FEATURE2)
+    message(NOTICE "Building with Feature #2 enabled")
+    add_compile_definitions(INTERNAL_FEATURE2)
+endif()
+
+if (INTERNAL_FEATURE3)
+    message(NOTICE "Building with Feature #3 enabled")
+    add_compile_definitions(INTERNAL_FEATURE3)
 endif()
 
 add_compile_definitions($<$<CONFIG:Release>:NDEBUG>)

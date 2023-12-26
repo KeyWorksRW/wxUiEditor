@@ -1,0 +1,865 @@
+<?xml version="1.0"?>
+<!DOCTYPE GeneratorDefinitions SYSTEM "gen.dtd">
+<GeneratorDefinitions>
+	<!--
+	Each interface class can be added to a generator by using <inherits class="name" />. The class name
+	will be used as a Category name.
+	-->
+
+	<gen class="Window Events" type="interface">
+		<category name="Focus Events">
+			<event name="wxEVT_KILL_FOCUS" class="wxFocusEvent"/>
+			<event name="wxEVT_SET_FOCUS" class="wxFocusEvent"/>
+		</category>
+		<category name="General Events">
+			<event name="wxEVT_CONTEXT_MENU" class="wxContextMenuEvent"/>
+			<event name="wxEVT_ERASE_BACKGROUND" class="wxEraseEvent"/>
+			<event name="wxEVT_HELP" class="wxHelpEvent"/>
+			<event name="wxEVT_PAINT" class="wxPaintEvent"/>
+			<event name="wxEVT_SIZE" class="wxSizeEvent"/>
+			<event name="wxEVT_UPDATE_UI" class="wxUpdateUIEvent"/>
+		</category>
+		<category name="Keyboard Events">
+			<event name="wxEVT_CHAR" class="wxKeyEvent"/>
+			<event name="wxEVT_CHAR_HOOK" class="wxKeyEvent"
+				help="Unlike all the other key events, this event is propagated upwards the window hierarchy which allows intercepting it in the parent window of the focused window to which it is sent initially (if there is no focused window, this event is sent to the wxApp global object). It is also generated before any other key events and so gives the parent window an opportunity to modify the keyboard handling of its children, e.g. it is used internally by wxWidgets in some ports to intercept pressing Esc key in any child of a dialog to close the dialog itself when it's pressed. By default, if this event is handled, i.e. the handler doesn't call wxEvent::Skip(), neither wxEVT_KEY_DOWN nor wxEVT_CHAR events will be generated (although wxEVT_KEY_UP still will be), i.e. it replaces the normal key events. However by calling the special DoAllowNextEvent() method you can handle wxEVT_CHAR_HOOK and still allow normal events generation. This is something that is rarely useful but can be required if you need to prevent a parent wxEVT_CHAR_HOOK handler from running without suppressing the normal key events. Finally notice that this event is not generated when the mouse is captured as it is considered that the window which has the capture should receive all the keyboard events too without allowing its parent wxTopLevelWindow to interfere with their processing."/>
+			<event name="wxEVT_KEY_DOWN" class="wxKeyEvent"
+				help="Generated when any key has been pressed. If this event is handled and not skipped, wxEVT_CHAR will not be generated at all for this key press (but wxEVT_KEY_UP will be)."/>
+			<event name="wxEVT_KEY_UP" class="wxKeyEvent"
+				help="Generated when any key has been released."/>
+		</category>
+		<category name="Mouse Events">
+			<event name="wxEVT_ENTER_WINDOW" class="wxMouseEvent"/>
+			<event name="wxEVT_LEAVE_WINDOW" class="wxMouseEvent"/>
+			<event name="wxEVT_LEFT_DCLICK" class="wxMouseEvent"/>
+			<event name="wxEVT_LEFT_DOWN" class="wxMouseEvent"/>
+			<event name="wxEVT_LEFT_UP" class="wxMouseEvent"/>
+			<event name="wxEVT_MIDDLE_DCLICK" class="wxMouseEvent"/>
+			<event name="wxEVT_MIDDLE_DOWN" class="wxMouseEvent"/>
+			<event name="wxEVT_MIDDLE_UP" class="wxMouseEvent"/>
+			<event name="wxEVT_RIGHT_DCLICK" class="wxMouseEvent"/>
+			<event name="wxEVT_RIGHT_DOWN" class="wxMouseEvent"/>
+			<event name="wxEVT_RIGHT_UP" class="wxMouseEvent"/>
+			<event name="wxEVT_AUX1_DCLICK" class="wxMouseEvent"/>
+			<event name="wxEVT_AUX1_DOWN" class="wxMouseEvent"/>
+			<event name="wxEVT_AUX1_UP" class="wxMouseEvent"/>
+			<event name="wxEVT_AUX2_DCLICK" class="wxMouseEvent"/>
+			<event name="wxEVT_AUX2_DOWN" class="wxMouseEvent"/>
+			<event name="wxEVT_AUX2_UP" class="wxMouseEvent"/>
+			<event name="wxEVT_MOTION" class="wxMouseEvent"/>
+			<event name="wxEVT_MOUSEWHEEL" class="wxMouseEvent"/>
+		</category>
+	</gen>
+
+	<gen class="wxTreeCtrlBase" type="interface">
+		<event name="wxEVT_TREE_BEGIN_DRAG" class="wxTreeEvent"
+			help="Generated when beginning to drag with the left mouse button."/>
+		<event name="wxEVT_TREE_BEGIN_RDRAG" class="wxTreeEvent"
+			help="Generated when beginning to drag with the right mouse button."/>
+		<event name="wxEVT_TREE_END_DRAG" class="wxTreeEvent"
+			help="Generated when ending dragging with the left or right mouse button."/>
+		<event name="wxEVT_TREE_BEGIN_LABEL_EDIT" class="wxTreeEvent"
+			help="This can be prevented by calling Veto()."/>
+		<event name="wxEVT_TREE_END_LABEL_EDIT" class="wxTreeEvent"
+			help="This can be prevented by calling Veto()."/>
+		<event name="wxEVT_TREE_DELETE_ITEM" class="wxTreeEvent"/>
+		<event name="wxEVT_TREE_ITEM_ACTIVATED" class="wxTreeEvent"/>
+		<event name="wxEVT_TREE_ITEM_COLLAPSED" class="wxTreeEvent"/>
+		<event name="wxEVT_TREE_ITEM_COLLAPSING" class="wxTreeEvent"
+			help="This can be prevented by calling Veto()."/>
+		<event name="wxEVT_TREE_ITEM_EXPANDED" class="wxTreeEvent"/>
+		<event name="wxEVT_TREE_ITEM_EXPANDING" class="wxTreeEvent"
+			help="This can be prevented by calling Veto()."/>
+		<event name="wxEVT_TREE_ITEM_RIGHT_CLICK" class="wxTreeEvent"/>
+		<event name="wxEVT_TREE_ITEM_MIDDLE_CLICK" class="wxTreeEvent"/>
+		<event name="wxEVT_TREE_SEL_CHANGED" class="wxTreeEvent"/>
+		<event name="wxEVT_TREE_SEL_CHANGING" class="wxTreeEvent"
+			help="This can be prevented by calling Veto()."/>
+		<event name="wxEVT_TREE_KEY_DOWN" class="wxTreeEvent"/>
+		<event name="wxEVT_TREE_ITEM_MENU" class="wxTreeEvent"
+			help="Generated when the context menu for the selected item has been requested, either by a right click or by using the menu key."/>
+	</gen>
+
+	<gen class="Bitmaps" type="interface">
+		<property name="bitmap" type="image"
+			help="This is the bitmap shown in the default state. It will also be used for all other bitmaps if they are not explicitly set."/>
+		<property name="disabled_bmp" type="image"
+			help="Bitmap shown when the button is disabled."/>
+		<property name="pressed_bmp" type="image"
+			help="Bitmap shown when the button is pushed (e.g. while the user keeps the mouse button pressed on it)."/>
+		<property name="focus_bmp" type="image"
+			help="Bitmap shown when the button has keyboard focus but is not pressed."/>
+		<property name="current" type="image"
+			help="Bitmap shown when the mouse is over the button (but it is not pressed). Notice that if hover bitmap is not specified but the current platform UI uses hover images for the buttons (such as Windows XP or GTK+), then the focus bitmap is used for the hover state as well. This makes it possible to set just the focus bitmap to get reasonably good behaviour on all platforms."/>
+		<property name="position" type="option">
+			<option name=""/>
+			<option name="wxLEFT"
+				help="Positions the bitmap at the left"/>
+			<option name="wxRIGHT"
+				help="Positions the bitmap at the right"/>
+			<option name="wxTOP"
+				help="Positions the bitmap at the top"/>
+			<option name="wxBOTTOM"
+				help="Positions the bitmap at the bottom"/>
+		</property>
+		<property name="margins" type="wxSize"
+			help="The margins between the bitmap and the text of the button. This is currently only implemented under MSW. If it is not specified, a default margin is used around the bitmap."/>
+	</gen>
+
+	<!-- wxCommandLink needs a special version because position and margins are not used. -->
+	<gen class="Command Bitmaps" type="interface">
+		<property name="bitmap" type="image"
+			help="This is the bitmap shown in the default state. It will also be used for all other bitmaps if they are not explicitly set."/>
+		<property name="disabled_bmp" type="image"
+			help="Bitmap shown when the button is disabled."/>
+		<property name="pressed_bmp" type="image"
+			help="Bitmap shown when the button is pushed (e.g. while the user keeps the mouse button pressed on it)."/>
+		<property name="focus_bmp" type="image"
+			help="Bitmap shown when the button has keyboard focus but is not pressed."/>
+		<property name="current" type="image"
+			help="Bitmap shown when the mouse is over the button (but it is not pressed). Notice that if hover bitmap is not specified but the current platform UI uses hover images for the buttons (such as Windows XP or GTK+), then the focus bitmap is used for the hover state as well. This makes it possible to set just the focus bitmap to get reasonably good behaviour on all platforms."/>
+		<!-- This should work, but fails on Windows 10
+		<property name="position" type="option">
+			<option name="" />
+			<option name="wxLEFT"
+				help="Positions the bitmap at the left" />
+			<option name="wxRIGHT"
+				help="Positions the bitmap at the right" />
+			<option name="wxTOP"
+				help="Positions the bitmap at the top" />
+			<option name="wxBOTTOM"
+				help="Positions the bitmap at the bottom" />
+		</property>
+ 		-->
+		<!-- This should work, but fails on Windows 10
+		<property name="margins" type="wxSize"
+			help="The margins between the bitmap and the text of the button. This is currently only implemented under MSW. If it is
+		not specified, a default margin is used around the bitmap." />
+ 		-->
+	</gen>
+
+	<gen class="Dialog Window Settings" type="interface">
+		<property name="id" type="id"
+			help="The identifier for the dialog.">wxID_ANY</property>
+		<property name="pos" type="wxPoint"
+			help="Sets the dialog position. The default is (-1, -1) which indicates that wxWidgets should generate a default position for the dialog."/>
+		<property name="size" type="wxSize"
+			help="Sets the dialog size. The default is (-1, -1) which indicates that wxWidgets should generate a default size for the dialog, large enough to display all visible elements."/>
+		<property name="minimum_size" type="wxSize"
+			help="Sets the minimum size of the dialog. The default is (-1, -1) which indicates wxWidgets should calculate a minimum size large enough to display all visible elements."/>
+		<property name="maximum_size" type="wxSize"
+			help="Sets the maximum size of the dialog."/>
+		<property name="foreground_colour" type="wxColour"
+			help="Sets the foreground colour of the dialog."/>
+		<property name="background_colour" type="wxColour"
+			help="Sets the background colour of the dialog."/>
+		<property name="font" type="wxFont"
+			help="Sets the font for the dialog. This should not be used if you don't want the font to be inherited by the dialog's children"/>
+		<property name="window_name" type="string_escapes"
+			help="Used to associate a name with the window, allowing the application user to set Motif resource values for individual dialog boxes."/>
+		<property name="derived_class" type="string"
+			help="If you have derived a class from wxDialog and you want to use your derived class, then specify that class name here. You will need to add the header file for your class to the base_hdr_includes property. Note that your base class must specify a constructor with no parameters to match a wxDialog() constructor."/>
+	</gen>
+
+	<!-- Using Language Settings will pull in all language settings -->
+	<gen class="Language Settings" type="interface"/>
+
+	<gen class="C++ Settings" type="interface">
+		<property name="base_file" type="file"
+			help="The filename of the base class."/>
+		<property name="generate_translation_unit" type="bool"
+			help="If checked, both a source file (translation unit) and a header file are generated. If not checked, all code is generated in the header file, and no source file is created. A header-only file with images requires a C++17 or later compiler.">
+			1</property>
+		<property name="source_preamble" type="code_edit"
+			help="This preamble is added in addition to any src_preamble specified for the entire project. It will be placed unchanged at the top of the generated base src file after any (optional) precompiled header file."/>
+		<property name="local_src_includes" type="include_files"
+			help="Lists one or more local header files to include in the generated header file."/>
+		<property name="system_src_includes" type="include_files"
+			help="Lists one or more system header files to include in the generated header file."/>
+		<property name="generate_ids" type="bool"
+			help="If checked, any non-wxWidgets ids will be created as an enumerated list unless you specically assign the value of the id (e.g., myid=100).">
+			1</property>
+		<property name="initial_enum_string" type="string"
+			help="The first id in a generated enum will be set to this value."> wxID_HIGHEST + 1</property>
+		<property name="class_decoration" type="string"
+			help="This specifies the keyword or macro to add to the class declaration (such as __declspec(dllexport) )."/>
+	</gen>
+
+	<gen class="C++ Header Settings" type="interface">
+		<property name="header_preamble" type="code_edit"
+			help="This preamble is placed unchanged in the generated header file after all wx/ include files. It is commonly used to add forward class names needed by methods and members you add to the Derived Class Settings."/>
+		<property name="local_hdr_includes" type="include_files"
+			help="Lists one or more local header files to include in the generated header file."/>
+		<property name="system_hdr_includes" type="include_files"
+			help="Lists one or more system header files to include in the generated header file."/>
+		<property name="inserted_hdr_code" type="code_edit"
+			help="Specify code to insert into the header file at the end of the public: section. You may add protected: and private: sections as needed for additional methods and member variables."/>
+		<property name="generate_const_values" type="bool"
+			help="If checked, each form's header file will have const values declared for some of the possible parameters. E.g., const int form_id = your_id. You can use this when creating multiple instances of a form with different construction parameters.">
+			0</property>
+		<property name="no_closing_brace" type="bool"
+			help="If checked no closing brace (};) will be generated at the end of the header file. This allows you to extend the class definition after the generated code block.">
+			0</property>
+	</gen>
+
+	<gen class="C++ Derived Class Settings" type="interface">
+		<property name="use_derived_class" type="bool"
+			help="Check this if you will be creating a derived class. If not checked, you can implement any event handlers below the generated file's final comment block.">
+			1</property>
+		<property name="derived_class_name" type="string"
+			help="The name of the derived class. Ignored if use_derived_class is unchecked."/>
+		<property name="derived_file" type="file"
+			help="The filename of the derived class. You can leave this empty if you have already generated the file. Ignored if use_derived_class is unchecked."/>
+		<property name="additional_inheritance" type="stringlist_escapes"
+			help="Additional classes to inherit from (these can be your own classes if you specified their header file in base_hdr_includes in the C++ Settings section above)."/>
+		<property name="class_methods" type="stringlist_escapes"
+			help="Additional class methods to add (useful if you are *not* using a derived class."/>
+		<property name="class_members" type="stringlist_escapes"
+			help="Additional class variable members to add (useful if you are *not* using a derived class."/>
+		<property name="private_members" type="bool"
+			help="Check this to make all protected: members private:. This can only be done if you are NOT creating a derived class (use_derived_class is unchecked)."/>
+	</gen>
+
+	<gen class="wxPython Settings" type="interface">
+		<property name="python_file" type="file"
+			help="The filename to use if generating code for wxPython."/>
+		<property name="insert_python_code" type="code_edit"
+			help="Specify the code to insert into the python file after the generated import statements. This is usually used to import addtional modules, but can be any valid python code for use before the class definition."/>
+		<property name="python_import_list" type="include_files"
+			help="Specifies the python modules that should be imported. These will be added using the import command."/>
+		<!-- <property name="python_variable_args" type="bool"
+			help="If checked, the form
+		parameters will be set to (*args, **kwargs) instead of listing all the parameters and their
+		default values.">1</property> -->
+		<property name="python_inherit_name" type="string"
+			help="The name to use for an inherited class. If specified, the Inherit tab in the Python panel will include a sample for creating an inherited class."/>
+	</gen>
+
+	<gen class="wxRuby Settings" type="interface">
+		<property name="ruby_file" type="file"
+			help="The filename to use if generating code for wxRuby."/>
+		<property name="insert_ruby_code" type="code_edit"
+			help="Specify the code to insert into the ruby file after the generated import statements. This can be any valid ruby code for use before the class definition."/>
+		<property name="relative_require_list" type="include_files"
+			help="Specifies the ruby modules that are required by this module. These will be added using the relative_require command, and are relative to the location of this generated file."/>
+		<property name="ruby_inherit_name" type="string"
+			help="The name to use for an inherited class. If specified, the Inherit tab in the Ruby panel will include a sample for creating an inherited class."/>
+	</gen>
+
+	<gen class="wxGo Settings" type="interface" enable="internal">
+		<property name="golang_file" type="file"
+			help="The filename to use if generating code for wxRuby."/>
+		<property name="golang_inherit_name" type="string"
+			help="The name to use for an inherited class. If specified, the Inherit tab in the Ruby panel will include a sample for creating an inherited class."/>
+		<property name="insert_golang_code" type="code_edit"
+			help="Specify the code to insert into the Go file after the generated import statements. This can be any valid Go code for use before the class definition."/>
+		<property name="golang_import_list" type="include_files"
+			help="Specifies the Go modules that should be imported. These will be placed in quotes and added using the import command."/>
+	</gen>
+
+	<gen class="wxLua Settings" type="interface" enable="internal">
+		<property name="lua_file" type="file"
+			help="The filename to use if generating code for wxRuby."/>
+		<property name="lua_inherit_name" type="string"
+			help="The name to use for an inherited class. If specified, the Inherit tab in the Ruby panel will include a sample for creating an inherited class."/>
+		<property name="insert_lua_code" type="code_edit"
+			help="Specify the code to insert into the Lua file after the generated import statements. This can be any valid Lua code for use before the class definition."/>
+		<property name="lua_require_list" type="include_files"
+			help="Specifies the Lua modules that are required for this module. These will be placed in quotes and added using the require command."/>
+	</gen>
+
+	<gen class="wxPerl Settings" type="interface" enable="internal">
+		<property name="perl_file" type="file"
+			help="The filename to use if generating code for wxRuby."/>
+		<property name="perl_inherit_name" type="string"
+			help="The name to use for an inherited class. If specified, the Inherit tab in the Ruby panel will include a sample for creating an inherited class."/>
+		<property name="insert_perl_code" type="code_edit"
+			help="Specify the code to insert into the Perl file after the generated import statements. This can be any valid Perl code for use before the class definition."/>
+		<property name="perl_package_list" type="include_files"
+			help="Specifies the Perl packages that are required for this module. These will be added via the use command."/>
+	</gen>
+
+	<gen class="wxRust Settings" type="interface" enable="internal">
+		<property name="rust_file" type="file"
+			help="The filename to use if generating code for wxRuby."/>
+		<property name="rust_inherit_name" type="string"
+			help="The name to use for an inherited class. If specified, the Inherit tab in the Ruby panel will include a sample for creating an inherited class."/>
+		<property name="insert_rust_code" type="code_edit"
+			help="Specify the code to insert into the Rust file after the generated import statements. This can be any valid Rust code for use before the class definition."/>
+		<property name="rust_module_list" type="include_files"
+			help="Specifies the Rust modules that are used in this module. These will be added via the use command."/>
+	</gen>
+
+	<gen class="XRC Settings" type="interface">
+		<property name="xrc_file" type="file"
+			help="The filename to use if generating XRC (wxPython can override this with its own file name)."/>
+		<property name="xrc_no_whitespace" type="bool"
+			help="If checked, no leading whitespace will be used. This makes the file smaller, but less readable."> 0</property>
+	</gen>
+
+	<gen class="C++" type="interface">
+		<property name="wxWidgets_version" type="option"
+			help="If you specify a control or property that requires a wxWidgets version later than this number, then the code will be generated within a conditional block.">
+			<option name="3.1"/>
+			<option name="3.2"/>
+		</property>
+		<property name="base_directory" type="path"
+			help="The generated base class output directory. If a form's base_file contains only a filename (without a path), the files will be generated in this directory. Leave blank to generate the in the same directory as the project file."/>
+		<property name="derived_directory" type="path"
+			help="The generated derived class output directory. Leave blank to generate them in the same directory as the project file."/>
+		<property name="source_ext" type="option"
+			help="Specifies the file extension to use when creating C++ source files.">
+			<option name=".cpp"/>
+			<option name=".cc"/>
+			<option name=".cxx"/> .cpp </property>
+		<property name="header_ext" type="option"
+			help="Specifies the file extension to use when creating C++ header files.">
+			<option name=".h"/>
+			<option name=".hh"/>
+			<option name=".hpp"/>
+			<option name=".hxx"/> .h </property>
+		<property name="cpp_line_length" type="uint"
+			help="Specifies a guideline for generated code line length. Most lines will be wrapped so that they do not exceed this length.">
+			110</property>
+		<property name="local_pch_file" type="file"
+			help="The filename of a local precompiled header file. The file will be included in quotes."/>
+		<property name="src_preamble" type="code_edit"
+			help="Code to generate at the top of all source files after the inclusion of any local precompiled header file. This can include header files, comments, macros, etc."/>
+		<property name="project_src_includes" type="include_files"
+			help="Lists one or more local header files to include in all generated source files."/>
+		<property name="name_space" type="string"
+			help="Namespace to enclose class declarations in. Separate nested namespaces with a double colon (e.g. company::app::subname)"/>
+		<property name="generate_cmake" type="bool"
+			help="If checked, this will auto-generate a .cmake file whenever C++ code is generated.">0</property>
+		<property name="cmake_file" type="file"
+			help="The filename of the cmake file to create. By default, this will be created in the same directory as the project file.">
+			wxui_code.cmake</property>
+		<property name="cmake_varname" type="string"
+			help="The variable name to set in the .cmake file. This will contain paths to every generated class.">
+			wxue_generated_code</property>
+	</gen>
+
+	<gen class="XRC" type="interface">
+		<property name="xrc_directory" type="path"
+			help="The directory to generate xrc files in. Leave blank to generate them in the same directory as the project file."/>
+		<property name="combine_all_forms" type="bool"
+			help="If checked, Export XRC (File menu) will create a single XRC file containing all forms.">1</property>
+		<property name="combined_xrc_file" type="file"
+			help="This filename will be used to write all XRC content to unless you unchecked the combine_all_forms property above."/>
+		<property name="xrc_art_directory" type="path"
+			help="The directory containing the images your XRC file will load.">./</property>
+	</gen>
+
+	<gen class="wxPython" type="interface">
+		<property name="wxPython_version" type="option"
+			help="Specifies the minimum version of wxPython needed to run the generated code.">
+			<option name="4.2.0"/> 4.2.0 </property>
+		<property name="python_output_folder" type="path"
+			help="If a folder name is specified, it will be used for all python code."/>
+		<!-- <property name="python_combine_forms" type="bool"
+			help="If checked, all code will be generated to a single file.\n\nThe code preview will only display code for the
+		currently selected form, even if this is checked.">0</property>
+		<property name="python_combined_file" type="file"
+			help="This filename will be used to write all Python content to unless you unchecked the python_combine_forms property
+		above." />
+-->
+		<property name="python_line_length" type="uint"
+			help="Specifies a guideline for generated code line length. Most lines will be wrapped so that they do not exceed this length.">
+			90</property>
+		<property name="python_project_preamble" type="code_edit"
+			help="Code to generate at the top of every source file after the comment block and before the first import statement."/>
+	</gen>
+
+	<gen class="wxRuby" type="interface">
+		<property name="wxRuby_version" type="option"
+			help="Specifies the minimum version of wxRuby needed to run the generated code.">
+			<option name="0.9.1"/>
+			<option name="1.0.0"/> 0.9.1 </property>
+		<property name="ruby_output_folder" type="path"
+			help="If a folder name is specified, it will be used for all ruby code."/>
+		<property name="ruby_line_length" type="uint"
+			help="Specifies a guideline for generated code line length. Most lines will be wrapped so that they do not exceed this length.">
+			80</property>
+		<property name="disable_rubo_cop" type="bool"
+			help="If checked, all RuboCop warnings will be disabled within the generated code."> 0</property>
+		<property name="ruby_project_preamble" type="code_edit"
+			help="Code to generate at the top of every source file after the comment block and any disabled RuboCop warnings."/>
+	</gen>
+
+	<gen class="wxGo" type="interface" enable="internal">
+		<property name="wxGo_version" type="option"
+			help="Specifies the minimum version of wxGo needed to run the generated code.">
+			<option name="0.3.0"/> 0.3.0 </property>
+		<property name="golang_output_folder" type="path"
+			help="If a folder name is specified, it will be used for all Go code."/>
+		<property name="golang_line_length" type="uint"
+			help="Specifies a guideline for generated code line length. Most lines will be wrapped so that they do not exceed this length.">
+			100</property>
+	</gen>
+
+	<gen class="wxLua" type="interface" enable="internal">
+		<property name="wxLua_version" type="option"
+			help="Specifies the minimum version of wxLua needed to run the generated code.">
+			<option name="3.2.0"/> 3.2.0 </property>
+		<property name="lua_output_folder" type="path"
+			help="If a folder name is specified, it will be used for all Lua code."/>
+		<property name="lua_line_length" type="uint"
+			help="Specifies a guideline for generated code line length. Most lines will be wrapped so that they do not exceed this length.">
+			100</property>
+	</gen>
+
+	<gen class="wxPerl" type="interface" enable="internal">
+		<property name="wxPerl_version" type="option"
+			help="Specifies the minimum version of wxPerl needed to run the generated code.">
+			<option name="0.3.0"/> 0.3.0 </property>
+		<property name="perl_output_folder" type="path"
+			help="If a folder name is specified, it will be used for all Perl code."/>
+		<property name="perl_line_length" type="uint"
+			help="Specifies a guideline for generated code line length. Most lines will be wrapped so that they do not exceed this length.">
+			80</property>
+	</gen>
+
+	<gen class="wxRust" type="interface" enable="internal">
+		<property name="wxRust_version" type="option"
+			help="Specifies the minimum version of wxRust needed to run the generated code.">
+			<option name="0.8.0"/> 0.8.0 </property>
+		<property name="rust_output_folder" type="path"
+			help="If a folder name is specified, it will be used for all Rust code."/>
+		<property name="rust_line_length" type="uint"
+			help="Specifies a guideline for generated code line length. Most lines will be wrapped so that they do not exceed this length.">
+			100</property>
+	</gen>
+
+	<gen class="Folder C++ Overrides" type="interface">
+		<property name="folder_base_directory" type="path"
+			help="Overrides any project setting of generated base class output directory. Only affects the forms within this folder."/>
+		<property name="folder_derived_directory" type="path"
+			help="Overrides any project setting of derived class output directory. Only affects the forms within this folder."/>
+		<property name="folder_namespace" type="string"
+			help="Overrides any project setting of namespace to enclose class declarations in. Only affects the forms within this folder."/>
+		<property name="folder_cmake_file" type="file"
+			help="Overrides any project setting of filename of the cmake file to create.  Only affects the forms within this folder."/>
+		<property name="folder_cmake_varname" type="string"
+			help="Overrides any project setting of the variable name to set in the .cmake file. Only affects the forms within this folder."/>
+	</gen>
+
+	<gen class="Folder wxPython Overrides" type="interface">
+		<property name="folder_python_output_folder" type="path"
+			help="Overrides any project setting of the output folder used for all generated python code. Only affects the forms within this folder."/>
+		<!-- 		<property name="folder_python_combine_forms" type="bool"
+			help="If checked, the code for all forms in this folder will be generated to a single file.\n\nThe code preview will
+		only display code for the currently selected form, even if this is checked.">0</property>
+		<property name="folder_python_combined_file" type="file"
+			help="Overrides any project setting of the combined filename. Only affects the forms within this folder, and is only
+		used if the folder_python_combine_forms above is checked." />
+-->
+	</gen>
+
+	<gen class="Folder wxRuby Overrides" type="interface">
+		<property name="folder_ruby_output_folder" type="path"
+			help="Overrides any project setting of the output folder used for all generated ruby code. Only affects the forms within this folder."/>
+	</gen>
+
+	<gen class="Folder XRC Overrides" type="interface">
+		<property name="folder_xrc_directory" type="path"
+			help="Overrides any project setting of the output folder used for all generated XRC code. Only affects the forms within this folder."/>
+		<property name="folder_combined_xrc_file" type="file"
+			help="Overrides any project setting of the combined filename. Only affects the forms within this folder."/>
+	</gen>
+
+	<gen class="sizer_child" type="interface">
+		<property name="alignment" type="bitlist">
+			<option name="wxALIGN_LEFT"
+				help="Align the item to the left of the space allotted to it by the sizer, adjusted for the border if any."/>
+			<option name="wxALIGN_TOP"
+				help="Align the item to the top of the space allotted to it by the sizer, adjusted for the border if any."/>
+			<option name="wxALIGN_RIGHT"
+				help="Align the item to the right of the space allotted to it by the sizer, adjusted for the border if any."/>
+			<option name="wxALIGN_BOTTOM"
+				help="Align the item to the bottom of the space allotted to it by the sizer, adjusted for the border if any."/>
+			<option name="wxALIGN_CENTER"
+				help="Align the item to the center of the space allotted to it by the sizer, adjusted for the border if any."/>
+			<option name="wxALIGN_CENTER_HORIZONTAL"
+				help="Align the item to the horizontal center of the space allotted to it by the sizer, adjusted for the border if any."/>
+			<option name="wxALIGN_CENTER_VERTICAL"
+				help="Align the item to the vertical center of the space allotted to it by the sizer, adjusted for the border if any."/>
+		</property>
+		<property name="borders" type="bitlist">
+			<option name="wxALL"
+				help="Enable all borders"/>
+			<option name="wxLEFT"
+				help="Enable the left border"/>
+			<option name="wxRIGHT"
+				help="Enable the right border"/>
+			<option name="wxTOP"
+				help="Enable the top border"/>
+			<option name="wxBOTTOM"
+				help="Enable the bottom border"/> wxALL </property>
+		<property name="border_size" type="uint"
+			help="Sets the border size, if the flag parameter is set to include any border flag. The default value of 5 will be scaled on high DPI displayes.">
+			5</property>
+		<property name="scale_border_size" type="bool"
+			help="If checked, the border size will be scaled on high DPI displays. Always scaled if size is 5, 10 or 15.">
+			1</property>
+		<property name="flags" type="bitlist">
+			<option name="wxEXPAND"
+				help="The item will be expanded to fill the space assigned to the item."/>
+			<option name="wxSHAPED"
+				help="The item will be expanded as much as possible while also maintaining its aspect ratio."/>
+			<option name="wxFIXED_MINSIZE"
+				help="Normally wxSizers will use GetAdjustedBestSize to determine what the minimal size of window items should be, and will use that size to calculate the layout. This allows layouts to adjust when an item changes and its best size becomes different. If you would rather have a window item stay the size it started with then use wxFIXED_MINSIZE."/>
+			<option name="wxRESERVE_SPACE_EVEN_IF_HIDDEN"
+				help="Normally wxSizers don't allocate space for hidden windows or other items. This flag overrides this behaviour so that sufficient space is allocated for the window even if it isn't visible. This makes it possible to dynamically show and hide controls without resizing the parent window."/>
+		</property>
+		<property name="proportion" type="uint"
+			help="How much this control will stretch in proportion to the other controls in the same sizer. Set to 0 to prevent stretching.">
+			0</property>
+		<property name="row" type="int"
+			help="Row for the item.">0</property>
+		<property name="column" type="int"
+			help="Column for the item.">0</property>
+		<property name="rowspan" type="int"
+			help="The number of rows that the item spans.">1</property>
+		<property name="colspan" type="int"
+			help="The number of columns that the item spans.">1</property>
+	</gen>
+	<gen class="sizer_dimension" type="interface">
+		<property name="minimum_size" type="wxSize"
+			help="Normally, the sizer will calculate its minimal size based purely on how much space its children need. If the minimal size is > 0, 'GetMinSize' will return either the minimal size as requested by its children or the minimal size set here, depending on which is bigger."/>
+	</gen>
+
+	<gen class="sizeritem_settings" type="interface">
+		<property name="alignment" type="bitlist">
+			<option name="wxALIGN_LEFT"
+				help="Align the item to the left of the space allotted to it by the sizer, adjusted for the border if any."/>
+			<option name="wxALIGN_TOP"
+				help="Align the item to the top of the space allotted to it by the sizer, adjusted for the border if any."/>
+			<option name="wxALIGN_RIGHT"
+				help="Align the item to the right of the space allotted to it by the sizer, adjusted for the border if any."/>
+			<option name="wxALIGN_BOTTOM"
+				help="Align the item to the bottom of the space allotted to it by the sizer, adjusted for the border if any."/>
+			<option name="wxALIGN_CENTER"
+				help="Align the item to the center of the space allotted to it by the sizer, adjusted for the border if any."/>
+			<option name="wxALIGN_CENTER_HORIZONTAL"
+				help="Align the item to the horizontal center of the space allotted to it by the sizer, adjusted for the border if any."/>
+			<option name="wxALIGN_CENTER_VERTICAL"
+				help="Align the item to the vertical center of the space allotted to it by the sizer, adjusted for the border if any."/>
+		</property>
+		<property name="borders" type="bitlist">
+			<option name="wxALL"
+				help="Enable all borders"/>
+			<option name="wxLEFT"
+				help="Enable the left border"/>
+			<option name="wxRIGHT"
+				help="Enable the right border"/>
+			<option name="wxTOP"
+				help="Enable the top border"/>
+			<option name="wxBOTTOM"
+				help="Enable the bottom border"/> wxALL </property>
+		<property name="border_size" type="uint"
+			help="Sets the border size, if the flag parameter is set to include any border flag. The default value of 5 will be scaled on high DPI displayes.">
+			5</property>
+		<property name="scale_border_size" type="bool"
+			help="If checked, the border size will be scaled on high DPI displays. Always scaled if size is 5, 10 or 15.">
+			1</property>
+		<property name="flags" type="bitlist">
+			<option name="wxEXPAND"
+				help="The item will be expanded to fill the space assigned to the item."/>
+			<option name="wxSHAPED"
+				help="The item will be expanded as much as possible while also maintaining its aspect ratio."/>
+			<option name="wxFIXED_MINSIZE"
+				help="Normally wxSizers will use GetAdjustedBestSize to determine what the minimal size of window items should be, and will use that size to calculate the layout. This allows layouts to adjust when an item changes and its best size becomes different. If you would rather have a window item stay the size it started with then use wxFIXED_MINSIZE."/>
+			<option name="wxRESERVE_SPACE_EVEN_IF_HIDDEN"
+				help="Normally wxSizers don't allocate space for hidden windows or other items. This flag overrides this behaviour so that sufficient space is allocated for the window even if it isn't visible. This makes it possible to dynamically show and hide controls without resizing the parent window."/>
+		</property>
+	</gen>
+
+	<gen class="flexgridsizerbase" image="flex_grid_sizer" type="interface">
+		<property name="vgap" type="uint"
+			help="The vertical gap (in pixels) between the cells in the sizer.">0</property>
+		<property name="hgap" type="uint"
+			help="The horizontal gap (in pixels) between cells in the sizer.">0</property>
+		<property name="growablecols" type="uintpairlist"
+			help="Comma separated list of column indices (starting from zero, optional proportion appended after a colon) that should be grown if there is extra space available to the sizer."/>
+		<property name="growablerows" type="uintpairlist"
+			help="Comma separated list of row indices (starting from zero, optional proportion appended after a colon) that should be grown if there is extra space available to the sizer."/>
+		<property name="flexible_direction" type="option"
+			help="wxFlexGridSizer can size items equally in one direction but unequally ('flexibly') in the other">
+			<option name="wxVERTICAL"
+				help="Rows are flexibly sized."/>
+			<option name="wxHORIZONTAL"
+				help="Columns are flexibly sized."/>
+			<option name="wxBOTH"
+				help="Both rows and columns are flexibly sized (this is the default value)."/> wxBOTH </property>
+		<property name="non_flexible_grow_mode" type="option"
+			help="If the sizer is only flexible in one direction (this can be changed using 'flexible_direction'), it needs to be decided how the sizer should grow in the other ('non flexible') direction in order to fill the available space.">
+			<option name="wxFLEX_GROWMODE_NONE"
+				help="Sizer doesn't grow in the non flexible direction."/>
+			<option name="wxFLEX_GROWMODE_SPECIFIED"
+				help="Sizer honors growable columns/rows set with AddGrowableCol and AddGrowableRow. In this case equal sizing applies to minimum sizes of columns or rows (this is the default value)."/>
+			<option
+				name="wxFLEX_GROWMODE_ALL"
+				help="Sizer equally stretches all columns or rows in the non flexible direction, whether they are growable or not in the flexible direction."/>
+			wxFLEX_GROWMODE_SPECIFIED </property>
+	</gen>
+
+	<gen class="Text Validator" type="interface">
+		<property name="validator_variable" type="string"
+			help="Name of a member variable associated with the validator"/>
+		<property name="validator_data_type" type="option"
+			help="Data type of the member variable">
+			<option name="wxString"
+				help="String value."/>
+			<option name="wxFileName"
+				help="Only use this with a wxGenericValidator type."/>
+				<option name="short"
+				help="Only use this with a wxIntegerValidator type."/>
+			<option name="int"
+				help="Only use this with a wxIntegerValidator type."/>
+			<option name="long"
+				help="Only use this with a wxIntegerValidator type."/>
+			<option name="long long"
+				help="Only use this with a wxIntegerValidator type."/>
+			<option name="unsigned short"
+				help="Only use this with a wxIntegerValidator type."/>
+			<option name="unsigned int"
+				help="Only use this with a wxIntegerValidator type."/>
+			<option name="unsigned long"
+				help="Only use this with a wxIntegerValidator type."/>
+			<option name="unsigned long long"
+				help="Only use this with a wxIntegerValidator type."/>
+			<option name="double"
+				help="Only use this with a wxFloatingPointValidator type."/>
+			<option name="float"
+				help="Only use this with a wxFloatingPointValidator type."/> wxString </property>
+		<property name="get_function" type="string"
+			help="Function name to get the value of the variable."/>
+		<property name="set_function" type="string"
+			help="Function name to set the value of the variable."/>
+		<property name="minValue" type="string"
+			help="Used by wxIntegerValidator and wxFloatingPointValidator, this is the minimum value accepted by the validator.\n\nIgnored unless maxValue is also set."/>
+		<property name="maxValue" type="string"
+			help="Used by wxIntegerValidator and wxFloatingPointValidator, this is the maximum value accepted by the validator.\n\nIgnore unless minValue is also set."/>
+		<property name="precision" type="int"
+			help="Used by wxFloatingPointValidator. The number of decimal digits after the decimal separator to show and accept. -1 uses the maximum precision possible.">
+			-1 </property>
+		<property name="validator_style" type="bitlist"
+			help="Data filtering style for wxTextValidator or wxGenericValidator.">
+			<option name="wxFILTER_NONE"
+				help="No filtering takes place."/>
+			<option name="wxFILTER_ASCII"
+				help="Non-ASCII characters are filtered out."/>
+			<option name="wxFILTER_ALPHA"
+				help="Non-alpha characters are filtered out."/>
+			<option name="wxFILTER_ALPHANUMERIC"
+				help="Non-alphanumeric characters are filtered out."/>
+			<option name="wxFILTER_DIGITS"
+				help="Non-numeric characters are filtered out. Uses isdigit() to perform the check."/>
+			<option
+				name="wxFILTER_NUMERIC"
+				help="Non-numeric characters are filtered out, but allows decimal points, minus/plus signs and the 'e' or 'E' character."/>
+			<option
+				name="wxFILTER_INCLUDE_LIST"
+				help="Use an include list. The validator checks if the user input is on the list, complaining if not. See wxTextValidator::SetIncludes."/>
+			<option
+				name="wxFILTER_EXCLUDE_LIST"
+				help="Use an exclude list. The validator checks if the user input is on the list, complaining if it is. See wxTextValidator::SetExcludes."/>
+			<option
+				name="wxFILTER_INCLUDE_CHAR_LIST"
+				help="Use an include list. The validator checks if each input character is in the list (one character per list element), complaining if not. See wxTextValidator::SetIncludes."/>
+			<option
+				name="wxFILTER_EXCLUDE_CHAR_LIST"
+				help="Use an include list. The validator checks if each input character is in the list (one character per list element), complaining if it is. See wxTextValidator::SetExcludes."/>
+			<option
+				name="wxNUM_VAL_THOUSANDS_SEPARATOR"
+				help="Used by wxIntegerValidator. When this style is used, numbers are formatted using the thousands separators after validating the user entry (if the current locale uses the thousands separators character)."/>
+			<option
+				name="wxNUM_VAL_ZERO_AS_BLANK"
+				help="Used by wxIntegerValidator and wxFloatingPointValidator. With this style a value of zero in the associated variable is translated to an empty string and an empty value of the control is translated to a value of zero."/>
+			<option
+				name="wxNUM_VAL_NO_TRAILING_ZEROES"
+				help="Used by wxFloatingPointValidator. Indicates that trailing zeroes should be removed from the control text when it is validated. By default, as many zeroes as needed to satisfy the precision used when creating the validator will be appended."/>
+			wxFILTER_NONE </property>
+	</gen>
+
+	<gen class="Boolean Validator" type="interface">
+		<property name="validator_variable" type="string"
+			help="Name of a member variable associated with the validator"/>
+		<property name="get_function" type="string"
+			help="Optional public function to get the value of the variable."/>
+		<property name="set_function" type="string"
+			help="Optional public function to set the value of the variable."/>
+	</gen>
+
+	<gen class="Integer Validator" type="interface">
+		<property name="validator_variable" type="string"
+			help="Name of a member variable associated with the validator"/>
+		<property name="get_function" type="string"
+			help="Function name to get the value of the variable."/>
+		<property name="set_function" type="string"
+			help="Function name to set the value of the variable."/>
+	</gen>
+
+	<gen class="Choice Validator" type="interface">
+		<property name="validator_variable" type="string"
+			help="Name of a member variable associated with the validator"/>
+		<property name="validator_data_type" type="option"
+			help="Data type of the member variable">
+			<option name="wxString"
+				help="String value."/>
+			<option name="int"
+				help="Integer value."/> wxString </property>
+		<property name="get_function" type="string"
+			help="Function name to get the value of the variable."/>
+		<property name="set_function" type="string"
+			help="Function name to set the value of the variable."/>
+	</gen>
+
+	<gen class="String Validator" type="interface">
+		<property name="validator_variable" type="string"
+			help="Name of a member variable associated with the validator"/>
+		<property name="set_function" type="string"
+			help="Function name to set the value of the variable."/>
+	</gen>
+
+	<gen class="List Validator" type="interface">
+		<property name="validator_variable" type="string"
+			help="Name of a member variable associated with the validator"/>
+		<property name="get_function" type="string"
+			help="Function name to get the value of the variable."/>
+		<property name="set_function" type="string"
+			help="Function name to set the value of the variable."/>
+	</gen>
+
+	<gen class="wxTopLevelWindow" type="interface">
+		<event name="wxEVT_ACTIVATE" class="wxActivateEvent"
+			help="An activate event is sent when a window or application is being activated or deactivated."/>
+		<event name="wxEVT_CLOSE_WINDOW" class="wxCloseEvent"
+			help=""/>
+		<event name="wxEVT_ICONIZE" class="wxIconizeEvent"
+			help="Only available for the wxMSW, wxGTK ports."/>
+		<event name="wxEVT_MAXIMIZE" class="wxMaximizeEvent"
+			help="Currently this event is only generated in wxMSW, wxGTK and wxOSX/Cocoa ports."/>
+		<event name="wxEVT_MOVE" class="wxMoveEvent"
+			help="Generated when a window is moved."/>
+		<event name="wxEVT_MOVING" class="wxMoveEvent"
+			help="Generated while the user is moving the window. These events are currently only generated by wxMSW port."/>
+		<event name="wxEVT_MOVE_START" class="wxMoveEvent"
+			help="Generated when the user starts to move or size a window. These events are currently only generated by wxMSW port."/>
+		<event name="wxEVT_MOVE_END" class="wxMoveEvent"
+			help="Generated when the user stops moving or sizing a window. These events are currently only generated by wxMSW port."/>
+		<event name="wxEVT_SHOW" class="wxShowEvent"
+			help="Sent when the window is shown or hidden. Notice that the event is not triggered when the application is iconized (minimized) or restored under wxMSW."/>
+		<event name="wxEVT_IDLE" class="wxIdleEvent"
+			help="Generated when the system becomes idle."/>
+	</gen>
+
+	<gen class="wxWindow" type="interface">
+		<property name="id" type="id"
+			help="Specifies the window identifier. When generating Python code, a non wx.Widgets id will be global unless prefixed with self.">
+			wxID_ANY</property>
+		<property name="minimum_size" type="wxSize"
+			help="Sets the minimum size of the window. Any positive value will override the automatic size calculation that would normally be done."/>
+		<property name="variant" type="option"
+			help="Chooses a different variant of the window display to use (calls SetWindowVariant).">
+			<option name="normal"
+				help="Normal size"/>
+			<option name="small"
+				help="About 25% smaller than normal."/>
+			<option name="mini"
+				help="About 33% smaller than normal."/>
+			<option name="large"
+				help="About 35% larger than normal."/> normal </property>
+		<property name="maximum_size" type="wxSize"
+			help="Sets the maximum allowable size of the window."/>
+		<property name="pos" type="wxPoint"
+			help="Specifies the position to pass to the constructor for the window. A -1 indicates that the value should be calculated automatically."/>
+		<property name="size" type="wxSize"
+			help="Specifies the size to pass to the constructor for the window. A -1 indicates that the value should be calculated automatically. Automatic layout (such as calling SetSizerAndFit) may override these values."/>
+		<property name="window_style" type="bitlist">
+			<option name="wxBORDER_DEFAULT"
+				help="The window class will decide the kind of border to show, if any."/>
+			<option name="wxBORDER_SIMPLE"
+				help="Displays a thin border around the window. wxSIMPLE_BORDER is the old name for this style."/>
+			<option name="wxBORDER_SUNKEN"
+				help="Displays a sunken border. wxSUNKEN_BORDER is the old name for this style."/>
+			<option name="wxBORDER_RAISED"
+				help="Displays a raised border. wxRAISED_BORDER is the old name for this style."/>
+			<option name="wxBORDER_STATIC"
+				help="Displays a border suitable for a static control. wxSTATIC_BORDER is the old name for this style. Windows only."/>
+			<option name="wxBORDER_THEME"
+				help="Displays a native border suitable for a control, on the current platform. On Windows XP or Vista, this will be a themed border; on most other platforms a sunken border will be used. For more information for themed borders on Windows, please see Themed borders on Windows."/>
+			<option name="wxBORDER_NONE"
+				help="Displays no border, overriding the default border style for the window."/>
+			<option name="wxTRANSPARENT_WINDOW"
+				help="The window is transparent, that is, it will not receive paint events. Windows only."/>
+			<option name="wxTAB_TRAVERSAL"
+				help="Setting this will cause the tab key to traverse child windows."/>
+			<option name="wxWANTS_CHARS"
+				help="Use this to indicate that the window wants to get all char/key events for all keys - even for keys like TAB or ENTER which are usually used for dialog navigation and which wouldn't be generated without this style. If you need to use this style in order to get the arrows or etc., but would still like to have normal keyboard navigation take place, you should call Navigate in response to the key events for Tab and Shift-Tab."/>
+			<option name="wxVSCROLL"
+				help="Use this style to enable a vertical scrollbar. Notice that this style cannot be used with native controls which don't support scrollbars nor with top-level windows in most ports."/>
+			<option name="wxHSCROLL"
+				help="Use this style to enable a horizontal scrollbar. The same limitations as for wxVSCROLL apply to this style."/>
+			<option name="wxALWAYS_SHOW_SB"
+				help="If a window has scrollbars, disable them instead of hiding them when they are not needed (i.e. when the size of the window is big enough to not require the scrollbars to navigate it). This style is currently implemented for wxMSW, wxGTK and wxUniversal and does nothing on the other platforms."/>
+			<option name="wxCLIP_CHILDREN"
+				help="Use this style to eliminate flicker caused by the background being repainted, then children being painted over them. Windows only."/>
+			<option name="wxFULL_REPAINT_ON_RESIZE"
+				help="Use this style to force a complete redraw of the window whenever it is resized instead of redrawing just the part of the window affected by resizing. Currently this style applies on GTK+ 2 and Windows only, and full repainting is always done on other platforms."/>
+		</property>
+		<property name="window_extra_style" type="bitlist">
+			<option name="wxWS_EX_VALIDATE_RECURSIVELY"
+				help="By default, Validate/TransferDataTo/FromWindow() only work on direct children of the window (compatible behaviour). Set this flag to make them recursively descend into all subwindows."/>
+			<option name="wxWS_EX_BLOCK_EVENTS"
+				help="wxCommandEvents are propagated upward to the parent window, it's parent window, etc. Setting this flag blocks this propagation at this window, preventing events from being propagated further upwards."/>
+			<option name="wxWS_EX_TRANSIENT"
+				help="Don't use this window as an implicit parent for the other windows: this must be used with transient windows as otherwise there is the risk of creating a dialog/frame with this window as a parent which would lead to a crash if the parent is destroyed before the child."/>
+			<option name="wxWS_EX_PROCESS_IDLE"
+				help="This window should always process idle events, even if the mode set by wxIdleEvent::SetMode is wxIDLE_PROCESS_SPECIFIED."/>
+			<option name="wxWS_EX_PROCESS_UI_UPDATES"
+				help="This window should always process UI update events, even if the mode set by wxUpdateUIEvent::SetMode is wxUPDATE_UI_PROCESS_SPECIFIED."/>
+		</property>
+		<property name="tooltip" type="string_edit_escapes"
+			help="Attach a tooltip to the window."/>
+		<property name="disabled" type="bool"
+			help="Disable the window for user input. Note that when a parent window is disabled, all of its children are disabled as well and they are reenabled again when the parent is.">
+			0</property>
+		<property name="hidden" type="bool"
+			help="Shows or hides the window.">0</property>
+		<property name="foreground_colour" type="wxColour"
+			help="Sets the foreground colour of the window."/>
+		<property name="background_colour" type="wxColour"
+			help="Sets the background colour of the window."/>
+		<property name="font" type="wxFont"
+			help="Sets the font for this window. This should not be used for a parent window if you don't want its font to be inherited by its children"/>
+		<property name="context_help" type="string_escapes"
+			help="Sets the help text to be used as context-sensitive help for this window."/>
+		<property name="derived_class" type="string"
+			help="If you have derived a class from a wxWidget class and you want this component to use your derived class, then specify that class name here. You will need to add the header file for your class to the derived_header property."/>
+		<property name="derived_params" type="string_escapes"
+			help="Specifies additional parameters to insert before the normal wxWidget class parameters."/>
+		<property name="derived_header" type="file"
+			help="Specify the name of the header file that declares your derived class."/>
+		<property name="window_name" type="string_escapes"/>
+		<property name="platforms" type="bitlist">
+			<option name="Windows"
+				help="Create this control when running on Windows."/>
+			<option name="Unix"
+				help="Create this control when running on Unix."/>
+			<option name="Mac"
+				help="Create this control when running on Mac."/> Windows|Unix|Mac </property>
+	</gen>
+
+	<gen class="wxMdiWindow" type="interface">
+		<property name="id" type="id"
+			help="Specifies the window identifier. When generating Python code, a non wx.Widgets id will be global unless prefixed with self.">
+			wxID_ANY </property>
+		<property name="pos" type="wxPoint"
+			help="Specifies the position to pass to the constructor for the window. A -1 indicates that the value should be calculated automatically."/>
+		<property name="size" type="wxSize"
+			help="Specifies the size to pass to the constructor for the window. A -1 indicates that the value should be calculated automatically. Automatic layout (such as calling SetSizerAndFit) may override these values."/>
+		<property name="window_name" type="string_escapes"/>
+	</gen>
+
+</GeneratorDefinitions>

@@ -140,6 +140,9 @@ protected:
     void GenerateCppClassHeader();
     void GenerateCppClassConstructor();
 
+    // Called from GenerateCppClassConstructor if node is a gen_Data
+    void GenerateDataClassConstructor(PANEL_PAGE panel_type);
+
     void GenSrcEventBinding(Node* class_node, EventVector& events);
     void GenHdrEvents();
     void GenPythonEventHandlers(EventVector& events);

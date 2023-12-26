@@ -5,6 +5,8 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
+#include <functional>
+
 #include <frozen/set.h>
 
 #include "node_creator.h"
@@ -15,90 +17,25 @@
 #include "node.h"            // Node class
 #include "node_types.h"      // NodeType -- Class for storing node types and allowable child count
 #include "prop_decl.h"       // PropChildDeclaration and PropDeclaration classes
+#include "wxue_data.h"       // Generated wxue_data strings and functions
 
 #include "pugixml.hpp"
 
-// The following are interfaces
-
-#include "../xml/interface_xml.xml"
-#include "../xml/lang_settings.xml"
-#include "../xml/project_interfaces_xml.xml"
-#include "../xml/sizer_child_xml.xml"
-#include "../xml/validators_xml.xml"
-#include "../xml/window_interfaces_xml.xml"
-
 // clang-format off
-inline const char* lst_xml_interfaces[] = {
 
-    // Note that interface_xml must *not* be added to this list! It is loaded as the root document.
-    lang_settings_xml,
-    project_interfaces_xml,
-    sizer_child_xml,
-    validators_xml,
-    window_interfaces_xml,
-
-};
-// clang-format on
-
-// The following are generators
-
-#include "../xml/aui_xml.xml"
-#include "../xml/bars_xml.xml"
-#include "../xml/books_xml.xml"
-#include "../xml/boxes_xml.xml"
-#include "../xml/buttons_xml.xml"
-#include "../xml/containers_xml.xml"
-#include "../xml/dataview_xml.xml"
-#include "../xml/dialogs_xml.xml"
-#include "../xml/doc_view_app_xml.xml"
-#include "../xml/forms_xml.xml"
-#include "../xml/grid_xml.xml"
-#include "../xml/listview_xml.xml"
-#include "../xml/menus_xml.xml"
-#include "../xml/objects_xml.xml"
-#include "../xml/pickers_xml.xml"
-#include "../xml/project_xml.xml"
-#include "../xml/propgrid_xml.xml"
-#include "../xml/ribbon_xml.xml"
-#include "../xml/scintilla_xml.xml"
-#include "../xml/sizers_xml.xml"
-#include "../xml/std_dlg_btns_xml.xml"
-#include "../xml/textctrls_xml.xml"
-#include "../xml/toolbars_xml.xml"
-#include "../xml/trees_xml.xml"
-#include "../xml/widgets_xml.xml"
-#include "../xml/wizard_xml.xml"
-
-// clang-format off
-inline const char* lst_xml_generators[] = {
-
-    aui_xml,
-    bars_xml,
-    books_xml,
-    boxes_xml,
-    buttons_xml,
-    containers_xml,
-    dataview_xml,
-    dialogs_xml,
-    doc_view_app_xml,
-    forms_xml,
-    grid_xml,
-    objects_xml,
-    listview_xml,
-    menus_xml,
-    pickers_xml,
-    project_xml,
-    propgrid_xml,
-    ribbon_xml,
-    scintilla_xml,
-    sizers_xml,
-    std_dlg_btns_xml,
-    textctrls_xml,
-    toolbars_xml,
-    trees_xml,
-    widgets_xml,
-    wizard_xml,
-
+const static std::function<std::string()> functionArray[] = {
+    wxue_data::get_bars,
+    wxue_data::get_boxes,
+    wxue_data::get_buttons,
+    wxue_data::get_containers,
+    wxue_data::get_data_ctrls,
+    wxue_data::get_forms,
+    wxue_data::get_mdi,
+    wxue_data::get_pickers,
+    wxue_data::get_project,
+    wxue_data::get_sizers,
+    wxue_data::get_text_ctrls,
+    wxue_data::get_widgets,
 };
 
 // var_names for these generators will default to "none" for class access
@@ -428,37 +365,23 @@ void NodeCreator::Initialize()
         pugi::xml_document interface_doc;
         m_pdoc_interface = &interface_doc;
 
-        // We start by loading the main interface_xml string, then we append the nodes from all the other interface strings.
-        auto result = interface_doc.load_string(interface_xml);
+        auto result = interface_doc.load_string(wxue_data::get_interfaces().c_str());
         if (!result)
         {
-            FAIL_MSG("xml/interface_xml.xml is corrupted!");
+            FAIL_MSG("xml/interfaces.xml is corrupted!");
             throw std::runtime_error("Internal XML file is corrupted.");
-        }
-        auto interface_root = interface_doc.child("GeneratorDefinitions");
-
-        for (auto& iter: lst_xml_interfaces)
-        {
-            pugi::xml_document sub_interface;
-            result = sub_interface.load_string(iter);
-            if (!result)
-            {
-                FAIL_MSG("XML file is corrupted!");
-                throw std::runtime_error("Internal XML file is corrupted.");
-            }
-            auto root = sub_interface.child("GeneratorDefinitions");
-            for (auto& child_node: root)
-            {
-                interface_root.append_copy(child_node);
-            }
         }
 
         // Now parse the completed m_pdoc_interface document
         parseGeneratorFile("");
 
-        for (auto& iter: lst_xml_generators)
+        for (auto& iter: functionArray)
         {
-            parseGeneratorFile(iter);
+            auto xml_data = iter();
+            if (xml_data.size())
+            {
+                parseGeneratorFile(xml_data.c_str());
+            }
         }
 
         m_interfaces.clear();
@@ -792,7 +715,8 @@ void NodeCreator::parseProperties(pugi::xml_node& elem_obj, NodeDeclaration* nod
         // Any time there is a var_name property, it needs to be followed by a var_comment and class_access property. Rather
         // than add this to all the XML generator specifications, we simply insert it here if it doesn't exist.
 
-        if (tt::is_sameas(name, map_PropNames[prop_var_name]))
+        if (tt::is_sameas(name, map_PropNames[prop_var_name]) && !node_declaration->isGen(gen_data_string) &&
+            !node_declaration->isGen(gen_data_xml))
         {
             category.addProperty(prop_var_comment);
             prop_info = new PropDeclaration(prop_var_comment, type_string_edit_single, tt_empty_cstr,

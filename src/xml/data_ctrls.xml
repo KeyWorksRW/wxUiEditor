@@ -1,0 +1,847 @@
+<?xml version="1.0"?>
+<!DOCTYPE GeneratorDefinitions SYSTEM "gen.dtd">
+<GeneratorDefinitions>
+    <gen class="wxDataViewCtrl" image="dataviewtree_ctrl" type="dataviewctrl">
+        <inherits class="wxWindow"/>
+        <inherits class="Window Events"/>
+        <inherits class="sizer_child"/>
+        <property name="var_name" type="string">m_dataViewCtrl</property>
+        <property name="style" type="bitlist">
+            <option name="wxDV_SINGLE"
+                help="Single selection mode. This is the default."/>
+            <option name="wxDV_MULTIPLE"
+                help="Multiple selection mode."/>
+            <option name="wxDV_ROW_LINES"
+                help="Use alternating colours for rows if supported by platform and theme. Currently only supported by the native GTK and OS X implementations but not by the generic one."/>
+            <option name="wxDV_HORIZ_RULES"
+                help="Display the separator lines between rows"/>
+            <option name="wxDV_VERT_RULES"
+                help="Display the separator lines between columns."/>
+            <option name="wxDV_VARIABLE_LINE_HEIGHT"
+                help="Allow variable line heights. This can be inefficient when displaying large number of items."/>
+            <option name="wxDV_NO_HEADER"
+                help="Do not show column headers (which are shown by default)."/>
+        </property>
+        <event name="wxEVT_DATAVIEW_SELECTION_CHANGED" class="wxDataViewEvent"
+            help=""/>
+        <event name="wxEVT_DATAVIEW_ITEM_ACTIVATED" class="wxDataViewEvent"
+            help="This event is triggered by double clicking an item or pressing some special key (usually 'Enter') when it is focused."/>
+        <event name="wxEVT_DATAVIEW_ITEM_START_EDITING" class="wxDataViewEvent"
+            help="This event can be vetoed in order to prevent editing on an item by item basis."/>
+        <event name="wxEVT_DATAVIEW_ITEM_EDITING_STARTED" class="wxDataViewEvent"
+            help=""/>
+        <event name="wxEVT_DATAVIEW_ITEM_EDITING_DONE" class="wxDataViewEvent"
+            help=""/>
+        <event name="wxEVT_DATAVIEW_ITEM_COLLAPSING" class="wxDataViewEvent"
+            help=""/>
+        <event name="wxEVT_DATAVIEW_ITEM_COLLAPSED" class="wxDataViewEvent"
+            help=""/>
+        <event name="wxEVT_DATAVIEW_ITEM_EXPANDING" class="wxDataViewEvent"
+            help=""/>
+        <event name="wxEVT_DATAVIEW_ITEM_EXPANDED" class="wxDataViewEvent"
+            help=""/>
+        <event name="wxEVT_DATAVIEW_ITEM_VALUE_CHANGED" class="wxDataViewEvent"
+            help=""/>
+        <event name="wxEVT_DATAVIEW_ITEM_CONTEXT_MENU" class="wxDataViewEvent"
+            help="Generated when the user right clicks inside the control. Notice that this menu is generated even if the click didn't occur on any valid item, in this case wxDataViewEvent::GetItem() simply returns an invalid item."/>
+        <event name="wxEVT_DATAVIEW_COLUMN_HEADER_CLICK" class="wxDataViewEvent"
+            help=""/>
+        <event name="wxEVT_DATAVIEW_COLUMN_HEADER_RIGHT_CLICK" class="wxDataViewEvent"
+            help="Notice that currently this event is not generated in the native OS X versions of the control."/>
+        <event name="wxEVT_DATAVIEW_COLUMN_SORTED" class="wxDataViewEvent"
+            help=""/>
+        <event name="wxEVT_DATAVIEW_COLUMN_REORDERED" class="wxDataViewEvent"
+            help=""/>
+        <event name="wxEVT_DATAVIEW_ITEM_BEGIN_DRAG" class="wxDataViewEvent"
+            help=""/>
+        <event name="wxEVT_DATAVIEW_ITEM_DROP_POSSIBLE" class="wxDataViewEvent"
+            help=""/>
+        <event name="wxEVT_DATAVIEW_ITEM_DROP" class="wxDataViewEvent"
+            help=""/>
+    </gen>
+
+    <gen class="wxDataViewTreeCtrl" image="dataviewtree_ctrl" type="dataviewtreectrl">
+        <inherits class="wxWindow"/>
+        <inherits class="Window Events"/>
+        <inherits class="sizer_child"/>
+        <property name="var_name" type="string">m_dataViewTreeCtrl</property>
+        <property name="style" type="bitlist">
+            <option name="wxDV_SINGLE"
+                help="Single selection mode. This is the default."/>
+            <option name="wxDV_MULTIPLE"
+                help="Multiple selection mode."/>
+            <option name="wxDV_ROW_LINES"
+                help="Use alternating colours for rows if supported by platform and theme. Currently only supported by the native GTK and OS X implementations but not by the generic one."/>
+            <option name="wxDV_HORIZ_RULES"
+                help="Display the separator lines between rows"/>
+            <option name="wxDV_VERT_RULES"
+                help="Display the separator lines between columns."/>
+            <option name="wxDV_VARIABLE_LINE_HEIGHT"
+                help="Allow variable line heights. This can be inefficient when displaying large number of items."/>
+            <option name="wxDV_NO_HEADER"
+                help="Do not show column headers (which are shown by default)."/>
+        </property>
+        <event name="wxEVT_DATAVIEW_SELECTION_CHANGED" class="wxDataViewEvent"
+            help=""/>
+        <event name="wxEVT_DATAVIEW_ITEM_ACTIVATED" class="wxDataViewEvent"
+            help="This event is triggered by double clicking an item or pressing some special key (usually 'Enter') when it is focused."/>
+        <event name="wxEVT_DATAVIEW_ITEM_START_EDITING" class="wxDataViewEvent"
+            help="This event can be vetoed in order to prevent editing on an item by item basis."/>
+        <event name="wxEVT_DATAVIEW_ITEM_EDITING_STARTED" class="wxDataViewEvent"
+            help=""/>
+        <event name="wxEVT_DATAVIEW_ITEM_EDITING_DONE" class="wxDataViewEvent"
+            help=""/>
+        <event name="wxEVT_DATAVIEW_ITEM_COLLAPSING" class="wxDataViewEvent"
+            help=""/>
+        <event name="wxEVT_DATAVIEW_ITEM_COLLAPSED" class="wxDataViewEvent"
+            help=""/>
+        <event name="wxEVT_DATAVIEW_ITEM_EXPANDING" class="wxDataViewEvent"
+            help=""/>
+        <event name="wxEVT_DATAVIEW_ITEM_EXPANDED" class="wxDataViewEvent"
+            help=""/>
+        <event name="wxEVT_DATAVIEW_ITEM_VALUE_CHANGED" class="wxDataViewEvent"
+            help=""/>
+        <event name="wxEVT_DATAVIEW_ITEM_CONTEXT_MENU" class="wxDataViewEvent"
+            help="Generated when the user right clicks inside the control. Notice that this menu is generated even if the click didn't occur on any valid item, in this case wxDataViewEvent::GetItem() simply returns an invalid item."/>
+        <event name="wxEVT_DATAVIEW_COLUMN_HEADER_CLICK" class="wxDataViewEvent"
+            help=""/>
+        <event name="wxEVT_DATAVIEW_COLUMN_HEADER_RIGHT_CLICK" class="wxDataViewEvent"
+            help="Notice that currently this event is not generated in the native OS X versions of the control."/>
+        <event name="wxEVT_DATAVIEW_COLUMN_SORTED" class="wxDataViewEvent"
+            help=""/>
+        <event name="wxEVT_DATAVIEW_COLUMN_REORDERED" class="wxDataViewEvent"
+            help=""/>
+        <event name="wxEVT_DATAVIEW_ITEM_BEGIN_DRAG" class="wxDataViewEvent"
+            help=""/>
+        <event name="wxEVT_DATAVIEW_ITEM_DROP_POSSIBLE" class="wxDataViewEvent"
+            help=""/>
+        <event name="wxEVT_DATAVIEW_ITEM_DROP" class="wxDataViewEvent"
+            help=""/>
+    </gen>
+
+    <gen class="wxDataViewListCtrl" image="dataviewlist_ctrl" type="dataviewlistctrl">
+        <inherits class="wxWindow"/>
+        <inherits class="Window Events"/>
+        <inherits class="sizer_child"/>
+        <property name="var_name" type="string">m_dataViewListCtrl</property>
+        <property name="style" type="bitlist">
+            <option name="wxDV_SINGLE"
+                help="Single selection mode. This is the default."/>
+            <option name="wxDV_MULTIPLE"
+                help="Multiple selection mode."/>
+            <option name="wxDV_ROW_LINES"
+                help="Use alternating colours for rows if supported by platform and theme. Currently only supported by the native GTK and OS X implementations but not by the generic one."/>
+            <option name="wxDV_HORIZ_RULES"
+                help="Display the separator lines between rows"/>
+            <option name="wxDV_VERT_RULES"
+                help="Display the separator lines between columns."/>
+            <option name="wxDV_VARIABLE_LINE_HEIGHT"
+                help="Allow variable line heights. This can be inefficient when displaying large number of items."/>
+            <option name="wxDV_NO_HEADER"
+                help="Do not show column headers (which are shown by default)."/>
+        </property>
+        <event name="wxEVT_DATAVIEW_SELECTION_CHANGED" class="wxDataViewEvent"
+            help=""/>
+        <event name="wxEVT_DATAVIEW_ITEM_ACTIVATED" class="wxDataViewEvent"
+            help="This event is triggered by double clicking an item or pressing some special key (usually 'Enter') when it is focused."/>
+        <event name="wxEVT_DATAVIEW_ITEM_START_EDITING" class="wxDataViewEvent"
+            help="This event can be vetoed in order to prevent editing on an item by item basis."/>
+        <event name="wxEVT_DATAVIEW_ITEM_EDITING_STARTED" class="wxDataViewEvent"
+            help=""/>
+        <event name="wxEVT_DATAVIEW_ITEM_EDITING_DONE" class="wxDataViewEvent"
+            help=""/>
+        <event name="wxEVT_DATAVIEW_ITEM_COLLAPSING" class="wxDataViewEvent"
+            help=""/>
+        <event name="wxEVT_DATAVIEW_ITEM_COLLAPSED" class="wxDataViewEvent"
+            help=""/>
+        <event name="wxEVT_DATAVIEW_ITEM_EXPANDING" class="wxDataViewEvent"
+            help=""/>
+        <event name="wxEVT_DATAVIEW_ITEM_EXPANDED" class="wxDataViewEvent"
+            help=""/>
+        <event name="wxEVT_DATAVIEW_ITEM_VALUE_CHANGED" class="wxDataViewEvent"
+            help=""/>
+        <event name="wxEVT_DATAVIEW_ITEM_CONTEXT_MENU" class="wxDataViewEvent"
+            help="Generated when the user right clicks inside the control. Notice that this menu is generated even if the click didn't occur on any valid item, in this case wxDataViewEvent::GetItem() simply returns an invalid item."/>
+        <event name="wxEVT_DATAVIEW_COLUMN_HEADER_CLICK" class="wxDataViewEvent"
+            help=""/>
+        <event name="wxEVT_DATAVIEW_COLUMN_HEADER_RIGHT_CLICK" class="wxDataViewEvent"
+            help="Notice that currently this event is not generated in the native OS X versions of the control."/>
+        <event name="wxEVT_DATAVIEW_COLUMN_SORTED" class="wxDataViewEvent"
+            help=""/>
+        <event name="wxEVT_DATAVIEW_COLUMN_REORDERED" class="wxDataViewEvent"
+            help=""/>
+        <event name="wxEVT_DATAVIEW_ITEM_BEGIN_DRAG" class="wxDataViewEvent"
+            help=""/>
+        <event name="wxEVT_DATAVIEW_ITEM_DROP_POSSIBLE" class="wxDataViewEvent"
+            help=""/>
+        <event name="wxEVT_DATAVIEW_ITEM_DROP" class="wxDataViewEvent"
+            help=""/>
+    </gen>
+
+    <gen class="dataViewColumn" image="dataviewlist_column" type="dataviewcolumn">
+        <property name="var_name" type="string">m_dataViewColumn</property>
+        <property name="label" type="string_escapes">Name</property>
+        <property name="model_column" type="uint">0</property>
+        <property name="type" type="option">
+            <option name="Text"
+                help="Appends a text column to the control and the store."/>
+			<option name="Bitmap"
+                help="Appends a column for rendering a bitmap."/>
+			<option name="Date"
+                help="Appends a column for rendering a date."/>
+			<option name="Toggle"
+                help="Appends a toggle column to the control and the store."/>
+			<option name="Progress"
+                help="Appends a progress column to the control and the store."/>
+			<option name="IconText"
+                help="Appends an icon-and-text column to the control and the store."/> Text </property>
+        <property name="mode" type="option">
+            <option name="wxDATAVIEW_CELL_INERT"
+                help="The cell only displays information and cannot be manipulated or otherwise interacted with in any way."/>
+			<option
+                name="wxDATAVIEW_CELL_ACTIVATABLE"
+                help="Indicates that the cell can be activated by clicking it or using keyboard."/>
+			<option
+                name="wxDATAVIEW_CELL_EDITABLE"
+                help="Indicates that the user can edit the data in-place in an inline editor control that will show up when the user wants to edit the cell."/>
+            wxDATAVIEW_CELL_INERT </property>
+        <property name="width" type="int">-1</property>
+        <property name="align" type="bitlist">
+            <option name="wxALIGN_LEFT"
+                help="Align the item to the left."/>
+			<option name="wxALIGN_TOP"
+                help="Align the item to the top."/>
+			<option name="wxALIGN_RIGHT"
+                help="Align the item to the right."/>
+			<option name="wxALIGN_BOTTOM"
+                help="Align the item to the bottom."/>
+			<option name="wxALIGN_CENTER"
+                help="Align the item to the center."/>
+			<option name="wxALIGN_CENTER_HORIZONTAL"
+                help="Align the item to the horizontal center."/>
+			<option name="wxALIGN_CENTER_VERTICAL"
+                help="Align the item to the vertical."/> wxALIGN_LEFT </property>
+        <property name="flags" type="bitlist">
+            <option name="wxDATAVIEW_COL_RESIZABLE"
+                help="Column can be resized."/>
+			<option name="wxDATAVIEW_COL_SORTABLE"
+                help="Column can be clicked to toggle the sort order by its contents."/>
+			<option
+                name="wxDATAVIEW_COL_REORDERABLE"
+                help="Column can be dragged to change its order."/>
+			<option name="wxDATAVIEW_COL_HIDDEN"
+                help="Column is not shown at all."/> wxDATAVIEW_COL_RESIZABLE </property>
+        <property name="ellipsize" type="option">
+            <option name=""/>
+            <option name="wxELLIPSIZE_NONE"
+                help="Don't ellipsize the text at all."/>
+            <option name="wxELLIPSIZE_START"
+                help="Put the ellipsis at the start of the string, if the string needs ellipsization."/>
+            <option name="wxELLIPSIZE_MIDDLE"
+                help="Put the ellipsis in the middle of the string, if the string needs ellipsization."/>
+            <option name="wxELLIPSIZE_END"
+                help="Put the ellipsis at the end of the string, if the string needs ellipsization."/>
+        </property>
+    </gen>
+
+    <gen class="dataViewListColumn" image="dataviewlist_column" type="dataviewlistcolumn">
+        <property name="var_name" type="string">m_dataViewListColumn</property>
+        <property name="label" type="string_escapes">Name</property>
+        <property name="type" type="option">
+            <option name="Text"
+                help="Appends a text column to the control and the store."/>
+			<option name="Toggle"
+                help="Appends a toggle column to the control and the store."/>
+			<option name="Progress"
+                help="Appends a progress column to the control and the store."/>
+			<option name="IconText"
+                help="Appends an icon-and-text column to the control and the store."/> Text </property>
+        <property name="mode" type="option">
+            <option name="wxDATAVIEW_CELL_INERT"
+                help="The cell only displays information and cannot be manipulated or otherwise interacted with in any way."/>
+			<option
+                name="wxDATAVIEW_CELL_ACTIVATABLE"
+                help="Indicates that the cell can be activated by clicking it or using keyboard."/>
+			<option
+                name="wxDATAVIEW_CELL_EDITABLE"
+                help="Indicates that the user can edit the data in-place in an inline editor control that will show up when the user wants to edit the cell."/>
+            wxDATAVIEW_CELL_INERT </property>
+        <property name="width" type="int">-1</property>
+        <property name="align" type="bitlist">
+            <option name="wxALIGN_LEFT"
+                help="Align the item to the left."/>
+			<option name="wxALIGN_TOP"
+                help="Align the item to the top."/>
+			<option name="wxALIGN_RIGHT"
+                help="Align the item to the right."/>
+			<option name="wxALIGN_BOTTOM"
+                help="Align the item to the bottom."/>
+			<option name="wxALIGN_CENTER"
+                help="Align the item to the center."/>
+			<option name="wxALIGN_CENTER_HORIZONTAL"
+                help="Align the item to the horizontal center."/>
+			<option name="wxALIGN_CENTER_VERTICAL"
+                help="Align the item to the vertical."/> wxALIGN_LEFT </property>
+        <property name="flags" type="bitlist">
+            <option name="wxDATAVIEW_COL_RESIZABLE"
+                help="Column can be resized."/>
+			<option name="wxDATAVIEW_COL_SORTABLE"
+                help="Column can be clicked to toggle the sort order by its contents."/>
+			<option
+                name="wxDATAVIEW_COL_REORDERABLE"
+                help="Column can be dragged to change its order."/>
+			<option name="wxDATAVIEW_COL_HIDDEN"
+                help="Column is not shown at all."/> wxDATAVIEW_COL_RESIZABLE </property>
+        <property name="ellipsize" type="option">
+            <option name=""/>
+            <option name="wxELLIPSIZE_NONE"
+                help="Don't ellipsize the text at all."/>
+            <option name="wxELLIPSIZE_START"
+                help="Put the ellipsis at the start of the string, if the string needs ellipsization."/>
+            <option name="wxELLIPSIZE_MIDDLE"
+                help="Put the ellipsis in the middle of the string, if the string needs ellipsization."/>
+            <option name="wxELLIPSIZE_END"
+                help="Put the ellipsis at the end of the string, if the string needs ellipsization."/>
+        </property>
+    </gen>
+
+    <gen class="wxGrid" image="grid" type="widget">
+        <inherits class="wxWindow"/>
+        <inherits class="Window Events"/>
+        <inherits class="sizer_child"/>
+        <property name="var_name" type="string">m_grid</property>
+        <property name="rows" type="uint"
+            help="Number of Rows.">5</property>
+        <property name="cols" type="uint"
+            help="Number of Columns.">5</property>
+        <property name="editing" type="bool"
+            help="Allow editing grid contents.">1</property>
+        <property name="grid_lines" type="bool"
+            help="Show grid lines.">1</property>
+        <property name="grid_line_color" type="wxColour"
+            help="The colour used to draw grid lines."/>
+        <property name="drag_grid_size" type="bool"
+            help="Allow sizing rows and columns by dragging gridlines.">0</property>
+        <property name="margin_width" type="uint"
+            help="Sets the extra width to display arouned the grid.">0</property>
+        <property name="margin_height" type="uint"
+            help="Sets the extra height to displaye around the grid.">0</property>
+        <property name="selection_mode" type="option">
+            <option name="wxGridSelectCells"
+                help="Select individual cells as well as of the entire rows and columns. This is the default."/>
+			<option
+                name="wxGridSelectColumns"
+                help="Select entire columns only."/>
+			<option name="wxGridSelectRows"
+                help="Select entire rows only."/>
+			<option name="wxGridSelectRowsOrColumns"
+                help="Select either the entire columns or the entire rows but not individual cells nor blocks."/>
+			<option
+                name="wxGridSelectNone"
+                help="No selections can be made. The user won't be able to select any cells in this mode. Available since wxWidgets 3.1.5"/>
+            wxGridSelectCells </property>
+
+        <category name="Labels">
+            <property name="native_col_header" type="bool"
+                help="If true, a wxHeaderCtrl is used instead to display the column labels instead of drawing them in wxGrid code itself.">
+                0</property>
+            <property name="native_col_labels" type="bool"
+                help="If true, column labels use a native look by calling wxRendererNative::DrawHeaderButton() internally. This option is ignored if native_col_header is set to true."/>
+            <property name="label_bg" type="wxColour"
+                help="Background color for row and column labels."/>
+            <property name="label_font" type="wxFont"
+                help="Font for row and column labels."/>
+            <property name="label_text" type="wxColour"
+                help="Colour for row and column label text."/>
+        </category>
+
+        <category name="Cells">
+            <property name="cell_bg" type="wxColour"
+                help="Default cell background color."/>
+            <property name="cell_fit" type="option"
+                help="Specifies the default behaviour of the cell contents if it doesn't fit into the available space. Available since wxWidgets 3.1.4.">
+                <option name="clip"/>
+				<option name="ellipsize"/>
+				<option name="overflow"/> overflow </property>
+            <property name="cell_font" type="wxFont"
+                help="Default cell font."/>
+            <property name="cell_text" type="wxColour"
+                help="Default cell text color."/>
+            <property name="cell_horiz_alignment" type="option"
+                help="Default horizontal alignment of cell values.">
+                <option name="wxALIGN_LEFT"
+                    help="Align left."/>
+				<option name="wxALIGN_CENTER"
+                    help="Align centered."/>
+				<option name="wxALIGN_RIGHT"
+                    help="Align right."/> wxALIGN_LEFT </property>
+            <property name="cell_vert_alignment" type="option"
+                help="Default vertical alignment of cell values.">
+                <option name="wxALIGN_TOP"
+                    help="Align top."/>
+				<option name="wxALIGN_CENTER"
+                    help="Align centered."/>
+				<option name="wxALIGN_BOTTOM"
+                    help="Align bottom."/> wxALIGN_TOP </property>
+        </category>
+
+        <category name="Columns">
+            <property name="col_label_values" type="stringlist_semi"
+                help="List of column labels."/>
+            <property name="column_sizes" type="stringlist_semi"
+                help="List of column sizes."/>
+            <property name="default_col_size" type="int"
+                help="Sets the default width for columns in the grid. Ignored unless a positive value is set.">-1</property>
+            <property name="autosize_cols" type="bool"
+                help="Automatically sizes all columns to fit their contents. Ignored if default_col_size is set to a positive value">
+                0</property>
+            <property name="drag_col_move" type="bool"
+                help="Allow moving columns by dragging.">0</property>
+            <property name="drag_col_size" type="bool"
+                help="Allow sizing columns by dragging.">1</property>
+            <property name="col_label_size" type="int"
+                help="Height of column labels. If height equals -1 then height is calculated automatically so that no label is truncated.">
+                -1</property>
+            <property name="col_label_horiz_alignment" type="option"
+                help="Horizontal alignment of column label text.">
+                <option name="wxALIGN_LEFT"
+                    help="Align labels left."/>
+				<option name="wxALIGN_CENTER"
+                    help="Align labels centered."/>
+				<option name="wxALIGN_RIGHT"
+                    help="Align labels right."/> wxALIGN_CENTER </property>
+            <property name="col_label_vert_alignment" type="option"
+                help="Vertical alignment of column label text.">
+                <option name="wxALIGN_TOP"
+                    help="Align labels top."/>
+				<option name="wxALIGN_CENTER"
+                    help="Align labels centered."/>
+				<option name="wxALIGN_BOTTOM"
+                    help="Align labels bottom."/> wxALIGN_CENTER </property>
+        </category>
+
+        <category name="Rows">
+            <property name="row_label_values" type="stringlist_semi"
+                help="List of row labels."/>
+            <property name="row_sizes" type="stringlist_semi"
+                help="List of row sizes."/>
+            <property name="default_row_size" type="int"
+                help="Sets the default height for rows in the grid. Ignored unless a positive value is set.">-1</property>
+            <property name="autosize_rows" type="bool"
+                help="Automatically sizes all rows to fit their contents. Ignored if default_row_size is set to a positive value">
+                0</property>
+            <property name="drag_row_size" type="bool"
+                help="Allow sizing rows by dragging with the mouse.">1</property>
+            <property name="row_label_size" type="int"
+                help="Width of row labels. If width equals -1 then width is calculated automatically so that no label is truncated.">
+                -1</property>
+            <property name="row_label_horiz_alignment" type="option"
+                help="Horizontal alignment of row label text.">
+                <option name="wxALIGN_LEFT"
+                    help="Align labels left."/>
+				<option name="wxALIGN_CENTER"
+                    help="Align labels centered."/>
+				<option name="wxALIGN_RIGHT"
+                    help="Align labels right."/> wxALIGN_CENTER </property>
+            <property name="row_label_vert_alignment" type="option"
+                help="Vertical alignment of row label text.">
+                <option name="wxALIGN_TOP"
+                    help="Align labels top."/>
+				<option name="wxALIGN_CENTER"
+                    help="Align labels centered."/>
+				<option name="wxALIGN_BOTTOM"
+                    help="Align labels bottom."/> wxALIGN_CENTER </property>
+            <property name="tab_behaviour" type="option">
+                <option name="Tab_Stop"
+                    help="Do nothing. This is the default."/>
+				<option name="Tab_Wrap"
+                    help="Move to the beginning of the next (or the end of the previous) row."/>
+				<option name="Tab_Leave"
+                    help="Move to the next (or the previous) control after the grid."/> Tab_Stop </property>
+        </category>
+
+        <event name="wxEVT_GRID_CELL_LEFT_CLICK" class="wxGridEvent"
+            help="The user clicked a cell with the left mouse button."/>
+        <event name="wxEVT_GRID_CELL_RIGHT_CLICK" class="wxGridEvent"
+            help="The user clicked a cell with the right mouse button."/>
+        <event name="wxEVT_GRID_CELL_LEFT_DCLICK" class="wxGridEvent"
+            help="The user double-clicked a cell with the left mouse button."/>
+        <event name="wxEVT_GRID_CELL_RIGHT_DCLICK" class="wxGridEvent"
+            help="The user double-clicked a cell with the right mouse button."/>
+        <event name="wxEVT_GRID_LABEL_LEFT_CLICK" class="wxGridEvent"
+            help="The user clicked a label with the left mouse button."/>
+        <event name="wxEVT_GRID_LABEL_RIGHT_CLICK" class="wxGridEvent"
+            help="The user clicked a label with the right mouse button."/>
+        <event name="wxEVT_GRID_LABEL_LEFT_DCLICK" class="wxGridEvent"
+            help="The user double-clicked a label with the left mouse button."/>
+        <event name="wxEVT_GRID_LABEL_RIGHT_DCLICK" class="wxGridEvent"
+            help="The user double-clicked a label with the right mouse button."/>
+        <event name="wxEVT_GRID_CELL_CHANGED" class="wxGridEvent"
+            help="The user changed the data in a cell."/>
+        <event name="wxEVT_GRID_SELECT_CELL" class="wxGridEvent"
+            help="The user moved to, and selected a cell."/>
+        <event name="wxEVT_GRID_EDITOR_HIDDEN" class="wxGridEvent"
+            help="The editor for a cell was hidden."/>
+        <event name="wxEVT_GRID_EDITOR_SHOWN" class="wxGridEvent"
+            help="The editor for a cell was shown."/>
+        <event name="wxEVT_GRID_COL_SIZE" class="wxGridSizeEvent"
+            help="The user resized a column by dragging it."/>
+        <event name="wxEVT_GRID_ROW_SIZE" class="wxGridSizeEvent"
+            help="The user resized a row by dragging it."/>
+        <event name="wxEVT_GRID_RANGE_SELECT" class="wxGridRangeSelectEvent"
+            help="The user selected a group of contiguous cells."/>
+        <event name="wxEVT_GRID_EDITOR_CREATED" class="wxGridEditorCreatedEvent"
+            help="The editor for a cell was created."/>
+    </gen>
+
+    <gen class="wxPropertyGrid" image="wxPropertyGrid" type="propgrid">
+        <inherits class="wxWindow"/>
+        <inherits class="Window Events"/>
+        <inherits class="sizer_child"/>
+        <property name="var_name" type="string">m_propertyGrid</property>
+        <property name="bitmap" type="image"
+            help="This is the bitmap shown in the default state, it must be always valid while all the other bitmaps are optional and don't have to be set."/>
+        <property name="style" type="bitlist">
+            <option name="wxPG_AUTO_SORT"
+                help="This will cause Sort() automatically after an item is added. When inserting a lot of items in this mode, it may make sense to use Freeze() before operations and Thaw() afterwards to increase performance."/>
+			<option
+                name="wxPG_HIDE_CATEGORIES"
+                help="Categories are not initially shown (even if added)."/>
+			<option name="wxPG_ALPHABETIC_MODE"
+                help="This style combines non-categoric mode and automatic sorting."/>
+			<option name="wxPG_BOLD_MODIFIED"
+                help="Modified values are shown in bold font."/>
+			<option name="wxPG_SPLITTER_AUTO_CENTER"
+                help="When wxPropertyGrid is resized, splitter moves to the center. This behaviour stops once the user manually moves the splitter."/>
+			<option
+                name="wxPG_TOOLTIPS"
+                help="Display tooltips for cell text that cannot be shown completely. If wxUSE_TOOLTIPS is 0, then this doesn't have any effect."/>
+			<option
+                name="wxPG_HIDE_MARGIN"
+                help="Disables margin and hides all expand/collapse buttons that would appear outside the margin (for sub-properties). Toggling this style automatically expands all collapsed items."/>
+			<option
+                name="wxPG_STATIC_SPLITTER"
+                help="This style prevents user from moving the splitter."/>
+			<option name="wxPG_STATIC_LAYOUT"
+                help="Combination of other styles that make it impossible for user to modify the layout."/>
+			<option
+                name="wxPG_LIMITED_EDITING"
+                help="Disables wxTextCtrl based editors for properties which can be edited in another way."/>
+			<option
+                name="wxPG_DEFAULT_STYLE"
+                help="Combines various styles."/>
+			<option name="wxTAB_TRAVERSAL"
+                help="wxTAB_TRAVERSAL allows using Tab/Shift-Tab to travel between properties in grid. Travelling forwards from last property will navigate to the next control, and backwards from first will navigate to the previous one."/>
+            wxPG_DEFAULT_STYLE </property>
+        <property name="extra_style" type="bitlist">
+            <option name="wxPG_EX_INIT_NOCAT"
+                help="Speeds up switching to wxPG_HIDE_CATEGORIES mode. Initially, if wxPG_HIDE_CATEGORIES is not defined, the non-categorized data storage is not activated, and switching the mode first time becomes somewhat slower. wxPG_EX_INIT_NOCAT activates the non-categorized data storage right away. IMPORTANT NOTE: If you do plan not switching to non-categoric mode, or if you don't plan to use categories at all, then using this style will result in waste of resources."/>
+            <option name="wxPG_EX_HELP_AS_TOOLTIPS"
+                help="Show property help strings as tool tips instead as text on the status bar."/>
+            <option name="wxPG_EX_NATIVE_DOUBLE_BUFFERING"
+                help="Allows relying on native double-buffering."/>
+            <option name="wxPG_EX_AUTO_UNSPECIFIED_VALUES"
+                help="Set this style to let user have ability to set values of properties to unspecified state. Same as setting wxPG_PROP_AUTO_UNSPECIFIED for all properties."/>
+            <option name="wxPG_EX_WRITEONLY_BUILTIN_ATTRIBUTES"
+                help="If this style is used, built-in attributes (such as wxPG_FLOAT_PRECISION and wxPG_STRING_PASSWORD) are not stored into property's attribute storage (thus they are not readable). Note that this option is global, and applies to all wxPG property containers."/>
+            <option name="wxPG_EX_MULTIPLE_SELECTION"
+                help="Allows multiple properties to be selected by user (by pressing SHIFT when clicking on a property, or by dragging with left mouse button down)."/>
+            <option name="wxPG_EX_ENABLE_TLP_TRACKING"
+                help="This enables top-level window tracking which allows wxPropertyGrid to notify the application of last-minute property value changes by user. This style is not enabled by default because it may cause crashes when wxPropertyGrid is used with wxAUI or similar system. If you are not in fact using any system that may change wxPropertyGrid's top-level parent window on its own, then it is recommended to enable this style."/>
+        </property>
+        <event name="wxEVT_PG_CHANGING" class="wxPropertyGridEvent"
+            help="Property value is about to be changed. Use wxPropertyGridEvent::GetValue() to take a peek at the pending value, and wxPropertyGridEvent::Veto() to prevent change from taking place, if necessary."/>
+        <event name="wxEVT_PG_CHANGED" class="wxPropertyGridEvent"
+            help="Property value is modified."/>
+    </gen>
+
+    <gen class="wxPropertyGridManager" image="wxPropertyGridManager" type="propgridman">
+        <inherits class="wxWindow"/>
+        <inherits class="Window Events"/>
+        <inherits class="sizer_child"/>
+        <property name="var_name" type="string">m_propertyGridManager</property>
+        <property name="show_header" type="bool"
+            help="Show or hide the property grid header control.">0</property>
+        <property name="style" type="bitlist">
+            <option name="wxPG_AUTO_SORT"
+                help="This will cause Sort() automatically after an item is added. When inserting a lot of items in this mode, it may make sense to use Freeze() before operations and Thaw() afterwards to increase performance."/>
+			<option
+                name="wxPG_HIDE_CATEGORIES"
+                help="Categories are not initially shown (even if added)."/>
+			<option name="wxPG_ALPHABETIC_MODE"
+                help="This style combines non-categoric mode and automatic sorting."/>
+			<option name="wxPG_BOLD_MODIFIED"
+                help="Modified values are shown in bold font."/>
+			<option name="wxPG_SPLITTER_AUTO_CENTER"
+                help="When wxPropertyGrid is resized, splitter moves to the center. This behaviour stops once the user manually moves the splitter."/>
+			<option
+                name="wxPG_TOOLTIPS"
+                help="Display tooltips for cell text that cannot be shown completely. If wxUSE_TOOLTIPS is 0, then this doesn't have any effect."/>
+			<option
+                name="wxPG_HIDE_MARGIN"
+                help="Disables margin and hides all expand/collapse buttons that would appear outside the margin (for sub-properties). Toggling this style automatically expands all collapsed items."/>
+			<option
+                name="wxPG_STATIC_SPLITTER"
+                help="This style prevents user from moving the splitter."/>
+			<option name="wxPG_STATIC_LAYOUT"
+                help="Combination of other styles that make it impossible for user to modify the layout."/>
+			<option
+                name="wxPG_LIMITED_EDITING"
+                help="Disables wxTextCtrl based editors for properties which can be edited in another way."/>
+			<option
+                name="wxTAB_TRAVERSAL"
+                help="wxTAB_TRAVERSAL allows using Tab/Shift-Tab to travel between properties in grid. Travelling forwards from last property will navigate to the next control, and backwards from first will navigate to the previous one."/>
+			<option
+                name="wxPG_COMPACTOR"
+                help="Show compactor button that toggles hidden state of low-priority properties."/>
+			<option
+                name="wxPGMAN_DEFAULT_STYLE"
+                help="Currently the default is for no styles to be set."/>
+			<option name="wxPG_DESCRIPTION"
+                help="Show adjustable text box showing description or help text, if available, for currently selected property."/>
+			<option
+                name="wxPG_TOOLBAR"
+                help="Show toolbar for mode and page selection."/>
+			<option name="wxPG_NO_INTERNAL_BORDER"
+                help="Don't show an internal border around the property grid. Recommended if you use a header."/>
+            wxPGMAN_DEFAULT_STYLE </property>
+        <property name="extra_style" type="bitlist">
+            <option name="wxPG_EX_INIT_NOCAT"
+                help="Speeds up switching to wxPG_HIDE_CATEGORIES mode. Initially, if wxPG_HIDE_CATEGORIES is not defined, the non-categorized data storage is not activated, and switching the mode first time becomes somewhat slower. wxPG_EX_INIT_NOCAT activates the non-categorized data storage right away. IMPORTANT NOTE: If you do plan not switching to non-categoric mode, or if you don't plan to use categories at all, then using this style will result in waste of resources."/>
+			<option
+                name="wxPG_EX_NO_FLAT_TOOLBAR"
+                help="Extended window style that sets wxPropertyGridManager toolbar to not use flat style."/>
+			<option
+                name="wxPG_EX_MODE_BUTTONS"
+                help="Shows alphabetic/categoric mode buttons from toolbar."/>
+			<option name="wxPG_EX_HELP_AS_TOOLTIPS"
+                help="Show property help strings as tool tips instead as text on the status bar."/>
+			<option
+                name="wxPG_EX_NATIVE_DOUBLE_BUFFERING"
+                help="Allows relying on native double-buffering."/>
+			<option name="wxPG_EX_AUTO_UNSPECIFIED_VALUES"
+                help="Set this style to let user have ability to set values of properties to unspecified state. Same as setting wxPG_PROP_AUTO_UNSPECIFIED for all properties."/>
+			<option
+                name="wxPG_EX_WRITEONLY_BUILTIN_ATTRIBUTES"
+                help="If this style is used, built-in attributes (such as wxPG_FLOAT_PRECISION and wxPG_STRING_PASSWORD) are not stored into property's attribute storage (thus they are not readable). Note that this option is global, and applies to all wxPG property containers."/>
+			<option
+                name="wxPG_EX_HIDE_PAGE_BUTTONS"
+                help="Hides page selection buttons from tool bar."/>
+			<option name="wxPG_EX_MULTIPLE_SELECTION"
+                help="Allows multiple properties to be selected by user (by pressing SHIFT when clicking on a property, or by dragging with left mouse button down)."/>
+			<option
+                name="wxPG_EX_ENABLE_TLP_TRACKING"
+                help="This enables top-level window tracking which allows wxPropertyGrid to notify the application of last-minute property value changes by user. This style is not enabled by default because it may cause crashes when wxPropertyGrid is used in with wxAUI or similar system. If you are not in fact using any system that may change wxPropertyGrid's top-level parent window on its own, then you are recommended to enable this style."/>
+			<option
+                name="wxPG_EX_NO_TOOLBAR_DIVIDER"
+                help="Don't show divider above toolbar, on Windows."/>
+			<option name="wxPG_EX_TOOLBAR_SEPARATOR"
+                help="Show a separator below the toolbar."/> wxPG_EX_MODE_BUTTONS </property>
+        <event name="wxEVT_PG_CHANGING" class="wxPropertyGridEvent"
+            help="Property value is about to be changed. Use wxPropertyGridEvent::GetValue() to take a peek at the pending value, and wxPropertyGridEvent::Veto() to prevent change from taking place, if necessary."/>
+        <event name="wxEVT_PG_CHANGED" class="wxPropertyGridEvent"
+            help="Property value is modified."/>
+    </gen>
+
+    <gen class="propGridPage" image="propgridpage" type="propgridpage">
+        <property name="var_name" type="string"
+            help="Instance name.">m_propertyGridPage</property>
+        <property name="label" type="string_escapes"
+            help="Label shown as a tooltip of the manager's tool button."/>
+        <property name="bitmap" type="image"
+            help="Bitmap shown in the property manager's header."/>
+    </gen>
+
+    <gen class="propGridItem" image="propgriditem" type="propgriditem">
+        <property name="var_name" type="string"
+            help="Instance name and an internal name of the property item.">m_propertyGridItem</property>
+        <property name="label" type="string_escapes"
+            help="Label shown in parent property grid/page.">Name</property>
+        <property name="type" type="option"
+            help="Type of the property item.">
+            <option name="Category"
+                help="Append properties category."/>
+			<option name="ArrayString"
+                help="Property that manages a list of strings. Allows editing of a list of strings in wxTextCtrl and in a separate dialog."/>
+			<option
+                name="Bool"
+                help="Represents a boolean value. wxChoice is used as editor control, by default."/>
+			<option
+                name="Colour"
+                help="Represents wxColour. wxButton is used to trigger a colour picker dialog."/>
+			<option name="Cursor"
+                help="Represents a wxCursor. wxChoice is used to edit the value."/>
+			<option name="Date"
+                help="Represents wxDateTime. Default editor is DatePickerCtrl, although TextCtrl should work as well."/>
+			<option
+                name="Dir"
+                help="Represents wxString. Button triggers a directory selector."/>
+			<option name="EditEnum"
+                help="Represents a string that can be freely edited or selected from list of choices"/>
+			<option
+                name="Enum"
+                help="Represents a single selection from a list of choices - wxOwnerDrawnComboBox is used to edit the value."/>
+			<option
+                name="File"
+                help="Represents wxString. Button triggers a file selector."/>
+			<option name="Flags"
+                help="Represents a bit set that fits in a long integer."/>
+			<option name="Float"
+                help="Represents a double-precision floating point."/>
+			<option name="Font"
+                help="Represents wxFont. Various sub-properties are used to edit individual subvalues."/>
+			<option
+                name="ImageFile"
+                help="Represents an image file(name). It displays a thumbnail of the image in front of the filename"/>
+			<option
+                name="Int"
+                help="Represents a signed long integer. Seamlessly supports 64-bit integers (i.e. wxLongLong) on overflow."/>
+			<option
+                name="LongString"
+                help="Represents wxString. Has a button that triggers a small text editor dialog."/>
+			<option
+                name="MultiChoice"
+                help="Represents wxArrayString. Allows editing a multiple selection from a list of strings."/>
+			<option
+                name="String"
+                help="Represents wxString"/>
+			<option name="SystemColour"
+                help="Represents wxColour and a system colour index. wxChoice is used to edit the value."/>
+			<option
+                name="UInt"
+                help="Represents an unsigned long integer. Seamlessly supports 64-bit integers (i.e. wxLongLong) on overflow."/>
+            String </property>
+        <property name="help" type="string_escapes"
+            help="Text to display in help description box."/>
+    </gen>
+
+    <gen class="propGridCategory" image="book_page" type="propgrid_category">
+        <property name="var_name" type="string"
+            help="Instance name and an internal name of the property category.">m_propertyGridItem</property>
+        <property name="label" type="string_escapes"
+            help="Label shown in parent property grid or page.">CategoryName</property>
+        <property name="help" type="string_escapes"
+            help="Text to display in help description box."/>
+    </gen>
+
+    <gen class="wxTreeCtrl" image="tree_ctrl" type="widget">
+        <inherits class="wxTreeCtrlBase"/>
+        <inherits class="wxWindow"/>
+        <inherits class="Window Events"/>
+        <inherits class="sizer_child"/>
+        <property name="var_name" type="string">m_treeCtrl</property>
+        <property name="style" type="bitlist">
+            <option name="wxTR_EDIT_LABELS"
+                help="Use this style if you wish the user to be able to edit labels in the tree control."/>
+			<option
+                name="wxTR_NO_BUTTONS"
+                help="For convenience to document that no buttons are to be drawn."/>
+			<option name="wxTR_HAS_BUTTONS"
+                help="Use this style to show + and - buttons to the left of parent items."/>
+			<option
+                name="wxTR_TWIST_BUTTONS"
+                help="Selects alternative style of +/- buttons and shows rotating (&quot;twisting&quot;) arrows instead. Currently this style is only implemented under Microsoft Windows Vista and later Windows versions and is ignored under the other platforms. Notice that under Vista this style results in the same appearance as used by the tree control in Explorer and other built-in programs and so using it may be preferable to the default style."/>
+			<option
+                name="wxTR_NO_LINES"
+                help="Use this style to hide vertical level connectors."/>
+			<option name="wxTR_FULL_ROW_HIGHLIGHT"
+                help="Use this style to have the background colour and the selection highlight extend over the entire horizontal row of the tree control window. (This flag is ignored under Windows unless you specify wxTR_NO_LINES as well.)"/>
+			<option
+                name="wxTR_LINES_AT_ROOT"
+                help="Use this style to show lines between root nodes. Only applicable if wxTR_HIDE_ROOT is set and wxTR_NO_LINES is not set."/>
+			<option
+                name="wxTR_HIDE_ROOT"
+                help="Use this style to suppress the display of the root node, effectively causing the first-level nodes to appear as a series of root nodes."/>
+			<option
+                name="wxTR_ROW_LINES"
+                help="Use this style to draw a contrasting border between displayed rows."/>
+			<option
+                name="wxTR_HAS_VARIABLE_ROW_HEIGHT"
+                help="Use this style to cause row heights to be just big enough to fit the content. If not set, all rows use the largest row height. The default is that this flag is unset. Generic only."/>
+			<option
+                name="wxTR_SINGLE"
+                help="For convenience to document that only one item may be selected at a time. Selecting another item causes the current selection, if any, to be deselected. This is the default."/>
+			<option
+                name="wxTR_MULTIPLE"
+                help="Use this style to allow a range of items to be selected. If a second range is selected, the current range, if any, is deselected."/>
+			<option
+                name="wxTR_DEFAULT_STYLE"
+                help="The set of flags that are closest to the defaults for the native control for a particular toolkit."/>
+            wxTR_DEFAULT_STYLE </property>
+        <event name="wxEVT_TREE_GET_INFO" class="wxTreeEvent"
+            help="Request information from the application."/>
+        <event name="wxEVT_TREE_SET_INFO" class="wxTreeEvent"
+            help="Information is being supplied."/>
+        <event name="wxEVT_TREE_ITEM_GETTOOLTIP" class="wxTreeEvent"
+            help="The opportunity to set the item tooltip is being given to the application (call wxTreeEvent::SetToolTip). Windows only."/>
+        <event name="wxEVT_TREE_STATE_IMAGE_CLICK" class="wxTreeEvent"
+            help="The state image has been clicked. Windows only."/>
+    </gen>
+
+    <gen class="wxTreeListCtrl" image="treelistctrl" type="treelistctrl">
+        <inherits class="wxWindow"/>
+        <inherits class="Window Events"/>
+        <inherits class="sizer_child"/>
+        <property name="var_name" type="string">m_treeListCtrl</property>
+        <property name="style" type="bitlist">
+            <option name="wxTL_SINGLE"
+                help="Single selection, this is the default."/>
+			<option name="wxTL_MULTIPLE"
+                help="Allow multiple selection."/>
+			<option name="wxTL_CHECKBOX"
+                help="Show the usual, 2 state, checkboxes for the items in the first column."/>
+			<option
+                name="wxTL_3STATE"
+                help="Show the checkboxes that can possibly be set by the program, but not the user, to a third, undetermined, state, for the items in the first column. Implies wxTL_CHECKBOX."/>
+			<option
+                name="wxTR_TWIST_BUTTONS"
+                help="Selects alternative style of +/- buttons and shows rotating (&quot;twisting&quot;) arrows instead. Currently this style is only implemented under Microsoft Windows Vista and later Windows versions and is ignored under the other platforms. Notice that under Vista this style results in the same appearance as used by the tree control in Explorer and other built-in programs and so using it may be preferable to the default style."/>
+			<option
+                name="wxTL_USER_3STATE"
+                help="Same as wxTL_3STATE but the user can also set the checkboxes to the undetermined state. Implies wxTL_3STATE."/>
+			<option
+                name="wxTL_DEFAULT_STYLE"
+                help="Style used by the control by default, just wxTL_SINGLE currently."/> wxTL_DEFAULT_STYLE </property>
+        <event name="wxEVT_TREELIST_SELECTION_CHANGED" class="wxTreeListEvent"
+            help="In the single selection case the item indicated by the event has been selected and previously selected item, if any, was deselected. In multiple selection case, the selection of this item has just changed (it may have been either selected or deselected) but notice that the selection of other items could have changed as well, use wxTreeListCtrl::GetSelections() to retrieve the new selection if necessary."/>
+        <event name="wxEVT_TREELIST_ITEM_EXPANDING" class="wxTreeListEvent"
+            help="This event is sent before the expansion occurs and can be vetoed to prevent it from happening."/>
+        <event name="wxEVT_TREELIST_ITEM_EXPANDED" class="wxTreeListEvent"
+            help="This event is sent after the expansion occurs and can't be vetoed."/>
+        <event name="wxEVT_TREELIST_ITEM_CHECKED" class="wxTreeListEvent"
+            help="You can use wxTreeListCtrl::GetCheckedState() to retrieve the new item state and wxTreeListEvent::GetOldCheckedState() to get the previous one."/>
+        <event name="wxEVT_TREELIST_ITEM_ACTIVATED" class="wxTreeListEvent"
+            help="Generated when the user double clicks the item or activating it from the keyboard."/>
+        <event name="wxEVT_TREELIST_ITEM_CONTEXT_MENU" class="wxTreeListEvent"
+            help=""/>
+        <event name="wxEVT_TREELIST_COLUMN_SORTED" class="wxTreeListEvent"
+            help="The event doesn't carry the sort direction, use GetSortColumn() method if you need to know it."/>
+    </gen>
+
+    <gen class="TreeListCtrlColumn" image="treelistctrlcolumn" type="treelistctrlcolumn">
+        <property name="label" type="string_escapes"
+            help="The column label.">Column</property>
+        <property name="width" type="int"
+            help="The width of the column in pixels or the special -2 value indicating that the column should adjust to its contents. Notice that the first column is special and will be always resized to fill all the space not taken by the other columns, i.e. the width specified here is ignored for it.">
+            -2</property>
+        <property name="alignment" type="option"
+            help="Alignment of both the column header and its items.">
+            <option name="wxALIGN_LEFT"
+                help="Align the item to the left."/>
+			<option name="wxALIGN_RIGHT"
+                help="Align the item to the right."/>
+			<option name="wxALIGN_CENTER"
+                help="Align the item to the center."/> wxALIGN_LEFT </property>
+        <property name="flags" type="bitlist">
+            <option name="wxCOL_RESIZABLE"
+                help="Column can be resized (included in default flags)."/>
+			<option name="wxCOL_SORTABLE"
+                help="Column can be clicked to toggle the sort order by its contents."/>
+			<option name="wxCOL_REORDERABLE"
+                help="Column can be dragged to change its order (included in default). Currently, this is only implemented in GTK and ignored on other platforms."/>
+			<option
+                name="wxCOL_HIDDEN"
+                help="Column is not shown at all."/> wxCOL_RESIZABLE </property>
+    </gen>
+
+</GeneratorDefinitions>

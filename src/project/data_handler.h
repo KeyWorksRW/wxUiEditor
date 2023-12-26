@@ -11,12 +11,23 @@
 
 #include "node_classes.h"  // Forward defintions of Node classes
 
+class Code;
+class WriteCode;
+
+enum xml_flags : uint32_t
+{
+    xml_none = 0,
+    xml_condense_format = 1 << 0,  // Don't write the XML header
+    xml_trim_whitespace = 1 << 1,  // Don't indent the XML
+};
+
 struct EmbeddedData
 {
     tt_string filename;
     size_t array_size;
     std::unique_ptr<unsigned char[]> array_data;
-    size_t type;  // 0 = string, 1 = xml
+    size_t type;         // 0 = string, 1 = xml, tt::npos = not_found
+    bool xml_condensed;  // true if node->as_bool(prop_xml_condensed_format) is true
 };
 
 class DataHandler
@@ -35,12 +46,36 @@ public:
         return instance;
     }
 
-    void Initialize(NodeSharedPtr project, bool allow_ui = true);
+    // Call this whenever a project is loaded
+    void Clear() { m_embedded_data.clear(); }
 
-    bool LoadAndCompress(Node* node);
+    // Only call this when the datalist code needs to be generated.
+    void Initialize();
+
+    // Generate extern references to all the data variables.
+    //
+    // This will call code.clear() before writing any code.
+    void WriteDataPreConstruction(Code& code);
+
+    // Generate data list construction code in source
+    //
+    // This will call code.clear() before writing any code.
+    void WriteDataConstruction(Code& code, WriteCode* source);
+
+    // Write extern statements to the header file
+    void WriteImagePostHeader(WriteCode* header);
+
+protected:
+    bool LoadAndCompress(const Node* node);
 
 private:
-    std::map<std::string, std::unique_ptr<EmbeddedData>, std::less<>> m_embedded_data;
+    std::map<std::string, EmbeddedData, std::less<>> m_embedded_data;
 };
 
 extern DataHandler& ProjectData;
+
+namespace data_list
+{
+    Node* FindDataList();
+
+};  // namespace data_list

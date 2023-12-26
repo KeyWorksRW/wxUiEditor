@@ -17,10 +17,6 @@ class DataGenerator : public BaseGenerator
 public:
     wxObject* CreateMockup(Node* node, wxObject* parent) override;
     int GetRequiredVersion(Node* /*node*/) override;
-
-private:
-    wxStaticText* m_item_name;
-    wxStaticText* m_text_info;
 };
 
 class DataStringGenerator : public BaseGenerator
@@ -32,9 +28,3 @@ class DataXmlGenerator : public BaseGenerator
 {
 public:
 };
-
-namespace data_list
-{
-    Node* FindDataList();
-
-};  // namespace data_list

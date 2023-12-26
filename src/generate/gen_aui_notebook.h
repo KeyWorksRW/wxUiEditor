@@ -29,8 +29,6 @@ public:
 
     bool GetRubyImports(Node*, std::set<std::string>& /* set_imports */) override;
 
-    void AddPropsAndEvents(NodeDeclaration* declaration) override;
-
 protected:
     void OnPageChanged(wxBookCtrlEvent& event);
 };

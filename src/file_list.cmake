@@ -419,38 +419,20 @@ set (doc_list
 set (xml_list
 
     # interface declarations
-
-    xml/interface_xml.xml
-    xml/sizer_child_xml.xml
-    xml/validators_xml.xml
-    xml/window_interfaces_xml.xml
+    xml/interfaces.xml
 
     # generator declarations
-
-    xml/aui_xml.xml
-    xml/bars_xml.xml
-    xml/books_xml.xml
-    xml/boxes_xml.xml
-    xml/buttons_xml.xml
-    xml/containers_xml.xml
-    xml/dataview_xml.xml
-    xml/doc_view_app_xml.xml
-    xml/dialogs_xml.xml
-    xml/forms_xml.xml
-    xml/grid_xml.xml
-    xml/listview_xml.xml
-    xml/menus_xml.xml
-    xml/pickers_xml.xml
-    xml/project_xml.xml
-    xml/propgrid_xml.xml
-    xml/ribbon_xml.xml
-    xml/scintilla_xml.xml
-    xml/sizers_xml.xml
-    xml/std_dlg_btns_xml.xml
-    xml/textctrls_xml.xml
-    xml/toolbars_xml.xml
-    xml/trees_xml.xml
-    xml/widgets_xml.xml
-    xml/wizard_xml.xml
+    xml/bars.xml
+    xml/boxes.xml
+    xml/buttons.xml
+    xml/containers.xml
+    xml/data_ctrls.xml
+    xml/forms.xml
+    xml/mdi.xml
+    xml/pickers.xml
+    xml/project.xml
+    xml/sizers.xml
+    xml/text_ctrls.xml
+    xml/widgets.xml
 
 )

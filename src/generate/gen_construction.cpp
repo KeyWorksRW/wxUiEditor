@@ -419,15 +419,13 @@ void BaseCodeGenerator::GenSettings(Node* node, bool within_brace)
 
     if (node->getPropPtr(prop_window_extra_style))
     {
-        if (m_language == GEN_LANG_CPLUSPLUS)
+        GenValidatorSettings(code);
+        if (code.size())
         {
-            GenValidatorSettings(code);
-            if (code.size())
-            {
-                m_source->writeLine(code);
-                code.clear();
-            }
+            m_source->writeLine(code);
+            code.clear();
         }
+
         code.GenWindowSettings();
         if (code.size())
             m_source->writeLine(code);

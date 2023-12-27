@@ -441,6 +441,10 @@ void NodeCreator::parseGeneratorFile(const char* xml_data)
     while (generator)
     {
         auto class_name = generator.attribute("class").as_std_str();
+        if (class_name.starts_with("gen_"))
+        {
+            class_name.erase(0, sizeof("gen_") - 1);
+        }
 #if defined(_DEBUG) || defined(INTERNAL_TESTING)
         if (is_interface)
         {
@@ -549,7 +553,12 @@ void NodeCreator::parseGeneratorFile(const char* xml_data)
         auto elem_obj = root.child("gen");
         while (elem_obj)
         {
-            auto class_name = elem_obj.attribute("class").as_string();
+            auto class_name = elem_obj.attribute("class").as_sview();
+            if (class_name.starts_with("gen_"))
+            {
+                class_name.remove_prefix(sizeof("gen_") - 1);
+            }
+
             auto class_info = getNodeDeclaration(class_name);
 
             // This can happen if the project file is corrupted, or it it a newer version of the project file
@@ -651,6 +660,11 @@ void NodeCreator::parseProperties(pugi::xml_node& elem_obj, NodeDeclaration* nod
     while (elem_prop)
     {
         auto name = elem_prop.attribute("name").as_std_str();
+        if (name.starts_with("prop_"))
+        {
+            name.erase(0, sizeof("prop_") - 1);
+        }
+
         GenEnum::PropName prop_name;
         auto lookup_name = rmap_PropNames.find(name);
         if (lookup_name == rmap_PropNames.end())
@@ -666,6 +680,10 @@ void NodeCreator::parseProperties(pugi::xml_node& elem_obj, NodeDeclaration* nod
         auto description = elem_prop.attribute("help").as_string();
 
         auto prop_type = elem_prop.attribute("type").as_sview();
+        if (prop_type.starts_with("type_"))
+        {
+            prop_type.remove_prefix(sizeof("type_") - 1);
+        }
 
         GenEnum::PropType property_type { type_unknown };
 

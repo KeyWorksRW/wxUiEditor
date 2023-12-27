@@ -254,6 +254,8 @@ bool TextCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, 
     {
         if (auto val_type = node->getValidatorType(); val_type.size())
         {
+            if (node->as_string(prop_validator_data_type) == "wxFileName")
+                set_hdr.insert("#include <wx/filename.h>");
             if (val_type == "wxGenericValidator")
                 set_src.insert("#include <wx/valgen.h>");
             else if (val_type == "wxTextValidator")

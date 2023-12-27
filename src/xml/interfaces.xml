@@ -302,6 +302,7 @@
 			help="If you specify a control or property that requires a wxWidgets version later than this number, then the code will be generated within a conditional block.">
 			<option name="3.1"/>
 			<option name="3.2"/>
+			<option name="3.3"/>
 		</property>
 		<property name="base_directory" type="path"
 			help="The generated base class output directory. If a form's base_file contains only a filename (without a path), the files will be generated in this directory. Leave blank to generate the in the same directory as the project file."/>

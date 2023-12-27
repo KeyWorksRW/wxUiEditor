@@ -109,6 +109,7 @@ public:
     bool isUiAllowed() const { return m_allow_ui; }
 
     bool is_wxWidgets31() const { return m_project_node->as_string(prop_wxWidgets_version) == "3.1"; }
+    int get_WidgetsMinorVersion();  // Currently returns 1, 2 or 3 for 3.1, 3.2, 3.3
 
     size_t getChildCount() const { return m_project_node->getChildCount(); }
 

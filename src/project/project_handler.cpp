@@ -500,3 +500,13 @@ Node* ProjectHandler::getImagesForm()
     }
     return m_ImagesForm;
 }
+
+int ProjectHandler::get_WidgetsMinorVersion()
+{
+    tt_string_view version = m_project_node->as_string(prop_wxWidgets_version);
+    if (version.empty())
+        return 1;
+    ASSERT(version.find('.') != tt::npos);
+    version = version.substr(version.find('.') + 1);
+    return tt::atoi(version);
+}

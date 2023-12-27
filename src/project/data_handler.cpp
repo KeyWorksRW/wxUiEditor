@@ -11,6 +11,7 @@
 
 #include <wx/mstream.h>   // Memory stream classes
 #include <wx/wfstream.h>  // File stream classes
+#include <wx/xml/xml.h>   // wxXmlDocument - XML parser & data holder class
 #include <wx/zstream.h>   // zlib stream classes
 
 #include <fstream>
@@ -133,6 +134,15 @@ bool DataHandler::LoadAndCompress(const Node* node)
         pugi::xml_document doc;
         if (auto result = doc.load_file(embed.filename.c_str(), pugi::parse_trim_pcdata | pugi::parse_default); !result)
         {
+#if defined(_DEBUG)
+            // Unlike pugixml, wxXmlDocument will list the line number where the error occurred
+            wxXmlDocument wx_doc;
+            wx_doc.Load(embed.filename.c_str());
+
+            // TODO: [Randalphwa - 12-26-2023] Once https://github.com/wxWidgets/wxWidgets/issues/24167 gets fixed,
+            // we can use wxXmlDocument in a release version and if Project.isUiAvailable() is true, we can use
+            // the error message from wxXmlDocument instead of pugixml to display to the user.
+#endif  // _DEBUG
             return false;
         }
         std::ostringstream xml_stream;

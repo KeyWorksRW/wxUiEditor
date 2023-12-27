@@ -902,31 +902,34 @@ void GenValidatorSettings(Code& code)
     // assignment just for convenience
     const auto* node = code.node();
 
-    if (code.is_ruby() && node->getValidatorType() != "wxTextValidator")
-        return;  // As of 8/2023, wxRuby3 only supports text validators
-
-    // Python supports user-created validator classes, but not any of the wxWidgets validators.
-    if (code.is_python())
-        return;
-
     // Make a copy of this -- most languages will need to modify it.
     auto var_name = node->as_string(prop_validator_variable);
     // Unless there is a variable name, we ignore the entire validator section
     if (var_name.empty())
         return;
 
-    code.Eol(eol_if_needed);
-    if (!code.is_cpp())
+    // Python supports user-created validator classes, but not any of the wxWidgets validators.
+    // From Python docs: "neither TextValidator nor GenericValidator are implemented in wxPython"
+    if (code.is_python())
     {
-        // This will add "my " for Perl, and "let " for Rust.
-        code.AddAuto();
-        if (code.is_python())
-            var_name.insert(0, "self.");
-        else if (code.is_ruby())
+        code.Eol(eol_if_needed);
+        code.Str("# wxPython only supports custom validators, not the wxWidgets validators.");
+        return;
+    }
+
+    code.Eol(eol_if_needed);
+    if (code.is_ruby())
+    {
+        if (node->isGen(gen_StaticCheckboxBoxSizer))
+            var_name = "@" + node->as_string(prop_checkbox_var_name);
+        else if (node->isGen(gen_StaticRadioBtnBoxSizer))
+            var_name = "@" + node->as_string(prop_radiobtn_var_name);
+        else
             var_name.insert(0, "@");
-        else if (code.is_perl())
-            var_name.insert(0, "$");
-        code.Str(var_name).Eol().NodeName();
+        code.Str("# to retrieve: ").Str(var_name).Str(" = ");
+        code.NodeName().Str(".get_validator.get_value()").Eol();
+        code.Str(var_name).Str(" = nil").Eol();
+        code.NodeName();
     }
 
     if (code.is_cpp())
@@ -947,7 +950,14 @@ void GenValidatorSettings(Code& code)
     if (!node->hasProp(prop_validator_data_type))
     {
         // Used for things like checkboxes, radio buttons, etc.
-        code.Add("wxGenericValidator(").AddIfCpp("&").Str(var_name).Str(")").EndFunction();
+        if (code.is_cpp())
+        {
+            code.Add("wxGenericValidator(&").Str(var_name).Str(")").EndFunction();
+        }
+        else
+        {
+            code.Add("wxGenericValidator").Str(".new").EndFunction();
+        }
         return;
     }
 
@@ -955,21 +965,64 @@ void GenValidatorSettings(Code& code)
     ASSERT(data_type.size())
     if (data_type.empty())
     {  // theoretically impossible
+        FAIL_MSG(tt_string() << "No validator data type for " << node->getNodeName());
         code.Add("wxDefaultValidator").EndFunction();
         return;
     }
+    auto style = node->as_string(prop_validator_style);
+    style.Replace("wxFILTER_NONE", "", true);
+    if (style.starts_with('|'))
+        style.erase(0, 1);
 
     auto validator_type = node->getValidatorType();
+
+    if (validator_type == "wxGenericValidator")
+    {
+        code.Add(validator_type);
+        if (code.is_ruby())
+        {
+            code.Str(".new");
+        }
+
+        // wxRuby doesn't add the var_name
+        if (code.is_cpp())
+        {
+            code.Comma().Str("&").Str(var_name);
+        }
+        code.Str(")").EndFunction();
+        return;
+    }
+
     if (validator_type == "wxIntegerValidator")
     {
-        code.Add(validator_type).Str("<").Str(data_type).Str(">(");
+        if (code.is_cpp())
+        {
+            code.Add(validator_type).Str("<").Str(data_type).Str(">(");
+        }
+        else if (code.is_ruby())
+        {
+            if (data_type.contains("unsigned"))
+            {
+                code.Str("Wx::UnsignedValidator.new");
+                if (style.size())
+                    code << '(';
+            }
+            else
+            {
+                code.Add(validator_type).Str(".new");
+                if (style.size())
+                    code << '(';
+            }
+        }
     }
     else
     {
-        code.Add(validator_type).AddIfRuby(".new") << '(';
+        if (code.is_ruby() && validator_type == "wxFloatingPointValidator")
+            code.Str("Wx::FloatValidator").AddIfRuby(".new") << '(';
+        else
+            code.Add(validator_type).AddIfRuby(".new") << '(';
     }
 
-    auto& style = node->as_string(prop_validator_style);
     tt_string_vector styles(style, '|', tt::TRIM::both);
     if (validator_type.is_sameas("wxTextValidator"))
     {
@@ -985,14 +1038,27 @@ void GenValidatorSettings(Code& code)
                     filters << iter;
                 }
             }
-            code.Add(filters).Comma();
+            code.Add(filters);
         }
         else
         {
-            code.Add("wxFILTER_NONE").Comma();
+            code.Add("wxFILTER_NONE");
         }
 
-        code.AddIfCpp("&").Str(var_name).Str(")").EndFunction();
+        // wxRuby doesn't add the var_name
+        if (code.is_cpp())
+        {
+            code.Comma().Str("&").Str(var_name);
+        }
+        if (code.is_ruby() && code.back() == '(')
+        {
+            code.pop_back();
+        }
+        else
+        {
+            code << ')';
+        }
+        code.EndFunction();
     }
     else
     {
@@ -1003,14 +1069,11 @@ void GenValidatorSettings(Code& code)
                 code.Add(prop_precision).Comma();
             }
         }
-        code.AddIfCpp("&").Str(var_name);
 
-        if (validator_type.is_sameas("wxIntegerValidator") || validator_type.is_sameas("wxFloatingPointValidator"))
+        // wxRuby doesn't add the var_name
+        if (code.is_cpp())
         {
-            if (node->hasValue(prop_minValue) && node->hasValue(prop_maxValue))
-            {
-                code.Comma().as_string(prop_minValue).Comma().as_string(prop_maxValue);
-            }
+            code.Str("&").Str(var_name);
         }
 
         if (style.contains("wxNUM_"))
@@ -1025,9 +1088,52 @@ void GenValidatorSettings(Code& code)
                     num_styles << iter;
                 }
             }
-            code.Comma().Add(num_styles);
+            if (code.is_cpp())
+            {
+                code.Comma();
+            }
+            code.Add(num_styles);
         }
-        code.Str(")").EndFunction();
+        if (code.is_ruby() && code.back() == '(')
+        {
+            code.pop_back();
+        }
+        else
+        {
+            code << ')';
+        }
+        code.EndFunction();
+    }
+    if (validator_type.is_sameas("wxIntegerValidator") || validator_type.is_sameas("wxFloatingPointValidator"))
+    {
+        if (node->hasValue(prop_minValue))
+        {
+            if (code.is_cpp())
+            {
+                code.Eol().Str("wxStaticCast(").NodeName().Str("->GetValidator(), ").Str(validator_type);
+                if (validator_type.is_sameas("wxIntegerValidator"))
+                    code.Str("<").Str(data_type).Str(">");
+                code.Str(")->SetMin(").Add(prop_minValue).Str(");");
+            }
+            else if (code.is_ruby())
+            {
+                code.Eol().NodeName().Str(".get_validator.set_min(").Add(prop_minValue).Str(")");
+            }
+        }
+        if (node->hasValue(prop_maxValue))
+        {
+            if (code.is_cpp())
+            {
+                code.Eol().Str("wxStaticCast(").NodeName().Str("->GetValidator(), ").Str(validator_type);
+                if (validator_type.is_sameas("wxIntegerValidator"))
+                    code.Str("<").Str(data_type).Str(">");
+                code.Str(")->SetMax(").Add(prop_maxValue).Str(");");
+            }
+            else if (code.is_ruby())
+            {
+                code.Eol().NodeName().Str(".get_validator.set_max(").Add(prop_maxValue).Str(")");
+            }
+        }
     }
 }
 

@@ -40,11 +40,11 @@ namespace wxue_data
     // ../xml/buttons.xml
     extern const unsigned char buttons[2712]; // 15282
     // ../xml/containers.xml
-    extern const unsigned char containers[4234]; // 23307
+    extern const unsigned char containers[5013]; // 27414
     // ../xml/data_ctrls.xml
     extern const unsigned char data_ctrls[7982]; // 43786
     // ../xml/forms.xml
-    extern const unsigned char forms[5587]; // 25188
+    extern const unsigned char forms[6057]; // 30340
     // ../xml/interfaces.xml
     extern const unsigned char interfaces[10565]; // 51420
     // ../xml/mdi.xml
@@ -56,9 +56,9 @@ namespace wxue_data
     // ../xml/sizers.xml
     extern const unsigned char sizers[2296]; // 12909
     // ../xml/text_ctrls.xml
-    extern const unsigned char text_ctrls[6047]; // 25418
+    extern const unsigned char text_ctrls[7123]; // 30442
     // ../xml/widgets.xml
-    extern const unsigned char widgets[6176]; // 26961
+    extern const unsigned char widgets[6713]; // 28608
 }
 
 // ************* End of generated code ***********

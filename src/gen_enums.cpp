@@ -21,6 +21,7 @@ std::map<std::string_view, PropType, std::less<>> GenEnum::umap_PropTypes = {
     { "bool", type_bool },
     { "checklist_item", type_checklist_item },
     { "code_edit", type_code_edit },
+    { "custom_mockup", type_custom_mockup },
     { "editoption", type_editoption },
     { "file", type_file },
     { "float", type_float },

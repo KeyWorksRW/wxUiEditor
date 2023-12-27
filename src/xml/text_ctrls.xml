@@ -37,6 +37,68 @@
         <inherits class="wxWindow"/>
         <inherits class="Window Events"/>
         <inherits class="sizer_child"/>
+        <property name="var_name" type="string">m_textCtrl</property>
+        <property name="value" type="string_escapes"
+            help="Sets the initial contents of the control."/>
+        <property name="hint" type="string_escapes"
+            help="Sets a hint to be shown when the control is empty and does not have the focus."/>
+        <property name="prop_maxlength" type="type_string"
+            help="The maximum length of user-entered text. 0 means no limit. Note that in wxGTK this function may only be used with single line text controls."/>
+        <property name="prop_auto_complete" type="type_stringlist_semi"
+            help="If one or more strings are entered, they will be used to initialize autocomplete."/>
+        <property name="prop_spellcheck" type="bitlist">
+            <option name="enabled"
+                help="Currently this is supported in wxMSW (when running under Windows 8 or later), wxGTK when using GTK 3 and wxOSX. In addition, wxMSW requires that the text control has the wxTE_RICH2 style set, while wxOSX requires that the control has the wxTE_MULTILINE style.\n\nAvailable since 3.1.6"/>
+            <option name="grammar"
+                help="Enables grammar checking in addition to spell checking. Currently this is supported in wxMSW (when running under Windows 8 or later), wxGTK when using GTK 3 and wxOSX. In addition, wxMSW requires that the text control has the wxTE_RICH2 style set, while wxOSX requires that the control has the wxTE_MULTILINE style.\n\nAvailable since 3.1.6"/>
+        </property>
+        <property name="style" type="bitlist">
+            <option name="wxTE_PROCESS_ENTER"
+                help="The control will generate the event wxEVT_TEXT_ENTER (otherwise pressing Enter key is either processed internally by the control or used for navigation between dialog controls)."/>
+            <option name="wxTE_PROCESS_TAB"
+                help="The control will receive wxEVT_CHAR events for TAB pressed - normally, TAB is used for passing to the next control in a dialog instead. For the control created with this style, you can still use Ctrl-Enter to pass to the next control from the keyboard."/>
+            <option name="wxTE_MULTILINE"
+                help="The text control allows multiple lines."/>
+            <option name="wxTE_PASSWORD"
+                help="The text will be echoed as asterisks."/>
+            <option name="wxTE_READONLY"
+                help="The text will not be user-editable."/>
+            <option name="wxTE_RICH"
+                help="Use rich text control under Windows. This allows having more than 64KB of text in the control. This style is ignored under other platforms."/>
+            <option name="wxTE_RICH2"
+                help="Use rich text control version 2.0 or 3.0 under Windows. This style is ignored under other platforms."/>
+            <option name="wxTE_AUTO_URL"
+                help="Highlight the URLs and generate the wxTextUrlEvents when mouse events occur over them. This style is only supported for wxTE_RICH Win32 and multi-line wxGTK2 text controls."/>
+            <option name="wxTE_NOHIDESEL"
+                help="By default, the Windows text control doesn't show the selection when it doesn't have focus - use this style to force it to always show it. This style is ignored under other platforms."/>
+            <option name="wxTE_NO_VSCROLL"
+                help="For multiline controls only: a vertical scrollbar will never be created. This limits the amount of text which can be entered into the control to what can be displayed in it under MSW but not under GTK2. Currently not implemented for the other platforms."/>
+            <option name="wxTE_LEFT"
+                help="The text in the control will be left-justified (default)."/>
+            <option name="wxTE_CENTER"
+                help="The text in the control will be centered (currently Windows and wxGTK2 only)."/>
+            <option name="wxTE_RIGHT"
+                help="The text in the control will be right-justified (currently Windows and wxGTK2 only)."/>
+            <option name="wxTE_DONTWRAP"
+                help="Same as wxHSCROLL style: don't wrap at all, show horizontal scrollbar instead."/>
+            <option name="wxTE_CHARWRAP"
+                help="Wrap the lines too long to be shown entirely at any position (wxUniv and wxGTK2 only)."/>
+            <option name="wxTE_WORDWRAP"
+                help="Wrap the lines too long to be shown entirely at word boundaries (wxUniv and wxGTK2 only)."/>
+            <option name="wxTE_BESTWRAP"
+                help="Wrap the lines at word boundaries or at any other character if there are words longer than the window width (this is the default)."/>
+        </property>
+        <property name="focus" type="bool"
+            help="When checked, this control will be set to receive keyboard input when the parent form is first created.">
+            0</property>
+        <event name="wxEVT_TEXT" class="wxCommandEvent"
+            help="Generated when the text changes. Notice that this event will always be generated when the text controls contents changes - whether this is due to user input or comes from the program itself (for example, if SetValue() is called.)"/>
+        <event name="wxEVT_TEXT_ENTER" class="wxCommandEvent"
+            help="Generated when enter is pressed in a text control (which must have wxTE_PROCESS_ENTER style for this event to be generated)."/>
+        <event name="wxEVT_TEXT_URL" class="wxTextUrlEvent"
+            help="Generated when the a mouse event occurred over an URL in the text control (Windows and wxGTK2 only)."/>
+        <event name="wxEVT_TEXT_MAXLEN" class="wxCommandEvent"
+            help="Generated when the user tries to enter more text into the control than the limit set by SetMaxLength."/>
     </gen>
 
     <gen class="wxRichTextCtrl" image="richtextctrl" type="widget">

@@ -23,7 +23,7 @@ wxObject* CustomControl::CreateMockup(Node* node, wxObject* parent)
     tt_string_vector parts(node->as_string(prop_custom_mockup), ";");
     wxWindow* widget = nullptr;
 
-    if (parts.size() &&parts[0].starts_with("wxStaticText"))
+    if (parts.size() && parts[0].starts_with("wxStaticText"))
     {
         if (auto pos = parts[0].find('('); pos != tt::npos)
         {
@@ -247,33 +247,4 @@ bool CustomControl::GetIncludes(Node* node, std::set<std::string>& set_src, std:
             set_hdr.insert(tt_string() << "class " << node->as_string(prop_class_name) << ';');
     }
     return true;
-}
-
-void CustomControl::AddPropsAndEvents(NodeDeclaration* declaration)
-{
-    DeclAddVarNameProps(declaration, "m_custom");
-    DeclAddProp(declaration, prop_header, type_code_edit,
-                "The header file that declares the class. If the first line does not start with #include then the entire "
-                "contents will be placed in quotes and prefixed with #include. Python and Ruby code should use "
-                "python_import_list and ruby_require_list instead of this property.");
-    DeclAddProp(declaration, prop_namespace, type_string,
-                "C++ namespace the class is declared in. This property is ignored in any langauage besides C++.");
-    DeclAddProp(declaration, prop_class_name, type_string, "The name of the custom class.", "CustomClass");
-
-    DeclAddProp(declaration, prop_construction, type_code_edit,
-                "Optional code to construct the control instead of having wxUiEditor construct it. After this code is "
-                "placed into the generated file, the var_name property will be used to access the control.");
-    DeclAddProp(declaration, prop_parameters, type_string_code_single,
-                "The parameters to use when the class is constructed. The macros ${id}, ${pos}, ${size}, "
-                "${window_extra_style}, ${window_name}, and ${window_style} will be replaced with the matching property. In "
-                "Python, this will be replaced with self.",
-                "(this)");
-
-    DeclAddProp(declaration, prop_settings_code, type_code_edit,
-                "Additional code to include after the class is constructed.");
-    DeclAddProp(declaration, prop_custom_mockup, type_custom_mockup,
-                "Set how you want your custom control represented in the Mockup panel. This will have no effect on the code "
-                "generated for your control. If both width and height are set to -1, then the control will be set to the "
-                "size property in the Window Settings section.",
-                "wxBitmap;-1;-1");
 }

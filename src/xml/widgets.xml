@@ -64,13 +64,32 @@
 			<option name="wxRIGHT"/> wxTOP </property>
     </gen>
 
-    <gen class="CustomControl" image="CustomControl" type="widget">
+    <gen class="gen_CustomControl" image="CustomControl" type="widget">
         <inherits class="wxWindow">
             <hide name="derived_class"/>
             <hide name="derived_header"/>
         </inherits>
         <inherits class="Window Events"/>
         <inherits class="sizer_child"/>
+        <property name="var_name" type="string">m_custom</property>
+        <!-- Verify that prop_ and type_ prefixes are removed in node_init.cpp -->
+        <property name="prop_header" type="type_code_edit"
+            help="The header file that declares the class. If the first line does not start with #include then the entire contents will be placed in quotes and prefixed with #include. Python and Ruby code should use python_import_list and ruby_require_list instead of this property."
+        />
+        <property name="namespace" type="string"
+            help="C++ namespace the class is declared in. This property is ignored in any langauage besides C++."/>
+        <property name="class_name" type="string"
+            help="The name of the custom class.">CustomClass</property>
+        <property name="construction" type="code_edit"
+            help="Optional code to construct the control instead of having wxUiEditor construct it. After this code is placed into the generated file, the var_name property will be used to access the control."/>
+        <property name="parameter" type="string_code_single"
+            help="The parameters to use when the class is constructed. The macros ${id}, ${pos}, ${size}, ${window_extra_style}, ${window_name}, and ${window_style} will be replaced with the matching property. In Python, this will be replaced with self.">
+            (this)</property>
+        <property name="settings_code" type="code_edit"
+            help="Additional code to include after the class is constructed."/>
+        <property name="custom_mockup" type="custom_mockup"
+            help="Set how you want your custom control represented in the Mockup panel. This will have no effect on the code generated for your control. If both width and height are set to -1, then the control will be set to the size property in the Window Settings section.">
+            wxBitmap;-1;-1</property>
     </gen>
 
     <gen class="wxRearrangeCtrl" image="wxRearrangeCtrl" type="widget">

@@ -27,5 +27,4 @@ public:
     void RequiredHandlers(Node*, std::set<std::string>& /* handlers */) override;
 
     void GenEvent(Code&, NodeEvent*, const std::string&) override;
-    void AddPropsAndEvents(NodeDeclaration* declaration) override;
 };

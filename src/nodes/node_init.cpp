@@ -390,16 +390,6 @@ void NodeCreator::Initialize()
 
     initGenerators();
 
-    for (auto* declaration: m_a_declarations)
-    {
-        if (!declaration)
-            continue;
-        if (auto gen = declaration->getGenerator(); gen)
-        {
-            gen->AddPropsAndEvents(declaration);
-        }
-    }
-
     for (auto& iter: fb_ImportTypes)
     {
         m_setOldHostTypes.emplace(iter);

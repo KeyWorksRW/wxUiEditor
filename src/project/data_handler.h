@@ -7,6 +7,8 @@
 
 #pragma once
 
+#include <wx/datetime.h>  // declarations of time/date related classes (wxDateTime,
+
 #include <map>
 
 #include "node_classes.h"  // Forward defintions of Node classes
@@ -27,6 +29,7 @@ struct EmbeddedData
     size_t array_size;
     std::unique_ptr<unsigned char[]> array_data;
     size_t type;         // 0 = string, 1 = xml, tt::npos = not_found
+    wxDateTime m_DateTime;
     bool xml_condensed;  // true if node->as_bool(prop_xml_condensed_format) is true
 };
 
@@ -51,11 +54,6 @@ public:
 
     // Only call this when the datalist code needs to be generated.
     void Initialize();
-
-    // Generate extern references to all the data variables.
-    //
-    // This will call code.clear() before writing any code.
-    void WriteDataPreConstruction(Code& code);
 
     // Generate data list construction code in source
     //

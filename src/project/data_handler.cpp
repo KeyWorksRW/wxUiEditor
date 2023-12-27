@@ -9,6 +9,7 @@
 
 #include <wx/utils.h>  // For wxBusyCursor
 
+#include <wx/filename.h>  // wxFileName - encapsulates a file path
 #include <wx/mstream.h>   // Memory stream classes
 #include <wx/wfstream.h>  // File stream classes
 #include <wx/xml/xml.h>   // wxXmlDocument - XML parser & data holder class
@@ -101,6 +102,7 @@ bool DataHandler::LoadAndCompress(const Node* node)
     auto& embed = m_embedded_data[node->as_string(prop_var_name)];
     embed.array_size = 0;
     embed.array_data = nullptr;
+    embed.m_DateTime = 0;
     embed.type = tt::npos;
 
     auto filename = node->as_string(prop_data_file);
@@ -169,6 +171,8 @@ bool DataHandler::LoadAndCompress(const Node* node)
         embed.array_size = (compressed_size | (org_size << 32));
         embed.array_data = std::make_unique<unsigned char[]>(compressed_size);
         memcpy(embed.array_data.get(), read_stream->GetBufferStart(), compressed_size);
+        wxFileName wx_file(embed.filename);
+        wx_file.GetTimes(nullptr, &embed.m_DateTime, nullptr);
         return true;
     }
 
@@ -202,54 +206,40 @@ bool DataHandler::LoadAndCompress(const Node* node)
         embed.array_size = (compressed_size | (org_size << 32));
         embed.array_data = std::make_unique<unsigned char[]>(compressed_size);
         memcpy(embed.array_data.get(), read_stream->GetBufferStart(), compressed_size);
+        wxFileName wx_file(embed.filename);
+        wx_file.GetTimes(nullptr, &embed.m_DateTime, nullptr);
         return true;
     }
 
     return false;
 }
 
-void DataHandler::WriteDataPreConstruction(Code& code)
-{
-    // Make certain all files have been loaded and are current.
-    wxBusyCursor wait;
-    Initialize();
-
-    ASSERT_MSG(code.is_cpp(), "This function is only used for C++ code generation");
-    code.clear();
-
-    bool is_namespace_written = false;
-    for (auto& iter_array: m_embedded_data)
-    {
-        auto& embed = iter_array.second;
-        if (embed.type == tt::npos)
-        {
-            // filename was not found
-            continue;
-        }
-        if (!is_namespace_written)
-        {
-            is_namespace_written = true;
-            code.Str("namespace wxue_data").OpenBrace();
-        }
-        code.Eol(eol_if_needed).Str("extern const unsigned char ").Str(iter_array.first);
-        code.Str("[").itoa(embed.array_size & 0xFFFFFFFF).Str("];");
-        if (embed.filename.size())
-        {
-            code.Str("  // ").Str(iter_array.second.filename);
-        }
-    }
-
-    if (is_namespace_written)
-    {
-        code.CloseBrace().Eol();
-    }
-}
-
 void DataHandler::WriteDataConstruction(Code& code, WriteCode* source)
 {
-    // Make certain all files have been loaded and are current.
+    // Make certain all files have been loaded
     wxBusyCursor wait;
     Initialize();
+
+    for (const auto& node: code.node()->getChildNodePtrs())
+    {
+        if (m_embedded_data.contains(node->as_string(prop_var_name)))
+        {
+            auto& embed = m_embedded_data[node->as_string(prop_var_name)];
+
+            // Since we've already called Initialize(), all valid files should have been
+            // loaded, so if type is tt::npos then there's no file to load, or it can't be
+            // loaded correctly.
+            if (embed.type == tt::npos)
+                continue;
+
+            wxFileName wx_file(embed.filename);
+            wxDateTime file_time;
+            wx_file.GetTimes(nullptr, &file_time, nullptr);
+            if (file_time == embed.m_DateTime)
+                continue;
+            LoadAndCompress(node.get());
+        }
+    }
 
     ASSERT_MSG(code.is_cpp(), "This function is only used for C++ code generation");
     code.clear();

@@ -177,6 +177,9 @@ protected:
     void GenContextMenuHandler(Node* node_ctx_menu);
 
 protected:
+    // Call this to set m_ImagesForm
+    void SetImagesForm();
+
     const char* LangPtr() const;
     void BeginPlatformCode(Code& code, const tt_string& platforms);
     void EndPlatformCode();

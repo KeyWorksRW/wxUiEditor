@@ -229,37 +229,15 @@ void BaseCodeGenerator::GenerateRubyClass(PANEL_PAGE panel_type)
 
     m_embedded_images.clear();
 
-    m_ImagesForm = nullptr;
-
     bool base64_requirement_written = false;
     bool stringio_requirement_written = false;
     bool zlib_requirement_written = false;
 
-    for (const auto& form: Project.getChildNodePtrs())
-    {
-        if (form->isGen(gen_folder))
-        {
-            for (const auto& child_form: form->getChildNodePtrs())
-            {
-                if (child_form->isGen(gen_Images))
-                {
-                    m_ImagesForm = child_form.get();
-                    break;
-                }
-            }
-            break;
-        }
-
-        else if (form->isGen(gen_Images))
-        {
-            m_ImagesForm = form.get();
-            break;
-        }
-    }
     m_NeedImageFunction = false;
     m_NeedAnimationFunction = false;
     m_NeedSVGFunction = false;
 
+    SetImagesForm();
     std::thread thrd_get_events(&BaseCodeGenerator::CollectEventHandlers, this, m_form_node, std::ref(m_events));
     std::thread thrd_need_img_func(&BaseCodeGenerator::ParseImageProperties, this, m_form_node);
 

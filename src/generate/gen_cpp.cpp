@@ -111,33 +111,10 @@ void BaseCodeGenerator::GenerateCppClass(PANEL_PAGE panel_type)
     m_embedded_images.clear();
     m_type_generated.clear();
 
-    // A lot of the code generation depends on knowing if there is an Images form, so check for that first
-    m_ImagesForm = nullptr;
-    for (const auto& form: Project.getChildNodePtrs())
-    {
-        if (form->isGen(gen_folder))
-        {
-            for (const auto& child_form: form->getChildNodePtrs())
-            {
-                if (child_form->isGen(gen_Images))
-                {
-                    m_ImagesForm = child_form.get();
-                    break;
-                }
-            }
-            break;
-        }
-
-        else if (form->isGen(gen_Images))
-        {
-            m_ImagesForm = form.get();
-            break;
-        }
-    }
-
     // If there is an Images form, then calculate the #include file relative to the current
     // form's output file.
     m_include_images_statement.clear();
+    SetImagesForm();
     if (m_ImagesForm && m_ImagesForm->hasValue(prop_base_file))
     {
         tt_string image_file = Project.getBaseDirectory(m_ImagesForm);

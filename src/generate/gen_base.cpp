@@ -907,3 +907,29 @@ void BaseCodeGenerator::WritePropHdrCode(Node* node, GenEnum::PropName prop)
     }
     m_header->writeLine();
 }
+
+void BaseCodeGenerator::SetImagesForm()
+{
+    m_ImagesForm = nullptr;
+    for (const auto& form: Project.getChildNodePtrs())
+    {
+        if (form->isGen(gen_folder))
+        {
+            for (const auto& child_form: form->getChildNodePtrs())
+            {
+                if (child_form->isGen(gen_Images))
+                {
+                    m_ImagesForm = child_form.get();
+                    break;
+                }
+            }
+            break;
+        }
+
+        else if (form->isGen(gen_Images))
+        {
+            m_ImagesForm = form.get();
+            break;
+        }
+    }
+}

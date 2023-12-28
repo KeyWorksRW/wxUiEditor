@@ -56,13 +56,6 @@ void BaseCodeGenerator::WriteImagePreConstruction(Code& code)
 // Generate code after the construcor for embedded images not defined in the gen_Images node.
 void BaseCodeGenerator::WriteImageConstruction(Code& code)
 {
-    WriteCode* save_writer = m_TranslationUnit ? nullptr : m_source;
-    bool inlined_warning = false;
-    if (!m_TranslationUnit)
-    {
-        m_source = m_header;
-    }
-
     code.clear();
 
     bool is_namespace_written = false;
@@ -92,21 +85,6 @@ void BaseCodeGenerator::WriteImageConstruction(Code& code)
                 code.Eol(eol_if_needed).Str("// ").Str(iter_array->filename);
             }
             code.Eol();
-
-            if (!m_TranslationUnit)
-            {
-                if (!inlined_warning)
-                {
-                    inlined_warning = true;
-                    code.Eol().Str("#if __cplusplus < 201703L");
-                    code.Eol().Str("#warning \"This code requires C++17 or later\"");
-                    code.Eol().Str("#endif");
-                }
-                // The header file can be included multiple times, so we need to set this to
-                // inline to avoid multiple definitions. Note that this requires C++17 --
-                // anything earlier will result in duplication.
-                code << "inline ";
-            }
             code.Str("const unsigned char ").Str(iter_array->array_name);
             code.Str("[").itoa(max_pos).Str("] {");
             m_source->writeLine(code);
@@ -207,11 +185,6 @@ void BaseCodeGenerator::WriteImageConstruction(Code& code)
     if (code.size())
     {
         m_source->writeLine(code);
-    }
-
-    if (save_writer)
-    {
-        m_source = save_writer;
     }
 }
 

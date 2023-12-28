@@ -712,16 +712,8 @@ void CodeDisplay::OnNodeSelected(Node* node)
             }
             else
             {
-                if (node->getForm()->as_bool(prop_generate_translation_unit))
-                {
-                    name << node->as_string(prop_var_name) << ";";
-                    line = (to_int) m_view.FindLineContaining(name);
-                }
-                else
-                {
-                    name << node->as_string(prop_var_name) << " = ";
-                    line = (to_int) m_view.FindLineContaining(name);
-                }
+                name << node->as_string(prop_var_name) << ";";
+                line = (to_int) m_view.FindLineContaining(name);
             }
         }
     }

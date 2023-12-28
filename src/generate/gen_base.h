@@ -234,5 +234,4 @@ private:
     bool m_NeedAnimationFunction { false };  // Set when an Animation image is used
     bool m_NeedSVGFunction { false };        // Set when SVG image type is used
     bool m_NeedImageFunction { false };      // Set when Embed type is used
-    bool m_TranslationUnit { true };         // Reflects form->as_bool(prop_generate_translation_unit)
 };

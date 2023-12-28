@@ -82,7 +82,7 @@
             help="The name of the custom class.">CustomClass</property>
         <property name="construction" type="code_edit"
             help="Optional code to construct the control instead of having wxUiEditor construct it. After this code is placed into the generated file, the var_name property will be used to access the control."/>
-        <property name="parameter" type="string_code_single"
+        <property name="parameters" type="string_code_single"
             help="The parameters to use when the class is constructed. The macros ${id}, ${pos}, ${size}, ${window_extra_style}, ${window_name}, and ${window_style} will be replaced with the matching property. In Python, this will be replaced with self.">
             (this)</property>
         <property name="settings_code" type="code_edit"

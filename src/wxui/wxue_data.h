@@ -46,7 +46,7 @@ namespace wxue_data
     // ../xml/forms.xml
     extern const unsigned char forms[6057]; // 30340
     // ../xml/interfaces.xml
-    extern const unsigned char interfaces[10568]; // 51440
+    extern const unsigned char interfaces[10479]; // 51127
     // ../xml/mdi.xml
     extern const unsigned char mdi[1791]; // 5631
     // ../xml/pickers.xml
@@ -58,7 +58,7 @@ namespace wxue_data
     // ../xml/text_ctrls.xml
     extern const unsigned char text_ctrls[7123]; // 30442
     // ../xml/widgets.xml
-    extern const unsigned char widgets[6713]; // 28608
+    extern const unsigned char widgets[6712]; // 28609
 }
 
 // ************* End of generated code ***********

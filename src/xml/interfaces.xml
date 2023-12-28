@@ -167,9 +167,6 @@
 	<gen class="C++ Settings" type="interface">
 		<property name="base_file" type="file"
 			help="The filename of the base class."/>
-		<property name="generate_translation_unit" type="bool"
-			help="If checked, both a source file (translation unit) and a header file are generated. If not checked, all code is generated in the header file, and no source file is created. A header-only file with images requires a C++17 or later compiler.">
-			1</property>
 		<property name="source_preamble" type="code_edit"
 			help="This preamble is added in addition to any src_preamble specified for the entire project. It will be placed unchanged at the top of the generated base src file after any (optional) precompiled header file."/>
 		<property name="local_src_includes" type="include_files"

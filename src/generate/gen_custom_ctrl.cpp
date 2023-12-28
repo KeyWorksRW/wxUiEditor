@@ -159,7 +159,7 @@ bool CustomControl::ConstructionCode(Code& code)
         }
     }
 
-    if (parameters.back() != ')')
+    if (parameters.size() && parameters.back() != ')')
         parameters += ")";
 
     code.as_string(prop_class_name).Str("(").CheckLineLength(parameters.size()).Str(parameters).AddIfCpp(";");

@@ -58,7 +58,7 @@ namespace wxue_data
     // ../xml/text_ctrls.xml
     extern const unsigned char text_ctrls[7123]; // 30442
     // ../xml/widgets.xml
-    extern const unsigned char widgets[6713]; // 28608
+    extern const unsigned char widgets[6712]; // 28609
 }
 
 // ************* End of generated code ***********

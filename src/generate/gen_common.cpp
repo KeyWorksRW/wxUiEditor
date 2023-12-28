@@ -987,7 +987,7 @@ void GenValidatorSettings(Code& code)
         // wxRuby doesn't add the var_name
         if (code.is_cpp())
         {
-            code.Comma().Str("&").Str(var_name);
+            code.Str("(&").Str(var_name);
         }
         code.Str(")").EndFunction();
         return;

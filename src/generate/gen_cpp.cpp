@@ -942,7 +942,8 @@ void BaseCodeGenerator::GenerateCppClassConstructor()
         m_source->writeLine(code);
         m_source->Indent();
 
-        if (m_form_node->isGen(gen_wxFrame) || m_form_node->isGen(gen_wxDialog) || m_form_node->isGen(gen_wxWizard))
+        if (m_form_node->isGen(gen_wxFrame) || m_form_node->isGen(gen_wxDialog) ||
+            m_form_node->isGen(gen_wxPropertySheetDialog) || m_form_node->isGen(gen_wxWizard))
         {
             // Write code to m_source that will load any image handlers needed by the form's class
             GenerateCppHandlers();

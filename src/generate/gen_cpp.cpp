@@ -96,6 +96,221 @@ R"===(//////////////////////////////////////////////////////////////////////////
 
 // clang-format on
 
+void BaseCodeGenerator::GenHdrNameSpace(tt_string& namespace_prop, tt_string_vector& names, size_t& indent)
+{
+    // BUGBUG: [KeyWorks - 09-01-2021] tt_string_vector works fine with a string as the separator. So does
+    // tt_view_vector which is what we should be using here.
+
+    // tt_string_vector works with a single char, not a string.
+    namespace_prop.Replace("::", ":");
+    // we also accept using semi-colons to separate the namespaces
+    namespace_prop.Replace(";", ":");
+    names.SetString(namespace_prop, ':');
+    tt_string using_name;
+    m_header->writeLine();
+    for (auto& iter: names)
+    {
+        m_header->writeLine(tt_string() << "namespace " << iter);
+        m_header->writeLine("{");
+        m_header->Indent();
+        ++indent;
+
+        if (using_name.empty())
+        {
+            using_name = "using namespace ";
+        }
+        else
+        {
+            using_name += "::";
+        }
+        using_name += iter;
+    }
+    m_header->SetLastLineBlank();
+
+    if (using_name.size())
+    {
+        using_name << ';';
+        m_source->writeLine(using_name);
+    }
+}
+
+void BaseCodeGenerator::GenCppImageFunctions()
+{
+    // First, generate the header files needed
+
+    m_source->writeLine();
+    if (m_NeedAnimationFunction)
+    {
+        m_source->writeLine("#include <wx/animate.h>", indent::none);
+        m_source->writeLine("\n#include <wx/mstream.h>  // memory stream classes", indent::none);
+        if (!m_NeedSVGFunction)
+        {
+            m_source->writeLine("#include <wx/zstream.h>  // zlib stream classes", indent::none);
+
+            m_source->writeLine();
+            m_source->writeLine("#include <memory>  // for std::make_unique", indent::none);
+        }
+    }
+    else if (m_NeedImageFunction || m_NeedHeaderFunction || m_NeedSVGFunction)
+    {
+        m_source->writeLine("\n#include <wx/mstream.h>  // memory stream classes", indent::none);
+    }
+
+    if (m_NeedSVGFunction)
+    {
+        m_source->writeLine("#include <wx/zstream.h>  // zlib stream classes", indent::none);
+        m_source->writeLine();
+        m_source->writeLine("#include <memory>  // for std::make_unique", indent::none);
+    }
+    m_source->writeLine();
+
+    // m_NeedImageFunction and m_NeedSVGFunction will be set to true if there is an image
+    // that is not added to an Image List where it can be loaded via a wxue_img:: function.
+
+    if (m_NeedImageFunction || m_NeedHeaderFunction)
+    {
+        tt_string_vector function;
+        function.ReadString(txt_wxueImageFunction);
+        for (auto& iter: function)
+        {
+            m_source->writeLine(iter, indent::none);
+        }
+        m_source->writeLine();
+    }
+
+    if (m_NeedSVGFunction)
+    {
+        if (Project.is_wxWidgets31())
+        {
+            m_source->writeLine("#if wxCHECK_VERSION(3, 1, 6)", indent::none);
+        }
+
+        tt_string_vector function;
+        function.ReadString(txt_GetBundleFromSVG);
+        for (auto& iter: function)
+        {
+            m_source->writeLine(iter, indent::none);
+        }
+        m_source->writeLine();
+        if (Project.is_wxWidgets31())
+        {
+            m_source->writeLine("#endif  // requires wxCHECK_VERSION(3, 1, 6)", indent::none);
+            m_source->writeLine();
+        }
+    }
+
+    if (m_NeedAnimationFunction)
+    {
+        // Note that we write the function even if the Image List file also has the
+        // function. It won't matter for C++17, and for C++14 the animation isn't likely to
+        // appear in a lot of forms, so any duplication of the function won't matter very
+        // much.
+        tt_string_vector function;
+        function.ReadString(txt_GetAnimFromHdrFunction);
+        for (auto& iter: function)
+        {
+            m_source->writeLine(iter, indent::none);
+        }
+        m_source->writeLine();
+    }
+
+    if (m_embedded_images.size())
+    {
+        Code code(m_form_node, GEN_LANG_CPLUSPLUS);
+        WriteImagePreConstruction(code);
+        if (code.size())
+        {
+            m_source->writeLine(code);
+        }
+    }
+
+    GenerateCppClassConstructor();
+
+    if (m_embedded_images.size())
+    {
+        Code code(m_form_node, GEN_LANG_CPLUSPLUS);
+        WriteImageConstruction(code);
+    }
+}
+
+void BaseCodeGenerator::GenInitHeaderFile(std::set<std::string>& hdr_includes)
+{
+    // BUGBUG: [KeyWorks - 01-25-2021] Need to look for base_class_name property of all children, and add each name
+    // as a forwarded class.
+
+    std::vector<std::string> ordered_includes;
+    if (auto pos = hdr_includes.find("#include <wx/generic/stattextg.h>"); pos != hdr_includes.end())
+    {
+        hdr_includes.erase(pos);
+        if (pos = hdr_includes.find("#include <wx/stattext.h>"); pos != hdr_includes.end())
+        {
+            hdr_includes.erase(pos);
+        }
+
+        if (ordered_includes.empty())
+        {
+            ordered_includes.emplace_back("// Order dependent includes");
+        }
+
+        ordered_includes.emplace_back("#include <wx/stattext.h>");
+        ordered_includes.emplace_back("#include <wx/generic/stattextg.h>");
+    }
+
+    if (ordered_includes.size())
+    {
+        for (auto& iter: ordered_includes)
+        {
+            m_header->writeLine(iter);
+        }
+        m_header->writeLine();
+    }
+
+    // First output all the wxWidget header files
+    for (auto& iter: hdr_includes)
+    {
+        if (tt::contains(iter, "<wx"))
+            m_header->writeLine((tt_string&) iter);
+    }
+
+    m_header->writeLine();
+
+    // Now output all the other header files (this will include forward class declarations)
+    for (auto& iter: hdr_includes)
+    {
+        if (!tt::contains(iter, "<wx"))
+            m_header->writeLine((tt_string&) iter);
+    }
+
+    m_header->writeLine();
+
+    if (m_form_node->hasValue(prop_header_preamble))
+    {
+        WritePropHdrCode(m_form_node, prop_header_preamble);
+    }
+
+    if (m_form_node->hasValue(prop_system_hdr_includes))
+    {
+        m_header->writeLine();
+        tt_view_vector list;
+        list.SetString(m_form_node->as_string(prop_system_hdr_includes));
+        for (auto& iter: list)
+        {
+            m_header->writeLine(tt_string("#include <") << iter << '>');
+        }
+    }
+
+    if (m_form_node->hasValue(prop_local_hdr_includes))
+    {
+        m_header->writeLine();
+        tt_view_vector list;
+        list.SetString(m_form_node->as_string(prop_local_hdr_includes));
+        for (auto& iter: list)
+        {
+            m_header->writeLine(tt_string("#include \"") << iter << '"');
+        }
+    }
+}
+
 void BaseCodeGenerator::GenerateCppClass(PANEL_PAGE panel_type)
 {
     ASSERT(m_language == GEN_LANG_CPLUSPLUS)
@@ -217,80 +432,8 @@ void BaseCodeGenerator::GenerateCppClass(PANEL_PAGE panel_type)
 
     if (panel_type != CPP_PANEL)
     {
-        // BUGBUG: [KeyWorks - 01-25-2021] Need to look for base_class_name property of all children, and add each name
-        // as a forwarded class.
-
-        std::vector<std::string> ordered_includes;
-        if (auto pos = hdr_includes.find("#include <wx/generic/stattextg.h>"); pos != hdr_includes.end())
-        {
-            hdr_includes.erase(pos);
-            if (pos = hdr_includes.find("#include <wx/stattext.h>"); pos != hdr_includes.end())
-            {
-                hdr_includes.erase(pos);
-            }
-
-            if (ordered_includes.empty())
-            {
-                ordered_includes.emplace_back("// Order dependent includes");
-            }
-
-            ordered_includes.emplace_back("#include <wx/stattext.h>");
-            ordered_includes.emplace_back("#include <wx/generic/stattextg.h>");
-        }
-
-        if (ordered_includes.size())
-        {
-            for (auto& iter: ordered_includes)
-            {
-                m_header->writeLine(iter);
-            }
-            m_header->writeLine();
-        }
-
-        // First output all the wxWidget header files
-        for (auto& iter: hdr_includes)
-        {
-            if (tt::contains(iter, "<wx"))
-                m_header->writeLine((tt_string&) iter);
-        }
-
-        m_header->writeLine();
-
-        // Now output all the other header files (this will include forward class declarations)
-        for (auto& iter: hdr_includes)
-        {
-            if (!tt::contains(iter, "<wx"))
-                m_header->writeLine((tt_string&) iter);
-        }
-
-        m_header->writeLine();
-
-        if (m_form_node->hasValue(prop_header_preamble))
-        {
-            WritePropHdrCode(m_form_node, prop_header_preamble);
-        }
-
-        if (m_form_node->hasValue(prop_system_hdr_includes))
-        {
-            m_header->writeLine();
-            tt_view_vector list;
-            list.SetString(m_form_node->as_string(prop_system_hdr_includes));
-            for (auto& iter: list)
-            {
-                m_header->writeLine(tt_string("#include <") << iter << '>');
-            }
-        }
-
-        if (m_form_node->hasValue(prop_local_hdr_includes))
-        {
-            m_header->writeLine();
-            tt_view_vector list;
-            list.SetString(m_form_node->as_string(prop_local_hdr_includes));
-            for (auto& iter: list)
-            {
-                m_header->writeLine(tt_string("#include \"") << iter << '"');
-            }
-        }
+        // Write the #include files to m_header
+        GenInitHeaderFile(hdr_includes);
     }
 
     if (m_form_node->hasValue(prop_cpp_conditional))
@@ -484,40 +627,7 @@ void BaseCodeGenerator::GenerateCppClass(PANEL_PAGE panel_type)
     tt_string_vector names;
     if (namespace_prop.size())
     {
-        // BUGBUG: [KeyWorks - 09-01-2021] tt_string_vector works fine with a string as the separator. So does
-        // tt_view_vector which is what we should be using here.
-
-        // tt_string_vector works with a single char, not a string.
-        namespace_prop.Replace("::", ":");
-        // we also accept using semi-colons to separate the namespaces
-        namespace_prop.Replace(";", ":");
-        names.SetString(namespace_prop, ':');
-        tt_string using_name;
-        m_header->writeLine();
-        for (auto& iter: names)
-        {
-            m_header->writeLine(tt_string() << "namespace " << iter);
-            m_header->writeLine("{");
-            m_header->Indent();
-            ++indent;
-
-            if (using_name.empty())
-            {
-                using_name = "using namespace ";
-            }
-            else
-            {
-                using_name += "::";
-            }
-            using_name += iter;
-        }
-        m_header->SetLastLineBlank();
-
-        if (using_name.size())
-        {
-            using_name << ';';
-            m_source->writeLine(using_name);
-        }
+        GenHdrNameSpace(namespace_prop, names, indent);
     }
 
     if (m_form_node->isGen(gen_Images))
@@ -541,101 +651,10 @@ void BaseCodeGenerator::GenerateCppClass(PANEL_PAGE panel_type)
     thrd_need_img_func.join();
     if (m_panel_type != HDR_PANEL)
     {
-        // First, generate the header files needed
-
-        m_source->writeLine();
-        if (m_NeedAnimationFunction)
-        {
-            m_source->writeLine("#include <wx/animate.h>", indent::none);
-            m_source->writeLine("\n#include <wx/mstream.h>  // memory stream classes", indent::none);
-            if (!m_NeedSVGFunction)
-            {
-                m_source->writeLine("#include <wx/zstream.h>  // zlib stream classes", indent::none);
-
-                m_source->writeLine();
-                m_source->writeLine("#include <memory>  // for std::make_unique", indent::none);
-            }
-        }
-        else if (m_NeedImageFunction || m_NeedHeaderFunction || m_NeedSVGFunction)
-        {
-            m_source->writeLine("\n#include <wx/mstream.h>  // memory stream classes", indent::none);
-        }
-
-        if (m_NeedSVGFunction)
-        {
-            m_source->writeLine("#include <wx/zstream.h>  // zlib stream classes", indent::none);
-            m_source->writeLine();
-            m_source->writeLine("#include <memory>  // for std::make_unique", indent::none);
-        }
-        m_source->writeLine();
-
-        // m_NeedImageFunction and m_NeedSVGFunction will be set to true if there is an image
-        // that is not added to an Image List where it can be loaded via a wxue_img:: function.
-
-        if (m_NeedImageFunction || m_NeedHeaderFunction)
-        {
-            tt_string_vector function;
-            function.ReadString(txt_wxueImageFunction);
-            for (auto& iter: function)
-            {
-                m_source->writeLine(iter, indent::none);
-            }
-            m_source->writeLine();
-        }
-
-        if (m_NeedSVGFunction)
-        {
-            if (Project.is_wxWidgets31())
-            {
-                m_source->writeLine("#if wxCHECK_VERSION(3, 1, 6)", indent::none);
-            }
-
-            tt_string_vector function;
-            function.ReadString(txt_GetBundleFromSVG);
-            for (auto& iter: function)
-            {
-                m_source->writeLine(iter, indent::none);
-            }
-            m_source->writeLine();
-            if (Project.is_wxWidgets31())
-            {
-                m_source->writeLine("#endif  // requires wxCHECK_VERSION(3, 1, 6)", indent::none);
-                m_source->writeLine();
-            }
-        }
-
-        if (m_NeedAnimationFunction)
-        {
-            // Note that we write the function even if the Image List file also has the
-            // function. It won't matter for C++17, and for C++14 the animation isn't likely to
-            // appear in a lot of forms, so any duplication of the function won't matter very
-            // much.
-            tt_string_vector function;
-            function.ReadString(txt_GetAnimFromHdrFunction);
-            for (auto& iter: function)
-            {
-                m_source->writeLine(iter, indent::none);
-            }
-            m_source->writeLine();
-        }
-
-        if (m_embedded_images.size())
-        {
-            WriteImagePreConstruction(code);
-            if (code.size())
-            {
-                m_source->writeLine(code);
-            }
-        }
-
-        GenerateCppClassConstructor();
-
-        if (m_embedded_images.size())
-        {
-            WriteImageConstruction(code);
-        }
+        GenCppImageFunctions();
     }
 
+    // If there was a namespace, then GenHdrNameSpace() will have increased the indent level.
     if (indent > 0)
     {
         while (indent > 0)

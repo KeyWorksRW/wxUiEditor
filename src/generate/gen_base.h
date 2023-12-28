@@ -181,6 +181,11 @@ protected:
     void GenContextMenuHandler(Node* node_ctx_menu);
 
 protected:
+    void GenHdrNameSpace(tt_string& namespace_prop, tt_string_vector& names, size_t& indent);
+    // Generate any headers and functions needed for images in m_source
+    void GenCppImageFunctions();
+    // Writes the #include files to m_header
+    void GenInitHeaderFile(std::set<std::string>& hdr_includes);
     // Call this to set m_ImagesForm
     void SetImagesForm();
 

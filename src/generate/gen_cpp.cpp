@@ -125,13 +125,18 @@ void BaseCodeGenerator::GenerateCppClass(PANEL_PAGE panel_type)
         m_include_images_statement << "#include \"" << image_file << '\"';
     }
 
+    // Initialize these values before calling ParseImageProperties
     m_NeedAnimationFunction = false;
     m_NeedHeaderFunction = false;
     m_NeedSVGFunction = false;
     m_NeedArtProviderHeader = false;
     m_NeedImageFunction = false;
 
+    std::set<std::string> img_include_set;
+
     std::thread thrd_get_events(&BaseCodeGenerator::CollectEventHandlers, this, m_form_node, std::ref(m_events));
+    std::thread thrd_collect_img_headers(&BaseCodeGenerator::CollectImageHeaders, this, m_form_node,
+                                         std::ref(img_include_set));
     std::thread thrd_need_img_func(&BaseCodeGenerator::ParseImageProperties, this, m_form_node);
 
     // If the code files are being written to disk, then UpdateEmbedNodes() has already been called.
@@ -169,11 +174,6 @@ void BaseCodeGenerator::GenerateCppClass(PANEL_PAGE panel_type)
         m_baseFullPath.make_absolute();
         m_baseFullPath.remove_filename();
     }
-
-    // Caution! CollectImageHeaders() needs access to m_baseFullPath, so don't start this thread until it has been set!
-    std::set<std::string> img_include_set;
-    std::thread thrd_collect_img_headers(&BaseCodeGenerator::CollectImageHeaders, this, m_form_node,
-                                         std::ref(img_include_set));
 
     m_header->writeLine("#pragma once");
     m_header->writeLine();

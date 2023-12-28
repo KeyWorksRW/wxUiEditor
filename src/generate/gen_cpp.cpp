@@ -127,10 +127,10 @@ void BaseCodeGenerator::GenerateCppClass(PANEL_PAGE panel_type)
 
     // Initialize these values before calling ParseImageProperties
     m_NeedAnimationFunction = false;
-    m_NeedHeaderFunction = false;
-    m_NeedSVGFunction = false;
     m_NeedArtProviderHeader = false;
+    m_NeedHeaderFunction = false;
     m_NeedImageFunction = false;
+    m_NeedSVGFunction = false;
 
     std::set<std::string> img_include_set;
 

@@ -40,7 +40,7 @@ bool ImportBase::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     if (!wxDialog::Create(parent, id, title, pos, size, style, name))
         return false;
 
-    SetIcon(wxueBundleSVG(wxue_img::import_svg, 418, 1013, wxSize(16, 16)).GetIconFor(this));
+    SetIcon(wxue_img::bundle_import_svg(16, 16).GetIconFor(this));
 
     auto* parent_sizer = new wxBoxSizer(wxVERTICAL);
 

@@ -60,14 +60,16 @@ bool EditCustomMockupBase::Create(wxWindow* parent, wxWindowID id, const wxStrin
     flex_grid_sizer->Add(m_static_text, wxSizerFlags().CenterVertical().Border(wxALL));
 
     auto* width = new wxTextCtrl(this, wxID_ANY, wxEmptyString);
-    width->SetValidator(wxIntegerValidator<int>(&m_width, -1, 9999));
+    width->SetValidator(wxIntegerValidator<int>(&m_width));
+    wxStaticCast(width->GetValidator(), wxIntegerValidator<int>)->SetMin(-1);
+    wxStaticCast(width->GetValidator(), wxIntegerValidator<int>)->SetMax(9999);
     flex_grid_sizer->Add(width, wxSizerFlags().Border(wxALL));
 
     m_static_text2 = new wxStaticText(this, wxID_ANY, "height:");
     flex_grid_sizer->Add(m_static_text2, wxSizerFlags().CenterVertical().Border(wxALL));
 
     auto* text_ctrl2 = new wxTextCtrl(this, wxID_ANY, wxEmptyString);
-    text_ctrl2->SetValidator(wxTextValidator(wxFILTER_NONE|wxFILTER_NUMERIC, &m_height));
+    text_ctrl2->SetValidator(wxTextValidator(wxFILTER_NUMERIC, &m_height));
     flex_grid_sizer->Add(text_ctrl2, wxSizerFlags().Border(wxALL));
 
     dlg_sizer->Add(flex_grid_sizer, wxSizerFlags().Border(wxALL));

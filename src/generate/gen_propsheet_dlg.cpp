@@ -92,11 +92,11 @@ bool PropSheetDlgGenerator::ConstructionCode(Code& code)
         code.Eol(eol_if_needed).FormFunction("SetSheetStyle(").Add(prop_book_type).EndFunction().Eol();
         if (node->as_int(prop_inner_border) >= 0)
         {
-            code.FormFunction("SetInnerBorder(").Add(prop_inner_border).EndFunction().Eol();
+            code.FormFunction("SetSheetInnerBorder(").Add(prop_inner_border).EndFunction().Eol();
         }
         if (node->as_int(prop_outer_border) >= 0)
         {
-            code.FormFunction("SetOuterBorder(").Add(prop_outer_border).EndFunction().Eol();
+            code.FormFunction("SetSheetOuterBorder(").Add(prop_outer_border).EndFunction().Eol();
         }
 
         code.Eol(eol_if_needed) += "if (!";

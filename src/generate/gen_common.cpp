@@ -180,7 +180,7 @@ void GenSize(Node* node, tt_string& code)
         code << "wxDefaultSize";
 }
 
-void GenStyle(Node* node, tt_string& code, const char* prefix)
+static void GenStyle(Node* node, tt_string& code, const char* prefix)
 {
     tt_string all_styles;
 

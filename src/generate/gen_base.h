@@ -132,6 +132,8 @@ protected:
     tt_string GetDeclaration(Node* node);
 
     void CollectEventHandlers(Node* node, EventVector& events);
+
+    // m_language and m_form_node must be set first. This will add to m_embedded_images
     void CollectImageHeaders(Node* node, std::set<std::string>& embedset);
     void CollectIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr);
     void CollectMemberVariables(Node* node, Permission perm, std::set<std::string>& code_lines);
@@ -161,7 +163,9 @@ protected:
     void GenCppEnumIds(Node* class_node);
 
     // Determine if Header or Animation functions need to be generated, and whether the
-    // wx/artprov.h is needed
+    // wx/artprov.h is needed.
+    //
+    // Requires m_ImagesForm to be set before calling
     void ParseImageProperties(Node* class_node);
 
     // implemented in gen_construction.cpp
@@ -177,6 +181,14 @@ protected:
     void GenContextMenuHandler(Node* node_ctx_menu);
 
 protected:
+    void GenHdrNameSpace(tt_string& namespace_prop, tt_string_vector& names, size_t& indent);
+    // Generate any headers and functions needed for images in m_source
+    void GenCppImageFunctions();
+    // Writes the #include files to m_header
+    void GenInitHeaderFile(std::set<std::string>& hdr_includes);
+    // Call this to set m_ImagesForm
+    void SetImagesForm();
+
     const char* LangPtr() const;
     void BeginPlatformCode(Code& code, const tt_string& platforms);
     void EndPlatformCode();

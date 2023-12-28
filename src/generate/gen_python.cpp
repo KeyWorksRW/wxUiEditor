@@ -218,41 +218,11 @@ void BaseCodeGenerator::GeneratePythonClass(PANEL_PAGE panel_type)
     Code code(m_form_node, GEN_LANG_PYTHON);
 
     m_embedded_images.clear();
-
-    m_ImagesForm = nullptr;
-
-    for (const auto& form: Project.getChildNodePtrs())
-    {
-        if (form->isGen(gen_folder))
-        {
-            for (const auto& child_form: form->getChildNodePtrs())
-            {
-                if (child_form->isGen(gen_Images))
-                {
-                    m_ImagesForm = child_form.get();
-                    break;
-                }
-            }
-            break;
-        }
-
-        else if (form->isGen(gen_Images))
-        {
-            m_ImagesForm = form.get();
-            break;
-        }
-    }
-
-    std::thread thrd_get_events(&BaseCodeGenerator::CollectEventHandlers, this, m_form_node, std::ref(m_events));
-
+    SetImagesForm();
+    std::set<std::string> img_include_set;
     m_baseFullPath = MakePythonPath(m_form_node);
 
-    // Caution! CollectImageHeaders() needs access to m_baseFullPath, so don't start this
-    // thread until it has been set!
-    //
-    // thrd_collect_img_headers will populate m_embedded_images;
-
-    std::set<std::string> img_include_set;
+    std::thread thrd_get_events(&BaseCodeGenerator::CollectEventHandlers, this, m_form_node, std::ref(m_events));
     std::thread thrd_collect_img_headers(&BaseCodeGenerator::CollectImageHeaders, this, m_form_node,
                                          std::ref(img_include_set));
 

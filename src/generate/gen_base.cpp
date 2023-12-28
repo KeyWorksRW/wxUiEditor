@@ -692,21 +692,27 @@ void BaseCodeGenerator::ParseImageProperties(Node* node)
         tt_view_vector parts(node->as_string(prop_icon), BMP_PROP_SEPARATOR, tt::TRIM::both);
         if (parts.size() >= IndexImage + 1)
         {
-            if (parts[IndexType] == "Header")
+            // If ProjectImages returns a function name, then the function will be in the
+            // Images List header file, so we don't need to generate any functions for it in
+            // the source file.
+            if (auto function_name = ProjectImages.GetBundleFuncName(node->as_string(prop_icon)); function_name.empty())
             {
-                m_NeedHeaderFunction = true;
-            }
-            else if (parts[IndexType] == "Embed")
-            {
-                m_NeedImageFunction = true;
-            }
-            else if ((parts[IndexType] == "Art"))
-            {
-                m_NeedArtProviderHeader = true;
-            }
-            else if ((parts[IndexType] == "SVG"))
-            {
-                m_NeedSVGFunction = true;
+                if (parts[IndexType] == "Header")
+                {
+                    m_NeedHeaderFunction = true;
+                }
+                else if (parts[IndexType] == "Embed")
+                {
+                    m_NeedImageFunction = true;
+                }
+                else if ((parts[IndexType] == "Art"))
+                {
+                    m_NeedArtProviderHeader = true;
+                }
+                else if ((parts[IndexType] == "SVG"))
+                {
+                    m_NeedSVGFunction = true;
+                }
             }
         }
     }
@@ -906,4 +912,30 @@ void BaseCodeGenerator::WritePropHdrCode(Node* node, GenEnum::PropName prop)
         }
     }
     m_header->writeLine();
+}
+
+void BaseCodeGenerator::SetImagesForm()
+{
+    m_ImagesForm = nullptr;
+    for (const auto& form: Project.getChildNodePtrs())
+    {
+        if (form->isGen(gen_folder))
+        {
+            for (const auto& child_form: form->getChildNodePtrs())
+            {
+                if (child_form->isGen(gen_Images))
+                {
+                    m_ImagesForm = child_form.get();
+                    break;
+                }
+            }
+            break;
+        }
+
+        else if (form->isGen(gen_Images))
+        {
+            m_ImagesForm = form.get();
+            break;
+        }
+    }
 }

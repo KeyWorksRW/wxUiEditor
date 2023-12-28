@@ -69,11 +69,6 @@ bool GenerateBundleCode(const tt_string& description, tt_string& code);
 void GenPos(Node* node, tt_string& code);
 void GenSize(Node* node, tt_string& code);
 
-// This will output "0" if there are no styles (style, window_style, tab_position etc.)
-//
-// If style is a friendly name, add the prefix parameter to prefix lookups.
-void GenStyle(Node* node, tt_string& code, const char* prefix = nullptr);
-
 // Returns the integer value of all style properties for the node. Includes style,
 // window_style, tab_position etc.
 //

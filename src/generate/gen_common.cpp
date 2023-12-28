@@ -180,7 +180,7 @@ void GenSize(Node* node, tt_string& code)
         code << "wxDefaultSize";
 }
 
-void GenStyle(Node* node, tt_string& code, const char* prefix)
+static void GenStyle(Node* node, tt_string& code, const char* prefix)
 {
     tt_string all_styles;
 
@@ -1196,9 +1196,17 @@ tt_string GenerateIconCode(const tt_string& description)
 
         auto svg_size = GetSizeInfo(parts[IndexSize]);
 
-        tt_string name = "wxue_img::" + embed->array_name;
-        code << "SetIcon(wxueBundleSVG(" << name << ", " << (embed->array_size & 0xFFFFFFFF) << ", ";
-        code << (embed->array_size >> 32) << ", wxSize(" << svg_size.x << ", " << svg_size.y << "))";
+        if (auto function_name = ProjectImages.GetBundleFuncName(description); function_name.size())
+        {
+            code << "SetIcon(" << function_name;
+        }
+        else
+        {
+            tt_string name = "wxue_img::" + embed->array_name;
+            code << "SetIcon(wxueBundleSVG(" << name << ", " << (embed->array_size & 0xFFFFFFFF) << ", ";
+            code << (embed->array_size >> 32) << ", wxSize(" << svg_size.x << ", " << svg_size.y << "))";
+        }
+
         code << ".GetIconFor(this));\n";
         return code;
     }

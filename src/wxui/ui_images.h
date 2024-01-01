@@ -58,6 +58,7 @@ namespace wxue_img
     wxBitmapBundle bundle_toolspacer_png();  // toolspacer.png
     wxBitmapBundle bundle_undo_svg(int width, int height);
     wxBitmapBundle bundle_unknown_png();  // unknown.png
+    wxBitmapBundle bundle_unknown_svg(int width, int height);
     wxBitmapBundle bundle_wxButton_png();  // wxButton.png
     wxBitmapBundle bundle_wxCheckBox_png();  // wxCheckBox.png
     wxBitmapBundle bundle_wxCheckListBox_png();  // wxCheckListBox.png
@@ -175,6 +176,7 @@ namespace wxue_img
     extern const unsigned char toolspacer_png[459];
     extern const unsigned char undo_svg[882];
     extern const unsigned char unknown_png[1699];
+    extern const unsigned char unknown_svg[2108];
     extern const unsigned char wxButton_png[500];
     extern const unsigned char wxCheckBox_png[202];
     extern const unsigned char wxCheckListBox_png[498];

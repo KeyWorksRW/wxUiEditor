@@ -1,7 +1,7 @@
 //////////////////////////////////////////////////////////////////////////
 // Purpose:   wxToolbook generator
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -12,6 +12,7 @@
 #include "gen_xrc_utils.h"   // Common XRC generating functions
 #include "node.h"            // Node class
 #include "pugixml.hpp"       // xml read/write/create/process
+#include "ui_images.h"       // Generated images header
 #include "utils.h"           // Utility functions that work with properties
 
 #include "gen_toolbook.h"
@@ -26,7 +27,13 @@ wxObject* ToolbookGenerator::CreateMockup(Node* node, wxObject* parent)
     {
         if (node->getChild(idx_child)->hasValue(prop_bitmap))
         {
-            bundle_list.push_back(node->getChild(idx_child)->as_wxBitmapBundle(prop_bitmap));
+            auto bundle = node->getChild(idx_child)->as_wxBitmapBundle(prop_bitmap);
+            if (!bundle.IsOk())
+            {
+                bundle = wxue_img::bundle_unknown_svg(24, 24);
+            }
+
+            bundle_list.push_back(bundle);
         }
     }
     auto book = wxStaticCast(widget, wxBookCtrlBase);

@@ -1,7 +1,7 @@
 //////////////////////////////////////////////////////////////////////////
 // Purpose:   Common Book utilities
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -11,6 +11,7 @@
 #include "gen_common.h"       // Common component functions
 #include "node.h"             // Node class
 #include "project_handler.h"  // ProjectHandler class
+#include "ui_images.h"        // Generated images header
 
 #include "gen_book_utils.h"
 
@@ -63,7 +64,12 @@ void AddBookImageList(Node* node_book, wxObject* widget)
         {
             if (child_node->hasValue(prop_bitmap))
             {
-                bundle_list.push_back(child_node->as_wxBitmapBundle(prop_bitmap));
+                auto bundle = child_node->as_wxBitmapBundle(prop_bitmap);
+                if (!bundle.IsOk())
+                {
+                    bundle = wxue_img::bundle_unknown_svg(24, 24);
+                }
+                bundle_list.push_back(bundle);
             }
 
             if (node_book->isGen(gen_wxTreebook))

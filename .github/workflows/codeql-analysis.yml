@@ -5,12 +5,12 @@ on:
     - cron: '17 6 * * *'
 
 env:
-  BUILD_TYPE: Debug
+  BUILD_TYPE: Release
 
 jobs:
   analyze:
     name: Analyze
-    runs-on: windows-2022
+    runs-on: windows-latest
     permissions:
       actions: read
       contents: read

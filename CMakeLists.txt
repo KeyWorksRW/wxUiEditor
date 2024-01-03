@@ -265,6 +265,7 @@ if (MSVC)
     # /GL -- combined with the Linker flag /LTCG to perform whole program optimization in Release build
     # /FC -- Full path to source code file in diagnostics
     target_compile_options(wxUiEditor PRIVATE "$<$<CONFIG:Release>:/GL>" "/FC" "/W4" "/Zc:__cplusplus" "/utf-8" "/std:c++latest")
+    target_compile_options(check_build PRIVATE "$<$<CONFIG:Release>:/GL>" "/FC" "/W4" "/Zc:__cplusplus" "/utf-8" "/std:c++latest")
 
     target_link_options(wxUiEditor PRIVATE "$<$<CONFIG:Release>:/LTCG>")
     target_link_options(wxUiEditor PRIVATE "$<$<CONFIG:Debug>:/OPT:REF>")
@@ -272,15 +273,15 @@ if (MSVC)
     # Assume the manifest is in the resource file
     target_link_options(wxUiEditor PRIVATE "/manifest:no")
 elseif(UNIX)
-    target_compile_options(wxUiEditor PRIVATE "-fPIC" "-std:c++latest")
+    target_compile_options(wxUiEditor PRIVATE "-fPIC" "-std=c++latest")
 endif()
 
 target_precompile_headers(wxUiEditor PRIVATE "src/pch.h")
 target_precompile_headers(check_build PRIVATE "src/pch.h")
 
 target_include_directories(wxUiEditor PRIVATE
-    ${BUILD_ROOT}/include
     ${setup_dir}
+    ${BUILD_ROOT}/include
 
     ${CMAKE_CURRENT_LIST_DIR}/frozen/include
 
@@ -297,8 +298,8 @@ target_include_directories(wxUiEditor PRIVATE
 )
 
 target_include_directories(check_build PRIVATE
-    ${BUILD_ROOT}/include
     ${setup_dir}
+    ${BUILD_ROOT}/include
 
     ${CMAKE_CURRENT_LIST_DIR}/frozen/include
 

@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Main window frame
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -13,6 +13,7 @@
 #include "gen_enums.h"   // Enumerations for generators
 #include "mainapp.h"     // App class
 #include "undo_stack.h"  // UndoAction -- Maintain a undo and redo stack
+#include "wakatime.h"    // WakaTime -- Updates WakaTime metrics
 
 #include "wxui/mainframe_base.h"
 
@@ -27,7 +28,6 @@ class MockupPanel;
 class MockupParent;
 class NavigationPanel;
 class PropGridPanel;
-class WakaTime;
 class ImportPanel;
 
 class wxAuiNotebook;

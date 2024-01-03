@@ -72,6 +72,8 @@ void DataHandler::Initialize()
 
     for (const auto& node: node_data_list->getChildNodePtrs())
     {
+        if (node->isGen(gen_data_folder))
+            continue;
         if (m_embedded_data.contains(node->as_string(prop_var_name)))
         {
             // If the filename is empty, there's nothing to load.

@@ -343,6 +343,7 @@ namespace GenEnum
         prop_one_shot,
         prop_orientation,
         prop_outer_border,
+        prop_output_file,
         prop_packing,
         prop_page_size,
         prop_pagesize,
@@ -587,6 +588,7 @@ namespace GenEnum
         type_choicebook,
         type_container,
         type_ctx_menu,
+        type_data_folder,
         type_data_list,
         type_data_string,
         type_dataviewcolumn,
@@ -724,6 +726,7 @@ namespace GenEnum
 
         gen_Data,
         gen_Images,
+        gen_data_folder,
         gen_data_string,
         gen_data_xml,
         gen_embedded_image,

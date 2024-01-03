@@ -1292,7 +1292,7 @@ void BaseCodeGenerator::GenerateDataClassConstructor(PANEL_PAGE panel_type)
     }
 
     tt_string file;
-    if (auto& base_file = m_form_node->as_string(prop_base_file); base_file.size())
+    if (auto& base_file = m_form_node->as_string(prop_output_file); base_file.size())
     {
         tt_cwd cwd(true);
         Project.ChangeDir();

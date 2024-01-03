@@ -80,8 +80,9 @@ endif()
 
 ####################### General Settings #######################
 
-set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
+# CMAKE_CXX_STANDARD is not set, using -std::c++latest instead. However, currently your compiler
+# *MUST* support C++20 or later.
+
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 if (MSVC)
@@ -263,7 +264,7 @@ endif()
 if (MSVC)
     # /GL -- combined with the Linker flag /LTCG to perform whole program optimization in Release build
     # /FC -- Full path to source code file in diagnostics
-    target_compile_options(wxUiEditor PRIVATE "$<$<CONFIG:Release>:/GL>" "/FC" "/W4" "/Zc:__cplusplus" "/utf-8")
+    target_compile_options(wxUiEditor PRIVATE "$<$<CONFIG:Release>:/GL>" "/FC" "/W4" "/Zc:__cplusplus" "/utf-8" "/std:c++latest")
 
     target_link_options(wxUiEditor PRIVATE "$<$<CONFIG:Release>:/LTCG>")
     target_link_options(wxUiEditor PRIVATE "$<$<CONFIG:Debug>:/OPT:REF>")
@@ -271,7 +272,7 @@ if (MSVC)
     # Assume the manifest is in the resource file
     target_link_options(wxUiEditor PRIVATE "/manifest:no")
 elseif(UNIX)
-    target_compile_options(wxUiEditor PRIVATE "-fPIC")
+    target_compile_options(wxUiEditor PRIVATE "-fPIC" "-std:c++latest")
 endif()
 
 target_precompile_headers(wxUiEditor PRIVATE "src/pch.h")

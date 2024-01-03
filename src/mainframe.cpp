@@ -42,7 +42,6 @@
 #include "project_handler.h"  // ProjectHandler class
 #include "undo_cmds.h"        // InsertNodeAction -- Undoable command classes derived from UndoAction
 #include "utils.h"            // Utility functions that work with properties
-#include "wakatime.h"         // WakaTime -- Updates WakaTime metrics
 #include "write_code.h"       // Write code to Scintilla or file
 
 #include "panels/base_panel.h"      // BasePanel -- C++ panel

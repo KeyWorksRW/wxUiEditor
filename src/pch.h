@@ -9,6 +9,14 @@
 
 #pragma once  // NOLINT(#pragma once in main file)
 
+#if defined(_MSVC_LANG)
+    #if (_MSVC_LANG < 202002L)
+        #error "This project requires C++20 or later"
+    #endif
+#elif (__cplusplus < 202002L)
+    #error "This project requires C++20 or later"
+#endif
+
 // Ensure that _DEBUG is defined in non-release builds
 #if !defined(NDEBUG) && !defined(_DEBUG)
     #define _DEBUG

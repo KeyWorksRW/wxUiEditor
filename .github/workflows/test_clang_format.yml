@@ -11,6 +11,7 @@ on:
       - docs
       - import_tests
       - .github
+  workflow_dispatch:
 
 jobs:
   build:

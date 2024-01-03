@@ -3,6 +3,7 @@ name: "Daily Build"
 on:
   schedule:
     - cron: '17 5 * * *'
+  workflow_dispatch:
 
 env:
   BUILD_TYPE: Release

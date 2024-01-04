@@ -236,6 +236,10 @@ if (BUILD_SHARED_LIBS)
     target_compile_definitions(check_build PRIVATE WXUSINGDLL)
 endif()
 
+# synchronize this with the compiler stanrdard required in src/pch.h
+target_compile_features(wxUiEditor PRIVATE cxx_std_20)
+target_compile_features(check_build PRIVATE cxx_std_20)
+
 if (UNIX)
     set(SYSTEM_LIBS
         ${GTK3_LIBRARIES}
@@ -264,16 +268,14 @@ endif()
 if (MSVC)
     # /GL -- combined with the Linker flag /LTCG to perform whole program optimization in Release build
     # /FC -- Full path to source code file in diagnostics
-    target_compile_options(wxUiEditor PRIVATE "$<$<CONFIG:Release>:/GL>" "/FC" "/W4" "/Zc:__cplusplus" "/utf-8" "/std:c++latest")
-    target_compile_options(check_build PRIVATE "$<$<CONFIG:Release>:/GL>" "/FC" "/W4" "/Zc:__cplusplus" "/utf-8" "/std:c++latest")
+    target_compile_options(wxUiEditor PRIVATE "$<$<CONFIG:Release>:/GL>" "/FC" "/W4" "/Zc:__cplusplus" "/utf-8")
+    target_compile_options(check_build PRIVATE "$<$<CONFIG:Release>:/GL>" "/FC" "/W4" "/Zc:__cplusplus" "/utf-8")
 
     target_link_options(wxUiEditor PRIVATE "$<$<CONFIG:Release>:/LTCG>")
     target_link_options(wxUiEditor PRIVATE "$<$<CONFIG:Debug>:/OPT:REF>")
 
     # Assume the manifest is in the resource file
     target_link_options(wxUiEditor PRIVATE "/manifest:no")
-elseif(UNIX)
-    target_compile_options(wxUiEditor PRIVATE "-fPIC" "-std=c++latest")
 endif()
 
 target_precompile_headers(wxUiEditor PRIVATE "src/pch.h")

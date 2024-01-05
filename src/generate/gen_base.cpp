@@ -271,6 +271,11 @@ void BaseCodeGenerator::GatherGeneratorIncludes(Node* node, std::set<std::string
                     set_src.insert(m_include_images_statement);
                 }
 
+                if (iter.as_string().starts_with("Art"))
+                {
+                    m_NeedArtProviderHeader = true;
+                }
+
                 if (auto function_name = ProjectImages.GetBundleFuncName(iter.as_string()); function_name.size())
                 {
                     continue;
@@ -764,10 +769,6 @@ void BaseCodeGenerator::ParseImageProperties(Node* node)
                             }
                         }
                     }
-                }
-                else if ((parts[IndexType] == "Art"))
-                {
-                    m_NeedArtProviderHeader = true;
                 }
                 else if ((parts[IndexType] == "SVG"))
                 {

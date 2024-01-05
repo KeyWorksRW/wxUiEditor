@@ -16,7 +16,7 @@
             <option name="C++"/>
 			<option name="Python"/>
 			<option name="Ruby"/>
-			<option name="XRC"/> C++ </property>
+			<option name="XRC"/>C++</property>
         <property name="art_directory" type="path"
             help="The directory containing your images (png, ico, xpm, etc.).">./</property>
         <property name="dialog_units" type="bool"
@@ -32,7 +32,7 @@
                 help="Use wxSimpleHelpProvider to provide context-sensitive help."/>
 			<option
                 name="wxHelpControllerHelpProvider"
-                help="Use wxHelpControllerHelpProvider to provide context-sensitive help."/> none </property>
+                help="Use wxHelpControllerHelpProvider to provide context-sensitive help."/>none</property>
         <property name="id_prefixes" type="stringlist_semi"
             help="Optional prefixes to apply before a custom id. These can be added in the ID Editor dialog."/>
         <property name="id_suffixes" type="stringlist_semi"
@@ -51,7 +51,7 @@
             <option name="C++"/>
 			<option name="Python"/>
 			<option name="Ruby"/>
-			<option name="XRC"/> C++ </property>
+			<option name="XRC"/>C++</property>
     </gen>
 
     <gen class="sub_folder" image="folder" type="sub_folder">
@@ -92,7 +92,7 @@
     </gen>
 
     <gen class="Data" image="text_sizer" type="data_list">
-        <property name="base_file" type="file"
+        <property name="output_file" type="file"
             help="The C++ filename to store all the data strings in.">wxue_data</property>
         <!-- <property name="python_file" type="file"
             help="The Python filename to store all the data strings in.">wxue_data</property> -->
@@ -101,6 +101,13 @@
         <!-- <property name="auto_update" type="bool"
             help="Automatically add any embedded or svg images specified for controls or forms. Will only add images in folders if
         the folder does not have its own image form.">0</property> -->
+    </gen>
+
+    <gen class="data_folder" image="folder" type="data_folder">
+        <property name="label" type="string"
+            help="The name of the folder.">my_data_files</property>
+        <property name="output_file" type="file"
+			help="If specified, all items in this folder will be generated to this file instead of the main output file."/>
     </gen>
 
     <gen class="data_string" image="filePicker" type="data_string">

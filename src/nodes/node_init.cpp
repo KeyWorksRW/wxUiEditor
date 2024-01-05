@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Initialize NodeCreator class
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -175,6 +175,8 @@ static const ParentChild lstParentChild[] = {
     { type_aui_toolbar_form, type_widget, infinite },
 
     { type_data_list, type_data_string, infinite },
+    { type_data_list, type_data_folder, infinite },
+    { type_data_folder, type_data_string, infinite },
     { type_images, type_embed_image, infinite },
     { type_wizard, type_wizardpagesimple, infinite },
 

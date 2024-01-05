@@ -1914,7 +1914,7 @@ bool MainFrame::MoveNode(Node* node, MoveDirection where, bool check_only)
         }
         return false;
     }
-    else if (node->isGen(gen_Data) || parent->isGen(gen_Data))
+    else if (node->isGen(gen_Data) || (parent->isGen(gen_Data) && !node->isGen(gen_data_folder)))
     {
         if (!check_only)
         {
@@ -1928,7 +1928,7 @@ bool MainFrame::MoveNode(Node* node, MoveDirection where, bool check_only)
 
     if (where == MoveDirection::Left)
     {
-        if (node->isGen(gen_folder))
+        if (node->isGen(gen_folder) || node->isGen(gen_data_folder))
             return false;
         else if (node->isGen(gen_sub_folder) && parent->isGen(gen_folder))
             return false;  // You can't have Project as the parent of a sub_folder
@@ -1962,7 +1962,7 @@ bool MainFrame::MoveNode(Node* node, MoveDirection where, bool check_only)
     }
     else if (where == MoveDirection::Right)
     {
-        if (node->isGen(gen_folder))
+        if (node->isGen(gen_folder) || node->isGen(gen_data_folder))
             return false;
 
         auto pos = parent->getChildPosition(node) - 1;

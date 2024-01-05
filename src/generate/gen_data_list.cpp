@@ -25,7 +25,6 @@
 #include "undo_cmds.h"        // InsertNodeAction -- Undoable command classes derived from UndoAction
 #include "utils.h"            // Utility functions that work with properties
 #include "write_code.h"       // Write code to Scintilla or file
-#include "mainframe.h"        // MainFrame -- Main window frame
 
 #include "ui_images.h"
 

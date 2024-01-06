@@ -164,51 +164,19 @@ tt_string ProjectHandler::ArtDirectory() const
 
 tt_string ProjectHandler::getBaseDirectory(Node* node, int language) const
 {
-    tt_string result;
-
-    Node* folder = node->getFolder();
-    if (folder)
+    // GetOutputPath() will handle a situation where the base filename contains a directory
+    // prefix, which might or might not be a duplicate of any project or folder's output
+    // directory.
+    auto result = GetOutputPath(node, language);
+    if (result.second)
     {
-        if (language == GEN_LANG_CPLUSPLUS && folder->hasValue(prop_folder_base_directory))
-            result = folder->as_string(prop_folder_base_directory);
-        else if (language == GEN_LANG_PYTHON && folder->hasValue(prop_folder_python_output_folder))
-            result = folder->as_string(prop_folder_python_output_folder);
-        else if (language == GEN_LANG_RUBY && folder->hasValue(prop_folder_ruby_output_folder))
-            result = folder->as_string(prop_folder_ruby_output_folder);
-        else if (language == GEN_LANG_XRC && folder->hasValue(prop_folder_xrc_directory))
-            result = folder->as_string(prop_folder_xrc_directory);
+        result.first.remove_filename();
     }
 
-    // Even if the node has a folder parent, there may not be a directory set for it, so check
-    // result and if it's empty use the project directory properties.
-    if (result.empty() || !folder)
-    {
-        if (language == GEN_LANG_CPLUSPLUS && m_project_node->hasValue(prop_base_directory))
-            result = m_project_node->as_string(prop_base_directory);
-        else if (language == GEN_LANG_PYTHON && m_project_node->hasValue(prop_python_output_folder))
-            result = m_project_node->as_string(prop_python_output_folder);
-        else if (language == GEN_LANG_RUBY && m_project_node->hasValue(prop_ruby_output_folder))
-            result = m_project_node->as_string(prop_ruby_output_folder);
-        else if (language == GEN_LANG_XRC && m_project_node->hasValue(prop_xrc_directory))
-            result = m_project_node->as_string(prop_xrc_directory);
-    }
-
-    if (result.empty())
-        result = m_projectPath;
-
-    tt_string base_file = node->as_string(prop_base_file);
-    base_file.remove_filename();
-    if (base_file.size())
-    {
-        result.append_filename(base_file);
-    }
-
-    result.make_absolute();
-
-    return result;
+    return result.first;
 }
 
-tt_string ProjectHandler::GetOutputPath(Node* form, int language) const
+std::pair<tt_string, bool> ProjectHandler::GetOutputPath(Node* form, int language) const
 {
     tt_string result;
     Node* folder = form->getFolder();
@@ -294,8 +262,7 @@ tt_string ProjectHandler::GetOutputPath(Node* form, int language) const
 
     if (base_file.empty())
     {
-        result.clear();
-        return result;
+        return std::make_pair(result, false);
     }
 
     // TODO: [Randalphwa - 01-06-2024] It's possible that the user created the filename using a
@@ -334,7 +301,7 @@ tt_string ProjectHandler::GetOutputPath(Node* form, int language) const
     result.make_absolute();
     result.backslashestoforward();
 
-    return result;
+    return std::make_pair(result, true);
 }
 
 // Note that this will return a directory for GEN_LANG_PYTHON and GEN_LANG_XRC even though we currently

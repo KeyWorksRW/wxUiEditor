@@ -318,7 +318,7 @@ bool GenerateXrcFiles(GenResults& results, tt_string out_file, std::vector<tt_st
 
     for (auto& form: forms)
     {
-        path = Project.GetOutputPath(form, GEN_LANG_XRC);
+        auto [path, has_base_file] = Project.GetOutputPath(form, GEN_LANG_XRC);
         if (path.empty())
         {
             // If the form type is supported, warn the user about not having an XRC file for it.

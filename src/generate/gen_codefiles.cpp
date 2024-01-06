@@ -98,8 +98,8 @@ void GenThreadCpp(GenData& gen_data, Node* form)
     tt_string& source_ext = gen_data.source_ext;
     tt_string& header_ext = gen_data.header_ext;
 
-    tt_string path = Project.GetOutputPath(form, GEN_LANG_CPLUSPLUS);
-    if (path.empty())
+    auto [path, has_base_file] = Project.GetOutputPath(form, GEN_LANG_CPLUSPLUS);
+    if (!has_base_file)
     {
         tt_string msg("No filename specified for ");
         if (form->hasValue(prop_class_name))
@@ -473,7 +473,6 @@ void GenerateTmpFiles(const std::vector<tt_string>& ClassList, pugi::xml_node ro
 {
     tt_cwd cwd(true);
     Project.ChangeDir();
-    tt_string path;
     std::vector<tt_string> results;
 
     tt_string source_ext(".cpp");
@@ -536,9 +535,8 @@ void GenerateTmpFiles(const std::vector<tt_string>& ClassList, pugi::xml_node ro
 
             if (class_name.is_sameas(iter_class))
             {
-                path.clear();
-                path = Project.GetOutputPath(form, language);
-                if (path.empty())
+                auto [path, has_base_file] = Project.GetOutputPath(form, language);
+                if (!has_base_file)
                     continue;
 
                 BaseCodeGenerator codegen(language, form);

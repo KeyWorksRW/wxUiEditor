@@ -164,8 +164,9 @@ void IncludeFilesDialog::OnAdd(wxCommandEvent& WXUNUSED(event))
         m_prop->isProp(prop_python_import_list))
     {
         auto* form = m_prop->getNode();
-        path = Project.GetOutputPath(form, m_language);
-        if (path.size())
+        auto [output_path, has_base_file] = Project.GetOutputPath(form, m_language);
+        path = std::move(output_path);
+        if (has_base_file)
         {
             cur_file = path.filename();
 

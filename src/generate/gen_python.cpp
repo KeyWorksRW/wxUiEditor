@@ -99,7 +99,6 @@ bool GeneratePythonFiles(GenResults& results, std::vector<tt_string>* pClassList
     }
     tt_cwd cwd(true);
     Project.ChangeDir();
-    tt_string path;
 
     bool generate_result = true;
     std::vector<Node*> forms;
@@ -111,8 +110,8 @@ bool GeneratePythonFiles(GenResults& results, std::vector<tt_string>* pClassList
 
     for (const auto& form: forms)
     {
-        path = Project.GetOutputPath(form, GEN_LANG_PYTHON);
-        if (path.empty())
+        auto [path, has_base_file] = Project.GetOutputPath(form, GEN_LANG_PYTHON);
+        if (!has_base_file)
         {
 #if !defined(_DEBUG)
             // For a lot of wxPython testing of projects with multiple dialogs, there may
@@ -797,11 +796,11 @@ void PythonBtnBimapCode(Code& code, bool is_single)
 
 tt_string MakePythonPath(Node* node)
 {
-    auto path = Project.GetOutputPath(node->getForm(), GEN_LANG_PYTHON);
+    auto [path, has_base_file] = Project.GetOutputPath(node->getForm(), GEN_LANG_PYTHON);
 
     if (path.empty())
         path = "./";
-    else
+    else if (has_base_file)
         path.remove_filename();
     return path;
 }

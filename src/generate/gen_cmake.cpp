@@ -139,8 +139,8 @@ int WriteCMakeFile(Node* parent_node, std::vector<tt_string>& updated_files, std
                 }
             }
 
-            tt_string path = Project.GetOutputPath(form, GEN_LANG_CPLUSPLUS);
-            if (path.empty())
+            auto [path, has_base_file] = Project.GetOutputPath(form, GEN_LANG_CPLUSPLUS);
+            if (!has_base_file)
             {
                 // No file was specified. It's unlikely this would actually happen given the
                 // form->hasValue(prop_base_file) above, but it does serve as a template check

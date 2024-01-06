@@ -681,16 +681,16 @@ void BaseCodeGenerator::GenPythonEventHandlers(EventVector& events)
     if (m_panel_type == NOT_PANEL)
     {
         tt_view_vector org_file;
-        tt_string path = Project.GetOutputPath(m_form_node, GEN_LANG_PYTHON);
+        auto [path, has_base_file] = Project.GetOutputPath(m_form_node, GEN_LANG_PYTHON);
 
-        if (path.size() && path.extension().empty())
+        if (has_base_file && path.extension().empty())
         {
             path += ".py";
         }
 
         // If the user has defined any event handlers, add them to the code_lines set so we
         // don't generate them again.
-        if (path.size() && org_file.ReadFile(path))
+        if (has_base_file && org_file.ReadFile(path))
         {
             size_t line_index;
             for (line_index = 0; line_index < org_file.size(); ++line_index)
@@ -841,16 +841,16 @@ void BaseCodeGenerator::GenRubyEventHandlers(EventVector& events)
     if (m_panel_type == NOT_PANEL)
     {
         tt_view_vector org_file;
-        tt_string path = Project.GetOutputPath(m_form_node, GEN_LANG_RUBY);
+        auto [path, has_base_file] = Project.GetOutputPath(m_form_node, GEN_LANG_RUBY);
 
-        if (path.size() && path.extension().empty())
+        if (has_base_file && path.extension().empty())
         {
             path += ".rb";
         }
 
         // If the user has defined any event handlers, add them to the code_lines set so we
         // don't generate them again.
-        if (path.size() && org_file.ReadFile(path))
+        if (has_base_file && org_file.ReadFile(path))
         {
             size_t line_index;
             for (line_index = 0; line_index < org_file.size(); ++line_index)

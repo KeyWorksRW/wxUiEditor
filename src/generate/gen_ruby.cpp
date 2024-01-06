@@ -117,8 +117,8 @@ bool GenerateRubyFiles(GenResults& results, std::vector<tt_string>* pClassList)
 
     for (const auto& form: forms)
     {
-        path = Project.GetOutputPath(form, GEN_LANG_RUBY);
-        if (path.empty())
+        auto [path, has_base_file] = Project.GetOutputPath(form, GEN_LANG_RUBY);
+        if (!has_base_file)
         {
 #if !defined(_DEBUG)
             // For a lot of wxRuby testing of projects with multiple dialogs, there may
@@ -655,10 +655,10 @@ void BaseCodeGenerator::GenerateRubyClass(PANEL_PAGE panel_type)
 
 tt_string MakeRubyPath(Node* node)
 {
-    auto path = Project.GetOutputPath(node->getForm(), GEN_LANG_RUBY);
+    auto [path, has_base_file] = Project.GetOutputPath(node->getForm(), GEN_LANG_RUBY);
     if (path.empty())
         path = "./";
-    else
+    else if (has_base_file)
         path.remove_filename();
     return path;
 }

@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Generate Ruby code files
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2023 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2023-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -117,22 +117,8 @@ bool GenerateRubyFiles(GenResults& results, std::vector<tt_string>* pClassList)
 
     for (const auto& form: forms)
     {
-        if (auto& base_file = form->as_string(prop_ruby_file); base_file.size())
-        {
-            path = Project.getBaseDirectory(form, GEN_LANG_RUBY);
-            if (path.size())
-            {
-                path.append_filename(base_file);
-            }
-            else
-            {
-                path = base_file;
-            }
-
-            path.make_absolute();
-            path.backslashestoforward();
-        }
-        else
+        path = Project.GetOutputPath(form, GEN_LANG_RUBY);
+        if (path.empty())
         {
 #if !defined(_DEBUG)
             // For a lot of wxRuby testing of projects with multiple dialogs, there may
@@ -669,29 +655,11 @@ void BaseCodeGenerator::GenerateRubyClass(PANEL_PAGE panel_type)
 
 tt_string MakeRubyPath(Node* node)
 {
-    tt_string path;
-    Node* form = node->getForm();
-
-    if (auto& base_file = form->as_string(prop_ruby_file); base_file.size())
-    {
-        path = Project.getBaseDirectory(form, GEN_LANG_RUBY);
-        if (path.size())
-        {
-            path.append_filename(base_file);
-        }
-        else
-        {
-            path = base_file;
-        }
-
-        path.make_absolute();
-        path.backslashestoforward();
-    }
-
+    auto path = Project.GetOutputPath(node->getForm(), GEN_LANG_RUBY);
     if (path.empty())
         path = "./";
-    path.make_absolute();
-    path.remove_filename();
+    else
+        path.remove_filename();
     return path;
 }
 

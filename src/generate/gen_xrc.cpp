@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Generate XRC file
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2022-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -318,22 +318,8 @@ bool GenerateXrcFiles(GenResults& results, tt_string out_file, std::vector<tt_st
 
     for (auto& form: forms)
     {
-        if (auto& base_file = form->as_string(prop_xrc_file); base_file.size())
-        {
-            path = Project.getBaseDirectory(form, GEN_LANG_XRC);
-            if (path.size())
-            {
-                path.append_filename(base_file);
-            }
-            else
-            {
-                path = base_file;
-            }
-
-            path.make_absolute();
-            path.backslashestoforward();
-        }
-        else
+        path = Project.GetOutputPath(form, GEN_LANG_XRC);
+        if (path.empty())
         {
             // If the form type is supported, warn the user about not having an XRC file for it.
             if (!form->isGen(gen_Images) && !form->isGen(gen_wxPopupTransientWindow))

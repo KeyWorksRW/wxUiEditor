@@ -1,7 +1,7 @@
 //////////////////////////////////////////////////////////////////////////
 // Purpose:   Auto-generate a .cmake file
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2021-2023 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2021-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -139,20 +139,13 @@ int WriteCMakeFile(Node* parent_node, std::vector<tt_string>& updated_files, std
                 }
             }
 
-            tt_string path;
-            if (auto& base_file = form->as_string(prop_base_file); base_file.size())
+            tt_string path = Project.GetOutputPath(form, GEN_LANG_CPLUSPLUS);
+            if (path.empty())
             {
-                path = Project.getBaseDirectory(form, GEN_LANG_CPLUSPLUS);
-                if (path.size())
-                {
-                    path.append_filename(base_file);
-                }
-                else
-                {
-                    path = base_file;
-                }
-
-                path.make_absolute();
+                // No file was specified. It's unlikely this would actually happen given the
+                // form->hasValue(prop_base_file) above, but it does serve as a template check
+                // -- an will prevent a problem if the above check is removed.
+                continue;
             }
 
             if (cmake_file_dir.size())

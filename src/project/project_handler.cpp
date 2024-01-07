@@ -164,13 +164,9 @@ tt_string ProjectHandler::ArtDirectory() const
 
 tt_string ProjectHandler::getBaseDirectory(Node* node, int language) const
 {
-    // GetOutputPath() will handle a situation where the base filename contains a directory
-    // prefix, which might or might not be a duplicate of any project or folder's output
-    // directory.
-    auto result = GetOutputPath(node, language);
-    if (result.second)
+    if (!node || node == m_project_node.get())
     {
-        result.first.remove_filename();
+        return m_projectPath;
     }
 
     return result.first;

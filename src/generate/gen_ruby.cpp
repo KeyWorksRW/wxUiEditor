@@ -105,7 +105,6 @@ bool GenerateRubyFiles(GenResults& results, std::vector<tt_string>* pClassList)
     }
     tt_cwd cwd(true);
     Project.ChangeDir();
-    tt_string path;
 
     bool generate_result = true;
     std::vector<Node*> forms;
@@ -462,7 +461,8 @@ void BaseCodeGenerator::GenerateRubyClass(PANEL_PAGE panel_type)
                 // We have to provide our own method, and that requires this library
                 if (!stringio_requirement_written)
                 {
-                    stringio_requirement_written = true;
+                    // No further check for this is needed
+                    // stringio_requirement_written = true;
                     m_source->writeLine("require 'stringio'");
                 }
             }

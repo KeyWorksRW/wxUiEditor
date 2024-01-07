@@ -310,7 +310,6 @@ bool GenerateXrcFiles(GenResults& results, tt_string out_file, std::vector<tt_st
     }
     std::vector<Node*> forms;
     Project.CollectForms(forms);
-    tt_string path;
 
 #if defined(_DEBUG) || defined(INTERNAL_TESTING)
     results.EndClock();

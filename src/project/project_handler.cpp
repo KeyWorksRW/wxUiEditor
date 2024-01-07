@@ -169,11 +169,28 @@ tt_string ProjectHandler::getBaseDirectory(Node* node, int language) const
         return m_projectPath;
     }
 
-    return result.first;
+    if (!node->isForm() && !node->isFolder())
+    {
+        node = node->getForm();
+        if (!node)
+        {
+            return m_projectPath;
+        }
+    }
+
+    auto [path, has_base_file] = GetOutputPath(node, language);
+    if (has_base_file)
+    {
+        path.remove_filename();
+    }
+
+    return path;
 }
 
 std::pair<tt_string, bool> ProjectHandler::GetOutputPath(Node* form, int language) const
 {
+    ASSERT(form->isForm() || form->isFolder());
+
     tt_string result;
     Node* folder = form->getFolder();
     if (folder)
@@ -282,18 +299,8 @@ std::pair<tt_string, bool> ProjectHandler::GetOutputPath(Node* form, int languag
                 result.erase(result.size() - end_folder, end_folder);
             }
         }
-        else
-        {
-            result += '/';
-        }
-
-        result += base_file;
     }
-    else
-    {
-        result.append_filename(base_file);
-    }
-
+    result.append_filename(base_file);
     result.make_absolute();
     result.backslashestoforward();
 

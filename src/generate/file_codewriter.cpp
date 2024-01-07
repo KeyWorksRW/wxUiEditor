@@ -231,8 +231,10 @@ int FileCodeWriter::WriteFile(int language, int flags)
     copy.remove_filename();
     if (copy.size() && !copy.dir_exists() && !wxGetApp().AskedAboutMissingDir(copy))
     {
-        if (flags & flag_no_ui)
+        if (wxGetApp().isGenerating())
+        {
             return write_no_folder;
+        }
 
         if (wxMessageBox(wxString() << "The directory " << copy.make_wxString()
                                     << " doesn't exist.\n\nWould you like it to be created?",

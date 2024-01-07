@@ -1,12 +1,13 @@
 //////////////////////////////////////////////////////////////////////////
 // Purpose:   Classs to write code to disk
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
 #include <wx/file.h>      // wxFile - encapsulates low-level "file descriptor"
 #include <wx/filename.h>  // wxFileName - encapsulates a file path
+#include <wx/msgdlg.h>    // common header and base class for wxMessageDialog
 
 #include "file_codewriter.h"
 
@@ -236,14 +237,18 @@ int FileCodeWriter::WriteFile(int language, int flags)
             return write_no_folder;
         }
 
-        if (wxMessageBox(wxString() << "The directory " << copy.make_wxString()
-                                    << " doesn't exist.\n\nWould you like it to be created?",
-                         "Generate Files", wxICON_WARNING | wxYES_NO) == wxYES)
+        // Use wxMessageDialog() rather than wxMessageBox() because it will correctly handle a
+        // long filename, whereas wxMessageBox() would truncate a long filename.
+
+        std::string msg("The directory:\n    \"" + copy + "\"\ndoesn't exist. Would you like it to be created?");
+        wxMessageDialog dlg(nullptr, wxString::FromUTF8(msg), "Generate Files", wxICON_WARNING | wxYES_NO);
+        if (dlg.ShowModal() == wxID_YES)
         {
             if (!tt_string::MkDir(copy))
             {
-                wxMessageBox(wxString() << "The directory " << copy.make_wxString() << "could not be created.",
-                             "Generate Files", wxICON_ERROR | wxOK);
+                msg = "The directory:\n    \"" + copy + "\"\ncould not be created.";
+                wxMessageDialog dlg_error(nullptr, wxString::FromUTF8(msg), "Generate Files", wxICON_ERROR | wxOK);
+                dlg_error.ShowModal();
                 return write_cant_create;
             }
         }

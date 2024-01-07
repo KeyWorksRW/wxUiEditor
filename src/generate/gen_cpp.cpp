@@ -332,12 +332,14 @@ void BaseCodeGenerator::GenerateCppClass(PANEL_PAGE panel_type)
     SetImagesForm();
     if (m_ImagesForm && m_ImagesForm->hasValue(prop_base_file))
     {
-        tt_string image_file = Project.getBaseDirectory(m_ImagesForm);
-        image_file.append_filename(m_ImagesForm->as_string(prop_base_file));
-        image_file.replace_extension(m_header_ext);
-        image_file.make_relative(Project.getBaseDirectory(m_form_node).make_absolute());
-        image_file.backslashestoforward();
-        m_include_images_statement << "#include \"" << image_file << '\"';
+        auto [path, has_base_file] = Project.GetOutputPath(m_ImagesForm, GEN_LANG_CPLUSPLUS);
+        if (has_base_file)
+        {
+            path.make_relative(Project.getBaseDirectory(m_form_node).make_absolute());
+            path.backslashestoforward();
+            path.replace_extension(m_header_ext);
+            m_include_images_statement << "#include \"" << path << '\"';
+        }
     }
 
     // Initialize these values before calling ParseImageProperties

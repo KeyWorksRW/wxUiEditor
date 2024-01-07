@@ -1,15 +1,13 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   ProjectHandler class
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
 #pragma once  // NOLINT(#pragma once in main file)
 
-#include <map>
-#include <mutex>
-#include <thread>
+#include <utility>  // for pair<>
 
 #include "gen_enums.h"  // Enumerations for generators
 #include "node.h"       // Node class
@@ -80,6 +78,10 @@ public:
     // If the node is within a folder, and the folder specifies a directory, then that
     // directory is returned. Otherwise the project base directory is returned.
     tt_string getBaseDirectory(Node* node, int language = GEN_LANG_CPLUSPLUS) const;
+
+    // Returns the absolute path to the output file for this node. If no output filename is
+    // specified, first will still contain a path with no filename, and second will be false.
+    std::pair<tt_string, bool> GetOutputPath(Node* form, int language = GEN_LANG_CPLUSPLUS) const;
 
     // If the node is within a folder, and the folder specifies a directory, then that
     // directory is returned. Otherwise the project derived directory is returned.

@@ -96,7 +96,7 @@ bool IncludeFilesDialog::Create(wxWindow* parent, wxWindowID id, const wxString&
 
 /////////////////// Non-generated Copyright/License Info ////////////////////
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2023 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2023-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -164,38 +164,15 @@ void IncludeFilesDialog::OnAdd(wxCommandEvent& WXUNUSED(event))
         m_prop->isProp(prop_python_import_list))
     {
         auto* form = m_prop->getNode();
-        GenEnum::PropName file_prop;
-        if (m_language == GEN_LANG_RUBY)
-            file_prop = prop_ruby_file;
-        else if (m_language == GEN_LANG_PYTHON)
-            file_prop = prop_python_file;
-        else
-            file_prop = prop_base_file;
-
-        if (auto& base_file = form->as_string(file_prop); base_file.size())
+        auto [output_path, has_base_file] = Project.GetOutputPath(form, m_language);
+        path = std::move(output_path);
+        if (has_base_file)
         {
-            path = Project.getBaseDirectory(form, m_language);
-            if (path.size())
-            {
-                path.append_filename(base_file);
-            }
-            else
-            {
-                path = base_file;
-            }
-
-            path.make_absolute();
-            path.backslashestoforward();
-            cur_file = path;
+            cur_file = path.filename();
 
             // We only got the node's filename in case it includes a path. We don't want the
             // filename portion as part of the path.
             path.remove_filename();
-
-            // We need to know the current filename so that properties that import modules
-            // (Python, Ruby, etc) don't try to load the current file.
-            cur_file.make_relative(path);
-            cur_file.backslashestoforward();
         }
 
         if (path.empty())

@@ -266,6 +266,7 @@ int App::OnRun()
         {
             if (generate_type != GEN_LANG_NONE)
             {
+                m_is_generating = true;
 #if defined(_DEBUG) || defined(INTERNAL_TESTING)
                 results.StartClock();
 #endif

@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Generate C++ Base code files
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -98,26 +98,16 @@ void GenThreadCpp(GenData& gen_data, Node* form)
     tt_string& source_ext = gen_data.source_ext;
     tt_string& header_ext = gen_data.header_ext;
 
-    tt_string path;
-
-    if (auto& base_file = form->as_string(prop_base_file); base_file.size())
+    auto [path, has_base_file] = Project.GetOutputPath(form, GEN_LANG_CPLUSPLUS);
+    if (!has_base_file)
     {
-        path = Project.getBaseDirectory(form, GEN_LANG_CPLUSPLUS);
-        if (path.size())
-        {
-            path.append_filename(base_file);
-        }
+        tt_string msg("No filename specified for ");
+        if (form->hasValue(prop_class_name))
+            msg += form->as_string(prop_class_name);
         else
-        {
-            path = base_file;
-        }
-
-        path.make_absolute();
-        path.backslashestoforward();
-    }
-    else
-    {
-        gen_data.AddResultMsg(tt_string() << "No filename specified for " << form->as_string(prop_class_name) << '\n');
+            msg += map_GenNames[form->getGenName()];
+        msg += '\n';
+        gen_data.AddResultMsg(msg);
         return;
     }
 
@@ -483,7 +473,6 @@ void GenerateTmpFiles(const std::vector<tt_string>& ClassList, pugi::xml_node ro
 {
     tt_cwd cwd(true);
     Project.ChangeDir();
-    tt_string path;
     std::vector<tt_string> results;
 
     tt_string source_ext(".cpp");
@@ -546,49 +535,8 @@ void GenerateTmpFiles(const std::vector<tt_string>& ClassList, pugi::xml_node ro
 
             if (class_name.is_sameas(iter_class))
             {
-                path.clear();
-
-                // Get the folder or project output directory, and if specified, set the path
-                // relative to that directory.
-                auto SetPath = [&](const tt_string& base_file)
-                {
-                    path = Project.getBaseDirectory(form, language);
-                    if (path.size())
-                    {
-                        path.append_filename(base_file);
-                    }
-                    else
-                    {
-                        path = base_file;
-                    }
-
-                    path.make_absolute();
-                    path.backslashestoforward();
-                };
-
-                if (language == GEN_LANG_CPLUSPLUS)
-                {
-                    if (auto& base_file = form->as_string(prop_base_file); base_file.size())
-                    {
-                        SetPath(base_file);
-                    }
-                }
-                else if (language == GEN_LANG_PYTHON)
-                {
-                    if (auto& base_file = form->as_string(prop_python_file); base_file.size())
-                    {
-                        SetPath(base_file);
-                    }
-                }
-                else if (language == GEN_LANG_RUBY)
-                {
-                    if (auto& base_file = form->as_string(prop_ruby_file); base_file.size())
-                    {
-                        SetPath(base_file);
-                    }
-                }
-
-                if (path.empty())
+                auto [path, has_base_file] = Project.GetOutputPath(form, language);
+                if (!has_base_file)
                     continue;
 
                 BaseCodeGenerator codegen(language, form);

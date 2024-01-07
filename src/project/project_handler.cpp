@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   ProjectHandler class
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -164,9 +164,35 @@ tt_string ProjectHandler::ArtDirectory() const
 
 tt_string ProjectHandler::getBaseDirectory(Node* node, int language) const
 {
-    tt_string result;
+    if (!node || node == m_project_node.get())
+    {
+        return m_projectPath;
+    }
 
-    Node* folder = node->getFolder();
+    if (!node->isForm() && !node->isFolder())
+    {
+        node = node->getForm();
+        if (!node)
+        {
+            return m_projectPath;
+        }
+    }
+
+    auto [path, has_base_file] = GetOutputPath(node, language);
+    if (has_base_file)
+    {
+        path.remove_filename();
+    }
+
+    return path;
+}
+
+std::pair<tt_string, bool> ProjectHandler::GetOutputPath(Node* form, int language) const
+{
+    ASSERT(form->isForm() || form->isFolder());
+
+    tt_string result;
+    Node* folder = form->getFolder();
     if (folder)
     {
         if (language == GEN_LANG_CPLUSPLUS && folder->hasValue(prop_folder_base_directory))
@@ -177,6 +203,16 @@ tt_string ProjectHandler::getBaseDirectory(Node* node, int language) const
             result = folder->as_string(prop_folder_ruby_output_folder);
         else if (language == GEN_LANG_XRC && folder->hasValue(prop_folder_xrc_directory))
             result = folder->as_string(prop_folder_xrc_directory);
+#if defined(INTERNAL_TESTING)
+        else if (language == GEN_LANG_GOLANG && folder->hasValue(prop_folder_golang_output_folder))
+            result = folder->as_string(prop_folder_golang_output_folder);
+        else if (language == GEN_LANG_LUA && folder->hasValue(prop_folder_lua_output_folder))
+            result = folder->as_string(prop_folder_lua_output_folder);
+        else if (language == GEN_LANG_PERL && folder->hasValue(prop_folder_perl_output_folder))
+            result = folder->as_string(prop_folder_perl_output_folder);
+        else if (language == GEN_LANG_RUST && folder->hasValue(prop_folder_rust_output_folder))
+            result = folder->as_string(prop_folder_rust_output_folder);
+#endif
     }
 
     // Even if the node has a folder parent, there may not be a directory set for it, so check
@@ -191,21 +227,84 @@ tt_string ProjectHandler::getBaseDirectory(Node* node, int language) const
             result = m_project_node->as_string(prop_ruby_output_folder);
         else if (language == GEN_LANG_XRC && m_project_node->hasValue(prop_xrc_directory))
             result = m_project_node->as_string(prop_xrc_directory);
+#if defined(INTERNAL_TESTING)
+        else if (language == GEN_LANG_GOLANG && m_project_node->hasValue(prop_golang_output_folder))
+            result = m_project_node->as_string(prop_golang_output_folder);
+        else if (language == GEN_LANG_LUA && m_project_node->hasValue(prop_lua_output_folder))
+            result = m_project_node->as_string(prop_lua_output_folder);
+        else if (language == GEN_LANG_PERL && m_project_node->hasValue(prop_perl_output_folder))
+            result = m_project_node->as_string(prop_perl_output_folder);
+        else if (language == GEN_LANG_RUST && m_project_node->hasValue(prop_rust_output_folder))
+            result = m_project_node->as_string(prop_rust_output_folder);
+#endif
     }
 
     if (result.empty())
         result = m_projectPath;
 
-    tt_string base_file = node->as_string(prop_base_file);
-    base_file.remove_filename();
-    if (base_file.size())
+    tt_string base_file;
+    switch (language)
     {
-        result.append_filename(base_file);
+        case GEN_LANG_CPLUSPLUS:
+            base_file = form->as_string(prop_base_file);
+            break;
+        case GEN_LANG_PYTHON:
+            base_file = form->as_string(prop_python_file);
+            break;
+        case GEN_LANG_RUBY:
+            base_file = form->as_string(prop_ruby_file);
+            break;
+        case GEN_LANG_XRC:
+            base_file = form->as_string(prop_xrc_file);
+            break;
+#if defined(INTERNAL_TESTING)
+        case GEN_LANG_GOLANG:
+            base_file = form->as_string(prop_golang_file);
+            break;
+        case GEN_LANG_LUA:
+            base_file = form->as_string(prop_lua_file);
+            break;
+        case GEN_LANG_PERL:
+            base_file = form->as_string(prop_perl_file);
+            break;
+        case GEN_LANG_RUST:
+            base_file = form->as_string(prop_rust_file);
+            break;
+#endif
     }
 
-    result.make_absolute();
+    if (base_file.empty())
+    {
+        return std::make_pair(result, false);
+    }
 
-    return result;
+    // TODO: [Randalphwa - 01-06-2024] It's possible that the user created the filename using a
+    // folder prefix that is the same as the project's base directory. If that's the case, the
+    // prefix should be removed here.
+
+    base_file.backslashestoforward();
+    if (base_file.contains("/"))
+    {
+        result.backslashestoforward();
+        if (result.back() == '/')
+            result.pop_back();
+
+        // If the first part of the base_file is a folder and it matches the last folder in
+        // result, then assume the folder name is duplicated in base_file. Remove the folder
+        // from result before adding the base_file path.
+        if (auto end_folder = base_file.find('/'); end_folder != tt::npos)
+        {
+            if (result.ends_with(base_file.substr(0, end_folder)))
+            {
+                result.erase(result.size() - end_folder, end_folder);
+            }
+        }
+    }
+    result.append_filename(base_file);
+    result.make_absolute();
+    result.backslashestoforward();
+
+    return std::make_pair(result, true);
 }
 
 // Note that this will return a directory for GEN_LANG_PYTHON and GEN_LANG_XRC even though we currently
@@ -378,7 +477,7 @@ tt_string ProjectHandler::getDerivedFilename(Node* form) const
         return path;
 
     path = getDerivedDirectory(form, GEN_LANG_CPLUSPLUS);
-    path.append_filename(form->as_string(prop_derived_file));
+    path.append_filename(form->as_string(prop_derived_file).filename());
     path.make_absolute();
 
     tt_string source_ext(".cpp");

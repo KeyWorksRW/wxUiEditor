@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Generate C++ and Python events
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -681,32 +681,16 @@ void BaseCodeGenerator::GenPythonEventHandlers(EventVector& events)
     if (m_panel_type == NOT_PANEL)
     {
         tt_view_vector org_file;
-        tt_string path;
+        auto [path, has_base_file] = Project.GetOutputPath(m_form_node, GEN_LANG_PYTHON);
 
-        // Set path to the output file
-        if (auto& base_file = m_form_node->as_string(prop_python_file); base_file.size())
+        if (has_base_file && path.extension().empty())
         {
-            path = Project.getBaseDirectory(m_form_node, GEN_LANG_PYTHON);
-            if (path.size())
-            {
-                path.append_filename(base_file);
-            }
-            else
-            {
-                path = base_file;
-            }
-
-            if (path.extension().empty())
-            {
-                path += ".py";
-            }
-            path.make_absolute();
-            path.backslashestoforward();
+            path += ".py";
         }
 
         // If the user has defined any event handlers, add them to the code_lines set so we
         // don't generate them again.
-        if (path.size() && org_file.ReadFile(path))
+        if (has_base_file && org_file.ReadFile(path))
         {
             size_t line_index;
             for (line_index = 0; line_index < org_file.size(); ++line_index)
@@ -857,32 +841,16 @@ void BaseCodeGenerator::GenRubyEventHandlers(EventVector& events)
     if (m_panel_type == NOT_PANEL)
     {
         tt_view_vector org_file;
-        tt_string path;
+        auto [path, has_base_file] = Project.GetOutputPath(m_form_node, GEN_LANG_RUBY);
 
-        // Set path to the output file
-        if (auto& base_file = m_form_node->as_string(prop_ruby_file); base_file.size())
+        if (has_base_file && path.extension().empty())
         {
-            path = Project.getBaseDirectory(m_form_node, GEN_LANG_RUBY);
-            if (path.size())
-            {
-                path.append_filename(base_file);
-            }
-            else
-            {
-                path = base_file;
-            }
-
-            if (path.extension().empty())
-            {
-                path += ".rb";
-            }
-            path.make_absolute();
-            path.backslashestoforward();
+            path += ".rb";
         }
 
         // If the user has defined any event handlers, add them to the code_lines set so we
         // don't generate them again.
-        if (path.size() && org_file.ReadFile(path))
+        if (has_base_file && org_file.ReadFile(path))
         {
             size_t line_index;
             for (line_index = 0; line_index < org_file.size(); ++line_index)

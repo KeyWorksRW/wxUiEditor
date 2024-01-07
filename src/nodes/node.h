@@ -278,6 +278,14 @@ public:
             return tt_empty_cstr;
     }
 
+    const std::string& as_std(PropName name) const
+    {
+        if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
+            return m_properties[result->second].as_string();
+        else
+            return tt_empty_cstr;
+    }
+
     // On Windows this will first convert to UTF-16 unless wxUSE_UNICODE_UTF8 is set.
     //
     // The string will be empty if the property doesn't exist.

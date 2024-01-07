@@ -10,6 +10,7 @@
 #include "import_xml.h"
 
 #include "base_generator.h"  // BaseGenerator -- Base Generator class
+#include "dlg_msgs.h"        // wxMessageDialog dialogs
 #include "gen_enums.h"       // Enumerations for generators
 #include "mainframe.h"       // Main window frame
 #include "node.h"            // Node class
@@ -137,9 +138,7 @@ std::optional<pugi::xml_document> ImportXML::LoadDocFile(const tt_string& file)
 
     if (auto result = doc.load_file(file.c_str()); !result)
     {
-        wxMessageBox(wxString("Cannot open ") << file.make_wxString() << "\n\n"
-                                              << result.description(),
-                     "Import wxFormBuilder project");
+        dlgCannotParse(result, file, "Import project");
         return {};
     }
 

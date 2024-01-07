@@ -304,7 +304,9 @@ bool GenerateXrcFiles(GenResults& results, tt_string out_file, std::vector<tt_st
         GenXrcObject(Project.getProjectNode(), root, false);
         if (!doc.save_file(out_file.c_str(), "\t"))
         {
-            wxMessageBox(wxString("An unexpected error occurred exporting ") << out_file, "Export XRC");
+            std::string msg("Unable to save\n    \"" + out_file + "\"\n");
+            wxMessageDialog dlg(nullptr, msg, "", wxICON_ERROR | wxOK);
+            dlg.ShowModal();
         }
         return true;
     }

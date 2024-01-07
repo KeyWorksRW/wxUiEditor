@@ -64,6 +64,8 @@ public:
 
     bool isTestingMenuEnabled() const noexcept { return m_TestingMenuEnabled; }
 
+    bool isGenerating() const noexcept { return m_is_generating; }
+
 protected:
     bool OnInit() override;
 
@@ -88,6 +90,7 @@ private:
     bool m_isMainFrameClosing { false };
     // bool m_isProject_updated { false };
     bool m_TestingMenuEnabled { false };
+    bool m_is_generating { false };  // true if generating code from the command line
 
 #if (DARK_MODE)
     bool m_isDarkMode { true };

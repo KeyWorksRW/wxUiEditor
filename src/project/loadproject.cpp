@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Load wxUiEditor project
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -9,6 +9,7 @@
 #include <wx/utils.h>    // Miscellaneous utilities
 
 #include "base_generator.h"   // BaseGenerator -- Base widget generator class
+#include "dlg_msgs.h"         // wxMessageDialog dialogs
 #include "gen_enums.h"        // Enumerations for generators
 #include "image_handler.h"    // ProjectImage class
 #include "mainframe.h"        // MainFrame -- Main window frame
@@ -46,7 +47,7 @@ bool ProjectHandler::LoadProject(const tt_string& file, bool allow_ui)
         ASSERT_MSG(result, tt_string() << "pugi failed trying to load " << file);
         if (allow_ui)
         {
-            wxMessageBox(wxString("Cannot open ") << file.make_wxString() << "\n\n" << result.description(), "Load Project");
+            dlgCannotParse(result, file, "Load Project");
         }
         return false;
     }
@@ -858,7 +859,7 @@ bool ProjectHandler::Import(ImportXML& import, tt_string& file, bool append, boo
                 ASSERT_MSG(result, tt_string() << "pugi failed trying to load " << file);
                 if (allow_ui)
                 {
-                    wxMessageBox(wxString("Cannot open ") << file << "\n\n" << result.description(), "Load Project");
+                    dlgCannotParse(result, file, "Load Project");
                 }
             }
             else

@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Generate Python code files
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2022-2023 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2022-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -12,6 +12,7 @@
 
 #include "base_generator.h"   // BaseGenerator -- Base widget generator class
 #include "code.h"             // Code -- Helper class for generating code
+#include "dlg_msgs.h"         // wxMessageDialog dialogs
 #include "file_codewriter.h"  // FileCodeWriter -- Classs to write code to disk
 #include "gen_base.h"         // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
 #include "gen_common.h"       // Common component functions
@@ -177,9 +178,7 @@ bool GeneratePythonFiles(GenResults& results, std::vector<tt_string>* pClassList
         catch (const std::exception& TESTING_PARAM(e))
         {
             MSG_ERROR(e.what());
-            wxMessageBox(tt_string("An internal error occurred generating code files for ")
-                             << form->as_string(prop_python_file),
-                         "Code generation");
+            dlgGenInternalError(e, path, form->as_std(prop_class_name));
             continue;
         }
     }

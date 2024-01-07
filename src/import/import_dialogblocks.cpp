@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Import a DialogBlocks project
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2023 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2023-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -31,6 +31,7 @@
 
 #include "import_dialogblocks.h"
 
+#include "dlg_msgs.h"      // wxMessageDialog dialogs
 #include "node.h"          // Node class
 #include "node_creator.h"  // NodeCreator class
 
@@ -41,8 +42,6 @@ bool DialogBlocks::Import(const tt_string& filename, bool write_doc)
     auto result = LoadDocFile(filename);
     if (!result)
     {
-        wxMessageBox(wxString() << "Unable to load " << filename << " -- was it saved as a binary file?",
-                     "Import DialogBlocks project");
         return false;
     }
 
@@ -50,7 +49,7 @@ bool DialogBlocks::Import(const tt_string& filename, bool write_doc)
 
     if (!tt::is_sameas(root.name(), "anthemion-project", tt::CASE::either))
     {
-        wxMessageBox(wxString() << filename << " is not a DialogBlocks file", "Import DialogBlocks project");
+        dlgInvalidProject(filename, "DialogBlocks", "Import DialogBlocks project");
         return false;
     }
 
@@ -138,9 +137,7 @@ bool DialogBlocks::Import(const tt_string& filename, bool write_doc)
     catch (const std::exception& TESTING_PARAM(e))
     {
         MSG_ERROR(e.what());
-        wxMessageBox(wxString("This DialogBlocks project file is invalid and cannot be loaded: ")
-                         << filename.make_wxString(),
-                     "Import DialogBlocks project");
+        dlgImportError(e, filename, "Import DialogBlocks project");
         return false;
     }
 
@@ -153,8 +150,8 @@ bool DialogBlocks::Import(const tt_string& filename, bool write_doc)
             MSG_ERROR(iter);
             errMsg << iter << '\n';
         }
-
-        wxMessageBox(errMsg, "Import DialogBlocks project");
+        wxMessageDialog dlg(nullptr, errMsg, "Import DialogBlocks Project", wxICON_WARNING | wxOK);
+        dlg.ShowModal();
     }
 
     return true;

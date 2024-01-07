@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Import a wxFormBuider project
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -17,6 +17,7 @@
 #include "import_formblder.h"
 
 #include "base_generator.h"  // BaseGenerator -- Base widget generator class
+#include "dlg_msgs.h"        // wxMessageDialog dialogs
 #include "font_prop.h"       // FontProperty class
 #include "mainframe.h"       // Main window frame
 #include "node.h"            // Node class
@@ -36,8 +37,7 @@ bool FormBuilder::Import(const tt_string& filename, bool write_doc)
 
     if (!tt::is_sameas(root.name(), "wxFormBuilder_Project", tt::CASE::either))
     {
-        wxMessageBox(wxString() << filename.make_wxString() << " is not a wxFormBuilder file",
-                     "Import wxFormBuilder project");
+        dlgInvalidProject(filename, "wxFormBuilder", "Import wxFormBuilder project");
         return false;
     }
 
@@ -73,9 +73,7 @@ bool FormBuilder::Import(const tt_string& filename, bool write_doc)
     catch (const std::exception& TESTING_PARAM(e))
     {
         MSG_ERROR(e.what());
-        wxMessageBox(wxString("This wxFormBuilder project file is invalid and cannot be loaded: ")
-                         << filename.make_wxString(),
-                     "Import wxFormBuilder project");
+        dlgImportError(e, filename, "Import wxFormBuilder Project");
         return false;
     }
 
@@ -86,10 +84,10 @@ bool FormBuilder::Import(const tt_string& filename, bool write_doc)
         for (auto& iter: m_errors)
         {
             MSG_ERROR(iter);
-            errMsg << iter << '\n';
+            errMsg += iter + '\n';
         }
-
-        wxMessageBox(errMsg, "Import wxFormBuilder project");
+        wxMessageDialog dlg(nullptr, errMsg, "Import wxFormBuilder project", wxICON_WARNING | wxOK);
+        dlg.ShowModal();
     }
 
     return true;

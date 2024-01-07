@@ -1,13 +1,14 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Import a WxGlade file
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2021-2023 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2021-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
 #include "import_wxglade.h"
 
 #include "base_generator.h"  // BaseGenerator -- Base Generator class
+#include "dlg_msgs.h"        // wxMessageDialog dialogs
 #include "node.h"            // Node class
 #include "node_creator.h"    // NodeCreator class
 #include "utils.h"           // Utility functions that work with properties
@@ -25,7 +26,7 @@ bool WxGlade::Import(const tt_string& filename, bool write_doc)
 
     if (!tt::is_sameas(root.name(), "application", tt::CASE::either))
     {
-        wxMessageBox(filename.make_wxString() << " is not a wxGlade file", "Import");
+        dlgInvalidProject(filename, "wxGlade", "Import wxGlade project");
         return false;
     }
 
@@ -162,8 +163,7 @@ bool WxGlade::Import(const tt_string& filename, bool write_doc)
     catch (const std::exception& TESTING_PARAM(e))
     {
         MSG_ERROR(e.what());
-        wxMessageBox(wxString("This project file is invalid and cannot be loaded: ") << filename.make_wxString(),
-                     "Import Project");
+        dlgImportError(e, filename, "Import wxGlade project");
         return false;
     }
 

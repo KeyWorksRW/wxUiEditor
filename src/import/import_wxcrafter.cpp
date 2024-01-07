@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Import a wxCrafter project
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2021-2023 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2021-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -21,6 +21,7 @@
 #include "import_wxcrafter.h"  // This will include rapidjson/document.h
 
 #include "base_generator.h"  // BaseGenerator -- Base widget generator class
+#include "dlg_msgs.h"        // wxMessageDialog dialogs
 #include "font_prop.h"       // FontProperty class
 #include "gen_enums.h"       // Enumerations for generators
 #include "mainframe.h"       // Main window frame
@@ -72,7 +73,9 @@ bool WxCrafter::Import(const tt_string& filename, bool write_doc)
     std::ifstream input(filename, std::ifstream::binary);
     if (!input.is_open())
     {
-        wxMessageBox(wxString() << "Cannot open " << filename.make_wxString(), "Import wxCrafter project");
+        std::string msg("Unable to open\n    \"" + filename + "\"");
+        wxMessageDialog dlg(nullptr, msg, "Import wxCrafter project", wxICON_ERROR | wxOK);
+        dlg.ShowModal();
         return false;
     }
     std::string buffer(std::istreambuf_iterator<char>(input), {});
@@ -81,12 +84,12 @@ bool WxCrafter::Import(const tt_string& filename, bool write_doc)
     Document document;
     if (document.Parse(buffer).HasParseError())
     {
-        wxMessageBox(filename.make_wxString() << " is not a valid wxCrafter file", "Import wxCrafter project");
+        dlgInvalidProject(filename, "wxCrafter", "Import wxCrafter project");
         return false;
     }
     if (!document.IsObject())
     {
-        wxMessageBox(filename.make_wxString() << " is not a valid wxCrafter file", "Import wxCrafter project");
+        dlgInvalidProject(filename, "wxCrafter", "Import wxCrafter project");
         return false;
     }
 
@@ -139,9 +142,7 @@ bool WxCrafter::Import(const tt_string& filename, bool write_doc)
     {
         FAIL_MSG(e.what())
         MSG_ERROR(e.what());
-        wxMessageBox(tt_string("Internal error: ") << e.what(), "Import wxCrafter project");
-        wxMessageBox(wxString("This wxCrafter project file is invalid and cannot be loaded: ") << filename.make_wxString(),
-                     "Import wxCrafter project");
+        dlgImportError(e, filename, "Import wxCrafter Project");
         return false;
     }
 
@@ -154,8 +155,8 @@ bool WxCrafter::Import(const tt_string& filename, bool write_doc)
             MSG_ERROR(iter);
             errMsg << iter << '\n';
         }
-
-        wxMessageBox(errMsg, "Import wxCrafter project");
+        wxMessageDialog dlg(nullptr, errMsg, "Import wxCrafter project", wxICON_WARNING | wxOK);
+        dlg.ShowModal();
     }
 
     return true;

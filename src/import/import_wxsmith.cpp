@@ -1,13 +1,14 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Import a wxSmith or XRC file
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
 #include "import_wxsmith.h"
 
 #include "base_generator.h"  // BaseGenerator -- Base Generator class
+#include "dlg_msgs.h"        // wxMessageDialog dialogs
 #include "node.h"            // Node class
 #include "node_creator.h"    // NodeCreator class
 #include "utils.h"           // Utility functions that work with properties
@@ -26,7 +27,7 @@ bool WxSmith::Import(const tt_string& filename, bool write_doc)
     if (!tt::is_sameas(root.name(), "wxsmith", tt::CASE::either) &&
         !tt::is_sameas(root.name(), "resource", tt::CASE::either))
     {
-        wxMessageBox(wxString() << filename.make_wxString() << " is not a wxSmith or XRC file", "Import");
+        dlgInvalidProject(filename, "wxSmith or XRC", "Import project");
         return false;
     }
 
@@ -54,7 +55,7 @@ bool WxSmith::Import(const tt_string& filename, bool write_doc)
     catch (const std::exception& TESTING_PARAM(e))
     {
         MSG_ERROR(e.what());
-        wxMessageBox(wxString("This project file is invalid and cannot be loaded: ") << filename, "Import Project");
+        dlgImportError(e, filename, "Import Project");
         return false;
     }
 
@@ -68,7 +69,8 @@ bool WxSmith::Import(const tt_string& filename, bool write_doc)
             errMsg << iter << '\n';
         }
 
-        wxMessageBox(errMsg, "Import project");
+        wxMessageDialog dlg(nullptr, errMsg, "Import Project", wxICON_WARNING | wxOK);
+        dlg.ShowModal();
     }
 
     return true;

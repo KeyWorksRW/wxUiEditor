@@ -307,6 +307,7 @@ set (file_list
     project/loadproject.cpp     # Load wxUiEditor project
     project/saveproject.cpp     # Save a wxUiEditor project file
 
+    utils/dlg_msgs.cpp          # wxMessageDialog dialogs
     utils/font_prop.cpp         # FontProperty class
     utils/utils.cpp             # Utility functions that work with properties
 

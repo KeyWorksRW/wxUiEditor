@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Top level Preview functions
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2022-2023 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2022-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -20,6 +20,7 @@
 
 #include "../tools/preview_settings.h"  // PreviewSettings
 #include "../ui/xrccompare.h"           // C++/XRC UI Comparison dialog
+#include "dlg_msgs.h"                   // wxMessageDialog dialogs
 #include "gen_common.h"                 // GeneratorLibrary -- Generator classes
 #include "generate/gen_xrc.h"           // Generate XRC file
 #include "mainapp.h"                    // App -- Main application class
@@ -294,10 +295,10 @@ void PreviewXrc(Node* form_node)
                 break;
         }
     }
-    catch (const std::exception& TESTING_PARAM(e))
+    catch (const std::exception& err)
     {
-        MSG_ERROR(e.what());
-        wxMessageBox("An internal error occurred generating XRC code", "XRC Dialog Preview");
+        MSG_ERROR(err.what());
+        dlgGenInternalError(err, "XRC code", "XRC Preview");
     }
 
     // Restore the original style if it was temporarily changed.
@@ -519,10 +520,10 @@ void MainFrame::PreviewCpp(Node* form_node)
                 break;
         }
     }
-    catch (const std::exception& TESTING_PARAM(e))
+    catch (const std::exception& err)
     {
-        MSG_ERROR(e.what());
-        wxMessageBox("An internal error occurred while creating the preview", "Preview");
+        MSG_ERROR(err.what());
+        dlgGenInternalError(err, "preview", "Preview");
     }
 
     // Restore the original style if it was temporarily changed.

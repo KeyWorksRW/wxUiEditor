@@ -197,11 +197,11 @@ NodeSharedPtr ProjectHandler::LoadProject(pugi::xml_document& doc, bool allow_ui
         }
         project = NodeCreation.createProjectNode(&node);
     }
-    catch (const std::exception& TESTING_PARAM(e))
+    catch (const std::exception& err)
     {
         if (allow_ui)
         {
-            MSG_ERROR(e.what());
+            MSG_ERROR(err.what());
             wxMessageBox("This wxUiEditor project file is invalid and cannot be loaded.", "Load Project");
         }
     }

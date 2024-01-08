@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Contains user-modifiable node
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -871,7 +871,7 @@ tt_string Node::getUniqueName(const tt_string& proposed_name, PropName prop_name
             name_set.emplace(iter);
         }
 
-        form->collectUniqueNames(name_set, this);
+        form->collectUniqueNames(name_set, this, prop_name);
     }
     else if (isGen(gen_propGridItem) || isGen(gen_propGridCategory))
     {
@@ -1098,9 +1098,20 @@ void Node::collectUniqueNames(std::unordered_set<std::string>& name_set, Node* c
         {
             for (auto& iter: s_var_names)
             {
+                // First check the parent node
                 if (auto& name = as_string(iter); name.size())
                 {
                     name_set.emplace(name);
+                }
+
+                // Now check the child node, skipping prop_var_name. This is needed in order to
+                // pick up validator names.
+                if (iter != prop_var_name)
+                {
+                    if (auto& name = cur_node->as_string(iter); name.size())
+                    {
+                        name_set.emplace(name);
+                    }
                 }
             }
         }

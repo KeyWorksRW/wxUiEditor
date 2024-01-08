@@ -185,10 +185,10 @@ bool GenerateRubyFiles(GenResults& results, std::vector<tt_string>* pClassList)
                 ++results.file_count;
             }
         }
-        catch (const std::exception& TESTING_PARAM(e))
+        catch (const std::exception& err)
         {
-            MSG_ERROR(e.what());
-            dlgGenInternalError(e, path, form->as_std(prop_class_name));
+            MSG_ERROR(err.what());
+            dlgGenInternalError(err, path, form->as_std(prop_class_name));
             continue;
         }
     }

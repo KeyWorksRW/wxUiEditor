@@ -208,9 +208,6 @@ constexpr const char BMP_PROP_SEPARATOR = ';';
     #define MSG_WARNING(msg)
     #define MSG_ERROR(msg)
 
-    // Use this macro to comment out parameters that are not used in Release builds
-    #define TESTING_PARAM(param) /* param */
-
 #else
 
 // These messages can be individually enabled/disabled in the Preferences dialog (Debug tab).
@@ -234,9 +231,6 @@ constexpr const char BMP_PROP_SEPARATOR = ';';
         {                                    \
             g_pMsgLogging->AddErrorMsg(msg); \
         }
-
-    // Use this macro to comment out parameters that are not used in Release builds
-    #define TESTING_PARAM(param) param
 
 #endif  // defined(NDEBUG) && !defined(INTERNAL_TESTING)
 

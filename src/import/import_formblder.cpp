@@ -70,10 +70,10 @@ bool FormBuilder::Import(const tt_string& filename, bool write_doc)
             m_project->createDoc(m_docOut);
     }
 
-    catch (const std::exception& TESTING_PARAM(e))
+    catch (const std::exception& err)
     {
-        MSG_ERROR(e.what());
-        dlgImportError(e, filename, "Import wxFormBuilder Project");
+        MSG_ERROR(err.what());
+        dlgImportError(err, filename, "Import wxFormBuilder Project");
         return false;
     }
 

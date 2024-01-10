@@ -11,7 +11,7 @@
 #include "node.h"             // Node class
 #include "project_handler.h"  // ProjectHandler class
 
-int WriteCMakeFile(Node* parent_node, std::vector<tt_string>& updated_files, std::vector<tt_string>& results)
+int WriteCMakeFile(Node* parent_node, std::vector<tt_string>& updated_files, std::vector<tt_string>& results, int flag)
 {
     if (parent_node->isGen(gen_folder) && !parent_node->hasValue(prop_folder_cmake_file))
     {
@@ -27,7 +27,12 @@ int WriteCMakeFile(Node* parent_node, std::vector<tt_string>& updated_files, std
     // need to tread that directory as the root of the file.
 
     tt_string cmake_file;
-    if (parent_node->isGen(gen_folder) && parent_node->hasValue(prop_folder_cmake_file))
+    if (flag == 2)
+    {
+        ASSERT(updated_files.size());
+        cmake_file = updated_files[0];
+    }
+    else if (parent_node->isGen(gen_folder) && parent_node->hasValue(prop_folder_cmake_file))
     {
         cmake_file = parent_node->as_string(prop_folder_cmake_file);
     }
@@ -194,6 +199,12 @@ int WriteCMakeFile(Node* parent_node, std::vector<tt_string>& updated_files, std
     out.emplace_back();
     out.emplace_back(")");
 
+    // flag == 2 if a temporary file is being written
+    if (flag == 2)
+    {
+        return out.WriteFile(cmake_file) ? result::created : result::fail;
+    }
+
     tt_view_vector current;
 
     // The return value is ignored because if the file doesn't exist then it will be created,
@@ -203,6 +214,12 @@ int WriteCMakeFile(Node* parent_node, std::vector<tt_string>& updated_files, std
     if (out.is_sameas(current))
     {
         return result::exists;
+    }
+
+    if (flag == 1)
+    {
+        updated_files.emplace_back(cmake_file);
+        return result::needs_writing;
     }
 
     if (!out.WriteFile(cmake_file))

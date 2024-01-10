@@ -219,23 +219,31 @@ bool GenerateCodeFiles(GenResults& results, std::vector<tt_string>* pClassList)
     results.StartClock();
 #endif
 
-    if (Project.as_bool(prop_generate_cmake) && !pClassList)
+    if (Project.as_bool(prop_generate_cmake))
     {
+        auto is_testing = pClassList ? 1 : 0;
         for (auto& iter: Project.getChildNodePtrs())
         {
             if (iter->isGen(gen_folder) && iter->hasValue(prop_folder_cmake_file))
             {
-                if (WriteCMakeFile(iter.get(), results.updated_files, results.msgs) == result::created)
+                auto result = WriteCMakeFile(iter.get(), results.updated_files, results.msgs, is_testing);
+                if (result == result::created || result == result::needs_writing)
                 {
                     ++results.file_count;
+                    pClassList->emplace_back(iter.get()->as_string(prop_cmake_file));
                 }
             }
         }
         if (Project.hasValue(prop_cmake_file))
         {
-            if (WriteCMakeFile(Project.getProjectNode(), results.updated_files, results.msgs) == result::created)
+            auto result = WriteCMakeFile(Project.getProjectNode(), results.updated_files, results.msgs, is_testing);
+            if (result == result::created || result == result::needs_writing)
             {
                 ++results.file_count;
+                if (is_testing)
+                {
+                    pClassList->emplace_back(Project.getProjectNode()->as_string(prop_cmake_file));
+                }
             }
         }
     }
@@ -509,18 +517,60 @@ void GenerateTmpFiles(const std::vector<tt_string>& ClassList, pugi::xml_node ro
     }
 
     std::vector<Node*> forms;
+    if (ClassList.size())
+    {
+        if (ClassList[0].ends_with(".cmake"))
+            forms.emplace_back(Project.getProjectNode());
+    }
+
     Project.CollectForms(forms);
 
     for (auto& iter_class: ClassList)
     {
         for (const auto& form: forms)
         {
-            // The Images class doesn't have a prop_class_name, so use "Images". Note that this will fail if there is a real
-            // form where the user set the class name to "Images". If this wasn't an Internal function, then we would need to
-            // store nodes rather than class names.
+            // The Images class doesn't have a prop_class_name, so use "Images". Note that this will fail if there is a
+            // real form where the user set the class name to "Images". If this wasn't an Internal function, then we
+            // would need to store nodes rather than class names.
 
             tt_string class_name(form->as_string(prop_class_name));
-            if (form->isGen(gen_Images))
+            if (form->isGen(gen_Project))
+            {
+                if (language != GEN_LANG_CPLUSPLUS)
+                    continue;
+                tt_string path = Project.getProjectPath() + Project.getProjectNode()->as_string(prop_cmake_file);
+                path.make_absolute();
+                tt_string tmp_path(path);
+                if (auto pos_file = path.find_filename(); tt::is_found(pos_file))
+                {
+                    tmp_path.insert(pos_file, "~wxue_");
+                }
+                else
+                {
+                    ASSERT(tmp_path.size())
+                    tmp_path.insert(0, "~wxue_");
+                }
+
+                // We need to tweak the call to WriteCMakeFile() to get it to write to our temporary .cmake file.
+                std::vector<tt_string> updated_files;
+                std::vector<tt_string> dummy;
+                updated_files.emplace_back(tmp_path);
+                WriteCMakeFile(Project.getProjectNode(), updated_files, dummy, 2);
+
+                auto paths = root.append_child("paths");
+
+                // Use absolute path and leave the backslashes alone because WinMerge
+                // doesn't understand forward slashes (even though Windows does).
+                path.make_absolute();
+                paths.append_child("left").text().set(path.c_str());
+                paths.append_child("left-readonly").text().set("0");
+
+                tmp_path.make_absolute();
+                paths.append_child("right").text().set(tmp_path.c_str());
+                paths.append_child("right-readonly").text().set("1");
+                continue;
+            }
+            else if (form->isGen(gen_Images))
             {
                 if (language != GEN_LANG_CPLUSPLUS)
                     continue;

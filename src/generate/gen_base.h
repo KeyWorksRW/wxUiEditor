@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Generate Src and Hdr files for Base Class
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -44,8 +44,9 @@ namespace result
     };
 }  // namespace result
 
-int WriteCMakeFile(Node* parent_node, std::vector<tt_string>& updated_files,
-                   std::vector<tt_string>& results);  // See gen_cmake.cpp
+// flag == 1 for test only, flag == 2 if temp filename in updated_files
+int WriteCMakeFile(Node* parent_node, std::vector<tt_string>& updated_files, std::vector<tt_string>& results,
+                   int flag = 0);  // See gen_cmake.cpp
 
 class BaseCodeGenerator
 {

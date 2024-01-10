@@ -1294,20 +1294,11 @@ void BaseCodeGenerator::GenerateDataClassConstructor(PANEL_PAGE panel_type)
         m_source->writeLine(txt_BaseCmtBlock);
     }
 
-    tt_string file;
-    if (auto& base_file = m_form_node->as_string(prop_output_file); base_file.size())
-    {
-        tt_cwd cwd(true);
-        Project.ChangeDir();
-        file = base_file;
-        file.make_relative(Project.getProjectPath());
-        file.backslashestoforward();
-        file.remove_extension();
-
-        m_baseFullPath = base_file;
-        m_baseFullPath.make_absolute();
+    auto [path, has_base_file] = Project.GetOutputPath(m_form_node, GEN_LANG_CPLUSPLUS);
+    // tt_string file;
+    m_baseFullPath = path;
+    if (has_base_file)
         m_baseFullPath.remove_filename();
-    }
 
     m_header->writeLine("#pragma once");
     m_header->writeLine();
@@ -1352,7 +1343,7 @@ void BaseCodeGenerator::GenerateDataClassConstructor(PANEL_PAGE panel_type)
         WritePropSourceCode(m_form_node, prop_source_preamble);
     }
 
-    if (file.empty())
+    if (!has_base_file)
     {
         m_source->writeLine();
         m_source->writeLine("// Specify the filename to use in the base_file property");
@@ -1360,9 +1351,9 @@ void BaseCodeGenerator::GenerateDataClassConstructor(PANEL_PAGE panel_type)
     }
     else
     {
-        file.replace_extension(m_header_ext);
+        path.replace_extension(m_header_ext);
         m_source->writeLine();
-        m_source->writeLine(tt_string() << "#include \"" << file.filename() << "\"");
+        m_source->writeLine(tt_string() << "#include \"" << path.filename() << "\"");
     }
 
     if (m_form_node->hasValue(prop_local_src_includes))

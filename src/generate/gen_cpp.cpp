@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Generate C++ code files
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -621,7 +621,8 @@ void BaseCodeGenerator::GenerateCppClass(PANEL_PAGE panel_type)
     }
 
     // Make a copy of the string so that we can tweak it
-    tt_string namespace_prop = Project.as_string(prop_name_space);
+    tt_string namespace_prop = m_form_node->hasValue(prop_name_space) ? m_form_node->as_string(prop_name_space) :
+                                                                        Project.as_string(prop_name_space);
     if (auto* node_namespace = m_form_node->getFolder(); node_namespace && node_namespace->hasValue(prop_folder_namespace))
     {
         namespace_prop = node_namespace->as_string(prop_folder_namespace);

@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Generate the C++ derived class source and header file
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -134,7 +134,8 @@ int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_PAG
     tt_string namespace_using_name;
 
     // Make a copy of the string so that we can tweak it
-    tt_string namespace_prop = Project.as_string(prop_name_space);
+    tt_string namespace_prop =
+        form->hasValue(prop_name_space) ? form->as_string(prop_name_space) : Project.as_string(prop_name_space);
     if (auto* node_namespace = form->getFolder(); node_namespace && node_namespace->hasValue(prop_folder_namespace))
     {
         namespace_prop = node_namespace->as_string(prop_folder_namespace);

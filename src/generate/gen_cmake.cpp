@@ -130,7 +130,7 @@ int WriteCMakeFile(Node* parent_node, std::vector<tt_string>& updated_files, std
 
         for (const auto& form: form_list)
         {
-            if (!form->hasValue(prop_base_file))
+            if (!form->hasValue(prop_base_file) && !form->isGen(gen_Data))
             {
                 continue;
             }

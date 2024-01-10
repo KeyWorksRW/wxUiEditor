@@ -180,6 +180,8 @@
 			help="The first id in a generated enum will be set to this value."> wxID_HIGHEST + 1</property>
 		<property name="class_decoration" type="string"
 			help="This specifies the keyword or macro to add to the class declaration (such as __declspec(dllexport) )."/>
+		<property name="name_space" type="string"
+			help="If specified, this will override any name_space specified for the entire project. Note that the class name must still be unique to the project in spite of using a name_space."/>
 	</gen>
 
 	<gen class="C++ Header Settings" type="interface">

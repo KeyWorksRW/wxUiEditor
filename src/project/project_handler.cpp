@@ -246,7 +246,10 @@ std::pair<tt_string, bool> ProjectHandler::GetOutputPath(Node* form, int languag
     switch (language)
     {
         case GEN_LANG_CPLUSPLUS:
-            base_file = form->as_string(prop_base_file);
+            if (form->isGen(gen_Data))
+                base_file = form->as_string(prop_output_file);
+            else
+                base_file = form->as_string(prop_base_file);
             break;
         case GEN_LANG_PYTHON:
             base_file = form->as_string(prop_python_file);

@@ -153,7 +153,7 @@
         <inherits class="sizer_child"/>
         <property name="var_name" type="string">m_listbook</property>
         <property name="display_images" type="bool"
-            help="If true, will display an image on the tab in addition to any text.">0</property>
+            help="If true, will display an image on the tab in addition to any text.">1</property>
         <property name="persist_name" type="string"
             help="If a name is specified, wxPersistenceManager will be used to save/restore the currently selected page."/>
         <property name="style" type="option">
@@ -182,7 +182,7 @@
         <property name="display_images" type="bool"
             help="If true, will display an image on the tab in addition to any text. The image to use for each tab is specifed in the individual pages."
         >
-            0</property>
+            1</property>
         <property name="persist_name" type="string"
             help="If a name is specified, wxPersistenceManager will be used to save/restore the currently selected page."/>
         <property name="art_provider" type="option">
@@ -256,7 +256,7 @@
         <inherits class="sizer_child"/>
         <property name="var_name" type="string">m_notebook</property>
         <property name="display_images" type="bool"
-            help="If true, will display an image on the tab in addition to any text.">0</property>
+            help="If true, will display an image on the tab in addition to any text.">1</property>
         <property name="persist_name" type="string"
             help="If a name is specified, wxPersistenceManager will be used to save/restore the currently selected page."/>
         <property name="tab_position" type="option">
@@ -305,7 +305,7 @@
         <inherits class="sizer_child"/>
         <property name="var_name" type="string">m_treebook</property>
         <property name="display_images" type="bool"
-            help="If true, will display an image on the tab in addition to any text.">0</property>
+            help="If true, will display an image on the tab in addition to any text.">1</property>
         <property name="persist_name" type="string"
             help="If a name is specified, wxPersistenceManager will be used to save/restore the currently selected page and the expand/collapse state of sub pages."/>
         <property name="tab_position" type="option">

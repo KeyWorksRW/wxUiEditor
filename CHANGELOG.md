@@ -18,6 +18,7 @@ All notable changes to this project will be documented in this file.
 - The Image List file now includes wxue_img::image_ functions for each image in the list, replacing the `extern` declarations that were previously used. A new `add_externs` property has been added -- check that if you still need the extern declarations.
 - wxIntegerValidator and wxFloatingPointValidator now support setting either min or max, and are generated as separate calls. Previously, you had to set both of them to have either one generated.
 - The ability to generate only a C++ header file without a source file has been removed.
+- Books now display images on pages by default. If you don't want the images, you can uncheck the `display_images` property.
 
 ### Fixed
 

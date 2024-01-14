@@ -1304,6 +1304,11 @@ void GenToolCode(Code& code)
 {
     const auto* node = code.node();
     code.Eol(eol_if_needed);
+    bool need_variable_result =
+        (node->hasValue(prop_var_name) &&
+         ((node->as_string(prop_class_access) != "none") || node->isGen(gen_tool_dropdown) ||
+          (node->isGen(gen_auitool) && node->as_string(prop_initial_state) != "wxAUI_BUTTON_STATE_NORMAL")));
+
     if (node->as_bool(prop_disabled) || (node->as_string(prop_id) == "wxID_ANY" && node->getInUseEventCount()))
     {
         code.AddAuto().NodeName();
@@ -1311,11 +1316,8 @@ void GenToolCode(Code& code)
             code += " := ";
         else
             code += " = ";
+        need_variable_result = false;  // make certain we don't add this again
     }
-    bool need_variable_result =
-        (node->hasValue(prop_var_name) &&
-         ((node->as_string(prop_class_access) != "none") || node->isGen(gen_tool_dropdown) ||
-          (node->isGen(gen_auitool) && node->as_string(prop_initial_state) != "wxAUI_BUTTON_STATE_NORMAL")));
 
     if (need_variable_result)
     {

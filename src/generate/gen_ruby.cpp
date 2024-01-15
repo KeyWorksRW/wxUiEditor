@@ -699,8 +699,7 @@ bool RubyBundleCode(Code& code, GenEnum::PropName prop)
         return true;
     }
 
-    if (const ImageBundle* bundle = ProjectImages.GetPropertyImageBundle(description);
-        bundle && bundle->lst_filenames.size())
+    if (auto bundle = ProjectImages.GetPropertyImageBundle(description); bundle && bundle->lst_filenames.size())
     {
         if (description.starts_with("SVG"))
         {

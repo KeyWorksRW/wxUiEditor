@@ -546,16 +546,7 @@ static void GenerateSVGBundle(Code& code, const tt_string_vector& parts, bool ge
     else if (code.is_ruby())
     {
         tt_string svg_name;
-        if (embed->form != code.node()->getForm())
-        {
-            svg_name = embed->form->as_string(prop_ruby_file).filename();
-            svg_name.remove_extension();
-            svg_name << ".$" << embed->array_name;
-        }
-        else
-        {
-            svg_name = "$" + embed->array_name;
-        }
+        svg_name = "$" + embed->array_name;
         code.insert(0, tt_string("_svg_string_ = Zlib::Inflate.inflate(Base64.decode64(") << svg_name << "))\n");
         code += "Wx::BitmapBundle.from_svg(_svg_string_";
         code.Comma().Str("Wx::Size.new(").itoa(svg_size.x).Comma().itoa(svg_size.y) += "))";

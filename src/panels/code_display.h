@@ -39,6 +39,7 @@ public:
     wxStyledTextCtrl* GetTextCtrl() { return m_scintilla; };
 
 protected:
+    void OnRibbonToolSelected(Node* node);
     void OnEmbedImageSelected(Node* node);
     void OnFind(wxFindDialogEvent& event);
 

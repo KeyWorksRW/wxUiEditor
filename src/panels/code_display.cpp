@@ -601,6 +601,11 @@ void CodeDisplay::OnNodeSelected(Node* node)
         OnEmbedImageSelected(node);
         return;
     }
+    else if (node->isGen(gen_ribbonTool) || node->isGen(gen_ribbonButton))
+    {
+        OnRibbonToolSelected(node);
+        return;
+    }
 
     if (!node->hasProp(prop_var_name) && m_panel_type != GEN_LANG_XRC && !node->isGen(gen_ribbonTool) &&
         !node->isGen(gen_ribbonButton))
@@ -743,6 +748,37 @@ void CodeDisplay::OnNodeSelected(Node* node)
 
     // Unlike GetLineVisible(), this function does ensure that the line is visible.
     m_scintilla->ScrollToLine(line);
+}
+
+void CodeDisplay::OnRibbonToolSelected(Node* node)
+{
+    tt_string search;
+    if (auto parent = node->getParent(); parent)
+    {
+        if (parent->isGen(gen_wxRibbonButtonBar))
+        {
+            search << '"' << node->as_string(prop_label) << '"';
+        }
+        else if (parent->isGen(gen_wxRibbonToolBar))
+        {
+            search << parent->as_string(prop_var_name) << "->AddTool(" << node->as_string(prop_id) << ",";
+            if (m_panel_type == GEN_LANG_PYTHON)
+                search.Replace("->", ".");
+            else if (m_panel_type == GEN_LANG_RUBY)
+                search.Replace("->AddTool(", ".add_tool($");
+        }
+    }
+
+    if (search.size())
+    {
+        if (auto line = (to_int) m_view.FindLineContaining(search); line >= 0)
+        {
+            m_scintilla->MarkerDeleteAll(node_marker);
+            m_scintilla->MarkerAdd(line, node_marker);
+            m_scintilla->ScrollToLine(line);
+        }
+        return;
+    }
 }
 
 void CodeDisplay::OnEmbedImageSelected(Node* node)

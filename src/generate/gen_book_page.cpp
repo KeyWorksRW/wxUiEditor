@@ -234,9 +234,15 @@ bool BookPageGenerator::ConstructionCode(Code& code)
     {
         if (node->getParent()->isGen(gen_wxPropertySheetDialog))
         {
-            code.FormFunction("GetBookCtrl()");
             if (code.is_ruby())
-                code.GetCode().resize(code.GetCode().size() - 2);  // remove the trailing ()
+            {
+                // wxRuby will fail if the empty () is included.
+                code.Str("get_book_ctrl");
+            }
+            else
+            {
+                code.FormFunction("GetBookCtrl()");
+            }
         }
         else
         {
@@ -247,7 +253,10 @@ bool BookPageGenerator::ConstructionCode(Code& code)
         if (node->getParent()->isGen(gen_wxPropertySheetDialog))
         {
             // Break out the close parenthesis so that the Ruby code can remove the () entirely.
-            code.Eol().FormFunction("GetBookCtrl()");
+            if (code.is_ruby())
+                code.Eol().Str("get_book_ctrl");
+            else
+                code.Eol().FormFunction("GetBookCtrl()");
             code.Function("AddPage(").NodeName().Comma().QuotedString(prop_label);
         }
         else

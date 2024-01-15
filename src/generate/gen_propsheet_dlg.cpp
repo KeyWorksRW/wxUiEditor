@@ -111,11 +111,8 @@ bool PropSheetDlgGenerator::ConstructionCode(Code& code)
     }
     else if (code.is_python())
     {
-        // The Python version creates an empty wx.Dialog and generates the Create() method in
-        // SettingsCode(). From the user's perspective, it looks like one-step creation, but
-        // it's actually two steps.
-        code.Add("class ").NodeName().Str("(wx.PropertySheetDialog):");
-        code.Eol().Tab().Add("def create(self, parent, id=").as_string(prop_id);
+        code.Add("class ").NodeName().Str("(wx.adv.PropertySheetDialog):");
+        code.Eol().Tab().Add("def __init__(self, parent, id=").as_string(prop_id);
         code.Indent(3);
         code.Comma().Str("title=").QuotedString(prop_title).Comma().Add("pos=").Pos(prop_pos);
         code.Comma().Str("size=").WxSize(prop_size).Comma();
@@ -131,6 +128,21 @@ bool PropSheetDlgGenerator::ConstructionCode(Code& code)
             code.Str("wx.DialogNameStr");
         code.Str("):");
         code.Unindent();
+        code.Eol().Str("wx.adv.PropertySheetDialog.__init__(self)");
+        auto book_type = node->as_string(prop_book_type);
+        book_type.erase(0, 2);  // Remove the "wx" from the front
+        code.Eol().FormFunction("SetSheetStyle(wx.adv.").Str(book_type).EndFunction().Eol();
+        if (node->as_int(prop_inner_border) >= 0)
+        {
+            code.FormFunction("SetSheetInnerBorder(").Add(prop_inner_border).EndFunction().Eol();
+        }
+        if (node->as_int(prop_outer_border) >= 0)
+        {
+            code.FormFunction("SetSheetOuterBorder(").Add(prop_outer_border).EndFunction().Eol();
+        }
+
+        code.Eol().Str("if not self.Create(parent, id, title, pos, size, style, name):").Eol().Tab().Str("return");
+        code.Eol().FormFunction("CreateButtons(").Add(prop_buttons).EndFunction().Eol();
     }
     else if (code.is_ruby())
     {

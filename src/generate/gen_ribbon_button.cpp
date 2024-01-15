@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   wxRibbonBar -- form and regular
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -11,6 +11,7 @@
 #include "code.h"        // Code -- Helper class for generating code
 #include "gen_common.h"  // GeneratorLibrary -- Generator classes
 #include "image_gen.h"   // Functions for generating embedded images
+#include "mainframe.h"   // MainFrame -- Main window frame
 #include "node.h"        // Node class
 #include "utils.h"       // Utility functions that work with properties
 
@@ -32,11 +33,13 @@ void RibbonButtonBarGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxp
 
     for (const auto& child: node->getChildNodePtrs())
     {
-        auto bmp = child->as_wxBitmap(prop_bitmap);
-        if (!bmp.IsOk())
+        auto bundle = child->as_wxBitmapBundle(prop_bitmap);
+        wxBitmap bmp;
+        if (bundle.IsOk())
+            bmp = bundle.GetBitmapFor(wxGetMainFrame()->getWindow());
+        else
             bmp = GetInternalImage("default");
 
-        // REVIEW: This is still a bitmap rather then a bundle as of the 3.1.6 release
         btn_bar->AddButton(wxID_ANY, child->as_wxString(prop_label), bmp, child->as_wxString(prop_help),
                            (wxRibbonButtonKind) child->as_int(prop_kind));
     }

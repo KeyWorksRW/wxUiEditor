@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   wxRibbonToolBar generator
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -36,7 +36,7 @@ wxObject* RibbonToolBarGenerator::CreateMockup(Node* node, wxObject* parent)
 
 void RibbonToolBarGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/, Node* node, bool /* is_preview */)
 {
-    auto btn_bar = wxDynamicCast(wxobject, wxRibbonToolBar);
+    auto btn_bar = wxStaticCast(wxobject, wxRibbonToolBar);
 
     for (const auto& child: node->getChildNodePtrs())
     {
@@ -46,12 +46,14 @@ void RibbonToolBarGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxpar
         }
         else
         {
-            auto bmp = child->as_wxBitmap(prop_bitmap);
-            if (!bmp.IsOk())
+            auto bundle = child->as_wxBitmapBundle(prop_bitmap);
+            wxBitmap bmp;
+            if (bundle.IsOk())
+                bmp = bundle.GetBitmapFor(wxGetMainFrame()->getWindow());
+            else
                 bmp = GetInternalImage("default");
-            auto scaled_bmp = child->as_wxBitmapBundle(prop_bitmap).GetBitmap(wxGetMainFrame()->FromDIP(bmp.GetSize()));
-            btn_bar->AddTool(wxID_ANY, scaled_bmp, child->as_wxString(prop_help),
-                             (wxRibbonButtonKind) child->as_int(prop_kind));
+
+            btn_bar->AddTool(wxID_ANY, bmp, child->as_wxString(prop_help), (wxRibbonButtonKind) child->as_int(prop_kind));
         }
     }
     btn_bar->Realize();

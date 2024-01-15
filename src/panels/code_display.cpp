@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Display code in scintilla control
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -13,12 +13,14 @@
 
 #include "base_panel.h"      // BasePanel -- Code generation panel
 #include "code.h"            // Code -- Helper class for generating code
+#include "image_handler.h"   // ImageHandler class
 #include "mainframe.h"       // MainFrame -- Main window frame
 #include "node.h"            // Node class
 #include "node_creator.h"    // NodeCreator -- Class used to create nodes
 #include "node_event.h"      // NodeEvent and NodeEventInfo classes
 #include "preferences.h"     // Prefs -- Set/Get wxUiEditor preferences
 #include "propgrid_panel.h"  // PropGridPanel -- PropertyGrid class for node properties and events
+#include "to_casts.h"        // to_int, to_size_t, and to_char classes
 #include "utils.h"           // Miscellaneous utility functions
 
 #ifndef SCI_SETKEYWORDS
@@ -594,6 +596,12 @@ void CodeDisplay::CodeGenerationComplete()
 
 void CodeDisplay::OnNodeSelected(Node* node)
 {
+    if (node->isGen(gen_embedded_image))
+    {
+        OnEmbedImageSelected(node);
+        return;
+    }
+
     if (!node->hasProp(prop_var_name) && m_panel_type != GEN_LANG_XRC && !node->isGen(gen_ribbonTool) &&
         !node->isGen(gen_ribbonButton))
     {
@@ -735,4 +743,47 @@ void CodeDisplay::OnNodeSelected(Node* node)
 
     // Unlike GetLineVisible(), this function does ensure that the line is visible.
     m_scintilla->ScrollToLine(line);
+}
+
+void CodeDisplay::OnEmbedImageSelected(Node* node)
+{
+    if (node->hasValue(prop_bitmap))
+    {
+        auto func_name = ProjectImages.GetBundleFuncName(node->as_string(prop_bitmap));
+        if (func_name.size())
+        {
+            if (func_name.starts_with("wxue_img::"))
+                func_name.erase(0, sizeof("wxue_img::") - 1);
+            if (auto pos = func_name.find("("); pos != tt::npos)
+                func_name.erase(pos, tt::npos);
+
+            if (auto line = (to_int) m_view.FindLineContaining(func_name); line >= 0)
+            {
+                m_scintilla->MarkerDeleteAll(node_marker);
+                m_scintilla->MarkerAdd(line, node_marker);
+                m_scintilla->ScrollToLine(line);
+                return;
+            }
+
+            // For icons, there is no bundle, just an image_ function
+            func_name.Replace("bundle_", "image_");
+            if (auto line = (to_int) m_view.FindLineContaining(func_name); line >= 0)
+            {
+                m_scintilla->MarkerDeleteAll(node_marker);
+                m_scintilla->MarkerAdd(line, node_marker);
+                m_scintilla->ScrollToLine(line);
+                return;
+            }
+
+            // If all else fails, try just the name. This will also handle Python and Ruby panels
+            func_name.Replace("image_", "");
+            if (auto line = (to_int) m_view.FindLineContaining(func_name); line >= 0)
+            {
+                m_scintilla->MarkerDeleteAll(node_marker);
+                m_scintilla->MarkerAdd(line, node_marker);
+                m_scintilla->ScrollToLine(line);
+                return;
+            }
+        }
+    }
 }

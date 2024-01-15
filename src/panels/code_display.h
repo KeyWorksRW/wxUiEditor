@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Display code in scintilla control
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2021 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -16,10 +16,11 @@
 class wxFindDialogEvent;
 class Node;
 
-// CodeDisplayBase creates and initializes a wxStyledTextCtrl (scintilla) control, and places it in a sizer.
-//
-// WriteCode expects a class to override the doWrite() method, which in this case sends the text to the scinitilla control
-// created by CodeDisplayBase.
+// CodeDisplayBase creates and initializes a wxStyledTextCtrl (scintilla) control, and places
+// it in a sizer.
+
+// WriteCode expects a class to override the doWrite() method, which in this case sends the
+// text to the scinitilla control created by CodeDisplayBase.
 
 class CodeDisplay : public CodeDisplayBase, public WriteCode
 {
@@ -38,9 +39,11 @@ public:
     wxStyledTextCtrl* GetTextCtrl() { return m_scintilla; };
 
 protected:
+    void OnRibbonToolSelected(Node* node);
+    void OnEmbedImageSelected(Node* node);
     void OnFind(wxFindDialogEvent& event);
 
-    // The following two functions are required to inherit from WriteCode
+    // The following function is required to inherit from WriteCode
 
     void doWrite(tt_string_view code) override;
 

@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Top-level MockUp Parent window
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -19,6 +19,7 @@
     #include <wx/msw/uxtheme.h>
 #endif  // _WIN32
 
+#include <wx/dcclient.h>  // wxClientDC base header
 #include <wx/scrolwin.h>  // wxScrolledWindow, wxScrolledControl and wxScrollHelper
 #include <wx/sizer.h>     // provide wxSizer class for layout
 #include <wx/statbmp.h>   // wxStaticBitmap class interface
@@ -219,6 +220,22 @@ void MockupParent::CreateContent()
         min_size.y += size.GetHeight();
     }
 
+    // If there are no controls, or the controls are all hidden, the width will be 0 which
+    // results in no UI being displayed at all. If this is the case and there is a title, use
+    // the width of the title as the minimum width. Otherwise, use a default of 32.
+    if (min_size.x == 0)
+    {
+        if (m_form->hasValue(prop_title))
+        {
+            wxClientDC dc(m_MockupWindow);
+            auto text_size = dc.GetTextExtent(m_form->as_string(prop_title));
+            min_size.x = text_size.x;
+        }
+        else
+        {
+            min_size.x = 32;
+        }
+    }
     m_MockupWindow->SetMinSize(min_size);
     Layout();
 

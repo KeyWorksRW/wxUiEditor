@@ -783,6 +783,10 @@ tt_string BaseGenerator::GetHelpURL(Node* node)
         {
             class_name = "simple_html_list_box";
         }
+        else if (class_name == "propertysheetdialog")
+        {
+            class_name = "property_sheet_dialog";
+        }
         else if (class_name == "toolbartoolbase")
         {
             class_name = "tool_bar_tool_base";

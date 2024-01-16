@@ -1183,13 +1183,21 @@ NodeSharedPtr ImportXML::CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, No
             is_generic_version = true;
             getGenName = gen_wxAnimationCtrl;
         }
+        else if (object_name == "button" && (parent->isGen(gen_wxRibbonButtonBar)))
+        {
+            getGenName = gen_ribbonButton;
+        }
+        else if (object_name == "item" && (parent->isGen(gen_wxRibbonGallery)))
+        {
+            getGenName = gen_ribbonGalleryItem;
+        }
         else
         {
 #if defined(INTERNAL_TESTING)
-            if (parent && parent->getForm())
+            if (parent)
             {
                 MSG_INFO(tt_string() << "Unrecognized object: " << object_name << " in "
-                                     << parent->getForm()->as_string(prop_class_name));
+                                     << map_GenNames.at(parent->getGenName()));
             }
             else
             {

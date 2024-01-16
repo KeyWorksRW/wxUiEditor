@@ -25,6 +25,7 @@ All notable changes to this project will be documented in this file.
 - The Show Hidden on the toolbar now shows (in the Mockup panel) the children of sizers that have their children hidden.
 - Setting `hidden` in a `wxStaticBoxSizer` did not generate any code to hide the wxStaticBox and it's children (you had to check `hide_children` to get the code). This has been fixed.
 - The Context Help button in wxStdDialogButtonSizer did not have a label. This now generates a `wxContextHelpButton` which uses a bitmap rather than a label, and automatically places the dialog in context-help mode when clicked.
+- Fixed wxPython and wxRuby3 code generation for creating a wxPropertySheetDialog class.
 
 ## [Released (1.2.0)]
 

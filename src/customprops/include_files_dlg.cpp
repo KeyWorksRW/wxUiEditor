@@ -111,14 +111,15 @@ void IncludeFilesDialog::Initialize(NodeProperty* prop)
         m_language = GEN_LANG_CPLUSPLUS;
 }
 
-void IncludeFilesDialog::SetButtonsEnableState()
+void IncludeFilesDialog::SetButtonsEnableState(bool set_ok_btn)
 {
     int sel = m_listbox->GetSelection();
     m_btn_remove->Enable(sel != wxNOT_FOUND);
     m_btn_move_up->Enable(sel > 0);
     m_btn_move_down->Enable(sel != wxNOT_FOUND && static_cast<unsigned int>(sel) < m_listbox->GetCount() - 1);
     m_btn_sort->Enable(m_listbox->GetCount() > 1);
-    FindWindow(GetAffirmativeId())->Enable(m_listbox->GetCount() > 0);
+    if (set_ok_btn)
+        FindWindow(GetAffirmativeId())->Enable(m_listbox->GetCount() > 0);
 }
 
 void IncludeFilesDialog::OnInit(wxInitDialogEvent& WXUNUSED(event))
@@ -296,7 +297,8 @@ void IncludeFilesDialog::OnRemove(wxCommandEvent& WXUNUSED(event))
         {
             m_listbox->SetSelection(sel);
         }
-        SetButtonsEnableState();
+        // Don't disable the OK button, but do disable the other buttons
+        SetButtonsEnableState(false);
     }
 }
 

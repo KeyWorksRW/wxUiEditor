@@ -38,7 +38,7 @@ public:
 
     void Initialize(NodeProperty* prop);
     const wxString& GetResults() { return m_value; }
-    void SetButtonsEnableState();
+    void SetButtonsEnableState(bool set_ok_btn = true);
 
 protected:
 

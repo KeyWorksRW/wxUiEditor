@@ -1196,8 +1196,18 @@ NodeSharedPtr ImportXML::CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, No
 #if defined(INTERNAL_TESTING)
             if (parent)
             {
-                MSG_INFO(tt_string() << "Unrecognized object: " << object_name << " in "
-                                     << map_GenNames.at(parent->getGenName()));
+                auto form = parent->getForm();
+                if (form && form->hasValue(prop_class_name))
+                {
+                    MSG_INFO(tt_string() << "Unrecognized object: " << object_name << " in "
+                                         << map_GenNames.at(parent->getGenName()) << " (" << form->as_string(prop_class_name)
+                                         << ')');
+                }
+                else
+                {
+                    MSG_INFO(tt_string() << "Unrecognized object: " << object_name << " in "
+                                         << map_GenNames.at(parent->getGenName()));
+                }
             }
             else
             {

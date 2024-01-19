@@ -88,6 +88,7 @@ int RibbonButtonGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size
 {
     auto item = InitializeXrcObject(node, object);
     GenXrcObjectAttributes(node, item, "button");
+    ADD_ITEM_PROP(prop_label, "label")
 
     if (!node->hasValue(prop_bitmap))
     {

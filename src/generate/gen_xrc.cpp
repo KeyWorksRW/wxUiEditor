@@ -208,7 +208,6 @@ std::string GenerateXrcStr(Node* node_start, size_t xrc_flags)
 
         GenXrcObject(node_start, object, xrc_flags);
     }
-#if 0
     else if ((xrc_flags & xrc::previewing) && node_start->isGen(gen_wxDialog))
     {
         auto object = root.append_child("object");
@@ -217,7 +216,6 @@ std::string GenerateXrcStr(Node* node_start, size_t xrc_flags)
         object = object.append_child("object");
         GenXrcObject(node_start->getChild(0), object, xrc_flags);
     }
-#endif
     else
     {
         auto object = root.append_child("object");

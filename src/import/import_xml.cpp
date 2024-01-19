@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Base class for XML importing
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2021-2023 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2021-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -241,9 +241,9 @@ void ImportXML::HandleSizerItemProperty(const pugi::xml_node& xml_prop, Node* no
             align_value << "wxALIGN_CENTER_HORIZONTAL";
         }
 
-        // Because we use contains(), all we know is that a CENTER flag was used, but not which one.
-        // If we get here and no CENTER flag has been added, then assume that "wxALIGN_CENTER" or
-        // "wxALIGN_CENTRE" was specified.
+        // Because we use contains(), all we know is that a CENTER flag was used, but not which
+        // one. If we get here and no CENTER flag has been added, then assume that
+        // "wxALIGN_CENTER" or "wxALIGN_CENTRE" was specified.
 
         if (!align_value.contains("wxALIGN_CENTER"))
         {
@@ -300,8 +300,8 @@ void ImportXML::ProcessStyle(pugi::xml_node& xml_prop, Node* node, NodeProperty*
 {
     if (node->isGen(gen_wxListBox) || node->isGen(gen_wxCheckListBox))
     {
-        // A list box selection type can only be single, multiple, or extended, so wxUiEditor stores this setting in a
-        // type property so that the user can only choose one.
+        // A list box selection type can only be single, multiple, or extended, so wxUiEditor
+        // stores this setting in a type property so that the user can only choose one.
 
         tt_string style(xml_prop.text().as_string());
         if (style.contains("wxLB_SINGLE"))
@@ -345,8 +345,8 @@ void ImportXML::ProcessStyle(pugi::xml_node& xml_prop, Node* node, NodeProperty*
     }
     else if (node->isGen(gen_wxGauge))
     {
-        // A list box selection type can only be single, multiple, or extended, so wxUiEditor stores this setting in a
-        // type property so that the user can only choose one.
+        // A list box selection type can only be single, multiple, or extended, so wxUiEditor
+        // stores this setting in a type property so that the user can only choose one.
 
         tt_string style(xml_prop.text().as_string());
         if (style.contains("wxGA_VERTICAL"))
@@ -378,8 +378,8 @@ void ImportXML::ProcessStyle(pugi::xml_node& xml_prop, Node* node, NodeProperty*
     }
     else if (node->isGen(gen_wxSlider))
     {
-        // A list box selection type can only be single, multiple, or extended, so wxUiEditor stores this setting in a
-        // type property so that the user can only choose one.
+        // A list box selection type can only be single, multiple, or extended, so wxUiEditor
+        // stores this setting in a type property so that the user can only choose one.
 
         tt_string style(xml_prop.text().as_string());
         if (style.contains("wxSL_HORIZONTAL"))
@@ -626,6 +626,21 @@ void ImportXML::ProcessProperties(const pugi::xml_node& xml_obj, Node* node, Nod
     {
         if (iter.name() == "object")
         {
+            if (node->isGen(gen_wxListView))
+            {
+                if (auto class_name = iter.attribute("class").value(); class_name.size())
+                {
+                    if (auto col_node = iter.child("text"); col_node)
+                    {
+                        auto col_name = col_node.text().as_string();
+                        std::string cur_col_names = node->as_string(prop_column_labels);
+                        if (cur_col_names.size())
+                            cur_col_names += ";";
+                        cur_col_names += col_name;
+                        node->set_value(prop_column_labels, cur_col_names);
+                    }
+                }
+            }
             continue;
         }
 
@@ -646,7 +661,8 @@ void ImportXML::ProcessProperties(const pugi::xml_node& xml_obj, Node* node, Nod
             continue;
         }
 
-        // Start by processing names that wxUiEditor might use but that need special processing when importing.
+        // Start by processing names that wxUiEditor might use but that need special processing
+        // when importing.
 
         if (wxue_prop == prop_bitmap)
         {
@@ -1000,9 +1016,10 @@ void ImportXML::ProcessUnknownProperty(const pugi::xml_node& xml_obj, Node* node
                 {
                     if (value.contains(";"))
                     {
-                        // wxFormBuilder breaks this into three fields: class, header, forward_declare. Or at least it is
-                        // supposed to. In version 3.10, it doesn't properly handle an empty class name, so the header file
-                        // can appear first.
+                        // wxFormBuilder breaks this into three fields: class, header,
+                        // forward_declare. Or at least it is supposed to. In version 3.10, it
+                        // doesn't properly handle an empty class name, so the header file can
+                        // appear first.
                         tt_string_vector parts(value, ';', tt::TRIM::both);
                         if (parts.size() > 0)
                         {
@@ -1128,8 +1145,8 @@ void ImportXML::ProcessBitmap(const pugi::xml_node& xml_obj, Node* node, GenEnum
         {
             tt_string bitmap("Embed;");
 
-            // wxGlade doubles the backslash after the drive letter on Windows, and that causes the conversion to a relative
-            // path to be incorrect
+            // wxGlade doubles the backslash after the drive letter on Windows, and that causes
+            // the conversion to a relative path to be incorrect
             file.Replace(":\\\\", ":\\");
 
             tt_string relative(file.make_wxString());
@@ -1174,7 +1191,7 @@ NodeSharedPtr ImportXML::CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, No
     auto getGenName = ConvertToGenName(object_name, parent);
     if (getGenName == gen_unknown)
     {
-        if (object_name.ends_with("bookpage"))
+        if (object_name.ends_with("bookpage") || object_name == "propertysheetpage")
         {
             getGenName = gen_BookPage;
         }
@@ -1183,13 +1200,35 @@ NodeSharedPtr ImportXML::CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, No
             is_generic_version = true;
             getGenName = gen_wxAnimationCtrl;
         }
+        else if (object_name == "button" && (parent->isGen(gen_wxRibbonButtonBar)))
+        {
+            getGenName = gen_ribbonButton;
+        }
+        else if (object_name == "item" && (parent->isGen(gen_wxRibbonGallery)))
+        {
+            getGenName = gen_ribbonGalleryItem;
+        }
+        else if (object_name == "listcol" && parent->isGen(gen_wxListView))
+        {
+            return NodeSharedPtr();
+        }
         else
         {
 #if defined(INTERNAL_TESTING)
-            if (parent && parent->getForm())
+            if (parent)
             {
-                MSG_INFO(tt_string() << "Unrecognized object: " << object_name << " in "
-                                     << parent->getForm()->as_string(prop_class_name));
+                auto form = parent->getForm();
+                if (form && form->hasValue(prop_class_name))
+                {
+                    MSG_INFO(tt_string() << "Unrecognized object: " << object_name << " in "
+                                         << map_GenNames.at(parent->getGenName()) << " (" << form->as_string(prop_class_name)
+                                         << ')');
+                }
+                else
+                {
+                    MSG_INFO(tt_string() << "Unrecognized object: " << object_name << " in "
+                                         << map_GenNames.at(parent->getGenName()));
+                }
             }
             else
             {
@@ -1270,16 +1309,18 @@ NodeSharedPtr ImportXML::CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, No
         msg << object_name;
         if (parent)
         {
-            // We can't use the class name because that won't necessarily be the wxWidgets class name. E.g., PanelForm might
-            // be the class name, but what we want to display to the user is wxPanel. GetHelpText() will give us something
-            // that makes sense to the user.
+            // We can't use the class name because that won't necessarily be the wxWidgets
+            // class name. E.g., PanelForm might be the class name, but what we want to display
+            // to the user is wxPanel. GetHelpText() will give us something that makes sense to
+            // the user.
 
             auto name = parent->getGenerator()->GetHelpText(parent);
             if (name.size() && name != "wxWidgets")
             {
 #if defined(_DEBUG)
-                // Currently, Debug builds also include the filename that gets passed to the browser if Help is requested.
-                // That's not useful in a message box, so we remove it.
+                // Currently, Debug builds also include the filename that gets passed to the
+                // browser if Help is requested. That's not useful in a message box, so we
+                // remove it.
 
                 name.erase_from('(');
 #endif  // _DEBUG
@@ -1388,8 +1429,9 @@ NodeSharedPtr ImportXML::CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, No
             new_node->set_value(prop_rows, 0);
     }
 
-    // Various designers allow the users to create settings that will generate an assert if compiled on a debug version of
-    // wxWidgets. We fix some of the more common invalid settings here.
+    // Various designers allow the users to create settings that will generate an assert if
+    // compiled on a debug version of wxWidgets. We fix some of the more common invalid
+    // settings here.
 
     if (new_node->hasValue(prop_flags) && new_node->as_string(prop_flags).contains("wxEXPAND"))
     {

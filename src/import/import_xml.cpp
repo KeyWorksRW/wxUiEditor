@@ -626,6 +626,21 @@ void ImportXML::ProcessProperties(const pugi::xml_node& xml_obj, Node* node, Nod
     {
         if (iter.name() == "object")
         {
+            if (node->isGen(gen_wxListView))
+            {
+                if (auto class_name = iter.attribute("class").value(); class_name.size())
+                {
+                    if (auto col_node = iter.child("text"); col_node)
+                    {
+                        auto col_name = col_node.text().as_string();
+                        std::string cur_col_names = node->as_string(prop_column_labels);
+                        if (cur_col_names.size())
+                            cur_col_names += ";";
+                        cur_col_names += col_name;
+                        node->set_value(prop_column_labels, cur_col_names);
+                    }
+                }
+            }
             continue;
         }
 
@@ -1190,6 +1205,10 @@ NodeSharedPtr ImportXML::CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, No
         else if (object_name == "item" && (parent->isGen(gen_wxRibbonGallery)))
         {
             getGenName = gen_ribbonGalleryItem;
+        }
+        else if (object_name == "listcol" && parent->isGen(gen_wxListView))
+        {
+            return NodeSharedPtr();
         }
         else
         {

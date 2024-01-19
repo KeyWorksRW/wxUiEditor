@@ -211,7 +211,20 @@ void PreviewXrc(Node* form_node)
     {
         auto doc_str = GenerateXrcStr(form_node, xrc::previewing);
         wxMemoryInputStream stream(doc_str.c_str(), doc_str.size());
+#if BUILD_FORK
+        wxXmlParseError err_details;
+        auto xmlDoc = std::make_unique<wxXmlDocument>(wxXmlDocument());
+        if (auto result = xmlDoc->Load(stream, wxXMLDOC_NONE, &err_details); !result)
+        {
+            std::string msg = std::format(std::locale(""), "Parsing error: {} at line: {}, column: {}, offset: {:L}\n",
+                                          err_details.message.ToStdString(), err_details.line, err_details.column,
+                                          err_details.offset);
+            wxMessageDialog(wxGetMainFrame()->getWindow(), msg, "Parsing Error", wxOK | wxICON_ERROR).ShowModal();
+            return;
+        }
+#else
         auto xmlDoc = std::make_unique<wxXmlDocument>(wxXmlDocument(stream, "UTF-8"));
+#endif
         if (!xmlDoc->IsOk())
         {
             wxMessageBox("Invalid XRC file generated -- it cannot be loaded.", "XRC Preview");

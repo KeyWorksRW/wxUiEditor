@@ -531,7 +531,7 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
             new_pg_property = new wxEnumProperty(prop->declName().make_wxString(), wxPG_LABEL, constants);
         }
 
-        new_pg_property->SetValueFromString(value, 0);
+        new_pg_property->SetValueFromString(value);
 
         tt_string description = GetPropHelp(prop);
         if (description.empty())
@@ -1291,7 +1291,7 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                         newValue = final_name.size() ? final_name : new_name;
 
                         auto grid_property = m_prop_grid->GetPropertyByLabel("var_name");
-                        grid_property->SetValueFromString(newValue.make_wxString(), 0);
+                        grid_property->SetValueFromString(newValue.make_wxString());
                     }
                 }
 
@@ -1421,28 +1421,28 @@ void PropGridPanel::OnNodePropChange(CustomEvent& event)
 
         case type_int:
         case type_uint:
-            grid_property->SetValueFromString(prop->as_string(), 0);
+            grid_property->SetValueFromString(prop->as_string());
             break;
 
         case type_string:
         case type_string_edit:
-            grid_property->SetValueFromString(prop->as_string(), 0);
+            grid_property->SetValueFromString(prop->as_string());
             break;
 
         case type_string_edit_escapes:
         case type_string_escapes:
         case type_stringlist_escapes:
-            grid_property->SetValueFromString(prop->as_escape_text().make_wxString(), 0);
+            grid_property->SetValueFromString(prop->as_escape_text().make_wxString());
             break;
 
         case type_id:
         case type_option:
         case type_editoption:
-            grid_property->SetValueFromString(prop->as_escape_text(), 0);
+            grid_property->SetValueFromString(prop->as_escape_text());
             break;
 
         case type_bool:
-            grid_property->SetValueFromInt(prop->as_string() == "0" ? 0 : 1, 0);
+            grid_property->SetValueFromInt(prop->as_string() == "0" ? 0 : 1);
             break;
 
         case type_bitlist:
@@ -1451,7 +1451,7 @@ void PropGridPanel::OnNodePropChange(CustomEvent& event)
                 value.Replace("|", ", ", true);
                 if (value == "0")
                     value = "";
-                grid_property->SetValueFromString(value, 0);
+                grid_property->SetValueFromString(value);
             }
             break;
 
@@ -1460,7 +1460,7 @@ void PropGridPanel::OnNodePropChange(CustomEvent& event)
                 // m_prop_grid->SetPropertyValue( grid_property, prop->GetValue() );
                 auto aux = prop->as_string();
                 aux.Replace(",", ";");
-                grid_property->SetValueFromString(aux, 0);
+                grid_property->SetValueFromString(aux);
             }
             break;
 
@@ -1469,7 +1469,7 @@ void PropGridPanel::OnNodePropChange(CustomEvent& event)
                 // m_prop_grid->SetPropertyValue( grid_property, prop->GetValue() );
                 auto aux = prop->as_string();
                 aux.Replace(",", ";");
-                grid_property->SetValueFromString(aux, 0);
+                grid_property->SetValueFromString(aux);
             }
             break;
 
@@ -1485,7 +1485,7 @@ void PropGridPanel::OnNodePropChange(CustomEvent& event)
             break;
 
         default:
-            grid_property->SetValueFromString(prop->as_string(), wxPG_FULL_VALUE);
+            grid_property->SetValueFromString(prop->as_string(), wxPGPropValFormatFlags::FullValue);
     }
     m_prop_grid->Refresh();
 }
@@ -1581,7 +1581,7 @@ void PropGridPanel::ModifyFileProperty(NodeProperty* node_prop, wxPGProperty* gr
             newValue.make_absolute();
             newValue.make_relative(Project.getProjectPath());
             newValue.backslashestoforward();
-            grid_prop->SetValueFromString(newValue, 0);
+            grid_prop->SetValueFromString(newValue);
         }
     }
     modifyProperty(node_prop, newValue);
@@ -1835,7 +1835,7 @@ void PropGridPanel::ModifyOptionsProperty(NodeProperty* node_prop, wxPGProperty*
             {
                 auto propChange = selected_node->getPropPtr(prop_var_name);
                 auto grid_property = m_prop_grid->GetPropertyByLabel("var_name");
-                grid_property->SetValueFromString(name, 0);
+                grid_property->SetValueFromString(name);
                 modifyProperty(propChange, name);
             }
         }
@@ -2174,7 +2174,7 @@ void PropGridPanel::ReplaceDerivedName(const tt_string& newValue, NodeProperty* 
     }
 
     auto grid_property = m_prop_grid->GetPropertyByLabel("derived_class_name");
-    grid_property->SetValueFromString(drvName.make_wxString(), 0);
+    grid_property->SetValueFromString(drvName.make_wxString());
     modifyProperty(propType, drvName);
 }
 
@@ -2190,7 +2190,7 @@ void PropGridPanel::CheckOutputFile(const tt_string& newValue, Node* node)
         {
             auto output_filename = CreateBaseFilename(form_node, newValue);
             auto grid_property = m_prop_grid->GetPropertyByLabel(label->make_wxString());
-            grid_property->SetValueFromString(output_filename.make_wxString(), 0);
+            grid_property->SetValueFromString(output_filename.make_wxString());
             modifyProperty(form_node->getPropPtr(prop_name), output_filename);
         }
     };
@@ -2237,7 +2237,7 @@ void PropGridPanel::ReplaceDerivedFile(const tt_string& newValue, NodeProperty* 
 {
     auto derived_filename = CreateDerivedFilename(propType->getNode()->getForm(), newValue);
     auto grid_property = m_prop_grid->GetPropertyByLabel("derived_file");
-    grid_property->SetValueFromString(derived_filename.make_wxString(), 0);
+    grid_property->SetValueFromString(derived_filename.make_wxString());
     modifyProperty(propType, derived_filename);
 }
 

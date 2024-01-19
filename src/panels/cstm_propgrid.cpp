@@ -33,10 +33,10 @@ bool CustomPropertyGrid::DoOnValidationFailure(wxPGProperty* property, wxVariant
 #endif
         ::wxBell();
 
-#if wxCHECK_VERSION(3, 3, 0)
-    if ((validation_behaviour & static_cast<int>(wxPGVFBFlags::MarkCell)) && !property->HasFlag(wxPG_PROP_INVALID_VALUE))
+#if BUILD_FORK
+    if ((validation_behaviour & static_cast<int>(wxPGVFBFlags::MarkCell)) && !property->HasFlag(wxPGPropertyFlags::InvalidValue))
 #else
-    if ((validation_behaviour & wxPG_VFB_MARK_CELL) && !property->HasFlag(wxPG_PROP_INVALID_VALUE))
+    if ((validation_behaviour & static_cast<int>(wxPGVFBFlags::MarkCell) && !property->HasFlag(wxPG_PROP_INVALID_VALUE))
 #endif
     {
         auto foreground_colour = *wxWHITE;

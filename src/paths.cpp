@@ -57,7 +57,7 @@ void AllowDirectoryChange(wxPropertyGridEvent& event, NodeProperty* /* prop */, 
     // If the event was previously veto'd, and the user corrected the file, then we have to set it here,
     // otherwise it will revert back to the original name before the Veto.
 
-    event.GetProperty()->SetValueFromString(newValue, 0);
+    event.GetProperty()->SetValueFromString(newValue);
 }
 
 // Unlike the AllowDirectoryChange() above, this will *not* allow a duplicate prop_base_file filename since the generated
@@ -168,7 +168,7 @@ void AllowFileChange(wxPropertyGridEvent& event, NodeProperty* prop, Node* node)
         // If the event was previously veto'd, and the user corrected the file, then we have to set it here,
         // otherwise it will revert back to the original name before the Veto.
 
-        event.GetProperty()->SetValueFromString(newValue, 0);
+        event.GetProperty()->SetValueFromString(newValue);
     }
 }
 
@@ -188,7 +188,7 @@ void OnPathChanged(wxPropertyGridEvent& event, NodeProperty* prop, Node* node)
     // with a backslash. However, modifyProperty() will save our forward slash version, so even thought the
     // display isn't correct, it will be stored in the project file correctly.
 
-    event.GetProperty()->SetValueFromString(newValue, 0);
+    event.GetProperty()->SetValueFromString(newValue);
     tt_string value(newValue);
     if (value != prop->as_string())
     {

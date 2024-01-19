@@ -1174,7 +1174,7 @@ NodeSharedPtr ImportXML::CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, No
     auto getGenName = ConvertToGenName(object_name, parent);
     if (getGenName == gen_unknown)
     {
-        if (object_name.ends_with("bookpage"))
+        if (object_name.ends_with("bookpage") || object_name == "propertysheetpage")
         {
             getGenName = gen_BookPage;
         }

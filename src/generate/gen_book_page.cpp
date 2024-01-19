@@ -366,6 +366,8 @@ int BookPageGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t x
         page_type = "treebookpage";
     else if (node->getParent()->isGen(gen_BookPage))
         page_type = "treebookpage";
+    else if (node->getParent()->isGen(gen_wxPropertySheetDialog))
+        page_type = "propertysheetpage";
     else
         FAIL_MSG("BookPageGenerator needs to know what to call the pages to pass to the XRC handler.")
 

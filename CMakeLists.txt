@@ -31,7 +31,7 @@ option(INTERNAL_FEATURE3 "Build with Feature #3 enabled")  # unused
 # build with the current wxWidgets sources (assuming the wxWidgets fork is in sync).
 # Realistically, this is only going to be usable by the maintainers of this project.
 
-option(BUILD_FORK "Builds wxWidgets using wxWidgets/wx_3_3")
+option(BUILD_FORK "Builds wxWidgets using wxFork")
 
 # The following options cannot be combined, are only usable for MSVC compiler, and are only for
 # a Release build.
@@ -51,13 +51,10 @@ if (BUILD_CUSTOM AND BUILD_FORK)
 endif()
 
 if (BUILD_FORK)
-    set(BUILD_ROOT ${BUILD_FORK_DIR} CACHE PATH "${CMAKE_CURRENT_LIST_DIR}/../wxWidgets" FORCE)
     message(NOTICE "Building with forked/cloned version of wxWidgets")
 elseif (BUILD_CUSTOM)
-    set(BUILD_ROOT ${BUILD_CUSTOM_DIR} CACHE PATH "${CMAKE_CURRENT_LIST_DIR}/../" FORCE)
     message(NOTICE "Building with custom build of wxWidgets")
 else()
-    set(BUILD_ROOT wxWidgets CACHE PATH "wxWidgets" FORCE)
     message(NOTICE "Building with wxWidgets 3.3")
 endif()
 
@@ -155,6 +152,10 @@ if (INTERNAL_FEATURE3)
     add_compile_definitions(INTERNAL_FEATURE3)
 endif()
 
+if (BUILD_FORK)
+    add_compile_definitions(BUILD_FORK)
+endif()
+
 add_compile_definitions($<$<CONFIG:Release>:NDEBUG>)
 
 set(stageDir ${CMAKE_CURRENT_BINARY_DIR}/stage)
@@ -176,8 +177,8 @@ endif()
 ####################### Set wxWidgets location macros #######################
 
 if (BUILD_FORK)
-    set (widget_dir ${CMAKE_CURRENT_LIST_DIR}/wxWidgets/wx_3_3)
-    add_subdirectory(${widget_dir})
+    set (widget_dir ${CMAKE_CURRENT_LIST_DIR}/../wxWidgets)
+    add_subdirectory(wxFork)
 elseif(BUILD_CUSTOM)
     set (widget_dir ${CMAKE_CURRENT_LIST_DIR}/wxWidgets/wx_custom)
     add_subdirectory(${widget_dir})
@@ -188,7 +189,7 @@ endif()
 
 if (WIN32)
     if (BUILD_FORK)
-        set(setup_dir ${CMAKE_CURRENT_LIST_DIR}/wxWidgets/wx_3_3/setup/win)
+        set(setup_dir ${CMAKE_CURRENT_LIST_DIR}/wxFork/win)
     elseif(BUILD_CUSTOM)
         set(setup_dir ${BUILD_CUSTOM_DIR}/win)
     else()
@@ -196,7 +197,7 @@ if (WIN32)
     endif()
 elseif (UNIX)
     if (BUILD_FORK)
-        set(setup_dir ${BUILD_FORK_DIR}/unix)
+        set(setup_dir ${CMAKE_CURRENT_LIST_DIR}/wxFork/unix)
     elseif(BUILD_CUSTOM)
         set(setup_dir ${BUILD_CUSTOM_DIR}/unix)
     else()
@@ -206,7 +207,6 @@ endif()
 
 message(STATUS "widget_dir: ${widget_dir}")
 message(STATUS "setup_dir: ${setup_dir}")
-message(STATUS "BUILD_ROOT: ${BUILD_ROOT}")
 
 ####################### Libraries and Executables #######################
 
@@ -258,13 +258,6 @@ else()
     target_link_libraries(wxUiEditor PRIVATE wxWidgets33 ${SYSTEM_LIBS} wxCLib)
 endif()
 
-if(BUILD_FORK)
-    target_link_directories(wxUiEditor PRIVATE
-        $<$<CONFIG:Debug>:${widget_dir}/bld/build/Debug>
-        $<$<CONFIG:Release>:${widget_dir}/bld/build/Release>
-    )
-endif()
-
 if (MSVC)
     # /GL -- combined with the Linker flag /LTCG to perform whole program optimization in Release build
     # /FC -- Full path to source code file in diagnostics
@@ -283,7 +276,7 @@ target_precompile_headers(check_build PRIVATE "src/pch.h")
 
 target_include_directories(wxUiEditor PRIVATE
     ${setup_dir}
-    ${BUILD_ROOT}/include
+    ${widget_dir}/include
 
     ${CMAKE_CURRENT_LIST_DIR}/frozen/include
 
@@ -301,7 +294,7 @@ target_include_directories(wxUiEditor PRIVATE
 
 target_include_directories(check_build PRIVATE
     ${setup_dir}
-    ${BUILD_ROOT}/include
+    ${widget_dir}/include
 
     ${CMAKE_CURRENT_LIST_DIR}/frozen/include
 

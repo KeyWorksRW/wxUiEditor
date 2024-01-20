@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   PropertyGrid class for node properties and events
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -1485,7 +1485,11 @@ void PropGridPanel::OnNodePropChange(CustomEvent& event)
             break;
 
         default:
+#if BUILD_FORK
             grid_property->SetValueFromString(prop->as_string(), wxPGPropValFormatFlags::FullValue);
+#else
+            grid_property->SetValueFromString(prop->as_string(), wxPG_FULL_VALUE);
+#endif
     }
     m_prop_grid->Refresh();
 }

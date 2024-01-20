@@ -195,6 +195,16 @@ MainFrame::MainFrame() :
 
     menuInternal->AppendSeparator();
 
+    auto* submenu_xrc = new wxMenu();
+    wxMenuItem* item;
+    item = submenu_xrc->Append(id_DebugXrcImport, "&Test XRC import", "Export the current form, then verify importing it");
+    item->SetBitmap(bundle_import_svg(16, 16));
+    submenu_xrc->Append(id_DebugXrcDuplicate, "&Test XRC duplication",
+                         "Duplicate the current form via Export and Import XRC");
+    submenu_xrc->Append(id_XrcPreviewDlg, "&XRC Preview",
+                         "Dialog for previewing and other XRC related functions");
+    menuInternal->AppendSubMenu(submenu_xrc, "&XRC");
+
     if (tt::file_exists("python\\py_main.py"))
     {
         menuInternal->Append(id_DebugPythonTest, "&Python Test", "Python debugging test");
@@ -206,12 +216,6 @@ MainFrame::MainFrame() :
         menuInternal->Append(id_DebugRubyTest, "&Ruby Test", "Ruby debugging test");
         Bind(wxEVT_MENU, &App::DbgRubyTest, &wxGetApp(), id_DebugRubyTest);
     }
-
-    wxMenuItem* item;
-    item = menuInternal->Append(id_DebugXrcImport, "&Text XRC import", "Export the current form, then verify importing it");
-    item->SetBitmap(bundle_import_svg(16, 16));
-    menuInternal->Append(id_DebugXrcDuplicate, "&Text XRC duplication",
-                         "Duplicate the current form via Export and Import XRC");
 
     #endif
     ////////////////////// End Debug-only menu items //////////////////////
@@ -403,6 +407,7 @@ MainFrame::MainFrame() :
 #if defined(_DEBUG)
     Bind(wxEVT_MENU, &MainFrame::OnTestXrcImport, this, id_DebugXrcImport);
     Bind(wxEVT_MENU, &MainFrame::OnTestXrcDuplicate, this, id_DebugXrcDuplicate);
+    Bind(wxEVT_MENU, &MainFrame::OnXrcPreview, this, id_XrcPreviewDlg);
 #endif
 
     AddCustomEventHandler(GetEventHandler());

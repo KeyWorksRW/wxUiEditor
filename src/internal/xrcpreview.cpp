@@ -142,6 +142,13 @@ bool XrcPreview::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 
 const int node_marker = 1;
 
+
+void MainFrame::OnXrcPreview(wxCommandEvent& /* event */)
+{
+    XrcPreview dlg(this);
+    dlg.ShowModal();
+}
+
 void XrcPreview::OnCreate(wxCommandEvent& WXUNUSED(event))
 {
     auto doc_str = GenerateXrcStr(nullptr, xrc::no_flags);

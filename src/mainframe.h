@@ -305,6 +305,7 @@ protected:
 
     void OnTestXrcImport(wxCommandEvent& e);
     void OnTestXrcDuplicate(wxCommandEvent& e);
+    void OnXrcPreview(wxCommandEvent& e);
 
 #endif
 

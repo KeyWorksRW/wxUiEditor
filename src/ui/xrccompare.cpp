@@ -212,8 +212,12 @@ bool XrcCompare::InitXrc(Node* form_node)
     size_t xrc_flags = (form_node->isGen(gen_wxDialog) ? xrc::previewing : 0);
     auto doc_str = GenerateXrcStr(form_node, xrc_flags);
     wxMemoryInputStream stream(doc_str.c_str(), doc_str.size());
+#if BUILD_FORK
+
+    auto xmlDoc = std::make_unique<wxXmlDocument>(stream);
+#else
     auto xmlDoc = std::make_unique<wxXmlDocument>(stream, "UTF-8");
-    // wxScopedPtr<wxXmlDocument> xmlDoc(new wxXmlDocument(stream, "UTF-8"));
+#endif
     if (!xmlDoc->IsOk())
     {
         wxMessageBox("Invalid XRC file generated -- it cannot be loaded.", "Compare");

@@ -314,7 +314,7 @@ bool BaseGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty
         // If the event was previously veto'd, and the user corrected the name, then we have to set it here,
         // otherwise it will revert back to the original name before the Veto.
 
-        event->GetProperty()->SetValueFromString(newValue, 0);
+        event->GetProperty()->SetValueFromString(newValue);
     }
     else if (prop->isProp(prop_class_name) && prop->getNode()->isForm())
     {

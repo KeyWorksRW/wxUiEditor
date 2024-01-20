@@ -1,8 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
-// Name:        wx/msw/setup.h
+// Name:        wx/gtk/setup.h
 // Purpose:     Configuration for the library
 // Author:      Julian Smart
-// Modified by:
 // Created:     01/02/97
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
@@ -112,7 +111,10 @@
 //
 // Recommended setting: 0 but can be set to 1 if your program is always run in
 // an UTF-8 locale.
-#define wxUSE_UTF8_LOCALE_ONLY 1
+
+// [Randalphwa - 11-09-2023] Needs to be 0 for Unix builds or you will end up
+// in recursive assert.
+#define wxUSE_UTF8_LOCALE_ONLY 0
 
 // ----------------------------------------------------------------------------
 // debugging settings
@@ -150,7 +152,7 @@
 // Default is 1 if supported by the compiler.
 //
 // Recommended setting: 1, set to 0 if your programs never crash
-#define wxUSE_STACKWALKER 1
+#define wxUSE_STACKWALKER 0
 
 // Set this to 1 to compile in wxDebugReport class which allows you to create
 // and optionally upload to your web site a debug report consisting of back
@@ -201,13 +203,13 @@
 #define wxUSE_LOG 1
 
 // Recommended setting: 1
-#define wxUSE_LOGWINDOW 1
+#define wxUSE_LOGWINDOW 0
 
 // Recommended setting: 1
 #define wxUSE_LOGGUI 1
 
 // Recommended setting: 1
-#define wxUSE_LOG_DIALOG 1
+#define wxUSE_LOG_DIALOG 0
 
 // Support for command line parsing using wxCmdLineParser class.
 //
@@ -229,7 +231,7 @@
 // Default is 1
 //
 // Recommended setting: 0 unless you do plan to develop MT applications
-#define wxUSE_THREADS 1
+#define wxUSE_THREADS 0
 
 // If enabled, compiles wxWidgets streams classes
 //
@@ -255,7 +257,7 @@
 // Default is 1
 //
 // Recommended setting: 1 if you want to support multiple languages
-#define wxUSE_PRINTF_POS_PARAMS      1
+#define wxUSE_PRINTF_POS_PARAMS      0
 
 // ----------------------------------------------------------------------------
 // Interoperability with the standard library.
@@ -273,11 +275,15 @@
 // disabled, wx streams are used instead.
 //
 // Notice that enabling this does not replace wx streams with std streams
-// everywhere, in a lot of places wx streams are used no matter what.
+// everywhere, in a lot of places wx streams are used no matter what and in
+// other places this option enables the use of standard streams in _addition_
+// to the wx ones. The only exception is wxDocument which defines functions
+// working with standard streams only when this option is on, and only
+// functions working with wx streams when it's off.
 //
 // Default is 1.
 //
-// Recommended setting: 1.
+// Recommended setting: 1, there should be no reason to disable it.
 #define wxUSE_STD_IOSTREAM  1
 
 // ----------------------------------------------------------------------------
@@ -372,7 +378,7 @@
 // Default is 1
 //
 // Recommended setting: 1 (but may be safely disabled if you don't use it)
-#define wxUSE_SECRETSTORE   1
+#define wxUSE_SECRETSTORE   0
 
 // Allow the use of the OS built-in spell checker in wxTextCtrl.
 //
@@ -380,7 +386,7 @@
 // anything if the functionality is not supported by the current platform.
 //
 // Recommended setting: 1 unless you want to save a tiny bit of code.
-#define wxUSE_SPELLCHECK 1
+#define wxUSE_SPELLCHECK 0
 
 // Use wxStandardPaths class which allows to retrieve some standard locations
 // in the file system
@@ -398,7 +404,7 @@
 #define wxUSE_TEXTFILE      1
 
 // i18n support: _() macro, wxLocale class.
-#define wxUSE_INTL          1
+#define wxUSE_INTL          0
 
 // Provide wxFoo_l() functions similar to standard foo() functions but taking
 // an extra locale parameter.
@@ -436,7 +442,7 @@
 //
 // Default is 1
 //
-// Recommended setting: 1 (needed by wxSocket)
+// Recommended setting: 1
 #define wxUSE_STOPWATCH     1
 
 // Set wxUSE_FSWATCHER to 1 if you want to enable wxFileSystemWatcher
@@ -444,7 +450,7 @@
 // Default is 1
 //
 // Recommended setting: 1
-#define wxUSE_FSWATCHER     1
+#define wxUSE_FSWATCHER     0
 
 // Setting wxUSE_CONFIG to 1 enables the use of wxConfig and related classes
 // which allow the application to store its settings in the persistent
@@ -487,10 +493,10 @@
 // Default is 1.
 //
 // Recommended setting: 1
-#define wxUSE_DYNLIB_CLASS    1
+#define wxUSE_DYNLIB_CLASS    0
 
 // experimental, don't use for now
-#define wxUSE_DYNAMIC_LOADER  1
+#define wxUSE_DYNAMIC_LOADER  0
 
 // Set to 1 to use socket classes
 #define wxUSE_SOCKETS       1
@@ -574,7 +580,7 @@
 //
 // Recommended setting: 1, setting it to 0 may be useful to avoid dependencies
 // on libcurl on Unix systems.
-#define wxUSE_WEBREQUEST 1
+#define wxUSE_WEBREQUEST 0
 
 // wxWebRequest backend based on NSURLSession
 //
@@ -657,7 +663,7 @@
 // Default is 1.
 //
 // Recommended setting: 1
-#define wxUSE_MEDIACTRL     1
+#define wxUSE_MEDIACTRL     0
 
 // Use wxWidget's XRC XML-based resource system.  Recommended.
 //
@@ -706,7 +712,7 @@
 // Default is 1
 //
 // Recommended setting: 1
-#define wxUSE_WEBVIEW 1
+#define wxUSE_WEBVIEW 0
 
 // Use the IE wxWebView backend
 //
@@ -750,7 +756,7 @@
 //
 // Recommended setting: 1
 #if defined(__WXGTK3__)
-#define wxUSE_WEBVIEW_WEBKIT2 1
+#define wxUSE_WEBVIEW_WEBKIT2 0
 #else
 #define wxUSE_WEBVIEW_WEBKIT2 0
 #endif
@@ -772,7 +778,7 @@
 // Default is 0
 //
 // Recommended setting: 0
-#define wxUSE_CAIRO 0
+#define wxUSE_CAIRO 1
 
 
 // ----------------------------------------------------------------------------
@@ -1122,7 +1128,7 @@
 //
 // Recommended setting: 1 (but can be safely disabled if you don't use it and
 // want to avoid extra dependencies under Linux, for example).
-#define wxUSE_PRIVATE_FONTS 1
+#define wxUSE_PRIVATE_FONTS 0
 
 // wxRichToolTip is a customizable tooltip class which has more functionality
 // than the stock (but native, unlike this class) wxToolTip.
@@ -1313,7 +1319,7 @@
 #define wxUSE_MDI_ARCHITECTURE    1
 
 // Set to 0 to disable print/preview architecture code
-#define wxUSE_PRINTING_ARCHITECTURE  1
+#define wxUSE_PRINTING_ARCHITECTURE  0
 
 // wxHTML allows displaying simple HTML.
 //
@@ -1332,7 +1338,7 @@
 //
 // Recommended setting: 1 if you intend to use OpenGL, can be safely set to 0
 // otherwise.
-#define wxUSE_GLCANVAS       1
+#define wxUSE_GLCANVAS       0
 
 // Setting wxUSE_GLCANVAS_EGL to 1 enables OpenGL EGL backend. This will be
 // automatically enabled if EGL support is detected.  EGL support is only
@@ -1417,11 +1423,11 @@
 //
 // Recommended setting: 1, only set to 0 if you have trouble compiling
 // wxCHMHelpController (could be a problem with really ancient compilers)
-#define wxUSE_MS_HTML_HELP 1
+#define wxUSE_MS_HTML_HELP 0
 
 
 // Use wxHTML-based help controller?
-#define wxUSE_WXHTML_HELP 1
+#define wxUSE_WXHTML_HELP 0
 
 #define wxUSE_CONSTRAINTS 1
                                 // 0 for no window layout constraint system
@@ -1503,7 +1509,7 @@
 #define wxUSE_PCX           1
 
 // Set to 1 for IFF format support (Amiga format)
-#define wxUSE_IFF           0
+#define wxUSE_IFF           1
 
 // Set to 1 for XPM format support
 #define wxUSE_XPM           1
@@ -1542,15 +1548,14 @@
 //
 // Default is 1.
 //
-// Recommended setting: 1 if you need to support XP, as Direct2D is not
-// available there.
+// Recommended setting: 1, GDI+ is always available.
 #define wxUSE_GRAPHICS_GDIPLUS wxUSE_GRAPHICS_CONTEXT
 
 // Enable support for Direct2D-based implementation of wxGraphicsContext.
 //
-// Default is 1 for compilers which support it, i.e. MSVS currently. If you
-// use another compiler and installed the necessary SDK components manually,
-// you need to change this setting.
+// Default is 1 for MSVS. MinGW-w64 supports Direct2D as well, but if you use
+// it, you need to change this setting manually as other MinGW distributions
+// may not support it.
 //
 // Recommended setting: 1 for faster and better quality graphics.
 #if defined(_MSC_VER)
@@ -1567,7 +1572,7 @@
 //
 // Recommended setting: 1, can be set to 0 if wxUSE_WEBREQUEST_CURL==1,
 // otherwise wxWebRequest won't be available at all.
-#define wxUSE_WEBREQUEST_WINHTTP 1
+#define wxUSE_WEBREQUEST_WINHTTP 0
 
 // ----------------------------------------------------------------------------
 // Windows-only settings
@@ -1692,7 +1697,7 @@
 // Default is 1.
 //
 // Recommended setting: 1, required to be 1 if wxUSE_IPV6 is 1.
-#define wxUSE_WINSOCK2 1
+#define wxUSE_WINSOCK2 0
 
 // ----------------------------------------------------------------------------
 // Generic versions of native controls
@@ -1736,7 +1741,74 @@
 // Default is 1 if supported by the compiler (VC++ and recent BC++ only).
 //
 // Recommended setting: 1, set to 0 if your programs never crash
-#define wxUSE_CRASHREPORT 1
+#define wxUSE_CRASHREPORT 0
 /* --- end MSW options --- */
+
+// [Randalphwa - 10-26-2023] Throws a recursive assertion in GTK debug build
+#define wxUSE_LOG_TRACE 0
+
+/* the installation location prefix from configure */
+#define wxINSTALL_PREFIX "/usr/local"
+
+// GTK-specific options used when not using configure. As we can't test for the
+// exact GTK version (without including GTK+ headers that we don't want to
+// include from our own public headers), just assume a recent GTK 2.x.
+#define __WXGTK__
+#define __WXGTK210__ 1
+#define __WXGTK220__ 1
+#define __WXGTK3__ 1
+
+#define wxUSE_LIBMSPACK 0
+#define wxUSE_SELECT_DISPATCHER 1
+#define wxUSE_XTEST 1
+
+#define WX_SOCKLEN_T socklen_t
+#define SOCKOPTLEN_T socklen_t
+
+#define HAVE_GMTIME_R 1
+#define HAVE_LOCALTIME_R 1
+#define HAVE_FUNC_GETHOSTBYNAME_R_6 1
+#define HAVE_FUNC_GETSERVBYNAME_R_6 1
+#define HAVE_INET_ATON 1
+#define HAVE_INET_ADDR 1
+#define HAVE_SSIZE_T 1
+#define HAVE_WPRINTF 1
+#define HAVE_VSWSCANF 1
+#define HAVE_GETTIMEOFDAY 1
+#define HAVE_SYS_TYPES_H 1
+#define HAVE_SYS_STAT_H 1
+#define HAVE_STDLIB_H 1
+#define HAVE_STRING_H 1
+#define HAVE_MEMORY_H 1
+#define HAVE_STRINGS_H 1
+#define HAVE_INTTYPES_H 1
+#define HAVE_STDINT_H 1
+#define HAVE_UNISTD_H 1
+#define HAVE_LANGINFO_H 1
+#define HAVE_WCHAR_H 1
+#define HAVE_SYS_SELECT_H 1
+#define HAVE_CXXABI_H 1
+#define HAVE_VA_COPY 1
+#define HAVE_LARGEFILE_SUPPORT 1
+#define HAVE_FSEEKO 1
+#define HAVE_GCC_ATOMIC_BUILTINS 1
+#define HAVE_CXX11 1
+#define HAVE_DLOPEN 1
+#define HAVE_NANOSLEEP 1
+#define HAVE_FCNTL 1
+
+#define __LINUX__ 1
+#define _GNU_SOURCE 1
+#define __UNIX__ 1
+#define STDC_HEADERS 1
+#define _FILE_OFFSET_BITS 64
+
+#define SIZEOF_SHORT 2
+#define SIZEOF_VOID_P 8
+#define SIZEOF_LONG 8
+#define SIZEOF_SIZE_T 8
+#define SIZEOF_LONG_LONG 8
+#define SIZEOF_INT __SIZEOF_INT__
+#define SIZEOF_WCHAR_T __SIZEOF_WCHAR_T__
 
 #endif // _WX_SETUP_H_

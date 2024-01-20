@@ -125,7 +125,7 @@ bool App::OnInit()
     SetVendorName("KeyWorks");
     UserPrefs.ReadConfig();
 
-#if wxCHECK_VERSION(3, 3, 0) && defined(_WIN32)
+#if defined(_WIN32)
 
     // [Randalphwa - 03-29-2023] Currently, this isn't really usable because we hard-code
     // colors in our property sheet and scintilla code displays.

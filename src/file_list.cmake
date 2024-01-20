@@ -344,24 +344,6 @@ set (file_list
 
     # (generated) ui/preferences_dlg.cpp  # Preferences dialog
 
-    # wxui
-
-    # (generated) wxui/insert_widget.cpp
-
-    # Internal files
-
-    # (generated) internal/code_compare.cpp
-    # (generated) internal/debugsettings.cpp
-    # (generated) internal/node_info.cpp
-    # (generated) internal/node_search_dlg.cpp
-    # (generated) internal/undo_info.cpp
-    # (generated) internal/unused_gen_dlg.cpp
-    # (generated) internal/xrcpreview.cpp
-    # (generated) internal/convert_img_base.cpp
-    # (generated) internal/msgframe_base.cpp
-
-    # Debug-only files from wxui_internal.cmake
-
     $<$<CONFIG:Debug>:internal/convert_img.cpp>     # Convert image
 
     $<$<CONFIG:Debug>:tests/test_xrc_import.cpp>  # XRC Import tests

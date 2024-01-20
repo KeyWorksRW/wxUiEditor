@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Derived wxPropertyGrid class
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2021-2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2021-2024 KeyWorks Software (Ralph Walden)
 // License:   wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -26,7 +26,8 @@ bool CustomPropertyGrid::DoOnValidationFailure(wxPGProperty* property, wxVariant
         ::wxBell();
 
 #if BUILD_FORK
-    if ((validation_behaviour & static_cast<int>(wxPGVFBFlags::MarkCell)) && !property->HasFlag(wxPGPropertyFlags::InvalidValue))
+    if ((validation_behaviour & static_cast<int>(wxPGVFBFlags::MarkCell)) &&
+        !property->HasFlag(wxPGPropertyFlags::InvalidValue))
 #else
     if ((validation_behaviour & static_cast<int>(wxPGVFBFlags::MarkCell) && !property->HasFlag(wxPG_PROP_INVALID_VALUE))
 #endif

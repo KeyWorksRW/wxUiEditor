@@ -20,17 +20,9 @@
 
 bool CustomPropertyGrid::DoOnValidationFailure(wxPGProperty* property, wxVariant& WXUNUSED(invalidValue))
 {
-#if wxCHECK_VERSION(3, 3, 0)
     auto validation_behaviour = static_cast<int>(m_validationInfo.GetFailureBehavior());
-#else
-    auto validation_behaviour = m_validationInfo.GetFailureBehavior();
-#endif
 
-#if wxCHECK_VERSION(3, 3, 0)
     if (validation_behaviour & static_cast<int>(wxPGVFBFlags::Beep))
-#else
-    if (validation_behaviour & wxPG_VFB_BEEP)
-#endif
         ::wxBell();
 
 #if BUILD_FORK
@@ -66,14 +58,9 @@ bool CustomPropertyGrid::DoOnValidationFailure(wxPGProperty* property, wxVariant
     // Note that since this is already a customized wxPropertyGrid, we don't call DoShowPropertyError() if
     // wxPG_VFB_SHOW_MESSAGE is set.
 
-#if wxCHECK_VERSION(3, 3, 0)
     if (validation_behaviour & static_cast<int>(wxPGVFBFlags::ShowMessageBox) ||
         validation_behaviour & static_cast<int>(wxPGVFBFlags::ShowMessage) ||
         validation_behaviour & static_cast<int>(wxPGVFBFlags::ShowMessageOnStatusBar))
-#else
-    if (validation_behaviour & wxPG_VFB_SHOW_MESSAGEBOX || validation_behaviour & wxPG_VFB_SHOW_MESSAGE ||
-        validation_behaviour & wxPG_VFB_SHOW_MESSAGE_ON_STATUSBAR)
-#endif
     {
         auto msg = m_validationInfo.GetFailureMessage();
         if (msg.empty())
@@ -82,11 +69,7 @@ bool CustomPropertyGrid::DoOnValidationFailure(wxPGProperty* property, wxVariant
                 _("You have entered an invalid value. Either change the value, or press ESC to restore the original value.");
         }
 
-#if wxCHECK_VERSION(3, 3, 0)
         if (validation_behaviour & static_cast<int>(wxPGVFBFlags::ShowMessageOnStatusBar))
-#else
-        if (validation_behaviour & wxPG_VFB_SHOW_MESSAGE_ON_STATUSBAR)
-#endif
         {
             if (!wxPGGlobalVars->m_offline)
             {
@@ -97,11 +80,7 @@ bool CustomPropertyGrid::DoOnValidationFailure(wxPGProperty* property, wxVariant
             }
         }
 
-#if wxCHECK_VERSION(3, 3, 0)
         if (validation_behaviour & static_cast<int>(wxPGVFBFlags::ShowMessageBox))
-#else
-        if (validation_behaviour & wxPG_VFB_SHOW_MESSAGEBOX)
-#endif
         {
             // Displaying the message box can cause a focus change which will result in idle processing sending the
             // validation event again. Preserving the focus window avoids validating twice.
@@ -117,9 +96,5 @@ bool CustomPropertyGrid::DoOnValidationFailure(wxPGProperty* property, wxVariant
         }
     }
 
-#if wxCHECK_VERSION(3, 3, 0)
     return (validation_behaviour & static_cast<int>(wxPGVFBFlags::StayInProperty)) ? false : true;
-#else
-    return (validation_behaviour & wxPG_VFB_STAY_IN_PROPERTY) ? false : true;
-#endif
 }

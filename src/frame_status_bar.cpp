@@ -24,8 +24,7 @@
  * Next we create a custom statusbar and when it is notified that text was sent to panel #0 it copies it to panel #2 and
  * erases the text in panel #0.
  *
- * As long as we have a custom bar anyway, we add a setText method that takes a tt_string (std::string). On Windows,
- * that gets converted to UTF16 before handing it off to the normal SetStatusText().
+ * As long as we have a custom bar anyway, we add a setText method that takes a tt_string (std::string).
  */
 
 class ueStatusBar : public wxStatusBar
@@ -34,9 +33,6 @@ public:
     ueStatusBar(wxWindow* parent, wxWindowID id = wxID_ANY, long style = wxSTB_DEFAULT_STYLE,
                 const wxString& name = wxStatusBarNameStr)
     {
-#if !wxCHECK_VERSION(3, 3, 0)
-        m_pDC = nullptr;
-#endif
         Create(parent, id, style, name);
     }
 

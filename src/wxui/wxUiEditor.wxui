@@ -5973,7 +5973,7 @@
         persist="1"
         style="wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER"
         title="Test XRC"
-        minimum_size="800,600d"
+        minimum_size="600,500d"
         base_file="..\internal\xrcpreview"
         derived_class_name="XrcPreview"
         derived_file="xrcpreview"
@@ -5990,11 +5990,24 @@
             flags="wxEXPAND"
             proportion="1">
             <node
-              class="wxBoxSizer"
-              var_name="box_sizer_4">
+              class="wxCollapsiblePane"
+              collapsed="1"
+              label="Information">
               <node
-                class="wxStaticText"
-                label="Preview only works with Dialogs. Be certain the dialog will be visible and has a close box in the title bar!" />
+                class="wxBoxSizer"
+                orientation="wxVERTICAL"
+                var_name="box_sizer_4">
+                <node
+                  class="wxStaticText"
+                  class_access="none"
+                  label="Click Generate then Preview to display a form. You can edit the generated content and Preview that if needed."
+                  var_name="static_text2"
+                  borders="wxTOP|wxRIGHT|wxLEFT" />
+                <node
+                  class="wxStaticText"
+                  label="Preview only works with Dialogs. Be certain the dialog will be visible and has a close box in the title bar!"
+                  borders="wxRIGHT|wxLEFT" />
+              </node>
             </node>
             <node
               class="wxBoxSizer"
@@ -6002,30 +6015,71 @@
               flags="wxEXPAND">
               <node
                 class="wxButton"
-                label="&amp;Blank"
-                var_name="m_btn_2"
-                tooltip="Create XRC with a single empty object"
-                wxEVT_BUTTON="OnCreate" />
-              <node
-                class="wxButton"
-                label="&amp;Generate"
-                var_name="m_btn_3"
-                tooltip="Generate XRC from current selected form."
-                wxEVT_BUTTON="OnXrcCopy" />
-              <node
-                class="wxButton"
-                label="&amp;Export..."
-                var_name="m_btn_4"
-                tooltip="Generate XRC from current selected form."
-                wxEVT_BUTTON="OnExport" />
+                class_access="none"
+                label="&amp;Generate..."
+                var_name="btn_3"
+                bitmap="SVG;generate.svg;[16,16]"
+                tooltip="Choose a form then generate the XRC code"
+                wxEVT_BUTTON="OnGenerate" />
               <node
                 class="wxButton"
                 label="&amp;Preview..."
-                tooltip="Load the XRC into a dialog and display it."
+                var_name="m_btn_preview"
+                bitmap="SVG;xrc_preview.svg;[16,16]"
+                tooltip="Use wxXmlResource to load and display the contents"
                 wxEVT_BUTTON="OnPreview" />
               <node
-                class="wxSearchCtrl"
-                wxEVT_SEARCHCTRL_SEARCH_BTN="OnSearch" />
+                class="wxButton"
+                label="&amp;Import"
+                var_name="m_btn_import"
+                bitmap="SVG;import.svg;[16,16]"
+                tooltip="Verify that the current contents can be imported"
+                wxEVT_BUTTON="OnImport" />
+              <node
+                class="wxButton"
+                label="&amp;Export..."
+                var_name="m_btn__export"
+                bitmap="Art;wxART_FILE_SAVE_AS|wxART_MENU"
+                tooltip="Load current contents into XML, then Export to a file of your choice"
+                wxEVT_BUTTON="OnExport" />
+              <node
+                class="wxButton"
+                class_access="none"
+                label="&amp;Duplicate"
+                var_name="btn3"
+                bitmap="Art;wxART_ADD_BOOKMARK|wxART_MENU"
+                tooltip="Load current contents into XML, then Export to a file of your choice"
+                wxEVT_BUTTON="OnDuplicate" />
+              <node
+                class="wxButton"
+                class_access="none"
+                label="&amp;Clear"
+                var_name="btn_2"
+                bitmap="Art;wxART_CUT|wxART_MENU"
+                tooltip="Remove all of the contents"
+                wxEVT_BUTTON="OnClear" />
+            </node>
+            <node
+              class="wxBoxSizer"
+              var_name="box_sizer2"
+              borders="wxRIGHT|wxLEFT"
+              flags="wxEXPAND">
+              <node
+                class="wxStaticText"
+                label="C&amp;ontents:"
+                var_name="m_contents"
+                alignment="wxALIGN_BOTTOM"
+                borders="wxTOP|wxRIGHT|wxLEFT"
+                proportion="1" />
+              <node
+                class="wxBoxSizer"
+                var_name="box_sizer3">
+                <node
+                  class="wxSearchCtrl"
+                  minimum_size="100,-1d"
+                  borders="wxBOTTOM|wxRIGHT|wxLEFT"
+                  wxEVT_SEARCHCTRL_SEARCH_BTN="OnSearch" />
+              </node>
             </node>
             <node
               class="wxBoxSizer"
@@ -6512,6 +6566,30 @@
             OK="0"
             default_button="none"
             flags="wxEXPAND" />
+        </node>
+      </node>
+      <node
+        class="wxDialog"
+        class_name="XrcListDlg"
+        title="XRC Preview forms"
+        base_file="..\internal\xrc_list_dlg"
+        local_hdr_includes="../nodes/node.h"
+        class_members="&quot;Node* m_form { nullptr };&quot;"
+        class_methods="&quot;Node* get_form() { return m_form; }&quot;"
+        use_derived_class="0"
+        wxEVT_INIT_DIALOG="OnInit">
+        <node
+          class="wxBoxSizer"
+          orientation="wxVERTICAL"
+          var_name="dlg_sizer">
+          <node
+            class="wxListBox"
+            minimum_size="100,70d"
+            flags="wxEXPAND" />
+          <node
+            class="wxStdDialogButtonSizer"
+            flags="wxEXPAND"
+            OKButtonClicked="OnOK" />
         </node>
       </node>
     </node>

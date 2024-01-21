@@ -95,6 +95,7 @@ public:
     auto& getChildNodePtrs() { return m_project_node->getChildNodePtrs(); }
     Node* getChild(size_t index) { return m_project_node->getChild(index); }
 
+    // This includes forms in folders and sub-folders
     void CollectForms(std::vector<Node*>& forms, Node* node_start = nullptr);
 
     // Returns the first project child that is a form, or nullptr if no form children found.

@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Main window frame
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -83,7 +83,6 @@ enum
     IDM_IMPORT_WINRES = wxID_HIGHEST + 500,
 
     id_CodeDiffDlg,
-    id_CompareXrcDlg,
     id_ConvertImage,
     id_DebugCurrentTest,
     id_DebugPreferences,
@@ -91,7 +90,6 @@ enum
     id_DebugXrcImport,
     id_FindWidget,
     id_GeneratePython,
-    id_MockupPreview,
     id_NodeMemory,
     id_ShowLogger,
     id_XrcPreviewDlg,
@@ -200,9 +198,8 @@ MainFrame::MainFrame() :
     item = submenu_xrc->Append(id_DebugXrcImport, "&Test XRC import", "Export the current form, then verify importing it");
     item->SetBitmap(bundle_import_svg(16, 16));
     submenu_xrc->Append(id_DebugXrcDuplicate, "&Test XRC duplication",
-                         "Duplicate the current form via Export and Import XRC");
-    submenu_xrc->Append(id_XrcPreviewDlg, "&XRC Preview",
-                         "Dialog for previewing and other XRC related functions");
+                        "Duplicate the current form via Export and Import XRC");
+    submenu_xrc->Append(id_XrcPreviewDlg, "&XRC Tests...", "Dialog with multiple XRC tests");
     menuInternal->AppendSubMenu(submenu_xrc, "&XRC");
 
     if (tt::file_exists("python\\py_main.py"))
@@ -238,7 +235,7 @@ MainFrame::MainFrame() :
     m_menubar->Append(menuInternal, "&Internal");
 
     #if defined(_DEBUG)
-    m_toolbar->AddTool(id_DebugXrcImport, "Test XRC import", bundle_import_svg(24, 24), "Test XRC import");
+    m_toolbar->AddTool(id_XrcPreviewDlg, "XRC Tests", bundle_import_svg(24, 24), "Test Tests");
     #endif
 
     m_toolbar->Realize();

@@ -9,11 +9,41 @@
 
 #if defined(INTERNAL_TESTING)
 
+#include <wx/artprov.h>
 #include <wx/persist.h>
 #include <wx/persist/toplevel.h>
 #include <wx/sizer.h>
 
+#include "../wxui/ui_images.h"
+
 #include "xrcpreview.h"
+
+#include <wx/mstream.h>  // memory stream classes
+#include <wx/zstream.h>  // zlib stream classes
+
+#include <memory>  // for std::make_unique
+
+// Convert compressed SVG string into a wxBitmapBundle
+#ifdef __cpp_inline_variables
+inline wxBitmapBundle wxueBundleSVG(const unsigned char* data,
+    size_t size_data, size_t size_svg, wxSize def_size)
+#else
+static wxBitmapBundle wxueBundleSVG(const unsigned char* data,
+    size_t size_data, size_t size_svg, wxSize def_size)
+#endif
+{
+    auto str = std::make_unique<char[]>(size_svg);
+    wxMemoryInputStream stream_in(data, size_data);
+    wxZlibInputStream zlib_strm(stream_in);
+    zlib_strm.Read(str.get(), size_svg);
+    return wxBitmapBundle::FromSVG(str.get(), def_size);
+};
+
+namespace wxue_img
+{
+    extern const unsigned char generate_svg[780];
+    extern const unsigned char xrc_preview_svg[469];
+}
 
 bool XrcPreview::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     const wxPoint& pos, const wxSize& size, long style, const wxString &name)
@@ -25,37 +55,70 @@ bool XrcPreview::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 
     auto* box_sizer = new wxBoxSizer(wxVERTICAL);
 
-    auto* box_sizer_4 = new wxBoxSizer(wxHORIZONTAL);
+    m_collapsible_pane = new wxCollapsiblePane(this, wxID_ANY, "Information");
+    m_collapsible_pane->Collapse();
+    box_sizer->Add(m_collapsible_pane, wxSizerFlags().Border(wxALL));
 
-    m_staticText = new wxStaticText(this, wxID_ANY,
+    auto* box_sizer_4 = new wxBoxSizer(wxVERTICAL);
+
+    auto* static_text2 = new wxStaticText(m_collapsible_pane->GetPane(), wxID_ANY,
+        "Click Generate then Preview to display a form. You can edit the generated content and Preview that if needed.");
+    box_sizer_4->Add(static_text2, wxSizerFlags().Border(wxLEFT|wxRIGHT|wxTOP, wxSizerFlags::GetDefaultBorder()));
+
+    m_staticText = new wxStaticText(m_collapsible_pane->GetPane(), wxID_ANY,
         "Preview only works with Dialogs. Be certain the dialog will be visible and has a close box in the title bar!");
-    box_sizer_4->Add(m_staticText, wxSizerFlags().Border(wxALL));
-
-    box_sizer->Add(box_sizer_4, wxSizerFlags().Border(wxALL));
+    box_sizer_4->Add(m_staticText, wxSizerFlags().Border(wxLEFT|wxRIGHT, wxSizerFlags::GetDefaultBorder()));
+    m_collapsible_pane->GetPane()->SetSizerAndFit(box_sizer_4);
 
     auto* box_sizer_2 = new wxBoxSizer(wxHORIZONTAL);
 
-    m_btn_2 = new wxButton(this, wxID_ANY, "&Blank");
-    m_btn_2->SetToolTip("Create XRC with a single empty object");
-    box_sizer_2->Add(m_btn_2, wxSizerFlags().Border(wxALL));
+    auto* btn_3 = new wxButton(this, wxID_ANY, "&Generate...");
+        btn_3->SetBitmap(wxueBundleSVG(wxue_img::generate_svg, 780, 2716, wxSize(16, 16)));
+    btn_3->SetToolTip("Choose a form then generate the XRC code");
+    box_sizer_2->Add(btn_3, wxSizerFlags().Border(wxALL));
 
-    m_btn_3 = new wxButton(this, wxID_ANY, "&Generate");
-    m_btn_3->SetToolTip("Generate XRC from current selected form.");
-    box_sizer_2->Add(m_btn_3, wxSizerFlags().Border(wxALL));
+    m_btn_preview = new wxButton(this, wxID_ANY, "&Preview...");
+        m_btn_preview->SetBitmap(wxueBundleSVG(wxue_img::xrc_preview_svg, 469, 1326, wxSize(16, 16)));
+    m_btn_preview->SetToolTip("Use wxXmlResource to load and display the contents");
+    box_sizer_2->Add(m_btn_preview, wxSizerFlags().Border(wxALL));
 
-    m_btn_4 = new wxButton(this, wxID_ANY, "&Export...");
-    m_btn_4->SetToolTip("Generate XRC from current selected form.");
-    box_sizer_2->Add(m_btn_4, wxSizerFlags().Border(wxALL));
+    m_btn_import = new wxButton(this, wxID_ANY, "&Import");
+        m_btn_import->SetBitmap(wxue_img::bundle_import_svg(16, 16));
+    m_btn_import->SetToolTip("Verify that the current contents can be imported");
+    box_sizer_2->Add(m_btn_import, wxSizerFlags().Border(wxALL));
 
-    m_btn = new wxButton(this, wxID_ANY, "&Preview...");
-    m_btn->SetToolTip("Load the XRC into a dialog and display it.");
-    box_sizer_2->Add(m_btn, wxSizerFlags().Border(wxALL));
+    m_btn__export = new wxButton(this, wxID_ANY, "&Export...");
+        m_btn__export->SetBitmap(wxArtProvider::GetBitmapBundle(wxART_FILE_SAVE_AS, wxART_MENU));
+    m_btn__export->SetToolTip("Load current contents into XML, then Export to a file of your choice");
+    box_sizer_2->Add(m_btn__export, wxSizerFlags().Border(wxALL));
+
+    auto* btn3 = new wxButton(this, wxID_ANY, "&Duplicate");
+        btn3->SetBitmap(wxArtProvider::GetBitmapBundle(wxART_ADD_BOOKMARK, wxART_MENU));
+    btn3->SetToolTip("Load current contents into XML, then Export to a file of your choice");
+    box_sizer_2->Add(btn3, wxSizerFlags().Border(wxALL));
+
+    auto* btn_2 = new wxButton(this, wxID_ANY, "&Clear");
+        btn_2->SetBitmap(wxArtProvider::GetBitmapBundle(wxART_CUT, wxART_MENU));
+    btn_2->SetToolTip("Remove all of the contents");
+    box_sizer_2->Add(btn_2, wxSizerFlags().Border(wxALL));
+
+    box_sizer->Add(box_sizer_2, wxSizerFlags().Expand().Border(wxALL));
+
+    auto* box_sizer2 = new wxBoxSizer(wxHORIZONTAL);
+
+    m_contents = new wxStaticText(this, wxID_ANY, "C&ontents:");
+    box_sizer2->Add(m_contents, wxSizerFlags(1).Bottom().Border(wxLEFT|wxRIGHT|wxTOP, wxSizerFlags::GetDefaultBorder()));
+
+    auto* box_sizer3 = new wxBoxSizer(wxHORIZONTAL);
 
     m_searchCtrl = new wxSearchCtrl(this, wxID_ANY, wxEmptyString);
     m_searchCtrl->ShowSearchButton(true);
-    box_sizer_2->Add(m_searchCtrl, wxSizerFlags().Border(wxALL));
+    m_searchCtrl->SetMinSize(ConvertDialogToPixels(wxSize(100, -1)));
+    box_sizer3->Add(m_searchCtrl, wxSizerFlags().Border(wxLEFT|wxRIGHT|wxBOTTOM, wxSizerFlags::GetDefaultBorder()));
 
-    box_sizer->Add(box_sizer_2, wxSizerFlags().Expand().Border(wxALL));
+    box_sizer2->Add(box_sizer3, wxSizerFlags().Border(wxALL));
+
+    box_sizer->Add(box_sizer2, wxSizerFlags().Expand().Border(wxLEFT|wxRIGHT, wxSizerFlags::GetDefaultBorder()));
 
     auto* box_sizer_3 = new wxBoxSizer(wxHORIZONTAL);
 
@@ -91,17 +154,19 @@ bool XrcPreview::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     dlg_sizer->Add(CreateSeparatedSizer(stdBtn), wxSizerFlags().Expand().Border(wxALL));
 
     SetSizer(dlg_sizer);
-    SetMinSize(ConvertDialogToPixels(wxSize(800, 600)));
+    SetMinSize(ConvertDialogToPixels(wxSize(600, 500)));
     Fit();
     Centre(wxBOTH);
 
     wxPersistentRegisterAndRestore(this, "XrcPreview");
 
     // Event handlers
-    m_btn_2->Bind(wxEVT_BUTTON, &XrcPreview::OnCreate, this);
-    m_btn_3->Bind(wxEVT_BUTTON, &XrcPreview::OnXrcCopy, this);
-    m_btn_4->Bind(wxEVT_BUTTON, &XrcPreview::OnExport, this);
-    m_btn->Bind(wxEVT_BUTTON, &XrcPreview::OnPreview, this);
+    btn_3->Bind(wxEVT_BUTTON, &XrcPreview::OnGenerate, this);
+    m_btn_preview->Bind(wxEVT_BUTTON, &XrcPreview::OnPreview, this);
+    m_btn_import->Bind(wxEVT_BUTTON, &XrcPreview::OnImport, this);
+    m_btn__export->Bind(wxEVT_BUTTON, &XrcPreview::OnExport, this);
+    btn3->Bind(wxEVT_BUTTON, &XrcPreview::OnDuplicate, this);
+    btn_2->Bind(wxEVT_BUTTON, &XrcPreview::OnClear, this);
     Bind(wxEVT_INIT_DIALOG, &XrcPreview::OnInit, this);
     m_searchCtrl->Bind(wxEVT_SEARCHCTRL_SEARCH_BTN, &XrcPreview::OnSearch, this);
 
@@ -133,39 +198,52 @@ bool XrcPreview::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     #include <wx/xml/xml.h>     // wxXmlDocument - XML parser & data holder class
     #include <wx/xrc/xmlres.h>  // XML resources
 
-    #include "gen_xrc.h"          // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
-    #include "mainframe.h"        // MainFrame -- Main window frame
-    #include "node.h"             // Node class
-    #include "project_handler.h"  // ProjectHandler class
+    #include "../import/import_wxsmith.h"  // Import a wxSmith file
+    #include "gen_xrc.h"                   // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
+    #include "mainframe.h"                 // MainFrame -- Main window frame
+    #include "node.h"                      // Node class
+    #include "project_handler.h"           // ProjectHandler class
+    #include "undo_cmds.h"                 // InsertNodeAction -- Undoable command classes derived from UndoAction
 
     #include "pugixml.hpp"
 
+    #include "xrc_list_dlg.h"
+
+    #include "xrc_list_dlg.h"
+
 const int node_marker = 1;
 
-void XrcPreview::OnCreate(wxCommandEvent& WXUNUSED(event))
+void MainFrame::OnXrcPreview(wxCommandEvent& /* event */)
 {
-    auto doc_str = GenerateXrcStr(nullptr, xrc::no_flags);
-
-    m_scintilla->ClearAll();
-    m_scintilla->AddTextRaw(doc_str.c_str(), (to_int) doc_str.size());
+    XrcPreview dlg(this);
+    dlg.ShowModal();
 }
 
-void XrcPreview::OnXrcCopy(wxCommandEvent& WXUNUSED(event))
+void XrcPreview::OnClear(wxCommandEvent& WXUNUSED(event))
 {
-    auto evt_flags = wxGetFrame().getSelectedNode();
+    m_scintilla->ClearAll();
+}
 
-    if (!evt_flags)
+void XrcPreview::OnGenerate(wxCommandEvent& WXUNUSED(event))
+{
+    XrcListDlg dlg(this);
+    if (dlg.ShowModal() != wxID_OK)
+        return;
+
+    auto form = dlg.get_form();
+
+    if (!form)
     {
         wxMessageBox("You need to select a form first.", "XRC Dialog Preview");
         return;
     }
 
-    if (!evt_flags->isForm())
+    if (!form->isForm())
     {
-        evt_flags = evt_flags->getForm();
+        form = form->getForm();
     }
 
-    auto doc_str = GenerateXrcStr(evt_flags, evt_flags->isGen(gen_PanelForm) ? xrc::previewing : 0);
+    auto doc_str = GenerateXrcStr(form, form->isGen(gen_PanelForm) ? xrc::previewing : 0);
 
     m_scintilla->ClearAll();
     m_scintilla->AddTextRaw(doc_str.c_str(), (to_int) doc_str.size());
@@ -174,21 +252,22 @@ void XrcPreview::OnXrcCopy(wxCommandEvent& WXUNUSED(event))
     tt_view_vector m_view;
     m_view.ReadString(doc_str);
 
-    tt_string search("name=\"");
-    evt_flags = wxGetFrame().getSelectedNode();
+    std::string search("name=\"");
 
-    if (evt_flags->hasProp(prop_id) && evt_flags->as_string(prop_id) != "wxID_ANY")
+    if (form->hasProp(prop_id) && form->as_string(prop_id) != "wxID_ANY")
     {
-        search << evt_flags->as_string(prop_id);
+        search = form->as_string(prop_id);
     }
-    else if (evt_flags->hasValue(prop_var_name))
+    else if (form->hasValue(prop_var_name))
     {
-        search << evt_flags->as_string(prop_var_name);
+        search = form->as_string(prop_var_name);
     }
     else
     {
-        search << evt_flags->as_string(prop_class_name);
+        search = form->as_string(prop_class_name);
     }
+
+    m_contents->SetLabelText("Contents: " + search);
 
     int line = (to_int) m_view.FindLineContaining(search);
 
@@ -278,6 +357,45 @@ void XrcPreview::OnInit(wxInitDialogEvent& event)
     event.Skip();
 }
 
+void XrcPreview::OnImport(wxCommandEvent& WXUNUSED(event))
+{
+    auto xrc_text = m_scintilla->GetText();
+    pugi::xml_document doc;
+    {
+        // Place this in a block so that the string is destroyed before we process the XML
+        // document (to save allocated memory).
+        auto result = doc.load_string(xrc_text.c_str());
+        if (!result)
+        {
+            wxMessageBox("Error parsing XRC document: " + tt_string(result.description()), "XRC Import Test");
+            return;
+        }
+    }
+
+    auto root = doc.first_child();
+    if (!tt::is_sameas(root.name(), "resource", tt::CASE::either))
+    {
+        wxMessageBox("Invalid XRC -- no resource object", "Import XRC Test");
+        return;
+    }
+
+    g_pMsgLogging->ShowLogger();
+    wxYield();
+
+    MSG_INFO("--- Importing XRC document ---");
+
+    WxSmith doc_import;
+
+    // If this is an actual form rather than the project, then there will only be one child
+    // object, which is the form.
+    for (auto& iter: root.children())
+    {
+        auto new_node = doc_import.CreateXrcNode(iter, nullptr);
+    }
+
+    MSG_INFO("--- Import completed ---");
+}
+
 void XrcPreview::OnExport(wxCommandEvent& WXUNUSED(event))
 {
     tt_string path = Project.getProjectPath();
@@ -301,8 +419,50 @@ void XrcPreview::OnExport(wxCommandEvent& WXUNUSED(event))
 
         if (!doc.save_file(filename.c_str(), "\t"))
         {
-            wxMessageBox(wxString("An unexpected error occurred exportin ") << filename.make_wxString(), "Export XRC");
+            wxMessageBox(wxString("An unexpected error occurred exporting ") << filename.make_wxString(), "Export XRC");
         }
+    }
+}
+
+void XrcPreview::OnDuplicate(wxCommandEvent& WXUNUSED(event))
+{
+    auto xrc_text = m_scintilla->GetText();
+    pugi::xml_document doc;
+    {
+        // Place this in a block so that the string is destroyed before we process the XML
+        // document (to save allocated memory).
+        auto result = doc.load_string(xrc_text.c_str());
+        if (!result)
+        {
+            wxMessageBox("Error parsing XRC document: " + tt_string(result.description()), "XRC Import Test");
+            return;
+        }
+    }
+
+    auto root = doc.first_child();
+    if (!tt::is_sameas(root.name(), "resource", tt::CASE::either))
+    {
+        wxMessageBox("Invalid XRC -- no resource object", "Import XRC Test");
+        return;
+    }
+
+    WxSmith doc_import;
+
+    auto first_child = root.first_child();
+    auto new_node = doc_import.CreateXrcNode(first_child, nullptr);
+    if (new_node)
+    {
+        Project.FixupDuplicatedNode(new_node.get());
+        tt_string undo_str("duplicate ");
+        undo_str << new_node->declName();
+        wxGetMainFrame()->PushUndoAction(
+            std::make_shared<InsertNodeAction>(new_node.get(), Project.getProjectNode(), undo_str));
+        wxGetMainFrame()->FireCreatedEvent(new_node);
+        wxGetMainFrame()->SelectNode(new_node, evt_flags::fire_event | evt_flags::force_selection);
+    }
+    else
+    {
+        MSG_ERROR("Failed to create node");
     }
 }
 

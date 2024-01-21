@@ -9,13 +9,23 @@
 
 #pragma once
 
+#include <wx/bitmap.h>
 #include <wx/button.h>
+#include <wx/collpane.h>
 #include <wx/dialog.h>
 #include <wx/event.h>
 #include <wx/gdicmn.h>
+#include <wx/icon.h>
+#include <wx/image.h>
 #include <wx/srchctrl.h>
 #include <wx/stattext.h>
 #include <wx/stc/stc.h>
+
+namespace wxue_img
+{
+    extern const unsigned char generate_svg[780];
+    extern const unsigned char xrc_preview_svg[469];
+}
 
 class XrcPreview : public wxDialog
 {
@@ -36,20 +46,23 @@ protected:
 
     // Event handlers
 
-    void OnCreate(wxCommandEvent& event);
+    void OnClear(wxCommandEvent& event);
+    void OnDuplicate(wxCommandEvent& event);
     void OnExport(wxCommandEvent& event);
+    void OnGenerate(wxCommandEvent& event);
+    void OnImport(wxCommandEvent& event);
     void OnInit(wxInitDialogEvent& event);
     void OnPreview(wxCommandEvent& event);
     void OnSearch(wxCommandEvent& event);
-    void OnXrcCopy(wxCommandEvent& event);
 
     // Class member variables
 
-    wxButton* m_btn;
-    wxButton* m_btn_2;
-    wxButton* m_btn_3;
-    wxButton* m_btn_4;
+    wxButton* m_btn__export;
+    wxButton* m_btn_import;
+    wxButton* m_btn_preview;
+    wxCollapsiblePane* m_collapsible_pane;
     wxSearchCtrl* m_searchCtrl;
+    wxStaticText* m_contents;
     wxStaticText* m_staticText;
     wxStyledTextCtrl* m_scintilla;
 };

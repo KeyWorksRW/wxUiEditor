@@ -16,6 +16,7 @@ set (wxue_generated_code
     ${CMAKE_CURRENT_LIST_DIR}/../internal/node_search_dlg.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../internal/undo_info.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../internal/unused_gen_dlg.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/../internal/xrc_list_dlg.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../internal/xrcpreview.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../newdialogs/new_dialog.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../newdialogs/new_frame.cpp

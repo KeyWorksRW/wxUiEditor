@@ -1,13 +1,14 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   NodeDeclaration class
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
 #pragma once
 
-#include <wx/image.h>  // wxImage class
+#include <wx/bmpbndl.h>  // Declaration of wxBitmapBundle class.
+#include <wx/image.h>    // wxImage class
 
 #include <map>
 #include <optional>
@@ -75,8 +76,10 @@ public:
     size_t GetBaseClassCount(bool inherited = true) const;
     bool hasBaseClasses() const { return m_base.size(); }
 
+    void SetBundleFunction(std::function<wxBitmapBundle(int width, int height)> func) { m_bundle_function = func; }
     void SetImage(wxImage image) { m_image = image; }
     wxImage GetImage() const { return m_image; }
+    wxBitmapBundle GetBitmapBundle(int width, int height) const;
 
     void SetGenerator(BaseGenerator* generator) { m_generator = generator; }
     BaseGenerator* getGenerator() const { return m_generator; }
@@ -102,6 +105,10 @@ private:
     tt_string m_internal_flags;
 
     wxImage m_image;  // The node's image, primarily used in the navigation pane
+
+    // If there is an svg file for this declaration, then this function can be used to
+    // retrieve it at whatever size is needed.
+    std::function<wxBitmapBundle(int width, int height)> m_bundle_function { nullptr };
 
     NodeType* m_type;
 

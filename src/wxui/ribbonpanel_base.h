@@ -35,7 +35,6 @@ namespace wxue_img
     extern const unsigned char dirPicker_png[690];
     extern const unsigned char doc_mdi_parent_frame_png[543];
     extern const unsigned char filePicker_png[705];
-    extern const unsigned char flex_grid_sizer_png[139];
     extern const unsigned char fontPicker_png[763];
     extern const unsigned char gauge_png[260];
     extern const unsigned char genericdir_ctrl_png[328];

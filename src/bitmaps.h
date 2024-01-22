@@ -1,3 +1,4 @@
+
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Contains various images handling functions
 // Author:    Ralph Walden
@@ -47,3 +48,13 @@ inline wxImage GetImageFromArray(const unsigned char* data, size_t size_data)
 // This is almost identical to GetImageFromArray() -- the only difference is that this one
 // first tries to load the image via the PNG handler.
 wxImage LoadHeaderImage(const unsigned char* data, size_t size_data);
+
+extern const std::map<std::string_view, std::function<wxBitmapBundle(int width, int height)>> map_svg_functions;
+
+inline std::function<wxBitmapBundle(int width, int height)> GetSvgFunction(tt_string_view name)
+{
+    auto it = map_svg_functions.find(name);
+    if (it != map_svg_functions.end())
+        return it->second;
+    return std::function<wxBitmapBundle(int width, int height)>();
+};

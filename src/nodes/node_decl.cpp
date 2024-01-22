@@ -161,3 +161,11 @@ std::optional<tt_string> NodeDeclaration::GetOverRideDefValue(GenEnum::PropName 
     else
         return {};
 }
+
+wxBitmapBundle NodeDeclaration::GetBitmapBundle(int width, int height) const
+{
+    if (m_bundle_function)
+        return m_bundle_function(width, height);
+
+    return wxBitmapBundle();
+}

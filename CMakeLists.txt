@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.20)
 
 project(wxUiEditor
-    LANGUAGES CXX
+    LANGUAGES CXX C
     VERSION 1.2.0.1
     DESCRIPTION "wxWidgets UI designer"
     HOMEPAGE_URL "https://github.com/KeyWorksRW/wxUiEditor")
@@ -278,8 +278,6 @@ target_include_directories(wxUiEditor PRIVATE
     ${setup_dir}
     ${widget_dir}/include
 
-    ${CMAKE_CURRENT_LIST_DIR}/frozen/include
-
     ${CMAKE_CURRENT_LIST_DIR}/src/
     ${CMAKE_CURRENT_LIST_DIR}/src/tt
     ${CMAKE_CURRENT_LIST_DIR}/src/nodes
@@ -289,6 +287,9 @@ target_include_directories(wxUiEditor PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}/src/customprops
     ${CMAKE_CURRENT_LIST_DIR}/src/ui
     ${CMAKE_CURRENT_LIST_DIR}/src/wxui
+
+    ${CMAKE_CURRENT_LIST_DIR}/frozen/include
+    ${CMAKE_CURRENT_LIST_DIR}/lunasvg/include
     ${CMAKE_CURRENT_LIST_DIR}/pugixml
 )
 
@@ -296,8 +297,6 @@ target_include_directories(check_build PRIVATE
     ${setup_dir}
     ${widget_dir}/include
 
-    ${CMAKE_CURRENT_LIST_DIR}/frozen/include
-
     ${CMAKE_CURRENT_LIST_DIR}/src/
     ${CMAKE_CURRENT_LIST_DIR}/src/tt
     ${CMAKE_CURRENT_LIST_DIR}/src/nodes
@@ -307,6 +306,9 @@ target_include_directories(check_build PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}/src/customprops
     ${CMAKE_CURRENT_LIST_DIR}/src/ui
     ${CMAKE_CURRENT_LIST_DIR}/src/wxui
+
+    ${CMAKE_CURRENT_LIST_DIR}/frozen/include
+    ${CMAKE_CURRENT_LIST_DIR}/lunasvg/include
     ${CMAKE_CURRENT_LIST_DIR}/pugixml
 )
 

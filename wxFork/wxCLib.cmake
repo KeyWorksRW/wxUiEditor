@@ -163,13 +163,13 @@ set (wxCLib_sources
     ../../wxWidgets/src/common/extended.c
 
     # lunasvg
-    ../lunasvg/3rdparty/plutovg/plutovg-blend.c
-    ../lunasvg/3rdparty/plutovg/plutovg-dash.c
-    ../lunasvg/3rdparty/plutovg/plutovg-ft-math.c
-    ../lunasvg/3rdparty/plutovg/plutovg-ft-raster.c
-    ../lunasvg/3rdparty/plutovg/plutovg-ft-stroker.c
-    ../lunasvg/3rdparty/plutovg/plutovg-geometry.c
-    ../lunasvg/3rdparty/plutovg/plutovg-paint.c
-    ../lunasvg/3rdparty/plutovg/plutovg-rle.c
-    ../lunasvg/3rdparty/plutovg/plutovg.c
+    # ../../lunasvg/3rdparty/plutovg/plutovg-blend.c
+    # ../../lunasvg/3rdparty/plutovg/plutovg-dash.c
+    # ../../lunasvg/3rdparty/plutovg/plutovg-ft-math.c
+    # ../../lunasvg/3rdparty/plutovg/plutovg-ft-raster.c
+    # ../../lunasvg/3rdparty/plutovg/plutovg-ft-stroker.c
+    # ../../lunasvg/3rdparty/plutovg/plutovg-geometry.c
+    # ../../lunasvg/3rdparty/plutovg/plutovg-paint.c
+    # ../../lunasvg/3rdparty/plutovg/plutovg-rle.c
+    # ../../lunasvg/3rdparty/plutovg/plutovg.c
 )

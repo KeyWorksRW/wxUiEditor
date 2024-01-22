@@ -617,29 +617,6 @@ set (common_sources
     src/xrc/xh_hyperlink.cpp
     src/xrc/xh_sttxt.cpp
 
-    # lunasvg
-    ../lunasvg/source/canvas.cpp
-    ../lunasvg/source/canvas.cpp
-    ../lunasvg/source/clippathelement.cpp
-    ../lunasvg/source/defselement.cpp
-    ../lunasvg/source/element.cpp
-    ../lunasvg/source/gelement.cpp
-    ../lunasvg/source/geometryelement.cpp
-    ../lunasvg/source/graphicselement.cpp
-    ../lunasvg/source/layoutcontext.cpp
-    ../lunasvg/source/lunasvg.cpp
-    ../lunasvg/source/markerelement.cpp
-    ../lunasvg/source/maskelement.cpp
-    ../lunasvg/source/paintelement.cpp
-    ../lunasvg/source/parser.cpp
-    ../lunasvg/source/property.cpp
-    ../lunasvg/source/stopelement.cpp
-    ../lunasvg/source/styledelement.cpp
-    ../lunasvg/source/styleelement.cpp
-    ../lunasvg/source/svgelement.cpp
-    ../lunasvg/source/symbolelement.cpp
-    ../lunasvg/source/useelement.cpp
-
 )
 
 set (msw_sources

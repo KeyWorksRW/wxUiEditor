@@ -515,15 +515,22 @@ void NodeCreator::parseGeneratorFile(const char* xml_data)
         auto image_name = generator.attribute("image").as_string();
         if (image_name.size())
         {
-            auto image = GetInternalImage(image_name);
-            if (image.GetWidth() != GenImageSize || image.GetHeight() != GenImageSize)
+            if (auto bndl_function = GetSvgFunction(image_name); bndl_function)
             {
-                MSG_INFO(tt_string() << image_name << " width: " << image.GetWidth() << "height: " << image.GetHeight());
-                declaration->SetImage(image.Scale(GenImageSize, GenImageSize));
+                declaration->SetBundleFunction(bndl_function);
             }
             else
             {
-                declaration->SetImage(image);
+                auto image = GetInternalImage(image_name);
+                if (image.GetWidth() != GenImageSize || image.GetHeight() != GenImageSize)
+                {
+                    MSG_INFO(tt_string() << image_name << " width: " << image.GetWidth() << "height: " << image.GetHeight());
+                    declaration->SetImage(image.Scale(GenImageSize, GenImageSize));
+                }
+                else
+                {
+                    declaration->SetImage(image);
+                }
             }
         }
         else

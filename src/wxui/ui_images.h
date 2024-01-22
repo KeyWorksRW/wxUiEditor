@@ -31,6 +31,7 @@ namespace wxue_img
     wxBitmapBundle bundle_debug_32_png();  // debug_32.png
     wxBitmapBundle bundle_default_png();  // default.png
     wxBitmapBundle bundle_empty_png();  // empty.png
+    wxBitmapBundle bundle_flex_grid_sizer_svg(int width, int height);
     wxBitmapBundle bundle_folder_png();  // folder.png
     wxBitmapBundle bundle_hide_png();  // hide.png
     wxBitmapBundle bundle_import_svg(int width, int height);
@@ -149,6 +150,7 @@ namespace wxue_img
     extern const unsigned char debug_32_png[1701];
     extern const unsigned char default_png[518];
     extern const unsigned char empty_png[101];
+    extern const unsigned char flex_grid_sizer_svg[203];
     extern const unsigned char folder_png[641];
     extern const unsigned char hide_png[242];
     extern const unsigned char import_svg[418];

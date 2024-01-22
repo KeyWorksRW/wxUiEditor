@@ -46,7 +46,6 @@ namespace wxue_img
     extern const unsigned char dirPicker_png[690];
     extern const unsigned char doc_mdi_parent_frame_png[543];
     extern const unsigned char filePicker_png[705];
-    extern const unsigned char flex_grid_sizer_png[139];
     extern const unsigned char fontPicker_png[763];
     extern const unsigned char gauge_png[260];
     extern const unsigned char genericdir_ctrl_png[328];
@@ -242,8 +241,8 @@ bool RibbonPanelBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos
             wxueImage(wxue_img::grid_sizer_png, sizeof(wxue_img::grid_sizer_png)).Rescale(
             FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "wxGridSizer", wxRIBBON_BUTTON_NORMAL);
         sizer_bar_grids->AddTool(gen_wxFlexGridSizer,
-            wxueImage(wxue_img::flex_grid_sizer_png, sizeof(wxue_img::flex_grid_sizer_png)).Rescale(
-            FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "wxFlexGridSizer", wxRIBBON_BUTTON_NORMAL);
+            wxue_img::bundle_flex_grid_sizer_svg(FromDIP(22), FromDIP(22)).GetBitmap(wxDefaultSize), "wxFlexGridSizer",
+            wxRIBBON_BUTTON_NORMAL);
         sizer_bar_grids->AddTool(gen_wxGridBagSizer,
             wxueImage(wxue_img::grid_bag_sizer_png, sizeof(wxue_img::grid_bag_sizer_png)).Rescale(
             FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "wxGridBagSizer", wxRIBBON_BUTTON_NORMAL);
@@ -891,13 +890,6 @@ namespace wxue_img
         145,97,128,60,184,6,59,157,206,146,75,231,108,224,66,158,237,209,40,5,225,246,116,58,93,240,15,176,27,105,106,252,
         91,121,60,242,132,84,117,119,209,149,186,43,25,125,56,104,216,222,14,147,170,238,38,112,174,231,191,113,53,220,
         210,255,0,176,66,225,250,172,80,128,61,0,0,0,0,73,69,78,68,174,66,96,130
-    };
-
-    const unsigned char flex_grid_sizer_png[139] {
-        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,115,
-        0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,0,61,73,68,65,84,56,203,99,96,24,106,128,17,153,243,159,129,225,63,133,134,
-        49,98,149,192,102,48,185,98,76,180,10,138,161,103,240,192,69,30,177,96,232,71,30,11,53,131,131,232,112,26,205,32,
-        163,6,15,197,178,98,72,0,0,78,21,28,8,134,72,167,206,0,0,0,0,73,69,78,68,174,66,96,130
     };
 
     const unsigned char fontPicker_png[763] {

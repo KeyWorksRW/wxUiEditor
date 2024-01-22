@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Custom property grid class for images
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2021-2023 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2021-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -264,8 +264,8 @@ wxVariant PropertyGrid_Image::ChildChanged(wxVariant& thisValue, int childIndex,
                 img_props.image.clear();
                 if (img_props.type == "SVG")
                 {
-                    img_props.SetWidth(16);
-                    img_props.SetHeight(16);
+                    img_props.SetWidth(24);
+                    img_props.SetHeight(24);
                 }
             }
             break;

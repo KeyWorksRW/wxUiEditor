@@ -21,7 +21,7 @@
 namespace wxue_img
 {
     // new-project.svg
-    extern const unsigned char new_project_svg[921];
+    extern const unsigned char new_project_svg[907];
 }
 
 class StartupDlg : public wxDialog

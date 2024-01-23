@@ -47,7 +47,7 @@ static wxBitmapBundle wxueBundleSVG(const unsigned char* data,
 
 namespace wxue_img
 {
-    extern const unsigned char new_project_svg[921];  // new-project.svg
+    extern const unsigned char new_project_svg[907];  // new-project.svg
 }
 
 bool StartupDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,
@@ -142,7 +142,7 @@ bool StartupDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 
     auto* box_sizer_5 = new wxBoxSizer(wxHORIZONTAL);
 
-    auto* bmp_3 = new wxStaticBitmap(this, wxID_ANY, wxueBundleSVG(wxue_img::new_project_svg, 921, 2208, wxSize(24, 24)));
+    auto* bmp_3 = new wxStaticBitmap(this, wxID_ANY, wxueBundleSVG(wxue_img::new_project_svg, 907, 2209, wxSize(24, 24)));
     box_sizer_5->Add(bmp_3, wxSizerFlags().Border(wxALL));
 
     auto* hyperlink_3 = new wxGenericHyperlinkCtrl(this, wxID_ANY, "New", wxEmptyString);

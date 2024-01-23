@@ -535,7 +535,14 @@ void NodeCreator::parseGeneratorFile(const char* xml_data)
         }
         else
         {
-            declaration->SetImage(GetInternalImage("unknown").Scale(GenImageSize, GenImageSize));
+            if (auto bndl_function = GetSvgFunction("unknown"); bndl_function)
+            {
+                declaration->SetBundleFunction(bndl_function);
+            }
+            else
+            {
+                declaration->SetImage(GetInternalImage("unknown").Scale(GenImageSize, GenImageSize));
+            }
         }
 
         // parseProperties(generator, declaration.get(), declaration->GetCategory());

@@ -17,9 +17,16 @@ namespace wxue_img
 {
     wxImage get_image(const unsigned char* data, size_t size_data);
 
+    wxBitmapBundle bundle_alignbottom_svg(int width, int height);
+    wxBitmapBundle bundle_aligncenter_svg(int width, int height);
+    wxBitmapBundle bundle_alignleft_svg(int width, int height);
+    wxBitmapBundle bundle_alignright_svg(int width, int height);
+    wxBitmapBundle bundle_aligntop_svg(int width, int height);
+    wxBitmapBundle bundle_alignvertcenter_svg(int width, int height);
     wxBitmapBundle bundle_auitoolbar_png();  // auitoolbar.png
     wxBitmapBundle bundle_bitmap_toggle_button_png();  // bitmap_toggle_button.png
     wxBitmapBundle bundle_bmp_combo_box_png();  // bmp_combo_box.png
+    wxBitmapBundle bundle_bottom_svg(int width, int height);
     wxBitmapBundle bundle_check3state_png();  // check3state.png
     wxBitmapBundle bundle_close_btn_png();  // close_btn.png
     wxBitmapBundle bundle_cpp_logo_svg(int width, int height);
@@ -33,8 +40,11 @@ namespace wxue_img
     wxBitmapBundle bundle_empty_png();  // empty.png
     wxBitmapBundle bundle_flex_grid_sizer_svg(int width, int height);
     wxBitmapBundle bundle_folder_png();  // folder.png
+    wxBitmapBundle bundle_grid_bag_sizer_svg(int width, int height);
+    wxBitmapBundle bundle_grid_sizer_svg(int width, int height);
     wxBitmapBundle bundle_hide_png();  // hide.png
     wxBitmapBundle bundle_import_svg(int width, int height);
+    wxBitmapBundle bundle_left_svg(int width, int height);
     wxBitmapBundle bundle_logo16_png();  // logo16.png
     wxBitmapBundle bundle_logo32_png();  // logo32.png
     wxBitmapBundle bundle_logo64_png();  // logo64.png
@@ -44,6 +54,7 @@ namespace wxue_img
     wxBitmapBundle bundle_ribbon_bar_png();  // ribbon_bar.png
     wxBitmapBundle bundle_ribbon_buttonbar_png();  // ribbon_buttonbar.png
     wxBitmapBundle bundle_ribbon_gallery_png();  // ribbon_gallery.png
+    wxBitmapBundle bundle_right_svg(int width, int height);
     wxBitmapBundle bundle_scrollbar_png();  // scrollbar.png
     wxBitmapBundle bundle_slider_png();  // slider.png
     wxBitmapBundle bundle_spin_ctrl_png();  // spin_ctrl.png
@@ -57,6 +68,7 @@ namespace wxue_img
     wxBitmapBundle bundle_tool_dropdown_png();  // tool_dropdown.png
     wxBitmapBundle bundle_toolseparator_png();  // toolseparator.png
     wxBitmapBundle bundle_toolspacer_png();  // toolspacer.png
+    wxBitmapBundle bundle_top_svg(int width, int height);
     wxBitmapBundle bundle_undo_svg(int width, int height);
     wxBitmapBundle bundle_unknown_png();  // unknown.png
     wxBitmapBundle bundle_unknown_svg(int width, int height);
@@ -136,12 +148,19 @@ namespace wxue_img
     wxImage image_wxStaticText_png();
     wxImage image_wxTimer_png();
 
+    extern const unsigned char alignbottom_svg[396];
+    extern const unsigned char aligncenter_svg[564];
+    extern const unsigned char alignleft_svg[433];
+    extern const unsigned char alignright_svg[438];
+    extern const unsigned char aligntop_svg[417];
+    extern const unsigned char alignvertcenter_svg[557];
     extern const unsigned char auitoolbar_png[476];
     extern const unsigned char bitmap_toggle_button_png[641];
     extern const unsigned char bmp_combo_box_png[492];
+    extern const unsigned char bottom_svg[170];
     extern const unsigned char check3state_png[194];
     extern const unsigned char close_btn_png[956];
-    extern const unsigned char cpp_logo_svg[587];
+    extern const unsigned char cpp_logo_svg[543];
     extern const unsigned char ctx_help_btn_png[1140];
     extern const unsigned char dataview_ctrl_png[231];
     extern const unsigned char dataviewlist_ctrl_png[685];
@@ -152,8 +171,11 @@ namespace wxue_img
     extern const unsigned char empty_png[101];
     extern const unsigned char flex_grid_sizer_svg[203];
     extern const unsigned char folder_png[641];
+    extern const unsigned char grid_bag_sizer_svg[153];
+    extern const unsigned char grid_sizer_svg[286];
     extern const unsigned char hide_png[242];
-    extern const unsigned char import_svg[418];
+    extern const unsigned char import_svg[4093];
+    extern const unsigned char left_svg[188];
     extern const unsigned char logo16_png[639];
     extern const unsigned char logo32_png[1470];
     extern const unsigned char logo64_png[1718];
@@ -163,6 +185,7 @@ namespace wxue_img
     extern const unsigned char ribbon_bar_png[844];
     extern const unsigned char ribbon_buttonbar_png[300];
     extern const unsigned char ribbon_gallery_png[215];
+    extern const unsigned char right_svg[282];
     extern const unsigned char scrollbar_png[214];
     extern const unsigned char slider_png[248];
     extern const unsigned char spin_ctrl_double_png[219];
@@ -176,9 +199,10 @@ namespace wxue_img
     extern const unsigned char tool_png[629];
     extern const unsigned char toolseparator_png[581];
     extern const unsigned char toolspacer_png[459];
+    extern const unsigned char top_svg[175];
     extern const unsigned char undo_svg[882];
     extern const unsigned char unknown_png[1699];
-    extern const unsigned char unknown_svg[2108];
+    extern const unsigned char unknown_svg[1416];
     extern const unsigned char wxButton_png[500];
     extern const unsigned char wxCheckBox_png[202];
     extern const unsigned char wxCheckListBox_png[498];

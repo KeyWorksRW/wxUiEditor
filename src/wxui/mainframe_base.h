@@ -25,24 +25,14 @@ class NavigationPanel;
 
 namespace wxue_img
 {
-    extern const unsigned char alignbottom_svg[658];
-    extern const unsigned char aligncenter_svg[898];
-    extern const unsigned char alignleft_svg[688];
-    extern const unsigned char alignright_svg[690];
-    extern const unsigned char aligntop_svg[688];
-    extern const unsigned char alignvertcenter_svg[911];
-    extern const unsigned char bottom_svg[585];
-    extern const unsigned char expand_svg[819];
-    extern const unsigned char generate_svg[780];
-    extern const unsigned char hidden_svg[2111];
-    extern const unsigned char left_svg[585];
-    extern const unsigned char magnify_svg[3953];
+    extern const unsigned char expand_svg[498];
+    extern const unsigned char generate_svg[32526];
+    extern const unsigned char hidden_svg[2055];
+    extern const unsigned char magnify_svg[2791];
     // new-project.svg
-    extern const unsigned char new_project_svg[921];
-    extern const unsigned char right_svg[599];
+    extern const unsigned char new_project_svg[907];
     extern const unsigned char ruby_logo_svg[1853];
     extern const unsigned char save_svg[717];
-    extern const unsigned char top_svg[586];
     extern const unsigned char wxlogo_svg[1331];
     extern const unsigned char xrc_preview_svg[469];
 }

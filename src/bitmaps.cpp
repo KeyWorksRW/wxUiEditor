@@ -31,14 +31,9 @@ struct ImageMap
 
 const std::map<std::string_view, std::function<wxBitmapBundle(int width, int height)>> map_svg_functions = {
     { "flex_grid_sizer", bundle_flex_grid_sizer_svg },
-};
-
-// Note that all SVG files must have a bundle_...() function that loads them. That's probably
-// going to be in ui_images.h.
-struct SvgMap
-{
-    const char* name;
-    std::function<wxBitmapBundle(int width, int height)> bundle_function;
+    { "grid_bag_sizer", bundle_grid_bag_sizer_svg },
+    { "grid_sizer", bundle_grid_sizer_svg },
+    { "unknown", bundle_unknown_svg },
 };
 
 // Images that may be accessed more than once (typically for popup menus) should be at the front for fastest access. The rest
@@ -176,10 +171,6 @@ static const ImageMap png_headers[] = {
     { "logo32", logo32_png, sizeof(logo32_png) }
 #endif
 
-};
-
-static const SvgMap svg_files[] = {
-    { "flex_grid_sizer", bundle_flex_grid_sizer_svg },
 };
 
 wxImage GetInternalImage(tt_string_view name)

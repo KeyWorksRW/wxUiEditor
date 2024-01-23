@@ -41,7 +41,7 @@ static wxBitmapBundle wxueBundleSVG(const unsigned char* data,
 
 namespace wxue_img
 {
-    extern const unsigned char generate_svg[780];
+    extern const unsigned char generate_svg[32526];
     extern const unsigned char xrc_preview_svg[469];
 }
 
@@ -73,7 +73,7 @@ bool XrcPreview::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     auto* box_sizer_2 = new wxBoxSizer(wxHORIZONTAL);
 
     auto* btn_3 = new wxButton(this, wxID_ANY, "&Generate...");
-        btn_3->SetBitmap(wxueBundleSVG(wxue_img::generate_svg, 780, 2716, wxSize(16, 16)));
+        btn_3->SetBitmap(wxueBundleSVG(wxue_img::generate_svg, 32526, 44316, wxSize(16, 16)));
     btn_3->SetToolTip("Choose a form then generate the XRC code");
     box_sizer_2->Add(btn_3, wxSizerFlags().Border(wxALL));
 

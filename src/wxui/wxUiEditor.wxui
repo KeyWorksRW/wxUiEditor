@@ -13,6 +13,24 @@
       base_file="ui_images">
       <node
         class="embedded_image"
+        bitmap="SVG;alignbottom.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;aligncenter.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;alignleft.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;alignright.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;aligntop.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;alignvertcenter.svg;[24,24]" />
+      <node
+        class="embedded_image"
         bitmap="Embed;auitoolbar.png" />
       <node
         class="embedded_image"
@@ -20,6 +38,9 @@
       <node
         class="embedded_image"
         bitmap="Embed;bmp_combo_box.png" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;bottom.svg;[24,24]" />
       <node
         class="embedded_image"
         bitmap="Embed;check3state.png" />
@@ -61,10 +82,19 @@
         bitmap="Embed;folder.png" />
       <node
         class="embedded_image"
+        bitmap="SVG;grid_bag_sizer.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;grid_sizer.svg;[24,24]" />
+      <node
+        class="embedded_image"
         bitmap="Embed;hide.png" />
       <node
         class="embedded_image"
         bitmap="SVG;import.svg;[16,16]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;left.svg;[24,24]" />
       <node
         class="embedded_image"
         bitmap="Embed;logo16.png" />
@@ -92,6 +122,9 @@
       <node
         class="embedded_image"
         bitmap="Embed;ribbon_gallery.png" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;right.svg;[24,24]" />
       <node
         class="embedded_image"
         bitmap="Embed;scrollbar.png" />
@@ -133,13 +166,16 @@
         bitmap="Embed;toolspacer.png" />
       <node
         class="embedded_image"
+        bitmap="SVG;top.svg;[24,24]" />
+      <node
+        class="embedded_image"
         bitmap="SVG;undo.svg;[16,16]" />
       <node
         class="embedded_image"
         bitmap="Embed;unknown.png" />
       <node
         class="embedded_image"
-        bitmap="SVG;unknown.svg;[16,16]" />
+        bitmap="SVG;unknown.svg;[32,32]" />
       <node
         class="embedded_image"
         bitmap="Embed;wxButton.png" />
@@ -1227,7 +1263,7 @@
                     id="gen_wxGridSizer" />
                   <node
                     class="ribbonTool"
-                    bitmap="SVG;../wxui/flex_grid_sizer.svg;[22,22]"
+                    bitmap="SVG;flex_grid_sizer.svg;[22,22]"
                     help="wxFlexGridSizer"
                     id="gen_wxFlexGridSizer" />
                   <node

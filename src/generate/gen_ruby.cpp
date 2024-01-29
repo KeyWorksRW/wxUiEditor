@@ -133,6 +133,76 @@ void MainFrame::OnGenerateRuby(wxCommandEvent& WXUNUSED(event))
 
 #endif
 
+static bool GenerateRubyForm(Node* form, GenResults& results, std::vector<tt_string>* pClassList)
+{
+    auto [path, has_base_file] = Project.GetOutputPath(form, GEN_LANG_RUBY);
+    if (!has_base_file)
+    {
+#if !defined(_DEBUG)
+        // For a lot of wxRuby testing of projects with multiple dialogs, there may
+        // only be a few forms where wxRuby generation is being tested, so don't nag in
+        // Debug builds. :-)
+        results.msgs.emplace_back() << "No Ruby filename specified for " << form->as_string(prop_class_name) << '\n';
+#endif  // _DEBUG
+        return false;
+    }
+
+    BaseCodeGenerator codegen(GEN_LANG_RUBY, form);
+
+    auto h_cw = std::make_unique<FileCodeWriter>(path);
+    h_cw->SetTabToSpaces(2);
+    codegen.SetHdrWriteCode(h_cw.get());
+
+    // REVIEW: [Randalphwa - 07-13-2023] The .rb extension should work, however on
+    // Windows, a .rbw extension can be used as well to launch in a new console window.
+    path.replace_extension(".rb");
+    auto cpp_cw = std::make_unique<FileCodeWriter>(path);
+    cpp_cw->SetTabToSpaces(2);
+    codegen.SetSrcWriteCode(cpp_cw.get());
+
+    codegen.GenerateRubyClass();
+    int flags = flag_no_ui;
+    if (pClassList)
+        flags |= flag_test_only;
+    auto retval = cpp_cw->WriteFile(GEN_LANG_RUBY, flags);
+
+    if (auto warning_msgs = codegen.getWarnings(); warning_msgs.size())
+    {
+        for (auto& iter: warning_msgs)
+        {
+            results.msgs.emplace_back() << iter << '\n';
+        }
+    }
+
+    if (retval > 0)
+    {
+        if (!pClassList)
+        {
+            results.updated_files.emplace_back(path);
+        }
+        else
+        {
+            if (form->isGen(gen_Images))
+                pClassList->emplace_back(GenEnum::map_GenNames[gen_Images]);
+            else if (form->isGen(gen_Data))
+                pClassList->emplace_back(GenEnum::map_GenNames[gen_Data]);
+            else
+                pClassList->emplace_back(form->as_string(prop_class_name));
+            return true;
+        }
+    }
+
+    else if (retval < 0)
+    {
+        results.msgs.emplace_back() << "Cannot create or write to the file " << path << '\n';
+    }
+    else  // retval == result::exists
+    {
+        ++results.file_count;
+    }
+    return true;
+}
+
 bool GenerateRubyFiles(GenResults& results, std::vector<tt_string>* pClassList)
 {
     if (Project.getChildCount() == 0)
@@ -153,80 +223,7 @@ bool GenerateRubyFiles(GenResults& results, std::vector<tt_string>* pClassList)
 
     for (const auto& form: forms)
     {
-        auto [path, has_base_file] = Project.GetOutputPath(form, GEN_LANG_RUBY);
-        if (!has_base_file)
-        {
-#if !defined(_DEBUG)
-            // For a lot of wxRuby testing of projects with multiple dialogs, there may
-            // only be a few forms where wxRuby generation is being tested, so don't nag in
-            // Debug builds. :-)
-            results.msgs.emplace_back() << "No Ruby filename specified for " << form->as_string(prop_class_name) << '\n';
-#endif  // _DEBUG
-            continue;
-        }
-
-        try
-        {
-            BaseCodeGenerator codegen(GEN_LANG_RUBY, form);
-
-            auto h_cw = std::make_unique<FileCodeWriter>(path);
-            h_cw->SetTabToSpaces(2);
-            codegen.SetHdrWriteCode(h_cw.get());
-
-            // REVIEW: [Randalphwa - 07-13-2023] The .rb extension should work, however on
-            // Windows, a .rbw extension can be used as well to launch in a new console window.
-            path.replace_extension(".rb");
-            auto cpp_cw = std::make_unique<FileCodeWriter>(path);
-            cpp_cw->SetTabToSpaces(2);
-            codegen.SetSrcWriteCode(cpp_cw.get());
-
-            codegen.GenerateRubyClass();
-            int flags = flag_no_ui;
-            if (pClassList)
-                flags |= flag_test_only;
-            auto retval = cpp_cw->WriteFile(GEN_LANG_RUBY, flags);
-
-            if (auto warning_msgs = codegen.getWarnings(); warning_msgs.size())
-            {
-                for (auto& iter: warning_msgs)
-                {
-                    results.msgs.emplace_back() << iter << '\n';
-                }
-            }
-
-            if (retval > 0)
-            {
-                if (!pClassList)
-                {
-                    results.updated_files.emplace_back(path);
-                }
-                else
-                {
-                    if (form->isGen(gen_Images))
-                        pClassList->emplace_back(GenEnum::map_GenNames[gen_Images]);
-                    else if (form->isGen(gen_Data))
-                        pClassList->emplace_back(GenEnum::map_GenNames[gen_Data]);
-                    else
-                        pClassList->emplace_back(form->as_string(prop_class_name));
-                    continue;
-                }
-            }
-
-            else if (retval < 0)
-            {
-                results.msgs.emplace_back() << "Cannot create or write to the file " << path << '\n';
-            }
-            else  // retval == result::exists
-            {
-                ++results.file_count;
-            }
-        }
-        catch (const std::exception& err)
-        {
-            MSG_ERROR(err.what());
-            dlgGenInternalError(err, path, form->as_std(prop_class_name));
-            continue;
-        }
+        GenerateRubyForm(form, results, pClassList);
     }
 
     if (results.msgs.size())

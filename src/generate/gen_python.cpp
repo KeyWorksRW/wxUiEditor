@@ -99,6 +99,71 @@ static void GatherImportModules(std::set<std::string>& imports, Node* node)
     }
 }
 
+static bool GeneratePythonForm(Node* form, GenResults& results, std::vector<tt_string>* pClassList)
+{
+    auto [path, has_base_file] = Project.GetOutputPath(form, GEN_LANG_PYTHON);
+    if (!has_base_file)
+    {
+#if !defined(_DEBUG)
+        // For a lot of wxPython testing of projects with multiple dialogs, there may only be a
+        // few forms where wxPython generation is being tested, so don't nag in Debug builds.
+        // :-)
+        results.msgs.emplace_back() << "No Python filename specified for " << form->as_string(prop_class_name) << '\n';
+#endif  // _DEBUG
+        return false;
+    }
+    BaseCodeGenerator codegen(GEN_LANG_PYTHON, form);
+
+    auto h_cw = std::make_unique<FileCodeWriter>(path);
+    codegen.SetHdrWriteCode(h_cw.get());
+
+    path.replace_extension(".py");
+    auto cpp_cw = std::make_unique<FileCodeWriter>(path);
+    codegen.SetSrcWriteCode(cpp_cw.get());
+
+    codegen.GeneratePythonClass();
+    int flags = flag_no_ui;
+    if (pClassList)
+        flags |= flag_test_only;
+    auto retval = cpp_cw->WriteFile(GEN_LANG_PYTHON, flags);
+
+    if (auto warning_msgs = codegen.getWarnings(); warning_msgs.size())
+    {
+        for (auto& iter: warning_msgs)
+        {
+            results.msgs.emplace_back() << iter << '\n';
+        }
+    }
+
+    if (retval > 0)
+    {
+        if (!pClassList)
+        {
+            results.updated_files.emplace_back(path);
+        }
+        else
+        {
+            if (form->isGen(gen_Images))
+                pClassList->emplace_back(GenEnum::map_GenNames[gen_Images]);
+            if (form->isGen(gen_Data))
+                pClassList->emplace_back(GenEnum::map_GenNames[gen_Data]);
+            else
+                pClassList->emplace_back(form->as_string(prop_class_name));
+            return true;
+        }
+    }
+
+    else if (retval < 0)
+    {
+        results.msgs.emplace_back() << "Cannot create or write to the file " << path << '\n';
+    }
+    else  // retval == result::exists
+    {
+        ++results.file_count;
+    }
+    return true;
+}
+
 bool GeneratePythonFiles(GenResults& results, std::vector<tt_string>* pClassList)
 {
     if (Project.getChildCount() == 0)
@@ -120,76 +185,7 @@ bool GeneratePythonFiles(GenResults& results, std::vector<tt_string>* pClassList
 
     for (const auto& form: forms)
     {
-        auto [path, has_base_file] = Project.GetOutputPath(form, GEN_LANG_PYTHON);
-        if (!has_base_file)
-        {
-#if !defined(_DEBUG)
-            // For a lot of wxPython testing of projects with multiple dialogs, there may
-            // only be a few forms where wxPython generation is being tested, so don't nag in
-            // Debug builds. :-)
-            results.msgs.emplace_back() << "No Python filename specified for " << form->as_string(prop_class_name) << '\n';
-#endif  // _DEBUG
-            continue;
-        }
-
-        try
-        {
-            BaseCodeGenerator codegen(GEN_LANG_PYTHON, form);
-
-            auto h_cw = std::make_unique<FileCodeWriter>(path);
-            codegen.SetHdrWriteCode(h_cw.get());
-
-            path.replace_extension(".py");
-            auto cpp_cw = std::make_unique<FileCodeWriter>(path);
-            codegen.SetSrcWriteCode(cpp_cw.get());
-
-            codegen.GeneratePythonClass();
-            int flags = flag_no_ui;
-            if (pClassList)
-                flags |= flag_test_only;
-            auto retval = cpp_cw->WriteFile(GEN_LANG_PYTHON, flags);
-
-            if (auto warning_msgs = codegen.getWarnings(); warning_msgs.size())
-            {
-                for (auto& iter: warning_msgs)
-                {
-                    results.msgs.emplace_back() << iter << '\n';
-                }
-            }
-
-            if (retval > 0)
-            {
-                if (!pClassList)
-                {
-                    results.updated_files.emplace_back(path);
-                }
-                else
-                {
-                    if (form->isGen(gen_Images))
-                        pClassList->emplace_back(GenEnum::map_GenNames[gen_Images]);
-                    if (form->isGen(gen_Data))
-                        pClassList->emplace_back(GenEnum::map_GenNames[gen_Data]);
-                    else
-                        pClassList->emplace_back(form->as_string(prop_class_name));
-                    continue;
-                }
-            }
-
-            else if (retval < 0)
-            {
-                results.msgs.emplace_back() << "Cannot create or write to the file " << path << '\n';
-            }
-            else  // retval == result::exists
-            {
-                ++results.file_count;
-            }
-        }
-        catch (const std::exception& err)
-        {
-            MSG_ERROR(err.what());
-            dlgGenInternalError(err, path, form->as_std(prop_class_name));
-            continue;
-        }
+        GeneratePythonForm(form, results, pClassList);
     }
 
     if (results.msgs.size())

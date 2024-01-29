@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Generate Rust code files
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2023 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2023-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -29,6 +29,8 @@
 using namespace code;
 using namespace GenEnum;
 
+static bool GenerateRustForm(Node* form, GenResults& results, std::vector<tt_string>* pClassList = nullptr);
+
 // clang-format off
 
 inline constexpr const auto txt_RustCmtBlock =
@@ -44,6 +46,48 @@ R"===(//////////////////////////////////////////////////////////////////////////
 // clang-format on
 
 #if defined(_DEBUG) || defined(INTERNAL_TESTING)
+
+void MainFrame::OnGenSingleRust(wxCommandEvent& WXUNUSED(event))
+{
+    auto form = wxGetMainFrame()->getSelectedNode();
+    if (form && !form->isForm())
+    {
+        form = form->getForm();
+    }
+    if (!form)
+    {
+        wxMessageBox("You must select a form before you can generate code.", "Code Generation");
+        return;
+    }
+
+    GenResults results;
+    GenerateRustForm(form, results);
+
+    tt_string msg;
+    if (results.updated_files.size())
+    {
+        if (results.updated_files.size() == 1)
+            msg << "1 file was updated";
+        else
+            msg << results.updated_files.size() << " files were updated";
+        msg << '\n';
+    }
+    else
+    {
+        msg << "Generated file is current";
+    }
+
+    if (results.msgs.size())
+    {
+        for (auto& iter: results.msgs)
+        {
+            msg << '\n';
+            msg << iter;
+        }
+    }
+
+    wxMessageBox(msg, "Rust Code Generation", wxOK | wxICON_INFORMATION);
+}
 
 void MainFrame::OnGenerateRust(wxCommandEvent& WXUNUSED(event))
 {
@@ -78,9 +122,107 @@ void MainFrame::OnGenerateRust(wxCommandEvent& WXUNUSED(event))
 
 #endif
 
-bool GenerateRustFiles(GenResults& /* results */, std::vector<tt_string>* /* pClassList */)
+static bool GenerateRustForm(Node* form, GenResults& results, std::vector<tt_string>* pClassList)
 {
-    return false;
+    auto [path, has_base_file] = Project.GetOutputPath(form, GEN_LANG_RUST);
+    if (!has_base_file)
+    {
+#if !defined(_DEBUG)
+        // For a lot of wxRuby testing of projects with multiple dialogs, there may
+        // only be a few forms where wxRuby generation is being tested, so don't nag in
+        // Debug builds. :-)
+        results.msgs.emplace_back() << "No Ruby filename specified for " << form->as_string(prop_class_name) << '\n';
+#endif  // _DEBUG
+        return false;
+    }
+
+    BaseCodeGenerator codegen(GEN_LANG_RUBY, form);
+
+    auto h_cw = std::make_unique<FileCodeWriter>(path);
+    codegen.SetHdrWriteCode(h_cw.get());
+
+    path.replace_extension(".rst");
+    auto cpp_cw = std::make_unique<FileCodeWriter>(path);
+    codegen.SetSrcWriteCode(cpp_cw.get());
+
+    codegen.GenerateRustClass();
+
+    int flags = flag_no_ui;
+    if (pClassList)
+        flags |= flag_test_only;
+    auto retval = cpp_cw->WriteFile(GEN_LANG_PYTHON, flags);
+
+    if (auto warning_msgs = codegen.getWarnings(); warning_msgs.size())
+    {
+        for (auto& iter: warning_msgs)
+        {
+            results.msgs.emplace_back() << iter << '\n';
+        }
+    }
+
+    if (retval > 0)
+    {
+        if (!pClassList)
+        {
+            results.updated_files.emplace_back(path);
+        }
+        else
+        {
+            if (form->isGen(gen_Images))
+                pClassList->emplace_back(GenEnum::map_GenNames[gen_Images]);
+            if (form->isGen(gen_Data))
+                pClassList->emplace_back(GenEnum::map_GenNames[gen_Data]);
+            else
+                pClassList->emplace_back(form->as_string(prop_class_name));
+            return true;
+        }
+    }
+
+    else if (retval < 0)
+    {
+        results.msgs.emplace_back() << "Cannot create or write to the file " << path << '\n';
+    }
+    else  // retval == result::exists
+    {
+        ++results.file_count;
+    }
+    return true;
+}
+
+bool GenerateRustFiles(GenResults& results, std::vector<tt_string>* pClassList)
+{
+    if (Project.getChildCount() == 0)
+    {
+        results.msgs.emplace_back("You cannot generate any code until you have added a top level form.") << '\n';
+        wxMessageBox("You cannot generate any code until you have added a top level form.", "Code Generation");
+        return false;
+    }
+    tt_cwd cwd(true);
+    Project.ChangeDir();
+
+    bool generate_result = true;
+    std::vector<Node*> forms;
+    Project.CollectForms(forms);
+
+#if defined(_DEBUG) || defined(INTERNAL_TESTING)
+    results.StartClock();
+#endif
+
+    for (const auto& form: forms)
+    {
+        GenerateRustForm(form, results, pClassList);
+    }
+
+    if (results.msgs.size())
+    {
+        results.msgs.emplace_back() << '\n';
+    }
+
+#if defined(_DEBUG) || defined(INTERNAL_TESTING)
+    results.EndClock();
+#endif
+
+    return generate_result;
 }
 
 void BaseCodeGenerator::GenerateRustClass(PANEL_PAGE panel_type)

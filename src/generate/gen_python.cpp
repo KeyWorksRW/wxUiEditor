@@ -31,6 +31,8 @@
 using namespace code;
 using namespace GenEnum;
 
+static bool GeneratePythonForm(Node* form, GenResults& results, std::vector<tt_string>* pClassList = nullptr);
+
 // clang-format off
 
 inline constexpr const auto txt_PyPerlRubyCmtBlock =
@@ -53,6 +55,48 @@ extern const char* python_perl_ruby_end_cmt_line;  // "# ************* End of ge
 int GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags);
 
 #if defined(_DEBUG) || defined(INTERNAL_TESTING)
+
+void MainFrame::OnGenSinglePython(wxCommandEvent& WXUNUSED(event))
+{
+    auto form = wxGetMainFrame()->getSelectedNode();
+    if (form && !form->isForm())
+    {
+        form = form->getForm();
+    }
+    if (!form)
+    {
+        wxMessageBox("You must select a form before you can generate code.", "Code Generation");
+        return;
+    }
+
+    GenResults results;
+    GeneratePythonForm(form, results);
+
+    tt_string msg;
+    if (results.updated_files.size())
+    {
+        if (results.updated_files.size() == 1)
+            msg << "1 file was updated";
+        else
+            msg << results.updated_files.size() << " files were updated";
+        msg << '\n';
+    }
+    else
+    {
+        msg << "Generated file is current";
+    }
+
+    if (results.msgs.size())
+    {
+        for (auto& iter: results.msgs)
+        {
+            msg << '\n';
+            msg << iter;
+        }
+    }
+
+    wxMessageBox(msg, "Python Code Generation", wxOK | wxICON_INFORMATION);
+}
 
 void MainFrame::OnGeneratePython(wxCommandEvent& WXUNUSED(event))
 {

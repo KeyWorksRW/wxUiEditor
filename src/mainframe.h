@@ -301,6 +301,10 @@ protected:
     void OnGeneratePython(wxCommandEvent& event);
     void OnGenerateRuby(wxCommandEvent& event);
     void OnGenerateRust(wxCommandEvent& event);
+    void OnGenSingleCpp(wxCommandEvent& event);
+    void OnGenSinglePython(wxCommandEvent& event);
+    void OnGenSingleRuby(wxCommandEvent& event);
+    void OnGenSingleRust(wxCommandEvent& event);
 #endif
 
 #if defined(_DEBUG)  // Starts debug section.

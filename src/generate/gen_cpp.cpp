@@ -61,6 +61,8 @@ struct GenData
     };
 };
 
+static void GenCppForm(GenData& gen_data, Node* form);
+
 // clang-format off
 
 inline constexpr const auto txt_wxueImageFunction = R"===(
@@ -124,6 +126,76 @@ R"===(//////////////////////////////////////////////////////////////////////////
 )===";
 
 // clang-format on
+
+#if defined(_DEBUG) || defined(INTERNAL_TESTING)
+
+void MainFrame::OnGenSingleCpp(wxCommandEvent& WXUNUSED(event))
+{
+    auto form = wxGetMainFrame()->getSelectedNode();
+    if (form && !form->isForm())
+    {
+        form = form->getForm();
+    }
+    if (!form)
+    {
+        wxMessageBox("You must select a form before you can generate code.", "Code Generation");
+        return;
+    }
+
+    GenResults results;
+    GenData gen_data(results, nullptr);
+
+    if (auto& extProp = Project.as_string(prop_source_ext); extProp.size())
+    {
+        gen_data.source_ext = extProp;
+    }
+    else
+    {
+        gen_data.source_ext = ".cpp";
+    }
+
+    if (auto& extProp = Project.as_string(prop_header_ext); extProp.size())
+    {
+        gen_data.header_ext = extProp;
+    }
+    else
+    {
+        gen_data.header_ext = ".h";
+    }
+
+    std::vector<Node*> forms;
+    Project.CollectForms(forms);
+    Project.FindWxueFunctions(forms);
+
+    GenCppForm(gen_data, form);
+
+    tt_string msg;
+    if (results.updated_files.size())
+    {
+        if (results.updated_files.size() == 1)
+            msg << "1 file was updated";
+        else
+            msg << results.updated_files.size() << " files were updated";
+        msg << '\n';
+    }
+    else
+    {
+        msg << "All " << results.file_count << " generated files are current";
+    }
+
+    if (results.msgs.size())
+    {
+        for (auto& iter: results.msgs)
+        {
+            msg << '\n';
+            msg << iter;
+        }
+    }
+
+    wxMessageBox(msg, "C++ Code Generation", wxOK | wxICON_INFORMATION);
+}
+
+#endif
 
 static void GenCppForm(GenData& gen_data, Node* form)
 {

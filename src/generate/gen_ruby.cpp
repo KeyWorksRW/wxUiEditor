@@ -31,6 +31,8 @@
 using namespace code;
 using namespace GenEnum;
 
+static bool GenerateRubyForm(Node* form, GenResults& results, std::vector<tt_string>* pClassList = nullptr);
+
 // clang-format off
 
 inline constexpr const auto txt_PyPerlRubyCmtBlock =
@@ -99,6 +101,48 @@ static const std::vector<tt_string> disable_list = {
 #endif  // _DEBUG
 
 #if defined(_DEBUG) || defined(INTERNAL_TESTING)
+
+void MainFrame::OnGenSingleRuby(wxCommandEvent& WXUNUSED(event))
+{
+    auto form = wxGetMainFrame()->getSelectedNode();
+    if (form && !form->isForm())
+    {
+        form = form->getForm();
+    }
+    if (!form)
+    {
+        wxMessageBox("You must select a form before you can generate code.", "Code Generation");
+        return;
+    }
+
+    GenResults results;
+    GenerateRubyForm(form, results);
+
+    tt_string msg;
+    if (results.updated_files.size())
+    {
+        if (results.updated_files.size() == 1)
+            msg << "1 file was updated";
+        else
+            msg << results.updated_files.size() << " files were updated";
+        msg << '\n';
+    }
+    else
+    {
+        msg << "Generated file is current";
+    }
+
+    if (results.msgs.size())
+    {
+        for (auto& iter: results.msgs)
+        {
+            msg << '\n';
+            msg << iter;
+        }
+    }
+
+    wxMessageBox(msg, "Ruby Code Generation", wxOK | wxICON_INFORMATION);
+}
 
 void MainFrame::OnGenerateRuby(wxCommandEvent& WXUNUSED(event))
 {
@@ -417,7 +461,7 @@ void BaseCodeGenerator::GenerateRubyClass(PANEL_PAGE panel_type)
             {
                 if (!images_file_imported)
                 {
-                    tt_string import_name = iter->form->as_string(prop_python_file).filename();
+                    tt_string import_name = iter->form->as_string(prop_ruby_file).filename();
                     import_name.remove_extension();
                     code.Str("require_relative '").Str(import_name) << "'";
                     m_source->writeLine(code);

@@ -178,7 +178,7 @@
         <inherits class="wxWindow"/>
         <inherits class="Window Events"/>
         <inherits class="sizer_child"/>
-        <property name="var_name" type="string">m_aui_notebook</property>
+        <property name="var_name" type="string">m_notebook</property>
         <property name="display_images" type="bool"
             help="If true, will display an image on the tab in addition to any text. The image to use for each tab is specifed in the individual pages."
         >

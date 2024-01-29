@@ -60,22 +60,29 @@ void MainFrame::OnGeneratePython(wxCommandEvent& WXUNUSED(event))
     GeneratePythonFiles(results);
 
     tt_string msg;
-    if (results.updated_files.size() || results.msgs.size())
+    if (results.updated_files.size())
     {
-        if (results.updated_files.size())
-        {
-            if (results.updated_files.size() == 1)
-                msg << "1 file was updated";
-            else
-                msg << " files were updated";
-        }
+        if (results.updated_files.size() == 1)
+            msg << "1 file was updated";
+        else
+            msg << " files were updated";
+        msg << '\n';
     }
-    else if (results.file_count)
+    else
     {
         msg << "All " << results.file_count << " generated files are current";
     }
 
-    SetStatusText(msg);
+    if (results.msgs.size())
+    {
+        for (auto& iter: results.msgs)
+        {
+            msg << '\n';
+            msg << iter;
+        }
+    }
+
+    wxMessageBox(msg, "Python Code Generation", wxOK | wxICON_INFORMATION);
 }
 
 #endif
@@ -96,6 +103,7 @@ bool GeneratePythonFiles(GenResults& results, std::vector<tt_string>* pClassList
 {
     if (Project.getChildCount() == 0)
     {
+        results.msgs.emplace_back("You cannot generate any code until you have added a top level form.") << '\n';
         wxMessageBox("You cannot generate any code until you have added a top level form.", "Code Generation");
         return false;
     }

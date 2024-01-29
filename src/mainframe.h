@@ -299,6 +299,8 @@ protected:
 #if defined(_DEBUG) || defined(INTERNAL_TESTING)
     void OnConvertImageDlg(wxCommandEvent& event);
     void OnGeneratePython(wxCommandEvent& event);
+    void OnGenerateRuby(wxCommandEvent& event);
+    void OnGenerateRust(wxCommandEvent& event);
 #endif
 
 #if defined(_DEBUG)  // Starts debug section.

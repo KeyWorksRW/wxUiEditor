@@ -43,6 +43,41 @@ R"===(//////////////////////////////////////////////////////////////////////////
 
 // clang-format on
 
+#if defined(_DEBUG) || defined(INTERNAL_TESTING)
+
+void MainFrame::OnGenerateRust(wxCommandEvent& WXUNUSED(event))
+{
+    GenResults results;
+    GenerateRustFiles(results);
+
+    tt_string msg;
+    if (results.updated_files.size())
+    {
+        if (results.updated_files.size() == 1)
+            msg << "1 file was updated";
+        else
+            msg << " files were updated";
+        msg << '\n';
+    }
+    else
+    {
+        msg << "All " << results.file_count << " generated files are current";
+    }
+
+    if (results.msgs.size())
+    {
+        for (auto& iter: results.msgs)
+        {
+            msg << '\n';
+            msg << iter;
+        }
+    }
+
+    wxMessageBox(msg, "Rust Code Generation", wxOK | wxICON_INFORMATION);
+}
+
+#endif
+
 bool GenerateRustFiles(GenResults& /* results */, std::vector<tt_string>* /* pClassList */)
 {
     return false;

@@ -33,6 +33,34 @@ using namespace code;
 extern std::map<wxBitmapType, std::string> g_map_handlers;
 extern std::map<wxBitmapType, std::string> g_map_types;
 
+struct GenData
+{
+    GenData(GenResults& results, std::vector<tt_string>* pClassList)
+    {
+        this->presults = &results;
+        this->pClassList = pClassList;
+    }
+
+    GenResults* presults { nullptr };
+    std::vector<tt_string>* pClassList { nullptr };
+    tt_string source_ext;
+    tt_string header_ext;
+
+    void AddUpdateFilename(tt_string& path) { presults->updated_files.emplace_back(path); };
+
+    void AddResultMsg(tt_string& msg) { presults->msgs.emplace_back(msg); };
+
+    void UpdateFileCount() { presults->file_count += 1; };
+
+    void AddClassName(const tt_string& class_name)
+    {
+        if (pClassList)
+        {
+            pClassList->emplace_back(class_name);
+        }
+    };
+};
+
 // clang-format off
 
 inline constexpr const auto txt_wxueImageFunction = R"===(
@@ -96,6 +124,200 @@ R"===(//////////////////////////////////////////////////////////////////////////
 )===";
 
 // clang-format on
+
+static void GenCppForm(GenData& gen_data, Node* form)
+{
+    // These are just defined for convenience.
+    tt_string& source_ext = gen_data.source_ext;
+    tt_string& header_ext = gen_data.header_ext;
+
+    auto [path, has_base_file] = Project.GetOutputPath(form, GEN_LANG_CPLUSPLUS);
+    if (!has_base_file)
+    {
+        tt_string msg("No filename specified for ");
+        if (form->hasValue(prop_class_name))
+            msg += form->as_string(prop_class_name);
+        else
+            msg += map_GenNames[form->getGenName()];
+        msg += '\n';
+        gen_data.AddResultMsg(msg);
+        return;
+    }
+
+    BaseCodeGenerator codegen(GEN_LANG_CPLUSPLUS, form);
+
+    path.replace_extension(header_ext);
+    auto h_cw = std::make_unique<FileCodeWriter>(path);
+    codegen.SetHdrWriteCode(h_cw.get());
+
+    path.replace_extension(source_ext);
+    auto cpp_cw = std::make_unique<FileCodeWriter>(path);
+    codegen.SetSrcWriteCode(cpp_cw.get());
+
+    codegen.GenerateCppClass();
+
+    path.replace_extension(header_ext);
+
+    int flags = flag_no_ui;
+    if (gen_data.pClassList)
+        flags |= flag_test_only;
+    if (form->as_bool(prop_no_closing_brace))
+        flags |= flag_add_closing_brace;
+    auto retval = h_cw->WriteFile(GEN_LANG_CPLUSPLUS, flags);
+    if (form->as_bool(prop_no_closing_brace))
+        flags = flags & ~flag_add_closing_brace;
+
+    if (retval > 0)
+    {
+        if (!gen_data.pClassList)
+        {
+            gen_data.AddUpdateFilename(path);
+        }
+        else
+        {
+            if (form->isGen(gen_Images))
+            {
+                // While technically this is a "form" it doesn't have the usual properties set
+                gen_data.AddClassName(GenEnum::map_GenNames[gen_Images]);
+            }
+            else if (form->isGen(gen_Data))
+            {
+                gen_data.AddClassName(GenEnum::map_GenNames[gen_Data]);
+            }
+            else
+            {
+                gen_data.AddClassName(form->as_string(prop_class_name));
+            }
+            return;
+        }
+    }
+    else if (retval < 0)
+    {
+        gen_data.AddResultMsg(tt_string() << "Cannot create or write to the file " << path << '\n');
+    }
+    else  // retval == result::exists)
+    {
+        gen_data.UpdateFileCount();
+    }
+
+    path.replace_extension(source_ext);
+    retval = cpp_cw->WriteFile(GEN_LANG_CPLUSPLUS, flags);
+
+    if (retval > 0)
+    {
+        if (!gen_data.pClassList)
+        {
+            gen_data.AddUpdateFilename(path);
+        }
+        else
+        {
+            if (form->isGen(gen_Images))
+            {
+                // While technically this is a "form" it doesn't have the usual properties set
+                gen_data.AddClassName("Images List");
+            }
+            else if (form->isGen(gen_Data))
+            {
+                gen_data.AddClassName("Data List");
+            }
+            else
+            {
+                gen_data.AddClassName(form->as_string(prop_class_name));
+            }
+            return;
+        }
+    }
+
+    else if (retval < 0)
+    {
+        gen_data.AddResultMsg(tt_string() << "Cannot create or write to the file " << path << '\n');
+    }
+    else  // retval == result::exists
+    {
+        gen_data.UpdateFileCount();
+    }
+}
+
+bool GenerateCppFiles(GenResults& results, std::vector<tt_string>* pClassList)
+{
+    if (Project.getChildCount() == 0)
+    {
+        wxMessageBox("You cannot generate any code until you have added a top level form.", "Code Generation");
+        return false;
+    }
+    tt_cwd cwd(true);
+    Project.ChangeDir();
+
+#if defined(_DEBUG) || defined(INTERNAL_TESTING)
+    results.StartClock();
+#endif
+
+    if (Project.as_bool(prop_generate_cmake))
+    {
+        auto is_testing = pClassList ? 1 : 0;
+        for (auto& iter: Project.getChildNodePtrs())
+        {
+            if (iter->isGen(gen_folder) && iter->hasValue(prop_folder_cmake_file))
+            {
+                auto result = WriteCMakeFile(iter.get(), results.updated_files, results.msgs, is_testing);
+                if (result == result::created || result == result::needs_writing)
+                {
+                    ++results.file_count;
+                    pClassList->emplace_back(iter.get()->as_string(prop_cmake_file));
+                }
+            }
+        }
+        if (Project.hasValue(prop_cmake_file))
+        {
+            auto result = WriteCMakeFile(Project.getProjectNode(), results.updated_files, results.msgs, is_testing);
+            if (result == result::created || result == result::needs_writing)
+            {
+                ++results.file_count;
+                if (is_testing)
+                {
+                    pClassList->emplace_back(Project.getProjectNode()->as_string(prop_cmake_file));
+                }
+            }
+        }
+    }
+
+    tt_string path;
+
+    tt_string source_ext(".cpp");
+    tt_string header_ext(".h");
+
+    if (auto& extProp = Project.as_string(prop_source_ext); extProp.size())
+    {
+        source_ext = extProp;
+    }
+
+    if (auto& extProp = Project.as_string(prop_header_ext); extProp.size())
+    {
+        header_ext = extProp;
+    }
+
+    std::vector<Node*> forms;
+    Project.CollectForms(forms);
+    Project.FindWxueFunctions(forms);
+
+    GenData gen_data(results, pClassList);
+    gen_data.source_ext = source_ext;
+    gen_data.header_ext = header_ext;
+
+    for (const auto& form: forms)
+    {
+        GenCppForm(gen_data, form);
+    }
+
+#if defined(_DEBUG) || defined(INTERNAL_TESTING)
+    results.EndClock();
+#endif
+
+    if (pClassList)
+        return pClassList->size() > 0;
+    else
+        return results.updated_files.size() > 0;
+}
 
 void BaseCodeGenerator::GenHdrNameSpace(tt_string& namespace_prop, tt_string_vector& names, size_t& indent)
 {

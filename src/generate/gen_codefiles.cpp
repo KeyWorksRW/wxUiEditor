@@ -5,14 +5,6 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-// #define THREADED_CODE_GEN
-
-#if defined(THREADED_CODE_GEN)
-    #include <future>
-    #include <mutex>
-    #include <thread>
-#endif
-
 #include "mainframe.h"
 
 #include "file_codewriter.h"  // FileCodeWriter -- Classs to write code to disk
@@ -37,7 +29,6 @@ struct GenData
     tt_string source_ext;
     tt_string header_ext;
 
-#if !defined(THREADED_CODE_GEN)
     void AddUpdateFilename(tt_string& path) { presults->updated_files.emplace_back(path); };
 
     void AddResultMsg(tt_string& msg) { presults->msgs.emplace_back(msg); };
@@ -51,48 +42,9 @@ struct GenData
             pClassList->emplace_back(class_name);
         }
     };
-#else
-    // REVIEW: [Randalphwa - 08-14-2023] The last time I tried using THREADED_CODE_GEN,
-    // it was slower then single-thread. That's probably because code generation creates
-    // several threads of it's own.
-    std::mutex mutex_results;
-    std::mutex mutex_class_list;
-
-    void AddUpdateFilename(tt_string& path)
-    {
-        mutex_results.lock();
-        presults->updated_files.emplace_back(path);
-        mutex_results.unlock();
-    };
-
-    void AddResultMsg(tt_string& msg)
-    {
-        mutex_results.lock();
-        presults->msgs.emplace_back(msg);
-        mutex_results.unlock();
-    };
-
-    void UpdateFileCount()
-    {
-        mutex_results.lock();
-        presults->file_count += 1;
-        mutex_results.unlock();
-    };
-
-    void AddClassName(const tt_string& class_name)
-    {
-        if (pClassList)
-        {
-            mutex_class_list.lock();
-            pClassList->emplace_back(class_name);
-            mutex_class_list.unlock();
-        }
-    };
-#endif
 };
 
-// While not required, this function can be run from a thread.
-void GenThreadCpp(GenData& gen_data, Node* form)
+static void GenCppForm(GenData& gen_data, Node* form)
 {
     // These are just defined for convenience.
     tt_string& source_ext = gen_data.source_ext;
@@ -271,56 +223,10 @@ bool GenerateCodeFiles(GenResults& results, std::vector<tt_string>* pClassList)
     gen_data.source_ext = source_ext;
     gen_data.header_ext = header_ext;
 
-#if defined(THREADED_CODE_GEN)
-    auto num_cpus = std::thread::hardware_concurrency();
-
-    // Keep in mind that GenThreadCpp() will itself create two threads when it calls
-    // codegen.GenerateBaseClass(). These additional threads are very short lived, and the
-    // calling thread will often block until they are done. GenThreadCpp() itself can block
-    // any time it needs to update results. We don't want to create too many threads, but we
-    // can rely on some blocking and therefore have more total threads created then there are
-    // CPUs to run them. That means that in theory, setting max_threads = 10 could result in
-    // 30 threads. In practice, threads will block or be deleted before that happens.
-
-    // Also keep in mind that some Intel processors have a few threads that run slower than
-    // normal threads. So even if you get a value of 24 cpus, only 20 of them will run at
-    // full speed. Just another reason to keep the max_threads count below the maximum number
-    // of CPUS.
-
-    size_t max_threads = 2;
-    if (num_cpus > 3)
-        max_threads = num_cpus / 3;
-
-    std::vector<std::thread> threads;
-    size_t thread_idx = 0;
-#endif
-
     for (const auto& form: forms)
     {
-#if defined(THREADED_CODE_GEN)
-        if (threads.size() < max_threads)
-        {
-            threads.emplace_back(GenThreadCpp, std::ref(gen_data), form);
-        }
-        else
-        {
-            threads[thread_idx].join();
-            threads[thread_idx] = std::thread(GenThreadCpp, std::ref(gen_data), form);
-            ++thread_idx;
-            if (thread_idx >= threads.size())
-                thread_idx = 0;
-        }
-#else   // not defined(THREADED_CODE_GEN)
-        GenThreadCpp(gen_data, form);
-#endif  // THREADED_CODE_GEN
+        GenCppForm(gen_data, form);
     }
-
-#if defined(THREADED_CODE_GEN)
-    for (auto& thread: threads)
-    {
-        thread.join();
-    }
-#endif
 
 #if defined(_DEBUG) || defined(INTERNAL_TESTING)
     results.EndClock();

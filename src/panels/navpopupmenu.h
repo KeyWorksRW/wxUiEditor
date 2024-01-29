@@ -151,6 +151,11 @@ public:
 
         MenuEXPAND_ALL,
 
+        // These are for Internal builds only
+        MenuSingleGenCpp,
+        MenuSingleGenPython,
+        MenuSingleGenRuby,
+        MenuSingleGenRust,
         MenuTESTING_INFO,
         MenuDEBUG_KEYHH,
     };

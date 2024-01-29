@@ -316,7 +316,7 @@ int App::OnRun()
             switch (generate_type)
             {
                 case GEN_LANG_CPLUSPLUS:
-                    GenerateCodeFiles(results, test_only ? &class_list : nullptr);
+                    GenerateCppFiles(results, test_only ? &class_list : nullptr);
                     break;
 
                 case GEN_LANG_PYTHON:

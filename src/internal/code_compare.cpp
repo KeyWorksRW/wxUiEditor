@@ -182,7 +182,7 @@ void CodeCompare::OnCPlusPlus(wxCommandEvent& /* event */)
     m_list_changes->Clear();
     m_btn->Enable(false);
 
-    if (GenerateCodeFiles(results, &m_class_list); m_class_list.size())
+    if (GenerateCppFiles(results, &m_class_list); m_class_list.size())
     {
         for (auto& iter: m_class_list)
         {

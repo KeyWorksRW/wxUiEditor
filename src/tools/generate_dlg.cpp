@@ -110,7 +110,7 @@ void MainFrame::OnGenerateCode(wxCommandEvent&)
 
     if (output_type == OUTPUT_CPLUS)
     {
-        GenerateCodeFiles(results);
+        GenerateCppFiles(results);
         code_generated = true;
     }
     else if (output_type == OUTPUT_DERIVED)
@@ -141,7 +141,7 @@ void MainFrame::OnGenerateCode(wxCommandEvent&)
         {
             if (dlg.is_gen_base())
             {
-                GenerateCodeFiles(results);
+                GenerateCppFiles(results);
                 code_generated = true;
 #if defined(INTERNAL_TESTING)
                 gen_base_code = true;

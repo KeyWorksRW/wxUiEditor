@@ -46,7 +46,7 @@ struct GenResults
 // updating.
 //
 // ../generate/gen_codefiles.cpp
-bool GenerateCodeFiles(GenResults& results, std::vector<tt_string>* pClassList = nullptr);
+bool GenerateCppFiles(GenResults& results, std::vector<tt_string>* pClassList = nullptr);
 
 // ../generate/gen_codefiles.cpp
 void GenInhertedClass(GenResults& results);

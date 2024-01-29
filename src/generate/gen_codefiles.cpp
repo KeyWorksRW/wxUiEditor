@@ -157,7 +157,7 @@ static void GenCppForm(GenData& gen_data, Node* form)
     }
 }
 
-bool GenerateCodeFiles(GenResults& results, std::vector<tt_string>* pClassList)
+bool GenerateCppFiles(GenResults& results, std::vector<tt_string>* pClassList)
 {
     if (Project.getChildCount() == 0)
     {

@@ -292,6 +292,36 @@ void NavPopupMenu::OnMenuEvent(wxCommandEvent& event)
             ChangeSizer(gen_wxWrapSizer);
             break;
 
+#if defined(_DEBUG) || defined(INTERNAL_TESTING)
+        case MenuSingleGenCpp:
+            {
+                wxCommandEvent dummy;
+                wxGetMainFrame()->OnGenSingleCpp(dummy);
+            }
+            break;
+
+        case MenuSingleGenPython:
+            {
+                wxCommandEvent dummy;
+                wxGetMainFrame()->OnGenSinglePython(dummy);
+            }
+            break;
+
+        case MenuSingleGenRuby:
+            {
+                wxCommandEvent dummy;
+                wxGetMainFrame()->OnGenSingleRuby(dummy);
+            }
+            break;
+
+        case MenuSingleGenRust:
+            {
+                wxCommandEvent dummy;
+                wxGetMainFrame()->OnGenSingleRust(dummy);
+            }
+            break;
+#endif
+
         case MenuADD_PAGE:
             if (m_node->isGen(gen_BookPage))
             {
@@ -458,6 +488,17 @@ void NavPopupMenu::CreateCommonMenu(Node* node)
 
 void NavPopupMenu::MenuAddCommands(Node* node)
 {
+#if defined(_DEBUG) || defined(INTERNAL_TESTING)
+    if (node->isForm())
+    {
+        Append(MenuSingleGenCpp, "Generate C++ for this form");
+        Append(MenuSingleGenPython, "Generate Python for this form");
+        Append(MenuSingleGenRuby, "Generate Ruby for this form");
+        Append(MenuSingleGenRust, "Generate Rust for this form");
+        AppendSeparator();
+    }
+#endif
+
     if (node->isForm() || node->isGen(gen_Images) || node->isGen(gen_embedded_image) || node->isGen(gen_Data) ||
         node->isGen(gen_data_string))
     {

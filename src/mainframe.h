@@ -252,6 +252,13 @@ public:
     void OnSaveProject(wxCommandEvent& event) override;
     void OnGenerateCode(wxCommandEvent& event) override;
 
+#if defined(_DEBUG) || defined(INTERNAL_TESTING)
+    void OnGenSingleCpp(wxCommandEvent& event);
+    void OnGenSinglePython(wxCommandEvent& event);
+    void OnGenSingleRuby(wxCommandEvent& event);
+    void OnGenSingleRust(wxCommandEvent& event);
+#endif
+
 protected:
     void OnAbout(wxCommandEvent& event) override;
     void OnAppendCrafter(wxCommandEvent& event) override;

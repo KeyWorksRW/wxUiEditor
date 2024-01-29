@@ -93,6 +93,10 @@ enum
     id_GeneratePython,
     id_GenerateRuby,
     id_GenerateRust,
+    id_GenSingleCpp,
+    id_GenSinglePython,
+    id_GenSingleRuby,
+    id_GenSingleRust,
     id_NodeMemory,
     id_ShowLogger,
     id_XrcPreviewDlg,
@@ -188,9 +192,14 @@ MainFrame::MainFrame() :
     menuInternal->Append(id_ShowLogger, "Show &Log Window", "Show window containing debug messages");
     menuInternal->Append(id_DebugPreferences, "Test &Settings...", "Settings to use in testing builds");
     menuInternal->AppendSeparator();
-    menuInternal->Append(id_GeneratePython, "&Generate Python", "Generate all python files from current project.");
-    menuInternal->Append(id_GenerateRuby, "&Generate Ruby", "Generate all ruby files from current project.");
-    menuInternal->Append(id_GenerateRust, "&Generate Rust", "Generate all rust files from current project.");
+    menuInternal->Append(id_GenSingleCpp, "&Generate Single C++", "Generate C++ src/hdr files for seletected form.");
+    menuInternal->Append(id_GenSinglePython, "&Generate Single Python", "Generate Python file for seletected form.");
+    menuInternal->Append(id_GenSingleRuby, "&Generate Single Ruby", "Generate Ruby file for seletected form.");
+    menuInternal->Append(id_GenSingleRust, "&Generate Single Rust", "Generate Rust file for seletected form.");
+
+    // menuInternal->Append(id_GeneratePython, "&Generate Python", "Generate all python files from current project.");
+    // menuInternal->Append(id_GenerateRuby, "&Generate Ruby", "Generate all ruby files from current project.");
+    // menuInternal->Append(id_GenerateRust, "&Generate Rust", "Generate all rust files from current project.");
     menuInternal->Append(id_DebugCurrentTest, "&Current Test", "Current debugging test");
 
     ////////////////////// Debug-only menu items //////////////////////
@@ -402,9 +411,14 @@ MainFrame::MainFrame() :
         },
         id_DebugPreferences);
 
-    Bind(wxEVT_MENU, &MainFrame::OnGeneratePython, this, id_GeneratePython);
-    Bind(wxEVT_MENU, &MainFrame::OnGenerateRuby, this, id_GenerateRuby);
-    Bind(wxEVT_MENU, &MainFrame::OnGenerateRust, this, id_GenerateRust);
+    Bind(wxEVT_MENU, &MainFrame::OnGenSingleCpp, this, id_GenSingleCpp);
+    Bind(wxEVT_MENU, &MainFrame::OnGenSinglePython, this, id_GenSinglePython);
+    Bind(wxEVT_MENU, &MainFrame::OnGenSingleRuby, this, id_GenSingleRuby);
+    Bind(wxEVT_MENU, &MainFrame::OnGenSingleRust, this, id_GenSingleRust);
+
+    // Bind(wxEVT_MENU, &MainFrame::OnGeneratePython, this, id_GeneratePython);
+    // Bind(wxEVT_MENU, &MainFrame::OnGenerateRuby, this, id_GenerateRuby);
+    // Bind(wxEVT_MENU, &MainFrame::OnGenerateRust, this, id_GenerateRust);
     Bind(wxEVT_MENU, &App::DbgCurrentTest, &wxGetApp(), id_DebugCurrentTest);
 #endif
 

@@ -215,9 +215,15 @@ void PreviewXrc(Node* form_node)
         auto xmlDoc = std::make_unique<wxXmlDocument>(wxXmlDocument());
         if (auto result = xmlDoc->Load(stream, wxXMLDOC_NONE, &err_details); !result)
         {
+#if __has_include(<format>)
             std::string msg =
                 std::format(std::locale(""), "Parsing error: {} at line: {}, column: {}, offset: {:L}\n",
                             err_details.message.ToStdString(), err_details.line, err_details.column, err_details.offset);
+#else
+            wxString msg;
+            msg.Format("Parsing error: %s at line: %d, column: %d, offset: %ld\n", err_details.message, err_details.line,
+                       err_details.column, err_details.offset);
+#endif
             wxMessageDialog(wxGetMainFrame()->getWindow(), msg, "Parsing Error", wxOK | wxICON_ERROR).ShowModal();
             return;
         }

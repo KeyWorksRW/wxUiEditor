@@ -617,28 +617,39 @@ set (common_sources
     ../../wxWidgets/src/xrc/xh_hyperlink.cpp
     ../../wxWidgets/src/xrc/xh_sttxt.cpp
 
-    # lunasvg
-    # ../../lunasvg/source/canvas.cpp
-    # ../../lunasvg/source/canvas.cpp
-    # ../../lunasvg/source/clippathelement.cpp
-    # ../../lunasvg/source/defselement.cpp
-    # ../../lunasvg/source/element.cpp
-    # ../../lunasvg/source/gelement.cpp
-    # ../../lunasvg/source/geometryelement.cpp
-    # ../../lunasvg/source/graphicselement.cpp
-    # ../../lunasvg/source/layoutcontext.cpp
-    # ../../lunasvg/source/lunasvg.cpp
-    # ../../lunasvg/source/markerelement.cpp
-    # ../../lunasvg/source/maskelement.cpp
-    # ../../lunasvg/source/paintelement.cpp
-    # ../../lunasvg/source/parser.cpp
-    # ../../lunasvg/source/property.cpp
-    # ../../lunasvg/source/stopelement.cpp
-    # ../../lunasvg/source/styledelement.cpp
-    # ../../lunasvg/source/styleelement.cpp
-    # ../../lunasvg/source/svgelement.cpp
-    # ../../lunasvg/source/symbolelement.cpp
-    # ../../lunasvg/source/useelement.cpp
+)
+
+set (lunasvg_sources
+    ../../wxWidgets/3rdparty/lunasvg/source/canvas.cpp
+    ../../wxWidgets/3rdparty/lunasvg/source/clippathelement.cpp
+    ../../wxWidgets/3rdparty/lunasvg/source/defselement.cpp
+    ../../wxWidgets/3rdparty/lunasvg/source/element.cpp
+    ../../wxWidgets/3rdparty/lunasvg/source/gelement.cpp
+    ../../wxWidgets/3rdparty/lunasvg/source/geometryelement.cpp
+    ../../wxWidgets/3rdparty/lunasvg/source/graphicselement.cpp
+    ../../wxWidgets/3rdparty/lunasvg/source/layoutcontext.cpp
+    ../../wxWidgets/3rdparty/lunasvg/source/lunasvg.cpp
+    ../../wxWidgets/3rdparty/lunasvg/source/markerelement.cpp
+    ../../wxWidgets/3rdparty/lunasvg/source/maskelement.cpp
+    ../../wxWidgets/3rdparty/lunasvg/source/paintelement.cpp
+    ../../wxWidgets/3rdparty/lunasvg/source/parser.cpp
+    ../../wxWidgets/3rdparty/lunasvg/source/property.cpp
+    ../../wxWidgets/3rdparty/lunasvg/source/stopelement.cpp
+    ../../wxWidgets/3rdparty/lunasvg/source/styledelement.cpp
+    ../../wxWidgets/3rdparty/lunasvg/source/styleelement.cpp
+    ../../wxWidgets/3rdparty/lunasvg/source/svgelement.cpp
+    ../../wxWidgets/3rdparty/lunasvg/source/symbolelement.cpp
+    ../../wxWidgets/3rdparty/lunasvg/source/useelement.cpp
+
+    ../../wxWidgets/3rdparty/lunasvg/source/plutovg/plutovg-blend.cpp
+    ../../wxWidgets/3rdparty/lunasvg/source/plutovg/plutovg-dash.cpp
+    ../../wxWidgets/3rdparty/lunasvg/source/plutovg/plutovg-ft-math.cpp
+    ../../wxWidgets/3rdparty/lunasvg/source/plutovg/plutovg-ft-raster.cpp
+    ../../wxWidgets/3rdparty/lunasvg/source/plutovg/plutovg-ft-stroker.cpp
+    ../../wxWidgets/3rdparty/lunasvg/source/plutovg/plutovg-geometry.cpp
+    ../../wxWidgets/3rdparty/lunasvg/source/plutovg/plutovg-paint.cpp
+    ../../wxWidgets/3rdparty/lunasvg/source/plutovg/plutovg-rle.cpp
+    ../../wxWidgets/3rdparty/lunasvg/source/plutovg/plutovg.cpp
 
 )
 

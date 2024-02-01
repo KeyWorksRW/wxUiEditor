@@ -25,9 +25,14 @@ struct WXDLLIMPEXP_BASE wxInitData
     // static, i.e. remain valid until the end of the program.
     void Initialize(int argc, char** argv);
 
-    // Initialize from wide command line arguments: here we currently make a
-    // copy of the arguments internally, so they don't need to be static.
-    void InitializeFromWide(int argc, wchar_t** argv);
+    // Initialize from wide command line arguments if we hadn't been
+    // initialized in some other way: this allows to call this function
+    // unconditionally, even when these wide arguments were themselves
+    // synthesized from ANSI ones by our own code.
+    //
+    // Note that here we currently make a copy of the arguments internally, so
+    // they don't need to be static.
+    void InitIfNecessary(int argc, wchar_t** argv);
 
     // This function is used instead of the dtor because the global object can
     // be initialized multiple times.
@@ -60,5 +65,20 @@ struct WXDLLIMPEXP_BASE wxInitData
 
     wxDECLARE_NO_COPY_CLASS(wxInitData);
 };
+
+// Type of the hook function, see wxAddEntryHook(). If this function returns
+// a value different from -1, the process exits using it as error code.
+using wxEntryHook = int (*)();
+
+// Set a special hook function which will be called before performing any
+// normal initialization. Note that this hook can't use any wxWidgets
+// functionality because nothing has been initialized yet, but can use
+// wxInitData to examine the command line arguments and determine if it should
+// be applied.
+//
+// This is currently used only by wxWebViewChromium to allow running Chromium
+// helper applications without initializing GTK under Linux but could, in
+// principle, be used for any other similar purpose.
+WXDLLIMPEXP_BASE void wxAddEntryHook(wxEntryHook hook);
 
 #endif // _WX_PRIVATE_INIT_H_

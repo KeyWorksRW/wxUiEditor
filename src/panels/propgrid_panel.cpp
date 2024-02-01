@@ -1485,11 +1485,7 @@ void PropGridPanel::OnNodePropChange(CustomEvent& event)
             break;
 
         default:
-#if BUILD_FORK
             grid_property->SetValueFromString(prop->as_string(), wxPGPropValFormatFlags::FullValue);
-#else
-            grid_property->SetValueFromString(prop->as_string(), wxPG_FULL_VALUE);
-#endif
     }
     m_prop_grid->Refresh();
 }

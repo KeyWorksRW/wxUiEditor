@@ -13,7 +13,6 @@
 #include "wx/settings.h"
 
 #ifndef WX_PRECOMP
-    #include "wx/app.h"
     #include "wx/toplevel.h"
     #include "wx/module.h"
 #endif
@@ -949,33 +948,45 @@ static GdkRectangle GetMonitorGeom(GdkWindow* window)
 }
 #endif
 
+#ifdef __WXGTK3__
+static int GetNodeWidth(wxGtkStyleContext& sc)
+{
+    int width;
+    gtk_style_context_get(sc, GTK_STATE_FLAG_NORMAL, "min-width", &width, nullptr);
+    GtkBorder border;
+    gtk_style_context_get_padding(sc, GTK_STATE_FLAG_NORMAL, &border);
+    width += border.left + border.right;
+    gtk_style_context_get_border(sc, GTK_STATE_FLAG_NORMAL, &border);
+    width += border.left + border.right;
+    gtk_style_context_get_margin(sc, GTK_STATE_FLAG_NORMAL, &border);
+    width += border.left + border.right;
+
+    return width < 0 ? 0 : width;
+}
+#endif // __WXGTK3__
+
 static int GetScrollbarWidth()
 {
     int width;
 #ifdef __WXGTK3__
     if (wx_is_at_least_gtk3(20))
     {
-        GtkBorder border;
 #if GTK_CHECK_VERSION(3,10,0)
         wxGtkStyleContext sc(gtk_widget_get_scale_factor(ScrollBarWidget()));
 #else
         wxGtkStyleContext sc;
 #endif
         sc.Add(GTK_TYPE_SCROLLBAR, "scrollbar", "scrollbar", "vertical", "right", nullptr);
+        width = GetNodeWidth(sc);
 
-        gtk_style_context_get_border(sc, GTK_STATE_FLAG_NORMAL, &border);
+        sc.Add("contents");
+        width += GetNodeWidth(sc);
 
-        sc.Add("contents").Add("trough").Add("slider");
+        sc.Add("trough");
+        width += GetNodeWidth(sc);
 
-        gtk_style_context_get(sc, GTK_STATE_FLAG_NORMAL, "min-width", &width, nullptr);
-        width += border.left + border.right;
-
-        gtk_style_context_get_border(sc, GTK_STATE_FLAG_NORMAL, &border);
-        width += border.left + border.right;
-        gtk_style_context_get_padding(sc, GTK_STATE_FLAG_NORMAL, &border);
-        width += border.left + border.right;
-        gtk_style_context_get_margin(sc, GTK_STATE_FLAG_NORMAL, &border);
-        width += border.left + border.right;
+        sc.Add("slider");
+        width += GetNodeWidth(sc);
     }
     else
 #endif
@@ -1215,8 +1226,8 @@ bool wxSystemSettingsModule::OnInit()
 
     m_proxy = nullptr;
 
-    wxAppConsole* app = wxAppConsole::GetInstance();
-    if (!app || !app->IsGUI())
+    // If this is not a GUI app
+    if (!g_type_class_peek(GTK_TYPE_WIDGET))
         return true;
 
     // GTK_THEME environment variable overrides other settings

@@ -1130,13 +1130,16 @@ void BaseCodeGenerator::GenerateCppClassHeader()
 
     if (m_form_node->hasValue(prop_class_methods))
     {
-        m_header->writeLine();
         tt_string_vector class_list(m_form_node->as_string(prop_class_methods), '"', tt::TRIM::both);
-        for (auto& iter: class_list)
+        if (class_list.size())
         {
-            m_header->writeLine(iter);
+            m_header->writeLine();
+            for (auto& iter: class_list)
+            {
+                m_header->writeLine(iter);
+            }
+            m_header->writeLine();
         }
-        m_header->writeLine();
     }
 
     m_header->Unindent();
@@ -1144,6 +1147,20 @@ void BaseCodeGenerator::GenerateCppClassHeader()
     m_header->Indent();
 
     GenHdrEvents();
+
+    if (m_form_node->hasValue(prop_protected_class_methods))
+    {
+        tt_string_vector class_list(m_form_node->as_string(prop_protected_class_methods), '"', tt::TRIM::both);
+        if (class_list.size())
+        {
+            m_header->writeLine();
+            for (auto& iter: class_list)
+            {
+                m_header->writeLine(iter);
+            }
+            m_header->writeLine();
+        }
+    }
 
     if (!m_form_node->as_bool(prop_use_derived_class) && m_form_node->as_bool(prop_private_members))
     {

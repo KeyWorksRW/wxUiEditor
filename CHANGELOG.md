@@ -11,6 +11,7 @@ All notable changes to this project will be documented in this file.
 - Added wxBitmapToggleButton for all languages.
 - Added wxContextHelpButton for all languages.
 - Added support for all four validators in wxRuby3 0.9.3 and up.
+- Non-derived C++ class headers now support protected: class methods in addition to the public: ones that were already supported.
 
 ### Changed
 

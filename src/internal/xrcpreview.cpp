@@ -213,8 +213,7 @@ bool XrcPreview::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 
 const int node_marker = 1;
 
-
-#if defined(_DEBUG)  // Starts debug section.
+    #if defined(_DEBUG)  // Starts debug section.
 
 void MainFrame::OnXrcPreview(wxCommandEvent& /* event */)
 {
@@ -222,7 +221,7 @@ void MainFrame::OnXrcPreview(wxCommandEvent& /* event */)
     dlg.ShowModal();
 }
 
-#endif
+    #endif
 
 void XrcPreview::OnClear(wxCommandEvent& WXUNUSED(event))
 {

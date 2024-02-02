@@ -31,10 +31,10 @@ namespace wxue_img
     extern const unsigned char magnify_svg[2791];
     // new-project.svg
     extern const unsigned char new_project_svg[907];
-    extern const unsigned char ruby_logo_svg[1853];
-    extern const unsigned char save_svg[717];
+    extern const unsigned char ruby_logo_svg[897];
+    extern const unsigned char save_svg[695];
     extern const unsigned char wxlogo_svg[1331];
-    extern const unsigned char xrc_preview_svg[469];
+    extern const unsigned char xrc_preview_svg[392];
 }
 
 class MainFrameBase : public wxFrame

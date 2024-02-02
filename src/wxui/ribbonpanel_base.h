@@ -38,9 +38,7 @@ namespace wxue_img
     extern const unsigned char fontPicker_png[763];
     extern const unsigned char gauge_png[260];
     extern const unsigned char genericdir_ctrl_png[328];
-    extern const unsigned char grid_bag_sizer_png[145];
     extern const unsigned char grid_png[171];
-    extern const unsigned char grid_sizer_png[127];
     extern const unsigned char htmlwin_png[1053];
     extern const unsigned char hyperlink_ctrl_png[329];
     extern const unsigned char infobar_png[556];

@@ -44,7 +44,7 @@ static wxBitmapBundle wxueBundleSVG(const unsigned char* data,
 
 namespace wxue_img
 {
-    extern const unsigned char ruby_logo_svg[1853];
+    extern const unsigned char ruby_logo_svg[897];
 }
 
 bool EventHandlerDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString& title,
@@ -68,7 +68,7 @@ bool EventHandlerDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString
         wxWithImages::Images bundle_list;
         bundle_list.push_back(wxue_img::bundle_cpp_logo_svg(16, 16));
         bundle_list.push_back(wxue_img::bundle_wxPython_png());
-        bundle_list.push_back(wxueBundleSVG(wxue_img::ruby_logo_svg, 1853, 10034, wxSize(16, 16)));
+        bundle_list.push_back(wxueBundleSVG(wxue_img::ruby_logo_svg, 897, 5655, wxSize(16, 16)));
         m_notebook->SetImages(bundle_list);
     }
     box_sizer->Add(m_notebook, wxSizerFlags().Expand().Border(wxALL));

@@ -39,7 +39,7 @@ static wxBitmapBundle wxueBundleSVG(const unsigned char* data,
 
 namespace wxue_img
 {
-    extern const unsigned char ruby_logo_svg[1853];
+    extern const unsigned char ruby_logo_svg[897];
 }
 
 bool DocViewPanel::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style,
@@ -66,7 +66,7 @@ bool DocViewPanel::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos, c
         wxue_img::bundle_python_logo_only_svg(FromDIP(16), FromDIP(16)), wxEmptyString, wxITEM_RADIO);
 
     m_toolBar->AddTool(ID_RUBY, "Ruby",
-        wxueBundleSVG(wxue_img::ruby_logo_svg, 1853, 10034, FromDIP(wxSize(16, 16))), wxEmptyString, wxITEM_RADIO);
+        wxueBundleSVG(wxue_img::ruby_logo_svg, 897, 5655, FromDIP(wxSize(16, 16))), wxEmptyString, wxITEM_RADIO);
 
     m_toolBar->Realize();
     m_parent_sizer->Add(m_toolBar, wxSizerFlags().Expand().Border(wxALL));

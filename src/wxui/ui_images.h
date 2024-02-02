@@ -172,7 +172,7 @@ namespace wxue_img
     extern const unsigned char flex_grid_sizer_svg[203];
     extern const unsigned char folder_png[641];
     extern const unsigned char grid_bag_sizer_svg[153];
-    extern const unsigned char grid_sizer_svg[286];
+    extern const unsigned char grid_sizer_svg[314];
     extern const unsigned char hide_png[242];
     extern const unsigned char import_svg[4093];
     extern const unsigned char left_svg[188];
@@ -180,8 +180,8 @@ namespace wxue_img
     extern const unsigned char logo32_png[1470];
     extern const unsigned char logo64_png[1718];
     extern const unsigned char project_png[899];
-    extern const unsigned char python_logo_only_svg[1648];  // python-logo-only.svg
-    extern const unsigned char redo_svg[919];
+    extern const unsigned char python_logo_only_svg[838];  // python-logo-only.svg
+    extern const unsigned char redo_svg[459];
     extern const unsigned char ribbon_bar_png[844];
     extern const unsigned char ribbon_buttonbar_png[300];
     extern const unsigned char ribbon_gallery_png[215];
@@ -200,7 +200,7 @@ namespace wxue_img
     extern const unsigned char toolseparator_png[581];
     extern const unsigned char toolspacer_png[459];
     extern const unsigned char top_svg[175];
-    extern const unsigned char undo_svg[882];
+    extern const unsigned char undo_svg[411];
     extern const unsigned char unknown_png[1699];
     extern const unsigned char unknown_svg[1416];
     extern const unsigned char wxButton_png[500];
@@ -222,8 +222,8 @@ namespace wxue_img
     extern const unsigned char wxStaticRadioBtnSizer_png[367];
     extern const unsigned char wxStaticText_png[290];
     extern const unsigned char wxTimer_png[1323];
-    extern const unsigned char wxUiEditor_svg[1943];
-    extern const unsigned char xrc_compare_svg[260];
+    extern const unsigned char wxUiEditor_svg[1490];
+    extern const unsigned char xrc_compare_svg[256];
 }
 
 // ************* End of generated code ***********

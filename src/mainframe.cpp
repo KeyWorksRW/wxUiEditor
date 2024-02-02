@@ -748,10 +748,6 @@ void MainFrame::OnImportProject(wxCommandEvent&)
     Project.NewProject();
 }
 
-namespace wxue_img
-{
-    extern const unsigned char wxUiEditor_svg[1943];
-}
 
 wxBitmapBundle wxueBundleSVG(const unsigned char* data, size_t size_data, size_t size_svg, wxSize def_size);
 
@@ -781,7 +777,7 @@ void MainFrame::OnAbout(wxCommandEvent&)
     aboutInfo.AddDeveloper("Randalphwa");
 #endif
 
-    aboutInfo.SetIcon(wxueBundleSVG(wxue_img::wxUiEditor_svg, 1943, 7265, wxSize(64, 64)).GetIconFor(this));
+    aboutInfo.SetIcon(bundle_wxUiEditor_svg(64, 64).GetIconFor(this));
 
     wxAboutBox(aboutInfo);
 }

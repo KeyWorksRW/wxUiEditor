@@ -748,7 +748,6 @@ void MainFrame::OnImportProject(wxCommandEvent&)
     Project.NewProject();
 }
 
-
 wxBitmapBundle wxueBundleSVG(const unsigned char* data, size_t size_data, size_t size_svg, wxSize def_size);
 
 void MainFrame::OnAbout(wxCommandEvent&)

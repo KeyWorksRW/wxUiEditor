@@ -212,11 +212,13 @@
 		<property name="additional_inheritance" type="stringlist_escapes"
 			help="Additional classes to inherit from (these can be your own classes if you specified their header file in base_hdr_includes in the C++ Settings section above)."/>
 		<property name="class_methods" type="stringlist_escapes"
-			help="Additional class methods to add (useful if you are *not* using a derived class."/>
+			help="Additional public class methods to add (useful if you are *not* using a derived class.)"/>
+		<property name="protected_class_methods" type="stringlist_escapes"
+			help="Additional protected class methods to add (useful if you are *not* using a derived class.)"/>
 		<property name="class_members" type="stringlist_escapes"
-			help="Additional class variable members to add (useful if you are *not* using a derived class."/>
+			help="Additional class variable members to add (useful if you are *not* using a derived class.)"/>
 		<property name="private_members" type="bool"
-			help="Check this to make all protected: members private:. This can only be done if you are NOT creating a derived class (use_derived_class is unchecked)."/>
+			help="Check this to make all class member variables private: instead of protected:. This can only be done if you are *not* creating a derived class (use_derived_class is unchecked)."/>
 	</gen>
 
 	<gen class="wxPython Settings" type="interface">

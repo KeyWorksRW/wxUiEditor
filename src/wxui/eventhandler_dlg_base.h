@@ -23,7 +23,7 @@
 
 namespace wxue_img
 {
-    extern const unsigned char ruby_logo_svg[1853];
+    extern const unsigned char ruby_logo_svg[897];
 }
 
 class EventHandlerDlgBase : public wxDialog

@@ -42,7 +42,7 @@ static wxBitmapBundle wxueBundleSVG(const unsigned char* data,
 namespace wxue_img
 {
     extern const unsigned char generate_svg[32526];
-    extern const unsigned char xrc_preview_svg[469];
+    extern const unsigned char xrc_preview_svg[392];
 }
 
 bool XrcPreview::Create(wxWindow* parent, wxWindowID id, const wxString& title,
@@ -78,7 +78,7 @@ bool XrcPreview::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     box_sizer_2->Add(btn_3, wxSizerFlags().Border(wxALL));
 
     m_btn_preview = new wxButton(this, wxID_ANY, "&Preview...");
-        m_btn_preview->SetBitmap(wxueBundleSVG(wxue_img::xrc_preview_svg, 469, 1326, wxSize(16, 16)));
+        m_btn_preview->SetBitmap(wxueBundleSVG(wxue_img::xrc_preview_svg, 392, 1322, wxSize(16, 16)));
     m_btn_preview->SetToolTip("Use wxXmlResource to load and display the contents");
     box_sizer_2->Add(m_btn_preview, wxSizerFlags().Border(wxALL));
 

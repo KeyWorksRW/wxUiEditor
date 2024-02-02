@@ -44,8 +44,8 @@ static const ImageMap png_headers[] = {
     { .name = "unknown", .data = unknown_png, .size_data = sizeof(unknown_png) },
     { "default", default_png, sizeof(default_png) },
 
-    { "grid_bag_sizer", grid_bag_sizer_png, sizeof(grid_bag_sizer_png) },
-    { "grid_sizer", grid_sizer_png, sizeof(grid_sizer_png) },
+    // { "grid_bag_sizer", grid_bag_sizer_png, sizeof(grid_bag_sizer_png) },
+    // { "grid_sizer", grid_sizer_png, sizeof(grid_sizer_png) },
     { "sizer", sizer_png, sizeof(sizer_png) },
     { "sizer_horizontal", sizer_horizontal_png, sizeof(sizer_horizontal_png) },
     { "slider", slider_png, sizeof(slider_png) },
@@ -185,6 +185,21 @@ wxImage GetInternalImage(tt_string_view name)
 
     // If all else fails, return a default 16x16 image
     return LoadHeaderImage(default_png, sizeof(default_png));
+}
+
+wxBitmapBundle GetSvgImage(tt_string_view name, int width, int height)
+{
+    if (auto bndl_function = GetSvgFunction(name); bndl_function)
+    {
+        return bndl_function(width, height);
+    }
+
+    return bundle_unknown_svg(width, height);
+}
+
+wxBitmapBundle GetSvgImage(tt_string_view name, const wxSize& size)
+{
+    return GetSvgImage(name, size.GetWidth(), size.GetHeight());
 }
 
 wxIcon GetIconImage(tt_string_view name)

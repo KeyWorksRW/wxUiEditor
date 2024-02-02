@@ -13,7 +13,7 @@
 class WXDLLIMPEXP_CORE wxBitmapButton : public wxBitmapButtonBase
 {
 public:
-    wxBitmapButton() { }
+    wxBitmapButton() = default;
 
     wxBitmapButton(wxWindow *parent,
                    wxWindowID id,
@@ -50,7 +50,7 @@ public:
 
     virtual bool Enable(bool enable = true) override;
 
-    virtual bool SetCurrent(bool doit = true) override;
+    virtual bool WXMakeCurrent(bool doit = true) override;
 
     virtual void Press() override;
     virtual void Release() override;

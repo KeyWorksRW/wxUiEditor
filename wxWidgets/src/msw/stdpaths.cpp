@@ -189,6 +189,9 @@ wxString wxStandardPaths::GetUserDir(Dir userDir) const
         case Dir_Cache:
             csidl = CSIDL_LOCAL_APPDATA;
             break;
+        case Dir_Config:
+            csidl = CSIDL_APPDATA;
+            break;
         case Dir_Desktop:
             csidl = CSIDL_DESKTOPDIRECTORY;
             break;
@@ -258,6 +261,7 @@ void wxStandardPaths::IgnoreAppBuildSubDirs()
 #else // __WIN32__
     IgnoreAppSubDir("Win32");
     IgnoreAppSubDir("x86");
+    IgnoreAppSubDir("ARM");
 #endif // __WIN64__/__WIN32__
 
     wxString compilerPrefix;
@@ -342,6 +346,12 @@ wxStandardPaths::MakeConfigFileName(const wxString& basename,
     wxFileName fn(wxEmptyString, basename);
     fn.SetExt(wxT("ini"));
     return fn.GetFullName();
+}
+
+wxString wxStandardPaths::GetSharedLibrariesDir() const
+{
+    wxFileName fn( GetExecutablePath() );
+    return fn.GetPath();
 }
 
 // ============================================================================

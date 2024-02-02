@@ -1710,18 +1710,19 @@ public:
             m_dist_x -= indent;
             m_hint = new wxFrame( m_win->GetParent(), wxID_ANY, wxEmptyString,
                                         wxPoint(pos.x - m_dist_x, pos.y + 5 ),
-                                        ib.GetSize(),
+                                        wxSize(1, 1),
                                         wxFRAME_TOOL_WINDOW |
                                         wxFRAME_FLOAT_ON_PARENT |
                                         wxFRAME_NO_TASKBAR |
                                         wxNO_BORDER );
             new wxBitmapCanvas( m_hint, ib, ib.GetSize() );
+            m_hint->SetClientSize(ib.GetSize());
+            m_hint->SetTransparent(128);
             m_hint->Show();
         }
         else
         {
             m_hint->Move( pos.x - m_dist_x, pos.y + 5  );
-            m_hint->SetTransparent( 128 );
         }
 
         return false;
@@ -5640,7 +5641,7 @@ bool wxDataViewCtrl::Create(wxWindow *parent,
     SetInitialSize(size);
 
 #ifdef __WXMAC__
-    MacSetClipChildren( true );
+    MacSetClipChildren();
 #endif
 
     m_clientArea = new wxDataViewMainWindow( this, wxID_ANY );

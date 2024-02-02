@@ -172,8 +172,8 @@ elseif (UNIX)
 endif()
 
 target_include_directories(wxWidgets33 PRIVATE
-    include
     ${setup_dir}
+    include
     src/tiff/libtiff
     src/jpeg
     src/png
@@ -187,11 +187,14 @@ target_include_directories(wxWidgets33 PRIVATE
     src/stc/lexilla/access
     src/stc/lexilla/lexlib
     src/stc/scintilla/src
+
+    3rdparty/lunasvg/include
+    3rdparty/lunasvg/source/plutovg
 )
 
 target_include_directories(wxCLib PRIVATE
-    include
     ${setup_dir}
+    include
     src/tiff/libtiff
     src/jpeg
     src/zlib

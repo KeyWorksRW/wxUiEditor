@@ -10,6 +10,8 @@
 #ifndef _WX_SETUP_H_
 #define _WX_SETUP_H_
 
+#pragma message("Including wxFork/wx/unix/setup.h")
+
 /* --- start common options --- */
 // ----------------------------------------------------------------------------
 // global settings
@@ -1495,6 +1497,9 @@
 
 // Set to 1 to use external nanosvg library when wxUSE_NANOSVG is enabled
 #define wxUSE_NANOSVG_EXTERNAL 0
+
+// Set to 1 for SVG rasterizing support using lunasvg instead of nanosvg
+#define wxUSE_LUNASVG       1
 
 // Set to 1 for TGA format support (loading only)
 #define wxUSE_TGA           1

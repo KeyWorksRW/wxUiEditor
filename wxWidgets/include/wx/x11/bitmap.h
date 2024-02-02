@@ -54,7 +54,7 @@ private:
 class WXDLLIMPEXP_CORE wxBitmap: public wxBitmapBase
 {
 public:
-    wxBitmap() {}
+    wxBitmap() = default;
     wxBitmap( int width, int height, int depth = -1 ) { Create( width, height, depth ); }
     wxBitmap( const wxSize& sz, int depth = -1 ) { Create( sz, depth ); }
     wxBitmap( int width, int height, const wxDC& dc ) { Create(width, height, dc); }
@@ -62,7 +62,6 @@ public:
     wxBitmap( const char bits[], int width, int height, int depth = 1 );
     wxBitmap( const char* const* bits );
     wxBitmap( const wxString &filename, wxBitmapType type = wxBITMAP_DEFAULT_TYPE );
-    virtual ~wxBitmap();
 
     static void InitStandardHandlers();
 

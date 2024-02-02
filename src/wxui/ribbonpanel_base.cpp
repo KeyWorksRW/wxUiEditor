@@ -49,9 +49,7 @@ namespace wxue_img
     extern const unsigned char fontPicker_png[763];
     extern const unsigned char gauge_png[260];
     extern const unsigned char genericdir_ctrl_png[328];
-    extern const unsigned char grid_bag_sizer_png[145];
     extern const unsigned char grid_png[171];
-    extern const unsigned char grid_sizer_png[127];
     extern const unsigned char htmlwin_png[1053];
     extern const unsigned char hyperlink_ctrl_png[329];
     extern const unsigned char infobar_png[556];
@@ -238,14 +236,14 @@ bool RibbonPanelBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos
     auto* sizer_bar_grids = new wxRibbonToolBar(sizer_panel_grids, wxID_ANY);
     {
         sizer_bar_grids->AddTool(gen_wxGridSizer,
-            wxueImage(wxue_img::grid_sizer_png, sizeof(wxue_img::grid_sizer_png)).Rescale(
-            FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "wxGridSizer", wxRIBBON_BUTTON_NORMAL);
+            wxue_img::bundle_grid_sizer_svg(FromDIP(22), FromDIP(22)).GetBitmap(wxDefaultSize), "wxGridSizer",
+            wxRIBBON_BUTTON_NORMAL);
         sizer_bar_grids->AddTool(gen_wxFlexGridSizer,
             wxue_img::bundle_flex_grid_sizer_svg(FromDIP(22), FromDIP(22)).GetBitmap(wxDefaultSize), "wxFlexGridSizer",
             wxRIBBON_BUTTON_NORMAL);
         sizer_bar_grids->AddTool(gen_wxGridBagSizer,
-            wxueImage(wxue_img::grid_bag_sizer_png, sizeof(wxue_img::grid_bag_sizer_png)).Rescale(
-            FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "wxGridBagSizer", wxRIBBON_BUTTON_NORMAL);
+            wxue_img::bundle_grid_bag_sizer_svg(FromDIP(22), FromDIP(22)).GetBitmap(wxDefaultSize), "wxGridBagSizer",
+            wxRIBBON_BUTTON_NORMAL);
     }
     sizer_bar_grids->Realize();
 
@@ -943,26 +941,12 @@ namespace wxue_img
         125,251,243,167,233,91,111,41,94,184,99,147,209,23,75,30,253,0,0,0,0,73,69,78,68,174,66,96,130
     };
 
-    const unsigned char grid_bag_sizer_png[145] {
-        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,115,
-        0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,0,67,73,68,65,84,56,203,99,96,24,106,128,17,198,248,207,192,240,159,74,6,
-        50,162,8,144,98,48,46,181,200,226,76,180,10,138,161,103,48,11,185,26,9,197,9,11,213,98,127,52,242,6,95,206,35,55,
-        71,142,70,222,104,114,195,159,213,135,6,0,0,107,184,22,20,23,111,101,87,0,0,0,0,73,69,78,68,174,66,96,130
-    };
-
     const unsigned char grid_png[171] {
         137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,115,
         0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,0,93,73,68,65,84,56,203,99,96,160,17,96,132,210,255,169,109,46,11,140,149,
         83,190,21,69,38,54,64,136,97,241,134,119,36,139,77,233,244,102,96,96,96,96,96,162,121,80,156,60,126,156,42,6,154,
         91,90,162,6,5,54,47,154,89,88,160,136,157,58,113,130,40,177,209,160,24,13,138,209,160,24,13,138,1,15,10,218,135,
         49,141,204,165,62,0,0,88,73,82,108,106,29,221,90,0,0,0,0,73,69,78,68,174,66,96,130
-    };
-
-    const unsigned char grid_sizer_png[127] {
-        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,115,
-        0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,0,49,73,68,65,84,56,203,99,96,24,106,128,17,198,248,207,192,240,159,10,134,
-        49,98,8,162,27,76,41,159,137,86,65,193,52,26,198,163,97,60,26,198,163,97,60,188,195,120,20,0,0,43,71,49,238,218,
-        78,100,17,0,0,0,0,73,69,78,68,174,66,96,130
     };
 
     const unsigned char htmlwin_png[1053] {

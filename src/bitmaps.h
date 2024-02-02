@@ -58,3 +58,6 @@ inline std::function<wxBitmapBundle(int width, int height)> GetSvgFunction(tt_st
         return it->second;
     return std::function<wxBitmapBundle(int width, int height)>();
 };
+
+wxBitmapBundle GetSvgImage(tt_string_view name, int width = 22, int height = 22);
+wxBitmapBundle GetSvgImage(tt_string_view name, const wxSize& size);

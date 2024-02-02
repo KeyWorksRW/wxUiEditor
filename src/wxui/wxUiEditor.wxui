@@ -1258,7 +1258,7 @@
                   wxEVT_RIBBONTOOLBAR_CLICKED="OnToolClick">
                   <node
                     class="ribbonTool"
-                    bitmap="Embed;grid_sizer.png"
+                    bitmap="SVG;grid_sizer.svg;[22,22]"
                     help="wxGridSizer"
                     id="gen_wxGridSizer" />
                   <node
@@ -1268,7 +1268,7 @@
                     id="gen_wxFlexGridSizer" />
                   <node
                     class="ribbonTool"
-                    bitmap="Embed;grid_bag_sizer.png"
+                    bitmap="SVG;grid_bag_sizer.svg;[22,22]"
                     help="wxGridBagSizer"
                     id="gen_wxGridBagSizer" />
                 </node>

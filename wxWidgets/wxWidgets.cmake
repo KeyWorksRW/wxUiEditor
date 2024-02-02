@@ -95,6 +95,7 @@ set (common_sources
     src/common/fontutilcmn.cpp
     src/common/framecmn.cpp
     src/common/fs_arc.cpp
+    src/common/fs_data.cpp
     src/common/fs_filter.cpp
     src/common/fs_inet.cpp
     src/common/fs_mem.cpp
@@ -235,6 +236,7 @@ set (common_sources
     src/common/webrequest.cpp
     src/common/webrequest_curl.cpp
     src/common/webview.cpp
+    src/common/webview_chromium.cpp
     src/common/webviewarchivehandler.cpp
     src/common/webviewfshandler.cpp
     src/common/wfstream.cpp
@@ -617,6 +619,36 @@ set (common_sources
     src/xrc/xh_hyperlink.cpp
     src/xrc/xh_sttxt.cpp
 
+    3rdparty/lunasvg/source/canvas.cpp
+    3rdparty/lunasvg/source/clippathelement.cpp
+    3rdparty/lunasvg/source/defselement.cpp
+    3rdparty/lunasvg/source/element.cpp
+    3rdparty/lunasvg/source/gelement.cpp
+    3rdparty/lunasvg/source/geometryelement.cpp
+    3rdparty/lunasvg/source/graphicselement.cpp
+    3rdparty/lunasvg/source/layoutcontext.cpp
+    3rdparty/lunasvg/source/lunasvg.cpp
+    3rdparty/lunasvg/source/markerelement.cpp
+    3rdparty/lunasvg/source/maskelement.cpp
+    3rdparty/lunasvg/source/paintelement.cpp
+    3rdparty/lunasvg/source/parser.cpp
+    3rdparty/lunasvg/source/property.cpp
+    3rdparty/lunasvg/source/stopelement.cpp
+    3rdparty/lunasvg/source/styledelement.cpp
+    3rdparty/lunasvg/source/styleelement.cpp
+    3rdparty/lunasvg/source/svgelement.cpp
+    3rdparty/lunasvg/source/symbolelement.cpp
+    3rdparty/lunasvg/source/useelement.cpp
+
+    3rdparty/lunasvg/source/plutovg/plutovg-blend.cpp
+    3rdparty/lunasvg/source/plutovg/plutovg-dash.cpp
+    3rdparty/lunasvg/source/plutovg/plutovg-ft-math.cpp
+    3rdparty/lunasvg/source/plutovg/plutovg-ft-raster.cpp
+    3rdparty/lunasvg/source/plutovg/plutovg-ft-stroker.cpp
+    3rdparty/lunasvg/source/plutovg/plutovg-geometry.cpp
+    3rdparty/lunasvg/source/plutovg/plutovg-paint.cpp
+    3rdparty/lunasvg/source/plutovg/plutovg-rle.cpp
+    3rdparty/lunasvg/source/plutovg/plutovg.cpp
 )
 
 set (msw_sources

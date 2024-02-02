@@ -14,7 +14,6 @@
 #include "bitmaps.h"         // Contains various images handling functions
 #include "clipboard.h"       // Handles reading and writing OS clipboard data
 #include "mainframe.h"       // MainFrame -- Main window frame
-#include "mainframe_base.h"  // contains all the wxue_img namespace embedded images
 #include "nav_panel.h"       // NavigationPanel -- Navigation Panel
 #include "node.h"            // Node class
 #include "node_creator.h"    // NodeCreator class
@@ -379,6 +378,7 @@ void NavPopupMenu::CreateSizerMenu(Node* node)
     Bind(wxEVT_UPDATE_UI, &NavPopupMenu::OnUpdateEvent, this);
 
     m_sizer_node = node;
+    auto dpi_size = wxGetFrame().FromDIP(wxSize(16, 16));
 
     bool isTopSizer = (node->getParent()->isForm() || node->getParent()->isContainer());
     wxMenuItem* menu_item;
@@ -392,11 +392,11 @@ void NavPopupMenu::CreateSizerMenu(Node* node)
     menu_item = sub_menu->Append(MenuNEW_CHILD_WRAP_SIZER, "wxWrapSizer");
     menu_item->SetBitmap(GetInternalImage("wrap_sizer"));
     menu_item = sub_menu->Append(MenuNEW_CHILD_GRID_SIZER, "wxGridSizer");
-    menu_item->SetBitmap(GetInternalImage("grid_sizer"));
+    menu_item->SetBitmap(GetSvgImage("grid_sizer", dpi_size));
     menu_item = sub_menu->Append(MenuNEW_CHILD_FLEX_GRID_SIZER, "wxFlexGridSizer");
-    menu_item->SetBitmap(GetInternalImage("flex_grid_sizer"));
+    menu_item->SetBitmap(GetSvgImage("flex_grid_sizer", dpi_size));
     menu_item = sub_menu->Append(MenuNEW_CHILD_GRIDBAG_SIZER, "wxGridBagSizer");
-    menu_item->SetBitmap(GetInternalImage("grid_bag_sizer"));
+    menu_item->SetBitmap(GetSvgImage("grid_bag_sizer", dpi_size));
 
     AppendSubMenu(sub_menu, "Add child sizer");
 
@@ -410,11 +410,11 @@ void NavPopupMenu::CreateSizerMenu(Node* node)
         menu_item = sub_menu->Append(MenuNEW_SIBLING_WRAP_SIZER, "wxWrapSizer");
         menu_item->SetBitmap(GetInternalImage("wrap_sizer"));
         menu_item = sub_menu->Append(MenuNEW_SIBLING_GRID_SIZER, "wxGridSizer");
-        menu_item->SetBitmap(GetInternalImage("grid_sizer"));
+        menu_item->SetBitmap(GetSvgImage("grid_sizer", dpi_size));
         menu_item = sub_menu->Append(MenuNEW_SIBLING_FLEX_GRID_SIZER, "wxFlexGridSizer");
-        menu_item->SetBitmap(GetInternalImage("flex_grid_sizer"));
+        menu_item->SetBitmap(GetSvgImage("flex_grid_sizer", dpi_size));
         menu_item = sub_menu->Append(MenuNEW_SIBLING_GRIDBAG_SIZER, "wxGridBagSizer");
-        menu_item->SetBitmap(GetInternalImage("grid_bag_sizer"));
+        menu_item->SetBitmap(GetSvgImage("grid_bag_sizer", dpi_size));
         AppendSubMenu(sub_menu, "Add sibling sizer");
 
         AppendSeparator();
@@ -425,9 +425,9 @@ void NavPopupMenu::CreateSizerMenu(Node* node)
     {
         sub_menu = new wxMenu;
         menu_item = sub_menu->Append(MenuChangeTo_FLEX_GRID_SIZER, "wxFlexGridSizer");
-        menu_item->SetBitmap(GetInternalImage("flex_grid_sizer"));
+        menu_item->SetBitmap(GetSvgImage("flex_grid_sizer", dpi_size));
         menu_item = sub_menu->Append(MenuChangeTo_GRID_SIZER, "wxGridSizer");
-        menu_item->SetBitmap(GetInternalImage("grid_sizer"));
+        menu_item->SetBitmap(GetSvgImage("grid_sizer", dpi_size));
         menu_item = sub_menu->Append(MenuChangeTo_STATIC_SIZER, "wxStaticBoxSizer");
         menu_item->SetBitmap(GetInternalImage("wxStaticBoxSizer"));
         menu_item = sub_menu->Append(MenuChangeTo_WRAP_SIZER, "wxWrapSizer");
@@ -439,7 +439,7 @@ void NavPopupMenu::CreateSizerMenu(Node* node)
     {
         sub_menu = new wxMenu;
         menu_item = sub_menu->Append(MenuChangeTo_FLEX_GRID_SIZER, "wxFlexGridSizer");
-        menu_item->SetBitmap(GetInternalImage("flex_grid_sizer"));
+        menu_item->SetBitmap(GetSvgImage("flex_grid_sizer", dpi_size));
         menu_item = sub_menu->Append(MenuChangeTo_WRAP_SIZER, "wxWrapSizer");
         menu_item->SetBitmap(GetInternalImage("wrap_sizer"));
 
@@ -449,7 +449,7 @@ void NavPopupMenu::CreateSizerMenu(Node* node)
     {
         sub_menu = new wxMenu;
         menu_item = sub_menu->Append(MenuChangeTo_GRID_SIZER, "wxGridSizer");
-        menu_item->SetBitmap(GetInternalImage("grid_sizer"));
+        menu_item->SetBitmap(GetSvgImage("grid_sizer", dpi_size));
         menu_item = sub_menu->Append(MenuChangeTo_WRAP_SIZER, "wxWrapSizer");
         menu_item->SetBitmap(GetInternalImage("wrap_sizer"));
 
@@ -459,9 +459,9 @@ void NavPopupMenu::CreateSizerMenu(Node* node)
     {
         sub_menu = new wxMenu;
         menu_item = sub_menu->Append(MenuChangeTo_FLEX_GRID_SIZER, "wxFlexGridSizer");
-        menu_item->SetBitmap(GetInternalImage("flex_grid_sizer"));
+        menu_item->SetBitmap(GetSvgImage("flex_grid_sizer", dpi_size));
         menu_item = sub_menu->Append(MenuChangeTo_GRID_SIZER, "wxGridSizer");
-        menu_item->SetBitmap(GetInternalImage("grid_sizer"));
+        menu_item->SetBitmap(GetSvgImage("grid_sizer", dpi_size));
 
         AppendSubMenu(sub_menu, "Change Sizer To");
     }
@@ -788,6 +788,8 @@ void NavPopupMenu::MenuAddCommands(Node* node)
 void NavPopupMenu::MenuAddChildSizerCommands(Node* child)
 {
     m_sizer_node = child;
+    auto dpi_size = wxGetFrame().FromDIP(wxSize(16, 16));
+
     auto sub_menu = new wxMenu;
     auto menu_item = sub_menu->Append(MenuNEW_CHILD_BOX_SIZER, "wxBoxSizer");
     menu_item->SetBitmap(GetInternalImage("sizer_horizontal"));
@@ -796,11 +798,11 @@ void NavPopupMenu::MenuAddChildSizerCommands(Node* child)
     menu_item = sub_menu->Append(MenuNEW_CHILD_WRAP_SIZER, "wxWrapSizer");
     menu_item->SetBitmap(GetInternalImage("wrap_sizer"));
     menu_item = sub_menu->Append(MenuNEW_CHILD_GRID_SIZER, "wxGridSizer");
-    menu_item->SetBitmap(GetInternalImage("grid_sizer"));
+    menu_item->SetBitmap(GetSvgImage("grid_sizer", dpi_size));
     menu_item = sub_menu->Append(MenuNEW_CHILD_FLEX_GRID_SIZER, "wxFlexGridSizer");
-    menu_item->SetBitmap(GetInternalImage("flex_grid_sizer"));
+    menu_item->SetBitmap(GetSvgImage("flex_grid_sizer", dpi_size));
     menu_item = sub_menu->Append(MenuNEW_CHILD_GRIDBAG_SIZER, "wxGridBagSizer");
-    menu_item->SetBitmap(GetInternalImage("grid_bag_sizer"));
+    menu_item->SetBitmap(GetSvgImage("grid_bag_sizer", dpi_size));
 
     if (child->isParent(gen_wxDialog))
     {
@@ -822,6 +824,7 @@ void NavPopupMenu::MenuAddMoveCommands(Node* node)
 
     wxMenuItem* menu_item;
     wxMenu* sub_menu;
+    auto dpi_size = wxGetFrame().FromDIP(wxSize(16, 16));
 
     sub_menu = new wxMenu;
     menu_item = sub_menu->Append(MenuMOVE_UP, "Up\tAlt+Up", "Moves selected item up");
@@ -849,11 +852,11 @@ void NavPopupMenu::MenuAddMoveCommands(Node* node)
         menu_item = sub_menu->Append(MenuNEW_PARENT_WRAP_SIZER, "wxWrapSizer");
         menu_item->SetBitmap(GetInternalImage("wrap_sizer"));
         menu_item = sub_menu->Append(MenuNEW_PARENT_GRID_SIZER, "wxGridSizer");
-        menu_item->SetBitmap(GetInternalImage("grid_sizer"));
+        menu_item->SetBitmap(GetSvgImage("grid_sizer", dpi_size));
         menu_item = sub_menu->Append(MenuNEW_PARENT_FLEX_GRID_SIZER, "wxFlexGridSizer");
-        menu_item->SetBitmap(GetInternalImage("flex_grid_sizer"));
+        menu_item->SetBitmap(GetSvgImage("flex_grid_sizer", dpi_size));
         menu_item = sub_menu->Append(MenuNEW_PARENT_GRIDBAG_SIZER, "wxGridBagSizer");
-        menu_item->SetBitmap(GetInternalImage("grid_bag_sizer"));
+        menu_item->SetBitmap(GetSvgImage("grid_bag_sizer", dpi_size));
 
         AppendSubMenu(sub_menu, "&Move into new sizer");
     }

@@ -6384,6 +6384,7 @@
         <node
           class="wxAuiNotebook"
           art_provider="wxAuiGenericTabArt"
+          var_name="m_aui_notebook"
           background_colour="wxSYS_COLOUR_BTNFACE"
           flags="wxEXPAND"
           proportion="1"

@@ -1,9 +1,13 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   DataHandler class
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2023 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2023-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+
+#if __has_include(<format>)
+    #include <format>
+#endif
 
 #include "data_handler.h"
 
@@ -21,6 +25,7 @@
 
 #include "code.h"             // Code -- Helper class for generating code
 #include "gen_base.h"         // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
+#include "mainframe.h"        // MainFrame -- Main window frame
 #include "project_handler.h"  // ProjectHandler class
 #include "utils.h"            // Miscellaneous utility functions
 #include "write_code.h"       // Write code to Scintilla or file
@@ -138,15 +143,23 @@ bool DataHandler::LoadAndCompress(const Node* node)
         pugi::xml_document doc;
         if (auto result = doc.load_file(embed.filename.c_str(), pugi::parse_trim_pcdata | pugi::parse_default); !result)
         {
-#if defined(_DEBUG)
             // Unlike pugixml, wxXmlDocument will list the line number where the error occurred
+            wxXmlParseError err_details;
             wxXmlDocument wx_doc;
-            wx_doc.Load(embed.filename.c_str());
-
-            // TODO: [Randalphwa - 12-26-2023] Once https://github.com/wxWidgets/wxWidgets/issues/24167 gets fixed,
-            // we can use wxXmlDocument in a release version and if Project.isUiAvailable() is true, we can use
-            // the error message from wxXmlDocument instead of pugixml to display to the user.
-#endif  // _DEBUG
+            if (!wx_doc.Load(embed.filename.c_str(), wxXMLDOC_NONE, &err_details))
+            {
+#if __has_include(<format>)
+                std::string msg =
+                    std::format(std::locale(""), "Parsing error: {} at line: {}, column: {}, offset: {:L}\nFile: {}\n",
+                                err_details.message.ToStdString(), err_details.line, err_details.column, err_details.offset,
+                                embed.filename.c_str());
+#else
+                wxString msg;
+                msg.Format("Parsing error: %s at line: %d, column: %d, offset: %ld\nFile: %s\n", err_details.message,
+                           err_details.line, err_details.column, err_details.offset, embed.filename.c_str());
+#endif
+                wxMessageDialog(wxGetMainFrame()->getWindow(), msg, "Parsing Error", wxOK | wxICON_ERROR).ShowModal();
+            }
             return false;
         }
         std::ostringstream xml_stream;

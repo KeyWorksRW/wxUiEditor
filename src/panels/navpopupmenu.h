@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Context-menu for Navigation Panel
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -156,6 +156,7 @@ public:
         MenuSingleGenPython,
         MenuSingleGenRuby,
         MenuSingleGenRust,
+        MenuSingleGenXRC,
         MenuTESTING_INFO,
         MenuDEBUG_KEYHH,
     };

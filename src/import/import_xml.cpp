@@ -1339,6 +1339,14 @@ NodeSharedPtr ImportXML::CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, No
         new_node->set_value(prop_label, "");
     }
 
+    if (new_node->isForm())
+    {
+        if (auto class_name = xml_obj.attribute("name").as_string(); class_name.size())
+        {
+            new_node->set_value(prop_class_name, class_name);
+        }
+    }
+
     if (parent)
     {
         if (auto prop = new_node->getPropPtr(prop_var_name); prop)

@@ -297,7 +297,7 @@ static bool GenerateXrcForm(Node* form, GenResults& results, std::vector<tt_stri
 
     if (path.file_exists())
     {
-        wxFile file_original(path.make_wxString(), wxFile::read);
+        wxFile file_original(path.make_wxString(), wxFile::read_write);
         if (file_original.IsOpened())
         {
             // Check to see if the file would be changed. If not, we don't need to update it.
@@ -324,6 +324,15 @@ static bool GenerateXrcForm(Node* form, GenResults& results, std::vector<tt_stri
                         return true;
                     }
                 }
+            }
+            else
+            {
+                if (file_original.Write(new_str.c_str(), new_str.length()) != new_str.length())
+                {
+                    results.msgs.emplace_back() << "Cannot create or write to the file " << path << '\n';
+                    return false;
+                }
+                return true;
             }
         }
 

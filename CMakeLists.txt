@@ -289,7 +289,7 @@ target_include_directories(wxUiEditor PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}/src/customprops
     ${CMAKE_CURRENT_LIST_DIR}/src/ui
     ${CMAKE_CURRENT_LIST_DIR}/src/wxui
-    ${CMAKE_CURRENT_LIST_DIR}/pugixml
+    ${CMAKE_CURRENT_LIST_DIR}/src/pugixml
 )
 
 target_include_directories(check_build PRIVATE
@@ -307,7 +307,7 @@ target_include_directories(check_build PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}/src/customprops
     ${CMAKE_CURRENT_LIST_DIR}/src/ui
     ${CMAKE_CURRENT_LIST_DIR}/src/wxui
-    ${CMAKE_CURRENT_LIST_DIR}/pugixml
+    ${CMAKE_CURRENT_LIST_DIR}/src/pugixml
 )
 
 ####################### Testing #######################

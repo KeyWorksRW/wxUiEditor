@@ -335,7 +335,7 @@ set (file_list
     winres/winres_layout.cpp    # resForm layout code
     winres/winres_styles.cpp    # resCtrl class style processing functions
 
-    ../pugixml/pugixml.cpp      # XML parser
+    pugixml/pugixml.cpp      # XML parser
 
     ui/generate_xrc_dlg.cpp     # Dialog for generating XRC file(s)
     ui/gridbag_item.cpp         # Dialog for inserting an item into a wxGridBagSizer node

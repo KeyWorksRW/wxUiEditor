@@ -27,8 +27,8 @@
     #endif
 
     #ifndef PUGIXML_NO_XPATH
-        #include <math.h>
         #include <float.h>
+        #include <math.h>
     #endif
 
     #ifndef PUGIXML_NO_STL
@@ -282,19 +282,20 @@ PUGI__FN bool strequalrange(const char_t* lhs, const char_t* rhs, size_t count)
     return lhs[count] == 0;
 }
 
-	// Get length of wide string, even if CRT lacks wide character support
-	PUGI__FN size_t strlength_wide(const wchar_t* s)
-	{
-		assert(s);
+// Get length of wide string, even if CRT lacks wide character support
+PUGI__FN size_t strlength_wide(const wchar_t* s)
+{
+    assert(s);
 
-        #ifdef PUGIXML_WCHAR_MODE
-		return wcslen(s);
-        #else
-		const wchar_t* end = s;
-		while (*end) end++;
-		return static_cast<size_t>(end - s);
-        #endif
-	}
+    #ifdef PUGIXML_WCHAR_MODE
+    return wcslen(s);
+    #else
+    const wchar_t* end = s;
+    while (*end)
+        end++;
+    return static_cast<size_t>(end - s);
+    #endif
+}
 PUGI__NS_END
 
 // auto_ptr-like object for exception recovery

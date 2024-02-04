@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Context-menu for Navigation Panel
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -319,6 +319,13 @@ void NavPopupMenu::OnMenuEvent(wxCommandEvent& event)
                 wxGetMainFrame()->OnGenSingleRust(dummy);
             }
             break;
+
+        case MenuSingleGenXRC:
+            {
+                wxCommandEvent dummy;
+                wxGetMainFrame()->OnGenSingleXRC(dummy);
+            }
+            break;
 #endif
 
         case MenuADD_PAGE:
@@ -495,6 +502,7 @@ void NavPopupMenu::MenuAddCommands(Node* node)
         Append(MenuSingleGenPython, "Generate Python for this form");
         Append(MenuSingleGenRuby, "Generate Ruby for this form");
         Append(MenuSingleGenRust, "Generate Rust for this form");
+        Append(MenuSingleGenXRC, "Generate XRC for this form");
         AppendSeparator();
     }
 #endif

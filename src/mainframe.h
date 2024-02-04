@@ -257,6 +257,7 @@ public:
     void OnGenSinglePython(wxCommandEvent& event);
     void OnGenSingleRuby(wxCommandEvent& event);
     void OnGenSingleRust(wxCommandEvent& event);
+    void OnGenSingleXRC(wxCommandEvent& event);
 #endif
 
 protected:

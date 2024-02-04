@@ -1238,8 +1238,7 @@ NodeSharedPtr ImportXML::CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, No
             return NodeSharedPtr();
         }
     }
-
-    if (getGenName == gen_wxCheckBox)
+    else if (getGenName == gen_wxCheckBox)
     {
         for (auto& iter: xml_obj.children())
         {
@@ -1252,7 +1251,7 @@ NodeSharedPtr ImportXML::CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, No
         }
     }
 
-    if (getGenName == gen_tool)
+    else if (getGenName == gen_tool)
     {
         if (xml_obj.find_node(
                 [](const pugi::xml_node& node)
@@ -1264,12 +1263,16 @@ NodeSharedPtr ImportXML::CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, No
         }
     }
 
-    if (getGenName == gen_wxMenuBar && parent->isGen(gen_Project))
+    else if (getGenName == gen_wxMenuBar && parent->isGen(gen_Project))
+    {
         // switch to the form version
         getGenName = gen_MenuBar;
+    }
     else if (getGenName == gen_wxToolBar && parent->isGen(gen_Project))
+    {
         // switch to the form version
         getGenName = gen_ToolBar;
+    }
 
     auto new_node = NodeCreation.createNode(getGenName, parent);
     if (new_node && is_generic_version)

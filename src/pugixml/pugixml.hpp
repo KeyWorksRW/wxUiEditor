@@ -1072,6 +1072,10 @@ namespace pugi
         void save(std::basic_ostream<wchar_t, std::char_traits<wchar_t>>& stream, const char* indent = PUGIXML_TEXT("\t"),
                   unsigned int flags = format_default) const;
 
+        // Creates std::ostringstream, writes utf8 encoded XML to it, and then saves it to
+        // the specified file
+        bool save_file_stream(const std::string& path, const char* indent = "\t", unsigned int flags = format_default) const;
+
         // Save XML to file
         bool save_file(const char* path, const char* indent = PUGIXML_TEXT("\t"), unsigned int flags = format_default,
                        xml_encoding encoding = encoding_auto) const;

@@ -50,6 +50,7 @@ using namespace pugi;
 #include <string.h>
 
 #include <cstring>
+#include <fstream>
 #include <istream>
 #include <ostream>
 #include <string>
@@ -6934,6 +6935,21 @@ namespace pugi
         xml_writer_stream writer(stream);
 
         save(writer, indent, flags, encoding_wchar);
+    }
+
+    bool xml_document::save_file_stream(const std::string& path, const char* indent, unsigned int flags) const
+    {
+        std::ofstream outfile(path);
+        if (outfile)
+        {
+            std::ostringstream stream;
+            xml_writer_stream writer(stream);
+            save(writer, indent, flags, encoding_utf8);
+            outfile << stream.str();  // Writes the buffer directly to the file.
+            outfile.close();
+            return true;
+        }
+        return false;
     }
 
     bool xml_document::save_file(const char* path_, const char* indent, unsigned int flags, xml_encoding encoding) const

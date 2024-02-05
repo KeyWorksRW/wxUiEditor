@@ -74,7 +74,7 @@
 #endif
 
 // Character interface macros
-    #define PUGIXML_TEXT(t) t
+#define PUGIXML_TEXT(t) t
 
 // The explicit boolean type to avoid compiler ambiguous match const char* as scalar type 'bool',
 // because we preferred compiler match const char* as std::string_view
@@ -352,12 +352,12 @@ namespace pugi
         std::string_view value() const;
 
         // Get attribute value, or the default value if attribute is empty
-        std::string_view as_string(std::string_view def = std::string_view{}) const;
+        std::string_view as_string(std::string_view def = std::string_view {}) const;
 
-        std::string as_std_str(std::string_view def = std::string_view{}) const { return std::string(as_string(def)); }
+        std::string as_std_str(std::string_view def = std::string_view {}) const { return std::string(as_string(def)); }
 
-        tt_string_view as_sview(std::string_view def = std::string_view{}) const { return as_string(def); }
-        tt_string as_cstr(std::string_view def = std::string_view{}) const { return as_std_str(def); }
+        tt_string_view as_sview(std::string_view def = std::string_view {}) const { return as_string(def); }
+        tt_string as_cstr(std::string_view def = std::string_view {}) const { return as_std_str(def); }
 
         // Get attribute value as a number, or the default value if conversion did not succeed or attribute is empty
         int as_int(int def = 0) const;
@@ -639,7 +639,8 @@ namespace pugi
         }
 
         // Find child node by attribute name/value
-        xml_node find_child_by_attribute(std::string_view name, std::string_view attr_name, std::string_view attr_value) const;
+        xml_node find_child_by_attribute(std::string_view name, std::string_view attr_name,
+                                         std::string_view attr_value) const;
         xml_node find_child_by_attribute(std::string_view attr_name, std::string_view attr_value) const;
 
         // Get the absolute node path from root as a text string.
@@ -698,7 +699,6 @@ namespace pugi
         xml_node_struct* internal_object() const;
     };
 
-
     // A helper for working with text inside PCDATA nodes
     class xml_text
     {
@@ -730,12 +730,12 @@ namespace pugi
         std::string_view get() const;
 
         // Get text, or the default value if object is empty
-        std::string_view as_string(std::string_view def = std::string_view{}) const;
+        std::string_view as_string(std::string_view def = std::string_view {}) const;
 
-        std::string as_std_str(std::string_view def = std::string_view{}) const { return std::string(as_string(def)); }
+        std::string as_std_str(std::string_view def = std::string_view {}) const { return std::string(as_string(def)); }
 
-        tt_string_view as_sview(std::string_view def = std::string_view{}) const { return as_string(def); }
-        tt_string as_cstr(std::string_view def = std::string_view{}) const { return tt_string(as_string(def)); }
+        tt_string_view as_sview(std::string_view def = std::string_view {}) const { return as_string(def); }
+        tt_string as_cstr(std::string_view def = std::string_view {}) const { return tt_string(as_string(def)); }
 
         // Get text as a number, or the default value if conversion did not succeed or object is empty
         int as_int(int def = 0) const;
@@ -783,7 +783,6 @@ namespace pugi
         // Get the data node (node_pcdata or node_cdata) for this object
         xml_node data() const;
     };
-
 
     // Child node iterator (a bidirectional iterator over a collection of xml_node)
     class xml_node_iterator
@@ -1032,39 +1031,42 @@ namespace pugi
                               unsigned int options = parse_default);
 
         // Load document from zero-terminated string. No encoding conversions are applied.
-        xml_parse_result load_string(const char* contents, unsigned int options = parse_default);
+        xml_parse_result load_string(const std::string& contents, unsigned int options = parse_default);
 
-        // Load document from file
-        xml_parse_result load_file(const char* path, unsigned int options = parse_default,
-                                   xml_encoding encoding = encoding_auto);
-        xml_parse_result load_file(const wchar_t* path, unsigned int options = parse_default,
+        xml_parse_result load_file(const std::string& path, unsigned int options = parse_default,
                                    xml_encoding encoding = encoding_auto);
 
-        // Load document from buffer. Copies/converts the buffer, so it may be deleted or changed after the function returns.
         // Load the file into a std::unique_ptr<char> and parse it as a string. If an error
         // occurs, xml_parse_result.line_number and xml_parse_result.column will be set to
         // the line number/column of the error.
         xml_parse_result load_file_string(const std::string& path, unsigned int options = parse_default);
+
+        // Load document from buffer. Copies/converts the buffer, so it may be deleted or
+        // changed after the function returns.
         xml_parse_result load_buffer(const void* contents, size_t size, unsigned int options = parse_default,
                                      xml_encoding encoding = encoding_auto);
 
-        // Load document from buffer, using the buffer for in-place parsing (the buffer is modified and used for storage of
-        // document data). You should ensure that buffer data will persist throughout the document's lifetime, and free the
-        // buffer memory manually once document is destroyed.
+        // Load document from buffer, using the buffer for in-place parsing (the buffer is
+        // modified and used for storage of document data). You should ensure that buffer
+        // data will persist throughout the document's lifetime, and free the buffer memory
+        // manually once document is destroyed.
         xml_parse_result load_buffer_inplace(void* contents, size_t size, unsigned int options = parse_default,
                                              xml_encoding encoding = encoding_auto);
 
-        // Load document from buffer, using the buffer for in-place parsing (the buffer is modified and used for storage of
-        // document data). You should allocate the buffer with pugixml allocation function; document will free the buffer
-        // when it is no longer needed (you can't use it anymore).
+        // Load document from buffer, using the buffer for in-place parsing (the buffer is
+        // modified and used for storage of document data). You should allocate the buffer
+        // with pugixml allocation function; document will free the buffer when it is no
+        // longer needed (you can't use it anymore).
         xml_parse_result load_buffer_inplace_own(void* contents, size_t size, unsigned int options = parse_default,
                                                  xml_encoding encoding = encoding_auto);
 
-        // Save XML document to writer (semantics is slightly different from xml_node::print, see documentation for details).
+        // Save XML document to writer (semantics is slightly different from xml_node::print,
+        // see documentation for details).
         void save(xml_writer& writer, const char* indent = PUGIXML_TEXT("\t"), unsigned int flags = format_default,
                   xml_encoding encoding = encoding_auto) const;
 
-        // Save XML document to stream (semantics is slightly different from xml_node::print, see documentation for details).
+        // Save XML document to stream (semantics is slightly different from xml_node::print,
+        // see documentation for details).
         void save(std::basic_ostream<char, std::char_traits<char>>& stream, const char* indent = PUGIXML_TEXT("\t"),
                   unsigned int flags = format_default, xml_encoding encoding = encoding_auto) const;
         void save(std::basic_ostream<wchar_t, std::char_traits<wchar_t>>& stream, const char* indent = PUGIXML_TEXT("\t"),
@@ -1256,13 +1258,13 @@ namespace pugi
         bool operator!() const;
     };
 
-    #if !defined(PUGIXML_NO_EXCEPTIONS)
-        #if defined(_MSC_VER)
-            // C4275 can be ignored in Visual C++ if you are deriving
-            // from a type in the Standard C++ Library
-            #pragma warning(push)
-            #pragma warning(disable : 4275)
-        #endif
+#if !defined(PUGIXML_NO_EXCEPTIONS)
+    #if defined(_MSC_VER)
+        // C4275 can be ignored in Visual C++ if you are deriving
+        // from a type in the Standard C++ Library
+        #pragma warning(push)
+        #pragma warning(disable : 4275)
+    #endif
     // XPath exception class
     class xpath_exception : public std::exception
     {
@@ -1279,10 +1281,10 @@ namespace pugi
         // Get parse result
         const xpath_parse_result& result() const;
     };
-        #if defined(_MSC_VER)
-            #pragma warning(pop)
-        #endif
-    #endif  // not !defined(PUGIXML_NO_EXCEPTIONS)
+    #if defined(_MSC_VER)
+        #pragma warning(pop)
+    #endif
+#endif  // not !defined(PUGIXML_NO_EXCEPTIONS)
 
     // XPath node class (either xml_node or xml_attribute)
     class xpath_node

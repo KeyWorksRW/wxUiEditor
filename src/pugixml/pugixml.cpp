@@ -6764,24 +6764,11 @@ namespace pugi
         return impl::load_stream_impl(static_cast<xml_document_struct*>(_root), stream, options, encoding_wchar, &_buffer);
     }
 
-    xml_parse_result xml_document::load_string(const char* contents, unsigned int options)
+    xml_parse_result xml_document::load_string(const std::string& contents, unsigned int options)
     {
         // Force native encoding (skip autodetection)
         xml_encoding encoding = encoding_utf8;
 
-        return load_buffer(contents, std::strlen(contents) * sizeof(char), options, encoding);
-    }
-
-    xml_parse_result xml_document::load(const char* contents, unsigned int options)
-    {
-        return load_string(contents, options);
-    }
-
-    xml_parse_result xml_document::load_file(const char* path_, unsigned int options, xml_encoding encoding)
-    {
-        reset();
-
-        auto_deleter<FILE> file(impl::open_file(path_, "rb"), impl::close_file);
         auto result = load_buffer(contents.c_str(), contents.size(), options, encoding);
         if (result.status != status_ok)
         {
@@ -6809,14 +6796,18 @@ namespace pugi
                     result.detailed_msg = msg.utf8_string();
 #endif
 
-        return impl::load_file_impl(static_cast<xml_document_struct*>(_root), file.data, options, encoding, &_buffer);
+                    break;
+                }
+            }
+        }
+        return result;
     }
 
-    xml_parse_result xml_document::load_file(const wchar_t* path_, unsigned int options, xml_encoding encoding)
+    xml_parse_result xml_document::load_file(const std::string& path, unsigned int options, xml_encoding encoding)
     {
         reset();
 
-        auto_deleter<FILE> file(impl::open_file_wide(path_, L"rb"), impl::close_file);
+        auto_deleter<FILE> file(impl::open_file(path.c_str(), "rb"), impl::close_file);
 
         return impl::load_file_impl(static_cast<xml_document_struct*>(_root), file.data, options, encoding, &_buffer);
     }
@@ -11978,10 +11969,7 @@ namespace pugi
         return *this;
     }
 
-    xpath_node_set::xpath_node_set(xpath_node_set&& rhs) noexcept :
-        _type(type_unsorted),
-        _begin(_storage),
-        _end(_storage)
+    xpath_node_set::xpath_node_set(xpath_node_set&& rhs) noexcept : _type(type_unsorted), _begin(_storage), _end(_storage)
     {
         _move(rhs);
     }

@@ -92,7 +92,7 @@ void ImportPanel::SetImportFile(const tt_string& file, int lexer)
 
             {
                 pugi::xml_document doc;
-                if (auto result = doc.load_file(file.c_str()); result)
+                if (auto result = doc.load_file_string(file); result)
                 {
                     std::set<tt_string> keywords;
                     auto root = doc.first_child();

@@ -1206,9 +1206,11 @@ bool ImageHandler::AddSvgBundleImage(tt_string path, Node* form)
     // Run the file through an XML parser so that we can remove content that isn't used, as well as removing line breaks,
     // leading spaces, etc.
     pugi::xml_document doc;
-    auto result = doc.load_file(path.c_str());
+    auto result = doc.load_file_string(path);
     if (!result)
     {
+        wxMessageDialog(wxGetMainFrame()->getWindow(), result.detailed_msg, "Parsing Error", wxOK | wxICON_ERROR)
+            .ShowModal();
         return false;
     }
 

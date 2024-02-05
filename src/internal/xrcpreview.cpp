@@ -368,7 +368,7 @@ void XrcPreview::OnImport(wxCommandEvent& WXUNUSED(event))
     {
         // Place this in a block so that the string is destroyed before we process the XML
         // document (to save allocated memory).
-        auto result = doc.load_string(xrc_text.c_str());
+        auto result = doc.load_string(xrc_text.utf8_string());
         if (!result)
         {
             wxMessageBox("Error parsing XRC document: " + tt_string(result.description()), "XRC Import Test");
@@ -435,7 +435,7 @@ void XrcPreview::OnDuplicate(wxCommandEvent& WXUNUSED(event))
     {
         // Place this in a block so that the string is destroyed before we process the XML
         // document (to save allocated memory).
-        auto result = doc.load_string(xrc_text.c_str());
+        auto result = doc.load_string(xrc_text.utf8_string());
         if (!result)
         {
             wxMessageBox("Error parsing XRC document: " + tt_string(result.description()), "XRC Import Test");

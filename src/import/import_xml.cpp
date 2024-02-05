@@ -136,9 +136,10 @@ std::optional<pugi::xml_document> ImportXML::LoadDocFile(const tt_string& file)
 {
     pugi::xml_document doc;
 
-    if (auto result = doc.load_file(file.c_str()); !result)
+    if (auto result = doc.load_file_string(file); !result)
     {
-        dlgCannotParse(result, file, "Import project");
+        wxMessageDialog(wxGetMainFrame()->getWindow(), result.detailed_msg, "Parsing Error", wxOK | wxICON_ERROR)
+            .ShowModal();
         return {};
     }
 

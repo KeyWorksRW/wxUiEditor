@@ -141,25 +141,10 @@ bool DataHandler::LoadAndCompress(const Node* node)
     if (node->isGen(gen_data_xml) && node->as_bool(prop_xml_condensed_format))
     {
         pugi::xml_document doc;
-        if (auto result = doc.load_file(embed.filename.c_str(), pugi::parse_trim_pcdata | pugi::parse_default); !result)
+        if (auto result = doc.load_file_string(embed.filename, pugi::parse_trim_pcdata | pugi::parse_default); !result)
         {
-            // Unlike pugixml, wxXmlDocument will list the line number where the error occurred
-            wxXmlParseError err_details;
-            wxXmlDocument wx_doc;
-            if (!wx_doc.Load(embed.filename.c_str(), wxXMLDOC_NONE, &err_details))
-            {
-#if __has_include(<format>)
-                std::string msg =
-                    std::format(std::locale(""), "Parsing error: {} at line: {}, column: {}, offset: {:L}\nFile: {}\n",
-                                err_details.message.ToStdString(), err_details.line, err_details.column, err_details.offset,
-                                embed.filename.c_str());
-#else
-                wxString msg;
-                msg.Format("Parsing error: %s at line: %d, column: %d, offset: %ld\nFile: %s\n", err_details.message,
-                           err_details.line, err_details.column, err_details.offset, embed.filename.c_str());
-#endif
-                wxMessageDialog(wxGetMainFrame()->getWindow(), msg, "Parsing Error", wxOK | wxICON_ERROR).ShowModal();
-            }
+            wxMessageDialog(wxGetMainFrame()->getWindow(), result.detailed_msg, "Parsing Error", wxOK | wxICON_ERROR)
+                .ShowModal();
             return false;
         }
         std::ostringstream xml_stream;

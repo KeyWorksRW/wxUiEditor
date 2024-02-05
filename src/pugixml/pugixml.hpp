@@ -972,6 +972,13 @@ namespace pugi
         // Last parsed offset (in char units from start of input data)
         ptrdiff_t offset;
 
+        // The following fields are valid if status != status_ok and the document was loaded by
+        // load_file_string().
+
+        size_t line;               // Line number of the error
+        size_t column;             // Approximate character position of the error
+        std::string detailed_msg;  // A detailed error message
+
         // Source document encoding
         xml_encoding encoding;
 

@@ -6782,6 +6782,32 @@ namespace pugi
         reset();
 
         auto_deleter<FILE> file(impl::open_file(path_, "rb"), impl::close_file);
+        auto result = load_buffer(contents.c_str(), contents.size(), options, encoding);
+        if (result.status != status_ok)
+        {
+            // Find the line number where the error occurred. This is only accurate if the
+            // file was encoded with LF line endings.
+            tt_view_vector lines_view;
+            lines_view.ReadString(contents);
+            ptrdiff_t line_offset = 0;
+            for (result.line = 0; result.line < lines_view.size(); ++result.line)
+            {
+                line_offset += lines_view[result.line].size();
+                if (line_offset >= result.offset)
+                {
+                    result.column = line_offset - result.offset;
+#if __has_include(<format>)
+                    // The advantage of std::format is that it will format the line number
+                    // with locale-specific separators
+                    result.detailed_msg =
+                        std::format(std::locale(""), "Parsing error: {} at line: {}, column: {}, offset: {:L}",
+                                    result.description(), result.line, result.column, result.offset);
+#else
+                    wxString msg;
+                    msg.Format("Parsing error: %s at line: %d, column: %d, offset: %ld", result.description(), result.line,
+                               result.column, result.offset);
+                    result.detailed_msg = msg.utf8_string();
+#endif
 
         return impl::load_file_impl(static_cast<xml_document_struct*>(_root), file.data, options, encoding, &_buffer);
     }

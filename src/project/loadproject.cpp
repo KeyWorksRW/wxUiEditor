@@ -245,7 +245,7 @@ static const auto lstStdButtonEvents = {
 
 NodeSharedPtr NodeCreator::createNodeFromXml(pugi::xml_node& xml_obj, Node* parent, bool check_for_duplicates, bool allow_ui)
 {
-    auto class_name = xml_obj.attribute("class").as_std_str();
+    auto class_name = xml_obj.attribute("class").as_str();
     if (class_name.empty())
         return NodeSharedPtr();
 
@@ -751,7 +751,7 @@ bool ProjectHandler::Import(ImportXML& import, tt_string& file, bool append, boo
         auto& doc = import.GetDocument();
         auto root = doc.first_child();
         auto project = root.child("node");
-        if (!project || project.attribute("class").as_string() != "Project")
+        if (!project || project.attribute("class").as_view() != "Project")
         {
             ASSERT_MSG(project, tt_string() << "Failed trying to load converted xml document: " << file);
 

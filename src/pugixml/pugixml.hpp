@@ -37,16 +37,7 @@
  * Copyright (C) 2003, by Kristen Wegner (kristen@tima.net)
  */
 
-// [KeyWorks - 05-16-2022] Additions:
-//
-// as_std_str() -- returns std::string
-// child_as_std_str() -- returns child value as std::string
-// child_as_std_str(std::string_view name)  -- returns child value as std::string
-
-// if TTLIB_ADDITIONS is defined:
-//
-// Same as above, but adding as_sview and add_cstr variations which return tt_string_view and tt_string repectively
-// The only difference is that these classes add additional methods to std::string_view and std::string
+// [KeyWorks - 05-16-2022/02-05-2024] Various additions and modifications
 
 #pragma once
 
@@ -348,18 +339,17 @@ namespace pugi
 
         // Get attribute name/value, or "" if attribute is empty
         std::string_view name() const;
-
         std::string_view value() const;
 
         // Get attribute value, or the default value if attribute is empty
-        std::string_view as_string(std::string_view def = std::string_view {}) const;
+        std::string_view as_view(std::string_view def = std::string_view {}) const;
+        std::string as_str(std::string_view def = std::string_view {}) const { return std::string(as_view(def)); }
 
-        std::string as_std_str(std::string_view def = std::string_view {}) const { return std::string(as_string(def)); }
+        tt_string_view as_sview(std::string_view def = std::string_view {}) const { return as_view(def); }
+        tt_string as_cstr(std::string_view def = std::string_view {}) const { return as_str(def); }
 
-        tt_string_view as_sview(std::string_view def = std::string_view {}) const { return as_string(def); }
-        tt_string as_cstr(std::string_view def = std::string_view {}) const { return as_std_str(def); }
-
-        // Get attribute value as a number, or the default value if conversion did not succeed or attribute is empty
+        // Get attribute value as a number, or the default value if conversion did not succeed
+        // or attribute is empty
         int as_int(int def = 0) const;
         unsigned int as_uint(unsigned int def = 0) const;
         double as_double(double def = 0) const;
@@ -368,8 +358,8 @@ namespace pugi
         long long as_llong(long long def = 0) const;
         unsigned long long as_ullong(unsigned long long def = 0) const;
 
-        // Get attribute value as bool (returns true if first character is in '1tTyY' set), or the default value if attribute
-        // is empty
+        // Get attribute value as bool (returns true if first character is in '1tTyY' set), or
+        // the default value if attribute is empty
         bool as_bool(bool def = false) const;
 
         // Set attribute name/value (returns false if attribute is empty or there is not enough memory)
@@ -377,8 +367,8 @@ namespace pugi
         bool set_value(std::string_view rhs, boolean shallow_copy = pugi::false_value);
         bool set_value(const char*, size_t sz);  // 1.13 ABI compatible
 
-        // Set attribute value with type conversion (numbers are converted to strings, boolean is converted to
-        // "true"/"false")
+        // Set attribute value with type conversion (numbers are converted to strings, boolean
+        // is converted to "true"/"false")
         bool set_value(int rhs);
         bool set_value(unsigned int rhs);
         bool set_value(long rhs);
@@ -463,19 +453,19 @@ namespace pugi
         // text inside nodes.
         std::string_view value() const;
 
-        std::string as_std_str() const { return std::string(value()); }
-        std::string child_as_std_str() const { return std::string(child_value()); }
-        std::string child_as_std_str(std::string_view name) const { return std::string(child_value(name)); }
+        std::string as_str() const { return std::string(value()); }
+        std::string child_as_str() const { return std::string(child_value()); }
+        std::string child_as_str(std::string_view name) const { return std::string(child_value(name)); }
 
         tt_string_view as_sview() const { return value(); }
-        tt_string as_cstr() const { return as_std_str(); }
+        tt_string as_cstr() const { return as_str(); }
 
         tt_string_view child_as_sview() const { return child_value(); }
-        tt_string child_as_cstr() const { return child_as_std_str(); }
+        tt_string child_as_cstr() const { return child_as_str(); }
 
         // Get child value of child with specified name. Equivalent to child(name).child_as_cstr().
         tt_string_view child_as_sview(std::string_view name) const { return child_value(name); }
-        tt_string child_as_cstr(std::string_view name) const { return child_as_std_str(name); }
+        tt_string child_as_cstr(std::string_view name) const { return child_as_str(name); }
 
         // Get attribute list
         xml_attribute first_attribute() const;
@@ -730,12 +720,11 @@ namespace pugi
         std::string_view get() const;
 
         // Get text, or the default value if object is empty
-        std::string_view as_string(std::string_view def = std::string_view {}) const;
+        std::string_view as_view(std::string_view def = std::string_view {}) const;
+        std::string as_str(std::string_view def = std::string_view {}) const { return std::string(as_view(def)); }
 
-        std::string as_std_str(std::string_view def = std::string_view {}) const { return std::string(as_string(def)); }
-
-        tt_string_view as_sview(std::string_view def = std::string_view {}) const { return as_string(def); }
-        tt_string as_cstr(std::string_view def = std::string_view {}) const { return tt_string(as_string(def)); }
+        tt_string_view as_sview(std::string_view def = std::string_view {}) const { return as_view(def); }
+        tt_string as_cstr(std::string_view def = std::string_view {}) const { return as_str(def); }
 
         // Get text as a number, or the default value if conversion did not succeed or object is empty
         int as_int(int def = 0) const;

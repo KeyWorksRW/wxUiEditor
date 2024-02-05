@@ -4664,7 +4664,7 @@ namespace pugi
         return prev->next_attribute ? xml_attribute(prev) : xml_attribute();
     }
 
-    std::string_view xml_attribute::as_string(std::string_view def) const
+    std::string_view xml_attribute::as_view(std::string_view def) const
     {
         return (_attr && _attr->value) ? _attr->unsafe_value_sv() : def;
     }
@@ -6106,7 +6106,7 @@ namespace pugi
         return (d && d->value) ? d->unsafe_value_sv() : std::string_view {};
     }
 
-    std::string_view xml_text::as_string(std::string_view def) const
+    std::string_view xml_text::as_view(std::string_view def) const
     {
         xml_node_struct* d = _data();
 

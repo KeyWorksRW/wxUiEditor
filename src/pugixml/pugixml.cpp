@@ -3243,6 +3243,21 @@ public:
         }
     }
 
+    void write_string(std::string_view data)
+    {
+        size_t offset = bufsize;
+
+        if (offset + data.size() <= bufcapacity)
+        {
+            memcpy(buffer + offset, data.data(), data.size());
+            bufsize = offset + data.size();
+        }
+        else
+        {
+            write_direct(data.data(), data.size());
+        }
+    }
+
     void write(char d0)
     {
         size_t offset = bufsize;
@@ -3327,7 +3342,7 @@ public:
 #ifdef PUGIXML_MEMORY_OUTPUT_STACK
             PUGIXML_MEMORY_OUTPUT_STACK
 #else
-            10240
+            20480
 #endif
         ,
         bufcapacity = bufcapacitybytes / (sizeof(char) + 4)
@@ -3364,27 +3379,27 @@ void text_output_escaped(xml_buffered_writer& writer, const char* s, chartypex_t
             case 0:
                 break;
             case '&':
-                writer.write('&', 'a', 'm', 'p', ';');
+                writer.write_buffer("&amp;", sizeof("&amp;") - 1);
                 ++s;
                 break;
             case '<':
-                writer.write('&', 'l', 't', ';');
+                writer.write_buffer("&lt;", sizeof("&lt;") - 1);
                 ++s;
                 break;
             case '>':
-                writer.write('&', 'g', 't', ';');
+                writer.write_buffer("&gt;", sizeof("&gt;") - 1);
                 ++s;
                 break;
             case '"':
                 if (flags & format_attribute_single_quote)
                     writer.write('"');
                 else
-                    writer.write('&', 'q', 'u', 'o', 't', ';');
+                    writer.write_buffer("&quot;", sizeof("&quot;") - 1);
                 ++s;
                 break;
             case '\'':
                 if (flags & format_attribute_single_quote)
-                    writer.write('&', 'a', 'p', 'o', 's', ';');
+                    writer.write_buffer("&apos;", sizeof("&apos;") - 1);
                 else
                     writer.write('\'');
                 ++s;
@@ -3523,7 +3538,7 @@ void node_output_pi_value(xml_buffered_writer& writer, const char* s)
 void node_output_attributes(xml_buffered_writer& writer, xml_node_struct* node, const char* indent, size_t indent_length,
                             unsigned int flags, unsigned int depth)
 {
-    const char* default_name = ":anonymous";
+    std::string_view default_name = ":anonymous";
     const char enquotation_char = (flags & format_attribute_single_quote) ? '\'' : '"';
 
     for (xml_attribute_struct* a = node->first_attribute; a; a = a->next_attribute)
@@ -3539,7 +3554,7 @@ void node_output_attributes(xml_buffered_writer& writer, xml_node_struct* node, 
             writer.write(' ');
         }
 
-        writer.write_string(a->name ? a->name + 0 : default_name);
+        writer.write_string(a->name ? a->unsafe_name_sv() : default_name);
         writer.write('=', enquotation_char);
 
         if (a->value)
@@ -3552,8 +3567,7 @@ void node_output_attributes(xml_buffered_writer& writer, xml_node_struct* node, 
 bool node_output_start(xml_buffered_writer& writer, xml_node_struct* node, const char* indent, size_t indent_length,
                        unsigned int flags, unsigned int depth)
 {
-    const char* default_name = ":anonymous";
-    const char* name = node->name ? node->name + 0 : default_name;
+    std::string_view name = node->name ? node->unsafe_name_sv() : ":anonymous";
 
     writer.write('<');
     writer.write_string(name);
@@ -3614,8 +3628,7 @@ bool node_output_start(xml_buffered_writer& writer, xml_node_struct* node, const
 
 void node_output_end(xml_buffered_writer& writer, xml_node_struct* node)
 {
-    const char* default_name = ":anonymous";
-    const char* name = node->name ? node->name + 0 : default_name;
+    std::string_view name = node->name ? node->unsafe_name_sv() : ":anonymous";
 
     writer.write('<', '/');
     writer.write_string(name);
@@ -3624,7 +3637,7 @@ void node_output_end(xml_buffered_writer& writer, xml_node_struct* node)
 
 void node_output_simple(xml_buffered_writer& writer, xml_node_struct* node, unsigned int flags)
 {
-    const char* default_name = ":anonymous";
+    std::string_view name = node->name ? node->unsafe_name_sv() : ":anonymous";
 
     switch (PUGI__NODETYPE(node))
     {
@@ -3642,7 +3655,7 @@ void node_output_simple(xml_buffered_writer& writer, xml_node_struct* node, unsi
 
         case node_pi:
             writer.write('<', '?');
-            writer.write_string(node->name ? node->name + 0 : default_name);
+            writer.write_string(name);
 
             if (node->value)
             {
@@ -3655,7 +3668,7 @@ void node_output_simple(xml_buffered_writer& writer, xml_node_struct* node, unsi
 
         case node_declaration:
             writer.write('<', '?');
-            writer.write_string(node->name ? node->name + 0 : default_name);
+            writer.write_string(name);
             node_output_attributes(writer, node, "", 0, flags | format_raw, 0);
             writer.write('?', '>');
             break;
@@ -3667,7 +3680,7 @@ void node_output_simple(xml_buffered_writer& writer, xml_node_struct* node, unsi
             if (node->value)
             {
                 writer.write(' ');
-                writer.write_string(node->value);
+                writer.write_string(node->unsafe_value_sv());
             }
 
             writer.write('>');
@@ -6908,10 +6921,7 @@ namespace pugi
 
         if (!(flags & format_no_declaration) && !impl::has_declaration(_root))
         {
-            buffered_writer.write_string(PUGIXML_TEXT("<?xml version=\"1.0\""));
-            if (encoding == encoding_latin1)
-                buffered_writer.write_string(PUGIXML_TEXT(" encoding=\"ISO-8859-1\""));
-            buffered_writer.write('?', '>');
+            buffered_writer.write_string("<?xml version=\"1.0\"?>");
             if (!(flags & format_raw))
                 buffered_writer.write('\n');
         }

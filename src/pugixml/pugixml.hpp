@@ -1041,6 +1041,10 @@ namespace pugi
                                    xml_encoding encoding = encoding_auto);
 
         // Load document from buffer. Copies/converts the buffer, so it may be deleted or changed after the function returns.
+        // Load the file into a std::unique_ptr<char> and parse it as a string. If an error
+        // occurs, xml_parse_result.line_number and xml_parse_result.column will be set to
+        // the line number/column of the error.
+        xml_parse_result load_file_string(const std::string& path, unsigned int options = parse_default);
         xml_parse_result load_buffer(const void* contents, size_t size, unsigned int options = parse_default,
                                      xml_encoding encoding = encoding_auto);
 

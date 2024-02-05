@@ -54,6 +54,11 @@ using namespace pugi;
 #include <ostream>
 #include <string>
 
+#include <wx/file.h>    // For wxFile
+#include <wx/string.h>  // For wxString
+
+#include "tt_view_vector.h"  // tt_view_vector -- Class for reading and writing line-oriented strings/files
+
 // For placement new
 // #include <new>
 
@@ -6797,6 +6802,62 @@ namespace pugi
 
         return impl::load_buffer_impl(static_cast<xml_document_struct*>(_root), _root, const_cast<void*>(contents), size,
                                       options, encoding, false, false, &_buffer);
+    }
+
+    xml_parse_result xml_document::load_file_string(const std::string& path, unsigned int options)
+    {
+        wxFile file(path, wxFile::read);
+        if (file.IsOpened())
+        {
+            auto size = file.Length();
+            auto buffer = std::make_unique<char[]>(size);
+            if (file.Read(buffer.get(), size) != size)
+            {
+                xml_parse_result result;
+                result.status = status_io_error;
+                result.offset = 0;
+                return result;
+            }
+            auto result = load_buffer(buffer.get(), size, options);
+            if (result.status != status_ok)
+            {
+                // Find the line number where the error occurred. This is only accurate if the
+                // file was encoded with LF line endings.
+                tt_view_vector lines_view;
+                lines_view.ReadString(buffer.get());
+                ptrdiff_t line_offset = 0;
+                for (result.line = 0; result.line < lines_view.size(); ++result.line)
+                {
+                    line_offset += lines_view[result.line].size();
+                    if (line_offset >= result.offset)
+                    {
+                        result.column = line_offset - result.offset;
+#if __has_include(<format>)
+                        // The advantage of std::format is that it will format the line number
+                        // with locale-specific separators
+                        result.detailed_msg = std::format(
+                            std::locale(""), "Parsing error: {} at line: {}, column: {}, offset: {:L}\nFile: {}\n",
+                            result.description(), result.line, result.column, result.offset, path.c_str());
+#else
+                        wxString msg;
+                        msg.Format("Parsing error: %s at line: %d, column: %d, offset: %ld\nFile: %s\n",
+                                   result.description(), result.line, result.column, result.offset, path.c_str());
+                        result.detailed_msg = msg.utf8_string();
+#endif
+
+                        break;
+                    }
+                }
+            }
+            return result;
+        }
+        else
+        {
+            xml_parse_result result;
+            result.status = status_file_not_found;
+            result.offset = 0;
+            return result;
+        }
     }
 
     xml_parse_result xml_document::load_buffer_inplace(void* contents, size_t size, unsigned int options,

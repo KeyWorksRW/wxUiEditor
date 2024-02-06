@@ -632,8 +632,20 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
                 new_pg_property->SetAttribute(wxPG_DIALOG_TITLE, "Data file");
                 new_pg_property->SetAttribute(wxPG_FILE_WILDCARD, "Files|*.*");
             }
-            new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH, Project.getProjectPath());
-            new_pg_property->SetAttribute(wxPG_FILE_SHOW_RELATIVE_PATH, Project.getProjectPath());
+            tt_string path;
+            if (prop->as_string().size())
+            {
+                path = prop->as_string();
+                path.remove_filename();
+            }
+            else
+            {
+                auto result = Project.GetOutputPath(prop->getNode()->getForm(), GEN_LANG_CPLUSPLUS);
+                path = result.first;
+                if (result.second)  // true if the the base filename was returned
+                    path.remove_filename();
+            }
+            new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH, path.make_wxString());
         }
         else if (prop->isProp(prop_derived_header))
         {
@@ -1569,6 +1581,19 @@ void PropGridPanel::ModifyBoolProperty(NodeProperty* node_prop, wxPGProperty* gr
 
 void PropGridPanel::ModifyFileProperty(NodeProperty* node_prop, wxPGProperty* grid_prop)
 {
+    if (node_prop->isProp(prop_data_file))
+    {
+        tt_string newValue = grid_prop->GetValueAsString(wxPGPropValFormatFlags::FullValue).utf8_string();
+        auto result = Project.GetOutputPath(node_prop->getNode()->getForm(), GEN_LANG_CPLUSPLUS);
+        auto path = result.first;
+        if (result.second)  // true if the the base filename was returned
+            path.remove_filename();
+        newValue.make_relative(path);
+        newValue.backslashestoforward();
+        modifyProperty(node_prop, newValue);
+        return;
+    }
+
     tt_string newValue = grid_prop->GetValueAsString().utf8_string();
 
     // The base_file grid_prop was already processed in OnPropertyGridChanging so only modify the value if

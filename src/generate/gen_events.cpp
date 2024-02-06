@@ -220,7 +220,7 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
         }
         else
         {
-            code.NodeName().Function("GetStaticBox()");
+            code.NodeName(event->getNode()).Function("GetStaticBox()");
         }
 
         if (code.is_cpp() || code.is_python())

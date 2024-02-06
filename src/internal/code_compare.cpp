@@ -265,7 +265,7 @@ void CodeCompare::OnWinMerge(wxCommandEvent& /* event */)
 
     GenerateTmpFiles(m_class_list, root, language);
 
-    doc.save_file("~wxue_.WinMerge");
+    doc.save_file_stream("~wxue_.WinMerge");
 
     // WinMergeU.exe typically is not in the system PATH, and as such, wxExecute won't be able to find it. ShellExecute will
     // find the registered location for the program.

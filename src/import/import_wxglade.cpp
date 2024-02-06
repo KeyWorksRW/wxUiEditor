@@ -30,7 +30,7 @@ bool WxGlade::Import(const tt_string& filename, bool write_doc)
         return false;
     }
 
-    if (auto language = root.attribute("language").as_string(); language.size())
+    if (auto language = root.attribute("language").as_view(); language.size())
     {
         if (language == "XRC")
         {
@@ -57,14 +57,14 @@ bool WxGlade::Import(const tt_string& filename, bool write_doc)
     try
     {
         m_project = NodeCreation.createNode(gen_Project, nullptr);
-        if (auto src_ext = root.attribute("source_extension").as_string(); src_ext.size())
+        if (auto src_ext = root.attribute("source_extension").as_view(); src_ext.size())
         {
             if (src_ext == ".cpp" || src_ext == ".cc" || src_ext == ".cxx")
             {
                 m_project->set_value(prop_source_ext, src_ext);
             }
         }
-        if (auto hdr_ext = root.attribute("header_extension").as_string(); hdr_ext.size())
+        if (auto hdr_ext = root.attribute("header_extension").as_view(); hdr_ext.size())
         {
             if (hdr_ext == ".h" || hdr_ext == ".hh" || hdr_ext == ".hpp" || hdr_ext == ".hxx")
             {
@@ -109,7 +109,7 @@ bool WxGlade::Import(const tt_string& filename, bool write_doc)
                     if (m_language == GEN_LANG_PYTHON)
                     {
                         m_project->set_value(prop_python_combine_forms, true);
-                        tt_string combined_filename = root.attribute("path").as_string();
+                        tt_string combined_filename = root.attribute("path").as_view();
                         tt_cwd cwd;
                         combined_filename.make_relative(cwd);
                         m_project->set_value(prop_python_combined_file, combined_filename);
@@ -126,7 +126,7 @@ bool WxGlade::Import(const tt_string& filename, bool write_doc)
 
         if (!root.attribute("option").as_bool())
         {
-            tt_string combined_filename = root.attribute("path").as_string();
+            tt_string combined_filename = root.attribute("path").as_view();
             tt_cwd cwd;
             combined_filename.make_relative(cwd);
 
@@ -183,7 +183,7 @@ NodeSharedPtr WxGlade::CreateGladeNode(pugi::xml_node& xml_obj, Node* parent, No
     {
         object_not_generator = true;
         // If we don't recognize the class, then try the base= attribute
-        auto base = xml_obj.attribute("base").as_string();
+        auto base = xml_obj.attribute("base").as_view();
         if (base == "EditFrame")
         {
             getGenName = ConvertToGenName("wxFrame", parent);
@@ -248,7 +248,7 @@ NodeSharedPtr WxGlade::CreateGladeNode(pugi::xml_node& xml_obj, Node* parent, No
         {
             if (!xml_obj.attribute("name").empty())
             {
-                if (auto tab = m_notebook_tabs.find(xml_obj.attribute("name").as_string()); tab != m_notebook_tabs.end())
+                if (auto tab = m_notebook_tabs.find(xml_obj.attribute("name").as_view()); tab != m_notebook_tabs.end())
                 {
                     new_node->set_value(prop_label, tab->second);
                 }
@@ -267,7 +267,7 @@ NodeSharedPtr WxGlade::CreateGladeNode(pugi::xml_node& xml_obj, Node* parent, No
                 {
                     if (!xml_obj.attribute("name").empty())
                     {
-                        if (auto tab = m_notebook_tabs.find(xml_obj.attribute("name").as_string());
+                        if (auto tab = m_notebook_tabs.find(xml_obj.attribute("name").as_view());
                             tab != m_notebook_tabs.end())
                         {
                             new_node->set_value(prop_label, tab->second);
@@ -283,7 +283,7 @@ NodeSharedPtr WxGlade::CreateGladeNode(pugi::xml_node& xml_obj, Node* parent, No
                     parent->adoptChild(page);
                     if (!xml_obj.attribute("name").empty())
                     {
-                        if (auto tab = m_notebook_tabs.find(xml_obj.attribute("name").as_string());
+                        if (auto tab = m_notebook_tabs.find(xml_obj.attribute("name").as_view());
                             tab != m_notebook_tabs.end())
                         {
                             page->set_value(prop_label, tab->second);
@@ -325,7 +325,7 @@ NodeSharedPtr WxGlade::CreateGladeNode(pugi::xml_node& xml_obj, Node* parent, No
         {
             if (child.name() != "object")
                 continue;
-            ASSERT(child.attribute("class").as_string() == "sizeritem");
+            ASSERT(child.attribute("class").as_view() == "sizeritem");
 
             for (auto& button: child.children())
             {
@@ -350,12 +350,12 @@ NodeSharedPtr WxGlade::CreateGladeNode(pugi::xml_node& xml_obj, Node* parent, No
                     {
                         for (auto& handler: btn_props.children())
                         {
-                            last_handler = handler.text().as_string();
+                            last_handler = handler.text().as_view();
                         }
                     }
                     else if (btn_props.name() == "id")
                     {
-                        if (auto id = btn_props.text().as_string(); tt::is_sameprefix(id, "wxID_"))
+                        if (auto id = btn_props.text().as_view(); tt::is_sameprefix(id, "wxID_"))
                         {
                             if (id == "wxID_OK")
                                 SetBtnAndHandler(prop_OK, "OKButtonClicked");
@@ -379,7 +379,7 @@ NodeSharedPtr WxGlade::CreateGladeNode(pugi::xml_node& xml_obj, Node* parent, No
                     }
                     else if (btn_props.name() == "stockitem")
                     {
-                        if (auto id = btn_props.text().as_string(); id.size())
+                        if (auto id = btn_props.text().as_view(); id.size())
                         {
                             if (id == "OK")
                                 SetBtnAndHandler(prop_OK, "OKButtonClicked");
@@ -472,10 +472,10 @@ bool WxGlade::HandleUnknownProperty(const pugi::xml_node& xml_obj, Node* node, N
         for (auto& handler: xml_obj.children())
         {
             tt_string event_name("wx");
-            event_name += handler.attribute("event").as_string();
+            event_name += handler.attribute("event").as_view();
             if (auto* event = node->getEvent(event_name); event)
             {
-                event->set_value(handler.text().as_string());
+                event->set_value(handler.text().as_view());
             }
         }
 
@@ -486,7 +486,7 @@ bool WxGlade::HandleUnknownProperty(const pugi::xml_node& xml_obj, Node* node, N
         tt_string parameters;
         for (auto& argument: xml_obj.children())
         {
-            tt_string param = argument.text().as_string();
+            tt_string param = argument.text().as_view();
             param.Replace("$parent", "${parent}");
             param.Replace("$id", "${id}");
             if (parameters.size())
@@ -512,12 +512,12 @@ bool WxGlade::HandleUnknownProperty(const pugi::xml_node& xml_obj, Node* node, N
     }
     else if (node_name == "option" && node->isGen(gen_sizeritem))
     {
-        node->set_value(prop_proportion, xml_obj.text().as_string());
+        node->set_value(prop_proportion, xml_obj.text().as_view());
         return true;
     }
     else if (node_name == "scroll_rate")
     {
-        tt_string param = xml_obj.text().as_string();
+        tt_string param = xml_obj.text().as_view();
         tt_view_vector params(param, ',');
         node->set_value(prop_scroll_rate_x, params[0]);
         node->set_value(prop_scroll_rate_y, params[1]);
@@ -526,9 +526,9 @@ bool WxGlade::HandleUnknownProperty(const pugi::xml_node& xml_obj, Node* node, N
     else if (node_name == "extracode_post")
     {
         if (m_language == GEN_LANG_PYTHON)
-            node->set_value(prop_python_insert, xml_obj.text().as_string());
+            node->set_value(prop_python_insert, xml_obj.text().as_view());
         else if (m_language == GEN_LANG_CPLUSPLUS)
-            node->set_value(prop_source_preamble, xml_obj.text().as_string());
+            node->set_value(prop_source_preamble, xml_obj.text().as_view());
         return true;
     }
     else if (node_name == "stockitem" && node->isGen(gen_wxButton))
@@ -536,7 +536,7 @@ bool WxGlade::HandleUnknownProperty(const pugi::xml_node& xml_obj, Node* node, N
         if (node->as_string(prop_id).empty() || node->as_string(prop_id) == "wxID_ANY")
         {
             tt_string id("wxID_");
-            id << xml_obj.text().as_string();
+            id << xml_obj.text().as_view();
             node->set_value(prop_id, id);
 
             if (node->as_string(prop_label).empty() || node->as_string(prop_label) == "MyButton")
@@ -575,12 +575,12 @@ bool WxGlade::HandleUnknownProperty(const pugi::xml_node& xml_obj, Node* node, N
         if (m_language == GEN_LANG_PYTHON)
         {
             construction = "self." + node->as_string(prop_var_name) + " = ";
-            construction += xml_obj.text().as_string();
+            construction += xml_obj.text().as_view();
         }
         else if (m_language == GEN_LANG_CPLUSPLUS)
         {
             construction = node->as_string(prop_var_name) + " = ";
-            construction += xml_obj.text().as_string();
+            construction += xml_obj.text().as_view();
         }
         else
         {
@@ -605,7 +605,7 @@ bool WxGlade::HandleNormalProperty(const pugi::xml_node& xml_obj, Node* node, No
         if (wxue_prop == prop_border)
         {
             // wxGlade uses border for border_size in a sizer
-            node->set_value(prop_border_size, xml_obj.text().as_string());
+            node->set_value(prop_border_size, xml_obj.text().as_view());
             return true;
         }
         else if (wxue_prop == prop_flag)
@@ -616,7 +616,7 @@ bool WxGlade::HandleNormalProperty(const pugi::xml_node& xml_obj, Node* node, No
     }
     else if (wxue_prop == prop_id)
     {
-        tt_string id = xml_obj.text().as_string();
+        tt_string id = xml_obj.text().as_view();
         id.erase_from('=');
         id.trim();
         node->set_value(prop_id, id);
@@ -629,20 +629,20 @@ bool WxGlade::HandleNormalProperty(const pugi::xml_node& xml_obj, Node* node, No
         {
             font_info.PointSize(size_child.text().as_double());
         }
-        if (auto family_child = xml_obj.child("family"); family_child && family_child.text().as_string() != "default")
+        if (auto family_child = xml_obj.child("family"); family_child && family_child.text().as_view() != "default")
         {
             FontFamilyPairs family_pair;
-            font_info.Family(family_pair.GetValue(family_child.text().as_string()));
+            font_info.Family(family_pair.GetValue(family_child.text().as_view()));
         }
-        if (auto style_child = xml_obj.child("style"); style_child && style_child.text().as_string() != "normal")
+        if (auto style_child = xml_obj.child("style"); style_child && style_child.text().as_view() != "normal")
         {
             FontStylePairs style_pair;
-            font_info.Style(style_pair.GetValue(style_child.text().as_string()));
+            font_info.Style(style_pair.GetValue(style_child.text().as_view()));
         }
-        if (auto weight_child = xml_obj.child("weight"); weight_child && weight_child.text().as_string() != "normal")
+        if (auto weight_child = xml_obj.child("weight"); weight_child && weight_child.text().as_view() != "normal")
         {
             FontWeightPairs weight_pair;
-            font_info.Weight(weight_pair.GetValue(weight_child.text().as_string()));
+            font_info.Weight(weight_pair.GetValue(weight_child.text().as_view()));
         }
         if (auto underline_child = xml_obj.child("underline"); underline_child)
         {
@@ -688,18 +688,18 @@ void WxGlade::CreateMenus(pugi::xml_node& xml_obj, Node* parent)
             auto id = item.child("id");
 
             auto new_item =
-                NodeCreation.createNode(id.text().as_string() == "---" ? gen_separator : gen_wxMenuItem, menu_node.get());
+                NodeCreation.createNode(id.text().as_view() == "---" ? gen_separator : gen_wxMenuItem, menu_node.get());
             menu_node->adoptChild(new_item);
 
             for (auto& iter: item.children())
             {
                 if (iter.name() == "label")
                 {
-                    new_item->set_value(prop_label, iter.text().as_string());
+                    new_item->set_value(prop_label, iter.text().as_view());
                 }
                 else if (iter.name() == "id")
                 {
-                    tt_string id_value = iter.text().as_string();
+                    tt_string id_value = iter.text().as_view();
                     if (m_language == GEN_LANG_PYTHON)
                     {
                         id_value.Replace(".", "", true);
@@ -708,27 +708,27 @@ void WxGlade::CreateMenus(pugi::xml_node& xml_obj, Node* parent)
                 }
                 else if (iter.name() == "name")
                 {
-                    new_item->set_value(prop_var_name, iter.text().as_string());
+                    new_item->set_value(prop_var_name, iter.text().as_view());
                 }
                 else if (iter.name() == "help_str")
                 {
-                    new_item->set_value(prop_help, iter.text().as_string());
+                    new_item->set_value(prop_help, iter.text().as_view());
                 }
                 else if (iter.name() == "checkable")
                 {
-                    new_item->set_value(prop_checked, iter.text().as_string());
+                    new_item->set_value(prop_checked, iter.text().as_view());
                     new_item->set_value(prop_kind, "wxITEM_CHECK");
                 }
                 else if (iter.name() == "radio")
                 {
-                    new_item->set_value(prop_checked, iter.text().as_string());
+                    new_item->set_value(prop_checked, iter.text().as_view());
                     new_item->set_value(prop_kind, "wxITEM_RADIO");
                 }
                 else if (iter.name() == "handler")
                 {
                     if (auto* event = new_item->getEvent("wxEVT_MENU"); event)
                     {
-                        event->set_value(iter.text().as_string());
+                        event->set_value(iter.text().as_view());
                     }
                 }
             }
@@ -747,17 +747,17 @@ void WxGlade::CreateToolbar(pugi::xml_node& xml_obj, Node* parent)
     {
         auto id = tool.child("id");
 
-        auto new_tool = NodeCreation.createNode(id.text().as_string() == "---" ? gen_separator : gen_wxMenuItem, parent);
+        auto new_tool = NodeCreation.createNode(id.text().as_view() == "---" ? gen_separator : gen_wxMenuItem, parent);
         parent->adoptChild(new_tool);
         for (auto& iter: tool.children())
         {
             if (iter.name() == "label")
             {
-                new_tool->set_value(prop_label, iter.text().as_string());
+                new_tool->set_value(prop_label, iter.text().as_view());
             }
             else if (iter.name() == "id")
             {
-                tt_string id_value = iter.text().as_string();
+                tt_string id_value = iter.text().as_view();
                 if (m_language == GEN_LANG_PYTHON)
                 {
                     id_value.Replace(".", "", true);
@@ -766,13 +766,13 @@ void WxGlade::CreateToolbar(pugi::xml_node& xml_obj, Node* parent)
             }
             else if (iter.name() == "short_help")
             {
-                new_tool->set_value(prop_tooltip, iter.text().as_string());
+                new_tool->set_value(prop_tooltip, iter.text().as_view());
             }
             else if (iter.name() == "handler")
             {
                 if (auto* event = new_tool->getEvent("wxEVT_TOOL"); event)
                 {
-                    event->set_value(iter.text().as_string());
+                    event->set_value(iter.text().as_view());
                 }
             }
         }

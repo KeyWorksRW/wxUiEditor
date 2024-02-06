@@ -1236,7 +1236,7 @@ void DialogBlocks::ProcessStyles(pugi::xml_node& node_xml, const NodeSharedPtr& 
         // We only collect styles that have been set, and ignore the rest
         if (!form.text().as_bool())
             continue;
-        auto name = form.attribute("name").as_std_str();
+        auto name = form.attribute("name").as_str();
         if (!name.starts_with("proxy-"))
             continue;
         name.erase(0, sizeof("proxy-") - 1);
@@ -1658,15 +1658,15 @@ void DialogBlocks::ProcessMisc(pugi::xml_node& node_xml, const NodeSharedPtr& no
                     case prop_value:
                         if (node->isGen(gen_wxSlider) || node->isGen(gen_wxScrollBar))
                         {
-                            node->set_value(prop_position, string_xml.text().as_string());
+                            node->set_value(prop_position, string_xml.text().as_view());
                         }
                         else if (node->isGen(gen_wxSpinButton) || node->isGen(gen_wxSpinCtrl))
                         {
-                            node->set_value(prop_initial, string_xml.text().as_string());
+                            node->set_value(prop_initial, string_xml.text().as_view());
                         }
                         else if (auto prop = node->getPropPtr(result->second); prop)
                         {
-                            prop->set_value(string_xml.text().as_string());
+                            prop->set_value(string_xml.text().as_view());
                         }
                         break;
 
@@ -1684,7 +1684,7 @@ void DialogBlocks::ProcessMisc(pugi::xml_node& node_xml, const NodeSharedPtr& no
                     case prop_fields:
                         if (!node->hasValue(prop_fields))
                         {
-                            node->set_value(prop_fields, string_xml.text().as_string());
+                            node->set_value(prop_fields, string_xml.text().as_view());
                         }
                         // It will have a value already if Field Widths has been processed
                         break;
@@ -1694,7 +1694,7 @@ void DialogBlocks::ProcessMisc(pugi::xml_node& node_xml, const NodeSharedPtr& no
                         {
                             // There's really no reason to convert the number, since set_value() would
                             // just convert the number back to a string.
-                            prop->set_value(string_xml.text().as_string());
+                            prop->set_value(string_xml.text().as_view());
                         }
                         break;
                 }

@@ -432,7 +432,7 @@ void NodeCreator::parseGeneratorFile(const char* xml_data)
     auto generator = root.child("gen");
     while (generator)
     {
-        auto class_name = generator.attribute("class").as_std_str();
+        auto class_name = generator.attribute("class").as_str();
         if (class_name.starts_with("gen_"))
         {
             class_name.erase(0, sizeof("gen_") - 1);
@@ -473,7 +473,7 @@ void NodeCreator::parseGeneratorFile(const char* xml_data)
         }
         else
         {
-            auto type_name = generator.attribute("type").as_string();
+            auto type_name = generator.attribute("type").as_view();
 #if defined(_DEBUG)
             if (is_interface && type_name != "interface")
             {
@@ -507,12 +507,12 @@ void NodeCreator::parseGeneratorFile(const char* xml_data)
         auto declaration = new NodeDeclaration(class_name, getNodeType(type));
         m_a_declarations[declaration->getGenName()] = declaration;
 
-        if (auto flags = generator.attribute("flags").as_string(); flags.size())
+        if (auto flags = generator.attribute("flags").as_view(); flags.size())
         {
             declaration->SetGeneratorFlags(flags);
         }
 
-        auto image_name = generator.attribute("image").as_string();
+        auto image_name = generator.attribute("image").as_view();
         if (image_name.size())
         {
             if (auto bndl_function = GetSvgFunction(image_name); bndl_function)
@@ -575,7 +575,7 @@ void NodeCreator::parseGeneratorFile(const char* xml_data)
             auto elem_base = elem_obj.child("inherits");
             while (elem_base)
             {
-                auto base_name = elem_base.attribute("class").as_string();
+                auto base_name = elem_base.attribute("class").as_view();
                 if (base_name == "Language Settings")
                 {
                     class_info->AddBaseClass(getNodeDeclaration("C++ Settings"));
@@ -604,26 +604,26 @@ void NodeCreator::parseGeneratorFile(const char* xml_data)
                     auto inheritedProperty = elem_base.child("property");
                     while (inheritedProperty)
                     {
-                        auto lookup_name = rmap_PropNames.find(inheritedProperty.attribute("name").as_string());
+                        auto lookup_name = rmap_PropNames.find(inheritedProperty.attribute("name").as_view());
                         if (lookup_name == rmap_PropNames.end())
                         {
                             MSG_ERROR(tt_string("Unrecognized inherited property name -- ")
-                                      << inheritedProperty.attribute("name").as_string());
+                                      << inheritedProperty.attribute("name").as_view());
                             inheritedProperty = inheritedProperty.next_sibling("property");
                             continue;
                         }
-                        class_info->SetOverRideDefValue(lookup_name->second, inheritedProperty.text().as_string());
+                        class_info->SetOverRideDefValue(lookup_name->second, inheritedProperty.text().as_view());
                         inheritedProperty = inheritedProperty.next_sibling("property");
                     }
 
                     inheritedProperty = elem_base.child("hide");
                     while (inheritedProperty)
                     {
-                        auto lookup_name = rmap_PropNames.find(inheritedProperty.attribute("name").as_string());
+                        auto lookup_name = rmap_PropNames.find(inheritedProperty.attribute("name").as_view());
                         if (lookup_name == rmap_PropNames.end())
                         {
                             MSG_ERROR(tt_string("Unrecognized inherited property name -- ")
-                                      << inheritedProperty.attribute("name").as_string());
+                                      << inheritedProperty.attribute("name").as_view());
                             inheritedProperty = inheritedProperty.next_sibling("hide");
                             continue;
                         }
@@ -644,7 +644,7 @@ void NodeCreator::parseProperties(pugi::xml_node& elem_obj, NodeDeclaration* nod
     auto elem_category = elem_obj.child("category");
     while (elem_category)
     {
-        auto name = elem_category.attribute("name").as_string();
+        auto name = elem_category.attribute("name").as_view();
         auto& new_cat = category.addCategory(name);
 
         if (auto base_name = elem_category.attribute("base_name").value(); base_name.size())
@@ -665,7 +665,7 @@ void NodeCreator::parseProperties(pugi::xml_node& elem_obj, NodeDeclaration* nod
     auto elem_prop = elem_obj.child("property");
     while (elem_prop)
     {
-        auto name = elem_prop.attribute("name").as_std_str();
+        auto name = elem_prop.attribute("name").as_str();
         if (name.starts_with("prop_"))
         {
             name.erase(0, sizeof("prop_") - 1);
@@ -683,7 +683,7 @@ void NodeCreator::parseProperties(pugi::xml_node& elem_obj, NodeDeclaration* nod
 
         category.addProperty(prop_name);
 
-        auto description = elem_prop.attribute("help").as_string();
+        auto description = elem_prop.attribute("help").as_view();
 
         auto prop_type = elem_prop.attribute("type").as_sview();
         if (prop_type.starts_with("type_"))
@@ -729,8 +729,8 @@ void NodeCreator::parseProperties(pugi::xml_node& elem_obj, NodeDeclaration* nod
             while (elem_opt)
             {
                 auto& opt = opts.emplace_back();
-                opt.name = elem_opt.attribute("name").as_string();
-                opt.help = elem_opt.attribute("help").as_string();
+                opt.name = elem_opt.attribute("name").as_view();
+                opt.help = elem_opt.attribute("help").as_view();
 
                 elem_opt = elem_opt.next_sibling("option");
             }
@@ -794,7 +794,7 @@ void NodeDeclaration::ParseEvents(pugi::xml_node& elem_obj, NodeCategory& catego
         // Only create the category if there is at least one event.
         if (elem_category.child("event"))
         {
-            auto name = elem_category.attribute("name").as_string();
+            auto name = elem_category.attribute("name").as_view();
             auto& new_cat = category.addCategory(name);
 
             ParseEvents(elem_category, new_cat);
@@ -805,11 +805,11 @@ void NodeDeclaration::ParseEvents(pugi::xml_node& elem_obj, NodeCategory& catego
     auto nodeEvent = elem_obj.child("event");
     while (nodeEvent)
     {
-        auto evt_name = nodeEvent.attribute("name").as_std_str();
+        auto evt_name = nodeEvent.attribute("name").as_str();
         category.addEvent(evt_name);
 
-        auto evt_class = nodeEvent.attribute("class").as_std_str("wxEvent");
-        auto description = nodeEvent.attribute("help").as_std_str();
+        auto evt_class = nodeEvent.attribute("class").as_str("wxEvent");
+        auto description = nodeEvent.attribute("help").as_str();
 
         m_events[evt_name] = new NodeEventInfo(evt_name, evt_class, description);
 

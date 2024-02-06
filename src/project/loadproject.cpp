@@ -18,6 +18,8 @@
 #include "preferences.h"      // Prefs -- Set/Get wxUiEditor preferences
 #include "project_handler.h"  // ProjectHandler class
 
+#include "../pugixml/pugixml.hpp"  // pugixml parser
+
 using namespace GenEnum;
 
 #include "../import/import_dialogblocks.h"  // DialogBlocks -- Import a DialogBlocks project
@@ -41,14 +43,18 @@ using namespace GenEnum;
 bool ProjectHandler::LoadProject(const tt_string& file, bool allow_ui)
 {
     pugi::xml_document doc;
-    auto result = doc.load_file(file.c_str());
+    auto result = doc.load_file_string(file);
     if (!result)
     {
-        ASSERT_MSG(result, tt_string() << "pugi failed trying to load " << file);
+#if defined(_DEBUG)
+        FAIL_MSG(result.detailed_msg);
+#else
         if (allow_ui)
         {
-            dlgCannotParse(result, file, "Load Project");
+            wxMessageDialog(wxGetMainFrame()->getWindow(), result.detailed_msg, "Parsing Error", wxOK | wxICON_ERROR)
+                .ShowModal();
         }
+#endif
         return false;
     }
 
@@ -239,7 +245,7 @@ static const auto lstStdButtonEvents = {
 
 NodeSharedPtr NodeCreator::createNodeFromXml(pugi::xml_node& xml_obj, Node* parent, bool check_for_duplicates, bool allow_ui)
 {
-    auto class_name = xml_obj.attribute("class").as_std_str();
+    auto class_name = xml_obj.attribute("class").as_str();
     if (class_name.empty())
         return NodeSharedPtr();
 
@@ -745,7 +751,7 @@ bool ProjectHandler::Import(ImportXML& import, tt_string& file, bool append, boo
         auto& doc = import.GetDocument();
         auto root = doc.first_child();
         auto project = root.child("node");
-        if (!project || project.attribute("class").as_string() != "Project")
+        if (!project || project.attribute("class").as_view() != "Project")
         {
             ASSERT_MSG(project, tt_string() << "Failed trying to load converted xml document: " << file);
 
@@ -853,14 +859,19 @@ bool ProjectHandler::Import(ImportXML& import, tt_string& file, bool append, boo
         if (m_project_node->getChildCount() && file.file_exists())
         {
             doc.reset();
-            auto result = doc.load_file(file.c_str());
+            auto result = doc.load_file_string(file);
             if (!result)
             {
-                ASSERT_MSG(result, tt_string() << "pugi failed trying to load " << file);
+    #if defined(_DEBUG)
+                wxMessageDialog(wxGetMainFrame()->getWindow(), result.detailed_msg, "Parsing Error", wxOK | wxICON_ERROR)
+                    .ShowModal();
+    #else
                 if (allow_ui)
                 {
-                    dlgCannotParse(result, file, "Load Project");
+                    wxMessageDialog(wxGetMainFrame()->getWindow(), result.detailed_msg, "Parsing Error", wxOK | wxICON_ERROR)
+                        .ShowModal();
                 }
+    #endif  // _DEBUG
             }
             else
             {

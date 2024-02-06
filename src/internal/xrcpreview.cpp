@@ -368,7 +368,7 @@ void XrcPreview::OnImport(wxCommandEvent& WXUNUSED(event))
     {
         // Place this in a block so that the string is destroyed before we process the XML
         // document (to save allocated memory).
-        auto result = doc.load_string(xrc_text.c_str());
+        auto result = doc.load_string(xrc_text.utf8_string());
         if (!result)
         {
             wxMessageBox("Error parsing XRC document: " + tt_string(result.description()), "XRC Import Test");
@@ -421,7 +421,7 @@ void XrcPreview::OnExport(wxCommandEvent& WXUNUSED(event))
         pugi::xml_document doc;
         doc.load_string(buf.c_str());
 
-        if (!doc.save_file(filename.c_str(), "\t"))
+        if (!doc.save_file_stream(filename))
         {
             wxMessageBox(wxString("An unexpected error occurred exporting ") << filename.make_wxString(), "Export XRC");
         }
@@ -435,7 +435,7 @@ void XrcPreview::OnDuplicate(wxCommandEvent& WXUNUSED(event))
     {
         // Place this in a block so that the string is destroyed before we process the XML
         // document (to save allocated memory).
-        auto result = doc.load_string(xrc_text.c_str());
+        auto result = doc.load_string(xrc_text.utf8_string());
         if (!result)
         {
             wxMessageBox("Error parsing XRC document: " + tt_string(result.description()), "XRC Import Test");

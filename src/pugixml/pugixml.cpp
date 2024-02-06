@@ -4472,6 +4472,22 @@ FILE* open_file_wide(const wchar_t* path, const wchar_t* mode)
     #endif
 }
 #else
+
+// Get length of wide string, even if CRT lacks wide character support
+size_t strlength_wide(const wchar_t* s)
+{
+    assert(s);
+
+    #ifdef PUGIXML_WCHAR_MODE
+    return wcslen(s);
+    #else
+    const wchar_t* end = s;
+    while (*end)
+        end++;
+    return static_cast<size_t>(end - s);
+    #endif
+}
+
 char* convert_path_heap(const wchar_t* str)
 {
     assert(str);
@@ -7901,7 +7917,7 @@ void truncate_zeros(char* begin, char* end)
 }
 
 // gets mantissa digits in the form of 0.xxxxx with 0. implied and the exponent
-#if defined(_MSC_VER) && _MSC_VER >= 1400
+#if defined(_MSC_VER)
 void convert_number_to_mantissa_exponent(double value, char (&buffer)[32], char** out_mantissa, int* out_exponent)
 {
     // get base values
@@ -7915,6 +7931,35 @@ void convert_number_to_mantissa_exponent(double value, char (&buffer)[32], char*
     *out_mantissa = buffer;
     *out_exponent = exponent;
 }
+#else
+void convert_number_to_mantissa_exponent(double value, char (&buffer)[32], char** out_mantissa, int* out_exponent)
+{
+    // get a scientific notation value with IEEE DBL_DIG decimals
+    PUGI__SNPRINTF(buffer, "%.*e", DBL_DIG, value);
+
+    // get the exponent (possibly negative)
+    char* exponent_string = strchr(buffer, 'e');
+    assert(exponent_string);
+
+    int exponent = atoi(exponent_string + 1);
+
+    // extract mantissa string: skip sign
+    char* mantissa = buffer[0] == '-' ? buffer + 1 : buffer;
+    assert(mantissa[0] != '0' && mantissa[1] == '.');
+
+    // divide mantissa by 10 to eliminate integer part
+    mantissa[1] = mantissa[0];
+    mantissa++;
+    exponent++;
+
+    // remove extra mantissa digits and zero-terminate mantissa
+    truncate_zeros(mantissa, exponent_string);
+
+    // fill results
+    *out_mantissa = mantissa;
+    *out_exponent = exponent;
+}
+#endif  // _MSC_VER
 
 xpath_string convert_number_to_string(double value, xpath_allocator* alloc)
 {
@@ -10823,11 +10868,11 @@ public:
 };
 
 static const size_t xpath_ast_depth_limit =
-    #ifdef PUGIXML_XPATH_DEPTH_LIMIT
+#ifdef PUGIXML_XPATH_DEPTH_LIMIT
     PUGIXML_XPATH_DEPTH_LIMIT
-    #else
+#else
     1024
-    #endif
+#endif
     ;
 
 struct xpath_parser
@@ -11857,7 +11902,6 @@ impl::xpath_ast_node* evaluate_node_set_prepare(xpath_query_impl* impl)
         res.error = "Expression does not evaluate to node set";
 
         throw xpath_exception(res);
-#endif
     }
 
     return impl->root;

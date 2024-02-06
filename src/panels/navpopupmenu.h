@@ -151,6 +151,10 @@ public:
 
         MenuEXPAND_ALL,
 
+        // Data List commands
+        MenuADD_DATA_STRING,
+        MenuADD_DATA_XML,
+
         // These are for Internal builds only
         MenuSingleGenCpp,
         MenuSingleGenPython,
@@ -186,6 +190,8 @@ protected:
     void ChangeNode(GenEnum::GenName new_node_gen);
     void ChangeSizer(GenEnum::GenName new_sizer_gen);
     void CreateSizerParent(Node* node, tt_string_view widget);
+
+    void AddSeparatorIfNeeded();
 
 private:
     Node* m_node { nullptr };

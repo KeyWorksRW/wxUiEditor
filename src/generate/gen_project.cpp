@@ -91,7 +91,8 @@ bool ProjectGenerator::PopupMenuAddCommands(NavPopupMenu* menu, Node* /* node */
         },
         NavPopupMenu::MenuPROJECT_ADD_WIZARD);
 
-    return true;
+    // Return false to indicate no sizer sub commands should be added
+    return false;
 }
 
 bool ProjectGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty* prop, Node* /* node */)
@@ -169,7 +170,7 @@ bool FolderGenerator::PopupMenuAddCommands(NavPopupMenu* menu, Node* /* node */)
         },
         NavPopupMenu::MenuPROJECT_ADD_WIZARD);
 
-    return true;
+    return false;
 }
 
 bool SubFolderGenerator::PopupMenuAddCommands(NavPopupMenu* menu, Node* /* node */)
@@ -231,5 +232,5 @@ bool SubFolderGenerator::PopupMenuAddCommands(NavPopupMenu* menu, Node* /* node 
         },
         NavPopupMenu::MenuPROJECT_ADD_WIZARD);
 
-    return true;
+    return false;
 }

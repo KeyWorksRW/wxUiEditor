@@ -352,6 +352,34 @@ void XrcPreview::OnInit(wxInitDialogEvent& event)
     m_scintilla->StyleSetForeground(wxSTC_H_ENTITY, *wxRED);
     m_scintilla->StyleSetForeground(wxSTC_H_DOUBLESTRING, wxColour(0, 128, 0));
     m_scintilla->StyleSetForeground(wxSTC_H_SINGLESTRING, wxColour(0, 128, 0));
+    if (UserPrefs.is_DarkMode())
+    {
+        auto fg = UserPrefs.GetColour(wxSYS_COLOUR_WINDOWTEXT);
+        auto bg = UserPrefs.GetColour(wxSYS_COLOUR_WINDOW);
+        for (int idx = 0; idx <= wxSTC_STYLE_LASTPREDEFINED; idx++)
+        {
+            m_scintilla->StyleSetForeground(idx, fg);
+            m_scintilla->StyleSetBackground(idx, bg);
+        }
+
+        m_scintilla->StyleSetForeground(wxSTC_H_ATTRIBUTE, wxColour("#FF00FF"));
+        m_scintilla->StyleSetForeground(wxSTC_H_TAG, wxColour("#80ccff"));
+        m_scintilla->StyleSetForeground(wxSTC_H_COMMENT, wxColour("#85e085"));
+        m_scintilla->StyleSetForeground(wxSTC_H_NUMBER, wxColour("#ff6666"));
+        m_scintilla->StyleSetForeground(wxSTC_H_ENTITY, wxColour("#ff6666"));
+        m_scintilla->StyleSetForeground(wxSTC_H_DOUBLESTRING, wxColour("#85e085"));
+        m_scintilla->StyleSetForeground(wxSTC_H_SINGLESTRING, wxColour("#85e085"));
+    }
+    else
+    {
+        m_scintilla->StyleSetForeground(wxSTC_H_ATTRIBUTE, wxColour("#FF00FF"));
+        m_scintilla->StyleSetForeground(wxSTC_H_TAG, *wxBLUE);
+        m_scintilla->StyleSetForeground(wxSTC_H_COMMENT, wxColour(0, 128, 0));
+        m_scintilla->StyleSetForeground(wxSTC_H_NUMBER, *wxRED);
+        m_scintilla->StyleSetForeground(wxSTC_H_ENTITY, *wxRED);
+        m_scintilla->StyleSetForeground(wxSTC_H_DOUBLESTRING, wxColour(0, 128, 0));
+        m_scintilla->StyleSetForeground(wxSTC_H_SINGLESTRING, wxColour(0, 128, 0));
+    }
 
     wxFont font(10, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL);
     m_scintilla->StyleSetFont(wxSTC_STYLE_DEFAULT, font);

@@ -151,6 +151,10 @@ public:
 
         MenuEXPAND_ALL,
 
+        // Data List commands
+        MenuADD_DATA_STRING,
+        MenuADD_DATA_XML,
+
         // These are for Internal builds only
         MenuSingleGenCpp,
         MenuSingleGenPython,

@@ -473,7 +473,7 @@ void NavPopupMenu::CreateSizerMenu(Node* node)
         AppendSubMenu(sub_menu, "Change Sizer To");
     }
 
-    AppendSeparator();
+    AddSeparatorIfNeeded();
     MenuAddStandardCommands(node);
 }
 
@@ -485,11 +485,6 @@ void NavPopupMenu::CreateCommonMenu(Node* node)
 
     MenuAddCommands(node);
     MenuAddMoveCommands(node);
-    if (!node->isGen(gen_Images) && !node->isGen(gen_embedded_image) && !node->isGen(gen_Data) &&
-        !node->isGen(gen_data_string))
-    {
-        AppendSeparator();
-    }
     MenuAddStandardCommands(node);
 }
 
@@ -507,8 +502,7 @@ void NavPopupMenu::MenuAddCommands(Node* node)
     }
 #endif
 
-    if (node->isForm() || node->isGen(gen_Images) || node->isGen(gen_embedded_image) || node->isGen(gen_Data) ||
-        node->isGen(gen_data_string))
+    if (node->isForm() || node->isGen(gen_Images) || node->isGen(gen_embedded_image))
     {
         if (node->isGen(gen_wxPropertySheetDialog))
         {
@@ -522,7 +516,27 @@ void NavPopupMenu::MenuAddCommands(Node* node)
                 MenuADD_PAGE);
             return;
         }
-        if (!node->isGen(gen_wxWizard) && !node->isToolBar())
+        else if (node->isGen(gen_Data))
+        {
+            Append(MenuADD_DATA_STRING, "Add File");
+            Append(MenuADD_DATA_XML, "Add XML File");
+            Bind(
+                wxEVT_MENU,
+                [](wxCommandEvent&)
+                {
+                    wxGetFrame().createToolNode(gen_data_string);
+                },
+                MenuADD_DATA_STRING);
+            Bind(
+                wxEVT_MENU,
+                [](wxCommandEvent&)
+                {
+                    wxGetFrame().createToolNode(gen_data_xml);
+                },
+                MenuADD_DATA_XML);
+            return;
+        }
+        else if (!node->isGen(gen_wxWizard) && !node->isToolBar())
         {
             return;
         }
@@ -535,10 +549,13 @@ void NavPopupMenu::MenuAddCommands(Node* node)
 
     if (auto gen = node->getGenerator(); gen)
     {
-        if (gen->PopupMenuAddCommands(this, node))
+        if (!gen->PopupMenuAddCommands(this, node))
         {
-            AppendSeparator();
             return;
+        }
+        else
+        {
+            AddSeparatorIfNeeded();
         }
     }
 
@@ -769,6 +786,28 @@ void NavPopupMenu::MenuAddCommands(Node* node)
                 MenuADD_PROPGRID_ITEM);
             break;
 
+        case gen_data_string:
+        case gen_data_xml:
+        case gen_data_folder:
+            add_sizer = false;
+            Append(MenuADD_DATA_STRING, "Add File");
+            Append(MenuADD_DATA_XML, "Add XML File");
+            Bind(
+                wxEVT_MENU,
+                [](wxCommandEvent&)
+                {
+                    wxGetFrame().createToolNode(gen_data_string);
+                },
+                MenuADD_DATA_STRING);
+            Bind(
+                wxEVT_MENU,
+                [](wxCommandEvent&)
+                {
+                    wxGetFrame().createToolNode(gen_data_xml);
+                },
+                MenuADD_DATA_XML);
+            break;
+
         default:
             if (m_is_parent_toolbar)
             {
@@ -789,7 +828,7 @@ void NavPopupMenu::MenuAddCommands(Node* node)
 
     if (!node->isGen(gen_Project))
     {
-        AppendSeparator();
+        AddSeparatorIfNeeded();
     }
 }
 
@@ -824,8 +863,7 @@ void NavPopupMenu::MenuAddChildSizerCommands(Node* child)
 
 void NavPopupMenu::MenuAddMoveCommands(Node* node)
 {
-    if (node->isGen(gen_Project) || node->isGen(gen_Images) || node->isGen(gen_embedded_image) || node->isGen(gen_Data) ||
-        node->isGen(gen_data_string))
+    if (node->isGen(gen_Project) || node->isGen(gen_Images) || node->isGen(gen_Data))
     {
         return;
     }
@@ -833,6 +871,7 @@ void NavPopupMenu::MenuAddMoveCommands(Node* node)
     wxMenuItem* menu_item;
     wxMenu* sub_menu;
     auto dpi_size = wxGetFrame().FromDIP(wxSize(16, 16));
+    AddSeparatorIfNeeded();
 
     sub_menu = new wxMenu;
     menu_item = sub_menu->Append(MenuMOVE_UP, "Up\tAlt+Up", "Moves selected item up");
@@ -849,6 +888,12 @@ void NavPopupMenu::MenuAddMoveCommands(Node* node)
         menu_item->SetBitmap(wxArtProvider::GetBitmapBundle(wxART_GO_FORWARD, wxART_MENU));
     }
     AppendSubMenu(sub_menu, "Move");
+
+    if (node->isGen(gen_folder) || node->isGen(gen_sub_folder) || node->isGen(gen_data_folder))
+    {
+        // Folders can only move up, down, left or right. No other move operations can be done on a folder.
+        return;
+    }
 
     if (!m_is_parent_toolbar && gen && gen->CanChangeParent(node))
     {
@@ -993,62 +1038,68 @@ void NavPopupMenu::MenuAddMoveCommands(Node* node)
         menu_item->SetBitmap(GetInternalImage("wxNotebook"));
         AppendSubMenu(sub_menu, "&Change widget to");
     }
+    return;
 }
 
 void NavPopupMenu::MenuAddStandardCommands(Node* node)
 {
-    if (node->isGen(gen_Images) || node->isGen(gen_embedded_image) || node->isGen(gen_Data) || node->isGen(gen_data_string))
+    AddSeparatorIfNeeded();
+    m_isPasteAllowed = false;
+    if (node->isGen(gen_embedded_image))
     {
         auto* menu_item = Append(wxID_DELETE);
         menu_item->SetBitmap(wxArtProvider::GetBitmapBundle(wxART_DELETE, wxART_MENU));
+        return;
+    }
+    else if (node->isGen(gen_wxStatusBar))
+    {
+        auto* menu_item = Append(wxID_CUT);
+        menu_item->SetBitmap(wxArtProvider::GetBitmapBundle(wxART_CUT, wxART_MENU));
 
-        m_isPasteAllowed = false;
+        menu_item = Append(wxID_COPY);
+        menu_item->SetBitmap(wxArtProvider::GetBitmapBundle(wxART_COPY, wxART_MENU));
+
+        menu_item = Append(wxID_DELETE);
+        menu_item->SetBitmap(wxArtProvider::GetBitmapBundle(wxART_DELETE, wxART_MENU));
         return;
     }
 
-    m_isPasteAllowed = false;
-
-    if (!node->isGen(gen_wxStatusBar))
+    auto clip_node = GetClipboardNode(false);
+    if (!clip_node)
     {
-        auto clip_node = GetClipboardNode(false);
-        if (!clip_node)
+        clip_node = wxGetFrame().getClipboardPtr();
+    }
+    m_isPasteAllowed = (clip_node ? true : false);
+
+    if (node->isGen(gen_Project))
+    {
+        auto paste_menu_item = Append(wxID_PASTE);
+        paste_menu_item->SetBitmap(wxArtProvider::GetBitmapBundle(wxART_PASTE, wxART_MENU));
+        if (!clip_node || !clip_node->isForm())
         {
-            clip_node = wxGetFrame().getClipboardPtr();
+            paste_menu_item->Enable(false);
+            m_isPasteAllowed = false;
         }
 
-        if (node->isGen(gen_Project))
-        {
-            auto paste_menu_item = Append(wxID_PASTE);
-            paste_menu_item->SetBitmap(wxArtProvider::GetBitmapBundle(wxART_PASTE, wxART_MENU));
-            if (!clip_node || !clip_node->isForm())
-            {
-                paste_menu_item->Enable(false);
-                m_isPasteAllowed = false;
-            }
-
-            // There are no other standard commands for a project
-            return;
-        }
-        m_isPasteAllowed = (clip_node ? true : false);
+        // There are no other standard commands for a project
+        return;
     }
 
     wxMenuItem* menu_item;
     menu_item = Append(wxID_CUT);
     menu_item->SetBitmap(wxArtProvider::GetBitmapBundle(wxART_CUT, wxART_MENU));
+
     menu_item = Append(wxID_COPY);
     menu_item->SetBitmap(wxArtProvider::GetBitmapBundle(wxART_COPY, wxART_MENU));
-    if (!node->isGen(gen_wxStatusBar))
-    {
-        auto paste_menu_item = Append(wxID_PASTE);
-        paste_menu_item->SetBitmap(wxArtProvider::GetBitmapBundle(wxART_PASTE, wxART_MENU));
-        if (!m_isPasteAllowed)
-        {
-            paste_menu_item->Enable(false);
-        }
-    }
+
+    auto paste_menu_item = Append(wxID_PASTE);
+    paste_menu_item->SetBitmap(wxArtProvider::GetBitmapBundle(wxART_PASTE, wxART_MENU));
+    paste_menu_item->Enable((clip_node ? true : false));
+
     menu_item = Append(wxID_DELETE);
     menu_item->SetBitmap(wxArtProvider::GetBitmapBundle(wxART_DELETE, wxART_MENU));
-    if (!node->isGen(gen_wxStatusBar))
+
+    if (!node->isGen(gen_Images) && !node->isGen(gen_Data))
     {
         Append(MenuDUPLICATE, "Duplicate");
     }
@@ -1098,9 +1149,9 @@ void NavPopupMenu::CreateSizerParent(Node* node, tt_string_view widget)
             undo_string << "sizer";
         wxGetFrame().PushUndoAction(std::make_shared<InsertNodeAction>(new_parent.get(), parent, undo_string, childPos));
 
-        // InsertNodeAction does not fire the creation event since that's usually handled by the caller as needed. We don't
-        // want to fire an event because we don't want the Mockup or Code panels to update until we have changed the parent.
-        // However we *do* need to let the navigation panel know that a new node has been added.
+        // InsertNodeAction does not fire the creation event since that's usually handled by the caller as needed. We
+        // don't want to fire an event because we don't want the Mockup or Code panels to update until we have changed
+        // the parent. However we *do* need to let the navigation panel know that a new node has been added.
 
         wxGetFrame().getNavigationPanel()->InsertNode(new_parent.get());
 

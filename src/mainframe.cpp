@@ -249,7 +249,7 @@ MainFrame::MainFrame() :
     m_menubar->Append(menuInternal, "&Internal");
 
     #if defined(_DEBUG)
-    m_toolbar->AddTool(id_XrcPreviewDlg, "XRC Tests", bundle_import_svg(24, 24), "Test Tests");
+    m_toolbar->AddTool(id_XrcPreviewDlg, "XRC Tests", bundle_import_svg(24, 24), "Dialog with multiple XRC tests");
     #endif
 
     m_toolbar->Realize();
@@ -258,7 +258,7 @@ MainFrame::MainFrame() :
     // For version 1.1.0.0, preview isn't reliable enough to be included in the release version
     m_menuTools->Delete(m_mi_preview);
     m_toolbar->DeleteTool(id_PreviewForm);
-#endif
+#endif  // defined(_DEBUG) || defined(INTERNAL_TESTING)
 
     CreateStatusBar(StatusPanels);
     SetStatusBarPane(1);  // specifies where menu and toolbar help content is displayed

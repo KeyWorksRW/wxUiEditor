@@ -159,6 +159,7 @@ bool MsgFrameBase::Create(wxWindow* parent, wxWindowID id, const wxString& title
         m_scintilla->MarkerDefine(wxSTC_MARKNUM_FOLDERMIDTAIL, wxSTC_MARK_BACKGROUND);
         m_scintilla->MarkerDefine(wxSTC_MARKNUM_FOLDERSUB, wxSTC_MARK_BACKGROUND);
         m_scintilla->MarkerDefine(wxSTC_MARKNUM_FOLDERTAIL, wxSTC_MARK_BACKGROUND);
+        m_scintilla->SetTabWidth(4);
         m_scintilla->SetBackSpaceUnIndents(true);
     }
     box_sizer_3->Add(m_scintilla, wxSizerFlags(1).Expand().Border(wxALL));

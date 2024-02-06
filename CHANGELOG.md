@@ -28,6 +28,7 @@ All notable changes to this project will be documented in this file.
 - The Context Help button in wxStdDialogButtonSizer did not have a label. This now generates a `wxContextHelpButton` which uses a bitmap rather than a label, and automatically places the dialog in context-help mode when clicked.
 - Fixed wxPython and wxRuby3 code generation for creating a wxPropertySheetDialog class.
 - When importing XRC files, a form's class name is correctly set if specified in the XRC file.
+- wxStyledTextCtrl::SetTabWidth() now generates code correctly (generated if tabs are enabled and tab width is not the default value of 8)
 
 ## [Released (1.2.0)]
 

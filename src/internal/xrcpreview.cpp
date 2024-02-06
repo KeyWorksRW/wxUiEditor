@@ -142,6 +142,7 @@ bool XrcPreview::Create(wxWindow* parent, wxWindowID id, const wxString& title,
         m_scintilla->MarkerDefine(wxSTC_MARKNUM_FOLDERMIDTAIL, wxSTC_MARK_BACKGROUND);
         m_scintilla->MarkerDefine(wxSTC_MARKNUM_FOLDERSUB, wxSTC_MARK_BACKGROUND);
         m_scintilla->MarkerDefine(wxSTC_MARKNUM_FOLDERTAIL, wxSTC_MARK_BACKGROUND);
+        m_scintilla->SetTabWidth(4);
         m_scintilla->SetBackSpaceUnIndents(true);
     }
     box_sizer_3->Add(m_scintilla, wxSizerFlags(1).Expand().Border(wxALL));
@@ -202,6 +203,7 @@ bool XrcPreview::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     #include "gen_xrc.h"                   // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
     #include "mainframe.h"                 // MainFrame -- Main window frame
     #include "node.h"                      // Node class
+    #include "preferences.h"               // Prefs -- Set/Get wxUiEditor preferences
     #include "project_handler.h"           // ProjectHandler class
     #include "undo_cmds.h"                 // InsertNodeAction -- Undoable command classes derived from UndoAction
 
@@ -345,13 +347,6 @@ void XrcPreview::OnInit(wxInitDialogEvent& event)
     m_scintilla->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_xrc_keywords);
 
     m_scintilla->StyleSetBold(wxSTC_H_TAG, true);
-    m_scintilla->StyleSetForeground(wxSTC_H_ATTRIBUTE, wxColour("#E91AFF"));
-    m_scintilla->StyleSetForeground(wxSTC_H_TAG, *wxBLUE);
-    m_scintilla->StyleSetForeground(wxSTC_H_COMMENT, wxColour(0, 128, 0));
-    m_scintilla->StyleSetForeground(wxSTC_H_NUMBER, *wxRED);
-    m_scintilla->StyleSetForeground(wxSTC_H_ENTITY, *wxRED);
-    m_scintilla->StyleSetForeground(wxSTC_H_DOUBLESTRING, wxColour(0, 128, 0));
-    m_scintilla->StyleSetForeground(wxSTC_H_SINGLESTRING, wxColour(0, 128, 0));
     if (UserPrefs.is_DarkMode())
     {
         auto fg = UserPrefs.GetColour(wxSYS_COLOUR_WINDOWTEXT);

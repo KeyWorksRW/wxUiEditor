@@ -40,7 +40,6 @@ bool CodeDisplayBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos
         m_scintilla->SetMarginSensitive(0, false);
         m_scintilla->SetIndentationGuides(wxSTC_IV_REAL);
         m_scintilla->SetUseTabs(false);
-        m_scintilla->SetTabWidth(4);
         m_scintilla->SetBackSpaceUnIndents(true);
     }
     parent_sizer->Add(m_scintilla, wxSizerFlags(1).Expand().Border(wxALL));

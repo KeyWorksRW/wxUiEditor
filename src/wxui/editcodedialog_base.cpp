@@ -44,7 +44,6 @@ bool EditCodeDialogBase::Create(wxWindow* parent, wxWindowID id, const wxString&
         m_stc->SetMarginSensitive(0, false);
         m_stc->SetIndentationGuides(wxSTC_IV_LOOKFORWARD);
         m_stc->SetUseTabs(false);
-        m_stc->SetTabWidth(4);
         m_stc->SetBackSpaceUnIndents(true);
     }
     parent_sizer->Add(m_stc, wxSizerFlags(1).Expand().DoubleBorder(wxALL));

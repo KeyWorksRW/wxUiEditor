@@ -49,7 +49,6 @@ bool EditHtmlDialogBase::Create(wxWindow* parent, wxWindowID id, const wxString&
         m_scintilla->SetMarginSensitive(0, false);
         m_scintilla->SetIndentationGuides(wxSTC_IV_LOOKFORWARD);
         m_scintilla->SetUseTabs(false);
-        m_scintilla->SetTabWidth(4);
         m_scintilla->SetBackSpaceUnIndents(true);
     }
     {

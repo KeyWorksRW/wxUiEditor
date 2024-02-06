@@ -126,7 +126,6 @@ bool EventHandlerDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString
         m_cpp_stc_lambda->SetMarginSensitive(0, false);
         m_cpp_stc_lambda->SetIndentationGuides(wxSTC_IV_LOOKFORWARD);
         m_cpp_stc_lambda->SetUseTabs(false);
-        m_cpp_stc_lambda->SetTabWidth(4);
         m_cpp_stc_lambda->SetBackSpaceUnIndents(true);
     }
     m_cpp_stc_lambda->SetMinSize(ConvertDialogToPixels(wxSize(200, -1)));
@@ -207,7 +206,6 @@ bool EventHandlerDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString
         m_ruby_stc_lambda->SetMarginSensitive(0, false);
         m_ruby_stc_lambda->SetIndentationGuides(wxSTC_IV_LOOKFORWARD);
         m_ruby_stc_lambda->SetUseTabs(false);
-        m_ruby_stc_lambda->SetTabWidth(4);
         m_ruby_stc_lambda->SetBackSpaceUnIndents(true);
     }
     m_ruby_stc_lambda->SetMinSize(ConvertDialogToPixels(wxSize(200, -1)));

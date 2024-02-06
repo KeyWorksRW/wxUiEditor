@@ -906,11 +906,10 @@ bool StyledTextGenerator::SettingsCode(Code& code)
     if (code.IsFalse(prop_use_tabs))
     {
         code.Eol(eol_if_needed).NodeName().Function("SetUseTabs(").False().EndFunction();
-
-        if (code.IntValue(prop_tab_width) != 8)
-        {
-            code.Eol().NodeName().Function("SetTabWidth(").as_string(prop_tab_width).EndFunction();
-        }
+    }
+    else if (code.IntValue(prop_tab_width) != 8)
+    {
+        code.Eol().NodeName().Function("SetTabWidth(").as_string(prop_tab_width).EndFunction();
     }
 
     // Default is true, so only set if false

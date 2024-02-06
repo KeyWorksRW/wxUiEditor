@@ -6128,6 +6128,7 @@
               <node
                 class="wxStyledTextCtrl"
                 fold_margin="1"
+                indentation_size="0"
                 lexer="XML"
                 flags="wxEXPAND"
                 proportion="1" />

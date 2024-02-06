@@ -251,15 +251,6 @@ void DataHandler::WriteDataConstruction(Code& code, WriteCode* source)
         auto& embed = iter_array.second;
         if (embed.type == tt::npos)
         {
-            // filename was not found
-            if (embed.filename.size())
-            {
-                code.Eol().Str("// ").Str(embed.filename) += " -- not found";
-            }
-            else
-            {
-                code.Eol() += "// filename not specified";
-            }
             continue;
         }
 

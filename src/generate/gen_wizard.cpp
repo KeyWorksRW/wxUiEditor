@@ -358,7 +358,7 @@ bool WizardFormGenerator::PopupMenuAddCommands(NavPopupMenu* menu, Node* node)
         },
         NavPopupMenu::MenuADD_WIZARD_PAGE);
 
-    return true;
+    return false;
 }
 
 // ../../wxSnapShot/src/xrc/xh_wizrd.cpp

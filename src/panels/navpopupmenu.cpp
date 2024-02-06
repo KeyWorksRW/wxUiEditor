@@ -1255,3 +1255,15 @@ void NavPopupMenu::AddToolbarCommands(Node* node)
             MenuADD_TOOL_STRETCHABLE_SPACER);
     }
 }
+
+void NavPopupMenu::AddSeparatorIfNeeded()
+{
+    if (auto count = GetMenuItemCount(); count)
+    {
+        auto* menu_item = FindItemByPosition(count - 1);
+        if (menu_item->GetKind() != wxITEM_SEPARATOR)
+        {
+            AppendSeparator();
+        }
+    }
+}

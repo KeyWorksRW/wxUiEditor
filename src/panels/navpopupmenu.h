@@ -187,6 +187,8 @@ protected:
     void ChangeSizer(GenEnum::GenName new_sizer_gen);
     void CreateSizerParent(Node* node, tt_string_view widget);
 
+    void AddSeparatorIfNeeded();
+
 private:
     Node* m_node { nullptr };
     Node* m_child { nullptr };

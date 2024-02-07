@@ -75,34 +75,42 @@ void DataHandler::Initialize()
         }
     }
 
-    for (const auto& node: node_data_list->getChildNodePtrs())
+    auto rlambda = [&](Node* parent, auto&& rlambda) -> void
     {
-        if (node->isGen(gen_data_folder))
-            continue;
-        if (m_embedded_data.contains(node->as_string(prop_var_name)))
+        for (const auto& node: parent->getChildNodePtrs())
         {
-            // If the filename is empty, there's nothing to load.
-            if (node->as_string(prop_data_file).empty())
-                continue;
-
-            auto& embed = m_embedded_data[node->as_string(prop_var_name)];
-
-            if (embed.filename == node->as_string(prop_data_file) && embed.type != tt::npos)
+            if (node->isGen(gen_data_folder))
             {
-                // If it's an XML file, then don't continue if xml_condensed has changed
-                if (!node->isGen(gen_data_xml) || node->as_bool(prop_xml_condensed_format) == embed.xml_condensed)
-                    continue;
+                rlambda(node.get(), rlambda);
+                continue;
             }
+            if (m_embedded_data.contains(node->as_string(prop_var_name)))
+            {
+                // If the filename is empty, there's nothing to load.
+                if (node->as_string(prop_data_file).empty())
+                    continue;
 
-            // If we get here, the variable name and filename was specified, but either the
-            // filename changed or it could not be found. Calling LoadAndCompress() will
-            // replace the EmbeddedData structure.
+                auto& embed = m_embedded_data[node->as_string(prop_var_name)];
+
+                if (embed.filename == node->as_string(prop_data_file) && embed.type != tt::npos)
+                {
+                    // If it's an XML file, then don't continue if xml_condensed has changed
+                    if (!node->isGen(gen_data_xml) || node->as_bool(prop_xml_condensed_format) == embed.xml_condensed)
+                        continue;
+                }
+
+                // If we get here, the variable name and filename was specified, but either the
+                // filename changed or it could not be found. Calling LoadAndCompress() will
+                // replace the EmbeddedData structure.
+            }
+            LoadAndCompress(node.get());
         }
-        LoadAndCompress(node.get());
-    }
+    };
+
+    rlambda(node_data_list, rlambda);
 }
 
-bool DataHandler::LoadAndCompress(const Node* node)
+bool DataHandler::LoadAndCompress(Node* node)
 {
     ASSERT(node->isGen(gen_data_string) || node->isGen(gen_data_xml));
     m_embedded_data[node->as_string(prop_var_name)] = {};
@@ -117,6 +125,18 @@ bool DataHandler::LoadAndCompress(const Node* node)
     {
         embed.filename = "// No filename specified";
         return false;
+    }
+
+    auto [path, has_base_file] = Project.GetOutputPath(node->getParent(), GEN_LANG_CPLUSPLUS);
+    if (has_base_file)
+    {
+        // true if the the base filename was returned, in which case we need to convert the
+        // relative path to the output path to a relative path to the project path
+        path.remove_filename();
+        path.append(filename);
+        filename = path;
+        filename.make_absolute();
+        filename.make_relative(Project.getProjectPath());
     }
 
     if (!filename.file_exists())
@@ -137,6 +157,7 @@ bool DataHandler::LoadAndCompress(const Node* node)
     {
         embed.filename = filename;
     }
+    embed.filename.backslashestoforward();
 
     if (node->isGen(gen_data_xml) && node->as_bool(prop_xml_condensed_format))
     {
@@ -176,36 +197,54 @@ bool DataHandler::LoadAndCompress(const Node* node)
         return true;
     }
 
-    std::ifstream file(embed.filename, std::ios::binary | std::ios::ate);
-    if (file.is_open())
+    if (!node->as_bool(prop_no_compression))
     {
-        std::streampos fileSize = file.tellg();
-        file.seekg(0, std::ios::beg);
-
-        std::vector<char> buffer(fileSize);
-        file.read(buffer.data(), fileSize);
-        file.close();
-
-        // Include the trailing zero -- we need to read this back as a string, not a data array
-        wxMemoryInputStream stream(buffer.data(), fileSize);
-
-        wxMemoryOutputStream memory_stream;
-        wxZlibOutputStream save_strem(memory_stream, wxZ_BEST_COMPRESSION);
-        if (!CopyStreamData(&stream, &save_strem, stream.GetLength()))
+        std::ifstream file(embed.filename, std::ios::binary | std::ios::ate);
+        if (file.is_open())
         {
-            // TODO: [KeyWorks - 03-16-2022] This would be really bad, though it should be impossible
+            std::streampos fileSize = file.tellg();
+            file.seekg(0, std::ios::beg);
+
+            std::vector<char> buffer(fileSize);
+            file.read(buffer.data(), fileSize);
+            file.close();
+
+            // Include the trailing zero -- we need to read this back as a string, not a data array
+            wxMemoryInputStream stream(buffer.data(), fileSize);
+
+            wxMemoryOutputStream memory_stream;
+            wxZlibOutputStream save_strem(memory_stream, wxZ_BEST_COMPRESSION);
+            if (!CopyStreamData(&stream, &save_strem, stream.GetLength()))
+            {
+                // TODO: [KeyWorks - 03-16-2022] This would be really bad, though it should be impossible
+                return false;
+            }
+            save_strem.Close();
+            size_t org_size = (buffer.size() & 0xFFFFFFFF);
+            size_t compressed_size = memory_stream.TellO();
+            auto read_stream = memory_stream.GetOutputStreamBuffer();
+
+            embed.type = node->isGen(gen_data_xml) ? 1 : 0;
+            embed.xml_condensed = false;
+            embed.array_size = (compressed_size | (org_size << 32));
+            embed.array_data = std::make_unique<unsigned char[]>(compressed_size);
+            memcpy(embed.array_data.get(), read_stream->GetBufferStart(), compressed_size);
+            wxFileName wx_file(embed.filename);
+            wx_file.GetTimes(nullptr, &embed.m_DateTime, nullptr);
+            return true;
+        }
+    }
+    else
+    {
+        wxFFileInputStream stream(embed.filename);
+        if (!stream.IsOk())
+        {
             return false;
         }
-        save_strem.Close();
-        size_t org_size = (buffer.size() & 0xFFFFFFFF);
-        size_t compressed_size = memory_stream.TellO();
-        auto read_stream = memory_stream.GetOutputStreamBuffer();
-
-        embed.type = node->isGen(gen_data_xml) ? 1 : 0;
-        embed.xml_condensed = false;
-        embed.array_size = (compressed_size | (org_size << 32));
-        embed.array_data = std::make_unique<unsigned char[]>(compressed_size);
-        memcpy(embed.array_data.get(), read_stream->GetBufferStart(), compressed_size);
+        embed.type = 0;
+        embed.array_size = static_cast<size_t>(stream.GetLength());
+        embed.array_data = std::make_unique<unsigned char[]>(embed.array_size);
+        stream.Read(embed.array_data.get(), embed.array_size);
         wxFileName wx_file(embed.filename);
         wx_file.GetTimes(nullptr, &embed.m_DateTime, nullptr);
         return true;
@@ -251,15 +290,6 @@ void DataHandler::WriteDataConstruction(Code& code, WriteCode* source)
         auto& embed = iter_array.second;
         if (embed.type == tt::npos)
         {
-            // filename was not found
-            if (embed.filename.size())
-            {
-                code.Eol().Str("// ").Str(embed.filename) += " -- not found";
-            }
-            else
-            {
-                code.Eol() += "// filename not specified";
-            }
             continue;
         }
 
@@ -268,7 +298,11 @@ void DataHandler::WriteDataConstruction(Code& code, WriteCode* source)
 
         if (embed.filename.size())
         {
-            code.Eol().Str("// ").Str(embed.filename).Str(" (").itoa(embed.array_size >> 32).Str(" bytes)");
+            code.Eol().Str("// ").Str(embed.filename);
+            if (embed.array_size >> 32 > 0)
+                code.Str(" (").itoa(embed.array_size >> 32).Str(" bytes)");
+            else
+                code.Str(" (uncompressed file)");
         }
         code.Eol();
 
@@ -315,10 +349,22 @@ void DataHandler::WriteDataConstruction(Code& code, WriteCode* source)
             continue;
         }
 
-        code.Str("std::string get_").Str(iter_array.first) << "()\n{\n\t";
-        // original size is in the high 32 bits
-        code.Str("return std::string((const char*) get_data(").Str(iter_array.first).Str(", sizeof(").Str(iter_array.first)
-            << "), " << (embed.array_size >> 32) << ").get(), " << (embed.array_size >> 32) << ");";
+        if (embed.array_size >> 32 > 0)
+        {
+            code.Str("std::string get_").Str(iter_array.first) << "()\n{\n\t";
+            // original size is in the high 32 bits
+            code.Str("return std::string((const char*) get_data(");
+            code.Str(iter_array.first).Str(", sizeof(").Str(iter_array.first);
+            code << "), " << (embed.array_size >> 32) << ").get(), " << (embed.array_size >> 32) << ");";
+        }
+        else
+        {
+            code.Str("std::pair<const unsigned char*, size_t> get_").Str(iter_array.first) << "()";
+            code.Eol().Str("{\n\t");
+            code.Str("return std::make_pair(").Str(iter_array.first).Str(", sizeof(").Str(iter_array.first);
+            code << "));";
+        }
+
         code.Eol().Str("}\n");
         source->writeLine(code);
         code.clear();
@@ -349,7 +395,14 @@ void DataHandler::WriteImagePostHeader(WriteCode* header)
             header->Indent();
             is_namespace_written = true;
         }
-        header->writeLine(tt_string("std::string get_") << iter_array.first << "();");
+        if (embed.array_size >> 32 > 0)
+        {
+            header->writeLine(tt_string("std::string get_") << iter_array.first << "();");
+        }
+        else
+        {
+            header->writeLine(tt_string("std::pair<const unsigned char*, size_t> get_") << iter_array.first << "();");
+        }
     }
     header->writeLine();
 
@@ -373,9 +426,17 @@ void DataHandler::WriteImagePostHeader(WriteCode* header)
         {
             header->writeLine(tt_string("// ") << embed.filename);
         }
-        header->writeLine(tt_string("extern const unsigned char ")
-                          << iter_array.first << '[' << (embed.array_size & 0xFFFFFFFF) << "]; // "
-                          << (embed.array_size >> 32));
+        if (embed.array_size >> 32 > 0)
+        {
+            header->writeLine(tt_string("extern const unsigned char ")
+                              << iter_array.first << '[' << (embed.array_size & 0xFFFFFFFF) << "]; // "
+                              << (embed.array_size >> 32));
+        }
+        else
+        {
+            header->writeLine(tt_string("extern const unsigned char ")
+                              << iter_array.first << '[' << (embed.array_size & 0xFFFFFFFF) << "];");
+        }
     }
 
     if (is_namespace_written)
@@ -383,6 +444,19 @@ void DataHandler::WriteImagePostHeader(WriteCode* header)
         header->Unindent();
         header->writeLine("}\n");
     }
+}
+
+bool DataHandler::NeedsUtilityHeader() const
+{
+    for (auto& iter_array: m_embedded_data)
+    {
+        auto& embed = iter_array.second;
+        if (embed.array_size >> 32 == 0)
+        {
+            return true;
+        }
+    }
+    return false;
 }
 
 // clang-format off
@@ -441,6 +515,11 @@ void BaseCodeGenerator::GenerateDataForm()
     {
         m_header->writeLine();
         m_header->writeLine("#include <memory>  // for std::make_unique", indent::none);
+
+        if (ProjectData.NeedsUtilityHeader())
+        {
+            m_header->writeLine("#include <utility>  // for std::pair", indent::none);
+        }
 
         m_header->writeLine();
         m_header->writeLine("namespace wxue_data\n{");

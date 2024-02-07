@@ -111,7 +111,7 @@ public:
     }
 
     // Returns true if the node is either a folder or subfolder
-    bool isFolder() const noexcept { return (isGen(gen_folder) || isGen(gen_sub_folder)); }
+    bool isFolder() const noexcept { return (isGen(gen_folder) || isGen(gen_sub_folder) || isGen(gen_data_folder)); }
 
     bool isWidget() const noexcept { return isType(type_widget); }
     bool isWizard() const noexcept { return isType(type_wizard); }

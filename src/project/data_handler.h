@@ -63,8 +63,10 @@ public:
     // Write extern statements to the header file
     void WriteImagePostHeader(WriteCode* header);
 
+    bool NeedsUtilityHeader() const;
+
 protected:
-    bool LoadAndCompress(const Node* node);
+    bool LoadAndCompress(Node* node);
 
 private:
     std::map<std::string, EmbeddedData, std::less<>> m_embedded_data;

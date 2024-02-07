@@ -106,16 +106,16 @@
     <gen class="data_folder" image="folder" type="data_folder">
         <property name="label" type="string"
             help="The name of the folder.">my_data_files</property>
-        <property name="output_file" type="file"
-			help="If specified, all items in this folder will be generated to this file instead of the main output file."/>
+        <!-- <property name="output_file" type="file"
+			help="If specified, all items in this folder will be generated to this file instead of the main output file."/> -->
     </gen>
 
     <gen class="data_string" image="filePicker" type="data_string">
         <property name="var_name" type="string">my_data_string</property>
         <property name="data_file" type="file"/>
-        <!-- <property name="no_compression" type="bool"
+        <property name="no_compression" type="bool"
             help="If checked, the file will not be compressed. Check this when adding a binary file that has already been
-        compressed. If unchecked, the file will be compressed using zlib.">0</property> -->
+        compressed. If unchecked, the file will be compressed using zlib.">0</property>
     </gen>
 
     <gen class="data_xml" image="fontPicker" type="data_string">

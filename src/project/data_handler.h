@@ -63,6 +63,8 @@ public:
     // Write extern statements to the header file
     void WriteImagePostHeader(WriteCode* header);
 
+    bool NeedsUtilityHeader() const;
+
 protected:
     bool LoadAndCompress(Node* node);
 

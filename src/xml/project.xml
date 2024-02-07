@@ -113,9 +113,9 @@
     <gen class="data_string" image="filePicker" type="data_string">
         <property name="var_name" type="string">my_data_string</property>
         <property name="data_file" type="file"/>
-        <!-- <property name="no_compression" type="bool"
+        <property name="no_compression" type="bool"
             help="If checked, the file will not be compressed. Check this when adding a binary file that has already been
-        compressed. If unchecked, the file will be compressed using zlib.">0</property> -->
+        compressed. If unchecked, the file will be compressed using zlib.">0</property>
     </gen>
 
     <gen class="data_xml" image="fontPicker" type="data_string">

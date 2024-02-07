@@ -83,7 +83,7 @@ std::optional<tt_string> TreeListCtrlGenerator::GetWarning(Node* node, int langu
 
 bool TreeListCtrlColumnGenerator::ConstructionCode(Code& code)
 {
-    code.NodeName().Function("AppendColumn(").QuotedString(prop_label).Comma();
+    code.ParentName().Function("AppendColumn(").QuotedString(prop_label).Comma();
     if (code.IntValue(prop_width) == -2)
     {
         code.Add("wxCOL_WIDTH_AUTOSIZE");

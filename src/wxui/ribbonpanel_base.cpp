@@ -200,14 +200,26 @@ bool RibbonPanelBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos
 
     auto* forms_bar_images = new wxRibbonToolBar(panel_wizard_2, wxID_ANY);
     {
+        forms_bar_images->AddTool(gen_folder,
+            wxue_img::bundle_folder_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize),
+            "Create a folder that can be used to organize forms.", wxRIBBON_BUTTON_NORMAL);
+        forms_bar_images->AddSeparator();
         forms_bar_images->AddTool(gen_Images,
             wxueImage(wxue_img::pagectrl_png, sizeof(wxue_img::pagectrl_png)).Rescale(
             FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "Create a file containing embedded images", wxRIBBON_BUTTON_NORMAL);
         forms_bar_images->AddTool(gen_embedded_image,
-            wxueImage(wxue_img::static_bitmap_png, sizeof(wxue_img::static_bitmap_png)).Rescale(
-            FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "Add an embedded image to an Images file", wxRIBBON_BUTTON_NORMAL);
-        forms_bar_images->AddTool(gen_folder, wxue_img::bundle_folder_png().GetBitmap(wxDefaultSize),
-            "Create a folder that can be used to organize forms.", wxRIBBON_BUTTON_NORMAL);
+            wxue_img::bundle_bitmap_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize),
+            "Add an embedded image to an Images file", wxRIBBON_BUTTON_NORMAL);
+        forms_bar_images->AddSeparator();
+        forms_bar_images->AddTool(gen_Data,
+            wxue_img::bundle_data_list_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize),
+            "Create a file containing embedded data files", wxRIBBON_BUTTON_NORMAL);
+        forms_bar_images->AddTool(gen_data_string,
+            wxue_img::bundle_text_file_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "Embed a string or binary file",
+            wxRIBBON_BUTTON_NORMAL);
+        forms_bar_images->AddTool(gen_data_xml,
+            wxue_img::bundle_xml_file_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "Embed an XML file",
+            wxRIBBON_BUTTON_NORMAL);
     }
     forms_bar_images->Realize();
 

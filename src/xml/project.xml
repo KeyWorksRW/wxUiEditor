@@ -73,7 +73,7 @@
         the folder does not have its own image form.">0</property> -->
     </gen>
 
-    <gen class="embedded_image" image="static_bitmap" type="embed_image">
+    <gen class="embedded_image" image="bitmap" type="embed_image">
         <property name="bitmap" type="image"/>
     </gen>
 
@@ -91,7 +91,7 @@
             help="Timer event that will be sent to the parent form's class."/>
     </gen>
 
-    <gen class="Data" image="text_sizer" type="data_list">
+    <gen class="Data" image="data_list" type="data_list">
         <property name="output_file" type="file"
             help="The C++ filename to store all the data strings in.">wxue_data</property>
         <!-- <property name="python_file" type="file"
@@ -110,7 +110,7 @@
 			help="If specified, all items in this folder will be generated to this file instead of the main output file."/> -->
     </gen>
 
-    <gen class="data_string" image="filePicker" type="data_string">
+    <gen class="data_string" image="text_file" type="data_string">
         <property name="var_name" type="string">my_data_string</property>
         <property name="data_file" type="file"/>
         <property name="no_compression" type="bool"
@@ -118,7 +118,7 @@
         compressed. If unchecked, the file will be compressed using zlib.">0</property>
     </gen>
 
-    <gen class="data_xml" image="fontPicker" type="data_string">
+    <gen class="data_xml" image="xml_file" type="data_string">
         <property name="var_name" type="string">my_xml_string</property>
         <property name="data_file" type="file"/>
         <property name="xml_condensed_format" type="bool"

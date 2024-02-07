@@ -30,9 +30,15 @@ struct ImageMap
 };
 
 const std::map<std::string_view, std::function<wxBitmapBundle(int width, int height)>> map_svg_functions = {
+    { "bitmap", bundle_bitmap_svg },
+    { "data_list", bundle_data_list_svg },
     { "flex_grid_sizer", bundle_flex_grid_sizer_svg },
+    { "folder", bundle_folder_svg },
     { "grid_bag_sizer", bundle_grid_bag_sizer_svg },
     { "grid_sizer", bundle_grid_sizer_svg },
+    { "text_file", bundle_text_file_svg },
+    { "xml_file", bundle_xml_file_svg },
+
     { "unknown", bundle_unknown_svg },
 };
 
@@ -77,7 +83,6 @@ static const ImageMap png_headers[] = {
     { "dirPicker", dirPicker_png, sizeof(dirPicker_png) },
     { "doc_mdi_parent_frame", doc_mdi_parent_frame_png, sizeof(doc_mdi_parent_frame_png) },
     { "filePicker", filePicker_png, sizeof(filePicker_png) },
-    { "folder", folder_png, sizeof(folder_png) },
     { "fontPicker", fontPicker_png, sizeof(fontPicker_png) },
     { "gauge", gauge_png, sizeof(gauge_png) },
     { "genericdir_ctrl", genericdir_ctrl_png, sizeof(genericdir_ctrl_png) },

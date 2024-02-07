@@ -24,6 +24,7 @@ namespace wxue_img
     wxBitmapBundle bundle_aligntop_svg(int width, int height);
     wxBitmapBundle bundle_alignvertcenter_svg(int width, int height);
     wxBitmapBundle bundle_auitoolbar_png();  // auitoolbar.png
+    wxBitmapBundle bundle_bitmap_svg(int width, int height);
     wxBitmapBundle bundle_bitmap_toggle_button_png();  // bitmap_toggle_button.png
     wxBitmapBundle bundle_bmp_combo_box_png();  // bmp_combo_box.png
     wxBitmapBundle bundle_bottom_svg(int width, int height);
@@ -31,6 +32,7 @@ namespace wxue_img
     wxBitmapBundle bundle_close_btn_png();  // close_btn.png
     wxBitmapBundle bundle_cpp_logo_svg(int width, int height);
     wxBitmapBundle bundle_ctx_help_btn_png();  // ctx_help_btn.png
+    wxBitmapBundle bundle_data_list_svg(int width, int height);
     wxBitmapBundle bundle_dataview_ctrl_png();  // dataview_ctrl.png
     wxBitmapBundle bundle_dataviewlist_ctrl_png();  // dataviewlist_ctrl.png
     wxBitmapBundle bundle_dataviewtree_ctrl_png();  // dataviewtree_ctrl.png
@@ -39,7 +41,7 @@ namespace wxue_img
     wxBitmapBundle bundle_default_png();  // default.png
     wxBitmapBundle bundle_empty_png();  // empty.png
     wxBitmapBundle bundle_flex_grid_sizer_svg(int width, int height);
-    wxBitmapBundle bundle_folder_png();  // folder.png
+    wxBitmapBundle bundle_folder_svg(int width, int height);
     wxBitmapBundle bundle_grid_bag_sizer_svg(int width, int height);
     wxBitmapBundle bundle_grid_sizer_svg(int width, int height);
     wxBitmapBundle bundle_hide_png();  // hide.png
@@ -61,6 +63,7 @@ namespace wxue_img
     wxBitmapBundle bundle_spin_ctrl_double_png();  // spin_ctrl_double.png
     wxBitmapBundle bundle_spinbtn_png();  // spinbtn.png
     wxBitmapBundle bundle_stddialogbuttonsizer_png();  // stddialogbuttonsizer.png
+    wxBitmapBundle bundle_text_file_svg(int width, int height);
     wxBitmapBundle bundle_title_close_png();  // title_close.png
     wxBitmapBundle bundle_toggle_button_png();  // toggle_button.png
     wxBitmapBundle bundle_tool_png();  // tool.png
@@ -90,6 +93,7 @@ namespace wxue_img
     wxBitmapBundle bundle_wxStaticText_png();  // wxStaticText.png
     wxBitmapBundle bundle_wxTimer_png();  // wxTimer.png
     wxBitmapBundle bundle_wxUiEditor_svg(int width, int height);
+    wxBitmapBundle bundle_xml_file_svg(int width, int height);
     wxBitmapBundle bundle_xrc_compare_svg(int width, int height);
 
     wxImage image_auitoolbar_png();
@@ -105,7 +109,6 @@ namespace wxue_img
     wxImage image_debug_32_png();
     wxImage image_default_png();
     wxImage image_empty_png();
-    wxImage image_folder_png();
     wxImage image_hide_png();
     wxImage image_logo16_png();
     wxImage image_logo32_png();
@@ -155,6 +158,7 @@ namespace wxue_img
     extern const unsigned char aligntop_svg[417];
     extern const unsigned char alignvertcenter_svg[557];
     extern const unsigned char auitoolbar_png[476];
+    extern const unsigned char bitmap_svg[1585];
     extern const unsigned char bitmap_toggle_button_png[641];
     extern const unsigned char bmp_combo_box_png[492];
     extern const unsigned char bottom_svg[170];
@@ -162,6 +166,7 @@ namespace wxue_img
     extern const unsigned char close_btn_png[956];
     extern const unsigned char cpp_logo_svg[543];
     extern const unsigned char ctx_help_btn_png[1140];
+    extern const unsigned char data_list_svg[930];
     extern const unsigned char dataview_ctrl_png[231];
     extern const unsigned char dataviewlist_ctrl_png[685];
     extern const unsigned char dataviewtree_ctrl_png[238];
@@ -170,7 +175,7 @@ namespace wxue_img
     extern const unsigned char default_png[518];
     extern const unsigned char empty_png[101];
     extern const unsigned char flex_grid_sizer_svg[203];
-    extern const unsigned char folder_png[641];
+    extern const unsigned char folder_svg[677];
     extern const unsigned char grid_bag_sizer_svg[153];
     extern const unsigned char grid_sizer_svg[314];
     extern const unsigned char hide_png[242];
@@ -192,6 +197,7 @@ namespace wxue_img
     extern const unsigned char spin_ctrl_png[300];
     extern const unsigned char spinbtn_png[192];
     extern const unsigned char stddialogbuttonsizer_png[524];
+    extern const unsigned char text_file_svg[2027];
     extern const unsigned char title_close_png[144];
     extern const unsigned char toggle_button_png[277];
     extern const unsigned char toolStretchable_png[578];
@@ -223,6 +229,7 @@ namespace wxue_img
     extern const unsigned char wxStaticText_png[290];
     extern const unsigned char wxTimer_png[1323];
     extern const unsigned char wxUiEditor_svg[1490];
+    extern const unsigned char xml_file_svg[1310];
     extern const unsigned char xrc_compare_svg[256];
 }
 

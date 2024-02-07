@@ -157,6 +157,7 @@ bool DataHandler::LoadAndCompress(Node* node)
     {
         embed.filename = filename;
     }
+    embed.filename.backslashestoforward();
 
     if (node->isGen(gen_data_xml) && node->as_bool(prop_xml_condensed_format))
     {

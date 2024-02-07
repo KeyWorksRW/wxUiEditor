@@ -117,8 +117,18 @@ MainFrame::MainFrame() :
 {
     wxIconBundle bundle;
 
-    bundle.AddIcon(GetIconImage("logo16"));
-    bundle.AddIcon(GetIconImage("logo32"));
+#if defined(_DEBUG)
+    bundle.AddIcon(bundle_debug_logo_svg(16, 16).GetIcon(wxSize(16, 16)));
+    bundle.AddIcon(bundle_debug_logo_svg(32, 32).GetIcon(wxSize(32, 32)));
+    bundle.AddIcon(bundle_debug_logo_svg(48, 48).GetIcon(wxSize(48, 48)));
+    bundle.AddIcon(bundle_debug_logo_svg(64, 64).GetIcon(wxSize(64, 64)));
+#else
+    bundle.AddIcon(bundle_wxUiEditor_svg(16, 16).GetIcon(wxSize(16, 16)));
+    bundle.AddIcon(bundle_wxUiEditor_svg(32, 32).GetIcon(wxSize(32, 32)));
+    bundle.AddIcon(bundle_wxUiEditor_svg(48, 48).GetIcon(wxSize(48, 48)));
+    bundle.AddIcon(bundle_wxUiEditor_svg(64, 64).GetIcon(wxSize(64, 64)));
+#endif  // _DEBUG
+
     SetIcons(bundle);
 
     SetTitle("wxUiEditor");
@@ -750,6 +760,10 @@ void MainFrame::OnImportProject(wxCommandEvent&)
 
 wxBitmapBundle wxueBundleSVG(const unsigned char* data, size_t size_data, size_t size_svg, wxSize def_size);
 
+#if defined(_DEBUG)
+    #include "internal/debugsettings.h"
+#endif
+
 void MainFrame::OnAbout(wxCommandEvent&)
 {
     wxAboutDialogInfo aboutInfo;
@@ -776,7 +790,11 @@ void MainFrame::OnAbout(wxCommandEvent&)
     aboutInfo.AddDeveloper("Randalphwa");
 #endif
 
+#if defined(_DEBUG)
+    aboutInfo.SetIcon(bundle_debug_logo_svg(64, 64).GetIconFor(this));
+#else
     aboutInfo.SetIcon(bundle_wxUiEditor_svg(64, 64).GetIconFor(this));
+#endif  // _DEBUG
 
     wxAboutBox(aboutInfo);
 }

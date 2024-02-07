@@ -192,11 +192,21 @@ std::pair<tt_string, bool> ProjectHandler::GetOutputPath(Node* form, int languag
     ASSERT(form->isForm() || form->isFolder());
 
     tt_string result;
-    Node* folder = form->getFolder();
+    Node* folder = form->isFolder() ? form : form->getFolder();
     if (folder)
     {
-        if (language == GEN_LANG_CPLUSPLUS && folder->hasValue(prop_folder_base_directory))
-            result = folder->as_string(prop_folder_base_directory);
+        if (language == GEN_LANG_CPLUSPLUS)
+        {
+            if (folder->hasValue(prop_folder_base_directory))
+                result = folder->as_string(prop_folder_base_directory);
+            else if (folder->hasValue(prop_output_file))
+                result = folder->as_string(prop_output_file);
+            else if (folder->isGen(gen_data_folder))
+            {
+                // Move the form to the gen_Data node since the folder doesn't specify an output file.
+                form = folder->getParent();
+            }
+        }
         else if (language == GEN_LANG_PYTHON && folder->hasValue(prop_folder_python_output_folder))
             result = folder->as_string(prop_folder_python_output_folder);
         else if (language == GEN_LANG_RUBY && folder->hasValue(prop_folder_ruby_output_folder))
@@ -219,8 +229,11 @@ std::pair<tt_string, bool> ProjectHandler::GetOutputPath(Node* form, int languag
     // result and if it's empty use the project directory properties.
     if (result.empty() || !folder)
     {
-        if (language == GEN_LANG_CPLUSPLUS && m_project_node->hasValue(prop_base_directory))
-            result = m_project_node->as_string(prop_base_directory);
+        if (language == GEN_LANG_CPLUSPLUS)
+        {
+            if (m_project_node->hasValue(prop_base_directory))
+                result = m_project_node->as_string(prop_base_directory);
+        }
         else if (language == GEN_LANG_PYTHON && m_project_node->hasValue(prop_python_output_folder))
             result = m_project_node->as_string(prop_python_output_folder);
         else if (language == GEN_LANG_RUBY && m_project_node->hasValue(prop_ruby_output_folder))

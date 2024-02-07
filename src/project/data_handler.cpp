@@ -75,34 +75,42 @@ void DataHandler::Initialize()
         }
     }
 
-    for (const auto& node: node_data_list->getChildNodePtrs())
+    auto rlambda = [&](Node* parent, auto&& rlambda) -> void
     {
-        if (node->isGen(gen_data_folder))
-            continue;
-        if (m_embedded_data.contains(node->as_string(prop_var_name)))
+        for (const auto& node: parent->getChildNodePtrs())
         {
-            // If the filename is empty, there's nothing to load.
-            if (node->as_string(prop_data_file).empty())
-                continue;
-
-            auto& embed = m_embedded_data[node->as_string(prop_var_name)];
-
-            if (embed.filename == node->as_string(prop_data_file) && embed.type != tt::npos)
+            if (node->isGen(gen_data_folder))
             {
-                // If it's an XML file, then don't continue if xml_condensed has changed
-                if (!node->isGen(gen_data_xml) || node->as_bool(prop_xml_condensed_format) == embed.xml_condensed)
-                    continue;
+                rlambda(node.get(), rlambda);
+                continue;
             }
+            if (m_embedded_data.contains(node->as_string(prop_var_name)))
+            {
+                // If the filename is empty, there's nothing to load.
+                if (node->as_string(prop_data_file).empty())
+                    continue;
 
-            // If we get here, the variable name and filename was specified, but either the
-            // filename changed or it could not be found. Calling LoadAndCompress() will
-            // replace the EmbeddedData structure.
+                auto& embed = m_embedded_data[node->as_string(prop_var_name)];
+
+                if (embed.filename == node->as_string(prop_data_file) && embed.type != tt::npos)
+                {
+                    // If it's an XML file, then don't continue if xml_condensed has changed
+                    if (!node->isGen(gen_data_xml) || node->as_bool(prop_xml_condensed_format) == embed.xml_condensed)
+                        continue;
+                }
+
+                // If we get here, the variable name and filename was specified, but either the
+                // filename changed or it could not be found. Calling LoadAndCompress() will
+                // replace the EmbeddedData structure.
+            }
+            LoadAndCompress(node.get());
         }
-        LoadAndCompress(node.get());
-    }
+    };
+
+    rlambda(node_data_list, rlambda);
 }
 
-bool DataHandler::LoadAndCompress(const Node* node)
+bool DataHandler::LoadAndCompress(Node* node)
 {
     ASSERT(node->isGen(gen_data_string) || node->isGen(gen_data_xml));
     m_embedded_data[node->as_string(prop_var_name)] = {};
@@ -117,6 +125,18 @@ bool DataHandler::LoadAndCompress(const Node* node)
     {
         embed.filename = "// No filename specified";
         return false;
+    }
+
+    auto [path, has_base_file] = Project.GetOutputPath(node->getParent(), GEN_LANG_CPLUSPLUS);
+    if (has_base_file)
+    {
+        // true if the the base filename was returned, in which case we need to convert the
+        // relative path to the output path to a relative path to the project path
+        path.remove_filename();
+        path.append(filename);
+        filename = path;
+        filename.make_absolute();
+        filename.make_relative(Project.getProjectPath());
     }
 
     if (!filename.file_exists())

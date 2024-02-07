@@ -64,7 +64,7 @@ public:
     void WriteImagePostHeader(WriteCode* header);
 
 protected:
-    bool LoadAndCompress(const Node* node);
+    bool LoadAndCompress(Node* node);
 
 private:
     std::map<std::string, EmbeddedData, std::less<>> m_embedded_data;

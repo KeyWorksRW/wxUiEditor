@@ -184,7 +184,7 @@ Node* Node::getFolder() noexcept
     auto parent = getParent();
     while (parent)
     {
-        if (parent->isGen(gen_folder))
+        if (parent->isGen(gen_folder) || parent->isGen(gen_data_folder))
         {
             return parent;
         }

@@ -26,7 +26,7 @@ class NavigationPanel;
 namespace wxue_img
 {
     extern const unsigned char expand_svg[498];
-    extern const unsigned char generate_svg[32526];
+    extern const unsigned char generate_svg[2236];
     extern const unsigned char hidden_svg[2055];
     extern const unsigned char magnify_svg[2791];
     // new-project.svg

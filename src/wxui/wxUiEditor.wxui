@@ -70,10 +70,7 @@
         bitmap="Embed;dataviewtree_ctrl.png" />
       <node
         class="embedded_image"
-        bitmap="Embed;debug_16.png" />
-      <node
-        class="embedded_image"
-        bitmap="Embed;debug_32.png" />
+        bitmap="SVG;debug_logo.svg;[24,24]" />
       <node
         class="embedded_image"
         bitmap="Embed;default.png" />
@@ -103,15 +100,6 @@
         bitmap="SVG;left.svg;[24,24]" />
       <node
         class="embedded_image"
-        bitmap="Embed;logo16.png" />
-      <node
-        class="embedded_image"
-        bitmap="Embed;logo32.png" />
-      <node
-        class="embedded_image"
-        bitmap="Embed;logo64.png" />
-      <node
-        class="embedded_image"
         bitmap="Embed;project.png" />
       <node
         class="embedded_image"
@@ -134,6 +122,12 @@
       <node
         class="embedded_image"
         bitmap="Embed;scrollbar.png" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;sizer.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;sizer_horizontal.svg;[24,24]" />
       <node
         class="embedded_image"
         bitmap="Embed;slider.png" />
@@ -1258,12 +1252,12 @@
                   wxEVT_RIBBONTOOLBAR_DROPDOWN_CLICKED="OnDropDown">
                   <node
                     class="ribbonTool"
-                    bitmap="Embed;sizer_horizontal.png"
+                    bitmap="SVG;sizer_horizontal.svg;[24,24]"
                     help="Horizontal wxBoxSizer"
                     id="gen_wxBoxSizer" />
                   <node
                     class="ribbonTool"
-                    bitmap="Embed;sizer.png"
+                    bitmap="SVG;sizer.svg;[24,24]"
                     help="Vertical wxBoxSizer"
                     id="gen_VerticalBoxSizer" />
                   <node

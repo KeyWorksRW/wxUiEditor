@@ -36,8 +36,7 @@ namespace wxue_img
     wxBitmapBundle bundle_dataview_ctrl_png();  // dataview_ctrl.png
     wxBitmapBundle bundle_dataviewlist_ctrl_png();  // dataviewlist_ctrl.png
     wxBitmapBundle bundle_dataviewtree_ctrl_png();  // dataviewtree_ctrl.png
-    wxBitmapBundle bundle_debug_16_png();  // debug_16.png
-    wxBitmapBundle bundle_debug_32_png();  // debug_32.png
+    wxBitmapBundle bundle_debug_logo_svg(int width, int height);
     wxBitmapBundle bundle_default_png();  // default.png
     wxBitmapBundle bundle_empty_png();  // empty.png
     wxBitmapBundle bundle_flex_grid_sizer_svg(int width, int height);
@@ -47,9 +46,6 @@ namespace wxue_img
     wxBitmapBundle bundle_hide_png();  // hide.png
     wxBitmapBundle bundle_import_svg(int width, int height);
     wxBitmapBundle bundle_left_svg(int width, int height);
-    wxBitmapBundle bundle_logo16_png();  // logo16.png
-    wxBitmapBundle bundle_logo32_png();  // logo32.png
-    wxBitmapBundle bundle_logo64_png();  // logo64.png
     wxBitmapBundle bundle_project_png();  // project.png
     wxBitmapBundle bundle_python_logo_only_svg(int width, int height);
     wxBitmapBundle bundle_redo_svg(int width, int height);
@@ -58,6 +54,8 @@ namespace wxue_img
     wxBitmapBundle bundle_ribbon_gallery_png();  // ribbon_gallery.png
     wxBitmapBundle bundle_right_svg(int width, int height);
     wxBitmapBundle bundle_scrollbar_png();  // scrollbar.png
+    wxBitmapBundle bundle_sizer_svg(int width, int height);
+    wxBitmapBundle bundle_sizer_horizontal_svg(int width, int height);
     wxBitmapBundle bundle_slider_png();  // slider.png
     wxBitmapBundle bundle_spin_ctrl_png();  // spin_ctrl.png
     wxBitmapBundle bundle_spin_ctrl_double_png();  // spin_ctrl_double.png
@@ -105,14 +103,9 @@ namespace wxue_img
     wxImage image_dataview_ctrl_png();
     wxImage image_dataviewlist_ctrl_png();
     wxImage image_dataviewtree_ctrl_png();
-    wxImage image_debug_16_png();
-    wxImage image_debug_32_png();
     wxImage image_default_png();
     wxImage image_empty_png();
     wxImage image_hide_png();
-    wxImage image_logo16_png();
-    wxImage image_logo32_png();
-    wxImage image_logo64_png();
     wxImage image_project_png();
     wxImage image_ribbon_bar_png();
     wxImage image_ribbon_buttonbar_png();
@@ -170,8 +163,7 @@ namespace wxue_img
     extern const unsigned char dataview_ctrl_png[231];
     extern const unsigned char dataviewlist_ctrl_png[685];
     extern const unsigned char dataviewtree_ctrl_png[238];
-    extern const unsigned char debug_16_png[656];
-    extern const unsigned char debug_32_png[1701];
+    extern const unsigned char debug_logo_svg[2965];
     extern const unsigned char default_png[518];
     extern const unsigned char empty_png[101];
     extern const unsigned char flex_grid_sizer_svg[203];
@@ -181,9 +173,6 @@ namespace wxue_img
     extern const unsigned char hide_png[242];
     extern const unsigned char import_svg[4093];
     extern const unsigned char left_svg[188];
-    extern const unsigned char logo16_png[639];
-    extern const unsigned char logo32_png[1470];
-    extern const unsigned char logo64_png[1718];
     extern const unsigned char project_png[899];
     extern const unsigned char python_logo_only_svg[838];  // python-logo-only.svg
     extern const unsigned char redo_svg[459];
@@ -192,6 +181,8 @@ namespace wxue_img
     extern const unsigned char ribbon_gallery_png[215];
     extern const unsigned char right_svg[282];
     extern const unsigned char scrollbar_png[214];
+    extern const unsigned char sizer_horizontal_svg[269];
+    extern const unsigned char sizer_svg[262];
     extern const unsigned char slider_png[248];
     extern const unsigned char spin_ctrl_double_png[219];
     extern const unsigned char spin_ctrl_png[300];

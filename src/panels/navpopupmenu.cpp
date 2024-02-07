@@ -393,7 +393,7 @@ void NavPopupMenu::CreateSizerMenu(Node* node)
 
     sub_menu = new wxMenu;
     menu_item = sub_menu->Append(MenuNEW_CHILD_BOX_SIZER, "wxBoxSizer");
-    menu_item->SetBitmap(GetInternalImage("sizer_horizontal"));
+    menu_item->SetBitmap(GetSvgImage("sizer_horizontal", dpi_size));
     menu_item = sub_menu->Append(MenuNEW_CHILD_STATIC_SIZER, "wxStaticBoxSizer");
     menu_item->SetBitmap(GetInternalImage("wxStaticBoxSizer"));
     menu_item = sub_menu->Append(MenuNEW_CHILD_WRAP_SIZER, "wxWrapSizer");
@@ -411,7 +411,7 @@ void NavPopupMenu::CreateSizerMenu(Node* node)
     {
         sub_menu = new wxMenu;
         menu_item = sub_menu->Append(MenuNEW_SIBLING_BOX_SIZER, "wxBoxSizer");
-        menu_item->SetBitmap(GetInternalImage("sizer_horizontal"));
+        menu_item->SetBitmap(GetSvgImage("sizer_horizontal", dpi_size));
         menu_item = sub_menu->Append(MenuNEW_SIBLING_STATIC_SIZER, "wxStaticBoxSizer");
         menu_item->SetBitmap(GetInternalImage("wxStaticBoxSizer"));
         menu_item = sub_menu->Append(MenuNEW_SIBLING_WRAP_SIZER, "wxWrapSizer");
@@ -839,7 +839,7 @@ void NavPopupMenu::MenuAddChildSizerCommands(Node* child)
 
     auto sub_menu = new wxMenu;
     auto menu_item = sub_menu->Append(MenuNEW_CHILD_BOX_SIZER, "wxBoxSizer");
-    menu_item->SetBitmap(GetInternalImage("sizer_horizontal"));
+    menu_item->SetBitmap(GetSvgImage("sizer_horizontal", dpi_size));
     menu_item = sub_menu->Append(MenuNEW_CHILD_STATIC_SIZER, "wxStaticBoxSizer");
     menu_item->SetBitmap(GetInternalImage("wxStaticBoxSizer"));
     menu_item = sub_menu->Append(MenuNEW_CHILD_WRAP_SIZER, "wxWrapSizer");
@@ -899,7 +899,7 @@ void NavPopupMenu::MenuAddMoveCommands(Node* node)
     {
         sub_menu = new wxMenu;
         menu_item = sub_menu->Append(MenuNEW_PARENT_BOX_SIZER, "wxBoxSizer");
-        menu_item->SetBitmap(GetInternalImage("sizer_horizontal"));
+        menu_item->SetBitmap(GetSvgImage("sizer_horizontal", dpi_size));
         menu_item = sub_menu->Append(MenuNEW_PARENT_STATIC_SIZER, "wxStaticBoxSizer");
         menu_item->SetBitmap(GetInternalImage("wxStaticBoxSizer"));
         menu_item = sub_menu->Append(MenuNEW_PARENT_WRAP_SIZER, "wxWrapSizer");

@@ -56,8 +56,6 @@ namespace wxue_img
     extern const unsigned char scintilla_png[729];
     extern const unsigned char search_png[800];
     extern const unsigned char separator_png[306];
-    extern const unsigned char sizer_horizontal_png[129];
-    extern const unsigned char sizer_png[133];
     extern const unsigned char spacer_png[183];
     extern const unsigned char static_bitmap_png[778];
     extern const unsigned char static_line_png[122];

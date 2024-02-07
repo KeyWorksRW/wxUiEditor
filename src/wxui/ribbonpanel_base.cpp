@@ -67,8 +67,6 @@ namespace wxue_img
     extern const unsigned char scintilla_png[729];
     extern const unsigned char search_png[800];
     extern const unsigned char separator_png[306];
-    extern const unsigned char sizer_horizontal_png[129];
-    extern const unsigned char sizer_png[133];
     extern const unsigned char spacer_png[183];
     extern const unsigned char static_bitmap_png[778];
     extern const unsigned char static_line_png[122];
@@ -230,11 +228,11 @@ bool RibbonPanelBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos
     auto* sizer_bar_basic = new wxRibbonToolBar(panel_basic, wxID_ANY);
     {
         sizer_bar_basic->AddTool(gen_wxBoxSizer,
-            wxueImage(wxue_img::sizer_horizontal_png, sizeof(wxue_img::sizer_horizontal_png)).Rescale(
-            FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "Horizontal wxBoxSizer", wxRIBBON_BUTTON_NORMAL);
+            wxue_img::bundle_sizer_horizontal_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "Horizontal wxBoxSizer",
+            wxRIBBON_BUTTON_NORMAL);
         sizer_bar_basic->AddTool(gen_VerticalBoxSizer,
-            wxueImage(wxue_img::sizer_png, sizeof(wxue_img::sizer_png)).Rescale(
-            FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "Vertical wxBoxSizer", wxRIBBON_BUTTON_NORMAL);
+            wxue_img::bundle_sizer_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "Vertical wxBoxSizer",
+            wxRIBBON_BUTTON_NORMAL);
         sizer_bar_basic->AddTool(NewStaticSizer, wxue_img::bundle_wxStaticBoxSizer_png().GetBitmap(wxDefaultSize),
             "wxStaticBoxSizer", wxRIBBON_BUTTON_DROPDOWN);
         sizer_bar_basic->AddTool(gen_wxWrapSizer,
@@ -1300,20 +1298,6 @@ namespace wxue_img
         65,145,228,57,147,60,71,250,14,17,60,211,217,140,88,239,17,73,129,20,159,89,59,193,77,99,104,26,51,72,197,10,160,
         109,219,65,119,187,56,63,67,88,107,67,93,215,220,222,92,255,115,43,186,85,191,13,189,227,253,196,10,79,191,13,191,
         110,133,52,198,136,161,1,144,227,83,251,187,124,0,38,28,251,236,206,248,7,228,0,0,0,0,73,69,78,68,174,66,96,130
-    };
-
-    const unsigned char sizer_horizontal_png[129] {
-        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,115,
-        0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,0,51,73,68,65,84,56,203,99,96,24,5,163,128,110,128,145,129,129,129,225,63,
-        3,195,127,42,26,200,8,231,224,50,152,18,113,38,90,5,197,168,193,67,216,96,218,166,227,81,48,10,80,0,0,229,90,12,
-        7,148,200,4,113,0,0,0,0,73,69,78,68,174,66,96,130
-    };
-
-    const unsigned char sizer_png[133] {
-        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,115,
-        0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,0,55,73,68,65,84,56,203,99,96,160,17,96,196,37,241,159,129,225,63,17,154,
-        25,73,182,145,144,193,132,228,153,104,21,20,163,6,195,1,11,37,17,68,22,24,77,21,163,169,98,52,85,140,166,138,33,
-        13,0,44,233,20,20,55,124,84,254,0,0,0,0,73,69,78,68,174,66,96,130
     };
 
     const unsigned char spacer_png[183] {

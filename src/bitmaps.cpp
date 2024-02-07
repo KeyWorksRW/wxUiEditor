@@ -36,6 +36,8 @@ const std::map<std::string_view, std::function<wxBitmapBundle(int width, int hei
     { "folder", bundle_folder_svg },
     { "grid_bag_sizer", bundle_grid_bag_sizer_svg },
     { "grid_sizer", bundle_grid_sizer_svg },
+    { "sizer", bundle_sizer_svg },
+    { "sizer_horizontal", bundle_sizer_horizontal_svg },
     { "text_file", bundle_text_file_svg },
     { "xml_file", bundle_xml_file_svg },
 
@@ -52,8 +54,6 @@ static const ImageMap png_headers[] = {
 
     // { "grid_bag_sizer", grid_bag_sizer_png, sizeof(grid_bag_sizer_png) },
     // { "grid_sizer", grid_sizer_png, sizeof(grid_sizer_png) },
-    { "sizer", sizer_png, sizeof(sizer_png) },
-    { "sizer_horizontal", sizer_horizontal_png, sizeof(sizer_horizontal_png) },
     { "slider", slider_png, sizeof(slider_png) },
     { "spacer", spacer_png, sizeof(spacer_png) },
     { "stddialogbuttonsizer", stddialogbuttonsizer_png, sizeof(stddialogbuttonsizer_png) },
@@ -165,16 +165,6 @@ static const ImageMap png_headers[] = {
     { "wxWizard", wxWizard_png, sizeof(wxWizard_png) },
     { "wxWizardPageSimple", wxWizardPageSimple_png, sizeof(wxWizardPageSimple_png) },
     { "webview", webview_png, sizeof(webview_png) },
-
-// A different Icon is used for debug builds so that it is easier to identify that a debug build is being run.
-
-#if defined(_DEBUG) || defined(INTERNAL_TESTING)
-    { "logo16", debug_16_png, sizeof(debug_16_png) },
-    { "logo32", debug_32_png, sizeof(debug_32_png) }
-#else
-    { "logo16", logo16_png, sizeof(logo16_png) },
-    { "logo32", logo32_png, sizeof(logo32_png) }
-#endif
 
 };
 

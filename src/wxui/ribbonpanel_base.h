@@ -24,8 +24,6 @@
 
 namespace wxue_img
 {
-    extern const unsigned char WXPOPupTransientWindow_png[358];
-    extern const unsigned char auinotebook_png[284];
     extern const unsigned char book_page_png[229];
     extern const unsigned char calendar_png[937];
     extern const unsigned char colourPickerIcon_png[534];
@@ -38,7 +36,6 @@ namespace wxue_img
     extern const unsigned char fontPicker_png[763];
     extern const unsigned char gauge_png[260];
     extern const unsigned char genericdir_ctrl_png[328];
-    extern const unsigned char grid_png[171];
     extern const unsigned char htmlwin_png[1053];
     extern const unsigned char hyperlink_ctrl_png[329];
     extern const unsigned char infobar_png[556];
@@ -56,8 +53,6 @@ namespace wxue_img
     extern const unsigned char scintilla_png[729];
     extern const unsigned char search_png[800];
     extern const unsigned char separator_png[306];
-    extern const unsigned char sizer_horizontal_png[129];
-    extern const unsigned char sizer_png[133];
     extern const unsigned char spacer_png[183];
     extern const unsigned char static_bitmap_png[778];
     extern const unsigned char static_line_png[122];
@@ -70,16 +65,15 @@ namespace wxue_img
     extern const unsigned char treelistctrlcolumn_png[504];
     extern const unsigned char webview_png[1208];
     extern const unsigned char wrap_sizer_png[145];
-    extern const unsigned char wxChoicebook_png[434];
     extern const unsigned char wxCollapsiblePane_png[324];
     extern const unsigned char wxDialog_png[636];
     extern const unsigned char wxFrame_png[424];
-    extern const unsigned char wxListbook_png[357];
     extern const unsigned char wxMenuBar_png[490];
     extern const unsigned char wxNotebook_png[177];
     extern const unsigned char wxPanel_png[156];
     extern const unsigned char wxPropertyGridManager_png[225];
     extern const unsigned char wxPropertyGrid_png[212];
+    extern const unsigned char wxTimer_svg[3522];
     extern const unsigned char wxToolBar_png[554];
     extern const unsigned char wxToolbook_png[450];
     extern const unsigned char wxTreebook_png[484];
@@ -92,12 +86,10 @@ namespace wxue_img
     extern const unsigned char wxcomboBox_png[233];
     extern const unsigned char wxfileCtrl_png[255];
     extern const unsigned char wxmenuBar_png[490];
-    extern const unsigned char wxnotebook_png[177];
     extern const unsigned char wxradioButton_png[268];
     extern const unsigned char wxscrolledWindow_png[258];
     extern const unsigned char wxsimplebook_png[249];
     extern const unsigned char wxsplitterWindow_png[266];
-    extern const unsigned char wxtextCtrl_png[283];
     extern const unsigned char wxtoolBar_png[554];
 }
 

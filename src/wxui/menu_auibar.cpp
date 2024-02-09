@@ -24,7 +24,7 @@ MenuAuiBar::MenuAuiBar() : wxMenu()
     auto* menu_item_6 = Append(gen_auitool, "Add Tool", "Insert a normal button tool", wxITEM_NORMAL);
     menu_item_6->SetBitmap(wxue_img::bundle_tool_png());
     auto* menu_item_2 = Append(gen_auitool_label, "Add Label", "Insert a Label", wxITEM_NORMAL);
-    menu_item_2->SetBitmap(wxue_img::bundle_wxStaticText_png());
+    menu_item_2->SetBitmap(wxue_img::bundle_wxStaticText_svg(24, 24));
     auto* menu_item_9 = Append(gen_toolSeparator, "Add Separator", "Add space to separate tools", wxITEM_NORMAL);
     menu_item_9->SetBitmap(wxue_img::bundle_toolseparator_png());
     auto* menu_item_4 = Append(gen_auitool_spacer, "Add Spacer", "Add space to separate tools", wxITEM_NORMAL);

@@ -385,15 +385,15 @@ void NavPopupMenu::CreateSizerMenu(Node* node)
     Bind(wxEVT_UPDATE_UI, &NavPopupMenu::OnUpdateEvent, this);
 
     m_sizer_node = node;
-    auto dpi_size = wxGetFrame().FromDIP(wxSize(16, 16));
-
-    bool isTopSizer = (node->getParent()->isForm() || node->getParent()->isContainer());
     wxMenuItem* menu_item;
     wxMenu* sub_menu;
 
+    auto dpi_size = wxGetFrame().FromDIP(wxSize(16, 16));
+    bool isTopSizer = (node->getParent()->isForm() || node->getParent()->isContainer());
+
     sub_menu = new wxMenu;
     menu_item = sub_menu->Append(MenuNEW_CHILD_BOX_SIZER, "wxBoxSizer");
-    menu_item->SetBitmap(GetInternalImage("sizer_horizontal"));
+    menu_item->SetBitmap(GetSvgImage("sizer_horizontal", dpi_size));
     menu_item = sub_menu->Append(MenuNEW_CHILD_STATIC_SIZER, "wxStaticBoxSizer");
     menu_item->SetBitmap(GetInternalImage("wxStaticBoxSizer"));
     menu_item = sub_menu->Append(MenuNEW_CHILD_WRAP_SIZER, "wxWrapSizer");
@@ -411,7 +411,7 @@ void NavPopupMenu::CreateSizerMenu(Node* node)
     {
         sub_menu = new wxMenu;
         menu_item = sub_menu->Append(MenuNEW_SIBLING_BOX_SIZER, "wxBoxSizer");
-        menu_item->SetBitmap(GetInternalImage("sizer_horizontal"));
+        menu_item->SetBitmap(GetSvgImage("sizer_horizontal", dpi_size));
         menu_item = sub_menu->Append(MenuNEW_SIBLING_STATIC_SIZER, "wxStaticBoxSizer");
         menu_item->SetBitmap(GetInternalImage("wxStaticBoxSizer"));
         menu_item = sub_menu->Append(MenuNEW_SIBLING_WRAP_SIZER, "wxWrapSizer");
@@ -490,6 +490,9 @@ void NavPopupMenu::CreateCommonMenu(Node* node)
 
 void NavPopupMenu::MenuAddCommands(Node* node)
 {
+    wxMenuItem* menu_item;
+    auto dpi_size = wxGetFrame().FromDIP(wxSize(16, 16));
+
 #if defined(_DEBUG) || defined(INTERNAL_TESTING)
     if (node->isForm())
     {
@@ -506,7 +509,8 @@ void NavPopupMenu::MenuAddCommands(Node* node)
     {
         if (node->isGen(gen_wxPropertySheetDialog))
         {
-            Append(MenuADD_PAGE, "Add Page");
+            menu_item = Append(MenuADD_PAGE, "Add Page");
+            menu_item->SetBitmap(GetSvgImage("book_page", dpi_size));
             Bind(
                 wxEVT_MENU,
                 [](wxCommandEvent&)
@@ -518,8 +522,10 @@ void NavPopupMenu::MenuAddCommands(Node* node)
         }
         else if (node->isGen(gen_Data))
         {
-            Append(MenuADD_DATA_STRING, "Add File");
-            Append(MenuADD_DATA_XML, "Add XML File");
+            menu_item = Append(MenuADD_DATA_STRING, "Add File");
+            menu_item->SetBitmap(GetSvgImage("text_file", dpi_size));
+            menu_item = Append(MenuADD_DATA_XML, "Add XML File");
+            menu_item->SetBitmap(GetSvgImage("xml_file", dpi_size));
             Bind(
                 wxEVT_MENU,
                 [](wxCommandEvent&)
@@ -527,6 +533,26 @@ void NavPopupMenu::MenuAddCommands(Node* node)
                     wxGetFrame().createToolNode(gen_data_string);
                 },
                 MenuADD_DATA_STRING);
+            Bind(
+                wxEVT_MENU,
+                [](wxCommandEvent&)
+                {
+                    wxGetFrame().createToolNode(gen_data_xml);
+                },
+                MenuADD_DATA_XML);
+            return;
+        }
+        else if (node->isGen(gen_Images))
+        {
+            menu_item = Append(MenuADD_IMAGE, "Add Image");
+            menu_item->SetBitmap(GetSvgImage("bitmap", dpi_size));
+            Bind(
+                wxEVT_MENU,
+                [](wxCommandEvent&)
+                {
+                    wxGetFrame().createToolNode(gen_embedded_image);
+                },
+                MenuADD_IMAGE);
             Bind(
                 wxEVT_MENU,
                 [](wxCommandEvent&)
@@ -839,7 +865,7 @@ void NavPopupMenu::MenuAddChildSizerCommands(Node* child)
 
     auto sub_menu = new wxMenu;
     auto menu_item = sub_menu->Append(MenuNEW_CHILD_BOX_SIZER, "wxBoxSizer");
-    menu_item->SetBitmap(GetInternalImage("sizer_horizontal"));
+    menu_item->SetBitmap(GetSvgImage("sizer_horizontal", dpi_size));
     menu_item = sub_menu->Append(MenuNEW_CHILD_STATIC_SIZER, "wxStaticBoxSizer");
     menu_item->SetBitmap(GetInternalImage("wxStaticBoxSizer"));
     menu_item = sub_menu->Append(MenuNEW_CHILD_WRAP_SIZER, "wxWrapSizer");
@@ -899,7 +925,7 @@ void NavPopupMenu::MenuAddMoveCommands(Node* node)
     {
         sub_menu = new wxMenu;
         menu_item = sub_menu->Append(MenuNEW_PARENT_BOX_SIZER, "wxBoxSizer");
-        menu_item->SetBitmap(GetInternalImage("sizer_horizontal"));
+        menu_item->SetBitmap(GetSvgImage("sizer_horizontal", dpi_size));
         menu_item = sub_menu->Append(MenuNEW_PARENT_STATIC_SIZER, "wxStaticBoxSizer");
         menu_item->SetBitmap(GetInternalImage("wxStaticBoxSizer"));
         menu_item = sub_menu->Append(MenuNEW_PARENT_WRAP_SIZER, "wxWrapSizer");
@@ -977,11 +1003,11 @@ void NavPopupMenu::MenuAddMoveCommands(Node* node)
     {
         sub_menu = new wxMenu;
         menu_item = sub_menu->Append(MenuChangeTo_CHOICE_BOOK, "wxChoicebook");
-        menu_item->SetBitmap(GetInternalImage("wxChoicebook"));
+        menu_item->SetBitmap(GetSvgImage("notebook_choice", dpi_size));
         menu_item = sub_menu->Append(MenuChangeTo_LIST_BOOK, "wxListbook");
-        menu_item->SetBitmap(GetInternalImage("wxListbook"));
+        menu_item->SetBitmap(GetSvgImage("notebook_list", dpi_size));
         menu_item = sub_menu->Append(MenuChangeTo_NOTE_BOOK, "wxNotebook");
-        menu_item->SetBitmap(GetInternalImage("wxNotebook"));
+        menu_item->SetBitmap(GetSvgImage("notebook", dpi_size));
         menu_item = sub_menu->Append(MenuChangeTo_SIMPLE_BOOK, "wxSimplebook");
         menu_item->SetBitmap(GetInternalImage("wxSimplebook"));
         AppendSubMenu(sub_menu, "&Change widget to");
@@ -990,11 +1016,11 @@ void NavPopupMenu::MenuAddMoveCommands(Node* node)
     {
         sub_menu = new wxMenu;
         menu_item = sub_menu->Append(MenuChangeTo_AUI_BOOK, "wxAuiNotebook");
-        menu_item->SetBitmap(GetInternalImage("auinotebook"));
+        menu_item->SetBitmap(GetSvgImage("notebook_aui", dpi_size));
         menu_item = sub_menu->Append(MenuChangeTo_LIST_BOOK, "wxListbook");
-        menu_item->SetBitmap(GetInternalImage("wxListbook"));
+        menu_item->SetBitmap(GetSvgImage("notebook_list", dpi_size));
         menu_item = sub_menu->Append(MenuChangeTo_NOTE_BOOK, "wxNotebook");
-        menu_item->SetBitmap(GetInternalImage("wxNotebook"));
+        menu_item->SetBitmap(GetSvgImage("notebook", dpi_size));
         menu_item = sub_menu->Append(MenuChangeTo_SIMPLE_BOOK, "wxSimplebook");
         menu_item->SetBitmap(GetInternalImage("wxSimplebook"));
         AppendSubMenu(sub_menu, "&Change widget to");
@@ -1003,11 +1029,11 @@ void NavPopupMenu::MenuAddMoveCommands(Node* node)
     {
         sub_menu = new wxMenu;
         menu_item = sub_menu->Append(MenuChangeTo_AUI_BOOK, "wxAuiNotebook");
-        menu_item->SetBitmap(GetInternalImage("auinotebook"));
+        menu_item->SetBitmap(GetSvgImage("notebook_aui", dpi_size));
         menu_item = sub_menu->Append(MenuChangeTo_CHOICE_BOOK, "wxChoicebook");
-        menu_item->SetBitmap(GetInternalImage("wxChoicebook"));
+        menu_item->SetBitmap(GetSvgImage("notebook_choice", dpi_size));
         menu_item = sub_menu->Append(MenuChangeTo_NOTE_BOOK, "wxNotebook");
-        menu_item->SetBitmap(GetInternalImage("wxNotebook"));
+        menu_item->SetBitmap(GetSvgImage("notebook", dpi_size));
         menu_item = sub_menu->Append(MenuChangeTo_SIMPLE_BOOK, "wxSimplebook");
         menu_item->SetBitmap(GetInternalImage("wxSimplebook"));
         AppendSubMenu(sub_menu, "&Change widget to");
@@ -1016,11 +1042,11 @@ void NavPopupMenu::MenuAddMoveCommands(Node* node)
     {
         sub_menu = new wxMenu;
         menu_item = sub_menu->Append(MenuChangeTo_AUI_BOOK, "wxAuiNotebook");
-        menu_item->SetBitmap(GetInternalImage("auinotebook"));
+        menu_item->SetBitmap(GetSvgImage("notebook_aui", dpi_size));
         menu_item = sub_menu->Append(MenuChangeTo_CHOICE_BOOK, "wxChoicebook");
-        menu_item->SetBitmap(GetInternalImage("wxChoicebook"));
+        menu_item->SetBitmap(GetSvgImage("notebook_choice", dpi_size));
         menu_item = sub_menu->Append(MenuChangeTo_LIST_BOOK, "wxListbook");
-        menu_item->SetBitmap(GetInternalImage("wxListbook"));
+        menu_item->SetBitmap(GetSvgImage("notebook_list", dpi_size));
         menu_item = sub_menu->Append(MenuChangeTo_SIMPLE_BOOK, "wxSimplebook");
         menu_item->SetBitmap(GetInternalImage("wxSimplebook"));
         AppendSubMenu(sub_menu, "&Change widget to");
@@ -1029,13 +1055,13 @@ void NavPopupMenu::MenuAddMoveCommands(Node* node)
     {
         sub_menu = new wxMenu;
         menu_item = sub_menu->Append(MenuChangeTo_AUI_BOOK, "wxAuiNotebook");
-        menu_item->SetBitmap(GetInternalImage("auinotebook"));
+        menu_item->SetBitmap(GetSvgImage("notebook_aui", dpi_size));
         menu_item = sub_menu->Append(MenuChangeTo_CHOICE_BOOK, "wxChoicebook");
-        menu_item->SetBitmap(GetInternalImage("wxChoicebook"));
+        menu_item->SetBitmap(GetSvgImage("notebook_choice", dpi_size));
         menu_item = sub_menu->Append(MenuChangeTo_LIST_BOOK, "wxListbook");
-        menu_item->SetBitmap(GetInternalImage("wxListbook"));
+        menu_item->SetBitmap(GetSvgImage("notebook_list", dpi_size));
         menu_item = sub_menu->Append(MenuChangeTo_NOTE_BOOK, "wxNotebook");
-        menu_item->SetBitmap(GetInternalImage("wxNotebook"));
+        menu_item->SetBitmap(GetSvgImage("notebook", dpi_size));
         AppendSubMenu(sub_menu, "&Change widget to");
     }
     return;
@@ -1177,6 +1203,8 @@ void NavPopupMenu::AddToolbarCommands(Node* node)
 {
     auto sub_menu = new wxMenu;
     wxMenuItem* menu_item;
+    auto dpi_size = wxGetFrame().FromDIP(wxSize(16, 16));
+
     AppendSubMenu(sub_menu, "Tools");
 
     bool is_aui_toolbar =
@@ -1194,7 +1222,7 @@ void NavPopupMenu::AddToolbarCommands(Node* node)
     if (is_aui_toolbar)
     {
         menu_item = sub_menu->Append(MenuADD_TOOL_LABEL, "Label");
-        menu_item->SetBitmap(GetInternalImage("wxStaticText"));
+        menu_item->SetBitmap(GetSvgImage("wxStaticText", dpi_size));
     }
 
     sub_menu->AppendSeparator();

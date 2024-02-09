@@ -59,7 +59,7 @@
             help="The name of the folder.">my_forms</property>
     </gen>
 
-    <gen class="Images" image="pagectrl" type="images">
+    <gen class="Images" image="images" type="images">
         <property name="base_file" type="file"
             help="The C++ filename to store all the embedded images in.">my_images</property>
         <property name="python_file" type="file"

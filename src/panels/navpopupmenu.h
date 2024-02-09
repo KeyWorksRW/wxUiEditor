@@ -91,6 +91,8 @@ public:
         // MenuChangeTo_TOOL_BOOK,
         // MenuChangeTo_TREE_BOOK,
 
+        MenuADD_IMAGE,
+
         MenuNEW_CHILD_SPACER,
         MenuNEW_SIBLING_SPACER,
 

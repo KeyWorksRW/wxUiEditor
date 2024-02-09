@@ -70,10 +70,7 @@
         bitmap="Embed;dataviewtree_ctrl.png" />
       <node
         class="embedded_image"
-        bitmap="Embed;debug_16.png" />
-      <node
-        class="embedded_image"
-        bitmap="Embed;debug_32.png" />
+        bitmap="SVG;debug_logo.svg;[24,24]" />
       <node
         class="embedded_image"
         bitmap="Embed;default.png" />
@@ -88,6 +85,9 @@
         bitmap="SVG;folder.svg;[24,24]" />
       <node
         class="embedded_image"
+        bitmap="SVG;grid.svg;[24,24]" />
+      <node
+        class="embedded_image"
         bitmap="SVG;grid_bag_sizer.svg;[24,24]" />
       <node
         class="embedded_image"
@@ -97,19 +97,28 @@
         bitmap="Embed;hide.png" />
       <node
         class="embedded_image"
+        bitmap="SVG;images.svg;[24,24]" />
+      <node
+        class="embedded_image"
         bitmap="SVG;import.svg;[16,16]" />
       <node
         class="embedded_image"
         bitmap="SVG;left.svg;[24,24]" />
       <node
         class="embedded_image"
-        bitmap="Embed;logo16.png" />
+        bitmap="SVG;notebook.svg;[24,24]" />
       <node
         class="embedded_image"
-        bitmap="Embed;logo32.png" />
+        bitmap="SVG;notebook_aui.svg;[24,24]" />
       <node
         class="embedded_image"
-        bitmap="Embed;logo64.png" />
+        bitmap="SVG;notebook_choice.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;notebook_list.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;popup_window.svg;[24,24]" />
       <node
         class="embedded_image"
         bitmap="Embed;project.png" />
@@ -118,7 +127,7 @@
         bitmap="SVG;python-logo-only.svg;[16,16]" />
       <node
         class="embedded_image"
-        bitmap="SVG;redo.svg;[16,16]" />
+        bitmap="SVG;redo.svg;[24,24]" />
       <node
         class="embedded_image"
         bitmap="Embed;ribbon_bar.png" />
@@ -134,6 +143,12 @@
       <node
         class="embedded_image"
         bitmap="Embed;scrollbar.png" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;sizer.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;sizer_horizontal.svg;[24,24]" />
       <node
         class="embedded_image"
         bitmap="Embed;slider.png" />
@@ -178,7 +193,7 @@
         bitmap="SVG;top.svg;[24,24]" />
       <node
         class="embedded_image"
-        bitmap="SVG;undo.svg;[16,16]" />
+        bitmap="SVG;undo.svg;[24,24]" />
       <node
         class="embedded_image"
         bitmap="Embed;unknown.png" />
@@ -232,7 +247,10 @@
         bitmap="Embed;wxStaticRadioBtnSizer.png" />
       <node
         class="embedded_image"
-        bitmap="Embed;wxStaticText.png" />
+        bitmap="SVG;wxStaticText.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;wxTextCtrl.svg;[24,24]" />
       <node
         class="embedded_image"
         bitmap="Embed;wxTimer.png" />
@@ -353,14 +371,14 @@
               class="toolSeparator" />
             <node
               class="tool"
-              bitmap="SVG;undo.svg;[16,16]"
+              bitmap="SVG;undo.svg;[24,24]"
               id="wxID_UNDO"
               label=""
               tooltip="Undo"
               var_name="Undo" />
             <node
               class="tool"
-              bitmap="SVG;redo.svg;[16,16]"
+              bitmap="SVG;redo.svg;[24,24]"
               id="wxID_REDO"
               label=""
               tooltip="Redo"
@@ -1123,7 +1141,7 @@
                     id="CreateNewPropertySheet" />
                   <node
                     class="ribbonTool"
-                    bitmap="Embed;WXPOPupTransientWindow.png"
+                    bitmap="SVG;popup_window.svg;[24,24]"
                     help="wxPopupTransientWindow"
                     id="gen_wxPopupTransientWindow" />
                 </node>
@@ -1215,7 +1233,7 @@
                     class="ribbonSeparator" />
                   <node
                     class="ribbonTool"
-                    bitmap="Embed;pagectrl.png"
+                    bitmap="SVG;images.svg;[24,24]"
                     help="Create a file containing embedded images"
                     id="gen_Images" />
                   <node
@@ -1258,12 +1276,12 @@
                   wxEVT_RIBBONTOOLBAR_DROPDOWN_CLICKED="OnDropDown">
                   <node
                     class="ribbonTool"
-                    bitmap="Embed;sizer_horizontal.png"
+                    bitmap="SVG;sizer_horizontal.svg;[24,24]"
                     help="Horizontal wxBoxSizer"
                     id="gen_wxBoxSizer" />
                   <node
                     class="ribbonTool"
-                    bitmap="Embed;sizer.png"
+                    bitmap="SVG;sizer.svg;[24,24]"
                     help="Vertical wxBoxSizer"
                     id="gen_VerticalBoxSizer" />
                   <node
@@ -1346,12 +1364,12 @@
                   wxEVT_RIBBONTOOLBAR_DROPDOWN_CLICKED="OnDropDown">
                   <node
                     class="ribbonTool"
-                    bitmap="Embed;wxStaticText.png"
+                    bitmap="SVG;wxStaticText.svg;[24,24]"
                     help="wxStaticText"
                     id="gen_wxStaticText" />
                   <node
                     class="ribbonTool"
-                    bitmap="Embed;wxtextCtrl.png"
+                    bitmap="SVG;wxTextCtrl.svg;[24,24]"
                     help="wxTextCtrl"
                     id="gen_wxTextCtrl" />
                   <node
@@ -1527,22 +1545,22 @@
                   wxEVT_RIBBONTOOLBAR_CLICKED="OnToolClick">
                   <node
                     class="ribbonTool"
-                    bitmap="Embed;auinotebook.png"
+                    bitmap="SVG;notebook_aui.svg;[24,24]"
                     help="wxAuiNotebook"
                     id="gen_wxAuiNotebook" />
                   <node
                     class="ribbonTool"
-                    bitmap="Embed;wxChoicebook.png"
+                    bitmap="SVG;notebook_choice.svg;[24,24]"
                     help="wxChoicebook"
                     id="gen_wxChoicebook" />
                   <node
                     class="ribbonTool"
-                    bitmap="Embed;wxListbook.png"
+                    bitmap="SVG;notebook_list.svg;[24,24]"
                     help="wxListbook"
                     id="gen_wxListbook" />
                   <node
                     class="ribbonTool"
-                    bitmap="Embed;wxnotebook.png"
+                    bitmap="SVG;notebook.svg;[24,24]"
                     help="wxNotebook"
                     id="gen_wxNotebook" />
                   <node
@@ -1597,7 +1615,7 @@
                   wxEVT_RIBBONTOOLBAR_CLICKED="OnToolClick">
                   <node
                     class="ribbonTool"
-                    bitmap="Embed;grid.png"
+                    bitmap="SVG;grid.svg;[24,24]"
                     help="wxGrid"
                     id="gen_wxGrid" />
                 </node>
@@ -1910,7 +1928,7 @@
                     id="gen_wxBannerWindow" />
                   <node
                     class="ribbonTool"
-                    bitmap="Embed;wxTimer.png"
+                    bitmap="SVG;wxTimer.svg;[24,24]"
                     help="wxTimer"
                     id="gen_wxTimer" />
                   <node
@@ -4285,7 +4303,7 @@
           var_name="menu_item_6" />
         <node
           class="wxMenuItem"
-          bitmap="Embed;wxStaticText.png"
+          bitmap="SVG;wxStaticText.svg;[24,24]"
           help="Insert a Label"
           id="gen_auitool_label"
           label="Add Label"

@@ -69,7 +69,7 @@
             help="In C++ code, any value in this property will be used to place a conditional (#if/#endif) block around the Frame's generated code."/>
     </gen>
 
-    <gen class="wxPopupTransientWindow" image="wxPopupTransientWindow" type="form">
+    <gen class="wxPopupTransientWindow" image="popup_window" type="form">
         <inherits class="Language Settings"/>
         <property name="class_name" type="string"
             help="The name of the base class.">MyPopupBase</property>

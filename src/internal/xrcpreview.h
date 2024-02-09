@@ -23,7 +23,7 @@
 
 namespace wxue_img
 {
-    extern const unsigned char generate_svg[32526];
+    extern const unsigned char generate_svg[2236];
     extern const unsigned char xrc_preview_svg[392];
 }
 

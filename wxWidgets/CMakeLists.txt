@@ -190,6 +190,7 @@ target_include_directories(wxWidgets33 PRIVATE
 
     3rdparty/lunasvg/include
     3rdparty/lunasvg/source/plutovg
+    #  3rdparty/lunasvg/3rdparty/plutovg
 )
 
 target_include_directories(wxCLib PRIVATE
@@ -200,6 +201,7 @@ target_include_directories(wxCLib PRIVATE
     src/zlib
     3rdparty/pcre/src/wx
     src/expat/expat/lib
+    # 3rdparty/lunasvg/3rdparty/plutovg
 )
 
 if (BUILD_SHARED_LIBS)

@@ -619,6 +619,7 @@ set (common_sources
     src/xrc/xh_hyperlink.cpp
     src/xrc/xh_sttxt.cpp
 
+    # lunasvg
     3rdparty/lunasvg/source/canvas.cpp
     3rdparty/lunasvg/source/clippathelement.cpp
     3rdparty/lunasvg/source/defselement.cpp
@@ -640,6 +641,9 @@ set (common_sources
     3rdparty/lunasvg/source/symbolelement.cpp
     3rdparty/lunasvg/source/useelement.cpp
 
+    # Using C++ also works but is not how the official build of lunasvg is done
+    # If this is enabled, then the plutovg sources in wxCLib.cmake must be
+    # disabled
     3rdparty/lunasvg/source/plutovg/plutovg-blend.cpp
     3rdparty/lunasvg/source/plutovg/plutovg-dash.cpp
     3rdparty/lunasvg/source/plutovg/plutovg-ft-math.cpp

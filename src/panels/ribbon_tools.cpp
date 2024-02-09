@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Displays node creation tools in a wxRibbonBar
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -179,6 +179,8 @@ void RibbonPanel::OnDropDown(wxRibbonToolBarEvent& event)
         case BarTools:
             {
                 const auto* cur_sel = wxGetFrame().getSelectedNode();
+                if (!cur_sel || cur_sel->isGen(gen_Project))
+                    return;
                 if (cur_sel && (cur_sel->isGen(gen_wxAuiToolBar) || cur_sel->getParent()->isGen(gen_wxAuiToolBar)))
                 {
                     MenuAuiBar popup_menu;
@@ -197,6 +199,8 @@ void RibbonPanel::OnDropDown(wxRibbonToolBarEvent& event)
         case AuiBarTools:
             {
                 const auto* cur_sel = wxGetFrame().getSelectedNode();
+                if (!cur_sel || cur_sel->isGen(gen_Project))
+                    return;
                 if (cur_sel && (cur_sel->isGen(gen_wxToolBar) || cur_sel->isGen(gen_ToolBar) ||
                                 cur_sel->getParent()->isGen(gen_wxToolBar) || cur_sel->getParent()->isGen(gen_ToolBar)))
                 {

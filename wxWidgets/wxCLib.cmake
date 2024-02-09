@@ -159,6 +159,18 @@ set (wxCLib_sources
     src/expat/expat/lib/xmlrole.c
     src/expat/expat/lib/xmltok.c
 
+    # plutovg used by lunasvg
+    # Note that there is a non-official version of these as C++ code
+    # 3rdparty/lunasvg/3rdparty/plutovg/plutovg-blend.c
+    # 3rdparty/lunasvg/3rdparty/plutovg/plutovg-dash.c
+    # 3rdparty/lunasvg/3rdparty/plutovg/plutovg-ft-math.c
+    # 3rdparty/lunasvg/3rdparty/plutovg/plutovg-ft-raster.c
+    # 3rdparty/lunasvg/3rdparty/plutovg/plutovg-ft-stroker.c
+    # 3rdparty/lunasvg/3rdparty/plutovg/plutovg-geometry.c
+    # 3rdparty/lunasvg/3rdparty/plutovg/plutovg-paint.c
+    # 3rdparty/lunasvg/3rdparty/plutovg/plutovg-rle.c
+    # 3rdparty/lunasvg/3rdparty/plutovg/plutovg.c
+
     # wxBase
     src/common/extended.c
 )

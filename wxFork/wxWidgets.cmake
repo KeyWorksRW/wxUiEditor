@@ -640,17 +640,6 @@ set (lunasvg_sources
     ../../wxWidgets/3rdparty/lunasvg/source/svgelement.cpp
     ../../wxWidgets/3rdparty/lunasvg/source/symbolelement.cpp
     ../../wxWidgets/3rdparty/lunasvg/source/useelement.cpp
-
-    ../../wxWidgets/3rdparty/lunasvg/source/plutovg/plutovg-blend.cpp
-    ../../wxWidgets/3rdparty/lunasvg/source/plutovg/plutovg-dash.cpp
-    ../../wxWidgets/3rdparty/lunasvg/source/plutovg/plutovg-ft-math.cpp
-    ../../wxWidgets/3rdparty/lunasvg/source/plutovg/plutovg-ft-raster.cpp
-    ../../wxWidgets/3rdparty/lunasvg/source/plutovg/plutovg-ft-stroker.cpp
-    ../../wxWidgets/3rdparty/lunasvg/source/plutovg/plutovg-geometry.cpp
-    ../../wxWidgets/3rdparty/lunasvg/source/plutovg/plutovg-paint.cpp
-    ../../wxWidgets/3rdparty/lunasvg/source/plutovg/plutovg-rle.cpp
-    ../../wxWidgets/3rdparty/lunasvg/source/plutovg/plutovg.cpp
-
 )
 
 set (msw_sources

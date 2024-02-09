@@ -78,10 +78,10 @@ bool MainFrameBase::Create(wxWindow* parent, wxWindowID id, const wxString& titl
 
     m_toolbar->AddSeparator();
     m_toolbar->AddTool(wxID_UNDO, wxEmptyString,
-        wxue_img::bundle_undo_svg(FromDIP(16), FromDIP(16)), "Undo");
+        wxue_img::bundle_undo_svg(FromDIP(24), FromDIP(24)), "Undo");
 
     m_toolbar->AddTool(wxID_REDO, wxEmptyString,
-        wxue_img::bundle_redo_svg(FromDIP(16), FromDIP(16)), "Redo");
+        wxue_img::bundle_redo_svg(FromDIP(24), FromDIP(24)), "Redo");
 
     m_toolbar->AddSeparator();
     m_toolbar->AddTool(wxID_CUT, wxEmptyString, wxArtProvider::GetBitmapBundle(wxART_CUT, wxART_TOOLBAR), "Cut");

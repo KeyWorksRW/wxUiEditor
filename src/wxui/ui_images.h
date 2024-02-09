@@ -41,11 +41,18 @@ namespace wxue_img
     wxBitmapBundle bundle_empty_png();  // empty.png
     wxBitmapBundle bundle_flex_grid_sizer_svg(int width, int height);
     wxBitmapBundle bundle_folder_svg(int width, int height);
+    wxBitmapBundle bundle_grid_svg(int width, int height);
     wxBitmapBundle bundle_grid_bag_sizer_svg(int width, int height);
     wxBitmapBundle bundle_grid_sizer_svg(int width, int height);
     wxBitmapBundle bundle_hide_png();  // hide.png
+    wxBitmapBundle bundle_images_svg(int width, int height);
     wxBitmapBundle bundle_import_svg(int width, int height);
     wxBitmapBundle bundle_left_svg(int width, int height);
+    wxBitmapBundle bundle_notebook_svg(int width, int height);
+    wxBitmapBundle bundle_notebook_aui_svg(int width, int height);
+    wxBitmapBundle bundle_notebook_choice_svg(int width, int height);
+    wxBitmapBundle bundle_notebook_list_svg(int width, int height);
+    wxBitmapBundle bundle_popup_window_svg(int width, int height);
     wxBitmapBundle bundle_project_png();  // project.png
     wxBitmapBundle bundle_python_logo_only_svg(int width, int height);
     wxBitmapBundle bundle_redo_svg(int width, int height);
@@ -88,8 +95,8 @@ namespace wxue_img
     wxBitmapBundle bundle_wxStaticBoxSizer_png();  // wxStaticBoxSizer.png
     wxBitmapBundle bundle_wxStaticCheckBoxSizer_png();  // wxStaticCheckBoxSizer.png
     wxBitmapBundle bundle_wxStaticRadioBtnSizer_png();  // wxStaticRadioBtnSizer.png
-    wxBitmapBundle bundle_wxStaticText_png();  // wxStaticText.png
-    wxBitmapBundle bundle_wxTimer_png();  // wxTimer.png
+    wxBitmapBundle bundle_wxStaticText_svg(int width, int height);
+    wxBitmapBundle bundle_wxTextCtrl_svg(int width, int height);
     wxBitmapBundle bundle_wxUiEditor_svg(int width, int height);
     wxBitmapBundle bundle_xml_file_svg(int width, int height);
     wxBitmapBundle bundle_xrc_compare_svg(int width, int height);
@@ -141,8 +148,6 @@ namespace wxue_img
     wxImage image_wxStaticBoxSizer_png();
     wxImage image_wxStaticCheckBoxSizer_png();
     wxImage image_wxStaticRadioBtnSizer_png();
-    wxImage image_wxStaticText_png();
-    wxImage image_wxTimer_png();
 
     extern const unsigned char alignbottom_svg[396];
     extern const unsigned char aligncenter_svg[564];
@@ -159,7 +164,7 @@ namespace wxue_img
     extern const unsigned char close_btn_png[956];
     extern const unsigned char cpp_logo_svg[543];
     extern const unsigned char ctx_help_btn_png[1140];
-    extern const unsigned char data_list_svg[930];
+    extern const unsigned char data_list_svg[933];
     extern const unsigned char dataview_ctrl_png[231];
     extern const unsigned char dataviewlist_ctrl_png[685];
     extern const unsigned char dataviewtree_ctrl_png[238];
@@ -170,12 +175,19 @@ namespace wxue_img
     extern const unsigned char folder_svg[677];
     extern const unsigned char grid_bag_sizer_svg[153];
     extern const unsigned char grid_sizer_svg[314];
+    extern const unsigned char grid_svg[2058];
     extern const unsigned char hide_png[242];
+    extern const unsigned char images_svg[1671];
     extern const unsigned char import_svg[4093];
     extern const unsigned char left_svg[188];
+    extern const unsigned char notebook_aui_svg[1514];
+    extern const unsigned char notebook_choice_svg[1928];
+    extern const unsigned char notebook_list_svg[1242];
+    extern const unsigned char notebook_svg[1140];
+    extern const unsigned char popup_window_svg[1181];
     extern const unsigned char project_png[899];
     extern const unsigned char python_logo_only_svg[838];  // python-logo-only.svg
-    extern const unsigned char redo_svg[459];
+    extern const unsigned char redo_svg[921];
     extern const unsigned char ribbon_bar_png[844];
     extern const unsigned char ribbon_buttonbar_png[300];
     extern const unsigned char ribbon_gallery_png[215];
@@ -197,7 +209,7 @@ namespace wxue_img
     extern const unsigned char toolseparator_png[581];
     extern const unsigned char toolspacer_png[459];
     extern const unsigned char top_svg[175];
-    extern const unsigned char undo_svg[411];
+    extern const unsigned char undo_svg[662];
     extern const unsigned char unknown_png[1699];
     extern const unsigned char unknown_svg[1416];
     extern const unsigned char wxButton_png[500];
@@ -217,8 +229,8 @@ namespace wxue_img
     extern const unsigned char wxStaticBoxSizer_png[199];
     extern const unsigned char wxStaticCheckBoxSizer_png[341];
     extern const unsigned char wxStaticRadioBtnSizer_png[367];
-    extern const unsigned char wxStaticText_png[290];
-    extern const unsigned char wxTimer_png[1323];
+    extern const unsigned char wxStaticText_svg[1065];
+    extern const unsigned char wxTextCtrl_svg[1206];
     extern const unsigned char wxUiEditor_svg[1490];
     extern const unsigned char xml_file_svg[1310];
     extern const unsigned char xrc_compare_svg[256];

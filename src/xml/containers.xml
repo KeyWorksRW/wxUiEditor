@@ -122,7 +122,7 @@
             help="The user expanded or collapsed the collapsible pane."/>
     </gen>
 
-    <gen class="wxChoicebook" image="wxChoicebook" type="choicebook">
+    <gen class="wxChoicebook" image="notebook_choice" type="choicebook">
         <inherits class="wxWindow"/>
         <inherits class="Window Events"/>
         <inherits class="sizer_child"/>
@@ -147,7 +147,7 @@
             help="The page selection is about to be changed. This event can be vetoed (using wxNotifyEvent::Veto())."/>
     </gen>
 
-    <gen class="wxListbook" image="wxListbook" type="listbook">
+    <gen class="wxListbook" image="notebook_list" type="listbook">
         <inherits class="wxWindow"/>
         <inherits class="Window Events"/>
         <inherits class="sizer_child"/>
@@ -174,7 +174,7 @@
             help="The page selection is about to be changed. This event can be vetoed."/>
     </gen>
 
-    <gen class="wxAuiNotebook" image="auinotebook" type="notebook">
+    <gen class="wxAuiNotebook" image="notebook_aui" type="notebook">
         <inherits class="wxWindow"/>
         <inherits class="Window Events"/>
         <inherits class="sizer_child"/>
@@ -250,7 +250,7 @@
             help="Double clicked on the tabs background area."/>
     </gen>
 
-    <gen class="wxNotebook" image="wxNotebook" type="notebook">
+    <gen class="wxNotebook" image="notebook" type="notebook">
         <inherits class="wxWindow"/>
         <inherits class="Window Events"/>
         <inherits class="sizer_child"/>

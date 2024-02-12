@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   ImageHandler class
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -11,6 +11,7 @@
 
 #include <wx/animate.h>   // wxAnimation and wxAnimationCtrl
 #include <wx/artprov.h>   // wxArtProvider class
+#include <wx/filename.h>  // wxFileName - encapsulates a file path
 #include <wx/mstream.h>   // Memory stream classes
 #include <wx/wfstream.h>  // File stream classes
 #include <wx/zstream.h>   // zlib stream classes
@@ -49,6 +50,8 @@ namespace wxue_img
 {
     extern const unsigned char pulsing_unknown_gif[377];
 }
+
+bool CopyStreamData(wxInputStream* inputStream, wxOutputStream* outputStream, size_t size);
 
 // Convert a data array into a wxAnimation
 inline wxAnimation GetAnimFromHdr(const unsigned char* data, size_t size_data)
@@ -417,7 +420,9 @@ bool ImageHandler::AddNewEmbeddedImage(tt_string path, Node* form, std::unique_l
             {
                 m_map_embedded[path.filename().as_str()] = std::make_unique<EmbeddedImage>();
                 auto embed = m_map_embedded[path.filename().as_str()].get();
-                InitializeArrayName(embed, path.filename());
+                InitializeArrayName(embed, path);
+                wxFileName wx_file(embed->filename.make_wxString());
+                wx_file.GetTimes(nullptr, &embed->date_time, nullptr);
                 embed->form = form;
 
                 // At this point, other threads can lookup and add an embedded image, they just can't access the data of this
@@ -486,18 +491,122 @@ bool ImageHandler::AddNewEmbeddedImage(tt_string path, Node* form, std::unique_l
     return false;
 }
 
-void ImageHandler::InitializeArrayName(EmbeddedImage* embed, tt_string_view filename)
+void ImageHandler::UpdateEmbeddedImage(EmbeddedImage* embed)
 {
-    auto result = FileNameToVarName(filename);
-    embed->array_name = result.value_or("image_");
-    tt_string check_filename(filename);
-    check_filename.Replace(".", "_");
-    // If the only thing that changed is replacing the '.' with '_', then there is no need to
-    // store the filename (which would cause a comment string to be generated).
-    if (embed->array_name != check_filename)
+    if (embed->type == wxBITMAP_TYPE_SVG)
     {
-        embed->filename = filename;
+        // Run the file through an XML parser so that we can remove content that isn't used, as well as removing line breaks,
+        // leading spaces, etc.
+        pugi::xml_document doc;
+        auto result = doc.load_file_string(embed->filename);
+        if (!result)
+        {
+            wxMessageDialog(wxGetMainFrame()->getWindow(), result.detailed_msg, "Parsing Error", wxOK | wxICON_ERROR)
+                .ShowModal();
+            return;
+        }
+
+        auto root = doc.first_child();  // this should be the <svg> element.
+        root.remove_attributes();       // we don't need any of the attributes
+
+        // Remove some inkscape nodes that we don't need
+        root.remove_child("sodipodi:namedview");
+        root.remove_child("metadata");
+
+        std::ostringstream xml_stream;
+        doc.save(xml_stream, "", pugi::format_raw | pugi::format_no_declaration);
+        std::string str = xml_stream.str();
+
+        // Include the trailing zero -- we need to read this back as a string, not a data array
+        wxMemoryInputStream stream(str.c_str(), str.size() + 1);
+
+        wxMemoryOutputStream memory_stream;
+        wxZlibOutputStream save_strem(memory_stream, wxZ_BEST_COMPRESSION);
+
+        size_t org_size = (stream.GetLength() & 0xFFFFFFFF);
+
+        if (!CopyStreamData(&stream, &save_strem, stream.GetLength()))
+        {
+            return;
+        }
+        save_strem.Close();
+        auto compressed_size = memory_stream.TellO();
+
+        auto read_stream = memory_stream.GetOutputStreamBuffer();
+        embed->array_size = (compressed_size | (org_size << 32));
+        embed->array_data = std::make_unique<unsigned char[]>(compressed_size);
+        memcpy(embed->array_data.get(), read_stream->GetBufferStart(), compressed_size);
+        return;
     }
+
+    wxFFileInputStream stream(embed->filename.make_wxString());
+    if (!stream.IsOk())
+        return;
+
+    wxImageHandler* handler;
+    auto& list = wxImage::GetHandlers();
+    for (auto node = list.GetFirst(); node; node = node->GetNext())
+    {
+        handler = (wxImageHandler*) node->GetData();
+        if (handler->CanRead(stream))
+        {
+            wxImage image;
+            if (handler->LoadFile(&image, stream))
+            {
+                wxFileName wx_file(embed->filename.make_wxString());
+                wx_file.GetTimes(nullptr, &embed->date_time, nullptr);
+
+                // If possible, convert the file to a PNG -- even if the original file is a PNG, since we might end up with
+                // better compression.
+
+                if (isConvertibleMime(handler->GetMimeType()))
+                {
+                    embed->type = wxBITMAP_TYPE_PNG;
+
+                    wxMemoryOutputStream save_stream;
+
+                    // Maximize compression
+                    image.SetOption(wxIMAGE_OPTION_PNG_COMPRESSION_LEVEL, 9);
+                    image.SetOption(wxIMAGE_OPTION_PNG_COMPRESSION_MEM_LEVEL, 9);
+                    image.SaveFile(save_stream, "image/png");
+
+                    auto read_stream = save_stream.GetOutputStreamBuffer();
+                    stream.SeekI(0);
+                    if (read_stream->GetBufferSize() <= (to_size_t) stream.GetLength())
+                    {
+                        embed->array_size = read_stream->GetBufferSize();
+                        embed->array_data = std::make_unique<unsigned char[]>(embed->array_size);
+                        memcpy(embed->array_data.get(), read_stream->GetBufferStart(), embed->array_size);
+                    }
+                    else
+                    {
+                        embed->array_size = stream.GetSize();
+                        embed->array_data = std::make_unique<unsigned char[]>(embed->array_size);
+                        stream.Read(embed->array_data.get(), embed->array_size);
+                    }
+                }
+                else
+                {
+                    stream.SeekI(0);
+                    embed->array_size = stream.GetSize();
+                    embed->array_data = std::make_unique<unsigned char[]>(embed->array_size);
+                    stream.Read(embed->array_data.get(), embed->array_size);
+                }
+
+                return;
+            }
+        }
+    }
+}
+
+void ImageHandler::InitializeArrayName(EmbeddedImage* embed, tt_string_view path)
+{
+    ASSERT(path.size());
+    embed->filename = path;
+    auto result = FileNameToVarName(path.filename());
+    embed->array_name = result.value_or("image_");
+    tt_string check_filename(path.filename());
+    check_filename.Replace(".", "_");
 
     for (size_t idx = 0; idx < embed->array_name.size(); ++idx)
     {
@@ -821,7 +930,7 @@ bool ImageHandler::AddEmbeddedBundleImage(tt_string path, Node* form)
             {
                 m_map_embedded[path.filename().as_str()] = std::make_unique<EmbeddedImage>();
                 auto embed = m_map_embedded[path.filename().as_str()].get();
-                InitializeArrayName(embed, path.filename());
+                InitializeArrayName(embed, path);
                 embed->form = form;
                 embed->size = image.GetSize();
 
@@ -1201,6 +1310,7 @@ wxAnimation ImageHandler::GetPropertyAnimation(const tt_string& description)
 
     return image;
 }
+
 bool ImageHandler::AddSvgBundleImage(tt_string path, Node* form)
 {
     // Run the file through an XML parser so that we can remove content that isn't used, as well as removing line breaks,
@@ -1231,8 +1341,10 @@ bool ImageHandler::AddSvgBundleImage(tt_string path, Node* form)
     wxMemoryOutputStream memory_stream;
     wxZlibOutputStream save_strem(memory_stream, wxZ_BEST_COMPRESSION);
     m_map_embedded[path.filename().as_str()] = std::make_unique<EmbeddedImage>();
-    auto embed = m_map_embedded[path.filename().as_str()].get();
-    InitializeArrayName(embed, path.filename());
+    auto* embed = m_map_embedded[path.filename().as_str()].get();
+    InitializeArrayName(embed, path);
+    wxFileName wx_file(embed->filename.make_wxString());
+    wx_file.GetTimes(nullptr, &embed->date_time, nullptr);
     embed->form = form;
 
     size_t org_size = (stream.GetLength() & 0xFFFFFFFF);

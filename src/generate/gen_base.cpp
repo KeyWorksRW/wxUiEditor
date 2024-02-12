@@ -9,6 +9,7 @@
 #include <thread>
 #include <unordered_set>
 
+#include <wx/datetime.h>  // wxDateTime
 #include <wx/filename.h>  // wxFileName - encapsulates a file path
 
 #include "gen_base.h"
@@ -565,10 +566,10 @@ void BaseCodeGenerator::CollectImageHeaders(Node* node, std::set<std::string>& e
                 {
                     for (auto& idx_image: bundle->lst_filenames)
                     {
-                        if (auto embed = ProjectImages.GetEmbeddedImage(idx_image); embed)
+                        if (auto* embed = ProjectImages.GetEmbeddedImage(idx_image); embed)
                         {
                             bool is_found = false;
-                            for (auto pimage: m_embedded_images)
+                            for (auto* pimage: m_embedded_images)
                             {
                                 if (pimage == embed)
                                 {
@@ -578,6 +579,14 @@ void BaseCodeGenerator::CollectImageHeaders(Node* node, std::set<std::string>& e
                             }
                             if (!is_found)
                             {
+                                wxFileName wx_file(embed->filename);
+                                wxDateTime file_time;
+                                wx_file.GetTimes(nullptr, &file_time, nullptr);
+                                if (file_time != embed->date_time)
+                                {
+                                    ProjectImages.UpdateEmbeddedImage(embed);
+                                    embed->date_time = file_time;
+                                }
                                 m_embedded_images.emplace_back(embed);
                             }
                         }

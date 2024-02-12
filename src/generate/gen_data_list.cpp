@@ -64,13 +64,8 @@ wxObject* DataGenerator::CreateMockup(Node* node, wxObject* wxobject)
     return flex_grid_sizer;
 }
 
-int DataGenerator::GetRequiredVersion(Node* node)
+int DataGenerator::GetRequiredVersion(Node* /* node */)
 {
-    if (node->hasValue(prop_auto_update))
-    {
-        // return minRequiredVer + 5;  // 1.2.1 release
-        return minRequiredVer + 4;  // 1.2.0 release
-    }
-
-    return minRequiredVer;
+    // return minRequiredVer + 5;  // 1.2.1 release
+    return minRequiredVer + 4;  // 1.2.0 release
 }

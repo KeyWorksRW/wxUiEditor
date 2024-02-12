@@ -68,9 +68,8 @@
             help="The Ruby filename to store all the embedded images in.">images</property>
         <property name="add_externs" type="bool"
             help="If checked, each image data array will be added to the header file as an extern.">0</property>
-        <!-- <property name="auto_update" type="bool"
-            help="Automatically add any embedded or svg images specified for controls or forms. Will only add images in folders if
-        the folder does not have its own image form.">0</property> -->
+        <property name="auto_add" type="bool"
+            help="If checked, then whenver you add an image file to a control, it will automatically be added to the Images List.">0</property>
     </gen>
 
     <gen class="embedded_image" image="bitmap" type="embed_image">
@@ -98,9 +97,6 @@
             help="The Python filename to store all the data strings in.">wxue_data</property> -->
         <!-- <property name="ruby_file" type="file"
             help="The Ruby filename to store all the data strings in.">wxue_data</property> -->
-        <!-- <property name="auto_update" type="bool"
-            help="Automatically add any embedded or svg images specified for controls or forms. Will only add images in folders if
-        the folder does not have its own image form.">0</property> -->
     </gen>
 
     <gen class="data_folder" image="folder" type="data_folder">

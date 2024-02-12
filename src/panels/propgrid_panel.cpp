@@ -1635,7 +1635,7 @@ void PropGridPanel::ModifyEmbeddedProperty(NodeProperty* node_prop, wxPGProperty
             {
                 embed->form = node_prop->getNode()->getParent();
             }
-            else
+            else if (!Project.getImagesForm() || !Project.getImagesForm()->as_bool(prop_auto_add))
             {
                 modifyProperty(node_prop, value);
                 return;
@@ -1698,47 +1698,39 @@ void PropGridPanel::ModifyEmbeddedProperty(NodeProperty* node_prop, wxPGProperty
     }
     else
     {
-        Node* image_node = nullptr;
-        for (const auto& iter: Project.getChildNodePtrs())
+        parent = Project.getImagesForm();
+        auto* embed = ProjectImages.GetEmbeddedImage(parts[IndexImage]);
+        if (!embed || embed->form != parent)
         {
-            if (iter->isGen(gen_Images))
+            auto filename = parts[IndexImage].filename();
+            size_t pos = 0;
+            for (const auto& embedded_image: parent->getChildNodePtrs())
             {
-                image_node = iter.get();
-                break;
-            }
-        }
-        if (image_node && image_node->as_bool(prop_auto_update))
-        {
-            bool done = false;
-            for (auto& iter: image_node->getChildNodePtrs())
-            {
-                if (iter->as_string(prop_bitmap) == value)
-                {
-                    done = true;
-                    break;  // It's already been added, so we're done
-                }
+                auto& description_a = embedded_image->as_string(prop_bitmap);
+                tt_view_vector parts_a(description_a, BMP_PROP_SEPARATOR, tt::TRIM::both);
+                if (parts_a.size() <= IndexImage || parts_a[IndexImage].empty())
+                    break;
+                if (filename.compare(parts_a[IndexImage].filename()) < 0)
+                    // We found the position where the new image should be inserted
+                    break;
+                ++pos;
             }
 
-            if (!done)
-            {
-                // It wasn't found, so add it
-                auto group = std::make_shared<GroupUndoActions>("Update bitmap property", node);
+            auto group = std::make_shared<GroupUndoActions>("Update bitmap property", node);
 
-                // auto* new_embedded = child->createChildNode(gen_embedded_image);
-                auto new_embedded = NodeCreation.createNode(gen_embedded_image, image_node);
-                new_embedded->set_value(prop_bitmap, value);
-                auto insert_action = std::make_shared<InsertNodeAction>(new_embedded.get(), image_node, tt_empty_cstr);
-                insert_action->AllowSelectEvent(false);
-                insert_action->SetFireCreatedEvent(true);
-                group->Add(insert_action);
+            auto new_embedded = NodeCreation.createNode(gen_embedded_image, parent);
+            new_embedded->set_value(prop_bitmap, value);
+            auto insert_action = std::make_shared<InsertNodeAction>(new_embedded.get(), parent, tt_empty_cstr, pos);
+            insert_action->AllowSelectEvent(false);
+            insert_action->SetFireCreatedEvent(true);
+            group->Add(insert_action);
 
-                auto prop_bitmap_action = std::make_shared<ModifyPropertyAction>(node_prop, value);
-                prop_bitmap_action->AllowSelectEvent(false);
-                group->Add(prop_bitmap_action);
+            auto prop_bitmap_action = std::make_shared<ModifyPropertyAction>(node_prop, value);
+            prop_bitmap_action->AllowSelectEvent(false);
+            group->Add(prop_bitmap_action);
 
-                wxGetFrame().PushUndoAction(group);
-                return;  // The group Undo will handle modifying the bitmap property, so simply return
-            }
+            wxGetFrame().PushUndoAction(group);
+            return;  // The group Undo will handle modifying the bitmap property, so simply return
         }
     }
 

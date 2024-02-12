@@ -13,6 +13,7 @@ All notable changes to this project will be documented in this file.
 - Added support for all four validators in wxRuby3 0.9.3 and up.
 - Non-derived C++ class headers now support protected: class methods in addition to the public: ones that were already supported.
 - New Data List form allowing you to embed text, xml and binary files into your application.
+- Images list has a new auto_add property that will automatically add new images to the list when they are added to any control.
 
 ### Changed
 
@@ -21,6 +22,7 @@ All notable changes to this project will be documented in this file.
 - wxIntegerValidator and wxFloatingPointValidator now support setting either min or max, and are generated as separate calls. Previously, you had to set both of them to have either one generated.
 - The ability to generate only a C++ header file without a source file has been removed.
 - Books now display images on pages by default. If you don't want the images, you can uncheck the `display_images` property.
+- Before generating code, any images that you used are checked to see if they have been modified since you created them, and if so, the new file is loaded before generating the code.
 
 ### Fixed
 

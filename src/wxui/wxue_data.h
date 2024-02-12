@@ -52,7 +52,7 @@ namespace wxue_data
     // ../xml/pickers.xml
     extern const unsigned char pickers[2481]; // 10224
     // ../xml/project.xml
-    extern const unsigned char project[1418]; // 5096
+    extern const unsigned char project[1466]; // 5265
     // ../xml/sizers.xml
     extern const unsigned char sizers[2296]; // 12909
     // ../xml/text_ctrls.xml

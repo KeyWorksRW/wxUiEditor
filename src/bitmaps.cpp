@@ -118,7 +118,6 @@ static const ImageMap png_headers[] = {
     { "spin_ctrl", spin_ctrl_png, sizeof(spin_ctrl_png) },
     { "spin_ctrl_double", spin_ctrl_double_png, sizeof(spin_ctrl_double_png) },
     { "spinbtn", spinbtn_png, sizeof(spinbtn_png) },
-    { "static_bitmap", static_bitmap_png, sizeof(static_bitmap_png) },
     { "static_line", static_line_png, sizeof(static_line_png) },
     { "statusbar", statusbar_png, sizeof(statusbar_png) },
     { "submenu", submenu_png, sizeof(submenu_png) },

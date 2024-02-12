@@ -137,7 +137,7 @@
             help="Generated when the listbox is double-clicked."/>
     </gen>
 
-    <gen class="wxStaticBitmap" image="static_bitmap" type="widget" flags="no_focus_events no_key_events">
+    <gen class="wxStaticBitmap" image="bitmap" type="widget" flags="no_focus_events no_key_events">
         <inherits class="wxWindow">
             <hide name="variant"/>
             <hide name="window_extra_style"/>

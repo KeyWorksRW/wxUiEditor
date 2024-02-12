@@ -1,1 +1,17 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg width="100%" height="100%" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;"><path id="arrow" d="M4.821,23.428l2.431,2.91l2.017,2.688l0.715,0.974l0.751,-1.054l2.106,-2.593l2.451,-2.815l-1.646,0.925l-1.646,0.921l0.072,-6.58l-1.963,-0.02l-1.965,-0.02l-0.036,3.29l-0.036,3.286l-1.626,-0.954l-1.625,-0.958Z" style="fill:#4a0;fill-rule:nonzero;"/><path id="arrow1" serif:id="arrow" d="M27,12.702l-2.96,2.298l1.94,-3.064l-3.35,-0.019l-3.351,-0.02l0.032,-3.69l3.35,0.019l3.351,0.02l-1.888,-3.086l2.873,2.29l2.65,1.967l1.075,0.701l-0.99,0.676l-2.732,1.908Z" style="fill:#4a0;fill-rule:nonzero;"/><rect id="box" x="4" y="3" width="13" height="14" style="fill:#0ff;stroke:url(#_Radial1);stroke-width:1.23px;"/><defs><radialGradient id="_Radial1" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="matrix(-1.30115e-06,-21,26.5149,0.000714303,18.3,18.1667)"><stop offset="0" style="stop-color:#000;stop-opacity:1"/><stop offset="1" style="stop-color:#000;stop-opacity:0"/></radialGradient></defs></svg>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="30px" height="30px" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;">
+    <g id="box">
+        <rect x="3.906" y="2.813" width="12.188" height="13.125" style="fill:rgb(0,255,255);stroke:url(#_Radial1);stroke-width:1.15px;"/>
+    </g>
+    <g>
+        <path id="arrow" d="M25.313,11.908L22.537,14.063L24.356,11.19L21.216,11.172L18.074,11.153L18.104,7.694L21.245,7.712L24.386,7.731L22.616,4.838L25.31,6.984L27.794,8.828L28.802,9.486L27.874,10.119L25.313,11.908Z" style="fill:rgb(68,170,0);fill-rule:nonzero;"/>
+    </g>
+    <g id="down">
+        <path d="M5.092,21.964L7.371,24.692L9.262,27.212L9.932,28.125L10.636,27.137L12.61,24.706L14.908,22.067L13.365,22.934L11.822,23.798L11.89,17.629L10.049,17.61L8.207,17.591L8.173,20.676L8.14,23.756L6.615,22.862L5.092,21.964Z" style="fill:rgb(68,170,0);fill-rule:nonzero;"/>
+    </g>
+    <rect id="outer" x="0" y="0" width="30" height="30" style="fill:none;"/>
+    <defs>
+        <radialGradient id="_Radial1" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="matrix(-1.21983e-06,-19.6875,24.8577,0.000669659,17.3125,17.0313)"><stop offset="0" style="stop-color:black;stop-opacity:1"/><stop offset="1" style="stop-color:black;stop-opacity:0"/></radialGradient>
+    </defs>
+</svg>

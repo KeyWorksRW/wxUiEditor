@@ -23,8 +23,8 @@
 
 namespace wxue_img
 {
-    extern const unsigned char generate_svg[2236];
-    extern const unsigned char xrc_preview_svg[392];
+    extern const unsigned char generate_svg[2373];
+    extern const unsigned char xrc_preview_svg[593];
 }
 
 class XrcPreview : public wxDialog

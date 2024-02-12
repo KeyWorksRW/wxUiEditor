@@ -21,11 +21,6 @@
 #include <wx/stc/stc.h>
 #include <wx/textctrl.h>
 
-namespace wxue_img
-{
-    extern const unsigned char ruby_logo_svg[897];
-}
-
 class EventHandlerDlgBase : public wxDialog
 {
 public:

@@ -18,12 +18,6 @@
 #include <wx/sizer.h>
 #include <wx/stattext.h>
 
-namespace wxue_img
-{
-    // new-project.svg
-    extern const unsigned char new_project_svg[907];
-}
-
 class StartupDlg : public wxDialog
 {
 public:

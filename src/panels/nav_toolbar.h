@@ -14,9 +14,9 @@
 
 namespace wxue_img
 {
-    extern const unsigned char nav_coll_expand_svg[147];
-    extern const unsigned char nav_collapse_svg[210];
-    extern const unsigned char nav_expand_svg[137];
+    extern const unsigned char nav_coll_expand_svg[208];
+    extern const unsigned char nav_collapse_svg[132];
+    extern const unsigned char nav_expand_svg[190];
 }
 
 class NavToolbar : public wxToolBar

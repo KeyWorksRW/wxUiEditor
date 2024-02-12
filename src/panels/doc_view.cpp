@@ -16,32 +16,6 @@
 
 #include "doc_view.h"
 
-#include <wx/mstream.h>  // memory stream classes
-#include <wx/zstream.h>  // zlib stream classes
-
-#include <memory>  // for std::make_unique
-
-// Convert compressed SVG string into a wxBitmapBundle
-#ifdef __cpp_inline_variables
-inline wxBitmapBundle wxueBundleSVG(const unsigned char* data,
-    size_t size_data, size_t size_svg, wxSize def_size)
-#else
-static wxBitmapBundle wxueBundleSVG(const unsigned char* data,
-    size_t size_data, size_t size_svg, wxSize def_size)
-#endif
-{
-    auto str = std::make_unique<char[]>(size_svg);
-    wxMemoryInputStream stream_in(data, size_data);
-    wxZlibInputStream zlib_strm(stream_in);
-    zlib_strm.Read(str.get(), size_svg);
-    return wxBitmapBundle::FromSVG(str.get(), def_size);
-};
-
-namespace wxue_img
-{
-    extern const unsigned char ruby_logo_svg[897];
-}
-
 bool DocViewPanel::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style,
     const wxString& name)
 {
@@ -66,7 +40,7 @@ bool DocViewPanel::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos, c
         wxue_img::bundle_python_logo_only_svg(FromDIP(16), FromDIP(16)), wxEmptyString, wxITEM_RADIO);
 
     m_toolBar->AddTool(ID_RUBY, "Ruby",
-        wxueBundleSVG(wxue_img::ruby_logo_svg, 897, 5655, FromDIP(wxSize(16, 16))), wxEmptyString, wxITEM_RADIO);
+        wxue_img::bundle_ruby_logo_svg(FromDIP(16), FromDIP(16)), wxEmptyString, wxITEM_RADIO);
 
     m_toolBar->Realize();
     m_parent_sizer->Add(m_toolBar, wxSizerFlags().Expand().Border(wxALL));

@@ -19,11 +19,6 @@ class CustomEvent;
 class wxWebView;
 class MainFrame;
 
-namespace wxue_img
-{
-    extern const unsigned char ruby_logo_svg[897];
-}
-
 class DocViewPanel : public wxPanel
 {
 public:

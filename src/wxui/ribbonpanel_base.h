@@ -54,7 +54,6 @@ namespace wxue_img
     extern const unsigned char search_png[800];
     extern const unsigned char separator_png[306];
     extern const unsigned char spacer_png[183];
-    extern const unsigned char static_bitmap_png[778];
     extern const unsigned char static_line_png[122];
     extern const unsigned char statusbar_png[432];
     extern const unsigned char submenu_png[760];
@@ -73,7 +72,7 @@ namespace wxue_img
     extern const unsigned char wxPanel_png[156];
     extern const unsigned char wxPropertyGridManager_png[225];
     extern const unsigned char wxPropertyGrid_png[212];
-    extern const unsigned char wxTimer_svg[3522];
+    extern const unsigned char wxTimer_svg[4356];
     extern const unsigned char wxToolBar_png[554];
     extern const unsigned char wxToolbook_png[450];
     extern const unsigned char wxTreebook_png[484];

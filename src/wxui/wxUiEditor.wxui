@@ -106,6 +106,9 @@
         bitmap="SVG;left.svg;[24,24]" />
       <node
         class="embedded_image"
+        bitmap="SVG;new-project.svg;[24,24]" />
+      <node
+        class="embedded_image"
         bitmap="SVG;notebook.svg;[24,24]" />
       <node
         class="embedded_image"
@@ -140,6 +143,9 @@
       <node
         class="embedded_image"
         bitmap="SVG;right.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;ruby_logo.svg;[24,24]" />
       <node
         class="embedded_image"
         bitmap="Embed;scrollbar.png" />
@@ -1478,7 +1484,7 @@
                   wxEVT_RIBBONTOOLBAR_CLICKED="OnToolClick">
                   <node
                     class="ribbonTool"
-                    bitmap="Embed;static_bitmap.png"
+                    bitmap="SVG;bitmap.svg;[24,24]"
                     help="wxStaticBitmap"
                     id="gen_wxStaticBitmap" />
                   <node

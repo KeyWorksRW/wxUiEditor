@@ -430,9 +430,10 @@ void BaseCodeGenerator::GenerateImagesForm()
 
 int ImagesGenerator::GetRequiredVersion(Node* node)
 {
-    if (node->hasValue(prop_auto_update))
+    if (node->hasValue(prop_auto_add) && node->as_bool(prop_auto_add))
     {
-        return minRequiredVer + 2;  // 1.1.1 release
+        // return minRequiredVer + 5;  // 1.2.1 release
+        return minRequiredVer + 4;  // 1.2.0 release
     }
 
     return minRequiredVer;

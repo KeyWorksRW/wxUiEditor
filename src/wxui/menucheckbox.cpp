@@ -18,13 +18,11 @@ using namespace GenEnum;
 
 MenuCheckbox::MenuCheckbox() : wxMenu()
 {
-    if (!wxImage::FindHandler(wxBITMAP_TYPE_PNG))
-        wxImage::AddHandler(new wxPNGHandler);
 
     auto* menu_item = Append(gen_wxCheckBox, "Insert wxCheckBox", "Insert a normal two-state checkbox", wxITEM_NORMAL);
-    menu_item->SetBitmap(wxue_img::bundle_wxCheckBox_png());
+    menu_item->SetBitmap(wxue_img::bundle_wxCheckBox_svg(24, 24));
     auto* menu_item_2 = Append(gen_Check3State, "Insert 3-state wxCheckBox", "Insert a 3-state checkbox", wxITEM_NORMAL);
-    menu_item_2->SetBitmap(wxue_img::bundle_check3state_png());
+    menu_item_2->SetBitmap(wxue_img::bundle_check3state_svg(24, 24));
 }
 
 // ************* End of generated code ***********

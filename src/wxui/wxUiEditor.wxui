@@ -46,7 +46,7 @@
         bitmap="SVG;bottom.svg;[24,24]" />
       <node
         class="embedded_image"
-        bitmap="Embed;check3state.png" />
+        bitmap="SVG;check3state.svg;[24,24]" />
       <node
         class="embedded_image"
         bitmap="Embed;close_btn.png" />
@@ -211,7 +211,7 @@
         bitmap="Embed;wxButton.png" />
       <node
         class="embedded_image"
-        bitmap="Embed;wxCheckBox.png" />
+        bitmap="SVG;wxCheckBox.svg;[24,24]" />
       <node
         class="embedded_image"
         bitmap="Embed;wxCheckListBox.png" />
@@ -236,6 +236,9 @@
       <node
         class="embedded_image"
         bitmap="Embed;wxPython.png" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;wxRadioButton.svg;[24,24]" />
       <node
         class="embedded_image"
         bitmap="Embed;wxRearrangeCtrl.png" />
@@ -1380,13 +1383,13 @@
                     id="gen_wxTextCtrl" />
                   <node
                     class="ribbonTool"
-                    bitmap="Embed;wxcheckBox.png"
+                    bitmap="SVG;wxCheckBox.svg;[24,24]"
                     help="Check Boxes"
                     id="NewCheckbox"
                     kind="wxRIBBON_BUTTON_DROPDOWN" />
                   <node
                     class="ribbonTool"
-                    bitmap="Embed;wxradioButton.png"
+                    bitmap="SVG;wxRadioButton.svg;[24,24]"
                     help="wxRadioButton"
                     id="gen_wxRadioButton" />
                   <node
@@ -4477,13 +4480,13 @@
         use_derived_class="0">
         <node
           class="wxMenuItem"
-          bitmap="Embed;wxCheckBox.png"
+          bitmap="SVG;wxCheckBox.svg;[24,24]"
           help="Insert a normal two-state checkbox"
           id="gen_wxCheckBox"
           label="Insert wxCheckBox" />
         <node
           class="wxMenuItem"
-          bitmap="Embed;check3state.png"
+          bitmap="SVG;check3state.svg;[24,24]"
           help="Insert a 3-state checkbox"
           id="gen_Check3State"
           label="Insert 3-state wxCheckBox"

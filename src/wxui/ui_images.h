@@ -28,7 +28,7 @@ namespace wxue_img
     wxBitmapBundle bundle_bitmap_toggle_button_png();  // bitmap_toggle_button.png
     wxBitmapBundle bundle_bmp_combo_box_png();  // bmp_combo_box.png
     wxBitmapBundle bundle_bottom_svg(int width, int height);
-    wxBitmapBundle bundle_check3state_png();  // check3state.png
+    wxBitmapBundle bundle_check3state_svg(int width, int height);
     wxBitmapBundle bundle_close_btn_png();  // close_btn.png
     wxBitmapBundle bundle_cpp_logo_svg(int width, int height);
     wxBitmapBundle bundle_ctx_help_btn_png();  // ctx_help_btn.png
@@ -83,7 +83,7 @@ namespace wxue_img
     wxBitmapBundle bundle_unknown_png();  // unknown.png
     wxBitmapBundle bundle_unknown_svg(int width, int height);
     wxBitmapBundle bundle_wxButton_png();  // wxButton.png
-    wxBitmapBundle bundle_wxCheckBox_png();  // wxCheckBox.png
+    wxBitmapBundle bundle_wxCheckBox_svg(int width, int height);
     wxBitmapBundle bundle_wxCheckListBox_png();  // wxCheckListBox.png
     wxBitmapBundle bundle_wxChoice_png();  // wxChoice.png
     wxBitmapBundle bundle_wxComboBox_png();  // wxComboBox.png
@@ -92,6 +92,7 @@ namespace wxue_img
     wxBitmapBundle bundle_wxListBox_png();  // wxListBox.png
     wxBitmapBundle bundle_wxListView_png();  // wxListView.png
     wxBitmapBundle bundle_wxPython_png();  // wxPython.png
+    wxBitmapBundle bundle_wxRadioButton_svg(int width, int height);
     wxBitmapBundle bundle_wxRearrangeCtrl_png();  // wxRearrangeCtrl.png
     wxBitmapBundle bundle_wxSimpleHtmlListBox_png();  // wxSimpleHtmlListBox.png
     wxBitmapBundle bundle_wxStaticBoxSizer_png();  // wxStaticBoxSizer.png
@@ -106,7 +107,6 @@ namespace wxue_img
     wxImage image_auitoolbar_png();
     wxImage image_bitmap_toggle_button_png();
     wxImage image_bmp_combo_box_png();
-    wxImage image_check3state_png();
     wxImage image_close_btn_png();
     wxImage image_ctx_help_btn_png();
     wxImage image_dataview_ctrl_png();
@@ -134,7 +134,6 @@ namespace wxue_img
     wxImage image_toolspacer_png();
     wxImage image_unknown_png();
     wxImage image_wxButton_png();
-    wxImage image_wxCheckBox_png();
     wxImage image_wxCheckListBox_png();
     wxImage image_wxChoice_png();
     wxImage image_wxComboBox_png();
@@ -162,7 +161,7 @@ namespace wxue_img
     extern const unsigned char bitmap_toggle_button_png[641];
     extern const unsigned char bmp_combo_box_png[492];
     extern const unsigned char bottom_svg[398];
-    extern const unsigned char check3state_png[194];
+    extern const unsigned char check3state_svg[149];
     extern const unsigned char close_btn_png[956];
     extern const unsigned char cpp_logo_svg[563];
     extern const unsigned char ctx_help_btn_png[1140];
@@ -217,7 +216,7 @@ namespace wxue_img
     extern const unsigned char unknown_png[1699];
     extern const unsigned char unknown_svg[1309];
     extern const unsigned char wxButton_png[500];
-    extern const unsigned char wxCheckBox_png[202];
+    extern const unsigned char wxCheckBox_svg[374];
     extern const unsigned char wxCheckListBox_png[498];
     extern const unsigned char wxChoice_png[330];
     extern const unsigned char wxComboBox_png[233];
@@ -228,6 +227,7 @@ namespace wxue_img
     extern const unsigned char wxPython_1_5x_png[765];
     extern const unsigned char wxPython_2x_png[251];
     extern const unsigned char wxPython_png[399];
+    extern const unsigned char wxRadioButton_svg[165];
     extern const unsigned char wxRearrangeCtrl_png[332];
     extern const unsigned char wxSimpleHtmlListBox_png[676];
     extern const unsigned char wxStaticBoxSizer_png[199];

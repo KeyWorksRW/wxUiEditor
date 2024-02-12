@@ -44,12 +44,6 @@ void ImageProperties::InitValues(tt_string_view value)
             }
         }
     }
-#if defined(INTERNAL_FEATURE1)
-    if (mstr.size() > IndexAltName)
-    {
-        alt_name = mstr[IndexAltName];
-    }
-#endif
 }
 
 tt_string ImageProperties::CombineValues()

@@ -145,7 +145,6 @@ enum PropIndex
     IndexImage,
     IndexArtID = IndexImage,
     IndexSize,
-    IndexAltName
 };
 
 namespace xrc

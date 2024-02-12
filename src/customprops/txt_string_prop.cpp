@@ -29,23 +29,14 @@ public:
         if (prop->isProp(prop_bitmap))
         {
             tt_view_vector mstr(prop->as_string(), ';', tt::TRIM::both);
-            if (mstr.size() > IndexAltName)
+            m_value.clear();
+            if (mstr.size() > IndexImage)
             {
-                m_value = mstr[IndexAltName].make_wxString();
-            }
-            else
-            {
-                m_value.clear();
-                if (mstr.size() > IndexImage)
+                if (auto result = FileNameToVarName(mstr[IndexImage].filename()); result)
                 {
-                    if (auto result = FileNameToVarName(mstr[IndexImage].filename()); result)
-                    {
-                        m_textCtrl->SetHint(result->make_wxString());
-                    }
+                    m_textCtrl->SetHint(result->make_wxString());
                 }
             }
-            m_static_hdr_text->SetLabel("&Alternate bitmap variable name:");
-            m_static_hdr_text->Show();
             // With wxWidgets 3.2.0, calling m_textCtrl->SetFocus(); in
             // EditStringDialogBase::Create() doesn't work, so we call it again here.
             m_textCtrl->SetFocus();

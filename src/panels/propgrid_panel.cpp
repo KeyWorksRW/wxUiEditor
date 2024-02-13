@@ -1629,12 +1629,23 @@ void PropGridPanel::ModifyEmbeddedProperty(NodeProperty* node_prop, wxPGProperty
         auto* embed = ProjectImages.GetEmbeddedImage(image_path);
         if (embed && image_path == embed->filename)
         {
-            modifyProperty(node_prop, value);
-            return;
+            // If the user is adding a node to a gen_Images node, then be sure that the embed
+            // entry form is pointing to the gen_Images node.
+            if (node_prop->getNode()->isGen(gen_embedded_image))
+            {
+                embed->form = node_prop->getNode()->getParent();
+            }
+            else
+            {
+                modifyProperty(node_prop, value);
+                return;
+            }
         }
-
-        // This ensures that all images from a bitmap bundle get added
-        ProjectImages.UpdateBundle(parts, node_prop->getNode());
+        else
+        {
+            // This ensures that all images from a bitmap bundle get added
+            ProjectImages.UpdateBundle(parts, node_prop->getNode());
+        }
     }
 
     if (value.empty() || node_prop->type() == type_animation || value.starts_with("Art") || value.starts_with("XPM"))

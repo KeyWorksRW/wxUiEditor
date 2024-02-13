@@ -26,6 +26,7 @@
 #include "category.h"         // NodeCategory class
 #include "cstm_event.h"       // CustomEvent -- Custom Event class
 #include "font_prop.h"        // FontProperty -- FontProperty class
+#include "image_handler.h"    // ImageHandler class
 #include "mainframe.h"        // MainFrame -- Main window frame
 #include "node.h"             // Node class
 #include "node_creator.h"     // NodeCreator -- Class used to create nodes
@@ -1625,20 +1626,14 @@ void PropGridPanel::ModifyEmbeddedProperty(NodeProperty* node_prop, wxPGProperty
     else if (!value.starts_with("Art"))
     {
         tt_string image_path(parts[IndexImage]);
-        image_path.make_absolute();
-        image_path.make_relative(Project.as_string(prop_art_directory));
-        if (image_path != parts[IndexImage])
+        auto* embed = ProjectImages.GetEmbeddedImage(image_path);
+        if (embed && image_path == embed->filename)
         {
-            parts[IndexImage] = image_path;
-            value.clear();
-            value << parts[IndexType] << BMP_PROP_SEPARATOR << image_path;
-            for (size_t idx = IndexImage + 1; idx < parts.size(); idx++)
-            {
-                value << BMP_PROP_SEPARATOR << parts[idx];
-            }
+            modifyProperty(node_prop, value);
+            return;
         }
-        // This ensures that all images from a bitmap bundle get added
 
+        // This ensures that all images from a bitmap bundle get added
         ProjectImages.UpdateBundle(parts, node_prop->getNode());
     }
 

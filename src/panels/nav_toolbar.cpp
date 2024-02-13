@@ -42,9 +42,9 @@ static wxBitmapBundle wxueBundleSVG(const unsigned char* data,
 
 namespace wxue_img
 {
-    extern const unsigned char nav_coll_expand_svg[208];
-    extern const unsigned char nav_collapse_svg[132];
-    extern const unsigned char nav_expand_svg[190];
+    extern const unsigned char nav_coll_expand_svg[208];  // ../art_src/nav_coll_expand.svg
+    extern const unsigned char nav_collapse_svg[132];  // ../art_src/nav_collapse.svg
+    extern const unsigned char nav_expand_svg[190];  // ../art_src/nav_expand.svg
 }
 
 NavToolbar::NavToolbar(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style,
@@ -85,7 +85,7 @@ NavToolbar::NavToolbar(wxWindow* parent, wxWindowID id, const wxPoint& pos, cons
 
 namespace wxue_img
 {
-
+    // ../art_src/nav_coll_expand.svg
     const unsigned char nav_coll_expand_svg[208] {
         120,218,93,145,89,14,130,48,20,69,93,74,243,190,52,193,218,65,70,129,21,148,13,248,231,80,129,132,136,41,117,192,
         213,91,138,36,208,159,230,158,155,219,251,94,218,180,123,149,121,250,56,233,10,213,215,12,6,65,125,14,200,232,130,
@@ -95,7 +95,7 @@ namespace wxue_img
         111,239,95,169,218,3,236,242,84,201,139,182,47,215,62,181,84,128,62,25,16,64,189,61,223,245,85,87,25,112,35,43,
         89,151,149,30,245,124,130,169,146,182,103,55,252,195,234,7,82,200,97,178
     };
-
+    // ../art_src/nav_collapse.svg
     const unsigned char nav_collapse_svg[132] {
         120,218,77,206,75,10,195,32,24,4,224,30,69,102,213,66,48,106,169,152,212,63,135,105,99,85,144,4,140,125,228,246,
         109,82,250,128,89,204,234,155,177,211,205,119,246,149,236,206,133,61,8,130,55,186,1,155,9,82,114,115,208,96,247,
@@ -103,7 +103,7 @@ namespace wxue_img
         74,236,142,168,59,91,127,224,216,19,198,107,113,25,235,198,234,139,47,189,23,63,118,233,255,230,48,14,238,109,45,
         79,55,79,5,53,50,28
     };
-
+    // ../art_src/nav_expand.svg
     const unsigned char nav_expand_svg[190] {
         120,218,93,144,217,14,130,48,16,69,253,148,102,158,52,193,210,22,176,236,95,128,63,224,155,75,5,146,6,72,41,42,
         126,189,101,209,8,47,147,123,38,55,119,150,184,125,228,105,220,156,117,129,202,91,2,141,236,90,64,70,28,41,197,

@@ -14,8 +14,11 @@
 
 namespace wxue_img
 {
+    // ../art_src/nav_coll_expand.svg
     extern const unsigned char nav_coll_expand_svg[208];
+    // ../art_src/nav_collapse.svg
     extern const unsigned char nav_collapse_svg[132];
+    // ../art_src/nav_expand.svg
     extern const unsigned char nav_expand_svg[190];
 }
 

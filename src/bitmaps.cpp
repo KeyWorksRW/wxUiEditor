@@ -31,6 +31,7 @@ struct ImageMap
 
 const std::map<std::string_view, std::function<wxBitmapBundle(int width, int height)>> map_svg_functions = {
     { "bitmap", bundle_bitmap_svg },
+    { "check3state", bundle_check3state_svg },
     { "data_list", bundle_data_list_svg },
     { "flex_grid_sizer", bundle_flex_grid_sizer_svg },
     { "folder", bundle_folder_svg },
@@ -46,6 +47,8 @@ const std::map<std::string_view, std::function<wxBitmapBundle(int width, int hei
     { "sizer_horizontal", bundle_sizer_horizontal_svg },
     { "text_file", bundle_text_file_svg },
     { "xml_file", bundle_xml_file_svg },
+    { "wxCheckBox", bundle_wxCheckBox_svg },
+    { "wxRadioButton", bundle_wxRadioButton_svg },
     { "wxStaticText", bundle_wxStaticText_svg },
     { "wxTextCtrl", bundle_wxTextCtrl_svg },
 
@@ -76,7 +79,6 @@ static const ImageMap png_headers[] = {
     { "bmp_combo_box", bmp_combo_box_png, sizeof(bmp_combo_box_png) },
     { "book_page", book_page_png, sizeof(book_page_png) },
     { "calendar", calendar_png, sizeof(calendar_png) },
-    { "check3state", check3state_png, sizeof(check3state_png) },
     { "close_btn", close_btn_png, sizeof(close_btn_png) },
     { "colourPickerIcon", colourPickerIcon_png, sizeof(colourPickerIcon_png) },
     { "ctx_help_btn", ctx_help_btn_png, sizeof(ctx_help_btn_png) },
@@ -135,7 +137,6 @@ static const ImageMap png_headers[] = {
     { "wxAnimation", wxanimation_png, sizeof(wxanimation_png) },
     { "wxBannerWindow", wxbannerWindow_png, sizeof(wxbannerWindow_png) },
     { "wxButton", wxButton_png, sizeof(wxButton_png) },
-    { "wxCheckBox", wxcheckBox_png, sizeof(wxcheckBox_png) },
     { "wxCheckListBox", wxCheckListBox_png, sizeof(wxCheckListBox_png) },
     { "wxChoice", wxChoice_png, sizeof(wxChoice_png) },
     { "wxCollapsiblePane", wxCollapsiblePane_png, sizeof(wxCollapsiblePane_png) },
@@ -151,7 +152,6 @@ static const ImageMap png_headers[] = {
     { "wxPanel", wxPanel_png, sizeof(wxPanel_png) },
     { "wxPropertyGrid", wxPropertyGrid_png, sizeof(wxPropertyGrid_png) },
     { "wxPropertyGridManager", wxPropertyGridManager_png, sizeof(wxPropertyGridManager_png) },
-    { "wxRadioButton", wxradioButton_png, sizeof(wxradioButton_png) },
     { "wxRearrangeCtrl", wxRearrangeCtrl_png, sizeof(wxRearrangeCtrl_png) },
     { "wxScrolledWindow", wxscrolledWindow_png, sizeof(wxscrolledWindow_png) },
     { "wxSimpleHtmlListBox", wxSimpleHtmlListBox_png, sizeof(wxSimpleHtmlListBox_png) },

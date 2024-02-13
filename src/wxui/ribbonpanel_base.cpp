@@ -111,11 +111,9 @@ namespace wxue_img
     extern const unsigned char wxactivityIndicator_png[796];
     extern const unsigned char wxanimation_png[248];
     extern const unsigned char wxbannerWindow_png[835];
-    extern const unsigned char wxcheckBox_png[202];
     extern const unsigned char wxcomboBox_png[233];
     extern const unsigned char wxfileCtrl_png[255];
     extern const unsigned char wxmenuBar_png[490];
-    extern const unsigned char wxradioButton_png[268];
     extern const unsigned char wxscrolledWindow_png[258];
     extern const unsigned char wxsimplebook_png[249];
     extern const unsigned char wxsplitterWindow_png[266];
@@ -296,11 +294,11 @@ bool RibbonPanelBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos
         common_bar_controls->AddTool(gen_wxTextCtrl,
             wxue_img::bundle_wxTextCtrl_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "wxTextCtrl", wxRIBBON_BUTTON_NORMAL);
         common_bar_controls->AddTool(NewCheckbox,
-            wxueImage(wxue_img::wxcheckBox_png, sizeof(wxue_img::wxcheckBox_png)).Rescale(
-            FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "Check Boxes", wxRIBBON_BUTTON_DROPDOWN);
+            wxue_img::bundle_wxCheckBox_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "Check Boxes",
+            wxRIBBON_BUTTON_DROPDOWN);
         common_bar_controls->AddTool(gen_wxRadioButton,
-            wxueImage(wxue_img::wxradioButton_png, sizeof(wxue_img::wxradioButton_png)).Rescale(
-            FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "wxRadioButton", wxRIBBON_BUTTON_NORMAL);
+            wxue_img::bundle_wxRadioButton_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "wxRadioButton",
+            wxRIBBON_BUTTON_NORMAL);
         common_bar_controls->AddTool(NewButton, wxue_img::bundle_wxButton_png().GetBitmap(wxDefaultSize), "Buttons",
             wxRIBBON_BUTTON_DROPDOWN);
         common_bar_controls->AddTool(NewSpin, wxue_img::bundle_spin_ctrl_png().GetBitmap(wxDefaultSize), "Spin controls",
@@ -1877,15 +1875,6 @@ namespace wxue_img
         27,44,92,121,249,217,135,116,172,127,1,22,43,59,120,219,69,88,83,0,0,0,0,73,69,78,68,174,66,96,130
     };
 
-    const unsigned char wxcheckBox_png[202] {
-        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,115,
-        0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,0,124,73,68,65,84,56,203,237,211,49,14,128,32,12,5,208,150,120,240,63,50,
-        50,112,31,88,29,29,60,15,78,36,134,128,109,141,14,26,254,248,33,47,77,3,68,51,159,13,183,5,128,98,1,0,112,175,95,
-        122,101,206,89,133,198,224,9,0,169,97,34,162,148,146,8,239,219,58,60,115,183,246,199,44,222,113,111,160,34,220,
-        34,90,84,53,113,197,206,104,41,229,153,85,88,81,17,110,17,45,170,154,184,98,22,84,189,10,43,58,252,32,49,248,203,
-        199,63,243,243,28,200,141,39,81,199,176,79,105,0,0,0,0,73,69,78,68,174,66,96,130
-    };
-
     const unsigned char wxcomboBox_png[233] {
         137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,115,
         0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,0,155,73,68,65,84,56,203,99,96,24,5,180,6,140,13,13,13,255,169,109,104,125,
@@ -1924,17 +1913,6 @@ namespace wxue_img
         123,149,10,210,183,207,101,126,28,30,248,10,54,123,21,108,219,110,233,57,142,131,144,207,231,61,61,220,79,3,16,
         0,239,31,149,166,94,243,215,180,105,243,159,248,5,209,231,135,48,146,219,194,246,0,0,0,0,73,69,78,68,174,66,96,
         130
-    };
-
-    const unsigned char wxradioButton_png[268] {
-        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,115,
-        0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,0,190,73,68,65,84,56,203,237,146,173,14,194,48,20,70,191,46,123,27,72,192,
-        129,92,29,18,193,251,172,18,137,224,49,38,38,231,54,89,92,73,202,243,20,117,73,219,220,174,157,64,44,217,81,237,
-        189,233,233,223,7,108,172,22,17,23,172,209,206,159,119,253,16,244,111,215,75,48,223,31,207,130,19,215,169,29,73,
-        56,77,19,219,143,55,40,18,119,253,240,19,142,227,24,244,164,148,0,128,182,109,241,121,191,150,137,137,88,74,181,
-        57,97,18,165,148,107,154,198,249,0,112,0,130,154,53,154,122,44,85,246,119,133,96,199,57,170,127,197,45,43,246,111,
-        59,115,243,60,214,104,199,189,51,247,190,113,230,139,78,252,124,220,217,223,47,77,68,157,10,255,238,112,98,69,169,
-        122,113,142,105,33,137,150,158,120,99,197,124,1,139,96,135,90,23,84,224,156,0,0,0,0,73,69,78,68,174,66,96,130
     };
 
     const unsigned char wxscrolledWindow_png[258] {

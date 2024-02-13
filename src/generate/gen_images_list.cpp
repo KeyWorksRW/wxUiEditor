@@ -5,10 +5,11 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include <wx/panel.h>     // Base header for wxPanel
-#include <wx/sizer.h>     // provide wxSizer class for layout
-#include <wx/statbmp.h>   // wxStaticBitmap class interface
-#include <wx/stattext.h>  // wxStaticText base header
+#include <wx/panel.h>              // Base header for wxPanel
+#include <wx/propgrid/propgrid.h>  // wxPropertyGrid
+#include <wx/sizer.h>              // provide wxSizer class for layout
+#include <wx/statbmp.h>            // wxStaticBitmap class interface
+#include <wx/stattext.h>           // wxStaticText base header
 
 #include "gen_images_list.h"
 
@@ -96,6 +97,29 @@ wxObject* ImagesGenerator::CreateMockup(Node* /* node */, wxObject* wxobject)
     sizer->Add(m_bitmap, wxSizerFlags(1).Border(wxALL).Expand());
 
     return sizer;
+}
+
+bool EmbeddedImageGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty* prop, Node* node)
+{
+    if (prop->isProp(prop_bitmap))
+    {
+        tt_string value = event->GetValue().GetString().utf8_string();
+        if (value.empty() || value.starts_with("Art"))
+            return true;
+
+        tt_string_vector parts(value, BMP_PROP_SEPARATOR, tt::TRIM::both);
+        if (parts.size() <= IndexImage || parts[IndexImage].empty())
+            return true;
+
+        auto* embed = ProjectImages.GetEmbeddedImage(parts[IndexImage]);
+        if (embed && embed->form == node->getParent())
+        {
+            event->SetValidationFailureMessage("You've already added this image!");
+            event->Veto();
+            return false;
+        }
+    }
+    return true;
 }
 
 //////////////////////////////////////////  Code Generator for Images  //////////////////////////////////////////
@@ -430,28 +454,13 @@ void BaseCodeGenerator::GenerateImagesForm()
 
 int ImagesGenerator::GetRequiredVersion(Node* node)
 {
-    if (node->hasValue(prop_auto_update))
+    if (node->hasValue(prop_auto_add) && node->as_bool(prop_auto_add))
     {
-        return minRequiredVer + 2;  // 1.1.1 release
+        // return minRequiredVer + 5;  // 1.2.1 release
+        return minRequiredVer + 4;  // 1.2.0 release
     }
 
     return minRequiredVer;
-}
-
-// Called by MainFrame when the user modifies a property. Return true if the generator handles
-// pushing to the undo stack.
-bool ImagesGenerator::modifyProperty(NodeProperty* prop, tt_string_view value)
-{
-    if (prop->isProp(prop_auto_update) && value != "0")
-    {
-        auto undo_update_images = std::make_shared<AutoImagesAction>(prop->getNode());
-        wxGetFrame().PushUndoAction(undo_update_images);
-        return true;
-    }
-    else
-    {
-        return false;
-    }
 }
 
 //////////////////////////////////////////  Image List Functions  //////////////////////////////////////////

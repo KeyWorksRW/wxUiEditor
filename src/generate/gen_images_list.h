@@ -18,8 +18,6 @@ public:
     wxObject* CreateMockup(Node* node, wxObject* parent) override;
     int GetRequiredVersion(Node* /*node*/) override;
 
-    bool modifyProperty(NodeProperty* prop, tt_string_view value) override;
-
 private:
     wxStaticBitmap* m_bitmap;
     wxStaticText* m_image_name;
@@ -29,6 +27,7 @@ private:
 class EmbeddedImageGenerator : public BaseGenerator
 {
 public:
+    bool AllowPropertyChange(wxPropertyGridEvent*, NodeProperty*, Node*) override;
 };
 
 namespace img_list

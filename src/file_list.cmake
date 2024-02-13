@@ -104,11 +104,9 @@ set (file_list
     generate/gen_data_list.cpp     # Data List generator
     generate/gen_project.cpp       # Project generator
 
-    generate/dataview_widgets.cpp  # wxDataView generation classes
-    generate/gen_styled_text.cpp   # wxStyledText (scintilla) generate
-
     # Misc widgets
 
+    generate/dataview_widgets.cpp   # wxDataView generation classes
     generate/gen_activity.cpp       # wxActivityIndicator generator
     generate/gen_animation.cpp      # wxAnimationCtrl generator
     generate/gen_banner_window.cpp  # wxBannerWindow generator
@@ -147,6 +145,7 @@ set (file_list
     generate/gen_static_line.cpp    # wxStaticLine generator
     generate/gen_static_text.cpp    # wxStaticText generator
     generate/gen_status_bar.cpp     # wxStatusBar generator
+    generate/gen_styled_text.cpp    # wxStyledText (scintilla) generate
     generate/gen_text_ctrl.cpp      # wxTextCtrl generator
     generate/gen_timer.cpp          # wxTimer generator
     generate/gen_toggle_btn.cpp     # wxToggleButton generator

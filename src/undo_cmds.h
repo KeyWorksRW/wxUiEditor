@@ -284,20 +284,3 @@ protected:
 private:
     NodeSharedPtr m_old_project;
 };
-
-// This is used to check whether Update Images is at the top of the undo stack
-extern const char* txt_update_images_undo_string;
-
-// This is used when an Images List has the auto_update property changed
-class AutoImagesAction : public UndoAction
-{
-public:
-    AutoImagesAction(Node* node);
-    void Change() override;
-    void Revert() override;
-
-    size_t GetMemorySize() override { return sizeof(*this); }
-
-private:
-    std::vector<UndoActionPtr> m_actions;
-};

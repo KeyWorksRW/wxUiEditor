@@ -117,7 +117,7 @@ bool DataHandler::LoadAndCompress(Node* node)
     auto& embed = m_embedded_data[node->as_string(prop_var_name)];
     embed.array_size = 0;
     embed.array_data = nullptr;
-    embed.m_DateTime = 0;
+    embed.date_time = 0;
     embed.type = tt::npos;
 
     auto filename = node->as_string(prop_data_file);
@@ -193,7 +193,7 @@ bool DataHandler::LoadAndCompress(Node* node)
         embed.array_data = std::make_unique<unsigned char[]>(compressed_size);
         memcpy(embed.array_data.get(), read_stream->GetBufferStart(), compressed_size);
         wxFileName wx_file(embed.filename);
-        wx_file.GetTimes(nullptr, &embed.m_DateTime, nullptr);
+        wx_file.GetTimes(nullptr, &embed.date_time, nullptr);
         return true;
     }
 
@@ -230,7 +230,7 @@ bool DataHandler::LoadAndCompress(Node* node)
             embed.array_data = std::make_unique<unsigned char[]>(compressed_size);
             memcpy(embed.array_data.get(), read_stream->GetBufferStart(), compressed_size);
             wxFileName wx_file(embed.filename);
-            wx_file.GetTimes(nullptr, &embed.m_DateTime, nullptr);
+            wx_file.GetTimes(nullptr, &embed.date_time, nullptr);
             return true;
         }
     }
@@ -246,7 +246,7 @@ bool DataHandler::LoadAndCompress(Node* node)
         embed.array_data = std::make_unique<unsigned char[]>(embed.array_size);
         stream.Read(embed.array_data.get(), embed.array_size);
         wxFileName wx_file(embed.filename);
-        wx_file.GetTimes(nullptr, &embed.m_DateTime, nullptr);
+        wx_file.GetTimes(nullptr, &embed.date_time, nullptr);
         return true;
     }
 
@@ -274,7 +274,7 @@ void DataHandler::WriteDataConstruction(Code& code, WriteCode* source)
             wxFileName wx_file(embed.filename);
             wxDateTime file_time;
             wx_file.GetTimes(nullptr, &file_time, nullptr);
-            if (file_time == embed.m_DateTime)
+            if (file_time == embed.date_time)
                 continue;
             LoadAndCompress(node.get());
         }

@@ -81,11 +81,9 @@ namespace wxue_img
     extern const unsigned char wxactivityIndicator_png[796];
     extern const unsigned char wxanimation_png[248];
     extern const unsigned char wxbannerWindow_png[835];
-    extern const unsigned char wxcheckBox_png[202];
     extern const unsigned char wxcomboBox_png[233];
     extern const unsigned char wxfileCtrl_png[255];
     extern const unsigned char wxmenuBar_png[490];
-    extern const unsigned char wxradioButton_png[268];
     extern const unsigned char wxscrolledWindow_png[258];
     extern const unsigned char wxsimplebook_png[249];
     extern const unsigned char wxsplitterWindow_png[266];

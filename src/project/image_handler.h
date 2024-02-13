@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   ImageHandler class
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -10,7 +10,8 @@
 #include <map>
 #include <mutex>
 
-#include <wx/bmpbndl.h>  // includes wx/bitmap.h, wxBitmapBundle class interface
+#include <wx/bmpbndl.h>   // includes wx/bitmap.h, wxBitmapBundle class interface
+#include <wx/datetime.h>  // wxDateTime
 
 #include "node_classes.h"  // Forward defintions of Node classes
 
@@ -26,11 +27,12 @@ struct EmbeddedImage
 {
     Node* form;  // the form node the image is declared in
     tt_string array_name;
-    tt_string filename;  // only filled in if this differs from array_name
+    tt_string filename;
     size_t array_size;
     std::unique_ptr<unsigned char[]> array_data;
+    wxSize size;           // dimensions of the first image in the array
+    wxDateTime date_time;  // time the file was last modified
     wxBitmapType type;
-    wxSize size;  // dimensions of the first image in the array
 };
 
 wxBitmapBundle LoadSVG(EmbeddedImage* embed, tt_string_view size_description);
@@ -58,6 +60,10 @@ public:
     //
     // Returns true if an associated node changed
     bool UpdateEmbedNodes();
+
+    // Call this is the image file has been modified. This will update the array_data and
+    // array_size for the image from the updated image file.
+    void UpdateEmbeddedImage(EmbeddedImage* embed);
 
     wxImage GetImage(const tt_string& description);
 
@@ -125,7 +131,7 @@ protected:
     void CollectNodeBundles(Node* node, Node* form);
 
     // Converts filename to a valid string name and sets EmbeddedImage::array_name
-    void InitializeArrayName(EmbeddedImage* embed, tt_string_view filename);
+    void InitializeArrayName(EmbeddedImage* embed, tt_string_view path);
 
     bool AddNewEmbeddedImage(tt_string path, Node* form, std::unique_lock<std::mutex>& add_lock);
 

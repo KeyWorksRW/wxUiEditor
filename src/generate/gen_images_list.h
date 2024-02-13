@@ -29,6 +29,7 @@ private:
 class EmbeddedImageGenerator : public BaseGenerator
 {
 public:
+    bool AllowPropertyChange(wxPropertyGridEvent*, NodeProperty*, Node*) override;
 };
 
 namespace img_list
